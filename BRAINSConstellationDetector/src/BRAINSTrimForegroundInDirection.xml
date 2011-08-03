@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+    <title>BRAINSTrimForegroundInDirection</title>
+    <description>This program will trim off the neck and also air-filling noise from the inputImage.</description>
+    <version>0.1</version>
+    <documentation-url>http://www.nitrc.org/projects/art/</documentation-url>
+    <parameters>
+        <image>
+            <name>inputVolume</name>
+            <flag>i</flag>
+            <longflag>inputVolume</longflag>
+            <label>Input Image Volume</label>
+            <description>Input image to trim off the neck (and also air-filling noise.)</description>
+            <channel>input</channel>
+            <default></default>
+        </image>
+        <image>
+            <name>outputVolume</name>
+            <flag>o</flag>
+            <longflag>outputVolume</longflag>
+            <label>Output Image Volume</label>
+            <description>Output image with neck and air-filling noise trimmed isotropic image with AC at center of image.</description>
+            <channel>output</channel>
+            <default></default>
+        </image>
+        <integer>
+            <name>directionCode</name>
+            <label>directionCode</label>
+            <longflag>directionCode</longflag>
+            <flag>x</flag>
+            <description>
+                This flag chooses which dimension to compare.  The sign lets you flip direction.
+            </description>
+            <default>3</default>
+        </integer>
+        <double>
+            <name>otsuPercentileThreshold</name>
+            <label>otsuPercentileThreshold</label>
+            <longflag>otsuPercentileThreshold</longflag>
+            <flag>p</flag>
+            <description>
+                This is a parameter to FindLargestForegroundFilledMask, which is employed to trim off air-filling noise.
+            </description>
+            <default>0.01</default>
+        </double>
+        <integer>
+            <name>closingSize</name>
+            <label>closingSize</label>
+            <longflag>closingSize</longflag>
+            <flag>c</flag>
+            <description>
+                This is a parameter to FindLargestForegroundFilledMask
+            </description>
+            <default>9</default>
+        </integer>
+        <double>
+            <name>headSizeLimit</name>
+            <label>headSizeLimit</label>
+            <longflag>headSizeLimit</longflag>
+            <flag>s</flag>
+            <description>
+                Use this to vary from the command line our search for how much upper tissue is head for the center-of-mass calculation.  Units are CCs, not cubic millimeters.
+            </description>
+            <default>1000.0</default>
+        </double>
+        <string>
+            <name>backgroundFillValueString</name>
+            <longflag>BackgroundFillValue</longflag>
+            <flag>z</flag>
+            <description>Fill the background of image with specified short int value. Enter number or use BIGNEG for a large negative number.</description>
+            <label>Background Fill Value</label>
+            <default>0</default>
+        </string>
+        <integer>
+          <name>numberOfThreads</name>
+          <longflag deprecatedalias="debugNumberOfThreads" >numberOfThreads</longflag>
+          <label>Number Of Threads</label>
+          <description>Explicitly specify the maximum number of threads to use.</description>
+          <default>-1</default>
+        </integer>
+    </parameters>
+</executable>

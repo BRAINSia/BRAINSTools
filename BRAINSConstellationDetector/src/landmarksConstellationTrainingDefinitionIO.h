@@ -1,0 +1,160 @@
+/*
+ * Author: Hans J. Johnson, Wei Lu
+ * at Psychiatry Imaging Lab,
+ * University of Iowa Health Care 2010
+ */
+
+#ifndef landmarksConstellationTrainingDefinitionIO_h
+#define landmarksConstellationTrainingDefinitionIO_h
+#include <vector>
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <itkPoint.h>
+#include <itkContinuousIndex.h>
+#include "landmarksDataSet.h"
+#include "landmarksConstellationModelBase.h"
+
+// HACK:  Remove the multiple inheritance here.
+class landmarksConstellationTrainingDefinitionIO : public landmarksConstellationModelBase,
+  public std::vector<landmarksDataSet>   // This should be a private member
+                                         // variable
+{
+private:
+  typedef enum { eof, bad } err_flags;
+public:
+  landmarksConstellationTrainingDefinitionIO()
+  {
+  }
+
+  landmarksConstellationTrainingDefinitionIO(const std::string & filename)
+  {
+    this->ReadFile(filename);
+  }
+
+  const ValMapType & GetRadii() const
+  {
+    return landmarksConstellationModelBase::GetRadii();
+  }
+
+  template <class type>
+  void Read(std::ifstream & s, type & var)
+  {
+    if( s.bad() )
+      {
+      throw bad;
+      }
+    if( s.eof() )
+      {
+      throw eof;
+      }
+    s >> var;
+  }
+
+  int ReadFile(const std::string & filename)
+  {
+    std::ifstream input( filename.c_str() );
+
+    if( input.bad() )
+      {
+      return -1;
+      }
+    try
+      {
+      this->Read<unsigned int>(input, this->m_NumDataSets);
+      // Note, more than 2 datasets are needed in order to get valid sample
+      // means and variances.
+      if( m_NumDataSets < 2 )
+        {
+        std::cerr << "NumberOfDatasets must be greater than 2" << std::endl;
+        exit(-1);
+        }
+      this->Read<unsigned int>(input, this->m_SearchboxDims);
+      if( m_SearchboxDims % 2 == 0 )
+        {
+        std::cerr << "SearchBoxDims must be odd" << std::endl;
+        exit(-1);
+        }
+      this->Read<float>(input, this->m_ResolutionUnits);
+      if( m_ResolutionUnits <= 0 )
+        {
+        std::cerr << "m_ResolutionUnits must be greater than zero" << std::endl;
+        exit(-1);
+        }
+      this->Read<float>(input, this->m_InitialRotationAngle);
+      this->Read<float>(input, this->m_InitialRotationStep);
+      this->Read<unsigned int>(input, this->m_NumRotationSteps);
+
+      // Read in template size for each landmark
+      std::string name;
+      float       val = 0;
+      this->Read<std::string>(input, name);
+
+      while( name.compare("END") != 0 )
+        {
+        this->Read<float>(input, val);
+        this->m_Radius[name] = val;
+        this->Read<float>(input, val);
+        this->m_Height[name] = val;
+        this->Read<std::string>(input, name);
+        }
+      // Read in landmarks
+      for( unsigned int i = 0; i < this->m_NumDataSets; i++ )
+        {
+        std::string TrainingImageFilename;
+        this->Read<std::string>(input, TrainingImageFilename);
+
+        std::string LandmarksFilename;
+        this->Read<std::string>(input, LandmarksFilename);
+
+        landmarksDataSet DataSet(TrainingImageFilename, LandmarksFilename);
+        this->push_back(DataSet);
+
+        std::string Finished;
+        this->Read<std::string>(input, Finished);
+        // This separator line says 'END'
+        }
+      input.close();
+      }
+    catch( err_flags f )
+      {
+      std::cerr << "File read error "
+                << ( f == eof ?
+           "unexpected end of file" :
+           "file read error" )
+                << std::endl;
+      std::cerr.flush();
+      input.close();
+      return -1;
+      }
+    return 0;
+  }
+
+private:
+};
+
+inline
+std::ostream & operator<<(std::ostream & os, const landmarksConstellationTrainingDefinitionIO & def)
+{
+  os << def.GetNumDataSets() << std::endl;
+  os << def.GetSearchboxDims() << " "
+     << def.GetResolutionUnits() << std::endl;
+  os << def.GetRadius("RP") << " "
+     << def.GetHeight("RP") << std::endl;
+  os << def.GetRadius("AC") << " "
+     << def.GetHeight("AC") << std::endl;
+  os << def.GetRadius("PC") << " "
+     << def.GetHeight("PC") << std::endl;
+  os << def.GetRadius("VN4") << " "
+     << def.GetHeight("VN4") << std::endl;
+  os << def.GetInitialRotationAngle() << " "
+     << def.GetInitialRotationStep() << " "
+     << def.GetNumRotationSteps() << std::endl << std::endl;
+  for( unsigned int i = 0; i < def.GetNumDataSets(); i++ )
+    {
+    os << def[i] << std::endl;
+    }
+  return os;
+}
+
+#endif // landmarksConstellationTrainingDefinitionIO_h

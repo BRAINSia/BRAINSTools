@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+    <title>BRAINSConstellationDetectorGUI</title>
+    <description>
+      This program provides the user with a GUI tool to view/manipulate landmarks for an input volume.
+    </description>
+
+    <version>1.0</version>
+    <documentation-url>http://www.nitrc.org/projects/brainscdetector/</documentation-url>
+    <parameters>
+        <image>
+            <name>inputVolume</name>
+            <flag>i</flag>
+            <longflag>inputVolume</longflag>
+            <label>Input Image Volume Filename</label>
+            <description>The filename of the input NIfTI volume to view/manipulate</description>
+            <channel>input</channel>
+            <default></default>
+        </image>
+        <file>
+            <name>inputLandmarks</name>
+            <label>Input Landmarks Filename</label>
+            <flag>l</flag>
+            <longflag>inputLandmarks</longflag>
+            <default></default>
+            <description>
+              The filename for the new subject-specific landmark definition file in the same format produced by Slicer3 (in a .fcsv format) with the landmarks in the original image space in it to be read in.
+            </description>
+            <channel>input</channel>
+        </file>
+        <file>
+            <name>outputLandmarks</name>
+            <label>Output Landmarks Filename</label>
+            <flag>o</flag>
+            <longflag>outputLandmarks</longflag>
+            <default></default>
+            <description>
+              The filename for the new subject-specific landmark definition file in the same format produced by Slicer3 (in a .fcsv format) with the landmarks in the original image space in it to be written.
+            </description>
+            <channel>input</channel>
+        </file>
+    </parameters>
+</executable>

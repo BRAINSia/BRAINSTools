@@ -1,0 +1,85 @@
+Hello Martin and Marcel,
+
+We are stating to have some success with BRAINSABC (EMSegmentation.h to be more precise) program.  We are working on creating a new set of atlases and using diffeomorphic demons to do the registration.  The initial results are very promising!
+
+I've now committed the clean compiling code for BRAINSABC.  There is a dashboard at:  http://testing.psychiatry.uiowa.edu/CDash/index.php?project=BRAINSABC.  Currently I do not have nightly dashboards, or multiple platforms being built.  I'll work on that as we build more fine grained tests.
+      [hjohnson@hans-uiowa BRAINSABC]$ diff -Naur log_orig_code.log log_post_cvs_3.log
+      --- log_orig_code.log 2009-02-16 18:50:05.000000000 -0600
+      +++ log_post_cvs_3.log  2009-02-17 20:04:07.000000000 -0600
+      @@ -12,7 +12,7 @@
+       Test timeout computed to be: 1500
+       mu::brainseg
+       ========================================
+      -Program compiled on: Feb 16 2009
+      +Program compiled on: Feb 17 2009
+       
+       Using ITK version 3.10.2
+       
+      @@ -51,7 +51,7 @@
+       Cropping images based on atlas priors...
+       Non-linear filtering of registered images...
+       K flow
+      -Non-linear filtering took 0 hours, 0 minutes, 0 seconds
+      +Non-linear filtering took 0 hours, 0 minutes, 1 seconds
+       Rescale intensity of filtered cropped images...
+       Start segmentation...
+       Splitting distributions with same prior
+      @@ -1805,7 +1805,7 @@
+       Writing labels...
+       Writing filtered and bias corrected images...
+       Writing posterior images...
+      -All segmentation processes took 0 hours, 16 minutes, 24 seconds
+      +All segmentation processes took 0 hours, 15 minutes, 25 seconds
+       <DartMeasurement name="BaselineImageName" type="text/string">small_ISO_T1_REP1_corrected_EMS.nrrd</DartMeasurement>
+       -- Process completed
+          Passed
+
+There are also some comments that are added in areas where more testing needs to be done, or where the code was not immediately clear to me or the graduate student (Regina) who is working on an implementation that will work well on our data.
+
+=====
+I've added a file in BRAINSABC called buildBRAINSABC.sh which downloads the necessary files (ITK/VTK/fltk), creates ../BRAINSABC-COMPILE directory, configures and compiles BRAINSABC all by itself.  You should be able to cd into the BRAINSABC directory and type "./buildBRAINSABC.sh" and it will download ITK/VTK/fltk configure and build them in optimized mode for your platform.  Alternatively, a debuggable version can be built with "./buildBRAINSABC.sh DEBUG", or a profileable version with "./buildBRAINSABC.sh PROFILE".  All these can be built from the same source tree, and across multiple platforms (assuming share storage between nodes).
+
+I've added a reference atlas to be used with BRAINSABC.
+
+I've added a few small test images and a reference data set (takes 11minutes to test on my MacBook Air).
+
+I've added SlicerExecutionModel directory to BRAINSABC so that Slicer is not needed in order to build BRAINSABC.
+
+=====
+There seems to be a minor configuration problem on your CVS server:
+cvs update: cannot open /home/cvsprivateuser/.cvsignore: Permission denied
+=====
+These are just random comments and sugestions about how I think that NeuroLib building could be easier.  I have many of these implemented in my local builds, but some of them would involve major change in how this is built, so I'm not prepared to commit them to the cvs repository.  Some of these changes were, however, necessary to get mriWatcher to build with the private version of BRAINSABC and the BUILD_TESTING turned on only for those two packages.
+
+I've had a little success in build all of NeuroLib, but there were several stumbling blocks in NeuroLib's CMakeLists.txt configurations.
+  1) The logic to turn components on/off is very complex
+      a) If BUILD_TESTING is ON, then and it tries to build EVERYTHING, even if you do not have the necessary supporting libraries (i.e. QT),  This prevents you from building and testing only a small subset of the NeuroLib packages.
+      b) There are mulitple "SUBDIRS" commands in CMake for the same directory, but they depend on different logic flags, so even if you explicitly request that a tool that depends on QT is not built, but turn BUILD_TESTING on, then it is built anyway.
+  2) There are some CMakeLists.txt files with out PROJECT() tags
+  3) the public and private versions of BRAINSABC have conflicting target names that must be unique across all projects (i.e. brainseg is a library in the public version, and is an executable in the private version).
+  4) NeuroLib/Testing/Applications/CMakeLists.txt has tests for programs that may or may not be built from the NeuroLib/Applications tree.  I would move the test into CMakeLists unit that actually builds the tested executable.  This has the added advantage of simplifying the conditional build logic from the CMakeLists.txt.
+  5) The file CMake/qtSetup.cmake appears to have many paths hardcoded for a particular install location (non of which worked for my lab).
+    I replace the original 137 lines of logic with:
+       FIND_PACKAGE(QT3 REQUIRED)
+       OPTION(QT_WRAP_CPP "QT_WRAP_CPP." ON)
+       OPTION(QT_WRAP_UI  "QT_WRAP_UI. " ON)
+    and mriWatcher built immediately after that.
+  6) Many of the CMake/*Setup.cmake files have standard FIND_PACKAGE() commands from cmake (fltk, fftw, vtk, boost, glut...), and it would be easier to build against these standard packages in our lab if the standard cmake FIND_PACKAGE commands were used.
+  7) There a many aliased variables,  for example COMPILE_SHAPE and NeuroLib_COMPILE_SHAPE
+        OPTION(COMPILE_SHAPE "Compile Shape Library" ON)
+        SET(NeuroLib_COMPILE_SHAPE ${COMPILE_SHAPE})
+        MARK_AS_ADVANCED(COMPILE_SHAPE)
+     One of these variables is not needed, and it would be easier to follow which variable controls adding subdirectories and other actions.
+  8)  The USE_ITK_LIB and USE_VTK_LIB seem like they should be removed completely (and perhaps others).  It is my opinion that each sub-component should know what libraries they depend on, and when those sub-components are requested for building, then there dependancies are found.  For example, if you choose COMPILE_SHAPE=ON, then the LAPACK LIBRARIES are required, and cmake requires them before continuing.
+
+
+Thanks for all your help.  I look forward to continued collaborations.
+
+Hans
+
+
+
+
+
+
+

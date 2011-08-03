@@ -1,0 +1,920 @@
+This is the change log to document the history when moving from the ART project to the BRAINSConstellationDetector Project on NITRC.
+
+
+------------------------------------------------------------------------
+r270 | harrisgreg | 2009-03-05 16:26:19 -0600 (Thu, 05 Mar 2009) | 1 line
+
+BUG: Now that ConstellationDetector has a new flag, cutOutHeadInOutputVolumes, need to make sure we only trim with the Otsu threshold once when both transformed and untransformed images are requested.
+------------------------------------------------------------------------
+r269 | harrisgreg | 2009-03-05 15:56:37 -0600 (Thu, 05 Mar 2009) | 1 line
+
+ENH:  Added commandline switch to optionally turn on cutting out the head in output volumes, both transformed and untransformed.
+------------------------------------------------------------------------
+r268 | hjmjohnson | 2009-02-26 21:49:12 -0600 (Thu, 26 Feb 2009) | 1 line
+
+ENH:  Updated to create clipped images for the outputs with both below acpoint clipping AND FindLargestRegionFilledMask clipping.
+------------------------------------------------------------------------
+r267 | harrisgreg | 2009-02-23 13:56:59 -0600 (Mon, 23 Feb 2009) | 1 line
+
+BUG:  Dispensed with one of the alternatives to TrimForegroundInDirection I had been coding.  Made the test pass meaningfully.
+------------------------------------------------------------------------
+r266 | harrisgreg | 2009-02-23 13:43:43 -0600 (Mon, 23 Feb 2009) | 1 line
+
+BUG:  Make regression tests pass.
+------------------------------------------------------------------------
+r265 | harrisgreg | 2009-02-23 13:17:51 -0600 (Mon, 23 Feb 2009) | 1 line
+
+ENH:  Changes to MakeBranded2DImage in landmarkIO and moving FindCenterOfBrainBasedOnTopOfHead to compute the entire CenterOfMass on the clipped foreground image before splicing the Inferior/Superior level into it.  Checked in for version control prior to subsequent deletions.
+------------------------------------------------------------------------
+r264 | hjmjohnson | 2009-02-22 21:54:34 -0600 (Sun, 22 Feb 2009) | 1 line
+
+ENH:  Major fixes to make sure to get center of mass in consistent location.
+------------------------------------------------------------------------
+r263 | hjmjohnson | 2009-02-21 16:25:32 -0600 (Sat, 21 Feb 2009) | 1 line
+
+ENH:  Many minor little bugs fixed to get better estimate of center of mass for the brain based on the top of the head.
+------------------------------------------------------------------------
+r262 | hjmjohnson | 2009-02-20 17:06:14 -0600 (Fri, 20 Feb 2009) | 1 line
+
+ENH: Trying to estimate brainsize from an estimate of planar area.
+------------------------------------------------------------------------
+r261 | harrisgreg | 2009-02-19 16:10:41 -0600 (Thu, 19 Feb 2009) | 1 line
+
+BUG:  If the histogram has less than the desired non-zero volume, need to use all the tissue, not none of it.
+------------------------------------------------------------------------
+r260 | harrisgreg | 2009-02-19 13:08:25 -0600 (Thu, 19 Feb 2009) | 1 line
+
+ENH:  Created the stand-alone program to exercise TrimForegroundInDirection in terms of signed short images.  Passes the test.
+------------------------------------------------------------------------
+r259 | harrisgreg | 2009-01-21 14:44:57 -0600 (Wed, 21 Jan 2009) | 1 line
+
+BUG:  Needed to relocate MakeBranded2DImage call to after taking care of outputUntransformedClippedVolume since it damages the outputInterpImage.
+------------------------------------------------------------------------
+r258 | hjmjohnson | 2009-01-16 21:24:08 -0600 (Fri, 16 Jan 2009) | 1 line
+
+ENH:  made less verbose by default.
+------------------------------------------------------------------------
+r256 | harrisgreg | 2009-01-16 16:25:47 -0600 (Fri, 16 Jan 2009) | 1 line
+
+BUG:  gnarly comment gone.
+------------------------------------------------------------------------
+r255 | harrisgreg | 2009-01-16 16:18:55 -0600 (Fri, 16 Jan 2009) | 1 line
+
+BUG:  Make the BRAINSConstellationDetectorTest_T2_BoundedBelow testing case exhibit the new standard.  strnlen(linebuf,299) doesn't exist, but since we are comparing it <1, we can just test for the terminator '\0'.
+------------------------------------------------------------------------
+r254 | harrisgreg | 2009-01-16 16:01:20 -0600 (Fri, 16 Jan 2009) | 1 line
+
+ENH:  a combined release of --writeBranded2DImageFilename and the --otsuPercentileThreshold/FindLargestForegroundFilledMask enhancement of the --outputUntransformedClippedVolume/--acLowerBound != 1000.0 raw T2 image cropping, now also cropping to the whole head (with a closing size of 7.)
+------------------------------------------------------------------------
+r253 | harrisgreg | 2009-01-16 15:00:36 -0600 (Fri, 16 Jan 2009) | 1 line
+
+ENH:  This commit JUST adds the FindLargestForgroundFilledMask.h file to the build tree.  More work needed to tie it in.
+------------------------------------------------------------------------
+r252 | hjmjohnson | 2009-01-15 14:40:38 -0600 (Thu, 15 Jan 2009) | 1 line
+
+ENH:  Updated to fix a problem with processing comments at the top of the fcsv files from slicer.
+------------------------------------------------------------------------
+r251 | harrisgreg | 2009-01-15 14:02:14 -0600 (Thu, 15 Jan 2009) | 1 line
+
+ENH: added --outputVerificationScriptFilename, which will only make a verification script if both outputVolume and saveOutputLandmarksFilename are provided, since it puts both these filenames in the resulting Slicer3 Tcl script.
+------------------------------------------------------------------------
+r249 | hjmjohnson | 2009-01-15 13:41:27 -0600 (Thu, 15 Jan 2009) | 1 line
+
+ENH:  Silence verbose debugging information.
+------------------------------------------------------------------------
+r248 | harrisgreg | 2009-01-15 12:17:49 -0600 (Thu, 15 Jan 2009) | 1 line
+
+BUG:  An image transform has to be inverted before transforming points in the moving image to fixed space.  --saveOutputLandmarksFilename was doing this backwards.
+------------------------------------------------------------------------
+r247 | harrisgreg | 2009-01-15 12:10:31 -0600 (Thu, 15 Jan 2009) | 1 line
+
+ENH:  Now ConstellationDetector has --saveOutputLandmarksFilename, which writes the VersorZeroCenteredTransform of the originalSpace RP, AC, and PC.
+------------------------------------------------------------------------
+r246 | harrisgreg | 2009-01-15 11:38:52 -0600 (Thu, 15 Jan 2009) | 1 line
+
+ENH:  Now ConstellationDetector has --saveOriginalLandmarksFilename, in contrast to ConstellationModeler's flag and extender.
+------------------------------------------------------------------------
+r245 | harrisgreg | 2009-01-13 16:59:50 -0600 (Tue, 13 Jan 2009) | 1 line
+
+BUG:  added missing test file standard, so BRAINSConstellationDetectorTest_T2_BoundedBelow can be checked.
+------------------------------------------------------------------------
+r244 | harrisgreg | 2009-01-13 15:36:06 -0600 (Tue, 13 Jan 2009) | 1 line
+
+ENH:  Added a test for BRAINSConstellationDetectorTest_T2_BoundedBelow.
+------------------------------------------------------------------------
+r243 | harrisgreg | 2009-01-13 15:24:59 -0600 (Tue, 13 Jan 2009) | 1 line
+
+ENH:  --outputUntransformedClippedVolume has been refactored and improved.  Now works properly side by side with --outputVolume;  now uses CopyInformation and Allocate;  now inverts the ZeroCenteredTransform.
+------------------------------------------------------------------------
+r242 | hjmjohnson | 2009-01-13 11:08:08 -0600 (Tue, 13 Jan 2009) | 1 line
+
+ENH:  Some refactoring that is not complete.
+------------------------------------------------------------------------
+r241 | hjmjohnson | 2009-01-12 19:54:05 -0600 (Mon, 12 Jan 2009) | 1 line
+
+BUG:  Slicer3 landmarks are in RAS space, so we need to negate the first two physical points to get them in LPS when read into ITK physical spaces.
+------------------------------------------------------------------------
+r239 | harrisgreg | 2009-01-12 17:23:35 -0600 (Mon, 12 Jan 2009) | 1 line
+
+ENH:  added --outputUntransformedClippedVolume (fullpathtofilename) for use with --acLowerBound 80.  This will produce neck-clipped raw T2 for use with neck-clipped windowed-sinc aligned T1 in BRAINSFit.
+------------------------------------------------------------------------
+r238 | harrisgreg | 2009-01-12 14:48:00 -0600 (Mon, 12 Jan 2009) | 1 line
+
+BUG:  Turned off debug printing in string processing.
+------------------------------------------------------------------------
+r237 | harrisgreg | 2009-01-12 14:36:40 -0600 (Mon, 12 Jan 2009) | 1 line
+
+ENH: Changed the format and file storage of landmark data sets.  Now we can use landmarks written by Slicer3.
+------------------------------------------------------------------------
+r236 | harrisgreg | 2009-01-12 14:34:12 -0600 (Mon, 12 Jan 2009) | 1 line
+
+BUG:  updated testing standard images to track the improved method.
+------------------------------------------------------------------------
+r235 | hjmjohnson | 2009-01-11 20:29:12 -0600 (Sun, 11 Jan 2009) | 1 line
+
+ENH:  Changed the code for masking out the neck.
+------------------------------------------------------------------------
+r234 | hjmjohnson | 2009-01-09 08:25:56 -0600 (Fri, 09 Jan 2009) | 1 line
+
+ENH:  Started some code cleanup that should provide a little optimization.
+------------------------------------------------------------------------
+r233 | harrisgreg | 2009-01-08 12:58:04 -0600 (Thu, 08 Jan 2009) | 1 line
+
+ENH:  Added the commandline flag --acLowerBound (double) for the lowest plane inferior to the aligned AC point that will be included in the output resampled image.  Below this plane we only have the BackgroundFillValue, specified with the flags for rescaling intensities.
+------------------------------------------------------------------------
+r232 | harrisgreg | 2009-01-08 12:52:45 -0600 (Thu, 08 Jan 2009) | 1 line
+
+BUG:  Cleaned up spelling of long flag VolumeVolume (huh?) became Volume
+------------------------------------------------------------------------
+r231 | harrisgreg | 2009-01-06 17:06:20 -0600 (Tue, 06 Jan 2009) | 1 line
+
+BUG:  Cleaned up the naming of the longFlag parameters.
+------------------------------------------------------------------------
+r230 | harrisgreg | 2009-01-06 15:38:29 -0600 (Tue, 06 Jan 2009) | 1 line
+
+BUG:  Updated the names of the testing standard images to track the change of name of the program they provide a check for.
+------------------------------------------------------------------------
+r229 | harrisgreg | 2009-01-06 15:37:29 -0600 (Tue, 06 Jan 2009) | 1 line
+
+BUG:  Updated the names of the testing standard images to track the change of name of the program they provide a check for.
+------------------------------------------------------------------------
+r228 | hjmjohnson | 2009-01-05 16:24:24 -0600 (Mon, 05 Jan 2009) | 1 line
+
+ENH: Changing the file names and command line arguments to distinguish them from the original art tools. Acknowlegement:  This is a complete rewrite with algorithmic changes to the methods proposed by Babak Ardekani.  His work was a great inspiration to what was developed here, and this work should be considered a derivative work of the original acpcdetect suite of tools.
+------------------------------------------------------------------------
+r227 | hjmjohnson | 2009-01-04 16:42:21 -0600 (Sun, 04 Jan 2009) | 1 line
+
+ENH:  Allow running without an output image.
+------------------------------------------------------------------------
+r226 | hjmjohnson | 2008-12-29 16:03:52 -0600 (Mon, 29 Dec 2008) | 1 line
+
+ENH: Cleaned up the documentation.
+------------------------------------------------------------------------
+r225 | harrisgreg | 2008-12-22 13:33:40 -0600 (Mon, 22 Dec 2008) | 1 line
+
+ENH:  Bumped testing of mspQualityLevel up from 2 to 3, with associated standard images.
+------------------------------------------------------------------------
+r224 | harrisgreg | 2008-12-22 10:51:02 -0600 (Mon, 22 Dec 2008) | 1 line
+
+BUG:  Testing against fixed images (aligned and standard): updated standard images to track fixes to transform code.
+------------------------------------------------------------------------
+r222 | hjmjohnson | 2008-12-21 17:04:10 -0600 (Sun, 21 Dec 2008) | 1 line
+
+ENH:  Updated internals to clean up the code and make it more efficient.  Removed dependance on Rigid3DTransform.  Optimized computations of CC by using a well constructed resampled image.
+------------------------------------------------------------------------
+r220 | harrisgreg | 2008-12-19 13:46:00 -0600 (Fri, 19 Dec 2008) | 1 line
+
+ENH: This checks in changes to support --rescaleIntensities and friends on acpcmodel, acpcdetect and acpcResampleMSP.  This does not check in any new tests for it, though.
+------------------------------------------------------------------------
+r219 | hjmjohnson | 2008-12-18 22:53:23 -0600 (Thu, 18 Dec 2008) | 1 line
+
+ENH: Conversions to Versors are now working.
+------------------------------------------------------------------------
+r218 | harrisgreg | 2008-12-18 16:31:37 -0600 (Thu, 18 Dec 2008) | 1 line
+
+BUG 3292, Background value processing, is now allowing --BackgroundFillValue for short int Pixels.  BIGNEG is -32768, assuming twos-complement 16-bit words.
+------------------------------------------------------------------------
+r217 | harrisgreg | 2008-12-18 14:29:27 -0600 (Thu, 18 Dec 2008) | 1 line
+
+BUG: With this commit we have returned to passing test cases in a CMake compliant test suite.  TODO:  evaluate the model generated by acpcmodelTest.
+------------------------------------------------------------------------
+r216 | harrisgreg | 2008-12-18 12:48:30 -0600 (Thu, 18 Dec 2008) | 1 line
+
+BUG! This is close to fully compiling...interim commit of sources for collaboration.
+------------------------------------------------------------------------
+r215 | harrisgreg | 2008-12-18 11:42:00 -0600 (Thu, 18 Dec 2008) | 1 line
+
+ENH-with-BUG: Step 1 of wrapping acpcResampleMSP around acpcResampleMSPPrimary.
+------------------------------------------------------------------------
+r214 | harrisgreg | 2008-12-18 11:39:50 -0600 (Thu, 18 Dec 2008) | 1 line
+
+ENH-with-BUG: Step 2 of wrapping acpcmodel around acpcmodelPrimary.
+------------------------------------------------------------------------
+r213 | harrisgreg | 2008-12-18 11:21:36 -0600 (Thu, 18 Dec 2008) | 1 line
+
+ENH-with-BUG: Step 1 of wrapping acpcmodel around acpcmodelPrimary.
+------------------------------------------------------------------------
+r212 | harrisgreg | 2008-12-18 11:20:30 -0600 (Thu, 18 Dec 2008) | 1 line
+
+BUG:  finish renaming of acpcdetectPrimaryCLP.h
+------------------------------------------------------------------------
+r211 | harrisgreg | 2008-12-18 10:47:22 -0600 (Thu, 18 Dec 2008) | 1 line
+
+ENH:  created CMake compliant test suite.  Initial contents:  T1 and T2 tests for acpcdetect.
+------------------------------------------------------------------------
+r210 | hjmjohnson | 2008-12-17 21:20:58 -0600 (Wed, 17 Dec 2008) | 1 line
+
+ENH:  Deciphering the VersorRigid3D problems assigning to Versors.
+------------------------------------------------------------------------
+r209 | hjmjohnson | 2008-12-17 17:09:15 -0600 (Wed, 17 Dec 2008) | 1 line
+
+ENH:  Attempting to figure out what to do about the VersorTransform issues.
+------------------------------------------------------------------------
+r208 | harrisgreg | 2008-12-17 16:57:49 -0600 (Wed, 17 Dec 2008) | 1 line
+
+ENH: Third step in making an acpcdetectTest -- everything in place now.
+------------------------------------------------------------------------
+r207 | harrisgreg | 2008-12-17 16:45:14 -0600 (Wed, 17 Dec 2008) | 1 line
+
+ENH with BUG: Second step in making an acpcdetectTest
+------------------------------------------------------------------------
+r206 | harrisgreg | 2008-12-17 16:29:01 -0600 (Wed, 17 Dec 2008) | 1 line
+
+ENH with BUG: First step in making an acpcdetectTest
+------------------------------------------------------------------------
+r204 | hjmjohnson | 2008-12-16 17:04:49 -0600 (Tue, 16 Dec 2008) | 1 line
+
+ENH:  Determining method to convert Rigid3D to Versor3D transform.
+------------------------------------------------------------------------
+r203 | hjmjohnson | 2008-12-16 07:52:03 -0600 (Tue, 16 Dec 2008) | 1 line
+
+STYLE:  Continue to detangle old and new versions of tools.  Some header files moved around.
+------------------------------------------------------------------------
+r202 | hjmjohnson | 2008-12-15 20:04:57 -0600 (Mon, 15 Dec 2008) | 1 line
+
+STYLE:  Starting to detangle old and new versions of tools.
+------------------------------------------------------------------------
+r201 | hjmjohnson | 2008-12-15 19:56:40 -0600 (Mon, 15 Dec 2008) | 1 line
+
+ENH:  Detangled some of the build process.
+------------------------------------------------------------------------
+r200 | harrisgreg | 2008-12-15 13:01:32 -0600 (Mon, 15 Dec 2008) | 1 line
+
+BUG:  Factored out vnl_powell_fixed which is now in ITK, and factored back in the subdir lib.
+------------------------------------------------------------------------
+r198 | hjmjohnson | 2008-12-15 08:00:22 -0600 (Mon, 15 Dec 2008) | 1 line
+
+COMP:  Removed compilation of much code that is not needed for this new version of ART.
+------------------------------------------------------------------------
+r197 | hjmjohnson | 2008-12-14 22:15:19 -0600 (Sun, 14 Dec 2008) | 1 line
+
+ENH:  This new fully compliant with ITK version seems to be working with both T1 and T2 images.
+------------------------------------------------------------------------
+r196 | hjmjohnson | 2008-12-13 16:44:48 -0600 (Sat, 13 Dec 2008) | 1 line
+
+ENH:  Some optimization and code cleanup to ensure better performance.
+------------------------------------------------------------------------
+r195 | hjmjohnson | 2008-12-13 11:43:52 -0600 (Sat, 13 Dec 2008) | 1 line
+
+COMP:  Cleaned up unnecessary files.
+------------------------------------------------------------------------
+r194 | hjmjohnson | 2008-12-13 11:37:09 -0600 (Sat, 13 Dec 2008) | 1 line
+
+ENH:  Reached milestone where a reasonable result is attained from acpcdetect.
+------------------------------------------------------------------------
+r193 | hjmjohnson | 2008-12-11 11:05:41 -0600 (Thu, 11 Dec 2008) | 1 line
+
+ENH:  First submit without plane objects being used.
+------------------------------------------------------------------------
+r192 | hjmjohnson | 2008-12-11 09:39:42 -0600 (Thu, 11 Dec 2008) | 1 line
+
+ENH:  Cleaning up and removing dependancies on the PlaneObject.
+------------------------------------------------------------------------
+r191 | hjmjohnson | 2008-12-11 06:41:03 -0600 (Thu, 11 Dec 2008) | 1 line
+
+ENH:  Propogating changes to finding MSP to all other programs.  Eliminating need for the PlaneObjects all together.
+------------------------------------------------------------------------
+r190 | hjmjohnson | 2008-12-10 22:50:28 -0600 (Wed, 10 Dec 2008) | 1 line
+
+ENH:  More code cleanups for ART MSP finder.
+------------------------------------------------------------------------
+r189 | hjmjohnson | 2008-12-10 21:37:27 -0600 (Wed, 10 Dec 2008) | 1 line
+
+BUG:  Fixed bugs related to center of mass shifting during downsampling.
+------------------------------------------------------------------------
+r188 | hjmjohnson | 2008-12-10 16:52:05 -0600 (Wed, 10 Dec 2008) | 1 line
+
+ENH: Adding test case for resampleImage based multi-resolution image filter.
+------------------------------------------------------------------------
+r187 | hjmjohnson | 2008-12-09 22:41:07 -0600 (Tue, 09 Dec 2008) | 1 line
+
+ENH:  getting bugs fixed in multi-resolution image filter.
+------------------------------------------------------------------------
+r186 | hjmjohnson | 2008-12-09 12:49:56 -0600 (Tue, 09 Dec 2008) | 1 line
+
+ENH:  New MSP finder code is working, but now needs to be optimized.
+------------------------------------------------------------------------
+r185 | hjmjohnson | 2008-12-09 07:59:56 -0600 (Tue, 09 Dec 2008) | 1 line
+
+ENH:  New approach to simplify code.
+------------------------------------------------------------------------
+r184 | hjmjohnson | 2008-12-08 17:05:47 -0600 (Mon, 08 Dec 2008) | 1 line
+
+ENH:  Trying something completely new in an attempt to simplify the processing.
+------------------------------------------------------------------------
+r183 | hjmjohnson | 2008-12-07 14:40:03 -0600 (Sun, 07 Dec 2008) | 1 line
+
+ENH:  Re-indented to make it easier to see boundaries of what needs to be edited.
+------------------------------------------------------------------------
+r182 | hjmjohnson | 2008-12-06 11:29:05 -0600 (Sat, 06 Dec 2008) | 1 line
+
+BUG:  Still tracking down incorrect MSP calculations.
+------------------------------------------------------------------------
+r181 | hjmjohnson | 2008-12-06 09:03:15 -0600 (Sat, 06 Dec 2008) | 1 line
+
+BUG:  Tracking down bug in optimization of MSP.
+------------------------------------------------------------------------
+r180 | hjmjohnson | 2008-12-02 14:00:26 -0600 (Tue, 02 Dec 2008) | 1 line
+
+ENH:  Testing to determine if this version works for automatically finding the ACPC points.
+------------------------------------------------------------------------
+r179 | hjmjohnson | 2008-12-01 17:01:46 -0600 (Mon, 01 Dec 2008) | 2 lines
+
+ENH:  Added version of conjugate_gradient that compiles.
+
+------------------------------------------------------------------------
+r178 | hjmjohnson | 2008-11-06 10:09:43 -0600 (Thu, 06 Nov 2008) | 1 line
+
+COMP:  Code scope bracket was placed one line too high.
+------------------------------------------------------------------------
+r177 | hjmjohnson | 2008-11-05 19:29:53 -0600 (Wed, 05 Nov 2008) | 1 line
+
+COMP:  Forgot to add necessary file.
+------------------------------------------------------------------------
+r176 | hjmjohnson | 2008-11-04 16:52:07 -0600 (Tue, 04 Nov 2008) | 1 line
+
+ENH:  Fixed some more bugs with respect to positive and negaive rotations being estimated correctly.
+------------------------------------------------------------------------
+r175 | hjmjohnson | 2008-11-02 20:34:57 -0600 (Sun, 02 Nov 2008) | 1 line
+
+ENH:  Made a new class to make reusing functionality easier.
+------------------------------------------------------------------------
+r174 | hjmjohnson | 2008-11-01 11:08:44 -0500 (Sat, 01 Nov 2008) | 1 line
+
+ENH:  Added ability to search off the exstimated midline for better answers.
+------------------------------------------------------------------------
+r173 | hjmjohnson | 2008-11-01 07:43:53 -0500 (Sat, 01 Nov 2008) | 1 line
+
+ENH:  Updated to fix linking of the powell optimizer, and to get offsets from CM to be correct.
+------------------------------------------------------------------------
+r172 | hjmjohnson | 2008-10-30 18:40:22 -0500 (Thu, 30 Oct 2008) | 1 line
+
+BUG:  Fixed a bug in the powell optimizer that was causing all types of problems.  I've submitted a bug report.
+------------------------------------------------------------------------
+r171 | kentwilliams | 2008-10-30 12:43:46 -0500 (Thu, 30 Oct 2008) | 1 line
+
+script tweaks and removed unused variables
+------------------------------------------------------------------------
+r170 | hjmjohnson | 2008-10-28 22:54:11 -0500 (Tue, 28 Oct 2008) | 1 line
+
+ENH: Reworked to optimize on HeadingAngle and BankAngle.
+------------------------------------------------------------------------
+r169 | hjmjohnson | 2008-10-28 07:52:19 -0500 (Tue, 28 Oct 2008) | 1 line
+
+ENH:  Started down path to optimize HeadingAngle, BankAngle, and DistanceFrom CenterOfMass.
+------------------------------------------------------------------------
+r168 | hjmjohnson | 2008-10-27 15:54:53 -0500 (Mon, 27 Oct 2008) | 1 line
+
+COMP:  Restored the GetImageCenterPhysicalPoint function that was deleted inappropriately.
+------------------------------------------------------------------------
+r167 | canoee | 2008-10-27 14:51:04 -0500 (Mon, 27 Oct 2008) | 3 lines
+
+try conjugate gradient optimizer, but not infact the powell optimizer
+
+
+------------------------------------------------------------------------
+r166 | kentwilliams | 2008-10-27 12:57:03 -0500 (Mon, 27 Oct 2008) | 1 line
+
+Worked around change in behavior to try and get tests passing again
+------------------------------------------------------------------------
+r165 | hjmjohnson | 2008-10-25 11:32:56 -0500 (Sat, 25 Oct 2008) | 1 line
+
+COMP:  Just making the code compile.  Half way through a refactoring.
+------------------------------------------------------------------------
+r164 | hjmjohnson | 2008-10-25 11:20:33 -0500 (Sat, 25 Oct 2008) | 1 line
+
+COMP:  Missing externals for ART to build SlicerExectuion Model.
+------------------------------------------------------------------------
+r161 | hjmjohnson | 2008-10-24 08:52:23 -0500 (Fri, 24 Oct 2008) | 1 line
+
+ENH:  More modifications to find the center of the image better.
+------------------------------------------------------------------------
+r159 | hjmjohnson | 2008-10-20 22:29:36 -0500 (Mon, 20 Oct 2008) | 1 line
+
+ENH: More bug fixes to the acpcmodel/acpcdetect programs.
+------------------------------------------------------------------------
+r156 | hjmjohnson | 2008-10-13 19:49:21 -0500 (Mon, 13 Oct 2008) | 1 line
+
+ENH: Write out optimized points to files.
+------------------------------------------------------------------------
+r155 | kentwilliams | 2008-10-06 16:42:28 -0500 (Mon, 06 Oct 2008) | 1 line
+
+COMP: added dumping out of debug images for mean vectors
+------------------------------------------------------------------------
+r154 | canoee | 2008-10-03 15:15:02 -0500 (Fri, 03 Oct 2008) | 3 lines
+
+Avoid debug wrong
+
+
+------------------------------------------------------------------------
+r153 | hjmjohnson | 2008-10-01 23:16:53 -0500 (Wed, 01 Oct 2008) | 1 line
+
+ENH:  Cleaning up debug code to verify that correct results are being created.  There is still a bug for images with resolution units less than 1 that needs to be resolved.
+------------------------------------------------------------------------
+r152 | hjmjohnson | 2008-10-01 08:41:02 -0500 (Wed, 01 Oct 2008) | 1 line
+
+BUGS:  Working out bugs to get orientation issues worked out.
+------------------------------------------------------------------------
+r151 | hjmjohnson | 2008-09-29 17:00:08 -0500 (Mon, 29 Sep 2008) | 1 line
+
+BUG:  Fixed centering of code bug when origin is not all zero's.
+------------------------------------------------------------------------
+r150 | hjmjohnson | 2008-09-29 15:58:03 -0500 (Mon, 29 Sep 2008) | 1 line
+
+COMP: Fixed compilation error.
+------------------------------------------------------------------------
+r149 | hjmjohnson | 2008-09-29 15:41:51 -0500 (Mon, 29 Sep 2008) | 1 line
+
+ENH:  Fixed bug in plane calculations.
+------------------------------------------------------------------------
+r148 | canoee | 2008-09-29 15:24:28 -0500 (Mon, 29 Sep 2008) | 3 lines
+
+Trying to make it working
+
+
+------------------------------------------------------------------------
+r147 | hjmjohnson | 2008-09-28 21:32:53 -0500 (Sun, 28 Sep 2008) | 1 line
+
+ENH:  Identifying that the last image location is greater than the origin.
+------------------------------------------------------------------------
+r146 | hjmjohnson | 2008-09-28 15:47:34 -0500 (Sun, 28 Sep 2008) | 1 line
+
+ENH: Starting to remove dependance on given orientations and spacing assumptions.
+------------------------------------------------------------------------
+r145 | hjmjohnson | 2008-09-25 22:41:35 -0500 (Thu, 25 Sep 2008) | 1 line
+
+ENH:  Fixed brains2 index to itk physical points.
+------------------------------------------------------------------------
+r143 | kentwilliams | 2008-09-24 16:32:46 -0500 (Wed, 24 Sep 2008) | 1 line
+
+ENH: hoisted some redundant calculations out of inner loops
+------------------------------------------------------------------------
+r142 | kentwilliams | 2008-09-24 16:09:04 -0500 (Wed, 24 Sep 2008) | 2 lines
+
+ENH: short circuit inner loop to avoid expensive interpolation
+BUG: model output changed slightly since last checkin, replaced out of date Baseline.mdl
+------------------------------------------------------------------------
+r141 | hjmjohnson | 2008-09-23 22:51:45 -0500 (Tue, 23 Sep 2008) | 1 line
+
+ENH: Attempting to create program for translating index locations to physical point locaitons.
+------------------------------------------------------------------------
+r140 | hjmjohnson | 2008-09-23 16:55:45 -0500 (Tue, 23 Sep 2008) | 1 line
+
+ENH:  Added new file for testing of conversion of landmark points.
+------------------------------------------------------------------------
+r139 | kentwilliams | 2008-09-23 14:26:12 -0500 (Tue, 23 Sep 2008) | 3 lines
+
+ENH: collapse together extractArray, RemoveMean and Normalize
+BUG: the tests in art/data are all broken and if you accidentally run them they completely 
+screw up the tests now performed in art/src
+------------------------------------------------------------------------
+r138 | kentwilliams | 2008-09-23 11:50:45 -0500 (Tue, 23 Sep 2008) | 1 line
+
+ENH: compute vector means in acpcmodel, reducing size of the model file
+------------------------------------------------------------------------
+r137 | hjmjohnson | 2008-09-22 21:26:16 -0500 (Mon, 22 Sep 2008) | 1 line
+
+ENH: Added new program for converting landmarks to physical coordinates from other programs to be ITK compliant.
+------------------------------------------------------------------------
+r136 | canoee | 2008-09-22 16:38:56 -0500 (Mon, 22 Sep 2008) | 1 line
+
+ENH:  Added psuedo-code for testing the speed of running the cc computations.
+------------------------------------------------------------------------
+r135 | canoee | 2008-09-22 16:20:10 -0500 (Mon, 22 Sep 2008) | 1 line
+
+ENH:  Added a new test program for optimizing the CC calculations.
+------------------------------------------------------------------------
+r134 | hjmjohnson | 2008-09-22 16:03:27 -0500 (Mon, 22 Sep 2008) | 1 line
+
+ENH:  Revert to requiring only version 2.4 of cmake.
+------------------------------------------------------------------------
+r133 | kentwilliams | 2008-09-22 11:48:39 -0500 (Mon, 22 Sep 2008) | 1 line
+
+ENH: first crack at making ART algorithm general over any set of landmark points
+------------------------------------------------------------------------
+r132 | kentwilliams | 2008-09-19 16:33:43 -0500 (Fri, 19 Sep 2008) | 1 line
+
+COMP: test for equality in acpcModelFile is now approximate -- anything within 1 part per 10000 is reported as equal
+------------------------------------------------------------------------
+r131 | hjmjohnson | 2008-09-17 21:49:59 -0500 (Wed, 17 Sep 2008) | 1 line
+
+ENH:  Seems to work, now working on cleanup.
+------------------------------------------------------------------------
+r130 | hjmjohnson | 2008-09-17 17:43:22 -0500 (Wed, 17 Sep 2008) | 1 line
+
+ENH:  FIXED initial location of finding the RP point.
+------------------------------------------------------------------------
+r129 | kentwilliams | 2008-09-17 16:11:25 -0500 (Wed, 17 Sep 2008) | 1 line
+
+COMP: added test for acpcmodel
+------------------------------------------------------------------------
+r128 | hjmjohnson | 2008-09-16 21:57:39 -0500 (Tue, 16 Sep 2008) | 2 lines
+
+ENH:  Code cleanup attempting to forify when finding the 4V notch is more prominant than finding the RP.
+
+------------------------------------------------------------------------
+r127 | hjmjohnson | 2008-09-16 16:51:59 -0500 (Tue, 16 Sep 2008) | 1 line
+
+ENH:  Nearly have a working version of the acpc detect software.
+------------------------------------------------------------------------
+r126 | hjmjohnson | 2008-09-16 08:06:27 -0500 (Tue, 16 Sep 2008) | 1 line
+
+ENH:  Partially working solution.
+------------------------------------------------------------------------
+r125 | hjmjohnson | 2008-09-15 16:58:17 -0500 (Mon, 15 Sep 2008) | 1 line
+
+ENH:  Working versions of finding the RP and the PC have been successful.
+------------------------------------------------------------------------
+r124 | kentwilliams | 2008-09-15 16:45:02 -0500 (Mon, 15 Sep 2008) | 1 line
+
+COMP: refined test 
+------------------------------------------------------------------------
+r123 | kentwilliams | 2008-09-15 10:59:19 -0500 (Mon, 15 Sep 2008) | 1 line
+
+FIX: worked around RealPath disappearing from SystemTools
+------------------------------------------------------------------------
+r122 | hjmjohnson | 2008-09-13 17:53:39 -0500 (Sat, 13 Sep 2008) | 1 line
+
+BUG:  Really stupid indexing error was fixed.
+------------------------------------------------------------------------
+r121 | hjmjohnson | 2008-09-13 16:45:20 -0500 (Sat, 13 Sep 2008) | 1 line
+
+COMP:  Removed compiler warnings.
+------------------------------------------------------------------------
+r120 | hjmjohnson | 2008-09-12 17:01:21 -0500 (Fri, 12 Sep 2008) | 1 line
+
+BUG:  Attempting to debug the rewrite of acpcdetect.
+------------------------------------------------------------------------
+r119 | kentwilliams | 2008-09-12 16:44:08 -0500 (Fri, 12 Sep 2008) | 1 line
+
+fixed test for acpcResampleMSP
+------------------------------------------------------------------------
+r118 | kentwilliams | 2008-09-12 16:35:31 -0500 (Fri, 12 Sep 2008) | 1 line
+
+add new tests for acpcResampleMSP
+------------------------------------------------------------------------
+r117 | hjmjohnson | 2008-09-12 06:18:45 -0500 (Fri, 12 Sep 2008) | 1 line
+
+BUG:  Removed bug of loading the image in the wrong orientation, and exposed a new bug that causes exception to be thrown.
+------------------------------------------------------------------------
+r116 | kentwilliams | 2008-09-11 14:07:34 -0500 (Thu, 11 Sep 2008) | 1 line
+
+BUG: vectors need to have a size before you right to them via subscripts
+------------------------------------------------------------------------
+r115 | kentwilliams | 2008-09-11 13:23:18 -0500 (Thu, 11 Sep 2008) | 1 line
+
+DEBUG: reading and writing the model file should agree on data types
+------------------------------------------------------------------------
+r114 | hjmjohnson | 2008-09-11 10:17:06 -0500 (Thu, 11 Sep 2008) | 1 line
+
+ENH:  Trying to fix the model file reading and writing.
+------------------------------------------------------------------------
+r112 | hjmjohnson | 2008-09-10 13:46:30 -0500 (Wed, 10 Sep 2008) | 1 line
+
+ENH: Added new program for debugging purposes.
+------------------------------------------------------------------------
+r111 | hjmjohnson | 2008-09-10 06:34:43 -0500 (Wed, 10 Sep 2008) | 1 line
+
+BUG:  Working out bugs introduced during the refactoring.
+------------------------------------------------------------------------
+r110 | hjmjohnson | 2008-09-07 03:01:33 -0500 (Sun, 07 Sep 2008) | 1 line
+
+ENH:  Working on getting the acpcdetect program to work.
+------------------------------------------------------------------------
+r109 | hjmjohnson | 2008-09-06 04:43:48 -0500 (Sat, 06 Sep 2008) | 1 line
+
+ENH:  Added ability to do byteswapping of files.
+------------------------------------------------------------------------
+r108 | kentwilliams | 2008-09-02 13:29:53 -0500 (Tue, 02 Sep 2008) | 1 line
+
+BUG: got sign wrong for seekg
+------------------------------------------------------------------------
+r107 | kentwilliams | 2008-09-02 13:26:27 -0500 (Tue, 02 Sep 2008) | 1 line
+
+ENH: binary model file now reads correctly on differently-ended machines
+------------------------------------------------------------------------
+r106 | kentwilliams | 2008-09-02 10:37:02 -0500 (Tue, 02 Sep 2008) | 1 line
+
+COMP: initialize vector sizes before reading into them
+------------------------------------------------------------------------
+r105 | kentwilliams | 2008-09-02 10:32:10 -0500 (Tue, 02 Sep 2008) | 1 line
+
+comp: more work on reading model files
+------------------------------------------------------------------------
+r104 | kentwilliams | 2008-09-02 10:04:27 -0500 (Tue, 02 Sep 2008) | 1 line
+
+ENH: Read model files back in
+------------------------------------------------------------------------
+r103 | hjmjohnson | 2008-09-01 17:33:15 -0500 (Mon, 01 Sep 2008) | 1 line
+
+BUG:  Missing function that will be added on tuesday.
+------------------------------------------------------------------------
+r102 | hjmjohnson | 2008-08-30 08:21:36 -0500 (Sat, 30 Aug 2008) | 1 line
+
+ENH: Finished first pass of refactoring the acpcmodel.
+------------------------------------------------------------------------
+r101 | hjmjohnson | 2008-08-29 15:22:05 -0500 (Fri, 29 Aug 2008) | 1 line
+
+ENH: Nearly done refactoring the statistics outputs.
+------------------------------------------------------------------------
+r100 | kentwilliams | 2008-08-29 13:17:10 -0500 (Fri, 29 Aug 2008) | 1 line
+
+Moved common variables used in the model definition and binary model file into a common superclass
+------------------------------------------------------------------------
+r99 | hjmjohnson | 2008-08-29 11:10:08 -0500 (Fri, 29 Aug 2008) | 1 line
+
+ENH:  Matched types for new variales across both classes in preparation for extracting a base class.
+------------------------------------------------------------------------
+r98 | hjmjohnson | 2008-08-29 10:41:58 -0500 (Fri, 29 Aug 2008) | 1 line
+
+ENH:  Nearly done refactoring the acpcmodel program,  The entire model is nearly encapsulated in a single class now.
+------------------------------------------------------------------------
+r97 | hjmjohnson | 2008-08-28 22:57:44 -0500 (Thu, 28 Aug 2008) | 1 line
+
+ENH:  New functions written to extract regions from images.
+------------------------------------------------------------------------
+r96 | hjmjohnson | 2008-08-28 18:07:15 -0500 (Thu, 28 Aug 2008) | 1 line
+
+ENH:  First version that rotates around each point is done.
+------------------------------------------------------------------------
+r94 | kentwilliams | 2008-08-28 16:44:35 -0500 (Thu, 28 Aug 2008) | 1 line
+
+ENH: first whack at the debug image branding
+------------------------------------------------------------------------
+r93 | hjmjohnson | 2008-08-27 22:31:26 -0500 (Wed, 27 Aug 2008) | 1 line
+
+ENH:  Fully working ACPC aligned data set with AC at the center of the image.
+------------------------------------------------------------------------
+r92 | hjmjohnson | 2008-08-27 21:49:18 -0500 (Wed, 27 Aug 2008) | 1 line
+
+BUG:  Transcribed the wrong rotation matricies for computing the 3x3 matrix from axis rotation angles.
+------------------------------------------------------------------------
+r90 | hjmjohnson | 2008-08-27 17:58:02 -0500 (Wed, 27 Aug 2008) | 1 line
+
+ENH:  Working on getting the ACPC alignments done.
+------------------------------------------------------------------------
+r89 | kentwilliams | 2008-08-27 08:51:57 -0500 (Wed, 27 Aug 2008) | 1 line
+
+COMP: changed to use acpcModelFile method to use the acpcmodelDefinition direcktly
+------------------------------------------------------------------------
+r88 | hjmjohnson | 2008-08-27 07:41:11 -0500 (Wed, 27 Aug 2008) | 2 lines
+
+ENH:  Added some comments for kent on a few little side projects that neeed to be done.
+
+------------------------------------------------------------------------
+r87 | hjmjohnson | 2008-08-26 21:41:22 -0500 (Tue, 26 Aug 2008) | 1 line
+
+BUG:  Fixed transforms so that both images and landmarks can be transformed consistently across the images.
+------------------------------------------------------------------------
+r86 | kentwilliams | 2008-08-26 11:27:12 -0500 (Tue, 26 Aug 2008) | 1 line
+
+COMP: changed point type name
+------------------------------------------------------------------------
+r85 | kentwilliams | 2008-08-26 11:24:42 -0500 (Tue, 26 Aug 2008) | 1 line
+
+COMP: moved point and superclass definitions into class itself -- having a global 'PointType' feels dangerous
+------------------------------------------------------------------------
+r84 | hjmjohnson | 2008-08-25 23:24:39 -0500 (Mon, 25 Aug 2008) | 1 line
+
+BUG:  Fixed alignment bugs caused by using the wrong center of rotations.
+------------------------------------------------------------------------
+r83 | hjmjohnson | 2008-08-25 17:52:57 -0500 (Mon, 25 Aug 2008) | 1 line
+
+ENH:  continuing to fix landmark points and making everything related to physical dimensions.
+------------------------------------------------------------------------
+r82 | kentwilliams | 2008-08-25 15:59:00 -0500 (Mon, 25 Aug 2008) | 1 line
+
+COMP: completed file name changes
+------------------------------------------------------------------------
+r81 | kentwilliams | 2008-08-25 15:57:21 -0500 (Mon, 25 Aug 2008) | 1 line
+
+COMP: changed around filenames to follow normal naming conventions
+------------------------------------------------------------------------
+r80 | kentwilliams | 2008-08-25 15:49:50 -0500 (Mon, 25 Aug 2008) | 1 line
+
+ENH: created writer for acpcmodel model files
+------------------------------------------------------------------------
+r79 | hjmjohnson | 2008-08-25 14:15:17 -0500 (Mon, 25 Aug 2008) | 1 line
+
+ENH:  More acpcmodel cleanups.  Made new class for reading/writingt he models.
+------------------------------------------------------------------------
+r78 | hjmjohnson | 2008-08-25 12:06:54 -0500 (Mon, 25 Aug 2008) | 1 line
+
+ENH: Fixed file name.
+------------------------------------------------------------------------
+r77 | kentwilliams | 2008-08-25 12:00:32 -0500 (Mon, 25 Aug 2008) | 1 line
+
+COMP: 2 functions needed an inline keyword
+------------------------------------------------------------------------
+r76 | kentwilliams | 2008-08-25 11:53:33 -0500 (Mon, 25 Aug 2008) | 1 line
+
+ENH: wrote, acpcmodelSetupClass, added testAcpcmodelSetupClass
+------------------------------------------------------------------------
+r75 | hjmjohnson | 2008-08-25 11:44:24 -0500 (Mon, 25 Aug 2008) | 1 line
+
+COMP:  Fixed compilation issues by detangling some of the function calls and removing huge portions of the code that will be necessary to re-write.
+------------------------------------------------------------------------
+r74 | hjmjohnson | 2008-08-25 11:32:46 -0500 (Mon, 25 Aug 2008) | 1 line
+
+ENH:  Fixed filename of header included.
+------------------------------------------------------------------------
+r73 | hjmjohnson | 2008-08-24 22:21:47 -0500 (Sun, 24 Aug 2008) | 1 line
+
+ENH:  Continuing to update acpcmodel in the itk conversion.
+------------------------------------------------------------------------
+r72 | hjmjohnson | 2008-08-24 16:52:31 -0500 (Sun, 24 Aug 2008) | 1 line
+
+ENH: Cleaned up code and started to work on acpcmodel program.
+------------------------------------------------------------------------
+r71 | hjmjohnson | 2008-08-24 15:53:18 -0500 (Sun, 24 Aug 2008) | 1 line
+
+ENH: Finally got the ACPC transform defined that will align the MSP with the center voxel lattice of the image.
+------------------------------------------------------------------------
+r70 | hjmjohnson | 2008-08-23 18:40:01 -0500 (Sat, 23 Aug 2008) | 1 line
+
+ENH:  A working version of the MSP finder using vnl powell optimization for finding the plane.
+------------------------------------------------------------------------
+r69 | hjmjohnson | 2008-08-22 21:13:00 -0500 (Fri, 22 Aug 2008) | 1 line
+
+ENH:  More refactorings of the plane finding code.
+------------------------------------------------------------------------
+r68 | hjmjohnson | 2008-08-21 23:39:37 -0500 (Thu, 21 Aug 2008) | 1 line
+
+ENH:  This does not compile at the moment, and needs to have refactoring completed.
+------------------------------------------------------------------------
+r62 | hjmjohnson | 2008-08-21 19:38:20 -0500 (Thu, 21 Aug 2008) | 1 line
+
+ENH:  Working on making planes estimation completely from ITK physical coordinates.
+------------------------------------------------------------------------
+r60 | hjmjohnson | 2008-08-20 21:05:04 -0500 (Wed, 20 Aug 2008) | 1 line
+
+ENH:  This version does not compile, but it is on it way for the first major refactoring.
+------------------------------------------------------------------------
+r59 | hjmjohnson | 2008-08-19 18:00:48 -0500 (Tue, 19 Aug 2008) | 1 line
+
+ENH:  Updated to use *.nii.gz
+------------------------------------------------------------------------
+r58 | hjmjohnson | 2008-08-18 22:26:38 -0500 (Mon, 18 Aug 2008) | 1 line
+
+ENH: More conversions to help make images itk images.
+------------------------------------------------------------------------
+r57 | hjmjohnson | 2008-08-18 19:28:19 -0500 (Mon, 18 Aug 2008) | 1 line
+
+COMP: Adding necessary files to build ART.
+------------------------------------------------------------------------
+r56 | hjmjohnson | 2008-08-17 21:44:29 -0500 (Sun, 17 Aug 2008) | 1 line
+
+ENH:  Consolidating functions into templates to help remove redundant code.
+------------------------------------------------------------------------
+r55 | hjmjohnson | 2008-08-16 11:02:59 -0500 (Sat, 16 Aug 2008) | 1 line
+
+ENH:  Many code cleanups. Made a library so that common functions only live in one spot.
+------------------------------------------------------------------------
+r54 | kentwilliams | 2008-08-14 15:33:52 -0500 (Thu, 14 Aug 2008) | 1 line
+
+acpcdetect cleanup
+------------------------------------------------------------------------
+r53 | kentwilliams | 2008-08-14 12:57:52 -0500 (Thu, 14 Aug 2008) | 1 line
+
+fixed typos
+------------------------------------------------------------------------
+r52 | kentwilliams | 2008-08-14 12:56:27 -0500 (Thu, 14 Aug 2008) | 1 line
+
+Code cleanup -- made template functions of stats functions that were duplicated over and over
+------------------------------------------------------------------------
+r49 | hjmjohnson | 2008-08-14 10:49:22 -0500 (Thu, 14 Aug 2008) | 1 line
+
+ENH: Removed code that was commented out.
+------------------------------------------------------------------------
+r48 | hjmjohnson | 2008-08-14 10:17:14 -0500 (Thu, 14 Aug 2008) | 1 line
+
+COMP:  Forgot to include 2 new source fles.
+------------------------------------------------------------------------
+r47 | hjmjohnson | 2008-08-14 09:35:29 -0500 (Thu, 14 Aug 2008) | 1 line
+
+ENH:  First pass at making program use ITK images.  This resulted in some numerical changes, but the results appear to be holding constant.
+------------------------------------------------------------------------
+r46 | kentwilliams | 2008-08-13 15:54:46 -0500 (Wed, 13 Aug 2008) | 1 line
+
+image type no longer getting set since we're using ITK to read files -- depending on it's never-set value is bad
+------------------------------------------------------------------------
+r44 | hjmjohnson | 2008-08-13 14:38:39 -0500 (Wed, 13 Aug 2008) | 1 line
+
+ENH:  More ITK integration of the code.
+------------------------------------------------------------------------
+r43 | kentwilliams | 2008-08-13 12:06:17 -0500 (Wed, 13 Aug 2008) | 1 line
+
+use ITK for writing image volumes
+------------------------------------------------------------------------
+r42 | kentwilliams | 2008-08-13 09:10:08 -0500 (Wed, 13 Aug 2008) | 1 line
+
+use ITK for I/O
+------------------------------------------------------------------------
+r41 | kentwilliams | 2008-08-12 09:47:39 -0500 (Tue, 12 Aug 2008) | 1 line
+
+COMP: converted acpcmodel to use GenerateCLP
+------------------------------------------------------------------------
+r40 | hjmjohnson | 2008-08-11 23:37:04 -0500 (Mon, 11 Aug 2008) | 1 line
+
+ENH:  More code cleanup.
+------------------------------------------------------------------------
+r39 | hjmjohnson | 2008-08-11 22:53:38 -0500 (Mon, 11 Aug 2008) | 1 line
+
+ENH: Working through the code to clean up and include more itk image procesing.
+------------------------------------------------------------------------
+r38 | hjmjohnson | 2008-08-11 16:27:03 -0500 (Mon, 11 Aug 2008) | 1 line
+
+COMP:  First little cleanups of acpcmodel.cxx to remove compiler warnings and get it to compile.
+------------------------------------------------------------------------
+r35 | kentwilliams | 2008-08-11 16:01:52 -0500 (Mon, 11 Aug 2008) | 1 line
+
+slight correction
+------------------------------------------------------------------------
+r34 | kentwilliams | 2008-08-11 15:37:19 -0500 (Mon, 11 Aug 2008) | 1 line
+
+ENH: Use ITK file reader
+------------------------------------------------------------------------
+r33 | ardekani | 2008-08-11 13:45:44 -0500 (Mon, 11 Aug 2008) | 1 line
+
+Initial import
+------------------------------------------------------------------------
+r32 | kentwilliams | 2008-08-11 13:03:58 -0500 (Mon, 11 Aug 2008) | 1 line
+
+got rid of global variables by tracing their use
+------------------------------------------------------------------------
+r31 | hjmjohnson | 2008-08-10 22:23:29 -0500 (Sun, 10 Aug 2008) | 1 line
+
+BUG:  refactoring error in the number of iterations that were being run.  It was two command line variables being incorrectly combined.
+------------------------------------------------------------------------
+r30 | hjmjohnson | 2008-08-10 21:42:57 -0500 (Sun, 10 Aug 2008) | 1 line
+
+ENH: added vcl math commands, and continued to clean up the code organization and variable listings.
+------------------------------------------------------------------------
+r20 | hjmjohnson | 2008-08-09 00:16:52 -0500 (Sat, 09 Aug 2008) | 1 line
+
+BUG:  Fixed bug that prevented program from running properly.
+------------------------------------------------------------------------
+r18 | hjmjohnson | 2008-08-08 23:30:38 -0500 (Fri, 08 Aug 2008) | 1 line
+
+COMP:  Removed compiler warnings and cleaned up code formatting.
+------------------------------------------------------------------------
+r16 | hjmjohnson | 2008-08-08 18:05:51 -0500 (Fri, 08 Aug 2008) | 1 line
+
+COMP:  Compiler error due to improper escape sequence in xml file.
+------------------------------------------------------------------------
+r15 | kentwilliams | 2008-08-08 17:04:59 -0500 (Fri, 08 Aug 2008) | 1 line
+
+COMP: Completed conversion of all programs to CLP
+------------------------------------------------------------------------
+r14 | kentwilliams | 2008-08-08 15:36:01 -0500 (Fri, 08 Aug 2008) | 1 line
+
+ENH: Use GenerateCLP
+------------------------------------------------------------------------
+r13 | hjmjohnson | 2008-08-08 07:01:56 -0500 (Fri, 08 Aug 2008) | 1 line
+
+ENH: Removed compiler warning messages.
+------------------------------------------------------------------------
+r12 | hjmjohnson | 2008-08-07 22:37:37 -0500 (Thu, 07 Aug 2008) | 1 line
+
+ENH: Added ability to write out RGB images in itk compliant formats.
+------------------------------------------------------------------------
+r9 | hjmjohnson | 2008-08-07 13:01:38 -0500 (Thu, 07 Aug 2008) | 1 line
+
+ENH:  Added new test suite for the art tools.  It is currently a pretty weak test suite.
+------------------------------------------------------------------------
+r8 | hjmjohnson | 2008-08-07 07:21:58 -0500 (Thu, 07 Aug 2008) | 1 line
+
+BUG:  Tracking down orientation bugs in acpcdetect.
+------------------------------------------------------------------------
+r7 | hjmjohnson | 2008-08-06 22:16:14 -0500 (Wed, 06 Aug 2008) | 1 line
+
+ENH:  Added some code to determine the correct orientation for syncronizing with ITK.
+------------------------------------------------------------------------
+r2 | hjmjohnson | 2008-08-06 12:32:40 -0500 (Wed, 06 Aug 2008) | 1 line
+
+DOC:  Added BSD license to this file.  This license will be reviewed by Dr. Ardekani and if acceptiable will be propogated to the other source files.
+------------------------------------------------------------------------
+r1 | hjmjohnson | 2008-08-06 12:04:08 -0500 (Wed, 06 Aug 2008) | 1 line
+
+ENH:  After working with Dr. Babak Ardekani we have developed the first svn repository release of the art tools that build with CMAKE.  Work will continue to integrate ITK features into the art toolkit over the next several weeks.
+------------------------------------------------------------------------

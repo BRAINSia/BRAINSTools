@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>BRAINS.Segmentation</category>
+  <title>ESLR</title>
+  <description>From a range of label map values, extract the largest contiguous region of those labels</description>
+
+<!-- ## testing for simpleEM -->
+  <parameters>
+  <label>Input Images</label>
+    <image>
+      <name>inputVolume</name>
+      <longflag>inputVolume</longflag>
+      <description>Input Label Volume</description>
+      <label>Input Label Volume</label>
+      <default></default>
+      <channel>input</channel>
+    </image>
+    <image fileExtensions=".nii.gz,.nrrd">
+      <name>outputVolume</name>
+      <longflag>outputVolume</longflag>
+      <description>Output Label Volume</description>
+      <label>Output Label Volume</label>
+      <default></default>
+      <channel>output</channel>
+    </image>
+    <integer>
+      <name>low</name>
+      <longflag>low</longflag>
+      <description>The lower bound of the labels to be used.</description>
+      <label>low</label>
+      <default>1</default>
+    </integer>
+    <integer>
+      <name>high</name>
+      <longflag>high</longflag>
+      <description>The higher bound of the labels to be used.</description>
+      <label>high</label>
+      <default>5</default>
+    </integer>
+    <integer>
+      <name>closingSize</name>
+      <longflag>closingSize</longflag>
+      <description>The closing size for hole filling.</description>
+      <label>Closing Size</label>
+      <default>2</default>
+    </integer>
+    <integer>
+      <name>openingSize</name>
+      <longflag>openingSize</longflag>
+      <description>The opening size for hole filling.</description>
+      <label>Opening Size</label>
+      <default>2</default>
+    </integer>
+    <integer>
+      <name>safetySize</name>
+      <longflag>safetySize</longflag>
+      <description>The safetySize size for the clipping region.</description>
+      <label>Safety Size</label>
+      <default>1</default>
+    </integer>
+    <boolean>
+      <name>preserveOutside</name>
+      <longflag>preserveOutside</longflag>
+      <description>For values outside the specified range, preserve those values.</description>
+      <label>Preserve values outside range </label>
+      <default>false</default>
+    </boolean>
+  </parameters>
+  <parameters advanced="true">
+    <label>Multiprocessing Control</label>
+    <integer>
+      <name>numberOfThreads</name>
+      <longflag deprecatedalias="debugNumberOfThreads" >numberOfThreads</longflag>
+      <label>Number Of Threads</label>
+      <description>Explicitly specify the maximum number of threads to use.</description>
+      <default>-1</default>
+    </integer>
+  </parameters>
+  <!-- ## end of simpleEM -->
+</executable>

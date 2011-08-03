@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<executable>
+  <category>BRAINS.Classify</category>
+  <title>BRAINSABC</title>
+  <description>Atlas-based tissue segmentation method.  This is an algorithmic extension of work done by XXXX at UNC and Utah XXXX need more description here.
+  </description>
+  <!-- TODO: Need a much more descriptive explanation of the evolution of this work from the work performed by and contributed to NAMIC by Marcel Prastawa -->
+
+  <parameters advanced="true">
+    <label>Input</label>
+    <description>Input parameters</description>
+
+    <image multiple="true">
+      <name>inputVolumes</name>
+      <label>Image Files</label>
+      <longflag>inputVolumes</longflag>
+      <flag>i</flag>
+      <channel>input</channel>
+      <description>The list of input image files to be segmented.</description>
+    </image>
+    <file fileExtensions=".xml">
+      <name>atlasDefinition</name>
+      <label>Atlas Definition</label>
+      <longflag>atlasDefinition</longflag>
+      <channel>input</channel>
+      <default></default>
+      <description>Contains all parameters for Atlas</description>
+    </file>
+
+    <!-- TODO:  Would rather have a string-enumeration  muliple="true" -->
+    <string-vector>
+      <name>inputVolumeTypes</name>
+      <label>Image Types</label>
+      <description>The list of input image types corresponding to the inputVolumes.</description>
+      <longflag>inputVolumeTypes</longflag>
+    </string-vector>
+
+    <directory>
+      <name>outputDir</name>
+      <default></default>
+      <label>Output Directory</label>
+      <longflag>outputDir</longflag>
+      <channel>output</channel>
+      <description>Ouput directory</description>
+      <default></default>
+    </directory>
+
+  <string-enumeration>
+    <name>atlasToSubjectTransformType</name>
+    <label>Atlas to Subject Transform Type</label>
+    <longflag>atlasToSubjectTransformType</longflag>
+    <description> What type of linear transform type do you want to use to register the atlas to the reference subject image.</description>
+    <element>ID</element>
+    <element>Rigid</element>
+    <element>Affine</element>
+    <element>BSpline</element>
+    <default>Affine</default>
+  </string-enumeration>
+  <transform fileExtensions=".mat">
+    <name>atlasToSubjectTransform</name>
+    <label>Atlas to Subject Transform</label>
+    <description>The trasform from atlas to the subject</description>
+    <longflag>atlasToSubjectTransform</longflag>
+    <channel>output</channel>
+  </transform>
+  <string-enumeration>
+    <name>subjectIntermodeTransformType</name>
+    <label>Atlas to Subject Transform Type</label>
+    <longflag>subjectIntermodeTransformType</longflag>
+    <description> What type of linear transform type do you want to use to register the atlas to the reference subject image.</description>
+    <element>ID</element>
+    <element>Rigid</element>
+    <element>Affine</element>
+    <element>BSpline</element>
+    <default>Rigid</default>
+  </string-enumeration>
+  </parameters>
+  <parameters>
+    <label>Output</label>
+    <description>Output filename specifications</description>
+    <image multiple="true" fileExtensions=".nii.gz,.nrrd">
+      <name>outputVolumes</name>
+      <label>Output Volumes</label>
+      <longflag>outputVolumes</longflag>
+      <channel>output</channel>
+      <default>%s_corrected_%d.nii.gz</default>
+      <description>Corrected Output Images: should specify the same number of images as inputVolume, if only one element is given, then it is used as a file pattern where %s is replaced by the imageVolumeType, and %d by the index list location.</description>
+    </image>
+
+    <image fileExtensions=".nii.gz,.nrrd" type='label'>
+      <name>outputLabels</name>
+      <label>Output Labels</label>
+      <longflag>outputLabels</longflag>
+      <channel>output</channel>
+      <default></default>
+      <description>Output Label Image</description>
+    </image>
+
+    <image fileExtensions=".nii.gz,.nrrd" type='label'>
+      <name>outputDirtyLabels</name>
+      <label>Output DirtyLabels</label>
+      <longflag>outputDirtyLabels</longflag>
+      <channel>output</channel>
+      <default></default>
+      <description>Output Dirty Label Image</description>
+    </image>
+
+    <string>
+      <name>posteriorTemplate</name>
+      <label>Posterior Filename Template</label>
+      <longflag>posteriorTemplate</longflag>
+      <default>POST_%s.nii.gz</default>
+      <description>filename template for Posterior output files</description>
+    </string>
+  </parameters>
+  <parameters advanced="true">
+    <label>Advanced BRAINSABC file parameters</label>
+    <description>Advanced parameters for the creation of the segmentation file</description>
+    <string-enumeration>
+      <label>Output Image Format</label>
+      <name>outputFormat</name>
+      <longflag>outputFormat</longflag>
+      <description>Output format</description>
+      <element>NIFTI</element>
+      <element>Meta</element>
+      <element>Nrrd</element>
+      <default>NIFTI</default>
+    </string-enumeration>
+    <string-enumeration>
+      <label>Resampler InterpoatorType</label>
+      <name>resamplerInterpolatorType</name>
+      <longflag deprecatedalias="interpolatorType">interpolationMode</longflag>
+      <description>Type of interpolation to be used when applying transform to moving volume.  Options are Linear, NearestNeighbor, BSpline, WindowedSinc, or ResampleInPlace.  The ResampleInPlace option will create an image with the same discrete voxel values and will adjust the origin and direction of the physical space interpretation.</description>
+      <element>BSpline</element>
+      <element>NearestNeighbor</element>
+      <element>WindowedSinc</element>
+      <element>Linear</element>
+      <element>ResampleInPlace</element>
+      <default>BSpline</default>
+    </string-enumeration>
+    <integer>
+      <name>maxIterations</name>
+      <description>Filter iterations</description>
+      <label>Segmentation Iterations</label>
+      <longflag>maxIterations</longflag>
+      <default>40</default>
+      <constraints>
+        <minimum>1</minimum>
+        <maximum>100</maximum>
+        <step>1</step>
+      </constraints>
+    </integer>
+
+    <!--  Standard options for the denoising phase of a program -->
+    <integer-vector>
+      <name>medianFilterSize</name>
+      <longflag>medianFilterSize</longflag>
+      <label>Median Filter Size</label>
+      <description>The radius for the optional MedianImageFilter preprocessing in all 3 directions.</description>
+      <default>0,0,0</default>
+    </integer-vector>
+    <integer>
+      <name>filterIteration</name>
+      <description>Filter iterations</description>
+      <label>Filter Iterations</label>
+      <longflag>filterIteration</longflag>
+      <default>5</default>
+      <constraints>
+        <minimum>0</minimum>
+        <maximum>50</maximum>
+        <step>1</step>
+      </constraints>
+    </integer>
+    <float>
+      <name>filterTimeStep</name>
+      <description>Filter time step</description>
+      <label>Filter Time Step</label>
+      <longflag>filterTimeStep</longflag>
+      <default>0.0625</default>
+      <constraints>
+        <minimum>0</minimum>
+        <maximum>0.5</maximum>
+        <step>0.01</step>
+      </constraints>
+    </float>
+    <string-enumeration>
+      <name>filterMethod</name>
+      <label>Filter Method</label>
+      <longflag>filterMethod</longflag>
+      <description>Filter method for preprocessing of registration</description>
+      <element>None</element>
+      <element>CurvatureFlow</element>
+      <element>GradientAnisotropicDiffusion</element>
+      <element>Median</element>
+      <default>None</default>
+    </string-enumeration>
+
+    <integer>
+      <name>maxBiasDegree</name>
+      <description>Maximum bias degree</description>
+      <label>Maximum Bias Degree</label>
+      <longflag>maxBiasDegree</longflag>
+      <default>4</default>
+      <constraints>
+        <minimum>0</minimum>
+        <maximum>20</maximum>
+        <step>1</step>
+      </constraints>
+    </integer>
+
+    <boolean>
+      <name>atlasWarpingOff</name>
+      <default>false</default>
+      <label>Turn off warping from atlas to subject space.</label>
+      <longflag>atlasWarpingOff</longflag>
+      <description>Deformable registration of atlas to subject</description>
+    </boolean>
+    <integer-vector>
+      <name>gridSize</name>
+      <description>Grid size for atlas warping with BSplines</description>
+      <label>BSpline Grid Size </label>
+      <longflag>gridSize</longflag>
+      <default>5,5,5</default>
+    </integer-vector>
+  </parameters>
+
+  <parameters >
+    <label>Atlas Images</label>
+    <!-- advanced -->
+    <string>
+      <name>defaultSuffix</name>
+      <label>Suffix</label>
+      <flag>s</flag>
+      <longflag>defaultSuffix</longflag>
+      <default>BRAINSABC</default>
+    </string>
+
+  </parameters>
+
+  <parameters advanced="true" >
+    <label>Options</label>
+    <description>Options</description>
+    <integer>
+      <name>debuglevel</name>
+      <label>Debug option</label>
+      <description>Display debug messages, and produce debug intermediate results.  0=OFF, 1=Minimal, 10=Maximum debugging.</description>
+      <longflag>debuglevel</longflag>
+      <default>0</default>
+    </integer>
+
+    <boolean>
+      <name>writeLess</name>
+      <label>Write less</label>
+      <description>Does not write posteriors and filtered, bias corrected images</description>
+      <longflag>writeLess</longflag>
+      <default>false</default>
+    </boolean>
+  </parameters>
+  <parameters advanced="true">
+    <label>Multiprocessing Control</label>
+    <integer>
+      <name>numberOfThreads</name>
+      <longflag deprecatedalias="debugNumberOfThreads" >numberOfThreads</longflag>
+      <label>Number Of Threads</label>
+      <description>Explicitly specify the maximum number of threads to use.</description>
+      <default>-1</default>
+    </integer>
+  </parameters>
+
+</executable>

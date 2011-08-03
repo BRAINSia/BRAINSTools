@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <title>fcsv_to_matlab</title>
+  <description>Convert a collection of fcsv files to a HDF5 format file</description>
+  <parameters>
+    <file fileExtensions=".hdf5">
+      <name>outputFile</name>
+      <label>Output HDF5 File</label>
+      <flag>o</flag>
+      <longflag>--outputMatlabFile</longflag>
+      <default></default>
+      <description>
+        name of HDF5 file to write matrices into
+      </description>
+      <channel>output</channel>
+    </file>
+    <file fileExtensions=".txt">
+      <name>landmarkTypesFile</name>
+      <label>Landmark Types File</label>
+      <longflag>--landmarkTypesFile</longflag>
+      <default></default>
+      <description>
+        file containing list of landmark types
+      </description>
+      <channel>output</channel>
+    </file>
+    <file>
+      <name>modelFile</name>
+      <label>BRAINSConstellationDetector Model File</label>
+      <longflag>--modelFile</longflag>
+      <default></default>
+      <description>
+        file containing BRAINSConstellationDetector Model file
+      </description>
+      <channel>output</channel>
+    </file>
+    <string>
+      <name>landmarkGlobPattern</name>
+      <longflag>landmarkGlobPattern</longflag>
+      <description>Glob pattern to select fcsv files</description>
+      <label>Landmark Glob Pattern</label>
+      <default>*_est.fcsv</default>
+    </string>
+    <integer>
+      <name>numberOfThreads</name>
+      <longflag deprecatedalias="debugNumberOfThreads" >numberOfThreads</longflag>
+      <label>Number Of Threads</label>
+      <description>Explicitly specify the maximum number of threads to use.</description>
+      <default>-1</default>
+    </integer>
+  </parameters>
+</executable>

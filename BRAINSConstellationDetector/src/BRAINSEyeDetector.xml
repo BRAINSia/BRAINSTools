@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <title>BRAINSEyeDetector</title>
+  <description>
+  </description>
+
+  <version>1.0</version>
+  <documentation-url>http://www.nitrc.org/projects/brainscdetector/</documentation-url>
+  <parameters>
+    <integer>
+      <name>numberOfThreads</name>
+      <longflag>numberOfThreads</longflag>
+      <label>Number Of Threads</label>
+      <description>Explicitly specify the maximum number of threads to use.</description>
+      <default>-1</default>
+    </integer>
+  </parameters>
+</executable>

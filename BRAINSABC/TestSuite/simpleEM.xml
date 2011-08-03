@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>UNC</category>
+  <title>simpleEM</title>
+  <description>Atlas-based tissue segmentation method </description>
+
+<!-- ## testing for simpleEM -->
+  <parameters>
+  <label>Input Images</label>
+    <image>
+      <name>t1Volume</name>
+      <longflag>t1Volume</longflag>
+      <description>T1 Volume</description>
+      <label>T1 Volume</label>
+      <default></default>
+      <channel>input</channel>
+    </image>
+    <image>
+      <name>t2Volume</name>
+      <longflag>t2Volume</longflag>
+      <description>T2 Volume</description>
+      <label>T2 Volume</label>
+      <default></default>
+      <channel>input</channel>
+    </image>
+    <image>
+      <name>pdVolume</name>
+      <longflag>pdVolume</longflag>
+      <description>PD Volume</description>
+      <label>PD Volume</label>
+      <default></default>
+      <channel>input</channel>
+    </image>
+  </parameters>
+  <parameters>
+  <label>Atlas Images</label>
+    <image>
+      <name>templateVolume</name>
+      <longflag>templateVolume</longflag>
+      <description>template Volume</description>
+      <label>template Volume</label>
+      <default></default>
+      <channel>input</channel>
+    </image>
+    <string-vector>
+      <name>priorsList</name>
+      <longflag>priorsList</longflag>
+      <description> number of input should same to the number of priorsList</description>
+      <default></default>
+    </string-vector>
+    <double-vector>
+      <name>priorsWeightList</name>
+      <longflag deprecatedalias="priorWeightsList">priorsWeightList</longflag>
+      <description> number of input should same to the number of priorsList</description>
+      <default></default>
+    </double-vector>
+    <double>
+      <name>likelihoodTolerance</name>
+      <longflag>likelihoodTolerance</longflag>
+      <description> a convergence parameter (0 indicates take the default from the EMSegmentationFilter constructor.)</description>
+      <default>0.0</default>
+    </double>
+  </parameters>
+  <parameters>
+  <label>Algorithm Parameters</label>
+    <boolean>
+      <name>warp</name>
+      <longflag>warp</longflag>
+      <label>warping </label>
+      <default>false</default>
+      <channel>input</channel>
+    </boolean>
+    <integer>
+      <name>degreeOfBiasFieldCorrection</name>
+      <longflag>degreeOfBiasFieldCorrection</longflag>
+      <label>maximum degree Of BiasField Correction</label>
+      <default>4</default>
+      <channel>input</channel>
+    </integer>
+    <integer>
+      <name>maxIteration</name>
+      <longflag>maxIteration</longflag>
+      <label>maximum iteration number</label>
+      <default>100</default>
+      <channel>input</channel>
+    </integer>
+  </parameters>
+  <parameters>
+  <label>IO data formats</label>
+    <string>
+      <longflag>OutputFileNamePrefix</longflag>
+      <label>Output File Prefix</label>
+      <default>BRAINSABC</default>
+      <channel>input</channel>
+    </string>
+    <string-enumeration>
+      <name>inputPixelType</name>
+      <longflag>inputPixelType</longflag>
+      <label>Input Type</label>
+      <description>Input Type</description>
+      <default>uchar</default>
+      <element>usigned char</element>
+      <element>short</element>
+      <element>unsigned short</element>
+      <element>int</element>
+      <element>unsigned int</element>
+      <element>long</element>
+      <element>float</element>
+      <element>double</element>
+    </string-enumeration>
+    <string-enumeration>
+      <name>outputPixelType</name>
+      <longflag>outputPixelType</longflag>
+      <label>Output Pixel Type</label>
+      <description>Input Type</description>
+      <default>uchar</default>
+      <element>unsigbed char</element>
+      <element>short</element>
+      <element>unsigned short</element>
+      <element>int</element>
+      <element>unsigned int</element>
+      <element>long</element>
+      <element>float</element>
+      <element>double</element>
+    </string-enumeration>
+    <string-enumeration>
+      <name>priorPixelType</name>
+      <longflag>priorPixelType</longflag>
+      <label>Prior Pixel Type</label>
+      <description>prior Type</description>
+      <default>float</default>
+      <element>unsigbed char</element>
+      <element>short</element>
+      <element>unsigned short</element>
+      <element>int</element>
+      <element>unsigned int</element>
+      <element>long</element>
+      <element>float</element>
+      <element>double</element>
+    </string-enumeration>
+  </parameters>
+  <!-- ## end of simpleEM -->
+</executable>

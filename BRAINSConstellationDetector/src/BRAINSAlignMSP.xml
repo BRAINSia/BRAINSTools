@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <title>BRAINSAlignMSP</title>
+  <description>Resample an image into ACPC alignement ACPCDetect</description>
+  <parameters>
+    <image>
+      <name>inputVolume</name>
+      <label>inputVolume</label>
+      <flag>i</flag>
+      <longflag>inputVolume</longflag>
+      <default></default>
+      <description>
+        The Image to be resampled
+      </description>
+      <channel>input</channel>
+    </image>
+    <image>
+      <name>resampleMSP</name>
+      <label>resampleMSP</label>
+      <flag>o</flag>
+      <longflag>OutputresampleMSP</longflag>
+      <default></default>
+      <description>
+        The image to be output.
+      </description>
+      <channel>output</channel>
+    </image>
+    <boolean>
+      <name>verbose</name>
+      <label>verbose</label>
+      <flag>v</flag>
+      <longflag>verbose</longflag>
+      <default>false</default>
+      <description>
+        Show more verbose output
+      </description>
+    </boolean>
+    <directory> <!-- This is really a directory name -->
+      <name>resultsDir</name>
+      <label>resultsDir</label>
+      <flag>r</flag>
+      <longflag>resultsDir</longflag>
+      <default>./</default>
+      <description>
+        The directory for the results to be written.
+      </description>
+      <channel>output</channel>
+    </directory>
+    <integer>
+      <name>writedebuggingImagesLevel</name>
+      <label>writedebuggingImagesLevel</label>
+      <longflag>writedebuggingImagesLevel</longflag>
+      <flag>w</flag>
+      <description>
+          This flag controls if debugging images are produced.  By default value of 0 is no images.  Anything greater than zero will be increasing level of debugging images.
+      </description>
+      <default>0</default>
+    </integer>
+    <integer>
+      <name>mspQualityLevel</name>
+      <label>mspQualityLevel</label>
+      <longflag>mspQualityLevel</longflag>
+      <flag>q</flag>
+      <description>
+          Flag cotrols how agressive the MSP is estimated.  0=quick estimate (9 seconds), 1=normal estimate (11 seconds), 2=great estimate (22 seconds), 3=best estimate (58 seconds).
+      </description>
+      <default>2</default>
+     <constraints>
+        <minimum>0</minimum>
+        <maximum>3</maximum>
+        <step>1</step>
+     </constraints>
+    </integer>
+    <boolean>
+      <name>rescaleIntensities</name>
+      <label>rescaleIntensities</label>
+      <longflag>rescaleIntensities</longflag>
+      <flag>n</flag>
+      <description>
+          Flag to turn on rescaling image intensities on input.
+      </description>
+      <default>0</default>
+    </boolean>
+    <double>
+      <name>trimRescaledIntensities</name>
+      <label>trimRescaledIntensities</label>
+      <longflag>trimRescaledIntensities</longflag>
+      <flag>x</flag>
+      <description>
+          Turn on clipping the rescaled image one-tailed on input.  Units of standard deviations above the mean.  Very large values are very permissive.  Non-positive value turns clipping off.  Defaults to removing 0.00001 of a normal tail above the mean.
+      </description>
+      <default>4.4172</default>
+    </double>
+    <integer-vector>
+      <name>rescaleIntensitiesOutputRange</name>
+      <label>rescaleIntensitiesOutputRange</label>
+      <longflag>rescaleIntensitiesOutputRange</longflag>
+      <flag>y</flag>
+      <description>
+          This pair of integers gives the lower and upper bounds on the signal portion of the output image.  Out-of-field voxels are taken from BackgroundFillValue.
+      </description>
+      <default>40,4000</default>
+    </integer-vector>
+    <string>
+      <name>backgroundFillValueString</name>
+      <longflag>BackgroundFillValue</longflag>
+      <flag>z</flag>
+      <description>Fill the background of image with specified short int value. Enter number or use BIGNEG for a large negative number.</description>
+      <label>Background Fill Value</label>
+      <default>0</default>
+    </string>
+    <string-enumeration>
+      <name>interpolationMode</name>
+      <longflag>interpolationMode</longflag>
+      <label>Interpolation Mode</label>
+      <description>Type of interpolation to be used when applying transform to moving volume.  Options are Linear, ResampleInPlace, NearestNeighbor, BSpline, or WindowedSinc</description>
+      <default>Linear</default>
+      <element>NearestNeighbor</element>
+      <element>Linear</element>
+      <element>ResampleInPlace</element>
+      <element>BSpline</element>
+      <element>WindowedSinc</element>
+    </string-enumeration>
+    <integer>
+      <name>numberOfThreads</name>
+      <longflag deprecatedalias="debugNumberOfThreads" >numberOfThreads</longflag>
+      <label>Number Of Threads</label>
+      <description>Explicitly specify the maximum number of threads to use.</description>
+      <default>-1</default>
+    </integer>
+  </parameters>
+</executable>

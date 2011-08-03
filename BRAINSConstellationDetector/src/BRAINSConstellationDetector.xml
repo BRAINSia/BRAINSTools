@@ -1,0 +1,384 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <title>BRAINSConstellationDetector</title>
+  <description>
+    This program will find the mid-sagittal plane, a constellation of landmarks in a volume, and create an AC/PC aligned data set with the AC point at the center of the voxel lattice (labeled at the origin of the image physical space.)  Part of this work is an extention of the algorithms originally described by Dr. Babak A. Ardekani, Alvin H. Bachman, Model-based automatic detection of the anterior and posterior commissures on MRI scans, NeuroImage, Volume 46, Issue 3, 1 July 2009, Pages 677-682, ISSN 1053-8119, DOI: 10.1016/j.neuroimage.2009.02.030.  (http://www.sciencedirect.com/science/article/B6WNP-4VRP25C-4/2/8207b962a38aa83c822c6379bc43fe4c)
+  </description>
+
+    <version>1.0</version>
+    <documentation-url>http://www.nitrc.org/projects/brainscdetector/</documentation-url>
+    <parameters>
+        <integer>
+            <name>houghEyeDetectorMode</name>
+            <label>Hough Eye Detector Mode</label>
+            <longflag>houghEyeDetectorMode</longflag>
+            <description>
+                This flag controls the mode of Hough eye detector.  By default, value of 1 is for T1W images, while the value of 0 is for T2W and PD images.
+            </description>
+            <default>1</default>
+        </integer>
+        <file fileExtensions=".txt">
+            <name>inputTemplateModel</name>
+            <label>Input Template Model</label>
+            <default>T1.mdl</default>
+            <longflag>inputTemplateModel</longflag>
+            <description>User-specified template model.
+            </description>
+            <channel>input</channel>
+        </file>
+        <file fileExtensions=".hdf5">
+            <name>llsModel</name>
+            <label>Input LLS Model in HD5 format</label>
+            <default></default>
+            <longflag>--LLSModel</longflag>
+            <description>Linear least squares model filename in HD5 format</description>
+            <channel>input</channel>
+        </file>
+        <image>
+            <name>inputVolume</name>
+            <flag>i</flag>
+            <longflag>inputVolume</longflag>
+            <label>Input Volume Filename</label>
+            <description>Input image in which to find ACPC points</description>
+            <channel>input</channel>
+            <default></default>
+        </image>
+        <image fileExtensions=".nii.gz,.nrrd">
+            <name>outputVolume</name>
+            <flag>o</flag>
+            <longflag>outputVolume</longflag>
+            <label>Output Volume Filename</label>
+            <description>ACPC-aligned output image with the same voxels, but updated origin, and direction cosign so that the AC point would fall at the physical location (0.0,0.0,0.0), and the mid-sagital plane is the plane where physical L/R coordinate is 0.0.</description>
+            <channel>output</channel>
+            <default></default>
+        </image>
+        <image fileExtensions=".nii.gz,.nrrd">
+            <name>outputResampledVolume</name>
+            <longflag>outputResampledVolume</longflag>
+            <label>Output Resampled Volume Filename</label>
+            <description>ACPC-aligned output image in a resampled unifor space.  Currently this is a 1mm, 256^3, Identity direction image.</description>
+            <channel>output</channel>
+            <default></default>
+        </image>
+        <transform fileExtensions=".mat,.txt">
+            <name>outputTransform</name>
+            <label>Output Transform</label>
+            <default></default>
+            <longflag>outputTransform</longflag>
+            <description>The filename for the original space to ACPC alignment to be written (in .mat format).
+            </description>
+            <channel>output</channel>
+        </transform>
+        <file fileExtensions=".fcsv">
+            <name>outputLandmarksInInputSpace</name>
+            <label>Output Landmarks in Input Space</label>
+            <longflag>outputLandmarksInInputSpace</longflag>
+            <default></default>
+            <description>
+              The filename for the new subject-specific landmark definition file in the same format produced by Slicer3 (.fcsv) with the landmarks in the original image space (the detected RP, AC, PC, and VN4) in it to be written.
+            </description>
+            <channel>output</channel>
+        </file>
+        <file fileExtensions=".fcsv">
+            <name>outputLandmarksInACPCAlignedSpace</name>
+            <label>Output Landmarks in ACPC Aligned Space</label>
+            <longflag>outputLandmarksInACPCAlignedSpace</longflag>
+            <default></default>
+            <description>
+              The filename for the new subject-specific landmark definition file in the same format produced by Slicer3 (.fcsv) with the landmarks in the output image space (the detected RP, AC, PC, and VN4) in it to be written.
+            </description>
+            <channel>output</channel>
+        </file>
+        <file fileExtensions=".fcsv">
+            <name>inputLandmarksPaired</name>
+            <label>Input Landmarks Paired</label>
+            <longflag>inputLandmarksPaired</longflag>
+            <default></default>
+            <description>
+              Paired use with outputLandmarks. It indicates the input landmark list filename (in a format of .fcsv) which contains the landmarks to be trainsformed to acpc-aligned space. The alignment transform will be calculated form the base landmarks provided, and then the rest of the landmarks are directly transformed to the acpc-aligned space rather than to estimate one by one.
+            </description>
+            <channel>input</channel>
+        </file>
+        <file fileExtensions=".fcsv">
+            <name>outputLandmarksPaired</name>
+            <label>Output Landmarks Paired</label>
+            <longflag>outputLandmarksPaired</longflag>
+            <default></default>
+            <description>
+              Paired use with inputLandmarks (in a format of .fcsv). It indicates the output acpc-aligned landmark list filename. The aligned landmarks are the landamrks that are defined in the file named inputLandmarks transformed by the acpc versor transform calculated by the constellation detector.
+            </description>
+            <channel>output</channel>
+        </file>
+        <file fileExtensions=".mrml">
+            <name>outputMRML</name>
+            <label>Output MRML Filename</label>
+            <longflag>outputMRML</longflag>
+            <default></default>
+            <description>
+              The filename for the new subject-specific scene definition file in the same format produced by Slicer3 (in .mrml format). Only the components that were specified by the user on command line would be generated. Compatible components include inputVolume, outputVolume, outputLandmarksInInputSpace, outputLandmarksInACPCAlignedSpace, and outputTransform.
+            </description>
+            <channel>output</channel>
+        </file>
+        <file fileExtensions=".sh">
+            <name>outputVerificationScript</name>
+            <label>outputVerificationScript</label>
+            <longflag>outputVerificationScript</longflag>
+            <default></default>
+            <description>
+              The filename for the Slicer3 script that verifies the aligned landmarks against the aligned image file.  This will happen only in conjunction with saveOutputLandmarks and an outputVolume.
+            </description>
+            <channel>output</channel>
+        </file>
+        <integer>
+            <name>mspQualityLevel</name>
+            <label>mspQualityLevel</label>
+            <longflag>mspQualityLevel</longflag>
+            <description>
+                Flag cotrols how agressive the MSP is estimated. 0=quick estimate (9 seconds), 1=normal estimate (11 seconds), 2=great estimate (22 seconds), 3=best estimate (58 seconds), NOTE: -1= Prealigned so no estimate!.
+            </description>
+            <default>2</default>
+           <constraints>
+              <minimum>-1</minimum>
+              <maximum>3</maximum>
+              <step>1</step>
+           </constraints>
+        </integer>
+        <double>
+            <name>otsuPercentileThreshold</name>
+            <label>otsuPercentileThreshold</label>
+            <longflag>otsuPercentileThreshold</longflag>
+            <description>
+                This is a parameter to FindLargestForegroundFilledMask, which is employed when acLowerBound is set and an outputUntransformedClippedVolume is requested.
+            </description>
+            <default>0.01</default>
+        </double>
+        <double>
+            <name>acLowerBound</name>
+            <label>acLowerBound</label>
+            <longflag>acLowerBound</longflag>
+            <description>
+                When generating a resampled output image, replace the image with the BackgroundFillValue everywhere below the plane This Far in physical units (millimeters) below (inferior to) the AC point (as found by the model.)  The oversize default was chosen to have no effect.  Based on visualizing a thousand masks in the IPIG study, we recommend a limit no smaller than 80.0 mm.
+            </description>
+            <default>1000.0</default>
+        </double>
+        <boolean>
+            <name>cutOutHeadInOutputVolume</name>
+            <label>cutOutHeadInOutputVolume</label>
+            <longflag>cutOutHeadInOutputVolume</longflag>
+            <description>
+                Flag to cut out just the head tissue when producing an (un)transformed clipped volume.
+            </description>
+            <default>false</default>
+        </boolean>
+        <image fileExtensions=".nii.gz,.nrrd">
+            <name>outputUntransformedClippedVolume</name>
+            <longflag>outputUntransformedClippedVolume</longflag>
+            <label>Output Raw Clipped Image Volume Filename</label>
+            <description>Output image in which to store neck-clipped input image, with the use of --acLowerBound and maybe --cutOutHeadInUntransformedVolume.</description>
+            <channel>output</channel>
+            <default></default>
+        </image>
+        <boolean>
+            <name>rescaleIntensities</name>
+            <label>rescaleIntensities</label>
+            <longflag>rescaleIntensities</longflag>
+            <description>
+                Flag to turn on rescaling image intensities on input.
+            </description>
+            <default>false</default>
+        </boolean>
+        <double>
+            <name>trimRescaledIntensities</name>
+            <label>trimRescaledIntensities</label>
+            <longflag>trimRescaledIntensities</longflag>
+            <description>
+                Turn on clipping the rescaled image one-tailed on input.  Units of standard deviations above the mean.  Very large values are very permissive.  Non-positive value turns clipping off.  Defaults to removing 0.00001 of a normal tail above the mean.
+            </description>
+            <default>4.4172</default>
+        </double>
+        <integer-vector>
+            <name>rescaleIntensitiesOutputRange</name>
+            <label>rescaleIntensitiesOutputRange</label>
+            <longflag>rescaleIntensitiesOutputRange</longflag>
+            <description>
+                This pair of integers gives the lower and upper bounds on the signal portion of the output image.  Out-of-field voxels are taken from BackgroundFillValue.
+            </description>
+            <default>40,4000</default>
+        </integer-vector>
+        <string>
+            <name>backgroundFillValueString</name>
+            <longflag>BackgroundFillValue</longflag>
+            <description>Fill the background of image with specified short int value. Enter number or use BIGNEG for a large negative number.</description>
+            <label>Background Fill Value</label>
+            <default>0</default>
+        </string>
+        <string-enumeration>
+          <name>interpolationMode</name>
+          <longflag>interpolationMode</longflag>
+          <label>Interpolation Mode</label>
+          <description>Type of interpolation to be used when applying transform to moving volume.  Options are Linear, ResampleInPlace, NearestNeighbor, BSpline, or WindowedSinc</description>
+          <default>Linear</default>
+          <element>NearestNeighbor</element>
+          <element>Linear</element>
+          <element>ResampleInPlace</element>
+          <element>BSpline</element>
+          <element>WindowedSinc</element>
+        </string-enumeration>
+    </parameters>
+    <parameters advanced="true">
+        <label>Manual Override </label>
+        <description> Manually force the location of the points in original image space.  </description>
+        <float-vector>
+            <name>forceACPoint</name>
+            <label>forceACPoint</label>
+            <longflag>forceACPoint</longflag>
+            <description>
+                Use this flag to manually specify the AC point from the original image on the command line.
+            </description>
+            <default>0</default>
+        </float-vector>
+        <float-vector>
+            <name>forcePCPoint</name>
+            <label>forcePCPoint</label>
+            <longflag>forcePCPoint</longflag>
+            <description>
+                Use this flag to manually specify the PC point from the original image on the command line.
+            </description>
+            <default>0</default>
+        </float-vector>
+        <float-vector>
+            <name>forceVN4Point</name>
+            <label>forceVN4Point</label>
+            <longflag>forceVN4Point</longflag>
+            <description>
+                Use this flag to manually specify the VN4 point from the original image on the command line.
+            </description>
+            <default>0</default>
+        </float-vector>
+        <float-vector>
+            <name>forceRPPoint</name>
+            <label>forceRPPoint</label>
+            <longflag>forceRPPoint</longflag>
+            <description>
+                Use this flag to manually specify the RP point from the original image on the command line.
+            </description>
+            <default>0</default>
+        </float-vector>
+        <file fileExtensions=".fcsv">
+            <name>inputLandmarksEMSP</name>
+            <label>inputLandmarksEMSP</label>
+            <longflag>inputLandmarksEMSP</longflag>
+            <default></default>
+            <description>
+              The filename for the new subject-specific landmark definition file in the same format produced by Slicer3 (in .fcsv) with the landmarks in the estimated MSP aligned space to be loaded. The detector will only process landmarks not enlisted on the file.
+            </description>
+            <channel>input</channel>
+        </file>
+        <boolean>
+            <name>forceHoughEyeDetectorReportFailure</name>
+            <label>Force Hough Eye Detector Report Failure</label>
+            <longflag>forceHoughEyeDetectorReportFailure</longflag>
+            <description>
+                Flag indicates whether the Hough eye detector should report failure
+            </description>
+            <default>false</default>
+        </boolean>
+    </parameters>
+    <parameters advanced="true">
+    <label>Model Override </label>
+    <description>Override the default values from the model files.</description>
+        <double>
+            <name>radiusMPJ</name>
+            <longflag>rmpj</longflag>
+            <description>
+              Search radius for MPJ in unit of mm
+            </description>
+            <default>-1</default>
+        </double>
+        <double>
+            <name>radiusAC</name>
+            <longflag>rac</longflag>
+            <description>
+              Search radius for AC in unit of mm
+            </description>
+            <default>-1</default>
+        </double>
+        <double>
+            <name>radiusPC</name>
+            <longflag>rpc</longflag>
+            <description>
+              Search radius for PC in unit of mm
+            </description>
+            <default>-1</default>
+        </double>
+        <double>
+            <name>radiusVN4</name>
+            <longflag>rVN4</longflag>
+            <description>
+              Search radius for VN4 in unit of mm
+            </description>
+            <default>-1</default>
+        </double>
+        </parameters>
+        <parameters advanced="true">
+        <label>Debug Options</label>
+        <description>Options to control the amount of debugging information that is presented.</description>
+        <boolean>
+            <name>debug</name>
+            <label>Show debug output</label>
+            <longflag>debug</longflag>
+            <default>false</default>
+            <description>
+              Show internal debugging information.
+            </description>
+        </boolean>
+        <boolean>
+            <name>verbose</name>
+            <label>verbose</label>
+            <flag>v</flag>
+            <longflag>verbose</longflag>
+            <default>false</default>
+            <description>
+              Show more verbose output
+            </description>
+        </boolean>
+        <file fileExtensions=".png">
+            <name>writeBranded2DImage</name>
+            <label>writeBranded2DImage</label>
+            <longflag>writeBranded2DImage</longflag>
+            <default></default>
+            <description>
+              The filename for the 2D .png branded midline debugging image.  This will happen only in conjunction with requesting an outputVolume.
+            </description>
+            <channel>output</channel>
+        </file>
+        <directory> <!-- This is really a directory name -->
+            <name>resultsDir</name>
+            <label>resultsDir</label>
+            <flag>r</flag>
+            <longflag>resultsDir</longflag>
+            <default>./</default>
+            <description>
+              The directory for the debuging images to be written.
+            </description>
+            <channel>output</channel>
+        </directory>
+        <integer>
+            <name>writedebuggingImagesLevel</name>
+            <label>writedebuggingImagesLevel</label>
+            <longflag>writedebuggingImagesLevel</longflag>
+            <flag>w</flag>
+            <description>
+                This flag controls if debugging images are produced.  By default value of 0 is no images.  Anything greater than zero will be increasing level of debugging images.
+            </description>
+            <default>0</default>
+        </integer>
+    <integer>
+      <name>numberOfThreads</name>
+      <longflag>numberOfThreads</longflag>
+      <label>Number Of Threads</label>
+      <description>Explicitly specify the maximum number of threads to use.</description>
+      <default>-1</default>
+    </integer>
+        </parameters>
+</executable>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<executable>
+  <category>BRAINS.Classify</category>
+  <title>BRAINSCleanMask</title>
+  <description>Cleans up a mask image by filling any holes
+  </description>
+  <!-- TODO: Need a much more descriptive explanation of the evolution of this work from the work performed by and contributed to NAMIC by Marcel Prastawa -->
+
+  <parameters>
+    <image>
+      <name>inputVolume</name>
+      <label>Mask Image</label>
+      <longflag>--inputVolume</longflag>
+      <flag>i</flag>
+      <channel>input</channel>
+      <description>The mask image to be cleaned up.</description>
+    </image>
+    <image fileExtensions=".nii.gz,.nrrd">
+      <name>outputVolume</name>
+      <label>Cleaned Mask Image</label>
+      <longflag>--outputVolume</longflag>
+      <flag>o</flag>
+      <channel>output</channel>
+      <description>The cleaned mask image.</description>
+    </image>
+  </parameters>
+  <parameters advanced="true">
+    <label>Multiprocessing Control</label>
+    <integer>
+      <name>numberOfThreads</name>
+      <longflag deprecatedalias="debugNumberOfThreads" >numberOfThreads</longflag>
+      <label>Number Of Threads</label>
+      <description>Explicitly specify the maximum number of threads to use.</description>
+      <default>-1</default>
+    </integer>
+  </parameters>
+
+</executable>

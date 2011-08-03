@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+    <title>ACPCModel</title>
+    <description>Train up a model for BRAINSConstellationDetector</description>
+    <parameters>
+        <boolean>
+            <name>verbose</name>
+            <label>verbose</label>
+            <flag>v</flag>
+            <longflag>verbose</longflag>
+            <default>false</default>
+            <description>
+              Show more verbose output
+            </description>
+        </boolean>
+        <file fileExtensions=".txt">
+            <name>inputTrainingList</name>
+            <flag>i</flag>
+            <longflag>inputTrainingList</longflag>
+            <default></default>
+            <description>
+              Setup file, giving all parameters for training up a template model for each landmark.
+            </description>
+            <channel>input</channel>
+        </file>
+        <file fileExtensions=".mdl">
+            <name>outputModel</name>
+            <flag>m</flag>
+            <longflag>outputModel</longflag>
+            <default>default.mdl</default>
+            <description>
+              The full filename of the output model file.
+            </description>
+            <channel>output</channel>
+        </file>
+        <boolean>
+            <name>saveOptimizedLandmarks</name>
+            <label>saveOptimizedLandmarks</label>
+            <flag>l</flag>
+            <longflag>saveOptimizedLandmarks</longflag>
+            <default>false</default>
+            <description>
+              Flag to make a new subject-specific landmark definition file in the same format produced by Slicer3 with the optimized landmark (the detected RP, AC, and PC) in it.  Useful to tighten the variances in the ConstellationModeler.
+            </description>
+        </boolean>
+        <string>
+            <name>optimizedLandmarksFilenameExtender</name>
+            <flag>j</flag>
+            <longflag>optimizedLandmarksFilenameExtender</longflag>
+            <default>_opt.fcsv</default>
+            <description>
+               If the trainingList is (indexFullPathName) and contains landmark data filenames [path]/[filename].fcsv ,  make the optimized landmarks filenames out of [path]/[filename](thisExtender) and the optimized version of the input trainingList out of (indexFullPathName)(thisExtender) , when you rewrite all the landmarks according to the saveOptimizedLandmarks flag.
+            </description>
+            <channel>output</channel>
+        </string>
+        <directory> <!-- This is really a directory name -->
+            <name>resultsDir</name>
+            <label>resultsDir</label>
+            <flag>r</flag>
+            <longflag>resultsDir</longflag>
+            <default>./</default>
+            <description>
+              The directory for the results to be written.
+            </description>
+            <channel>output</channel>
+        </directory>
+        <integer>
+            <name>mspQualityLevel</name>
+            <label>mspQualityLevel</label>
+            <longflag>mspQualityLevel</longflag>
+            <flag>q</flag>
+            <description>
+                Flag cotrols how agressive the MSP is estimated.  0=quick estimate (9 seconds), 1=normal estimate (11 seconds), 2=great estimate (22 seconds), 3=best estimate (58 seconds).
+            </description>
+            <default>2</default>
+           <constraints>
+              <minimum>0</minimum>
+              <maximum>3</maximum>
+              <step>1</step>
+           </constraints>
+        </integer>
+        <boolean>
+            <name>rescaleIntensities</name>
+            <label>rescaleIntensities</label>
+            <longflag>rescaleIntensities</longflag>
+            <flag>n</flag>
+            <description>
+                Flag to turn on rescaling image intensities on input.
+            </description>
+            <default>0</default>
+        </boolean>
+        <double>
+            <name>trimRescaledIntensities</name>
+            <label>trimRescaledIntensities</label>
+            <longflag>trimRescaledIntensities</longflag>
+            <flag>x</flag>
+            <description>
+                Turn on clipping the rescaled image one-tailed on input.  Units of standard deviations above the mean.  Very large values are very permissive.  Non-positive value turns clipping off.  Defaults to removing 0.00001 of a normal tail above the mean.
+            </description>
+            <default>4.4172</default>
+        </double>
+        <integer-vector>
+            <name>rescaleIntensitiesOutputRange</name>
+            <label>rescaleIntensitiesOutputRange</label>
+            <longflag>rescaleIntensitiesOutputRange</longflag>
+            <flag>y</flag>
+            <description>
+                This pair of integers gives the lower and upper bounds on the signal portion of the output image.  Out-of-field voxels are taken from BackgroundFillValue.
+            </description>
+            <default>40,4000</default>
+        </integer-vector>
+        <string>
+            <name>backgroundFillValueString</name>
+            <longflag>BackgroundFillValue</longflag>
+            <flag>z</flag>
+            <description>Fill the background of image with specified short int value. Enter number or use BIGNEG for a large negative number.</description>
+            <label>Background Fill Value</label>
+            <default>0</default>
+        </string>
+        <integer>
+            <name>writedebuggingImagesLevel</name>
+            <label>writedebuggingImagesLevel</label>
+            <longflag>writedebuggingImagesLevel</longflag>
+            <flag>w</flag>
+            <description>
+                This flag controls if debugging images are produced.  By default value of 0 is no images.  Anything greater than zero will be increasing level of debugging images.
+            </description>
+            <default>0</default>
+        </integer>
+        <integer>
+          <name>numberOfThreads</name>
+          <longflag deprecatedalias="debugNumberOfThreads" >numberOfThreads</longflag>
+          <label>Number Of Threads</label>
+          <description>Explicitly specify the maximum number of threads to use.</description>
+          <default>-1</default>
+        </integer>
+    </parameters>
+</executable>

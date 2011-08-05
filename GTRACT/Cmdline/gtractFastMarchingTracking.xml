@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8" ?>
+  <executable>
+  <category>Diffusion.GTRACT</category>
+  <title>Fast Marching Tracking</title>
+
+  <description> This program will use a fast marching fiber tracking algorithm to identify fiber tracts from a tensor image. This program is the second portion of the algorithm. The user must first run gtractCostFastMarching to generate the vcl_cost image. The second step of the algorithm implemented here is a gradient descent soplution from the defined ending region back to the seed points specified in gtractCostFastMarching. This algorithm is roughly based on the work by G. Parker et al. from IEEE Transactions On Medical Imaging, 21(5): 505-512, 2002. An additional feature of including anisotropy into the vcl_cost function calculation is included.  </description>
+  <acknowledgements>Funding for this version of the GTRACT program was provided by NIH/NINDS R01NS050568-01A2S1</acknowledgements>
+  <version>4.0.0</version>
+  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Modules:GTRACT</documentation-url>
+  <license>http://mri.radiology.uiowa.edu/copyright/GTRACT-Copyright.txt</license>
+  <contributor>This tool was developed by Vincent Magnotta and Greg Harris. The original code here was developed by Daisy Espino.</contributor>
+
+  <parameters>
+    <label>Input Image Files</label>
+    <description>Parameters for specifying the diffusion tensor image set</description>
+
+    <image type="tensor" fileExtensions=".nrrd">
+      <name>inputTensorVolume</name>
+      <longflag>inputTensorVolume</longflag>
+      <description>Required: input tensor image file name</description>
+      <label>Input Tensor Image Volume</label>
+      <channel>input</channel>
+    </image>
+
+    <image type="scalar" fileExtensions=".nrrd">
+      <name>inputAnisotropyVolume</name>
+      <longflag>inputAnisotropyVolume</longflag>
+      <description>Required: input anisotropy image file name</description>
+      <label>Input Anisotropy Image Volume</label>
+      <channel>input</channel>
+    </image>
+
+    <image type="scalar" fileExtensions=".nrrd">
+      <name>inputCostVolume</name>
+      <longflag>inputCostVolume</longflag>
+      <description>Required: input vcl_cost image file name</description>
+      <label>Input Cost Image Volume</label>
+      <channel>input</channel>
+    </image>
+
+    <image type="label" fileExtensions=".nrrd">
+      <name>inputStartingSeedsLabelMapVolume</name>
+      <longflag>inputStartingSeedsLabelMapVolume</longflag>
+      <description>Required: input starting seeds LabelMap image file name</description>
+      <label>Input Starting Seeds LabelMap Volume</label>
+      <channel>input</channel>
+    </image>
+
+    <integer>
+      <name>startingSeedsLabel</name>
+      <longflag>startingSeedsLabel</longflag>
+      <description>Label value for Starting Seeds</description>
+      <label>Starting Seeds Label</label>
+      <default>1</default>
+      <channel>input</channel>
+    </integer>
+
+  </parameters>
+
+  <parameters>
+    <label>Output Files</label>
+    <description>Output file in which to store tract lines</description>
+
+    <geometry type="fiberbundle">
+      <name>outputTract</name>
+      <longflag>outputTract</longflag>
+      <description>Required: name of output vtkPolydata file containing tract lines and the point data collected along them.</description>
+      <label>Output Tract Filename</label>
+      <channel>output</channel>
+    </geometry>
+
+    <boolean>
+      <name>writeXMLPolyDataFile</name>
+      <longflag>writeXMLPolyDataFile</longflag>
+      <description>Flag to make use of the XML format for vtkPolyData fiber tracts.</description>
+      <label>Write fiber tracts in XML format</label>
+      <default>0</default>
+      <channel>output</channel>
+    </boolean>
+
+  </parameters>
+
+  <parameters>
+    <label>Fast Marching Tracking Parameters</label>
+    <description>Input parameters controlling the Fast Marching Cost Function</description>
+
+    <integer>
+      <name>numberOfIterations</name>
+      <longflag>numberOfIterations</longflag>
+      <description>Number of iterations used for the optimization</description>
+      <label>Number of Iterations</label>
+      <default>200</default>
+      <channel>input</channel>
+    </integer>
+
+    <float>
+      <name>seedThreshold</name>
+      <longflag>seedThreshold</longflag>
+      <description>Anisotropy threshold used for seed selection</description>
+      <label>Seed Threshold</label>
+      <default>0.3</default>
+      <channel>input</channel>
+    </float>
+
+    <float>
+      <name>trackingThreshold</name>
+      <longflag>trackingThreshold</longflag>
+      <description>Anisotropy threshold used for fiber tracking</description>
+      <label>Tracking Threshold</label>
+      <default>0.2</default>
+      <channel>input</channel>
+    </float>
+
+
+    <float>
+      <name>costStepSize</name>
+      <longflag>costStepSize</longflag>
+      <description>Cost image sub-voxel sampling</description>
+      <label>Cost Step Size</label>
+      <default>1.0</default>
+      <channel>input</channel>
+    </float>
+
+    <float>
+      <name>maximumStepSize</name>
+      <longflag>maximumStepSize</longflag>
+      <description>Maximum step size to move when tracking</description>
+      <label>Maximum Step Size</label>
+      <default>1.0</default>
+      <channel>input</channel>
+    </float>
+
+    <float>
+      <name>minimumStepSize</name>
+      <longflag>minimumStepSize</longflag>
+      <description>Minimum step size to move when tracking</description>
+      <label>Minimum Step Size</label>
+      <default>0.1</default>
+      <channel>input</channel>
+    </float>
+
+    
+  </parameters>
+  <parameters>
+    <label>Multiprocessing Control</label>
+    <integer>
+      <name>numberOfThreads</name>
+      <longflag deprecatedalias="debugNumberOfThreads" >numberOfThreads</longflag>
+      <label>Number Of Threads</label>
+      <description>Explicitly specify the maximum number of threads to use.</description>
+      <default>-1</default>
+    </integer>
+  </parameters>
+  </executable>

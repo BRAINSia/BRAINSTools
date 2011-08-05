@@ -1,0 +1,76 @@
+<BRAINSCutProcessDescription>
+  <ProbabilityMap StructureID="l_hippo" 
+                  Gaussian="1.5" 
+                  Filename="@BRAINSCut_BINARY_DIR@/Testl_hippoProb.nii.gz" />
+  <ProbabilityMap StructureID="r_hippo" 
+                  Gaussian="1.5" 
+                  Filename="@BRAINSCut_BINARY_DIR@/Testr_hippoProb.nii.gz" />
+  <RegistrationParams Type="Thirion" 
+                      Command="@CMAKE_RUNTIME_OUTPUT_DIRECTORY@/ASTDRegister.tcl" 
+                      ImageType="SG" 
+                      ID="T1" />
+  <!--
+  <SVMParams VectorSize="1000" GaussianSize="5.5" />
+  -->
+  <ANNParams VectorSize="2000" 
+             Iterations="20" 
+             ErrorInterval="5" 
+             LearningRate="0.3" 
+             MomentumRate="0.15"
+             DesiredError="0.001"/>
+  <NeuralNetParams MaskSmoothingValue="0" 
+                   GaussianSize="3" 
+                   GradientProfileSize="1"
+                   IrisSize="1" 
+                   TrainingFilename="@BRAINSCut_BINARY_DIR@/TestTrainingVectors.txt"
+                   Filename="@BRAINSCut_BINARY_DIR@/TestModel.txt"
+                   />
+  <ApplyModel CutOutThresh="0.05" 
+              CutOutGaussian="0.5" 
+              MaskThresh="127" 
+              DefDir="@BRAINSCut_BINARY_DIR@" 
+              OutputDir="@BRAINSCut_BINARY_DIR@" />
+
+  <DataSet Name="img1" Type="Train" >
+    <Image Type="SG" Filename="@BRAINSCut_SOURCE_DIR@/TestData/TrainImage1.nii.gz" />
+    <Mask Type="l_hippo" Filename="@BRAINSCut_SOURCE_DIR@/TestData/img1l_hippo.mask" />
+    <Mask Type="r_hippo" Filename="@BRAINSCut_SOURCE_DIR@/TestData/img1r_hippo.mask" />
+    <Registration SubjToAtlasRegistrationFilename="@BRAINSCut_BINARY_DIR@/TestForward1.nii.gz" 
+              AtlasToSubjRegistrationFilename="@BRAINSCut_BINARY_DIR@/TestReverse1.nii.gz" 
+                  LandmarkType="Cerebellum" ID="T1" />
+  </DataSet>
+  <DataSet Name="img2" Type="Train">
+    <Image Type="SG" Filename="@BRAINSCut_SOURCE_DIR@/TestData/TrainImage2.nii.gz" />
+    <Mask Type="l_hippo" Filename="@BRAINSCut_SOURCE_DIR@/TestData/img2l_hippo.mask" />
+    <Mask Type="r_hippo" Filename="@BRAINSCut_SOURCE_DIR@/TestData/img2r_hippo.mask" />
+    <Registration SubjToAtlasRegistrationFilename="@BRAINSCut_BINARY_DIR@/TestForward2.nii.gz" 
+              AtlasToSubjRegistrationFilename="@BRAINSCut_BINARY_DIR@/TestReverse2.nii.gz" 
+                  LandmarkType="" ID="T1" />
+  </DataSet>
+  <DataSet Name="Atlas" Type="Atlas">
+    <Image Type="SG" Filename="@BRAINSCut_SOURCE_DIR@/TestData/Atlas.nii.gz"  />
+  </DataSet>
+  <DataSet Name="ITI1"
+           Type="Apply">
+    <Image Type="SG"
+           Filename="@BRAINSCut_SOURCE_DIR@/TestData/ITImage1.nii.gz" />
+    <Registration SubjToAtlasRegistrationFilename="@BRAINSCut_BINARY_DIR@/TestITIF1.nii.gz"
+                  AtlasToSubjRegistrationFilename="@BRAINSCut_BINARY_DIR@/TestITIR1.nii.gz"
+                  LandmarkType="Whole_brain" 
+                  ID="T1" />
+
+  </DataSet>
+  <DataSet Name="ITI2"
+           Type="Apply">
+    <Image Type="SG"
+           Filename="@BRAINSCut_SOURCE_DIR@/TestData/ITImage2.nii.gz" />
+    <Registration SubjToAtlasRegistrationFilename="@BRAINSCut_BINARY_DIR@/TestITIF2.nii.gz"
+                  AtlasToSubjRegistrationFilename="@BRAINSCut_BINARY_DIR@/TestITIR2.nii.gz"
+                  LandmarkType="Whole_brain" 
+                  ID="T1" />
+
+  </DataSet>
+           
+
+                 
+</BRAINSCutProcessDescription> 

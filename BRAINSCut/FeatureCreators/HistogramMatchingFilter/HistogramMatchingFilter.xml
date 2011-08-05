@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>BRAINS.Utilities</category>
+  <title>Write Out Image Intensities
+  </title>
+  <description>
+    For Analysis
+  </description>
+  <version>0.1</version>
+  <documentation-url></documentation-url>
+  <license></license>
+  <contributor>University of Iowa Department of Psychiatry, http:://www.psychiatry.uiowa.edu
+  </contributor>
+
+  <parameters advanced="true">
+    <label>Required Parameters</label>
+    <!--  -->
+    <image>
+      <name>inputVolume</name>
+      <longflag>inputVolume</longflag>
+      <description>The Input image to be computed for statistics</description>
+      <channel>input</channel>
+      <label>Input volume</label>
+      <default></default>
+    </image>
+    <!--  -->
+    <image>
+      <name>referenceVolume</name>
+      <longflag>referenceVolume</longflag>
+      <description>The Input image to be computed for statistics</description>
+      <channel>input</channel>
+      <label>Input Image 2</label>
+      <default></default>
+    </image>
+    <!--  -->
+    <image>
+      <name>outputVolume</name>
+      <longflag>outputVolume</longflag>
+      <description>Output Image File Name</description>
+      <channel>output</channel>
+      <label>Output File Name</label>
+      <default></default>
+    </image>
+    <!--  -->
+    <image>
+      <name>referenceBinaryVolume</name>
+      <longflag>referenceBinaryVolume</longflag>
+      <description>referenceBinaryVolume</description>
+      <channel>input</channel>
+      <label>referenceBinaryVolume</label>
+      <default></default>
+    </image>
+    <!--  -->
+    <image>
+      <name>inputBinaryVolume</name>
+      <longflag>inputBinaryVolume</longflag>
+      <description>inputBinaryVolume</description>
+      <channel>input</channel>
+      <label>inputBinaryVolume</label>
+      <default></default>
+    </image>
+    <!--  -->
+    <integer>
+      <name>numberOfMatchPoints</name>
+      <longflag>numberOfMatchPoints</longflag>
+      <channel>input</channel>
+      <description> number of histogram matching points </description>
+      <label>Number of histogram matching points</label>
+      <default>100</default>
+    </integer>
+    <integer>
+      <name>numberOfHistogramBins</name>
+      <longflag>numberOfHistogramBins</longflag>
+      <channel>input</channel>
+      <description> number of histogram bin </description>
+      <label>Number Of  Histogram Bin</label>
+      <default>100</default>
+    </integer>
+    <string>
+      <name>writeHistogram</name>
+      <longflag>writeHistogram</longflag>
+      <channel>input</channel>
+      <description> decide if histogram data would be written with prefixe of the file name</description>
+      <label>writeHistogram</label>
+      <default></default>
+    </string>
+    <string-enumeration>
+      <name>histogramAlgorithm</name>
+      <longflag>histogramAlgorithm</longflag>
+      <channel>input</channel>
+      <description> histogram algrithm selection</description>
+      <label>histogramAlgorithm</label>
+      <default>simpleITKHistogramMatch</default>
+      <element>OtsuHistogramMatching</element>
+    </string-enumeration>
+    <boolean>
+      <name>verbose</name>
+      <longflag>verbose</longflag>
+      <channel>input</channel>
+      <description> verbose mode running for debbuging</description>
+      <label>verbose</label>
+      <default>FALSE</default>
+    </boolean>
+
+    <!--  -->
+  </parameters>
+</executable>

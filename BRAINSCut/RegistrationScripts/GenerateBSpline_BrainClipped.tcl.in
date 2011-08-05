@@ -1,0 +1,69 @@
+#!/usr/bin/tclsh
+
+set EXEC_PATH @CMAKE_RUNTIME_OUTPUT_DIRECTORY@
+puts "@CMAKE_LIBRARY_OUTPUT_DIRECTORY@"
+puts "@CMAKE_LIBRARY_OUTPUT_DIRECTORY@"
+if { $argc != 3 && $argc != 4 } {
+  puts "ERROR: Incorect number of arguments";
+  exit -1 ;
+}
+
+source ${EXEC_PATH}/CheckOutputsNewer.tcl
+
+set Moving [lindex $argv 0];
+set Fixed [lindex $argv 1];
+set DeformationOutput [lindex $argv 2];
+
+
+### Assuming Classified image has name of     :  *****_acpc_class.nii.gz
+###          Brain Mask has name of           :  *****_BRAINSABC_Brain.nii.gz
+###          Template/Atlas image has name of :  template_class.nii.gz
+###          Template/Atlas brain mask is     :  template_brain.nii.gz
+####################################################################################
+if { [ string match -nocase "*_acpc_class*" $Fixed ] } {
+  ## e.g) May2010NNTest_acpc_class.nii.gz 
+  ##      -> May2010NNTest_Class_BrainClipped.nii.gz
+  ##      -> May2010NNTest_BRAINSABC_Brain.nii.gz
+  set clippedFixed [ regsub -nocase "_acpc_class" $Fixed "_Class_BrainClipped" ]
+  set FixedBrainMask [ regsub -nocase "_acpc_class" $Fixed "_BRAINSABC_Brain" ]
+} else {
+  ## e.g) template_class.nii.gz
+  ##      -> template_Class_BrainClipped.nii.gz
+  ##      -> template_brain.nii.gz
+  set clippedFixed [ regsub -nocase "_class" $Fixed "_Class_BrainClipped" ]
+  set FixedBrainMask [ regsub -nocase "_class" $Fixed "_brain" ]
+}
+if { [ string match -nocase "*_acpc_class*" $Moving ] } {
+  set clippedMoving [ regsub -nocase "_acpc_class" $Moving "_Class_BrainClipped" ]
+  set MovingBrainMask [ regsub -nocase "_acpc_class" $Moving "_BRAINSABC_Brain" ]
+} else {
+  set clippedMoving [ regsub -nocase "_class" $Moving "_Class_BrainClipped" ]
+  set MovingBrainMask [ regsub -nocase "_class" $Moving "_brain" ]
+}
+puts $clippedMoving
+puts $clippedFixed
+if { [ CheckOutputsNewer [list $clippedFixed] [list $FixedBrainMask $Fixed ] ] == false  } {
+  puts "Clip image generation"
+  puts "${EXEC_PATH}/GenerateBrainClippedImage --inputImg $Fixed --inputMsk $FixedBrainMask --outputFileName $clippedFixed"
+  set Status [catch { exec ${EXEC_PATH}/GenerateBrainClippedImage --inputImg $Fixed --inputMsk $FixedBrainMask --outputFileName $clippedFixed } RETURN_VALUE];
+}
+if { [ CheckOutputsNewer [list $clippedMoving] [list $MovingBrainMask $Moving ] ]== false  } {
+  puts "Clip image generation"
+  puts "${EXEC_PATH}/GenerateBrainClippedImage --inputImg $Moving --inputMsk $MovingBrainMask --outputFileName $clippedMoving"
+  set Status [catch { exec ${EXEC_PATH}/GenerateBrainClippedImage --inputImg $Moving --inputMsk $MovingBrainMask --outputFileName $clippedMoving } RETURN_VALUE];
+}
+set basepath [file dirname ${DeformationOutput}]
+
+if { [file exists ${basepath}] == false } {
+  file mkdir ${basepath}
+}
+set MovingImage ${clippedMoving}
+set FixedImage  ${clippedFixed}
+####################################################################################
+puts " About to call BSpline tcl script..."
+puts "--------------------------------------------------------------------------------------"
+puts "${EXEC_PATH}/GenerateBSplineTransform.tcl ${MovingImage} ${FixedImage} ${DeformationOutput} "
+set BSplineStatus [catch { exec ${EXEC_PATH}/GenerateBSplineTransform.tcl ${MovingImage} ${FixedImage} ${DeformationOutput} } RETURN_VALUE ];
+
+puts "Status from root file about Demon::::: ${BSplineStatus}"
+

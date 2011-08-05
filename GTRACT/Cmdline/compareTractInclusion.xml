@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8" ?>
+  <executable>
+  <category>Diffusion.GTRACT</category>
+  <title>Compare Tracts</title>
+
+  <description> This program will halt with a status code indicating whether a test tract is nearly enough included in a standard tract in the sense that every fiber in the test tract has a low enough sum of squares distance to some fiber in the standard tract modulo spline resampling of every fiber to a fixed number of points.  </description>
+  <acknowledgements>Funding for this version of the GTRACT program was provided by NIH/NINDS R01NS050568-01A2S1</acknowledgements>
+  <version>4.0.0</version>
+  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Modules:GTRACT</documentation-url>
+  <license>http://mri.radiology.uiowa.edu/copyright/GTRACT-Copyright.txt</license>
+  <contributor>This tool was developed by Vincent Magnotta and Greg Harris.</contributor>
+
+
+  <parameters>
+    <label>Input Parameters</label>
+    <description>Parameters for fiber tract comparison</description>
+
+    <geometry type="fiberbundle" fileExtensions=".vtk">
+      <name>testFiber</name>
+      <longflag>testFiber</longflag>
+      <description>Required: test fiber tract file name</description>
+      <label>Test Fiber</label>
+      <channel>input</channel>
+    </geometry>
+
+    <geometry type="fiberbundle" fileExtensions=".vtk">
+      <name>standardFiber</name>
+      <longflag>standardFiber</longflag>
+      <description>Required: standard fiber tract file name</description>
+      <label>Standard Fiber</label>
+      <channel>input</channel>
+    </geometry>
+
+  </parameters>
+
+  <parameters>
+    <label>Method Parameters</label>
+    <description>Output file from averaging fibers in a fiber tract</description>
+
+    <float>
+      <name>closeness</name>
+      <longflag>closeness</longflag>
+      <description>Closeness of every test fiber to some fiber in the standard tract, computed as a sum of squares of spatial differences of standard points</description>
+      <label>Closeness of Test Fiber to Standard Tract</label>
+      <default>100</default>
+      <channel>input</channel>
+    </float>
+
+    <integer>
+      <name>numberOfPoints</name>
+      <longflag>numberOfPoints</longflag>
+      <description>Number of points in comparison fiber pairs</description>
+      <label>Number Of Points</label>
+      <default>100</default>
+      <channel>input</channel>
+    </integer>
+
+    <boolean>
+      <name>testForBijection</name>
+      <longflag>testForBijection</longflag>
+      <description>Flag to apply the closeness criterion both ways</description>
+      <label>Test Tracts Bijectively</label>
+      <default>0</default>
+      <channel>input</channel>
+    </boolean>
+
+    <boolean>
+      <name>testForFiberCardinality</name>
+      <longflag>testForFiberCardinality</longflag>
+      <description>Flag to require the same number of fibers in both tracts</description>
+      <label>Test Fiber Cardinality</label>
+      <default>0</default>
+      <channel>input</channel>
+    </boolean>
+
+    <boolean>
+      <name>writeXMLPolyDataFile</name>
+      <longflag>writeXMLPolyDataFile</longflag>
+      <description>Flag to make use of XML files when reading and writing vtkPolyData.</description>
+      <label>Use XML PolyData Headers</label>
+      <default>0</default>
+      <channel>input</channel>
+    </boolean>
+  </parameters>
+  <parameters>
+    <label>Multiprocessing Control</label>
+    <integer>
+      <name>numberOfThreads</name>
+      <longflag deprecatedalias="debugNumberOfThreads" >numberOfThreads</longflag>
+      <label>Number Of Threads</label>
+      <description>Explicitly specify the maximum number of threads to use.</description>
+      <default>-1</default>
+    </integer>
+  </parameters>
+  </executable>
+

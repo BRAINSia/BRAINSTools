@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8" ?>
+  <executable>
+  <category>Diffusion.GTRACT</category>
+  <title>Coregister B0 to Anatomy B-Spline</title>
+
+  <description>This program will register a NRRD diffusion weighted 4D vector image to a fixed anatomical image to produce a Bspline fit.</description>
+  <acknowledgements>Funding for this version of the GTRACT program was provided by NIH/NINDS R01NS050568-01A2S1</acknowledgements>
+  <version>4.0.0</version>
+  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Modules:GTRACT</documentation-url>
+  <license>http://mri.radiology.uiowa.edu/copyright/GTRACT-Copyright.txt</license>
+  <contributor>This tool was developed by Vincent Magnotta and Greg Harris.</contributor>
+
+
+  <parameters>
+    <label>Input Image Parameters</label>
+    <description>Parameters for specifying the NRRD vector image to fit to the anatomical image</description>
+
+    <image fileExtensions=".nrrd">
+      <name>inputVolume</name>
+      <longflag>inputVolume</longflag>
+      <description>Required: input vector image file name. It is recommended that the input volume is the skull stripped baseline image of the DWI scan.</description>
+      <label>Input Image Volume</label>
+      <channel>input</channel>
+    </image>
+
+    <image type="scalar" fileExtensions=".nrrd">
+      <name>inputAnatomicalVolume</name>
+      <longflag>inputAnatomicalVolume</longflag>
+      <description>Required: input anatomical image file name. It is recommended that that the input anatomical image has been skull stripped and has the same orientation as the DWI scan.</description>
+      <label>Input Anatomical Image Volume</label>
+      <channel>input</channel>
+    </image>
+
+    <integer>
+      <name>vectorIndex</name>
+      <longflag>vectorIndex</longflag>
+      <description>Vector image index in the moving image (within the DWI) to be used for registration.</description>
+      <label>Vector Image Index</label>
+      <default>0</default>
+      <channel>input</channel>
+    </integer>
+
+    <transform fileExtensions=".mat">
+      <name>inputRigidTransform</name>
+      <longflag>inputRigidTransform</longflag>
+      <description>Required (for B-Spline type co-registration): input rigid transform file name. Used as a starting point for the anatomical B-Spline registration.</description>
+      <label>Input Rigid Transform</label>
+      <channel>input</channel>
+    </transform>
+
+  </parameters>
+
+  <parameters>
+    <label>Output Files</label>
+    <description>Output file from rigid registrations</description>
+
+    <transform type="b-spline" fileExtensions=".mat">
+      <name>outputBsplineTransform</name>
+      <longflag>outputBsplineTransform</longflag>
+      <description>Required: filename for the B-Spline fit transform.</description>
+      <label>Output Transform</label>
+      <channel>output</channel>
+    </transform>
+
+  </parameters>
+
+  <parameters>
+    <label>Registration Parameters</label>
+    <description>Input registration parameters controlling the fit</description>
+
+    <integer>
+      <name>numberOfIterations</name>
+      <longflag>numberOfIterations</longflag>
+      <description>Number of iterations in the selected 3D fit</description>
+      <label>Number Of Iterations</label>
+      <default>1000</default>
+      <channel>input</channel>
+    </integer>
+
+    <integer-vector>
+      <name>gridSize</name>
+      <longflag>gridSize</longflag>
+      <description>Number of grid subdivisions in all 3 directions</description>
+      <label>Grid Size</label>
+      <default>12,4,12</default>
+      <channel>input</channel>
+    </integer-vector>
+
+    <integer>
+      <name>borderSize</name>
+      <longflag>borderSize</longflag>
+      <description>Size of border</description>
+      <label>Border Size</label>
+      <default>3</default>
+      <channel>input</channel>
+    </integer>
+
+    <integer>
+      <name>numberOfHistogramBins</name>
+      <longflag>numberOfHistogramBins</longflag>
+      <description>Number of histogram bins</description>
+      <label>Number of Histogram Bins</label>
+      <default>50</default>
+      <channel>input</channel>
+    </integer>
+
+    <integer>
+      <name>spatialScale</name>
+      <longflag>spatialScale</longflag>
+      <description>Scales the number of voxels in the image by this value to specify the number of voxels used in the registration</description>
+      <label>Spatial Scale</label>
+      <default>100</default>
+      <channel>input</channel>
+    </integer>
+
+    <float>
+      <name>convergence</name>
+      <longflag>convergence</longflag>
+      <description>Convergence Factor</description>
+      <label>Convergence Factor</label>
+      <default>10000000</default>
+      <channel>input</channel>
+    </float>
+
+    <float>
+      <name>gradientTolerance</name>
+      <longflag>gradientTolerance</longflag>
+      <description>Gradient Tolerance</description>
+      <label>Gradient Tolerance</label>
+      <default>0.0001</default>
+      <channel>input</channel>
+    </float>
+
+    <double>
+      <name>maxBSplineDisplacement</name>
+      <longflag>maxBSplineDisplacement</longflag>
+     <description> Sets the maximum allowed displacements in image physical coordinates for BSpline control grid along each axis.  A value of 0.0 indicates that the problem should be unbounded.  NOTE:  This only constrains the BSpline portion, and does not limit the displacement from the associated bulk transform.  This can lead to a substantial reduction in computation time in the BSpline optimizer.
+      </description>
+      <default>0.0</default>
+    </double>
+
+  </parameters>
+  <parameters>
+    <label>Multiprocessing Control</label>
+    <integer>
+      <name>numberOfThreads</name>
+      <longflag deprecatedalias="debugNumberOfThreads" >numberOfThreads</longflag>
+      <label>Number Of Threads</label>
+      <description>Explicitly specify the maximum number of threads to use.</description>
+      <default>-1</default>
+    </integer>
+  </parameters>
+  </executable>

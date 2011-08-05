@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8" ?>
+  <executable>
+  <category>Diffusion.GTRACT</category>
+  <title>Tensor Estimation</title>
+
+  <description>This step will convert a b-value averaged diffusion tensor image to a 3x3 tensor voxel image. This step takes the diffusion tensor image data and generates a tensor representation of the data based on the signal intensity decay, b values applied, and the diffusion difrections. The apparent diffusion coefficient for a given orientation is computed on a pixel-by-pixel basis by fitting the image data (voxel intensities) to the Stejskal-Tanner equation. If at least 6 diffusion directions are used, then the diffusion tensor can be computed. This program uses itk::DiffusionTensor3DReconstructionImageFilter. The user can adjust background threshold, median filter, and isotropic resampling.</description>
+  <acknowledgements>Funding for this version of the GTRACT program was provided by NIH/NINDS R01NS050568-01A2S1</acknowledgements>
+  <version>4.0.0</version>
+  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Modules:GTRACT</documentation-url>
+  <license>http://mri.radiology.uiowa.edu/copyright/GTRACT-Copyright.txt</license>
+  <contributor>This tool was developed by Vincent Magnotta and Greg Harris.</contributor>
+
+  <parameters>
+    <label>Input Image Files</label>
+    <description>Parameters for specifying the averaged Bvalue diffusion tensor image set</description>
+
+    <image type="diffusion-weighted">
+      <name>inputVolume</name>
+      <longflag>inputVolume</longflag>
+      <description>Required: input image 4D NRRD image. Must contain data based on at least 6 distinct diffusion directions. The inputVolume is allowed to have multiple b0 and gradient direction images. Averaging of the b0 image is done internally in this step. Prior averaging of the DWIs is not required.</description>
+      <label>Input Image Volume</label>
+      <channel>input</channel>
+    </image>
+
+  </parameters>
+
+  <parameters>
+    <label>Output Image Files</label>
+    <description>Output file from conversion from Dicom to NRRD</description>
+
+    <image type="tensor" fileExtensions=".nrrd">
+      <name>outputVolume</name>
+      <longflag>outputVolume</longflag>
+      <description>Required: name of output NRRD file containing the Tensor vector image</description>
+      <label>Output Tensor Image Volume</label>
+      <channel>output</channel>
+    </image>
+
+  </parameters>
+
+  <parameters>
+    <label>Tensor Conversion Parameters</label>
+    <description>Input parameters controlling the mapping from averaged B values to 3 by 3 tensors</description>
+
+    <integer-vector>
+      <name>medianFilterSize</name>
+      <longflag>medianFilterSize</longflag>
+      <description>Median filter radius in all 3 directions</description>
+      <label>Median Filter Size</label>
+      <default>0,0,0</default>
+      <channel>input</channel>
+    </integer-vector>
+    <string-enumeration>
+      <name>maskProcessingMode</name>
+      <longflag>maskProcessingMode</longflag>
+      <description>ROIAUTO:  mask is implicitly defined using a otsu forground and hole filling algorithm. ROI: Uses the masks to define what parts of the image should be used for computing the transform. NOMASK: no mask used</description>
+      <element>NOMASK</element>
+      <element>ROIAUTO</element>
+      <element>ROI</element>
+      <default>NOMASK</default>
+      <label>Mask Processing Mode</label>
+    </string-enumeration>
+    <image>
+      <name>maskVolume</name>
+      <longflag>maskVolume</longflag>
+      <description>Mask Image, if maskProcessingMode is ROI</description>
+      <label>Mask Image Volume</label>
+      <channel>input</channel>
+    </image>
+    <integer>
+      <name>backgroundSuppressingThreshold</name>
+      <longflag>backgroundSuppressingThreshold</longflag>
+      <description>Image threshold to suppress background. This sets a threshold used on the b0 image to remove background voxels from processing. Typically, values of 100 and 500 work well for Siemens and GE DTI data, respectively. Check your data particularly in the globus pallidus to make sure the brain tissue is not being eliminated with this threshold.</description>
+      <label>B0 Image Threshold</label>
+      <default>100</default>
+      <channel>input</channel>
+    </integer>
+
+    <boolean>
+      <name>resampleIsotropic</name>
+      <longflag>resampleIsotropic</longflag>
+      <description>Flag to resample to isotropic voxels. Enabling this feature is recommended if fiber tracking will be performed.</description>
+      <label>Resample To Isotropic Voxels</label>
+      <default>0</default>
+      <channel>input</channel>
+    </boolean>
+
+    <float>
+      <name>voxelSize</name>
+      <longflag>size</longflag>
+      <description>Isotropic voxel size to resample to</description>
+      <label>Isotropic Voxel Size</label>
+      <default>2.0</default>
+      <channel>input</channel>
+    </float>
+
+    <integer>
+      <name>b0Index</name>
+      <longflag>b0Index</longflag>
+      <description>Index in input vector index to extract</description>
+      <label>Vector Image B0 Index</label>
+      <default>0</default>
+      <channel>input</channel>
+    </integer>
+
+    <boolean>
+      <name>applyMeasurementFrame</name>
+      <longflag>applyMeasurementFrame</longflag>
+      <description>Flag to apply the measurement frame to the gradient directions</description>
+      <label>Apply Measurement Frame</label>
+      <default>0</default>
+      <channel>input</channel>
+    </boolean>
+
+    <integer-vector>
+      <name>ignoreIndex</name>
+      <longflag>ignoreIndex</longflag>
+      <description>Ignore diffusion gradient index. Used to remove specific gradient directions with artifacts.</description>
+      <label>Ignore Indices</label>
+      <channel>input</channel>
+    </integer-vector>
+
+  </parameters>
+  <parameters>
+    <label>Multiprocessing Control</label>
+    <integer>
+      <name>numberOfThreads</name>
+      <longflag deprecatedalias="debugNumberOfThreads" >numberOfThreads</longflag>
+      <label>Number Of Threads</label>
+      <description>Explicitly specify the maximum number of threads to use.</description>
+      <default>-1</default>
+    </integer>
+  </parameters>
+  </executable>

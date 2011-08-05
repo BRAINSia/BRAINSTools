@@ -1,0 +1,99 @@
+<!-- BRAINSCutProcessDescription, top level node.  Contains entire processing input -->
+<BRAINSCutProcessDescription>
+  <!--List of one or more DataSets -->
+  <DataSet Name="subjectName" Type="typeName" >
+  <!-- Name is some identifier to distinguish between datasets -->
+  <!-- Type = "Train" | "Atlas" | "Apply" -->
+
+  <!-- List of images, of different types -->
+  <Image Type="type" Filename="filename" />
+  <!-- Type = T1|T2|PD or whatever seems appropriate -->
+  <!-- Filename = file containing the image -->
+
+  <!-- List of Landmarks -->
+  <Landmark Type="type" Filename="filename" />
+  <!-- Type = Cerebellum | Talairach | Hippocampus etc -->
+  <!-- Filename = file containing landmarks -->
+
+  <!-- List of Masks -->
+  <Mask Type="type" Filename="filename" />
+  <!-- Type = l_hippo | r_hippo etc -->
+
+  <!-- List of Registrations 
+    -- For any run, only one is used, selected by
+    -- the RegistrationID field in the RegistrationParam element
+    -->
+  <Registration SubjToAtlasRegistration="filename" 
+                AtlasToSubjRegistration="filename"
+                LandmarkType="type" 
+                ID="id" />
+  <!-- SubjToAtlasRegistration,AtlasToRegistration are
+    -- images of 3d vectors defining deformation to register the current
+    -- images to the atlas image
+    -- LandmarkType = which landmarks to use
+    -- ID -- see above
+    -->
+  </DataSet>
+
+   <!-- List of Probability Map objects. These specify the outputs -->
+   <ProbabilityMap StructureID="id" Gaussian="num" Filename="filename" />
+   <!-- StructureID -- specifies the anatomical structure, must correspond
+     -- to the structure to a Mask type 
+     -- Gaussian -- floating pt number for Gaussian sigma
+     -- Filename -- output filename to store the probability map
+     -->
+   
+   <RegistrationParams Type="type" 
+                       ImageType="Type" 
+                       Command="Registratioin Command" 
+                       RegistrationID="id" />
+   <!-- Type = ICCDef, Thirion, MutualInformation
+     -- Command = the command to run to generate either an XFRM file (i.e. rigid transform)
+     --           or deformation field.
+     -- ImageType = which Image in the registration to use
+     -- RegistrationID = use to pick which registration in
+     --                  the datasets to use
+     -->
+
+   <NeuralNetParams MaskSmoothingValue="num"
+                    GaussianSize="num"
+                    GradientProfileSize="num"
+                    IrisSize="num"
+                    TrainingFilename="filename" />
+   <!-- MaskSmoothingValue = integer smoothing factor(?)
+     -- GaussianSize = integer pixel radius for gaussian blur
+     -- IrisSize = controls neighborhood for constructing vectors
+     -- TrainingFilename = output vector file
+     -->
+
+    <ANNParams VectorSize ="num"
+               Iterations="num"
+               MaximumVectorsPerEpoch="num"
+               EpochIterations="num"
+               ErrorInterval="num"
+               LearningRate="num"
+               MomentumRate="num" />
+    <!-- VectorSize = training vector size
+      -- Iterations = # of iterations
+      -- ErrorInterval = # of steps before error measure(?)
+      -- LearningRate = ??? ANN param
+      -- MomentumRate = ??? ANN param
+      -->
+
+    <SVMParams VectorSize="num"
+               GaussianSize="num" />
+    <!-- VectorSize = training vector size
+      -- GaussianSize = ??? SVM parameter
+      -->
+   
+    <ApplyModel CutOutThresh="0.05" 
+                CutOutGaussian="0.5" 
+                MaskThresh="127" 
+                DefDir="/scratch/kent/brains2/MACOSX/DEBUG/src/iplProg/XMLBRAINSCut/" 
+                />
+    <!-- CutOutThres =
+      -- CutOutGaussian =
+      -- MaskThresh =
+      -- DefDir=
+      -->
+</BRAINSCutProcessDescription>

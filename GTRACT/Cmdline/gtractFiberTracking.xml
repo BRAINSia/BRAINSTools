@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="utf-8" ?>
+  <executable>
+  <category>Diffusion.GTRACT</category>
+  <title>Fiber Tracking</title>
+
+  <description>This program implements four fiber tracking methods (Free, Streamline, GraphSearch, Guided). The output of the fiber tracking is vtkPolyData (i.e. Polylines) that can be loaded into Slicer3 for visualization. The poly data can be saved in either old VTK format files (.vtk) or in the new VTK XML format (.xml). The polylines contain point data that defines ther Tensor at each point along the fiber tract. This can then be used to rendered as glyphs in Slicer3 and can be used to define severeal scalar measures without referencing back to the anisotropy images. (1) Free tracking is a basic streamlines algorithm. This is a direct implementation of the method original proposed by Basser et al. The tracking follows the primarty eigenvector. The tracking begins with seed points in the starting region. Only those voxels above the specified anisotropy threshold in the starting region are used as seed points. Tracking terminates either as a result of maximum fiber length, low ansiotropy, or large curvature. This is a great way to explore your data. (2) The streamlines algorithm is a direct implementation of the method originally proposed by Basser et al. The tracking follows the primary eigenvector. The tracking begins with seed points in the starting region. Only those voxels above the specified anisotropy threshold in the starting region are used as seed points. Tracking terminates either by reaching the ending region or reaching some stopping criteria. Stopping criteria are specified using the following parameters: tracking threshold, curvature threshold, and max length. Only paths terminating in the ending region are kept in this method. The TEND algorithm proposed by Lazar et al. (Human Brain Mapping 18:306-321, 2003) has been instrumented. This can be enabled using the --useTend option while performing Streamlines tracking. This utilizes the entire diffusion tensor to deflect the incoming vector instead of simply following the primary eigenvector. The TEND parameters are set using the --tendF and --tendG options. (3) Graph Search tracking is the first step in the full GTRACT algorithm developed by Cheng et al. (NeuroImage 31(3): 1075-1085, 2006) for finding the tracks in a tensor image. This method was developed to generate fibers in a Tensor representation where crossing fibers occur. The graph search algorithm follows the primary eigenvector in non-ambigous regions and utilizes branching and a graph search algorithm in ambigous regions. Ambiguous tracking regions are defined based on two criteria: Branching Al Threshold (anisotropy values below this value and above the traching threshold) and Curvature Major Eigen (angles of the primary eigenvector direction and the current tracking direction). In regions that meet this criteria, two or three tracking paths are considered. The first is the standard primary eigenvector direction. The second is the seconadary eigenvector direction. This is based on the assumption that these regions may be prolate regions. If the Random Walk option is selected then a third direction is also considered. This direction is defined by a cone pointing from the current position to the centroid of the ending region. The interior angle of the cone is specified by the user with the Branch/Guide Angle parameter. A vector contained inside of the cone is selected at random and used as the third direction. This method can also utilize the TEND option where the primary tracking direction is that specified by the TEND method instead of the primary eigenvector. The parameter '--maximumBranchPoints' allows the tracking to have this number of branches being considered at a time. If this number of branch points is exceeded at any time, then the algorithm will revert back to a streamline alogrithm until the number of branches is reduced. This allows the user to constrain the computational complexity of the algorithm. (4) The second phase of the GTRACT algorithm is Guided Tracking. This method incorporates anatomical information about the track orientation using an initial guess of the fiber track. In the originally proposed GTRACT method, this would be created from the fibers resulting from the Graph Search tracking. However, in practice this can be created using any method and could be defined manually. To create the guide fiber the program gtractCreateGuideFiber can be used. This program will load a fiber tract that has been generated and create a centerline representation of the fiber tract (i.e. a single fiber). In this method, the fiber tracking follows the primary eigenvector direction unless it deviates from the guide fiber track by a angle greater than that specified by the '--guidedCurvatureThreshold' parameter. The user must specify the guide fiber when running this program.</description>
+  <acknowledgements>Funding for this version of the GTRACT program was provided by NIH/NINDS R01NS050568-01A2S1</acknowledgements>
+  <version>4.0.0</version>
+  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Modules:GTRACT</documentation-url>
+  <license>http://mri.radiology.uiowa.edu/copyright/GTRACT-Copyright.txt</license>
+  <contributor>This tool was developed by Vincent Magnotta, Greg Harris and Yongqiang Zhao.</contributor>
+
+
+  <parameters>
+    <label>Input Image Files</label>
+    <description>Parameters for specifying the diffusion tensor image set</description>
+
+    <image type="tensor" fileExtensions=".nrrd">
+      <name>inputTensorVolume</name>
+      <longflag>inputTensorVolume</longflag>
+      <description>Required (for Free, Streamline, GraphSearch, and Guided fiber tracking methods): input tensor image file name</description>
+      <label>Input Tensor Image Volume</label>
+      <channel>input</channel>
+    </image>
+
+    <image type="scalar" fileExtensions=".nrrd">
+      <name>inputAnisotropyVolume</name>
+      <longflag>inputAnisotropyVolume</longflag>
+      <description>Required (for Free, Streamline, GraphSearch, and Guided fiber tracking methods): input anisotropy image file name</description>
+      <label>Input Anisotropy Image Volume</label>
+      <channel>input</channel>
+    </image>
+
+    <image type="label" fileExtensions=".nrrd">
+      <name>inputStartingSeedsLabelMapVolume</name>
+      <longflag>inputStartingSeedsLabelMapVolume</longflag>
+      <description>Required (for Free, Streamline, GraphSearch, and Guided fiber tracking methods): input starting seeds LabelMap image file name</description>
+      <label>Input Starting Seeds LabelMap Volume</label>
+      <channel>input</channel>
+    </image>
+
+    <integer>
+      <name>startingSeedsLabel</name>
+      <longflag>startingSeedsLabel</longflag>
+      <description>Label value for Starting Seeds (required if Label number used to create seed point in Slicer was not 1)</description>
+      <label>Starting Seeds Label</label>
+      <default>1</default>
+      <channel>input</channel>
+    </integer>
+
+    <image type="label" fileExtensions=".nrrd">
+      <name>inputEndingSeedsLabelMapVolume</name>
+      <longflag>inputEndingSeedsLabelMapVolume</longflag>
+      <description>Required (for Streamline, GraphSearch, and Guided fiber tracking methods): input ending seeds LabelMap image file name</description>
+      <label>Input Ending Seeds LabelMap Volume</label>
+      <channel>input</channel>
+    </image>
+
+    <integer>
+      <name>endingSeedsLabel</name>
+      <longflag>endingSeedsLabel</longflag>
+      <description>Label value for Ending Seeds (required if Label number used to create seed point in Slicer was not 1)</description>
+      <label>Ending Seeds Label</label>
+      <default>1</default>
+      <channel>input</channel>
+    </integer>
+
+    <geometry type="fiberbundle" fileExtensions=".vtk">
+      <name>inputTract</name>
+      <longflag>inputTract</longflag>
+      <description>Required (for Guided fiber tracking method): guide fiber in vtkPolydata file containing one tract line.</description>
+      <label>Guide Tract </label>
+      <channel>input</channel>
+    </geometry>
+
+
+  </parameters>
+
+  <parameters>
+    <label>Output Files</label>
+    <description>Output file in which to store tract lines</description>
+
+    <geometry type="fiberbundle" fileExtensions=".vtk">
+      <name>outputTract</name>
+      <longflag>outputTract</longflag>
+      <description>Required (for Free, Streamline, GraphSearch, and Guided fiber tracking methods): name of output vtkPolydata file containing tract lines and the point data collected along them.</description>
+      <label>Output Tract Filename</label>
+      <channel>output</channel>
+    </geometry>
+
+    <boolean>
+      <name>writeXMLPolyDataFile</name>
+      <longflag>writeXMLPolyDataFile</longflag>
+      <description>Flag to make use of the XML format for vtkPolyData fiber tracts.</description>
+      <label>Write fiber tracts in XML format</label>
+      <default>0</default>
+      <channel>output</channel>
+    </boolean>
+
+  </parameters>
+
+  <parameters>
+    <label>Tensor Tracking Parameters</label>
+    <description>Input parameters controlling the track finding</description>
+
+    <string-enumeration>
+      <name>trackingMethod</name>
+      <longflag>trackingMethod</longflag>
+      <description>Fiber tracking Filter Type: Guided|Free|Streamline|GraphSearch</description>
+      <label>Fiber Tracking Filter Type</label>
+      <default>Guided</default>
+      <element>Guided</element>
+      <element>Free</element>
+      <element>Streamline</element>
+      <element>GraphSearch</element>
+    </string-enumeration>
+
+    <float>
+      <name>guidedCurvatureThreshold</name>
+      <longflag>guidedCurvatureThreshold</longflag>
+      <description>Guided Curvature Threshold (Degrees)</description>
+      <label>Guided Curvature Threshold</label>
+      <default>30.0</default>
+      <channel>input</channel>
+    </float>
+
+    <float>
+      <name>maximumGuideDistance</name>
+      <longflag>maximumGuideDistance</longflag>
+      <description>Maximum distance for using the guide fiber direction</description>
+      <label>Guide Distance</label>
+      <default>12.0</default>
+      <channel>input</channel>
+    </float>
+
+    <float>
+      <name>seedThreshold</name>
+      <longflag>seedThreshold</longflag>
+      <description>Anisotropy threshold for seed selection (recommended for Free fiber tracking)</description>
+      <label>Seed Threshold</label>
+      <default>0.40</default>
+      <channel>input</channel>
+    </float>
+
+    <float>
+      <name>trackingThreshold</name>
+      <longflag>trackingThreshold</longflag>
+      <description>Anisotropy threshold for fiber tracking (anisotropy values of the next point along the path)</description>
+      <label>Tracking Threshold</label>
+      <default>0.20</default>
+      <channel>input</channel>
+    </float>
+
+    <float>
+      <name>curvatureThreshold</name>
+      <longflag>curvatureThreshold</longflag>
+      <description>Curvature threshold in degrees (recommended for Free	fiber tracking)</description>
+      <label>Curvature Threshold</label>
+      <default>45.0</default>
+      <channel>input</channel>
+    </float>
+
+    <float>
+      <name>branchingThreshold</name>
+      <longflag>branchingThreshold</longflag>
+      <description>Anisotropy Branching threshold (recommended for GraphSearch fiber tracking method)</description>
+      <label>Branching Threshold</label>
+      <default>0.20</default>
+      <channel>input</channel>
+    </float>
+
+    <integer>
+      <name>maximumBranchPoints</name>
+      <longflag>maximumBranchPoints</longflag>
+      <description>Maximum branch points (recommended for GraphSearch fiber tracking method)</description>
+      <label>Maximum Branch Points</label>
+      <default>5</default>
+      <channel>input</channel>
+    </integer>
+
+    <boolean>
+      <name>useRandomWalk</name>
+      <longflag>useRandomWalk</longflag>
+      <description>Flag to use random walk.</description>
+      <label>Use Random Walk</label>
+      <default>0</default>
+      <channel>input</channel>
+    </boolean>
+
+    <integer>
+      <name>randomSeed</name>
+      <longflag>randomSeed</longflag>
+      <description>Random number generator seed</description>
+      <label>Random Seed</label>
+      <default>13579</default>
+      <channel>input</channel>
+    </integer>
+
+    <float>
+      <name>branchingAngle</name>
+      <longflag>branchingAngle</longflag>
+      <description>Branching angle in degrees (recommended for GraphSearch fiber tracking method)</description>
+      <label>Branching Angle</label>
+      <default>45.0</default>
+      <channel>input</channel>
+    </float>
+
+    <float>
+      <name>minimumLength</name>
+      <longflag>minimumLength</longflag>
+      <description>Minimum fiber length. Helpful for filtering invalid tracts.</description>
+      <label>Minimum Fiber Length</label>
+      <default>0.0</default>
+      <channel>input</channel>
+    </float>
+
+    <float>
+      <name>maximumLength</name>
+      <longflag>maximumLength</longflag>
+      <description>Maximum fiber length (voxels)</description>
+      <label>Maximum Fiber Length</label>
+      <default>125.0</default>
+      <channel>input</channel>
+    </float>
+
+    <float>
+      <name>stepSize</name>
+      <longflag>stepSize</longflag>
+      <description>Fiber tracking step size</description>
+      <label>Step Size</label>
+      <default>1.0</default>
+      <channel>input</channel>
+    </float>
+
+    <boolean>
+      <name>useLoopDetection</name>
+      <longflag>useLoopDetection</longflag>
+      <description>Flag to make use of loop detection.</description>
+      <label>Use Loop Detection</label>
+      <default>0</default>
+      <channel>input</channel>
+    </boolean>
+
+    <boolean>
+      <name>useTend</name>
+      <longflag>useTend</longflag>
+      <description>Flag to make use of Tend F and Tend G parameters.</description>
+      <label>Use Tensor Deflection</label>
+      <default>0</default>
+      <channel>input</channel>
+    </boolean>
+
+    <float>
+      <name>tendF</name>
+      <longflag>tendF</longflag>
+      <description>Tend F parameter</description>
+      <label>Tend F</label>
+      <default>0.5</default>
+      <channel>input</channel>
+    </float>
+
+    <float>
+      <name>tendG</name>
+      <longflag>tendG</longflag>
+      <description>Tend G parameter</description>
+      <label>Tend G</label>
+      <default>0.5</default>
+      <channel>input</channel>
+    </float>
+
+    
+  </parameters>
+  <parameters>
+    <label>Multiprocessing Control</label>
+    <integer>
+      <name>numberOfThreads</name>
+      <longflag deprecatedalias="debugNumberOfThreads" >numberOfThreads</longflag>
+      <label>Number Of Threads</label>
+      <description>Explicitly specify the maximum number of threads to use.</description>
+      <default>-1</default>
+    </integer>
+  </parameters>
+  </executable>

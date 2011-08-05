@@ -1,0 +1,136 @@
+<!-- ==========================================================================
+
+  - BRAINSCut Test XML File 
+  - Author : Eun Young( Regina ) Kim
+  - 2011 Feb
+
+    @CMAKE_RUNTIME_OUTPUT_DIRECTORY@
+
+
+    TODO :: change BRAINSCut Binary Diretory
+    TODO :: change BRAINSCut Test Data Directory
+    
+    ========================================================================== -->
+
+<!-- This is the part holding everything -->
+<AutoSegProcessDescription>
+
+  <!-- ========================================================================== 
+        Registration Description
+        TODO:: Change BRAINSCut Registration Script to Python
+       ========================================================================== -->
+  <RegistrationParams
+    ImageTypeToUse="T1"
+    ID="BSpline"/>
+  <!-- ========================================================================== 
+        Template Data Scan Description
+       ========================================================================== -->
+  <DataSet Name="template"  Type="Atlas" >
+    <Image Type="T1" Filename="@BRAINSCut_SOURCE_DIR@/TestSuite/TestData/Input/template_t1.nii.gz"/>
+    <Image Type="T2" Filename="na" />
+  </DataSet>
+
+  <!-- ========================================================================== 
+        Probability Map  Description
+       ========================================================================== -->
+  <ProbabilityMap 
+         StructureID="mask1"
+         Gaussian="1.0"
+         GenerateVector="true"
+         Filename="@CMAKE_CURRENT_BINARY_DIR@/Mask1ProbabilityMap.nii.gz"
+         rho="@CMAKE_CURRENT_BINARY_DIR@/rho.nii.gz"
+         phi="@CMAKE_CURRENT_BINARY_DIR@/phi.nii.gz"
+         theta="@CMAKE_CURRENT_BINARY_DIR@/theta.nii.gz"
+  />
+
+  <!-- ========================================================================== 
+        ANN Description
+       ========================================================================== -->
+  <ANNParams        Iterations             = "10"
+                    MaximumVectorsPerEpoch = "10000"
+                    EpochIterations        = "100"
+                    ErrorInterval          = "1"
+                    DesiredError           = "0.000001"
+                    NumberOfHiddenNodes    = "60"
+                    ActivationSlope        = "1.0"
+                    ActivationMinMax       = "1.0"
+   />
+
+  <!-- ========================================================================== 
+        ANN Description
+       ========================================================================== -->
+   <NeuralNetParams MaskSmoothingValue     = "0.0" 
+                    GradientProfileSize    = "1"
+                    TrainingVectorFilename = "@CMAKE_CURRENT_BINARY_DIR@/trainVectorHE.txt"
+                    TrainingModelFilename  = "@CMAKE_CURRENT_BINARY_DIR@/trainModel.txt"
+                    TestVectorFilename     = "na" 
+   />
+
+  <!-- ========================================================================== 
+        ANN Description
+       ========================================================================== -->
+    <ApplyModel         CutOutThresh           = "0.05" 
+                        MaskThresh             = "0.01" 
+    />
+    <!--                    CutOutGaussian         = "0" this does not exist anymore! -->
+
+  <!-- ========================================================================== 
+        Train Data Scan Description
+       ========================================================================== -->
+  <DataSet Name="Scan1"  Type="Train" >
+    <Image Type="T1" Filename="@BRAINSCut_SOURCE_DIR@/TestSuite/TestData/Input/scan1T1.nii.gz"/>
+    <Image Type="T2" Filename="@BRAINSCut_SOURCE_DIR@/TestSuite/TestData/Input/scan1T2.nii.gz"/>
+    <Mask Type="mask1"  Filename="@BRAINSCut_SOURCE_DIR@/TestSuite/TestData/Input/scan1Mask1.nii.gz"/>
+    <Registration 
+      SubjToAtlasRegistrationFilename="@CMAKE_CURRENT_BINARY_DIR@/SubjectToAtlasScan1.mat"
+      AtlasToSubjRegistrationFilename="@CMAKE_CURRENT_BINARY_DIR@/AtlasToSubjectScan1.mat" 
+      ID="BSpline"
+      />
+  </DataSet>
+
+  <DataSet Name="Scan2"  Type="Train" >
+    <Image Type="T1" Filename="@BRAINSCut_SOURCE_DIR@/TestSuite/TestData/Input/scan2T1.nii.gz"/>
+    <Image Type="T2" Filename="@BRAINSCut_SOURCE_DIR@/TestSuite/TestData/Input/scan2T2.nii.gz"/>
+    <Mask Type="mask1"  Filename="@BRAINSCut_SOURCE_DIR@/TestSuite/TestData/Input/scan2Mask1.nii.gz"/>
+    <Registration 
+      SubjToAtlasRegistrationFilename="@CMAKE_CURRENT_BINARY_DIR@/SubjectToAtlasScan2.mat"
+      AtlasToSubjRegistrationFilename="@CMAKE_CURRENT_BINARY_DIR@/AtlasToSubjectScan2.mat" 
+      AtlasBinaryFilename="na"
+      SubjectBinaryFilename="na"
+      ID="BSpline"
+      />
+  </DataSet>
+
+
+  <!-- ========================================================================== 
+        Apply Data Scan Description
+       ========================================================================== -->
+    <DataSet Name="Scan3"  Type="Apply" 
+      OutputDir="@CMAKE_CURRENT_BINARY_DIR@/MaskOutputDir">
+    <Image Type="T1" Filename="@BRAINSCut_SOURCE_DIR@/TestSuite/TestData/Input/scan3T1.nii.gz"/>
+    <Image Type="T2" Filename="@BRAINSCut_SOURCE_DIR@/TestSuite/TestData/Input/scan3T2.nii.gz"/>
+    <Mask Type="mask1"  Filename="@CMAKE_CURRENT_BINARY_DIR@/scan3Mask1.nii.gz"/>
+    <Registration 
+      SubjToAtlasRegistrationFilename="@CMAKE_CURRENT_BINARY_DIR@/SubjectToAtlasScan3.mat"
+      AtlasToSubjRegistrationFilename="@CMAKE_CURRENT_BINARY_DIR@/AtlasToSubjectScan3.mat" 
+      AtlasBinaryFilename="NA"
+      SubjectBinaryFilename="NA"
+      ID="BSpline"
+      />
+  </DataSet>
+  <DataSet Name="Scan4"  Type="Apply" 
+             OutputDir="@BRAINSCut_SOURCE_DIR@/TestSuite/TestData/EutputDir">
+    <Image Type="T1" Filename="@BRAINSCut_SOURCE_DIR@/TestSuite/TestData/Input/scan4T1.nii.gz"/>
+    <Image Type="T2" Filename="@BRAINSCut_SOURCE_DIR@/TestSuite/TestData/Input/scan4T2.nii.gz"/>
+    <Registration 
+      SubjToAtlasRegistrationFilename="@CMAKE_CURRENT_BINARY_DIR@/SubjectToAtlasScan4.mat"
+      AtlasToSubjRegistrationFilename="@CMAKE_CURRENT_BINARY_DIR@/AtlasToSubjectScan4.mat" 
+      AtlasBinaryFilename="NA"
+      SubjectBinaryFilename="NA"
+      ID="BSpline"
+      />
+  </DataSet>
+
+</AutoSegProcessDescription>
+
+

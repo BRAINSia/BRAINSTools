@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>FeatureImages</category>
+  <title>GenerateSummedGradient</title>
+  <description>Automatic FeatureImages using neural networks</description>
+  <version> 1.0</version>
+  <documentation-url></documentation-url>
+  <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt </license>
+  <contributor>Greg Harris, Eun Young Kim</contributor>
+  <acknowledgements></acknowledgements>
+ <parameters>
+   <image>
+    <name>inputVolume</name>
+    <longflag>inputVolume</longflag>
+    <description>input volume 1, usally t1 image </description>
+    <channel>input</channel>
+   </image>
+   <file>
+      <name>outputVolume</name>
+      <longflag>outputVolume</longflag>
+      <description>(required) output file name </description>
+      <channel>output</channel>
+   </file>
+   <double>
+     <name>lowerBoundOfOutputVolume</name>
+     <label>lowerBoundOfOutputVolume</label>
+     <longflag>lowerBoundOfOutputVolume</longflag>
+     <description></description>
+     <default>1000</default>
+   </double>
+   <double>
+     <name>upperBoundOfOutputVolume</name>
+     <label>upperBoundOfOutputVolume</label>
+     <longflag>upperBoundOfOutputVolume</longflag>
+     <description></description>
+     <default>2000</default>
+   </double>
+</parameters>
+</executable>

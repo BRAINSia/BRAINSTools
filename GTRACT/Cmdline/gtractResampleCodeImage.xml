@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8" ?>
+  <executable>
+  <category>Diffusion.GTRACT</category>
+  <title>Resample Code Image</title>
+
+  <description>This program will resample a short integer code image using either the Rigid or Inverse-B-Spline transform.  The reference image is the DTI tensor anisotropy image space, and the input code image is in anatomical space.</description>
+  <acknowledgements>Funding for this version of the GTRACT program was provided by NIH/NINDS R01NS050568-01A2S1</acknowledgements>
+  <version>4.0.0</version>
+  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Modules:GTRACT</documentation-url>
+  <license>http://mri.radiology.uiowa.edu/copyright/GTRACT-Copyright.txt</license>
+  <contributor>This tool was developed by Vincent Magnotta and Greg Harris.</contributor>
+
+  <parameters>
+    <label>Input Parameters</label>
+    <description>Parameters for specifying the code image, the transform filename, the transform type, and the standard image (whose characteristics will be cloned).</description>
+
+    <image type="label">
+      <name>inputCodeVolume</name>
+      <longflag>inputCodeVolume</longflag>
+      <description>Required: input file containing the code image</description>
+      <label>Input Code Image Volume</label>
+      <channel>input</channel>
+    </image>
+
+    <image type="scalar">
+      <name>inputReferenceVolume</name>
+      <longflag>inputReferenceVolume</longflag>
+      <description>Required: input file containing the standard image to clone the characteristics of.</description>
+      <label>Input Reference Image Volume</label>
+      <channel>input</channel>
+    </image>
+
+    <transform fileExtensions=".mat">
+      <name>inputTransform</name>
+      <longflag>inputTransform</longflag>
+      <description>Required: input Rigid or Inverse-B-Spline transform file name</description>
+      <label>Input Transform</label>
+      <channel>input</channel>
+    </transform>
+
+    <string-enumeration>
+      <name>transformType</name>
+      <longflag>transformType</longflag>
+      <description>Transform type: Rigid or Inverse-B-Spline</description>
+      <label>Transform Type</label>
+      <default>Inverse-B-Spline</default>
+      <element>Rigid</element>
+      <element>Affine</element>
+      <element>B-Spline</element>
+      <element>Inverse-B-Spline</element>
+      <element>None</element>
+    </string-enumeration>
+  </parameters>
+
+  <parameters>
+    <label>Output File</label>
+    <description>Output file from resampling the input code image</description>
+
+    <image type="label" fileExtensions=".nrrd">
+      <name>outputVolume</name>
+      <longflag>outputVolume</longflag>
+      <description>Required: name of output NRRD file containing the resampled code image in acquisition space.</description>
+      <label>Output Code Image Volume</label>
+      <channel>output</channel>
+    </image>
+  </parameters>
+  <parameters>
+    <label>Multiprocessing Control</label>
+    <integer>
+      <name>numberOfThreads</name>
+      <longflag deprecatedalias="debugNumberOfThreads" >numberOfThreads</longflag>
+      <label>Number Of Threads</label>
+      <description>Explicitly specify the maximum number of threads to use.</description>
+      <default>-1</default>
+    </integer>
+  </parameters>
+
+  </executable>

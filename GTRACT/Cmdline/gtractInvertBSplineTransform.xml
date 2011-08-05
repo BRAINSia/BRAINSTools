@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8" ?>
+  <executable>
+  <category>Diffusion.GTRACT</category>
+  <title>B-Spline Transform Inversion</title>
+
+  <description>This program will invert a B-Spline transform using a thin-plate spline approximation.</description>
+  <acknowledgements>Funding for this version of the GTRACT program was provided by NIH/NINDS R01NS050568-01A2S1</acknowledgements>
+  <version>4.0.0</version>
+  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Modules:GTRACT</documentation-url>
+  <license>http://mri.radiology.uiowa.edu/copyright/GTRACT-Copyright.txt</license>
+  <contributor>This tool was developed by Vincent Magnotta and Greg Harris.</contributor>
+
+  <parameters>
+    <label>Input Image Files</label>
+    <description>Parameters for specifying the B-Spline transform and the space to invert it in.</description>
+
+    <image fileExtensions=".nrrd">
+      <name>inputReferenceVolume</name>
+      <longflag>inputReferenceVolume</longflag>
+      <description>Required: input image file name to exemplify the anatomical space to interpolate over.</description>
+      <label>Input Reference Image Volume</label>
+      <channel>input</channel>
+    </image>
+
+    <transform fileExtensions=".mat" type="bspline">
+      <name>inputTransform</name>
+      <longflag>inputTransform</longflag>
+      <description>Required: input B-Spline transform file name</description>
+      <label>Input B-Spline Transform</label>
+      <channel>input</channel>
+    </transform>
+
+  </parameters>
+
+  <parameters>
+    <label>Output Image Files</label>
+    <description>Output file from conversion from Dicom to Nrrd</description>
+
+    <transform fileExtensions=".mat" type="bspline">
+      <name>outputTransform</name>
+      <longflag>outputTransform</longflag>
+      <description>Required: output transform file name</description>
+      <label>Output Transform</label>
+      <channel>output</channel>
+    </transform>
+
+  </parameters>
+
+  <parameters>
+    <label>Transform Conversion Parameters</label>
+    <description>Input parameters controlling the approximation of a B-Spline inverse by a thin-plate spline.</description>
+
+    <integer-vector>
+      <name>landmarkDensity</name>
+      <longflag>landmarkDensity</longflag>
+      <description>Number of landmark subdivisions in all 3 directions</description>
+      <label>Landmark Density</label>
+      <default>8,8,8</default>
+      <channel>input</channel>
+    </integer-vector>
+
+    
+  </parameters>
+  <parameters>
+    <label>Multiprocessing Control</label>
+    <integer>
+      <name>numberOfThreads</name>
+      <longflag deprecatedalias="debugNumberOfThreads" >numberOfThreads</longflag>
+      <label>Number Of Threads</label>
+      <description>Explicitly specify the maximum number of threads to use.</description>
+      <default>-1</default>
+    </integer>
+  </parameters>
+  </executable>

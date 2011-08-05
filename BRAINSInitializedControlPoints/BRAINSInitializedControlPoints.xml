@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>
+  Converters
+  </category>
+  <title>
+  BRAINSInitializedControlPoints
+  </title>
+  <description>
+  Outputs bspline control points as landmarks
+  </description>
+  <version>0.1.0.$Revision: 916 $(alpha)</version>
+  <documentation-url></documentation-url>
+  <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt </license>
+  <contributor>Mark Scully</contributor>
+<acknowledgements>
+This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.  Additional support for Mark Scully and Hans Johnson at the University of Iowa.
+</acknowledgements>
+
+  <parameters>
+    <label>IO</label>
+    <description>Input/output parameters</description>
+
+    <image>
+      <name>inputVolume</name>
+      <longflag>--inputVolume</longflag>
+      <label>Input Volume</label>
+      <channel>input</channel>
+      <description>Input Volume</description>
+    </image>
+
+    <image>
+      <name>outputVolume</name>
+      <longflag>--outputVolume</longflag>
+      <label>Output Volume</label>
+      <channel>output</channel>
+      <description>Output Volume</description>
+    </image>
+
+    <integer-vector>
+      <name>splineGridSize</name>
+      <longflag>splineGridSize</longflag>
+      <label>Number Of Grid Subdivisions</label>
+      <description>The number of subdivisions of the BSpline Grid to be centered on the image space.  Each dimension must have at least 3 subdivisions for the BSpline to be correctly computed. </description>
+      <default>14,10,12</default>
+    </integer-vector>
+
+    <integer-vector>
+      <name>permuteOrder</name>
+      <longflag>permuteOrder</longflag>
+      <label>permuteOrder</label>
+      <description>The permutation order for the images.  The default is 0,1,2 (i.e. no permutation)</description>
+      <default>0,1,2</default>
+    </integer-vector>
+
+    <string>
+      <name>outputLandmarksFile</name>
+      <longflag>--outputLandmarksFile</longflag>
+      <label>Output Landmarks Filename</label>
+      <channel>output</channel>
+      <description>Output filename</description>
+    </string>
+
+  </parameters>
+  <parameters advanced="true">
+    <label>Multiprocessing Control</label>
+    <integer>
+      <name>numberOfThreads</name>
+      <longflag deprecatedalias="debugNumberOfThreads" >numberOfThreads</longflag>
+      <label>Number Of Threads</label>
+      <description>Explicitly specify the maximum number of threads to use.</description>
+      <default>-1</default>
+    </integer>
+  </parameters>
+</executable>

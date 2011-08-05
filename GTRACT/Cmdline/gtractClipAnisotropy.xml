@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8" ?>
+  <executable>
+  <category>Diffusion.GTRACT</category>
+  <title>Clip Anisotropy</title>
+
+  <description>This program will zero the first and/or last slice of an anisotropy image, creating a clipped anisotropy image.</description>
+  <acknowledgements>Funding for this version of the GTRACT program was provided by NIH/NINDS R01NS050568-01A2S1</acknowledgements>
+  <version>4.0.0</version>
+  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Modules:GTRACT</documentation-url>
+  <license>http://mri.radiology.uiowa.edu/copyright/GTRACT-Copyright.txt</license>
+  <contributor>This tool was developed by Vincent Magnotta and Greg Harris.</contributor>
+
+
+  <parameters>
+    <label>Image Files and Parameters</label>
+    <description>Parameters for clipping an anisotropy image</description>
+
+    <image type="scalar" fileExtensions=".nrrd">
+      <name>inputVolume</name>
+      <longflag>inputVolume</longflag>
+      <description>Required: input image file name</description>
+      <label>Input Image Volume</label>
+      <channel>input</channel>
+    </image>
+
+    <image type="scalar" fileExtensions=".nrrd">
+      <name>outputVolume</name>
+      <longflag>outputVolume</longflag>
+      <description>Required: name of output NRRD file containing the clipped anisotropy image</description>
+      <label>Output Image Volume</label>
+      <channel>output</channel>
+    </image>
+
+    <boolean>
+      <name>clipFirstSlice</name>
+      <longflag>clipFirstSlice</longflag>
+      <description>Clip the first slice of the anisotropy image</description>
+      <label>Clip First Slice</label>
+      <default>0</default>
+      <channel>input</channel>
+    </boolean>
+
+    <boolean>
+      <name>clipLastSlice</name>
+      <longflag>clipLastSlice</longflag>
+      <description>Clip the last slice of the anisotropy image</description>
+      <label>Clip Last Slice</label>
+      <default>0</default>
+      <channel>input</channel>
+    </boolean>
+
+  </parameters>
+  <parameters>
+    <label>Multiprocessing Control</label>
+    <integer>
+      <name>numberOfThreads</name>
+      <longflag deprecatedalias="debugNumberOfThreads" >numberOfThreads</longflag>
+      <label>Number Of Threads</label>
+      <description>Explicitly specify the maximum number of threads to use.</description>
+      <default>-1</default>
+    </integer>
+  </parameters>
+  </executable>

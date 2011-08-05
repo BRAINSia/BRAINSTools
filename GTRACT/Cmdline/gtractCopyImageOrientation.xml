@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8" ?>
+  <executable>
+  <category>Diffusion.GTRACT</category>
+  <title>Copy Image Orientation</title>
+
+  <description>This program will copy the orientation from the reference image into the moving image. Currently, the registration process requires that the diffusion weighted images and the anatomical images have the same image orientation (i.e. Axial, Coronal, Sagittal). It is suggested that you copy the image orientation from the diffusion weighted images and apply this to the anatomical image. This image can be subsequently removed after the registration step is complete. We anticipate that this limitation will be removed in future versions of the registration programs.</description>
+  <acknowledgements>Funding for this version of the GTRACT program was provided by NIH/NINDS R01NS050568-01A2S1</acknowledgements>
+  <version>4.0.0</version>
+  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Modules:GTRACT</documentation-url>
+  <license>http://mri.radiology.uiowa.edu/copyright/GTRACT-Copyright.txt</license>
+  <contributor>This tool was developed by Vincent Magnotta and Greg Harris.</contributor>
+
+
+  <parameters>
+    <label>Input Parameters</label>
+    <description>Parameters for specifying the input image and the reference image to clone the orientation of the reference image into the input image.</description>
+
+    <image type="scalar" fileExtensions=".nrrd">
+      <name>inputVolume</name>
+      <longflag>inputVolume</longflag>
+      <description>Required: input file containing the signed short image to reorient without resampling.</description>
+      <label>Input Image Volume</label>
+      <channel>input</channel>
+    </image>
+
+    <image type="diffusion-weighted" fileExtensions=".nrrd">
+      <name>inputReferenceVolume</name>
+      <longflag>inputReferenceVolume</longflag>
+      <description>Required: input file containing orietation that will be cloned.</description>
+      <label>Input Reference Image Volume</label>
+      <channel>input</channel>
+    </image>
+  </parameters>
+
+  <parameters>
+    <label>Output File</label>
+    <description>Output file from resampling the input specimen image</description>
+
+    <image type="scalar" fileExtensions=".nrrd">
+      <name>outputVolume</name>
+      <longflag>outputVolume</longflag>
+      <description>Required: name of output NRRD or Nifti file containing the reoriented image in reference image space.</description>
+      <label>Output Code Image Volume</label>
+      <channel>output</channel>
+    </image>
+    
+  </parameters>
+
+  <parameters>
+    <label>Multiprocessing Control</label>
+    <integer>
+      <name>numberOfThreads</name>
+      <longflag deprecatedalias="debugNumberOfThreads" >numberOfThreads</longflag>
+      <label>Number Of Threads</label>
+      <description>Explicitly specify the maximum number of threads to use.</description>
+      <default>-1</default>
+    </integer>
+  </parameters>
+  </executable>

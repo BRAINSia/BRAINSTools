@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8" ?>
+  <executable>
+  <category>Diffusion.GTRACT</category>
+  <title>Resample Anisotropy</title>
+
+  <description>This program will resample a floating point image using either the Rigid or B-Spline transform. You may want to save the aligned B0 image after each of the anisotropy map co-registration steps with the anatomical image to check the registration quality with another tool.</description>
+  <acknowledgements>Funding for this version of the GTRACT program was provided by NIH/NINDS R01NS050568-01A2S1</acknowledgements>
+  <version>4.0.0</version>
+  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Modules:GTRACT</documentation-url>
+  <license>http://mri.radiology.uiowa.edu/copyright/GTRACT-Copyright.txt</license>
+  <contributor>This tool was developed by Vincent Magnotta and Greg Harris.</contributor>
+
+
+  <parameters>
+    <label>Input Parameters</label>
+    <description>Parameters for specifying the anisotropy image, the transform filename, the transform type, and the anatomical image (whose characteristics will be cloned).</description>
+
+    <image type="scalar">
+      <name>inputAnisotropyVolume</name>
+      <longflag>inputAnisotropyVolume</longflag>
+      <description>Required: input file containing the anisotropy image</description>
+      <label>Input Anisotropy Image Volume</label>
+      <channel>input</channel>
+    </image>
+
+    <image type="scalar">
+      <name>inputAnatomicalVolume</name>
+      <longflag>inputAnatomicalVolume</longflag>
+      <description>Required: input file containing the anatomical image whose characteristics will be cloned.</description>
+      <label>Input Anatomical Image Volume</label>
+      <channel>input</channel>
+    </image>
+
+    <transform fileExtensions=".mat">
+      <name>inputTransform</name>
+      <longflag>inputTransform</longflag>
+      <description>Required: input Rigid OR Bspline transform file name</description>
+      <label>Input Transform</label>
+      <channel>input</channel>
+    </transform>
+
+    <string-enumeration>
+      <name>transformType</name>
+      <longflag>transformType</longflag>
+      <description>Transform type: Rigid, B-Spline</description>
+      <label>Transform Type</label>
+      <default>Rigid</default>
+      <element>Rigid</element>
+      <element>B-Spline</element>
+      <channel>input</channel>
+    </string-enumeration>
+  </parameters>
+
+  <parameters>
+    <label>Output File</label>
+    <description>Output file from resampling the input 3D float image</description>
+
+    <image type="scalar" fileExtensions=".nrrd">
+      <name>outputVolume</name>
+      <longflag>outputVolume</longflag>
+      <description>Required: name of output NRRD file containing the resampled transformed anisotropy image.</description>
+      <label>Output Anisotropy Image Volume</label>
+      <channel>output</channel>
+    </image>
+  </parameters>
+  <parameters>
+    <label>Multiprocessing Control</label>
+    <integer>
+      <name>numberOfThreads</name>
+      <longflag deprecatedalias="debugNumberOfThreads" >numberOfThreads</longflag>
+      <label>Number Of Threads</label>
+      <description>Explicitly specify the maximum number of threads to use.</description>
+      <default>-1</default>
+    </integer>
+  </parameters>
+
+  </executable>

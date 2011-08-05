@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8" ?>
+  <executable>
+  <category>Diffusion.GTRACT</category>
+  <title>Coregister B-Values</title>
+
+  <description>This step should be performed after converting DWI scans from DICOM to NRRD format. This program will register all gradients in a NRRD diffusion weighted 4D vector image (moving image) to a specified index in a fixed image. It also supports co-registration with a T2 weighted image or field map in the same plane as the DWI data. The fixed image for the registration should be a b0 image. A mutual information metric cost function is used for the registration because of the differences in signal intensity as a result of the diffusion gradients. The full affine allows the registration procedure to correct for eddy current distortions that may exist in the data. If the eddyCurrentCorrection is enabled, relaxationFactor (0.25) and maximumStepSize (0.1) should be adjusted.</description>
+  <acknowledgements>Funding for this version of the GTRACT program was provided by NIH/NINDS R01NS050568-01A2S1</acknowledgements>
+  <version>4.0.0</version>
+  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Modules:GTRACT</documentation-url>
+  <license>http://mri.radiology.uiowa.edu/copyright/GTRACT-Copyright.txt</license>
+  <contributor>This tool was developed by Vincent Magnotta and Greg Harris.</contributor>
+
+
+  <parameters>
+    <label>Input Image Parameters</label>
+    <description>Parameters for specifying the diffusion tensor images to fit</description>
+
+    <image type="diffusion-weighted" fileExtensions=".nrrd">
+      <name>movingVolume</name>
+      <longflag>movingVolume</longflag>
+      <description>Required: input moving image file name. In order to register gradients within a scan to its first gradient, set the movingVolume and fixedVolume as the same image.</description>
+      <label>Moving Image Volume</label>
+      <channel>input</channel>
+    </image>
+
+    <image fileExtensions=".nrrd">
+      <name>fixedVolume</name>
+      <longflag>fixedVolume</longflag>
+      <description>Required: input fixed image file name. It is recommended that this image should either contain or be a b0 image.</description>
+      <label>Fixed Image Volume</label>
+      <channel>input</channel>
+    </image>
+
+    <integer>
+      <name>fixedVolumeIndex</name>
+      <longflag>fixedVolumeIndex</longflag>
+      <description>Index in the fixed image for registration. It is recommended that this image should be a b0 image.</description>
+      <label>Fixed Image Index</label>
+      <default>0</default>
+      <channel>input</channel>
+    </integer>
+
+  </parameters>
+
+  <parameters>
+    <label>Output Files</label>
+    <description>Output file from gtractCoregBvalues</description>
+
+    <image type="diffusion-weighted" fileExtensions=".nrrd">
+      <name>outputVolume</name>
+      <longflag>outputVolume</longflag>
+      <description>Required: name of output NRRD file containing moving images individually resampled and fit to the specified fixed image index.</description>
+      <label>Output Image Volume</label>
+      <channel>output</channel>
+    </image>
+
+    <transform fileExtensions=".mat">
+      <name>outputTransform</name>
+      <longflag>outputTransform</longflag>
+      <description>Registration 3D transforms concatenated in a single output file.  There are no tools that can use this, but can be used for debugging purposes.</description>
+      <label>Output Transform</label>
+      <channel>output</channel>
+    </transform>
+
+  </parameters>
+
+  <parameters>
+    <label>Registration Parameters</label>
+    <description>Input registration parameters controlling the fit</description>
+
+    <boolean>
+      <name>eddyCurrentCorrection</name>
+      <longflag>eddyCurrentCorrection</longflag>
+      <description>Flag to perform eddy current corection in addition to motion correction (recommended)</description>
+      <label>Eddy Current Correction</label>
+      <default>0</default>
+      <channel>input</channel>
+    </boolean>
+
+    <integer>
+      <name>numberOfIterations</name>
+      <longflag>numberOfIterations</longflag>
+      <description>Number of iterations in each 3D fit</description>
+      <label>Number Of Iterations</label>
+      <default>1000</default>
+      <channel>input</channel>
+    </integer>
+
+    <integer>
+      <name>numberOfSpatialSamples</name>
+      <longflag>numberOfSpatialSamples</longflag>
+      <description>Number of voxels sampled for mutual information computation in each 3D fit step</description>
+      <label>Number Of Samples</label>
+      <default>100000</default>
+      <channel>input</channel>
+    </integer>
+
+    <float>
+      <name>relaxationFactor</name>
+      <longflag>relaxationFactor</longflag>
+      <description>Fraction of gradient from Jacobian to attempt to move in each 3D fit step (adjust when eddyCurrentCorrection is enabled; suggested value = 0.25)</description>
+      <label>Relaxation Factor</label>
+      <default>0.5</default>
+      <channel>input</channel>
+    </float>
+
+    <float>
+      <name>maximumStepSize</name>
+      <longflag>maximumStepSize</longflag>
+      <description>Maximum permitted step size to move in each 3D fit step (adjust when eddyCurrentCorrection is enabled; suggested value = 0.1)</description>
+      <label>Maximum Step Size</label>
+      <default>0.2</default>
+      <channel>input</channel>
+    </float>
+
+    <float>
+      <name>minimumStepSize</name>
+      <longflag>minimumStepSize</longflag>
+      <description>Minimum required step size to move in each 3D fit step without converging -- decrease this to make the fit more exacting</description>
+      <label>Minimum Step Size</label>
+      <default>0.0001</default>
+      <channel>input</channel>
+    </float>
+
+    <float>
+      <name>spatialScale</name>
+      <longflag>spatialScale</longflag>
+      <description>How much to scale up changes in position compared to unit rotational changes in radians -- decrease this to put more rotation in the fit</description>
+      <label>Translation Scale</label>
+      <default>1000.0</default>
+      <channel>input</channel>
+    </float>
+
+     <boolean>
+      <name>registerB0Only</name>
+      <longflag>registerB0Only</longflag>
+      <description>Register the B0 images only</description>
+      <label>B0 Only Registration</label>
+      <default>0</default>
+      <channel>input</channel>
+    </boolean>
+
+    <integer>
+      <name>debugLevel</name>
+      <label>Debug option</label>
+      <description>Display debug messages, and produce debug intermediate results.  0=OFF, 1=Minimal, 10=Maximum debugging.</description>
+      <longflag deprecatedalias="debuglevel">--debugLevel</longflag>
+      <default>0</default>
+    </integer>
+
+    
+  </parameters>
+  <parameters>
+    <label>Multiprocessing Control</label>
+    <integer>
+      <name>numberOfThreads</name>
+      <longflag deprecatedalias="debugNumberOfThreads" >numberOfThreads</longflag>
+      <label>Number Of Threads</label>
+      <description>Explicitly specify the maximum number of threads to use.</description>
+      <default>-1</default>
+    </integer>
+  </parameters>
+  </executable>

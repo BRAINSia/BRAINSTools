@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8" ?>
+  <executable>
+  <category>Diffusion.GTRACT</category>
+  <title>Rigid Transform Inversion</title>
+
+  <description>This program will invert a Rigid transform.</description>
+  <acknowledgements>Funding for this version of the GTRACT program was provided by NIH/NINDS R01NS050568-01A2S1</acknowledgements>
+  <version>4.0.0</version>
+  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Modules:GTRACT</documentation-url>
+  <license>http://mri.radiology.uiowa.edu/copyright/GTRACT-Copyright.txt</license>
+  <contributor>This tool was developed by Vincent Magnotta and Greg Harris.</contributor>
+
+
+  <parameters>
+    <label>Input Image Files</label>
+    <description>Parameters for specifying the rigid transform</description>
+
+    <transform fileExtensions=".mat" type="linear">
+      <name>inputTransform</name>
+      <longflag>inputTransform</longflag>
+      <description>Required: input rigid transform file name</description>
+      <label>Input Rigid Transform</label>
+      <channel>input</channel>
+    </transform>
+
+  </parameters>
+
+  <parameters>
+    <label>Output Image Files</label>
+    <description>Output file for inverse transform</description>
+
+    <transform fileExtensions=".mat" type="linear">
+      <name>outputTransform</name>
+      <longflag>outputTransform</longflag>
+      <description>Required: output transform file name</description>
+      <label>Output Transform</label>
+      <channel>output</channel>
+    </transform>
+
+  </parameters>
+  <parameters>
+    <label>Multiprocessing Control</label>
+    <integer>
+      <name>numberOfThreads</name>
+      <longflag deprecatedalias="debugNumberOfThreads" >numberOfThreads</longflag>
+      <label>Number Of Threads</label>
+      <description>Explicitly specify the maximum number of threads to use.</description>
+      <default>-1</default>
+    </integer>
+  </parameters>
+  </executable>

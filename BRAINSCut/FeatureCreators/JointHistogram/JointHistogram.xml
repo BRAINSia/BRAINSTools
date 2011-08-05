@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>BRAINS.Utilities</category>
+  <title>Write Out Image Intensities
+  </title>
+  <description>
+    For Analysis
+  </description>
+  <version>0.1</version>
+  <documentation-url></documentation-url>
+  <license></license>
+  <contributor>University of Iowa Department of Psychiatry, http:://www.psychiatry.uiowa.edu
+  </contributor>
+
+  <parameters advanced="true">
+    <label>Required Parameters</label>
+    <!--  -->
+    <image>
+      <name>inputVolume1</name>
+      <longflag>inputVolume1</longflag>
+      <description>The Input image to be computed for statistics</description>
+      <channel>input</channel>
+      <label>Input Image 1</label>
+      <default></default>
+    </image>
+    <!--  -->
+    <image>
+      <name>inputVolume2</name>
+      <longflag>inputVolume2</longflag>
+      <description>The Input image to be computed for statistics</description>
+      <channel>input</channel>
+      <label>Input Image 2</label>
+      <default></default>
+    </image>
+    <string>
+      <name>outputJointHistogramImage</name>
+      <longflag>outputJointHistogramImage</longflag>
+      <channel>input</channel>
+      <description> output data file name </description>
+      <label>OutputDataFilename</label>
+      <default>./output.txt</default>
+    </string>
+    <boolean>
+      <name>verbose</name>
+      <longflag>verbose</longflag>
+      <channel>input</channel>
+      <description> print debugging information
+      </description>
+      <label>verbose</label>
+      <default>FALSE</default>
+    </boolean>
+
+    <!--  -->
+
+  </parameters>
+</executable>

@@ -1,0 +1,11 @@
+label, name , color
+  0, PVAIR, black
+  1, PVBASALTISSUE, lightblue 
+  2, PVCRBLGM, green 
+  3, PVCRBLWM, orange
+  4, PVCSF, red
+  5, PVSURFGM, green
+  6, PVVB, blue 
+  7, PVWM, orange
+  
+

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>FeatureImages</category>
+  <title>GenerateSummedGradient</title>
+  <description>Automatic FeatureImages using neural networks</description>
+  <version> 1.0</version>
+  <documentation-url></documentation-url>
+  <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt </license>
+  <contributor>Greg Harris, Eun Young Kim</contributor>
+  <acknowledgements></acknowledgements>
+ <parameters>
+   <image>
+    <name>inputVolume1</name>
+    <longflag>inputVolume1</longflag>
+    <description>input volume 1, usally t1 image </description>
+    <channel>input</channel>
+   </image>
+   <image>
+    <name>inputVolume2</name>
+    <longflag>inputVolume2</longflag>
+    <description>input volume 2, usally t2 image </description>
+    <channel>input</channel>
+   </image>
+   <file>
+      <name>outputFileName</name>
+      <longflag>outputFileName</longflag>
+      <description>(required) output file name </description>
+      <channel>output</channel>
+   </file>
+   <boolean>
+     <name>MaximumGradient</name>
+     <label>Maximum Gradient</label>
+     <longflag>MaximumGradient</longflag>
+     <description>If set this flag, it will compute maximum gradient between two input volumes instead of sum of it.</description>
+     <default>false</default>
+   </boolean>
+    <integer>
+      <name>numberOfThreads</name>
+      <longflag deprecatedalias="debugNumberOfThreads" >numberOfThreads</longflag>
+      <label>Number Of Threads</label>
+      <description>Explicitly specify the maximum number of threads to use.</description>
+      <default>-1</default>
+    </integer>
+</parameters>
+</executable>

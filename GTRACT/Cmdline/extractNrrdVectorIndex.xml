@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8" ?>
+  <executable>
+  <category>Diffusion.GTRACT</category>
+  <title>Extract Nrrd Index</title>
+
+  <description>This program will extract a 3D image (single vector) from a vector 3D image at a given vector index.</description>
+  <acknowledgements>Funding for this version of the GTRACT program was provided by NIH/NINDS R01NS050568-01A2S1</acknowledgements>
+  <version>4.0.0</version>
+  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Modules:GTRACT</documentation-url>
+  <license>http://mri.radiology.uiowa.edu/copyright/GTRACT-Copyright.txt</license>
+  <contributor>This tool was developed by Vincent Magnotta and Greg Harris.</contributor>
+
+
+  <parameters>
+    <label>Input Parameters</label>
+    <description>Parameters for specifying vector extraction</description>
+
+    <image>
+      <name>inputVolume</name>
+      <longflag>inputVolume</longflag>
+      <description>Required: input file containing the vector that will be extracted</description>
+      <label>Vector Image Volume</label>
+      <channel>input</channel>
+    </image>
+
+    <integer>
+      <name>vectorIndex</name>
+      <longflag>vectorIndex</longflag>
+      <description>Index in the vector image to extract</description>
+      <label>Index Into Vector Image</label>
+      <default>0</default>
+      <channel>input</channel>
+    </integer>
+
+    <string-enumeration>
+      <name>setImageOrientation</name>
+      <longflag>setImageOrientation</longflag>
+      <description>Sets the image orientation of the extracted vector (Axial, Coronal, Sagittal)</description>
+      <label>Index Into Vector Image</label>
+      <default>AsAcquired</default>
+      <element>AsAcquired</element>
+      <element>Axial</element>
+      <element>Coronal</element>
+      <element>Sagittal</element>
+      <channel>input</channel>
+    </string-enumeration>
+  </parameters>
+
+  <parameters>
+    <label>Output File</label>
+    <description>Output file containing the extracted vector in NRRD file form</description>
+
+    <image>
+      <name>outputVolume</name>
+      <longflag>outputVolume</longflag>
+      <description>Required: name of output NRRD file containing the vector image at the given index</description>
+      <label>Output Volume</label>
+      <channel>output</channel>
+    </image>
+  </parameters>
+  <parameters>
+    <label>Multiprocessing Control</label>
+    <integer>
+      <name>numberOfThreads</name>
+      <longflag deprecatedalias="debugNumberOfThreads" >numberOfThreads</longflag>
+      <label>Number Of Threads</label>
+      <description>Explicitly specify the maximum number of threads to use.</description>
+      <default>-1</default>
+    </integer>
+  </parameters>
+  </executable>

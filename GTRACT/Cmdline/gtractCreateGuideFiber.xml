@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8" ?>
+  <executable>
+  <category>Diffusion.GTRACT</category>
+  <title>Create Guide Fiber</title>
+
+  <description>This program will create a guide fiber by averaging fibers from a previously generated tract.</description>
+  <acknowledgements>Funding for this version of the GTRACT program was provided by NIH/NINDS R01NS050568-01A2S1</acknowledgements>
+  <version>4.0.0</version>
+  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Modules:GTRACT</documentation-url>
+  <license>http://mri.radiology.uiowa.edu/copyright/GTRACT-Copyright.txt</license>
+  <contributor>This tool was developed by Vincent Magnotta and Greg Harris.</contributor>
+
+
+  <parameters>
+    <label>Input Parameters</label>
+    <description>Parameters for guide fiber generation</description>
+
+    <geometry type="fiberbundle" fileExtensions=".vtk">
+      <name>inputFiber</name>
+      <longflag>inputFiber</longflag>
+      <description>Required: input fiber tract file name</description>
+      <label>Input Fiber</label>
+      <channel>input</channel>
+    </geometry>
+
+    <integer>
+      <name>numberOfPoints</name>
+      <longflag>numberOfPoints</longflag>
+      <description>Number of points in output guide fiber</description>
+      <label>Number Of Points</label>
+      <default>100</default>
+      <channel>input</channel>
+    </integer>
+
+  </parameters>
+
+  <parameters>
+    <label>Output Files</label>
+    <description>Output file from averaging fibers in a fiber tract</description>
+
+    <geometry type="fiberbundle" fileExtensions=".vtk">
+      <name>outputFiber</name>
+      <longflag>outputFiber</longflag>
+      <description>Required: output guide fiber file name</description>
+      <label>Output Fiber</label>
+      <channel>output</channel>
+    </geometry>
+
+    <boolean>
+      <name>writeXMLPolyDataFile</name>
+      <longflag>writeXMLPolyDataFile</longflag>
+      <description>Flag to make use of XML files when reading and writing vtkPolyData.</description>
+      <label>Use XML PolyData Headers</label>
+      <default>0</default>
+      <channel>input</channel>
+    </boolean>
+
+  </parameters>
+  <parameters>
+    <label>Multiprocessing Control</label>
+    <integer>
+      <name>numberOfThreads</name>
+      <longflag deprecatedalias="debugNumberOfThreads" >numberOfThreads</longflag>
+      <label>Number Of Threads</label>
+      <description>Explicitly specify the maximum number of threads to use.</description>
+      <default>-1</default>
+    </integer>
+  </parameters>
+  </executable>

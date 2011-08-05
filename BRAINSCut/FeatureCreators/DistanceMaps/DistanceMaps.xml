@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8" ?>
+  <executable>
+  <category>Statistics</category>
+  <title>Mauerer Distance</title>
+
+  <description>Get the distance from a voxel to the nearest voxel of a given tissue type.</description>
+  <version>0.1.0.$Revision: 1 $(alpha)</version>
+  <documentation-url>http:://www.na-mic.org/</documentation-url>
+  <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt </license>
+  <contributor>This tool was developed by Mark Scully and Jeremy Bockholt.</contributor>
+
+
+  <parameters>
+    <label>Input Parameters</label>
+    <description>Input parameters for analysis.</description>
+
+    <image>
+      <name>inputLabelVolume</name>
+      <longflag>--inputLabelVolume</longflag>
+      <description>Required: input tissue label image</description>
+      <label>Input Tissue Label Volume</label>
+      <channel>input</channel>
+    </image>
+
+    <image>
+      <name>inputMaskVolume</name>
+      <longflag>--inputMaskVolume</longflag>
+      <description>Required: input brain mask image</description>
+      <label>Input Brain Mask Volume</label>
+      <channel>input</channel>
+    </image>
+
+    <integer>
+      <name>inputTissueLabel</name>
+      <longflag>--inputTissueLabel</longflag>
+      <description>Required: input integer value of tissue type used to calculate distance</description>
+      <label>Input Tissue Type Label</label>
+      <channel>input</channel>
+      <default>1</default>
+    </integer>
+
+  </parameters>
+  <parameters>
+    <label>Output Parameters</label>
+    <description>Output parameters for analysis.</description>
+
+    <image>
+      <name>outputVolume</name>
+      <longflag>--outputVolume</longflag>
+      <description>Required: output image</description>
+      <label>Output Volume</label>
+      <channel>output</channel>
+    </image>
+
+  </parameters>
+
+  </executable>

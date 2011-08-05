@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>
+    Segmentation.CannyLevelSetFilter
+  </category>
+  <title>
+  Canny Level Set Image Filter
+  </title>
+  <description>
+The CannySegmentationLevelSet is commonly used to refine a manually generated manual mask.
+  </description>
+  <version>0.3.0</version>
+  <documentation-url></documentation-url>
+  <license>CC</license>
+  <contributor>Regina Kim</contributor>
+  <acknowledgements>This command module was derived from Insight/Examples/Segmentation/CannySegmentationLevelSetImageFilter.cxx (copyright) Insight Software Consortium.  See http://wiki.na-mic.org/Wiki/index.php/Slicer3:Execution_Model_Documentation for more detailed descriptions.
+  </acknowledgements>
+  <parameters>
+    <label>IO</label>
+    <description>The image input and output arguments</description>
+    <image>
+        <name>inputVolume</name>
+        <longflag>inputVolume</longflag>
+        <label>Intensity Input Volume</label>
+        <channel>input</channel>
+    </image>
+    <image>
+        <name>initialModel</name>
+        <longflag>initialModel</longflag>
+        <label>Input Binary Mask Model</label>
+        <channel>input</channel>
+    </image>
+    <image type="label">
+        <name>outputVolume</name>
+        <longflag>outputVolume</longflag>
+        <label>Output Volume</label>
+        <channel>output</channel>
+    </image>
+    <image>
+        <name>outputSpeedVolume</name>
+        <longflag>outputSpeedVolume</longflag>
+        <label>Output SpeedVolume</label>
+        <channel>output</channel>
+    </image>
+  </parameters>
+  <parameters>
+    <label>CannySegmentationLevelSet Parameters</label>
+    <description>Parameters for the threshold </description>
+
+    <float>
+      <name>cannyThreshold</name>
+      <longflag>cannyThreshold</longflag>
+      <description>Canny Threshold Value</description>
+      <label>Canny Threshold</label>
+      <default>7.0</default>
+      <channel>input</channel>
+    </float>
+    <float>
+      <name>cannyVariance</name>
+      <longflag>cannyVariance</longflag>
+      <description>Canny variance</description>
+      <label>Canny Variance</label>
+      <default>0.1</default>
+      <channel>input</channel>
+    </float>
+    <float>
+      <name>advectionWeight</name>
+      <longflag>advectionWeight</longflag>
+      <description>Controls the smoothness of the resulting mask, small number are more smooth, large numbers allow more sharp corners.  </description>
+      <label>Advection Weight</label>
+      <default>10.0</default>
+      <channel>input</channel>
+    </float>
+    <float>
+      <name>initialModelIsovalue</name>
+      <longflag>initialModelIsovalue</longflag>
+      <description>The identification of the input model iso-surface.  (for a binary image with 0s and 1s use 0.5) (for a binary image with 0s and 255's use 127.5).</description>
+      <label>Initial Model Isovalue</label>
+      <default>0.5</default>
+      <channel>input</channel>
+    </float>
+    <integer>
+      <name>maxIterations</name>
+      <longflag>maxIterations</longflag>
+      <description>The</description>
+      <label>The maximum number of iterations</label>
+      <default>15</default>
+      <channel>input</channel>
+    </integer>
+
+  </parameters>
+</executable>

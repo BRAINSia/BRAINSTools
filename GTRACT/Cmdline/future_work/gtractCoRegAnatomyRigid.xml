@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8" ?>
+  <executable>
+  <category>Diffusion.GTRACT</category>
+  <title>Coregister B0 to Anatomy Rigid</title>
+
+  <description>This program will register a NRRD diffusion weighted 4D vector image to a fixed anatomical image to produce a rigid fit.</description>
+  <acknowledgements>Funding for this version of the GTRACT program was provided by NIH/NINDS R01NS050568-01A2S1</acknowledgements>
+  <version>4.0.0</version>
+  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Modules:GTRACT</documentation-url>
+  <license>http://mri.radiology.uiowa.edu/copyright/GTRACT-Copyright.txt</license>
+  <contributor>This tool was developed by Vincent Magnotta and Greg Harris.</contributor>
+
+
+  <parameters>
+    <label>Input Image Parameters</label>
+    <description>Parameters for specifying the NRRD vector image to fit to the anatomical image</description>
+
+    <image>
+      <name>inputVolume</name>
+      <longflag>inputVolume</longflag>
+      <description>Required: input vector image file name. It is recommended that the input volume is the skull stripped baseline image of the DWI scan.</description>
+      <label>Input Image Volume</label>
+      <channel>input</channel>
+    </image>
+
+    <image>
+      <name>inputAnatomicalVolume</name>
+      <longflag>inputAnatomicalVolume</longflag>
+      <description>Required: input anatomical image file name. It is recommended that that the input anatomical image has been skull stripped and has the same orientation as the DWI scan.</description>
+      <label>Input Anatomical Image Volume</label>
+      <channel>input</channel>
+    </image>
+
+    <integer>
+      <name>vectorIndex</name>
+      <longflag>vectorIndex</longflag>
+      <description>Vector image index in the moving image (within the DWI) to be used for registration.</description>
+      <label>Vector Image Index</label>
+      <default>0</default>
+      <channel>input</channel>
+    </integer>
+
+  </parameters>
+
+  <parameters>
+    <label>Output Files</label>
+    <description>Output file from rigid registrations</description>
+
+    <file>
+      <name>outputRigidTransform</name>
+      <longflag>outputRigidTransform</longflag>
+      <description>Required: filename for the rigid fit transform.</description>
+      <label>Output Rigid Transform</label>
+      <channel>output</channel>
+    </file>
+
+  </parameters>
+
+  <parameters>
+    <label>Registration Parameters</label>
+    <description>Input registration parameters controlling the fit</description>
+
+    <integer>
+      <name>numberOfIterations</name>
+      <longflag>numberOfIterations</longflag>
+      <description>Number of iterations in the selected 3D fit</description>
+      <label>Number Of Iterations</label>
+      <default>1000</default>
+      <channel>input</channel>
+    </integer>
+
+    <integer>
+      <name>numberOfSamples</name>
+      <longflag>numberOfSamples</longflag>
+      <description>Number of voxels sampled for mutual information computation in the selected 3D fit</description>
+      <label>Number Of Samples</label>
+      <default>100000</default>
+      <channel>input</channel>
+    </integer>
+
+    <integer>
+      <name>initialRotationAxis</name>
+      <longflag>initialRotationAxis</longflag>
+      <description>Axis for the initial rotation angle: 0, 1, 2 mean x, y, z, respectively.</description>
+      <label>Initial Rotation Axis</label>
+      <default>0</default>
+      <channel>input</channel>
+    </integer>
+
+    <float>
+      <name>initialRotationAngle</name>
+      <longflag>initialRotationAngle</longflag>
+      <description>Angle to rotate about the initial rotation angle (Degrees)</description>
+      <label>Initial Rotation Angle</label>
+      <default>0.0</default>
+      <channel>input</channel>
+    </float>
+
+    <float>
+      <name>relaxationFactor</name>
+      <longflag>relaxationFactor</longflag>
+      <description>Fraction of gradient from Jacobian to attempt to move in the selected 3D fit</description>
+      <label>Relaxation Factor</label>
+      <default>0.5</default>
+      <channel>input</channel>
+    </float>
+
+    <float>
+      <name>maximumStepSize</name>
+      <longflag>maximumStepSize</longflag>
+      <description>Maximum permitted step size to move in the selected 3D fit</description>
+      <label>Maximum Step Size</label>
+      <default>0.2</default>
+      <channel>input</channel>
+    </float>
+
+    <float>
+      <name>minimumStepSize</name>
+      <longflag>minimumStepSize</longflag>
+      <description>Minimum required step size to move in the selected 3D fit without converging -- decrease this to make the fit more exacting</description>
+      <label>Minimum Step Size</label>
+      <default>0.0001</default>
+      <channel>input</channel>
+    </float>
+
+    <float>
+      <name>spatialScale</name>
+      <longflag>spatialScale</longflag>
+      <description>How much to scale up changes in position compared to unit rotational changes in radians -- decrease this to put more translation in the fit</description>
+      <label>Spatial Scale</label>
+      <default>1000.0</default>
+      <channel>input</channel>
+    </float>
+
+  </parameters>
+  </executable>

@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="utf-8" ?>
+  <executable>
+  <category>Diffusion.GTRACT</category>
+  <title>Coregister B0 to Anatomy B-Spline</title>
+
+  <description>This program will register a Nrrd diffusion weighted 4D vector image to a fixed anatomical image. Two registration methods are supported for alignment with anatomical images: Rigid and B-Spline. The rigid registration performs a rigid body registration with the anatomical images and should be done as well to initialize the B-Spline transform. The B-SPline transform is the deformable transform, where the user can control the amount of deformation based on the number of control points as well as the maximum distance that these points can move. The B-Spline registration places a low dimensional grid in the image, which is deformed. This allows for some susceptibility related distortions to be removed from the diffusion weighted images. In general the amount of motion in the slice selection and read-out directions direction should be kept low. The distortion is in the phase encoding direction in the images. It is recommended that skull stripped (i.e. image containing only brain with skull removed) images shoud be used for image co-registration with the B-Spline transform.</description>
+  <acknowledgements>Funding for this version of the GTRACT program was provided by NIH/NINDS R01NS050568-01A2S1</acknowledgements>
+  <version>4.0.0</version>
+  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Modules:GTRACT</documentation-url>
+  <license>http://mri.radiology.uiowa.edu/copyright/GTRACT-Copyright.txt</license>
+  <contributor>This tool was developed by Vincent Magnotta and Greg Harris.</contributor>
+
+
+  <parameters>
+    <label>Input Image Parameters</label>
+    <description>Parameters for specifying the Nrrd vector image to fit to the anatomical image</description>
+
+    <image fileExtensions=".nrrd">
+      <name>inputVolume</name>
+      <longflag>inputVolume</longflag>
+      <description>Required: input vector image file name. It is recommended that the input volume is the skull stripped baseline image of the DWI scan.</description>
+      <label>Input Image Volume</label>
+      <channel>input</channel>
+    </image>
+
+    <image type="scalar" fileExtensions=".nrrd">
+      <name>inputAnatomicalVolume</name>
+      <longflag>inputAnatomicalVolume</longflag>
+      <description>Required: input anatomical image file name. It is recommended that that the input anatomical image has been skull stripped and has the same orientation as the DWI scan.</description>
+      <label>Input Anatomical Image Volume</label>
+      <channel>input</channel>
+    </image>
+
+    <integer>
+      <name>vectorIndex</name>
+      <longflag>vectorIndex</longflag>
+      <description>Vector image index in the moving image (within the DWI) to be used for registration.</description>
+      <label>Vector Image Index</label>
+      <default>0</default>
+      <channel>input</channel>
+    </integer>
+
+    <transform fileExtensions=".mat">
+      <name>inputRigidTransform</name>
+      <longflag>inputRigidTransform</longflag>
+      <description>Required (for B-Spline type co-registration): input rigid transform file name. Used as a starting point for the anatomical B-Spline registration.</description>
+      <label>Input Rigid Transform</label>
+      <channel>input</channel>
+    </transform>
+  </parameters>
+
+  <parameters>
+    <label>Output Files</label>
+    <description>Output file from rigid registrations</description>
+
+    <transform fileExtensions=".mat">
+      <name>outputTransformName</name>
+      <longflag>outputTransformName</longflag>
+      <description>Required: filename for the  fit transform.</description>
+      <label>Output Transform</label>
+      <channel>output</channel>
+    </transform>
+
+  </parameters>
+
+  <parameters>
+    <label>Registration Parameters</label>
+    <description>Input registration parameters controlling the fit</description>
+
+    <string-enumeration>
+      <name>transformType</name>
+      <longflag>transformType</longflag>
+      <description>Transform Type: Rigid|Bspline</description>
+      <label>Transform Type</label>
+      <default>Rigid</default>
+      <element>Rigid</element>
+      <element>Bspline</element>
+    </string-enumeration>
+
+    <integer>
+      <name>numberOfIterations</name>
+      <longflag>numberOfIterations</longflag>
+      <description>Number of iterations in the selected 3D fit</description>
+      <label>Number Of Iterations</label>
+      <default>1000</default>
+      <channel>input</channel>
+    </integer>
+
+    <integer-vector>
+      <name>gridSize</name>
+      <longflag>gridSize</longflag>
+      <description>Number of grid subdivisions in all 3 directions</description>
+      <label>Grid Size</label>
+      <default>12,4,12</default>
+      <channel>input</channel>
+    </integer-vector>
+
+    <integer>
+      <name>borderSize</name>
+      <longflag>borderSize</longflag>
+      <description>Size of border</description>
+      <label>Border Size</label>
+      <default>3</default>
+      <channel>input</channel>
+    </integer>
+
+    <integer>
+      <name>numberOfHistogramBins</name>
+      <longflag>numberOfHistogramBins</longflag>
+      <description>Number of histogram bins</description>
+      <label>Number of Histogram Bins</label>
+      <default>50</default>
+      <channel>input</channel>
+    </integer>
+
+    <integer>
+      <name>spatialScale</name>
+      <longflag>spatialScale</longflag>
+      <description>Scales the number of voxels in the image by this value to specify the number of voxels used in the registration</description>
+      <label>Spatial Scale</label>
+      <default>100</default>
+      <channel>input</channel>
+    </integer>
+
+    <float>
+      <name>convergence</name>
+      <longflag>convergence</longflag>
+      <description>Convergence Factor</description>
+      <label>Convergence Factor</label>
+      <default>10000000</default>
+      <channel>input</channel>
+    </float>
+
+    <float>
+      <name>gradientTolerance</name>
+      <longflag>gradientTolerance</longflag>
+      <description>Gradient Tolerance</description>
+      <label>Gradient Tolerance</label>
+      <default>0.0001</default>
+      <channel>input</channel>
+    </float>
+
+    <double>
+      <name>maxBSplineDisplacement</name>
+      <longflag>maxBSplineDisplacement</longflag>
+     <description> Sets the maximum allowed displacements in image physical coordinates for BSpline control grid along each axis.  A value of 0.0 indicates that the problem should be unbounded.  NOTE:  This only constrains the BSpline portion, and does not limit the displacement from the associated bulk transform.  This can lead to a substantial reduction in computation time in the BSpline optimizer.
+      </description>
+      <default>0.0</default>
+    </double>
+
+   <float>
+      <name>maximumStepSize</name>
+      <longflag>maximumStepSize</longflag>
+      <description>Maximum permitted step size to move in the selected 3D fit</description>
+      <label>Maximum Step Size</label>
+      <default>0.2</default>
+      <channel>input</channel>
+    </float>
+
+    <float>
+      <name>minimumStepSize</name>
+      <longflag>minimumStepSize</longflag>
+      <description>Minimum required step size to move in the selected 3D fit without converging -- decrease this to make the fit more exacting</description>
+      <label>Minimum Step Size</label>
+      <default>0.0001</default>
+      <channel>input</channel>
+    </float>
+
+    <float>
+      <name>translationScale</name>
+      <longflag>translationScale</longflag>
+      <description>How much to scale up changes in position compared to unit rotational changes in radians -- decrease this to put more translation in the fit</description>
+      <label>Translation Scale</label>
+      <default>1000.0</default>
+      <channel>input</channel>
+    </float>
+
+    <float>
+      <name>relaxationFactor</name>
+      <longflag>relaxationFactor</longflag>
+      <description>Fraction of gradient from Jacobian to attempt to move in the selected 3D fit</description>
+      <label>Relaxation Factor</label>
+      <default>0.5</default>
+      <channel>input</channel>
+    </float>
+
+   <integer>
+      <name>numberOfSamples</name>
+      <longflag>numberOfSamples</longflag>
+      <description>Number of voxels sampled for mutual information computation in the selected 3D fit</description>
+      <label>Number Of Samples</label>
+      <default>100000</default>
+      <channel>input</channel>
+    </integer>
+
+  <boolean>
+       <name>useMomentsAlign</name>
+       <longflag>useMomentsAlign</longflag>
+       <label>Initialize with MomentsAlign registration phase</label>
+       <description>MomentsAlign assumes that the center of mass of the images represent similar structures.  Perform a MomentsAlign registration as part of the sequential registration steps.   This option MUST come first, and CAN NOT be used with either CenterOfHeadLAlign, GeometryAlign, or initialTransform file.  This family of options superceeds the use of transformType if any of them are set.</description>
+       <default>false</default>
+    </boolean>
+
+    <boolean>
+       <name>useGeometryAlign</name>
+       <longflag>useGeometryAlign</longflag>
+       <label>Initialize with GeometryCenterAlign registration phase</label>
+       <description>GeometryAlign on assumes that the center of the voxel lattice of the images represent similar structures. Perform a GeometryCenterAlign registration as part of the sequential registration steps.   This option MUST come first, and CAN NOT be used with either MomentsAlign, CenterOfHeadAlign, or initialTransform file.  This family of options superceeds the use of transformType if any of them are set.</description>
+       <default>false</default>
+    </boolean>
+
+    <boolean>
+       <name>useCenterOfHeadAlign</name>
+       <longflag>useCenterOfHeadAlign</longflag>
+       <label>Initialize with CenterOfHeadAlign registration phase</label>
+       <description>CenterOfHeadAlign attempts to find a hemisphere full of foreground voxels from the superior direction as an estimate of where the center of a head shape would be to drive a center of mass estimate.  Perform a CenterOfHeadAlign registration as part of the sequential registration steps.   This option MUST come first, and CAN NOT be used with either MomentsAlign, GeometryAlign, or initialTransform file.  This family of options superceeds the use of transformType if any of them are set.</description>
+       <default>false</default>
+    </boolean>
+
+  </parameters>
+  <parameters>
+    <label>Multiprocessing Control</label>
+    <integer>
+      <name>numberOfThreads</name>
+      <longflag deprecatedalias="debugNumberOfThreads" >numberOfThreads</longflag>
+      <label>Number Of Threads</label>
+      <description>Explicitly specify the maximum number of threads to use.</description>
+      <default>-1</default>
+    </integer>
+  </parameters>
+  </executable>

@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>
+  BRAINS.Utility
+  </category>
+  <title>
+  BRAINSMush Brain Extraction
+  </title>
+  <description>
+  This program: 1) generates a weighted mixture image optimizing the mean and variance and 2) produces a mask of the brain volume
+  </description>
+  <version>0.1.0.$Revision: 1.4 $(alpha)</version>
+  <documentation-url>http:://mri.radiology.uiowa.edu</documentation-url>
+  <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt </license>
+  <contributor>
+  This tool is a modification by Steven Dunn of a program developed by Greg Harris and Ron Pierson.
+  </contributor>
+  <acknowledgements>
+  This work was developed by the University of Iowa Departments of Radiology and Psychiatry. This software was supported in part of NIH/NINDS award NS050568.
+  </acknowledgements>
+
+  <!-- This should follow some latex like framework for style, preferably something that is exportable from Papers.
+  <publication>
+     <title>Maximize Uniformity Summation Heuristic (MUSH): A highly accurate, simple method for intracranial delineation</title>
+     <authors>Ronald Pierson, Gregory Harris, Hans J. Johnson, Steve Dunn, Vincent A. Magnotta </authors>
+     <journal>Proc. of SPIE Vol. 7259, 2009 SPIE</journal>
+     <doi>10.1117/12.812322</doi>
+  </publication>
+  -->
+
+  <parameters>
+    <label>Input Images</label>
+    <description>First Image, Second Image and Mask Image</description>
+
+    <image>
+      <name>inputFirstVolume</name>
+      <longflag>inputFirstVolume</longflag>
+      <description>Input image (1) for mixture optimization</description>
+      <label>First Mixture Component Image</label>
+      <channel>input</channel>
+    </image>
+
+    <image>
+      <name>inputSecondVolume</name>
+      <longflag>inputSecondVolume</longflag>
+      <description>Input image (2) for mixture optimization</description>
+      <label>Second Mixture Component Image</label>
+      <channel>input</channel>
+    </image>
+
+    <image>
+      <name>inputMaskVolume</name>
+      <longflag>inputMaskVolume</longflag>
+      <description>Input label image for mixture optimization</description>
+      <label>Region Of Interest Image Mask</label>
+      <channel>input</channel>
+      <default>no_mask_exists</default>
+    </image>
+  </parameters>
+
+  <parameters>
+    <label>Output Files</label>
+    <description>Outputs from both MUSH generation and brain volume mask creation</description>
+
+    <file fileExtensions=".txt">
+      <name>outputWeightsFile</name>
+      <longflag>outputWeightsFile</longflag>
+      <description>Output Weights File</description>
+      <label>Output Weights File</label>
+      <default>OptimalMixtureWeights.txt</default>
+      <channel>output</channel>
+    </file>
+
+    <image fileExtensions=".nii.gz,.nrrd">
+      <name>outputVolume</name>
+      <longflag deprecatedalias="outputImage">outputVolume</longflag>
+      <description>The MUSH image produced from the T1 and T2 weighted images</description>
+      <label>MUSH Image</label>
+      <channel>output</channel>
+      <default>MUSH_image.nii.gz</default>
+    </image>
+
+    <image fileExtensions=".nii.gz,.nrrd" type="label">
+      <name>outputMask</name>
+      <longflag>outputMask</longflag>
+      <description>The brain volume mask generated from the MUSH image</description>
+      <label>brain volume mask</label>
+      <channel>output</channel>
+      <default>output.nii.gz</default>
+    </image>
+  </parameters>
+
+  <parameters>
+    <label>Seed Point</label>
+    <description>Seed point for brain region filling</description>
+
+    <integer-vector>
+      <name>seed</name>
+      <longflag>seed</longflag>
+      <description>Seed Point for Brain Region Filling</description>
+      <label>Seed Point</label>
+      <channel>input</channel>
+      <default>128,128,128</default>
+    </integer-vector>
+  </parameters>
+
+  <parameters advanced="true">
+    <label>Target Statistic Parameters</label>
+    <description>Target Statistic Parameters</description>
+
+   <double>
+      <name>desiredMean</name>
+      <longflag>desiredMean</longflag>
+      <description>Desired mean within the mask for weighted sum of both images.</description>
+      <label>Desired Mean</label>
+      <channel>input</channel>
+     <default>10000.0</default>
+    </double>
+
+   <double>
+      <name>desiredVariance</name>
+      <longflag>desiredVariance</longflag>
+      <description>Desired variance within the mask for weighted sum of both images.</description>
+      <label>Desired Variance</label>
+      <channel>input</channel>
+     <default>0.0</default>
+    </double>
+
+    <double>
+      <name>lowerThresholdFactorPre</name>
+      <longflag>lowerThresholdFactorPre</longflag>
+      <description>Lower threshold factor for finding an initial brain mask</description>
+      <label>Lower Threshold Value Pre</label>
+      <channel>input</channel>
+     <default>1.485</default>
+    </double>
+
+    <double>
+      <name>upperThresholdFactorPre</name>
+      <longflag>upperThresholdFactorPre</longflag>
+      <description>Upper threshold factor for finding an initial brain mask</description>
+      <label>Upper Threshold Value Pre</label>
+      <channel>input</channel>
+     <default>0.62</default>
+    </double>
+
+    <double>
+      <name>lowerThresholdFactor</name>
+      <longflag>lowerThresholdFactor</longflag>
+      <description>Lower threshold factor for defining the brain mask</description>
+      <label>Lower Threshold Value</label>
+      <channel>input</channel>
+     <default>1.2431</default>
+    </double>
+
+    <double>
+      <name>upperThresholdFactor</name>
+      <longflag>upperThresholdFactor</longflag>
+      <description>Upper threshold factor for defining the brain mask</description>
+      <label>Upper Threshold Value</label>
+      <channel>input</channel>
+     <default>0.71956</default>
+    </double>
+
+    <integer-vector>
+      <name>boundingBoxSize</name>
+      <longflag>boundingBoxSize</longflag>
+      <description>Size of the cubic bounding box mask used when no brain mask is present</description>
+      <label>Bounding Box Size</label>
+      <channel>input</channel>
+      <default>90,60,75</default>
+    </integer-vector>
+
+    <integer-vector>
+      <name>boundingBoxStart</name>
+      <longflag>boundingBoxStart</longflag>
+      <description>XYZ point-coordinate for the start of the cubic bounding box mask used when no brain mask is present</description>
+      <label>Bounding Box Start</label>
+      <channel>input</channel>
+      <default>83,113,80</default>
+    </integer-vector>
+    <integer>
+      <name>numberOfThreads</name>
+      <longflag deprecatedalias="debugNumberOfThreads" >numberOfThreads</longflag>
+      <label>Number Of Threads</label>
+      <description>Explicitly specify the maximum number of threads to use.</description>
+      <default>-1</default>
+    </integer>
+  </parameters>
+
+</executable>

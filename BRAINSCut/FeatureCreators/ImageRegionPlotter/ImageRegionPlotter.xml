@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>BRAINS.Utilities</category>
+  <title>Write Out Image Intensities
+  </title>
+  <description>
+    For Analysis
+  </description>
+  <version>0.1</version>
+  <documentation-url></documentation-url>
+  <license></license>
+  <contributor>University of Iowa Department of Psychiatry, http:://www.psychiatry.uiowa.edu
+  </contributor>
+
+  <parameters advanced="true">
+    <label>Required Parameters</label>
+    <!--  -->
+    <image>
+      <name>inputVolume1</name>
+      <longflag>inputVolume1</longflag>
+      <description>The Input image to be computed for statistics</description>
+      <channel>input</channel>
+      <label>Input Image 1</label>
+      <default></default>
+    </image>
+    <!--  -->
+    <image>
+      <name>inputVolume2</name>
+      <longflag>inputVolume2</longflag>
+      <description>The Input image to be computed for statistics</description>
+      <channel>input</channel>
+      <label>Input Image 2</label>
+      <default></default>
+    </image>
+    <!--  -->
+    <image>
+      <name>inputBinaryROIVolume</name>
+      <longflag>inputBinaryROIVolume</longflag>
+      <description>The Input binary image for region of interest</description>
+      <channel>input</channel>
+      <label>inputBinaryROIVolume</label>
+      <default></default>
+    </image>
+    <!--  -->
+    <image>
+      <name>inputLabelVolume</name>
+      <longflag>inputLabelVolume</longflag>
+      <description>The Label Image </description>
+      <channel>input</channel>
+      <label>Input Label Image</label>
+      <default></default>
+    </image>
+
+    <integer>
+      <name>numberOfHistogramBins</name>
+      <longflag>numberOfHistogramBins</longflag>
+      <channel>input</channel>
+      <description> the number of histogram levels</description>
+      <label>NumberOfHistogramBin</label>
+      <default>256</default>
+    </integer>
+    <string>
+      <name>outputJointHistogramData</name>
+      <longflag>outputJointHistogramData</longflag>
+      <channel>input</channel>
+      <description> output data file name </description>
+      <label>OutputDataFilename</label>
+      <default>./output.txt</default>
+    </string>
+    <boolean>
+      <name>useROIAUTO</name>
+      <longflag>useROIAUTO</longflag>
+      <channel>input</channel>
+      <description> Use ROIAUTO to compute region of interest. This cannot be used with inputLabelVolume</description>
+      <label>useROIAUTO</label>
+      <default>TRUE</default>
+    </boolean>
+    <boolean>
+      <name>useIntensityForHistogram</name>
+      <longflag>useIntensityForHistogram</longflag>
+      <channel>input</channel>
+      <description> Create Intensity Joint Histogram instead of Quantile Joint Histogram</description>
+      <label>useIntensityForHistogram</label>
+      <default>FALSE</default>
+    </boolean>
+    <boolean>
+      <name>verbose</name>
+      <longflag>verbose</longflag>
+      <channel>input</channel>
+      <description> print debugging information
+      </description>
+      <label>verbose</label>
+      <default>FALSE</default>
+    </boolean>
+
+    <!--  -->
+    <!--image>
+      <name>DeformedProbabilityMapFilename</name>
+      <longflag>DeformedProbabilityMapFilename</longflag>
+      <description>Deformed Probability Map Filename </description>
+      <channel>input</channel>
+      <label>Deformed Probability Map Filename</label>
+      <default></default>
+    </image-->
+    <!--  -->
+    <!--image>
+      <name>ProbabilityMapFilename</name>
+      <longflag>ProbabilityMapFilename</longflag>
+      <description>Probability Map Filename to be deformed</description>
+      <channel>input</channel>
+      <label>Probability Map Filename</label>
+      <default></default>
+    </image-->
+    <!--  -->
+    <!--image>
+      <name>DeformationFilename</name>
+      <longflag>DeformationFilename</longflag>
+      <description>Deformation Filename</description>
+      <channel>input</channel>
+      <label>Deformation Filename</label>
+      <default></default>
+    </image-->
+
+  </parameters>
+</executable>

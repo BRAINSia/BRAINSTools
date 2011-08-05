@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8" ?>
+  <executable>
+  <category>Diffusion.GTRACT</category>
+  <title>Resample Fibers</title>
+
+  <description>This program will resample a fiber tract with respect to a pair of deformation fields that represent the forward and reverse deformation fields.</description>
+  <acknowledgements>Funding for this version of the GTRACT program was provided by NIH/NINDS R01NS050568-01A2S1</acknowledgements>
+  <version>4.0.0</version>
+  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Modules:GTRACT</documentation-url>
+  <license>http://mri.radiology.uiowa.edu/copyright/GTRACT-Copyright.txt</license>
+  <contributor>This tool was developed by Vincent Magnotta and Greg Harris.</contributor>
+
+
+  <parameters>
+    <label>Input Image Files</label>
+    <description>Parameters for specifying the diffusion tensor image set</description>
+
+    <image type="vector">
+      <name>inputForwardDeformationFieldVolume</name>
+      <longflag>inputForwardDeformationFieldVolume</longflag>
+      <description>Required: input forward deformation field image file name</description>
+      <label>Input Forward Deformation Field Volume</label>
+      <channel>input</channel>
+    </image>
+
+    <image type="vector">
+      <name>inputReverseDeformationFieldVolume</name>
+      <longflag>inputReverseDeformationFieldVolume</longflag>
+      <description>Required: input reverse deformation field image file name</description>
+      <label>Input Reverse Deformation Field Volume</label>
+      <channel>input</channel>
+    </image>
+
+    <geometry type="fiberbundle">
+      <name>inputTract</name>
+      <longflag>inputTract</longflag>
+      <description>Required: name of input vtkPolydata file containing tract lines.</description>
+      <label>Input Tract Filename</label>
+      <channel>input</channel>
+    </geometry>
+
+  </parameters>
+
+  <parameters>
+    <label>Output Files</label>
+    <description>Output file in which to store tract lines</description>
+
+    <geometry type="fiberbundle" fileExtensions=".vtk" >
+      <name>outputTract</name>
+      <longflag>outputTract</longflag>
+      <description>Required: name of output vtkPolydata file containing tract lines and the point data collected along them.</description>
+      <label>Output Tract Filename</label>
+      <channel>output</channel>
+    </geometry>
+
+    <boolean>
+      <name>writeXMLPolyDataFile</name>
+      <longflag>writeXMLPolyDataFile</longflag>
+      <description>Flag to make use of the XML format for vtkPolyData fiber tracts.</description>
+      <label>Write fiber tracts in XML format</label>
+      <default>0</default>
+      <channel>output</channel>
+    </boolean>
+
+  </parameters>
+
+  <parameters>
+    <label>Multiprocessing Control</label>
+    <integer>
+      <name>numberOfThreads</name>
+      <longflag deprecatedalias="debugNumberOfThreads" >numberOfThreads</longflag>
+      <label>Number Of Threads</label>
+      <description>Explicitly specify the maximum number of threads to use.</description>
+      <default>-1</default>
+    </integer>
+  </parameters>
+  </executable>

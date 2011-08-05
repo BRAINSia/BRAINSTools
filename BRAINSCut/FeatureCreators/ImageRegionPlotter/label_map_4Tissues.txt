@@ -1,0 +1,11 @@
+label, name , color
+0, AIR, black
+3, BGM, grey
+4, CSF, green
+2, GM, blue
+6, NOTCSF, grey
+7, NOTGM , grey
+9, NOTVB, grey
+8, NOTWM, grey
+5, VB, yellow 
+1, WM, red

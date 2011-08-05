@@ -1,0 +1,37 @@
+#!/usr/bin/tclsh
+
+set EXEC_PATH @CMAKE_RUNTIME_OUTPUT_DIRECTORY@
+
+foreach script [glob ${EXEC_PATH}/scripts/iplTclScripts/*.tcl] {
+    source ${script}
+}
+
+proc ComputeMIDeformationFeidsForANN { MovingImageFilename FixedImageFilename WriteTemp_freescale_MovingToFixed EXEC_PATH } {
+    set WorkIn_autotempdir [ file dirname ${WriteTemp_freescale_MovingToFixed} ];
+    if { [ file exists ${WriteTemp_freescale_MovingToFixed} ] == 1 } {
+        puts "File already exists ${WriteTemp_freescale_MovingToFixed}, so skipping ";
+    } else {
+        set WriteDeformationBaseName [ file tail ${WriteTemp_freescale_MovingToFixed} ];
+        set WriteTemp_bootrotation "${WorkIn_autotempdir}/_bootrotation__${WriteDeformationBaseName}";
+        set WriteTemp_rigidrotation "${WorkIn_autotempdir}/_rigidrotation__${WriteDeformationBaseName}";
+        set WriteTemp_freescale_FixedToMoving "${WorkIn_autotempdir}/inv__${WriteDeformationBaseName}";
+        NineParameterImageToTemplateMIRegistration ${MovingImageFilename} ${FixedImageFilename} ${WriteTemp_bootrotation} ${WriteTemp_freescale_MovingToFixed} ${WriteTemp_rigidrotation};
+    }
+}
+
+if { $argc != 3  && $argc != 4 } {
+    puts "ERROR: Incorect number of arguments";
+    exit -1 ;
+}
+set MovingImage [lindex $argv 0];
+set FixedImage [lindex $argv 1];
+set DeformationOutput [lindex $argv 2];
+
+set basepathoutput [ file dirname ${FixedImage} ];
+
+if  { [ file exists $DeformationOutput ] } {
+    puts "Skipping generation of $DeformationOutput because it already exists"
+    exit 0;
+} else {
+    ComputeMIDeformationFeidsForANN $MovingImage $FixedImage $DeformationOutput ${EXEC_PATH}
+}

@@ -1,0 +1,172 @@
+<!-- 
+   - This is an exmample file to apply BRAINSCut for those already trained model.
+   - 2010 Dec, this version includes 6 structures,
+   - has to be applied at the same time.
+   - `[ square_bracket ]' part has to be replaced to the proper file/directory name
+   - Other part could be remaind as it is.
+
+   - Model Description
+     - This model generated from 17 training data set and tested with 8 data set
+     - Test result shows that the multi-net is good for Caduate, Globus, Hippocampus 
+     - and Putamen but accumbens. For thalamus, it is very unstable for now. 
+
+   - Necessary Input Images:
+     - T1
+     - T2
+     - CL = Tissue Classified Image
+     - SG = Sum of Gradient from T1 and T2 Image
+
+   Regina
+-->
+
+<AutoSegProcessDescription> 
+  <DataSet Name="[data_set_name(scan_name)]" Type="Apply"
+    OutputDir="[Directory_name_to_store_result]" > 
+    <Image Type="T1" Filename="[t1_file_name_for_the_dataset]" />
+    <Image Type="T2" Filename="[t2_file_name_for_the_dataset]" />
+    <Image Type="CL" Filename="[t2_file_name_for_the_dataset]" />
+    <Image Type="SG" Filename="[Sum_Grad_file_name_for_the_dataset]" />
+    <Registration SubjToAtlasRegistrationFilename="[Deformation_name_for_subject_to_atlas]" 
+      AtlasToSubjRegistrationFilename="[Deformation_name_for_atlas_to_subject]"
+                   ID="T1_BSpline_ROI" /> 
+  </DataSet>
+
+  <DataSet Name="template" Type="Atlas" >
+    <Image Type="T1" Filename="[BRAINSBuild_Dir]/template_t1.nii.gz" />
+    <Image Type="T2" Filename="na" />
+    <Image Type="CL" Filename="na" />
+    <Image Type="SG" Filename="na" />
+  </DataSet>
+
+  <RegistrationParams 
+                     Type      = "T1_BSpline_ROI" 
+                     Command   = "[BRAINSBuild_Dir]/GenerateBSplineTransform_ROI.sh"
+                     ImageType = "T1" 
+                     ID        = "T1_BSpline_ROI" 
+   />
+ <ProbabilityMap  StructureID    = "l_accumbens" 
+                  Gaussian       = "1.0"
+                  GenerateVector = "true"
+                  Filename       = "[BRAINSCut_Dir]/TrainedModels/2011_SIEMENS/l_accumbens/_ProbabilityMap.nii.gz"
+                  rho            = "[BRAINSCut_Dir]//TrainedModels/2011_SIEMENS/rho.nii.gz"
+                  phi            = "[BRAINSCut_Dir]//TrainedModels/2011_SIEMENS/phi.nii.gz"
+                  theta            = "[BRAINSCut_Dir]//TrainedModels/2011_SIEMENS/theta.nii.gz"
+   />
+
+ <ProbabilityMap  StructureID    = "r_accumbens" 
+                  Gaussian       = "1.0"
+                  GenerateVector = "true"
+                  Filename       = "[BRAINSCut_Dir]/TrainedModels/2011_SIEMENS/r_accumbens/_ProbabilityMap.nii.gz"
+                  rho            = "[BRAINSCut_Dir]//TrainedModels/2011_SIEMENS/rho.nii.gz"
+                  phi            = "[BRAINSCut_Dir]//TrainedModels/2011_SIEMENS/phi.nii.gz"
+                  theta            = "[BRAINSCut_Dir]//TrainedModels/2011_SIEMENS/theta.nii.gz"
+   />
+ <ProbabilityMap  StructureID    = "l_caudate" 
+                  Gaussian       = "1.0"
+                  GenerateVector = "true"
+                  Filename       = "[BRAINSCut_Dir]/TrainedModels/2011_SIEMENS/l_caudate/_ProbabilityMap.nii.gz"
+                  rho            = "[BRAINSCut_Dir]//TrainedModels/2011_SIEMENS/rho.nii.gz"
+                  phi            = "[BRAINSCut_Dir]//TrainedModels/2011_SIEMENS/phi.nii.gz"
+                  theta            = "[BRAINSCut_Dir]//TrainedModels/2011_SIEMENS/theta.nii.gz"
+   />
+
+ <ProbabilityMap  StructureID    = "r_caudate" 
+                  Gaussian       = "1.0"
+                  GenerateVector = "true"
+                  Filename       = "[BRAINSCut_Dir]/TrainedModels/2011_SIEMENS/r_caudate/_ProbabilityMap.nii.gz"
+                  rho            = "[BRAINSCut_Dir]//TrainedModels/2011_SIEMENS/rho.nii.gz"
+                  phi            = "[BRAINSCut_Dir]//TrainedModels/2011_SIEMENS/phi.nii.gz"
+                  theta            = "[BRAINSCut_Dir]//TrainedModels/2011_SIEMENS/theta.nii.gz"
+   />
+ <ProbabilityMap  StructureID    = "l_globus" 
+                  Gaussian       = "1.0"
+                  GenerateVector = "true"
+                  Filename       = "[BRAINSCut_Dir]/TrainedModels/2011_SIEMENS/l_globus/_ProbabilityMap.nii.gz"
+                  rho            = "[BRAINSCut_Dir]//TrainedModels/2011_SIEMENS/rho.nii.gz"
+                  phi            = "[BRAINSCut_Dir]//TrainedModels/2011_SIEMENS/phi.nii.gz"
+                  theta            = "[BRAINSCut_Dir]//TrainedModels/2011_SIEMENS/theta.nii.gz"
+   />
+
+ <ProbabilityMap  StructureID    = "r_globus" 
+                  Gaussian       = "1.0"
+                  GenerateVector = "true"
+                  Filename       = "[BRAINSCut_Dir]/TrainedModels/2011_SIEMENS/r_globus/_ProbabilityMap.nii.gz"
+                  rho            = "[BRAINSCut_Dir]//TrainedModels/2011_SIEMENS/rho.nii.gz"
+                  phi            = "[BRAINSCut_Dir]//TrainedModels/2011_SIEMENS/phi.nii.gz"
+                  theta            = "[BRAINSCut_Dir]//TrainedModels/2011_SIEMENS/theta.nii.gz"
+   />
+ <ProbabilityMap  StructureID    = "l_hippocampus" 
+                  Gaussian       = "1.0"
+                  GenerateVector = "true"
+                  Filename       = "[BRAINSCut_Dir]/TrainedModels/2011_SIEMENS/l_hippocampus/_ProbabilityMap.nii.gz"
+                  rho            = "[BRAINSCut_Dir]//TrainedModels/2011_SIEMENS/rho.nii.gz"
+                  phi            = "[BRAINSCut_Dir]//TrainedModels/2011_SIEMENS/phi.nii.gz"
+                  theta            = "[BRAINSCut_Dir]//TrainedModels/2011_SIEMENS/theta.nii.gz"
+   />
+
+ <ProbabilityMap  StructureID    = "r_hippocampus" 
+                  Gaussian       = "1.0"
+                  GenerateVector = "true"
+                  Filename       = "[BRAINSCut_Dir]/TrainedModels/2011_SIEMENS/r_hippocampus/_ProbabilityMap.nii.gz"
+                  rho            = "[BRAINSCut_Dir]//TrainedModels/2011_SIEMENS/rho.nii.gz"
+                  phi            = "[BRAINSCut_Dir]//TrainedModels/2011_SIEMENS/phi.nii.gz"
+                  theta            = "[BRAINSCut_Dir]//TrainedModels/2011_SIEMENS/theta.nii.gz"
+   />
+ <ProbabilityMap  StructureID    = "l_putamen" 
+                  Gaussian       = "1.0"
+                  GenerateVector = "true"
+                  Filename       = "[BRAINSCut_Dir]/TrainedModels/2011_SIEMENS/l_putamen/_ProbabilityMap.nii.gz"
+                  rho            = "[BRAINSCut_Dir]//TrainedModels/2011_SIEMENS/rho.nii.gz"
+                  phi            = "[BRAINSCut_Dir]//TrainedModels/2011_SIEMENS/phi.nii.gz"
+                  theta            = "[BRAINSCut_Dir]//TrainedModels/2011_SIEMENS/theta.nii.gz"
+   />
+
+ <ProbabilityMap  StructureID    = "r_putamen" 
+                  Gaussian       = "1.0"
+                  GenerateVector = "true"
+                  Filename       = "[BRAINSCut_Dir]/TrainedModels/2011_SIEMENS/r_putamen/_ProbabilityMap.nii.gz"
+                  rho            = "[BRAINSCut_Dir]//TrainedModels/2011_SIEMENS/rho.nii.gz"
+                  phi            = "[BRAINSCut_Dir]//TrainedModels/2011_SIEMENS/phi.nii.gz"
+                  theta            = "[BRAINSCut_Dir]//TrainedModels/2011_SIEMENS/theta.nii.gz"
+   />
+ <ProbabilityMap  StructureID    = "l_thalamus" 
+                  Gaussian       = "1.0"
+                  GenerateVector = "true"
+                  Filename       = "[BRAINSCut_Dir]/TrainedModels/2011_SIEMENS/l_thalamus/_ProbabilityMap.nii.gz"
+                  rho            = "[BRAINSCut_Dir]//TrainedModels/2011_SIEMENS/rho.nii.gz"
+                  phi            = "[BRAINSCut_Dir]//TrainedModels/2011_SIEMENS/phi.nii.gz"
+                  theta            = "[BRAINSCut_Dir]//TrainedModels/2011_SIEMENS/theta.nii.gz"
+   />
+
+ <ProbabilityMap  StructureID    = "r_thalamus" 
+                  Gaussian       = "1.0"
+                  GenerateVector = "true"
+                  Filename       = "[BRAINSCut_Dir]/TrainedModels/2011_SIEMENS/r_thalamus/_ProbabilityMap.nii.gz"
+                  rho            = "[BRAINSCut_Dir]//TrainedModels/2011_SIEMENS/rho.nii.gz"
+                  phi            = "[BRAINSCut_Dir]//TrainedModels/2011_SIEMENS/phi.nii.gz"
+                  theta            = "[BRAINSCut_Dir]//TrainedModels/2011_SIEMENS/theta.nii.gz"
+   />
+
+  <ANNParams        Iterations             = "1"
+                    MaximumVectorsPerEpoch = "700000"
+                    EpochIterations        = "100"
+                    ErrorInterval          = "1"
+                    DesiredError           = "0.000001"
+                    NumberOfHiddenNodes    = "70"
+                    ActivationSlope        = "1.0"
+                    ActivationMinMax       = "1.0"
+   />
+
+   <NeuralNetParams MaskSmoothingValue     = "0.0" 
+                    GradientProfileSize    = "1"
+                    TrainingVectorFilename = "na"
+                    TrainingModelFilename  = "[BRAINSCut_Dir]/TrainedModels/2011_SIEMENS/t1t2clsg_AllInOne_model.txt"
+                    TestVectorFilename     = "na" 
+   />
+
+<ApplyModel         CutOutThresh           = "0.05" 
+                    CutOutGaussian         = "0"
+                    MaskThresh             = "0.4" 
+   />
+
+</AutoSegProcessDescription>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>
+  BRAINS.BRAINSCut
+  </category>
+  <title>
+  Image Label Combine
+  </title>
+  <description>
+  Combine multiple binary images into one label map with different label map value. The order of given binary volumes should match with the order of given label map values(integer). From the multiple binary images, this would produce one label map. </description>
+  <version>0.1.0</version>
+  <documentation-url></documentation-url>
+  <license></license>
+  <contributor>Eun Young Kim</contributor>
+  <acknowledgements></acknowledgements>
+
+  <parameters>
+    <label>IO</label>
+    <description>Input/output parameters</description>
+    <image type ="vector">
+      <name>inputBinaryVolumes</name>
+      <label>Input Binary Images</label>
+      <channel>input</channel>
+      <longflag>inputBinaryVolumes</longflag>
+      <description>The list of binary images to be combined to the one label map</description>
+    </image>
+    <integer-vector>
+      <name>inputLabels</name>
+      <label>Input Label Map Values</label>
+      <channel>input</channel>
+      <longflag>inputLabels</longflag>
+      <description>The list of label values corresponding to the inputBinaryVolumes. Default values are given for the case of two binary images</description>
+      <default>1,2</default>
+    </integer-vector>
+    <image>
+      <name>outputLabelMapVolume</name>
+      <label>Output Label Volume</label>
+      <channel>output</channel>
+      <longflag>outputLabelMapVolume</longflag>
+      <description>The output label map images, with integer values in it. Each label value specified in the inputLabels is combined into this output label map volume</description>
+    </image>
+
+  </parameters>
+  
+  <parameters>
+    <label>Label combination options</label>
+    <description>Selection of how to combine label maps</description>
+
+    <boolean>
+      <name>firstOverwrites</name>
+      <longflag>firstOverwrites</longflag>
+      <description>The label volume given first wins the one comes later. So if binary volumes are overlaped each other, the label is decided based on the order of input volume.</description>
+      <label>First Label Overwrites Second</label>
+      <default>true</default>
+    </boolean>
+  </parameters>  
+</executable>

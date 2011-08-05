@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8" ?>
+  <executable>
+  <category>Statistics.Features.HammerFeatures</category>
+  <title>HAMMER Feature Vectors</title>
+
+  <description>Create the feature vectors used by HAMMER.</description>
+  <version>0.1.0.$Revision: 1 $(alpha)</version>
+  <documentation-url>http:://www.na-mic.org/</documentation-url>
+  <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt </license>
+  <contributor>This was extracted from the Hammer Registration source code, and wrapped up by Hans J. Johnson.</contributor>
+
+  <parameters>
+    <label>GMI featrue parameters</label>
+    <description>Input parameters for analysis.</description>
+
+    <integer>
+      <name>Scale</name>
+      <longflag>--Scale</longflag>
+      <description>Determine Scale of Ball</description>
+      <label>Scale</label>
+      <default>7</default>
+      <channel>input</channel>
+    </integer>
+    <float>
+      <name>Strength</name>
+      <longflag>--Strength</longflag>
+      <description>Determine Strength of Edges</description>
+      <label>Strength</label>
+      <default>2</default>
+      <channel>input</channel>
+    </float>
+  </parameters>
+
+  <parameters>
+    <label>Tissue Volumes</label>
+    <description>Input images for GMI computation.</description>
+    <image>
+      <name>inputGMVolume</name>
+      <longflag>--inputGMVolume</longflag>
+      <description>Required: input grey matter posterior image</description>
+      <label>Input Grey Matter Volume</label>
+      <channel>input</channel>
+    </image>
+    <image>
+      <name>inputWMVolume</name>
+      <longflag>--inputWMVolume</longflag>
+      <description>Required: input white matter posterior image</description>
+      <label>Input White Matter Volume</label>
+      <channel>input</channel>
+    </image>
+    <image>
+      <name>inputCSFVolume</name>
+      <longflag>--inputCSFVolume</longflag>
+      <description>Required: input CSF posterior image</description>
+      <label>Input CSF Volume</label>
+      <channel>input</channel>
+    </image>
+  </parameters>
+
+  <parameters>
+    <label>Output Parameters</label>
+    <description>Output parameters for analysis.</description>
+
+    <string>
+      <name>outputVolumeBase</name>
+      <longflag>--outputVolumeBase</longflag>
+      <description>Required: output image base name to be appended for each feature vector.</description>
+      <label>Output Volume</label>
+      <channel>output</channel>
+    </string>
+
+  </parameters>
+
+  </executable>

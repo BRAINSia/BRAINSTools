@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8" ?>
+  <executable>
+    <category>BRAINS3.BRAINSCut.Features.</category>
+  <title>GradientAnisopropicDiffusionFilter</title>
+
+  <description> Image Smoothing using Gradient Anisotropic Diffuesion Filer</description>
+  <contributor> This tool was developed by Eun Young Kim by modifying ITK Example </contributor>
+
+  <parameters>
+    <label>Input Parameters</label>
+    <description>Input parameters for analysis.</description>
+
+    <image>
+      <name>inputVolume</name>
+      <longflag>--inputVolume</longflag>
+      <description>Required: input image</description>
+      <label>Input Volume</label>
+      <channel>input</channel>
+    </image>
+
+    <integer>
+      <name>numberOfIterations</name>
+      <longflag>--numberOfIterations</longflag>
+      <description>Optional value for number of Iterations</description>
+      <label> number of iterations</label>
+      <channel>input</channel>
+      <default>5</default>
+    </integer>
+
+    <double>
+      <name>timeStep</name>
+      <longflag>--timeStep</longflag>
+      <description>Time step for diffusion process</description>
+      <label> Time Step</label>
+      <channel>input</channel>
+      <default>0.125</default>
+    </double>
+
+    <double>
+      <name>conductance</name>
+      <longflag>--conductance</longflag>
+      <description>Conductance for diffusion process</description>
+      <label> Conductance </label>
+      <channel>input</channel>
+      <default>1.0</default>
+    </double>
+
+  </parameters>
+
+  <parameters>
+    <label>Output Parameters</label>
+    <description>Output parameters for analysis.</description>
+
+    <image>
+      <name>outputVolume</name>
+      <longflag>--outputVolume</longflag>
+      <description>Required: output image</description>
+      <label>output Volume</label>
+      <channel>output</channel>
+    </image>
+
+  </parameters>
+
+  </executable>

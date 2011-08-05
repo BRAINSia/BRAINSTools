@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8" ?>
+  <executable>
+    <category>BRAINSCut.Tools</category>
+  <title>CombineLabelToMask</title>
+
+  <description>Combine mask image which has different labels to one label mask </description>
+  <version>0.1.0.$Revision: 1 $(alpha)</version>
+  <documentation-url>http:://www.na-mic.org/</documentation-url>
+  <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt </license>
+  <contributor>This tool was written by Eunyoung Regina Kim.</contributor>
+
+  <parameters>
+    <label>Input Parameters</label>
+    <description>Input parameters for analysis.</description>
+
+    <image>
+      <name>inputVolume</name>
+      <longflag>--inputVolume</longflag>
+      <description>Required: input tissue label image</description>
+      <label>Input Tissue Label Volume</label>
+      <channel>input</channel>
+    </image>
+
+    <integer>
+      <name>outsideValue</name>
+      <longflag>outsideValue</longflag>
+      <label>outside value after threshold</label>
+      <default>0</default>
+      <channel>input</channel>
+    </integer>
+
+    <integer>
+      <name>insideValue</name>
+      <longflag>insideValue</longflag>
+      <label>inside value after threshold</label>
+      <default>1</default>
+      <channel>input</channel>
+    </integer>
+
+    <integer>
+      <name>lowerThreshold</name>
+      <longflag>lowerThreshold</longflag>
+      <label>lower threshold value</label>
+      <default>1</default>
+      <channel>input</channel>
+    </integer>
+
+  </parameters>
+  <parameters>
+    <label>Output Parameters</label>
+    <description>Output parameters for analysis.</description>
+
+    <image>
+      <name>outputVolume</name>
+      <longflag>--outputVolume</longflag>
+      <description>Required: output image</description>
+      <label>Output Volume</label>
+      <channel>output</channel>
+    </image>
+  </parameters>
+
+  </executable>

@@ -1,0 +1,30 @@
+/*=========================================================================
+
+ Program:   BRAINS (Brain Research: Analysis of Images, Networks, and Systems)
+ Module:    $RCSfile: $
+ Language:  C++
+ Date:      $Date: 2006/03/29 14:53:40 $
+ Version:   $Revision: 1.9 $
+
+   Copyright (c) Iowa Mental Health Clinical Research Center. All rights reserved.
+   See BRAINSCopyright.txt or http://www.psychiatry.uiowa.edu/HTML/Copyright.html 
+   for details.
+ 
+      This software is distributed WITHOUT ANY WARRANTY; without even 
+      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+      PURPOSE.  See the above copyright notices for more information.
+
+=========================================================================*/
+#ifndef __gtractConfigure_H__
+#define __gtractConfigure_H__
+
+
+#cmakedefine BUILD_SHARED_LIBS
+#ifdef BUILD_SHARED_LIBS
+#define GTRACTDLL
+#else
+#define GTRACTSTATIC
+#endif
+
+
+#endif //__gtractConfigure_H__

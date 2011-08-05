@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8" ?>
+  <executable>
+  <category>Diffusion.GTRACT</category>
+  <title>Concat DWI Images</title>
+
+  <description>This program will concatenate two DTI runs together.</description>
+  <acknowledgements>Funding for this version of the GTRACT program was provided by NIH/NINDS R01NS050568-01A2S1</acknowledgements>
+  <version>4.0.0</version>
+  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Modules:GTRACT</documentation-url>
+  <license>http://mri.radiology.uiowa.edu/copyright/GTRACT-Copyright.txt</license>
+  <contributor>This tool was developed by Vincent Magnotta and Greg Harris.</contributor>
+
+
+  <parameters>
+    <label>Input Parameters</label>
+    <description>Parameters for specifying the diffusion weighted imaging studies to run together</description>
+
+    <image multiple="true" type="diffusion-weighted" fileExtensions=".nrrd">
+      <name>inputVolume</name>
+      <longflag>inputVolume</longflag>
+      <description>Required: input file containing the first diffusion weighted image</description>
+      <label>First Input Image Volume</label>
+      <channel>input</channel>
+    </image>
+  </parameters>
+
+  <parameters>
+    <label>Output File</label>
+    <description>Output file from combining two diffusion weighted images</description>
+
+    <image type="diffusion-weighted" fileExtensions=".nrrd">
+      <name>outputVolume</name>
+      <longflag>outputVolume</longflag>
+      <description>Required: name of output NRRD file containing the combined diffusion weighted images.</description>
+      <label>Output Image Volume</label>
+      <channel>output</channel>
+    </image>
+  </parameters>
+
+  <parameters>
+    <label>Multiprocessing Control</label>
+    <integer>
+      <name>numberOfThreads</name>
+      <longflag deprecatedalias="debugNumberOfThreads" >numberOfThreads</longflag>
+      <label>Number Of Threads</label>
+      <description>Explicitly specify the maximum number of threads to use.</description>
+      <default>-1</default>
+    </integer>
+  </parameters>
+  </executable>

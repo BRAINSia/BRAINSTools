@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="utf-8" ?>
+  <executable>
+  <category>Diffusion.GTRACT</category>
+  <title>Graph Search Tracking</title>
+
+  <description> This program implements the Graph Serach Tracking method proposed by Cheng et al. in NeuroImage Volume 31, Issue 3, 1 July 2006, Pages 1075-1085 for finding the tracks in a tensor image.  This method to generate fibers in a Tensor representation where crossing fibers occur.  This is defined by low anisotropy and high curvature. Both of these values are controlled by the user. In these regions, three directions for tracking are considered. This includes the primary eigenvector, secondary eigenvector, and a vector with random pertubations added pointing towards the ending region.  </description>
+  <acknowledgements>Funding for this version of the GTRACT program was provided by NIH/NINDS R01NS050568-01A2S1</acknowledgements>
+  <version>4.0.0</version>
+  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Modules:GTRACT</documentation-url>
+  <license>http://mri.radiology.uiowa.edu/copyright/GTRACT-Copyright.txt</license>
+  <contributor>This tool was developed by Vincent Magnotta and Greg Harris.</contributor>
+
+
+  <parameters>
+    <label>Input Image Files</label>
+    <description>Parameters for specifying the diffusion tensor image set</description>
+
+    <image>
+      <name>inputTensorVolume</name>
+      <longflag>inputTensorVolume</longflag>
+      <description>Required: input tensor image file name</description>
+      <label>Input Tensor Image Volume</label>
+      <channel>input</channel>
+    </image>
+
+    <image>
+      <name>inputAnisotropyVolume</name>
+      <longflag>inputAnisotropyVolume</longflag>
+      <description>Required: input anisotropy image file name</description>
+      <label>Input Anisotropy Image Volume</label>
+      <channel>input</channel>
+    </image>
+
+    <image>
+      <name>inputStartingSeedsLabelMapVolume</name>
+      <longflag>inputStartingSeedsLabelMapVolume</longflag>
+      <description>Required: input starting seeds LabelMap image file name</description>
+      <label>Input Starting Seeds LabelMap Volume</label>
+      <channel>input</channel>
+    </image>
+
+    <integer>
+      <name>startingSeedsLabel</name>
+      <longflag>startingSeedsLabel</longflag>
+      <description>Label value for Starting Seeds</description>
+      <label>Starting Seeds Label</label>
+      <default>1</default>
+      <channel>input</channel>
+    </integer>
+
+    <image>
+      <name>inputEndingSeedsLabelMapVolume</name>
+      <longflag>inputEndingSeedsLabelMapVolume</longflag>
+      <description>Required: input ending seeds LabelMap image file name</description>
+      <label>Input Ending Seeds LabelMap Volume</label>
+      <channel>input</channel>
+    </image>
+
+    <integer>
+      <name>endingSeedsLabel</name>
+      <longflag>endingSeedsLabel</longflag>
+      <description>Label value for Ending Seeds</description>
+      <label>Ending Seeds Label</label>
+      <default>1</default>
+      <channel>input</channel>
+    </integer>
+
+  </parameters>
+
+  <parameters>
+    <label>Output Files</label>
+    <description>Output file in which to store tract lines</description>
+
+    <file>
+      <name>outputTract</name>
+      <longflag>outputTract</longflag>
+      <description>Required: name of output vtkPolydata file containing tract lines and the point data collected along them.</description>
+      <label>Output Tract Filename</label>
+      <channel>output</channel>
+    </file>
+
+    <boolean>
+      <name>writeXMLPolyDataFile</name>
+      <longflag>writeXMLPolyDataFile</longflag>
+      <description>Flag to make use of the XML format for vtkPolyData fiber tracts.</description>
+      <label>Write fiber tracts in XML format</label>
+      <default>0</default>
+      <channel>output</channel>
+    </boolean>
+
+  </parameters>
+
+  <parameters>
+    <label>Tensor Tracking Parameters</label>
+    <description>Input parameters controlling the track finding</description>
+
+    <float>
+      <name>seedThreshold</name>
+      <longflag>seedThreshold</longflag>
+      <description>Anisotropy threshold for seed selection</description>
+      <label>Seed Threshold</label>
+      <default>0.40</default>
+      <channel>input</channel>
+    </float>
+
+    <float>
+      <name>trackingThreshold</name>
+      <longflag>trackingThreshold</longflag>
+      <description>Anisotropy threshold for fiber tracking</description>
+      <label>Tracking Threshold</label>
+      <default>0.20</default>
+      <channel>input</channel>
+    </float>
+
+    <float>
+      <name>curvatureThreshold</name>
+      <longflag>curvatureThreshold</longflag>
+      <description>Curvature threshold (Degrees)</description>
+      <label>Curvature Threshold</label>
+      <default>45.0</default>
+      <channel>input</channel>
+    </float>
+
+    <float>
+      <name>branchingThreshold</name>
+      <longflag>branchingThreshold</longflag>
+      <description>Anisotropy Branching threshold</description>
+      <label>Branching Threshold</label>
+      <default>0.20</default>
+      <channel>input</channel>
+    </float>
+
+    <integer>
+      <name>maximumBranchPoints</name>
+      <longflag>maximumBranchPoints</longflag>
+      <description>Maximum branch points</description>
+      <label>Maximum Branch Points</label>
+      <default>5</default>
+      <channel>input</channel>
+    </integer>
+
+    <boolean>
+      <name>useRandomWalk</name>
+      <longflag>useRandomWalk</longflag>
+      <description>Flag to use random walk.</description>
+      <label>Use Random Walk</label>
+      <default>0</default>
+      <channel>input</channel>
+    </boolean>
+
+    <integer>
+      <name>randomSeed</name>
+      <longflag>randomSeed</longflag>
+      <description>Random number generator seed</description>
+      <label>Random Seed</label>
+      <default>13579</default>
+      <channel>input</channel>
+    </integer>
+
+    <float>
+      <name>branchingAngle</name>
+      <longflag>branchingAngle</longflag>
+      <description>Branchging angle (Degrees)</description>
+      <label>Branching Angle</label>
+      <default>45.0</default>
+      <channel>input</channel>
+    </float>
+
+    <float>
+      <name>minimumLength</name>
+      <longflag>minimumLength</longflag>
+      <description>Minimum fiber length. Helpful for filtering invalid tracts.</description>
+      <label>Minimum Fiber Length</label>
+      <default>0.0</default>
+      <channel>input</channel>
+    </float>
+
+    <float>
+      <name>maximumLength</name>
+      <longflag>maximumLength</longflag>
+      <description>Maximum fiber length</description>
+      <label>Maximum Fiber Length</label>
+      <default>125.0</default>
+      <channel>input</channel>
+    </float>
+
+    <float>
+      <name>stepSize</name>
+      <longflag>stepSize</longflag>
+      <description>Fiber tracking step size</description>
+      <label>Step Size</label>
+      <default>1.0</default>
+      <channel>input</channel>
+    </float>
+
+    <boolean>
+      <name>useLoopDetection</name>
+      <longflag>useLoopDetection</longflag>
+      <description>Flag to make use of loop detection.</description>
+      <label>Use Loop Detection</label>
+      <default>0</default>
+      <channel>input</channel>
+    </boolean>
+
+    <boolean>
+      <name>useTend</name>
+      <longflag>useTend</longflag>
+      <description>Flag to make use of Tend F and Tend G parameters.</description>
+      <label>Use Tensor Deflection</label>
+      <default>0</default>
+      <channel>input</channel>
+    </boolean>
+
+    <float>
+      <name>tendF</name>
+      <longflag>tendF</longflag>
+      <description>Tend F parameter</description>
+      <label>Tend F</label>
+      <default>0.5</default>
+      <channel>input</channel>
+    </float>
+
+    <float>
+      <name>tendG</name>
+      <longflag>tendG</longflag>
+      <description>Tend G parameter</description>
+      <label>Tend G</label>
+      <default>0.5</default>
+      <channel>input</channel>
+    </float>
+
+  </parameters>
+  </executable>

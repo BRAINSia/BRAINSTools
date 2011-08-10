@@ -143,22 +143,33 @@ else()
   include(External_SlicerExecutionModel)
 endif()
 
-include(External_BRAINSTools)
+option(USE_BRAINSCommonLib             "Build BRAINSCommonLib"             ON)
+option(USE_BRAINSFit                   "Build BRAINSFit"                   ON)
+#option(USE_BRAINSCut                   "Build BRAINSCut"                   OFF)
+option(USE_BRAINSABC                   "Build BRAINSABC"                   OFF)
+option(USE_BRAINSConstellationDetector "Build BRAINSConstellationDetector" ON)
 
-set(BRAINSStandAlone_DEPENDENCIES ${BRAINSTools_PROVIDES})
+set(BRAINSTools_DEPENDENCIES ITKv4 SlicerExecutionModel)
+if(USE_BRAINSABC) # OR USE_BRAINSCut)
+  # Define the atlas subdirectory in one place
+  set(${CMAKE_PROJECT_NAME}_RUNTIME_DIR ${CMAKE_CURRENT_BINARY_DIR}/src/bin)
+  include(External_ReferenceAtlas)
+  list(APPEND  BRAINSTools_DEPENDENCIES ${ReferenceAtlas_DEPEND})
+endif()
+
 #------------------------------------------------------------------------------
 # Configure and build
 #------------------------------------------------------------------------------
-set(proj BRAINSStandAlone)
+set(proj BRAINSTools)
 ExternalProject_Add(${proj}
-  DEPENDS ${BRAINSStandAlone_DEPENDENCIES}
+  DEPENDS ${BRAINSTools_DEPENDENCIES}
   DOWNLOAD_COMMAND ""
   SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-  BINARY_DIR BRAINSStandAlone-build
+  BINARY_DIR BRAINSTools-build
   CMAKE_GENERATOR ${gen}
   CMAKE_ARGS
     ${ep_common_args}
-    -DBRAINSStandAlone_SUPERBUILD:BOOL=OFF
+    -DBRAINSTools_SUPERBUILD:BOOL=OFF
     -DADDITIONAL_CXX_FLAGS:STRING=${ADDITIONAL_CXX_FLAGS}
     -DGIT_EXECUTABLE:FILEPATH=${GIT_EXECUTABLE}
     # ITK
@@ -167,5 +178,16 @@ ExternalProject_Add(${proj}
     -DVTK_DIR:PATH=${VTK_DIR}
     # SlicerExecutionModel_DIR
     -DSlicerExecutionModel_DIR:PATH=${SlicerExecutionModel_DIR}
+    -DINTEGRATE_WITH_SLICER:BOOL=${INTEGRATE_WITH_SLICER}
+    -DSlicer_SOURCE_DIR:PATH=${Slicer_SOURCE_DIR}
+    -DBUILD_TESTING:BOOL=ON
+    -DUSE_BRAINSFit:BOOL=${USE_BRAINSFit}
+    -DUSE_BRAINSCommonLib:BOOL=${USE_BRAINSCommonLib}
+    -DUSE_BRAINSABC:BOOL=${USE_BRAINSABC}
+    -DUSE_BRAINSConstellationDetector:BOOL=${USE_BRAINSConstellationDetector}
+    -D${CMAKE_PROJECT_NAME}_USE_ITK4:BOOL=ON
+    ${VTK_BUILD_FLAGS}
+    ${OpenCV_BUILD_FLAGS}
+    ${QT_BUILD_FLAGS}
   INSTALL_COMMAND ""
   )

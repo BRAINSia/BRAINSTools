@@ -24,33 +24,12 @@ endif (WIN32)
 
 configure_file(${BRAINSFit_SOURCE_DIR}/CTestCustom.ctest ${BRAINSFit_BINARY_DIR}/CTestCustom.ctest COPYONLY)
 
-include(${BRAINSCommonLib_BUILDSCRIPTS_DIR}/ExternalData.cmake)
-list(APPEND ExternalData_URL_TEMPLATES
-  # Local data store populated by the ITK pre-commit hook
-  "file:///${CMAKE_SOURCE_DIR}/.ExternalData/%(algo)/%(hash)"
-  # Data published by Iowa Psychiatry web interface
-  "http://www.psychiatry.uiowa.edu/users/brainstestdata/ctestdata/%(algo)/%(hash)"
-
-  # Data published by MIDAS
-  "http://midas.kitware.com/api/rest/midas.bitstream.by.hash?hash=%(hash)&algorithm=%(algo)"
-
-  # Data published by developers using git-gerrit-push.
-  "http://www.itk.org/files/ExternalData/%(algo)/%(hash)"
-)
-
-
-
-# Tell ExternalData commands to transform raw files to content links.
-set(ExternalData_LINK_CONTENT MD5)
-
-#SETIFEMPTY(MIDAS_REST_URL "http://midas.kitware.com/api/rest" CACHE STRING "The MIDAS server where testing data resides")
-#
 ## Needed to set this for Slicer3 to find the test data directory
-#set(BRAINSCommonLib_DATA_DIRS "${PROJECT_SOURCE_DIR}/../BRAINSCommonLib/TestData")
+#set(BRAINSCommonLib_DATA_DIRS "${PROJECT_SOURCE_DIR}/../BRAINSCommonLi${TestData_DIR}")
 
 set(BRAINSFitTestName BRAINSFitTest_AffineRotationMasks)
-ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
-  --compare DATA{./TestData/${BRAINSFitTestName}.result.nii.gz}
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+  --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 7
   --compareRadiusTolerance 0
@@ -65,20 +44,20 @@ ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE}
   --minimumStepLength 0.001
   --outputVolumePixelType uchar
   --transformType Affine
-  --initialTransform DATA{./TestData/BRAINSFitTest_Initializer_RigidRotationNoMasks.mat}
+  --initialTransform DATA{${TestData_DIR}/BRAINSFitTest_Initializer_RigidRotationNoMasks.mat}
   --maskProcessingMode ROI
-  --fixedVolume DATA{./TestData/test.nii.gz}
-  --fixedBinaryVolume DATA{./TestData/test_mask.nii.gz}
-  --movingVolume DATA{./TestData/rotation.test.nii.gz}
-  --movingBinaryVolume DATA{./TestData/rotation.test_mask.nii.gz}
+  --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
+  --fixedBinaryVolume DATA{${TestData_DIR}/test_mask.nii.gz}
+  --movingVolume DATA{${TestData_DIR}/rotation.test.nii.gz}
+  --movingBinaryVolume DATA{${TestData_DIR}/rotation.test_mask.nii.gz}
   --outputVolume ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --outputTransform ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.mat
   --debugLevel 50
 )
 
 set(BRAINSFitTestName BRAINSFitTest_AffineRotationNoMasks)
-ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
-  --compare DATA{./TestData/${BRAINSFitTestName}.result.nii.gz}
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+  --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 7
   --compareRadiusTolerance 0
@@ -93,16 +72,16 @@ ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE}
   --minimumStepLength 0.001
   --outputVolumePixelType uchar
   --transformType Affine
-  --initialTransform DATA{./TestData/Initializer_0.05_${BRAINSFitTestName}.mat}
-  --fixedVolume DATA{./TestData/test.nii.gz}
-  --movingVolume DATA{./TestData/rotation.test.nii.gz}
+  --initialTransform DATA{${TestData_DIR}/Initializer_0.05_${BRAINSFitTestName}.mat}
+  --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
+  --movingVolume DATA{${TestData_DIR}/rotation.test.nii.gz}
   --outputVolume ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --outputTransform ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.mat
 )
 
 set(BRAINSFitTestName BRAINSFitTest_AffineScaleMasks)
-ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
-  --compare DATA{./TestData/${BRAINSFitTestName}.result.nii.gz}
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+  --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 9
   --compareRadiusTolerance 0
@@ -119,17 +98,17 @@ ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE}
   --transformType Affine
   --initializeTransformMode useMomentsAlign
   --maskProcessingMode ROI
-  --fixedVolume DATA{./TestData/test.nii.gz}
-  --fixedBinaryVolume DATA{./TestData/test_mask.nii.gz}
-  --movingVolume DATA{./TestData/scale.test.nii.gz}
-  --movingBinaryVolume DATA{./TestData/scale.test_mask.nii.gz}
+  --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
+  --fixedBinaryVolume DATA{${TestData_DIR}/test_mask.nii.gz}
+  --movingVolume DATA{${TestData_DIR}/scale.test.nii.gz}
+  --movingBinaryVolume DATA{${TestData_DIR}/scale.test_mask.nii.gz}
   --outputVolume ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --outputTransform ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.mat
 )
 
 set(BRAINSFitTestName BRAINSFitTest_AffineScaleNoMasks)
-ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
-  --compare DATA{./TestData/${BRAINSFitTestName}.result.nii.gz}
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+  --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 9
   --compareRadiusTolerance 0
@@ -144,16 +123,16 @@ ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE}
   --minimumStepLength 0.001
   --outputVolumePixelType uchar
   --transformType Affine
-  --initialTransform DATA{./TestData/Initializer_0.05_${BRAINSFitTestName}.mat}
-  --fixedVolume DATA{./TestData/test.nii.gz}
-  --movingVolume DATA{./TestData/scale.test.nii.gz}
+  --initialTransform DATA{${TestData_DIR}/Initializer_0.05_${BRAINSFitTestName}.mat}
+  --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
+  --movingVolume DATA{${TestData_DIR}/scale.test.nii.gz}
   --outputVolume ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --outputTransform ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.mat
 )
 
 set(BRAINSFitTestName BRAINSFitTest_AffineTranslationMasks)
-ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
-  --compare DATA{./TestData/${BRAINSFitTestName}.result.nii.gz}
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+  --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 7
   --compareRadiusTolerance 0
@@ -170,17 +149,17 @@ ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE}
   --transformType Affine
   --initializeTransformMode useMomentsAlign
   --maskProcessingMode ROI
-  --fixedVolume DATA{./TestData/test.nii.gz}
-  --fixedBinaryVolume DATA{./TestData/test_mask.nii.gz}
-  --movingVolume DATA{./TestData/translation.test.nii.gz}
-  --movingBinaryVolume DATA{./TestData/translation.test_mask.nii.gz}
+  --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
+  --fixedBinaryVolume DATA{${TestData_DIR}/test_mask.nii.gz}
+  --movingVolume DATA{${TestData_DIR}/translation.test.nii.gz}
+  --movingBinaryVolume DATA{${TestData_DIR}/translation.test_mask.nii.gz}
   --outputVolume ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --outputTransform ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.mat
 )
 
 set(BRAINSFitTestName BRAINSFitTest_AffineTranslationNoMasks)
-ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
-  --compare DATA{./TestData/${BRAINSFitTestName}.result.nii.gz}
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+  --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 7
   --compareRadiusTolerance 0
@@ -196,16 +175,16 @@ ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE}
   --outputVolumePixelType uchar
   --transformType Affine
   --initializeTransformMode useMomentsAlign
-  --fixedVolume DATA{./TestData/test.nii.gz}
-  --movingVolume DATA{./TestData/translation.test.nii.gz}
+  --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
+  --movingVolume DATA{${TestData_DIR}/translation.test.nii.gz}
   --outputVolume ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --outputTransform ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.mat
 )
 
 
 set(BRAINSFitTestName BRAINSFitTest_BSplineAnteScaleRotationRescaleHeadMasks)
-ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
-  --compare DATA{./TestData/${BRAINSFitTestName}.result.nii.gz}
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+  --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 9
   --compareRadiusTolerance 0
@@ -223,16 +202,16 @@ ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE}
   --maskProcessingMode ROIAUTO
   --initializeTransformMode useCenterOfHeadAlign
   --transformType Rigid,ScaleVersor3D,Affine,BSpline
-  --fixedVolume DATA{./TestData/test.nii.gz}
-  --movingVolume DATA{./TestData/rotation.rescale.rigid.nii.gz}
+  --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
+  --movingVolume DATA{${TestData_DIR}/rotation.rescale.rigid.nii.gz}
   --outputVolume ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --outputTransform ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.mat
   --maxBSplineDisplacement 7.3
 )
 
 set(BRAINSFitTestName BRAINSFitTest_BSplineOnlyRescaleHeadMasks)
-ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
-  --compare DATA{./TestData/${BRAINSFitTestName}.result.nii.gz}
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+  --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 9
   --compareRadiusTolerance 0
@@ -248,10 +227,10 @@ ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE}
   --minimumStepLength 0.01
   --outputVolumePixelType short
   --maskProcessingMode ROIAUTO
-  --initialTransform DATA{./TestData/Initializer_BRAINSFitTest_BSplineAnteScaleRotationRescaleHeadMasks.mat}
+  --initialTransform DATA{${TestData_DIR}/Initializer_BRAINSFitTest_BSplineAnteScaleRotationRescaleHeadMasks.mat}
   --transformType BSpline
-  --fixedVolume DATA{./TestData/test.nii.gz}
-  --movingVolume DATA{./TestData/rotation.rescale.rigid.nii.gz}
+  --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
+  --movingVolume DATA{${TestData_DIR}/rotation.rescale.rigid.nii.gz}
   --outputVolume ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --outputTransform ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.mat
   --debugLevel 10
@@ -262,8 +241,8 @@ ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE}
 ## NOTE: 7.3 above was computed explicitly through testing.
 
 set(BRAINSFitTestName BRAINSFitTest_BSplineBSplineRescaleHeadMasks)
-ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
-  --compare DATA{./TestData/${BRAINSFitTestName}.result.nii.gz}
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+  --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 9
   --compareRadiusTolerance 0
@@ -279,18 +258,18 @@ ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE}
   --minimumStepLength 0.005
   --outputVolumePixelType short
   --maskProcessingMode ROIAUTO
-  --initialTransform DATA{./TestData/Initializer_BRAINSFitTest_BSplineOnlyRescaleHeadMasks.mat}
+  --initialTransform DATA{${TestData_DIR}/Initializer_BRAINSFitTest_BSplineOnlyRescaleHeadMasks.mat}
   --transformType BSpline
-  --fixedVolume DATA{./TestData/test.nii.gz}
-  --movingVolume DATA{./TestData/rotation.rescale.rigid.nii.gz}
+  --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
+  --movingVolume DATA{${TestData_DIR}/rotation.rescale.rigid.nii.gz}
   --outputVolume ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --outputTransform ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.mat
   --maxBSplineDisplacement 7.3
 )
 
 set(BRAINSFitTestName BRAINSFitTest_BSplineScaleRotationRescaleHeadMasks)
-ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
-  --compare DATA{./TestData/${BRAINSFitTestName}.result.nii.gz}
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+  --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 9
   --compareRadiusTolerance 0
@@ -308,8 +287,8 @@ ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE}
   --maskProcessingMode ROIAUTO
   --initializeTransformMode useCenterOfHeadAlign
   --transformType Rigid,ScaleVersor3D,BSpline
-  --fixedVolume DATA{./TestData/test.nii.gz}
-  --movingVolume DATA{./TestData/rotation.rescale.rigid.nii.gz}
+  --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
+  --movingVolume DATA{${TestData_DIR}/rotation.rescale.rigid.nii.gz}
   --outputVolume ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --outputTransform ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.mat
   --maxBSplineDisplacement 7.3
@@ -317,8 +296,8 @@ ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE}
 
 
 set(BRAINSFitTestName BRAINSFitTest_BSplineScaleRotationHistogramHeadMasks)
-ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
-  --compare DATA{./TestData/${BRAINSFitTestName}.result.nii.gz}
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+  --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 9
   --compareRadiusTolerance 1
@@ -338,8 +317,8 @@ ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE}
   --maskProcessingMode ROIAUTO
   --initializeTransformMode useCenterOfHeadAlign
   --transformType Rigid,ScaleVersor3D,BSpline
-  --fixedVolume DATA{./TestData/test.nii.gz}
-  --movingVolume DATA{./TestData/rotation.rescale.rigid.nii.gz}
+  --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
+  --movingVolume DATA{${TestData_DIR}/rotation.rescale.rigid.nii.gz}
   --outputVolume ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --outputTransform ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.mat
   --maxBSplineDisplacement 7.3
@@ -347,8 +326,8 @@ ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE}
 
 
 set(BRAINSFitTestName BRAINSFitTest_RigidAnisotropicMasks)
-ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
-  --compare DATA{./TestData/${BRAINSFitTestName}.result.nii.gz}
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+  --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
 ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 7
   --compareRadiusTolerance 1
@@ -356,8 +335,8 @@ ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   BRAINSFitTest
   --costMetric MMI
   --failureExitCode -1 --writeTransformOnFailure
-  --fixedVolume DATA{./TestData/ANON0006_20_T1_dbg_splayed.nii.gz}
-  --movingVolume DATA{./TestData/ANON0006_20_T1_sag_twisted.nii.gz}
+  --fixedVolume DATA{${TestData_DIR}/ANON0006_20_T1_dbg_splayed.nii.gz}
+  --movingVolume DATA{${TestData_DIR}/ANON0006_20_T1_sag_twisted.nii.gz}
   --fixedVolumeTimeIndex 0 --movingVolumeTimeIndex 0
   --minimumStepLength 0.001 --numberOfSamples 100000 --numberOfIterations 1500
   --numberOfHistogramBins 200
@@ -367,8 +346,8 @@ ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   )
 
 set(BRAINSFitTestName BRAINSFitTest_RigidMedianRotationNoMasks)
-ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
-  --compare DATA{./TestData/${BRAINSFitTestName}.result.nii.gz}
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+  --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 7
   --compareRadiusTolerance 0
@@ -385,15 +364,15 @@ ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE}
   --transformType Rigid
   --initializeTransformMode useMomentsAlign
   --medianFilterSize 1,1,1
-  --fixedVolume DATA{./TestData/test.nii.gz}
-  --movingVolume DATA{./TestData/rotation.test.nii.gz}
+  --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
+  --movingVolume DATA{${TestData_DIR}/rotation.test.nii.gz}
   --outputVolume ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --outputTransform ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.mat
 )
 
 set(BRAINSFitTestName BRAINSFitTest_RigidRotGeomNoMasks)
-ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
-  --compare DATA{./TestData/${BRAINSFitTestName}.result.nii.gz}
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+  --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 7
   --compareRadiusTolerance 0
@@ -409,15 +388,15 @@ ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE}
   --outputVolumePixelType short
   --transformType Rigid,Rigid
   --initializeTransformMode useGeometryAlign
-  --fixedVolume DATA{./TestData/test.nii.gz}
-  --movingVolume DATA{./TestData/rotation.geom.test.nii.gz}
+  --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
+  --movingVolume DATA{${TestData_DIR}/rotation.geom.test.nii.gz}
   --outputVolume ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --outputTransform ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.mat
 )
 
 set(BRAINSFitTestName BRAINSFitTest_RigidRotaRotaRotNoMasks)
-ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
-  --compare DATA{./TestData/${BRAINSFitTestName}.result.nii.gz}
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+  --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 9
   --compareRadiusTolerance 0
@@ -433,15 +412,15 @@ ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE}
   --outputVolumePixelType uchar
   --transformType Rigid,Rigid,Rigid
   --initializeTransformMode useCenterOfHeadAlign
-  --fixedVolume DATA{./TestData/test.nii.gz}
-  --movingVolume DATA{./TestData/rotation.test.nii.gz}
+  --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
+  --movingVolume DATA{${TestData_DIR}/rotation.test.nii.gz}
   --outputVolume ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --outputTransform ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.mat
 )
 
 set(BRAINSFitTestName BRAINSFitTest_RigidRotationHeadMasks)
-ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
-  --compare DATA{./TestData/${BRAINSFitTestName}.result.nii.gz}
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+  --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 7
   --compareRadiusTolerance 0
@@ -456,17 +435,17 @@ ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE}
   --minimumStepLength 0.001
   --outputVolumePixelType uchar
   --transformType Rigid
-  --initialTransform DATA{./TestData/Initializer_0.05_${BRAINSFitTestName}.mat}
+  --initialTransform DATA{${TestData_DIR}/Initializer_0.05_${BRAINSFitTestName}.mat}
   --maskProcessingMode ROIAUTO
-  --fixedVolume DATA{./TestData/test.nii.gz}
-  --movingVolume DATA{./TestData/rotation.test.nii.gz}
+  --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
+  --movingVolume DATA{${TestData_DIR}/rotation.test.nii.gz}
   --outputVolume ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --outputTransform ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.mat
 )
 
 set(BRAINSFitTestName BRAINSFitTest_RigidRotationMasks)
-ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
-  --compare DATA{./TestData/${BRAINSFitTestName}.result.nii.gz}
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+  --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 7
   --compareRadiusTolerance 0
@@ -483,17 +462,17 @@ ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE}
   --transformType Rigid
   --initializeTransformMode useMomentsAlign
   --maskProcessingMode ROI
-  --fixedVolume DATA{./TestData/test.nii.gz}
-  --fixedBinaryVolume DATA{./TestData/test_mask.nii.gz}
-  --movingVolume DATA{./TestData/rotation.test.nii.gz}
-  --movingBinaryVolume DATA{./TestData/rotation.test_mask.nii.gz}
+  --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
+  --fixedBinaryVolume DATA{${TestData_DIR}/test_mask.nii.gz}
+  --movingVolume DATA{${TestData_DIR}/rotation.test.nii.gz}
+  --movingBinaryVolume DATA{${TestData_DIR}/rotation.test_mask.nii.gz}
   --outputVolume ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --outputTransform ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.mat
 )
 
 set(BRAINSFitTestName BRAINSFitTest_RigidRotationNoMasks)
-ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
-  --compare DATA{./TestData/${BRAINSFitTestName}.result.nii.gz}
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+  --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 7
   --compareRadiusTolerance 0
@@ -509,15 +488,15 @@ ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE}
   --outputVolumePixelType uchar
   --transformType Rigid
   --interpolationMode WindowedSinc
-  --initialTransform DATA{./TestData/Initializer_0.05_${BRAINSFitTestName}.mat}
-  --fixedVolume DATA{./TestData/test.nii.gz}
-  --movingVolume DATA{./TestData/rotation.test.nii.gz}
+  --initialTransform DATA{${TestData_DIR}/Initializer_0.05_${BRAINSFitTestName}.mat}
+  --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
+  --movingVolume DATA{${TestData_DIR}/rotation.test.nii.gz}
   --outputVolume ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --outputTransform ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.mat
 )
 set(BRAINSFitTestName BRAINSFitTest_RigidRotationNoMasksRiginInPlaceInterp)
-ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
-  --compare DATA{./TestData/${BRAINSFitTestName}.result.nii.gz}
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+  --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 7
   --compareRadiusTolerance 0
@@ -533,17 +512,17 @@ ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE}
   --outputVolumePixelType uchar
   --transformType Rigid
   --interpolationMode ResampleInPlace
-  --initialTransform DATA{./TestData/Initializer_0.05_${BRAINSFitTestName}.mat}
-  --fixedVolume DATA{./TestData/test.nii.gz}
-  --movingVolume DATA{./TestData/rotation.test.nii.gz}
+  --initialTransform DATA{${TestData_DIR}/Initializer_0.05_${BRAINSFitTestName}.mat}
+  --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
+  --movingVolume DATA{${TestData_DIR}/rotation.test.nii.gz}
   --outputVolume ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --outputTransform ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.mat
 )
 
 
 set(BRAINSFitTestName BRAINSFitTest_ScaleRotationRescaleHeadMasksNoInit)
-ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
-  --compare DATA{./TestData/${BRAINSFitTestName}.result.nii.gz}
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+  --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 9
   --compareRadiusTolerance 0
@@ -560,15 +539,15 @@ ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE}
   --maskProcessingMode ROIAUTO
   --initializeTransformMode useCenterOfHeadAlign
   --useRigid --useScaleVersor3D
-  --fixedVolume DATA{./TestData/test.nii.gz}
-  --movingVolume DATA{./TestData/rotation.rescale.test.nii.gz}
+  --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
+  --movingVolume DATA{${TestData_DIR}/rotation.rescale.test.nii.gz}
   --outputVolume ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --outputTransform ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.mat
 )
 
 set(BRAINSFitTestName BRAINSFitTest_ScaleSkewVersorRotationMasks)
-ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
-  --compare DATA{./TestData/${BRAINSFitTestName}.result.nii.gz}
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+  --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 11
   --compareRadiusTolerance 0
@@ -583,19 +562,19 @@ ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE}
   --minimumStepLength 0.001
   --outputVolumePixelType uchar
   --transformType ScaleSkewVersor3D
-  --initialTransform DATA{./TestData/BRAINSFitTest_Initializer_RigidRotationNoMasks.mat}
+  --initialTransform DATA{${TestData_DIR}/BRAINSFitTest_Initializer_RigidRotationNoMasks.mat}
   --maskProcessingMode ROI
-  --fixedVolume DATA{./TestData/test.nii.gz}
-  --fixedBinaryVolume DATA{./TestData/test_mask.nii.gz}
-  --movingVolume DATA{./TestData/rotation.test.nii.gz}
-  --movingBinaryVolume DATA{./TestData/rotation.test_mask.nii.gz}
+  --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
+  --fixedBinaryVolume DATA{${TestData_DIR}/test_mask.nii.gz}
+  --movingVolume DATA{${TestData_DIR}/rotation.test.nii.gz}
+  --movingBinaryVolume DATA{${TestData_DIR}/rotation.test_mask.nii.gz}
   --outputVolume ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --outputTransform ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.mat
 )
 
 set(BRAINSFitTestName BRAINSFitTest_ScaleSkewVersorRotationNoMasks)
-ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
-  --compare DATA{./TestData/${BRAINSFitTestName}.result.nii.gz}
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+  --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 11
   --compareRadiusTolerance 0
@@ -610,16 +589,16 @@ ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE}
   --minimumStepLength 0.001
   --outputVolumePixelType uchar
   --transformType ScaleSkewVersor3D
-  --initialTransform DATA{./TestData/Initializer_0.05_${BRAINSFitTestName}.mat}
-  --fixedVolume DATA{./TestData/test.nii.gz}
-  --movingVolume DATA{./TestData/rotation.test.nii.gz}
+  --initialTransform DATA{${TestData_DIR}/Initializer_0.05_${BRAINSFitTestName}.mat}
+  --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
+  --movingVolume DATA{${TestData_DIR}/rotation.test.nii.gz}
   --outputVolume ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --outputTransform ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.mat
 )
 
 set(BRAINSFitTestName BRAINSFitTest_ScaleSkewVersorScaleMasks)
-ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
-  --compare DATA{./TestData/${BRAINSFitTestName}.result.nii.gz}
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+  --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 9
   --compareRadiusTolerance 0
@@ -636,17 +615,17 @@ ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE}
   --transformType ScaleSkewVersor3D
   --initializeTransformMode useMomentsAlign
   --maskProcessingMode ROI
-  --fixedVolume DATA{./TestData/test.nii.gz}
-  --fixedBinaryVolume DATA{./TestData/test_mask.nii.gz}
-  --movingVolume DATA{./TestData/scale.test.nii.gz}
-  --movingBinaryVolume DATA{./TestData/scale.test_mask.nii.gz}
+  --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
+  --fixedBinaryVolume DATA{${TestData_DIR}/test_mask.nii.gz}
+  --movingVolume DATA{${TestData_DIR}/scale.test.nii.gz}
+  --movingBinaryVolume DATA{${TestData_DIR}/scale.test_mask.nii.gz}
   --outputVolume ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --outputTransform ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.mat
 )
 
 set(BRAINSFitTestName BRAINSFitTest_ScaleSkewVersorScaleNoMasks)
-ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
-  --compare DATA{./TestData/${BRAINSFitTestName}.result.nii.gz}
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+  --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 9
   --compareRadiusTolerance 0
@@ -661,16 +640,16 @@ ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE}
   --minimumStepLength 0.001
   --outputVolumePixelType uchar
   --transformType ScaleSkewVersor3D
-  --initialTransform DATA{./TestData/Initializer_0.05_${BRAINSFitTestName}.mat}
-  --fixedVolume DATA{./TestData/test.nii.gz}
-  --movingVolume DATA{./TestData/scale.test.nii.gz}
+  --initialTransform DATA{${TestData_DIR}/Initializer_0.05_${BRAINSFitTestName}.mat}
+  --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
+  --movingVolume DATA{${TestData_DIR}/scale.test.nii.gz}
   --outputVolume ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --outputTransform ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.mat
 )
 
 set(BRAINSFitTestName BRAINSFitTest_ScaleTranslationRescaleHeadMasksNoInit)
-ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
-  --compare DATA{./TestData/${BRAINSFitTestName}.result.nii.gz}
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+  --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 7
   --compareRadiusTolerance 0
@@ -688,15 +667,15 @@ ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE}
   --initializeTransformMode useCenterOfHeadAlign
   --transformType Rigid,ScaleVersor3D
   --permitParameterVariation 0,0,0,1,1,1
-  --fixedVolume DATA{./TestData/test.nii.gz}
-  --movingVolume DATA{./TestData/translation.rescale.test.nii.gz}
+  --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
+  --movingVolume DATA{${TestData_DIR}/translation.rescale.test.nii.gz}
   --outputVolume ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --outputTransform ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.mat
 )
 
 set(BRAINSFitTestName BRAINSFitTest_ScaleTranslationRescaleHeadMasksInit)
-ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
-  --compare DATA{./TestData/${BRAINSFitTestName}.result.nii.gz}
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+  --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 7
   --compareRadiusTolerance 0
@@ -711,18 +690,18 @@ ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE}
   --minimumStepLength 0.001
   --outputVolumePixelType uchar
   --maskProcessingMode ROIAUTO
-  --initialTransform DATA{./TestData/Initializer_BRAINSFitTest_TranslationRescaleHeadMasks.mat}
+  --initialTransform DATA{${TestData_DIR}/Initializer_BRAINSFitTest_TranslationRescaleHeadMasks.mat}
   --transformType ScaleVersor3D
   --permitParameterVariation 0,0,0,1,1,1,1,1,1
-  --fixedVolume DATA{./TestData/test.nii.gz}
-  --movingVolume DATA{./TestData/translation.rescale.test.nii.gz}
+  --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
+  --movingVolume DATA{${TestData_DIR}/translation.rescale.test.nii.gz}
   --outputVolume ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --outputTransform ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.mat
 )
 
 set(BRAINSFitTestName BRAINSFitTest_ScaleVersorRotationMasks)
-ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
-  --compare DATA{./TestData/${BRAINSFitTestName}.result.nii.gz}
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+  --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 11
   --compareRadiusTolerance 0
@@ -737,19 +716,19 @@ ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE}
   --minimumStepLength 0.001
   --outputVolumePixelType uchar
   --transformType ScaleVersor3D
-  --initialTransform DATA{./TestData/BRAINSFitTest_Initializer_RigidRotationNoMasks.mat}
+  --initialTransform DATA{${TestData_DIR}/BRAINSFitTest_Initializer_RigidRotationNoMasks.mat}
   --maskProcessingMode ROI
-  --fixedVolume DATA{./TestData/test.nii.gz}
-  --fixedBinaryVolume DATA{./TestData/test_mask.nii.gz}
-  --movingVolume DATA{./TestData/rotation.test.nii.gz}
-  --movingBinaryVolume DATA{./TestData/rotation.test_mask.nii.gz}
+  --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
+  --fixedBinaryVolume DATA{${TestData_DIR}/test_mask.nii.gz}
+  --movingVolume DATA{${TestData_DIR}/rotation.test.nii.gz}
+  --movingBinaryVolume DATA{${TestData_DIR}/rotation.test_mask.nii.gz}
   --outputVolume ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --outputTransform ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.mat
 )
 
 set(BRAINSFitTestName BRAINSFitTest_ScaleVersorRotationNoMasks)
-ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
-  --compare DATA{./TestData/${BRAINSFitTestName}.result.nii.gz}
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+  --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 11
   --compareRadiusTolerance 0
@@ -764,16 +743,16 @@ ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE}
   --minimumStepLength 0.001
   --outputVolumePixelType uchar
   --transformType ScaleVersor3D
-  --initialTransform DATA{./TestData/Initializer_0.05_${BRAINSFitTestName}.mat}
-  --fixedVolume DATA{./TestData/test.nii.gz}
-  --movingVolume DATA{./TestData/rotation.test.nii.gz}
+  --initialTransform DATA{${TestData_DIR}/Initializer_0.05_${BRAINSFitTestName}.mat}
+  --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
+  --movingVolume DATA{${TestData_DIR}/rotation.test.nii.gz}
   --outputVolume ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --outputTransform ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.mat
 )
 
 set(BRAINSFitTestName BRAINSFitTest_ScaleVersorScaleMasks)
-ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
-  --compare DATA{./TestData/${BRAINSFitTestName}.result.nii.gz}
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+  --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 9
   --compareRadiusTolerance 0
@@ -790,17 +769,17 @@ ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE}
   --transformType ScaleVersor3D
   --initializeTransformMode useMomentsAlign
   --maskProcessingMode ROI
-  --fixedVolume DATA{./TestData/test.nii.gz}
-  --fixedBinaryVolume DATA{./TestData/test_mask.nii.gz}
-  --movingVolume DATA{./TestData/scale.test.nii.gz}
-  --movingBinaryVolume DATA{./TestData/scale.test_mask.nii.gz}
+  --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
+  --fixedBinaryVolume DATA{${TestData_DIR}/test_mask.nii.gz}
+  --movingVolume DATA{${TestData_DIR}/scale.test.nii.gz}
+  --movingBinaryVolume DATA{${TestData_DIR}/scale.test_mask.nii.gz}
   --outputVolume ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --outputTransform ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.mat
 )
 
 set(BRAINSFitTestName BRAINSFitTest_ScaleVersorScaleNoMasks)
-ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
-  --compare DATA{./TestData/${BRAINSFitTestName}.result.nii.gz}
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+  --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 9
   --compareRadiusTolerance 0
@@ -815,21 +794,21 @@ ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE}
   --minimumStepLength 0.001
   --outputVolumePixelType uchar
   --transformType ScaleVersor3D
-  --initialTransform DATA{./TestData/Initializer_0.05_${BRAINSFitTestName}.mat}
-  --fixedVolume DATA{./TestData/test.nii.gz}
-  --movingVolume DATA{./TestData/scale.test.nii.gz}
+  --initialTransform DATA{${TestData_DIR}/Initializer_0.05_${BRAINSFitTestName}.mat}
+  --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
+  --movingVolume DATA{${TestData_DIR}/scale.test.nii.gz}
   --outputVolume ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --outputTransform ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.mat
 )
 
 if(Test_SignedDistanceData)
-ExternalData_add_test( FetchData NAME BRAINSFitTest_SignedDistanceData COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
-  --compare DATA{./TestData/TEST_output.nii.gz} ${BRAINSFit_BINARY_DIR}/Testing/TEST_output.nii.gz
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME BRAINSFitTest_SignedDistanceData COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+  --compare DATA{${TestData_DIR}/TEST_output.nii.gz} ${BRAINSFit_BINARY_DIR}/Testing/TEST_output.nii.gz
   BRAINSFitTest
   --costMetric MMI
   --failureExitCode 1
-  --fixedVolume DATA{./TestData/AtlasBrain_SignedDistance.nii.gz}
-  --movingVolume DATA{./TestData/Unoriented_RawBrain_SignedDistance.nii.gz}
+  --fixedVolume DATA{${TestData_DIR}/AtlasBrain_SignedDistance.nii.gz}
+  --movingVolume DATA{${TestData_DIR}/Unoriented_RawBrain_SignedDistance.nii.gz}
   --fixedVolumeTimeIndex 0 --movingVolumeTimeIndex 0
   --minimumStepLength 0.001 --numberOfSamples 75000 --numberOfIterations 1500
   --numberOfHistogramBins 200
@@ -840,8 +819,8 @@ ExternalData_add_test( FetchData NAME BRAINSFitTest_SignedDistanceData COMMAND $
 endif(Test_SignedDistanceData)
 
 set(BRAINSFitTestName BRAINSFitTest_BSplineScaleRotationHeadMasksUShort)
-ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
-  --compare DATA{./TestData/${BRAINSFitTestName}.result.nii.gz}
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+  --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 2505
   --compareRadiusTolerance 1
@@ -860,16 +839,16 @@ ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE}
   --maskProcessingMode ROIAUTO
   --initializeTransformMode useCenterOfHeadAlign
   --transformType Rigid,ScaleVersor3D,BSpline
-  --fixedVolume DATA{./TestData/test.nii.gz}
-  --movingVolume DATA{./TestData/rotationUShort.rescale.rigid.nii.gz}
+  --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
+  --movingVolume DATA{${TestData_DIR}/rotationUShort.rescale.rigid.nii.gz}
   --outputVolume ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --outputTransform ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.mat
   --maxBSplineDisplacement 7.3
 )
 
 set(BRAINSFitTestName BRAINSFitTest_BSplineScaleRotationHistogramHeadMasksUShort)
-ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
-  --compare DATA{./TestData/${BRAINSFitTestName}.result.nii.gz}
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+  --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 9
   --compareRadiusTolerance 1
@@ -889,16 +868,16 @@ ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE}
   --maskProcessingMode ROIAUTO
   --initializeTransformMode useCenterOfHeadAlign
   --transformType Rigid,ScaleVersor3D,BSpline
-  --fixedVolume DATA{./TestData/test.nii.gz}
-  --movingVolume DATA{./TestData/rotationUShort.rescale.rigid.nii.gz}
+  --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
+  --movingVolume DATA{${TestData_DIR}/rotationUShort.rescale.rigid.nii.gz}
   --outputVolume ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --outputTransform ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.mat
   --maxBSplineDisplacement 7.3
 )
 
 set(BRAINSFitTestName BRAINSFitTest_NCMetricBrainToItself)
-ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
-  --compare DATA{./TestData/test.nii.gz}
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+  --compare DATA{${TestData_DIR}/test.nii.gz}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 9
   --compareRadiusTolerance 0
@@ -913,15 +892,15 @@ ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE}
   --minimumStepLength 0.001
   --outputVolumePixelType uchar
   --transformType ScaleVersor3D
-  --fixedVolume DATA{./TestData/test.nii.gz}
-  --movingVolume DATA{./TestData/test.nii.gz}
+  --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
+  --movingVolume DATA{${TestData_DIR}/test.nii.gz}
   --outputVolume ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --outputTransform ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.mat
 )
 
 set(BRAINSFitTestName BRAINSFitTest_NCAffineRotationMasks)
-ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
-  --compare DATA{./TestData/${BRAINSFitTestName}.result.nii.gz}
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+  --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 7
   --compareRadiusTolerance 0
@@ -936,20 +915,20 @@ ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE}
   --minimumStepLength 0.001
   --outputVolumePixelType uchar
   --transformType Affine
-  --initialTransform DATA{./TestData/BRAINSFitTest_Initializer_RigidRotationNoMasks.mat}
+  --initialTransform DATA{${TestData_DIR}/BRAINSFitTest_Initializer_RigidRotationNoMasks.mat}
   --maskProcessingMode ROI
-  --fixedVolume DATA{./TestData/test.nii.gz}
-  --fixedBinaryVolume DATA{./TestData/test_mask.nii.gz}
-  --movingVolume DATA{./TestData/rotation.test.nii.gz}
-  --movingBinaryVolume DATA{./TestData/rotation.test_mask.nii.gz}
+  --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
+  --fixedBinaryVolume DATA{${TestData_DIR}/test_mask.nii.gz}
+  --movingVolume DATA{${TestData_DIR}/rotation.test.nii.gz}
+  --movingBinaryVolume DATA{${TestData_DIR}/rotation.test_mask.nii.gz}
   --outputVolume ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --outputTransform ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.mat
   --debugLevel 50
 )
 
 set(BRAINSFitTestName BRAINSFitTest_NCScaleSkewVersorRotationMasks)
-ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
-  --compare DATA{./TestData/${BRAINSFitTestName}.result.nii.gz}
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+  --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 11
   --compareRadiusTolerance 0
@@ -964,20 +943,20 @@ ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE}
   --minimumStepLength 0.001
   --outputVolumePixelType uchar
   --transformType ScaleSkewVersor3D
-  --initialTransform DATA{./TestData/BRAINSFitTest_Initializer_RigidRotationNoMasks.mat}
+  --initialTransform DATA{${TestData_DIR}/BRAINSFitTest_Initializer_RigidRotationNoMasks.mat}
   --maskProcessingMode ROI
-  --fixedVolume DATA{./TestData/test.nii.gz}
-  --fixedBinaryVolume DATA{./TestData/test_mask.nii.gz}
-  --movingVolume DATA{./TestData/rotation.test.nii.gz}
-  --movingBinaryVolume DATA{./TestData/rotation.test_mask.nii.gz}
+  --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
+  --fixedBinaryVolume DATA{${TestData_DIR}/test_mask.nii.gz}
+  --movingVolume DATA{${TestData_DIR}/rotation.test.nii.gz}
+  --movingBinaryVolume DATA{${TestData_DIR}/rotation.test_mask.nii.gz}
   --outputVolume ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --outputTransform ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.mat
 )
 
 
 set(BRAINSFitTestName BRAINSFitTest_MSEMetricBrainToItself)
-ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
-  --compare DATA{./TestData/test.nii.gz}
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+  --compare DATA{${TestData_DIR}/test.nii.gz}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 9
   --compareRadiusTolerance 0
@@ -992,15 +971,15 @@ ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE}
   --minimumStepLength 0.001
   --outputVolumePixelType uchar
   --transformType ScaleVersor3D
-  --fixedVolume DATA{./TestData/test.nii.gz}
-  --movingVolume DATA{./TestData/test.nii.gz}
+  --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
+  --movingVolume DATA{${TestData_DIR}/test.nii.gz}
   --outputVolume ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --outputTransform ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.mat
 )
 
 set(BRAINSFitTestName BRAINSFitTest_MSEAffineRotationMasks)
-ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
-  --compare DATA{./TestData/${BRAINSFitTestName}.result.nii.gz}
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+  --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 7
   --compareRadiusTolerance 0
@@ -1015,20 +994,20 @@ ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE}
   --minimumStepLength 0.001
   --outputVolumePixelType uchar
   --transformType Affine
-  --initialTransform DATA{./TestData/BRAINSFitTest_Initializer_RigidRotationNoMasks.mat}
+  --initialTransform DATA{${TestData_DIR}/BRAINSFitTest_Initializer_RigidRotationNoMasks.mat}
   --maskProcessingMode ROI
-  --fixedVolume DATA{./TestData/test.nii.gz}
-  --fixedBinaryVolume DATA{./TestData/test_mask.nii.gz}
-  --movingVolume DATA{./TestData/rotation.test.nii.gz}
-  --movingBinaryVolume DATA{./TestData/rotation.test_mask.nii.gz}
+  --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
+  --fixedBinaryVolume DATA{${TestData_DIR}/test_mask.nii.gz}
+  --movingVolume DATA{${TestData_DIR}/rotation.test.nii.gz}
+  --movingBinaryVolume DATA{${TestData_DIR}/rotation.test_mask.nii.gz}
   --outputVolume ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --outputTransform ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.mat
   --debugLevel 50
 )
 
 set(BRAINSFitTestName BRAINSFitTest_MSEScaleSkewVersorRotationMasks)
-ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
-  --compare DATA{./TestData/${BRAINSFitTestName}.result.nii.gz}
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+  --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 11
   --compareRadiusTolerance 0
@@ -1043,19 +1022,19 @@ ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE}
   --minimumStepLength 0.001
   --outputVolumePixelType uchar
   --transformType ScaleSkewVersor3D
-  --initialTransform DATA{./TestData/BRAINSFitTest_Initializer_RigidRotationNoMasks.mat}
+  --initialTransform DATA{${TestData_DIR}/BRAINSFitTest_Initializer_RigidRotationNoMasks.mat}
   --maskProcessingMode ROI
-  --fixedVolume DATA{./TestData/test.nii.gz}
-  --fixedBinaryVolume DATA{./TestData/test_mask.nii.gz}
-  --movingVolume DATA{./TestData/rotation.test.nii.gz}
-  --movingBinaryVolume DATA{./TestData/rotation.test_mask.nii.gz}
+  --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
+  --fixedBinaryVolume DATA{${TestData_DIR}/test_mask.nii.gz}
+  --movingVolume DATA{${TestData_DIR}/rotation.test.nii.gz}
+  --movingBinaryVolume DATA{${TestData_DIR}/rotation.test_mask.nii.gz}
   --outputVolume ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --outputTransform ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.mat
 )
 
 set(BRAINSFitTestName BRAINSFitTest_MCMetricBrainToItself)
-ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
-  --compare DATA{./TestData/test.nii.gz}
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+  --compare DATA{${TestData_DIR}/test.nii.gz}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 9
   --compareRadiusTolerance 0
@@ -1070,15 +1049,15 @@ ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE}
   --minimumStepLength 0.001
   --outputVolumePixelType uchar
   --transformType Rigid --initializeTransformMode useMomentsAlign
-  --fixedVolume DATA{./TestData/test.nii.gz}
-  --movingVolume DATA{./TestData/test.nii.gz}
+  --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
+  --movingVolume DATA{${TestData_DIR}/test.nii.gz}
   --outputVolume ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --outputTransform ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.mat
 )
 
 set(BRAINSFitTestName BRAINSFitTest_MCMetricMaskBrainToItself)
-ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
-  --compare DATA{./TestData/testMask.nii.gz}
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+  --compare DATA{${TestData_DIR}/testMask.nii.gz}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.testMask.nii.gz
   --compareIntensityTolerance 9
   --compareRadiusTolerance 0
@@ -1093,15 +1072,15 @@ ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE}
   --minimumStepLength 0.001
   --outputVolumePixelType uchar
   --transformType Rigid --initializeTransformMode useMomentsAlign
-  --fixedVolume DATA{./TestData/testMask.nii.gz}
-  --movingVolume DATA{./TestData/testMask.nii.gz}
+  --fixedVolume DATA{${TestData_DIR}/testMask.nii.gz}
+  --movingVolume DATA{${TestData_DIR}/testMask.nii.gz}
   --outputVolume ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.testMask.nii.gz
   --outputTransform ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.mat
 )
 
 set(BRAINSFitTestName BRAINSFitTest_MCAffineRotationMasks)
-ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
-  --compare DATA{./TestData/${BRAINSFitTestName}.result.nii.gz}
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+  --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 7
   --compareRadiusTolerance 0
@@ -1116,20 +1095,20 @@ ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE}
   --minimumStepLength 0.001
   --outputVolumePixelType uchar
   --transformType Affine
-  --initialTransform DATA{./TestData/BRAINSFitTest_Initializer_RigidRotationNoMasks.mat}
+  --initialTransform DATA{${TestData_DIR}/BRAINSFitTest_Initializer_RigidRotationNoMasks.mat}
   --maskProcessingMode ROI
-  --fixedVolume DATA{./TestData/test.nii.gz}
-  --fixedBinaryVolume DATA{./TestData/test_mask.nii.gz}
-  --movingVolume DATA{./TestData/rotation.test.nii.gz}
-  --movingBinaryVolume DATA{./TestData/rotation.test_mask.nii.gz}
+  --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
+  --fixedBinaryVolume DATA{${TestData_DIR}/test_mask.nii.gz}
+  --movingVolume DATA{${TestData_DIR}/rotation.test.nii.gz}
+  --movingBinaryVolume DATA{${TestData_DIR}/rotation.test_mask.nii.gz}
   --outputVolume ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --outputTransform ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.mat
   --debugLevel 50
 )
 
 set(BRAINSFitTestName BRAINSFitTest_MCScaleSkewVersorRotationMasks)
-ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
-  --compare DATA{./TestData/${BRAINSFitTestName}.result.nii.gz}
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+  --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 11
   --compareRadiusTolerance 0
@@ -1144,12 +1123,12 @@ ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE}
   --minimumStepLength 0.001
   --outputVolumePixelType uchar
   --transformType ScaleSkewVersor3D
-  --initialTransform DATA{./TestData/BRAINSFitTest_Initializer_RigidRotationNoMasks.mat}
+  --initialTransform DATA{${TestData_DIR}/BRAINSFitTest_Initializer_RigidRotationNoMasks.mat}
   --maskProcessingMode ROI
-  --fixedVolume DATA{./TestData/test.nii.gz}
-  --fixedBinaryVolume DATA{./TestData/test_mask.nii.gz}
-  --movingVolume DATA{./TestData/rotation.test.nii.gz}
-  --movingBinaryVolume DATA{./TestData/rotation.test_mask.nii.gz}
+  --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
+  --fixedBinaryVolume DATA{${TestData_DIR}/test_mask.nii.gz}
+  --movingVolume DATA{${TestData_DIR}/rotation.test.nii.gz}
+  --movingBinaryVolume DATA{${TestData_DIR}/rotation.test_mask.nii.gz}
   --outputVolume ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --outputTransform ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.mat
 )
@@ -1191,8 +1170,8 @@ if(RUN_EXTRA_METRIC_TESTS)
   # to converge even when given many iterations (which it shouldn't need, since
   # it's registering the same image to itself).
   set(BRAINSFitTestName BRAINSFitTest_KSMetricBrainToItself)
-  ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
-    --compare DATA{./TestData/test.nii.gz}
+  ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+    --compare DATA{${TestData_DIR}/test.nii.gz}
               ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
     --compareIntensityTolerance 9
     --compareRadiusTolerance 0
@@ -1207,15 +1186,15 @@ if(RUN_EXTRA_METRIC_TESTS)
     --minimumStepLength 0.001
     --outputVolumePixelType uchar
     --transformType Rigid --initializeTransformMode useMomentsAlign
-    --fixedVolume DATA{./TestData/test.nii.gz}
-    --movingVolume DATA{./TestData/test.nii.gz}
+    --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
+    --movingVolume DATA{${TestData_DIR}/test.nii.gz}
     --outputVolume ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
     --outputTransform ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.mat
   )
 
   set(BRAINSFitTestName BRAINSFitTest_KSMetricBrainMaskToItself)
-  ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
-    --compare DATA{./TestData/testMask.nii.gz}
+  ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+    --compare DATA{${TestData_DIR}/testMask.nii.gz}
               ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.testMask.nii.gz
     --compareIntensityTolerance 9
     --compareRadiusTolerance 0
@@ -1231,16 +1210,16 @@ if(RUN_EXTRA_METRIC_TESTS)
     --outputVolumePixelType uchar
     --transformType Rigid
     #--initializeTransformMode useMomentsAlign
-    --fixedVolume DATA{./TestData/testMask.nii.gz}
-    --movingVolume DATA{./TestData/testMask.nii.gz}
+    --fixedVolume DATA{${TestData_DIR}/testMask.nii.gz}
+    --movingVolume DATA{${TestData_DIR}/testMask.nii.gz}
     --outputVolume ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.testMask.nii.gz
     --outputTransform ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.mat
   )
 
 
   set(BRAINSFitTestName BRAINSFitTest_KSAffineRotationMasks)
-  ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
-    --compare DATA{./TestData/${BRAINSFitTestName}.result.nii.gz}
+  ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+    --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
               ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
     --compareIntensityTolerance 7
     --compareRadiusTolerance 0
@@ -1255,20 +1234,20 @@ if(RUN_EXTRA_METRIC_TESTS)
     --minimumStepLength 0.001
     --outputVolumePixelType uchar
     --transformType Affine
-    --initialTransform DATA{./TestData/BRAINSFitTest_Initializer_RigidRotationNoMasks.mat}
+    --initialTransform DATA{${TestData_DIR}/BRAINSFitTest_Initializer_RigidRotationNoMasks.mat}
     --maskProcessingMode ROI
-    --fixedVolume DATA{./TestData/test.nii.gz}
-    --fixedBinaryVolume DATA{./TestData/test.nii.gz}
-    --movingVolume DATA{./TestData/rotation.test.nii.gz}
-    --movingBinaryVolume DATA{./TestData/rotation.test.nii.gz}
+    --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
+    --fixedBinaryVolume DATA{${TestData_DIR}/test.nii.gz}
+    --movingVolume DATA{${TestData_DIR}/rotation.test.nii.gz}
+    --movingBinaryVolume DATA{${TestData_DIR}/rotation.test.nii.gz}
     --outputVolume ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
     --outputTransform ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.mat
     --debugLevel 50
   )
 
   set(BRAINSFitTestName BRAINSFitTest_KSScaleSkewVersorRotationMasks)
-  ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
-    --compare DATA{./TestData/${BRAINSFitTestName}.result.nii.gz}
+  ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+    --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
               ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
     --compareIntensityTolerance 11
     --compareRadiusTolerance 0
@@ -1283,20 +1262,20 @@ if(RUN_EXTRA_METRIC_TESTS)
     --minimumStepLength 0.001
     --outputVolumePixelType uchar
     --transformType ScaleSkewVersor3D
-    --initialTransform DATA{./TestData/BRAINSFitTest_Initializer_RigidRotationNoMasks.mat}
+    --initialTransform DATA{${TestData_DIR}/BRAINSFitTest_Initializer_RigidRotationNoMasks.mat}
     --maskProcessingMode ROI
-    --fixedVolume DATA{./TestData/test.nii.gz}
-    --fixedBinaryVolume DATA{./TestData/test.nii.gz}
-    --movingVolume DATA{./TestData/rotation.test.nii.gz}
-    --movingBinaryVolume DATA{./TestData/rotation.test.nii.gz}
+    --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
+    --fixedBinaryVolume DATA{${TestData_DIR}/test.nii.gz}
+    --movingVolume DATA{${TestData_DIR}/rotation.test.nii.gz}
+    --movingBinaryVolume DATA{${TestData_DIR}/rotation.test.nii.gz}
     --outputVolume ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
     --outputTransform ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.mat
   )
 
   # Fails to converge when registering a brain to itself.
   set(BRAINSFitTestName BRAINSFitTest_MRSDMetricBrainToItself)
-  ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
-    --compare DATA{./TestData/test.nii.gz}
+  ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+    --compare DATA{${TestData_DIR}/test.nii.gz}
               ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
     --compareIntensityTolerance 9
     --compareRadiusTolerance 0
@@ -1311,16 +1290,16 @@ if(RUN_EXTRA_METRIC_TESTS)
     --minimumStepLength 0.001
     --outputVolumePixelType uchar
     --transformType Rigid
-    --fixedVolume DATA{./TestData/test.nii.gz}
-    --movingVolume DATA{./TestData/test.nii.gz}
+    --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
+    --movingVolume DATA{${TestData_DIR}/test.nii.gz}
     --outputVolume ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
     --outputTransform ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.mat
   )
 
   # Segfault when running this test
   set(BRAINSFitTestName BRAINSFitTest_MIHMetricBrainToItself)
-  ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
-    --compare DATA{./TestData/test.nii.gz}
+  ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+    --compare DATA{${TestData_DIR}/test.nii.gz}
               ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
     --compareIntensityTolerance 9
     --compareRadiusTolerance 0
@@ -1335,16 +1314,16 @@ if(RUN_EXTRA_METRIC_TESTS)
     --minimumStepLength 0.001
     --outputVolumePixelType uchar
     --transformType Rigid --initializeTransformMode useMomentsAlign
-    --fixedVolume DATA{./TestData/test.nii.gz}
-    --movingVolume DATA{./TestData/test.nii.gz}
+    --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
+    --movingVolume DATA{${TestData_DIR}/test.nii.gz}
     --outputVolume ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
     --outputTransform ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.mat
   )
 
   # Fails to converge when registering a brain to itself.
   set(BRAINSFitTestName BRAINSFitTest_GDMetricBrainToItself)
-  ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
-    --compare DATA{./TestData/test.nii.gz}
+  ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+    --compare DATA{${TestData_DIR}/test.nii.gz}
               ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
     --compareIntensityTolerance 9
     --compareRadiusTolerance 0
@@ -1359,16 +1338,16 @@ if(RUN_EXTRA_METRIC_TESTS)
     --minimumStepLength 0.001
     --outputVolumePixelType uchar
     --transformType Rigid --initializeTransformMode useMomentsAlign
-    --fixedVolume DATA{./TestData/test.nii.gz}
-    --movingVolume DATA{./TestData/test.nii.gz}
+    --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
+    --movingVolume DATA{${TestData_DIR}/test.nii.gz}
     --outputVolume ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
     --outputTransform ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.mat
   )
 
   # Segfault when running this test
   set(BRAINSFitTestName BRAINSFitTest_CCHMetricBrainToItself)
-  ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
-    --compare DATA{./TestData/test.nii.gz}
+  ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+    --compare DATA{${TestData_DIR}/test.nii.gz}
               ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
     --compareIntensityTolerance 9
     --compareRadiusTolerance 0
@@ -1383,16 +1362,16 @@ if(RUN_EXTRA_METRIC_TESTS)
     --minimumStepLength 0.001
     --outputVolumePixelType uchar
     --transformType Rigid --initializeTransformMode useMomentsAlign
-    --fixedVolume DATA{./TestData/test.nii.gz}
-    --movingVolume DATA{./TestData/test.nii.gz}
+    --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
+    --movingVolume DATA{${TestData_DIR}/test.nii.gz}
     --outputVolume ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
     --outputTransform ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.mat
   )
 
   # Segfault when running this test
   set(BRAINSFitTestName BRAINSFitTest_MSEHMetricBrainToItself)
-  ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
-    --compare DATA{./TestData/test.nii.gz}
+  ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+    --compare DATA{${TestData_DIR}/test.nii.gz}
               ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
     --compareIntensityTolerance 9
     --compareRadiusTolerance 0
@@ -1407,16 +1386,16 @@ if(RUN_EXTRA_METRIC_TESTS)
     --minimumStepLength 0.001
     --outputVolumePixelType uchar
     --transformType Rigid --initializeTransformMode useMomentsAlign
-    --fixedVolume DATA{./TestData/test.nii.gz}
-    --movingVolume DATA{./TestData/test.nii.gz}
+    --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
+    --movingVolume DATA{${TestData_DIR}/test.nii.gz}
     --outputVolume ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
     --outputTransform ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.mat
   )
 
   # Segfault when running this test
   set(BRAINSFitTestName BRAINSFitTest_NMIHMetricBrainToItself)
-  ExternalData_add_test( FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
-    --compare DATA{./TestData/test.nii.gz}
+  ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+    --compare DATA{${TestData_DIR}/test.nii.gz}
               ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
     --compareIntensityTolerance 9
     --compareRadiusTolerance 0
@@ -1431,12 +1410,12 @@ if(RUN_EXTRA_METRIC_TESTS)
     --minimumStepLength 0.001
     --outputVolumePixelType uchar
     --transformType Rigid --initializeTransformMode useMomentsAlign
-    --fixedVolume DATA{./TestData/test.nii.gz}
-    --movingVolume DATA{./TestData/test.nii.gz}
+    --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
+    --movingVolume DATA{${TestData_DIR}/test.nii.gz}
     --outputVolume ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
     --outputTransform ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.mat
   )
 endif(RUN_EXTRA_METRIC_TESTS)
 
-ExternalData_Add_Target( FetchData )  # Name of data management target
 
+ExternalData_Add_Target( ${PROJECT_NAME}FetchData )  # Name of data management target

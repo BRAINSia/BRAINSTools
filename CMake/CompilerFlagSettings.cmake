@@ -43,7 +43,6 @@ set(common_flags_to_test
 -Wextra
 #-Wshadow
 -Wlong-long
--fopenmp
 )
 
 set(cc_flags_to_test ${common_flags_to_test})

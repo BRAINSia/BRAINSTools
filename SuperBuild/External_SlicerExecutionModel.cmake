@@ -33,7 +33,8 @@ endif()
 if(NOT DEFINED SlicerExecutionModel_DIR)
   #message(STATUS "${__indent}Adding project ${proj}")
   ExternalProject_Add(${proj}
-    GIT_REPOSITORY "${git_protocol}://github.com/Slicer/SlicerExecutionModel.git"
+    #GIT_REPOSITORY "${git_protocol}://github.com/Slicer/SlicerExecutionModel.git"
+    GIT_REPOSITORY "https://github.com/Slicer/SlicerExecutionModel.git"
     GIT_TAG "origin/master"
     SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
     BINARY_DIR ${proj}-build

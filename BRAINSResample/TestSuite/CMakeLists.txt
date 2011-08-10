@@ -16,10 +16,6 @@ add_dependencies(BRAINSResampleTest BRAINSResample)
 
 set(BRAINSResample_TESTS ${LAUNCH_EXE} $<TARGET_FILE:BRAINSResampleTest>)
 
-SETIFEMPTY(MIDAS_REST_URL "http://midas.kitware.com/api/rest" CACHE STRING "The MIDAS server where testing data resides")
-include(${BRAINS_CMAKE_HELPER_DIR}/MIDAS.cmake)
-set(MIDAS_KEY_DIR "${BRAINSCommonLib_DATA_DIRS}")
-
 ## Should provide exactly the same result as BRAINSFitTest_AffineRotationMasks
 midas_add_test(NAME ValidateBRAINSResampleTest4_nii COMMAND ${BRAINSResample_TESTS}
  --compare

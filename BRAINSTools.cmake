@@ -1,0 +1,87 @@
+cmake_minimum_required(VERSION 2.8)
+cmake_policy(VERSION 2.8)
+
+enable_testing()
+include(CTest)
+
+include(${CMAKE_CURRENT_SOURCE_DIR}/BRAINSCommonLib/BuildScripts/PreventInSourceBuilds.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/BRAINSCommonLib/BuildScripts/CMakeBuildMacros.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/BRAINSCommonLib/BuildScripts/SEMMacroBuildCLI.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/BRAINSCommonLib/BuildScripts/CMakeBRAINS3BuildMacros.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/BRAINSCommonLib/BuildScripts/IJMacros.txt)
+
+###
+SETIFEMPTY(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/lib)
+SETIFEMPTY(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/lib)
+SETIFEMPTY(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)
+SETIFEMPTY(CMAKE_BUNDLE_OUTPUT_DIRECTORY  ${CMAKE_CURRENT_BINARY_DIR}/bin)
+link_directories(${CMAKE_LIBRARY_OUTPUT_DIRECTORY} ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY})
+
+if(NOT ITK_FOUND)
+    find_package(ITK REQUIRED)
+    include(${ITK_USE_FILE})
+endif(NOT ITK_FOUND)
+
+list(APPEND ExternalData_URL_TEMPLATES
+  # Local data store populated by the ITK pre-commit hook
+  "file:///${CMAKE_SOURCE_DIR}/.ExternalData/%(algo)/%(hash)"
+  # Data published by Iowa Psychiatry web interface
+  "http://www.psychiatry.uiowa.edu/users/brainstestdata/ctestdata/%(algo)/%(hash)"
+
+  # Data published by MIDAS
+  "http://midas.kitware.com/api/rest/midas.bitstream.by.hash?hash=%(hash)&algorithm=%(algo)"
+
+  # Data published by developers using git-gerrit-push.
+  "http://www.itk.org/files/ExternalData/%(algo)/%(hash)"
+)
+
+# Tell ExternalData commands to transform raw files to content links.
+# TODO: Condition this feature on presence of our pre-commit hook.
+set(ExternalData_LINK_CONTENT MD5)
+include(${CMAKE_CURRENT_SOURCE_DIR}/BRAINSCommonLib/BuildScripts/ExternalData.cmake)
+set(TestData_DIR ${CMAKE_CURRENT_SOURCE_DIR}/TestData)
+
+## This is required option(USE_BRAINSCommonLib "Build BRAINSCommonLib" ON)
+## NOTE:  BRAINSCommonLib is REQUIRED.
+add_subdirectory(BRAINSCommonLib)
+set(BRAINSCommonLib_DIR ${CMAKE_CURRENT_BINARY_DIR}/BRAINSCommonLib)
+
+find_package(BRAINSCommonLib NO_MODULE REQUIRED)
+include(${BRAINSCommonLib_USE_FILE})
+
+#-----------------------------------------------------------------------------
+# BRAINSFit
+#-----------------------------------------------------------------------------
+if(USE_BRAINSFit)
+  add_subdirectory(BRAINSFit)
+endif()
+
+#-----------------------------------------------------------------------------
+# BRAINSConstellationDetector
+#-----------------------------------------------------------------------------
+if(USE_BRAINSConstellationDetector)
+  add_subdirectory(BRAINSConstellationDetector)
+endif()
+
+# Define the atlas subdirectory in one place
+#set(${CMAKE_PROJECT_NAME}_RUNTIME_DIR ${CMAKE_CURRENT_BINARY_DIR}/src/bin)
+
+#-----------------------------------------------------------------------------
+# BRAINSABC
+#-----------------------------------------------------------------------------
+if(USE_BRAINSABC)
+  add_subdirectory(BRAINSABC)
+endif()
+
+
+#if(0)
+#  BuildExtPackage(BRAINSResample "BRAINSCommonLib" )
+#  BuildExtPackage(BRAINSROIAuto "BRAINSCommonLib" )
+#  BuildExtPackage(GTRACT "BRAINSCommonLib" )
+#  BuildExtPackage(BRAINSCut "BRAINSCommonLib;${OpenCV_DEPEND}" )
+#  BuildExtPackage(BRAINSMush "BRAINSCommonLib" )
+#  BuildExtPackage(BRAINSDemonWarp "BRAINSCommonLib" )
+#  BuildExtPackage(BRAINSMultiModeSegment "BRAINSCommonLib" )
+#  BuildExtPackage(BRAINSInitializedControlPoints "BRAINSCommonLib" )
+#endif() ## Comment out things that are not yet ready
+

@@ -1,4 +1,4 @@
-project(BRAINSStandAlone)
+project(BRAINSTools)
 cmake_minimum_required(VERSION 2.8)
 
 #-----------------------------------------------------------------------------
@@ -13,15 +13,16 @@ endif()
 #-----------------------------------------------------------------------------
 # Superbuild Option - Enabled by default
 #-----------------------------------------------------------------------------
-option(BRAINSStandAlone_SUPERBUILD "Build Slicer and the projects it depends on via SuperBuild.cmake." ON)
-mark_as_advanced(BRAINSStandAlone_SUPERBUILD)
+option(BRAINSTools_SUPERBUILD "Build Slicer and the projects it depends on via SuperBuild.cmake." ON)
+mark_as_advanced(BRAINSTools_SUPERBUILD)
 #-----------------------------------------------------------------------------
 # Superbuild script
 #-----------------------------------------------------------------------------
-if(BRAINSStandAlone_SUPERBUILD)
+if(BRAINSTools_SUPERBUILD)
   include("${CMAKE_CURRENT_SOURCE_DIR}/SuperBuild.cmake")
   return()
 else()
-  include("${CMAKE_CURRENT_SOURCE_DIR}/BRAINSStandAlone.cmake")
+  include("${CMAKE_CURRENT_SOURCE_DIR}/BRAINSTools.cmake")
+  return()
 endif()
 

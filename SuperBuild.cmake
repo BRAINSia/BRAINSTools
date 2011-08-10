@@ -129,6 +129,13 @@ else()
   include(External_ITKv4)
 endif()
 
+#### HACK -- need to fix this
+  if(NOT VTK_FOUND)
+    find_package(VTK REQUIRED)
+    include(${VTK_USE_FILE})
+  endif(NOT VTK_FOUND)
+  link_libraries( vtkGraphics vtkImaging vtkIO vtkFiltering vtkCommon )
+
 option(USE_SYSTEM_SEM               "Build using an externally defined version of SEM"  OFF)
 if(USE_SYSTEM_SEM)
   find_package(SlicerExecutionModel NO_MODULE REQUIRED GenerateCLP)
@@ -143,11 +150,18 @@ else()
   include(External_SlicerExecutionModel)
 endif()
 
+option(USE_GTRACT                      "Build GTRACT"                      ON)
 option(USE_BRAINSCommonLib             "Build BRAINSCommonLib"             ON)
 option(USE_BRAINSFit                   "Build BRAINSFit"                   ON)
-#option(USE_BRAINSCut                   "Build BRAINSCut"                   OFF)
-option(USE_BRAINSABC                   "Build BRAINSABC"                   OFF)
+option(USE_BRAINSABC                   "Build BRAINSABC"                   ON)
+option(USE_BRAINSROIAuto               "Build BRAINSROIAuto"               ON)
+option(USE_BRAINSDemonWarp             "Build BRAINSDemonWarp"             ON)
+option(USE_BRAINSResample              "Build BRAINSResample"              ON)
 option(USE_BRAINSConstellationDetector "Build BRAINSConstellationDetector" ON)
+option(USE_BRAINSMush                  "Build BRAINSMush"                  ON)
+option(USE_BRAINSMultiModeSegment      "Build BRAINSMultiModeSegment"      ON)
+option(USE_BRAINSInitializedControlPoints      "Build BRAINSInitializedControlPoints"      ON)
+#option(USE_BRAINSCut                   "Build BRAINSCut"                   OFF)
 
 set(BRAINSTools_DEPENDENCIES ITKv4 SlicerExecutionModel)
 if(USE_BRAINSABC) # OR USE_BRAINSCut)
@@ -181,10 +195,17 @@ ExternalProject_Add(${proj}
     -DINTEGRATE_WITH_SLICER:BOOL=${INTEGRATE_WITH_SLICER}
     -DSlicer_SOURCE_DIR:PATH=${Slicer_SOURCE_DIR}
     -DBUILD_TESTING:BOOL=ON
+    -DUSE_GTRACT:BOOL=${USE_GTRACT}
     -DUSE_BRAINSFit:BOOL=${USE_BRAINSFit}
     -DUSE_BRAINSCommonLib:BOOL=${USE_BRAINSCommonLib}
     -DUSE_BRAINSABC:BOOL=${USE_BRAINSABC}
+    -DUSE_BRAINSMush:BOOL=${USE_BRAINSMush}
+    -DUSE_BRAINSROIAuto:BOOL=${USE_BRAINSROIAuto}
+    -DUSE_BRAINSResample:BOOL=${USE_BRAINSResample}
     -DUSE_BRAINSConstellationDetector:BOOL=${USE_BRAINSConstellationDetector}
+    -DUSE_BRAINSDemonWarp:BOOL=${USE_BRAINSDemonWarp}
+    -DUSE_BRAINSMultiModeSegment:BOOL=${USE_BRAINSMultiModeSegment}
+    -DUSE_BRAINSInitializedControlPoints:BOOL=${USE_BRAINSInitializedControlPoints}
     -D${CMAKE_PROJECT_NAME}_USE_ITK4:BOOL=ON
     ${VTK_BUILD_FLAGS}
     ${OpenCV_BUILD_FLAGS}

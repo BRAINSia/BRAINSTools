@@ -1,10 +1,25 @@
 option(DEBUGGING_PRINT_IMAGES "Use the DEBUG_IMAGE_VIEWER for debugging" ON)
 ### A local macro for configuring all these programs consistantly for the different platforms.
 macro(ADDGTRACTPROG PROGNAME)
-  set(CLP ${PROGNAME})
-  set(${CLP}_SOURCE ${PROGNAME}.cxx )
-  CONFIGUREBRAINSORSLICERPROPERTIES(${CLP} ${PROGNAME}.xml "${${CLP}_SOURCE}" "" "main" "GTRACTCommon")
-  target_link_libraries( ${CLP} BRAINSCommonLib GTRACTCommon)
+###
+if(0) # Build against Slicer
+  ## Include the Slicer macro for setting up default locations!
+  SlicerMacroBuildCLI(
+    NAME ${PROGNAME}
+    LOGO_HEADER ${BRAINSCommonLib_BUILDSCRIPTS_DIR}/BRAINSLogo.h
+    TARGET_LIBRARIES GTRACTCommon ${OPTIONAL_DEBUG_LINK_LIBRARIES}
+    CLI_SHARED_LIBRARY_WRAPPER_CXX  ${BRAINSCommonLib_BUILDSCRIPTS_DIR}/SEMCommanLineSharedLibraryWrapper.cxx
+    VERBOSE
+  )
+else()
+  SEMMacroBuildCLI(
+    NAME ${PROGNAME}
+    LOGO_HEADER ${BRAINSCommonLib_BUILDSCRIPTS_DIR}/BRAINSLogo.h
+    TARGET_LIBRARIES GTRACTCommon ${OPTIONAL_DEBUG_LINK_LIBRARIES}
+    CLI_SHARED_LIBRARY_WRAPPER_CXX ${BRAINSCommonLib_BUILDSCRIPTS_DIR}/SEMCommanLineSharedLibraryWrapper.cxx
+    VERBOSE
+    )
+endif()
 endmacro(ADDGTRACTPROG PROGNAME)
 
 ADDGTRACTPROG(gtractImageConformity)
@@ -29,6 +44,8 @@ ADDGTRACTPROG(gtractCopyImageOrientation)
 ADDGTRACTPROG(gtractClipAnisotropy)
 ADDGTRACTPROG(gtractInvertDeformationField)
 ADDGTRACTPROG(gtractResampleDWIInPlace)
+ADDGTRACTPROG(gtractCoregBvalues)
+ADDGTRACTPROG(gtractCoRegAnatomy)
 
 #ADDGTRACTPROG(gtractCoRegAnatomyRigid)
 #ADDGTRACTPROG(gtractCoRegAnatomyBspline)
@@ -36,14 +53,4 @@ ADDGTRACTPROG(gtractResampleDWIInPlace)
 #ADDGTRACTPROG(gtractStreamlineTracking)
 #ADDGTRACTPROG(gtractGuidedTracking)
 #ADDGTRACTPROG(gtractGraphSearchTracking)
-
-set(CLP gtractCoregBvalues)
-set(${CLP}_SOURCE gtractCoregBvalues.cxx gtractCoregBvaluesPrimary.cxx)
-CONFIGUREBRAINSORSLICERPROPERTIES(${CLP} gtractCoregBvaluesPrimary.xml "${${CLP}_SOURCE}" "" "main" "GTRACTCommon")
-target_link_libraries( ${CLP} BRAINSCommonLib GTRACTCommon )
-
-set(CLP gtractCoRegAnatomy)
-set(${CLP}_SOURCE gtractCoRegAnatomy.cxx gtractCoRegAnatomyPrimary.cxx)
-CONFIGUREBRAINSORSLICERPROPERTIES(${CLP} gtractCoRegAnatomyPrimary.xml "${${CLP}_SOURCE}" "" "main" "GTRACTCommon")
-target_link_libraries( ${CLP} BRAINSCommonLib GTRACTCommon )
 

@@ -93,7 +93,7 @@ vtkMatrix4x4 * CreateIjkToRasMatrix( typename TImageType::Pointer image )
   return RasToIjkMatrix;
 }
 
-int main(int argc, char * *argv)
+int main(int argc, char *argv[])
 {
   PARSE_ARGS;
   BRAINSUtils::SetThreadCount(numberOfThreads);
@@ -391,4 +391,5 @@ int main(int argc, char * *argv)
     fiberWriter->SetInput( transformPolyData->GetOutput() );
     fiberWriter->Update();
     }
+  return EXIT_SUCCESS;
 }

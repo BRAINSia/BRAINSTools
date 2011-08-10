@@ -13,15 +13,25 @@ configure_file(
 ###
 configure_file(${BRAINSResample_SOURCE_DIR}/CTestCustom.ctest ${BRAINSResample_BINARY_DIR}/CTestCustom.ctest COPYONLY)
 
-include(${BRAINS_CMAKE_HELPER_DIR}/CMakeBRAINS3BuildMacros.cmake)
 ###
-
-
-set(CLP BRAINSResample)
-#set(${CLP}_SOURCE BRAINSResample.cxx ${BRAINSResample_SOURCE_DIR}/BRAINSResamplePrimary.cxx)
-set(${CLP}_SOURCE BRAINSResample.cxx )
-set(${CLP}_PRIMARY_SOURCE ${BRAINSResample_SOURCE_DIR}/BRAINSResamplePrimary.cxx)
-CONFIGUREBRAINSORSLICERPROPERTIES(${CLP} BRAINSResamplePrimary.xml "${${CLP}_SOURCE}" "${${CLP}_PRIMARY_SOURCE}" "BRAINSResamplePrimary" "")
+if(0) # Build against Slicer
+  ## Include the Slicer macro for setting up default locations!
+  SlicerMacroBuildCLI(
+    NAME BRAINSResample
+    LOGO_HEADER ${BRAINSCommonLib_BUILDSCRIPTS_DIR}/BRAINSLogo.h
+    TARGET_LIBRARIES BRAINSCommonLib ${ITK_LIBRARIES} ${OPTIONAL_DEBUG_LINK_LIBRARIES}
+    CLI_SHARED_LIBRARY_WRAPPER_CXX  ${BRAINSCommonLib_BUILDSCRIPTS_DIR}/SEMCommanLineSharedLibraryWrapper.cxx
+    VERBOSE
+  )
+else()
+  SEMMacroBuildCLI(
+    NAME BRAINSResample
+    LOGO_HEADER ${BRAINSCommonLib_BUILDSCRIPTS_DIR}/BRAINSLogo.h
+    TARGET_LIBRARIES BRAINSCommonLib ${ITK_LIBRARIES} ${OPTIONAL_DEBUG_LINK_LIBRARIES}
+    CLI_SHARED_LIBRARY_WRAPPER_CXX ${BRAINSCommonLib_BUILDSCRIPTS_DIR}/SEMCommanLineSharedLibraryWrapper.cxx
+    VERBOSE
+    )
+endif()
 
 ### Add the Testing Subdirectory.
 if(BUILD_TESTING)

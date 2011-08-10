@@ -50,6 +50,7 @@ namespace BRAINSMush
 {
 const int Dimension = 3;
 }
+
 typedef unsigned char                InputPixelType;
 typedef float                        PixelType;
 typedef itk::Image<PixelType, 3>     ImageType;
@@ -80,15 +81,6 @@ ImageType::Pointer MixtureOptimizer(ImageType::Pointer & firstImage, ImageType::
                                     MaskImageType::Pointer & maskImage, double desiredMean, double desiredVariance,
                                     std::string outputWeightsFile);
 
-#if 0
-void PreliminaryGenerateBrainVolume(ImageType::Pointer & firstImage, ImageType::Pointer & secondImage,
-                                    MaskImageType::Pointer & maskImage, std::string inputMaskVolume, double desiredMean,
-                                    double desiredVariance, double lowerThresholdFactor, double upperThresholdFactor,
-                                    std::vector<int> boundingBoxSize, std::vector<int> boundingBoxStart,
-                                    std::vector<int> seed, std::string outputVolume, std::string outputMask,
-                                    std::string outputWeightsFile, MaskImageType::Pointer & resultImage);
-
-#endif
 void GenerateBrainVolume(ImageType::Pointer & firstImage, ImageType::Pointer & secondImage,
                          MaskImageType::Pointer & maskImage, std::string inputMaskVolume, double desiredMean,
                          double desiredVariance, double lowerThresholdFactor, double upperThresholdFactor,

@@ -42,7 +42,7 @@ typedef float vtkFloatingPointType;
 
 #include "gtractCreateGuideFiberCLP.h"
 #include "BRAINSThreadControl.h"
-int main(int argc, char * *argv)
+int main(int argc, char *argv[])
 {
   PARSE_ARGS;
   BRAINSUtils::SetThreadCount(numberOfThreads);
@@ -129,4 +129,5 @@ int main(int argc, char * *argv)
     tractWriter->SetInput( guideFiber );
     tractWriter->Update();
     }
+  return EXIT_SUCCESS;
 }

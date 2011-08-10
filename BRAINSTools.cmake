@@ -38,6 +38,7 @@ list(APPEND ExternalData_URL_TEMPLATES
 # Tell ExternalData commands to transform raw files to content links.
 # TODO: Condition this feature on presence of our pre-commit hook.
 set(ExternalData_LINK_CONTENT MD5)
+
 include(${CMAKE_CURRENT_SOURCE_DIR}/BRAINSCommonLib/BuildScripts/ExternalData.cmake)
 set(TestData_DIR ${CMAKE_CURRENT_SOURCE_DIR}/TestData)
 
@@ -73,15 +74,54 @@ if(USE_BRAINSABC)
   add_subdirectory(BRAINSABC)
 endif()
 
+#-----------------------------------------------------------------------------
+# BRAINSResample
+#-----------------------------------------------------------------------------
+if(USE_BRAINSResample)
+  add_subdirectory(BRAINSResample)
+endif()
 
-#if(0)
-#  BuildExtPackage(BRAINSResample "BRAINSCommonLib" )
-#  BuildExtPackage(BRAINSROIAuto "BRAINSCommonLib" )
-#  BuildExtPackage(GTRACT "BRAINSCommonLib" )
+#-----------------------------------------------------------------------------
+# BRAINSDemonWarp
+#-----------------------------------------------------------------------------
+if(USE_BRAINSDemonWarp)
+  add_subdirectory(BRAINSDemonWarp)
+endif()
+
+#-----------------------------------------------------------------------------
+# BRAINSROIAuto
+#-----------------------------------------------------------------------------
+if(USE_BRAINSROIAuto)
+  add_subdirectory(BRAINSROIAuto)
+endif()
+
+#-----------------------------------------------------------------------------
+# BRAINSMush
+#-----------------------------------------------------------------------------
+if(USE_BRAINSMush)
+  add_subdirectory(BRAINSMush)
+endif()
+
+#-----------------------------------------------------------------------------
+# BRAINSMultiModeSegment
+#-----------------------------------------------------------------------------
+if(USE_BRAINSMultiModeSegment)
+  add_subdirectory(BRAINSMultiModeSegment)
+endif()
+
+#-----------------------------------------------------------------------------
+# BRAINSInitializedControlPoints
+#-----------------------------------------------------------------------------
+if(USE_BRAINSInitializedControlPoints)
+  add_subdirectory(BRAINSInitializedControlPoints)
+endif()
+
+#-----------------------------------------------------------------------------
+# GTRACT
+#-----------------------------------------------------------------------------
+if(USE_GTRACT)
+  add_subdirectory(GTRACT)
+endif()
+
 #  BuildExtPackage(BRAINSCut "BRAINSCommonLib;${OpenCV_DEPEND}" )
-#  BuildExtPackage(BRAINSMush "BRAINSCommonLib" )
-#  BuildExtPackage(BRAINSDemonWarp "BRAINSCommonLib" )
-#  BuildExtPackage(BRAINSMultiModeSegment "BRAINSCommonLib" )
-#  BuildExtPackage(BRAINSInitializedControlPoints "BRAINSCommonLib" )
-#endif() ## Comment out things that are not yet ready
 

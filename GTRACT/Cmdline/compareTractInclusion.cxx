@@ -100,7 +100,7 @@ double PairOffFibers(vtkPolyData *resampledTestFibers, vtkPolyData *resampledSta
   return maxDistances;
 }
 
-int main(int argc, char * *argv)
+int main(int argc, char * argv[])
 {
   PARSE_ARGS;
   BRAINSUtils::SetThreadCount(numberOfThreads);
@@ -204,5 +204,5 @@ int main(int argc, char * *argv)
       exit(4);
       }
     }
-  return 0;
+  return EXIT_SUCCESS;
 }

@@ -47,7 +47,7 @@ BRAINSDemonWarpCommonLib_EXPORT extern void PrintDataTypeStrings(void);
 
 BRAINSDemonWarpCommonLib_EXPORT extern int CompareNoCase(const std::string & s, const std::string & s2);
 
-BRAINSDemonWarpCommonLib_EXPORT extern int BRAINSResamplePrimary(int argc, char *argv[]);
+BRAINSDemonWarpCommonLib_EXPORT extern int BRAINSResample(int argc, char *argv[]);
 
 BRAINSDemonWarpCommonLib_EXPORT extern void ProcessOutputType_uchar(struct BRAINSDemonWarpAppParameters & command);
 

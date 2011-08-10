@@ -10,12 +10,25 @@ configure_file(
   ${CMAKE_CURRENT_BINARY_DIR}/BRAINSROIAutoCommonLib.h
   )
 
-
-set(CLP BRAINSROIAuto)
-set(${CLP}_SOURCE BRAINSROIAuto.cxx )
-set(${CLP}_PRIMARY_SOURCE BRAINSROIAuto.cxx)
-CONFIGUREBRAINSORSLICERPROPERTIES(${CLP} BRAINSROIAuto.xml "${${CLP}_SOURCE}" "${${CLP}_PRIMARY_SOURCE}" "main" "")
-target_link_libraries( ${CLP} BRAINSCommonLib ${ITK_LIBRARIES} ${OPTIONAL_DEBUG_LINK_LIBRARIES})
+###
+if(0) # Build against Slicer
+  ## Include the Slicer macro for setting up default locations!
+  SlicerMacroBuildCLI(
+    NAME BRAINSROIAuto
+    LOGO_HEADER ${BRAINSCommonLib_BUILDSCRIPTS_DIR}/BRAINSLogo.h
+    TARGET_LIBRARIES BRAINSCommonLib ${ITK_LIBRARIES} ${OPTIONAL_DEBUG_LINK_LIBRARIES}
+    CLI_SHARED_LIBRARY_WRAPPER_CXX  ${BRAINSCommonLib_BUILDSCRIPTS_DIR}/SEMCommanLineSharedLibraryWrapper.cxx
+    VERBOSE
+  )
+else()
+  SEMMacroBuildCLI(
+    NAME BRAINSROIAuto
+    LOGO_HEADER ${BRAINSCommonLib_BUILDSCRIPTS_DIR}/BRAINSLogo.h
+    TARGET_LIBRARIES BRAINSCommonLib ${ITK_LIBRARIES} ${OPTIONAL_DEBUG_LINK_LIBRARIES}
+    CLI_SHARED_LIBRARY_WRAPPER_CXX ${BRAINSCommonLib_BUILDSCRIPTS_DIR}/SEMCommanLineSharedLibraryWrapper.cxx
+    VERBOSE
+    )
+endif()
 
 if(BUILD_TESTING)
     add_subdirectory(TestSuite)

@@ -31,7 +31,7 @@
 #include "GtractTypes.h"
 #include "gtractAnisotropyMapCLP.h"
 #include "BRAINSThreadControl.h"
-int main(int argc, char * *argv)
+int main(int argc, char *argv[])
 {
   typedef double                                            TensorComponentType;
   typedef itk::gtractDiffusionTensor3D<TensorComponentType> TensorPixelType;
@@ -142,5 +142,5 @@ int main(int argc, char * *argv)
     {
     std::cout << e << std::endl;
     }
-  return 0;
+  return EXIT_SUCCESS;
 }

@@ -1,34 +1,7 @@
 project( GTRACT )
 set(LOCAL_PROJECT_NAME GTRACT)
 
-if (BUILD_AGAINST_SLICER3)
-  find_package(Slicer3 REQUIRED)
-  if(Slicer3_FOUND)
-    include(${Slicer3_USE_FILE})
-  else(Slicer3_FOUND)
-    message(ERROR "Cannot build without a Slicer3 build tree or a Slicer3 installation. Please set Slicer3_DIR. If using a Slicer3 build, Slicer3_DIR needs to be set to the root of the build tree of Slicer3.  If using an installation
-   of Slicer3, Slicer3_DIR needs to be set to <SlicerInstallation>/lib/Slicer3.")
-  endif(Slicer3_FOUND)
-
-  # Demian W: THESE 3 LINES ARE A HACK SO THE CMakeBuildMacros OF BRAINSTOOLS RECOGNIZE THAT BEING BUILT AS A MODULE IS THE SAME AS BEING BUILT INSIDE OF SLICER
-  set(Slicer_SOURCE_DIR ${Slicer3_CMAKE_DIR}/..)
-  set(BRAINS_CMAKE_HELPER_DIR ${Slicer3_CMAKE_DIR}/../Applications/CLI/BRAINSTools/BuildScripts)
-  set(BRAINSCommonLib_DIR ${Slicer3_DIR}/Applications/CLI/BRAINSTools/BRAINSCommonLib)
-endif(BUILD_AGAINST_SLICER3)
-
-link_directories(${CMAKE_LIBRARY_OUTPUT_DIRECTORY} ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY})
-
-
 option(DEBUGGING_PRINT_IMAGES "Use the DEBUG_IMAGE_VIEWER for debugging" ON)
-
-
-if(NOT VTK_FOUND)
-    find_package(VTK REQUIRED)
-    include(${VTK_USE_FILE})
-endif(NOT VTK_FOUND)
-
-find_package(BRAINSCommonLib NO_MODULE REQUIRED)
-include(${BRAINSCommonLib_USE_FILE})
 
 #-----------------------------------------------------------------------------
 # Output directories.
@@ -60,7 +33,10 @@ if(WIN32)
   endif(NOT BORLAND)
 endif(WIN32)
 
-link_libraries(${ITK_LIBRARIES})
+if(NOT VTK_FOUND)
+    find_package(VTK REQUIRED)
+    include(${VTK_USE_FILE})
+endif(NOT VTK_FOUND)
 link_libraries( vtkGraphics vtkImaging vtkIO vtkFiltering vtkCommon )
 #-----------------------------------------------------------------------------
 # Configure files with settings for use by the build.
@@ -70,7 +46,6 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/gtractConfigure.h.in
 # Definitions for GTRACT Includes
 include_directories( ${CMAKE_CURRENT_BINARY_DIR} )
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/Common )
-
 
 #-----------------------------------------------------------------------------
 # Build Generate CLP

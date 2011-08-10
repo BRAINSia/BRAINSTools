@@ -155,5 +155,5 @@ int main(int argc, char *argv[])
   // IndexImageType::Pointer indexImage = SelectIndexImageFilter->GetOutput();
   // std::cout << "Index Image: "<< indexImage  << std::endl;
 
-  return 0;
+  return EXIT_SUCCESS;
 }

@@ -31,7 +31,7 @@
 #include "gtractInvertRigidTransformCLP.h"
 #include "GenericTransformImage.h"
 #include "BRAINSThreadControl.h"
-int main(int argc, char * *argv)
+int main(int argc, char *argv[])
 {
   PARSE_ARGS;
   BRAINSUtils::SetThreadCount(numberOfThreads);
@@ -52,4 +52,5 @@ int main(int argc, char * *argv)
   RigidTransformType::Pointer   reverseTransform = RigidTransformType::New();
   forwardTransform->GetInverse(reverseTransform);
   itk::WriteTransformToDisk(reverseTransform, outputTransform);
+  return EXIT_SUCCESS;
 }

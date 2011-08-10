@@ -39,7 +39,7 @@ int buildDirectionLut(itk::Array<int> & lut, itk::Array<int> & count, itk::MetaD
 
 bool areDirectionsEqual(std::string direction1, std::string direction2, double directionsTolerance, bool averageB0only);
 
-int main(int argc, char * *argv)
+int main(int argc, char *argv[])
 {
   PARSE_ARGS;
   BRAINSUtils::SetThreadCount(numberOfThreads);
@@ -237,6 +237,7 @@ int main(int argc, char * *argv)
     {
     std::cout << e << std::endl;
     }
+  return EXIT_SUCCESS;
 }
 
 int buildDirectionLut(itk::Array<int> & lut,
@@ -341,4 +342,5 @@ bool areDirectionsEqual(std::string direction1, std::string direction2, double d
       return false;
       }
     }
+  return EXIT_SUCCESS;
 }

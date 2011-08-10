@@ -16,7 +16,7 @@
 
 extern "C" MODULE_IMPORT int ModuleEntryPoint(int, char * []);
 
-int BRAINSResampleTest(int argc, char* * argv)
+int BRAINSDemonWarpTest(int argc, char* * argv)
 {
   return ModuleEntryPoint(argc, argv);
 }

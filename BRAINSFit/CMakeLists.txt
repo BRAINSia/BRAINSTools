@@ -5,16 +5,10 @@ set(LOCAL_PROJECT_NAME BRAINSFit)
 #
 #SETOPTIONALDEBUGIMAGEVIEWER()
 
-
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/BRAINSFitCommonLib.h.in
   ${CMAKE_CURRENT_BINARY_DIR}/BRAINSFitCommonLib.h
   )
-
-## ITKv4 requires that ITKReview is explicitly linked against
-if(ITK_VERSION_MAJOR EQUAL 4 )
-  set(ITKREVIEWLIB ITKReview)
-endif(ITK_VERSION_MAJOR EQUAL 4 )
 
 ###
 if(0) # Build against Slicer

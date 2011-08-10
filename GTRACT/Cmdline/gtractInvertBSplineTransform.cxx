@@ -32,7 +32,7 @@
 #include "BRAINSThreadControl.h"
 #include "GenericTransformImage.h"
 
-int main(int argc, char * *argv)
+int main(int argc, char *argv[])
 {
   PARSE_ARGS;
   BRAINSUtils::SetThreadCount(numberOfThreads);
@@ -104,4 +104,5 @@ int main(int argc, char * *argv)
   std::cout << "TPS Inversion Complete" << std::endl;
 
   itk::WriteTransformToDisk(invertTransformFilter->GetOutput(), outputTransform);
+  return EXIT_SUCCESS;
 }

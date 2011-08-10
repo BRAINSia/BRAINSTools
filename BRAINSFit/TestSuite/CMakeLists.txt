@@ -18,10 +18,6 @@ if(COMPILE_TEST_GENERATION_PROGRAMS)  ## These were programs needed to create th
   endif()
 endif(COMPILE_TEST_GENERATION_PROGRAMS)
 
-if (WIN32)
-  set(BUILD_SUBDIR ${CMAKE_BUILD_TYPE}/)
-endif (WIN32)
-
 configure_file(${BRAINSFit_SOURCE_DIR}/CTestCustom.ctest ${BRAINSFit_BINARY_DIR}/CTestCustom.ctest COPYONLY)
 
 ## Needed to set this for Slicer3 to find the test data directory

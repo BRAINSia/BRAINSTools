@@ -1,6 +1,8 @@
 #include <iostream>
 
-// main function built in BRAINSResamplePrimary.cxx so that testing only builds
+sdfasdfa
+
+// main function built in BRAINSResample.cxx so that testing only builds
 // templates once.
 
 int main(int argc, char *argv[])

@@ -4,10 +4,6 @@
  * University of Iowa Health Care 2010
  */
 
-#if defined(_MSC_VER)
-#pragma warning (disable : 4786)
-#endif
-
 #include "itksys/SystemTools.hxx"
 #include "BRAINSThreadControl.h"
 

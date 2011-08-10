@@ -33,14 +33,6 @@
 #ifndef __BRAINSConstellationDetector2_h
 #define __BRAINSConstellationDetector2_h
 
-#ifdef _MSC_VER
-#pragma warning ( disable : 4786 )
-#endif
-
-#ifdef __BORLANDC__
-#define ITK_LEAN_AND_MEAN
-#endif
-
 #include "itkImageToImageFilter.h"
 
 #include "landmarksConstellationDetector.h"

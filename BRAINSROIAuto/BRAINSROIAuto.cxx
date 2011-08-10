@@ -22,9 +22,6 @@
   * using the ROIAUTO method that seems to work well for brain images.
   */
 
-#if defined( _MSC_VER )
-#pragma warning ( disable : 4786 )
-#endif
 #include "itkIO.h"
 
 #include "itkMultiplyImageFilter.h"

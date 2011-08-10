@@ -16,13 +16,6 @@ See License.txt or http://www.slicer.org/copyright/copyright.txt for details.
  outputs the bspline control points as a landmark file.
 
  =========================================================================*/
-#if defined(_MSC_VER)
-#pragma warning ( disable : 4786 )
-#endif
-
-#ifdef __BORLANDC__
-#define ITK_LEAN_AND_MEAN
-#endif
 
 #include <sstream>
 #include "itkXMLFilterWatcher.h"

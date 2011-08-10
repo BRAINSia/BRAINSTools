@@ -7,10 +7,6 @@
 #ifndef __BRAINSHoughEyeDetector_h
 #define __BRAINSHoughEyeDetector_h
 
-#ifdef _MSC_VER
-#pragma warning ( disable : 4786 )
-#endif
-
 #include "itkMultiThreader.h"
 
 #include "itkImageToImageFilter.h"

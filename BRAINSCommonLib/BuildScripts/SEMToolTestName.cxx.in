@@ -4,9 +4,6 @@
 //commands to an
 //the SEM compatibile program
 //
-#if defined(_MSC_VER)
-#pragma warning ( disable : 4786 )
-#endif
 
 #ifdef WIN32
 #define MODULE_IMPORT __declspec(dllimport)

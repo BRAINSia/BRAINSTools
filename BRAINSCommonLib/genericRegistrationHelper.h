@@ -14,9 +14,6 @@
  *  =========================================================================*/
 #ifndef __genericRegistrationHelper_h
 #define __genericRegistrationHelper_h
-#if defined( _MSC_VER )
-#pragma warning ( disable : 4786 )
-#endif
 
 #if (ITK_VERSION_MAJOR < 4)
 #include "itkOptImageToImageMetric.h"

@@ -12,7 +12,7 @@
   * NOTE:  This class is not templated!
   */
 
-#if defined( ITK_LEAN_AND_MEAN ) || defined( __BORLANDC__ ) || defined( NDEBUG )
+#if defined( NDEBUG )
 #define VECTORitkDebugMacro(s, type, x)
 #else
 #define VECTORitkDebugMacro(s, type, x)                               \

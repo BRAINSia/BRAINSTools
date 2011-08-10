@@ -4,10 +4,6 @@
  * set of landmark files.
  */
 
-#if defined(_MSC_VER)
-#pragma warning ( disable : 4786 )
-#endif
-
 #include <itkTransformFileWriter.h>
 #include <itkImage.h>
 #include <itkAffineTransform.h>

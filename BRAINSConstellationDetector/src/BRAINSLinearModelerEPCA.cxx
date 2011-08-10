@@ -7,10 +7,6 @@
 #include "BRAINSLinearModelerEPCACLP.h"
 #include "BRAINSThreadControl.h"
 
-#if defined(_MSC_VER)
-#pragma warning ( disable : 4786 )
-#endif
-
 int main( int argc, char * argv[] )
 {
   PARSE_ARGS;

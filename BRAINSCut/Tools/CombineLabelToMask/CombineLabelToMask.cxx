@@ -16,13 +16,6 @@
      Author Eunyoung Regina Kim
      This is modified from itk Binary Threshold Image Filter.
 =========================================================================*/
-#if defined(_MSC_VER)
-#pragma warning ( disable : 4786 )
-#endif
-
-#ifdef __BORLANDC__
-#define ITK_LEAN_AND_MEAN
-#endif
 
 #include "itkBinaryThresholdImageFilter.h"
 

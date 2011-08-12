@@ -112,6 +112,7 @@ LargestForegroundFilledMaskImageFilter<TInputImage, TOutputImage>
     }
   this->AllocateOutputs();
 
+  // This is to help with noisy data that has a few spurious very high/ very low values.
   typedef ComputeHistogramQuantileThresholds<TInputImage, TOutputImage> ImageCalcType;
   typename ImageCalcType::Pointer ImageCalc = ImageCalcType::New();
   ImageCalc->SetImage( this->GetInput() );
@@ -122,7 +123,6 @@ LargestForegroundFilledMaskImageFilter<TInputImage, TOutputImage>
   ImageCalc->Calculate();
 
   typename TInputImage::PixelType threshold_low_foreground;
-  typename TInputImage::PixelType threshold_low = ImageCalc->GetLowerIntensityThresholdValue();
   typename TInputImage::PixelType threshold_hi  = ImageCalc->GetUpperIntensityThresholdValue();
   const unsigned int numNonZeroHistogramBins = ImageCalc->GetNumberOfValidHistogramsEntries();
 
@@ -157,17 +157,12 @@ LargestForegroundFilledMaskImageFilter<TInputImage, TOutputImage>
   threshold->SetInsideValue(this->m_InsideValue);
   threshold->SetOutsideValue(this->m_OutsideValue);
   threshold->SetLowerThreshold(threshold_low_foreground);
-  // threshold->SetUpperThreshold(threshold_hi);
-  threshold->SetUpperThreshold(
-    NumericTraits<typename TInputImage::PixelType>::max() );
+  const typename TInputImage::PixelType threshold_hi_foreground = NumericTraits<typename TInputImage::PixelType>::max();
+  threshold->SetUpperThreshold(threshold_hi_foreground);
   threshold->Update();
-  // C'mon, guys.  I need to know what's going on.  Leave this output visible
-  // for me.  Please?
-  // NOTE:  The printout below is not what is really being used to threshold.
-  // it is really threshold_low_foreground, NumericTraits<typename
-  // OutputImageType::PixelType>::max()
-  std::cout << "LowHigh Thresholds: [" << static_cast<int>( threshold_low ) << ","
-            << threshold_low_foreground << "," << static_cast<int>( threshold_hi ) << "]"
+//  typename TInputImage::PixelType threshold_low = ImageCalc->GetLowerIntensityThresholdValue();
+  std::cout << "LowHigh Thresholds: [" << static_cast<int>( threshold_low_foreground ) << ","
+            << threshold_hi_foreground << static_cast<int>(  ) << "]"
             << std::endl;
 
   typedef ConnectedComponentImageFilter<IntegerImageType,

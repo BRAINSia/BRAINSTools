@@ -129,12 +129,16 @@ else()
   include(External_ITKv4)
 endif()
 
-#### HACK -- need to fix this
-  if(NOT VTK_FOUND)
-    find_package(VTK REQUIRED)
-    include(${VTK_USE_FILE})
-  endif(NOT VTK_FOUND)
-  link_libraries( vtkGraphics vtkImaging vtkIO vtkFiltering vtkCommon )
+option(USE_SYSTEM_VTK             "Build using an externally defined version of VTK" OFF)
+if(USE_SYSTEM_VTK)
+  find_package(VTK  REQUIRED)
+  include(${VTK_USE_FILE})
+  SlicerMacroEmptyExternalProject("VTK" "")
+  #link_libraries( vtkGraphics vtkImaging vtkIO vtkFiltering vtkCommon )
+else()
+  include(External_VTK)
+endif()
+
 
 option(USE_SYSTEM_SEM               "Build using an externally defined version of SEM"  OFF)
 if(USE_SYSTEM_SEM)

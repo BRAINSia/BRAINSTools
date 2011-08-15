@@ -6,7 +6,4 @@
 project(BRAINSBuildScripts)
 cmake_minimum_required(VERSION 2.8)
 
-message(STATUS "CMAKE_INSTALL_PREFIX = ${CMAKE_INSTALL_PREFIX}")
-
 install( FILES License.txt DESTINATION ${CMAKE_INSTALL_PREFIX} )
-

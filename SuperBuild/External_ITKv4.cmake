@@ -14,6 +14,7 @@ if(DEFINED ITK_DIR AND NOT EXISTS ${ITK_DIR})
 endif()
 
 
+set(proj ITKv4)  ## Use ITKv4 convention of calling it ITK
 if(NOT DEFINED ITK_DIR)
   #
   # this code fixes a loony problem with HDF5 -- it doesn't
@@ -21,7 +22,6 @@ if(NOT DEFINED ITK_DIR)
   string(REPLACE "-fopenmp" "" ITK_CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
   string(REPLACE "-fopenmp" "" ITK_CMAKE_CXX_FLAGS "${CMAKE_CX_FLAGS}")
 
-  set(proj ITKv4)  ## Use ITKv4 convention of calling it ITK
   set(ITK_REPOSITORY git://itk.org/ITK.git)
   #set(ITK_DIR ${CMAKE_INSTALL_PREFIX}/lib/cmake/ITK-4.0)
   set(ITK_DIR ${CMAKE_BINARY_DIR}/${proj}-build)

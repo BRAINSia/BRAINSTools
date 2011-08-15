@@ -69,25 +69,7 @@ set(ALL_PROGS_LIST
   BRAINSConstellationDetectorGUI
   )
 foreach(prog ${ALL_PROGS_LIST})
-
-  if(0) # Build against Slicer
-    ## Include the Slicer macro for setting up default locations!
-    SlicerMacroBuildCLI(
-      NAME ${prog}
-      LOGO_HEADER ${BRAINSCommonLib_BUILDSCRIPTS_DIR}/BRAINSLogo.h
-      TARGET_LIBRARIES BRAINSConstellationDetectorGUICOMMONLIB ${OPTIONAL_DEBUG_LINK_LIBRARIES}
-      CLI_SHARED_LIBRARY_WRAPPER_CXX  ${BRAINSCommonLib_BUILDSCRIPTS_DIR}/SEMCommanLineSharedLibraryWrapper.cxx
-      VERBOSE
-    )
-  else()
-    SEMMacroBuildCLI(
-      NAME ${prog}
-      LOGO_HEADER ${BRAINSCommonLib_BUILDSCRIPTS_DIR}/BRAINSLogo.h
-      TARGET_LIBRARIES BRAINSConstellationDetectorGUICOMMONLIB ${OPTIONAL_DEBUG_LINK_LIBRARIES}
-      CLI_SHARED_LIBRARY_WRAPPER_CXX ${BRAINSCommonLib_BUILDSCRIPTS_DIR}/SEMCommanLineSharedLibraryWrapper.cxx
-      VERBOSE
-      )
-  endif()
+  StandardBRAINSBuildMacro(NAME ${prog} TARGET_LIBRARIES BRAINSConstellationDetectorGUICOMMONLIB )
 endforeach()
 
 

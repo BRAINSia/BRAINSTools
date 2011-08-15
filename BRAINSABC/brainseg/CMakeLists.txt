@@ -1,15 +1,4 @@
 
-#mark_as_advanced(USE_DEBUG_IMAGE_VIEWER)
-#if( USE_DEBUG_IMAGE_VIEWER )
-#   if(NOT KWWidgets_SOURCE_DIR)
-#     find_package(KWWidgets REQUIRED)
-#     include(${KWWidgets_USE_FILE})
-#   endif(NOT KWWidgets_SOURCE_DIR)
-#   add_definitions(-DUSE_DEBUG_IMAGE_VIEWER)
-#   find_path(DEBUG_IMAGE_VIEWER_INCLUDE_DIR DebugImageViewerClient.h ${CMAKE_INSTALL_PREFIX}/include)
-#   include_directories(${DEBUG_IMAGE_VIEWER_INCLUDE_DIR})
-#endif( USE_DEBUG_IMAGE_VIEWER )
-
 include_directories(
   ${BRAINSABC_SOURCE_DIR}/brainseg
   ${BRAINSABC_SOURCE_DIR}/common
@@ -48,27 +37,7 @@ set(BRAINSABCCOMMONLIB_SRCS
   BRAINSABCUtilities.h
 )
 
-set(CLP BRAINSABC)
-if(0) # Build against Slicer
-  ## Include the Slicer macro for setting up default locations!
-  SlicerMacroBuildCLI(
-    NAME ${CLP}
-    LOGO_HEADER ${BRAINSCommonLib_BUILDSCRIPTS_DIR}/BRAINSLogo.h
-    TARGET_LIBRARIES BRAINSCommonLib ${ITK_LIBRARIES} ${OPTIONAL_DEBUG_LINK_LIBRARIES}
-    CLI_SHARED_LIBRARY_WRAPPER_CXX  ${BRAINSCommonLib_BUILDSCRIPTS_DIR}/SEMCommanLineSharedLibraryWrapper.cxx
-    ADDITIONAL_SRCS ${BRAINSABCCOMMONLIB_SRCS}
-    VERBOSE
-  )
-else()
-  SEMMacroBuildCLI(
-    NAME ${CLP}
-    LOGO_HEADER ${BRAINSCommonLib_BUILDSCRIPTS_DIR}/BRAINSLogo.h
-    TARGET_LIBRARIES BRAINSCommonLib ${ITK_LIBRARIES} ${OPTIONAL_DEBUG_LINK_LIBRARIES}
-    CLI_SHARED_LIBRARY_WRAPPER_CXX ${BRAINSCommonLib_BUILDSCRIPTS_DIR}/SEMCommanLineSharedLibraryWrapper.cxx
-    ADDITIONAL_SRCS ${BRAINSABCCOMMONLIB_SRCS}
-    VERBOSE
-    )
-endif()
+StandardBRAINSBuildMacro(NAME BRAINSABC ADDITIONAL_SRCS ${BRAINSABCCOMMONLIB_SRCS})
 
 
 if(0)

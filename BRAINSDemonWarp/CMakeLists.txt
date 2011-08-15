@@ -33,40 +33,15 @@ set(BRAINSDemonWarpTemplatesLIB_SRCS
 )
 
 add_library(BRAINSDemonWarpTemplatesLIB STATIC ${BRAINSDemonWarpTemplatesLIB_SRCS})
-target_link_libraries(BRAINSDemonWarpTemplatesLIB ${ITK_LIBRARIES})
+target_link_libraries(BRAINSDemonWarpTemplatesLIB BRAINSCommonLib)
 
-if(0) # Build against Slicer
-  ## Include the Slicer macro for setting up default locations!
-  SlicerMacroBuildCLI(
-    NAME BRAINSDemonWarp
-    LOGO_HEADER ${BRAINSCommonLib_BUILDSCRIPTS_DIR}/BRAINSLogo.h
-    TARGET_LIBRARIES BRAINSCommonLib BRAINSDemonWarpTemplatesLIB ${OPTIONAL_DEBUG_LINK_LIBRARIES}
-    CLI_SHARED_LIBRARY_WRAPPER_CXX  ${BRAINSCommonLib_BUILDSCRIPTS_DIR}/SEMCommanLineSharedLibraryWrapper.cxx
-    VERBOSE
+set(ALL_PROGS_LIST
+  BRAINSDemonWarp
+  VBRAINSDemonWarp
   )
-  SlicerMacroBuildCLI(
-    NAME VBRAINSDemonWarp
-    LOGO_HEADER ${BRAINSCommonLib_BUILDSCRIPTS_DIR}/BRAINSLogo.h
-    TARGET_LIBRARIES BRAINSCommonLib BRAINSDemonWarpTemplatesLIB ${OPTIONAL_DEBUG_LINK_LIBRARIES}
-    CLI_SHARED_LIBRARY_WRAPPER_CXX  ${BRAINSCommonLib_BUILDSCRIPTS_DIR}/SEMCommanLineSharedLibraryWrapper.cxx
-    VERBOSE
-  )
-else()
-  SEMMacroBuildCLI(
-    NAME BRAINSDemonWarp
-    LOGO_HEADER ${BRAINSCommonLib_BUILDSCRIPTS_DIR}/BRAINSLogo.h
-    TARGET_LIBRARIES BRAINSCommonLib BRAINSDemonWarpTemplatesLIB ${OPTIONAL_DEBUG_LINK_LIBRARIES}
-    CLI_SHARED_LIBRARY_WRAPPER_CXX ${BRAINSCommonLib_BUILDSCRIPTS_DIR}/SEMCommanLineSharedLibraryWrapper.cxx
-    VERBOSE
-    )
-  SEMMacroBuildCLI(
-    NAME VBRAINSDemonWarp
-    LOGO_HEADER ${BRAINSCommonLib_BUILDSCRIPTS_DIR}/BRAINSLogo.h
-    TARGET_LIBRARIES BRAINSCommonLib BRAINSDemonWarpTemplatesLIB ${OPTIONAL_DEBUG_LINK_LIBRARIES}
-    CLI_SHARED_LIBRARY_WRAPPER_CXX ${BRAINSCommonLib_BUILDSCRIPTS_DIR}/SEMCommanLineSharedLibraryWrapper.cxx
-    VERBOSE
-    )
-endif()
+foreach(prog ${ALL_PROGS_LIST})
+  StandardBRAINSBuildMacro(NAME ${prog} TARGET_LIBRARIES BRAINSDemonWarpTemplatesLIB )
+endforeach()
 
 ### Add the Testing Subdirectory.
 if(BUILD_TESTING)

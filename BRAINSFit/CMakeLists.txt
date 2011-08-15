@@ -10,25 +10,12 @@ configure_file(
   ${CMAKE_CURRENT_BINARY_DIR}/BRAINSFitCommonLib.h
   )
 
-###
-if(0) # Build against Slicer
-  ## Include the Slicer macro for setting up default locations!
-  SlicerMacroBuildCLI(
-    NAME BRAINSFit
-    LOGO_HEADER ${BRAINSCommonLib_BUILDSCRIPTS_DIR}/BRAINSLogo.h
-    TARGET_LIBRARIES BRAINSCommonLib ${ITK_LIBRARIES} ${OPTIONAL_DEBUG_LINK_LIBRARIES}
-    CLI_SHARED_LIBRARY_WRAPPER_CXX  ${BRAINSCommonLib_BUILDSCRIPTS_DIR}/SEMCommanLineSharedLibraryWrapper.cxx
-    VERBOSE
+set(ALL_PROGS_LIST
+  BRAINSFit
   )
-else()
-  SEMMacroBuildCLI(
-    NAME BRAINSFit
-    LOGO_HEADER ${BRAINSCommonLib_BUILDSCRIPTS_DIR}/BRAINSLogo.h
-    TARGET_LIBRARIES BRAINSCommonLib ${ITK_LIBRARIES} ${OPTIONAL_DEBUG_LINK_LIBRARIES}
-    CLI_SHARED_LIBRARY_WRAPPER_CXX ${BRAINSCommonLib_BUILDSCRIPTS_DIR}/SEMCommanLineSharedLibraryWrapper.cxx
-    VERBOSE
-    )
-endif()
+foreach(prog ${ALL_PROGS_LIST})
+  StandardBRAINSBuildMacro(NAME ${prog} TARGET_LIBRARIES BRAINSCommonLib )
+endforeach()
 
 if(BUILD_TESTING)
     add_subdirectory(TestSuite)

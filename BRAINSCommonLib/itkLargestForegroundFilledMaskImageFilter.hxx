@@ -161,8 +161,9 @@ LargestForegroundFilledMaskImageFilter<TInputImage, TOutputImage>
   threshold->SetUpperThreshold(threshold_hi_foreground);
   threshold->Update();
 //  typename TInputImage::PixelType threshold_low = ImageCalc->GetLowerIntensityThresholdValue();
-  std::cout << "LowHigh Thresholds: [" << static_cast<int>( threshold_low_foreground ) << ","
-            << threshold_hi_foreground << static_cast<int>(  ) << "]"
+  std::cout << "LowHigh Thresholds: ["
+            << static_cast<int>( threshold_low_foreground ) << ","
+            << static_cast<int>( threshold_hi_foreground ) << "]"
             << std::endl;
 
   typedef ConnectedComponentImageFilter<IntegerImageType,

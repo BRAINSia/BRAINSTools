@@ -1,28 +1,38 @@
-project(BRAINSTools)
 cmake_minimum_required(VERSION 2.8)
+cmake_policy(VERSION 2.8)
 
-#-----------------------------------------------------------------------------
-# Set a default build type if none was specified
-if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
-  message(STATUS "Setting build type to 'Release' as none was specified.")
-  set(CMAKE_BUILD_TYPE RelWithDebInfo CACHE STRING "Choose the type of build." FORCE)
-  # Set the possible values of build type for cmake-gui
-  set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
-endif()
+## NOTE THERE SHOULD BE NO PROJECT STATEMENT HERE!
+## This file acts as a simple switch to initiate
+## two completely independant CMake build environments.
+## or the actual build
 
 #-----------------------------------------------------------------------------
 # Superbuild Option - Enabled by default
+#                   Phase I:  BRAINSTools_SUPERBUILD is set to ON, and the
+#                             supporting packages defined in "SuperBuild.camke"
+#                             are built.  The last package in "SuperBuild.camke"
+#                             to be built is a recursive call to this
+#                             file with BRAINSTools_SUPERBUILD explicitly
+#                             set to "OFF" to initiate Phase II
+#
+#                   Phase II: Build the BRAINSTools, referencing the support
+#                             packages built in Phase I.
 #-----------------------------------------------------------------------------
 option(BRAINSTools_SUPERBUILD "Build Slicer and the projects it depends on via SuperBuild.cmake." ON)
 mark_as_advanced(BRAINSTools_SUPERBUILD)
+
 #-----------------------------------------------------------------------------
 # Superbuild script
 #-----------------------------------------------------------------------------
 if(BRAINSTools_SUPERBUILD)
+  project(SuperBuild_BRAINSTools)
   include("${CMAKE_CURRENT_SOURCE_DIR}/SuperBuild.cmake")
-  return()
+  return() #NOTE: This terminiates the CMake script
 else()
+  project(BRAINSTools)
+  #The project state
   include("${CMAKE_CURRENT_SOURCE_DIR}/BRAINSTools.cmake")
-  return()
+  return() #NOTE: This terminiates the CMake script
 endif()
 
+## NOTE:  You never reach this point.

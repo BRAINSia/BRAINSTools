@@ -6,32 +6,6 @@ cmake_policy(VERSION 2.8)
 enable_testing()
 include(CPack)
 
-include(GenerateBRAINSCommonLibConfig.cmake)
-include(BuildScripts/CMakeBRAINS3BuildMacros.cmake)
-if(NOT SETIFEMPTY)
-macro(SETIFEMPTY)
-  set(KEY ${ARGV0})
-  set(VALUE ${ARGV1})
-  if(NOT ${KEY})
-    set(${ARGV})
-  endif(NOT ${KEY})
-endmacro(SETIFEMPTY KEY VALUE)
-endif(NOT SETIFEMPTY)
-
-###
-SETIFEMPTY(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/lib)
-SETIFEMPTY(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/lib)
-SETIFEMPTY(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)
-SETIFEMPTY(CMAKE_BUNDLE_OUTPUT_DIRECTORY  ${CMAKE_CURRENT_BINARY_DIR}/bin)
-link_directories(${CMAKE_LIBRARY_OUTPUT_DIRECTORY} ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY})
-
-###
-if(NOT ITK_FOUND)
-    find_package(ITK REQUIRED)
-    include(${ITK_USE_FILE})
-    message("ITK_INCLUDE_DIRS=${ITK_INCLUDE_DIRS}")
-endif(NOT ITK_FOUND)
-
 #-----------------------------------------------------------------------------
 # Output directories.
 #
@@ -68,7 +42,7 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/BRAINSCommonLibInstallConfig.cmake.in
 
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/BRAINSCommonLibInstallConfig.cmake DESTINATION lib/BRAINSCommonLib COMPONENT Development RENAME BRAINSCommonLibConfig.cmake)
 
-set(BRAINSCommonLib_BUILDSCRIPTS_DIR_CONFIG ${CMAKE_INSTALL_PREFIX}/BRAINSTools-build/BRAINSCommonLib/BuildScripts)
+set(BRAINSCommonLib_BUILDSCRIPTS_DIR_CONFIG ${CMAKE_CURRENT_BINARY_DIR}/BuildScripts)
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/UseBRAINSCommonLib.cmake.in
   ${CMAKE_CURRENT_BINARY_DIR}/UseBRAINSCommonLib.cmake @ONLY IMMEDIATE)

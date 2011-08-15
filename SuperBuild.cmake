@@ -1,3 +1,13 @@
+#-----------------------------------------------------------------------------
+# Set a default build type if none was specified
+if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+  message(STATUS "Setting build type to 'Release' as none was specified.")
+  set(CMAKE_BUILD_TYPE RelWithDebInfo CACHE STRING "Choose the type of build." FORCE)
+  # Set the possible values of build type for cmake-gui
+  set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
+endif()
+
+
 find_package(Git REQUIRED)
 include(ExternalProject)
 enable_language(C)
@@ -120,10 +130,11 @@ set(ep_common_args
 # and SEM (i.e. for tight integration with Slicer)
 #------------------------------------------------------------------------------
 include(SlicerMacroEmptyExternalProject)
-option(USE_SYSTEM_ITKv4             "Build using an externally defined version of ITKv4" OFF)
-if(USE_SYSTEM_ITKv4)
-  find_package(ITK 4 REQUIRED)
+option(USE_SYSTEM_ITK             "Build using an externally defined version of ITKv4" OFF)
+if(USE_SYSTEM_ITK)
+  find_package(ITK REQUIRED)
   include(${ITK_USE_FILE})
+  message(STATUS "ITKv4 EmptyProject Set")
   SlicerMacroEmptyExternalProject("ITKv4" "")
 else()
   include(External_ITKv4)
@@ -190,6 +201,11 @@ ExternalProject_Add(${proj}
     -DBRAINSTools_SUPERBUILD:BOOL=OFF
     -DADDITIONAL_CXX_FLAGS:STRING=${ADDITIONAL_CXX_FLAGS}
     -DGIT_EXECUTABLE:FILEPATH=${GIT_EXECUTABLE}
+    #################### Propogate the Slicer Environment
+    ## -- This could be some other variable to indicate a slicer build
+    -DINTEGRATE_WITH_SLICER:BOOL=${INTEGRATE_WITH_SLICER}
+    -DSlicer_DIR:PATH=${Slicer_DIR}
+    #################### Propogate the Slicer Environment
     # ITK
     -DITK_DIR:PATH=${ITK_DIR}
     # VTK

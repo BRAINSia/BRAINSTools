@@ -429,6 +429,7 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
     m_ActualNumberOfIterations = optimizer->GetCurrentIteration();
     m_Transform->SetParametersByValue(finalParameters);
 
+#if ITK_VERSION_MAJOR >= 4  // GetJointPDF only available in ITKv4
     //
     // GenerateHistogram
     // TODO: KENT:  BRAINSFit tools need to define a common output directory for
@@ -461,6 +462,7 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
         TransformIterationCounter += 10000;
         }
       }
+#endif
     }
 
   typename TransformType::MatrixType matrix = m_Transform->GetMatrix();

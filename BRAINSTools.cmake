@@ -121,23 +121,6 @@ if(USE_BRAINSFit)
 endif()
 
 #-----------------------------------------------------------------------------
-# BRAINSConstellationDetector
-#-----------------------------------------------------------------------------
-if(USE_BRAINSConstellationDetector)
-  add_subdirectory(BRAINSConstellationDetector)
-endif()
-
-# Define the atlas subdirectory in one place
-#set(${CMAKE_PROJECT_NAME}_RUNTIME_DIR ${CMAKE_CURRENT_BINARY_DIR}/src/bin)
-
-#-----------------------------------------------------------------------------
-# BRAINSABC
-#-----------------------------------------------------------------------------
-if(USE_BRAINSABC)
-  add_subdirectory(BRAINSABC)
-endif()
-
-#-----------------------------------------------------------------------------
 # BRAINSResample
 #-----------------------------------------------------------------------------
 if(USE_BRAINSResample)
@@ -156,6 +139,39 @@ endif()
 #-----------------------------------------------------------------------------
 if(USE_BRAINSROIAuto)
   add_subdirectory(BRAINSROIAuto)
+endif()
+
+#-----------------------------------------------------------------------------
+# GTRACT
+#-----------------------------------------------------------------------------
+if(USE_GTRACT)
+  add_subdirectory(GTRACT)
+endif()
+
+
+#-----------------------------------------------------------------------------
+#-----------------------------------------------------------------------------
+#-----------------------------------------------------------------------------
+#-----------------------------------------------------------------------------
+#-----------------------------------------------------------------------------
+#-----------------------------------------------------------------------------
+if(ITK_VERSION_MAJOR GREATER 3)  ## Tools that only work with ITKv4
+#-----------------------------------------------------------------------------
+# BRAINSConstellationDetector
+#-----------------------------------------------------------------------------
+if(USE_BRAINSConstellationDetector)
+  add_subdirectory(BRAINSConstellationDetector)
+endif()
+
+
+# Define the atlas subdirectory in one place
+#set(${CMAKE_PROJECT_NAME}_RUNTIME_DIR ${CMAKE_CURRENT_BINARY_DIR}/src/bin)
+
+#-----------------------------------------------------------------------------
+# BRAINSABC
+#-----------------------------------------------------------------------------
+if(USE_BRAINSABC)
+  add_subdirectory(BRAINSABC)
 endif()
 
 #-----------------------------------------------------------------------------
@@ -178,13 +194,6 @@ endif()
 if(USE_BRAINSInitializedControlPoints)
   add_subdirectory(BRAINSInitializedControlPoints)
 endif()
-
-#-----------------------------------------------------------------------------
-# GTRACT
-#-----------------------------------------------------------------------------
-if(USE_GTRACT)
-  add_subdirectory(GTRACT)
-endif()
-
 #  BuildExtPackage(BRAINSCut "BRAINSCommonLib;${OpenCV_DEPEND}" )
+endif(ITK_VERSION_MAJOR GREATER 3)
 

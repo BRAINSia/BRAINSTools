@@ -32,8 +32,14 @@ endif(NOT SETIFEMPTY)
 macro(MakeTestDriverFromSEMTool SEMToolName SEMToolTestSourceName)
   set(SEMToolLibName        ${SEMToolName}Lib)
 
+  if(ITK_VERSION_MAJOR LESS 4)
+    ## BackPort files from ITKv4 need to be pushed to ITKv3 for backwards compatibility
+    include_directories(${BRAINSTools_SOURCE_DIR}/BRAINSCommonLib/itkV3TestKernel/include)
+  endif()
+
   set(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "#include \"itkTestDriverBeforeTest.inc\"")
   set(CMAKE_TESTDRIVER_AFTER_TESTMAIN "#include \"itkTestDriverAfterTest.inc\"")
+
   create_test_sourcelist(${SEMToolName}   ${SEMToolName}TestDriver.cxx ${SEMToolTestSourceName}
      EXTRA_INCLUDE itkTestDriverIncludeRequiredIOFactories.h
      FUNCTION  ProcessArgumentsAndRegisterRequiredFactories

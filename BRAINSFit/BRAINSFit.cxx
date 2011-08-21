@@ -144,9 +144,6 @@ DebugImageViewerClient DebugImageDisplaySender;
 int main(int argc, char *argv[])
 {
   PARSE_ARGS;
-#if ( ITK_VERSION_MAJOR < 4  ) // These are all defaults in ITKv4
-  itk::ObjectFactoryBase::RegisterFactory( itk::Brains2MaskImageIOFactory::New() );
-#endif
 
   itk::AddExtraTransformRegister();
   // Apparently when you register one transform, you need to register all your

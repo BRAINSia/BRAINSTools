@@ -37,37 +37,26 @@ set(BRAINSABCCOMMONLIB_SRCS
   BRAINSABCUtilities.h
 )
 
-StandardBRAINSBuildMacro(NAME BRAINSABC ADDITIONAL_SRCS ${BRAINSABCCOMMONLIB_SRCS})
+## Build BRAINSABCCOMMONLIB library
+##
+add_library(BRAINSABCCOMMONLIB STATIC ${BRAINSABCCOMMONLIB_SRCS})
+target_link_libraries(BRAINSABCCOMMONLIB BRAINSCommonLib ${ITK_LIBRARIES})
 
+## Build all the programs
+##
+set(ALL_PROGS_LIST
+  BRAINSABC
+  ESLR
+  GenerateLabelMapFromProbabilityMap
+  )
+foreach( prog ${ALL_PROGS_LIST} )
+  StandardBRAINSBuildMacro( NAME ${prog} TARGET_LIBRARIES BRAINSABCCOMMONLIB )
+endforeach()
 
 if(0)
+  StandardBRAINSBuildMacro(NAME BRAINSCleanMask                    ADDITIONAL_SRCS ${BRAINSABCCOMMONLIB_SRCS})
 
-set(${CLP}_SOURCE BRAINSABC.cxx )
-set(BRAINSABC_PRIMARY_SOURCE ${BRAINSABC_SOURCE_DIR}/brainseg/BRAINSABCPrimary.cxx)
-CONFIGUREBRAINSORSLICERPROPERTIES(${CLP} BRAINSABCPrimary.xml "${${CLP}_SOURCE}" "${BRAINSABC_PRIMARY_SOURCE}" "BRAINSABCPrimary" "")
-add_dependencies(BRAINSABCCOMMONLIB BRAINSABCPrimaryCLP.h) ## Needed to create proper library dependancies when building parallel
-target_link_libraries( ${CLP} BRAINSABCCOMMONLIB)
-
-
-
-
-set(CLP ESLR)
-set(${CLP}_SOURCE ${CLP}.cxx )
-CONFIGUREBRAINSORSLICERPROPERTIES(${CLP} ${CLP}.xml "${${CLP}_SOURCE}" "" "main" "")
-target_link_libraries( ${CLP} BRAINSABCCOMMONLIB )
-
-set(CLP GenerateLabelMapFromProbabilityMap)
-set(${CLP}_SOURCE ${CLP}.cxx )
-CONFIGUREBRAINSORSLICERPROPERTIES(${CLP} ${CLP}.xml "${${CLP}_SOURCE}" "" "main" "")
-target_link_libraries( ${CLP} ${ITK_LIBRARIES})
-
-## A utility program
-add_executable(StandardizeMaskIntensity StandardizeMaskIntensity.cxx)
-target_link_libraries(StandardizeMaskIntensity ${ITK_LIBRARIES})
-
-set(CLP BRAINSCleanMask)
-set(${CLP}_SOURCE ${CLP}.cxx)
-CONFIGUREBRAINSORSLICERPROPERTIES(${CLP} ${CLP}.xml "${${CLP}_SOURCE}" "" "main" "")
-target_link_libraries( ${CLP} ${ITK_LIBRARIES})
-
+  ## A utility program
+  add_executable(StandardizeMaskIntensity StandardizeMaskIntensity.cxx)
+  target_link_libraries(StandardizeMaskIntensity ${ITK_LIBRARIES})
 endif()

@@ -64,17 +64,48 @@ macro(StandardBRAINSBuildMacro)
     )
 ###
 SEMMacroBuildCLI(
-  NAME ${BRAINS_SEM_NAME}
-    LOGO_HEADER ${BRAINSCommonLib_BUILDSCRIPTS_DIR}/BRAINSLogo.h
-    TARGET_LIBRARIES ${BRAINS_SEM_TARGET_LIBRARIES}
-    CLI_SHARED_LIBRARY_WRAPPER_CXX ${BRAINSCommonLib_BUILDSCRIPTS_DIR}/SEMCommanLineSharedLibraryWrapper.cxx
+  NAME "${BRAINS_SEM_NAME}"
+    ADDITIONAL_SRCS "${BRAINS_SEM_ADDITIONAL_SRCS}"
+    LOGO_HEADER "${BRAINSCommonLib_BUILDSCRIPTS_DIR}/BRAINSLogo.h"
+    TARGET_LIBRARIES "${BRAINS_SEM_TARGET_LIBRARIES}"
+    CLI_SHARED_LIBRARY_WRAPPER_CXX "${BRAINSCommonLib_BUILDSCRIPTS_DIR}/SEMCommanLineSharedLibraryWrapper.cxx"
     VERBOSE
-    RUNTIME_OUTPUT_DIRECTORY    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
-    LIBRARY_OUTPUT_DIRECTORY    ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}
-    ARCHIVE_OUTPUT_DIRECTORY    ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}
-    INSTALL_RUNTIME_DESTINATION ${CMAKE_INSTALL_RUNTIME_DESTINATION}
-    INSTALL_LIBRARY_DESTINATION ${CMAKE_INSTALL_LIBRARY_DESTINATION}
-    INSTALL_ARCHIVE_DESTINATION ${CMAKE_INSTALL_ARCHIVE_DESTINATION}
+    RUNTIME_OUTPUT_DIRECTORY    "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}"
+    LIBRARY_OUTPUT_DIRECTORY    "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}"
+    ARCHIVE_OUTPUT_DIRECTORY    "${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}"
+    INSTALL_RUNTIME_DESTINATION "${CMAKE_INSTALL_RUNTIME_DESTINATION}"
+    INSTALL_LIBRARY_DESTINATION "${CMAKE_INSTALL_LIBRARY_DESTINATION}"
+    INSTALL_ARCHIVE_DESTINATION "${CMAKE_INSTALL_ARCHIVE_DESTINATION}"
 )
 endmacro(StandardBRAINSBuildMacro TOOLNAME)
 endif(NOT StandardBRAINSBuildMacro)
+
+###############################################################################
+###############################################################################
+## MakeTestDriverFromSEMTool
+## For tools made with the slicer execution model,
+## This macro will build a test driver that adds the
+## --compare
+## --compareIntensityTolerance
+## --compareRadiusTolerance
+## --compareNumberOfPixelsTolerance
+## to the SEM tools.
+macro(MakeTestDriverFromSEMTool SEMToolName SEMToolTestSourceName)
+  set(SEMToolLibName        ${SEMToolName}Lib)
+
+  if(ITK_VERSION_MAJOR LESS 4)
+    ## BackPort files from ITKv4 need to be pushed to ITKv3 for backwards compatibility
+    include_directories(${BRAINSTools_SOURCE_DIR}/BRAINSCommonLib/itkV3TestKernel/include)
+  endif()
+
+  set(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "#include \"itkTestDriverBeforeTest.inc\"")
+  set(CMAKE_TESTDRIVER_AFTER_TESTMAIN "#include \"itkTestDriverAfterTest.inc\"")
+
+  create_test_sourcelist(${SEMToolName}   ${SEMToolName}TestDriver.cxx ${SEMToolTestSourceName}
+     EXTRA_INCLUDE itkTestDriverIncludeRequiredIOFactories.h
+     FUNCTION  ProcessArgumentsAndRegisterRequiredFactories
+     )
+  add_executable(${SEMToolName}TestDriver ${SEMToolName}TestDriver.cxx ${SEMToolTestSourceName})
+  target_link_libraries(${SEMToolName}TestDriver ${SEMToolLibName} ${ITKTestKernel_LIBRARIES})
+endmacro(MakeTestDriverFromSEMTool SEMToolName)
+

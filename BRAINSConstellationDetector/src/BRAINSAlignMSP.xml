@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
-  <title>BRAINSAlignMSP</title>
+  <category>Utilities.BRAINS</category>
+  <title>Align Mid Saggital Brain (BRAINS)</title>
   <description>Resample an image into ACPC alignement ACPCDetect</description>
   <parameters>
     <image>

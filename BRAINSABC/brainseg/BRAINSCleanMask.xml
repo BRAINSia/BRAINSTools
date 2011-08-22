@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <executable>
-  <category>BRAINS.Classify</category>
-  <title>BRAINSCleanMask</title>
+  <category>Segmentation</category>
+  <title>Mask Hole Filling (BRAINS)</title>
   <description>Cleans up a mask image by filling any holes
   </description>
-  <!-- TODO: Need a much more descriptive explanation of the evolution of this work from the work performed by and contributed to NAMIC by Marcel Prastawa -->
-
   <parameters>
     <image>
       <name>inputVolume</name>

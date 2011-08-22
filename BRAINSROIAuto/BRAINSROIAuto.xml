@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
   <category>Segmentation</category>
-  <title>BRAINSROIAuto - Foreground masking tool</title>
+  <title>Foreground masking (BRAINS)</title>
   <description>This tool uses a combination of otsu thresholding and a closing operations to identify the most prominant foreground region in an image.
   </description>
   <version>2.4.1</version>

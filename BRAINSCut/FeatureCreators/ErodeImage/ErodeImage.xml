@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8"?>
   <executable>
   <category>Statistics</category>
-  <title>Erode Image</title>
+  <title>Erode Image (BRAINS)</title>
 
   <description>Uses mathematical morphology to erode the input images.</description>
   <version>0.1.0.$Revision: 1 $(alpha)</version>

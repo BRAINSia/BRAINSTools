@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
-  <category>
-  Converters
-  </category>
-  <title>
-  BRAINSInitializedControlPoints
-  </title>
+  <category> Utilities.BRAINS </category>
+  <title>Initialized Control Points (BRAINS)</title>
   <description>
   Outputs bspline control points as landmarks
   </description>

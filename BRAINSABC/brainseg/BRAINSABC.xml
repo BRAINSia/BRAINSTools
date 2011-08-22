@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <executable>
-  <category>BRAINS.Classify</category>
-  <title>BRAINSABC</title>
+  <category>Segmentation</category>
+  <title>Intra-subject registration, bias Correction, and tissue classification (BRAINS)</title>
   <description>Atlas-based tissue segmentation method.  This is an algorithmic extension of work done by XXXX at UNC and Utah XXXX need more description here.
   </description>
   <!-- TODO: Need a much more descriptive explanation of the evolution of this work from the work performed by and contributed to NAMIC by Marcel Prastawa -->

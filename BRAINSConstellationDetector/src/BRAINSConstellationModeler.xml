@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
-    <title>ACPCModel</title>
+    <category>Utilities.BRAINS</category>
+    <title>Generate Landmarks Model (BRAINS)</title>
     <description>Train up a model for BRAINSConstellationDetector</description>
     <parameters>
         <boolean>

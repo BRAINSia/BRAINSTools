@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8"?>
   <executable>
   <category>Registration</category>
-  <title>BRAINSResample</title>
+  <title>Resample Image (BRAINS)</title>
 
   <description>
    This program resamples an image image using a deformation field or a transform (BSpline, Affine, Rigid, etc.).

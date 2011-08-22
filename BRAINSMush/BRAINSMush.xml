@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
-  <category>
-  BRAINS.Utility
-  </category>
-  <title>
-  BRAINSMush Brain Extraction
-  </title>
+  <category>Utilities.BRAINS</category>
+  <title> Brain Extraction from T1/T2 image (BRAINS) </title>
   <description>
   This program: 1) generates a weighted mixture image optimizing the mean and variance and 2) produces a mask of the brain volume
   </description>

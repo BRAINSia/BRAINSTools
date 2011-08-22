@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
-  <category>UNC</category>
-  <title>simpleEM</title>
+  <category>Segmentation</category>
+  <title>simpleEM (BRAINS)</title>
   <description>Atlas-based tissue segmentation method </description>
 
 <!-- ## testing for simpleEM -->

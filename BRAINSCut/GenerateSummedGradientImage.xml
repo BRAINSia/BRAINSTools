@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
   <category>FeatureImages</category>
-  <title>GenerateSummedGradient</title>
+  <title>GenerateSummedGradient (BRAINS)</title>
   <description>Automatic FeatureImages using neural networks</description>
   <version> 1.0</version>
   <documentation-url></documentation-url>

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
-  <title>fcsv_to_matlab</title>
+  <category>Utility.BRAINS</category>
+  <title>fcsv_to_matlab (BRAINS)</title>
   <description>Convert a collection of fcsv files to a HDF5 format file</description>
   <parameters>
     <file fileExtensions=".hdf5">

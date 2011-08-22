@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
-    <title>BRAINSClipInferior</title>
+    <category>Utilities.BRAINS</category>
+    <title>Clip Inferior of Center of Brain (BRAINS)</title>
     <description>This program will read the inputVolume as a short int image, write the BackgroundFillValue everywhere inferior to the lower bound, and write the resulting clipped short int image in the outputVolume.
     </description>
 

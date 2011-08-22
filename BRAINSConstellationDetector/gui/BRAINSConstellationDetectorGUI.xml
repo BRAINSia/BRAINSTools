@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
-    <title>BRAINSConstellationDetectorGUI</title>
+    <category>Utilities.BRAINS</category>
+    <title>ConstellationDetectorGUI (BRAINS)</title>
     <description>
       This program provides the user with a GUI tool to view/manipulate landmarks for an input volume.
     </description>

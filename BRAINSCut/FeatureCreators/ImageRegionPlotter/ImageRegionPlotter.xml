@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
-  <category>BRAINS.Utilities</category>
+  <category>Utilities.BRAINS</category>
   <title>Write Out Image Intensities
   </title>
   <description>

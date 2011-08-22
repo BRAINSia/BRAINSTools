@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
-    <title>BRAINSLmkTransform</title>
+    <category>Utilities.BRAINS</category>
+    <title>Landmark Linear Modeler (BRAINS)</title>
     <description>
       Training linear model using EPCA. Implementation based on my MS thesis, "A METHOD FOR AUTOMATED LANDMARK CONSTELLATION DETECTION USING EVOLUTIONARY PRINCIPAL COMPONENTS AND STATISTICAL SHAPE MODELS"
 

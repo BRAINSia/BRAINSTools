@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8"?>
   <executable>
   <category>Statistics</category>
-  <title>Neighborhood Median</title>
+  <title>Neighborhood Median (BRAINS via Hammer)</title>
 
   <description>Calculates the median, for the given neighborhood size, at each voxel of the input image.</description>
   <version>0.1.0.$Revision: 1 $(alpha)</version>

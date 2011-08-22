@@ -107,5 +107,10 @@ macro(MakeTestDriverFromSEMTool SEMToolName SEMToolTestSourceName)
      )
   add_executable(${SEMToolName}TestDriver ${SEMToolName}TestDriver.cxx ${SEMToolTestSourceName})
   target_link_libraries(${SEMToolName}TestDriver ${SEMToolLibName} ${ITKTestKernel_LIBRARIES})
+  set_target_properties(${SEMToolName}TestDriver PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
+    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
+    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
+    )
 endmacro(MakeTestDriverFromSEMTool SEMToolName)
 

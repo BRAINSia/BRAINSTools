@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
   <category>Registration</category>
-  <title>BRAINSFit</title>
-  <description>Uses the Mattes Mutual Registration algorithm to register a three-dimensional volume to a reference volume. Described in BRAINSFit: Mutual Information Registrations of Whole-Brain 3D Images, Using the Insight Toolkit, Johnson H.J., Harris G., Williams K., The Insight Journal, 2007. http://hdl.handle.net/1926/1291</description>
+  <title>General Registration (BRAINS)</title>
+  <description>Register a three-dimensional volume to a reference volume (Mattes Mutual Information by default). Described in BRAINSFit: Mutual Information Registrations of Whole-Brain 3D Images, Using the Insight Toolkit, Johnson H.J., Harris G., Williams K., The Insight Journal, 2007. http://hdl.handle.net/1926/1291</description>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Modules:BRAINSFit</documentation-url>
   <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt </license>
   <contributor>Hans J. Johnson, hans-johnson -at- uiowa.edu, http://wwww.psychiatry.uiowa.edu</contributor>

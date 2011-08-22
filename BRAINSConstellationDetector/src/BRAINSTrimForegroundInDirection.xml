@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
-    <title>BRAINSTrimForegroundInDirection</title>
+    <category>Utilities.BRAINS</category>
+    <title>Trim Foreground In Direction (BRAINS)</title>
     <description>This program will trim off the neck and also air-filling noise from the inputImage.</description>
     <version>0.1</version>
     <documentation-url>http://www.nitrc.org/projects/art/</documentation-url>

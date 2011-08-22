@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
-  <category>BRAINS.Segmentation</category>
-  <title>ESLR</title>
+  <category>Segmentation</category>
+  <title>Clean Contiguous Label Map (BRAINS)</title>
   <description>From a range of label map values, extract the largest contiguous region of those labels</description>
 
 <!-- ## testing for simpleEM -->

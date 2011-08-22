@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8"?>
   <executable>
   <category>Statistics.Features.HammerFeatures</category>
-  <title>HAMMER Feature Vectors</title>
+  <title>HAMMER Feature Vectors (BRAINS via Hammer)</title>
 
   <description>Create the feature vectors used by HAMMER.</description>
   <version>0.1.0.$Revision: 1 $(alpha)</version>

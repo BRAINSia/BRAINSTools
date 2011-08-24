@@ -14,13 +14,13 @@ set(VBRAINS_Demon_Warp_TESTS ${LAUNCH_EXE} $<TARGET_FILE:VBRAINSDemonWarpTestDri
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateBRAINSDemonsWarpTest_nii COMMAND ${BRAINS_Demon_Warp_TESTS}
  --compare
     DATA{${TestData_DIR}/thirionDemons.nii.gz}
-    ${BRAINSDemonWarp_BINARY_DIR}/thirionDemons_test.nii.gz
+    ${CMAKE_CURRENT_BINARY_DIR}/thirionDemons_test.nii.gz
     --compareNumberOfPixelsTolerance 50
     --compareIntensityTolerance 10
     BRAINSDemonWarpTest
     --movingVolume DATA{${TestData_DIR}/SUBJ_B_small_T1.nii.gz}
     --fixedVolume DATA{${TestData_DIR}/SUBJ_A_small_T1.nii.gz}
-    --outputVolume ${BRAINSDemonWarp_BINARY_DIR}/thirionDemons_test.nii.gz
+    --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/thirionDemons_test.nii.gz
 #    --inputPixelType short
 #    --outputPixelType short
     --outputDebug
@@ -35,13 +35,13 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateBRAINSDemonsWarpTes
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateFastSymmetricForcesTest_nii COMMAND ${BRAINS_Demon_Warp_TESTS}
  --compare
     DATA{${TestData_DIR}/fastSymmetricForcesDemons.nii.gz}
-    ${BRAINSDemonWarp_BINARY_DIR}/fastSymmetricForcesDemons_test.nii.gz
+    ${CMAKE_CURRENT_BINARY_DIR}/fastSymmetricForcesDemons_test.nii.gz
     --compareNumberOfPixelsTolerance 450
     --compareIntensityTolerance 10
      BRAINSDemonWarpTest
     --movingVolume DATA{${TestData_DIR}/SUBJ_B_small_T1.nii.gz}
     --fixedVolume DATA{${TestData_DIR}/SUBJ_A_small_T1.nii.gz}
-    --outputVolume ${BRAINSDemonWarp_BINARY_DIR}/fastSymmetricForcesDemons_test.nii.gz
+    --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/fastSymmetricForcesDemons_test.nii.gz
     --inputPixelType uchar
     --outputPixelType uchar
     --medianFilterSize 1,1,1
@@ -58,14 +58,14 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateFastSymmetricForces
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateDiffeomorphicTest1_nii COMMAND ${BRAINS_Demon_Warp_TESTS}
  --compare
     DATA{${TestData_DIR}/diffeomorphicDemons1.nii.gz}
-    ${BRAINSDemonWarp_BINARY_DIR}/diffeomorphicDemons1_test.nii.gz
+    ${CMAKE_CURRENT_BINARY_DIR}/diffeomorphicDemons1_test.nii.gz
     --compareNumberOfPixelsTolerance 220
     --compareIntensityTolerance 10
     BRAINSDemonWarpTest
     --movingVolume DATA{${TestData_DIR}/SUBJ_B_small_T1.nii.gz}
     --fixedVolume DATA{${TestData_DIR}/SUBJ_A_small_T1.nii.gz}
-    --outputVolume ${BRAINSDemonWarp_BINARY_DIR}/diffeomorphicDemons1_test.nii.gz
-    --outputDeformationFieldVolume ${BRAINSDemonWarp_BINARY_DIR}/OutDefField.nii.gz
+    --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/diffeomorphicDemons1_test.nii.gz
+    --outputDeformationFieldVolume ${CMAKE_CURRENT_BINARY_DIR}/OutDefField.nii.gz
     --inputPixelType short
     --outputPixelType uchar
     --outputNormalized
@@ -85,13 +85,13 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateDiffeomorphicTest1_
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateDiffeomorphicTest2_nii COMMAND ${BRAINS_Demon_Warp_TESTS}
  --compare
     DATA{${TestData_DIR}/diffeomorphicDemons2.nii.gz}
-    ${BRAINSDemonWarp_BINARY_DIR}/diffeomorphicDemons2_test.nii.gz
+    ${CMAKE_CURRENT_BINARY_DIR}/diffeomorphicDemons2_test.nii.gz
     --compareNumberOfPixelsTolerance 300
     --compareIntensityTolerance 10
     BRAINSDemonWarpTest
     --movingVolume DATA{${TestData_DIR}/SUBJ_B_small_T1.nii.gz}
     --fixedVolume DATA{${TestData_DIR}/SUBJ_A_small_T1.nii.gz}
-    --outputVolume ${BRAINSDemonWarp_BINARY_DIR}/diffeomorphicDemons2_test.nii.gz
+    --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/diffeomorphicDemons2_test.nii.gz
     --inputPixelType ushort
     --outputPixelType uchar
     --outputNormalized
@@ -113,14 +113,14 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateDiffeomorphicTest2_
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateDiffeomorphicTest3_nii COMMAND ${BRAINS_Demon_Warp_TESTS}
  --compare
     DATA{${TestData_DIR}/diffeomorphicDemons3.nii.gz}
-    ${BRAINSDemonWarp_BINARY_DIR}/diffeomorphicDemons3_test.nii.gz
+    ${CMAKE_CURRENT_BINARY_DIR}/diffeomorphicDemons3_test.nii.gz
     --compareNumberOfPixelsTolerance 6950
     --compareIntensityTolerance 10
     BRAINSDemonWarpTest
     --movingVolume DATA{${TestData_DIR}/SUBJ_B_small_T1.nii.gz}
     --fixedVolume DATA{${TestData_DIR}/SUBJ_A_small_T1.nii.gz}
-#    --outputDeformationFieldVolume ${BRAINSDemonWarp_BINARY_DIR}/OutDefField.nii.gz
-    --outputVolume ${BRAINSDemonWarp_BINARY_DIR}/diffeomorphicDemons3_test.nii.gz
+#    --outputDeformationFieldVolume ${CMAKE_CURRENT_BINARY_DIR}/OutDefField.nii.gz
+    --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/diffeomorphicDemons3_test.nii.gz
     --inputPixelType int
     --outputPixelType uchar
     --outputNormalized
@@ -143,24 +143,24 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateDiffeomorphicTest3_
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateDiffeomorphicTest4_nii COMMAND ${BRAINS_Demon_Warp_TESTS}
  --compare
     DATA{${TestData_DIR}/diffeomorphicDemons4.nii.gz}
-    ${BRAINSDemonWarp_BINARY_DIR}/diffeomorphicDemons4_test.nii.gz
+    ${CMAKE_CURRENT_BINARY_DIR}/diffeomorphicDemons4_test.nii.gz
     --compareNumberOfPixelsTolerance 340
     --compareIntensityTolerance 10
     BRAINSDemonWarpTest
     --movingVolume DATA{${TestData_DIR}/SUBJ_B_small_T1.nii.gz}
     --fixedVolume DATA{${TestData_DIR}/SUBJ_A_small_T1.nii.gz}
-    --outputVolume ${BRAINSDemonWarp_BINARY_DIR}/diffeomorphicDemons4_test.nii.gz
+    --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/diffeomorphicDemons4_test.nii.gz
     --inputPixelType int
     --outputPixelType uchar
 #    --outputNormalized
-    --outputCheckerboardVolume ${BRAINSDemonWarp_BINARY_DIR}/output_Checkborad.nii.gz
+    --outputCheckerboardVolume ${CMAKE_CURRENT_BINARY_DIR}/output_Checkborad.nii.gz
     --initializeWithDeformationField DATA{${TestData_DIR}/InitialDeformationField.nii.gz}
     --smoothDeformationFieldSigma 1.5
     --numberOfPyramidLevels 3
     --arrayOfPyramidLevelIterations 10,5,5
     --minimumFixedPyramid 4,4,4
     --minimumMovingPyramid 4,4,4
-    --outputDisplacementFieldPrefix ${BRAINSDemonWarp_BINARY_DIR}/displacement.nii.gz
+    --outputDisplacementFieldPrefix ${CMAKE_CURRENT_BINARY_DIR}/displacement.nii.gz
     --registrationFilterType Diffeomorphic
 )
 
@@ -168,14 +168,14 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateDiffeomorphicTest4_
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateOrientedImagesTest5_nii COMMAND ${BRAINS_Demon_Warp_TESTS}
  --compare
     DATA{${TestData_DIR}/ValidateOrientedImagesTest5.nii.gz}
-    ${BRAINSDemonWarp_BINARY_DIR}/ValidateOrientedImagesTest5.nii.gz
+    ${CMAKE_CURRENT_BINARY_DIR}/ValidateOrientedImagesTest5.nii.gz
     --compareNumberOfPixelsTolerance 49800
     --compareIntensityTolerance 25
     BRAINSDemonWarpTest
     --movingVolume DATA{${TestData_DIR}/ANON0006_20_T1_sag_twisted.nii.gz}
     --fixedVolume DATA{${TestData_DIR}/ANON0006_20_T1_dbg_splayed.nii.gz}
-    --outputVolume ${BRAINSDemonWarp_BINARY_DIR}/ValidateOrientedImagesTest5.nii.gz
-    --outputDeformationFieldVolume ${BRAINSDemonWarp_BINARY_DIR}/OutDefField_orientedImage.nii.gz
+    --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/ValidateOrientedImagesTest5.nii.gz
+    --outputDeformationFieldVolume ${CMAKE_CURRENT_BINARY_DIR}/OutDefField_orientedImage.nii.gz
     --inputPixelType uchar
     --outputPixelType uchar
     --smoothDeformationFieldSigma 1.5
@@ -188,13 +188,13 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateOrientedImagesTest5
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateVectorBRAINSDemonWarpTest_nii COMMAND ${VBRAINS_Demon_Warp_TESTS}
  --compare
     DATA{${TestData_DIR}/thirionDemons.nii.gz}
-    ${BRAINSDemonWarp_BINARY_DIR}/thirionDemons_V_test.nii.gz
+    ${CMAKE_CURRENT_BINARY_DIR}/thirionDemons_V_test.nii.gz
     --compareNumberOfPixelsTolerance 50
     --compareIntensityTolerance 10
     VBRAINSDemonWarpTest
     --movingVolume DATA{${TestData_DIR}/SUBJ_B_small_T1.nii.gz}
     --fixedVolume DATA{${TestData_DIR}/SUBJ_A_small_T1.nii.gz}
-    --outputVolume ${BRAINSDemonWarp_BINARY_DIR}/thirionDemons_V_test.nii.gz
+    --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/thirionDemons_V_test.nii.gz
 #    --inputPixelType short
 #    --outputPixelType short
     --outputDebug
@@ -209,13 +209,13 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateVectorBRAINSDemonWa
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateVectorFastSymmetricForcesTest_nii COMMAND ${VBRAINS_Demon_Warp_TESTS}
  --compare
     DATA{${TestData_DIR}/fastSymmetricForcesDemons.nii.gz}
-    ${BRAINSDemonWarp_BINARY_DIR}/fastSymmetricForcesDemons_V_test.nii.gz
+    ${CMAKE_CURRENT_BINARY_DIR}/fastSymmetricForcesDemons_V_test.nii.gz
     --compareNumberOfPixelsTolerance 450
     --compareIntensityTolerance 10
     VBRAINSDemonWarpTest
     --movingVolume DATA{${TestData_DIR}/SUBJ_B_small_T1.nii.gz}
     --fixedVolume DATA{${TestData_DIR}/SUBJ_A_small_T1.nii.gz}
-    --outputVolume ${BRAINSDemonWarp_BINARY_DIR}/fastSymmetricForcesDemons_V_test.nii.gz
+    --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/fastSymmetricForcesDemons_V_test.nii.gz
     --inputPixelType uchar
     --outputPixelType uchar
     --medianFilterSize 1,1,1
@@ -231,14 +231,14 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateVectorFastSymmetric
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateVectorDiffeomorphicTest1_nii COMMAND ${VBRAINS_Demon_Warp_TESTS}
  --compare
     DATA{${TestData_DIR}/diffeomorphicDemons1.nii.gz}
-    ${BRAINSDemonWarp_BINARY_DIR}/vectordiffeomorphicDemons1_test.nii.gz
+    ${CMAKE_CURRENT_BINARY_DIR}/vectordiffeomorphicDemons1_test.nii.gz
     --compareNumberOfPixelsTolerance 220
     --compareIntensityTolerance 10
     VBRAINSDemonWarpTest
     --movingVolume DATA{${TestData_DIR}/SUBJ_B_small_T1.nii.gz},DATA{${TestData_DIR}/SUBJ_B_small_T1.nii.gz}
     --fixedVolume DATA{${TestData_DIR}/SUBJ_A_small_T1.nii.gz},DATA{${TestData_DIR}/SUBJ_A_small_T1.nii.gz}
-    --outputVolume ${BRAINSDemonWarp_BINARY_DIR}/vectordiffeomorphicDemons1_test.nii.gz
-    --outputDeformationFieldVolume ${BRAINSDemonWarp_BINARY_DIR}/OutDefField.nii.gz
+    --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/vectordiffeomorphicDemons1_test.nii.gz
+    --outputDeformationFieldVolume ${CMAKE_CURRENT_BINARY_DIR}/OutDefField.nii.gz
     --inputPixelType short
     --outputPixelType uchar
     --outputNormalized
@@ -258,13 +258,13 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateVectorDiffeomorphic
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateVectorDiffeomorphicTest2_nii COMMAND ${VBRAINS_Demon_Warp_TESTS}
  --compare
     DATA{${TestData_DIR}/diffeomorphicDemons2.nii.gz}
-    ${BRAINSDemonWarp_BINARY_DIR}/vectordiffeomorphicDemons2_test.nii.gz
+    ${CMAKE_CURRENT_BINARY_DIR}/vectordiffeomorphicDemons2_test.nii.gz
     --compareNumberOfPixelsTolerance 300
     --compareIntensityTolerance 10
     VBRAINSDemonWarpTest
     --movingVolume DATA{${TestData_DIR}/SUBJ_B_small_T1.nii.gz},DATA{${TestData_DIR}/SUBJ_B_small_T1.nii.gz}
     --fixedVolume DATA{${TestData_DIR}/SUBJ_A_small_T1.nii.gz},DATA{${TestData_DIR}/SUBJ_A_small_T1.nii.gz}
-    --outputVolume ${BRAINSDemonWarp_BINARY_DIR}/vectordiffeomorphicDemons2_test.nii.gz
+    --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/vectordiffeomorphicDemons2_test.nii.gz
     --inputPixelType ushort
     --outputPixelType uchar
     --outputNormalized
@@ -283,14 +283,14 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateVectorDiffeomorphic
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateVectorDiffeomorphicTest3_nii COMMAND ${VBRAINS_Demon_Warp_TESTS}
  --compare
     DATA{${TestData_DIR}/diffeomorphicDemons3.nii.gz}
-    ${BRAINSDemonWarp_BINARY_DIR}/vectordiffeomorphicDemons3_test.nii.gz
+    ${CMAKE_CURRENT_BINARY_DIR}/vectordiffeomorphicDemons3_test.nii.gz
     --compareNumberOfPixelsTolerance 6950
     --compareIntensityTolerance 10
     VBRAINSDemonWarpTest
     --movingVolume DATA{${TestData_DIR}/SUBJ_B_small_T1.nii.gz},DATA{${TestData_DIR}/SUBJ_B_small_T1.nii.gz}
     --fixedVolume DATA{${TestData_DIR}/SUBJ_A_small_T1.nii.gz},DATA{${TestData_DIR}/SUBJ_A_small_T1.nii.gz}
 #    --outputDeformationFieldVolume ${VBRAINSDemonWarp_BINARY_DIR}/OutDefField.nii.gz
-    --outputVolume ${BRAINSDemonWarp_BINARY_DIR}/vectordiffeomorphicDemons3_test.nii.gz
+    --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/vectordiffeomorphicDemons3_test.nii.gz
     --inputPixelType int
     --outputPixelType uchar
     --outputNormalized
@@ -313,18 +313,18 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateVectorDiffeomorphic
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateVectorDiffeomorphicTest4_nii COMMAND ${VBRAINS_Demon_Warp_TESTS}
  --compare
     DATA{${TestData_DIR}/diffeomorphicDemons4.nii.gz}
-    ${BRAINSDemonWarp_BINARY_DIR}/vectordiffeomorphicDemons4_test.nii.gz
+    ${CMAKE_CURRENT_BINARY_DIR}/vectordiffeomorphicDemons4_test.nii.gz
     --compareNumberOfPixelsTolerance 340
     --compareIntensityTolerance 10
     VBRAINSDemonWarpTest
     --movingVolume DATA{${TestData_DIR}/SUBJ_B_small_T1.nii.gz},DATA{${TestData_DIR}/SUBJ_B_small_T1.nii.gz}
     --fixedVolume DATA{${TestData_DIR}/SUBJ_A_small_T1.nii.gz},DATA{${TestData_DIR}/SUBJ_A_small_T1.nii.gz}
-    --outputVolume ${BRAINSDemonWarp_BINARY_DIR}/vectordiffeomorphicDemons4_test.nii.gz
-    --outputDeformationFieldVolume ${BRAINSDemonWarp_BINARY_DIR}/OutDefField.nii.gz
+    --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/vectordiffeomorphicDemons4_test.nii.gz
+    --outputDeformationFieldVolume ${CMAKE_CURRENT_BINARY_DIR}/OutDefField.nii.gz
     --inputPixelType int
     --outputPixelType uchar
 #    --outputNormalized
-    --outputCheckerboardVolume ${BRAINSDemonWarp_BINARY_DIR}/output_Checkborad.nii.gz
+    --outputCheckerboardVolume ${CMAKE_CURRENT_BINARY_DIR}/output_Checkborad.nii.gz
     --initializeWithDeformationField DATA{${TestData_DIR}/InitialDeformationField.nii.gz}
      --smoothDeformationFieldSigma 1.5
     --numberOfPyramidLevels 3
@@ -332,19 +332,19 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateVectorDiffeomorphic
     --minimumFixedPyramid 4,4,4
     --minimumMovingPyramid 4,4,4
     --registrationFilterType Diffeomorphic
-    --outputDisplacementFieldPrefix ${BRAINSDemonWarp_BINARY_DIR}/displacement.nii.gz
+    --outputDisplacementFieldPrefix ${CMAKE_CURRENT_BINARY_DIR}/displacement.nii.gz
 )
 
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateVectorDiffeomorphicTest5_nii COMMAND ${VBRAINS_Demon_Warp_TESTS}
  --compare
     DATA{${TestData_DIR}/diffeomorphicDemons5.nii.gz}
-    ${BRAINSDemonWarp_BINARY_DIR}/vectordiffeomorphicDemons5_test.nii.gz
+    ${CMAKE_CURRENT_BINARY_DIR}/vectordiffeomorphicDemons5_test.nii.gz
     --compareNumberOfPixelsTolerance 75
     --compareIntensityTolerance 10
     VBRAINSDemonWarpTest
     --movingVolume DATA{${TestData_DIR}/SUBJ_B_small_T1.nii.gz},DATA{${TestData_DIR}/SUBJ_B_small_T1.nii.gz},DATA{${TestData_DIR}/SUBJ_B_small_T1.nii.gz}
     --fixedVolume DATA{${TestData_DIR}/SUBJ_A_small_T1.nii.gz},DATA{${TestData_DIR}/SUBJ_A_small_T1.nii.gz},DATA{${TestData_DIR}/SUBJ_A_small_T1.nii.gz}
-    --outputVolume ${BRAINSDemonWarp_BINARY_DIR}/vectordiffeomorphicDemons5_test.nii.gz
+    --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/vectordiffeomorphicDemons5_test.nii.gz
     --inputPixelType short
     --outputPixelType uchar
     --medianFilterSize 1,1,1
@@ -364,14 +364,14 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateVectorDiffeomorphic
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateVectorDiffeomorphicTest6_nii COMMAND ${VBRAINS_Demon_Warp_TESTS}
  --compare
     DATA{${TestData_DIR}/diffeomorphicDemons3.nii.gz}
-    ${BRAINSDemonWarp_BINARY_DIR}/vectordiffeomorphicDemons6_test.nii.gz
+    ${CMAKE_CURRENT_BINARY_DIR}/vectordiffeomorphicDemons6_test.nii.gz
     --compareNumberOfPixelsTolerance 6950
     --compareIntensityTolerance 10
     VBRAINSDemonWarpTest
     --movingVolume DATA{${TestData_DIR}/SUBJ_B_small_T1.nii.gz}
     --fixedVolume DATA{${TestData_DIR}/SUBJ_A_small_T1.nii.gz}
-#    --outputDeformationFieldVolume ${BRAINSDemonWarp_BINARY_DIR}/OutDefField.nii.gz
-    --outputVolume ${BRAINSDemonWarp_BINARY_DIR}/vectordiffeomorphicDemons6_test.nii.gz
+#    --outputDeformationFieldVolume ${CMAKE_CURRENT_BINARY_DIR}/OutDefField.nii.gz
+    --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/vectordiffeomorphicDemons6_test.nii.gz
     --inputPixelType int
     --outputPixelType uchar
     --outputNormalized
@@ -395,13 +395,13 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateVectorDiffeomorphic
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateVectorOrientedImagesTest6_nii COMMAND ${VBRAINS_Demon_Warp_TESTS}
  --compare
     DATA{${TestData_DIR}/ValidateVectorOrientedImagesTest6.nii.gz}
-    ${BRAINSDemonWarp_BINARY_DIR}/ValidateVectorOrientedImagesTest6.nii.gz
+    ${CMAKE_CURRENT_BINARY_DIR}/ValidateVectorOrientedImagesTest6.nii.gz
     --compareNumberOfPixelsTolerance 50000
     --compareIntensityTolerance 25
     VBRAINSDemonWarpTest
     --movingVolume DATA{${TestData_DIR}/ANON0006_20_T1_sag_twisted.nii.gz},DATA{${TestData_DIR}/ANON0006_20_T1_sag_twisted.nii.gz}
     --fixedVolume DATA{${TestData_DIR}/ANON0006_20_T1_dbg_splayed.nii.gz},DATA{${TestData_DIR}/ANON0006_20_T1_dbg_splayed.nii.gz}
-    --outputVolume ${BRAINSDemonWarp_BINARY_DIR}/ValidateVectorOrientedImagesTest6.nii.gz
+    --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/ValidateVectorOrientedImagesTest6.nii.gz
     --inputPixelType uchar
     --outputPixelType uchar
     --smoothDeformationFieldSigma 1.5
@@ -414,13 +414,13 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateVectorOrientedImage
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateVectorOrientedImagesTest7_nii COMMAND ${VBRAINS_Demon_Warp_TESTS}
  --compare
     DATA{${TestData_DIR}/ValidateVectorOrientedImagesTest7.nii.gz}
-    ${BRAINSDemonWarp_BINARY_DIR}/ValidateVectorOrientedImagesTest7.nii.gz
+    ${CMAKE_CURRENT_BINARY_DIR}/ValidateVectorOrientedImagesTest7.nii.gz
     --compareNumberOfPixelsTolerance 51000
     --compareIntensityTolerance 25
     VBRAINSDemonWarpTest
     --movingVolume DATA{${TestData_DIR}/ANON0006_20_T1_sag_twisted.nii.gz},DATA{${TestData_DIR}/ANON0006_20_T1_sag_twisted.nii.gz}
     --fixedVolume DATA{${TestData_DIR}/ANON0006_20_T1_dbg_splayed.nii.gz},DATA{${TestData_DIR}/ANON0006_20_T1_dbg_splayed.nii.gz}
-    --outputVolume ${BRAINSDemonWarp_BINARY_DIR}/ValidateVectorOrientedImagesTest7.nii.gz
+    --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/ValidateVectorOrientedImagesTest7.nii.gz
     --inputPixelType uchar
     --outputPixelType uchar
     --smoothDeformationFieldSigma 1.5
@@ -434,13 +434,13 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateVectorOrientedImage
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateDiffeomorphicWithAUTOMask_Test_nii COMMAND ${BRAINS_Demon_Warp_TESTS}
   --compare
     DATA{${TestData_DIR}/diffeomorphicDemons_AutoMask.nii.gz}
-    ${BRAINSDemonWarp_BINARY_DIR}/diffeomorphicDemonsWithAutoMask_test.nii.gz
+    ${CMAKE_CURRENT_BINARY_DIR}/diffeomorphicDemonsWithAutoMask_test.nii.gz
     --compareNumberOfPixelsTolerance 50
     --compareIntensityTolerance 10
     BRAINSDemonWarpTest
     --movingVolume DATA{${TestData_DIR}/SUBJ_B_small_T2.nii.gz}
     --fixedVolume DATA{${TestData_DIR}/SUBJ_A_small_T2.nii.gz}
-    --outputVolume ${BRAINSDemonWarp_BINARY_DIR}/diffeomorphicDemonsWithAutoMask_test.nii.gz
+    --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/diffeomorphicDemonsWithAutoMask_test.nii.gz
     --inputPixelType short
     --outputPixelType uchar
     --outputNormalized
@@ -460,13 +460,13 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateDiffeomorphicWithAU
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateDiffeomorphicWithMask_Test_nii COMMAND ${BRAINS_Demon_Warp_TESTS}
   --compare
     DATA{${TestData_DIR}/diffeomorphicDemonsWithMask.nii.gz}
-    ${BRAINSDemonWarp_BINARY_DIR}/diffeomorphicDemonsWithMask_test.nii.gz
+    ${CMAKE_CURRENT_BINARY_DIR}/diffeomorphicDemonsWithMask_test.nii.gz
     --compareNumberOfPixelsTolerance 50
     --compareIntensityTolerance 10
     BRAINSDemonWarpTest
     --movingVolume DATA{${TestData_DIR}/SUBJ_B_small_T2.nii.gz}
     --fixedVolume DATA{${TestData_DIR}/SUBJ_A_small_T2.nii.gz}
-    --outputVolume ${BRAINSDemonWarp_BINARY_DIR}/diffeomorphicDemonsWithMask_test.nii.gz
+    --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/diffeomorphicDemonsWithMask_test.nii.gz
     --inputPixelType short
     --outputPixelType uchar
     --outputNormalized
@@ -489,13 +489,13 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateDiffeomorphicWithMa
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateInitialTransform_Test_nii COMMAND ${BRAINS_Demon_Warp_TESTS}
   --compare
     DATA{${TestData_DIR}/ValidateInitialTransform_Test.nii.gz}
-    ${BRAINSDemonWarp_BINARY_DIR}/ValidateInitialTransform_Test.nii.gz
+    ${CMAKE_CURRENT_BINARY_DIR}/ValidateInitialTransform_Test.nii.gz
     --compareNumberOfPixelsTolerance 20
     --compareIntensityTolerance 10
     BRAINSDemonWarpTest
     --movingVolume DATA{${TestData_DIR}/rotation.rescale.rigid.nii.gz}
     --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
-    --outputVolume ${BRAINSDemonWarp_BINARY_DIR}/ValidateInitialTransform_Test.nii.gz
+    --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/ValidateInitialTransform_Test.nii.gz
     --outputPixelType short
     --outputDebug
     --initializeWithTransform DATA{${TestData_DIR}/BRAINSFitTest_BSplineAnteScaleRotationRescaleHeadMasks.mat}
@@ -511,13 +511,13 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateInitialTransform_Te
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateLogDemons_Test_nii COMMAND ${BRAINS_Demon_Warp_TESTS}
   --compare
     DATA{${TestData_DIR}/logDemons.nii.gz}
-    ${BRAINSDemonWarp_BINARY_DIR}/logDemons_test.nii.gz
+    ${CMAKE_CURRENT_BINARY_DIR}/logDemons_test.nii.gz
     --compareNumberOfPixelsTolerance 500
     --compareIntensityTolerance 10
     BRAINSDemonWarpTest
     --movingVolume DATA{${TestData_DIR}/SUBJ_B_small_T1.nii.gz}
     --fixedVolume DATA{${TestData_DIR}/SUBJ_A_small_T1.nii.gz}
-    --outputVolume ${BRAINSDemonWarp_BINARY_DIR}/logDemons_test.nii.gz
+    --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/logDemons_test.nii.gz
     --outputDebug
     --histogramMatch
     --numberOfHistogramBins 1024
@@ -533,13 +533,13 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateLogDemons_Test_nii 
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateSymmetricLogDemons_Test1_nii COMMAND ${BRAINS_Demon_Warp_TESTS}
   --compare
     DATA{${TestData_DIR}/symmetricLogDemons1.nii.gz}
-    ${BRAINSDemonWarp_BINARY_DIR}/symmetricLogDemons_test1.nii.gz
+    ${CMAKE_CURRENT_BINARY_DIR}/symmetricLogDemons_test1.nii.gz
     --compareNumberOfPixelsTolerance 1300
     --compareIntensityTolerance 10
     BRAINSDemonWarpTest
     --movingVolume DATA{${TestData_DIR}/SUBJ_B_small_T1.nii.gz}
     --fixedVolume DATA{${TestData_DIR}/SUBJ_A_small_T1.nii.gz}
-    --outputVolume ${BRAINSDemonWarp_BINARY_DIR}/symmetricLogDemons_test1.nii.gz
+    --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/symmetricLogDemons_test1.nii.gz
     --outputDebug
     --histogramMatch
     --numberOfHistogramBins 1024
@@ -555,13 +555,13 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateSymmetricLogDemons_
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateSymmetricLogDemons_Test2_nii COMMAND ${BRAINS_Demon_Warp_TESTS}
   --compare
     DATA{${TestData_DIR}/symmetricLogDemons2.nii.gz}
-    ${BRAINSDemonWarp_BINARY_DIR}/symmetricLogDemons_test2.nii.gz
+    ${CMAKE_CURRENT_BINARY_DIR}/symmetricLogDemons_test2.nii.gz
     --compareNumberOfPixelsTolerance 1300
     --compareIntensityTolerance 10
     BRAINSDemonWarpTest
     --movingVolume DATA{${TestData_DIR}/SUBJ_B_small_T1.nii.gz}
     --fixedVolume DATA{${TestData_DIR}/SUBJ_A_small_T1.nii.gz}
-    --outputVolume ${BRAINSDemonWarp_BINARY_DIR}/symmetricLogDemons_test2.nii.gz
+    --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/symmetricLogDemons_test2.nii.gz
     --outputDebug
     --histogramMatch
     --numberOfHistogramBins 1024

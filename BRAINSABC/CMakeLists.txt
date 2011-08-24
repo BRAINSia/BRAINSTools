@@ -9,7 +9,7 @@ set(LOCAL_PROJECT_NAME BRAINSABC)
 ###
 add_subdirectory(brainseg)
 
-if(1)
+if(BUILD_TESTING)
   add_subdirectory(TestSuite)
-endif(1)
+endif()
 

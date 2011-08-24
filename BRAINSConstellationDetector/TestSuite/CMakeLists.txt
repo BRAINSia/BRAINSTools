@@ -1,9 +1,9 @@
 
 ## Set testing environment
 ##
-file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/TEST_LOCATION)
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/obliq_setup.txt.in
-               ${CMAKE_CURRENT_BINARY_DIR}/TEST_LOCATION/obliq_setup.txt @ONLY IMMEDIATE)
+               ${CMAKE_CURRENT_BINARY_DIR}/obliq_setup.txt @ONLY IMMEDIATE)
 
 set(ALL_TEST_PROGS
   BRAINSAlignMSP
@@ -25,8 +25,8 @@ set(BRAINSConstellationModelerTestName BRAINSConstellationModelerTest_T1)
 if(ConstellationModeler_TEST_causes_major_delay)
 ExternalData_add_test( ${PROJECT_NAME}FetchData ${BRAINSConstellationModelerTestName} BRAINSConstellationModelerTest
          BRAINSConstellationModelerTest
-         --inputTrainingList ${CMAKE_CURRENT_BINARY_DIR}/TEST_LOCATION/obliq_setup.txt
-         --outputModel ${CMAKE_BINARY_DIR}/TEST_LOCATION/${BRAINSConstellationModelerTestName}.mdl
+         --inputTrainingList ${CMAKE_CURRENT_BINARY_DIR}/obliq_setup.txt
+         --outputModel ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationModelerTestName}.mdl
 )
 endif(ConstellationModeler_TEST_causes_major_delay)
 endif()
@@ -34,14 +34,14 @@ endif()
 set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_T1)
 ExternalData_add_test( ${PROJECT_NAME}FetchData ${BRAINSConstellationDetectorTestName} BRAINSConstellationDetectorTest
   --compare DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.nii.gz}
-         ${CMAKE_CURRENT_BINARY_DIR}/TEST_LOCATION/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
+         ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
          --compareIntensityTolerance 0
          --compareRadiusTolerance 0
          --compareNumberOfPixelsTolerance 0
 
          BRAINSConstellationDetectorTest
          --inputVolume DATA{${TestData_DIR}/T1.nii.gz}
-         --outputResampledVolume ${CMAKE_CURRENT_BINARY_DIR}/TEST_LOCATION/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
+         --outputResampledVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
          --inputTemplateModel DATA{${TestData_DIR}/newT1.mdl}
          --LLSModel DATA{${TestData_DIR}/LLSModel.hdf5})
 
@@ -50,28 +50,28 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData ${BRAINSConstellationDetectorTes
 set(BRAINSEyeDetectorTestName BRAINSEyeDetectorTest_T1)
 ExternalData_add_test( ${PROJECT_NAME}FetchData ${BRAINSEyeDetectorTestName} BRAINSEyeDetectorTest
   --compare DATA{${TestData_DIR}/${BRAINSEyeDetectorTestName}_standard.nii.gz}
-         ${CMAKE_CURRENT_BINARY_DIR}/TEST_LOCATION/${BRAINSEyeDetectorTestName}_aligned.nii.gz
+         ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSEyeDetectorTestName}_aligned.nii.gz
          --compareIntensityTolerance 0
          --compareRadiusTolerance 0
          --compareNumberOfPixelsTolerance 0
 
          BRAINSEyeDetectorTest
          DATA{${TestData_DIR}/${BRAINSEyeDetectorTestName}_standard.nii.gz}
-         ${CMAKE_CURRENT_BINARY_DIR}/TEST_LOCATION/${BRAINSEyeDetectorTestName}_aligned.nii.gz
-         ${CMAKE_CURRENT_BINARY_DIR}/TEST_LOCATION)
+         ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSEyeDetectorTestName}_aligned.nii.gz
+         ${CMAKE_CURRENT_BINARY_DIR})
 
 ## Test BRAINSAlignMSP:
 ##
 set(BRAINSAlignMSPTestName BRAINSAlignMSPTest_T1)
 ExternalData_add_test( ${PROJECT_NAME}FetchData ${BRAINSAlignMSPTestName} BRAINSAlignMSPTest
   --compare DATA{${TestData_DIR}/${BRAINSAlignMSPTestName}_standard.nii.gz}
-           ${CMAKE_CURRENT_BINARY_DIR}/TEST_LOCATION/${BRAINSAlignMSPTestName}_aligned.nii.gz
+           ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSAlignMSPTestName}_aligned.nii.gz
          --compareIntensityTolerance 50
          --compareRadiusTolerance 0
          --compareNumberOfPixelsTolerance 500
          BRAINSAlignMSPTest
          --inputVolume DATA{${TestData_DIR}/T1.nii.gz}
-         --OutputresampleMSP ${CMAKE_CURRENT_BINARY_DIR}/TEST_LOCATION/${BRAINSAlignMSPTestName}_aligned.nii.gz
+         --OutputresampleMSP ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSAlignMSPTestName}_aligned.nii.gz
          --mspQualityLevel 3
 )
 
@@ -81,14 +81,14 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData ${BRAINSAlignMSPTestName} BRAINS
 set(BRAINSTrimForegroundInDirectionTestName BRAINSTrimForegroundInDirectionTest_T1)
 ExternalData_add_test( ${PROJECT_NAME}FetchData ${BRAINSTrimForegroundInDirectionTestName} BRAINSTrimForegroundInDirectionTest
   --compare DATA{${TestData_DIR}/${BRAINSTrimForegroundInDirectionTestName}_standard.nii.gz}
-           ${CMAKE_CURRENT_BINARY_DIR}/TEST_LOCATION/${BRAINSTrimForegroundInDirectionTestName}_aligned.nii.gz
+           ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSTrimForegroundInDirectionTestName}_aligned.nii.gz
          --compareIntensityTolerance 0
          --compareRadiusTolerance 0
          --compareNumberOfPixelsTolerance 0
 
          BRAINSTrimForegroundInDirectionTest
          --inputVolume DATA{${TestData_DIR}/T1.nii.gz}
-         --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/TEST_LOCATION/${BRAINSTrimForegroundInDirectionTestName}_aligned.nii.gz
+         --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSTrimForegroundInDirectionTestName}_aligned.nii.gz
          --headSizeLimit 2600.0)
 
 
@@ -117,14 +117,14 @@ add_executable(TestlandmarksConstellationTrainingDefinitionIO TestlandmarksConst
 set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_otsuThreshold)
 ExternalData_add_test( ${PROJECT_NAME}FetchData ${BRAINSConstellationDetectorTestName} BRAINSConstellationDetectorTest
          --compare DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.nii.gz}
-         ${CMAKE_CURRENT_BINARY_DIR}/TEST_LOCATION/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
+         ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
          --compareIntensityTolerance 0
          --compareRadiusTolerance 0
          --compareNumberOfPixelsTolerance 0
 
          BRAINSConstellationDetectorTest
          --inputVolume DATA{${TestData_DIR}/T1.nii.gz}
-         --outputResampledVolume ${CMAKE_CURRENT_BINARY_DIR}/TEST_LOCATION/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
+         --outputResampledVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
          --inputTemplateModel DATA{${TestData_DIR}/newT1.mdl}
          --LLSModel DATA{${TestData_DIR}/LLSModel.hdf5}
          --otsuPercentileThreshold 0.05)
@@ -133,14 +133,14 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData ${BRAINSConstellationDetectorTes
 set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_mspLevel)
 ExternalData_add_test( ${PROJECT_NAME}FetchData ${BRAINSConstellationDetectorTestName} BRAINSConstellationDetectorTest
          --compare DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.nii.gz}
-         ${CMAKE_CURRENT_BINARY_DIR}/TEST_LOCATION/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
+         ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
          --compareIntensityTolerance 0
          --compareRadiusTolerance 0
          --compareNumberOfPixelsTolerance 0
 
          BRAINSConstellationDetectorTest
          --inputVolume DATA{${TestData_DIR}/T1.nii.gz}
-         --outputResampledVolume ${CMAKE_CURRENT_BINARY_DIR}/TEST_LOCATION/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
+         --outputResampledVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
          --inputTemplateModel DATA{${TestData_DIR}/newT1.mdl}
          --LLSModel DATA{${TestData_DIR}/LLSModel.hdf5}
          --mspQualityLevel 3)
@@ -149,14 +149,14 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData ${BRAINSConstellationDetectorTes
 set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_interpolationMode)
 ExternalData_add_test( ${PROJECT_NAME}FetchData ${BRAINSConstellationDetectorTestName} BRAINSConstellationDetectorTest
          --compare DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.nii.gz}
-         ${CMAKE_CURRENT_BINARY_DIR}/TEST_LOCATION/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
+         ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
          --compareIntensityTolerance 0
          --compareRadiusTolerance 0
          --compareNumberOfPixelsTolerance 0
 
          BRAINSConstellationDetectorTest
          --inputVolume DATA{${TestData_DIR}/T1.nii.gz}
-         --outputResampledVolume ${CMAKE_CURRENT_BINARY_DIR}/TEST_LOCATION/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
+         --outputResampledVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
          --inputTemplateModel DATA{${TestData_DIR}/newT1.mdl}
          --LLSModel DATA{${TestData_DIR}/LLSModel.hdf5}
          --interpolationMode BSpline)
@@ -165,14 +165,14 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData ${BRAINSConstellationDetectorTes
 set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_rescaleIntensity)
 ExternalData_add_test( ${PROJECT_NAME}FetchData ${BRAINSConstellationDetectorTestName} BRAINSConstellationDetectorTest
          --compare DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.nii.gz}
-         ${CMAKE_CURRENT_BINARY_DIR}/TEST_LOCATION/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
+         ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
          --compareIntensityTolerance 0
          --compareRadiusTolerance 0
          --compareNumberOfPixelsTolerance 0
 
          BRAINSConstellationDetectorTest
          --inputVolume DATA{${TestData_DIR}/T1.nii.gz}
-         --outputResampledVolume ${CMAKE_CURRENT_BINARY_DIR}/TEST_LOCATION/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
+         --outputResampledVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
          --inputTemplateModel DATA{${TestData_DIR}/newT1.mdl}
          --LLSModel DATA{${TestData_DIR}/LLSModel.hdf5}
          --rescaleIntensities)
@@ -181,14 +181,14 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData ${BRAINSConstellationDetectorTes
 set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_acLowerBound)
 ExternalData_add_test( ${PROJECT_NAME}FetchData ${BRAINSConstellationDetectorTestName} BRAINSConstellationDetectorTest
          --compare DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.nii.gz}
-         ${CMAKE_CURRENT_BINARY_DIR}/TEST_LOCATION/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
+         ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
          --compareIntensityTolerance 0
          --compareRadiusTolerance 0
          --compareNumberOfPixelsTolerance 0
 
          BRAINSConstellationDetectorTest
          --inputVolume DATA{${TestData_DIR}/T1.nii.gz}
-         --outputResampledVolume ${CMAKE_CURRENT_BINARY_DIR}/TEST_LOCATION/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
+         --outputResampledVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
          --inputTemplateModel DATA{${TestData_DIR}/newT1.mdl}
          --LLSModel DATA{${TestData_DIR}/LLSModel.hdf5}
          --acLowerBound 100)
@@ -197,14 +197,14 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData ${BRAINSConstellationDetectorTes
 set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_rescaleIntensityRange)
 ExternalData_add_test( ${PROJECT_NAME}FetchData ${BRAINSConstellationDetectorTestName} BRAINSConstellationDetectorTest
          --compare DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.nii.gz}
-         ${CMAKE_CURRENT_BINARY_DIR}/TEST_LOCATION/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
+         ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
          --compareIntensityTolerance 0
          --compareRadiusTolerance 0
          --compareNumberOfPixelsTolerance 0
 
          BRAINSConstellationDetectorTest
          --inputVolume DATA{${TestData_DIR}/T1.nii.gz}
-         --outputResampledVolume ${CMAKE_CURRENT_BINARY_DIR}/TEST_LOCATION/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
+         --outputResampledVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
          --inputTemplateModel DATA{${TestData_DIR}/newT1.mdl}
          --LLSModel DATA{${TestData_DIR}/LLSModel.hdf5}
          --rescaleIntensitiesOutputRange 20,2000)
@@ -213,14 +213,14 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData ${BRAINSConstellationDetectorTes
 set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_backgroundValue)
 ExternalData_add_test( ${PROJECT_NAME}FetchData ${BRAINSConstellationDetectorTestName} BRAINSConstellationDetectorTest
          --compare DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.nii.gz}
-         ${CMAKE_CURRENT_BINARY_DIR}/TEST_LOCATION/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
+         ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
          --compareIntensityTolerance 0
          --compareRadiusTolerance 0
          --compareNumberOfPixelsTolerance 0
 
          BRAINSConstellationDetectorTest
          --inputVolume DATA{${TestData_DIR}/T1.nii.gz}
-         --outputResampledVolume ${CMAKE_CURRENT_BINARY_DIR}/TEST_LOCATION/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
+         --outputResampledVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
          --inputTemplateModel DATA{${TestData_DIR}/newT1.mdl}
          --LLSModel DATA{${TestData_DIR}/LLSModel.hdf5}
          --BackgroundFillValue BIGNEG)
@@ -229,14 +229,14 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData ${BRAINSConstellationDetectorTes
 set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_cutOutHeadInOutputResampledVolume)
 ExternalData_add_test( ${PROJECT_NAME}FetchData ${BRAINSConstellationDetectorTestName} BRAINSConstellationDetectorTest
          --compare DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.nii.gz}
-         ${CMAKE_CURRENT_BINARY_DIR}/TEST_LOCATION/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
+         ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
          --compareIntensityTolerance 0
          --compareRadiusTolerance 0
          --compareNumberOfPixelsTolerance 0
 
          BRAINSConstellationDetectorTest
          --inputVolume DATA{${TestData_DIR}/T1.nii.gz}
-         --outputResampledVolume ${CMAKE_CURRENT_BINARY_DIR}/TEST_LOCATION/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
+         --outputResampledVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
          --inputTemplateModel DATA{${TestData_DIR}/newT1.mdl}
          --LLSModel DATA{${TestData_DIR}/LLSModel.hdf5}
          --cutOutHeadInOutputVolume)
@@ -245,14 +245,14 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData ${BRAINSConstellationDetectorTes
 set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_cutOutHeadInOutputVolume)
 ExternalData_add_test( ${PROJECT_NAME}FetchData ${BRAINSConstellationDetectorTestName} BRAINSConstellationDetectorTest
          --compare DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.nii.gz}
-         ${CMAKE_CURRENT_BINARY_DIR}/TEST_LOCATION/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
+         ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
          --compareIntensityTolerance 0
          --compareRadiusTolerance 0
          --compareNumberOfPixelsTolerance 0
 
          BRAINSConstellationDetectorTest
          --inputVolume DATA{${TestData_DIR}/T1.nii.gz}
-         --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/TEST_LOCATION/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
+         --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
          --inputTemplateModel DATA{${TestData_DIR}/newT1.mdl}
          --LLSModel DATA{${TestData_DIR}/LLSModel.hdf5}
          --cutOutHeadInOutputVolume)
@@ -261,14 +261,14 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData ${BRAINSConstellationDetectorTes
 set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_trimRescaledIntensities)
 ExternalData_add_test( ${PROJECT_NAME}FetchData ${BRAINSConstellationDetectorTestName} BRAINSConstellationDetectorTest
          --compare DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.nii.gz}
-         ${CMAKE_CURRENT_BINARY_DIR}/TEST_LOCATION/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
+         ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
          --compareIntensityTolerance 0
          --compareRadiusTolerance 0
          --compareNumberOfPixelsTolerance 0
 
          BRAINSConstellationDetectorTest
          --inputVolume DATA{${TestData_DIR}/T1.nii.gz}
-         --outputResampledVolume ${CMAKE_CURRENT_BINARY_DIR}/TEST_LOCATION/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
+         --outputResampledVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
          --inputTemplateModel DATA{${TestData_DIR}/newT1.mdl}
          --LLSModel DATA{${TestData_DIR}/LLSModel.hdf5}
          --trimRescaledIntensities 2)
@@ -277,14 +277,14 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData ${BRAINSConstellationDetectorTes
 set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_rVN4)
 ExternalData_add_test( ${PROJECT_NAME}FetchData ${BRAINSConstellationDetectorTestName} BRAINSConstellationDetectorTest
          --compare DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.nii.gz}
-         ${CMAKE_CURRENT_BINARY_DIR}/TEST_LOCATION/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
+         ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
          --compareIntensityTolerance 0
          --compareRadiusTolerance 0
          --compareNumberOfPixelsTolerance 0
 
          BRAINSConstellationDetectorTest
          --inputVolume DATA{${TestData_DIR}/T1.nii.gz}
-         --outputResampledVolume ${CMAKE_CURRENT_BINARY_DIR}/TEST_LOCATION/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
+         --outputResampledVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
          --inputTemplateModel DATA{${TestData_DIR}/newT1.mdl}
          --LLSModel DATA{${TestData_DIR}/LLSModel.hdf5}
          --rVN4 200)
@@ -293,14 +293,14 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData ${BRAINSConstellationDetectorTes
 set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_rpc)
 ExternalData_add_test( ${PROJECT_NAME}FetchData ${BRAINSConstellationDetectorTestName} BRAINSConstellationDetectorTest
          --compare DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.nii.gz}
-         ${CMAKE_CURRENT_BINARY_DIR}/TEST_LOCATION/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
+         ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
          --compareIntensityTolerance 0
          --compareRadiusTolerance 0
          --compareNumberOfPixelsTolerance 0
 
          BRAINSConstellationDetectorTest
          --inputVolume DATA{${TestData_DIR}/T1.nii.gz}
-         --outputResampledVolume ${CMAKE_CURRENT_BINARY_DIR}/TEST_LOCATION/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
+         --outputResampledVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
          --inputTemplateModel DATA{${TestData_DIR}/newT1.mdl}
          --LLSModel DATA{${TestData_DIR}/LLSModel.hdf5}
          --rpc 200)
@@ -309,14 +309,14 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData ${BRAINSConstellationDetectorTes
 set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_rac)
 ExternalData_add_test( ${PROJECT_NAME}FetchData ${BRAINSConstellationDetectorTestName} BRAINSConstellationDetectorTest
          --compare DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.nii.gz}
-         ${CMAKE_CURRENT_BINARY_DIR}/TEST_LOCATION/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
+         ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
          --compareIntensityTolerance 0
          --compareRadiusTolerance 0
          --compareNumberOfPixelsTolerance 0
 
          BRAINSConstellationDetectorTest
          --inputVolume DATA{${TestData_DIR}/T1.nii.gz}
-         --outputResampledVolume ${CMAKE_CURRENT_BINARY_DIR}/TEST_LOCATION/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
+         --outputResampledVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
          --inputTemplateModel DATA{${TestData_DIR}/newT1.mdl}
          --LLSModel DATA{${TestData_DIR}/LLSModel.hdf5}
          --rac 200)
@@ -325,14 +325,14 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData ${BRAINSConstellationDetectorTes
 set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_rmpj)
 ExternalData_add_test( ${PROJECT_NAME}FetchData ${BRAINSConstellationDetectorTestName} BRAINSConstellationDetectorTest
          --compare DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.nii.gz}
-         ${CMAKE_CURRENT_BINARY_DIR}/TEST_LOCATION/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
+         ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
          --compareIntensityTolerance 0
          --compareRadiusTolerance 0
          --compareNumberOfPixelsTolerance 0
 
          BRAINSConstellationDetectorTest
          --inputVolume DATA{${TestData_DIR}/T1.nii.gz}
-         --outputResampledVolume ${CMAKE_CURRENT_BINARY_DIR}/TEST_LOCATION/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
+         --outputResampledVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
          --inputTemplateModel DATA{${TestData_DIR}/newT1.mdl}
          --LLSModel DATA{${TestData_DIR}/LLSModel.hdf5}
          --rmpj 200)
@@ -341,14 +341,14 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData ${BRAINSConstellationDetectorTes
 set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_rVN4-rpc-rac-rmpj)
 ExternalData_add_test( ${PROJECT_NAME}FetchData ${BRAINSConstellationDetectorTestName} BRAINSConstellationDetectorTest
          --compare DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.nii.gz}
-         ${CMAKE_CURRENT_BINARY_DIR}/TEST_LOCATION/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
+         ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
          --compareIntensityTolerance 0
          --compareRadiusTolerance 0
          --compareNumberOfPixelsTolerance 0
 
          BRAINSConstellationDetectorTest
          --inputVolume DATA{${TestData_DIR}/T1.nii.gz}
-         --outputResampledVolume ${CMAKE_CURRENT_BINARY_DIR}/TEST_LOCATION/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
+         --outputResampledVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
          --inputTemplateModel DATA{${TestData_DIR}/newT1.mdl}
          --LLSModel DATA{${TestData_DIR}/LLSModel.hdf5}
          --rmpj 200

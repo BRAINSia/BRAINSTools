@@ -21,6 +21,9 @@ cmake_policy(VERSION 2.8)
 option(BRAINSTools_SUPERBUILD "Build Slicer and the projects it depends on via SuperBuild.cmake." ON)
 mark_as_advanced(BRAINSTools_SUPERBUILD)
 
+option(BRAINSTools_USE_QT "Find and use Qt with VTK to build GUI Tools" OFF)
+mark_as_advanced(BRAINSTools_USE_QT)
+
 #-----------------------------------------------------------------------------
 # Superbuild script
 #-----------------------------------------------------------------------------

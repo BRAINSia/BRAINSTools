@@ -1,3 +1,22 @@
+#
+# Stuff that needs to be set if you're building with Slicer
+if(NOT INTEGRATE_WITH_SLICER)
+  set(Slicer_VTK_GIT_REPOSITORY
+    "github.com/Slicer/VTK.git" CACHE STRING "repository from which to get VTK" FORCE)
+  mark_as_advanced(Slicer_VTK_GIT_REPOSITORY)
+  # By default, use a specific SHA1 associated with branch slicer-4.0-gamma on github.com/Slicer/VTK.git
+  set(Slicer_VTK_GIT_TAG
+    "9330805c45444eb5b740bf401aec50f4c32f3cab" CACHE STRING "VTK git tag to use" FORCE)
+  mark_as_advanced(Slicer_VTK_GIT_TAG)
+  option(Slicer_USE_GIT_PROTOCOL "If behind a firewall turn this off to use http instead." ON)
+
+  set(git_protocol "git")
+  if(NOT Slicer_USE_GIT_PROTOCOL)
+    set(git_protocol "http")
+  endif()
+
+endif(NOT INTEGRATE_WITH_SLICER)
+
 #-----------------------------------------------------------------------------
 # Set a default build type if none was specified
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
@@ -178,7 +197,7 @@ option(USE_BRAINSMultiModeSegment      "Build BRAINSMultiModeSegment"      ON)
 option(USE_BRAINSInitializedControlPoints      "Build BRAINSInitializedControlPoints"      ON)
 #option(USE_BRAINSCut                   "Build BRAINSCut"                   OFF)
 
-set(BRAINSTools_DEPENDENCIES ITKv4 SlicerExecutionModel)
+set(BRAINSTools_DEPENDENCIES ITKv4 SlicerExecutionModel VTK)
 if(USE_BRAINSABC) # OR USE_BRAINSCut)
   # Define the atlas subdirectory in one place
   set(${CMAKE_PROJECT_NAME}_RUNTIME_DIR ${CMAKE_CURRENT_BINARY_DIR}/src/bin)

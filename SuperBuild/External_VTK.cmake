@@ -44,27 +44,37 @@ if(NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR)
   endif()
 
   set(VTK_QT_ARGS)
-  if(NOT APPLE)
+  if(BRAINSTools_USE_QT)
+    if(NOT APPLE)
+      set(VTK_QT_ARGS
+        #-DDESIRED_QT_VERSION:STRING=4 # Unused
+        -DVTK_USE_GUISUPPORT:BOOL=ON
+        -DVTK_USE_QVTK_QTOPENGL:BOOL=ON
+        -DVTK_USE_QT:BOOL=ON
+        -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
+        )
+    else()
+      set(VTK_QT_ARGS
+        -DVTK_USE_CARBON:BOOL=OFF
+        # Default to Cocoa, VTK/CMakeLists.txt will enable Carbon and disable cocoa if needed
+        -DVTK_USE_COCOA:BOOL=ON
+        -DVTK_USE_X:BOOL=OFF
+        #-DVTK_USE_RPATH:BOOL=ON # Unused
+        #-DDESIRED_QT_VERSION:STRING=4 # Unused
+        -DVTK_USE_GUISUPPORT:BOOL=ON
+        -DVTK_USE_QVTK_QTOPENGL:BOOL=ON
+        -DVTK_USE_QT:BOOL=ON
+        -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
+        )
+    endif()
+    find_package(Qt4 REQUIRED)
+  else(BRAINSTOOLS_USE_QT)
     set(VTK_QT_ARGS
-      #-DDESIRED_QT_VERSION:STRING=4 # Unused
-      -DVTK_USE_GUISUPPORT:BOOL=ON
-      -DVTK_USE_QVTK_QTOPENGL:BOOL=ON
-      -DVTK_USE_QT:BOOL=ON
-      -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
-      )
-  else()
-    set(VTK_QT_ARGS
-      -DVTK_USE_CARBON:BOOL=OFF
-      -DVTK_USE_COCOA:BOOL=ON # Default to Cocoa, VTK/CMakeLists.txt will enable Carbon and disable cocoa if needed
-      -DVTK_USE_X:BOOL=OFF
-      #-DVTK_USE_RPATH:BOOL=ON # Unused
-      #-DDESIRED_QT_VERSION:STRING=4 # Unused
-      -DVTK_USE_GUISUPPORT:BOOL=ON
-      -DVTK_USE_QVTK_QTOPENGL:BOOL=ON
-      -DVTK_USE_QT:BOOL=ON
-      -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
-      )
-  endif()
+        -DVTK_USE_GUISUPPORT:BOOL=OFF
+        -DVTK_USE_QVTK_QTOPENGL:BOOL=OFF
+        -DVTK_USE_QT:BOOL=OFF
+        )
+  endif(BRAINSTools_USE_QT)
 
   # Disable Tk when Python wrapping is enabled
   if (Slicer_USE_PYTHONQT)

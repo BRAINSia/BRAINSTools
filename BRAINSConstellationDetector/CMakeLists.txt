@@ -17,6 +17,6 @@ if(BUILD_TESTING)
 endif(BUILD_TESTING)
 
 # Build GUI option, the option is provided in src directory
-if(BUILD_WITH_GUI OR BRAINS3_USE_QT)
+if(BUILD_WITH_GUI OR BRAINS3_USE_QT OR BRAINSTools_USE_QT)
   add_subdirectory(gui)
 endif()

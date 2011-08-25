@@ -2,7 +2,7 @@ include_directories(
   ${BRAINSABC_SOURCE_DIR}/brainseg
   ${BRAINSABC_SOURCE_DIR}/common
   ${BRAINSABC_BINARY_DIR}/brainseg
-)
+  )
 
 
 
@@ -10,13 +10,14 @@ MakeTestDriverFromSEMTool(BRAINSABC BRAINSABCTest.cxx)
 
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME BRAINSABCLongTest
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSABCTestDriver>
-    --compare DATA{${TestData_DIR}/labels.nii.gz}
-               ${CMAKE_CURRENT_BINARY_DIR}/labels.nii.gz
-    --compareIntensityTolerance 1
-    --compareRadiusTolerance 1
-    --compareNumberOfPixelsTolerance 10000
+  --compare DATA{${TestData_DIR}/labels.nii.gz}
+  ${CMAKE_CURRENT_BINARY_DIR}/labels.nii.gz
+  --compareIntensityTolerance 1
+  --compareRadiusTolerance 1
+  --compareNumberOfPixelsTolerance 10000
   BRAINSABCTest
-  --inputVolumes DATA{${TestData_DIR}/small_ISO_T1_REP0.nii.gz} --inputVolumes DATA{${TestData_DIR}/small_ISO_T2_REP0.nii.gz}
+  --inputVolumes DATA{${TestData_DIR}/small_ISO_T1_REP0.nii.gz}
+  --inputVolumes DATA{${TestData_DIR}/small_ISO_T2_REP0.nii.gz}
   --outputVolumes ${CMAKE_CURRENT_BINARY_DIR}/T1_cleaned.nii.gz,${CMAKE_CURRENT_BINARY_DIR}/T2_cleaned.nii.gz
   --outputLabels ${CMAKE_CURRENT_BINARY_DIR}/labels.nii.gz
   --outputDirtyLabels ${CMAKE_CURRENT_BINARY_DIR}/dirty_labels.nii.gz
@@ -30,13 +31,13 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME BRAINSABCLongTest
   --outputDir ${CMAKE_CURRENT_BINARY_DIR}
   --gridSize  5,3,4
   --atlasDefinition ${CMAKE_CURRENT_BINARY_DIR}/../../src/bin/Atlas/Atlas_20110607/AtlasPVDefinition.xml
-)
+  )
 set_tests_properties(BRAINSABCLongTest PROPERTIES TIMEOUT 6500)
 
 if(0) # This should be restored after fixing.
-add_executable(BlendImageFilterTest BlendImageFilterTest.cxx)
-target_link_libraries(BlendImageFilterTest ${ITK_LIBRARIES})
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME BlendImageFilterTest COMMAND ${LAUNCH_EXE}  $<TARGET_FILE:BlendImageFilterTest> )
+  add_executable(BlendImageFilterTest BlendImageFilterTest.cxx)
+  target_link_libraries(BlendImageFilterTest ${ITK_LIBRARIES})
+  ExternalData_add_test( ${PROJECT_NAME}FetchData NAME BlendImageFilterTest COMMAND ${LAUNCH_EXE}  $<TARGET_FILE:BlendImageFilterTest> )
 endif()
 
 ExternalData_Add_Target( ${PROJECT_NAME}FetchData )  # Name of data management target

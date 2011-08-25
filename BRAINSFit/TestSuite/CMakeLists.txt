@@ -24,7 +24,8 @@ configure_file(${BRAINSFit_SOURCE_DIR}/CTestCustom.ctest ${BRAINSFit_BINARY_DIR}
 #set(BRAINSCommonLib_DATA_DIRS "${PROJECT_SOURCE_DIR}/../BRAINSCommonLi${TestData_DIR}")
 
 set(BRAINSFitTestName BRAINSFitTest_AffineRotationMasks)
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
   --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 7
@@ -52,7 +53,8 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAN
 )
 
 set(BRAINSFitTestName BRAINSFitTest_AffineRotationNoMasks)
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
   --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 7
@@ -76,7 +78,8 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAN
 )
 
 set(BRAINSFitTestName BRAINSFitTest_AffineScaleMasks)
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
   --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 9
@@ -103,7 +106,8 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAN
 )
 
 set(BRAINSFitTestName BRAINSFitTest_AffineScaleNoMasks)
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
   --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 9
@@ -127,7 +131,8 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAN
 )
 
 set(BRAINSFitTestName BRAINSFitTest_AffineTranslationMasks)
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
   --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 7
@@ -154,7 +159,8 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAN
 )
 
 set(BRAINSFitTestName BRAINSFitTest_AffineTranslationNoMasks)
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
   --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 7
@@ -179,7 +185,8 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAN
 
 
 set(BRAINSFitTestName BRAINSFitTest_BSplineAnteScaleRotationRescaleHeadMasks)
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
   --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 9
@@ -206,7 +213,8 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAN
 )
 
 set(BRAINSFitTestName BRAINSFitTest_BSplineOnlyRescaleHeadMasks)
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
   --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 9
@@ -237,7 +245,8 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAN
 ## NOTE: 7.3 above was computed explicitly through testing.
 
 set(BRAINSFitTestName BRAINSFitTest_BSplineBSplineRescaleHeadMasks)
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
   --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 9
@@ -264,7 +273,8 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAN
 )
 
 set(BRAINSFitTestName BRAINSFitTest_BSplineScaleRotationRescaleHeadMasks)
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
   --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 9
@@ -292,7 +302,8 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAN
 
 
 set(BRAINSFitTestName BRAINSFitTest_BSplineScaleRotationHistogramHeadMasks)
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
   --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 9
@@ -322,7 +333,8 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAN
 
 
 set(BRAINSFitTestName BRAINSFitTest_RigidAnisotropicMasks)
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
   --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
 ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 7
@@ -342,7 +354,8 @@ ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
   )
 
 set(BRAINSFitTestName BRAINSFitTest_RigidMedianRotationNoMasks)
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
   --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 7
@@ -367,7 +380,8 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAN
 )
 
 set(BRAINSFitTestName BRAINSFitTest_RigidRotGeomNoMasks)
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
   --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 7
@@ -391,7 +405,8 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAN
 )
 
 set(BRAINSFitTestName BRAINSFitTest_RigidRotaRotaRotNoMasks)
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
   --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 9
@@ -415,7 +430,8 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAN
 )
 
 set(BRAINSFitTestName BRAINSFitTest_RigidRotationHeadMasks)
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
   --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 7
@@ -440,7 +456,8 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAN
 )
 
 set(BRAINSFitTestName BRAINSFitTest_RigidRotationMasks)
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
   --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 7
@@ -467,7 +484,8 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAN
 )
 
 set(BRAINSFitTestName BRAINSFitTest_RigidRotationNoMasks)
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
   --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 7
@@ -491,7 +509,8 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAN
   --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.mat
 )
 set(BRAINSFitTestName BRAINSFitTest_RigidRotationNoMasksRiginInPlaceInterp)
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
   --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 7
@@ -517,7 +536,8 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAN
 
 
 set(BRAINSFitTestName BRAINSFitTest_ScaleRotationRescaleHeadMasksNoInit)
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
   --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 9
@@ -542,7 +562,8 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAN
 )
 
 set(BRAINSFitTestName BRAINSFitTest_ScaleSkewVersorRotationMasks)
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
   --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 11
@@ -569,7 +590,8 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAN
 )
 
 set(BRAINSFitTestName BRAINSFitTest_ScaleSkewVersorRotationNoMasks)
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
   --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 11
@@ -593,7 +615,8 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAN
 )
 
 set(BRAINSFitTestName BRAINSFitTest_ScaleSkewVersorScaleMasks)
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
   --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 9
@@ -620,7 +643,8 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAN
 )
 
 set(BRAINSFitTestName BRAINSFitTest_ScaleSkewVersorScaleNoMasks)
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
   --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 9
@@ -644,7 +668,8 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAN
 )
 
 set(BRAINSFitTestName BRAINSFitTest_ScaleTranslationRescaleHeadMasksNoInit)
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
   --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 7
@@ -670,7 +695,8 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAN
 )
 
 set(BRAINSFitTestName BRAINSFitTest_ScaleTranslationRescaleHeadMasksInit)
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
   --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 7
@@ -696,7 +722,8 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAN
 )
 
 set(BRAINSFitTestName BRAINSFitTest_ScaleVersorRotationMasks)
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
   --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 11
@@ -723,7 +750,8 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAN
 )
 
 set(BRAINSFitTestName BRAINSFitTest_ScaleVersorRotationNoMasks)
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
   --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 11
@@ -747,7 +775,8 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAN
 )
 
 set(BRAINSFitTestName BRAINSFitTest_ScaleVersorScaleMasks)
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
   --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 9
@@ -774,7 +803,8 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAN
 )
 
 set(BRAINSFitTestName BRAINSFitTest_ScaleVersorScaleNoMasks)
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
   --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 9
@@ -798,7 +828,8 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAN
 )
 
 if(Test_SignedDistanceData)
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME BRAINSFitTest_SignedDistanceData COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME BRAINSFitTest_SignedDistanceData
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
   --compare DATA{${TestData_DIR}/TEST_output.nii.gz} ${CMAKE_CURRENT_BINARY_DIR}/TEST_output.nii.gz
   BRAINSFitTest
   --costMetric MMI
@@ -815,7 +846,8 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME BRAINSFitTest_SignedDistanc
 endif(Test_SignedDistanceData)
 
 set(BRAINSFitTestName BRAINSFitTest_BSplineScaleRotationHeadMasksUShort)
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
   --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 2505
@@ -843,7 +875,8 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAN
 )
 
 set(BRAINSFitTestName BRAINSFitTest_BSplineScaleRotationHistogramHeadMasksUShort)
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
   --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 9
@@ -872,7 +905,8 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAN
 )
 
 set(BRAINSFitTestName BRAINSFitTest_NCMetricBrainToItself)
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
   --compare DATA{${TestData_DIR}/test.nii.gz}
             ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 9
@@ -895,7 +929,8 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAN
 )
 
 set(BRAINSFitTestName BRAINSFitTest_NCAffineRotationMasks)
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
   --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 7
@@ -923,7 +958,8 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAN
 )
 
 set(BRAINSFitTestName BRAINSFitTest_NCScaleSkewVersorRotationMasks)
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
   --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 11
@@ -951,7 +987,8 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAN
 
 
 set(BRAINSFitTestName BRAINSFitTest_MSEMetricBrainToItself)
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
   --compare DATA{${TestData_DIR}/test.nii.gz}
             ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 9
@@ -974,7 +1011,8 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAN
 )
 
 set(BRAINSFitTestName BRAINSFitTest_MSEAffineRotationMasks)
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
   --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 7
@@ -1002,7 +1040,8 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAN
 )
 
 set(BRAINSFitTestName BRAINSFitTest_MSEScaleSkewVersorRotationMasks)
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
   --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 11
@@ -1029,7 +1068,8 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAN
 )
 
 set(BRAINSFitTestName BRAINSFitTest_MCMetricBrainToItself)
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
   --compare DATA{${TestData_DIR}/test.nii.gz}
             ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 9
@@ -1052,7 +1092,8 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAN
 )
 
 set(BRAINSFitTestName BRAINSFitTest_MCMetricMaskBrainToItself)
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
   --compare DATA{${TestData_DIR}/testMask.nii.gz}
             ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.testMask.nii.gz
   --compareIntensityTolerance 9
@@ -1075,7 +1116,8 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAN
 )
 
 set(BRAINSFitTestName BRAINSFitTest_MCAffineRotationMasks)
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
   --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 7
@@ -1103,7 +1145,8 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAN
 )
 
 set(BRAINSFitTestName BRAINSFitTest_MCScaleSkewVersorRotationMasks)
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
   --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 11
@@ -1166,7 +1209,8 @@ if(RUN_EXTRA_METRIC_TESTS)
   # to converge even when given many iterations (which it shouldn't need, since
   # it's registering the same image to itself).
   set(BRAINSFitTestName BRAINSFitTest_KSMetricBrainToItself)
-  ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+  ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
+    COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
     --compare DATA{${TestData_DIR}/test.nii.gz}
               ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
     --compareIntensityTolerance 9
@@ -1189,7 +1233,8 @@ if(RUN_EXTRA_METRIC_TESTS)
   )
 
   set(BRAINSFitTestName BRAINSFitTest_KSMetricBrainMaskToItself)
-  ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+  ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
+    COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
     --compare DATA{${TestData_DIR}/testMask.nii.gz}
               ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.testMask.nii.gz
     --compareIntensityTolerance 9
@@ -1214,7 +1259,8 @@ if(RUN_EXTRA_METRIC_TESTS)
 
 
   set(BRAINSFitTestName BRAINSFitTest_KSAffineRotationMasks)
-  ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+  ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
+    COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
     --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
               ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
     --compareIntensityTolerance 7
@@ -1242,7 +1288,8 @@ if(RUN_EXTRA_METRIC_TESTS)
   )
 
   set(BRAINSFitTestName BRAINSFitTest_KSScaleSkewVersorRotationMasks)
-  ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+  ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
+    COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
     --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
               ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
     --compareIntensityTolerance 11
@@ -1270,7 +1317,8 @@ if(RUN_EXTRA_METRIC_TESTS)
 
   # Fails to converge when registering a brain to itself.
   set(BRAINSFitTestName BRAINSFitTest_MRSDMetricBrainToItself)
-  ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+  ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
+    COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
     --compare DATA{${TestData_DIR}/test.nii.gz}
               ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
     --compareIntensityTolerance 9
@@ -1294,7 +1342,8 @@ if(RUN_EXTRA_METRIC_TESTS)
 
   # Segfault when running this test
   set(BRAINSFitTestName BRAINSFitTest_MIHMetricBrainToItself)
-  ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+  ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
+    COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
     --compare DATA{${TestData_DIR}/test.nii.gz}
               ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
     --compareIntensityTolerance 9
@@ -1318,7 +1367,8 @@ if(RUN_EXTRA_METRIC_TESTS)
 
   # Fails to converge when registering a brain to itself.
   set(BRAINSFitTestName BRAINSFitTest_GDMetricBrainToItself)
-  ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+  ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
+    COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
     --compare DATA{${TestData_DIR}/test.nii.gz}
               ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
     --compareIntensityTolerance 9
@@ -1342,7 +1392,8 @@ if(RUN_EXTRA_METRIC_TESTS)
 
   # Segfault when running this test
   set(BRAINSFitTestName BRAINSFitTest_CCHMetricBrainToItself)
-  ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+  ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
+    COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
     --compare DATA{${TestData_DIR}/test.nii.gz}
               ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
     --compareIntensityTolerance 9
@@ -1366,7 +1417,8 @@ if(RUN_EXTRA_METRIC_TESTS)
 
   # Segfault when running this test
   set(BRAINSFitTestName BRAINSFitTest_MSEHMetricBrainToItself)
-  ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+  ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
+    COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
     --compare DATA{${TestData_DIR}/test.nii.gz}
               ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
     --compareIntensityTolerance 9
@@ -1390,7 +1442,8 @@ if(RUN_EXTRA_METRIC_TESTS)
 
   # Segfault when running this test
   set(BRAINSFitTestName BRAINSFitTest_NMIHMetricBrainToItself)
-  ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+  ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
+    COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
     --compare DATA{${TestData_DIR}/test.nii.gz}
               ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
     --compareIntensityTolerance 9

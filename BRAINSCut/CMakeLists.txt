@@ -119,15 +119,15 @@ configure_file( ${InputNetConfigurationForTesting} ${OutputNetConfigurationForTe
 
 ##
 ## BRAINSCut Test Run
-add_test( GenerateProbabilityTest ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/BRAINSCut
+add_test( GenerateProbabilityTest $<TARGET_FILE:BRAINSCut>
                                   --generateProbability --netConfiguration ${OutputNetConfigurationForTesting})
-add_test( CreateVectorsTest ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/BRAINSCut
+add_test( CreateVectorsTest $<TARGET_FILE:BRAINSCut>
                                   --createVectors --netConfiguration ${OutputNetConfigurationForTesting})
-add_test( TrainModelTest ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/BRAINSCut
+add_test( TrainModelTest $<TARGET_FILE:BRAINSCut>
                                   --trainModel --netConfiguration ${OutputNetConfigurationForTesting})
-add_test( ApplyModelTest ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/BRAINSCut
+add_test( ApplyModelTest $<TARGET_FILE:BRAINSCut>
                                   --applyModel --netConfiguration ${OutputNetConfigurationForTesting})
-add_test( AllInOneTest ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/BRAINSCut
+add_test( AllInOneTest $<TARGET_FILE:BRAINSCut>
                                   --generateProbability  --createVectors  --trainModel  --applyModel
                                   --netConfiguration ${OutputNetConfigurationForTesting})
 #endif()

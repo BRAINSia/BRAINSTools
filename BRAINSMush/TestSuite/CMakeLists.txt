@@ -5,7 +5,8 @@ configure_file(${BRAINSMush_SOURCE_DIR}/CTestCustom.ctest ${BRAINSMush_BINARY_DI
 
 ##  Test goes here:
 set(BRAINSMushTestName BRAINSMushTest_MaskGiven)
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSMushTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSMushTestDriver>
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSMushTestName}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSMushTestDriver>
   --compare DATA{${TestData_DIR}/${BRAINSMushTestName}_MushResult_BrainMask.nii.gz}
             ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSMushTestName}_MushTest_BrainMask.nii.gz
   --compareIntensityTolerance 0
@@ -21,7 +22,8 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSMushTestName} COMMA
 )
 
 set(BRAINSMushTestName BRAINSMushTest_NoMaskGiven)
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSMushTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSMushTestDriver>
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSMushTestName}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSMushTestDriver>
   --compare DATA{${TestData_DIR}/${BRAINSMushTestName}_MushResult_BrainMask.nii.gz}
             ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSMushTestName}_MushTest_BrainMask.nii.gz
   --compareIntensityTolerance 0

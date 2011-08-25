@@ -97,6 +97,11 @@
       <element>ResampleInPlace</element>
       <element>BSpline</element>
       <element>WindowedSinc</element>
+      <element>Hamming</element>
+      <element>Cosine</element>
+      <element>Welch</element>
+      <element>Lanczos</element>
+      <element>Blackman</element>
     </string-enumeration>
   </parameters>
 

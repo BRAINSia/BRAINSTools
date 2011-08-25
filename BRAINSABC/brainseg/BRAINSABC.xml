@@ -138,6 +138,11 @@
       <element>Linear</element>
       <element>ResampleInPlace</element>
       <default>BSpline</default>
+      <element>Hamming</element>
+      <element>Cosine</element>
+      <element>Welch</element>
+      <element>Lanczos</element>
+      <element>Blackman</element>
     </string-enumeration>
     <integer>
       <name>maxIterations</name>

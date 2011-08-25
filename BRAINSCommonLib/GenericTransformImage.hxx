@@ -78,6 +78,11 @@ Pointer
 GetInterpolatorFromString(const std::string interpolationMode)
 {
   typedef typename itk::NumericTraits<typename InputImageType::PixelType>::RealType TInterpolatorPrecisionType;
+  typedef typename itk::ConstantBoundaryCondition<InputImageType>                   BoundaryConditionType;
+  //
+  // WindowRadius set to 3 to match default for Slicer
+  static const unsigned int SlicerWindowedSincWindowRadius = 3;
+
   if( interpolationMode == "NearestNeighbor" )
     {
     typedef typename itk::NearestNeighborInterpolateImageFunction<InputImageType, TInterpolatorPrecisionType>
@@ -98,17 +103,87 @@ GetInterpolatorFromString(const std::string interpolationMode)
     }
   else if( interpolationMode == "WindowedSinc" )
     {
-    typedef typename itk::ConstantBoundaryCondition<InputImageType>
-      BoundaryConditionType;
     static const unsigned int WindowedSincHammingWindowRadius = 5;
-    typedef typename itk::Function::HammingWindowFunction<
-        WindowedSincHammingWindowRadius, TInterpolatorPrecisionType, TInterpolatorPrecisionType> WindowFunctionType;
-    typedef typename itk::WindowedSincInterpolateImageFunction<
-        InputImageType,
-        WindowedSincHammingWindowRadius,
-        WindowFunctionType,
-        BoundaryConditionType,
-        TInterpolatorPrecisionType>   InterpolatorType;
+    typedef typename itk::Function::HammingWindowFunction<WindowedSincHammingWindowRadius,
+                                                          TInterpolatorPrecisionType,
+                                                          TInterpolatorPrecisionType>
+      WindowFunctionType;
+    typedef typename itk::WindowedSincInterpolateImageFunction<InputImageType,
+                                                               WindowedSincHammingWindowRadius,
+                                                               WindowFunctionType,
+                                                               BoundaryConditionType,
+                                                               TInterpolatorPrecisionType>
+      InterpolatorType;
+    return ( InterpolatorType::New() ).GetPointer();
+    }
+  else if( interpolationMode == "Hamming" )
+    {
+    typedef typename itk::Function::HammingWindowFunction<SlicerWindowedSincWindowRadius,
+                                                          TInterpolatorPrecisionType,
+                                                          TInterpolatorPrecisionType>
+      WindowFunctionType;
+    typedef typename itk::WindowedSincInterpolateImageFunction<InputImageType,
+                                                               SlicerWindowedSincWindowRadius,
+                                                               WindowFunctionType,
+                                                               BoundaryConditionType,
+                                                               TInterpolatorPrecisionType>
+      InterpolatorType;
+    return ( InterpolatorType::New() ).GetPointer();
+    }
+  else if( interpolationMode == "Cosine" )
+    {
+    typedef typename itk::Function::CosineWindowFunction<SlicerWindowedSincWindowRadius,
+                                                         TInterpolatorPrecisionType,
+                                                         TInterpolatorPrecisionType>
+      WindowFunctionType;
+    typedef typename itk::WindowedSincInterpolateImageFunction<InputImageType,
+                                                               SlicerWindowedSincWindowRadius,
+                                                               WindowFunctionType,
+                                                               BoundaryConditionType,
+                                                               TInterpolatorPrecisionType>
+      InterpolatorType;
+    return ( InterpolatorType::New() ).GetPointer();
+    }
+  else if( interpolationMode == "Welch" )
+    {
+    typedef typename itk::Function::WelchWindowFunction<SlicerWindowedSincWindowRadius,
+                                                        TInterpolatorPrecisionType,
+                                                        TInterpolatorPrecisionType>
+      WindowFunctionType;
+    typedef typename itk::WindowedSincInterpolateImageFunction<InputImageType,
+                                                               SlicerWindowedSincWindowRadius,
+                                                               WindowFunctionType,
+                                                               BoundaryConditionType,
+                                                               TInterpolatorPrecisionType>
+      InterpolatorType;
+    return ( InterpolatorType::New() ).GetPointer();
+    }
+  else if( interpolationMode == "Lanczos" )
+    {
+    typedef typename itk::Function::LanczosWindowFunction<SlicerWindowedSincWindowRadius,
+                                                          TInterpolatorPrecisionType,
+                                                          TInterpolatorPrecisionType>
+      WindowFunctionType;
+    typedef typename itk::WindowedSincInterpolateImageFunction<InputImageType,
+                                                               SlicerWindowedSincWindowRadius,
+                                                               WindowFunctionType,
+                                                               BoundaryConditionType,
+                                                               TInterpolatorPrecisionType>
+      InterpolatorType;
+    return ( InterpolatorType::New() ).GetPointer();
+    }
+  else if( interpolationMode == "Blackman" )
+    {
+    typedef typename itk::Function::BlackmanWindowFunction<SlicerWindowedSincWindowRadius,
+                                                           TInterpolatorPrecisionType,
+                                                           TInterpolatorPrecisionType>
+      WindowFunctionType;
+    typedef typename itk::WindowedSincInterpolateImageFunction<InputImageType,
+                                                               SlicerWindowedSincWindowRadius,
+                                                               WindowFunctionType,
+                                                               BoundaryConditionType,
+                                                               TInterpolatorPrecisionType>
+      InterpolatorType;
     return ( InterpolatorType::New() ).GetPointer();
     }
   else

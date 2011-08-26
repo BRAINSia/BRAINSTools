@@ -33,7 +33,7 @@
 #include "itkIO.h"
 #if defined( USE_DEBUG_IMAGE_VIEWER )
 #include "DebugImageViewerClient.h"
-BRAINSDemonWarpCommonLib_EXPORT extern DebugImageViewerClient DebugImageDisplaySender;
+extern DebugImageViewerClient DebugImageDisplaySender;
 #endif
 
 #include "VcommandIterationupdate.h"
@@ -43,39 +43,39 @@ BRAINSDemonWarpCommonLib_EXPORT extern DebugImageViewerClient DebugImageDisplayS
 #include "ReadMask.h"
 #include "itkImageMaskSpatialObject.h"
 
-BRAINSDemonWarpCommonLib_EXPORT extern void PrintDataTypeStrings(void);
+extern void PrintDataTypeStrings(void);
 
-BRAINSDemonWarpCommonLib_EXPORT extern int CompareNoCase(const std::string & s, const std::string & s2);
+extern int CompareNoCase(const std::string & s, const std::string & s2);
 
-BRAINSDemonWarpCommonLib_EXPORT extern int BRAINSResample(int argc, char *argv[]);
+extern int BRAINSResample(int argc, char *argv[]);
 
-BRAINSDemonWarpCommonLib_EXPORT extern void ProcessOutputType_uchar(struct BRAINSDemonWarpAppParameters & command);
+extern void ProcessOutputType_uchar(struct BRAINSDemonWarpAppParameters & command);
 
-BRAINSDemonWarpCommonLib_EXPORT extern void ProcessOutputType_short(struct BRAINSDemonWarpAppParameters & command);
+extern void ProcessOutputType_short(struct BRAINSDemonWarpAppParameters & command);
 
-BRAINSDemonWarpCommonLib_EXPORT extern void ProcessOutputType_ushort(struct BRAINSDemonWarpAppParameters & command);
+extern void ProcessOutputType_ushort(struct BRAINSDemonWarpAppParameters & command);
 
-BRAINSDemonWarpCommonLib_EXPORT extern void ProcessOutputType_int(struct BRAINSDemonWarpAppParameters & command);
+extern void ProcessOutputType_int(struct BRAINSDemonWarpAppParameters & command);
 
-BRAINSDemonWarpCommonLib_EXPORT extern void ProcessOutputType_uint(struct BRAINSDemonWarpAppParameters & command);
+extern void ProcessOutputType_uint(struct BRAINSDemonWarpAppParameters & command);
 
-BRAINSDemonWarpCommonLib_EXPORT extern void ProcessOutputType_float(struct BRAINSDemonWarpAppParameters & command);
+extern void ProcessOutputType_float(struct BRAINSDemonWarpAppParameters & command);
 
-BRAINSDemonWarpCommonLib_EXPORT extern void ProcessOutputType_double(struct BRAINSDemonWarpAppParameters & command);
+extern void ProcessOutputType_double(struct BRAINSDemonWarpAppParameters & command);
 
-BRAINSDemonWarpCommonLib_EXPORT extern void VectorProcessOutputType_uchar(struct BRAINSDemonWarpAppParameters & command);
+extern void VectorProcessOutputType_uchar(struct BRAINSDemonWarpAppParameters & command);
 
-BRAINSDemonWarpCommonLib_EXPORT extern void VectorProcessOutputType_short(struct BRAINSDemonWarpAppParameters & command);
+extern void VectorProcessOutputType_short(struct BRAINSDemonWarpAppParameters & command);
 
-BRAINSDemonWarpCommonLib_EXPORT extern void VectorProcessOutputType_ushort(struct BRAINSDemonWarpAppParameters & command);
+extern void VectorProcessOutputType_ushort(struct BRAINSDemonWarpAppParameters & command);
 
-BRAINSDemonWarpCommonLib_EXPORT extern void VectorProcessOutputType_int(struct BRAINSDemonWarpAppParameters & command);
+extern void VectorProcessOutputType_int(struct BRAINSDemonWarpAppParameters & command);
 
-BRAINSDemonWarpCommonLib_EXPORT extern void VectorProcessOutputType_uint(struct BRAINSDemonWarpAppParameters & command);
+extern void VectorProcessOutputType_uint(struct BRAINSDemonWarpAppParameters & command);
 
-BRAINSDemonWarpCommonLib_EXPORT extern void VectorProcessOutputType_float(struct BRAINSDemonWarpAppParameters & command);
+extern void VectorProcessOutputType_float(struct BRAINSDemonWarpAppParameters & command);
 
-BRAINSDemonWarpCommonLib_EXPORT extern void VectorProcessOutputType_double(struct BRAINSDemonWarpAppParameters & command);
+extern void VectorProcessOutputType_double(struct BRAINSDemonWarpAppParameters & command);
 
 struct BRAINSDemonWarpAppParameters
   {

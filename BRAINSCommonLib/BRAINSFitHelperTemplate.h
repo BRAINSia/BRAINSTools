@@ -53,13 +53,13 @@ namespace itk
 {
 /** Method for verifying that the ordering of the transformTypes is consistent
   * with converting routines. */
-BRAINSCommonLib_EXPORT extern void ValidateTransformRankOrdering(const std::vector<std::string> & transformType);
+extern void ValidateTransformRankOrdering(const std::vector<std::string> & transformType);
 }
 
 namespace itk
 {
 template <class FixedImageType, class MovingImageType>
-class BRAINSCommonLib_EXPORT BRAINSFitHelperTemplate : public Object
+class BRAINSFitHelperTemplate : public Object
 {
 public:
   /** Standard class typedefs. */

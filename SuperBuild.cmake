@@ -220,11 +220,13 @@ ExternalProject_Add(${proj}
     -DBRAINSTools_SUPERBUILD:BOOL=OFF
     -DADDITIONAL_CXX_FLAGS:STRING=${ADDITIONAL_CXX_FLAGS}
     -DGIT_EXECUTABLE:FILEPATH=${GIT_EXECUTABLE}
-    #################### Propogate the Slicer Environment
+    #################### Propogate the SEM Environment
     ## -- This could be some other variable to indicate a slicer build
-    -DINTEGRATE_WITH_SLICER:BOOL=${INTEGRATE_WITH_SLICER}
-    -DSlicer_DIR:PATH=${Slicer_DIR}
-    #################### Propogate the Slicer Environment
+    -DSEM_PLUGINS_BIN_DIR:PATH=${CMAKE_CURRENT_BINARY_DIR}/bin
+    -DSEM_PLUGINS_LIB_DIR:PATH=${CMAKE_CURRENT_BINARY_DIR}/lib
+    -DSEM_INSTALL_PLUGINS_BIN_DIR:STRING=/bin
+    -DSEM_INSTALL_PLUGINS_LIB_DIR:STRING=/lib
+    #################### Propogate the SEM Environment
     # ITK
     -DITK_DIR:PATH=${ITK_DIR}
     # VTK

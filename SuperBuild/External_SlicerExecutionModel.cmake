@@ -14,8 +14,10 @@ if(DEFINED SlicerExecutionModel_DIR AND NOT EXISTS ${SlicerExecutionModel_DIR})
   message(FATAL_ERROR "SlicerExecutionModel_DIR variable is defined but corresponds to non-existing directory")
 endif()
 
-# Set dependency list
-set(SlicerExecutionModel_DEPENDENCIES ${ITK_EXTERNAL_NAME})
+
+if(NOT SlicerExecutionModel_DEPENDENCIES)
+  set(SlicerExecutionModel_DEPENDENCIES ${ITK_EXTERNAL_NAME})
+endif(NOT SlicerExecutionModel_DEPENDENCIES)
 
 # Include dependent projects if any
 # SlicerMacroCheckExternalProjectDependency(SlicerExecutionModel)

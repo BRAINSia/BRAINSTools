@@ -18,7 +18,7 @@ cmake_policy(VERSION 2.8)
 #                   Phase II: Build the BRAINSTools, referencing the support
 #                             packages built in Phase I.
 #-----------------------------------------------------------------------------
-option(BRAINSTools_SUPERBUILD "Build Slicer and the projects it depends on via SuperBuild.cmake." ON)
+option(BRAINSTools_SUPERBUILD "Build BRAINSTools and the projects it depends on via SuperBuild.cmake." ON)
 mark_as_advanced(BRAINSTools_SUPERBUILD)
 
 option(BRAINSTools_USE_QT "Find and use Qt with VTK to build GUI Tools" OFF)

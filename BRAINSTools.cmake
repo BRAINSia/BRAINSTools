@@ -178,6 +178,13 @@ endif()
 if(USE_BRAINSInitializedControlPoints)
   add_subdirectory(BRAINSInitializedControlPoints)
 endif()
-#  BuildExtPackage(BRAINSCut "BRAINSCommonLib;${OpenCV_DEPEND}" )
+
+#-----------------------------------------------------------------------------
+# BRAINSTransformConvert
+#-----------------------------------------------------------------------------
+if(USE_BRAINSTransformConvert)
+  add_subdirectory(BRAINSTransformConvert)
+endif()
+
 endif(ITK_VERSION_MAJOR GREATER 3)
 

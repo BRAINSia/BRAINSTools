@@ -1,0 +1,3 @@
+
+MakeTestDriverFromSEMTool(BRAINSTransformConvert BRAINSTransformConvertTest.cxx)
+

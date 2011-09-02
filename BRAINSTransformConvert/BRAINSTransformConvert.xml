@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>Converters</category>
+  <title>BRAINS Transform Convert</title>
+  <description>Convert ITK transforms to higher order transforms</description>
+  <version>1.0</version>
+  <documentation-url></documentation-url>
+  <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt </license>
+  <contributor>Hans Johnson,Kent Williams</contributor>
+  <acknowledgements>
+  </acknowledgements>
+
+  <parameters>
+    <label>IO</label>
+    <description>Input/output parameters</description>
+    <transform>
+      <name>inputTransform</name>
+      <label>Transform File Name To Convert</label>
+      <description></description>
+      <longflag>--inputTransform</longflag>
+    </transform>
+    <transform>
+      <name>outputTransform</name>
+      <label>Transform File Name To Save ConvertedTransform</label>
+      <description></description>
+      <longflag>--outputTransform</longflag>
+    </transform>
+    <string-enumeration>
+      <name>outputTransformType</name>
+      <longflag>--outputTransform</longflag>
+      <description>The target transformation type. Must be conversion-compatible with the input transform type</description>
+      <default>Affine</default>
+      <element>Affine</element>
+      <element>VersorRigid</element>
+      <element>ScaleVersor</element>
+      <element>ScaleSkewVersor</element>
+      <element>BSPlineDeformable</element>
+      <element>DisplacementField</element>
+    </string-enumeration>
+
+    <image>
+      <name>referenceVolume</name>
+      <label>Reference image</label>
+
+      <longflag>--referenceVolume</longflag>
+    </image>
+
+    <image>
+      <name>displacementVolume</name>
+      <label>Output displacement field</label>
+      <longflag>--displacementVolume</longflag>
+    </image>
+
+  </parameters>
+
+</executable>

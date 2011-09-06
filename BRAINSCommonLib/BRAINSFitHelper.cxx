@@ -553,18 +553,6 @@ BRAINSFitHelper::PrintCommandLine(const bool dumpTempVolumes, const std::string 
   oss << "--projectedGradientTolerance " << this->m_ProjectedGradientTolerance << " \\" << std::endl;
   oss << "--costFunctionConvergenceFactor " << this->m_CostFunctionConvergenceFactor << " \\" << std::endl;
   oss << "--backgroundFillValue " << this->m_BackgroundFillValue  << "  \\" << std::endl;
-  if( this->m_InitializeTransformMode == "useGeometryAlign" )
-    {
-    oss << "--useGeometryAlign \\" << std::endl;
-    }
-  else if( this->m_InitializeTransformMode == "useMomentsAlign" )
-    {
-    oss << "--useMomentsAlign \\" << std::endl;
-    }
-  else if( this->m_InitializeTransformMode == "useCenterOfHeadAlign" )
-    {
-    oss << "--useCenterOfHeadAlign \\" << std::endl;
-    }
   oss << "--initializeTransformMode " << this->m_InitializeTransformMode  << "  \\" << std::endl;
   oss << "--maskInferiorCutOffFromCenter " << this->m_MaskInferiorCutOffFromCenter  << "  \\" << std::endl;
   oss << "--splineGridSize ";

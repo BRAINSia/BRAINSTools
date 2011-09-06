@@ -1,10 +1,6 @@
 /*=========================================================================
  *
  *  Program:   Insight Segmentation & Registration Toolkit
- *  Module:    $RCSfile: itkScalarImagePortionToHistogramGenerator.hxx,v $
- *  Language:  C++
- *  Date:      $Date: 2009-08-17 18:29:01 $
- *  Version:   $Revision: 1.4 $
  *
  *  Copyright (c) Insight Software Consortium. All rights reserved.
  *  See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.

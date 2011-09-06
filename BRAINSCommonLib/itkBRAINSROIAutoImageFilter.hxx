@@ -1,11 +1,6 @@
 /*=========================================================================
  *
  *  Program:   Insight Segmentation & Registration Toolkit
- *  Module:    $RCSfile: itkBRAINSROIAutoImageFilter.hxx,v $
- *  Language:  C++
- *  Date:      $Date: 2008-10-16 16:45:09 $
- *  Version:   $Revision: 1.13 $
- *
  *  Copyright (c) Insight Software Consortium. All rights reserved.
  *  See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
  *

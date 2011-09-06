@@ -90,6 +90,16 @@
             </description>
             <channel>output</channel>
         </file>
+        <file fileExtensions=".wts">
+            <name>outputLandmarkWeights</name>
+            <label>Output Landmark Weights</label>
+            <longflag>outputLandmarkWeights</longflag>
+            <default></default>
+            <description>
+              The filename for the list of the landmarks and their correspond weight in (.wts) format.
+            </description>
+            <channel>output</channel>
+        </file>
         <file fileExtensions=".fcsv">
             <name>inputLandmarksPaired</name>
             <label>Input Landmarks Paired</label>

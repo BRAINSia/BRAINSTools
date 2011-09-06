@@ -20,7 +20,7 @@ include_directories(
   ${CMAKE_CURRENT_BINARY_DIR}
   )
 
-set(BRAINSCommonLib_SRCS GenericTransformImage.cxx BRAINSFitHelper.cxx Slicer3LandmarkIO.cxx)
+set(BRAINSCommonLib_SRCS GenericTransformImage.cxx BRAINSFitHelper.cxx Slicer3LandmarkWeightIO.cxx Slicer3LandmarkIO.cxx)
 
 ## Always build BRAINSCommonLib as static
 add_library(BRAINSCommonLib STATIC ${BRAINSCommonLib_SRCS})

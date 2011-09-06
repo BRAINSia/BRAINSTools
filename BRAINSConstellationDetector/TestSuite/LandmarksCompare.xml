@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>
+  TestCompare
+  </category>
+  <title>
+  landmark file comparison
+  </title>
+  <description>
+	  Compares two .fcsv or .wts text files and verifies that they are identicle.  Used for testing landmarks files.
+  </description>
+  <version> </version>
+  <documentation-url> </documentation-url>
+  <license> </license>
+  <contributor>Ali Ghayoor</contributor>
+<acknowledgements>
+</acknowledgements>
+
+  <parameters>
+    <label>IO</label>
+    <description>Input/output parameters</description>
+
+    <file>
+      <name>inputLandmarkFile1</name>
+      <longflag>--inputLandmarkFile1</longflag> 
+      <label>First input file</label>
+      <channel>input</channel>
+      <description>First input landmark file (.fcsv or .wts)</description>
+    </file>
+
+    <file>
+      <name>inputLandmarkFile2</name>
+      <longflag>--inputLandmarkFile2</longflag> 
+      <label>Second input file</label>
+      <channel>input</channel>
+      <description>Second input landmark file (.fcsv or .wts)</description>
+    </file>
+
+  </parameters>
+
+</executable>

@@ -1,7 +1,5 @@
 /*
- * Author: Han J. Johnson, Wei Lu
- * at Psychiatry Imaging Lab,
- * University of Iowa Health Care 2010
+ * Author: Hans J. Johnson
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:

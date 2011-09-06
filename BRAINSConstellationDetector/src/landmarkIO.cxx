@@ -697,6 +697,7 @@ WriteMRMLFile(std::string outputMRML,
   myfile.close();
 }
 
+/*
 void
 loadLLSModelMat(std::string llsModel,
                 std::string processingList,
@@ -781,7 +782,7 @@ loadLLSModelMat(std::string llsModel,
     myMatlabLLSModelFile.close();
     }
 }
-
+*/
 void
 loadLLSModel(std::string llsModelFilename,
              std::map<std::string, std::vector<double> > & llsMeans,

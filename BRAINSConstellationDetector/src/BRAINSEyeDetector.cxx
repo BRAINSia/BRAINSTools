@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
     }
 
   ReaderType::Pointer reader = ReaderType::New();
-  reader->SetFileName(argv[1]);
+  reader->SetFileName(inputVolume);
   try
     {
     reader->Update();
@@ -72,7 +72,7 @@ int main(int argc, char *argv[])
   houghEyeDetector->SetInput( reader->GetOutput() );
   houghEyeDetector->SetHoughEyeDetectorMode(1); // For T1 images
   houghEyeDetector->SetCenterOfHeadMass(centerOfHeadMass);
-  houghEyeDetector->SetResultsDir(argv[3]);            // debug image write dir
+  houghEyeDetector->SetResultsDir(debugDir);           // debug image write dir
   houghEyeDetector->SetWritedebuggingImagesLevel(2);   // write ROI and
                                                        // accumulator images
   houghEyeDetector->Update();
@@ -92,7 +92,7 @@ int main(int argc, char *argv[])
   // Write aligned image
   WriterType::Pointer writer = WriterType::New();
   writer->UseCompressionOn();
-  writer->SetFileName(argv[2]);
+  writer->SetFileName(outputVolume);
   writer->SetInput( houghEyeDetector->GetOutput() );
   try
     {

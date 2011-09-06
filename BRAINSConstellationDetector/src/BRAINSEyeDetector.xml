@@ -15,5 +15,21 @@
       <description>Explicitly specify the maximum number of threads to use.</description>
       <default>-1</default>
     </integer>
+    <image>
+      <name>inputVolume</name>
+      <longflag>inputVolume</longflag>
+      <description>The input volume</description>
+    </image>
+    <image>
+      <name>outputVolume</name>
+      <longflag>outputVolume</longflag>
+      <description>The output volume</description>
+    </image>
+    <string>
+      <name>debugDir</name>
+      <longflag>debugDir</longflag>
+      <description>A place for debug information</description>
+      <default>/tmp</default>
+    </string>
   </parameters>
 </executable>

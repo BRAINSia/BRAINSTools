@@ -58,13 +58,15 @@ extern void loadLLSModel(std::string llsModel, std::map<std::string,
                                                                                                                                        double>
                          & searchRadii);
 
+/*
 // load from .mat file
-extern void loadLLSModelMat(std::string llsModel, std::string processingList, std::map<std::string,
-                                                                                       std::vector<double> > & llsMeans,
+extern void loadLLSModelMat(std::string llsModel, std::string processingList,
+                            std::map<std::string,
+                                     std::vector<double> > & llsMeans,
                             std::map<std::string, MatrixType> & llsMatrices, std::map<std::string,
                                                                                       double>
                             & searchRadii);
-
+*/
 extern void writeLLSModel(const std::string & modelName, const std::map<std::string,
                                                                         std::vector<double> > & llsMeans,
                           const std::map<std::string, MatrixType> & llsMatrices, const std::map<std::string,

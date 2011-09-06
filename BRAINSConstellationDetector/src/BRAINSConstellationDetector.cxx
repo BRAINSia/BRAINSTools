@@ -12,6 +12,7 @@
 #include "BRAINSHoughEyeDetector.h"
 #include "BRAINSConstellationDetector2.h"
 #include "Slicer3LandmarkIO.h"
+#include "Slicer3LandmarkWeightIO.h"
 #include "LLSModel.h"
 
 #include "itkCommand.h"
@@ -39,6 +40,7 @@ typedef ImageType::SizeType                        ImageSizeType;
 typedef ImageType::DirectionType                   ImageDirectionType;
 typedef ImageType::IndexType                       ImageIndexType;
 typedef std::map<std::string, ImagePointType>      LandmarksMapType;
+typedef std::map<std::string, double>              LandmarksWeightMapType; // -- Added by Ali
 
 typedef itk::ImageFileReader<ImageType>         ReaderType;
 typedef itk::ImageFileWriter<ImageType>         WriterType;
@@ -284,6 +286,10 @@ int main( int argc, char *argv[] )
   finalTransform->SetParameters( constellation2->GetVersorTransform()->GetParameters() );
   finalTransform->GetInverse( invFinalTransform );
 
+  // Landmark weights. All of them equal 1 wright now, but they should be calculated later
+  LandmarksWeightMapType LandmarksWeightMap;
+  double                 weights = 1;
+
   // Save landmarks in input/output or original/aligned space
   LandmarksMapType                 outputLandmarksInInputSpaceMap;
   LandmarksMapType                 outputLandmarksInACPCAlignedSpaceMap;
@@ -295,6 +301,8 @@ int main( int argc, char *argv[] )
     outputLandmarksInInputSpaceMap[lit->first] =
       finalTransform->TransformPoint( lit->second );
     // or something like constellation2->GetOriginalPoints()[lit->first];
+
+    LandmarksWeightMap[lit->first] = weights;
     }
 
   // ----------------------
@@ -401,6 +409,13 @@ int main( int argc, char *argv[] )
       {
       std::cout << "WARNING no aligned output volume is requested." << std::endl;
       }
+    }
+
+  if( outputLandmarkWeights.compare( "" ) != 0 )
+    {
+    WriteITKtoSlicer3LmkWts( outputLandmarkWeights,
+                             LandmarksWeightMap );
+    std::cout << "The output landmark weights list file is written." << std::endl;
     }
 
   if( outputMRML.compare( "" ) != 0 )

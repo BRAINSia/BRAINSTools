@@ -27,6 +27,15 @@ typedef std::map<std::string, MatrixType>     MatrixMapType;
 typedef std::map<std::string, VectorType>     VectorMapType;
 
 /*
+ * Description:
+ * Training linear model using EPCA
+ * Implementation based on my MS thesis,
+ * "A METHOD FOR AUTOMATED LANDMARK CONSTELLATION DETECTION USING
+ * EVOLUTIONARY PRINCIPAL COMPONENTS AND STATISTICAL SHAPE MODELS"
+ */
+int BRAINSLinearModelerEPCAPrimary( int argc, char * argv[] );
+
+/*
  * Build up the landmark database from a list of fcsv files
  * TODO: Explain each argument in the func
  * Input:

@@ -105,7 +105,7 @@ protected:
   {
   }
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const;
 
   /** ComparisonImageFilter can be implemented as a multithreaded
    * filter.  Therefore, this implementation provides a
@@ -116,11 +116,11 @@ protected:
    * the portion of the output image specified by the parameter
    * "outputRegionForThread"
    */
-  void ThreadedGenerateData(const OutputImageRegionType & threadRegion, ThreadIdType threadId);
+  virtual void ThreadedGenerateData(const OutputImageRegionType & threadRegion, int threadId);
 
-  void BeforeThreadedGenerateData();
+  virtual void BeforeThreadedGenerateData();
 
-  void AfterThreadedGenerateData();
+  virtual void AfterThreadedGenerateData();
 
   OutputPixelType m_DifferenceThreshold;
 

@@ -28,6 +28,7 @@
 #ifndef __itkTestDriverInclude_h
 #define __itkTestDriverInclude_h
 
+#include "itkMacro.h"
 #if ITK_VERSION < 4
 namespace itk
 {
@@ -47,7 +48,7 @@ typedef signed long IndexValueType;
 typedef signed long OffsetValueType;
 
 /** Type to count and reference number of threads */
-typedef unsigned int ThreadIdType;
+typedef int ThreadIdType;
 }
 #endif
 

@@ -113,7 +113,7 @@ ComparisonImageFilter<TInputImage, TOutputImage>
 template <class TInputImage, class TOutputImage>
 void
 ComparisonImageFilter<TInputImage, TOutputImage>
-::ThreadedGenerateData(const OutputImageRegionType & threadRegion, ThreadIdType threadId)
+::ThreadedGenerateData(const OutputImageRegionType & threadRegion, int threadId)
 {
   typedef ConstNeighborhoodIterator<InputImageType>                           SmartIterator;
   typedef ImageRegionConstIterator<InputImageType>                            InputIterator;

@@ -27,7 +27,7 @@
     </transform>
     <string-enumeration>
       <name>outputTransformType</name>
-      <longflag>--outputTransform</longflag>
+      <longflag>--outputTransformType</longflag>
       <description>The target transformation type. Must be conversion-compatible with the input transform type</description>
       <default>Affine</default>
       <element>Affine</element>

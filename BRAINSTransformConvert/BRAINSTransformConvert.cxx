@@ -45,26 +45,8 @@ ExtractTransform(AffineTransformType::Pointer & result,
     }
 
   result->SetCenter(matBasePtr->GetCenter() );
-
-  const unsigned dim = matBasePtr->GetInputSpaceDimension();
-
-  const MatrixOffsetTransformType::OutputVectorType xlat =
-    matBasePtr->GetTranslation();
-  const MatrixOffsetTransformType::MatrixType & mat = matBasePtr->GetMatrix();
-  AffineTransformType::ParametersType           parameters(9);
-  for( unsigned i = 0; i < dim; i++ )
-    {
-    for( unsigned j = 0; j < dim; j++ )
-      {
-      parameters[(i * dim) + j] = mat[i][j];
-      }
-    }
-  for( unsigned i = 0; i < dim; i++ )
-    {
-    parameters[(dim * dim) + i] = xlat[i];
-    }
-  result->SetParameters(parameters);
-  result->SetCenter(matBasePtr->GetCenter() );
+  result->SetMatrix(matBasePtr->GetMatrix() );
+  result->SetTranslation(matBasePtr->GetTranslation() );
   return true;
 }
 
@@ -336,7 +318,7 @@ int main(int argc, char *argv[])
       }
     outputXfrm = scaleSkewVersorXfrm.GetPointer();
     }
-  else if( outputTransformType == "BSPlineDeformable" )
+  else if( outputTransformType == "BSplineDeformable" )
     {
     BSplineDeformableTransformType::Pointer bsplineXfrm =
       BSplineDeformableTransformType::New();
@@ -351,6 +333,7 @@ int main(int argc, char *argv[])
       }
     bsplineXfrm->SetIdentity();
     bsplineXfrm->SetBulkTransform(bulkXfrm);
+    outputXfrm = bsplineXfrm.GetPointer();
     }
   // write the resulting transform.
   itk::WriteTransformToDisk(outputXfrm.GetPointer(), outputTransform);

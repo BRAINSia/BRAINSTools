@@ -34,7 +34,7 @@
       <element>VersorRigid</element>
       <element>ScaleVersor</element>
       <element>ScaleSkewVersor</element>
-      <element>BSPlineDeformable</element>
+      <element>BSplineDeformable</element>
       <element>DisplacementField</element>
     </string-enumeration>
 

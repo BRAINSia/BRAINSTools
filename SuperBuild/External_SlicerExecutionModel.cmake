@@ -54,7 +54,6 @@ if(NOT DEFINED SlicerExecutionModel_DIR)
       #-DSlicerExecutionModel_INSTALL_SHARE_DIR:PATH=${Slicer_INSTALL_ROOT}share/${SlicerExecutionModel}
       -DSlicerExecutionModel_INSTALL_NO_DEVELOPMENT:BOOL=${Slicer_INSTALL_NO_DEVELOPMENT}
     INSTALL_COMMAND ""
-    UPDATE_COMMAND ""
     DEPENDS
       ${SlicerExecutionModel_DEPENDENCIES}
     )

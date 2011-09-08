@@ -5,6 +5,15 @@ add_executable(BRAINSTransformConvertMakeTestFiles
   BRAINSTransformConvertMakeTestFiles.cxx)
 target_link_libraries(BRAINSTransformConvertMakeTestFiles BRAINSCommonLib ${ITK_LIBRARIES})
 
+add_executable(ImageCompare ImageCompare.cxx)
+target_link_libraries(ImageCompare BRAINSCommonLib ${ITK_LIBRARIES})
+
+set_target_properties(BRAINSTransformConvertMakeTestFiles
+  ImageCompare
+  PROPERTIES
+  RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+  )
+
 #      <element>VersorRigid</element>
 #      <element>ScaleVersor</element>
 #      <element>ScaleSkewVersor</element>
@@ -16,14 +25,98 @@ target_link_libraries(BRAINSTransformConvertMakeTestFiles BRAINSCommonLib ${ITK_
 #   foreach transform type
 #     convert transform to each higher-dimensional type
 
-add_dependencies(BRAINSTransformConvertMakeTestFiles
-  BRAINSTransformConvert
-  BRAINSResample)
 
-set_target_properties(BRAINSTransformConvertMakeTestFiles
-  PROPERTIES
-  RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-  )
-
-add_test(BRAINSTransformConvertMakeTestFiles
+#
+# program to generate the test files
+add_test(BRAINSTransformConvertMakeTestFilesTest
   ${LAUNCH_EXE} BRAINSTransformConvertMakeTestFiles ${CMAKE_CURRENT_BINARY_DIR})
+
+set_property(TEST BRAINSTransformConvertMakeTestFilesTest
+  APPEND PROPERTY DEPENDS BRAINSTransformConvertMakeTestFiles)
+#
+# need to run BRAINSTransformConvert where they were dumped
+set(BRAINSTransformConvert "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/BRAINSTransformConvert")
+set(BRAINSResample "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/BRAINSResample")
+set(ImageCompare "${CMAKE_CURRENT_BINARY_DIR}/ImageCompare")
+
+#
+# use BRAINSTransformConvert to make conversions
+set(VersorRigidTargets ScaleVersor ScaleSkewVersor Affine BSplineDeformable DisplacementField)
+set(ScaleVersorTargets ScaleSkewVersor Affine BSplineDeformable DisplacementField)
+set(ScaleSkewVersorTargets Affine BSplineDeformable DisplacementField)
+set(AffineTargets BSplineDeformable DisplacementField)
+set(BSplineDeformableTargets DisplacementField)
+
+set(TransformTestImage "${CMAKE_CURRENT_BINARY_DIR}/TransformConvertTestImage.nii.gz")
+
+foreach(SourceTransform VersorRigid ScaleVersor ScaleSkewVersor Affine BSplineDeformable)
+  foreach(TargetTransform IN LISTS ${SourceTransform}Targets)
+    message("${SourceTransform} ${TargetTransform}")
+
+    set(TransformConvertTestName Convert${SourceTransform}To${TargetTransform})
+    set(SourceTransformName "${CMAKE_CURRENT_BINARY_DIR}/${SourceTransform}Transform.txt")
+    set(TargetTransformName "${CMAKE_CURRENT_BINARY_DIR}/${SourceTransform}To${TargetTransform}.txt")
+    set(DisplacementVolumeImage "${CMAKE_CURRENT_BINARY_DIR}/${SourceTransform}Displacement.nii.gz")
+
+    add_test(${TransformConvertTestName} COMMAND
+      ${LAUNCH_EXE} ${BRAINSTransformConvert}
+      --inputTransform ${SourceTransformName}
+      --outputTransform ${TargetTransformName}
+      --outputTransformType ${TargetTransform}
+      --referenceVolume ${TransformTestImage}
+      --displacementVolume ${DisplacementVolumeImage}
+      )
+    set_property(TEST ${TestName} APPEND PROPERTY DEPENDS BRAINSTransformConvertMakeTestFilesTest)
+    set_property(TEST ${TestName} APPEND PROPERTY DEPENDS BRAINSTransformConvert)
+
+    # resample the test image using BRAINSResample
+    # and original transform
+    set(ResampleWSourceTestName ResampleWSource${SourceTransform}${TargetTransform})
+    set(ResampleWSourceOutputImage ${ResampleWSourceTestName}.nii.gz)
+
+    add_test(${ResampleWSourceTestName}
+      COMMAND ${LAUNCH_EXE} ${BRAINSResample}
+      --inputVolume ${TransformTestImage}
+      --outputVolume ${ResampleWSourceOutputImage}
+      --pixelType short
+      --warpTransform ${SourceTransformName})
+    set_property(TEST ${ResampleWSourceTestName} APPEND PROPERTY DEPENDS BRAINSResample)
+    set_property(TEST ${TestName} APPEND PROPERTY DEPENDS BRAINSTransformConvertMakeTestFilesTest)
+
+    # resample the test image using BRAINSResample
+    # and converted transform
+    set(ResampleWTargetTestName ResampleWTarget${SourceTransform}${TargetTransform})
+    set(ResampleWTargetOutputImage ${ResampleWTargetTestName}.nii.gz)
+
+    # Displacement field takes different command line
+    if(NOT "${TargetTransform}" STREQUAL "DisplacementField")
+      add_test(${ResampleWTargetTestName}
+        COMMAND ${LAUNCH_EXE} ${BRAINSResample}
+        --inputVolume ${TransformTestImage}
+        --outputVolume ${ResampleWTargetOutputImage}
+        --pixelType short
+        --warpTransform ${TargetTransformName})
+    else(NOT "${TargetTransform}" STREQUAL "DisplacementField")
+      add_test(${ResampleWTargetTestName}
+        COMMAND ${LAUNCH_EXE} ${BRAINSResample}
+        --inputVolume ${TransformTestImage}
+        --outputVolume ${ResampleWTargetOutputImage}
+        --pixelType short
+        --deformationVolume ${DisplacementVolumeImage})
+    endif(NOT "${TargetTransform}" STREQUAL "DisplacementField")
+
+    #
+    # depend on previous test, and BRAINSResample
+    set_property(TEST ${ResampleWTargetTestName} APPEND PROPERTY DEPENDS ${TransformConvertTestName})
+    set_property(TEST ${ResampleWTargetTestName} APPEND PROPERTY DEPENDS BRAINSResample)
+
+    set(ImageCompareTestName ImageCompare${SourceTransform}${TargetTransform})
+    add_test(${ImageCompareTestName} COMMAND ${LAUNCH_EXE} ${ImageCompare}
+      ${ResampleWSourceOutputImage} ${ResampleWTargetOutputImage})
+
+    set_property(TEST ${ImageCompareTestName} APPEND PROPERTY DEPENDS ImageCompare)
+    set_property(TEST ${ImageCompareTestName} APPEND PROPERTY DEPENDS ${ResampleWSourceTestName})
+    set_property(TEST ${ImageCompareTestName} APPEND PROPERTY DEPENDS ${ResampleWTargetTestName})
+
+  endforeach(TargetTransform)
+endforeach(SourceTransform)

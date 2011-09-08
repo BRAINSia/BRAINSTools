@@ -50,7 +50,7 @@ int main(int argc, char * *argv)
   versorRigidTransform->SetRotation(axis, 1.5);
 
   std::string versorRigidName(argv[1]);
-  versorRigidName += "/versorRigidTransform.txt";
+  versorRigidName += "/VersorRigidTransform.txt";
   itk::WriteTransformToDisk(versorRigidTransform.GetPointer(), versorRigidName);
 
   ScaleVersor3DTransformType::Pointer scaleVersorTransform =
@@ -71,7 +71,7 @@ int main(int argc, char * *argv)
   scaleVersorTransform->SetScale(scale);
 
   std::string scaleVersorName(argv[1]);
-  scaleVersorName += "/scaleVersorTransform.txt";
+  scaleVersorName += "/ScaleVersorTransform.txt";
   itk::WriteTransformToDisk(scaleVersorTransform, scaleVersorName);
 
   ScaleSkewVersor3DTransformType::Pointer scaleSkewVersorTransform =
@@ -89,7 +89,7 @@ int main(int argc, char * *argv)
   scaleSkewVersorTransform->SetScale(scale);
 
   std::string scaleSkewVersorName(argv[1]);
-  scaleSkewVersorName += "/scaleSkewVersorTransform.txt";
+  scaleSkewVersorName += "/ScaleSkewVersorTransform.txt";
   itk::WriteTransformToDisk(scaleSkewVersorTransform, scaleSkewVersorName);
 
   AffineTransformType::Pointer affineTransform =
@@ -112,8 +112,33 @@ int main(int argc, char * *argv)
   affineTransform->Shear(1, 2, 0.35);
 
   std::string affineName(argv[1]);
-  affineName += "/affineTransform.txt";
+  affineName += "/AffineTransform.txt";
   itk::WriteTransformToDisk(affineTransform, affineName);
+
+  BSplineTransformType::Pointer bsplineTransform =
+    CreateTransform<BSplineTransformType>();
+
+  translation[0] = -1.0; translation[1] = 0.6; translation[2] = -0.5;
+  affineTransform->Translate(translation);
+
+  center[0] = 0.77; center[1] = -0.8; center[2] = 0.03;
+  affineTransform->SetCenter(center);
+
+  axis[0] = 0.0; axis[1] = -1.0; axis[2] = 0.0;
+  affineTransform->Rotate3D(axis, 0.45);
+
+  scale[0] = .8; scale[1] = .5; scale[2] = 0.3;
+  affineTransform->Scale(scale);
+
+  affineTransform->Shear(0, 1, 0.3);
+  affineTransform->Shear(1, 0, 0.4);
+  affineTransform->Shear(1, 2, 0.5);
+
+  bsplineTransform->SetBulkTransform(affineTransform.GetPointer() );
+
+  std::string bsplineName(argv[1]);
+  bsplineName += "/BSplineDeformableTransform.txt";
+  itk::WriteTransformToDisk(bsplineTransform, bsplineName);
 
   typedef itk::Image<signed short, 3> ImageType;
   ImageType::RegionType            region;
@@ -142,7 +167,7 @@ int main(int argc, char * *argv)
     }
 
   std::string testImageName(argv[1]);
-  testImageName += "/transformConvertTestImage.nii.gz";
+  testImageName += "/TransformConvertTestImage.nii.gz";
   itkUtil::WriteImage<ImageType>(testImage, testImageName);
   return EXIT_SUCCESS;
 }

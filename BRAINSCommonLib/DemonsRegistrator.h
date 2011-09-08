@@ -49,7 +49,7 @@ namespace itk
 template <
   class TRealImage,
   class TOutputImage,
-  class TFieldValue = ITK_TYPENAME TRealImage::PixelType
+  class TFieldValue = typename TRealImage::PixelType
   >
 class DemonsRegistrator : public Object
 {

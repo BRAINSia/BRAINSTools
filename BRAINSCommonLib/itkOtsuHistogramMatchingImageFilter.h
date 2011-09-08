@@ -63,7 +63,7 @@ typedef int ThreadIdType;
   */
 /* THistogramMeasurement -- The precision level for which to do
   * HistogramMeasurmenets */
-template <class TInputImage, class TOutputImage, class THistogramMeasurement = ITK_TYPENAME TInputImage::PixelType>
+template <class TInputImage, class TOutputImage, class THistogramMeasurement = typename TInputImage::PixelType>
 class ITK_EXPORT OtsuHistogramMatchingImageFilter :
   public         ImageToImageFilter<TInputImage, TOutputImage>
 {

@@ -19,7 +19,7 @@ class ThirionRegistration : public ApplicationBase<
     ValidationInputParser<TImage>,
     DemonsPreprocessor<TImage, TRealImage>,
     DemonsRegistrator<TRealImage, TOutputImage,
-                      ITK_TYPENAME TRealImage::PixelType>
+                      typename TRealImage::PixelType>
     >
 {
 public:
@@ -29,7 +29,7 @@ public:
   typedef ApplicationBase<ValidationInputParser<TImage>,
                           DemonsPreprocessor<TImage, TRealImage>,
                           DemonsRegistrator<TRealImage, TRealImage,
-                                            ITK_TYPENAME TRealImage::PixelType> >
+                                            typename TRealImage::PixelType> >
     Superclass;
   typedef SmartPointer<Self>       Pointer;
   typedef SmartPointer<const Self> ConstPointer;

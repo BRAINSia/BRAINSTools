@@ -21,7 +21,7 @@ class VBRAINSDemonWarp : public ApplicationBase<
     VValidationInputParser<TImage>,
     VDemonsPreprocessor<TImage, TRealImage>,
     VDemonsRegistrator<TRealImage, TOutputImage,
-                       ITK_TYPENAME TRealImage::PixelType>
+                       typename TRealImage::PixelType>
     >
 {
 public:
@@ -31,7 +31,7 @@ public:
   typedef ApplicationBase<VValidationInputParser<TImage>,
                           VDemonsPreprocessor<TImage, TRealImage>,
                           VDemonsRegistrator<TRealImage, TRealImage,
-                                             ITK_TYPENAME TRealImage::PixelType>
+                                             typename TRealImage::PixelType>
                           > Superclass;
   typedef SmartPointer<Self>       Pointer;
   typedef SmartPointer<const Self> ConstPointer;

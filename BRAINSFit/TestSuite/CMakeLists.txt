@@ -934,8 +934,8 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 7
-  --compareRadiusTolerance 0
-  --compareNumberOfPixelsTolerance 777
+  --compareRadiusTolerance 1
+  --compareNumberOfPixelsTolerance 250
   BRAINSFitTest
   --costMetric NC
   --failureExitCode -1 --writeTransformOnFailure

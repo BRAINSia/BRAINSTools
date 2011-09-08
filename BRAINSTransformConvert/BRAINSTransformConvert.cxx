@@ -137,7 +137,6 @@ bool
 ExtractTransform(ScaleSkewVersor3DTransformType::Pointer & result,
                  const GenericTransformType *source)
 {
-  result->SetIdentity();
   // always able to convert to same type
   if( dynamic_cast<const ScaleSkewVersor3DTransformType *>(source) != 0 )
     {
@@ -166,6 +165,39 @@ ExtractTransform(ScaleSkewVersor3DTransformType::Pointer & result,
   return false;
 }
 
+//
+// scale skew versor case
+bool
+ExtractTransform(BSplineTransformType::Pointer & result,
+                 const GenericTransformType *source)
+{
+  const BSplineTransformType *sourceBSpline =
+    dynamic_cast<const BSplineTransformType *>(source);
+
+  if( sourceBSpline != 0 )
+    {
+    result->SetFixedParameters(sourceBSpline->GetFixedParameters() );
+    result->SetIdentity();
+    result->SetParametersByValue(sourceBSpline->GetParameters() );
+    result->SetBulkTransform(sourceBSpline->GetBulkTransform() );
+    return true;
+    }
+  else
+    {
+    result->SetIdentity();
+    }
+  typedef BSplineTransformType::BulkTransformType BulkXfrmType;
+
+  const BulkXfrmType *bulkXfrm =
+    dynamic_cast<const BulkXfrmType *>(source);
+  if( bulkXfrm == 0 )
+    {
+    return false;
+    }
+  result->SetBulkTransform(bulkXfrm);
+  return true;
+}
+
 void
 TransformConvertError(GenericTransformType *inputXfrm,
                       const std::string & targetClassName)
@@ -186,8 +218,6 @@ TransformConvertError(GenericTransformType *inputXfrm,
 
 int main(int argc, char *argv[])
 {
-  typedef itk::BSplineDeformableTransform<double, 3, 3> BSplineDeformableTransformType;
-
   PARSE_ARGS;
 
   CHECK_PARAMETER_IS_SET(inputTransform,
@@ -204,34 +234,33 @@ int main(int argc, char *argv[])
     reader->GetTransformList();
   GenericTransformType::Pointer inputXfrm = dynamic_cast<GenericTransformType *>(transformList->front().GetPointer() );
 
+  // Handle BSpline type
+  BSplineTransformType::Pointer bsplineInputXfrm =
+    dynamic_cast<BSplineTransformType *>(inputXfrm.GetPointer() );
+  if( bsplineInputXfrm.IsNotNull() )
+    {
+    transformList->pop_front();
+    if( transformList->size() == 0 )
+      {
+      std::cerr << "Error, the second transform needed for BSplineDeformableTransform is missing." << std::endl;
+      return EXIT_FAILURE;
+      }
+    BSplineTransformType::BulkTransformType::Pointer bulkXfrm =
+      dynamic_cast<BSplineTransformType::BulkTransformType *>(transformList->front().GetPointer() );
+    if( bulkXfrm.IsNull() )
+      {
+      std::cerr << "Error, the second transform is not a bulk transform" << std::endl;
+      }
+    bsplineInputXfrm->SetBulkTransform(bulkXfrm);
+    inputXfrm = bsplineInputXfrm.GetPointer();
+    }
+
   if( outputTransformType == "DisplacementField" )
     {
     CHECK_PARAMETER_IS_SET(referenceVolume,
                            "Missing referenceVolume needed for Displacement Field output");
     CHECK_PARAMETER_IS_SET(displacementVolume,
                            "Missing displacementVolume needed for Displacement Field output");
-
-    // Handle BSpline type
-    BSplineDeformableTransformType::Pointer bsplineXfrm =
-      dynamic_cast<BSplineDeformableTransformType *>(inputXfrm.GetPointer() );
-
-    if( bsplineXfrm.IsNotNull() )
-      {
-      transformList->pop_front();
-      if( transformList->size() == 0 )
-        {
-        std::cerr << "Error, the second transform needed for BSplineDeformableTransform is missing." << std::endl;
-        return EXIT_FAILURE;
-        }
-      BSplineDeformableTransformType::BulkTransformType::Pointer bulkXfrm =
-        dynamic_cast<BSplineDeformableTransformType::BulkTransformType *>(transformList->front().GetPointer() );
-      if( bulkXfrm.IsNull() )
-        {
-        std::cerr << "Error, the second transform is not a bulk transform" << std::endl;
-        }
-      bsplineXfrm->SetBulkTransform(bulkXfrm);
-      inputXfrm = bsplineXfrm.GetPointer();
-      }
 
     typedef itk::Image<short, 3> ReferenceImageType;
     ReferenceImageType::Pointer referenceImage = itkUtil::ReadImage<ReferenceImageType>(referenceVolume);
@@ -320,19 +349,13 @@ int main(int argc, char *argv[])
     }
   else if( outputTransformType == "BSplineDeformable" )
     {
-    BSplineDeformableTransformType::Pointer bsplineXfrm =
-      BSplineDeformableTransformType::New();
-    typedef BSplineDeformableTransformType::BulkTransformType BulkXfrmType;
-
-    const BulkXfrmType *bulkXfrm =
-      dynamic_cast<const BulkXfrmType *>(inputXfrm.GetPointer() );
-    if( bulkXfrm == 0 )
+    BSplineTransformType::Pointer bsplineXfrm =
+      BSplineTransformType::New();
+    if( ExtractTransform(bsplineXfrm, inputXfrm.GetPointer() ) == false )
       {
       TransformConvertError(inputXfrm, "BSplineDeformable Transform");
       return EXIT_FAILURE;
       }
-    bsplineXfrm->SetIdentity();
-    bsplineXfrm->SetBulkTransform(bulkXfrm);
     outputXfrm = bsplineXfrm.GetPointer();
     }
   // write the resulting transform.

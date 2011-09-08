@@ -41,11 +41,11 @@ set(ImageCompare "${CMAKE_CURRENT_BINARY_DIR}/ImageCompare")
 
 #
 # use BRAINSTransformConvert to make conversions
-set(VersorRigidTargets ScaleVersor ScaleSkewVersor Affine BSplineDeformable DisplacementField)
-set(ScaleVersorTargets ScaleSkewVersor Affine BSplineDeformable DisplacementField)
-set(ScaleSkewVersorTargets Affine BSplineDeformable DisplacementField)
-set(AffineTargets BSplineDeformable DisplacementField)
-set(BSplineDeformableTargets DisplacementField)
+set(VersorRigidTargets VersorRigid ScaleVersor ScaleSkewVersor Affine BSplineDeformable DisplacementField)
+set(ScaleVersorTargets ScaleVersor ScaleSkewVersor Affine BSplineDeformable DisplacementField)
+set(ScaleSkewVersorTargets Affine Affine BSplineDeformable DisplacementField)
+set(AffineTargets Affine BSplineDeformable DisplacementField)
+set(BSplineDeformableTargets BSplineDeformable DisplacementField)
 
 set(TransformTestImage "${CMAKE_CURRENT_BINARY_DIR}/TransformConvertTestImage.nii.gz")
 
@@ -63,8 +63,8 @@ foreach(SourceTransform VersorRigid ScaleVersor ScaleSkewVersor Affine BSplineDe
       --inputTransform ${SourceTransformName}
       --outputTransform ${TargetTransformName}
       --outputTransformType ${TargetTransform}
-      --referenceVolume ${TransformTestImage}
-      --displacementVolume ${DisplacementVolumeImage}
+      --referenceVolume ${TransformTestImage}         # Only needed for DisplacementField transforms
+      --displacementVolume ${DisplacementVolumeImage} # Only needed for DisplacementField transforms
       )
     set_property(TEST ${TestName} APPEND PROPERTY DEPENDS BRAINSTransformConvertMakeTestFilesTest)
     set_property(TEST ${TestName} APPEND PROPERTY DEPENDS BRAINSTransformConvert)

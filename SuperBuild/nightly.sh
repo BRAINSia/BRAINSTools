@@ -3,7 +3,7 @@
 # Set the library paths such that all locally built shared 
 # libraries are found and used
 # ahead of system libs
-package=BRAINSStandalone
+package=BRAINSStandAlone
 
 #
 # when run by cron, the path variable is only /bin:/usr/bin

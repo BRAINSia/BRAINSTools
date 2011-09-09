@@ -64,18 +64,18 @@ cd ${startdir}/${ThisComputer}
 top=`pwd`
 echo WORKING IN $top
 
-# check out BRAINSStandalone in a directory unique to each host -- this is unfortunately necessary
+# check out BRAINSStandAlone in a directory unique to each host -- this is unfortunately necessary
 # because svn can't update a directory  checked out by a newer version of svn, so
 # every host has their own copy of BRAINS3 so that it's compatible with the local svn version.
-if [ -d BRAINSStandalone ] ; then
-    cd BRAINSStandalone
+if [ -d BRAINSStandAlone ] ; then
+    cd BRAINSStandAlone
     git pull
 else
     git clone git@github.com:BRAINSia/BRAINSStandAlone.git
 fi
 if [ $? != 0 ]
 then
-    echo BRAINSStandalone checkout failed, continuing with old version
+    echo BRAINSStandAlone checkout failed, continuing with old version
 fi
 
 
@@ -101,7 +101,7 @@ do
 	-DBUILDNAME:STRING="${OsName}-${Compiler}-${BUILD_TYPE}" \
         -DBUILD_SHARED_LIBS:BOOL=Off \
 	-DCMAKE_BUILD_TYPE:STRING=${BUILD_TYPE} \
-        ${top}/BRAINSStandalone
+        ${top}/BRAINSStandAlone
     echo "Building in `pwd`"
     scriptname=`basename $0`
     make -j ${NPROCS}

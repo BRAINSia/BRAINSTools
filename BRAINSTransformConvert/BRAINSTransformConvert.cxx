@@ -20,6 +20,21 @@
 // BSpline 5
 // BSplineROI 5
 
+inline
+bool
+IsSameClass(const GenericTransformType *result,
+            const GenericTransformType *source)
+{
+  return strcmp(result->GetNameOfClass(), source->GetNameOfClass() ) == 0;
+}
+
+inline
+bool
+IsClass(const GenericTransformType *xfrm, const char *className)
+{
+  return strcmp(xfrm->GetNameOfClass(), className) == 0;
+}
+
 //
 // Convert from any type derived from MatrixOffsetTransformType to
 // AffineTransform.
@@ -29,7 +44,7 @@ ExtractTransform(AffineTransformType::Pointer & result,
 {
   result->SetIdentity();
   // always able to convert to same type
-  if( dynamic_cast<const AffineTransformType *>(source) != 0 )
+  if( IsSameClass(result.GetPointer(), source) )
     {
     result->SetParameters( source->GetParameters() );
     result->SetFixedParameters( source->GetFixedParameters() );
@@ -58,7 +73,7 @@ ExtractTransform(VersorRigid3DTransformType::Pointer & result,
 {
   result->SetIdentity();
   // always able to convert to same type
-  if( dynamic_cast<const VersorRigid3DTransformType *>(source) != 0 )
+  if( IsSameClass(result.GetPointer(), source) )
     {
     result->SetParameters( source->GetParameters() );
     result->SetFixedParameters( source->GetFixedParameters() );
@@ -67,28 +82,28 @@ ExtractTransform(VersorRigid3DTransformType::Pointer & result,
   // this looks like it should be a convertible transform but
   // I'm not sure.
   typedef itk::TranslationTransform<double, 3> TransTransformType;
-  const TransTransformType *translationXfrm =
-    dynamic_cast<const TransTransformType *>(source);
-  if( translationXfrm != 0 )
+  if( IsClass(source, "TranslationTransform") )
     {
+    const TransTransformType *translationXfrm =
+      dynamic_cast<const TransTransformType *>(source);
     TransTransformType::OutputVectorType offset = translationXfrm->GetOffset();
     result->SetOffset(offset);
     return true;
     }
   // versor == rotation only
-  typedef itk::VersorTransform<double> VersorTransformType;
-  const VersorTransformType *versorXfrm = dynamic_cast<const VersorTransformType *>(source);
-  if( versorXfrm != 0 )
+  if( IsClass(source, "VersorTransform") )
     {
+    typedef itk::VersorTransform<double> VersorTransformType;
+    const VersorTransformType *versorXfrm = dynamic_cast<const VersorTransformType *>(source);
     result->SetRotation(versorXfrm->GetVersor() );
     result->SetCenter(versorXfrm->GetCenter() );
     return true;
     }
   // rigid3d == rotation + translation.
-  typedef itk::Rigid3DTransform<double> Rigid3DTransformType;
-  const Rigid3DTransformType *rigid3DXfrm = dynamic_cast<const Rigid3DTransformType *>(source);
-  if( rigid3DXfrm != 0 )
+  if( IsClass(source, "Rigid3DTransform") )
     {
+    typedef itk::Rigid3DTransform<double> Rigid3DTransformType;
+    const Rigid3DTransformType *rigid3DXfrm = dynamic_cast<const Rigid3DTransformType *>(source);
     result->SetMatrix(rigid3DXfrm->GetMatrix() );
     result->SetTranslation(rigid3DXfrm->GetTranslation() );
     result->SetCenter(rigid3DXfrm->GetCenter() );
@@ -105,16 +120,16 @@ ExtractTransform(ScaleVersor3DTransformType::Pointer & result,
 {
   result->SetIdentity();
   // always able to convert to same type
-  if( dynamic_cast<const ScaleVersor3DTransformType *>(source) != 0 )
+  if( IsSameClass(result.GetPointer(), source) )
     {
     result->SetParameters( source->GetParameters() );
     result->SetFixedParameters( source->GetFixedParameters() );
     return true;
     }
-  const VersorRigid3DTransformType *versorRigidXfrm =
-    dynamic_cast<const VersorRigid3DTransformType *>(source);
-  if( versorRigidXfrm != 0 )
+  if( IsClass(source, "VersorRigid3DTransform") )
     {
+    const VersorRigid3DTransformType *versorRigidXfrm =
+      dynamic_cast<const VersorRigid3DTransformType *>(source);
     result->SetRotation(versorRigidXfrm->GetVersor() );
     result->SetTranslation(versorRigidXfrm->GetTranslation() );
     result->SetCenter(versorRigidXfrm->GetCenter() );
@@ -138,16 +153,17 @@ ExtractTransform(ScaleSkewVersor3DTransformType::Pointer & result,
                  const GenericTransformType *source)
 {
   // always able to convert to same type
-  if( dynamic_cast<const ScaleSkewVersor3DTransformType *>(source) != 0 )
+  if( IsSameClass(result.GetPointer(), source) )
     {
     result->SetParameters( source->GetParameters() );
     result->SetFixedParameters( source->GetFixedParameters() );
     return true;
     }
-  const ScaleVersor3DTransformType *scaleVersorXfrm =
-    dynamic_cast<const ScaleVersor3DTransformType *>(source);
-  if( scaleVersorXfrm != 0 )
+  // is it the parent?
+  if( IsClass(source, "ScaleVersor3DTransform") )
     {
+    const ScaleVersor3DTransformType *scaleVersorXfrm =
+      dynamic_cast<const ScaleVersor3DTransformType *>(source);
     result->SetRotation(scaleVersorXfrm->GetVersor() );
     result->SetTranslation(scaleVersorXfrm->GetTranslation() );
     result->SetCenter(scaleVersorXfrm->GetCenter() );
@@ -171,11 +187,10 @@ bool
 ExtractTransform(BSplineTransformType::Pointer & result,
                  const GenericTransformType *source)
 {
-  const BSplineTransformType *sourceBSpline =
-    dynamic_cast<const BSplineTransformType *>(source);
-
-  if( sourceBSpline != 0 )
+  if( IsSameClass(result.GetPointer(), source) )
     {
+    const BSplineTransformType *sourceBSpline =
+      dynamic_cast<const BSplineTransformType *>(source);
     result->SetFixedParameters(sourceBSpline->GetFixedParameters() );
     result->SetIdentity();
     result->SetParametersByValue(sourceBSpline->GetParameters() );

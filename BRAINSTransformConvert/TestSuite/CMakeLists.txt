@@ -30,9 +30,9 @@ set_target_properties(BRAINSTransformConvertMakeTestFiles
 # program to generate the test files
 add_test(BRAINSTransformConvertMakeTestFilesTest
   ${LAUNCH_EXE} BRAINSTransformConvertMakeTestFiles ${CMAKE_CURRENT_BINARY_DIR})
-
 set_property(TEST BRAINSTransformConvertMakeTestFilesTest
   APPEND PROPERTY DEPENDS BRAINSTransformConvertMakeTestFiles)
+
 #
 # need to run BRAINSTransformConvert where they were dumped
 set(BRAINSTransformConvert "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/BRAINSTransformConvert")
@@ -51,13 +51,13 @@ set(TransformTestImage "${CMAKE_CURRENT_BINARY_DIR}/TransformConvertTestImage.ni
 
 foreach(SourceTransform VersorRigid ScaleVersor ScaleSkewVersor Affine BSplineDeformable)
   foreach(TargetTransform IN LISTS ${SourceTransform}Targets)
-    message("${SourceTransform} ${TargetTransform}")
 
     set(TransformConvertTestName Convert${SourceTransform}To${TargetTransform})
     set(SourceTransformName "${CMAKE_CURRENT_BINARY_DIR}/${SourceTransform}Transform.txt")
     set(TargetTransformName "${CMAKE_CURRENT_BINARY_DIR}/${SourceTransform}To${TargetTransform}.txt")
     set(DisplacementVolumeImage "${CMAKE_CURRENT_BINARY_DIR}/${SourceTransform}Displacement.nii.gz")
-
+    #
+    # do the conversion
     add_test(${TransformConvertTestName} COMMAND
       ${LAUNCH_EXE} ${BRAINSTransformConvert}
       --inputTransform ${SourceTransformName}
@@ -68,6 +68,28 @@ foreach(SourceTransform VersorRigid ScaleVersor ScaleSkewVersor Affine BSplineDe
       )
     set_property(TEST ${TestName} APPEND PROPERTY DEPENDS BRAINSTransformConvertMakeTestFilesTest)
     set_property(TEST ${TestName} APPEND PROPERTY DEPENDS BRAINSTransformConvert)
+
+
+    if(NOT "${SourceTransform}" STREQUAL "${TargetTransform}")
+      #
+      # Do the backwards conversion which will fail
+      set(BadTransformConvertTestName "Bad${TransformConvertTestName}")
+      set(BadTransformConvertTargetName ${BadTransformConvertTestName}.txt)
+
+      add_test(${BadTransformConvertTestName} COMMAND
+        ${LAUNCH_EXE} ${BRAINSTransformConvert}
+        --inputTransform ${TargetTransformName}
+        --outputTransform ${BadTransformConvertTargetName}
+        --outputTransformType ${SourceTransform}
+        --referenceVolume ${TransformTestImage}
+        --displacementVolume ${DisplacementVolumeImage}
+        )
+      set_property(TEST ${BadTransformConvertTestName}
+        APPEND PROPERTY DEPENDS BRAINSTransformConvertMakeTestFilesTest)
+      set_property(TEST ${BadTransformConvertTestName}
+        APPEND PROPERTY DEPENDS ${TransformConvertTestName})
+      set_tests_properties(${BadTransformConvertTestName} PROPERTIES WILL_FAIL ON)
+    endif(NOT "${SourceTransform}" STREQUAL "${TargetTransform}")
 
     # resample the test image using BRAINSResample
     # and original transform

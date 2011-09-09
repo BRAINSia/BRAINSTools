@@ -14,10 +14,8 @@ if(DEFINED SlicerExecutionModel_DIR AND NOT EXISTS ${SlicerExecutionModel_DIR})
   message(FATAL_ERROR "SlicerExecutionModel_DIR variable is defined but corresponds to non-existing directory")
 endif()
 
-
-if(NOT SlicerExecutionModel_DEPENDENCIES)
-  set(SlicerExecutionModel_DEPENDENCIES ${ITK_EXTERNAL_NAME})
-endif(NOT SlicerExecutionModel_DEPENDENCIES)
+# Set dependency list
+set(SlicerExecutionModel_DEPENDENCIES ${ITK_EXTERNAL_NAME})
 
 # Include dependent projects if any
 # SlicerMacroCheckExternalProjectDependency(SlicerExecutionModel)
@@ -55,8 +53,7 @@ if(NOT DEFINED SlicerExecutionModel_DIR)
       #-DSlicerExecutionModel_INSTALL_SHARE_DIR:PATH=${Slicer_INSTALL_ROOT}share/${SlicerExecutionModel}
       -DSlicerExecutionModel_INSTALL_NO_DEVELOPMENT:BOOL=${Slicer_INSTALL_NO_DEVELOPMENT}
     INSTALL_COMMAND ""
-    DEPENDS
-      ${SlicerExecutionModel_DEPENDENCIES}
+    DEPENDS ${SlicerExecutionModel_DEPENDENCIES}
     )
   set(SlicerExecutionModel_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
 else()

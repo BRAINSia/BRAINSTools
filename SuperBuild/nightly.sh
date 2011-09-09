@@ -19,6 +19,8 @@ ThisComputer=`hostname`
 OS=$(uname -s)
 if [ "${OS}" = "Linux" ] ; then
     NPROCS=$(grep -c ^processor /proc/cpuinfo)
+    export CFLAGS="${CFLAGS:-} -fpic"
+    export CXXFLAGS="${CXXFLAGS:-} -fpic"
 else
     NPROCS=$(system_profiler | awk '/Number Of Cores/{print $5}{next;}')
 fi

@@ -8,20 +8,18 @@ if(COMPILE_TEST_GENERATION_PROGRAMS)  ## These were programs needed to create th
     add_executable(makexfrmedImage makexfrmedImage.cxx)
     target_link_libraries(makexfrmedImage ${ITK_LIBRARIES})
   endif(MakeMakeXfrmImage)
-
-  if(BRAINSFitTestDriver)
-    # The test driver is only needed to help generate new testcases
-    add_executable(BRAINSFitTestDriver BRAINSFitTestDriver.cxx)
-    target_link_libraries(BRAINSFitTestDriver ${ITK_LIBRARIES}
-      ${OPTIONAL_DEBUG_LINK_LIBRARIES} )
-    set_target_properties(BRAINSFitTestDriver PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${BRAINSFit_BINARY_DIR})
-  endif()
 endif(COMPILE_TEST_GENERATION_PROGRAMS)
 
 configure_file(${BRAINSFit_SOURCE_DIR}/CTestCustom.ctest ${BRAINSFit_BINARY_DIR}/CTestCustom.ctest COPYONLY)
 
-## Needed to set this for Slicer3 to find the test data directory
-#set(BRAINSCommonLib_DATA_DIRS "${PROJECT_SOURCE_DIR}/../BRAINSCommonLi${TestData_DIR}")
+# Test the CenterOfROI Test
+add_executable(CenterOfROIInitTest CenterOfROIInitTest.cxx )
+target_link_libraries(CenterOfROIInitTest BRAINSCommonLib ${ITK_LIBRARIES} ${OPTIONAL_DEBUG_LINK_LIBRARIES} )
+set_target_properties(CenterOfROIInitTest PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${BRAINSFit_BINARY_DIR})
+ExternalData_add_test(${PROJECT_NAME}FetchData NAME CenterOfROIInitTest
+  COMMAND ${LAUNCH_EXE}  $<TARGET_FILE:CenterOfROIInitTest>)
+
+
 
 set(BRAINSFitTestName BRAINSFitTest_AffineRotationMasks)
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
@@ -1467,4 +1465,8 @@ if(RUN_EXTRA_METRIC_TESTS)
 endif(RUN_EXTRA_METRIC_TESTS)
 
 
+
+
+
 ExternalData_Add_Target( ${PROJECT_NAME}FetchData )  # Name of data management target
+

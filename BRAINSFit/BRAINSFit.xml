@@ -81,6 +81,7 @@
       <element>useMomentsAlign</element>
       <element>useCenterOfHeadAlign</element>
       <element>useGeometryAlign</element>
+      <element>useCenterOfROIAlign</element>
     </string-enumeration>
   </parameters>
 

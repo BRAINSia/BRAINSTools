@@ -143,7 +143,10 @@ set(ep_common_args
   -DBUILDNAME:STRING=${BUILDNAME}
 )
 
-
+option(BUILD_STYLE_UTILS "Build uncrustify, cppcheck, & KWStule" OFF)
+if(BUILD_STYLE_UTILS)
+include(External_Utilities)
+endif()
 #------------------------------------------------------------------------------
 # Determine if building stand-alone, or using external versions of ITKv4
 # and SEM (i.e. for tight integration with Slicer)

@@ -56,8 +56,6 @@ void         CleanUpOverlapArea(ProcessDescription & ANNXMLObject,
 
   RealImageType::Pointer ANNCutOut_Image[OutputVectorSize];
   const std::string      OutputDir = fOutputDir + "/";
-  std::string            Type;
-  std::string            ExtI;
   const std::string      ImageID( curDataSet->GetAttribute<StringValue>("Name") );
 
   typedef itk::AddImageFilter<RealImageType, RealImageType, RealImageType> SumImagesType;
@@ -71,10 +69,8 @@ void         CleanUpOverlapArea(ProcessDescription & ANNXMLObject,
     ProbabilityMap *probabilityMap    = dynamic_cast<ProbabilityMap *>( pmi->second );
 
     StructureID[structure] = probabilityMap->GetAttribute<StringValue>("StructureID");
-    Type = "ANNCutOut_median";
-    ExtI = ".nii.gz";
 
-    ANNCutOut_name[structure] = OutputDir +  Type + StructureID[structure] + ImageID + ExtI;
+    ANNCutOut_name[structure] = OutputDir +  "ANNCutOut_median" + StructureID[structure] + ImageID + ".nii.gz";
     std::cout << " Read Image :: " << ANNCutOut_name[structure] << std::endl;
     try
       {
@@ -176,10 +172,7 @@ void         CleanUpOverlapArea(ProcessDescription & ANNXMLObject,
      */
     if( verbose > 5 )
       {
-      Type = "ANNCutOut_median_cleanup";
-      ExtI = ".nii.gz";
-
-      std::string WriteID = OutputDir +  Type + StructureID[strt] + ImageID + ExtI;
+      std::string WriteID(OutputDir +  "ANNCutOut_median_cleanup" + StructureID[strt] + ImageID + ".nii.gz");
       itkUtil::WriteImage<RealImageType>(ANNCutOut_Image[strt], WriteID);
       }
 
@@ -255,12 +248,13 @@ void         CleanUpOverlapArea(ProcessDescription & ANNXMLObject,
        */
       if( verbose > 5 )
         {
-        const std::string ConnectedThresholdWriteID = OutputDir
-          + Type
+        const std::string ConnectedThresholdWriteID(
+          OutputDir
+          + "ANNCutOut_median_cleanup"
           + StructureID[strt]
           + ImageID
           +
-          "_ConnectedThreshold.nii.gz";
+          "_ConnectedThreshold.nii.gz");
         itkUtil::WriteImage<BinaryMaskImageType>(ConnectedThresholdImage,
                                                  ConnectedThresholdWriteID);
         }
@@ -278,9 +272,9 @@ void         CleanUpOverlapArea(ProcessDescription & ANNXMLObject,
        */
       if( verbose > 5 )
         {
-        const std::string LabelWriteID = OutputDir + Type
-          + StructureID[strt] + ImageID
-          + "_labeled.nii.gz";
+        const std::string LabelWriteID(OutputDir + "ANNCutOut_median_cleanup"
+                                       + StructureID[strt] + ImageID
+                                       + "_labeled.nii.gz");
         itkUtil::WriteImage<BinaryMaskImageType>(labeledImage, LabelWriteID);
         }
       typedef itk::RelabelComponentImageFilter<BinaryMaskImageType,
@@ -305,9 +299,9 @@ void         CleanUpOverlapArea(ProcessDescription & ANNXMLObject,
        */
       if( verbose > 5 )
         {
-        const std::string MultiLabelWriteID = OutputDir + Type
-          + StructureID[strt] + ImageID
-          + "_MultiLabeled.nii.gz";
+        const std::string MultiLabelWriteID(OutputDir + "ANNCutOut_median_cleanup"
+                                            + StructureID[strt] + ImageID
+                                            + "_MultiLabeled.nii.gz");
         itkUtil::WriteImage<BinaryMaskImageType>(MultiLabeledImage,
                                                  MultiLabelWriteID);
         }
@@ -326,11 +320,11 @@ void         CleanUpOverlapArea(ProcessDescription & ANNXMLObject,
       std::string OneLabelWriteID_Mask(
         curDataSet->GetMaskFilenameByType( StructureID[strt] ) );
 
-      if( OneLabelWriteID_Mask == "" or OneLabelWriteID_Mask == "na" )
+      if( (OneLabelWriteID_Mask == "") || (OneLabelWriteID_Mask == "na") )
         {
         std::cout << " MaskName is " << OneLabelWriteID_Mask << std::endl;
         OneLabelWriteID_Mask = OutputDir
-          + Type
+          + "ANNCutOut_median_cleanup"
           + StructureID[strt]
           + ImageID
           + "_OneLabeled.nii.gz";
@@ -729,9 +723,7 @@ static void CreateOutputMasks(ProcessDescription & ANNXMLObject,
           {
           ANNCutOut->SetPixel(*iiter, *oiter);
           }
-        std::string Type = "ANNCutOut";
-        std::string ExtI = ".nii.gz";
-        std::string WriteID = m_OutputDir + Type + StructureID + ImageID + ExtI;
+        std::string WriteID(m_OutputDir + "ANNCutOut" + StructureID + ImageID + ".nii.gz");
           {
           std::string destination_dir = itksys::SystemTools::GetFilenamePath(
               WriteID);
@@ -743,8 +735,8 @@ static void CreateOutputMasks(ProcessDescription & ANNXMLObject,
         if( verbose > 5 )
           {
           itkUtil::WriteImage<RealImageType>(ANNCutOut, WriteID);
-          std::string DefMapWriteID = m_OutputDir + Type + StructureID
-            + ImageID + "_defprobmap.nii.gz";
+          std::string DefMapWriteID(m_OutputDir + "ANNCutOut" + StructureID
+                                    + ImageID + "_defprobmap.nii.gz");
           itkUtil::WriteImage<RealImageType>(DeformedProbabilityMap[structure],
                                              DefMapWriteID);
           }
@@ -762,9 +754,7 @@ static void CreateOutputMasks(ProcessDescription & ANNXMLObject,
         medianFilter->Update();
 
         RealImageType::Pointer medianImage = medianFilter->GetOutput();
-        Type = "ANNCutOut_median";
-        ExtI = ".nii.gz";
-        WriteID = m_OutputDir + Type + StructureID + ImageID + ExtI;
+        WriteID = m_OutputDir + "ANNCutOut_median" + StructureID + ImageID + ".nii.gz";
         itkUtil::WriteImage<RealImageType>(medianImage, WriteID);
         }
       }
@@ -870,9 +860,7 @@ static void CreateOutputMasks(ProcessDescription & ANNXMLObject,
               SVMCutOut->SetPixel(*iiter, *oiter);
               }
             }
-          std::string Type = "SVMCutOut";
-          std::string WriteID = m_OutputDir + Type + StructureID + ImageID;
-          WriteID += ".nii.gz";
+          std::string WriteID(m_OutputDir + "SVMCutOut" + StructureID + ImageID + ".nii.gz");
             {
             std::string destination_dir = itksys::SystemTools::GetFilenamePath(
                 WriteID);
@@ -899,9 +887,7 @@ static void CreateOutputMasks(ProcessDescription & ANNXMLObject,
           filterUpper->SetOutsideValue(1); // Forground Value
           filterUpper->ThresholdAbove(MaskThresh);
           filterUpper->Update();
-          Type = "SVMThresh";
-          WriteID = m_OutputDir + Type + StructureID + ImageID;
-          WriteID += ".mask";
+          WriteID = m_OutputDir + "SVMThresh" + StructureID + ImageID + ".mask";
             {
             std::string destination_dir = itksys::SystemTools::GetFilenamePath(
                 WriteID);

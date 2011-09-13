@@ -624,6 +624,7 @@ void ReadDeformationField(TDeformationField::Pointer & DeformationField,
   std::cout << "Deformation Field Orientation \n" << DeformationField->GetDirection() << std::endl << std::endl;
 }
 
+/*
 bool CheckIndex(const int SizeX,
                 const int SizeY,
                 const int SizeZ,
@@ -651,6 +652,7 @@ bool CheckIndexFloat(const int SizeX,
     }
   return true;
 }
+*/
 
 void FillGradProfile(std::vector<float>::iterator & fi,
                      const std::map<std::string, ProbabilityMapImageType::Pointer> MapOfImages,

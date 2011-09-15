@@ -16,14 +16,6 @@ user=${LOGNAME}
 
 ThisComputer=`hostname`
 
-OS=$(uname -s)
-if [ "${OS}" = "Linux" ] ; then
-    NPROCS=$(grep -c ^processor /proc/cpuinfo)
-    export CFLAGS="${CFLAGS:-} -fpic"
-    export CXXFLAGS="${CXXFLAGS:-} -fpic"
-else
-    NPROCS=$(system_profiler | awk '/Number Of Cores/{print $5}{next;}')
-fi
 
 #
 # the default is to use /brainsdev/kent -- which is
@@ -45,9 +37,23 @@ if [ $# = 0 ] ; then
 else
     if [ $1 = "coverage" ] ; then
 	coverage=1
+	shift
+CXXFLAGS="-g -O0 -Wall -W -Wshadow -Wunused-variable \
+ -Wunused-parameter -Wunused-function -Wunused -Wno-system-headers \
+ -Wno-deprecated -Woverloaded-virtual -Wwrite-strings -fprofile-arcs -ftest-coverage"
+CFLAGS="-g -O0 -Wall -W -fprofile-arcs -ftest-coverage"
+LDFLAGS="-fprofile-arcs -ftest-coverage"
     fi
 fi
 
+OS=$(uname -s)
+if [ "${OS}" = "Linux" ] ; then
+    NPROCS=$(grep -c ^processor /proc/cpuinfo)
+    export CFLAGS="${CFLAGS:-} -fpic"
+    export CXXFLAGS="${CXXFLAGS:-} -fpic"
+else
+    NPROCS=$(system_profiler | awk '/Number Of Cores/{print $5}{next;}')
+fi
 # create the testing directory if necessary
 mkdir -p ${startdir}
 if [ ! -d ${startdir} ] ; then
@@ -97,7 +103,6 @@ do
     cd ${B3Build}
 
     #
-    # unset base CFlags -- use just flags specified by
     # the Build type
     cmake -DSITE:STRING=${ThisComputer} \
 	-DBUILDNAME:STRING="${OsName}-${Compiler}-${BUILD_TYPE}" \

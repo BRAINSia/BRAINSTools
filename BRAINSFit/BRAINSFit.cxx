@@ -37,6 +37,7 @@ typedef itk::Vector<double, Dimension>           VectorType;
 
 // This function deciphers the BackgroundFillValueString and returns a double
 // precision number based on the requested value
+// cppcheck-suppress unusedFunction
 double GetBackgroundFillValueFromString(
   const std::string & BackgroundFillValueString)
 {
@@ -218,7 +219,7 @@ int main(int argc, char *argv[])
   if( ( useRigid == true ) || ( useScaleVersor3D == true ) || ( useScaleSkewVersor3D == true )
       || ( useAffine == true ) || ( useBSpline == true ) )
     {
-    localTransformType.resize(0); // Set to zero lenght;
+    localTransformType.resize(0); // Set to zero length
     if( useRigid == true )
       {
       localTransformType.push_back("Rigid");
@@ -244,7 +245,7 @@ int main(int argc, char *argv[])
     {
     localTransformType = transformType;
     }
-  else if( ( ( initialTransform.size() > 0 ) + ( initializeTransformMode != "Off" ) ) > 0 )
+  else if( (initialTransform.size() > 0) || (initializeTransformMode != "Off") )
     {
     // Only do the initialization phase;
     }
@@ -317,7 +318,7 @@ int main(int argc, char *argv[])
       const int numberOf = numberOfIterations[0];
       for( unsigned int i = 1; i < localTransformType.size(); i++ )
         {
-        numberOfIterations[i] = ( numberOf );
+        numberOfIterations[i] = numberOf;
         }
       }
     }
@@ -382,8 +383,8 @@ int main(int argc, char *argv[])
   // const unsigned int MedianFilterRadius =
   // command.GetValueAsInt(MedianFilterRadiusText, IntegerText);
   // Median Filter images if requested.
-  if( medianFilterSize[0] > 0 || medianFilterSize[1] > 0
-      || medianFilterSize[2] > 0 )
+  if( (medianFilterSize[0] > 0) || (medianFilterSize[1] > 0)
+      || (medianFilterSize[2] > 0) )
     {
     FixedVolumeType::SizeType indexRadius;
     indexRadius[0] = static_cast<long int>( medianFilterSize[0] );   // radius
@@ -410,8 +411,8 @@ int main(int argc, char *argv[])
     {
     if( maskProcessingMode == "NOMASK" )
       {
-      if( ( fixedBinaryVolume != "" )
-          || ( movingBinaryVolume != "" ) )
+      if( ( !fixedBinaryVolume.empty() )
+          || ( !movingBinaryVolume.empty() ) )
         {
         std::cout
           << "ERROR:  Can not specify mask file names when the default of NOMASK is used for the maskProcessingMode"
@@ -421,8 +422,8 @@ int main(int argc, char *argv[])
       }
     else if( maskProcessingMode == "ROIAUTO" )
       {
-      if( ( fixedBinaryVolume != "" )
-          || ( movingBinaryVolume != "" ) )
+      if( ( !fixedBinaryVolume.empty() )
+          || ( !movingBinaryVolume.empty() ) )
         {
         std::cout
           << "ERROR:  Can not specify mask file names when ROIAUTO is used for the maskProcessingMode"
@@ -450,8 +451,8 @@ int main(int argc, char *argv[])
       }
     else if( maskProcessingMode == "ROI" )
       {
-      if( ( fixedBinaryVolume == "" )
-          || ( movingBinaryVolume == "" ) )
+      if( ( !fixedBinaryVolume.empty() )
+          || ( !movingBinaryVolume.empty() ) )
         {
         std::cout
           <<
@@ -483,7 +484,7 @@ int main(int argc, char *argv[])
    */
 //  int actualIterations = 0;
 //  int permittedIterations = 0;
-// int allLevelsIterations=0;
+//  int allLevelsIterations = 0;
 
     {
     typedef itk::BRAINSFitHelper HelperType;

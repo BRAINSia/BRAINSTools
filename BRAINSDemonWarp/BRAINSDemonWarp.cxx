@@ -180,17 +180,6 @@ int main(int argc, char *argv[])
     exit(-1);
     }
 
-  //   if (command.outputVolume.size() == 0)
-  //   {
-  //   violated = true; std::cout << "  --outputVolume Required! "  <<
-  // std::endl;
-  //   }
-  // if (outputDeformationFieldVolume.size() == 0) { violated = true; std::cout
-  // << "  --outputDeformationFieldVolume Required! "  << std::endl; }
-  // if (registrationParameters.size() == 0) { violated = true; std::cout << "
-  //  --registrationParameters Required! "  << std::endl; }
-  // if (inputPixelType.size() == 0) { violated = true; std::cout << "
-  //  --inputPixelType Required! "  << std::endl; }
   if( violated )
     {
     exit(1);

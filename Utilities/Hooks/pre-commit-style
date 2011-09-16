@@ -292,7 +292,7 @@ before the 'erroneous' line, as follows:
 
 To suppress all errors in all files, disable cppcheck, as:
 
-git config --bool hooks.cppcheck=false
+git config --bool hooks.cppcheck false
 			"
 		fi
 

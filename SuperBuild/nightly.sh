@@ -31,6 +31,10 @@ fi
 # needed for ssl authentication for git
 export GIT_SSL_NO_VERIFY=true
 
+CXXFLAGS="${CXXFLAGS:-}"
+CFLAGS="${CFLAGS:-}"
+LDFLAGS="${LDFLAGS:-}"
+
 # turn on coverage at command line
 if [ $# = 0 ] ; then
     coverage=0
@@ -38,22 +42,23 @@ else
     if [ $1 = "coverage" ] ; then
 	coverage=1
 	shift
-CXXFLAGS="-g -O0 -Wall -W -Wshadow -Wunused-variable \
- -Wunused-parameter -Wunused-function -Wunused -Wno-system-headers \
- -Wno-deprecated -Woverloaded-virtual -Wwrite-strings -fprofile-arcs -ftest-coverage"
-CFLAGS="-g -O0 -Wall -W -fprofile-arcs -ftest-coverage"
-LDFLAGS="-fprofile-arcs -ftest-coverage"
+	CXXFLAGS="${CXXFLAGS} -g -O0 -Wall -W -Wshadow -Wunused-variable \
+	    -Wunused-parameter -Wunused-function -Wunused -Wno-system-headers \
+	    -Wno-deprecated -Woverloaded-virtual -Wwrite-strings -fprofile-arcs -ftest-coverage"
+	CFLAGS="${CFLAGS} -g -O0 -Wall -W -fprofile-arcs -ftest-coverage"
+	LDFLAGS="${LDFLAGS} -fprofile-arcs -ftest-coverage"
     fi
 fi
 
 OS=$(uname -s)
 if [ "${OS}" = "Linux" ] ; then
     NPROCS=$(grep -c ^processor /proc/cpuinfo)
-    export CFLAGS="${CFLAGS:-} -fpic"
-    export CXXFLAGS="${CXXFLAGS:-} -fpic"
+    export CFLAGS="${CFLAGS} -fpic"
+    export CXXFLAGS="${CXXFLAGS} -fpic"
 else
     NPROCS=$(system_profiler | awk '/Number Of Cores/{print $5}{next;}')
 fi
+
 # create the testing directory if necessary
 mkdir -p ${startdir}
 if [ ! -d ${startdir} ] ; then
@@ -101,10 +106,15 @@ do
 
     mkdir -p ${B3Build}
     cd ${B3Build}
-
+    rm -f CMakeCache.txt
     #
     # the Build type
     cmake -DSITE:STRING=${ThisComputer} \
+	-DCMAKE_C_FLAGS:STRING="${CFLAGS}" \
+	-DCMAKE_CXX_FLAGS:STRING="${CXXFLAGS}" \
+	-DCMAKE_EXE_LINKER_FLAGS:STRING="${LDFLAGS}" \
+	-DCMAKE_MODULE_LINKER_FLAGS:STRING="${LDFLAGS}" \
+	-DCMAKE_SHARED_LINKER_FLAGS:STRING="${LDFLAGS}" \
 	-DBUILDNAME:STRING="${OsName}-${Compiler}-${BUILD_TYPE}" \
         -DBUILD_SHARED_LIBS:BOOL=Off \
 	-DCMAKE_BUILD_TYPE:STRING=${BUILD_TYPE} \

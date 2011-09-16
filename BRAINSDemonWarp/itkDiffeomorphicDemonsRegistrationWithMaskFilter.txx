@@ -452,6 +452,15 @@ DiffeomorphicDemonsRegistrationWithMaskFilter<TFixedImage, TMovingImage,
   os << indent << "Use First Order exponential: "
      << this->m_UseFirstOrderExp << std::endl;
 }
+
+template <class TFixedImage, class TMovingImage, class TDeformationField>
+void
+DiffeomorphicDemonsRegistrationWithMaskFilter<TFixedImage, TMovingImage,
+                                              TDeformationField>
+::VerifyInputInformation()
+{
+  // Do nothing, since images to be registered will not be in the same space
+}
 } // end namespace itk
 
 #endif

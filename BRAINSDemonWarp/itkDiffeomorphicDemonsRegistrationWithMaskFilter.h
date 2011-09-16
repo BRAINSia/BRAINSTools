@@ -194,6 +194,11 @@ protected:
   /** Apply update. */
   virtual void ApplyUpdate(TimeStepType dt);
 
+  /** override to do nothing since by definition input image spaces
+   *  won't match
+  */
+  virtual void VerifyInputInformation();
+
 private:
   // purposely not implemented
   DiffeomorphicDemonsRegistrationWithMaskFilter(const Self &);

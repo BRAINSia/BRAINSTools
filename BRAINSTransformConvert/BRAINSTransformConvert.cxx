@@ -2,7 +2,7 @@
 #include "itkTransformFileReader.h"
 #include "itkTransformFileWriter.h"
 #include "itkImageFileReader.h"
-#include "itkBSPlineDeformableTransform.h"
+#include "itkBSplineDeformableTransform.h"
 #include "itkIO.h"
 #include "itkImageRegionIterator.h"
 #include "GenericTransformImage.h"

@@ -29,7 +29,6 @@ if ( 0 ) ## HACK:  Just silencing failing tests until they can be proper address
       --outputModel ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationModelerTestName}.mdl
       )
   endif(ConstellationModeler_TEST_causes_major_delay)
-endif()
 
 
 ## Test BRAINSEyeDetector
@@ -580,3 +579,4 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetect
          -P ${CMAKE_CURRENT_SOURCE_DIR}/LandmarksCompareTest.cmake
          )
 ExternalData_Add_Target( ${PROJECT_NAME}FetchData )  # Name of data management target
+endif()

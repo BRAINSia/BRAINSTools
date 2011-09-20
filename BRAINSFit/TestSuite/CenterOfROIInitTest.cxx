@@ -7,7 +7,7 @@
 #include <itkCastImageFilter.h>
 #include <itkIO.h>
 
-int main(int argc, char* * argv)
+int main(int, char * *)
 {
   typedef unsigned char                                             MaskPixelType;
   typedef float                                                     PixelType;

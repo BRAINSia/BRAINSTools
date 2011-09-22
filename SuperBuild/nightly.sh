@@ -42,11 +42,6 @@ else
     if [ $1 = "coverage" ] ; then
 	coverage=1
 	shift
-	CXXFLAGS="${CXXFLAGS} -g -O0 -Wall -W -Wshadow -Wunused-variable \
-	    -Wunused-parameter -Wunused-function -Wunused -Wno-system-headers \
-	    -Wno-deprecated -Woverloaded-virtual -Wwrite-strings -fprofile-arcs -ftest-coverage"
-	CFLAGS="${CFLAGS} -g -O0 -Wall -W -fprofile-arcs -ftest-coverage"
-	LDFLAGS="${LDFLAGS} -fprofile-arcs -ftest-coverage"
     fi
 fi
 
@@ -103,7 +98,13 @@ fi
 for BUILD_TYPE in Debug Release
 do
     B3Build=${top}/${BUILD_TYPE}
-
+    if [ "$BUILD_TYPE" = "Debug" -a "$coverage" = "1" ] ; then
+	CXXFLAGS="${CXXFLAGS} -g -O0 -Wall -W -Wshadow -Wunused-variable \
+	    -Wunused-parameter -Wunused-function -Wunused -Wno-system-headers \
+	    -Wno-deprecated -Woverloaded-virtual -Wwrite-strings -fprofile-arcs -ftest-coverage"
+	CFLAGS="${CFLAGS} -g -O0 -Wall -W -fprofile-arcs -ftest-coverage"
+	LDFLAGS="${LDFLAGS} -fprofile-arcs -ftest-coverage"
+    fi
     mkdir -p ${B3Build}
     cd ${B3Build}
     rm -f CMakeCache.txt

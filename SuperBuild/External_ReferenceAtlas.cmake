@@ -7,7 +7,6 @@ endif()
 
 
 if(NOT DEFINED ReferenceAtlas_DIR)
-
   set(ATLAS_VERSION 20110607)
   set(ATLAS_URL http://www.psychiatry.uiowa.edu/users/hjohnson/ftp/Atlas_${ATLAS_VERSION}.tar.gz)
   set(ATLAS_NAME Atlas/Atlas_${ATLAS_VERSION})
@@ -40,7 +39,6 @@ if(NOT DEFINED ReferenceAtlas_DIR)
     -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}
     -DReferenceAtlas_XML_DIR:PATH=${${CMAKE_PROJECT_NAME}_RUNTIME_DIR}
     -DATLAS_VERSION:STRING=${ATLAS_VERSION}
-    INSTALL_COMMAND ""
     )
   set(ReferenceAtlas_DIR ${proj}-build)
 

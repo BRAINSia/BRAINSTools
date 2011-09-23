@@ -191,6 +191,7 @@ option(USE_GTRACT                      "Build GTRACT"                      ON)
 option(USE_BRAINSCommonLib             "Build BRAINSCommonLib"             ON)
 option(USE_BRAINSFit                   "Build BRAINSFit"                   ON)
 option(USE_BRAINSABC                   "Build BRAINSABC"                   ON)
+option(USE_BRAINSCUT                   "Build BRAINSCut"                   OFF)
 option(USE_BRAINSROIAuto               "Build BRAINSROIAuto"               ON)
 option(USE_BRAINSDemonWarp             "Build BRAINSDemonWarp"             ON)
 option(USE_BRAINSResample              "Build BRAINSResample"              ON)
@@ -244,6 +245,7 @@ ExternalProject_Add(${proj}
     -DUSE_BRAINSFit:BOOL=${USE_BRAINSFit}
     -DUSE_BRAINSCommonLib:BOOL=${USE_BRAINSCommonLib}
     -DUSE_BRAINSABC:BOOL=${USE_BRAINSABC}
+    -DUSE_BRAINSCUT:BOOL=${USE_BRAINSCUT}
     -DUSE_BRAINSMush:BOOL=${USE_BRAINSMush}
     -DUSE_BRAINSROIAuto:BOOL=${USE_BRAINSROIAuto}
     -DUSE_BRAINSResample:BOOL=${USE_BRAINSResample}

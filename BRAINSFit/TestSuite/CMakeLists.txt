@@ -20,7 +20,6 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME CenterOfROIInitTest
   COMMAND ${LAUNCH_EXE}  $<TARGET_FILE:CenterOfROIInitTest>)
 
 
-
 set(BRAINSFitTestName BRAINSFitTest_AffineRotationMasks)
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>

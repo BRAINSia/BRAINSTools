@@ -362,6 +362,7 @@ int main(int argc, char *argv[])
       }
     outputXfrm = scaleSkewVersorXfrm.GetPointer();
     }
+#if 0
   else if( outputTransformType == "BSplineDeformable" )
     {
     BSplineTransformType::Pointer bsplineXfrm =
@@ -373,6 +374,7 @@ int main(int argc, char *argv[])
       }
     outputXfrm = bsplineXfrm.GetPointer();
     }
+#endif
   // write the resulting transform.
   itk::WriteTransformToDisk(outputXfrm.GetPointer(), outputTransform);
   return EXIT_SUCCESS;

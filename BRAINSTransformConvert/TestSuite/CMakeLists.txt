@@ -42,11 +42,11 @@ set(ImageCompare "${CMAKE_CURRENT_BINARY_DIR}/ImageCompare")
 
 #
 # use BRAINSTransformConvert to make conversions
-set(VersorRigidTargets VersorRigid ScaleVersor ScaleSkewVersor Affine BSplineDeformable DisplacementField)
-set(ScaleVersorTargets ScaleVersor ScaleSkewVersor Affine BSplineDeformable DisplacementField)
-set(ScaleSkewVersorTargets Affine BSplineDeformable DisplacementField)
-set(AffineTargets Affine BSplineDeformable DisplacementField)
-set(BSplineDeformableTargets BSplineDeformable DisplacementField)
+set(VersorRigidTargets VersorRigid ScaleVersor ScaleSkewVersor Affine DisplacementField)
+set(ScaleVersorTargets ScaleVersor ScaleSkewVersor Affine DisplacementField)
+set(ScaleSkewVersorTargets Affine DisplacementField)
+set(AffineTargets Affine DisplacementField)
+set(BSplineDeformableTargets DisplacementField)
 
 set(TransformTestImage "${CMAKE_CURRENT_BINARY_DIR}/TransformConvertTestImage.nii.gz")
 

@@ -108,9 +108,12 @@ do
     mkdir -p ${B3Build}
     cd ${B3Build}
     rm -f CMakeCache.txt
+    # force reconfigure.
+    find . -name '*-configure' | xargs rm -f
     #
     # the Build type
     cmake -DSITE:STRING=${ThisComputer} \
+        -G "Unix Makefiles" \
 	-DCMAKE_C_FLAGS:STRING="${CFLAGS}" \
 	-DCMAKE_CXX_FLAGS:STRING="${CXXFLAGS}" \
 	-DCMAKE_EXE_LINKER_FLAGS:STRING="${LDFLAGS}" \
@@ -124,6 +127,7 @@ do
     scriptname=`basename $0`
     make -j ${NPROCS}
     cd BRAINSTools-build
+    make clean
     if [ $scriptname = "nightly.sh" ] ; then
 	ctest -j ${NPROCS} -D Nightly
     else

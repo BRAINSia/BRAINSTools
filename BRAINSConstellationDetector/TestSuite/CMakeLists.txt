@@ -19,6 +19,9 @@ foreach(testprog ${ALL_TEST_PROGS})
 endforeach()
 
 
+## Test BRAINSConstellationModeler
+##
+
 if ( 0 ) ## HACK:  Just silencing failing tests until they can be proper addressed
   set(BRAINSConstellationModelerTestName BRAINSConstellationModelerTest_T1)
   if(ConstellationModeler_TEST_causes_major_delay)
@@ -29,7 +32,7 @@ if ( 0 ) ## HACK:  Just silencing failing tests until they can be proper address
       --outputModel ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationModelerTestName}.mdl
       )
   endif(ConstellationModeler_TEST_causes_major_delay)
-
+endif(0)
 
 ## Test BRAINSEyeDetector
 ##
@@ -464,6 +467,37 @@ install(TARGETS VersorTester
 add_executable(TestlandmarksConstellationTrainingDefinitionIO TestlandmarksConstellationTrainingDefinitionIO.cxx)
 
 
+#
+# Test Landmark files
+#
+include_regular_expression("^.*$")
+
+enable_testing()
+
+if(NOT ITK_FOUND)
+  find_package(ITK REQUIRED)
+  include(${ITK_USE_FILE})
+endif(NOT ITK_FOUND)
+
+include_directories(${BRAINSConstellationDetectorTool_SOURCE_DIR})
+include_directories(${BRAINSConstellationDetectorTool_BINARY_DIR})
+
+find_package(GenerateCLP NO_MODULE REQUIRED)
+include(${GenerateCLP_USE_FILE})
+
+set (CLP LandmarksCompare)
+set ( ${CLP}_SOURCE ${CLP}.cxx)
+generateclp(${CLP}_SOURCE ${CLP}.xml)
+add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
+add_executable(${CLP} ${${CLP}_SOURCE})
+target_link_libraries(${CLP} ${ITK_LIBRARIES})
+set_target_properties(${CLP} PROPERTIES
+                        RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+set(LandmarksCompareEXE ${CMAKE_CURRENT_BINARY_DIR}/${CLP})
+set (CLP BRAINSConstellationDetector)
+set (BRAINSConstellationDetectorEXE ${LAUNCH_EXE} ${BRAINSConstellationDetectorTool_BINARY_DIR}/../bin/${CLP} )
+set (BRAINSConstellationDetector_TESTS ${LAUNCH_EXE} ${CMAKE_CURRENT_BINARY_DIR}/${CLP}Test )
+
 
 #This test is run by the default input template model and without any output to check the warning codes
 ExternalData_add_test(${PROJECT_NAME}FetchData NAME BRAINSConstellationDetectorTestWarning1
@@ -579,4 +613,3 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetect
          -P ${CMAKE_CURRENT_SOURCE_DIR}/LandmarksCompareTest.cmake
          )
 ExternalData_Add_Target( ${PROJECT_NAME}FetchData )  # Name of data management target
-endif()

@@ -8,20 +8,17 @@ namespace itk
 template <typename TCoordinateType, unsigned int NDimensions,
           typename TInputImage>
 TransformAdaptor<TCoordinateType, NDimensions, TInputImage>
-::TransformAdaptor()
+::TransformAdaptor() :
+  m_FixedImage(NULL),
+  m_MovingImage(NULL),
+  m_CenterFixedAffineTransform(AffineTransformType::New() ),
+  m_CenterMovingAffineTransform(AffineTransformType::New() ),
+  m_DeCenterFixedAffineTransform(AffineTransformType::New() ),
+  m_DeCenterMovingAffineTransform(AffineTransformType::New() ),
+  m_InputAffineTransform(AffineTransformType::New() ),
+  m_OutputAffineTransform(AffineTransformType::New() ),
+  m_ITKAffineTransform(AffineTransformType::New() )
 {
-  m_FixedImage   = NULL;
-  m_MovingImage  = NULL;
-
-  m_CenterMovingAffineTransform = AffineTransformType::New();
-  m_CenterFixedAffineTransform = AffineTransformType::New();
-
-  m_DeCenterMovingAffineTransform = AffineTransformType::New();
-  m_DeCenterFixedAffineTransform = AffineTransformType::New();
-
-  m_InputAffineTransform = AffineTransformType::New();
-  m_ITKAffineTransform = AffineTransformType::New();
-  m_OutputAffineTransform = AffineTransformType::New();
 }
 
 template <typename TCoordinateType, unsigned int NDimensions,

@@ -26,18 +26,18 @@ template <class TReferenceImagePixelType,
           class TGradientImagePixelType, class TTensorPixelType>
 DiffusionTensor3DReconstructionWithMaskImageFilter<TReferenceImagePixelType,
                                                    TGradientImagePixelType, TTensorPixelType>
-::DiffusionTensor3DReconstructionWithMaskImageFilter()
+::DiffusionTensor3DReconstructionWithMaskImageFilter() :
+  m_GradientDirectionContainer(NULL),
+  m_NumberOfGradientDirections(0),
+  m_NumberOfBaselineImages(1),
+  m_Threshold(NumericTraits<ReferencePixelType>::min() ),
+  m_BValue(1.0),
+  m_GradientImageTypeEnumeration(Else)
 {
   // At least 1 inputs is necessary for a vector image.
   // For images added one at a time we need at least six
   this->SetNumberOfRequiredInputs( 1 );
-  m_NumberOfGradientDirections = 0;
-  m_NumberOfBaselineImages = 1;
-  m_Threshold = NumericTraits<ReferencePixelType>::min();
-  m_GradientImageTypeEnumeration = Else;
-  m_GradientDirectionContainer = NULL;
   m_TensorBasis.set_identity();
-  m_BValue = 1.0;
 }
 
 template <class TReferenceImagePixelType,

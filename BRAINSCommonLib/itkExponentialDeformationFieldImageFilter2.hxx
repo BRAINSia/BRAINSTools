@@ -12,21 +12,19 @@ namespace itk
   */
 template <class TInputImage, class TOutputImage>
 ExponentialDeformationFieldImageFilter2<TInputImage, TOutputImage>
-::ExponentialDeformationFieldImageFilter2()
+::ExponentialDeformationFieldImageFilter2() :
+  m_AutomaticNumberOfIterations(true),
+  m_MaximumNumberOfIterations(20),
+  m_ComputeInverse(false),
+  m_Divider(DivideByConstantType::New() ),
+  m_Caster(CasterType::New() ),
+  m_Oppositer(OppositerType::New() ),
+  m_Warper(VectorWarperType::New() ),
+  m_Adder(AdderType::New() )
 {
-  m_AutomaticNumberOfIterations = true;
-  m_MaximumNumberOfIterations = 20;
-  m_ComputeInverse = false;
-  m_Divider = DivideByConstantType::New();
-  m_Caster = CasterType::New();
-  m_Oppositer = OppositerType::New();
-  m_Warper = VectorWarperType::New();
+  FieldInterpolatorPointer VectorInterpolator = FieldInterpolatorType::New();
 
-  FieldInterpolatorPointer VectorInterpolator =
-    FieldInterpolatorType::New();
   m_Warper->SetInterpolator(VectorInterpolator);
-
-  m_Adder = AdderType::New();
   m_Adder->InPlaceOn();
 }
 

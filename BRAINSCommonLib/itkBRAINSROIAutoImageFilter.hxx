@@ -22,15 +22,15 @@ namespace itk
 {
 template <class TInputImage, class TOutputImage>
 BRAINSROIAutoImageFilter<TInputImage, TOutputImage>
-::BRAINSROIAutoImageFilter()
+::BRAINSROIAutoImageFilter() :
+  m_OtsuPercentileThreshold(0.01),
+  m_ThresholdCorrectionFactor(1.0),
+  m_ClosingSize(9.0),
+  m_DilateSize(0.0),
+  m_ResultMaskPointer(NULL)
 {
   // this filter requires two input images
   this->SetNumberOfRequiredInputs(1);
-  m_OtsuPercentileThreshold = 0.01;
-  m_ClosingSize = 9.0;
-  m_ThresholdCorrectionFactor = 1.0;
-  m_DilateSize = 0.0;
-  m_ResultMaskPointer = NULL;
 }
 
 template <class TInputImage, class TOutputImage>

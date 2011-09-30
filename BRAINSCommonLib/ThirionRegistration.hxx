@@ -7,32 +7,29 @@ namespace itk
 {
 template <typename TImage, typename TRealImage, typename TOutputImage>
 ThirionRegistration<TImage, TRealImage, TOutputImage>
-::ThirionRegistration()
+::ThirionRegistration() :
+  m_TheMovingImageFilename(""),
+  m_TheFixedImageFilename(""),
+  m_DisplacementBaseName("none"),
+  m_WarpedImageName("none"),
+  m_ForceCoronalZeroOrigin(false),
+  m_UseHistogramMatching(false),
+  m_OutNormalized("OFF"),
+  m_OutputFilename(""),
+  m_CheckerBoardFilename("none"),
+  m_DeformationFieldOutputName("none"),
+  m_AppendOutputFile(true),
+  m_BOBFTargetMask("none"),
+  m_BOBFTemplateMask("none"),
+  m_Lower(NumericTraits<PixelType>::NonpositiveMin() ),
+  m_Upper(NumericTraits<PixelType>::max() ),
+  m_DefaultPixelValue(NumericTraits<PixelType>::Zero),
+  m_NumberOfHistogramLevels(256),
+  m_NumberOfMatchPoints(2),
+  m_NumberOfLevels(4)
 {
-  m_TheMovingImageFilename = "";
-  m_TheFixedImageFilename = "";
-
-  // m_ParameterFilename = "";
-  m_OutputFilename = "";
-  m_AppendOutputFile = true;
-  m_WarpedImageName = "none";
-  m_CheckerBoardFilename = "none";
-  m_DeformationFieldOutputName = "none";
-  m_DisplacementBaseName = "none";
   m_CheckerBoardPattern.Fill(4);
-  m_Lower = NumericTraits<PixelType>::NonpositiveMin();
-  m_Upper = NumericTraits<PixelType>::max();
-  m_DefaultPixelValue = NumericTraits<PixelType>::Zero;
   m_Radius.Fill(1);
-  m_BOBFTargetMask = "none";
-  m_BOBFTemplateMask = "none";
-  m_ForceCoronalZeroOrigin = false;
-  m_OutNormalized = "OFF";
-  m_UseHistogramMatching = false;
-  //    m_OutDebug = false;
-  m_NumberOfHistogramLevels = 256;
-  m_NumberOfMatchPoints = 2;
-  m_NumberOfLevels = 4;   // if that fixes it, I'm going to do something else
   m_NumberOfIterations = IterationsArrayType(m_NumberOfLevels);
   m_NumberOfIterations[0] = 2000;
   m_NumberOfIterations[1] = 500;

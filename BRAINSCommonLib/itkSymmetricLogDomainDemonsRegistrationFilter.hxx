@@ -12,27 +12,21 @@ namespace itk
 // Default constructor
 template <class TFixedImage, class TMovingImage, class TField>
 SymmetricLogDomainDemonsRegistrationFilter<TFixedImage, TMovingImage, TField>
-::SymmetricLogDomainDemonsRegistrationFilter()
+::SymmetricLogDomainDemonsRegistrationFilter() :
+  m_Multiplier(MultiplyByConstantType::New() ),
+  m_Adder(AdderType::New() ),
+  m_NumberOfBCHApproximationTerms(2),
+  m_BackwardUpdateBuffer(0)
 {
   DemonsRegistrationFunctionPointer drfpf = DemonsRegistrationFunctionType::New();
 
   this->SetDifferenceFunction( static_cast<FiniteDifferenceFunctionType *>(
                                  drfpf.GetPointer() ) );
-
   DemonsRegistrationFunctionPointer drfpb = DemonsRegistrationFunctionType::New();
   this->SetBackwardDifferenceFunction( static_cast<FiniteDifferenceFunctionType *>(
                                          drfpb.GetPointer() ) );
-
-  m_Multiplier = MultiplyByConstantType::New();
   m_Multiplier->InPlaceOn();
-
-  m_Adder = AdderType::New();
   m_Adder->InPlaceOn();
-
-  // Set number of terms in the BCH approximation to default value
-  m_NumberOfBCHApproximationTerms = 2;
-
-  m_BackwardUpdateBuffer = 0;
 }
 
 // Checks whether the DifferenceFunction is of type DemonsRegistrationFunction.

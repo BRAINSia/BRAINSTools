@@ -15,13 +15,13 @@ namespace itk
   */
 template <class TInputImage, class TOutputImage>
 BOBFFilter<TInputImage, TOutputImage>
-::BOBFFilter()
+::BOBFFilter() :
+  m_Lower(NumericTraits<InputPixelType>::NonpositiveMin() ),
+  m_Upper(NumericTraits<InputPixelType>::max() ),
+  m_ReplaceValue(NumericTraits<OutputPixelType>::One)
 {
   this->SetNumberOfRequiredInputs(2);
   m_Seed.Fill(0);
-  m_Lower = NumericTraits<InputPixelType>::NonpositiveMin();
-  m_Upper = NumericTraits<InputPixelType>::max();
-  m_ReplaceValue = NumericTraits<OutputPixelType>::One;
   m_Radius.Fill(1);
 }
 
@@ -34,9 +34,6 @@ BOBFFilter<TInputImage, TOutputImage>
 ::PrintSelf(std::ostream & os, Indent indent) const
 {
   Superclass::PrintSelf(os, indent);
-
-  // os << indent << "UpperGradient: ";
-  // os << m_UpperGradient << std::endl;
 }
 
 /*

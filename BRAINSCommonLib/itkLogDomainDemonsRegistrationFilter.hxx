@@ -8,17 +8,17 @@ namespace itk
 // Default constructor
 template <class TFixedImage, class TMovingImage, class TField>
 LogDomainDemonsRegistrationFilter<TFixedImage, TMovingImage, TField>
-::LogDomainDemonsRegistrationFilter()
+::LogDomainDemonsRegistrationFilter() :
+  m_Multiplier(MultiplyByConstantType::New() ),
+  m_BCHFilter(BCHFilterType::New() )
 {
   DemonsRegistrationFunctionPointer drfp = DemonsRegistrationFunctionType::New();
 
   this->SetDifferenceFunction( static_cast<FiniteDifferenceFunctionType *>(
                                  drfp.GetPointer() ) );
 
-  m_Multiplier = MultiplyByConstantType::New();
   m_Multiplier->InPlaceOn();
 
-  m_BCHFilter = BCHFilterType::New();
   m_BCHFilter->InPlaceOn();
 
   // Set number of terms in the BCH approximation to default value

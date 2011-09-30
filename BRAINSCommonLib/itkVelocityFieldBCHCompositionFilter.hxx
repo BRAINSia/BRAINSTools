@@ -11,23 +11,19 @@ namespace itk
   */
 template <class TInputImage, class TOutputImage>
 VelocityFieldBCHCompositionFilter<TInputImage, TOutputImage>
-::VelocityFieldBCHCompositionFilter()
+::VelocityFieldBCHCompositionFilter() :
+  m_Adder(AdderType::New() ),
+  m_LieBracketFilter(LieBracketFilterType::New() ),
+  m_LieBracketFilter2(LieBracketFilterType::New() ),
+  m_Multiplier(MultiplierType::New() ),
+  m_Multiplier2(MultiplierType::New() ),
+  m_NumberOfApproximationTerms(2)
 {
   // Setup the number of required inputs
   this->SetNumberOfRequiredInputs(2);
 
   // By default we shouldn't be inplace
   this->InPlaceOff();
-
-  // Set number of apprximation terms to default value
-  m_NumberOfApproximationTerms = 2;
-
-  // Declare sub filters
-  m_Adder = AdderType::New();
-  m_LieBracketFilter = LieBracketFilterType::New();
-  m_LieBracketFilter2 = LieBracketFilterType::New();
-  m_Multiplier = MultiplierType::New();
-  m_Multiplier2 = MultiplierType::New();
 
   // Multipliers can always be inplace here
   m_Multiplier->InPlaceOn();

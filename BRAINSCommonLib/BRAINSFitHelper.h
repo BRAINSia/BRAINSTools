@@ -27,6 +27,7 @@
 #include "BRAINSFitBSpline.h"
 #include "BRAINSFitUtils.h"
 
+#include "itkMacro.h"
 #include "itkIO.h"
 #include "GenericTransformImage.h"
 #include "itkFindCenterOfBrainFilter.h"
@@ -313,9 +314,8 @@ BRAINSFitHelper::SetupRegistration()
       ++NRit;
       }
 
-    //    BUG: I don't know why this assert is here but it GUARANTEES
-    //    Test failures; without it, tests seem to complete correctly
-    //    assert(currentCount != 0 );
+//    itkAssertOrThrowMacro(currentCount != 0 );
+    assert(currentCount != 0 );
     this->m_NumberOfSamples = myListOfIndexLocations.size();
     // Redundant with SetFixedImageIndexes
     // localCostMetric->SetUseFixedImageIndexes(true);

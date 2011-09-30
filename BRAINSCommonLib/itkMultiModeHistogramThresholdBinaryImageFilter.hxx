@@ -18,16 +18,12 @@ MultiModeHistogramThresholdBinaryImageFilter<TInputImage, TOutputImage>
   m_QuantileLowerThreshold(1), // temporarily estimate how many SetInput images
                                // there are
   m_QuantileUpperThreshold(1),
+  m_LinearQuantileThreshold(0.01),
   m_InsideValue(NumericTraits<typename IntegerImageType::PixelType>::One),
   m_OutsideValue(NumericTraits<typename IntegerImageType::PixelType>::Zero)
 {
   m_QuantileLowerThreshold.Fill(0.0);
   m_QuantileUpperThreshold.Fill(1.0);
-  m_LinearQuantileThreshold = 0.01;
-  //   this->m_InsideValue =
-  //     NumericTraits<typename IntegerImageType::PixelType>::One;
-  //   this->m_OutsideValue =
-  //     NumericTraits<typename IntegerImageType::PixelType>::Zero;
 }
 
 template <class TInputImage, class TOutputImage>

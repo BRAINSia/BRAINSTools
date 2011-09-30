@@ -19,29 +19,25 @@ namespace itk
 {
 template <typename TInputImage, typename TOutputImage>
 DemonsPreprocessor<TInputImage, TOutputImage>
-::DemonsPreprocessor()
+::DemonsPreprocessor() :
+  m_NumberOfHistogramLevels(256),
+  m_NumberOfMatchPoints(1),
+  m_FixedImageMinimum(NumericTraits<InputPixelType>::NonpositiveMin() ),
+  m_MovingImageMinimum(NumericTraits<InputPixelType>::NonpositiveMin() ),
+  m_FixedBinaryVolume("none"),
+  m_MovingBinaryVolume("none"),
+  m_Lower(NumericTraits<PixelType>::NonpositiveMin() ),
+  m_Upper(NumericTraits<PixelType>::max() ),
+  m_DefaultPixelValue(NumericTraits<PixelType>::One),
+  m_OutDebug(false),
+  m_UseHistogramMatching(0)
 {
-  m_UseHistogramMatching = 0;
-  m_NumberOfHistogramLevels = 256;
-  m_NumberOfMatchPoints = 1;
-
-  m_FixedImageMinimum =  NumericTraits<InputPixelType>::NonpositiveMin();
-  m_MovingImageMinimum = NumericTraits<InputPixelType>::NonpositiveMin();
-
-  m_FixedBinaryVolume = "none";
-  m_MovingBinaryVolume = "none";
-  //    m_Seed =  NumericTraits<IndexType>::Zero;
   for( unsigned i = 0; i < TInputImage::ImageDimension; ++i )
     {
     m_Seed[i] = 0;
     m_MedianFilterSize[i] = 0;
     }
-  m_Lower = NumericTraits<PixelType>::NonpositiveMin();
-  m_Upper = NumericTraits<PixelType>::max();
-
-  m_DefaultPixelValue = NumericTraits<PixelType>::One;
   m_Radius.Fill(1);
-  m_OutDebug = false;
 }
 
 template <typename TInputImage, typename TOutputImage>
@@ -111,7 +107,6 @@ DemonsPreprocessor<TInputImage, TOutputImage>
     histogramfilter->SetNumberOfMatchPoints(m_NumberOfMatchPoints);
     histogramfilter->ThresholdAtMeanIntensityOn();
     histogramfilter->Update();
-    //      m_OutputFixedImage  = histogramfilter->GetOutput();
     m_OutputMovingImage  = histogramfilter->GetOutput();
     // +DANGER: ALIASING:  m_OutputMovingImage EQ m_UnNormalizedMovingImage by
     // design.
@@ -119,9 +114,6 @@ DemonsPreprocessor<TInputImage, TOutputImage>
     // m_OutputMovingImage =
     // itkUtil::CopyImage<TOutputImage>(m_UnNormalizedMovingImage);
     }
-
-  //  m_OutputMovingImage =
-  // itkUtil::CopyImage<TOutputImage>(m_UnNormalizedMovingImage);
 
   m_OutputFixedImage = itkUtil::CopyImage<TOutputImage>(
       m_UnNormalizedFixedImage);

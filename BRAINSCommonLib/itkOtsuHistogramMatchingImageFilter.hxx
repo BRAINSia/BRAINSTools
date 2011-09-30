@@ -29,30 +29,25 @@ namespace itk
   */
 template <class TInputImage, class TOutputImage, class THistogramMeasurement>
 OtsuHistogramMatchingImageFilter<TInputImage, TOutputImage, THistogramMeasurement>
-::OtsuHistogramMatchingImageFilter()
+::OtsuHistogramMatchingImageFilter() :
+  m_NumberOfHistogramLevels(256),
+  m_NumberOfMatchPoints(1),
+  m_SourceMinValue(0),
+  m_ReferenceMinValue(0),
+  m_SourceHistogram(HistogramType::New() ),
+  m_ReferenceHistogram(HistogramType::New() ),
+  m_OutputHistogram(HistogramType::New() ),
+  m_LowerGradient(0.0),
+  m_UpperGradient(0.0),
+  m_SourceMask(NULL),
+  m_ReferenceMask(NULL)
 {
   this->SetNumberOfRequiredInputs(2);
-
-  m_NumberOfHistogramLevels = 256;
-  m_NumberOfMatchPoints = 1;
 
   m_QuantileTable.set_size(3, m_NumberOfMatchPoints + 2);
   m_QuantileTable.fill(0);
   m_Gradients.set_size(m_NumberOfMatchPoints + 1);
   m_Gradients.fill(0);
-
-  m_LowerGradient = 0.0;
-  m_UpperGradient = 0.0;
-
-  // Create histograms.
-  m_SourceHistogram = HistogramType::New();
-  m_ReferenceHistogram = HistogramType::New();
-  m_OutputHistogram = HistogramType::New();
-
-  m_SourceMinValue = 0;
-  m_ReferenceMinValue = 0;
-  m_SourceMask = NULL;
-  m_ReferenceMask = NULL;
 }
 
 /*

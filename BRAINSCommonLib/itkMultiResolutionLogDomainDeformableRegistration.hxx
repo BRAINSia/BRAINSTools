@@ -12,7 +12,13 @@ namespace itk
 // Default constructor
 template <class TFixedImage, class TMovingImage, class TField, class TRealType>
 MultiResolutionLogDomainDeformableRegistration<TFixedImage, TMovingImage, TField, TRealType>
-::MultiResolutionLogDomainDeformableRegistration()
+::MultiResolutionLogDomainDeformableRegistration() :
+  m_FieldExpander(FieldExpanderType::New() ),
+  m_InitialVelocityField(NULL),
+  m_NumberOfLevels(3),
+  m_CurrentLevel(0),
+  m_StopRegistrationFlag(false),
+  m_Exponentiator(FieldExponentiatorType::New() )
 {
   this->SetNumberOfRequiredInputs(2);
 
@@ -37,12 +43,9 @@ MultiResolutionLogDomainDeformableRegistration<TFixedImage, TMovingImage, TField
     <MovingImageType, FloatImageType> ActualMovingImagePyramidType;
 #endif
 
-  m_MovingImagePyramid  = ActualMovingImagePyramidType::New();
-  m_FixedImagePyramid     = ActualFixedImagePyramidType::New();
-  m_FieldExpander     = FieldExpanderType::New();
-  m_InitialVelocityField = NULL;
+  m_FixedImagePyramid = ActualFixedImagePyramidType::New();
+  m_MovingImagePyramid = ActualMovingImagePyramidType::New();
 
-  m_NumberOfLevels = 3;
   m_NumberOfIterations.resize(m_NumberOfLevels);
   m_FixedImagePyramid->SetNumberOfLevels(m_NumberOfLevels);
   m_MovingImagePyramid->SetNumberOfLevels(m_NumberOfLevels);
@@ -52,11 +55,6 @@ MultiResolutionLogDomainDeformableRegistration<TFixedImage, TMovingImage, TField
     {
     m_NumberOfIterations[ilevel] = 10;
     }
-  m_CurrentLevel = 0;
-
-  m_StopRegistrationFlag = false;
-
-  m_Exponentiator = FieldExponentiatorType::New();
 }
 
 // Set the moving image image.

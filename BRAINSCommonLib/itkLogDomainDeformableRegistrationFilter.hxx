@@ -18,7 +18,15 @@ namespace itk
 // Default constructor
 template <class TFixedImage, class TMovingImage, class TField>
 LogDomainDeformableRegistrationFilter<TFixedImage, TMovingImage, TField>
-::LogDomainDeformableRegistrationFilter()
+::LogDomainDeformableRegistrationFilter() :
+  m_SmoothVelocityField(true),
+  m_SmoothUpdateField(false),
+  m_TempField(VelocityFieldType::New() ),
+  m_MaximumError(0.1),
+  m_MaximumKernelWidth(30),
+  m_StopRegistrationFlag(false),
+  m_Exponentiator(FieldExponentiatorType::New() ),
+  m_InverseExponentiator(FieldExponentiatorType::New() )
 {
   this->SetNumberOfRequiredInputs(2);
 
@@ -31,18 +39,8 @@ LogDomainDeformableRegistrationFilter<TFixedImage, TMovingImage, TField>
     m_UpdateFieldStandardDeviations[j] = 1.0;
     }
 
-  m_TempField = VelocityFieldType::New();
-  m_MaximumError = 0.1;
-  m_MaximumKernelWidth = 30;
-  m_StopRegistrationFlag = false;
-
-  m_SmoothVelocityField = true;
-  m_SmoothUpdateField = false;
-
-  m_Exponentiator = FieldExponentiatorType::New();
   m_Exponentiator->ComputeInverseOff();
 
-  m_InverseExponentiator = FieldExponentiatorType::New();
   m_InverseExponentiator->ComputeInverseOn();
 }
 

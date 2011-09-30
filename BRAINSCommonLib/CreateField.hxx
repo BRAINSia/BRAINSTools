@@ -10,36 +10,28 @@ namespace itk
 {
 template <typename TImage, typename T2Image>
 CreateField<TImage,
-            T2Image>::CreateField()
+            T2Image>::CreateField() :
+  m_Image1Filename(""),
+  m_Image2Filename(""),
+  m_ParameterFilename(""),
+  m_ImageOne(NULL),
+  m_ImageTwo(NULL),
+  m_NumberOfHistogramLevels(1024),
+  m_NumberOfMatchPoints(7),
+  m_NumberOfLevels(1),
+  m_FixedImage(NULL),
+  m_MovingImage(NULL),
+  m_NumberOfHistogramLevels(256),
+  m_NumberOfMatchPoints(1),
+  m_FixedImageMinimum(0),
+  m_MovingImageMinimum(0),
+  m_DeformationField(NULL)
 {
-  // MUST GRAB IMAGE 1 AND 2, Parameter Map and Warped Image Name
-  m_Image1Filename = "";
-  m_Image2Filename = "";
-  m_ParameterFilename = "";
-
-  m_ImageOne = NULL;
-  m_ImageTwo = NULL;
-
-  m_NumberOfHistogramLevels = 1024;
-  m_NumberOfMatchPoints = 7;
-
-  m_NumberOfLevels = 1;
-  m_Image1ShrinkFactors.Fill(1);
-  m_Image2ShrinkFactors.Fill(1);
+  m_Image1ShrinkFactors.Fill(1),
+  m_Image2ShrinkFactors.Fill(1)
 
   m_NumberOfIterations = IterationsArrayType(1);
   m_NumberOfIterations.Fill(10);
-
-  m_FixedImage  = NULL;
-  m_MovingImage = NULL;
-
-  m_NumberOfHistogramLevels = 256;
-  m_NumberOfMatchPoints = 1;
-
-  m_FixedImageMinimum = 0;
-  m_MovingImageMinimum = 0;
-
-  m_DeformationField = NULL;
 
   m_FixedImagePyramid  = FixedImagePyramidType::New();
   m_FixedImagePyramid->UseShrinkImageFilterOff();
@@ -74,8 +66,7 @@ void CreateField<TImage,
     m_ImageOne = itkUtil::ReadImage<TImage>(m_Image1Filename);
     m_ImageTwo = itkUtil::ReadImage<TImage>(m_Image2Filename);
 
-    FILE *paramFile;
-    paramFile = fopen(m_ParameterFilename.c_str(), "r");
+    FILE *paramFile = fopen(m_ParameterFilename.c_str(), "r");
     if( !paramFile )
       {
       itkExceptionMacro(<< "  Could not open parameter file. ");
@@ -103,7 +94,6 @@ void CreateField<TImage,
 
       {
       itk::Array<unsigned int> temp(m_NumberOfLevels);
-
       temp.Fill(0);
       m_NumberOfIterations = temp;
       }
@@ -196,9 +186,7 @@ void CreateField<TImage,
         << m_MovingImage->GetDirection()
         << std::endl;
       }
-    // m_ImageOne->DisconnectPipeline();
     m_ImageOne = NULL;
-    // m_ImageTwo->DisconnectPipeline();
     m_ImageTwo = NULL;
 
     m_FixedImagePyramid->SetNumberOfLevels(m_NumberOfLevels);
@@ -266,9 +254,7 @@ template <typename TImage, typename T2Image>
 void CreateField<TImage,
                  T2Image>::ReleaseDataFlagOn()
 {
-  // m_FixedImage->DisconnectPipeline();
   m_FixedImage = NULL;
-  // m_MovingImage->DisconnectPipeline();
   m_MovingImage = NULL;
 }
 

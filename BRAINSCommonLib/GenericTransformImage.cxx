@@ -479,6 +479,8 @@ void WriteTransformToDisk(GenericTransformType const *const MyTransform, const s
 }
 
 // HACK:  This can now be removed!
+//  * COMMENT: The above comment says this is a hack and can be removed, but
+//  as of 30 Sep 2011, there is still code calling it.
 // Adding a single new transform require registering all the transform types.
 void AddExtraTransformRegister(void)
 {

@@ -78,45 +78,37 @@ template <
   class TRealImage,
   class TOutputImage,
   class TFieldValue>
-DemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::DemonsRegistrator()
+DemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::DemonsRegistrator() :
+  m_InitialDeformationField(NULL),
+  m_FixedImage(NULL),
+  m_MovingImage(NULL),
+  m_FixedImagePyramid(FixedImagePyramidType::New() ),
+  m_MovingImagePyramid(MovingImagePyramidType::New() ),
+  m_Registration(RegistrationType::New() ),
+  m_LDRegistration(LDRegistrationType::New() ),
+  m_DefaultPixelValue( NumericTraits<typename RealImageType::PixelType>::Zero),
+  m_NumberOfLevels(1),
+  m_NumberOfIterations(UnsignedIntArray(1) ),
+  m_DeformationField(NULL),
+  m_DisplacementBaseName("none"),
+  m_WarpedImageName("none"),
+  m_CheckerBoardFilename("none"),
+  m_DeformationFieldOutputName("none"),
+  m_OutNormalized("OFF"),
+  m_OutDebug(false),
+  m_UseHistogramMatching(false),
+  m_UseLogDomain(false),
+  m_InterpolationMode("Linear")
 {
-  // Images need to be set from the outside
-  m_FixedImage = NULL;
-  m_MovingImage = NULL;
-  m_DeformationField = NULL;
-
-  m_Registration = RegistrationType::New();
-  m_LDRegistration = LDRegistrationType::New();
-
   // Set up internal registrator with default components
-  m_FixedImagePyramid = FixedImagePyramidType::New();
   m_FixedImagePyramid->UseShrinkImageFilterOff();
-  m_MovingImagePyramid = MovingImagePyramidType::New();
   m_MovingImagePyramid->UseShrinkImageFilterOff();
-
-  m_DefaultPixelValue =  NumericTraits<typename RealImageType::PixelType>::Zero;
-
-  // Default parameters
-  m_NumberOfLevels = 1;
 
   m_FixedImageShrinkFactors.Fill(1);
   m_MovingImageShrinkFactors.Fill(1);
 
-  m_NumberOfIterations = UnsignedIntArray(1);
   m_NumberOfIterations.Fill(10);
-  m_WarpedImageName = "none";
-  m_DisplacementBaseName = "none";
-  m_CheckerBoardFilename = "none";
-  m_DeformationFieldOutputName = "none";
   m_CheckerBoardPattern.Fill(4);
-  m_OutNormalized  = "OFF";
-
-  m_UseHistogramMatching = false;
-  m_OutDebug = false;
-  m_UseLogDomain = false;
-
-  m_InitialDeformationField = NULL;
-  m_InterpolationMode = "Linear";
 }
 
 template <

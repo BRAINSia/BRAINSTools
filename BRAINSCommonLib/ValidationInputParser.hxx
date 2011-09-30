@@ -42,28 +42,22 @@ namespace itk
 {
 template <typename TImage>
 ValidationInputParser<TImage>
-::ValidationInputParser()
+::ValidationInputParser() :
+  m_TheMovingImageFilename(""),
+  m_TheFixedImageFilename(""),
+  m_ParameterFilename(""),
+  m_TheMovingImage(NULL),
+  m_TheFixedImage(NULL),
+  m_ForceCoronalZeroOrigin(false),
+  m_OutDebug(false),
+  m_NumberOfHistogramLevels(1024),
+  m_NumberOfMatchPoints(7),
+  m_NumberOfLevels(1),
+  m_NumberOfIterations(IterationsArrayType(1) )
 {
-  m_TheMovingImageFilename = "";
-  m_TheFixedImageFilename = "";
-
-  m_ParameterFilename = "";
-
-  m_TheMovingImage = NULL;
-  m_TheFixedImage = NULL;
-
-  m_NumberOfHistogramLevels = 1024;
-  m_NumberOfMatchPoints = 7;
-
-  m_NumberOfLevels = 1;
   m_TheMovingImageShrinkFactors.Fill(1);
   m_TheFixedImageShrinkFactors.Fill(1);
-
-  m_NumberOfIterations = IterationsArrayType(1);
   m_NumberOfIterations.Fill(10);
-
-  m_OutDebug = false;
-  m_ForceCoronalZeroOrigin = false;
 }
 
 template <typename TImage>

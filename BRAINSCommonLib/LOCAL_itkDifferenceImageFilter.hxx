@@ -30,22 +30,16 @@ namespace itk
 // ----------------------------------------------------------------------------
 template <class TInputImage, class TOutputImage>
 LOCAL_DifferenceImageFilter<TInputImage, TOutputImage>
-::LOCAL_DifferenceImageFilter()
+::LOCAL_DifferenceImageFilter() :
+  m_DifferenceThreshold(NumericTraits<OutputPixelType>::Zero),
+  m_MeanDifference(NumericTraits<RealType>::Zero),
+  m_TotalDifference(NumericTraits<AccumulateType>::Zero),
+  m_NumberOfPixelsWithDifferences(0),
+  m_ToleranceRadius(0),
+  m_IgnoreBoundaryPixels(false)
 {
   // We require two inputs to execute.
   this->SetNumberOfRequiredInputs(2);
-
-  // Set the default DifferenceThreshold.
-  m_DifferenceThreshold = NumericTraits<OutputPixelType>::Zero;
-
-  // Set the default ToleranceRadius.
-  m_ToleranceRadius = 0;
-
-  // Initialize statistics about difference image.
-  m_MeanDifference = NumericTraits<RealType>::Zero;
-  m_TotalDifference = NumericTraits<AccumulateType>::Zero;
-  m_NumberOfPixelsWithDifferences = 0;
-  m_IgnoreBoundaryPixels = false;
 }
 
 // ----------------------------------------------------------------------------

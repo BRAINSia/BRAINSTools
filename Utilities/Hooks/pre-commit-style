@@ -313,7 +313,7 @@ run_cppcheck() {
 
 # Do not run during merge commits for now.
 if test -f "$GIT_DIR/MERGE_HEAD"; then
-	exit 0:
+	exit 0
 fi
 if $do_cppcheck; then
 	run_cppcheck || exit 1

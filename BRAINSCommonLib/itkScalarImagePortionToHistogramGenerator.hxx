@@ -21,10 +21,10 @@ namespace Statistics
 {
 template <class TImageType, class TMaskType>
 ScalarImagePortionToHistogramGenerator<TImageType, TMaskType>
-::ScalarImagePortionToHistogramGenerator()
+::ScalarImagePortionToHistogramGenerator() :
+  m_HistogramGenerator(GeneratorType::New() )
 {
   m_ImageToListSampleGenerator = ListSampleGeneratorType::New();
-  m_HistogramGenerator = GeneratorType::New();
   m_HistogramGenerator->SetInput( m_ImageToListSampleGenerator->GetOutput() );
 }
 

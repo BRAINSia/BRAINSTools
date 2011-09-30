@@ -12,13 +12,12 @@ namespace itk
   */
 template <class TInputImage, class TOutputImage>
 VelocityFieldLieBracketFilter<TInputImage, TOutputImage>
-::VelocityFieldLieBracketFilter()
+::VelocityFieldLieBracketFilter() :
+  m_RightGradientCalculator(InputFieldGradientCalculatorType::New() ),
+  m_LeftGradientCalculator(InputFieldGradientCalculatorType::New() )
 {
   // Setup the number of required inputs
   this->SetNumberOfRequiredInputs(2);
-
-  m_RightGradientCalculator = InputFieldGradientCalculatorType::New();
-  m_LeftGradientCalculator  = InputFieldGradientCalculatorType::New();
 }
 
 /**

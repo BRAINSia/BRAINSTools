@@ -185,19 +185,14 @@ BRAINSFitHelper::StartRegistration(void)
       std::cout << "ERROR:  Histogram matching requires a fixed mask." << std::endl;
       exit(-1);
       }
-      {
-      histogramfilter->SetReferenceMask( m_FixedBinaryVolume.GetPointer() );
-      }
+    histogramfilter->SetReferenceMask( m_FixedBinaryVolume.GetPointer() );
     histogramfilter->SetInput(this->m_PreprocessedMovingVolume);
     if( this->m_MovingBinaryVolume.IsNull() )
       {
       std::cout << "ERROR:  Histogram matching requires a moving mask." << std::endl;
       exit(-1);
       }
-      {
-      histogramfilter->SetSourceMask( m_MovingBinaryVolume.GetPointer() );
-      }
-
+    histogramfilter->SetSourceMask( m_MovingBinaryVolume.GetPointer() );
     histogramfilter->SetNumberOfHistogramLevels(this->m_NumberOfHistogramBins);
     histogramfilter->SetNumberOfMatchPoints(this->m_NumberOfMatchPoints);
     histogramfilter->Update();

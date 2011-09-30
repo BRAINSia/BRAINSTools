@@ -22,8 +22,6 @@ FindCenterOfBrainFilter<TInputImage, TMaskImage>
   m_HeadSizeEstimate(0),
   m_BackgroundValue(NumericTraits<typename ImageType::PixelType>::Zero),
   m_GenerateDebugImages(false),
-  // ITK smart pointers construct as null pointers, but
-  // belt and suspenders initialization
   m_ImageMask(0),
   m_ClippedImageMask(0),
   m_TrimmedImage(0),

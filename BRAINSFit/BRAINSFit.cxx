@@ -408,65 +408,60 @@ int main(int argc, char *argv[])
   // if they've been defined assign the masks...
   ImageMaskPointer fixedMask = NULL;
   ImageMaskPointer movingMask = NULL;
+  if( maskProcessingMode == "NOMASK" )
     {
-    if( maskProcessingMode == "NOMASK" )
+    if( fixedBinaryVolume != "" || movingBinaryVolume != "" )
       {
-      if( ( !fixedBinaryVolume.empty() )
-          || ( !movingBinaryVolume.empty() ) )
-        {
-        std::cout
-          << "ERROR:  Can not specify mask file names when the default of NOMASK is used for the maskProcessingMode"
-          << std::endl;
-        exit(-1);
-        }
+      std::cout
+        << "ERROR:  Can not specify mask file names when the default of NOMASK is used for the maskProcessingMode"
+        << std::endl;
+      exit(-1);
       }
-    else if( maskProcessingMode == "ROIAUTO" )
+    }
+  else if( maskProcessingMode == "ROIAUTO" )
+    {
+    if( fixedBinaryVolume != "" || movingBinaryVolume != "" )
       {
-      if( ( !fixedBinaryVolume.empty() )
-          || ( !movingBinaryVolume.empty() ) )
-        {
-        std::cout
-          << "ERROR:  Can not specify mask file names when ROIAUTO is used for the maskProcessingMode"
-          << std::endl;
-        exit(-1);
-        }
-        {
-        typedef itk::BRAINSROIAutoImageFilter<FixedVolumeType, itk::Image<unsigned char, 3> > ROIAutoType;
-        ROIAutoType::Pointer ROIFilter = ROIAutoType::New();
-        ROIFilter->SetInput(extractFixedVolume);
-        ROIFilter->SetClosingSize(ROIAutoClosingSize);
-        ROIFilter->SetDilateSize(ROIAutoDilateSize);
-        ROIFilter->Update();
-        fixedMask = ROIFilter->GetSpatialObjectROI();
-        }
-        {
-        typedef itk::BRAINSROIAutoImageFilter<MovingVolumeType, itk::Image<unsigned char, 3> > ROIAutoType;
-        ROIAutoType::Pointer ROIFilter = ROIAutoType::New();
-        ROIFilter->SetInput(extractMovingVolume);
-        ROIFilter->SetClosingSize(ROIAutoClosingSize);
-        ROIFilter->SetDilateSize(ROIAutoDilateSize);
-        ROIFilter->Update();
-        movingMask = ROIFilter->GetSpatialObjectROI();
-        }
+      std::cout
+        << "ERROR:  Can not specify mask file names when ROIAUTO is used for the maskProcessingMode"
+        << std::endl;
+      exit(-1);
       }
-    else if( maskProcessingMode == "ROI" )
       {
-      if( ( !fixedBinaryVolume.empty() )
-          || ( !movingBinaryVolume.empty() ) )
-        {
-        std::cout
-          <<
-          "ERROR:  Must specify mask file names when ROI is used for the maskProcessingMode"
-          << std::endl;
-        exit(-1);
-        }
-      fixedMask = ReadImageMask<SpatialObjectType, Dimension>(
-          fixedBinaryVolume,
-          extractFixedVolume.GetPointer() );
-      movingMask = ReadImageMask<SpatialObjectType, Dimension>(
-          movingBinaryVolume,
-          extractMovingVolume.GetPointer() );
+      typedef itk::BRAINSROIAutoImageFilter<FixedVolumeType, itk::Image<unsigned char, 3> > ROIAutoType;
+      ROIAutoType::Pointer ROIFilter = ROIAutoType::New();
+      ROIFilter->SetInput(extractFixedVolume);
+      ROIFilter->SetClosingSize(ROIAutoClosingSize);
+      ROIFilter->SetDilateSize(ROIAutoDilateSize);
+      ROIFilter->Update();
+      fixedMask = ROIFilter->GetSpatialObjectROI();
       }
+      {
+      typedef itk::BRAINSROIAutoImageFilter<MovingVolumeType, itk::Image<unsigned char, 3> > ROIAutoType;
+      ROIAutoType::Pointer ROIFilter = ROIAutoType::New();
+      ROIFilter->SetInput(extractMovingVolume);
+      ROIFilter->SetClosingSize(ROIAutoClosingSize);
+      ROIFilter->SetDilateSize(ROIAutoDilateSize);
+      ROIFilter->Update();
+      movingMask = ROIFilter->GetSpatialObjectROI();
+      }
+    }
+  else if( maskProcessingMode == "ROI" )
+    {
+    if( fixedBinaryVolume == "" || movingBinaryVolume == "" )
+      {
+      std::cout
+        <<
+        "ERROR:  Must specify mask file names when ROI is used for the maskProcessingMode"
+        << std::endl;
+      exit(-1);
+      }
+    fixedMask = ReadImageMask<SpatialObjectType, Dimension>(
+        fixedBinaryVolume,
+        extractFixedVolume.GetPointer() );
+    movingMask = ReadImageMask<SpatialObjectType, Dimension>(
+        movingBinaryVolume,
+        extractMovingVolume.GetPointer() );
     }
   /* This default fills the background with zeros
    *  const double BackgroundFillValue =

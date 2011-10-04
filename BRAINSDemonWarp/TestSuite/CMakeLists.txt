@@ -243,8 +243,10 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateVectorDiffeomorphic
   --compareNumberOfPixelsTolerance 220
   --compareIntensityTolerance 10
   VBRAINSDemonWarpTest
-  --movingVolume DATA{${TestData_DIR}/SUBJ_B_small_T1.nii.gz},DATA{${TestData_DIR}/SUBJ_B_small_T1.nii.gz}
-  --fixedVolume DATA{${TestData_DIR}/SUBJ_A_small_T1.nii.gz},DATA{${TestData_DIR}/SUBJ_A_small_T1.nii.gz}
+  --movingVolume DATA{${TestData_DIR}/SUBJ_B_small_T1.nii.gz}
+  --movingVolume DATA{${TestData_DIR}/SUBJ_B_small_T1.nii.gz}
+  --fixedVolume DATA{${TestData_DIR}/SUBJ_A_small_T1.nii.gz}
+  --fixedVolume DATA{${TestData_DIR}/SUBJ_A_small_T1.nii.gz}
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/vectordiffeomorphicDemons1_test.nii.gz
   --outputDeformationFieldVolume ${CMAKE_CURRENT_BINARY_DIR}/OutDefField.nii.gz
   --inputPixelType short
@@ -271,8 +273,10 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateVectorDiffeomorphic
   --compareNumberOfPixelsTolerance 300
   --compareIntensityTolerance 10
   VBRAINSDemonWarpTest
-  --movingVolume DATA{${TestData_DIR}/SUBJ_B_small_T1.nii.gz},DATA{${TestData_DIR}/SUBJ_B_small_T1.nii.gz}
-  --fixedVolume DATA{${TestData_DIR}/SUBJ_A_small_T1.nii.gz},DATA{${TestData_DIR}/SUBJ_A_small_T1.nii.gz}
+  --movingVolume DATA{${TestData_DIR}/SUBJ_B_small_T1.nii.gz}
+  --movingVolume DATA{${TestData_DIR}/SUBJ_B_small_T1.nii.gz}
+  --fixedVolume DATA{${TestData_DIR}/SUBJ_A_small_T1.nii.gz}
+  --fixedVolume DATA{${TestData_DIR}/SUBJ_A_small_T1.nii.gz}
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/vectordiffeomorphicDemons2_test.nii.gz
   --inputPixelType ushort
   --outputPixelType uchar
@@ -297,8 +301,10 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateVectorDiffeomorphic
   --compareNumberOfPixelsTolerance 6950
   --compareIntensityTolerance 10
   VBRAINSDemonWarpTest
-  --movingVolume DATA{${TestData_DIR}/SUBJ_B_small_T1.nii.gz},DATA{${TestData_DIR}/SUBJ_B_small_T1.nii.gz}
-  --fixedVolume DATA{${TestData_DIR}/SUBJ_A_small_T1.nii.gz},DATA{${TestData_DIR}/SUBJ_A_small_T1.nii.gz}
+  --movingVolume DATA{${TestData_DIR}/SUBJ_B_small_T1.nii.gz}
+  --movingVolume DATA{${TestData_DIR}/SUBJ_B_small_T1.nii.gz}
+  --fixedVolume  DATA{${TestData_DIR}/SUBJ_A_small_T1.nii.gz}
+  --fixedVolume  DATA{${TestData_DIR}/SUBJ_A_small_T1.nii.gz}
   #    --outputDeformationFieldVolume ${VBRAINSDemonWarp_BINARY_DIR}/OutDefField.nii.gz
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/vectordiffeomorphicDemons3_test.nii.gz
   --inputPixelType int
@@ -328,8 +334,10 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateVectorDiffeomorphic
   --compareNumberOfPixelsTolerance 340
   --compareIntensityTolerance 10
   VBRAINSDemonWarpTest
-  --movingVolume DATA{${TestData_DIR}/SUBJ_B_small_T1.nii.gz},DATA{${TestData_DIR}/SUBJ_B_small_T1.nii.gz}
-  --fixedVolume DATA{${TestData_DIR}/SUBJ_A_small_T1.nii.gz},DATA{${TestData_DIR}/SUBJ_A_small_T1.nii.gz}
+  --movingVolume DATA{${TestData_DIR}/SUBJ_B_small_T1.nii.gz}
+  --movingVolume DATA{${TestData_DIR}/SUBJ_B_small_T1.nii.gz}
+  --fixedVolume DATA{${TestData_DIR}/SUBJ_A_small_T1.nii.gz}
+  --fixedVolume DATA{${TestData_DIR}/SUBJ_A_small_T1.nii.gz}
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/vectordiffeomorphicDemons4_test.nii.gz
   --outputDeformationFieldVolume ${CMAKE_CURRENT_BINARY_DIR}/OutDefField.nii.gz
   --inputPixelType int
@@ -354,8 +362,12 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateVectorDiffeomorphic
   --compareNumberOfPixelsTolerance 75
   --compareIntensityTolerance 10
   VBRAINSDemonWarpTest
-  --movingVolume DATA{${TestData_DIR}/SUBJ_B_small_T1.nii.gz},DATA{${TestData_DIR}/SUBJ_B_small_T1.nii.gz},DATA{${TestData_DIR}/SUBJ_B_small_T1.nii.gz}
-  --fixedVolume DATA{${TestData_DIR}/SUBJ_A_small_T1.nii.gz},DATA{${TestData_DIR}/SUBJ_A_small_T1.nii.gz},DATA{${TestData_DIR}/SUBJ_A_small_T1.nii.gz}
+  --movingVolume DATA{${TestData_DIR}/SUBJ_B_small_T1.nii.gz}
+  --movingVolume DATA{${TestData_DIR}/SUBJ_B_small_T1.nii.gz}
+  --movingVolume DATA{${TestData_DIR}/SUBJ_B_small_T1.nii.gz}
+  --fixedVolume DATA{${TestData_DIR}/SUBJ_A_small_T1.nii.gz}
+  --fixedVolume DATA{${TestData_DIR}/SUBJ_A_small_T1.nii.gz}
+  --fixedVolume DATA{${TestData_DIR}/SUBJ_A_small_T1.nii.gz}
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/vectordiffeomorphicDemons5_test.nii.gz
   --inputPixelType short
   --outputPixelType uchar
@@ -413,8 +425,10 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateVectorOrientedImage
   --compareNumberOfPixelsTolerance 50000
   --compareIntensityTolerance 25
   VBRAINSDemonWarpTest
-  --movingVolume DATA{${TestData_DIR}/ANON0006_20_T1_sag_twisted.nii.gz},DATA{${TestData_DIR}/ANON0006_20_T1_sag_twisted.nii.gz}
-  --fixedVolume DATA{${TestData_DIR}/ANON0006_20_T1_dbg_splayed.nii.gz},DATA{${TestData_DIR}/ANON0006_20_T1_dbg_splayed.nii.gz}
+  --movingVolume DATA{${TestData_DIR}/ANON0006_20_T1_sag_twisted.nii.gz}
+  --movingVolume DATA{${TestData_DIR}/ANON0006_20_T1_sag_twisted.nii.gz}
+  --fixedVolume DATA{${TestData_DIR}/ANON0006_20_T1_dbg_splayed.nii.gz}
+  --fixedVolume  DATA{${TestData_DIR}/ANON0006_20_T1_dbg_splayed.nii.gz}
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/ValidateVectorOrientedImagesTest6.nii.gz
   --inputPixelType uchar
   --outputPixelType uchar
@@ -433,8 +447,10 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateVectorOrientedImage
   --compareNumberOfPixelsTolerance 51000
   --compareIntensityTolerance 25
   VBRAINSDemonWarpTest
-  --movingVolume DATA{${TestData_DIR}/ANON0006_20_T1_sag_twisted.nii.gz},DATA{${TestData_DIR}/ANON0006_20_T1_sag_twisted.nii.gz}
-  --fixedVolume DATA{${TestData_DIR}/ANON0006_20_T1_dbg_splayed.nii.gz},DATA{${TestData_DIR}/ANON0006_20_T1_dbg_splayed.nii.gz}
+  --movingVolume DATA{${TestData_DIR}/ANON0006_20_T1_sag_twisted.nii.gz}
+  --movingVolume DATA{${TestData_DIR}/ANON0006_20_T1_sag_twisted.nii.gz}
+  --fixedVolume DATA{${TestData_DIR}/ANON0006_20_T1_dbg_splayed.nii.gz}
+  --fixedVolume DATA{${TestData_DIR}/ANON0006_20_T1_dbg_splayed.nii.gz}
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/ValidateVectorOrientedImagesTest7.nii.gz
   --inputPixelType uchar
   --outputPixelType uchar

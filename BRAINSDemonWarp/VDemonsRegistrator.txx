@@ -494,7 +494,7 @@ void VDemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::StartNewLevel()
     //     std::cout << "--- Starting level " << m_Registration->GetCurrentLevel
     // () << std::endl;
 
-    std::cout << "--- Starting level "
+    std::cout << "---- Starting level "
               << m_VectorRegistration->GetCurrentLevel() << std::endl;
     }
 }

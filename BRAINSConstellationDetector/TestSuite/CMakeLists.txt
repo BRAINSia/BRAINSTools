@@ -3,6 +3,7 @@
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/obliq_setup.txt.in
   ${CMAKE_CURRENT_BINARY_DIR}/obliq_setup.txt @ONLY IMMEDIATE)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/T1.mdl ${CMAKE_CURRENT_BINARY_DIR}/T1.mdl)
 
 set(ALL_TEST_PROGS
   BRAINSAlignMSP
@@ -397,7 +398,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetect
   --outputResampledVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
   --inputTemplateModel DATA{${TestData_DIR}/T1.mdl}
   --LLSModel DATA{${TestData_DIR}/LLSModel.hdf5}
-  --inputLandmarksEMSP DATA{${TestData_DIR}/EMSP.fcsv)
+  --inputLandmarksEMSP DATA{${TestData_DIR}/EMSP.fcsv})
 
 
 
@@ -487,16 +488,18 @@ set_target_properties(${CLP} PROPERTIES
                         RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 set(LandmarksCompareEXE ${CMAKE_CURRENT_BINARY_DIR}/${CLP})
 set (CLP BRAINSConstellationDetector)
-set (BRAINSConstellationDetectorEXE ${LAUNCH_EXE} ${BRAINSConstellationDetectorTool_BINARY_DIR}/../bin/${CLP} )
-set (BRAINSConstellationDetector_TESTS ${LAUNCH_EXE} ${CMAKE_CURRENT_BINARY_DIR}/${CLP}Test )
+set (BRAINSConstellationDetectorEXE ${LAUNCH_EXE} ${BRAINSConstellationDetectorTool_BINARY_DIR}/../../bin/${CLP} )
+set (BRAINSConstellationDetector_TESTS ${LAUNCH_EXE} ${CMAKE_CURRENT_BINARY_DIR}/${CLP}TestDriver )
 
 
-#This test is run by the default input template model and without any output to check the warning codes
+if(0)
+#This test is run without any output to check the warning codes
 ExternalData_add_test(${PROJECT_NAME}FetchData NAME BRAINSConstellationDetectorTestWarning1
   COMMAND $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
   BRAINSConstellationDetectorTest
   --inputVolume DATA{${TestData_DIR}/T1.nii.gz}
   --LLSModel DATA{${TestData_DIR}/LLSModel.hdf5}
+  --inputTemplateModel DATA{${TestData_DIR}/T1.mdl}
   --inputLandmarksPaired DATA{${TestData_DIR}/BRAINSConstellationDetectorTest_outputLandmarksInInputSpace_standard.fcsv
   )
 set_tests_properties(BRAINSConstellationDetectorTestWarning1 PROPERTIES WILL_FAIL ON)
@@ -506,6 +509,7 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME BRAINSConstellationDetectorT
   BRAINSConstellationDetectorTest
   --inputVolume DATA{${TestData_DIR}/T1.nii.gz}
   --LLSModel DATA{${TestData_DIR}/LLSModel.hdf5}
+  --inputTemplateModel DATA{${TestData_DIR}/T1.mdl}
   --outputLandmarksInACPCAlignedSpace ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.fcsv
   )
 set_tests_properties(BRAINSConstellationDetectorTestWarning2 PROPERTIES WILL_FAIL ON)
@@ -514,6 +518,8 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME LandmarksCompareTest
   COMMAND ${LAUNCH_EXE} ${LandmarksCompareEXE}
   --help
   )
+endif(0)
+
 
 #To define new tests for other landmark files (such as .wts files), we just need to change:
 #                      TestName
@@ -527,7 +533,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetect
   COMMAND ${CMAKE_COMMAND}
         -D TEST_PROGRAM=${BRAINSConstellationDetectorEXE}
         -D TEST_COMPARE_PROGRAM=${LandmarksCompareEXE}
-        -D TEST_BASELINE=DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.fcsv
+        -D TEST_BASELINE=DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.fcsv}
         -D TEST_INPUT_VOLUME=DATA{${TestData_DIR}/T1.nii.gz}
         -D TEST_INPUT_TEMPLATEMODEL=DATA{${TestData_DIR}/T1.mdl}
         -D TEST_INPUT_LLSMODEL=DATA{${TestData_DIR}/LLSModel.hdf5}
@@ -544,7 +550,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetect
   COMMAND ${CMAKE_COMMAND}
          -D TEST_PROGRAM=${BRAINSConstellationDetectorEXE}
          -D TEST_COMPARE_PROGRAM=${LandmarksCompareEXE}
-         -D TEST_BASELINE=DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.fcsv
+         -D TEST_BASELINE=DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.fcsv}
          -D TEST_INPUT_VOLUME=DATA{${TestData_DIR}/T1.nii.gz}
          -D TEST_INPUT_TEMPLATEMODEL=DATA{${TestData_DIR}/T1.mdl}
          -D TEST_INPUT_LLSMODEL=DATA{${TestData_DIR}/LLSModel.hdf5}
@@ -561,7 +567,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetect
   COMMAND ${CMAKE_COMMAND}
          -D TEST_PROGRAM=${BRAINSConstellationDetectorEXE}
          -D TEST_COMPARE_PROGRAM=${LandmarksCompareEXE}
-         -D TEST_BASELINE=DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.wts
+         -D TEST_BASELINE=DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.wts}
          -D TEST_INPUT_VOLUME=DATA{${TestData_DIR}/T1.nii.gz}
          -D TEST_INPUT_TEMPLATEMODEL=DATA{${TestData_DIR}/T1.mdl}
          -D TEST_INPUT_LLSMODEL=DATA{${TestData_DIR}/LLSModel.hdf5}
@@ -578,7 +584,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetect
   COMMAND ${CMAKE_COMMAND}
          -D TEST_PROGRAM=${BRAINSConstellationDetectorEXE}
          -D TEST_COMPARE_PROGRAM=${LandmarksCompareEXE}
-         -D TEST_BASELINE=DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.fcsv
+         -D TEST_BASELINE=DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.fcsv}
          -D TEST_INPUT_VOLUME=DATA{${TestData_DIR}/T1.nii.gz}
          -D TEST_INPUT_TEMPLATEMODEL=DATA{${TestData_DIR}/T1.mdl}
          -D TEST_INPUT_LLSMODEL=DATA{${TestData_DIR}/LLSModel.hdf5}
@@ -595,7 +601,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetect
   COMMAND ${CMAKE_COMMAND}
          -D TEST_PROGRAM=${BRAINSConstellationDetectorEXE}
          -D TEST_COMPARE_PROGRAM=${LandmarksCompareEXE}
-         -D TEST_BASELINE=DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.sh
+         -D TEST_BASELINE=DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.sh}
          -D TEST_INPUT_VOLUME=DATA{${TestData_DIR}/T1.nii.gz}
          -D TEST_INPUT_TEMPLATEMODEL=DATA{${TestData_DIR}/T1.mdl}
          -D TEST_INPUT_LLSMODEL=DATA{${TestData_DIR}/LLSModel.hdf5}

@@ -98,7 +98,9 @@ int main( int argc, char *argv[] )
     if( !itksys::SystemTools::FindProgramPath( argv[0], pathOut, errorMsg) )
 
       {
-      std::cerr << "Error: File not found" << std::endl;
+      std::cerr << "Error: Input Model File not found" << std::endl;
+      std::cerr << errorMsg << std::endl;
+
       return 1;
       }
     // std::cerr << "ERROR: Could not find " << argv[0] << ": " << errorMessage

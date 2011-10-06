@@ -30,7 +30,7 @@ MultiResolutionLogDomainDeformableRegistration<TFixedImage, TMovingImage, TDefor
   // /\todo Choose the right type of pyramid
 #if ( ITK_VERSION_MAJOR == 3 && ITK_VERSION_MINOR == 12 && ITK_VERSION_PATCH == 0 )
   // Work-around for http://public.kitware.com/Bug/view.php?id=503
-#error "ITK version 3.12.0 not supported.
+#error "ITK version 3.12.0 not supported."
 #endif
   typedef MultiResolutionPyramidImageFilter
     <FixedImageType, FloatImageType>  ActualFixedImagePyramidType;

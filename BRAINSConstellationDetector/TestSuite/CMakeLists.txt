@@ -584,15 +584,15 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetect
   COMMAND ${CMAKE_COMMAND}
          -D TEST_PROGRAM=${BRAINSConstellationDetectorEXE}
          -D TEST_COMPARE_PROGRAM=${LandmarksCompareEXE}
-         -D TEST_BASELINE=DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.fcsv}
-         -D TEST_INPUT_VOLUME=DATA{${TestData_DIR}/T1.nii.gz}
-         -D TEST_INPUT_TEMPLATEMODEL=DATA{${TestData_DIR}/T1.mdl}
-         -D TEST_INPUT_LLSMODEL=DATA{${TestData_DIR}/LLSModel.hdf5}
+         -D TEST_BASELINE= DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.fcsv}
+         -D TEST_INPUT_VOLUME= DATA{${TestData_DIR}/T1.nii.gz}
+         -D TEST_INPUT_TEMPLATEMODEL= DATA{${TestData_DIR}/T1.mdl}
+         -D TEST_INPUT_LLSMODEL= DATA{${TestData_DIR}/LLSModel.hdf5}
          -D TEST_TEMP_OUTPUT_RESAMPLEDVOLUME=${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
          -D TEST_TEMP_OUTPUT_LANDMARKS=${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.fcsv
          -D TEST_PROGRAM_ARG=outputLandmarksPaired
          -D MORE_ARG=--inputLandmarksPaired
-         -D MORE_ARG_CONTENT=DATA{${TestData_DIR}/BRAINSConstellationDetectorTest_outputLandmarksInInputSpace_standard.fcsv
+         -D MORE_ARG_CONTENT= DATA{${TestData_DIR}/BRAINSConstellationDetectorTest_outputLandmarksInInputSpace_standard.fcsv
          -P ${CMAKE_CURRENT_SOURCE_DIR}/LandmarksCompareTest.cmake
          )
 
@@ -601,10 +601,10 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetect
   COMMAND ${CMAKE_COMMAND}
          -D TEST_PROGRAM=${BRAINSConstellationDetectorEXE}
          -D TEST_COMPARE_PROGRAM=${LandmarksCompareEXE}
-         -D TEST_BASELINE=DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.sh}
-         -D TEST_INPUT_VOLUME=DATA{${TestData_DIR}/T1.nii.gz}
-         -D TEST_INPUT_TEMPLATEMODEL=DATA{${TestData_DIR}/T1.mdl}
-         -D TEST_INPUT_LLSMODEL=DATA{${TestData_DIR}/LLSModel.hdf5}
+         -D TEST_BASELINE= DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.sh}
+         -D TEST_INPUT_VOLUME= DATA{${TestData_DIR}/T1.nii.gz}
+         -D TEST_INPUT_TEMPLATEMODEL= DATA{${TestData_DIR}/T1.mdl}
+         -D TEST_INPUT_LLSMODEL= DATA{${TestData_DIR}/LLSModel.hdf5}
          -D TEST_TEMP_OUTPUT_RESAMPLEDVOLUME=${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
          -D TEST_TEMP_OUTPUT_LANDMARKS=${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.sh
          -D TEST_PROGRAM_ARG=outputVerificationScript

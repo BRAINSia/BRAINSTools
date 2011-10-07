@@ -200,6 +200,7 @@ option(USE_BRAINSMush                  "Build BRAINSMush"                  ON)
 option(USE_BRAINSMultiModeSegment      "Build BRAINSMultiModeSegment"      ON)
 option(USE_BRAINSInitializedControlPoints      "Build BRAINSInitializedControlPoints"      ON)
 option(USE_BRAINSTransformConvert       "Build BRAINSTransformConvert"     ON)
+option(USE_ImageCalculator             "Build ImageCalculator       "      ON)
 #option(USE_BRAINSCut                   "Build BRAINSCut"                   OFF)
 
 set(BRAINSTools_DEPENDENCIES ITKv4 SlicerExecutionModel VTK)
@@ -254,6 +255,7 @@ ExternalProject_Add(${proj}
     -DUSE_BRAINSMultiModeSegment:BOOL=${USE_BRAINSMultiModeSegment}
     -DUSE_BRAINSInitializedControlPoints:BOOL=${USE_BRAINSInitializedControlPoints}
     -DUSE_BRAINSTransformConvert:BOOL=${USE_BRAINSTransformConvert}
+    -DUSE_ImageCalculator:BOOL=${USE_ImageCalculator}
     -D${CMAKE_PROJECT_NAME}_USE_ITK4:BOOL=ON
     ${VTK_BUILD_FLAGS}
     ${OpenCV_BUILD_FLAGS}

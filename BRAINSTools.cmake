@@ -140,6 +140,9 @@ if(USE_GTRACT)
   add_subdirectory(GTRACT)
 endif()
 
+if(USE_ImageCalculator)
+  add_subdirectory(ImageCalculator)
+endif()
 
 #-----------------------------------------------------------------------------
 #-----------------------------------------------------------------------------

@@ -60,7 +60,7 @@ if __name__ == '__main__':
   f = open(md5FileName,'w')
   f.write(value)
   f.close()
-  shutil.copy(md5FileName,destPath+'/'+os.path.basename(md5FileName))
+  shutil.copyfile(md5FileName,destPath+'/'+os.path.basename(md5FileName))
   shutil.copy(source,dest)
   os.unlink(source)
   ## if prepareing data remotely, echo a helpful rsync command needed to push from remote destination to IPL via rsync

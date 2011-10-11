@@ -3,7 +3,7 @@
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/obliq_setup.txt.in
   ${CMAKE_CURRENT_BINARY_DIR}/obliq_setup.txt @ONLY IMMEDIATE)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/T1.mdl ${CMAKE_CURRENT_BINARY_DIR}/T1.mdl)
+#configure_file(${CMAKE_CURRENT_SOURCE_DIR}/T1.mdl ${CMAKE_CURRENT_BINARY_DIR}/T1.mdl)
 
 set(ALL_TEST_PROGS
   BRAINSAlignMSP
@@ -487,130 +487,66 @@ target_link_libraries(${CLP} ${ITK_LIBRARIES})
 set_target_properties(${CLP} PROPERTIES
                         RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 set(LandmarksCompareEXE ${CMAKE_CURRENT_BINARY_DIR}/${CLP})
-set (CLP BRAINSConstellationDetector)
-set (BRAINSConstellationDetectorEXE ${LAUNCH_EXE} ${BRAINSConstellationDetectorTool_BINARY_DIR}/../../bin/${CLP} )
-set (BRAINSConstellationDetector_TESTS ${LAUNCH_EXE} ${CMAKE_CURRENT_BINARY_DIR}/${CLP}TestDriver )
 
-
-if(0)
-#This test is run without any output to check the warning codes
-ExternalData_add_test(${PROJECT_NAME}FetchData NAME BRAINSConstellationDetectorTestWarning1
+set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTestForLandmarkCompare)
+ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
   COMMAND $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
   BRAINSConstellationDetectorTest
   --inputVolume DATA{${TestData_DIR}/T1.nii.gz}
   --LLSModel DATA{${TestData_DIR}/LLSModel.hdf5}
   --inputTemplateModel DATA{${TestData_DIR}/T1.mdl}
-  --inputLandmarksPaired DATA{${TestData_DIR}/BRAINSConstellationDetectorTest_outputLandmarksInInputSpace_standard.fcsv
+  --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
+  --outputLandmarksInACPCAlignedSpace ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_ACPCSpace_aligned.fcsv
+  --outputLandmarksInInputSpace ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_InputSpace_aligned.fcsv
+  --outputLandmarkWeights ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.wts
+  --inputLandmarksPaired DATA{${TestData_DIR}/BRAINSConstellationDetectorTest_outputLandmarksInInputSpace_standard.fcsv}
+  --outputLandmarksPaired ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_Paired_aligned.fcsv
+  --outputVerificationScript ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.sh
   )
-set_tests_properties(BRAINSConstellationDetectorTestWarning1 PROPERTIES WILL_FAIL ON)
 
-ExternalData_add_test(${PROJECT_NAME}FetchData NAME BRAINSConstellationDetectorTestWarning2
-  COMMAND $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
-  BRAINSConstellationDetectorTest
-  --inputVolume DATA{${TestData_DIR}/T1.nii.gz}
-  --LLSModel DATA{${TestData_DIR}/LLSModel.hdf5}
-  --inputTemplateModel DATA{${TestData_DIR}/T1.mdl}
-  --outputLandmarksInACPCAlignedSpace ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.fcsv
-  )
-set_tests_properties(BRAINSConstellationDetectorTestWarning2 PROPERTIES WILL_FAIL ON)
-
-ExternalData_add_test(${PROJECT_NAME}FetchData NAME LandmarksCompareTest
-  COMMAND ${LAUNCH_EXE} ${LandmarksCompareEXE}
-  --help
-  )
-endif(0)
-
-
-#To define new tests for other landmark files (such as .wts files), we just need to change:
-#                      TestName
-#                      TEST_PROGRAM_ARG (which is the BCD flag for tested output argument)
-#                      TEST_BASELINE (just add proper file to the TestData)
-#                      TEST_TEMP_OUTPUT_LANDMARKS (notice to its format)
-#you can use MORE_ARG and MORE_ARG_CONTENT to add new arguments to the BCD if you need to pass them for the test
 
 set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_outputLandmarksInACPCAlignedSpace)
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
-  COMMAND ${CMAKE_COMMAND}
-        -D TEST_PROGRAM=${BRAINSConstellationDetectorEXE}
-        -D TEST_COMPARE_PROGRAM=${LandmarksCompareEXE}
-        -D TEST_BASELINE=DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.fcsv}
-        -D TEST_INPUT_VOLUME=DATA{${TestData_DIR}/T1.nii.gz}
-        -D TEST_INPUT_TEMPLATEMODEL=DATA{${TestData_DIR}/T1.mdl}
-        -D TEST_INPUT_LLSMODEL=DATA{${TestData_DIR}/LLSModel.hdf5}
-        -D TEST_TEMP_OUTPUT_RESAMPLEDVOLUME=${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
-        -D TEST_TEMP_OUTPUT_LANDMARKS=${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.fcsv
-        -D TEST_PROGRAM_ARG=outputLandmarksInACPCAlignedSpace
-        -D MORE_ARG=
-        -D MORE_ARG_CONTENT=
-        -P ${CMAKE_CURRENT_SOURCE_DIR}/LandmarksCompareTest.cmake
-        )
+ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
+  COMMAND ${LAUNCH_EXE} ${LandmarksCompareEXE}
+  --inputLandmarkFile1 ${CMAKE_CURRENT_BINARY_DIR}/BRAINSConstellationDetectorTestForLandmarkCompare_ACPCSpace_aligned.fcsv
+  --inputLandmarkFile2 DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.fcsv} # Baseline file
+  )
+set_property(TEST ${BRAINSConstellationDetectorTestName} APPEND PROPERTY DEPENDS BRAINSConstellationDetectorTestForLandmarkCompare)
+
 
 set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_outputLandmarksInInputSpace)
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
-  COMMAND ${CMAKE_COMMAND}
-         -D TEST_PROGRAM=${BRAINSConstellationDetectorEXE}
-         -D TEST_COMPARE_PROGRAM=${LandmarksCompareEXE}
-         -D TEST_BASELINE=DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.fcsv}
-         -D TEST_INPUT_VOLUME=DATA{${TestData_DIR}/T1.nii.gz}
-         -D TEST_INPUT_TEMPLATEMODEL=DATA{${TestData_DIR}/T1.mdl}
-         -D TEST_INPUT_LLSMODEL=DATA{${TestData_DIR}/LLSModel.hdf5}
-         -D TEST_TEMP_OUTPUT_RESAMPLEDVOLUME=${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
-         -D TEST_TEMP_OUTPUT_LANDMARKS=${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.fcsv
-         -D TEST_PROGRAM_ARG=outputLandmarksInInputSpace
-         -D MORE_ARG=
-         -D MORE_ARG_CONTENT=
-         -P ${CMAKE_CURRENT_SOURCE_DIR}/LandmarksCompareTest.cmake
-         )
+ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
+  COMMAND ${LAUNCH_EXE} ${LandmarksCompareEXE}
+  --inputLandmarkFile1 ${CMAKE_CURRENT_BINARY_DIR}/BRAINSConstellationDetectorTestForLandmarkCompare_InputSpace_aligned.fcsv
+  --inputLandmarkFile2 DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.fcsv} # Baseline file
+  )
+set_property(TEST ${BRAINSConstellationDetectorTestName} APPEND PROPERTY DEPENDS BRAINSConstellationDetectorTestForLandmarkCompare)
+
 
 set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_outputLandmarkWeights)
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
-  COMMAND ${CMAKE_COMMAND}
-         -D TEST_PROGRAM=${BRAINSConstellationDetectorEXE}
-         -D TEST_COMPARE_PROGRAM=${LandmarksCompareEXE}
-         -D TEST_BASELINE=DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.wts}
-         -D TEST_INPUT_VOLUME=DATA{${TestData_DIR}/T1.nii.gz}
-         -D TEST_INPUT_TEMPLATEMODEL=DATA{${TestData_DIR}/T1.mdl}
-         -D TEST_INPUT_LLSMODEL=DATA{${TestData_DIR}/LLSModel.hdf5}
-         -D TEST_TEMP_OUTPUT_RESAMPLEDVOLUME=${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
-         -D TEST_TEMP_OUTPUT_LANDMARKS=${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.wts
-         -D TEST_PROGRAM_ARG=outputLandmarkWeights
-         -D MORE_ARG=
-         -D MORE_ARG_CONTENT=
-         -P ${CMAKE_CURRENT_SOURCE_DIR}/LandmarksCompareTest.cmake
-         )
+ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
+  COMMAND ${LAUNCH_EXE} ${LandmarksCompareEXE}
+  --inputLandmarkFile1 ${CMAKE_CURRENT_BINARY_DIR}/BRAINSConstellationDetectorTestForLandmarkCompare_aligned.wts
+  --inputLandmarkFile2 DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.wts} # Baseline file
+  )
+set_property(TEST ${BRAINSConstellationDetectorTestName} APPEND PROPERTY DEPENDS BRAINSConstellationDetectorTestForLandmarkCompare)
+
 
 set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_LandmarksPaired)
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
-  COMMAND ${CMAKE_COMMAND}
-         -D TEST_PROGRAM=${BRAINSConstellationDetectorEXE}
-         -D TEST_COMPARE_PROGRAM=${LandmarksCompareEXE}
-         -D TEST_BASELINE= DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.fcsv}
-         -D TEST_INPUT_VOLUME= DATA{${TestData_DIR}/T1.nii.gz}
-         -D TEST_INPUT_TEMPLATEMODEL= DATA{${TestData_DIR}/T1.mdl}
-         -D TEST_INPUT_LLSMODEL= DATA{${TestData_DIR}/LLSModel.hdf5}
-         -D TEST_TEMP_OUTPUT_RESAMPLEDVOLUME=${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
-         -D TEST_TEMP_OUTPUT_LANDMARKS=${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.fcsv
-         -D TEST_PROGRAM_ARG=outputLandmarksPaired
-         -D MORE_ARG=--inputLandmarksPaired
-         -D MORE_ARG_CONTENT= DATA{${TestData_DIR}/BRAINSConstellationDetectorTest_outputLandmarksInInputSpace_standard.fcsv
-         -P ${CMAKE_CURRENT_SOURCE_DIR}/LandmarksCompareTest.cmake
-         )
+ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
+  COMMAND ${LAUNCH_EXE} ${LandmarksCompareEXE}
+  --inputLandmarkFile1 ${CMAKE_CURRENT_BINARY_DIR}/BRAINSConstellationDetectorTestForLandmarkCompare_Paired_aligned.fcsv
+  --inputLandmarkFile2 DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.fcsv} # Baseline file
+  )
+set_property(TEST ${BRAINSConstellationDetectorTestName} APPEND PROPERTY DEPENDS BRAINSConstellationDetectorTestForLandmarkCompare)
+
 
 set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_outputVerificationScript)
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
-  COMMAND ${CMAKE_COMMAND}
-         -D TEST_PROGRAM=${BRAINSConstellationDetectorEXE}
-         -D TEST_COMPARE_PROGRAM=${LandmarksCompareEXE}
-         -D TEST_BASELINE= DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.sh}
-         -D TEST_INPUT_VOLUME= DATA{${TestData_DIR}/T1.nii.gz}
-         -D TEST_INPUT_TEMPLATEMODEL= DATA{${TestData_DIR}/T1.mdl}
-         -D TEST_INPUT_LLSMODEL= DATA{${TestData_DIR}/LLSModel.hdf5}
-         -D TEST_TEMP_OUTPUT_RESAMPLEDVOLUME=${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
-         -D TEST_TEMP_OUTPUT_LANDMARKS=${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.sh
-         -D TEST_PROGRAM_ARG=outputVerificationScript
-         -D MORE_ARG=--outputLandmarksInACPCAlignedSpace
-         -D MORE_ARG_CONTENT=${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.fcsv
-         -P ${CMAKE_CURRENT_SOURCE_DIR}/LandmarksCompareTest.cmake
-         )
+ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
+  COMMAND ${LAUNCH_EXE} ${LandmarksCompareEXE}
+  --inputLandmarkFile1 ${CMAKE_CURRENT_BINARY_DIR}/BRAINSConstellationDetectorTestForLandmarkCompare_aligned.sh
+  --inputLandmarkFile2 DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.sh} # Baseline file
+  )
+set_property(TEST ${BRAINSConstellationDetectorTestName} APPEND PROPERTY DEPENDS BRAINSConstellationDetectorTestForLandmarkCompare)
 
 ExternalData_Add_Target( ${PROJECT_NAME}FetchData )  # Name of data management target

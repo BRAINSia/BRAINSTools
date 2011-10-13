@@ -10,7 +10,7 @@ TARGET_LINK_LIBRARIES(ImageCalculator ${ITK_LIBRARIES} )
 ADD_EXECUTABLE(ImageGenerate ImageGenerate.cxx )
 TARGET_LINK_LIBRARIES(ImageGenerate ${ITK_LIBRARIES})
 
-IF( ____BUILD_TESTING )
+IF( BUILD_TESTING )
 
   SET(IMAGE_CALCULATOR_TESTS ${CXX_TEST_PATH}/ImageCalculatorTests)
   SET(IC_TSTDATA ${ImageCalculator_SOURCE_DIR}/TestImages)
@@ -219,5 +219,5 @@ IF( ____BUILD_TESTING )
   ADD_EXECUTABLE(ImageCalculatorTests ImageCalculatorTests.cxx ImageCalculatorUtils.cxx ImageCalculatorProcess2D.cxx ImageCalculatorProcess3D.cxx)
   TARGET_LINK_LIBRARIES(ImageCalculatorTests ${ITK_LIBRARIES})
 
-ENDIF( BUILD_TESTING )
+ENDIF()
 

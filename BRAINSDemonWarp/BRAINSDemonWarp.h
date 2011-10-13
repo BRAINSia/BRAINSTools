@@ -7,7 +7,6 @@
 #include "ValidationInputParser.h"
 #include "ApplicationBase.h"
 #include "itkCheckerBoardImageFilter.h"
-#include "itkLogDomainDeformableRegistrationFilter.h"
 
 namespace itk
 {
@@ -224,19 +223,6 @@ public:
     BaseRegistrationFilterType *filter)
   {
     this->m_Registrator->SetRegistrationFilter(filter);
-  }
-
-  typedef itk::LogDomainDeformableRegistrationFilter<RealImageType, RealImageType,
-                                                     TDeformationField>
-    LDDRegistrationFilterType;
-  void SetLDDRegistrationFilter(LDDRegistrationFilterType *filter)
-  {
-    this->m_Registrator->SetLDDRegistrationFilter(filter);
-  }
-
-  void SetLogDomain(bool bl)
-  {
-    this->m_Registrator->SetUseLogDomain(bl);
   }
 
 protected:

@@ -21,13 +21,10 @@
 #include "itkPDEDeformableRegistrationFilter.h"
 #include "itkDemonsRegistrationFilter.h"
 #include "itkSymmetricForcesDemonsRegistrationFilter.h"
-#include "itkLogDomainDeformableRegistrationFilter.h"
-#include "itkLogDomainDemonsRegistrationFilter.h"
 #include "itkFastSymmetricForcesDemonsRegistrationFilter.h"
 #include "itkDiffeomorphicDemonsRegistrationFilter.h"
 #include "itkDiffeomorphicDemonsRegistrationWithMaskFilter.h"
 #include "itkVectorDiffeomorphicDemonsRegistrationFilter.h"
-#include "itkSymmetricLogDomainDemonsRegistrationFilter.h"
 #include "itkESMDemonsRegistrationWithMaskFunction.h"
 #include "itkArray.h"
 #include "itkIO.h"
@@ -191,74 +188,6 @@ void ThirionFunction(const struct BRAINSDemonWarpAppParameters & command)
     {
     observer = CommandIterationUpdate<float, 3>::New();
     }
-  if( command.registrationFilterType == "SymmetricLogDemons" || command.registrationFilterType == "LogDemons" )
-    {
-    app->SetLogDomain(true);
-    typedef typename itk::LogDomainDeformableRegistrationFilter<TRealImage, TRealImage, TVelocityField>
-      BaseRegistrationFilterType;
-    typename BaseRegistrationFilterType::Pointer filter;
-
-    if( command.registrationFilterType == "LogDemons" )
-      {
-      typedef typename itk::LogDomainDemonsRegistrationFilter<TRealImage, TRealImage, TVelocityField>
-        ActualRegistrationFilterType;
-      typedef typename ActualRegistrationFilterType::GradientType GradientType;
-
-      typename ActualRegistrationFilterType::Pointer actualfilter =
-        ActualRegistrationFilterType::New();
-
-      actualfilter->SetMaximumUpdateStepLength(command.maxStepLength);
-      actualfilter->SetUseGradientType( static_cast<GradientType>( command.gradientType ) );
-      actualfilter->SetNumberOfBCHApproximationTerms(command.numberOfBCHApproximationTerms);
-      filter = actualfilter;
-      }
-    if( command.registrationFilterType == "SymmetricLogDemons" )
-      {
-      typedef typename itk::SymmetricLogDomainDemonsRegistrationFilter<TRealImage, TRealImage, TVelocityField>
-        ActualRegistrationFilterType;
-      typename ActualRegistrationFilterType::Pointer actualfilter = ActualRegistrationFilterType::New();
-      typedef  typename ActualRegistrationFilterType::GradientType GradientType;
-
-      actualfilter->SetMaximumUpdateStepLength(command.maxStepLength);
-      actualfilter->SetUseGradientType( static_cast<GradientType>( command.gradientType ) );
-      actualfilter->SetNumberOfBCHApproximationTerms(command.numberOfBCHApproximationTerms);
-      filter = actualfilter;
-      }
-    if( command.smoothDeformationFieldSigma > 0.1 )
-      {
-      if( command.outputDebug )
-        {
-        std::cout << " Smoothing is on ....." << std::endl;
-        }
-      filter->SmoothVelocityFieldOn();
-      filter->SetStandardDeviations(command.smoothDeformationFieldSigma);
-      }
-    else
-      {
-      filter->SmoothVelocityFieldOff();
-      }
-    if( command.smoothingUp > 0.1 )
-      {
-      if( command.outputDebug )
-        {
-        std::cout << " Smoothing at update....." << std::endl;
-        }
-      filter->SmoothUpdateFieldOn();
-      filter->SetUpdateFieldStandardDeviations(command.smoothingUp);
-      }
-    else
-      {
-      filter->SmoothUpdateFieldOff();
-      }
-    if( command.outputDebug )
-      {
-      filter->AddObserver(itk::IterationEvent(), observer);
-      }
-
-    app->SetLDDRegistrationFilter(filter);
-    }
-
-  else
     {
     // Set up the demons filter
     typedef typename itk::PDEDeformableRegistrationFilter<TRealImage, TRealImage,

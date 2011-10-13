@@ -112,14 +112,16 @@
     <string-enumeration>
       <name>registrationFilterType</name>
       <longflag>registrationFilterType</longflag>
-      <description>Registration Filter Type: Demons|FastSymmetricForces|Diffeomorphic|LogDemons|SymmetricLogDemons</description>
+      <description>Registration Filter Type: Demons|FastSymmetricForces|Diffeomorphic</description>
       <label>Registration Filter Type</label>
       <default>Diffeomorphic</default>
       <element>Demons</element>
       <element>FastSymmetricForces</element>
       <element>Diffeomorphic</element>
+      <!--  These do not work, so commenting out for now.
       <element>LogDemons</element>
-      <element>SymmetricLogDemons</element>:
+      <element>SymmetricLogDemons</element>
+      -->
     </string-enumeration>
 
     <double>

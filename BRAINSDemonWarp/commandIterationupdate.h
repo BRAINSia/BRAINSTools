@@ -16,10 +16,6 @@
 #include "itkDemonsRegistrationFilter.h"
 #include "GenericTransformImage.h"
 
-#include "itkMultiResolutionLogDomainDeformableRegistration.h"
-#include "itkLogDomainDemonsRegistrationFilter.h"
-#include "itkSymmetricLogDomainDemonsRegistrationFilter.h"
-
 #include "itkDisplacementFieldJacobianDeterminantFilter.h"
 #include "itkMinimumMaximumImageCalculator.h"
 #include "itkWarpHarmonicEnergyCalculator.h"
@@ -61,15 +57,6 @@ public:
       InternalImageType,
       InternalImageType,
       DeformationFieldType>   FastSymmetricForcesDemonsRegistrationFilterType;
-
-  typedef itk::LogDomainDeformableRegistrationFilter<
-      InternalImageType,
-      InternalImageType,
-      VelocityFieldType>       LogDomainDeformableRegistrationFilterType;
-
-  typedef itk::MultiResolutionLogDomainDeformableRegistration<
-      InternalImageType, InternalImageType,
-      VelocityFieldType, TPixel>         MultiLogResRegistrationFilterType;
 
   typedef itk::MultiResolutionPDEDeformableRegistration<
       InternalImageType, InternalImageType,
@@ -181,20 +168,6 @@ public:
       {
       std::cout << "Finished Multi-resolution iteration :"
                 << multiresfilter->GetCurrentLevel() - 1 << std::endl;
-      std::cout << "==============================" << std::endl << std::endl;
-      }
-    else if( const LogDomainDeformableRegistrationFilterType * LDDfilter =
-               dynamic_cast<const LogDomainDeformableRegistrationFilterType *>( object ) )
-      {
-      iter = LDDfilter->GetElapsedIterations() - 1;
-      metricbefore = LDDfilter->GetMetric();
-      deffield = const_cast<LogDomainDeformableRegistrationFilterType *>
-        ( LDDfilter )->GetDeformationField();
-      }
-    else if( const MultiLogResRegistrationFilterType * multiresLfilter =
-               dynamic_cast<const MultiLogResRegistrationFilterType *>( object ) )
-      {
-      std::cout << "Finished Multi-resolution iteration :" << multiresLfilter->GetCurrentLevel() - 1 << std::endl;
       std::cout << "==============================" << std::endl << std::endl;
       }
     else

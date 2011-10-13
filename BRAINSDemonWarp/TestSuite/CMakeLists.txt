@@ -541,6 +541,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateInitialTransform_Te
   --registrationFilterType Diffeomorphic
   )
 
+if(0)  # These do not work, and appear to have never worked
 #Test for Log Domain
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateLogDemons_Test_nii
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSDemonWarpTestDriver>
@@ -611,5 +612,6 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateSymmetricLogDemons_
   --initializeWithDeformationField DATA{${TestData_DIR}/InitialDeformationField.nii.gz}
   --registrationFilterType SymmetricLogDemons
   )
+endif()  # Commend out the LogDemons tests.
 
 ExternalData_Add_Target( ${PROJECT_NAME}FetchData )  # Name of data management target

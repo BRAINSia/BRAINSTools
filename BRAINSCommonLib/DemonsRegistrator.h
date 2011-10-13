@@ -5,9 +5,7 @@
 #include "itkVector.h"
 #include "itkImage.h"
 #include "itkMultiResolutionPDEDeformableRegistration.h"
-#include "itkMultiResolutionLogDomainDeformableRegistration.h"
 #include "itkRecursiveMultiResolutionPyramidImageFilter.h"
-#include "itkLogDomainDeformableRegistrationFilter.h"
 
 #include "itkArray.h"
 
@@ -111,11 +109,6 @@ public:
       RealImageType,
       TDeformationField, float>    RegistrationType;
 
-  typedef MultiResolutionLogDomainDeformableRegistration<
-      RealImageType,
-      RealImageType,
-      TDeformationField, float>    LDRegistrationType;
-
   /** UnsignedIntArray type. */
   typedef Array<unsigned int> UnsignedIntArray;
 
@@ -205,28 +198,9 @@ public:
     this->m_Registration->SetRegistrationFilter(filter);
   }
 
-  typedef itk::LogDomainDeformableRegistrationFilter<RealImageType, RealImageType,
-                                                     TDeformationField>
-    LDDRegistrationFilterType;
-  void SetLDDRegistrationFilter(
-    LDDRegistrationFilterType *filter)
-  {
-    this->m_LDRegistration->SetRegistrationFilter(filter);
-  }
-
   RegistrationType * GetRegistrationType(void)
   {
     return m_Registration;
-  }
-
-  void SetUseLogDomain(bool bl)
-  {
-    this->m_UseLogDomain = bl;
-  }
-
-  bool GetUseLogDomain()
-  {
-    return this->m_UseLogDomain;
   }
 
 protected:
@@ -246,7 +220,6 @@ private:
   typename FixedImagePyramidType::Pointer m_FixedImagePyramid;
   typename MovingImagePyramidType::Pointer m_MovingImagePyramid;
   typename RegistrationType::Pointer m_Registration;
-  typename LDRegistrationType::Pointer m_LDRegistration;
   typename RealImageType::PixelType m_DefaultPixelValue;
 
   unsigned short   m_NumberOfLevels;
@@ -267,7 +240,6 @@ private:
   std::string      m_OutNormalized;
   bool             m_OutDebug;
   bool             m_UseHistogramMatching;
-  bool             m_UseLogDomain;
   std::string      m_InterpolationMode;
 };
 }   // namespace itk

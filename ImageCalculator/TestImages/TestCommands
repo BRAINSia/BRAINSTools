@@ -1,0 +1,62 @@
+In this document we give some example test commands for ImageCalculator. 
+
+The first 2 tests are for 2d images and the third test is performed on 3d images
+
+The test folder contains some simple 2d and 3d images to do these tests.
+
+
+Test 1
+UpperHalfHundreds.png contains upper half of its pixel values equal to 100.
+LowerHalfHundreds.png contains lower half of its pixel values equal to 100.
+We add the 2 of them to get AllHundreds.png we print out the statistics to see whether we get the correct result.
+
+<path to ImageCalculator.exe> -in 2 UpperHalfHundreds.png LowerHalfHundreds.png  -intype UCHAR -outtype UCHAR -add -out AllHundreds.png -Dimensions 2 -statNPX -statMIN -statAVG -statMAX -statVAR -statSUM
+The statistics are.
+AVG: 100,  MAX: 100,  MIN: 100,  NPX: 400,  SUM: 40000,  VAR: 0
+
+We can subtract any one of the input images from this resultant image to get back the other input we can try
+<path to ImageCalculator.exe> -in 2 AllHundreds.png LowerHalfHundreds.png  -intype UCHAR -outtype UCHAR -sub -out Temp.png -Dimensions 2
+
+To verify
+We can subtract the Temp.png and UpperHalfHundreds.png to get AllZeroes.png
+
+
+    
+Test 2
+
+In this we see that we can add more than 2 inputs. ImageCalculator can take any number of inputs but in this example we add 5 images. We set the input Pixel Type as unsigned short and output as unsigned char for this example.
+
+<Path to ImageCalculator.exe> -in 5 AllHundreds.png AllHundreds.png AllHundreds.png AllHundreds.png AllHundreds.png  -intype USHORT -outtype UCHAR -add -out AllFiveHundreds.png -Dimensions 2 -statNPX -statMIN -statAVG -statMAX -statVAR -statSUM
+ we get the output statistics as
+ AVG: 500,  MAX: 500,  MIN: 500,  NPX: 400,  SUM: 200000,  VAR: 0,
+
+ImageCalculator provides scalar arithmetic operations on images.
+We can get the same result with scalar mutltiplication of AllHundreds.png  
+<path to ImageCalculator.exe> -in 2 UpperHalfHundreds.png LowerHalfHundreds.png  -
+intype USHORT -outtype UCHAR -add -out Temp.png -Dimensions 2 -ofmulc 5
+
+should give us the same result as adding five AllHundred images (AllFiveHundreds.png).
+
+To verify
+We can subtract the Temp.png and AllFiveHundreds.png to get AllZeroes.png
+
+
+Test 3
+
+In this test we compare the 3d images. We divide a 5,5,5 image having all its pixels values 300 from another image with all pixel values 100. We should get all the pixel values equal to 3. The operations are performed with float data types.
+
+<path to ImageCalculator.exe> -in 2 ThreeHundred.hdr Hundred.hdr -intype FLOAT -outtype FLOAT -div -out Temp.hdr -Dimensions 3
+
+To verify
+We can multiply the result with Hundred.hdr to get back ThreeHundred.hdr
+
+
+
+
+
+
+
+
+    
+
+

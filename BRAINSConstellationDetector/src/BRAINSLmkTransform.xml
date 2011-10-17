@@ -65,7 +65,7 @@
           <longflag deprecatedalias="debugNumberOfThreads" >numberOfThreads</longflag>
           <label>Number Of Threads</label>
           <description>Explicitly specify the maximum number of threads to use.</description>
-          <default>-1</default>
+          <default>1</default>
         </integer>
     </parameters>
 </executable>

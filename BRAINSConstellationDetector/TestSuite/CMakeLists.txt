@@ -540,7 +540,7 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetecto
   )
 set_property(TEST ${BRAINSConstellationDetectorTestName} APPEND PROPERTY DEPENDS BRAINSConstellationDetectorTestForLandmarkCompare)
 
-
+if(0)
 set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_outputVerificationScript)
 ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
   COMMAND ${LAUNCH_EXE} ${LandmarksCompareEXE}
@@ -548,5 +548,7 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetecto
   --inputLandmarkFile2 DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.sh} # Baseline file
   )
 set_property(TEST ${BRAINSConstellationDetectorTestName} APPEND PROPERTY DEPENDS BRAINSConstellationDetectorTestForLandmarkCompare)
+endif(0)
+
 
 ExternalData_Add_Target( ${PROJECT_NAME}FetchData )  # Name of data management target

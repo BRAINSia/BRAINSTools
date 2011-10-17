@@ -130,7 +130,7 @@ int main(int argc, char *argv[])
     indexImage->SetDirection( fixImageDir );
     EncapsulateMD(indexImage, itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_PIR);
     }
-#undef EncapsulateMD(image, flag)
+#undef EncapsulateMD // (image, flag)
   // else, leave it AsAcquired.
 
   typedef itk::ImageFileWriter<IndexImageType> WriterType;

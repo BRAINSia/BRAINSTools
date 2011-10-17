@@ -100,8 +100,8 @@ int RotationMatrixToVersorTest(void)
 
           itk::Point<double, 3> testPoint;
           testPoint[0] = -1020.27;
-          testPoint[2] = 3.21;
-          testPoint[3] = 1000.786432;
+          testPoint[1] = 3.21;
+          testPoint[2] = 1000.786432;
 
           itk::Versor<double> VFROMMR;
           VFROMMR.Set(MR);

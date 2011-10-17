@@ -235,7 +235,7 @@ public:
   }
 
   /* -- */
-  const double CenterImageReflection_crossCorrelation(vnl_vector<double> const & params)
+  double CenterImageReflection_crossCorrelation(vnl_vector<double> const & params)
   {
     // TODO WEI: the following block of code only need to be computed once for
     // one image.

@@ -194,8 +194,9 @@ BRAINSCutApplyModel
     }
   thresholder->SetInput( image );
   thresholder->SetOutsideValue( 0 );
-    << << << < HEAD
-    thresholder->SetLowerThreshold( thresholdValue );
+#if 1 // HACK:  Regina,  I don't know which of these two items was intended to be committed.
+// <<<<<<< HEAD
+  thresholder->SetLowerThreshold( thresholdValue );
   thresholder->Update();
 
   BinaryImagePointer mask = itkUtil::TypeCast<WorkingImageType, BinaryImageType>( thresholder->GetOutput() );
@@ -214,24 +215,32 @@ BRAINSCutApplyModel
   thresholder->SetOutsideValue( 0 );
   thresholder->SetUpperThreshold( thresholdValue );
   thresholder->SetLowerThreshold( thresholdValue );
-  == == == =
-    thresholder->SetInsideValue( 255 );
+#else
+// =======
+  thresholder->SetInsideValue( 255 );
   thresholder->SetLowerThreshold( annOutputThreshold  );
-  >> >> >> > EHN : SEM compliant command line interface fixed for
+// >>>>>>> EHN: SEM compliant command line interface fixed for
+#endif
   thresholder->Update();
+  BinaryImagePointer mask = itkUtil::TypeCast<BinaryImageType, BinaryImageType>( thresholder->GetOutput() );
   return mask;
 }
 
+#if 0
 BinaryTypePointer
 BRAINSCutApplyModel
 ::GetOneContinuousObject( BinaryTypePointer binaryImage )
 {
-    << << << < HEAD
-    BinaryImagePointer mask = itkUtil::TypeCast<BinaryImageType, BinaryImageType>( thresholder->GetOutput() );
-  == == == =
-    >> >> >> > EHN : SEM compliant command line interface fixed for
-    return mask;
+#if 1 // HACK: Regina, I don't know what was intended here.
+// <<<<<<< HEAD
+  BinaryImagePointer mask = itkUtil::TypeCast<BinaryImageType, BinaryImageType>( thresholder->GetOutput() );
+// =======
+// >>>>>>> EHN: SEM compliant command line interface fixed for
+#endif
+  return mask;
 }
+
+#endif
 
 BinaryImagePointer
 BRAINSCutApplyModel

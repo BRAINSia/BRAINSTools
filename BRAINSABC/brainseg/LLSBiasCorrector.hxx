@@ -298,7 +298,7 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>
 #if defined(LOCAL_USE_OPEN_MP)
 #pragma omp parallel for default(shared) reduction(+:local_XMu_x,local_XMu_y,local_XMu_z)
 #endif
-      for( long kk = 0; kk < numEquations; kk++ )
+      for( unsigned int kk = 0; kk < numEquations; kk++ )
         {
         const ProbabilityImageIndexType & currIndex = m_ValidIndicies[kk];
         local_XMu_x += currIndex[0];
@@ -320,7 +320,7 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>
 #if defined(LOCAL_USE_OPEN_MP)
 #pragma omp parallel for default(shared) reduction(+:local_XStd_x,local_XStd_y,local_XStd_z)
 #endif
-      for( long kk = 0; kk < numEquations; kk++ )
+      for( unsigned int kk = 0; kk < numEquations; kk++ )
         {
         const ProbabilityImageIndexType & currIndex = m_ValidIndicies[kk];
         const double                      diff0 = static_cast<double>(currIndex[0]) - m_XMu[0];
@@ -342,7 +342,7 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>
 #if defined(LOCAL_USE_OPEN_MP)
 #pragma omp parallel for default(shared)
 #endif
-    for( long r = 0; r < numEquations; r++ )
+    for( unsigned int r = 0; r < numEquations; r++ )
       {
       const ProbabilityImageIndexType & currIndex = m_ValidIndicies[r];
       unsigned int                      c = 0;
@@ -619,7 +619,7 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>
 #if defined(LOCAL_USE_OPEN_MP)
 #pragma omp parallel for shared(Wij_A) // default(shared)
 #endif
-          for( long eq = 0; eq < numEquations; eq++ )
+          for( unsigned int eq = 0; eq < numEquations; eq++ )
             {
             const ProbabilityImageIndexType & currIndex = m_ValidIndicies[eq];
             double                            sumW = DBL_EPSILON;

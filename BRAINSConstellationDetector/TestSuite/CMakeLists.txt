@@ -430,7 +430,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetect
   --inputTemplateModel DATA{${TestData_DIR}/T1.mdl}
   --LLSModel DATA{${TestData_DIR}/LLSModel.hdf5}
   --inputLandmarksEMSP DATA{${TestData_DIR}/EMSP.fcsv})
-
+set_tests_properties(${BRAINSConstellationDetectorTestName} PROPERTIES TIMEOUT 5432)
 
 
 set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_inputVolumeError)
@@ -490,6 +490,7 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetecto
   --outputLandmarksPaired ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_Paired_aligned.fcsv
   --outputVerificationScript ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.sh
   )
+set_tests_properties(${BRAINSConstellationDetectorTestName} PROPERTIES TIMEOUT 5432)
 
 
 set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_outputLandmarksInACPCAlignedSpace)

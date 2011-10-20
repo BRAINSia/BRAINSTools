@@ -7,6 +7,7 @@
 #include <fstream>
 #include <map>
 #include <vector>
+#include <algorithm>
 
 #include "itkNormalizedCorrelationImageToImageMetric.h"
 #include "itkCastImageFilter.h"
@@ -20,6 +21,7 @@
 #include "itksys/SystemTools.hxx"
 #include "PrettyPrintTable.h"
 #include "DenoiseFiltering.h"
+#include "itkImageDuplicator.h"
 
 typedef itk::Image<float, 3>         FloatImageType;
 typedef itk::Image<unsigned char, 3> ByteImageType;
@@ -40,6 +42,7 @@ typedef ShortImageType::Pointer ShortImagePointer;
 #include <iostream>
 #include <string>
 #include <sstream>
+#include <map>
 
 #include <stdlib.h>
 
@@ -322,6 +325,69 @@ static std::vector<bool> FindDuplicateImages(const std::vector<FloatImagePointer
     std::cout << "Removing highly correlated image " << static_cast<int>(isDuplicated[q]) << std::endl;
     }
   return isDuplicated;
+}
+
+class EmptyVectorException
+{
+public:
+  EmptyVectorException(const char* pStr = "The list of input images was empty.  Nothing to averge.") :
+    pMessage(pStr)
+  {
+  }
+
+  const char * what() const
+  {
+    return pMessage;
+  }
+
+private:
+  const char * pMessage;
+};
+
+// Take a list of coregistered images, all of the same type (T1,T2) and return the average image.
+static FloatImageType::Pointer AverageImageList(
+  const std::vector<FloatImageType::Pointer> & inputImageList)
+{
+  if( inputImageList.size() == 0 )
+    {
+    // No images, something went wrong.
+    throw EmptyVectorException();
+    }
+  if( inputImageList.size() == 1 )
+    {
+    // Only one image, nothing to average.
+    return inputImageList[0];
+    }
+
+  // Create an image iterator over the first image.  Use that iterator to get an index into the other
+  // images, sum each of the voxel values and divide by the number of input images and set the output
+  // voxel at this index to that value.
+
+  // Duplicate the first input image to use as an output image.
+  typedef itk::ImageDuplicator<FloatImageType> DuplicatorType;
+  DuplicatorType::Pointer duplicator = DuplicatorType::New();
+  duplicator->SetInputImage(inputImageList[0]);
+  duplicator->Update();
+  FloatImageType::Pointer averageImage = duplicator->GetOutput();
+
+  // Create an image iterator over the first image.
+  typedef itk::ImageRegionIterator<FloatImageType> ImageRegionIteratorType;
+  ImageRegionIteratorType imgItr( inputImageList[0], inputImageList[0]->GetRequestedRegion() );
+  // Loop over the voxels calculating the averages.
+  for( imgItr.GoToBegin(); !imgItr.IsAtEnd(); ++imgItr )
+    {
+    const FloatImageType::IndexType & idx = imgItr.GetIndex();
+    FloatImageType::PixelType         avgValue = 0;
+    const unsigned int                inputListSize = inputImageList.size();
+    const float                       invListSize = 1.0F / static_cast<float>(inputListSize);
+    for( unsigned int j = 0; j < inputImageList.size(); ++j )
+      {
+      avgValue += inputImageList[j]->GetPixel(idx);
+      }
+    averageImage->SetPixel(idx, static_cast<FloatImageType::PixelType>(avgValue * invListSize) );
+    }
+
+  return averageImage;
 }
 
 int main(int argc, char * *argv)
@@ -1220,6 +1286,50 @@ int main(int argc, char * *argv)
         writer->UseCompressionOn();
         writer->Update();
         }
+      }
+
+    // Average together all the input images of a given type
+    typedef std::map<std::string, std::vector<FloatImageType::Pointer> > imgTypeMapType;
+    imgTypeMapType volumesByImgType;
+
+    std::vector<FloatImagePointer> imgset = segfilter->GetRawCorrected();
+    for( unsigned int k = 0; k < inputVolumeTypes.size(); ++k )
+      {
+      volumesByImgType[inputVolumeTypes[k]].push_back(imgset[k]);
+      }
+
+    imgTypeMapType::const_iterator mapItr;
+    for( mapItr = volumesByImgType.begin();
+         mapItr != volumesByImgType.end();
+         ++mapItr )
+      {
+      std::string volumeType = mapItr->first;
+      // Can't average images of type other since it's really a mix of types.
+      std::transform(volumeType.begin(), volumeType.end(), volumeType.begin(), tolower);
+      if( volumeType == "other" )
+        {
+        continue;
+        }
+
+      FloatImageType::Pointer avgImage = AverageImageList(mapItr->second);
+      // Write out average image.
+      typedef itk::CastImageFilter<FloatImageType, ShortImageType> CasterType;
+      CasterType::Pointer caster = CasterType::New();
+
+      caster->SetInput(avgImage);
+      caster->Update();
+
+      std::string avgFileName = outputDir + volumeType + std::string("_average") + suffstr;
+
+      muLogMacro(<< "Writing averaged corrected input images... " << avgFileName << std::endl );
+
+      typedef itk::ImageFileWriter<ShortImageType> ShortWriterType;
+      ShortWriterType::Pointer writer = ShortWriterType::New();
+
+      writer->SetInput( caster->GetOutput() );
+      writer->SetFileName(avgFileName);
+      writer->UseCompressionOn();
+      writer->Update();
       }
 
     // Write warped template and bspline trafo

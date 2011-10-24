@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>
+  insertMidACPCpoint 
+  </category>
+  <title>
+  Inserting midACPC landmark
+  </title>
+  <description>
+  This program gets a landmark fcsv file and adds a new landmark as the midpoint between AC and PC points to the output landmark fcsv file	
+  </description>
+  <version> </version>
+  <documentation-url> </documentation-url>
+  <license> </license>
+  <contributor>Ali Ghayoor</contributor>
+<acknowledgements>
+</acknowledgements>
+
+  <parameters>
+    <label>IO</label>
+    <description>Input/output parameters</description>
+
+    <file>
+      <name>inputLandmarkFile</name>
+      <longflag>--inputLandmarkFile</longflag> 
+      <label>Input landmark file</label>
+      <channel>input</channel>
+      <description>Input landmark file (.fcsv)</description>
+    </file>
+
+    <file>
+      <name>outputLandmarkFile</name>
+      <longflag>--outputLandmarkFile</longflag> 
+      <label>Output landmark file</label>
+      <channel>output</channel>
+      <description>Output landmark file (.fcsv)</description>
+    </file>
+
+  </parameters>
+
+</executable>

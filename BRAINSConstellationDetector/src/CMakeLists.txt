@@ -24,6 +24,7 @@ set(ALL_PROGS_LIST
   BRAINSLmkTransform
   TransformFromFiducials
   BRAINSEyeDetector
+  insertMidACPCpoint
   )
 foreach(prog ${ALL_PROGS_LIST})
   StandardBRAINSBuildMacro(NAME ${prog} TARGET_LIBRARIES landmarksConstellationCOMMONLIB )

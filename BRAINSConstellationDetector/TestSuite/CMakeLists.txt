@@ -541,15 +541,23 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetecto
   )
 set_property(TEST ${BRAINSConstellationDetectorTestName} APPEND PROPERTY DEPENDS BRAINSConstellationDetectorTestForLandmarkCompare)
 
-if(0)
-set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_outputVerificationScript)
+
+set(CLP insertMidACPCpoint)
+set(BRAINSConstellationDetectorTestName insertMidACPCpointTest) #This test aims to generate the output of the insertMidACPCpoint 
+                                                                # program to be compared with the baseline file
+ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName} 
+  COMMAND ${LAUNCH_EXE} ${BRAINSTools_BINARY_DIR}/../bin/${CLP}
+  --inputLandmarkFile DATA{${TestData_DIR}/BRAINSConstellationDetectorTest_outputLandmarksInACPCAlignedSpace_standard.fcsv} #input standard file
+  --outputLandmarkFile ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_ACPCSpace_aligned.fcsv #output of the program
+  )
+
+set(BRAINSConstellationDetectorTestName MidACPCpointCompareTest)
 ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
   COMMAND ${LAUNCH_EXE} ${LandmarksCompareEXE}
-  --inputLandmarkFile1 ${CMAKE_CURRENT_BINARY_DIR}/BRAINSConstellationDetectorTestForLandmarkCompare_aligned.sh
-  --inputLandmarkFile2 DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.sh} # Baseline file
+  --inputLandmarkFile1 ${CMAKE_CURRENT_BINARY_DIR}/insertMidACPCpointTest_ACPCSpace_aligned.fcsv # output of the insertMidACPCpoint
+  --inputLandmarkFile2 DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.fcsv} # Baseline file
   )
-set_property(TEST ${BRAINSConstellationDetectorTestName} APPEND PROPERTY DEPENDS BRAINSConstellationDetectorTestForLandmarkCompare)
-endif(0)
+set_property(TEST ${BRAINSConstellationDetectorTestName} APPEND PROPERTY DEPENDS insertMidACPCpointTest)
 
 
 ExternalData_Add_Target( ${PROJECT_NAME}FetchData )  # Name of data management target

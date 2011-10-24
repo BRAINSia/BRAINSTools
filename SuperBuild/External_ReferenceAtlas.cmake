@@ -29,7 +29,7 @@ if(NOT DEFINED ReferenceAtlas_DIR OR NOT DEFINED ATLAS_NAME)
   set(ATLAS_VERSION 20110607)
   set(ATLAS_URL http://www.psychiatry.uiowa.edu/users/hjohnson/ftp/Atlas_${ATLAS_VERSION}.tar.gz)
   set(ATLAS_NAME Atlas/Atlas_${ATLAS_VERSION})
-  
+
   ExternalProject_add(${proj}
     URL ${ATLAS_URL}
     SOURCE_DIR ${proj}
@@ -44,7 +44,7 @@ if(NOT DEFINED ReferenceAtlas_DIR OR NOT DEFINED ATLAS_NAME)
     DEPENDS
       ${ReferenceAtlas_DEPENDENCIES}
     )
-  set(ReferenceAtlas_DIR ${proj}-build)
+  set(ReferenceAtlas_DIR ${CMAKE_CURRENT_BINARY_DIR}/${proj}-build)
 
 else()
   # The project is provided using ReferenceAtlas_DIR, nevertheless since other

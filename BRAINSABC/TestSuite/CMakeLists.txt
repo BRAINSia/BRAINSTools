@@ -30,7 +30,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME BRAINSABCLongTest
   --outputFormat NIFTI
   --outputDir ${CMAKE_CURRENT_BINARY_DIR}
   --gridSize  5,3,4
-  --atlasDefinition ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Atlas/Atlas_20110607/AtlasPVDefinition.xml
+  --atlasDefinition ${ReferenceAtlas_DIR}/${ATLAS_NAME}/AtlasPVDefinition.xml
   )
 set_tests_properties(BRAINSABCLongTest PROPERTIES TIMEOUT 6500)
 

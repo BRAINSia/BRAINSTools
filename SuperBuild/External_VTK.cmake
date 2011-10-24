@@ -22,10 +22,10 @@ if (Slicer_USE_PYTHONQT)
 endif()
 
 # Include dependent projects if any
-#SlicerMacroCheckExternalProjectDependency(VTK)
+SlicerMacroCheckExternalProjectDependency(VTK)
 set(proj VTK)
 
-if(NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR)
+if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT ${USE_SYSTEM_VTK})
   #message(STATUS "${__indent}Adding project ${proj}")
   set(VTK_WRAP_TCL OFF)
   set(VTK_WRAP_PYTHON OFF)
@@ -37,6 +37,7 @@ if(NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR)
   set(VTK_PYTHON_ARGS)
   if(Slicer_USE_PYTHONQT)
     set(VTK_PYTHON_ARGS
+      -DVTK_INSTALL_PYTHON_USING_CMAKE:BOOL=ON
       -DPYTHON_EXECUTABLE:PATH=${slicer_PYTHON_EXECUTABLE}
       -DPYTHON_INCLUDE_DIR:PATH=${slicer_PYTHON_INCLUDE}
       -DPYTHON_LIBRARY:FILEPATH=${slicer_PYTHON_LIBRARY}
@@ -71,7 +72,6 @@ if(NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR)
   else(BRAINSTOOLS_USE_QT)
     set(VTK_QT_ARGS
         -DVTK_USE_GUISUPPORT:BOOL=OFF
-        -DVTK_USE_QVTK_QTOPENGL:BOOL=OFF
         -DVTK_USE_QT:BOOL=OFF
         )
   endif(BRAINSTools_USE_QT)
@@ -126,13 +126,14 @@ if(NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR)
   endif()
 
   ExternalProject_Add(${proj}
+    GIT_REPOSITORY "${git_protocol}://vtk.org/VTK.git"
+    GIT_TAG "v5.8.0"
+    UPDATE_COMMAND ""
     SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
     BINARY_DIR ${proj}-build
-    GIT_REPOSITORY "${git_protocol}://${Slicer_VTK_GIT_REPOSITORY}"
-    GIT_TAG ${Slicer_VTK_GIT_TAG}
     CMAKE_GENERATOR ${gen}
     CMAKE_ARGS
-      ${ep_common_flags}
+      ${ep_common_compiler_args}
       ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
       -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
       -DBUILD_TESTING:BOOL=OFF
@@ -145,7 +146,6 @@ if(NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR)
       #-DVTK_USE_RPATH:BOOL=ON # Unused
       ${VTK_TCL_ARGS}
       -DVTK_WRAP_PYTHON:BOOL=${VTK_WRAP_PYTHON}
-      -DVTK_INSTALL_PYTHON_USING_CMAKE:BOOL=ON
       -DVTK_INSTALL_LIB_DIR:PATH=${Slicer_INSTALL_LIB_DIR}
       ${VTK_PYTHON_ARGS}
       ${VTK_QT_ARGS}
@@ -159,8 +159,16 @@ if(NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR)
   set(VTK_SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj})
 
 else()
+  if(${USE_SYSTEM_VTK})
+    find_package(VTK REQUIRED)
+    if(NOT VTK_DIR)
+      message(FATAL_ERROR "To use the system VTK, set VTK_DIR")
+    endif()
+  endif()
   # The project is provided using VTK_DIR and VTK_SOURCE_DIR, nevertheless since other
   # project may depend on VTK, let's add an 'empty' one
   SlicerMacroEmptyExternalProject(${proj} "${VTK_DEPENDENCIES}")
 endif()
+
+LIST(APPEND ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS VTK_DIR:PATH)
 

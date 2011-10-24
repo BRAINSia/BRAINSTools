@@ -2,6 +2,8 @@
 ## to build all the BRAINSTools for distribution in
 ## various build environments.
 
+message(FATAL_ERROR "This file need some attention ...")
+
 
 ## This macro builds each of the BRAINSTools Components.
 macro(BuildExtPackage PackageName PACKAGE_DEPENDANCIES)

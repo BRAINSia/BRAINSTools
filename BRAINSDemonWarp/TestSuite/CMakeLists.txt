@@ -55,6 +55,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateFastSymmetricForces
   )
 
 #3
+if ( 0 )
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateDiffeomorphicTest1_nii
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSDemonWarpTestDriver>
   --compare
@@ -81,7 +82,35 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateDiffeomorphicTest1_
   --minimumMovingPyramid 4,4,4
   --registrationFilterType Diffeomorphic
   )
-
+else()
+  ## Simplified
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateDiffeomorphicTest1_nii
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSDemonWarpTestDriver>
+  --compare
+  DATA{${TestData_DIR}/diffeomorphicDemons1.nii.gz}
+  ${CMAKE_CURRENT_BINARY_DIR}/diffeomorphicDemons1_test.nii.gz
+  --compareNumberOfPixelsTolerance 220
+  --compareIntensityTolerance 10
+  BRAINSDemonWarpTest
+  --movingVolume DATA{${TestData_DIR}/SUBJ_B_small_T1.nii.gz}
+  --fixedVolume DATA{${TestData_DIR}/SUBJ_A_small_T1.nii.gz}
+  --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/diffeomorphicDemons1_test.nii.gz
+  --outputDeformationFieldVolume ${CMAKE_CURRENT_BINARY_DIR}/OutDefField.nii.gz
+  --inputPixelType short
+  --outputPixelType uchar
+  --outputNormalized
+  --outputDebug
+  --histogramMatch
+  --numberOfHistogramBins 1024
+  --numberOfMatchPoints 7
+  # --smoothDeformationFieldSigma 1.5
+  --numberOfPyramidLevels 1
+  --arrayOfPyramidLevelIterations 1
+  --minimumFixedPyramid 1,1,1
+  --minimumMovingPyramid 1,1,1
+  --registrationFilterType Diffeomorphic
+  )
+endif()
 #4
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateDiffeomorphicTest2_nii
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSDemonWarpTestDriver>

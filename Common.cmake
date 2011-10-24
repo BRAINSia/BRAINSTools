@@ -15,7 +15,7 @@ option(USE_BRAINSMultiModeSegment          "Build BRAINSMultiModeSegment (ITKv4)
 option(USE_BRAINSInitializedControlPoints  "Build BRAINSInitializedControlPoints (ITKv4)"  ON)
 option(USE_BRAINSTransformConvert          "Build BRAINSTransformConvert (ITKv4)"          ON)
 
-option(USE_BRAINSDemonWarp                 "Build BRAINSDemonWarp (ITKv3)"                 ON)
+option(USE_BRAINSDemonWarp                 "Build BRAINSDemonWarp (ITKv3)"                 OFF)
 #option(USE_BRAINSCut                       "Build BRAINSCut (ITKv4)"                     OFF)
 
 

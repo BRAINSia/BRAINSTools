@@ -1,8 +1,8 @@
 #ifndef __DemonsRegistrator_hxx
 #define __DemonsRegistrator_hxx
 
-#include <sstream>
 #include <string>
+#include <sstream>
 #include "DemonsRegistrator.h"
 #include "itkCommand.h"
 #include "ApplyField.h"
@@ -169,9 +169,41 @@ void DemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute()
     m_Registration->SetNumberOfLevels(m_NumberOfLevels);
     m_Registration->SetNumberOfIterations( m_NumberOfIterations.data_block() );
 
+#define __WRITE_ANNOYING_DEBUG_IMAGES__
+#if defined __WRITE_ANNOYING_DEBUG_IMAGES__
+    itkUtil::WriteImage<RealImageType>(m_FixedImage, "m_Registration_m_FixedImage.nii.gz");
+    itkUtil::WriteImage<RealImageType>(m_MovingImage, "m_Registration_m_MovingImage.nii.gz");
+
+    itkUtil::WriteImage<RealImageType>(m_FixedImage, "m_Registration_m_Registration.nii.gz");
+    itkUtil::WriteImage<RealImageType>(m_MovingImage, "m_Registration_m_MovingImage.nii.gz");
+
+    m_MovingImagePyramid->SetNumberOfLevels(m_NumberOfLevels);
+    m_MovingImagePyramid->SetInput(m_MovingImage);
+    m_MovingImagePyramid->UpdateLargestPossibleRegion();
+
+    m_FixedImagePyramid->SetNumberOfLevels(m_NumberOfLevels);
+    m_FixedImagePyramid->SetInput(m_FixedImage);
+    m_FixedImagePyramid->UpdateLargestPossibleRegion();
+    for( unsigned int i = 0; i < m_NumberOfLevels; i++ )
+      {
+      std::stringstream tempF("");
+      tempF << "m_Registration_m_FixedImagePyramid_" << i << ".nii.gz";
+      itkUtil::WriteImage<RealImageType>(this->m_FixedImagePyramid->GetOutput(i), tempF.str() );
+
+      std::stringstream tempM("");
+      tempM << "m_Registration_m_MovingImagePyramid_" << i << ".nii.gz";
+      itkUtil::WriteImage<RealImageType>(this->m_MovingImagePyramid->GetOutput(i), tempM.str() );
+      }
+
+#endif
+
     // Setup the initial deformation field
     if( this->m_InitialDeformationField.IsNotNull() )
       {
+#if defined __WRITE_ANNOYING_DEBUG_IMAGES__
+      itkUtil::WriteImage<TDeformationField>(this->m_InitialDeformationField,
+                                             "m_Registration_m_InitialDeformationField.nii.gz");
+#endif
       m_Registration->SetInitialDeformationField(this->m_InitialDeformationField);
       }
     // Perform the registration.
@@ -272,6 +304,13 @@ void DemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute()
           0,
           GetInterpolatorFromString<RealImageType>(this->m_InterpolationMode),
           m_DeformationField);
+#define __WRITE_ANNOYING_DEBUG_IMAGES__
+#if defined __WRITE_ANNOYING_DEBUG_IMAGES__
+      itkUtil::WriteImage<RealImageType>(sourceMovingImage, "TransormWarp_sourceMovingImage.nii.gz");
+      itkUtil::WriteImage<RealImageType>(m_FixedImage, "TransormWarp_FixedImage.nii.gz");
+      itkUtil::WriteImage<RealImageType>(DeformedMovingImagePtr, "TransormWarp_DeformedMovingImagePtr.nii.gz");
+      itkUtil::WriteImage<TDeformationField>(m_DeformationField, "TransormWarp_m_DeformationField.nii.gz");
+#endif
       }
 
     if( this->GetOutDebug() )

@@ -88,13 +88,10 @@ ThirionRegistration<TImage, TRealImage, TOutputImage>
 {
   this->m_Preprocessor->SetInputFixedImage( this->m_Parser->GetTheFixedImage() );
   this->m_Preprocessor->SetInputMovingImage( this->m_Parser->GetTheMovingImage() );
-  this->m_Preprocessor->SetInitialDeformationField(
-    this->m_Parser->GetInitialDeformationField() );
+  this->m_Preprocessor->SetInitialDeformationField( this->m_Parser->GetInitialDeformationField() );
   this->m_Preprocessor->SetUseHistogramMatching( this->GetUseHistogramMatching() );
-  this->m_Preprocessor->SetNumberOfHistogramLevels(
-    this->m_Parser->GetNumberOfHistogramLevels() );
-  this->m_Preprocessor->SetNumberOfMatchPoints(
-    this->m_Parser->GetNumberOfMatchPoints() );
+  this->m_Preprocessor->SetNumberOfHistogramLevels( this->m_Parser->GetNumberOfHistogramLevels() );
+  this->m_Preprocessor->SetNumberOfMatchPoints( this->m_Parser->GetNumberOfMatchPoints() );
   this->m_Preprocessor->SetBOBFTargetMask( this->GetBOBFTargetMask() );
   this->m_Preprocessor->SetBOBFTemplateMask( this->GetBOBFTemplateMask() );
   this->m_Preprocessor->SetLower( this->GetLower() );
@@ -104,8 +101,7 @@ ThirionRegistration<TImage, TRealImage, TOutputImage>
   this->m_Preprocessor->SetSeed( this->GetSeed() );
   this->m_Preprocessor->SetOutDebug( this->GetOutDebug() );
   this->m_Preprocessor->SetMedianFilterSize( this->GetMedianFilterSize() );
-  this->m_Preprocessor->SetInitialDeformationField(
-    this->m_Parser->GetInitialDeformationField() );
+  this->m_Preprocessor->SetInitialDeformationField( this->m_Parser->GetInitialDeformationField() );
 }
 
 /*This method initializes the registration process. The preprocessed output
@@ -119,35 +115,25 @@ ThirionRegistration<TImage, TRealImage, TOutputImage>
   this->m_Registrator->SetDisplacementBaseName( this->GetDisplacementBaseName() );
   this->m_Registrator->SetWarpedImageName( this->GetWarpedImageName() );
   this->m_Registrator->SetCheckerBoardFilename( this->GetCheckerBoardFilename() );
-  this->m_Registrator->SetDeformationFieldOutputName(
-    this->GetDeformationFieldOutputName() );
+  this->m_Registrator->SetDeformationFieldOutputName( this->GetDeformationFieldOutputName() );
   this->m_Registrator->SetCheckerBoardPattern( this->GetCheckerBoardPattern() );
   this->m_Registrator->SetFixedImage( this->m_Preprocessor->GetOutputFixedImage() );
-  this->m_Registrator->SetMovingImage(
-    this->m_Preprocessor->GetOutputMovingImage() );
-  this->m_Registrator->SetUnNormalizedMovingImage(
-    this->m_Preprocessor->GetUnNormalizedMovingImage() );
-  this->m_Registrator->SetUnNormalizedFixedImage(
-    this->m_Preprocessor->GetUnNormalizedFixedImage() );
-  this->m_Registrator->SetInitialDeformationField(
-    this->m_Parser->GetInitialDeformationField() );
-  this->m_Registrator->SetDefaultPixelValue(
-    this->m_Preprocessor->GetDefaultPixelValue() );
+  this->m_Registrator->SetMovingImage( this->m_Preprocessor->GetOutputMovingImage() );
+  this->m_Registrator->SetUnNormalizedMovingImage( this->m_Preprocessor->GetUnNormalizedMovingImage() );
+  this->m_Registrator->SetUnNormalizedFixedImage( this->m_Preprocessor->GetUnNormalizedFixedImage() );
+  this->m_Registrator->SetInitialDeformationField( this->m_Parser->GetInitialDeformationField() );
+  this->m_Registrator->SetDefaultPixelValue( this->m_Preprocessor->GetDefaultPixelValue() );
   this->m_Registrator->SetUseHistogramMatching( this->GetUseHistogramMatching() );
   this->m_Registrator->SetNumberOfLevels( this->m_Parser->GetNumberOfLevels() );
-  this->m_Registrator->SetNumberOfIterations(
-    this->m_Parser->GetNumberOfIterations() );
+  this->m_Registrator->SetNumberOfIterations( this->m_Parser->GetNumberOfIterations() );
   this->m_Registrator->SetInterpolationMode( this->GetInterpolationMode() );
 
-  this->m_Registrator->SetFixedImageShrinkFactors(
-    this->m_Parser->GetTheFixedImageShrinkFactors() );
-  this->m_Registrator->SetMovingImageShrinkFactors(
-    this->m_Parser->GetTheMovingImageShrinkFactors() );
+  this->m_Registrator->SetFixedImageShrinkFactors( this->m_Parser->GetTheFixedImageShrinkFactors() );
+  this->m_Registrator->SetMovingImageShrinkFactors( this->m_Parser->GetTheMovingImageShrinkFactors() );
 
   this->m_Registrator->SetOutNormalized( this->GetOutNormalized() );
   this->m_Registrator->SetOutDebug( this->GetOutDebug() );
-  this->m_Registrator->SetDeformationFieldOutputName(
-    this->m_DeformationFieldOutputName);
+  this->m_Registrator->SetDeformationFieldOutputName( this->m_DeformationFieldOutputName);
   this->m_Registrator->SetFixedLandmarkFilename(this->m_FixedLandmarkFilename);
   this->m_Registrator->SetMovingLandmarkFilename(this->m_MovingLandmarkFilename);
 }

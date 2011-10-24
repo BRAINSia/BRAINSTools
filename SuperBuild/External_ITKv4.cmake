@@ -28,7 +28,7 @@ if(NOT DEFINED ITK_DIR AND NOT ${USE_SYSTEM_ITK})
       -DCMAKE_OSX_SYSROOT=${CMAKE_OSX_SYSROOT}
       -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET})
   endif()
-  
+
   set(ITKv4_WRAP_ARGS)
   #if(foo)
     #set(ITKv4_WRAP_ARGS
@@ -51,7 +51,7 @@ if(NOT DEFINED ITK_DIR AND NOT ${USE_SYSTEM_ITK})
     #  -DPYTHON_LIBRARY:FILEPATH=${${CMAKE_PROJECT_NAME}_PYTHON_LIBRARY}
     #  )
   #endif()
-      
+
   # HACK This code fixes a loony problem with HDF5 -- it doesn't
   #      link properly if -fopenmp is used.
   string(REPLACE "-fopenmp" "" ITK_CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
@@ -59,7 +59,7 @@ if(NOT DEFINED ITK_DIR AND NOT ${USE_SYSTEM_ITK})
 
   set(ITKv4_REPOSITORY git://github.com/hjmjohnson/ITK.git)
   set(ITKv4_GIT_TAG ITK_Slicer)
-  
+
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${ITKv4_REPOSITORY}
     GIT_TAG ${ITKv4_GIT_TAG}
@@ -92,7 +92,7 @@ else()
       message(FATAL_ERROR "To use the system ITK, set ITK_DIR")
     endif()
   endif()
-  # The project is provided using ITKv4_DIR, nevertheless since other
+  # The project is provided using ITK_DIR, nevertheless since other
   # project may depend on ITKv4, let's add an 'empty' one
   SlicerMacroEmptyExternalProject(${proj} "${ITKv4_DEPENDENCIES}")
 endif()

@@ -1,5 +1,25 @@
 
 #-----------------------------------------------------------------------------
+# Build option(s)
+#-----------------------------------------------------------------------------
+option(USE_BRAINSFit                       "Build BRAINSFit"                       ON)
+option(USE_BRAINSROIAuto                   "Build BRAINSROIAuto"                   ON)
+option(USE_BRAINSResample                  "Build BRAINSResample"                  ON)
+option(USE_GTRACT                          "Build GTRACT"                          ON)
+option(USE_ImageCalculator                 "Build ImageCalculator"                 ON)
+
+option(USE_BRAINSABC                       "Build BRAINSABC (ITKv4)"                       ON)
+option(USE_BRAINSConstellationDetector     "Build BRAINSConstellationDetector (ITKv4)"     ON)
+option(USE_BRAINSMush                      "Build BRAINSMush (ITKv4)"                      ON)
+option(USE_BRAINSMultiModeSegment          "Build BRAINSMultiModeSegment (ITKv4)"          ON)
+option(USE_BRAINSInitializedControlPoints  "Build BRAINSInitializedControlPoints (ITKv4)"  ON)
+option(USE_BRAINSTransformConvert          "Build BRAINSTransformConvert (ITKv4)"          ON)
+
+option(USE_BRAINSDemonWarp                 "Build BRAINSDemonWarp (ITKv3)"                 ON)
+#option(USE_BRAINSCut                       "Build BRAINSCut (ITKv4)"                     OFF)
+
+
+#-----------------------------------------------------------------------------
 # Update CMake module path
 #------------------------------------------------------------------------------
 set(CMAKE_MODULE_PATH
@@ -23,25 +43,6 @@ if(CMAKE_PATCH_VERSION LESS 3)
 else()
   include(CMakeParseArguments)
 endif()
-
-#-----------------------------------------------------------------------------
-# Build option(s)
-#-----------------------------------------------------------------------------
-option(USE_GTRACT                          "Build GTRACT"                          ON)
-option(USE_BRAINSCommonLib                 "Build BRAINSCommonLib"                 ON)
-option(USE_BRAINSFit                       "Build BRAINSFit"                       ON)
-option(USE_BRAINSABC                       "Build BRAINSABC"                       ON)
-option(USE_BRAINSCUT                       "Build BRAINSCut"                       OFF)
-option(USE_BRAINSROIAuto                   "Build BRAINSROIAuto"                   ON)
-option(USE_BRAINSDemonWarp                 "Build BRAINSDemonWarp"                 ON)
-option(USE_BRAINSResample                  "Build BRAINSResample"                  ON)
-option(USE_BRAINSConstellationDetector     "Build BRAINSConstellationDetector"     ON)
-option(USE_BRAINSMush                      "Build BRAINSMush"                      ON)
-option(USE_BRAINSMultiModeSegment          "Build BRAINSMultiModeSegment"          ON)
-option(USE_BRAINSInitializedControlPoints  "Build BRAINSInitializedControlPoints"  ON)
-option(USE_BRAINSTransformConvert          "Build BRAINSTransformConvert"          ON)
-option(USE_ImageCalculator                 "Build ImageCalculator"                 ON)
-#option(USE_BRAINSCut                       "Build BRAINSCut"                       OFF)
 
 #-----------------------------------------------------------------------------
 # Platform check

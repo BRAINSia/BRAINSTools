@@ -9,7 +9,7 @@ set(CMAKE_MODULE_PATH
   ${${PROJECT_NAME}_BINARY_DIR}/CMake
   ${CMAKE_MODULE_PATH}
   )
-  
+
 #-----------------------------------------------------------------------------
 find_package(ITK REQUIRED)
 include(${ITK_USE_FILE})
@@ -84,25 +84,29 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/BRAINSCommonLib ${CMAKE_CURRENT_
 #-----------------------------------------------------------------------------
 # Define list of module names
 #-----------------------------------------------------------------------------
-set(brains_modulenames 
+set(brains_modulenames
   BRAINSFit
   BRAINSResample
-  BRAINSDemonWarp
   BRAINSROIAuto
   GTRACT
   ImageCalculator
   )
 
 ## Tools that only work with ITKv4
-if(ITK_VERSION_MAJOR GREATER 3)  
-  list(APPEND brains_modulenames 
-    BRAINSConstellationDetector 
-    BRAINSABC 
-    BRAINSCut 
-    BRAINSMush 
-    BRAINSMultiModeSegment 
+if(ITK_VERSION_MAJOR GREATER 3)
+  list(APPEND brains_modulenames
+    BRAINSConstellationDetector
+    BRAINSABC
+    BRAINSMush
+    BRAINSMultiModeSegment
     BRAINSInitializedControlPoints
+    BRAINSTransformConvert
+    # Not yet ready BRAINSCut
     )
+else(ITK_VERSION_MAJOR GREATER 3)
+  list(APPEND brains_modulenames
+    BRAINSDemonWarp  # This is only working in ITKv3,  ITKv4 does not work correctly, and we are moving to a new program.
+  )
 endif(ITK_VERSION_MAJOR GREATER 3)
 
 #-----------------------------------------------------------------------------

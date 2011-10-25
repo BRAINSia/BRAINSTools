@@ -44,9 +44,9 @@ namespace itk
  */
 
 template <class TTensorImageType, class TAnisotropyImageType, class TMaskImageType>
-GTRACT_COMMON_EXPORT class DtiGraphSearchTrackingFilter : public itk::DtiTrackingFilterBase<TTensorImageType,
-                                                                                            TAnisotropyImageType,
-                                                                                            TMaskImageType>
+class DtiGraphSearchTrackingFilter : public itk::DtiTrackingFilterBase<TTensorImageType,
+                                                                       TAnisotropyImageType,
+                                                                       TMaskImageType>
 {
 public:
   /** Standard class typedefs. */

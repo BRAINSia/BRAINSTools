@@ -13,6 +13,7 @@ set(ALL_TEST_PROGS
   BRAINSClipInferior
   BRAINSConstellationModeler
   BRAINSTrimForegroundInDirection
+  insertMidACPCpoint
   )
 
 
@@ -487,11 +488,11 @@ add_executable(${CLP} ${${CLP}_SOURCE})
 target_link_libraries(${CLP} ${ITK_LIBRARIES})
 set_target_properties(${CLP} PROPERTIES
                         RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
-set(LandmarksCompareEXE ${CMAKE_CURRENT_BINARY_DIR}/${CLP})
 
 set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTestForLandmarkCompare)
+
 ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
-  COMMAND $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
   BRAINSConstellationDetectorTest
   --inputVolume DATA{${TestData_DIR}/T1.nii.gz}
   --LLSModel DATA{${TestData_DIR}/LLSModel.hdf5}
@@ -507,8 +508,9 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetecto
 
 
 set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_outputLandmarksInACPCAlignedSpace)
+
 ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
-  COMMAND ${LAUNCH_EXE} ${LandmarksCompareEXE}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:LandmarksCompare}
   --inputLandmarkFile1 ${CMAKE_CURRENT_BINARY_DIR}/BRAINSConstellationDetectorTestForLandmarkCompare_ACPCSpace_aligned.fcsv
   --inputLandmarkFile2 DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.fcsv} # Baseline file
   )
@@ -517,7 +519,7 @@ set_property(TEST ${BRAINSConstellationDetectorTestName} APPEND PROPERTY DEPENDS
 
 set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_outputLandmarksInInputSpace)
 ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
-  COMMAND ${LAUNCH_EXE} ${LandmarksCompareEXE}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:LandmarksCompare>
   --inputLandmarkFile1 ${CMAKE_CURRENT_BINARY_DIR}/BRAINSConstellationDetectorTestForLandmarkCompare_InputSpace_aligned.fcsv
   --inputLandmarkFile2 DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.fcsv} # Baseline file
   )
@@ -526,7 +528,7 @@ set_property(TEST ${BRAINSConstellationDetectorTestName} APPEND PROPERTY DEPENDS
 
 set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_outputLandmarkWeights)
 ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
-  COMMAND ${LAUNCH_EXE} ${LandmarksCompareEXE}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:LandmarksCompare>
   --inputLandmarkFile1 ${CMAKE_CURRENT_BINARY_DIR}/BRAINSConstellationDetectorTestForLandmarkCompare_aligned.wts
   --inputLandmarkFile2 DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.wts} # Baseline file
   )
@@ -535,25 +537,25 @@ set_property(TEST ${BRAINSConstellationDetectorTestName} APPEND PROPERTY DEPENDS
 
 set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_LandmarksPaired)
 ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
-  COMMAND ${LAUNCH_EXE} ${LandmarksCompareEXE}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:LandmarksCompare>
   --inputLandmarkFile1 ${CMAKE_CURRENT_BINARY_DIR}/BRAINSConstellationDetectorTestForLandmarkCompare_Paired_aligned.fcsv
   --inputLandmarkFile2 DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.fcsv} # Baseline file
   )
 set_property(TEST ${BRAINSConstellationDetectorTestName} APPEND PROPERTY DEPENDS BRAINSConstellationDetectorTestForLandmarkCompare)
 
 
-set(CLP insertMidACPCpoint)
-set(BRAINSConstellationDetectorTestName insertMidACPCpointTest) #This test aims to generate the output of the insertMidACPCpoint 
+set(BRAINSConstellationDetectorTestName insertMidACPCpointTest) #This test aims to generate the output of the insertMidACPCpoint
                                                                 # program to be compared with the baseline file
-ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName} 
-  COMMAND ${LAUNCH_EXE} ${BRAINSTools_BINARY_DIR}/../bin/${CLP}
+ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:insertMidACPCpointTestDriver>
+  ${BRAINSConstellationDetectorTestName}
   --inputLandmarkFile DATA{${TestData_DIR}/BRAINSConstellationDetectorTest_outputLandmarksInACPCAlignedSpace_standard.fcsv} #input standard file
   --outputLandmarkFile ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_ACPCSpace_aligned.fcsv #output of the program
   )
 
 set(BRAINSConstellationDetectorTestName MidACPCpointCompareTest)
 ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
-  COMMAND ${LAUNCH_EXE} ${LandmarksCompareEXE}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:LandmarksCompare>
   --inputLandmarkFile1 ${CMAKE_CURRENT_BINARY_DIR}/insertMidACPCpointTest_ACPCSpace_aligned.fcsv # output of the insertMidACPCpoint
   --inputLandmarkFile2 DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.fcsv} # Baseline file
   )

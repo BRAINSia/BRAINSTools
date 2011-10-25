@@ -16,6 +16,6 @@ set(GTRACTCommon_SRC
   # itkDtiTrackingFilterFibersAndPoints.cxx
 )
 
-add_library(GTRACTCommon STATIC ${GTRACTCommon_SRC})
+add_library(GTRACTCommon ${GTRACTCommon_SRC})
 target_link_libraries(GTRACTCommon BRAINSCommonLib ${VTK_LIBRARIES})
 

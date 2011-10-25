@@ -11,6 +11,7 @@
 #include "landmarksConstellationCommon.h"
 #include "TrimForegroundInDirection.h"
 #include "GenericTransformImage.h"
+#include "itkOrthogonalize3DRotationMatrix.h"
 
 typedef itk::ImageMomentsCalculator<SImageType> momentsCalculatorType;
 
@@ -538,23 +539,19 @@ RigidTransformType::Pointer computeTmspFromPoints(
   // Rotate the "Z" (i.e. Inferior to Superior Axis)
   double PlaneNormalAttitude = vcl_sin(ACPC[2]);
 
-  // --std::cout << "!!!!!!!!!!!!!!!!!!!!! " << PlaneNormalAttitude << " " <<
-  // PlaneNormalBank << " " << PlaneNormalHeading << std::endl;
-  // --std::cout << "!!!!!!!!!!!!!!!!!!!!! " <<
-  // PlaneNormalAttitude*180.9/vnl_math::pi << " " <<
-  // PlaneNormalBank*180.0/vnl_math::pi << " " <<
-  // PlaneNormalHeading*180.0/vnl_math::pi << std::endl;
-  // itk::Matrix<double,3,3>
-  // BestRotationAlignment=CreateRotationMatrixFromAngles(PlaneNormalAttitude,PlaneNormalBank,PlaneNormalHeading);
-
   SImageType::PointType::VectorType CenterOffset =
     AC.GetVectorFromOrigin()
     - DesiredCenter.GetVectorFromOrigin();
 
   RigidTransformType::Pointer AlignMSPTransform = RigidTransformType::New();
   AlignMSPTransform->SetCenter(DesiredCenter);
-  // AlignMSPTransform->SetRotationMatrix(BestRotationAlignment);
   AlignMSPTransform->SetRotation(PlaneNormalAttitude, PlaneNormalBank, PlaneNormalHeading);
+    {
+    // Clean up the rotation to make it orthogonal:
+    const itk::Matrix<double, 3, 3> & CleanedOrthogonalized = itk::Orthogonalize3DRotationMatrix(
+        AlignMSPTransform->GetRotationMatrix() );
+    AlignMSPTransform->SetRotationMatrix( CleanedOrthogonalized );
+    }
   AlignMSPTransform->SetTranslation(CenterOffset);
   if( LMC::globalverboseFlag )
     {

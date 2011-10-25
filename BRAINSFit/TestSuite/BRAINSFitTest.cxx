@@ -13,7 +13,7 @@
 
 extern "C" MODULE_IMPORT int ModuleEntryPoint(int, char * []);
 
-int BRAINSFitTest(int argc, char* * argv)
+int BRAINSFitTest(int argc, char* argv[])
 {
   return ModuleEntryPoint(argc, argv);
 }

@@ -13,7 +13,7 @@
 
 extern "C" MODULE_IMPORT int ModuleEntryPoint(int, char * []);
 
-int BRAINSROIAutoTest(int argc, char* * argv)
+int BRAINSROIAutoTest(int argc, char* argv[])
 {
   return ModuleEntryPoint(argc, argv);
 }

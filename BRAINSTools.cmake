@@ -81,14 +81,19 @@ if(ITK_VERSION_MAJOR GREATER 3)
     BRAINSMultiModeSegment
     BRAINSInitializedControlPoints
     BRAINSTransformConvert
-    # Not yet ready BRAINSCut
+    # BRAINSCut # Not yet ready
     )
-else(ITK_VERSION_MAJOR GREATER 3)
-endif(ITK_VERSION_MAJOR GREATER 3)
-## HACK:  Need to have it available just for testing puposes.
+  if(BUILD_TESTING)
+    list(APPEND brains_modulenames
+      BRAINSDemonWarp # HACK Only works with ITKv3. Enabled with ITKv4 for testing purposes.
+                      #      Note also we are moving to a new program.
+      )
+  endif()
+else()
   list(APPEND brains_modulenames
-    BRAINSDemonWarp  # This is only working in ITKv3,  ITKv4 does not work correctly, and we are moving to a new program.
-  )
+    BRAINSDemonWarp
+    )
+endif()
 
 #-----------------------------------------------------------------------------
 # Add module sub-directory if USE_<MODULENAME> is both defined and true

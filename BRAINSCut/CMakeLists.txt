@@ -7,7 +7,6 @@ enable_testing()
 #include(Dart)
 include(CTest)
 include(CPack)
-include(${BRAINS_CMAKE_HELPER_DIR}/CMakeBuildMacros.cmake)
 include(${BRAINS_CMAKE_HELPER_DIR}/PreventInSourceBuilds.cmake)
 set(BRAINSLogo ${BRAINS_CMAKE_HELPER_DIR}/BRAINSLogo.h CACHE
 FILEPATH "Path to BRAINS Logo")

@@ -49,7 +49,6 @@ set(TestData_DIR ${CMAKE_CURRENT_SOURCE_DIR}/TestData)
 #-----------------------------------------------------------------------------
 # BRAINSCommonLib (Required)
 #-----------------------------------------------------------------------------
-include(CMakeBuildMacros)
 include(CMakeBRAINS3BuildMacros)
 
 add_subdirectory(BRAINSCommonLib)

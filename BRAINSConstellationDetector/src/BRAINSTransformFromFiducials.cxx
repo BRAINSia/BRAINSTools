@@ -12,7 +12,7 @@
 #include <functional>
 #include <iterator>
 
-#include "TransformFromFiducialsCLP.h"
+#include "BRAINSTransformFromFiducialsCLP.h"
 #include "itkLandmarkBasedTransformInitializer.h"
 #include "itkSimilarity3DTransform.h"
 #include "BRAINSThreadControl.h"

@@ -15,7 +15,7 @@ find_package(ITK ${ITK_MAJOR_VERSION} REQUIRED)
 include(${ITK_USE_FILE})
 
 #-----------------------------------------------------------------------------
-find_package(SlicerExecutionModel NO_MODULE REQUIRED GenerateCLP)
+find_package(SlicerExecutionModel REQUIRED GenerateCLP)
 include(${SlicerExecutionModel_USE_FILE})
 
 #-----------------------------------------------------------------------------

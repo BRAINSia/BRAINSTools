@@ -65,7 +65,7 @@ if(NOT DEFINED SlicerExecutionModel_DIR AND NOT ${USE_SYSTEM_SlicerExecutionMode
   set(SlicerExecutionModel_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
 else()
   if(${USE_SYSTEM_SlicerExecutionModel})
-    find_package(SlicerExecutionModel NO_MODULE REQUIRED GenerateCLP)
+    find_package(SlicerExecutionModel REQUIRED GenerateCLP)
     if(NOT SlicerExecutionModel_DIR)
       message(FATAL_ERROR "To use the system SlicerExecutionModel, set SlicerExecutionModel_DIR")
     endif()

@@ -13,13 +13,13 @@ set(CMAKE_MODULE_PATH
   )
 
 #-----------------------------------------------------------------------------
-set(expected_itk_major_version ${ITK_MAJOR_VERSION})
+set(expected_ITK_VERSION_MAJOR ${ITK_VERSION_MAJOR})
 find_package(ITK REQUIRED)
-if(${ITK_MAJOR_VERSION} VERSION_LESS ${expected_itk_major_version})
+if(${ITK_VERSION_MAJOR} VERSION_LESS ${expected_ITK_VERSION_MAJOR})
   # Note: Since ITKv3 doesn't include a ITKConfigVersion.cmake file, let's check the version 
   #       explicitly instead of passing the version as an argument to find_package() command.
   message(FATAL_ERROR "Could not find a configuration file for package \"ITK\" that is compatible "
-                      "with requested version \"${expected_itk_major_version}\".\n"
+                      "with requested version \"${expected_ITK_VERSION_MAJOR}\".\n"
                       "The following configuration files were considered but not accepted:\n"
                       "  ${ITK_CONFIG}, version: ${ITK_VERSION_MAJOR}.${ITK_VERSION_MINOR}.${ITK_VERSION_PATCH}\n")
 endif()

@@ -64,7 +64,7 @@ option(USE_SYSTEM_VTK "Build using an externally defined version of VTK" OFF)
 # BRAINS dependency list
 #------------------------------------------------------------------------------
 
-set(ITK_EXTERNAL_NAME ITKv${ITK_MAJOR_VERSION})
+set(ITK_EXTERNAL_NAME ITKv${ITK_VERSION_MAJOR})
 
 set(BRAINSTools_DEPENDENCIES VTK ${ITK_EXTERNAL_NAME} SlicerExecutionModel)
 
@@ -163,7 +163,7 @@ SlicerMacroCheckExternalProjectDependency(BRAINSTools)
 list(APPEND ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS
   BUILD_EXAMPLES:BOOL
   BUILD_TESTING:BOOL
-  ITK_MAJOR_VERSION:BOOL
+  ITK_VERSION_MAJOR:BOOL
   ITK_DIR:PATH
 
   BRAINSTools_CLI_LIBRARY_OUTPUT_DIRECTORY:PATH

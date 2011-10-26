@@ -8,6 +8,13 @@ option(USE_BRAINSResample                  "Build BRAINSResample"               
 option(USE_GTRACT                          "Build GTRACT"                          ON)
 option(USE_ImageCalculator                 "Build ImageCalculator"                 ON)
 
+set(ITK_MAJOR_VERSION 4 CACHE STRING "Choose the expected ITK major version to build BRAINS (3 or 4).")
+# Set the possible values of ITK major version for cmake-gui
+set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "3" "4")
+if(NOT ${ITK_MAJOR_VERSION} STREQUAL "3" AND NOT ${ITK_MAJOR_VERSION} STREQUAL "4")
+  message(FATAL_ERROR "ITK_MAJOR_VERSION should be either 3 or 4")
+endif()
+
 option(USE_BRAINSABC                       "Build BRAINSABC (ITKv4)"                       ON)
 option(USE_BRAINSConstellationDetector     "Build BRAINSConstellationDetector (ITKv4)"     ON)
 option(USE_BRAINSMush                      "Build BRAINSMush (ITKv4)"                      ON)
@@ -17,7 +24,6 @@ option(USE_BRAINSTransformConvert          "Build BRAINSTransformConvert (ITKv4)
 
 option(USE_BRAINSDemonWarp                 "Build BRAINSDemonWarp (ITKv3)"                 OFF)
 #option(USE_BRAINSCut                       "Build BRAINSCut (ITKv4)"                     OFF)
-
 
 #-----------------------------------------------------------------------------
 # Update CMake module path

@@ -39,7 +39,6 @@ else()
   set(gen "${CMAKE_GENERATOR}")
 endif()
 
-
 #-----------------------------------------------------------------------------
 # Superbuild option(s)
 #-----------------------------------------------------------------------------
@@ -57,23 +56,15 @@ CMAKE_DEPENDENT_OPTION(
   "BUILD_STYLE_UTILS" OFF
   )
 
-option(USE_SYSTEM_VTK "Build using an externally defined version of VTK" OFF)
+option(USE_SYSTEM_ITK "Build using an externally defined version of ITK" OFF)
 option(USE_SYSTEM_SlicerExecutionModel "Build using an externally defined version of SlicerExecutionModel"  OFF)
+option(USE_SYSTEM_VTK "Build using an externally defined version of VTK" OFF)
 
-option(BUILD_LOCAL_ITKv4 "Build BRAINS against a local build tree of ITKv4" ON)
-#option(USE_SYSTEM_ITK "Build using an externally defined version of ITK" OFF)
-CMAKE_DEPENDENT_OPTION( USE_SYSTEM_ITK "Build using an externally defined version of ITK" OFF
-      "NOT BUILD_LOCAL_ITKv4" OFF
-      )
 #------------------------------------------------------------------------------
 # BRAINS dependency list
 #------------------------------------------------------------------------------
 
-if(BUILD_LOCAL_ITKv4)
-  set(ITK_EXTERNAL_NAME "ITKv4")
-else()
-  set(ITK_EXTERNAL_NAME "ITKv3")
-endif()
+set(ITK_EXTERNAL_NAME ITKv${ITK_MAJOR_VERSION})
 
 set(BRAINSTools_DEPENDENCIES VTK ${ITK_EXTERNAL_NAME} SlicerExecutionModel)
 
@@ -172,6 +163,7 @@ SlicerMacroCheckExternalProjectDependency(BRAINSTools)
 list(APPEND ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS
   BUILD_EXAMPLES:BOOL
   BUILD_TESTING:BOOL
+  ITK_MAJOR_VERSION:BOOL
 
   BRAINSTools_CLI_LIBRARY_OUTPUT_DIRECTORY:PATH
   BRAINSTools_CLI_ARCHIVE_OUTPUT_DIRECTORY:PATH

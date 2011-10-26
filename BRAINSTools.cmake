@@ -11,7 +11,7 @@ set(CMAKE_MODULE_PATH
   )
 
 #-----------------------------------------------------------------------------
-find_package(ITK REQUIRED)
+find_package(ITK ${ITK_MAJOR_VERSION} REQUIRED)
 include(${ITK_USE_FILE})
 
 #-----------------------------------------------------------------------------

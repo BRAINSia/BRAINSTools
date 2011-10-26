@@ -39,7 +39,7 @@ if(NOT DEFINED SlicerExecutionModel_DIR AND NOT ${USE_SYSTEM_SlicerExecutionMode
     BINARY_DIR ${proj}-build
     CMAKE_GENERATOR ${gen}
     CMAKE_ARGS
-      ${ep_common_compiler_args}
+      ${COMMON_EXTERNAL_PROJECT_ARGS}
       ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
       -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
       -DBUILD_TESTING:BOOL=OFF

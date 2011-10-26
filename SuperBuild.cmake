@@ -1,3 +1,8 @@
+
+#-----------------------------------------------------------------------------
+set(verbose FALSE)
+#-----------------------------------------------------------------------------
+
 #-----------------------------------------------------------------------------
 enable_language(C)
 enable_language(CXX)
@@ -55,15 +60,14 @@ CMAKE_DEPENDENT_OPTION(
 option(USE_SYSTEM_VTK "Build using an externally defined version of VTK" OFF)
 option(USE_SYSTEM_SlicerExecutionModel "Build using an externally defined version of SlicerExecutionModel"  OFF)
 
-#------------------------------------------------------------------------------
-# BRAINS dependency list
-#------------------------------------------------------------------------------
-option(BUILD_LOCAL_ITKv4 "Build BRAINS against ITKv4" ON)
-
+option(BUILD_LOCAL_ITKv4 "Build BRAINS against a local build tree of ITKv4" ON)
 #option(USE_SYSTEM_ITK "Build using an externally defined version of ITK" OFF)
 CMAKE_DEPENDENT_OPTION( USE_SYSTEM_ITK "Build using an externally defined version of ITK" OFF
       "NOT BUILD_LOCAL_ITKv4" OFF
       )
+#------------------------------------------------------------------------------
+# BRAINS dependency list
+#------------------------------------------------------------------------------
 
 if(BUILD_LOCAL_ITKv4)
   set(ITK_EXTERNAL_NAME "ITKv4")
@@ -82,23 +86,38 @@ if(USE_BRAINSABC) # OR USE_BRAINSCut)
 endif()
 
 #-----------------------------------------------------------------------------
-# Include external projects
+# Define Superbuild global variables
 #-----------------------------------------------------------------------------
-set(${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_ARGS)
 
 # This variable will contain the list of CMake variable specific to each external project
 # that should passed to ${CMAKE_PROJECT_NAME}.
 # The item of this list should have the following form: <EP_VAR>:<TYPE>
 # where '<EP_VAR>' is an external project variable and TYPE is either BOOL, STRING, PATH or FILEPATH.
 # TODO Variable appended to this list will be automatically exported in BRAINSToolsConfig.cmake, 
-# prefix 'BRAINSTools_' will be prepended if it applied.
+# prefix 'BRAINSTools_' will be prepended if it applies.
 set(${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS)
 
+# The macro '_expand_external_project_vars' can be used to expand the list of <EP_VAR>.
+set(${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_ARGS) # List of CMake args to configure BRAINS
+SET(${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARNAMES) # List of CMake variable names
+
+# Convenient macro allowing to expand the list of EP_VAR listed in ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS
+# The expanded arguments will be appended to the list ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_ARGS
+# Similarly the name of the EP_VARs will be appended to the list ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARNAMES.
+macro(_expand_external_project_vars)
+  foreach(arg ${${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS})
+    string(REPLACE ":" ";" varname_and_vartype ${arg})
+    set(target_info_list ${target_info_list})
+    list(GET varname_and_vartype 0 _varname)
+    list(GET varname_and_vartype 1 _vartype)
+    list(APPEND ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_ARGS -D${_varname}:${_vartype}=${${_varname}})
+    list(APPEND ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARNAMES ${_varname})
+  endforeach()
+endmacro()
 
 #-----------------------------------------------------------------------------
-# Additionnal superbuild args
+# Common external projects CMake variables
 #-----------------------------------------------------------------------------
-
 list(APPEND ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS
   CMAKE_BUILD_TYPE:PATH
   MAKECOMMAND:STRING
@@ -132,21 +151,24 @@ list(APPEND ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS
   BUILDNAME:STRING
   )
 
-#-----------------------------------------------------------------------------
-# Expand build external project args
-#-----------------------------------------------------------------------------
-set(ep_common_compiler_args "")
-FOREACH(arg ${${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS})
-  STRING(REPLACE ":" ";" varname_and_vartype ${arg})
-  SET(target_info_list ${target_info_list})
-  LIST(GET varname_and_vartype 0 _varname)
-  LIST(GET varname_and_vartype 1 _vartype)
-  LIST(APPEND ep_common_compiler_args -D${_varname}:${_vartype}=${${_varname}})
-ENDFOREACH()
-message(STATUS "@@@@@@@@@@@@@ CMAKE ${ep_common_compiler_args}")
+_expand_external_project_vars()
+set(COMMON_EXTERNAL_PROJECT_ARGS ${${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_ARGS})
 
+if(verbose)
+  message("Common external project args:")
+  foreach(arg ${COMMON_EXTERNAL_PROJECT_ARGS})
+    message("  ${arg}")
+  endforeach()
+endif()
+
+#-----------------------------------------------------------------------------
+# Include external projects
+#-----------------------------------------------------------------------------
 SlicerMacroCheckExternalProjectDependency(BRAINSTools)
 
+#-----------------------------------------------------------------------------
+# Inner external project CMake args
+#-----------------------------------------------------------------------------
 list(APPEND ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS
   BUILD_EXAMPLES:BOOL
   BUILD_TESTING:BOOL
@@ -158,7 +180,6 @@ list(APPEND ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS
   BRAINSTools_CLI_INSTALL_ARCHIVE_DESTINATION:PATH
   BRAINSTools_CLI_INSTALL_RUNTIME_DESTINATION:PATH
 
-  BUILD_TESTING:BOOL
   USE_GTRACT:BOOL
   USE_BRAINSFit:BOOL
   USE_BRAINSABC:BOOL
@@ -174,24 +195,23 @@ list(APPEND ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS
   USE_ImageCalculator:BOOL
   )
 
-#-----------------------------------------------------------------------------
-# Expand superbuild external project args
-#-----------------------------------------------------------------------------
-SET(${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARNAMES)
-FOREACH(arg ${${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS})
-  STRING(REPLACE ":" ";" varname_and_vartype ${arg})
-  SET(target_info_list ${target_info_list})
-  LIST(GET varname_and_vartype 0 _varname)
-  LIST(GET varname_and_vartype 1 _vartype)
-  LIST(APPEND ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_ARGS -D${_varname}:${_vartype}=${${_varname}})
-  LIST(APPEND ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARNAMES ${_varname})
-ENDFOREACH()
-STRING(REPLACE ";" "^" ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARNAMES "${${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARNAMES}")
+_expand_external_project_vars()
 
-# MESSAGE("CMake external project args:")
-# FOREACH(arg ${${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_ARGS})
-#   MESSAGE("  ${arg}")
-# ENDFOREACH()
+if(verbose)
+  message("Inner external project args:")
+  foreach(arg ${${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_ARGS})
+    message("  ${arg}")
+  endforeach()
+endif()
+
+string(REPLACE ";" "^" ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARNAMES "${${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARNAMES}")
+
+if(verbose)
+  message("Inner external project argnames:")
+  foreach(argname ${${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARNAMES})
+    message("  ${argname}")
+  endforeach()
+endif()
 
 #-----------------------------------------------------------------------------
 # Set CMake OSX variable to pass down the external project
@@ -215,7 +235,7 @@ ExternalProject_Add(${proj}
   BINARY_DIR BRAINSTools-build
   CMAKE_GENERATOR ${gen}
   CMAKE_ARGS
-    --no-warn-unused-cli
+    --no-warn-unused-cli # HACK Only expected variables should be passed down.
     ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
     ${${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_ARGS}
     -DBRAINSTools_SUPERBUILD:BOOL=OFF

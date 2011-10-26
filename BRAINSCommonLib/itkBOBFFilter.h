@@ -100,6 +100,15 @@ protected:
   {
   }
 
+  /** Override VeriyInputInformation() since this filter does not expect
+    * the input images to occupy the same physical space.
+    *
+    * \sa ProcessObject::VerifyInputInformation
+    */
+  virtual void VerifyInputInformation()
+  {
+  }
+
 private:
   BOBFFilter(const Self &);      // purposely not implemented
   void operator=(const Self &);  // purposely not implemented

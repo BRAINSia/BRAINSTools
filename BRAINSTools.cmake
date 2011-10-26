@@ -13,7 +13,12 @@ set(CMAKE_MODULE_PATH
   )
 
 #-----------------------------------------------------------------------------
-find_package(ITK ${ITK_MAJOR_VERSION} REQUIRED)
+if(${ITK_MAJOR_VERSION} GREATER 3)
+  find_package(ITK ${ITK_MAJOR_VERSION} REQUIRED)
+else()
+  find_package(ITK REQUIRED)
+endif()
+
 include(${ITK_USE_FILE})
 
 #-----------------------------------------------------------------------------

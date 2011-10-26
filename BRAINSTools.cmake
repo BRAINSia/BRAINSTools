@@ -4,7 +4,9 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/Common.cmake)
 #-----------------------------------------------------------------------------
 # Update CMake module path
 #------------------------------------------------------------------------------
+set(BRAINSCommonLib_BUILDSCRIPTS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/BRAINSCommonLib/BuildScripts)
 set(CMAKE_MODULE_PATH
+  ${BRAINSCommonLib_BUILDSCRIPTS_DIR}
   ${${PROJECT_NAME}_SOURCE_DIR}/CMake
   ${${PROJECT_NAME}_BINARY_DIR}/CMake
   ${CMAKE_MODULE_PATH}
@@ -39,20 +41,17 @@ list(APPEND ExternalData_URL_TEMPLATES
 # Tell ExternalData commands to transform raw files to content links.
 # TODO: Condition this feature on presence of our pre-commit hook.
 set(ExternalData_LINK_CONTENT MD5)
+set(ExternalData_SOURCE_ROOT ${${PROJECT_NAME}_SOURCE_DIR})
+include(ExternalData)
 
 set(TestData_DIR ${CMAKE_CURRENT_SOURCE_DIR}/TestData)
 
 #-----------------------------------------------------------------------------
 # BRAINSCommonLib (Required)
 #-----------------------------------------------------------------------------
-set(BRAINSCommonLib_BUILDSCRIPTS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/BRAINSCommonLib/BuildScripts)
-
-include(${BRAINSCommonLib_BUILDSCRIPTS_DIR}/CMakeBuildMacros.cmake)
-include(${BRAINSCommonLib_BUILDSCRIPTS_DIR}/CMakeBRAINS3BuildMacros.cmake)
+include(CMakeBuildMacros)
+include(CMakeBRAINS3BuildMacros)
 include(${BRAINSCommonLib_BUILDSCRIPTS_DIR}/IJMacros.txt)
-
-set(ExternalData_SOURCE_ROOT ${${PROJECT_NAME}_SOURCE_DIR})
-include(${BRAINSCommonLib_BUILDSCRIPTS_DIR}/ExternalData.cmake)
 
 add_subdirectory(BRAINSCommonLib)
 

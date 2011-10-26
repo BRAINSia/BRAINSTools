@@ -467,8 +467,6 @@ add_executable(TestlandmarksConstellationTrainingDefinitionIO TestlandmarksConst
 #
 include_regular_expression("^.*$")
 
-enable_testing()
-
 if(NOT ITK_FOUND)
   find_package(ITK REQUIRED)
   include(${ITK_USE_FILE})

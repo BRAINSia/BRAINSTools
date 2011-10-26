@@ -16,9 +16,6 @@ include_directories(${BRAINSFit_SOURCE_DIR}/BRAINSFit_Common)
 include_directories(${BRAINSFit_SOURCE_DIR}/LargestForegroundFilledMaskImageFilter)
 include_directories(${BRAINSFit_SOURCE_DIR}/FindCenterOfBrainFilter)
 
-enable_testing()
-include(Dart)
-
 set(FindCenterOfBrain_SRC
 FindCenterOfBrainCLP.cxx)
 

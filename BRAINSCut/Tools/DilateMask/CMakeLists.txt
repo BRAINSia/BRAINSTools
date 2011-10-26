@@ -36,8 +36,6 @@ target_link_libraries(${CLP} ${ITK_LIBRARIES})
 
 # Test it
 
-#enable_testing()
-#include(CTest)
 #set(UPDATE_TYPE svn)
 
 #slicer3_add_plugins_test(${CLP}Test1 ${CLP} --help)

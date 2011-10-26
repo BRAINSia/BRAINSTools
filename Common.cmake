@@ -1,4 +1,6 @@
 
+include(CMakeDependentOption)
+
 #-----------------------------------------------------------------------------
 # Build option(s)
 #-----------------------------------------------------------------------------
@@ -15,15 +17,31 @@ if(NOT ${ITK_MAJOR_VERSION} STREQUAL "3" AND NOT ${ITK_MAJOR_VERSION} STREQUAL "
   message(FATAL_ERROR "ITK_MAJOR_VERSION should be either 3 or 4")
 endif()
 
-option(USE_BRAINSABC                       "Build BRAINSABC (ITKv4)"                       ON)
-option(USE_BRAINSConstellationDetector     "Build BRAINSConstellationDetector (ITKv4)"     ON)
-option(USE_BRAINSMush                      "Build BRAINSMush (ITKv4)"                      ON)
-option(USE_BRAINSMultiModeSegment          "Build BRAINSMultiModeSegment (ITKv4)"          ON)
-option(USE_BRAINSInitializedControlPoints  "Build BRAINSInitializedControlPoints (ITKv4)"  ON)
-option(USE_BRAINSTransformConvert          "Build BRAINSTransformConvert (ITKv4)"          ON)
+set(USE_ITKv3 OFF)
+set(USE_ITKv4 ON)
+if(${ITK_MAJOR_VERSION} STREQUAL "3")
+  set(USE_ITKv3 ON)
+  set(USE_ITKv4 OFF)
+endif()
 
-option(USE_BRAINSDemonWarp                 "Build BRAINSDemonWarp (ITKv3)"                 OFF)
-#option(USE_BRAINSCut                       "Build BRAINSCut (ITKv4)"                     OFF)
+CMAKE_DEPENDENT_OPTION(
+  USE_BRAINSABC                       "Build BRAINSABC (ITKv4)"                      ON "USE_ITKv4" OFF)
+CMAKE_DEPENDENT_OPTION(
+  USE_BRAINSConstellationDetector     "Build BRAINSConstellationDetector (ITKv4)"    ON "USE_ITKv4" OFF)
+CMAKE_DEPENDENT_OPTION(
+  USE_BRAINSMush                      "Build BRAINSMush (ITKv4)"                     ON "USE_ITKv4" OFF)
+CMAKE_DEPENDENT_OPTION(
+  USE_BRAINSMultiModeSegment          "Build BRAINSMultiModeSegment (ITKv4)"         ON "USE_ITKv4" OFF)
+CMAKE_DEPENDENT_OPTION(
+  USE_BRAINSInitializedControlPoints  "Build BRAINSInitializedControlPoints (ITKv4)" ON "USE_ITKv4" OFF)
+CMAKE_DEPENDENT_OPTION(
+  USE_BRAINSTransformConvert          "Build BRAINSTransformConvert (ITKv4)"         ON "USE_ITKv4" OFF)
+
+#CMAKE_DEPENDENT_OPTION(
+#  USE_BRAINSCut                       "Build BRAINSCut (ITKv4)"                      ON "USE_ITKv4" OFF)
+
+CMAKE_DEPENDENT_OPTION(
+  USE_BRAINSDemonWarp                 "Build BRAINSDemonWarp (ITKv3)"                ON "USE_ITKv3" OFF)
 
 #-----------------------------------------------------------------------------
 # Update CMake module path
@@ -43,7 +61,6 @@ include(PreventInBuildInstalls)
 #-----------------------------------------------------------------------------
 # CMake Function(s) and Macro(s)
 #-----------------------------------------------------------------------------
-include(CMakeDependentOption)
 if(CMAKE_PATCH_VERSION LESS 3)
   include(Pre283CMakeParseArguments)
 else()

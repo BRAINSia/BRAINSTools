@@ -5,6 +5,10 @@ if(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED)
 endif()
 set(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED 1)
 
+if(${USE_SYSTEM_SlicerExecutionModel})
+  unset(SlicerExecutionModel_DIR CACHE)
+endif()
+
 # Sanity checks
 if(DEFINED SlicerExecutionModel_DIR AND NOT EXISTS ${SlicerExecutionModel_DIR})
   message(FATAL_ERROR "SlicerExecutionModel_DIR variable is defined but corresponds to non-existing directory")

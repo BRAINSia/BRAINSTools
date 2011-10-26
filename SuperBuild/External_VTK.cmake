@@ -6,6 +6,11 @@ if(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED)
 endif()
 set(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED 1)
 
+if(${USE_SYSTEM_VTK})
+  unset(VTK_DIR CACHE)
+  unset(VTK_SOURCE_DIR CACHE)
+endif()
+
 # Sanity checks
 if(DEFINED VTK_DIR AND NOT EXISTS ${VTK_DIR})
   message(FATAL_ERROR "VTK_DIR variable is defined but corresponds to non-existing directory")

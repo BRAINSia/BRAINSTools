@@ -51,7 +51,6 @@ set(TestData_DIR ${CMAKE_CURRENT_SOURCE_DIR}/TestData)
 #-----------------------------------------------------------------------------
 include(CMakeBuildMacros)
 include(CMakeBRAINS3BuildMacros)
-include(${BRAINSCommonLib_BUILDSCRIPTS_DIR}/IJMacros.txt)
 
 add_subdirectory(BRAINSCommonLib)
 

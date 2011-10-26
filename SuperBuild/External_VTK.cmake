@@ -8,16 +8,11 @@ set(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED 1)
 
 if(${USE_SYSTEM_VTK})
   unset(VTK_DIR CACHE)
-  unset(VTK_SOURCE_DIR CACHE)
 endif()
 
 # Sanity checks
 if(DEFINED VTK_DIR AND NOT EXISTS ${VTK_DIR})
   message(FATAL_ERROR "VTK_DIR variable is defined but corresponds to non-existing directory")
-endif()
-
-if(DEFINED VTK_SOURCE_DIR AND NOT EXISTS ${VTK_SOURCE_DIR})
-  message(FATAL_ERROR "VTK_SOURCE_DIR variable is defined but corresponds to non-existing directory")
 endif()
 
 # Set dependency list
@@ -30,7 +25,7 @@ endif()
 SlicerMacroCheckExternalProjectDependency(VTK)
 set(proj VTK)
 
-if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT ${USE_SYSTEM_VTK})
+if(NOT DEFINED VTK_DIR AND NOT ${USE_SYSTEM_VTK})
   #message(STATUS "${__indent}Adding project ${proj}")
   set(VTK_WRAP_TCL OFF)
   set(VTK_WRAP_PYTHON OFF)
@@ -161,7 +156,6 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT ${USE_SYSTEM_VTK}
       ${VTK_DEPENDENCIES}
     )
   set(VTK_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
-  set(VTK_SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj})
 
 else()
   if(${USE_SYSTEM_VTK})

@@ -19,10 +19,10 @@ SlicerMacroCheckExternalProjectDependency(Cppcheck)
 set(proj Cppcheck)
 
 if(NOT DEFINED Cppcheck_EXE AND NOT ${USE_SYSTEM_Cppcheck})
-  
+
   set(Cppcheck_REPOSITORY git://github.com/danmar/cppcheck.git)
   set(Cppcheck_GIT_TAG origin/master)
-  
+
   ExternalProject_add(${proj}
     GIT_REPOSITORY ${Cppcheck_REPOSITORY}
     GIT_TAG ${Cppcheck_GIT_TAG}
@@ -34,9 +34,9 @@ if(NOT DEFINED Cppcheck_EXE AND NOT ${USE_SYSTEM_Cppcheck})
     DEPENDS
       ${Cppcheck_DEPENDENCIES}
     )
-    
+
   set(Cppcheck_EXE ${CMAKE_BINARY_DIR}/Utils/bin/cppcheck)
-  
+
 else()
   if(${USE_SYSTEM_Cppcheck})
     find_program(Cppcheck_EXE cppcheck DOC "Path of Cppcheck program")
@@ -49,5 +49,5 @@ else()
   SlicerMacroEmptyExternalProject(${proj} "${Cppcheck_DEPENDENCIES}")
 endif()
 
-LIST(APPEND ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS Cppcheck_EXE:FILEPATH)
+list(APPEND ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS Cppcheck_EXE:FILEPATH)
 

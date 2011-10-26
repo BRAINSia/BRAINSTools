@@ -75,5 +75,5 @@ else()
     SlicerMacroEmptyExternalProject(${proj} "${SlicerExecutionModel_DEPENDENCIES}")
 endif()
 
-LIST(APPEND ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS SlicerExecutionModel_DIR:PATH)
+list(APPEND ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS SlicerExecutionModel_DIR:PATH)
 

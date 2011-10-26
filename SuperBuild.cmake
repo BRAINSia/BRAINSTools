@@ -84,13 +84,13 @@ endif()
 # that should passed to ${CMAKE_PROJECT_NAME}.
 # The item of this list should have the following form: <EP_VAR>:<TYPE>
 # where '<EP_VAR>' is an external project variable and TYPE is either BOOL, STRING, PATH or FILEPATH.
-# TODO Variable appended to this list will be automatically exported in BRAINSToolsConfig.cmake, 
+# TODO Variable appended to this list will be automatically exported in BRAINSToolsConfig.cmake,
 # prefix 'BRAINSTools_' will be prepended if it applies.
 set(${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS)
 
 # The macro '_expand_external_project_vars' can be used to expand the list of <EP_VAR>.
 set(${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_ARGS) # List of CMake args to configure BRAINS
-SET(${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARNAMES) # List of CMake variable names
+set(${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARNAMES) # List of CMake variable names
 
 # Convenient macro allowing to expand the list of EP_VAR listed in ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS
 # The expanded arguments will be appended to the list ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_ARGS

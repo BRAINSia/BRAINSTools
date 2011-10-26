@@ -28,7 +28,7 @@ if(NOT DEFINED KWStyle_EXE AND NOT ${USE_SYSTEM_KWStyle})
       -DCMAKE_OSX_SYSROOT=${CMAKE_OSX_SYSROOT}
       -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET})
   endif()
-  
+
   ExternalProject_add(${proj}
     CVS_REPOSITORY :pserver:anoncvs@public.kitware.com:/cvsroot/KWStyle
     CVS_MODULE KWStyle
@@ -41,7 +41,7 @@ if(NOT DEFINED KWStyle_EXE AND NOT ${USE_SYSTEM_KWStyle})
     DEPENDS
       ${KWStyle_DEPENDENCIES}
     )
-      
+
   set(KWStyle_EXE ${CMAKE_BINARY_DIR}/Utils/bin/KWStyle)
 else()
   if(${USE_SYSTEM_KWStyle})
@@ -55,5 +55,5 @@ else()
   SlicerMacroEmptyExternalProject(${proj} "${KWStyle_DEPENDENCIES}")
 endif()
 
-LIST(APPEND ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS KWStyle_EXE:FILEPATH)
-  
+list(APPEND ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS KWStyle_EXE:FILEPATH)
+

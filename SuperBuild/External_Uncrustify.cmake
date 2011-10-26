@@ -22,7 +22,7 @@ if(NOT DEFINED Uncrustify_EXE AND NOT ${USE_SYSTEM_Uncrustify})
 
   set(Uncrustify_REPOSITORY git://uncrustify.git.sourceforge.net/gitroot/uncrustify/uncrustify)
   set(Uncrustify_GIT_TAG 60f3681da60462eda539b78e0c6c3eea823481e5)
-  
+
   ExternalProject_add(${proj}
     GIT_REPOSITORY ${Uncrustify_REPOSITORY}
     GIT_TAG ${Uncrustify_GIT_TAG}
@@ -33,7 +33,7 @@ if(NOT DEFINED Uncrustify_EXE AND NOT ${USE_SYSTEM_Uncrustify})
     DEPENDS
       ${Uncrustify_DEPENDENCIES}
     )
-    
+
   set(Uncrustify_EXE ${CMAKE_BINARY_DIR}/Utils/bin/uncrustify)
 
 else()
@@ -43,12 +43,12 @@ else()
       message(FATAL_ERROR "To use the system uncrustify, set Uncrustify_EXE")
     endif()
   endif()
-  
+
   # The project is provided using Uncrustify_EXE, nevertheless since other
   # project may depend on Uncrustify, let's add an 'empty' one
   SlicerMacroEmptyExternalProject(${proj} "${Uncrustify_DEPENDENCIES}")
-  
+
 endif()
 
-LIST(APPEND ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS Uncrustify_EXE:FILEPATH)
+list(APPEND ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS Uncrustify_EXE:FILEPATH)
 

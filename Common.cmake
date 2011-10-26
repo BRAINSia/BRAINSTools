@@ -139,7 +139,7 @@ endif()
 #-----------------------------------------------------------------------------
 # Add needed flag for gnu on linux like enviroments to build static common libs
 # suitable for linking with shared object libs.
-IF(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
+if(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
   if(NOT "${CMAKE_CXX_FLAGS}" MATCHES "-fPIC")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
   endif()

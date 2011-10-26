@@ -60,7 +60,7 @@ add_subdirectory(BRAINSCommonLib)
 
 set(BRAINSCommonLib_DIR ${CMAKE_CURRENT_BINARY_DIR}/BRAINSCommonLib)
 include_directories(
-  ${CMAKE_CURRENT_SOURCE_DIR}/BRAINSCommonLib 
+  ${CMAKE_CURRENT_SOURCE_DIR}/BRAINSCommonLib
   ${CMAKE_CURRENT_BINARY_DIR}/BRAINSCommonLib)
 
 #-----------------------------------------------------------------------------

@@ -52,5 +52,5 @@ else()
   SlicerMacroEmptyExternalProject(${proj} "${ReferenceAtlas_DEPENDENCIES}")
 endif()
 
-LIST(APPEND ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS ReferenceAtlas_DIR:PATH ATLAS_NAME:STRING)
+list(APPEND ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS ReferenceAtlas_DIR:PATH ATLAS_NAME:STRING)
 

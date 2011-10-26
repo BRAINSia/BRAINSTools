@@ -22,7 +22,7 @@ set(ALL_PROGS_LIST
   BRAINSClipInferior
   BRAINSTrimForegroundInDirection
   BRAINSLmkTransform
-  TransformFromFiducials
+  BRAINSTransformFromFiducials
   BRAINSEyeDetector
   insertMidACPCpoint
   )

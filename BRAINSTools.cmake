@@ -22,25 +22,9 @@ include(${SlicerExecutionModel_USE_FILE})
 enable_testing()
 include(CTest)
 
-#-----------------------------------------------------------------------------
-# TODO Should be moved in a subdirectory
-#link_directories(${CMAKE_LIBRARY_OUTPUT_DIRECTORY} ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY})
-
-#-----------------------------------------------------------------------------
-# Add needed flag for gnu on linux like enviroments to build static common libs
-# suitable for linking with shared object libs.
-#if(NOT APPLE AND "${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
-#  if(NOT "${CMAKE_CXX_FLAGS}" MATCHES "-fPIC")
-#    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
-#  endif()
-#  if(NOT "${CMAKE_C_FLAGS}" MATCHES "-fPIC")
-#    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
-#  endif()
-#endif()
-
-##-----------------------------------------------------------------------
-## Setup locations to find externally maintained test data.
-##-----------------------------------------------------------------------
+#-----------------------------------------------------------------------
+# Setup locations to find externally maintained test data.
+#-----------------------------------------------------------------------
 list(APPEND ExternalData_URL_TEMPLATES
   # Local data store populated by the ITK pre-commit hook
   "file:///${${PROJECT_NAME}_SOURCE_DIR}/.ExternalData/%(algo)/%(hash)"
@@ -58,12 +42,8 @@ set(ExternalData_LINK_CONTENT MD5)
 
 set(TestData_DIR ${CMAKE_CURRENT_SOURCE_DIR}/TestData)
 
-
 #-----------------------------------------------------------------------------
-#-----------------------------------------------------------------------------
-## NOTE:  BRAINSCommonLib is REQUIRED.
-# BRAINSCommonLib
-#-----------------------------------------------------------------------------
+# BRAINSCommonLib (Required)
 #-----------------------------------------------------------------------------
 set(BRAINSCommonLib_BUILDSCRIPTS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/BRAINSCommonLib/BuildScripts)
 
@@ -75,11 +55,11 @@ set(ExternalData_SOURCE_ROOT ${${PROJECT_NAME}_SOURCE_DIR})
 include(${BRAINSCommonLib_BUILDSCRIPTS_DIR}/ExternalData.cmake)
 
 add_subdirectory(BRAINSCommonLib)
-set(BRAINSCommonLib_DIR ${CMAKE_CURRENT_BINARY_DIR}/BRAINSCommonLib)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/BRAINSCommonLib ${CMAKE_CURRENT_BINARY_DIR}/BRAINSCommonLib)
 
-#find_package(BRAINSCommonLib NO_MODULE REQUIRED)
-#include(${BRAINSCommonLib_USE_FILE})
+set(BRAINSCommonLib_DIR ${CMAKE_CURRENT_BINARY_DIR}/BRAINSCommonLib)
+include_directories(
+  ${CMAKE_CURRENT_SOURCE_DIR}/BRAINSCommonLib 
+  ${CMAKE_CURRENT_BINARY_DIR}/BRAINSCommonLib)
 
 #-----------------------------------------------------------------------------
 # Define list of module names

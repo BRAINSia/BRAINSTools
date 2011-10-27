@@ -1,4 +1,5 @@
 #include "ShuffleVectors.h"
+#include "ShuffleVectorsModuleCLP.h"
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Shuffling Vectors
@@ -6,6 +7,7 @@
 int
 main(int argc, char * *argv)
 {
+  PARSE_ARGS;
   if( argc < 4 )
     {
     std::cerr << "USAGE::::" << std::endl

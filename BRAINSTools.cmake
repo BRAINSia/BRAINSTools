@@ -77,6 +77,7 @@ set(brains_modulenames
   BRAINSROIAuto
   GTRACT
   ImageCalculator
+  BRAINSCut
   )
 
 ## Tools that only work with ITKv4
@@ -88,7 +89,6 @@ if(ITK_VERSION_MAJOR GREATER 3)
     BRAINSMultiModeSegment
     BRAINSInitializedControlPoints
     BRAINSTransformConvert
-    # BRAINSCut # Not yet ready
     )
   if(BUILD_TESTING)
     list(APPEND brains_modulenames

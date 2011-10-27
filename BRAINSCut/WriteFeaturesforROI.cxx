@@ -7,10 +7,12 @@
 // Iterator
 #include <itkImageRegionConstIterator.h>
 
+#include "WriteFeaturesforROICLP.h"
+
 int
 main(int argc, char * *argv)
 {
-  // PARSE_ARGS;
+  PARSE_ARGS;
   if( argc < 2 )
     {
     std::cout << " Usage:: Need classified Image to calculate " << std::endl

@@ -8,7 +8,6 @@ option(USE_BRAINSFit                       "Build BRAINSFit"                    
 option(USE_BRAINSROIAuto                   "Build BRAINSROIAuto"                   ON)
 option(USE_BRAINSResample                  "Build BRAINSResample"                  ON)
 option(USE_GTRACT                          "Build GTRACT"                          ON)
-option(USE_ImageCalculator                 "Build ImageCalculator"                 ON)
 
 set(ITK_VERSION_MAJOR 4 CACHE STRING "Choose the expected ITK major version to build BRAINS (3 or 4).")
 # Set the possible values of ITK major version for cmake-gui
@@ -25,23 +24,25 @@ if(${ITK_VERSION_MAJOR} STREQUAL "3")
 endif()
 
 CMAKE_DEPENDENT_OPTION(
-  USE_BRAINSABC                       "Build BRAINSABC (ITKv4)"                      ON "USE_ITKv4" OFF)
+  USE_BRAINSABC                       "Build BRAINSABC (ITKv4)"                      ON "USE_ITKv4" ON)
 CMAKE_DEPENDENT_OPTION(
-  USE_BRAINSConstellationDetector     "Build BRAINSConstellationDetector (ITKv4)"    ON "USE_ITKv4" OFF)
+  USE_BRAINSTransformConvert          "Build BRAINSTransformConvert (ITKv4)"         ON "USE_ITKv4" ON)
 CMAKE_DEPENDENT_OPTION(
-  USE_BRAINSMush                      "Build BRAINSMush (ITKv4)"                     ON "USE_ITKv4" OFF)
+  USE_BRAINSConstellationDetector     "Build BRAINSConstellationDetector (ITKv4)"    ON "USE_ITKv4" ON)
 CMAKE_DEPENDENT_OPTION(
-  USE_BRAINSMultiModeSegment          "Build BRAINSMultiModeSegment (ITKv4)"         ON "USE_ITKv4" OFF)
+  USE_BRAINSMush                      "Build BRAINSMush (ITKv4)"                     ON "USE_ITKv4" ON)
 CMAKE_DEPENDENT_OPTION(
-  USE_BRAINSInitializedControlPoints  "Build BRAINSInitializedControlPoints (ITKv4)" ON "USE_ITKv4" OFF)
+  USE_BRAINSInitializedControlPoints  "Build BRAINSInitializedControlPoints (ITKv4)" ON "USE_ITKv4" ON)
 CMAKE_DEPENDENT_OPTION(
-  USE_BRAINSTransformConvert          "Build BRAINSTransformConvert (ITKv4)"         ON "USE_ITKv4" OFF)
+  USE_BRAINSMultiModeSegment          "Build BRAINSMultiModeSegment (ITKv4)"        OFF "USE_ITKv4" OFF)
+CMAKE_DEPENDENT_OPTION(
+  USE_BRAINSCut                       "Build BRAINSCut (ITKv4)"                     OFF "USE_ITKv4" OFF)
+CMAKE_DEPENDENT_OPTION(
+  USE_ImageCalculator                 "Build ImageCalculator (ITKv4)"               OFF "USE_ITKv4" OFF)
 
-#CMAKE_DEPENDENT_OPTION(
-#  USE_BRAINSCut                       "Build BRAINSCut (ITKv4)"                      ON "USE_ITKv4" OFF)
-
+## For now only build DemonWarp if ITKv3, ITKv4 is not yet working.
 CMAKE_DEPENDENT_OPTION(
-  USE_BRAINSDemonWarp                 "Build BRAINSDemonWarp (ITKv3)"                ON "USE_ITKv3" OFF)
+  USE_BRAINSDemonWarp                 "Build BRAINSDemonWarp (ITKv3)"               OFF "USE_ITKv3" OFF)
 
 #-----------------------------------------------------------------------------
 # Update CMake module path

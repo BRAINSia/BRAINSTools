@@ -72,8 +72,12 @@ if(BUILD_STYLE_UTILS)
   list(APPEND BRAINSTools_DEPENDENCIES Cppcheck KWStyle Uncrustify)
 endif()
 
-if(USE_BRAINSABC) # OR USE_BRAINSCut)
+if(USE_BRAINSABC OR USE_BRAINSCut)
   list(APPEND BRAINSTools_DEPENDENCIES ReferenceAtlas)
+endif()
+
+if(USE_BRAINSCut)
+  list(APPEND BRAINSTools_DEPENDENCIES ReferenceANNModels OpenCV)
 endif()
 
 #-----------------------------------------------------------------------------
@@ -176,7 +180,7 @@ list(APPEND ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS
   USE_GTRACT:BOOL
   USE_BRAINSFit:BOOL
   USE_BRAINSABC:BOOL
-  USE_BRAINSCUT:BOOL
+  USE_BRAINSCut:BOOL
   USE_BRAINSMush:BOOL
   USE_BRAINSROIAuto:BOOL
   USE_BRAINSResample:BOOL

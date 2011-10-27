@@ -2,7 +2,7 @@
 #define _BRAINSDemonWarp_txx
 
 #include "BRAINSDemonWarp.h"
-
+#include "debugImage.h"
 namespace itk
 {
 template <typename TImage, typename TRealImage, typename TOutputImage>
@@ -126,16 +126,13 @@ BRAINSDemonWarp<TImage, TRealImage, TOutputImage>
   this->m_Registrator->SetUnNormalizedMovingImage( this->m_Preprocessor->GetUnNormalizedMovingImage() );
   this->m_Registrator->SetUnNormalizedFixedImage( this->m_Preprocessor->GetUnNormalizedFixedImage() );
 
-#ifdef __WRITE_ANNOYING_DEBUG_IMAGES__
-  itkUtil::WriteImage<TRealImage>(
-    this->m_Preprocessor->GetOutputFixedImage(), "m_Preprocessor_GetOutputFixedImage.nii.gz");
-  itkUtil::WriteImage<TRealImage>(
-    this->m_Preprocessor->GetOutputMovingImage(), "m_Preprocessor_GetOutputMovingImage.nii.gz");
-  itkUtil::WriteImage<TRealImage>(
-    this->m_Preprocessor->GetUnNormalizedFixedImage(), "m_Preprocessor_GetUnNormalizedFixedImage.nii.gz");
-  itkUtil::WriteImage<TRealImage>(
-    this->m_Preprocessor->GetUnNormalizedMovingImage(), "m_Preprocessor_GetUnNormalizedMovingImage.nii.gz");
-#endif
+  typedef typename Superclass::PreprocessorType::OutputImageType PPOutputImageType;
+  DebugOutputWName(PPOutputImageType, this->m_Preprocessor->GetOutputFixedImage(), PreprocessorFixedImage);
+  DebugOutputWName(PPOutputImageType, this->m_Preprocessor->GetOutputMovingImage(), PreprocessorMovingImage);
+  DebugOutputWName(PPOutputImageType,
+                   this->m_Preprocessor->GetUnNormalizedFixedImage(), PreprocessorUnNormalizedFixedImage);
+  DebugOutputWName(PPOutputImageType,
+                   this->m_Preprocessor->GetUnNormalizedMovingImage(), PreprocessorUnNormalizedMovingImage);
 
   this->m_Registrator->SetInitialDeformationField( this->m_Parser->GetInitialDeformationField() );
   this->m_Registrator->SetDefaultPixelValue( this->m_Preprocessor->GetDefaultPixelValue() );

@@ -14,7 +14,8 @@
 #include "itkMultiResolutionPDEDeformableRegistration.h"
 #include "itkDiffeomorphicDemonsRegistrationFilter.h"
 #include "itkWarpImageFilter.h"
-
+#include <sstream>
+#include "debugImage.h"
 namespace itk
 {
 template <typename TInputImage, typename TOutputImage>
@@ -108,6 +109,7 @@ DemonsPreprocessor<TInputImage, TOutputImage>
     histogramfilter->ThresholdAtMeanIntensityOn();
     histogramfilter->Update();
     m_OutputMovingImage  = histogramfilter->GetOutput();
+    DebugOutput(OutputImageType, m_OutputMovingImage)
     // +DANGER: ALIASING:  m_OutputMovingImage EQ m_UnNormalizedMovingImage by
     // design.
     // Create a copy just to be safe.  This s probably a waste of memory.
@@ -138,6 +140,7 @@ DemonsPreprocessor<TInputImage, TOutputImage>
       }
     m_OutputFixedImage = this->MakeBOBFImage(m_OutputFixedImage,
                                              m_FixedBinaryVolume);
+    DebugOutput(OutputImageType, m_OutputFixedImage);
     if( this->GetOutDebug() )
       {
       std::cout << "Fixed Origin" << m_OutputFixedImage->GetOrigin()
@@ -147,6 +150,7 @@ DemonsPreprocessor<TInputImage, TOutputImage>
       }
     m_OutputMovingImage = this->MakeBOBFImage(m_OutputMovingImage,
                                               m_MovingBinaryVolume);
+    DebugOutput(OutputImageType, m_OutputMovingImage);
     if( this->GetOutDebug() )
       {
       std::cout << "Moving Origin" << m_OutputMovingImage->GetOrigin()

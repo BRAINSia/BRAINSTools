@@ -5,6 +5,9 @@
 
 #include "BRAINSDemonWarpTemplates.h"
 
+#include "debugImage.h"
+DEFINE_DEBUG_IMAGE_COUNTER();
+
 #ifdef USE_DEBUG_IMAGE_VIEWER
 /*************************
   * Have a global variable to

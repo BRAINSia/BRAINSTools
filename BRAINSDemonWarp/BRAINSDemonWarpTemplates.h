@@ -1,8 +1,6 @@
 #ifndef __BRAINSDemonWarpTemplates_h
 #define __BRAINSDemonWarpTemplates_h
 
-#define __WRITE_ANNOYING_DEBUG_IMAGES__
-
 #include <iostream>
 #include <string>
 #include <vector>
@@ -268,10 +266,8 @@ void ThirionFunction(const struct BRAINSDemonWarpAppParameters & command)
         castFixedMaskImage->SetInput(fixedBinaryVolumeImage);
         castFixedMaskImage->Update();
 
-#ifdef __WRITE_ANNOYING_DEBUG_IMAGES__
         typename MaskImageType::Pointer fm = castFixedMaskImage->GetOutput();
-        itkUtil::WriteImage<MaskImageType>(fm, "fixedMaskImage.nii.gz");
-#endif
+        DebugOutput(MaskImageType, fm);
 
         // convert mask image to mask
         typename ImageMaskSpatialObjectType::Pointer fixedMask = ImageMaskSpatialObjectType::New();
@@ -289,10 +285,8 @@ void ThirionFunction(const struct BRAINSDemonWarpAppParameters & command)
         typename CastImageFilter::Pointer castMovingMaskImage = CastImageFilter::New();
         castMovingMaskImage->SetInput(movingBinaryVolumeImage);
         castMovingMaskImage->Update();
-#ifdef __WRITE_ANNOYING_DEBUG_IMAGES__
         typename MaskImageType::Pointer mm = castMovingMaskImage->GetOutput();
-        itkUtil::WriteImage<MaskImageType>(mm, "movingMaskImage.nii.gz");
-#endif
+        DebugOutput(MaskImageType, mm);
 
         // convert mask image to mask
         typename ImageMaskSpatialObjectType::Pointer movingMask = ImageMaskSpatialObjectType::New();

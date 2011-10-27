@@ -6,7 +6,9 @@ set(LOCAL_PROJECT_NAME BRAINSDemonWarp)
 #
 
 ###
+option(BRAINSDEMONWARP_DEBUG_OUTPUT "Enable writing out intermediate results in BRAINSDemonWarp" OFF)
 configure_file(${BRAINSDemonWarp_SOURCE_DIR}/CTestCustom.ctest ${BRAINSDemonWarp_BINARY_DIR}/CTestCustom.ctest COPYONLY)
+configure_file(${BRAINSDemonWarp_SOURCE_DIR}/debugImage.h.in ${BRAINSDemonWarp_BINARY_DIR}/debugImage.h)
 
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/BRAINSDemonWarpCommonLib.h.in

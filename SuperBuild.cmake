@@ -217,6 +217,8 @@ if(APPLE)
     -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET})
 endif()
 
+option(BRAINSDEMONWARP_DEBUG_OUTPUT "Enable writing out intermediate results in BRAINSDemonWarp" OFF)
+
 #------------------------------------------------------------------------------
 # Configure and build
 #------------------------------------------------------------------------------
@@ -232,6 +234,7 @@ ExternalProject_Add(${proj}
     ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
     ${${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_ARGS}
     -DBRAINSTools_SUPERBUILD:BOOL=OFF
+    -DBRAINSDEMONWARP_DEBUG_OUTPUT:BOOL=${BRAINSDEMONWARP_DEBUG_OUTPUT}
   INSTALL_COMMAND ""
   )
 

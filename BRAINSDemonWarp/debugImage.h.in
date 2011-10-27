@@ -1,0 +1,61 @@
+#if !defined(__debugImage_h)
+#define __debugImage_h 1
+#cmakedefine BRAINSDEMONWARP_DEBUG_OUTPUT
+#if defined(BRAINSDEMONWARP_DEBUG_OUTPUT)
+#include "itkIO.h"
+#include "itksys/SystemTools.hxx"
+
+#define DEFINE_DEBUG_IMAGE_COUNTER() int fileSequenceNumber = 0;
+extern int fileSequenceNumber;
+
+#define DebugOutput(imageType,image)                           \
+  {                                                            \
+    typename imageType::Pointer im = image;                    \
+    std::string fname(__FILE__);                               \
+    fname = itksys::SystemTools::GetFilenameName(fname);       \
+    std::stringstream filename;                                \
+    filename << "DBG_";                                        \
+    filename.width(2); filename.fill('0');                     \
+    filename << fileSequenceNumber;                            \
+    filename << "_"                                            \
+             << #image << "_" << fname                         \
+             << "_" << __LINE__ << ".nii.gz";                  \
+    std::cerr << "Writing " << filename.str();                 \
+    itkUtil::WriteImage<imageType>(im,filename.str());         \
+    ++fileSequenceNumber;                                      \
+  }
+
+#define DebugOutputN(imageType,image,N,name)                      \
+  {                                                               \
+    typename imageType::Pointer im = image;                       \
+    std::string fname(__FILE__);                                  \
+    fname = itksys::SystemTools::GetFilenameName(fname);          \
+    std::stringstream filename;                                   \
+    filename.width(2); filename.fill(' ');                        \
+    filename << "DBG_" << fileSequenceNumber << "_"               \
+             << #name << "_" << N << "_" << fname                 \
+             << "_" << __LINE__ << ".nii.gz";                     \
+    std::cerr << "Writing " << filename.str();                    \
+    itkUtil::WriteImage<imageType>(im,filename.str());            \
+    ++fileSequenceNumber;                                         \
+  }
+
+#define DebugOutputWName(imageType,image,name)                    \
+  {                                                               \
+    typename imageType::Pointer im = image;                       \
+    std::string fname(__FILE__);                                  \
+    fname = itksys::SystemTools::GetFilenameName(fname);          \
+    std::stringstream filename;                                   \
+    filename << "DBG_" << fileSequenceNumber << "_"               \
+             << #name "_" << fname                                \
+             << "_" << __LINE__ << ".nii.gz";                     \
+    std::cerr << "Writing " << filename.str();                    \
+    itkUtil::WriteImage<imageType>(im,filename.str());            \
+    ++fileSequenceNumber;                                         \
+  }
+#else
+#define DebugOutput(imageType,image)
+#define DebugOutputN(imageType,image,N,name)
+#define DebugOutputWName(imageType,image,name)
+#endif // BRAINSDEMONWARP_DEBUG_OUTPUT
+#endif // __debugImage_h

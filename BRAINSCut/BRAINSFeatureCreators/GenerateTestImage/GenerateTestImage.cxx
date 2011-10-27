@@ -68,4 +68,6 @@ main(int argc, char * *argv)
     std::cerr << err << std::endl;
     return -1;
     }
+
+  return EXIT_SUCCESS;
 }

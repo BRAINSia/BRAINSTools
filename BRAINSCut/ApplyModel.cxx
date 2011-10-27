@@ -372,8 +372,8 @@ void         CleanUpOverlapArea(NetConfiguration & ANNConfiguration,
  */
 int ApplyModel(NetConfiguration & ANNConfiguration,
                int verbose,
-               bool histogramEqualization,
-               bool multiStructureThreshold
+               bool /*TODO: DELETE  histogramEqualization */,
+               bool /*TODO: DELETE multiStructureThreshold*/
                )
 {
   /** generate registration */

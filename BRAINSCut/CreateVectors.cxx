@@ -38,12 +38,13 @@
  * \param ANNOutputVectorList ANN Output Training Vector List
  */
 
+#if 0 // TODO: DELETE
 /**
  * Create Training Vector
  */
-int CreateVectors(NetConfiguration & ANNConfiguration,
-                  bool histogramEqualization,
-                  int verbose)
+static int CreateVectorsFromNetConfiguration(NetConfiguration & ANNConfiguration,
+                                             bool /* TODO:  DELETE THIS LINE histogramEqualization */,
+                                             int /* TODO: DELTE THIS LINE verbose */ )
 {
   /** Check Necessary Inputs */
   /** 1. registration params */
@@ -109,7 +110,7 @@ int CreateVectors(NetConfiguration & ANNConfiguration,
   );
 
   /** atals */
-  DataSet * atlasDataSet = ANNConfiguration.GetAtlasDataSet();
+  // TODO: Delete this DataSet * atlasDataSet = ANNConfiguration.GetAtlasDataSet();
   // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   // Process 1. Getting  Output Vector Size == Number of ROIs
   // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -207,15 +208,18 @@ int CreateVectors(NetConfiguration & ANNConfiguration,
   return 0;
 }
 
+#endif
+
+#if 0 // TODO:  DELETE
 // for each probability map
 //   for each image
 //     create atlas-to-subject transform deformation field if needed
 //     deform probability map into subject space
 //     find mask for current image + structure id
 
-int CreateVectors(const std::string & XMLFile,
-                  bool histogramEqualization,
-                  int verbose)
+static int CreateVectorsFromXMLFile(const std::string & XMLFile,
+                                    bool /* TODO DELETE THIS histogramEqualization */,
+                                    int /* verbose */ )
 {
   int rval = 0;
 
@@ -255,9 +259,9 @@ int CreateVectors(const std::string & XMLFile,
 
     try
       {
-      rval = CreateVectors(*ANNConfiguration,
-                           histogramEqualization,
-                           verbose);
+      rval = CreateVectorsFromNetConfiguration(*ANNConfiguration,
+                                               true /* TODO DELETE THIS histogramEqualization */,
+                                               true /* TODO DELETE THIS verbose */);
       }
     catch( BRAINSCutExceptionStringHandler & ex )
       {
@@ -302,3 +306,5 @@ int CreateVectors(const std::string & XMLFile,
     }
   return rval;
 }
+
+#endif

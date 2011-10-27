@@ -25,13 +25,13 @@ set(BRAINSCutCOMMONLIB_SRCS
   BRAINSCutTrainModel.cxx
   BRAINSCutVectorTrainingSet.cxx
   GenerateProbability.cxx
-  CreateVectors.cxx
   TrainModel.cxx
   ApplyModel.cxx
   BRAINSCutPrimary.cxx
   ${BRAINSCut_HDRS}
   )
 
+#TODO: DELETE CreateVectors.cxx
 #TODO:  Rename BRAINSCutPrimary to something more meaningful
 
 ## Build BRAINSCutCOMMONLIB library
@@ -55,5 +55,6 @@ foreach( prog ${ALL_PROGS_LIST} )
   StandardBRAINSBuildMacro( NAME ${prog} TARGET_LIBRARIES BRAINSCutCOMMONLIB )
 endforeach()
 
-#  Delete this add_subdirectory(TrainedModels)
-#  Delete this add_subdirectory(RegistrationScripts)
+if(BUILD_TESTING)
+    add_subdirectory(TestSuite)
+endif(BUILD_TESTING)

@@ -1282,7 +1282,7 @@ void AddROIVectorApply( ProbabilityMapParser * currentROI,
 
   std::string currentROIName( currentROI->GetAttribute<StringValue>("StructureID") );
 
-  int currentROINumber;
+  int currentROINumber = -1;
 
   for( int i = 0; i < outputVectorSize; i++ )
     {
@@ -1290,6 +1290,11 @@ void AddROIVectorApply( ProbabilityMapParser * currentROI,
       {
       currentROINumber = i;
       }
+    }
+  if( currentROINumber == -1 )
+    {
+    std::cout << "No valid ROINumber found" << std::endl;
+    exit(-1);
     }
 
   /** get the local mean and std */

@@ -97,7 +97,7 @@ public:
 
   void SetGradientSizeFromNetConfiguration();
 
-  inline WorkingImagePointer ReadImageByFilename( const std::string  filename );
+  WorkingImagePointer ReadImageByFilename( const std::string  filename );
 
   WorkingImagePointer WarpImageByFilenames( const std::string & deformationFilename, const std::string & inputFilename,
                                             const std::string & referenceFilename );

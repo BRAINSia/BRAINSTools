@@ -57,6 +57,8 @@ DemonsPreprocessor<TInputImage, TOutputImage>
     medianFilter->SetInput(m_InputFixedImage);
     medianFilter->Update();
     m_InputFixedImage = medianFilter->GetOutput();
+    DebugOutput(InputImageType, m_InputFixedImage);
+
     //
     // reinitialize
     medianFilter = MedianImageFilterType::New();
@@ -64,6 +66,7 @@ DemonsPreprocessor<TInputImage, TOutputImage>
     medianFilter->SetInput(m_InputMovingImage);
     medianFilter->Update();
     m_InputMovingImage = medianFilter->GetOutput();
+    DebugOutput(InputImageType, m_InputMovingImage);
     }
     { // Create UnNormalized...Images
       {

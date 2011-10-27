@@ -1,14 +1,14 @@
 #ifndef FileSystemDescriptor_H
 #define FileSystemDescriptor_H
-#include "ProcessObjectBase.h"
+#include "XMLElementContainer.h"
 #include <itksys/SystemTools.hxx>
 #include <fstream>
 template <typename OutputType>
 class FileSystemDescriptor :
-  public ValueObjectBase<OutputType>
+  public XMLContents<OutputType>
 {
 public:
-  typedef ValueObjectBase<OutputType> SuperClass;
+  typedef XMLContents<OutputType> SuperClass;
   virtual int PrintSelf(std::ostream & os, int indent) const
   {
     indent += SuperClass::PrintSelf(os, indent);
@@ -18,7 +18,7 @@ public:
   }
 
   FileSystemDescriptor(const std::string & name, const std::string & filename) :
-    ValueObjectBase<OutputType>(name)
+    XMLContents<OutputType>(name)
   {
     this->SetFileName(filename);
   }

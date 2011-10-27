@@ -2,18 +2,19 @@
 #define DataSet_h
 #include "StringValue.h"
 #include "ImageDescription.h"
-// #include "LandmarkType.h"
 #include "MaskType.h"
-#include "CompoundObjectBase.h"
+#include "XMLElementParser.h"
 #include "RegistrationType.h"
+#include "SpatialLocationType.h"
 #include <vector>
 //
-// subclass CompoundObjectBase, overriding the
+// subclass XMLElementParser, overriding the
 // constructor to initialize the model structure.
-class DataSet : public CompoundObjectBase
+class DataSet : public XMLElementParser
 {
 public:
-  typedef CompoundObjectBase SuperClass;
+  typedef XMLElementParser SuperClass;
+
   virtual int PrintSelf(std::ostream & os, int indent) const
   {
     indent += SuperClass::PrintSelf(os, indent);
@@ -21,15 +22,15 @@ public:
     return indent + 2;
   }
 
-  typedef SuperClass::StringVectorType TypeVector;
+  typedef SuperClass::StringVectorType StringVectorType;
 
-  DataSet() : CompoundObjectBase("DataSet")
+  DataSet() : XMLElementParser("DataSet")
   {
     this->Add(new StringValue("Name", ""), "Name");
     this->Add(new StringValue("Type", ""), "Type");
     this->Add(new StringValue("OutputDir", "na"), "OutputDir");
     this->Add(new ImageList, "ImageList");
-    //    this->Add(new LandmarkList,"LandmarkList");
+    this->Add(new SpatialLocationList, "SpatialLocationList");
     this->Add(new MaskList, "MaskList");
     this->Add(new RegistrationList, "RegistrationList");
   }
@@ -61,21 +62,18 @@ public:
     return GetImageFilenameByType( type.c_str() );
   }
 
-#if 0
   //
-  // get the landmark with the type 'type'
-  const std::string GetAtlasFilenameByType(const char *type) const
+  // get the SpatialLocation with the type 'type'
+  const std::string GetSpatialLocationFilenameByType(const char *type) const
   {
-    return this->GetFilenameByType<LandmarkList, LandmarkType>("LandmarkList",
-                                                               type);
+    return this->GetFilenameByType<SpatialLocationList, SpatialLocationType>("SpatialLocationList",
+                                                                             type);
   }
 
-  const std::string GetAtlasFilenameByType(const std::string & type) const
+  const std::string GetSpatialLocationFilenameByType(const std::string & type) const
   {
-    return GetAtlasFilenameByType( type.c_str() );
+    return GetSpatialLocationFilenameByType( type.c_str() );
   }
-
-#endif
 
   //
   // get the Mask with the type 'type'
@@ -107,27 +105,25 @@ public:
 
   //
   // get all potential image types
-  const TypeVector ImageTypes() const
+  const StringVectorType GetImageTypes() const
   {
     const ImageList *imList = this->Get<ImageList>("ImageList");
 
     return imList->CollectAttValues<ImageDescription>("Type");
   }
 
-#if 0
   //
-  // get all potential landmark types
-  const TypeVector LandmarkTypes() const
+  // get all spatialLocation types
+  const StringVectorType GetSpatialLocationTypes() const
   {
-    LandmarkList *landmarkList = this->Get<LandmarkList>("LandmarkList");
+    const SpatialLocationList *spatialLocationList = this->Get<SpatialLocationList>("SpatialLocationList");
 
-    return landmarkList->CollectAttValues<LandmarkType>("Type");
+    return spatialLocationList->CollectAttValues<SpatialLocationType>("Type");
   }
 
-#endif
   //
   // get all mask types
-  const TypeVector MaskTypes() const
+  const StringVectorType GetMaskTypes() const
   {
     const MaskList *maskList = this->Get<MaskList>("MaskList");
 
@@ -135,10 +131,10 @@ public:
   }
 };
 
-class DataSetList : public CompoundObjectBase
+class DataSetList : public XMLElementParser
 {
 public:
-  DataSetList() : CompoundObjectBase("DataSetList")
+  DataSetList() : XMLElementParser("DataSetList")
   {
   }
 };

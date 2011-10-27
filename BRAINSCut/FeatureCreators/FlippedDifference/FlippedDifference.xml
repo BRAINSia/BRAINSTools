@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
   <executable>
   <category>Statistics</category>
-  <title>Flip Image (BRAINS)</title>
+  <title>Flip Image</title>
 
   <description>Difference between an image and the axially flipped version of that image.</description>
   <version>0.1.0.$Revision: 1 $(alpha)</version>

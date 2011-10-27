@@ -1,10 +1,10 @@
-project(ProcessDescription)
+project(NetConfiguration)
 
 file(GLOB ProcessDescription_SRC *.cxx)
 link_libraries( itksys )
-add_library(ProcessDescription ${ProcessDescription_SRC})
+add_library(NetConfiguration ${ProcessDescription_SRC})
 
-install(TARGETS ProcessDescription
+install(TARGETS NetConfiguration
                  RUNTIME DESTINATION bin
                  LIBRARY DESTINATION lib
                  ARCHIVE DESTINATION lib/static)

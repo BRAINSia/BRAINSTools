@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
   <category>
-    Segmentation
+    Segmentation.CannyLevelSetFilter
   </category>
   <title>
-  Canny Level Set Mask Cleaning (BRAINS)
+  Canny Level Set Image Filter
   </title>
   <description>
 The CannySegmentationLevelSet is commonly used to refine a manually generated manual mask.

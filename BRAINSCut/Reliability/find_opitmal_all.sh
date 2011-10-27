@@ -10,6 +10,7 @@ ROI=$2;
 DATALIST=$3;
 
 ManualSubDirectory="ANN2011Apr25ManualCompleted";
+#ManualSubDirectory="AmygdalaMayManualCompleted";
 
 for SubjectANNOutputDir in $ANNOutputDir/*
 do

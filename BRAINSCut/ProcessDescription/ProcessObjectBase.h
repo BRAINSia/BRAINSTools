@@ -76,7 +76,7 @@ private:
 };
 
 template <typename OutputType>
-class ValueObjectBase :
+class XMLContents :
   public ProcessObjectBase
 {
 public:
@@ -84,22 +84,22 @@ public:
   virtual int PrintSelf(std::ostream &, int indent) const
   {
     // SuperClass::PrintSelf(os);
-    // os << this->PrintSpaces(indent) << "=== ValueObjectBase ===" <<
+    // os << this->PrintSpaces(indent) << "=== XMLContents ===" <<
     // std::endl;
     // return indent+2;
     return indent;
   }
 
-  ValueObjectBase(const std::string & s) :
+  XMLContents(const std::string & s) :
     ProcessObjectBase(s)
   {
   }
 
-  ValueObjectBase()
+  XMLContents()
   {
   }
 
-  virtual ~ValueObjectBase()
+  virtual ~XMLContents()
   {
   }
 

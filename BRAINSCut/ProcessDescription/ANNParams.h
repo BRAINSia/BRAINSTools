@@ -3,12 +3,12 @@
 #include "StringValue.h"
 #include "IntValue.h"
 #include "FloatValue.h"
-#include "CompoundObjectBase.h"
+#include "XMLElementParser.h"
 
-class ANNParams : public CompoundObjectBase
+class ANNParams : public XMLElementParser
 {
 public:
-  typedef CompoundObjectBase SuperClass;
+  typedef XMLElementParser SuperClass;
   virtual int PrintSelf(std::ostream & os, int indent) const
   {
     indent += SuperClass::PrintSelf(os, indent);
@@ -16,7 +16,7 @@ public:
     return indent + 2;
   }
 
-  ANNParams() : CompoundObjectBase("ANNParams")
+  ANNParams() : XMLElementParser("ANNParams")
   {
     // this->Add(new IntValue("VectorSize", "0"), "VectorSize");
     this->Add(new IntValue("Iterations", "20"), "Iterations");

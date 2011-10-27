@@ -3,12 +3,12 @@
 #include "StringValue.h"
 #include "IntValue.h"
 #include "FloatValue.h"
-#include "CompoundObjectBase.h"
+#include "XMLElementParser.h"
 
-class NeuralParams : public CompoundObjectBase
+class NeuralParams : public XMLElementParser
 {
 public:
-  typedef CompoundObjectBase SuperClass;
+  typedef XMLElementParser SuperClass;
   virtual int PrintSelf(std::ostream & os, int indent) const
   {
     indent += SuperClass::PrintSelf(os, indent);
@@ -16,15 +16,14 @@ public:
     return indent + 2;
   }
 
-  NeuralParams() : CompoundObjectBase("NeuralParams")
+  NeuralParams() : XMLElementParser("NeuralParams")
   {
     this->Add(new FloatValue("MaskSmoothingValue", 0.0), "MaskSmoothingValue");
-    // this->Add(new IntValue("GaussianSize",1),"GaussianSize");
     this->Add(new IntValue("GradientProfileSize", 1), "GradientProfileSize");
-    this->Add(new IntValue("IrisSize", 1), "IrisSize");
     this->Add(new StringValue("TrainingVectorFilename", ""), "TrainingVectorFilename");
     this->Add(new StringValue("TestVectorFilename", ""), "TestVectorFilename");
     this->Add(new StringValue("TrainingModelFilename", ""), "TrainingModelFilename");
+    this->Add(new StringValue("Normalization", ""), "Normalization");
   }
 };
 

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>
+    Segmentation.CannyLevelSetFilter
+  </category>
+  <title>
+  Canny Level Set Image Filter
+  </title>
+  <description>
+The CannySegmentationLevelSet is commonly used to refine a manually generated manual mask.
+  </description>
+  <version>0.3.0</version>
+  <documentation-url></documentation-url>
+  <license>CC</license>
+  <contributor>Regina Kim</contributor>
+  <acknowledgements>This command module was derived from Insight/Examples/Segmentation/CannySegmentationLevelSetImageFilter.cxx (copyright) Insight Software Consortium.  See http://wiki.na-mic.org/Wiki/index.php/Slicer3:Execution_Model_Documentation for more detailed descriptions.
+  </acknowledgements>
+  <parameters>
+    <label>IO</label>
+    <description>The image input and output arguments</description>
+    <image>
+        <name>inputVolume</name>
+        <longflag>inputVolume</longflag>
+        <label>Intensity Input Volume</label>
+        <channel>input</channel>
+        <default>na</default>
+    </image>
+    <image>
+        <name>inputMaskVolume</name>
+        <longflag>inputMaskVolume</longflag>
+        <label>binary of ROI</label>
+        <channel>input</channel>
+        <default>na</default>
+    </image>
+    <integer>
+        <name>distance</name>
+        <longflag>distance</longflag>
+        <label>distance for cooccurrence matrix computation</label>
+        <default>1</default>
+        <channel>input</channel>
+    </integer>
+    <float>
+        <name>insideROIValue</name>
+        <longflag>insideROIValue</longflag>
+        <label>inside value binary of ROI</label>
+        <default>1</default>
+        <channel>input</channel>
+    </float>
+
+  </parameters>
+</executable>

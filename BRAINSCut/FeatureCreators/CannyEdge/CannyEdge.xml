@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
   <executable>
   <category>Statistics</category>
-  <title>Canny Edge Detection (BRAINS via Hammer)</title>
+  <title>Canny Edge Detection</title>
 
   <description>Get the distance from a voxel to the nearest voxel of a given tissue type.</description>
   <version>0.1.0.$Revision: 1 $(alpha)</version>

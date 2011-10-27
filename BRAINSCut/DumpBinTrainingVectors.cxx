@@ -106,12 +106,8 @@ main(int argc, char * *argv)
       result = 1;
       break;
       }
-    for( unsigned int j = 0; j < OutputVectorSize; j++ )
-      {
-      std::cout << buf[j] << " ";
-      }
     binfile.read( (char *)buf, recordsize );
-    for( unsigned int j = OutputVectorSize;
+    for( unsigned int j = 0;
          j < OutputVectorSize + InputVectorSize;
          j++ )
       {

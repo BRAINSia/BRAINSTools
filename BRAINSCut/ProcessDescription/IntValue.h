@@ -1,5 +1,6 @@
 #ifndef IntValue_h
 #define IntValue_h
+#include "NumericValue.h"
 
 class IntValue :
   public NumericValue<long>

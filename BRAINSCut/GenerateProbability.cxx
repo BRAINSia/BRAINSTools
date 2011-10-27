@@ -1,112 +1,19 @@
-#include <ProcessDescription.h>
+#include <NetConfiguration.h>
 #include <itksys/SystemTools.hxx>
 #include <list>
 #include <vector>
 #include <iostream>
 #include <itkIO.h>
 #include "Utilities.h"
-#include "Parser.h"
+#include "NetConfigurationParser.h"
 
-// ValidateDataSets function will read throught he XML files,
-// and for each data set, it will ensure that all
-// the image files are in the same physical space.
-bool ValidateDataSets(ProcessDescription & ANNXMLObject)
-{
-  // HACK:  Needed to speed up testing.
-  std::list<DataSet *> dataSets = ANNXMLObject.GetTrainDataSets();
-
-  for( std::list<DataSet *>::iterator it = dataSets.begin();
-       it != dataSets.end(); ++it )
-    {
-    DataSet::TypeVector allImageTypes( ( *it )->ImageTypes() );
-    const std::string   FirstImageName(
-      ( *it )->GetImageFilenameByType(allImageTypes[0]) );
-    ProbabilityMapImageType::Pointer FirstImage =
-      itkUtil::ReadImage<ProbabilityMapImageType>(FirstImageName);
-    FirstImage =
-      itkUtil::ScaleAndCast<ProbabilityMapImageType, ProbabilityMapImageType>(
-        FirstImage,
-        0,
-        HUNDRED_PERCENT_VALUE);
-    for( unsigned int imindex = 1; imindex < allImageTypes.size(); imindex++ )
-      {
-      const std::string CurrentImageName( ( *it )->GetImageFilenameByType(
-                                            allImageTypes[imindex]) );
-      if( !itksys::SystemTools::FileExists( CurrentImageName.c_str() ) )
-        {
-        std::string errmsg(CurrentImageName);
-        errmsg += " does not exist";
-        throw  ProcessObjectException(errmsg);
-        }
-      ProbabilityMapImageType::Pointer CurrentImage =
-        itkUtil::ReadImage<ProbabilityMapImageType>(CurrentImageName);
-      CurrentImage =
-        itkUtil::ScaleAndCast<ProbabilityMapImageType,
-                              ProbabilityMapImageType>(
-          CurrentImage,
-          0,
-          HUNDRED_PERCENT_VALUE);
-      if( !itkUtil::ImagePhysicalDimensionsAreIdentical<
-            ProbabilityMapImageType, ProbabilityMapImageType>(FirstImage,
-                                                              CurrentImage) )
-        {
-        std::string errmsg(CurrentImageName);
-        errmsg += " and ";
-        errmsg += FirstImageName;
-        errmsg += " differ";
-        std::cout << "============" << FirstImageName << "===============\n"
-                  << FirstImage << std::endl;
-        std::cout << "============" << CurrentImageName
-                  << "===============\n" << CurrentImage << std::endl;
-        throw  ProcessObjectException(errmsg);
-        }
-      } // Each Image
-
-    DataSet::TypeVector allMaskTypes( ( *it )->MaskTypes() );
-    for( unsigned maskindex = 0; maskindex < allMaskTypes.size(); maskindex++ )
-      {
-      const std::string CurrentMaskName( ( *it )->GetMaskFilenameByType(
-                                           allMaskTypes[maskindex]) );
-      if( !itksys::SystemTools::FileExists( CurrentMaskName.c_str() ) )
-        {
-        std::string errmsg(CurrentMaskName);
-        errmsg += " does not exist";
-        throw  ProcessObjectException(errmsg);
-        }
-      ProbabilityMapImageType::Pointer CurrentMask =
-        itkUtil::ReadImage<ProbabilityMapImageType>(CurrentMaskName);
-      CurrentMask =
-        itkUtil::ScaleAndCast<ProbabilityMapImageType,
-                              ProbabilityMapImageType>(
-          CurrentMask,
-          0,
-          HUNDRED_PERCENT_VALUE);
-      if( !itkUtil::ImagePhysicalDimensionsAreIdentical<
-            ProbabilityMapImageType, ProbabilityMapImageType>(FirstImage,
-                                                              CurrentMask) )
-        {
-        std::string errmsg(CurrentMaskName);
-        errmsg += " and ";
-        errmsg += FirstImageName;
-        errmsg += " differ";
-        std::cout << "============" << FirstImageName << "===============\n"
-                  << FirstImage << std::endl;
-        std::cout << "============" << CurrentMaskName
-                  << "===============\n" << CurrentMask << std::endl;
-        throw  ProcessObjectException(errmsg);
-        }
-      } // Each Mask
-    }   // Each DataSet
-  return true;
-}
-
-static ProbabilityMapImageType::Pointer
-GaussianSmooth(const RealImageType::Pointer image,
+static InternalImageType::Pointer
+GaussianSmooth(const InternalImageType::Pointer image,
                const double Sigma)
 {
-  RealImageType::SpacingType imageSpacing = image->GetSpacing();
+  InternalImageType::SpacingType imageSpacing = image->GetSpacing();
 
-  for( int currDim = 0; currDim < RealImageType::ImageDimension; currDim++ )
+  for( int currDim = 0; currDim < InternalImageType::ImageDimension; currDim++ )
     {
     if( Sigma < imageSpacing[currDim] )
       {
@@ -145,11 +52,11 @@ GaussianSmooth(const RealImageType::Pointer image,
   g_gaussianFilterZ->SetInput( g_gaussianFilterY->GetOutput() );
   g_gaussianFilterZ->ReleaseDataFlagOn();
   g_gaussianFilterZ->Update();
-  RealImageType::Pointer gaussianImage = g_gaussianFilterZ->GetOutput();
+  InternalImageType::Pointer gaussianImage = g_gaussianFilterZ->GetOutput();
   // NOTE:  Sometimes the "SetNormalizeAcrossScale" will make the zeros slightly
   // above zero.
-  ProbabilityMapImageType::Pointer returnSmoothed =
-    itkUtil::ScaleAndCast<RealImageType, ProbabilityMapImageType>(
+  InternalImageType::Pointer returnSmoothed =
+    itkUtil::ScaleAndCast<InternalImageType, InternalImageType>(
       gaussianImage,
       0,
       HUNDRED_PERCENT_VALUE);
@@ -159,24 +66,24 @@ GaussianSmooth(const RealImageType::Pointer image,
 //
 // this is to remove warnings about assigning a float to a long int.
 // I could have just added a cast, but it would make hairy code even uglier,
-inline ProbabilityMapImageType::IndexType::IndexValueType
-TruncatedHalf(const ProbabilityMapImageType::SizeType::SizeValueType & v)
+inline InternalImageType::IndexType::IndexValueType
+TruncatedHalf(const InternalImageType::SizeType::SizeValueType & v)
 {
-  return static_cast<ProbabilityMapImageType::IndexType::IndexValueType>
+  return static_cast<InternalImageType::IndexType::IndexValueType>
          ( static_cast<double>( v ) * 0.5 );
 }
 
 // Generate PolarImages about the center of the Atlas Image.
-static void GeneratePolarImages(ProbabilityMap *probMapObject, /*const
+static void GeneratePolarImages(DataSet *atlasDataSet, /*const
                                                                  * std::string
                                                                  *
-                                                                 *&ANNXMLObjectFilename,*/
-                                const ProbabilityMapImageType::Pointer AtlasImage)
+                                                                 *&ANNConfigurationFilename,*/
+                                const InternalImageType::Pointer AtlasImage)
 {
-  ProbabilityMapImageType::IndexType CenterIndex;
+  InternalImageType::IndexType CenterIndex;
 
     {
-    const ProbabilityMapImageType::SizeType
+    const InternalImageType::SizeType
       size( AtlasImage->GetLargestPossibleRegion().GetSize() );
     CenterIndex[0] = TruncatedHalf(size[0]);
     CenterIndex[1] = TruncatedHalf(size[1]);
@@ -189,28 +96,28 @@ static void GeneratePolarImages(ProbabilityMap *probMapObject, /*const
   // std::cout << AtlasImage << std::endl;
   std::cout << "CENTER LOC " << ImageCenterLocationInMM << std::endl;
 
-  RealImageType::Pointer rhoImage, phiImage, thetaImage;
+  InternalImageType::Pointer rhoImage, phiImage, thetaImage;
   CreateNewFloatImageFromTemplate(rhoImage, AtlasImage);
   CreateNewFloatImageFromTemplate(phiImage, AtlasImage);
   CreateNewFloatImageFromTemplate(thetaImage, AtlasImage);
 
-  itk::ImageRegionIterator<ProbabilityMapImageType> it(
+  itk::ImageRegionIterator<InternalImageType> it(
     AtlasImage, AtlasImage->GetLargestPossibleRegion() );
   it.GoToBegin();
-  itk::ImageRegionIterator<RealImageType> rhoit(
+  itk::ImageRegionIterator<InternalImageType> rhoit(
     rhoImage, rhoImage->GetLargestPossibleRegion() );
   rhoit.GoToBegin();
-  itk::ImageRegionIterator<RealImageType> phiit(
+  itk::ImageRegionIterator<InternalImageType> phiit(
     phiImage, phiImage->GetLargestPossibleRegion() );
   phiit.GoToBegin();
-  itk::ImageRegionIterator<RealImageType> thetait(
+  itk::ImageRegionIterator<InternalImageType> thetait(
     thetaImage, thetaImage->GetLargestPossibleRegion() );
   thetait.GoToBegin();
   itk::Point<float, 3> CurrentLocationInMM;
   itk::Point<float, 3> LocationWithRespectToCenterOfImageInMM;
   while( !it.IsAtEnd() )
     {
-    const ProbabilityMapImageType::IndexType CurrentIndex = it.GetIndex();
+    const InternalImageType::IndexType CurrentIndex = it.GetIndex();
     AtlasImage->TransformIndexToPhysicalPoint(CurrentIndex, CurrentLocationInMM);
     for( unsigned i = 0; i < 3; i++ )
       {
@@ -239,32 +146,32 @@ static void GeneratePolarImages(ProbabilityMap *probMapObject, /*const
     }
 
   /* Implementation 1.
-    * std::string ANNXMLObjectFilenamePath =
-    * itksys::SystemTools::GetFilenamePath(ANNXMLObjectFilename);
-    * if ( ANNXMLObjectFilenamePath == "" )
+    * std::string ANNConfigurationFilenamePath =
+    * itksys::SystemTools::GetFilenamePath(ANNConfigurationFilename);
+    * if ( ANNConfigurationFilenamePath == "" )
     *  {
-    *  ANNXMLObjectFilenamePath = "." ;
+    *  ANNConfigurationFilenamePath = "." ;
     *  }
-    * std::string RhoMapName(ANNXMLObjectFilenamePath); RhoMapName +=
+    * std::string RhoMapName(ANNConfigurationFilenamePath); RhoMapName +=
     * "/rho.nii.gz";
-    * std::string PhiMapName(ANNXMLObjectFilenamePath); PhiMapName +=
+    * std::string PhiMapName(ANNConfigurationFilenamePath); PhiMapName +=
     * "/phi.nii.gz";
-    * std::string ThetaMapName(ANNXMLObjectFilenamePath); ThetaMapName +=
+    * std::string ThetaMapName(ANNConfigurationFilenamePath); ThetaMapName +=
     * "/theta.nii.gz";
     */
   // Implementation 2.
   // REGINA:: Read Rho, phi, theta file name from xml
   std::cout << " Write rho,phi and theta" << std::endl;
-  std::string RhoMapName = probMapObject->GetAttribute<StringValue>("rho");
-  std::string PhiMapName = probMapObject->GetAttribute<StringValue>("phi");
-  std::string ThetaMapName = probMapObject->GetAttribute<StringValue>("theta");
+  std::string RhoMapName = atlasDataSet->GetSpatialLocationFilenameByType("rho");
+  std::string PhiMapName = atlasDataSet->GetSpatialLocationFilenameByType("phi");
+  std::string ThetaMapName = atlasDataSet->GetSpatialLocationFilenameByType("theta");
   // Check if rho,phi and theta file exists.
-  itkUtil::WriteImage<RealImageType>(rhoImage, RhoMapName);
-  itkUtil::WriteImage<RealImageType>(phiImage, PhiMapName);
-  itkUtil::WriteImage<RealImageType>(thetaImage, ThetaMapName);
+  itkUtil::WriteImage<InternalImageType>(rhoImage, RhoMapName);
+  itkUtil::WriteImage<InternalImageType>(phiImage, PhiMapName);
+  itkUtil::WriteImage<InternalImageType>(thetaImage, ThetaMapName);
 }
 
-static int GenerateProbabilityMaps(ProcessDescription & ANNXMLObject,
+static int GenerateProbabilityMaps(NetConfiguration & ANNConfiguration,
                                    bool verbose)
 {
   // Get the atlas dataset
@@ -272,11 +179,10 @@ static int GenerateProbabilityMaps(ProcessDescription & ANNXMLObject,
     {
     std::cout << "* GenerateProbabilityMaps" << std::endl;
     }
-  DataSet *atlasDataSet = ANNXMLObject.GetAtlasDataSet();
 
   // find out the registration parameters
-  RegistrationParams *regParams =
-    ANNXMLObject.Get<RegistrationParams>("RegistrationParams");
+  RegistrationConfigurationParser *regParams =
+    ANNConfiguration.Get<RegistrationConfigurationParser>("RegistrationConfigurationParser");
   const std::string imageTypeToUse
   (
     regParams->GetAttribute<StringValue>(
@@ -291,28 +197,31 @@ static int GenerateProbabilityMaps(ProcessDescription & ANNXMLObject,
 
   // itk::MultiThreader::GetGlobalDefaultNumberOfThreads();
 
-  GenerateRegistrations(ANNXMLObject, false, false, numThreads);
+  GenerateRegistrations(ANNConfiguration, false, false,  numThreads);
 
   // Get Atlas Image Name
+  DataSet *   atlasDataSet = ANNConfiguration.GetAtlasDataSet();
   std::string AtlasImageFilename( atlasDataSet->GetImageFilenameByType(
                                     imageTypeToUse) );
   // HACK:  radius is hardcoded to size 2, it should be taken from command line
   // arguments.
-  ProbabilityMapImageType::SizeType radius;
+  InternalImageType::SizeType radius;
   radius[0] = 0; radius[1] = 0; radius[2] = 0;
-  ProbabilityMapImageType::Pointer AtlasImage =
-    ReadMedianFilteredImage<ProbabilityMapImageType>(AtlasImageFilename,
-                                                     radius);
+  InternalImageType::Pointer AtlasImage =
+    ReadMedianFilteredImage<InternalImageType>(AtlasImageFilename,
+                                               radius);
 
-  ProbabilityMapList *probMaps = ANNXMLObject.Get<ProbabilityMapList>(
+  GeneratePolarImages(atlasDataSet, /*probFilename,*/ AtlasImage);
+
+  ProbabilityMapList *probMaps = ANNConfiguration.Get<ProbabilityMapList>(
       "ProbabilityMapList");
-  const DataSet::TypeVector ProbMapByMaskTypeVector =
-    probMaps->CollectAttValues<ProbabilityMap>("StructureID");
-  const unsigned int probMapCount = ProbMapByMaskTypeVector.size();
+  const DataSet::StringVectorType ProbMapByMaskStringVectorType =
+    probMaps->CollectAttValues<ProbabilityMapParser>("StructureID");
+  const unsigned int probMapCount = ProbMapByMaskStringVectorType.size();
   assert(probMapCount > 0);
 
-  std::vector<unsigned int>           accumulatorcounter(probMapCount);
-  std::vector<RealImageType::Pointer> accumulators(probMapCount);
+  std::vector<unsigned int>               accumulatorcounter(probMapCount);
+  std::vector<InternalImageType::Pointer> accumulators(probMapCount);
   for( unsigned int accumindex = 0;
        accumindex < accumulators.size();
        accumindex++ )
@@ -321,22 +230,22 @@ static int GenerateProbabilityMaps(ProcessDescription & ANNXMLObject,
     accumulatorcounter[accumindex] = 0;
     }
   // For each dataset, create deformation fields if they don't already exist.
-  std::list<DataSet *> dataSets = ANNXMLObject.GetTrainDataSets();
+  std::list<DataSet *> dataSets = ANNConfiguration.GetTrainDataSets();
   // For each mask type, you need an accumulator image, so find all mask types,
   // and initialize the images to zeros with size and resolution of the
   // AtlasImage.
-  DataSet::TypeVector allMaskTypes( ( *( dataSets.begin() ) )->MaskTypes() );
+  DataSet::StringVectorType allMaskTypes( ( *( dataSets.begin() ) )->GetMaskTypes() );
   // Traverse all datasets looking for mask types.
   for( std::list<DataSet *>::iterator it = dataSets.begin();
        it != dataSets.end();
        ++it )
     {
-    DataSet::TypeVector currDatasetMaskTypes( ( *it )->MaskTypes() );
-    for( DataSet::TypeVector::iterator maskit = currDatasetMaskTypes.begin();
+    DataSet::StringVectorType currDatasetMaskTypes( ( *it )->GetMaskTypes() );
+    for( DataSet::StringVectorType::iterator maskit = currDatasetMaskTypes.begin();
          maskit != currDatasetMaskTypes.end();
          ++maskit )
       {
-      DataSet::TypeVector::iterator currmaskiterator = std::find(
+      DataSet::StringVectorType::iterator currmaskiterator = std::find(
           allMaskTypes.begin(),
           allMaskTypes.end(),
           *maskit);
@@ -350,15 +259,15 @@ static int GenerateProbabilityMaps(ProcessDescription & ANNXMLObject,
   std::cout << "===== BEGIN probMaps ====" << std::endl;
   for( unsigned int pmindex = 0; pmindex < probMaps->size(); pmindex++ )
     {
-    std::cout << ProbMapByMaskTypeVector[pmindex] << std::endl;
-    DataSet::TypeVector::iterator currmaskiterator = std::find(
+    std::cout << ProbMapByMaskStringVectorType[pmindex] << std::endl;
+    DataSet::StringVectorType::iterator currmaskiterator = std::find(
         allMaskTypes.begin(),
         allMaskTypes.end(),
-        ProbMapByMaskTypeVector[pmindex]);
+        ProbMapByMaskStringVectorType[pmindex]);
     if( currmaskiterator == allMaskTypes.end() )
       {
       std::cout << "ERROR:  No training data sets found with structure: "
-                << ProbMapByMaskTypeVector[pmindex] <<  std::endl;
+                << ProbMapByMaskStringVectorType[pmindex] <<  std::endl;
       exit(-1);
       }
     else
@@ -391,14 +300,14 @@ static int GenerateProbabilityMaps(ProcessDescription & ANNXMLObject,
         {
         std::string errmsg(SubjToAtlasRegistrationFilename);
         errmsg += " does not exist";
-        throw  ProcessObjectException(errmsg);
+        throw  BRAINSCutExceptionStringHandler(errmsg);
         }
       // for each mask in this dataset, register it to atlas space
       // and then add it to the accumulator.
       for( unsigned i = 0; i < probMapCount; i++ )
         {
         const std::string MaskName( ( *it )->GetMaskFilenameByType(
-                                      ProbMapByMaskTypeVector[i]) );
+                                      ProbMapByMaskStringVectorType[i]) );
         if( MaskName == "" || !itksys::SystemTools::FileExists( MaskName.c_str() ) )
           {
           continue;
@@ -440,7 +349,7 @@ static int GenerateProbabilityMaps(ProcessDescription & ANNXMLObject,
     for( unsigned i = 0; i < probMapCount; i++ )
       {
       const std::string MaskName( ( *it )->GetMaskFilenameByType(
-                                    ProbMapByMaskTypeVector[i]) );
+                                    ProbMapByMaskStringVectorType[i]) );
       if( MaskName == "" || !itksys::SystemTools::FileExists( MaskName.c_str() ) )
         {
         std::cout << "---Mask missing for " << SubjectImage << " "
@@ -459,12 +368,12 @@ static int GenerateProbabilityMaps(ProcessDescription & ANNXMLObject,
 
       // TODO
       // - Check if this Image Warper deals properly with Binary deformation
-      RealImageType::Pointer DeformedMask =
-        ImageWarper<RealImageType>(SubjToAtlasRegistrationFilename, MaskName, AtlasImage);
+      InternalImageType::Pointer DeformedMask =
+        ImageWarper<InternalImageType>(SubjToAtlasRegistrationFilename, MaskName, AtlasImage);
 
       // It has to be make sure that read-in mask image has binary values with
       // one and zero. Otherwise, summing will mess up the average calculation.
-      typedef itk::BinaryThresholdImageFilter<RealImageType, RealImageType>
+      typedef itk::BinaryThresholdImageFilter<InternalImageType, InternalImageType>
         UnifyMaskLabelFilterType;
       UnifyMaskLabelFilterType::Pointer unifyMaskLabelFilter =
         UnifyMaskLabelFilterType::New();
@@ -481,11 +390,11 @@ static int GenerateProbabilityMaps(ProcessDescription & ANNXMLObject,
                   << " * Origin : " << DeformedMask->GetOrigin()
                   << std::endl;
         }
-      VerifyNonZeroImage<RealImageType>(DeformedMask, MaskName);
+      VerifyNonZeroImage<InternalImageType>(DeformedMask, MaskName);
       try
         {
-        typedef itk::AddImageFilter<RealImageType, RealImageType,
-                                    RealImageType> AddType;
+        typedef itk::AddImageFilter<InternalImageType, InternalImageType,
+                                    InternalImageType> AddType;
         AddType::Pointer add = AddType::New();
         add->SetInput1( unifyMaskLabelFilter->GetOutput() );
         add->SetInput2(accumulators[i]);
@@ -512,33 +421,33 @@ static int GenerateProbabilityMaps(ProcessDescription & ANNXMLObject,
               << probMapCount << std::endl;
     std::cout
       << " =====================================================================";
-    // find the corresponding ProbabilityMap
-    ProbabilityMap *probMapObject =
-      probMaps->GetMatching<ProbabilityMap>( "StructureID",
-                                             ProbMapByMaskTypeVector[i].c_str() );
+    // find the corresponding ProbabilityMapParser
+    ProbabilityMapParser *probMapObject =
+      probMaps->GetMatching<ProbabilityMapParser>( "StructureID",
+                                                   ProbMapByMaskStringVectorType[i].c_str() );
     if( probMapObject == 0 )
       {
       std::cout << "Missing Probability map for map structure: "
-                << ProbMapByMaskTypeVector[i] << std::endl;
+                << ProbMapByMaskStringVectorType[i] << std::endl;
       exit(-1);
       }
     const std::string probFilename
     (
       probMapObject->GetAttribute<StringValue>(
         "Filename") );
-    VerifyNonZeroImage<RealImageType>(accumulators[i],
-                                      probFilename + "AccumulatorPreDiv");
+    VerifyNonZeroImage<InternalImageType>(accumulators[i],
+                                          probFilename + "AccumulatorPreDiv");
     const double AveragerValue =
       ( 1.0 / static_cast<double>( accumulatorcounter[i] ) );
     std::cout << "#######AveragerValue " << AveragerValue << " for "
-              << ProbMapByMaskTypeVector[i] <<  " " << i << std::endl;
-    accumulators[i] = ImageMultiplyConstant<RealImageType>(accumulators[i],
-                                                           AveragerValue);
-    VerifyNonZeroImage<RealImageType>(accumulators[i],
-                                      probFilename + "AccumulatorPostDiv");
+              << ProbMapByMaskStringVectorType[i] <<  " " << i << std::endl;
+    accumulators[i] = ImageMultiplyConstant<InternalImageType>(accumulators[i],
+                                                               AveragerValue);
+    VerifyNonZeroImage<InternalImageType>(accumulators[i],
+                                          probFilename + "AccumulatorPostDiv");
     const double GaussianValue =
       probMapObject->GetAttribute<FloatValue>("Gaussian");
-    ProbabilityMapImageType::Pointer currentImage;
+    InternalImageType::Pointer currentImage;
     if( GaussianValue > 1e-2 )  /*Use a very small sigma value as decision
                                   * rule*/
       {
@@ -547,12 +456,12 @@ static int GenerateProbabilityMaps(ProcessDescription & ANNXMLObject,
     else
       {
       currentImage =
-        itkUtil::ScaleAndCast<RealImageType, ProbabilityMapImageType>(
+        itkUtil::ScaleAndCast<InternalImageType, InternalImageType>(
           accumulators[i],
           0,
           HUNDRED_PERCENT_VALUE);
       }
-    itk::ImageRegionIterator<ProbabilityMapImageType> it(
+    itk::ImageRegionIterator<InternalImageType> it(
       currentImage, currentImage->GetLargestPossibleRegion() );
     it.GoToBegin();
     while( !it.IsAtEnd() )
@@ -573,51 +482,49 @@ static int GenerateProbabilityMaps(ProcessDescription & ANNXMLObject,
     // HUNDRED_PERCENT_VALUE for values. down stream
     // depending on gaussian values.
 
-    VerifyNonZeroImage<ProbabilityMapImageType>(currentImage, probFilename);
+    VerifyNonZeroImage<InternalImageType>(currentImage, probFilename);
     try
       {
       // std::cout << currentImage << "\n  " << probFilename << std::endl;
-      itkUtil::WriteImage<ProbabilityMapImageType>( currentImage,
-                                                    probFilename.c_str() );
+      itkUtil::WriteImage<InternalImageType>( currentImage,
+                                              probFilename.c_str() );
       }
     catch( ... )
       {
       std::cerr << "Error writing " << probFilename << std::endl;
       return -1;
       }
-    // generate Rho/Phi/Theta images
-    //    if ( i == 0 )                  // we need every polor image
-    //      {
-    GeneratePolarImages(probMapObject, /*probFilename,*/ AtlasImage);
-    //      }
     } // end of probability map loop
   return 0;
 }
 
-int GenerateProbability(const std::string & XMLFile, int verbose, bool validate)
+int GenerateProbability(const std::string & XMLFile,
+                        int verbose,
+                        bool validate)
 {
   if( verbose )
     {
     std::cerr << "This will print out process in more detail for debugging purpose\n"
               << std::endl;
     }
-  ProcessDescription ANNXMLObject;
+  NetConfiguration *     ANNConfiguration;
+  NetConfigurationParser ANNConfigurationParser = NetConfigurationParser( XMLFile );
   try
     {
-    ReadXML(XMLFile.c_str(), ANNXMLObject);
+    ANNConfiguration = ANNConfigurationParser.GetNetConfiguration();
     }
-  catch( ProcessObjectException & ex )
+  catch( BRAINSCutExceptionStringHandler & ex )
     {
     std::cerr << ex.Error() << std::endl;
     exit(-1);
     }
-  if( ANNXMLObject.Verify() != true )
+  if( ANNConfiguration->Verify() != true )
     {
     std::cerr << "XML file " << " is invalid." << std::endl;
     std::cerr << "FULL DUMP ===============================" << std::endl;
     std::cerr << "FULL DUMP ===============================" << std::endl;
     std::cerr << "FULL DUMP ===============================" << std::endl;
-    ANNXMLObject.PrintSelf(std::cerr, 0);
+    ANNConfiguration->PrintSelf(std::cerr, 0);
     std::cerr << "FULL DUMP ===============================" << std::endl;
     std::cerr << "FULL DUMP ===============================" << std::endl;
     std::cerr << "FULL DUMP ===============================" << std::endl;
@@ -626,15 +533,15 @@ int GenerateProbability(const std::string & XMLFile, int verbose, bool validate)
   if( validate )
     {
     std::cout << " *~*~*~*~*~*~*~*~*Start Validation.... *~*~*~*~*~*~*~*~*"  << std::endl;
-    ValidateDataSets(ANNXMLObject);
+    ANNConfigurationParser.ValidateDataSets();
     std::cout << " *~*~*~*~*~*~*~*~*End of Validation.... *~*~*~*~*~*~*~*~*"  << std::endl;
     }
   int rval = -1;
   try
     {
-    rval = GenerateProbabilityMaps(ANNXMLObject, verbose);
+    rval = GenerateProbabilityMaps(*ANNConfiguration,  verbose);
     }
-  catch( ProcessObjectException & ex )
+  catch( BRAINSCutExceptionStringHandler & ex )
     {
     std::cerr << ex.Error() << std::endl;
     }

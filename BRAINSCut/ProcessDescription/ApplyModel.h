@@ -3,12 +3,12 @@
 #include "StringValue.h"
 #include "IntValue.h"
 #include "FloatValue.h"
-#include "CompoundObjectBase.h"
+#include "XMLElementParser.h"
 
-class ApplyModelType : public CompoundObjectBase
+class ApplyModelType : public XMLElementParser
 {
 public:
-  typedef CompoundObjectBase SuperClass;
+  typedef XMLElementParser SuperClass;
   virtual int PrintSelf(std::ostream & os, int indent) const
   {
     indent += SuperClass::PrintSelf(os, indent);
@@ -16,7 +16,7 @@ public:
     return indent + 2;
   }
 
-  ApplyModelType() : CompoundObjectBase("ApplyModel")
+  ApplyModelType() : XMLElementParser("ApplyModel")
   {
     this->Add(new FloatValue("CutOutThresh", 0.5), "CutOutThresh");
     this->Add(new FloatValue("MaskThresh", 0.5), "MaskThresh");

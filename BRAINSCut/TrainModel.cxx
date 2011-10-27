@@ -5,12 +5,11 @@
  */
 #include "Utilities.h"
 #include "itksys/SystemTools.hxx"
-#include <ProcessDescription.h>
+#include <NetConfiguration.h>
 #include "NeuralParams.h"
 #include "ANNParams.h"
-#include "SVMParams.h"
 // #include "ApplyModel.h"
-#include "Parser.h"
+#include "NetConfigurationParser.h"
 #include <vnl/vnl_random.h>
 #include <sys/time.h>
 
@@ -64,17 +63,13 @@ ExtractTrainingSubsetFromFile(std::ifstream & vectorstr,  // const std::string
                               const int NumSubSets,
                               const int SubSetNumber,
                               const int NumberTrainingVectorsFromFile,
-                              bool doTest = false,
                               int verbose = 0)
 {
-  if( doTest )
-    {
-    vector_index = 0;
-    }
   int                   SliceSize    = NumberTrainingVectorsFromFile / NumSubSets;
   neural_data_set_type *TrainSetPtr =    new neural_data_set_type;
   neural_scalar_type *  tempBuf = new neural_scalar_type[SliceSize * InputVectorSize];
   neural_scalar_type *  tempOutputBuf = new neural_scalar_type[SliceSize * OutputVectorSize];
+
 // ******************************************************************************//
   if( SubSetNumber >  NumSubSets )
     {
@@ -85,9 +80,9 @@ ExtractTrainingSubsetFromFile(std::ifstream & vectorstr,  // const std::string
     }
   int                NumInputVectors;
   std::ios::off_type recordSize =
-    ( InputVectorSize + OutputVectorSize + 1 ) * sizeof( float );
-  std::ios::off_type seekval;
-  float *            buf = new float[InputVectorSize + OutputVectorSize + 1];
+    ( InputVectorSize + OutputVectorSize + 1 ) * sizeof( neural_scalar_type);
+  std::ios::off_type  seekval;
+  neural_scalar_type* buf = new neural_scalar_type[InputVectorSize + OutputVectorSize + 1];
   // two conditions pertain -- either you've gotten your full count
   // of vectors, or you've run out of file. In which case, you're done.
   // the training
@@ -95,18 +90,10 @@ ExtractTrainingSubsetFromFile(std::ifstream & vectorstr,  // const std::string
        ( NumInputVectors < SliceSize )   &&   !vectorstr.eof();
        NumInputVectors++ )
     {
-    if( !doTest )
-      {
-      seekval = static_cast<std::ios::off_type>( vector_order[vector_index] )
-        * recordSize;
-      // vector_index = (vector_index ) % NumberTrainingVectorsFromFile;
-      vector_index = ( vector_index + 1 ) % NumberTrainingVectorsFromFile;
-      }
-    else
-      {
-      seekval = static_cast<std::ios::off_type>( vector_index ) * recordSize;
-      vector_index = vector_index + 1;
-      }
+    seekval = static_cast<std::ios::off_type>( vector_order[vector_index] )
+      * recordSize;
+    // vector_index = (vector_index ) % NumberTrainingVectorsFromFile;
+    vector_index = ( vector_index + 1 ) % NumberTrainingVectorsFromFile;
     vectorstr.seekg(seekval, std::ios::beg);
     vectorstr.read( (char *)buf, recordSize );
     for( int i = 0; i < OutputVectorSize; i++ )
@@ -133,17 +120,17 @@ ExtractTrainingSubsetFromFile(std::ifstream & vectorstr,  // const std::string
             << NumInputVectors
             << " for this iteration of training."
             << std::endl << std::flush;
-  TrainSetPtr->inputVector = cvCreateMat( SliceSize, InputVectorSize, CV_64FC1);
-  TrainSetPtr->outputVector = cvCreateMat( SliceSize, OutputVectorSize, CV_64FC1);
+  TrainSetPtr->inputVector = cvCreateMat( SliceSize, InputVectorSize, CV_32FC1);
+  TrainSetPtr->outputVector = cvCreateMat( SliceSize, OutputVectorSize, CV_32FC1);
   cvInitMatHeader( TrainSetPtr->inputVector,
                    SliceSize,
                    InputVectorSize,
-                   CV_64FC1,
+                   CV_32FC1,
                    tempBuf);
   cvInitMatHeader( TrainSetPtr->outputVector,
                    SliceSize,
                    OutputVectorSize,
-                   CV_64FC1,
+                   CV_32FC1,
                    tempOutputBuf);
 
   if( verbose > 7 )
@@ -153,25 +140,24 @@ ExtractTrainingSubsetFromFile(std::ifstream & vectorstr,  // const std::string
       std::cout << "\n I  ";
       for( int j = 0; j < InputVectorSize; j++ )
         {
-        std::cout << " : " << CV_MAT_ELEM(  *(TrainSetPtr->inputVector), double, i, j);
+        std::cout << " : " << CV_MAT_ELEM(  *(TrainSetPtr->inputVector), neural_scalar_type, i, j);
         }
       std::cout << " :: O";
       for( int j = 0; j < OutputVectorSize; j++ )
         {
-        std::cout << " : " << CV_MAT_ELEM( *(TrainSetPtr->outputVector), double, i, j);
+        std::cout << " : " << CV_MAT_ELEM( *(TrainSetPtr->outputVector), neural_scalar_type, i, j);
         }
       }
     }
   return TrainSetPtr;
 }
 
-void ANNTrain( // ProcessDescription & prob,
+void ANNTrain( // NetConfiguration & prob,
   ANNParams *annParams,
   //  const std::string &StructureID,
   const std::string & VectorFilename,
   const std::string & ModelFilename,
   const std::string & TestVectorFilename,
-  bool doTest,
   int verbose)
 {
   std::string ANNVectorFilename = VectorFilename;
@@ -259,7 +245,7 @@ void ANNTrain( // ProcessDescription & prob,
             << NumberTrainingVectorsFromFile << std::endl;
   std::cout << "\nEstimated Memory Needed for Vectors: (MB) "
             << ( ( static_cast<float>( MaximumVectorsPerEpoch ) )
-       * sizeof( float )
+       * sizeof( neural_scalar_type)
        * ( InputVectorSize + 1.0F ) ) / ( 1024.0F * 1024.0F )
             << std::endl;
 
@@ -334,70 +320,7 @@ void ANNTrain( // ProcessDescription & prob,
   int                   test_OutputVectorSize = 0;
   int                   test_NumberTrainingVectorsFromFile = 0;
   std::ifstream         testVectorStr;
-  if( doTest )
-    {
-    testfilestr.open(ANNHeaderTestVectorFilename.c_str(),
-                     std::ios::in | std::ios::binary);
-    std::cout << "Read Vector Head file :: "
-              << ANNHeaderTestVectorFilename.c_str() << std::endl;
-    if( !testfilestr.is_open() )
-      {
-      std::cout << "Error: doTest: Could not open ANN Test vector file name of \""
-                << ANNHeaderTestVectorFilename.c_str() << "\"" << std::endl;
-      exit(-1);
-      }
-    for( int tags = 0; tags < 3; tags++ )      // Read header file for
-                                               // input/output
-    // vectors and total vectors.
-      {
-      std::string temp;
-      char        currentline[MAX_LINE_SIZE];
-      testfilestr.getline(currentline, MAX_LINE_SIZE - 1);
-      std::istringstream iss(currentline, std::istringstream::in);
-      iss >> temp;
-      if( temp == "IVS" )
-        {
-        iss >> test_InputVectorSize;
-        }
-      if( temp == "OVS" )
-        {
-        iss >> test_OutputVectorSize;
-        }
-      else if( temp == "TVC" )
-        {
-        iss >> test_NumberTrainingVectorsFromFile;
-        }
-      }
-    }
   testfilestr.close();
-  if( doTest )
-    {
-    testVectorStr.open(ANNTestVectorFilename.c_str(), std::ios::in);
-    std::cout << "------------- Read Vector file :: "
-              << ANNTestVectorFilename.c_str()
-              << std::endl;
-    if( !testVectorStr.is_open() )
-      {
-      std::cout << "Error: doTest: Could not open ANN Test vector file name of \""
-                << ANNTestVectorFilename.c_str() << "\"" << std::endl;
-      exit(-1);
-      }
-
-    if( TestSetPtr != 0 )
-      {
-      std::cout << "deleting..." << std::endl;
-      delete  TestSetPtr;
-      }
-    std::cout << "call extracing..." << std::endl;
-    TestSetPtr = ExtractTrainingSubsetFromFile(testVectorStr,
-                                               test_InputVectorSize,
-                                               test_OutputVectorSize,
-                                               1,
-                                               0,
-                                               test_NumberTrainingVectorsFromFile,
-                                               true
-                                               );
-    }
   // To trace minimum traininig point
   double TrainSet_MinimumMSE = 100.0; int TrainSet_MinimumMSEPoint = 0;
 
@@ -422,7 +345,6 @@ void ANNTrain( // ProcessDescription & prob,
                                               NumSubSets,
                                               0,
                                               NumberTrainingVectorsFromFile,
-                                              false,
                                               verbose
                                               );
   int first_iter = training_net->train( (TrainSetPtr->inputVector),
@@ -501,13 +423,13 @@ void ANNTrain( // ProcessDescription & prob,
           for( int j = 0; j < InputVectorSize; j++ )
             {
             std::cout << ": "
-                      << CV_MAT_ELEM(  *(TrainSetPtr->inputVector), double, i, j);
+                      << CV_MAT_ELEM(  *(TrainSetPtr->inputVector), neural_scalar_type, i, j);
             }
           std::cout << " :: O [" << OutputVectorSize << "] ";
           for( int j = 0; j < OutputVectorSize; j++ )
             {
             std::cout << ": "
-                      << CV_MAT_ELEM(  *(TrainSetPtr->outputVector), double, i, j);
+                      << CV_MAT_ELEM(  *(TrainSetPtr->outputVector), neural_scalar_type, i, j);
             }
           }
         }
@@ -601,71 +523,6 @@ void ANNTrain( // ProcessDescription & prob,
               << " Iteration. "
               << "\n###################################################\n";
     }
-  if( doTest ) // if training has been proceeeded
-    {          // Wirte to the header file as well at this point
-    std::cout <<  "###################################################\n"
-              << " * Minimum MSE of Testing : " << TestSet_MinimumMSE
-              << " at "                          << TestSet_MinimumMSEPoint
-              << " Iteration. "
-              << "\n###################################################\n";
-
-    // ANNHeaderVectorFilename
-    // ANNModelFilename
-    std::fstream ANNHeaderVectorStream;
-    ANNHeaderVectorStream.open(ANNHeaderTestVectorFilename.c_str(),
-                               std::ios::in
-                               | std::ios::binary );
-    std::cout << "Read Vector Head file :: "
-              << ANNHeaderTestVectorFilename.c_str() << std::endl;
-    if( !ANNHeaderVectorStream.is_open() )
-      {
-      std::cout << "Error: Writing Header File: \
-                    Could not open ANN Test vector file name of \""
-                << ANNHeaderTestVectorFilename.c_str() << "\"" << std::endl;
-      exit(-1);
-      }
-
-    std::string temp;      char        currentline[MAX_LINE_SIZE];
-
-    while( ANNHeaderVectorStream.getline(currentline, MAX_LINE_SIZE - 1) )
-      {
-      std::istringstream iss(currentline, std::istringstream::in);
-      iss >> temp;
-      if( temp == ANNModelFilename )
-        {
-        // TODO:: to modify with same name....?
-        std::cout << "* Found model file name in the hdr :: "
-                  << std::endl;
-        }
-      }
-
-    ANNHeaderVectorStream.close();
-
-    std::fstream ANNHeaderVectorStreamOut;
-    ANNHeaderVectorStreamOut.open(ANNHeaderTestVectorFilename.c_str(),
-                                  std::ios::out
-                                  | std::ios::app
-                                  | std::ios::binary );
-    if( !ANNHeaderVectorStreamOut.is_open() )
-      {
-      std::cout << "Error: Writing Header File: \
-                    Could not open ANN Test vector file name of \""
-                << ANNHeaderTestVectorFilename.c_str() << "\"" << std::endl;
-      exit(-1);
-      }
-    std::cout << ANNModelFilename.c_str()
-              << " "
-              << TestSet_MinimumMSEPoint
-              << std::endl;
-
-    // ANNHeaderVectorStreamOut.seekp(0,std::ios::end);
-    ANNHeaderVectorStreamOut << ANNModelFilename.c_str()
-                             << " "
-                             << TestSet_MinimumMSEPoint
-                             << std::endl;
-    ANNHeaderVectorStreamOut.flush();
-    ANNHeaderVectorStreamOut.close();
-    }
   // exit from loop bypasses deleting training set
   delete TrainSetPtr;
 
@@ -678,217 +535,51 @@ void ANNTrain( // ProcessDescription & prob,
     << std::endl;
 }
 
-void
-SVNTrain(   // ProcessDescription & proc,
-  SVMParams *svModel,
-  const std::string & StructureID,
-  const std::string & VectorFilename,
-  const std::string & ModelFilename)
+static int Train(NetConfiguration & ANNConfiguration, int verbose)
 {
-  std::string SVMVectorFilename = VectorFilename;
+  NeuralParams *model = ANNConfiguration.Get<NeuralParams>("NeuralNetParams");
 
-  SVMVectorFilename += "SVM";
-  SVMVectorFilename += StructureID.c_str();
-  std::string SVMModelFilename = ModelFilename;
-  SVMModelFilename += "SVM";
-  SVMModelFilename += StructureID.c_str();
-  float Gamma = 5.5;
-  Gamma = svModel->GetAttribute<FloatValue>("GaussianSize");
-
-  struct svm_parameter param;
-  param.svm_type = C_SVC;
-  param.kernel_type = RBF;
-  param.degree = 3;
-  param.gamma = Gamma;
-  param.coef0 = 0;
-  param.nu = 0.5;
-  param.cache_size = 100;
-  param.C = 1;
-  param.eps = 1e-3;
-  param.p = 0.1;
-  param.shrinking = 1;
-  param.probability = 1;
-  param.nr_weight = 0;
-  param.weight_label = NULL;
-  param.weight = NULL;
-
-  int InputVectorSize = 0;
-  int NumberTrainingVectorsFromFile = 0;
-    {
-    const std::string SVMHeaderVectorFilename = SVMVectorFilename + ".hdr";
-    std::ifstream     filestr;
-    filestr.open(SVMHeaderVectorFilename.c_str(), std::ios::in);
-    if( !filestr.is_open() )
-      {
-      std::cout << "Error: Could not open SVM vector file";
-      return;
-      }
-    for( int tags = 0; tags < 2; tags++ )
-      {
-      std::string temp;
-      char        currentline[MAX_LINE_SIZE];
-      filestr.getline(currentline, MAX_LINE_SIZE - 1);
-      if( strncmp(&( currentline[0] ), "IVS", 3) == 0 )
-        {
-        std::istringstream iss(currentline, std::istringstream::in);
-        iss >> temp;
-        iss >> InputVectorSize;
-        }
-      if( strncmp(&( currentline[0] ), "TVC", 3) == 0 )
-        {
-        std::istringstream iss(currentline, std::istringstream::in);
-        iss >> temp;
-        iss >> NumberTrainingVectorsFromFile;
-        }
-      }
-    if( ( InputVectorSize == 0 ) || ( NumberTrainingVectorsFromFile == 0 ) )
-      {
-      std::cout << "Input vector size and vector count must be non-zero."
-                << std::endl;
-      return;
-      }
-
-    if( param.gamma == 0 )
-      {
-      param.gamma = 1.0 / InputVectorSize;
-      }
-    filestr.close();
-    }
-  struct svm_problem prob;
-  prob.l_svm = NumberTrainingVectorsFromFile;
-  int elements = NumberTrainingVectorsFromFile * ( InputVectorSize + 1 );
-  prob.y_svm = (double *)malloc( ( prob.l_svm ) * sizeof( double ) );
-  prob.x_svm =
-    (struct svm_node * *)malloc( ( prob.l_svm ) * sizeof( struct svm_node * ) );
-  struct svm_node *x_space;
-  x_space = (struct svm_node *)malloc( ( elements ) * sizeof( struct svm_node ) );
-    {
-    std::ifstream VectorFileStream;
-    VectorFileStream.open(SVMVectorFilename.c_str(), std::ios::in);
-    if( !VectorFileStream.is_open() )
-      {
-      std::cout << "Error: Could not open SVM vector file";
-      free(x_space);
-      return;
-      }
-    int j = 0;
-    for( int vector = 0; vector < NumberTrainingVectorsFromFile; vector++ )
-      {
-      char currentline[MAX_LINE_SIZE];
-      VectorFileStream.getline(currentline, MAX_LINE_SIZE - 1);
-      std::istringstream iss(currentline, std::istringstream::in);
-      iss >> prob.y_svm[vector];
-      prob.x_svm[vector] = &x_space[j];
-      for( int a = 0; a < InputVectorSize; a++ )
-        {
-        iss >> x_space[j].value;
-        x_space[j].index = a + 1;
-        j++;
-        }
-      x_space[j].index = -1;
-      j++;
-      }
-    VectorFileStream.close();
-    }
-  struct svm_model *SVM;
-  SVM = svm_train(&prob, &param);
-    {
-    std::string destination_dir = itksys::SystemTools::GetFilenamePath(
-        SVMModelFilename);
-    itksys::SystemTools::MakeDirectory( destination_dir.c_str() );
-    }
-  svm_save_model(SVMModelFilename.c_str(), SVM);
-  svm_destroy_model(SVM);
-  svm_destroy_param(&param);
-  free(prob.y_svm);
-  free(prob.x_svm);
-  free(x_space);
-  std::cout << "\tSVM Model for " << StructureID << " Written to file "
-            << SVMModelFilename << "." << std::endl;
-}
-
-static void TrainStructure(ProcessDescription & ANNXMLObject,
-                           const std::string & StructureID,
-                           const std::string & VectorFilename,
-                           const std::string & ModelFilename)
-{
-  /*ANNParams *annParams = ANNXMLObject.Get<ANNParams>("ANNParams");
-    if(annParams != 0)
-      {
-      ANNTrain(ANNXMLObject,annParams,StructureID,VectorFilename,ModelFilename);
-      }*/
-  SVMParams *svModel =
-    ANNXMLObject.Get<SVMParams>("SVMParams");
-
-  //  if(!(svi == CurrASDef.end()))
-  if( svModel != 0 )
-    {
-    SVNTrain(/*ANNXMLObject,*/ svModel, StructureID, VectorFilename, ModelFilename);
-    }
-}
-
-static int Train(ProcessDescription & ANNXMLObject, bool doTest, int verbose)
-{
-  NeuralParams *model = ANNXMLObject.Get<NeuralParams>("NeuralNetParams");
-
-  ANNParams *annParams = ANNXMLObject.Get<ANNParams>("ANNParams");
+  ANNParams *annParams = ANNConfiguration.Get<ANNParams>("ANNParams");
 
   if( annParams != 0 )
     {
-    annParams = ANNXMLObject.Get<ANNParams>("ANNParams");
-    ANNTrain(   // ANNXMLObject,
+    annParams = ANNConfiguration.Get<ANNParams>("ANNParams");
+    ANNTrain(   // ANNConfiguration,
       annParams,
       model->GetAttribute<StringValue>("TrainingVectorFilename"),
       model->GetAttribute<StringValue>("TrainingModelFilename"),
       model->GetAttribute<StringValue>("TestVectorFileName"),
-      doTest,
       verbose
       );
-    }
-  else
-    {
-    ProbabilityMapList *probabilityMaps =
-      ANNXMLObject.Get<ProbabilityMapList>("ProbabilityMapList");
-    for( ProbabilityMapList::iterator
-         pmi = probabilityMaps->begin();
-         pmi != probabilityMaps->end();
-         ++pmi )
-      {
-      ProbabilityMap *current = dynamic_cast<ProbabilityMap *>( pmi->second );
-      TrainStructure( ANNXMLObject,
-                      current->GetAttribute<StringValue>("StructureID"),
-                      model->GetAttribute<StringValue>("TrainingVectorFilename"),
-                      model->GetAttribute<StringValue>("TrainingModelFilename") );
-      }
     }
   return 0;
 }
 
-int TrainModel(const std::string & XMLFile, int verbose, int StartIteration, bool doTest)
+int TrainModel(const std::string & XMLFile, int verbose, int StartIteration)
 {
 #if defined( NUMERIC_TRAP_TEST )
   // turn on numeric exceptions...
   _mm_setcsr( _MM_MASK_MASK & ~
               ( _MM_MASK_OVERFLOW | _MM_MASK_INVALID | _MM_MASK_DIV_ZERO ) );
 #endif
-  ProcessDescription ANNXMLObject;
+  NetConfiguration *     ANNConfiguration;
+  NetConfigurationParser ANNConfigurationParser = NetConfigurationParser( XMLFile );
   try
     {
-    ReadXML(XMLFile.c_str(), ANNXMLObject);
+    ANNConfiguration = ANNConfigurationParser.GetNetConfiguration();
     }
-  catch( ProcessObjectException & ex )
+  catch( BRAINSCutExceptionStringHandler & ex )
     {
     std::cerr << ex.Error() << std::endl;
     exit(-1);
     }
-  ANNXMLObject.Verify();
-  if( ANNXMLObject.Verify() != true )
+  if( ANNConfiguration->Verify() != true )
     {
     std::cerr << "XML file " << " is invalid." << std::endl;
     std::cerr << "FULL DUMP ===============================" << std::endl;
     std::cerr << "FULL DUMP ===============================" << std::endl;
     std::cerr << "FULL DUMP ===============================" << std::endl;
-    ANNXMLObject.PrintSelf(std::cerr, 0);
+    ANNConfiguration->PrintSelf(std::cerr, 0);
     std::cerr << "FULL DUMP ===============================" << std::endl;
     std::cerr << "FULL DUMP ===============================" << std::endl;
     std::cerr << "FULL DUMP ===============================" << std::endl;
@@ -904,10 +595,10 @@ int TrainModel(const std::string & XMLFile, int verbose, int StartIteration, boo
       std::cerr << "This will print out in detail with process....\n";
       }
     std::cout << "Training Model(s)" << std::endl;
-    rval = Train(ANNXMLObject, doTest, verbose);
+    rval = Train(*ANNConfiguration, verbose);
     std::cout << "Finished Training" << std::endl;
     }
-  catch( ProcessObjectException & ex )
+  catch( BRAINSCutExceptionStringHandler & ex )
     {
     std::cerr << ex.Error() << std::endl;
     rval = -1;

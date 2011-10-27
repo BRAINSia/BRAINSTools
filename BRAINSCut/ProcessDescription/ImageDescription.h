@@ -2,12 +2,12 @@
 #define ImageDescription_h
 
 #include "StringValue.h"
-#include "CompoundObjectBase.h"
+#include "XMLElementParser.h"
 
-class ImageDescription : public CompoundObjectBase
+class ImageDescription : public XMLElementParser
 {
 public:
-  typedef CompoundObjectBase SuperClass;
+  typedef XMLElementParser SuperClass;
   virtual int PrintSelf(std::ostream & os, int indent) const
   {
     indent += SuperClass::PrintSelf(os, indent);
@@ -15,17 +15,17 @@ public:
     return indent + 2;
   }
 
-  ImageDescription() : CompoundObjectBase("Image")
+  ImageDescription() : XMLElementParser("Image")
   {
     this->Add(new StringValue("Type", ""), "Type");
     this->Add(new StringValue("Filename", ""), "Filename");
   }
 };
 
-class ImageList : public CompoundObjectBase
+class ImageList : public XMLElementParser
 {
 public:
-  ImageList() : CompoundObjectBase("ImageList")
+  ImageList() : XMLElementParser("ImageList")
   {
   }
 };

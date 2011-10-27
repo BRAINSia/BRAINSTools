@@ -1,14 +1,14 @@
 #ifndef StringValue_h
 #define StringValue_h
-#include "ProcessObjectBase.h"
+#include "XMLElementContainer.h"
 #include <string>
 #include <iostream>
 
 class StringValue :
-  public ValueObjectBase<const std::string>
+  public XMLContents<const std::string>
 {
 public:
-  typedef ValueObjectBase<const std::string> SuperClass;
+  typedef XMLContents<const std::string> SuperClass;
   virtual int PrintSelf(std::ostream & os, int indent) const
   {
     indent += SuperClass::PrintSelf(os, indent);
@@ -19,7 +19,7 @@ public:
 
   typedef const std::string ReturnType;
   StringValue(ReturnType & name, ReturnType & value) :
-    ValueObjectBase<ReturnType>(name),
+    XMLContents<ReturnType>(name),
     m_Value(value)
   {
   }

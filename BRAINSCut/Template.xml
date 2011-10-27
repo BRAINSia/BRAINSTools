@@ -36,14 +36,14 @@
   </DataSet>
 
    <!-- List of Probability Map objects. These specify the outputs -->
-   <ProbabilityMap StructureID="id" Gaussian="num" Filename="filename" />
+   <ProbabilityMapParser StructureID="id" Gaussian="num" Filename="filename" />
    <!-- StructureID -- specifies the anatomical structure, must correspond
      -- to the structure to a Mask type 
      -- Gaussian -- floating pt number for Gaussian sigma
      -- Filename -- output filename to store the probability map
      -->
    
-   <RegistrationParams Type="type" 
+   <RegistrationConfigurationParser Type="type" 
                        ImageType="Type" 
                        Command="Registratioin Command" 
                        RegistrationID="id" />

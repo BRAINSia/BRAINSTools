@@ -1,12 +1,12 @@
 #if 0
 #ifndef LandmarkType_h
 #define LandmarkType_h
-#include "CompoundObjectBase.h"
+#include "XMLElementParser.h"
 #include "StringValue.h"
-class LandmarkType : public CompoundObjectBase
+class LandmarkType : public XMLElementParser
 {
 public:
-  typedef CompoundObjectBase SuperClass;
+  typedef XMLElementParser SuperClass;
   virtual int PrintSelf(std::ostream & os, int indent) const
   {
     indent += SuperClass::PrintSelf(os, indent);
@@ -14,17 +14,17 @@ public:
     return indent + 2;
   }
 
-  LandmarkType() : CompoundObjectBase("Landmark")
+  LandmarkType() : XMLElementParser("Landmark")
   {
     this->Add(new StringValue("Type", ""), "Type");
     this->Add(new StringValue("Filename", ""), "Filename");
   }
 };
 
-class LandmarkList : public CompoundObjectBase
+class LandmarkList : public XMLElementParser
 {
 public:
-  LandmarkList() : CompoundObjectBase("LandmarkList")
+  LandmarkList() : XMLElementParser("LandmarkList")
   {
   }
 };

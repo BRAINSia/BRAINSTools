@@ -127,6 +127,13 @@ main(int argc, char *argv[])
    *  itk::HistogramMatchingImageFilter
    */
 
+  if( histogramAlgorithm == "quantileHistogramMatch" )
+    {
+    std::cout << "Using: " << histogramAlgorithm << " algorithm." << std::endl;
+    std::cout << "This is under the construction. " << std::endl;
+    exit(1);
+    // Find quantiles and linearly scale image.
+    }
   if( histogramAlgorithm == "simpleITKHistogramMatch" )
     {
     std::cout << "Using: " << histogramAlgorithm << " algorithm." << std::endl;

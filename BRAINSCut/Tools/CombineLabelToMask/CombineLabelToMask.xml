@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
   <executable>
-  <category>Utilities.BRAINS</category>
+    <category>BRAINSCut.Tools</category>
   <title>CombineLabelToMask</title>
 
   <description>Combine mask image which has different labels to one label mask </description>
@@ -42,6 +42,14 @@
       <longflag>lowerThreshold</longflag>
       <label>lower threshold value</label>
       <default>1</default>
+      <channel>input</channel>
+    </integer>
+
+    <integer>
+      <name>upperThreshold</name>
+      <longflag>upperThreshold</longflag>
+      <label>upper threshold value</label>
+      <default>-1</default>
       <channel>input</channel>
     </integer>
 

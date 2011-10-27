@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
   <executable>
   <category>Statistics</category>
-  <title>Co-Occurrence Matrix (BRAINS via Hammer)</title>
+  <title>Co-Occurrence Matrix </title>
 
   <description>Get texture of the image</description>
   <version>0.1.0.$Revision: 1 $(alpha)</version>

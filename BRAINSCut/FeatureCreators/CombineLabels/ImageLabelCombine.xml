@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
-  <category> Segmentation </category>
-  <title> Image Combine To LabelMap </title>
+  <category>
+  BRAINS.BRAINSCut
+  </category>
+  <title>
+  Image Label Combine
+  </title>
   <description>
   Combine multiple binary images into one label map with different label map value. The order of given binary volumes should match with the order of given label map values(integer). From the multiple binary images, this would produce one label map. </description>
   <version>0.1.0</version>
@@ -37,7 +41,7 @@
     </image>
 
   </parameters>
-
+  
   <parameters>
     <label>Label combination options</label>
     <description>Selection of how to combine label maps</description>
@@ -49,5 +53,5 @@
       <label>First Label Overwrites Second</label>
       <default>true</default>
     </boolean>
-  </parameters>
+  </parameters>  
 </executable>

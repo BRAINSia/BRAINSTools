@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
   <executable>
-    <category>Utilities.BRAINS</category>
-  <title>GradientAnisopropicDiffusionFilter (BRAINS)</title>
+    <category>BRAINS3.BRAINSCut.Features.</category>
+  <title>GradientAnisopropicDiffusionFilter</title>
 
   <description> Image Smoothing using Gradient Anisotropic Diffuesion Filer</description>
   <contributor> This tool was developed by Eun Young Kim by modifying ITK Example </contributor>

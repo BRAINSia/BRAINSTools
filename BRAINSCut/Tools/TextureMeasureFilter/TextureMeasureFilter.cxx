@@ -1,0 +1,227 @@
+/*=========================================================================
+
+  Program:   Insight Segmentation & Registration Toolkit
+  Module:    $RCSfile: CannySegmentationLevelSetImageFilter.cxx,v $
+  Language:  C++
+  Date:      $Date: 2009-03-17 21:44:37 $
+  Version:   $Revision: 1.31 $
+
+  Copyright (c) Insight Software Consortium. All rights reserved.
+  See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
+
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notices for more information.
+
+=========================================================================*/
+#if defined(_MSC_VER)
+#pragma warning ( disable : 4786 )
+#endif
+
+#ifdef __BORLANDC__
+#define ITK_LEAN_AND_MEAN
+#endif
+
+#include "itkImage.h"
+
+#include "itkImageFileReader.h"
+#include "itkImageFileWriter.h"
+
+#include "itkScalarImageToTextureFeaturesFilter.h"
+#include "itkRescaleIntensityImageFilter.h"
+
+#include "TextureMeasureFilterCLP.h"
+#include "itkCastImageFilter.h"
+#include "itkBinaryThresholdImageFilter.h"
+int main( int argc, char *argv[] )
+{
+  PARSE_ARGS;
+
+  if( inputVolume == "na"  || inputMaskVolume == "na" )
+    {
+    std::cout << "InputVolume Required!"
+              << std::endl;
+    }
+
+  const     unsigned int Dimension = 3;
+
+  typedef   double                              InputPixelType;
+  typedef itk::Image<InputPixelType, Dimension> InputImageType;
+  typedef itk::ImageFileReader<InputImageType>  InputImageReaderType;
+
+  InputImageReaderType::Pointer inputImageReader = InputImageReaderType::New();
+
+  inputImageReader->SetFileName( inputVolume );
+  try
+    {
+    inputImageReader->Update();
+    }
+  catch( itk::ExceptionObject & err )
+    {
+    std::cout << "Exception Object Caught! "
+              << std::endl;
+    }
+
+  /** Convert Type to unsigned char */
+  typedef itk::RescaleIntensityImageFilter<InputImageType, InputImageType>
+    RescaleFilterType;
+
+  RescaleFilterType::Pointer rescaler = RescaleFilterType::New();
+
+  rescaler->SetInput( inputImageReader->GetOutput() );
+  rescaler->SetOutputMaximum(255);
+  rescaler->SetOutputMinimum(0);
+
+  /** read ROI mask */
+  typedef unsigned char                            InternalPixelType;
+  typedef itk::Image<InternalPixelType, Dimension> InternalImageType;
+  typedef itk::CastImageFilter<InputImageType, InternalImageType>
+    CasterType;
+
+  CasterType::Pointer caster = CasterType::New();
+
+  caster->SetInput( inputImageReader->GetOutput() );
+
+  typedef itk::ImageFileReader<InputImageType> BinaryImageReaderType;
+
+  BinaryImageReaderType::Pointer binaryImageReader = BinaryImageReaderType::New();
+
+  binaryImageReader->SetFileName( inputMaskVolume);
+
+  /** make sure binary mask */
+  typedef itk::BinaryThresholdImageFilter<InputImageType, InternalImageType>
+    BinaryFilterType;
+  BinaryFilterType::Pointer binaryFilter = BinaryFilterType::New();
+
+  binaryFilter->SetInput( binaryImageReader->GetOutput() );
+  binaryFilter->SetLowerThreshold(1.0);
+  binaryFilter->SetInsideValue(1);
+  binaryFilter->SetOutsideValue(1);
+
+  /** texture Computation */
+
+  typedef itk::Statistics::ScalarImageToTextureFeaturesFilter<InternalImageType>
+    TextureFilterType;
+
+  TextureFilterType::FeatureNameVectorPointer requestedFeatures =
+    TextureFilterType::FeatureNameVector::New();
+
+  /** texture setting */
+  requestedFeatures->push_back( TextureFilterType::TextureFeaturesFilterType::Energy );
+  requestedFeatures->push_back( TextureFilterType::TextureFeaturesFilterType::Entropy );
+  requestedFeatures->push_back( TextureFilterType::TextureFeaturesFilterType::Correlation );
+  requestedFeatures->push_back( TextureFilterType::TextureFeaturesFilterType::InverseDifferenceMoment );
+  requestedFeatures->push_back( TextureFilterType::TextureFeaturesFilterType::ClusterShade );
+  requestedFeatures->push_back( TextureFilterType::TextureFeaturesFilterType::ClusterProminence );
+  requestedFeatures->push_back( TextureFilterType::TextureFeaturesFilterType::HaralickCorrelation );
+
+  TextureFilterType::Pointer textureFilter = TextureFilterType::New();
+
+  /** texture distance */
+  TextureFilterType::OffsetVectorPointer requestedOffsets =
+    TextureFilterType::OffsetVector::New();
+
+  TextureFilterType::OffsetVector::ConstIterator offSetIt;
+  std::cout << "TextureDistance,"
+            << distance
+            << std::endl;
+  for( offSetIt  = textureFilter->GetOffsets()->Begin();
+       offSetIt != textureFilter->GetOffsets()->End();
+       ++offSetIt )
+    {
+    TextureFilterType::OffsetType tempOffset = offSetIt.Value();
+    for( unsigned int t = 0; t < Dimension; t++ )
+      {
+      tempOffset[t] *= distance;
+      }
+    requestedOffsets->push_back( tempOffset );
+    }
+
+  textureFilter->SetInput( caster->GetOutput() );
+  textureFilter->SetMaskImage( binaryFilter->GetOutput() );
+  // textureFilter->SetInsidePixelValue( 1 );
+  textureFilter->SetNumberOfBinsPerAxis(256);
+  textureFilter->FastCalculationsOff();
+  textureFilter->SetRequestedFeatures( requestedFeatures);
+  textureFilter->SetOffsets( requestedOffsets );
+  try
+    {
+    textureFilter->Update();
+    }
+  catch( itk::ExceptionObject & err )
+    {
+    std::cout << "Exception Object Caught! "
+              << std::endl;
+    }
+
+  /** Get output and display */
+
+  TextureFilterType::FeatureValueVectorPointer means, stds;
+
+  means = textureFilter->GetFeatureMeans();
+  stds = textureFilter->GetFeatureStandardDeviations();
+
+  const TextureFilterType::FeatureNameVector* featureNames = textureFilter->GetRequestedFeatures();
+
+  TextureFilterType::FeatureValueVector::ConstIterator mIt;
+  TextureFilterType::FeatureValueVector::ConstIterator sIt;
+  TextureFilterType::FeatureNameVector::ConstIterator  nIt;
+
+  int counter;
+  for( counter = 0, mIt = means->Begin(), sIt = stds->Begin(), nIt = featureNames->Begin();
+       mIt != means->End(); ++mIt, counter++, ++nIt, ++sIt )
+    {
+    int name = nIt.Value();
+
+    switch( name )
+      {
+      case 0:
+        {
+        std::cout << "Energy                  " << ",";
+        }
+        break;
+      case 1:
+        {
+        std::cout << "Entropy                  " << ",";
+        }
+        break;
+      case 2:
+        {
+        std::cout << "Correlation              " << ",";
+        }
+        break;
+      case 3:
+        {
+        std::cout << "InverseDifferenceMoment  " << ",";
+        }
+        break;
+      case 4:
+        {
+        std::cout << "Inertia                  " << ",";
+        }
+        break;
+      case 5:
+        {
+        std::cout << "ClusterShade             " << ",";
+        }
+        break;
+      case 6:
+        {
+        std::cout << "ClusterProminence        " << ",";
+        }
+        break;
+      case 7:
+        {
+        std::cout << "HaralickCorrelation      " << ",";
+        }
+        break;
+      default:
+        std::cout << "Unknown Feature          " << ",";
+      }
+    std::cout
+      << mIt.Value() << ","
+      << sIt.Value() << std::endl;
+    }
+
+  return 0;
+}

@@ -1,13 +1,13 @@
 #ifndef NumericValue_h
 #define NumericValue_h
-#include "ProcessObjectBase.h"
+#include "XMLElementContainer.h"
 
 template <typename T>
 class NumericValue :
-  public ValueObjectBase<T>
+  public XMLContents<T>
 {
 public:
-  typedef ValueObjectBase<T> SuperClass;
+  typedef XMLContents<T> SuperClass;
   virtual int PrintSelf(std::ostream &, int indent) const
   {
     // indent+=SuperClass::PrintSelf(os, indent);
@@ -17,7 +17,7 @@ public:
   }
 
   NumericValue(const std::string & name, T value) :
-    ValueObjectBase<T>(name),
+    XMLContents<T>(name),
     m_Value(value)
   {
   }

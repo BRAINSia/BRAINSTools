@@ -2,14 +2,15 @@
 #include <itksys/SystemTools.hxx>
 #include <iostream>
 #include <fstream>
-#include <ProcessObjectBase.h>
+#include <XMLElementContainer.h>
+#include "BRAINSCutExceptionStringHandler.h"
 static
 void
 SE(void *parser,
    const XML_Char *name,
    const XML_Char * *atts)
 {
-  XMLParserBase *Parser = static_cast<XMLParserBase *>( parser );
+  XMLParser *Parser = static_cast<XMLParser *>( parser );
 
   Parser->StartElement(Parser->GetUserData(),
                        name,
@@ -21,14 +22,14 @@ void
 EE(void *parser,
    const XML_Char *name)
 {
-  XMLParserBase *Parser = static_cast<XMLParserBase *>( parser );
+  XMLParser *Parser = static_cast<XMLParser *>( parser );
 
   Parser->EndElement(Parser->GetUserData(),
                      name);
 }
 
 bool
-XMLParserBase::Parse()
+XMLParser::Parse()
 {
   this->m_Parser = XML_ParserCreate(0);
 
@@ -45,7 +46,7 @@ XMLParserBase::Parse()
     std::string message = "Can't open ";
     message += this->m_Filename;
     message += '\n';
-    ProcessObjectException exception(message);
+    BRAINSCutExceptionStringHandler exception(message);
     throw exception;
     }
 
@@ -59,7 +60,7 @@ XMLParserBase::Parse()
 
   if( static_cast<std::streamsize>( inputstream.gcount() ) != filesize )
     {
-    ProcessObjectException exception("File Read Error");
+    BRAINSCutExceptionStringHandler exception("File Read Error");
     throw exception;
     }
   return XML_Parse(this->m_Parser,

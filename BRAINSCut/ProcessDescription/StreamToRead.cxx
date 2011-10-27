@@ -1,6 +1,7 @@
 #include "StreamToRead.h"
 #include <iostream>
 #include <fstream>
+#include "BRAINSCutExceptionStringHandler.h"
 
 StreamToRead::ReturnType
 StreamToRead::GetValue(void)
@@ -9,7 +10,7 @@ StreamToRead::GetValue(void)
     {
     std::string msg("Missing File Name For ");
     msg += this->GetName();
-    throw ProcessObjectException(msg);
+    throw BRAINSCutExceptionStringHandler(msg);
     }
   if( this->m_F != 0 )
     {
@@ -24,7 +25,7 @@ StreamToRead::GetValue(void)
     {
     std::string msg("Can't open ");
     msg += this->m_Filename;
-    throw ProcessObjectException(msg);
+    throw BRAINSCutExceptionStringHandler(msg);
     }
   return this->m_F;
 }

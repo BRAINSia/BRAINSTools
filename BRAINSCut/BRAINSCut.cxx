@@ -4,13 +4,65 @@
 #include "itkScaleVersor3DTransform.h"
 #include "itkVersorRigid3DTransform.h"
 #include "itkTransformFactory.h"
+
 #include "BRAINSThreadControl.h"
+#include "BRAINSCutGenerateProbability.h"
+#include "BRAINSCutCreateVector.h"
+#include "BRAINSCutVectorTrainingSet.h"
+#include "BRAINSCutTrainModel.h"
+#include "BRAINSCutApplyModel.h"
 
 #include "BRAINSCutCLP.h"
 
 int main(int argc, char * *argv)
 {
   PARSE_ARGS;
+
+  /** Test of Class
+   */
+  if( generateProbability )
+    {
+    BRAINSCutGenerateProbability testBRAINSCutClass( netConfiguration );
+    testBRAINSCutClass.GenerateProbabilityMaps();
+    }
+  if( createVectors )
+    {
+    BRAINSCutCreateVector testCreateVector( netConfiguration );
+    testCreateVector.SetTrainingDataSetFromNetConfiguration();
+    testCreateVector.CreateVectors();
+    }
+  if( trainModel )
+    {
+    try
+      {
+      BRAINSCutTrainModel testTrain( netConfiguration);
+      testTrain.InitializeNeuralNetwork();
+      testTrain.InitializeTrainDataSet();
+      testTrain.Train();
+      }
+    catch( BRAINSCutExceptionStringHandler& e )
+      {
+      std::cout << e.Error();
+      }
+    }
+  if( applyModel )
+    {
+    try
+      {
+      BRAINSCutApplyModel applyTest( netConfiguration );
+
+      applyTest.SetApplyDataSetFromNetConfiguration();
+      applyTest.SetANNModelFilenameFromNetConfiguration();
+
+      applyTest.Apply();
+      }
+    catch( BRAINSCutExceptionStringHandler& e )
+      {
+      std::cout << e.Error();
+      }
+    }
+
+/*
   BRAINSUtils::SetThreadCount(numberOfThreads);
 
   // Apparently when you register one transform, you need to register all your
@@ -28,7 +80,9 @@ int main(int argc, char * *argv)
     extern int GenerateProbability(const std::string & xmlFile,
                                    int verbose,
                                    bool validate);
-    status = GenerateProbability(netConfiguration, verbose, validate);
+    status = GenerateProbability(netConfiguration,
+                                 verbose,
+                                 validate);
     if( verbose > 9 )
       {
       std::cout << " Status Returned from GenerateProbability is "
@@ -40,11 +94,9 @@ int main(int argc, char * *argv)
     {
     extern int CreateVectors(const std::string & xmlFile,
                              bool histogramEqualization,
-                             bool doTest,
                              int verbose);
     status = CreateVectors(netConfiguration,
                            histogramEqualization,
-                           doTest,
                            verbose);
     if( verbose > 9 )
       {
@@ -57,13 +109,11 @@ int main(int argc, char * *argv)
     {
     extern int TrainModel(const std::string & xmlFile,
                           int verbose,
-                          int start_iteration,
-                          bool doTest
+                          int start_iteration
                           );
     status = TrainModel(netConfiguration,
                         verbose,
-                        trainModelStartIndex,
-                        doTest);
+                        trainModelStartIndex);
     if( verbose > 9 )
       {
       std::cout << " Status Returned from CreateVectors is "
@@ -76,13 +126,13 @@ int main(int argc, char * *argv)
     extern int ApplyModel(const std::string & xmlFile,
                           int verbose,
                           bool histogramEqualization,
-                          bool multiStructureThreshold,
-                          bool doTest);
+                          bool multiStructureThreshold);
     status = ApplyModel(netConfiguration,
                         verbose,
                         histogramEqualization,
-                        multiStructureThreshold,
-                        doTest);
+                        multiStructureThreshold
+                        );
     }
   exit(status);
+  */
 }

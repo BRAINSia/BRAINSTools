@@ -11,9 +11,9 @@
   * dependancies of probability images being written as un-signed characters's
   * */
 
-static const float HUNDRED_PERCENT_VALUE = 1.0F;
-static const float MINIMUM_VALUE = 0.0F;
-static const float PERCENT_MIN_MAX_TOLERANCE = 0.01F;
+static const double HUNDRED_PERCENT_VALUE = 1.0F;
+static const double MINIMUM_VALUE = 0.0F;
+static const double PERCENT_MIN_MAX_TOLERANCE = 0.01F;
 // static const float
 // THRESHOLD_CUTOFF=HUNDRED_PERCENT_VALUE-PERCENT_MIN_MAX_TOLERANCE;
 // static const float
@@ -74,6 +74,7 @@ static const float PERCENT_MIN_MAX_TOLERANCE = 0.01F;
 #include "itkWeightSetBase.h"
 
 #include "GenericTransformImage.h"
+#include "itkLabelStatisticsImageFilter.h"
 
 // ****************OpenCV****************//
 // ****************OpenCV****************//
@@ -81,7 +82,7 @@ static const float PERCENT_MIN_MAX_TOLERANCE = 0.01F;
 #include "ml.h"
 #include "cxcore.h"
 #include "cv.h"
-typedef double  neural_scalar_type;
+typedef float   neural_scalar_type;
 typedef CvMat * neural_vector_type;
 
 typedef struct
@@ -98,7 +99,7 @@ typedef CvANN_MLP_Revision neural_net_type;
 // ******************SVNM****************//
 // ******************SVNM****************//
 #include "Svm.h"
-#include "ProcessDescription.h"
+#include "NetConfiguration.h"
 
 #include "vnl/vnl_vector.h"
 #include "vnl/vnl_c_vector.h"
@@ -146,8 +147,8 @@ typedef CvANN_MLP_Revision neural_net_type;
 //
 #include "BRAINSFitHelper.h"
 
-typedef itk::Image<float, 3> RealImageType;
-typedef itk::Image<float, 3> ProbabilityMapImageType;
+typedef itk::Image<float, 3> InputImageType;
+typedef itk::Image<float, 3> InternalImageType;
 typedef itk::Image<itk::Vector<float,
                                3>, 3>                     TDeformationField;
 typedef itk::Image<itk::CovariantVector<float,
@@ -155,35 +156,35 @@ typedef itk::Image<itk::CovariantVector<float,
 typedef itk::RecursiveGaussianImageFilter<itk::Image<float,
                                                      3>, itk::Image<float, 3> > g_GaussianFilterType;
 
-#if 1
+#if 0
 const unsigned int WindowRadius = 5;
 typedef itk::Function::HammingWindowFunction<WindowRadius, float,
                                              float> WindowFunctionType;
 
-typedef itk::ConstantBoundaryCondition<ProbabilityMapImageType>
+typedef itk::ConstantBoundaryCondition<InternalImageType>
   BoundaryConditionType;
 typedef itk::WindowedSincInterpolateImageFunction<
-    ProbabilityMapImageType,
+    InternalImageType,
     WindowRadius,
     WindowFunctionType,
     BoundaryConditionType,
     float>   ImageLinearInterpolatorType;
 
-typedef itk::ConstantBoundaryCondition<RealImageType> RealBoundaryConditionType;
+typedef itk::ConstantBoundaryCondition<InputImageType> RealBoundaryConditionType;
 typedef itk::WindowedSincInterpolateImageFunction<
-    RealImageType,
+    InputImageType,
     WindowRadius,
     WindowFunctionType,
     RealBoundaryConditionType,
     float>  ImageLinearInterpolatorRealType;
 #else
-typedef itk::LinearInterpolateImageFunction<ProbabilityMapImageType,
+typedef itk::LinearInterpolateImageFunction<InternalImageType,
                                             float> ImageLinearInterpolatorType;
-typedef itk::LinearInterpolateImageFunction<RealImageType,
+typedef itk::LinearInterpolateImageFunction<InputImageType,
                                             float> ImageLinearInterpolatorRealType;
 #endif
 
-extern bool CHECK_CORONAL(ProbabilityMapImageType::DirectionType Dir);
+extern bool CHECK_CORONAL(InternalImageType::DirectionType Dir);
 
 /**
   * \ingroup Util
@@ -217,10 +218,10 @@ extern void ReadDeformationField(TDeformationField::Pointer & DeformationField,
   * \param SmoothedImage Output Image Pointer
   * \return Void
   */
-// extern void SmoothSingleImage(ProbabilityMapImageType::Pointer
+// extern void SmoothSingleImage(InternalImageType::Pointer
 // &ImageToSmooth,
 //     const float currentGaussianSigma,
-//     ProbabilityMapImageType::Pointer &SmoothedImage);
+//     InternalImageType::Pointer &SmoothedImage);
 template <class SmootherImageType>
 typename SmootherImageType::Pointer
 SmoothSingleImage(typename SmootherImageType::Pointer ImageToSmooth,
@@ -235,9 +236,9 @@ SmoothSingleImage(typename SmootherImageType::Pointer ImageToSmooth,
     std::cout << " Smoothing Guassian with of " << currentGaussianSigma
               << std::endl;
     typename itk::RescaleIntensityImageFilter<SmootherImageType,
-                                              RealImageType>::Pointer
+                                              InputImageType>::Pointer
     ProbMapToRealCast =
-      itk::RescaleIntensityImageFilter<SmootherImageType, RealImageType>::New();
+      itk::RescaleIntensityImageFilter<SmootherImageType, InputImageType>::New();
     ProbMapToRealCast->SetOutputMinimum(0.0F);
     ProbMapToRealCast->SetOutputMaximum(1.0F);
     ProbMapToRealCast->SetInput(ImageToSmooth);
@@ -263,10 +264,10 @@ SmoothSingleImage(typename SmootherImageType::Pointer ImageToSmooth,
     g_gaussianFilterZ->SetDirection(2);
     g_gaussianFilterZ->SetInput( g_gaussianFilterY->GetOutput() );
     g_gaussianFilterZ->ReleaseDataFlagOn();
-    typename itk::RescaleIntensityImageFilter<RealImageType,
+    typename itk::RescaleIntensityImageFilter<InputImageType,
                                               SmootherImageType>::Pointer
     RealToProbMapCast =
-      itk::RescaleIntensityImageFilter<RealImageType, SmootherImageType>::New();
+      itk::RescaleIntensityImageFilter<InputImageType, SmootherImageType>::New();
     RealToProbMapCast->SetOutputMinimum(0);
     RealToProbMapCast->SetOutputMaximum(HUNDRED_PERCENT_VALUE);
     RealToProbMapCast->SetInput( g_gaussianFilterZ->GetOutput() );
@@ -312,21 +313,67 @@ extern unsigned int InputVectorSizeRequirement(const unsigned int NumberOfProbab
   * \param IrisSize Desired Iris Size
   * \return Void
   */
-extern void AddInputVector(std::vector<float> & inputvector,
-                           // ProbabilityMapImageType::Pointer ProbMapImage,
-                           itk::Image<itk::CovariantVector<float,
-                                                           3>,
-                                      3>::Pointer ProbMapGradient, RealImageType::Pointer RhoMapImage,
-                           RealImageType::Pointer PhiMapImage, RealImageType::Pointer ThetaMapImage,
-                           // const DataSet::TypeVector &ImageTypeList,
-                           const std::map<std::string,
-                                          ProbabilityMapImageType::Pointer> & MapOfImages, std::map<std::string,
-                                                                                                    ImageLinearInterpolatorType
-                                                                                                    ::Pointer>  &
-                           MapOfImageInterpolators, const ProbabilityMapImageType::Pointer DeformedProbabilityMap[],
-                           const int NumberOfProbabilityMaps, const ProbabilityMapImageType::IndexType & CurrentIndex,
-                           const int GradientProfileSize/*,
-                                 * const int IrisSize*/);
+extern  void AddInputVector(std::vector<neural_scalar_type> & inputvector, itk::Image<itk::CovariantVector<float,
+                                                                                                           3>,
+                                                                                      3>::Pointer ProbMapGradient,
+                            InternalImageType::Pointer RhoMapImage, InternalImageType::Pointer PhiMapImage,
+                            InternalImageType::Pointer ThetaMapImage, const std::map<std::string,
+                                                                                     InternalImageType
+                                                                                     ::
+                                                                                     Pointer> & MapOfImages,
+                            const std::map<std::string,
+                                           InternalImageType
+                                           ::
+                                           Pointer> & MapOfDeformedROIs, std::map<std::string,
+                                                                                  neural_scalar_type>
+                            & MapOfLocalMean, std::map<std::string,
+                                                       neural_scalar_type>
+                            & MapOfLocalStd, std::map<int,
+                                                      std
+                                                      ::string>& MapOfROIOrder,
+                            const InternalImageType::IndexType & CurrentIndex,
+                            const int GradientProfileSize);
+
+extern int AddROIVectorTrain( ProbabilityMapParser * currentROI, DataSet * subjectSet, NetConfiguration & ANNXMLObject,
+                              std::map<int,
+                                       std
+                                       ::
+                                       string> MapOfROIOrder, std::map<std::string,
+                                                                       InternalImageType
+                                                                       ::
+                                                                       Pointer>& MapOfImages, std::map<std::string,
+                                                                                                       InternalImageType
+                                                                                                       ::
+                                                                                                       Pointer> &
+                              MapOfDeformedROIs, std::map<std::string,
+                                                          InternalImageType
+                                                          ::
+                                                          Pointer>& MapOfDeformedSpatialDescription,
+                              const int inputVectorSize, const int outputVectorSize,
+                              std::ofstream & ANNVectorStream);
+
+extern void AddROIVectorApply( ProbabilityMapParser * currentROI, DataSet * subjectSet, NetConfiguration & ANNXMLObject,
+                               std::map<int,
+                                        std
+                                        ::
+                                        string> MapOfROIOrder, std::map<std::string,
+                                                                        InternalImageType
+                                                                        ::
+                                                                        Pointer>& MapOfImages, std::map<std::string,
+                                                                                                        InternalImageType
+                                                                                                        ::
+                                                                                                        Pointer> &
+                               MapOfDeformedROIs, std::map<std::string,
+                                                           InternalImageType
+                                                           ::
+                                                           Pointer>& MapOfDeformedSpatialDescription,
+                               const int inputVectorSize, const int outputVectorSize,
+                               const std::string ANNModelFilename);
+
+extern int AddSubjectInputVector(DataSet * subjectSet, NetConfiguration & ANNXMLObject,
+                                 const std::string registrationID, const int inputVectorSize,
+                                 const int outputVectorSize, const map<int, std::string>& MapOfROIOrder,
+                                 bool Apply = false);
 
 extern void XYZToSpherical(const itk::Point<float, 3> & LocationWithOriginAtCenterOfImage, float & rho, float & phi,
                            float & theta);
@@ -348,13 +395,15 @@ extern void XYZToSpherical(const itk::Point<float, 3> & LocationWithOriginAtCent
   * \return Void
   */
 extern void FillGradProfile(std::vector<float>::iterator & fi, const std::map<std::string,
-                                                                              ProbabilityMapImageType::Pointer> MapOfImages, std::map<std::string,
-                                                                                                                                      ImageLinearInterpolatorType
-                                                                                                                                      ::
-                                                                                                                                      Pointer>
+                                                                              InternalImageType::Pointer>& MapOfImages,
+                            std::map<std::string,
+                                     ImageLinearInterpolatorType
+                                     ::
+                                     Pointer>
                             MapOfImageInterpolators,
-                            //  const ProbabilityMapImageType::Pointer DeformedProbMap,
-                            const ProbabilityMapImageType::IndexType & CurrentIndex, const int ProfileExtent/*,
+                            //  const InternalImageType::Pointer DeformedProbMap,
+                            const InternalImageType::IndexType & CurrentIndex,
+                            const int ProfileExtent/*,
                            * const int IrisSize*/);
 
 /**
@@ -365,8 +414,8 @@ extern void FillGradProfile(std::vector<float>::iterator & fi, const std::map<st
   * \param PreInitializedImage Input Image Pointer (double)
   * \return Void
   */
-extern void CreateNewImageFromTemplate(ProbabilityMapImageType::Pointer & PointerToOutputImage,
-                                       const ProbabilityMapImageType::Pointer & PreInitializedImage);
+extern void CreateNewImageFromTemplate(InternalImageType::Pointer & PointerToOutputImage,
+                                       const InternalImageType::Pointer & PreInitializedImage);
 
 /**
   * \ingroup Util
@@ -376,8 +425,8 @@ extern void CreateNewImageFromTemplate(ProbabilityMapImageType::Pointer & Pointe
   * \param PreInitializedImage Input Image Pointer (float)
   * \return Void
   */
-extern void CreateNewFloatImageFromTemplate(RealImageType::Pointer & PointerToOutputImage,
-                                            const ProbabilityMapImageType::Pointer & PreInitializedImage);
+extern void CreateNewFloatImageFromTemplate(InputImageType::Pointer & PointerToOutputImage,
+                                            const InternalImageType::Pointer & PreInitializedImage);
 
 /**
   * \ingroup Util
@@ -389,7 +438,7 @@ extern void CreateNewFloatImageFromTemplate(RealImageType::Pointer & PointerToOu
   * \return Void
   */
 
-extern void DefineBoundingBox(const ProbabilityMapImageType::Pointer image, itk::Index<3> & min, itk::Index<3> & max);
+extern void DefineBoundingBox(const InternalImageType::Pointer image, itk::Index<3> & min, itk::Index<3> & max);
 
 /**
   * \ingroup Util
@@ -423,9 +472,10 @@ extern int CreateMITransformFile(const std::string & MovingImageFilename, const 
 
 extern int CreateTransformFile(const std::string & MovingImageFilename, const std::string & FixedImageFilename,
                                const std::string & OutputRegName, const std::string & FixedBinaryImageFilename,
-                               const std::string & MovingBinaryImageFilename, bool verbose = true);
+                               const std::string & MovingBinaryImageFilename, const int roiAutoDilateSize = 1,
+                               bool verbose = true);
 
-extern int GenerateRegistrations(ProcessDescription & prob, bool reverse, bool apply, const unsigned int numThreads);
+extern int GenerateRegistrations(NetConfiguration & prob, bool reverse, bool apply, const unsigned int numThreads);
 
 template <class WarperImageType>
 typename WarperImageType::Pointer ImageWarper(
@@ -434,11 +484,13 @@ typename WarperImageType::Pointer ImageWarper(
   typename WarperImageType::Pointer ReferenceImage
   )
 {
+  std::cout << __LINE__ << "::" << __FILE__ << std::endl;
   const bool useTransform = ( RegistrationFilename.find(".mat") != std::string::npos );
 
   typename WarperImageType::Pointer PrincipalOperandImage;   // One name for the
                                                              // image to be
                                                              // warped.
+  std::cout << __LINE__ << "::" << __FILE__ << std::endl;
     {
     typedef typename itk::ImageFileReader<WarperImageType> ReaderType;
     typename ReaderType::Pointer imageReader = ReaderType::New();
@@ -448,6 +500,7 @@ typename WarperImageType::Pointer ImageWarper(
     PrincipalOperandImage = imageReader->GetOutput();
     }
 
+  std::cout << __LINE__ << "::" << __FILE__ << std::endl;
   typedef float                                        VectorComponentType;
   typedef typename itk::Vector<VectorComponentType, 3> VectorPixelType;
   typedef typename itk::Image<VectorPixelType,  3>     DeformationFieldType;
@@ -458,6 +511,7 @@ typename WarperImageType::Pointer ImageWarper(
   typename DeformationFieldType::Pointer DeformationField;
   // typename WarperImageType::Pointer ReferenceImage;
   // if there is no *mat file.
+  std::cout << __LINE__ << "::" << __FILE__ << std::endl;
   if( !useTransform )    // that is, it's a warp by deformation field:
     {
     typedef typename itk::ImageFileReader<DeformationFieldType> DefFieldReaderType;
@@ -483,6 +537,7 @@ typename WarperImageType::Pointer ImageWarper(
               << "!!!!!!!!!!!! CAUTION !!!!!!!!!!!!!!!!!!!" << std::endl;
     genericTransform = itk::ReadTransformFromDisk(RegistrationFilename);
     }
+  std::cout << __LINE__ << "::" << __FILE__ << std::endl;
   const double defaultValue = 0;
   const typename std::string interpolationMode = "Linear";
   const typename std::string pixelType = "short";
@@ -497,7 +552,31 @@ typename WarperImageType::Pointer ImageWarper(
       interpolationMode,
       pixelType == "binary");
 
+  std::cout << __LINE__ << "::" << __FILE__ << std::endl;
   return TransformedImage;
+}
+
+template <class ImageType>
+typename ImageType::Pointer
+ReadImage(const std::string & filename )
+{
+  std::cout << __FILE__ << "::" << __LINE__ << std::endl
+            << filename << std::endl;
+
+  typedef typename ImageType::Pointer ImagePointer;
+
+  ImagePointer inputImage = itkUtil::ReadImage<ImageType>(filename);
+  inputImage =
+    itkUtil::ScaleAndCast<InternalImageType, InternalImageType>(inputImage,
+                                                                0,
+                                                                HUNDRED_PERCENT_VALUE);
+  if( inputImage.IsNull() )
+    {
+    std::string error("Can't open image file ");
+    error += filename;
+    throw itk::ExceptionObject( error.c_str() );
+    }
+  return inputImage;
 }
 
 template <class ImageType>
@@ -511,9 +590,9 @@ ReadMedianFilteredImage(const std::string & filename,
   typedef typename ImageType::Pointer                           ImagePointer;
   ImagePointer inputImage = itkUtil::ReadImage<ImageType>(filename);
   inputImage =
-    itkUtil::ScaleAndCast<ProbabilityMapImageType, ProbabilityMapImageType>(inputImage,
-                                                                            0,
-                                                                            HUNDRED_PERCENT_VALUE);
+    itkUtil::ScaleAndCast<InputImageType, InternalImageType>(inputImage,
+                                                             0,
+                                                             HUNDRED_PERCENT_VALUE);
   /*std::cout << "100%::: " << HUNDRED_PERCENT_VALUE << std::endl
             << filename
             << " ** Origin ** :"

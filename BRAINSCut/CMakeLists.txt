@@ -3,9 +3,29 @@ set(LOCAL_PROJECT_NAME BRAINSCut)
 cmake_minimum_required(VERSION 2.8)
 cmake_policy(VERSION 2.8)
 
+enable_testing()
+#include(Dart)
+include(CTest)
+include(CPack)
+include(${BRAINS_CMAKE_HELPER_DIR}/CMakeBuildMacros.cmake)
 include(${BRAINS_CMAKE_HELPER_DIR}/PreventInSourceBuilds.cmake)
 set(BRAINSLogo ${BRAINS_CMAKE_HELPER_DIR}/BRAINSLogo.h CACHE
 FILEPATH "Path to BRAINS Logo")
+
+###
+SETIFEMPTY(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/lib)
+SETIFEMPTY(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/lib)
+SETIFEMPTY(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)
+SETIFEMPTY(CMAKE_BUNDLE_OUTPUT_DIRECTORY  ${CMAKE_CURRENT_BINARY_DIR}/bin)
+link_directories(${CMAKE_LIBRARY_OUTPUT_DIRECTORY} ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY})
+
+###
+CHECKIFSLICER3BUILD()  ## Call the convenience macro
+
+if(NOT ITK_FOUND)
+    find_package(ITK REQUIRED)
+    include(${ITK_USE_FILE})
+endif(NOT ITK_FOUND)
 
 find_package(BRAINSCommonLib NO_MODULE REQUIRED)
 include(${BRAINSCommonLib_USE_FILE})
@@ -18,6 +38,10 @@ find_package( OpenCV REQUIRED)
 #
 include(${BRAINS_CMAKE_HELPER_DIR}/CMakeBRAINS3BuildMacros.cmake)
 #SETOPTIONALDEBUGIMAGEVIEWER()
+
+
+# No need to add with nothing to compile. add_subdirectory(BRAINSFit_Common)
+include(${BRAINS_CMAKE_HELPER_DIR}/IJMacros.txt)
 
 ###
 include_directories(${BRAINSCut_SOURCE_DIR}/ProcessDescription)
@@ -32,14 +56,13 @@ add_library(BRAINSCutCommon
             Utilities.cxx
             GenerateRegistrations.cxx
             XMLParser.cxx
-            Parser.cxx
-            Svm.cxx
+            NetConfigurationParser.cxx
             ShuffleVectors.cxx
             ${BRAINSCut_HDRS}
             )
 ### OPENCV
 target_link_libraries( BRAINSCutCommon
-                       ProcessDescription
+                       NetConfiguration
                        BRAINSCommonLib
                        ${ITK_LIBRARIES}
                        ${OpenCV_LIBS}
@@ -47,12 +70,17 @@ target_link_libraries( BRAINSCutCommon
 
 
 set(CLP BRAINSCut)
-set(${CLP}_SOURCE BRAINSCut.cxx BRAINSCut.cxx
+set(${CLP}_SOURCE BRAINSCut.cxx BRAINSCutPrimary.cxx
+  BRAINSCutGenerateProbability.cxx
+  BRAINSCutCreateVector.cxx
+  FeatureInputVector.cxx
+  BRAINSCutApplyModel.cxx
+  BRAINSCutTrainModel.cxx
+  BRAINSCutVectorTrainingSet.cxx
   GenerateProbability.cxx
   CreateVectors.cxx
   TrainModel.cxx
-  ApplyModel.cxx
-  )
+  ApplyModel.cxx)
 CONFIGUREBRAINSORSLICERPROPERTIES(${CLP} BRAINSCut.xml "${${CLP}_SOURCE}" "" "main" "BRAINSCutCommon")
 target_link_libraries(BRAINSCut BRAINSCutCommon BRAINSCommonLib)
 
@@ -96,7 +124,7 @@ install(TARGETS BRAINSCut
 # BRAINSCut Testing
 # --------------------------------------------------------- #
 ##
-#if ( 0 ) ## HACK:  Just silencing failing test until they can be properly addressed
+#if ( 1 ) ## HACK:  Just silencing failing test until they can be properly addressed
 
 enable_testing()
 
@@ -109,15 +137,15 @@ configure_file( ${InputNetConfigurationForTesting} ${OutputNetConfigurationForTe
 
 ##
 ## BRAINSCut Test Run
-add_test( GenerateProbabilityTest $<TARGET_FILE:BRAINSCut>
+add_test( GenerateProbabilityTest ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/BRAINSCut
                                   --generateProbability --netConfiguration ${OutputNetConfigurationForTesting})
-add_test( CreateVectorsTest $<TARGET_FILE:BRAINSCut>
+add_test( CreateVectorsTest ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/BRAINSCut
                                   --createVectors --netConfiguration ${OutputNetConfigurationForTesting})
-add_test( TrainModelTest $<TARGET_FILE:BRAINSCut>
+add_test( TrainModelTest ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/BRAINSCut
                                   --trainModel --netConfiguration ${OutputNetConfigurationForTesting})
-add_test( ApplyModelTest $<TARGET_FILE:BRAINSCut>
+add_test( ApplyModelTest ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/BRAINSCut
                                   --applyModel --netConfiguration ${OutputNetConfigurationForTesting})
-add_test( AllInOneTest $<TARGET_FILE:BRAINSCut>
+add_test( AllInOneTest ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/BRAINSCut
                                   --generateProbability  --createVectors  --trainModel  --applyModel
                                   --netConfiguration ${OutputNetConfigurationForTesting})
 #endif()

@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
-  <category>Utilities.BRAINS</category>
-  <title>Histogram Match</title>
+  <category>BRAINS.Utilities</category>
+  <title>Write Out Image Intensities
+  </title>
   <description>
-    Histogram match two images
+    For Analysis
   </description>
   <version>0.1</version>
   <documentation-url></documentation-url>

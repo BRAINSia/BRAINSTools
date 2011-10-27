@@ -1,4 +1,4 @@
-#include <ProcessDescription.h>
+#include <NetConfiguration.h>
 #include <itksys/SystemTools.hxx>
 #include <itkMultiThreader.h>
 
@@ -7,7 +7,7 @@
 #include <iostream>
 #include <itkIO.h>
 #include "Utilities.h"
-#include "Parser.h"
+#include "NetConfigurationParser.h"
 
 static int
 WaitForProcess(itksysProcess * *processes, const unsigned processID)
@@ -20,7 +20,7 @@ WaitForProcess(itksysProcess * *processes, const unsigned processID)
   return rval;
 }
 
-int GenerateRegistrations(ProcessDescription & ANNXMLObject,
+int GenerateRegistrations(NetConfiguration & ANNXMLObject,
                           bool reverse,
                           bool apply,
                           const unsigned int numThreads)
@@ -28,28 +28,40 @@ int GenerateRegistrations(ProcessDescription & ANNXMLObject,
   std::cout << "GenerateRegistrations" << std::endl;
   // Get the atlas dataset
   DataSet *atlasDataSet = ANNXMLObject.GetAtlasDataSet();
+  std::cout << __LINE__ << "::" << __FILE__ << std::endl;
   // find out the registration parameters
-  RegistrationParams *regParams =
-    ANNXMLObject.Get<RegistrationParams>("RegistrationParams");
+  RegistrationConfigurationParser *regParams =
+    ANNXMLObject.Get<RegistrationConfigurationParser>("RegistrationConfiguration");
+  std::cout << __LINE__ << "::" << __FILE__ << std::endl;
   const std::string imageTypeToUse
     ( regParams->GetAttribute<StringValue>(
       "ImageTypeToUse") );
+  std::cout << __LINE__ << "::" << __FILE__ << std::endl;
   const std::string regID
     ( regParams->GetAttribute<StringValue>(
       "ID") );
+  std::cout << __LINE__ << "::" << __FILE__ << std::endl;
+  const double roiAUtoDilateSize
+    ( regParams->GetAttribute<IntValue>("BRAINSROIAutoDilateSize") );
+
+  std::cout << __LINE__ << "::" << __FILE__ << std::endl;
   // Get Atlas Image Name
+  std::cout << __LINE__ << "::" << __FILE__ << imageTypeToUse << std::endl;
   std::string AtlasImageFilename( atlasDataSet->GetImageFilenameByType(
                                     imageTypeToUse) );
+  std::cout << __LINE__ << "::" << __FILE__ << std::endl;
 
   // We will use just original image without smoothing
-  ProbabilityMapImageType::SizeType radius;
+  InternalImageType::SizeType radius;
 
   radius[0] = 0; radius[1] = 0; radius[2] = 0;
-  ProbabilityMapImageType::Pointer AtlasImage =
-    ReadMedianFilteredImage<ProbabilityMapImageType>(AtlasImageFilename.c_str(
-                                                       ), radius);
+  InternalImageType::Pointer AtlasImage =
+    ReadMedianFilteredImage<InternalImageType>(AtlasImageFilename.c_str(
+                                                 ), radius);
+  std::cout << __LINE__ << "::" << __FILE__ << std::endl;
 
   // For each dataset, create deformation fields if they don't already exist.
+  std::cout << __LINE__ << "::" << __FILE__ << std::endl;
   std::list<DataSet *> dataSets;
   if( apply )
     {
@@ -60,6 +72,7 @@ int GenerateRegistrations(ProcessDescription & ANNXMLObject,
     dataSets = ANNXMLObject.GetTrainDataSets();
     }
   // TODO Hard coded Max Processes == 9 ????
+  std::cout << __LINE__ << "::" << __FILE__ << std::endl;
 #define MAXPROCESSES 9
   itksysProcess *processes[MAXPROCESSES];
   for( unsigned i = 0; i < MAXPROCESSES; i++ )
@@ -96,7 +109,7 @@ int GenerateRegistrations(ProcessDescription & ANNXMLObject,
     const RegistrationType *reg = ( *it )->GetRegistrationWithID(regID);
     if( reg == NULL )
       {
-      std::cout << "ERROR:  Invalid ID in RegistrationParams.  ("
+      std::cout << "ERROR:  Invalid ID in RegistrationConfigurationParser.  ("
                 << reg
                 << ")"
                 << "with " << SubjectImage << std::endl;
@@ -137,8 +150,8 @@ int GenerateRegistrations(ProcessDescription & ANNXMLObject,
                             SubjToAtlasRegistrationFilename,
                             AtlasBinaryFilename,
                             SubjectBinaryFilename,
-                            //  true,
-                            &processes[process_count]);
+                            roiAUtoDilateSize,
+                            true);
         ++process_count;
         }
       }
@@ -152,8 +165,8 @@ int GenerateRegistrations(ProcessDescription & ANNXMLObject,
                             AtlasToSubjRegistrationFilename,
                             SubjectBinaryFilename,
                             AtlasBinaryFilename,
-                            //  true,
-                            &processes[process_count]);
+                            roiAUtoDilateSize,
+                            true);
         ++process_count;
         }
       }

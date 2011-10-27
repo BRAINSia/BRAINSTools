@@ -1,12 +1,12 @@
 #ifndef MaskType_h
 #define MaskType_h
 #include "StringValue.h"
-#include "CompoundObjectBase.h"
+#include "XMLElementParser.h"
 
-class MaskType : public CompoundObjectBase
+class MaskType : public XMLElementParser
 {
 public:
-  typedef CompoundObjectBase SuperClass;
+  typedef XMLElementParser SuperClass;
   virtual int PrintSelf(std::ostream & os, int indent) const
   {
     indent += SuperClass::PrintSelf(os, indent);
@@ -14,17 +14,17 @@ public:
     return indent + 2;
   }
 
-  MaskType() : CompoundObjectBase("Mask")
+  MaskType() : XMLElementParser("Mask")
   {
     this->Add(new StringValue("Type", ""), "Type");
     this->Add(new StringValue("Filename", ""), "Filename");
   }
 };
 
-class MaskList : public CompoundObjectBase
+class MaskList : public XMLElementParser
 {
 public:
-  MaskList() : CompoundObjectBase("MaskList")
+  MaskList() : XMLElementParser("MaskList")
   {
   }
 };

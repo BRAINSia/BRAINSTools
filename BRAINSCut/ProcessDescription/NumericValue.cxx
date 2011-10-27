@@ -1,6 +1,7 @@
 #include "FloatValue.h"
 #include "IntValue.h"
 #include <stdlib.h>
+#include "BRAINSCutExceptionStringHandler.h"
 
 //
 // for each type define Verify, and SetValue (from string)
@@ -29,7 +30,7 @@ IntValue::SetValue(const std::string & stringval)
     std::string msg("Can't convert *");
     msg += stringval;
     msg += ") to integer";
-    throw ProcessObjectException(msg);
+    throw BRAINSCutExceptionStringHandler(msg);
     }
   this->m_Value = val;
 }
@@ -45,7 +46,7 @@ FloatValue::SetValue(const std::string & stringval)
     std::string msg("Can't convert *");
     msg += stringval;
     msg += ") to float";
-    throw ProcessObjectException(msg);
+    throw BRAINSCutExceptionStringHandler(msg);
     }
   this->NumericValue<double>::SetValue(val);
 }

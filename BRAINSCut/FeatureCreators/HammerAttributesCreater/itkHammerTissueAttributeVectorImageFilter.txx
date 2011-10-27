@@ -67,7 +67,8 @@ HammerTissueAttributeVectorImageFilter<TInputImage, TOutputImage>
 template <class TInputImage, class TOutputImage>
 void
 HammerTissueAttributeVectorImageFilter<TInputImage, TOutputImage>
-::GenerateInputRequestedRegion() throw (InvalidRequestedRegionError)
+::GenerateInputRequestedRegion()
+throw (InvalidRequestedRegionError)
 {
   printf("* GenerateInputRequestRegion() \n");
   // call the superclass' implementation of this method

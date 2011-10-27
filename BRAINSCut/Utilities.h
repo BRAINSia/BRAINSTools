@@ -321,7 +321,11 @@ extern void AddInputVector(std::vector<float> & inputvector,
                            // const DataSet::TypeVector &ImageTypeList,
                            const std::map<std::string,
                                           ProbabilityMapImageType::Pointer> & MapOfImages, std::map<std::string,
-                                                                                                    ImageLinearInterpolatorType::Pointer>  & MapOfImageInterpolators, const ProbabilityMapImageType::Pointer DeformedProbabilityMap[], const int NumberOfProbabilityMaps, const ProbabilityMapImageType::IndexType & CurrentIndex, const int GradientProfileSize/*,
+                                                                                                    ImageLinearInterpolatorType
+                                                                                                    ::Pointer>  &
+                           MapOfImageInterpolators, const ProbabilityMapImageType::Pointer DeformedProbabilityMap[],
+                           const int NumberOfProbabilityMaps, const ProbabilityMapImageType::IndexType & CurrentIndex,
+                           const int GradientProfileSize/*,
                                  * const int IrisSize*/);
 
 extern void XYZToSpherical(const itk::Point<float, 3> & LocationWithOriginAtCenterOfImage, float & rho, float & phi,
@@ -346,7 +350,8 @@ extern void XYZToSpherical(const itk::Point<float, 3> & LocationWithOriginAtCent
 extern void FillGradProfile(std::vector<float>::iterator & fi, const std::map<std::string,
                                                                               ProbabilityMapImageType::Pointer> MapOfImages, std::map<std::string,
                                                                                                                                       ImageLinearInterpolatorType
-                                                                                                                                      ::Pointer>
+                                                                                                                                      ::
+                                                                                                                                      Pointer>
                             MapOfImageInterpolators,
                             //  const ProbabilityMapImageType::Pointer DeformedProbMap,
                             const ProbabilityMapImageType::IndexType & CurrentIndex, const int ProfileExtent/*,

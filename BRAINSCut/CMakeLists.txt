@@ -1,11 +1,7 @@
 project(BRAINSCut)
-set(LOCAL_PROJECT_NAME BRAINSCut)
-cmake_minimum_required(VERSION 2.8)
-cmake_policy(VERSION 2.8)
 
-message(STATUS "BRAINSCut OpenCV_DIR = ${OpenCV_DIR}")
+#message(STATUS "BRAINSCut OpenCV_DIR = ${OpenCV_DIR}")
 find_package( OpenCV REQUIRED)
-#include( ${OpenCV_USE_FILE} )
 
 ###
 add_subdirectory(BRAINSFeatureCreators)

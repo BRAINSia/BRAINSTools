@@ -1,6 +1,4 @@
 project(BRAINSMush)
-set(LOCAL_PROJECT_NAME BRAINSMush)
-
 #-----------------------------------------------------------------------------
 # Output directories.
 #

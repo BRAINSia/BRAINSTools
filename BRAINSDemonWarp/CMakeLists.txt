@@ -1,6 +1,4 @@
 project(BRAINSDemonWarp)
-set(LOCAL_PROJECT_NAME BRAINSDemonWarp)
-
 #-----------------------------------------------------------------------------
 # Output directories.
 #

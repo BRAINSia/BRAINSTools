@@ -1,11 +1,9 @@
 project( GTRACT )
-set(LOCAL_PROJECT_NAME GTRACT)
-
-option(DEBUGGING_PRINT_IMAGES "Use the DEBUG_IMAGE_VIEWER for debugging" ON)
-
 #-----------------------------------------------------------------------------
 # Output directories.
 #
+
+option(DEBUGGING_PRINT_IMAGES "Use the DEBUG_IMAGE_VIEWER for debugging" ON)
 
 ###
 # On Visual Studio 8 MS deprecated C. This removes all 1.276E1265 security

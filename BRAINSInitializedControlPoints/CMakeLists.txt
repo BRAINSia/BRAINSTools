@@ -1,6 +1,4 @@
 project(BRAINSInitializedControlPoints)
-set(LOCAL_PROJECT_NAME BRAINSInitializedControlPoints)
-
 #-----------------------------------------------------------------------------
 # Output directories.
 #

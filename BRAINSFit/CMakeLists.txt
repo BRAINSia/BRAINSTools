@@ -1,5 +1,4 @@
 project(BRAINSFit)
-set(LOCAL_PROJECT_NAME BRAINSFit)
 #-----------------------------------------------------------------------------
 # Output directories.
 #

@@ -1,6 +1,4 @@
 project(BRAINSResample)
-set(LOCAL_PROJECT_NAME BRAINSResample)
-
 #-----------------------------------------------------------------------------
 # Output directories.
 #

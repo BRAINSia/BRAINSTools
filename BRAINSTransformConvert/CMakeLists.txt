@@ -1,5 +1,7 @@
 project(BRAINSTransformConvert)
-set(LOCAL_PROJECT_NAME BRAINSTransformConvert)
+#-----------------------------------------------------------------------------
+# Output directories.
+#
 
 set(ALL_PROGS_LIST
   BRAINSTransformConvert

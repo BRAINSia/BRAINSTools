@@ -1,8 +1,4 @@
 project(BRAINSCommonLibProject)
-set(LOCAL_PROJECT_NAME BRAINSCommonLib)
-cmake_minimum_required(VERSION 2.8)
-cmake_policy(VERSION 2.8)
-
 #-----------------------------------------------------------------------------
 # Output directories.
 #

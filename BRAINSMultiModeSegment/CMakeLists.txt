@@ -1,6 +1,4 @@
 project(BRAINSMultiModeSegment)
-set(LOCAL_PROJECT_NAME BRAINSMultiModeSegment)
-
 #-----------------------------------------------------------------------------
 # Output directories.
 #

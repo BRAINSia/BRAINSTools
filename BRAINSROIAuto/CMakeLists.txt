@@ -1,6 +1,4 @@
 project(BRAINSROIAuto)
-set(LOCAL_PROJECT_NAME BRAINSROIAuto)
-
 #-----------------------------------------------------------------------------
 # Output directories.
 #

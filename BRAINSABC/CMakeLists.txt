@@ -1,6 +1,4 @@
 project(BRAINSABC)
-set(LOCAL_PROJECT_NAME BRAINSABC)
-
 #-----------------------------------------------------------------------------
 # Output directories.
 #

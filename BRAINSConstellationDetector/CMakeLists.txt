@@ -1,6 +1,4 @@
 project(BRAINSConstellationDetectorTool)
-set(LOCAL_PROJECT_NAME BRAINSConstellationDetectorTool)
-
 #-----------------------------------------------------------------------------
 # Output directories.
 #

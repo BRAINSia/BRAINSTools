@@ -9,7 +9,7 @@ if(NOT DEFINED OpenCV_DIR)
     SOURCE_DIR ${proj}
     BINARY_DIR ${proj}-build
 
-    GIT_REPOSITORY "https://github.com/hjmjohnson/OpenCV.git"
+    GIT_REPOSITORY "${git_protocol}://github.com/hjmjohnson/OpenCV.git"
     GIT_TAG "339f97dd675af1cee552a6bb4430689c58559c19"
     CMAKE_ARGS
     --no-warn-unused-cli

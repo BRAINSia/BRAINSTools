@@ -82,7 +82,7 @@ if(BRAINS_DEBUG_IMAGE_WRITE OR USE_GTRACT)
 endif()
 
 if(USE_BRAINSCut)
-  list(APPEND BRAINSTools_DEPENDENCIES ReferenceANNModels OpenCV)
+  list(APPEND BRAINSTools_DEPENDENCIES OpenCV)
 endif()
 
 #-----------------------------------------------------------------------------

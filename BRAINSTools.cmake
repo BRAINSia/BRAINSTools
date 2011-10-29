@@ -78,6 +78,9 @@ set(brains_modulenames
   GTRACT
   ImageCalculator
   BRAINSCut
+  BRAINSDemonWarp ## NOTE: This is off by default, but is valid for both ITKv3/4
+                  ##       This builds just fine with ITKv3/4, but test cases need
+                  ##       further review before trusting it.
   )
 
 ## Tools that only work with ITKv4
@@ -90,16 +93,7 @@ if(ITK_VERSION_MAJOR GREATER 3)
     BRAINSInitializedControlPoints
     BRAINSTransformConvert
     )
-  if(BUILD_TESTING)
-    list(APPEND brains_modulenames
-      BRAINSDemonWarp # HACK Only works with ITKv3. Enabled with ITKv4 for testing purposes.
-                      #      Note also we are moving to a new program.
-      )
-  endif()
 else()
-  list(APPEND brains_modulenames
-    BRAINSDemonWarp
-    )
 endif()
 
 #-----------------------------------------------------------------------------

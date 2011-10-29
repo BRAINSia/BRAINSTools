@@ -9,6 +9,12 @@ option(USE_BRAINSROIAuto                   "Build BRAINSROIAuto"                
 option(USE_BRAINSResample                  "Build BRAINSResample"                  ON)
 option(USE_GTRACT                          "Build GTRACT"                          ON)
 
+## For now do not build BRAINSDemonWarp unless explicitly requested.
+## The conditions where it could be safe to build BRAINSDemonWarp were
+## getting overly complicated and was slowing down other tool deployment.
+## Someday once BRAINSDemonsWarp becomes trustworthy again, this may be changed.
+option(USE_BRAINSDemonWarp "Build BRAINSDemonWarp (ITKv3)" OFF)
+
 set(ITK_VERSION_MAJOR 4 CACHE STRING "Choose the expected ITK major version to build BRAINS (3 or 4).")
 # Set the possible values of ITK major version for cmake-gui
 set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "3" "4")
@@ -40,9 +46,6 @@ CMAKE_DEPENDENT_OPTION(
 CMAKE_DEPENDENT_OPTION(
   USE_ImageCalculator                 "Build ImageCalculator (ITKv4)"               OFF "USE_ITKv4" OFF)
 
-## For now only build DemonWarp if ITKv3, ITKv4 is not yet working.
-CMAKE_DEPENDENT_OPTION(
-  USE_BRAINSDemonWarp                 "Build BRAINSDemonWarp (ITKv3)"               OFF "USE_ITKv3" OFF)
 
 #-----------------------------------------------------------------------------
 # Update CMake module path

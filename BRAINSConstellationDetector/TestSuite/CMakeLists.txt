@@ -6,6 +6,10 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/obliq_setup.txt.in
 #configure_file(${CMAKE_CURRENT_SOURCE_DIR}/T1.mdl ${CMAKE_CURRENT_BINARY_DIR}/T1.mdl)
 set(DART_TESTING_TIMEOUT 10000)
 
+## Test landmarksConstellationTrainingDefinitionIO
+##
+add_executable(TestlandmarksConstellationTrainingDefinitionIO TestlandmarksConstellationTrainingDefinitionIO.cxx)
+
 set(ALL_TEST_PROGS
   BRAINSAlignMSP
   BRAINSConstellationDetector
@@ -20,6 +24,30 @@ set(ALL_TEST_PROGS
 foreach(testprog ${ALL_TEST_PROGS})
   MakeTestDriverFromSEMTool(${testprog} ${testprog}Test.cxx)
 endforeach()
+
+set(ALL_PROGS_LIST
+  LandmarksCompare
+  )
+
+## Simple CLP programs without TestDriver wrappers
+foreach(prog ${ALL_PROGS_LIST})
+  StandardBRAINSBuildMacro(NAME ${prog} TARGET_LIBRARIES landmarksConstellationCOMMONLIB )
+endforeach()
+
+## Simple programs
+## Test BRAINSClipInferior
+##
+# add_executable(BRAINSClipInferiorTest BRAINSClipInferiorTest.cxx)
+# target_link_libraries(BRAINSClipInferiorTest BRAINSClipInferiorCOMMONLIB)
+
+if(0)
+## Test Versor,  This does not currently have a formal test, so disable building it.
+## TODO:  Create a test for the VersorTester
+##
+set (VersorTester_source VersorTester.cxx)
+add_executable(VersorTester ${VersorTester_source})
+target_link_libraries(VersorTester ${ITK_LIBRARIES})
+endif()
 
 
 ## Test BRAINSConstellationModeler
@@ -439,56 +467,14 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSTrimForegroundInDir
   --headSizeLimit 2600.0)
 
 
-## Test BRAINSClipInferior
-##
-# add_executable(BRAINSClipInferiorTest BRAINSClipInferiorTest.cxx)
-# target_link_libraries(BRAINSClipInferiorTest BRAINSClipInferiorCOMMONLIB)
 
-
-## Test Versor
-##
-set (VersorTester_source VersorTester.cxx)
-add_executable(VersorTester ${VersorTester_source})
-target_link_libraries(VersorTester ${ITK_LIBRARIES})
-
-install(TARGETS VersorTester
-  RUNTIME DESTINATION bin
-  LIBRARY DESTINATION lib
-  ARCHIVE DESTINATION lib/static)
-
-
-## Test landmarksConstellationTrainingDefinitionIO
-##
-add_executable(TestlandmarksConstellationTrainingDefinitionIO TestlandmarksConstellationTrainingDefinitionIO.cxx)
-
-
-#
-# Test Landmark files
-#
-include_regular_expression("^.*$")
-
-if(NOT ITK_FOUND)
-  find_package(ITK REQUIRED)
-  include(${ITK_USE_FILE})
-endif(NOT ITK_FOUND)
-
-include_directories(${BRAINSConstellationDetectorTool_SOURCE_DIR})
-include_directories(${BRAINSConstellationDetectorTool_BINARY_DIR})
-
-find_package(GenerateCLP NO_MODULE REQUIRED)
-include(${GenerateCLP_USE_FILE})
-
-set (CLP LandmarksCompare)
-set ( ${CLP}_SOURCE ${CLP}.cxx)
-generateclp(${CLP}_SOURCE ${CLP}.xml)
-add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
-add_executable(${CLP} ${${CLP}_SOURCE})
-target_link_libraries(${CLP} ${ITK_LIBRARIES})
-set_target_properties(${CLP} PROPERTIES
-                        RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+############################
+############################
+############################
+############################
+############################
 
 set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTestForLandmarkCompare)
-
 ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
   BRAINSConstellationDetectorTest
@@ -506,7 +492,6 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetecto
 
 
 set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_outputLandmarksInACPCAlignedSpace)
-
 ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:LandmarksCompare}
   --inputLandmarkFile1 ${CMAKE_CURRENT_BINARY_DIR}/BRAINSConstellationDetectorTestForLandmarkCompare_ACPCSpace_aligned.fcsv

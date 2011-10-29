@@ -47,8 +47,3 @@ endforeach()
 if(BUILD_TESTING)
   add_subdirectory(TestSuite)
 endif(BUILD_TESTING)
-
-if(NOT Slicer3_SOURCE_DIR)
-  add_subdirectory(Example)
-endif(NOT Slicer3_SOURCE_DIR)
-

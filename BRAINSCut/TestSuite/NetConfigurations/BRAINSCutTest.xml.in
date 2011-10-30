@@ -30,9 +30,9 @@
   <DataSet Name="template"  Type="Atlas" >
     <Image Type="T1" Filename="@BRAINSCut_SOURCE_DIR@/TestSuite/TestData/Input/template_t1.nii.gz"/>
     <Image Type="T2" Filename="na" />
-    <SpatialLocation Type="rho" Filename="@CMAKE_CURRENT_BINARY_DIR@/rho.nii.gz" />
-    <SpatialLocation Type="phi" Filename="@CMAKE_CURRENT_BINARY_DIR@/phi.nii.gz" />
-    <SpatialLocation Type="theta" Filename="@CMAKE_CURRENT_BINARY_DIR@/theta.nii.gz" />
+    <SpatialLocation Type="rho" Filename="@CMAKE_CURRENT_BINARY_DIR@/TestSuite/TestOutput/rho.nii.gz" />
+    <SpatialLocation Type="phi" Filename="@CMAKE_CURRENT_BINARY_DIR@/TestSuite/TestOutput/phi.nii.gz" />
+    <SpatialLocation Type="theta" Filename="@CMAKE_CURRENT_BINARY_DIR@/TestSuite/TestOutput/theta.nii.gz" />
   </DataSet>
 
   <!-- ========================================================================== 
@@ -49,7 +49,7 @@
   <!-- ========================================================================== 
         ANN Description
        ========================================================================== -->
-  <ANNParams        Iterations             = "10"
+  <ANNConfiguration Iterations             = "10"
                     MaximumVectorsPerEpoch = "10000"
                     EpochIterations        = "100"
                     ErrorInterval          = "1"
@@ -67,6 +67,7 @@
                     TrainingVectorFilename = "@CMAKE_CURRENT_BINARY_DIR@/trainVectorHE.txt"
                     TrainingModelFilename  = "@CMAKE_CURRENT_BINARY_DIR@/trainModel.txt"
                     TestVectorFilename     = "na" 
+                    Normalization          = "true"
    />
 
   <!-- ========================================================================== 

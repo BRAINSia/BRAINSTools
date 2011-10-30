@@ -28,6 +28,8 @@ public:
 
   BinaryTypePointer ThresholdImage( WorkingImagePointer image );
 
+  BinaryTypePointer GetOneConnectedRegion( BinaryTypePointer image );
+
 private:
   NetConfiguration::ApplyDataSetListType applyDataSetList;
 

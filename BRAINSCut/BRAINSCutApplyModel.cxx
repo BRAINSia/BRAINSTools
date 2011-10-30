@@ -3,6 +3,8 @@
 #include "ANNParams.h"
 #include "Utilities.h"
 
+#include <itkHardConnectedComponentImageFilter.h>
+
 BRAINSCutApplyModel
 ::BRAINSCutApplyModel( std::string netConfigurationFilename)
   : BRAINSCutPrimary( netConfigurationFilename )
@@ -126,7 +128,11 @@ BRAINSCutApplyModel
 
   maskVolume = ThresholdImage( continuousImage );
 
+  /* Get One label */
+  maskVolume = GetOneConnectedRegion( maskVolume );
+
   /* TODO hole filling here */
+  // maskVolume = HoleFilling( maskVolume );
 
   return maskVolume;
 }
@@ -146,6 +152,20 @@ BRAINSCutApplyModel
 
   BinaryTypePointer mask = itkUtil::TypeCast<WorkingImageType, BinaryImageType>( thresholder->GetOutput() );
   return mask;
+}
+
+BinaryTypePointer
+BRAINSCutApplyModel
+::GetOneConnectedRegion( BinaryTypePointer image )
+{
+  typedef itk::HardConnectedComponentImageFilter<BinaryImageType, BinaryImageType>
+    ConnectedBinaryImageFilterType;
+  ConnectedBinaryImageFilterType::Pointer relabler = ConnectedBinaryImageFilterType::New();
+
+  relabler->SetInput( image );
+  relabler->Update();
+
+  return relabler->GetOutput();
 }
 
 void

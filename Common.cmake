@@ -46,6 +46,17 @@ CMAKE_DEPENDENT_OPTION(
 CMAKE_DEPENDENT_OPTION(
   USE_ImageCalculator                 "Build ImageCalculator (ITKv4)"               OFF "USE_ITKv4" OFF)
 
+option(USE_DebugImageViewer "Build DebugImageViewer" OFF)
+
+if(DEFINED USE_DebugImageViewer AND USE_DebugImageViewer AND BRAINSTools_USE_QT)
+  if(NOT QT4_FOUND)
+    find_package(Qt4 COMPONENTS QtCore QtGui QtNetwork REQUIRED)
+    include(${QT_USE_FILE})
+  endif(NOT QT4_FOUND)
+  option(USE_DEBUG_IMAGE_VIEWER "use DebugImageViewer to display intermediate results" OFF)
+endif()
+
+
 
 #-----------------------------------------------------------------------------
 # Update CMake module path

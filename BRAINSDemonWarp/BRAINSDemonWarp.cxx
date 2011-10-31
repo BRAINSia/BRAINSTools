@@ -5,7 +5,7 @@
 
 #include "BRAINSDemonWarpTemplates.h"
 
-#include "debugImage.h"
+#include "DebugImageWrite.h"
 DEFINE_DEBUG_IMAGE_COUNTER;
 
 #ifdef USE_DebugImageViewer

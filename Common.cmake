@@ -46,7 +46,11 @@ CMAKE_DEPENDENT_OPTION(
 CMAKE_DEPENDENT_OPTION(
   USE_ImageCalculator                 "Build ImageCalculator (ITKv4)"               OFF "USE_ITKv4" OFF)
 
+
 option(USE_DebugImageViewer "Build DebugImageViewer" OFF)
+
+option(BRAINS_DEBUG_IMAGE_WRITE "Enable writing out intermediate image results" OFF)
+
 
 if(DEFINED USE_DebugImageViewer AND USE_DebugImageViewer AND BRAINSTools_USE_QT)
   if(NOT QT4_FOUND)

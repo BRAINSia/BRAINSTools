@@ -15,7 +15,7 @@
 #include "itkDiffeomorphicDemonsRegistrationFilter.h"
 #include "itkWarpImageFilter.h"
 #include <sstream>
-#include "debugImage.h"
+#include "DebugImageWrite.h"
 namespace itk
 {
 template <typename TInputImage, typename TOutputImage>

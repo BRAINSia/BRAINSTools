@@ -2,12 +2,21 @@
  * Here is where system computed values get stored.
  * These values should only change when the target compile platform changes.
  */
+#ifndef __BRAINSCommonLib_h
+#define __BRAINSCommonLib_h
 
 #if defined(WIN32) && !defined(BRAINSCommonLib_STATIC)
 #pragma warning ( disable : 4275 )
 #endif
 
 #cmakedefine BUILD_SHARED_LIBS
+
 #ifndef BUILD_SHARED_LIBS
 #define BRAINSCommonLib_STATIC
 #endif
+
+#cmakedefine BRAINS_DEBUG_IMAGE_WRITE
+
+#cmakedefine USE_DebugImageViewer
+
+#endif // __BRAINSCommonLib_h

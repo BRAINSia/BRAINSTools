@@ -23,6 +23,8 @@
 // #include <getopt.h>
 #include <iostream>
 
+#include "DebugImageWrite.h"
+
 #include "BRAINSDemonWarpTemplates.h"
 
 /*

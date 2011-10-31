@@ -15,6 +15,8 @@
 #ifndef __genericRegistrationHelper_h
 #define __genericRegistrationHelper_h
 
+#include "BRAINSCommonLib.h"
+
 #if (ITK_VERSION_MAJOR < 4)
 #include "itkOptImageToImageMetric.h"
 #include "itkOptMattesMutualInformationImageToImageMetric.h"
@@ -40,6 +42,7 @@
 
 #include "itkMultiThreader.h"
 #include "itkResampleImageFilter.h"
+
 #ifdef USE_DebugImageViewer
 #include "DebugImageViewerClient.h"
 #include "itkLinearInterpolateImageFunction.h"
@@ -76,7 +79,7 @@ public:
   void SetDisplayDeformedImage(bool x)
   {
     m_DisplayDeformedImage = x;
-#if USE_DebugImageViewer
+#ifdef USE_DebugImageViewer
     m_DebugImageDisplaySender.SetEnabled(x);
 #endif
   }
@@ -84,7 +87,7 @@ public:
   void SetPromptUserAfterDisplay(bool x)
   {
     m_PromptUserAfterDisplay = x;
-#if USE_DebugImageViewer
+#ifdef USE_DebugImageViewer
     m_DebugImageDisplaySender.SetPromptUser(x);
 #endif
   }

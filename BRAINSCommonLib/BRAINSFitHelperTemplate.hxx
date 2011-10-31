@@ -1,4 +1,6 @@
 #include "itkIO.h"
+#include "BRAINSCommonLib.h"
+
 #ifdef USE_DebugImageViewer
 #include "DebugImageViewerClient.h"
 #endif

@@ -93,3 +93,19 @@ macro(MakeTestDriverFromSEMTool SEMToolName SEMToolTestSourceName)
     )
 endmacro(MakeTestDriverFromSEMTool SEMToolName)
 
+# DebugImageViewer Macro
+if(USE_DebugImageViewer)
+
+  if(NOT VTK_FOUND) #See if it has already been found because this is a nested project
+    find_package(VTK REQUIRED)
+    include(${VTK_USE_FILE})
+  endif(NOT VTK_FOUND)
+
+  macro(DebugImageViewerLibAdditions LibVariable)
+    list(APPEND ${LibVariable} ${VTK_LIBRARIES})
+  endmacro(DebugImageViewerLibAdditions)
+else(USE_DebugImageViewer)
+  macro(DebugImageViewerLibAdditions LibVariable)
+  endmacro(DebugImageViewerLibAdditions)
+
+endif(USE_DebugImageViewer)

@@ -190,6 +190,7 @@ list(APPEND ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS
   USE_BRAINSInitializedControlPoints:BOOL
   USE_BRAINSTransformConvert:BOOL
   USE_ImageCalculator:BOOL
+  USE_DebugImageViewer:BOOL
   )
 
 _expand_external_project_vars()

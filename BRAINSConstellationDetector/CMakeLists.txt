@@ -2,7 +2,6 @@ project(BRAINSConstellationDetectorTool)
 #-----------------------------------------------------------------------------
 # Output directories.
 #
-#SETOPTIONALDEBUGIMAGEVIEWER()
 
 add_subdirectory(src)
 

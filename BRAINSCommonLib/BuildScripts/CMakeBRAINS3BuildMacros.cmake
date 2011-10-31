@@ -8,32 +8,6 @@ if(POLICY CMP0017)
   cmake_policy(SET CMP0017 OLD)
 endif()
 
-#
-#-----------------------------------------------------------------------------
-# Build the optional DEBUGIMAGEVIEWER
-if(NOT SETOPTIONALDEBUGIMAGEVIEWER)
-  macro(SETOPTIONALDEBUGIMAGEVIEWER)
-    if(BRAINS_BUILD)
-      option(USE_DEBUG_IMAGE_VIEWER "Use the DEBUG_IMAGE_VIEWER for debugging" ON)
-    else(BRAINS_BUILD)
-      option(USE_DEBUG_IMAGE_VIEWER "Use the DEBUG_IMAGE_VIEWER for debugging" OFF)
-    endif(BRAINS_BUILD)
-
-    mark_as_advanced(USE_DEBUG_IMAGE_VIEWER)
-    set(OPTIONAL_DEBUG_LINK_LIBRARIES) ## Set it to empty as the default
-    if( USE_DEBUG_IMAGE_VIEWER )
-       if(NOT KWWidgets_SOURCE_DIR)
-         find_package(KWWidgets REQUIRED)
-         include(${KWWidgets_USE_FILE})
-       endif(NOT KWWidgets_SOURCE_DIR)
-       add_definitions(-DUSE_DEBUG_IMAGE_VIEWER)
-       find_path(DEBUG_IMAGE_VIEWER_INCLUDE_DIR DebugImageViewerClient.h ${CMAKE_INSTALL_PREFIX}/include)
-       include_directories(${DEBUG_IMAGE_VIEWER_INCLUDE_DIR})
-       set(OPTIONAL_DEBUG_LINK_LIBRARIES ${KWWidgets_LIBRARIES})
-    endif( USE_DEBUG_IMAGE_VIEWER )
-  endmacro(SETOPTIONALDEBUGIMAGEVIEWER)
-endif(NOT SETOPTIONALDEBUGIMAGEVIEWER)
-
 #-----------------------------------------------------------------------------
 #-----------------------------------------------------------------------------
 #-----------------------------------------------------------------------------

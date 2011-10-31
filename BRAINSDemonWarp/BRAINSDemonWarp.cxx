@@ -6,9 +6,9 @@
 #include "BRAINSDemonWarpTemplates.h"
 
 #include "debugImage.h"
-DEFINE_DEBUG_IMAGE_COUNTER();
+DEFINE_DEBUG_IMAGE_COUNTER;
 
-#ifdef USE_DEBUG_IMAGE_VIEWER
+#ifdef USE_DebugImageViewer
 /*************************
   * Have a global variable to
   * add debugging information.
@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
     PARSE_ARGS;
     BRAINSUtils::SetThreadCount(numberOfThreads);
 
-#ifdef USE_DEBUG_IMAGE_VIEWER
+#ifdef USE_DebugImageViewer
     DebugImageDisplaySender.SetEnabled(UseDebugImageViewer);
     DebugImageDisplaySender.SetPromptUser(PromptAfterImageSend);
 #endif

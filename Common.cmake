@@ -53,7 +53,7 @@ if(DEFINED USE_DebugImageViewer AND USE_DebugImageViewer AND BRAINSTools_USE_QT)
     find_package(Qt4 COMPONENTS QtCore QtGui QtNetwork REQUIRED)
     include(${QT_USE_FILE})
   endif(NOT QT4_FOUND)
-  option(USE_DEBUG_IMAGE_VIEWER "use DebugImageViewer to display intermediate results" OFF)
+  option(USE_DebugImageViewer "use DebugImageViewer to display intermediate results" OFF)
 endif()
 
 

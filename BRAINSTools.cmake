@@ -93,7 +93,11 @@ if(ITK_VERSION_MAJOR GREATER 3)
     BRAINSInitializedControlPoints
     BRAINSTransformConvert
     )
-else()
+endif()
+
+if(USE_DebugImageViewer)
+  list(APPEND brains_modulenames
+    DebugImageViewer)
 endif()
 
 #-----------------------------------------------------------------------------

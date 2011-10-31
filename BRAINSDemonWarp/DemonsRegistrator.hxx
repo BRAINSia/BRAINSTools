@@ -20,7 +20,8 @@
 #include "itkWarpImageFilter.h"
 #include "itkVectorLinearInterpolateNearestNeighborExtrapolateImageFunction.h"
 #include "GenericTransformImage.h"
-#include "debugImage.h"
+#include "DebugImageWrite.h"
+
 namespace itk
 {
 /*This function writes the displacement fields of the Deformation.*/

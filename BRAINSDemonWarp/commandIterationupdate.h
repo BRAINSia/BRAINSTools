@@ -7,19 +7,24 @@
   *
   */
 #include "itkCommand.h"
-#include "itkPDEDeformableRegistrationFilter.h"
-
 #include "itkMultiResolutionPDEDeformableRegistration.h"
 #include "itkFastSymmetricForcesDemonsRegistrationFilter.h"
 #include "itkDiffeomorphicDemonsRegistrationFilter.h"
 #include "itkDiffeomorphicDemonsRegistrationWithMaskFilter.h"
 #include "itkDemonsRegistrationFilter.h"
-#include "GenericTransformImage.h"
-
 #include "itkDisplacementFieldJacobianDeterminantFilter.h"
 #include "itkMinimumMaximumImageCalculator.h"
 #include "itkWarpHarmonicEnergyCalculator.h"
 #include "itkVectorCentralDifferenceImageFunction.h"
+
+#include "BRAINSCommonLib.h"
+#include "DebugImageViewerClient.h"
+#include "DebugImageWrite.h"
+
+#include "itkPDEDeformableRegistrationFilter.h"
+
+#include "GenericTransformImage.h"
+
 // #include <getopt.h>
 #include <iostream>
 

@@ -11,8 +11,12 @@ configure_file(
 set(ALL_PROGS_LIST
   BRAINSFit
   )
+
+set(BRAINSFitLibraries BRAINSCommonLib)
+DebugImageViewerLibAdditions(BRAINSFitLibraries)
+
 foreach(prog ${ALL_PROGS_LIST})
-  StandardBRAINSBuildMacro(NAME ${prog} TARGET_LIBRARIES BRAINSCommonLib )
+  StandardBRAINSBuildMacro(NAME ${prog} TARGET_LIBRARIES ${BRAINSFitLibraries})
 endforeach()
 
 if(BUILD_TESTING)

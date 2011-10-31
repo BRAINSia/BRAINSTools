@@ -10,14 +10,6 @@
 #include "itkIndex.h"
 #include "itkSize.h"
 #include "itkExceptionObject.h"
-#include "BRAINSDemonWarpCommonLibWin32Header.h"
-#include "GenericTransformImage.h"
-#include "VBRAINSDemonWarp.h"
-#include "BRAINSDemonWarp.h"
-
-#include "itkSymmetricForcesDemonsRegistrationFunction.h"
-#include "itkFastSymmetricForcesDemonsRegistrationFunction.h"
-
 #include "itkPDEDeformableRegistrationFilter.h"
 #include "itkDemonsRegistrationFilter.h"
 #include "itkSymmetricForcesDemonsRegistrationFilter.h"
@@ -27,6 +19,17 @@
 #include "itkVectorDiffeomorphicDemonsRegistrationFilter.h"
 #include "itkESMDemonsRegistrationWithMaskFunction.h"
 #include "itkArray.h"
+
+#include "BRAINSCommonLib.h"
+
+#include "BRAINSDemonWarpCommonLibWin32Header.h"
+#include "GenericTransformImage.h"
+#include "VBRAINSDemonWarp.h"
+#include "BRAINSDemonWarp.h"
+
+#include "itkSymmetricForcesDemonsRegistrationFunction.h"
+#include "itkFastSymmetricForcesDemonsRegistrationFunction.h"
+
 #include "itkIO.h"
 #if defined( USE_DebugImageViewer )
 #include "DebugImageViewerClient.h"

@@ -1,6 +1,9 @@
+#include "DebugImageWrite.h"
+
 #include "BRAINSDemonWarpTemplates.h"
 #include "VBRAINSDemonWarpCLP.h"
 #include "BRAINSThreadControl.h"
+
 #ifdef USE_DebugImageViewer
 /*************************
   * Have a global variable to

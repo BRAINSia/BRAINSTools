@@ -14,7 +14,12 @@ configure_file(${BRAINSFit_SOURCE_DIR}/CTestCustom.ctest ${BRAINSFit_BINARY_DIR}
 
 # Test the CenterOfROI Test
 add_executable(CenterOfROIInitTest CenterOfROIInitTest.cxx )
-target_link_libraries(CenterOfROIInitTest BRAINSCommonLib ${ITK_LIBRARIES} ${OPTIONAL_DEBUG_LINK_LIBRARIES} )
+set(CenterOfROIInitTestLibraries BRAINSCommonLib ${ITK_LIBRARIES} ${OPTIONAL_DEBUG_LINK_LIBRARIES} )
+
+DebugImageViewerLibAdditions(CenterOfROIInitTestLibraries)
+
+target_link_libraries(CenterOfROIInitTest ${CenterOfROIInitTestLibraries} )
+
 set_target_properties(CenterOfROIInitTest PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${BRAINSFit_BINARY_DIR})
 ExternalData_add_test(${PROJECT_NAME}FetchData NAME CenterOfROIInitTest
   COMMAND ${LAUNCH_EXE}  $<TARGET_FILE:CenterOfROIInitTest>)

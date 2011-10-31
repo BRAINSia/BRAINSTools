@@ -17,6 +17,7 @@ PURPOSE.  See the above copyright notices for more information.
 #include <sstream>
 #include "itkMedianImageFilter.h"
 #include "itkExtractImageFilter.h"
+#include "BRAINSCommonLib.h"
 #include "BRAINSThreadControl.h"
 #include "BRAINSFitHelper.h"
 #include "BRAINSFitCLP.h"

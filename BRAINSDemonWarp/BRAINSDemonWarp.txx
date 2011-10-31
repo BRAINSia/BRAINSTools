@@ -2,7 +2,7 @@
 #define _BRAINSDemonWarp_txx
 
 #include "BRAINSDemonWarp.h"
-#include "debugImage.h"
+#include "DebugImageWrite.h"
 namespace itk
 {
 template <typename TImage, typename TRealImage, typename TOutputImage>

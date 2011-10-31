@@ -2,7 +2,6 @@ project(BRAINSFit)
 #-----------------------------------------------------------------------------
 # Output directories.
 #
-#SETOPTIONALDEBUGIMAGEVIEWER()
 
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/BRAINSFitCommonLib.h.in

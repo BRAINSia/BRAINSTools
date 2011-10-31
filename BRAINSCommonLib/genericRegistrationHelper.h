@@ -40,7 +40,7 @@
 
 #include "itkMultiThreader.h"
 #include "itkResampleImageFilter.h"
-#ifdef USE_DEBUG_IMAGE_VIEWER
+#ifdef USE_DebugImageViewer
 #include "DebugImageViewerClient.h"
 #include "itkLinearInterpolateImageFunction.h"
 #include "Imgmath.h"
@@ -76,7 +76,7 @@ public:
   void SetDisplayDeformedImage(bool x)
   {
     m_DisplayDeformedImage = x;
-#if USE_DEBUG_IMAGE_VIEWER
+#if USE_DebugImageViewer
     m_DebugImageDisplaySender.SetEnabled(x);
 #endif
   }
@@ -84,7 +84,7 @@ public:
   void SetPromptUserAfterDisplay(bool x)
   {
     m_PromptUserAfterDisplay = x;
-#if USE_DEBUG_IMAGE_VIEWER
+#if USE_DebugImageViewer
     m_DebugImageDisplaySender.SetPromptUser(x);
 #endif
   }
@@ -172,7 +172,7 @@ public:
       std::cout << std::endl;
       }
 
-#ifdef USE_DEBUG_IMAGE_VIEWER
+#ifdef USE_DebugImageViewer
     if( m_DisplayDeformedImage )
       {
       if( parmsNonEmpty )
@@ -226,7 +226,7 @@ private:
 
   typename MattesMutualInformationMetricType::Pointer m_CostMetricObject;
 
-#ifdef USE_DEBUG_IMAGE_VIEWER
+#ifdef USE_DebugImageViewer
   DebugImageViewerClient m_DebugImageDisplaySender;
 #endif
 };

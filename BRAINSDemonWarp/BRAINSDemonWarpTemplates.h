@@ -28,7 +28,7 @@
 #include "itkESMDemonsRegistrationWithMaskFunction.h"
 #include "itkArray.h"
 #include "itkIO.h"
-#if defined( USE_DEBUG_IMAGE_VIEWER )
+#if defined( USE_DebugImageViewer )
 #include "DebugImageViewerClient.h"
 extern DebugImageViewerClient DebugImageDisplaySender;
 #endif

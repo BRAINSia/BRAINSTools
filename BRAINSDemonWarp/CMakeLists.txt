@@ -32,8 +32,20 @@ set(BRAINSDemonWarpTemplatesLIB_SRCS
          BRAINSDemonWarpTemplates.cxx
 )
 
+if(USE_DebugImageViewer)
+  if(NOT VTK_FOUND) #See if it has already been found because this is a nested project
+    find_package(VTK REQUIRED)
+    include(${VTK_USE_FILE})
+  endif(NOT VTK_FOUND)
+  set_source_files_properties(${BRAINSDemonWarpTemplatesLIB_SRCS} BRAINSDemonWarp.cxx VBRAINSDemonWarp.cxx
+    PROPERTIES COMPILE_DEFINITIONS USE_DebugImageViewer=1)
+endif()
+
 add_library(BRAINSDemonWarpTemplatesLIB STATIC ${BRAINSDemonWarpTemplatesLIB_SRCS})
-target_link_libraries(BRAINSDemonWarpTemplatesLIB BRAINSCommonLib)
+if(USE_DebugImageViewer)
+  set(VTKLIB ${VTK_LIBRARIES})
+endif()
+target_link_libraries(BRAINSDemonWarpTemplatesLIB BRAINSCommonLib ${VTK_LIBRARIES})
 
 set(ALL_PROGS_LIST
   BRAINSDemonWarp

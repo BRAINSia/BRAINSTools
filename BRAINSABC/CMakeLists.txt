@@ -2,7 +2,6 @@ project(BRAINSABC)
 #-----------------------------------------------------------------------------
 # Output directories.
 #
-#SETOPTIONALDEBUGIMAGEVIEWER()
 
 ###
 add_subdirectory(brainseg)

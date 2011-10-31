@@ -5,7 +5,16 @@
 #include "itkIO.h"
 #include "itksys/SystemTools.hxx"
 
-#define DEFINE_DEBUG_IMAGE_COUNTER() int fileSequenceNumber = 0;
+#define DEFINE_DEBUG_IMAGE_COUNTER int fileSequenceNumber = 0
+extern int fileSequenceNumber;
+inline std::string twodigits(unsigned int x)
+{
+  std::string rval;
+  rval = '0' + static_cast<char>(x / 10);
+  rval += '0' + static_cast<char>(x % 10);
+  return rval;
+}
+
 extern int fileSequenceNumber;
 
 #define DebugOutput(imageType,image)                           \
@@ -15,8 +24,7 @@ extern int fileSequenceNumber;
     fname = itksys::SystemTools::GetFilenameName(fname);       \
     std::stringstream filename;                                \
     filename << "DBG_";                                        \
-    filename.width(2); filename.fill('0');                     \
-    filename << fileSequenceNumber;                            \
+    filename << twodigits(fileSequenceNumber);                 \
     filename << "_"                                            \
              << #image << "_" << fname                         \
              << "_" << __LINE__ << ".nii.gz";                  \
@@ -31,8 +39,7 @@ extern int fileSequenceNumber;
     std::string fname(__FILE__);                                  \
     fname = itksys::SystemTools::GetFilenameName(fname);          \
     std::stringstream filename;                                   \
-    filename.width(2); filename.fill(' ');                        \
-    filename << "DBG_" << fileSequenceNumber << "_"               \
+    filename << "DBG_" << twodigits(fileSequenceNumber) << "_"    \
              << #name << "_" << N << "_" << fname                 \
              << "_" << __LINE__ << ".nii.gz";                     \
     std::cerr << "Writing " << filename.str();                    \
@@ -46,7 +53,7 @@ extern int fileSequenceNumber;
     std::string fname(__FILE__);                                  \
     fname = itksys::SystemTools::GetFilenameName(fname);          \
     std::stringstream filename;                                   \
-    filename << "DBG_" << fileSequenceNumber << "_"               \
+    filename << "DBG_" << twodigits(fileSequenceNumber) << "_"    \
              << #name "_" << fname                                \
              << "_" << __LINE__ << ".nii.gz";                     \
     std::cerr << "Writing " << filename.str();                    \
@@ -54,6 +61,7 @@ extern int fileSequenceNumber;
     ++fileSequenceNumber;                                         \
   }
 #else
+#define DEFINE_DEBUG_IMAGE_COUNTER
 #define DebugOutput(imageType,image)
 #define DebugOutputN(imageType,image,N,name)
 #define DebugOutputWName(imageType,image,name)

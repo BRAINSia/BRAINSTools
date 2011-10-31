@@ -246,14 +246,14 @@ public:
         std::cout << "d(.,true) " << fieldDist << " - ";
         std::cout << "d(.,Jac(true)) " << fieldGradDist << " - ";
         }
-#if defined( USE_DEBUG_IMAGE_VIEWER )
+#if defined( USE_DebugImageViewer )
       if( DebugImageDisplaySender.Enabled() )
         {
         DebugImageDisplaySender.SendImage<DeformationFieldType>(deffield, 0, 0);
         DebugImageDisplaySender.SendImage<DeformationFieldType>(deffield, 1, 1);
         DebugImageDisplaySender.SendImage<DeformationFieldType>(deffield, 2, 2);
         }
-#endif // defined(USE_DEBUG_IMAGE_VIEWER)
+#endif // defined(USE_DebugImageViewer)
 
       m_HarmonicEnergyCalculator->SetImage(deffield);
       m_HarmonicEnergyCalculator->Compute();

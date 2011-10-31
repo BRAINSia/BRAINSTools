@@ -1,5 +1,5 @@
 #include "itkIO.h"
-#ifdef USE_DEBUG_IMAGE_VIEWER
+#ifdef USE_DebugImageViewer
 #include "DebugImageViewerClient.h"
 #endif
 

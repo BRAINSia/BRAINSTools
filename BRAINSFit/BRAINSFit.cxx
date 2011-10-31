@@ -134,7 +134,7 @@ typename ImageType::Pointer DoMedian(typename ImageType::Pointer & input,
   return result;
 }
 
-#ifdef USE_DEBUG_IMAGE_VIEWER
+#ifdef USE_DebugImageViewer
 /*************************
  * Have a global variable to
  * add debugging information.
@@ -155,7 +155,7 @@ int main(int argc, char *argv[])
   itk::TransformFactory<AffineTransformType>::RegisterTransform();
   itk::TransformFactory<BSplineTransformType>::RegisterTransform();
 
-#ifdef USE_DEBUG_IMAGE_VIEWER
+#ifdef USE_DebugImageViewer
   if( UseDebugImageViewer )
     {
     DebugImageDisplaySender.SetEnabled(UseDebugImageViewer);
@@ -371,7 +371,7 @@ int main(int argc, char *argv[])
   extractMovingVolume = ExtractImage<MovingVolumeType>(OriginalMovingVolume,
                                                        movingVolumeTimeIndex);
 
-#ifdef USE_DEBUG_IMAGE_VIEWER
+#ifdef USE_DebugImageViewer
   if( DebugImageDisplaySender.Enabled() )
     {
     DebugImageDisplaySender.SendImage<itk::Image<float, 3> >(extractFixedVolume, 0);

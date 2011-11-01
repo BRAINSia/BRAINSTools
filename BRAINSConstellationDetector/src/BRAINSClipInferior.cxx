@@ -75,7 +75,7 @@ int main(int argc, char *argv[])
   if( image.IsNull() )
     {
     printf( "\nCould not open image %s, aborting ...\n\n", inputVolume.c_str() );
-    exit(1);
+    return EXIT_FAILURE;
     }
 
   // we need a DOUBLE constant, not a FLOAT constant, for exact switch

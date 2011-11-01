@@ -287,9 +287,8 @@ double FindCenterOfBrainBasedOnTopOfHead(SImageType::Pointer & foreground,  SIma
         // std::cout << "  " << vnl_math_abs(physOrigin[1]-physOriginPlusOne[1])
         // << std::endl;
 
-        std::cout << "ERROR:  Can not have zero area, or zero thickness." << std::endl;
-        std::cout << volOrig << std::endl;
-        exit(-1);
+        itkGenericExceptionMacro(<< "ERROR:  Can not have zero area, or zero thickness. "
+                                 << volOrig << std::endl);
         }
       }
 

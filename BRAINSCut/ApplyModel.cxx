@@ -394,10 +394,9 @@ int ApplyModel(NetConfiguration & ANNConfiguration,
 
   if( model == 0 )
     {
-    std::cout << "Model information (gaussian size, iris size, "
-      "mask smoothing value, training vector filename) not given,"
-      " so training vectors cannot be created." << std::endl;
-    exit(-1);
+    itkGenericExceptionMacro(<< "Model information (gaussian size, iris size, "
+                             << "mask smoothing value, training vector filename) not given,"
+                             << " so training vectors cannot be created.");
     }
   std::cout << __FILE__ << " " << __LINE__ << std::endl;
   std::cout << "** Using Model file: "
@@ -412,15 +411,13 @@ int ApplyModel(NetConfiguration & ANNConfiguration,
   if( ( MaskThresh < MINIMUM_VALUE + PERCENT_MIN_MAX_TOLERANCE )
       || ( MaskThresh > ( HUNDRED_PERCENT_VALUE - PERCENT_MIN_MAX_TOLERANCE ) ) )
     {
-    std::cout << __FILE__ << " " << __LINE__ << std::endl;
-    std::cout << "ERROR: Invalid mask threshold given as " << MaskThresh
-              << std::endl;
-    std::cout << "Valid values are in range : ["
-              << MINIMUM_VALUE + PERCENT_MIN_MAX_TOLERANCE
-              << ","
-              << HUNDRED_PERCENT_VALUE - PERCENT_MIN_MAX_TOLERANCE
-              << "]" << std::endl;
-    exit(-1);
+    itkGenericExceptionMacro(<< "ERROR: Invalid mask threshold given as " << MaskThresh
+                             << std::endl
+                             << "Valid values are in range : ["
+                             << MINIMUM_VALUE + PERCENT_MIN_MAX_TOLERANCE
+                             << ","
+                             << HUNDRED_PERCENT_VALUE - PERCENT_MIN_MAX_TOLERANCE
+                             << "]");
     }
 
   /** Get Input Vector Size */
@@ -507,9 +504,7 @@ int ApplyModel(const std::string & XMLFile,
     }
   catch( BRAINSCutExceptionStringHandler & ex )
     {
-    std::cerr << " this error possibly caused by no present of file\n";
-    std::cerr << ex.Error() << std::endl;
-    exit(-1);
+    throw;
     }
   if( ANNConfiguration->Verify() != true )
     {

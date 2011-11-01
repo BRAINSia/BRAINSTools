@@ -226,10 +226,7 @@ VDemonsPreprocessor<TInputImage, TOutputImage>
       }
     if( condition != 1 )
       {
-      std::cout
-        << "Fixed images or Moving images have different size or spacing!"
-        << std::endl;
-      exit(-1);
+      itkGenericExceptionMacro(<< "Fixed images or Moving images have different size or spacing!");
       }
     }
 }
@@ -279,16 +276,7 @@ typename VDemonsPreprocessor<TInputImage,
   BOBFfilter->SetSeed(m_Seed);
   BOBFfilter->SetInputImage(input);
   BOBFfilter->SetInputMask(Mask);
-  try
-    {
-    BOBFfilter->Update();
-    }
-  catch( itk::ExceptionObject & err )
-    {
-    std::cout << "Exception Object caught: " << std::endl;
-    std::cout << err << std::endl;
-    exit(-1);
-    }
+  BOBFfilter->Update();
 
   OutputImagePointer output = BOBFfilter->GetOutput();
   return output;

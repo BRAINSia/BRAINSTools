@@ -1,9 +1,7 @@
 #include "DebugImageWrite.h"
-
 #include "BRAINSDemonWarpTemplates.h"
 #include "VBRAINSDemonWarpCLP.h"
 #include "BRAINSThreadControl.h"
-
 #ifdef USE_DebugImageViewer
 /*************************
   * Have a global variable to
@@ -183,11 +181,9 @@ int main(int argc, char *argv[])
       || ( command.checkerboardPatternSubdivisions[1] == 0 )
       || ( command.checkerboardPatternSubdivisions[2] == 0 ) )
     {
-    std::cout
-      <<
-      "Invalid Patameters. The value of checkboardPatternSubdivisions should not be zero!"
-      << std::endl;
-    exit(-1);
+    std::cout << "Invalid Patameters. The value of checkboardPatternSubdivisions should not be zero!"
+              << std::endl;
+    return EXIT_FAILURE;
     }
 
   // if (outputVolume.size() == 0) { violated = true; std::cout << "
@@ -200,7 +196,7 @@ int main(int argc, char *argv[])
   //  --inputPixelType Required! "  << std::endl; }
   if( violated )
     {
-    exit(1);
+    return EXIT_FAILURE;
     }
 
   // Test if the input data type is valid
@@ -228,7 +224,7 @@ int main(int argc, char *argv[])
         << std::endl;
       std::cout << "Use one of the following:" << std::endl;
       PrintDataTypeStrings();
-      exit(-1);
+      return EXIT_FAILURE;
       }
     }
 
@@ -259,7 +255,7 @@ int main(int argc, char *argv[])
         << std::endl;
       std::cout << "Use one of the following:" << std::endl;
       PrintDataTypeStrings();
-      exit(-1);
+      return EXIT_FAILURE;
       }
     }
 
@@ -307,7 +303,7 @@ int main(int argc, char *argv[])
       << "Error. Invalid data type for --inputPixelType!  Use one of these:"
       << std::endl;
     PrintDataTypeStrings();
-    exit(-1);
+    return EXIT_FAILURE;
     }
   return 0;
 }

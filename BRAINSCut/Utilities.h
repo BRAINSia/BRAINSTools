@@ -276,10 +276,7 @@ SmoothSingleImage(typename SmootherImageType::Pointer ImageToSmooth,
     }
   catch( itk::ExceptionObject & e )
     {
-    std::cerr << "Exception in gaussian smoothing." << std::endl;
-    std::cerr << e.GetDescription() << std::endl;
-    std::cerr << e.GetLocation() << std::endl;
-    exit(-1);
+    throw;
     }
 }
 
@@ -641,9 +638,8 @@ void VerifyNonZeroImage(const typename ImageType::Pointer image,
 //  min[2] = max[2];
   if( minmaxcalc->GetMaximum() == 0.0 )
     {
-    std::cout << "ERROR:  Maximum deformed probability for " << ImageIDName
-              << " is 0.  This is not valid." << std::endl;
-    exit(-1);
+    itkGenericExceptionMacro(<< "ERROR:  Maximum deformed probability for " << ImageIDName
+                             << " is 0.  This is not valid." )
     }
 }
 

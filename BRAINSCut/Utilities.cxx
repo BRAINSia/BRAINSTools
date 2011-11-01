@@ -21,6 +21,7 @@
 #include "itkBRAINSROIAutoImageFilter.h"
 
 #include "GenericTransformImage.h"
+#include <sstream>
 
 template <typename TTransformType>
 InternalImageType::Pointer ItkTransformWarpImage(TTransformType transform,
@@ -38,17 +39,7 @@ InternalImageType::Pointer ItkTransformWarpImage(TTransformType transform,
   InterpolatorType::Pointer interpolator  = InterpolatorType::New();
   resampleFilter->SetInterpolator(interpolator);
   std::cout << "Init resampling" << std::endl;
-  try
-    {
-    resampleFilter->Update();
-    }
-  catch( itk::ExceptionObject & e )
-    {
-    std::cerr << "Exception in Resampling." << std::endl;
-    std::cerr << e.GetDescription() << std::endl;
-    std::cerr << e.GetLocation() << std::endl;
-    exit(-1);
-    }
+  resampleFilter->Update();
   std::cout << "Resampled Image" << std::endl;
   return resampleFilter->GetOutput();
 }
@@ -73,10 +64,7 @@ int CreateMITransformFile(const std::string & MovingImageFilename,
     }
   catch( itk::ExceptionObject & e )
     {
-    std::cerr << "Exception in CreateMITransformFile." << std::endl;
-    std::cerr << e.GetDescription() << std::endl;
-    std::cerr << e.GetLocation() << std::endl;
-    exit(-1);
+    throw;
     }
   return 0;
 }
@@ -166,18 +154,8 @@ int CreateTransformFile(const std::string & MovingImageFilename,
   typedef itk::ImageFileReader<InternalImageType> FixedVolumeReaderType;
   FixedVolumeReaderType::Pointer fixedVolumeReader = FixedVolumeReaderType::New();
   fixedVolumeReader->SetFileName( FixedImageFilename );
-  try
-    {
-    fixedVolumeReader->Update();
-    }
-  catch( itk::ExceptionObject & e )
-    {
-    std::cerr << "Exception in fixedVolumeReader->Update();." << std::endl;
-    std::cerr << e.GetDescription() << std::endl;
-    std::cerr << e.GetLocation() << std::endl;
-    std::cerr << FixedImageFilename << std::endl;
-    exit(-1);
-    }
+
+  fixedVolumeReader->Update();
 
   InternalImageType::Pointer fixedVolume = fixedVolumeReader->GetOutput();
 
@@ -188,17 +166,8 @@ int CreateTransformFile(const std::string & MovingImageFilename,
   typedef itk::ImageFileReader<InternalImageType> MovingVolumeReaderType;
   MovingVolumeReaderType::Pointer movingVolumeReader = MovingVolumeReaderType::New();
   movingVolumeReader->SetFileName( MovingImageFilename );
-  try
-    {
-    movingVolumeReader->Update();
-    }
-  catch( itk::ExceptionObject & e )
-    {
-    std::cerr << "Exception in movingVolumeReader->Update();." << std::endl;
-    std::cerr << e.GetDescription() << std::endl;
-    std::cerr << e.GetLocation() << std::endl;
-    exit(-1);
-    }
+
+  movingVolumeReader->Update();
 
   InternalImageType::Pointer movingVolume = movingVolumeReader->GetOutput();
 
@@ -219,17 +188,7 @@ int CreateTransformFile(const std::string & MovingImageFilename,
 
     fixedVolumeROIFilter->SetInput( fixedVolume );
     fixedVolumeROIFilter->SetDilateSize(roiAutoDilateSize);
-    try
-      {
-      fixedVolumeROIFilter->Update();
-      }
-    catch( itk::ExceptionObject & e )
-      {
-      std::cerr << "Exception in fixedVolumeROIFilter->Update();." << std::endl;
-      std::cerr << e.GetDescription() << std::endl;
-      std::cerr << e.GetLocation() << std::endl;
-      exit(-1);
-      }
+    fixedVolumeROIFilter->Update();
 
     BSplineRegistrationHelper->SetFixedBinaryVolume(
       fixedVolumeROIFilter->GetSpatialObjectROI() );
@@ -240,17 +199,8 @@ int CreateTransformFile(const std::string & MovingImageFilename,
     typedef itk::ImageFileReader<BinaryImageType> BinaryImageReaderType;
     BinaryImageReaderType::Pointer binaryFixedImageReader = BinaryImageReaderType::New();
     binaryFixedImageReader->SetFileName( FixedBinaryImageFilename );
-    try
-      {
-      binaryFixedImageReader->Update();
-      }
-    catch( itk::ExceptionObject & e )
-      {
-      std::cerr << "Exception in binaryFixedImageReader->Update();." << std::endl;
-      std::cerr << e.GetDescription() << std::endl;
-      std::cerr << e.GetLocation() << std::endl;
-      exit(-1);
-      }
+    binaryFixedImageReader->Update();
+
     typedef itk::ImageMaskSpatialObject<3> binarySpatialObjectType;
     binarySpatialObjectType::Pointer binaryFixedObject
       = binarySpatialObjectType::New();
@@ -272,17 +222,7 @@ int CreateTransformFile(const std::string & MovingImageFilename,
 
     movingVolumeROIFilter->SetInput( movingVolume );
     movingVolumeROIFilter->SetDilateSize(roiAutoDilateSize);
-    try
-      {
-      movingVolumeROIFilter->Update();
-      }
-    catch( itk::ExceptionObject & e )
-      {
-      std::cerr << "Exception in movingVolumeROIFilter->Update();." << std::endl;
-      std::cerr << e.GetDescription() << std::endl;
-      std::cerr << e.GetLocation() << std::endl;
-      exit(-1);
-      }
+    movingVolumeROIFilter->Update();
 
     BSplineRegistrationHelper->SetMovingBinaryVolume(
       movingVolumeROIFilter->GetSpatialObjectROI() );
@@ -293,17 +233,7 @@ int CreateTransformFile(const std::string & MovingImageFilename,
     BinaryImageReaderType::Pointer binaryMovingImageReader =
       BinaryImageReaderType::New();
     binaryMovingImageReader->SetFileName( MovingBinaryImageFilename );
-    try
-      {
-      binaryMovingImageReader->Update();
-      }
-    catch( itk::ExceptionObject & e )
-      {
-      std::cerr << "Exception in binaryMovingImageReader->Update();." << std::endl;
-      std::cerr << e.GetDescription() << std::endl;
-      std::cerr << e.GetLocation() << std::endl;
-      exit(-1);
-      }
+    binaryMovingImageReader->Update();
 
     std::cout << " Set Binary Image " << std::endl;
     typedef itk::ImageMaskSpatialObject<3> binarySpatialObjectType;
@@ -343,23 +273,8 @@ int CreateTransformFile(const std::string & MovingImageFilename,
     BSplineRegistrationHelper->PrintCommandLine(true, "BSplineRegistrationHelper");
     }
 
-  try
-    {
-    BSplineRegistrationHelper->StartRegistration();
-    }
-  catch( itk::ExceptionObject & e )
-    {
-    std::cerr << "Exception in BSplineRegistrationHelper->StartRegistration();." << std::endl;
-    std::cerr << e.GetDescription() << std::endl;
-    std::cerr << e.GetLocation() << std::endl;
-    exit(-1);
-    }
-  catch( ... )
-    {
-    std::cerr << " Undefined Exception while BSplineRegistrationHelper->StartRegistration(); "
-              << std::endl;
-    exit(-1);
-    }
+  BSplineRegistrationHelper->StartRegistration();
+
   if( verbose > 0 )
     {
     std::cout << " - Write deformation " << std::endl
@@ -386,18 +301,7 @@ int CreateTransformFile(const std::string & MovingImageFilename,
 
   deformedVolumeWriter->SetFileName( OutputRegName + "_output.nii.gz" );
   deformedVolumeWriter->SetInput( DeformedMovingImage );
-  try
-    {
-    deformedVolumeWriter->Update();
-    }
-  catch( itk::ExceptionObject & e )
-    {
-    std::cerr << "Exception in deformedVolumeWriter->Update();." << std::endl;
-    std::cerr << e.GetDescription() << std::endl;
-    std::cerr << e.GetLocation() << std::endl;
-    exit(-1);
-    }
-
+  deformedVolumeWriter->Update();
 #endif
 // -------------------------------------- END HERE MY TESTING WITH BRAINS HELPER
 // //
@@ -459,10 +363,7 @@ int CreateTransformFile(const std::string & MovingImageFilename,
     }
   catch( itk::ExceptionObject & e )
     {
-    std::cerr << "Exception in Transformation Creation." << std::endl;
-    std::cerr << e.GetDescription() << std::endl;
-    std::cerr << e.GetLocation() << std::endl;
-    exit(-1);
+    throw;
     }
 #endif
 // ---------------------------------------------------------------------- END
@@ -565,21 +466,9 @@ void ReadDeformationField(TDeformationField::Pointer & DeformationField,
     }
   catch( itk::ExceptionObject & e )
     {
-    std::cerr << "Exception in reading deformation field " << DeformationFilename.c_str() << std::endl;
-    std::cerr << e.GetDescription() << std::endl;
-    std::cerr << e.GetLocation() << std::endl;
-    exit(-1);
+    throw;
     }
-  catch( std::exception & error )
-    {
-    std::cout << "Memory Error near " << __LINE__ <<  " " << __FILE__ << ": " << error.what() << std::endl;
-    exit(-1);
-    }
-  catch( ... )
-    {
-    std::cout << "Unknown error near "  << __LINE__ <<  " " << __FILE__ << std::endl;
-    exit(-1);
-    }
+
   // REGINA:: removed #if 0 //HACK:  For right now, everything must be in RIP
   // orientaiton to work.
   std::cout << "Deformation Field Orientation \n" << DeformationField->GetDirection() << std::endl << std::endl;
@@ -689,21 +578,22 @@ void FillGradProfile(std::vector<neural_scalar_type>::iterator & fi,
           }
         else
           {
-          std::cerr << "THIS IS HIGHLY UNLIKELY TO HAPPEN, AND NOT ALLOWED."
-                    << " The error is occuring at location " << CurrentIndex
-                    << " while accessing point " << ContinuousIndexProfilePoint << " with unit delta "
-                    << unitdeltax << " " << unitdeltay << " " << unitdeltaz << std::endl;
-          std::cerr << "Trying to access point :"
-                    << ContinuousIndexProfilePoint << " in image where physical space is from \n"
-                    << imapi->second->GetOrigin() << " to [";
+          std::stringstream ss;
+          ss << "THIS IS HIGHLY UNLIKELY TO HAPPEN, AND NOT ALLOWED."
+             << " The error is occuring at location " << CurrentIndex
+             << " while accessing point " << ContinuousIndexProfilePoint << " with unit delta "
+             << unitdeltax << " " << unitdeltay << " " << unitdeltaz << std::endl;
+          ss << "Trying to access point :"
+             << ContinuousIndexProfilePoint << " in image where physical space is from \n"
+             << imapi->second->GetOrigin() << " to [";
           for( int q = 0; q < 3; q++ )
             {
-            std::cerr << imapi->second->GetOrigin()[q]
+            ss << imapi->second->GetOrigin()[q]
               + imapi->second->GetLargestPossibleRegion().GetSize()[q]
               * imapi->second->GetSpacing()[q] << ",";
             }
-          std::cerr << "]" << std::endl;
-          exit(-1);
+          ss << "]" << std::endl;
+          std::cerr << ss.str();
           *fi = 0.0F;
           }
 
@@ -801,9 +691,7 @@ int AddSubjectInputVector(  DataSet * subjectSet,
 
   if( !ImageTypeList.size() )
     {
-    std::cout << "No images types found. Cannot compute neural net output."
-              << std::endl;
-    exit(-1);
+    itkGenericExceptionMacro(<< "No images types found. Cannot compute neural net output.");
     }
 
   /** read in images */
@@ -893,9 +781,8 @@ int AddSubjectInputVector(  DataSet * subjectSet,
       std::cout << __LINE__ << "::" << __FILE__ << std::endl;
       if( !ANNVectorStream.good() )
         {
-        std::cout << "Error: Could not open ANN vector file: "
-                  << ANNVectorFilename << std::endl;
-        exit(-1);
+        itkGenericExceptionMacro(<< "Error: Could not open ANN vector file: "
+                                 << ANNVectorFilename );
         }
       std::cout << __LINE__ << "::" << __FILE__ << std::endl;
 
@@ -1019,9 +906,7 @@ int AddROIVectorTrain( ProbabilityMapParser * currentROI,
   DataSet::StringVectorType ImageTypeList = ANNXMLObject.GetAtlasDataSet()->GetImageTypes();
   if( !ImageTypeList.size() )
     {
-    std::cout << "No images types found. Cannot compute neural net output."
-              << std::endl;
-    exit(-1);
+    itkGenericExceptionMacro(<< "No images types found. Cannot compute neural net output.");
     }
   std::cout << __LINE__ << "::" << __FILE__ << std::endl;
   // create labelmap from probability
@@ -1060,15 +945,7 @@ int AddROIVectorTrain( ProbabilityMapParser * currentROI,
     StatCalculatorType::Pointer statCalculator = StatCalculatorType::New();
     statCalculator->SetInput( MapOfImages[*ImageList] );
     statCalculator->SetLabelInput( thresholder->GetOutput() );
-    try
-      {
-      statCalculator->Update();
-      }
-    catch( ... )
-      {
-      std::cout << __LINE__ << "::" << __FILE__ << std::endl;
-      exit(-1);
-      }
+    statCalculator->Update();
 
     // get the mean and std
     MapOfLocalMax[*ImageList] = statCalculator->GetMaximum( thresholder->GetInsideValue() );
@@ -1142,9 +1019,7 @@ int AddROIVectorTrain( ProbabilityMapParser * currentROI,
 
   if( NonZeroProbMapPoints == 0 )
     {
-    std::cout << "ERROR:  Could not find any valid probable points for deformed ROI"
-              << std::endl;
-    exit(-1);
+    itkGenericExceptionMacro(<< "ERROR:  Could not find any valid probable points for deformed ROI");
     }
 
   /** gradient direction image */
@@ -1293,8 +1168,7 @@ void AddROIVectorApply( ProbabilityMapParser * currentROI,
     }
   if( currentROINumber == -1 )
     {
-    std::cout << "No valid ROINumber found" << std::endl;
-    exit(-1);
+    itkGenericExceptionMacro(<< "No valid ROINumber found" );
     }
 
   /** get the local mean and std */
@@ -1304,9 +1178,7 @@ void AddROIVectorApply( ProbabilityMapParser * currentROI,
   DataSet::StringVectorType ImageTypeList = ANNXMLObject.GetAtlasDataSet()->GetImageTypes();
   if( !ImageTypeList.size() )
     {
-    std::cout << "No images types found. Cannot compute neural net output."
-              << std::endl;
-    exit(-1);
+    itkGenericExceptionMacro(<< "No images types found. Cannot compute neural net output.");
     }
   // create labelmap from probability
 
@@ -1343,15 +1215,7 @@ void AddROIVectorApply( ProbabilityMapParser * currentROI,
 
     statCalculator->SetInput( MapOfImages[*ImageList] );
     statCalculator->SetLabelInput( thresholder->GetOutput() );
-    try
-      {
-      statCalculator->Update();
-      }
-    catch( ... )
-      {
-      std::cout << __LINE__ << "::" << __FILE__ << std::endl;
-      exit(-1);
-      }
+    statCalculator->Update();
 
     // get the mean and std
     MapOfLocalMax[*ImageList] = statCalculator->GetMaximum( thresholder->GetInsideValue() );
@@ -1425,9 +1289,7 @@ void AddROIVectorApply( ProbabilityMapParser * currentROI,
 
   if( NonZeroProbMapPoints == 0 )
     {
-    std::cout << "ERROR:  Could not find any valid probable points for deformed ROI"
-              << std::endl;
-    exit(-1);
+    itkGenericExceptionMacro(<< "ERROR:  Could not find any valid probable points for deformed ROI");
     }
 
   /** gradient direction image */

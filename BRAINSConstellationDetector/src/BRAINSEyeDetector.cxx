@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
   if( argc < 3 )
     {
     std::cerr << "Please specify the input filename." << std::endl;
-    exit(-1);
+    return EXIT_FAILURE;
     }
 
   ReaderType::Pointer reader = ReaderType::New();

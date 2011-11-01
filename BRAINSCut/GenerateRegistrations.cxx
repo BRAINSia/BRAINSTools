@@ -109,11 +109,10 @@ int GenerateRegistrations(NetConfiguration & ANNXMLObject,
     const RegistrationType *reg = ( *it )->GetRegistrationWithID(regID);
     if( reg == NULL )
       {
-      std::cout << "ERROR:  Invalid ID in RegistrationConfigurationParser.  ("
-                << reg
-                << ")"
-                << "with " << SubjectImage << std::endl;
-      exit(-1);
+      itkGenericExceptionMacro(<< "ERROR:  Invalid ID in RegistrationConfigurationParser.  ("
+                               << reg
+                               << ")"
+                               << "with " << SubjectImage);
       }
     const std::string SubjToAtlasRegistrationFilename
       ( reg->GetAttribute<StringValue>(

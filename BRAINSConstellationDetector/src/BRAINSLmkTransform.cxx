@@ -79,9 +79,8 @@ int main( int argc, char * argv[] )
       && ( inputMovingVolume.compare( "" ) == 0 )
       && ( inputReferenceVolume.compare( "" ) == 0 ) )
     {
-    std::cerr << "Please set inputMovingLandmarks, inputFixedLandmarks, "
-              << "inputMovingVolume, and inputReferenceVolume." << std::endl;
-    exit( -1 );
+    itkGenericExceptionMacro(<< "Please set inputMovingLandmarks, inputFixedLandmarks, "
+                             << "inputMovingVolume, and inputReferenceVolume.");
     }
 
   // typedefs
@@ -241,8 +240,7 @@ LoadLandmarks( std::string filename )
 
   if( !myfile.is_open() )
     {
-    std::cerr << "Fatal error: Failed to load landmarks file. Program abort!" << std::endl;
-    exit( -1 );
+    itkGenericExceptionMacro(<< "Fatal error: Failed to load landmarks file. Program abort!");
     }
   while( getline(myfile, line) )
     {

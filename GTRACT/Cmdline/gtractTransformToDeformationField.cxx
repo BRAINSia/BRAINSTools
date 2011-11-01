@@ -112,7 +112,7 @@ int main(int argc, char *argv[])
     {
     std::cerr << "ExceptionObject caught !" << std::endl;
     std::cerr << err << std::endl;
-    exit(-1);
+    return EXIT_FAILURE;
     }
 
   // Write out Deformation field

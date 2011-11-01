@@ -14,8 +14,8 @@ ReadHeader(const char *fname,
   filestr.open(fname);
   if( !filestr.is_open() )
     {
-    std::cout << "Error: Could not open ANN vector file" << std::endl;
-    exit(1);
+    itkGenericExceptionMacro(<< "Error: Could not open ANN vector file"
+                             << fname);
     }
   for( int tags = 0; tags < 3; tags++ )
     {
@@ -52,17 +52,25 @@ main(int argc, char * *argv)
     {
     std::cerr << "DumpBinTrainingVectors hdr-name bin-name [record-offset]"
               << std::endl;
-    exit(1);
+    return EXIT_FAILURE;
     }
   // read header
-  ReadHeader(argv[1],
-             InputVectorSize,
-             OutputVectorSize,
-             NumberTrainingVectorsFromFile);
-  std::cout << "Input Vector  Size "  << InputVectorSize
-            << "Output Vector Size "  << OutputVectorSize
-            << " #Training Vectors " << NumberTrainingVectorsFromFile
-            << std::endl;
+  try
+    {
+    ReadHeader(argv[1],
+               InputVectorSize,
+               OutputVectorSize,
+               NumberTrainingVectorsFromFile);
+    std::cout << "Input Vector  Size "  << InputVectorSize
+              << "Output Vector Size "  << OutputVectorSize
+              << " #Training Vectors " << NumberTrainingVectorsFromFile
+              << std::endl;
+    }
+  catch( itk::ExceptionObject & ex )
+    {
+    std::cerr << ex << std::endl;
+    return EXIT_FAILURE;
+    }
   // read binary
   // const unsigned int OutputVectorSize=2;
   const unsigned int SentinalValueSize = 1;
@@ -71,7 +79,7 @@ main(int argc, char * *argv)
   if( !binfile.is_open() )
     {
     std::cerr << "Can't open " << argv[2] << std::endl;
-    exit(1);
+    return EXIT_FAILURE;
     }
   unsigned skip = 0;
   if( argc > 3 )
@@ -125,5 +133,5 @@ main(int argc, char * *argv)
       }
     }
   delete[] buf;
-  exit(result);
+  return result;
 }

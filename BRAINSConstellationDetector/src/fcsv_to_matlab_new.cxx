@@ -217,8 +217,7 @@ static FileToLandmarksMapType get_allFileToLandmarkMap(const std::vector<std::pa
     allLandmarks[subject_iter->first] = ReadSlicer3toITKLmk( subject_iter->second );
     if( allLandmarks[subject_iter->first].size() == 0 )
       {
-      std::cout << "FAILED TO PROCESS FILE:  " << subject_iter->second << "" << std::endl;
-      exit(-1);
+      itkGenericExceptionMacro(<< "FAILED TO PROCESS FILE:  " << subject_iter->second);
       }
     }
   return allLandmarks;;
@@ -243,13 +242,8 @@ static std::vector<std::pair<std::string, std::vector<std::string> > > get_landm
 
     if( iter->size() != 2 )
       {
-      std::cout << "Row in " << landmark_types_list_file << " must have precisely two entries:" << std::endl;
-      for( unsigned int i = 0; i < iter->size(); i++ )
-        {
-        std::cout << (*iter)[i] << " ";
-        }
-      std::cout << std::endl;
-      exit(1);
+      itkGenericExceptionMacro(<< "Row in " << landmark_types_list_file
+                               << " must have precisely two entries:");
       }
 
     // Add it to the list.  We'll assume that there either are no duplicates, or
@@ -312,12 +306,12 @@ int main(int argc, char* argv[])
   if( outputFile == "" )
     {
     std::cerr << "Missing output file name" << std::endl;
-    exit(1);
+    return EXIT_FAILURE;
     }
   if( landmarkTypesFile == "" )
     {
     std::cerr << "Missing landmark types filename name" << std::endl;
-    exit(1);
+    return EXIT_FAILURE;
     }
 
   std::string cleanedGlobPattern = landmarkGlobPattern;

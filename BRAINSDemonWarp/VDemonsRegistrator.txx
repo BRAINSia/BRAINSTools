@@ -72,11 +72,7 @@ void VDemonsRegistrator<TRealImage, TOutputImage,
     }
   catch( itk::ExceptionObject & e )
     {
-    std::cerr << "exception in file Displacement File Writer("
-              << CurrentComponentFilename << ")" << std::endl;
-    std::cerr << e.GetDescription() << std::endl;
-    std::cerr << e.GetLocation() << std::endl;
-    exit(-1);
+    throw;
     }
 }
 
@@ -232,10 +228,7 @@ void VDemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute()
     if( this->m_FixedLandmarkFilename != ""
         && this->m_MovingLandmarkFilename != "" )
       {
-      std::cerr
-        << "Registering Landmarks as an initializer is not yet implemented"
-        << std::endl;
-      exit(-1);
+      itkGenericExceptionMacro(<< "Registering Landmarks as an initializer is not yet implemented");
       }
 
     // Perform the registration.
@@ -271,12 +264,11 @@ void VDemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute()
       m_DeformationField = m_VectorRegistration->GetOutput();
       if( m_DeformationField->GetDirection() != m_FixedImage[0]->GetDirection() )
         {
-        std::cout << "ERROR Directions don't match\n"
-                  << m_DeformationField->GetDirection()
-                  << "\n"
-                  << m_FixedImage[0]->GetDirection()
-                  << std::endl;
-        exit(-1);
+        itkGenericExceptionMacro(<< "ERROR Directions don't match"
+                                 << std::endl
+                                 << m_DeformationField->GetDirection()
+                                 << std::endl
+                                 << m_FixedImage[0]->GetDirection() );
         }
       if( m_VectorTag )
         {
@@ -314,10 +306,7 @@ void VDemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute()
     if( this->m_FixedLandmarkFilename != ""
         && this->m_MovingLandmarkFilename != "" )
       {
-      std::cerr
-        << "Registering Landmarks as an initializer is not yet implemented"
-        << std::endl;
-      exit(-1);
+      itkGenericExceptionMacro(<< "Registering Landmarks as an initializer is not yet implemented");
       }
     // Perform the registration.
     try
@@ -353,12 +342,11 @@ void VDemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute()
       m_DeformationField = m_Registration->GetOutput();
       if( m_DeformationField->GetDirection() != m_FixedImage[0]->GetDirection() )
         {
-        std::cout << "ERROR Directions don't match\n"
-                  << m_DeformationField->GetDirection()
-                  << "\n"
-                  << m_FixedImage[0]->GetDirection()
-                  << std::endl;
-        exit(-1);
+        itkGenericExceptionMacro(<< "ERROR Directions don't match"
+                                 << std::endl
+                                 << m_DeformationField->GetDirection()
+                                 << std::endl
+                                 << m_FixedImage[0]->GetDirection() );
         }
       if( m_Tag )
         {

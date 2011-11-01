@@ -58,7 +58,7 @@ int main(int argc, char *argv[])
   if( volOrig.IsNull() )
     {
     printf( "\nCould not open image %s, aborting ...\n\n", inputVolume.c_str() );
-    exit(1);
+    return EXIT_FAILURE;
     }
   SImageType::Pointer image;
 

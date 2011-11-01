@@ -46,23 +46,23 @@ int main(int argc, char* argv[])
   bool violated = false;
   if( inputVolume.size() == 0 )
     {
-    violated = true; std::cout << "  --inputVolume Required! "  << std::endl;
+    violated = true; std::cerr << "  --inputVolume Required! "  << std::endl;
     }
   if( splineGridSize.size() == 0 )
     {
-    violated = true; std::cout << "  --splineGridSize Required! "  << std::endl;
+    violated = true; std::cerr << "  --splineGridSize Required! "  << std::endl;
     }
   if( outputLandmarksFile.size() == 0 )
     {
-    violated = true; std::cout << "  --outputLandMarksFile Required! "  << std::endl;
+    violated = true; std::cerr << "  --outputLandMarksFile Required! "  << std::endl;
     }
   if( permuteOrder.size() != 3 )
     {
-    violated = true; std::cout << " --permuteOrder must have size 3! " << std::endl;
+    violated = true; std::cerr << " --permuteOrder must have size 3! " << std::endl;
     }
   if( violated )
     {
-    exit(1);
+    throw;
     }
 
   typedef float PixelType;
@@ -76,9 +76,8 @@ int main(int argc, char* argv[])
       {
       if( splineGridSize[sgs] < 3 )
         {
-        std::cout << "splineGridSize[" << sgs << "]= " << splineGridSize[sgs]
-                  << " is invalid.  There must be at lest 3 divisions in each dimension of the image." << std::endl;
-        exit(-1);
+        itkGenericExceptionMacro(<< "splineGridSize[" << sgs << "]= " << splineGridSize[sgs]
+                                 << " is invalid.  There must be at lest 3 divisions in each dimension of the image.");
         }
       }
     }

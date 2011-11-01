@@ -266,9 +266,8 @@ static int GenerateProbabilityMaps(NetConfiguration & ANNConfiguration,
         ProbMapByMaskStringVectorType[pmindex]);
     if( currmaskiterator == allMaskTypes.end() )
       {
-      std::cout << "ERROR:  No training data sets found with structure: "
-                << ProbMapByMaskStringVectorType[pmindex] <<  std::endl;
-      exit(-1);
+      itkGenericExceptionMacro(<< "ERROR:  No training data sets found with structure: "
+                               << ProbMapByMaskStringVectorType[pmindex]);
       }
     else
       {
@@ -321,9 +320,7 @@ static int GenerateProbabilityMaps(NetConfiguration & ANNConfiguration,
       }
     if( !AllGood )
       {
-      std::cerr << "Can not continue until there are no missing files."
-                << std::endl;
-      exit(-1);
+      itkGenericExceptionMacro(<< "Can not continue until there are no missing files.");
       }
     std::cout << "File existance verification Done." << std::endl;
     }
@@ -359,8 +356,7 @@ static int GenerateProbabilityMaps(NetConfiguration & ANNConfiguration,
         }
       if( !itksys::SystemTools::FileExists( MaskName.c_str() ) )
         {
-        std::cerr << "Required mask is missing " << MaskName << std::endl;
-        exit(-1);
+        itkGenericExceptionMacro(<< "Required mask is missing " << MaskName);
         }
       std::cout << "Deforming " << MaskName << " with "
                 << SubjToAtlasRegistrationFilename
@@ -404,10 +400,7 @@ static int GenerateProbabilityMaps(NetConfiguration & ANNConfiguration,
         }
       catch( itk::ExceptionObject & e )
         {
-        std::cerr << "Exception in Image Accumulation." << std::endl;
-        std::cerr << e.GetDescription() << std::endl;
-        std::cerr << e.GetLocation() << std::endl;
-        exit(-1);
+        throw;
         }
       }
     }
@@ -427,9 +420,8 @@ static int GenerateProbabilityMaps(NetConfiguration & ANNConfiguration,
                                                    ProbMapByMaskStringVectorType[i].c_str() );
     if( probMapObject == 0 )
       {
-      std::cout << "Missing Probability map for map structure: "
-                << ProbMapByMaskStringVectorType[i] << std::endl;
-      exit(-1);
+      itkGenericExceptionMacro(<< "Missing Probability map for map structure: "
+                               << ProbMapByMaskStringVectorType[i]);
       }
     const std::string probFilename
     (
@@ -509,15 +501,9 @@ int GenerateProbability(const std::string & XMLFile,
     }
   NetConfiguration *     ANNConfiguration;
   NetConfigurationParser ANNConfigurationParser = NetConfigurationParser( XMLFile );
-  try
-    {
-    ANNConfiguration = ANNConfigurationParser.GetNetConfiguration();
-    }
-  catch( BRAINSCutExceptionStringHandler & ex )
-    {
-    std::cerr << ex.Error() << std::endl;
-    exit(-1);
-    }
+
+  ANNConfiguration = ANNConfigurationParser.GetNetConfiguration();
+
   if( ANNConfiguration->Verify() != true )
     {
     std::cerr << "XML file " << " is invalid." << std::endl;

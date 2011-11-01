@@ -87,7 +87,7 @@ int main(int argc, char *argv[])
     std::cerr << "To run the program please specify the training filename and the "
               << "output outputModel filename." << std::endl;
     std::cerr << "Type " << argv[0] << " -h for more help." << std::endl;
-    exit(-1);
+    return EXIT_FAILURE;
     }
 
   LMC::globalverboseFlag = verbose;
@@ -177,7 +177,7 @@ int main(int argc, char *argv[])
     if( volOrig.IsNull() )
       {
       printf( "\nCould not open image %s, aborting ...\n\n", mDef[currentDataset].GetImageFilename().c_str() );
-      exit(1);
+      return EXIT_FAILURE;
       }
     SImageType::Pointer image;
 

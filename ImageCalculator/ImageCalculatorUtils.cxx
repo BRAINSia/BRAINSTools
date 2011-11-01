@@ -306,7 +306,7 @@ int PrimaryImageCalculatorRoutine(int argc, char *argv[])
       std::cout << "Error. Invalid data type string specified with -intype!" << std::endl;
       std::cout << "Use one of the following:" << std::endl;
       PrintDataTypeStrings();
-      exit(-1);
+      throw;
       }
     }
 
@@ -320,7 +320,7 @@ int PrimaryImageCalculatorRoutine(int argc, char *argv[])
       std::cout << "Error. Invalid data type string specified with -outtype!" << std::endl;
       std::cout << "Use one of the following:" << std::endl;
       PrintDataTypeStrings();
-      exit(-1);
+      throw;
       }
     }
 
@@ -352,8 +352,7 @@ int PrimaryImageCalculatorRoutine(int argc, char *argv[])
     }
   if( opcount > 1 )
     {
-    std::cout << "Can only supply one operation to do [-add|-sub|-mul|-div|-var|-avg]" << std::endl;
-    exit(-1);
+    itkGenericExceptionMacro(<< "Can only supply one operation to do [-add|-sub|-mul|-div|-var|-avg]");
     }
 
   // Call the ImageCalculatorReadWrite function based on the dimension.

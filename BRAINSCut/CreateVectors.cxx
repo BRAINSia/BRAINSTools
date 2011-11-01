@@ -53,20 +53,16 @@ static int CreateVectorsFromNetConfiguration(NetConfiguration & ANNConfiguration
 
   if( regParams == 0 )
     {
-    std::cout << "Registration information (parameter map filename, atlas image filename) "
-              << "not given, so training vectors cannot be computed."
-              << std::endl;
-    exit(-1);
+    itkGenericExceptionMacro(<< "Registration information (parameter map filename, atlas image filename) "
+                             << "not given, so training vectors cannot be computed.");
     }
   /** 2. neural network params */
   NeuralParams *model = ANNConfiguration.Get<NeuralParams>("NeuralNetParams");
   if( model == 0 )
     {
-    std::cout << "NeurlaNetParams (gaussian size, iris size, "
-              << "mask smoothing value, training vector filename) not given,"
-              << " so training vectors cannot be created."
-              << std::endl;
-    exit(-1);
+    itkGenericExceptionMacro(<< "NeurlaNetParams (gaussian size, iris size, "
+                             << "mask smoothing value, training vector filename) not given,"
+                             << " so training vectors cannot be created.")
     }
 
   std::cout << "Using Training Filename file: "
@@ -91,9 +87,7 @@ static int CreateVectorsFromNetConfiguration(NetConfiguration & ANNConfiguration
   const int NumberOfImageTypes = ImageTypeList.size();
   if( !NumberOfImageTypes )
     {
-    std::cout
-      << "No images types found. Cannot compute neural net output." << std::endl;
-    exit(-1);
+    itkGenericExceptionMacro(<< "No images types found. Cannot compute neural net output.");
     }
 
   /** number of thread = 1 hard coded */
@@ -126,8 +120,7 @@ static int CreateVectorsFromNetConfiguration(NetConfiguration & ANNConfiguration
                                                                   model->GetAttribute<IntValue>("GradientProfileSize") );
   if( inputVectorSize == 0 )
     {
-    std::cout << "Input vector size must not be zero!" << std::endl;
-    exit(-1);
+    itkGenericExceptionMacro(<< "Input vector size must not be zero!");
     }
 
   // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -232,15 +225,8 @@ static int CreateVectorsFromXMLFile(const std::string & XMLFile,
     // + Read XML file and check its validity.
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    try
-      {
-      ANNConfiguration = ANNConfigurationParser.GetNetConfiguration();
-      }
-    catch( BRAINSCutExceptionStringHandler & ex )
-      {
-      std::cerr << ex.Error() << std::endl;
-      exit(-1);
-      }
+    ANNConfiguration = ANNConfigurationParser.GetNetConfiguration();
+
     if( ANNConfiguration->Verify() != true )
       {
       std::cerr << "XML file " << " is invalid." << std::endl;
@@ -257,17 +243,9 @@ static int CreateVectorsFromXMLFile(const std::string & XMLFile,
     // + Create Vectors
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    try
-      {
-      rval = CreateVectorsFromNetConfiguration(*ANNConfiguration,
-                                               true /* TODO DELETE THIS histogramEqualization */,
-                                               true /* TODO DELETE THIS verbose */);
-      }
-    catch( BRAINSCutExceptionStringHandler & ex )
-      {
-      std::cerr << ex.Error() << std::endl;
-      exit(-1);
-      }
+    rval = CreateVectorsFromNetConfiguration(*ANNConfiguration,
+                                             true /* TODO DELETE THIS histogramEqualization */,
+                                             true /* TODO DELETE THIS verbose */);
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     // + Shuffle Vectors
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -289,15 +267,14 @@ static int CreateVectorsFromXMLFile(const std::string & XMLFile,
       }
     catch( BRAINSCutExceptionStringHandler & ex )
       {
-      std::cerr << ex.Error() << std::endl;
-      exit(-1);
+      throw;
       }
     rval = 0;
     }
   catch( BRAINSCutExceptionStringHandler & ex )
     {
     std::cerr << ex.Error() << std::endl;
-    exit(-1);
+    return EXIT_FAILURE;
     }
   catch( ... )
     {

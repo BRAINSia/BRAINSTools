@@ -133,7 +133,6 @@ int main(int argc, char * *argv)
                         multiStructureThreshold
                         );
     }
-  exit(status);
-  */
+    */
   return EXIT_SUCCESS;
 }

@@ -366,8 +366,7 @@ BRAINSHoughEyeDetector<TInputImage, TOutputImage>
     // Get the inverse transform
     if( !this->m_VersorTransform->GetInverse( this->m_InvVersorTransform ) )
       {
-      std::cerr << "Cannot get the inverse transform from Hough eye detector!" << std::endl;
-      exit( -1 );
+      itkGenericExceptionMacro("Cannot get the inverse transform from Hough eye detector!");
       }
 
     /** The output image will have exact the same index contents

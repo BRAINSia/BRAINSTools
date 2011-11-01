@@ -25,8 +25,7 @@ unsigned long * ShuffledOrder(unsigned long shuffleSize)
 
   if( rval == 0 )
     {
-    std::cerr << "Can't allocate shuffled ordering" << std::endl;
-    exit(1);
+    itkGenericExceptionMacro(<< "Can't allocate shuffled ordering");
     }
   for( unsigned long i = 0; i < shuffleSize; i++ )
     {
@@ -73,10 +72,8 @@ ExtractTrainingSubsetFromFile(std::ifstream & vectorstr,  // const std::string
 // ******************************************************************************//
   if( SubSetNumber >  NumSubSets )
     {
-    std::cerr << " Current Subset number ," << SubSetNumber
-              << " can not exceed total number of subset, " << NumSubSets
-              << ".\n";
-    exit(-1);
+    itkGenericExceptionMacro(<< " Current Subset number ," << SubSetNumber
+                             << " can not exceed total number of subset, " << NumSubSets);
     }
   int                NumInputVectors;
   std::ios::off_type recordSize =
@@ -106,12 +103,11 @@ ExtractTrainingSubsetFromFile(std::ifstream & vectorstr,  // const std::string
       }
     if( buf[InputVectorSize + OutputVectorSize] != AUTOSEG_VEC_SENTINEL )
       {
-      std::cerr << "Vector size mismatch in Vector file "
-                << "while reading vector number:"
-                << NumInputVectors << std::endl
-                << "buffer contents:: "
-                << buf[InputVectorSize + OutputVectorSize] << "\n";
-      exit(-1);
+      itkGenericExceptionMacro(<< "Vector size mismatch in Vector file "
+                               << "while reading vector number:"
+                               << NumInputVectors << std::endl
+                               << "buffer contents:: "
+                               << buf[InputVectorSize + OutputVectorSize]);
       }
     }
 
@@ -194,9 +190,8 @@ void ANNTrain( // NetConfiguration & prob,
   filestr.open(ANNHeaderVectorFilename.c_str(), std::ios::in | std::ios::binary);
   if( !filestr.is_open() )
     {
-    std::cout << "Error:  ANNTrain: Could not open ANN vector file name of \""
-              << ANNHeaderVectorFilename.c_str() << "\"" << std::endl;
-    exit(-1);
+    itkGenericExceptionMacro(<< "Error:  ANNTrain: Could not open ANN vector file name of \""
+                             << ANNHeaderVectorFilename.c_str() << "\"");
     }
   for( int tags = 0; tags < 3; tags++ )  // Read header file for input/output
                                          // vectors and total vectors.
@@ -565,15 +560,8 @@ int TrainModel(const std::string & XMLFile, int verbose, int StartIteration)
 #endif
   NetConfiguration *     ANNConfiguration;
   NetConfigurationParser ANNConfigurationParser = NetConfigurationParser( XMLFile );
-  try
-    {
-    ANNConfiguration = ANNConfigurationParser.GetNetConfiguration();
-    }
-  catch( BRAINSCutExceptionStringHandler & ex )
-    {
-    std::cerr << ex.Error() << std::endl;
-    exit(-1);
-    }
+  ANNConfiguration = ANNConfigurationParser.GetNetConfiguration();
+
   if( ANNConfiguration->Verify() != true )
     {
     std::cerr << "XML file " << " is invalid." << std::endl;

@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
     {
     std::cerr << argv[0] << ": Missing required --inputVolumes parameter"
               << std::cerr;
-    exit(1);
+    return EXIT_FAILURE;
     }
   const unsigned int numberOfModes = inputVolumes.size();
   typedef itk::MultiModeHistogramThresholdBinaryImageFilter<ImageType, MaskImageType> ThresholdRegionFinderType;

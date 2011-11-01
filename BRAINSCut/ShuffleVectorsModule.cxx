@@ -14,11 +14,9 @@ main(int argc, char * *argv)
               << argv[0] << std::endl
               << " [inputVectorFileBaseName] [outputVectorFileBaseName] [downsamplesize] "
               << std::endl;
-    std::cerr
-      <<
-      "downsample size of 1 will be the same size as the input images, downsample size of 3 will throw 2/3 the vectors away."
-      << std::endl;
-    exit(1);
+    std::cerr << "downsample size of 1 will be the same size as the input images, "
+              << "downsample size of 3 will throw 2/3 the vectors away."
+      return EXIT_FAILURE;
     }
   // Shuffled the vector:
   ShuffleVectors * my_ShuffleVector = new ShuffleVectors(  std::string( argv[1] ),

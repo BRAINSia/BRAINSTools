@@ -148,7 +148,7 @@ public:
       std::cout << __FILE__ << " " << __LINE__ << " "
                 << params << " : " << cc << " " << cost_of_HeadingAngle << " " << cost_of_BankAngle << " "
                 << cost_of_motion << std::endl;
-      exit(-1);
+      return EXIT_FAILURE;
       }
 #endif
     return raw_finalcos_gamma;

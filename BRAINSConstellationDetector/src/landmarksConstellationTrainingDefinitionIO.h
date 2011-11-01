@@ -66,20 +66,17 @@ public:
       // means and variances.
       if( m_NumDataSets < 2 )
         {
-        std::cerr << "NumberOfDatasets must be greater than 2" << std::endl;
-        exit(-1);
+        itkGenericExceptionMacro(<< "NumberOfDatasets must be greater than 2");
         }
       this->Read<unsigned int>(input, this->m_SearchboxDims);
       if( m_SearchboxDims % 2 == 0 )
         {
-        std::cerr << "SearchBoxDims must be odd" << std::endl;
-        exit(-1);
+        itkGenericExceptionMacro(<< "SearchBoxDims must be odd");
         }
       this->Read<float>(input, this->m_ResolutionUnits);
       if( m_ResolutionUnits <= 0 )
         {
-        std::cerr << "m_ResolutionUnits must be greater than zero" << std::endl;
-        exit(-1);
+        itkGenericExceptionMacro(<< "m_ResolutionUnits must be greater than zero");
         }
       this->Read<float>(input, this->m_InitialRotationAngle);
       this->Read<float>(input, this->m_InitialRotationStep);

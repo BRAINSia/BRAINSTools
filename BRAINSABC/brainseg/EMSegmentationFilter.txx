@@ -861,8 +861,7 @@ WarpImageList(const std::vector<typename TInputImage::Pointer> & originalList,
 {
   if( originalList.size() != backgroundValues.size() )
     {
-    std::cout << "ERROR:  originalList and backgroundValues arrays sizes do not match" << std::endl;
-    exit(-1);
+    itkGenericExceptionMacro(<< "ERROR:  originalList and backgroundValues arrays sizes do not match" << std::endl);
     }
   std::vector<typename TInputImage::Pointer> warpedList(originalList.size() );
 
@@ -1570,8 +1569,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
 {
   if( this->m_TemplateGenericTransform.IsNull() )
     {
-    std::cout << "ERROR:  Must suppply an intial transformation!" << std::endl;
-    exit(-1);
+    itkExceptionMacro( << "ERROR:  Must suppply an intial transformation!" );
     }
 
   this->m_NonAirRegion = ComputeTissueRegion<TInputImage, ByteImageType>(this->m_InputImages[0], 3);
@@ -1655,11 +1653,10 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
         }
       catch( ... )
         {
-        std::cerr << "ERROR:\nERROR:\nERROR:\nERROR:"
-                  <<
-          " Linearly dependant input images detected.  Please remove the images in the above table that show very similar values images."
-                  << "ERROR:\nERROR:\nERROR:\nERROR:" << std::endl;
-        exit(-1);
+        itkExceptionMacro( << "ERROR:\nERROR:\nERROR:\nERROR:"
+                           << " Linearly dependant input images detected. "
+                           << "Please remove the images in the above table that show very similar values images."
+                           << "ERROR:\nERROR:\nERROR:\nERROR:" );
         }
       }
     }

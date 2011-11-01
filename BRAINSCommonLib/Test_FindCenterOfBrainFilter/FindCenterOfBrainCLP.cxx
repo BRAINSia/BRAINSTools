@@ -21,7 +21,7 @@ int main(int argc, char * *argv)
   if( InputVolume == "" )
     {
     std::cerr << "FindCenterOfBrain: missing input image name" << std::endl;
-    exit(1);
+    return 1;
     }
   typedef itk::Image<unsigned char, 3>            ImageType;
   typedef itk::FindCenterOfBrainFilter<ImageType> FindCenterFilterType;
@@ -32,7 +32,7 @@ int main(int argc, char * *argv)
     {
     std::cerr << "FindCenterOfBrain: Can't read input image "
               << InputVolume << std::endl;
-    exit(2);
+    return 2;
     }
 
   FindCenterFilterType::Pointer filter = FindCenterFilterType::New();
@@ -46,7 +46,7 @@ int main(int argc, char * *argv)
       {
       std::cerr << "FindCenterOfBrain: Can't read mask "
                 << ImageMask << std::endl;
-      exit(3);
+      return 3;
       }
     filter->SetImageMask(imageMask);
     }
@@ -66,7 +66,7 @@ int main(int argc, char * *argv)
     {
     std::cerr << "ExceptionObject caught !" << std::endl;
     std::cerr << err << std::endl;
-    exit(4);
+    return 4;
     }
   FindCenterFilterType::PointType center =
     filter->GetCenterOfBrain();
@@ -84,7 +84,7 @@ int main(int argc, char * *argv)
     }
   if( !GenerateDebugImages )
     {
-    exit(0);
+    return 0;
     }
   if( DebugDistanceImage != "" )
     {
@@ -120,5 +120,5 @@ int main(int argc, char * *argv)
     itkUtil::WriteImage<ImageType>(trimmedImage,
                                    DebugTrimmedImage);
     }
-  exit(0);
+  return EXIT_SUCCESS;
 }

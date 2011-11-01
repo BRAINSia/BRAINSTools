@@ -50,16 +50,7 @@ typename ImageType::Pointer Iadd(const typename ImageType::Pointer input1,
   typename FilterType::Pointer filter = FilterType::New();
   filter->SetInput1(input1);
   filter->SetInput2(input2);
-  try
-    {
-    filter->Update();
-    }
-  catch( itk::ExceptionObject & err )
-    {
-    std::cout << "Exception Object caught: " << std::endl;
-    std::cout << err << std::endl;
-    exit(-1);
-    }
+  filter->Update();
   typename ImageType::Pointer image = filter->GetOutput();
   return image;
 }
@@ -74,16 +65,7 @@ typename ImageType::Pointer Isub(const typename ImageType::Pointer input1,
   typename FilterType::Pointer filter = FilterType::New();
   filter->SetInput1(input1);
   filter->SetInput2(input2);
-  try
-    {
-    filter->Update();
-    }
-  catch( itk::ExceptionObject & err )
-    {
-    std::cout << "Exception Object caught: " << std::endl;
-    std::cout << err << std::endl;
-    exit(-1);
-    }
+  filter->Update();
   typename ImageType::Pointer image = filter->GetOutput();
   return image;
 }
@@ -98,16 +80,7 @@ typename ImageType::Pointer Imul(const typename ImageType::Pointer input1,
   typename FilterType::Pointer filter = FilterType::New();
   filter->SetInput1(input1);
   filter->SetInput2(input2);
-  try
-    {
-    filter->Update();
-    }
-  catch( itk::ExceptionObject & err )
-    {
-    std::cout << "Exception Object caught: " << std::endl;
-    std::cout << err << std::endl;
-    exit(-1);
-    }
+  filter->Update();
   typename ImageType::Pointer image = filter->GetOutput();
   return image;
 }
@@ -122,16 +95,7 @@ typename ImageType::Pointer Idiv(const typename ImageType::Pointer input1,
   typename FilterType::Pointer filter = FilterType::New();
   filter->SetInput1(input1);
   filter->SetInput2(input2);
-  try
-    {
-    filter->Update();
-    }
-  catch( itk::ExceptionObject & err )
-    {
-    std::cout << "Exception Object caught: " << std::endl;
-    std::cout << err << std::endl;
-    exit(-1);
-    }
+  filter->Update();
   typename ImageType::Pointer image = filter->GetOutput();
   return image;
 }
@@ -147,16 +111,7 @@ typename ImageType::Pointer Imax(const typename ImageType::Pointer input1,
   typename FilterType::Pointer filter = FilterType::New();
   filter->SetInput1(input1);
   filter->SetInput2(input2);
-  try
-    {
-    filter->Update();
-    }
-  catch( itk::ExceptionObject & err )
-    {
-    std::cout << "Exception Object caught: " << std::endl;
-    std::cout << err << std::endl;
-    exit(-1);
-    }
+  filter->Update();
   typename ImageType::Pointer image = filter->GetOutput();
   return image;
 }
@@ -172,16 +127,7 @@ typename ImageType::Pointer Imin(const typename ImageType::Pointer input1,
   typename FilterType::Pointer filter = FilterType::New();
   filter->SetInput1(input1);
   filter->SetInput2(input2);
-  try
-    {
-    filter->Update();
-    }
-  catch( itk::ExceptionObject & err )
-    {
-    std::cout << "Exception Object caught: " << std::endl;
-    std::cout << err << std::endl;
-    exit(-1);
-    }
+  filter->Update();
   typename ImageType::Pointer image = filter->GetOutput();
   return image;
 }

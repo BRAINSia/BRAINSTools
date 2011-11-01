@@ -116,8 +116,7 @@ public:
       m_ResultMaskPointer = dynamic_cast<ImageMaskSpatialObjectType *>( mask.GetPointer() );
       if( m_ResultMaskPointer.IsNull() )
         {
-        std::cout << "Invalid converstion attempted." << __FILE__ << " " << __LINE__ << std::endl;
-        exit(-1);
+        itkGenericExceptionMacro(<< "failed conversion to MaskSpatialObject");
         }
       }
     return m_ResultMaskPointer;
@@ -134,8 +133,7 @@ public:
         dynamic_cast<itk::ImageMaskSpatialObject<3> *>(tmp.GetPointer() );
       if( imso.IsNull() )
         {
-        std::cout << "Invalid converstion attempted." << __FILE__ << " " << __LINE__ << std::endl;
-        exit(-1);
+        itkGenericExceptionMacro(<< "failed conversion to MaskSpatialObject");
         }
       if( imso.IsNotNull() )
         {

@@ -46,8 +46,8 @@ int main(int, char * *)
       {
       std::cerr << "Expected " << blend << " found " << itBlend.Get()
                 << std::endl;
-      exit(1);
+      return EXIT_FAILURE;
       }
     }
-  exit(0);
+  return EXIT_SUCCESS;
 }

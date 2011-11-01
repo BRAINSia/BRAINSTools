@@ -116,8 +116,7 @@ const typename OtsuHistogramMatchingImageFilter<TInputImage, TOutputImage, THist
   TInputImage const * const temp = dynamic_cast<TInputImage *>( this->ProcessObject::GetInput(1) );
   if( temp == NULL )
     {
-    std::cout << "Invalid mask converstion attempted." << __FILE__ << " " << __LINE__ << std::endl;
-    exit(-1);
+    itkGenericExceptionMacro( << "Invalid mask converstion attempted." );
     }
   return temp;
   }

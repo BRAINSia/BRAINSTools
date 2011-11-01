@@ -87,10 +87,8 @@ typename ImageType::Pointer StandardizeMaskIntensity(
     maskedStatistics->GetHistogram( maskInteriorLabel );
   if( hist.IsNull() )
     {
-    std::cout << "TODO: THIS SHOULD BE AN EXCEPTION"
-              << "histogram had no value for label "
-              << __FILE__ << " " << __LINE__ << " " << maskInteriorLabel << std::endl;
-    exit(-1);
+    itkGenericExceptionMacro("histogram had no value for label "
+                             << maskInteriorLabel);
     }
 
   // Remark:  Since itk's filter uses the same bounds to scale and to clip,

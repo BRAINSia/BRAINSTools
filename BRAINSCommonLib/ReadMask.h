@@ -28,8 +28,7 @@ ReadImageMask(const std::string & filename,
   typename MaskType::Pointer p = dynamic_cast<MaskType *>( mask.GetPointer() );
   if( p.IsNull() )
     {
-    std::cout << "ERROR::" << __FILE__ << " " << __LINE__ << std::endl;
-    exit(-1);
+    itkGenericExceptionMacro(<< "Failed conversion to Mask");
     }
   return p;
 }

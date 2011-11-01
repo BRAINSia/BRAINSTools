@@ -150,6 +150,7 @@ int main(int argc, char *argv[])
   itk::AddExtraTransformRegister();
   // Apparently when you register one transform, you need to register all your
   // transforms.
+  //
   itk::TransformFactory<VersorRigid3DTransformType>::RegisterTransform();
   itk::TransformFactory<ScaleVersor3DTransformType>::RegisterTransform();
   itk::TransformFactory<ScaleSkewVersor3DTransformType>::RegisterTransform();
@@ -178,11 +179,18 @@ int main(int argc, char *argv[])
                                                  // so don't count it.
           ) > 1 )
       {
+<<<<<<< HEAD
+      itkGenericExceptionMacro(
+        "ERROR:  Can only specify one of "
+        "[initialTransform | useCenterOfHeadAlign | useGeometryAlign | useMomentsAlign | initializeTransformMode ]"
+      );
+=======
       std::cout
-        <<
-        "ERROR:  Can only specify one of [initialTransform | useCenterOfHeadAlign | useGeometryAlign | useMomentsAlign | initializeTransformMode ]"
-        << std::endl;
+      <<
+      "ERROR:  Can only specify one of [initialTransform | useCenterOfHeadAlign | useGeometryAlign | useMomentsAlign | initializeTransformMode ]"
+      << std::endl;
       return EXIT_FAILURE;
+>>>>>>> a21244c... BUG: remove calls to 'exit' which were killing Slicer
       }
     if( useCenterOfHeadAlign == true )
       {
@@ -207,10 +215,15 @@ int main(int argc, char *argv[])
       {
       if( splineGridSize[sgs] < 3 )
         {
+<<<<<<< HEAD
+        itkGenericExceptionMacro("splineGridSize[" << sgs << "]= " << splineGridSize[sgs]
+                            << " is invalid.  There must be at lest 3 divisions in each dimension of the image.");
+=======
 //        validGridSize = false;
         std::cout << "splineGridSize[" << sgs << "]= " << splineGridSize[sgs]
                   << " is invalid.  There must be at lest 3 divisions in each dimension of the image." << std::endl;
         return EXIT_FAILURE;
+>>>>>>> a21244c... BUG: remove calls to 'exit' which were killing Slicer
         }
       }
     }
@@ -252,8 +265,12 @@ int main(int argc, char *argv[])
     }
   else
     {
+<<<<<<< HEAD
+    itkGenericExceptionMacro( "ERROR: No registration phases specified to perform!");
+=======
     std::cerr << "ERROR: No registration phases specified to perform!" << std::endl;
     return EXIT_FAILURE;
+>>>>>>> a21244c... BUG: remove calls to 'exit' which were killing Slicer
     }
 
   // In order to make the Slicer interface work, a few alternate command line
@@ -263,16 +280,24 @@ int main(int argc, char *argv[])
       || ( linearTransform.size() > 0 && outputTransform.size() > 0 )
       || ( outputTransform.size() > 0 && bsplineTransform.size() > 0 ) )
     {
+<<<<<<< HEAD
+    itkGenericExceptionMacro("Error:  user can only specify one output transform type.");
+=======
     std::cout << "Error:  user can only specify one output transform type." << std::endl;
     return EXIT_FAILURE;
+>>>>>>> a21244c... BUG: remove calls to 'exit' which were killing Slicer
     }
   if( linearTransform.size() > 0 )
     {
     localOutputTransform = linearTransform;
     if( ( !localTransformType.empty() ) && ( localTransformType[localTransformType.size() - 1] == "BSpline" ) )
       {
+<<<<<<< HEAD
+      itkGenericExceptionMacro("Error:  Linear transforms can not be used for BSpline registration!");
+=======
       std::cout << "Error:  Linear transforms can not be used for BSpline registration!" << std::endl;
       return EXIT_FAILURE;
+>>>>>>> a21244c... BUG: remove calls to 'exit' which were killing Slicer
       }
     }
   else if( !bsplineTransform.empty() )
@@ -280,6 +305,13 @@ int main(int argc, char *argv[])
     localOutputTransform = bsplineTransform;
     if( ( !localTransformType.empty() ) && ( localTransformType[localTransformType.size() - 1] != "BSpline" ) )
       {
+<<<<<<< HEAD
+      itkGenericExceptionMacro("Error:  BSpline registrations require output transform to be of type BSpline!");
+      }
+    else if( localTransformType.empty() )
+      {
+      itkGenericExceptionMacro("Error:  Initializer only registrations require output transform to be of type Linear!");
+=======
       std::cout << "Error:  BSpline registrations require output transform to be of type BSpline!" << std::endl;
       return EXIT_FAILURE;
       }
@@ -287,6 +319,7 @@ int main(int argc, char *argv[])
       {
       std::cout << "Error:  Initializer only registrations require output transform to be of type Linear!" << std::endl;
       return EXIT_FAILURE;
+>>>>>>> a21244c... BUG: remove calls to 'exit' which were killing Slicer
       }
     }
   else if( !outputTransform.empty() )
@@ -299,17 +332,23 @@ int main(int argc, char *argv[])
       && outputVolume.empty() )
     {
     itkGenericExceptionMacro( "Error:  user requested neither localOutputTransform,"
-                              << " nor strippedOutputTransform,"
-                              << " nor outputVolume.");
+              << " nor strippedOutputTransform,"
+              << " nor outputVolume.");
     }
 
   if( numberOfIterations.size() != localTransformType.size() )
     {
     if( numberOfIterations.size() != 1 )
       {
+<<<<<<< HEAD
+      itkGenericExceptionMacro(
+       "The numberOfIterations array must match the length of the transformType"
+                << "length, or have a single value that is used for all registration phases.");
+=======
       std::cerr << "The numberOfIterations array must match the length of the transformType"
                 << "length, or have a single value that is used for all registration phases." << std::endl;
       return EXIT_FAILURE;
+>>>>>>> a21244c... BUG: remove calls to 'exit' which were killing Slicer
       }
     else
       {
@@ -326,8 +365,12 @@ int main(int argc, char *argv[])
     {
     if( minimumStepLength.size() != 1 )
       {
+<<<<<<< HEAD
+      itkGenericExceptionMacro("The minimumStepLength array must match the localTransformType length");
+=======
       std::cerr << "The minimumStepLength array must match the localTransformType length" << std::endl;
       return EXIT_FAILURE;
+>>>>>>> a21244c... BUG: remove calls to 'exit' which were killing Slicer
       }
     else
       {
@@ -348,7 +391,7 @@ int main(int argc, char *argv[])
   FixedVolumeType::Pointer  extractFixedVolume;
   MovingVolumeType::Pointer extractMovingVolume;
   InputImageType::Pointer
-    OriginalFixedVolume( itkUtil::ReadImage<InputImageType>(fixedVolume) );
+  OriginalFixedVolume( itkUtil::ReadImage<InputImageType>(fixedVolume) );
 
   std::cout << "Original Fixed image origin"
             << OriginalFixedVolume->GetOrigin() << std::endl;
@@ -403,65 +446,82 @@ int main(int argc, char *argv[])
                                                      indexRadius);
     }
 
+  //
   // If masks are associated with the images, then read them into the correct
   // orientation.
   // if they've been defined assign the masks...
+  //
   ImageMaskPointer fixedMask = NULL;
   ImageMaskPointer movingMask = NULL;
   if( maskProcessingMode == "NOMASK" )
     {
-    if( fixedBinaryVolume != "" || movingBinaryVolume != "" )
+    if( fixedBinaryVolume != "" || movingBinaryVolume != "")
       {
+<<<<<<< HEAD
+      itkGenericExceptionMacro(
+        "ERROR:  Can not specify mask file names when the default of NOMASK is used for the maskProcessingMode");
+=======
       std::cout
         << "ERROR:  Can not specify mask file names when the default of NOMASK is used for the maskProcessingMode"
         << std::endl;
       return EXIT_FAILURE;
+>>>>>>> a21244c... BUG: remove calls to 'exit' which were killing Slicer
       }
     }
   else if( maskProcessingMode == "ROIAUTO" )
     {
-    if( fixedBinaryVolume != "" || movingBinaryVolume != "" )
+    if( fixedBinaryVolume != "" || movingBinaryVolume != "")
       {
+<<<<<<< HEAD
+      itkGenericExceptionMacro(
+        "ERROR:  Can not specify mask file names when ROIAUTO is used for the maskProcessingMode");
+=======
       std::cout
         << "ERROR:  Can not specify mask file names when ROIAUTO is used for the maskProcessingMode"
         << std::endl;
       return EXIT_FAILURE;
+>>>>>>> a21244c... BUG: remove calls to 'exit' which were killing Slicer
       }
-      {
-      typedef itk::BRAINSROIAutoImageFilter<FixedVolumeType, itk::Image<unsigned char, 3> > ROIAutoType;
-      ROIAutoType::Pointer ROIFilter = ROIAutoType::New();
-      ROIFilter->SetInput(extractFixedVolume);
-      ROIFilter->SetClosingSize(ROIAutoClosingSize);
-      ROIFilter->SetDilateSize(ROIAutoDilateSize);
-      ROIFilter->Update();
-      fixedMask = ROIFilter->GetSpatialObjectROI();
-      }
-      {
-      typedef itk::BRAINSROIAutoImageFilter<MovingVolumeType, itk::Image<unsigned char, 3> > ROIAutoType;
-      ROIAutoType::Pointer ROIFilter = ROIAutoType::New();
-      ROIFilter->SetInput(extractMovingVolume);
-      ROIFilter->SetClosingSize(ROIAutoClosingSize);
-      ROIFilter->SetDilateSize(ROIAutoDilateSize);
-      ROIFilter->Update();
-      movingMask = ROIFilter->GetSpatialObjectROI();
-      }
+    {
+    typedef itk::BRAINSROIAutoImageFilter<FixedVolumeType, itk::Image<unsigned char, 3> > ROIAutoType;
+    ROIAutoType::Pointer ROIFilter = ROIAutoType::New();
+    ROIFilter->SetInput(extractFixedVolume);
+    ROIFilter->SetClosingSize(ROIAutoClosingSize);
+    ROIFilter->SetDilateSize(ROIAutoDilateSize);
+    ROIFilter->Update();
+    fixedMask = ROIFilter->GetSpatialObjectROI();
+    }
+    {
+    typedef itk::BRAINSROIAutoImageFilter<MovingVolumeType, itk::Image<unsigned char, 3> > ROIAutoType;
+    ROIAutoType::Pointer ROIFilter = ROIAutoType::New();
+    ROIFilter->SetInput(extractMovingVolume);
+    ROIFilter->SetClosingSize(ROIAutoClosingSize);
+    ROIFilter->SetDilateSize(ROIAutoDilateSize);
+    ROIFilter->Update();
+    movingMask = ROIFilter->GetSpatialObjectROI();
+    }
     }
   else if( maskProcessingMode == "ROI" )
     {
-    if( fixedBinaryVolume == "" || movingBinaryVolume == "" )
+    if( fixedBinaryVolume == "" || movingBinaryVolume == "")
       {
+<<<<<<< HEAD
+      itkGenericExceptionMacro(
+        "ERROR:  Must specify mask file names when ROI is used for the maskProcessingMode");
+=======
       std::cout
         <<
         "ERROR:  Must specify mask file names when ROI is used for the maskProcessingMode"
         << std::endl;
       return EXIT_FAILURE;
+>>>>>>> a21244c... BUG: remove calls to 'exit' which were killing Slicer
       }
     fixedMask = ReadImageMask<SpatialObjectType, Dimension>(
-        fixedBinaryVolume,
-        extractFixedVolume.GetPointer() );
+      fixedBinaryVolume,
+      extractFixedVolume.GetPointer() );
     movingMask = ReadImageMask<SpatialObjectType, Dimension>(
-        movingBinaryVolume,
-        extractMovingVolume.GetPointer() );
+      movingBinaryVolume,
+      extractMovingVolume.GetPointer() );
     }
   /* This default fills the background with zeros
    *  const double BackgroundFillValue =
@@ -481,11 +541,11 @@ int main(int argc, char *argv[])
 //  int permittedIterations = 0;
 //  int allLevelsIterations = 0;
 
-    {
-    typedef itk::BRAINSFitHelper HelperType;
-    HelperType::Pointer myHelper = HelperType::New();
-    myHelper->SetTransformType(localTransformType);
-    myHelper->SetFixedVolume(extractFixedVolume);
+  {
+  typedef itk::BRAINSFitHelper HelperType;
+  HelperType::Pointer myHelper = HelperType::New();
+  myHelper->SetTransformType(localTransformType);
+  myHelper->SetFixedVolume(extractFixedVolume);
     myHelper->SetMovingVolume(extractMovingVolume);
     myHelper->SetHistogramMatch(histogramMatch);
     myHelper->SetRemoveIntensityOutliers(removeIntensityOutliers);
@@ -539,9 +599,14 @@ int main(int argc, char *argv[])
           }
         else
           {
+<<<<<<< HEAD
+          itkGenericExceptionMacro(
+            "could not convert to rigid versor type" );
+=======
           // This should be an exception thow instead of exit.
           std::cout << "could not convert to rigid versor type" << std::endl;
           return EXIT_FAILURE;
+>>>>>>> a21244c... BUG: remove calls to 'exit' which were killing Slicer
           }
         }
       else
@@ -742,3 +807,4 @@ int main(int argc, char *argv[])
 
   return 0;
 }
+

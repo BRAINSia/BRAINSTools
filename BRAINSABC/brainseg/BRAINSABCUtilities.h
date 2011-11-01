@@ -36,7 +36,6 @@ typedef unsigned int LOOPITERTYPE;
     if( !vnl_math_isfinite( XXXTESTXXX ) ) \
       { \
       std::cout << "Found " << XXXTESTXXX << " at " << srcfile << " " << srcline << std::endl; \
-      /*exit(-1);*/ \
       } \
     }
 #else

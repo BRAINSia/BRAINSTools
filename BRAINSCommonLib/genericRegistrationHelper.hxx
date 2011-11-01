@@ -209,10 +209,8 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
     }
   else      // Won't happen under BRAINSFitPrimary.
     {
-    std::cout
-      << "FAILURE:  InitialTransform must be set in MultiModal3DMutualRegistrationHelper before Initialize is called."
-      << std::endl;
-    exit(-1);
+    itkGenericExceptionMacro(
+      << "FAILURE:  InitialTransform must be set in MultiModal3DMutualRegistrationHelper before Initialize is called.");
     //  m_Transform would be SetIdentity() if this case continued.
     }
 
@@ -421,8 +419,7 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
       dynamic_cast<OptimizerPointer>( m_Registration->GetOptimizer() );
     if( optimizer == NULL )
       {
-      std::cout << "ERROR::" << __FILE__ << " " << __LINE__ << std::endl;
-      exit(-1);
+      itkExceptionMacro(<< "Failed to convert pointer to Optimizer type");
       }
     std::cout << "Stop condition from optimizer." << optimizer->GetStopConditionDescription() << std::endl;
     m_FinalMetricValue = optimizer->GetValue();

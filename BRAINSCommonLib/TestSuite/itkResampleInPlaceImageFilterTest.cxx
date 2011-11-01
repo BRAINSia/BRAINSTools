@@ -43,7 +43,7 @@ int itkResampleInPlaceImageFilterTest( int argc, char * argv[] )
     {
     std::cerr << "Wrong arguments!" << std::endl;
     std::cerr << "Usage: ./" << argv[0] << " inputImage baselineImage outputImage" << std::endl;
-    exit( -1 );
+    return EXIT_FAILURE;
     }
 
   bool   result = false; // test result default = no failure

@@ -65,7 +65,7 @@ int main( int argc, char *argv[] )
     {
     std::cerr << "To run the program please specify the input volume filename." << std::endl;
     std::cerr << "Type " << argv[0] << " -h for more help." << std::endl;
-    exit( -1 );
+    return EXIT_FAILURE;
     }
 
   // Get a warning if none of the main output filename is specified
@@ -130,14 +130,14 @@ int main( int argc, char *argv[] )
   if( llsModel == "" )
     {
     std::cerr << "Missing LLSModel file" << std::endl;
-    exit(1);
+    return EXIT_FAILURE;
     }
   LLSModel theModel;
   theModel.SetFileName(llsModel);
   if( theModel.Read() != 0 )
     {
     std::cerr << "Error reading LLS Model" << std::endl;
-    exit(1);
+    return EXIT_FAILURE;
     }
 
   llsMeans = theModel.GetLLSMeans();

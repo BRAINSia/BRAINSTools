@@ -36,7 +36,7 @@ int main(int argc, char * *argv)
   if( argc < 2 )
     {
     std::cerr << "Missing working directory argument" << std::endl;
-    exit(1);
+    return EXIT_FAILURE;
     }
   VersorRigid3DTransformType::Pointer versorRigidTransform
     = CreateTransform<VersorRigid3DTransformType>();

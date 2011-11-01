@@ -9,16 +9,7 @@ int Resample(const std::string & inputVolume,
              const std::string & outputVolume)
 {
   typename ImageType::Pointer inputImage;
-  try
-    {
-    inputImage = itkUtil::ReadImage<ImageType>(inputVolume);
-    }
-  catch( ... )
-    {
-    std::cout << "Caught an exception: " << std::endl;
-    std::cout << " " << __FILE__ << " " << __LINE__ << std::endl;
-    exit(1);
-    }
+  inputImage = itkUtil::ReadImage<ImageType>(inputVolume);
 
   typename ImageType::RegionType region =
     inputImage->GetLargestPossibleRegion();
@@ -65,17 +56,8 @@ int Resample(const std::string & inputVolume,
     std::cerr << excep << std::endl;
     }
 
-  try
-    {
-    itkUtil::WriteImage<ImageType>(outputImage, outputVolume);
-    }
-  catch( ... )
-    {
-    std::cout << "Caught an exception: " << std::endl;
-    std::cout << " " << __FILE__ << " " << __LINE__ << std::endl;
-    exit(1);
-    }
-  exit(0);
+  itkUtil::WriteImage<ImageType>(outputImage, outputVolume);
+  return 0;
 }
 
 int
@@ -83,28 +65,37 @@ main(int argc, char * *argv)
 {
   if( argc < 4 )
     {
-    std::cerr << "resamp: "
-              << "Usage resamp pixType <inputImage> <outputImage"
+    std::cerr << "BRAINSResize: "
+              << "Usage BRAINSResize pixType <inputImage> <outputImage"
               << std::endl;
-    exit(1);
+    return EXIT_FAILURE;
     }
   std::string pixType(argv[1]);
   std::string inputVolume(argv[2]);
   std::string outputVolume(argv[3]);
-  if( pixType == "short" )
+  try
     {
-    Resample<itk::Image<short, 3> >(inputVolume, outputVolume);
+    if( pixType == "short" )
+      {
+      return Resample<itk::Image<short, 3> >(inputVolume, outputVolume);
+      }
+    else if( pixType == "uint" )
+      {
+      return Resample<itk::Image<unsigned int, 3> >(inputVolume, outputVolume);
+      }
+    else if( pixType == "float" )
+      {
+      return Resample<itk::Image<float, 3> >(inputVolume, outputVolume);
+      }
+    else if( pixType == "uchar" )
+      {
+      return Resample<itk::Image<unsigned char, 3> >(inputVolume, outputVolume);
+      }
     }
-  else if( pixType == "uint" )
+  catch( const itkException & e )
     {
-    Resample<itk::Image<unsigned int, 3> >(inputVolume, outputVolume);
+    std::cerr << "BRAINSResize " << e << std::endl;
+    return EXIT_FAILURE;
     }
-  else if( pixType == "float" )
-    {
-    Resample<itk::Image<float, 3> >(inputVolume, outputVolume);
-    }
-  else if( pixType == "uchar" )
-    {
-    Resample<itk::Image<unsigned char, 3> >(inputVolume, outputVolume);
-    }
+  return EXIT_FAILURE;
 }

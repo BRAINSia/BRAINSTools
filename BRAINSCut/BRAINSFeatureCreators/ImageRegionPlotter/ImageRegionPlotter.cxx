@@ -89,9 +89,8 @@ MapHistogramToImage( typename TImageType::Pointer inputImage,
   // Fixed Number of Maximum Number of Intensity
   if( (Image_MAXIMUM - Image_MINIMUM) > MAXIMUM_NUMBER_OF_INTENSITY )
     {
-    std::cerr << "Range of Values are Too Large! "
-              << std::endl;
-    exit(EXIT_FAILURE);
+    itkExceptionMacro( << "Range of Values are Too Large! "
+                       << Image_MINIMUM << " " << Image_MAXIMUM);
     }
 
   // Compute Quantiles
@@ -481,7 +480,7 @@ main(int argc, char *argv[])
     std::cout << " Wrong Argument! " << std::endl
               << " inputVolume1, inputVolume2, and inputLabelVolume are necessary! "
               << std::endl;
-    exit( EXIT_FAILURE);
+    return EXIT_FAILURE;
     }
   return 0;
 }

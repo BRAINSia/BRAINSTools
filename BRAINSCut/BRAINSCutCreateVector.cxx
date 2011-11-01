@@ -39,9 +39,8 @@ BRAINSCutCreateVector
 
   if( !outputVectorStream.good() )
     {
-    std::cout << "Error: Could not open ANN vector file: "
-              << vectorFilename << std::endl;
-    exit(-1);
+    itkGenericExceptionMacro(<< "Error: Could not open ANN vector file: "
+                             << vectorFilename)
     }
   for( TrainSubjectIteratorType subjectIt = trainDataSetList.begin();
        subjectIt != trainDataSetList.end();
@@ -65,8 +64,7 @@ BRAINSCutCreateVector
     }
   catch( BRAINSCutExceptionStringHandler& e )
     {
-    std::cout << e.Error() << std::endl;
-    exit(EXIT_SUCCESS);
+    throw;
     }
 }
 

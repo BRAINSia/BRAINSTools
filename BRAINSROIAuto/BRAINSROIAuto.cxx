@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
     {
     std::cerr << argv[0] << ": Missing required --inputVolume parameter"
               << std::cerr;
-    exit(1);
+    return EXIT_FAILURE;
     }
   VolumeImageType::Pointer ImageInput =
     itkUtil::ReadImage<VolumeImageType>(inputVolume);

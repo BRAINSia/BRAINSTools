@@ -33,8 +33,8 @@ CreateLmkDB( std::string filename, LmkDBType & baseLmkDB, LmkDBType & EPCALmkDB 
 
   if( !myfile.is_open() )
     {
-    std::cerr << "Cannot open training landmark list file!" << std::endl;
-    exit(-1);
+    itkGenericExceptionMacro(<< "Cannot open training landmark list file!"
+                             << filename.c_str() );
     }
 
   // for each file enlisted on the list of landmark list file
@@ -75,9 +75,8 @@ CreateLmkDB( std::string filename, LmkDBType & baseLmkDB, LmkDBType & EPCALmkDB 
       {
       if( itDB->second.size() != numLmks )
         {
-        std::cerr << "Error: number of landmark \"" << itDB->first
-                  << "\" in training list files mismatched!" << std::endl;
-        exit( -1 );
+        itkGenericExceptionMacro(<< "Error: number of landmark \"" << itDB->first
+                                 << "\" in training list files mismatched!");
         }
       ++itDB;
       }
@@ -91,9 +90,8 @@ CreateLmkDB( std::string filename, LmkDBType & baseLmkDB, LmkDBType & EPCALmkDB 
       {
       if( itDB->second.size() != numLmks )
         {
-        std::cerr << "Error: number of landmark \"" << itDB->first
-                  << "\" in training list files mismatched!" << std::endl;
-        exit( -1 );
+        itkGenericExceptionMacro(<< "Error: number of landmark \"" << itDB->first
+                                 << "\" in training list files mismatched!");
         }
       ++itDB;
       }
@@ -113,8 +111,7 @@ InitializeXi( LmkDBType & baseLmkDB )
   // Assert RP (MPJ) exists
   if( baseLmkDB.find( "RP" ) == baseLmkDB.end() )
     {
-    std::cerr << "Error: RP (MPJ) landmark is missing!" << std::endl;
-    exit( -1 );
+    itkGenericExceptionMacro(<< "Error: RP (MPJ) landmark is missing!")
     }
 
   // for each base landmark
@@ -207,8 +204,7 @@ ComputeEPCAModel( MatrixMapType & MMatrixMap, VectorMapType & SVectorMap,
     vnl_vector<double> D;   // eigenvalue of X_i*X_i'
     if( !vnl_symmetric_eigensystem_compute(X_i0Mean * X_i0Mean.transpose(), W_i, D) )
       {
-      std::cerr << "Error: vnl_symmetric_eigensystem_compute failed." << std::endl;
-      exit( -1 );
+      itkGenericExceptionMacro(<< "Error: vnl_symmetric_eigensystem_compute failed.")
       }
 
     // TODO -------------------------------------------------------
@@ -244,8 +240,7 @@ ComputeSVector( const MatrixType & X_i )
   // Sanity check for X_i
   if( X_i.rows() % PointDim != 0 )
     {
-    std::cerr << "Error: Bad X_i!" << std::endl;
-    exit( -1 );
+    itkGenericExceptionMacro(<< "Error: Bad X_i!");
     }
   const unsigned int numLmks( X_i.rows() / PointDim );
   VectorType         s_i;
@@ -272,8 +267,7 @@ ComputeIsiMatrix( const unsigned int rows, const unsigned int columns, const Vec
   // Sanity check for X_i
   if( rows % PointDim != 0 )
     {
-    std::cerr << "Error: Bad X_i!" << std::endl;
-    exit( -1 );
+    itkGenericExceptionMacro(<< "Error: Bad X_i!" );
     }
   const unsigned int numLmks( rows / PointDim );
 

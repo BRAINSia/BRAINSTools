@@ -37,10 +37,8 @@ FeatureInputVector
       SpatialLocationImages.find("phi") == SpatialLocationImages.end()  ||
       SpatialLocationImages.find("theta") == SpatialLocationImages.end()  )
     {
-    std::cerr << __LINE__ << "::" << __FILE__
-              << "::number of images for spatial location should be 3 not " << SpatialLocationImages.size()
-              << std::endl;
-    exit( EXIT_FAILURE);
+    itkGenericExceptionMacro(<< "::number of images for spatial location should be 3 not "
+                             << SpatialLocationImages.size() );
     }
   spatialLocations = SpatialLocationImages;
 }

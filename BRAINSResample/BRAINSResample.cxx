@@ -53,38 +53,37 @@ int main(int argc, char *argv[])
 
   const bool debug = true;
   const bool useTransform = ( warpTransform.size() > 0 );
+
+  const bool useDeformationField = ( deformationVolume.size() > 0 );
+
+  if( debug )
     {
-    const bool useDeformationField = ( deformationVolume.size() > 0 );
-
-    if( debug )
+    std::cout << "=====================================================" << std::endl;
+    std::cout << "Input Volume:     " <<  inputVolume << std::endl;
+    std::cout << "Reference Volume: " <<  referenceVolume << std::endl;
+    std::cout << "Output Volume:    " <<  outputVolume << std::endl;
+    std::cout << "Pixel Type:       " <<  pixelType << std::endl;
+    std::cout << "Interpolation:    " <<  interpolationMode << std::endl;
+    std::cout << "Background Value: " <<  defaultValue << std::endl;
+    if( useDeformationField )
       {
-      std::cout << "=====================================================" << std::endl;
-      std::cout << "Input Volume:     " <<  inputVolume << std::endl;
-      std::cout << "Reference Volume: " <<  referenceVolume << std::endl;
-      std::cout << "Output Volume:    " <<  outputVolume << std::endl;
-      std::cout << "Pixel Type:       " <<  pixelType << std::endl;
-      std::cout << "Interpolation:    " <<  interpolationMode << std::endl;
-      std::cout << "Background Value: " <<  defaultValue << std::endl;
-      if( useDeformationField )
-        {
-        std::cout << "Warp by Deformation Volume: " <<  deformationVolume   << std::endl;
-        }
-      if( useTransform )
-        {
-        std::cout << "Warp By Transform: "  <<   warpTransform << std::endl;
-        }
-      std::cout << "=====================================================" << std::endl;
+      std::cout << "Warp by Deformation Volume: " <<  deformationVolume   << std::endl;
       }
-
-    if( useTransform == useDeformationField )
+    if( useTransform )
       {
-      std::cout
-        << "Choose one of the two possibilities, "
-        "an ITK compliant transform (BSpline, Rigid, Versor3D, Affine) --or-- a high-dimensional"
-        "deformation field."
-        << std::endl;
-      exit(1);
+      std::cout << "Warp By Transform: "  <<   warpTransform << std::endl;
       }
+    std::cout << "=====================================================" << std::endl;
+    }
+
+  if( useTransform == useDeformationField )
+    {
+    std::cout
+      << "Choose one of the two possibilities, "
+      "an ITK compliant transform (BSpline, Rigid, Versor3D, Affine) --or-- a high-dimensional"
+      "deformation field."
+      << std::endl;
+    return EXIT_FAILURE;
     }
 
   TBRAINSResampleInternalImageType::Pointer PrincipalOperandImage;  // One name
@@ -373,7 +372,7 @@ int main(int argc, char *argv[])
   else
     {
     std::cout << "ERROR:  Invalid pixelType" << std::endl;
-    exit(-1);
+    return EXIT_FAILURE;
     }
   return EXIT_SUCCESS;
 }

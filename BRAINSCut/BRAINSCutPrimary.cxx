@@ -19,28 +19,14 @@ BRAINSCutPrimary
 ::SetNetConfiguration()
 {
   std::cout << __LINE__ << "::" << __FILE__ << std::endl;
+  std::list<XMLElementContainer *> elementList;
 
-  try
-    {
-    std::list<XMLElementContainer *> elementList;
+  elementList.push_front( &BRAINSCutNetConfiguration );
 
-    elementList.push_front( &BRAINSCutNetConfiguration );
-
-    NetConfigurationParser BRIANSCutNetConfigurationParser = NetConfigurationParser( NetConfigurationFilename );
-    BRIANSCutNetConfigurationParser.SetUserData( &elementList );
-    BRIANSCutNetConfigurationParser.Parse();
-    }
-  catch( BRAINSCutExceptionStringHandler& e )
-    {
-    std::cout << e.Error() << std::endl;
-    exit(EXIT_SUCCESS);
-    }
-  catch( ... )
-    {
-    std::cout << "Exception occured while SetNetConfiguration() " << std::endl
-              << __LINE__ << "::" << __FILE__ << std::endl;
-    exit(EXIT_SUCCESS);
-    }
+  NetConfigurationParser BRIANSCutNetConfigurationParser = NetConfigurationParser( NetConfigurationFilename );
+  BRIANSCutNetConfigurationParser.SetUserData( &elementList );
+  BRIANSCutNetConfigurationParser.Parse();
+}
 }
 
 void
@@ -49,15 +35,7 @@ BRAINSCutPrimary
 {
   std::cout << __LINE__ << "::" << __FILE__ << std::endl;
 
-  try
-    {
-    atlasDataSet = BRAINSCutNetConfiguration.GetAtlasDataSet();
-    }
-  catch( BRAINSCutExceptionStringHandler& e )
-    {
-    std::cout << e.Error() << std::endl;
-    exit(EXIT_SUCCESS);
-    }
+  atlasDataSet = BRAINSCutNetConfiguration.GetAtlasDataSet();
 }
 
 void
@@ -127,21 +105,13 @@ BRAINSCutPrimary
 {
   std::cout << __LINE__ << "::" << __FILE__ << std::endl;
 
-  try
-    {
-    registrationParser =
-      BRAINSCutNetConfiguration.Get<RegistrationConfigurationParser>("RegistrationConfiguration");
+  registrationParser =
+    BRAINSCutNetConfiguration.Get<RegistrationConfigurationParser>("RegistrationConfiguration");
 
-    registrationImageTypeToUse =
-      std::string( registrationParser->GetAttribute<StringValue>( "ImageTypeToUse") );
-    registrationID = std::string(
-        registrationParser->GetAttribute<StringValue>("ID") );
-    }
-  catch( BRAINSCutExceptionStringHandler& e )
-    {
-    std::cout << e.Error() << std::endl;
-    exit(EXIT_SUCCESS);
-    }
+  registrationImageTypeToUse =
+    std::string( registrationParser->GetAttribute<StringValue>( "ImageTypeToUse") );
+  registrationID = std::string(
+      registrationParser->GetAttribute<StringValue>("ID") );
 }
 
 inline
@@ -273,19 +243,12 @@ BRAINSCutPrimary
   std::cout << __LINE__ << "::" << __FILE__ << "::" << filename << std::endl;
   WorkingImagePointer readInImage;
 
-  try
-    {
-    ReadInImagePointer inputImage = itkUtil::ReadImage<ReadInImageType>(filename.c_str() );
-    readInImage = itkUtil::ScaleAndCast<ReadInImageType,
-                                        WorkingImageType>(inputImage,
-                                                          ZeroPercentValue,
-                                                          HundreadPercentValue);
-    }
-  catch( BRAINSCutExceptionStringHandler& e )
-    {
-    std::cout << e.Error() << std::endl;
-    exit(EXIT_SUCCESS);
-    }
+  ReadInImagePointer inputImage = itkUtil::ReadImage<ReadInImageType>(filename.c_str() );
+
+  readInImage = itkUtil::ScaleAndCast<ReadInImageType,
+                                      WorkingImageType>(inputImage,
+                                                        ZeroPercentValue,
+                                                        HundreadPercentValue);
   return readInImage;
 }
 

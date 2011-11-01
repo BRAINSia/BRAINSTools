@@ -7,7 +7,7 @@ int main(int argc, char * *argv)
     std::cerr << "Usage: testAcpcmodelSetupClass <model txt file>"
               << std::endl;
     std::cerr.flush();
-    exit(1);
+    return EXIT_FAILURE;
     }
   std::string                                filename(argv[1]);
   landmarksConstellationTrainingDefinitionIO m;
@@ -16,8 +16,8 @@ int main(int argc, char * *argv)
     std::cerr << "Error reading " << filename
               << std::endl;
     std::cerr.flush();
-    exit(1);
+    return EXIT_FAILURE;
     }
   std::cout << m;
-  exit(0);
+  return EXIT_SUCCESS;
 }

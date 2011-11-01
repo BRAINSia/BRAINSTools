@@ -74,9 +74,7 @@ VValidationInputParser<TImage>
    */
   if( this->m_ForceCoronalZeroOrigin == true )
     {
-    std::cout << "---Forcing Brains2 Orientation not yet implemented"
-              << std::endl;
-    exit(-1);
+    itkGenericExceptionMacro(<< "---Forcing Brains2 Orientation not yet implemented");
     }
   else
     {

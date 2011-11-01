@@ -70,9 +70,7 @@ ValidationInputParser<TImage>
     */
   if( this->m_ForceCoronalZeroOrigin == true )
     {
-    std::cout << "---Forcing Brains2 Orientation not yet implemented"
-              << std::endl;
-    exit(-1);
+    itkGenericExceptionMacro(<< "---Forcing Brains2 Orientation not yet implemented");
     }
   else
     {
@@ -141,16 +139,7 @@ ValidationInputParser<TImage>
     defGenerator->SetOutputSize( this->GetTheFixedImage()->GetLargestPossibleRegion().GetSize() );
     defGenerator->SetOutputIndex( this->GetTheFixedImage()->GetLargestPossibleRegion().GetIndex() );
     defGenerator->SetTransform(trsf);
-    try
-      {
-      defGenerator->Update();
-      }
-    catch( itk::ExceptionObject & err )
-      {
-      std::cerr << "ExceptionObject caught !" << std::endl;
-      std::cerr << err << std::endl;
-      exit(-1);
-      }
+    defGenerator->Update();
     m_InitialDeformationField = defGenerator->GetOutput();
     // itkUtil::WriteImage<TDeformationField>(m_InitialDeformationField,
     // "initialDeformationfield.nii.gz");
@@ -176,8 +165,7 @@ ValidationInputParser<TImage>
       }
     m_InitialDeformationField = CreateITKDisplacementFieldFromCoeffs(mu);
 #else
-    std::cout << "ERROR:  InitialCoefficientFilename not supported yet" << std::endl;
-    exit(-1);
+    itkGenericExceptionMacro(<< "ERROR:  InitialCoefficientFilename not supported yet");
 #endif
     }
 

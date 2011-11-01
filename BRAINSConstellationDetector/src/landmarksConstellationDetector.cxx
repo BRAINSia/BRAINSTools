@@ -190,10 +190,6 @@ void landmarksConstellationDetector::Compute( void )
 
     if( this->m_HoughEyeFailure )
       {
-      std::cout << "EMSP aligned image and zero eye centers "
-                << "landmarks are written to " << std::endl;
-      std::cout << this->m_ResultsDir << ". Use GUI corrector to "
-                << "correct the landmarks on EMSP.fcsv." << std::endl;
       SImageType::PointType zeroPoint;
       zeroPoint.Fill( 0 );
       LandmarksMapType zeroEyeCenters;
@@ -201,7 +197,10 @@ void landmarksConstellationDetector::Compute( void )
       zeroEyeCenters["RE"] = zeroPoint;
       WriteITKtoSlicer3Lmk
         ( this->m_ResultsDir + "/EMSP.fcsv", zeroEyeCenters );
-      exit( -1 );
+      itkGenericExceptionMacro(<< "EMSP aligned image and zero eye centers "
+                               << "landmarks are written to " << std::endl
+                               << this->m_ResultsDir << ". Use GUI corrector to "
+                               << "correct the landmarks on EMSP.fcsv.");
       }
     }
 
@@ -310,9 +309,8 @@ void landmarksConstellationDetector::Compute( void )
         }
       else if( err_MSP > 6 )
         {
-        std::cerr << "Bad MPJ estimation or too large MSP estimation error!" << std::endl;
-        std::cerr << "The estimation result is probably not reliable." << std::endl;
-        exit( -1 );
+        itkGenericExceptionMacro(<< "Bad MPJ estimation or too large MSP estimation error!"
+                                 << "The estimation result is probably not reliable.");
         }
       else // not changed
         {
@@ -778,8 +776,7 @@ landmarksConstellationDetector::FindVectorFromPointAndVectors
   double delta = b * b - 4 * a * c;
   if( delta < 0 )
     {
-    std::cerr << "Failed to solve a 2rd-order equation!" << std::endl;
-    exit( -1 );
+    itkGenericExceptionMacro(<< "Failed to solve a 2rd-order equation!");
     }
   else if( sign == 1 || sign == -1 )
     {
@@ -787,8 +784,7 @@ landmarksConstellationDetector::FindVectorFromPointAndVectors
     }
   else
     {
-    std::cerr << "Bad parameter! sign = 1 or sign = -1 please" << std::endl;
-    exit( -1 );
+    itkGenericExceptionMacro(<< "Bad parameter! sign = 1 or sign = -1 please");
     }
   BC[1] = ( BA.GetNorm() * BCMean.GetNorm()
             * cosTheta - BA[2] * BC[2] ) / BA[1];

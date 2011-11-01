@@ -6,7 +6,8 @@
 
 #ifndef _landmarksDataSet_h
 #define _landmarksDataSet_h
-#include <itkPoint.h>
+#include "itkMacro.h"
+#include "itkPoint.h"
 #include <map>
 #include <string>
 #include <iostream>
@@ -47,8 +48,7 @@ public:
     std::ifstream singleLandmarkFile( LandmarksFilename.c_str() );
     if( !singleLandmarkFile.is_open() )
       {
-      std::cerr << "Input model file cannot open! :" << LandmarksFilename << ":" << std::endl;
-      exit(-1);
+      itkGenericExceptionMacro(<< "Input model file cannot open! :" << LandmarksFilename);
       }
     landmarksDataSet::PointType tempPoint;
     char                        linebuf[300];
@@ -96,10 +96,9 @@ public:
         || ( this->find("LE") == this->end() )
         || ( this->find("RE") == this->end() ) )
       {
-      std::cerr << "Essential landmarks are missing!" << std::endl;
-      std::cerr << "Make sure the RP (MPJ), AC, PC, 4VN (4th ventricle notch), "
-                << "LE (left eye centers), and RE (right eye centers) are all defined." << std::endl;
-      exit(-1);
+      itkGenericExceptionMacro(<< "Essential landmarks are missing!"
+                               << "Make sure the RP (MPJ), AC, PC, 4VN (4th ventricle notch), "
+                               << "LE (left eye centers), and RE (right eye centers) are all defined.");
       }
 
     singleLandmarkFile.close();

@@ -138,7 +138,7 @@ int main(int argc, char *argv[])
   if( inputTensorVolume == "" )
     {
     std::cerr << "Missing Filename for input Tensor Volume (--inputTensorVolume)" << std::endl;
-    exit(1);
+    return EXIT_FAILURE;
     }
   TensorImageReaderType::Pointer tensorImageReader = TensorImageReaderType::New();
   tensorImageReader->SetFileName( inputTensorVolume );
@@ -162,7 +162,7 @@ int main(int argc, char *argv[])
     {
     std::cerr << "Missing filename for input Anisotropy Volume (--inputAnisotropyVolume)"
               << std::endl;
-    exit(1);
+    return EXIT_FAILURE;
     }
   typedef float                                     AnisotropyPixelType;
   typedef itk::Image<AnisotropyPixelType, 3>        AnisotropyImageType;
@@ -226,7 +226,7 @@ int main(int argc, char *argv[])
       {
       std::cerr << "Missing filename for input Ending Seeds Label Map (--inputEndingSeedsLabelMapVolume)"
                 << std::endl;
-      exit(1);
+      return EXIT_FAILURE;
       }
     MaskImageReaderType::Pointer endingSeedImageReader = MaskImageReaderType::New();
     endingSeedImageReader->SetFileName( inputEndingSeedsLabelMapVolume );
@@ -259,7 +259,7 @@ int main(int argc, char *argv[])
     if( inputTract == "" )
       {
       std::cerr << "Missing Input Guide Tract (--inputTract)" << std::endl;
-      exit(1);
+      return EXIT_FAILURE;
       }
     else
       {
@@ -392,7 +392,7 @@ int main(int argc, char *argv[])
   else
     {
     std::cout << "No correct tracking method!" << std::endl;
-    exit(-1);
+    return EXIT_FAILURE;
     }
 
   //   vtkPolyData *fibers = acturalTrackingFilter->GetOutput();

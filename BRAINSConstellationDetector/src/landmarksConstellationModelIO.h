@@ -193,8 +193,8 @@ public:
   {
     if( this->m_Templates.find(name) == this->m_Templates.end() )
       {
-      std::cerr << "Attempt to access an undifined landmark template for " << name << "! Abort." << std::endl;
-      exit(-1);
+      itkGenericExceptionMacro(<< "Attempt to access an undifined landmark template for "
+                               << name);
       }
     return this->m_Templates[name][indexDataSet][indexAngle];
   }
@@ -205,8 +205,7 @@ public:
     if( this->m_TemplateMeansComputed.find(name) == this->m_TemplateMeansComputed.end()
         || this->m_Templates.find(name) == this->m_Templates.end() )
       {
-      std::cerr << "Attempt to access an undifined landmark template (mean)! Abort." << std::endl;
-      exit(-1);
+      itkGenericExceptionMacro(<< "Attempt to access an undifined landmark template (mean)!");
       }
     ComputeAllMeans(this->m_TemplateMeans[name], this->m_Templates[name]);
     return this->m_TemplateMeans[name][indexAngle];
@@ -217,8 +216,7 @@ public:
     if( this->m_TemplateMeansComputed.find(name) == this->m_TemplateMeansComputed.end()
         && this->m_Templates.find(name) == this->m_Templates.end() )
       {
-      std::cerr << "Attempt to access an undefined landmark template (mean)! Abort." << std::endl;
-      exit(-1);
+      itkGenericExceptionMacro(<< "Attempt to access an undefined landmark template (mean)!");
       }
     ComputeAllMeans(this->m_TemplateMeans[name], this->m_Templates[name]);
     return this->m_TemplateMeans[name];
@@ -355,9 +353,7 @@ public:
 
     if( !input.is_open() )
       {
-      std::cerr << "Can't read " << filename << std::endl;
-      std::cerr.flush();
-      exit(-1);
+      itkGenericExceptionMacro(<< "Can't read " << filename);
       }
     try
       {
@@ -447,9 +443,7 @@ public:
 #ifdef __USE_OFFSET_DEBUGGING_CODE__
       this->debugOffset(&input, "end of file", -1);
 #endif
-      std::cerr << "Read failed for " << filename << std::endl;
-      std::cerr << e << std::endl;
-      exit(-1);
+      throw;
       }
     input.close();
   }

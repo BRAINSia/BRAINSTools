@@ -50,8 +50,9 @@ int main(int argc, char *argv[])
   SImageType::Pointer volOrig = itkUtil::ReadImage<SImageType>(inputVolume);
   if( volOrig.IsNull() )
     {
-    printf( "\nCould not open image %s, aborting ...\n\n", inputVolume.c_str() );
-    exit(1);
+    std::cerr << "Could not open image "
+              << inputVolume.c_str() << std::endl;
+    return EXIT_FAILURE;
     }
 
   // /////////////////////////////////////////////////////////////////////////////////////////////

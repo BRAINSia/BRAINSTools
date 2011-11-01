@@ -527,8 +527,8 @@ WriteMRMLFile(std::string outputMRML,
   std::ofstream myfile( mrmlFullFilename.c_str() );
   if( !myfile.is_open() )
     {
-    std::cerr << "Cannot write mrml file!" << std::endl;
-    exit(-1);
+    itkGenericExceptionMacro(<< "Cannot write mrml file!"
+                             << mrmlFullFilename);
     }
 
   // Common mrml header
@@ -697,92 +697,6 @@ WriteMRMLFile(std::string outputMRML,
   myfile.close();
 }
 
-/*
-void
-loadLLSModelMat(std::string llsModel,
-                std::string processingList,
-                std::map<std::string, std::vector<double> > & llsMeans,
-                std::map<std::string, MatrixType> & llsMatrices,
-                std::map<std::string, double> & searchRadii)
-{
-  std::vector<std::string> landmarkList;
-
-    {
-    // Read in landmark name and their search radii
-    std::ifstream myprocessingListFile( processingList.c_str() );
-    if( !myprocessingListFile.is_open() )
-      {
-      std::cerr << "Cannot open processing list file!" << std::endl;
-      exit(-1);
-      }
-
-    // for each landmark
-    std::string line;
-    while( getline( myprocessingListFile, line ) )
-      {
-      std::string name = line;
-      landmarkList.push_back( name );
-      if( !getline( myprocessingListFile, line ) )
-        {
-        std::cerr << "Bad file format of processing list file!" << std::endl;
-        return;
-        }
-      searchRadii[name] = atof( line.c_str() );
-      }
-
-    myprocessingListFile.close();
-    }
-
-  // Read in the s vector and M matrix of each landmark
-    {
-    vcl_ifstream myMatlabLLSModelFile( llsModel.c_str() );
-    VectorType   llsMeansVnl;
-    if( !myMatlabLLSModelFile.is_open() )
-      {
-      std::cerr << "Cannot open landmark model file!" << std::endl;
-      exit(-1);
-      }
-    for( unsigned int i = 0; i < landmarkList.size(); ++i )
-      {
-      // vnl can only read in Matlab v4 binary files, and there is a 19
-      // character length
-      // restriction for the stored variables.
-      size_t      matV4MaxVarLen = 19;
-      size_t      suffixLen = 3; // suffix length for __x
-      std::string name_s;
-      std::string name_M;
-      if( landmarkList[i].size() > matV4MaxVarLen - suffixLen )
-        {
-        name_s = landmarkList[i].substr( 0, matV4MaxVarLen - suffixLen ) + "__s";
-        name_M = landmarkList[i].substr( 0, matV4MaxVarLen - suffixLen ) + "__M";
-        }
-      else
-        {
-        name_s = landmarkList[i] + "__s";
-        name_M = landmarkList[i] + "__M";
-        }
-
-      std::cout << "Reading: " << name_s << "  " << name_M << std::endl;
-      if( !vnl_matlab_read_or_die( myMatlabLLSModelFile, llsMeansVnl, name_s.c_str() ) )
-        {
-        std::cerr << "Error reading s vector of landmark " << name_s << std::endl;
-        }
-      else
-        {
-        // hard coded dim = 3
-        llsMeans[landmarkList[i]].push_back( llsMeansVnl[0] );
-        llsMeans[landmarkList[i]].push_back( llsMeansVnl[1] );
-        llsMeans[landmarkList[i]].push_back( llsMeansVnl[2] );
-        }
-      if( !vnl_matlab_read_or_die( myMatlabLLSModelFile, llsMatrices[landmarkList[i]], name_M.c_str() ) )
-        {
-        std::cerr << "Error reading M matrix of landmark " << name_M << std::endl;
-        }
-      }
-    myMatlabLLSModelFile.close();
-    }
-}
-*/
 void
 loadLLSModel(std::string llsModelFilename,
              std::map<std::string, std::vector<double> > & llsMeans,
@@ -793,8 +707,8 @@ loadLLSModel(std::string llsModelFilename,
 
   if( !myfile.is_open() )
     {
-    std::cerr << "Cannot open landmark model file!" << std::endl;
-    exit(-1);
+    itkGenericExceptionMacro(<< "Cannot open landmark model file!"
+                             << llsModelFilename);
     }
 
   // for each landmark
@@ -812,8 +726,7 @@ loadLLSModel(std::string llsModelFilename,
 
       if( !getline(myfile, line) )
         {
-        std::cerr << "Bad number of parameters info in llsModelFile!" << std::endl;
-        exit(-1);
+        itkGenericExceptionMacro(<< "Bad number of parameters info in llsModelFile!");
         }
       else
         {
@@ -832,16 +745,14 @@ loadLLSModel(std::string llsModelFilename,
 
         if( i != dimension )  // double check
           {
-          std::cerr << "Bad mean values in llsModelFile!" << std::endl;
-          exit(-1);
+          itkGenericExceptionMacro(<< "Bad mean values in llsModelFile!");
           }
         }
 
       // read in search radius
       if( !getline(myfile, line) )
         {
-        std::cerr << "Bad search radius in llsModelFile!" << std::endl;
-        exit(-1);
+        itkGenericExceptionMacro(<< "Bad search radius in llsModelFile!");
         }
       else
         {
@@ -852,8 +763,7 @@ loadLLSModel(std::string llsModelFilename,
       unsigned int numParameters = 0;
       if( !getline(myfile, line) )
         {
-        std::cerr << "Bad number of parameters info in llsModelFile!" << std::endl;
-        exit(-1);
+        itkGenericExceptionMacro(<< "Bad number of parameters info in llsModelFile!");
         }
       else
         {
@@ -866,8 +776,7 @@ loadLLSModel(std::string llsModelFilename,
         {
         if( !getline(myfile, line) )
           {
-          std::cerr << "Bad linear model coefficients in llsModelFile!" << std::endl;
-          exit(-1);
+          itkGenericExceptionMacro(<< "Bad linear model coefficients in llsModelFile!")
           }
         else
           {
@@ -884,8 +793,7 @@ loadLLSModel(std::string llsModelFilename,
 
           if( i != numParameters )  // double check
             {
-            std::cerr << "Bad linear model coefficients in llsModelFile!" << std::endl;
-            exit(-1);
+            itkGenericExceptionMacro(<< "Bad linear model coefficients in llsModelFile!");
             }
           }
         }
@@ -908,9 +816,7 @@ writeVerificationScript(std::string outputVerificationScriptFilename,
                                                                // writing
   if( !ScriptFile.is_open() )
     {
-    std::cerr << "Can't write outputVerificationScript " << outputVerificationScriptFilename << std::endl;
-    std::cerr.flush();
-    exit(-1);
+    itkGenericExceptionMacro(<< "Can't write outputVerificationScript " << outputVerificationScriptFilename);
     }
 
   ScriptFile << "##There is a program that reads in a T1 image, determine the AC, PC, VN4, and MPJ" << std::endl;

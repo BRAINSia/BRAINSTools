@@ -111,8 +111,7 @@ BRAINSCutApplyModel
     }
   catch( BRAINSCutExceptionStringHandler& e )
     {
-    std::cout << e.Error() << std::endl;
-    exit(EXIT_SUCCESS);
+    throw;
     }
 }
 

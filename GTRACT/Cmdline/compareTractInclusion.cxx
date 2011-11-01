@@ -159,7 +159,7 @@ int main(int argc, char * argv[])
       std::cout << "Number of Standard Fibers in " << standardFiber << " was " << numberOfStandardFibers << std::endl;
       std::cout << "TractInclusion test halting with error status 2 indicating cardinality agreement error."
                 << std::endl;
-      exit(2);
+      return EXIT_FAILURE;
       }
     }
 
@@ -187,7 +187,7 @@ int main(int argc, char * argv[])
     std::cout
       << "TractInclusion test halting with error status 3 indicating Test fibers not included in Standard neighborhood."
       << std::endl;
-    exit(3);
+    return EXIT_FAILURE;
     }
 
   if( testForBijection )
@@ -201,7 +201,7 @@ int main(int argc, char * argv[])
         <<
         "TractInclusion test halting witherror status 4 indicating Standard fibers not included in Test neighborhood."
         << std::endl;
-      exit(4);
+      return EXIT_FAILURE;
       }
     }
   return EXIT_SUCCESS;

@@ -88,7 +88,7 @@ int main(int argc, char *argv[])
     }
   if( violated )
     {
-    exit(1);
+    return EXIT_FAILURE;
     }
 
   typedef itk::ImageFileReader<VectorImageType,
@@ -124,7 +124,7 @@ int main(int argc, char *argv[])
     catch( itk::ExceptionObject e )
       {
       std::cerr << e << std::endl;
-      exit(1);
+      return EXIT_FAILURE;
       }
     ;
     IndexImageType::Pointer b0Image(SelectIndexImageFilter->GetOutput() );
@@ -143,14 +143,14 @@ int main(int argc, char *argv[])
       {
       std::cerr << "Error: missing mask Volume needed for ROI mask Processing"
                 << std::endl;
-      exit(1);
+      return EXIT_FAILURE;
       }
     maskImage = itkUtil::ReadImage<MaskImageType>(maskVolume);
     if( maskImage.IsNull() )
       {
       std::cerr << "Error: can't read mask volume "
                 << maskVolume << std::endl;
-      exit(1);
+      return EXIT_FAILURE;
       }
     }
   /* Extract Diffusion Information from the Header */

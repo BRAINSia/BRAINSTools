@@ -16,7 +16,7 @@ main(int argc, char **argv)
     <<
     "downsample size of 1 will be the same size as the input images, downsample size of 3 will throw 2/3 the vectors away."
     << std::endl;
-    exit(1);
+
   }
   //Shuffled the vector:
   ShuffleVectors * my_ShuffleVector = new ShuffleVectors (  std::string( argv[1] ),
@@ -39,11 +39,9 @@ ShuffleVectors::ReadHeader()
   filestr.open( m_inputHeaderFilename.c_str() );
   if( !filestr.is_open() )
     {
-    std::cout << "Error: Could not open ANN vector file"
-              << std::endl
-              << m_inputHeaderFilename
-              << std::endl;
-    exit(1);
+    itkGenericExceptionMacro(<< "Error: Could not open ANN vector file"
+                             << std::endl
+                             << m_inputHeaderFilename);
     }
   for( int tags = 0; tags < 3; tags++ )
     {
@@ -79,8 +77,7 @@ ShuffleVectors::WriteHeader()
   filestr.open( m_outputHeaderFilename.c_str() );
   if( !filestr.is_open() )
     {
-    std::cout << "Error: Could not open ANN vector file" << std::endl;
-    exit(1);
+    itkGenericExceptionMacro(<< "Error: Could not open ANN vector file")
     }
   filestr << "IVS " <<  m_IVS << std::endl;
   filestr << "OVS " <<  m_OVS << std::endl;
@@ -122,8 +119,7 @@ ShuffleVectors::ShuffledOrder()
 
   if( rval == 0 )
     {
-    std::cerr << "Can't allocate shuffled ordering" << std::endl;
-    exit(1);
+    itkGenericExceptionMacro(<< "Can't allocate shuffled ordering")
     }
   for( unsigned long i = 0; i < m_input_TVC; i++ )
     {
@@ -168,15 +164,12 @@ ShuffleVectors::ShuffleVectors(const std::string& inputVectorFilename, const std
 
   if( inputVectorFilename == "" || outputVectorFilename == "" )
     {
-    std::cout << " Filenames for inputVector and outputVector are neccessary"
-              << std::endl;
-    exit(-1);
+    itkGenericExceptionMacro(<< " Filenames for inputVector and outputVector are neccessary");
     }
   else if( inputVectorFilename == outputVectorFilename )
     {
-    std::cout << "ERROR:  Can not use the same file for input and output."
-              << std::endl;
-    exit(-1);
+    itkGenericExceptionMacro(<< "ERROR:  Can not use the same file for input and output."
+                             << inputVectorFilename);
     }
   else
     {
@@ -199,8 +192,7 @@ ShuffleVectors::Shuffling()
                 std::ios::in | std::ios::binary);
   if( !binfile.is_open() )
     {
-    std::cerr << "Can't open " << m_inputVectorFilename << std::endl;
-    exit(1);
+    itkGenericExceptionMacro(<< "Can't open " << m_inputVectorFilename );
     }
 
   int shuffledFile =
@@ -209,8 +201,7 @@ ShuffleVectors::Shuffling()
          S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
   if( shuffledFile == -1 )
     {
-    std::cerr << "Can't open output file " << m_outputVectorFilename << std::endl;
-    exit(1);
+    itkGenericExceptionMacro(<< "Can't open output file " << m_outputVectorFilename);
     }
   // make a shuffled output ordering
   std::cout.flush();

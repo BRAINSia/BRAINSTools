@@ -178,11 +178,10 @@ int main(int argc, char *argv[])
                                                  // so don't count it.
           ) > 1 )
       {
-      std::cout
-        <<
-        "ERROR:  Can only specify one of [initialTransform | useCenterOfHeadAlign | useGeometryAlign | useMomentsAlign | initializeTransformMode ]"
-        << std::endl;
-      exit(-1);
+      itkGenericExceptionMacro(
+        "ERROR:  Can only specify one of "
+        "[initialTransform | useCenterOfHeadAlign | useGeometryAlign | useMomentsAlign | initializeTransformMode ]"
+        );
       }
     if( useCenterOfHeadAlign == true )
       {
@@ -207,10 +206,8 @@ int main(int argc, char *argv[])
       {
       if( splineGridSize[sgs] < 3 )
         {
-//        validGridSize = false;
-        std::cout << "splineGridSize[" << sgs << "]= " << splineGridSize[sgs]
-                  << " is invalid.  There must be at lest 3 divisions in each dimension of the image." << std::endl;
-        exit(-1);
+        itkGenericExceptionMacro("splineGridSize[" << sgs << "]= " << splineGridSize[sgs]
+                                                   << " is invalid.  There must be at lest 3 divisions in each dimension of the image.");
         }
       }
     }
@@ -252,8 +249,7 @@ int main(int argc, char *argv[])
     }
   else
     {
-    std::cerr << "ERROR: No registration phases specified to perform!" << std::endl;
-    exit(-1);
+    itkGenericExceptionMacro( "ERROR: No registration phases specified to perform!");
     }
 
   // In order to make the Slicer interface work, a few alternate command line
@@ -263,16 +259,14 @@ int main(int argc, char *argv[])
       || ( linearTransform.size() > 0 && outputTransform.size() > 0 )
       || ( outputTransform.size() > 0 && bsplineTransform.size() > 0 ) )
     {
-    std::cout << "Error:  user can only specify one output transform type." << std::endl;
-    exit(-1);
+    itkGenericExceptionMacro("Error:  user can only specify one output transform type.");
     }
   if( linearTransform.size() > 0 )
     {
     localOutputTransform = linearTransform;
     if( ( !localTransformType.empty() ) && ( localTransformType[localTransformType.size() - 1] == "BSpline" ) )
       {
-      std::cout << "Error:  Linear transforms can not be used for BSpline registration!" << std::endl;
-      exit(-1);
+      itkGenericExceptionMacro("Error:  Linear transforms can not be used for BSpline registration!");
       }
     }
   else if( !bsplineTransform.empty() )
@@ -280,13 +274,11 @@ int main(int argc, char *argv[])
     localOutputTransform = bsplineTransform;
     if( ( !localTransformType.empty() ) && ( localTransformType[localTransformType.size() - 1] != "BSpline" ) )
       {
-      std::cout << "Error:  BSpline registrations require output transform to be of type BSpline!" << std::endl;
-      exit(-1);
+      itkGenericExceptionMacro("Error:  BSpline registrations require output transform to be of type BSpline!");
       }
     else if( localTransformType.empty() )
       {
-      std::cout << "Error:  Initializer only registrations require output transform to be of type Linear!" << std::endl;
-      exit(-1);
+      itkGenericExceptionMacro("Error:  Initializer only registrations require output transform to be of type Linear!");
       }
     }
   else if( !outputTransform.empty() )
@@ -298,19 +290,18 @@ int main(int argc, char *argv[])
       && strippedOutputTransform.empty()
       && outputVolume.empty() )
     {
-    std::cout << "Error:  user requested neither localOutputTransform,"
-              << " nor strippedOutputTransform,"
-              << " nor outputVolume." << std::endl;
-    return 2;
+    itkGenericExceptionMacro( "Error:  user requested neither localOutputTransform,"
+                              << " nor strippedOutputTransform,"
+                              << " nor outputVolume.");
     }
 
   if( numberOfIterations.size() != localTransformType.size() )
     {
     if( numberOfIterations.size() != 1 )
       {
-      std::cerr << "The numberOfIterations array must match the length of the transformType"
-                << "length, or have a single value that is used for all registration phases." << std::endl;
-      exit(-1);
+      itkGenericExceptionMacro(
+        "The numberOfIterations array must match the length of the transformType"
+        << "length, or have a single value that is used for all registration phases.");
       }
     else
       {
@@ -327,8 +318,7 @@ int main(int argc, char *argv[])
     {
     if( minimumStepLength.size() != 1 )
       {
-      std::cerr << "The minimumStepLength array must match the localTransformType length" << std::endl;
-      exit(-1);
+      itkGenericExceptionMacro("The minimumStepLength array must match the localTransformType length");
       }
     else
       {
@@ -413,20 +403,16 @@ int main(int argc, char *argv[])
     {
     if( fixedBinaryVolume != "" || movingBinaryVolume != "" )
       {
-      std::cout
-        << "ERROR:  Can not specify mask file names when the default of NOMASK is used for the maskProcessingMode"
-        << std::endl;
-      exit(-1);
+      itkGenericExceptionMacro(
+        "ERROR:  Can not specify mask file names when the default of NOMASK is used for the maskProcessingMode");
       }
     }
   else if( maskProcessingMode == "ROIAUTO" )
     {
     if( fixedBinaryVolume != "" || movingBinaryVolume != "" )
       {
-      std::cout
-        << "ERROR:  Can not specify mask file names when ROIAUTO is used for the maskProcessingMode"
-        << std::endl;
-      exit(-1);
+      itkGenericExceptionMacro(
+        "ERROR:  Can not specify mask file names when ROIAUTO is used for the maskProcessingMode");
       }
       {
       typedef itk::BRAINSROIAutoImageFilter<FixedVolumeType, itk::Image<unsigned char, 3> > ROIAutoType;
@@ -451,11 +437,8 @@ int main(int argc, char *argv[])
     {
     if( fixedBinaryVolume == "" || movingBinaryVolume == "" )
       {
-      std::cout
-        <<
-        "ERROR:  Must specify mask file names when ROI is used for the maskProcessingMode"
-        << std::endl;
-      exit(-1);
+      itkGenericExceptionMacro(
+        "ERROR:  Must specify mask file names when ROI is used for the maskProcessingMode");
       }
     fixedMask = ReadImageMask<SpatialObjectType, Dimension>(
         fixedBinaryVolume,
@@ -540,9 +523,8 @@ int main(int argc, char *argv[])
           }
         else
           {
-          // This should be an exception thow instead of exit.
-          std::cout << "could not convert to rigid versor type" << std::endl;
-          exit(-1);
+          itkGenericExceptionMacro(
+            "could not convert to rigid versor type" );
           }
         }
       else

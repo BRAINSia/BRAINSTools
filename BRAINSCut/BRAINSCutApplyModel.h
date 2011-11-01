@@ -5,7 +5,7 @@
 #include "FeatureInputVector.h"
 
 typedef itk::Image<unsigned char, DIMENSION> BinaryImageType;
-typedef BinaryImageType::Pointer             BinaryTypePointer;
+typedef BinaryImageType::Pointer             BinaryImagePointer;
 
 class BRAINSCutApplyModel : public BRAINSCutPrimary
 {
@@ -22,13 +22,17 @@ public:
 
   void ReadANNModelFile();
 
-  BinaryTypePointer PostProcessingOfANNContinuousImage( std::string continuousFilname );
+  BinaryImagePointer PostProcessingOfANNContinuousImage( std::string continuousFilname );
 
   void SetANNOutputThresholdFromNetConfiguration();
 
-  BinaryTypePointer ThresholdImage( WorkingImagePointer image );
+  BinaryImagePointer ThresholdImageAtLower( WorkingImagePointer image, scalarType thresholdValue );
 
-  BinaryTypePointer GetOneConnectedRegion( BinaryTypePointer image );
+  BinaryImagePointer ExtractLabel( BinaryImagePointer image, unsigned char thresholdValue );
+
+  BinaryImagePointer GetOneConnectedRegion( BinaryImagePointer image );
+
+  BinaryImagePointer FillHole( BinaryImagePointer mask);
 
 private:
   NetConfiguration::ApplyDataSetListType applyDataSetList;

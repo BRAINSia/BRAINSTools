@@ -166,8 +166,7 @@ void DiffusionTensor3DReconstructionWithMaskImageFilter<TReferenceImagePixelType
           this->ProcessObject::GetInput(i) );
       if( gradientImagePointer.IsNull() )
         {
-        std::cout << "Invalid converstion attempted." << __FILE__ << " " << __LINE__ << std::endl;
-        exit(-1);
+        itkGenericExceptionMacro(<< "Failed conversion to Gradient Image");
         }
 
       GradientIteratorType *git = new GradientIteratorType(

@@ -377,8 +377,7 @@ FindCenterOfBrainFilter<TInputImage, TMaskImage>
         dynamic_cast<itk::SpatialObject<TInputImage::ImageDimension> *>( mask.GetPointer() );
       if( test.IsNull() )
         {
-        std::cout << "Invalid converstion attempted." << __FILE__ << " " << __LINE__ << std::endl;
-        exit(-1);
+        itkGenericExceptionMacro(<< "Failed conversion to Image");
         }
 
       moments->SetSpatialObjectMask( test.GetPointer() );

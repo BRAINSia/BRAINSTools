@@ -295,10 +295,7 @@ ScaleAndCast(const typename InputImageType::Pointer & image,
     }
   catch( itk::ExceptionObject & e )
     {
-    std::cerr << "Exception in Image cast." << std::endl;
-    std::cerr << e.GetDescription() << std::endl;
-    std::cerr << e.GetLocation() << std::endl;
-    exit(-1);
+    throw;
     }
   typename OutputImageType::Pointer returnScaled = RealToProbMapCast->GetOutput();
   return returnScaled;

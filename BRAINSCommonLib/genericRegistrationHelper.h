@@ -143,8 +143,7 @@ public:
 
     if( optimizer == NULL )
       {
-      std::cout << "ERROR::" << __FILE__ << " " << __LINE__ << std::endl;
-      exit(-1);
+      itkGenericExceptionMacro("fail to convert to Optimizer Pointer");
       }
     if( !itk::IterationEvent().CheckEvent(&event) )
       {

@@ -79,7 +79,7 @@ int main(int argc, char * *argv)
     {
     std::cerr << "Can't read test image "
               << startImageName << std::endl;
-    exit(3);
+    return EXIT_FAILURE;
     }
 
   AffineTransformType::Pointer transform = AffineTransformType::New();
@@ -122,5 +122,5 @@ int main(int argc, char * *argv)
 
   ImageType::Pointer xfrmImage = Resample(startImage, transform);
   itkUtil::WriteImage<ImageType>(xfrmImage, xfrmImageName);
-  exit(0);
+  return EXIT_SUCCESS;
 }

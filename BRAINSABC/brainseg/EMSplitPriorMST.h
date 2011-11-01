@@ -6,7 +6,7 @@ void
 EMSegmentationFilter<TInputImage, TProbabilityImage>
 ::SplitPriorMST(unsigned int /*iprior*/)
 {
-  exit(-1);
+  throw; // don't exit
 #if 0
   const unsigned int numChannels = m_InputImages.size();
   const unsigned int numPriors = m_WarpedPriors.size();

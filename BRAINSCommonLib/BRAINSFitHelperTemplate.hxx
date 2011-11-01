@@ -15,6 +15,7 @@
 #include "itkLabelObject.h"
 #include "itkStatisticsLabelObject.h"
 #include "itkLabelImageToStatisticsLabelMapFilter.h"
+#include "itkMacro.h"
 
 namespace itk
 {
@@ -30,6 +31,11 @@ ValidateTransformRankOrdering(const std::vector<std::string> & transformType)
   // transform types.
   // Rigid=1, ScaleVersor3D=2, ScaleSkewVersor3D=3, Affine=4, and (BSpline or
   // ROIBspline)=5
+#define VTROExceptionMacroMacro()                                       \
+  itkGenericExceptionMacro(<< "Ordering of transforms does not proceed from\n" \
+                           << "smallest to largest.  Please review settings for transformType.\n" \
+                           << "Rigid < ScaleVersor3D < ScaleSkewVersor3D < Affine < (BSpline | ROIBSpine)")
+
   unsigned int CurrentTransformRank = 0;
 
   for( unsigned int l = 0; l < transformType.size(); ++l )
@@ -42,10 +48,7 @@ ValidateTransformRankOrdering(const std::vector<std::string> & transformType)
         }
       else
         {
-        std::cerr << "Ordering of transforms does not proceed from\n"
-                  << "smallest to largest.  Please review settings for transformType.\n"
-                  << "Rigid < ScaleVersor3D < ScaleSkewVersor3D < Affine < (BSpline | ROIBSpine)" << std::endl;
-        exit(-1);
+        VTROExceptionMacroMacro();
         }
       }
     else if( transformType[l] == "ScaleVersor3D" )
@@ -56,10 +59,7 @@ ValidateTransformRankOrdering(const std::vector<std::string> & transformType)
         }
       else
         {
-        std::cerr << "Ordering of transforms does not proceed from\n"
-                  << "smallest to largest.  Please review settings for transformType.\n"
-                  << "Rigid < ScaleVersor3D < ScaleSkewVersor3D < Affine < (BSpline | ROIBSpline)" << std::endl;
-        exit(-1);
+        VTROExceptionMacroMacro();
         }
       }
     else if( transformType[l] == "ScaleSkewVersor3D" )
@@ -70,10 +70,7 @@ ValidateTransformRankOrdering(const std::vector<std::string> & transformType)
         }
       else
         {
-        std::cerr << "Ordering of transforms does not proceed from\n"
-                  << "smallest to largest.  Please review settings for transformType.\n"
-                  << "Rigid < ScaleVersor3D < ScaleSkewVersor3D < Affine < (BSpline | ROIBSpline)" << std::endl;
-        exit(-1);
+        VTROExceptionMacroMacro();
         }
       }
     else if( transformType[l] == "Affine" )
@@ -84,10 +81,7 @@ ValidateTransformRankOrdering(const std::vector<std::string> & transformType)
         }
       else
         {
-        std::cerr << "Ordering of transforms does not proceed from\n"
-                  << "smallest to largest.  Please review settings for transformType.\n"
-                  << "Rigid < ScaleVersor3D < ScaleSkewVersor3D < Affine < (BSpline | ROIBSpline)" << std::endl;
-        exit(-1);
+        VTROExceptionMacroMacro();
         }
       }
     else if( transformType[l] == "BSpline" )
@@ -98,10 +92,7 @@ ValidateTransformRankOrdering(const std::vector<std::string> & transformType)
         }
       else
         {
-        std::cerr << "Ordering of transforms does not proceed from\n"
-                  << "smallest to largest.  Please review settings for transformType.\n"
-                  << "Rigid < ScaleVersor3D < ScaleSkewVersor3D < Affine < (BSpline | ROIBSpline)" << std::endl;
-        exit(-1);
+        VTROExceptionMacroMacro();
         }
       }
     else if( transformType[l] == "ROIBSpline" )
@@ -112,10 +103,7 @@ ValidateTransformRankOrdering(const std::vector<std::string> & transformType)
         }
       else
         {
-        std::cerr << "Ordering of transforms does not proceed from\n"
-                  << "smallest to largest.  Please review settings for transformType.\n"
-                  << "Rigid < ScaleVersor3D < ScaleSkewVersor3D < Affine < (BSpline | ROIBSpline)" << std::endl;
-        exit(-1);
+        VTROExceptionMacroMacro();
         }
       }
 
@@ -123,10 +111,7 @@ ValidateTransformRankOrdering(const std::vector<std::string> & transformType)
       {
       std::cerr << " ERROR:  Invalid transform type specified for element " << l << " of --transformType: "
                 << transformType[l] << std::endl;
-      std::cerr << "Ordering of transforms must proceed from\n"
-                << "smallest to largest.  Please review settings for transformType.\n"
-                << "Rigid < ScaleVersor3D < ScaleSkewVersor3D < Affine < BSpline" << std::endl;
-      exit(-1);
+      VTROExceptionMacroMacro();
       }
     }
 }
@@ -244,8 +229,7 @@ typename TransformType::Pointer DoCenteredInitialization(
       typename SpatialObjectType::Pointer p = dynamic_cast<SpatialObjectType *>( mask.GetPointer() );
       if( p.IsNull() )
         {
-        std::cout << "ERROR::" << __FILE__ << " " << __LINE__ << std::endl;
-        exit(-1);
+        itkGenericExceptionMacro(<< "Can't convert mask pointer to SpatialObject");
         }
       movingMask = p;
       }
@@ -278,8 +262,7 @@ typename TransformType::Pointer DoCenteredInitialization(
       typename SpatialObjectType::Pointer p = dynamic_cast<SpatialObjectType *>( mask.GetPointer() );
       if( p.IsNull() )
         {
-        std::cout << "ERROR::" << __FILE__ << " " << __LINE__ << std::endl;
-        exit(-1);
+        itkGenericExceptionMacro(<< "Can't convert mask pointer to SpatialObject");
         }
       fixedMask = p;
       }
@@ -497,9 +480,8 @@ typename TransformType::Pointer DoCenteredInitialization(
                            // was
   // added:
     {
-    std::cout << "FAILURE:  Improper mode for initializeTransformMode: "
-              << initializeTransformMode << std::endl;
-    exit(-1);
+    itkGenericExceptionMacro(<< "FAILURE:  Improper mode for initializeTransformMode: "
+                             << initializeTransformMode);
     }
   std::cout << "Initializing transform with "  << initializeTransformMode
             << " to " << std::endl;
@@ -624,16 +606,13 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::FitCommonCode(
   catch( itk::ExceptionObject& err )
     {
     // pass exception to caller
-    std::cout << "ERROR OCCURED: " << err << std::endl;
-    exit(-1);
-    throw err;
+    throw;
     }
 
-    {   // Put the transform on the CurrentTransformList
-        // Initialize next level of transformations with previous transform
-        // result
-    this->m_CurrentGenericTransform = finalTransform;
-    }
+  // Put the transform on the CurrentTransformList
+  // Initialize next level of transformations with previous transform
+  // result
+  this->m_CurrentGenericTransform = finalTransform;
 }
 
 template <class FixedImageType, class MovingImageType>
@@ -661,10 +640,8 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::StartRegistration(void
     {
     if( m_MinimumStepLength.size() != 1 )
       {
-      std::cout << "ERROR:  Wrong number of parameters for MinimumStepLength."
-                << "It either needs to be 1 or the same size as TransformType."
-                << std::endl;
-      exit(-1);
+      itkGenericExceptionMacro(<< "ERROR:  Wrong number of parameters for MinimumStepLength."
+                               << "It either needs to be 1 or the same size as TransformType.");
       }
     for( unsigned int q = 0; q < m_TransformType.size(); ++q )
       {
@@ -680,10 +657,8 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::StartRegistration(void
     {
     if( m_NumberOfIterations.size() != 1 )
       {
-      std::cout << "ERROR:  Wrong number of parameters for NumberOfIterations."
-                << " It either needs to be 1 or the same size as TransformType."
-                << std::endl;
-      exit(-1);
+      itkGenericExceptionMacro(<< "ERROR:  Wrong number of parameters for NumberOfIterations."
+                               << " It either needs to be 1 or the same size as TransformType.")
       }
     for( unsigned int q = 0; q < m_TransformType.size(); ++q )
       {
@@ -1295,33 +1270,27 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::StartRegistration(void
                 {
                 // Error, initializing from wrong size transform parameters;
                 //  Use its bulk transform only?
-                std::cerr
-                  << "Trouble using the m_CurrentGenericTransform for initializing a BSPlineDeformableTransform:"
-                  << std::endl;
-                std::cerr
-                  <<
-                  "The initializing BSplineDeformableTransform has a different"
+                itkGenericExceptionMacro(
+                  << "Trouble using the m_CurrentGenericTransform"
+                  << "for initializing a BSPlineDeformableTransform:"
+                  << std::endl
+                  << "The initializing BSplineDeformableTransform has a different"
                   << " number of Parameters, than what is required for the requested grid."
-                  << std::endl;
-                std::cerr
-                  << "BRAINSFit was only able to use the bulk transform that was before it."
-                  << std::endl;
-                exit(-1);
+                  << std::endl
+                  << "BRAINSFit was only able to use the bulk transform that was before it.");
                 }
               }
             else
               {
-              std::cerr
+              itkGenericExceptionMacro(
                 << "ERROR:  initialization BSpline transform does not have the same "
-                << "parameter dimensions as the one currently specified."
-                << std::endl;
-              exit(-1);
+                << "parameter dimensions as the one currently specified.");
               }
             }
           else
             {
-            std::cerr << "ERROR:  Invalid transform initializer type found:  " << transformFileType << std::endl;
-            exit(-1);
+            itkGenericExceptionMacro( << "ERROR:  Invalid transform initializer type found:  "
+                                      << transformFileType )
             }
           }
         catch( itk::ExceptionObject & excp )
@@ -1613,33 +1582,26 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::StartRegistration(void
                 {
                 // Error, initializing from wrong size transform parameters;
                 //  Use its bulk transform only?
-                std::cerr
+                itkGenericExceptionMacro(
                   << "Trouble using the m_CurrentGenericTransform for initializing a BSPlineDeformableTransform:"
-                  << std::endl;
-                std::cerr
-                  <<
-                  "The initializing BSplineDeformableTransform has a different"
+                  << std::endl
+                  << "The initializing BSplineDeformableTransform has a different"
                   << " number of Parameters, than what is required for the requested grid."
-                  << std::endl;
-                std::cerr
-                  << "BRAINSFit was only able to use the bulk transform that was before it."
-                  << std::endl;
-                exit(-1);
+                  << std::endl
+                  << "BRAINSFit was only able to use the bulk transform that was before it.");
                 }
               }
             else
               {
-              std::cerr
+              itkGenericExceptionMacro(
                 << "ERROR:  initialization BSpline transform does not have the same "
-                << "parameter dimensions as the one currently specified."
-                << std::endl;
-              exit(-1);
+                << "parameter dimensions as the one currently specified.")
               }
             }
           else
             {
-            std::cerr << "ERROR:  Invalid transform initializer type found:  " << transformFileType << std::endl;
-            exit(-1);
+            itkGenericExceptionMacro( << "ERROR:  Invalid transform initializer type found:  "
+                                      << transformFileType );
             }
           }
         catch( itk::ExceptionObject & excp )
@@ -1707,20 +1669,15 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::StartRegistration(void
 
     else
       {
-      std::cout
+      itkGenericExceptionMacro(
         << "Error choosing what kind of transform to fit \""
-        << currentTransformType << "(" << currentTransformIndex + 1 << " of " << m_TransformType.size() << "). "
-        << std::endl;
-      std::cout << std::flush << std::endl;
-      exit(-1);
-      return;
+        << currentTransformType << "(" << currentTransformIndex + 1 << " of " << m_TransformType.size() << "). ");
       }
 
     if( currentTransformId > m_GenericTransformList.size() - 1 )
       {
-      std::cerr << "Out of bounds access for transform vector!" << std::endl;
-      exit(-1);
-      return;
+      itkGenericExceptionMacro(
+        << "Out of bounds access for transform vector!" << std::endl);
       }
     m_GenericTransformList[currentTransformId++] = m_CurrentGenericTransform;
     }

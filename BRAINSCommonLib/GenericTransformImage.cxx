@@ -207,11 +207,7 @@ int WriteBothTransformsToDisk(const GenericTransformType::ConstPointer genericTr
     }
   catch( itk::ExceptionObject & excp )
     {
-    std::cout << "[FAILED]" << std::endl;
-    std::cerr << "Error while writing the genericTransformToWrite"
-              << std::endl;
-    std::cerr << excp << std::endl;
-    exit(-1);
+    throw; // rethrow exception, handle in some other scope.
     }
   return 0;
 }
@@ -237,22 +233,14 @@ GenericTransformType::Pointer ReadTransformFromDisk(const std::string & initialT
       << initialTransform << std::endl;
 
     transformListReader->SetFileName( initialTransform.c_str() );
-    try
-      {
-      transformListReader->Update();
-      }
-    catch( itk::ExceptionObject & err )
-      {
-      std::cerr << "ExceptionObject caught !" << std::endl;
-      std::cerr << err << std::endl;
-      exit(-1);
-      }
+
+    transformListReader->Update();
+
     currentTransformList = *( transformListReader->GetTransformList() );
     if( currentTransformList.size() == 0 )
       {
-      std::cout << "Number of currentTransformList = " << currentTransformList.size() << std::endl;
-      std::cout << "FATAL ERROR: Failed to read transform" << initialTransform << std::endl;
-      exit(-1);
+      itkGenericExceptionMacro( << "Number of currentTransformList = " << currentTransformList.size()
+                                << "FATAL ERROR: Failed to read transform" << initialTransform);
       }
     }
   if( currentTransformList.size() == 1 )  // Most simple transform types
@@ -456,11 +444,7 @@ void WriteTransformToDisk(GenericTransformType const *const MyTransform, const s
       }
     catch( itk::ExceptionObject & excp )
       {
-      std::cout << "[FAILED]" << std::endl;
-      std::cerr << "Error while writing transform file: "
-                << TransformFilename << std::endl;
-      std::cerr << excp << std::endl;
-      return;
+      throw;
       }
     // Test if the file exists.
     if( !itksys::SystemTools::FileExists( TransformFilename.c_str() ) )
@@ -472,8 +456,6 @@ void WriteTransformToDisk(GenericTransformType const *const MyTransform, const s
           << std::endl;
       e.SetDescription( msg.str().c_str() );
       throw e;
-      exit(-1);
-      return;
       }
     }
 }

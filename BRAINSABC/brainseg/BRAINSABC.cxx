@@ -420,7 +420,7 @@ int main(int argc, char * *argv)
               << outputVolumes.size() << " names in output volumes list"
               << "OR it must be exactly 1, and be the template for writing files."
               << std::endl;
-    exit(1);
+    return EXIT_FAILURE;
     }
   if( inputVolumeTypes.size() != inputVolumes.size() )
     {
@@ -446,7 +446,7 @@ int main(int argc, char * *argv)
     {
     muLogMacro( << "ERROR:  Commanline arguments are not valid." << std::endl );
     GENERATE_ECHOARGS;
-    exit(-1);
+    return EXIT_FAILURE;
     }
   AtlasDefinition atlasDefinitionParser;
   try
@@ -458,7 +458,7 @@ int main(int argc, char * *argv)
     muLogMacro( <<  "Error reading Atlas Definition from "
                 << atlasDefinition
                 << std::endl );
-    exit(1);
+    return EXIT_FAILURE;
     }
   ;
   atlasDefinitionParser.DebugPrint();
@@ -483,7 +483,7 @@ int main(int argc, char * *argv)
   if( !itksys::SystemTools::MakeDirectory( outputDir.c_str() ) )
     {
     muLogMacro( << "ERROR: Could not create requested output directory " << outputDir << std::endl );
-    exit(-1);
+    return EXIT_FAILURE;
     }
 
   // Set up the logger
@@ -670,27 +670,26 @@ int main(int argc, char * *argv)
     if( templateMask.size() < 1 )
       {
       muLogMacro( <<  "No template mask specified" << std::endl );
-      exit(-1);
+      return EXIT_FAILURE;
       }
     typedef itk::ImageFileReader<ByteImageType> ReaderType;
     typedef ReaderType::Pointer                 ReaderPointer;
+
+    muLogMacro( << "Reading mask : " << templateMask << "...\n");
+
+    ReaderPointer imgreader = ReaderType::New();
+    imgreader->SetFileName( templateMask.c_str() );
+
+    try
       {
-      muLogMacro( << "Reading mask : " << templateMask << "...\n");
-
-      ReaderPointer imgreader = ReaderType::New();
-      imgreader->SetFileName( templateMask.c_str() );
-
-      try
-        {
-        imgreader->Update();
-        }
-      catch( ... )
-        {
-        muLogMacro( << "ERROR:  Could not read image " << templateMask << "." << std::endl );
-        exit(-1);
-        }
-      atlasBrainMask = imgreader->GetOutput();
+      imgreader->Update();
       }
+    catch( ... )
+      {
+      muLogMacro( << "ERROR:  Could not read image " << templateMask << "." << std::endl );
+      return EXIT_FAILURE;
+      }
+    atlasBrainMask = imgreader->GetOutput();
     }
 
   std::vector<FloatImagePointer> intraSubjectRegisteredImageList;
@@ -746,7 +745,7 @@ int main(int argc, char * *argv)
           if( inputVolumes.size() < 1 )
             {
             muLogMacro( <<  "No data images specified" << std::endl );
-            exit(-1);
+            return EXIT_FAILURE;
             }
 
           typedef itk::ImageFileReader<FloatImageType> ReaderType;
@@ -768,7 +767,7 @@ int main(int argc, char * *argv)
             catch( ... )
               {
               muLogMacro( << "ERROR:  Could not read image " << inputVolumes[i] << "." << std::endl );
-              exit(-1);
+              return EXIT_FAILURE;
               }
             // Initialize with file read in
             FloatImageType::Pointer typewiseEqualizedToFirstImage = imgreader->GetOutput();
@@ -851,7 +850,7 @@ int main(int argc, char * *argv)
           if( templateVolumes.size() < 1 )
             {
             muLogMacro( <<  "No data images specified" << std::endl );
-            exit(-1);
+            return EXIT_FAILURE;
             }
 
           typedef itk::ImageFileReader<FloatImageType> ReaderType;
@@ -886,7 +885,7 @@ int main(int argc, char * *argv)
               catch( ... )
                 {
                 muLogMacro( << "ERROR:  Could not read image " << templateVolumes[atlasIndex] << "." << std::endl );
-                exit(-1);
+                return EXIT_FAILURE;
                 }
 
               muLogMacro( << "Standardizing Intensities: ..." );
@@ -935,7 +934,7 @@ int main(int argc, char * *argv)
           {
           muLogMacro(
             "ERROR:  Invalid atlasToSubjectTransformType specified" << atlasToSubjectTransformType << std::endl);
-          exit(-1);
+          return EXIT_FAILURE;
           }
 
         if( !( ( subjectIntermodeTransformType.compare("Identity") == 0 )
@@ -946,7 +945,7 @@ int main(int argc, char * *argv)
           {
           muLogMacro(
             "ERROR:  Invalid subjectIntermodeTransformType specified" << subjectIntermodeTransformType << std::endl);
-          exit(-1);
+          return EXIT_FAILURE;
           }
 
         atlasreg->SetAtlasLinearTransformChoice(atlasToSubjectTransformType);
@@ -966,7 +965,17 @@ int main(int argc, char * *argv)
         itk::TimeProbe regtimer;
         regtimer.Start();
         atlasreg->SetOutputDebugDir(outputDir);
-        atlasreg->Update();
+        try
+          {
+          atlasreg->Update();
+          }
+        catch( itk::ExceptionObject & e )
+          {
+          std::cerr << "Exception caught!" << std::endl;
+          std::cerr << e << std::endl;
+          return EXIT_FAILURE;
+          }
+
         regtimer.Stop();
         itk::RealTimeClock::TimeStampType elapsedTime
           = regtimer.GetTotal();
@@ -1259,7 +1268,7 @@ int main(int argc, char * *argv)
         std::cerr << imgset.size() << " images in filter output, but "
                   << outputVolumes.size() << " names in output volumes list"
                   << std::endl;
-        exit(1);
+        return EXIT_FAILURE;
         }
       else
         {
@@ -1364,12 +1373,12 @@ int main(int argc, char * *argv)
       if( atlasToSubjectTransform != "" )
         {
         /* HACK Remove this completely
-        const std::string postSegmentationTransformFileName = outputDir
-          + GetStripedImageFileNameExtension(templateVolumes[0])
-          + std::string("_to_")
-          + GetStripedImageFileNameExtension( ( inputVolumes[0] ) )
-          + std::string("_") + defaultSuffix + "_PostSegmentation.mat";
-          */
+      const std::string postSegmentationTransformFileName = outputDir
+        + GetStripedImageFileNameExtension(templateVolumes[0])
+        + std::string("_to_")
+        + GetStripedImageFileNameExtension( ( inputVolumes[0] ) )
+        + std::string("_") + defaultSuffix + "_PostSegmentation.mat";
+        */
         const std::string postSegmentationTransformFileName = atlasToSubjectTransform;
         // NOTE:  Aliasing of smart-pointers up the polymorphic tree OK here
         // because
@@ -1489,5 +1498,5 @@ int main(int argc, char * *argv)
     }
   timer.Stop();
   muLogMacro(<< "All segmentation processes took " << timer.GetTotal() << " " << timer.GetUnit() << std::endl );
-  return 0;
+  return EXIT_SUCCESS;
 }

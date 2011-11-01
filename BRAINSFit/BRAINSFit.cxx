@@ -182,7 +182,7 @@ int main(int argc, char *argv[])
         <<
         "ERROR:  Can only specify one of [initialTransform | useCenterOfHeadAlign | useGeometryAlign | useMomentsAlign | initializeTransformMode ]"
         << std::endl;
-      exit(-1);
+      return EXIT_FAILURE;
       }
     if( useCenterOfHeadAlign == true )
       {
@@ -210,7 +210,7 @@ int main(int argc, char *argv[])
 //        validGridSize = false;
         std::cout << "splineGridSize[" << sgs << "]= " << splineGridSize[sgs]
                   << " is invalid.  There must be at lest 3 divisions in each dimension of the image." << std::endl;
-        exit(-1);
+        return EXIT_FAILURE;
         }
       }
     }
@@ -253,7 +253,7 @@ int main(int argc, char *argv[])
   else
     {
     std::cerr << "ERROR: No registration phases specified to perform!" << std::endl;
-    exit(-1);
+    return EXIT_FAILURE;
     }
 
   // In order to make the Slicer interface work, a few alternate command line
@@ -264,7 +264,7 @@ int main(int argc, char *argv[])
       || ( outputTransform.size() > 0 && bsplineTransform.size() > 0 ) )
     {
     std::cout << "Error:  user can only specify one output transform type." << std::endl;
-    exit(-1);
+    return EXIT_FAILURE;
     }
   if( linearTransform.size() > 0 )
     {
@@ -272,7 +272,7 @@ int main(int argc, char *argv[])
     if( ( !localTransformType.empty() ) && ( localTransformType[localTransformType.size() - 1] == "BSpline" ) )
       {
       std::cout << "Error:  Linear transforms can not be used for BSpline registration!" << std::endl;
-      exit(-1);
+      return EXIT_FAILURE;
       }
     }
   else if( !bsplineTransform.empty() )
@@ -281,12 +281,12 @@ int main(int argc, char *argv[])
     if( ( !localTransformType.empty() ) && ( localTransformType[localTransformType.size() - 1] != "BSpline" ) )
       {
       std::cout << "Error:  BSpline registrations require output transform to be of type BSpline!" << std::endl;
-      exit(-1);
+      return EXIT_FAILURE;
       }
     else if( localTransformType.empty() )
       {
       std::cout << "Error:  Initializer only registrations require output transform to be of type Linear!" << std::endl;
-      exit(-1);
+      return EXIT_FAILURE;
       }
     }
   else if( !outputTransform.empty() )
@@ -310,7 +310,7 @@ int main(int argc, char *argv[])
       {
       std::cerr << "The numberOfIterations array must match the length of the transformType"
                 << "length, or have a single value that is used for all registration phases." << std::endl;
-      exit(-1);
+      return EXIT_FAILURE;
       }
     else
       {
@@ -328,7 +328,7 @@ int main(int argc, char *argv[])
     if( minimumStepLength.size() != 1 )
       {
       std::cerr << "The minimumStepLength array must match the localTransformType length" << std::endl;
-      exit(-1);
+      return EXIT_FAILURE;
       }
     else
       {
@@ -416,7 +416,7 @@ int main(int argc, char *argv[])
       std::cout
         << "ERROR:  Can not specify mask file names when the default of NOMASK is used for the maskProcessingMode"
         << std::endl;
-      exit(-1);
+      return EXIT_FAILURE;
       }
     }
   else if( maskProcessingMode == "ROIAUTO" )
@@ -426,7 +426,7 @@ int main(int argc, char *argv[])
       std::cout
         << "ERROR:  Can not specify mask file names when ROIAUTO is used for the maskProcessingMode"
         << std::endl;
-      exit(-1);
+      return EXIT_FAILURE;
       }
       {
       typedef itk::BRAINSROIAutoImageFilter<FixedVolumeType, itk::Image<unsigned char, 3> > ROIAutoType;
@@ -455,7 +455,7 @@ int main(int argc, char *argv[])
         <<
         "ERROR:  Must specify mask file names when ROI is used for the maskProcessingMode"
         << std::endl;
-      exit(-1);
+      return EXIT_FAILURE;
       }
     fixedMask = ReadImageMask<SpatialObjectType, Dimension>(
         fixedBinaryVolume,
@@ -542,7 +542,7 @@ int main(int argc, char *argv[])
           {
           // This should be an exception thow instead of exit.
           std::cout << "could not convert to rigid versor type" << std::endl;
-          exit(-1);
+          return EXIT_FAILURE;
           }
         }
       else

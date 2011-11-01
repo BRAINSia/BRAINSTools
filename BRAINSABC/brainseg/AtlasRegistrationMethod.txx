@@ -149,7 +149,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
           muLogMacro(
             << "Failed to read transform file caused exception." << this->m_IntraSubjectTransformFileNames[i]
             <<  std::endl );
-          exit(-1);
+          itkExceptionMacro(<< "Failed to read transform file " <<  this->m_IntraSubjectTransformFileNames[i]);
           }
         }
       else if( m_ImageLinearTransformChoice == "Identity" )
@@ -371,7 +371,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
         muLogMacro(
           << "Failed to read transform file caused exception." << this->m_AtlasToSubjectTransformFileName
           <<  std::endl );
-        exit(-1);
+        itkExceptionMacro(<< "Failed to read transform file " <<  this->m_AtlasToSubjectTransformFileName);
         }
       }
     else if( m_AtlasLinearTransformChoice == "Identity" )
@@ -390,7 +390,10 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
         muLogMacro( << "m_IntraSubjectTransforms.size() = " << m_IntraSubjectTransforms.size() <<   std::endl );
         muLogMacro(
           << "m_IntraSubjectOriginalImageList.size() = " << m_IntraSubjectOriginalImageList.size() <<   std::endl );
-        exit(-1);
+        itkExceptionMacro(<< "ERROR:  atlas and template image list sizes do not match. "
+                          << "m_AtlasOriginalImageList.size() = " << m_AtlasOriginalImageList.size() <<   std::endl
+                          << "m_IntraSubjectTransforms.size() = " << m_IntraSubjectTransforms.size() <<   std::endl
+                          << "m_IntraSubjectOriginalImageList.size() = " << m_IntraSubjectOriginalImageList.size() );
         }
       muLogMacro(<< "Registering all atlas images to first subject." << std::endl);
       for( unsigned int atlasIter = 0; atlasIter < m_AtlasOriginalImageList.size(); atlasIter++ )
@@ -483,7 +486,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
               writer->SetFileName(fn.c_str() );
               writer->Update();
               muLogMacro( << __FILE__ << " " << __LINE__ << " "  <<   std::endl );
-              exit( -1 );
+              itkExceptionMacro(<< "Histogram match");
               }
             }
           else

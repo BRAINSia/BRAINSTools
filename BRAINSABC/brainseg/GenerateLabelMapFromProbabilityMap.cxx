@@ -24,7 +24,7 @@ main(int argc, char *argv[])
     {
     std::cerr << argv[0] << ": Missing required probability maps"
               << std::cerr;
-    exit(1);
+    return EXIT_FAILURE;
     }
 
   const unsigned int numberOfProbabilityMaps = inputVolumes.size();

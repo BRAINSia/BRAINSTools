@@ -50,6 +50,10 @@ int main(int argc, char *argv[])
 {
   PARSE_ARGS;
   BRAINSUtils::SetThreadCount(numberOfThreads);
+#if ITK_VERSION_MAJOR > 3
+  // Call register default transforms
+  itk::TransformFactoryBase::RegisterDefaultTransforms();
+#endif
 
   const bool debug = true;
   const bool useTransform = ( warpTransform.size() > 0 );

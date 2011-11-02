@@ -466,6 +466,7 @@ void WriteTransformToDisk(GenericTransformType const *const MyTransform, const s
 // Adding a single new transform require registering all the transform types.
 void AddExtraTransformRegister(void)
 {
+#if (ITK_VERSION_MAJOR < 4)
   // This is needed in order to read and write ScaleVersor3D TransformTypes.
   // Hopefully in ITK-3-19 this will become part of the non-review transform
   // types.
@@ -536,5 +537,6 @@ void AddExtraTransformRegister(void)
   itk::TransformFactory<itk::ThinPlateR2LogRSplineKernelTransform<double, 3> >::RegisterTransform();
   itk::TransformFactory<itk::ThinPlateSplineKernelTransform<double, 2> >::RegisterTransform();
   itk::TransformFactory<itk::ThinPlateSplineKernelTransform<double, 3> >::RegisterTransform();
+#endif
 }
 } // end namespace itk

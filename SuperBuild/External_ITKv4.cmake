@@ -62,7 +62,7 @@ if(NOT DEFINED ITK_DIR AND NOT ${USE_SYSTEM_ITK})
   string(REPLACE "-fopenmp" "" ITK_CMAKE_CXX_FLAGS "${CMAKE_CX_FLAGS}")
 
   set(ITKv4_REPOSITORY git://github.com/hjmjohnson/ITK.git)
-  set(ITKv4_GIT_TAG ITK_Slicer)
+  set(ITKv4_GIT_TAG MakeCommonBSplineBaseClass)
 
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${ITKv4_REPOSITORY}

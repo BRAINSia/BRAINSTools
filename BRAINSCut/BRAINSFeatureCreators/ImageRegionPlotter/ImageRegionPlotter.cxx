@@ -89,8 +89,8 @@ MapHistogramToImage( typename TImageType::Pointer inputImage,
   // Fixed Number of Maximum Number of Intensity
   if( (Image_MAXIMUM - Image_MINIMUM) > MAXIMUM_NUMBER_OF_INTENSITY )
     {
-    itkExceptionMacro( << "Range of Values are Too Large! "
-                       << Image_MINIMUM << " " << Image_MAXIMUM);
+    itkGenericExceptionMacro( << "Range of Values are Too Large! "
+                              << Image_MINIMUM << " " << Image_MAXIMUM);
     }
 
   // Compute Quantiles

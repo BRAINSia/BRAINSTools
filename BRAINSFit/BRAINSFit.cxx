@@ -351,7 +351,7 @@ int main(int argc, char *argv[])
   InputImageType::Pointer
     OriginalFixedVolume( itkUtil::ReadImage<InputImageType>(fixedVolume) );
 
-  std::cerr << "Original Fixed image origin"
+  std::cout << "Original Fixed image origin"
             << OriginalFixedVolume->GetOrigin() << std::endl;
   // fixedVolumeTimeIndex lets lets us treat 3D as 4D.
   /***********************

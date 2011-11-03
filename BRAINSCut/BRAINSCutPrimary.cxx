@@ -27,7 +27,6 @@ BRAINSCutPrimary
   BRIANSCutNetConfigurationParser.SetUserData( &elementList );
   BRIANSCutNetConfigurationParser.Parse();
 }
-}
 
 void
 BRAINSCutPrimary

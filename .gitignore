@@ -1,2 +1,13 @@
 *.sample
 *~
+*.[oa]
+.DS_Store
+.RDataTmp
+._*
+*.nii.gz
+*.nrrd
+*.nhdr
+*.raw
+.svn
+CMakeCache.txt
+CMakeFiles/*

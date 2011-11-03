@@ -1483,7 +1483,8 @@ int main(int argc, char * *argv)
           char buf[8192];
           sprintf(buf, posteriorTemplate.c_str(),
                   PriorNames[probabilityIndex].c_str() );
-          fn = buf;
+          fn = outputDir;
+          fn += buf;
           }
         typedef itk::ImageFileWriter<FloatImageType> FloatWriterType;
         FloatWriterType::Pointer writer = FloatWriterType::New();

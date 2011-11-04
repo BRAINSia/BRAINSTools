@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>BRAINS.Segmentation</category>
+  <title>BRAINSCut:SimilarityIndexComputation</title>
+  <description>Automatic analysis of BRAINSCut Output</description>
+  <version> 1.0</version>
+  <documentation-url></documentation-url>
+  <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt </license>
+  <contributor>Eunyoung Regin Kim</contributor>
+  <acknowledgements></acknowledgements>
+ <parameters>
+   <file>
+     <name>outputCSVFilename</name>
+     <label>outputCSVFilename</label>
+     <longflag>outputCSVFilename</longflag>
+     <description>output CSV Filename </description>
+     <channel>input</channel>
+   </file>
+   <image>
+     <name>ANNContinuousVolume</name>
+     <label>ANNContinuousVolume</label>
+     <longflag>ANNContinuousVolume</longflag>
+     <description>ANN Continuous volume to be compared to the manual volume </description>
+     <channel>input</channel>
+   </image>
+   <image>
+     <name>inputManualVolume</name>
+     <label>inputManualVolume</label>
+     <longflag>inputManualVolume</longflag>
+     <description>input manual(reference) volume</description>
+     <channel>input</channel>
+   </image>
+   <float>
+     <name>thresholdInterval</name>
+     <label>thresholdInterval</label>
+     <longflag>thresholdInterval</longflag>
+     <description>Threshold interval to compute similarity index between zero and one</description>
+     <default>0.1</default>
+   </float>
+</parameters>
+</executable>

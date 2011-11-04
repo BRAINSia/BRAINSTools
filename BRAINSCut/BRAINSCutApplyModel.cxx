@@ -96,7 +96,8 @@ BRAINSCutApplyModel
       /* post processing
        * may include hole-filling(closing), thresholding, and more adjustment
        */
-      BinaryImagePointer mask = PostProcessingOfANNContinuousImage( ANNContinuousOutputFilename);
+      BinaryImagePointer mask = PostProcessingOfANNContinuousImage( ANNContinuousOutputFilename,
+                                                                    annOutputThreshold);
 
       std::string roiOutputFilename = GetOutputROIFilename( subject, *roiTyIt );
       itkUtil::WriteImage<BinaryImageType>( mask, roiOutputFilename );
@@ -118,20 +119,21 @@ BRAINSCutApplyModel
     }
   catch( BRAINSCutExceptionStringHandler& e )
     {
-    throw;
+    std::cout << e.Error() << std::endl;
+    exit(EXIT_SUCCESS);
     }
 }
 
 BinaryImagePointer
 BRAINSCutApplyModel
-::PostProcessingOfANNContinuousImage( std::string continuousFilename )
+::PostProcessingOfANNContinuousImage( std::string continuousFilename, scalarType threshold )
 {
   WorkingImagePointer continuousImage = ReadImageByFilename( continuousFilename );
 
   /* threshold */
   BinaryImagePointer maskVolume;
 
-  maskVolume = ThresholdImageAtLower( continuousImage, annOutputThreshold );
+  maskVolume = ThresholdImageAtLower( continuousImage, threshold);
   itkUtil::WriteImage<BinaryImageType>( maskVolume, continuousFilename + "DEBUGThreshold.nii.gz");
 
   /* Get One label */
@@ -406,12 +408,13 @@ inline std::string
 BRAINSCutApplyModel
 ::GetOutputROIFilename( DataSet& subject, std::string currentROIName)
 {
-  std::string givenROIName = subject.GetMaskFilenameByType( currentROIName );
+  std::string       givenROIName = subject.GetMaskFilenameByType( currentROIName );
+  const std::string subjectID(subject.GetAttribute<StringValue>("Name") );
 
   if( givenROIName == "" or givenROIName == "na" )
     {
     std::string outputDir =  GetSubjectOutputDirectory( subject );
-    givenROIName = outputDir + "/ANNLabel_" + currentROIName + ".nii.gz";
+    givenROIName = outputDir + "/" + subjectID + "ANNLabel_" + currentROIName + ".nii.gz";
     }
   return givenROIName;
 }

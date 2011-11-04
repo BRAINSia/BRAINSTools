@@ -66,7 +66,7 @@ option(USE_SYSTEM_VTK "Build using an externally defined version of VTK" OFF)
 
 set(ITK_EXTERNAL_NAME ITKv${ITK_VERSION_MAJOR})
 
-set(BRAINSTools_DEPENDENCIES VTK ${ITK_EXTERNAL_NAME} SlicerExecutionModel)
+set(BRAINSTools_DEPENDENCIES ${ITK_EXTERNAL_NAME} SlicerExecutionModel)
 
 if(BUILD_STYLE_UTILS)
   list(APPEND BRAINSTools_DEPENDENCIES Cppcheck KWStyle Uncrustify)
@@ -74,6 +74,11 @@ endif()
 
 if(USE_BRAINSABC OR USE_BRAINSCut)
   list(APPEND BRAINSTools_DEPENDENCIES ReferenceAtlas)
+endif()
+
+#if(USE_BRAINSABC OR BRAINS_DEBUG_IMAGE_WRITE)
+if(BRAINS_DEBUG_IMAGE_WRITE)
+  list(APPEND BRAINSTools_DEPENDENCIES VTK)
 endif()
 
 if(USE_BRAINSCut)

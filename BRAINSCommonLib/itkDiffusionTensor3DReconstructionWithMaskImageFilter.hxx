@@ -38,6 +38,10 @@ DiffusionTensor3DReconstructionWithMaskImageFilter<TReferenceImagePixelType,
   // For images added one at a time we need at least six
   this->SetNumberOfRequiredInputs( 1 );
   m_TensorBasis.set_identity();
+
+  // This is due to buggy code in netlib/dsvdc, that is called by vnl_svd.
+  // (used to compute the psudo-inverse to find the dual tensor basis).
+  this->SetNumberOfThreads(1);
 }
 
 template <class TReferenceImagePixelType,

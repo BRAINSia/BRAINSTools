@@ -9,6 +9,7 @@ option(USE_BRAINSROIAuto                   "Build BRAINSROIAuto"                
 option(USE_BRAINSResample                  "Build BRAINSResample"                  ON)
 option(USE_GTRACT                          "Build GTRACT"                          ON)
 
+
 ## For now do not build BRAINSDemonWarp unless explicitly requested.
 ## The conditions where it could be safe to build BRAINSDemonWarp were
 ## getting overly complicated and was slowing down other tool deployment.

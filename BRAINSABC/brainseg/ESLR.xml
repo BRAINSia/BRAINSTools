@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
-  <category>Segmentation</category>
+  <category>Segmentation.Specialized</category>
   <title>Clean Contiguous Label Map (BRAINS)</title>
   <description>From a range of label map values, extract the largest contiguous region of those labels</description>
 

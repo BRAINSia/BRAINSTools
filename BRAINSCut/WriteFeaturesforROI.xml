@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
-  <category>BRAINS.Segmentation</category>
+  <category>Segmentation.Specialized</category>
   <title>WriteFeaturesforROI</title>
   <description>Automatic Segmentation using neural networks</description>
   <version> 1.0</version>

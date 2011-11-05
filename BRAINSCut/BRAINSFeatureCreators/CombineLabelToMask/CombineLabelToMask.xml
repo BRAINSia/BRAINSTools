@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
   <executable>
-    <category>BRAINSCut.Tools</category>
+    <category>Utilities.BRAINS</category>
   <title>CombineLabelToMask</title>
 
   <description>Combine mask image which has different labels to one label mask </description>

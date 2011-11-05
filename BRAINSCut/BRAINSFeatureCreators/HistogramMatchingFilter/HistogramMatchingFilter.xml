@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
   <category>BRAINS.Utilities</category>
-  <title>Write Out Image Intensities
-  </title>
-  <description>
-    For Analysis
-  </description>
+  <title>Write Out Image Intensities </title>
+  <description> For Analysis </description>
   <version>0.1</version>
   <documentation-url></documentation-url>
   <license></license>

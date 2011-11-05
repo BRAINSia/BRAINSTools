@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
   <executable>
-  <category>Statistics</category>
+  <category>Filtering.FeatureDetection</category>
   <title>Dilate Image</title>
 
   <description>Uses mathematical morphology to dilate the input images.</description>

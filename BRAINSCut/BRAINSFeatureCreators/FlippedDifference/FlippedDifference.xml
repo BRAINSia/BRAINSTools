@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
   <executable>
-  <category>Statistics</category>
+  <category>Filtering.FeatureDetection</category>
   <title>Flip Image</title>
 
   <description>Difference between an image and the axially flipped version of that image.</description>

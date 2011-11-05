@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
   <executable>
-  <category>Statistics</category>
+  <category>Filtering.FeatureDetection</category>
   <title>Co-Occurrence Matrix </title>
 
   <description>Get texture of the image</description>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
-  <category>Converters</category>
+  <category>Utilities.BRAINS</category>
   <title>BRAINS Transform Convert</title>
   <description>Convert ITK transforms to higher order transforms</description>
   <version>1.0</version>

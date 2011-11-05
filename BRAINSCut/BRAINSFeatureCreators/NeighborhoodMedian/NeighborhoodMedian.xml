@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
   <executable>
-  <category>Statistics</category>
+  <category>Filtering.FeatureDetection</category>
   <title>Neighborhood Median</title>
 
   <description>Calculates the median, for the given neighborhood size, at each voxel of the input image.</description>

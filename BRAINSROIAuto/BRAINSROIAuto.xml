@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
-  <category>Segmentation</category>
+  <category>Segmentation.Specialized</category>
   <title>Foreground masking (BRAINS)</title>
   <description>This tool uses a combination of otsu thresholding and a closing operations to identify the most prominant foreground region in an image.
   </description>

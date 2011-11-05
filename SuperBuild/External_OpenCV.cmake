@@ -44,6 +44,7 @@ if(NOT DEFINED OpenCV_DIR)
       -DENABLE_SSE42:BOOL=ON
       -DENABLE_SSSE3:BOOL=ON
     UPDATE_COMMAND ""
+    INSTALL_COMMAND ""
     )
   set(OpenCV_DIR ${CMAKE_BINARY_DIR}/${proj}-build/share/opencv)
 endif(NOT DEFINED OpenCV_DIR)

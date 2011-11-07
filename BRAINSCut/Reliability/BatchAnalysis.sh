@@ -32,9 +32,34 @@ SIExe="/ipldev/scratch/eunyokim/src/BRAINS20111028/build-Darwin-20111028/lib/Sim
 # /paulsen/MRx/PHD_120/0057/34479/10_AUTO.NN3Tv20111003 ANN20111006_ManualTrimForANN 
 # /paulsen/IPIG/predict_3T_MR/site-048/0217/52712/10_AUTO.NN3Tv20110418  ANN2011May04ManualCompleted
 
+
+MendatoryFileExists() #----------------------------------------------------------- #
+{
+  local f=$1;
+  if [[ -f $f ]]; then
+    return 0;
+  else
+    echo "File $f does not exists! "
+    exit 1;
+  fi
+}
+
+FileExists() #------------------------------------------------------------------- #
+{
+  local f=$1;
+  if [[ -f $f ]]; then
+    return 0;
+  else
+    return 1;
+  fi
+}
+
 OutputDir="$inputANNDir/AnalysisOutput_${ROIName}_${inputHN}";
-rm -rf $OutputDir;
-mkdir $OutputDir;
+if ( FileExists $OutputDir ); then
+  echo "file $OutputDir found"
+else
+    mkdir $OutputDir;
+fi
 
 RScriptListFile="${OutputDir}/RScriptList.csv"
 echo "subjectID,csvFIlename,ROIName">$RScriptListFile;
@@ -47,33 +72,45 @@ do
 
    #
    # Compute Similarity index -------------------------------------------------- #
-   SIManualROI=(`ls $autoWorkUpDir/$manDir/${subjectID}_l_${ROIName}.nii.gz`)
+   SIManualROI=(`ls $autoWorkUpDir/$manDir/${subjectID}_l_${ROIName}.nii.gz`) ; 
+   MendatoryFileExists $SIManualROI;
    SIAnnROI=(`ls $inputANNDir/Test*/${subjectID}_${inputHN}/ANNContinuousPredictionl_${ROIName}${subjectID}.nii.gz`)
+   MendatoryFileExists $SIAnnROI
+
    SIThresholdInterval="0.01"
-   SICSVOutput="${OutputDir}/l_${ROIName}_${subjectID}.csv"
+   CSVOutputFileOfCurrentScan="${OutputDir}/l_${ROIName}_${subjectID}.csv"
    
    SICommand="$SIExe --inputManualVolume   $SIManualROI \
                      --ANNContinuousVolume $SIAnnROI    \
                      --thresholdInterval   $SIThresholdInterval";
 
-   echo $SICommand;
-   $SICommand |grep ","|tee $SICSVOutput;
-   #
-   # Re-format the similarity text output --------------------------------------- #
-   while read line
-   do
-     echo "$subjectID, $line " >> ${SICSVOutput}TEMP;
-   done < $SICSVOutput
+   if [[ -s $CSVOutputFileOfCurrentScan ]] ; then # if file is not empty
+     echo "-------------------------------------------------------------------------"
+     echo "$CSVOutputFileOfCurrentScan has data already. skip this "
+     echo "-------------------------------------------------------------------------"
+   else
+     echo "-------------------------------------------------------------------------"
+     echo $SICommand;
+     $SICommand |grep ","|tee $CSVOutputFileOfCurrentScan;
+     #
+     # Re-format the similarity text output ----------------------------------- #
+     while read line
+     do
+       echo "$subjectID, $line " >> ${CSVOutputFileOfCurrentScan}TEMP;
+     done < $CSVOutputFileOfCurrentScan
    
-   mv ${SICSVOutput}TEMP $SICSVOutput
+     mv ${CSVOutputFileOfCurrentScan}TEMP $CSVOutputFileOfCurrentScan
+   fi;
 
-   #---------------------------------------------------------------------------- #
+   #------------------------------------------------------------------------- #
    # make list file for RSscript
-   echo "$subjectID,$SICSVOutput,$ROIName " >> $RScriptListFile;
+   echo "$subjectID,$CSVOutputFileOfCurrentScan,$ROIName " >> $RScriptListFile;
+   echo "-------------------------------------------------------------------------"
+
 done < $inputListFilename
 
 #
-# Relative Overlap Graph ------------------------------------------------------- #
+# Relative Overlap Graph ------------------------------------------------------ #
 SIList=$RScriptListFile;
 SIPlotOutputPlotFilename="${RScriptListFile}.pdf";
 SIPlotRScript=" /ipldev/scratch/eunyokim/src/BRAINS20111028/BRAINSStandAlone/BRAINSCut/Reliability/RelativeOverlapPlot.R"
@@ -81,6 +118,7 @@ SIPlotRScript=" /ipldev/scratch/eunyokim/src/BRAINS20111028/BRAINSStandAlone/BRA
 SIPlotR="bash R --slave --args $SIList $SIPlotOutputPlotFilename < $SIPlotRScript "
 
 echo $SIPlotR
+$SIPlotR
    
 
 

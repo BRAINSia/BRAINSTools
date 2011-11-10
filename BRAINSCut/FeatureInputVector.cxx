@@ -299,9 +299,9 @@ FeatureInputVector
 ::CalculateUnitDeltaAlongTheGradient( std::string ROIName,
                                       WorkingImageType::IndexType currentPixelIndex )
 {
-  WorkingPixelType deltaX = gradientOfROI.find( ROIName )->second->GetPixel( currentPixelIndex )[1];
-  WorkingPixelType deltaY = gradientOfROI.find( ROIName )->second->GetPixel( currentPixelIndex )[2];
-  WorkingPixelType deltaZ = gradientOfROI.find( ROIName )->second->GetPixel( currentPixelIndex )[3];
+  WorkingPixelType deltaX = gradientOfROI.find( ROIName )->second->GetPixel( currentPixelIndex )[0];
+  WorkingPixelType deltaY = gradientOfROI.find( ROIName )->second->GetPixel( currentPixelIndex )[1];
+  WorkingPixelType deltaZ = gradientOfROI.find( ROIName )->second->GetPixel( currentPixelIndex )[2];
 
   const scalarType Length = vcl_sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
   const scalarType inverseLength =  ( Length > 0.0F ) ? 1.0 / Length : 1;

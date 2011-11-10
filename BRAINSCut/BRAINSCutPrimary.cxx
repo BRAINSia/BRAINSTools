@@ -141,19 +141,19 @@ BRAINSCutPrimary
     ReadImageByFilename( subject.GetImageFilenameByType(registrationImageTypeToUse) );
   const std::string transoformationPixelType = "float";
 
-  warpedSpatialLocationImages.insert( pair<std::string, WorkingImagePointer>
+  warpedSpatialLocationImages.insert( std::pair<std::string, WorkingImagePointer>
                                         ("rho", GenericTransformImage<WorkingImageType,
                                                                       WorkingImageType,
                                                                       DeformationFieldType>
                                           ( rho, referenceImage, deformation, genericTransform,
                                           0.0, "Linear", transoformationPixelType == "binary") ) );
-  warpedSpatialLocationImages.insert( pair<std::string, WorkingImagePointer>
+  warpedSpatialLocationImages.insert( std::pair<std::string, WorkingImagePointer>
                                         ("phi", GenericTransformImage<WorkingImageType,
                                                                       WorkingImageType,
                                                                       DeformationFieldType>
                                           ( phi, referenceImage, deformation, genericTransform,
                                           0.0, "Linear", transoformationPixelType == "binary") ) );
-  warpedSpatialLocationImages.insert( pair<std::string, WorkingImagePointer>
+  warpedSpatialLocationImages.insert( std::pair<std::string, WorkingImagePointer>
                                         ("theta", GenericTransformImage<WorkingImageType,
                                                                         WorkingImageType,
                                                                         DeformationFieldType>
@@ -205,7 +205,7 @@ BRAINSCutPrimary
     std::cout << __LINE__ << "::" << __FILE__ << std::endl
               << "Read :: " << roiFilename << std::endl;
 
-    warpedROIs.insert( pair<std::string, WorkingImagePointer>(
+    warpedROIs.insert( std::pair<std::string, WorkingImagePointer>(
                          (*roiTyIt), GenericTransformImage<WorkingImageType,
                                                            WorkingImageType,
                                                            DeformationFieldType>

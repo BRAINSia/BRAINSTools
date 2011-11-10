@@ -73,7 +73,7 @@ FeatureInputVector
     std::string errorMsg = " Fail to generate itk gradient image.";
     throw BRAINSCutExceptionStringHandler( errorMsg );
     }
-  gradientOfROI.insert( pair<std::string, GradientImageType>( ROIName, gradientFilter->GetOutput() ) );
+  gradientOfROI.insert( std::pair<std::string, GradientImageType>( ROIName, gradientFilter->GetOutput() ) );
 }
 
 void
@@ -148,7 +148,7 @@ FeatureInputVector
 
       int oneRowKey = FeatureInputVector::HashKeyFromIndex( eachVoxelInROI.GetIndex() );
 
-      currentFeatureVector.insert( pair<int, InputVectorType>( oneRowKey, oneRowInputFeature) );
+      currentFeatureVector.insert( std::pair<int, InputVectorType>( oneRowKey, oneRowInputFeature) );
       }
     ++eachVoxelInROI;
     }
@@ -162,7 +162,7 @@ FeatureInputVector
     }
 
   /* insert computed vector */
-  featureInputOfROI.insert(pair<std::string, InputVectorMapType>( ROIName, currentFeatureVector) );
+  featureInputOfROI.insert(std::pair<std::string, InputVectorMapType>( ROIName, currentFeatureVector) );
 }
 
 /* set normalization parameters */
@@ -353,7 +353,7 @@ FeatureInputVector
   return WorkingImageType::IndexType( key );
 }
 
-inline pair<scalarType, scalarType>
+inline std::pair<scalarType, scalarType>
 FeatureInputVector
 ::SetMinMaxOfSubject( BinaryImageType::Pointer & labelImage, const WorkingImagePointer& Image )
 {
@@ -368,8 +368,8 @@ FeatureInputVector
   std::cout << " * Min : " << statisticCalculator->GetMinimum(1)
             << " * Max : " << statisticCalculator->GetMaximum(1)
             << std::endl;
-  return minmaxPairType( pair<scalarType, scalarType>( statisticCalculator->GetMinimum(1),
-                                                       statisticCalculator->GetMaximum(1) ) );
+  return minmaxPairType( std::pair<scalarType, scalarType>( statisticCalculator->GetMinimum(1),
+                                                            statisticCalculator->GetMaximum(1) ) );
 }
 
 void

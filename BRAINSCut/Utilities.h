@@ -369,7 +369,7 @@ extern void AddROIVectorApply( ProbabilityMapParser * currentROI, DataSet * subj
 
 extern int AddSubjectInputVector(DataSet * subjectSet, NetConfiguration & ANNXMLObject,
                                  const std::string registrationID, const int inputVectorSize,
-                                 const int outputVectorSize, const map<int, std::string>& MapOfROIOrder,
+                                 const int outputVectorSize, const std::map<int, std::string>& MapOfROIOrder,
                                  bool Apply = false);
 
 extern void XYZToSpherical(const itk::Point<float, 3> & LocationWithOriginAtCenterOfImage, float & rho, float & phi,

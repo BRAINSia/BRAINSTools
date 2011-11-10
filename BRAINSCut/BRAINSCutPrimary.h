@@ -60,9 +60,9 @@ typedef WorkingImageType::IndexType WorkingIndexType;
 typedef std::vector<WorkingPixelType> InputVectorType;
 typedef std::vector<WorkingPixelType> OutputVectorType;
 
-typedef map<int, InputVectorType>  InputVectorMapType; // < index ,feature vector > pair
-typedef map<int, OutputVectorType> OutputVectorMapType;
-typedef map<int, scalarType>       PredictValueMapType;
+typedef std::map<int, InputVectorType>  InputVectorMapType; // < index ,feature vector > pair
+typedef std::map<int, OutputVectorType> OutputVectorMapType;
+typedef std::map<int, scalarType>       PredictValueMapType;
 
 const WorkingImageType::IndexType ConstantHashIndexSize = {{255, 255, 255}};
 /*

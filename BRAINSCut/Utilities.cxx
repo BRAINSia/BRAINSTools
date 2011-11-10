@@ -677,7 +677,7 @@ int AddSubjectInputVector(  DataSet * subjectSet,
                             const std::string registrationID,
                             const int inputVectorSize,
                             const int outputVectorSize,
-                            const map<int, std::string>& MapOfROIOrder,
+                            const std::map<int, std::string>& MapOfROIOrder,
                             bool Apply) // last parameter: apply=false
 {
   int VectorCreatedCounts = 0;
@@ -734,21 +734,21 @@ int AddSubjectInputVector(  DataSet * subjectSet,
 
   std::cout << __LINE__ << "::" << __FILE__ << std::endl;
   MapOfDeformedSpatialDescription.insert(
-    pair<std::string, InternalImageType::Pointer>(
+    std::pair<std::string, InternalImageType::Pointer>(
       "rho", ImageWarper<InternalImageType>(
         DeformationFilename,
         atlasDataSet->GetSpatialLocationFilenameByType("rho"),
         MapOfImages[*(ImageTypeList.begin() )] ) ) );
   std::cout << __LINE__ << "::" << __FILE__ << std::endl;
   MapOfDeformedSpatialDescription.insert(
-    pair<std::string, InternalImageType::Pointer>(
+    std::pair<std::string, InternalImageType::Pointer>(
       "phi", ImageWarper<InternalImageType>(
         DeformationFilename,
         atlasDataSet->GetSpatialLocationFilenameByType("phi"),
         MapOfImages[*(ImageTypeList.begin() )] ) ) );
   std::cout << __LINE__ << "::" << __FILE__ << std::endl;
   MapOfDeformedSpatialDescription.insert(
-    pair<std::string, InternalImageType::Pointer>(
+    std::pair<std::string, InternalImageType::Pointer>(
       "theta", ImageWarper<InternalImageType>(
         DeformationFilename,
         atlasDataSet->GetSpatialLocationFilenameByType("theta"),

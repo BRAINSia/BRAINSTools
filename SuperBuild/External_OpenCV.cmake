@@ -3,7 +3,7 @@ if(DEFINED OpenCV_DIR AND NOT EXISTS ${OpenCV_DIR})
 endif()
 
 
-option(${CMAKE_PROJECT_NAME}_USE_NEW_OPENCV "if on, then use the 2011-10-31 version of OpenCV" OFF)
+option(${CMAKE_PROJECT_NAME}_USE_NEW_OPENCV "if on, then use the 2011-10-31 version of OpenCV" ON)
 
 if(${CMAKE_PROJECT_NAME}_USE_NEW_OPENCV)
   set(OPENCV_GIT_TAG "FixNeuralNetwork_20111031") # USE THIS FOR UPDATED VERSION
@@ -46,5 +46,9 @@ if(NOT DEFINED OpenCV_DIR)
     UPDATE_COMMAND ""
     INSTALL_COMMAND ""
     )
+if(${CMAKE_PROJECT_NAME}_USE_NEW_OPENCV)
+  set(OpenCV_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
+else()
   set(OpenCV_DIR ${CMAKE_BINARY_DIR}/${proj}-build/share/opencv)
+endif()
 endif(NOT DEFINED OpenCV_DIR)

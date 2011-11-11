@@ -170,6 +170,12 @@ endif()
 #-----------------------------------------------------------------------------
 SlicerMacroCheckExternalProjectDependency(BRAINSTools)
 
+set(BRAINSTools_CLI_RUNTIME_DESTINATION  bin)
+set(BRAINSTools_CLI_LIBRARY_DESTINATION  lib)
+set(BRAINSTools_CLI_ARCHIVE_DESTINATION  lib)
+set(BRAINSTools_CLI_INSTALL_RUNTIME_DESTINATION  bin)
+set(BRAINSTools_CLI_INSTALL_LIBRARY_DESTINATION  lib)
+set(BRAINSTools_CLI_INSTALL_ARCHIVE_DESTINATION  lib)
 #-----------------------------------------------------------------------------
 # Inner external project CMake args
 #-----------------------------------------------------------------------------
@@ -200,7 +206,10 @@ list(APPEND ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS
   USE_BRAINSTransformConvert:BOOL
   USE_ImageCalculator:BOOL
   USE_DebugImageViewer:BOOL
-  DBRAINS_DEBUG_IMAGE_WRITE:BOOL
+  BRAINS_DEBUG_IMAGE_WRITE:BOOL
+  INSTALL_RUNTIME_DESTINATION:STRING
+  INSTALL_LIBRARY_DESTINATION:STRING
+  INSTALL_ARCHIVE_DESTINATION:STRING
   )
 
 _expand_external_project_vars()

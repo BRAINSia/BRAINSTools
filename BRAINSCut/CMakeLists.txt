@@ -1,6 +1,6 @@
 project(BRAINSCut)
 
-#message(STATUS "BRAINSCut OpenCV_DIR = ${OpenCV_DIR}")
+message(STATUS "BRAINSCut OpenCV_DIR = ${OpenCV_DIR}")
 find_package( OpenCV REQUIRED)
 
 ###

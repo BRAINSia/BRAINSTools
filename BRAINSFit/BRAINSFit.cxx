@@ -486,6 +486,7 @@ int main(int argc, char *argv[])
     HelperType::Pointer myHelper = HelperType::New();
     myHelper->SetTransformType(localTransformType);
     myHelper->SetFixedVolume(extractFixedVolume);
+    myHelper->SetForceMINumberOfThreads(forceMINumberOfThreads);
     myHelper->SetMovingVolume(extractMovingVolume);
     myHelper->SetHistogramMatch(histogramMatch);
     myHelper->SetRemoveIntensityOutliers(removeIntensityOutliers);

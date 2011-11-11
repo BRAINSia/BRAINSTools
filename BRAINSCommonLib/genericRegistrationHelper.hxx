@@ -142,8 +142,12 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
       dynamic_cast<MattesMutualInformationMetricType *>(this->m_CostMetricObject.GetPointer() );
     if( test_MMICostMetric.IsNotNull() )
       {
-      this->m_CostMetricObject->SetNumberOfThreads(1);
-      this->m_Registration->SetNumberOfThreads(1);
+      if( this->m_ForceMINumberOfThreads != 1 )
+        {
+        std::cout << "WARNING USING MAX MMI NUMBER OF THREADS:   " << this->m_ForceMINumberOfThreads << std::endl;
+        }
+      this->m_CostMetricObject->SetNumberOfThreads(this->m_ForceMINumberOfThreads);
+      this->m_Registration->SetNumberOfThreads(this->m_ForceMINumberOfThreads);
       }
     }
   m_Registration->SetMetric(this->m_CostMetricObject);

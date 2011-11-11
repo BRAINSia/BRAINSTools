@@ -470,8 +470,15 @@
       <name>numberOfThreads</name>
       <longflag deprecatedalias="debugNumberOfThreads" >numberOfThreads</longflag>
       <label>Number Of Threads</label>
-      <description>Explicitly specify the maximum number of threads to use.</description>
+      <description>Explicitly specify the maximum number of threads to use. (default is auto-detected)</description>
       <default>-1</default>
+    </integer>
+    <integer>
+      <name>forceMINumberOfThreads</name>
+      <longflag>forceMINumberOfThreads</longflag>
+      <label>Buggy MI metric Number Of Threads</label>
+      <description>Force the the maximum number of threads to use for non thread safe MI metric.  CAUTION: Inconsistent results my arise!</description>
+      <default>1</default>
     </integer>
 
     <integer>

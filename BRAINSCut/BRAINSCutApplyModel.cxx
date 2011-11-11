@@ -134,15 +134,12 @@ BRAINSCutApplyModel
   BinaryImagePointer maskVolume;
 
   maskVolume = ThresholdImageAtLower( continuousImage, threshold);
-  itkUtil::WriteImage<BinaryImageType>( maskVolume, continuousFilename + "DEBUGThreshold.nii.gz");
 
   /* Get One label */
   maskVolume = GetOneConnectedRegion( maskVolume );
-  itkUtil::WriteImage<BinaryImageType>( maskVolume, continuousFilename + "DEBUGOneLargestLabel.nii.gz");
 
   /* opening and closing to get rid of island and holes */
   maskVolume = FillHole( maskVolume );
-  itkUtil::WriteImage<BinaryImageType>( maskVolume, continuousFilename + "DEBUGFillHole.nii.gz");
   return maskVolume;
 }
 

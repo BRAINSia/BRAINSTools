@@ -58,7 +58,7 @@ ${ITK_LIBRARIES}
 ${VTK_LIBRARIES}
 )
 
-add_executable(DebugImageViewerVectorClientTest DebugImageViewerVectorClientTest.cxx 
+add_executable(DebugImageViewerVectorClientTest DebugImageViewerVectorClientTest.cxx
 )
 target_link_libraries(DebugImageViewerVectorClientTest
 ${ITK_LIBRARIES}

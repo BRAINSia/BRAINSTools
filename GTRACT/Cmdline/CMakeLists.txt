@@ -4,7 +4,7 @@ option(DEBUGGING_PRINT_IMAGES "Use the DEBUG_IMAGE_VIEWER for debugging" ON)
 set(ALL_PROGS_LIST
   gtractImageConformity
   gtractInvertRigidTransform
-  gtractTransformToDeformationField
+  gtractTransformToDisplacementField
   gtractInvertBSplineTransform
   gtractResampleCodeImage
   gtractResampleFibers
@@ -22,7 +22,7 @@ set(ALL_PROGS_LIST
   gtractFastMarchingTracking
   gtractCopyImageOrientation
   gtractClipAnisotropy
-  gtractInvertDeformationField
+  gtractInvertDisplacementField
   gtractResampleDWIInPlace
   gtractCoregBvalues
   gtractCoRegAnatomy

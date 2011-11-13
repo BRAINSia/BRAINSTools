@@ -46,7 +46,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateFastSymmetricForces
   --outputPixelType uchar
   --medianFilterSize 1,1,1
   --outputDebug
-  --smoothDeformationFieldSigma 1.0
+  --smoothDisplacementFieldSigma 1.0
   --numberOfPyramidLevels 3
   --arrayOfPyramidLevelIterations 100,50,5
   --minimumFixedPyramid 4,4,4
@@ -67,7 +67,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateDiffeomorphicTest1_
   --movingVolume DATA{${TestData_DIR}/SUBJ_B_small_T1.nii.gz}
   --fixedVolume DATA{${TestData_DIR}/SUBJ_A_small_T1.nii.gz}
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/diffeomorphicDemons1_test.nii.gz
-  --outputDeformationFieldVolume ${CMAKE_CURRENT_BINARY_DIR}/OutDefField.nii.gz
+  --outputDisplacementFieldVolume ${CMAKE_CURRENT_BINARY_DIR}/OutDefField.nii.gz
   --inputPixelType short
   --outputPixelType uchar
   --outputNormalized
@@ -75,7 +75,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateDiffeomorphicTest1_
   --histogramMatch
   --numberOfHistogramBins 1024
   --numberOfMatchPoints 7
-  --smoothDeformationFieldSigma 1.5
+  --smoothDisplacementFieldSigma 1.5
   --numberOfPyramidLevels 3
   --arrayOfPyramidLevelIterations 100,50,5
   --minimumFixedPyramid 4,4,4
@@ -95,7 +95,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateDiffeomorphicTest1_
   --movingVolume DATA{${TestData_DIR}/SUBJ_B_small_T1.nii.gz}
   --fixedVolume DATA{${TestData_DIR}/SUBJ_A_small_T1.nii.gz}
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/diffeomorphicDemons1_test.nii.gz
-  --outputDeformationFieldVolume ${CMAKE_CURRENT_BINARY_DIR}/OutDefField.nii.gz
+  --outputDisplacementFieldVolume ${CMAKE_CURRENT_BINARY_DIR}/OutDefField.nii.gz
   --inputPixelType short
   --outputPixelType uchar
   --outputNormalized
@@ -103,7 +103,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateDiffeomorphicTest1_
   --histogramMatch
   --numberOfHistogramBins 1024
   --numberOfMatchPoints 7
-  # --smoothDeformationFieldSigma 1.5
+  # --smoothDisplacementFieldSigma 1.5
   --numberOfPyramidLevels 1
   --arrayOfPyramidLevelIterations 1
   --minimumFixedPyramid 1,1,1
@@ -132,7 +132,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateDiffeomorphicTest2_
   --histogramMatch
   --numberOfHistogramBins 1024
   --numberOfMatchPoints 7
-  --smoothDeformationFieldSigma 1.0
+  --smoothDisplacementFieldSigma 1.0
   --numberOfPyramidLevels 3
   --arrayOfPyramidLevelIterations 100,50,5
   --minimumFixedPyramid 4,4,4
@@ -151,7 +151,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateDiffeomorphicTest3_
   BRAINSDemonWarpTest
   --movingVolume DATA{${TestData_DIR}/SUBJ_B_small_T1.nii.gz}
   --fixedVolume DATA{${TestData_DIR}/SUBJ_A_small_T1.nii.gz}
-  #    --outputDeformationFieldVolume ${CMAKE_CURRENT_BINARY_DIR}/OutDefField.nii.gz
+  #    --outputDisplacementFieldVolume ${CMAKE_CURRENT_BINARY_DIR}/OutDefField.nii.gz
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/diffeomorphicDemons3_test.nii.gz
   --inputPixelType int
   --outputPixelType uchar
@@ -159,7 +159,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateDiffeomorphicTest3_
   --fixedBinaryVolume DATA{${TestData_DIR}/SUBJ_A_small_brain_cut_mask.nii.gz}
   --movingBinaryVolume DATA{${TestData_DIR}/SUBJ_B_small_brain_cut_mask.nii.gz}
   --maskProcessingMode BOBF
-  --smoothDeformationFieldSigma 0.01
+  --smoothDisplacementFieldSigma 0.01
   --upFieldSmoothing 1.0
   --histogramMatch
   --numberOfHistogramBins 1024
@@ -187,8 +187,8 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateDiffeomorphicTest4_
   --outputPixelType uchar
   #    --outputNormalized
   --outputCheckerboardVolume ${CMAKE_CURRENT_BINARY_DIR}/output_Checkborad.nii.gz
-  --initializeWithDeformationField DATA{${TestData_DIR}/InitialDeformationField.nii.gz}
-  --smoothDeformationFieldSigma 1.5
+  --initializeWithDisplacementField DATA{${TestData_DIR}/InitialDisplacementField.nii.gz}
+  --smoothDisplacementFieldSigma 1.5
   --numberOfPyramidLevels 3
   --arrayOfPyramidLevelIterations 10,5,5
   --minimumFixedPyramid 4,4,4
@@ -209,10 +209,10 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateOrientedImagesTest5
   --movingVolume DATA{${TestData_DIR}/ANON0006_20_T1_sag_twisted.nii.gz}
   --fixedVolume DATA{${TestData_DIR}/ANON0006_20_T1_dbg_splayed.nii.gz}
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/ValidateOrientedImagesTest5.nii.gz
-  --outputDeformationFieldVolume ${CMAKE_CURRENT_BINARY_DIR}/OutDefField_orientedImage.nii.gz
+  --outputDisplacementFieldVolume ${CMAKE_CURRENT_BINARY_DIR}/OutDefField_orientedImage.nii.gz
   --inputPixelType uchar
   --outputPixelType uchar
-  --smoothDeformationFieldSigma 1.5
+  --smoothDisplacementFieldSigma 1.5
   --outputDebug
   --numberOfPyramidLevels 3
   --arrayOfPyramidLevelIterations 1000,100,25
@@ -256,7 +256,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateVectorFastSymmetric
   --outputPixelType uchar
   --medianFilterSize 1,1,1
   --outputDebug
-  --smoothDeformationFieldSigma 1.0
+  --smoothDisplacementFieldSigma 1.0
   --numberOfPyramidLevels 3
   --arrayOfPyramidLevelIterations 100,50,5
   --minimumFixedPyramid 4,4,4
@@ -277,7 +277,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateVectorDiffeomorphic
   --fixedVolume DATA{${TestData_DIR}/SUBJ_A_small_T1.nii.gz}
   --fixedVolume DATA{${TestData_DIR}/SUBJ_A_small_T1.nii.gz}
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/vectordiffeomorphicDemons1_test.nii.gz
-  --outputDeformationFieldVolume ${CMAKE_CURRENT_BINARY_DIR}/OutDefField.nii.gz
+  --outputDisplacementFieldVolume ${CMAKE_CURRENT_BINARY_DIR}/OutDefField.nii.gz
   --inputPixelType short
   --outputPixelType uchar
   --outputNormalized
@@ -285,7 +285,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateVectorDiffeomorphic
   --histogramMatch
   --numberOfHistogramBins 1024
   --numberOfMatchPoints 7
-  --smoothDeformationFieldSigma 1.5
+  --smoothDisplacementFieldSigma 1.5
   --numberOfPyramidLevels 3
   --arrayOfPyramidLevelIterations 100,50,5
   --minimumFixedPyramid 4,4,4
@@ -315,7 +315,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateVectorDiffeomorphic
   --makeBOBF
   --histogramMatch
   --numberOfHistogramBins 1024    --numberOfMatchPoints 7
-  --smoothDeformationFieldSigma 1.0    --numberOfPyramidLevels 3
+  --smoothDisplacementFieldSigma 1.0    --numberOfPyramidLevels 3
   --arrayOfPyramidLevelIterations 100,50,5
   --minimumFixedPyramid 4,4,4
   --minimumMovingPyramid 4,4,4
@@ -334,7 +334,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateVectorDiffeomorphic
   --movingVolume DATA{${TestData_DIR}/SUBJ_B_small_T1.nii.gz}
   --fixedVolume  DATA{${TestData_DIR}/SUBJ_A_small_T1.nii.gz}
   --fixedVolume  DATA{${TestData_DIR}/SUBJ_A_small_T1.nii.gz}
-  #    --outputDeformationFieldVolume ${VBRAINSDemonWarp_BINARY_DIR}/OutDefField.nii.gz
+  #    --outputDisplacementFieldVolume ${VBRAINSDemonWarp_BINARY_DIR}/OutDefField.nii.gz
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/vectordiffeomorphicDemons3_test.nii.gz
   --inputPixelType int
   --outputPixelType uchar
@@ -342,7 +342,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateVectorDiffeomorphic
   --fixedBinaryVolume DATA{${TestData_DIR}/SUBJ_A_small_brain_cut_mask.nii.gz}
   --movingBinaryVolume DATA{${TestData_DIR}/SUBJ_B_small_brain_cut_mask.nii.gz}
   --makeBOBF
-  --smoothDeformationFieldSigma 0.01
+  --smoothDisplacementFieldSigma 0.01
   --upFieldSmoothing 1.0
   --histogramMatch
   --numberOfHistogramBins 1024
@@ -368,13 +368,13 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateVectorDiffeomorphic
   --fixedVolume DATA{${TestData_DIR}/SUBJ_A_small_T1.nii.gz}
   --fixedVolume DATA{${TestData_DIR}/SUBJ_A_small_T1.nii.gz}
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/vectordiffeomorphicDemons4_test.nii.gz
-  --outputDeformationFieldVolume ${CMAKE_CURRENT_BINARY_DIR}/OutDefField.nii.gz
+  --outputDisplacementFieldVolume ${CMAKE_CURRENT_BINARY_DIR}/OutDefField.nii.gz
   --inputPixelType int
   --outputPixelType uchar
   #    --outputNormalized
   --outputCheckerboardVolume ${CMAKE_CURRENT_BINARY_DIR}/output_Checkborad.nii.gz
-  --initializeWithDeformationField DATA{${TestData_DIR}/InitialDeformationField.nii.gz}
-  --smoothDeformationFieldSigma 1.5
+  --initializeWithDisplacementField DATA{${TestData_DIR}/InitialDisplacementField.nii.gz}
+  --smoothDisplacementFieldSigma 1.5
   --numberOfPyramidLevels 3
   --arrayOfPyramidLevelIterations 10,5,5
   --minimumFixedPyramid 4,4,4
@@ -406,7 +406,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateVectorDiffeomorphic
   --weightFactors 0.5,0.5,0.0
   --numberOfHistogramBins 1024
   --numberOfMatchPoints 7
-  --smoothDeformationFieldSigma 1.5
+  --smoothDisplacementFieldSigma 1.5
   --numberOfPyramidLevels 3
   --arrayOfPyramidLevelIterations 100,50,5
   --minimumFixedPyramid 4,4,4
@@ -424,7 +424,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateVectorDiffeomorphic
   VBRAINSDemonWarpTest
   --movingVolume DATA{${TestData_DIR}/SUBJ_B_small_T1.nii.gz}
   --fixedVolume DATA{${TestData_DIR}/SUBJ_A_small_T1.nii.gz}
-  #    --outputDeformationFieldVolume ${CMAKE_CURRENT_BINARY_DIR}/OutDefField.nii.gz
+  #    --outputDisplacementFieldVolume ${CMAKE_CURRENT_BINARY_DIR}/OutDefField.nii.gz
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/vectordiffeomorphicDemons6_test.nii.gz
   --inputPixelType int
   --outputPixelType uchar
@@ -432,7 +432,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateVectorDiffeomorphic
   --fixedBinaryVolume DATA{${TestData_DIR}/SUBJ_A_small_brain_cut_mask.nii.gz}
   --movingBinaryVolume DATA{${TestData_DIR}/SUBJ_B_small_brain_cut_mask.nii.gz}
   --makeBOBF
-  --smoothDeformationFieldSigma 0.01
+  --smoothDisplacementFieldSigma 0.01
   --upFieldSmoothing 1.0
   --histogramMatch
   --numberOfHistogramBins 1024
@@ -461,7 +461,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateVectorOrientedImage
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/ValidateVectorOrientedImagesTest6.nii.gz
   --inputPixelType uchar
   --outputPixelType uchar
-  --smoothDeformationFieldSigma 1.5
+  --smoothDisplacementFieldSigma 1.5
   --outputDebug
   --numberOfPyramidLevels 5
   --arrayOfPyramidLevelIterations 100,30,20,0,0
@@ -483,7 +483,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateVectorOrientedImage
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/ValidateVectorOrientedImagesTest7.nii.gz
   --inputPixelType uchar
   --outputPixelType uchar
-  --smoothDeformationFieldSigma 1.5
+  --smoothDisplacementFieldSigma 1.5
   --outputDebug
   --weightFactors 0.8,0.2
   --numberOfPyramidLevels 5
@@ -509,7 +509,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateDiffeomorphicWithAU
   --histogramMatch
   --numberOfHistogramBins 1024
   --numberOfMatchPoints 7
-  --smoothDeformationFieldSigma 1.5
+  --smoothDisplacementFieldSigma 1.5
   --numberOfPyramidLevels 3
   --arrayOfPyramidLevelIterations 100,50,5
   --minimumFixedPyramid 4,4,4
@@ -536,7 +536,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateDiffeomorphicWithMa
   --histogramMatch
   --numberOfHistogramBins 1024
   --numberOfMatchPoints 7
-  --smoothDeformationFieldSigma 1.5
+  --smoothDisplacementFieldSigma 1.5
   --numberOfPyramidLevels 3
   --arrayOfPyramidLevelIterations 100,50,5
   --minimumFixedPyramid 4,4,4
@@ -562,7 +562,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateInitialTransform_Te
   --outputPixelType short
   --outputDebug
   --initializeWithTransform DATA{${TestData_DIR}/BRAINSFitTest_BSplineAnteScaleRotationRescaleHeadMasks.mat}
-  --smoothDeformationFieldSigma 0.0
+  --smoothDisplacementFieldSigma 0.0
   --numberOfPyramidLevels 1
   --arrayOfPyramidLevelIterations 1
   --minimumFixedPyramid 1,1,1
@@ -587,7 +587,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateLogDemons_Test_nii
   --histogramMatch
   --numberOfHistogramBins 1024
   --numberOfMatchPoints 7
-  --smoothDeformationFieldSigma 1.5
+  --smoothDisplacementFieldSigma 1.5
   --numberOfPyramidLevels 3
   --arrayOfPyramidLevelIterations 100,50,5
   --minimumFixedPyramid 4,4,4
@@ -610,7 +610,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateSymmetricLogDemons_
   --histogramMatch
   --numberOfHistogramBins 1024
   --numberOfMatchPoints 7
-  --smoothDeformationFieldSigma 1.5
+  --smoothDisplacementFieldSigma 1.5
   --numberOfPyramidLevels 3
   --arrayOfPyramidLevelIterations 100,50,5
   --minimumFixedPyramid 4,4,4
@@ -633,12 +633,12 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateSymmetricLogDemons_
   --histogramMatch
   --numberOfHistogramBins 1024
   --numberOfMatchPoints 7
-  --smoothDeformationFieldSigma 1.5
+  --smoothDisplacementFieldSigma 1.5
   --numberOfPyramidLevels 3
   --arrayOfPyramidLevelIterations 100,50,5
   --minimumFixedPyramid 4,4,4
   --minimumMovingPyramid 4,4,4
-  --initializeWithDeformationField DATA{${TestData_DIR}/InitialDeformationField.nii.gz}
+  --initializeWithDisplacementField DATA{${TestData_DIR}/InitialDisplacementField.nii.gz}
   --registrationFilterType SymmetricLogDemons
   )
 endif()  # Commend out the LogDemons tests.

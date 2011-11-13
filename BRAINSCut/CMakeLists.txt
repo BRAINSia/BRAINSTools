@@ -50,7 +50,7 @@ set(ALL_PROGS_LIST
   BRAINSCut
   ShuffleVectorsModule  ## TODO: Make into SEM program
   WriteFeaturesforROI   ## TODO: Make into SEM program
-  SimilarityIndex 
+  SimilarityIndex
   )
 foreach( prog ${ALL_PROGS_LIST} )
   StandardBRAINSBuildMacro( NAME ${prog} TARGET_LIBRARIES BRAINSCutCOMMONLIB )

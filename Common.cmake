@@ -141,7 +141,7 @@ SETIFEMPTY(BRAINSTools_CLI_INSTALL_RUNTIME_DESTINATION ${CMAKE_INSTALL_RUNTIME_D
 #-------------------------------------------------------------------------
 # Augment compiler flags
 #-------------------------------------------------------------------------
-include(CompilerFlagSettings)
+include(ITKSetStandardCompilerFlags)
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${C_DEBUG_DESIRED_FLAGS}" )
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX_DEBUG_DESIRED_FLAGS}" )

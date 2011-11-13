@@ -77,7 +77,7 @@ public:
   FloatingPrecision m_Weighting;  // The strength of this class.
 };
 
-#include "BRAINSABCUtilities.txx"
+#include "BRAINSABCUtilities.hxx"
 
 // External Templates to improve compilation times.
 extern std::vector<CorrectIntensityImageType::Pointer> CorrectBias(const unsigned int degree,

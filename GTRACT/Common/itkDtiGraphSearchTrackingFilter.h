@@ -100,7 +100,7 @@ private:
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkDtiGraphSearchTrackingFilter.txx"
+#include "itkDtiGraphSearchTrackingFilter.hxx"
 #endif
 
 #endif

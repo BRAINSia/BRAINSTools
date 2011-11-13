@@ -215,7 +215,7 @@ private:
 }   // namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "VDemonsPreprocessor.txx"
+#include "VDemonsPreprocessor.hxx"
 #endif
 
 #endif // _VDemonsPreprocessor_h

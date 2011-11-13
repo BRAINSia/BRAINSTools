@@ -105,7 +105,7 @@ private:
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkBlendImageFilter.txx"
+#include "itkBlendImageFilter.hxx"
 #endif
 
 #endif

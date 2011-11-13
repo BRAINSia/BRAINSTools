@@ -116,7 +116,7 @@ protected:
 };
 
 #ifndef MU_MANUAL_INSTANTIATION
-#include "AtlasCropImageSource.txx"
+#include "AtlasCropImageSource.hxx"
 #endif
 
 #endif

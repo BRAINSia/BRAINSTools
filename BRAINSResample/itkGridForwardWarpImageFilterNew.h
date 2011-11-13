@@ -151,7 +151,7 @@ private:
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkGridForwardWarpImageFilterNew.txx"
+#include "itkGridForwardWarpImageFilterNew.hxx"
 #endif
 
 #endif

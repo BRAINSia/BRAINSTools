@@ -339,7 +339,7 @@ private:
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkESMDemonsRegistrationWithMaskFunction.txx"
+#include "itkESMDemonsRegistrationWithMaskFunction.hxx"
 #endif
 
 #endif

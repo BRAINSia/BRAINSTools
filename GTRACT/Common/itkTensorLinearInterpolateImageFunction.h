@@ -94,7 +94,7 @@ private:
 } // namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkTensorLinearInterpolateImageFunction.txx"
+#include "itkTensorLinearInterpolateImageFunction.hxx"
 #endif
 
 #endif

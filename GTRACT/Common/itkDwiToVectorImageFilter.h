@@ -174,7 +174,7 @@ private:
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkDwiToVectorImageFilter.txx"
+#include "itkDwiToVectorImageFilter.hxx"
 #endif
 
 #endif

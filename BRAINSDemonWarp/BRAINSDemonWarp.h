@@ -285,6 +285,6 @@ private:
 }          // namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "BRAINSDemonWarp.txx"
+#include "BRAINSDemonWarp.hxx"
 #endif
 #endif

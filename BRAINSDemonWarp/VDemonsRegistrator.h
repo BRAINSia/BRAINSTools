@@ -289,7 +289,7 @@ private:
 }   // namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "VDemonsRegistrator.txx"
+#include "VDemonsRegistrator.hxx"
 #endif
 
 #endif

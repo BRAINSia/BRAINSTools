@@ -284,7 +284,7 @@ int CreateTransformFile(const std::string & MovingImageFilename,
   WriteTransformToDisk( BSplineRegistrationHelper->GetCurrentGenericTransform(),
                         OutputRegName );
   // Write out Transformed Output As Well
-  // - EX. from GenericTransformImage.txx
+  // - EX. from GenericTransformImage.hxx
 
   InternalImageType::Pointer DeformedMovingImage;
   DeformedMovingImage = TransformResample<InternalImageType,

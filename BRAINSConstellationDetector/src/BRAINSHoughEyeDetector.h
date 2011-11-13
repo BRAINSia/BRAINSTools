@@ -245,7 +245,7 @@ private:
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "BRAINSHoughEyeDetector.txx"
+#include "BRAINSHoughEyeDetector.hxx"
 #endif
 
 #endif

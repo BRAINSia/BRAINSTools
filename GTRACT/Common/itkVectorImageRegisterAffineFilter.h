@@ -232,7 +232,7 @@ private:
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkVectorImageRegisterAffineFilter.txx"
+#include "itkVectorImageRegisterAffineFilter.hxx"
 #endif
 
 #endif

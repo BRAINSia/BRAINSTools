@@ -97,6 +97,6 @@ public:
   RealValueType GetLatticeIndex() const;
 };
 } // namespace itk
-#include "gtractDiffusionTensor3D.txx"
+#include "gtractDiffusionTensor3D.hxx"
 
 #endif

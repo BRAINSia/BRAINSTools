@@ -138,7 +138,7 @@ private:
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkFixDicomImageFilter.txx"
+#include "itkFixDicomImageFilter.hxx"
 #endif
 
 #endif

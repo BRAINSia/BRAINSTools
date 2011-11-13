@@ -301,6 +301,6 @@ private:
 }          // namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "VBRAINSDemonWarp.txx"
+#include "VBRAINSDemonWarp.hxx"
 #endif
 #endif

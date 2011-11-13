@@ -191,7 +191,7 @@ private:
 }   // namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "VValidationInputParser.txx"
+#include "VValidationInputParser.hxx"
 #endif
 
 #endif

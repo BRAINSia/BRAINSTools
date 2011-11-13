@@ -1,7 +1,7 @@
 /*=========================================================================
  *
  *  Program:   Insight Segmentation & Registration Toolkit
- *  Module:    $RCSfile: itkDiffeomorphicDemonsRegistrationWithMaskFilter.txx,v
+ *  Module:    $RCSfile: itkDiffeomorphicDemonsRegistrationWithMaskFilter.hxx,v
  * $
  *  Language:  C++
  *  Date:      $Date: 2008-11-07 19:39:44 $
@@ -16,8 +16,8 @@
  *
  *  =========================================================================*/
 
-#ifndef __itkDiffeomorphicDemonsRegistrationWithMaskFilter_txx
-#define __itkDiffeomorphicDemonsRegistrationWithMaskFilter_txx
+#ifndef __itkDiffeomorphicDemonsRegistrationWithMaskFilter_hxx
+#define __itkDiffeomorphicDemonsRegistrationWithMaskFilter_hxx
 
 #include "itkDiffeomorphicDemonsRegistrationWithMaskFilter.h"
 #include "itkSmoothingRecursiveGaussianImageFilter.h"

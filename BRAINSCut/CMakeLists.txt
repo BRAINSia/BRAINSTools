@@ -10,7 +10,7 @@ include_directories(${BRAINSCut_SOURCE_DIR}/NetConfiguration)
 add_subdirectory(NetConfiguration)
 
 
-file(GLOB BRAINSCut_HDRS *.h *.txx)
+file(GLOB BRAINSCut_HDRS *.h *.hxx)
 
 set(BRAINSCutCOMMONLIB_SRCS
   Utilities.cxx

@@ -400,7 +400,6 @@ BRAINSFitHelper::RunRegistration()
     {
     std::cout << "ERROR:  Invalid BRAINSFitHelper conversion" << __FILE__ << " " << __LINE__ << std::endl;
     }
-
   myHelper->StartRegistration();
   this->m_CurrentGenericTransform = myHelper->GetCurrentGenericTransform();
   this->m_ActualNumberOfIterations = myHelper->GetActualNumberOfIterations();

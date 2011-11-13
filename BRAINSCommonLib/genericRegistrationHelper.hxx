@@ -149,6 +149,11 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
       this->m_CostMetricObject->SetNumberOfThreads(this->m_ForceMINumberOfThreads);
       this->m_Registration->SetNumberOfThreads(this->m_ForceMINumberOfThreads);
       }
+    else
+      {
+      this->m_CostMetricObject->SetNumberOfThreads(itk::MultiThreader::GetGlobalDefaultNumberOfThreads() );
+      this->m_Registration->SetNumberOfThreads(itk::MultiThreader::GetGlobalDefaultNumberOfThreads() );
+      }
     }
   m_Registration->SetMetric(this->m_CostMetricObject);
   m_Registration->SetOptimizer(optimizer);
@@ -312,6 +317,12 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
   optimizer->SetMaximumStepLength(m_MaximumStepLength);
   optimizer->SetMinimumStepLength(m_MinimumStepLength);
   optimizer->SetNumberOfIterations(m_NumberOfIterations);
+
+  // std::cout << "OPTIMIZER    THREADS USED: " << optimizer->GetNumberOfThreads()                << std::endl;
+  std::cout << "METRIC       THREADS USED: " << this->m_CostMetricObject->GetNumberOfThreads()
+            << " of " << itk::MultiThreader::GetGlobalDefaultNumberOfThreads() <<  std::endl;
+  std::cout << "REGISTRATION THREADS USED: " << this->m_Registration->GetNumberOfThreads()
+            << " of " << itk::MultiThreader::GetGlobalDefaultNumberOfThreads() <<  std::endl;
 
 #if 0
   // if (globalVerbose)

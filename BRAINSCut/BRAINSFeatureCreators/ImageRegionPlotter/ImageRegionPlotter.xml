@@ -113,9 +113,9 @@
     <!--image>
       <name>DeformationFilename</name>
       <longflag>DeformationFilename</longflag>
-      <description>Deformation Filename</description>
+      <description>Displacement Filename</description>
       <channel>input</channel>
-      <label>Deformation Filename</label>
+      <label>Displacement Filename</label>
       <default></default>
     </image-->
 

@@ -6,7 +6,7 @@ Language:  C++
 Date:      $Date: 2006/03/29 14:53:40 $
 Version:   $Revision: 1.9 $
 
-Purpose:   Get Deformation Field from the input Transform
+Purpose:   Get Displacement Field from the input Transform
 Date:      11/13/07
 Author:    Madhura A Ingalhalikar
 
@@ -56,11 +56,11 @@ int main(int argc, char *argv[])
 
   std::cout << "Input Transform: " <<  inputTransform << std::endl;
   std::cout << "Reference Image: " <<  inputReferenceVolume << std::endl;
-  std::cout << "Output Deformation Field: " << outputDeformationFieldVolume << std::endl;
+  std::cout << "Output Displacement Field: " << outputDeformationFieldVolume << std::endl;
 
   typedef itk::Vector<float, 3>                    DeformationPixelType;
-  typedef itk::Image<DeformationPixelType, 3>      DeformationFieldType;
-  typedef DeformationFieldType                     ImageType;
+  typedef itk::Image<DeformationPixelType, 3>      DisplacementFieldType;
+  typedef DisplacementFieldType                    ImageType;
   typedef itk::ImageFileWriter<ImageType>          WriterType;
   typedef itk::Image<signed short, 3>              ReferenceImageType;
   typedef itk::ImageFileReader<ReferenceImageType> ReferenceReaderType;
@@ -69,8 +69,12 @@ int main(int argc, char *argv[])
   // "AddExtraTransformRegister"
   typedef itk::ThinPlateR2LogRSplineKernelTransform<double, 3> ThinPlateSplineTransformType;
 
-  typedef itk::TransformToDeformationFieldSource<DeformationFieldType, double> DeformationFieldGeneratorType;
-  typedef DeformationFieldGeneratorType::TransformType                         TransformType;
+#if (ITK_VERSION_MAJOR < 4)
+  typedef itk::TransformToDeformationFieldSource<DisplacementFieldType, double> DisplacementFieldGeneratorType;
+#else
+  typedef itk::TransformToDisplacementFieldSource<DisplacementFieldType, double> DisplacementFieldGeneratorType;
+#endif
+  typedef DisplacementFieldGeneratorType::TransformType TransformType;
 
   itk::AddExtraTransformRegister();
 
@@ -93,7 +97,7 @@ int main(int argc, char *argv[])
   // Read the transform
   GenericTransformType::Pointer baseTransform = itk::ReadTransformFromDisk(inputTransform);
 
-  DeformationFieldGeneratorType::Pointer defGenerator = DeformationFieldGeneratorType::New();
+  DisplacementFieldGeneratorType::Pointer defGenerator = DisplacementFieldGeneratorType::New();
 #if 0
   defGenerator->SetOutputSize( image->GetLargestPossibleRegion().GetSize() );
   defGenerator->SetOutputSpacing( image->GetSpacing() );
@@ -115,7 +119,7 @@ int main(int argc, char *argv[])
     return EXIT_FAILURE;
     }
 
-  // Write out Deformation field
+  // Write out Displacement field
 
   WriterType::Pointer writer = WriterType::New();
   writer->UseCompressionOn();

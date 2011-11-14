@@ -52,18 +52,18 @@ namespace itk
   *
   */
 template <
-  class TDeformationField,
+  class TDisplacementField,
   class TOutputImage
   >
 class ITK_EXPORT GridForwardWarpImageFilterNew :
-  public         ImageToImageFilter<TDeformationField, TOutputImage>
+  public         ImageToImageFilter<TDisplacementField, TOutputImage>
 {
 public:
   /** Standard class typedefs. */
-  typedef GridForwardWarpImageFilterNew                       Self;
-  typedef ImageToImageFilter<TDeformationField, TOutputImage> Superclass;
-  typedef SmartPointer<Self>                                  Pointer;
-  typedef SmartPointer<const Self>                            ConstPointer;
+  typedef GridForwardWarpImageFilterNew                        Self;
+  typedef ImageToImageFilter<TDisplacementField, TOutputImage> Superclass;
+  typedef SmartPointer<Self>                                   Pointer;
+  typedef SmartPointer<const Self>                             ConstPointer;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -85,13 +85,13 @@ public:
   /** Determine the image dimension. */
   itkStaticConstMacro(ImageDimension, unsigned int,
                       TOutputImage::ImageDimension);
-  itkStaticConstMacro(DeformationFieldDimension, unsigned int,
-                      TDeformationField::ImageDimension);
+  itkStaticConstMacro(DisplacementFieldDimension, unsigned int,
+                      TDisplacementField::ImageDimension);
 
-  /** Deformation field typedef support. */
-  typedef TDeformationField                           DeformationFieldType;
-  typedef typename DeformationFieldType::ConstPointer DeformationFieldConstPointer;
-  typedef typename DeformationFieldType::PixelType    DisplacementType;
+  /** Displacement field typedef support. */
+  typedef TDisplacementField                           DisplacementFieldType;
+  typedef typename DisplacementFieldType::ConstPointer DeformationFieldConstPointer;
+  typedef typename DisplacementFieldType::PixelType    DisplacementType;
 
   /** Set the background value */
   itkSetMacro(BackgroundValue, PixelType);
@@ -122,9 +122,9 @@ public:
 #ifdef ITK_USE_CONCEPT_CHECKING
   /** Begin concept checking */
   itkConceptMacro( SameDimensionCheck,
-                   ( Concept::SameDimension<ImageDimension, DeformationFieldDimension> ) );
+                   ( Concept::SameDimension<ImageDimension, DisplacementFieldDimension> ) );
   itkConceptMacro( DeformationFieldHasNumericTraitsCheck,
-                   ( Concept::HasNumericTraits<typename TDeformationField::PixelType::ValueType> ) );
+                   ( Concept::HasNumericTraits<typename TDisplacementField::PixelType::ValueType> ) );
   /** End concept checking */
 #endif
 protected:

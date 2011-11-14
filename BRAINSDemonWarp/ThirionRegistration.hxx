@@ -17,7 +17,7 @@ ThirionRegistration<TImage, TRealImage, TOutputImage>
   m_OutNormalized("OFF"),
   m_OutputFilename(""),
   m_CheckerBoardFilename("none"),
-  m_DeformationFieldOutputName("none"),
+  m_DisplacementFieldOutputName("none"),
   m_AppendOutputFile(true),
   m_BOBFTargetMask("none"),
   m_BOBFTemplateMask("none"),
@@ -58,8 +58,8 @@ ThirionRegistration<TImage, TRealImage, TOutputImage>
   this->m_Parser->SetTheFixedImageFilename( this->m_TheFixedImageFilename.c_str() );
   this->m_Parser->SetForceCoronalZeroOrigin( this->GetForceCoronalZeroOrigin() );
 
-  this->m_Parser->SetInitialDeformationFieldFilename(
-    this->m_InitialDeformationFieldFilename.c_str() );
+  this->m_Parser->SetInitialDisplacementFieldFilename(
+    this->m_InitialDisplacementFieldFilename.c_str() );
   this->m_Parser->SetInitialCoefficientFilename(
     this->m_InitialCoefficientFilename.c_str() );
   this->m_Parser->SetInitialTransformFilename(
@@ -88,7 +88,7 @@ ThirionRegistration<TImage, TRealImage, TOutputImage>
 {
   this->m_Preprocessor->SetInputFixedImage( this->m_Parser->GetTheFixedImage() );
   this->m_Preprocessor->SetInputMovingImage( this->m_Parser->GetTheMovingImage() );
-  this->m_Preprocessor->SetInitialDeformationField( this->m_Parser->GetInitialDeformationField() );
+  this->m_Preprocessor->SetInitialDisplacementField( this->m_Parser->GetInitialDisplacementField() );
   this->m_Preprocessor->SetUseHistogramMatching( this->GetUseHistogramMatching() );
   this->m_Preprocessor->SetNumberOfHistogramLevels( this->m_Parser->GetNumberOfHistogramLevels() );
   this->m_Preprocessor->SetNumberOfMatchPoints( this->m_Parser->GetNumberOfMatchPoints() );
@@ -101,7 +101,7 @@ ThirionRegistration<TImage, TRealImage, TOutputImage>
   this->m_Preprocessor->SetSeed( this->GetSeed() );
   this->m_Preprocessor->SetOutDebug( this->GetOutDebug() );
   this->m_Preprocessor->SetMedianFilterSize( this->GetMedianFilterSize() );
-  this->m_Preprocessor->SetInitialDeformationField( this->m_Parser->GetInitialDeformationField() );
+  this->m_Preprocessor->SetInitialDisplacementField( this->m_Parser->GetInitialDisplacementField() );
 }
 
 /*This method initializes the registration process. The preprocessed output
@@ -115,13 +115,13 @@ ThirionRegistration<TImage, TRealImage, TOutputImage>
   this->m_Registrator->SetDisplacementBaseName( this->GetDisplacementBaseName() );
   this->m_Registrator->SetWarpedImageName( this->GetWarpedImageName() );
   this->m_Registrator->SetCheckerBoardFilename( this->GetCheckerBoardFilename() );
-  this->m_Registrator->SetDeformationFieldOutputName( this->GetDeformationFieldOutputName() );
+  this->m_Registrator->SetDisplacementFieldOutputName( this->GetDisplacementFieldOutputName() );
   this->m_Registrator->SetCheckerBoardPattern( this->GetCheckerBoardPattern() );
   this->m_Registrator->SetFixedImage( this->m_Preprocessor->GetOutputFixedImage() );
   this->m_Registrator->SetMovingImage( this->m_Preprocessor->GetOutputMovingImage() );
   this->m_Registrator->SetUnNormalizedMovingImage( this->m_Preprocessor->GetUnNormalizedMovingImage() );
   this->m_Registrator->SetUnNormalizedFixedImage( this->m_Preprocessor->GetUnNormalizedFixedImage() );
-  this->m_Registrator->SetInitialDeformationField( this->m_Parser->GetInitialDeformationField() );
+  this->m_Registrator->SetInitialDisplacementField( this->m_Parser->GetInitialDisplacementField() );
   this->m_Registrator->SetDefaultPixelValue( this->m_Preprocessor->GetDefaultPixelValue() );
   this->m_Registrator->SetUseHistogramMatching( this->GetUseHistogramMatching() );
   this->m_Registrator->SetNumberOfLevels( this->m_Parser->GetNumberOfLevels() );
@@ -133,7 +133,7 @@ ThirionRegistration<TImage, TRealImage, TOutputImage>
 
   this->m_Registrator->SetOutNormalized( this->GetOutNormalized() );
   this->m_Registrator->SetOutDebug( this->GetOutDebug() );
-  this->m_Registrator->SetDeformationFieldOutputName( this->m_DeformationFieldOutputName);
+  this->m_Registrator->SetDisplacementFieldOutputName( this->m_DisplacementFieldOutputName);
   this->m_Registrator->SetFixedLandmarkFilename(this->m_FixedLandmarkFilename);
   this->m_Registrator->SetMovingLandmarkFilename(this->m_MovingLandmarkFilename);
 }

@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Insight Segmentation & Registration Toolkit
-  Module:    $RCSfile: itkGtractInverseDeformationFieldImageFilter.h,v $
+  Module:    $RCSfile: itkGtractInverseDisplacementFieldImageFilter.h,v $
   Language:  C++
   Date:      $Date: 2009-04-25 12:27:27 $
   Version:   $Revision: 1.5 $
@@ -14,8 +14,8 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#ifndef __itkGtractInverseDeformationFieldImageFilter_h
-#define __itkGtractInverseDeformationFieldImageFilter_h
+#ifndef __itkGtractInverseDisplacementFieldImageFilter_h
+#define __itkGtractInverseDisplacementFieldImageFilter_h
 
 #include "itkImageToImageFilter.h"
 #include "itkKernelTransform.h"
@@ -23,10 +23,10 @@
 
 namespace itk
 {
-/** \class GtractInverseDeformationFieldImageFilter
+/** \class GtractInverseDisplacementFieldImageFilter
  * \brief Computes the inverse of a deformation field.
  *
- * GtractInverseDeformationFieldImageFilter takes a deformation field as input and
+ * GtractInverseDisplacementFieldImageFilter takes a deformation field as input and
  * computes the deformation field that is its inverse. If the input deformation
  * field was mapping coordinates from a space A into a space B, the output of
  * this filter will map coordinates from the space B into the space A.
@@ -60,12 +60,12 @@ namespace itk
  * \ingroup ImageToImageFilter
  */
 template <class TInputImage, class TOutputImage>
-class ITK_EXPORT GtractInverseDeformationFieldImageFilter :
+class ITK_EXPORT GtractInverseDisplacementFieldImageFilter :
   public         ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:
   /** Standard class typedefs. */
-  typedef GtractInverseDeformationFieldImageFilter      Self;
+  typedef GtractInverseDisplacementFieldImageFilter     Self;
   typedef ImageToImageFilter<TInputImage, TOutputImage> Superclass;
   typedef SmartPointer<Self>                            Pointer;
   typedef SmartPointer<const Self>                      ConstPointer;
@@ -81,7 +81,7 @@ public:
   itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(GtractInverseDeformationFieldImageFilter, ImageToImageFilter);
+  itkTypeMacro(GtractInverseDisplacementFieldImageFilter, ImageToImageFilter);
 
   /** Number of dimensions. */
   itkStaticConstMacro(ImageDimension, unsigned int,
@@ -157,15 +157,15 @@ public:
   itkSetMacro( SubsamplingFactor, unsigned int );
   itkGetConstMacro( SubsamplingFactor, unsigned int );
 
-  /** GtractInverseDeformationFieldImageFilter produces an image which is a different size
+  /** GtractInverseDisplacementFieldImageFilter produces an image which is a different size
    * than its input.  As such, it needs to provide an implementation
    * for GenerateOutputInformation() in order to inform the pipeline
    * execution model.  The original documentation of this method is
    * below. \sa ProcessObject::GenerateOutputInformaton() */
   virtual void GenerateOutputInformation();
 
-  /** GtractInverseDeformationFieldImageFilter needs a different input requested region than
-   * the output requested region.  As such, GtractInverseDeformationFieldImageFilter needs
+  /** GtractInverseDisplacementFieldImageFilter needs a different input requested region than
+   * the output requested region.  As such, GtractInverseDisplacementFieldImageFilter needs
    * to provide an implementation for GenerateInputRequestedRegion()
    * in order to inform the pipeline execution model.
    * \sa ProcessObject::GenerateInputRequestedRegion() */
@@ -181,8 +181,8 @@ public:
   /** End concept checking */
 #endif
 protected:
-  GtractInverseDeformationFieldImageFilter();
-  ~GtractInverseDeformationFieldImageFilter()
+  GtractInverseDisplacementFieldImageFilter();
+  ~GtractInverseDisplacementFieldImageFilter()
   {
   }
 
@@ -200,9 +200,9 @@ protected:
   void PrepareKernelBaseSpline();
 
 private:
-  GtractInverseDeformationFieldImageFilter(const Self &); // purposely not
-                                                          // implemented
-  void operator=(const Self &);                           // purposely not
+  GtractInverseDisplacementFieldImageFilter(const Self &); // purposely not
+                                                           // implemented
+  void operator=(const Self &);                            // purposely not
 
   // implemented
 
@@ -219,7 +219,7 @@ private:
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkGtractInverseDeformationFieldImageFilter.hxx"
+#include "itkGtractInverseDisplacementFieldImageFilter.hxx"
 #endif
 
-#endif
+#endif // __itkGtractInverseDisplacementFieldImageFilter_h

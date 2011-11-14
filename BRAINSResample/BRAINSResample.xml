@@ -70,8 +70,8 @@
     <transform fileExtensions=".nrrd" type="nonlinear" >
       <name>deformationVolume</name>
       <longflag>deformationVolume</longflag>
-      <description>Deformation Field to be used to warp the image</description>
-      <label>Deformation Field</label>
+      <description>Displacement Field to be used to warp the image</description>
+      <label>Displacement Field</label>
       <channel>input</channel>
       <default></default>
     </transform>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
   <executable>
   <category>Diffusion.GTRACT</category>
-  <title>Invert Deformation Field</title>
+  <title>Invert Displacement Field</title>
 
   <description>This program will invert a deformatrion field. The size of the deformation field is defined by an example image provided by the user</description>
   <acknowledgements>Funding for this version of the GTRACT program was provided by NIH/NINDS R01NS050568-01A2S1</acknowledgements>
@@ -26,8 +26,8 @@
     <image type="vector" fileExtensions=".nrrd">
       <name>deformationImage</name>
       <longflag>deformationImage</longflag>
-      <description>Required: Deformation field image</description>
-      <label>Deformation Image Volume</label>
+      <description>Required: Displacement field image</description>
+      <label>Displacement Image Volume</label>
       <channel>input</channel>
     </image>
 

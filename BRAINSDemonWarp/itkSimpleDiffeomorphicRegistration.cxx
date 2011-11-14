@@ -25,7 +25,7 @@ itkSimpleDiffeomorphicRegistration::itkSimpleDiffeomorphicRegistration()
 {
   m_DemonsPreprocessor = DemonsPreprocessorType::New();
   m_DemonsRegistrator = DemonsRegistratorType::New();
-  m_DeformationField = NULL;
+  m_DisplacementField = NULL;
 }
 
 /*
@@ -53,11 +53,11 @@ void itkSimpleDiffeomorphicRegistration::Initialization()
 {
   typedef itk::DiffeomorphicDemonsRegistrationWithMaskFilter<TRealImage,
                                                              TRealImage,
-                                                             TDeformationField>
+                                                             TDisplacementField>
     RegistrationFilterType;
   RegistrationFilterType::Pointer filter = RegistrationFilterType::New();
   typedef itk::PDEDeformableRegistrationFilter<TRealImage, TRealImage,
-                                               TDeformationField>
+                                               TDisplacementField>
     BaseRegistrationFilterType;
   BaseRegistrationFilterType::Pointer actualfilter;
   // typedef RegistrationFilterType::GradientType TGradientType;
@@ -119,8 +119,8 @@ void itkSimpleDiffeomorphicRegistration::Initialization()
 
   filter->SetMaximumUpdateStepLength(MaxStepLength);
   //  filter->SetUseGradientType(static_cast<TGradientType> (0));
-  filter->SmoothDeformationFieldOn();
-  filter->SetStandardDeviations(SmoothDeformationFieldSigma);
+  filter->SmoothDisplacementFieldOn();
+  filter->SetStandardDeviations(SmoothDisplacementFieldSigma);
   filter->SmoothUpdateFieldOff();
   actualfilter = filter;
   m_DemonsRegistrator->SetRegistrationFilter(actualfilter);
@@ -151,7 +151,7 @@ void itkSimpleDiffeomorphicRegistration::Initialization()
   m_DemonsRegistrator->SetNumberOfLevels(NumberOfLevels);
   m_DemonsRegistrator->SetNumberOfIterations(numberOfIterations);
   m_DemonsRegistrator->SetWarpedImageName( this->GetDeformedImageName() );
-  // m_DemonsRegistrator->SetDeformationFieldOutputName(m_DeformationFieldName);
+  // m_DemonsRegistrator->SetDisplacementFieldOutputName(m_DisplacementFieldName);
   m_DemonsRegistrator->SetUseHistogramMatching(true);
 }
 
@@ -192,5 +192,5 @@ void itkSimpleDiffeomorphicRegistration::Update()
          << std::endl;
     }
 
-  m_DeformationField = m_DemonsRegistrator->GetDeformationField();
+  m_DisplacementField = m_DemonsRegistrator->GetDisplacementField();
 }

@@ -25,7 +25,7 @@ CreateField<TImage,
   m_NumberOfMatchPoints(1),
   m_FixedImageMinimum(0),
   m_MovingImageMinimum(0),
-  m_DeformationField(NULL)
+  m_DisplacementField(NULL)
 {
   m_Image1ShrinkFactors.Fill(1),
   m_Image2ShrinkFactors.Fill(1)
@@ -221,8 +221,8 @@ void CreateField<TImage,
     try
       {
       m_Registration->ReleaseDataFlagOn();
-      m_DeformationField = m_Registration->GetOutput();
-      // m_DeformationField->DisconnectPipeline();
+      m_DisplacementField = m_Registration->GetOutput();
+      // m_DisplacementField->DisconnectPipeline();
       }
     catch( itk::ExceptionObject & err )
       {

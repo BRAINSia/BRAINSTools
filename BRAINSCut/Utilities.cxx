@@ -451,18 +451,18 @@ void CreateNewFloatImageFromTemplate(InternalImageType::Pointer & PointerToOutpu
 
 // REGINA:: removed #if 0
 
-void ReadDeformationField(TDeformationField::Pointer & DeformationField,
-                          const std::string & DeformationFilename)
+void ReadDisplacementField(TDisplacementField::Pointer & DisplacementField,
+                           const std::string & DisplacementFilename)
 {
-  std::cout << "Reading Deformation Field " << DeformationFilename.c_str() << std::endl;
+  std::cout << "Reading Displacement Field " << DisplacementFilename.c_str() << std::endl;
 
   try
     {
-    itk::ImageFileReader<TDeformationField>::Pointer DeformationReader =
-      itk::ImageFileReader<TDeformationField>::New();
-    DeformationReader->SetFileName( DeformationFilename.c_str() );
+    itk::ImageFileReader<TDisplacementField>::Pointer DeformationReader =
+      itk::ImageFileReader<TDisplacementField>::New();
+    DeformationReader->SetFileName( DisplacementFilename.c_str() );
     DeformationReader->Update();
-    DeformationField = DeformationReader->GetOutput();
+    DisplacementField = DeformationReader->GetOutput();
     }
   catch( itk::ExceptionObject & e )
     {
@@ -471,7 +471,7 @@ void ReadDeformationField(TDeformationField::Pointer & DeformationField,
 
   // REGINA:: removed #if 0 //HACK:  For right now, everything must be in RIP
   // orientaiton to work.
-  std::cout << "Deformation Field Orientation \n" << DeformationField->GetDirection() << std::endl << std::endl;
+  std::cout << "Displacement Field Orientation \n" << DisplacementField->GetDirection() << std::endl << std::endl;
 }
 
 bool CheckIndex(const int SizeX,
@@ -710,7 +710,7 @@ int AddSubjectInputVector(  DataSet * subjectSet,
 
   /** get registarion type */
   const RegistrationType *transform = subjectSet->GetRegistrationWithID(registrationID);
-  std::string             DeformationFilename( transform->GetAttribute<StringValue>("AtlasToSubjRegistrationFilename") );
+  std::string             DisplacementFilename( transform->GetAttribute<StringValue>("AtlasToSubjRegistrationFilename") );
 
   /** read in Deformed probability map*/
   ProbabilityMapList * ROIList = ANNXMLObject.Get<ProbabilityMapList>("ProbabilityMapList");
@@ -722,7 +722,7 @@ int AddSubjectInputVector(  DataSet * subjectSet,
     {
     ProbabilityMapParser *ROI = dynamic_cast<ProbabilityMapParser *>(ri->second);
     MapOfDeformedROIs[ri->first] =
-      ImageWarper<InternalImageType>( DeformationFilename,
+      ImageWarper<InternalImageType>( DisplacementFilename,
                                       ROI->GetAttribute<StringValue>("Filename"),
                                       MapOfImages[*(ImageTypeList.begin() )] );
     }
@@ -736,21 +736,21 @@ int AddSubjectInputVector(  DataSet * subjectSet,
   MapOfDeformedSpatialDescription.insert(
     std::pair<std::string, InternalImageType::Pointer>(
       "rho", ImageWarper<InternalImageType>(
-        DeformationFilename,
+        DisplacementFilename,
         atlasDataSet->GetSpatialLocationFilenameByType("rho"),
         MapOfImages[*(ImageTypeList.begin() )] ) ) );
   std::cout << __LINE__ << "::" << __FILE__ << std::endl;
   MapOfDeformedSpatialDescription.insert(
     std::pair<std::string, InternalImageType::Pointer>(
       "phi", ImageWarper<InternalImageType>(
-        DeformationFilename,
+        DisplacementFilename,
         atlasDataSet->GetSpatialLocationFilenameByType("phi"),
         MapOfImages[*(ImageTypeList.begin() )] ) ) );
   std::cout << __LINE__ << "::" << __FILE__ << std::endl;
   MapOfDeformedSpatialDescription.insert(
     std::pair<std::string, InternalImageType::Pointer>(
       "theta", ImageWarper<InternalImageType>(
-        DeformationFilename,
+        DisplacementFilename,
         atlasDataSet->GetSpatialLocationFilenameByType("theta"),
         MapOfImages[*(ImageTypeList.begin() )] ) ) );
 
@@ -1571,17 +1571,17 @@ void DefineBoundingBox(const InternalImageType::Pointer image,
 
 #if 0
 
-TDeformationField::Pointer
+TDisplacementField::Pointer
 RegisterLandmarksToDeformationField(const std::string & InputImageFilename,
                                     const std::string & InputAtlasFilename,
                                     const std::string & TemplateAtlasFilename,
                                     const std::string & TemplateImageFilename)
 {
   return itkUtil::RegisterLandmarksToDeformationField
-         <TDeformationField, InternalImageType>(InputImageFilename,
-                                                InputAtlasFilename,
-                                                TemplateAtlasFilename,
-                                                TemplateImageFilename);
+         <TDisplacementField, InternalImageType>(InputImageFilename,
+                                                 InputAtlasFilename,
+                                                 TemplateAtlasFilename,
+                                                 TemplateImageFilename);
 }
 
 #endif

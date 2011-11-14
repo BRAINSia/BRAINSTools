@@ -77,20 +77,20 @@ public:
     m_InputMovingImage = image;
   }
 
-  /** Deformation field value type. */
+  /** Displacement field value type. */
   typedef float FieldValueType;
 
-  /** Deformation field pixel type. */
+  /** Displacement field pixel type. */
   typedef Vector<FieldValueType,
                  itkGetStaticConstMacro(ImageDimension)> FieldPixelType;
 
-  /** Deformation field type. */
+  /** Displacement field type. */
   typedef Image<FieldPixelType,
-                itkGetStaticConstMacro(ImageDimension)> TDeformationField;
+                itkGetStaticConstMacro(ImageDimension)> TDisplacementField;
 
-  /** Set the initial Deformation Field. */
-  itkSetObjectMacro(InitialDeformationField, TDeformationField);
-  itkGetObjectMacro(InitialDeformationField, TDeformationField);
+  /** Set the initial Displacement Field. */
+  itkSetObjectMacro(InitialDisplacementField, TDisplacementField);
+  itkGetObjectMacro(InitialDisplacementField, TDisplacementField);
 
   /** Set the number of histogram levels to use. */
   itkSetMacro(NumberOfHistogramLevels, unsigned long);
@@ -187,7 +187,7 @@ private:
   std::vector<OutputImagePointer> m_OutputMovingImage;
   std::vector<OutputImagePointer> m_UnNormalizedMovingImage;
   std::vector<OutputImagePointer> m_UnNormalizedFixedImage;
-  typename TDeformationField::Pointer m_InitialDeformationField;
+  typename TDisplacementField::Pointer m_InitialDisplacementField;
 
   unsigned long m_NumberOfHistogramLevels;
   unsigned long m_NumberOfMatchPoints;

@@ -53,7 +53,7 @@ typedef std::vector<WorkingImagePointer> WorkingImageVectorType;
 /* Deformations */
 typedef float                                         DeformationScalarType;
 typedef itk::Vector<DeformationScalarType, DIMENSION> DeformationPixelType;
-typedef itk::Image<DeformationPixelType, DIMENSION>   DeformationFieldType;
+typedef itk::Image<DeformationPixelType, DIMENSION>   DisplacementFieldType;
 
 typedef WorkingImageType::IndexType WorkingIndexType;
 
@@ -117,8 +117,8 @@ public:
 
   bool GetNormalizationFromNetConfiguration();
 
-  /* Deformation Functions */
-  inline DeformationFieldType::Pointer GetDeformationField( std::string filename);
+  /* Displacement Functions */
+  inline DisplacementFieldType::Pointer GetDeformationField( std::string filename);
 
   inline GenericTransformType::Pointer GetGenericTransform( std::string filename);
 

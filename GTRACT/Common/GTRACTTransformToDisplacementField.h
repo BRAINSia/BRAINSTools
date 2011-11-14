@@ -21,8 +21,8 @@
 //
 //
 
-#ifndef TransformToDeformationField_h
-#define TransformToDeformationField_h
+#ifndef TransformToDisplacementField_h
+#define TransformToDisplacementField_h
 #include "itkSpatialOrientationAdapter.h"
 // #include "itkIO.h"
 // #include "itkUtil.h"
@@ -31,17 +31,17 @@
 /**
  * Go from any subclass of Transform, to the corresponding deformation field
  */
-template <typename DeformationFieldType, typename TransformType>
-typename DeformationFieldType::Pointer TransformToDeformationField( typename DeformationFieldType::SizeType size,
-                                                                    double *spacing,
-                                                                    double *origin,
-                                                                    typename DeformationFieldType::DirectionType Dir,
-                                                                    typename TransformType::Pointer & xfrm)
+template <typename DisplacementFieldType, typename TransformType>
+typename DisplacementFieldType::Pointer TransformToDeformationField( typename DisplacementFieldType::SizeType size,
+                                                                     double *spacing,
+                                                                     double *origin,
+                                                                     typename DisplacementFieldType::DirectionType Dir,
+                                                                     typename TransformType::Pointer & xfrm)
 {
-  typedef typename DeformationFieldType::PixelType DeformationPixelType;
+  typedef typename DisplacementFieldType::PixelType DeformationPixelType;
 
-  typename DeformationFieldType::Pointer deformation = DeformationFieldType::New();
-  typename DeformationFieldType::RegionType region;
+  typename DisplacementFieldType::Pointer deformation = DisplacementFieldType::New();
+  typename DisplacementFieldType::RegionType region;
 
   region.SetSize(size);
 
@@ -69,7 +69,7 @@ typename DeformationFieldType::Pointer TransformToDeformationField( typename Def
         // std::cout<<"p[0]=" << p[0]<< "p[1]= "<< p[1] << "p[2]=" <<p[2]
         // <<std::endl;
 
-        typename DeformationFieldType::IndexType ind;
+        typename DisplacementFieldType::IndexType ind;
         ind[0] = x;
         ind[1] = y;
         ind[2] = z;
@@ -82,4 +82,4 @@ typename DeformationFieldType::Pointer TransformToDeformationField( typename Def
   return deformation;
 }
 
-#endif /* TransformToDeformationField_h*/
+#endif /* TransformToDisplacementField_h*/

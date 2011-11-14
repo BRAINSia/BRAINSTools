@@ -143,7 +143,7 @@ void AnatomicalBSplineFilter::Update()
   // boundSelect.Fill( 0 );
   // upperBound.Fill( 0.0 );
   // lowerBound.Fill( 0.0 );
-  /* New Method - User Specifies the Deformation Bounds in X,Y,Z */
+  /* New Method - User Specifies the Displacement Bounds in X,Y,Z */
   /*    Default is the same as the Old method          */
   for( unsigned int i = 0; i < boundSelect.size(); i += 3 )
     {

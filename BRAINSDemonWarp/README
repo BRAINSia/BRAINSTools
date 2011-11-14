@@ -49,7 +49,7 @@ image with the target image is written
 zero number for each dimension. Default is 4 in all dimensions.
  --outputDisplacementFieldPrefix: You can write the displacement fields by giving the prefix of the
 displacement fields, (suffix of xdisp.hdr, ydisp.hdr, zdisp.hdr will be added).
- --outputDeformationFieldVolume: Write the deformation fields with -O option
+ --outputDisplacementFieldVolume: Write the deformation fields with -O option
  --outputDebug: This option is to write all the intermediate images, debug information and metric value
 file for debugging purposes with -v option.
  --maskProcessingMode- What mode to use for using the masks: NOMASK|ROI AU T O|ROI |BOBF . 
@@ -68,7 +68,7 @@ option of BOBF is to make Brain Only Background Filled(BOBF) images.(default: NO
 Default 1,1,1
  --movingLandmarks: Landmarks filename for moving image to initialize deformation field.
  --fixedLandmarks: Landmarks filename for fixed image to initialize deformation field.
- --initialDeformationFieldVolume: Initial deformation field vector image file name.
+ --initialDisplacementFieldVolume: Initial deformation field vector image file name.
  --initializeWithFourier: Initial Coefficient filename.
  --initializeWithTransform: Initial Transform filename
 matched.

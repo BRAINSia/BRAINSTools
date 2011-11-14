@@ -54,7 +54,7 @@ int main(int argc, char *argv[])
   const bool debug = true;
   const bool useTransform = ( warpTransform.size() > 0 );
 
-  const bool useDeformationField = ( deformationVolume.size() > 0 );
+  const bool useDisplacementField = ( deformationVolume.size() > 0 );
 
   if( debug )
     {
@@ -65,9 +65,9 @@ int main(int argc, char *argv[])
     std::cout << "Pixel Type:       " <<  pixelType << std::endl;
     std::cout << "Interpolation:    " <<  interpolationMode << std::endl;
     std::cout << "Background Value: " <<  defaultValue << std::endl;
-    if( useDeformationField )
+    if( useDisplacementField )
       {
-      std::cout << "Warp by Deformation Volume: " <<  deformationVolume   << std::endl;
+      std::cout << "Warp by Displacement Volume: " <<  deformationVolume   << std::endl;
       }
     if( useTransform )
       {
@@ -76,7 +76,7 @@ int main(int argc, char *argv[])
     std::cout << "=====================================================" << std::endl;
     }
 
-  if( useTransform == useDeformationField )
+  if( useTransform == useDisplacementField )
     {
     std::cout
       << "Choose one of the two possibilities, "
@@ -103,11 +103,11 @@ int main(int argc, char *argv[])
   // Read ReferenceVolume and DeformationVolume
   typedef float                                                                     VectorComponentType;
   typedef itk::Vector<VectorComponentType, GenericTransformImageNS::SpaceDimension> VectorPixelType;
-  typedef itk::Image<VectorPixelType,  GenericTransformImageNS::SpaceDimension>     DeformationFieldType;
+  typedef itk::Image<VectorPixelType,  GenericTransformImageNS::SpaceDimension>     DisplacementFieldType;
 
   // An empty SmartPointer constructor sets up someImage.IsNull() to represent a
   // not-supplied state:
-  DeformationFieldType::Pointer              DeformationField;
+  DisplacementFieldType::Pointer             DisplacementField;
   TBRAINSResampleReferenceImageType::Pointer ReferenceImage;
 
   if( useTransform )
@@ -128,11 +128,11 @@ int main(int argc, char *argv[])
     }
   else if( !useTransform )  // that is, it's a warp by deformation field:
     {
-    typedef itk::ImageFileReader<DeformationFieldType> DefFieldReaderType;
+    typedef itk::ImageFileReader<DisplacementFieldType> DefFieldReaderType;
     DefFieldReaderType::Pointer fieldImageReader = DefFieldReaderType::New();
     fieldImageReader->SetFileName(deformationVolume);
     fieldImageReader->Update();
-    DeformationField = fieldImageReader->GetOutput();
+    DisplacementField = fieldImageReader->GetOutput();
 
     if( referenceVolume.size() > 0 )
       {
@@ -210,10 +210,10 @@ int main(int argc, char *argv[])
       }
     }
   TBRAINSResampleInternalImageType::Pointer TransformedImage =
-    GenericTransformImage<TBRAINSResampleInternalImageType, TBRAINSResampleInternalImageType, DeformationFieldType>(
+    GenericTransformImage<TBRAINSResampleInternalImageType, TBRAINSResampleInternalImageType, DisplacementFieldType>(
       PrincipalOperandImage,
       ReferenceImage,
-      DeformationField,
+      DisplacementField,
       genericTransform,
       defaultValue,
       interpolationMode,
@@ -234,18 +234,22 @@ int main(int argc, char *argv[])
     if( useTransform )
       { // HACK:  Need to make handeling of transforms more elegant as is done
         // in BRAINSFitHelper.
-      typedef itk::TransformToDeformationFieldSource<DeformationFieldType, double> ConverterType;
+#if (ITK_VERSION_MAJOR < 4)
+      typedef itk::TransformToDeformationFieldSource<DisplacementFieldType, double> ConverterType;
+#else
+      typedef itk::TransformToDisplacementFieldSource<DisplacementFieldType, double> ConverterType;
+#endif
       ConverterType::Pointer myConverter = ConverterType::New();
       myConverter->SetTransform(genericTransform);
       myConverter->SetOutputParametersFromImage(TransformedImage);
       myConverter->Update();
-      DeformationField = myConverter->GetOutput();
+      DisplacementField = myConverter->GetOutput();
       }
     typedef itk::MaximumImageFilter<TBRAINSResampleInternalImageType> MaxFilterType;
     typedef itk::GridForwardWarpImageFilterNew
-      <DeformationFieldType, TBRAINSResampleInternalImageType> GFType;
+      <DisplacementFieldType, TBRAINSResampleInternalImageType> GFType;
     GFType::Pointer GFFilter = GFType::New();
-    GFFilter->SetInput(DeformationField);
+    GFFilter->SetInput(DisplacementField);
     GFType::GridSpacingType GridOffsets;
     GridOffsets[0] = gridSpacing[0];
     GridOffsets[1] = gridSpacing[1];

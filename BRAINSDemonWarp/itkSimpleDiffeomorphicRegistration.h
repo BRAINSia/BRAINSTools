@@ -11,7 +11,7 @@
 
 #define DIM                         3
 #define MaxStepLength               2
-#define SmoothDeformationFieldSigma 1.5
+#define SmoothDisplacementFieldSigma 1.5
 #define NumberOfLevels              5
 #define NumberOfIteration0          300
 #define NumberOfIteration1          100                              // 100
@@ -32,16 +32,16 @@ public:
                                   TRealImage> DemonsPreprocessorType;
   typedef itk::DemonsRegistrator<TRealImage, TRealImage,
                                  float> DemonsRegistratorType;
-  typedef itk::Image<itk::Vector<float, DIM>, DIM> TDeformationField;
+  typedef itk::Image<itk::Vector<float, DIM>, DIM> TDisplacementField;
 
   itkSimpleDiffeomorphicRegistration();
   itkSetObjectMacro(FixedImage, TRealImage);
   itkSetObjectMacro(MovingImage, TRealImage);
 
-  itkSetStringMacro(DeformationFieldName);
+  itkSetStringMacro(DisplacementFieldName);
   itkSetStringMacro(DeformedImageName);
   itkGetStringMacro(DeformedImageName);
-  itkGetObjectMacro(DeformationField, TDeformationField);
+  itkGetObjectMacro(DisplacementField, TDisplacementField);
   void Update();
 
 protected:
@@ -56,11 +56,11 @@ protected:
 private:
   DemonsPreprocessorType::Pointer m_DemonsPreprocessor;
   DemonsRegistratorType::Pointer  m_DemonsRegistrator;
-  TDeformationField::Pointer      m_DeformationField;
+  TDisplacementField::Pointer     m_DisplacementField;
   TRealImage::Pointer             m_FixedImage;
   TRealImage::Pointer             m_MovingImage;
   std::string                     m_DeformedImageName;
-  std::string                     m_DeformationFieldName;
+  std::string                     m_DisplacementFieldName;
 };
 
 #endif

@@ -26,7 +26,7 @@
  * \param AtlasLandmark Atlas Landmark Filename
  * \param DefGaussian Image Smoothing Value (applied to images prior to registration)
  * \param ImageTypeList List of Image Types (T1, T2, ..)
- * \param AtlasToSubjRegistrationFilename Current Deformation Field Filename
+ * \param AtlasToSubjRegistrationFilename Current Displacement Field Filename
  * \param InputVectorSize Size of Input Vectors
  * \param GaussianValue Image Smoothing Value (for Registration)
  * \param GradientProfileSize Size of Iris Information in Input Vector

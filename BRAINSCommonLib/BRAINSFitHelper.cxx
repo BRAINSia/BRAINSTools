@@ -19,18 +19,6 @@
 #include "itkBinaryThresholdImageFilter.h"
 #include "itkNormalizedMutualInformationHistogramImageToImageMetric.h"
 
-#if ( ITK_VERSION_MAJOR < 4  ) // These are all defaults in ITKv4
-// Check that ITK was compiled with correct flags set:
-#ifndef ITK_IMAGE_BEHAVES_AS_ORIENTED_IMAGE
-#error \
-  "Results will not be correct if ITK_IMAGE_BEHAVES_AS_ORIENTED_IMAGE is turned off"
-#endif
-#ifndef ITK_USE_ORIENTED_IMAGE_DIRECTION
-#error \
-  "Results will not be correct if ITK_USE_ORIENTED_IMAGE_DIRECTION is turned off"
-#endif
-#endif
-
 MaskImageType::ConstPointer ExtractConstPointerToImageMaskFromImageSpatialObject(
   SpatialObjectType::ConstPointer inputSpatialObject)
 {

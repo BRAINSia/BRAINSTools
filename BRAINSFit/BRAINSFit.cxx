@@ -560,8 +560,8 @@ int main(int argc, char *argv[])
       {
       typedef float                                                                     VectorComponentType;
       typedef itk::Vector<VectorComponentType, GenericTransformImageNS::SpaceDimension> VectorPixelType;
-      typedef itk::Image<VectorPixelType,  GenericTransformImageNS::SpaceDimension>     DeformationFieldType;
-      resampledImage = GenericTransformImage<MovingVolumeType, FixedVolumeType, DeformationFieldType>(
+      typedef itk::Image<VectorPixelType,  GenericTransformImageNS::SpaceDimension>     DisplacementFieldType;
+      resampledImage = GenericTransformImage<MovingVolumeType, FixedVolumeType, DisplacementFieldType>(
           preprocessedMovingVolume,
           extractFixedVolume,
           NULL,

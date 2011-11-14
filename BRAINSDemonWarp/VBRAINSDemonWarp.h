@@ -36,10 +36,10 @@ public:
   typedef SmartPointer<Self>       Pointer;
   typedef SmartPointer<const Self> ConstPointer;
 
-  /** Deformation field pixel type. */
+  /** Displacement field pixel type. */
   typedef float                     FieldValueType;
   typedef Vector<FieldValueType, 3> FieldPixelType;
-  typedef Image<FieldPixelType, 3>  TDeformationField;
+  typedef Image<FieldPixelType, 3>  TDisplacementField;
 
   /** Run-time type information (and related methods). */
   itkTypeMacro(VBRAINSDemonWarp, ApplicationBase);
@@ -84,8 +84,8 @@ public:
   }
 
   /** Set the initial Displacement Field one of 3 ways. */
-  itkSetStringMacro(InitialDeformationFieldFilename);
-  itkGetStringMacro(InitialDeformationFieldFilename);
+  itkSetStringMacro(InitialDisplacementFieldFilename);
+  itkGetStringMacro(InitialDisplacementFieldFilename);
 
   itkSetStringMacro(InitialCoefficientFilename);
   itkGetStringMacro(InitialCoefficientFilename);
@@ -110,9 +110,9 @@ public:
   itkSetStringMacro(CheckerBoardFilename);
   itkGetStringMacro(CheckerBoardFilename);
 
-  /**Set Deformation field output filename*/
-  itkSetStringMacro(DeformationFieldOutputName);
-  itkGetStringMacro(DeformationFieldOutputName);
+  /**Set Displacement field output filename*/
+  itkSetStringMacro(DisplacementFieldOutputName);
+  itkGetStringMacro(DisplacementFieldOutputName);
 
   /** Set Checker pattern */
   itkSetMacro(CheckerBoardPattern, PatternArrayType);
@@ -168,7 +168,7 @@ public:
   itkGetMacro(MedianFilterSize,  SizeType);
 
   /** Set the initial deformation field to prime registration */
-  //    itkSetObjectMacro(InitialDeformationField,TDeformationField);
+  //    itkSetObjectMacro(InitialDisplacementField,TDisplacementField);
   /** Set the Input Landmark Filename*/
   itkSetStringMacro(FixedLandmarkFilename);
   itkGetStringMacro(FixedLandmarkFilename);
@@ -223,7 +223,7 @@ public:
   }
 
   typedef itk::PDEDeformableRegistrationFilter<RealImageType, RealImageType,
-                                               TDeformationField>
+                                               TDisplacementField>
     BaseRegistrationFilterType;
   void SetRegistrationFilter(
     typename BaseRegistrationFilterType::Pointer filter)
@@ -233,7 +233,7 @@ public:
 
   typedef itk::VectorDiffeomorphicDemonsRegistrationFilter<VectorImageType,
                                                            VectorImageType,
-                                                           TDeformationField>
+                                                           TDisplacementField>
     VectorRegistrationFilterType;
   void SetVectorRegistrationFilter(
     typename VectorRegistrationFilterType::Pointer filter)
@@ -261,7 +261,7 @@ private:
 
   std::vector<std::string> m_TheMovingImageFilename;
   std::vector<std::string> m_TheFixedImageFilename;
-  std::string              m_InitialDeformationFieldFilename;
+  std::string              m_InitialDisplacementFieldFilename;
   std::string              m_InitialCoefficientFilename;
   std::string              m_InitialTransformFilename;
   std::string              m_DisplacementBaseName;
@@ -275,7 +275,7 @@ private:
   //    std::string m_OutDebug;
   std::string      m_OutputFilename;
   std::string      m_CheckerBoardFilename;
-  std::string      m_DeformationFieldOutputName;
+  std::string      m_DisplacementFieldOutputName;
   bool             m_AppendOutputFile;
   PatternArrayType m_CheckerBoardPattern;
   std::string      m_FixedBinaryVolume;
@@ -288,7 +288,7 @@ private:
   SizeType         m_MedianFilterSize;
   std::string      m_FixedLandmarkFilename;
   std::string      m_MovingLandmarkFilename;
-  // typename TDeformationField::Pointer m_InitialDeformationField;
+  // typename TDisplacementField::Pointer m_InitialDisplacementField;
   unsigned long       m_NumberOfHistogramLevels;
   unsigned long       m_NumberOfMatchPoints;
   unsigned short      m_NumberOfLevels;

@@ -22,7 +22,7 @@
 #include <metaCommand.h>
 #include "itkImageRegionIterator.h"
 #ifdef __USE_BRAINS2_INTEGRATION
-#include "TransformToDeformationField.h"
+#include "TransformToDisplacementField.h"
 #endif
 #include <itkDisplacementFieldJacobianDeterminantFilter.h>
 // #include <itkMultiplyImageFilter.h>
@@ -91,16 +91,16 @@ VValidationInputParser<TImage>
 
   // TODO:  Need to figure out how to read in the initial deformation field.
   // std::cerr << "About to check for deformation field file " <<
-  // m_InitialDeformationFieldFilename << std::endl;
+  // m_InitialDisplacementFieldFilename << std::endl;
   // std::cerr << "About to check for transform file " <<
   // m_InitialTransformFilename << std::endl;
   // std::cerr << "About to check for Coefficient file" <<
   // m_InitialCoefficientFilename << std::endl;
-  if( m_InitialDeformationFieldFilename != "" )
+  if( m_InitialDisplacementFieldFilename != "" )
     {
-    typedef   itk::ImageFileReader<TDeformationField> FieldReaderType;
+    typedef   itk::ImageFileReader<TDisplacementField> FieldReaderType;
     typename FieldReaderType::Pointer fieldReader = FieldReaderType::New();
-    fieldReader->SetFileName( m_InitialDeformationFieldFilename.c_str() );
+    fieldReader->SetFileName( m_InitialDisplacementFieldFilename.c_str() );
     try
       {
       fieldReader->Update();
@@ -112,11 +112,11 @@ VValidationInputParser<TImage>
       }
     if( this->GetOutDebug() )
       {
-      std::cout << "\nReading Deformation fields.\n";
+      std::cout << "\nReading Displacement fields.\n";
       }
-    m_InitialDeformationField = fieldReader->GetOutput();
-    //  typename ImageType::DirectionType DeformationOrientation;
-    //  DeformationOrientation=deformationField->GetDirection();
+    m_InitialDisplacementField = fieldReader->GetOutput();
+    //  typename ImageType::DirectionType DisplacementOrientation;
+    //  DisplacementOrientation=displacementField->GetDirection();
     }
 #ifdef __USE_BRAINS2_INTEGRATION
   else if( m_InitialTransformFilename != "" )
@@ -139,9 +139,9 @@ VValidationInputParser<TImage>
                 << std::endl;
       }
 
-    typename TDeformationField::RegionType::SizeType size =
+    typename TDisplacementField::RegionType::SizeType size =
       transform.GetFixedImageSize();
-    typename TDeformationField::SpacingType spacing =
+    typename TDisplacementField::SpacingType spacing =
       transform.GetFixedImageSpacing();
 
     // convert brains2 transform, which is in index, to ITK transform, which is
@@ -174,11 +174,11 @@ VValidationInputParser<TImage>
     ITKAffineTransformType::Pointer InitialITKAffineTransformInverse =
       ITKAffineTransformType::New();
     InitialITKAffineTransform->GetInverse(InitialITKAffineTransformInverse);
-    m_InitialDeformationField =
+    m_InitialDisplacementField =
       TransformToDeformationField(m_TheFixedImage,
                                   InitialITKAffineTransformInverse);
 #else
-    m_InitialDeformationField =
+    m_InitialDisplacementField =
       TransformToDeformationField(m_TheFixedImage,
                                   InitialITKAffineTransform);
 #endif
@@ -187,8 +187,8 @@ VValidationInputParser<TImage>
 #ifdef __USE_BRAINS2_INTEGRATION
   else if( m_InitialCoefficientFilename != "" )
     {
-    DeformationFieldFFTType::Pointer mu;    // mu1, mu2, mu3;
-    std::string                      CoeffNameInput(
+    DisplacementFieldFFTType::Pointer mu;    // mu1, mu2, mu3;
+    std::string                       CoeffNameInput(
       m_InitialCoefficientFilename.c_str() );
 
       {
@@ -200,9 +200,9 @@ VValidationInputParser<TImage>
       }
     if( this->GetOutDebug() )
       {
-      std::cout << "\nCreating Deformation fields from Coefficient files\n";
+      std::cout << "\nCreating Displacement fields from Coefficient files\n";
       }
-    m_InitialDeformationField = CreateITKDisplacementFieldFromCoeffs(mu);
+    m_InitialDisplacementField = CreateITKDisplacementFieldFromCoeffs(mu);
     }
 #endif
 

@@ -27,9 +27,9 @@ namespace itk
 /**
   * Default constructor
   */
-template <class TFixedImage, class TMovingImage, class TDeformationField>
+template <class TFixedImage, class TMovingImage, class TDisplacementField>
 VectorESMDemonsRegistrationFunction<TFixedImage, TMovingImage,
-                                    TDeformationField>
+                                    TDisplacementField>
 ::VectorESMDemonsRegistrationFunction()
 {
   RadiusType   r;
@@ -95,10 +95,10 @@ VectorESMDemonsRegistrationFunction<TFixedImage, TMovingImage,
 /*
   * Standard "PrintSelf" method.
   */
-template <class TFixedImage, class TMovingImage, class TDeformationField>
+template <class TFixedImage, class TMovingImage, class TDisplacementField>
 void
 VectorESMDemonsRegistrationFunction<TFixedImage, TMovingImage,
-                                    TDeformationField>
+                                    TDisplacementField>
 ::PrintSelf(std::ostream & os, Indent indent) const
 {
   Superclass::PrintSelf(os, indent);
@@ -134,10 +134,10 @@ VectorESMDemonsRegistrationFunction<TFixedImage, TMovingImage,
 /**
   *
   */
-template <class TFixedImage, class TMovingImage, class TDeformationField>
+template <class TFixedImage, class TMovingImage, class TDisplacementField>
 void
 VectorESMDemonsRegistrationFunction<TFixedImage, TMovingImage,
-                                    TDeformationField>
+                                    TDisplacementField>
 ::SetIntensityDifferenceThreshold(double threshold)
 {
   m_IntensityDifferenceThreshold = threshold;
@@ -146,10 +146,10 @@ VectorESMDemonsRegistrationFunction<TFixedImage, TMovingImage,
 /**
   *
   */
-template <class TFixedImage, class TMovingImage, class TDeformationField>
+template <class TFixedImage, class TMovingImage, class TDisplacementField>
 double
 VectorESMDemonsRegistrationFunction<TFixedImage, TMovingImage,
-                                    TDeformationField>
+                                    TDisplacementField>
 ::GetIntensityDifferenceThreshold() const
 {
   return m_IntensityDifferenceThreshold;
@@ -158,10 +158,10 @@ VectorESMDemonsRegistrationFunction<TFixedImage, TMovingImage,
 /**
   * Set the function state values before each iteration
   */
-template <class TFixedImage, class TMovingImage, class TDeformationField>
+template <class TFixedImage, class TMovingImage, class TDisplacementField>
 void
 VectorESMDemonsRegistrationFunction<TFixedImage, TMovingImage,
-                                    TDeformationField>
+                                    TDisplacementField>
 ::InitializeIteration()
 {
   if( !this->GetMovingImage() || !this->GetFixedImage()
@@ -235,10 +235,13 @@ VectorESMDemonsRegistrationFunction<TFixedImage, TMovingImage,
     m_MovingImageWarperVector[i]->SetOutputDirection(m_FixedImageDirection);
     //  m_MovingImageWarperVector[i]->SetInput( movingimage );
     m_MovingImageWarperVector[i]->SetInput(vectorMovingImageToImageAdaptor);
-    m_MovingImageWarperVector[i]->SetDeformationField(
-      this->GetDeformationField() );
-    m_MovingImageWarperVector[i]->GetOutput()->SetRequestedRegion(
-      this->GetDeformationField()->GetRequestedRegion() );
+#if (ITK_VERSION_MAJOR < 4)
+    m_MovingImageWarperVector[i]->SetDeformationField( this->GetDeformationField() );
+    m_MovingImageWarperVector[i]->GetOutput()->SetRequestedRegion( this->GetDeformationField()->GetRequestedRegion() );
+#else
+    m_MovingImageWarperVector[i]->SetDisplacementField( this->GetDisplacementField() );
+    m_MovingImageWarperVector[i]->GetOutput()->SetRequestedRegion( this->GetDisplacementField()->GetRequestedRegion() );
+#endif
     m_MovingImageWarperVector[i]->Update();
 
     // setup moving image interpolator for further access
@@ -254,12 +257,12 @@ VectorESMDemonsRegistrationFunction<TFixedImage, TMovingImage,
 /**
   * Compute update at a non boundary neighbourhood
   */
-template <class TFixedImage, class TMovingImage, class TDeformationField>
+template <class TFixedImage, class TMovingImage, class TDisplacementField>
 typename VectorESMDemonsRegistrationFunction<TFixedImage, TMovingImage,
-                                             TDeformationField>
+                                             TDisplacementField>
 ::PixelType
 VectorESMDemonsRegistrationFunction<TFixedImage, TMovingImage,
-                                    TDeformationField>
+                                    TDisplacementField>
 ::ComputeUpdate( const NeighborhoodType & it, void *gd,
                  const FloatOffsetType & itkNotUsed(offset) )
 {
@@ -472,8 +475,7 @@ VectorESMDemonsRegistrationFunction<TFixedImage, TMovingImage,
     {
     CovariantVectorType tempGradientTimes2;
     this->GetFixedImage()->TransformLocalVectorToPhysicalVector(
-      usedOrientFreeGradientTimes2[i],
-      tempGradientTimes2);
+      usedOrientFreeGradientTimes2[i], tempGradientTimes2);
     usedGradientTimes2.push_back(tempGradientTimes2);
     }
 
@@ -552,10 +554,10 @@ VectorESMDemonsRegistrationFunction<TFixedImage, TMovingImage,
 /**
   * Update the metric and release the per-thread-global data.
   */
-template <class TFixedImage, class TMovingImage, class TDeformationField>
+template <class TFixedImage, class TMovingImage, class TDisplacementField>
 void
 VectorESMDemonsRegistrationFunction<TFixedImage, TMovingImage,
-                                    TDeformationField>
+                                    TDisplacementField>
 ::ReleaseGlobalDataPointer(void *gd) const
 {
   GlobalDataStruct *globalData = (GlobalDataStruct *)gd;

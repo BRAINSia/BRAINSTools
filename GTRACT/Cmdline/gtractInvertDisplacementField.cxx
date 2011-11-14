@@ -18,7 +18,7 @@
 
 #include "itkImage.h"
 #include "itkVector.h"
-#include "itkGtractInverseDeformationFieldImageFilter.h"
+#include "itkGtractInverseDisplacementFieldImageFilter.h"
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 #include "gtractInvertDeformationFieldCLP.h"
@@ -53,9 +53,9 @@ int main( int argc, char *argv[] )
   typedef   float                                       VectorComponentType;
   typedef   itk::Vector<VectorComponentType, Dimension> VectorType;
 
-  typedef itk::Image<VectorType,  Dimension> DeformationFieldType;
+  typedef itk::Image<VectorType,  Dimension> DisplacementFieldType;
 
-  typedef itk::ImageFileReader<DeformationFieldType> VectorReaderType;
+  typedef itk::ImageFileReader<DisplacementFieldType> VectorReaderType;
 
   VectorReaderType::Pointer vectorReader = VectorReaderType::New();
   vectorReader->SetFileName( deformationImage );
@@ -71,9 +71,9 @@ int main( int argc, char *argv[] )
     }
 
   // Invert the deformationfield field
-  typedef itk::GtractInverseDeformationFieldImageFilter<
-      DeformationFieldType,
-      DeformationFieldType
+  typedef itk::GtractInverseDisplacementFieldImageFilter<
+      DisplacementFieldType,
+      DisplacementFieldType
       >  FilterType;
 
   FilterType::Pointer inverseFilter = FilterType::New();
@@ -96,7 +96,7 @@ int main( int argc, char *argv[] )
     }
 
   // Write an image for regression testing
-  typedef itk::ImageFileWriter<DeformationFieldType> WriterType;
+  typedef itk::ImageFileWriter<DisplacementFieldType> WriterType;
 
   WriterType::Pointer writer = WriterType::New();
   writer->UseCompressionOn();

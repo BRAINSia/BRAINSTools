@@ -27,7 +27,7 @@
 
 namespace itk
 {
-/*This function writes the displacement fields of the Deformation.*/
+/*This function writes the displacement fields of the Displacement.*/
 template <
   class TRealImage,
   class TOutputImage,
@@ -41,7 +41,7 @@ void VDemonsRegistrator<TRealImage, TOutputImage,
   // into x,y,z components.
   typedef itk::Image<FieldValueType,
                      3>                  ComponentImageType;
-  typedef itk::VectorIndexSelectionCastImageFilter<TDeformationField,
+  typedef itk::VectorIndexSelectionCastImageFilter<TDisplacementField,
                                                    ComponentImageType> ComponentFilterType;
 
   std::string CurrentComponentFilename;
@@ -51,7 +51,7 @@ void VDemonsRegistrator<TRealImage, TOutputImage,
 
     typename ComponentFilterType::Pointer myComponentFilter =
       ComponentFilterType::New();
-    myComponentFilter->SetInput(m_DeformationField);
+    myComponentFilter->SetInput(m_DisplacementField);
     for( unsigned int extiter = 0; extiter < 3; extiter++ )
       {
       CurrentComponentFilename = m_DisplacementBaseName + ext[extiter];
@@ -86,7 +86,7 @@ VDemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::VDemonsRegistrator()
   // Images need to be set from the outside
   m_VectorFixedImage = VectorImageType::New();
   m_VectorMovingImage = VectorImageType::New();
-  m_DeformationField = NULL;
+  m_DisplacementField = NULL;
 
   // Set up internal registrator with default components
   m_FixedImagePyramid = FixedImagePyramidType::New();
@@ -112,7 +112,7 @@ VDemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::VDemonsRegistrator()
   m_VectorTag = m_VectorRegistration->AddObserver(IterationEvent(), command);
 
   typedef VectorLinearInterpolateNearestNeighborExtrapolateImageFunction<
-      TDeformationField, double> FieldInterpolatorType;
+      TDisplacementField, double> FieldInterpolatorType;
 
   typename FieldInterpolatorType::Pointer VectorInterpolator =
     FieldInterpolatorType::New();
@@ -131,14 +131,14 @@ VDemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::VDemonsRegistrator()
   m_WarpedImageName = "none";
   m_DisplacementBaseName = "none";
   m_CheckerBoardFilename = "none";
-  m_DeformationFieldOutputName = "none";
+  m_DisplacementFieldOutputName = "none";
   m_CheckerBoardPattern.Fill(4);
   m_OutNormalized  = "OFF";
 
   m_UseHistogramMatching = false;
   m_OutDebug = false;
 
-  m_InitialDeformationField = NULL;
+  m_InitialDisplacementField = NULL;
   m_InterpolationMode = "Linear";
 }
 
@@ -219,10 +219,10 @@ void VDemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute()
       m_NumberOfIterations.data_block() );
 
     // Setup the initial deformation field
-    if( this->m_InitialDeformationField.IsNotNull() )
+    if( this->m_InitialDisplacementField.IsNotNull() )
       {
-      m_VectorRegistration->SetInitialDeformationField(
-        this->m_InitialDeformationField);
+      m_VectorRegistration->SetInitialDisplacementField(
+        this->m_InitialDisplacementField);
       }
 
     if( this->m_FixedLandmarkFilename != ""
@@ -261,12 +261,12 @@ void VDemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute()
       }
     try
       {
-      m_DeformationField = m_VectorRegistration->GetOutput();
-      if( m_DeformationField->GetDirection() != m_FixedImage[0]->GetDirection() )
+      m_DisplacementField = m_VectorRegistration->GetOutput();
+      if( m_DisplacementField->GetDirection() != m_FixedImage[0]->GetDirection() )
         {
         itkGenericExceptionMacro(<< "ERROR Directions don't match"
                                  << std::endl
-                                 << m_DeformationField->GetDirection()
+                                 << m_DisplacementField->GetDirection()
                                  << std::endl
                                  << m_FixedImage[0]->GetDirection() );
         }
@@ -298,10 +298,13 @@ void VDemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute()
                                            data_block() );
 
     // Setup the initial deformation field
-    if( this->m_InitialDeformationField.IsNotNull() )
+    if( this->m_InitialDisplacementField.IsNotNull() )
       {
-      m_Registration->SetInitialDeformationField(
-        this->m_InitialDeformationField);
+#if (ITK_VERSION_MAJOR < 4)
+      m_Registration->SetInitialDeformationField( this->m_InitialDisplacementField);
+#else
+      m_Registration->SetInitialDisplacementField( this->m_InitialDisplacementField);
+#endif
       }
     if( this->m_FixedLandmarkFilename != ""
         && this->m_MovingLandmarkFilename != "" )
@@ -339,12 +342,12 @@ void VDemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute()
       }
     try
       {
-      m_DeformationField = m_Registration->GetOutput();
-      if( m_DeformationField->GetDirection() != m_FixedImage[0]->GetDirection() )
+      m_DisplacementField = m_Registration->GetOutput();
+      if( m_DisplacementField->GetDirection() != m_FixedImage[0]->GetDirection() )
         {
         itkGenericExceptionMacro(<< "ERROR Directions don't match"
                                  << std::endl
-                                 << m_DeformationField->GetDirection()
+                                 << m_DisplacementField->GetDirection()
                                  << std::endl
                                  << m_FixedImage[0]->GetDirection() );
         }
@@ -370,15 +373,15 @@ void VDemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute()
     }
 
   // Write the output deformation fields if specified by the user.
-  if( this->m_DeformationFieldOutputName != std::string("none")
-      && this->m_DeformationFieldOutputName != std::string("") )
+  if( this->m_DisplacementFieldOutputName != std::string("none")
+      && this->m_DisplacementFieldOutputName != std::string("") )
     {
-    itkUtil::WriteImage<TDeformationField>(m_DeformationField,
-                                           this->m_DeformationFieldOutputName);
+    itkUtil::WriteImage<TDisplacementField>(m_DisplacementField,
+                                            this->m_DisplacementFieldOutputName);
     if( this->GetOutDebug() )
       {
-      std::cout << "---Deformation field has been written "
-                << this->m_DeformationFieldOutputName << "--" << std::endl;
+      std::cout << "---Displacement field has been written "
+                << this->m_DisplacementFieldOutputName << "--" << std::endl;
       }
     }
 
@@ -403,12 +406,12 @@ void VDemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute()
         {
         sourceMovingImage = m_UnNormalizedMovingImage[0];
         }
-      DeformedMovingImagePtr = TransformWarp<RealImageType, RealImageType, TDeformationField>(
+      DeformedMovingImagePtr = TransformWarp<RealImageType, RealImageType, TDisplacementField>(
           sourceMovingImage,
           m_FixedImage[0],
           0,
           GetInterpolatorFromString<RealImageType>(this->m_InterpolationMode),
-          m_DeformationField);
+          m_DisplacementField);
       }
 
     if( this->GetOutDebug() )
@@ -416,7 +419,7 @@ void VDemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute()
       std::cout << "-----Direction of output warped image\n"
                 << DeformedMovingImagePtr->GetDirection()
                 << "\n-----Direction of deformation field\n"
-                << this->m_DeformationField->GetDirection() << std::endl;
+                << this->m_DisplacementField->GetDirection() << std::endl;
       }
     /*Write the output image.*/
     if( this->m_WarpedImageName != std::string("none") )

@@ -31,8 +31,8 @@ namespace itk
 /**
   * Default constructor.
   */
-template <class TDeformationField, class TOutputImage>
-GridForwardWarpImageFilterNew<TDeformationField, TOutputImage>
+template <class TDisplacementField, class TOutputImage>
+GridForwardWarpImageFilterNew<TDisplacementField, TOutputImage>
 ::GridForwardWarpImageFilterNew() :
   m_BackgroundValue(NumericTraits<PixelType>::Zero),
   m_ForegroundValue(NumericTraits<PixelType>::One)
@@ -47,9 +47,9 @@ GridForwardWarpImageFilterNew<TDeformationField, TOutputImage>
 /**
   * Standard PrintSelf method.
   */
-template <class TDeformationField, class TOutputImage>
+template <class TDisplacementField, class TOutputImage>
 void
-GridForwardWarpImageFilterNew<TDeformationField, TOutputImage>
+GridForwardWarpImageFilterNew<TDisplacementField, TOutputImage>
 ::PrintSelf(std::ostream & os, Indent indent) const
 {
   Superclass::PrintSelf(os, indent);
@@ -65,9 +65,9 @@ GridForwardWarpImageFilterNew<TDeformationField, TOutputImage>
 /**
   * Compute the output for the region specified by outputRegionForThread.
   */
-template <class TDeformationField, class TOutputImage>
+template <class TDisplacementField, class TOutputImage>
 void
-GridForwardWarpImageFilterNew<TDeformationField, TOutputImage>
+GridForwardWarpImageFilterNew<TDisplacementField, TOutputImage>
 ::GenerateData()
 {
   OutputImagePointer           outputPtr = this->GetOutput();
@@ -89,7 +89,7 @@ GridForwardWarpImageFilterNew<TDeformationField, TOutputImage>
   OutputImageIteratorWithIndex iter( outputPtr, outputPtr->GetRequestedRegion() );
 
   // iterator for the deformation field
-  typedef ImageRegionConstIterator<DeformationFieldType> DeformationFieldIterator;
+  typedef ImageRegionConstIterator<DisplacementFieldType> DeformationFieldIterator;
   DeformationFieldIterator fieldIt( fieldPtr, outputPtr->GetRequestedRegion() );
 
   // Bresenham line iterator

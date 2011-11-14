@@ -171,7 +171,7 @@ typename OutputImageType::Pointer
   * \author Hans J. Johnson
   * \brief A class to transform images
   */
-template <class InputImageType, class OutputImageType, class DeformationImageType>
+template <class InputImageType, class OutputImageType, class DisplacementImageType>
 typename OutputImageType::Pointer
   TransformWarp(
   InputImageType const *const inputImage,
@@ -180,18 +180,18 @@ typename OutputImageType::Pointer
   typename itk::InterpolateImageFunction<InputImageType,
                                          typename itk::NumericTraits<typename InputImageType::PixelType>::RealType>
   ::Pointer interp,
-  typename DeformationImageType::Pointer deformationField);
+  typename DisplacementImageType::Pointer displacementField);
 
 /**
   * \author Hans J. Johnson
   * \brief A class to transform images.  Only one of genericTransform or
-  *DeformationField can be non-null.
+  *DisplacementField can be non-null.
   */
-template <typename InputImageType, class OutputImageType, typename DeformationImageType>
+template <typename InputImageType, class OutputImageType, typename DisplacementImageType>
 typename OutputImageType::Pointer GenericTransformImage(
   InputImageType const *const OperandImage,
   const itk::ImageBase<InputImageType::ImageDimension> *ReferenceImage,
-  typename DeformationImageType::Pointer DeformationField,
+  typename DisplacementImageType::Pointer DisplacementField,
   typename GenericTransformType::Pointer genericTransform,
   typename InputImageType::PixelType suggestedDefaultValue, // NOTE:  This is
                                                             // ignored in the

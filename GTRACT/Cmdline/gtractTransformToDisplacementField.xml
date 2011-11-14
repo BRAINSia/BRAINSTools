@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
   <executable>
   <category>Diffusion.GTRACT</category>
-  <title>Create Deformation Field</title>
+  <title>Create Displacement Field</title>
 
   <description>This program will compute forward deformation from the given Transform. The size of the DF is equal to MNI space</description>
   <acknowledgements>Funding for this version of the GTRACT program was provided by NIH/NINDS R01NS050568-01A2S1</acknowledgements>
@@ -45,7 +45,7 @@
      <name>outputDeformationFieldVolume</name>
      <longflag>outputDeformationFieldVolume</longflag>
      <description>Output deformation field</description>
-     <label>Output Deformation Field Volume</label>
+     <label>Output Displacement Field Volume</label>
      <channel>output</channel>
    </image>
 

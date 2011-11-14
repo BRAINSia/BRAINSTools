@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Insight Segmentation & Registration Toolkit
-  Module:    $RCSfile: itkGtractInverseDeformationFieldImageFilter.hxx,v $
+  Module:    $RCSfile: itkGtractInverseDisplacementFieldImageFilter.hxx,v $
   Language:  C++
   Date:      $Date: 2008-10-16 16:45:11 $
   Version:   $Revision: 1.7 $
@@ -15,10 +15,10 @@
 
 =========================================================================*/
 
-#ifndef __itkGtractInverseDeformationFieldImageFilter_hxx
-#define __itkGtractInverseDeformationFieldImageFilter_hxx
+#ifndef __itkGtractInverseDisplacementFieldImageFilter.hxx
+#define __itkGtractInverseDisplacementFieldImageFilter .hxx
 
-#include "itkGtractInverseDeformationFieldImageFilter.h"
+#include "itkGtractInverseDisplacementFieldImageFilter.h"
 #include "itkObjectFactory.h"
 #include "itkProgressReporter.h"
 #include "itkThinPlateSplineKernelTransform.h"
@@ -31,8 +31,8 @@ namespace itk
  * Initialize new instance
  */
 template <class TInputImage, class TOutputImage>
-GtractInverseDeformationFieldImageFilter<TInputImage, TOutputImage>
-::GtractInverseDeformationFieldImageFilter()
+GtractInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>
+::GtractInverseDisplacementFieldImageFilter()
 {
   m_OutputSpacing.Fill(1.0);
   m_OutputOrigin.Fill(0.0);
@@ -59,7 +59,7 @@ GtractInverseDeformationFieldImageFilter<TInputImage, TOutputImage>
  */
 template <class TInputImage, class TOutputImage>
 void
-GtractInverseDeformationFieldImageFilter<TInputImage, TOutputImage>
+GtractInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>
 ::PrintSelf(std::ostream & os, Indent indent) const
 {
   Superclass::PrintSelf(os, indent);
@@ -78,7 +78,7 @@ GtractInverseDeformationFieldImageFilter<TInputImage, TOutputImage>
  */
 template <class TInputImage, class TOutputImage>
 void
-GtractInverseDeformationFieldImageFilter<TInputImage, TOutputImage>
+GtractInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>
 ::SetOutputSpacing(const double *spacing)
 {
   SpacingType s(spacing);
@@ -91,7 +91,7 @@ GtractInverseDeformationFieldImageFilter<TInputImage, TOutputImage>
  */
 template <class TInputImage, class TOutputImage>
 void
-GtractInverseDeformationFieldImageFilter<TInputImage, TOutputImage>
+GtractInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>
 ::SetOutputOrigin(const double *origin)
 {
   OriginPointType p(origin);
@@ -105,7 +105,7 @@ GtractInverseDeformationFieldImageFilter<TInputImage, TOutputImage>
  */
 template <class TInputImage, class TOutputImage>
 void
-GtractInverseDeformationFieldImageFilter<TInputImage, TOutputImage>
+GtractInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>
 ::PrepareKernelBaseSpline()
 {
   typedef typename KernelTransformType::PointsContainer LandmarkContainer;
@@ -211,7 +211,7 @@ GtractInverseDeformationFieldImageFilter<TInputImage, TOutputImage>
  */
 template <class TInputImage, class TOutputImage>
 void
-GtractInverseDeformationFieldImageFilter<TInputImage, TOutputImage>
+GtractInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>
 ::GenerateData()
 {
   // First subsample the input deformation field in order to create
@@ -282,7 +282,7 @@ GtractInverseDeformationFieldImageFilter<TInputImage, TOutputImage>
  */
 template <class TInputImage, class TOutputImage>
 void
-GtractInverseDeformationFieldImageFilter<TInputImage, TOutputImage>
+GtractInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>
 ::GenerateInputRequestedRegion()
 {
   // call the superclass's implementation of this method
@@ -310,7 +310,7 @@ GtractInverseDeformationFieldImageFilter<TInputImage, TOutputImage>
  */
 template <class TInputImage, class TOutputImage>
 void
-GtractInverseDeformationFieldImageFilter<TInputImage, TOutputImage>
+GtractInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>
 ::GenerateOutputInformation()
 {
   // call the superclass' implementation of this method
@@ -342,7 +342,7 @@ GtractInverseDeformationFieldImageFilter<TInputImage, TOutputImage>
  */
 template <class TInputImage, class TOutputImage>
 unsigned long
-GtractInverseDeformationFieldImageFilter<TInputImage, TOutputImage>
+GtractInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>
 ::GetMTime( void ) const
 {
   unsigned long latestTime = Object::GetMTime();

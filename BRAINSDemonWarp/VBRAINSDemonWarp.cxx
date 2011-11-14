@@ -24,7 +24,7 @@ int main(int argc, char *argv[])
     command.vectorMovingVolume = movingVolume;
     command.vectorFixedVolume = fixedVolume;
     command.outputVolume = outputVolume;
-    command.outputDeformationFieldVolume = outputDeformationFieldVolume;
+    command.outputDisplacementFieldVolume = outputDisplacementFieldVolume;
     command.inputPixelType = inputPixelType;
     command.outputPixelType = outputPixelType;
     command.outputDisplacementFieldPrefix = outputDisplacementFieldPrefix;
@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
       * command.fixedLandmarks = fixedLandmarks;
       * command.initializeWithFourier = initializeWithFourier;
       */
-    command.initializeWithDeformationField = initializeWithDeformationField;
+    command.initializeWithDisplacementField = initializeWithDisplacementField;
     command.initializeWithTransform = initializeWithTransform;
 
     command.histogramMatch = histogramMatch;
@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
 
     command.maxStepLength = maxStepLength;
     command.gradientType = gradientType;
-    command.smoothDeformationFieldSigma = smoothDeformationFieldSigma;
+    command.smoothDisplacementFieldSigma = smoothDisplacementFieldSigma;
     command.smoothingUp = smoothingUp;
     command.interpolationMode = interpolationMode;
     for( int i = 0; i < numberOfPyramidLevels; i++ )
@@ -102,8 +102,8 @@ int main(int argc, char *argv[])
                 << command.vectorFixedVolume[i] << std::endl;
       }
     std::cout
-      << "   outputDeformationFieldVolume: "
-      << command.outputDeformationFieldVolume << std::endl
+      << "   outputDisplacementFieldVolume: "
+      << command.outputDisplacementFieldVolume << std::endl
       << "                 inputPixelType: " << command.inputPixelType
       << std::endl
       << "                outputPixelType: " << command.outputPixelType
@@ -140,8 +140,8 @@ int main(int argc, char *argv[])
         * << "         fixedLandmarks: " << command.fixedLandmarks << std::endl
         * << "     initializeWithFourier: " << command.initializeWithFourier
         */
-      << "  initializeWithDeformationField: "
-      << command.initializeWithDeformationField  << std::endl
+      << "  initializeWithDisplacementField: "
+      << command.initializeWithDisplacementField  << std::endl
       << std::endl
       << "       initializeWithTransform: "
       << command.initializeWithTransform << std::endl
@@ -149,8 +149,8 @@ int main(int argc, char *argv[])
       << std::endl
       << "                   maxStepLength: " << command.maxStepLength
       << std::endl
-      << "     smoothDeformationFieldSigma: "
-      << command.smoothDeformationFieldSigma << std::endl
+      << "     smoothDisplacementFieldSigma: "
+      << command.smoothDisplacementFieldSigma << std::endl
       << "                     smoothingUp: " << command.smoothingUp
       << std::endl
       << "                   histogramMatch: " << command.histogramMatch
@@ -188,8 +188,8 @@ int main(int argc, char *argv[])
 
   // if (outputVolume.size() == 0) { violated = true; std::cout << "
   //  --outputVolume Required! "  << std::endl; }
-  // if (outputDeformationFieldVolume.size() == 0) { violated = true; std::cout
-  // << "  --outputDeformationFieldVolume Required! "  << std::endl; }
+  // if (outputDisplacementFieldVolume.size() == 0) { violated = true; std::cout
+  // << "  --outputDisplacementFieldVolume Required! "  << std::endl; }
   // if (registrationParameters.size() == 0) { violated = true; std::cout << "
   //  --registrationParameters Required! "  << std::endl; }
   // if (inputPixelType.size() == 0) { violated = true; std::cout << "

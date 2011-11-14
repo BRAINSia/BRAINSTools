@@ -60,16 +60,16 @@ namespace itk
   * \ingroup FiniteDifferenceFunctions
   *
   */
-template <class TFixedImage, class TMovingImage, class TDeformationField>
+template <class TFixedImage, class TMovingImage, class TDisplacementField>
 class ITK_EXPORT VectorESMDemonsRegistrationFunction :
   public         PDEDeformableRegistrationFunction<TFixedImage,
-                                                   TMovingImage, TDeformationField>
+                                                   TMovingImage, TDisplacementField>
 {
 public:
   /** Standard class typedefs. */
   typedef VectorESMDemonsRegistrationFunction Self;
   typedef PDEDeformableRegistrationFunction<
-      TFixedImage, TMovingImage, TDeformationField>    Superclass;
+      TFixedImage, TMovingImage, TDisplacementField>    Superclass;
   typedef SmartPointer<Self>       Pointer;
   typedef SmartPointer<const Self> ConstPointer;
 
@@ -108,10 +108,13 @@ public:
   typedef typename FixedImageType::SpacingType   SpacingType;
   typedef typename FixedImageType::DirectionType DirectionType;
 
-  /** Deformation field type. */
-  typedef typename Superclass::DeformationFieldType DeformationFieldType;
-  typedef typename Superclass::DeformationFieldTypePointer
-    DeformationFieldTypePointer;
+  /** Displacement field type. */
+#if (ITK_VERSION_MAJOR < 4)
+  typedef typename Superclass::DeformationFieldType DisplacementFieldType;
+#else
+  typedef typename Superclass::DisplacementFieldType DisplacementFieldType;
+#endif
+  typedef typename DisplacementFieldType::Pointer DisplacementFieldPointer;
 
   /** Inherit some enums from the superclass. */
   typedef typename Superclass::PixelType        PixelType;
@@ -134,7 +137,7 @@ public:
   /** Warper type */
   typedef WarpImageFilter<
       AdaptorType,
-      MovingImageType, DeformationFieldType>           WarperType;
+      MovingImageType, DisplacementFieldType>           WarperType;
   typedef typename WarperType::Pointer WarperPointer;
 
   /** Covariant vector type. */

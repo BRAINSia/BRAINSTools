@@ -193,11 +193,18 @@ protected:
   virtual void AllocateUpdateBuffer();
 
   /** Apply update. */
+#if (ITK_VERSION_MAJOR < 4)
+  // This is for meeting the virutal function signature for ITKv3 polymorphic heirarchy
   virtual void ApplyUpdate(TimeStepType dt);
+
+#else
+  virtual void ApplyUpdate(const TimeStepType& dt);
+
+#endif
 
   /** override to do nothing since by definition input image spaces
    *  won't match
- */
+   */
   virtual void VerifyInputInformation();
 
 private:

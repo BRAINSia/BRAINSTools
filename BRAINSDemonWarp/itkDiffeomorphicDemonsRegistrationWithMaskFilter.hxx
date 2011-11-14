@@ -249,10 +249,14 @@ DiffeomorphicDemonsRegistrationWithMaskFilter<TFixedImage, TMovingImage, TDispla
  */
 template <class TFixedImage, class TMovingImage, class TDisplacementField>
 void
-DiffeomorphicDemonsRegistrationWithMaskFilter<TFixedImage, TMovingImage,
-                                              TDisplacementField>
+DiffeomorphicDemonsRegistrationWithMaskFilter<TFixedImage, TMovingImage, TDisplacementField>
+#if (ITK_VERSION_MAJOR < 4)
+// This is for meeting the virutal function signature for ITKv3 polymorphic heirarchy
 ::ApplyUpdate(TimeStepType dt)
-{
+#else
+::ApplyUpdate(const TimeStepType &dt)
+#endif
+  {
   // If we smooth the update buffer before applying it, then the are
   // approximating a viscuous problem as opposed to an elastic problem
   if( this->GetSmoothUpdateField() )
@@ -378,7 +382,7 @@ DiffeomorphicDemonsRegistrationWithMaskFilter<TFixedImage, TMovingImage,
     this->SmoothDisplacementField();
     }
 #endif
-}
+  }
 
 template <class TFixedImage, class TMovingImage, class TDisplacementField>
 void

@@ -26,7 +26,7 @@
 #include <metaCommand.h>
 #include "itkImageRegionIterator.h"
 #include "TransformToDeformationField.h"
-#include <itkDeformationFieldJacobianDeterminantFilter.h>
+#include <itkDisplacementFieldJacobianDeterminantFilter.h>
 // #include <itkMultiplyImageFilter.h>
 // #include "Jacobian.h"
 #include <fstream>

@@ -139,7 +139,7 @@ int main( int argc, char * argv[] )
     tps->ComputeWMatrix();
     itk::Matrix<double, ImageDimension, ImageDimension> aMatrix( tps->GetAMatrix() );
     itk::Vector<double, ImageDimension>                 bVector;
-    bVector.SetVnlVector( tps->GetBVector() );
+    bVector.SetVnlVector( vnl_vector<double>(tps->GetBVector() ) );
     itk::Matrix<double, ImageDimension, ImageDimension> identity;
     identity.SetIdentity();
     affine->SetMatrix( aMatrix + identity );

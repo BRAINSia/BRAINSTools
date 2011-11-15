@@ -7,14 +7,8 @@ include(CMakeDependentOption)
 option(USE_BRAINSFit                       "Build BRAINSFit"                       ON)
 option(USE_BRAINSROIAuto                   "Build BRAINSROIAuto"                   ON)
 option(USE_BRAINSResample                  "Build BRAINSResample"                  ON)
+option(USE_BRAINSDemonWarp                 "Build BRAINSDemonWarp "                ON)
 option(USE_GTRACT                          "Build GTRACT"                          ON)
-
-
-## For now do not build BRAINSDemonWarp unless explicitly requested.
-## The conditions where it could be safe to build BRAINSDemonWarp were
-## getting overly complicated and was slowing down other tool deployment.
-## Someday once BRAINSDemonsWarp becomes trustworthy again, this may be changed.
-option(USE_BRAINSDemonWarp "Build BRAINSDemonWarp (ITKv3)" OFF)
 
 set(ITK_VERSION_MAJOR 4 CACHE STRING "Choose the expected ITK major version to build BRAINS (3 or 4).")
 # Set the possible values of ITK major version for cmake-gui

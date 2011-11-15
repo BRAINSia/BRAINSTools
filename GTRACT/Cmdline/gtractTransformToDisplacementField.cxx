@@ -11,7 +11,7 @@ Date:      11/13/07
 Author:    Madhura A Ingalhalikar
 
 
-Purpose:  Replace itkTransformToDeformationFieldSource with GTRACTTransformToDeformationField
+Purpose:  Replace TransformToDisplacementField with GTRACTTransformToDisplacementField
 Date:     04/26/10
 Author:   Yongqiang Zhao
 
@@ -42,9 +42,9 @@ PURPOSE.  See the above copyright notices for more information.
 #include <itkVersorRigid3DTransform.h>
 #include <itkInverseDeformationFieldImageFilter.h>
 
-#include "itkTransformToDeformationFieldSource.h"
+#include "TransformToDisplacementField.h"
 
-#include "gtractTransformToDeformationFieldCLP.h"
+#include "gtractTransformToDisplacementFieldCLP.h"
 #include "BRAINSThreadControl.h"
 #include "GenericTransformImage.h"
 

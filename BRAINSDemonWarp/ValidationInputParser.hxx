@@ -25,11 +25,7 @@
 #include <itkIO.h>
 #include <metaCommand.h>
 
-#if (ITK_VERSION_MAJOR < 4)
-#include "itkTransformToDeformationFieldSource.h"
-#else
-#include "itkTransformToDisplacementFieldSource.h"
-#endif
+#include "TransformToDisplacementField.h"
 #include <itkDisplacementFieldJacobianDeterminantFilter.h>
 
 #ifdef __USE_BRAINS2_INTEGRATION

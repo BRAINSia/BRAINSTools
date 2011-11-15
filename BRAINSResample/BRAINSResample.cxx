@@ -24,7 +24,7 @@
 #include "itkMaximumImageFilter.h"
 #include "GenericTransformImage.h"
 
-#include "itkTransformToDeformationFieldSource.h"
+#include "TransformToDisplacementField.h"
 #include "itkGridForwardWarpImageFilterNew.h"
 #include "itkBSplineKernelFunction.h"
 

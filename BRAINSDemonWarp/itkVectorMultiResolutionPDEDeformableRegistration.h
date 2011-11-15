@@ -230,6 +230,8 @@ public:
   /** Stop the registration after the current iteration. */
   virtual void StopRegistration();
 
+  virtual void VerifyInputInformation();
+
 protected:
   VectorMultiResolutionPDEDeformableRegistration();
   ~VectorMultiResolutionPDEDeformableRegistration()

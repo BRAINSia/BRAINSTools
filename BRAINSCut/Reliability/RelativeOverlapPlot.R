@@ -37,27 +37,29 @@ OneSubjectPlotOfSI <- function( subjectID, csvFilename, ROIName, myColor, cumula
 # ---------------------------------------------------------------------------- #
 # plot Mean SI
 # ---------------------------------------------------------------------------- #
-MeanSIPlot <- function( data )
+MeanSIPlot <- function( data  )
 {
   meanSI <- rowMeans( data[ 2: ncol(data) ] );
   points( data$threshold, meanSI, 
           type="l" ,lwd="3", lty=4,col="darkblue" );
 
-  maxMeanSI <-  max( meanSI );
-  maxMeanThreshold <- which.max( meanSI );
+  SI <-  max( meanSI );
+  SIThreshold <- data$threshold[ which.max( meanSI ) ];
 
-  require( fields );
-  xline( data$threshold[maxMeanThreshold], col="darkblue", lty=2, lwd=2 );
-  mtext( paste( "Maximum Mean SI : ", round( maxMeanSI,2) , 
-                " at ", maxMeanThreshold ) ,
-         side=3, line= -1 );
-  
+  MaximumMeanText <- paste( "Maximum Mean SI : ", round( SI,2) ,
+                            " at ", SIThreshold  );
+
+  mtext( MaximumMeanText,
+         side=1, line= -1 );
+
+  # return summary
+  c( SI, SIThreshold);
 }
 
 # ---------------------------------------------------------------------------- #
 # ICC 
 # ---------------------------------------------------------------------------- #
-ICCPlot <- function( man, dt)
+ICCPlot <- function( man, dt )
 {
 
   NoSubject <- ncol(dt)-1;
@@ -99,23 +101,38 @@ ICCPlot <- function( man, dt)
   ICCmaximumAgreementIndex<-ICCmax[1];
   ICCmaximumConsistencyIndex<-ICCmax[2];
 
+  # rounding points
   roundPrecision<-3;
 
-  mtext( paste( "Maximum ICC(A)  : ", round(ICCTable[ ICCagreementColumn, ICCmaximumAgreementIndex], roundPrecision ), 
-                " at ", dt$threshold[ICCmaximumAgreementIndex] ),
-         side=3, line=-2 );
+  # summary stats
+  iccA <- ICCTable[ ICCagreementColumn, ICCmaximumAgreementIndex];
+  iccAThreshold <- dt$threshold[ICCmaximumAgreementIndex] ;
 
-  mtext( paste( "Maximum ICC(C)  : ", round(ICCTable[ ICCconsistencyColumn, ICCmaximumConsistencyIndex], roundPrecision ), 
-                " at ", dt$threshold[ICCmaximumConsistencyIndex] ),
-         side=3, line=-3 );
+  iccC <- ICCTable[ ICCconsistencyColumn, ICCmaximumConsistencyIndex];
+  iccCThreshold <- dt$threshold[ICCmaximumConsistencyIndex];
+
+  # Vertical line
+  require( fields );
+  xline( iccAThreshold, col="red", lty=3, lwd=2);
+
+  # description on the plot
+  MaximumICCAText <- paste( "Maximum ICC(A)  : ", 
+                             round( iccA, roundPrecision ) ,
+                            " at ", iccAThreshold )
+  mtext( MaximumICCAText, side=1, line=-2 );
+
+  MaximumICCCText <- paste( "Maximum ICC(C)  : ", round( iccC , roundPrecision ),
+                            " at ", iccCThreshold  );
+  mtext( MaximumICCCText,side=1, line=-3 );
 
   legend( "topright", 
           c( "ICC(A)","ICC(C)" ),
           col=c("darkblue", "red"),
           lty=1, lwd=2,
           bty="n" )
+
 # return threshold value at best agreement
-  ICCmaximumAgreementIndex;
+  c(ICCmaximumAgreementIndex, iccA, iccAThreshold, iccC, iccCThreshold);
   
 }
 # ---------------------------------------------------------------------------- #
@@ -159,7 +176,7 @@ VolumetricComparisonPlot <- function( manual, ann, threshold)
   fit.intercept <- round( fit$coefficients[[1]], 2 );
   fit.slope <- round( fit$coefficients[[2]], 2 );
   mtext( paste( "y = ",fit.slope , " x + ", fit.intercept ) ,
-         side=3, line=-1 );
+         side=1, line=-1 );
 
   lines( c( range.min, range.max ), 
          y= c(( range.min*fit.slope+fit.intercept), range.max*fit.slope+fit.intercept),
@@ -176,6 +193,8 @@ VolumetricComparisonPlot <- function( manual, ann, threshold)
           pch=c(21,22,23,24,25),col=seq(1,NoSubject,1),
           bty="n");
 
+  # return slope and intercept
+  c( fit.slope, fit.intercept );
 }
 # ---------------------------------------------------------------------------- #
 # plot Subjects
@@ -229,13 +248,26 @@ for( i in 2:numberOfSubject )
   manualData[i]  <- currentDT$manual[i];
 }
 
+
+
 # plot mean
-MeanSIPlot( cumulativeSI );
+meanSIPlotResults<-MeanSIPlot( cumulativeSI );
 
 # ICC accros threshold
-maximumAgreementIndex<-ICCPlot( manualData, cumulativeVolumes );
+iccResults<-ICCPlot( manualData, cumulativeVolumes );
 
 # plot volumetric match
-VolumetricComparisonPlot( manualData, cumulativeVolumes, maximumAgreementIndex );
+#linearFitResults<-VolumetricComparisonPlot( manualData, cumulativeVolumes, iccResults[1]);
+linearFitResults<-VolumetricComparisonPlot( manualData, cumulativeVolumes, 50);
 dev.off();
+
+# summary stats
+summaryStatOutputFilename <- paste(plotName, "txt", sep=".");
+outputData<-c( currentROIName, meanSIPlotResults, iccResults[2:5], linearFitResults ); 
+outputData<-t(outputData);
+
+write.table( outputData , file=summaryStatOutputFilename , append=FALSE ,
+             col.names=c( "roi","SI","SIThreshold", "iccA", "iccAThreshold","iccC","iccCThreshold","slope","intercept") ,
+             row.names=FALSE,
+             sep=",", quote=FALSE);  
 

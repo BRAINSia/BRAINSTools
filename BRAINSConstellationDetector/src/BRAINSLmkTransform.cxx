@@ -73,7 +73,7 @@ int main( int argc, char * argv[] )
 {
   PARSE_ARGS;
 
-  BRAINSUtils::SetThreadCount(numberOfThreads);
+  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
   if( ( inputMovingLandmarks.compare( "" ) == 0 )
       && ( inputFixedLandmarks.compare( "" ) == 0 )
       && ( inputMovingVolume.compare( "" ) == 0 )

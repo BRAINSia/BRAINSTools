@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
   struct BRAINSDemonWarpAppParameters command;
     {
     PARSE_ARGS;
-    BRAINSUtils::SetThreadCount(numberOfThreads);
+    const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
 #ifdef USE_DebugImageViewer
     DebugImageDisplaySender.SetEnabled(UseDebugImageViewer);
 #endif

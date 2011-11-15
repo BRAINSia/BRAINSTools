@@ -163,7 +163,7 @@ int main(int argc, char *argv[])
     }
 #endif
 
-  BRAINSUtils::SetThreadCount(numberOfThreads);
+  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
 
   std::string localInitializeTransformMode = initializeTransformMode;
   // Intially set using the string enumeration

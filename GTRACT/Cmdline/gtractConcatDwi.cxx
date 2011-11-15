@@ -37,7 +37,7 @@
 int main(int argc, char *argv[])
 {
   PARSE_ARGS;
-  BRAINSUtils::SetThreadCount(numberOfThreads);
+  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
 
   const int numberOfImages = inputVolume.size();
   bool      debug = true;

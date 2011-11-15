@@ -41,7 +41,7 @@ See License.txt or http://www.slicer.org/copyright/copyright.txt for details.
 int main(int argc, char* argv[])
 {
   PARSE_ARGS;
-  BRAINSUtils::SetThreadCount(numberOfThreads);
+  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
 
   bool violated = false;
   if( inputVolume.size() == 0 )

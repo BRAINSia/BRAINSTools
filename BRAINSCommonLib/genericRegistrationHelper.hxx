@@ -146,8 +146,16 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
         {
         std::cout << "WARNING USING MAX MMI NUMBER OF THREADS:   " << this->m_ForceMINumberOfThreads << std::endl;
         }
-      this->m_CostMetricObject->SetNumberOfThreads(this->m_ForceMINumberOfThreads);
-      this->m_Registration->SetNumberOfThreads(this->m_ForceMINumberOfThreads);
+      if( this->m_ForceMINumberOfThreads > 0 )
+        {
+        this->m_CostMetricObject->SetNumberOfThreads(this->m_ForceMINumberOfThreads);
+        this->m_Registration->SetNumberOfThreads(this->m_ForceMINumberOfThreads);
+        }
+      else
+        {
+        this->m_CostMetricObject->SetNumberOfThreads(itk::MultiThreader::GetGlobalDefaultNumberOfThreads() );
+        this->m_Registration->SetNumberOfThreads(itk::MultiThreader::GetGlobalDefaultNumberOfThreads() );
+        }
       }
     else
       {

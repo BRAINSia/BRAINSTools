@@ -6,7 +6,7 @@
 int main(int argc, char * *argv)
 {
   PARSE_ARGS;
-  BRAINSUtils::SetThreadCount(numberOfThreads);
+  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
   if( inputVolume == "" )
     {
     std::cerr << "No input volume name given" << std::endl;

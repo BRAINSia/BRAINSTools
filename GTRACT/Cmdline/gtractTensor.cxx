@@ -48,7 +48,7 @@
 int main(int argc, char *argv[])
 {
   PARSE_ARGS;
-  BRAINSUtils::SetThreadCount(numberOfThreads);
+  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
   itk::AddExtraTransformRegister();
 
   typedef signed short                   PixelType;

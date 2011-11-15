@@ -112,7 +112,7 @@ void AdaptOriginAndDirection( typename TImageType::Pointer image )
 int main( int argc, char *argv[] )
 {
   PARSE_ARGS;
-  BRAINSUtils::SetThreadCount(numberOfThreads);
+  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
 // itk::AddExtraTransformRegister();
 
   const unsigned int Dimension = 3;

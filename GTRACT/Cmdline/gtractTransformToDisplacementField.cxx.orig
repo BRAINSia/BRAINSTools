@@ -52,7 +52,7 @@ PURPOSE.  See the above copyright notices for more information.
 int main(int argc, char *argv[])
 {
   PARSE_ARGS;
-  BRAINSUtils::SetThreadCount(numberOfThreads);
+  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
   itk::AddExtraTransformRegister();
 
   std::cout << "Input Transform: " <<  inputTransform << std::endl;

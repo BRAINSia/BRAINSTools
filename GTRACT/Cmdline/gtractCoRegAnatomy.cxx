@@ -33,7 +33,7 @@
 int main(int argc, char *argv[])
 {
   PARSE_ARGS;
-  BRAINSUtils::SetThreadCount(numberOfThreads);
+  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
 
   itk::TransformFactory<itk::ScaleVersor3DTransform<double> >::RegisterTransform();
   itk::TransformFactory<itk::ScaleVersor3DTransform<float> >::RegisterTransform();

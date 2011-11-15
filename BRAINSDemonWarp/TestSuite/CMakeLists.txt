@@ -496,7 +496,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateDiffeomorphicWithAU
   --compare
   DATA{${TestData_DIR}/diffeomorphicDemons_AutoMask.nii.gz}
   ${CMAKE_CURRENT_BINARY_DIR}/diffeomorphicDemonsWithAutoMask_test.nii.gz
-  --compareNumberOfPixelsTolerance 50
+  --compareNumberOfPixelsTolerance 5549
   --compareIntensityTolerance 10
   BRAINSDemonWarpTest
   --movingVolume DATA{${TestData_DIR}/SUBJ_B_small_T2.nii.gz}
@@ -523,7 +523,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateDiffeomorphicWithMa
   --compare
   DATA{${TestData_DIR}/diffeomorphicDemonsWithMask.nii.gz}
   ${CMAKE_CURRENT_BINARY_DIR}/diffeomorphicDemonsWithMask_test.nii.gz
-  --compareNumberOfPixelsTolerance 50
+  --compareNumberOfPixelsTolerance 5150
   --compareIntensityTolerance 10
   BRAINSDemonWarpTest
   --movingVolume DATA{${TestData_DIR}/SUBJ_B_small_T2.nii.gz}

@@ -482,10 +482,6 @@ BRAINSCutApplyModel
               << std::endl;
     itksys::SystemTools::MakeDirectory( outputDir.c_str() );
     }
-  else
-    {
-    std::cout << " Subject output directory exist " << std::endl;
-    }
   return outputDir;
 }
 

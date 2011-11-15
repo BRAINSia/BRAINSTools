@@ -17,6 +17,8 @@ plotLine <- function( dt, lineColor)
   points( dt$iteration, dt$SSE, 
           col=lineColor,
           type="l", lty=2, lwd=1);
+  print( dt$iteration );
+  print( dt$SSE);
 }
 
 # ---------------------------------------------------------------------------- #
@@ -40,9 +42,9 @@ for( currentStructure in structureList)
   currentPlotFilename <-  paste( outputFilenamePrefix, currentStructure, ".pdf",sep="");
 
   # get mean of error for each iteration
-  currentMeanSSE<-aggregate( currentDT$SSE, list(iteration=ldt$iteration), mean);
+  currentMeanSSE<-aggregate( currentDT$SSE, list(iteration=currentDT$iteration), mean);
 
-  pdf( curretnPlotFilename );
+  pdf( currentPlotFilename );
 
   # expand right side of clipping rect to make room for the legend
   par( xpd=T, mar=par()$mar+c(0,0,0,4) );
@@ -64,5 +66,6 @@ for( currentStructure in structureList)
   title( currentStructure );
   legend(  max(dt$iteration)*1.05,range.max, c("mean",subjectList), 
            col=c("darkblue",myColorList), pch=20, lty=1, bty="n" );
+  dev.off();
 }
-dev.off();
+

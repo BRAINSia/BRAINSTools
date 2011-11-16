@@ -10,7 +10,15 @@ if [ $# != 3 ]; then
   exit 1;
 fi
 
-RScript="/ipldev/scratch/eunyokim/src/BRAINS20111028/BRAINSStandAlone/BRAINSCut/Reliability/SSEPlot.R"
+machine=`uname`
+if [ "$machine" == "Darwin" ]; then
+  BRAINSSRC="/ipldev/scratch/eunyokim/src/BRAINS20111028/"
+else
+  BRAINSSRC="/scratch/PREDICT/regina/BRAINS/"
+fi
+
+RScript="$BRAINSSRC/BRAINSStandAlone/BRAINSCut/Reliability/SSEPlot.R"
+
 
 SSECollectionFilename="$OutputDir/ValidationSetSSE.txt"
 rm -f $SSECollectionFilename

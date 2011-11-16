@@ -1,6 +1,6 @@
 project(BRAINSCut)
 
-#message(STATUS "BRAINSCut OpenCV_DIR = ${OpenCV_DIR}")
+message(STATUS "BRAINSCut OpenCV_DIR = ${OpenCV_DIR}")
 find_package( OpenCV REQUIRED)
 
 ###
@@ -10,7 +10,7 @@ include_directories(${BRAINSCut_SOURCE_DIR}/NetConfiguration)
 add_subdirectory(NetConfiguration)
 
 
-file(GLOB BRAINSCut_HDRS *.h *.txx)
+file(GLOB BRAINSCut_HDRS *.h *.hxx)
 
 set(BRAINSCutCOMMONLIB_SRCS
   Utilities.cxx
@@ -50,6 +50,7 @@ set(ALL_PROGS_LIST
   BRAINSCut
   ShuffleVectorsModule  ## TODO: Make into SEM program
   WriteFeaturesforROI   ## TODO: Make into SEM program
+  SimilarityIndex
   )
 foreach( prog ${ALL_PROGS_LIST} )
   StandardBRAINSBuildMacro( NAME ${prog} TARGET_LIBRARIES BRAINSCutCOMMONLIB )

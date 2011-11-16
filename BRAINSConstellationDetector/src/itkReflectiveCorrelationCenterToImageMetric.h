@@ -441,7 +441,7 @@ namespace itk
         {} // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkReflectiveCorrelationCenterToImageMetric.txx"
+#include "itkReflectiveCorrelationCenterToImageMetric.hxx"
 #endif
 
 #endif

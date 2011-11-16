@@ -1,13 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
-  <category>
-  TestCompare
-  </category>
-  <title>
-  landmark file comparison
-  </title>
+  <category>Testing</category>
+  <title>Compare Fiducials</title>
   <description>
-	  Compares two .fcsv or .wts text files and verifies that they are identicle.  Used for testing landmarks files.
+    Compares two .fcsv or .wts text files and verifies that they are identicle.  Used for testing landmarks files.
   </description>
   <version> </version>
   <documentation-url> </documentation-url>

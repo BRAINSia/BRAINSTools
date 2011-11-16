@@ -179,7 +179,7 @@ private:
 };
 
 #ifndef MU_MANUAL_INSTANTIATION
-#include "LLSBiasCorrector.txx"
+#include "LLSBiasCorrector.hxx"
 #endif
 
 #endif

@@ -189,7 +189,7 @@ private:
 };
 
 #ifndef MU_MANUAL_INSTANTIATION
-#include "AtlasRegistrationMethod.txx"
+#include "AtlasRegistrationMethod.hxx"
 #endif
 
 #endif

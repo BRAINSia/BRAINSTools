@@ -318,7 +318,7 @@ private:
 };
 
 #ifndef MU_MANUAL_INSTANTIATION
-#include "EMSegmentationFilter.txx"
+#include "EMSegmentationFilter.hxx"
 #endif
 
 #endif

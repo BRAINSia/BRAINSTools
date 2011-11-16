@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
   <executable>
-    <category>BRAINS3.BRAINSCut.Features.</category>
+  <category>Filtering.FeatureDetection</category>
   <title>GradientAnisopropicDiffusionFilter</title>
 
   <description> Image Smoothing using Gradient Anisotropic Diffuesion Filer</description>

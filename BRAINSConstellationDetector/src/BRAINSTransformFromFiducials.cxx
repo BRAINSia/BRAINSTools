@@ -150,7 +150,7 @@ static VersorRigidTransformType::Pointer DoIt_Rigid(PointList fixedPoints, Point
 int main(int argc, char* argv[])
 {
   PARSE_ARGS;
-  BRAINSUtils::SetThreadCount(numberOfThreads);
+  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
   if( saveTransform == "" )
     {
     std::cerr << "An output transform must be specified" << std::endl;

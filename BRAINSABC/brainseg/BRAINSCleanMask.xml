@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <executable>
-  <category>Segmentation</category>
+  <category>Segmentation.Specialized</category>
   <title>Mask Hole Filling (BRAINS)</title>
   <description>Cleans up a mask image by filling any holes
   </description>

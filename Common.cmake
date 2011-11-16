@@ -7,13 +7,8 @@ include(CMakeDependentOption)
 option(USE_BRAINSFit                       "Build BRAINSFit"                       ON)
 option(USE_BRAINSROIAuto                   "Build BRAINSROIAuto"                   ON)
 option(USE_BRAINSResample                  "Build BRAINSResample"                  ON)
+option(USE_BRAINSDemonWarp                 "Build BRAINSDemonWarp "                ON)
 option(USE_GTRACT                          "Build GTRACT"                          ON)
-
-## For now do not build BRAINSDemonWarp unless explicitly requested.
-## The conditions where it could be safe to build BRAINSDemonWarp were
-## getting overly complicated and was slowing down other tool deployment.
-## Someday once BRAINSDemonsWarp becomes trustworthy again, this may be changed.
-option(USE_BRAINSDemonWarp "Build BRAINSDemonWarp (ITKv3)" OFF)
 
 set(ITK_VERSION_MAJOR 4 CACHE STRING "Choose the expected ITK major version to build BRAINS (3 or 4).")
 # Set the possible values of ITK major version for cmake-gui
@@ -107,7 +102,7 @@ endif()
 # Set a default build type if none was specified
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   message(STATUS "Setting build type to 'Release' as none was specified.")
-  set(CMAKE_BUILD_TYPE RelWithDebInfo CACHE STRING "Choose the type of build." FORCE)
+  set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build." FORCE)
   # Set the possible values of build type for cmake-gui
   set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
 endif()
@@ -146,7 +141,7 @@ SETIFEMPTY(BRAINSTools_CLI_INSTALL_RUNTIME_DESTINATION ${CMAKE_INSTALL_RUNTIME_D
 #-------------------------------------------------------------------------
 # Augment compiler flags
 #-------------------------------------------------------------------------
-include(CompilerFlagSettings)
+include(ITKSetStandardCompilerFlags)
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${C_DEBUG_DESIRED_FLAGS}" )
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX_DEBUG_DESIRED_FLAGS}" )

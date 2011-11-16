@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
   <executable>
-  <category>Statistics.Features.HammerFeatures</category>
+  <category>Filtering.FeatureDetection</category>
   <title>HAMMER Feature Vectors</title>
 
   <description>Create the feature vectors used by HAMMER.</description>

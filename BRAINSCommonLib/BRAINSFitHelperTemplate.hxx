@@ -577,6 +577,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::FitCommonCode(
   appMutualRegistration->SetFixedImage(    m_FixedVolume    );
   appMutualRegistration->SetMovingImage(   m_MovingVolume   );
   appMutualRegistration->SetCostMetricObject( this->m_CostMetricObject );
+  appMutualRegistration->SetForceMINumberOfThreads( this->m_ForceMINumberOfThreads );
 
   appMutualRegistration->SetBackgroundFillValue(   m_BackgroundFillValue   );
 

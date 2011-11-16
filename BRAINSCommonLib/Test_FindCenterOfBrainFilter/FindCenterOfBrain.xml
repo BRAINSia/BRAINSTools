@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
-  <category>Utility</category>
+  <category>Utility.BRAINS</category>
   <title>Center Of Brain (BRAINS)</title>
   <description>Finds the center point of a brain</description>
   <documentation-url></documentation-url>

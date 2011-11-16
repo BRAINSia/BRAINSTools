@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
-  <category>Registration</category>
+  <category>Registration.Specialized</category>
   <title>Demon Registration (BRAINS)</title>
 
   <description>
@@ -64,11 +64,11 @@
     </image>
 
     <transform fileExtensions=".nrrd" type="nonlinear" reference="movingVolume">
-      <name>outputDeformationFieldVolume</name>
+      <name>outputDisplacementFieldVolume</name>
       <flag>O</flag>
-      <longflag alias="output_field">outputDeformationFieldVolume</longflag>
+      <longflag alias="output_field">outputDisplacementFieldVolume</longflag>
       <description>Output deformation field vector image (will have the same physical space as the fixedVolume).</description>
-      <label>Output Deformation Field Volume</label>
+      <label>Output Displacement Field Volume</label>
       <channel>output</channel>
     </transform>
 
@@ -125,10 +125,10 @@
     </string-enumeration>
 
     <double>
-      <name>smoothDeformationFieldSigma</name>
+      <name>smoothDisplacementFieldSigma</name>
       <flag>s</flag>
-      <longflag alias="def_field_sigma">smoothDeformationFieldSigma</longflag>
-      <label>Deformation field smoothing sigma</label>
+      <longflag alias="def_field_sigma">smoothDisplacementFieldSigma</longflag>
+      <label>Displacement field smoothing sigma</label>
       <description>A gaussian smoothing value to be applied to the deformation feild at each iteration.</description>
       <default>1.0</default>
     </double>
@@ -205,14 +205,14 @@
     </parameters>
 
   <parameters advanced="true">
-  <label> Deformation field initialziation </label>
+  <label> Displacement field initialziation </label>
   <description> Options for initializing the deformation field. </description>
 
     <transform fileExtensions=".nrrd" type="nonlinear">
-      <name>initializeWithDeformationField</name>
-      <longflag>initializeWithDeformationField</longflag>
+      <name>initializeWithDisplacementField</name>
+      <longflag>initializeWithDisplacementField</longflag>
       <description>Initial deformation field vector image file name</description>
-      <label>Initial Deformation Field Volume</label>
+      <label>Initial Displacement Field Volume</label>
       <channel>input</channel>
     </transform>
 

@@ -40,8 +40,8 @@ typedef itk::Image<short, 3> SImageType;
 int main(int argc, char *argv[])
 {
   PARSE_ARGS;
-  BRAINSUtils::SetThreadCount(numberOfThreads);
-  bool verbose = true;
+  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
+  bool                                                  verbose = true;
 
   std::cout << "================================================================" << std::endl;
   std::cout << "Processing: " << inputVolume << std::endl;

@@ -10,7 +10,7 @@
 int main(int argc, char *argv[])
 {
   PARSE_ARGS;
-  BRAINSUtils::SetThreadCount(numberOfThreads);
+  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
 
   typedef itk::Image<unsigned char, 3>        ByteImageType;
   typedef itk::ImageFileReader<ByteImageType> ReaderType;

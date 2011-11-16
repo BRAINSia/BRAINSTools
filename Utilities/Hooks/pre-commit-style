@@ -78,7 +78,7 @@ Allow skipping the style check for this commit with
 #	esac
 #	return 1
 
-	processing_list='\.cpp|\.c|\.cxx|\.txx'
+	processing_list='\.cpp|\.c|\.cxx|\.txx|\.hxx'
 	egrep_processing_list="^.*(${processing_list})\$"
 	if [ $(echo $1 | egrep -c $egrep_processing_list) -ne 0 ]; then
 		return 0
@@ -278,7 +278,7 @@ Please install cppcheck or set the executable location with
 run_cppcheck_on_file() {
 	file="$1"
 #	echo $cppcheck_path -q --enable=all --force --inline-suppr --template --'{file}:{line},{severity},{id},{message}' "${file}"
-	if [ $(echo "$file" | grep -c "\.cpp\|\.cxx\|\.c\|\.txx") != 0 ]; then
+	if [ $(echo "$file" | grep -c "\.cpp\|\.cxx\|\.c\|\.txx|\.hxx") != 0 ]; then
 
 		output=$($cppcheck_path -q --enable=all --force --inline-suppr --template --'{file}:{line},{severity},{id},{message}' "${file}" 2>&1 | grep -v missingInclude)
 		if [ x"$output" != x ]; then

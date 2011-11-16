@@ -356,7 +356,7 @@ private:
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "BRAINSConstellationDetector2.txx"
+#include "BRAINSConstellationDetector2.hxx"
 #endif
 
 #endif

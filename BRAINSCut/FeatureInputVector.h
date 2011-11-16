@@ -35,8 +35,8 @@ public:
                                               WorkingPixelType> ImageLinearInterpolatorType;
 
   /* min/max */
-  typedef pair<scalarType, scalarType> minmaxPairType;
-  typedef vector<minmaxPairType>       minmaxPairVectorType;
+  typedef std::pair<scalarType, scalarType> minmaxPairType;
+  typedef std::vector<minmaxPairType>       minmaxPairVectorType;
 
   matrixType  GetInputVectorAt(WorkingImageVectorType & currentIndex);
 
@@ -127,7 +127,7 @@ private:
   inline std::map<std::string, scalarType> CalculateUnitDeltaAlongTheGradient(std::string ROIName,
                                                                               WorkingImageType::IndexType currentPixelIndex );
 
-  inline pair<scalarType, scalarType>  SetMinMaxOfSubject( BinaryImageType::Pointer & labelImage,
-                                                           const WorkingImagePointer & Image );
+  inline std::pair<scalarType, scalarType>  SetMinMaxOfSubject( BinaryImageType::Pointer & labelImage,
+                                                                const WorkingImagePointer & Image );
 };
 #endif

@@ -73,7 +73,7 @@ FeatureInputVector
     std::string errorMsg = " Fail to generate itk gradient image.";
     throw BRAINSCutExceptionStringHandler( errorMsg );
     }
-  gradientOfROI.insert( pair<std::string, GradientImageType>( ROIName, gradientFilter->GetOutput() ) );
+  gradientOfROI.insert( std::pair<std::string, GradientImageType>( ROIName, gradientFilter->GetOutput() ) );
 }
 
 void
@@ -148,7 +148,7 @@ FeatureInputVector
 
       int oneRowKey = FeatureInputVector::HashKeyFromIndex( eachVoxelInROI.GetIndex() );
 
-      currentFeatureVector.insert( pair<int, InputVectorType>( oneRowKey, oneRowInputFeature) );
+      currentFeatureVector.insert( std::pair<int, InputVectorType>( oneRowKey, oneRowInputFeature) );
       }
     ++eachVoxelInROI;
     }
@@ -162,7 +162,7 @@ FeatureInputVector
     }
 
   /* insert computed vector */
-  featureInputOfROI.insert(pair<std::string, InputVectorMapType>( ROIName, currentFeatureVector) );
+  featureInputOfROI.insert(std::pair<std::string, InputVectorMapType>( ROIName, currentFeatureVector) );
 }
 
 /* set normalization parameters */
@@ -299,9 +299,9 @@ FeatureInputVector
 ::CalculateUnitDeltaAlongTheGradient( std::string ROIName,
                                       WorkingImageType::IndexType currentPixelIndex )
 {
-  WorkingPixelType deltaX = gradientOfROI.find( ROIName )->second->GetPixel( currentPixelIndex )[1];
-  WorkingPixelType deltaY = gradientOfROI.find( ROIName )->second->GetPixel( currentPixelIndex )[2];
-  WorkingPixelType deltaZ = gradientOfROI.find( ROIName )->second->GetPixel( currentPixelIndex )[3];
+  WorkingPixelType deltaX = gradientOfROI.find( ROIName )->second->GetPixel( currentPixelIndex )[0];
+  WorkingPixelType deltaY = gradientOfROI.find( ROIName )->second->GetPixel( currentPixelIndex )[1];
+  WorkingPixelType deltaZ = gradientOfROI.find( ROIName )->second->GetPixel( currentPixelIndex )[2];
 
   const scalarType Length = vcl_sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
   const scalarType inverseLength =  ( Length > 0.0F ) ? 1.0 / Length : 1;
@@ -353,7 +353,7 @@ FeatureInputVector
   return WorkingImageType::IndexType( key );
 }
 
-inline pair<scalarType, scalarType>
+inline std::pair<scalarType, scalarType>
 FeatureInputVector
 ::SetMinMaxOfSubject( BinaryImageType::Pointer & labelImage, const WorkingImagePointer& Image )
 {
@@ -368,8 +368,8 @@ FeatureInputVector
   std::cout << " * Min : " << statisticCalculator->GetMinimum(1)
             << " * Max : " << statisticCalculator->GetMaximum(1)
             << std::endl;
-  return minmaxPairType( pair<scalarType, scalarType>( statisticCalculator->GetMinimum(1),
-                                                       statisticCalculator->GetMaximum(1) ) );
+  return minmaxPairType( std::pair<scalarType, scalarType>( statisticCalculator->GetMinimum(1),
+                                                            statisticCalculator->GetMaximum(1) ) );
 }
 
 void

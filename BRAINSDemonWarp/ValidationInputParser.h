@@ -84,16 +84,16 @@ public:
       itkGetStaticConstMacro(ImageDimension),
       itkGetStaticConstMacro(SplineOrder)> BSplineTransformType;
 
-  /** Deformation field value type. */
+  /** Displacement field value type. */
   typedef float FieldValueType;
 
-  /** Deformation field pixel type. */
+  /** Displacement field pixel type. */
   typedef Vector<FieldValueType,
                  itkGetStaticConstMacro(ImageDimension)> FieldPixelType;
 
-  /** Deformation field type. */
+  /** Displacement field type. */
   typedef Image<FieldPixelType,
-                itkGetStaticConstMacro(ImageDimension)> TDeformationField;
+                itkGetStaticConstMacro(ImageDimension)> TDisplacementField;
 
   /** ShrinkFactors type. */
   typedef FixedArray<unsigned int,
@@ -109,7 +109,7 @@ public:
   itkSetStringMacro(TheFixedImageFilename);
 
   /** Set the initial Displacement Field one of 3 ways. */
-  itkSetStringMacro(InitialDeformationFieldFilename);
+  itkSetStringMacro(InitialDisplacementFieldFilename);
   itkSetStringMacro(InitialCoefficientFilename);
   itkSetStringMacro(InitialTransformFilename);
 
@@ -130,7 +130,7 @@ public:
   itkGetConstMacro(ForceCoronalZeroOrigin, bool);
 
   /** Get pointer to the subject image. */
-  itkGetObjectMacro(InitialDeformationField, TDeformationField);
+  itkGetObjectMacro(InitialDisplacementField, TDisplacementField);
 
   /** Get the number of histogram bins. */
   itkGetConstMacro(NumberOfHistogramLevels, unsigned long);
@@ -181,7 +181,7 @@ private:
 
   std::string m_TheMovingImageFilename;
   std::string m_TheFixedImageFilename;
-  std::string m_InitialDeformationFieldFilename;
+  std::string m_InitialDisplacementFieldFilename;
   std::string m_InitialCoefficientFilename;
   std::string m_InitialTransformFilename;
   std::string m_ParameterFilename;
@@ -193,7 +193,7 @@ private:
   //  bool                          m_HistogramMatching;
   bool m_OutDebug;
 
-  typename TDeformationField::Pointer m_InitialDeformationField;
+  typename TDisplacementField::Pointer m_InitialDisplacementField;
 
   unsigned long       m_NumberOfHistogramLevels;
   unsigned long       m_NumberOfMatchPoints;

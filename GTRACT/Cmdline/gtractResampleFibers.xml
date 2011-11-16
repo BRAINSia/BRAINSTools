@@ -19,7 +19,7 @@
       <name>inputForwardDeformationFieldVolume</name>
       <longflag>inputForwardDeformationFieldVolume</longflag>
       <description>Required: input forward deformation field image file name</description>
-      <label>Input Forward Deformation Field Volume</label>
+      <label>Input Forward Displacement Field Volume</label>
       <channel>input</channel>
     </image>
 
@@ -27,7 +27,7 @@
       <name>inputReverseDeformationFieldVolume</name>
       <longflag>inputReverseDeformationFieldVolume</longflag>
       <description>Required: input reverse deformation field image file name</description>
-      <label>Input Reverse Deformation Field Volume</label>
+      <label>Input Reverse Displacement Field Volume</label>
       <channel>input</channel>
     </image>
 

@@ -344,6 +344,10 @@ public:
   itkGetConstMacro(ActualNumberOfIterations, unsigned int);
   itkSetMacro(ObserveIterations,        bool);
   itkGetConstMacro(ObserveIterations,        bool);
+  // Debug option for MI metric
+  itkSetMacro(ForceMINumberOfThreads, int);
+  itkGetConstMacro(ForceMINumberOfThreads, int);
+
   /** Returns the transform resulting from the registration process  */
   const TransformOutputType * GetOutput() const;
 
@@ -418,6 +422,8 @@ private:
   bool         m_PromptUserAfterDisplay;
   double       m_FinalMetricValue;
   bool         m_ObserveIterations;
+  // DEBUG OPTION:
+  int m_ForceMINumberOfThreads;
 };
 } // end namespace itk
 

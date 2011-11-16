@@ -90,16 +90,16 @@ public:
   itkSetMacro(CheckerBoardPattern, PatternArrayType);
   itkGetConstReferenceMacro(CheckerBoardPattern, PatternArrayType);
 
-  /** Deformation field value type. */
+  /** Displacement field value type. */
   typedef TFieldValue FieldValueType;
 
-  /** Deformation field pixel type. */
+  /** Displacement field pixel type. */
   typedef Vector<FieldValueType,
                  itkGetStaticConstMacro(ImageDimension)> FieldPixelType;
 
-  /** Deformation field type. */
+  /** Displacement field type. */
   typedef Image<FieldPixelType,
-                itkGetStaticConstMacro(ImageDimension)> TDeformationField;
+                itkGetStaticConstMacro(ImageDimension)> TDisplacementField;
 
   /** Fixed Image Pyramid Type. */
   typedef RecursiveMultiResolutionPyramidImageFilter<
@@ -115,12 +115,12 @@ public:
   typedef MultiResolutionPDEDeformableRegistration<
       RealImageType,
       RealImageType,
-      TDeformationField, float>    RegistrationType;
+      TDisplacementField, float>    RegistrationType;
 
   typedef VectorMultiResolutionPDEDeformableRegistration<
       VectorImageType,
       VectorImageType,
-      TDeformationField, float>    VectorRegistrationType;
+      TDisplacementField, float>    VectorRegistrationType;
 
   /** UnsignedIntArray type. */
   typedef Array<unsigned int> UnsignedIntArray;
@@ -130,7 +130,7 @@ public:
                      itkGetStaticConstMacro(ImageDimension)> ShrinkFactorsArray;
 
   /** Set the intial deformation field **/
-  itkSetObjectMacro(InitialDeformationField, TDeformationField);
+  itkSetObjectMacro(InitialDisplacementField, TDisplacementField);
 
   /** Set the fixed image. */
   void SetFixedImage(std::vector<ImagePointer> & image)
@@ -179,9 +179,9 @@ public:
   itkSetStringMacro(CheckerBoardFilename);
   itkGetStringMacro(CheckerBoardFilename);
 
-  /** Set Deformation field output file Name */
-  itkSetStringMacro(DeformationFieldOutputName);
-  itkGetStringMacro(DeformationFieldOutputName);
+  /** Set Displacement field output file Name */
+  itkSetStringMacro(DisplacementFieldOutputName);
+  itkGetStringMacro(DisplacementFieldOutputName);
 
   /**Set histogram matching*/
   itkSetMacro(UseHistogramMatching, bool);
@@ -191,7 +191,7 @@ public:
   virtual void Execute();
 
   /** Get the deformation field. */
-  itkGetObjectMacro(DeformationField, TDeformationField);
+  itkGetObjectMacro(DisplacementField, TDisplacementField);
 
   /** Initialize registration at the start of new level. */
   void StartNewLevel();
@@ -217,7 +217,7 @@ public:
   itkSetMacro(InterpolationMode, std::string);
 
   typedef itk::PDEDeformableRegistrationFilter<RealImageType, RealImageType,
-                                               TDeformationField>
+                                               TDisplacementField>
     BaseRegistrationFilterType;
   void SetRegistrationFilter(
     typename BaseRegistrationFilterType::Pointer filter)
@@ -228,7 +228,7 @@ public:
 
   typedef itk::VectorDiffeomorphicDemonsRegistrationFilter<VectorImageType,
                                                            VectorImageType,
-                                                           TDeformationField>
+                                                           TDisplacementField>
     VectorRegistrationFilterType;
   void SetVectorRegistrationFilter(
     typename VectorRegistrationFilterType::Pointer filter)
@@ -250,7 +250,7 @@ private:
 
   void WriteDisplacementComponents();
 
-  typename TDeformationField::Pointer m_InitialDeformationField;
+  typename TDisplacementField::Pointer m_InitialDisplacementField;
   std::vector<ImagePointer> m_FixedImage;
   std::vector<ImagePointer> m_MovingImage;
   std::vector<ImagePointer> m_UnNormalizedMovingImage;
@@ -267,7 +267,7 @@ private:
   ShrinkFactorsArray m_MovingImageShrinkFactors;
   ShrinkFactorsArray m_FixedImageShrinkFactors;
 
-  typename TDeformationField::Pointer m_DeformationField;
+  typename TDisplacementField::Pointer m_DisplacementField;
   std::string      m_FixedLandmarkFilename;
   std::string      m_MovingLandmarkFilename;
   unsigned long    m_Tag;
@@ -275,7 +275,7 @@ private:
   std::string      m_DisplacementBaseName;
   std::string      m_WarpedImageName;
   std::string      m_CheckerBoardFilename;
-  std::string      m_DeformationFieldOutputName;
+  std::string      m_DisplacementFieldOutputName;
   PatternArrayType m_CheckerBoardPattern;
   std::string      m_OutNormalized;
   bool             m_OutDebug;
@@ -289,7 +289,7 @@ private:
 }   // namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "VDemonsRegistrator.txx"
+#include "VDemonsRegistrator.hxx"
 #endif
 
 #endif

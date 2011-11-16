@@ -142,8 +142,25 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
       dynamic_cast<MattesMutualInformationMetricType *>(this->m_CostMetricObject.GetPointer() );
     if( test_MMICostMetric.IsNotNull() )
       {
-      this->m_CostMetricObject->SetNumberOfThreads(1);
-      this->m_Registration->SetNumberOfThreads(1);
+      if( this->m_ForceMINumberOfThreads != 1 )
+        {
+        std::cout << "WARNING USING MAX MMI NUMBER OF THREADS:   " << this->m_ForceMINumberOfThreads << std::endl;
+        }
+      if( this->m_ForceMINumberOfThreads > 0 )
+        {
+        this->m_CostMetricObject->SetNumberOfThreads(this->m_ForceMINumberOfThreads);
+        this->m_Registration->SetNumberOfThreads(this->m_ForceMINumberOfThreads);
+        }
+      else
+        {
+        this->m_CostMetricObject->SetNumberOfThreads(itk::MultiThreader::GetGlobalDefaultNumberOfThreads() );
+        this->m_Registration->SetNumberOfThreads(itk::MultiThreader::GetGlobalDefaultNumberOfThreads() );
+        }
+      }
+    else
+      {
+      this->m_CostMetricObject->SetNumberOfThreads(itk::MultiThreader::GetGlobalDefaultNumberOfThreads() );
+      this->m_Registration->SetNumberOfThreads(itk::MultiThreader::GetGlobalDefaultNumberOfThreads() );
       }
     }
   m_Registration->SetMetric(this->m_CostMetricObject);
@@ -308,6 +325,12 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
   optimizer->SetMaximumStepLength(m_MaximumStepLength);
   optimizer->SetMinimumStepLength(m_MinimumStepLength);
   optimizer->SetNumberOfIterations(m_NumberOfIterations);
+
+  // std::cout << "OPTIMIZER    THREADS USED: " << optimizer->GetNumberOfThreads()                << std::endl;
+  std::cout << "METRIC       THREADS USED: " << this->m_CostMetricObject->GetNumberOfThreads()
+            << " of " << itk::MultiThreader::GetGlobalDefaultNumberOfThreads() <<  std::endl;
+  std::cout << "REGISTRATION THREADS USED: " << this->m_Registration->GetNumberOfThreads()
+            << " of " << itk::MultiThreader::GetGlobalDefaultNumberOfThreads() <<  std::endl;
 
 #if 0
   // if (globalVerbose)

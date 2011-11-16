@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
-  <category>Utilities.BRAINS.Segmentation</category>
+  <category>Utilities.BRAINS</category>
   <title>Segment based on rectangular region of joint histogram (BRAINS)</title>
   <description>This tool creates binary regions based on segmenting multiple image modalitities at once.
   </description>

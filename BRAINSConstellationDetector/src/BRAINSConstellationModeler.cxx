@@ -79,7 +79,7 @@ int main(int argc, char *argv[])
   // /////////////////////////////////////////////////////////////////////////////////////////////
   PARSE_ARGS;
 
-  BRAINSUtils::SetThreadCount(numberOfThreads);
+  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
 
   if( ( inputTrainingList.compare("") == 0 )
       || ( outputModel.compare("") == 0 ) )

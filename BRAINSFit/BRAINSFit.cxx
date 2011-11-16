@@ -163,7 +163,7 @@ int main(int argc, char *argv[])
     }
 #endif
 
-  BRAINSUtils::SetThreadCount(numberOfThreads);
+  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
 
   std::string localInitializeTransformMode = initializeTransformMode;
   // Intially set using the string enumeration
@@ -491,6 +491,7 @@ int main(int argc, char *argv[])
     HelperType::Pointer myHelper = HelperType::New();
     myHelper->SetTransformType(localTransformType);
     myHelper->SetFixedVolume(extractFixedVolume);
+    myHelper->SetForceMINumberOfThreads(forceMINumberOfThreads);
     myHelper->SetMovingVolume(extractMovingVolume);
     myHelper->SetHistogramMatch(histogramMatch);
     myHelper->SetRemoveIntensityOutliers(removeIntensityOutliers);
@@ -564,8 +565,8 @@ int main(int argc, char *argv[])
       {
       typedef float                                                                     VectorComponentType;
       typedef itk::Vector<VectorComponentType, GenericTransformImageNS::SpaceDimension> VectorPixelType;
-      typedef itk::Image<VectorPixelType,  GenericTransformImageNS::SpaceDimension>     DeformationFieldType;
-      resampledImage = GenericTransformImage<MovingVolumeType, FixedVolumeType, DeformationFieldType>(
+      typedef itk::Image<VectorPixelType,  GenericTransformImageNS::SpaceDimension>     DisplacementFieldType;
+      resampledImage = GenericTransformImage<MovingVolumeType, FixedVolumeType, DisplacementFieldType>(
           preprocessedMovingVolume,
           extractFixedVolume,
           NULL,

@@ -16,8 +16,8 @@
 
 =========================================================================*/
 
-#ifndef __itkTensorToAnisotropyImageFilter_txx
-#define __itkTensorToAnisotropyImageFilter_txx
+#ifndef __itkTensorToAnisotropyImageFilter_hxx
+#define __itkTensorToAnisotropyImageFilter_hxx
 
 #include "itkImageRegionIterator.h"
 #include "itkImageRegionConstIterator.h"

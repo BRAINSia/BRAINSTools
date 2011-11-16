@@ -213,7 +213,7 @@ private:
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkOrientScalarImageFilter.txx"
+#include "itkOrientScalarImageFilter.hxx"
 #endif
 
 #endif

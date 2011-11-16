@@ -16,8 +16,8 @@
 
 =========================================================================*/
 
-#ifndef __itkEigenVectorToColorImageFilter_txx
-#define __itkEigenVectorToColorImageFilter_txx
+#ifndef __itkEigenVectorToColorImageFilter_hxx
+#define __itkEigenVectorToColorImageFilter_hxx
 
 #include "itkImageRegionIterator.h"
 #include "itkImageRegionConstIterator.h"

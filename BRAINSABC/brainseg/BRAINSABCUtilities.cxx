@@ -2,7 +2,7 @@
 /*****************************
  * Now call the instantiations
  */
-#include "BRAINSABCUtilities.txx"
+#include "BRAINSABCUtilities.hxx"
 #include "LLSBiasCorrector.h"
 
 template std::vector<FloatImageType::Pointer> DuplicateImageList<FloatImageType>(

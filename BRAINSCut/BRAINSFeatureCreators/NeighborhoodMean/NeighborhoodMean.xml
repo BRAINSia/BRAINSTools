@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
   <executable>
-  <category>Statistics</category>
+  <category>Filtering.FeatureDetection</category>
   <title>Neighborhood Mean</title>
 
   <description>Calculates the mean, for the given neighborhood size, at each voxel of the T1, T2, and FLAIR.</description>

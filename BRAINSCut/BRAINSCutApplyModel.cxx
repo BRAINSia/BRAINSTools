@@ -2,6 +2,12 @@
 #include "FeatureInputVector.h"
 #include "ANNParams.h"
 #include "Utilities.h"
+#include "ApplyModel.h"
+
+#include <itkConnectedComponentImageFilter.h>
+
+#include "itkBinaryMorphologicalClosingImageFilter.h"
+// TODO: consider using itk::LabelMap Hole filling process in ITK4
 
 BRAINSCutApplyModel
 ::BRAINSCutApplyModel( std::string netConfigurationFilename)
@@ -18,6 +24,7 @@ BRAINSCutApplyModel
   SetRhoPhiThetaFromNetConfiguration();
   SetANNModelConfiguration();
   SetGradientSizeFromNetConfiguration();
+  SetANNOutputThresholdFromNetConfiguration();
 
   normalization = GetNormalizationFromNetConfiguration();
 
@@ -89,7 +96,8 @@ BRAINSCutApplyModel
       /* post processing
        * may include hole-filling(closing), thresholding, and more adjustment
        */
-      BinaryTypePointer mask = PostProcessingOfANNContinuousImage( ANNContinuousOutputFilename);
+      BinaryImagePointer mask = PostProcessingOfANNContinuousImage( ANNContinuousOutputFilename,
+                                                                    annOutputThreshold);
 
       std::string roiOutputFilename = GetOutputROIFilename( subject, *roiTyIt );
       itkUtil::WriteImage<BinaryImageType>( mask, roiOutputFilename );
@@ -111,29 +119,36 @@ BRAINSCutApplyModel
     }
   catch( BRAINSCutExceptionStringHandler& e )
     {
-    throw;
+    std::cout << e.Error() << std::endl;
+    exit(EXIT_SUCCESS);
     }
 }
 
-BinaryTypePointer
+BinaryImagePointer
 BRAINSCutApplyModel
-::PostProcessingOfANNContinuousImage( std::string continuousFIlename )
+::PostProcessingOfANNContinuousImage( std::string continuousFilename, scalarType threshold )
 {
-  WorkingImagePointer continuousImage = ReadImageByFilename( continuousFIlename );
+  WorkingImagePointer continuousImage = ReadImageByFilename( continuousFilename );
 
-  /* threshold first */
-  BinaryTypePointer maskVolume;
+  /* threshold */
+  BinaryImagePointer maskVolume;
 
-  maskVolume = ThresholdImage( continuousImage );
+  maskVolume = ThresholdImageAtLower( continuousImage, threshold);
+  itkUtil::WriteImage<BinaryImageType>( maskVolume, continuousFilename + "DEBUGThreshold.nii.gz");
 
-  /* TODO hole filling here */
+  /* Get One label */
+  maskVolume = GetOneConnectedRegion( maskVolume );
+  itkUtil::WriteImage<BinaryImageType>( maskVolume, continuousFilename + "DEBUGOneLargestLabel.nii.gz");
 
+  /* opening and closing to get rid of island and holes */
+  maskVolume = FillHole( maskVolume );
+  itkUtil::WriteImage<BinaryImageType>( maskVolume, continuousFilename + "DEBUGFillHole.nii.gz");
   return maskVolume;
 }
 
-BinaryTypePointer
+BinaryImagePointer
 BRAINSCutApplyModel
-::ThresholdImage( WorkingImagePointer image )
+::ThresholdImageAtLower( WorkingImagePointer image, scalarType thresholdValue  )
 {
   typedef itk::BinaryThresholdImageFilter<WorkingImageType, WorkingImageType> ThresholdFilterType;
   ThresholdFilterType::Pointer thresholder = ThresholdFilterType::New();
@@ -141,11 +156,54 @@ BRAINSCutApplyModel
   thresholder->SetInput( image );
   thresholder->SetInsideValue( 1 );
   thresholder->SetOutsideValue( 0 );
-  thresholder->SetLowerThreshold( annOutputThreshold  );
+  thresholder->SetLowerThreshold( thresholdValue );
   thresholder->Update();
 
-  BinaryTypePointer mask = itkUtil::TypeCast<WorkingImageType, BinaryImageType>( thresholder->GetOutput() );
+  BinaryImagePointer mask = itkUtil::TypeCast<WorkingImageType, BinaryImageType>( thresholder->GetOutput() );
   return mask;
+}
+
+BinaryImagePointer
+BRAINSCutApplyModel
+::ExtractLabel( BinaryImagePointer image, unsigned char thresholdValue  )
+{
+  typedef itk::BinaryThresholdImageFilter<BinaryImageType, BinaryImageType> ThresholdFilterType;
+  ThresholdFilterType::Pointer thresholder = ThresholdFilterType::New();
+
+  thresholder->SetInput( image );
+  thresholder->SetInsideValue( 1 );
+  thresholder->SetOutsideValue( 0 );
+  thresholder->SetUpperThreshold( thresholdValue );
+  thresholder->SetLowerThreshold( thresholdValue );
+  thresholder->Update();
+
+  BinaryImagePointer mask = itkUtil::TypeCast<BinaryImageType, BinaryImageType>( thresholder->GetOutput() );
+  return mask;
+}
+
+BinaryImagePointer
+BRAINSCutApplyModel
+::GetOneConnectedRegion( BinaryImagePointer image )
+{
+  /* relabel images if they are disconnected */
+  typedef itk::ConnectedComponentImageFilter<BinaryImageType, BinaryImageType>
+    ConnectedBinaryImageFilterType;
+  ConnectedBinaryImageFilterType::Pointer relabler = ConnectedBinaryImageFilterType::New();
+
+  relabler->SetInput( image );
+
+  /* relable images from the largest to smallset one */
+  typedef itk::RelabelComponentImageFilter<BinaryImageType, BinaryImageType> RelabelInOrderFilterType;
+  RelabelInOrderFilterType::Pointer relabelInOrder = RelabelInOrderFilterType::New();
+
+  relabelInOrder->SetInput( relabler->GetOutput() );
+  relabelInOrder->Update();
+
+  BinaryImagePointer multipleLabelVolume = relabelInOrder->GetOutput();
+  /* get the label one */
+  BinaryImagePointer resultMask = ExtractLabel( multipleLabelVolume, 1 );
+
+  return resultMask;
 }
 
 void
@@ -153,12 +211,40 @@ BRAINSCutApplyModel
 ::SetANNOutputThresholdFromNetConfiguration()
 {
   annOutputThreshold =
-    BRAINSCutNetConfiguration.Get<ANNParams>("ANNParams")->GetAttribute<FloatValue>("MaskThresh");
+    BRAINSCutNetConfiguration.Get<ApplyModelType>("ApplyModel")->GetAttribute<FloatValue>("MaskThresh");
   if( annOutputThreshold < 0.0F )
     {
     std::string msg = " ANNOutput Threshold cannot be less than zero. \n";
     throw BRAINSCutExceptionStringHandler( msg );
     }
+}
+
+BinaryImagePointer
+BRAINSCutApplyModel
+::FillHole( BinaryImagePointer mask)
+{
+  typedef itk::BinaryBallStructuringElement<BinaryImageType::PixelType, DIMENSION> KernelType;
+  KernelType           ball;
+  KernelType::SizeType ballSize;
+
+  /* Create the structuring element- a disk of radius 2 */
+  ballSize.Fill(2);
+  ball.SetRadius( ballSize );
+  ball.CreateStructuringElement();
+
+  /* Closing */
+  typedef itk::BinaryMorphologicalClosingImageFilter<BinaryImageType,
+                                                     BinaryImageType,
+                                                     KernelType> ClosingFilterType;
+  ClosingFilterType::Pointer closingFilter = ClosingFilterType::New();
+  closingFilter->SetInput( mask );
+  closingFilter->SetKernel( ball );
+  closingFilter->SetForegroundValue(1);
+  closingFilter->SetSafeBorder( true );
+  closingFilter->Update();
+
+  itkUtil::WriteImage<BinaryImageType>(  closingFilter->GetOutput(), "DEBUGCloseed.nii.gz");
+  return closingFilter->GetOutput();
 }
 
 inline void
@@ -186,10 +272,10 @@ BRAINSCutApplyModel
     openCVANN->predict( openCVInputFeature, openCVOutput );
 
     /* insert result to the result output vector */
-    resultOutputVector.insert( pair<int, scalarType>(  ( it->first ),  CV_MAT_ELEM( *openCVOutput,
-                                                                                    scalarType,
-                                                                                    0,
-                                                                                    roiNumber) ) );
+    resultOutputVector.insert( std::pair<int, scalarType>(  ( it->first ),  CV_MAT_ELEM( *openCVOutput,
+                                                                                         scalarType,
+                                                                                         0,
+                                                                                         roiNumber) ) );
     }
 }
 
@@ -293,6 +379,10 @@ BRAINSCutApplyModel
               << std::endl;
     itksys::SystemTools::MakeDirectory( outputDir.c_str() );
     }
+  else
+    {
+    std::cout << " Subject output directory exist " << std::endl;
+    }
   return outputDir;
 }
 
@@ -318,12 +408,13 @@ inline std::string
 BRAINSCutApplyModel
 ::GetOutputROIFilename( DataSet& subject, std::string currentROIName)
 {
-  std::string givenROIName = subject.GetMaskFilenameByType( currentROIName );
+  std::string       givenROIName = subject.GetMaskFilenameByType( currentROIName );
+  const std::string subjectID(subject.GetAttribute<StringValue>("Name") );
 
   if( givenROIName == "" or givenROIName == "na" )
     {
     std::string outputDir =  GetSubjectOutputDirectory( subject );
-    givenROIName = outputDir + "/ANNLabel_" + currentROIName + ".nii.gz";
+    givenROIName = outputDir + "/" + subjectID + "ANNLabel_" + currentROIName + ".nii.gz";
     }
   return givenROIName;
 }

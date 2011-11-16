@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <executable>
-  <category>Segmentation</category>
+  <category>Segmentation.Specialized</category>
   <title>Intra-subject registration, bias Correction, and tissue classification (BRAINS)</title>
   <description>Atlas-based tissue segmentation method.  This is an algorithmic extension of work done by XXXX at UNC and Utah XXXX need more description here.
   </description>

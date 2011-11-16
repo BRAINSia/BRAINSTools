@@ -9,12 +9,12 @@
 #include "itkAffineTransform.h"
 #include "itkLinearInterpolateImageFunction.h"
 #include "itkIO.h"
-#include "itkTransformToDeformationFieldSource.h"
 #include "itkTransform.h"
 #include "itkAffineTransform.h"
 #include "itkScaleVersor3DTransform.h"
 #include "ConvertToRigidAffine.h"
 
+#include <fstream>
 // The following was just copied out of iccdefWarpImage.cc.  Sorry.
 #include "itkImage.h"
 #include "itkImageFileReader.h"
@@ -24,12 +24,9 @@
 #include "itkBSplineInterpolateImageFunction.h"
 #include <itkIO.h>
 #include <metaCommand.h>
-#include "itkImageRegionIterator.h"
-#include "TransformToDeformationField.h"
-#include <itkDeformationFieldJacobianDeterminantFilter.h>
-// #include <itkMultiplyImageFilter.h>
-// #include "Jacobian.h"
-#include <fstream>
+
+#include "TransformToDisplacementField.h"
+#include <itkDisplacementFieldJacobianDeterminantFilter.h>
 
 #ifdef __USE_BRAINS2_INTEGRATION
 #include "iccdefdeformation/Deformation.h"
@@ -82,16 +79,16 @@ ValidationInputParser<TImage>
 
   // TODO:  Need to figure out how to read in the initial deformation field.
   // std::cerr << "About to check for deformation field file " <<
-  // m_InitialDeformationFieldFilename << std::endl;
+  // m_InitialDisplacementFieldFilename << std::endl;
   // std::cerr << "About to check for transform file " <<
   // m_InitialTransformFilename << std::endl;
   // std::cerr << "About to check for Coefficient file" <<
   // m_InitialCoefficientFilename << std::endl;
-  if( m_InitialDeformationFieldFilename != "" )
+  if( m_InitialDisplacementFieldFilename != "" )
     {
-    typedef   itk::ImageFileReader<TDeformationField> FieldReaderType;
+    typedef   itk::ImageFileReader<TDisplacementField> FieldReaderType;
     typename FieldReaderType::Pointer fieldReader = FieldReaderType::New();
-    fieldReader->SetFileName( m_InitialDeformationFieldFilename.c_str() );
+    fieldReader->SetFileName( m_InitialDisplacementFieldFilename.c_str() );
     try
       {
       fieldReader->Update();
@@ -103,11 +100,11 @@ ValidationInputParser<TImage>
       }
     if( this->GetOutDebug() )
       {
-      std::cout << "\nReading Deformation fields.\n";
+      std::cout << "\nReading Displacement fields.\n";
       }
-    m_InitialDeformationField = fieldReader->GetOutput();
-    //  typename ImageType::DirectionType DeformationOrientation;
-    //  DeformationOrientation=deformationField->GetDirection();
+    m_InitialDisplacementField = fieldReader->GetOutput();
+    //  typename ImageType::DirectionType DisplacementOrientation;
+    //  DisplacementOrientation=displacementField->GetDirection();
     }
   else if( m_InitialTransformFilename != "" )
     {
@@ -124,15 +121,18 @@ ValidationInputParser<TImage>
     //
     AddExtraTransformRegister();
 
-    //  #######Now use TransformToDeformationFieldSource
-    typedef itk::TransformToDeformationFieldSource<TDeformationField, double>
-      DeformationFieldGeneratorType;
-    typedef typename DeformationFieldGeneratorType::TransformType TransformType;
+    //  #######Now use TransformToDisplacementFieldSource
+#if (ITK_VERSION_MAJOR < 4)
+    typedef itk::TransformToDeformationFieldSource<TDisplacementField, double> DisplacementFieldGeneratorType;
+#else
+    typedef itk::TransformToDisplacementFieldSource<TDisplacementField, double> DisplacementFieldGeneratorType;
+#endif
+    typedef typename DisplacementFieldGeneratorType::TransformType TransformType;
     // Only a templated base class.
 
     typename TransformType::Pointer trsf = ReadTransformFromDisk(m_InitialTransformFilename);
 
-    typename DeformationFieldGeneratorType::Pointer defGenerator = DeformationFieldGeneratorType::New();
+    typename DisplacementFieldGeneratorType::Pointer defGenerator = DisplacementFieldGeneratorType::New();
     defGenerator->SetOutputSpacing( this->GetTheFixedImage()->GetSpacing() );
     defGenerator->SetOutputOrigin( this->GetTheFixedImage()->GetOrigin() );
     defGenerator->SetOutputDirection( this->GetTheFixedImage()->GetDirection() );
@@ -140,16 +140,16 @@ ValidationInputParser<TImage>
     defGenerator->SetOutputIndex( this->GetTheFixedImage()->GetLargestPossibleRegion().GetIndex() );
     defGenerator->SetTransform(trsf);
     defGenerator->Update();
-    m_InitialDeformationField = defGenerator->GetOutput();
-    // itkUtil::WriteImage<TDeformationField>(m_InitialDeformationField,
+    m_InitialDisplacementField = defGenerator->GetOutput();
+    // itkUtil::WriteImage<TDisplacementField>(m_InitialDisplacementField,
     // "initialDeformationfield.nii.gz");
 #endif
     }
   else if( m_InitialCoefficientFilename != "" )
     {
 #ifdef __USE_BRAINS2_INTEGRATION
-    DeformationFieldFFTType::Pointer mu;        // mu1, mu2, mu3;
-    std::string                      CoeffNameInput(
+    DisplacementFieldFFTType::Pointer mu;        // mu1, mu2, mu3;
+    std::string                       CoeffNameInput(
       m_InitialCoefficientFilename.c_str() );
 
       {
@@ -161,9 +161,9 @@ ValidationInputParser<TImage>
       }
     if( this->GetOutDebug() )
       {
-      std::cout << "\nCreating Deformation fields from Coefficient files\n";
+      std::cout << "\nCreating Displacement fields from Coefficient files\n";
       }
-    m_InitialDeformationField = CreateITKDisplacementFieldFromCoeffs(mu);
+    m_InitialDisplacementField = CreateITKDisplacementFieldFromCoeffs(mu);
 #else
     itkGenericExceptionMacro(<< "ERROR:  InitialCoefficientFilename not supported yet");
 #endif

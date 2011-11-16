@@ -26,7 +26,7 @@ set(BRAINSABCCOMMONLIB_SRCS
   EMSParameters.h
   EMSParameters.cxx
   EMSegmentationFilter.h
-  EMSegmentationFilter.txx
+  EMSegmentationFilter.hxx
   EMSegmentationFilter_float+float.cxx
   AtlasRegistrationMethod_float+float.cxx
   AtlasDefinition.cxx

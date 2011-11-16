@@ -150,7 +150,7 @@ typedef CvANN_MLP_Revision neural_net_type;
 typedef itk::Image<float, 3> InputImageType;
 typedef itk::Image<float, 3> InternalImageType;
 typedef itk::Image<itk::Vector<float,
-                               3>, 3>                     TDeformationField;
+                               3>, 3>                     TDisplacementField;
 typedef itk::Image<itk::CovariantVector<float,
                                         3>, 3>                     GradImageType;
 typedef itk::RecursiveGaussianImageFilter<itk::Image<float,
@@ -202,12 +202,12 @@ extern void SmoothImageWrite(const std::string & InputImageFilename, const float
   * \ingroup Util
   * \short
   *   This function reads a deformation field.
-  * \param DeformationField Deformation Field Poitner
-  * \param DeformationFilename Input Deformation Filename
+  * \param DisplacementField Displacement Field Poitner
+  * \param DisplacementFilename Input Displacement Filename
   * \return Void
   */
-extern void ReadDeformationField(TDeformationField::Pointer & DeformationField,
-                                 const std::string & DeformationFilename);
+extern void ReadDisplacementField(TDisplacementField::Pointer & DisplacementField,
+                                  const std::string & DisplacementFilename);
 
 /**
   * \ingroup Util
@@ -369,7 +369,7 @@ extern void AddROIVectorApply( ProbabilityMapParser * currentROI, DataSet * subj
 
 extern int AddSubjectInputVector(DataSet * subjectSet, NetConfiguration & ANNXMLObject,
                                  const std::string registrationID, const int inputVectorSize,
-                                 const int outputVectorSize, const map<int, std::string>& MapOfROIOrder,
+                                 const int outputVectorSize, const std::map<int, std::string>& MapOfROIOrder,
                                  bool Apply = false);
 
 extern void XYZToSpherical(const itk::Point<float, 3> & LocationWithOriginAtCenterOfImage, float & rho, float & phi,
@@ -458,10 +458,10 @@ extern void PreLandmarkRegisterImage(std::string & MovingImageFilename, const st
                                      const std::string & LandmarkImage, const std::string & LandmarkFixedImage,
                                      const std::string & FixedImageFilename);
 
-extern TDeformationField::Pointer RegisterLandmarksToDeformationField(const std::string & InputImageFilename,
-                                                                      const std::string & InputAtlasFilename,
-                                                                      const std::string & TemplateAtlasFilename,
-                                                                      const std::string & TemplateImageFilename);
+extern TDisplacementField::Pointer RegisterLandmarksToDeformationField(const std::string & InputImageFilename,
+                                                                       const std::string & InputAtlasFilename,
+                                                                       const std::string & TemplateAtlasFilename,
+                                                                       const std::string & TemplateImageFilename);
 
 extern int CreateMITransformFile(const std::string & MovingImageFilename, const std::string & FixedImageFilename,
                                  const std::string & MovingImageToFixedImageRegistrationFilename,
@@ -500,22 +500,22 @@ typename WarperImageType::Pointer ImageWarper(
   std::cout << __LINE__ << "::" << __FILE__ << std::endl;
   typedef float                                        VectorComponentType;
   typedef typename itk::Vector<VectorComponentType, 3> VectorPixelType;
-  typedef typename itk::Image<VectorPixelType,  3>     DeformationFieldType;
+  typedef typename itk::Image<VectorPixelType,  3>     DisplacementFieldType;
 
   // An empty SmartPointer constructor sets up someImage.IsNull() to represent
   // a
   // not-supplied state:
-  typename DeformationFieldType::Pointer DeformationField;
+  typename DisplacementFieldType::Pointer DisplacementField;
   // typename WarperImageType::Pointer ReferenceImage;
   // if there is no *mat file.
   std::cout << __LINE__ << "::" << __FILE__ << std::endl;
   if( !useTransform )    // that is, it's a warp by deformation field:
     {
-    typedef typename itk::ImageFileReader<DeformationFieldType> DefFieldReaderType;
+    typedef typename itk::ImageFileReader<DisplacementFieldType> DefFieldReaderType;
     typename DefFieldReaderType::Pointer fieldImageReader = DefFieldReaderType::New();
     fieldImageReader->SetFileName(RegistrationFilename);
     fieldImageReader->Update();
-    DeformationField = fieldImageReader->GetOutput();
+    DisplacementField = fieldImageReader->GetOutput();
 
     // Resample deformation filed to reference image size Check that
     // deformation
@@ -540,10 +540,10 @@ typename WarperImageType::Pointer ImageWarper(
   const typename std::string pixelType = "short";
 
   typename WarperImageType::Pointer TransformedImage =
-    GenericTransformImage<WarperImageType, WarperImageType, DeformationFieldType>(
+    GenericTransformImage<WarperImageType, WarperImageType, DisplacementFieldType>(
       PrincipalOperandImage,
       ReferenceImage,
-      DeformationField,
+      DisplacementField,
       genericTransform,
       defaultValue,
       interpolationMode,

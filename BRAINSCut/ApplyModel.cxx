@@ -446,7 +446,7 @@ int ApplyModel(NetConfiguration & ANNConfiguration,
        pmi != ROIList->end();
        ++pmi )
     {
-    MapOfROIOrder.insert( pair<int, std::string>( roiCounter, pmi->first) );
+    MapOfROIOrder.insert( std::pair<int, std::string>( roiCounter, pmi->first) );
     roiCounter++;
     }
 

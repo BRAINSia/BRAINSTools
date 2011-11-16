@@ -112,7 +112,7 @@ void AdaptOriginAndDirection( typename TImageType::Pointer image )
 int main( int argc, char *argv[] )
 {
   PARSE_ARGS;
-  BRAINSUtils::SetThreadCount(numberOfThreads);
+  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
 // itk::AddExtraTransformRegister();
 
   const unsigned int Dimension = 3;
@@ -127,15 +127,15 @@ int main( int argc, char *argv[] )
 
   typedef   float                                       VectorComponentType;
   typedef   itk::Vector<VectorComponentType, Dimension> VectorPixelType;
-  typedef   itk::Image<VectorPixelType,  Dimension>     DeformationFieldType;
-  typedef   itk::ImageFileReader<DeformationFieldType>  FieldReaderType;
+  typedef   itk::Image<VectorPixelType,  Dimension>     DisplacementFieldType;
+  typedef   itk::ImageFileReader<DisplacementFieldType> FieldReaderType;
 
   FieldReaderType::Pointer forwardFieldReader = FieldReaderType::New();
   forwardFieldReader->SetFileName( inputForwardDeformationFieldVolume );
 
   try
     {
-    std::cout << "Reading Forward Deformation Field........." << std::endl;
+    std::cout << "Reading Forward Displacement Field........." << std::endl;
     forwardFieldReader->Update();
     }
   catch( itk::ExceptionObject & fe )
@@ -143,15 +143,15 @@ int main( int argc, char *argv[] )
     std::cout << "Field Exception caught ! " << fe << std::endl;
     }
 
-  DeformationFieldType::Pointer forwardDeformationField = forwardFieldReader->GetOutput();
-  // AdaptOriginAndDirection<DeformationFieldType>( forwardDeformationField );
+  DisplacementFieldType::Pointer forwardDeformationField = forwardFieldReader->GetOutput();
+  // AdaptOriginAndDirection<DisplacementFieldType>( forwardDeformationField );
 
   FieldReaderType::Pointer reverseFieldReader = FieldReaderType::New();
   reverseFieldReader->SetFileName( inputReverseDeformationFieldVolume );
 
   try
     {
-    std::cout << "Reading Reverse Deformation Field........." << std::endl;
+    std::cout << "Reading Reverse Displacement Field........." << std::endl;
     reverseFieldReader->Update();
     }
   catch( itk::ExceptionObject & fe )
@@ -159,10 +159,10 @@ int main( int argc, char *argv[] )
     std::cout << "Field Exception caught ! " << fe << std::endl;
     }
 
-  DeformationFieldType::Pointer reverseDeformationField = reverseFieldReader->GetOutput();
-  // AdaptOriginAndDirection<DeformationFieldType>( reverseDeformationField );
+  DisplacementFieldType::Pointer reverseDeformationField = reverseFieldReader->GetOutput();
+  // AdaptOriginAndDirection<DisplacementFieldType>( reverseDeformationField );
 
-  typedef itk::OrientImageFilter<DeformationFieldType, DeformationFieldType> OrientFilterType;
+  typedef itk::OrientImageFilter<DisplacementFieldType, DisplacementFieldType> OrientFilterType;
   OrientFilterType::Pointer orientImageFilter = OrientFilterType::New();
   orientImageFilter->SetInput( reverseDeformationField );
   orientImageFilter->SetDesiredCoordinateDirection( forwardDeformationField->GetDirection() );
@@ -195,20 +195,20 @@ int main( int argc, char *argv[] )
 
   // Define Neighbourhood Iterator for computing the Jacobian on the fly
 
-  typedef itk::ConstantBoundaryCondition<DeformationFieldType>                        boundaryConditionType;
-  typedef itk::ConstNeighborhoodIterator<DeformationFieldType, boundaryConditionType> ConstNeighborhoodIteratorType;
+  typedef itk::ConstantBoundaryCondition<DisplacementFieldType>                        boundaryConditionType;
+  typedef itk::ConstNeighborhoodIterator<DisplacementFieldType, boundaryConditionType> ConstNeighborhoodIteratorType;
   ConstNeighborhoodIteratorType::RadiusType radius;
   radius[0] = 1; radius[1] = 1; radius[2] = 1;
 
-  DeformationFieldType::RegionType region;
+  DisplacementFieldType::RegionType region;
   region.SetSize( forwardDeformationField->GetRequestedRegion().GetSize() );
   ConstNeighborhoodIteratorType bit( radius, forwardDeformationField, region);
 
-  DeformationFieldType::PointType physicalPoint;
-  DeformationFieldType::IndexType indexPoint;
+  DisplacementFieldType::PointType physicalPoint;
+  DisplacementFieldType::IndexType indexPoint;
 
-  typedef double                                                                        CoordRepType;
-  typedef itk::VectorLinearInterpolateImageFunction<DeformationFieldType, CoordRepType> InterpolatorType;
+  typedef double                                                                         CoordRepType;
+  typedef itk::VectorLinearInterpolateImageFunction<DisplacementFieldType, CoordRepType> InterpolatorType;
   InterpolatorType::Pointer interpolator = InterpolatorType::New();
   interpolator->SetInputImage( orientImageFilter->GetOutput() );
 

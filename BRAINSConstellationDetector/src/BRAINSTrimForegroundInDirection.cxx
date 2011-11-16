@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
   // file pointer for opening the setup file
   // /////////////////////////////////////////////////////////////////////////////////////////////
   PARSE_ARGS;
-  BRAINSUtils::SetThreadCount(numberOfThreads);
+  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
   std::cout << "================================================================" << std::endl;
   std::cout << "Processing: " << inputVolume << std::endl;
 

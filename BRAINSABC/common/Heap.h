@@ -74,7 +74,7 @@ template <class T>
 T heapMedian(std::vector<T> & array, unsigned int n);
 
 #ifndef MU_MANUAL_INSTANTIATION
-#include "Heap.txx"
+#include "Heap.hxx"
 #endif
 
 #endif

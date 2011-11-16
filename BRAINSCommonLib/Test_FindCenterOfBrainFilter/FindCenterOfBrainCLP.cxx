@@ -2,7 +2,7 @@
  *  the itkFindCenterOfBrainCLP.h class.
  *
  * As part of this testing, please move as many of the hard-coded
- * debuggging images out of the txx files, and make it so that this
+ * debuggging images out of the hxx files, and make it so that this
  * test program will create those images from the command line.
  *
  * You will have to make some more member variables of the class for

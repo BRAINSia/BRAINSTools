@@ -37,7 +37,7 @@
     <label>Outputs</label>
     <description>Resulting deformed image parameters</description>
 
-    <image reference="inputVolume">
+    <image>
       <name>outputVolume</name>
       <longflag>outputVolume</longflag>
       <description>Resulting deformed image</description>
@@ -70,8 +70,8 @@
     <transform fileExtensions=".nrrd" type="nonlinear" >
       <name>deformationVolume</name>
       <longflag>deformationVolume</longflag>
-      <description>Deformation Field to be used to warp the image</description>
-      <label>Deformation Field</label>
+      <description>Displacement Field to be used to warp the image</description>
+      <label>Displacement Field</label>
       <channel>input</channel>
       <default></default>
     </transform>

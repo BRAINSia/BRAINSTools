@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
   <executable>
-  <category>Statistics</category>
+  <category>Filtering.FeatureDetection</category>
   <title>Canny Edge Detection</title>
 
   <description>Get the distance from a voxel to the nearest voxel of a given tissue type.</description>

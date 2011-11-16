@@ -1,94 +1,94 @@
 /*=========================================================================
  *
- *  Program:   Insight Segmentation & Registration Toolkit
- *  Module:    $RCSfile: itkDiffeomorphicDemonsRegistrationFilter.h,v $
- *  Language:  C++
- *  Date:      $Date: 2008-07-05 00:07:02 $
- *  Version:   $Revision: 1.1 $
+ *  Copyright Insight Software Consortium
  *
- *  Copyright (c) Insight Software Consortium. All rights reserved.
- *  See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *  This software is distributed WITHOUT ANY WARRANTY; without even
- *  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- *  PURPOSE.  See the above copyright notices for more information.
+ *         http://www.apache.org/licenses/LICENSE-2.0.txt
  *
- *  =========================================================================*/
-
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ *=========================================================================*/
 #ifndef __itkVectorDiffeomorphicDemonsRegistrationFilter_h
 #define __itkVectorDiffeomorphicDemonsRegistrationFilter_h
 
 #include "itkPDEDeformableRegistrationFilter.h"
 #include "itkVectorESMDemonsRegistrationFunction.h"
 
+#if (ITK_VERSION_MAJOR < 4)
 #include "itkMultiplyByConstantImageFilter.h"
 #include "itkExponentialDeformationFieldImageFilter.h"
-#include "itkWarpVectorImageFilter.h"
-#include "itkVectorLinearInterpolateNearestNeighborExtrapolateImageFunction.h"
-#include "itkAddImageFilter.h"
+#else
+#include "itkMultiplyImageFilter.h"
+#include "itkExponentialDisplacementFieldImageFilter.h"
+#endif
 
 namespace itk
 {
 /** \class DiffeomorphicDemonsRegistrationFilter
-  * \brief Deformably register two images using a diffeomorphic demons
-  *algorithm.
-  *
-  * This class was contributed by Tom Vercauteren, INRIA & Mauna Kea
-  *Technologies,
-  * based on a variation of the DemonsRegistrationFilter. The basic modification
-  * is to use diffeomorphism exponentials.
-  *
-  * See T. Vercauteren, X. Pennec, A. Perchant and N. Ayache,
-  * "Non-parametric Diffeomorphic Image Registration with the Demons Algorithm",
-  * Proc. of MICCAI 2007.
-  *
-  * DiffeomorphicDemonsRegistrationFilter implements the demons deformable
-  *algorithm that
-  * register two images by computing the deformation field which will map a
-  * moving image onto a fixed image.
-  *
-  * A deformation field is represented as a image whose pixel type is some
-  * vector type with at least N elements, where N is the dimension of
-  * the fixed image. The vector type must support element access via operator
-  * []. It is assumed that the vector elements behave like floating point
-  * scalars.
-  *
-  * This class is templated over the fixed image type, moving image type
-  * and the deformation field type.
-  *
-  * The input fixed and moving images are set via methods SetFixedImage
-  * and SetMovingImage respectively. An initial deformation field maybe set via
-  * SetInitialDeformationField or SetInput. If no initial field is set,
-  * a zero field is used as the initial condition.
-  *
-  * The output deformation field can be obtained via methods GetOutput
-  * or GetDeformationField.
-  *
-  * This class make use of the finite difference solver hierarchy. Update
-  * for each iteration is computed in DemonsRegistrationFunction.
-  *
-  * \author Tom Vercauteren, INRIA & Mauna Kea Technologies
-  *
-  * \warning This filter assumes that the fixed image type, moving image type
-  * and deformation field type all have the same number of dimensions.
-  *
-  * This implementation was taken from the Insight Journal paper:
-  * http://hdl.handle.net/1926/510
-  *
-  * \sa DemonsRegistrationFilter
-  * \sa DemonsRegistrationFunction
-  * \ingroup DeformableImageRegistration MultiThreaded
-  */
-template <class TFixedImage, class TMovingImage, class TDeformationField>
+ * \brief Deformably register two images using a diffeomorphic demons algorithm.
+ *
+ * This class was contributed by Tom Vercauteren, INRIA & Mauna Kea Technologies,
+ * based on a variation of the DemonsRegistrationFilter. The basic modification
+ * is to use diffeomorphism exponentials.
+ *
+ * See T. Vercauteren, X. Pennec, A. Perchant and N. Ayache,
+ * "Non-parametric Diffeomorphic Image Registration with the Demons Algorithm",
+ * Proc. of MICCAI 2007.
+ *
+ * DiffeomorphicDemonsRegistrationFilter implements the demons deformable
+ *algorithm that
+ * register two images by computing the deformation field which will map a
+ * moving image onto a fixed image.
+ *
+ * A deformation field is represented as a image whose pixel type is some
+ * vector type with at least N elements, where N is the dimension of
+ * the fixed image. The vector type must support element access via operator
+ * []. It is assumed that the vector elements behave like floating point
+ * scalars.
+ *
+ * This class is templated over the fixed image type, moving image type
+ * and the deformation field type.
+ *
+ * The input fixed and moving images are set via methods SetFixedImage
+ * and SetMovingImage respectively. An initial deformation field maybe set via
+ * SetInitialDisplacementField or SetInput. If no initial field is set,
+ * a zero field is used as the initial condition.
+ *
+ * The output deformation field can be obtained via methods GetOutput
+ * or GetDisplacementField.
+ *
+ * This class make use of the finite difference solver hierarchy. Update
+ * for each iteration is computed in DemonsRegistrationFunction.
+ *
+ * \author Tom Vercauteren, INRIA & Mauna Kea Technologies
+ *
+ * \warning This filter assumes that the fixed image type, moving image type
+ * and deformation field type all have the same number of dimensions.
+ *
+ * This implementation was taken from the Insight Journal paper:
+ * http://hdl.handle.net/1926/510
+ *
+ * \sa DemonsRegistrationFilter
+ * \sa DemonsRegistrationFunction
+ * \ingroup DeformableImageRegistration MultiThreaded
+ */
+template <class TFixedImage, class TMovingImage, class TDisplacementField>
 class ITK_EXPORT VectorDiffeomorphicDemonsRegistrationFilter :
   public         PDEDeformableRegistrationFilter<TFixedImage, TMovingImage,
-                                                 TDeformationField>
+                                                 TDisplacementField>
 {
 public:
   /** Standard class typedefs. */
   typedef VectorDiffeomorphicDemonsRegistrationFilter Self;
   typedef PDEDeformableRegistrationFilter<
-      TFixedImage, TMovingImage, TDeformationField>      Superclass;
+      TFixedImage, TMovingImage, TDisplacementField>      Superclass;
   typedef SmartPointer<Self>       Pointer;
   typedef SmartPointer<const Self> ConstPointer;
 
@@ -109,30 +109,35 @@ public:
   typedef typename MovingImageType::Pointer      MovingImagePointer;
   typedef typename MovingImageType::ConstPointer MovingImageConstPointer;
 
-  /** Deformation field type. */
+  /** Displacement field type. */
+#if (ITK_VERSION_MAJOR < 4)
+  typedef typename Superclass::DeformationFieldType    DisplacementFieldType;
+  typedef typename Superclass::DeformationFieldPointer DisplacementFieldPointer;
+#else
+  typedef typename Superclass::DisplacementFieldType    DisplacementFieldType;
+  typedef typename Superclass::DisplacementFieldPointer DisplacementFieldPointer;
+#endif
+#ifdef ITKV3_COMPATIBILITY
   typedef typename Superclass::DeformationFieldType    DeformationFieldType;
   typedef typename Superclass::DeformationFieldPointer DeformationFieldPointer;
+#endif
 
   /** FiniteDifferenceFunction type. */
-  typedef typename
-    Superclass::FiniteDifferenceFunctionType FiniteDifferenceFunctionType;
+  typedef typename Superclass::FiniteDifferenceFunctionType FiniteDifferenceFunctionType;
 
   /** Take timestep type from the FiniteDifferenceFunction. */
-  typedef typename
-    FiniteDifferenceFunctionType::TimeStepType TimeStepType;
+  typedef typename FiniteDifferenceFunctionType::TimeStepType TimeStepType;
 
   /** DemonsRegistrationFilterFunction type. */
   typedef VectorESMDemonsRegistrationFunction<FixedImageType, MovingImageType,
-                                              DeformationFieldType>
-    DemonsRegistrationFunctionType;
+                                              DisplacementFieldType> DemonsRegistrationFunctionType;
 
-  typedef typename
-    DemonsRegistrationFunctionType::GradientType GradientType;
+  typedef typename DemonsRegistrationFunctionType::GradientType GradientType;
 
   /** Get the metric value. The metric value is the mean square difference
-    * in intensity between the fixed image and transforming moving image
-    * computed over the the overlapping region between the two images.
-    * This value is calculated for the current iteration */
+   * in intensity between the fixed image and transforming moving image
+   * computed over the the overlapping region between the two images.
+   * This value is calculated for the current iteration */
   virtual double GetMetric() const;
 
   virtual const double & GetRMSChange() const;
@@ -142,22 +147,22 @@ public:
   virtual GradientType GetUseGradientType() const;
 
   /** Use a first-order approximation of the exponential.
-    *  This amounts to using an update rule of the type
-    *  s <- s o (Id + u) instead of s <- s o exp(u) */
+   *  This amounts to using an update rule of the type
+   *  s <- s o (Id + u) instead of s <- s o exp(u) */
   itkSetMacro(UseFirstOrderExp, bool);
-  itkGetMacro(UseFirstOrderExp, bool);
+  itkGetConstMacro(UseFirstOrderExp, bool);
   itkBooleanMacro(UseFirstOrderExp);
 
   /** Set/Get the threshold below which the absolute difference of
-    * intensity yields a match. When the intensities match between a
-    * moving and fixed image pixel, the update vector (for that
-    * iteration) will be the zero vector. Default is 0.001. */
+   * intensity yields a match. When the intensities match between a
+   * moving and fixed image pixel, the update vector (for that
+   * iteration) will be the zero vector. Default is 0.001. */
   virtual void SetIntensityDifferenceThreshold(double);
 
   virtual double GetIntensityDifferenceThreshold() const;
 
   /** Set/Get the maximum length in terms of pixels of
-    *  the vectors in the update buffer. */
+   *  the vectors in the update buffer. */
   virtual void SetMaximumUpdateStepLength(double);
 
   virtual double GetMaximumUpdateStepLength() const;
@@ -174,54 +179,67 @@ protected:
   virtual void InitializeIteration();
 
   /** This method allocates storage in m_UpdateBuffer.  It is called from
-    * FiniteDifferenceFilter::GenerateData(). */
+   * FiniteDifferenceFilter::GenerateData(). */
   virtual void AllocateUpdateBuffer();
 
   /** Apply update. */
+#if (ITK_VERSION_MAJOR < 4)
+  // This is for meeting the virutal function signature for ITKv3 polymorphic heirarchy
   virtual void ApplyUpdate(TimeStepType dt);
 
+#else
+  virtual void ApplyUpdate(const TimeStepType& dt);
+
+#endif
+
+  /** override to do nothing since by definition input image spaces
+   *  won't match
+   */
+  virtual void VerifyInputInformation();
+
 private:
-  // purposefully not implemented
-  VectorDiffeomorphicDemonsRegistrationFilter(const Self &);
-  void operator=(const Self &);                              // purposely not
+  VectorDiffeomorphicDemonsRegistrationFilter(const Self &); // purposefully not
+  // implemented
+  void operator=(const Self &);                        // purposely not
 
   // implemented
 
-  /** Downcast the DifferenceFunction using a dynamic_cast to ensure that it is
-   * of the correct type.
-    * this method will throw an exception if the function is not of the expected
-    *type. */
+  /** Downcast the DifferenceFunction using a dynamic_cast to ensure that it is of the correct type.
+   * this method will throw an exception if the function is not of the expected type. */
   DemonsRegistrationFunctionType *  DownCastDifferenceFunctionType();
 
-  const DemonsRegistrationFunctionType *  DownCastDifferenceFunctionType()
-  const;
+  const DemonsRegistrationFunctionType *  DownCastDifferenceFunctionType() const;
 
   /** Exp and composition typedefs */
-  typedef MultiplyByConstantImageFilter<
-      DeformationFieldType,
-      TimeStepType, DeformationFieldType>                MultiplyByConstantType;
+  typedef MultiplyByConstantImageFilter<DisplacementFieldType,
+                                        TimeStepType,
+                                        DisplacementFieldType>                              MultiplyByConstantType;
 
+#if (ITK_VERSION_MAJOR < 4)
   typedef ExponentialDeformationFieldImageFilter<
-      DeformationFieldType, DeformationFieldType>        FieldExponentiatorType;
+      DisplacementFieldType, DisplacementFieldType>        FieldExponentiatorType;
+#else
+  typedef ExponentialDisplacementFieldImageFilter<
+      DisplacementFieldType, DisplacementFieldType>        FieldExponentiatorType;
+#endif
 
   typedef WarpVectorImageFilter<
-      DeformationFieldType,
-      DeformationFieldType, DeformationFieldType>        VectorWarperType;
+      DisplacementFieldType,
+      DisplacementFieldType, DisplacementFieldType>        VectorWarperType;
 
   typedef VectorLinearInterpolateNearestNeighborExtrapolateImageFunction<
-      DeformationFieldType, double>                      FieldInterpolatorType;
+      DisplacementFieldType, double>                      FieldInterpolatorType;
 
   typedef AddImageFilter<
-      DeformationFieldType,
-      DeformationFieldType, DeformationFieldType>        AdderType;
+      DisplacementFieldType,
+      DisplacementFieldType, DisplacementFieldType>        AdderType;
 
-  typedef typename MultiplyByConstantType::Pointer MultiplyByConstantPointer;
-  typedef typename FieldExponentiatorType::Pointer FieldExponentiatorPointer;
-  typedef typename VectorWarperType::Pointer       VectorWarperPointer;
-  typedef typename FieldInterpolatorType::Pointer  FieldInterpolatorPointer;
-  typedef typename FieldInterpolatorType::OutputType
-    FieldInterpolatorOutputType;
-  typedef typename AdderType::Pointer AdderPointer;
+  typedef typename MultiplyByConstantType::Pointer   MultiplyByConstantPointer;
+  typedef typename FieldExponentiatorType::Pointer   FieldExponentiatorPointer;
+  typedef typename VectorWarperType::Pointer         VectorWarperPointer;
+  typedef typename FieldInterpolatorType::Pointer    FieldInterpolatorPointer;
+  typedef typename FieldInterpolatorType::OutputType FieldInterpolatorOutputType;
+  typedef typename AdderType::Pointer                AdderPointer;
 
   MultiplyByConstantPointer m_Multiplier;
   FieldExponentiatorPointer m_Exponentiator;
@@ -232,7 +250,7 @@ private:
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkVectorDiffeomorphicDemonsRegistrationFilter.txx"
+#include "itkVectorDiffeomorphicDemonsRegistrationFilter.hxx"
 #endif
 
 #endif

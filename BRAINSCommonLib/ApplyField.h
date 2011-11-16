@@ -10,7 +10,7 @@
 
 namespace itk
 {
-template <typename TDeformationField, typename TInputImage,
+template <typename TDisplacementField, typename TInputImage,
           typename TOutputImage>
 class ApplyField : public Object
 {
@@ -41,7 +41,7 @@ public:
   itkSetMacro(DefaultPixelValue,  PixelType);
   itkGetMacro(DefaultPixelValue,  PixelType);
 
-  itkSetObjectMacro(DeformationField, TDeformationField);
+  itkSetObjectMacro(DisplacementField, TDisplacementField);
 
   void Execute();
 
@@ -53,7 +53,7 @@ protected:
 private:
   typename InputImageType::Pointer m_InputImage;
   typename OutputImageType::Pointer m_OutputImage;
-  typename TDeformationField::Pointer m_DeformationField;
+  typename TDisplacementField::Pointer m_DisplacementField;
   PixelType m_DefaultPixelValue;
 };
 }

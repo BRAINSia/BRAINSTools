@@ -23,6 +23,9 @@ mark_as_advanced(BRAINSTools_SUPERBUILD)
 option(BRAINSTools_USE_QT "Find and use Qt with VTK to build GUI Tools" OFF)
 mark_as_advanced(BRAINSTools_USE_QT)
 
+option(BRAINSTools_INSTALL_DEVELOPMENT "Install development support include and libraries for external packages." OFF)
+mark_as_advanced(BRAINSTools_INSTALL_DEVELOPMENT)
+
 #-----------------------------------------------------------------------------
 # Superbuild script
 #-----------------------------------------------------------------------------

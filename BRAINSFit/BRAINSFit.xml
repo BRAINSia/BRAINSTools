@@ -396,7 +396,7 @@
       <longflag>removeIntensityOutliers</longflag>
       <label>Remove Intensity Outliers value at one tail</label>
       <description>The half percentage to decide outliers of image intensities. The default value is zero, which means no outlier removal. If the value of 0.005 is given, the moduel will throw away 0.005 % of both tails, so 0.01% of intensities in total would be ignored in its statistic calculation. </description>
-      <default>0.0F</default>
+      <default>0.0</default>
     </double>
   </parameters>
   <!-- -->
@@ -477,8 +477,15 @@
       <name>numberOfThreads</name>
       <longflag deprecatedalias="debugNumberOfThreads" >numberOfThreads</longflag>
       <label>Number Of Threads</label>
-      <description>Explicitly specify the maximum number of threads to use.</description>
+      <description>Explicitly specify the maximum number of threads to use. (default is auto-detected)</description>
       <default>-1</default>
+    </integer>
+    <integer>
+      <name>forceMINumberOfThreads</name>
+      <longflag>forceMINumberOfThreads</longflag>
+      <label>Buggy MI metric Number Of Threads</label>
+      <description>Force the the maximum number of threads to use for non thread safe MI metric.  CAUTION: Inconsistent results my arise!</description>
+      <default>1</default>
     </integer>
 
     <integer>

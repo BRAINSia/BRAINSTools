@@ -53,16 +53,16 @@ typedef std::vector<WorkingImagePointer> WorkingImageVectorType;
 /* Deformations */
 typedef float                                         DeformationScalarType;
 typedef itk::Vector<DeformationScalarType, DIMENSION> DeformationPixelType;
-typedef itk::Image<DeformationPixelType, DIMENSION>   DeformationFieldType;
+typedef itk::Image<DeformationPixelType, DIMENSION>   DisplacementFieldType;
 
 typedef WorkingImageType::IndexType WorkingIndexType;
 
 typedef std::vector<WorkingPixelType> InputVectorType;
 typedef std::vector<WorkingPixelType> OutputVectorType;
 
-typedef map<int, InputVectorType>  InputVectorMapType; // < index ,feature vector > pair
-typedef map<int, OutputVectorType> OutputVectorMapType;
-typedef map<int, scalarType>       PredictValueMapType;
+typedef std::map<int, InputVectorType>  InputVectorMapType; // < index ,feature vector > pair
+typedef std::map<int, OutputVectorType> OutputVectorMapType;
+typedef std::map<int, scalarType>       PredictValueMapType;
 
 const WorkingImageType::IndexType ConstantHashIndexSize = {{255, 255, 255}};
 /*
@@ -72,6 +72,9 @@ const WorkingImageType::IndexType ConstantHashIndexSize = {{255, 255, 255}};
 class BRAINSCutPrimary
 {
 public:
+  BRAINSCutPrimary()
+  {
+  };
   BRAINSCutPrimary(std::string netConfigurationFilename);
 
   void SetNetConfiguration();
@@ -114,8 +117,8 @@ public:
 
   bool GetNormalizationFromNetConfiguration();
 
-  /* Deformation Functions */
-  inline DeformationFieldType::Pointer GetDeformationField( std::string filename);
+  /* Displacement Functions */
+  inline DisplacementFieldType::Pointer GetDeformationField( std::string filename);
 
   inline GenericTransformType::Pointer GetGenericTransform( std::string filename);
 

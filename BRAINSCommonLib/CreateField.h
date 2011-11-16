@@ -73,20 +73,20 @@ public:
   typedef Vector<float,
                  itkGetStaticConstMacro(ImageDimension)> FieldPixelType;
   typedef Image<FieldPixelType,
-                itkGetStaticConstMacro(ImageDimension)> TDeformationField;
+                itkGetStaticConstMacro(ImageDimension)> TDisplacementField;
   typedef RecursiveMultiResolutionPyramidImageFilter<FixedImageType,
                                                      FixedImageType>                         FixedImagePyramidType;
   typedef RecursiveMultiResolutionPyramidImageFilter<MovingImageType,
                                                      MovingImageType>                        MovingImagePyramidType;
   typedef MultiResolutionPDEDeformableRegistration<FixedImageType,
-                                                   MovingImageType, TDeformationField>     RegistrationType;
+                                                   MovingImageType, TDisplacementField>     RegistrationType;
 
   typedef Array<unsigned int>
     UnsignedIntArray;
   itkSetClampMacro( NumberOfLevels, unsigned short, 1,
                     NumericTraits<unsigned short>::max() );
   itkSetMacro(NumberOfIterations, UnsignedIntArray);
-  itkGetObjectMacro(DeformationField, TDeformationField);
+  itkGetObjectMacro(DisplacementField, TDisplacementField);
   void StartNewLevel();
 
   void Execute();
@@ -117,7 +117,7 @@ private:
   typename OutputImageType::Pointer m_MovingImage;
   typename FixedImagePyramidType::Pointer m_FixedImagePyramid;
   typename MovingImagePyramidType::Pointer m_MovingImagePyramid;
-  typename TDeformationField::Pointer m_DeformationField;
+  typename TDisplacementField::Pointer m_DisplacementField;
   unsigned long m_Tag;
   typename RegistrationType::Pointer m_Registration;
 

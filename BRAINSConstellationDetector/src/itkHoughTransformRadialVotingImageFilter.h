@@ -312,7 +312,7 @@ private:
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkHoughTransformRadialVotingImageFilter.txx"
+#include "itkHoughTransformRadialVotingImageFilter.hxx"
 #endif
 
 #endif

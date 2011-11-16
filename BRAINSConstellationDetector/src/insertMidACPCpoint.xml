@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
-  <category>
-  insertMidACPCpoint 
-  </category>
-  <title>
-  Inserting midACPC landmark
-  </title>
+  <category>Utilities.BRAINS</category>
+  <title>MidACPC Landmark Insertion</title>
   <description>
   This program gets a landmark fcsv file and adds a new landmark as the midpoint between AC and PC points to the output landmark fcsv file	
   </description>

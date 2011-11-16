@@ -72,7 +72,7 @@ private:  /* define methods available only to this class */
 }   // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkApplyMaskImageFilter.txx"
+#include "itkApplyMaskImageFilter.hxx"
 #endif
 
 #endif

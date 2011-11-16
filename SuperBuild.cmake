@@ -66,7 +66,7 @@ option(USE_SYSTEM_VTK "Build using an externally defined version of VTK" OFF)
 
 set(ITK_EXTERNAL_NAME ITKv${ITK_VERSION_MAJOR})
 
-set(BRAINSTools_DEPENDENCIES VTK ${ITK_EXTERNAL_NAME} SlicerExecutionModel)
+set(BRAINSTools_DEPENDENCIES ${ITK_EXTERNAL_NAME} SlicerExecutionModel)
 
 if(BUILD_STYLE_UTILS)
   list(APPEND BRAINSTools_DEPENDENCIES Cppcheck KWStyle Uncrustify)
@@ -76,8 +76,13 @@ if(USE_BRAINSABC OR USE_BRAINSCut)
   list(APPEND BRAINSTools_DEPENDENCIES ReferenceAtlas)
 endif()
 
+#if(USE_BRAINSABC OR BRAINS_DEBUG_IMAGE_WRITE)
+if(BRAINS_DEBUG_IMAGE_WRITE OR USE_GTRACT)
+  list(APPEND BRAINSTools_DEPENDENCIES VTK)
+endif()
+
 if(USE_BRAINSCut)
-  list(APPEND BRAINSTools_DEPENDENCIES ReferenceANNModels OpenCV)
+  list(APPEND BRAINSTools_DEPENDENCIES OpenCV)
 endif()
 
 #-----------------------------------------------------------------------------
@@ -146,6 +151,10 @@ list(APPEND ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS
   BUILDNAME:STRING
   )
 
+if(USE_BRAINSCut)
+  list(APPEND ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS OpenCV_DIR:PATH)
+endif()
+
 _expand_external_project_vars()
 set(COMMON_EXTERNAL_PROJECT_ARGS ${${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_ARGS})
 
@@ -161,13 +170,19 @@ endif()
 #-----------------------------------------------------------------------------
 SlicerMacroCheckExternalProjectDependency(BRAINSTools)
 
+set(BRAINSTools_CLI_RUNTIME_DESTINATION  bin)
+set(BRAINSTools_CLI_LIBRARY_DESTINATION  lib)
+set(BRAINSTools_CLI_ARCHIVE_DESTINATION  lib)
+set(BRAINSTools_CLI_INSTALL_RUNTIME_DESTINATION  bin)
+set(BRAINSTools_CLI_INSTALL_LIBRARY_DESTINATION  lib)
+set(BRAINSTools_CLI_INSTALL_ARCHIVE_DESTINATION  lib)
 #-----------------------------------------------------------------------------
 # Inner external project CMake args
 #-----------------------------------------------------------------------------
 list(APPEND ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS
   BUILD_EXAMPLES:BOOL
   BUILD_TESTING:BOOL
-  ITK_VERSION_MAJOR:BOOL
+  ITK_VERSION_MAJOR:STRING
   ITK_DIR:PATH
 
   BRAINSTools_CLI_LIBRARY_OUTPUT_DIRECTORY:PATH
@@ -191,7 +206,10 @@ list(APPEND ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS
   USE_BRAINSTransformConvert:BOOL
   USE_ImageCalculator:BOOL
   USE_DebugImageViewer:BOOL
-  DBRAINS_DEBUG_IMAGE_WRITE:BOOL
+  BRAINS_DEBUG_IMAGE_WRITE:BOOL
+  INSTALL_RUNTIME_DESTINATION:STRING
+  INSTALL_LIBRARY_DESTINATION:STRING
+  INSTALL_ARCHIVE_DESTINATION:STRING
   )
 
 _expand_external_project_vars()

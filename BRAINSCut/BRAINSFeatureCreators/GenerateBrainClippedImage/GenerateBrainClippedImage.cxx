@@ -15,7 +15,7 @@ int
 main(int argc, char * *argv)
 {
   PARSE_ARGS;
-  BRAINSUtils::SetThreadCount(numberOfThreads);
+  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
   typedef float PixelType;
   const unsigned int Dim = 3;
   typedef  itk::Image<PixelType, Dim> ImageType;

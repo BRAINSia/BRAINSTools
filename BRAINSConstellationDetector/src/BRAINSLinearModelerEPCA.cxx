@@ -10,9 +10,9 @@
 int main( int argc, char * argv[] )
 {
   PARSE_ARGS;
-  BRAINSUtils::SetThreadCount(numberOfThreads);
-  LmkDBType baseLmkDB;     // in the format of [landmarkID][datasetID]
-  LmkDBType EPCALmkDB;
+  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
+  LmkDBType                                             baseLmkDB; // in the format of [landmarkID][datasetID]
+  LmkDBType                                             EPCALmkDB;
   CreateLmkDB( inputTrainingList, baseLmkDB, EPCALmkDB );
 
   MatrixMapType MMatrixMap; // Principal components of landmark vector

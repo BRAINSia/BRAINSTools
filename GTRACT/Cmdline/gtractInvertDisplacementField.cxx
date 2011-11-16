@@ -21,7 +21,7 @@
 #include "itkGtractInverseDisplacementFieldImageFilter.h"
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
-#include "gtractInvertDeformationFieldCLP.h"
+#include "gtractInvertDisplacementFieldCLP.h"
 #include "BRAINSThreadControl.h"
 
 int main( int argc, char *argv[] )

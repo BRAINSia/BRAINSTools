@@ -5,7 +5,14 @@
 #include "itkIO.h"
 #include "itksys/SystemTools.hxx"
 
-#define DEFINE_DEBUG_IMAGE_COUNTER int fileSequenceNumber = 0
+#define DEFINE_DEBUG_IMAGE_COUNTER \
+  namespace DebugImageWrite        \
+  {                                \
+  int fileSequenceNumber = 0;    \
+  }
+
+namespace DebugImageWrite
+{
 extern int fileSequenceNumber;
 inline std::string twodigits(unsigned int x)
 {
@@ -18,49 +25,41 @@ inline std::string twodigits(unsigned int x)
 
 extern int fileSequenceNumber;
 
-#define DebugOutput(imageType, image)                           \
-    {                                                            \
-    typename imageType::Pointer im = image;                    \
-    std::string fname(__FILE__);                               \
-    fname = itksys::SystemTools::GetFilenameName(fname);       \
-    std::stringstream filename;                                \
-    filename << "DBG_";                                        \
-    filename << twodigits(fileSequenceNumber);                 \
-    filename << "_"                                            \
-             << #image << "_" << fname                         \
-             << "_" << __LINE__ << ".nii.gz";                  \
-    std::cerr << "Writing " << filename.str();                 \
-    itkUtil::WriteImage<imageType>(im, filename.str() );         \
-    ++fileSequenceNumber;                                      \
-    }
+template <typename ImageType>
+void DebugOutput(int LINE,
+                 const char *FILE,
+                 typename ImageType::Pointer img,
+                 int imageIndex = -1,
+                 const char *name = 0)
+{
+  std::string fname(FILE);
 
-#define DebugOutputN(imageType, image, N, name)                      \
-    {                                                               \
-    typename imageType::Pointer im = image;                       \
-    std::string fname(__FILE__);                                  \
-    fname = itksys::SystemTools::GetFilenameName(fname);          \
-    std::stringstream filename;                                   \
-    filename << "DBG_" << twodigits(fileSequenceNumber) << "_"    \
-             << #name << "_" << N << "_" << fname                 \
-             << "_" << __LINE__ << ".nii.gz";                     \
-    std::cerr << "Writing " << filename.str();                    \
-    itkUtil::WriteImage<imageType>(im, filename.str() );            \
-    ++fileSequenceNumber;                                         \
+  fname = itksys::SystemTools::GetFilenameName(fname);
+  std::stringstream filename;
+  filename << "DBG_";
+  filename << twodigits(fileSequenceNumber);
+  filename << "_";
+  filename << name;
+  if( imageIndex != -1 )
+    {
+    filename << twodigits(fileSequenceNumber);
     }
+  filename << "_" << fname
+           << "_" << LINE << ".nii.gz";
+  std::cerr << "Writing " << filename.str() << " "
+            << img.GetPointer() << std::endl;
+  itkUtil::WriteImage<ImageType>(img, filename.str() );
+  ++fileSequenceNumber;
+}
+}
 
-#define DebugOutputWName(imageType, image, name)                    \
-    {                                                               \
-    typename imageType::Pointer im = image;                       \
-    std::string fname(__FILE__);                                  \
-    fname = itksys::SystemTools::GetFilenameName(fname);          \
-    std::stringstream filename;                                   \
-    filename << "DBG_" << twodigits(fileSequenceNumber) << "_"    \
-             << #name "_" << fname                                \
-             << "_" << __LINE__ << ".nii.gz";                     \
-    std::cerr << "Writing " << filename.str();                    \
-    itkUtil::WriteImage<imageType>(im, filename.str() );            \
-    ++fileSequenceNumber;                                         \
-    }
+#define DebugOutput(imageType, image) \
+  DebugImageWrite::DebugOutput<imageType>(__LINE__, __FILE__, image, -1,#image)
+#define DebugOutputN(imageType, image, N, name) \
+  DebugImageWrite::DebugOutput<imageType>(__LINE__, __FILE__, image, N, #name)
+#define DebugOutputWName(imageType, image, name) \
+  DebugImageWrite::DebugOutput<imageType>(__LINE__, __FILE__, image, -1,#name)
+
 #else
 #define DEFINE_DEBUG_IMAGE_COUNTER
 #define DebugOutput(imageType, image)

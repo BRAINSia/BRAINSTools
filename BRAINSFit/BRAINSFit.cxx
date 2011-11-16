@@ -241,6 +241,10 @@ int main(int argc, char *argv[])
       {
       localTransformType.push_back("BSpline");
       }
+    if( useComposite )
+      {
+      localTransformType.push_back("Composite3D");
+      }
     }
   else if( transformType.size() > 0 )
     {

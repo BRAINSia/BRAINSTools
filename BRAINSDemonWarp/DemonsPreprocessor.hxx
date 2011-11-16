@@ -112,7 +112,7 @@ DemonsPreprocessor<TInputImage, TOutputImage>
     histogramfilter->ThresholdAtMeanIntensityOn();
     histogramfilter->Update();
     m_OutputMovingImage  = histogramfilter->GetOutput();
-    DebugOutput(OutputImageType, m_OutputMovingImage)
+    DebugOutput(OutputImageType, m_OutputMovingImage);
     // +DANGER: ALIASING:  m_OutputMovingImage EQ m_UnNormalizedMovingImage by
     // design.
     // Create a copy just to be safe.  This s probably a waste of memory.

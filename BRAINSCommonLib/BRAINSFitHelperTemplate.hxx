@@ -1666,7 +1666,10 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::StartRegistration(void
           }
         }
       }
-
+    else if( currentTransformType == "Composite3D" )
+      {
+      itkGenericExceptionMacro(<< "Composite Transform is not yet Implemented");
+      }
     else
       {
       itkGenericExceptionMacro(

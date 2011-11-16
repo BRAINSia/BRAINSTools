@@ -64,9 +64,10 @@ void DemonsRegistrator<TRealImage, TOutputImage,
                                               CurrentComponentFilename);
       }
     }
-  catch( itk::ExceptionObject & e )
+  catch( itk::ExceptionObject & err )
     {
-    throw;
+    std::cerr << err << std::endl;
+    throw err;
     }
 }
 

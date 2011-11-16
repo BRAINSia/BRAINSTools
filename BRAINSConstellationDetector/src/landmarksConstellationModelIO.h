@@ -311,6 +311,7 @@ public:
     catch( ioErr e )
       {
       std::cerr << "Write failed for " << filename << std::endl;
+      std::cerr << e << std::endl;
       }
     output.close();
   }
@@ -443,6 +444,7 @@ public:
 #ifdef __USE_OFFSET_DEBUGGING_CODE__
       this->debugOffset(&input, "end of file", -1);
 #endif
+      std::cerr << "ioErr " << e << std::endl;
       throw;
       }
     input.close();
@@ -538,7 +540,7 @@ public:
       {
       defineTemplateIndexLocations(this->GetRadius(it2->first), this->GetHeight(it2->first),
                                    this->m_VectorIndexLocations[it2->first]);
-      printf( "%s template size = %d voxels\n", it2->first.c_str(),
+      printf( "%s template size = %u voxels\n", it2->first.c_str(),
               static_cast<unsigned int>( this->m_VectorIndexLocations[it2->first].size() ) );
       if( CreatingModel )
         {

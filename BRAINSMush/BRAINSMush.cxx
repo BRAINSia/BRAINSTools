@@ -539,12 +539,9 @@ void GenerateBrainVolume(ImageType::Pointer & firstImage,
   typedef itk::BinaryThresholdImageFilter<MaskImageType,
                                           MaskImageType> MaskBinaryThresholdFilterType;
 
-  BinaryThresholdFilterType::Pointer threshold =
-    BinaryThresholdFilterType::New();
-  ConnectedComponentFilterType::Pointer filter =
-    ConnectedComponentFilterType::New();
-  RelabelComponentFilterType::Pointer relabel =
-    RelabelComponentFilterType::New();
+  // BinaryThresholdFilterType::Pointer threshold = BinaryThresholdFilterType::New();
+  ConnectedComponentFilterType::Pointer filter = ConnectedComponentFilterType::New();
+  RelabelComponentFilterType::Pointer   relabel = RelabelComponentFilterType::New();
 
   ThresholdFilterType::Pointer LargestFilter = ThresholdFilterType::New();
   LargestFilter->SetOutsideValue(0);

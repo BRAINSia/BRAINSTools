@@ -3,8 +3,19 @@
 #include <fstream>
 #include "BRAINSCutExceptionStringHandler.h"
 
-StreamToRead::ReturnType
-StreamToRead::GetValue(void)
+int
+StreamToRead
+::PrintSelf(std::ostream & os, int indent) const
+{
+  indent += Superclass::PrintSelf(os, indent);
+  os << this->PrintSpaces(indent) << "=== StreamToRead ===" << std::endl;
+  return indent + 2;
+}
+
+StreamToRead
+::StreamToRead(const std::string & name, const std::string & filename) :
+  FileToRead<std::fstream *>(name, filename),
+  m_F(0)
 {
   if( this->m_Filename == "" )
     {
@@ -20,13 +31,21 @@ StreamToRead::GetValue(void)
       }
     delete this->m_F;
     }
-  this->m_F = new StreamType(this->m_Filename.c_str(), std::ifstream::in);
+  this->m_F = new FileStreamType(this->m_Filename.c_str(), std::ifstream::in);
   if( m_F->fail() )
     {
     std::string msg("Can't open ");
     msg += this->m_Filename;
     throw BRAINSCutExceptionStringHandler(msg);
     }
+}
+
+StreamToRead::OutputType
+StreamToRead
+::GetValue() const
+{
+  // this->m_F.clear();              // forget we hit the end of file
+  // this->m_F.seekg(0, ios::beg);   // move to the start of the file
   return this->m_F;
 }
 

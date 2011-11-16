@@ -25,7 +25,7 @@ public:
   {
   }
 
-  virtual bool Verify()
+  virtual bool Verify() const
   {
     bool returnvalue = true;
 

@@ -181,15 +181,18 @@ BRAINSCutGenerateProbability
                 << std::endl;
       }
 
-    float rho, phi, theta;
+      {
+      float rhoValue, phiValue, thetaValue;
+      XYZToSpherical(LocationWithRespectToCenterOfImageInMM, rhoValue, phiValue, thetaValue);
+      rhoit.Set(rhoValue);
+      phiit.Set(phiValue);
+      thetait.Set(thetaValue);
+      }
 
-    XYZToSpherical(LocationWithRespectToCenterOfImageInMM, rho, phi, theta);
-
-    rhoit.Set(rho);
-    phiit.Set(phi);
-    thetait.Set(theta);
-
-    ++it;    ++rhoit;    ++phiit;    ++thetait;
+    ++it;
+    ++rhoit;
+    ++phiit;
+    ++thetait;
     }
 
   std::string RhoMapName = atlasDataSet->GetSpatialLocationFilenameByType("rho");

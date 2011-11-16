@@ -37,6 +37,7 @@ public:
 
   typedef HammerAttributeVectorBase                     Self;
   typedef typename itk::FixedArray<TValueType, VLength> SuperClass;
+  typedef FixedArray<TValueType, VLength>               VectorType;
 
   /** Length constant */
   unsigned int GetLength() const
@@ -52,25 +53,25 @@ public:
 
   /** define interface for computing similarity/difference between two
     * attribute vectors */
-  virtual double ComputeSimilarity(Self & vec2)
+  virtual double ComputeSimilarity(const VectorType & vec2) const
   {
     double d = 1;
 
     for( unsigned int k = 0; k < this->Size(); k++ )
       {
-      double c = static_cast<double>( this->GetElement(k) ) - static_cast<double>( vec2[k] );
+      const double c = static_cast<double>( this->GetElement(k) ) - static_cast<double>( vec2[k] );
       d *= exp(-c * c / 2);
       }
     return d;
   }
 
-  virtual double ComputeDifference(Self & vec2)
+  virtual double ComputeDifference(const VectorType & vec2) const
   {
     double d = 0;
 
     for( unsigned k = 0; k < this->Size(); k++ )
       {
-      double c = static_cast<double>( this->GetElement(k) ) - static_cast<double>( vec2[k] );
+      const double c = static_cast<double>( this->GetElement(k) ) - static_cast<double>( vec2[k] );
       d += c * c;
       }
     return d;

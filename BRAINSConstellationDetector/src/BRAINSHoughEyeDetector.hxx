@@ -241,10 +241,8 @@ BRAINSHoughEyeDetector<TInputImage, TOutputImage>
     // We will determine the left and right of the eyes
     // Assuming that the degradation of the image does not
     // change their relative positions.
-    unsigned int eye1OnLeft = 1;            // eye1 is on left = 1/right = 0
     if( physicalEye1[0] > physicalEye2[0] ) // eye1 is on the left
       {
-      eye1OnLeft = 1;
       for( unsigned int i = 0; i < Dimension; ++i )
         {
         this->m_LE[i] = physicalEye1[i];
@@ -253,7 +251,6 @@ BRAINSHoughEyeDetector<TInputImage, TOutputImage>
       }
     else
       {
-      eye1OnLeft = 0;
       for( unsigned int i = 0; i < Dimension; ++i )
         {
         this->m_LE[i] = physicalEye2[i];   // eye2 is on the left
@@ -299,6 +296,7 @@ BRAINSHoughEyeDetector<TInputImage, TOutputImage>
       image->TransformIndexToPhysicalPoint( stopIndex, physicalStopLocation );
       }
 
+#if 0
     // Compute the bound of image
     double bound[6];
     bound[0] =
@@ -319,6 +317,7 @@ BRAINSHoughEyeDetector<TInputImage, TOutputImage>
     bound[5] =
       physicalStartLocation[2] >= physicalStopLocation[2] ?
       physicalStartLocation[2] : physicalStopLocation[2];
+#endif
 
     // Space coordinate origin -> center of eye centers of input image
     VersorVectorType translation1;

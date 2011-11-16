@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
   ReaderType::Pointer     imageReader = ReaderType::New();
   MaskReaderType::Pointer maskReader = MaskReaderType::New();
 
-  ImageType::Pointer image = ImageType::New();
+  // ImageType::Pointer image = ImageType::New();
 
   imageReader->SetFileName( inputVolume.c_str() );
   maskReader->SetFileName( inputMaskVolume.c_str() );
@@ -75,7 +75,8 @@ int main(int argc, char *argv[])
   catch( itk::ExceptionObject & excep )
     {
     std::cerr << argv[0] << ": exception caught !" << std::endl;
-    return EXIT_FAILURE;
+    std::cerr << excep << std::endl;
+    throw excep;
     }
 
   // Output Dilated Image

@@ -40,7 +40,7 @@ template <class TInputImage, class TOutputImage>
 void
 BlendImageFilter<TInputImage, TOutputImage>
 ::ThreadedGenerateData(const OutputImageRegionType & outputRegionForThread,
-                       int threadId)
+                       ThreadIdType threadId)
 {
   // We use dynamic_cast since inputs are stored as DataObjects.  The
   // ImageToImageFilter::GetInput(int) always returns a pointer to a

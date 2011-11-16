@@ -33,7 +33,9 @@ class ITK_EXPORT HammerTissueAttributeVector :
 {
 public:
 
-  typedef HammerTissueAttributeVector Self;
+  typedef HammerTissueAttributeVector                 Self;
+  typedef HammerAttributeVectorBase<unsigned char, 5> Superclass;
+  typedef Superclass::VectorType                      VectorType;
 
   /** Length constant */
   unsigned int GetLength() const
@@ -49,9 +51,9 @@ public:
 
   /** define interface for computing similarity/difference between two
     * attribute vectors */
-  virtual double ComputeSimilarity(Self & vec2)
+  virtual double ComputeSimilarity(const VectorType & vec2) const
   {
-    if( this->GetEdge() != vec2.GetEdge() )
+    if( this->operator[](0) != vec2.operator[](0) )
       {
       return 0;
       }
@@ -60,23 +62,24 @@ public:
       double sim = 1;
       for( int k = 1; k < 5; k++ )
         {
-        sim *= ( 1.0 - fabs( static_cast<double>( this->operator[](k) ) - static_cast<double>( vec2[k] ) ) / 255.0 );
+        sim *=
+          ( 1.0 - vcl_fabs( static_cast<double>( this->operator[](k) ) - static_cast<double>( vec2[k] ) ) / 255.0 );
         }
       return sim;
       }
   }
 
-  virtual double ComputeDifference(Self & vec2)
+  virtual double ComputeDifference(const VectorType & vec2) const
   {
-    double diff = ComputeSimilarity(vec2);
+    const double diff = ComputeSimilarity(vec2);
 
-    if( diff == 0 )
+    if( diff == 0.0 )
       {
-      return -1;
+      return -1.0;
       }
     else
       {
-      return 1 / diff;
+      return 1.0 / diff;
       }
   }
 

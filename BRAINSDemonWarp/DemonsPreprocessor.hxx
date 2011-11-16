@@ -219,7 +219,8 @@ DemonsPreprocessor<TInputImage, TOutputImage>
     }
   catch( itk::ExceptionObject & err )
     {
-    throw;
+    std::cerr << err << std::endl;
+    throw err;
     }
 
   OutputImagePointer output = BOBFfilter->GetOutput();

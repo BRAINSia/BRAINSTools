@@ -81,11 +81,10 @@ MapHistogramToImage( typename TImageType::Pointer inputImage,
 
   minmaxFilter->SetImage( inputImage );
   minmaxFilter->Compute();
-  const int Image_MAXIMUM = static_cast<const int>(ceil( minmaxFilter->GetMaximum() ) );
-  const int Image_MINIMUM = static_cast<const int>(ceil( minmaxFilter->GetMinimum() ) );
+  const int Image_MAXIMUM = static_cast<int>(ceil( minmaxFilter->GetMaximum() ) );
+  const int Image_MINIMUM = static_cast<int>(ceil( minmaxFilter->GetMinimum() ) );
 
   std::cout << "Maximum Image Intensity :" << Image_MAXIMUM << std::endl;
-
   // Fixed Number of Maximum Number of Intensity
   if( (Image_MAXIMUM - Image_MINIMUM) > MAXIMUM_NUMBER_OF_INTENSITY )
     {
@@ -430,7 +429,7 @@ main(int argc, char *argv[])
 
     const std::string IMAGE_FILENAME1 = GetFilename( inputVolume1);
     const std::string IMAGE_FILENAME2 = GetFilename( inputVolume2);
-    const std::string LABEL_MAP_FILENAME = GetFilename( inputLabelVolume );
+    // const std::string LABEL_MAP_FILENAME = GetFilename( inputLabelVolume );
 
     // - write header line 1: including image names
 

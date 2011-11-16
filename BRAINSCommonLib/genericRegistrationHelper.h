@@ -353,6 +353,11 @@ public:
 
   /** Make a DataObject of the correct type to be used as the specified
     * output. */
+#if (ITK_VERSION_MAJOR < 4)
+  // Nothing to add for ITKv3
+#else
+  using Superclass::MakeOutput;
+#endif
   virtual DataObjectPointer MakeOutput(unsigned int idx);
 
   /** Method to return the latest modified time of this object or

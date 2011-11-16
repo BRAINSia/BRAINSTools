@@ -672,7 +672,6 @@ ComputePosteriors(const std::vector<typename TProbabilityImage::Pointer> & Prior
   const unsigned int numClasses = Priors.size();
   muLogMacro(<< "Computing posteriors at full resolution" << std::endl);
 
-  const typename TProbabilityImage::SizeType size = Priors[0]->GetLargestPossibleRegion().GetSize();
   std::vector<typename TProbabilityImage::Pointer> Posteriors;
   Posteriors.resize(numClasses);
   for( unsigned int iclass = 0; iclass < numClasses; iclass++ )
@@ -959,11 +958,12 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
         probThresh->SetInput(  WarpedPriorsList[i] );
         probThresh->SetInsideValue(1);
         probThresh->SetOutsideValue(0);
-        probThresh->SetLowerThreshold(0.05);  // Need greater than 1 in 20
+        probThresh->SetLowerThreshold(0.05);  // Hueristic: Need greater than 1 in 20
                                               // chance of being this structure
                                               // from the spatial probabilities
-        probThresh->SetUpperThreshold(1e200); // No upper limit needed, values
-                                              // should be between 0 and 1
+        probThresh->SetUpperThreshold( vcl_numeric_limits<typename TProbabilityImage::PixelType>::max() );
+        // No upper limit needed, values
+        // should be between 0 and 1
         probThresh->Update();
         probThreshImage = probThresh->GetOutput();
         if( this->m_DebugLevel > 9 )
@@ -1062,14 +1062,12 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
       { // Ensure that every candidate region has some value
       const unsigned int candiateVectorSize = subjectCandidateRegions.size();
       itk::ImageRegionIteratorWithIndex<ByteImageType>
-      firstCandidateIter(subjectCandidateRegions[0],
-                         subjectCandidateRegions[0]->GetLargestPossibleRegion() );
-      const size_t AllZeroCounts = 0;
+             firstCandidateIter(subjectCandidateRegions[0], subjectCandidateRegions[0]->GetLargestPossibleRegion() );
+      size_t AllZeroCounts = 0;
       while( !firstCandidateIter.IsAtEnd() )
         {
         const typename ByteImageType::IndexType myIndex = firstCandidateIter.GetIndex();
-        bool   AllPixelsAreZero = true;
-        size_t AllZeroCounts = 0;
+        bool AllPixelsAreZero = true;
 //        unsigned int maxPriorRegionIndex = 0;
         typename TProbabilityImage::PixelType maxProbValue = WarpedPriorsList[0]->GetPixel(myIndex);
         for( unsigned int k = 0; ( k < candiateVectorSize ) && AllPixelsAreZero; k++ )
@@ -1442,12 +1440,8 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
           splineGridSize[1] = m_WarpGrid[1];
           splineGridSize[2] = m_WarpGrid[2];
           atlasToSubjectRegistrationHelper->SetSplineGridSize(splineGridSize);
-          atlasToSubjectRegistrationHelper->SetMaxBSplineDisplacement(6.0); //
-                                                                            // Setting
-                                                                            //
-                                                                            // max
-                                                                            //
-                                                                            // displace
+          // Setting max displace
+          atlasToSubjectRegistrationHelper->SetMaxBSplineDisplacement(6.0);
           }
         atlasToSubjectRegistrationHelper->SetCurrentGenericTransform(m_TemplateGenericTransform);
         if( this->m_DebugLevel > 9 )

@@ -240,8 +240,6 @@ int main(int argc, char *argv[])
 
     SImageType::PointType origin;
     origin.Fill(0);
-    SImageType::SpacingType iSpacing  = image->GetSpacing();
-    SImageType::SizeType    iSize        = image->GetLargestPossibleRegion().GetSize();
 
     // This section assumes that the landmarks are defined as
     // ITK compliant physical space

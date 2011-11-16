@@ -83,8 +83,8 @@ int main(int argc, char *argv[])
   ROIFilter->SetThresholdCorrectionFactor(thresholdCorrectionFactor);
   ROIFilter->SetDilateSize(ROIAutoDilateSize);
   ROIFilter->Update();
-  SOImageMaskType::Pointer maskWrapper = ROIFilter->GetSpatialObjectROI();
-  VolumeMaskType::Pointer  MaskImage = ROIFilter->GetOutput();
+  // const SOImageMaskType::Pointer maskWrapper = ROIFilter->GetSpatialObjectROI();
+  VolumeMaskType::Pointer MaskImage = ROIFilter->GetOutput();
 
   if( outputROIMaskVolume != "" )
     {

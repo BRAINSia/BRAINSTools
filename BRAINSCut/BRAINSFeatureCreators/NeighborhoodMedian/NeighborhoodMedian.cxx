@@ -54,6 +54,7 @@ int main(int argc, char *argv[])
   catch( itk::ExceptionObject & excep )
     {
     std::cerr << argv[0] << ": exception caught !" << std::endl;
+    std::cerr << excep;
     return EXIT_FAILURE;
     }
 

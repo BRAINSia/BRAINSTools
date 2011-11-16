@@ -115,11 +115,11 @@ int main(int argc, char *argv[])
   GenericTransformType::Pointer baseTransform = itk::ReadTransformFromDisk(inputTransform);
 
   typedef itk::VectorImage<PixelType, 3> VectorImageType;
-  VectorImageType::Pointer     dwiImage = vectorImageReader->GetOutput();
-  VectorImageType::RegionType  fixedRegion = dwiImage->GetLargestPossibleRegion();
-  VectorImageType::SizeType    fixedSize = fixedRegion.GetSize();
-  VectorImageType::SpacingType fixedSpacing = dwiImage->GetSpacing();
-  VectorImageType::PointType   fixedOrigin = dwiImage->GetOrigin();
+  VectorImageType::Pointer    dwiImage = vectorImageReader->GetOutput();
+  VectorImageType::RegionType fixedRegion = dwiImage->GetLargestPossibleRegion();
+  VectorImageType::SizeType   fixedSize = fixedRegion.GetSize();
+  // const VectorImageType::SpacingType fixedSpacing = dwiImage->GetSpacing();
+  // const VectorImageType::PointType   fixedOrigin = dwiImage->GetOrigin();
 
   fixedSize[3] = 0;
   fixedRegion.SetSize(fixedSize);

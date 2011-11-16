@@ -23,9 +23,9 @@ void
 BRAINSCutTrainModel
 ::InitializeTrainDataSet()
 {
-  std::string ANNVectorFilenamePrefix = GetANNVectorFilenamePrefix();
+  const std::string Local_ANNVectorFilenamePrefix = this->GetANNVectorFilenamePrefix();
 
-  trainingDataSet = new BRAINSCutVectorTrainingSet( ANNVectorFilenamePrefix);
+  trainingDataSet = new BRAINSCutVectorTrainingSet( Local_ANNVectorFilenamePrefix);
   trainingDataSet->ReadHeaderFileInformation();
   trainingDataSet->SetRecordSize();
   trainingDataSet->SetBufferRecordSize();
@@ -88,7 +88,7 @@ BRAINSCutTrainModel
 {
   char tempid[10];
 
-  sprintf( tempid, "%09d", No + 1 );
+  sprintf( tempid, "%09u", No + 1 );
   std::string filename = ANNModelFilenamePrefix + tempid;
 
   myTrainer.save( filename.c_str() );

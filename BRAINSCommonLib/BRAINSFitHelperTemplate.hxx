@@ -607,7 +607,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::FitCommonCode(
   catch( itk::ExceptionObject& err )
     {
     // pass exception to caller
-    throw;
+    throw err;
     }
 
   // Put the transform on the CurrentTransformList
@@ -767,7 +767,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::StartRegistration(void
           if( transformFileType == "VersorRigid3DTransform" )
             {
             const VersorRigid3DTransformType::ConstPointer tempInitializerITKTransform =
-              dynamic_cast<VersorRigid3DTransformType const *const>( m_CurrentGenericTransform.GetPointer() );
+              dynamic_cast<VersorRigid3DTransformType const *>( m_CurrentGenericTransform.GetPointer() );
             if( tempInitializerITKTransform.IsNull() )
               {
               std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
@@ -846,7 +846,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::StartRegistration(void
           if( transformFileType == "VersorRigid3DTransform" )
             {
             const VersorRigid3DTransformType::ConstPointer tempInitializerITKTransform =
-              dynamic_cast<VersorRigid3DTransformType const *const>( m_CurrentGenericTransform.GetPointer() );
+              dynamic_cast<VersorRigid3DTransformType const *>( m_CurrentGenericTransform.GetPointer() );
             if( tempInitializerITKTransform.IsNull() )
               {
               std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
@@ -857,7 +857,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::StartRegistration(void
           else if( transformFileType == "ScaleVersor3DTransform" )
             {
             const ScaleVersor3DTransformType::ConstPointer tempInitializerITKTransform =
-              dynamic_cast<ScaleVersor3DTransformType const *const>( m_CurrentGenericTransform.GetPointer() );
+              dynamic_cast<ScaleVersor3DTransformType const *>( m_CurrentGenericTransform.GetPointer() );
             if( tempInitializerITKTransform.IsNull() )
               {
               std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
@@ -941,7 +941,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::StartRegistration(void
           if( transformFileType == "VersorRigid3DTransform" )
             {
             const VersorRigid3DTransformType::ConstPointer tempInitializerITKTransform =
-              dynamic_cast<VersorRigid3DTransformType const *const>( m_CurrentGenericTransform.GetPointer() );
+              dynamic_cast<VersorRigid3DTransformType const *>( m_CurrentGenericTransform.GetPointer() );
             if( tempInitializerITKTransform.IsNull() )
               {
               std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
@@ -952,7 +952,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::StartRegistration(void
           else if( transformFileType == "ScaleVersor3DTransform" )
             {
             const ScaleVersor3DTransformType::ConstPointer tempInitializerITKTransform =
-              dynamic_cast<ScaleVersor3DTransformType const *const>( m_CurrentGenericTransform.GetPointer() );
+              dynamic_cast<ScaleVersor3DTransformType const *>( m_CurrentGenericTransform.GetPointer() );
             if( tempInitializerITKTransform.IsNull() )
               {
               std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
@@ -963,7 +963,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::StartRegistration(void
           else if( transformFileType == "ScaleSkewVersor3DTransform" )
             {
             const ScaleSkewVersor3DTransformType::ConstPointer tempInitializerITKTransform =
-              dynamic_cast<ScaleSkewVersor3DTransformType const *const>( m_CurrentGenericTransform.GetPointer() );
+              dynamic_cast<ScaleSkewVersor3DTransformType const *>( m_CurrentGenericTransform.GetPointer() );
             if( tempInitializerITKTransform.IsNull() )
               {
               std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
@@ -1045,7 +1045,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::StartRegistration(void
           if( transformFileType == "VersorRigid3DTransform" )
             {
             const VersorRigid3DTransformType::ConstPointer tempInitializerITKTransform =
-              dynamic_cast<VersorRigid3DTransformType const *const>( m_CurrentGenericTransform.GetPointer() );
+              dynamic_cast<VersorRigid3DTransformType const *>( m_CurrentGenericTransform.GetPointer() );
             if( tempInitializerITKTransform.IsNull() )
               {
               std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
@@ -1056,7 +1056,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::StartRegistration(void
           else if( transformFileType == "ScaleVersor3DTransform" )
             {
             const ScaleVersor3DTransformType::ConstPointer tempInitializerITKTransform =
-              dynamic_cast<ScaleVersor3DTransformType const *const>( m_CurrentGenericTransform.GetPointer() );
+              dynamic_cast<ScaleVersor3DTransformType const *>( m_CurrentGenericTransform.GetPointer() );
             if( tempInitializerITKTransform.IsNull() )
               {
               std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
@@ -1067,7 +1067,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::StartRegistration(void
           else if( transformFileType == "ScaleSkewVersor3DTransform" )
             {
             const ScaleSkewVersor3DTransformType::ConstPointer tempInitializerITKTransform =
-              dynamic_cast<ScaleSkewVersor3DTransformType const *const>( m_CurrentGenericTransform.GetPointer() );
+              dynamic_cast<ScaleSkewVersor3DTransformType const *>( m_CurrentGenericTransform.GetPointer() );
             if( tempInitializerITKTransform.IsNull() )
               {
               std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
@@ -1078,7 +1078,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::StartRegistration(void
           else if( transformFileType == "AffineTransform" )
             {
             const AffineTransformType::ConstPointer tempInitializerITKTransform =
-              dynamic_cast<AffineTransformType const *const>( m_CurrentGenericTransform.GetPointer() );
+              dynamic_cast<AffineTransformType const *>( m_CurrentGenericTransform.GetPointer() );
             if( tempInitializerITKTransform.IsNull() )
               {
               std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
@@ -1173,7 +1173,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::StartRegistration(void
           if( transformFileType == "VersorRigid3DTransform" )
             {
             const VersorRigid3DTransformType::ConstPointer tempInitializerITKTransform =
-              dynamic_cast<VersorRigid3DTransformType const *const>( m_CurrentGenericTransform.GetPointer() );
+              dynamic_cast<VersorRigid3DTransformType const *>( m_CurrentGenericTransform.GetPointer() );
             if( tempInitializerITKTransform.IsNull() )
               {
               std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
@@ -1185,7 +1185,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::StartRegistration(void
           else if( transformFileType == "ScaleVersor3DTransform" )
             {
             const ScaleVersor3DTransformType::ConstPointer tempInitializerITKTransform =
-              dynamic_cast<ScaleVersor3DTransformType const *const>( m_CurrentGenericTransform.GetPointer() );
+              dynamic_cast<ScaleVersor3DTransformType const *>( m_CurrentGenericTransform.GetPointer() );
             if( tempInitializerITKTransform.IsNull() )
               {
               std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
@@ -1197,7 +1197,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::StartRegistration(void
           else if( transformFileType == "ScaleSkewVersor3DTransform" )
             {
             const ScaleSkewVersor3DTransformType::ConstPointer tempInitializerITKTransform =
-              dynamic_cast<ScaleSkewVersor3DTransformType const *const>( m_CurrentGenericTransform.GetPointer() );
+              dynamic_cast<ScaleSkewVersor3DTransformType const *>( m_CurrentGenericTransform.GetPointer() );
             if( tempInitializerITKTransform.IsNull() )
               {
               std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
@@ -1209,7 +1209,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::StartRegistration(void
           else if( transformFileType == "AffineTransform" )
             {
             const AffineTransformType::ConstPointer tempInitializerITKTransform =
-              dynamic_cast<AffineTransformType const *const>( m_CurrentGenericTransform.GetPointer() );
+              dynamic_cast<AffineTransformType const *>( m_CurrentGenericTransform.GetPointer() );
             if( tempInitializerITKTransform.IsNull() )
               {
               std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
@@ -1221,7 +1221,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::StartRegistration(void
           else if( transformFileType == "BSplineDeformableTransform" )
             {
             const BSplineTransformType::ConstPointer tempInitializerITKTransform =
-              dynamic_cast<BSplineTransformType const *const>( m_CurrentGenericTransform.GetPointer() );
+              dynamic_cast<BSplineTransformType const *>( m_CurrentGenericTransform.GetPointer() );
             if( tempInitializerITKTransform.IsNull() )
               {
               std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
@@ -1485,7 +1485,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::StartRegistration(void
           if( transformFileType == "VersorRigid3DTransform" )
             {
             const VersorRigid3DTransformType::ConstPointer tempInitializerITKTransform =
-              dynamic_cast<VersorRigid3DTransformType const *const>( m_CurrentGenericTransform.GetPointer() );
+              dynamic_cast<VersorRigid3DTransformType const *>( m_CurrentGenericTransform.GetPointer() );
             if( tempInitializerITKTransform.IsNull() )
               {
               std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
@@ -1497,7 +1497,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::StartRegistration(void
           else if( transformFileType == "ScaleVersor3DTransform" )
             {
             const ScaleVersor3DTransformType::ConstPointer tempInitializerITKTransform =
-              dynamic_cast<ScaleVersor3DTransformType const *const>( m_CurrentGenericTransform.GetPointer() );
+              dynamic_cast<ScaleVersor3DTransformType const *>( m_CurrentGenericTransform.GetPointer() );
             if( tempInitializerITKTransform.IsNull() )
               {
               std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
@@ -1509,7 +1509,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::StartRegistration(void
           else if( transformFileType == "ScaleSkewVersor3DTransform" )
             {
             const ScaleSkewVersor3DTransformType::ConstPointer tempInitializerITKTransform =
-              dynamic_cast<ScaleSkewVersor3DTransformType const *const>( m_CurrentGenericTransform.GetPointer() );
+              dynamic_cast<ScaleSkewVersor3DTransformType const *>( m_CurrentGenericTransform.GetPointer() );
             if( tempInitializerITKTransform.IsNull() )
               {
               std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
@@ -1521,7 +1521,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::StartRegistration(void
           else if( transformFileType == "AffineTransform" )
             {
             const AffineTransformType::ConstPointer tempInitializerITKTransform =
-              dynamic_cast<AffineTransformType const *const>( m_CurrentGenericTransform.GetPointer() );
+              dynamic_cast<AffineTransformType const *>( m_CurrentGenericTransform.GetPointer() );
             if( tempInitializerITKTransform.IsNull() )
               {
               std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
@@ -1533,7 +1533,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::StartRegistration(void
           else if( transformFileType == "BSplineDeformableTransform" )
             {
             const BSplineTransformType::ConstPointer tempInitializerITKTransform =
-              dynamic_cast<BSplineTransformType const *const>( m_CurrentGenericTransform.GetPointer() );
+              dynamic_cast<BSplineTransformType const *>( m_CurrentGenericTransform.GetPointer() );
             if( tempInitializerITKTransform.IsNull() )
               {
               std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;

@@ -128,7 +128,7 @@ int main(int argc, char *argv[])
       char tmpValue[64];
       char tokStr[64];
 
-      sprintf(tmpStr, "DWMRI_gradient_%04d", j);
+      sprintf(tmpStr, "DWMRI_gradient_%04u", j);
       itk::ExposeMetaData<std::string>(currentMetaData, tmpStr, NrrdValue);
       strcpy( tokStr, NrrdValue.c_str() );
       double x = atof( strtok( tokStr, " " ) );

@@ -250,7 +250,6 @@ HammerTissueAttributeVectorFromPartialVolumeImageFilter<TInputImage, TOutputImag
   // Use inputVolume as a reference volume for image information
   //
 
-  typename InputImageType::SpacingType inputSpacing = inputWMVolume->GetSpacing();
   InputRegionType dummyRegion = inputWMVolume->GetLargestPossibleRegion();
   // Create the neighbor
   CreateN1Neighbor();

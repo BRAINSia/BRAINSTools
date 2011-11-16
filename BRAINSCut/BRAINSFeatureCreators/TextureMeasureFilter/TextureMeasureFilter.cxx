@@ -58,8 +58,9 @@ int main( int argc, char *argv[] )
     }
   catch( itk::ExceptionObject & err )
     {
-    std::cout << "Exception Object Caught! "
-              << std::endl;
+    std::cerr << "Exception Object Caught! " << std::endl;
+    std::cerr << err << std::endl;
+    throw err;
     }
 
   /** Convert Type to unsigned char */
@@ -150,8 +151,9 @@ int main( int argc, char *argv[] )
     }
   catch( itk::ExceptionObject & err )
     {
-    std::cout << "Exception Object Caught! "
-              << std::endl;
+    std::cerr << "Exception Object Caught! " << std::endl;
+    std::cerr << err << std::endl;
+    throw err;
     }
 
   /** Get output and display */

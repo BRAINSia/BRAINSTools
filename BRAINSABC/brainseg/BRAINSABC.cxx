@@ -514,8 +514,6 @@ int main(int argc, char * *argv)
     }
   const std::string suffstr
     = std::string("_") + std::string(defaultSuffix) + outext;
-  const std::string metasuffstr
-    = std::string("_") + std::string(defaultSuffix) + std::string(".mha");
 
   muLogMacro(<< "mu::brainseg\n");
   muLogMacro(<< "========================================\n");

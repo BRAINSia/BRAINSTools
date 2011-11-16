@@ -109,7 +109,7 @@ LLSModel
     {
     this->m_H5File = new H5::H5File(this->m_FileName.c_str(), H5F_ACC_TRUNC);
 
-    H5::Group MeansGroup(this->m_H5File->createGroup(LLSModel::m_LLSMeansGroupName) );
+    this->m_H5File->createGroup(LLSModel::m_LLSMeansGroupName);
     for( LLSMeansType::iterator it = this->m_LLSMeans.begin();
          it != this->m_LLSMeans.end();
          it++ )
@@ -120,7 +120,7 @@ LLSModel
       this->WriteVector(curVecName, it->second);
       }
 
-    H5::Group MatricesGroup(this->m_H5File->createGroup(LLSModel::m_LLSMatricesGroupName) );
+    this->m_H5File->createGroup(LLSModel::m_LLSMatricesGroupName);
     for( LLSMatricesType::iterator it = this->m_LLSMatrices.begin();
          it != this->m_LLSMatrices.end();
          it++ )
@@ -131,7 +131,7 @@ LLSModel
       this->WriteMatrix(curMatName, it->second);
       }
 
-    H5::Group SearchRadiiGroup(this->m_H5File->createGroup(LLSModel::m_LLSSearchRadiiGroupName) );
+    this->m_H5File->createGroup(LLSModel::m_LLSSearchRadiiGroupName);
     for( LLSSearchRadiiType::iterator it = this->m_LLSSearchRadii.begin();
          it != this->m_LLSSearchRadii.end();
          it++ )

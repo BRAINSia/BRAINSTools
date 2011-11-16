@@ -38,6 +38,7 @@ public:
   typedef FixedArray<TValueType, VLength> Superclass;
   typedef SmartPointer<Self>              Pointer;
   typedef SmartPointer<const Self>        ConstPointer;
+  typedef FixedArray<TValueType, VLength> VectorType;
 
   /** Length constant */
   itkStaticConstMacro(Length, unsigned int, VLength);
@@ -65,35 +66,35 @@ public:
 
   /** define interface for computing similarity/difference between two
     * attribute vectors */
-  virtual double ComputeSimilarity(Self & vec2)
+  virtual double ComputeSimilarity(const VectorType & vec2) const
   {
     double diff = 0;
     double mag1 = 0;
     double mag2 = 0;
 
-    for( int k = 0; k < Length; k++ )
+    for( unsigned int k = 0; k < Length; k++ )
       {
-      double a = static_cast<double>( this->operator[](k) );
-      double b = static_cast<double>( vec2[k] );
+      const double a = static_cast<double>( this->operator[](k) );
+      const double b = static_cast<double>( vec2[k] );
       diff += ( a - b ) * ( a - b );
       mag1 += a * a;
       mag2 += b * b;
       }
-    diff /= sqrt(mag1 * mag2);
-    return asin(diff);
+    diff /= vcl_sqrt(mag1 * mag2);
+    return vcl_asin(diff);
   }
 
-  virtual double ComputeDifference(Self & vec2)
+  virtual double ComputeDifference(const VectorType & vec2) const
   {
     double diff = 0;
 
-    for( int k = 0; k < Length; k++ )
+    for( unsigned int k = 0; k < Length; k++ )
       {
-      double a = static_cast<double>( this->operator[](k) );
-      double b = static_cast<double>( vec2[k] );
+      const double a = static_cast<double>( this->operator[](k) );
+      const double b = static_cast<double>( vec2[k] );
       diff += ( a - b ) * ( a - b );
       }
-    return sqrt(diff);
+    return vcl_sqrt(diff);
   }
 
 protected:

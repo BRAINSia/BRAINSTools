@@ -70,7 +70,7 @@ ICCPlot <- function( man, dt )
     manData<-rbind( manData, man[i] );
   }
 
-  require(psy);
+  require("psy");
 
   ICCTable      <- array( 0, c(2,nrow(dt) ) );
 

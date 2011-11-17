@@ -3,13 +3,15 @@
 ##     - List of Mask ( name )
 ##     - Output xml file name for xml file
 ##     - Training Model Directory ( for Registration/ProbabilityMap/Model output )
+##     - BRAINS build Directory
 
-if [ $# != 4 ]; then
+if [ $# != 5 ]; then
   echo "Incorrect Number of Argument"  
   echo "Usage::"  
-  echo "$0 [ListFilename] [ROIListFilename] [OutputXMLFile] [HN]"
+  echo "$0 [ListFilename] [ROIListFilename] [OutputXMLFile] [HN] [BRAINS Build Dir]"
   exit 1;
 fi
+
 LISTofDataDirectory=$1;
 LISTofMask=$2;
 OutputXMLFile=$3
@@ -23,29 +25,25 @@ InputVectorDirectory="$ModelDirectory/InputVectors/"
 TrainingVectorDirectory="$ModelDirectory/TrainedModels${ANNHN}/"
 ProbabilityMapDirectory="$ModelDirectory/ProbabilityMaps/"
 
-mkdir $InputVectorDirectory
-mkdir $TrainingVectorDirectory
-mkdir $ProbabilityMapDirectory
+mkdir -p $InputVectorDirectory
+mkdir -p $TrainingVectorDirectory
+mkdir -p $ProbabilityMapDirectory
 
-SpatialLocationDirectory="/hjohnson/HDNI/PREDICT_TRAINING/regina_ann/TrainingModels/3T_DataSet_2011May/ProbabilityMaps/T1_BSpline_ROIWithMay04/"
+## TODO Move these to the atlas Dir( under BRAINSCut build or something)
+SpatialLocationDirectory="$BRAINSBuild/../ANN/"
 
+TemplateDirectory="$BRAINSBuild/ReferenceAtlas-build/Atlas/Atlas_20110701/"
 
 InputVectorFilename="${ModelDate}InputVector.txt"
 TrainingModelFilename="${ModelDate}ANNModel.txt"
 DeformTargetImage="T1";
-TemplateDirectory="/ipldev//scratch/eunyokim/src/BRAINS-COMPILE/src/bin/Atlas/Atlas_20110701/"
+
 
 InputVectorGradientSize="1";
 
 ANNIteration="100"
 DeformationDirectory="ANNDeformation${ModelDate}"
 RegistrationID="BSpline_ROI"
-
-
-
-
-
-
 
 ##
 ## write header 
@@ -167,9 +165,7 @@ do
 
   # 
   # generate directory
-  if [ ! -d ${currentSubjectDirectory}/$DeformationDirectory/ ]; then
-    mkdir ${currentSubjectDirectory}/$DeformationDirectory/
-  fi
+  mkdir -p ${currentSubjectDirectory}/$DeformationDirectory/
   #
   # Add Regisration parameters
   echo "      <Registration SubjToAtlasRegistrationFilename=\"${currentSubjectDirectory}/$DeformationDirectory/SubToAtlas_${currentSubject}.mat\" "  >> ${OutputXMLFile} 

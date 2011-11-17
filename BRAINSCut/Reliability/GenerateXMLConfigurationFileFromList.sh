@@ -16,6 +16,7 @@ LISTofDataDirectory=$1;
 LISTofMask=$2;
 OutputXMLFile=$3
 ANNHN=$4;
+BRAINSBuild=$5;
 
 ModelDate="20110919"
 

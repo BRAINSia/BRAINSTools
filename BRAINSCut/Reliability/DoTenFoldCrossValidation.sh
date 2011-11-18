@@ -114,7 +114,7 @@ do
    rm -f $currentListFile;
    generateListOfTrainAndApply $testIteration $pseudoRandomDataList $currentListFile
 
-   for HN in 4 8 12 16 54
+   for HN in 5 10 15 20 30 40 50 60 70 80
    do
       currentXMLFile="${currentTargetDirectory}/${Date}_$HN.xml"
       echo "from $startApplyIndex to $endApplyIndex"
@@ -136,12 +136,12 @@ do
 
    qsubHeader $QSUBFile
 
-   for HN in 4 
+   for HN in 5
    do
      currentXMLFile="${currentTargetDirectory}/${Date}_$HN.xml"
      echo " \${BRAINSBuild}/BRAINSCut --netConfiguration  ${currentXMLFile} --createVectors --trainModel --generateProbability">>$QSUBFile
    done
-   for HN in 8 12 16 54
+   for HN in 10 15 20 30 40 50 60 70 80
    do
      currentXMLFile="${currentTargetDirectory}/${Date}_$HN.xml"
      echo " \${BRAINSBuild}/BRAINSCut --netConfiguration  ${currentXMLFile} --trainModel ">>$QSUBFile

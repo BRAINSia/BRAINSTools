@@ -6,6 +6,7 @@ if [ $# != 3 ]; then
   echo "Incorrect Number of Argument:: $#"  
   echo "Usage::----------------------------------------------------"  
   echo "$0 [ANN Model Dir Prefix] [subDir] [Output Dir]"
+  echo " ex)  $0 /scratch/PREDICT/regina/ANN20111112T1T2/Test TrainedModels4  /scratch/PREDICT/regina/ANN20111112T1T2/SSE04"
   echo ":----------------------------------------------------------"  
   exit 1;
 fi
@@ -20,6 +21,7 @@ fi
 RScript="$BRAINSSRC/BRAINSStandAlone/BRAINSCut/Reliability/SSEPlot.R"
 
 
+mkdir -p $OutputDir
 SSECollectionFilename="$OutputDir/ValidationSetSSE.txt"
 rm -f $SSECollectionFilename
 for file in $ANNModelDirPrefix*/${subDir}/*ValidationSetSSE.txt

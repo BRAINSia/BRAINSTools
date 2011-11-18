@@ -65,7 +65,8 @@ for( currentStructure in structureList)
   }
   title( currentStructure );
   legend(  max(dt$iteration)*1.05,range.max, c("mean",subjectList), 
-           col=c("darkblue",myColorList), pch=20, lty=1, bty="n" );
+           col=c("darkblue",myColorList), pch=20, lty=1, bty="n",
+           cex=0.8);
   dev.off();
 }
 

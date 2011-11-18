@@ -2,15 +2,21 @@
 ## Second part of 10 fold cross validation
 ## compute SSE to find iteration number to use
 
+
 WorkingDir=$1;
-if [ $# != 2 ]; then
+if [ $# != 4 ]; then
   echo "Incorrect Number of Argument"  
   echo "Usage::"  
-  echo "$0 [working directory] [GenerateValidationXML Script]"
+  echo "$0 [working directory] [GenerateValidationXML Script] [MaskListFile ][HNList]"
   exit 1;
 fi
 
-DATE="20111112";
+
+
+
+maskList=$3;
+HNList=$4;
+# HNList=" 4 11 22 33 44 55 66"
 
 
 ## TODO change this to BRAINSCut build Dir
@@ -19,78 +25,50 @@ machine=`uname`
 if [ "$machine" == "Darwin" ]; then
   BRAINSSRC="/ipldev/scratch/eunyokim/src/BRAINS20111028/build-Darwin-20111109/lib/"
   ## Mask list
-  maskList="/hjohnson/HDNI/PREDICT_TRAINING/regina_ann/TrainingModels/Script/Putamen.list"
+
 else
   BRAINSSRC="/scratch/PREDICT/regina/BRAINS//buildICC/lib/"
   ## Mask list
-  maskList="/scratch/PREDICT/regina/Scirpts/Putamen.list"
 fi
 
 ## Sum of squar error script
 SSEScript="$BRAINSSRC/../../BRAINSStandAlone/BRAINSCut/Reliability/SSEPlot.sh";
+UtilityrSRC="$BRAINSSRC/../../BRAINSStandAlone/BRAINSCut/Reliability/utilities.sh";
+
+source $UtilityrSRC 
 
 ## Generate Validation XML file script
 XMLFileEXE=$2;
-
-
-
-for HN in 4 11 22 33 44 55 66
+for HN in $HNList
 do
-  ## Analyze output 
-  SSEOutputDir="$WorkingDir/AnalysisOutput_putamen_$HN/"
-  mkdir -p $SSEOutputDir;
 
-  SSEOutput="$SSEOutputDir/CallSSEPlot.sh";
-  rm -f $SSEOutput;
   for TEST in 1 2 3 4 5 6 7 8 9 10
   do
-     LISTFile="$WorkingDir/Test$TEST/${DATE}.list"
+     LISTFile=`ls $WorkingDir/Test$TEST/*.list`
+     echo "LISTFILE:::::$LISTFile"
+     DATE=`basename $LISTFile`;
+     DATE=`echo $DATE|sed 's/\.list$//'`;
      outputXML="$WorkingDir/Test$TEST/${DATE}_${HN}_Validation.xml"
 
      # generate validation xml file
      if [ ! -s $outputXML ]; then
-       cmd="$XMLFileEXE $LISTFile $maskList $outputXML $HN"
-       echo $cmd
-       $cmd
+       printCommandAndRun "$XMLFileEXE $LISTFile $maskList $outputXML $HN"
      fi
    done
-
-   echo "bash $SSEScript $WorkingDir/Test TrainedModels$HN  $SSEOutputDir" >> $SSEOutput;
-   chmod 755 $SSEOutput
 done
 
+## 1. Create SSE values
 for TEST in 1 2 3 4 5 6 7 8 9 10
 do
       ## ---------------- QSUB -----------------------
         QSUBFile="${WorkingDir}/Test$TEST/runValidation${TEST}.sh"
         echo "QSUBFile name is :: $QSUBFile"
-      
-      
-        echo "#!/bin/bash">$QSUBFile
-        echo "#$ -N VAL${testIteration}">>$QSUBFile
-        echo "#$ -j yes"         >>$QSUBFile
-        echo "#$ -o $QSUBFile.log" >>$QSUBFile
-        echo "#$ -l mf=2G "      >>$QSUBFile
-        echo "#$ -pe smp1 1-12"  >>$QSUBFile
-        echo "PLATFORM=\$(uname)">>$QSUBFile
-        echo "hostname"          >>$QSUBFile
-        echo "uname -a"          >>$QSUBFile
-        echo "## Set global number of threads to 4 in order to minimize CPU wasting.">>$QSUBFile
-        echo "export ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS=\$NSLOTS;">>$QSUBFile
-        echo "echo \"USING NUM THREADS \${ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS}\"" >>$QSUBFile
-      
-        echo " arch=\`uname\`;"   >>$QSUBFile
-      
-        echo "BRAINSSRC=\"$BRAINSSRC\";">>$QSUBFile
-      
-        for HN in 4 11 22 33 44 55 66
+        qsubHeader $QSUBFile      
+
+        for HN in $HNList
         do
           currentXMLFile="${WorkingDir}/Test$TEST/${DATE}_${HN}_Validation.xml"
-          for structure in caudate
-          do
-            echo " \${BRAINSSRC}/BRAINSCut --netConfiguration  ${currentXMLFile} --computeSSEOn  --applyModel">>$QSUBFile
-          done
-
+          echo " \${BRAINSBuild}/BRAINSCut --netConfiguration  ${currentXMLFile} --computeSSEOn  --applyModel">>$QSUBFile
         done
       
         chmod 755 $QSUBFile
@@ -98,3 +76,17 @@ do
       ## ---------------- QSUB -----------------------
 done
 
+for HN in $HNList
+do
+   ## Analyze output 
+   SSEOutputDir="$WorkingDir/SSE$HN/"
+   mkdir -p $SSEOutputDir;
+
+   SSEOutput="$SSEOutputDir/CallSSEPlotAlongTrainedModel.sh";
+   rm -f $SSEOutput;
+   echo "bash $SSEScript $WorkingDir/Test TrainedModels$HN  $SSEOutputDir" >> $SSEOutput;
+   echo "bash $SSEScript $WorkingDir/Test TrainedModels$HN  $SSEOutputDir" 
+   echo "$SSEOutput"
+
+   chmod 755 $SSEOutput
+done

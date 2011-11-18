@@ -26,6 +26,7 @@ SSECollectionFilename="$OutputDir/ValidationSetSSE.txt"
 rm -f $SSECollectionFilename
 for file in $ANNModelDirPrefix*/${subDir}/*ValidationSetSSE.txt
 do
+  echo "cat this file :: $file"
   cat $file >> $SSECollectionFilename;
 done
 

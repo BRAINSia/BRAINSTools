@@ -562,7 +562,7 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>
 #if defined(LOCAL_USE_OPEN_MP)
 #pragma omp parallel for default(shared)
 #endif
-          for( long eq = 0; eq < numEquations; eq++ )
+          for( unsigned int eq = 0; eq < numEquations; eq++ )
             {
             const ProbabilityImageIndexType & currIndex = m_ValidIndicies[eq];
             // Compute reconstructed intensity, weighted by prob * invCov

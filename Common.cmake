@@ -9,6 +9,7 @@ option(USE_BRAINSROIAuto                   "Build BRAINSROIAuto"                
 option(USE_BRAINSResample                  "Build BRAINSResample"                  ON)
 option(USE_BRAINSDemonWarp                 "Build BRAINSDemonWarp "                ON)
 option(USE_GTRACT                          "Build GTRACT"                          ON)
+option(USE_BRAINSContinuousClass           "Build BRAINSContinuousClass "          ON)
 
 set(ITK_VERSION_MAJOR 4 CACHE STRING "Choose the expected ITK major version to build BRAINS (3 or 4).")
 # Set the possible values of ITK major version for cmake-gui

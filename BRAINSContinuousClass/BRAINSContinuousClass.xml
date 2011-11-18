@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+  <executable>
+  <category>Segmentation.ContClassImage</category>   
+  <title> Predict Lesions </title> 
+  
+  <description>Creates a continuous classified image.</description>
+  <version>0.1.0.$Revision: 1.3 $(alpha)</version> 
+  <documentation-url>http:://www.na-mic.org/</documentation-url> 
+  <license>NEED TO ADD</license> 
+  <contributor>This tool was developed by Mark Scully.</contributor> 
+  
+  
+  <parameters>
+    <label>Input Parameters</label> 
+    <description>Input parameters for analysis.</description>
+
+    <image>
+      <name>inputT1Volume</name> 
+      <longflag>--inputT1Volume</longflag> 
+      <description>Required: input T1 image</description> 
+      <label>Input T1 Volume</label> 
+      <channel>input</channel> 
+    </image>  
+    
+    <image>
+      <name>inputT2Volume</name> 
+      <longflag>--inputT2Volume</longflag> 
+      <description>Required: input T2 image</description> 
+      <label>Input T2 Volume</label> 
+      <channel>input</channel> 
+    </image>  
+    
+    <image>
+      <name>inputDiscreteVolume</name> 
+      <longflag>--inputDiscreteVolume</longflag> 
+      <description>Required: input discrete image</description> 
+      <label>Input discrete Volume</label> 
+      <channel>input</channel> 
+    </image>  
+
+  </parameters>
+  
+  <parameters>
+    
+    <image>
+      <name>outputVolume</name>
+      <longflag>--outputVolume</longflag>
+      <description>Required: output continuous classified image</description>
+      <label>Output Classified Volume</label>
+      <channel>output</channel>
+    </image>
+
+  </parameters>
+  </executable>

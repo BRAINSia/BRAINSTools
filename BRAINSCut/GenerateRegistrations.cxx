@@ -28,28 +28,21 @@ int GenerateRegistrations(NetConfiguration & ANNXMLObject,
   std::cout << "GenerateRegistrations" << std::endl;
   // Get the atlas dataset
   DataSet *atlasDataSet = ANNXMLObject.GetAtlasDataSet();
-  std::cout << __LINE__ << "::" << __FILE__ << std::endl;
   // find out the registration parameters
   RegistrationConfigurationParser *regParams =
     ANNXMLObject.Get<RegistrationConfigurationParser>("RegistrationConfiguration");
-  std::cout << __LINE__ << "::" << __FILE__ << std::endl;
   const std::string imageTypeToUse
     ( regParams->GetAttribute<StringValue>(
       "ImageTypeToUse") );
-  std::cout << __LINE__ << "::" << __FILE__ << std::endl;
   const std::string regID
     ( regParams->GetAttribute<StringValue>(
       "ID") );
-  std::cout << __LINE__ << "::" << __FILE__ << std::endl;
   const double roiAUtoDilateSize
     ( regParams->GetAttribute<IntValue>("BRAINSROIAutoDilateSize") );
 
-  std::cout << __LINE__ << "::" << __FILE__ << std::endl;
   // Get Atlas Image Name
-  std::cout << __LINE__ << "::" << __FILE__ << imageTypeToUse << std::endl;
   std::string AtlasImageFilename( atlasDataSet->GetImageFilenameByType(
                                     imageTypeToUse) );
-  std::cout << __LINE__ << "::" << __FILE__ << std::endl;
 
   // We will use just original image without smoothing
   InternalImageType::SizeType radius;
@@ -57,10 +50,11 @@ int GenerateRegistrations(NetConfiguration & ANNXMLObject,
   radius[0] = 0; radius[1] = 0; radius[2] = 0;
   // InternalImageType::Pointer AtlasImage = ReadMedianFilteredImage<InternalImageType>(AtlasImageFilename.c_str(),
   // radius);
-  std::cout << __LINE__ << "::" << __FILE__ << std::endl;
+  InternalImageType::Pointer AtlasImage =
+    ReadMedianFilteredImage<InternalImageType>(AtlasImageFilename.c_str(
+                                                 ), radius);
 
   // For each dataset, create deformation fields if they don't already exist.
-  std::cout << __LINE__ << "::" << __FILE__ << std::endl;
   std::list<DataSet *> dataSets;
   if( apply )
     {
@@ -71,7 +65,6 @@ int GenerateRegistrations(NetConfiguration & ANNXMLObject,
     dataSets = ANNXMLObject.GetTrainDataSets();
     }
   // TODO Hard coded Max Processes == 9 ????
-  std::cout << __LINE__ << "::" << __FILE__ << std::endl;
 #define MAXPROCESSES 9
   itksysProcess *processes[MAXPROCESSES];
   for( unsigned i = 0; i < MAXPROCESSES; i++ )

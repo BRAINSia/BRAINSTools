@@ -2,8 +2,8 @@
 #define _GenericTransformImage_H_
 
 #include "BRAINSCommonLibWin32Header.h"
-
 #include <iostream>
+#include "itkMacro.h"
 #include "itkImage.h"
 #include "itkCastImageFilter.h"
 #include "itkRescaleIntensityImageFilter.h"
@@ -21,7 +21,7 @@
 #include <itkBSplineDeformableTransform.h>
 #include <itkThinPlateR2LogRSplineKernelTransform.h>
 #include "itkVersorRigid3DTransform.h"
-#if ITK_VERSION_MAJOR > 3
+#if (ITK_VERSION_MAJOR > 3)
 #include "itkCompositeTransform.h"
 #endif
 #include "ConvertToRigidAffine.h"
@@ -59,9 +59,10 @@ typedef itk::ScaleVersor3DTransform<double>                  ScaleVersor3DTransf
 typedef itk::ScaleSkewVersor3DTransform<double>              ScaleSkewVersor3DTransformType;
 typedef itk::ThinPlateR2LogRSplineKernelTransform<double, 3> ThinPlateSpline3DTransformType;
 
-#if ITK_VERSION_MAJOR > 3
-typedef itk::CompositeTransfrom<double, 3> CompositeTransformType;
+#if (ITK_VERSION_MAJOR > 3)
+typedef itk::CompositeTransform<double, 3> CompositeTransformType;
 #endif
+
 namespace itk
 {
 /**

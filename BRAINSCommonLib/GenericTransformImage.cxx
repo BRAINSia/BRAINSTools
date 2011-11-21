@@ -319,24 +319,24 @@ GenericTransformType::Pointer ReadTransformFromDisk(const std::string & initialT
       tempCopy->ComputeWMatrix();
       genericTransform = tempCopy.GetPointer();
       }
-    }
 #if (ITK_VERSION_MAJOR > 3)
-  else if( transformFileType == "Composite" )
-    {
-    const CompositeTransformType::ConstPointer tempInitializerITKTransform =
-      dynamic_cast<const CompositeTransformType *>( ( *( currentTransformList.begin() ) ).GetPointer() );
-    if( tempInitializerITKTransform.IsNull() )
+    else if( transformFileType == "Composite" )
       {
-      itkGenericExceptionMacro(<< "Error in type conversion");
+      const CompositeTransformType::ConstPointer tempInitializerITKTransform =
+        dynamic_cast<const CompositeTransformType *>( ( *( currentTransformList.begin() ) ).GetPointer() );
+      if( tempInitializerITKTransform.IsNull() )
+        {
+        itkGenericExceptionMacro(<< "Error in type conversion");
+        }
+      CompositeTransformType::Pointer                    tempCopy = CompositeTransformType::New();
+      const CompositeTransformType::TransformQueueType & transformQueue =
+        tempInitializerITKTransform->GetTransformQueue();
+      for( unsigned i = 0; i < transformQueue.size(); ++i )
+        {
+        }
       }
-    CompositeTransformType::Pointer                    tempCopy = CompositeTransformType::New();
-    const CompositeTransformType::TransformQueueType & transformQueue =
-      tempInitializerITKTransform->GetTransformQueue();
-    for( unsigned i = 0; i < transformQueue.size(); ++i )
-      {
-      }
-    }
 #endif
+    }
   else if( currentTransformList.size() == 2 )  // A special case for
                                                // BSplineTransforms
   // To recombine the bulk and the bSpline transforms.

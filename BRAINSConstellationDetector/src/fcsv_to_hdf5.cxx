@@ -36,7 +36,7 @@ benefits more from readability than speed.
 #include <vnl/vnl_matlab_write.h>
 
 #include "itkPoint.h"
-#include "fcsv_to_matlab_newCLP.h"
+#include "fcsv_to_hdf5CLP.h"
 
 #include "LLSModel.h"
 #include "BRAINSThreadControl.h"

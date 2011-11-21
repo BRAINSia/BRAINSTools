@@ -19,7 +19,9 @@ dtList <- read.csv( listFilename );
 # ---------------------------------------------------------------------------- #
 OneSubjectPlotOfSI <- function( subjectID, csvFilename, ROIName, myColor, cumulativeVolumes )
 {
+
   csvFilename=as.character(csvFilename);
+  print( csvFilename );
   dt<-read.csv( csvFilename );
 
   points( dt$threshold, dt$SI,            # x,y
@@ -187,8 +189,9 @@ VolumetricComparisonPlot <- function( manual, ann, threshold)
   Legend.x <- range.max + 0.1*vol.range ;
   Legend.y <- range.max + 0.1*vol.range ;
   
+  print( ann );
   legend( Legend.x, Legend.y, 
-          colnames(ann)[2:NoSubject+1], 
+          colnames(ann)[1:NoSubject+1], 
           cex=0.8,
           pch=c(21,22,23,24,25),col=seq(1,NoSubject,1),
           bty="n");
@@ -202,8 +205,6 @@ VolumetricComparisonPlot <- function( manual, ann, threshold)
 
 # plot first one
 numberOfSubject = nrow( dtList );
-
-
 currentDTFilename <- as.character(dtList$csvFIlename[1]);
 currentSubjectID  <- as.character(dtList$subjectID[1]);
 currentROIName    <- as.character(dtList$ROIName[1]);

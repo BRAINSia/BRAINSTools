@@ -97,7 +97,6 @@ do
       QSUBFile="${OutputDir}/ComputeSimilarities${subjectID}_${side}_${ROIName}.sh"
       echo "QSUBFile name is :: $QSUBFile"
 
-
       echo "#!/bin/bash">$QSUBFile
       echo "#$ -N ${side}_${ROIName}_${subjectID}">>$QSUBFile
       echo "#$ -j yes"         >>$QSUBFile
@@ -148,6 +147,7 @@ do
    
   SIPlotR="R --slave --args $SIList $SIPlotOutputPlotFilename < $SIPlotRScript "
   echo "$SIPlotR" >> $RScript ;
+  chmod 755 $RScript;
 done
 
 

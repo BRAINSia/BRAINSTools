@@ -255,10 +255,6 @@ int main(int argc, char * argv [])
   std::cout << logisticRegressionModelGrayVsCSF->label[0] << "," << logisticRegressionModelGrayVsCSF->label[1]
             << std::endl;
 
-  // Loop over all input voxels and build a two element feature vector.  Pass the vector to
-  // the WM vs CSF classifier.  Then pass it through the WM vs GM or CSF vs GM based on the
-  // result.  Map the final result to the appropriate range.
-
   typedef itk::ImageDuplicator<ImageType> ImageDuplicatorType;
   ImageDuplicatorType::Pointer t1DuplicateImageFilter = ImageDuplicatorType::New();
   t1DuplicateImageFilter->SetInputImage(t1Reader->GetOutput() );
@@ -295,6 +291,10 @@ int main(int argc, char * argv [])
 
     ImageType::PixelType predictedOutputPixelValue = 0;
 
+    // The ordering of the predicted probabilities is based on the order of the labels.  The
+    // zero index probability corresponds to the probability that the sample is the label with the
+    // lowest integer value.  i.e. if Gray is label 1 and White is label 2, the zero index probability
+    // would correspond to Gray.
     if( predictedProbabilityEstimatesWhiteVsCSF[0] > predictedProbabilityEstimatesWhiteVsCSF[1] )
       {
       if( predictedProbabilityEstimatesWhiteVsGray[0] < predictedProbabilityEstimatesWhiteVsGray[1] )

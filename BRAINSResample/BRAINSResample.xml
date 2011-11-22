@@ -4,7 +4,7 @@
   <title>Resample Image (BRAINS)</title>
 
   <description>
-   This program resamples an image image using a deformation field or a transform (BSpline, Affine, Rigid, etc.).
+	  This program collects together three common image processing tasks that all involve resampling an image volume: Resampling to a new resolution and spacing, applying a transformation (using an ITK transform IO mechanisms) and Warping (using a vector image deformation field).  Full documentation available here: http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/BRAINSResample.
   </description>
   <version>3.0.0</version>
   <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:BRAINSResample</documentation-url>

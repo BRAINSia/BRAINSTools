@@ -6,9 +6,9 @@ if(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED)
 endif()
 set(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED 1)
 
-if(${USE_SYSTEM_ITK})
-  unset(ITK_DIR CACHE)
-endif()
+#if(${USE_SYSTEM_ITK})
+#  unset(ITK_DIR CACHE)
+#endif()
 
 # Sanity checks
 if(DEFINED ITK_DIR AND NOT EXISTS ${ITK_DIR})

@@ -4,7 +4,7 @@
   <title>Demon Registration (BRAINS)</title>
 
   <description>
-    This program finds a deformation field to warp a moving image onto a fixed image.  The images must be of the same signal kind, and contain an image of the same kind of object.  This program uses the Thirion Demons warp software in ITK, the Insight Toolkit.  Additional information is available at: http://www.nitrc.org/projects/brainsdemonwarp.
+	  This program finds a deformation field to warp a moving image onto a fixed image.  The images must be of the same signal kind, and contain an image of the same kind of object.  This program uses the Thirion Demons warp software in ITK, the Insight Toolkit.  Additional information is available at: http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/BRAINSDemonWarp.
 
   </description>
   <version>3.0.0</version>

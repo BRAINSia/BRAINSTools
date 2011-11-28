@@ -55,8 +55,22 @@ int main(int argc, char * *argv)
       {
       BRAINSCutApplyModel applyTest( netConfiguration );
 
+      applyTest.SetRegionsOfInterestFromNetConfiguration();
+      applyTest.SetRegistrationParametersFromNetConfiguration();
+      applyTest.SetAtlasDataSet();
+      applyTest.SetAtlasImage();
+      applyTest.SetRhoPhiThetaFromNetConfiguration();
+
+      applyTest.SetANNModelConfiguration();
+      applyTest.SetANNTestingSSEFilename();
+      applyTest.SetGradientSizeFromNetConfiguration();
+      applyTest.SetANNOutputThresholdFromNetConfiguration();
+      applyTest.SetTrainIterationFromNetConfiguration();
+      applyTest.SetComputeSSE(false);
+
       applyTest.SetApplyDataSetFromNetConfiguration();
       applyTest.SetANNModelFilenameFromNetConfiguration();
+      applyTest.SetComputeSSE( computeSSEOn );
 
       applyTest.Apply();
       }

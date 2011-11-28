@@ -73,16 +73,16 @@ GridForwardWarpImageFilterNew<TDisplacementField, TOutputImage>
   OutputImagePointer           outputPtr = this->GetOutput();
   DeformationFieldConstPointer fieldPtr = this->GetInput();
 
-  SpacingType spacing = fieldPtr->GetSpacing();
+  // const SpacingType spacing = fieldPtr->GetSpacing();
 
   outputPtr->SetRegions( fieldPtr->GetRequestedRegion() );
   outputPtr->CopyInformation(fieldPtr);
   outputPtr->Allocate();
   outputPtr->FillBuffer(m_BackgroundValue);
 
-  IndexType FirstIndex = fieldPtr->GetRequestedRegion().GetIndex();
-  IndexType OnePastValidIndex = fieldPtr->GetRequestedRegion().GetIndex()
-    + fieldPtr->GetRequestedRegion().GetSize();
+  // const IndexType FirstIndex = fieldPtr->GetRequestedRegion().GetIndex();
+  // const IndexType OnePastValidIndex = fieldPtr->GetRequestedRegion().GetIndex() +
+  // fieldPtr->GetRequestedRegion().GetSize();
 
   // iterator for the output image
   typedef ImageRegionIteratorWithIndex<OutputImageType> OutputImageIteratorWithIndex;

@@ -47,10 +47,10 @@
      <default>false</default>
    </boolean>
    <boolean>
-     <name>doTest</name>
+     <name>computeSSEOn</name>
      <label>Testing with testing vector input</label>
-     <longflag>doTest</longflag>
-     <description>doTest</description>
+     <longflag>computeSSEOn</longflag>
+     <description>computeSSEOn</description>
      <default>false</default>
    </boolean>
    <boolean>

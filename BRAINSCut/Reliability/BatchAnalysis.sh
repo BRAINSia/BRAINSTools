@@ -9,15 +9,16 @@ inputListFilename=$1;
 inputANNDir=$2;
 inputHN=$3; # since output directory of ANN consists of HN
 ROIName=$4
+BRAINSBuild=$5;
 
-if [ $# != 4 ]; then
-  echo "USAGE::: $0 [list filename] [ann dir] [HN] [roi name]"
+if [ $# != 5 ]; then
+  echo "USAGE::: $0 [list filename] [ann dir] [HN] [roi name] [BRAINS build]"
   exit 1
 fi
 
 #
 # Similarity Index execution 
-SIExe="/ipldev/scratch/eunyokim/src/BRAINS20111028/build-Darwin-20111028/lib/SimilarityIndex";
+SIExe="$BRAINSBuild/SimilarityIndex";
 
 #
 # input
@@ -55,30 +56,32 @@ FileExists() #------------------------------------------------------------------
 }
 
 OutputDir="$inputANNDir/AnalysisOutput_${ROIName}_${inputHN}";
-if ( FileExists $OutputDir ); then
-  echo "file $OutputDir found"
-else
-    mkdir $OutputDir;
-fi
+mkdir -p $OutputDir;
 
-RScriptListFile="${OutputDir}/RScriptList.csv"
-echo "subjectID,csvFIlename,ROIName">$RScriptListFile;
+for side in l r
+do
+  RScriptListFile="${OutputDir}/${side}_${ROIName}_RScriptList.csv"
+  echo "subjectID,csvFIlename,ROIName">$RScriptListFile;
+done
 
 while read autoWorkUpDir manDir
 do
+  for side in l r
+  do
+    RScriptListFile="${OutputDir}/${side}_${ROIName}_RScriptList.csv"
    #
    # scan information
    subjectID=( `echo $autoWorkUpDir |tr "/" "\n"|grep '[0-9]\{5\}'`)
 
    #
    # Compute Similarity index -------------------------------------------------- #
-   SIManualROI=(`ls $autoWorkUpDir/$manDir/${subjectID}_l_${ROIName}.nii.gz`) ; 
+   SIManualROI=(`ls $autoWorkUpDir/$manDir/${subjectID}_${side}_${ROIName}.nii.gz`) ; 
    MendatoryFileExists $SIManualROI;
-   SIAnnROI=(`ls $inputANNDir/Test*/${subjectID}_${inputHN}/ANNContinuousPredictionl_${ROIName}${subjectID}.nii.gz`)
+   SIAnnROI=(`ls $inputANNDir/Test*/${subjectID}_${inputHN}/ANNContinuousPrediction${side}_${ROIName}${subjectID}.nii.gz`)
    MendatoryFileExists $SIAnnROI
 
    SIThresholdInterval="0.01"
-   CSVOutputFileOfCurrentScan="${OutputDir}/l_${ROIName}_${subjectID}.csv"
+   CSVOutputFileOfCurrentScan="${OutputDir}/${side}_${ROIName}_${subjectID}.csv"
    
    SICommand="$SIExe --inputManualVolume   $SIManualROI \
                      --ANNContinuousVolume $SIAnnROI    \
@@ -91,35 +94,63 @@ do
    else
      echo "-------------------------------------------------------------------------"
      echo $SICommand;
-     $SICommand |grep ","|tee $CSVOutputFileOfCurrentScan;
-     #
-     # Re-format the similarity text output ----------------------------------- #
-     while read line
-     do
-       echo "$subjectID, $line " >> ${CSVOutputFileOfCurrentScan}TEMP;
-     done < $CSVOutputFileOfCurrentScan
+      QSUBFile="${OutputDir}/ComputeSimilarities${subjectID}_${side}_${ROIName}.sh"
+      echo "QSUBFile name is :: $QSUBFile"
+
+      echo "#!/bin/bash">$QSUBFile
+      echo "#$ -N ${side}_${ROIName}_${subjectID}">>$QSUBFile
+      echo "#$ -j yes"         >>$QSUBFile
+      echo "#$ -o $QSUBFile.log ">>$QSUBFile
+      echo "#$ -l mf=2G "      >>$QSUBFile
+      echo "#$ -pe smp1 1-2"  >>$QSUBFile
+      echo "PLATFORM=\$(uname)">>$QSUBFile
+      echo "hostname"          >>$QSUBFile
+      echo "uname -a"          >>$QSUBFile
+      echo "## Set global number of threads to 4 in order to minimize CPU wasting.">>$QSUBFile
+      echo "export ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS=\$NSLOTS;"                 >>$QSUBFile
+      echo "echo \"USING NUM THREADS \${ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS}\""   >>$QSUBFile
+
+      echo " arch=\`uname\`;"                                     >>$QSUBFile
+      echo "$SICommand |grep ","|tee $CSVOutputFileOfCurrentScan" >>$QSUBFile;
+      echo "#"                                                    >>$QSUBFile
+      echo "# Re-format the similarity text output ----------------------------------- #" >>$QSUBFile;
+      echo "while read line                                      ">>$QSUBFile
+      echo "do                                                   ">>$QSUBFile
+      echo "  echo \"$subjectID, \$line \" >> ${CSVOutputFileOfCurrentScan}TEMP;">>$QSUBFile
+      echo "done < $CSVOutputFileOfCurrentScan                   ">>$QSUBFile
    
-     mv ${CSVOutputFileOfCurrentScan}TEMP $CSVOutputFileOfCurrentScan
+      echo "mv ${CSVOutputFileOfCurrentScan}TEMP $CSVOutputFileOfCurrentScan">>$QSUBFile
+      chmod 755 $QSUBFile;
    fi;
+
+
 
    #------------------------------------------------------------------------- #
    # make list file for RSscript
    echo "$subjectID,$CSVOutputFileOfCurrentScan,$ROIName " >> $RScriptListFile;
    echo "-------------------------------------------------------------------------"
 
+ done
 done < $inputListFilename
 
-#
-# Relative Overlap Graph ------------------------------------------------------ #
-SIList=$RScriptListFile;
-SIPlotOutputPlotFilename="${RScriptListFile}.pdf";
-SIPlotRScript=" /ipldev/scratch/eunyokim/src/BRAINS20111028/BRAINSStandAlone/BRAINSCut/Reliability/RelativeOverlapPlot.R"
-   
-SIPlotR="bash R --slave --args $SIList $SIPlotOutputPlotFilename < $SIPlotRScript "
+RScript="${OutputDir}/ComputeStats.sh"
+rm -f $RScript
 
-echo $SIPlotR
-$SIPlotR
+for side in l r
+do
+  RScriptListFile="${OutputDir}/${side}_${ROIName}_RScriptList.csv"
+  #
+  # Relative Overlap Graph ------------------------------------------------------ #
+  SIList=$RScriptListFile;
+  SIPlotOutputPlotFilename="${RScriptListFile}.pdf";
+  SIPlotRScript="$BRAINSBuild/../../BRAINSStandAlone/BRAINSCut/Reliability/RelativeOverlapPlot.R"
    
+  SIPlotR="R --slave --args $SIList $SIPlotOutputPlotFilename < $SIPlotRScript "
+  echo "$SIPlotR" >> $RScript ;
+  chmod 755 $RScript;
+done
+
+
 
 
 

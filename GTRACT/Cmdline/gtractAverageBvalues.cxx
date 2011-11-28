@@ -305,21 +305,21 @@ int buildDirectionLut(itk::Array<int> & lut,
 
 bool areDirectionsEqual(std::string direction1, std::string direction2, double directionsTolerance, bool averageB0only)
 {
-  char tmpDir1[256];
-  char tmpDir2[256];
+  const unsigned int MAXSTR = 256;
+  char               tmpDir1[MAXSTR];
+  char               tmpDir2[MAXSTR];
 
-  strcpy( tmpDir1, direction1.c_str() );
-  strcpy( tmpDir2, direction2.c_str() );
+  strncpy( tmpDir1, direction1.c_str(), MAXSTR - 1 );
+  strncpy( tmpDir2, direction2.c_str(), MAXSTR - 1 );
 
-  double x1 = atof( strtok(tmpDir1, " ") );
-  double y1 = atof( strtok(NULL, " ") );
-  double z1 = atof( strtok(NULL, " ") );
+  const double x1 = atof( strtok(tmpDir1, " ") );
+  const double y1 = atof( strtok(NULL, " ") );
+  const double z1 = atof( strtok(NULL, " ") );
 
-  double x2 = atof( strtok(tmpDir2, " ") );
-  double y2 = atof( strtok(NULL, " ") );
-  double z2 = atof( strtok(NULL, " ") );
+  const double x2 = atof( strtok(tmpDir2, " ") );
+  const double y2 = atof( strtok(NULL, " ") );
+  const double z2 = atof( strtok(NULL, " ") );
 
-  double dist = vcl_sqrt( ( x1 - x2 ) * ( x1 - x2 ) + ( y1 - y2 ) * ( y1 - y2 ) + ( z1 - z2 ) * ( z1 - z2 ) );
   if( averageB0only )
     {
     if( ( x1 == 0.0 ) && ( y1 == 0.0 ) && ( z1 == 0.0 ) && ( x2 == 0.0 ) && ( y2 == 0.0 ) && ( z2 == 0.0 ) )
@@ -333,14 +333,11 @@ bool areDirectionsEqual(std::string direction1, std::string direction2, double d
     }
   else
     {
-    if( dist <= directionsTolerance )
-      {
-      return true;
-      }
-    else
+    const double dist = vcl_sqrt( ( x1 - x2 ) * ( x1 - x2 ) + ( y1 - y2 ) * ( y1 - y2 ) + ( z1 - z2 ) * ( z1 - z2 ) );
+    if( dist > directionsTolerance )
       {
       return false;
       }
     }
-  return EXIT_SUCCESS;
+  return true;
 }

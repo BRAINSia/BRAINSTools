@@ -51,7 +51,7 @@ BRAINSCutCreateVector
     }
   outputVectorStream.close();
 
-  WriteHeaderFile( inputVectorSize, outputVectorSize, numberOfInputVector);
+  WriteHeaderFile( this->inputVectorSize, outputVectorSize, numberOfInputVector);
 }
 
 void
@@ -64,7 +64,7 @@ BRAINSCutCreateVector
     }
   catch( BRAINSCutExceptionStringHandler& e )
     {
-    throw;
+    throw e;
     }
 }
 
@@ -230,7 +230,7 @@ BRAINSCutCreateVector
 
 void
 BRAINSCutCreateVector
-::WriteHeaderFile( int inputVectorSize, int outputVectorSize, int numberOfInputVector)
+::WriteHeaderFile( int LocalinputVectorSize, int LocaloutputVectorSize, int numberOfInputVector)
 {
   const std::string headerFilename = vectorFilename + ".hdr";
   std::ofstream     outputStream;
@@ -238,8 +238,8 @@ BRAINSCutCreateVector
   outputStream.open( headerFilename.c_str(),
                      std::ios::out | std::ios::binary );
 
-  outputStream <<  "IVS " << inputVectorSize     << std::endl
-               <<  "OVS " << outputVectorSize    << std::endl
+  outputStream <<  "IVS " << LocalinputVectorSize     << std::endl
+               <<  "OVS " << LocaloutputVectorSize    << std::endl
                <<  "TVC " << numberOfInputVector << std::endl;
 
   outputStream.close();

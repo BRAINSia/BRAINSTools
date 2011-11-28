@@ -307,7 +307,7 @@ typename OutputImageType::Pointer GenericTransformImage(
         typedef typename ResampleIPFilterType::Pointer                           ResampleIPFilterPointer;
 
         const VersorRigid3DTransformType::ConstPointer tempInitializerITKTransform =
-          dynamic_cast<VersorRigid3DTransformType const *const>( genericTransform.GetPointer() );
+          dynamic_cast<VersorRigid3DTransformType const *>( genericTransform.GetPointer() );
         if( tempInitializerITKTransform.IsNull() )
           {
           std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;

@@ -261,7 +261,7 @@ int main(int argc, char *argv[])
       }
     char        tmpStr[64];
     std::string NrrdValue;
-    sprintf(tmpStr, "DWMRI_gradient_%04d", i);
+    sprintf(tmpStr, "DWMRI_gradient_%04u", i);
     itk::ExposeMetaData<std::string>(vectorImageReader->GetOutput()->GetMetaDataDictionary(), tmpStr, NrrdValue);
     char tokTmStr[64];
     strcpy( tokTmStr, NrrdValue.c_str() );

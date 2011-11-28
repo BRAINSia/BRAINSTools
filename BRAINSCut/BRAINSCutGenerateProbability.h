@@ -5,7 +5,7 @@
 #include "NetConfiguration.h"
 #include <itkIO.h>
 
-class BRAINSCutGenerateProbability : BRAINSCutPrimary
+class BRAINSCutGenerateProbability : private BRAINSCutPrimary
 {
 public:
   BRAINSCutGenerateProbability(std::string netConfigurationFilename);

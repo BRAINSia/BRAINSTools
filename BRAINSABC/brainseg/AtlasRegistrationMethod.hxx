@@ -130,9 +130,6 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
 ::RegisterImages()
 {
   muLogMacro(<< "RegisterImages" << std::endl);
-
-  const std::string suffixstr = (m_Suffix.length() != 0) ? std::string("_") + m_Suffix : std::string("");
-
     {
     for( unsigned int i = 1; i < m_IntraSubjectOriginalImageList.size(); i++ )
       {

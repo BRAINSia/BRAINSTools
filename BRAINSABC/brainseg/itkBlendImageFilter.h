@@ -92,9 +92,9 @@ protected:
   {
   }
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const;
 
-  void ThreadedGenerateData(const OutputImageRegionType & outputRegionForThread, int threadId);
+  virtual void ThreadedGenerateData(const OutputImageRegionType & outputRegionForThread, ThreadIdType threadId);
 
 private:
   BlendImageFilter(const Self &); // purposely not implemented

@@ -378,17 +378,15 @@ int ApplyModel(NetConfiguration & ANNConfiguration,
 {
   /** generate registration */
 
-  RegistrationConfigurationParser *regParams =
-    ANNConfiguration.Get<RegistrationConfigurationParser>("RegistrationConfigurationParser");
+  RegistrationConfigurationParser *regParams = ANNConfiguration.Get<RegistrationConfigurationParser>(
+      "RegistrationConfigurationParser");
   const std::string regID( regParams->GetAttribute<StringValue>("ID") );
-  const std::string imageTypeToUse( regParams->GetAttribute<StringValue>(
-                                      "ImageTypeToUse") );
-  std::string ANNModelFilename;
+  // const std::string imageTypeToUse( regParams->GetAttribute<StringValue>( "ImageTypeToUse") );
+  // DataSet *         atlasDataSet = ANNConfiguration.GetAtlasDataSet();
+  // const std::string atlasImage( atlasDataSet->GetImageFilenameByType( imageTypeToUse.c_str() ) );
 
   // Get the atlas dataset
-  DataSet *         atlasDataSet = ANNConfiguration.GetAtlasDataSet();
-  const std::string atlasImage( atlasDataSet->GetImageFilenameByType(
-                                  imageTypeToUse.c_str() ) );
+  std::string ANNModelFilename;
 
   NeuralParams *model = ANNConfiguration.Get<NeuralParams>("NeuralNetParams");
 
@@ -504,7 +502,7 @@ int ApplyModel(const std::string & XMLFile,
     }
   catch( BRAINSCutExceptionStringHandler & ex )
     {
-    throw;
+    throw ex;
     }
   if( ANNConfiguration->Verify() != true )
     {

@@ -202,7 +202,7 @@ int main(int argc, char *argv[])
     marcher->SetAlivePoints( seedPoints );
     marcher->SetOverrideOutputInformation( true );
 #if  1
-    CostImageType::SizeType size = tensorImage->GetLargestPossibleRegion().GetSize();
+    // const CostImageType::SizeType size = tensorImage->GetLargestPossibleRegion().GetSize();
     marcher->SetOutputSize( tensorImage->GetLargestPossibleRegion().GetSize() );
     marcher->SetOutputRegion( tensorImage->GetLargestPossibleRegion() );
     marcher->SetOutputSpacing( tensorImage->GetSpacing() );

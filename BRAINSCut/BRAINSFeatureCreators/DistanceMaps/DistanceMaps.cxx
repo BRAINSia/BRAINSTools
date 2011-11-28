@@ -75,7 +75,8 @@ int main(int argc, char *argv[])
   catch( itk::ExceptionObject & excep )
     {
     std::cerr << argv[0] << ": exception caught !" << std::endl;
-    return EXIT_FAILURE;
+    std::cerr << excep << std::endl;
+    throw excep;
     }
 
   typedef itk::ImageFileWriter<DistanceMapFilterType::OutputImageType> ImageWriterType;

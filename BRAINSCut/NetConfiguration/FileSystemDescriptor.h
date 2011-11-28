@@ -3,12 +3,13 @@
 #include "XMLElementContainer.h"
 #include <itksys/SystemTools.hxx>
 #include <fstream>
-template <typename OutputType>
+template <typename TOutputType>
 class FileSystemDescriptor :
-  public XMLContents<OutputType>
+  public XMLContents<TOutputType>
 {
 public:
-  typedef XMLContents<OutputType> SuperClass;
+  typedef XMLContents<TOutputType> SuperClass;
+  typedef TOutputType              OutputType;
   virtual int PrintSelf(std::ostream & os, int indent) const
   {
     indent += SuperClass::PrintSelf(os, indent);
@@ -18,7 +19,7 @@ public:
   }
 
   FileSystemDescriptor(const std::string & name, const std::string & filename) :
-    XMLContents<OutputType>(name)
+    XMLContents<TOutputType>(name)
   {
     this->SetFileName(filename);
   }
@@ -37,15 +38,15 @@ public:
     m_Filename = s;
   }
 
-  bool Exists()
+  bool Exists() const
   {
     return itksys::SystemTools::FileExists( m_Filename.c_str() );
   }
 
-  bool IsReadable()
+  bool IsReadable() const
   {
     std::fstream f(this->m_Filename.c_str(), std::fstream::in);
-    bool         rval = f.is_open();
+    const bool   rval = f.is_open();
 
     if( rval == true )
       {
@@ -54,12 +55,16 @@ public:
     return rval;
   }
 
-  bool IsDirectory()
+  bool IsDirectory() const
   {
     return itksys::SystemTools::FileIsDirectory( m_Filename.c_str() );
   }
 
   virtual void Close() = 0;
+
+  virtual bool Verify() const = 0;
+
+  virtual OutputType GetValue() const = 0;
 
 protected:
   std::string m_Filename;

@@ -151,7 +151,7 @@ int main(int argc, char *argv[])
     // Get Current Gradient Direction
     vnl_vector<double> curGradientDirection(3);
     char               tmpStr[64];
-    sprintf(tmpStr, "DWMRI_gradient_%04d", i);
+    sprintf(tmpStr, "DWMRI_gradient_%04u", i);
     std::string KeyString(tmpStr);
     std::string NrrdValue;
 

@@ -44,7 +44,6 @@ landmarksConstellationDetector::FindCandidatePoints
 
   // For all regions within the search radius around the center
   std::vector<float>    CurrentPoint_test_vec;
-  SImageType::SizeType  imageSize = volumeMSP->GetLargestPossibleRegion().GetSize();
   SImageType::PointType currentPointLocation;
   currentPointLocation[0] = CenterOfSearchArea[0];
   currentPointLocation[1] = CenterOfSearchArea[1];

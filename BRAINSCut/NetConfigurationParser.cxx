@@ -39,7 +39,7 @@ NetConfigurationParser::StartElement(void *userData,
   // only one of these two dynamic casts will succeed, but
   // do them here to avoid duplication below.
   DataSet *         dataSet = dynamic_cast<DataSet *>( current );
-  NetConfiguration *netConfiguration = dynamic_cast<NetConfiguration *>( current );
+  NetConfiguration *Local_netConfiguration = dynamic_cast<NetConfiguration *>( current );
 
   if( Name == "AutoSegProcessDescription" )
     {
@@ -59,12 +59,13 @@ NetConfigurationParser::StartElement(void *userData,
         currentDataSet->SetAttribute<StringValue, std::string>( "OutputDir",   attribMap.Get("DataSet", "OutputDir") );
         }
 
-      netConfiguration->AddDataSet(currentDataSet);
+      Local_netConfiguration->AddDataSet(currentDataSet);
       stack->push_front(currentDataSet);
       }
     catch( BRAINSCutExceptionStringHandler& ex )
       {
-      throw;
+      std::cerr << ex << std::endl;
+      throw ex;
       }
     }
   else if( Name == "ProbabilityMap" )
@@ -72,7 +73,7 @@ NetConfigurationParser::StartElement(void *userData,
     try
       {
       ProbabilityMapList *mapList =
-        netConfiguration->Get<ProbabilityMapList>("ProbabilityMapList");
+        Local_netConfiguration->Get<ProbabilityMapList>("ProbabilityMapList");
       ProbabilityMapParser *map = new ProbabilityMapParser;
       std::string           structureID( attribMap.Get("ProbabilityMap",
                                                        "StructureID") );
@@ -91,7 +92,8 @@ NetConfigurationParser::StartElement(void *userData,
       }
     catch( BRAINSCutExceptionStringHandler& ex )
       {
-      throw;
+      std::cerr << ex << std::endl;
+      throw ex;
       }
     }
   else if( Name == "Registration" )
@@ -125,7 +127,8 @@ NetConfigurationParser::StartElement(void *userData,
       }
     catch( BRAINSCutExceptionStringHandler& ex )
       {
-      throw;
+      std::cerr << ex << std::endl;
+      throw ex;
       }
     }
   else if( Name == "RegistrationConfiguration" )
@@ -133,7 +136,7 @@ NetConfigurationParser::StartElement(void *userData,
     try
       {
       RegistrationConfigurationParser *params =
-        netConfiguration->Get<RegistrationConfigurationParser>("RegistrationConfiguration");
+        Local_netConfiguration->Get<RegistrationConfigurationParser>("RegistrationConfiguration");
       params->SetAttribute<StringValue>( "ImageTypeToUse",
                                          attribMap.Get("RegistrationConfiguration",
                                                        "ImageTypeToUse") );
@@ -146,7 +149,8 @@ NetConfigurationParser::StartElement(void *userData,
       }
     catch( BRAINSCutExceptionStringHandler& ex )
       {
-      throw;
+      std::cerr << ex << std::endl;
+      throw ex;
       }
     }
   else if( Name == "Mask" )
@@ -165,7 +169,8 @@ NetConfigurationParser::StartElement(void *userData,
       }
     catch( BRAINSCutExceptionStringHandler& ex )
       {
-      throw;
+      std::cerr << ex << std::endl;
+      throw ex;
       }
     }
   else if( Name == "Image" )
@@ -184,7 +189,8 @@ NetConfigurationParser::StartElement(void *userData,
       }
     catch( BRAINSCutExceptionStringHandler& ex )
       {
-      throw;
+      std::cerr << ex << std::endl;
+      throw ex;
       }
     }
   else if( Name == "SpatialLocation" )
@@ -203,7 +209,8 @@ NetConfigurationParser::StartElement(void *userData,
       }
     catch( BRAINSCutExceptionStringHandler& ex )
       {
-      throw;
+      std::cerr << ex << std::endl;
+      throw ex;
       }
     }
   else if( Name == "NeuralNetParams" )
@@ -235,11 +242,12 @@ NetConfigurationParser::StartElement(void *userData,
       np->SetAttribute<StringValue>( "Normalization",
                                      attribMap.Get("NeuralNetParams",
                                                    "Normalization") );
-      netConfiguration->Add(np, Name);
+      Local_netConfiguration->Add(np, Name);
       }
     catch( BRAINSCutExceptionStringHandler& ex )
       {
-      throw;
+      std::cerr << ex << std::endl;
+      throw ex;
       }
     }
   else if( Name == "ANNParams" )
@@ -273,11 +281,12 @@ NetConfigurationParser::StartElement(void *userData,
       ap->SetAttribute<IntValue>( "NumberOfHiddenNodes",
                                   attribMap.Get("ANNParams",
                                                 "NumberOfHiddenNodes") );
-      netConfiguration->Add(ap, Name);
+      Local_netConfiguration->Add(ap, Name);
       }
     catch( BRAINSCutExceptionStringHandler& ex )
       {
-      throw;
+      std::cerr << ex << std::endl;
+      throw ex;
       }
     }
   else if( Name == "ApplyModel" )
@@ -291,11 +300,12 @@ NetConfigurationParser::StartElement(void *userData,
       am->SetAttribute<FloatValue>( "MaskThresh",
                                     attribMap.Get("ApplyModel",
                                                   "MaskThresh") );
-      netConfiguration->Add(am, Name);
+      Local_netConfiguration->Add(am, Name);
       }
     catch( BRAINSCutExceptionStringHandler& ex )
       {
-      throw;
+      std::cerr << ex << std::endl;
+      throw ex;
       }
     }
   else
@@ -344,7 +354,7 @@ void
 NetConfigurationParser::ValidateDataSets()
 {
   // HACK:  Needed to speed up testing.
-  std::list<DataSet *> dataSets = netConfiguration->GetTrainDataSets();
+  // std::list<DataSet *> dataSets = netConfiguration->GetTrainDataSets();
 
   std::cout << " ***************************************************" << std::endl
             << " Validation has not been implimented yet" << std::endl

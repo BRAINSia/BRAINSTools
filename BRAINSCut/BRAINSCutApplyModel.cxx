@@ -17,17 +17,6 @@ BRAINSCutApplyModel
   // TODO Take this apart to generate registration one by one!
   GenerateRegistrations(BRAINSCutNetConfiguration, true, true, 1);
 
-  SetRegionsOfInterestFromNetConfiguration();
-  SetRegistrationParametersFromNetConfiguration();
-  SetAtlasDataSet();
-  SetAtlasImage();
-  SetRhoPhiThetaFromNetConfiguration();
-  SetANNModelConfiguration();
-  SetGradientSizeFromNetConfiguration();
-  SetANNOutputThresholdFromNetConfiguration();
-
-  normalization = GetNormalizationFromNetConfiguration();
-
   openCVANN = new OpenCVMLPType();
 }
 
@@ -36,8 +25,9 @@ void
 BRAINSCutApplyModel
 ::Apply()
 {
-  typedef NetConfiguration::ApplyDataSetListType::iterator
-    ApplySubjectIteratorType;
+  typedef NetConfiguration::ApplyDataSetListType::iterator ApplySubjectIteratorType;
+
+  normalization = GetNormalizationFromNetConfiguration();
   for( ApplySubjectIteratorType subjectIt = applyDataSetList.begin();
        subjectIt != applyDataSetList.end();
        ++subjectIt )
@@ -51,6 +41,8 @@ void
 BRAINSCutApplyModel
 ::ApplyOnSubject( DataSet& subject)
 {
+  const std::string subjectID(subject.GetAttribute<StringValue>("Name") );
+
   std::map<std::string, WorkingImagePointer> deformedSpatialLocationImageList;
 
   GetDeformedSpatialLocationImages( deformedSpatialLocationImageList, subject );
@@ -84,29 +76,73 @@ BRAINSCutApplyModel
       {
       InputVectorMapType  roiInputVector = inputVectorGenerator.GetFeatureInputOfROI( *roiTyIt );
       PredictValueMapType predictedOutputVector;
-      PredictROI( roiInputVector, predictedOutputVector,
-                  roiIDsOrderNumber, inputVectorGenerator.GetInputVectorSize() );
 
-      std::string ANNContinuousOutputFilename = GetContinuousPredictionFilename( subject, (*roiTyIt) );
+      if( !computeSSE )
+        {
+        PredictROI( roiInputVector, predictedOutputVector,
+                    roiIDsOrderNumber, inputVectorGenerator.GetInputVectorSize() );
+        std::string ANNContinuousOutputFilename = GetContinuousPredictionFilename( subject, (*roiTyIt) );
 
-      WritePredictROIProbabilityBasedOnReferenceImage( predictedOutputVector,
-                                                       imagesOfInterest.front(),
-                                                       deformedROIs.find( *roiTyIt )->second,
-                                                       ANNContinuousOutputFilename );
-      /* post processing
-       * may include hole-filling(closing), thresholding, and more adjustment
-       */
-      BinaryImagePointer mask = PostProcessingOfANNContinuousImage( ANNContinuousOutputFilename,
-                                                                    annOutputThreshold);
+        WritePredictROIProbabilityBasedOnReferenceImage( predictedOutputVector,
+                                                         imagesOfInterest.front(),
+                                                         deformedROIs.find( *roiTyIt )->second,
+                                                         ANNContinuousOutputFilename );
 
-      std::string roiOutputFilename = GetOutputROIFilename( subject, *roiTyIt );
-      itkUtil::WriteImage<BinaryImageType>( mask, roiOutputFilename );
+        /* post processing
+         * may include hole-filling(closing), thresholding, and more adjustment
+         */
+        BinaryImagePointer mask = PostProcessingOfANNContinuousImage( ANNContinuousOutputFilename,
+                                                                      annOutputThreshold);
+
+        std::string roiOutputFilename = GetROIVolumeName( subject, *roiTyIt );
+        itkUtil::WriteImage<BinaryImageType>( mask, roiOutputFilename );
+        itkUtil::WriteImage<WorkingImageType>( deformedROIs.find( *roiTyIt )->second,
+                                               roiOutputFilename + "def.nii.gz");
+        }
+      else /* testing phase */
+        {
+        for( int currentIteration = 1; currentIteration <= trainIteration; currentIteration++ )
+          {
+          SetANNModelFilenameAtIteration( currentIteration );
+          PredictROI( roiInputVector, predictedOutputVector,
+                      roiIDsOrderNumber, inputVectorGenerator.GetInputVectorSize() );
+          std::string roiReferenceFilename = GetROIVolumeName( subject, *roiTyIt );
+          float       SSE = ComputeSSE( predictedOutputVector, roiReferenceFilename );
+
+          ANNTestingSSEFileStream << *roiTyIt
+                                  << ", subjectID, " << subjectID
+                                  << ", Iteration, " << currentIteration
+                                  << ", SSE, " << SSE
+                                  << std::endl;
+          }
+        }
       }
 
-    // TODO:do clean up here
-    // TODO:writing mask here ?
     roiIDsOrderNumber++;
     }
+}
+
+float
+BRAINSCutApplyModel
+::ComputeSSE( const PredictValueMapType& predictedOutputVector,
+              const std::string roiReferenceFilename )
+{
+  WorkingImagePointer ReferenceVolume = ReadImageByFilename( roiReferenceFilename );
+
+  WorkingImageType::PixelType referenceValue = 0.0F;
+  double                      SSE = 0.0F;
+
+  for( PredictValueMapType::const_iterator it = predictedOutputVector.begin();
+       it != predictedOutputVector.end();
+       ++it )
+    {
+    WorkingImageType::IndexType indexFromKey = FeatureInputVector::HashIndexFromKey( it->first );
+    referenceValue = ReferenceVolume->GetPixel( indexFromKey );
+    SSE += (referenceValue - it->second) * (referenceValue - it->second);
+    }
+  double totalSize = predictedOutputVector.size();
+  SSE = SSE / totalSize;
+  return SSE;
 }
 
 void
@@ -134,15 +170,12 @@ BRAINSCutApplyModel
   BinaryImagePointer maskVolume;
 
   maskVolume = ThresholdImageAtLower( continuousImage, threshold);
-  itkUtil::WriteImage<BinaryImageType>( maskVolume, continuousFilename + "DEBUGThreshold.nii.gz");
 
   /* Get One label */
   maskVolume = GetOneConnectedRegion( maskVolume );
-  itkUtil::WriteImage<BinaryImageType>( maskVolume, continuousFilename + "DEBUGOneLargestLabel.nii.gz");
 
   /* opening and closing to get rid of island and holes */
   maskVolume = FillHole( maskVolume );
-  itkUtil::WriteImage<BinaryImageType>( maskVolume, continuousFilename + "DEBUGFillHole.nii.gz");
   return maskVolume;
 }
 
@@ -153,9 +186,16 @@ BRAINSCutApplyModel
   typedef itk::BinaryThresholdImageFilter<WorkingImageType, WorkingImageType> ThresholdFilterType;
   ThresholdFilterType::Pointer thresholder = ThresholdFilterType::New();
 
+  std::cout << "Treshold at " << annOutputThreshold << std::endl;
+  if( annOutputThreshold <= 0.0F )
+    {
+    std::string msg = " ANNOutput Threshold cannot be less than zero. \n";
+    throw BRAINSCutExceptionStringHandler( msg );
+    }
   thresholder->SetInput( image );
-  thresholder->SetInsideValue( 1 );
   thresholder->SetOutsideValue( 0 );
+#if 1 // HACK:  Regina,  I don't know which of these two items was intended to be committed.
+// <<<<<<< HEAD
   thresholder->SetLowerThreshold( thresholdValue );
   thresholder->Update();
 
@@ -175,11 +215,32 @@ BRAINSCutApplyModel
   thresholder->SetOutsideValue( 0 );
   thresholder->SetUpperThreshold( thresholdValue );
   thresholder->SetLowerThreshold( thresholdValue );
+#else
+// =======
+  thresholder->SetInsideValue( 255 );
+  thresholder->SetLowerThreshold( annOutputThreshold  );
+// >>>>>>> EHN: SEM compliant command line interface fixed for
+#endif
   thresholder->Update();
-
   BinaryImagePointer mask = itkUtil::TypeCast<BinaryImageType, BinaryImageType>( thresholder->GetOutput() );
   return mask;
 }
+
+#if 0
+BinaryTypePointer
+BRAINSCutApplyModel
+::GetOneContinuousObject( BinaryTypePointer binaryImage )
+{
+#if 1 // HACK: Regina, I don't know what was intended here.
+// <<<<<<< HEAD
+  BinaryImagePointer mask = itkUtil::TypeCast<BinaryImageType, BinaryImageType>( thresholder->GetOutput() );
+// =======
+// >>>>>>> EHN: SEM compliant command line interface fixed for
+#endif
+  return mask;
+}
+
+#endif
 
 BinaryImagePointer
 BRAINSCutApplyModel
@@ -243,7 +304,6 @@ BRAINSCutApplyModel
   closingFilter->SetSafeBorder( true );
   closingFilter->Update();
 
-  itkUtil::WriteImage<BinaryImageType>(  closingFilter->GetOutput(), "DEBUGCloseed.nii.gz");
   return closingFilter->GetOutput();
 }
 
@@ -255,6 +315,8 @@ BRAINSCutApplyModel
               unsigned int         inputVectorSize)
 {
   ReadANNModelFile();
+  /* initialize container of output vector*/
+  resultOutputVector.clear();
   for( InputVectorMapType::iterator it = roiInputFeatureVector.begin();
        it != roiInputFeatureVector.end();
        ++it )
@@ -286,22 +348,74 @@ BRAINSCutApplyModel
   cvInitMatHeader( matrix, 1, inputVectorSize, CV_32FC1, array );
 }
 
-void
+std::string
 BRAINSCutApplyModel
-::SetANNModelFilenameFromNetConfiguration()
+::GetANNModelBaseName()
 {
+  std::string basename;
+
   try
     {
-    ANNModelFilename = annModelConfiguration->GetAttribute<StringValue>("TrainingModelFilename");
+    basename = annModelConfiguration->GetAttribute<StringValue>("TrainingModelFilename");
     }
   catch( ... )
     {
     throw BRAINSCutExceptionStringHandler("Fail to get the ann model file name");
     }
-  int  iteration = BRAINSCutNetConfiguration.Get<ANNParams>("ANNParams")->GetAttribute<IntValue>("Iterations");
+  return basename;
+}
+
+void
+BRAINSCutApplyModel
+::SetANNModelFilenameAtIteration( const int iteration)
+{
+  ANNModelFilename = GetANNModelBaseName();
+
   char temp[10];
   sprintf( temp, "%09d", iteration );
   ANNModelFilename += temp;
+}
+
+void
+BRAINSCutApplyModel
+::SetTrainIterationFromNetConfiguration()
+{
+  trainIteration = BRAINSCutNetConfiguration.Get<ANNParams>("ANNParams")->GetAttribute<IntValue>("Iterations");
+}
+
+void
+BRAINSCutApplyModel
+::SetANNTestingSSEFilename()
+{
+  ANNTestingSSEFilename = GetANNModelBaseName();
+  ANNTestingSSEFilename += "ValidationSetSSE.txt";
+}
+
+void
+BRAINSCutApplyModel
+::SetComputeSSE( const bool sse)
+{
+  computeSSE = sse;
+  if( computeSSE )
+    {
+    ANNTestingSSEFileStream.open( ANNTestingSSEFilename.c_str(),
+                                  std::fstream::out );
+    if( !ANNTestingSSEFileStream.good() )
+      {
+      std::string errorMsg = " Cannot open the file! :";
+      errorMsg += ANNTestingSSEFilename;
+      std::cout << errorMsg << std::endl;
+      throw BRAINSCutExceptionStringHandler( errorMsg );
+      exit( EXIT_FAILURE );
+      }
+    }
+}
+
+void
+BRAINSCutApplyModel
+::SetANNModelFilenameFromNetConfiguration()
+{
+  SetANNModelFilenameAtIteration( trainIteration );
 }
 
 void
@@ -379,10 +493,6 @@ BRAINSCutApplyModel
               << std::endl;
     itksys::SystemTools::MakeDirectory( outputDir.c_str() );
     }
-  else
-    {
-    std::cout << " Subject output directory exist " << std::endl;
-    }
   return outputDir;
 }
 
@@ -406,7 +516,7 @@ BRAINSCutApplyModel
 /* get output mask file name of subject */
 inline std::string
 BRAINSCutApplyModel
-::GetOutputROIFilename( DataSet& subject, std::string currentROIName)
+::GetROIVolumeName( DataSet& subject, std::string currentROIName)
 {
   std::string       givenROIName = subject.GetMaskFilenameByType( currentROIName );
   const std::string subjectID(subject.GetAttribute<StringValue>("Name") );

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
   <executable>
-  <category>Filtering.FeatureDetection</category>
+  <category>FeatureCreator.</category>
   <title>GenerateCsfClippedFromClassifiedImage</title>
 
   <description>Get the distance from a voxel to the nearest voxel of a given tissue type.</description>
@@ -14,41 +14,12 @@
     <description>Input parameters for analysis.</description>
 
     <image>
-      <name>inputVolume</name>
-      <longflag>--inputVolume</longflag>
+      <name>inputCassifiedVolume</name>
+      <longflag>inputCassifiedVolume</longflag>
       <description>Required: input tissue label image</description>
       <label>Input Tissue Label Volume</label>
       <channel>input</channel>
     </image>
-
-      float variance = 2.0;
-        float upperThreshold = 0.0;
-          float lowerThreshold = 0.0;
-  <float>
-    <name>variance</name>
-    <longflag>--variance</longflag>
-    <description>Variance and Maximum error are used in the Gaussian smoothing of the input image.  See  itkDiscreteGaussianImageFilter for information on these parameters.</description>
-    <label>Canny Variance Parameter</label>
-    <channel>input</channel>
-    <default>2.0</default>
-  </float>
-  <float>
-    <name>upperThreshold</name>
-    <longflag>--upperThreshold</longflag>
-    <description>Threshold is the lowest allowed value in the output image.  Its data type is· the same as the data type of the output image. Any values below the Threshold level will be replaced with the OutsideValue parameter value, whose default is zero.  </description>
-    <label>Canny Lower Threshold Parameter</label>
-    <channel>input</channel>
-    <default>0.0</default>
-  </float>
-  <float>
-    <name>lowerThreshold</name>
-    <longflag>--lowerThreshold</longflag>
-    <description>Threshold is the lowest allowed value in the output image.  Its data type is· the same as the data type of the output image. Any values below the Threshold level will be replaced with the OutsideValue parameter value, whose default is zero.  </description>
-    <label>Canny Lower Threshold Parameter</label>
-    <channel>input</channel>
-    <default>1e10</default>
-  </float>
-
   </parameters>
   <parameters>
     <label>Output Parameters</label>

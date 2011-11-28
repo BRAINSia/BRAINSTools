@@ -23,6 +23,14 @@ public:
 
   void SetANNModelFilenameFromNetConfiguration();
 
+  void SetANNModelFilenameAtIteration( const int iteration);
+
+  void SetTrainIterationFromNetConfiguration();
+
+  void SetComputeSSE( const bool sse );
+
+  void SetANNTestingSSEFilename();
+
   void ReadANNModelFile();
 
   BinaryImagePointer PostProcessingOfANNContinuousImage( std::string continuousFilname, scalarType threshold);
@@ -40,12 +48,20 @@ public:
 private:
   NetConfiguration::ApplyDataSetListType applyDataSetList;
 
-  bool        normalization;
-  std::string ANNModelFilename;
+  bool         normalization;
+  bool         computeSSE;
+  int          trainIteration;
+  std::string  ANNModelFilename;
+  std::string  ANNTestingSSEFilename;
+  std::fstream ANNTestingSSEFileStream;
 
-  scalarType annOutputThreshold;
-
+  scalarType      annOutputThreshold;
   OpenCVMLPType * openCVANN;
+
+  /* private functions  */
+  std::string GetANNModelBaseName();
+
+  float ComputeSSE(const PredictValueMapType& predictedOutputVector, const std::string roiReferenceFilename );
 
   /* inline functions */
 
@@ -65,7 +81,7 @@ private:
 
   inline std::string GetContinuousPredictionFilename( DataSet& subject, std::string currentROIName);
 
-  inline std::string GetOutputROIFilename( DataSet& subject, std::string currentROIName);
+  inline std::string GetROIVolumeName( DataSet& subject, std::string currentROIName);
 };
 
 #endif

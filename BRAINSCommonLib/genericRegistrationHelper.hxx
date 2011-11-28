@@ -89,8 +89,7 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
 {
   this->SetNumberOfRequiredOutputs(1);    // for the Transform
 
-  TransformOutputPointer transformDecorator =
-    static_cast<TransformOutputType *>( this->MakeOutput(0).GetPointer() );
+  TransformOutputPointer transformDecorator = static_cast<TransformOutputType *>( this->MakeOutput(0U).GetPointer() );
 
   this->ProcessObject::SetNthOutput( 0, transformDecorator.GetPointer() );
 

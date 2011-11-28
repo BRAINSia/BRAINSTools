@@ -242,6 +242,11 @@ static std::vector<std::pair<std::string, std::vector<std::string> > > get_landm
 
     if( iter->size() != 2 )
       {
+      std::cout << "Row in " << landmark_types_list_file << " must have precisely two entries:" << std::endl;
+      for( unsigned int i = 0; i < iter->size(); i++ )
+        {
+        std::cout << (*iter)[i] << " ";
+        }
       itkGenericExceptionMacro(<< "Row in " << landmark_types_list_file
                                << " must have precisely two entries:");
       }

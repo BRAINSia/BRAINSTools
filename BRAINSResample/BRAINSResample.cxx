@@ -167,13 +167,13 @@ int main(int argc, char *argv[])
         typedef itk::AffineTransform<double, 3>
           AffineTransformType;
         const AffineTransformType::ConstPointer affineTransform =
-          dynamic_cast<AffineTransformType const *const>(
+          dynamic_cast<AffineTransformType const *>(
             genericTransform.GetPointer() );
 
-        AffineTransformType::Pointer inverseTransform = AffineTransformType::New();
-        affineTransform->GetInverse( inverseTransform );
+        AffineTransformType::Pointer Local_inverseTransform = AffineTransformType::New();
+        affineTransform->GetInverse( Local_inverseTransform );
 
-        genericTransform = inverseTransform;
+        genericTransform = Local_inverseTransform;
         if( genericTransform.IsNull() )
           {
           std::cout << "Error in type conversion " << __FILE__ << __LINE__ << std::endl;
@@ -185,7 +185,7 @@ int main(int argc, char *argv[])
         typedef itk::VersorRigid3DTransform<double>
           RigidTransformType;
         const RigidTransformType::ConstPointer rigidTransform =
-          dynamic_cast<RigidTransformType const *const>(
+          dynamic_cast<RigidTransformType const *>(
             genericTransform.GetPointer() );
         if( rigidTransform.IsNull() )
           {
@@ -193,10 +193,10 @@ int main(int argc, char *argv[])
           return EXIT_FAILURE;
           }
 
-        RigidTransformType::Pointer inverseTransform = RigidTransformType::New();
-        rigidTransform->GetInverse( inverseTransform );
+        RigidTransformType::Pointer Local_inverseTransform = RigidTransformType::New();
+        rigidTransform->GetInverse( Local_inverseTransform );
 
-        genericTransform = inverseTransform;
+        genericTransform = Local_inverseTransform;
 
         if( genericTransform.IsNull() )
           {

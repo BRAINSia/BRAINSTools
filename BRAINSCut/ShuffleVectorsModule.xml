@@ -10,90 +10,28 @@
   <acknowledgements></acknowledgements>
  <parameters>
    <file>
-     <name>netConfiguration</name>
-     <longflag>netConfiguration</longflag>
-     <label>Neural Net Configuration File</label>
+     <name>inputVectorFileBaseName</name>
+     <longflag>inputVectorFileBaseName</longflag>
+     <label>Vector Filename prefix</label>
      <channel>input</channel>
-     <description>XML File defining ShuffleVectors parameters</description>
+     <description>input vector file name prefix. Usually end with .txt and header file has prost fix of .txt.hdr</description>
+     <default></default>
+   </file>
+   <file>
+     <name>outputVectorFileBaseName</name>
+     <longflag>outputVectorFileBaseName</longflag>
+     <label>Output Vector Filename prefix</label>
+     <channel>output</channel>
+     <description>output vector file name prefix. Usually end with .txt and header file has prost fix of .txt.hdr</description>
      <default></default>
    </file>
    <integer>
-     <name>trainModelStartIndex</name>
-     <label>Training Start Index</label>
-     <longflag>trainModelStartIndex</longflag>
-     <description>Starting iteration for training</description>
-     <label>Training Start Index</label>
-     <default>0</default>
+     <name>downSampleSize</name>
+     <longflag>downSampleSixe</longflag>
+     <label>Down Sample Size</label>
+     <channel>input</channel>
+     <description>downsample size of 1 will be the same size as the input images, downsample size of 3 will throw 2/3 the vectors away.</description>
+     <default>1</default>
    </integer>
-   <integer>
-     <name>verbose</name>
-     <label>verbose</label>
-     <longflag>verbose</longflag>
-     <description>print out some debugging information</description>
-     <default>0</default>
-   </integer>
-   <boolean>
-     <name>multiStructureThreshold</name>
-     <label>multiStructureThreshold</label>
-     <longflag>multiStructureThreshold</longflag>
-     <description>multiStructureThreshold module to deal with overlaping area</description>
-     <default>false</default>
-   </boolean>
-   <boolean>
-     <name>histogramEqualization</name>
-     <label>histogram Equalziation Process</label>
-     <longflag>histogramEqualization</longflag>
-     <description>A Histogram Equalization process could be added to the creating/applying process from Subject To Atlas. Default is false, which genreate input vectors without Histogram Equalization. </description>
-     <default>false</default>
-   </boolean>
-   <boolean>
-     <name>doTest</name>
-     <label>Testing with testing vector input</label>
-     <longflag>doTest</longflag>
-     <description>doTest</description>
-     <default>false</default>
-   </boolean>
-   <boolean>
-     <name>generateProbability</name>
-     <label>Generate Probability</label>
-     <longflag>generateProbability</longflag>
-     <description>Generate probability map</description>
-     <default>false</default>
-   </boolean>
-   <boolean>
-     <name>createVectors</name>
-     <label>Create Vectors</label>
-     <longflag>createVectors</longflag>
-     <description>create vectors for training neural net</description>
-     <default>false</default>
-   </boolean>
-   <boolean>
-     <name>trainModel</name>
-     <label>Train Model</label>
-     <longflag>trainModel</longflag>
-     <description>train the neural net</description>
-     <default>false</default>
-   </boolean>
-   <boolean>
-     <name>applyModel</name>
-     <label>Apply Model</label>
-     <longflag>applyModel</longflag>
-     <description>apply the neural net</description>
-     <default>false</default>
-   </boolean>
-   <boolean>
-     <name>validate</name>
-     <label>Validate</label>
-     <longflag>validate</longflag>
-     <description>validate data set.Just need for the first time run</description>
-     <default>false</default>
-   </boolean>
-    <integer>
-      <name>numberOfThreads</name>
-      <longflag deprecatedalias="debugNumberOfThreads" >numberOfThreads</longflag>
-      <label>Number Of Threads</label>
-      <description>Explicitly specify the maximum number of threads to use.</description>
-      <default>-1</default>
-    </integer>
 </parameters>
 </executable>

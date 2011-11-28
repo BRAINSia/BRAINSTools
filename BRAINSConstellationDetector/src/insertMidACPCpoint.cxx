@@ -36,8 +36,8 @@ int main( int argc, char * argv[] )
   midACPCpoint[1] = (PCpoint[1] - ACpoint[1]) / 2;
   midACPCpoint[2] = (PCpoint[2] - ACpoint[2]) / 2;
 
-//	std::cout << "PC :" << PCpoint[0] << ", " << PCpoint[1] << ", " << PCpoint[2] << ")" << std::endl;
-//	std::cout << "midpoint :" << midACPCpoint[0] << ", " << midACPCpoint[1] << ", " << midACPCpoint[2] << ")" <<
+//  std::cout << "PC :" << PCpoint[0] << ", " << PCpoint[1] << ", " << PCpoint[2] << ")" << std::endl;
+//  std::cout << "midpoint :" << midACPCpoint[0] << ", " << midACPCpoint[1] << ", " << midACPCpoint[2] << ")" <<
 // std::endl;
 
   lmksMap["midACPC"] = midACPCpoint;

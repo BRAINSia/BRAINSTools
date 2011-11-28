@@ -94,17 +94,28 @@ MakeBrandeddebugImage(SImageType::ConstPointer in,
     orientedImage = rgbImage;
     }
 
+  // HACK: Ali:  This code seems to be duplicated at line 294,  The duplicated code should be made into a function so
+  // there is only one verison of it
+  // HACK: Ali:  BRAINSConstellationDetector/src/landmarkIO.cxx:294: warning #593: variable "height" was set but never
+  // used
   for( unsigned int which = 0; which < 4; which++ )
     {
     SImageType::PointType pt = RP;
     SImageType::PointType pt2 = RP2;
     double                radius = 0.0;
-    double                height = 0.0;
+    // HACK:  Ali:  Why is height hard-coded to a value of 4 here?
+    // HACK:  Ali:  BRAINSConstellationDetector/src/landmarkIO.cxx:102: warning #593: variable "height" was set but
+    // never used
+
+    double height = 0.0;
 
     switch( which )
       {
       case 0:
         {
+        // The mDef reference file is probably still specifying the Height for each of these landmark points, but
+        // that value is not being used in the IsOnCylinder computation due to the over-ride value of '4'
+        // It would be better to use the value of '4' in the mDef file instead.
         height = mDef.GetHeight("RP");
         radius = 4 * mDef.GetRadius("RP");
         pt = RP;
@@ -146,6 +157,7 @@ MakeBrandeddebugImage(SImageType::ConstPointer in,
       SImageType::IndexType index = rgbIt.GetIndex();
       SImageType::PointType p;
       orientedImage->TransformIndexToPhysicalPoint(index, p);
+      // HACK:  Ali:  Why is height hard-coded to a value of 4 here?
       if( IsOnCylinder(p, pt, pt2, radius, /* height, */ 4) )
         {
         RGBPixelType pixel = rgbIt.Value();
@@ -304,6 +316,11 @@ MakeBranded2DImage(SImageType::ConstPointer in,
     orientedImage = rgbImage;
     }
 
+  // HACK: Ali:  This code seems to be duplicated at line 102,  The duplicated code should be made into a function so
+  // there is only one verison of it
+  // HACK: Ali:  BRAINSConstellationDetector/src/landmarkIO.cxx:294: warning #593: variable "height" was set but never
+  // used
+  // HACK: Ali:  This code also has the same problem as the code at line 102.
   for( unsigned int which = 0; which < 5; which++ )
     {
     SImageType::PointType pt;

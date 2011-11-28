@@ -284,7 +284,7 @@ static int GenerateProbabilityMaps(NetConfiguration & ANNConfiguration,
          it != dataSets.end(); ++it )
       {
       // get subject image
-      std::string SubjectImage( ( *it )->GetImageFilenameByType(imageTypeToUse) );
+      // std::string SubjectImage( ( *it )->GetImageFilenameByType(imageTypeToUse) );
       // Get SubjtoAtlasRegistrationFilename
       // RegistrationType *reg = (*it)->Get<RegistrationType>("Registration");
       const RegistrationType *reg = ( *it )->GetRegistrationWithID(regID);
@@ -400,7 +400,8 @@ static int GenerateProbabilityMaps(NetConfiguration & ANNConfiguration,
         }
       catch( itk::ExceptionObject & e )
         {
-        throw;
+        std::cerr << e << std::endl;
+        throw e;
         }
       }
     }

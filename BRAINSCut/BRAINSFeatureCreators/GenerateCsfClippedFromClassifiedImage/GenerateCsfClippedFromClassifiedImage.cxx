@@ -13,14 +13,6 @@ int
 main(int argc, char * *argv)
 {
   PARSE_ARGS;
-  if( argc < 3 )
-    {
-    std::cout << " Usage:: Need classified Image to calculate " << std::endl
-              << argv[0] << "   "
-              << " [classified Image Name] [output name] "
-              << std::endl;
-    return 0;
-    }
 
   typedef float PixelType;
   const unsigned int Dim = 3;
@@ -30,7 +22,7 @@ main(int argc, char * *argv)
 
   ImageReaderType::Pointer classified_imageReader = ImageReaderType::New();
 
-  classified_imageReader->SetFileName(argv[1]);
+  classified_imageReader->SetFileName( inputCassifiedVolume );
 
   typedef itk::ThresholdImageFilter<ImageType> ThresholdFilterType;
 
@@ -47,14 +39,13 @@ main(int argc, char * *argv)
 
   WriterType::Pointer writer = WriterType::New();
   writer->UseCompressionOn();
-  const char *outputFileName = argv[2];
   typedef itk::RescaleIntensityImageFilter<ImageType, ImageType> RescaleFilterType;
   RescaleFilterType::Pointer rescaler = RescaleFilterType::New();
   rescaler->SetOutputMinimum(0);
   rescaler->SetOutputMaximum(255);
 
   rescaler->SetInput( classified_gradientFilter->GetOutput() );
-  writer->SetFileName(outputFileName);
+  writer->SetFileName( outputVolume );
   writer->SetInput( rescaler->GetOutput() );
   try
     {

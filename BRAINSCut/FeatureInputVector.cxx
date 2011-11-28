@@ -224,7 +224,7 @@ FeatureInputVector
        ++roiStringIt )  // iterate each ROI candidates in order specified in "roi IDs in order"
     {
     WorkingPixelType currentProbability = candidateROIs.find( *roiStringIt )->second->GetPixel( currentPixelIndex );
-    if( currentProbability > 0.0F )
+    if( currentProbability > 0.0F +  FLOAT_TOLERANCE )
       {
       AddValueToElement( MAX, elementIterator );
       }

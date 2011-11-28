@@ -388,7 +388,7 @@ void DtiFastMarchingCostFilter<TLevelSet, TTensorImage>
       }
 
     // check if node index is within brain region
-    EigenvectorPixelType eigPixel = m_EigenvectorImage->GetPixel( node.GetIndex() );
+    // const EigenvectorPixelType eigPixel = m_EigenvectorImage->GetPixel( node.GetIndex() );
 
     // does this node contain the current value ?
     currentValue = (double)output->GetPixel( node.GetIndex() );
@@ -497,7 +497,7 @@ DtiFastMarchingCostFilter<TLevelSet, TTensorImage>
     // bool pass=false;
     // float checkEigValue=0.0;
 
-    EigenvectorPixelType eigPixel = m_EigenvectorImage->GetPixel(eigIndex);
+    // const EigenvectorPixelType eigPixel = m_EigenvectorImage->GetPixel(eigIndex);
 
     /*
     for(unsigned int j=0; j<dimension; j++)

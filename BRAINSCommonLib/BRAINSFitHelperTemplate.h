@@ -117,7 +117,7 @@ public:
   typedef enum
     {
     LINEAR_INTERP = 0,
-    WINDOWSINC_INTERP = 1,
+    WINDOWSINC_INTERP = 1
     } InterpolationType;
 
   itkSetMacro(NumberOfSamples,        unsigned int);

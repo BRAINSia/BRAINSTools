@@ -22,7 +22,7 @@ main(int argc, char * *argv)
     return 0;
     }
   std::cout << "Input File name: " << argv[1]
-            << "Input Mask anem : " << argv[2] << std::endl;
+            << "Input Mask name: " << argv[2] << std::endl;
 
   typedef double PixelType;
   const unsigned int Dim = 3;

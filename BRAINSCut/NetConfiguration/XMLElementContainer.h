@@ -48,12 +48,13 @@ private:
   std::string m_Name;
 };
 
-template <typename OutputType>
+template <typename TOutputType>
 class XMLContents :
   public XMLElementContainer
 {
 public:
   typedef XMLElementContainer SuperClass;
+  typedef TOutputType         OutputType;
   virtual int PrintSelf(std::ostream &, int indent) const
   {
     // SuperClass::PrintSelf(os);

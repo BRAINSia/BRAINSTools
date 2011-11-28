@@ -12,8 +12,6 @@ BRAINSCutTrainModel
   activationSlope(0),
   activationMinMax(0)
 {
-  std::cout << __LINE__ << "::" << __FILE__ << std::endl;
-
   ANNParameterNetConfiguration = BRAINSCutNetConfiguration.Get<ANNParams>("ANNParams");
   ANNLayerStructure = cvCreateMat( 1, 3, CV_32SC1);
 }
@@ -23,9 +21,9 @@ void
 BRAINSCutTrainModel
 ::InitializeTrainDataSet()
 {
-  std::string ANNVectorFilenamePrefix = GetANNVectorFilenamePrefix();
+  const std::string Local_ANNVectorFilenamePrefix = this->GetANNVectorFilenamePrefix();
 
-  trainingDataSet = new BRAINSCutVectorTrainingSet( ANNVectorFilenamePrefix);
+  trainingDataSet = new BRAINSCutVectorTrainingSet( Local_ANNVectorFilenamePrefix);
   trainingDataSet->ReadHeaderFileInformation();
   trainingDataSet->SetRecordSize();
   trainingDataSet->SetBufferRecordSize();
@@ -60,7 +58,6 @@ inline void
 BRAINSCutTrainModel
 ::TrainWithUpdate( neuralNetType& myTrainer, bool update, pairedTrainingSetType& currentTrainData )
 {
-  std::cout << __LINE__ << "::" << __FILE__ << std::endl;
   int updateOption = 0;
 
   if( update )
@@ -88,7 +85,7 @@ BRAINSCutTrainModel
 {
   char tempid[10];
 
-  sprintf( tempid, "%09d", No + 1 );
+  sprintf( tempid, "%09u", No + 1 );
   std::string filename = ANNModelFilenamePrefix + tempid;
 
   myTrainer.save( filename.c_str() );
@@ -129,10 +126,6 @@ BRAINSCutTrainModel
                     CvANN_MLP::SIGMOID_SYM,
                     activationSlope,
                     activationMinMax);
-
-  std::cout << __LINE__ << "::" << __FILE__ << std::endl;
-  std::cout << trainner->get_MSE() << " > " << trainDesiredError << std::endl;
-  std::cout << trainIteration << "::" << std::endl;
   for( unsigned int currentIteration = 0;
        currentIteration < trainIteration;
        currentIteration++ )

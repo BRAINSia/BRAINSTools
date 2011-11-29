@@ -180,7 +180,7 @@ DoBSpline(typename BSplineTransformType::Pointer InitializerBsplineTransform,
   try
     {
     collector.Start("Registration");
-    registration->StartRegistration();
+    registration->Update();
     collector.Stop("Registration");
     }
   catch( itk::ExceptionObject & err )

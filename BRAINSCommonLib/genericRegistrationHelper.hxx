@@ -403,7 +403,7 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
       {
       try
         {
-        m_Registration->StartRegistration();
+        m_Registration->Update();
         successful = true;
         }
       catch( itk::ExceptionObject & err )

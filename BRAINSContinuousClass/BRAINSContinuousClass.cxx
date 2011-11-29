@@ -119,7 +119,6 @@ int main(int argc, char * argv [])
   struct problem logisticRegressionProblemWhiteVsCSF;
   struct problem logisticRegressionProblemWhiteVsGray;
   struct problem logisticRegressionProblemGrayVsCSF;
-  struct model*  logisticRegressionModel;
 
   const unsigned int bias = 1;
   const unsigned int featuresCount = 2; // T1 and T2, excludes bias term
@@ -248,13 +247,6 @@ int main(int argc, char * argv [])
   logisticRegressionModelGrayVsCSF = train(&logisticRegressionProblemGrayVsCSF, &logisticRegressionParameter);
   logisticRegressionModelWhiteVsGray = train(&logisticRegressionProblemWhiteVsGray, &logisticRegressionParameter);
 
-  std::cout << logisticRegressionModelWhiteVsCSF->label[0] << "," << logisticRegressionModelWhiteVsCSF->label[1]
-            << std::endl;
-  std::cout << logisticRegressionModelWhiteVsGray->label[0] << "," << logisticRegressionModelWhiteVsGray->label[1]
-            << std::endl;
-  std::cout << logisticRegressionModelGrayVsCSF->label[0] << "," << logisticRegressionModelGrayVsCSF->label[1]
-            << std::endl;
-
   typedef itk::ImageDuplicator<ImageType> ImageDuplicatorType;
   ImageDuplicatorType::Pointer t1DuplicateImageFilter = ImageDuplicatorType::New();
   t1DuplicateImageFilter->SetInputImage(t1Reader->GetOutput() );
@@ -273,7 +265,6 @@ int main(int argc, char * argv [])
   for( imgItr.GoToBegin(); !imgItr.IsAtEnd(); ++imgItr )
     {
     const ImageType::IndexType idx = imgItr.GetIndex();
-    const ImageType::PixelType discretePixelValue = discreteReader->GetOutput()->GetPixel(idx);
     const ImageType::PixelType t1PixelValue = t1Reader->GetOutput()->GetPixel(idx);
     const ImageType::PixelType t2PixelValue = t2Reader->GetOutput()->GetPixel(idx);
     sampleToPredict[0].value = t1PixelValue;
@@ -358,6 +349,9 @@ int main(int argc, char * argv [])
   free(predictedProbabilityEstimatesWhiteVsGray);
   free(predictedProbabilityEstimatesWhiteVsCSF);
   free(predictedProbabilityEstimatesGrayVsCSF);
+  free(logisticRegressionModelWhiteVsCSF);
+  free(logisticRegressionModelGrayVsCSF);
+  free(logisticRegressionModelWhiteVsGray);
 
   ouptutWriter->SetInput(outputImage);
   ouptutWriter->SetFileName(outputVolume);

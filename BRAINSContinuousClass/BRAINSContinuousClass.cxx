@@ -259,9 +259,9 @@ int main(int argc, char * argv [])
   sampleToPredict[1].index = 2;
   sampleToPredict[2].index = -1;
 
-  double *predictedProbabilityEstimatesWhiteVsGray = (double *) malloc(2 * sizeof(double) );
-  double *predictedProbabilityEstimatesWhiteVsCSF = (double *) malloc(2 * sizeof(double) );
-  double *predictedProbabilityEstimatesGrayVsCSF = (double *) malloc(2 * sizeof(double) );
+  double predictedProbabilityEstimatesWhiteVsGray[2];
+  double predictedProbabilityEstimatesWhiteVsCSF[2];
+  double predictedProbabilityEstimatesGrayVsCSF[2];
   for( imgItr.GoToBegin(); !imgItr.IsAtEnd(); ++imgItr )
     {
     const ImageType::IndexType idx = imgItr.GetIndex();
@@ -346,12 +346,16 @@ int main(int argc, char * argv [])
   free(logisticRegressionProblemWhiteVsCSF.y);
   free(logisticRegressionProblemWhiteVsCSF.x);
   free(whiteVsCSFFeatureNodes);
-  free(predictedProbabilityEstimatesWhiteVsGray);
-  free(predictedProbabilityEstimatesWhiteVsCSF);
-  free(predictedProbabilityEstimatesGrayVsCSF);
+  free(sampleToPredict);
+  free(logisticRegressionModelWhiteVsCSF->w);
+  free(logisticRegressionModelWhiteVsCSF->label);
   free(logisticRegressionModelWhiteVsCSF);
-  free(logisticRegressionModelGrayVsCSF);
+  free(logisticRegressionModelWhiteVsGray->w);
+  free(logisticRegressionModelWhiteVsGray->label);
   free(logisticRegressionModelWhiteVsGray);
+  free(logisticRegressionModelGrayVsCSF->w);
+  free(logisticRegressionModelGrayVsCSF->label);
+  free(logisticRegressionModelGrayVsCSF);
 
   ouptutWriter->SetInput(outputImage);
   ouptutWriter->SetFileName(outputVolume);

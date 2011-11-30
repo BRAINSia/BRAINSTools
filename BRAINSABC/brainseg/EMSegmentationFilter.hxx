@@ -50,6 +50,8 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
 {
   m_DirtyLabels = NULL;
   m_CleanedLabels = NULL;
+  m_ThresholdedLabels = NULL;
+  m_DirtyThresholdedLabels = NULL;
 
   m_SampleSpacing = 2.0;
 
@@ -441,6 +443,17 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
   m_PriorIsForegroundPriorVectorSet = true;
   this->Modified();
   m_UpdateRequired = true;
+}
+
+template <class TInputImage, class TProbabilityImage>
+typename EMSegmentationFilter<TInputImage, TProbabilityImage>::
+ByteImagePointer
+EMSegmentationFilter<TInputImage, TProbabilityImage>
+::GetThresholdedOutput(void)
+{
+  // TODO:  This assumes that GetOutput was already called.  This should be made
+  // more intelligent
+  return m_ThresholdedLabels;
 }
 
 template <class TInputImage, class TProbabilityImage>
@@ -1780,6 +1793,10 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
   ComputeLabels<TProbabilityImage>(this->m_Posteriors, this->m_PriorIsForegroundPriorVector,
                                    this->m_PriorLabelCodeVector, this->m_NonAirRegion, this->m_DirtyLabels,
                                    this->m_CleanedLabels);
+  FloatingPrecision inclusionThreshold = 0.75F;
+  ComputeLabels<TProbabilityImage>(this->m_Posteriors, this->m_PriorIsForegroundPriorVector,
+                                   this->m_PriorLabelCodeVector, this->m_NonAirRegion, this->m_DirtyThresholdedLabels,
+                                   this->m_ThresholdedLabels, inclusionThreshold);
   this->WriteDebugLabels(CurrentEMIteration + 100);
 
   // Bias correction at full resolution, still using downsampled images

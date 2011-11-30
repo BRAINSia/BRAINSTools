@@ -168,6 +168,8 @@ public:
 
   ByteImagePointer GetCleanedOutput(void);
 
+  ByteImagePointer GetThresholdedOutput(void);
+
   std::vector<ProbabilityImagePointer> GetPosteriors();
 
   std::vector<InputImagePointer> GetCorrected();
@@ -273,6 +275,8 @@ private:
   // final output
   ByteImagePointer m_DirtyLabels;
   ByteImagePointer m_CleanedLabels;
+  ByteImagePointer m_ThresholdedLabels;
+  ByteImagePointer m_DirtyThresholdedLabels;
 
   // exclude region from outside image space created by warping an all ones
   // image with zero default value, anded across images

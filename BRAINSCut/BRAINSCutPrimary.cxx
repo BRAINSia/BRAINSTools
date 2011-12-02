@@ -148,6 +148,7 @@ BRAINSCutPrimary
        imgTyIt != imageListFromAtlas.end();
        ++imgTyIt ) // imgTyIt = image type iterator
     {
+    std::cout << *imgTyIt << std::endl;
     WorkingImagePointer currentTypeImage = ReadImageByFilename( subject.GetImageFilenameByType( *imgTyIt ) );
     subjectImageList.push_back( currentTypeImage );
     }

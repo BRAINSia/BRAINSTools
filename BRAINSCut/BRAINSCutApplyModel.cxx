@@ -187,7 +187,7 @@ BRAINSCutApplyModel
   ThresholdFilterType::Pointer thresholder = ThresholdFilterType::New();
 
   std::cout << "Treshold at " << thresholdValue << std::endl;
-  if( thresholdValue <= 0.0F )
+  if( thresholdValue < 0.0F )
     {
     std::string msg = " ANNOutput Threshold cannot be less than zero. \n";
     throw BRAINSCutExceptionStringHandler( msg );

@@ -241,6 +241,10 @@ int main(int argc, char *argv[])
       {
       localTransformType.push_back("BSpline");
       }
+    if( useComposite )
+      {
+      localTransformType.push_back("Composite3D");
+      }
     }
   else if( transformType.size() > 0 )
     {
@@ -298,9 +302,10 @@ int main(int argc, char *argv[])
       && strippedOutputTransform.empty()
       && outputVolume.empty() )
     {
-    itkGenericExceptionMacro( "Error:  user requested neither localOutputTransform,"
-                              << " nor strippedOutputTransform,"
-                              << " nor outputVolume.");
+    std::cout << "Error:  user requested neither localOutputTransform,"
+              << " nor strippedOutputTransform,"
+              << " nor outputVolume." << std::endl;
+    return 2;
     }
 
   if( numberOfIterations.size() != localTransformType.size() )

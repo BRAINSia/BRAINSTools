@@ -123,6 +123,13 @@
        <description>Perform a BSpline registration as part of the sequential registration steps.  This family of options superceeds the use of transformType if any of them are set.</description>
        <default>false</default>
     </boolean>
+    <boolean>
+       <name>useComposite</name>
+       <longflag>useComposite</longflag>
+       <label>Composite (many DOF) </label>
+       <description>Perform a Composite registration as part of the sequential registration steps.  This family of options superceeds the use of transformType if any of them are set.</description>
+       <default>false</default>
+    </boolean>
   </parameters>
 
   <!-- -->

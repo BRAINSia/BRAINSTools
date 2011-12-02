@@ -49,6 +49,10 @@ void PrintImageMinAndMax(TImage *inputImage)
 int main(int argc, char *argv[])
 {
   PARSE_ARGS;
+#if ITK_VERSION_MAJOR > 3
+  // Call register default transforms
+  itk::TransformFactoryBase::RegisterDefaultTransforms();
+#endif
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
 
   const bool debug = true;

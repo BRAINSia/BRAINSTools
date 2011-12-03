@@ -114,10 +114,6 @@ DoBSpline(typename BSplineTransformType::Pointer InitializerBsplineTransform,
 
   registration->SetInitialTransformParameters( m_OutputBSplineTransform->GetParameters() );
 
-  OptimizerBoundSelectionType boundSelect( m_OutputBSplineTransform->GetNumberOfParameters() );
-  OptimizerBoundValueType     upperBound( m_OutputBSplineTransform->GetNumberOfParameters() );
-  OptimizerBoundValueType     lowerBound( m_OutputBSplineTransform->GetNumberOfParameters() );
-
   /**
     *
     * Set the boundary condition for each variable, where
@@ -130,6 +126,7 @@ DoBSpline(typename BSplineTransformType::Pointer InitializerBsplineTransform,
   // constrian
   // the parameters to something different than those control points inside the
   // fixed image mask.
+  OptimizerBoundSelectionType boundSelect( m_OutputBSplineTransform->GetNumberOfParameters() );
   if( vcl_abs(m_MaxBSplineDisplacement) < 1e-12 )
     {
     boundSelect.Fill(0);
@@ -137,12 +134,15 @@ DoBSpline(typename BSplineTransformType::Pointer InitializerBsplineTransform,
   else
     {
     boundSelect.Fill(2);
+    OptimizerBoundValueType upperBound( m_OutputBSplineTransform->GetNumberOfParameters() );
+    OptimizerBoundValueType lowerBound( m_OutputBSplineTransform->GetNumberOfParameters() );
+
+    upperBound.Fill(m_MaxBSplineDisplacement);
+    lowerBound.Fill(-m_MaxBSplineDisplacement);
+    optimizer->SetUpperBound(upperBound);
+    optimizer->SetLowerBound(lowerBound);
     }
-  upperBound.Fill(m_MaxBSplineDisplacement);
-  lowerBound.Fill(-m_MaxBSplineDisplacement);
   optimizer->SetBoundSelection(boundSelect);
-  optimizer->SetUpperBound(upperBound);
-  optimizer->SetLowerBound(lowerBound);
 
   optimizer->SetCostFunctionConvergenceFactor(m_CostFunctionConvergenceFactor);
   optimizer->SetProjectedGradientTolerance(m_ProjectedGradientTolerance);

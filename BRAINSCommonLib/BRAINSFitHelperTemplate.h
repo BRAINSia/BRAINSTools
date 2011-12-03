@@ -25,7 +25,6 @@
 #include "itkCenteredVersorTransformInitializer.h"
 #include "itkCenteredTransformInitializer.h"
 #include "itkVersorRigid3DTransformOptimizer.h"
-#include "itkVersorRigid3DTransformOptimizer.h"
 #include "itkVersorTransformOptimizer.h"
 #include "itkMultiThreader.h"
 #include "itkResampleImageFilter.h"

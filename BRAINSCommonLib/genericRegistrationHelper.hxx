@@ -25,35 +25,11 @@
 
 #include "itkWindowedSincInterpolateImageFunction.h"
 
+#include "itkStatisticsImageFilter.h"
+#include "itkImageDuplicator.h"
+
 namespace itk
 {
-template <class JointPDFType>
-void MakeDebugJointHistogram(const std::string debugOutputDirectory, const typename JointPDFType::Pointer myHistogram,
-                             const int globalIteration,
-                             const int currentIteration)
-{
-  std::stringstream fn("");
-
-  fn << debugOutputDirectory << "/DEBUGHistogram_"
-     << std::setw( 4 ) << std::setfill( '0' ) << globalIteration
-     << "_"
-     << std::setw( 4 ) << std::setfill( '0' ) << currentIteration
-     << ".png";
-  // typename JOINTPDFType::ConstPointer =
-  // typedef itk::CastImageFilter<JointPDFType, itk::Image< unsigned short, 2 >
-  // > CasterType;
-  typedef itk::RescaleIntensityImageFilter<JointPDFType, itk::Image<unsigned short, 2> > CasterType;
-  // typedef itk::ShiftScaleImageFilter<JointPDFType, itk::Image< unsigned char,
-  // 2 > > CasterType;
-  typename CasterType::Pointer myCaster = CasterType::New();
-  myCaster->SetInput(myHistogram);
-  // myCaster->SetShift(0);
-  // myCaster->SetScale(255);
-  myCaster->Update();
-  itkUtil::WriteImage<itk::Image<unsigned short, 2> >( myCaster->GetOutput(), fn.str() );
-  std::cout << "Writing jointPDF: " << fn.str() << std::endl;
-}
-
 /*
   * Constructor
   */
@@ -447,41 +423,6 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
     m_FinalMetricValue = optimizer->GetValue();
     m_ActualNumberOfIterations = optimizer->GetCurrentIteration();
     m_Transform->SetParametersByValue(finalParameters);
-
-#if ITK_VERSION_MAJOR >= 4  // GetJointPDF only available in ITKv4
-    //
-    // GenerateHistogram
-    // TODO: KENT:  BRAINSFit tools need to define a common output directory for
-    // all debug images to be written.
-    //             by default the it should be the same as the outputImage, and
-    // if that does not exists, then it
-    //             should default to the same directory as the outputTransform,
-    // or it should be specified by the
-    //             user on the command line.
-    //             The following function should only be called when BRAINSFit
-    // command line tool is called with
-    //             --debugLevel 7 or greater, and it should write the 3D
-    // JointPDF image to the debugOutputDirectory
-    //             location.
-    const std::string debugOutputDirectory("");
-    if( debugOutputDirectory != "" )
-      {
-      // Special BUG work around for MMI metric
-      // that does not work in multi-threaded mode
-      typedef COMMON_MMI_METRIC_TYPE<FixedImageType, MovingImageType> MattesMutualInformationMetricType;
-      static int TransformIterationCounter = 10000;
-      typename MattesMutualInformationMetricType::Pointer test_MMICostMetric =
-        dynamic_cast<MattesMutualInformationMetricType *>(this->m_CostMetricObject.GetPointer() );
-      if( test_MMICostMetric.IsNotNull() )
-        {
-        typedef itk::Image<float, 2> JointPDFType;
-        const JointPDFType::Pointer myHistogram = test_MMICostMetric->GetJointPDF();
-        MakeDebugJointHistogram<JointPDFType>(debugOutputDirectory, myHistogram, TransformIterationCounter,
-                                              optimizer->GetCurrentIteration() );
-        TransformIterationCounter += 10000;
-        }
-      }
-#endif
     }
 
   typename TransformType::MatrixType matrix = m_Transform->GetMatrix();

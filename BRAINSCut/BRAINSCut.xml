@@ -6,7 +6,7 @@
   <version> 1.0</version>
   <documentation-url></documentation-url>
   <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt </license>
-  <contributor>Vince Magnotta, Hans Johnson, Greg Harris, Kent Williams </contributor>
+  <contributor>Vince Magnotta, Hans Johnson, Greg Harris, Kent Williams, Eunyoung Regina Kim </contributor>
   <acknowledgements></acknowledgements>
  <parameters>
    <file>
@@ -50,7 +50,7 @@
      <name>computeSSEOn</name>
      <label>Testing with testing vector input</label>
      <longflag>computeSSEOn</longflag>
-     <description>computeSSEOn</description>
+     <description>compute Sum of Square Error (SSE) along the trained model until the number of iteration given in the netConfiguration file</description>
      <default>false</default>
    </boolean>
    <boolean>
@@ -85,7 +85,7 @@
      <name>validate</name>
      <label>Validate</label>
      <longflag>validate</longflag>
-     <description>validate data set.Just need for the first time run</description>
+     <description>validate data set.Just need for the first time run ( This is for validation of xml file and not working yet )</description>
      <default>false</default>
    </boolean>
     <integer>

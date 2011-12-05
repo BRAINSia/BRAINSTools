@@ -143,7 +143,7 @@ void ComputeLabels(
 
             {
             bool         fgflag = PriorIsForegroundPriorVector[indexMaxPosteriorClassValue];
-            unsigned int label = 0;
+            unsigned int label = 99;
             if( maxPosteriorClassValue > InclusionThreshold )
               {
               label = PriorLabelCodeVector[indexMaxPosteriorClassValue];

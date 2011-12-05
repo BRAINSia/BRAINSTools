@@ -15,7 +15,23 @@ BRAINSCutApplyModel
   // ANNModelFilename(NULL)
 {
   // TODO Take this apart to generate registration one by one!
-  GenerateRegistrations(BRAINSCutNetConfiguration, true, true, 1);
+  SetRegionsOfInterestFromNetConfiguration();
+  SetRegistrationParametersFromNetConfiguration();
+
+  SetAtlasDataSet();
+  SetAtlasFilename();
+  SetAtlasImage();
+
+  SetRhoPhiThetaFromNetConfiguration();
+
+  SetANNModelConfiguration();
+  SetANNTestingSSEFilename();
+  SetGradientSizeFromNetConfiguration();
+  SetANNOutputThresholdFromNetConfiguration();
+  SetTrainIterationFromNetConfiguration();
+
+  SetApplyDataSetFromNetConfiguration();
+  SetANNModelFilenameFromNetConfiguration();
 
   openCVANN = new OpenCVMLPType();
 }

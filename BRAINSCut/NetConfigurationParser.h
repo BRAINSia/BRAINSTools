@@ -52,8 +52,6 @@ class NetConfigurationParser : public XMLParser
 public:
   NetConfigurationParser(const std::string & filename) : XMLParser(filename)
   {
-    std::cout << __LINE__ << "::"__FILE__ << std::endl;
-    // ReadXML( );
   }
 
   virtual void StartElement(void *userData, const XML_Char *name, const XML_Char * *atts);

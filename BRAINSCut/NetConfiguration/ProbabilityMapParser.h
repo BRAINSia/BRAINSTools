@@ -29,7 +29,6 @@ class ProbabilityMapList : public XMLElementParser
 public:
   ProbabilityMapList() : XMLElementParser("ProbabilityMapList")
   {
-    std::cout << __LINE__ << __FILE__ << std::endl;
   }
 };
 

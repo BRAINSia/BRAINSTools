@@ -8,6 +8,7 @@
 #include <itkIO.h>
 #include "Utilities.h"
 #include "NetConfigurationParser.h"
+#include "BRAINSCutPrimary.h"
 
 static int
 WaitForProcess(itksysProcess * *processes, const unsigned processID)
@@ -44,15 +45,11 @@ int GenerateRegistrations(NetConfiguration & ANNXMLObject,
   std::string AtlasImageFilename( atlasDataSet->GetImageFilenameByType(
                                     imageTypeToUse) );
 
-  // We will use just original image without smoothing
-  InternalImageType::SizeType radius;
+  WorkingImageType::SizeType radius;
 
   radius[0] = 0; radius[1] = 0; radius[2] = 0;
-  // InternalImageType::Pointer AtlasImage = ReadMedianFilteredImage<InternalImageType>(AtlasImageFilename.c_str(),
-  // radius);
-  InternalImageType::Pointer AtlasImage =
-    ReadMedianFilteredImage<InternalImageType>(AtlasImageFilename.c_str(
-                                                 ), radius);
+  WorkingImageType::Pointer AtlasImage =
+    ReadMedianFilteredImage<WorkingImageType>( AtlasImageFilename.c_str(), radius);
 
   // For each dataset, create deformation fields if they don't already exist.
   std::list<DataSet *> dataSets;
@@ -118,19 +115,10 @@ int GenerateRegistrations(NetConfiguration & ANNXMLObject,
     const std::string SubjectBinaryFilename
       ( reg->GetAttribute<StringValue>(
         "SubjectBinaryFilename") );
-#if 0
-    const std::string landmarkType( reg->GetAttribute<StringValue>(
-                                      "LandmarkType") );
-    // Get Subject Landmark Name
-    const std::string SubjectLandmark( ( *it )->GetAtlasFilenameByType(
-                                         landmarkType) );
-    const std::string AtlasLandmark( atlasDataSet->GetAtlasFilenameByType(
-                                       landmarkType) );
-#else
-    const std::string landmarkType("");
-    const std::string SubjectLandmark("");
-    const std::string AtlasLandmark("");
-#endif
+    /*
+    const std::string subjectLandmarkFilename( reg->GetAttribute<StringValue>(
+                                               "SubjectLandmarkFilename") );
+                                               */
     if( reverse == false )
       {
       if( !itksys::SystemTools::FileExists( SubjToAtlasRegistrationFilename.

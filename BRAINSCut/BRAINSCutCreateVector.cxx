@@ -5,7 +5,7 @@ BRAINSCutCreateVector
 ::BRAINSCutCreateVector(std::string netConfigurationFilename)
   : BRAINSCutPrimary( netConfigurationFilename)
 {
-  GenerateRegistrations(BRAINSCutNetConfiguration, true, false, 1);
+  // GenerateRegistrations(BRAINSCutNetConfiguration, true, false, 1);
 
   SetRegistrationParametersFromNetConfiguration();
 

@@ -9,11 +9,10 @@
 BRAINSCutGenerateProbability
 ::BRAINSCutGenerateProbability( std::string netConfigurationFilename ) : BRAINSCutPrimary( netConfigurationFilename )
 {
-  std::cout << __LINE__ << "::" << __FILE__ << std::endl;
-
   SetRegistrationParametersFromNetConfiguration();
 
   SetAtlasDataSet();
+  SetAtlasFilename();
   SetAtlasImage();
 
   SetRegionsOfInterestFromNetConfiguration();
@@ -58,7 +57,7 @@ void
 BRAINSCutGenerateProbability
 ::GenerateProbabilityMaps()
 {
-  GenerateRegistrations(BRAINSCutNetConfiguration, false, false,  1);
+  // GenerateRegistrations(BRAINSCutNetConfiguration, false, false,  1);
 
   /** generating spherical coordinate image does not have to be here */
   GenerateSymmetricalSphericalCoordinateImage();
@@ -78,9 +77,10 @@ BRAINSCutGenerateProbability
       currentROISubjectsCounter++;
       /** deform ROI to Atlas */
 
-      std::string currentRegistrationFilename =
+      std::string currentRegistrationFilename = GetSubjectToAtlasRegistrationFilename( *(*currentSubjectIt) );
+      /*std::string currentRegistrationFilename =
         (*currentSubjectIt)->GetRegistrationWithID( registrationID )
-        ->GetAttribute<StringValue>( "SubjToAtlasRegistrationFIlename");
+        ->GetAttribute<StringValue>( "SubjToAtlasRegistrationFIlename");*/
 
       std::string currentROIFilename = ( *currentSubjectIt)
         ->GetMaskFilenameByType( currentROIID );

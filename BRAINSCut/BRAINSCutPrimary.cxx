@@ -33,9 +33,16 @@ BRAINSCutPrimary
 
 void
 BRAINSCutPrimary
+::SetAtlasFilename()
+{
+  atlasFilename = atlasDataSet->GetImageFilenameByType( registrationImageTypeToUse);
+}
+
+void
+BRAINSCutPrimary
 ::SetAtlasImage()
 {
-  atlasImage = ReadImageByFilename( atlasDataSet->GetImageFilenameByType( registrationImageTypeToUse) );
+  atlasImage = ReadImageByFilename( atlasFilename );
 }
 
 void
@@ -79,6 +86,7 @@ BRAINSCutPrimary
   roiCount = roiDataList->size();
 }
 
+/** registration related */
 void
 BRAINSCutPrimary
 ::SetRegistrationParametersFromNetConfiguration()
@@ -88,11 +96,23 @@ BRAINSCutPrimary
 
   registrationImageTypeToUse =
     std::string( registrationParser->GetAttribute<StringValue>( "ImageTypeToUse") );
+
   registrationID = std::string(
       registrationParser->GetAttribute<StringValue>("ID") );
+
+  roiAutoDilateSize = registrationParser->GetAttribute<IntValue>("BRAINSROIAutoDilateSize");
 }
 
-inline
+std::string
+BRAINSCutPrimary
+::GetSubjectToAtlasRegistrationFilename( DataSet& subject)
+{
+  std::string filename = subject.GetRegistrationWithID( registrationID )
+    ->GetAttribute<StringValue>("SubjToAtlasRegistrationFilename");
+
+  return filename;
+}
+
 std::string
 BRAINSCutPrimary
 ::GetAtlasToSubjectRegistrationFilename( DataSet& subject)
@@ -201,8 +221,6 @@ BRAINSCutPrimary
   gradientSize = annModelConfiguration->GetAttribute<IntValue>("GradientProfileSize");
 }
 
-/* inline functions */
-
 WorkingImagePointer
 BRAINSCutPrimary
 ::ReadImageByFilename( const std::string  filename )
@@ -217,6 +235,8 @@ BRAINSCutPrimary
                                                         HundreadPercentValue);
   return readInImage;
 }
+
+/* inline functions */
 
 inline
 DisplacementFieldType::Pointer

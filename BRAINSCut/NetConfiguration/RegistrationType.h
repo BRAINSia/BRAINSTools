@@ -24,8 +24,8 @@ public:
               "AtlasBinaryFilename");
     this->Add(new StringValue("SubjectBinaryFilename", "NA"),
               "SubjectBinaryFilename");
-    //    this->Add(new StringValue("LandmarkType",""),
-    //             "LandmarkType");
+    this->Add(new StringValue("SubjectLandmarkFilename", "NA"),
+              "SubjectLandmarkFilename");
     this->Add(new StringValue("ID", ""),
               "ID");
   }

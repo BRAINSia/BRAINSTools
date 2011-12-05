@@ -11,6 +11,7 @@
 #include "BRAINSCutVectorTrainingSet.h"
 #include "BRAINSCutTrainModel.h"
 #include "BRAINSCutApplyModel.h"
+#include "BRAINSCutGenerateRegistrations.h"
 
 #include "BRAINSCutCLP.h"
 
@@ -24,13 +25,27 @@ int main(int argc, char * *argv)
   // Call register default transforms
   itk::TransformFactoryBase::RegisterDefaultTransforms();
 
+  std::cout << __LINE__ << "::" << __FILE__ << std::endl;
+  BRAINSCutGenerateRegistrations registrationGenerator( netConfiguration );
+  std::cout << __LINE__ << "::" << __FILE__ << std::endl;
+  const bool applyDataSetOff = false;
+  const bool applyDataSetOn = true;
+
   if( generateProbability )
     {
+    registrationGenerator.SetAtlasToSubjectRegistrationOn( false );
+    registrationGenerator.SetSubjectDataSet( applyDataSetOff );
+    registrationGenerator.GenerateRegistrations();
+
     BRAINSCutGenerateProbability testBRAINSCutClass( netConfiguration );
     testBRAINSCutClass.GenerateProbabilityMaps();
     }
   if( createVectors )
     {
+    registrationGenerator.SetAtlasToSubjectRegistrationOn( true );
+    registrationGenerator.SetSubjectDataSet( applyDataSetOff );
+    registrationGenerator.GenerateRegistrations();
+
     BRAINSCutCreateVector testCreateVector( netConfiguration );
     testCreateVector.SetTrainingDataSetFromNetConfiguration();
     testCreateVector.CreateVectors();
@@ -53,25 +68,14 @@ int main(int argc, char * *argv)
     {
     try
       {
+      std::cout << __LINE__ << "::" << __FILE__ << std::endl;
+      registrationGenerator.SetAtlasToSubjectRegistrationOn( true );
+      registrationGenerator.SetSubjectDataSet( applyDataSetOn );
+      registrationGenerator.GenerateRegistrations();
+
       BRAINSCutApplyModel applyTest( netConfiguration );
 
-      applyTest.SetRegionsOfInterestFromNetConfiguration();
-      applyTest.SetRegistrationParametersFromNetConfiguration();
-      applyTest.SetAtlasDataSet();
-      applyTest.SetAtlasImage();
-      applyTest.SetRhoPhiThetaFromNetConfiguration();
-
-      applyTest.SetANNModelConfiguration();
-      applyTest.SetANNTestingSSEFilename();
-      applyTest.SetGradientSizeFromNetConfiguration();
-      applyTest.SetANNOutputThresholdFromNetConfiguration();
-      applyTest.SetTrainIterationFromNetConfiguration();
-      applyTest.SetComputeSSE(false);
-
-      applyTest.SetApplyDataSetFromNetConfiguration();
-      applyTest.SetANNModelFilenameFromNetConfiguration();
       applyTest.SetComputeSSE( computeSSEOn );
-
       applyTest.Apply();
       }
     catch( BRAINSCutExceptionStringHandler& e )

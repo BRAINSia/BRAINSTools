@@ -14,10 +14,11 @@ file(GLOB BRAINSCut_HDRS *.h *.hxx)
 
 set(BRAINSCutCOMMONLIB_SRCS
   Utilities.cxx
-  GenerateRegistrations.cxx
   XMLParser.cxx
   NetConfigurationParser.cxx
   ShuffleVectors.cxx
+  BRAINSCutPrimary.cxx
+  BRAINSCutGenerateRegistrations.cxx
   BRAINSCutGenerateProbability.cxx
   BRAINSCutCreateVector.cxx
   FeatureInputVector.cxx
@@ -27,7 +28,6 @@ set(BRAINSCutCOMMONLIB_SRCS
   GenerateProbability.cxx
   TrainModel.cxx
   ApplyModel.cxx
-  BRAINSCutPrimary.cxx
   ${BRAINSCut_HDRS}
   )
 

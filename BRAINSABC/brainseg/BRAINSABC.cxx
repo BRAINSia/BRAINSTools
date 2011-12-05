@@ -1555,14 +1555,16 @@ int main(int argc, char * *argv)
       writer->SetFileName( fn.c_str() );
       writer->UseCompressionOn();
 
-      fn = outputDir;
-      fn += "thresholded_labels.nii.gz";
-      writer->SetInput( segfilter->GetThresholdedOutput() );
-      writer->SetFileName( fn );
-      writer->UseCompressionOn();
-
       try
         {
+        writer->Update();
+
+        fn = outputDir;
+        fn += "thresholded_labels.nii.gz";
+        writer->SetInput( segfilter->GetThresholdedOutput() );
+        writer->SetFileName( fn );
+        writer->UseCompressionOn();
+        writer->Modified();
         writer->Update();
         }
       catch( itk::ExceptionObject & e )

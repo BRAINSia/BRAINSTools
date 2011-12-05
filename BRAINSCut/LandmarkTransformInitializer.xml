@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>Utilities.BRAINS</category>
+  <title>ShuffleVectors</title>
+  <description>Automatic Segmentation using neural networks</description>
+  <version> 1.0</version>
+  <documentation-url></documentation-url>
+  <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt </license>
+  <contributor>Hans Johnson</contributor>
+  <acknowledgements></acknowledgements>
+ <parameters>
+   <file>
+     <name>inputFixedLandmarkFilename</name>
+     <longflag>inputFixedLandmarkFilename</longflag>
+     <label>input fixed landmark filename</label>
+     <channel>input</channel>
+     <description>input fixed landmark. *.fcsv</description>
+     <default></default>
+   </file>
+   <file>
+     <name>inputMovingLandmarkFilename</name>
+     <longflag>inputMovingLandmarkFilename</longflag>
+     <label>input moving landmark filename</label>
+     <channel>input</channel>
+     <description>input moving landmark. *.fcsv</description>
+     <default></default>
+   </file>
+   <file>
+     <name>outputTransformFilename</name>
+     <longflag>outputTransformFilename</longflag>
+     <label>output Transform file name</label>
+     <channel>output</channel>
+     <description>output transform file name</description>
+     <default></default>
+   </file>
+</parameters>
+</executable>

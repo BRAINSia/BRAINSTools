@@ -1,12 +1,13 @@
 #include "BRAINSCutApplyModel.h"
 #include "FeatureInputVector.h"
 #include "ANNParams.h"
-#include "Utilities.h"
 #include "ApplyModel.h"
 
 #include <itkConnectedComponentImageFilter.h>
+#include <itkRelabelComponentImageFilter.h>
+#include <itkBinaryBallStructuringElement.h>
+#include <itkBinaryMorphologicalClosingImageFilter.h>
 
-#include "itkBinaryMorphologicalClosingImageFilter.h"
 // TODO: consider using itk::LabelMap Hole filling process in ITK4
 
 BRAINSCutApplyModel

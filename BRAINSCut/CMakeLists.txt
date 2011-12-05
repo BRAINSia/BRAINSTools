@@ -13,7 +13,6 @@ add_subdirectory(NetConfiguration)
 file(GLOB BRAINSCut_HDRS *.h *.hxx)
 
 set(BRAINSCutCOMMONLIB_SRCS
-  Utilities.cxx
   XMLParser.cxx
   NetConfigurationParser.cxx
   ShuffleVectors.cxx
@@ -25,9 +24,6 @@ set(BRAINSCutCOMMONLIB_SRCS
   BRAINSCutApplyModel.cxx
   BRAINSCutTrainModel.cxx
   BRAINSCutVectorTrainingSet.cxx
-  GenerateProbability.cxx
-  TrainModel.cxx
-  ApplyModel.cxx
   ${BRAINSCut_HDRS}
   )
 
@@ -49,7 +45,6 @@ target_link_libraries(BRAINSCutCOMMONLIB
 set(ALL_PROGS_LIST
   BRAINSCut
   ShuffleVectorsModule  ## TODO: Make into SEM program
-  WriteFeaturesforROI   ## TODO: Make into SEM program
   SimilarityIndex
   )
 foreach( prog ${ALL_PROGS_LIST} )

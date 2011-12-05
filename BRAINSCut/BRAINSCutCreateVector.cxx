@@ -1,5 +1,4 @@
 #include "BRAINSCutCreateVector.h"
-#include "Utilities.h"
 
 BRAINSCutCreateVector
 ::BRAINSCutCreateVector(std::string netConfigurationFilename)

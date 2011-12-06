@@ -78,6 +78,7 @@ set(brains_modulenames
   GTRACT
   ImageCalculator
   BRAINSCut
+  BRAINSLandmarkInitializer
   BRAINSDemonWarp ## NOTE: This is off by default, but is valid for both ITKv3/4
                   ##       This builds just fine with ITKv3/4, but test cases need
                   ##       further review before trusting it.

@@ -8,9 +8,8 @@ BRAINSCutGenerateRegistrations
   : BRAINSCutPrimary( netConfigurationFilename )
 {
   SetAtlasDataSet();
-  SetAtlasFilename();
-
   SetRegistrationParametersFromNetConfiguration();
+  SetAtlasFilename();
 }
 
 void
@@ -57,23 +56,39 @@ BRAINSCutGenerateRegistrations
       ( subjectRegistration->GetAttribute<StringValue>("SubjectBinaryFilename") );
 
     if( atlasToSubjectRegistraionOn &&
-        (!itksys::SystemTools::FileExists( SubjectToAtlasRegistrationFilename.c_str() ) ) )
+        (!itksys::SystemTools::FileExists( AtlasToSubjRegistrationFilename.c_str() ) ) )
       {
-      CreateTransformFile(  subjectFilename,                    // moving image
-                            atlasFilename,                      // fixed image
-                            SubjectBinaryFilename,              // moving ROI
-                            AtlasBinaryFilename,                // fixed ROI
-                            SubjectToAtlasRegistrationFilename,
-                            false );
-      }
-    else if( (!atlasToSubjectRegistraionOn) &&
-             (!itksys::SystemTools::FileExists( AtlasToSubjRegistrationFilename.c_str() ) ) )
-      {
+      /** create directories */
+      std::string directory = itksys::SystemTools::GetParentDirectory(
+          SubjectToAtlasRegistrationFilename.c_str() );
+
+      if( !itksys::SystemTools::FileExists( directory.c_str() ) )
+        {
+        itksys::SystemTools::MakeDirectory( directory.c_str() );
+        }
       CreateTransformFile(  atlasFilename,                      // moving image
                             subjectFilename,                    // fixed image
                             AtlasBinaryFilename,                // moving ROI
                             SubjectBinaryFilename,              // fixed ROI
                             AtlasToSubjRegistrationFilename,
+                            false );
+      }
+    else if( (!atlasToSubjectRegistraionOn) &&
+             (!itksys::SystemTools::FileExists( SubjectToAtlasRegistrationFilename.c_str() ) ) )
+      {
+      /** create directories */
+      std::string directory = itksys::SystemTools::GetParentDirectory(
+          SubjectToAtlasRegistrationFilename.c_str() );
+
+      if( !itksys::SystemTools::FileExists( directory.c_str() ) )
+        {
+        itksys::SystemTools::MakeDirectory( directory.c_str() );
+        }
+      CreateTransformFile(  subjectFilename,                    // moving image
+                            atlasFilename,                      // fixed image
+                            SubjectBinaryFilename,              // moving ROI
+                            AtlasBinaryFilename,                // fixed ROI
+                            SubjectToAtlasRegistrationFilename,
                             false );
       }
     }
@@ -157,26 +172,12 @@ BRAINSCutGenerateRegistrations
   BSplineRegistrationHelper->SetHistogramMatch(false);
 
   // Set Fixed Volume
-
-  typedef itk::ImageFileReader<WorkingImageType> FixedVolumeReaderType;
-  FixedVolumeReaderType::Pointer fixedVolumeReader = FixedVolumeReaderType::New();
-  fixedVolumeReader->SetFileName( FixedImageFilename );
-
-  fixedVolumeReader->Update();
-
-  WorkingImageType::Pointer fixedVolume = fixedVolumeReader->GetOutput();
+  WorkingImageType::Pointer fixedVolume = ReadImageByFilename( FixedImageFilename );
 
   BSplineRegistrationHelper->SetFixedVolume( fixedVolume );
 
   // Set Moving Volume
-
-  typedef itk::ImageFileReader<WorkingImageType> MovingVolumeReaderType;
-  MovingVolumeReaderType::Pointer movingVolumeReader = MovingVolumeReaderType::New();
-  movingVolumeReader->SetFileName( MovingImageFilename );
-
-  movingVolumeReader->Update();
-
-  WorkingImageType::Pointer movingVolume = movingVolumeReader->GetOutput();
+  WorkingImageType::Pointer movingVolume = ReadImageByFilename( MovingImageFilename );
 
   BSplineRegistrationHelper->SetMovingVolume( movingVolume );
 
@@ -242,7 +243,6 @@ BRAINSCutGenerateRegistrations
     binaryMovingImageReader->SetFileName( MovingBinaryImageFilename );
     binaryMovingImageReader->Update();
 
-    std::cout << " Set Binary Image " << std::endl;
     typedef itk::ImageMaskSpatialObject<3> binarySpatialObjectType;
     binarySpatialObjectType::Pointer binaryMovingObject
       = binarySpatialObjectType::New();

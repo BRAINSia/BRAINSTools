@@ -50,10 +50,8 @@ BRAINSCutGenerateRegistrations
       ( subjectRegistration->GetAttribute<StringValue>("SubjToAtlasRegistrationFilename") );
     const std::string AtlasToSubjRegistrationFilename
       ( subjectRegistration->GetAttribute<StringValue>("AtlasToSubjRegistrationFilename") );
-    const std::string AtlasBinaryFilename
-      ( subjectRegistration->GetAttribute<StringValue>("AtlasBinaryFilename") );
     const std::string SubjectBinaryFilename
-      ( subjectRegistration->GetAttribute<StringValue>("SubjectBinaryFilename") );
+      ( (*subjectIt)->GetMaskFilenameByType( "RegistrationROI" ) );
 
     if( atlasToSubjectRegistraionOn &&
         (!itksys::SystemTools::FileExists( AtlasToSubjRegistrationFilename.c_str() ) ) )
@@ -68,7 +66,7 @@ BRAINSCutGenerateRegistrations
         }
       CreateTransformFile(  atlasFilename,                      // moving image
                             subjectFilename,                    // fixed image
-                            AtlasBinaryFilename,                // moving ROI
+                            atlasBinaryFilename,                // moving ROI
                             SubjectBinaryFilename,              // fixed ROI
                             AtlasToSubjRegistrationFilename,
                             false );
@@ -87,7 +85,7 @@ BRAINSCutGenerateRegistrations
       CreateTransformFile(  subjectFilename,                    // moving image
                             atlasFilename,                      // fixed image
                             SubjectBinaryFilename,              // moving ROI
-                            AtlasBinaryFilename,                // fixed ROI
+                            atlasBinaryFilename,                // fixed ROI
                             SubjectToAtlasRegistrationFilename,
                             false );
       }

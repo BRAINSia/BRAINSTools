@@ -20,9 +20,6 @@ BRAINSCutApplyModel
   SetRegistrationParametersFromNetConfiguration();
 
   SetAtlasDataSet();
-  SetAtlasFilename();
-  SetAtlasImage();
-
   SetRhoPhiThetaFromNetConfiguration();
 
   SetANNModelConfiguration();

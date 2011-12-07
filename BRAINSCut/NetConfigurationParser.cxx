@@ -1,7 +1,7 @@
 #include "NetConfigurationParser.h"
+#include "ApplyModel.h"
 #include "NeuralParams.h"
 #include "ANNParams.h"
-#include "ApplyModel.h"
 #include <XMLElementContainer.h>
 #include "BRAINSCutExceptionStringHandler.h"
 
@@ -113,14 +113,6 @@ NetConfigurationParser::StartElement(void *userData,
         "AtlasToSubjRegistrationFilename",
         attribMap.Get("Registration",
                       "AtlasToSubjRegistrationFilename") );
-      registration->SetAttribute<StringValue>(
-        "AtlasBinaryFilename",
-        attribMap.GetIfExist("Registration",
-                             "AtlasBinaryFilename") );
-      registration->SetAttribute<StringValue>(
-        "SubjectBinaryFilename",
-        attribMap.GetIfExist("Registration",
-                             "SubjectBinaryFilename") );
       std::string id( attribMap.Get("Registration", "ID") );
       registration->SetAttribute<StringValue>("ID", id);
       regList->Add(registration, id);

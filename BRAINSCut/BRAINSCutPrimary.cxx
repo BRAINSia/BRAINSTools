@@ -36,6 +36,7 @@ BRAINSCutPrimary
 ::SetAtlasFilename()
 {
   atlasFilename = atlasDataSet->GetImageFilenameByType( registrationImageTypeToUse);
+  atlasBinaryFilename = atlasDataSet->GetMaskFilenameByType( "RegistrationROI" );
 }
 
 void

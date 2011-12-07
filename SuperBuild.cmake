@@ -25,6 +25,12 @@ endif()
 
 find_package(Git REQUIRED)
 
+# I don't know who removed the Find_Package for QT, but it needs to be here
+# in order to build VTK if BRAINSTools_USE_QT is set.
+if(BRAINSTools_USE_QT)
+find_package(Qt4 REQUIRED)
+endif()
+
 #-----------------------------------------------------------------------------
 # Enable and setup External project global properties
 #-----------------------------------------------------------------------------

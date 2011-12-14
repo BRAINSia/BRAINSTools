@@ -1,4 +1,4 @@
-project(CoOccurrenceMatrix)
+project(STAPLEAnalysis)
 
 ## Build all the programs
 ##

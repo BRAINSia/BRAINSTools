@@ -28,5 +28,4 @@ add_subdirectory(GradientAnisotropicDiffusionImageFilter)
 add_subdirectory(HistogramMatchingFilter)
 add_subdirectory(TextureMeasureFilter)
 
-# TODO:  This does not seem to compile? add_subdirectory(CoOccurrenceMatrix)
-# TODO:  IS THIS STILL VALID?           add_subdirectory(ImageLabelCombine)
+add_subdirectory(STAPLE)

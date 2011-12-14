@@ -52,6 +52,8 @@ BRAINSCutGenerateRegistrations
       ( subjectRegistration->GetAttribute<StringValue>("AtlasToSubjRegistrationFilename") );
     const std::string SubjectBinaryFilename
       ( (*subjectIt)->GetMaskFilenameByType( "RegistrationROI" ) );
+    std::cout << "RegistrationROI::" << SubjectBinaryFilename << std::endl;
+    std::cout << "atlasFIlename:: " << atlasBinaryFilename << std::endl;
 
     if( atlasToSubjectRegistraionOn &&
         (!itksys::SystemTools::FileExists( AtlasToSubjRegistrationFilename.c_str() ) ) )

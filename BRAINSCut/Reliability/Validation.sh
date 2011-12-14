@@ -60,18 +60,18 @@ done
 ## 1. Create SSE values
 for TEST in 1 2 3 4 5 6 7 8 9 10
 do
-      ## ---------------- QSUB -----------------------
-        QSUBFile="${WorkingDir}/Test$TEST/runValidation${TEST}.sh"
-        echo "QSUBFile name is :: $QSUBFile"
-        qsubHeader $QSUBFile      
-
         for HN in $HNList
         do
+          ## ---------------- QSUB -----------------------
+          QSUBFile="${WorkingDir}/Test$TEST/runValidation${TEST}_HN${HN}.sh"
+          echo "QSUBFile name is :: $QSUBFile"
+          qsubHeader $QSUBFile      
           currentXMLFile="${WorkingDir}/Test$TEST/${DATE}_${HN}_Validation.xml"
           echo " \${BRAINSBuild}/BRAINSCut --netConfiguration  ${currentXMLFile} --computeSSEOn  --applyModel">>$QSUBFile
+          chmod 755 $QSUBFile
         done
       
-        chmod 755 $QSUBFile
+
       
       ## ---------------- QSUB -----------------------
 done

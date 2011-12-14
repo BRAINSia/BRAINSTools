@@ -37,6 +37,7 @@ BRAINSCutPrimary
 {
   atlasFilename = atlasDataSet->GetImageFilenameByType( registrationImageTypeToUse);
   atlasBinaryFilename = atlasDataSet->GetMaskFilenameByType( "RegistrationROI" );
+  std::cout << atlasBinaryFilename << std::endl;
 }
 
 void

@@ -453,7 +453,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
 {
   // TODO:  This assumes that GetOutput was already called.  This should be made
   // more intelligent
-  return m_ThresholdedLabels;
+  return m_DirtyThresholdedLabels;
 }
 
 template <class TInputImage, class TProbabilityImage>

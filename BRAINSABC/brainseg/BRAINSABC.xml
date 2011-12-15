@@ -64,6 +64,13 @@
     <longflag>atlasToSubjectTransform</longflag>
     <channel>output</channel>
   </transform>
+  <transform fileExtensions=".mat">
+    <name>atlasToSubjectInitialTransform</name>
+    <label>Atlas to Subject Initial Transform</label>
+    <description>The initial trasform from atlas to the subject</description>
+    <longflag>atlasToSubjectInitialTransform</longflag>
+    <channel>output</channel>
+  </transform>
   <string-enumeration>
     <name>subjectIntermodeTransformType</name>
     <label>Atlas to Subject Transform Type</label>

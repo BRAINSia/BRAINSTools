@@ -411,6 +411,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
         atlasToSubjectRegistrationHelper->SetTranslationScale(1000);
         atlasToSubjectRegistrationHelper->SetReproportionScale(1.0);
         atlasToSubjectRegistrationHelper->SetSkewScale(1.0);
+        atlasToSubjectRegistrationHelper->SetCurrentGenericTransform(this->m_AtlasToSubjectInitialTransform);
         // Register all atlas images to first image
           {
           muLogMacro(

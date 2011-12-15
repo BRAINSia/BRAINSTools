@@ -144,6 +144,11 @@ public:
     this->m_InputVolumeTypes = newInputVolumeTypes;
   }
 
+  void SetAtlasToSubjectInitialTransform( const GenericTransformType::Pointer atlasToSubjectInitialTransform)
+  {
+    this->m_AtlasToSubjectInitialTransform = atlasToSubjectInitialTransform;
+  }
+
   std::vector<std::string> GetInputVolumeTypes(void) const
   {
     return this->m_InputVolumeTypes;
@@ -176,6 +181,7 @@ private:
   std::vector<std::string> m_InputVolumeTypes;
 
   GenericTransformType::Pointer              m_AtlasToSubjectTransform;
+  GenericTransformType::Pointer              m_AtlasToSubjectInitialTransform;
   std::vector<GenericTransformType::Pointer> m_IntraSubjectTransforms;
 
   bool m_UseNonLinearInterpolation;

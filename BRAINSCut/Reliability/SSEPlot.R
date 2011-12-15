@@ -72,12 +72,15 @@ for( currentStructure in structureList)
   {
     currentSet<-subset(dt, dt$subjectID==currentSubject & dt$structure==currentStructure);
     plotLine( currentSet , myColorList[colorIndex] );
+    print( paste( "subject ", currentSubject, " color ", myColorList[colorIndex] ) );
     colorIndex<- colorIndex+1;
   }
   title( currentStructure );
-  legend(  max(dt$iteration)*1.05,range.max*1.1, c("mean",subjectList), 
-           col=c("darkblue",myColorList), pch=20, lty=1, bty="n",
-           cex=0.8);
+  legend( max(dt$iteration)*1.05,range.max*1.1, 
+          c("mean",subjectList), 
+          col=c("darkblue",myColorList[1:colorIndex-1]), pch=20, lty=1, bty="n",
+          cex=0.8);
+  print( myColorList[1:colorIndex-1] );
   dev.off();
 }
 

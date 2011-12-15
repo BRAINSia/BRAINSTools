@@ -20,12 +20,6 @@ public:
               "SubjToAtlasRegistrationFilename");
     this->Add(new StringValue("AtlasToSubjRegistrationFilename", ""),
               "AtlasToSubjRegistrationFilename");
-    this->Add(new StringValue("AtlasBinaryFilename", "NA"),
-              "AtlasBinaryFilename");
-    this->Add(new StringValue("SubjectBinaryFilename", "NA"),
-              "SubjectBinaryFilename");
-    //    this->Add(new StringValue("LandmarkType",""),
-    //             "LandmarkType");
     this->Add(new StringValue("ID", ""),
               "ID");
   }

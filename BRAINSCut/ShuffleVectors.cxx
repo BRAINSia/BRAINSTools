@@ -1,4 +1,7 @@
 #include "ShuffleVectors.h"
+#include "BRAINSCutPrimary.h"
+
+#define MAX_LINE_SIZE 1000
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Usage Example
@@ -39,9 +42,9 @@ ShuffleVectors::ReadHeader()
   filestr.open( m_inputHeaderFilename.c_str() );
   if( !filestr.is_open() )
     {
-    itkGenericExceptionMacro(<< "Error: Could not open ANN vector file"
-                             << std::endl
-                             << m_inputHeaderFilename);
+    std::cout << "Error: Could not open ANN vector file"
+              << std::endl
+              << m_inputHeaderFilename;
     }
   for( int tags = 0; tags < 3; tags++ )
     {
@@ -77,7 +80,8 @@ ShuffleVectors::WriteHeader()
   filestr.open( m_outputHeaderFilename.c_str() );
   if( !filestr.is_open() )
     {
-    itkGenericExceptionMacro(<< "Error: Could not open ANN vector file")
+    std::cout << "Error: Could not open ANN vector file"
+              << std::endl;
     }
   filestr << "IVS " <<  m_IVS << std::endl;
   filestr << "OVS " <<  m_OVS << std::endl;
@@ -119,7 +123,8 @@ ShuffleVectors::ShuffledOrder()
 
   if( rval == 0 )
     {
-    itkGenericExceptionMacro(<< "Can't allocate shuffled ordering")
+    std::cout << "Can't allocate shuffled ordering"
+              << std::endl;
     }
   for( unsigned long i = 0; i < m_input_TVC; i++ )
     {
@@ -164,12 +169,13 @@ ShuffleVectors::ShuffleVectors(const std::string& inputVectorFilename, const std
 
   if( inputVectorFilename == "" || outputVectorFilename == "" )
     {
-    itkGenericExceptionMacro(<< " Filenames for inputVector and outputVector are neccessary");
+    std::cout << " Filenames for inputVector and outputVector are neccessary"
+              << std::endl;
     }
   else if( inputVectorFilename == outputVectorFilename )
     {
-    itkGenericExceptionMacro(<< "ERROR:  Can not use the same file for input and output."
-                             << inputVectorFilename);
+    std::cout << "ERROR:  Can not use the same file for input and output."
+              << inputVectorFilename;
     }
   else
     {
@@ -192,7 +198,7 @@ ShuffleVectors::Shuffling()
                 std::ios::in | std::ios::binary);
   if( !binfile.is_open() )
     {
-    itkGenericExceptionMacro(<< "Can't open " << m_inputVectorFilename );
+    std::cout << "Can't open " << m_inputVectorFilename;
     }
 
   int shuffledFile =
@@ -201,7 +207,7 @@ ShuffleVectors::Shuffling()
          S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
   if( shuffledFile == -1 )
     {
-    itkGenericExceptionMacro(<< "Can't open output file " << m_outputVectorFilename);
+    std::cout << "Can't open output file " << m_outputVectorFilename;
     }
   // make a shuffled output ordering
   std::cout.flush();
@@ -238,7 +244,7 @@ ShuffleVectors::Shuffling()
     // read in the record
     binfile.read( (char *)buf, recordsize );
 
-    if( buf[m_IVS  + m_OVS] != AUTOSEG_VEC_SENTINEL )
+    if( buf[m_IVS  + m_OVS] != LineGuard )
       {
       std::cerr << "Record not properly terminated by sentinel value ::  "
                 << buf[m_IVS  + m_OVS]

@@ -19,7 +19,7 @@
         Registration Description
         TODO:: Change BRAINSCut Registration Script to Python
        ========================================================================== -->
-  <RegistrationParams
+  <RegistrationConfiguration
     ImageTypeToUse="T1"
     ID="BSpline"
     BRAINSROIAutoDilateSize="10"
@@ -49,7 +49,7 @@
   <!-- ========================================================================== 
         ANN Description
        ========================================================================== -->
-  <ANNConfiguration Iterations             = "10"
+  <ANNParams Iterations             = "10"
                     MaximumVectorsPerEpoch = "10000"
                     EpochIterations        = "100"
                     ErrorInterval          = "1"

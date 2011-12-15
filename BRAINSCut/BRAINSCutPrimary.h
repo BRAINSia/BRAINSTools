@@ -88,6 +88,8 @@ public:
   /* Atlas(template) related */
   void SetAtlasDataSet();
 
+  void SetAtlasFilename();
+
   void SetAtlasImage();
 
   void SetRegionsOfInterestFromNetConfiguration();
@@ -118,11 +120,13 @@ public:
   bool GetNormalizationFromNetConfiguration();
 
   /* Displacement Functions */
-  inline DisplacementFieldType::Pointer GetDeformationField( std::string filename);
+  DisplacementFieldType::Pointer GetDeformationField( std::string filename);
 
-  inline GenericTransformType::Pointer GetGenericTransform( std::string filename);
+  GenericTransformType::Pointer GetGenericTransform( std::string filename);
 
-  inline std::string GetAtlasToSubjectRegistrationFilename( DataSet& subject);
+  std::string GetAtlasToSubjectRegistrationFilename( DataSet& subject);
+
+  std::string GetSubjectToAtlasRegistrationFilename( DataSet& subject);
 
 protected:
 
@@ -131,6 +135,8 @@ protected:
 
   /** atlas data set*/
   DataSet *           atlasDataSet;
+  std::string         atlasFilename;
+  std::string         atlasBinaryFilename;
   WorkingImagePointer atlasImage;
 
   /**ProbabilityMaps*/
@@ -142,6 +148,7 @@ protected:
   RegistrationConfigurationParser * registrationParser;
   std::string                       registrationImageTypeToUse;
   std::string                       registrationID;
+  int                               roiAutoDilateSize;
 
   /** Spatial Coordinate System Images*/
   WorkingImagePointer rho;

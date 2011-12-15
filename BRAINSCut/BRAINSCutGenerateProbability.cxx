@@ -2,18 +2,16 @@
 #include "NetConfigurationParser.h"
 #include "NetConfiguration.h"
 #include <itkSmoothingRecursiveGaussianImageFilter.h>
-#include "Utilities.h"
 #include "itkIO.h"
 
 /** constructors */
 BRAINSCutGenerateProbability
 ::BRAINSCutGenerateProbability( std::string netConfigurationFilename ) : BRAINSCutPrimary( netConfigurationFilename )
 {
-  std::cout << __LINE__ << "::" << __FILE__ << std::endl;
-
   SetRegistrationParametersFromNetConfiguration();
 
   SetAtlasDataSet();
+  SetAtlasFilename();
   SetAtlasImage();
 
   SetRegionsOfInterestFromNetConfiguration();
@@ -58,7 +56,7 @@ void
 BRAINSCutGenerateProbability
 ::GenerateProbabilityMaps()
 {
-  GenerateRegistrations(BRAINSCutNetConfiguration, false, false,  1);
+  // GenerateRegistrations(BRAINSCutNetConfiguration, false, false,  1);
 
   /** generating spherical coordinate image does not have to be here */
   GenerateSymmetricalSphericalCoordinateImage();
@@ -78,9 +76,10 @@ BRAINSCutGenerateProbability
       currentROISubjectsCounter++;
       /** deform ROI to Atlas */
 
-      std::string currentRegistrationFilename =
+      std::string currentRegistrationFilename = GetSubjectToAtlasRegistrationFilename( *(*currentSubjectIt) );
+      /*std::string currentRegistrationFilename =
         (*currentSubjectIt)->GetRegistrationWithID( registrationID )
-        ->GetAttribute<StringValue>( "SubjToAtlasRegistrationFIlename");
+        ->GetAttribute<StringValue>( "SubjToAtlasRegistrationFIlename");*/
 
       std::string currentROIFilename = ( *currentSubjectIt)
         ->GetMaskFilenameByType( currentROIID );
@@ -225,4 +224,75 @@ BRAINSCutGenerateProbability
   smoothingFilter->Update();
 
   return smoothingFilter->GetOutput();
+}
+
+void
+BRAINSCutGenerateProbability
+::CreateNewFloatImageFromTemplate(WorkingImageType::Pointer & PointerToOutputImage,
+                                  const WorkingImageType::Pointer & PreInitializedImage)
+{
+  WorkingImageType::RegionType region;
+
+  PointerToOutputImage = WorkingImageType::New();
+  region.SetSize( PreInitializedImage->GetLargestPossibleRegion().GetSize() );
+  region.SetIndex( PreInitializedImage->GetLargestPossibleRegion().GetIndex() );
+  PointerToOutputImage->SetLargestPossibleRegion(region);
+  PointerToOutputImage->SetBufferedRegion(region);
+  PointerToOutputImage->SetRequestedRegion(region);
+  PointerToOutputImage->CopyInformation(PreInitializedImage);
+  PointerToOutputImage->Allocate();
+  PointerToOutputImage->FillBuffer(0.0);
+  // NO LONGER NEEDED CHECK_CORONAL(PointerToOutputImage->GetDirection());
+  PointerToOutputImage->SetDirection( PreInitializedImage->GetDirection() );
+  PointerToOutputImage->SetMetaDataDictionary( PreInitializedImage->GetMetaDataDictionary() );
+  itk::ImageRegionIterator<WorkingImageType> bbri( PointerToOutputImage,
+                                                   PointerToOutputImage->GetLargestPossibleRegion() );
+  bbri = bbri.Begin();
+  while( !bbri.IsAtEnd() )
+    {
+    // Zeroing voxel signal intensity values
+    bbri.Set(itk::NumericTraits<WorkingImageType::PixelType>::Zero);
+    ++bbri;
+    }
+}
+
+void
+BRAINSCutGenerateProbability
+::XYZToSpherical(const itk::Point<float, 3> & LocationWithOriginAtCenterOfImage,
+                 float & rhoValue, float & phiValue, float & thetaValue)
+{
+  /*Rho*/
+#define _SQR(a) ( ( a ) * ( a ) )
+  rhoValue = static_cast<float>
+    ( vcl_sqrt( _SQR(LocationWithOriginAtCenterOfImage[0])
+                + _SQR(LocationWithOriginAtCenterOfImage[1])
+                + _SQR(LocationWithOriginAtCenterOfImage[2]) ) );
+#undef _SQR
+  /*Phi*/
+  phiValue = 0.0F;
+  if( LocationWithOriginAtCenterOfImage[0] < 0 )
+    {
+    phiValue = vcl_atan2(-LocationWithOriginAtCenterOfImage[0], LocationWithOriginAtCenterOfImage[1]);
+    }
+  else
+    {
+    phiValue = vcl_atan2(LocationWithOriginAtCenterOfImage[0], LocationWithOriginAtCenterOfImage[1]);
+    }
+  /*Theta*/
+  thetaValue = 0.0F;
+  if( LocationWithOriginAtCenterOfImage[2] < 0 )
+    {
+    thetaValue = vcl_atan2(-LocationWithOriginAtCenterOfImage[2], LocationWithOriginAtCenterOfImage[1]);
+    }
+  else
+    {
+    thetaValue = vcl_atan2(LocationWithOriginAtCenterOfImage[2], LocationWithOriginAtCenterOfImage[1]);
+    }
+
+  //  thetaValue = vcl_acos(LocationWithOriginAtCenterOfImage[2]/rhoValue);
+
+  rhoValue = rhoValue / 128.0F;  // The largest brain ever will always fit in a sphere
+  // with radius of 128MM centered at the AC point
+  phiValue = phiValue / (vnl_math::pi);
+  thetaValue = thetaValue / (vnl_math::pi);
 }

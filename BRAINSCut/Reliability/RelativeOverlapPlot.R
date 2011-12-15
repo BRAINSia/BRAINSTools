@@ -114,8 +114,8 @@ ICCPlot <- function( man, dt )
   iccCThreshold <- dt$threshold[ICCmaximumConsistencyIndex];
 
   # Vertical line
-  require( fields );
-  xline( iccAThreshold, col="red", lty=3, lwd=2);
+  # require( fields );
+  abline( v=iccAThreshold, col="red", lty=3, lwd=2);
 
   # description on the plot
   MaximumICCAText <- paste( "Maximum ICC(A)  : ", 
@@ -195,6 +195,8 @@ VolumetricComparisonPlot <- function( manual, ann, threshold)
           cex=0.8,
           pch=c(21,22,23,24,25),col=seq(1,NoSubject,1),
           bty="n");
+  print( colnames(ann)[1:NoSubject+1] );
+  print( seq(1,NoSubject,1) );
 
   # return slope and intercept
   c( fit.slope, fit.intercept );

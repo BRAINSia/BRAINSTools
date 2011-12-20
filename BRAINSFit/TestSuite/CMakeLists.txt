@@ -280,7 +280,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 9
-  --compareRadiusTolerance 0
+  --compareRadiusTolerance 1
   --compareNumberOfPixelsTolerance 1000
   BRAINSFitTest
   --costMetric MMI
@@ -399,7 +399,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --minimumStepLength 0.05,0.0050
   --outputVolumePixelType short
   --transformType Rigid,Rigid
-  --initializeTransformMode useGeometryAlign
+  --initializeTransformMode useMomentsAlign
   --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
   --movingVolume DATA{${TestData_DIR}/rotation.geom.test.nii.gz}
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz

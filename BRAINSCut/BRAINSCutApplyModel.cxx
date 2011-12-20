@@ -7,6 +7,7 @@
 #include <itkRelabelComponentImageFilter.h>
 #include <itkBinaryBallStructuringElement.h>
 #include <itkBinaryMorphologicalClosingImageFilter.h>
+#include <itkLaplacianSegmentationLevelSetImageFilter.h>
 
 // TODO: consider using itk::LabelMap Hole filling process in ITK4
 
@@ -106,6 +107,7 @@ BRAINSCutApplyModel
          * may include hole-filling(closing), thresholding, and more adjustment
          */
         BinaryImagePointer mask = PostProcessingOfANNContinuousImage( ANNContinuousOutputFilename,
+                                                                      imagesOfInterest,
                                                                       annOutputThreshold);
 
         std::string roiOutputFilename = GetROIVolumeName( subject, *roiTyIt );
@@ -176,14 +178,27 @@ BRAINSCutApplyModel
 
 BinaryImagePointer
 BRAINSCutApplyModel
-::PostProcessingOfANNContinuousImage( std::string continuousFilename, scalarType threshold )
+::PostProcessingOfANNContinuousImage( std::string continuousFilename,
+                                      WorkingImageVectorType& imageVector,
+                                      scalarType threshold )
 {
   WorkingImagePointer continuousImage = ReadImageByFilename( continuousFilename );
 
-  /* threshold */
   BinaryImagePointer maskVolume;
 
-  maskVolume = ThresholdImageAtLower( continuousImage, threshold);
+  /* level set */
+  // get feature image
+  WorkingImagePointer featureImage = GetFeatureImageForLevelSet( imageVector );
+
+  // level set filtering
+  WorkingImagePointer levelSetAdjustedImage;
+
+  levelSetAdjustedImage = LevelSetAdjustment( continuousImage,
+                                              imageVector );
+
+  /* threshold */
+  // maskVolume = ThresholdImageAtLower( continuousImage, threshold);
+  maskVolume = ThresholdImageAtLower( levelSetAdjustedImage, threshold);
 
   /* Get One label */
   maskVolume = GetOneConnectedRegion( maskVolume );
@@ -191,6 +206,52 @@ BRAINSCutApplyModel
   /* opening and closing to get rid of island and holes */
   maskVolume = FillHole( maskVolume );
   return maskVolume;
+}
+
+/** BRAINSCut Laplaian LevelSet **/
+WorkingImagePointer
+BRAINSCutApplyModel
+::LevelSetAdjustment( WorkingImagePointer& annOutput,
+                      WorkingImagePointer& featureImage
+                      )
+{
+  typedef itk::ShapeDetectionLevelSetImageFilter<
+      WorkingImageType,
+      WorkingImageType>
+    LevelSetFilterType;
+  LevelSetFilterType::Pointer levelSetFilter = LevelSetFilterType::New();
+
+  levelSetFilter->SetInput( annOutput );
+  levelSetFilter->SetFeatureImage( featureImage );
+
+  levelSetFilter->SetMaximumRMSError( 0.02 );
+  levelSetFilter->SetNumberOfIterations( 10 );
+
+  // half way between outer and inner value
+  levelSetFilter->SetIsoSurfaceValue( 0.5F );
+  levelSetFilter->SetPropagationScaling( 1.0 );
+  levelSetFilter->SetCurvatureScaling( 0.1 );
+
+  levelSetFilter->Update();
+
+  // output of the filter is signed image,
+  // inside = positive
+  // outside = negative
+  return levelSetFilter->GetOutput();
+}
+
+/** feature image */
+WorkingImagePointer
+BRAINSCutApplyModel
+::GetFeatureImageForLevelSet( WorkingImageVectorType& imagesOfInterest )
+{
+  /* return SG image if exists,
+   * otherwise return graident of first image */
+
+  DataSet::StringVectorType imageListFromAtlas
+  if( imagesOfInterest.find( "SG" ) != imagesOfInterest.end() )
+    {
+    }
 }
 
 BinaryImagePointer
@@ -201,6 +262,7 @@ BRAINSCutApplyModel
   ThresholdFilterType::Pointer thresholder = ThresholdFilterType::New();
 
   std::cout << "Treshold at " << thresholdValue << std::endl;
+
   if( thresholdValue < 0.0F )
     {
     std::string msg = " ANNOutput Threshold cannot be less than zero. \n";

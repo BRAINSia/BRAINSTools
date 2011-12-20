@@ -326,17 +326,9 @@ Parser::StartElement(void *userData,
     try
       {
       ApplyModelType *am = new ApplyModelType;
-      am->SetAttribute<FloatValue>( "CutOutThresh",
-                                    attribMap.Get("ApplyModel",
-                                                  "CutOutThresh") );
       am->SetAttribute<FloatValue>( "MaskThresh",
                                     attribMap.Get("ApplyModel",
                                                   "MaskThresh") );
-      // am->SetAttribute<StringValue>( "DefDir",
-      //                              attribMap.Get("ApplyModel", "DefDir") );
-      // am->SetAttribute<StringValue>( "OutputDir",
-      //                              attribMap.Get("ApplyModel", "OutputDir")
-      // );
       proc->Add(am, Name);
       }
     catch( ProcessObjectException& ex )

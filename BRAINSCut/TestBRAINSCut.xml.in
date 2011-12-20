@@ -25,11 +25,7 @@
                    TrainingFilename="@BRAINSCut_BINARY_DIR@/TestTrainingVectors.txt"
                    Filename="@BRAINSCut_BINARY_DIR@/TestModel.txt"
                    />
-  <ApplyModel CutOutThresh="0.05" 
-              CutOutGaussian="0.5" 
-              MaskThresh="127" 
-              DefDir="@BRAINSCut_BINARY_DIR@" 
-              OutputDir="@BRAINSCut_BINARY_DIR@" />
+                 <ApplyModel      MaskThresh="127" />
 
   <DataSet Name="img1" Type="Train" >
     <Image Type="SG" Filename="@BRAINSCut_SOURCE_DIR@/TestData/TrainImage1.nii.gz" />

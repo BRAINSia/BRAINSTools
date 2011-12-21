@@ -355,11 +355,13 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
     // TODO:  Need to make this register all the atlas filenames to all the
     //       reference images.
     //       Should probably do it in reverse order.
+    muLogMacro(<< "Starting atlas registration." << std::endl);
     if( itksys::SystemTools::FileExists( this->m_AtlasToSubjectTransformFileName.c_str() ) )
       {
       try
         {
-        muLogMacro(<< "Reading " << this->m_AtlasToSubjectTransformFileName << "." << std::endl);
+        muLogMacro(
+          << "Reading Atlas to subject transform: " << this->m_AtlasToSubjectTransformFileName << "." << std::endl);
         m_AtlasToSubjectTransform = itk::ReadTransformFromDisk(this->m_AtlasToSubjectTransformFileName);
         // Note:  No need to write this transform to disk
         }
@@ -409,7 +411,6 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
         atlasToSubjectRegistrationHelper->SetTranslationScale(1000);
         atlasToSubjectRegistrationHelper->SetReproportionScale(1.0);
         atlasToSubjectRegistrationHelper->SetSkewScale(1.0);
-        atlasToSubjectRegistrationHelper->SetCurrentGenericTransform(this->m_AtlasToSubjectInitialTransform);
         // Register all atlas images to first image
           {
           muLogMacro(
@@ -572,24 +573,28 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
             muLogMacro(
               << "Registering (Affine) " << preprocessMovingString << "atlas(" << atlasIter << ") to template("
               << atlasIter << ") image." << std::endl);
-            const unsigned int       regLevels = (atlasIter == 0) ? 4 : 1;
-            std::vector<double>      minimumStepSize(regLevels);
-            std::vector<std::string> transformType(regLevels);
+            std::vector<double>      minimumStepSize;
+            std::vector<std::string> transformType;
             if( atlasIter == 0 )
               {
-              minimumStepSize[0] = 0.0025;
-              minimumStepSize[1] = 0.0025;
-              minimumStepSize[2] = 0.0025;
-              minimumStepSize[3] = 0.0025;
-              transformType[0] = "Rigid";
-              transformType[1] = "ScaleVersor3D";
-              transformType[2] = "ScaleSkewVersor3D";
-              transformType[3] = "Affine";
+              std::string atlasToSubjectInitialTransformName = this->m_AtlasToSubjectInitialTransform->GetNameOfClass();
+              if( !( (atlasToSubjectInitialTransformName.compare("AffineTransform") == 0 ) ||
+                     (atlasToSubjectInitialTransformName.compare("BSpline") == 0 ) ) )
+                {
+                minimumStepSize.push_back(0.0025);
+                minimumStepSize.push_back(0.0025);
+                minimumStepSize.push_back(0.0025);
+                transformType.push_back("Rigid");
+                transformType.push_back("ScaleVersor3D");
+                transformType.push_back("ScaleSkewVersor3D");
+                }
+              minimumStepSize.push_back(0.0025);
+              transformType.push_back("Affine");
               }
             else
               {
-              minimumStepSize[0] = 0.0025;
-              transformType[0] = "Affine";
+              minimumStepSize.push_back(0.0025);
+              transformType.push_back("Affine");
               }
             atlasToSubjectRegistrationHelper->SetMinimumStepLength(minimumStepSize);
             atlasToSubjectRegistrationHelper->SetTransformType(transformType);
@@ -601,24 +606,32 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
               << atlasIter << ") image." << std::endl);
             const unsigned int       regLevels = (atlasIter == 0) ? 5 : 1;
             std::vector<double>      minimumStepSize(regLevels);
-            std::vector<std::string> transformType(regLevels);
+            std::vector<std::string> transformType;
             if( atlasIter == 0 )
               {
-              minimumStepSize[0] = 0.0025;
-              minimumStepSize[1] = 0.0025;
-              minimumStepSize[2] = 0.0025;
-              minimumStepSize[3] = 0.0025;
-              minimumStepSize[4] = 0.0025;
-              transformType[0] = "Rigid";
-              transformType[1] = "ScaleVersor3D";
-              transformType[2] = "ScaleSkewVersor3D";
-              transformType[3] = "Affine";
-              transformType[4] = "BSpline";
+              std::string atlasToSubjectInitialTransformName = this->m_AtlasToSubjectInitialTransform->GetNameOfClass();
+              if( !( ( atlasToSubjectInitialTransformName.compare("Affine") == 0 ) ||
+                     (atlasToSubjectInitialTransformName.compare("BSpline") == 0 ) ) )
+                {
+                minimumStepSize.push_back(0.0025);
+                minimumStepSize.push_back(0.0025);
+                minimumStepSize.push_back(0.0025);
+                transformType.push_back("Rigid");
+                transformType.push_back("ScaleVersor3D");
+                transformType.push_back("ScaleSkewVersor3D");
+                }
+              else if( atlasToSubjectInitialTransformName.compare("Affine") == 0 )
+                {
+                minimumStepSize.push_back(0.0025);
+                transformType.push_back("Affine");
+                }
+              minimumStepSize.push_back(0.0025);
+              transformType.push_back("BSpline");
               }
             else
               {
-              minimumStepSize[0] = 0.0025;
-              transformType[0] = "BSpline";
+              minimumStepSize.push_back(0.0025);
+              transformType.push_back("BSpline");
               }
             atlasToSubjectRegistrationHelper->SetMinimumStepLength(minimumStepSize);
             atlasToSubjectRegistrationHelper->SetTransformType(transformType);
@@ -651,12 +664,22 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
             //       "useCenterOfHeadAlign" works well for brain images, but
             // will break
             //       algorithm for many other segmentation types.
-            const std::string initializeTransformMode("useCenterOfHeadAlign");
-            atlasToSubjectRegistrationHelper->SetInitializeTransformMode(initializeTransformMode);
-            atlasToSubjectRegistrationHelper->SetMaskInferiorCutOffFromCenter(65.0); //
-                                                                                     //
-                                                                                     // maskInferiorCutOffFromCenter);
-            this->m_AtlasToSubjectTransform = NULL;
+
+            if( m_AtlasToSubjectInitialTransform.IsNotNull() )
+              {
+              const std::string initializeTransformMode("Off");
+              atlasToSubjectRegistrationHelper->SetInitializeTransformMode(initializeTransformMode);
+              this->m_AtlasToSubjectTransform = this->m_AtlasToSubjectInitialTransform;
+              }
+            else
+              {
+              const std::string initializeTransformMode("useCenterOfHeadAlign");
+              atlasToSubjectRegistrationHelper->SetInitializeTransformMode(initializeTransformMode);
+              atlasToSubjectRegistrationHelper->SetMaskInferiorCutOffFromCenter(65.0); //
+              //
+              // maskInferiorCutOffFromCenter);
+              this->m_AtlasToSubjectTransform = NULL;
+              }
             }
           else
             {

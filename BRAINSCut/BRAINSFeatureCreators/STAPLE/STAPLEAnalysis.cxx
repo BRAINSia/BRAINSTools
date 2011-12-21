@@ -1,13 +1,10 @@
+#include <string>
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 #include "itkMultiLabelSTAPLEImageFilter.h"
-// #include "itkSTAPLEImageFilter.h"
 #include "itkTimeProbe.h"
-
-#include <string>
-#include <fstream.h>
-
 #include "STAPLEAnalysisCLP.h"
+
 template <unsigned int ImageDimension>
 int STAPLE(unsigned int argc, char *argv[] )
 {
@@ -91,7 +88,7 @@ int main( int argc, char *argv[] )
     {
     std::cout << "Usage: " << argv[0] << " imageDimension outputImage "
               << "segmentationImage1 ... segmentationImageN" << std::endl;
-    exit( 0 );
+    return EXIT_FAILURE;
     }
 
   switch( inputDimension )
@@ -104,6 +101,7 @@ int main( int argc, char *argv[] )
       break;
     default:
       std::cerr << "Unsupported dimension" << std::endl;
-      exit( EXIT_FAILURE );
+      return EXIT_FAILURE;
     }
+  return EXIT_SUCCESS;
 }

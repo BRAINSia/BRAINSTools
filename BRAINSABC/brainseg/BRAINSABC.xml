@@ -253,6 +253,15 @@
   <parameters advanced="true" >
     <label>Options</label>
     <description>Options</description>
+
+    <image multiple="true" fileExtensions=".nii.gz,.nrrd">
+      <name>implicitOutputs</name>
+      <label>Implicit Outputs</label>
+      <description>Outputs to be made available to NiPype. Needed because not all BRAINSABC outputs have command line arguments.</description>
+      <longflag>implicitOutputs</longflag>
+      <channel>output</channel>
+    </image>
+
     <integer>
       <name>debuglevel</name>
       <label>Debug option</label>

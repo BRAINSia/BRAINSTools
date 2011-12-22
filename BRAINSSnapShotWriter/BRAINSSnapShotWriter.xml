@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>Utilities.BRAINS</category>
+  <title>BRAINSSnapShotWriter</title>
+  <description>Create 2D snapshot of input images. Mask images are color-coded</description>
+  <version> 1.0</version>
+  <documentation-url></documentation-url>
+  <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt </license>
+  <contributor>Eunyoung Regina Kim</contributor>
+  <acknowledgements></acknowledgements>
+ <parameters>
+
+   <image multiple="true">
+     <name>inputVolumes</name>
+     <longflag>inputVolumes</longflag>
+     <label>inputVolumes</label>
+     <channel>input</channel>
+     <description>Input image volume list to be extracted as 2D image. Multiple input is possible. At least one input is required.</description>
+     <default></default>
+   </image>
+   
+   <image multiple="true">
+     <name>inputBinaryVolumes</name>
+     <longflag>inputBinaryVolumes</longflag>
+     <label>inputBinaryVolumes</label>
+     <channel>input</channel>
+     <description>Input mask (binary) volume list to be extracted as 2D image. Multiple input is possible.</description>
+     <default></default>
+   </image>
+
+   <float-vector>
+     <name>inputSliceToExtractInPhysicalPoint</name>
+     <longflag>inputSliceToExtractInPhysicalPoint</longflag>
+     <label>inputSliceToExtractInPhysicalPoint</label>
+     <channel>input</channel>
+     <description>2D slice number of input images. For autoWorkUp output, which AC-PC aligned, 0,0,0 will be the center.</description>
+     <default></default>
+   </float-vector>
+
+   <integer-vector>
+     <name>inputSliceToExtractInIndex</name>
+     <longflag>inputSliceToExtractInIndex</longflag>
+     <label>inputSliceToExtractInIndex</label>
+     <channel>input</channel>
+     <description>2D slice number of input images. For size of 256*256*256 image, 128 is usually used.</description>
+     <default></default>
+   </integer-vector>
+
+   <integer-vector>
+     <name>inputSliceToExtractInPercent</name>
+     <longflag>inputSliceToExtractInPercent</longflag>
+     <label>inputSliceToExtractInPercent</label>
+     <channel>input</channel>
+     <description>2D slice number of input images. Percentage input from 0%-100%. (ex. --inputSliceToExtractInPercent 50,50,50</description>
+     <default></default>
+   </integer-vector>
+
+   <integer-vector>
+     <name>inputPlaneDirection</name>
+     <longflag>inputPlaneDirection</longflag>
+     <label>inputPlaneDirection</label>
+     <channel>input</channel>
+     <description>Plane to display. In general, 0=saggital, 1=coronal, and 2=axial plane.</description>
+     <default>0,1,2</default>
+   </integer-vector>
+
+   <file>
+     <name>outputFilename</name>
+     <longflag>outputFilename</longflag>
+     <label>outputFilename</label>
+     <channel>output</channel>
+     <description>2D file name of input images. Required.</description>
+     <default></default>
+   </file>
+   
+</parameters>
+
+</executable>

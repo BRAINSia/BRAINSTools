@@ -254,12 +254,13 @@
     <label>Options</label>
     <description>Options</description>
 
-    <string>
+    <image multiple="true" fileExtensions=".nii.gz,.nrrd">
       <name>implicitOutputs</name>
       <label>Implicit Outputs</label>
-      <description>A comma separated list of outputs to be made available to NiPype. Needed because not all BRAINSABC outputs have command line arguments.</description>
+      <description>Outputs to be made available to NiPype. Needed because not all BRAINSABC outputs have command line arguments.</description>
       <longflag>implicitOutputs</longflag>
-    </string>
+      <channel>output</channel>
+    </image>
 
     <integer>
       <name>debuglevel</name>

@@ -17,6 +17,8 @@ inline BinaryImagePointer ThresholdLabelImageToOneValue( BinaryImagePointer inpu
 
 inline BinaryImagePointer ReadBinaryImageByFilename( std::string filename );
 
+inline WorkingImagePointer ReadWorkingImageByFilename( std::string filename );
+
 inline float GetVolume( BinaryImagePointer image);
 
 void printToScreen( float manualVolume, float annVolume, float SI, float threshold);
@@ -30,9 +32,23 @@ main(int argc, char * *argv)
 
   BRAINSCutApplyModel BRAINSCutPostProcessing;
 
+  if( inputManualVolume == "" )
+    {
+    std::cout << " inputManualVolume is necessary"
+              << std::endl;
+    exit( EXIT_FAILURE );
+    }
   /* read continuous image */
   BinaryImagePointer manualVolume = ReadBinaryImageByFilename( inputManualVolume );
   manualVolume = ThresholdLabelImageToOneValue( manualVolume );
+
+  /* read levelSet feature image */
+  WorkingImagePointer levelSetFeatureImage;
+  if( inputLevelSetFeatureImage != "" )
+    {
+    BRAINSCutPostProcessing.SetANNLevelSetImageType( "dummy" );
+    levelSetFeatureImage = ReadWorkingImageByFilename( inputLevelSetFeatureImage );
+    }
 
   /* temporary file to be compared */
   BinaryImagePointer annThresholdVolume;
@@ -51,7 +67,9 @@ main(int argc, char * *argv)
   for( float threshold = 0.0F; threshold <= 1.00F; threshold += thresholdInterval )
     {
     /* similarity index */
-    annThresholdVolume = BRAINSCutPostProcessing.PostProcessingOfANNContinuousImage( ANNContinuousVolume, threshold);
+    annThresholdVolume = BRAINSCutPostProcessing.PostProcessingOfANNContinuousImage( ANNContinuousVolume,
+                                                                                     levelSetFeatureImage,
+                                                                                     threshold);
     similarityIndexFilter->SetInput2( annThresholdVolume );
     similarityIndexFilter->Update();
 
@@ -78,6 +96,19 @@ ThresholdLabelImageToOneValue( BinaryImagePointer inputMaskVolume)
 
   BinaryImagePointer outputMask = thresholder->GetOutput();
   return outputMask;
+}
+
+inline WorkingImagePointer
+ReadWorkingImageByFilename( std::string filename )
+{
+  typedef itk::ImageFileReader<WorkingImageType> WorkingImageReaderType;
+  WorkingImageReaderType::Pointer reader = WorkingImageReaderType::New();
+
+  reader->SetFileName( filename );
+  reader->Update();
+
+  WorkingImagePointer image = reader->GetOutput();
+  return image;
 }
 
 inline BinaryImagePointer

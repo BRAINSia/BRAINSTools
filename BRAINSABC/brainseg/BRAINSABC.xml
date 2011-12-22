@@ -253,6 +253,14 @@
   <parameters advanced="true" >
     <label>Options</label>
     <description>Options</description>
+
+    <string>
+      <name>implicitOutputs</name>
+      <label>Implicit Outputs</label>
+      <description>A comma separated list of outputs to be made available to NiPype. Needed because not all BRAINSABC outputs have command line arguments.</description>
+      <longflag>implicitOutputs</longflag>
+    </string>
+
     <integer>
       <name>debuglevel</name>
       <label>Debug option</label>

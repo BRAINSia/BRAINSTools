@@ -22,18 +22,19 @@
   * using the ROIAUTO method that seems to work well for brain images.
   */
 
+#include <itkMultiplyImageFilter.h>
+#include <itkImageMaskSpatialObject.h>
+#include <itkImageRegionIteratorWithIndex.h>
+#include <itkImageRegionConstIteratorWithIndex.h>
+#include <itkExtractImageFilter.h>
+#include <vcl_algorithm.h>
+
 #include "itkIO.h"
-
-#include "itkMultiplyImageFilter.h"
 #include "itkLargestForegroundFilledMaskImageFilter.h"
-
-#include "itkImageMaskSpatialObject.h"
-#include "itkImageRegionIteratorWithIndex.h"
-
 #include "itkBRAINSROIAutoImageFilter.h"
 #include "BRAINSROIAutoCLP.h"
 #include "BRAINSThreadControl.h"
-typedef itk::Image<signed short, 3>  VolumeImageType;
+typedef itk::Image<signed int, 3>    VolumeImageType;
 typedef itk::Image<unsigned char, 3> VolumeMaskType;
 typedef itk::SpatialObject<3>        SOImageMaskType;
 
@@ -46,20 +47,71 @@ template <typename PixelType>
 void
 BRAINSROIAUTOWriteOutputVolume(VolumeImageType::Pointer image,
                                VolumeMaskType::Pointer mask,
-                               std::string & fileName)
+                               std::string & fileName,
+                               const bool MaskImage,
+                               const bool CropImage)
 {
   typedef typename itk::Image<PixelType, VolumeImageType::ImageDimension> WriteOutImageType;
+  typename WriteOutImageType::Pointer finalOutput;
+    {
+    typedef itk::CastImageFilter<VolumeImageType, WriteOutImageType> CasterType;
+    typename CasterType::Pointer myCaster = CasterType::New();
+    myCaster->SetInput(image);
+    myCaster->Update();
+    finalOutput = myCaster->GetOutput();
+    }
+  if( MaskImage )
+    {
+    typedef typename itk::MultiplyImageFilter<VolumeMaskType, WriteOutImageType, WriteOutImageType> MultiplierType;
 
-  typedef typename itk::MultiplyImageFilter<VolumeMaskType, VolumeImageType, WriteOutImageType> MultiplierType;
+    typename MultiplierType::Pointer clipper = MultiplierType::New();
+    clipper->SetInput1(mask);
+    clipper->SetInput2(finalOutput);
+    clipper->Update();
+    finalOutput = clipper->GetOutput();
+    }
+  if( CropImage )
+    {
+    typename VolumeMaskType::IndexType minIndex;
+    typename VolumeMaskType::IndexType maxIndex;
+    for( VolumeMaskType::IndexType::IndexValueType i = 0; i < VolumeMaskType::ImageDimension; ++i )
+      {
+      minIndex[i] = vcl_numeric_limits<VolumeMaskType::IndexType::IndexValueType>::max();
+      maxIndex[i] = vcl_numeric_limits<VolumeMaskType::IndexType::IndexValueType>::min();
+      }
+    itk::ImageRegionConstIteratorWithIndex<VolumeMaskType> maskIt(mask, mask->GetLargestPossibleRegion() );
+    while( !maskIt.IsAtEnd() )
+      {
+      if( maskIt.Get() > 0 )
+        {
+        const typename VolumeMaskType::IndexType & currIndex = maskIt.GetIndex();
+        for( VolumeMaskType::IndexType::IndexValueType i = 0; i < VolumeMaskType::ImageDimension; ++i )
+          {
+          minIndex[i] = vcl_min(minIndex[i], currIndex[i]);
+          maxIndex[i] = vcl_max(maxIndex[i], currIndex[i]);
+          }
+        }
+      ++maskIt;
+      }
 
-  typename MultiplierType::Pointer clipper = MultiplierType::New();
+    VolumeMaskType::SizeType desiredSize;
+    for( VolumeMaskType::IndexType::IndexValueType i = 0; i < VolumeMaskType::ImageDimension; ++i )
+      {
+      desiredSize[i] = maxIndex[i] - minIndex[i] - 1;
+      }
+    VolumeMaskType::RegionType desiredRegion(minIndex, desiredSize);
 
-  clipper->SetInput1(mask);
-  clipper->SetInput2(image);
-  clipper->Update();
-
-  typename WriteOutImageType::Pointer temp = clipper->GetOutput();
-  itkUtil::WriteImage<WriteOutImageType>(temp, fileName);
+    typedef itk::ExtractImageFilter<WriteOutImageType, WriteOutImageType> ExtractorType;
+    typename ExtractorType::Pointer myExtractor = ExtractorType::New();
+    myExtractor->SetExtractionRegion(desiredRegion);
+    myExtractor->SetInput(finalOutput);
+#if ITK_VERSION_MAJOR >= 4
+    myExtractor->SetDirectionCollapseToIdentity(); // This is required.
+#endif
+    myExtractor->Update();
+    finalOutput = myExtractor->GetOutput();
+    }
+  itkUtil::WriteImage<WriteOutImageType>(finalOutput, fileName);
 }
 
 int main(int argc, char *argv[])
@@ -91,7 +143,7 @@ int main(int argc, char *argv[])
     itkUtil::WriteImage<VolumeMaskType>(MaskImage, outputROIMaskVolume);
     }
 
-  if( outputClippedVolumeROI != "" )
+  if( outputVolume != "" )
     {
     //      std::cout << "=========== resampledImage :\n" <<
     // resampledImage->GetDirection() << std::endl;
@@ -99,28 +151,28 @@ int main(int argc, char *argv[])
     // command line parameter
     if( outputVolumePixelType == "float" )
       {
-      BRAINSROIAUTOWriteOutputVolume<float>(ImageInput, MaskImage, outputClippedVolumeROI);
+      BRAINSROIAUTOWriteOutputVolume<float>(ImageInput, MaskImage, outputVolume, maskOutput, cropOutput);
       }
     else if( outputVolumePixelType == "short" )
       {
-      BRAINSROIAUTOWriteOutputVolume<signed short>(ImageInput, MaskImage, outputClippedVolumeROI);
+      BRAINSROIAUTOWriteOutputVolume<signed short>(ImageInput, MaskImage, outputVolume, maskOutput, cropOutput);
       }
     else if( outputVolumePixelType == "ushort" )
       {
-      BRAINSROIAUTOWriteOutputVolume<unsigned short>(ImageInput, MaskImage, outputClippedVolumeROI);
+      BRAINSROIAUTOWriteOutputVolume<unsigned short>(ImageInput, MaskImage, outputVolume, maskOutput, cropOutput);
       }
     else if( outputVolumePixelType == "int" )
       {
-      BRAINSROIAUTOWriteOutputVolume<signed int>(ImageInput, MaskImage, outputClippedVolumeROI);
+      BRAINSROIAUTOWriteOutputVolume<signed int>(ImageInput, MaskImage, outputVolume, maskOutput, cropOutput);
       }
     else if( outputVolumePixelType == "uint" )
       {
-      BRAINSROIAUTOWriteOutputVolume<unsigned int>(ImageInput, MaskImage, outputClippedVolumeROI);
+      BRAINSROIAUTOWriteOutputVolume<unsigned int>(ImageInput, MaskImage, outputVolume, maskOutput, cropOutput);
       }
     else if( outputVolumePixelType == "uchar" )
       {
-      BRAINSROIAUTOWriteOutputVolume<unsigned char>(ImageInput, MaskImage, outputClippedVolumeROI);
+      BRAINSROIAUTOWriteOutputVolume<unsigned char>(ImageInput, MaskImage, outputVolume, maskOutput, cropOutput);
       }
     }
-  return 0;
+  return EXIT_SUCCESS;
 }

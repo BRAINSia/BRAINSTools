@@ -30,7 +30,7 @@ set_target_properties(BRAINSTransformConvertMakeTestFiles
 # program to generate the test files
 add_test(NAME BRAINSTransformConvertMakeTestFilesTest
   COMMAND
-  ${LAUNCH_EXE} BRAINSTransformConvertMakeTestFiles ${CMAKE_CURRENT_BINARY_DIR})
+  ${LAUNCH_EXE} $<TARGET_FILE:BRAINSTransformConvertMakeTestFiles> ${CMAKE_CURRENT_BINARY_DIR})
 set_property(TEST BRAINSTransformConvertMakeTestFilesTest
   APPEND PROPERTY DEPENDS BRAINSTransformConvertMakeTestFiles)
 
@@ -60,7 +60,7 @@ foreach(SourceTransform VersorRigid ScaleVersor ScaleSkewVersor Affine BSplineDe
     #
     # do the conversion
     add_test(NAME ${TransformConvertTestName} COMMAND
-      ${LAUNCH_EXE} ${BRAINSTransformConvert}
+      ${LAUNCH_EXE} $<TARGET_FILE:BRAINSTransformConvert>
       --inputTransform ${SourceTransformName}
       --outputTransform ${TargetTransformName}
       --outputTransformType ${TargetTransform}
@@ -78,7 +78,7 @@ foreach(SourceTransform VersorRigid ScaleVersor ScaleSkewVersor Affine BSplineDe
         set(BadTransformConvertTestName "Bad${TransformConvertTestName}")
         set(BadTransformConvertTargetName ${BadTransformConvertTestName}.txt)
         add_test(NAME ${BadTransformConvertTestName} COMMAND
-          ${LAUNCH_EXE} ${BRAINSTransformConvert}
+          ${LAUNCH_EXE} $<TARGET_FILE:BRAINSTransformConvert>
           --inputTransform ${TargetTransformName}
           --outputTransform ${BadTransformConvertTargetName}
           --outputTransformType ${SourceTransform}
@@ -99,7 +99,7 @@ foreach(SourceTransform VersorRigid ScaleVersor ScaleSkewVersor Affine BSplineDe
     set(ResampleWSourceOutputImage ${ResampleWSourceTestName}.nii.gz)
 
     add_test(NAME ${ResampleWSourceTestName}
-      COMMAND ${LAUNCH_EXE} ${BRAINSResample}
+      COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSResample>
       --inputVolume ${TransformTestImage}
       --outputVolume ${ResampleWSourceOutputImage}
       --pixelType short
@@ -115,14 +115,14 @@ foreach(SourceTransform VersorRigid ScaleVersor ScaleSkewVersor Affine BSplineDe
     # Displacement field takes different command line
     if(NOT "${TargetTransform}" STREQUAL "DisplacementField")
       add_test(NAME ${ResampleWTargetTestName}
-        COMMAND ${LAUNCH_EXE} ${BRAINSResample}
+        COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSResample>
         --inputVolume ${TransformTestImage}
         --outputVolume ${ResampleWTargetOutputImage}
         --pixelType short
         --warpTransform ${TargetTransformName})
     else(NOT "${TargetTransform}" STREQUAL "DisplacementField")
       add_test(NAME ${ResampleWTargetTestName}
-        COMMAND ${LAUNCH_EXE} ${BRAINSResample}
+        COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSResample>
         --inputVolume ${TransformTestImage}
         --outputVolume ${ResampleWTargetOutputImage}
         --pixelType short

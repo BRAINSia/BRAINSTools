@@ -192,8 +192,8 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 9
-  --compareRadiusTolerance 0
-  --compareNumberOfPixelsTolerance 1000
+  --compareRadiusTolerance 1
+  --compareNumberOfPixelsTolerance 300
   BRAINSFitTest
   --costMetric MMI
   --failureExitCode -1 --writeTransformOnFailure
@@ -220,8 +220,8 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 9
-  --compareRadiusTolerance 0
-  --compareNumberOfPixelsTolerance 1000
+  --compareRadiusTolerance 1
+  --compareNumberOfPixelsTolerance 300
   BRAINSFitTest
   --costMetric MMI
   --failureExitCode -1 --writeTransformOnFailure

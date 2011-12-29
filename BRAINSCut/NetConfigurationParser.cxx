@@ -286,9 +286,6 @@ NetConfigurationParser::StartElement(void *userData,
     try
       {
       ApplyModelType *am = new ApplyModelType;
-      am->SetAttribute<FloatValue>( "CutOutThresh",
-                                    attribMap.Get("ApplyModel",
-                                                  "CutOutThresh") );
       am->SetAttribute<FloatValue>( "MaskThresh",
                                     attribMap.Get("ApplyModel",
                                                   "MaskThresh") );

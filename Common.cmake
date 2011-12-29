@@ -42,6 +42,8 @@ CMAKE_DEPENDENT_OPTION(
   USE_BRAINSLandmarkInitializer       "Build BRAINSLandmarkInitializer (ITKv4)"     OFF "USE_ITKv4" OFF)
 CMAKE_DEPENDENT_OPTION(
   USE_ImageCalculator                 "Build ImageCalculator (ITKv4)"               OFF "USE_ITKv4" OFF)
+CMAKE_DEPENDENT_OPTION(
+  USE_BRAINSSnapShotWriter            "Build BRAINSSnapShotWriter (ITKv4)"          OFF "USE_ITKv4" OFF)
 
 
 option(USE_DebugImageViewer "Build DebugImageViewer" OFF)

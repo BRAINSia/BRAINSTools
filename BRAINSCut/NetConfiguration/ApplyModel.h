@@ -18,11 +18,7 @@ public:
 
   ApplyModelType() : XMLElementParser("ApplyModel")
   {
-    this->Add(new FloatValue("CutOutThresh", 0.5), "CutOutThresh");
     this->Add(new FloatValue("MaskThresh", 0.5), "MaskThresh");
-    // Output Directory move to Apply subject...
-    //    this->Add(new StringValue("DefDir", ""), "DefDir");
-    //    this->Add(new StringValue("OutputDir", ""), "OutputDir");
   }
 };
 

@@ -150,22 +150,22 @@ typename TransformType::Pointer DoCenteredInitialization(
     }
   else if( initializeTransformMode == "useCenterOfROIAlign" )
     {
-    typedef typename itk::ImageMaskSpatialObject<FixedImageType::ImageDimension> ImageMaskSpatialObjectType;
-    typedef itk::Image<unsigned char, 3>                                         MaskImageType;
+    typedef typename itk::ImageMaskSpatialObject<FixedImageType::ImageDimension> CROIImageMaskSpatialObjectType;
+    typedef itk::Image<unsigned char, 3>                                         CROIMaskImageType;
     typename MovingImageType::PointType movingCenter;
     typename FixedImageType::PointType fixedCenter;
 
-    typename ImageMaskSpatialObjectType::Pointer movingImageMask(
-      dynamic_cast<ImageMaskSpatialObjectType *>( movingMask.GetPointer() ) );
-    typename MaskImageType::Pointer tempOutputMovingVolumeROI =
-      const_cast<MaskImageType *>( movingImageMask->GetImage() );
+    typename CROIImageMaskSpatialObjectType::Pointer movingImageMask(
+      dynamic_cast<CROIImageMaskSpatialObjectType *>( movingMask.GetPointer() ) );
+    typename CROIMaskImageType::Pointer tempOutputMovingVolumeROI =
+      const_cast<CROIMaskImageType *>( movingImageMask->GetImage() );
 
-    typename ImageMaskSpatialObjectType::Pointer fixedImageMask(
-      dynamic_cast<ImageMaskSpatialObjectType *>( fixedMask.GetPointer() ) );
-    typename MaskImageType::Pointer tempOutputFixedVolumeROI =
-      const_cast<MaskImageType *>( fixedImageMask->GetImage() );
-    typedef itk::CastImageFilter<MaskImageType, FixedImageType>  MaskToFixedCastType;
-    typedef itk::CastImageFilter<MaskImageType, MovingImageType> MaskToMovingCastType;
+    typename CROIImageMaskSpatialObjectType::Pointer fixedImageMask(
+      dynamic_cast<CROIImageMaskSpatialObjectType *>( fixedMask.GetPointer() ) );
+    typename CROIMaskImageType::Pointer tempOutputFixedVolumeROI =
+      const_cast<CROIMaskImageType *>( fixedImageMask->GetImage() );
+    typedef itk::CastImageFilter<CROIMaskImageType, FixedImageType>  MaskToFixedCastType;
+    typedef itk::CastImageFilter<CROIMaskImageType, MovingImageType> MaskToMovingCastType;
 
     typename MaskToFixedCastType::Pointer mask2fixedCast = MaskToFixedCastType::New();
     typename MaskToMovingCastType::Pointer mask2movingCast = MaskToMovingCastType::New();
@@ -189,8 +189,7 @@ typename TransformType::Pointer DoCenteredInitialization(
     }
   else if( initializeTransformMode == "useCenterOfHeadAlign" )
     {
-    typedef typename itk::ImageMaskSpatialObject<FixedImageType::ImageDimension> ImageMaskSpatialObjectType;
-    typedef itk::Image<unsigned char, 3>                                         MaskImageType;
+    typedef itk::Image<unsigned char, 3> CHMMaskImageType;
     typename MovingImageType::PointType movingCenter;
     typename FixedImageType::PointType fixedCenter;
 
@@ -207,22 +206,19 @@ typename TransformType::Pointer DoCenteredInitialization(
       {
       typename ImageMaskSpatialObjectType::Pointer movingImageMask(
         dynamic_cast<ImageMaskSpatialObjectType *>( movingMask.GetPointer() ) );
-      typename MaskImageType::Pointer tempOutputMovingVolumeROI =
-        const_cast<MaskImageType *>( movingImageMask->GetImage() );
+      typename CHMMaskImageType::Pointer tempOutputMovingVolumeROI =
+        const_cast<CHMMaskImageType *>( movingImageMask->GetImage() );
       movingFindCenter->SetImageMask(tempOutputMovingVolumeROI);
       }
     movingFindCenter->Update();
     movingCenter = movingFindCenter->GetCenterOfBrain();
       {
       // convert mask image to mask
-      typedef typename itk::ImageMaskSpatialObject<Dimension>
-        ImageMaskSpatialObjectType;
-      typename ImageMaskSpatialObjectType::Pointer mask =
-        ImageMaskSpatialObjectType::New();
+      typename ImageMaskSpatialObjectType::Pointer mask = ImageMaskSpatialObjectType::New();
       mask->SetImage( movingFindCenter->GetClippedImageMask() );
 
-      typename MaskImageType::Pointer ClippedMask = movingFindCenter->GetClippedImageMask();
-      // itkUtil::WriteImage<MaskImageType>( ClippedMask ,
+      typename CHMMaskImageType::Pointer ClippedMask = movingFindCenter->GetClippedImageMask();
+      // itkUtil::WriteImage<CHMMaskImageType>( ClippedMask ,
       // std::string("MOVING_MASK.nii.gz"));
 
       mask->ComputeObjectToWorldTransform();
@@ -243,8 +239,8 @@ typename TransformType::Pointer DoCenteredInitialization(
       {
       typename ImageMaskSpatialObjectType::Pointer fixedImageMask(
         dynamic_cast<ImageMaskSpatialObjectType *>( fixedMask.GetPointer() ) );
-      typename MaskImageType::Pointer tempOutputFixedVolumeROI =
-        const_cast<MaskImageType *>( fixedImageMask->GetImage() );
+      typename CHMMaskImageType::Pointer tempOutputFixedVolumeROI =
+        const_cast<CHMMaskImageType *>( fixedImageMask->GetImage() );
       fixedFindCenter->SetImageMask(tempOutputFixedVolumeROI);
       }
     fixedFindCenter->Update();
@@ -252,11 +248,10 @@ typename TransformType::Pointer DoCenteredInitialization(
 
       {
       // convert mask image to mask
-      typedef typename itk::ImageMaskSpatialObject<Dimension> ImageMaskSpatialObjectType;
       typename ImageMaskSpatialObjectType::Pointer mask = ImageMaskSpatialObjectType::New();
       mask->SetImage( fixedFindCenter->GetClippedImageMask() );
 
-      typename MaskImageType::Pointer ClippedMask = fixedFindCenter->GetClippedImageMask();
+      typename CHMMaskImageType::Pointer ClippedMask = fixedFindCenter->GetClippedImageMask();
 
       mask->ComputeObjectToWorldTransform();
       typename SpatialObjectType::Pointer p = dynamic_cast<SpatialObjectType *>( mask.GetPointer() );
@@ -712,8 +707,6 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::StartRegistration(void
       m_MaskInferiorCutOffFromCenter);
 
       {   // Write out some debugging information if requested
-      typedef itk::Image<unsigned char, 3>                               MaskImageType;
-      typedef itk::ImageMaskSpatialObject<MaskImageType::ImageDimension> ImageMaskSpatialObjectType;
       if( ( !this->m_FixedBinaryVolume.IsNull() ) && ( m_OutputFixedVolumeROI != "" ) )
         {
         const MaskImageType::ConstPointer tempOutputFixedVolumeROI =

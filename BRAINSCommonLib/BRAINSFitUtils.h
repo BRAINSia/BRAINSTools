@@ -60,10 +60,7 @@ void DoCenteredTransformMaskClipping(
     }
   std::cerr << "maskInferiorCutOffFromCenter is " << maskInferiorCutOffFromCenter << std::endl;
 
-  typedef itk::ImageMaskSpatialObject<VImageDimension> ImageMaskSpatialObjectType;
-
-  typedef unsigned char                          PixelType;
-  typedef itk::Image<PixelType, VImageDimension> MaskImageType;
+  typedef unsigned char PixelType;
 
   typename TransformType::InputPointType rotationCenter = transform->GetCenter();
   typename TransformType::OutputVectorType translationVector = transform->GetTranslation();

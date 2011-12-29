@@ -26,15 +26,15 @@ PURPOSE.  See the above copyright notices for more information.
 // Insight/Examples/Registration/ImageRegistration8.cxx
 // and is an improved replacement for the old (and defective)
 
-typedef float                            PixelType;
-typedef itk::Image<PixelType, Dimension> FixedVolumeType;
-typedef itk::Image<PixelType, Dimension> MovingVolumeType;
+typedef float                                     BRAINSFitPixelType;
+typedef itk::Image<BRAINSFitPixelType, Dimension> FixedVolumeType;
+typedef itk::Image<BRAINSFitPixelType, Dimension> MovingVolumeType;
 
-typedef itk::Image<PixelType, MaxInputDimension> InputImageType;
-typedef itk::ImageFileReader<InputImageType>     FixedVolumeReaderType;
-typedef itk::ImageFileReader<InputImageType>     MovingVolumeReaderType;
-typedef AffineTransformType::Pointer             AffineTransformPointer;
-typedef itk::Vector<double, Dimension>           VectorType;
+typedef itk::Image<BRAINSFitPixelType, MaxInputDimension> InputImageType;
+typedef itk::ImageFileReader<InputImageType>              FixedVolumeReaderType;
+typedef itk::ImageFileReader<InputImageType>              MovingVolumeReaderType;
+typedef AffineTransformType::Pointer                      AffineTransformPointer;
+// typedef itk::Vector<double, Dimension>           BRAINSFitVectorType;
 
 // This function deciphers the BackgroundFillValueString and returns a double
 // precision number based on the requested value

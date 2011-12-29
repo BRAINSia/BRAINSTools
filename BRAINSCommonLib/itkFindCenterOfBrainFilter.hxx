@@ -369,8 +369,8 @@ FindCenterOfBrainFilter<TInputImage, TMaskImage>
     moments->SetImage(this->m_TrimmedImage);
       {
       // convert mask image to mask
-      typedef typename itk::ImageMaskSpatialObject<TInputImage::ImageDimension> ImageMaskSpatialObjectType;
-      typename ImageMaskSpatialObjectType::Pointer mask = ImageMaskSpatialObjectType::New();
+      typedef typename itk::ImageMaskSpatialObject<TInputImage::ImageDimension> LFFImageMaskSpatialObjectType;
+      typename LFFImageMaskSpatialObjectType::Pointer mask = LFFImageMaskSpatialObjectType::New();
       mask->SetImage(this->m_ClippedImageMask);
       mask->ComputeObjectToWorldTransform();
       typename itk::SpatialObject<TInputImage::ImageDimension>::Pointer test =

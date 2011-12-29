@@ -354,13 +354,12 @@ typename OutputImageType::Pointer GenericTransformImage(
     // A special case for dealing with binary images
     // where signed distance maps are warped and thresholds created
     typedef short int                                                                    MaskPixelType;
-    typedef typename itk::Image<MaskPixelType,  GenericTransformImageNS::SpaceDimension> MaskImageType;
+    typedef typename itk::Image<MaskPixelType,  GenericTransformImageNS::SpaceDimension> BinFlagOnMaskImageType;
 
     // Now Threshold and write out image
     typedef typename itk::BinaryThresholdImageFilter<InputImageType,
-                                                     MaskImageType> BinaryThresholdFilterType;
-    typename BinaryThresholdFilterType::Pointer finalFilter =
-      BinaryThresholdFilterType::New();
+                                                     BinFlagOnMaskImageType> BinaryThresholdFilterType;
+    typename BinaryThresholdFilterType::Pointer finalFilter = BinaryThresholdFilterType::New();
     finalFilter->SetInput(TransformedImage);
 
     const typename BinaryThresholdFilterType::OutputPixelType outsideValue = 0;
@@ -382,7 +381,7 @@ typename OutputImageType::Pointer GenericTransformImage(
 
     finalFilter->Update();
 
-    typedef typename itk::CastImageFilter<MaskImageType, InputImageType> CastImageFilter;
+    typedef typename itk::CastImageFilter<BinFlagOnMaskImageType, InputImageType> CastImageFilter;
     typename CastImageFilter::Pointer castFilter = CastImageFilter::New();
     castFilter->SetInput( finalFilter->GetOutput() );
     castFilter->Update();

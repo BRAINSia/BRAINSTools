@@ -33,7 +33,7 @@ mkdir -p $ProbabilityMapDirectory
 ## TODO Move these to the atlas Dir( under BRAINSCut build or something)
 SpatialLocationDirectory="$BRAINSBuild/../ANN/"
 
-TemplateDirectory="$BRAINSBuild/ReferenceAtlas-build/Atlas/Atlas_20111221/"
+TemplateDirectory="$BRAINSBuild/ReferenceAtlas-build/Atlas/Atlas_20111229/"
 
 InputVectorFilename="${ModelDate}InputVector.txt"
 TrainingModelFilename="${ModelDate}ANNModel.txt"

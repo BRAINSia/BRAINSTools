@@ -810,9 +810,24 @@ int main(int argc, char * *argv)
 #if 1
               {
               std::vector<unsigned int> unused_gridSize;
+              double                    localFilterTimeStep = filterTimeStep;
+              if( localFilterTimeStep <= 0 )
+                {
+                FloatImageType::SpacingType::ValueType minPixelSize =
+                  vcl_numeric_limits<FloatImageType::SpacingType::ValueType>::max();
+                const FloatImageType::SpacingType & imageSpacing = intraSubjectRawImageList[i]->GetSpacing();
+                for( int is = 0; is < FloatImageType::ImageDimension; ++is )
+                  {
+                  minPixelSize = vcl_min( minPixelSize, imageSpacing[is]);
+                  }
+                localFilterTimeStep =
+                  ( (minPixelSize - vcl_numeric_limits<FloatImageType::SpacingType::ValueType>::epsilon() )
+                    / ( vcl_pow(2.0, FloatImageType::ImageDimension + 1 ) )
+                  );
+                }
               intraSubjectNoiseRemovedImageList[i] =
                 DenoiseFiltering<FloatImageType>(intraSubjectRawImageList[i], filterMethod, filterIteration,
-                                                 filterTimeStep,
+                                                 localFilterTimeStep,
                                                  unused_gridSize);
               if( debuglevel > 1 )
                 {

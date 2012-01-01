@@ -186,10 +186,10 @@
     </integer>
     <float>
       <name>filterTimeStep</name>
-      <description>Filter time step</description>
+      <description>Filter time step should be less than (PixelSpacing/(1^(DIM+1)), value is set to negative, then allow automatic setting of this value. </description>
       <label>Filter Time Step</label>
       <longflag>filterTimeStep</longflag>
-      <default>0.0625</default>
+      <default>-1.0</default>
       <constraints>
         <minimum>0</minimum>
         <maximum>0.5</maximum>

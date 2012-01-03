@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>BRAINS.Segmentation</category>
+  <title>Write Identity Transform</title>
+  <description>write identity transform to the disc.</description>
+  <version> 1.0</version>
+  <documentation-url></documentation-url>
+  <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt </license>
+  <contributor>Eunyoung Regin Kim</contributor>
+  <acknowledgements></acknowledgements>
+ <parameters>
+   <file>
+     <name>dummy</name>
+     <label>dummy</label>
+     <longflag>dummy</longflag>
+     <description>dummy</description>
+     <channel>input</channel>
+   </file>
+</parameters>
+</executable>

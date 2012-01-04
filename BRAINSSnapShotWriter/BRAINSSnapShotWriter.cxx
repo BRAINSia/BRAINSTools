@@ -9,6 +9,7 @@
 #include "itkTileImageFilter.h"
 #include "itkFlipImageFilter.h"
 #include "itkLabelOverlayImageFilter.h"
+#include "itkComposeRGBImageFilter.h"
 #include "itkRGBPixel.h"
 
 #include "BRAINSSnapShotWriterCLP.h"
@@ -312,34 +313,39 @@ main(int argc, char * *argv)
 
   /* combine binary images */
   Image3DVolumeType::Pointer labelMap = Image3DVolumeType::New();
-  labelMap->CopyInformation( image3DBinaries[0] );
-  labelMap->SetRegions( image3DVolumes[0]->GetLargestPossibleRegion() );
-  labelMap->Allocate();
-
-  itk::ImageRegionIterator<Image3DVolumeType> binaryIterator(
-    labelMap,
-    labelMap->GetLargestPossibleRegion() );
-
-  while( !binaryIterator.IsAtEnd() )
+  if( image3DBinaries.size() > 0 )
     {
-    Image3DBinaryType::IndexType index = binaryIterator.GetIndex();
-    /** itereate one image */
-    binaryIterator.Set( 0 );
-    for( unsigned int i = 0; i < image3DBinaries.size(); i++ )
-      {
-      if( image3DBinaries[i]->GetPixel( index ) > 0 )
-        {
-        binaryIterator.Set( i + 1 ); // label color zero is grey
-        }
-      }
-    /** add each binary values */
-    ++binaryIterator;
-    }
+    labelMap->CopyInformation( image3DBinaries[0] );
+    labelMap->SetRegions( image3DVolumes[0]->GetLargestPossibleRegion() );
+    labelMap->Allocate();
 
+    itk::ImageRegionIterator<Image3DVolumeType> binaryIterator(
+      labelMap,
+      labelMap->GetLargestPossibleRegion() );
+
+    while( !binaryIterator.IsAtEnd() )
+      {
+      Image3DBinaryType::IndexType index = binaryIterator.GetIndex();
+      /** itereate one image */
+      binaryIterator.Set( 0 );
+      for( unsigned int i = 0; i < image3DBinaries.size(); i++ )
+        {
+        if( image3DBinaries[i]->GetPixel( index ) > 0 )
+          {
+          binaryIterator.Set( i + 1 ); // label color zero is grey
+          }
+        }
+      /** add each binary values */
+      ++binaryIterator;
+      }
+    }
   /* compose color image */
   typedef itk::LabelOverlayImageFilter<OutputGreyImageType,
                                        OutputGreyImageType,
-                                       OutputRGBImageType> RGBComposeFilter;
+                                       OutputRGBImageType> LabelOverlayFilter;
+
+  typedef itk::ComposeRGBImageFilter<OutputGreyImageType,
+                                     OutputRGBImageType> RGBComposeFilter;
 
   typedef std::vector<OutputRGBImageType::Pointer> OutputRGBImageVectorType;
 
@@ -359,29 +365,52 @@ main(int argc, char * *argv)
         Rescale<Image2DVolumeType, OutputGreyImageType>( imageSlice, 0, 255 );
 
       /** binaries */
-      OutputGreyImageType::Pointer labelSlice =
-        ExtractSlice<Image3DVolumeType, OutputGreyImageType>( labelMap,
-                                                              inputPlaneDirection[plane],
-                                                              extractingSlices[plane] );
-      /** rgb creator */
-      RGBComposeFilter::Pointer rgbComposer = RGBComposeFilter::New();
-
-      rgbComposer->SetInput( greyScaleSlice );
-      rgbComposer->SetLabelImage( labelSlice);
-      rgbComposer->SetOpacity(.5F);
-
-      try
+      OutputGreyImageType::Pointer labelSlice;
+      if( image3DBinaries.size() > 0 )
         {
-        rgbComposer->Update();
-        }
-      catch( itk::ExceptionObject& e  )
-        {
-        std::cout << "ERROR:  Could not update image." << std::endl;
-        std::cout << "ERROR:  " << e.what() << std::endl;
-        exit(EXIT_FAILURE);
-        }
+        /** rgb creator */
+        LabelOverlayFilter::Pointer rgbComposer = LabelOverlayFilter::New();
 
-      rgbSlices.push_back( rgbComposer->GetOutput() );
+        labelSlice =
+          ExtractSlice<Image3DVolumeType, OutputGreyImageType>( labelMap,
+                                                                inputPlaneDirection[plane],
+                                                                extractingSlices[plane] );
+        rgbComposer->SetLabelImage( labelSlice);
+        rgbComposer->SetInput( greyScaleSlice );
+        rgbComposer->SetOpacity(.5F);
+        try
+          {
+          rgbComposer->Update();
+          }
+        catch( itk::ExceptionObject& e  )
+          {
+          std::cout << "ERROR:  Could not update image." << std::endl;
+          std::cout << "ERROR:  " << e.what() << std::endl;
+          exit(EXIT_FAILURE);
+          }
+
+        rgbSlices.push_back( rgbComposer->GetOutput() );
+        }
+      else /** ----------------------------------------------------- */
+        {
+        RGBComposeFilter::Pointer rgbComposer = RGBComposeFilter::New();
+
+        rgbComposer->SetInput1( greyScaleSlice );
+        rgbComposer->SetInput2( greyScaleSlice );
+        rgbComposer->SetInput3( greyScaleSlice );
+
+        try
+          {
+          rgbComposer->Update();
+          }
+        catch( itk::ExceptionObject& e  )
+          {
+          std::cout << "ERROR:  Could not update image." << std::endl;
+          std::cout << "ERROR:  " << e.what() << std::endl;
+          exit(EXIT_FAILURE);
+          }
+        rgbSlices.push_back( rgbComposer->GetOutput() );
+        }
       }
     }
 

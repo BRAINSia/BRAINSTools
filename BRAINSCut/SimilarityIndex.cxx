@@ -42,14 +42,6 @@ main(int argc, char * *argv)
   BinaryImagePointer manualVolume = ReadBinaryImageByFilename( inputManualVolume );
   manualVolume = ThresholdLabelImageToOneValue( manualVolume );
 
-  /* read levelSet feature image */
-  WorkingImagePointer levelSetFeatureImage;
-  if( inputLevelSetFeatureImage != "" )
-    {
-    BRAINSCutPostProcessing.SetANNLevelSetImageType( "dummy" );
-    levelSetFeatureImage = ReadWorkingImageByFilename( inputLevelSetFeatureImage );
-    }
-
   /* temporary file to be compared */
   BinaryImagePointer annThresholdVolume;
 
@@ -68,7 +60,6 @@ main(int argc, char * *argv)
     {
     /* similarity index */
     annThresholdVolume = BRAINSCutPostProcessing.PostProcessingOfANNContinuousImage( ANNContinuousVolume,
-                                                                                     levelSetFeatureImage,
                                                                                      threshold);
     similarityIndexFilter->SetInput2( annThresholdVolume );
     similarityIndexFilter->Update();

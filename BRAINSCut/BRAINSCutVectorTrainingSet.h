@@ -41,6 +41,8 @@ public:
 
   void SetBufferRecordSize();
 
+  void SetShuffled(bool shuffled);
+
   int GetTotalVectorSize();
 
   int GetInputVectorSize();

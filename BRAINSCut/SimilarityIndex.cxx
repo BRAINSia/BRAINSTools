@@ -59,8 +59,8 @@ main(int argc, char * *argv)
   for( float threshold = 0.0F; threshold <= 1.00F; threshold += thresholdInterval )
     {
     /* similarity index */
-    annThresholdVolume = BRAINSCutPostProcessing.PostProcessingOfANNContinuousImage( ANNContinuousVolume,
-                                                                                     threshold);
+    annThresholdVolume = BRAINSCutPostProcessing.PostProcessingANN( ANNContinuousVolume,
+                                                                    threshold);
     similarityIndexFilter->SetInput2( annThresholdVolume );
     similarityIndexFilter->Update();
 

@@ -158,8 +158,6 @@ BRAINSCutCreateVector
   std::cout << __LINE__ << "::" << __FILE__ << "::" << subjectROIBinaryFilename << std::endl;
   WorkingImagePointer subjectROIBinaryImage = ReadImageByFilename( subjectROIBinaryFilename );
 
-  std::cout << __LINE__ << "::" << __FILE__ << "::" << subjectROIBinaryImage << std::endl;
-
   itk::ImageRegionIterator<WorkingImageType> it( deformedROIs.find( roiName )->second,
                                                  deformedROIs.find( roiName )->second->GetLargestPossibleRegion() );
 

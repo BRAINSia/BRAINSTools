@@ -23,11 +23,14 @@ int main(int argc, char * *argv)
    * ITK4 resigration initilization
    */
   // Call register default transforms
-  itk::TransformFactoryBase::RegisterDefaultTransforms();
+  // itk::TransformFactoryBase::RegisterDefaultTransforms();
 
   BRAINSCutGenerateRegistrations registrationGenerator( netConfiguration );
   const bool                     applyDataSetOff = false;
   const bool                     applyDataSetOn = true;
+  const bool                     shuffleTrainVector = (NoTrainingVectorShuffling != true );
+
+  std::cout << "shuffleTrainVector::" << shuffleTrainVector << std::endl;
 
   if( generateProbability )
     {
@@ -50,16 +53,41 @@ int main(int argc, char * *argv)
     }
   if( trainModel )
     {
-    try
+    if( method == "ANN" )
       {
-      BRAINSCutTrainModel testTrain( netConfiguration);
-      testTrain.InitializeNeuralNetwork();
-      testTrain.InitializeTrainDataSet();
-      testTrain.Train();
+      try
+        {
+        BRAINSCutTrainModel ANNTrain( netConfiguration);
+        ANNTrain.InitializeNeuralNetwork();
+        ANNTrain.InitializeTrainDataSet( shuffleTrainVector );
+        ANNTrain.TrainANN();
+        }
+      catch( BRAINSCutExceptionStringHandler& e )
+        {
+        std::cout << e.Error();
+        }
       }
-    catch( BRAINSCutExceptionStringHandler& e )
+    else if( method == "RandomForest" )
       {
-      std::cout << e.Error();
+      BRAINSCutTrainModel RandomForestTrain( netConfiguration );
+      RandomForestTrain.InitializeRandomForest();
+      RandomForestTrain.InitializeTrainDataSet( shuffleTrainVector);
+
+      /* these set has to be **AFTER** InitializeTrainDataSet */
+      if( numberOfTrees > 0 && randomTreeDepth > 0 )
+        {
+        RandomForestTrain.TrainRandomForestAt( randomTreeDepth, numberOfTrees );
+        }
+      else
+        {
+        RandomForestTrain.TrainRandomForest();
+        }
+      }
+    else
+      {
+      std::cout << "No proper method found to train"
+                << std::endl;
+      exit(EXIT_FAILURE);
       }
     }
   if( applyModel )
@@ -70,10 +98,20 @@ int main(int argc, char * *argv)
       registrationGenerator.SetSubjectDataSet( applyDataSetOn );
       registrationGenerator.GenerateRegistrations();
 
-      BRAINSCutApplyModel applyTest( netConfiguration );
+      BRAINSCutApplyModel ApplyModule( netConfiguration );
 
-      applyTest.SetComputeSSE( computeSSEOn );
-      applyTest.Apply();
+      ApplyModule.SetMethod( method );
+      ApplyModule.SetComputeSSE( computeSSEOn );
+      /* these set has to be **AFTER** InitializeTrainDataSet */
+      if( numberOfTrees > 0 && randomTreeDepth > 0 )
+        {
+        ApplyModule.SetRandomForestModelFilename( randomTreeDepth, numberOfTrees );
+        }
+      else
+        {
+        ApplyModule.SetRandomForestModelFilenameFromNetConfiguration();
+        }
+      ApplyModule.Apply();
       }
     catch( BRAINSCutExceptionStringHandler& e )
       {

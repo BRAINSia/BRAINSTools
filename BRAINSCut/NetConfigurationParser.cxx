@@ -1,7 +1,7 @@
 #include "NetConfigurationParser.h"
 #include "ApplyModel.h"
 #include "NeuralParams.h"
-#include "ANNParams.h"
+#include "TrainingPrameters.h"
 #include <XMLElementContainer.h>
 #include "BRAINSCutExceptionStringHandler.h"
 
@@ -213,15 +213,9 @@ NetConfigurationParser::StartElement(void *userData,
       np->SetAttribute<FloatValue>( "MaskSmoothingValue",
                                     attribMap.Get("NeuralNetParams",
                                                   "MaskSmoothingValue") );
-      // np->SetAttribute<IntValue>("GaussianSize",
-      // attribMap.Get("NeuralNetParams",
-      // "GaussianSize"));
       np->SetAttribute<IntValue>( "GradientProfileSize",
                                   attribMap.Get("NeuralNetParams",
                                                 "GradientProfileSize") );
-      // np->SetAttribute<IntValue>("IrisSize",
-      //                       attribMap.Get("NeuralNetParams",
-      //                                   "IrisSize"));
       np->SetAttribute<StringValue>( "TrainingVectorFilename",
                                      attribMap.Get("NeuralNetParams",
                                                    "TrainingVectorFilename") );
@@ -242,36 +236,66 @@ NetConfigurationParser::StartElement(void *userData,
       throw ex;
       }
     }
-  else if( Name == "ANNParams" )
+  else if( Name == "RandomForestParameters" )
     {
     try
       {
-      ANNParams *ap = new ANNParams;
-      // ap->SetAttribute<IntValue>( "VectorSize",    attribMap.Get("ANNParams",
+      TrainingParameters *ap = new TrainingParameters("RandomForestParameters");
+      std::cout << __LINE__ << "::" << __FILE__ << std::endl;
+      ap->SetAttribute<IntValue>( "MaxDepth",
+                                  attribMap.Get("RandomForestParameters",
+                                                "MaxDepth") );
+      std::cout << __LINE__ << "::" << __FILE__ << std::endl;
+      ap->SetAttribute<IntValue>( "MinSampleCount",
+                                  attribMap.Get("RandomForestParameters",
+                                                "MinSampleCount") );
+      ap->SetAttribute<BooleanValue>( "UseSurrogates",
+                                      attribMap.Get("RandomForestParameters",
+                                                    "UseSurrogates") );
+      ap->SetAttribute<BooleanValue>( "CalcVarImportance",
+                                      attribMap.Get("RandomForestParameters",
+                                                    "CalcVarImportance") );
+      ap->SetAttribute<IntValue>( "MaxTreeCount",
+                                  attribMap.Get("RandomForestParameters",
+                                                "MaxTreeCount") );
+      Local_netConfiguration->Add(ap, Name);
+      }
+    catch( BRAINSCutExceptionStringHandler& ex )
+      {
+      std::cerr << ex << std::endl;
+      throw ex;
+      }
+    }
+  else if( Name == "ANNParameters" )
+    {
+    try
+      {
+      TrainingParameters *ap = new TrainingParameters("ANNParameters");
+      // ap->SetAttribute<IntValue>( "VectorSize",    attribMap.Get("TrainingParameters",
       //          "VectorSize") );
       ap->SetAttribute<IntValue>( "Iterations",
-                                  attribMap.Get("ANNParams",
+                                  attribMap.Get("ANNParameters",
                                                 "Iterations") );
       ap->SetAttribute<IntValue>( "MaximumVectorsPerEpoch",
-                                  attribMap.Get("ANNParams",
+                                  attribMap.Get("ANNParameters",
                                                 "MaximumVectorsPerEpoch") );
       ap->SetAttribute<IntValue>( "EpochIterations",
-                                  attribMap.Get("ANNParams",
+                                  attribMap.Get("ANNParameters",
                                                 "EpochIterations") );
       ap->SetAttribute<IntValue>( "ErrorInterval",
-                                  attribMap.Get("ANNParams",
+                                  attribMap.Get("ANNParameters",
                                                 "ErrorInterval") );
       ap->SetAttribute<FloatValue>( "ActivationSlope",
-                                    attribMap.Get("ANNParams",
+                                    attribMap.Get("ANNParameters",
                                                   "ActivationSlope") );
       ap->SetAttribute<FloatValue>( "ActivationMinMax",
-                                    attribMap.Get("ANNParams",
+                                    attribMap.Get("ANNParameters",
                                                   "ActivationMinMax") );
       ap->SetAttribute<FloatValue>( "DesiredError",
-                                    attribMap.Get("ANNParams",
+                                    attribMap.Get("ANNParameters",
                                                   "DesiredError") );
       ap->SetAttribute<IntValue>( "NumberOfHiddenNodes",
-                                  attribMap.Get("ANNParams",
+                                  attribMap.Get("ANNParameters",
                                                 "NumberOfHiddenNodes") );
       Local_netConfiguration->Add(ap, Name);
       }

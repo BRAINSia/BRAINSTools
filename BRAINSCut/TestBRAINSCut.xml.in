@@ -25,7 +25,7 @@
                    TrainingFilename="@BRAINSCut_BINARY_DIR@/TestTrainingVectors.txt"
                    Filename="@BRAINSCut_BINARY_DIR@/TestModel.txt"
                    />
-                 <ApplyModel      MaskThresh="127" />
+  <ApplyModel MaskThresh="127" />
 
   <DataSet Name="img1" Type="Train" >
     <Image Type="SG" Filename="@BRAINSCut_SOURCE_DIR@/TestData/TrainImage1.nii.gz" />

@@ -33,11 +33,17 @@ public:
 
   void ReadANNModelFile();
 
-  BinaryImagePointer PostProcessingOfANNContinuousImage( std::string continuousFilname, scalarType threshold);
+  BinaryImagePointer PostProcessingOfANNContinuousImage( std::string continuousFilename, scalarType threshold );
 
   void SetANNOutputThresholdFromNetConfiguration();
 
-  BinaryImagePointer ThresholdImageAtLower( WorkingImagePointer image, scalarType thresholdValue );
+  void SetANNLevelSetImageTypeFromNetConfiguration();
+
+  void SetANNLevelSetImageType( std::string imageType );
+
+  BinaryImagePointer ThresholdImageAtLower( WorkingImagePointer& image, scalarType thresholdValue );
+
+  BinaryImagePointer ThresholdImageAtUpper( WorkingImagePointer& image, scalarType thresholdValue );
 
   BinaryImagePointer ExtractLabel( BinaryImagePointer image, unsigned char thresholdValue );
 
@@ -54,6 +60,8 @@ private:
   std::string  ANNModelFilename;
   std::string  ANNTestingSSEFilename;
   std::fstream ANNTestingSSEFileStream;
+
+  std::string levelSetImageType;
 
   scalarType      annOutputThreshold;
   OpenCVMLPType * openCVANN;

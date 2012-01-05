@@ -26,7 +26,7 @@ SlicerMacroCheckExternalProjectDependency(ReferenceAtlas)
 set(proj ReferenceAtlas)
 
 if(NOT DEFINED ReferenceAtlas_DIR OR NOT DEFINED ATLAS_NAME)
-  set(ATLAS_VERSION 20111229)
+  set(ATLAS_VERSION 20120104)
   set(ATLAS_URL http://www.psychiatry.uiowa.edu/users/brainstestdata/Atlas_${ATLAS_VERSION}.tar.gz)
   set(ATLAS_NAME Atlas/Atlas_${ATLAS_VERSION})
 

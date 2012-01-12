@@ -66,7 +66,7 @@
     <transform fileExtensions=".nrrd" type="nonlinear" reference="movingVolume">
       <name>outputDisplacementFieldVolume</name>
       <flag>O</flag>
-      <longflag alias="output_field">outputDisplacementFieldVolume</longflag>
+      <longflag deprecatedalias="output_field,outputDeformationFieldVolume">outputDisplacementFieldVolume</longflag>
       <description>Output deformation field vector image (will have the same physical space as the fixedVolume).</description>
       <label>Output Displacement Field Volume</label>
       <channel>output</channel>

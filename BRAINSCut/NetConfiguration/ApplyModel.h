@@ -19,7 +19,6 @@ public:
   ApplyModelType() : XMLElementParser("ApplyModel")
   {
     this->Add(new FloatValue("MaskThresh", 0.5), "MaskThresh");
-    this->Add(new StringValue("LevelSetImageType", ""), "LevelSetImageType");
   }
 };
 

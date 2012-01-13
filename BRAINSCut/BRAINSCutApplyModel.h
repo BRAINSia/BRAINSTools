@@ -37,10 +37,6 @@ public:
 
   void SetANNOutputThresholdFromNetConfiguration();
 
-  void SetANNLevelSetImageTypeFromNetConfiguration();
-
-  void SetANNLevelSetImageType( std::string imageType );
-
   BinaryImagePointer ThresholdImageAtLower( WorkingImagePointer& image, scalarType thresholdValue );
 
   BinaryImagePointer ThresholdImageAtUpper( WorkingImagePointer& image, scalarType thresholdValue );
@@ -60,8 +56,6 @@ private:
   std::string  ANNModelFilename;
   std::string  ANNTestingSSEFilename;
   std::fstream ANNTestingSSEFileStream;
-
-  std::string levelSetImageType;
 
   scalarType      annOutputThreshold;
   OpenCVMLPType * openCVANN;

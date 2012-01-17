@@ -255,6 +255,20 @@ main(int argc, char * *argv)
               << std::endl;
     exit(EXIT_FAILURE);
     }
+  if( inputPlaneDirection.size() == 0 )
+    {
+    std::cout << "Input Plane Direction is required "
+              << std::endl;
+    exit(EXIT_FAILURE);
+    }
+  if( inputSliceToExtractInIndex.size() == 0 &&
+      inputSliceToExtractInPercent.size() == 0 &&
+      inputSliceToExtractInPhysicalPoint.size() )
+    {
+    std::cout << "At least one of input Slice to Extract has to be specified."
+              << std::endl;
+    exit(EXIT_FAILURE);
+    }
 
   if( inputPlaneDirection.size() != inputSliceToExtractInIndex.size() &&
       inputPlaneDirection.size() != inputSliceToExtractInPercent.size() &&

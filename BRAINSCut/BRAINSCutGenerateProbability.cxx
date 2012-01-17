@@ -1,7 +1,7 @@
 #include "BRAINSCutGenerateProbability.h"
 #include "NetConfigurationParser.h"
 #include "NetConfiguration.h"
-#include <itkSmoothingRecursiveGaussianImageFilter.h>
+
 #include "itkIO.h"
 
 /** constructors */
@@ -202,28 +202,6 @@ BRAINSCutGenerateProbability
   itkUtil::WriteImage<WorkingImageType>(rhoImage, RhoMapName);
   itkUtil::WriteImage<WorkingImageType>(phiImage, PhiMapName);
   itkUtil::WriteImage<WorkingImageType>(thetaImage, ThetaMapName);
-}
-
-WorkingImagePointer
-BRAINSCutGenerateProbability
-::SmoothImage( const WorkingImagePointer image, const float GaussianValue)
-{
-  if( GaussianValue < 0 + FLOAT_TOLERANCE )
-    {
-    std::cout << "Gaussian value is less than tolerance. "
-              << "No smoothing occurs at this time"
-              << std::endl;
-    return image;
-    }
-  typedef itk::SmoothingRecursiveGaussianImageFilter<WorkingImageType, WorkingImageType> SmoothingFilterType;
-  SmoothingFilterType::Pointer smoothingFilter = SmoothingFilterType::New();
-
-  smoothingFilter->SetInput( image);
-  smoothingFilter->SetSigma( GaussianValue );
-
-  smoothingFilter->Update();
-
-  return smoothingFilter->GetOutput();
 }
 
 void

@@ -32,6 +32,7 @@ BRAINSCutApplyModel
 
   SetApplyDataSetFromNetConfiguration();
   SetANNModelFilenameFromNetConfiguration();
+  SetGaussianSmoothingSigmaFromNetConfiguration();
 
   openCVANN = new OpenCVMLPType();
 }
@@ -66,9 +67,24 @@ BRAINSCutApplyModel
   WorkingImageVectorType imagesOfInterest;
   GetImagesOfSubjectInOrder(imagesOfInterest, subject);
 
-  std::map<std::string, WorkingImagePointer> deformedROIs;
+  /** Warp probability map(ROI) onto the subject*/
+  typedef std::map<std::string, WorkingImagePointer> DeformedROIMapType;
+  DeformedROIMapType deformedROIs;
+
   GetDeformedROIs(deformedROIs, subject);
 
+  /** Gaussian Smoothing if requested to cover broader area */
+  if( gaussianSmoothingSigma > 0.0F )
+    {
+    for( DeformedROIMapType::iterator it = deformedROIs.begin();
+         it != deformedROIs.end();
+         ++it )
+      {
+      deformedROIs[it->first] = this->SmoothImage( it->second, gaussianSmoothingSigma);
+      }
+    }
+
+  /** Get input feature vectors based on subject images and deformed ROIs */
   FeatureInputVector inputVectorGenerator;
 
   inputVectorGenerator.SetGradientSize( gradientSize );
@@ -282,6 +298,14 @@ BRAINSCutApplyModel
   BinaryImagePointer resultMask = ExtractLabel( multipleLabelVolume, 1 );
 
   return resultMask;
+}
+
+void
+BRAINSCutApplyModel
+::SetGaussianSmoothingSigmaFromNetConfiguration()
+{
+  gaussianSmoothingSigma =
+    BRAINSCutNetConfiguration.Get<ApplyModelType>("ApplyModel")->GetAttribute<FloatValue>("GaussianSmoothingSigma");
 }
 
 void

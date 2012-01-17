@@ -86,6 +86,8 @@
     <Image Type="T2" Filename="@BRAINSTools_BINARY_DIR@/ExternalData/BRAINSCut/TestSuite/TestData/Input/TestSuite/TestData/Input/scan1T2.nii.gz"/>
     <Mask Type="RegistrationROI" Filename="NA" />
     <Mask Type="mask1"  Filename="@BRAINSTools_BINARY_DIR@/ExternalData/BRAINSCut/TestSuite/TestData/Input/TestSuite/TestData/Input/scan1Mask1.nii.gz"/>
+    <Mask Type="RegistrationROI" Filename="NA" />
+    <Mask Type="mask1"  Filename="@BRAINSCut_SOURCE_DIR@/TestSuite/TestData/Input/scan1Mask1.nii.gz"/>
     <Registration 
       SubjToAtlasRegistrationFilename="@CMAKE_CURRENT_BINARY_DIR@/SubjectToAtlasScan1.mat"
       AtlasToSubjRegistrationFilename="@CMAKE_CURRENT_BINARY_DIR@/AtlasToSubjectScan1.mat" 

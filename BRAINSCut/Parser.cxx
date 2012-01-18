@@ -329,12 +329,9 @@ Parser::StartElement(void *userData,
       am->SetAttribute<FloatValue>( "MaskThresh",
                                     attribMap.Get("ApplyModel",
                                                   "MaskThresh") );
-        << << << < Updated upstream
-        == == == =
-        am->SetAttribute<FloatValue>( "GaussianSmoothingSigma",
-                                      attribMap.GetIfExist("ApplyModel",
-                                                           "GaussianSmoothingSigma") );
-      >> >> >> > Stashed changes
+      am->SetAttribute<FloatValue>( "GaussianSmoothingSigma",
+                                    attribMap.GetIfExist("ApplyModel",
+                                                         "GaussianSmoothingSigma") );
       proc->Add(am, Name);
       }
     catch( ProcessObjectException& ex )

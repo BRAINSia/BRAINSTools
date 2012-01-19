@@ -18,7 +18,7 @@ public:
   ~LogisticRegressionSample();
   double const GetLabelProbability(unsigned int const &) const;
 
-  void SetSample(std::vector<TSampleType> const &);
+  void SetSample(std::vector<TSampleType> *);
 
   std::vector<TSampleType> const * GetSample() const;
 
@@ -34,11 +34,11 @@ template <typename TSampleType>
 class LogisticRegression
 {
 private:
-  unsigned int     m_sampleCount;
-  unsigned int     m_totalSamples;
-  struct parameter m_parameters;
-  struct problem   m_problem;
-  struct m_model;
+  unsigned int          m_sampleCount;
+  unsigned int          m_totalSamples;
+  struct parameter      m_parameters;
+  struct problem        m_problem;
+  struct model *        m_model;
   struct feature_node * m_featureNodes;
   unsigned int          m_featureCount;
   unsigned int          m_classOneLabel;
@@ -54,6 +54,6 @@ public:
 
   void SetClassTwoLabel(const unsigned int);
 
-  void ClassifySample(LogisticRegressionSample<TSampleType> const &);
+  void ClassifySample(LogisticRegressionSample<TSampleType> &);
 };
 #endif

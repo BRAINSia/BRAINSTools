@@ -17,6 +17,7 @@
 #include "itkLabelStatisticsImageFilter.h"
 #include "linear.h"
 #include "omp.h"
+#include "LogisticRegression.h"
 #include "BRAINSContinuousClassCLP.h"
 
 #define Malloc(type, n) (type *)malloc( (n) * sizeof(type) )
@@ -111,6 +112,12 @@ int main(int argc, char * argv [])
   // Create training set for each tissue type.
   // The training set is all voxels labeled that class in the discrete classified image.
   // For each set of training data train a logistic classifier.
+  const unsigned int            featureCount = 2;
+  LogisticRegression<PixelType> logisticRegressionWhiteVsCSF = LogisticRegression<PixelType>(featureCount,
+                                                                                             csfSampleCount
+                                                                                             + whiteMatterSampleCount);
+  logisticRegressionWhiteVsCSF.SetClassOneLabel(whiteMatterDiscreteValue);
+  logisticRegressionWhiteVsCSF.SetClassTwoLabel(csfDiscreteValue);
   struct parameter logisticRegressionParameter;
 
   logisticRegressionParameter.solver_type = L1R_LR;
@@ -120,7 +127,7 @@ int main(int argc, char * argv [])
   logisticRegressionParameter.weight_label = NULL;
   logisticRegressionParameter.weight = NULL;
 
-  struct problem logisticRegressionProblemWhiteVsCSF;
+  // struct problem logisticRegressionProblemWhiteVsCSF;
   struct problem logisticRegressionProblemWhiteVsGray;
   struct problem logisticRegressionProblemGrayVsCSF;
   struct problem logisticRegressionProblemVeinousBloodVsAll;
@@ -142,13 +149,13 @@ int main(int argc, char * argv [])
                                          (featuresCount + bias) * logisticRegressionProblemVeinousBloodVsAll.l);
 
   // White Vs CSF
-  logisticRegressionProblemWhiteVsCSF.bias = bias;
-  logisticRegressionProblemWhiteVsCSF.n = bias + featuresCount;                    // Number of features with bias term
-  logisticRegressionProblemWhiteVsCSF.l = whiteMatterSampleCount + csfSampleCount; // Number of training samples
-  logisticRegressionProblemWhiteVsCSF.y = Malloc(int, logisticRegressionProblemWhiteVsCSF.l);
-  logisticRegressionProblemWhiteVsCSF.x = Malloc(struct feature_node *, logisticRegressionProblemWhiteVsCSF.l);
-  struct feature_node *whiteVsCSFFeatureNodes;
-  whiteVsCSFFeatureNodes = Malloc(struct feature_node, (featuresCount + bias) * logisticRegressionProblemWhiteVsCSF.l);
+  // logisticRegressionProblemWhiteVsCSF.bias = bias;
+  // logisticRegressionProblemWhiteVsCSF.n = bias + featuresCount; // Number of features with bias term
+  // logisticRegressionProblemWhiteVsCSF.l = whiteMatterSampleCount + csfSampleCount; // Number of training samples
+  // logisticRegressionProblemWhiteVsCSF.y = Malloc(int,logisticRegressionProblemWhiteVsCSF.l);
+  // logisticRegressionProblemWhiteVsCSF.x = Malloc(struct feature_node *,logisticRegressionProblemWhiteVsCSF.l);
+  // struct feature_node *whiteVsCSFFeatureNodes;
+  // whiteVsCSFFeatureNodes = Malloc(struct feature_node,(featuresCount+bias)*logisticRegressionProblemWhiteVsCSF.l);
 
   // White Vs GRAY
   logisticRegressionProblemWhiteVsGray.bias = bias;
@@ -177,6 +184,9 @@ int main(int argc, char * argv [])
 
   typedef itk::ImageRegionConstIterator<ImageType> ImageRegionConstIteratorType;
   ImageRegionConstIteratorType imgItr( t1Volume, t1Volume->GetRequestedRegion() );
+
+  LogisticRegressionSample<PixelType> tempSample = LogisticRegressionSample<PixelType>(featureCount);
+  std::vector<PixelType>              tempFeatures(featureCount);
   for( imgItr.GoToBegin(); !imgItr.IsAtEnd(); ++imgItr )
     {
     const ImageType::IndexType      idx = imgItr.GetIndex();
@@ -228,14 +238,20 @@ int main(int argc, char * argv [])
       whiteVsGrayFeatureNodes[whiteVsGraySampleCount * (featuresCount + bias) + 2].index = -1;
       logisticRegressionProblemWhiteVsGray.y[whiteVsGraySampleCount] = whiteMatterDiscreteValue;
 
-      logisticRegressionProblemWhiteVsCSF.x[whiteVsCSFSampleCount] =
-        &whiteVsCSFFeatureNodes[whiteVsCSFSampleCount * (featuresCount + bias)];
-      whiteVsCSFFeatureNodes[whiteVsCSFSampleCount * (featuresCount + bias)].index = 1;
-      whiteVsCSFFeatureNodes[whiteVsCSFSampleCount * (featuresCount + bias)].value = t1PixelValue;
-      whiteVsCSFFeatureNodes[whiteVsCSFSampleCount * (featuresCount + bias) + 1].index = 2;
-      whiteVsCSFFeatureNodes[whiteVsCSFSampleCount * (featuresCount + bias) + 1].value = t2PixelValue;
-      whiteVsCSFFeatureNodes[whiteVsCSFSampleCount * (featuresCount + bias) + 2].index = -1;
-      logisticRegressionProblemWhiteVsCSF.y[whiteVsCSFSampleCount] = whiteMatterDiscreteValue;
+      tempSample.SetLabel(whiteMatterDiscreteValue);
+      tempFeatures[0] = t1PixelValue;
+      tempFeatures[1] = t2PixelValue;
+      tempSample.SetSample(tempFeatures);
+      logisticRegressionWhiteVsCSF.AddLabeledSample(tempSample);
+
+      // logisticRegressionProblemWhiteVsCSF.x[whiteVsCSFSampleCount] =
+      // &whiteVsCSFFeatureNodes[whiteVsCSFSampleCount*(featuresCount+bias)];
+      // whiteVsCSFFeatureNodes[whiteVsCSFSampleCount*(featuresCount+bias)].index = 1;
+      // whiteVsCSFFeatureNodes[whiteVsCSFSampleCount*(featuresCount+bias)].value = t1PixelValue;
+      // whiteVsCSFFeatureNodes[whiteVsCSFSampleCount*(featuresCount+bias)+1].index = 2;
+      // whiteVsCSFFeatureNodes[whiteVsCSFSampleCount*(featuresCount+bias)+1].value = t2PixelValue;
+      // whiteVsCSFFeatureNodes[whiteVsCSFSampleCount*(featuresCount+bias)+2].index = -1;
+      // logisticRegressionProblemWhiteVsCSF.y[whiteVsCSFSampleCount] = whiteMatterDiscreteValue;
 
       logisticRegressionProblemVeinousBloodVsAll.x[veinousBloodVsAllSampleCount] =
         &veinousBloodVsAllFeatureNodes[veinousBloodVsAllSampleCount * (featuresCount + bias)];
@@ -261,14 +277,20 @@ int main(int argc, char * argv [])
       GrayVsCSFFeatureNodes[csfVsGraySampleCount * (featuresCount + bias) + 2].index = -1;
       logisticRegressionProblemGrayVsCSF.y[csfVsGraySampleCount] = csfDiscreteValue;
 
-      logisticRegressionProblemWhiteVsCSF.x[whiteVsCSFSampleCount] =
-        &whiteVsCSFFeatureNodes[whiteVsCSFSampleCount * (featuresCount + bias)];
-      whiteVsCSFFeatureNodes[whiteVsCSFSampleCount * (featuresCount + bias)].index = 1;
-      whiteVsCSFFeatureNodes[whiteVsCSFSampleCount * (featuresCount + bias)].value = t1PixelValue;
-      whiteVsCSFFeatureNodes[whiteVsCSFSampleCount * (featuresCount + bias) + 1].index = 2;
-      whiteVsCSFFeatureNodes[whiteVsCSFSampleCount * (featuresCount + bias) + 1].value = t2PixelValue;
-      whiteVsCSFFeatureNodes[whiteVsCSFSampleCount * (featuresCount + bias) + 2].index = -1;
-      logisticRegressionProblemWhiteVsCSF.y[whiteVsCSFSampleCount] = csfDiscreteValue;
+      tempSample.SetLabel(csfDiscreteValue);
+      tempFeatures[0] = t1PixelValue;
+      tempFeatures[1] = t2PixelValue;
+      tempSample.SetSample(tempFeatures);
+      logisticRegressionWhiteVsCSF.AddLabeledSample(tempSample);
+
+      // logisticRegressionProblemWhiteVsCSF.x[whiteVsCSFSampleCount] =
+      // &whiteVsCSFFeatureNodes[whiteVsCSFSampleCount*(featuresCount+bias)];
+      // whiteVsCSFFeatureNodes[whiteVsCSFSampleCount*(featuresCount+bias)].index = 1;
+      // whiteVsCSFFeatureNodes[whiteVsCSFSampleCount*(featuresCount+bias)].value = t1PixelValue;
+      // whiteVsCSFFeatureNodes[whiteVsCSFSampleCount*(featuresCount+bias)+1].index = 2;
+      // whiteVsCSFFeatureNodes[whiteVsCSFSampleCount*(featuresCount+bias)+1].value = t2PixelValue;
+      // whiteVsCSFFeatureNodes[whiteVsCSFSampleCount*(featuresCount+bias)+2].index = -1;
+      // logisticRegressionProblemWhiteVsCSF.y[whiteVsCSFSampleCount] = csfDiscreteValue;
 
 //        logisticRegressionProblemVeinousBloodVsAll.x[veinousBloodVsAllSampleCount] =
 // &veinousBloodVsAllFeatureNodes[veinousBloodVsAllSampleCount*(featuresCount+bias)];
@@ -298,12 +320,13 @@ int main(int argc, char * argv [])
       }
     }
 
-  struct model* logisticRegressionModelWhiteVsCSF;
+  // struct model* logisticRegressionModelWhiteVsCSF;
   struct model* logisticRegressionModelGrayVsCSF;
   struct model* logisticRegressionModelWhiteVsGray;
   struct model* logisticRegressionModelVeinousBloodVsAll;
 
-  logisticRegressionModelWhiteVsCSF = train(&logisticRegressionProblemWhiteVsCSF, &logisticRegressionParameter);
+  logisticRegressionWhiteVsCSF.TrainModel();
+  // logisticRegressionModelWhiteVsCSF = train(&logisticRegressionProblemWhiteVsCSF, &logisticRegressionParameter);
   logisticRegressionModelGrayVsCSF = train(&logisticRegressionProblemGrayVsCSF, &logisticRegressionParameter);
   logisticRegressionModelWhiteVsGray = train(&logisticRegressionProblemWhiteVsGray, &logisticRegressionParameter);
   logisticRegressionModelVeinousBloodVsAll = train(&logisticRegressionProblemVeinousBloodVsAll,
@@ -322,7 +345,7 @@ int main(int argc, char * argv [])
   sampleToPredict[2].index = -1;
 
   double predictedProbabilityEstimatesWhiteVsGray[2];
-  double predictedProbabilityEstimatesWhiteVsCSF[2];
+  // double predictedProbabilityEstimatesWhiteVsCSF[2];
   double predictedProbabilityEstimatesGrayVsCSF[2];
   double predictedProbabilityEstimatesVeinousBloodVsAll[2];
 
@@ -338,18 +361,23 @@ int main(int argc, char * argv [])
     sampleToPredict[0].value = t1PixelValue;
     sampleToPredict[1].value = t2PixelValue;
 
-    unsigned int predictionLabel = predict_probability(logisticRegressionModelWhiteVsCSF,
-                                                       sampleToPredict,
-                                                       predictedProbabilityEstimatesWhiteVsCSF);
-    predictionLabel = predict_probability(logisticRegressionModelWhiteVsGray,
-                                          sampleToPredict,
-                                          predictedProbabilityEstimatesWhiteVsGray);
-    predictionLabel = predict_probability(logisticRegressionModelGrayVsCSF,
-                                          sampleToPredict,
-                                          predictedProbabilityEstimatesGrayVsCSF);
-    predictionLabel = predict_probability(logisticRegressionModelVeinousBloodVsAll,
-                                          sampleToPredict,
-                                          predictedProbabilityEstimatesVeinousBloodVsAll);
+    tempFeatures[0] = t1PixelValue;
+    tempFeatures[1] = t2PixelValue;
+    tempSample.SetSample(tempFeatures);
+    logisticRegressionWhiteVsCSF.ClassifySample(tempSample);
+
+    // unsigned int predictionLabel = predict_probability(logisticRegressionModelWhiteVsCSF,
+    //                                      sampleToPredict,
+    //                                      predictedProbabilityEstimatesWhiteVsCSF);
+    predict_probability(logisticRegressionModelWhiteVsGray,
+                        sampleToPredict,
+                        predictedProbabilityEstimatesWhiteVsGray);
+    predict_probability(logisticRegressionModelGrayVsCSF,
+                        sampleToPredict,
+                        predictedProbabilityEstimatesGrayVsCSF);
+    predict_probability(logisticRegressionModelVeinousBloodVsAll,
+                        sampleToPredict,
+                        predictedProbabilityEstimatesVeinousBloodVsAll);
 
     // TODO: Add classifiers for air and blood.
 
@@ -365,7 +393,9 @@ int main(int argc, char * argv [])
 //      {
 //      predictedOutputPixelValue = outputOtherPixelValue;
 //      }
-    else if( predictedProbabilityEstimatesWhiteVsCSF[0] > predictedProbabilityEstimatesWhiteVsCSF[1] )
+    // else if( predictedProbabilityEstimatesWhiteVsCSF[0] > predictedProbabilityEstimatesWhiteVsCSF[1])
+    else if( tempSample.GetLabelProbability(whiteMatterDiscreteValue) >
+             tempSample.GetLabelProbability(csfDiscreteValue) )
       {
       if( predictedProbabilityEstimatesWhiteVsGray[0] < predictedProbabilityEstimatesWhiteVsGray[1] )
         {
@@ -439,16 +469,16 @@ int main(int argc, char * argv [])
   free(logisticRegressionProblemWhiteVsGray.y);
   free(logisticRegressionProblemWhiteVsGray.x);
   free(whiteVsGrayFeatureNodes);
-  free(logisticRegressionProblemWhiteVsCSF.y);
-  free(logisticRegressionProblemWhiteVsCSF.x);
-  free(whiteVsCSFFeatureNodes);
+  // free(logisticRegressionProblemWhiteVsCSF.y);
+  // free(logisticRegressionProblemWhiteVsCSF.x);
+  // free(whiteVsCSFFeatureNodes);
   free(logisticRegressionProblemVeinousBloodVsAll.y);
   free(logisticRegressionProblemVeinousBloodVsAll.x);
   free(veinousBloodVsAllFeatureNodes);
   free(sampleToPredict);
-  free(logisticRegressionModelWhiteVsCSF->w);
-  free(logisticRegressionModelWhiteVsCSF->label);
-  free(logisticRegressionModelWhiteVsCSF);
+  // free(logisticRegressionModelWhiteVsCSF->w);
+  // free(logisticRegressionModelWhiteVsCSF->label);
+  // free(logisticRegressionModelWhiteVsCSF);
   free(logisticRegressionModelWhiteVsGray->w);
   free(logisticRegressionModelWhiteVsGray->label);
   free(logisticRegressionModelWhiteVsGray);

@@ -150,7 +150,7 @@ DtiStreamlineTrackingFilter<TTensorImageType, TAnisotropyImageType, TMaskImageTy
         fiberAnisotropySum->InsertNextValue( anisotropySum );
 
         typename Self::PointType p;
-        ContinuousIndexToMM(index, p);
+        this->ContinuousIndexToMM(index, p);
         fiber->InsertNextPoint( p.GetDataPointer() );
         currentPointId++;
 
@@ -193,7 +193,7 @@ DtiStreamlineTrackingFilter<TTensorImageType, TAnisotropyImageType, TMaskImageTy
           //
           // ////////////////////////////////////////////////////////////////////////
           // Calculate the new index
-          StepIndex(tmpIndex, index, vout);
+          this->StepIndex(tmpIndex, index, vout);
           pathLength += this->m_StepSize;
 
           //

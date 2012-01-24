@@ -113,9 +113,9 @@ DtiGuidedTrackingFilter<TTensorImageType, TAnisotropyImageType, TMaskImageType>
     typename Self::PointType p2;
     vtkFloatingPointType p1[3];
     this->m_GuideFiber->GetPoint(0, p1);
-    ContinuousIndexToMM( index, p2 );
+    this->ContinuousIndexToMM( index, p2 );
     typename Self::ContinuousIndexType index1;
-    MMToContinuousIndex( p1, index1 );
+    this->MMToContinuousIndex( p1, index1 );
 
     // std::cout << "Guide Index: " << index1 << std::endl;
     // std::cout << "Guide Point 0: " << p1[0] << " " << p1[1] << " " << p1[2]
@@ -158,7 +158,7 @@ DtiGuidedTrackingFilter<TTensorImageType, TAnisotropyImageType, TMaskImageType>
           }
 
         typename Self::PointType p;
-        ContinuousIndexToMM( index, p );
+        this->ContinuousIndexToMM( index, p );
         fiber->InsertNextPoint( p.GetDataPointer() );
 
         currentPointId++;
@@ -222,7 +222,7 @@ DtiGuidedTrackingFilter<TTensorImageType, TAnisotropyImageType, TMaskImageType>
           //
           // ////////////////////////////////////////////////////////////////////////
           // Update Index
-          StepIndex(tmpIndex, index, vout);
+          this->StepIndex(tmpIndex, index, vout);
           pathLength += this->m_StepSize;
           index = tmpIndex;
           vin = vout;
@@ -255,7 +255,7 @@ DtiGuidedTrackingFilter<TTensorImageType, TAnisotropyImageType, TMaskImageType>
               vout = e2;
               }
 
-            StepIndex(tmpIndex, index, vout);
+            this->StepIndex(tmpIndex, index, vout);
             pathLength += this->m_StepSize;
             index = tmpIndex;
             vin = vout;

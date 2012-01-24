@@ -158,7 +158,7 @@ void DtiGraphSearchTrackingFilter<
   tmpPoint[2] = midPoint[2];
   typename Self::ContinuousIndexType endP;
 
-  MMToContinuousIndex(tmpPoint, endP);
+  this->MMToContinuousIndex(tmpPoint, endP);
   // std::cout << "Ending Bound Box: " << bb << std::endl;
   // std::cout << "Ending Center Point: " << endP << std::endl;
   while( !( this->m_Seeds.empty() ) )
@@ -265,7 +265,7 @@ void DtiGraphSearchTrackingFilter<
 
           vout = bp.m_Direction;
           vtkFloatingPointType *p = fiber->GetPoint(currentPointId - 1);
-          MMToContinuousIndex(p, index);
+          this->MMToContinuousIndex(p, index);
           }
         else
           {
@@ -292,7 +292,7 @@ void DtiGraphSearchTrackingFilter<
         fiberAnisotropySum->InsertNextValue(anisotropySum);
 
         typename Self::PointType t;
-        ContinuousIndexToMM(index, t);
+        this->ContinuousIndexToMM(index, t);
         fiber->InsertNextPoint( t.GetDataPointer() );
         currentPointId++;
 
@@ -428,7 +428,7 @@ void DtiGraphSearchTrackingFilter<
       //
       // ////////////////////////////////////////////////////////////////////////
       // Calculate the new index
-      StepIndex(tmpIndex, index, vout);
+      this->StepIndex(tmpIndex, index, vout);
       bool backTrack = false;
       if( ImageRegion.IsInside(tmpIndex) )
         {
@@ -492,8 +492,8 @@ void DtiGraphSearchTrackingFilter<
           vtkFloatingPointType *p
             = fiber->GetPoint(currentPointId - 1);
           typename Self::ContinuousIndexType prevIndex;
-          MMToContinuousIndex(p, prevIndex);
-          StepIndex(tmpIndex, prevIndex, vout);
+          this->MMToContinuousIndex(p, prevIndex);
+          this->StepIndex(tmpIndex, prevIndex, vout);
           }
         else
           {

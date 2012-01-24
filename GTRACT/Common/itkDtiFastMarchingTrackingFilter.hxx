@@ -211,7 +211,7 @@ DtiFastMarchingTrackingFilter<TTensorImageType, TAnisotropyImageType, TCostImage
   fiberCost->InsertNextValue( m_CostFN->GetValue(initialPosition) );
 
   typename Self::PointType p;
-  ContinuousIndexToMM(inputIndex, p);
+  this->ContinuousIndexToMM(inputIndex, p);
   fiber->InsertNextPoint( p.GetDataPointer() );
 
   typename Self::TensorImagePixelType tensorPixel = this->m_VectorIP->EvaluateAtContinuousIndex(index);
@@ -262,7 +262,7 @@ DtiFastMarchingTrackingFilter<TTensorImageType, TAnisotropyImageType, TCostImage
       if( anisotropy >= this->m_AnisotropyThreshold )
         {
         // Add current point (fiber point) to fiber
-        ContinuousIndexToMM(tmpIndex, p);
+        this->ContinuousIndexToMM(tmpIndex, p);
         fiber->InsertNextPoint( p.GetDataPointer() );
         fiberAnisotropy->InsertNextValue( anisotropy );
         fiberAnisotropySum->InsertNextValue( anisotropySum );

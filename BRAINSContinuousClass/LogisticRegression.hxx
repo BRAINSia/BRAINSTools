@@ -107,6 +107,11 @@ void LogisticRegression<TSampleType>::AddLabeledSample(LogisticRegressionSample<
 template <typename TSampleType>
 void LogisticRegression<TSampleType>::TrainModel()
 {
+  assert(this->m_totalSamples >= this->m_sampleCount);
+  if( this->m_totalSamples > this->m_sampleCount )
+    {
+    m_problem.l = m_sampleCount;
+    }
   this->m_model = train(&this->m_problem, &this->m_parameters);
 }
 

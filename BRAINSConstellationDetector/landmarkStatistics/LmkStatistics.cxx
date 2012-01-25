@@ -7,7 +7,7 @@
 // This program gets a row of the fcsv files. The first argument is the number of pair landmark files for example
 // (e0326_10335.fcsv , k0326_10335.fcsv)
 // After that the fcsv file names come consequently.
-// For instans:
+// For instance:
 //              LMKstatis 10 E_lmk1.fcsv E_lmk2.fcsv ... E_lmk10.fcsv K_lmk1.fcsv K_lmk2.fcsv ... K_lmk10.fcsv
 
 // *** FOR EACH PAIR FILES: ****

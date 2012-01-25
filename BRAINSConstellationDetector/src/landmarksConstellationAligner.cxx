@@ -8,17 +8,10 @@
 
 #include "itksys/SystemTools.hxx"
 #include "BRAINSThreadControl.h"
-// #include "itkFindCenterOfBrainFilter.h"
-// #include "BRAINSHoughEyeDetector.h"
-// #include "BRAINSConstellationDetector2.h"
 #include "Slicer3LandmarkIO.h"
 
-// #include "itk.h"
 #include "itkCommand.h"
 #include "itkImage.h"
-// #include "itkImageFileReader.h"
-// #include "itkImageFileWriter.h"
-// #include "itkTransformFileWriter.h"
 #include "itkOrthogonalize3DRotationMatrix.h"
 #include "itkVersorRigid3DTransform.h"
 #include "itkEuler3DTransform.h"
@@ -38,24 +31,10 @@ const unsigned int LocalImageDimension = 3;
 typedef short PixelType;
 
 typedef itk::Image<PixelType, LocalImageDimension> SImageType;
-// typedef ImageType::Pointer                         ImagePointerType;
-typedef SImageType::PointType ImagePointType;
-// typedef ImageType::SpacingType                     ImageSpacingType;
-// typedef ImageType::SizeType                        ImageSizeType;
-// typedef ImageType::DirectionType                   ImageDirectionType;
-// typedef ImageType::IndexType                       ImageIndexType;
-
-typedef std::map<std::string, ImagePointType> LandmarksMapType;
-
-// typedef itk::ImageFileReader<ImageType>         ReaderType;
-// typedef itk::ImageFileWriter<ImageType>         WriterType;
-// typedef itk::FindCenterOfBrainFilter<ImageType> FindCenterFilter;
-// typedef itk::BRAINSHoughEyeDetector<ImageType, ImageType>      HoughEyeDetectorType;
-// typedef itk::BRAINSConstellationDetector2<ImageType, ImageType>  Constellation2Type;
-// typedef itk::TransformFileWriter            TransformWriterType;
-
-typedef itk::VersorRigid3DTransform<double> VersorTransformType;
-typedef itk::Euler3DTransform<double>       RigidTransformType;
+typedef SImageType::PointType                      ImagePointType;
+typedef std::map<std::string, ImagePointType>      LandmarksMapType;
+typedef itk::VersorRigid3DTransform<double>        VersorTransformType;
+typedef itk::Euler3DTransform<double>              RigidTransformType;
 
 // F U N C T I O N S //////////////////////////////////////////////////////////
 
@@ -83,10 +62,7 @@ RigidTransformType::Pointer computeTmspFromPoints(SImageType::PointType RP,
   ACPC.Normalize();
   SImageType::PointType::VectorType ACRP = RP - AC;
 
-  vnl_vector_fixed<double, 3> NormalToMSPPlane = vnl_cross_3d( ACPC.GetVnlVector(), ACRP.GetVnlVector() );
-  // --std::cout << ACPC << "=" << PC << " - " << AC << std::endl;
-  // --std::cout << ACRP << "=" << RP << " - " << AC << std::endl;
-  // --std::cout << NormalToMSPPlane << std::endl;
+  vnl_vector_fixed<double, 3>       NormalToMSPPlane = vnl_cross_3d( ACPC.GetVnlVector(), ACRP.GetVnlVector() );
   SImageType::PointType::VectorType NormalToMSPPlaneVector;
   NormalToMSPPlaneVector[0] = NormalToMSPPlane[0];
   NormalToMSPPlaneVector[1] = NormalToMSPPlane[1];
@@ -115,14 +91,7 @@ RigidTransformType::Pointer computeTmspFromPoints(SImageType::PointType RP,
     AlignMSPTransform->SetRotationMatrix( CleanedOrthogonalized );
     }
   AlignMSPTransform->SetTranslation(CenterOffset);
-/*
-  if( LMC::globalverboseFlag )
-    {
-    std::cout << "\n============================" << CenterOffset << " \n" << AlignMSPTransform << std::endl;
-    std::cout << " \n" << AlignMSPTransform->GetTranslation() << std::endl;
-    std::cout << "============================\n" << std::endl;
-    }
-*/
+
   return AlignMSPTransform;
 }
 

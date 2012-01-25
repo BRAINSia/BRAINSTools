@@ -124,7 +124,7 @@ public:
 
   void SetCSFVolume( const TInputImage * inputCSFVolume)
   {
-    SetNthInput(2, const_cast<TInputImage *>( inputCSFVolume ) );
+    this->SetNthInput(2, const_cast<TInputImage *>( inputCSFVolume ) );
   }
 
   /** HammerTissueAttributeVectorFromPartialVolumeImageFilter needs a larger input requested region than

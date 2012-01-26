@@ -1,3 +1,4 @@
+project(BRAINSTools)
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/Common.cmake)
 
@@ -28,7 +29,9 @@ include(${ITK_USE_FILE})
 
 #-----------------------------------------------------------------------------
 find_package(SlicerExecutionModel REQUIRED GenerateCLP)
+include(${GenerateCLP_USE_FILE})
 include(${SlicerExecutionModel_USE_FILE})
+include(${SlicerExecutionModel_CMAKE_DIR}/SEMMacroBuildCLI.cmake)
 
 #-----------------------------------------------------------------------------
 enable_testing()

@@ -24,7 +24,7 @@ public:
 
   void SetLabelProbability(unsigned int const &, double const &);
 
-  unsigned int const GetLabel() const
+  unsigned int GetLabel() const
   {
     return this->m_label;
   };

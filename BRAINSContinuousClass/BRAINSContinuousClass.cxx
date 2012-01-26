@@ -19,72 +19,48 @@
 #include "LogisticRegression.h"
 #include "BRAINSContinuousClassCLP.h"
 
-#define Malloc(type, n) (type *)malloc( (n) * sizeof(type) )
-
-int main(int argc, char * argv [])
+template <class PixelType>
+int ContinuousClassification(std::string t1VolumeName, std::string T2VolumeName,
+                             std::string discreteVolumeName, std::string outputVolumeName)
 {
-  PARSE_ARGS;
-
-  bool violated = false;
-  if( inputT1Volume.size() == 0 )
-    {
-    violated = true; std::cout << "  --inputT1Volume Required! "  << std::endl;
-    }
-  if( inputT2Volume.size() == 0 )
-    {
-    violated = true; std::cout << "  --inputT2Volume Required! "  << std::endl;
-    }
-  if( inputDiscreteVolume.size() == 0 )
-    {
-    violated = true; std::cout << "  --inputDiscreteVolume Required! "  << std::endl;
-    }
-  if( outputVolume.size() == 0 )
-    {
-    violated = true; std::cout << "  --outputVolume Required! "  << std::endl;
-    }
-  if( violated )
-    {
-    exit(1);
-    }
-
-  typedef float PixelType;
+  // typedef float PixelType;
   const unsigned int Dimension = 3;
 
-  typedef itk::Image<PixelType,  Dimension>    ImageType;
-  typedef itk::Image<unsigned int, Dimension>  ShortImageType;
-  typedef itk::ImageFileReader<ImageType>      ReaderType;
-  typedef itk::ImageFileReader<ShortImageType> ShortReaderType;
-  typedef itk::ImageFileWriter<ImageType>      WriterType;
+  typedef typename itk::Image<PixelType,  Dimension>    ImageType;
+  typedef typename itk::Image<unsigned int, Dimension>  ShortImageType;
+  typedef typename itk::ImageFileReader<ImageType>      ReaderType;
+  typedef typename itk::ImageFileReader<ShortImageType> ShortReaderType;
+  typedef typename itk::ImageFileWriter<ImageType>      WriterType;
 
-  static const ShortImageType::PixelType grayMatterDiscreteValue = 2;
-  static const ShortImageType::PixelType basalGrayMatterDiscreteValue = 3;
-  static const ShortImageType::PixelType whiteMatterDiscreteValue = 1;
-  static const ShortImageType::PixelType csfDiscreteValue = 4;
-  static const ShortImageType::PixelType airDiscreteValue = 0;
-  static const ShortImageType::PixelType veinousBloodDiscreteValue = 5;
-  static const ShortImageType::PixelType allStandInDiscreteValue = 9;
+  static const typename ShortImageType::PixelType grayMatterDiscreteValue = 2;
+  static const typename ShortImageType::PixelType basalGrayMatterDiscreteValue = 3;
+  static const typename ShortImageType::PixelType whiteMatterDiscreteValue = 1;
+  static const typename ShortImageType::PixelType csfDiscreteValue = 4;
+  static const typename ShortImageType::PixelType airDiscreteValue = 0;
+  static const typename ShortImageType::PixelType veinousBloodDiscreteValue = 5;
+  static const typename ShortImageType::PixelType allStandInDiscreteValue = 9;
 
-  ReaderType::Pointer      t1Reader = ReaderType::New();
-  ReaderType::Pointer      t2Reader = ReaderType::New();
-  ShortReaderType::Pointer discreteReader = ShortReaderType::New();
+  typename ReaderType::Pointer t1Reader = ReaderType::New();
+  typename ReaderType::Pointer t2Reader = ReaderType::New();
+  typename ShortReaderType::Pointer discreteReader = ShortReaderType::New();
 
-  WriterType::Pointer ouptutWriter = WriterType::New();
+  typename WriterType::Pointer ouptutWriter = WriterType::New();
 
-  ImageType::Pointer      t1Volume;
-  ImageType::Pointer      t2Volume;
-  ShortImageType::Pointer discreteVolume;
+  typename ImageType::Pointer t1Volume;
+  typename ImageType::Pointer t2Volume;
+  typename ShortImageType::Pointer discreteVolume;
 
   try
     {
-    t1Reader->SetFileName( inputT1Volume.c_str() );
+    t1Reader->SetFileName( t1VolumeName );
     t1Reader->Update();
     t1Volume = t1Reader->GetOutput();
 
-    t2Reader->SetFileName( inputT2Volume.c_str() );
+    t2Reader->SetFileName( T2VolumeName );
     t2Reader->Update();
     t2Volume = t2Reader->GetOutput();
 
-    discreteReader->SetFileName( inputDiscreteVolume.c_str() );
+    discreteReader->SetFileName( discreteVolumeName );
     discreteReader->Update();
     discreteVolume = discreteReader->GetOutput();
     }
@@ -142,10 +118,10 @@ int main(int argc, char * argv [])
   std::vector<PixelType>              tempFeatures(featureCount);
   for( imgItr.GoToBegin(); !imgItr.IsAtEnd(); ++imgItr )
     {
-    const ImageType::IndexType      idx = imgItr.GetIndex();
-    const ImageType::PixelType      t1PixelValue = t1Volume->GetPixel(idx);
-    const ImageType::PixelType      t2PixelValue = t2Volume->GetPixel(idx);
-    const ShortImageType::PixelType discretePixelValue = discreteVolume->GetPixel(idx);
+    const typename ImageType::IndexType idx = imgItr.GetIndex();
+    const typename ImageType::PixelType t1PixelValue = t1Volume->GetPixel(idx);
+    const typename ImageType::PixelType t2PixelValue = t2Volume->GetPixel(idx);
+    const typename ShortImageType::PixelType discretePixelValue = discreteVolume->GetPixel(idx);
 
     if( discretePixelValue == grayMatterDiscreteValue || discretePixelValue == basalGrayMatterDiscreteValue )
       {
@@ -220,26 +196,26 @@ int main(int argc, char * argv [])
   logisticRegressionWhiteVsGray.TrainModel();
   logisticRegressionVeinousBloodVsAll.TrainModel();
 
-  typedef itk::ImageDuplicator<ImageType> ImageDuplicatorType;
-  ImageDuplicatorType::Pointer t1DuplicateImageFilter = ImageDuplicatorType::New();
+  typedef typename itk::ImageDuplicator<ImageType> ImageDuplicatorType;
+  typename ImageDuplicatorType::Pointer t1DuplicateImageFilter = ImageDuplicatorType::New();
   t1DuplicateImageFilter->SetInputImage(t1Reader->GetOutput() );
   t1DuplicateImageFilter->Update();
-  ImageType::Pointer outputImage = t1DuplicateImageFilter->GetOutput();
+  typename ImageType::Pointer outputImage = t1DuplicateImageFilter->GetOutput();
 
   double predictedProbabilityEstimatesWhiteVsGray[2];
   double predictedProbabilityEstimatesWhiteVsCSF[2];
   double predictedProbabilityEstimatesGrayVsCSF[2];
   double predictedProbabilityEstimatesVeinousBloodVsAll[2];
 
-  ImageType::PixelType outputAirPixelValue = 0;
-  ImageType::PixelType outputOtherPixelValue = 9;
-  ImageType::PixelType predictedOutputPixelValue = outputAirPixelValue;
+  typename ImageType::PixelType outputAirPixelValue = 0;
+  typename ImageType::PixelType outputOtherPixelValue = 9;
+  typename ImageType::PixelType predictedOutputPixelValue = outputAirPixelValue;
   for( imgItr.GoToBegin(); !imgItr.IsAtEnd(); ++imgItr )
     {
-    const ImageType::IndexType      idx = imgItr.GetIndex();
-    const ImageType::PixelType      t1PixelValue = t1Reader->GetOutput()->GetPixel(idx);
-    const ImageType::PixelType      t2PixelValue = t2Reader->GetOutput()->GetPixel(idx);
-    const ShortImageType::PixelType discretePixelValue = discreteVolume->GetPixel(idx);
+    const typename ImageType::IndexType idx = imgItr.GetIndex();
+    const typename ImageType::PixelType t1PixelValue = t1Reader->GetOutput()->GetPixel(idx);
+    const typename ImageType::PixelType t2PixelValue = t2Reader->GetOutput()->GetPixel(idx);
+    const typename ShortImageType::PixelType discretePixelValue = discreteVolume->GetPixel(idx);
 
     tempFeatures[0] = t1PixelValue;
     tempFeatures[1] = t2PixelValue;
@@ -284,7 +260,7 @@ int main(int argc, char * argv [])
             {
             // white vs gray
             predictedOutputPixelValue =
-              static_cast<ImageType::PixelType>(130 + (120 * predictedProbabilityEstimatesWhiteVsGray[0]) );
+              static_cast<typename ImageType::PixelType>(130 + (120 * predictedProbabilityEstimatesWhiteVsGray[0]) );
             }
           }
         }
@@ -300,7 +276,7 @@ int main(int argc, char * argv [])
           {
           // white vs gray
           predictedOutputPixelValue =
-            static_cast<ImageType::PixelType>(130 + 120 * predictedProbabilityEstimatesWhiteVsGray[0]);
+            static_cast<typename ImageType::PixelType>(130 + 120 * predictedProbabilityEstimatesWhiteVsGray[0]);
           }
         }
       }
@@ -317,14 +293,14 @@ int main(int argc, char * argv [])
           {
           // CSF Vs Gray
           predictedOutputPixelValue =
-            static_cast<ImageType::PixelType>(10 + 120 * predictedProbabilityEstimatesGrayVsCSF[0]);
+            static_cast<typename ImageType::PixelType>(10 + 120 * predictedProbabilityEstimatesGrayVsCSF[0]);
           }
         }
       else
         {
         // CSF Vs Gray
         predictedOutputPixelValue =
-          static_cast<ImageType::PixelType>(10 + 120 * predictedProbabilityEstimatesGrayVsCSF[0]);
+          static_cast<typename ImageType::PixelType>(10 + 120 * predictedProbabilityEstimatesGrayVsCSF[0]);
         }
       }
 
@@ -332,9 +308,42 @@ int main(int argc, char * argv [])
     }
 
   ouptutWriter->SetInput(outputImage);
-  ouptutWriter->SetFileName(outputVolume);
+  ouptutWriter->SetFileName(outputVolumeName);
   ouptutWriter->Modified();
   ouptutWriter->Update();
+
+  return EXIT_SUCCESS;
+}
+
+int main(int argc, char * argv [])
+{
+  PARSE_ARGS;
+
+  bool violated = false;
+  if( inputT1Volume.size() == 0 )
+    {
+    violated = true; std::cout << "  --inputT1Volume Required! "  << std::endl;
+    }
+  if( inputT2Volume.size() == 0 )
+    {
+    violated = true; std::cout << "  --inputT2Volume Required! "  << std::endl;
+    }
+  if( inputDiscreteVolume.size() == 0 )
+    {
+    violated = true; std::cout << "  --inputDiscreteVolume Required! "  << std::endl;
+    }
+  if( outputVolume.size() == 0 )
+    {
+    violated = true; std::cout << "  --outputVolume Required! "  << std::endl;
+    }
+  if( violated )
+    {
+    exit(1);
+    }
+
+  typedef float PixelType;
+
+  ContinuousClassification<PixelType>(inputT1Volume, inputT2Volume, inputDiscreteVolume, outputVolume);
 
   return EXIT_SUCCESS;
 }

@@ -114,12 +114,12 @@ public:
 
   void SetGMVolume( const TInputImage * inputGMVolume)
   {
-    SetNthInput(0, const_cast<TInputImage *>( inputGMVolume ) );
+    this->SetNthInput(0, const_cast<TInputImage *>( inputGMVolume ) );
   }
 
   void SetWMVolume( const TInputImage * inputWMVolume)
   {
-    SetNthInput(1, const_cast<TInputImage *>( inputWMVolume ) );
+    this->SetNthInput(1, const_cast<TInputImage *>( inputWMVolume ) );
   }
 
   void SetCSFVolume( const TInputImage * inputCSFVolume)

@@ -578,7 +578,12 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
             std::vector<std::string> transformType;
             if( atlasIter == 0 )
               {
-              std::string atlasToSubjectInitialTransformName = this->m_AtlasToSubjectInitialTransform->GetNameOfClass();
+              std::string atlasToSubjectInitialTransformName = "";
+              if( this->m_AtlasToSubjectInitialTransform.IsNotNull() )
+                {
+                atlasToSubjectInitialTransformName = this->m_AtlasToSubjectInitialTransform->GetNameOfClass();
+                }
+
               if( !( (atlasToSubjectInitialTransformName.compare("AffineTransform") == 0 ) ||
                      (atlasToSubjectInitialTransformName.compare("BSpline") == 0 ) ) )
                 {
@@ -610,7 +615,12 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
             std::vector<std::string> transformType;
             if( atlasIter == 0 )
               {
-              std::string atlasToSubjectInitialTransformName = this->m_AtlasToSubjectInitialTransform->GetNameOfClass();
+              std::string atlasToSubjectInitialTransformName = "";
+              if( this->m_AtlasToSubjectInitialTransform.IsNotNull() )
+                {
+                atlasToSubjectInitialTransformName = this->m_AtlasToSubjectInitialTransform->GetNameOfClass();
+                }
+
               if( !( ( atlasToSubjectInitialTransformName.compare("Affine") == 0 ) ||
                      (atlasToSubjectInitialTransformName.compare("BSpline") == 0 ) ) )
                 {

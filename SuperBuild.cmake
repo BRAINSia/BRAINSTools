@@ -26,8 +26,8 @@ endif()
 find_package(Git REQUIRED)
 
 # I don't know who removed the Find_Package for QT, but it needs to be here
-# in order to build VTK if BRAINSTools_USE_QT is set.
-if(BRAINSTools_USE_QT)
+# in order to build VTK if ${LOCAL_PROJECT_NAME}_USE_QT is set.
+if(${LOCAL_PROJECT_NAME}_USE_QT)
 find_package(Qt4 REQUIRED)
 endif()
 
@@ -43,6 +43,24 @@ if(CMAKE_EXTRA_GENERATOR)
   set(gen "${CMAKE_EXTRA_GENERATOR} - ${CMAKE_GENERATOR}")
 else()
   set(gen "${CMAKE_GENERATOR}")
+endif()
+
+#-----------------------------------------------------------------------------
+# Platform check
+#-----------------------------------------------------------------------------
+
+set(PLATFORM_CHECK true)
+
+if(PLATFORM_CHECK)
+  # See CMake/Modules/Platform/Darwin.cmake)
+  #   6.x == Mac OSX 10.2 (Jaguar)
+  #   7.x == Mac OSX 10.3 (Panther)
+  #   8.x == Mac OSX 10.4 (Tiger)
+  #   9.x == Mac OSX 10.5 (Leopard)
+  #  10.x == Mac OSX 10.6 (Snow Leopard)
+  if (DARWIN_MAJOR_VERSION LESS "9")
+    message(FATAL_ERROR "Only Mac OSX >= 10.5 are supported !")
+  endif()
 endif()
 
 #-----------------------------------------------------------------------------
@@ -72,23 +90,23 @@ option(USE_SYSTEM_VTK "Build using an externally defined version of VTK" OFF)
 
 set(ITK_EXTERNAL_NAME ITKv${ITK_VERSION_MAJOR})
 
-set(BRAINSTools_DEPENDENCIES ${ITK_EXTERNAL_NAME} SlicerExecutionModel)
+set(${LOCAL_PROJECT_NAME}_DEPENDENCIES ${ITK_EXTERNAL_NAME} SlicerExecutionModel)
 
 if(BUILD_STYLE_UTILS)
-  list(APPEND BRAINSTools_DEPENDENCIES Cppcheck KWStyle Uncrustify)
+  list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES Cppcheck KWStyle Uncrustify)
 endif()
 
 if(USE_BRAINSABC OR USE_BRAINSCut)
-  list(APPEND BRAINSTools_DEPENDENCIES ReferenceAtlas)
+  list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES ReferenceAtlas)
 endif()
 
 #if(USE_BRAINSABC OR BRAINS_DEBUG_IMAGE_WRITE)
 if(BRAINS_DEBUG_IMAGE_WRITE OR USE_GTRACT)
-  list(APPEND BRAINSTools_DEPENDENCIES VTK)
+  list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES VTK)
 endif()
 
 if(USE_BRAINSCut)
-  list(APPEND BRAINSTools_DEPENDENCIES OpenCV)
+  list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES OpenCV)
 endif()
 
 #-----------------------------------------------------------------------------
@@ -99,8 +117,8 @@ endif()
 # that should passed to ${CMAKE_PROJECT_NAME}.
 # The item of this list should have the following form: <EP_VAR>:<TYPE>
 # where '<EP_VAR>' is an external project variable and TYPE is either BOOL, STRING, PATH or FILEPATH.
-# TODO Variable appended to this list will be automatically exported in BRAINSToolsConfig.cmake,
-# prefix 'BRAINSTools_' will be prepended if it applies.
+# TODO Variable appended to this list will be automatically exported in ${LOCAL_PROJECT_NAME}Config.cmake,
+# prefix '${LOCAL_PROJECT_NAME}_' will be prepended if it applies.
 set(${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS)
 
 # The macro '_expand_external_project_vars' can be used to expand the list of <EP_VAR>.
@@ -111,6 +129,8 @@ set(${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARNAMES) # List of CMake variable names
 # The expanded arguments will be appended to the list ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_ARGS
 # Similarly the name of the EP_VARs will be appended to the list ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARNAMES.
 macro(_expand_external_project_vars)
+  set(${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_ARGS "")
+  set(${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARNAMES "")
   foreach(arg ${${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS})
     string(REPLACE ":" ";" varname_and_vartype ${arg})
     set(target_info_list ${target_info_list})
@@ -129,6 +149,7 @@ list(APPEND ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS
   MAKECOMMAND:STRING
   CMAKE_SKIP_RPATH:BOOL
   CMAKE_BUILD_TYPE:STRING
+  BUILD_SHARED_LIBS:BOOL
   CMAKE_CXX_COMPILER:PATH
   CMAKE_CXX_FLAGS_RELEASE:STRING
   CMAKE_CXX_FLAGS_DEBUG:STRING
@@ -163,27 +184,27 @@ endif()
 
 _expand_external_project_vars()
 set(COMMON_EXTERNAL_PROJECT_ARGS ${${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_ARGS})
+SlicerMacroCheckExternalProjectDependency(${LOCAL_PROJECT_NAME})
 
-if(verbose)
-  message("Common external project args:")
-  foreach(arg ${COMMON_EXTERNAL_PROJECT_ARGS})
-    message("  ${arg}")
-  endforeach()
+#-----------------------------------------------------------------------------
+# Set CMake OSX variable to pass down the external project
+#-----------------------------------------------------------------------------
+set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
+if(APPLE)
+  list(APPEND CMAKE_OSX_EXTERNAL_PROJECT_ARGS
+    -DCMAKE_OSX_ARCHITECTURES=${CMAKE_OSX_ARCHITECTURES}
+    -DCMAKE_OSX_SYSROOT=${CMAKE_OSX_SYSROOT}
+    -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET})
 endif()
 
+set(${LOCAL_PROJECT_NAME}_CLI_RUNTIME_DESTINATION  bin)
+set(${LOCAL_PROJECT_NAME}_CLI_LIBRARY_DESTINATION  lib)
+set(${LOCAL_PROJECT_NAME}_CLI_ARCHIVE_DESTINATION  lib)
+set(${LOCAL_PROJECT_NAME}_CLI_INSTALL_RUNTIME_DESTINATION  bin)
+set(${LOCAL_PROJECT_NAME}_CLI_INSTALL_LIBRARY_DESTINATION  lib)
+set(${LOCAL_PROJECT_NAME}_CLI_INSTALL_ARCHIVE_DESTINATION  lib)
 #-----------------------------------------------------------------------------
-# Include external projects
-#-----------------------------------------------------------------------------
-SlicerMacroCheckExternalProjectDependency(BRAINSTools)
-
-set(BRAINSTools_CLI_RUNTIME_DESTINATION  bin)
-set(BRAINSTools_CLI_LIBRARY_DESTINATION  lib)
-set(BRAINSTools_CLI_ARCHIVE_DESTINATION  lib)
-set(BRAINSTools_CLI_INSTALL_RUNTIME_DESTINATION  bin)
-set(BRAINSTools_CLI_INSTALL_LIBRARY_DESTINATION  lib)
-set(BRAINSTools_CLI_INSTALL_ARCHIVE_DESTINATION  lib)
-#-----------------------------------------------------------------------------
-# Inner external project CMake args
+# Add external project CMake args
 #-----------------------------------------------------------------------------
 list(APPEND ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS
   BUILD_EXAMPLES:BOOL
@@ -191,12 +212,12 @@ list(APPEND ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS
   ITK_VERSION_MAJOR:STRING
   ITK_DIR:PATH
 
-  BRAINSTools_CLI_LIBRARY_OUTPUT_DIRECTORY:PATH
-  BRAINSTools_CLI_ARCHIVE_OUTPUT_DIRECTORY:PATH
-  BRAINSTools_CLI_RUNTIME_OUTPUT_DIRECTORY:PATH
-  BRAINSTools_CLI_INSTALL_LIBRARY_DESTINATION:PATH
-  BRAINSTools_CLI_INSTALL_ARCHIVE_DESTINATION:PATH
-  BRAINSTools_CLI_INSTALL_RUNTIME_DESTINATION:PATH
+  ${LOCAL_PROJECT_NAME}_CLI_LIBRARY_OUTPUT_DIRECTORY:PATH
+  ${LOCAL_PROJECT_NAME}_CLI_ARCHIVE_OUTPUT_DIRECTORY:PATH
+  ${LOCAL_PROJECT_NAME}_CLI_RUNTIME_OUTPUT_DIRECTORY:PATH
+  ${LOCAL_PROJECT_NAME}_CLI_INSTALL_LIBRARY_DESTINATION:PATH
+  ${LOCAL_PROJECT_NAME}_CLI_INSTALL_ARCHIVE_DESTINATION:PATH
+  ${LOCAL_PROJECT_NAME}_CLI_INSTALL_RUNTIME_DESTINATION:PATH
 
   USE_GTRACT:BOOL
   USE_BRAINSFit:BOOL
@@ -221,6 +242,7 @@ list(APPEND ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS
   )
 
 _expand_external_project_vars()
+set(COMMON_EXTERNAL_PROJECT_ARGS ${${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_ARGS})
 
 if(verbose)
   message("Inner external project args:")
@@ -238,32 +260,21 @@ if(verbose)
   endforeach()
 endif()
 
-#-----------------------------------------------------------------------------
-# Set CMake OSX variable to pass down the external project
-#-----------------------------------------------------------------------------
-set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
-if(APPLE)
-  list(APPEND CMAKE_OSX_EXTERNAL_PROJECT_ARGS
-    -DCMAKE_OSX_ARCHITECTURES=${CMAKE_OSX_ARCHITECTURES}
-    -DCMAKE_OSX_SYSROOT=${CMAKE_OSX_SYSROOT}
-    -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET})
-endif()
-
 #------------------------------------------------------------------------------
 # Configure and build
 #------------------------------------------------------------------------------
-set(proj BRAINSTools)
+set(proj ${LOCAL_PROJECT_NAME})
 ExternalProject_Add(${proj}
-  DEPENDS ${BRAINSTools_DEPENDENCIES}
+  DEPENDS ${${LOCAL_PROJECT_NAME}_DEPENDENCIES}
   DOWNLOAD_COMMAND ""
   SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-  BINARY_DIR BRAINSTools-build
+  BINARY_DIR ${LOCAL_PROJECT_NAME}-build
   CMAKE_GENERATOR ${gen}
   CMAKE_ARGS
     --no-warn-unused-cli # HACK Only expected variables should be passed down.
     ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
-    ${${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_ARGS}
-    -DBRAINSTools_SUPERBUILD:BOOL=OFF
+    ${COMMON_EXTERNAL_PROJECT_ARGS}
+    -D${LOCAL_PROJECT_NAME}_SUPERBUILD:BOOL=OFF
   INSTALL_COMMAND ""
   )
 

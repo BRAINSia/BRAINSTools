@@ -9,48 +9,78 @@ if(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED)
 endif()
 set(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED 1)
 
+# Include dependent projects if any
+set(extProjName ReferenceAtlas) #The find_package known name
+set(proj ${extProjName})              #This local name
+
+#if(${USE_SYSTEM_${extProjName}})
+#  unset(${extProjName}_DIR CACHE)
+#endif()
+
 # Sanity checks
-if(DEFINED ReferenceAtlas_DIR AND NOT EXISTS ${ReferenceAtlas_DIR})
-  message(FATAL_ERROR "ReferenceAtlas_DIR variable is defined but corresponds to non-existing directory")
+if(DEFINED ${extProjName}_DIR AND NOT EXISTS ${${extProjName}_DIR})
+  message(FATAL_ERROR "${extProjName}_DIR variable is defined but corresponds to non-existing directory")
 endif()
 
-if(DEFINED ATLAS_NAME AND NOT EXISTS ${ReferenceAtlas_DIR}/${ATLAS_NAME})
-  message(FATAL_ERROR "ATLAS_NAME variable is defined but <ReferenceAtlas_DIR>/<ATLAS_NAME> corresponds to non-existing directory")
+if(DEFINED ATLAS_NAME AND NOT EXISTS ${${extProjName}_DIR}/${ATLAS_NAME})
+  message(FATAL_ERROR "ATLAS_NAME variable is defined but <${extProjName}_DIR>/<ATLAS_NAME> corresponds to non-existing directory")
 endif()
 
 # Set dependency list
-set(ReferenceAtlas_DEPENDENCIES "")
+set(${proj}_DEPENDENCIES "")
 
-# Include dependent projects if any
-SlicerMacroCheckExternalProjectDependency(ReferenceAtlas)
-set(proj ReferenceAtlas)
+SlicerMacroCheckExternalProjectDependency(${proj})
 
-if(NOT DEFINED ReferenceAtlas_DIR OR NOT DEFINED ATLAS_NAME)
+if(NOT DEFINED ${extProjName}_DIR OR NOT DEFINED ATLAS_NAME)
+
+  # Set CMake OSX variable to pass down the external project
+  set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
+  if(APPLE)
+    list(APPEND CMAKE_OSX_EXTERNAL_PROJECT_ARGS
+      -DCMAKE_OSX_ARCHITECTURES=${CMAKE_OSX_ARCHITECTURES}
+      -DCMAKE_OSX_SYSROOT=${CMAKE_OSX_SYSROOT}
+      -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET})
+  endif()
+
+  ### --- Project specific additions here
+  set(${proj}_CMAKE_OPTIONS
+      -DReferenceAtlas_XML_DIR:PATH=<BINARY_DIR>
+      -DATLAS_VERSION:STRING=${ATLAS_VERSION}
+      )
+  ### --- End Project specific additions
   set(ATLAS_VERSION 20120104)
   set(ATLAS_URL http://www.psychiatry.uiowa.edu/users/brainstestdata/Atlas_${ATLAS_VERSION}.tar.gz)
   set(ATLAS_NAME Atlas/Atlas_${ATLAS_VERSION})
-
   ExternalProject_add(${proj}
     URL ${ATLAS_URL}
     SOURCE_DIR ${proj}
     BINARY_DIR ${proj}-build
     UPDATE_COMMAND ""
-    BUILD_COMMAND ""
     CMAKE_GENERATOR ${gen}
     CMAKE_ARGS
-      -DReferenceAtlas_XML_DIR:PATH=<BINARY_DIR>
-      -DATLAS_VERSION:STRING=${ATLAS_VERSION}
+      ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
+      ${COMMON_EXTERNAL_PROJECT_ARGS}
+      -DBUILD_EXAMPLES:BOOL=OFF
+      -DBUILD_TESTING:BOOL=OFF
+      ${${proj}_CMAKE_OPTIONS}
     INSTALL_COMMAND ""
     DEPENDS
-      ${ReferenceAtlas_DEPENDENCIES}
+      ${${proj}_DEPENDENCIES}
+    BUILD_COMMAND ""
     )
-  set(ReferenceAtlas_DIR ${CMAKE_CURRENT_BINARY_DIR}/${proj}-build)
-
+  set(${extProjName}_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
 else()
-  # The project is provided using ReferenceAtlas_DIR, nevertheless since other
-  # project may depend on ReferenceAtlas, let's add an 'empty' one
-  SlicerMacroEmptyExternalProject(${proj} "${ReferenceAtlas_DEPENDENCIES}")
+  if(${USE_SYSTEM_${extProjName}})
+    find_package(${extProjName} ${ITK_VERSION_MAJOR} REQUIRED)
+    if(NOT ${extProjName}_DIR)
+      message(FATAL_ERROR "To use the system ${extProjName}, set ${extProjName}_DIR")
+    endif()
+  endif()
+  # The project is provided using ${extProjName}_DIR, nevertheless since other
+  # project may depend on ${extProjName}v4, let's add an 'empty' one
+  SlicerMacroEmptyExternalProject(${proj} "${${proj}_DEPENDENCIES}")
 endif()
 
-list(APPEND ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS ReferenceAtlas_DIR:PATH ATLAS_NAME:STRING)
+list(APPEND ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS ${extProjName}_DIR:PATH)
+list(APPEND ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS ATLAS_NAME:STRING)
 

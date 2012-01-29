@@ -114,17 +114,17 @@ public:
 
   void SetGMVolume( const TInputImage * inputGMVolume)
   {
-    SetNthInput(0, const_cast<TInputImage *>( inputGMVolume ) );
+    this->SetNthInput(0, const_cast<TInputImage *>( inputGMVolume ) );
   }
 
   void SetWMVolume( const TInputImage * inputWMVolume)
   {
-    SetNthInput(1, const_cast<TInputImage *>( inputWMVolume ) );
+    this->SetNthInput(1, const_cast<TInputImage *>( inputWMVolume ) );
   }
 
   void SetCSFVolume( const TInputImage * inputCSFVolume)
   {
-    SetNthInput(2, const_cast<TInputImage *>( inputCSFVolume ) );
+    this->SetNthInput(2, const_cast<TInputImage *>( inputCSFVolume ) );
   }
 
   /** HammerTissueAttributeVectorFromPartialVolumeImageFilter needs a larger input requested region than

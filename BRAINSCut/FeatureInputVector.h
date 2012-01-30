@@ -18,8 +18,8 @@ public:
   FeatureInputVector();
 
   /** constants definition */
-  static const scalarType MIN = -1.0F;
-  static const scalarType MAX = 1.0F;
+  static const scalarType MIN;
+  static const scalarType MAX;
 
   /** type definition */
   typedef itk::GradientImageFilter<WorkingImageType,

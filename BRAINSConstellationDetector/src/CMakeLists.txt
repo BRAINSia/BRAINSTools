@@ -23,6 +23,7 @@ set(ALL_PROGS_LIST
   BRAINSEyeDetector
   insertMidACPCpoint
   fcsv_to_hdf5
+  landmarksConstellationAligner
   )
 foreach(prog ${ALL_PROGS_LIST})
   StandardBRAINSBuildMacro(NAME ${prog} TARGET_LIBRARIES landmarksConstellationCOMMONLIB )

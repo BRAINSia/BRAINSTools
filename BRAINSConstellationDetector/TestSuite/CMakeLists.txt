@@ -19,6 +19,7 @@ set(ALL_TEST_PROGS
   BRAINSConstellationModeler
   BRAINSTrimForegroundInDirection
   insertMidACPCpoint
+  landmarksConstellationAligner
   )
 
 
@@ -34,6 +35,19 @@ set(ALL_PROGS_LIST
 foreach(prog ${ALL_PROGS_LIST})
   StandardBRAINSBuildMacro(NAME ${prog} TARGET_LIBRARIES landmarksConstellationCOMMONLIB )
 endforeach()
+
+if(0)
+## Programs for landmarks statistics. These programs do not have any xml file
+set(ALL_PROGS_LIST
+    LmkStatistics
+    GenerateAverageLmkFile
+    )
+
+foreach(prog ${ALL_PROGS_LIST})
+  add_executable(${prog} ../landmarkStatistics/${prog}.cxx)
+  target_link_libraries(${prog} BRAINSCommonLib ${ITK_LIBRARIES})
+endforeach()
+endif()
 
 ## Simple programs
 ## Test BRAINSClipInferior
@@ -545,6 +559,24 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetecto
   --inputLandmarkFile2 DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.fcsv} # Baseline file
   )
 set_property(TEST ${BRAINSConstellationDetectorTestName} APPEND PROPERTY DEPENDS insertMidACPCpointTest)
+
+
+set(BRAINSConstellationDetectorTestName landmarksConstellationAlignerTest) #This test aims to generate the output of the landmarksConstellationAligner to be compared with the baseline file
+ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:landmarksConstellationAlignerTestDriver>
+  ${BRAINSConstellationDetectorTestName}
+  --inputLandmarksPaired DATA{${TestData_DIR}/BRAINSConstellationDetectorTest_outputLandmarksInInputSpace_standard.fcsv}
+  --outputLandmarksPaired ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}.fcsv #output of the program
+  )
+
+set(BRAINSConstellationDetectorTestName landmarksAlignerCompareTest)
+ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
+    COMMAND ${LAUNCH_EXE} $<TARGET_FILE:LandmarksCompare>
+    --inputLandmarkFile1 ${CMAKE_CURRENT_BINARY_DIR}/landmarksConstellationAlignerTest.fcsv # output of the landmarksConstellationAlignerTest
+    --inputLandmarkFile2 DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.fcsv} # Baseline file
+    )
+set_property(TEST ${BRAINSConstellationDetectorTestName} APPEND PROPERTY DEPENDS landmarksConstellationAlignerTest)
+
 
 
 ExternalData_Add_Target( ${PROJECT_NAME}FetchData )  # Name of data management target

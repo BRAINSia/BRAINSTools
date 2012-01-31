@@ -4,6 +4,7 @@ project(BRAINSConstellationDetectorTool)
 #
 
 add_subdirectory(src)
+add_subdirectory(landmarkStatistics)
 
 #-----------------------------------------------------------------------------
 ## optional build.

@@ -3,6 +3,7 @@
 
 #include "GenericTransformImage.h"
 
+#include <itkSmoothingRecursiveGaussianImageFilter.h>
 /** constructors */
 BRAINSCutPrimary
 ::BRAINSCutPrimary( std::string netConfigurationFilename )
@@ -183,6 +184,10 @@ BRAINSCutPrimary
 {
   std::string atlasSubjectRegistrationFilename = GetAtlasToSubjectRegistrationFilename( subject );
 
+  /** Get the transformation file
+   * Note that only one of transformation type will be used. Either deformation or transformation
+   * That determined based on the file name at the GetDeformationField
+   */
   DisplacementFieldType::Pointer deformation = GetDeformationField( atlasSubjectRegistrationFilename );
   GenericTransformType::Pointer  genericTransform = GetGenericTransform( atlasSubjectRegistrationFilename );
 
@@ -297,4 +302,29 @@ BRAINSCutPrimary
     {
     return false;
     }
+}
+
+WorkingImagePointer
+BRAINSCutPrimary
+::SmoothImage( const WorkingImagePointer image, const float GaussianValue)
+{
+  if( GaussianValue < 0 + FLOAT_TOLERANCE )
+    {
+    std::cout << "Gaussian value is less than tolerance. "
+              << "No smoothing occurs at this time"
+              << std::endl;
+    return image;
+    }
+  std::cout << "Smooth Image with Gaussian value of :: "
+            << GaussianValue
+            << std::endl;
+  typedef itk::SmoothingRecursiveGaussianImageFilter<WorkingImageType, WorkingImageType> SmoothingFilterType;
+  SmoothingFilterType::Pointer smoothingFilter = SmoothingFilterType::New();
+
+  smoothingFilter->SetInput( image);
+  smoothingFilter->SetSigma( GaussianValue );
+
+  smoothingFilter->Update();
+
+  return smoothingFilter->GetOutput();
 }

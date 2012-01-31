@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
   <category>Filtering.FeatureDetection</category>
-  <title>GenerateSummedGradient</title>
-  <description>Automatic FeatureImages using neural networks</description>
+  <title>DownSampleImage</title>
+  <description>Down sample image for testing </description>
   <version> 1.0</version>
   <documentation-url></documentation-url>
   <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt </license>
-  <contributor>Greg Harris, Eun Young Kim</contributor>
+  <contributor>Eun Young Kim</contributor>
   <acknowledgements></acknowledgements>
  <parameters>
    <image>
@@ -26,14 +26,21 @@
      <label>lowerBoundOfOutputVolume</label>
      <longflag>lowerBoundOfOutputVolume</longflag>
      <description></description>
-     <default>1000</default>
+     <default>0</default>
    </double>
    <double>
      <name>upperBoundOfOutputVolume</name>
      <label>upperBoundOfOutputVolume</label>
      <longflag>upperBoundOfOutputVolume</longflag>
      <description></description>
-     <default>2000</default>
+     <default>255</default>
+   </double>
+   <double>
+     <name>outputVolumeSize</name>
+     <label>outputVolumeSize</label>
+     <longflag>outputVolumeSize</longflag>
+     <description>output Volume Size</description>
+     <default>128</default>
    </double>
 </parameters>
 </executable>

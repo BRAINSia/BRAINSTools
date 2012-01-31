@@ -24,8 +24,6 @@ public:
 
   void GenerateProbabilityMaps();
 
-  WorkingImagePointer SmoothImage( const WorkingImagePointer image, const float GaussianValue);
-
 private:
 
   /** DataSets */

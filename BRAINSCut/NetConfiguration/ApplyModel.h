@@ -19,6 +19,7 @@ public:
   ApplyModelType() : XMLElementParser("ApplyModel")
   {
     this->Add(new FloatValue("MaskThresh", 0.5), "MaskThresh");
+    this->Add(new FloatValue("GaussianSmoothingSigma", 0.5), "GaussianSmoothingSigma");
   }
 };
 

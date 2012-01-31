@@ -1,5 +1,3 @@
-project( BRAINSContinuousClass)
-
 cmake_minimum_required(VERSION 2.8)
 
 add_subdirectory(liblinear-1.8)
@@ -14,6 +12,6 @@ endforeach()
 
 ### Add the Testing Subdirectory.
 if(BUILD_TESTING)
-  #  add_subdirectory(TestSuite)
+  add_subdirectory(TestSuite)
 endif(BUILD_TESTING)
 

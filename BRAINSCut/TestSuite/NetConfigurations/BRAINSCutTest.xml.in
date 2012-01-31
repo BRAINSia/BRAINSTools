@@ -28,7 +28,7 @@
         Template Data Scan Description
        ========================================================================== -->
   <DataSet Name="template"  Type="Atlas" >
-    <Image Type="T1" Filename="@BRAINSCut_SOURCE_DIR@/TestSuite/TestData/Input/template_t1.nii.gz"/>
+    <Image Type="T1" Filename="@BRAINSTools_BINARY_DIR@/ExternalData/BRAINSCut/TestSuite/TestData/Input/TestSuite/TestData/Input/template_t1.nii.gz"/>
     <Image Type="T2" Filename="na" />
     <Mask Type="RegistrationROI" Filename="NA" />
     <SpatialLocation Type="rho" Filename="@CMAKE_CURRENT_BINARY_DIR@/TestSuite/TestOutput/rho.nii.gz" />
@@ -82,10 +82,10 @@
         Train Data Scan Description
        ========================================================================== -->
   <DataSet Name="Scan1"  Type="Train" >
-    <Image Type="T1" Filename="@BRAINSCut_SOURCE_DIR@/TestSuite/TestData/Input/scan1T1.nii.gz"/>
-    <Image Type="T2" Filename="@BRAINSCut_SOURCE_DIR@/TestSuite/TestData/Input/scan1T2.nii.gz"/>
-    <Mask Type="RegistrationROI" Filename="CHANGE THIS TO SOMETHING MEANINGFUL" />
-    <Mask Type="mask1"  Filename="@BRAINSCut_SOURCE_DIR@/TestSuite/TestData/Input/scan1Mask1.nii.gz"/>
+    <Image Type="T1" Filename="@BRAINSTools_BINARY_DIR@/ExternalData/BRAINSCut/TestSuite/TestData/Input/TestSuite/TestData/Input/scan1T1.nii.gz"/>
+    <Image Type="T2" Filename="@BRAINSTools_BINARY_DIR@/ExternalData/BRAINSCut/TestSuite/TestData/Input/TestSuite/TestData/Input/scan1T2.nii.gz"/>
+    <Mask Type="RegistrationROI" Filename="NA" />
+    <Mask Type="mask1"  Filename="@BRAINSTools_BINARY_DIR@/ExternalData/BRAINSCut/TestSuite/TestData/Input/TestSuite/TestData/Input/scan1Mask1.nii.gz"/>
     <Registration 
       SubjToAtlasRegistrationFilename="@CMAKE_CURRENT_BINARY_DIR@/SubjectToAtlasScan1.mat"
       AtlasToSubjRegistrationFilename="@CMAKE_CURRENT_BINARY_DIR@/AtlasToSubjectScan1.mat" 
@@ -94,9 +94,9 @@
   </DataSet>
 
   <DataSet Name="Scan2"  Type="Train" >
-    <Image Type="T1" Filename="@BRAINSCut_SOURCE_DIR@/TestSuite/TestData/Input/scan2T1.nii.gz"/>
-    <Image Type="T2" Filename="@BRAINSCut_SOURCE_DIR@/TestSuite/TestData/Input/scan2T2.nii.gz"/>
-    <Mask Type="mask1"  Filename="@BRAINSCut_SOURCE_DIR@/TestSuite/TestData/Input/scan2Mask1.nii.gz"/>
+    <Image Type="T1" Filename="@BRAINSTools_BINARY_DIR@/ExternalData/BRAINSCut/TestSuite/TestData/Input/TestSuite/TestData/Input/scan2T1.nii.gz"/>
+    <Image Type="T2" Filename="@BRAINSTools_BINARY_DIR@/ExternalData/BRAINSCut/TestSuite/TestData/Input/TestSuite/TestData/Input/scan2T2.nii.gz"/>
+    <Mask Type="mask1"  Filename="@BRAINSTools_BINARY_DIR@/ExternalData/BRAINSCut/TestSuite/TestData/Input/TestSuite/TestData/Input/scan2Mask1.nii.gz"/>
     <Registration 
       SubjToAtlasRegistrationFilename="@CMAKE_CURRENT_BINARY_DIR@/SubjectToAtlasScan2.mat"
       AtlasToSubjRegistrationFilename="@CMAKE_CURRENT_BINARY_DIR@/AtlasToSubjectScan2.mat" 
@@ -112,8 +112,8 @@
        ========================================================================== -->
     <DataSet Name="Scan3"  Type="Apply" 
       OutputDir="@CMAKE_CURRENT_BINARY_DIR@/MaskOutputDir">
-    <Image Type="T1" Filename="@BRAINSCut_SOURCE_DIR@/TestSuite/TestData/Input/scan3T1.nii.gz"/>
-    <Image Type="T2" Filename="@BRAINSCut_SOURCE_DIR@/TestSuite/TestData/Input/scan3T2.nii.gz"/>
+    <Image Type="T1" Filename="@BRAINSTools_BINARY_DIR@/ExternalData/BRAINSCut/TestSuite/TestData/Input/TestSuite/TestData/Input/scan3T1.nii.gz"/>
+    <Image Type="T2" Filename="@BRAINSTools_BINARY_DIR@/ExternalData/BRAINSCut/TestSuite/TestData/Input/TestSuite/TestData/Input/scan3T2.nii.gz"/>
     <Mask Type="mask1"  Filename="@CMAKE_CURRENT_BINARY_DIR@/scan3Mask1.nii.gz"/>
     <Registration 
       SubjToAtlasRegistrationFilename="@CMAKE_CURRENT_BINARY_DIR@/SubjectToAtlasScan3.mat"
@@ -124,9 +124,9 @@
       />
   </DataSet>
   <DataSet Name="Scan4"  Type="Apply" 
-             OutputDir="@BRAINSCut_SOURCE_DIR@/TestSuite/TestData/EutputDir">
-    <Image Type="T1" Filename="@BRAINSCut_SOURCE_DIR@/TestSuite/TestData/Input/scan4T1.nii.gz"/>
-    <Image Type="T2" Filename="@BRAINSCut_SOURCE_DIR@/TestSuite/TestData/Input/scan4T2.nii.gz"/>
+             OutputDir="@BRAINSTools_BINARY_DIR@/ExternalData/BRAINSCut/TestSuite/TestData/Input/TestSuite/TestData/EutputDir">
+    <Image Type="T1" Filename="@BRAINSTools_BINARY_DIR@/ExternalData/BRAINSCut/TestSuite/TestData/Input/TestSuite/TestData/Input/scan4T1.nii.gz"/>
+    <Image Type="T2" Filename="@BRAINSTools_BINARY_DIR@/ExternalData/BRAINSCut/TestSuite/TestData/Input/TestSuite/TestData/Input/scan4T2.nii.gz"/>
     <Registration 
       SubjToAtlasRegistrationFilename="@CMAKE_CURRENT_BINARY_DIR@/SubjectToAtlasScan4.mat"
       AtlasToSubjRegistrationFilename="@CMAKE_CURRENT_BINARY_DIR@/AtlasToSubjectScan4.mat" 

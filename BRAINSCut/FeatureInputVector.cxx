@@ -2,6 +2,9 @@
 #include "BRAINSCutExceptionStringHandler.h"
 #include "itkLabelStatisticsImageFilter.h"
 
+const scalarType FeatureInputVector::MIN = -1.0F;
+const scalarType FeatureInputVector::MAX = 1.0F;
+
 FeatureInputVector
 ::FeatureInputVector() :
   gradientSize(-1),

@@ -43,12 +43,13 @@ if(NOT DEFINED ${extProjName}_DIR OR NOT DEFINED ATLAS_NAME)
   endif()
 
   ### --- Project specific additions here
+  set(ATLAS_VERSION 20120104)
+
   set(${proj}_CMAKE_OPTIONS
       -DReferenceAtlas_XML_DIR:PATH=<BINARY_DIR>
       -DATLAS_VERSION:STRING=${ATLAS_VERSION}
       )
   ### --- End Project specific additions
-  set(ATLAS_VERSION 20120104)
   set(ATLAS_URL http://www.psychiatry.uiowa.edu/users/brainstestdata/Atlas_${ATLAS_VERSION}.tar.gz)
   set(ATLAS_NAME Atlas/Atlas_${ATLAS_VERSION})
   ExternalProject_add(${proj}

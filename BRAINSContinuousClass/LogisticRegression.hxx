@@ -136,7 +136,7 @@ void LogisticRegression<TSampleType>::ClassifySample(LogisticRegressionSample<TS
   assert(this->m_classTwoLabelSet && this->m_classOneLabelSet);
 
   std::vector<TSampleType> const * const samples = labeledSample.GetSample();
-  std::vector<struct feature_node>       sampleToPredict(this->m_problem.n);
+  struct feature_node *                  sampleToPredict = new struct feature_node[this->m_problem.n];
   for( unsigned int i = 0; i < samples->size(); ++i )
     {
     sampleToPredict[i].index = i + 1;
@@ -145,7 +145,7 @@ void LogisticRegression<TSampleType>::ClassifySample(LogisticRegressionSample<TS
   sampleToPredict[samples->size()].index = -1;
 
   double predictedProbabilities[2];
-  predict_probability(this->m_model, &(sampleToPredict[0]), predictedProbabilities);
+  predict_probability(this->m_model, sampleToPredict, predictedProbabilities);
 
   if( this->m_classOneLabel > this->m_classTwoLabel )
     {
@@ -157,4 +157,6 @@ void LogisticRegression<TSampleType>::ClassifySample(LogisticRegressionSample<TS
     labeledSample.SetLabelProbability(this->m_classOneLabel, predictedProbabilities[0]);
     labeledSample.SetLabelProbability(this->m_classTwoLabel, predictedProbabilities[1]);
     }
+
+  delete sampleToPredict;
 }

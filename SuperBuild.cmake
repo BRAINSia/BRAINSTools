@@ -278,3 +278,11 @@ ExternalProject_Add(${proj}
   INSTALL_COMMAND ""
   )
 
+## Force rebuilding of the main subproject every time building from super structure
+ExternalProject_Add_Step(${proj} forcebuild
+    COMMAND ${CMAKE_COMMAND} -E remove
+    ${CMAKE_CURRENT_BUILD_DIR}/${proj}-prefix/src/${proj}-stamp/${proj}-build
+    DEPENDEES configure
+    DEPENDERS build
+    ALWAYS 1
+  )

@@ -198,6 +198,15 @@ BRAINSCutGenerateProbability
   std::string PhiMapName = atlasDataSet->GetSpatialLocationFilenameByType("phi");
   std::string ThetaMapName = atlasDataSet->GetSpatialLocationFilenameByType("theta");
 
+  std::string rhoPath = itksys::SystemTools::GetFilenamePath( RhoMapName );
+  itksys::SystemTools::MakeDirectory( rhoPath.c_str() );
+
+  std::string phiPath = itksys::SystemTools::GetFilenamePath( PhiMapName );
+  itksys::SystemTools::MakeDirectory( phiPath.c_str() );
+
+  std::string thetaPath = itksys::SystemTools::GetFilenamePath( ThetaMapName );
+  itksys::SystemTools::MakeDirectory( thetaPath.c_str() );
+
   // Check if rho,phi and theta file exists.
   itkUtil::WriteImage<WorkingImageType>(rhoImage, RhoMapName);
   itkUtil::WriteImage<WorkingImageType>(phiImage, PhiMapName);

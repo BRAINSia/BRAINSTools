@@ -9,7 +9,6 @@ set( OutputNetConfigurationForTesting ${CMAKE_CURRENT_BINARY_DIR}/TestSuite/NetC
 
 configure_file( ${InputNetConfigurationForTesting} ${OutputNetConfigurationForTesting}  IMMEDIATE @ONLY)
 
-#set(TestData_DIR ${CMAKE_CURRENT_SOURCE_DIR}/TestData/Input)
 
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME FakeTestToDownloadFiles
   COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_LIST_DIR}/FakeTest.cmake
@@ -54,9 +53,4 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME AllInOneTest
   --netConfiguration ${OutputNetConfigurationForTesting})
 
 ExternalData_Add_Target( ${PROJECT_NAME}FetchData )  # Name of data management target
-
-
-
-
-
 

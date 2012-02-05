@@ -85,7 +85,7 @@ option(USE_SYSTEM_SlicerExecutionModel "Build using an externally defined versio
 option(USE_SYSTEM_VTK "Build using an externally defined version of VTK" OFF)
 
 #------------------------------------------------------------------------------
-# BRAINS dependency list
+# ${LOCAL_PROJECT_NAME} dependency list
 #------------------------------------------------------------------------------
 
 set(ITK_EXTERNAL_NAME ITKv${ITK_VERSION_MAJOR})

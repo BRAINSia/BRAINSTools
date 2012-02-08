@@ -31,13 +31,13 @@ WriteITKtoSlicer3LmkWts( const std::string landmarksWeightFilename,
 
   std::stringstream lmksStream;
   // Write the .wts header information.
-  lmksStream << "#Fiducial List file " << fullPathLandmarksWeightFileName << std::endl;
-  lmksStream << "#numPoints = " << numNamedLandmarks << "\n";
-  lmksStream << "#symbolScale = 5" << std::endl;
-  lmksStream << "#visibility = 1" << std::endl;
-  lmksStream << "#textScale = 4.5" << std::endl;
-  lmksStream << "#color = 0.4,1,1" << std::endl;
-  lmksStream << "#selectedColor = 1,0.5,0.5" << std::endl;
+//  lmksStream << "#Fiducial List file " << fullPathLandmarksWeightFileName << std::endl;
+//  lmksStream << "#numPoints = " << numNamedLandmarks << "\n";
+//  lmksStream << "#symbolScale = 5" << std::endl;
+//  lmksStream << "#visibility = 1" << std::endl;
+//  lmksStream << "#textScale = 4.5" << std::endl;
+//  lmksStream << "#color = 0.4,1,1" << std::endl;
+//  lmksStream << "#selectedColor = 1,0.5,0.5" << std::endl;
   lmksStream << "#label,weight" << std::endl;
   lmksStream << lmkWeightStream.str();
 

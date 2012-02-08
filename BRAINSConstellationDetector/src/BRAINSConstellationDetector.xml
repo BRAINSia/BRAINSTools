@@ -21,7 +21,7 @@
         <file fileExtensions=".txt">
             <name>inputTemplateModel</name>
             <label>Input Template Model</label>
-            <default>T1.mdl</default>
+            <default></default>
             <longflag>inputTemplateModel</longflag>
             <description>User-specified template model.
             </description>
@@ -31,7 +31,7 @@
             <name>llsModel</name>
             <label>Input LLS Model in HD5 format</label>
             <default></default>
-            <longflag>--LLSModel</longflag>
+            <longflag>LLSModel</longflag>
             <description>Linear least squares model filename in HD5 format</description>
             <channel>input</channel>
         </file>

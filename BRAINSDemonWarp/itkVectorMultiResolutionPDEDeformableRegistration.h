@@ -168,7 +168,7 @@ public:
     *  images characteristics at the coarsest level of the pyramid. */
   virtual void SetArbitraryInitialDisplacementField(DisplacementFieldType *ptr)
   {
-    this->SetInput(ptr);
+    this->SetNthInput(2, ptr);
   }
 
   /** Get output deformation field. */

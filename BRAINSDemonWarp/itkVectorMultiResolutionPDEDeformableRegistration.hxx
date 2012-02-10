@@ -74,7 +74,7 @@ VectorMultiResolutionPDEDeformableRegistration<TFixedImage, TMovingImage,
 ::SetMovingImage(
   const MovingImageType *ptr)
 {
-  this->ProcessObject::SetNthInput( 2, const_cast<MovingImageType *>( ptr ) );
+  this->ProcessObject::SetNthInput( 1, const_cast<MovingImageType *>( ptr ) );
 }
 
 /*
@@ -90,7 +90,7 @@ const typename VectorMultiResolutionPDEDeformableRegistration<TFixedImage,
 ::GetMovingImage(void) const
   {
   return dynamic_cast<const MovingImageType *>
-         ( this->ProcessObject::GetInput(2) );
+         ( this->ProcessObject::GetInput(1) );
   }
 
 /*
@@ -104,7 +104,7 @@ VectorMultiResolutionPDEDeformableRegistration<TFixedImage, TMovingImage,
 ::SetFixedImage(
   const FixedImageType *ptr)
 {
-  this->ProcessObject::SetNthInput( 1, const_cast<FixedImageType *>( ptr ) );
+  this->ProcessObject::SetNthInput( 0, const_cast<FixedImageType *>( ptr ) );
 }
 
 /*
@@ -120,7 +120,7 @@ const typename VectorMultiResolutionPDEDeformableRegistration<TFixedImage,
 ::GetFixedImage(void) const
   {
   return dynamic_cast<const FixedImageType *>
-         ( this->ProcessObject::GetInput(1) );
+         ( this->ProcessObject::GetInput(0) );
   }
 
 template <class TFixedImage, class TMovingImage, class TDisplacementField,
@@ -254,7 +254,7 @@ VectorMultiResolutionPDEDeformableRegistration<TFixedImage, TMovingImage,
     itkExceptionMacro(<< "Registration filter not set");
     }
 
-  if( this->m_InitialDisplacementField && this->GetInput(0) )
+  if( this->m_InitialDisplacementField && this->GetInput(2) )
     {
     itkExceptionMacro(
       << "Only one initial deformation can be given. "
@@ -312,7 +312,7 @@ VectorMultiResolutionPDEDeformableRegistration<TFixedImage, TMovingImage,
   DisplacementFieldPointer tempField = NULL;
 
   DisplacementFieldPointer inputPtr = const_cast<DisplacementFieldType *>(
-      this->GetInput(0) );
+      this->GetInput(2) );
 
   if( this->m_InitialDisplacementField )
     {
@@ -571,7 +571,7 @@ VectorMultiResolutionPDEDeformableRegistration<TFixedImage, TMovingImage,
 {
   typename DataObject::Pointer output;
 
-  if( this->GetInput(0) )
+  if( this->GetInput(2) )
     {
     // Initial deformation field is set.
     // Copy information from initial field.
@@ -615,7 +615,7 @@ VectorMultiResolutionPDEDeformableRegistration<TFixedImage, TMovingImage,
   // just propagate up the output requested region for
   // the fixed image and initial deformation field.
   DisplacementFieldPointer inputPtr =
-    const_cast<DisplacementFieldType *>( this->GetInput() );
+    const_cast<DisplacementFieldType *>( this->GetInput(2) );
   DisplacementFieldPointer outputPtr = this->GetOutput();
   FixedImagePointer        fixedPtr =
     const_cast<FixedImageType *>( this->GetFixedImage() );

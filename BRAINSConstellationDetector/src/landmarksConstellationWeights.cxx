@@ -3,7 +3,7 @@
 
 // ==============================================================================================
 
-// 1- BCD is run through the training data set.
+// 1- BCD is run through all the training data set.
 //    We use an inputTrainingList the same as what we use for the BRAINSConstellationModeler.
 //    For each training volume, just the "outputLandmarksInInputSpace" is needed.
 
@@ -19,6 +19,7 @@
 // ==============================================================================================
 
 // I N C L U D E S ////////////////////////////////////////////////////////////
+
 #include "BRAINSConstellationDetectorPrimary.h"
 #include "landmarksConstellationCommon.h"
 #include "landmarksConstellationTrainingDefinitionIO.h"
@@ -34,18 +35,18 @@ typedef std::vector<std::map<std::string, PointType> > LandmarksMapTypeVec;
 
 // F U N C T I O N S //////////////////////////////////////////////////////////
 
-bool value_comparer(const std::pair<std::string, int>& i1,
-                    const std::pair<std::string, int>& i2)
+bool value_comparer(const std::pair<std::string, float> & i,
+                    const std::pair<std::string, float> & j)
 {
-  return i1.second < i2.second;
+  return i.second < j.second;
 }
 
-double get_max_value(LandmarksValueMapType const & m) // returns the max value of a map
+double get_max_value(LandmarksValueMapType const & m)  // returns the max value of a map
 {
   return std::max_element(m.begin(), m.end(), value_comparer)->second;
 }
 
-double get_min_value(LandmarksValueMapType const & m) // returns the min value of a map
+double get_min_value(LandmarksValueMapType const & m)  // returns the min value of a map
 {
   return std::min_element(m.begin(), m.end(), value_comparer)->second;
 }
@@ -125,6 +126,18 @@ int main( int argc, char *argv[] )
   std::cout << "\n====================================================================================" << std::endl;
   std::cout << "Number of training cases = " << k << std::endl;
   std::cout << "Number of landmarks = " << numNamedLandmarks << std::endl;
+  /*
+  // TEST PRINT FOR TRACKING
+  for (unsigned int i=0; i<(2*k); i++)
+  {
+      std::cout << "\n\nValues of landmarks(" << i << "): " << std::endl;
+      for( LandmarksMapType::const_iterator it = LandmarksMapVector[i].begin(); it != LandmarksMapVector[i].end(); ++it )
+      {
+          std::cout << it->first << " : (" << it->second[0] << ", " << it->second[1] << ", " << it->second[2] << ")" << std::endl;
+      }
+      std::cout << "==============================================================" << std::endl;
+  }
+  */
   // Computing the average coordinate for each landmark
   for( unsigned int j = 0; j < numNamedLandmarks; j++ )
     {
@@ -166,6 +179,17 @@ int main( int argc, char *argv[] )
     LandmarksSTDMap[name] = sqrt(sum / k);
     }
 
+  /*
+  // TEST PRINT FOR TRACKING
+  std::cout << "\n=============Standard Deviation of Error for Each Landmarks====================" << std::endl;
+for (unsigned int j=0; j<numNamedLandmarks; j++)
+{
+  std::string name = LandmarksNames[j];
+  std::cout << "-" << name << ": " << LandmarksSTDMap[name] << std::endl;
+}
+std::cout << "==============================================================\n" << std::endl;
+  */
+
   // Computing LandmarksWeightMap
   // the weight of a landmark point, which has the lowest std, should be mapped to ONE, and weights of the other
   // landmarks should be calculated correspondingly
@@ -173,6 +197,11 @@ int main( int argc, char *argv[] )
   double minValue = get_min_value( LandmarksSTDMap );
   double maxValue = get_max_value( LandmarksSTDMap );
   double UpperBound = Margin + minValue + maxValue;
+  /*
+  // TEST PRINT FOR TRACKING
+  std::cout << "minValue = " << minValue << std::endl;
+  std::cout << "maxValue = " << maxValue << std::endl;
+  */
   for( unsigned int j = 0; j < numNamedLandmarks; j++ )
     {
     std::string name = LandmarksNames[j];

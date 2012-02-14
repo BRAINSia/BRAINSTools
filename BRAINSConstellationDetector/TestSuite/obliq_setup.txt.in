@@ -1,19 +1,48 @@
-3
-255 1
-14 5
-8 5
-6 5
--10 10 5
+3 255 1
+-10 10 10
 
-@TEST_DATA_DIR@/A.nii.gz
-@TEST_DATA_DIR@/A.fcsv
+RP 5 10
+AC 5 10
+PC 5 10
+VN4 5 10
+CM 5 10
+LE 5 10
+RE 5 10
+genu 5 10
+rostrum 5 10
+BPons 5 10
+optic_chiasm 5 10
+mid_prim_inf 5 10
+mid_prim_sup 5 10
+dens_axis 8 16
+SMV 8 16
+r_prim_ext 8 16
+l_prim_ext 8 16
+l_corp 8 16
+r_corp 8 16
+r_caud_head 8 16
+l_caud_head 8 16
+r_front_pole 8 16
+l_front_pole 8 16
+r_temp_pole 8 16
+l_temp_pole 8 16
+l_occ_pole 8 16
+r_occ_pole 8 16
+l_lat_ext 8 16
+r_lat_ext 8 16
+r_sup_ext 8 16
+l_sup_ext 8 16
 END
 
-@TEST_DATA_DIR@/B.nii.gz
-@TEST_DATA_DIR@/B.fcsv
+@CMAKE_CURRENT_BINARY_DIR@/../../ExternalData/TestData/TrainingCase1_T1.nii.gz
+@CMAKE_CURRENT_BINARY_DIR@/../../ExternalData/TestData/TrainingCase1.fcsv
 END
 
-@TEST_DATA_DIR@/msp_test.nii.gz
-@TEST_DATA_DIR@/msp_test.fcsv
+@CMAKE_CURRENT_BINARY_DIR@/../../ExternalData/TestData/TrainingCase2_T1.nii.gz
+@CMAKE_CURRENT_BINARY_DIR@/../../ExternalData/TestData/TrainingCase2.fcsv
+END
+
+@CMAKE_CURRENT_BINARY_DIR@/../../ExternalData/TestData/TrainingCase3_T1.nii.gz
+@CMAKE_CURRENT_BINARY_DIR@/../../ExternalData/TestData/TrainingCase3.fcsv
 END
 

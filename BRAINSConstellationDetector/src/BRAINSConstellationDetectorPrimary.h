@@ -264,7 +264,7 @@ public:
     return this->m_outputLandmarksInACPCAlignedSpaceMap;
   }
 
-  void Compute(void);
+  bool Compute(void);
 
 private:
 

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+    <category>Utilities.BRAINS</category>
+    <title>Generate Landmarks Weights (BRAINS)</title>
+    <description>Train up a list of Weights for the Landmarks in BRAINSConstellationDetector</description>
+    <parameters>
+        <file fileExtensions=".txt">
+            <name>inputTrainingList</name>
+            <flag>i</flag>
+            <longflag>inputTrainingList</longflag>
+            <default></default>
+            <description>
+                Setup file, giving all parameters for training up a Weight list for landmark.
+            </description>
+            <channel>input</channel>
+        </file>
+        <file fileExtensions=".txt">
+            <name>inputTemplateModel</name>
+            <label>Input Template Model</label>
+            <default></default>
+            <longflag>inputTemplateModel</longflag>
+            <description>User-specified template model.
+            </description>
+            <channel>input</channel>
+        </file>
+        <file fileExtensions=".hdf5">
+            <name>llsModel</name>
+            <label>Input LLS Model in HD5 format</label>
+            <default></default>
+            <longflag>LLSModel</longflag>
+            <description>Linear least squares model filename in HD5 format</description>
+            <channel>input</channel>
+        </file>
+        <file fileExtensions=".wts">
+            <name>outputWeightsList</name>
+            <flag>w</flag>
+            <longflag>outputWeightsList</longflag>
+            <default>default.wts</default>
+            <description>
+                The filename of a csv file which is a list of landmarks and their corresponding weights.
+            </description>
+            <channel>output</channel>
+        </file>
+    </parameters>
+</executable>

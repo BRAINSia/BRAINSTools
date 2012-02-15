@@ -814,13 +814,13 @@ void Solver_MCSVM_CS::Solve(double *w)
 //  D is a diagonal matrix
 //
 // In L1-SVM case:
-//    upper_bound_i = Cp if y_i = 1
-//    upper_bound_i = Cn if y_i = -1
-//    D_ii = 0
+//              upper_bound_i = Cp if y_i = 1
+//              upper_bound_i = Cn if y_i = -1
+//              D_ii = 0
 // In L2-SVM case:
-//    upper_bound_i = INF
-//    D_ii = 1/(2*Cp)	if y_i = 1
-//    D_ii = 1/(2*Cn)	if y_i = -1
+//              upper_bound_i = INF
+//              D_ii = 1/(2*Cp) if y_i = 1
+//              D_ii = 1/(2*Cn) if y_i = -1
 //
 // Given:
 // x, y, Cp, Cn
@@ -1546,7 +1546,6 @@ static void solve_l1r_l2_svc(
       v += C[GETI(j)] * b[j] * b[j];
       }
     }
-
   info("Objective value = %lf\n", v);
   info("#nonzeros/#features = %d/%d\n", nnz, w_size);
 
@@ -1858,7 +1857,6 @@ static void solve_l1r_lr(
         negsum_xTd += C[GETI(i)] * xTd[i];
         }
       }
-
     int num_linesearch;
     for( num_linesearch = 0; num_linesearch < max_num_linesearch; num_linesearch++ )
       {
@@ -1973,7 +1971,6 @@ static void solve_l1r_lr(
       v += C[GETI(j)] * log(1 + exp_wTx[j]);
       }
     }
-
   info("Objective value = %lf\n", v);
   info("#nonzeros/#features = %d/%d\n", nnz, w_size);
 
@@ -2592,10 +2589,7 @@ int save_model(const char *model_file_name, const struct model *model_)
     {
     return -1;
     }
-  else
-    {
-    return 0;
-    }
+  return 0;
 }
 
 struct model * load_model(const char *model_file_name)

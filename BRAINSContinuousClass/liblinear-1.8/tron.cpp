@@ -100,7 +100,6 @@ void TRON::tron(double *w)
     {
     search = 0;
     }
-
   iter = 1;
 
   while( iter <= max_iter && search )
@@ -123,7 +122,6 @@ void TRON::tron(double *w)
       {
       delta = min(delta, snorm);
       }
-
     // Compute prediction alpha*snorm of the step.
     if( fnew - f - gs <= 0 )
       {

@@ -158,5 +158,5 @@ void LogisticRegression<TSampleType>::ClassifySample(LogisticRegressionSample<TS
     labeledSample.SetLabelProbability(this->m_classTwoLabel, predictedProbabilities[1]);
     }
 
-  delete sampleToPredict;
+  delete [] sampleToPredict;
 }

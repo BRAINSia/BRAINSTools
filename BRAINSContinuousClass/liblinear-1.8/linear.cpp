@@ -59,7 +59,7 @@ static void info(const char *fmt, ...)
 }
 
 #else
-static void info(const char *fmt, ...)
+static void info(const char *, ...)
 {
 }
 
@@ -90,13 +90,13 @@ private:
   const problem *prob;
 };
 
-l2r_lr_fun::l2r_lr_fun(const problem *prob, double Cp, double Cn)
+l2r_lr_fun::l2r_lr_fun(const problem *_prob, double Cp, double Cn)
 {
   int  i;
-  int  l = prob->l;
-  int *y = prob->y;
+  int  l = _prob->l;
+  int *y = _prob->y;
 
-  this->prob = prob;
+  this->prob = _prob;
 
   z = new double[l];
   D = new double[l];
@@ -267,13 +267,13 @@ private:
   const problem *prob;
 };
 
-l2r_l2_svc_fun::l2r_l2_svc_fun(const problem *prob, double Cp, double Cn)
+l2r_l2_svc_fun::l2r_l2_svc_fun(const problem *_prob, double Cp, double Cn)
 {
   int  i;
-  int  l = prob->l;
-  int *y = prob->y;
+  int  l = _prob->l;
+  int *y = _prob->y;
 
-  this->prob = prob;
+  this->prob = _prob;
 
   z = new double[l];
   D = new double[l];
@@ -477,16 +477,16 @@ private:
   const problem *prob;
 };
 
-Solver_MCSVM_CS::Solver_MCSVM_CS(const problem *prob, int nr_class, double *weighted_C, double eps, int max_iter)
+Solver_MCSVM_CS::Solver_MCSVM_CS(const problem *_prob, int _nr_class, double *weighted_C, double _eps, int _max_iter)
 {
-  this->w_size = prob->n;
-  this->l = prob->l;
-  this->nr_class = nr_class;
-  this->eps = eps;
-  this->max_iter = max_iter;
-  this->prob = prob;
-  this->B = new double[nr_class];
-  this->G = new double[nr_class];
+  this->w_size = _prob->n;
+  this->l = _prob->l;
+  this->nr_class = _nr_class;
+  this->eps = _eps;
+  this->max_iter = _max_iter;
+  this->prob = _prob;
+  this->B = new double[_nr_class];
+  this->G = new double[_nr_class];
   this->C = weighted_C;
 }
 
@@ -2330,9 +2330,9 @@ model * train(const problem *prob, const parameter *param)
           }
 
         train_one(&sub_prob, param, w, weighted_C[i], param->C);
-        for( int j = 0; j < w_size; j++ )
+        for( int _j = 0; _j < w_size; _j++ )
           {
-          model_->w[j * nr_class + i] = w[j];
+          model_->w[_j * nr_class + i] = w[_j];
           }
         }
       free(w);
@@ -2624,16 +2624,16 @@ struct model * load_model(const char *model_file_name)
     if( strcmp(cmd, "solver_type") == 0 )
       {
       fscanf(fp, "%80s", cmd);
-      int i;
-      for( i = 0; solver_type_table[i]; i++ )
+      int _i;
+      for( _i = 0; solver_type_table[_i]; _i++ )
         {
-        if( strcmp(solver_type_table[i], cmd) == 0 )
+        if( strcmp(solver_type_table[_i], cmd) == 0 )
           {
-          param.solver_type = i;
+          param.solver_type = _i;
           break;
           }
         }
-      if( solver_type_table[i] == NULL )
+      if( solver_type_table[_i] == NULL )
         {
         fprintf(stderr, "unknown solver type.\n");
         free(model_->label);
@@ -2662,11 +2662,11 @@ struct model * load_model(const char *model_file_name)
       }
     else if( strcmp(cmd, "label") == 0 )
       {
-      int nr_class = model_->nr_class;
-      model_->label = Malloc(int, nr_class);
-      for( int i = 0; i < nr_class; i++ )
+      int _nr_class = model_->nr_class;
+      model_->label = Malloc(int, _nr_class);
+      for( int _i = 0; _i < _nr_class; _i++ )
         {
-        fscanf(fp, "%d", &model_->label[i]);
+        fscanf(fp, "%d", &model_->label[_i]);
         }
       }
     else
@@ -2771,7 +2771,7 @@ void destroy_param(parameter* param)
     }
 }
 
-const char * check_parameter(const problem *prob, const parameter *param)
+const char * check_parameter(const problem *, const parameter *param)
 {
   if( param->eps <= 0 )
     {

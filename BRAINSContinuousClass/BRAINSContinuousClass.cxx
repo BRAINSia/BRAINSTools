@@ -44,7 +44,7 @@ int ContinuousClassification(std::string t1VolumeName, std::string T2VolumeName,
   typename ReaderType::Pointer t2Reader = ReaderType::New();
   typename ShortReaderType::Pointer discreteReader = ShortReaderType::New();
 
-  typename WriterType::Pointer ouptutWriter = WriterType::New();
+  typename WriterType::Pointer outputWriter = WriterType::New();
 
   typename ImageType::Pointer t1Volume;
   typename ImageType::Pointer t2Volume;
@@ -306,11 +306,16 @@ int ContinuousClassification(std::string t1VolumeName, std::string T2VolumeName,
 
     outputImage->SetPixel(idx, predictedOutputPixelValue);
     }
+  std::cerr << "whiteVsGraySampleCount " << whiteVsGraySampleCount
+            << " csfVsGraySampleCount " << csfVsGraySampleCount
+            << " whiteVsCSFSampleCount " << whiteVsCSFSampleCount
+            << " veinousBloodVsAllSampleCount " << veinousBloodVsAllSampleCount
+            << std::endl;
 
-  ouptutWriter->SetInput(outputImage);
-  ouptutWriter->SetFileName(outputVolumeName);
-  ouptutWriter->Modified();
-  ouptutWriter->Update();
+  outputWriter->SetInput(outputImage);
+  outputWriter->SetFileName(outputVolumeName);
+  outputWriter->Modified();
+  outputWriter->Update();
 
   return EXIT_SUCCESS;
 }

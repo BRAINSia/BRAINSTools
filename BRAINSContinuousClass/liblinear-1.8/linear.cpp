@@ -5,6 +5,91 @@
 #include <stdarg.h>
 #include "linear.h"
 #include "tron.h"
+#ifdef USE_VNL_RANDOM
+#include "vnl/vnl_random.h"
+#else
+#include <itkMersenneTwisterRandomVariateGenerator.h>
+#endif
+
+namespace
+{
+#define USE_ITK_MERSENNE_TWISTER
+#if defined(USE_VNL_RANDOM)
+class random
+{
+public:
+  random()
+  {
+    m_random.reseed(0x01234567);
+  }
+
+  int rand()
+  {
+    return static_cast<int>(m_random.lrand32() );
+  }
+
+  int rand(int limit)
+  {
+    return static_cast<int>(m_random.lrand32(limit) );
+  }
+
+private:
+  vnl_random m_random;
+};
+#elif defined(USE_SYSTEM_RAND)
+//
+// this is the original behavior in the liblinear library
+class random
+{
+public:
+  random()
+  {
+  }
+
+  int rand()
+  {
+    return static_cast<int>(rand() );
+  }
+
+  int rand(int limit)
+  {
+    return static_cast<int>(rand() % (limit + 1) );
+  }
+
+private:
+  itk::Statistics::MersenneTwisterRandomVariateGenerator m_random;
+};
+#elif defined(USE_ITK_MERSENNE_TWISTER)
+// Use itk's Mersienne Twister RNG
+class random
+{
+public:
+  random()
+  {
+    this->m_random = itk::Statistics::MersenneTwisterRandomVariateGenerator::New();
+    this->m_random->SetSeed(0x01234567);
+  }
+
+  int rand()
+  {
+    return static_cast<int>(m_random->GetIntegerVariate() );
+  }
+
+  int rand(int limit)
+  {
+    return static_cast<int>(m_random->GetIntegerVariate(limit) );
+  }
+
+private:
+  itk::Statistics::MersenneTwisterRandomVariateGenerator::Pointer m_random;
+};
+#else
+#error "Please choose which random number generator to use"
+#endif
+
+// one static random number generator
+random localrng;
+}
 typedef signed char schar;
 template <class T>
 static inline void swap(T& x, T& y)
@@ -607,7 +692,8 @@ void Solver_MCSVM_CS::Solve(double *w)
     double stopping = -INF;
     for( i = 0; i < active_size; i++ )
       {
-      int j = i + rand() % (active_size - i);
+      // int j = i+rand()%(active_size-i);
+      int j = i + localrng.rand(active_size - 1 - i);
       swap(index[i], index[j]);
       }
     for( s = 0; s < active_size; s++ )
@@ -899,7 +985,8 @@ static void solve_l2r_l1l2_svc(
     PGmin_new = INF;
     for( i = 0; i < active_size; i++ )
       {
-      int j = i + rand() % (active_size - i);
+      // int j = i+rand()%(active_size-i);
+      int j = i + localrng.rand(active_size - 1 - i);
       swap(index[i], index[j]);
       }
     for( s = 0; s < active_size; s++ )
@@ -1107,7 +1194,8 @@ void solve_l2r_lr_dual(const problem *prob, double *w, double eps, double Cp, do
     {
     for( i = 0; i < l; i++ )
       {
-      int j = i + rand() % (l - i);
+      // int j = i+rand()%(l-i);
+      int j = i + localrng.rand(l - 1 - i);
       swap(index[i], index[j]);
       }
     int    newton_iter = 0;
@@ -1307,7 +1395,8 @@ static void solve_l1r_l2_svc(
     Gnorm1_new = 0;
     for( j = 0; j < active_size; j++ )
       {
-      int i = j + rand() % (active_size - j);
+      // int i = j+rand()%(active_size-j);
+      int i = j + localrng.rand(active_size - 1 - j);
       swap(index[i], index[j]);
       }
     for( s = 0; s < active_size; s++ )
@@ -1729,7 +1818,8 @@ static void solve_l1r_lr(
       QP_Gnorm1_new = 0;
       for( j = 0; j < QP_active_size; j++ )
         {
-        int i = j + rand() % (QP_active_size - j);
+        // int i = j+rand()%(QP_active_size-j);
+        int i = j + localrng.rand(QP_active_size - 1 - j);
         swap(index[i], index[j]);
         }
       for( s = 0; s < QP_active_size; s++ )
@@ -2360,7 +2450,8 @@ void cross_validation(const problem *prob, const parameter *param, int nr_fold, 
     }
   for( i = 0; i < l; i++ )
     {
-    int j = i + rand() % (l - i);
+    // int j = i+rand()%(l-i);
+    int j = i + localrng.rand(l - 1 - i);
     swap(perm[i], perm[j]);
     }
   for( i = 0; i <= nr_fold; i++ )

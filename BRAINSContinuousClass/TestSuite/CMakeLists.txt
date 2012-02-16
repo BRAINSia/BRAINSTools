@@ -2,7 +2,7 @@
 
 MakeTestDriverFromSEMTool(BRAINSContinuousClass BRAINSContinuousClassTest.cxx)
 
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateBRAINSContinousClassTest_nii
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateBRAINSContinuousClassTest_nii
   COMMAND ${LAUNCH_EXE} ${CMAKE_BIN_DIR}/BRAINSContinuousClassTestDriver
   --compare
   DATA{${TestData_DIR}/BRAINSContinuousClassTest_baseline.nii.gz}

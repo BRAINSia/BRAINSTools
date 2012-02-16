@@ -32,7 +32,7 @@
 
     <float>
       <name>inputGaussianMean</name>
-      <longflag>inputGaussianStandardDeviation</longflag>
+      <longflag>inputGaissianMean</longflag>
       <description>Optional: mean for Gaussian Noise</description>
       <label>Gaussian Mean</label>
       <default>0</default>

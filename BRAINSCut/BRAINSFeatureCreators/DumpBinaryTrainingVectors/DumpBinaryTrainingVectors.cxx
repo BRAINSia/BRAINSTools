@@ -2,6 +2,9 @@
 #include <fstream>
 #include <sstream>
 
+#include "DumpBinaryTrainingVectorsCLP.h"
+#define MAX_LINE_SIZE 1000
+#define LineGuard  1234567.0
 void
 ReadHeader(const char *fname,
            unsigned int & InputVectorSize,
@@ -13,8 +16,9 @@ ReadHeader(const char *fname,
   filestr.open(fname);
   if( !filestr.is_open() )
     {
-    itkGenericExceptionMacro(<< "Error: Could not open ANN vector file"
-                             << fname);
+    std::cout << "Error: Could not open ANN vector file"
+              << fname
+              << std::endl;
     }
   for( int tags = 0; tags < 3; tags++ )
     {
@@ -42,6 +46,8 @@ ReadHeader(const char *fname,
 int
 main(int argc, char * *argv)
 {
+  PARSE_ARGS;
+
   unsigned int InputVectorSize;
   unsigned int OutputVectorSize;
   unsigned int NumberTrainingVectorsFromFile;
@@ -56,39 +62,29 @@ main(int argc, char * *argv)
   // read header
   try
     {
-    ReadHeader(argv[1],
-               InputVectorSize,
-               OutputVectorSize,
-               NumberTrainingVectorsFromFile);
+    ReadHeader( inputHeaderFilename.c_str(),
+                InputVectorSize,
+                OutputVectorSize,
+                NumberTrainingVectorsFromFile);
     std::cout << "Input Vector  Size "  << InputVectorSize
               << "Output Vector Size "  << OutputVectorSize
               << " #Training Vectors " << NumberTrainingVectorsFromFile
               << std::endl;
     }
-  catch( itk::ExceptionObject & ex )
+  catch( std::exception & ex )
     {
-    std::cerr << ex << std::endl;
+    std::cerr << ex.what() << std::endl;
     return EXIT_FAILURE;
     }
   // read binary
   // const unsigned int OutputVectorSize=2;
   const unsigned int SentinalValueSize = 1;
   std::ifstream      binfile;
-  binfile.open(argv[2], std::ios::in | std::ios::binary);
+  binfile.open(inputVectorFilename.c_str(), std::ios::in | std::ios::binary);
   if( !binfile.is_open() )
     {
-    std::cerr << "Can't open " << argv[2] << std::endl;
+    std::cerr << "Can't open " << inputVectorFilename << std::endl;
     return EXIT_FAILURE;
-    }
-  unsigned skip = 0;
-  if( argc > 3 )
-    {
-    skip = atoi(argv[3]);
-    }
-  if( skip > 0 )
-    {
-    std::cout << "Skipping " << skip << " vectors"
-              << std::endl;
     }
   unsigned int recordsize =
     ( InputVectorSize + OutputVectorSize
@@ -123,7 +119,7 @@ main(int argc, char * *argv)
 
     std::cout << std::endl;
     if( buf[OutputVectorSize + InputVectorSize + SentinalValueSize - 1] !=
-        AUTOSEG_VEC_SENTINEL )
+        LineGuard )
       {
       std::cerr << "Record not properly terminated by sentinel value"
                 << std::endl;

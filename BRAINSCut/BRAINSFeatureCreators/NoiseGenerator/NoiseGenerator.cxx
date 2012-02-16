@@ -38,7 +38,6 @@ int main(int argc, char * argv[])
   typedef itk::AdditiveGaussianNoiseImageFilter<ImageType, ImageType> FilterType;
   FilterType::Pointer filter = FilterType::New();
   filter->SetInput( reader->GetOutput() );
-
   filter->SetStandardDeviation( inputGaussianStandardDeviation );
 
   filter->SetMean( inputGaussianMean );
@@ -48,7 +47,9 @@ int main(int argc, char * argv[])
   typedef itk::ImageFileWriter<ImageType> WriterType;
   WriterType::Pointer writer = WriterType::New();
   writer->SetInput( filter->GetOutput() );
+  std::cout << __LINE__ << "::" << __FILE__ << std::endl;
   writer->SetFileName( outputVolume );
+  std::cout << __LINE__ << "::" << __FILE__ << std::endl;
   writer->Update();
 
   return 0;

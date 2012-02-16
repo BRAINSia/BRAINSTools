@@ -37,8 +37,10 @@ SpeckleNoiseImageFilter<TInputImage, TOutputImage>
 ::ThreadedGenerateData( const OutputImageRegionType & outputRegionForThread,
                         int threadId)
 {
+  std::cout << __LINE__ << "::" << __FILE__ << std::endl;
   InputImageConstPointer inputPtr = this->GetInput();
-  OutputImagePointer     outputPtr = this->GetOutput(0);
+  std::cout << __LINE__ << "::" << __FILE__ << std::endl;
+  OutputImagePointer outputPtr = this->GetOutput(0);
 
   // create a random generator per thread
   typename Statistics::ThreadSafeMersenneTwisterRandomVariateGenerator::Pointer rand =
@@ -62,12 +64,14 @@ SpeckleNoiseImageFilter<TInputImage, TOutputImage>
 
   // choose the value of the gamma distribution so that the mean is 1 and the variance depend
   // on m_StandardDeviation
+  std::cout << __LINE__ << "::" << __FILE__ << std::endl;
   double theta = m_StandardDeviation * m_StandardDeviation;
   double k = 1 / theta;
   double floork = itk::Math::Floor( k );
   double delta = k - floork;
   double v0 = itk::Math::e / ( itk::Math::e + delta );
 
+  std::cout << __LINE__ << "::" << __FILE__ << std::endl;
   while( !inputIt.IsAtEnd() )
     {
     // first generate the gamma distributed random variable
@@ -109,6 +113,8 @@ SpeckleNoiseImageFilter<TInputImage, TOutputImage>
     ++outputIt;
     progress.CompletedPixel();  // potential exception thrown here
     }
+
+  std::cout << __LINE__ << "::" << __FILE__ << std::endl;
 }
 
 template <class TInputImage, class TOutputImage>

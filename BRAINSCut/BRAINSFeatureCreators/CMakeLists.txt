@@ -30,4 +30,5 @@ add_subdirectory(TextureMeasureFilter)
 
 add_subdirectory(STAPLE)
 
-#add_subdirectory(NoiseGenerator)
+add_subdirectory(NoiseGenerator)
+add_subdirectory(DumpBinaryTrainingVectors)

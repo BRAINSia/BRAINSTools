@@ -3,13 +3,16 @@
 #include <iostream>
 #include <fstream>
 #include <stdlib.h>
+#include <itksys/SystemTools.hxx>
 
 namespace // anon
 {
 extern "C"
 {
+namespace AtlasXMLParser
+{
 void
-start(void *data, const char *el, const char * *)
+XMLstart(void *data, const char *el, const char * *)
 {
   // std::cerr << "Start, El = ("
   //         << el
@@ -27,7 +30,7 @@ start(void *data, const char *el, const char * *)
 }
 
 void
-end(void *data, const char *el)
+XMLend(void *data, const char *el)
 {
   // std::cerr << "End, El = ("
   //         << el
@@ -38,7 +41,7 @@ end(void *data, const char *el)
 }
 
 void
-charhandler(void *data, const char *txt, int txtlen)
+XMLcharhandler(void *data, const char *txt, int txtlen)
 {
   // std::cerr << "Char data = (";
   // for(unsigned i = 0; i < txtlen; i++)
@@ -57,6 +60,7 @@ charhandler(void *data, const char *txt, int txtlen)
   AtlasDefinition *_this = reinterpret_cast<AtlasDefinition *>( data );
   _this->XMLChar(buf);
   delete[] buf;
+}
 }
 }
 }
@@ -276,27 +280,28 @@ AtlasDefinition::InitFromXML(const std::string & XMLFilename)
     {
     throw;
     }
-  xmlFile.seekg(static_cast<std::streampos>( 0 ),
-                std::ios_base::end);
-  std::streampos fSize( xmlFile.tellg() );
-  xmlFile.seekg(static_cast<std::streampos>( 0 ),
-                std::ios_base::beg);
+  std::streamsize fSize =
+    itksys::SystemTools::FileLength(XMLFilename.c_str() );
+
   XML_Parser parser = XML_ParserCreate(0);
   XML_SetUserData( parser, static_cast<void *>( this ) );
-  XML_SetElementHandler(parser, start, end);
-  XML_SetCharacterDataHandler(parser, charhandler);
+  XML_SetElementHandler(parser, AtlasXMLParser::XMLstart, AtlasXMLParser::XMLend);
+  XML_SetCharacterDataHandler(parser, AtlasXMLParser::XMLcharhandler);
+
   char *filebuf = new char[fSize];
   if( filebuf == NULL )
     {
     throw;
     }
+
   xmlFile.read(filebuf, fSize);
-  if( !xmlFile.good() )
+  if( static_cast<std::streamsize>(xmlFile.gcount() ) != fSize )
     {
-    delete[] filebuf;
+    delete [] filebuf;
     throw;
     }
   xmlFile.close();
+
   if( XML_Parse(parser, filebuf, fSize, 1) == 0 )
     {
     delete[] filebuf;

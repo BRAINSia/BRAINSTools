@@ -52,7 +52,7 @@
      <label>inputSliceToExtractInPercent</label>
      <channel>input</channel>
      <description>2D slice number of input images. Percentage input from 0%-100%. (ex. --inputSliceToExtractInPercent 50,50,50</description>
-     <default></default>
+     <default>50,50,50</default>
    </integer-vector>
 
    <integer-vector>

@@ -1,3 +1,4 @@
+project(BRAINSTools)
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/Common.cmake)
 
@@ -28,7 +29,9 @@ include(${ITK_USE_FILE})
 
 #-----------------------------------------------------------------------------
 find_package(SlicerExecutionModel REQUIRED GenerateCLP)
+include(${GenerateCLP_USE_FILE})
 include(${SlicerExecutionModel_USE_FILE})
+include(${SlicerExecutionModel_CMAKE_DIR}/SEMMacroBuildCLI.cmake)
 
 #-----------------------------------------------------------------------------
 enable_testing()
@@ -83,6 +86,7 @@ set(brains_modulenames
   BRAINSDemonWarp ## NOTE: This is off by default, but is valid for both ITKv3/4
                   ##       This builds just fine with ITKv3/4, but test cases need
                   ##       further review before trusting it.
+  BRAINSContinuousClass
   )
 
 ## Tools that only work with ITKv4

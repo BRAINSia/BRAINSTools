@@ -1,7 +1,7 @@
 #include "BRAINSCutGenerateProbability.h"
 #include "NetConfigurationParser.h"
 #include "NetConfiguration.h"
-#include <itkSmoothingRecursiveGaussianImageFilter.h>
+
 #include "itkIO.h"
 
 /** constructors */
@@ -198,32 +198,19 @@ BRAINSCutGenerateProbability
   std::string PhiMapName = atlasDataSet->GetSpatialLocationFilenameByType("phi");
   std::string ThetaMapName = atlasDataSet->GetSpatialLocationFilenameByType("theta");
 
+  std::string rhoPath = itksys::SystemTools::GetFilenamePath( RhoMapName );
+  itksys::SystemTools::MakeDirectory( rhoPath.c_str() );
+
+  std::string phiPath = itksys::SystemTools::GetFilenamePath( PhiMapName );
+  itksys::SystemTools::MakeDirectory( phiPath.c_str() );
+
+  std::string thetaPath = itksys::SystemTools::GetFilenamePath( ThetaMapName );
+  itksys::SystemTools::MakeDirectory( thetaPath.c_str() );
+
   // Check if rho,phi and theta file exists.
   itkUtil::WriteImage<WorkingImageType>(rhoImage, RhoMapName);
   itkUtil::WriteImage<WorkingImageType>(phiImage, PhiMapName);
   itkUtil::WriteImage<WorkingImageType>(thetaImage, ThetaMapName);
-}
-
-WorkingImagePointer
-BRAINSCutGenerateProbability
-::SmoothImage( const WorkingImagePointer image, const float GaussianValue)
-{
-  if( GaussianValue < 0 + FLOAT_TOLERANCE )
-    {
-    std::cout << "Gaussian value is less than tolerance. "
-              << "No smoothing occurs at this time"
-              << std::endl;
-    return image;
-    }
-  typedef itk::SmoothingRecursiveGaussianImageFilter<WorkingImageType, WorkingImageType> SmoothingFilterType;
-  SmoothingFilterType::Pointer smoothingFilter = SmoothingFilterType::New();
-
-  smoothingFilter->SetInput( image);
-  smoothingFilter->SetSigma( GaussianValue );
-
-  smoothingFilter->Update();
-
-  return smoothingFilter->GetOutput();
 }
 
 void

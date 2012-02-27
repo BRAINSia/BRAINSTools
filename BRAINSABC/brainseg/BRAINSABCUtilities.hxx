@@ -84,7 +84,8 @@ void ComputeLabels(
   vnl_vector<unsigned int> & PriorLabelCodeVector,
   typename ByteImageType::Pointer & NonAirRegion,
   typename ByteImageType::Pointer & DirtyLabels,
-  typename ByteImageType::Pointer & CleanedLabels)
+  typename ByteImageType::Pointer & CleanedLabels,
+  FloatingPrecision InclusionThreshold = 0.0F)
 {
   muLogMacro(<< "ComputeLabels" << std::endl );
   itk::TimeProbe ComputeLabelsTimer;
@@ -142,7 +143,12 @@ void ComputeLabels(
 
             {
             bool         fgflag = PriorIsForegroundPriorVector[indexMaxPosteriorClassValue];
-            unsigned int label = PriorLabelCodeVector[indexMaxPosteriorClassValue];
+            unsigned int label = 99;
+            if( maxPosteriorClassValue > InclusionThreshold )
+              {
+              label = PriorLabelCodeVector[indexMaxPosteriorClassValue];
+              }
+
             // Only use non-zero probabilities and foreground classes
             if( !fgflag || ( maxPosteriorClassValue < 0.001 ) )
               {

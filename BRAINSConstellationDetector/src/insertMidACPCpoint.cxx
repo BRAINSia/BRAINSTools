@@ -7,11 +7,11 @@
 // This program adds a new landmark as the midpoint between AC and PC points to the output landmark fcsv file
 
 // This program gets a landmark1.fcsv file as its input and returns landmark2.fcsv file which contains
-// the new added landmark that is the midpoint between AC and PC points.
-// Therefore, the first argument is the inputlandmark file and the second argument is the name of the outputlandmark
-// file
-// For instans:
-//               ./midACPCpoint {inputlandmarkFile}.fcsv {NameOfoutputlandmarkFile}.fcsv
+// the new added landmark "midACPC" which is the midpoint between AC and PC points.
+//
+// For use:
+//             .../midACPCpoint --inputLandmarkFile {NameinputlandmarkFile}.fcsv --outputLandmarkFile
+// {NameOfoutputlandmarkFile}.fcsv
 
 #include "itkImage.h"
 #include "math.h"

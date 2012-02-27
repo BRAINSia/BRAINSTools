@@ -174,7 +174,7 @@ public:
   }
 
   // This is wrong?
-  const SImageType & GetAlignedPoint(std::string name)
+  const SImagePointType & GetAlignedPoint(std::string name)
   {
     return this->m_AlignedPoints[name];
   }

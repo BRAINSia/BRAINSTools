@@ -17,13 +17,6 @@
      <channel>input</channel>
    </file>
    <image>
-     <name>inputLevelSetFeatureImage</name>
-     <label>inputLevelSetFeatureImage</label>
-     <longflag>inputLevelSetFeatureImage</longflag>
-     <description>In case of using level set adjustment in the post processing, level set feature image is necessary </description>
-     <channel>input</channel>
-   </image>
-   <image>
      <name>ANNContinuousVolume</name>
      <label>ANNContinuousVolume</label>
      <longflag>ANNContinuousVolume</longflag>

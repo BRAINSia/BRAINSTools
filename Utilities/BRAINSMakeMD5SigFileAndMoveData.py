@@ -60,9 +60,13 @@ if __name__ == '__main__':
   f = open(md5FileName,'w')
   f.write(value)
   f.close()
-  shutil.copyfile(md5FileName,destPath+'/'+os.path.basename(md5FileName))
-  shutil.copy(source,dest)
-  os.unlink(source)
+  finalDestination=destPath+'/'+os.path.basename(md5FileName)
+  if os.path.exists(finalDestination):
+    print("Destination file already exists: SKIPPING {0}".format(finalDestination))
+  else:
+    shutil.copyfile(md5FileName,destPath+'/'+os.path.basename(md5FileName))
+    shutil.copy(source,dest)
+    os.unlink(source)
   ## if prepareing data remotely, echo a helpful rsync command needed to push from remote destination to IPL via rsync
   if args.destPath != defaultCMakeRepository:
     print('rsync -av {0}/ neuron.psychiatry.uiowa.edu:{1}/'.format(args.destPath,defaultCMakeRepository))

@@ -6,27 +6,40 @@ if(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED)
 endif()
 set(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED 1)
 
-if(${USE_SYSTEM_VTK})
-  unset(VTK_DIR CACHE)
-endif()
+# Include dependent projects if any
+set(extProjName VTK)     #The find_package known name
+set(proj ${extProjName}) #This local name
+
+#if(${USE_SYSTEM_${extProjName}})
+#  unset(${extProjName}_DIR CACHE)
+#endif()
 
 # Sanity checks
-if(DEFINED VTK_DIR AND NOT EXISTS ${VTK_DIR})
-  message(FATAL_ERROR "VTK_DIR variable is defined but corresponds to non-existing directory")
+if(DEFINED ${extProjName}_DIR AND NOT EXISTS ${${extProjName}_DIR})
+  message(FATAL_ERROR "${extProjName}_DIR variable is defined but corresponds to non-existing directory")
 endif()
+
 
 # Set dependency list
-set(VTK_DEPENDENCIES "")
+set(${proj}_DEPENDENCIES "")
 if (Slicer_USE_PYTHONQT)
-  list(APPEND VTK_DEPENDENCIES python)
+  list(APPEND ${proj}_DEPENDENCIES python)
 endif()
 
-# Include dependent projects if any
-SlicerMacroCheckExternalProjectDependency(VTK)
-set(proj VTK)
+SlicerMacroCheckExternalProjectDependency(${proj})
 
-if(NOT DEFINED VTK_DIR AND NOT ${USE_SYSTEM_VTK})
-  #message(STATUS "${__indent}Adding project ${proj}")
+if(NOT DEFINED ${extProjName}_DIR AND NOT ${USE_SYSTEM_${extProjName}})
+
+  # Set CMake OSX variable to pass down the external project
+  set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
+  if(APPLE)
+    list(APPEND CMAKE_OSX_EXTERNAL_PROJECT_ARGS
+      -DCMAKE_OSX_ARCHITECTURES=${CMAKE_OSX_ARCHITECTURES}
+      -DCMAKE_OSX_SYSROOT=${CMAKE_OSX_SYSROOT}
+      -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET})
+  endif()
+
+  ### --- Project specific additions here
   set(VTK_WRAP_TCL OFF)
   set(VTK_WRAP_PYTHON OFF)
 
@@ -45,7 +58,7 @@ if(NOT DEFINED VTK_DIR AND NOT ${USE_SYSTEM_VTK})
   endif()
 
   set(VTK_QT_ARGS)
-  if(BRAINSTools_USE_QT)
+  if(${PROJECT_NAME}_USE_QT)
     if(NOT APPLE)
       set(VTK_QT_ARGS
         #-DDESIRED_QT_VERSION:STRING=4 # Unused
@@ -69,12 +82,12 @@ if(NOT DEFINED VTK_DIR AND NOT ${USE_SYSTEM_VTK})
         )
     endif()
     find_package(Qt4 REQUIRED)
-  else(BRAINSTOOLS_USE_QT)
+  else(${PROJECT_NAME}_USE_QT)
     set(VTK_QT_ARGS
         -DVTK_USE_GUISUPPORT:BOOL=OFF
         -DVTK_USE_QT:BOOL=OFF
         )
-  endif(BRAINSTools_USE_QT)
+  endif(${PROJECT_NAME}_USE_QT)
 
   # Disable Tk when Python wrapping is enabled
   if (Slicer_USE_PYTHONQT)
@@ -116,29 +129,7 @@ if(NOT DEFINED VTK_DIR AND NOT ${USE_SYSTEM_VTK})
     set(VTK_BUILD_STEP ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/VTK_build_step.cmake)
   endif()
 
-  # Set CMake OSX variable to pass down the external project
-  set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
-  if(APPLE)
-    list(APPEND CMAKE_OSX_EXTERNAL_PROJECT_ARGS
-      -DCMAKE_OSX_ARCHITECTURES=${CMAKE_OSX_ARCHITECTURES}
-      -DCMAKE_OSX_SYSROOT=${CMAKE_OSX_SYSROOT}
-      -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET})
-  endif()
-
-  ExternalProject_Add(${proj}
-    GIT_REPOSITORY "${git_protocol}://vtk.org/VTK.git"
-    GIT_TAG "v5.8.0"
-    UPDATE_COMMAND ""
-    SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
-    BINARY_DIR ${proj}-build
-    CMAKE_GENERATOR ${gen}
-    CMAKE_ARGS
-      ${COMMON_EXTERNAL_PROJECT_ARGS}
-      ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
-      -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-      -DBUILD_TESTING:BOOL=OFF
-      -DBUILD_EXAMPLES:BOOL=OFF
-      -DBUILD_SHARED_LIBS:BOOL=ON
+  set(${proj}_CMAKE_OPTIONS
       -DVTK_USE_PARALLEL:BOOL=ON
       -DVTK_DEBUG_LEAKS:BOOL=${Slicer_USE_VTK_DEBUG_LEAKS}
       -DVTK_LEGACY_REMOVE:BOOL=OFF
@@ -150,24 +141,40 @@ if(NOT DEFINED VTK_DIR AND NOT ${USE_SYSTEM_VTK})
       ${VTK_PYTHON_ARGS}
       ${VTK_QT_ARGS}
       ${VTK_MAC_ARGS}
-    BUILD_COMMAND ${VTK_BUILD_STEP}
+      )
+  ### --- End Project specific additions
+  set(${proj}_REPOSITORY ${git_protocol}://vtk.org/VTK.git CACHE STRING "" FORCE)
+  set(${proj}_GIT_TAG "v5.8.0" CACHE STRING "" FORCE)
+  ExternalProject_Add(${proj}
+    GIT_REPOSITORY ${${proj}_REPOSITORY}
+    GIT_TAG ${${proj}_GIT_TAG}
+    SOURCE_DIR ${proj}
+    BINARY_DIR ${proj}-build
+    UPDATE_COMMAND ""
+    CMAKE_GENERATOR ${gen}
+    CMAKE_ARGS
+      ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
+      ${COMMON_EXTERNAL_PROJECT_ARGS}
+      -DBUILD_EXAMPLES:BOOL=OFF
+      -DBUILD_TESTING:BOOL=OFF
+      ${${proj}_CMAKE_OPTIONS}
     INSTALL_COMMAND ""
     DEPENDS
-      ${VTK_DEPENDENCIES}
+      ${${proj}_DEPENDENCIES}
+    BUILD_COMMAND ${VTK_BUILD_STEP}
     )
-  set(VTK_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
-
+  set(${extProjName}_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
 else()
-  if(${USE_SYSTEM_VTK})
-    find_package(VTK REQUIRED)
-    if(NOT VTK_DIR)
-      message(FATAL_ERROR "To use the system VTK, set VTK_DIR")
+  if(${USE_SYSTEM_${extProjName}})
+    find_package(${extProjName} ${ITK_VERSION_MAJOR} REQUIRED)
+    if(NOT ${extProjName}_DIR)
+      message(FATAL_ERROR "To use the system ${extProjName}, set ${extProjName}_DIR")
     endif()
   endif()
-  # The project is provided using VTK_DIR and VTK_SOURCE_DIR, nevertheless since other
-  # project may depend on VTK, let's add an 'empty' one
-  SlicerMacroEmptyExternalProject(${proj} "${VTK_DEPENDENCIES}")
+  # The project is provided using ${extProjName}_DIR, nevertheless since other
+  # project may depend on ${extProjName}v4, let's add an 'empty' one
+  SlicerMacroEmptyExternalProject(${proj} "${${proj}_DEPENDENCIES}")
 endif()
 
-list(APPEND ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS VTK_DIR:PATH)
+list(APPEND ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS ${extProjName}_DIR:PATH)
 

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>Utilities.BRAINS</category>
+  <title>MidACPC Landmark Insertion</title>
+  <description>
+  This program converts the original landmark files to the acpc-aligned landmark files	
+  </description>
+  <version> </version>
+  <documentation-url> </documentation-url>
+  <license> </license>
+  <contributor>Ali Ghayoor</contributor>
+<acknowledgements>
+</acknowledgements>
+
+  <parameters>
+    <label>IO</label>
+    <description>Input/output parameters</description>
+
+    <file>
+      <name>inputLandmarksPaired</name>
+      <longflag>--inputLandmarksPaired</longflag> 
+      <label>Input landmark file</label>
+      <channel>input</channel>
+      <description>Input landmark file (.fcsv)</description>
+    </file>
+
+    <file>
+      <name>outputLandmarksPaired</name>
+      <longflag>--outputLandmarksPaired</longflag> 
+      <label>Output landmark file</label>
+      <channel>output</channel>
+      <description>Output landmark file (.fcsv)</description>
+    </file>
+
+  </parameters>
+
+</executable>

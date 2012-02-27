@@ -19,6 +19,8 @@ set(ALL_TEST_PROGS
   BRAINSConstellationModeler
   BRAINSTrimForegroundInDirection
   insertMidACPCpoint
+  landmarksConstellationAligner
+  landmarksConstellationWeights
   )
 
 
@@ -34,6 +36,19 @@ set(ALL_PROGS_LIST
 foreach(prog ${ALL_PROGS_LIST})
   StandardBRAINSBuildMacro(NAME ${prog} TARGET_LIBRARIES landmarksConstellationCOMMONLIB )
 endforeach()
+
+if(0)
+## Programs for landmarks statistics. These programs do not have any xml file
+set(ALL_PROGS_LIST
+    LmkStatistics
+    GenerateAverageLmkFile
+    )
+
+foreach(prog ${ALL_PROGS_LIST})
+  add_executable(${prog} ../landmarkStatistics/${prog}.cxx)
+  target_link_libraries(${prog} BRAINSCommonLib ${ITK_LIBRARIES})
+endforeach()
+endif()
 
 ## Simple programs
 ## Test BRAINSClipInferior
@@ -545,6 +560,58 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetecto
   --inputLandmarkFile2 DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.fcsv} # Baseline file
   )
 set_property(TEST ${BRAINSConstellationDetectorTestName} APPEND PROPERTY DEPENDS insertMidACPCpointTest)
+
+
+set(BRAINSConstellationDetectorTestName landmarksConstellationAlignerTest) #This test aims to generate the output of the landmarksConstellationAligner to be compared with the baseline file
+ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:landmarksConstellationAlignerTestDriver>
+  ${BRAINSConstellationDetectorTestName}
+  --inputLandmarksPaired DATA{${TestData_DIR}/BRAINSConstellationDetectorTest_outputLandmarksInInputSpace_standard.fcsv}
+  --outputLandmarksPaired ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}.fcsv #output of the program
+  )
+
+set(BRAINSConstellationDetectorTestName landmarksAlignerCompareTest)
+ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:LandmarksCompare>
+  --inputLandmarkFile1 ${CMAKE_CURRENT_BINARY_DIR}/landmarksConstellationAlignerTest.fcsv # output of the landmarksConstellationAlignerTest
+  --inputLandmarkFile2 DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.fcsv} # Baseline file
+  )
+set_property(TEST ${BRAINSConstellationDetectorTestName} APPEND PROPERTY DEPENDS landmarksConstellationAlignerTest)
+
+
+# Fetching training data
+# We want to fetch some data, but we do not want to use them explicity as an argument in any program. They just have been addressed later in a txt file. However, we cannot pass an empty command, so we have used "BCD --hlep", which is like a command that do nothing.
+set(BRAINSConstellationDetectorTestName fetchDataTobeUsedInInputTrainingList)
+ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
+    BRAINSConstellationDetectorTest
+    --help DATA{${TestData_DIR}/TrainingCase1_T1.nii.gz} 
+     DATA{${TestData_DIR}/TrainingCase1.fcsv} 
+     DATA{${TestData_DIR}/TrainingCase2_T1.nii.gz}
+     DATA{${TestData_DIR}/TrainingCase2.fcsv}
+     DATA{${TestData_DIR}/TrainingCase3_T1.nii.gz}
+     DATA{${TestData_DIR}/TrainingCase3.fcsv}
+    )
+
+#This test aims to generate the output of the landmarksConstellationWeights program to be compared with the baseline file
+set(BRAINSConstellationDetectorTestName landmarksConstellationWeightsTest) 
+ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:landmarksConstellationWeightsTestDriver>
+  ${BRAINSConstellationDetectorTestName}
+  --inputTrainingList ${CMAKE_CURRENT_BINARY_DIR}/obliq_setup.txt
+  --inputTemplateModel DATA{${TestData_DIR}/T1-2ndVersion.mdl}
+  --LLSModel DATA{${TestData_DIR}/LLSModel-2ndVersion.hdf5}
+  --outputWeightsList ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}.wts #output of the program
+  )
+set_tests_properties(${BRAINSConstellationDetectorTestName} PROPERTIES TIMEOUT 9876)
+
+set(BRAINSConstellationDetectorTestName landmarksWeightsCompareTest)
+ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:LandmarksCompare>
+  --inputLandmarkFile1 ${CMAKE_CURRENT_BINARY_DIR}/landmarksConstellationWeightsTest.wts # output of the landmarksConstellationWeightsTest
+  --inputLandmarkFile2 DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.wts} # Baseline file
+  )
+set_property(TEST ${BRAINSConstellationDetectorTestName} APPEND PROPERTY DEPENDS landmarksConstellationWeightsTest)
 
 
 ExternalData_Add_Target( ${PROJECT_NAME}FetchData )  # Name of data management target

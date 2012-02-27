@@ -17,7 +17,7 @@ set(CMAKE_MODULE_PATH
 set(expected_ITK_VERSION_MAJOR ${ITK_VERSION_MAJOR})
 find_package(ITK REQUIRED)
 if(${ITK_VERSION_MAJOR} VERSION_LESS ${expected_ITK_VERSION_MAJOR})
-  # Note: Since ITKv3 doesn't include a ITKConfigVersion.cmake file, let's check the version 
+  # Note: Since ITKv3 doesn't include a ITKConfigVersion.cmake file, let's check the version
   #       explicitly instead of passing the version as an argument to find_package() command.
   message(FATAL_ERROR "Could not find a configuration file for package \"ITK\" that is compatible "
                       "with requested version \"${expected_ITK_VERSION_MAJOR}\".\n"
@@ -76,6 +76,7 @@ include_directories(
 #-----------------------------------------------------------------------------
 set(brains_modulenames
   BRAINSFit
+  EZBRAINSFit
   BRAINSResample
   BRAINSROIAuto
   GTRACT

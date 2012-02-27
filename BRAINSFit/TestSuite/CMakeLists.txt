@@ -1,5 +1,6 @@
 
 MakeTestDriverFromSEMTool(BRAINSFit BRAINSFitTest.cxx)
+MakeTestDriverFromSEMTool(EZBRAINSFit EZBRAINSFitTest.cxx)
 
 if(COMPILE_TEST_GENERATION_PROGRAMS)  ## These were programs needed to create the test suite, but are not needed for actual testing!
   # The following program was used to generate TestData/test2.nii.gz
@@ -1468,9 +1469,37 @@ if(RUN_EXTRA_METRIC_TESTS)
   )
 endif(RUN_EXTRA_METRIC_TESTS)
 
-
-
+# Test for EZBRAINSFit
+# TODO: Test xml parsing instead of algorithm (that's done with BRAINSFit tests)
+set(EZBRAINSFitTestName EZBRAINSFitTest_AffineRotationMasks)
+set(BRAINSFitTestName BRAINSFitTest_AffineRotationMasks)
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${EZBRAINSFitTestName}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:EZBRAINSFitTestDriver>
+  --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
+            ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
+  --compareIntensityTolerance 7
+  --compareRadiusTolerance 0
+  --compareNumberOfPixelsTolerance 777
+  EZBRAINSFitTest
+  --costMetric MMI
+  --failureExitCode -1 --writeTransformOnFailure
+  --numberOfIterations 2500
+  --numberOfHistogramBins 200
+  --numberOfSamples 131072
+  --translationScale 250
+  --minimumStepLength 0.001
+  --outputVolumePixelType uchar
+  --transformType Affine
+  --initialTransform DATA{${TestData_DIR}/BRAINSFitTest_Initializer_RigidRotationNoMasks.mat}
+  --maskProcessingMode ROI
+  --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
+  --fixedBinaryVolume DATA{${TestData_DIR}/test_mask.nii.gz}
+  --movingVolume DATA{${TestData_DIR}/rotation.test.nii.gz}
+  --movingBinaryVolume DATA{${TestData_DIR}/rotation.test_mask.nii.gz}
+  --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
+  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.mat
+  --debugLevel 50
+)
 
 
 ExternalData_Add_Target( ${PROJECT_NAME}FetchData )  # Name of data management target
-

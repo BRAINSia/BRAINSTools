@@ -46,13 +46,15 @@ else
 fi
 
 OS=$(uname -s)
-if [ "${OS}" = "Linux" ] ; then
-    NPROCS=$(grep -c ^processor /proc/cpuinfo)
-    export CFLAGS="${CFLAGS} -fpic"
-    export CXXFLAGS="${CXXFLAGS} -fpic"
-else
-    NPROCS=$(system_profiler | awk '/Number Of Cores/{print $5}{next;}')
-fi
+NPROCS=1
+
+# if [ "${OS}" = "Linux" ] ; then
+#     NPROCS=$(grep -c ^processor /proc/cpuinfo)
+#     export CFLAGS="${CFLAGS} -fpic"
+#     export CXXFLAGS="${CXXFLAGS} -fpic"
+# else
+#     NPROCS=$(system_profiler | awk '/Number Of Cores/{print $5}{next;}')
+# fi
 
 # create the testing directory if necessary
 mkdir -p ${startdir}
@@ -87,13 +89,22 @@ then
 fi
 
 
-OsName=`uname`
-which gcc > /dev/null 2>&1
-if [ $? == 0 ] ; then
-    Compiler=gcc-`gcc -dumpversion`-`gcc -dumpmachine`
+OsName=$(uname)
+if [ "${OsName}" = "Darwin" ] ; then
+    Compiler=clang-`clang -v 2>&1 | head -1 | awk '{print $4}'`
+    Compiler=${Compiler}-`clang -v 2>&1 | tail -2 | head -1 | awk '{print $2}'`
+    export CC=`which clang`
+    export CXX=`which clang++`
 else
-    Compiler=unknown
+    which gcc > /dev/null 2>&1
+    if [ $? == 0 ] ; then
+        Compiler=gcc-`gcc -dumpversion`-`gcc -dumpmachine`
+    else
+        Compiler=unknown
+    fi
 fi
+
+echo "Compiler=${Compiler} CC=${CC} CXX=${CXX}"
 
 for BUILD_TYPE in Debug Release
 do

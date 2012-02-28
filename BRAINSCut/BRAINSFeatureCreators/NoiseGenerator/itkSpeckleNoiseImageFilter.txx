@@ -35,7 +35,7 @@ template <class TInputImage, class TOutputImage>
 void
 SpeckleNoiseImageFilter<TInputImage, TOutputImage>
 ::ThreadedGenerateData( const OutputImageRegionType & outputRegionForThread,
-                        int threadId)
+                        ThreadIdType threadId)
 {
   std::cout << __LINE__ << "::" << __FILE__ << std::endl;
   InputImageConstPointer inputPtr = this->GetInput();
@@ -67,7 +67,7 @@ SpeckleNoiseImageFilter<TInputImage, TOutputImage>
   std::cout << __LINE__ << "::" << __FILE__ << std::endl;
   double theta = m_StandardDeviation * m_StandardDeviation;
   double k = 1 / theta;
-  double floork = itk::Math::Floor( k );
+  double floork = itk::Math::Floor<double>( k );
   double delta = k - floork;
   double v0 = itk::Math::e / ( itk::Math::e + delta );
 

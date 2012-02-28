@@ -36,7 +36,7 @@ template <class TInputImage, class TOutputImage>
 void
 ShotNoiseImageFilter<TInputImage, TOutputImage>
 ::ThreadedGenerateData( const OutputImageRegionType & outputRegionForThread,
-                        int threadId)
+                        ThreadIdType threadId)
 {
   InputImageConstPointer inputPtr = this->GetInput();
   OutputImagePointer     outputPtr = this->GetOutput(0);

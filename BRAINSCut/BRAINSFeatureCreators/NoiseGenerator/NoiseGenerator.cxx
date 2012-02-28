@@ -2,15 +2,18 @@
 #include "itkImageFileWriter.h"
 #include "itkSimpleFilterWatcher.h"
 
+#include "itkRescaleIntensityImageFilter.h"
+#include "itkCastImageFilter.h"
+
 #include "itkAdditiveGaussianNoiseImageFilter.h"
+#include "itkSpeckleNoiseImageFilter.h"
+#include "itkSaltAndPepperNoiseImageFilter.h"
+#include "itkShotNoiseImageFilter.h"
 #include "NoiseGeneratorCLP.h"
 
 int main(int argc, char * argv[])
 {
-  std::cout << __LINE__ << "::" << __FILE__ << std::endl;
-
   PARSE_ARGS;
-  std::cout << __LINE__ << "::" << __FILE__ << std::endl;
 
   bool violated = false;
   if( inputVolume == "" )
@@ -26,31 +29,93 @@ int main(int argc, char * argv[])
     return EXIT_FAILURE;
     }
 
-  const int dim = 3;
+  const int DIMENSION = 3;
 
-  typedef float                      PixelType;
-  typedef itk::Image<PixelType, dim> ImageType;
+  /** input iamges */
+  typedef double                                 ReadInPixelType;
+  typedef itk::Image<ReadInPixelType, DIMENSION> ReadInImageType;
 
-  typedef itk::ImageFileReader<ImageType> ReaderType;
+  typedef itk::ImageFileReader<ReadInImageType> ReaderType;
   ReaderType::Pointer reader = ReaderType::New();
   reader->SetFileName( inputVolume );
 
-  typedef itk::AdditiveGaussianNoiseImageFilter<ImageType, ImageType> FilterType;
-  FilterType::Pointer filter = FilterType::New();
-  filter->SetInput( reader->GetOutput() );
-  filter->SetStandardDeviation( inputGaussianStandardDeviation );
+  /** rescaler */
+  typedef itk::RescaleIntensityImageFilter<ReadInImageType, ReadInImageType> RescalerType;
+  RescalerType::Pointer rescaler = RescalerType::New();
 
-  filter->SetMean( inputGaussianMean );
-  filter->Update();
+  rescaler->SetInput( reader->GetOutput() );
+  rescaler->SetOutputMinimum(0);
+  rescaler->SetOutputMaximum(255);
 
-  itk::SimpleFilterWatcher watcher(filter, "filter");
+  /** casting */
+  typedef unsigned char                    PixelType;
+  typedef itk::Image<PixelType, DIMENSION> ImageType;
+
+  typedef itk::CastImageFilter<ReadInImageType, ImageType> CastingType;
+  CastingType::Pointer caster = CastingType::New();
+  caster->SetInput( rescaler->GetOutput() );
+
+  /** output image */
+  ImageType::Pointer outputImage;
+
+  if(  inputGaussianStandardDeviation < 0.0F &&
+       inputShotNoiseScale < 0.0F  &&
+       inputSpeckleNoiseStandardDeviation < 0.0F &&
+       inputSaltAndPepperProbability < 0.0F )
+    {
+    std::cout << "ERROR:: No method is given " << std::endl;
+    exit(EXIT_FAILURE);
+    }
+
+  /** gaussian */
+  if( inputGaussianStandardDeviation > 0 )
+    {
+    typedef itk::AdditiveGaussianNoiseImageFilter<ImageType, ImageType> GaussianNoiseFilterType;
+    GaussianNoiseFilterType::Pointer gaussianFilter = GaussianNoiseFilterType::New();
+    gaussianFilter->SetInput( caster->GetOutput() );
+    gaussianFilter->SetStandardDeviation( inputGaussianStandardDeviation );
+    gaussianFilter->SetMean( inputGaussianMean );
+    gaussianFilter->Update();
+    outputImage = gaussianFilter->GetOutput();
+    }
+
+  /** shot noise */
+  if( inputShotNoiseScale > 0 )
+    {
+    typedef itk::ShotNoiseImageFilter<ImageType, ImageType> ShotNoiseFilterType;
+    ShotNoiseFilterType::Pointer shotNoiseFilter = ShotNoiseFilterType::New();
+    shotNoiseFilter->SetInput( caster->GetOutput() );
+    shotNoiseFilter->SetScale( inputShotNoiseScale );
+    shotNoiseFilter->Update();
+    outputImage = shotNoiseFilter->GetOutput();
+    }
+
+  /** speckle noise image filter */
+  if( inputSpeckleNoiseStandardDeviation > 0 )
+    {
+    typedef itk::SpeckleNoiseImageFilter<ImageType, ImageType> SpeckleNoiseFilterType;
+    SpeckleNoiseFilterType::Pointer speckleNoiseFilter = SpeckleNoiseFilterType::New();
+    speckleNoiseFilter->SetInput( caster->GetOutput() );
+    speckleNoiseFilter->SetStandardDeviation( inputSpeckleNoiseStandardDeviation );
+    speckleNoiseFilter->Update();
+    outputImage = speckleNoiseFilter->GetOutput();
+    }
+
+  /** salt and pepper noise image filter */
+  if( inputSaltAndPepperProbability > 0 )
+    {
+    typedef itk::SaltAndPepperNoiseImageFilter<ImageType, ImageType> SaltAndPepperNoiseFilterType;
+    SaltAndPepperNoiseFilterType::Pointer spFilter = SaltAndPepperNoiseFilterType::New();
+    spFilter->SetInput( caster->GetOutput() );
+    spFilter->SetProbability( inputSaltAndPepperProbability );
+    spFilter->Update();
+    outputImage = spFilter->GetOutput();
+    }
 
   typedef itk::ImageFileWriter<ImageType> WriterType;
   WriterType::Pointer writer = WriterType::New();
-  writer->SetInput( filter->GetOutput() );
-  std::cout << __LINE__ << "::" << __FILE__ << std::endl;
+  writer->SetInput(  outputImage );
   writer->SetFileName( outputVolume );
-  std::cout << __LINE__ << "::" << __FILE__ << std::endl;
   writer->Update();
 
   return 0;

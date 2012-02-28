@@ -90,7 +90,7 @@ protected:
 
   void PrintSelf(std::ostream & os, Indent indent) const;
 
-  void ThreadedGenerateData(const OutputImageRegionType& outputRegionForThread, int threadId );
+  void ThreadedGenerateData(const OutputImageRegionType& outputRegionForThread, ThreadIdType threadId );
 
 private:
   SaltAndPepperNoiseImageFilter(const Self &); // purposely not implemented

@@ -26,19 +26,45 @@
       <longflag>inputGaussianStandardDeviation</longflag>
       <description>Optional: standard deviation for Gaussian Noise</description>
       <label>Gaussian Standard Deviation</label>
-      <default>1</default>
+      <default>-1</default>
       <channel>input</channel>
     </float>
 
     <float>
       <name>inputGaussianMean</name>
-      <longflag>inputGaissianMean</longflag>
+      <longflag>inputGaussianMean</longflag>
       <description>Optional: mean for Gaussian Noise</description>
       <label>Gaussian Mean</label>
       <default>0</default>
       <channel>input</channel>
     </float>
 
+    <float>
+      <name>inputShotNoiseScale</name>
+      <longflag>inputShotNoiseScale</longflag>
+      <description>Optional: scale for Shot Noise</description>
+      <label>ShotNoise Scale</label>
+      <default>-1</default>
+      <channel>input</channel>
+    </float>
+
+    <float>
+      <name>inputSpeckleNoiseStandardDeviation</name>
+      <longflag>inputSpeckleNoiseStandardDeviation</longflag>
+      <description>Optional: standard deviation for Speckle Noise</description>
+      <label>Speckel Noise Standard Deviation</label>
+      <default>-1</default>
+      <channel>input</channel>
+    </float>
+
+    <float>
+      <name>inputSaltAndPepperProbability</name>
+      <longflag>inputSaltAndPepperProbability</longflag>
+      <description>Optional: probability for Salt and Pepper Noise</description>
+      <label>Salt and Pepper Noise Probability </label>
+      <default>-1</default>
+      <channel>input</channel>
+    </float>
   </parameters>
   <parameters>
     <label>Output Parameters</label>

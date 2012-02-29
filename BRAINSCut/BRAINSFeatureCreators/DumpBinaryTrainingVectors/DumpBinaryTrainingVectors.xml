@@ -31,15 +31,4 @@
     </image>
   </parameters>
 
-  <parameters>
-    <label>Output Parameters</label>
-    <description>Output parameters for analysis.</description>
-    <image>
-      <name>outputFilename</name>
-      <longflag>--outputFilename</longflag>
-      <description>output filename (DOES NOT WORK YET)</description>
-      <label>Output Filename</label>
-      <channel>output</channel>
-    </image>
-  </parameters>
   </executable>

@@ -95,5 +95,12 @@
       <description>Explicitly specify the maximum number of threads to use.</description>
       <default>-1</default>
     </integer>
+    <image multiple="true" fileExtensions=".nii.gz,.nrrd">
+      <name>implicitOutputs</name>
+      <label>Implicit Outputs</label>
+      <description>Outputs to be made available to NiPype. Needed because not all BRAINSABC outputs have command line arguments.</description>
+      <longflag>implicitOutputs</longflag>
+      <channel>output</channel>
+    </image>
 </parameters>
 </executable>

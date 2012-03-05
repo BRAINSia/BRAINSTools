@@ -1,6 +1,6 @@
 
 MakeTestDriverFromSEMTool(BRAINSFit BRAINSFitTest.cxx)
-MakeTestDriverFromSEMTool(EZBRAINSFit EZBRAINSFitTest.cxx)
+MakeTestDriverFromSEMTool(BRAINSFitEZ BRAINSFitEZTest.cxx)
 
 if(COMPILE_TEST_GENERATION_PROGRAMS)  ## These were programs needed to create the test suite, but are not needed for actual testing!
   # The following program was used to generate TestData/test2.nii.gz
@@ -1469,18 +1469,18 @@ if(RUN_EXTRA_METRIC_TESTS)
   )
 endif(RUN_EXTRA_METRIC_TESTS)
 
-# Test for EZBRAINSFit
+# Test for BRAINSFitEZ
 # TODO: Test xml parsing instead of algorithm (that's done with BRAINSFit tests)
-set(EZBRAINSFitTestName EZBRAINSFitTest_AffineRotationMasks)
+set(BRAINSFitEZTestName BRAINSFitEZTest_AffineRotationMasks)
 set(BRAINSFitTestName BRAINSFitTest_AffineRotationMasks)
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${EZBRAINSFitTestName}
-  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:EZBRAINSFitTestDriver>
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitEZTestName}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitEZTestDriver>
   --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
             ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 7
   --compareRadiusTolerance 0
   --compareNumberOfPixelsTolerance 777
-  EZBRAINSFitTest
+  BRAINSFitEZTest
   --costMetric MMI
   --failureExitCode -1 --writeTransformOnFailure
   --numberOfIterations 2500

@@ -32,13 +32,6 @@
   <!-- -->
   <parameters advanced="false">
     <label>Output Settings (At least one output must be specified.)</label>
-    <transform fileExtensions=".mat" type="bspline" reference="movingVolume">
-      <name>bsplineTransform</name>
-      <longflag>bsplineTransform</longflag>
-      <label>Slicer BSpline Transform</label>
-      <description>(optional) Filename to which save the estimated transform. NOTE: You must set at least one output object (either a deformed image or a transform.  NOTE: USE THIS ONLY IF THE FINAL TRANSFORM IS BSpline (Advanced)</description>
-      <channel>output</channel>
-    </transform>
 
     <transform fileExtensions=".mat" type="linear" reference="movingVolume">
       <name>linearTransform</name>
@@ -47,7 +40,35 @@
       <description>(optional) Filename to which save the estimated transform. NOTE: You must set at least one output object (either a deformed image or a transform.  NOTE: USE THIS ONLY IF THE FINAL TRANSFORM IS ---NOT--- BSpline</description>
       <channel>output</channel>
     </transform>
+  </parameters>
+  <parameters advanced="false">
+    <label>Simple Registration Phases (Check one or more, executed in order listed)</label>
+    <description>Each of the registration phases will be used to initialize the next phase</description>
+    <boolean>
+       <name>useRigid</name>
+       <longflag>useRigid</longflag>
+       <label>Rigid (6 DOF)</label>
+       <description>Perform a rigid registration as part of the sequential registration steps.  This family of options superceeds the use of transformType if any of them are set.</description>
+       <default>true</default>
+    </boolean>
+    <boolean>
+       <name>useAffine</name>
+       <longflag>useAffine</longflag>
+       <label>Affine(12 DOF)</label>
+       <description>Perform a series of registrations to that culminates with an Affine transform being defined.  This family of options superceeds the use of transformType if any of them are set.</description>
+       <default>false</default>
+    </boolean>
+  </parameters>
 
+
+  <parameters advanced="true">
+    <transform fileExtensions=".mat" type="bspline" reference="movingVolume">
+      <name>bsplineTransform</name>
+      <longflag>bsplineTransform</longflag>
+      <label>Slicer BSpline Transform</label>
+      <description>(optional) Filename to which save the estimated transform. NOTE: You must set at least one output object (either a deformed image or a transform.  NOTE: USE THIS ONLY IF THE FINAL TRANSFORM IS BSpline (Advanced)</description>
+      <channel>output</channel>
+    </transform>
     <image>
       <name>outputVolume</name>
       <longflag>outputVolume</longflag>
@@ -56,10 +77,6 @@
       <channel>output</channel>
       <default></default>
     </image>
-
-  </parameters>
-
-  <parameters>
     <label>Initial Alignment</label>
     <description>Options for initializing transform parameters to a initial starting point.</description>
 
@@ -76,7 +93,7 @@
       <longflag>initializeTransformMode</longflag>
       <label>Intitialze Transform Mode</label>
       <description>Determine how to initialize the transform center.  GeometryAlign on assumes that the center of the voxel lattice of the images represent similar structures.  MomentsAlign assumes that the center of mass of the images represent similar structures.  useCenterOfHeadAlign attempts to use the top of head and shape of neck to drive a center of mass estimate.  Off assumes that the physical space of the images are close, and that centering in terms of the image Origins is a good starting point.  This flag is mutually exclusive with the initialTransform flag.</description>
-      <default>Off</default>
+      <default>useMomentsAlign</default>
       <element>Off</element>
       <element>useMomentsAlign</element>
       <element>useCenterOfHeadAlign</element>
@@ -85,36 +102,11 @@
     </string-enumeration>
   </parameters>
 
-  <parameters advanced="false">
-    <label>Simple Registration Phases (Check one or more, executed in order listed)</label>
-    <description>Each of the registration phases will be used to initialize the next phase</description>
-    <boolean>
-       <name>useRigid</name>
-       <longflag>useRigid</longflag>
-       <label>Rigid (6 DOF)</label>
-       <description>Perform a rigid registration as part of the sequential registration steps.  This family of options superceeds the use of transformType if any of them are set.</description>
-       <default>false</default>
-    </boolean>
-    <boolean>
-       <name>useAffine</name>
-       <longflag>useAffine</longflag>
-       <label>Affine(12 DOF)</label>
-       <description>Perform an Affine registration as part of the sequential registration steps.  This family of options superceeds the use of transformType if any of them are set.</description>
-       <default>false</default>
-    </boolean>
-  </parameters>
 
   <!-- -->
   <parameters advanced="true">
     <label>Registration Phases (Check one or more, executed in order listed)</label>
     <description>Each of the registration phases will be used to initialize the next phase</description>
-    <boolean>
-       <name>useRigid</name>
-       <longflag>useRigid</longflag>
-       <label>Rigid (6 DOF)</label>
-       <description>Perform a rigid registration as part of the sequential registration steps.  This family of options superceeds the use of transformType if any of them are set.</description>
-       <default>false</default>
-    </boolean>
     <boolean>
        <name>useScaleVersor3D</name>
        <longflag>useScaleVersor3D</longflag>
@@ -127,13 +119,6 @@
        <longflag>useScaleSkewVersor3D</longflag>
        <label>Rigid+Scale+Skew(10 DOF)</label>
        <description>Perform a ScaleSkewVersor3D registration as part of the sequential registration steps.  This family of options superceeds the use of transformType if any of them are set.</description>
-       <default>false</default>
-    </boolean>
-    <boolean>
-       <name>useAffine</name>
-       <longflag>useAffine</longflag>
-       <label>Affine(12 DOF)</label>
-       <description>Perform an Affine registration as part of the sequential registration steps.  This family of options superceeds the use of transformType if any of them are set.</description>
        <default>false</default>
     </boolean>
     <boolean>
@@ -190,7 +175,7 @@
       <longflag>maskProcessingMode</longflag>
       <description>What mode to use for using the masks.  If ROIAUTO is choosen, then the mask is implicitly defined using a otsu forground and hole filling algorithm. The Region Of Interest mode (choose ROI) uses the masks to define what parts of the image should be used for computing the transform.</description>
       <label>Masking Option </label>
-      <default>NOMASK</default>
+      <default>ROIAUTO</default>
       <element>NOMASK</element>
       <element>ROIAUTO</element>
       <element>ROI</element>

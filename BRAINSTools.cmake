@@ -76,7 +76,6 @@ include_directories(
 #-----------------------------------------------------------------------------
 set(brains_modulenames
   BRAINSFit
-  EZBRAINSFit
   BRAINSResample
   BRAINSROIAuto
   GTRACT

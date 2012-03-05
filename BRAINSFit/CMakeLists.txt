@@ -10,7 +10,7 @@ configure_file(
 
 set(ALL_PROGS_LIST
   BRAINSFit
-  EZBRAINSFit
+  BRAINSFitEZ
   )
 
 set(BRAINSFitLibraries BRAINSCommonLib)

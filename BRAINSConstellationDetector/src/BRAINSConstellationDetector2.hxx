@@ -494,6 +494,19 @@ BRAINSConstellationDetector2<TInputImage, TOutputImage>
         }
       if( this->m_WriteBranded2DImage.compare("") != 0 )
         {
+        /*
+        for( LandmarksMapType::const_iterator lit = m_AlignedPoints.begin(); lit != m_AlignedPoints.end(); ++lit )
+        {
+            std::cout << lit->first << "=" << lit->second[0] << "," << lit->second[1] << "," << lit->second[2] << std::endl << std::endl;
+        }
+
+        std::cout << "filename : " << this->m_WriteBranded2DImage << std::endl;
+
+        itkUtil::WriteImage<SImageType>(this->m_OutputResampledImage, "m_OutputResampledImage.nii.gz");
+
+        double height = myDetector.GetModelHeight("AC");
+        */
+
         MakeBranded2DImage(this->m_OutputResampledImage.GetPointer(), myDetector,
                            this->m_AlignedPoints["RP"],
                            this->m_AlignedPoints["AC"],

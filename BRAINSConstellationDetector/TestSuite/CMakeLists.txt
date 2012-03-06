@@ -409,6 +409,22 @@ if("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
     --LLSModel DATA{${TestData_DIR}/LLSModel.hdf5}
     --trimRescaledIntensities 2)
 
+  set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_writeBranded2DImage)
+  ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
+    COMMAND $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
+    --compare DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.png}
+    ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.png
+    --compareIntensityTolerance 0
+    --compareRadiusTolerance 0
+    --compareNumberOfPixelsTolerance 0
+
+    BRAINSConstellationDetectorTest
+    --inputVolume DATA{${TestData_DIR}/T1.nii.gz}
+    --outputResampledVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
+    --inputTemplateModel DATA{${TestData_DIR}/T1-2ndVersion.mdl}
+    --LLSModel DATA{${TestData_DIR}/LLSModel-2ndVersion.hdf5}
+    --writeBranded2DImage ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.png)
+
 endif("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
 
 set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_forceHoughReportFailure)

@@ -13,14 +13,96 @@
 #include "H5Cpp.h"
 #endif
 
+RGBImageType::Pointer ReturnOrientedRGBImage(SImageType::Pointer inputImage)
+{
+  RGBImageType::Pointer orientedImage;
+
+  // std::cout << "inputImage information:\n" << inputImage << std::endl;
+
+  // StatisticsImageFilter clears the buffer of the input image, so we have to pass a copy
+  // of the input image through that
+  SImageType::Pointer inputStatsImage;
+    {
+    DuplicatorType::Pointer duplicator = DuplicatorType::New();
+    duplicator->SetInputImage(inputImage);
+    duplicator->Update();
+    inputStatsImage = duplicator->GetOutput();
+    }
+
+  itk::StatisticsImageFilter<SImageType>::Pointer stats = itk::StatisticsImageFilter<SImageType>::New();
+
+  stats->SetInput(inputStatsImage);
+  stats->Update();
+
+  SImageType::PixelType minPixel( stats->GetMinimum() );
+  SImageType::PixelType maxPixel( stats->GetMaximum() );
+
+  // std::cout << "size of inputImage: " << inputImage->GetLargestPossibleRegion().GetSize()[0] << ","
+  //    << inputImage->GetLargestPossibleRegion().GetSize()[1] << "," <<
+  // inputImage->GetLargestPossibleRegion().GetSize()[2] << std::endl;
+
+  //  itkUtil::WriteImage<SImageType>(inputImage, "inputImage.nii.gz");
+
+  RGBImageType::Pointer rgbImage = RGBImageType::New();
+  rgbImage->CopyInformation(inputImage);
+  rgbImage->SetRegions( inputImage->GetLargestPossibleRegion() );
+  rgbImage->Allocate();
+
+  // First just make RGB Image with greyscale values.
+  itk::ImageRegionIterator<RGBImageType> rgbIt( rgbImage, rgbImage->GetLargestPossibleRegion() );
+  itk::ImageRegionIterator<SImageType>   sIt( inputImage, inputImage->GetLargestPossibleRegion() );
+  for( ; !sIt.IsAtEnd(); ++rgbIt, ++sIt )
+    {
+    unsigned char charVal( ShortToUChar(sIt.Value(), minPixel, maxPixel) );
+    RGBPixelType  pixel;
+    pixel.SetRed(charVal);
+    pixel.SetGreen(charVal);
+    pixel.SetBlue(charVal);
+    rgbIt.Set(pixel);
+    }
+  return orientedImage = rgbImage;
+}
+
+RGB2DImageType::Pointer GenerateRGB2DImage( RGBImageType::Pointer orientedImage)
+{
+  // Alocate 2DImage
+  RGB2DImageType::Pointer   TwoDImage = RGB2DImageType::New();
+  RGB2DImageType::IndexType TwoDIndex;
+
+  TwoDIndex[0] = 0;
+  TwoDIndex[1] = 0;
+  RGB2DImageType::SizeType TwoDSize;
+  TwoDSize[0] = orientedImage->GetLargestPossibleRegion().GetSize()[1];
+  TwoDSize[1] = orientedImage->GetLargestPossibleRegion().GetSize()[2];
+  RGB2DImageType::RegionType TwoDImageRegion;
+  TwoDImageRegion.SetIndex(TwoDIndex);
+  TwoDImageRegion.SetSize(TwoDSize);
+  TwoDImage->SetRegions(TwoDImageRegion);
+  TwoDImage->Allocate();
+
+  // Fill 2DImage
+  RGBImageType::IndexType ThreeDIndex;
+  ThreeDIndex[0] = ( orientedImage->GetLargestPossibleRegion().GetSize()[0] ) / 2;
+  for( TwoDIndex[1] = 0; TwoDIndex[1] < static_cast<signed int>( TwoDSize[1] ); ( TwoDIndex[1] )++ )
+    {
+    ThreeDIndex[2] = TwoDSize[1] - 1 - TwoDIndex[1];
+    for( TwoDIndex[0] = 0; TwoDIndex[0] < static_cast<signed int>( TwoDSize[0] ); ( TwoDIndex[0] )++ )
+      {
+      ThreeDIndex[1] = TwoDIndex[0];
+      TwoDImage->SetPixel( TwoDIndex, orientedImage->GetPixel(ThreeDIndex) );
+      }
+    }
+
+  return TwoDImage;
+}
+
 static bool IsOnCylinder(const SImageType::PointType & curr_point,
                          const SImageType::PointType & center_point,
                          const SImageType::PointType & center_point2,
                          const double radius,
                          const double thickness)
 {
-  // const double cylinder_end=vcl_abs(height -
-  // vcl_abs(curr_point[0]-center_point[0]));
+  // const double cylinder_end=vcl_abs(height - vcl_abs(curr_point[0]-center_point[0]));
   const double APdist = curr_point[1] - center_point[1];
   const double ISdist = curr_point[2] - center_point[2];
   const double cylinder_side_squared =
@@ -56,66 +138,23 @@ MakeBrandeddebugImage(SImageType::ConstPointer in,
                       const SImageType::PointType & PC2,
                       const SImageType::PointType & VN42)
 {
-  RGBImageType::Pointer orientedImage;
-  SImageType::Pointer   inputImage =
-    itkUtil::OrientImage<SImageType>(in,
-                                     itk::SpatialOrientation::
-                                     ITK_COORDINATE_ORIENTATION_RAI);
+  SImageType::Pointer inputImage = itkUtil::OrientImage<SImageType>(in,
+                                                                    itk::SpatialOrientation::
+                                                                    ITK_COORDINATE_ORIENTATION_RAI);
 
-    {
-    itk::StatisticsImageFilter<SImageType>::Pointer stats =
-      itk::StatisticsImageFilter<SImageType>::New();
-    stats->SetInput(inputImage);
-    stats->Update();
-    SImageType::PixelType minPixel( stats->GetMinimum() );
-    SImageType::PixelType maxPixel( stats->GetMaximum() );
-    RGBImageType::Pointer rgbImage = RGBImageType::New();
-    rgbImage->CopyInformation(inputImage);
-    rgbImage->SetRegions( inputImage->GetLargestPossibleRegion() );
-    rgbImage->Allocate();
+  RGBImageType::Pointer orientedImage = ReturnOrientedRGBImage( inputImage );
 
-    // First just make RGB Image with greyscale values.
-    itk::ImageRegionIterator<RGBImageType>
-    rgbIt( rgbImage, rgbImage->GetLargestPossibleRegion() );
-    itk::ImageRegionIterator<SImageType>
-    sIt( inputImage, inputImage->GetLargestPossibleRegion() );
-    for( ; !sIt.IsAtEnd(); ++rgbIt, ++sIt )
-      {
-      // SImageType::IndexType index = sIt.GetIndex();
-      // SImageType::PointType p;
-      // rgbImage->TransformIndexToPhysicalPoint(index,p);
-      unsigned char charVal( ShortToUChar(sIt.Value(), minPixel, maxPixel) );
-      RGBPixelType  pixel;
-      pixel.SetRed(charVal);
-      pixel.SetGreen(charVal);
-      pixel.SetBlue(charVal);
-      rgbIt.Set(pixel);
-      }
-    orientedImage = rgbImage;
-    }
-
-  // HACK: Ali:  This code seems to be duplicated at line 294,  The duplicated code should be made into a function so
-  // there is only one verison of it
-  // HACK: Ali:  BRAINSConstellationDetector/src/landmarkIO.cxx:294: warning #593: variable "height" was set but never
-  // used
   for( unsigned int which = 0; which < 4; which++ )
     {
     SImageType::PointType pt = RP;
     SImageType::PointType pt2 = RP2;
     double                radius = 0.0;
-    // HACK:  Ali:  Why is height hard-coded to a value of 4 here?
-    // HACK:  Ali:  BRAINSConstellationDetector/src/landmarkIO.cxx:102: warning #593: variable "height" was set but
-    // never used
-
-    double height = 0.0;
+    double                height = 0.0;
 
     switch( which )
       {
       case 0:
         {
-        // The mDef reference file is probably still specifying the Height for each of these landmark points, but
-        // that value is not being used in the IsOnCylinder computation due to the over-ride value of '4'
-        // It would be better to use the value of '4' in the mDef file instead.
         height = mDef.GetHeight("RP");
         radius = 4 * mDef.GetRadius("RP");
         pt = RP;
@@ -148,17 +187,15 @@ MakeBrandeddebugImage(SImageType::ConstPointer in,
         break;
       }
 
-    itk::ImageRegionIterator<RGBImageType>
-    rgbIt( orientedImage, orientedImage->GetLargestPossibleRegion() );
-    itk::ImageRegionIterator<SImageType>
-    sIt( inputImage, inputImage->GetLargestPossibleRegion() );
+    itk::ImageRegionIterator<RGBImageType> rgbIt( orientedImage, orientedImage->GetLargestPossibleRegion() );
+    itk::ImageRegionIterator<SImageType>   sIt( inputImage, inputImage->GetLargestPossibleRegion() );
     for( ; !rgbIt.IsAtEnd() && !sIt.IsAtEnd(); ++sIt, ++rgbIt )
       {
       SImageType::IndexType index = rgbIt.GetIndex();
       SImageType::PointType p;
       orientedImage->TransformIndexToPhysicalPoint(index, p);
-      // HACK:  Ali:  Why is height hard-coded to a value of 4 here?
-      if( IsOnCylinder(p, pt, pt2, radius, /* height, */ 4) )
+
+      if( IsOnCylinder(p, pt, pt2, radius, height) )
         {
         RGBPixelType pixel = rgbIt.Value();
 
@@ -198,34 +235,7 @@ MakeBrandeddebugImage(SImageType::ConstPointer in,
       }
     }
 
-  RGB2DImageType::Pointer    TwoDImage = RGB2DImageType::New();
-  RGB2DImageType::RegionType TwoDImageRegion;
-  RGB2DImageType::IndexType  TwoDIndex;
-  TwoDIndex[0] = 0;
-  TwoDIndex[1] = 0;
-  RGB2DImageType::SizeType TwoDSize;
-  TwoDSize[0] = orientedImage->GetLargestPossibleRegion().GetSize()[1];
-  TwoDSize[1] = orientedImage->GetLargestPossibleRegion().GetSize()[2];
-  TwoDImageRegion.SetIndex(TwoDIndex);
-  TwoDImageRegion.SetSize(TwoDSize);
-  TwoDImage->SetRegions(TwoDImageRegion);
-  TwoDImage->Allocate();
-
-  RGBImageType::IndexType ThreeDIndex;
-  ThreeDIndex[0] = ( orientedImage->GetLargestPossibleRegion().GetSize()[0] ) / 2;
-  for( TwoDIndex[1] = 0;
-       TwoDIndex[1] < static_cast<signed int>( TwoDSize[1] );
-       ( TwoDIndex[1] )++ )
-    {
-    ThreeDIndex[2] = TwoDSize[1] - 1 - TwoDIndex[1];
-    for( TwoDIndex[0] = 0;
-         TwoDIndex[0] < static_cast<signed int>( TwoDSize[0] );
-         ( TwoDIndex[0] )++ )
-      {
-      ThreeDIndex[1] = TwoDIndex[0];
-      TwoDImage->SetPixel( TwoDIndex, orientedImage->GetPixel(ThreeDIndex) );
-      }
-    }
+  RGB2DImageType::Pointer TwoDImage = GenerateRGB2DImage( orientedImage );
 
   itkUtil::WriteImage<RGB2DImageType>(TwoDImage, fname);
   itkUtil::WriteImage<RGBImageType>(orientedImage, fname + "_ThreeDRGB.nii.gz");
@@ -237,23 +247,27 @@ MakePointBranded3DImage(SImageType::ConstPointer in,
                         const SImageType::PointType & CenterPoint,
                         const std::string & fname)
 {
-  SImageType::Pointer inputImage =
-    itkUtil::OrientImage<SImageType>(in,
-                                     itk::SpatialOrientation::
-                                     ITK_COORDINATE_ORIENTATION_RAI);
+  SImageType::Pointer inputImage = itkUtil::OrientImage<SImageType>(in,
+                                                                    itk::SpatialOrientation::
+                                                                    ITK_COORDINATE_ORIENTATION_RAI);
+  SImageType::Pointer inputStatsImage;
+    {
+    DuplicatorType::Pointer duplicator = DuplicatorType::New();
+    duplicator->SetInputImage(inputImage);
+    duplicator->Update();
+    inputStatsImage = duplicator->GetOutput();
+    }
 
-  itk::StatisticsImageFilter<SImageType>::Pointer stats =
-    itk::StatisticsImageFilter<SImageType>::New();
+  itk::StatisticsImageFilter<SImageType>::Pointer stats = itk::StatisticsImageFilter<SImageType>::New();
 
-  stats->SetInput(inputImage);
+  stats->SetInput(inputStatsImage);
   stats->Update();
-  //  SImageType::PixelType minPixel(stats->GetMinimum());
   SImageType::PixelType maxPixel( stats->GetMaximum() );
+
   SImageType::PointType pt = CenterPoint;
   double                radius = 3.0;
 
-  itk::ImageRegionIterator<SImageType>
-  sIt( inputImage, inputImage->GetLargestPossibleRegion() );
+  itk::ImageRegionIterator<SImageType> sIt( inputImage, inputImage->GetLargestPossibleRegion() );
   for( ; !sIt.IsAtEnd(); ++sIt )
     {
     SImageType::IndexType index = sIt.GetIndex();
@@ -278,49 +292,12 @@ MakeBranded2DImage(SImageType::ConstPointer in,
                    const SImageType::PointType & CM,
                    const std::string & fname)
 {
-  RGBImageType::Pointer orientedImage;
-  SImageType::Pointer   inputImage =
-    itkUtil::OrientImage<SImageType>(in,
-                                     itk::SpatialOrientation::
-                                     ITK_COORDINATE_ORIENTATION_RAI);
+  SImageType::Pointer inputImage = itkUtil::OrientImage<SImageType>(in,
+                                                                    itk::SpatialOrientation::
+                                                                    ITK_COORDINATE_ORIENTATION_RAI);
 
-    {
-    itk::StatisticsImageFilter<SImageType>::Pointer stats =
-      itk::StatisticsImageFilter<SImageType>::New();
-    stats->SetInput(inputImage);
-    stats->Update();
-    SImageType::PixelType minPixel( stats->GetMinimum() );
-    SImageType::PixelType maxPixel( stats->GetMaximum() );
-    RGBImageType::Pointer rgbImage = RGBImageType::New();
-    rgbImage->CopyInformation(inputImage);
-    rgbImage->SetRegions( inputImage->GetLargestPossibleRegion() );
-    rgbImage->Allocate();
+  RGBImageType::Pointer orientedImage = ReturnOrientedRGBImage( inputImage );
 
-    // First just make RGB Image with greyscale values.
-    itk::ImageRegionIterator<RGBImageType>
-    rgbIt( rgbImage, rgbImage->GetLargestPossibleRegion() );
-    itk::ImageRegionIterator<SImageType>
-    sIt( inputImage, inputImage->GetLargestPossibleRegion() );
-    for( ; !sIt.IsAtEnd(); ++rgbIt, ++sIt )
-      {
-      // SImageType::IndexType index = sIt.GetIndex();
-      // SImageType::PointType p;
-      // rgbImage->TransformIndexToPhysicalPoint(index,p);
-      unsigned char charVal( ShortToUChar(sIt.Value(), minPixel, maxPixel) );
-      RGBPixelType  pixel;
-      pixel.SetRed(charVal);
-      pixel.SetGreen(charVal);
-      pixel.SetBlue(charVal);
-      rgbIt.Set(pixel);
-      }
-    orientedImage = rgbImage;
-    }
-
-  // HACK: Ali:  This code seems to be duplicated at line 102,  The duplicated code should be made into a function so
-  // there is only one verison of it
-  // HACK: Ali:  BRAINSConstellationDetector/src/landmarkIO.cxx:294: warning #593: variable "height" was set but never
-  // used
-  // HACK: Ali:  This code also has the same problem as the code at line 102.
   for( unsigned int which = 0; which < 5; which++ )
     {
     SImageType::PointType pt;
@@ -366,16 +343,14 @@ MakeBranded2DImage(SImageType::ConstPointer in,
         break;
       }
 
-    itk::ImageRegionIterator<RGBImageType>
-    rgbIt( orientedImage, orientedImage->GetLargestPossibleRegion() );
-    itk::ImageRegionIterator<SImageType>
-    sIt( inputImage, inputImage->GetLargestPossibleRegion() );
+    itk::ImageRegionIterator<RGBImageType> rgbIt( orientedImage, orientedImage->GetLargestPossibleRegion() );
+    itk::ImageRegionIterator<SImageType>   sIt( inputImage, inputImage->GetLargestPossibleRegion() );
     for( ; !rgbIt.IsAtEnd() && !sIt.IsAtEnd(); ++sIt, ++rgbIt )
       {
       SImageType::IndexType index = rgbIt.GetIndex();
       SImageType::PointType p;
       orientedImage->TransformIndexToPhysicalPoint(index, p);
-      if( IsOnCylinder(p, pt, pt, radius, /* height,*/ 4) )
+      if( IsOnCylinder(p, pt, pt, radius, height) )
         {
         RGBPixelType pixel = rgbIt.Value();
 
@@ -431,35 +406,7 @@ MakeBranded2DImage(SImageType::ConstPointer in,
       }
     }
 
-  RGB2DImageType::Pointer    TwoDImage = RGB2DImageType::New();
-  RGB2DImageType::RegionType TwoDImageRegion;
-  RGB2DImageType::IndexType  TwoDIndex;
-  TwoDIndex[0] = 0;
-  TwoDIndex[1] = 0;
-  RGB2DImageType::SizeType TwoDSize;
-  TwoDSize[0] = orientedImage->GetLargestPossibleRegion().GetSize()[1];
-  TwoDSize[1] = orientedImage->GetLargestPossibleRegion().GetSize()[2];
-  TwoDImageRegion.SetIndex(TwoDIndex);
-  TwoDImageRegion.SetSize(TwoDSize);
-  TwoDImage->SetRegions(TwoDImageRegion);
-  TwoDImage->Allocate();
-
-  RGBImageType::IndexType ThreeDIndex;
-  ThreeDIndex[0] =
-    ( orientedImage->GetLargestPossibleRegion().GetSize()[0] ) / 2;
-  for( TwoDIndex[1] = 0;
-       TwoDIndex[1] < static_cast<signed int>( TwoDSize[1] );
-       ( TwoDIndex[1] )++ )
-    {
-    ThreeDIndex[2] = TwoDSize[1] - 1 - TwoDIndex[1];
-    for( TwoDIndex[0] = 0;
-         TwoDIndex[0] < static_cast<signed int>( TwoDSize[0] );
-         ( TwoDIndex[0] )++ )
-      {
-      ThreeDIndex[1] = TwoDIndex[0];
-      TwoDImage->SetPixel( TwoDIndex, orientedImage->GetPixel(ThreeDIndex) );
-      }
-    }
+  RGB2DImageType::Pointer TwoDImage = GenerateRGB2DImage( orientedImage );
 
   itkUtil::WriteImage<RGB2DImageType>(TwoDImage, fname);
 }

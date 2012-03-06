@@ -14,6 +14,7 @@
 #include "itkAffineTransform.h"
 #include "itkVersorRigid3DTransform.h"
 #include "itkImageFileReader.h"
+#include "itkImageDuplicator.h"
 
 #include "string.h"
 #include <map>
@@ -27,6 +28,7 @@ typedef vnl_vector<double>                           VectorType;
 typedef itk::VersorRigid3DTransform<double>          VersorTransformType;
 typedef VersorTransformType::Pointer                 VersorTransformPointer;
 typedef VersorTransformType::MatrixType              VersorTransformMatrixType;
+typedef itk::ImageDuplicator<SImageType>             DuplicatorType;
 
 extern void MakeBrandeddebugImage(SImageType::ConstPointer in, const landmarksConstellationModelIO & mDef,
                                   const SImageType::PointType & RP, const SImageType::PointType & AC,
@@ -52,11 +54,8 @@ extern void WriteMRMLFile(std::string outputMRML, std::string outputLandmarksInI
 
 // load linear least squares model for selected landmarks
 // .load from txt file
-extern void loadLLSModel(std::string llsModel, std::map<std::string,
-                                                        std::vector<double> > & llsMeans, std::map<std::string,
-                                                                                                   MatrixType> & llsMatrices, std::map<std::string,
-                                                                                                                                       double>
-                         & searchRadii);
+extern void loadLLSModel(std::string llsModel, std::map<std::string, std::vector<double> > & llsMeans,
+                         std::map<std::string, MatrixType> & llsMatrices, std::map<std::string, double> & searchRadii);
 
 /*
 // load from .mat file
@@ -67,17 +66,12 @@ extern void loadLLSModelMat(std::string llsModel, std::string processingList,
                                                                                       double>
                             & searchRadii);
 */
-extern void writeLLSModel(const std::string & modelName, const std::map<std::string,
-                                                                        std::vector<double> > & llsMeans,
+extern void writeLLSModel(const std::string & modelName, const std::map<std::string, std::vector<double> > & llsMeans,
                           const std::map<std::string, MatrixType> & llsMatrices, const std::map<std::string,
-                                                                                                double>
-                          & searchRadii);
+                                                                                                double> & searchRadii);
 
-extern void readLLSModel(const std::string & modelName, std::map<std::string,
-                                                                 std::vector<double> > & llsMeans, std::map<std::string,
-                                                                                                            MatrixType> & llsMatrices, std::map<std::string,
-                                                                                                                                                double>
-                         & searchRadii);
+extern void readLLSModel(const std::string & modelName, std::map<std::string, std::vector<double> > & llsMeans,
+                         std::map<std::string, MatrixType> & llsMatrices, std::map<std::string, double> & searchRadii);
 
 // write out verification script
 extern void writeVerificationScript(std::string outputVerificationScript, std::string outputVolume,

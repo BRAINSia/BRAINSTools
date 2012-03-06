@@ -79,8 +79,6 @@
       <channel>output</channel>
       <default></default>
     </image>
-    <label>Initial Alignment</label>
-    <description>Options for initializing transform parameters to a initial starting point.</description>
 
     <transform fileExtensions=".mat">
       <name>initialTransform</name>

@@ -60,8 +60,10 @@
     </boolean>
   </parameters>
 
-
+  <!--    Advanced parameters -->
   <parameters advanced="true">
+    <label>Advanced Hidden Parameters</label>
+    <description>Use the advanced version of BRAINSFit for more flexibility</description>
     <transform fileExtensions=".mat" type="bspline" reference="movingVolume">
       <name>bsplineTransform</name>
       <longflag>bsplineTransform</longflag>
@@ -100,13 +102,8 @@
       <element>useGeometryAlign</element>
       <element>useCenterOfROIAlign</element>
     </string-enumeration>
-  </parameters>
 
 
-  <!-- -->
-  <parameters advanced="true">
-    <label>Registration Phases (Check one or more, executed in order listed)</label>
-    <description>Each of the registration phases will be used to initialize the next phase</description>
     <boolean>
        <name>useScaleVersor3D</name>
        <longflag>useScaleVersor3D</longflag>
@@ -136,11 +133,6 @@
        <default>false</default>
     </boolean>
 
-  </parameters>
-  <!-- -->
-  <parameters advanced="true">
-    <label>Main Parameters</label>
-
     <integer>
       <name>numberOfSamples</name>
       <longflag>numberOfSamples</longflag>
@@ -165,10 +157,6 @@
       <default>1500</default>
     </integer-vector>
 
-  </parameters>
-  <!-- -->
-  <parameters advanced="true">
-    <label>Mask Option</label>
 
     <string-enumeration>
       <name>maskProcessingMode</name>
@@ -214,11 +202,8 @@
       <description>The ROI automatically found in moving image, ONLY FOR ROIAUTO mode.</description>
       <channel>output</channel>
     </image>
-  </parameters>
 
 
-  <parameters advanced="true">
-    <label>Advanced Output Settings</label>
     <string-enumeration>
       <name>outputVolumePixelType</name>
       <longflag>outputVolumePixelType</longflag>
@@ -341,11 +326,6 @@
       <default>10</default>
     </integer>
 
-  </parameters>
-
-  <parameters advanced="true">
-    <label>Special Modes Parameters</label>
-
     <transform fileExtensions=".mat" type="linear">
       <name>strippedOutputTransform</name>
       <longflag>strippedOutputTransform</longflag>
@@ -403,11 +383,6 @@
       <description>The half percentage to decide outliers of image intensities. The default value is zero, which means no outlier removal. If the value of 0.005 is given, the moduel will throw away 0.005 % of both tails, so 0.01% of intensities in total would be ignored in its statistic calculation. </description>
       <default>0.0</default>
     </double>
-  </parameters>
-  <!-- -->
-  <!-- -->
-  <parameters advanced="true">
-    <label>Registration Debugging Parameters</label>
 
     <string-enumeration>
       <name>useCachingOfBSplineWeightsMode</name>
@@ -529,9 +504,6 @@
       <description>Prompt the user to hit enter each time an image is sent to the DebugImageViewer</description>
       <default>false</default>
     </boolean>
-  </parameters>
-  <parameters advanced="true">
-    <label>Risky Expert-only Parameters</label>
 
     <boolean>
        <name>useMomentsAlign</name>

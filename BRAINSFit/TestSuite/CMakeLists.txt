@@ -1490,6 +1490,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitEZTestName}
   --minimumStepLength 0.001
   --outputVolumePixelType uchar
   --transformType Affine
+  --initializeTransformMode Off
   --initialTransform DATA{${TestData_DIR}/BRAINSFitTest_Initializer_RigidRotationNoMasks.mat}
   --maskProcessingMode ROI
   --fixedVolume DATA{${TestData_DIR}/test.nii.gz}

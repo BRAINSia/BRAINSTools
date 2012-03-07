@@ -4,7 +4,7 @@ file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/obliq_setup.txt.in
   ${CMAKE_CURRENT_BINARY_DIR}/obliq_setup.txt @ONLY IMMEDIATE)
 #configure_file(${CMAKE_CURRENT_SOURCE_DIR}/T1.mdl ${CMAKE_CURRENT_BINARY_DIR}/T1.mdl)
-set(DART_TESTING_TIMEOUT 10000)
+set(DART_TESTING_TIMEOUT 15000)
 
 ## Test landmarksConstellationTrainingDefinitionIO
 ##
@@ -48,7 +48,7 @@ foreach(prog ${ALL_PROGS_LIST})
   add_executable(${prog} ../landmarkStatistics/${prog}.cxx)
   target_link_libraries(${prog} BRAINSCommonLib ${ITK_LIBRARIES})
 endforeach()
-endif()
+endif(0)
 
 ## Simple programs
 ## Test BRAINSClipInferior
@@ -619,7 +619,7 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetecto
   --LLSModel DATA{${TestData_DIR}/LLSModel-2ndVersion.hdf5}
   --outputWeightsList ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}.wts #output of the program
   )
-set_tests_properties(${BRAINSConstellationDetectorTestName} PROPERTIES TIMEOUT 9876)
+set_tests_properties(${BRAINSConstellationDetectorTestName} PROPERTIES TIMEOUT 15000)
 
 set(BRAINSConstellationDetectorTestName landmarksWeightsCompareTest)
 ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}

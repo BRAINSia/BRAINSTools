@@ -27,8 +27,10 @@ add_subdirectory(GradientAnisotropicDiffusionImageFilter)
 
 add_subdirectory(HistogramMatchingFilter)
 add_subdirectory(TextureMeasureFilter)
+add_subdirectory(TextureFromNoiseImageFilter)
 
 add_subdirectory(STAPLE)
 
 add_subdirectory(NoiseGenerator)
 add_subdirectory(DumpBinaryTrainingVectors)
+

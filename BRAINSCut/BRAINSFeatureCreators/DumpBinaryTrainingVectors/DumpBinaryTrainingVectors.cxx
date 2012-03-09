@@ -5,8 +5,11 @@
 #include "itkIO.h"
 
 #include "DumpBinaryTrainingVectorsCLP.h"
+
 #define MAX_LINE_SIZE 1000
-#define LineGuard  1234567.0
+
+static const float LineGuard = 1234567.0;
+
 void
 ReadHeader(const char *fname,
            unsigned int & InputVectorSize,
@@ -112,17 +115,18 @@ main(int argc, char * *argv)
       }
     binfile.read( (char *)buf, recordsize );
     for( unsigned int j = 0;
-         j < OutputVectorSize + InputVectorSize;
+         j <= OutputVectorSize + InputVectorSize;
          j++ )
       {
       std::cout << buf[j] << " ";
       }
-
     std::cout << std::endl;
     if( buf[OutputVectorSize + InputVectorSize + SentinalValueSize - 1] !=
         LineGuard )
       {
-      std::cerr << "Record not properly terminated by sentinel value"
+      std::cerr << "Record not properly terminated by sentinel value :::: "
+                << buf[OutputVectorSize + InputVectorSize + SentinalValueSize - 1]
+                << " != " << LineGuard
                 << std::endl;
       result = 1;
       break;

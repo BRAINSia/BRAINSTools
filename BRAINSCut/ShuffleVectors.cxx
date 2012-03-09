@@ -109,7 +109,7 @@ public:  typedef unsigned long unsigned64;
 }
 
 std::ios::off_type *
-ShuffleVectors::ShuffledOrder()
+ShuffleVectors::ShuffleOrder()
 {
   typedef findUINT64Type<sizeof(unsigned long)>::unsigned64 unsigned64;
 
@@ -210,9 +210,8 @@ ShuffleVectors::Shuffling()
     std::cout << "Can't open output file " << m_outputVectorFilename;
     }
   // make a shuffled output ordering
-  std::cout.flush();
 
-  std::ios::off_type *order = ShuffledOrder();
+  std::ios::off_type *randomOrder = ShuffleOrder();
 
   unsigned recordsize = ( m_IVS + m_OVS + 1 ) * sizeof( float );
   float *  buf = new float[m_IVS + m_OVS + 1];
@@ -220,49 +219,68 @@ ShuffleVectors::Shuffling()
   std::cout << "Writing a shuffled output file "
             << m_outputVectorFilename
             << std::endl;
-  std::cout.flush();
 
-  float VectorsPerPercent = m_output_TVC / 100.0F;
+  float VectorsPerPercent = m_input_TVC / 100.0F;
   int   current_percent = 0;
-  for( unsigned int i = 0; i < m_output_TVC; i++ )
+  /**
+   * shuffle process goes through entire input vector file and then
+   * include only those have (randomly assigned) index less
+   * than a desired output size
+   */
+  for( unsigned int vectorIndex = 0; vectorIndex < m_input_TVC; vectorIndex++ )
     {
-    if( i > current_percent * VectorsPerPercent )
+    if( vectorIndex > current_percent * VectorsPerPercent )
       {
       current_percent += 1;
       if( current_percent % 5 == 0 )
         {
-        std::cout << current_percent << "% ";
-        std::cout.flush();
+        std::cout << current_percent << "% " << std::endl;
         }
       }
     if( binfile.eof() )
       {
       std::cerr << "Premature end of file at record "
-                << i << std::endl;
+                << vectorIndex << std::endl;
       break; // TODO throw error here
       }
     // read in the record
     binfile.read( (char *)buf, recordsize );
+    /*
+    std::cout<< " randomOrder[ "<< vectorIndex<<" ] :: "
+             << randomOrder[vectorIndex]
+             << " < " << m_output_TVC
+             << " ? " << std::endl;
+             */
+    if( randomOrder[vectorIndex] < static_cast<std::ios::off_type>( m_output_TVC) )
+      {
+      std::ios::off_type seekval =
+        randomOrder[vectorIndex] * static_cast<std::ios::off_type>( recordsize );
+      lseek(shuffledFile, seekval, SEEK_SET);
+      (void)write(shuffledFile, (const char *) buf, recordsize);
+      /*
+      // debugging code
+      for( int dummy_i = 0; dummy_i< m_IVS  + m_OVS +1; dummy_i++ )
+        {
+        std::cout<<buf[dummy_i]<<" ";
+        }
+      std::cout<< " randomOrder[ "<< vectorIndex<<" ] :: "
+               << randomOrder[vectorIndex]
+               << " @ "
+               <<seekval <<std::endl;
+      //*/
+      }
 
     if( buf[m_IVS  + m_OVS] != LineGuard )
       {
       std::cerr << "Record not properly terminated by sentinel value ::  "
-                << buf[m_IVS  + m_OVS]
+                << buf[m_IVS  + m_OVS] << " != "
+                << LineGuard
                 << std::endl;
-      break; // TODO throw error here
-      }
-    // Now only write out vector if it is supposed to be placed in the smaller
-    // image size.
-    if( order[i] < static_cast<std::ios::off_type>( m_output_TVC) )
-      {
-      std::ios::off_type seekval =
-        order[i] * static_cast<std::ios::off_type>( recordsize );
-      lseek(shuffledFile, seekval, SEEK_SET);
-      (void)write(shuffledFile, buf, recordsize);
+      exit(EXIT_FAILURE); // TODO throw error here
       }
     }
   close(shuffledFile);
   std::cout << "done." << std::endl;
   delete[] buf;
-  delete[] order;
+  delete[] randomOrder;
 }

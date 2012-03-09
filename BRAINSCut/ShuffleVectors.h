@@ -36,7 +36,7 @@ public:
 private:
   std::string TempName( const char *s );
 
-  std::ios::off_type * ShuffledOrder();
+  std::ios::off_type * ShuffleOrder();
 
   //
   // Member Variables::

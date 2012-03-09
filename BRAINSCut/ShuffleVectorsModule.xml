@@ -27,7 +27,7 @@
    </file>
    <integer>
      <name>downSampleSize</name>
-     <longflag>downSampleSixe</longflag>
+     <longflag>downSampleSize</longflag>
      <label>Down Sample Size</label>
      <channel>input</channel>
      <description>downsample size of 1 will be the same size as the input images, downsample size of 3 will throw 2/3 the vectors away.</description>

@@ -216,7 +216,7 @@ void DtiFastMarchingCostFilter<TLevelSet, TTensorImage>
 
   typedef itk::ImageRegionConstIterator<TensorImageType> TensorImageIteratorType;
   TensorImageIteratorType tensorIt( tensorImage, tensorImage->GetRequestedRegion() );
-  for( eigIt.GoToBegin(), tensorIt.GoToBegin(); !eigIt.IsAtEnd(), !tensorIt.IsAtEnd(); ++eigIt, ++tensorIt )
+  for( eigIt.GoToBegin(), tensorIt.GoToBegin(); !eigIt.IsAtEnd() && !tensorIt.IsAtEnd(); ++eigIt, ++tensorIt )
     {
     EigenvectorPixelType principalEigenvector;
     TensorImageIndexType tensorIndex = tensorIt.GetIndex();

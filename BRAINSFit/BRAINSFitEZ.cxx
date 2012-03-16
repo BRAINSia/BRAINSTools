@@ -166,37 +166,6 @@ int main(int argc, char *argv[])
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
 
   std::string localInitializeTransformMode = initializeTransformMode;
-  // Intially set using the string enumeration
-    {
-    // For backwards compatibility, allow old flags to overwrite setting of the new flag.
-    if( ( 0
-          + ( initialTransform.size() > 0 )
-          + ( useCenterOfHeadAlign == true )
-          + ( useGeometryAlign == true )
-          + ( useMomentsAlign == true )
-          + ( initializeTransformMode != "Off" ) // This is the default value,
-                                                 // so don't count it.
-          ) > 1 )
-      {
-      std::cout
-        <<
-        "ERROR:  Can only specify one of [initialTransform | useCenterOfHeadAlign | useGeometryAlign | useMomentsAlign | initializeTransformMode ]"
-        << std::endl;
-      return EXIT_FAILURE;
-      }
-    if( useCenterOfHeadAlign == true )
-      {
-      localInitializeTransformMode = "useCenterOfHeadAlign";
-      }
-    if( useGeometryAlign == true )
-      {
-      localInitializeTransformMode = "useGeometryAlign";
-      }
-    if( useMomentsAlign == true )
-      {
-      localInitializeTransformMode = "useMomentsAlign";
-      }
-    }
 
   // std::vector<int> zeroOrigin(3, 0);
 
@@ -235,10 +204,6 @@ int main(int argc, char *argv[])
       }
     if( useAffine == true )
       {
-      localTransformType.clear();
-      localTransformType.push_back("Rigid");
-      localTransformType.push_back("ScaleVersor3D");
-      localTransformType.push_back("ScaleSkewVersor3D");
       localTransformType.push_back("Affine");
       }
     if( useBSpline == true )

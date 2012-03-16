@@ -241,7 +241,7 @@
       <name>maskInferiorCutOffFromCenter</name>
       <longflag>maskInferiorCutOffFromCenter</longflag>
       <label>Inferior Cut Off From Center</label>
-      <description>For use with --useCenterOfHeadAlign (and --maskProcessingMode ROIAUTO): the cut-off below the image centers, in millimeters, </description>
+      <description>For use with --initializeTransformMode useCenterOfHeadAlign (and --maskProcessingMode ROIAUTO): the cut-off below the image centers, in millimeters, </description>
       <default>1000.0</default>
     </double>
 
@@ -527,28 +527,6 @@
   </parameters>
   <parameters advanced="true">
     <label>Risky Expert-only Parameters</label>
-
-    <boolean>
-       <name>useMomentsAlign</name>
-       <longflag deprecatedalias="useMomentsAlign">NEVER_USE_THIS_FLAG_IT_IS_OUTDATED_00</longflag>
-       <label>DO NOT USE</label>
-       <description>DO NOT USE THIS FLAG</description>
-       <default>false</default>
-    </boolean>
-    <boolean>
-       <name>useGeometryAlign</name>
-       <longflag deprecatedalias="useGeometryAlign">NEVER_USE_THIS_FLAG_IT_IS_OUTDATED_01</longflag>
-       <label>DO NOT USE</label>
-       <description>DO NOT USE THIS FLAG</description>
-       <default>false</default>
-    </boolean>
-    <boolean>
-       <name>useCenterOfHeadAlign</name>
-       <longflag deprecatedalias="useCenterOfHeadAlign">NEVER_USE_THIS_FLAG_IT_IS_OUTDATED_02</longflag>
-       <label>DO NOT USE</label>
-       <description>DO NOT USE THIS FLAG</description>
-       <default>false</default>
-    </boolean>
 
     <integer-vector>
       <name>permitParameterVariation</name>

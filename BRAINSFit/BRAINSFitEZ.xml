@@ -68,7 +68,7 @@
       <longflag>initializeTransformMode</longflag>
       <label>Intitialze Transform Mode</label>
       <description>Determine how to initialize the transform center.  GeometryAlign on assumes that the center of the voxel lattice of the images represent similar structures.  MomentsAlign assumes that the center of mass of the images represent similar structures.  useCenterOfHeadAlign attempts to use the top of head and shape of neck to drive a center of mass estimate.  Off assumes that the physical space of the images are close, and that centering in terms of the image Origins is a good starting point.  This flag is mutually exclusive with the initialTransform flag.</description>
-      <default>useMomentsAlign</default>
+      <default>Off</default>
       <element>Off</element>
       <element>useMomentsAlign</element>
       <element>useCenterOfHeadAlign</element>
@@ -165,7 +165,7 @@
       <longflag>maskProcessingMode</longflag>
       <description>What mode to use for using the masks.  If ROIAUTO is choosen, then the mask is implicitly defined using a otsu forground and hole filling algorithm. The Region Of Interest mode (choose ROI) uses the masks to define what parts of the image should be used for computing the transform.</description>
       <label>Masking Option </label>
-      <default>ROIAUTO</default>
+      <default>NOMASK</default>
       <element>NOMASK</element>
       <element>ROIAUTO</element>
       <element>ROI</element>
@@ -233,7 +233,7 @@
       <name>maskInferiorCutOffFromCenter</name>
       <longflag>maskInferiorCutOffFromCenter</longflag>
       <label>Inferior Cut Off From Center</label>
-      <description>For use with --useCenterOfHeadAlign (and --maskProcessingMode ROIAUTO): the cut-off below the image centers, in millimeters, </description>
+      <description>For use with --initializeTransformMode useCenterOfHeadAlign (and --maskProcessingMode ROIAUTO): the cut-off below the image centers, in millimeters, </description>
       <default>1000.0</default>
     </double>
 
@@ -505,28 +505,6 @@
       <longflag>promptUser</longflag>
       <description>Prompt the user to hit enter each time an image is sent to the DebugImageViewer</description>
       <default>false</default>
-    </boolean>
-
-    <boolean>
-       <name>useMomentsAlign</name>
-       <longflag deprecatedalias="useMomentsAlign">NEVER_USE_THIS_FLAG_IT_IS_OUTDATED_00</longflag>
-       <label>DO NOT USE</label>
-       <description>DO NOT USE THIS FLAG</description>
-       <default>false</default>
-    </boolean>
-    <boolean>
-       <name>useGeometryAlign</name>
-       <longflag deprecatedalias="useGeometryAlign">NEVER_USE_THIS_FLAG_IT_IS_OUTDATED_01</longflag>
-       <label>DO NOT USE</label>
-       <description>DO NOT USE THIS FLAG</description>
-       <default>false</default>
-    </boolean>
-    <boolean>
-       <name>useCenterOfHeadAlign</name>
-       <longflag deprecatedalias="useCenterOfHeadAlign">NEVER_USE_THIS_FLAG_IT_IS_OUTDATED_02</longflag>
-       <label>DO NOT USE</label>
-       <description>DO NOT USE THIS FLAG</description>
-       <default>false</default>
     </boolean>
 
     <integer-vector>

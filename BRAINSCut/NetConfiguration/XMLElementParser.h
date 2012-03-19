@@ -237,8 +237,7 @@ public:
         continue;
         }
       const std::string val
-        ( current->GetAttribute<StringValue>(
-          attributeName) );
+        ( current->template GetAttribute<StringValue>(attributeName) );
       if( val != "" )
         {
         rval[i] = val;
@@ -264,7 +263,7 @@ public:
         {
         continue;
         }
-      if( current->GetAttribute<StringValue>(attName) ==
+      if( current->template GetAttribute<StringValue>(attName) ==
           attValue )
         {
         return current;
@@ -289,7 +288,7 @@ public:
         {
         continue;
         }
-      if( current->GetAttribute<StringValue>(attName) ==
+      if( current->template GetAttribute<StringValue>(attName) ==
           attValue )
         {
         return current;

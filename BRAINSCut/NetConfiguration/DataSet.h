@@ -43,10 +43,10 @@ public:
   std::string GetFilenameByType(const char *listName,  const char *type) const
   {
     const ListType *   list = this->Get<ListType>(listName);
-    const ElementType *element    = list->GetMatching<ElementType>("Type", type);
+    const ElementType *element    = list->template GetMatching<ElementType>("Type", type);
 
     return element == 0 ? std::string() :
-           element->GetAttribute<StringValue>("Filename");
+           element->template GetAttribute<StringValue>("Filename");
   }
 
   //

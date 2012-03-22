@@ -276,7 +276,7 @@ void GenerateBrainVolume(ImageType::Pointer & firstImage,
     ConstIteratorType     volumeIt(mixtureImage, regionOfInterest);
     ConstMaskIteratorType labelIt(maskImage, regionOfInterest);
     for( volumeIt.GoToBegin(), labelIt.GoToBegin();
-         !volumeIt.IsAtEnd(), !labelIt.IsAtEnd();
+         !volumeIt.IsAtEnd() && !labelIt.IsAtEnd();
          ++volumeIt, ++labelIt )
       {
       MaskPixelType labelValue = labelIt.Get();

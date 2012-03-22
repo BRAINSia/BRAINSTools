@@ -30,7 +30,11 @@
 #include <itkImageRegionIterator.h>
 #include <itkImageRegionConstIterator.h>
 #include <itkVectorIndexSelectionCastImageFilter.h>
+#if (ITK_VERSION_MAJOR < 4)
 #include <itkImageToVectorImageFilter.h>
+#else
+#include <itkComposeImageFilter.h>
+#endif
 
 #include "gtractConcatDwiCLP.h"
 #include "BRAINSThreadControl.h"
@@ -74,7 +78,11 @@ int main(int argc, char *argv[])
   typedef itk::ImageFileReader<NrrdImageType,
                                itk::DefaultConvertPixelTraits<PixelType> > FileReaderType;
   itk::MetaDataDictionary resultMetaData;
+#if (ITK_VERSION_MAJOR < 4)
   typedef itk::ImageToVectorImageFilter<IndexImageType> VectorImageFilterType;
+#else
+  typedef itk::ComposeImageFilter<IndexImageType> VectorImageFilterType;
+#endif
   VectorImageFilterType::Pointer indexImageToVectorImageFilter = VectorImageFilterType::New();
   int                            vectorIndex = 0;
   double                         baselineBvalue = 0.0;

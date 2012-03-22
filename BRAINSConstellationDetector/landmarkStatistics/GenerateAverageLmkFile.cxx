@@ -19,11 +19,23 @@
 #include "math.h"
 #include "Slicer3LandmarkIO.h"
 
+void UsageAndExit()
+{
+  std::cerr << "Usage: GenerateAverageLmkFile <number of files> <file1> <file2> ... <filen>"
+            << std::endl;
+
+  exit(EXIT_FAILURE);
+}
+
 int main( int argc, char * argv[] )
 {
-  const unsigned int k = atoi(argv[1]);  // The number of input landmark files
-  unsigned int       numNamedLandmarks = 0;
-  double             x_ave, y_ave, z_ave;
+  if( argc < 2 )
+    {
+    UsageAndExit();
+    }
+  const int    k = atoi(argv[1]); // The number of input landmark files
+  unsigned int numNamedLandmarks = 0;
+  double       x_ave, y_ave, z_ave;
 
   std::map<std::string, PointType> LandmarksAverageMap;
 
@@ -35,8 +47,12 @@ int main( int argc, char * argv[] )
   // For each input landmark file this LandmarksMapType is computed and is set in a vector: "LandmarksMapTypeVec"
 
   LandmarksMapType temp;
-  for( unsigned int i = 0; i < k; i++ )
+  for( int i = 0; i < k; i++ )
     {
+    if( argc < i + 3 )
+      {
+      UsageAndExit();
+      }
     temp = ReadSlicer3toITKLmk( argv[i + 2] );
     LandmarksMapVector.push_back(temp);
     }
@@ -56,7 +72,7 @@ int main( int argc, char * argv[] )
     {
     x_ave = y_ave = z_ave = 0;
     std::string name = LandmarksNames[j];
-    for( unsigned int i = 0; i < k; i++ )
+    for( int i = 0; i < k; i++ )
       {
       x_ave += LandmarksMapVector[i][name][0];
       y_ave += LandmarksMapVector[i][name][1];

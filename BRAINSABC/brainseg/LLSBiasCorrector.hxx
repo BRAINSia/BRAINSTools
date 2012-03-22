@@ -809,7 +809,7 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>
               biasIntensityScaleFactor->SetPixel(currIndex,
                                                  (InternalImagePixelType) multiplicitiveBiasCorrectionFactor );
               }
-            if( ( this->m_AllTissueMask->GetPixel(currIndex) == 0 ) )
+            if( this->m_AllTissueMask->GetPixel(currIndex) == 0 )
               {
               // Now clamp intensities outside the probability mask region to
               // the min and

@@ -153,7 +153,6 @@ main(int argc, char *argv[])
 
     imageInY->TransformPhysicalPointToIndex( currentPhysicalPoint, currentIndexOfY );
 
-    std::cout << "currentIndexOfY::" << currentIndexOfY << std::endl;
     bool imageInBoundary = true;
     for( unsigned int dimIndex = 0; dimIndex < Dimension; dimIndex++ )
       {

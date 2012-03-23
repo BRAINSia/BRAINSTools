@@ -23,10 +23,10 @@
     </image>
 
     <image>
-      <name>inputMaskVolume</name>
-      <longflag>--inputMaskVolume</longflag>
+      <name>inputBinaryVolume</name>
+      <longflag>--inputBinaryVolume</longflag>
       <description>Required: input brain mask image</description>
-      <label>Input Mask Volume</label>
+      <label>Input Binary Volume</label>
       <channel>input</channel>
     </image>
 
@@ -36,7 +36,7 @@
       <description>size of structural element. sizeStructuralElement=1 means that 3x3x3 structuring element for 3D</description>
       <label>Input lower threshold value</label>
       <channel>input</channel>
-      <default>0.5F</default>
+      <default>1</default>
     </integer>
 
     <float>
@@ -51,10 +51,10 @@
   </parameters>
   <parameters>
     <label>Output Parameters</label>
-    <description>Input parameters for analysis.</description>
+    <description>output dilated mask image file name.</description>
     <image>
-      <name>outputDilation</name>
-      <longflag>--outputDilation</longflag>
+      <name>outputVolume</name>
+      <longflag>--outputVolume</longflag>
       <description>Required: output image</description>
       <label>Output Volume</label>
       <channel>output</channel>

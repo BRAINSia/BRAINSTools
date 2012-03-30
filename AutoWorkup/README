@@ -1,0 +1,13 @@
+Inital version of BRAINS AutoWorkup built on Nipype.
+Currently very rough, use at your own risk!
+
+To use the code, build BRAINSTools with ITKv4 on.
+
+Then install the nipype version in the BRAINSia github account.
+
+The file Template.config should be copied and modified to define the
+experiment that should be run.
+
+python baw_exp.py -processingLevel 2 -ExperimentConfig Template.config -pe IPL_ENVIRONMENT
+
+

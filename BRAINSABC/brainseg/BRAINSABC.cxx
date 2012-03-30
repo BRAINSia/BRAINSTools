@@ -1215,6 +1215,7 @@ int main(int argc, char * *argv)
     intraSubjectRegisteredImageList = RemoveDuplicates(intraSubjectRegisteredImageList, duplicatesFound);
     intraSubjectRegisteredRawImageList = RemoveDuplicates(intraSubjectRegisteredRawImageList, duplicatesFound);
     inputVolumes = RemoveDuplicates(inputVolumes, duplicatesFound);
+    outputVolumes = RemoveDuplicates(outputVolumes, duplicatesFound);
     inputVolumeTypes = RemoveDuplicates(inputVolumeTypes, duplicatesFound);
     }
 

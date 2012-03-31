@@ -88,6 +88,15 @@ BRAINSCutTrainModel
   sprintf( tempid, "%09u", No + 1 );
   std::string filename = ANNModelFilenamePrefix + tempid;
 
+  /** check the directory */
+  std::string path = itksys::SystemTools::GetFilenamePath( filename );
+  if( !itksys::SystemTools::FileExists( path.c_str(), false ) )
+    {
+    std::cout << " A directory for training file does not exist. Create as following:: "
+              << filename.c_str()
+              << std::endl;
+    itksys::SystemTools::MakeDirectory( path.c_str() );
+    }
   myTrainer.save( filename.c_str() );
 }
 

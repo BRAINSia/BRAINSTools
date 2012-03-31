@@ -4,6 +4,7 @@
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 #include "itkImageRegionIterator.h"
+#include "itkImageRegionConstIterator.h"
 #include "JointHistogramCLP.h"
 #include "itkRescaleIntensityImageFilter.h"
 #include "itkHistogram.h"
@@ -18,7 +19,7 @@
 
 #include <fstream>
 
-#define HISTOGRAMSIZE 50
+#define HISTOGRAMSIZE 255
 
 /*
  * Author : Eun Young (Regina) Kim
@@ -38,210 +39,278 @@ main(int argc, char *argv[])
   typedef itk::Image<PixelType, Dimension> InputImageType;
 
   // there has to be two input volumes and label volume
-  if( ( !inputVolume1.empty() ) && (!inputVolume2.empty() ) )
+  if( ( inputVolumeInXAxis.empty() ) || (inputVolumeInYAxis.empty() ) )
     {
-    // print volume names
+    std::cout << " Wrong Argument! " << std::endl
+              << " inputVolumeInXAxis, inputVolumeInYAxis, are necessary! "
+              << std::endl;
+    exit( EXIT_FAILURE );
+    }
 
-    std::cout << "* InputImage Filename "  << inputVolume1  << std::endl
-              << "* InputImage Filename "  << inputVolume2  << std::endl;
+  std::cout << "* InputImage Filename "  << inputVolumeInXAxis  << std::endl
+            << "* InputImage Filename "  << inputVolumeInYAxis  << std::endl;
 
-    // Image Reader for inputVolumes
-    typedef itk::ImageFileReader<InputImageType> ImageReaderType;
+  // Image Reader for inputVolumes
+  typedef itk::ImageFileReader<InputImageType> ImageReaderType;
 
-    ImageReaderType::Pointer imageReader1 = ImageReaderType::New();
-    imageReader1->SetFileName( inputVolume1 );
+  ImageReaderType::Pointer imageReader1 = ImageReaderType::New();
+  imageReader1->SetFileName( inputVolumeInXAxis );
 
-    ImageReaderType::Pointer imageReader2 = ImageReaderType::New();
-    imageReader2->SetFileName( inputVolume2 );
+  ImageReaderType::Pointer imageReader2 = ImageReaderType::New();
+  imageReader2->SetFileName( inputVolumeInYAxis );
+
+  // Read Binary Images
+  typedef double                                 BinaryPixelType;
+  typedef itk::Image<BinaryPixelType, Dimension> BinaryImageType;
+
+  BinaryImageType::Pointer binaryImageInX = BinaryImageType::New();
+  BinaryImageType::Pointer binaryImageInY = BinaryImageType::New();
+
+  if( (!inputMaskVolumeInXAxis.empty() ) && (!inputMaskVolumeInYAxis.empty() ) )
+    {
+    typedef itk::ImageFileReader<BinaryImageType> BinaryImageReaderType;
+
+    BinaryImageReaderType::Pointer binaryImageReaderInX = BinaryImageReaderType::New();
+    binaryImageReaderInX->SetFileName( inputMaskVolumeInXAxis );
+
+    BinaryImageReaderType::Pointer binaryImageReaderInY = BinaryImageReaderType::New();
+    binaryImageReaderInY->SetFileName( inputMaskVolumeInYAxis );
+
     try
       {
-      imageReader1->Update();
-      imageReader2->Update();
+      binaryImageReaderInX->Update();
+      binaryImageReaderInY->Update();
       }
     catch( itk::ExceptionObject & e )
       {
-      std::cerr << "Exception in Resampling." << std::endl;
+      std::cerr << "Exception in Reading." << std::endl;
       std::cerr << e.GetDescription() << std::endl;
       std::cerr << e.GetLocation() << std::endl;
-      return EXIT_FAILURE;
+      exit(EXIT_FAILURE);
+      }
+    binaryImageInX = binaryImageReaderInX->GetOutput();
+    binaryImageInY = binaryImageReaderInY->GetOutput();
+    }
+
+  // Rescale Input Images
+  typedef itk::RescaleIntensityImageFilter<InputImageType, InputImageType>
+    RescaleFilterType;
+
+  RescaleFilterType::Pointer rescaler1 = RescaleFilterType::New();
+
+  rescaler1->SetInput( imageReader1->GetOutput() );
+
+  rescaler1->SetOutputMaximum( HISTOGRAMSIZE );
+  rescaler1->SetOutputMinimum(0);
+
+  RescaleFilterType::Pointer rescaler2 = RescaleFilterType::New();
+
+  rescaler2->SetInput( imageReader2->GetOutput() );
+  rescaler2->SetOutputMaximum(HISTOGRAMSIZE);
+  rescaler2->SetOutputMinimum(0);
+  try
+    {
+    rescaler1->Update();
+    rescaler2->Update();
+    }
+  catch( itk::ExceptionObject & e )
+    {
+    std::cerr << "Exception in Rescaling." << std::endl;
+    std::cerr << e.GetDescription() << std::endl;
+    std::cerr << e.GetLocation() << std::endl;
+    exit(EXIT_FAILURE);
+    }
+
+  // Images
+  InputImageType::Pointer imageInX = InputImageType::New();
+  imageInX = rescaler1->GetOutput();
+  InputImageType::Pointer imageInY = InputImageType::New();
+  imageInY = rescaler2->GetOutput();
+
+  // Start Iterator
+  unsigned int HistogramArray[HISTOGRAMSIZE + 1][HISTOGRAMSIZE + 1] =  {{0}};
+
+  InputImageType::IndexType currentIndexOfX;
+  InputImageType::IndexType currentIndexOfY;
+
+  itk::Point<double, Dimension> currentPhysicalPoint;
+
+  // * Iterator For Image
+
+  itk::ImageRegionIterator<InputImageType> it(imageInX,
+                                              imageInX->GetLargestPossibleRegion() );
+
+  InputImageType::SizeType imageInYSize = imageInY->GetLargestPossibleRegion().GetSize();
+  std::cout << "imageInYSize::" << imageInYSize << std::endl;
+  for( it.GoToBegin();
+       !it.IsAtEnd();
+       ++it )
+    {
+    currentIndexOfX = it.GetIndex();
+
+    // get physical points
+    imageInX->TransformIndexToPhysicalPoint( currentIndexOfX, currentPhysicalPoint );
+
+    imageInY->TransformPhysicalPointToIndex( currentPhysicalPoint, currentIndexOfY );
+
+    bool imageInBoundary = true;
+    for( unsigned int dimIndex = 0; dimIndex < Dimension; dimIndex++ )
+      {
+      if( currentIndexOfY[dimIndex] > imageInYSize[dimIndex] )
+        {
+        imageInBoundary = false;
+        }
       }
 
-    // Rescale Input Images
-    typedef itk::RescaleIntensityImageFilter<InputImageType, InputImageType>
-      RescaleFilterType;
-
-    RescaleFilterType::Pointer rescaler1 = RescaleFilterType::New();
-
-    rescaler1->SetInput( imageReader1->GetOutput() );
-
-    rescaler1->SetOutputMaximum( HISTOGRAMSIZE );
-    rescaler1->SetOutputMinimum(0);
-
-    RescaleFilterType::Pointer rescaler2 = RescaleFilterType::New();
-
-    rescaler2->SetInput( imageReader2->GetOutput() );
-    rescaler2->SetOutputMaximum(HISTOGRAMSIZE);
-    rescaler2->SetOutputMinimum(0);
-    try
+    if( imageInBoundary )
       {
-      rescaler1->Update();
-      rescaler2->Update();
-      }
-    catch( itk::ExceptionObject & e )
-      {
-      std::cerr << "Exception in Resampling." << std::endl;
-      std::cerr << e.GetDescription() << std::endl;
-      std::cerr << e.GetLocation() << std::endl;
-      return EXIT_FAILURE;
-      }
+      if( verbose )
+        {
+        std::cout << "Transform IndexOfX ( "   << currentIndexOfX
+                  << " ) to Physical Point ( " << currentPhysicalPoint
+                  << " ) and Get IndexOfY ( "  << currentIndexOfY
+                  << " ) " << std::endl;
+        }
 
-    // Start Iterator
-    unsigned int HistogramArray[HISTOGRAMSIZE][HISTOGRAMSIZE] =  {{0}};
-    // * Iterator For Image
+      // taking account binary (mask) images if they are given
 
-    typedef itk::ImageRegionIterator<InputImageType> ConstIteratorType;
-    ConstIteratorType it( imageReader1->GetOutput(),
-                          imageReader1->GetOutput()->GetLargestPossibleRegion() );
-    for( it.GoToBegin();
-         !it.IsAtEnd();
-         ++it )
-      {
-      if( it.Get() != 0 )
+      if( inputMaskVolumeInXAxis.empty() ||
+          ( ( !inputMaskVolumeInXAxis.empty() ) && ( !inputMaskVolumeInYAxis.empty() ) &&
+            ( binaryImageInX->GetPixel( currentIndexOfX ) > 0 ) && (binaryImageInY->GetPixel( currentIndexOfY ) > 0 ) )
+          )
         {
         int temp_image1_intensity =
-          rescaler1->GetOutput()->GetPixel( it.GetIndex()  );
+          imageInX->GetPixel( currentIndexOfX  );
         int temp_image2_intensity =
-          rescaler2->GetOutput()->GetPixel( it.GetIndex()  );
+          imageInY->GetPixel( currentIndexOfY  );
+        if( verbose )
+          {
+          std::cout << " ADD to the Bin (" << temp_image1_intensity
+                    << " , " << temp_image2_intensity << " ) ";
+          }
 
         HistogramArray[temp_image1_intensity][temp_image2_intensity]++;
 
         if( verbose )
           {
-          std::cout << " ADD to the Bin (" << temp_image1_intensity
-                    << " , " << temp_image2_intensity << " ) "
-                    << " = " << HistogramArray[temp_image1_intensity][temp_image2_intensity]
+          std::cout << " = " << HistogramArray[temp_image1_intensity][temp_image2_intensity]
                     << std::endl;
           }
         }
       }
-    // - open file stream and write to the file
-    std::ofstream outputFileStream;
-    std::string   outputHistogramData = outputJointHistogramImage + ".txt";
-    outputFileStream.open( outputHistogramData.c_str() );
-
-    // - write header line 1: including image names
-
-    outputFileStream << "[Image1]: " << inputVolume1 << std::endl
-                     << "[Image2]: " << inputVolume2 << std::endl
-                     << std::endl;
-    // - write header line 2: colume name
-
-    std::string FrequencyName = "Frequence";
-    FrequencyName += "OfIntensity";
-
-    outputFileStream << "label, " << inputVolume1
-                     << ", " << inputVolume2
-                     << ", " << FrequencyName
-                     << std::endl;
-    // - Iterate for each bins
-    for( int i = 0; i < HISTOGRAMSIZE; i++ )
-      {
-      for( int j = 0; j < HISTOGRAMSIZE; j++ )
-        {
-        // - Write text file
-
-        outputFileStream
-          << i             << ","
-          << j             << ","
-          << HistogramArray[i][j]
-          << std::endl;
-        }
-      }
-    // - Write Histogram Image
-    typedef itk::Image<unsigned int, 2> HistogramImageType;
-    HistogramImageType::Pointer histogramImg = HistogramImageType::New();
-
-    HistogramImageType::IndexType start;
-    start[0] = 0; start[1] = 0;
-
-    HistogramImageType::SizeType size;
-    size[0] = HISTOGRAMSIZE; size[1] = HISTOGRAMSIZE;
-
-    HistogramImageType::RegionType region;
-    region.SetSize( size);
-    region.SetIndex( start );
-
-    histogramImg->SetRegions( region );
-
-    HistogramImageType::SpacingType space;
-    space[0] = 1; space[1] = 1;
-    histogramImg->SetSpacing( space );
-
-    histogramImg->Allocate();
-
-    // * Iterator For Image
-
-    typedef itk::ImageRegionIterator<HistogramImageType> HistIteratorType;
-    HistIteratorType hit( histogramImg,
-                          histogramImg->GetLargestPossibleRegion() );
-    for( hit.GoToBegin(); !hit.IsAtEnd();     ++hit )
-      {
-      HistogramImageType::IndexType currentIdx = hit.GetIndex();
-      hit.Set( HistogramArray[currentIdx[0]][currentIdx[1]] );
-      }
-
-    // Histogram Image Rescale to 0-255
-
-    typedef itk::Image<unsigned char, 2> HistogramWritingType;
-    typedef itk::RescaleIntensityImageFilter<HistogramImageType,
-                                             HistogramWritingType>
-      HistogramRescaleFilterType;
-
-    HistogramRescaleFilterType::Pointer histogramRescaler
-      = HistogramRescaleFilterType::New();
-
-    histogramRescaler->SetInput( histogramImg );
-
-    histogramRescaler->SetOutputMaximum(255);
-    histogramRescaler->SetOutputMinimum(0);
-
-    // Invert Intensity so that background is white
-    typedef itk::InvertIntensityImageFilter<HistogramWritingType,
-                                            HistogramWritingType>
-      InvertIntensityFilterType;
-    InvertIntensityFilterType::Pointer invertFilter =
-      InvertIntensityFilterType::New();
-
-    invertFilter->SetInput( histogramRescaler->GetOutput() );
-    invertFilter->SetMaximum(255);
-    invertFilter->Update();
-
-    //  Histogram Writer
-    typedef itk::ImageFileWriter<HistogramWritingType> HistogramWriter;
-
-    HistogramWriter::Pointer histogramWriter  = HistogramWriter::New();
-
-    histogramWriter->SetFileName( outputJointHistogramImage );
-    histogramWriter->SetInput( invertFilter->GetOutput() );
-
-    try
-      {
-      histogramWriter->Update();
-      }
-    catch( itk::ExceptionObject & e )
-      {
-      std::cerr << "Exception in Resampling." << std::endl;
-      std::cerr << e.GetDescription() << std::endl;
-      std::cerr << e.GetLocation() << std::endl;
-      return EXIT_FAILURE;
-      }
     }
-  else
+  // - open file stream and write to the file
+  std::ofstream outputFileStream;
+  std::string   outputHistogramData = outputJointHistogramImage + ".txt";
+  outputFileStream.open( outputHistogramData.c_str() );
+
+  // - write header line 1: including image names
+
+  outputFileStream << "[Image1]: " << inputVolumeInXAxis << std::endl
+                   << "[Image2]: " << inputVolumeInYAxis << std::endl
+                   << std::endl;
+  // - write header line 2: colume name
+
+  std::string FrequencyName = "Frequence";
+  FrequencyName += "OfIntensity";
+
+  outputFileStream << "label, " << inputVolumeInXAxis
+                   << ", " << inputVolumeInYAxis
+                   << ", " << FrequencyName
+                   << std::endl;
+  // - Iterate for each bins
+  for( int i = 0; i < HISTOGRAMSIZE; i++ )
     {
-    std::cout << " Wrong Argument! " << std::endl
-              << " inputVolume1, inputVolume2, and inputLabelVolume are necessary! "
-              << std::endl;
-    return EXIT_FAILURE;
+    for( int j = 0; j < HISTOGRAMSIZE; j++ )
+      {
+      // - Write text file
+
+      outputFileStream
+        << i             << ","
+        << j             << ","
+        << HistogramArray[i][j]
+        << std::endl;
+      }
     }
-  return 0;
+  outputFileStream.close();
+  // - Write Histogram Image
+  typedef itk::Image<unsigned int, 2> HistogramImageType;
+  HistogramImageType::Pointer histogramImg = HistogramImageType::New();
+
+  HistogramImageType::IndexType start;
+  start[0] = 0; start[1] = 0;
+
+  HistogramImageType::SizeType size;
+  size[0] = HISTOGRAMSIZE; size[1] = HISTOGRAMSIZE;
+
+  HistogramImageType::RegionType region;
+  region.SetSize( size);
+  region.SetIndex( start );
+
+  histogramImg->SetRegions( region );
+
+  HistogramImageType::SpacingType space;
+  space[0] = 1; space[1] = 1;
+  histogramImg->SetSpacing( space );
+
+  histogramImg->Allocate();
+
+  // * Iterator For Image
+
+  typedef itk::ImageRegionIterator<HistogramImageType> HistIteratorType;
+  HistIteratorType hit( histogramImg,
+                        histogramImg->GetLargestPossibleRegion() );
+  for( hit.GoToBegin(); !hit.IsAtEnd();     ++hit )
+    {
+    HistogramImageType::IndexType currentIdx = hit.GetIndex();
+    hit.Set( HistogramArray[currentIdx[0]][currentIdx[1]] );
+    }
+
+  // Histogram Image Rescale to 0-255
+
+  typedef itk::Image<unsigned char, 2> HistogramWritingType;
+  typedef itk::RescaleIntensityImageFilter<HistogramImageType,
+                                           HistogramWritingType>
+    HistogramRescaleFilterType;
+
+  HistogramRescaleFilterType::Pointer histogramRescaler
+    = HistogramRescaleFilterType::New();
+
+  histogramRescaler->SetInput( histogramImg );
+
+  histogramRescaler->SetOutputMaximum(255);
+  histogramRescaler->SetOutputMinimum(0);
+
+  // Invert Intensity so that background is white
+  typedef itk::InvertIntensityImageFilter<HistogramWritingType,
+                                          HistogramWritingType>
+    InvertIntensityFilterType;
+  InvertIntensityFilterType::Pointer invertFilter =
+    InvertIntensityFilterType::New();
+
+  invertFilter->SetInput( histogramRescaler->GetOutput() );
+  invertFilter->SetMaximum(255);
+  invertFilter->Update();
+
+  //  Histogram Writer
+  typedef itk::ImageFileWriter<HistogramWritingType> HistogramWriter;
+
+  HistogramWriter::Pointer histogramWriter  = HistogramWriter::New();
+
+  histogramWriter->SetFileName( outputJointHistogramImage );
+  histogramWriter->SetInput( invertFilter->GetOutput() );
+
+  try
+    {
+    histogramWriter->Update();
+    }
+  catch( itk::ExceptionObject & e )
+    {
+    std::cerr << "Exception in Resampling." << std::endl;
+    std::cerr << e.GetDescription() << std::endl;
+    std::cerr << e.GetLocation() << std::endl;
+    exit(EXIT_FAILURE);
+    }
+
+  exit(EXIT_SUCCESS);
 }

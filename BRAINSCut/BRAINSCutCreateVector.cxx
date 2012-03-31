@@ -33,6 +33,17 @@ BRAINSCutCreateVector
   /* open up the output stream */
   SetTrainingVectorFilenameFromNetConfiguration();
   std::ofstream outputVectorStream;
+
+  std::string vectorFileDirectory = itksys::SystemTools::GetFilenamePath( vectorFilename.c_str() );
+
+  if( !itksys::SystemTools::FileExists( vectorFileDirectory.c_str(), false ) )
+    {
+    std::cout << " OutputVectorDirectory does not exist. Create as following:: "
+              << vectorFileDirectory.c_str()
+              << std::endl;
+    itksys::SystemTools::MakeDirectory( vectorFileDirectory.c_str() );
+    }
+
   outputVectorStream.open( vectorFilename.c_str(),
                            std::ios::out | std::ios::binary | std::ios::trunc);
 

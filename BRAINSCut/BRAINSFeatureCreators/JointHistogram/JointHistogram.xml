@@ -16,30 +16,55 @@
     <label>Required Parameters</label>
     <!--  -->
     <image>
-      <name>inputVolume1</name>
-      <longflag>inputVolume1</longflag>
+      <name>inputVolumeInXAxis</name>
+      <longflag>inputVolumeInXAxis</longflag>
       <description>The Input image to be computed for statistics</description>
       <channel>input</channel>
-      <label>Input Image 1</label>
+      <label>Input Image In X Axis</label>
       <default></default>
     </image>
+    
     <!--  -->
     <image>
-      <name>inputVolume2</name>
-      <longflag>inputVolume2</longflag>
+      <name>inputVolumeInYAxis</name>
+      <longflag>inputVolumeInYAxis</longflag>
       <description>The Input image to be computed for statistics</description>
       <channel>input</channel>
-      <label>Input Image 2</label>
+      <label>Input Image In Y Axis</label>
       <default></default>
     </image>
+    
+    <!--  -->
+    <image>
+      <name>inputMaskVolumeInXAxis</name>
+      <longflag>inputMaskVolumeInXAxis</longflag>
+      <description>Input mask volume for inputVolumeInXAxis. Histogram will be computed just for the masked region</description>
+      <channel>input</channel>
+      <label>Input mask image In X Axis</label>
+      <default></default>
+    </image>
+
+    <!--  -->
+    <image>
+      <name>inputMaskVolumeInYAxis</name>
+      <longflag>inputMaskVolumeInYAxis</longflag>
+      <description>Input mask volume for inputVolumeInYAxis. Histogram will be computed just for the masked region</description>
+      <channel>input</channel>
+      <label>Input mask image In Y Axis</label>
+      <default></default>
+    </image>
+
+    <!--  -->
     <string>
       <name>outputJointHistogramImage</name>
       <longflag>outputJointHistogramImage</longflag>
       <channel>input</channel>
-      <description> output data file name </description>
+      <description> output joint histogram image file name. Histogram is usually 2D image. </description>
       <label>OutputDataFilename</label>
-      <default>./output.txt</default>
+      <default>./output.png</default>
     </string>
+
+    <!--  -->
     <boolean>
       <name>verbose</name>
       <longflag>verbose</longflag>
@@ -49,8 +74,6 @@
       <label>verbose</label>
       <default>FALSE</default>
     </boolean>
-
-    <!--  -->
 
   </parameters>
 </executable>

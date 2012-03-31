@@ -59,7 +59,7 @@ int main( int argc, char * argv[] )
       StructuringElementType>  DilateFilterType;
 
   ReaderType::Pointer reader = ReaderType::New();
-  WriterType::Pointer writerDilation = WriterType::New();
+  WriterType::Pointer writingFilter = WriterType::New();
 
   ThresholdFilterType::Pointer thresholder = ThresholdFilterType::New();
 
@@ -69,9 +69,9 @@ int main( int argc, char * argv[] )
   structuringElement.CreateStructuringElement();
   binaryDilate->SetKernel( structuringElement );
 
-  reader->SetFileName( inputMaskVolume );
+  reader->SetFileName( inputBinaryVolume );
 
-  writerDilation->SetFileName( outputDilation );
+  writingFilter->SetFileName( outputVolume );
 
   thresholder->SetInput( reader->GetOutput() );
 
@@ -88,8 +88,8 @@ int main( int argc, char * argv[] )
 
   binaryDilate->SetDilateValue( foreground );
 
-  writerDilation->SetInput( binaryDilate->GetOutput() );
-  writerDilation->Update();
+  writingFilter->SetInput( binaryDilate->GetOutput() );
+  writingFilter->Update();
 
   return EXIT_SUCCESS;
 }

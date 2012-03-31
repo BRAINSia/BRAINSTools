@@ -324,18 +324,21 @@ def getT1sT2s(uid, dbfile,altT1):
 ###########################################################################
 def WorkupT1T2(processingLevel,mountPrefix,ExperimentBaseDirectory, subject_data_file, atlas_fname_wpath, BCD_model_path,
                InterpolationMode="Linear", Mode=10,DwiList=[] ):
-    processingLevel=int(processingLevel)
     """
     Run autoworkup on all subjects data defined in the subject_data_file
 
-    This is the main function to call when processing a data set with T1 & T2 
+    This is the main function to call when processing a data set with T1 & T2
     data.  ExperimentBaseDirectory is the base of the directory to place results, T1Images & T2Images
     are the lists of images to be used in the auto-workup. atlas_fname_wpath is
     the path and filename of the atlas to use.
     """
+
+    subjectDatabaseFile=os.path.join( ExperimentBaseDirectory,'InternalWorkflowSubjectDB.pickle')
+    processingLevel=int(processingLevel)
     subjData=csv.reader(open(subject_data_file,'rb'), delimiter=',', quotechar='"')
     myDB=dict()
-    multiLevel=AutoVivification()
+    multiLevel=AutoVivification()  #This should be replaced by a more nested dictionary
+    nestedDictionary=AutoVivification()
     for row in subjData:
         currDict=dict()
         validEntry=True
@@ -369,9 +372,10 @@ def WorkupT1T2(processingLevel,mountPrefix,ExperimentBaseDirectory, subject_data
             if validEntry == True:
                 myDB[session]=currDict
                 UNIQUE_ID=site+"_"+subj+"_"+session
+                nestedDictionary[site][subj][session]=currDict
                 multiLevel[UNIQUE_ID]=currDict
     from cPickle import dump
-    dump(multiLevel, open('db.tmp','w'))
+    dump(multiLevel, open(subjectDatabaseFile,'w'))
 
     ########### PIPELINE INITIALIZATION #############
     baw200 = pe.Workflow(name="BAW_20120104_workflow")
@@ -399,9 +403,23 @@ def WorkupT1T2(processingLevel,mountPrefix,ExperimentBaseDirectory, subject_data
     """TODO: Determine if we want to pass subjectID and scanID, always require full
     paths, get them from the output path, or something else.
     """
-    siteSource = pe.Node(interface=IdentityInterface(fields=['uid']),name='99_siteSource')
-    siteSource.iterables = ('uid', multiLevel.keys() )
-    
+    uidSource = pe.Node(interface=IdentityInterface(fields=['uid']),name='99_siteSource')
+    uidSource.iterables = ('uid', multiLevel.keys() )
+
+    projSource = pe.Node(interface=IdentityInterface(fields=['proj']),name='99_projSource')
+    projSource.iterables = ('proj', multiLevel.keys() )
+
+#    subjSource = pe.Node( Function(function=IdentityInterface, input_names = ['T1List','T2List','altT1'], output_names = ['imagePathList']), run_without_submitting=True, name="99_makeImagePathList")
+#    baw200.connect( [ (projSource, makeImagePathList, [(('uid', getT1s, subjectDatabaseFile ), 'T1List')] ), ])
+#    baw200.connect( [ (uidSource, makeImagePathList, [(('uid', getT2s, subjectDatabaseFile ), 'T2List')] ), ])
+
+#    subjSource = pe.Node(interface=IdentityInterface(fields=['subj']),name='99_subjSource')
+#    subjSource.iterables = ('subj', multiLevel.keys() )
+
+#    sessSource = pe.Node(interface=IdentityInterface(fields=['sess']),name='99_sessSource')
+#    sessSource.iterables = ('sess', multiLevel.keys() )
+
+
     BAtlas = MakeAtlasNode(atlas_fname_wpath) ## Call function to create node
 
     ########################################################
@@ -422,7 +440,7 @@ def WorkupT1T2(processingLevel,mountPrefix,ExperimentBaseDirectory, subject_data
     BCD.inputs.inputTemplateModel = os.path.join(BCD_model_path,'T1-2ndVersion.mdl')
 
     # Entries below are of the form:
-    baw200.connect( [ (siteSource, BCD, [(('uid', getFirstT1, os.path.join(os.getcwd(), 'db.tmp') ), 'inputVolume')] ), ])
+    baw200.connect( [ (uidSource, BCD, [(('uid', getFirstT1, subjectDatabaseFile) , 'inputVolume')] ), ])
 
     if processingLevel > 0:
         ########################################################
@@ -457,7 +475,7 @@ def WorkupT1T2(processingLevel,mountPrefix,ExperimentBaseDirectory, subject_data
         Resample2Atlas.inputs.interpolationMode = "Linear"
         Resample2Atlas.inputs.outputVolume = "subject2atlas.nii.gz"
 
-        baw200.connect( [ (siteSource, Resample2Atlas, [(('uid', getFirstT1, os.path.join(os.getcwd(), 'db.tmp') ), 'inputVolume')] ), ])
+        baw200.connect( [ (uidSource, Resample2Atlas, [(('uid', getFirstT1, subjectDatabaseFile ), 'inputVolume')] ), ])
         baw200.connect(BLI2Atlas,'outputTransformFilename',Resample2Atlas,'warpTransform')
         baw200.connect(BAtlas,'template_t1',Resample2Atlas,'referenceVolume')
 
@@ -475,8 +493,8 @@ def WorkupT1T2(processingLevel,mountPrefix,ExperimentBaseDirectory, subject_data
                 imagePathList.append(i)
             return imagePathList
         makeImagePathList = pe.Node( Function(function=MakeOneFileList, input_names = ['T1List','T2List','altT1'], output_names = ['imagePathList']), run_without_submitting=True, name="99_makeImagePathList")
-        baw200.connect( [ (siteSource, makeImagePathList, [(('uid', getT1s, os.path.join(os.getcwd(), 'db.tmp') ), 'T1List')] ), ])
-        baw200.connect( [ (siteSource, makeImagePathList, [(('uid', getT2s, os.path.join(os.getcwd(), 'db.tmp') ), 'T2List')] ), ])
+        baw200.connect( [ (uidSource, makeImagePathList, [(('uid', getT1s, subjectDatabaseFile ), 'T1List')] ), ])
+        baw200.connect( [ (uidSource, makeImagePathList, [(('uid', getT2s, subjectDatabaseFile ), 'T2List')] ), ])
         # -- Standard mode to make 256^3 images
         baw200.connect( BCD,    'outputResampledVolume', makeImagePathList, 'altT1' )
 
@@ -486,8 +504,8 @@ def WorkupT1T2(processingLevel,mountPrefix,ExperimentBaseDirectory, subject_data
             return ",".join(input_types)
         makeImageTypeList = pe.Node( Function(function=MakeOneFileTypeList, input_names = ['T1List','T2List'], output_names = ['imageTypeList']), run_without_submitting=True, name="99_makeImageTypeList")
 
-        baw200.connect( [ (siteSource, makeImageTypeList, [(('uid', getT1s, os.path.join(os.getcwd(), 'db.tmp') ), 'T1List')] ), ])
-        baw200.connect( [ (siteSource, makeImageTypeList, [(('uid', getT2s, os.path.join(os.getcwd(), 'db.tmp') ), 'T2List')] ), ])
+        baw200.connect( [ (uidSource, makeImageTypeList, [(('uid', getT1s, subjectDatabaseFile ), 'T1List')] ), ])
+        baw200.connect( [ (uidSource, makeImageTypeList, [(('uid', getT2s, subjectDatabaseFile ), 'T2List')] ), ])
 
         def MakeOutFileList(T1List,T2List):
             def GetExtBaseName(filename):
@@ -510,8 +528,8 @@ def WorkupT1T2(processingLevel,mountPrefix,ExperimentBaseDirectory, subject_data
                 out_corrected_names.append(out_name)
             return out_corrected_names
         makeOutImageList = pe.Node( Function(function=MakeOutFileList, input_names = ['T1List','T2List'], output_names = ['outImageList']), run_without_submitting=True, name="99_makeOutImageList")
-        baw200.connect( [ (siteSource, makeOutImageList, [(('uid', getT1s, os.path.join(os.getcwd(), 'db.tmp') ), 'T1List')] ), ])
-        baw200.connect( [ (siteSource, makeOutImageList, [(('uid', getT2s, os.path.join(os.getcwd(), 'db.tmp') ), 'T2List')] ), ])
+        baw200.connect( [ (uidSource, makeOutImageList, [(('uid', getT1s, subjectDatabaseFile ), 'T1List')] ), ])
+        baw200.connect( [ (uidSource, makeOutImageList, [(('uid', getT2s, subjectDatabaseFile ), 'T2List')] ), ])
 
         BABC= pe.Node(interface=BRAINSABC(), name="11_BABC")
         baw200.connect(makeImagePathList,'imagePathList',BABC,'inputVolumes')
@@ -544,7 +562,7 @@ def WorkupT1T2(processingLevel,mountPrefix,ExperimentBaseDirectory, subject_data
                                    output_names=['t1_corrected','t2_corrected'],
                                    function=get_first_T1_and_T2), name='99_bfc_files')
 
-        baw200.connect( [ (siteSource, bfc_files, [(('uid', getT1sLength, os.path.join(os.getcwd(), 'db.tmp') ), 'T1_count')] ), ])
+        baw200.connect( [ (uidSource, bfc_files, [(('uid', getT1sLength, subjectDatabaseFile ), 'T1_count')] ), ])
         baw200.connect(BABC,'outputVolumes',bfc_files,'in_files')
 
         """

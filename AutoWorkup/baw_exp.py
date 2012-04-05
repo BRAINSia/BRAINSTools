@@ -44,6 +44,8 @@ def main(argv=None):
     group = parser.add_argument_group('Required')
     group.add_argument('-pe', action="store", dest='processingEnvironment', required=True,
                        help='The name of the processing environment to use from the config file')
+    group.add_argument('-wfrun', action="store", dest='wfrun', required=True,
+                       help='The name of the workflow running plugin to use')
     group.add_argument('-ExperimentConfig', action="store", dest='ExperimentConfig', required=True,
                        help='The path to the file that describes the entire experiment')
     parser.add_argument('--version', action='version', version='%(prog)s 1.0')
@@ -95,13 +97,26 @@ def main(argv=None):
     ## Create the shell wrapper script for ensuring that all jobs running on remote hosts from SGE
     #  have the same environment as the job submission host.
     JOB_SCRIPT=get_global_sge_script(sys.path,PROGRAM_PATHS)
-    #baw200.run(plugin='SGE', plugin_args=dict(template=JOB_SCRIPT,qsub_args="-S /bin/bash -q OSX -pe smp1 2-4 -o /dev/null -e /dev/null "))
-    #baw200.run(plugin='MultiProc', plugin_args={'n_procs' : 4})
-    #baw200.run(plugin='MultiProc', plugin_args={'n_procs' : 12})
-    #baw200.run(plugin='SGE', plugin_args=dict(template=JOB_SCRIPT,qsub_args="-S /bin/bash -q all.q -pe smp1 2-4 -o /dev/null -e /dev/null "))
-    baw200.run()
+    if input_arguments.wfrun == 'helium_all.q':
+        baw200.run(plugin='SGE',
+            plugin_args=dict(template=JOB_SCRIPT,qsub_args="-S /bin/bash -q all.q -pe smp1 2-4 -o /dev/null -e /dev/null "))
+    elif input_arguments.wfrun == 'ipl_OSX':
+        baw200.run(plugin='SGE',
+            plugin_args=dict(template=JOB_SCRIPT,qsub_args="-S /bin/bash -q OSX -pe smp1 2-4 -o /dev/null -e /dev/null "))
+    elif input_arguments.wfrun == 'local_4':
+        print "Running with 4 parallel processes on local machine"
+        baw200.run(plugin='MultiProc', plugin_args={'n_procs' : 4})
+    elif input_arguments.wfrun == 'local_12':
+        print "Running with 12 parallel processes on local machine"
+        baw200.run(plugin='MultiProc', plugin_args={'n_procs' : 4})
+    elif input_arguments.wfrun == 'local':
+        print "Running sequentially on local machine"
+        baw200.run()
+    else:
+        print "You must specify the run environment type."
+	sys.exit(-1)
+	
     baw200.write_graph()
-
 
 if __name__ == "__main__":
     sys.exit(main())

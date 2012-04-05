@@ -50,8 +50,8 @@ from BRAINSTools.BRAINSCut import *
 from BRAINSTools.GradientAnisotropicDiffusionImageFilter import *
 from BRAINSTools.GenerateSummedGradientImage import *
 from BRAINSTools.ANTSWrapper import *
-#from BRAINSTools.WarpImageMultiTransform import *
-#from BRAINSTools.WarpAllAtlas import *
+from BRAINSTools.WarpImageMultiTransform import *
+from BRAINSTools.WarpAllAtlas import *
 
 #######################  HACK:  Needed to make some global variables for quick
 #######################         processing needs

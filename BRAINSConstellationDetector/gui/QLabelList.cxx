@@ -151,12 +151,14 @@ void QLabelList::sliceChangedSlot()
     }
 }
 
+#define MAX_LABEL_NUM 100
+
 void QLabelList::checkVisibilitySlot()
 {
   if( this->currentItem() != NULL )
     {
-    int     MAX_LABEL_NUM = 100;
-    int     table[3 * MAX_LABEL_NUM];
+    int table[3 * MAX_LABEL_NUM];
+
     int     currRow = this->currentRow();
     QString textLabel = this->item(currRow)->text();
     double  currPos[3];
@@ -194,7 +196,6 @@ void QLabelList::checkVisibilitySlot(double *tag)
 {
   if( this->currentItem() != NULL )
     {
-    int     MAX_LABEL_NUM = 100;
     int     table[3 * MAX_LABEL_NUM];
     int     currRow = this->currentRow();
     QString textLabel = this->item(currRow)->text();
@@ -240,7 +241,6 @@ void QLabelList::ackWheelChanged()
 {
   if( this->currentItem() != NULL )
     {
-    int     MAX_LABEL_NUM = 100;
     double  labelPos[3 * MAX_LABEL_NUM];
     int     currRow = this->currentRow();
     double  currPos[3];

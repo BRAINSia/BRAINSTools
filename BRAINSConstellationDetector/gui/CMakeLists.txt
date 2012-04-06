@@ -19,9 +19,8 @@ project(MedicalSlicerViewerGui)
     set(QT_LIBRARIES ${QT_QT_LIBRARY})
   endif()
 
-  set( CMAKE_CURRENT_SOURCE_DIRS
-  BRAINSConstellationDetectorGUIPrimary.cxx
-  QSliceViewer.cxx
+  set( BRAINSConstellationDetectorGUI_SRC
+   QSliceViewer.cxx
   QLabelList.cxx
   QVTKInteractionCallback.cxx
   QDelLabelDialogs.cxx
@@ -53,14 +52,15 @@ project(MedicalSlicerViewerGui)
   add_definitions( ${QT_DEFINITIONS} )
 
 add_library( BRAINSConstellationDetectorGUICOMMONLIB STATIC
-  ${CMAKE_CURRENT_SOURCE_DIRS}
+  ${BRAINSConstellationDetectorGUI_SRC}
   ${HEADERS_MOC}
   )
   target_link_libraries( BRAINSConstellationDetectorGUICOMMONLIB
   QVTK
   ${QT_LIBRARIES}
-  BRAINSConstellationDetectorCOMMONLIB
-  vtkRendering vtkGraphics vtkIO vtkCommon vtkImaging
+ # BRAINSConstellationDetectorCOMMONLIB
+ ${ITK_LIBRARIES}
+ ${VTK_LIBRARIES}
   )
 
 ## Build all the programs

@@ -89,6 +89,10 @@ set(brains_modulenames
                   #  NOTE :  This program is not yet ready for use:  BRAINSContinuousClass
   )
 
+if(BRAINSTools_USE_QT)
+  list(APPEND brains_modulenames DTIPrep)
+endif()
+
 ## Tools that only work with ITKv4
 if(ITK_VERSION_MAJOR GREATER 3)
   list(APPEND brains_modulenames

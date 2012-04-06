@@ -58,7 +58,7 @@ if(NOT DEFINED ${extProjName}_DIR AND NOT ${USE_SYSTEM_${extProjName}})
   endif()
 
   set(VTK_QT_ARGS)
-  if(${PROJECT_NAME}_USE_QT)
+  if(${LOCAL_PROJECT_NAME}_USE_QT)
     if(NOT APPLE)
       set(VTK_QT_ARGS
         #-DDESIRED_QT_VERSION:STRING=4 # Unused
@@ -87,7 +87,7 @@ if(NOT DEFINED ${extProjName}_DIR AND NOT ${USE_SYSTEM_${extProjName}})
         -DVTK_USE_GUISUPPORT:BOOL=OFF
         -DVTK_USE_QT:BOOL=OFF
         )
-  endif(${PROJECT_NAME}_USE_QT)
+  endif(${LOCAL_PROJECT_NAME}_USE_QT)
 
   # Disable Tk when Python wrapping is enabled
   if (Slicer_USE_PYTHONQT)

@@ -27,6 +27,9 @@ if(${ITK_VERSION_MAJOR} STREQUAL "3")
 endif()
 
 CMAKE_DEPENDENT_OPTION(
+  USE_DTIPrep                         "Build DTIPrep"                                ON "BRAINSTools_USE_QT" ON)
+
+CMAKE_DEPENDENT_OPTION(
   USE_BRAINSABC                       "Build BRAINSABC (ITKv4)"                      ON "USE_ITKv4" ON)
 CMAKE_DEPENDENT_OPTION(
   USE_BRAINSTransformConvert          "Build BRAINSTransformConvert (ITKv4)"         ON "USE_ITKv4" ON)
@@ -52,13 +55,11 @@ option(USE_DebugImageViewer "Build DebugImageViewer" OFF)
 
 option(BRAINS_DEBUG_IMAGE_WRITE "Enable writing out intermediate image results" OFF)
 
-
-if(DEFINED USE_DebugImageViewer AND USE_DebugImageViewer AND BRAINSTools_USE_QT)
+if(BRAINSTools_USE_QT)
   if(NOT QT4_FOUND)
-    find_package(Qt4 COMPONENTS QtCore QtGui QtNetwork REQUIRED)
+    find_package(Qt4 4.6 COMPONENTS QtCore QtGui QtNetwork QtXml REQUIRED)
     include(${QT_USE_FILE})
   endif(NOT QT4_FOUND)
-  option(USE_DebugImageViewer "use DebugImageViewer to display intermediate results" OFF)
 endif()
 
 

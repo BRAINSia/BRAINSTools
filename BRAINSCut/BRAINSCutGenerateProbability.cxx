@@ -8,14 +8,21 @@
 BRAINSCutGenerateProbability
 ::BRAINSCutGenerateProbability( std::string netConfigurationFilename ) : BRAINSCutPrimary( netConfigurationFilename )
 {
-  SetRegistrationParametersFromNetConfiguration();
+  try
+    {
+    SetRegistrationParametersFromNetConfiguration();
 
-  SetAtlasDataSet();
-  SetAtlasFilename();
-  SetAtlasImage();
+    SetAtlasDataSet();
+    SetAtlasFilename();
+    SetAtlasImage();
 
-  SetRegionsOfInterestFromNetConfiguration();
-  SetTrainingDataSetsList();
+    SetRegionsOfInterestFromNetConfiguration();
+    SetTrainingDataSetsList();
+    }
+  catch( BRAINSCutExceptionStringHandler& e )
+    {
+    std::cout << e.Error();
+    }
 }
 
 /** Get/Set Methods */

@@ -8,8 +8,11 @@ BRAINSCutGenerateRegistrations
   : BRAINSCutPrimary( netConfigurationFilename )
 {
   SetAtlasDataSet();
+  std::cout << __LINE__ << "::" << __FILE__ << std::endl;
   SetRegistrationParametersFromNetConfiguration();
+  std::cout << __LINE__ << "::" << __FILE__ << std::endl;
   SetAtlasFilename();
+  std::cout << __LINE__ << "::" << __FILE__ << std::endl;
 }
 
 void

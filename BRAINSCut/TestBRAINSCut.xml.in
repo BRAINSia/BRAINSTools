@@ -18,6 +18,12 @@
              LearningRate="0.3" 
              MomentumRate="0.15"
              DesiredError="0.001"/>
+
+  <RandomTreeParams MaxDepth="5"
+                    MInSampleCount="10",
+                    MaxTreeCount="10",
+                    />
+
   <NeuralNetParams MaskSmoothingValue="0" 
                    GaussianSize="3" 
                    GradientProfileSize="1"

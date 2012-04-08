@@ -23,13 +23,14 @@ struct pairedTrainingSetType
   {
   matrixType pairedInput;
   matrixType pairedOutput;
+  matrixType pairedOutputRF;
   unsigned int size;
   };
 
 /*
  * constant
  */
-static const float        HundreadPercentValue = 1.0F;
+static const float        HundredPercentValue = 1.0F;
 static const float        ZeroPercentValue = 0.0F;
 static const unsigned int LineGuardSize = 1;
 static const scalarType   LineGuard = 1234567.0;
@@ -102,6 +103,15 @@ public:
 
   void SetGradientSizeFromNetConfiguration();
 
+  /** Model file name **/
+  std::string GetModelBaseName();
+
+  void SetANNModelFilenameAtIteration( const int iteration);
+
+  std::string GetANNModelFilenameAtIteration( const int iteration);
+
+  std::string GetRFModelFilename( int depth, int NTrees);
+
   WorkingImagePointer ReadImageByFilename( const std::string  filename );
 
   WorkingImagePointer WarpImageByFilenames( const std::string & deformationFilename, const std::string & inputFilename,
@@ -159,6 +169,10 @@ protected:
   WorkingImagePointer theta;
 
   unsigned int gradientSize;
+
+  /** model name **/
+  std::string ANNModelFilename;
+  std::string RandomForestModelFilename;
 private:
   WorkingImageType GetDeformedImage( WorkingImageType image);
 

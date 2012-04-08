@@ -1,6 +1,6 @@
 #include "BRAINSCutApplyModel.h"
 #include "FeatureInputVector.h"
-#include "ANNParams.h"
+#include "TrainingPrameters.h"
 #include "ApplyModel.h"
 
 #include <itkConnectedComponentImageFilter.h>
@@ -34,7 +34,17 @@ BRAINSCutApplyModel
   SetANNModelFilenameFromNetConfiguration();
   SetGaussianSmoothingSigmaFromNetConfiguration();
 
+  SetRandomForestModelFilenameFromNetConfiguration();
   openCVANN = new OpenCVMLPType();
+
+  SetMethod( "ANN" );
+}
+
+void
+BRAINSCutApplyModel
+::SetMethod( std::string inputMethod)
+{
+  method = inputMethod;
 }
 
 /* iterate through subject */
@@ -42,6 +52,15 @@ void
 BRAINSCutApplyModel
 ::Apply()
 {
+  if( method ==  "ANN" )
+    {
+    ReadANNModelFile();
+    }
+  else if( method == "RandomForest" )
+    {
+    ReadRandomForestModelFile();
+    }
+
   typedef NetConfiguration::ApplyDataSetListType::iterator ApplySubjectIteratorType;
 
   normalization = GetNormalizationFromNetConfiguration();
@@ -118,13 +137,22 @@ BRAINSCutApplyModel
         WritePredictROIProbabilityBasedOnReferenceImage( predictedOutputVector,
                                                          imagesOfInterest.front(),
                                                          deformedROIs.find( *roiTyIt )->second,
-                                                         ANNContinuousOutputFilename );
+                                                         ANNContinuousOutputFilename,
+                                                         roiIDsOrderNumber );
 
         /* post processing
          * may include hole-filling(closing), thresholding, and more adjustment
          */
-        BinaryImagePointer mask = PostProcessingOfANNContinuousImage( ANNContinuousOutputFilename,
-                                                                      annOutputThreshold);
+        BinaryImagePointer mask;
+        if( method == "ANN" )
+          {
+          mask = PostProcessingANN( ANNContinuousOutputFilename,
+                                    annOutputThreshold);
+          }
+        else if( method == "RandomForest" )
+          {
+          mask = PostProcessingRF( ANNContinuousOutputFilename );
+          }
 
         std::string roiOutputFilename = GetROIVolumeName( subject, *roiTyIt );
         itkUtil::WriteImage<BinaryImageType>( mask, roiOutputFilename );
@@ -194,8 +222,8 @@ BRAINSCutApplyModel
 
 BinaryImagePointer
 BRAINSCutApplyModel
-::PostProcessingOfANNContinuousImage( std::string continuousFilename,
-                                      scalarType threshold )
+::PostProcessingANN( std::string continuousFilename,
+                     scalarType threshold )
 {
   WorkingImagePointer continuousImage = ReadImageByFilename( continuousFilename );
 
@@ -203,6 +231,28 @@ BRAINSCutApplyModel
 
   /* threshold */
   maskVolume = ThresholdImageAtLower( continuousImage, threshold);
+
+  /* Get One label */
+  // maskVolume = GetOneConnectedRegion( maskVolume );
+
+  /* opening and closing to get rid of island and holes */
+  // maskVolume = FillHole( maskVolume );
+  return maskVolume;
+}
+
+BinaryImagePointer
+BRAINSCutApplyModel
+::PostProcessingRF( std::string labelImageFilename )
+{
+  WorkingImagePointer labelImage = ReadImageByFilename( labelImageFilename );
+
+  BinaryImagePointer maskVolume = itkUtil::ScaleAndCast<WorkingImageType,
+                                                        BinaryImageType>( labelImage,
+                                                                          0,
+                                                                          255);
+
+  /* threshold */
+  // maskVolume = ThresholdImageAtLower( labelImage, 1);
 
   /* Get One label */
   maskVolume = GetOneConnectedRegion( maskVolume );
@@ -231,7 +281,10 @@ BRAINSCutApplyModel
   thresholder->SetLowerThreshold( -1e+10F);
   thresholder->Update();
 
-  BinaryImagePointer mask = itkUtil::TypeCast<WorkingImageType, BinaryImageType>( thresholder->GetOutput() );
+  BinaryImagePointer mask = itkUtil::ScaleAndCast<WorkingImageType,
+                                                  BinaryImageType>(thresholder->GetOutput(),
+                                                                   0,
+                                                                   255);
   return mask;
 }
 
@@ -253,7 +306,10 @@ BRAINSCutApplyModel
   thresholder->SetLowerThreshold( thresholdValue );
   thresholder->Update();
 
-  BinaryImagePointer mask = itkUtil::TypeCast<WorkingImageType, BinaryImageType>( thresholder->GetOutput() );
+  BinaryImagePointer mask = itkUtil::ScaleAndCast<WorkingImageType,
+                                                  BinaryImageType>(thresholder->GetOutput(),
+                                                                   0,
+                                                                   255);
   return mask;
 }
 
@@ -305,7 +361,8 @@ BRAINSCutApplyModel
 ::SetGaussianSmoothingSigmaFromNetConfiguration()
 {
   gaussianSmoothingSigma =
-    BRAINSCutNetConfiguration.Get<ApplyModelType>("ApplyModel")->GetAttribute<FloatValue>("GaussianSmoothingSigma");
+    BRAINSCutNetConfiguration.Get<ApplyModelType>("ApplyModel")
+    ->GetAttribute<FloatValue>("GaussianSmoothingSigma");
 }
 
 void
@@ -313,7 +370,8 @@ BRAINSCutApplyModel
 ::SetANNOutputThresholdFromNetConfiguration()
 {
   annOutputThreshold =
-    BRAINSCutNetConfiguration.Get<ApplyModelType>("ApplyModel")->GetAttribute<FloatValue>("MaskThresh");
+    BRAINSCutNetConfiguration.Get<ApplyModelType>("ApplyModel")
+    ->GetAttribute<FloatValue>("MaskThresh");
   if( annOutputThreshold < 0.0F )
     {
     std::string msg = " ANNOutput Threshold cannot be less than zero. \n";
@@ -355,7 +413,6 @@ BRAINSCutApplyModel
               unsigned int         roiNumber,
               unsigned int         inputVectorSize)
 {
-  ReadANNModelFile();
   /* initialize container of output vector*/
   resultOutputVector.clear();
   for( InputVectorMapType::iterator it = roiInputFeatureVector.begin();
@@ -368,17 +425,29 @@ BRAINSCutApplyModel
 
     /* get open cv type matrix from array for prediction */
     matrixType openCVInputFeature = cvCreateMat( 1, inputVectorSize, CV_32FC1);
+    // std::cout<<FeatureInputVector::HashIndexFromKey( it->first );
     GetOpenCVMatrixFromArray( openCVInputFeature, arrayInputFeatureVector, inputVectorSize);
 
     /* predict */
-    matrixType openCVOutput = cvCreateMat( 1, roiIDsInOrder.size(), CV_32FC1);
-    openCVANN->predict( openCVInputFeature, openCVOutput );
 
-    /* insert result to the result output vector */
-    resultOutputVector.insert( std::pair<int, scalarType>(  ( it->first ),  CV_MAT_ELEM( *openCVOutput,
-                                                                                         scalarType,
-                                                                                         0,
-                                                                                         roiNumber) ) );
+    if( method == "ANN" )
+      {
+      matrixType openCVOutput = cvCreateMat( 1, roiIDsInOrder.size(), CV_32FC1);
+      openCVANN->predict( openCVInputFeature, openCVOutput );
+
+      /* insert result to the result output vector */
+      resultOutputVector.insert( std::pair<int, scalarType>(  ( it->first ),  CV_MAT_ELEM( *openCVOutput,
+                                                                                           scalarType,
+                                                                                           0,
+                                                                                           roiNumber) ) );
+      }
+    else if( method == "RandomForest" )
+      {
+      scalarType response = openCVRandomForest.predict( openCVInputFeature );
+      resultOutputVector.insert( std::pair<int, scalarType>(  ( it->first ),
+                                                              response ) );
+      // std::cout<<"--> "<<response<<std::endl;
+      }
     }
 }
 
@@ -386,49 +455,55 @@ inline void
 BRAINSCutApplyModel
 ::GetOpenCVMatrixFromArray( matrixType& matrix, scalarType array[], unsigned int inputVectorSize)
 {
+  // for(int i=0; i<inputVectorSize; i++)
+  //  {
+  //  std::cout<<array[i]<<", ";
+  //  }
   cvInitMatHeader( matrix, 1, inputVectorSize, CV_32FC1, array );
 }
 
-std::string
-BRAINSCutApplyModel
-::GetANNModelBaseName()
-{
-  std::string basename;
-
-  try
-    {
-    basename = annModelConfiguration->GetAttribute<StringValue>("TrainingModelFilename");
-    }
-  catch( ... )
-    {
-    throw BRAINSCutExceptionStringHandler("Fail to get the ann model file name");
-    }
-  return basename;
-}
+/** Model file name */
 
 void
 BRAINSCutApplyModel
-::SetANNModelFilenameAtIteration( const int iteration)
+::SetANNModelFilenameFromNetConfiguration()
 {
-  ANNModelFilename = GetANNModelBaseName();
-
-  char temp[10];
-  sprintf( temp, "%09d", iteration );
-  ANNModelFilename += temp;
+  SetANNModelFilenameAtIteration( trainIteration );
 }
 
 void
 BRAINSCutApplyModel
 ::SetTrainIterationFromNetConfiguration()
 {
-  trainIteration = BRAINSCutNetConfiguration.Get<ANNParams>("ANNParams")->GetAttribute<IntValue>("Iterations");
+  trainIteration = BRAINSCutNetConfiguration.Get<TrainingParameters>("ANNParameters")
+    ->GetAttribute<IntValue>("Iterations");
+}
+
+// TODO TODO TODO TODO TODO
+void
+BRAINSCutApplyModel
+::SetRandomForestModelFilename( int depth, int nTree)
+{
+  RandomForestModelFilename =  GetRFModelFilename( depth, nTree );
+}
+
+void
+BRAINSCutApplyModel
+::SetRandomForestModelFilenameFromNetConfiguration()
+{
+  int nTree = BRAINSCutNetConfiguration.Get<TrainingParameters>("RandomForestParameters")
+    ->GetAttribute<IntValue>("MaxDepth");
+  int depth = BRAINSCutNetConfiguration.Get<TrainingParameters>("RandomForestParameters")
+    ->GetAttribute<IntValue>("MaxTreeCount");
+
+  RandomForestModelFilename =  GetRFModelFilename( depth, nTree );
 }
 
 void
 BRAINSCutApplyModel
 ::SetANNTestingSSEFilename()
 {
-  ANNTestingSSEFilename = GetANNModelBaseName();
+  ANNTestingSSEFilename = GetModelBaseName();
   ANNTestingSSEFilename += "ValidationSetSSE.txt";
 }
 
@@ -452,13 +527,7 @@ BRAINSCutApplyModel
     }
 }
 
-void
-BRAINSCutApplyModel
-::SetANNModelFilenameFromNetConfiguration()
-{
-  SetANNModelFilenameAtIteration( trainIteration );
-}
-
+/** read model files */
 void
 BRAINSCutApplyModel
 ::ReadANNModelFile()
@@ -471,6 +540,20 @@ BRAINSCutApplyModel
     }
 
   openCVANN->load( ANNModelFilename.c_str() );
+}
+
+void
+BRAINSCutApplyModel
+::ReadRandomForestModelFile()
+{
+  if( !itksys::SystemTools::FileExists( RandomForestModelFilename.c_str() ) )
+    {
+    std::string errorMsg = " File does not exist! :";
+    errorMsg += ANNModelFilename;
+    throw BRAINSCutExceptionStringHandler( errorMsg );
+    }
+
+  openCVRandomForest.load( RandomForestModelFilename.c_str() );
 }
 
 inline scalarType *
@@ -489,7 +572,8 @@ BRAINSCutApplyModel
 ::WritePredictROIProbabilityBasedOnReferenceImage( const PredictValueMapType& predictedOutput,
                                                    const WorkingImagePointer& referenceImage,
                                                    const WorkingImagePointer& roi,
-                                                   const std::string imageFilename)
+                                                   const std::string imageFilename,
+                                                   const WorkingPixelType labelValue )
 {
   WorkingImagePointer ANNContinuousOutputImage = WorkingImageType::New();
 
@@ -510,9 +594,9 @@ BRAINSCutApplyModel
   imgIt.GoToBegin();
   while( !imgIt.IsAtEnd() )
     {
-    if( imgIt.Value() > (HundreadPercentValue - FLOAT_TOLERANCE) )
+    if( imgIt.Value() > (HundredPercentValue - FLOAT_TOLERANCE) )
       {
-      ANNContinuousOutputImage->SetPixel( imgIt.GetIndex(), HundreadPercentValue );
+      ANNContinuousOutputImage->SetPixel( imgIt.GetIndex(), labelValue + 1.0F );
       }
     ++imgIt;
     }

@@ -18,7 +18,7 @@ function qsubHeader( ){
    outputFilename=$1;
    rm -f $outputFilename;
 
-   macBRANISBuild="/ipldev/scratch/eunyokim/src/BRAINS20111028/build-Darwin-20111028/lib"
+   macBRANISBuild="/ipldev/scratch/eunyokim/src/BRAINS20111028/build-Darwin/lib"
    heliumBRAINSBuild="/scratch/PREDICT/regina/BRAINS/buildICC/lib"
 
    echoOutTo "#!/bin/bash"                             $outputFilename 

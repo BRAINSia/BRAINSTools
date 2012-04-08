@@ -75,6 +75,13 @@
      <default>false</default>
    </boolean>
    <boolean>
+     <name>NoTrainingVectorShuffling</name>
+     <label>NoTrainingVectorShuffling</label>
+     <longflag>NoTrainingVectorShuffling</longflag>
+     <description>If this flag is on, there will be no shuffling.</description>
+     <default>false</default>
+   </boolean>
+   <boolean>
      <name>applyModel</name>
      <label>Apply Model</label>
      <longflag>applyModel</longflag>
@@ -88,19 +95,29 @@
      <description>validate data set.Just need for the first time run ( This is for validation of xml file and not working yet )</description>
      <default>false</default>
    </boolean>
+    <string-enumeration>
+      <name>method</name>
+      <label>method</label>
+      <longflag>method</longflag>
+      <default>ANN</default>
+      <element>RandomForest</element>
+      <element></element>
+    </string-enumeration>
+</parameters>
+<parameters>
     <integer>
-      <name>numberOfThreads</name>
-      <longflag deprecatedalias="debugNumberOfThreads" >numberOfThreads</longflag>
-      <label>Number Of Threads</label>
-      <description>Explicitly specify the maximum number of threads to use.</description>
+      <name>numberOfTrees</name>
+      <longflag>numberOfTrees</longflag>
+      <label>number of trees for random tree</label>
+      <description> Random tree: number of trees. This is to be used when only one model with specified depth wish to be created. </description>
       <default>-1</default>
     </integer>
-    <image multiple="true" fileExtensions=".nii.gz,.nrrd">
-      <name>implicitOutputs</name>
-      <label>Implicit Outputs</label>
-      <description>Outputs to be made available to NiPype. Needed because not all BRAINSABC outputs have command line arguments.</description>
-      <longflag>implicitOutputs</longflag>
-      <channel>output</channel>
-    </image>
+    <integer>
+      <name>randomTreeDepth</name>
+      <longflag>randomTreeDepth</longflag>
+      <label>depth for random tree</label>
+      <description> Random tree depth. This is to be used when only one model with specified depth wish to be created. </description>
+      <default>-1</default>
+    </integer>
 </parameters>
 </executable>

@@ -8,21 +8,37 @@
 BRAINSCutPrimary
 ::BRAINSCutPrimary( std::string netConfigurationFilename )
 {
-  SetNetConfigurationFilename( netConfigurationFilename );
-  SetNetConfiguration();
+  try
+    {
+    SetNetConfigurationFilename( netConfigurationFilename );
+    SetNetConfiguration();
+    }
+  catch( BRAINSCutExceptionStringHandler& e )
+    {
+    std::cout << e.Error() << std::endl;
+    exit(EXIT_FAILURE);
+    }
 }
 
 void
 BRAINSCutPrimary
 ::SetNetConfiguration()
 {
-  std::list<XMLElementContainer *> elementList;
+  try
+    {
+    std::list<XMLElementContainer *> elementList;
 
-  elementList.push_front( &BRAINSCutNetConfiguration );
+    elementList.push_front( &BRAINSCutNetConfiguration );
 
-  NetConfigurationParser BRIANSCutNetConfigurationParser = NetConfigurationParser( NetConfigurationFilename );
-  BRIANSCutNetConfigurationParser.SetUserData( &elementList );
-  BRIANSCutNetConfigurationParser.Parse();
+    NetConfigurationParser BRIANSCutNetConfigurationParser = NetConfigurationParser( NetConfigurationFilename );
+    BRIANSCutNetConfigurationParser.SetUserData( &elementList );
+    BRIANSCutNetConfigurationParser.Parse();
+    }
+  catch( BRAINSCutExceptionStringHandler& e )
+    {
+    std::cout << e.Error() << std::endl;
+    exit(EXIT_FAILURE);
+    }
 }
 
 void
@@ -239,7 +255,7 @@ BRAINSCutPrimary
   readInImage = itkUtil::ScaleAndCast<ReadInImageType,
                                       WorkingImageType>(inputImage,
                                                         ZeroPercentValue,
-                                                        HundreadPercentValue);
+                                                        HundredPercentValue);
   return readInImage;
 }
 
@@ -273,6 +289,7 @@ BRAINSCutPrimary
 
   if( useDeformation )
     {
+    std::cout << "return null deformation" << std::endl;
     return NULL;
     }
   return itk::ReadTransformFromDisk( filename );
@@ -327,4 +344,61 @@ BRAINSCutPrimary
   smoothingFilter->Update();
 
   return smoothingFilter->GetOutput();
+}
+
+/** model file name */
+std::string
+BRAINSCutPrimary
+::GetModelBaseName()
+{
+  std::string basename;
+
+  try
+    {
+    basename = annModelConfiguration->GetAttribute<StringValue>("TrainingModelFilename");
+    }
+  catch( ... )
+    {
+    throw BRAINSCutExceptionStringHandler("Fail to get the ann model file name");
+    exit(EXIT_FAILURE);
+    }
+  return basename;
+}
+
+std::string
+BRAINSCutPrimary
+::GetANNModelFilenameAtIteration( const int iteration)
+{
+  SetANNModelFilenameAtIteration( iteration );
+  return ANNModelFilename;
+}
+
+void
+BRAINSCutPrimary
+::SetANNModelFilenameAtIteration( const int iteration)
+{
+  ANNModelFilename = GetModelBaseName();
+
+  char temp[10];
+  sprintf( temp, "%09d", iteration );
+  ANNModelFilename += temp;
+}
+
+std::string
+BRAINSCutPrimary
+::GetRFModelFilename( int depth,
+                      int NTrees)
+{
+  std::string basename = GetModelBaseName();
+
+  char tempDepth[5];
+
+  sprintf( tempDepth, "%04u", depth );
+
+  char tempNTrees[5];
+  sprintf( tempNTrees, "%04u", NTrees );
+
+  std::string filename = basename + "D" + tempDepth + "NF" + tempNTrees;
+
+  return filename;
 }

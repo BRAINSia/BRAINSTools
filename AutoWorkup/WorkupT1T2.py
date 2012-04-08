@@ -767,7 +767,9 @@ def WorkupT1T2(processingLevel,mountPrefix,ExperimentBaseDirectory, subject_data
             baw200.connect( SplitAvgBABC,'avgBABCT2',ComputeAtlasToSubjectTransform,"fixed_T2_image")
             baw200.connect( BAtlas,'template_t1',    ComputeAtlasToSubjectTransform,"moving_T1_image")
             baw200.connect( BAtlas,'template_t1',    ComputeAtlasToSubjectTransform,"moving_T2_image")
+            baw200.connect(BLI,'outputTransformFilename',ComputeAtlasToSubjectTransform,'initialTransform')
 
+	if processingLevel == -123:
             WarpAtlas = pe.Node(interface=WarpAllAtlas(), name = "19_WarpAtlas")
             WarpAtlas.inputs.moving_atlas = atlas_fname_wpath
             WarpAtlas.inputs.deformed_atlas = "./"
@@ -775,7 +777,9 @@ def WorkupT1T2(processingLevel,mountPrefix,ExperimentBaseDirectory, subject_data
             baw200.connect( ComputeAtlasToSubjectTransform,'output_warp', WarpAtlas,"deformation_field")
             baw200.connect( SplitAvgBABC,'avgBABCT1', WarpAtlas, 'reference_image')
 
-        if processingLevel > 3:
+
+        #if processingLevel > 3:
+	if processingLevel == -123:
             print("""
             Run Freesurfer ReconAll at processingLevel={0}
             """.format(processingLevel) )

@@ -22,7 +22,6 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
 #-- #The following are brains2 warnings that just need to be suppressed because they are caused
 #-- #by third parties, and will never be fixed.
 set(CTEST_CUSTOM_WARNING_EXCEPTION
-    $ {CTEST_CUSTOM_WARNING_EXCEPTION}
     "tcl8.4.5/[^/]+/../[^/]+/[^.]+.c[:\"]"
     "tk8.4.5/[^/]+/[^/]+.c[:\"]"
     "SlicerExecutionModel"

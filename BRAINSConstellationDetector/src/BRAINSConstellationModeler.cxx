@@ -43,6 +43,8 @@
 #include "landmarkIO.h"
 #include "GenericTransformImage.h"
 
+#include "itkOrthogonalize3DRotationMatrix.h"
+
 // //////////////////////////////////////////////////////////////
 // Computes the unbiased sample variance of a set of n observations
 // {x_1,x_2,...,x_n} from a given distribution.
@@ -66,7 +68,7 @@ void sample_variance(const std::vector<DType> & x, DType *mean, DType *var)
     sum += value;
     }
   *mean = sum / n;
-  *var = ( sum_of_sq - sum * sum / n ) / ( n - 1.0 );
+  *var = ( sum_of_sq - sum * sum / n ) / ( n - 1.0 ); // var = E[X^2]-(E[X])^2
 }
 
 //
@@ -116,8 +118,7 @@ int main(int argc, char *argv[])
   myModel.InitializeModel(true);
 
   // the following tables store the inputed manually selected RP, AC, PC, etc
-  // locations for
-  // each volume
+  // locations for each volume
   // NOTE:  3 because before projection into Mid-sagital-plane (msp) need 3
   // coords
   // these tables store the RP, AC, PC, etc locations for each volume projected
@@ -255,12 +256,12 @@ int main(int argc, char *argv[])
     SImageType::PointType origCEC;
     origCEC.SetToMidPoint(origLE, origRE);
 
+    SImageType::PointType centerOfHeadMass = GetCenterOfHeadMass(image);
+
     // original input volume from the training set
     // transforms image to MSP aligned voxel lattice
     RigidTransformType::Pointer Tmsp = RigidTransformType::New();
-    RigidTransformType::Pointer invTmsp = RigidTransformType::New();
     SImageType::Pointer         volumeMSP;
-    SImageType::PointType       centerOfHeadMass = GetCenterOfHeadMass(image);
     ComputeMSP(image, Tmsp, volumeMSP, centerOfHeadMass, mspQualityLevel);
 
     if( globalImagedebugLevel > 2 )
@@ -271,32 +272,58 @@ int main(int argc, char *argv[])
       CreatedebugPlaneImage(volumeMSP, MSP_ImagePlane);
       }
 
-    Tmsp->GetInverse(invTmsp);
+    // Compute the transform from original space to the AC-PC aligned space using Reflective Correlation method
+    //    RigidTransformType::Pointer invTmsp = RigidTransformType::New();
+    //    Tmsp->GetInverse(invTmsp);
 
-    cm_InMSPAlignedSpace[currentDataset] = invTmsp->TransformPoint(centerOfHeadMass);
-    rp_InMSPAlignedSpace[currentDataset] = invTmsp->TransformPoint(origRP);
-    ac_InMSPAlignedSpace[currentDataset] = invTmsp->TransformPoint(origAC);
-    pc_InMSPAlignedSpace[currentDataset] = invTmsp->TransformPoint(origPC);
-    vn4_InMSPAlignedSpace[currentDataset] = invTmsp->TransformPoint(origVN4);
-    cec_InMSPAlignedSpace[currentDataset] = invTmsp->TransformPoint(origCEC);
-
-    // Compute the transform from original space to the AC-PC aligned space
+    // Instead of RC method, now we compute all the ac-pc aligned transforms by estimating the plane passing through RP,
+    // AC and PC points
     RigidTransformType::Pointer ACPC_AlignedTransform = computeTmspFromPoints(origRP, origAC, origPC, origin);
-    RigidTransformType::Pointer ACPC_AlignedTransform_INV = RigidTransformType::New();
-    ACPC_AlignedTransform_INV->GetInverse(ACPC_AlignedTransform);
 
-    const SImageType::PointType finalRP = ACPC_AlignedTransform_INV->TransformPoint(origRP);
-    const SImageType::PointType finalAC = ACPC_AlignedTransform_INV->TransformPoint(origAC);
-    const SImageType::PointType finalPC = ACPC_AlignedTransform_INV->TransformPoint(origPC);
-    const SImageType::PointType finalVN4 = ACPC_AlignedTransform_INV->TransformPoint(origVN4);
+    // We cannot easily compute the Inverse transform by the following to lines, we need to use versor for percise
+    // transformation
+    //    RigidTransformType::Pointer ACPC_AlignedTransform_INV = RigidTransformType::New();
+    //    ACPC_AlignedTransform_INV->GetInverse(ACPC_AlignedTransform);
 
-    SImageType::Pointer volumeACPC_Aligned =
-      TransformResample<SImageType, SImageType>( image, image, BackgroundFillValue,
-                                                 GetInterpolatorFromString<SImageType>("Linear"),
-                                                 ACPC_AlignedTransform.GetPointer() );
+    // AC-PC aligned TRANSFORM
+    VersorTransformType::Pointer finalTransform = VersorTransformType::New();
+    finalTransform->SetFixedParameters( ACPC_AlignedTransform->GetFixedParameters() );
+    itk::Versor<double>               versorRotation; // was commented before
+    const itk::Matrix<double, 3, 3> & NewCleanedOrthogonalized = itk::Orthogonalize3DRotationMatrix(
+        ACPC_AlignedTransform->GetRotationMatrix() );
+    versorRotation.Set( NewCleanedOrthogonalized );
+    finalTransform->SetRotation( versorRotation );
+    finalTransform->SetTranslation( ACPC_AlignedTransform->GetTranslation() );
+    // inverse transform
+    VersorTransformType::Pointer ACPC_AlignedTransform_INV = VersorTransformType::New();
+    SImageType::PointType        centerPoint = finalTransform->GetCenter(); // was commented before
+    centerPoint = finalTransform->GetCenter();
+    ACPC_AlignedTransform_INV->SetCenter( centerPoint );
+    ACPC_AlignedTransform_INV->SetIdentity();
+    finalTransform->GetInverse( ACPC_AlignedTransform_INV );
+    //////////////////////////////////////////////////////////////////
+
+    // Transform points based on the new transform
+    cm_InMSPAlignedSpace[currentDataset] = ACPC_AlignedTransform_INV->TransformPoint(centerOfHeadMass);
+    rp_InMSPAlignedSpace[currentDataset] = ACPC_AlignedTransform_INV->TransformPoint(origRP);
+    ac_InMSPAlignedSpace[currentDataset] = ACPC_AlignedTransform_INV->TransformPoint(origAC);
+    pc_InMSPAlignedSpace[currentDataset] = ACPC_AlignedTransform_INV->TransformPoint(origPC);
+    vn4_InMSPAlignedSpace[currentDataset] = ACPC_AlignedTransform_INV->TransformPoint(origVN4);
+    cec_InMSPAlignedSpace[currentDataset] = ACPC_AlignedTransform_INV->TransformPoint(origCEC);
 
     if( globalImagedebugLevel > 3 )
       {
+      const SImageType::PointType finalRP = ACPC_AlignedTransform_INV->TransformPoint(origRP);
+      const SImageType::PointType finalAC = ACPC_AlignedTransform_INV->TransformPoint(origAC);
+      const SImageType::PointType finalPC = ACPC_AlignedTransform_INV->TransformPoint(origPC);
+      const SImageType::PointType finalVN4 = ACPC_AlignedTransform_INV->TransformPoint(origVN4);
+
+      // TransformResample( inputImage, referenceImage, defaultValue, interpolationMode, transform )
+      SImageType::Pointer volumeACPC_Aligned =
+        TransformResample<SImageType, SImageType>( image, image, BackgroundFillValue,
+                                                   GetInterpolatorFromString<SImageType>("Linear"),
+                                                   ACPC_AlignedTransform.GetPointer() );
+
       itkUtil::WriteImage<SImageType>( volumeACPC_Aligned, resultsDir + "/ACPC_Aligned_"
                                        + itksys::SystemTools::GetFilenameName( mDef[currentDataset].GetImageFilename() ) );
       MakeLabelImage( volumeACPC_Aligned, finalRP, finalAC, finalPC, finalVN4, resultsDir + "/Mask_Resampled_"
@@ -308,15 +335,24 @@ int main(int argc, char *argv[])
     for( it = mDef[currentDataset].begin(); it != mDef[currentDataset].end(); ++it )
       {
       std::cout << "Training template for " << it->first << std::endl;
+      const SImageType::PointType origPoint = it->second;
+      const SImageType::PointType transformedPoint = ACPC_AlignedTransform_INV->TransformPoint(origPoint);
+
+      /* PRINT FOR TEST */                                                 ////////////////////////////////////////////
+      std::cout << "original point: " << it->second << std::endl;          // [0] << "," << it->second[1] << "," <<
+                                                                           // it->second[2] << ")" << std::endl;
+      std::cout << "transformed point: " << transformedPoint << std::endl; // [0] << "," << transformedPoint[1] << ","
+                                                                           // << transformedPoint[2] << ")" <<
+                                                                           // std::endl;
+      /////////////////////////////////////////////////////////////////
       for( unsigned int currentAngle = 0; currentAngle < myModel.GetNumRotationSteps(); currentAngle++ )
         {
         // //////  create a rotation about the center with respect to the
         // current test rotation angle
-        const float degree_current_angle =
-          myModel.GetInitialRotationAngle() + myModel.GetInitialRotationStep() * currentAngle;
-        const float                 current_angle = degree_current_angle * vnl_math::pi / 180;
-        const SImageType::PointType origPoint = it->second;
-        const SImageType::PointType transformedPoint = ACPC_AlignedTransform_INV->TransformPoint(origPoint);
+        const float degree_current_angle = myModel.GetInitialRotationAngle() + myModel.GetInitialRotationStep()
+          * currentAngle;
+        const float current_angle = degree_current_angle * vnl_math::pi / 180;
+
         RigidTransformType::Pointer Point_Rotate = RigidTransformType::New();
         Point_Rotate->SetCenter(transformedPoint);
         Point_Rotate->SetRotation(current_angle, 0, 0);
@@ -352,6 +388,16 @@ int main(int argc, char *argv[])
       }
     }
 
+  /* PRINT FOR TEST */ ///////////////////////////////////////////
+  std::cout << "\nPROCESSING AC transformed values in MSP aligned space by 'Reflective Correlation' method:"
+            << std::endl;
+  for( unsigned int currentDataset = 0; currentDataset < mDef.GetNumDataSets(); currentDataset++ )
+    {
+    std::cout << "====================================================================================" << std::endl;
+    std::cout << currentDataset + 1 << "#: " << ac_InMSPAlignedSpace[currentDataset] << std::endl;
+    }
+  ////////////////////////////////////////////////////////////////
+
   // -------------------------------
   std::cout << "\nCompute vector means:" << std::endl;
 
@@ -362,12 +408,9 @@ int main(int argc, char *argv[])
     std::vector<SImageType::PointType::VectorType::ComponentType> zComponents( myModel.GetNumDataSets() );
     for( unsigned int currentDataset = 0; currentDataset < myModel.GetNumDataSets(); currentDataset++ )
       {
-      xComponents[currentDataset] = pc_InMSPAlignedSpace[currentDataset][0]
-        - rp_InMSPAlignedSpace[currentDataset][0];
-      yComponents[currentDataset] = pc_InMSPAlignedSpace[currentDataset][1]
-        - rp_InMSPAlignedSpace[currentDataset][1];
-      zComponents[currentDataset] = pc_InMSPAlignedSpace[currentDataset][2]
-        - rp_InMSPAlignedSpace[currentDataset][2];
+      xComponents[currentDataset] = pc_InMSPAlignedSpace[currentDataset][0] - rp_InMSPAlignedSpace[currentDataset][0];
+      yComponents[currentDataset] = pc_InMSPAlignedSpace[currentDataset][1] - rp_InMSPAlignedSpace[currentDataset][1];
+      zComponents[currentDataset] = pc_InMSPAlignedSpace[currentDataset][2] - rp_InMSPAlignedSpace[currentDataset][2];
       }
     SImageType::PointType::VectorType RPtoPCmean;
     SImageType::PointType::VectorType RPtoPCvar;
@@ -386,12 +429,9 @@ int main(int argc, char *argv[])
     std::vector<SImageType::PointType::VectorType::ComponentType> zComponents( myModel.GetNumDataSets() );
     for( unsigned int currentDataset = 0; currentDataset < myModel.GetNumDataSets(); currentDataset++ )
       {
-      xComponents[currentDataset] = vn4_InMSPAlignedSpace[currentDataset][0]
-        - rp_InMSPAlignedSpace[currentDataset][0];
-      yComponents[currentDataset] = vn4_InMSPAlignedSpace[currentDataset][1]
-        - rp_InMSPAlignedSpace[currentDataset][1];
-      zComponents[currentDataset] = vn4_InMSPAlignedSpace[currentDataset][2]
-        - rp_InMSPAlignedSpace[currentDataset][2];
+      xComponents[currentDataset] = vn4_InMSPAlignedSpace[currentDataset][0] - rp_InMSPAlignedSpace[currentDataset][0];
+      yComponents[currentDataset] = vn4_InMSPAlignedSpace[currentDataset][1] - rp_InMSPAlignedSpace[currentDataset][1];
+      zComponents[currentDataset] = vn4_InMSPAlignedSpace[currentDataset][2] - rp_InMSPAlignedSpace[currentDataset][2];
       }
     SImageType::PointType::VectorType RPtoVN4mean;
     SImageType::PointType::VectorType RPtoVN4var;
@@ -410,12 +450,9 @@ int main(int argc, char *argv[])
     std::vector<SImageType::PointType::VectorType::ComponentType> zComponents( myModel.GetNumDataSets() );
     for( unsigned int currentDataset = 0; currentDataset < myModel.GetNumDataSets(); currentDataset++ )
       {
-      xComponents[currentDataset] = cec_InMSPAlignedSpace[currentDataset][0]
-        - rp_InMSPAlignedSpace[currentDataset][0];
-      yComponents[currentDataset] = cec_InMSPAlignedSpace[currentDataset][1]
-        - rp_InMSPAlignedSpace[currentDataset][1];
-      zComponents[currentDataset] = cec_InMSPAlignedSpace[currentDataset][2]
-        - rp_InMSPAlignedSpace[currentDataset][2];
+      xComponents[currentDataset] = cec_InMSPAlignedSpace[currentDataset][0] - rp_InMSPAlignedSpace[currentDataset][0];
+      yComponents[currentDataset] = cec_InMSPAlignedSpace[currentDataset][1] - rp_InMSPAlignedSpace[currentDataset][1];
+      zComponents[currentDataset] = cec_InMSPAlignedSpace[currentDataset][2] - rp_InMSPAlignedSpace[currentDataset][2];
       }
     SImageType::PointType::VectorType RPtoCECmean;
     SImageType::PointType::VectorType RPtoCECvar;
@@ -449,24 +486,29 @@ int main(int argc, char *argv[])
     }
 
   // ??  What does RPPC_to_RPAC_angle and RPAC_over_RPPC mean?
-  std::vector<float>                RPPC_to_RPAC_angle( myModel.GetNumDataSets() );
-  std::vector<float>                RPAC_over_RPPC( myModel.GetNumDataSets() );
+  std::vector<float> RPPC_to_RPAC_angle( myModel.GetNumDataSets() );
+  std::vector<float> RPAC_over_RPPC( myModel.GetNumDataSets() );
+  // Initializing CMtoRPMean
   SImageType::PointType::VectorType CMtoRPMean;
   CMtoRPMean.Fill(0.0);
+  // This for loop does two jobs
   for( unsigned int currentDataset = 0; currentDataset < myModel.GetNumDataSets(); currentDataset++ )
     {
+    // JOB1: RPPC_to_RPAC_angle and RPAC_over_RPPC
     float curr_RPPC_to_RPAC_angle;
     float curr_RPAC_over_RPPC;
     decomposeRPAC(rp_InMSPAlignedSpace[currentDataset],
                   pc_InMSPAlignedSpace[currentDataset],
                   ac_InMSPAlignedSpace[currentDataset],
-                  &curr_RPPC_to_RPAC_angle, &curr_RPAC_over_RPPC);
+                  &curr_RPPC_to_RPAC_angle,
+                  &curr_RPAC_over_RPPC);
     RPPC_to_RPAC_angle[currentDataset] = curr_RPPC_to_RPAC_angle;
     RPAC_over_RPPC[currentDataset] = curr_RPAC_over_RPPC;
-    // / NOTE:  This needs to be the average distance from the center of
-    // gravity.
-    SImageType::PointType::VectorType RPDistanceFromCenterOfMass = rp_InMSPAlignedSpace[currentDataset]
-      - cm_InMSPAlignedSpace[currentDataset];
+
+    // JOB2: CMtoRPMean
+    // // NOTE:  This needs to be the average distance from the center of gravity.
+    SImageType::PointType::VectorType RPDistanceFromCenterOfMass =
+      rp_InMSPAlignedSpace[currentDataset] - cm_InMSPAlignedSpace[currentDataset];
     CMtoRPMean += RPDistanceFromCenterOfMass;
     }
   CMtoRPMean /= static_cast<float>( myModel.GetNumDataSets() );

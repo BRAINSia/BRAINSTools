@@ -36,21 +36,23 @@ case n:     PCn1         PCn2
 #include "math.h"
 #include "Slicer3LandmarkIO.h"
 
-int main( int argc, char * argv[] )
+int main( unsigned int argc, char * argv[] )
 {
   const unsigned int k = atoi(argv[1]);  // Number of landmark pairs
 
   // So the number of input landmark files = 2*k
 
-  if( argc != 0 )
+  if( ( argc % 2 != 0 ) || ( argc != (2 * (k + 1) ) ) )
     {
-    std::cout << "For comparison, we should have two landmarks files corresponding to each case; therefore, the total "
-              << "number of landmark files should be even\n" << std::endl;
+    std::cout << " First argument indicates the number of landmark pairs for comparison.\n"
+              << "Two landmarks files are needed corresponding to each data case.\n"
+              << "Therefore, you must insert an even number of landmark files at the command line.\n" << std::endl;
+
+    return EXIT_FAILURE;
     }
 
   unsigned int numNamedLandmarks = 0;
   double       d0, d1, d2, dist;
-
   typedef std::map<std::string, std::vector<double> > LandmarksDistanceMapType;
   LandmarksDistanceMapType      LandmarksDistanceMap;
   std::map<std::string, double> LandmarksAverageMap;  // for average

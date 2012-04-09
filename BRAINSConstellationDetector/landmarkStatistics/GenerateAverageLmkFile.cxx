@@ -33,6 +33,34 @@ int main( int argc, char * argv[] )
     {
     UsageAndExit();
     }
+
+  const unsigned int k = atoi(argv[1]);  // The number of input landmark files
+
+  if( argc != k + 2 )
+    {
+    std::cout << "First argument indicates the number of input landmarks files.\n"
+              << "The number of input files inserted at the command line does not match." << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  unsigned int numNamedLandmarks = 0;
+  double       x_ave, y_ave, z_ave;
+
+  std::map<std::string, PointType> LandmarksAverageMap;
+
+  typedef std::vector<std::map<std::string, PointType> > LandmarksMapTypeVec;
+  LandmarksMapTypeVec LandmarksMapVector;
+
+  // LandmarksMapType is as "std::map<std::string, PointType>" which means a map between landmarks and their
+  // coordinates.
+  // For each input landmark file this LandmarksMapType is computed and is set in a vector: "LandmarksMapTypeVec"
+
+  LandmarksMapType temp;
+  for( unsigned int i = 0; i < k; i++ )
+    {
+    temp = ReadSlicer3toITKLmk( argv[i + 2] );
+    LandmarksMapVector.push_back(temp);
+    }
   const int    k = atoi(argv[1]); // The number of input landmark files
   unsigned int numNamedLandmarks = 0;
   double       x_ave, y_ave, z_ave;

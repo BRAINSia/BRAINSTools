@@ -3,9 +3,6 @@ project(BRAINSDemonWarp)
 # Output directories.
 #
 
-###
-configure_file(${BRAINSDemonWarp_SOURCE_DIR}/CTestCustom.ctest ${BRAINSDemonWarp_BINARY_DIR}/CTestCustom.ctest COPYONLY)
-
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/BRAINSDemonWarpCommonLib.h.in
   ${CMAKE_CURRENT_BINARY_DIR}/BRAINSDemonWarpCommonLib.h

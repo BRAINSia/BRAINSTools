@@ -3,9 +3,6 @@ project(BRAINSMush)
 # Output directories.
 #
 
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/CTestCustom.ctest
-  ${CMAKE_CURRENT_BINARY_DIR}/CTestCustom.ctest COPYONLY)
-
 set(ALL_PROGS_LIST
   BRAINSMush
   )

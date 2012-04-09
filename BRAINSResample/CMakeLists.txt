@@ -8,9 +8,6 @@ configure_file(
   ${CMAKE_CURRENT_BINARY_DIR}/BRAINSResampleCommonLib.h
   )
 
-###
-configure_file(${BRAINSResample_SOURCE_DIR}/CTestCustom.ctest ${BRAINSResample_BINARY_DIR}/CTestCustom.ctest COPYONLY)
-
 set(ALL_PROGS_LIST
   BRAINSResample
   )

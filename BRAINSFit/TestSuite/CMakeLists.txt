@@ -11,7 +11,6 @@ if(COMPILE_TEST_GENERATION_PROGRAMS)  ## These were programs needed to create th
   endif(MakeMakeXfrmImage)
 endif(COMPILE_TEST_GENERATION_PROGRAMS)
 
-configure_file(${BRAINSFit_SOURCE_DIR}/CTestCustom.ctest ${BRAINSFit_BINARY_DIR}/CTestCustom.ctest COPYONLY)
 
 # Test the CenterOfROI Test
 add_executable(CenterOfROIInitTest CenterOfROIInitTest.cxx )

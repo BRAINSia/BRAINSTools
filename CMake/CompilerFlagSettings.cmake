@@ -37,9 +37,19 @@ function(test_cxx_flags cxx_flag_var flag_list)
   set(${cxx_flag_var} "${local_cxx_flags}" PARENT_SCOPE)
 endfunction(test_cxx_flags)
 
+## On windows, the most verbose compiler options
+## is reporting 1000's of wanings in windows
+## header files, for now, limit the number of
+## warnings to level 3
+if( WIN32 )
+  set(VerboseWarningsFlag /W3 )
+else()
+  set(VerboseWarningsFlag -Wall )
+endif()
+
 #-pedantic
 set(common_flags_to_test
--Wall
+${VerboseWarningsFlag}
 -Wextra
 #-Wshadow
 -Wlong-long

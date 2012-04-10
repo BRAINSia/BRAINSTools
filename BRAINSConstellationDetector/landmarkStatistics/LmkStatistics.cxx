@@ -36,10 +36,16 @@ case n:     PCn1         PCn2
 #include "math.h"
 #include "Slicer3LandmarkIO.h"
 
-int main( unsigned int argc, char * argv[] )
+int main( int argc, char * argv[] )
 {
+  if( argc < 2 )
+    {
+    std::cerr << "Usage : " << argv[0]
+              << " <#of landmark pairs> <lmk-pair1> <lmk-pair2> ... <lmk-pairN>"
+              << std::endl;
+    return EXIT_FAILURE;
+    }
   const unsigned int k = atoi(argv[1]);  // Number of landmark pairs
-
   // So the number of input landmark files = 2*k
 
   if( ( argc % 2 != 0 ) || ( argc != (2 * (k + 1) ) ) )

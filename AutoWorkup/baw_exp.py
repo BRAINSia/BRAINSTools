@@ -86,6 +86,7 @@ def main(argv=None):
     ATLASPATH=expConfig.get(input_arguments.processingEnvironment,'ATLASPATH')
     BCDMODELPATH=expConfig.get(input_arguments.processingEnvironment,'BCDMODELPATH')
 
+    print "Configuring Pipeline"
     import WorkupT1T2 ## NOTE:  This needs to occur AFTER the PYTHON_AUX_PATHS has been modified
     baw200=WorkupT1T2.WorkupT1T2(input_arguments.processingLevel, mountPrefix,
       ExperimentBaseDirectory,
@@ -94,12 +95,13 @@ def main(argv=None):
       BCDMODELPATH)
     
     print "Start Processing"
+
     ## Create the shell wrapper script for ensuring that all jobs running on remote hosts from SGE
     #  have the same environment as the job submission host.
     JOB_SCRIPT=get_global_sge_script(sys.path,PROGRAM_PATHS)
     if input_arguments.wfrun == 'helium_all.q':
         baw200.run(plugin='SGE',
-            plugin_args=dict(template=JOB_SCRIPT,qsub_args="-S /bin/bash -q all.q -pe smp1 2-4 -o /dev/null -e /dev/null "))
+            plugin_args=dict(template=JOB_SCRIPT,qsub_args="-S /bin/bash -q UI -pe smp1 2-4 -o /dev/null -e /dev/null "))
     elif input_arguments.wfrun == 'ipl_OSX':
         baw200.run(plugin='SGE',
             plugin_args=dict(template=JOB_SCRIPT,qsub_args="-S /bin/bash -q OSX -pe smp1 2-4 -o /dev/null -e /dev/null "))
@@ -116,7 +118,7 @@ def main(argv=None):
         print "You must specify the run environment type."
 	sys.exit(-1)
 	
-    baw200.write_graph()
+    #baw200.write_graph()
 
 if __name__ == "__main__":
     sys.exit(main())

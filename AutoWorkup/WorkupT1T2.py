@@ -53,6 +53,8 @@ from BRAINSTools.ANTSWrapper import *
 from BRAINSTools.WarpImageMultiTransform import *
 from BRAINSTools.WarpAllAtlas import *
 
+default_sge_options_dictionary={'qsub_args': '-S /bin/bash -q all.q -pe smp1 2-4 -o /dev/null -e /dev/null ', 'overwrite': True}
+
 #######################  HACK:  Needed to make some global variables for quick
 #######################         processing needs
 #Generate by running a file system list "ls -1 $AtlasDir *.nii.gz *.xml *.fcsv *.wgts"
@@ -269,41 +271,41 @@ def getFirstT1(uid, dbfile):
     with open(dbfile) as fp:
         db = load(fp)
     print("uid:= {0}, dbfile: {1}".format(uid,dbfile))
-    print("result:= {0}".format(db[uid]["T1s"]))
-    return db[uid]["T1s"][0]
+    print("result:= {0}".format(db[uid]["T1"]))
+    return db[uid]["T1"][0]
 
 def getT1s(uid, dbfile):
     from cPickle import load
     with open(dbfile) as fp:
         db = load(fp)
     #print("uid:= {0}, dbfile: {1}".format(uid,dbfile))
-    #print("result:= {0}".format(db[uid]["T1s"]))
-    return db[uid]["T1s"]
+    #print("result:= {0}".format(db[uid]["T1"]))
+    return db[uid]["T1"]
 
 def getT1sLength(uid, dbfile):
     from cPickle import load
     with open(dbfile) as fp:
         db = load(fp)
     #print("uid:= {0}, dbfile: {1}".format(uid,dbfile))
-    #print("result:= {0}".format(db[uid]["T1s"]))
-    return len(db[uid]["T1s"])
+    #print("result:= {0}".format(db[uid]["T1"]))
+    return len(db[uid]["T1"])
 
 def getT2s(uid, dbfile):
     from cPickle import load
     with open(dbfile) as fp:
         db = load(fp)
     #print("uid:= {0}, dbfile: {1}".format(uid,dbfile))
-    #print("result:= {0}".format(db[uid]["T1s"]))
-    return db[uid]["T2s"]
+    #print("result:= {0}".format(db[uid]["T1"]))
+    return db[uid]["T2"]
 
 def getT1sT2s(uid, dbfile,altT1):
     from cPickle import load
     with open(dbfile) as fp:
         db = load(fp)
     #print("uid:= {0}, dbfile: {1}".format(uid,dbfile))
-    #print("result:= {0}".format(db[uid]["T1s"]))
-    temp=db[uid]["T1s"]
-    temp.append(db[uid]["T2s"])
+    #print("result:= {0}".format(db[uid]["T1"]))
+    temp=db[uid]["T1"]
+    temp.append(db[uid]["T2"])
     temp[0]=altT1
     return temp
 
@@ -333,6 +335,7 @@ def WorkupT1T2(processingLevel,mountPrefix,ExperimentBaseDirectory, subject_data
     the path and filename of the atlas to use.
     """
 
+    print "Building Subject List: " + subject_data_file
     subjectDatabaseFile=os.path.join( ExperimentBaseDirectory,'InternalWorkflowSubjectDB.pickle')
     processingLevel=int(processingLevel)
     subjData=csv.reader(open(subject_data_file,'rb'), delimiter=',', quotechar='"')
@@ -342,46 +345,43 @@ def WorkupT1T2(processingLevel,mountPrefix,ExperimentBaseDirectory, subject_data
     for row in subjData:
         currDict=dict()
         validEntry=True
-        if len(row) == 5:
+        if len(row) == 4:
             site=row[0]
             subj=row[1]
             session=row[2]
-            T1s=eval(row[3])
-            T2s=eval(row[4])
-            fullT1s=[ mountPrefix+i for i in T1s]
-            fullT2s=[ mountPrefix+i for i in T2s]
-            currDict['T1s']=fullT1s
-            currDict['T2s']=fullT2s
+            rawDict=eval(row[3])
+            currDict={}
+            for imageType in rawDict.keys():
+                fullPaths=[ mountPrefix+i for i in rawDict[imageType] ]
+                if len(fullPaths) < 1:
+                    print("Invalid Entry!  {0}".format(currDict))
+                    validEntry=False
+                for i in fullPaths:
+                    if not os.path.exists(i):
+                        print("Missing File: {0}".format(i))
+                        validEntry=False
+                currDict[imageType]=fullPaths
             currDict['site']=site
             currDict['subj']=subj
-            if len(fullT1s) < 1:
-                print("Invalid Entry!  {0}".format(currDict))
-                validEntry=False
-            if len(fullT2s) < 1:
-                print("Invalid Entry!  {0}".format(currDict))
-                validEntry=False
-            for i in fullT1s:
-                if not os.path.exists(i):
-                    print("Missing File: {0}".format(i))
-                    validEntry=False
-            for i in fullT2s:
-                if not os.path.exists(i):
-                    print("Missing File: {0}".format(i))
-                    validEntry=False
 
             if validEntry == True:
                 myDB[session]=currDict
                 UNIQUE_ID=site+"_"+subj+"_"+session
                 nestedDictionary[site][subj][session]=currDict
                 multiLevel[UNIQUE_ID]=currDict
+        else:
+            print "ERROR:  Invalid number of elements in row"
+            print row
     from cPickle import dump
     dump(multiLevel, open(subjectDatabaseFile,'w'))
 
+    print "Building Pipeline"
     ########### PIPELINE INITIALIZATION #############
     baw200 = pe.Workflow(name="BAW_20120104_workflow")
     baw200.config['execution'] = {
                                      'plugin':'Linear',
                                      #'stop_on_first_crash':'true',
+                                     #'stop_on_first_rerun': 'true',
                                      'stop_on_first_crash':'false',
                                      'stop_on_first_rerun': 'false',
                                      'hash_method': 'timestamp',
@@ -389,9 +389,9 @@ def WorkupT1T2(processingLevel,mountPrefix,ExperimentBaseDirectory, subject_data
                                      'remove_unnecessary_outputs':'false',
                                      'use_relative_paths':'false',
                                      'remove_node_directories':'false',
-                                     'local_hash_check':'true'
+                                     'local_hash_check':'true',
+                                     'job_finished_timeout':15
                                      }
-                                     #'job_finished_timeout':3700
     baw200.config['logging'] = {
       'workflow_level':'DEBUG',
       'filemanip_level':'DEBUG',
@@ -547,13 +547,10 @@ def WorkupT1T2(processingLevel,mountPrefix,ExperimentBaseDirectory, subject_data
         BABC.inputs.posteriorTemplate = "POSTERIOR_%s.nii.gz"
         BABC.inputs.atlasToSubjectTransform = "atlas_to_subject.mat"
         BABC.inputs.implicitOutputs = ['t1_average_BRAINSABC.nii.gz', 't2_average_BRAINSABC.nii.gz']
-
         BABC.inputs.resamplerInterpolatorType = InterpolationMode
-        ##
         BABC.inputs.outputDir = './'
 
         baw200.connect(BAtlas,'AtlasPVDefinition_xml',BABC,'atlasDefinition')
-
         baw200.connect(BLI,'outputTransformFilename',BABC,'atlasToSubjectInitialTransform')
         """
         Get the first T1 and T2 corrected images from BABC
@@ -647,7 +644,8 @@ def WorkupT1T2(processingLevel,mountPrefix,ExperimentBaseDirectory, subject_data
         baw200.connect(GADT1,'outputVolume',SGI,'inputVolume1')
         baw200.connect(GADT2,'outputVolume',SGI,'inputVolume2')
 
-        if processingLevel > 1:
+        #if processingLevel > 1:
+        if processingLevel == -123: 
             """
             Load the BRAINSCut models & probabiity maps.
             """
@@ -739,7 +737,6 @@ def WorkupT1T2(processingLevel,mountPrefix,ExperimentBaseDirectory, subject_data
             #CreateBRAINSCutXML.inputs.atlasToSubj = "INTERNAL_REGISTER.mat"
             #baw200.connect(BABC,'atlasToSubjectTransform',CreateBRAINSCutXML,'atlasToSubj')
 
-        if 1 == 1:
             """
             BRAINSCut
             """
@@ -757,10 +754,13 @@ def WorkupT1T2(processingLevel,mountPrefix,ExperimentBaseDirectory, subject_data
 
         ## Make deformed Atlas image space
         if processingLevel > 2:
+            
+            many_cpu_sge_options_dictionary={'qsub_args': '-S /bin/bash -q UI -pe smp1 6-12 -l mem_free=5000M -o /dev/null -e /dev/null ', 'overwrite': True}
             print("""
             Run ANTS Registration at processingLevel={0}
             """.format(processingLevel) )
             ComputeAtlasToSubjectTransform = pe.Node(interface=ANTSWrapper(), name="19_ComputeAtlasToSubjectTransform")
+            ComputeAtlasToSubjectTransform.plugin_args=many_cpu_sge_options_dictionary
             ComputeAtlasToSubjectTransform.inputs.output_prefix = "ANTS_"
 
             baw200.connect( SplitAvgBABC,'avgBABCT1',ComputeAtlasToSubjectTransform,"fixed_T1_image")
@@ -769,17 +769,18 @@ def WorkupT1T2(processingLevel,mountPrefix,ExperimentBaseDirectory, subject_data
             baw200.connect( BAtlas,'template_t1',    ComputeAtlasToSubjectTransform,"moving_T2_image")
             baw200.connect(BLI,'outputTransformFilename',ComputeAtlasToSubjectTransform,'initialTransform')
 
-	if processingLevel == -123:
+        #if processingLevel == -123:
             WarpAtlas = pe.Node(interface=WarpAllAtlas(), name = "19_WarpAtlas")
             WarpAtlas.inputs.moving_atlas = atlas_fname_wpath
-            WarpAtlas.inputs.deformed_atlas = "./"
-            baw200.connect( ComputeAtlasToSubjectTransform,'output_affine', WarpAtlas,"affine_transform")
+            WarpAtlas.inputs.deformed_atlas = "./template_t2.nii.gz"
+            #baw200.connect( ComputeAtlasToSubjectTransform,'output_affine', WarpAtlas,"affine_transform")
+            baw200.connect(BLI,'outputTransformFilename',WarpAtlas,'affine_transform')
             baw200.connect( ComputeAtlasToSubjectTransform,'output_warp', WarpAtlas,"deformation_field")
             baw200.connect( SplitAvgBABC,'avgBABCT1', WarpAtlas, 'reference_image')
 
 
         #if processingLevel > 3:
-	if processingLevel == -123:
+        if processingLevel == -123:
             print("""
             Run Freesurfer ReconAll at processingLevel={0}
             """.format(processingLevel) )

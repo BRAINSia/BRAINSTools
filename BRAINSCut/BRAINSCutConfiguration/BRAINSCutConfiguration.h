@@ -1,17 +1,17 @@
-#ifndef NetConfiguration_h
-#define NetConfiguration_h
-#include <XMLElementParser.h>
+#ifndef BRAINSCutConfiguration_h
+#define BRAINSCutConfiguration_h
+
 #include <DataSet.h>
 #include <RegistrationConfigurationParser.h>
 #include <ProbabilityMapParser.h>
 #include <list>
 #include <SpatialLocationType.h>
 
-class NetConfiguration : public XMLElementParser
+class BRAINSCutConfiguration : public XMLElementParser
 {
 public:
   typedef XMLElementParser SuperClass;
-  NetConfiguration();
+  BRAINSCutConfiguration();
 
   virtual int PrintSelf(std::ostream & os, int indent) const
   {
@@ -37,4 +37,4 @@ private:
   std::string RegistrationID;
 };
 
-#endif // NetConfiguration_h
+#endif // BRAINSCutConfiguration_h

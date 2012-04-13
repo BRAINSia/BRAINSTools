@@ -1,7 +1,7 @@
 #ifndef ProbabilityMapParser_h
 #define ProbabilityMapParser_h
-#include "StringValue.h"
-#include "FloatValue.h"
+// #include "StringValue.h"
+// #include "FloatValue.h"
 #include "XMLElementParser.h"
 
 class ProbabilityMapParser : public XMLElementParser

@@ -1,7 +1,7 @@
-#ifndef NetConfigurationParser_h
-#define NetConfigurationParser_h
+#ifndef XMLConfigurationFileParser_h
+#define XMLConfigurationFileParser_h
 
-#include <NetConfiguration.h>
+#include <BRAINSCutConfiguration.h>
 #include "XMLParser.h"
 #include <list>
 #include <vector>
@@ -47,10 +47,10 @@ public:
   }
 };
 
-class NetConfigurationParser : public XMLParser
+class XMLConfigurationFileParser : public XMLParser
 {
 public:
-  NetConfigurationParser(const std::string & filename) : XMLParser(filename)
+  XMLConfigurationFileParser(const std::string & filename) : XMLParser(filename)
   {
   }
 
@@ -58,14 +58,14 @@ public:
 
   virtual void EndElement(void *userData, const XML_Char *name);
 
-  NetConfiguration * GetNetConfiguration();
+  BRAINSCutConfiguration * GetNetConfiguration();
 
   void ValidateDataSets();
 
 private:
   void ReadXML();
 
-  NetConfiguration * netConfiguration;
+  BRAINSCutConfiguration * netConfiguration;
 };
 
-#endif // NetConfigurationParser_h
+#endif // XMLConfigurationFileParser_h

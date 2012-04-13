@@ -2,7 +2,7 @@
 #define BRAINSCutGenerateProbability_h
 
 #include "BRAINSCutPrimary.h"
-#include "NetConfiguration.h"
+#include "BRAINSCutConfiguration.h"
 #include <itkIO.h>
 
 class BRAINSCutGenerateProbability : private BRAINSCutPrimary
@@ -10,9 +10,9 @@ class BRAINSCutGenerateProbability : private BRAINSCutPrimary
 public:
   BRAINSCutGenerateProbability(std::string netConfigurationFilename);
 
-  NetConfiguration * GetNetConfiguration();
+  BRAINSCutConfiguration * GetNetConfiguration();
 
-  void SetNetConfiguration( NetConfiguration * netConfiguration);
+  void SetNetConfiguration( BRAINSCutConfiguration * netConfiguration);
 
   void SetNetConfigurationFilename(std::string filename);
 

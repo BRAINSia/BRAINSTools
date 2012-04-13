@@ -102,7 +102,7 @@ int main(int argc, char * *argv)
 
       ApplyModule.SetMethod( method );
       ApplyModule.SetComputeSSE( computeSSEOn );
-      /* these set has to be **AFTER** InitializeTrainDataSet */
+      /* these has to be set **AFTER** InitializeTrainDataSet */
       if( numberOfTrees > 0 && randomTreeDepth > 0 )
         {
         ApplyModule.SetRandomForestModelFilename( randomTreeDepth, numberOfTrees );

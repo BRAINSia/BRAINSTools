@@ -1,5 +1,5 @@
 #include "BRAINSCutPrimary.h"
-#include "NetConfigurationParser.h"
+#include "XMLConfigurationFileParser.h"
 
 #include "GenericTransformImage.h"
 
@@ -30,9 +30,10 @@ BRAINSCutPrimary
 
     elementList.push_front( &BRAINSCutNetConfiguration );
 
-    NetConfigurationParser BRIANSCutNetConfigurationParser = NetConfigurationParser( NetConfigurationFilename );
-    BRIANSCutNetConfigurationParser.SetUserData( &elementList );
-    BRIANSCutNetConfigurationParser.Parse();
+    XMLConfigurationFileParser BRIANSCutXMLConfigurationFileParser = XMLConfigurationFileParser(
+        NetConfigurationFilename );
+    BRIANSCutXMLConfigurationFileParser.SetUserData( &elementList );
+    BRIANSCutXMLConfigurationFileParser.Parse();
     }
   catch( BRAINSCutExceptionStringHandler& e )
     {

@@ -1,6 +1,6 @@
 #ifndef SpatialLocationType_h
 #define SpatialLocationType_h
-#include "StringValue.h"
+// #include "StringValue.h"
 #include "XMLElementParser.h"
 
 class SpatialLocationType : public XMLElementParser

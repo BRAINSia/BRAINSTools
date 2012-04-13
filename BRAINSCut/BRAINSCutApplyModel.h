@@ -58,7 +58,7 @@ public:
   BinaryImagePointer FillHole( BinaryImagePointer mask);
 
 private:
-  NetConfiguration::ApplyDataSetListType applyDataSetList;
+  BRAINSCutConfiguration::ApplyDataSetListType applyDataSetList;
 
   std::string  method;
   bool         normalization;

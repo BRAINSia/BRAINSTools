@@ -16,7 +16,7 @@ BRAINSCutCreateVector
   SetANNModelConfiguration();
   SetGradientSizeFromNetConfiguration();
 
-  std::cout << "Get Normalization From NetConfiguration ";
+  std::cout << "Get Normalization From BRAINSCutConfiguration ";
   normalization = GetNormalizationFromNetConfiguration();
   std::cout << "(" << normalization << ")" << std::endl;
 }
@@ -25,7 +25,7 @@ void
 BRAINSCutCreateVector
 ::CreateVectors()
 {
-  typedef NetConfiguration::TrainDataSetListType::iterator
+  typedef BRAINSCutConfiguration::TrainDataSetListType::iterator
     TrainSubjectIteratorType;
 
   int numberOfInputVector = 0;

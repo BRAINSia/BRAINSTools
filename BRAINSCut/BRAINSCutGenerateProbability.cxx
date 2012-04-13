@@ -1,6 +1,6 @@
 #include "BRAINSCutGenerateProbability.h"
-#include "NetConfigurationParser.h"
-#include "NetConfiguration.h"
+#include "XMLConfigurationFileParser.h"
+#include "BRAINSCutConfiguration.h"
 
 #include "itkIO.h"
 

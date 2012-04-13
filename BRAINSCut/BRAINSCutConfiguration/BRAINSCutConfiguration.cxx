@@ -1,13 +1,13 @@
-#include <XMLElementParser.h>
 #include <DataSet.h>
 #include <RegistrationConfigurationParser.h>
 #include <ProbabilityMapParser.h>
-#include <list>
+
 #include <SpatialLocationType.h>
 
-#include <NetConfiguration.h>
+#include <list>
+#include <BRAINSCutConfiguration.h>
 
-NetConfiguration::NetConfiguration() : XMLElementParser("BRAINSCutNetConfiguration")
+BRAINSCutConfiguration::BRAINSCutConfiguration() : XMLElementParser("BRAINSCutBRAINSCutConfiguration")
 {
   this->Add(new DataSetList, "DataSetList");
   this->Add(new ProbabilityMapList, "ProbabilityMapList");
@@ -15,7 +15,7 @@ NetConfiguration::NetConfiguration() : XMLElementParser("BRAINSCutNetConfigurati
 }
 
 void
-NetConfiguration::AddDataSet(DataSet *newSet)
+BRAINSCutConfiguration::AddDataSet(DataSet *newSet)
 {
   DataSetList *set = this->Get<DataSetList>("DataSetList");
 
@@ -23,7 +23,7 @@ NetConfiguration::AddDataSet(DataSet *newSet)
             newSet->GetAttribute<StringValue>("Name") );
 }
 
-DataSet * NetConfiguration::GetAtlasDataSet() const
+DataSet * BRAINSCutConfiguration::GetAtlasDataSet() const
 {
   const DataSetList *set = this->Get<DataSetList>("DataSetList");
 
@@ -40,8 +40,8 @@ DataSet * NetConfiguration::GetAtlasDataSet() const
   return 0;
 }
 
-NetConfiguration::TrainDataSetListType
-NetConfiguration::GetTrainDataSets() const
+BRAINSCutConfiguration::TrainDataSetListType
+BRAINSCutConfiguration::GetTrainDataSets() const
 {
   const DataSetList *set = this->Get<DataSetList>("DataSetList");
 
@@ -61,8 +61,8 @@ NetConfiguration::GetTrainDataSets() const
   return rval;
 }
 
-NetConfiguration::ApplyDataSetListType
-NetConfiguration::GetApplyDataSets() const
+BRAINSCutConfiguration::ApplyDataSetListType
+BRAINSCutConfiguration::GetApplyDataSets() const
 {
   const DataSetList *set = this->Get<DataSetList>("DataSetList");
 
@@ -82,7 +82,7 @@ NetConfiguration::GetApplyDataSets() const
 }
 
 const DataSet::StringVectorType
-NetConfiguration::GetImageTypes() const
+BRAINSCutConfiguration::GetImageTypes() const
 {
   const DataSetList *set = this->Get<DataSetList>("DataSetList");
 

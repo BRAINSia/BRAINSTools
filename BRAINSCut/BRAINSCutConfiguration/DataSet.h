@@ -1,6 +1,6 @@
 #ifndef DataSet_h
 #define DataSet_h
-#include "StringValue.h"
+// #include "StringValue.h"
 #include "ImageDescription.h"
 #include "MaskType.h"
 #include "XMLElementParser.h"

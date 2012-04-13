@@ -6,15 +6,15 @@ find_package( OpenCV REQUIRED)
 ###
 add_subdirectory(BRAINSFeatureCreators)
 
-include_directories(${BRAINSCut_SOURCE_DIR}/NetConfiguration)
-add_subdirectory(NetConfiguration)
+include_directories(${BRAINSCut_SOURCE_DIR}/BRAINSCutConfiguration)
+add_subdirectory(BRAINSCutConfiguration)
 
 
 file(GLOB BRAINSCut_HDRS *.h *.hxx)
 
 set(BRAINSCutCOMMONLIB_SRCS
   XMLParser.cxx
-  NetConfigurationParser.cxx
+  XMLConfigurationFileParser.cxx
   ShuffleVectors.cxx
   BRAINSCutPrimary.cxx
   BRAINSCutGenerateRegistrations.cxx

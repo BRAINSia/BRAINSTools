@@ -1,8 +1,8 @@
 #ifndef RegistrationConfigurationParser_h
 #define RegistrationConfigurationParser_h
 #include "XMLElementParser.h"
-#include "StringValue.h"
-#include "IntValue.h"
+// #include "StringValue.h"
+// #include "IntValue.h"
 
 class RegistrationConfigurationParser : public XMLElementParser
 {

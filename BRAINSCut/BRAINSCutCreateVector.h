@@ -25,8 +25,8 @@ public:
   void WriteHeaderFile( int inputVectorSize, int outputVectorSize, int numberOfInputVector);
 
 private:
-  NetConfiguration::TrainDataSetListType trainDataSetList;
-  bool                                   normalization;
+  BRAINSCutConfiguration::TrainDataSetListType trainDataSetList;
+  bool                                         normalization;
 
   std::string vectorFilename;
 

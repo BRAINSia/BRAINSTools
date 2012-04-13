@@ -2,7 +2,12 @@
 #define XMLElementParser_h
 #include "XMLElementContainer.h"
 #include "BRAINSCutExceptionStringHandler.h"
+
 #include "StringValue.h"
+#include "BooleanValue.h"
+#include "IntValue.h"
+#include "FloatValue.h"
+
 #include <map>
 #include <vector>
 #include <ctype.h>

@@ -202,8 +202,8 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>
   // Compute skips along each dimension
 #ifdef USE_HALF_RESOLUTION // Need to do full scale to prevent checkerboard
   // images from being created
-  InputImageSpacingType spacing = m_ForegroundBrainMask->GetSpacing();
-  unsigned int          skips[3];
+  const InputImageSpacingType spacing = m_ForegroundBrainMask->GetSpacing();
+  unsigned int                skips[3];
   skips[0] = (unsigned int)( m_SampleSpacing / spacing[0] );
   skips[1] = (unsigned int)( m_SampleSpacing / spacing[1] );
   skips[2] = (unsigned int)( m_SampleSpacing / spacing[2] );
@@ -230,29 +230,9 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>
 
   // Number of pixels with non-zero weights, downsampled
   unsigned numEquations = 0;
-  m_ValidIndicies.reserve(size[2] * size[1] * size[0] / (8 * skips[0] * skips[1] * skips[2]) ); //
-                                                                                                //
-                                                                                                // Assume
-                                                                                                //
-                                                                                                // that
-                                                                                                //
-                                                                                                // only
-                                                                                                //
-                                                                                                // 0.125
-                                                                                                //
-                                                                                                // of
-                                                                                                //
-                                                                                                // the
-                                                                                                //
-                                                                                                // image
-                                                                                                //
-                                                                                                // is
-                                                                                                //
-                                                                                                // part
-                                                                                                //
-                                                                                                // of
-                                                                                                //
-                                                                                                // mask
+  // Assume that only 0.125 of the image is part of mask
+  m_ValidIndicies.reserve(size[2] * size[1] * size[0] / (8 * skips[0] * skips[1] * skips[2]) );
+
   m_ValidIndicies.resize(0);
     {
     // Not parallizable! ORDER IS IMPORTANT  //#pragma omp parallel for
@@ -420,7 +400,7 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>
 
 #ifdef USE_HALF_RESOLUTION
   // Compute skips along each dimension
-  InputImageSpacingType spacing = m_InputImages[0]->GetSpacing();
+  const InputImageSpacingType spacing = m_InputImages[0]->GetSpacing();
 
   unsigned int sampleofft[3];
   sampleofft[0] = (unsigned int)vcl_floor(m_SampleSpacing / spacing[0]);

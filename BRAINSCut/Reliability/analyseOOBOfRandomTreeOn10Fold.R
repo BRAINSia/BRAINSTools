@@ -10,6 +10,7 @@ drawLines<-function( dt, lineType, count,
   plot( subDt$NTree, subDt$error,
         type=lineType,
         pch=20, 
+        cex=2,
         xlim=c(NTree.min,NTree.max),
         ylim=c(error.min,error.max),
         ann = FALSE,
@@ -25,10 +26,11 @@ drawLines<-function( dt, lineType, count,
     points( subDt$NTree, subDt$error,
             type=lineType, 
             pch=20,
+            cex=2,
             col=myColors[ currCnt+count ]);
     }
 }
-plotOOB <- function( filename, titleTxt, detailDepth)
+plotOOB <- function( filename, titleTxt, detailDepth, magnifiedPlot=F)
 {
 ## read data
   dtOrig<-read.csv( filename, header=T);
@@ -37,7 +39,7 @@ plotOOB <- function( filename, titleTxt, detailDepth)
 
 ## color scheme
   numDepth = as.numeric(levels(factor( dtOrig$depth)) );
-  myColors=rainbow( length( numDepth) , alpha=0.8);
+  myColors=rainbow( length( numDepth) , alpha=0.5);
 
 ## make mean data
   dt <- aggregate(dtOrig$error, list(depth=dtOrig$depth, NTree=dtOrig$NTree ), mean );
@@ -46,7 +48,8 @@ plotOOB <- function( filename, titleTxt, detailDepth)
 
 ## range
   error.range <- max(dt$error) - min( dt$error ) ;
-  error.min   <- 0;#min(dt$error ) - error.range * 0.05;
+  #error.min   <- 0;#min(dt$error ) - error.range * 0.05;
+  error.min   <- min(dt$error ) - error.range * 0.05;
   error.max   <- max(dt$error ) + error.range * 0.05;
 
   print( paste( error.min, error.max, error.range ))
@@ -61,26 +64,31 @@ pdf( paste(titleTxt,".pdf",sep=""));##, width=500, height=800 );
 
 ## 
   par( fig=c(0,1,0,1), new=T );
-  drawLines( dt , "o", 1,
+  drawLines( dt , "o", 0,
              error.min, error.max, NTree.min, NTree.max, myColors, numDepth);
   title( main=titleTxt , cex.main=1.6,
          xlab="number of trees", cex.lab=1.3,
          ylab="out of bag training error" );
 
+  print (numDepth)
 ##
   legend( "topright", 
-          "depth",
+          c("depth",numDepth),
+          col=c("black",myColors),
           bty="n",
-          cex=1.2
+          cex=1.2,
+          pch=20
           );
-  require(fields);
+#require(fields);
 
-  image.plot( legend.only=T, 
-              zlim=c( numDepth[1], numDepth[length(numDepth)]), 
-              legend.shrink = 0.8,
-              col=rainbow(length( numDepth)) );
+# image.plot( legend.only=T, 
+#             zlim=c( numDepth[1], numDepth[length(numDepth)]), 
+#             legend.shrink = 0.8,
+#             col=rainbow(length( numDepth)) );
 
 ## magnified plot
+  if( magnifiedPlot )
+  {
   magDT <- subset( dt, dt$depth > detailDepth );
   print(magDT)
   magNumDepth = as.numeric(levels(factor( magDT$depth)) );
@@ -94,6 +102,7 @@ pdf( paste(titleTxt,".pdf",sep=""));##, width=500, height=800 );
              min(magDT$error), max(magDT$error), NTree.min, NTree.max, myColors, magNumDepth);
   legend( "top",paste("detail ",detailDepth, "~") , bty="n" );
 
+  }
 
   dev.off();
 }

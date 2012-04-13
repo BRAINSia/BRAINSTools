@@ -34,27 +34,59 @@ export GIT_SSL_NO_VERIFY=true
 CXXFLAGS="${CXXFLAGS:-}"
 CFLAGS="${CFLAGS:-}"
 LDFLAGS="${LDFLAGS:-}"
+CCOverride=""
+CXXOverride=""
 
-# turn on coverage at command line
-if [ $# = 0 ] ; then
-    coverage=0
+while [ $# -gt 0 ]
+do
+    echo Current Arg $1
+    case "$1" in
+        coverage)
+            coverage=1 ;;
+        CC=*)
+          echo Override C Compiler ; CCOverride=`echo $1 | sed -e 's/^CC=//'` ;;
+        CXX=*)
+          echo Override CXX Compiler ; CXXOverride=`echo $1 | sed -e 's/^CXX=//'` ;;
+    esac
+    shift
+done
+
+OsName=$(uname)
+if [ "${OsName}" = "Darwin" ] ; then
+    Compiler=clang-`clang -v 2>&1 | head -1 | awk '{print $4}'`
+    Compiler=${Compiler}-`clang -v 2>&1 | tail -2 | head -1 | awk '{print $2}'`
+    export CC=`which clang`
+    export CXX=`which clang++`
 else
-    if [ $1 = "coverage" ] ; then
-	coverage=1
-	shift
+    which gcc > /dev/null 2>&1
+    if [ $? == 0 ] ; then
+        Compiler=gcc-`gcc -dumpversion`-`gcc -dumpmachine`
+    else
+        Compiler=unknown
     fi
 fi
+
+if [ X$CCOverride != X ] ; then
+    export CC=$CCOverride;
+    Compiler=`${CCOverride} -dumpversion`-`gcc -dumpmachine`
+fi
+if [ X$CXXOverride != X ] ; then
+    export CXX=$CXXOverride;
+    Compiler=`${CXXOverride} -dumpversion`-`gcc -dumpmachine`
+fi
+
+echo "Compiler=${Compiler} CC=${CC} CXX=${CXX} coverage=${coverage}"
 
 OS=$(uname -s)
 NPROCS=1
 
-# if [ "${OS}" = "Linux" ] ; then
-#     NPROCS=$(grep -c ^processor /proc/cpuinfo)
-#     export CFLAGS="${CFLAGS} -fpic"
-#     export CXXFLAGS="${CXXFLAGS} -fpic"
-# else
-#     NPROCS=$(system_profiler | awk '/Number Of Cores/{print $5}{next;}')
-# fi
+if [ "${OS}" = "Linux" ] ; then
+#    NPROCS=$(grep -c ^processor /proc/cpuinfo)
+    export CFLAGS="${CFLAGS} -fpic"
+    export CXXFLAGS="${CXXFLAGS} -fpic"
+#else
+#    NPROCS=$(system_profiler | awk '/Number Of Cores/{print $5}{next;}')
+fi
 
 # create the testing directory if necessary
 mkdir -p ${startdir}
@@ -89,26 +121,10 @@ then
 fi
 
 
-OsName=$(uname)
-if [ "${OsName}" = "Darwin" ] ; then
-    Compiler=clang-`clang -v 2>&1 | head -1 | awk '{print $4}'`
-    Compiler=${Compiler}-`clang -v 2>&1 | tail -2 | head -1 | awk '{print $2}'`
-    export CC=`which clang`
-    export CXX=`which clang++`
-else
-    which gcc > /dev/null 2>&1
-    if [ $? == 0 ] ; then
-        Compiler=gcc-`gcc -dumpversion`-`gcc -dumpmachine`
-    else
-        Compiler=unknown
-    fi
-fi
-
-echo "Compiler=${Compiler} CC=${CC} CXX=${CXX}"
 
 for BUILD_TYPE in Debug Release
 do
-    B3Build=${top}/${BUILD_TYPE}
+    B3Build=${top}/${BUILD_TYPE}-${Compiler}
     if [ "$BUILD_TYPE" = "Debug" -a "$coverage" = "1" ] ; then
 	CXXFLAGS="${CXXFLAGS} -g -O0 -Wall -W -Wshadow -Wunused-variable \
 	    -Wunused-parameter -Wunused-function -Wunused -Wno-system-headers \
@@ -125,6 +141,8 @@ do
     # the Build type
     cmake -DSITE:STRING=${ThisComputer} \
         -G "Unix Makefiles" \
+        -DCMAKE_CXX_COMPILER:STRING="${CXX}" \
+        -DCMAKE_C_COMPILER:STRING="${CC}" \
 	-DCMAKE_C_FLAGS:STRING="${CFLAGS}" \
 	-DCMAKE_CXX_FLAGS:STRING="${CXXFLAGS}" \
 	-DCMAKE_EXE_LINKER_FLAGS:STRING="${LDFLAGS}" \

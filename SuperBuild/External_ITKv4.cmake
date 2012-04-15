@@ -73,7 +73,8 @@ if(NOT DEFINED ${extProjName}_DIR AND NOT ${USE_SYSTEM_${extProjName}})
     )
   ### --- End Project specific additions
   set(${proj}_REPOSITORY ${git_protocol}://itk.org/ITK.git CACHE STRING "" FORCE)
-  set(${proj}_GIT_TAG v4.1rc04 CACHE STRING "" FORCE)
+  #set(${proj}_GIT_TAG v4.1rc04 CACHE STRING "" FORCE)
+  set(${proj}_GIT_TAG 4f9f2236d3d952270041b9170f9b2f8a83c3096d CACHE STRING "" FORCE)
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${${proj}_REPOSITORY}
     GIT_TAG ${${proj}_GIT_TAG}

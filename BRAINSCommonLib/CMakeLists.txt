@@ -29,11 +29,11 @@ file(GLOB __files1 "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
 file(GLOB __files2 "${CMAKE_CURRENT_SOURCE_DIR}/*.hxx")
 install(FILES ${__files1} ${__files2} ${CMAKE_CURRENT_BINARY_DIR}/BRAINSCommonLib.h DESTINATION include/BRAINSCommonLib COMPONENT Development)
 
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/BRAINSCommonLibInstallConfig.cmake.in
-               ${CMAKE_CURRENT_BINARY_DIR}/BRAINSCommonLibInstallConfig.cmake
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/BRAINSCommonLibConfig.cmake.in
+               ${CMAKE_CURRENT_BINARY_DIR}/BRAINSCommonLibConfig.cmake
                @ONLY IMMEDIATE)
 
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/BRAINSCommonLibInstallConfig.cmake DESTINATION lib/BRAINSCommonLib COMPONENT Development RENAME BRAINSCommonLibConfig.cmake)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/BRAINSCommonLibConfig.cmake DESTINATION lib/BRAINSCommonLib COMPONENT Development RENAME BRAINSCommonLibConfig.cmake)
 
 set(BRAINSCommonLib_BUILDSCRIPTS_DIR_CONFIG ${CMAKE_CURRENT_BINARY_DIR}/BuildScripts)
 

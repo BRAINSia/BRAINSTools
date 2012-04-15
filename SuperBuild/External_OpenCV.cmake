@@ -1,5 +1,6 @@
+set(extProjName "OpenCV")
 if(DEFINED OpenCV_DIR AND NOT EXISTS ${OpenCV_DIR})
-  message(FATAL_ERROR "OpenCV_DIR variable is defined but corresponds to non-existing directory")
+  message(FATAL_ERROR "${extProjName}_DIR variable is defined but corresponds to non-existing directory (${${extProjName}_DIR})")
 endif()
 
 set(OPENCV_GIT_TAG "FixNeuralNetwork_20111111") # USE THIS FOR UPDATED VERSION

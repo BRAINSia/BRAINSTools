@@ -23,5 +23,5 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/UseBRAINSCommonLib.cmake.in
   ${CMAKE_CURRENT_BINARY_DIR}/UseBRAINSCommonLib.cmake_install
   @ONLY)
 
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/BRAINSCommonLibInstallConfig.cmake.in
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/BRAINSCommonLibConfig.cmake.in
   ${CMAKE_CURRENT_BINARY_DIR}/BRAINSCommonLibConfig.cmake_install @ONLY)

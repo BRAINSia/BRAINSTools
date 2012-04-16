@@ -42,6 +42,7 @@ else()
     if(NOT Uncrustify_EXE)
       message(FATAL_ERROR "To use the system uncrustify, set Uncrustify_EXE")
     endif()
+    message("USING the system ${extProjName}, set ${extProjName}_DIR=${${extProjName}_DIR}")
   endif()
 
   # The project is provided using Uncrustify_EXE, nevertheless since other

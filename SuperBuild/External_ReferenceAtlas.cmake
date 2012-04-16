@@ -19,11 +19,11 @@ set(proj ${extProjName})              #This local name
 
 # Sanity checks
 if(DEFINED ${extProjName}_DIR AND NOT EXISTS ${${extProjName}_DIR})
-  message(FATAL_ERROR "${extProjName}_DIR variable is defined but corresponds to non-existing directory")
+  message(FATAL_ERROR "${extProjName}_DIR variable is defined but corresponds to non-existing directory (${${extProjName}_DIR})")
 endif()
 
 if(DEFINED ATLAS_NAME AND NOT EXISTS ${${extProjName}_DIR}/${ATLAS_NAME})
-  message(FATAL_ERROR "ATLAS_NAME variable is defined but <${extProjName}_DIR>/<ATLAS_NAME> corresponds to non-existing directory")
+  message(FATAL_ERROR "ATLAS_NAME variable is defined but <${extProjName}_DIR>/<ATLAS_NAME> corresponds to non-existing directory (${${extProjName}_DIR}/${ATLAS_NAME})")
 endif()
 
 # Set dependency list
@@ -72,10 +72,11 @@ if(NOT DEFINED ${extProjName}_DIR OR NOT DEFINED ATLAS_NAME)
   set(${extProjName}_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
 else()
   if(${USE_SYSTEM_${extProjName}})
-    find_package(${extProjName} ${ITK_VERSION_MAJOR} REQUIRED)
+    find_package(${extProjName} REQUIRED)
     if(NOT ${extProjName}_DIR)
       message(FATAL_ERROR "To use the system ${extProjName}, set ${extProjName}_DIR")
     endif()
+    message("USING the system ${extProjName}, set ${extProjName}_DIR=${${extProjName}_DIR}")
   endif()
   # The project is provided using ${extProjName}_DIR, nevertheless since other
   # project may depend on ${extProjName}v4, let's add an 'empty' one

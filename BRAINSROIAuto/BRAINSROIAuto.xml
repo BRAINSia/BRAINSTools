@@ -2,7 +2,7 @@
 <executable>
   <category>Segmentation.Specialized</category>
   <title>Foreground masking (BRAINS)</title>
-  <description>This program is used to create a mask over the most prominant forground region in an image.  This is accomplished via a combination of otsu thresholding and a closing operation.  More documentation is available here: http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/ForegroundMasking.
+  <description>This program is used to create a mask over the most prominant forground region in an image.  This is accomplished via a combination of otsu thresholding and a closing operation.  More documentation is available here: http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.1/Modules/ForegroundMasking.
   </description>
   <version>2.4.1</version>
   <documentation-url></documentation-url>

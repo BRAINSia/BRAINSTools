@@ -27,9 +27,6 @@ if(${ITK_VERSION_MAJOR} STREQUAL "3")
 endif()
 
 CMAKE_DEPENDENT_OPTION(
-  USE_DTIPrep                         "Build DTIPrep"                                ON "BRAINSTools_USE_QT" ON)
-
-CMAKE_DEPENDENT_OPTION(
   USE_BRAINSABC                       "Build BRAINSABC (ITKv4)"                      ON "USE_ITKv4" ON)
 CMAKE_DEPENDENT_OPTION(
   USE_BRAINSTransformConvert          "Build BRAINSTransformConvert (ITKv4)"         ON "USE_ITKv4" ON)

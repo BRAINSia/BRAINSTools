@@ -61,8 +61,12 @@ else
     which gcc > /dev/null 2>&1
     if [ $? == 0 ] ; then
         Compiler=gcc-`gcc -dumpversion`-`gcc -dumpmachine`
+        export CC=`which gcc`
+        export CXX=`which g++`
     else
         Compiler=unknown
+        export CC=`which cc`
+        export CXX=`which cxx`
     fi
 fi
 

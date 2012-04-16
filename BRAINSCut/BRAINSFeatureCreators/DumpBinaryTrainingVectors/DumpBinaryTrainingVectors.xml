@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8" ?>
+  <executable>
+  <category>Filtering.FeatureDetection</category>
+  <title>Erode Image</title>
+
+  <description>Uses mathematical morphology to erode the input images.</description>
+  <version>0.1.0.$Revision: 1 $(alpha)</version>
+  <documentation-url>http:://www.na-mic.org/</documentation-url>
+  <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt </license>
+  <contributor>This tool was developed by Mark Scully and Jeremy Bockholt.</contributor>
+
+
+  <parameters>
+    <label>Input Parameters</label>
+    <description>Input parameters for analysis.</description>
+
+    <image>
+      <name>inputHeaderFilename</name>
+      <longflag>--inputHeaderFilename</longflag>
+      <description>Required: input header file name</description>
+      <label>Input Header Filename </label>
+      <channel>input</channel>
+    </image>
+
+    <image>
+      <name>inputVectorFilename</name>
+      <longflag>--inputVectorFilename</longflag>
+      <description>Required: input vector filename</description>
+      <label>Input Vector Filename</label>
+      <channel>input</channel>
+    </image>
+  </parameters>
+
+  </executable>

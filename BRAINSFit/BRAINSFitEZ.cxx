@@ -20,7 +20,7 @@ PURPOSE.  See the above copyright notices for more information.
 #include "BRAINSCommonLib.h"
 #include "BRAINSThreadControl.h"
 #include "BRAINSFitHelper.h"
-#include "BRAINSFitCLP.h"
+#include "BRAINSFitEZCLP.h"
 
 // This program was modified from
 // Insight/Examples/Registration/ImageRegistration8.cxx
@@ -235,6 +235,10 @@ int main(int argc, char *argv[])
       }
     if( useAffine == true )
       {
+      localTransformType.clear();
+      localTransformType.push_back("Rigid");
+      localTransformType.push_back("ScaleVersor3D");
+      localTransformType.push_back("ScaleSkewVersor3D");
       localTransformType.push_back("Affine");
       }
     if( useBSpline == true )

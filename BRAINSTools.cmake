@@ -76,7 +76,6 @@ include_directories(
 #-----------------------------------------------------------------------------
 set(brains_modulenames
   BRAINSFit
-  EZBRAINSFit
   BRAINSResample
   BRAINSROIAuto
   GTRACT
@@ -87,7 +86,7 @@ set(brains_modulenames
   BRAINSDemonWarp ## NOTE: This is off by default, but is valid for both ITKv3/4
                   ##       This builds just fine with ITKv3/4, but test cases need
                   ##       further review before trusting it.
-  BRAINSContinuousClass
+                  #  NOTE :  This program is not yet ready for use:  BRAINSContinuousClass
   )
 
 ## Tools that only work with ITKv4

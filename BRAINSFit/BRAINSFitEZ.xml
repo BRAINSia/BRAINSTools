@@ -32,13 +32,6 @@
   <!-- -->
   <parameters advanced="false">
     <label>Output Settings (At least one output must be specified.)</label>
-    <transform fileExtensions=".mat" type="bspline" reference="movingVolume">
-      <name>bsplineTransform</name>
-      <longflag>bsplineTransform</longflag>
-      <label>Slicer BSpline Transform</label>
-      <description>(optional) Filename to which save the estimated transform. NOTE: You must set at least one output object (either a deformed image or a transform.  NOTE: USE THIS ONLY IF THE FINAL TRANSFORM IS BSpline (Advanced)</description>
-      <channel>output</channel>
-    </transform>
 
     <transform fileExtensions=".mat" type="linear" reference="movingVolume">
       <name>linearTransform</name>
@@ -47,21 +40,41 @@
       <description>(optional) Filename to which save the estimated transform. NOTE: You must set at least one output object (either a deformed image or a transform.  NOTE: USE THIS ONLY IF THE FINAL TRANSFORM IS ---NOT--- BSpline</description>
       <channel>output</channel>
     </transform>
-
-    <image>
-      <name>outputVolume</name>
-      <longflag>outputVolume</longflag>
-      <label>Output Image Volume</label>
-      <description>(optional) Output image for registration. NOTE: You must select either the outputTransform or the outputVolume option.</description>
-      <channel>output</channel>
-      <default></default>
-    </image>
-
+  </parameters>
+  <parameters advanced="false">
+    <label>Simple Registration Phases (Check one or more, executed in order listed)</label>
+    <description>Each of the registration phases will be used to initialize the next phase</description>
+    <boolean>
+       <name>useRigid</name>
+       <longflag>useRigid</longflag>
+       <label>Rigid (6 DOF)</label>
+       <description>Perform a rigid registration as part of the sequential registration steps.  This family of options superceeds the use of transformType if any of them are set.</description>
+       <default>true</default>
+    </boolean>
+    <boolean>
+       <name>useAffine</name>
+       <longflag>useAffine</longflag>
+       <label>Affine(12 DOF)</label>
+       <description>Perform a series of registrations to that culminates with an Affine transform being defined.  This family of options superceeds the use of transformType if any of them are set.</description>
+       <default>false</default>
+    </boolean>
   </parameters>
 
-  <parameters>
-    <label>Initial Alignment</label>
-    <description>Options for initializing transform parameters to a initial starting point.</description>
+  <parameters advanced="true">
+    <label>Transform Initialization (Optional)</label>
+    <description>Options to define how registrations should be initialized</description>
+    <string-enumeration>
+      <name>initializeTransformMode</name>
+      <longflag>initializeTransformMode</longflag>
+      <label>Intitialze Transform Mode</label>
+      <description>Determine how to initialize the transform center.  GeometryAlign on assumes that the center of the voxel lattice of the images represent similar structures.  MomentsAlign assumes that the center of mass of the images represent similar structures.  useCenterOfHeadAlign attempts to use the top of head and shape of neck to drive a center of mass estimate.  Off assumes that the physical space of the images are close, and that centering in terms of the image Origins is a good starting point.  This flag is mutually exclusive with the initialTransform flag.</description>
+      <default>useMomentsAlign</default>
+      <element>Off</element>
+      <element>useMomentsAlign</element>
+      <element>useCenterOfHeadAlign</element>
+      <element>useGeometryAlign</element>
+      <element>useCenterOfROIAlign</element>
+    </string-enumeration>
 
     <transform fileExtensions=".mat">
       <name>initialTransform</name>
@@ -71,50 +84,28 @@
       <channel>input</channel>
     </transform>
 
-    <string-enumeration>
-      <name>initializeTransformMode</name>
-      <longflag>initializeTransformMode</longflag>
-      <label>Intitialze Transform Mode</label>
-      <description>Determine how to initialize the transform center.  GeometryAlign on assumes that the center of the voxel lattice of the images represent similar structures.  MomentsAlign assumes that the center of mass of the images represent similar structures.  useCenterOfHeadAlign attempts to use the top of head and shape of neck to drive a center of mass estimate.  Off assumes that the physical space of the images are close, and that centering in terms of the image Origins is a good starting point.  This flag is mutually exclusive with the initialTransform flag.</description>
-      <default>Off</default>
-      <element>Off</element>
-      <element>useMomentsAlign</element>
-      <element>useCenterOfHeadAlign</element>
-      <element>useGeometryAlign</element>
-      <element>useCenterOfROIAlign</element>
-    </string-enumeration>
   </parameters>
-
-  <parameters advanced="false">
-    <label>Simple Registration Phases (Check one or more, executed in order listed)</label>
-    <description>Each of the registration phases will be used to initialize the next phase</description>
-    <boolean>
-       <name>useRigid</name>
-       <longflag>useRigid</longflag>
-       <label>Rigid (6 DOF)</label>
-       <description>Perform a rigid registration as part of the sequential registration steps.  This family of options superceeds the use of transformType if any of them are set.</description>
-       <default>false</default>
-    </boolean>
-    <boolean>
-       <name>useAffine</name>
-       <longflag>useAffine</longflag>
-       <label>Affine(12 DOF)</label>
-       <description>Perform an Affine registration as part of the sequential registration steps.  This family of options superceeds the use of transformType if any of them are set.</description>
-       <default>false</default>
-    </boolean>
-  </parameters>
-
-  <!-- -->
+  <!--    Advanced parameters -->
   <parameters advanced="true">
-    <label>Registration Phases (Check one or more, executed in order listed)</label>
-    <description>Each of the registration phases will be used to initialize the next phase</description>
-    <boolean>
-       <name>useRigid</name>
-       <longflag>useRigid</longflag>
-       <label>Rigid (6 DOF)</label>
-       <description>Perform a rigid registration as part of the sequential registration steps.  This family of options superceeds the use of transformType if any of them are set.</description>
-       <default>false</default>
-    </boolean>
+    <label>Advanced Hidden Parameters</label>
+    <description>Use the advanced version of BRAINSFit for more flexibility</description>
+    <transform fileExtensions=".mat" type="bspline" reference="movingVolume">
+      <name>bsplineTransform</name>
+      <longflag>bsplineTransform</longflag>
+      <label>Slicer BSpline Transform</label>
+      <description>(optional) Filename to which save the estimated transform. NOTE: You must set at least one output object (either a deformed image or a transform.  NOTE: USE THIS ONLY IF THE FINAL TRANSFORM IS BSpline (Advanced)</description>
+      <channel>output</channel>
+    </transform>
+    <image>
+      <name>outputVolume</name>
+      <longflag>outputVolume</longflag>
+      <label>Output Image Volume</label>
+      <description>(optional) Output image for registration. NOTE: You must select either the outputTransform or the outputVolume option.</description>
+      <channel>output</channel>
+      <default></default>
+    </image>
+
+
     <boolean>
        <name>useScaleVersor3D</name>
        <longflag>useScaleVersor3D</longflag>
@@ -127,13 +118,6 @@
        <longflag>useScaleSkewVersor3D</longflag>
        <label>Rigid+Scale+Skew(10 DOF)</label>
        <description>Perform a ScaleSkewVersor3D registration as part of the sequential registration steps.  This family of options superceeds the use of transformType if any of them are set.</description>
-       <default>false</default>
-    </boolean>
-    <boolean>
-       <name>useAffine</name>
-       <longflag>useAffine</longflag>
-       <label>Affine(12 DOF)</label>
-       <description>Perform an Affine registration as part of the sequential registration steps.  This family of options superceeds the use of transformType if any of them are set.</description>
        <default>false</default>
     </boolean>
     <boolean>
@@ -150,11 +134,6 @@
        <description>Perform a Composite registration as part of the sequential registration steps.  This family of options superceeds the use of transformType if any of them are set.</description>
        <default>false</default>
     </boolean>
-
-  </parameters>
-  <!-- -->
-  <parameters advanced="true">
-    <label>Main Parameters</label>
 
     <integer>
       <name>numberOfSamples</name>
@@ -180,17 +159,13 @@
       <default>1500</default>
     </integer-vector>
 
-  </parameters>
-  <!-- -->
-  <parameters advanced="true">
-    <label>Mask Option</label>
 
     <string-enumeration>
       <name>maskProcessingMode</name>
       <longflag>maskProcessingMode</longflag>
       <description>What mode to use for using the masks.  If ROIAUTO is choosen, then the mask is implicitly defined using a otsu forground and hole filling algorithm. The Region Of Interest mode (choose ROI) uses the masks to define what parts of the image should be used for computing the transform.</description>
       <label>Masking Option </label>
-      <default>NOMASK</default>
+      <default>ROIAUTO</default>
       <element>NOMASK</element>
       <element>ROIAUTO</element>
       <element>ROI</element>
@@ -229,11 +204,8 @@
       <description>The ROI automatically found in moving image, ONLY FOR ROIAUTO mode.</description>
       <channel>output</channel>
     </image>
-  </parameters>
 
 
-  <parameters advanced="true">
-    <label>Advanced Output Settings</label>
     <string-enumeration>
       <name>outputVolumePixelType</name>
       <longflag>outputVolumePixelType</longflag>
@@ -356,11 +328,6 @@
       <default>10</default>
     </integer>
 
-  </parameters>
-
-  <parameters advanced="true">
-    <label>Special Modes Parameters</label>
-
     <transform fileExtensions=".mat" type="linear">
       <name>strippedOutputTransform</name>
       <longflag>strippedOutputTransform</longflag>
@@ -418,11 +385,6 @@
       <description>The half percentage to decide outliers of image intensities. The default value is zero, which means no outlier removal. If the value of 0.005 is given, the moduel will throw away 0.005 % of both tails, so 0.01% of intensities in total would be ignored in its statistic calculation. </description>
       <default>0.0</default>
     </double>
-  </parameters>
-  <!-- -->
-  <!-- -->
-  <parameters advanced="true">
-    <label>Registration Debugging Parameters</label>
 
     <string-enumeration>
       <name>useCachingOfBSplineWeightsMode</name>
@@ -544,9 +506,6 @@
       <description>Prompt the user to hit enter each time an image is sent to the DebugImageViewer</description>
       <default>false</default>
     </boolean>
-  </parameters>
-  <parameters advanced="true">
-    <label>Risky Expert-only Parameters</label>
 
     <boolean>
        <name>useMomentsAlign</name>

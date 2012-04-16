@@ -434,9 +434,9 @@ void landmarksConstellationDetector::Compute( void )
         {
         std::string BrandedImageAName( this->m_ResultsDir + "/BrandedImage.png" );
 
-        MakeBrandeddebugImage( this->m_VolumeMSP.GetPointer(), this->m_InputTemplateModel,
-                               this->m_CenterOfHeadMassEMSP
-                               + this->m_InputTemplateModel.GetCMtoRPMean(),
+        MakeBrandeddebugImage( this->m_VolumeMSP.GetPointer(),
+                               this->m_InputTemplateModel,
+                               this->m_CenterOfHeadMassEMSP + this->m_InputTemplateModel.GetCMtoRPMean(),
                                CandidateRPPoint + RPtoAC,
                                CandidateRPPoint + RPtoPC,
                                CandidateRPPoint + RPtoVN4,

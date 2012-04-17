@@ -48,7 +48,7 @@ int main( int argc, char * argv[] )
   const unsigned int k = atoi(argv[1]);  // Number of landmark pairs
   // So the number of input landmark files = 2*k
 
-  if( ( argc % 2 != 0 ) || ( argc != (2 * (k + 1) ) ) )
+  if( ( argc % 2 != 0 ) || ( static_cast<unsigned int>(argc) != (2 * (k + 1) ) ) )
     {
     std::cout << " First argument indicates the number of landmark pairs for comparison.\n"
               << "Two landmarks files are needed corresponding to each data case.\n"

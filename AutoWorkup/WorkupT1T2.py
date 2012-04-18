@@ -755,7 +755,7 @@ def WorkupT1T2(processingLevel,mountPrefix,ExperimentBaseDirectory, subject_data
         ## Make deformed Atlas image space
         if processingLevel > 2:
             
-            many_cpu_sge_options_dictionary={'qsub_args': '-S /bin/bash -q UI -pe smp1 6-12 -l mem_free=5000M -o /dev/null -e /dev/null ', 'overwrite': True}
+            many_cpu_sge_options_dictionary={'qsub_args': '-S /bin/bash -q all.q -pe smp1 4-12 -l mem_free=5000M -o /dev/null -e /dev/null ', 'overwrite': True}
             print("""
             Run ANTS Registration at processingLevel={0}
             """.format(processingLevel) )
@@ -769,7 +769,7 @@ def WorkupT1T2(processingLevel,mountPrefix,ExperimentBaseDirectory, subject_data
             baw200.connect( BAtlas,'template_t1',    ComputeAtlasToSubjectTransform,"moving_T2_image")
             baw200.connect(BLI,'outputTransformFilename',ComputeAtlasToSubjectTransform,'initialTransform')
 
-        #if processingLevel == -123:
+        if processingLevel == -123:
             WarpAtlas = pe.Node(interface=WarpAllAtlas(), name = "19_WarpAtlas")
             WarpAtlas.inputs.moving_atlas = atlas_fname_wpath
             WarpAtlas.inputs.deformed_atlas = "./template_t2.nii.gz"
@@ -779,14 +779,15 @@ def WorkupT1T2(processingLevel,mountPrefix,ExperimentBaseDirectory, subject_data
             baw200.connect( SplitAvgBABC,'avgBABCT1', WarpAtlas, 'reference_image')
 
 
-        #if processingLevel > 3:
-        if processingLevel == -123:
+        if processingLevel > 3:
             print("""
             Run Freesurfer ReconAll at processingLevel={0}
             """.format(processingLevel) )
             subj_id = os.path.basename(os.path.dirname(os.path.dirname(baw200.base_dir)))
             scan_id = os.path.basename(os.path.dirname(baw200.base_dir))
             reconall = pe.Node(interface=ReconAll(),name="41_FS510")
+            freesurfer_sge_options_dictionary={'qsub_args': '-S /bin/bash -q all.q -pe smp1 1 -l mem_free=3100M -o /dev/null -e /dev/null ', 'overwrite': True}
+            reconall.plugin_args=freesurfer_sge_options_dictionary
             reconall.inputs.subject_id = subj_id+'_'+scan_id
             reconall.inputs.directive = 'all'
             reconall.inputs.subjects_dir = '.'

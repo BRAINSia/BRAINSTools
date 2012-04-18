@@ -13,9 +13,14 @@
 import sys
 
 ##############################################################################
-def get_global_sge_script(pythonPathsList,binPathsList):
+def get_global_sge_script(pythonPathsList,binPathsList,customEnvironment={}):
     """This is a wrapper script for running commands on an SGE cluster
 so that all the python modules and commands are pathed properly"""
+
+    custEnvString=""
+    for key,value in customEnvironment.items():
+        custEnvString+=key+"="+value+"\n"
+
     PYTHONPATH=":".join(pythonPathsList)
     BASE_BUILDS=":".join(binPathsList)
     GLOBAL_SGE_SCRIPT="""#!/bin/bash
@@ -25,8 +30,11 @@ export PATH={BINPATH}
 export PYTHONPATH={PYTHONPATH}
 echo "With PYTHONPATH={PYTHONPATH}"
 echo "With PATH={BINPATH}"
+echo "With custom environment:"
+echo {CUSTENV}
+{CUSTENV}
 ## NOTE:  nipype inserts the actaul commands that need running below this section.
-""".format(PYTHONPATH=PYTHONPATH,BINPATH=BASE_BUILDS)
+""".format(PYTHONPATH=PYTHONPATH,BINPATH=BASE_BUILDS,CUSTENV=custEnvString)
     return GLOBAL_SGE_SCRIPT
 
 def main(argv=None):
@@ -85,6 +93,8 @@ def main(argv=None):
     #    Define workup common reference data sets
     ATLASPATH=expConfig.get(input_arguments.processingEnvironment,'ATLASPATH')
     BCDMODELPATH=expConfig.get(input_arguments.processingEnvironment,'BCDMODELPATH')
+    CUSTOM_ENVIRONMENT=expConfig.get(input_arguments.processingEnvironment,'CUSTOM_ENVIRONMENT')
+    CUSTOM_ENVIRONMENT=eval(CUSTOM_ENVIRONMENT)
 
     print "Configuring Pipeline"
     import WorkupT1T2 ## NOTE:  This needs to occur AFTER the PYTHON_AUX_PATHS has been modified
@@ -98,10 +108,11 @@ def main(argv=None):
 
     ## Create the shell wrapper script for ensuring that all jobs running on remote hosts from SGE
     #  have the same environment as the job submission host.
-    JOB_SCRIPT=get_global_sge_script(sys.path,PROGRAM_PATHS)
+    JOB_SCRIPT=get_global_sge_script(sys.path,PROGRAM_PATHS,CUSTOM_ENVIRONMENT)
+    print JOB_SCRIPT
     if input_arguments.wfrun == 'helium_all.q':
         baw200.run(plugin='SGE',
-            plugin_args=dict(template=JOB_SCRIPT,qsub_args="-S /bin/bash -q UI -pe smp1 2-4 -o /dev/null -e /dev/null "))
+            plugin_args=dict(template=JOB_SCRIPT,qsub_args="-S /bin/bash -q all.q -pe smp1 2-4 -o /dev/null -e /dev/null "))
     elif input_arguments.wfrun == 'ipl_OSX':
         baw200.run(plugin='SGE',
             plugin_args=dict(template=JOB_SCRIPT,qsub_args="-S /bin/bash -q OSX -pe smp1 2-4 -o /dev/null -e /dev/null "))

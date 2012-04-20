@@ -53,7 +53,6 @@ from BRAINSTools.ANTSWrapper import *
 from BRAINSTools.WarpImageMultiTransform import *
 from BRAINSTools.WarpAllAtlas import *
 
-default_sge_options_dictionary={'qsub_args': '-S /bin/bash -q all.q -pe smp1 2-4 -o /dev/null -e /dev/null ', 'overwrite': True}
 
 #######################  HACK:  Needed to make some global variables for quick
 #######################         processing needs
@@ -174,7 +173,7 @@ def create_BRAINSCut_XML(rho,phi,theta,model,
 
     XMLSTRING="""<AutoSegProcessDescription>
   <RegistrationConfiguration
-         ImageTypeToUse="T1"
+         ImageTypeToUse="T1-30"
          ID="BSpline_ROI"
          BRAINSROIAutoDilateSize="1"
   />
@@ -205,8 +204,8 @@ def create_BRAINSCut_XML(rho,phi,theta,model,
   <ProbabilityMap StructureID="l_{structure}" Gaussian="0.5" GenerateVector="true" Filename="{l_probabilityMap}"/>
   <ProbabilityMap StructureID="r_{structure}" Gaussian="0.5" GenerateVector="true" Filename="{r_probabilityMap}"/>
   <DataSet Type="Atlas" Name="template">
-    <Image Type="T1" Filename="{atlasT1}"/>
-    <Image Type="T2" Filename="na"/>
+    <Image Type="T1-30" Filename="{atlasT1}"/>
+    <Image Type="T2-30" Filename="na"/>
     {EXTRA_FLAGS}
     <Image Type="SGGAD" Filename="na"/>
 
@@ -215,8 +214,8 @@ def create_BRAINSCut_XML(rho,phi,theta,model,
     <SpatialLocation Type="theta" Filename="{theta}"/>
   </DataSet>
   <DataSet Name="sessionID" Type="Apply" OutputDir="./">
-      <Image Type="T1" Filename="{subjT1}"/>
-      <Image Type="T2" Filename="{subjT2}"/>
+      <Image Type="T1-30" Filename="{subjT1}"/>
+      <Image Type="T2-30" Filename="{subjT2}"/>
       <Image Type="T1GAD" Filename="{subjT1GAD}"/>
       <Image Type="T2GAD" Filename="{subjT2GAD}"/>
       <Image Type="SGGAD" Filename="{subjSGGAD}"/>
@@ -271,41 +270,41 @@ def getFirstT1(uid, dbfile):
     with open(dbfile) as fp:
         db = load(fp)
     print("uid:= {0}, dbfile: {1}".format(uid,dbfile))
-    print("result:= {0}".format(db[uid]["T1"]))
-    return db[uid]["T1"][0]
+    print("result:= {0}".format(db[uid]["T1-30"]))
+    return db[uid]["T1-30"][0]
 
 def getT1s(uid, dbfile):
     from cPickle import load
     with open(dbfile) as fp:
         db = load(fp)
     #print("uid:= {0}, dbfile: {1}".format(uid,dbfile))
-    #print("result:= {0}".format(db[uid]["T1"]))
-    return db[uid]["T1"]
+    #print("result:= {0}".format(db[uid]["T1-30"]))
+    return db[uid]["T1-30"]
 
 def getT1sLength(uid, dbfile):
     from cPickle import load
     with open(dbfile) as fp:
         db = load(fp)
     #print("uid:= {0}, dbfile: {1}".format(uid,dbfile))
-    #print("result:= {0}".format(db[uid]["T1"]))
-    return len(db[uid]["T1"])
+    #print("result:= {0}".format(db[uid]["T1-30"]))
+    return len(db[uid]["T1-30"])
 
 def getT2s(uid, dbfile):
     from cPickle import load
     with open(dbfile) as fp:
         db = load(fp)
     #print("uid:= {0}, dbfile: {1}".format(uid,dbfile))
-    #print("result:= {0}".format(db[uid]["T1"]))
-    return db[uid]["T2"]
+    #print("result:= {0}".format(db[uid]["T1-30"]))
+    return db[uid]["T2-30"]
 
 def getT1sT2s(uid, dbfile,altT1):
     from cPickle import load
     with open(dbfile) as fp:
         db = load(fp)
     #print("uid:= {0}, dbfile: {1}".format(uid,dbfile))
-    #print("result:= {0}".format(db[uid]["T1"]))
-    temp=db[uid]["T1"]
-    temp.append(db[uid]["T2"])
+    #print("result:= {0}".format(db[uid]["T1-30"]))
+    temp=db[uid]["T1-30"]
+    temp.append(db[uid]["T2-30"])
     temp[0]=altT1
     return temp
 
@@ -325,7 +324,7 @@ def getT1sT2s(uid, dbfile,altT1):
 ###########################################################################
 ###########################################################################
 def WorkupT1T2(processingLevel,mountPrefix,ExperimentBaseDirectory, subject_data_file, atlas_fname_wpath, BCD_model_path,
-               InterpolationMode="Linear", Mode=10,DwiList=[] ):
+               InterpolationMode="Linear", Mode=10,DwiList=[],WORKFLOW_COMPONENTS=[],CLUSTER_QUEUE=''):
     """
     Run autoworkup on all subjects data defined in the subject_data_file
 
@@ -372,6 +371,7 @@ def WorkupT1T2(processingLevel,mountPrefix,ExperimentBaseDirectory, subject_data
         else:
             print "ERROR:  Invalid number of elements in row"
             print row
+    print "DICTIONARY",multiLevel
     from cPickle import dump
     dump(multiLevel, open(subjectDatabaseFile,'w'))
 
@@ -442,7 +442,7 @@ def WorkupT1T2(processingLevel,mountPrefix,ExperimentBaseDirectory, subject_data
     # Entries below are of the form:
     baw200.connect( [ (uidSource, BCD, [(('uid', getFirstT1, subjectDatabaseFile) , 'inputVolume')] ), ])
 
-    if processingLevel > 0:
+    if 'BASIC' in WORKFLOW_COMPONENTS:
         ########################################################
         # Run BLI atlas_to_subject
         ########################################################
@@ -457,7 +457,7 @@ def WorkupT1T2(processingLevel,mountPrefix,ExperimentBaseDirectory, subject_data
             (BAtlas,BLI,[('template_landmark_weights_csv','inputWeightFilename')])
         ])
 
-    if processingLevel > 0:
+    if 'AUXLMK' in WORKFLOW_COMPONENTS:
         ########################################################
         # Run BLI subject_to_atlas
         ########################################################
@@ -479,7 +479,7 @@ def WorkupT1T2(processingLevel,mountPrefix,ExperimentBaseDirectory, subject_data
         baw200.connect(BLI2Atlas,'outputTransformFilename',Resample2Atlas,'warpTransform')
         baw200.connect(BAtlas,'template_t1',Resample2Atlas,'referenceVolume')
 
-    if processingLevel > 1:
+    if 'TISSUE_CLASSIFY' in WORKFLOW_COMPONENTS:
         ########################################################
         # Run BABC on Multi-modal images
         ########################################################
@@ -644,8 +644,7 @@ def WorkupT1T2(processingLevel,mountPrefix,ExperimentBaseDirectory, subject_data
         baw200.connect(GADT1,'outputVolume',SGI,'inputVolume1')
         baw200.connect(GADT2,'outputVolume',SGI,'inputVolume2')
 
-        #if processingLevel > 1:
-        if processingLevel == -123: 
+        if 'SEGMENTATION' in WORKFLOW_COMPONENTS:
             """
             Load the BRAINSCut models & probabiity maps.
             """
@@ -753,9 +752,9 @@ def WorkupT1T2(processingLevel,mountPrefix,ExperimentBaseDirectory, subject_data
             """
 
         ## Make deformed Atlas image space
-        if processingLevel > 2:
+        if 'ANTS' in WORKFLOW_COMPONENTS:
             
-            many_cpu_sge_options_dictionary={'qsub_args': '-S /bin/bash -q all.q -pe smp1 4-12 -l mem_free=5000M -o /dev/null -e /dev/null ', 'overwrite': True}
+            many_cpu_sge_options_dictionary={'qsub_args': '-S /bin/bash -pe smp1 4-12 -l mem_free=5000M -o /dev/null -e /dev/null '+CLUSTER_QUEUE, 'overwrite': True}
             print("""
             Run ANTS Registration at processingLevel={0}
             """.format(processingLevel) )
@@ -769,7 +768,7 @@ def WorkupT1T2(processingLevel,mountPrefix,ExperimentBaseDirectory, subject_data
             baw200.connect( BAtlas,'template_t1',    ComputeAtlasToSubjectTransform,"moving_T2_image")
             baw200.connect(BLI,'outputTransformFilename',ComputeAtlasToSubjectTransform,'initialTransform')
 
-        if processingLevel == -123:
+        if 'ANTSWARP_FIXME' in WORKFLOW_COMPONENTS:
             WarpAtlas = pe.Node(interface=WarpAllAtlas(), name = "19_WarpAtlas")
             WarpAtlas.inputs.moving_atlas = atlas_fname_wpath
             WarpAtlas.inputs.deformed_atlas = "./template_t2.nii.gz"
@@ -778,17 +777,14 @@ def WorkupT1T2(processingLevel,mountPrefix,ExperimentBaseDirectory, subject_data
             baw200.connect( ComputeAtlasToSubjectTransform,'output_warp', WarpAtlas,"deformation_field")
             baw200.connect( SplitAvgBABC,'avgBABCT1', WarpAtlas, 'reference_image')
 
-
-        if processingLevel > 3:
+        if 'FREESURFER' in WORKFLOW_COMPONENTS:
             print("""
             Run Freesurfer ReconAll at processingLevel={0}
             """.format(processingLevel) )
-            subj_id = os.path.basename(os.path.dirname(os.path.dirname(baw200.base_dir)))
-            scan_id = os.path.basename(os.path.dirname(baw200.base_dir))
             reconall = pe.Node(interface=ReconAll(),name="41_FS510")
-            freesurfer_sge_options_dictionary={'qsub_args': '-S /bin/bash -q all.q -pe smp1 1 -l mem_free=3100M -o /dev/null -e /dev/null ', 'overwrite': True}
+            freesurfer_sge_options_dictionary={'qsub_args': '-S /bin/bash -pe smp1 1 -l mem_free=3100M -o /dev/null -e /dev/null '+CLUSTER_QUEUE, 'overwrite': True}
             reconall.plugin_args=freesurfer_sge_options_dictionary
-            reconall.inputs.subject_id = subj_id+'_'+scan_id
+            reconall.inputs.subject_id = 'ThisSubject'
             reconall.inputs.directive = 'all'
             reconall.inputs.subjects_dir = '.'
             baw200.connect(SplitAvgBABC,'avgBABCT1',reconall,'T1_files')

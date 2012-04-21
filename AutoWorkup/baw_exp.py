@@ -57,9 +57,6 @@ def main(argv=None):
     group.add_argument('-ExperimentConfig', action="store", dest='ExperimentConfig', required=True,
                        help='The path to the file that describes the entire experiment')
     parser.add_argument('--version', action='version', version='%(prog)s 1.0')
-    group.add_argument('-processingLevel', action="store", dest='processingLevel', required=False,
-                       help='How much processing should be done, 1=basic, 2= include ABC, 3= include ANTS, 4= include Freesurfer',
-                       default=2)
     #parser.add_argument('-v', action='store_false', dest='verbose', default=True,
     #                    help='If not present, prints the locations')
     input_arguments = parser.parse_args()
@@ -114,7 +111,7 @@ def main(argv=None):
 
     print "Configuring Pipeline"
     import WorkupT1T2 ## NOTE:  This needs to occur AFTER the PYTHON_AUX_PATHS has been modified
-    baw200=WorkupT1T2.WorkupT1T2(input_arguments.processingLevel, mountPrefix,
+    baw200=WorkupT1T2.WorkupT1T2(mountPrefix,
       ExperimentBaseDirectory,
       session_db,
       ATLASPATH,

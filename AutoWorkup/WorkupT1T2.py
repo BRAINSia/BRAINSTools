@@ -323,7 +323,7 @@ def getT1sT2s(uid, dbfile,altT1):
 ###########################################################################
 ###########################################################################
 ###########################################################################
-def WorkupT1T2(processingLevel,mountPrefix,ExperimentBaseDirectory, subject_data_file, atlas_fname_wpath, BCD_model_path,
+def WorkupT1T2(mountPrefix,ExperimentBaseDirectory, subject_data_file, atlas_fname_wpath, BCD_model_path,
                InterpolationMode="Linear", Mode=10,DwiList=[],WORKFLOW_COMPONENTS=[],CLUSTER_QUEUE=''):
     """
     Run autoworkup on all subjects data defined in the subject_data_file
@@ -336,7 +336,6 @@ def WorkupT1T2(processingLevel,mountPrefix,ExperimentBaseDirectory, subject_data
 
     print "Building Subject List: " + subject_data_file
     subjectDatabaseFile=os.path.join( ExperimentBaseDirectory,'InternalWorkflowSubjectDB.pickle')
-    processingLevel=int(processingLevel)
     subjData=csv.reader(open(subject_data_file,'rb'), delimiter=',', quotechar='"')
     myDB=dict()
     multiLevel=AutoVivification()  #This should be replaced by a more nested dictionary
@@ -753,11 +752,8 @@ def WorkupT1T2(processingLevel,mountPrefix,ExperimentBaseDirectory, subject_data
 
         ## Make deformed Atlas image space
         if 'ANTS' in WORKFLOW_COMPONENTS:
-            
             many_cpu_sge_options_dictionary={'qsub_args': '-S /bin/bash -pe smp1 4-12 -l mem_free=5000M -o /dev/null -e /dev/null '+CLUSTER_QUEUE, 'overwrite': True}
-            print("""
-            Run ANTS Registration at processingLevel={0}
-            """.format(processingLevel) )
+            print("""Run ANTS Registration""")
             ComputeAtlasToSubjectTransform = pe.Node(interface=ANTSWrapper(), name="19_ComputeAtlasToSubjectTransform")
             ComputeAtlasToSubjectTransform.plugin_args=many_cpu_sge_options_dictionary
             ComputeAtlasToSubjectTransform.inputs.output_prefix = "ANTS_"
@@ -778,9 +774,7 @@ def WorkupT1T2(processingLevel,mountPrefix,ExperimentBaseDirectory, subject_data
             baw200.connect( SplitAvgBABC,'avgBABCT1', WarpAtlas, 'reference_image')
 
         if 'FREESURFER' in WORKFLOW_COMPONENTS:
-            print("""
-            Run Freesurfer ReconAll at processingLevel={0}
-            """.format(processingLevel) )
+            print("""Run Freesurfer ReconAll at""")
             reconall = pe.Node(interface=ReconAll(),name="41_FS510")
             freesurfer_sge_options_dictionary={'qsub_args': '-S /bin/bash -pe smp1 1 -l mem_free=3100M -o /dev/null -e /dev/null '+CLUSTER_QUEUE, 'overwrite': True}
             reconall.plugin_args=freesurfer_sge_options_dictionary

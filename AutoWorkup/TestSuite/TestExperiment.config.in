@@ -1,0 +1,48 @@
+# The configuration file consists of sections, led by a [section] header and followed by name: value entries,
+# with continuations in the style of RFC 822 (see section 3.1.1, ?~@~\LONG HEADER FIELDS");
+#
+# time python /scratch/PREDICT/johnsonhj/src/BRAINSStandAlone/AutoWorkup/baw_exp.py -processingLevel 2 -ExperimentConfig NewExperiment.config -pe HELIUM_ENVIRIONMENT
+#
+# The intent of this configuraiton file is to define all the information needed to completely run an experiment.
+#
+[EXPERIMENT_DATA]
+#   A formatted csv file decribing the data sets one per line, where the different data types are listed in a dictionary.
+#  'PROJECT,SUBJ,SESSION,"{'T1-30:['T1_1.nii.gz','T1_2.nii.gz'],'T2-30':['T2_1.nii.gz']}"
+SESSION_DB=/ipldev/scratch/johnsonhj/src/BRAINSStandAlone/AutoWorkup/TestSuite/TestDataDescription.csv.in
+# The desired output directory for this experiment
+EXPERIMENTNAME=B4AUTO.TESTPROJ
+# Components of pipeline to run.  There are some branches of the workflow that are mostly for validation and experimentation.
+#WORKFLOW_COMPONENTS=['BASIC','TISSUE_CLASSIFY','ANTS','AUXLMK','FREESURFER']
+WORKFLOW_COMPONENTS=['BASIC']
+
+[OSX_ENVIRIONMENT]
+# Where to find Freesurfer base directory
+_FREESURFER_HOME=/ipldev/sharedopt/20110601/MacOSX_10.6/freesurfer
+_FREESURFER_PATH_EXT=%(_FREESURFER_HOME)s/bin:%(_FREESURFER_HOME)s/fsfast/bin:%(_FREESURFER_HOME)s/tktools:/opt/fsl/bin:%(_FREESURFER_HOME)s/mni/bin
+
+_GRAPHVIZ_BIN_DIR=/usr/local
+_ANTS_BIN_DIR=/ipldev/scratch/johnsonhj/src/ANTS-Darwin-clang/bin
+_BRAINSTOOLS_BIN_PATH=/ipldev/scratch/johnsonhj/src/BRAINSStandAlone-Darwin-clang
+# The prefix to add to all image files in the $(SESSION_DB) to account
+# for different file system mount points
+MOUNTPREFIX=
+# The base directory where all experiments of this type go
+BASEOUTPUTDIR=/ipldev/scratch/johnsonhj/src/BRAINSStandAlone-Darwin-clang
+#ENVIRONMENT_VARIABLES  This is mostly needed for freesurfer
+CUSTOM_ENVIRONMENT={'FREESURFER_HOME':'%(_FREESURFER_HOME)s', 'FIX_VERTEX_AREA':'', 'FMRI_ANALYSIS_DIR':'%(_FREESURFER_HOME)s/fsfast', 'FSFAST_HOME':'%(_FREESURFER_HOME)s/fsfast', 'FSF_OUTPUT_FORMAT':'nii.gz', 'FSL_BIN':'%(_FREESURFER_HOME)s/bin', 'FSL_DIR':'%(_FREESURFER_HOME)s', 'FS_OVERRIDE':'0', 'FUNCTIONALS_DIR':'%(_FREESURFER_HOME)s/sessions', 'LOCAL_DIR':'%(_FREESURFER_HOME)s/local', 'MINC_BIN_DIR':'%(_FREESURFER_HOME)s/mni/bin', 'MINC_LIB_DIR':'%(_FREESURFER_HOME)s/mni/lib', 'MNI_DATAPATH':'%(_FREESURFER_HOME)s/mni/data', 'MNI_DIR':'%(_FREESURFER_HOME)s/mni', 'MNI_PERL5LIB':'%(_FREESURFER_HOME)s/mni/lib/../System/Library/Perl/5.8.6', 'PERL5LIB':'%(_FREESURFER_HOME)s/mni/lib/../System/Library/Perl/5.8.6', 'SUBJECTS_DIR':'%(_FREESURFER_HOME)s/subjects'}
+## The cluster queue to use for submitting jobs.
+CLUSTER_QUEUE=-q OSX
+
+############## -- You should not need to modify below here. ###########
+# Where to find the Autoworkup scripts.
+_BRAINSTOOLS_SCRIPTS=/ipldev/scratch/johnsonhj/src/BRAINSStandAlone/AutoWorkup
+# Where SimpleITK, required nipype, and other non-standard python packages reside
+_NIPYPE_CUSTOM_PATH=/ipldev/sharedopt/20120201/Darwin_i386/PYTHON_MODULES/lib/python2.7/site-packages
+PYTHON_AUX_PATHS=%(_BRAINSTOOLS_SCRIPTS)s:%(_NIPYPE_CUSTOM_PATH)s
+# Where to find BRAINSTools
+# Paths that need to be configured to find tools needed to run this workflow
+PROGRAM_PATHS=%(_BRAINSTOOLS_BIN_PATH)s/lib:%(_BRAINSTOOLS_BIN_PATH)s/bin:%(_BRAINSTOOLS_SCRIPTS)s/BRAINSTools:%(_ANTS_BIN_DIR)s:%(_FREESURFER_PATH_EXT)s:%(_GRAPHVIZ_BIN_DIR)s
+# The path to the reference atlas spact to be used in this analysis by all BRAINSTools
+ATLASPATH=%(_BRAINSTOOLS_BIN_PATH)s/ReferenceAtlas-build/Atlas/Atlas_20120104
+# The path to the model files to be used by BCD.
+BCDMODELPATH=%(_BRAINSTOOLS_BIN_PATH)s/BRAINSTools-build/ExternalData/TestData

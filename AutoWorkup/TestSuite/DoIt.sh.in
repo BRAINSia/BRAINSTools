@@ -1,0 +1,6 @@
+#!/bin/bash
+
+python /ipldev/scratch/johnsonhj/src/BRAINSStandAlone/AutoWorkup/baw_exp.py \
+         -ExperimentConfig /ipldev/scratch/johnsonhj/src/BRAINSStandAlone/AutoWorkup/TestSuite/TestExperiment.config.in \
+         -pe OSX_ENVIRIONMENT \
+         -wfrun local

@@ -3,7 +3,7 @@
 mkdir ./python_install_stuff
 cd ./python_install_stuff
 
-export INSTALL_DIR=/scratch/PREDICT/Experiments/NewExperiment/python-site-packages
+export INSTALL_DIR=/ipldev/sharedopt/20120201/Darwin_i386/PYTHON_MODULES/
 export PYTHONPATH=${INSTALL_DIR}
 export THIS_DIR=$(pwd)
 

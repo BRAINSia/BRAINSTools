@@ -1,6 +1,6 @@
 #include "BRAINSCutTrainModel.h"
 #include "NeuralParams.h"
-#include "fstream.h"
+#include <fstream>
 
 BRAINSCutTrainModel
 ::BRAINSCutTrainModel( std::string netConfigurationFIlename)
@@ -184,7 +184,7 @@ inline void
 BRAINSCutTrainModel
 ::appendToFile( std::string filename, std::string line )
 {
-  fstream filestr;
+  std::fstream filestr;
 
   filestr.open( filename.c_str(), std::ios::app | std::ios::out );
   if( !filestr.good() )
@@ -325,8 +325,8 @@ void
 BRAINSCutTrainModel
 ::SetRFErrorFile()
 {
-  fstream  filestr;
-  ifstream ifile(RFErrorFilename.c_str() );
+  std::fstream  filestr;
+  std::ifstream ifile(RFErrorFilename.c_str() );
 
   if( ifile )
     {
@@ -336,7 +336,7 @@ BRAINSCutTrainModel
     return;
     }
 
-  filestr.open( RFErrorFilename.c_str(), fstream::out);
+  filestr.open( RFErrorFilename.c_str(), std::fstream::out);
 
   if( !filestr.good() )
     {

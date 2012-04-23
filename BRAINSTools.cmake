@@ -78,6 +78,7 @@ include_directories(
 # Define list of module names
 #-----------------------------------------------------------------------------
 set(brains_modulenames
+  AutoWorkup
   BRAINSFit
   BRAINSResample
   BRAINSROIAuto
@@ -113,6 +114,7 @@ endif()
 # Add module sub-directory if USE_<MODULENAME> is both defined and true
 #-----------------------------------------------------------------------------
 foreach(modulename ${brains_modulenames})
+  #message("DEFINED USE_${modulename} AND ${USE_${modulename}}")
   if(DEFINED USE_${modulename} AND USE_${modulename})
     add_subdirectory(${modulename})
   endif()

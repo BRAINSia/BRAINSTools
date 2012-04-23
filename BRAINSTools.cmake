@@ -1,6 +1,9 @@
 project(BRAINSTools)
 
-include(${CMAKE_CURRENT_SOURCE_DIR}/Common.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/Common.cmake)
+
+configure_file(${CMAKE_CURRENT_LIST_DIR}/CTestCustom.cmake
+  ${CMAKE_CURRENT_BINARY_DIR}/CTestCustom.cmake COPYONLY)
 
 #-----------------------------------------------------------------------------
 # Update CMake module path

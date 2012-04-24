@@ -10,7 +10,7 @@
 #        of the Iowa PINC lab have access
 #        to generate data in this way.
 #
-#  
+#
 import hashlib
 import os
 import argparse
@@ -55,7 +55,7 @@ if __name__ == '__main__':
   if not os.path.exists(destPath):
       os.mkdir(destPath)
   dest = destPath +'/'+value
-  print("mv {0} {1}".format(source,dest))
+  print("mv -f {0} {1}".format(source,dest))
   md5FileName=fileName+'.md5'
   f = open(md5FileName,'w')
   f.write(value)

@@ -76,14 +76,6 @@ int main( int argc, char * argv[] )
   for( unsigned int i = 0; i < (2 * k); i++ )
     {
     temp = ReadSlicer3toITKLmk( argv[i + 2] );
-    /*
-    std::cout << "\n\nTemp values of landmarks" << std::endl;
-    for( LandmarksMapType::const_iterator it = temp.begin(); it != temp.end(); ++it )
-    {
-      std::cout << it->first << " : (" << it->second[0] << ", " << it->second[1] << ", " << it->second[2] << ")" << std::endl;
-    }
-    std::cout << "==============================================================" << std::endl;
-    */
     LandmarksMapVector.push_back(temp);
     }
 

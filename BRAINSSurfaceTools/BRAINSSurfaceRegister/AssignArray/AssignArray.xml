@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>
+    BRAINS.Surface
+  </category>
+  <title>
+    BRAINS Assign Array
+  </title>
+  <description>
+    This program assigns array (scalars) from the source surface to the target surface. 
+  </description>
+  <version>1.0</version>
+  <documentation-url>http://www.nitrc.org/plugins/mwiki/index.php/brains:BRAINSSurfaceRegister</documentation-url>
+  <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
+  <contributor>Wen Li</contributor>
+  <acknowledgements>Funding for this work was provided by NIH/NINDS award NS050568</acknowledgements>
+
+  <parameters>
+    <label>Input Parameters</label>
+
+    <file>
+      <name>sourceSurfaceFile</name>
+      <longflag>sourceSurfaceFile</longflag>
+      <description>Source Surface Filename</description>
+      <label>Source Surface</label>
+      <channel>input</channel>
+    </file>
+      
+      <file>
+          <name>targetSurfaceFile</name>
+          <longflag>targetSurfaceFile</longflag>
+          <description>Target Surface Filename</description>
+          <label>Target Surface</label>
+          <channel>input</channel>
+      </file>
+      
+    <string>
+      <name>getArrayName</name>
+      <longflag>getArrayName</longflag>
+      <description>Array Name Get from source</description>
+      <label>Get Array Name</label>
+      <default>scalars</default>
+      <channel>input</channel>
+    </string>
+    
+    <string>
+      <name>setArrayName</name>
+      <longflag>setArrayName</longflag>
+      <description>Array Name set to output</description>
+      <label>Set Array Name</label>
+      <default>NewArray</default>
+      <channel>input</channel>
+    </string>
+
+  </parameters>
+
+
+  <parameters>
+    <label>Output Parameters</label>
+
+    <file>
+      <name>outputSurfaceFile</name>
+      <longflag>outputSurfaceFile</longflag>
+      <description>Output Surface Filename</description>
+      <label>Output Surface</label>
+      <channel>output</channel>
+    </file>
+
+  </parameters>
+
+</executable>

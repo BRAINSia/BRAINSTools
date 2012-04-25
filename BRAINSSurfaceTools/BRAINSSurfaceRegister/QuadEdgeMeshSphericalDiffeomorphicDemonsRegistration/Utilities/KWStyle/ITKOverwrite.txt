@@ -1,0 +1,2 @@
+itk.*\Test.*\.cxx Namespace Disable
+itk.*\Test.*\.h Namespace Disable

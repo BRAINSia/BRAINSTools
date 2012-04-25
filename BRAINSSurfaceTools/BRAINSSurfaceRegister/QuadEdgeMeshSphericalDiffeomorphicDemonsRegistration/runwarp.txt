@@ -1,0 +1,13 @@
+@ECHO OFF
+
+D:/Development/Debug/SphericalDemons/svn/QuadEdgeMeshSphericalDiffeomorphicDemonsRegistration/bin/Release/RigidAndDemonsRegistration ^
+D:/wen/My Documents/SpericalDemons/svn/QuadEdgeMeshSphericalDiffeomorphicDemonsRegistration/Data/Input/GeoSphere7n_IC5.vtk ^
+D:/wen/My Documents/SpericalDemons/svn/QuadEdgeMeshSphericalDiffeomorphicDemonsRegistration/Data/Input/GeoSphere3n_IC5.vtk ^
+1.0 ^
+0.2 ^
+25.0 ^
+3000 ^
+outputResampledRigid.vtk ^
+outputResampledDemons.vtk ^
+outputDeformedFixedMesh.vtk ^
+DeformationField.vtk

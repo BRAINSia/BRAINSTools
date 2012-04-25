@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>
+    BRAINS.Surface
+  </category>
+  <title>
+    BRAINS Resample Quad Edge Mesh
+  </title>
+  <description>
+      This program resamples the scalar values on the input mesh using points on the reference mesh. The interpolation type is either "Linear" or "Nearest".
+  </description>
+  <version>1.0</version>
+  <documentation-url>http://www.nitrc.org/plugins/mwiki/index.php/brains:BRAINSSurfaceRegister</documentation-url>
+  <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
+  <contributor>Wen Li and Luis Ibanez and Vincent Magnotta</contributor>
+  <acknowledgements>Funding for this work was provided by NIH/NINDS award NS050568</acknowledgements>
+
+  <parameters>
+    <label>Input Parameters</label>
+
+    <file>
+      <name>inputMeshFile</name>
+      <longflag>inputMeshFile</longflag>
+      <description>Input Mesh Filename</description>
+      <label>Input Mesh</label>
+      <channel>input</channel>
+    </file>
+    
+    <file>
+      <name>refMeshFile</name>
+      <longflag>refMeshFile</longflag>
+      <description>Reference Mesh Filename</description>
+      <label>Reference Mesh</label>
+      <channel>input</channel>
+    </file>
+  </parameters>
+  
+  <parameters>
+    <label>Interpolate Parameters</label>
+    
+    <string-enumeration>
+      <name>interpolateType</name>
+      <longflag>interpolateType</longflag>
+      <description>The type of interpolation to be used</description>
+      <label>Interpolate Type</label>
+      <default>Linear</default>
+      <element>Nearest</element>
+      <element>Linear</element>
+    </string-enumeration>
+    
+  </parameters>
+    
+  <parameters>
+    <label>Output Parameters</label>
+
+    <file>
+      <name>outputMeshFile</name>
+      <longflag>outputMeshFile</longflag>
+      <description>Output Mesh Filename</description>
+      <label>Output Mesh</label>
+      <channel>output</channel>
+    </file>
+  </parameters>
+
+</executable>

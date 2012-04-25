@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>
+    BRAINS.Surface
+  </category>
+  <title>
+    BRAINS Surface Statistics
+  </title>
+  <description> This program allows the user to perform statistics on a surface using the R statistical language </description>
+  <version>1.0</version>
+  <documentation-url>NEED to ADD</documentation-url>
+  <license>NEED to ADD</license>
+  <contributor>Wen Li, Vincent A. Magnotta, and Jeff Long</contributor>
+  <acknowledgements>NEED to ADD</acknowledgements>
+
+
+  <parameters>
+    <label>Input Parameters</label>
+    <description>Input Surfaces and Parameters</description>
+    <geometry type="model" multiple="true">
+      <name>inputSurfaces</name>
+      <longflag>inputSurfaces</longflag>
+      <description>Input surfaces for statistical analysis</description>
+      <label>Input Surfaces</label>
+      <channel>input</channel>
+    </geometry>
+
+    <file>
+      <name>inputRscript</name>
+      <longflag>inputRscript</longflag>
+      <description>Input R script</description>
+      <label>R Script</label>
+      <channel>input</channel>
+    </file>
+
+    <string>
+      <name>scalarName</name>
+      <longflag>scalarName</longflag>
+      <description>Vertex scalar values to be analyzed</description>
+      <label>Scalar Name</label>
+      <channel>input</channel>
+    </string>
+
+    <boolean>
+      <name>freeSurfer</name>
+      <longflag>freeSurfer</longflag>
+      <description>Free Surfer Data</description>
+      <label>Free Surfer Data</label>
+      <default>False</default>
+    </boolean>
+
+    <string-enumeration>
+      <name>freeSurferScalar</name>
+      <longflag>freeSurferScalar</longflag>
+      <description>The type of FreeSurfer scalars to be analyzed </description>
+      <label>FreeSurfer Type</label>
+      <default>Thickness</default>
+      <element>Thickness</element>
+      <element>Curvature</element>
+      <element>Average Curvature</element>
+      <element>Sulcus</element>
+      <element>Area</element>
+    </string-enumeration>
+
+  </parameters>
+
+
+  <parameters>
+    <label>Output Files</label>
+    <description>Output Surface File</description>
+    <geometry type="model">
+      <name>outputSurface</name>
+      <longflag>outputSurface</longflag>
+      <description>Output surfaces holding resulting stats</description>
+      <label>Output Surfaces</label>
+      <channel>output</channel>
+    </geometry>
+  </parameters>
+
+</executable>

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>
+    BRAINS.Surface
+  </category>
+  <title>
+    BRAINS Warp Quad Edge Mesh
+  </title>
+  <description>
+      This program warps scalar values from the moving mesh to the fixed mesh using a deformation field (deformed fixed). The output mesh has points from the fixed mesh with scalar values from the moving mesh. So it should "look" like the moving mesh, as the result of registration. 
+  </description>
+  <version>1.0</version>
+  <documentation-url>http://www.nitrc.org/plugins/mwiki/index.php/brains:BRAINSSurfaceRegister</documentation-url>
+  <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
+  <contributor>Wen Li and Luis Ibanez and Vincent Magnotta</contributor>
+  <acknowledgements>Funding for this work was provided by NIH/NINDS award NS050568</acknowledgements>
+
+  <parameters>
+    <label>Input Parameters</label>
+
+    <file>
+      <name>fixedMeshFile</name>
+      <longflag>fixedMeshFile</longflag>
+      <description>Fixed Mesh Filename</description>
+      <label>Fixed Mesh</label>
+      <channel>input</channel>
+    </file>
+    
+    <file>
+      <name>movingMeshFile</name>
+      <longflag>movingMeshFile</longflag>
+      <description>Moving Mesh Filename</description>
+      <label>Moving Mesh</label>
+      <channel>input</channel>
+    </file>
+    
+    <file>
+      <name>deformedMeshFile</name>
+      <longflag>deformedMeshFile</longflag>
+      <description>Deformed Mesh Filename</description>
+      <label>Deformed Fixed Mesh</label>
+      <channel>input</channel>
+    </file>
+
+  </parameters>
+  
+  <parameters>
+    <label>Interpolate Parameters</label>
+    
+    <string-enumeration>
+      <name>interpolateType</name>
+      <longflag>interpolateType</longflag>
+      <description>The type of interpolation to be used</description>
+      <label>Interpolate Type</label>
+      <default>Linear</default>
+      <element>Nearest</element>
+      <element>Linear</element>
+    </string-enumeration>
+    
+  </parameters>
+    
+  <parameters>
+    <label>Output Parameters</label>
+
+    <file>
+      <name>outputMeshFile</name>
+      <longflag>outputMeshFile</longflag>
+      <description>Output Mesh Filename</description>
+      <label>Output Mesh</label>
+      <channel>output</channel>
+    </file>
+
+  </parameters>
+
+</executable>

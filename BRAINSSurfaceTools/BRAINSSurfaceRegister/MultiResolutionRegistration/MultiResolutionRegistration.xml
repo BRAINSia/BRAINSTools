@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>
+    BRAINS.Surface
+  </category>
+  <title>
+    BRAINS Multi Resolution Registration
+  </title>
+  <description>
+    This program does multiresolution registration on two lists of meshes.
+  </description>
+  <version>1.0</version>
+  <documentation-url>http://www.nitrc.org/plugins/mwiki/index.php/brains:BRAINSSurfaceRegister</documentation-url>
+  <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
+  <contributor>Wen Li and Luis Ibanez and Vincent Magnotta</contributor>
+  <acknowledgements>Funding for this work was provided by NIH/NINDS award NS050568</acknowledgements>
+
+  <parameters>
+    <label>Input Parameters</label>
+
+    <geometry type="model" multiple="true">
+      <name>fixedMeshFileList</name>
+      <longflag>fixedMeshFileList</longflag>
+      <description>The list of file names for fixed meshes</description>
+      <label>Fixed Mesh File List</label>
+      <channel>input</channel>
+     </geometry>
+    
+    <geometry type="model" multiple="true">
+      <name>movingMeshFileList</name>
+      <longflag>movingMeshFileList</longflag>
+      <description>The list of file names for moving meshes</description>
+      <label>Moving Mesh File List</label>
+      <channel>input</channel>
+    </geometry>
+    
+    <file>
+      <name>fixedMeshFileName</name>
+      <longflag>fixedMeshFileName</longflag>
+      <description>Unresampled Fixed Mesh File Name</description>
+      <label>Fixed Mesh</label>
+      <channel>input</channel>
+    </file>
+    
+    <file>
+      <name>movingMeshFileName</name>
+      <longflag>movingMeshFileName</longflag>
+      <description>Unresampled Moving Mesh File Name</description>
+      <label>Moving Mesh</label>
+      <channel>input</channel>
+    </file>
+  </parameters>
+    
+  <parameters>
+      <label>Registration Parameters</label>
+      
+      <integer-vector>
+          <name>rigidIterations</name>
+          <longflag>rigidIterations</longflag>
+          <description>The number of iterations for rigid (rotational) registration in each level</description>
+          <label>Rigid Iterations</label>
+      </integer-vector>
+      
+      <integer-vector>
+          <name>demonsIterations</name>
+          <longflag>demonsIterations</longflag>
+          <description>The number of iterations for spherical demons registration in each level</description>
+          <label>Demons Iterations</label>
+      </integer-vector>
+      
+      <integer-vector>
+          <name>smoothIterations</name>
+          <longflag>smoothIterations</longflag>
+          <description>The number of iterations for smoothing the displacement in each level</description>
+          <label>Smoothing Iterations</label>
+      </integer-vector>
+      
+      <double-vector>
+          <name>metricSignificance</name>
+          <longflag>metricSignificance</longflag>
+          <description>The percentage of change of metric (mean squared distance) used to stop the registration in each level</description>
+          <label>Metric Significance</label>
+      </double-vector>
+      
+      <integer>
+          <name>resolutionLevels</name>
+          <longflag>resolutionLevels</longflag>
+          <description>The numbers of resolution levels</description>
+          <label>Resolution Levels</label>
+          <default>4</default>
+      </integer>
+      
+  </parameters>
+
+  <parameters>
+    <label>Output Parameters</label>
+
+    <file>
+      <name>deformedFileNameRes4</name>
+      <longflag>deformedFileNameRes4</longflag>
+      <description>Output mesh file name of the deformed fixed mesh in highest resolution level</description>
+      <label>Deformed Mesh File Name Res4</label>
+      <channel>output</channel>
+    </file>
+    
+    <file>
+      <name>deformedFileName</name>
+      <longflag>deformedFileName</longflag>
+      <description>Output mesh file name of the deformed original fixed mesh</description>
+      <label>Deformed Mesh File Name Res4</label>
+      <channel>output</channel>
+    </file>
+    
+    <file>
+      <name>deformationFieldFileName</name>
+      <longflag>deformationFieldFileName</longflag>
+      <description>Output deformation field as vectors on the fixed mesh</description>
+      <label>Deformation Field on Fixed Mesh</label>
+      <channel>output</channel>
+    </file>
+  </parameters>
+
+</executable>

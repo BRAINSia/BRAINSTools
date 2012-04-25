@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>
+    BRAINS.Surface
+  </category>
+  <title>
+    BRAINS Resample Sphere Using Icosahedron
+  </title>
+  <description>
+    This program resamples the input sphere with an icosahedron and outputs the icosahedron sphere associated with resampled scalar values from the input sphere.
+  </description>
+  <version>1.0</version>
+  <documentation-url>http://www.nitrc.org/plugins/mwiki/index.php/brains:BRAINSSurfaceRegister</documentation-url>
+  <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
+  <contributor>Wen Li and Luis Ibanez and Vincent Magnotta</contributor>
+  <acknowledgements>Funding for this work was provided by NIH/NINDS award NS050568</acknowledgements>
+
+  <parameters>
+    <label>Input Parameters</label>
+
+    <file>
+      <name>inputSurfaceFile</name>
+      <longflag>inputSurfaceFile</longflag>
+      <description>Input Surface Filename</description>
+      <label>Input Surface</label>
+      <channel>input</channel>
+    </file>
+
+  </parameters>
+    
+  <parameters>
+      <label>Resampling Parameters</label>
+      
+    <string-enumeration>
+      <name>interpolateType</name>
+      <longflag>interpolateType</longflag>
+      <description>The type of interpolation to be used</description>
+      <label>Interpolate Type</label>
+      <default>Linear</default>
+      <element>Nearest</element>
+      <element>Linear</element>
+    </string-enumeration>
+    
+      <integer>
+          <name>resolution</name>
+          <longflag>resolution</longflag>
+          <description>The resolution of the icosahedron sphere</description>
+          <label>resolution</label>
+          <default>4</default>
+      </integer>
+      
+      <double>
+          <name>radius</name>
+          <longflag>radius</longflag>
+          <description>The radius of input and output spheres</description>
+          <label>Sphere Radius</label>
+          <default>1.0</default>
+      </double>
+      
+  </parameters>
+
+  <parameters>
+    <label>Output Parameters</label>
+
+    <file>
+      <name>outputSurfaceFile</name>
+      <longflag>outputSurfaceFile</longflag>
+      <description>Output Surface Filename</description>
+      <label>Output Surface</label>
+      <channel>output</channel>
+    </file>
+
+  </parameters>
+
+</executable>

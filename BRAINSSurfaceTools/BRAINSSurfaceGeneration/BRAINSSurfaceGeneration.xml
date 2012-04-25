@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>
+    BRAINS.Surface
+  </category>
+  <title>
+    BRAINS Surface Generation
+  </title>
+  <description>
+    This program generates surfaces from itk images with an iso-contour value. It can also take a surface as input. The surface decimation and smoothing will be applied on the generated surface. The primary purpose of this program is to generate the cortical surface of the brain.  
+  </description>
+  <version>1.0</version>
+  <documentation-url>http://www.nitrc.org/plugins/mwiki/index.php/brains:BRAINSMarchingCubes</documentation-url>
+  <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
+  <contributor>Wen Li and Vincent A. Magnotta</contributor>
+  <acknowledgements>Funding for this work was provided by NIH/NINDS award NS050568</acknowledgements>
+
+  <parameters>
+    <label>Input Files</label>
+    <description>Input Parameters</description>
+
+    <file>
+      <name>inputImageFile</name>
+      <longflag>inputImageFile</longflag>
+      <description>Input Image File Name</description>
+      <label>Input Image File</label>
+      <channel>input</channel>
+    </file>
+
+    <file>
+      <name>inputSurfaceFile</name>
+      <longflag>inputSurfaceFile</longflag>
+      <description>Input Surface File Name</description>
+      <label>Input Surface File</label>
+      <channel>input</channel>
+    </file>
+  </parameters>
+
+
+
+  <parameters>
+    <label>Output Parameters</label>
+    <file>
+      <name>outputSurface</name>
+      <longflag>outputSurface</longflag>
+      <description>Output surface filename</description>
+      <label>Output Surface Filename</label>
+      <channel>output</channel>
+    </file>
+  </parameters>
+
+
+
+  <parameters>
+    
+    <label>MarchingCubes Parameters</label>
+    
+    <double>
+      <name>surfaceValue</name>
+      <longflag>surfaceValue</longflag>
+      <description>The iso-surface value for the resulting surface</description>
+      <label>Surface Value</label>
+      <default>0.5</default>
+    </double>
+
+    <boolean>
+      <name>genusNumber</name>
+      <longflag>genusNumber</longflag>
+      <description>calculate the number of genus of the output surface</description>
+      <label>genus number</label>
+      <default>false</default>
+    </boolean>
+    
+  </parameters>
+
+
+  <parameters>
+    <label>Decimation Parameters</label>
+    
+    <boolean>
+      <name>decimateSurface</name>
+      <longflag>decimateSurface</longflag>
+      <description>decimate the surface</description>
+      <label>decimate the surface</label>
+      <default>false</default>
+    </boolean>
+    
+    <integer>
+      <name>numberOfElements</name>
+      <longflag>numberOfElements</longflag>
+      <description>Number of faces desired after decimation</description>
+      <label>Number of Elements</label>
+      <default>70000</default>
+    </integer>
+
+  </parameters>
+
+
+  <parameters>
+    <label>Smoothing Parameters</label>
+    
+    <boolean>
+      <name>smoothSurface</name>
+      <longflag>smoothSurface</longflag>
+      <description>Smooth the surface</description>
+      <label>Smooth the surface</label>
+      <default>false</default>
+    </boolean>
+    
+    <integer>
+      <name>numIterations</name>
+      <longflag>numIterations</longflag>
+      <description>Number of Iterations Used in Smoothing</description>
+      <label>Number of Iterations in Smoothing</label>
+      <default>5</default>
+    </integer>
+
+    <double>
+      <name>relaxationFactor</name>
+      <longflag>relaxationFactor</longflag>
+      <description>The Relaxation Factor Used in Smoothing</description>
+      <label>Relaxation Factor</label>
+      <default>0.1</default>
+    </double>
+
+  </parameters>
+
+
+</executable>

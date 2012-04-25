@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>
+    BRAINS.Surface
+  </category>
+  <title>
+    BRAINS Surface Color
+  </title>
+  <description>
+    This program assigns labels from a labelmap image to the surface 
+  </description>
+  <version>1.0</version>
+  <documentation-url>http://www.nitrc.org/plugins/mwiki/index.php/brains:BRAINSSurfaceRegister</documentation-url>
+  <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
+  <contributor>Wen Li and Vincent Magnotta</contributor>
+  <acknowledgements>Funding for this work was provided by NIH/NINDS award NS050568</acknowledgements>
+
+  <parameters>
+    <label>Input Parameters</label>
+
+    <file>
+      <name>inputSurfaceFile</name>
+      <longflag>inputSurfaceFile</longflag>
+      <description>Input Surface Filename</description>
+      <label>Input Surface</label>
+      <channel>input</channel>
+    </file>
+      
+      <file>
+          <name>labelMapFile</name>
+          <longflag>labelMapFile</longflag>
+          <description>LabelMap Image Filename</description>
+          <label>LabelMap Image</label>
+          <channel>input</channel>
+      </file>
+
+  </parameters>
+  
+  <parameters>
+      <label>Color Parameters</label>
+      
+      <double>
+          <name>radius</name>
+          <longflag>radius</longflag>
+          <description>The radius used to search for nearest label for a surface point</description>
+          <label>radius</label>
+          <default>5.0</default>
+      </double>
+      
+      <integer>
+          <name>numOfLabels</name>
+          <longflag>numOfLabels</longflag>
+          <description>The number of labels the labelmap image has</description>
+          <label>Number of Labels</label>
+          <default>48</default>
+      </integer>
+      
+     <boolean>
+          <name>increaseRadius</name>
+          <longflag>increaseRadius</longflag>
+          <description>Increase the radius by 1.0 at a time until reaching a nonzero label</description>
+          <label>Increase Radius</label>
+          <default>false</default>
+      </boolean>
+      
+  </parameters>
+
+  <parameters>
+    <label>Output Parameters</label>
+
+    <file>
+      <name>outputSurfaceFile</name>
+      <longflag>outputSurfaceFile</longflag>
+      <description>Output Surface Filename</description>
+      <label>Output Surface</label>
+      <channel>output</channel>
+    </file>
+
+  </parameters>
+
+</executable>

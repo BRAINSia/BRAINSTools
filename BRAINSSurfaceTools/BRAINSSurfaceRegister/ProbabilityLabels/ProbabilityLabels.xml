@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>
+    BRAINS.Surface
+  </category>
+  <title>
+    BRAINS Probability Labels
+  </title>
+  <description>
+      This program calculates the probability of each label across a list of surfaces when the flag "probability" is ON and the most likely labels (assign each point with the highest probability label across surfaces) when the flag "mostLikely" is ON.
+  </description>
+  <version>1.0</version>
+  <documentation-url>http://www.nitrc.org/plugins/mwiki/index.php/brains:BRAINSSurfaceRegister</documentation-url>
+  <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
+  <contributor>Wen Li and Vincent Magnotta</contributor>
+  <acknowledgements>Funding for this work was provided by NIH/NINDS award NS050568</acknowledgements>
+
+  <parameters>
+    <label>Input Parameters</label>
+
+    <geometry type="model" multiple="true">
+      <name>inputMeshList</name>
+      <longflag>inputMeshList</longflag>
+      <description>The list of input meshes filenames</description>
+      <label>Input Mesh File List</label>
+      <channel>input</channel>
+     </geometry>
+
+  </parameters>
+  
+  <parameters>
+    <label>Probability Parameters</label>
+    
+    <boolean>
+      <name>mostLikely</name>
+      <longflag>mostLikely</longflag>
+      <description>calculate the most likely label for each point</description>
+      <label>mostLikely</label>
+      <default>false</default>
+    </boolean>
+    
+    <boolean>
+      <name>probability</name>
+      <longflag>probability</longflag>
+      <description>calculate the probabilit for each label at each point</description>
+      <label>probability</label>
+      <default>false</default>
+    </boolean>
+    
+    </parameters>
+    
+  <parameters>
+    <label>Output Parameters</label>
+
+    <file>
+      <name>outputMeshFile</name>
+      <longflag>outputMeshFile</longflag>
+      <description>Output Mesh Filename</description>
+      <label>Output Mesh</label>
+      <channel>output</channel>
+    </file>
+
+  </parameters>
+
+</executable>

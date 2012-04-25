@@ -1,0 +1,3 @@
+
+StandardBRAINSBuildMacro(NAME AverageScalarsByResampling TARGET_LIBRARIES ${ITK_LIBRARIES} ${VTK_LIBRARIES})
+

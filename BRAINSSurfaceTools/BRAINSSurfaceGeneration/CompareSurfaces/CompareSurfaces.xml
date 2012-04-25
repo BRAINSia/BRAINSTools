@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>
+    SurfaceComparision
+  </category>
+  <title>
+    Surface Comparision
+  </title>
+  <description>
+    This program compares input surface with reference surface. All of the vertex locations are compared from input surface with reference surface and also the scalar array names and scalar values of points or cells.
+  </description>
+  <version>0.1.0.$Revision: 1 $(alpha)</version>
+  <documentation-url></documentation-url>
+  <license></license>
+  <contributor>Wen Li and Vincent A. Magnotta</contributor>
+  <acknowledgements>Funding for this work was provided by NIH/NINDS award NS050568</acknowledgements>
+
+  <parameters>
+    <label>Input Surfaces</label>
+    <description>Input surfaces to compare</description>
+
+    <file>
+      <name>inputSurfaceFile</name>
+      <longflag>inputSurfaceFile</longflag>
+      <description>The input surface to compare</description>
+      <label>input surface file</label>
+      <channel>input</channel>
+    </file>
+
+    <file>
+      <name>refSurfaceFile</name>
+      <longflag>refSurfaceFile</longflag>
+      <description>The reference surface to compare with</description>
+      <label>reference surface file</label>
+      <channel>input</channel>
+    </file>
+  </parameters>
+  
+    <parameters>
+
+      <label>Comparison Parameters</label>
+
+      <boolean>
+        <name>vertexLocation</name>
+        <longflag>vertexLocation</longflag>
+        <description>Compare vertex locations</description>
+        <label>Vertex Location</label>
+        <default>false</default>
+      </boolean>
+
+      <boolean>
+        <name>scalarArray</name>
+        <longflag>scalarArray</longflag>
+        <description>Compare all of the scalar arrays</description>
+        <label>Scalar Array</label>
+        <default>false</default>
+      </boolean>
+        
+      <boolean>
+        <name>cellData</name>
+        <longflag>cellData</longflag>
+        <description>Compare all of the cell data</description>
+        <label>Cell Data</label>
+        <default>false</default>
+      </boolean>
+
+     <double>
+      <name>tolerance</name>
+      <longflag>tolerance</longflag>
+      <description>The tolerance within which the surfaces must be similar</description>
+      <label>Tolerance</label>
+      <default>1.0e-7</default>
+    </double>
+      
+    </parameters>
+
+
+</executable>

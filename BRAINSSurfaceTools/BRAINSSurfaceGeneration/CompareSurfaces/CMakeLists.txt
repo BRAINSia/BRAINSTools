@@ -1,0 +1,2 @@
+StandardBRAINSBuildMacro(NAME CompareSurfaces TARGET_LIBRARIES ${VTK_LIBRARIES})
+

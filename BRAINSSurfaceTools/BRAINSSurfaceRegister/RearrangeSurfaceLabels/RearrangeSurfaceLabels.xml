@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>
+    BRAINS.Surface
+  </category>
+  <title>
+    BRAINS Rearrange Labels
+  </title>
+  <description>
+      This program rearranges surface labels after removing tiny labels and combining labels. The left labels are renumbered using continuous numbers and the full name of each label is given in the field data with the name of "LabelName".
+  </description>
+  <version>1.0</version>
+  <documentation-url>http://www.nitrc.org/plugins/mwiki/index.php/brains:BRAINSSurfaceRegister</documentation-url>
+  <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
+  <contributor>Wen Li and Vincent Magnotta</contributor>
+  <acknowledgements>Funding for this work was provided by NIH/NINDS award NS050568</acknowledgements>
+
+  <parameters>
+    <label>Input Parameters</label>
+
+    <file>
+      <name>inputSurfaceFile</name>
+      <longflag>inputSurfaceFile</longflag>
+      <description>Input Surface Filename</description>
+      <label>Input Surface</label>
+      <channel>input</channel>
+    </file>
+    
+    <file>
+      <name>labelNameFile</name>
+      <longflag>labelNameFile</longflag>
+      <description>Label Name Filename</description>
+      <label>Label Name</label>
+      <channel>input</channel>
+    </file>
+
+  </parameters>
+    
+  <parameters>
+    <label>Output Parameters</label>
+
+    <file>
+      <name>outputSurfaceFile</name>
+      <longflag>outputSurfaceFile</longflag>
+      <description>Output Surface Filename</description>
+      <label>Output Surface</label>
+      <channel>output</channel>
+    </file>
+
+  </parameters>
+
+</executable>

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>
+    BRAINS.Surface
+  </category>
+  <title>
+    BRAINS Quad Edge Mesh Similarity
+  </title>
+  <description>
+      This program compares overlap between two label arrays on two input surfaces. Both Dice and Jaccard Indices are given for each label in the output .txt file. The average Dice and Jaccard Indices are added to the bottom lines of the output file, if the flag "Average" is ON.
+  </description>
+  <version>1.0</version>
+  <documentation-url>http://www.nitrc.org/plugins/mwiki/index.php/brains:BRAINSSurfaceRegister</documentation-url>
+  <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
+  <contributor>Wen Li and Luis Ibanez and Vincent Magnotta</contributor>
+  <acknowledgements>Funding for this work was provided by NIH/NINDS award NS050568</acknowledgements>
+
+  <parameters>
+    <label>Input Parameters</label>
+
+    <file>
+      <name>inputSurfaceFile1</name>
+      <longflag>inputSurfaceFile1</longflag>
+      <description>Input Surface1 Filename</description>
+      <label>Input Surface1</label>
+      <channel>input</channel>
+    </file>
+    
+    <file>
+      <name>inputSurfaceFile2</name>
+      <longflag>inputSurfaceFile2</longflag>
+      <description>Input Surface2 Filename</description>
+      <label>Input Surface2</label>
+      <channel>input</channel>
+    </file>
+  </parameters>
+  
+  <parameters>
+    <label>Similarity Parameters</label>
+    
+    <string>
+      <name>labelName1</name>
+      <longflag>labelName1</longflag>
+      <description>The array name of labels on inputSurface1</description>
+      <label>Array Name1</label>
+      <default>scalars</default>
+    </string>
+    
+    <string>
+      <name>labelName2</name>
+      <longflag>labelName2</longflag>
+      <description>The array name of labels on inputSurface2</description>
+      <label>Array Name2</label>
+      <default>scalars</default>
+    </string>
+    
+     <boolean>
+          <name>average</name>
+          <longflag>average</longflag>
+          <description>To calculate the average similarities across labels</description>
+          <label>Average Dice and Jaccard</label>
+          <default>false</default>
+      </boolean>
+    
+  </parameters>
+    
+  <parameters>
+    <label>Output Parameters</label>
+
+    <file>
+      <name>outputSimilarityFile</name>
+      <longflag>outputSimilarityFile</longflag>
+      <description>Output Similarity Filename</description>
+      <label>Output File</label>
+      <channel>output</channel>
+    </file>
+  </parameters>
+
+</executable>

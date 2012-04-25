@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>
+    BRAINS.Surface
+  </category>
+  <title>
+    BRAINS Surface Measures
+  </title>
+  <description>
+    This program generates measures regional statistics of a surface based on the scalars associated with the triangles. Regional measures for surface area, cortical thickness, and curvature are written to either a CSV or XML file. You must have a labeled VTK surface to work with this program. The user specifies the label name to be used in the measurements. It is assumed that the surface also contains the following data arrays: Mean_Curvature (Curvature measures) and Depth (Depth measurements). In the future the names of these arrays will be added to the command line for flexibility. Currently only the CSV output is supported. We are currently working to add the XML format. The program also supports input of expected values that can be used for testing purposes.
+  </description>
+  <version>3.0</version>
+  <documentation-url>http://www.nitrc.org/plugins/mwiki/index.php/brains:BRAINSMeasureSurface</documentation-url>
+  <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
+  <contributor>Vincent A. Magnotta</contributor>
+  <acknowledgements>Funding for this work was provided by NIH/NINDS award NS050568</acknowledgements>
+
+  <parameters>
+    <label>Input Parameters</label>
+
+    <file>
+      <name>inputSurface</name>
+      <longflag>inputSurface</longflag>
+      <description>Input Surface Filename</description>
+      <label>Input Surface</label>
+      <channel>input</channel>
+    </file>
+
+    <string>
+      <name>arrayName</name>
+      <longflag>arrayName</longflag>
+      <description>Array name containing the anatomical labels</description>
+      <label>Label Array Name</label>
+      <default>None</default>
+      <channel>input</channel>
+    </string>
+
+    <string-vector>
+      <name>labels</name>
+      <longflag>labelNames</longflag>
+      <description>Names for the anatomical labels</description>
+      <label>Label Names</label>
+      <default>None</default>
+      <channel>input</channel>
+    </string-vector>
+
+    <string>
+      <name>subjectId</name>
+      <longflag>subjectId</longflag>
+      <description>Subject ID to be used for labeling of results</description>
+      <label>Subject ID</label>
+      <channel>input</channel>
+    </string>
+
+    <string>
+      <name>scanId</name>
+      <longflag>scanId</longflag>
+      <description>Scan ID to be used for labeling of results</description>
+      <label>Scan ID</label>
+      <channel>input</channel>
+    </string>
+
+  </parameters>
+
+
+  <parameters>
+    <label>Output Parameters</label>
+
+    <boolean>
+      <name>writeCsvFile</name>
+      <longflag>writeCsvFile</longflag>
+      <description>Boolean Flag to specify if a CSV file is to be written</description>
+      <label>Write CSV</label>
+      <default>False</default>
+    </boolean>
+
+    <boolean>
+      <name>writeXmlFile</name>
+      <longflag>writeXmlFile</longflag>
+      <description>Boolean Flag to specify if a XML file is to be written</description>
+      <label>Write XML</label>
+      <default>False</default>
+    </boolean>
+
+    <file>
+      <name>csvFile</name>
+      <longflag>csvFile</longflag>
+      <description>Output CSV Rsult filename</description>
+      <label>Output CSV Filename</label>
+      <channel>output</channel>
+    </file>
+
+    <file>
+      <name>xmlFile</name>
+      <longflag>xmlFile</longflag>
+      <description>Output XML Result filename</description>
+      <label>Output XML Filename</label>
+      <channel>output</channel>
+    </file>
+
+  </parameters>
+
+  <parameters>
+    <label>Test Parameters</label>
+
+    <boolean>
+      <name>testDepth</name>
+      <longflag>testDepth</longflag>
+      <description>Test Cortical depth measurements</description>
+      <label>Test Depth</label>
+      <default>False</default>
+    </boolean>
+    <double-vector>
+      <name>totalDepthResults</name>
+      <longflag>totalDepthResults</longflag>
+      <description>Expected total depth measurements for each label. Used for testing of program</description>
+      <label>Total Depth Measurements</label>
+      <default>None</default>
+      <channel>input</channel>
+    </double-vector>
+    <double-vector>
+      <name>gyralDepthResults</name>
+      <longflag>gyralDepthResults</longflag>
+      <description>Expected gyral depth measurements for each label. Used for testing of program</description>
+      <label>Gyral Depth Measurements</label>
+      <default>None</default>
+      <channel>input</channel>
+    </double-vector>
+    <double-vector>
+      <name>sulcalDepthResults</name>
+      <longflag>sulcalDepthResults</longflag>
+      <description>Expected sulcal depth measurements for each label. Used for testing of program</description>
+      <label>Sulcal Depth Measurements</label>
+      <default>None</default>
+      <channel>input</channel>
+    </double-vector>
+
+    <boolean>
+      <name>testArea</name>
+      <longflag>testArea</longflag>
+      <description>Test surface area measurements. Used for testing of program</description>
+      <label>Test Area</label>
+      <default>False</default>
+    </boolean>
+    <double-vector>
+      <name>totalAreaResults</name>
+      <longflag>totalAreaResults</longflag>
+      <description>Expected total surface area for each label. Used for testing of program</description>
+      <label>Total Surface Area</label>
+      <default>None</default>
+      <channel>input</channel>
+    </double-vector>
+    <double-vector>
+      <name>gyralAreaResults</name>
+      <longflag>gyralAreaResults</longflag>
+      <description>Expected gyral surface area for each label. Used for testing of program</description>
+      <label>Gyral Surface Area</label>
+      <default>None</default>
+      <channel>input</channel>
+    </double-vector>
+    <double-vector>
+      <name>sulcalAreaResults</name>
+      <longflag>sulcalAreaResults</longflag>
+      <description>Expected sulcal surface area for each label. Used for testing of program</description>
+      <label>Sulcal Surface Area</label>
+      <default>None</default>
+      <channel>input</channel>
+    </double-vector>
+
+    <boolean>
+      <name>testCurvature</name>
+      <longflag>testCurvature</longflag>
+      <description>Test curvature measurements. Used for testing of program</description>
+      <label>Test Curvature</label>
+      <default>False</default>
+    </boolean>
+    <double-vector>
+      <name>totalCurvatureResults</name>
+      <longflag>totalCurvatureResults</longflag>
+      <description>Expected total curvature for each label. Used for testing of program</description>
+      <label>Total Curvature</label>
+      <default>None</default>
+      <channel>input</channel>
+    </double-vector>
+    <double-vector>
+      <name>gyralCurvatureResults</name>
+      <longflag>gyralCurvatureResults</longflag>
+      <description>Expected gyral curvature for each label. Used for testing of program</description>
+      <label>Gyral Curvature</label>
+      <default>None</default>
+      <channel>input</channel>
+    </double-vector>
+    <double-vector>
+      <name>sulcalCurvatureResults</name>
+      <longflag>sulcalCurvatureResults</longflag>
+      <description>Expected sulcal curvature for each label. Used for testing of program</description>
+      <label>Sulcal Curvature</label>
+      <default>None</default>
+      <channel>input</channel>
+    </double-vector>
+
+  </parameters>
+
+</executable>

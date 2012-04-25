@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>
+    BRAINS.Surface
+  </category>
+  <title>
+    BRAINS Surface Flattening
+  </title>
+  <description>
+    This program flattens the genus zero cortical surface onto a sphere. 
+  </description>
+  <version>1.0</version>
+  <documentation-url></documentation-url>
+  <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
+  <contributor>Wen Li and Arnaud Gelas and Vincent Magnotta</contributor>
+  <acknowledgements>Funding for this work was provided by NIH/NINDS award NS050568</acknowledgements>
+
+  <parameters>
+    <label>Input File</label>
+    <file>
+      <name>inputSurfaceFile</name>
+      <longflag>inputSurfaceFile</longflag>
+      <description>Input Surface File Name</description>
+      <label>Input Surface Filename</label>
+      <channel>input</channel>
+    </file>
+  </parameters>
+
+  <parameters>
+    <label>Output File</label>
+    <file>
+      <name>outputSurfaceFile</name>
+      <longflag>outputSurfaceFile</longflag>
+      <description>Output surface filename</description>
+      <label>Output Surface Filename</label>
+      <channel>output</channel>
+    </file>
+  </parameters>
+
+  <parameters>
+    
+    <label>Flattening Parameters</label>
+    
+    <double>
+      <name>sphereRadius</name>
+      <longflag>sphereRadius</longflag>
+      <description>The radius of the output sphere</description>
+      <label>Sphere Radius</label>
+      <default>1.0</default>
+    </double>
+
+    <boolean>
+      <name>seed</name>
+      <longflag>seed</longflag>
+      <description>Specify axis along which seed cells are chosen</description>
+      <label>seed</label>
+      <default>false</default>
+    </boolean>
+
+    <string-enumeration>
+      <name>seedAxis</name>
+      <longflag>seedAxis</longflag>
+      <description>Specify the seed axis as in Cartesian Coordinate System</description>
+      <label>seed axis</label>
+      <default>y</default>
+      <element>x</element>
+      <element>y</element>
+      <element>z</element>
+    </string-enumeration>
+    
+  </parameters>
+
+
+  <parameters>
+    <label>Rotation Parameters</label>
+    
+    <boolean>
+      <name>rotate</name>
+      <longflag>rotate</longflag>
+      <description>rotate the sphere to align polar point</description>
+      <label>rotate the sphere</label>
+      <default>false</default>
+    </boolean>
+
+    <string-enumeration>
+      <name>maxAxis</name>
+      <longflag>maxAxis</longflag>
+      <description>the polar point along this axis stays to be the polar point on the sphere</description>
+      <label>max axis</label>
+      <default>z</default>
+      <element>x</element>
+      <element>y</element>
+      <element>z</element>
+    </string-enumeration>
+    
+  </parameters>
+
+</executable>

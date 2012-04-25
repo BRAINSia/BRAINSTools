@@ -511,8 +511,8 @@ int main(int argc, char *argv[])
   // Now compute the average angle and average ratio
   float RPPC_to_RPAC_angleMean, RPAC_over_RPPCMean;
     {
-    float dummy_mean;
-    float dummy_var;
+    float dummy_mean(0.0);
+    float dummy_var(0.0);
     // HACK:  Need to compute only the mean, since that is all that is needed.
     sample_variance(RPPC_to_RPAC_angle, &dummy_mean, &dummy_var);
     RPPC_to_RPAC_angleMean = dummy_mean;

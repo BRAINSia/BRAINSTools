@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>
+    BRAINS.Surface
+  </category>
+  <title>
+    BRAINS Combine Labels
+  </title>
+  <description>
+    This program replace RemoveLabel with KeepLabel on PointData of input surface.
+  </description>
+  <version>1.0</version>
+  <documentation-url>http://www.nitrc.org/plugins/mwiki/index.php/brains:BRAINSSurfaceRegister</documentation-url>
+  <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
+  <contributor>Wen Li and Vincent Magnotta</contributor>
+  <acknowledgements>Funding for this work was provided by NIH/NINDS award NS050568</acknowledgements>
+
+  <parameters>
+    <label>Input Parameters</label>
+
+    <file>
+      <name>inputSurfaceFile</name>
+      <longflag>inputSurfaceFile</longflag>
+      <description>Input Surface Filename</description>
+      <label>Input Surface</label>
+      <channel>input</channel>
+    </file>
+
+  </parameters>
+    
+    <parameters>
+        <label>Label Parameters</label>
+        
+    <integer>
+        <name>keepLabel</name>
+        <longflag>keepLabel</longflag>
+        <description>Keep Label</description>
+        <label>Keep Label</label>
+        <default>0</default>
+    </integer>
+    
+    <integer>
+        <name>removeLabel</name>
+        <longflag>removeLabel</longflag>
+        <description>Remove Label</description>
+        <label>Remove Label</label>
+        <default>0</default>
+    </integer>
+  </parameters>
+    
+  <parameters>
+    <label>Output Parameters</label>
+
+    <file>
+      <name>outputSurfaceFile</name>
+      <longflag>outputSurfaceFile</longflag>
+      <description>Output Surface Filename</description>
+      <label>Output Surface</label>
+      <channel>output</channel>
+    </file>
+
+  </parameters>
+
+</executable>

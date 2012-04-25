@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>
+    BRAINS.Surface
+  </category>
+  <title>
+    BRAINS Histogram Matching
+  </title>
+  <description>
+    This program adjusts the scalar values of the input surface in the reference of the ref surface using the histogram matching technique.
+  </description>
+  <version>1.0</version>
+  <documentation-url>http://www.nitrc.org/plugins/mwiki/index.php/brains:BRAINSSurfaceRegister</documentation-url>
+  <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
+  <contributor>Wen Li</contributor>
+  <acknowledgements>Funding for this work was provided by NIH/NINDS award NS050568</acknowledgements>
+
+  <parameters>
+    <label>Input Parameters</label>
+
+    <file>
+      <name>inputSurfaceFile</name>
+      <longflag>inputSurfaceFile</longflag>
+      <description>Input Surface Filename</description>
+      <label>Input Surface</label>
+      <channel>input</channel>
+    </file>
+    
+    <file>
+      <name>refSurfaceFile</name>
+      <longflag>refSurfaceFile</longflag>
+      <description>Reference Surface Filename</description>
+      <label>Reference Surface</label>
+      <channel>input</channel>
+    </file>
+
+  </parameters>
+    
+  <parameters>
+      <label>Histogram Matching Parameters</label>
+      
+      <integer>
+          <name>numberOfHistogramLevels</name>
+          <longflag>numberOfHistogramLevels</longflag>
+          <description>Number of histogram levels used in the program</description>
+          <label>Number of Histogram Levels</label>
+          <default>1024</default>
+      </integer>
+      
+      <integer>
+          <name>numberOfMatchPoints</name>
+          <longflag>numberOfMatchPoints</longflag>
+          <description>The number of match points used in the program</description>
+          <label>Number of Match Points</label>
+          <default>7</default>
+      </integer>
+      
+  </parameters>
+
+  <parameters>
+    <label>Output Parameters</label>
+
+    <file>
+      <name>outputSurfaceFile</name>
+      <longflag>outputSurfaceFile</longflag>
+      <description>Output Surface Filename</description>
+      <label>Output Surface</label>
+      <channel>output</channel>
+    </file>
+
+  </parameters>
+
+</executable>

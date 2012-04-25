@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>
+    BRAINS.Surface
+  </category>
+  <title>
+    BRAINS Label Maps
+  </title>
+  <description>
+    This program generates a labelmap (.nii) through a list of label files (.mask). We assume that each label is given by an individual file. An integer is assigned to the label and value of it is decided by the order of the label file occurred in the labelFileList.  </description>
+  <version>1.0</version>
+  <documentation-url>http://www.nitrc.org/plugins/mwiki/index.php/brains:BRAINSSurfaceRegister</documentation-url>
+  <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
+  <contributor>Wen Li and Vincent Magnotta</contributor>
+  <acknowledgements>Funding for this work was provided by NIH/NINDS award NS050568</acknowledgements>
+
+  <parameters>
+    <label>Input Parameters</label>
+
+    <geometry type="model" multiple="true">
+      <name>labelFileList</name>
+      <longflag>labelFileList</longflag>
+      <description>The list of filenames for each label</description>
+      <label>Label File List</label>
+      <channel>input</channel>
+    </geometry>
+
+  </parameters>
+
+
+  <parameters>
+    <label>Output Parameters</label>
+
+    <file>
+      <name>outputImageFile</name>
+      <longflag>outputImageFile</longflag>
+      <description>Output LabelMap Filename</description>
+      <label>Output Image</label>
+      <channel>output</channel>
+    </file>
+
+  </parameters>
+
+</executable>

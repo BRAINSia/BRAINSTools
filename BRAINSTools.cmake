@@ -91,6 +91,7 @@ set(brains_modulenames
                   ##       This builds just fine with ITKv3/4, but test cases need
                   ##       further review before trusting it.
                   #  NOTE :  This program is not yet ready for use:  BRAINSContinuousClass
+  BRAINSSurfaceTools
   )
 
 ## Tools that only work with ITKv4
@@ -114,7 +115,7 @@ endif()
 # Add module sub-directory if USE_<MODULENAME> is both defined and true
 #-----------------------------------------------------------------------------
 foreach(modulename ${brains_modulenames})
-  #message("DEFINED USE_${modulename} AND ${USE_${modulename}}")
+  message("DEFINED USE_${modulename} AND ${USE_${modulename}}")
   if(DEFINED USE_${modulename} AND USE_${modulename})
     add_subdirectory(${modulename})
   endif()

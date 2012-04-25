@@ -1,0 +1,1 @@
+StandardBRAINSBuildMacro(NAME ProbabilityLabels TARGET_LIBRARIES ${ITK_LIBRARIES} ${VTK_LIBRARIES})

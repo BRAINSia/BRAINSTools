@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>
+    BRAINS.Surface
+  </category>
+  <title>
+    BRAINS Clamp Scalars
+  </title>
+  <description>
+    This program clamps scalar values of the input surface.
+  </description>
+  <version>1.0</version>
+  <documentation-url>http://www.nitrc.org/plugins/mwiki/index.php/brains:BRAINSSurfaceRegister</documentation-url>
+  <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
+  <contributor>Wen Li</contributor>
+  <acknowledgements>Funding for this work was provided by NIH/NINDS award NS050568</acknowledgements>
+
+  <parameters>
+    <label>Input Parameters</label>
+
+    <file>
+      <name>inputSurfaceFile</name>
+      <longflag>inputSurfaceFile</longflag>
+      <description>Input Surface Filename</description>
+      <label>Input Surface</label>
+      <channel>input</channel>
+    </file>
+
+  </parameters>
+    
+  <parameters>
+      <label>Clamping Parameters</label>
+      
+      <double>
+          <name>outputMin</name>
+          <longflag>outputMin</longflag>
+          <description>The expected minimum value of the output</description>
+          <label>Output Minimum</label>
+          <default>-1.0</default>
+      </double>
+      
+      <double>
+          <name>outputMax</name>
+          <longflag>outputMax</longflag>
+          <description>The expected maximum value of the output</description>
+          <label>Output Maximum</label>
+          <default>1.0</default>
+      </double>
+      
+  </parameters>
+
+  <parameters>
+    <label>Output Parameters</label>
+
+    <file>
+      <name>outputSurfaceFile</name>
+      <longflag>outputSurfaceFile</longflag>
+      <description>Output Surface Filename</description>
+      <label>Output Surface</label>
+      <channel>output</channel>
+    </file>
+
+  </parameters>
+
+</executable>

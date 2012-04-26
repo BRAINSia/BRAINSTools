@@ -50,8 +50,8 @@ from BRAINSTools.BRAINSCut import *
 from BRAINSTools.GradientAnisotropicDiffusionImageFilter import *
 from BRAINSTools.GenerateSummedGradientImage import *
 from BRAINSTools.ANTSWrapper import *
-from BRAINSTools.WarpImageMultiTransform import *
 from BRAINSTools.WarpAllAtlas import *
+from BRAINSTools.ants.normalize import WarpImageMultiTransform
 
 
 #######################  HACK:  Needed to make some global variables for quick
@@ -308,8 +308,8 @@ def getT1sT2s(uid, dbfile,altT1):
     temp[0]=altT1
     return temp
 
-
-
+def MakeList(firstElement,secondElement):
+    return [firstElement, secondElement]
 
 ###########################################################################
 ###########################################################################
@@ -761,9 +761,29 @@ def WorkupT1T2(mountPrefix,ExperimentBaseDirectory, subject_data_file, atlas_fna
             baw200.connect( SplitAvgBABC,'avgBABCT1',ComputeAtlasToSubjectTransform,"fixed_T1_image")
             baw200.connect( SplitAvgBABC,'avgBABCT2',ComputeAtlasToSubjectTransform,"fixed_T2_image")
             baw200.connect( BAtlas,'template_t1',    ComputeAtlasToSubjectTransform,"moving_T1_image")
-            baw200.connect( BAtlas,'template_t1',    ComputeAtlasToSubjectTransform,"moving_T2_image")
+            baw200.connect( BAtlas,'template_t2',    ComputeAtlasToSubjectTransform,"moving_T2_image")
             baw200.connect(BLI,'outputTransformFilename',ComputeAtlasToSubjectTransform,'initialTransform')
-
+            
+            #####################
+            #####################
+            #####################
+            WarpSubjectToAtlas = pe.Node(interface=WarpImageMultiTransform(), name = "20_WarpImageMultiTransform")
+            WarpSubjectToAtlas.plugin_args=many_cpu_sge_options_dictionary
+            WarpSubjectToAtlas.inputs.invert_affine=[0]   # only invert the transform at index 0
+            WarpSubjectToAtlas.inputs.dimension=3
+            WarpSubjectToAtlas.inputs.out_postfix='_To_Atlas'
+            baw200.connect( SplitAvgBABC,'avgBABCT1',WarpSubjectToAtlas,"moving_image")
+            baw200.connect( BAtlas,'template_t1', WarpSubjectToAtlas, 'reference_image')
+            
+            makeInverseTransformList = pe.Node(interface=Function(function=MakeList,
+                                                                input_names=['firstElement','secondElement'],
+                                                                output_names=['outList']),
+                             run_without_submitting=True, name="99_MakeInverseTransformList")
+            
+            baw200.connect(BLI,'outputTransformFilename',makeInverseTransformList,'firstElement')
+            baw200.connect(ComputeAtlasToSubjectTransform,'output_inversewarp',makeInverseTransformList,'secondElement')
+            baw200.connect( makeInverseTransformList, 'outList',WarpSubjectToAtlas, 'transformation_series')
+            
         if 'ANTSWARP_FIXME' in WORKFLOW_COMPONENTS:
             WarpAtlas = pe.Node(interface=WarpAllAtlas(), name = "19_WarpAtlas")
             WarpAtlas.inputs.moving_atlas = atlas_fname_wpath

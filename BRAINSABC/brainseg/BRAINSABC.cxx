@@ -22,6 +22,7 @@
 #include "PrettyPrintTable.h"
 #include "DenoiseFiltering.h"
 #include "itkImageDuplicator.h"
+#include "itkBRAINSROIAutoImageFilter.h"
 
 typedef itk::Image<float, 3>         FloatImageType;
 typedef itk::Image<unsigned char, 3> ByteImageType;
@@ -289,7 +290,7 @@ static void RescaleFunctionLocal( std::vector<FloatImageType::Pointer> & localLi
 static std::vector<bool> FindDuplicateImages(const std::vector<FloatImagePointer> candidateSameImageList )
 {
   // Images with higher correlation are considered soo much the same that they are duplicates.
-  const double IMAGES_SAME_CORRELATION_CUTOFF = 0.98;
+  const double IMAGES_SAME_CORRELATION_CUTOFF = 0.999;
 
   typedef itk::IdentityTransform<double, FloatImageType::ImageDimension> IDTYPE;
   IDTYPE::Pointer myID = IDTYPE::New();
@@ -297,6 +298,32 @@ static std::vector<bool> FindDuplicateImages(const std::vector<FloatImagePointer
   InterpType::Pointer myInterp = InterpType::New();
 
   std::vector<bool> isDuplicated(candidateSameImageList.size(), false);
+#if 1
+  typedef itk::SpatialObject<3>        SOImageMaskType;
+  typedef itk::Image<unsigned char, 3> VolumeMaskType;
+  std::vector<SOImageMaskType::Pointer> candidateSameImageMaskList(candidateSameImageList.size() );
+  for( unsigned int start = 0; start < candidateSameImageList.size(); start++ )
+    {
+    typedef itk::Image<signed int, 3> VolumeImageType;
+
+    const float        otsuPercentileThreshold = 0.01F;
+    const float        thresholdCorrectionFactor = 1.0F;
+    const unsigned int closingSize = 0;       // These are just to make masking as fast as possible.
+    const unsigned int ROIAutoDilateSize = 0; // These are just to make masking as fast as possible.
+    typedef itk::BRAINSROIAutoImageFilter<FloatImageType, VolumeMaskType> ROIAutoType;
+    ROIAutoType::Pointer ROIFilter = ROIAutoType::New();
+    ROIFilter->SetInput(candidateSameImageList[start]);
+    ROIFilter->SetOtsuPercentileThreshold(otsuPercentileThreshold);
+    ROIFilter->SetClosingSize(closingSize);
+    ROIFilter->SetThresholdCorrectionFactor(thresholdCorrectionFactor);
+    ROIFilter->SetDilateSize(ROIAutoDilateSize);
+    ROIFilter->Update();
+    // const SOImageMaskType::Pointer maskWrapper = ROIFilter->GetSpatialObjectROI();
+    // VolumeMaskType::Pointer  MaskImage = ROIFilter->GetOutput();
+    // candidateSameImageMaskList[start]=ROIFilter->GetOutput();
+    candidateSameImageMaskList[start] = ROIFilter->GetSpatialObjectROI();
+    }
+#endif
   for( unsigned int start = 0; start < candidateSameImageList.size(); start++ )
     {
     for( unsigned int q = start + 1; q < candidateSameImageList.size(); q++ )
@@ -305,14 +332,18 @@ static std::vector<bool> FindDuplicateImages(const std::vector<FloatImagePointer
       NormalizerType::Pointer myNormalizer = NormalizerType::New();
       myNormalizer->SetFixedImage(candidateSameImageList[start]);
       myNormalizer->SetMovingImage(candidateSameImageList[q]);
+#if 1
+      myNormalizer->SetFixedImageMask(candidateSameImageMaskList[start]);
+      myNormalizer->SetMovingImageMask(candidateSameImageMaskList[q]);
+#endif
       myNormalizer->SetTransform(myID);
       myNormalizer->SetFixedImageRegion( candidateSameImageList[start]->GetBufferedRegion() );
       myInterp->SetInputImage(candidateSameImageList[q]);
       myNormalizer->SetInterpolator(myInterp);
       myNormalizer->Initialize();
       const double correlationValue = vcl_abs(myNormalizer->GetValue(myID->GetParameters() ) );
-      std::cout << "Correlation value between image " << start
-                << " and image " << q << ": " << correlationValue << std::endl;
+      muLogMacro(
+        << "Correlation value between image " << start << " and image " << q << ": " << correlationValue << std::endl);
       if( correlationValue > IMAGES_SAME_CORRELATION_CUTOFF )
         {
         isDuplicated[q] = true;
@@ -323,7 +354,7 @@ static std::vector<bool> FindDuplicateImages(const std::vector<FloatImagePointer
     {
     if( isDuplicated[q] == true )
       {
-      std::cout << "Removing highly correlated image :" << q << std::endl;
+      muLogMacro( << "Marking highly correlated image as duplicate :" << q << std::endl);
       }
     }
   return isDuplicated;
@@ -1129,14 +1160,20 @@ int main(int argc, char * *argv)
           // occurs when two or more of the images are linearly dependant (i.e.
           // nearly the same image).
           duplicatesFound = FindDuplicateImages(intraSubjectRegisteredImageList);
-          for( size_t q = 0; q < duplicatesFound.size(); q++ )
+          if( duplicatesFound.size() > 0 )
             {
-            if( duplicatesFound[q] == true )
+            for( size_t q = 0; q < duplicatesFound.size(); q++ )
               {
-              std::cout << "WARNING: Found images that were very highly correlated." << std::endl;
-              std::cout << "WARNING: Removing image " << inputVolumes[q] << " from further processing" << std::endl;
-              std::cout << "WARNING:" << std::endl;
+              if( duplicatesFound[q] == true )
+                {
+                muLogMacro(<< "WARNING: Found images that were very highly correlated." << std::endl );
+                muLogMacro(
+                  << "WARNING: The image " << inputVolumes[q] << " must be removed from further processing"
+                  << std::endl );
+                muLogMacro(<< "WARNING:" << std::endl );
+                }
               }
+            return EXIT_FAILURE;
             }
           }
         } // EndOriginalImagesList
@@ -1144,8 +1181,8 @@ int main(int argc, char * *argv)
       atlasToSubjectPreSegmentationTransform = atlasreg->GetAtlasToSubjectTransform();
       if( debuglevel > 9 )
         { // NOTE THIS IS REALLY ANNOYING FOR LARGE BSPLINE REGISTRATIONS!
-        muLogMacro( << __FILE__ << " " << __LINE__ << " " << atlasToSubjectPreSegmentationTransform->GetFixedParameters(
-                      ) << std::endl );
+        muLogMacro( << __FILE__ << " " << __LINE__ << " "
+                    << atlasToSubjectPreSegmentationTransform->GetFixedParameters() << std::endl );
         muLogMacro(
           << __FILE__ << " " << __LINE__ << " " << atlasToSubjectPreSegmentationTransform->GetParameters()
           << std::endl );

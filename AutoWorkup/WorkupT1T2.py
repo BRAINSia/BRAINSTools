@@ -22,7 +22,7 @@ import argparse
 #config.set_log_dir(os.getcwd())
 #--config.set('logging', 'workflow_level', 'DEBUG')
 #--config.set('logging', 'interface_level', 'DEBUG')
-#--config.set('execution','remove_unnecessary_outputs','false')
+config.set('execution','remove_unnecessary_outputs','false')
 
 from nipype.interfaces.base import CommandLine, CommandLineInputSpec, TraitedSpec, File, Directory
 from nipype.interfaces.base import traits, isdefined, BaseInterface
@@ -382,14 +382,14 @@ def WorkupT1T2(mountPrefix,ExperimentBaseDirectory, subject_data_file, atlas_fna
                                      #'stop_on_first_crash':'true',
                                      #'stop_on_first_rerun': 'true',
                                      'stop_on_first_crash':'false',
-                                     'stop_on_first_rerun': 'false',
+                                     'stop_on_first_rerun': 'false',      ## This stops at first attempt to rerun, before running, and before deleting previous results.
                                      'hash_method': 'timestamp',
-                                     'single_thread_matlab':'true',
+                                     'single_thread_matlab':'true',       ## Multi-core 2011a  multi-core for matrix multiplication.
                                      'remove_unnecessary_outputs':'false',
-                                     'use_relative_paths':'false',
-                                     'remove_node_directories':'false',
-                                     'local_hash_check':'true',
-                                     'job_finished_timeout':15
+                                     'use_relative_paths':'false',        ## relative paths should be on, require hash update when changed.
+                                     'remove_node_directories':'false',   ## Experimental
+                                     'local_hash_check':'true',           ##
+                                     'job_finished_timeout':15            ##
                                      }
     baw200.config['logging'] = {
       'workflow_level':'DEBUG',

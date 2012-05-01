@@ -2,12 +2,12 @@
 #define ImageDescription_h
 
 #include "StringValue.h"
-#include "XMLElementParser.h"
+#include "ElementParser.h"
 
-class ImageDescription : public XMLElementParser
+class ImageDescription : public ElementParser
 {
 public:
-  typedef XMLElementParser SuperClass;
+  typedef ElementParser SuperClass;
   virtual int PrintSelf(std::ostream & os, int indent) const
   {
     indent += SuperClass::PrintSelf(os, indent);
@@ -15,17 +15,17 @@ public:
     return indent + 2;
   }
 
-  ImageDescription() : XMLElementParser("Image")
+  ImageDescription() : ElementParser("Image")
   {
     this->Add(new StringValue("Type", ""), "Type");
     this->Add(new StringValue("Filename", ""), "Filename");
   }
 };
 
-class ImageList : public XMLElementParser
+class ImageList : public ElementParser
 {
 public:
-  ImageList() : XMLElementParser("ImageList")
+  ImageList() : ElementParser("ImageList")
   {
   }
 };

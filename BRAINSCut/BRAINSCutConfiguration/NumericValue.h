@@ -1,6 +1,6 @@
 #ifndef NumericValue_h
 #define NumericValue_h
-#include "XMLElementContainer.h"
+#include "ElementContainer.h"
 
 template <typename T>
 class NumericValue :

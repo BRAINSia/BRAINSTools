@@ -1,51 +1,39 @@
 #ifndef BRAINSCutApplyModel_h
 #define BRAINSCutApplyModel_h
 
-#include "BRAINSCutPrimary.h"
+#include "BRAINSCutDataHandler.h"
 #include "FeatureInputVector.h"
 
 typedef itk::Image<unsigned char, DIMENSION> BinaryImageType;
 typedef BinaryImageType::Pointer             BinaryImagePointer;
 
-class BRAINSCutApplyModel : public BRAINSCutPrimary
+class BRAINSCutApplyModel
 {
 public:
   BRAINSCutApplyModel()
   {
   };
-  BRAINSCutApplyModel( std::string netConfigurationFilename);
-
-  void SetApplyDataSetFromNetConfiguration();
-
-  void SetANNModelFilenameFromNetConfiguration();
+  BRAINSCutApplyModel( BRAINSCutDataHandler& dataHandler );
 
   void Apply();
 
   void ApplyOnSubject( DataSet& subject);
 
-  void SetTrainIterationFromNetConfiguration();
-
   void SetComputeSSE( const bool sse );
 
-  void SetANNTestingSSEFilename();
-
   void SetMethod( std::string inputMethod);
+
+  void SetNumberOfTrees( const int numberOfTree );
+
+  void SetDepthOfTree( const int depth );
 
   void ReadANNModelFile();
 
   void ReadRandomForestModelFile();
 
-  void SetRandomForestModelFilenameFromNetConfiguration();
-
-  void SetRandomForestModelFilename( int depth, int nTree);
-
   BinaryImagePointer PostProcessingANN( std::string continuousFilename, scalarType threshold );
 
   BinaryImagePointer PostProcessingRF( std::string labelImageFilename );
-
-  void SetANNOutputThresholdFromNetConfiguration();
-
-  void SetGaussianSmoothingSigmaFromNetConfiguration();
 
   BinaryImagePointer ThresholdImageAtLower( WorkingImagePointer& image, scalarType thresholdValue );
 
@@ -58,13 +46,17 @@ public:
   BinaryImagePointer FillHole( BinaryImagePointer mask);
 
 private:
+  BRAINSCutDataHandler                         myDataHandler;
   BRAINSCutConfiguration::ApplyDataSetListType applyDataSetList;
 
-  std::string  method;
-  bool         normalization;
-  bool         computeSSE;
-  int          trainIteration;
-  std::string  ANNTestingSSEFilename;
+  std::string method;
+  bool        normalization;
+  bool        computeSSE;
+  int         trainIteration;
+
+  int numberOfTrees;
+  int depthOfTree;
+
   std::fstream ANNTestingSSEFileStream;
 
   scalarType      annOutputThreshold;

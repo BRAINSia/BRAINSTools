@@ -1,6 +1,6 @@
 #ifndef StringValue_h
 #define StringValue_h
-#include "XMLElementContainer.h"
+#include "ElementContainer.h"
 #include <string>
 #include <iostream>
 

@@ -2,7 +2,7 @@
 #include <itksys/SystemTools.hxx>
 #include <iostream>
 #include <fstream>
-#include <XMLElementContainer.h>
+#include <ElementContainer.h>
 #include "BRAINSCutExceptionStringHandler.h"
 static
 void

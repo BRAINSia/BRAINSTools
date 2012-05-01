@@ -1,13 +1,13 @@
 #ifndef RegistrationConfigurationParser_h
 #define RegistrationConfigurationParser_h
-#include "XMLElementParser.h"
+#include "ElementParser.h"
 // #include "StringValue.h"
 // #include "IntValue.h"
 
-class RegistrationConfigurationParser : public XMLElementParser
+class RegistrationConfigurationParser : public ElementParser
 {
 public:
-  typedef XMLElementParser SuperClass;
+  typedef ElementParser SuperClass;
   virtual int PrintSelf(std::ostream & os, int indent) const
   {
     indent += SuperClass::PrintSelf(os, indent);
@@ -16,7 +16,7 @@ public:
     return indent + 2;
   }
 
-  RegistrationConfigurationParser() : XMLElementParser("RegistrationConfiguration")
+  RegistrationConfigurationParser() : ElementParser("RegistrationConfiguration")
   {
     this->Add(new StringValue("ImageTypeToUse", ""), "ImageTypeToUse");
     this->Add(new StringValue("ID", ""), "ID");

@@ -1,12 +1,12 @@
 #ifndef RegistrationType_h
 #define RegistrationType_h
 #include "StringValue.h"
-#include "XMLElementParser.h"
+#include "ElementParser.h"
 
-class RegistrationType : public XMLElementParser
+class RegistrationType : public ElementParser
 {
 public:
-  typedef XMLElementParser SuperClass;
+  typedef ElementParser SuperClass;
   virtual int PrintSelf(std::ostream & os, int indent) const
   {
     indent += SuperClass::PrintSelf(os, indent);
@@ -14,7 +14,7 @@ public:
     return indent + 2;
   }
 
-  RegistrationType() : XMLElementParser("Registration")
+  RegistrationType() : ElementParser("Registration")
   {
     this->Add(new StringValue("SubjToAtlasRegistrationFilename", ""),
               "SubjToAtlasRegistrationFilename");
@@ -25,10 +25,10 @@ public:
   }
 };
 
-class RegistrationList : public XMLElementParser
+class RegistrationList : public ElementParser
 {
 public:
-  RegistrationList() : XMLElementParser("RegistrationList")
+  RegistrationList() : ElementParser("RegistrationList")
   {
   }
 };

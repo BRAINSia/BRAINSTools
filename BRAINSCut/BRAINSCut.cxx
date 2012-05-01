@@ -25,7 +25,21 @@ int main(int argc, char * *argv)
   // Call register default transforms
   // itk::TransformFactoryBase::RegisterDefaultTransforms();
 
-  BRAINSCutGenerateRegistrations registrationGenerator( netConfiguration );
+  if( !netConfiguration.empty() && modelConfigurationFilename.empty() )
+    {
+    modelConfigurationFilename = netConfiguration;
+    }
+
+  // Data handler
+  if( !itksys::SystemTools::FileExists( modelConfigurationFilename.c_str() ) )
+    {
+    std::string errorMsg = " File does not exist! :";
+    errorMsg += modelConfigurationFilename;
+    throw BRAINSCutExceptionStringHandler( errorMsg );
+    }
+  BRAINSCutDataHandler dataHandler( modelConfigurationFilename );
+
+  BRAINSCutGenerateRegistrations registrationGenerator( dataHandler );
   const bool                     applyDataSetOff = false;
   const bool                     applyDataSetOn = true;
   const bool                     shuffleTrainVector = (NoTrainingVectorShuffling != true );
@@ -35,20 +49,20 @@ int main(int argc, char * *argv)
   if( generateProbability )
     {
     registrationGenerator.SetAtlasToSubjectRegistrationOn( false );
-    registrationGenerator.SetSubjectDataSet( applyDataSetOff );
+    registrationGenerator.SetDataSet( applyDataSetOff );
     registrationGenerator.GenerateRegistrations();
 
-    BRAINSCutGenerateProbability testBRAINSCutClass( netConfiguration );
+    BRAINSCutGenerateProbability testBRAINSCutClass( dataHandler );
     testBRAINSCutClass.GenerateProbabilityMaps();
     }
   if( createVectors )
     {
     registrationGenerator.SetAtlasToSubjectRegistrationOn( true );
-    registrationGenerator.SetSubjectDataSet( applyDataSetOff );
+    registrationGenerator.SetDataSet( applyDataSetOff );
     registrationGenerator.GenerateRegistrations();
 
-    BRAINSCutCreateVector testCreateVector( netConfiguration );
-    testCreateVector.SetTrainingDataSetFromNetConfiguration();
+    BRAINSCutCreateVector testCreateVector( dataHandler);
+    testCreateVector.SetTrainingDataSet();
     testCreateVector.CreateVectors();
     }
   if( trainModel )
@@ -57,7 +71,7 @@ int main(int argc, char * *argv)
       {
       try
         {
-        BRAINSCutTrainModel ANNTrain( netConfiguration);
+        BRAINSCutTrainModel ANNTrain( dataHandler );
         ANNTrain.InitializeNeuralNetwork();
         ANNTrain.InitializeTrainDataSet( shuffleTrainVector );
         ANNTrain.TrainANN();
@@ -69,11 +83,11 @@ int main(int argc, char * *argv)
       }
     else if( method == "RandomForest" )
       {
-      BRAINSCutTrainModel RandomForestTrain( netConfiguration );
+      BRAINSCutTrainModel RandomForestTrain( dataHandler );
       RandomForestTrain.InitializeRandomForest();
       RandomForestTrain.InitializeTrainDataSet( shuffleTrainVector);
 
-      /* these set has to be **AFTER** InitializeTrainDataSet */
+      // these set has to be **AFTER** InitializeTrainDataSet
       if( numberOfTrees > 0 && randomTreeDepth > 0 )
         {
         RandomForestTrain.TrainRandomForestAt( randomTreeDepth, numberOfTrees );
@@ -95,21 +109,20 @@ int main(int argc, char * *argv)
     try
       {
       registrationGenerator.SetAtlasToSubjectRegistrationOn( true );
-      registrationGenerator.SetSubjectDataSet( applyDataSetOn );
+      registrationGenerator.SetDataSet( applyDataSetOn );
       registrationGenerator.GenerateRegistrations();
 
-      BRAINSCutApplyModel ApplyModule( netConfiguration );
+      dataHandler.SetRandomForestModelFilename( modelFilename );
+
+      BRAINSCutApplyModel ApplyModule( dataHandler );
 
       ApplyModule.SetMethod( method );
       ApplyModule.SetComputeSSE( computeSSEOn );
-      /* these has to be set **AFTER** InitializeTrainDataSet */
-      if( numberOfTrees > 0 && randomTreeDepth > 0 )
+
+      if( method == "RandomForest" )
         {
-        ApplyModule.SetRandomForestModelFilename( randomTreeDepth, numberOfTrees );
-        }
-      else
-        {
-        ApplyModule.SetRandomForestModelFilenameFromNetConfiguration();
+        ApplyModule.SetDepthOfTree( randomTreeDepth );
+        ApplyModule.SetNumberOfTrees( numberOfTrees );
         }
       ApplyModule.Apply();
       }

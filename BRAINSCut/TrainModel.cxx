@@ -6,7 +6,7 @@
 #include "Utilities.h"
 #include "itksys/SystemTools.hxx"
 #include <NetConfiguration.h>
-#include "NeuralParams.h"
+#include "TrainingVectorConfigurationType.h"
 #include "ANNParams.h"
 // #include "ApplyModel.h"
 #include "NetConfigurationParser.h"
@@ -533,7 +533,8 @@ void ANNTrain( // NetConfiguration & prob,
 
 static int Train(NetConfiguration & ANNConfiguration, int verbose)
 {
-  NeuralParams *model = ANNConfiguration.Get<NeuralParams>("NeuralNetParams");
+  TrainingVectorConfigurationType *model = ANNConfiguration.Get<TrainingVectorConfigurationType>(
+      "TrainingVectorConfiguration");
 
   ANNParams *annParams = ANNConfiguration.Get<ANNParams>("ANNParams");
 

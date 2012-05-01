@@ -1,7 +1,7 @@
 #ifndef BRAINSCutVectorTrainingSet_h
 #define BRAINSCutVectorTrainingSet_h
 
-#include "BRAINSCutPrimary.h"
+#include "BRAINSCutDataHandler.h"
 
 typedef CvANN_MLP_Revision neuralNetType;
 

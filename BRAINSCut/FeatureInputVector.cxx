@@ -83,10 +83,6 @@ void
 FeatureInputVector
 ::SetInputVectorSize()
 {
-  std::cout << candidateROIs.size() << std::endl
-            << imagesOfInterestInOrder.size() << std::endl
-            << spatialLocations.size() << std::endl;
-
   if( candidateROIs.empty() || imagesOfInterestInOrder.empty() || spatialLocations.empty() )
     {
     std::string errorMsg = " Cannot compute input vector size properly.";
@@ -159,7 +155,6 @@ FeatureInputVector
   /* normalization */
   if( normalization )
     {
-    std::cout << " Set Normalization Parameters " << std::endl;
     SetNormalizationParameters( ROIName );
     NormalizationOfVector( currentFeatureVector, ROIName );
     }
@@ -368,9 +363,9 @@ FeatureInputVector
 
   statisticCalculator->Update();
 
-  std::cout << " * Min : " << statisticCalculator->GetMinimum(1)
+  /*std::cout << " * Min : " << statisticCalculator->GetMinimum(1)
             << " * Max : " << statisticCalculator->GetMaximum(1)
-            << std::endl;
+            << std::endl; */
   return minmaxPairType( std::pair<scalarType, scalarType>( statisticCalculator->GetMinimum(1),
                                                             statisticCalculator->GetMaximum(1) ) );
 }

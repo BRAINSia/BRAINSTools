@@ -14,6 +14,14 @@
      <longflag>netConfiguration</longflag>
      <label>Neural Net Configuration File</label>
      <channel>input</channel>
+     <description>XML File defining BRAINSCut parameters. OLD NAME. PLEASE USE modelConfigurationFilename instead.</description>
+     <default></default>
+   </file>
+   <file>
+     <name>modelConfigurationFilename</name>
+     <longflag>modelConfigurationFilename</longflag>
+     <label>Neural Net Configuration File</label>
+     <channel>input</channel>
      <description>XML File defining BRAINSCut parameters</description>
      <default></default>
    </file>
@@ -50,7 +58,7 @@
      <name>computeSSEOn</name>
      <label>Testing with testing vector input</label>
      <longflag>computeSSEOn</longflag>
-     <description>compute Sum of Square Error (SSE) along the trained model until the number of iteration given in the netConfiguration file</description>
+     <description>compute Sum of Square Error (SSE) along the trained model until the number of iteration given in the modelConfigurationFilename file</description>
      <default>false</default>
    </boolean>
    <boolean>
@@ -119,5 +127,12 @@
       <description> Random tree depth. This is to be used when only one model with specified depth wish to be created. </description>
       <default>-1</default>
     </integer>
+    <string>
+      <name>modelFilename</name>
+      <label>modelFilename</label>
+      <longflag>modelFilename</longflag>
+      <default></default>
+      <description> model file name given from user (not by xml  configuration file) </description>
+    </string>
 </parameters>
 </executable>

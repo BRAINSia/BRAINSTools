@@ -59,6 +59,7 @@
           <longflag>numSubs</longflag>
           <description>The number of subjects excluding the template to generate the atlas</description>
           <label>Number of Subjects</label>
+          <default>0</default>
       </integer>
       
   </parameters>

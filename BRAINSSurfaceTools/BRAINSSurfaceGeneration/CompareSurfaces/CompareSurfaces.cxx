@@ -70,7 +70,7 @@ int main( int argc, char *argv[] )
 
   vtkPolyData *refSurface = refReader->GetOutput();
 
-  unsigned int numberOfPoints = inputSurface->GetNumberOfPoints();
+  vtkIdType numberOfPoints = inputSurface->GetNumberOfPoints();
   if( numberOfPoints != refSurface->GetNumberOfPoints() )
     {
     std::cout << "The number of points are different between two surfaces." << std::endl;

@@ -86,6 +86,7 @@ public:
   itkSetMacro( NumberOfResolutionLevels, unsigned int );
   itkGetMacro( NumberOfResolutionLevels, unsigned int );
 
+  using Superclass::MakeOutput;
   /**  Create the Output of the proper type for that output number */
   virtual DataObject::Pointer MakeOutput(size_t idx);
 

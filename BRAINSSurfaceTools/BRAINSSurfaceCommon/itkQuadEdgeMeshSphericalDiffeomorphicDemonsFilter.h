@@ -257,6 +257,7 @@ public:
   itkSetMacro( MetricSignificance, double );
   itkGetConstMacro( MetricSignificance, double );
 
+  using Superclass::MakeOutput;
   /**  Create the Output of the proper type for that output number */
   virtual DataObject::Pointer MakeOutput(size_t idx);
 

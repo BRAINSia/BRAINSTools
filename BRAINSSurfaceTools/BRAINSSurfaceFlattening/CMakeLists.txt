@@ -7,20 +7,20 @@ set(project_name BRAINSSurfaceFlattening)
 set(BRAINSSurfaceFlatteningProg ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/BRAINSSurfaceFlattening)
 set(CompareSurfacesProg ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/CompareSurfaces)
 
-ExternalData_add_test( ${project_name}FetchData TEST_BRAINSSurfaceFlattening0
+ExternalData_add_test( ${project_name}FetchData NAME TEST_BRAINSSurfaceFlattening0
   COMMAND ${LAUNCH_EXE} ${BRAINSSurfaceFlatteningProg}
           --inputSurfaceFile DATA{${TestData_DIR}/0036195_left_5000_smoothed.vtk}
           --outputSurfaceFile 0036195_left_5000_sphere0.vtk
           --sphereRadius 100.0 )
 
-ExternalData_add_test( ${project_name}FetchData COMPARE_BRAINSSurfaceFlattening0
+ExternalData_add_test( ${project_name}FetchData NAME COMPARE_BRAINSSurfaceFlattening0
   COMMAND ${LAUNCH_EXE} ${CompareSurfacesProg}
           --inputSurfaceFile 0036195_left_5000_sphere0.vtk
           --refSurfaceFile DATA{${TestData_DIR}/0036195_left_5000_sphere0.vtk}
           --vertexLocation
           --tolerance 1.0e-7 )
 
-ExternalData_add_test( ${project_name}FetchData TEST_BRAINSSurfaceFlattening1
+ExternalData_add_test( ${project_name}FetchData NAME TEST_BRAINSSurfaceFlattening1
   COMMAND ${LAUNCH_EXE} ${BRAINSSurfaceFlatteningProg}
           --inputSurfaceFile DATA{${TestData_DIR}/0036195_left_5000_smoothed.vtk}
           --outputSurfaceFile 0036195_left_5000_sphere1.vtk
@@ -30,7 +30,7 @@ ExternalData_add_test( ${project_name}FetchData TEST_BRAINSSurfaceFlattening1
           --rotate
           --maxAxis x )
 
-ExternalData_add_test( ${project_name}FetchData COMPARE_BRAINSSurfaceFlattening1
+ExternalData_add_test( ${project_name}FetchData NAME COMPARE_BRAINSSurfaceFlattening1
   COMMAND ${LAUNCH_EXE} ${CompareSurfacesProg}
           --inputSurfaceFile 0036195_left_5000_sphere1.vtk
           --refSurfaceFile DATA{${TestData_DIR}/0036195_left_5000_sphere1.vtk}

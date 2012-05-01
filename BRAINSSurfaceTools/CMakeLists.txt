@@ -4,7 +4,7 @@ if(VTK_FOUND)
   include(${VTK_USE_FILE})
 endif(VTK_FOUND)
 
-include_directories(${CMAKE_CURRENT_LIST_DIR}/SurfaceRegistrationLib)
+include_directories(${CMAKE_CURRENT_LIST_DIR}/BRAINSSurfaceCommon)
 
 add_subdirectory(BRAINSSurfaceFlattening)
 add_subdirectory(BRAINSSurfaceGeneration)

@@ -34,9 +34,9 @@
 #include "itkConvertVTKToQuadEdgeMeshFilter.h"
 #include "itkQuadEdgeMesh.h"
 #include "itkQuadEdgeMeshDecimationCriteria.h"
-#include "itkQuadEdgeMeshSquaredEdgeLengthDecimation.h"
+#include "itkSquaredEdgeLengthDecimationQuadEdgeMeshFilter.h"
 #include "itkQuadEdgeMeshParamMatrixCoefficients.h"
-#include "itkQuadEdgeMeshSmoothing.h"
+#include "itkSmoothingQuadEdgeMeshFilter.h"
 #include "itkQuadEdgeMeshScalarDataVTKPolyDataWriter.h"
 
 #include "BRAINSSurfaceGenerationCLP.h"
@@ -207,13 +207,12 @@ int main( int argc, char * *argv )
     criterion->SetTopologicalChange( false );
     criterion->SetNumberOfElements( numberOfElements );
 
-    typedef itk::QuadEdgeMeshSquaredEdgeLengthDecimation<MeshType, MeshType,
-                                                         CriterionType> DecimationType;
+    typedef itk::SquaredEdgeLengthDecimationQuadEdgeMeshFilter<MeshType, MeshType,
+                                                               CriterionType> DecimationType;
     DecimationType::Pointer decimator = DecimationType::New();
     decimator->SetInput( convertor->GetOutput() );
     decimator->SetCriterion( criterion );
     decimator->Update();
-
     mesh = decimator->GetOutput();
     mesh->DisconnectPipeline();
     }
@@ -225,7 +224,7 @@ int main( int argc, char * *argv )
 
     itk::OnesMatrixCoefficients<MeshType> coeff0;
 
-    typedef itk::QuadEdgeMeshSmoothing<MeshType, MeshType> SmoothingType;
+    typedef itk::SmoothingQuadEdgeMeshFilter<MeshType, MeshType> SmoothingType;
     SmoothingType::Pointer smoother = SmoothingType::New();
     smoother->SetInput( mesh );
     smoother->SetNumberOfIterations( numIterations );

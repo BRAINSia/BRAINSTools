@@ -1,9 +1,0 @@
-INCLUDE_DIRECTORIES(
-  ${CMAKE_CURRENT_LIST_DIR}/Source
-  ${CMAKE_CURRENT_LIST_DIR}/../QuadEdgeMeshFieldSmoothingFilters/Source
-  )
-
-ADD_SUBDIRECTORY( Source )
-#ADD_SUBDIRECTORY( Testing )
-ADD_SUBDIRECTORY( Examples )
-

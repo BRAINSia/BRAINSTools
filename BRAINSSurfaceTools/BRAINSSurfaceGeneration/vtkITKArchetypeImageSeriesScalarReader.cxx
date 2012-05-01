@@ -2,13 +2,13 @@
 
   Copyright Brigham and Women's Hospital (BWH) All Rights Reserved.
 
-  See Doc/copyright/copyright.txt
+  See COPYRIGHT.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
 
   Program:   vtkITK
-  Module:    $HeadURL: http://www.na-mic.org/svn/Slicer3/trunk/Libs/vtkITK/vtkITKArchetypeImageSeriesScalarReader.cxx $
-  Date:      $Date: 2007-01-19 12:21:56 -0600 (Fri, 19 Jan 2007) $
-  Version:   $Revision: 2267 $
+  Module:    $HeadURL$
+  Date:      $Date$
+  Version:   $Revision$
 
 ==========================================================================*/
 
@@ -17,22 +17,12 @@
 #include "vtkImageData.h"
 #include "vtkObjectFactory.h"
 #include "vtkPointData.h"
-#include "vtkDataArray.h"
 #include <vtkCommand.h>
 
-#include "itkArchetypeSeriesFileNames.h"
-#include "itkImage.h"
-#include "itkVector.h"
 #include "itkOrientImageFilter.h"
 #include "itkImageSeriesReader.h"
-#include "itkImageFileReader.h"
-#include "itkImportImageContainer.h"
-#include "itkImageRegion.h"
-#include "itkGDCMSeriesFileNames.h"
-#include "itkGDCMImageIO.h"
-#include <itksys/SystemTools.hxx>
 
-vtkCxxRevisionMacro(vtkITKArchetypeImageSeriesScalarReader, "$Revision: 2267 $");
+vtkCxxRevisionMacro(vtkITKArchetypeImageSeriesScalarReader, "$Revision$");
 vtkStandardNewMacro(vtkITKArchetypeImageSeriesScalarReader);
 
 // ----------------------------------------------------------------------------

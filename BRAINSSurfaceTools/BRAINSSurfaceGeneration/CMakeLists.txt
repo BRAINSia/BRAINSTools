@@ -1,5 +1,14 @@
 add_subdirectory( CompareSurfaces )
 
+
+set(configure_header_file vtkITKConfigure.h)
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/${configure_header_file}.in
+  ${CMAKE_CURRENT_BINARY_DIR}/${configure_header_file}
+  )
+
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
+
 StandardBRAINSBuildMacro(NAME BRAINSApplySurfaceLabels TARGET_LIBRARIES ${ITK_LIBRARIES} ${VTK_LIBRARIES})
 
 StandardBRAINSBuildMacro(NAME BRAINSMeasureSurface TARGET_LIBRARIES ${ITK_LIBRARIES} ${VTK_LIBRARIES} )
@@ -59,6 +68,8 @@ ExternalData_add_test(${project_name}FetchData NAME TEST_BRAINSMeasureSurface0
           --scanId 0036195
           --subjectId 0036195 )
 
+#
+# this test is failing; Wen Li needs to ahve a look at it.
 ExternalData_add_test(${project_name}FetchData NAME TEST_BRAINSMeasureSurface1
   COMMAND $<TARGET_FILE:BRAINSMeasureSurface>
           --inputSurface DATA{${TestData_DIR}/0036195_leftTalLabels.vtk}
@@ -71,7 +82,7 @@ ExternalData_add_test(${project_name}FetchData NAME TEST_BRAINSMeasureSurface1
           --testDepth
           --totalDepthResults 1.96012,2.07585,2.08634,2.55434
           --gyralDepthResults 1.74871,2.0133,1.72714,2.02547
-          --sulcalDepthResults 2.28187,2.45074,3.3185 )
+          --sulcalDepthResults 2.28187,2.14289,2.45074,3.3185 )
 
 ExternalData_add_test(${project_name}FetchData  NAME TEST_BRAINSMeasureSurface2
   COMMAND $<TARGET_FILE:BRAINSMeasureSurface>

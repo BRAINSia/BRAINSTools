@@ -1,3 +1,0 @@
-@PROJECT_SOURCE_DIR@/Source/*.h
-@PROJECT_SOURCE_DIR@/Source/*.cxx
-@PROJECT_SOURCE_DIR@/Source/*.txx

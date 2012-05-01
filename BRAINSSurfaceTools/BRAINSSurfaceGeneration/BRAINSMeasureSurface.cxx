@@ -386,5 +386,5 @@ int main( int argc, char * *argv )
   surfaceData->Delete();
   cellPtIds->Delete();
 
-  return EXIT_SUCCESS;
+  return result;
 }

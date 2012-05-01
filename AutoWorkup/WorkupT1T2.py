@@ -22,7 +22,7 @@ import argparse
 #config.set_log_dir(os.getcwd())
 #--config.set('logging', 'workflow_level', 'DEBUG')
 #--config.set('logging', 'interface_level', 'DEBUG')
-config.set('execution','remove_unnecessary_outputs','false')
+#--config.set('execution','remove_unnecessary_outputs','false')
 
 from nipype.interfaces.base import CommandLine, CommandLineInputSpec, TraitedSpec, File, Directory
 from nipype.interfaces.base import traits, isdefined, BaseInterface
@@ -51,7 +51,9 @@ from BRAINSTools.GradientAnisotropicDiffusionImageFilter import *
 from BRAINSTools.GenerateSummedGradientImage import *
 from BRAINSTools.ANTSWrapper import *
 from BRAINSTools.WarpAllAtlas import *
-from BRAINSTools.ants.normalize import WarpImageMultiTransform
+from BRAINSTools.ants.normalize import WarpImageMultiTransform 
+
+
 
 
 #######################  HACK:  Needed to make some global variables for quick

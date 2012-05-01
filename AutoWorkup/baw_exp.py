@@ -122,6 +122,7 @@ def main(argv=None):
     #  have the same environment as the job submission host.
     JOB_SCRIPT=get_global_sge_script(sys.path,PROGRAM_PATHS,CUSTOM_ENVIRONMENT)
     print JOB_SCRIPT
+    baw200.write_graph()
     if input_arguments.wfrun == 'helium_all.q':
         baw200.run(plugin='SGE',
             plugin_args=dict(template=JOB_SCRIPT,qsub_args="-S /bin/bash -pe smp1 1-4 -l mem_free=4000M -o /dev/null -e /dev/null "+CLUSTER_QUEUE))
@@ -140,8 +141,7 @@ def main(argv=None):
         baw200.run()
     else:
         print "You must specify the run environment type."
-    sys.exit(-1)
-    baw200.write_graph()
+
 
 if __name__ == "__main__":
     sys.exit(main())

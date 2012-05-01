@@ -51,10 +51,7 @@ from BRAINSTools.GradientAnisotropicDiffusionImageFilter import *
 from BRAINSTools.GenerateSummedGradientImage import *
 from BRAINSTools.ANTSWrapper import *
 from BRAINSTools.WarpAllAtlas import *
-from BRAINSTools.ants.normalize import WarpImageMultiTransform 
-
-
-
+from BRAINSTools.ants.normalize import WarpImageMultiTransform
 
 #######################  HACK:  Needed to make some global variables for quick
 #######################         processing needs
@@ -768,7 +765,7 @@ def WorkupT1T2(mountPrefix,ExperimentBaseDirectory, subject_data_file, atlas_fna
             baw200.connect( BAtlas,'template_t1',    ComputeAtlasToSubjectTransform,"moving_T1_image")
             baw200.connect( BAtlas,'template_t2',    ComputeAtlasToSubjectTransform,"moving_T2_image")
             baw200.connect(BLI,'outputTransformFilename',ComputeAtlasToSubjectTransform,'initialTransform')
-            
+
             #####################
             #####################
             #####################
@@ -779,16 +776,16 @@ def WorkupT1T2(mountPrefix,ExperimentBaseDirectory, subject_data_file, atlas_fna
             WarpSubjectToAtlas.inputs.out_postfix='_To_Atlas'
             baw200.connect( SplitAvgBABC,'avgBABCT1',WarpSubjectToAtlas,"moving_image")
             baw200.connect( BAtlas,'template_t1', WarpSubjectToAtlas, 'reference_image')
-            
+
             makeInverseTransformList = pe.Node(interface=Function(function=MakeList,
                                                                 input_names=['firstElement','secondElement'],
                                                                 output_names=['outList']),
                              run_without_submitting=True, name="99_MakeInverseTransformList")
-            
+
             baw200.connect(BLI,'outputTransformFilename',makeInverseTransformList,'firstElement')
             baw200.connect(ComputeAtlasToSubjectTransform,'output_inversewarp',makeInverseTransformList,'secondElement')
             baw200.connect( makeInverseTransformList, 'outList',WarpSubjectToAtlas, 'transformation_series')
-            
+
         if 'ANTSWARP_FIXME' in WORKFLOW_COMPONENTS:
             WarpAtlas = pe.Node(interface=WarpAllAtlas(), name = "19_WarpAtlas")
             WarpAtlas.inputs.moving_atlas = atlas_fname_wpath
@@ -798,15 +795,63 @@ def WorkupT1T2(mountPrefix,ExperimentBaseDirectory, subject_data_file, atlas_fna
             baw200.connect( ComputeAtlasToSubjectTransform,'output_warp', WarpAtlas,"deformation_field")
             baw200.connect( SplitAvgBABC,'avgBABCT1', WarpAtlas, 'reference_image')
 
+        if 'PERSISTANCE_CHECK' in WORKFLOW_COMPONENTS:
+            print("DOING FILE PERSISTANCE CHECK")
+            PERSISTANCE_CHECK = pe.Node(interface=BRAINSFit(),name="99999_PERSISTANCE_CHECK_PERSISTANCE_CHECK")
+            PERSISTANCE_CHECK.inputs.costMetric="MMI"
+            PERSISTANCE_CHECK.inputs.debugLevel=10
+            PERSISTANCE_CHECK.inputs.maskProcessingMode="ROI"
+            PERSISTANCE_CHECK.inputs.numberOfSamples=1000
+            PERSISTANCE_CHECK.inputs.numberOfIterations=[1500]
+            PERSISTANCE_CHECK.inputs.numberOfHistogramBins=50
+            PERSISTANCE_CHECK.inputs.maximumStepLength=0.2
+            PERSISTANCE_CHECK.inputs.minimumStepLength=[0.005]
+            PERSISTANCE_CHECK.inputs.transformType= ["Affine"]
+            PERSISTANCE_CHECK.inputs.maxBSplineDisplacement= 7
+            PERSISTANCE_CHECK.inputs.maskInferiorCutOffFromCenter=65
+            PERSISTANCE_CHECK.inputs.splineGridSize=[28,20,24]
+            PERSISTANCE_CHECK.inputs.outputVolume="Trial_Initializer_Output.nii.gz"
+            PERSISTANCE_CHECK.inputs.outputTransform="Trial_Initializer_Output.mat"
+            baw200.connect(SplitAvgBABC,'avgBABCT1',PERSISTANCE_CHECK,'fixedVolume')
+            baw200.connect(BABC,'outputLabels',PERSISTANCE_CHECK,'fixedBinaryVolume')
+            baw200.connect(BAtlas,'template_t1',PERSISTANCE_CHECK,'movingVolume')
+            baw200.connect(BAtlas,'template_brain',PERSISTANCE_CHECK,'movingBinaryVolume')
+            baw200.connect(BLI,'outputTransformFilename',PERSISTANCE_CHECK,'initialTransform')
+
         if 'FREESURFER' in WORKFLOW_COMPONENTS:
             print("""Run Freesurfer ReconAll at""")
-            reconall = pe.Node(interface=ReconAll(),name="41_FS510")
+            fs_autorecon1 = pe.Node(interface=ReconAll(),name="41_FS510")
             freesurfer_sge_options_dictionary={'qsub_args': '-S /bin/bash -pe smp1 1 -l mem_free=3100M -o /dev/null -e /dev/null '+CLUSTER_QUEUE, 'overwrite': True}
-            reconall.plugin_args=freesurfer_sge_options_dictionary
-            reconall.inputs.subject_id = 'ThisSubject'
-            reconall.inputs.directive = 'all'
-            reconall.inputs.subjects_dir = '.'
-            baw200.connect(SplitAvgBABC,'avgBABCT1',reconall,'T1_files')
+            fs_autorecon1.plugin_args=freesurfer_sge_options_dictionary
+            fs_autorecon1.inputs.directive = 'autorecon1'
+            fs_autorecon1.inputs.subjects_dir = '.'
+            baw200.connect(uidSource,'uid',fs_autorecon1,'subject_id')
+            baw200.connect(SplitAvgBABC,'avgBABCT1',fs_autorecon1,'T1_files')
+
+            """
+            fs_autorecon2_cp = pe.Node(interface=ReconAll(),name="41_FS510_autorecon2_cp")
+            freesurfer_sge_options_dictionary={'qsub_args': '-S /bin/bash -pe smp1 1 -l mem_free=3100M -o /dev/null -e /dev/null '+CLUSTER_QUEUE, 'overwrite': True}
+            fs_autorecon2_cp.plugin_args=freesurfer_sge_options_dictionary
+            fs_autorecon2_cp.inputs.directive = 'autorecon2-cp'
+            baw200.connect(fs_autorecon1,'subject_id',fs_autorecon2_cp,'subject_id')
+            baw200.connect(fs_autorecon1,'subjects_dir',fs_autorecon2_cp,'subjects_dir')
+            """
+            """
+            fs_autorecon2_wm = pe.Node(interface=ReconAll(),name="41_FS510_autorecon2_wm")
+            freesurfer_sge_options_dictionary={'qsub_args': '-S /bin/bash -pe smp1 1 -l mem_free=3100M -o /dev/null -e /dev/null '+CLUSTER_QUEUE, 'overwrite': True}
+            fs_autorecon2_wm.plugin_args=freesurfer_sge_options_dictionary
+            fs_autorecon2_wm.inputs.directive = 'autorecon2-wm'
+            baw200.connect(fs_autorecon1,'subject_id',fs_autorecon2_wm,'subject_id')
+            baw200.connect(fs_autorecon1,'subjects_dir',fs_autorecon2_wm,'subjects_dir')
+            """
+            """
+            fs_autorecon3 = pe.Node(interface=ReconAll(),name="41_FS510_autorecon3")
+            freesurfer_sge_options_dictionary={'qsub_args': '-S /bin/bash -pe smp1 1 -l mem_free=3100M -o /dev/null -e /dev/null '+CLUSTER_QUEUE, 'overwrite': True}
+            fs_autorecon3.plugin_args=freesurfer_sge_options_dictionary
+            fs_autorecon3.inputs.directive = 'autorecon2-wm'
+            baw200.connect(fs_autorecon1,'subject_id',fs_autorecon3,'subject_id')
+            baw200.connect(fs_autorecon1,'subjects_dir',fs_autorecon3,'subjects_dir')
+            """
         else:
             print "Skipping freesurfer"
 

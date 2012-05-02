@@ -152,6 +152,7 @@ public:
   /** Returns the transform resulting from the registration process  */
   const TransformOutputType * GetOutput() const;
 
+  using Superclass::MakeOutput;
   /** Make a DataObject of the correct type to be used as the specified
    * output. */
   virtual DataObjectPointer MakeOutput(size_t idx);

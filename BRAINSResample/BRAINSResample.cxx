@@ -53,6 +53,11 @@ int main(int argc, char *argv[])
   // Call register default transforms
   itk::TransformFactoryBase::RegisterDefaultTransforms();
 #endif
+  itk::Object::SetGlobalWarningDisplay(false); // itk warnings aren't
+                                               // thread safe and in
+                                               // this program cause
+                                               // intermittent crashes.
+
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
 
   const bool debug = true;

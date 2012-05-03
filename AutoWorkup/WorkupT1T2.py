@@ -38,17 +38,8 @@ package_check('scipy', '0.7', 'tutorial1')
 package_check('networkx', '1.0', 'tutorial1')
 package_check('IPython', '0.10', 'tutorial1')
 
-from BRAINSTools.BRAINSConstellationDetector import *
+from BRAINSTools import *
 from BRAINSTools.BRAINSABCext import *
-from BRAINSTools.BRAINSDemonWarp import *
-from BRAINSTools.BRAINSFit import *
-from BRAINSTools.BRAINSMush import *
-from BRAINSTools.BRAINSResample import *
-from BRAINSTools.BRAINSROIAuto import *
-from BRAINSTools.BRAINSLandmarkInitializer import *
-from BRAINSTools.BRAINSCut import *
-from BRAINSTools.GradientAnisotropicDiffusionImageFilter import *
-from BRAINSTools.GenerateSummedGradientImage import *
 from BRAINSTools.ANTSWrapper import *
 from BRAINSTools.WarpAllAtlas import *
 from BRAINSTools.ants.normalize import WarpImageMultiTransform
@@ -260,9 +251,9 @@ def WorkupT1T2(mountPrefix,ExperimentBaseDirectory, subject_data_file, atlas_fna
     baw200 = pe.Workflow(name="BAW_20120104_workflow")
     baw200.config['execution'] = {
                                      'plugin':'Linear',
-                                     #'stop_on_first_crash':'true',
+                                     'stop_on_first_crash':'true',
                                      #'stop_on_first_rerun': 'true',
-                                     'stop_on_first_crash':'false',
+                                     #'stop_on_first_crash':'false',
                                      'stop_on_first_rerun': 'false',      ## This stops at first attempt to rerun, before running, and before deleting previous results.
                                      'hash_method': 'timestamp',
                                      'single_thread_matlab':'true',       ## Multi-core 2011a  multi-core for matrix multiplication.
@@ -302,23 +293,24 @@ def WorkupT1T2(mountPrefix,ExperimentBaseDirectory, subject_data_file, atlas_fna
     BCD.inputs.interpolationMode = InterpolationMode
     BCD.inputs.houghEyeDetectorMode = 1  # Look for dark eyes like on a T1 image, 0=Look for bright eyes like in a T2 image
     BCD.inputs.acLowerBound = 80.0 # Chop the data set 80mm below the AC PC point.
-    BCD.inputs.llsModel = os.path.join(BCD_model_path,'LLSModel-2ndVersion.hdf5')
+    BCD.inputs.LLSModel = os.path.join(BCD_model_path,'LLSModel-2ndVersion.hdf5')
     BCD.inputs.inputTemplateModel = os.path.join(BCD_model_path,'T1-2ndVersion.mdl')
 
     # Entries below are of the form:
     baw200.connect( [ (uidSource, BCD, [(('uid', getFirstT1, subjectDatabaseFile) , 'inputVolume')] ), ])
-    
-    baw200DataSink=pe.Node(nio.DataSink(),name="baw200DS")
-    baw200DataSink.inputs.base_directory=ExperimentBaseDirectory + "FinalRepository"
-    baw200DataSink.inputs.regexp_substitutions = [
-        ('foo/_uid_(?P=<project>PHD_[0-9][0-9][0-9])_(?P=<subject>[0-9][0-9][0-9][0-9])_(?P=<session>[0-9][0-9][0-9][0-9][0-9])','test/\g<project>/\g<subject>/\g<session>')
-        ]
-    baw200.connect(BCD, 'outputLandmarksInACPCAlignedSpace', baw200DataSink,'foo.@outputLandmarksInACPCAlignedSpace')
-    baw200.connect(BCD, 'outputResampledVolume', baw200DataSink,'foo.@outputResampledVolume')
-    baw200.connect(BCD, 'outputLandmarksInInputSpace', baw200DataSink,'foo.@outputLandmarksInInputSpace')
-    baw200.connect(BCD, 'outputTransform', baw200DataSink,'foo.@outputTransform')
-    baw200.connect(BCD, 'outputMRML', baw200DataSink,'foo.@outputMRML')
-    """
+
+    if 0 == 1:
+        baw200DataSink=pe.Node(nio.DataSink(),name="baw200DS")
+        baw200DataSink.inputs.base_directory=ExperimentBaseDirectory + "FinalRepository"
+        baw200DataSink.inputs.regexp_substitutions = [
+            ('foo/_uid_(?P=<project>PHD_[0-9][0-9][0-9])_(?P=<subject>[0-9][0-9][0-9][0-9])_(?P=<session>[0-9][0-9][0-9][0-9][0-9])','test/\g<project>/\g<subject>/\g<session>')
+            ]
+        baw200.connect(BCD, 'outputLandmarksInACPCAlignedSpace', baw200DataSink,'foo.@outputLandmarksInACPCAlignedSpace')
+        baw200.connect(BCD, 'outputResampledVolume', baw200DataSink,'foo.@outputResampledVolume')
+        baw200.connect(BCD, 'outputLandmarksInInputSpace', baw200DataSink,'foo.@outputLandmarksInInputSpace')
+        baw200.connect(BCD, 'outputTransform', baw200DataSink,'foo.@outputTransform')
+        baw200.connect(BCD, 'outputMRML', baw200DataSink,'foo.@outputMRML')
+        """
     subs=r'test/\g<project>/\g<subject>/\g<session>'
 pe.sub(subs,test)
 pat=r'foo/_uid_(?P<project>PHD_[0-9][0-9][0-9])_(?P<subject>[0-9][0-9][0-9][0-9])_(?P<session>[0-9][0-9][0-9][0-9][0-9])'
@@ -372,7 +364,7 @@ pe.sub(subs,test)
 
     if 'TISSUE_CLASSIFY' in WORKFLOW_COMPONENTS:
         ########################################################
-        # Run BABC on Multi-modal images
+        # Run BABCext on Multi-modal images
         ########################################################
         def MakeOneFileList(T1List,T2List,altT1):
             """ This funciton uses altT1 for the first T1, and the append the rest of the T1's and T2's """
@@ -392,7 +384,7 @@ pe.sub(subs,test)
         def MakeOneFileTypeList(T1List,T2List):
             input_types =       ["T1"]*len(T1List)
             input_types.extend( ["T2"]*len(T2List) )
-            return ",".join(input_types)
+            return input_types
         makeImageTypeList = pe.Node( Function(function=MakeOneFileTypeList, input_names = ['T1List','T2List'], output_names = ['imageTypeList']), run_without_submitting=True, name="99_makeImageTypeList")
 
         baw200.connect( [ (uidSource, makeImageTypeList, [(('uid', getT1s, subjectDatabaseFile ), 'T1List')] ), ])
@@ -422,39 +414,39 @@ pe.sub(subs,test)
         baw200.connect( [ (uidSource, makeOutImageList, [(('uid', getT1s, subjectDatabaseFile ), 'T1List')] ), ])
         baw200.connect( [ (uidSource, makeOutImageList, [(('uid', getT2s, subjectDatabaseFile ), 'T2List')] ), ])
 
-        BABC= pe.Node(interface=BRAINSABCext(), name="11_BABC")
+        BABCext= pe.Node(interface=BRAINSABCext(), name="11_BABC")
         many_cpu_BABC_options_dictionary={'qsub_args': '-S /bin/bash -pe smp1 4-12 -o /dev/null -e /dev/null '+CLUSTER_QUEUE, 'overwrite': True}
         #many_cpu_BABC_options_dictionary={'qsub_args': '-S /bin/bash -pe smp1 4-12 -l mem_free=8000M -o /dev/null -e /dev/null '+CLUSTER_QUEUE, 'overwrite': True}
-        BABC.plugin_args=many_cpu_BABC_options_dictionary
-        baw200.connect(makeImagePathList,'imagePathList',BABC,'inputVolumes')
-        baw200.connect(makeImageTypeList,'imageTypeList',BABC,'inputVolumeTypes')
-        baw200.connect(makeOutImageList,'outImageList',BABC,'outputVolumes')
-        BABC.inputs.debuglevel = 0
-        BABC.inputs.maxIterations = 3
-        BABC.inputs.maxBiasDegree = 4
-        BABC.inputs.filterIteration = 3
-        BABC.inputs.filterMethod = 'GradientAnisotropicDiffusion'
-        BABC.inputs.gridSize = [28,20,24]
-        BABC.inputs.outputFormat = "NIFTI"
-        BABC.inputs.outputLabels = "brain_label_seg.nii.gz"
-        BABC.inputs.outputDirtyLabels = "volume_label_seg.nii.gz"
-        BABC.inputs.posteriorTemplate = "POSTERIOR_%s.nii.gz"
-        BABC.inputs.atlasToSubjectTransform = "atlas_to_subject.mat"
-        #BABC.inputs.implicitOutputs = ['t1_average_BRAINSABC.nii.gz', 't2_average_BRAINSABC.nii.gz']
-        BABC.inputs.resamplerInterpolatorType = InterpolationMode
-        BABC.inputs.outputDir = './'
+        BABCext.plugin_args=many_cpu_BABC_options_dictionary
+        baw200.connect(makeImagePathList,'imagePathList',BABCext,'inputVolumes')
+        baw200.connect(makeImageTypeList,'imageTypeList',BABCext,'inputVolumeTypes')
+        baw200.connect(makeOutImageList,'outImageList',BABCext,'outputVolumes')
+        BABCext.inputs.debuglevel = 0
+        BABCext.inputs.maxIterations = 3
+        BABCext.inputs.maxBiasDegree = 4
+        BABCext.inputs.filterIteration = 3
+        BABCext.inputs.filterMethod = 'GradientAnisotropicDiffusion'
+        BABCext.inputs.gridSize = [28,20,24]
+        BABCext.inputs.outputFormat = "NIFTI"
+        BABCext.inputs.outputLabels = "brain_label_seg.nii.gz"
+        BABCext.inputs.outputDirtyLabels = "volume_label_seg.nii.gz"
+        BABCext.inputs.posteriorTemplate = "POSTERIOR_%s.nii.gz"
+        BABCext.inputs.atlasToSubjectTransform = "atlas_to_subject.mat"
+        #BABCext.inputs.implicitOutputs = ['t1_average_BRAINSABC.nii.gz', 't2_average_BRAINSABC.nii.gz']
+        BABCext.inputs.interpolationMode = InterpolationMode
+        BABCext.inputs.outputDir = './'
 
-        baw200.connect(BAtlas,'AtlasPVDefinition_xml',BABC,'atlasDefinition')
-        baw200.connect(BLI,'outputTransformFilename',BABC,'atlasToSubjectInitialTransform')
+        baw200.connect(BAtlas,'AtlasPVDefinition_xml',BABCext,'atlasDefinition')
+        baw200.connect(BLI,'outputTransformFilename',BABCext,'atlasToSubjectInitialTransform')
         """
-        Get the first T1 and T2 corrected images from BABC
+        Get the first T1 and T2 corrected images from BABCext
         """
         bfc_files = pe.Node(Function(input_names=['in_files','T1_count'],
                                    output_names=['t1_corrected','t2_corrected'],
                                    function=get_first_T1_and_T2), name='99_bfc_files')
 
         baw200.connect( [ (uidSource, bfc_files, [(('uid', getT1sLength, subjectDatabaseFile ), 'T1_count')] ), ])
-        baw200.connect(BABC,'outputVolumes',bfc_files,'in_files')
+        baw200.connect(BABCext,'outputVolumes',bfc_files,'in_files')
 
         """
         ResampleNACLabels
@@ -463,7 +455,7 @@ pe.sub(subs,test)
         ResampleAtlasNACLabels.inputs.interpolationMode = "NearestNeighbor"
         ResampleAtlasNACLabels.inputs.outputVolume = "atlasToSubjectNACLabels.nii.gz"
 
-        baw200.connect(BABC,'atlasToSubjectTransform',ResampleAtlasNACLabels,'warpTransform')
+        baw200.connect(BABCext,'atlasToSubjectTransform',ResampleAtlasNACLabels,'warpTransform')
         baw200.connect(bfc_files,'t1_corrected',ResampleAtlasNACLabels,'referenceVolume')
         baw200.connect(BAtlas,'template_nac_lables',ResampleAtlasNACLabels,'inputVolume')
 
@@ -478,7 +470,7 @@ pe.sub(subs,test)
 
         baw200.connect(bfc_files,'t1_corrected',BMUSH,'inputFirstVolume')
         baw200.connect(bfc_files,'t2_corrected',BMUSH,'inputSecondVolume')
-        baw200.connect(BABC,'outputLabels',BMUSH,'inputMaskVolume')
+        baw200.connect(BABCext,'outputLabels',BMUSH,'inputMaskVolume')
 
         """
         BRAINSROIAuto
@@ -491,13 +483,13 @@ pe.sub(subs,test)
         baw200.connect(bfc_files,'t1_corrected',BROI,'inputVolume')
 
         """
-        Split the implicit outputs of BABC
+        Split the implicit outputs of BABCext
         """
         SplitAvgBABC = pe.Node(Function(input_names=['in_files','T1_count'], output_names=['avgBABCT1','avgBABCT2'],
                                  function = get_first_T1_and_T2), run_without_submitting=True, name="99_SplitAvgBABC")
         SplitAvgBABC.inputs.T1_count = 1 ## There is only 1 average T1 image.
 
-        baw200.connect(BABC,'outputAverageImages',SplitAvgBABC,'in_files')
+        baw200.connect(BABCext,'outputAverageImages',SplitAvgBABC,'in_files')
 
 
         """
@@ -588,7 +580,7 @@ pe.sub(subs,test)
             from WorkupT1T2PERSISTANCE_CHECK import CreatePERSISTANCE_CHECKWorkflow
             myLocalPERSISTANCE_CHECKWF= CreatePERSISTANCE_CHECKWorkflow("999999_PersistanceCheckingWorkflow")
             PERSISTANCE_CHECKWF.connect(SplitAvgBABC,'avgBABCT1',myLocalPERSISTANCE_CHECKWF,'fixedVolume')
-            PERSISTANCE_CHECKWF.connect(BABC,'outputLabels',myLocalPERSISTANCE_CHECKWF,'fixedBinaryVolume')
+            PERSISTANCE_CHECKWF.connect(BABCext,'outputLabels',myLocalPERSISTANCE_CHECKWF,'fixedBinaryVolume')
             PERSISTANCE_CHECKWF.connect(BAtlas,'template_t1',myLocalPERSISTANCE_CHECKWF,'movingVolume')
             PERSISTANCE_CHECKWF.connect(BAtlas,'template_brain',myLocalPERSISTANCE_CHECKWF,'movingBinaryVolume')
             PERSISTANCE_CHECKWF.connect(BLI,'outputTransformFilename',myLocalPERSISTANCE_CHECKWF,'initialTransform')

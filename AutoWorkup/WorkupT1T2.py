@@ -39,7 +39,7 @@ package_check('networkx', '1.0', 'tutorial1')
 package_check('IPython', '0.10', 'tutorial1')
 
 from BRAINSTools.BRAINSConstellationDetector import *
-from BRAINSTools.BRAINSABC import *
+from BRAINSTools.BRAINSABCext import *
 from BRAINSTools.BRAINSDemonWarp import *
 from BRAINSTools.BRAINSFit import *
 from BRAINSTools.BRAINSMush import *
@@ -130,127 +130,6 @@ def MakeAtlasNode(atlasDirectory):
     BAtlas.inputs.template_args = dict(zip(atlas_file_keys,atlas_template_args_match))
     return BAtlas
 
-def create_BRAINSCut_XML(rho,phi,theta,model,
-                         r_probabilityMap,l_probabilityMap,
-                         atlasT1,atlasBrain,
-                         subjT1,subjT2,
-                         subjT1GAD,subjT2GAD,subjSGGAD,subjBrain,
-                         atlasToSubj,
-                         output_dir):
-    import re
-    import os
-    print "*"*80
-    print rho
-    print phi
-    print theta
-    print model
-    print r_probabilityMap
-    print l_probabilityMap
-    structure = re.search("r_(\w+)_ProbabilityMap",os.path.basename(r_probabilityMap)).group(1)
-
-    ## The model file name is auto-generated, and needs to be split apart here
-    basemodel      =re.search("(.*{structure}Model.*\.txt)(00[0-9]*)".format(structure=structure),model).group(1)
-    EpochIterations=re.search("(.*{structure}Model.*\.txt)(00[0-9]*)".format(structure=structure),model).group(2)
-    EpochIterations.lstrip('0')
-
-    ## HACK:  Needed to make neural networks easier to use.  This information should be embeded in the model file.
-    HiddenNodeDict={'caudate':"14",'putamen':"20",'hippocampus':"20",'thalamus':"14"}
-
-    print "^^"*80
-    print "^^"*80
-    print "^^"*80
-    print "^^"*80
-    print basemodel
-    print EpochIterations
-    NumberOfHiddenNodes=HiddenNodeDict[structure]
-
-    EXTRA_FLAGS=""
-    if structure in [ 'putamen','hippocampus']:
-        EXTRA_FLAGS="""
-     <Image Type="T1GAD" Filename="na" />
-     <Image Type="T2GAD" Filename="na" />"""
-
-    XMLSTRING="""<AutoSegProcessDescription>
-  <RegistrationConfiguration
-         ImageTypeToUse="T1-30"
-         ID="BSpline_ROI"
-         BRAINSROIAutoDilateSize="1"
-  />
-  <ANNParams
-         Iterations="{EpochIterations}"
-         MaximumVectorsPerEpoch="700000"
-         EpochIterations="{EpochIterations}"
-         ErrorInterval="1"
-         DesiredError="0.000001"
-         NumberOfHiddenNodes="{NumberOfHiddenNodes}"
-         ActivationSlope="1.0"
-         ActivationMinMax="1.0"
-  />
-  <ApplyModel
-         CutOutThresh="0.05"
-         MaskThresh="0.4"
-         LevelSetImageType="NA"
-         GaussianSmoothingSigma="0.0"
-  />
-  <NeuralNetParams
-         MaskSmoothingValue="0.0"
-         GradientProfileSize="1"
-         TrainingVectorFilename="na"
-         TrainingModelFilename="{basemodel}"
-         TestVectorFilename="na"
-         Normalization="true"
-  />
-  <ProbabilityMap StructureID="l_{structure}" Gaussian="0.5" GenerateVector="true" Filename="{l_probabilityMap}"/>
-  <ProbabilityMap StructureID="r_{structure}" Gaussian="0.5" GenerateVector="true" Filename="{r_probabilityMap}"/>
-  <DataSet Type="Atlas" Name="template">
-    <Image Type="T1-30" Filename="{atlasT1}"/>
-    <Image Type="T2-30" Filename="na"/>
-    {EXTRA_FLAGS}
-    <Image Type="SGGAD" Filename="na"/>
-
-    <SpatialLocation Type="rho"   Filename="{rho}"/>
-    <SpatialLocation Type="phi"   Filename="{phi}"/>
-    <SpatialLocation Type="theta" Filename="{theta}"/>
-  </DataSet>
-  <DataSet Name="sessionID" Type="Apply" OutputDir="./">
-      <Image Type="T1-30" Filename="{subjT1}"/>
-      <Image Type="T2-30" Filename="{subjT2}"/>
-      <Image Type="T1GAD" Filename="{subjT1GAD}"/>
-      <Image Type="T2GAD" Filename="{subjT2GAD}"/>
-      <Image Type="SGGAD" Filename="{subjSGGAD}"/>
-      <Mask Type="l_{structure}" Filename="{output_dir}/l_{structure}_seg.nii.gz"/>
-      <Mask Type="r_{structure}" Filename="{output_dir}/r_{structure}_seg.nii.gz"/>
-      <Registration SubjToAtlasRegistrationFilename="na"
-                    AtlasToSubjRegistrationFilename="{atlasToSubj}"
-                    SubjectBinaryFilename="{subjBrain}"
-                    AtlasBinaryFilename="{atlasBrain}"
-                    ID="BSpline_ROI"/>
-  </DataSet>
-</AutoSegProcessDescription>
-
-""".format(structure=structure,rho=rho,phi=phi,theta=theta,
-                         basemodel=basemodel,EpochIterations=EpochIterations,NumberOfHiddenNodes=NumberOfHiddenNodes,
-                         r_probabilityMap=r_probabilityMap,l_probabilityMap=l_probabilityMap,
-                         atlasT1=atlasT1,atlasBrain=atlasBrain,
-                         subjT1=subjT1,subjT2=subjT2,
-                         subjT1GAD=subjT1GAD,subjT2GAD=subjT2GAD,subjSGGAD=subjSGGAD,subjBrain=subjBrain,
-                         EXTRA_FLAGS=EXTRA_FLAGS,
-                         atlasToSubj=atlasToSubj,
-                         output_dir=output_dir)
-
-    if not os.path.exists(output_dir):
-        os.mkdir(output_dir)
-    #xml_filename = os.path.join(output_dir,'%s.xml' % structure)
-    xml_filename = '%s.xml' % structure
-    xml_file = open(xml_filename,'w')
-    #xml_file.write(etree.tostring(xml_output, pretty_print=True))
-    xml_file.write(XMLSTRING)
-    xml_file.close()
-
-    r_struct_fname="{output_dir}/r_{structure}_seg.nii.gz".format(output_dir=output_dir,structure=structure)
-    l_struct_fname="{output_dir}/l_{structure}_seg.nii.gz".format(output_dir=output_dir,structure=structure)
-    return os.path.realpath(xml_filename), [ r_struct_fname, l_struct_fname ]
-
 
 def get_list_element( nestedList, index ):
     return nestedList[index]
@@ -310,31 +189,8 @@ def getT1sT2s(uid, dbfile,altT1):
 def MakeList(firstElement,secondElement):
     return [firstElement, secondElement]
 
-###########################################################################
-###########################################################################
-###########################################################################
-###########################################################################
-###########################################################################
-###########################################################################
-## WorkupT1T2 is the main workflow to be run
-###########################################################################
-###########################################################################
-###########################################################################
-###########################################################################
-###########################################################################
-def WorkupT1T2(mountPrefix,ExperimentBaseDirectory, subject_data_file, atlas_fname_wpath, BCD_model_path,
-               InterpolationMode="Linear", Mode=10,DwiList=[],WORKFLOW_COMPONENTS=[],CLUSTER_QUEUE=''):
-    """
-    Run autoworkup on all subjects data defined in the subject_data_file
-
-    This is the main function to call when processing a data set with T1 & T2
-    data.  ExperimentBaseDirectory is the base of the directory to place results, T1Images & T2Images
-    are the lists of images to be used in the auto-workup. atlas_fname_wpath is
-    the path and filename of the atlas to use.
-    """
-
+def createDBFile(subject_data_file,subjectDatabaseFile,mountPrefix):
     print "Building Subject List: " + subject_data_file
-    subjectDatabaseFile=os.path.join( ExperimentBaseDirectory,'InternalWorkflowSubjectDB.pickle')
     subjData=csv.reader(open(subject_data_file,'rb'), delimiter=',', quotechar='"')
     myDB=dict()
     multiLevel=AutoVivification()  #This should be replaced by a more nested dictionary
@@ -372,7 +228,33 @@ def WorkupT1T2(mountPrefix,ExperimentBaseDirectory, subject_data_file, atlas_fna
     print "DICTIONARY",multiLevel
     from cPickle import dump
     dump(multiLevel, open(subjectDatabaseFile,'w'))
+    return multiLevel
 
+###########################################################################
+###########################################################################
+###########################################################################
+###########################################################################
+###########################################################################
+###########################################################################
+## WorkupT1T2 is the main workflow to be run
+###########################################################################
+###########################################################################
+###########################################################################
+###########################################################################
+###########################################################################
+def WorkupT1T2(mountPrefix,ExperimentBaseDirectory, subject_data_file, atlas_fname_wpath, BCD_model_path,
+               InterpolationMode="Linear", Mode=10,DwiList=[],WORKFLOW_COMPONENTS=[],CLUSTER_QUEUE=''):
+    """
+    Run autoworkup on all subjects data defined in the subject_data_file
+
+    This is the main function to call when processing a data set with T1 & T2
+    data.  ExperimentBaseDirectory is the base of the directory to place results, T1Images & T2Images
+    are the lists of images to be used in the auto-workup. atlas_fname_wpath is
+    the path and filename of the atlas to use.
+    """
+    subjectDatabaseFile=os.path.join( ExperimentBaseDirectory,'InternalWorkflowSubjectDB.pickle')
+    multiLevel=createDBFile(subject_data_file,subjectDatabaseFile,mountPrefix)
+    
     print "Building Pipeline"
     ########### PIPELINE INITIALIZATION #############
     baw200 = pe.Workflow(name="BAW_20120104_workflow")
@@ -404,22 +286,8 @@ def WorkupT1T2(mountPrefix,ExperimentBaseDirectory, subject_data_file, atlas_fna
     uidSource = pe.Node(interface=IdentityInterface(fields=['uid']),name='99_siteSource')
     uidSource.iterables = ('uid', multiLevel.keys() )
 
-    projSource = pe.Node(interface=IdentityInterface(fields=['proj']),name='99_projSource')
-    projSource.iterables = ('proj', multiLevel.keys() )
-
-#    subjSource = pe.Node( Function(function=IdentityInterface, input_names = ['T1List','T2List','altT1'], output_names = ['imagePathList']), run_without_submitting=True, name="99_makeImagePathList")
-#    baw200.connect( [ (projSource, makeImagePathList, [(('uid', getT1s, subjectDatabaseFile ), 'T1List')] ), ])
-#    baw200.connect( [ (uidSource, makeImagePathList, [(('uid', getT2s, subjectDatabaseFile ), 'T2List')] ), ])
-
-#    subjSource = pe.Node(interface=IdentityInterface(fields=['subj']),name='99_subjSource')
-#    subjSource.iterables = ('subj', multiLevel.keys() )
-
-#    sessSource = pe.Node(interface=IdentityInterface(fields=['sess']),name='99_sessSource')
-#    sessSource.iterables = ('sess', multiLevel.keys() )
-
-
     BAtlas = MakeAtlasNode(atlas_fname_wpath) ## Call function to create node
-
+    
     ########################################################
     # Run ACPC Detect on first T1 Image - Base Image
     ########################################################
@@ -439,7 +307,32 @@ def WorkupT1T2(mountPrefix,ExperimentBaseDirectory, subject_data_file, atlas_fna
 
     # Entries below are of the form:
     baw200.connect( [ (uidSource, BCD, [(('uid', getFirstT1, subjectDatabaseFile) , 'inputVolume')] ), ])
-
+    
+    baw200DataSink=pe.Node(nio.DataSink(),name="baw200DS")
+    baw200DataSink.inputs.base_directory=ExperimentBaseDirectory + "FinalRepository"
+    baw200DataSink.inputs.regexp_substitutions = [
+        ('foo/_uid_(?P=<project>PHD_[0-9][0-9][0-9])_(?P=<subject>[0-9][0-9][0-9][0-9])_(?P=<session>[0-9][0-9][0-9][0-9][0-9])','test/\g<project>/\g<subject>/\g<session>')
+        ]
+    baw200.connect(BCD, 'outputLandmarksInACPCAlignedSpace', baw200DataSink,'foo.@outputLandmarksInACPCAlignedSpace')
+    baw200.connect(BCD, 'outputResampledVolume', baw200DataSink,'foo.@outputResampledVolume')
+    baw200.connect(BCD, 'outputLandmarksInInputSpace', baw200DataSink,'foo.@outputLandmarksInInputSpace')
+    baw200.connect(BCD, 'outputTransform', baw200DataSink,'foo.@outputTransform')
+    baw200.connect(BCD, 'outputMRML', baw200DataSink,'foo.@outputMRML')
+    """
+    subs=r'test/\g<project>/\g<subject>/\g<session>'
+pe.sub(subs,test)
+pat=r'foo/_uid_(?P<project>PHD_[0-9][0-9][0-9])_(?P<subject>[0-9][0-9][0-9][0-9])_(?P<session>[0-9][0-9][0-9][0-9][0-9])'
+pe=re.compile(pat)
+pe.sub(subs,test)
+test
+test='foo/_uid_PHD_024_0003_12345'
+pe.sub(subs,test)
+pat=r'(?P<modulename>[^/]*)/_uid_(?P<project>PHD_[0-9][0-9][0-9])_(?P<subject>[0-9][0-9][0-9][0-9])_(?P<session>[0-9][0-9][0-9][0-9][0-9])'
+subs=r'test/\g<project>/\g<subject>/\g<session>/\g<modulename>'
+pe.sub(subs,test)
+pe=re.compile(pat)
+pe.sub(subs,test)
+    """
     if 'BASIC' in WORKFLOW_COMPONENTS:
         ########################################################
         # Run BLI atlas_to_subject
@@ -529,7 +422,7 @@ def WorkupT1T2(mountPrefix,ExperimentBaseDirectory, subject_data_file, atlas_fna
         baw200.connect( [ (uidSource, makeOutImageList, [(('uid', getT1s, subjectDatabaseFile ), 'T1List')] ), ])
         baw200.connect( [ (uidSource, makeOutImageList, [(('uid', getT2s, subjectDatabaseFile ), 'T2List')] ), ])
 
-        BABC= pe.Node(interface=BRAINSABC(), name="11_BABC")
+        BABC= pe.Node(interface=BRAINSABCext(), name="11_BABC")
         many_cpu_BABC_options_dictionary={'qsub_args': '-S /bin/bash -pe smp1 4-12 -o /dev/null -e /dev/null '+CLUSTER_QUEUE, 'overwrite': True}
         #many_cpu_BABC_options_dictionary={'qsub_args': '-S /bin/bash -pe smp1 4-12 -l mem_free=8000M -o /dev/null -e /dev/null '+CLUSTER_QUEUE, 'overwrite': True}
         BABC.plugin_args=many_cpu_BABC_options_dictionary
@@ -547,7 +440,7 @@ def WorkupT1T2(mountPrefix,ExperimentBaseDirectory, subject_data_file, atlas_fna
         BABC.inputs.outputDirtyLabels = "volume_label_seg.nii.gz"
         BABC.inputs.posteriorTemplate = "POSTERIOR_%s.nii.gz"
         BABC.inputs.atlasToSubjectTransform = "atlas_to_subject.mat"
-        BABC.inputs.implicitOutputs = ['t1_average_BRAINSABC.nii.gz', 't2_average_BRAINSABC.nii.gz']
+        #BABC.inputs.implicitOutputs = ['t1_average_BRAINSABC.nii.gz', 't2_average_BRAINSABC.nii.gz']
         BABC.inputs.resamplerInterpolatorType = InterpolationMode
         BABC.inputs.outputDir = './'
 
@@ -604,7 +497,7 @@ def WorkupT1T2(mountPrefix,ExperimentBaseDirectory, subject_data_file, atlas_fna
                                  function = get_first_T1_and_T2), run_without_submitting=True, name="99_SplitAvgBABC")
         SplitAvgBABC.inputs.T1_count = 1 ## There is only 1 average T1 image.
 
-        baw200.connect(BABC,'implicitOutputs',SplitAvgBABC,'in_files')
+        baw200.connect(BABC,'outputAverageImages',SplitAvgBABC,'in_files')
 
 
         """
@@ -646,112 +539,8 @@ def WorkupT1T2(mountPrefix,ExperimentBaseDirectory, subject_data_file, atlas_fna
         baw200.connect(GADT2,'outputVolume',SGI,'inputVolume2')
 
         if 'SEGMENTATION' in WORKFLOW_COMPONENTS:
-            """
-            Load the BRAINSCut models & probabiity maps.
-            """
-            BCM_outputs = ['phi','rho','theta',
-                           'r_probabilityMaps','l_probabilityMaps',
-                           'models']
-            BCM_Models = pe.Node(interface=nio.DataGrabber(input_names=['structures'],
-                                                           outfields=BCM_outputs),
-                                 name='10_BCM_Models')
-            BCM_Models.inputs.base_directory = atlas_fname_wpath
-            BCM_Models.inputs.template_args['phi'] = [['spatialImages','phi','nii.gz']]
-            BCM_Models.inputs.template_args['rho'] = [['spatialImages','rho','nii.gz']]
-            BCM_Models.inputs.template_args['theta'] = [['spatialImages','theta','nii.gz']]
-            BCM_Models.inputs.template_args['r_probabilityMaps'] = [['structures']]
-            BCM_Models.inputs.template_args['l_probabilityMaps'] = [['structures']]
-            BCM_Models.inputs.template_args['models'] = [['structures']]
-
-            BRAINSCut_structures = ['caudate','thalamus','putamen','hippocampus']
-            #BRAINSCut_structures = ['caudate','thalamus']
-            BCM_Models.iterables = ( 'structures',  BRAINSCut_structures )
-            BCM_Models.inputs.template = '%s/%s.%s'
-            BCM_Models.inputs.field_template = dict(
-                r_probabilityMaps='probabilityMaps/r_%s_ProbabilityMap.nii.gz',
-                l_probabilityMaps='probabilityMaps/l_%s_ProbabilityMap.nii.gz',
-                models='modelFiles/%sModel*',
-                )
-
-            """
-            The xml creation and BRAINSCut need to be their own mini-pipeline that gets
-            executed once for each of the structures in BRAINSCut_structures.  This can be
-            accomplished with a map node and a new pipeline.
-            """
-            """
-            Create xml file for BRAINSCut
-            """
-
-
-            BFitAtlasToSubject = pe.Node(interface=BRAINSFit(),name="30_BFitAtlasToSubject")
-            BFitAtlasToSubject.inputs.costMetric="MMI"
-            BFitAtlasToSubject.inputs.maskProcessingMode="ROI"
-            BFitAtlasToSubject.inputs.numberOfSamples=100000
-            BFitAtlasToSubject.inputs.numberOfIterations=[1500,1500]
-            BFitAtlasToSubject.inputs.numberOfHistogramBins=50
-            BFitAtlasToSubject.inputs.maximumStepLength=0.2
-            BFitAtlasToSubject.inputs.minimumStepLength=[0.005,0.005]
-            BFitAtlasToSubject.inputs.transformType= ["Affine","BSpline"]
-            BFitAtlasToSubject.inputs.maxBSplineDisplacement= 7
-            BFitAtlasToSubject.inputs.maskInferiorCutOffFromCenter=65
-            BFitAtlasToSubject.inputs.splineGridSize=[28,20,24]
-            BFitAtlasToSubject.inputs.outputVolume="Trial_Initializer_Output.nii.gz"
-            BFitAtlasToSubject.inputs.outputTransform="Trial_Initializer_Output.mat"
-            baw200.connect(SplitAvgBABC,'avgBABCT1',BFitAtlasToSubject,'fixedVolume')
-            baw200.connect(BABC,'outputLabels',BFitAtlasToSubject,'fixedBinaryVolume')
-            baw200.connect(BAtlas,'template_t1',BFitAtlasToSubject,'movingVolume')
-            baw200.connect(BAtlas,'template_brain',BFitAtlasToSubject,'movingBinaryVolume')
-            baw200.connect(BLI,'outputTransformFilename',BFitAtlasToSubject,'initialTransform')
-
-            CreateBRAINSCutXML = pe.Node(Function(input_names=['rho','phi','theta',
-                                                                  'model',
-                                                                  'r_probabilityMap',
-                                                                  'l_probabilityMap',
-                                                                  'atlasT1','atlasBrain',
-                                                                  'subjT1','subjT2',
-                                                                  'subjT1GAD','subjT2GAD',
-                                                                  'subjSGGAD','subjBrain',
-                                                                  'atlasToSubj','output_dir'],
-                                                     output_names=['xml_filename','rl_structure_filename_list'],
-                                                     function = create_BRAINSCut_XML),
-                                            overwrite = True,
-                                            name="CreateBRAINSCutXML")
-
-            ## HACK  Makde better directory
-            CreateBRAINSCutXML.inputs.output_dir = "." #os.path.join(baw200.base_dir, "BRAINSCut_output")
-            baw200.connect(BCM_Models,'models',CreateBRAINSCutXML,'model')
-            baw200.connect(BCM_Models,'rho',CreateBRAINSCutXML,'rho')
-            baw200.connect(BCM_Models,'phi',CreateBRAINSCutXML,'phi')
-            baw200.connect(BCM_Models,'theta',CreateBRAINSCutXML,'theta')
-            baw200.connect(BCM_Models,'r_probabilityMaps',CreateBRAINSCutXML,'r_probabilityMap')
-            baw200.connect(BCM_Models,'l_probabilityMaps',CreateBRAINSCutXML,'l_probabilityMap')
-            baw200.connect(BAtlas,'template_t1',CreateBRAINSCutXML,'atlasT1')
-            baw200.connect(BAtlas,'template_brain',CreateBRAINSCutXML,'atlasBrain')
-            baw200.connect(SplitAvgBABC,'avgBABCT1',CreateBRAINSCutXML,'subjT1')
-            baw200.connect(SplitAvgBABC,'avgBABCT2',CreateBRAINSCutXML,'subjT2')
-            baw200.connect(GADT1,'outputVolume',CreateBRAINSCutXML,'subjT1GAD')
-            baw200.connect(GADT2,'outputVolume',CreateBRAINSCutXML,'subjT2GAD')
-            baw200.connect(SGI,'outputFileName',CreateBRAINSCutXML,'subjSGGAD')
-            baw200.connect(BABC,'outputLabels',CreateBRAINSCutXML,'subjBrain')
-            baw200.connect(BFitAtlasToSubject,'outputTransform',CreateBRAINSCutXML,'atlasToSubj')
-            #CreateBRAINSCutXML.inputs.atlasToSubj = "INTERNAL_REGISTER.mat"
-            #baw200.connect(BABC,'atlasToSubjectTransform',CreateBRAINSCutXML,'atlasToSubj')
-
-            """
-            BRAINSCut
-            """
-            BRAINSCUT = pe.Node(interface=BRAINSCut(),name="BRAINSCUT",
-                                   input_names=['netConfiguration'],
-                                   output_names=['implicitOutputs'])
-            BRAINSCUT.inputs.applyModel = True
-            baw200.connect(CreateBRAINSCutXML,'xml_filename',BRAINSCUT,'netConfiguration')
-            baw200.connect(CreateBRAINSCutXML,'rl_structure_filename_list',BRAINSCUT,'implicitOutputs')
-
-            """
-            BRAINSTalairach
-            Not implemented yet.
-            """
-
+            pass
+        
         ## Make deformed Atlas image space
         if 'ANTS' in WORKFLOW_COMPONENTS:
             many_cpu_sge_options_dictionary={'qsub_args': '-S /bin/bash -pe smp1 2-8 -l mem_free=5000M -o /dev/null -e /dev/null '+CLUSTER_QUEUE, 'overwrite': True}
@@ -796,61 +585,22 @@ def WorkupT1T2(mountPrefix,ExperimentBaseDirectory, subject_data_file, atlas_fna
             baw200.connect( SplitAvgBABC,'avgBABCT1', WarpAtlas, 'reference_image')
 
         if 'PERSISTANCE_CHECK' in WORKFLOW_COMPONENTS:
-            print("DOING FILE PERSISTANCE CHECK")
-            PERSISTANCE_CHECK = pe.Node(interface=BRAINSFit(),name="99999_PERSISTANCE_CHECK_PERSISTANCE_CHECK")
-            PERSISTANCE_CHECK.inputs.costMetric="MMI"
-            PERSISTANCE_CHECK.inputs.debugLevel=10
-            PERSISTANCE_CHECK.inputs.maskProcessingMode="ROI"
-            PERSISTANCE_CHECK.inputs.numberOfSamples=1000
-            PERSISTANCE_CHECK.inputs.numberOfIterations=[1500]
-            PERSISTANCE_CHECK.inputs.numberOfHistogramBins=50
-            PERSISTANCE_CHECK.inputs.maximumStepLength=0.2
-            PERSISTANCE_CHECK.inputs.minimumStepLength=[0.005]
-            PERSISTANCE_CHECK.inputs.transformType= ["Affine"]
-            PERSISTANCE_CHECK.inputs.maxBSplineDisplacement= 7
-            PERSISTANCE_CHECK.inputs.maskInferiorCutOffFromCenter=65
-            PERSISTANCE_CHECK.inputs.splineGridSize=[28,20,24]
-            PERSISTANCE_CHECK.inputs.outputVolume="Trial_Initializer_Output.nii.gz"
-            PERSISTANCE_CHECK.inputs.outputTransform="Trial_Initializer_Output.mat"
-            baw200.connect(SplitAvgBABC,'avgBABCT1',PERSISTANCE_CHECK,'fixedVolume')
-            baw200.connect(BABC,'outputLabels',PERSISTANCE_CHECK,'fixedBinaryVolume')
-            baw200.connect(BAtlas,'template_t1',PERSISTANCE_CHECK,'movingVolume')
-            baw200.connect(BAtlas,'template_brain',PERSISTANCE_CHECK,'movingBinaryVolume')
-            baw200.connect(BLI,'outputTransformFilename',PERSISTANCE_CHECK,'initialTransform')
+            from WorkupT1T2PERSISTANCE_CHECK import CreatePERSISTANCE_CHECKWorkflow
+            myLocalPERSISTANCE_CHECKWF= CreatePERSISTANCE_CHECKWorkflow("999999_PersistanceCheckingWorkflow")
+            PERSISTANCE_CHECKWF.connect(SplitAvgBABC,'avgBABCT1',myLocalPERSISTANCE_CHECKWF,'fixedVolume')
+            PERSISTANCE_CHECKWF.connect(BABC,'outputLabels',myLocalPERSISTANCE_CHECKWF,'fixedBinaryVolume')
+            PERSISTANCE_CHECKWF.connect(BAtlas,'template_t1',myLocalPERSISTANCE_CHECKWF,'movingVolume')
+            PERSISTANCE_CHECKWF.connect(BAtlas,'template_brain',myLocalPERSISTANCE_CHECKWF,'movingBinaryVolume')
+            PERSISTANCE_CHECKWF.connect(BLI,'outputTransformFilename',myLocalPERSISTANCE_CHECKWF,'initialTransform')
 
         if 'FREESURFER' in WORKFLOW_COMPONENTS:
-            print("""Run Freesurfer ReconAll at""")
-            fs_autorecon1 = pe.Node(interface=ReconAll(),name="41_FS510")
-            freesurfer_sge_options_dictionary={'qsub_args': '-S /bin/bash -pe smp1 1 -l mem_free=3100M -o /dev/null -e /dev/null '+CLUSTER_QUEUE, 'overwrite': True}
-            fs_autorecon1.plugin_args=freesurfer_sge_options_dictionary
-            fs_autorecon1.inputs.directive = 'autorecon1'
-            fs_autorecon1.inputs.subjects_dir = '.'
-            baw200.connect(uidSource,'uid',fs_autorecon1,'subject_id')
-            baw200.connect(SplitAvgBABC,'avgBABCT1',fs_autorecon1,'T1_files')
-
+            from WorkupT1T2FreeSurfer import CreateFreeSurferWorkflow
+            myLocalFSWF= CreateFreeSurferWorkflow("Level1_FSTest")
+            baw200.connect(uidSource,'uid',myLocalFSWF,'InputSpec.subject_id')
+            baw200.connect(SplitAvgBABC,'avgBABCT1',myLocalFSWF,'InputSpec.T1_files')
             """
-            fs_autorecon2_cp = pe.Node(interface=ReconAll(),name="41_FS510_autorecon2_cp")
-            freesurfer_sge_options_dictionary={'qsub_args': '-S /bin/bash -pe smp1 1 -l mem_free=3100M -o /dev/null -e /dev/null '+CLUSTER_QUEUE, 'overwrite': True}
-            fs_autorecon2_cp.plugin_args=freesurfer_sge_options_dictionary
-            fs_autorecon2_cp.inputs.directive = 'autorecon2-cp'
-            baw200.connect(fs_autorecon1,'subject_id',fs_autorecon2_cp,'subject_id')
-            baw200.connect(fs_autorecon1,'subjects_dir',fs_autorecon2_cp,'subjects_dir')
-            """
-            """
-            fs_autorecon2_wm = pe.Node(interface=ReconAll(),name="41_FS510_autorecon2_wm")
-            freesurfer_sge_options_dictionary={'qsub_args': '-S /bin/bash -pe smp1 1 -l mem_free=3100M -o /dev/null -e /dev/null '+CLUSTER_QUEUE, 'overwrite': True}
-            fs_autorecon2_wm.plugin_args=freesurfer_sge_options_dictionary
-            fs_autorecon2_wm.inputs.directive = 'autorecon2-wm'
-            baw200.connect(fs_autorecon1,'subject_id',fs_autorecon2_wm,'subject_id')
-            baw200.connect(fs_autorecon1,'subjects_dir',fs_autorecon2_wm,'subjects_dir')
-            """
-            """
-            fs_autorecon3 = pe.Node(interface=ReconAll(),name="41_FS510_autorecon3")
-            freesurfer_sge_options_dictionary={'qsub_args': '-S /bin/bash -pe smp1 1 -l mem_free=3100M -o /dev/null -e /dev/null '+CLUSTER_QUEUE, 'overwrite': True}
-            fs_autorecon3.plugin_args=freesurfer_sge_options_dictionary
-            fs_autorecon3.inputs.directive = 'autorecon2-wm'
-            baw200.connect(fs_autorecon1,'subject_id',fs_autorecon3,'subject_id')
-            baw200.connect(fs_autorecon1,'subjects_dir',fs_autorecon3,'subjects_dir')
+            baw200.connect(myLocalFSWF,'OutputSpec.subject_id',...)
+            baw200.connect(myLocalFSWF,'OutputSpec.subject_dir',...)
             """
         else:
             print "Skipping freesurfer"

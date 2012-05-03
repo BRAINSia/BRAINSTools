@@ -1,19 +1,17 @@
 #ifndef BRAINSCutCreateVectorModel_h
 #define BRAINSCutCreateVectorModel_h
 
-#include "BRAINSCutPrimary.h"
+#include "BRAINSCutDataHandler.h"
 #include "FeatureInputVector.h"
 
-class BRAINSCutCreateVector : public BRAINSCutPrimary
+class BRAINSCutCreateVector
 {
 public:
-  BRAINSCutCreateVector(std::string netConfigurationFilename);
+  BRAINSCutCreateVector( BRAINSCutDataHandler dataHandler );
 
-  void SetTrainingDataSetFromNetConfiguration();
+  void SetTrainingDataSet();
 
-  void SetTrainingVectorFilenameFromNetConfiguration();
-
-  void SetNormalizationFromNetConfiguration();
+  void SetTrainingVectorFilename();
 
   void CreateVectors();
 
@@ -22,16 +20,15 @@ public:
   void WriteCurrentVectors( InputVectorMapType& pairedInput, OutputVectorMapType& pairedOutput,
                             std::ofstream& outputStream );
 
-  void WriteHeaderFile( int inputVectorSize, int outputVectorSize, int numberOfInputVector);
+  void WriteHeaderFile( std::string vectorFilename, int inputVectorSize, int outputVectorSize, int numberOfInputVector);
 
 private:
+  BRAINSCutDataHandler                         myDataHandler;
   BRAINSCutConfiguration::TrainDataSetListType trainDataSetList;
-  bool                                         normalization;
-
-  std::string vectorFilename;
 
   int inputVectorSize;
   int outputVectorSize;
+
   OutputVectorMapType GetPairedOutput( std::map<std::string,
                                                 WorkingImagePointer>& deformedROIs, std::string roiName,
                                        std::string subjectROIBinaryFilename, int roiNumber);

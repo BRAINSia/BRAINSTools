@@ -1,7 +1,7 @@
 #ifndef FeatureInputVector_h
 #define FeatureInputVector_h
 
-#include "BRAINSCutPrimary.h"
+#include "BRAINSCutDataHandler.h"
 
 #include <itkLinearInterpolateImageFunction.h>
 #include <itkGradientImageFilter.h>

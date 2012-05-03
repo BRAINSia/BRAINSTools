@@ -3,12 +3,12 @@
 #include "StringValue.h"
 #include "IntValue.h"
 #include "FloatValue.h"
-#include "XMLElementParser.h"
+#include "ElementParser.h"
 
-class SVMParams : public XMLElementParser
+class SVMParams : public ElementParser
 {
 public:
-  typedef XMLElementParser SuperClass;
+  typedef ElementParser SuperClass;
   virtual int PrintSelf(std::ostream & os, int indent) const
   {
     indent += SuperClass::PrintSelf(os, indent);
@@ -16,7 +16,7 @@ public:
     return indent + 2;
   }
 
-  SVMParams() : XMLElementParser("AnnParams")
+  SVMParams() : ElementParser("AnnParams")
   {
     this->Add(new IntValue("MaximumVectorsPerEpoch",
                            2000), "MaximumVectorsPerEpoch");

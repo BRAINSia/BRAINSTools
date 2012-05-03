@@ -1,12 +1,12 @@
 #ifndef SpatialLocationType_h
 #define SpatialLocationType_h
 // #include "StringValue.h"
-#include "XMLElementParser.h"
+#include "ElementParser.h"
 
-class SpatialLocationType : public XMLElementParser
+class SpatialLocationType : public ElementParser
 {
 public:
-  typedef XMLElementParser SuperClass;
+  typedef ElementParser SuperClass;
   virtual int PrintSelf(std::ostream & os, int indent) const
   {
     indent += SuperClass::PrintSelf(os, indent);
@@ -14,17 +14,17 @@ public:
     return indent + 2;
   }
 
-  SpatialLocationType() : XMLElementParser("SpatialLocation")
+  SpatialLocationType() : ElementParser("SpatialLocation")
   {
     this->Add(new StringValue("Type", ""), "Type");
     this->Add(new StringValue("Filename", ""), "Filename");
   }
 };
 
-class SpatialLocationList : public XMLElementParser
+class SpatialLocationList : public ElementParser
 {
 public:
-  SpatialLocationList() : XMLElementParser("SpatialLocationList")
+  SpatialLocationList() : ElementParser("SpatialLocationList")
   {
   }
 };

@@ -3,18 +3,16 @@
 #include "itkBRAINSROIAutoImageFilter.h"
 #include "BRAINSFitHelper.h"
 
+// ----------------------------------------------------- //
 BRAINSCutGenerateRegistrations
-::BRAINSCutGenerateRegistrations(  std::string netConfigurationFilename)
-  : BRAINSCutPrimary( netConfigurationFilename )
+::BRAINSCutGenerateRegistrations(  BRAINSCutDataHandler& dataHandler )
 {
-  SetAtlasDataSet();
-  std::cout << __LINE__ << "::" << __FILE__ << std::endl;
-  SetRegistrationParametersFromNetConfiguration();
-  std::cout << __LINE__ << "::" << __FILE__ << std::endl;
-  SetAtlasFilename();
-  std::cout << __LINE__ << "::" << __FILE__ << std::endl;
+  myDataHandler =  dataHandler;
+  myDataHandler.SetRegistrationParameters();
+  myDataHandler.SetAtlasDataSet();
 }
 
+// ----------------------------------------------------- //
 void
 BRAINSCutGenerateRegistrations
 ::SetAtlasToSubjectRegistrationOn( bool onOff)
@@ -22,21 +20,23 @@ BRAINSCutGenerateRegistrations
   atlasToSubjectRegistraionOn = onOff;
 }
 
+// ----------------------------------------------------- //
 void
 BRAINSCutGenerateRegistrations
-::SetSubjectDataSet( bool applyDataSet )
+::SetDataSet( bool applyDataSet )
 {
-  /** if applyDataSEt==false, then use training dataset */
+  // if applyDataSEt==false, then use training dataset
   if( applyDataSet )
     {
-    subjectDataSets = BRAINSCutNetConfiguration.GetApplyDataSets();
+    subjectDataSets = myDataHandler.GetApplyDataSet();
     }
   else
     {
-    subjectDataSets = BRAINSCutNetConfiguration.GetTrainDataSets();
+    subjectDataSets = myDataHandler.GetTrainDataSet();
     }
 }
 
+// ----------------------------------------------------- //
 void
 BRAINSCutGenerateRegistrations
 ::GenerateRegistrations()
@@ -45,23 +45,22 @@ BRAINSCutGenerateRegistrations
        subjectIt != subjectDataSets.end();
        ++subjectIt )
     {
-    const std::string subjectFilename( (*subjectIt)->GetImageFilenameByType(registrationImageTypeToUse) );
+    const std::string subjectFilename( (*subjectIt)->GetImageFilenameByType(
+                                         myDataHandler.GetRegistrationImageTypeToUse() ) );
 
-    const RegistrationType *subjectRegistration = (*subjectIt)->GetRegistrationWithID(registrationID);
-
+    const RegistrationType *subjectRegistration =
+      (*subjectIt)->GetRegistrationWithID( myDataHandler.GetRegistrationID() );
     const std::string SubjectToAtlasRegistrationFilename
       ( subjectRegistration->GetAttribute<StringValue>("SubjToAtlasRegistrationFilename") );
     const std::string AtlasToSubjRegistrationFilename
       ( subjectRegistration->GetAttribute<StringValue>("AtlasToSubjRegistrationFilename") );
     const std::string SubjectBinaryFilename
       ( (*subjectIt)->GetMaskFilenameByType( "RegistrationROI" ) );
-    std::cout << "RegistrationROI::" << SubjectBinaryFilename << std::endl;
-    std::cout << "atlasFIlename:: " << atlasBinaryFilename << std::endl;
 
     if( atlasToSubjectRegistraionOn &&
         (!itksys::SystemTools::FileExists( AtlasToSubjRegistrationFilename.c_str() ) ) )
       {
-      /** create directories */
+      // create directories
       std::string directory = itksys::SystemTools::GetParentDirectory(
           SubjectToAtlasRegistrationFilename.c_str() );
 
@@ -69,17 +68,17 @@ BRAINSCutGenerateRegistrations
         {
         itksys::SystemTools::MakeDirectory( directory.c_str() );
         }
-      CreateTransformFile(  atlasFilename,                      // moving image
-                            subjectFilename,                    // fixed image
-                            atlasBinaryFilename,                // moving ROI
-                            SubjectBinaryFilename,              // fixed ROI
+      CreateTransformFile(  myDataHandler.GetAtlasFilename(),         // moving image
+                            subjectFilename,                          // fixed image
+                            myDataHandler.GetAtlasBinaryFilename(),   // moving ROI
+                            SubjectBinaryFilename,                    // fixed ROI
                             AtlasToSubjRegistrationFilename,
                             false );
       }
     else if( (!atlasToSubjectRegistraionOn) &&
              (!itksys::SystemTools::FileExists( SubjectToAtlasRegistrationFilename.c_str() ) ) )
       {
-      /** create directories */
+      // create directories
       std::string directory = itksys::SystemTools::GetParentDirectory(
           SubjectToAtlasRegistrationFilename.c_str() );
 
@@ -87,10 +86,10 @@ BRAINSCutGenerateRegistrations
         {
         itksys::SystemTools::MakeDirectory( directory.c_str() );
         }
-      CreateTransformFile(  subjectFilename,                    // moving image
-                            atlasFilename,                      // fixed image
-                            SubjectBinaryFilename,              // moving ROI
-                            atlasBinaryFilename,                // fixed ROI
+      CreateTransformFile(  subjectFilename,                        // moving image
+                            myDataHandler.GetAtlasFilename(),       // fixed image
+                            SubjectBinaryFilename,                  // moving ROI
+                            myDataHandler.GetAtlasBinaryFilename(), // fixed ROI
                             SubjectToAtlasRegistrationFilename,
                             false );
       }
@@ -99,19 +98,13 @@ BRAINSCutGenerateRegistrations
 
 void
 BRAINSCutGenerateRegistrations
-::CreateTransformFile(const std::string & MovingImageFilename,
-                      const std::string & FixedImageFilename,
-                      const std::string & MovingBinaryImageFilename,
-                      const std::string & FixedBinaryImageFilename,
-                      const std::string & OutputRegName,
+::CreateTransformFile(const std::string MovingImageFilename,
+                      const std::string FixedImageFilename,
+                      const std::string MovingBinaryImageFilename,
+                      const std::string FixedBinaryImageFilename,
+                      const std::string OutputRegName,
                       bool verbose)
 {
-  std::cout << "* CreateTransformFile" << std::endl;
-  std::cout << "MovingBinaryImageFilename :: "
-            << MovingBinaryImageFilename << std::endl
-            << "FixedBinaryImageFilename :: "
-            << FixedBinaryImageFilename  << std::endl;
-
   // Create Helper Class of BRAINSFit for BSpline Registraion.
   // CAUTION!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   // Check if input images are all 'float'
@@ -198,7 +191,7 @@ BRAINSCutGenerateRegistrations
     ROIAutoFilterType::Pointer fixedVolumeROIFilter = ROIAutoFilterType::New();
 
     fixedVolumeROIFilter->SetInput( fixedVolume );
-    fixedVolumeROIFilter->SetDilateSize(roiAutoDilateSize);
+    fixedVolumeROIFilter->SetDilateSize(myDataHandler.GetROIAutoDilateSize() );
     fixedVolumeROIFilter->Update();
 
     BSplineRegistrationHelper->SetFixedBinaryVolume(
@@ -232,7 +225,7 @@ BRAINSCutGenerateRegistrations
     ROIAutoFilterType::Pointer movingVolumeROIFilter = ROIAutoFilterType::New();
 
     movingVolumeROIFilter->SetInput( movingVolume );
-    movingVolumeROIFilter->SetDilateSize(roiAutoDilateSize);
+    movingVolumeROIFilter->SetDilateSize(myDataHandler.GetROIAutoDilateSize() );
     movingVolumeROIFilter->Update();
 
     BSplineRegistrationHelper->SetMovingBinaryVolume(

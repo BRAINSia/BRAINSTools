@@ -8,12 +8,12 @@
 #include "StringValue.h"
 #include "IntValue.h"
 #include "FloatValue.h"
-#include "XMLElementParser.h"
+#include "ElementParser.h"
 
-class ANNParams : public XMLElementParser
+class ANNParams : public ElementParser
 {
 public:
-  typedef XMLElementParser SuperClass;
+  typedef ElementParser SuperClass;
   virtual int PrintSelf(std::ostream & os, int indent) const
   {
     indent += SuperClass::PrintSelf(os, indent);
@@ -21,7 +21,7 @@ public:
     return indent + 2;
   }
 
-  ANNParams() : XMLElementParser("ANNParams")
+  ANNParams() : ElementParser("ANNParams")
   {
     // this->Add(new IntValue("VectorSize", "0"), "VectorSize");
     this->Add(new IntValue("Iterations", "20"), "Iterations");

@@ -1,5 +1,5 @@
 #include "ShuffleVectors.h"
-#include "BRAINSCutPrimary.h"
+#include "BRAINSCutDataHandler.h"
 
 #define MAX_LINE_SIZE 1000
 

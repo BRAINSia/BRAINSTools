@@ -7,10 +7,10 @@
 #include <list>
 #include <SpatialLocationType.h>
 
-class BRAINSCutConfiguration : public XMLElementParser
+class BRAINSCutConfiguration : public ElementParser
 {
 public:
-  typedef XMLElementParser SuperClass;
+  typedef ElementParser SuperClass;
   BRAINSCutConfiguration();
 
   virtual int PrintSelf(std::ostream & os, int indent) const
@@ -31,6 +31,16 @@ public:
   ApplyDataSetListType GetApplyDataSets() const;
 
   const DataSet::StringVectorType GetImageTypes() const;
+
+  // Set/Get Functions
+  //
+  void SetImageTypeToUse( std::string imageTypeToUse );
+
+  std::string GetImageTypeToUse();
+
+  void SetRegistrationID( std::string registrationID );
+
+  std::string GetRegistrationID();
 
 private:
   std::string ImageTypeToUse;

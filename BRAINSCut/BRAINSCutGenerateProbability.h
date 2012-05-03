@@ -1,54 +1,43 @@
 #ifndef BRAINSCutGenerateProbability_h
 #define BRAINSCutGenerateProbability_h
 
-#include "BRAINSCutPrimary.h"
+#include "BRAINSCutDataHandler.h"
 #include "BRAINSCutConfiguration.h"
 #include <itkIO.h>
 
-class BRAINSCutGenerateProbability : private BRAINSCutPrimary
+class BRAINSCutGenerateProbability
 {
 public:
-  BRAINSCutGenerateProbability(std::string netConfigurationFilename);
-
-  BRAINSCutConfiguration * GetNetConfiguration();
-
-  void SetNetConfiguration( BRAINSCutConfiguration * netConfiguration);
-
-  void SetNetConfigurationFilename(std::string filename);
-
-  void SetNetConfiguration();
+  BRAINSCutGenerateProbability( BRAINSCutDataHandler dataHandler);
 
   void SetTrainingDataSetsList();
-
-  std::string GetNetConfigurationFilename();
 
   void GenerateProbabilityMaps();
 
 private:
+  BRAINSCutDataHandler myDataHandler;
 
   /** DataSets */
   std::list<DataSet *> trainingDataSetList;
 
   void GenerateSymmetricalSphericalCoordinateImage();
 
-  void CreateNewFloatImageFromTemplate(WorkingImageType::Pointer & PointerToOutputImage,
-                                       const WorkingImageType::Pointer & PreInitializedImage);
+  void CreateNewFloatImageFromTemplate( WorkingImageType::Pointer & PointerToOutputImage,
+                                        const WorkingImageType::Pointer & PreInitializedImage);
 
-  void XYZToSpherical(const itk::Point<float, 3> & LocationWithOriginAtCenterOfImage, float & rho, float & phi,
-                      float & theta);
+  void XYZToSpherical( const itk::Point<float, 3> & LocationWithOriginAtCenterOfImage, float & rho, float & phi,
+                       float & theta);
 
   template <class WarperImageType>
   typename WarperImageType::Pointer ImageWarper(  const std::string & RegistrationFilename,
                                                   const std::string & ImageName,
                                                   typename WarperImageType::Pointer ReferenceImage  )
   {
-    std::cout << __LINE__ << "::" << __FILE__ << std::endl;
     const bool useTransform = ( RegistrationFilename.find(".mat") != std::string::npos );
 
     typename WarperImageType::Pointer PrincipalOperandImage; // One name for the
                                                              // image to be
                                                              // warped.
-    std::cout << __LINE__ << "::" << __FILE__ << std::endl;
       {
       typedef typename itk::ImageFileReader<WarperImageType> ReaderType;
       typename ReaderType::Pointer imageReader = ReaderType::New();
@@ -58,7 +47,6 @@ private:
       PrincipalOperandImage = imageReader->GetOutput();
       }
 
-    std::cout << __LINE__ << "::" << __FILE__ << std::endl;
     typedef float                                        VectorComponentType;
     typedef typename itk::Vector<VectorComponentType, 3> VectorPixelType;
     typedef typename itk::Image<VectorPixelType,  3>     DisplacementFieldType;
@@ -69,7 +57,6 @@ private:
     typename DisplacementFieldType::Pointer DisplacementField;
     // typename WarperImageType::Pointer ReferenceImage;
     // if there is no *mat file.
-    std::cout << __LINE__ << "::" << __FILE__ << std::endl;
     if( !useTransform )  // that is, it's a warp by deformation field:
       {
       typedef typename itk::ImageFileReader<DisplacementFieldType> DefFieldReaderType;
@@ -95,7 +82,6 @@ private:
                 << "!!!!!!!!!!!! CAUTION !!!!!!!!!!!!!!!!!!!" << std::endl;
       genericTransform = itk::ReadTransformFromDisk(RegistrationFilename);
       }
-    std::cout << __LINE__ << "::" << __FILE__ << std::endl;
     const double defaultValue = 0;
     const typename std::string interpolationMode = "Linear";
     const typename std::string pixelType = "short";
@@ -110,7 +96,6 @@ private:
         interpolationMode,
         pixelType == "binary");
 
-    std::cout << __LINE__ << "::" << __FILE__ << std::endl;
     return TransformedImage;
   }
 };

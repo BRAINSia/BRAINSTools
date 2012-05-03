@@ -1,6 +1,6 @@
 #ifndef BooleanValue_h
 #define BooleanValue_h
-#include "XMLElementContainer.h"
+#include "ElementContainer.h"
 #include <iostream>
 
 class BooleanValue :

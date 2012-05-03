@@ -1,6 +1,6 @@
 #ifndef FileSystemDescriptor_H
 #define FileSystemDescriptor_H
-#include "XMLElementContainer.h"
+#include "ElementContainer.h"
 #include <itksys/SystemTools.hxx>
 #include <fstream>
 template <typename TOutputType>

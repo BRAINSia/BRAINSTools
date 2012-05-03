@@ -2,12 +2,12 @@
 #define ProbabilityMapParser_h
 // #include "StringValue.h"
 // #include "FloatValue.h"
-#include "XMLElementParser.h"
+#include "ElementParser.h"
 
-class ProbabilityMapParser : public XMLElementParser
+class ProbabilityMapParser : public ElementParser
 {
 public:
-  typedef XMLElementParser SuperClass;
+  typedef ElementParser SuperClass;
   virtual int PrintSelf(std::ostream & os, int indent) const
   {
     indent += SuperClass::PrintSelf(os, indent);
@@ -15,7 +15,7 @@ public:
     return indent + 2;
   }
 
-  ProbabilityMapParser() : XMLElementParser("ProbabilityMapParser")
+  ProbabilityMapParser() : ElementParser("ProbabilityMapParser")
   {
     this->Add(new StringValue("StructureID", ""), "StructureID");
     this->Add(new StringValue("GenerateVector", ""), "GenerateVector");
@@ -24,10 +24,10 @@ public:
   }
 };
 
-class ProbabilityMapList : public XMLElementParser
+class ProbabilityMapList : public ElementParser
 {
 public:
-  ProbabilityMapList() : XMLElementParser("ProbabilityMapList")
+  ProbabilityMapList() : ElementParser("ProbabilityMapList")
   {
   }
 };

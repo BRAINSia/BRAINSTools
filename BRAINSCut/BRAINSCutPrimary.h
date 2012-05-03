@@ -2,10 +2,16 @@
 #define BRAINSCutPrimary_h
 
 #include "BRAINSCutConfiguration.h"
-#include "NeuralParams.h"
+
+#include "TrainingVectorConfigurationType.h"
+#include "TrainingPrameters.h"
+#include "ApplyModel.h"
 #include "itkIO.h"
 
 #include "GenericTransformImage.h"
+
+#include <itkSmoothingRecursiveGaussianImageFilter.h>
+
 /** include opencv library */
 #include "ml.h"
 #include "cxcore.h"
@@ -66,116 +72,88 @@ typedef std::map<int, OutputVectorType> OutputVectorMapType;
 typedef std::map<int, scalarType>       PredictValueMapType;
 
 const WorkingImageType::IndexType ConstantHashIndexSize = {{255, 255, 255}};
-/*
- * BRAINSCut Primary Class Starts here
- */
 
-class BRAINSCutPrimary
+std::string GetAtlasToSubjectRegistrationFilename( DataSet& subject);
+
+std::string GetSubjectToAtlasRegistrationFilename( DataSet& subject);
+
+//
+// read/warp image
+//
+static
+WorkingImagePointer
+SmoothImage( const WorkingImagePointer image, const float GaussianValue)
 {
-public:
-  BRAINSCutPrimary()
-  {
-  };
-  BRAINSCutPrimary(std::string netConfigurationFilename);
+  if( GaussianValue < 0 + FLOAT_TOLERANCE )
+    {
+    std::cout << "Gaussian value is less than tolerance. "
+              << "No smoothing occurs at this time"
+              << std::endl;
+    return image;
+    }
+  /*std::cout<<"Smooth Image with Gaussian value of :: "
+           << GaussianValue
+           <<std::endl;*/
+  typedef itk::SmoothingRecursiveGaussianImageFilter<WorkingImageType, WorkingImageType> SmoothingFilterType;
+  SmoothingFilterType::Pointer smoothingFilter = SmoothingFilterType::New();
 
-  void SetNetConfiguration();
+  smoothingFilter->SetInput( image);
+  smoothingFilter->SetSigma( GaussianValue );
 
-  BRAINSCutConfiguration * GetNetConfiguration();
+  smoothingFilter->Update();
 
-  void SetNetConfigurationFilename(const std::string filename);
+  return smoothingFilter->GetOutput();
+}
 
-  std::string GetNetConfigurationFilename();
+static
+WorkingImagePointer
+ReadImageByFilename( const std::string  filename )
+{
+  WorkingImagePointer readInImage;
 
-  /* Atlas(template) related */
-  void SetAtlasDataSet();
+  ReadInImagePointer inputImage = itkUtil::ReadImage<ReadInImageType>(filename.c_str() );
 
-  void SetAtlasFilename();
+  readInImage = itkUtil::ScaleAndCast<ReadInImageType,
+                                      WorkingImageType>(inputImage,
+                                                        ZeroPercentValue,
+                                                        HundredPercentValue);
+  return readInImage;
+}
 
-  void SetAtlasImage();
+/* inline functions */
 
-  void SetRegionsOfInterestFromNetConfiguration();
+static
+inline
+DisplacementFieldType::Pointer
+GetDeformationField( std::string filename)
+{
+  const bool useTransform( filename.find(".mat") != std::string::npos );
 
-  void SetRegistrationParametersFromNetConfiguration();
+  if( useTransform )
+    {
+    return NULL;
+    }
+  typedef itk::ImageFileReader<DisplacementFieldType> DeformationReaderType;
+  DeformationReaderType::Pointer deformationReader = DeformationReaderType::New();
+  deformationReader->SetFileName( filename );
+  deformationReader->Update();
 
-  void SetRhoPhiThetaFromNetConfiguration();
+  return deformationReader->GetOutput();
+}
 
-  void SetANNModelConfiguration();
+static
+inline
+GenericTransformType::Pointer
+GetGenericTransform( std::string filename)
+{
+  const bool useDeformation( filename.find(".mat") == std::string::npos );
 
-  void SetGradientSizeFromNetConfiguration();
+  if( useDeformation )
+    {
+    std::cout << "return null deformation" << std::endl;
+    return NULL;
+    }
+  return itk::ReadTransformFromDisk( filename );
+}
 
-  /** Model file name **/
-  std::string GetModelBaseName();
-
-  void SetANNModelFilenameAtIteration( const int iteration);
-
-  std::string GetANNModelFilenameAtIteration( const int iteration);
-
-  std::string GetRFModelFilename( int depth, int NTrees);
-
-  WorkingImagePointer ReadImageByFilename( const std::string  filename );
-
-  WorkingImagePointer WarpImageByFilenames( const std::string & deformationFilename, const std::string & inputFilename,
-                                            const std::string & referenceFilename );
-
-  /** Get Function */
-  DataSet::StringVectorType GetROIIDsInOrder();
-
-  void   GetDeformedSpatialLocationImages( std::map<std::string, WorkingImagePointer>& warpedSpatialLocationImages,
-                                           DataSet& subject );
-
-  void GetImagesOfSubjectInOrder( WorkingImageVectorType& subjectImageList, DataSet& subject);
-
-  void GetDeformedROIs( std::map<std::string, WorkingImagePointer>& deformedROIs, DataSet& subject );
-
-  bool GetNormalizationFromNetConfiguration();
-
-  /* Displacement Functions */
-  DisplacementFieldType::Pointer GetDeformationField( std::string filename);
-
-  GenericTransformType::Pointer GetGenericTransform( std::string filename);
-
-  std::string GetAtlasToSubjectRegistrationFilename( DataSet& subject);
-
-  std::string GetSubjectToAtlasRegistrationFilename( DataSet& subject);
-
-  /* common functions */
-  WorkingImagePointer SmoothImage( const WorkingImagePointer image, const float GaussianValue);
-
-protected:
-
-  BRAINSCutConfiguration BRAINSCutNetConfiguration;
-  NeuralParams *         annModelConfiguration;
-
-  /** atlas data set*/
-  DataSet *           atlasDataSet;
-  std::string         atlasFilename;
-  std::string         atlasBinaryFilename;
-  WorkingImagePointer atlasImage;
-
-  /**ProbabilityMaps*/
-  ProbabilityMapList *      roiDataList;
-  DataSet::StringVectorType roiIDsInOrder;;
-  unsigned int              roiCount;
-
-  /** registration data set */
-  RegistrationConfigurationParser * registrationParser;
-  std::string                       registrationImageTypeToUse;
-  std::string                       registrationID;
-  int                               roiAutoDilateSize;
-
-  /** Spatial Coordinate System Images*/
-  WorkingImagePointer rho;
-  WorkingImagePointer phi;
-  WorkingImagePointer theta;
-
-  unsigned int gradientSize;
-
-  /** model name **/
-  std::string ANNModelFilename;
-  std::string RandomForestModelFilename;
-private:
-  WorkingImageType GetDeformedImage( WorkingImageType image);
-
-  std::string NetConfigurationFilename;
-};
 #endif

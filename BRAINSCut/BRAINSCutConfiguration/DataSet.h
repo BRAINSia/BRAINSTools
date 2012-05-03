@@ -3,17 +3,17 @@
 // #include "StringValue.h"
 #include "ImageDescription.h"
 #include "MaskType.h"
-#include "XMLElementParser.h"
+#include "ElementParser.h"
 #include "RegistrationType.h"
 #include "SpatialLocationType.h"
 #include <vector>
 //
-// subclass XMLElementParser, overriding the
+// subclass ElementParser, overriding the
 // constructor to initialize the model structure.
-class DataSet : public XMLElementParser
+class DataSet : public ElementParser
 {
 public:
-  typedef XMLElementParser SuperClass;
+  typedef ElementParser SuperClass;
 
   virtual int PrintSelf(std::ostream & os, int indent) const
   {
@@ -24,7 +24,7 @@ public:
 
   typedef SuperClass::StringVectorType StringVectorType;
 
-  DataSet() : XMLElementParser("DataSet")
+  DataSet() : ElementParser("DataSet")
   {
     this->Add(new StringValue("Name", ""), "Name");
     this->Add(new StringValue("Type", ""), "Type");
@@ -131,10 +131,10 @@ public:
   }
 };
 
-class DataSetList : public XMLElementParser
+class DataSetList : public ElementParser
 {
 public:
-  DataSetList() : XMLElementParser("DataSetList")
+  DataSetList() : ElementParser("DataSetList")
   {
   }
 };

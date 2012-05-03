@@ -16,7 +16,7 @@ set(BRAINSCutCOMMONLIB_SRCS
   XMLParser.cxx
   XMLConfigurationFileParser.cxx
   ShuffleVectors.cxx
-  BRAINSCutPrimary.cxx
+  BRAINSCutDataHandler.cxx
   BRAINSCutGenerateRegistrations.cxx
   BRAINSCutGenerateProbability.cxx
   BRAINSCutCreateVector.cxx
@@ -28,7 +28,7 @@ set(BRAINSCutCOMMONLIB_SRCS
   )
 
 #TODO: DELETE CreateVectors.cxx
-#TODO:  Rename BRAINSCutPrimary to something more meaningful
+#TODO:  Rename BRAINSCutDataHandler to something more meaningful
 
 ## Build BRAINSCutCOMMONLIB library
 ##

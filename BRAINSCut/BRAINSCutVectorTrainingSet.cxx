@@ -8,9 +8,9 @@
 
 // ---------------------------//
 BRAINSCutVectorTrainingSet
-::BRAINSCutVectorTrainingSet( const std::string vectorFilenamePrefix )
-  : trainingVectorFilename( vectorFilenamePrefix ),
-  trainingHeaderFilename( vectorFilenamePrefix ),
+::BRAINSCutVectorTrainingSet( const std::string vectorFilename)
+  : trainingVectorFilename( vectorFilename),
+  trainingHeaderFilename( vectorFilename + ".hdr" ),
   totalVectorSize(0),
   inputVectorSize(0),
   outputVectorSize(0),
@@ -21,8 +21,8 @@ BRAINSCutVectorTrainingSet
   currentTrainingSubSet(NULL)
 
 {
-  trainingVectorFilename += "ANN";
-  trainingHeaderFilename += "ANN.hdr";
+  // trainingVectorFilename = vectorFilename;
+  // trainingHeaderFilename += ".hdr";
 }
 
 // ---------------------------//
@@ -194,8 +194,6 @@ inline
 void
 GetFileStreamToRead( std::string filename, std::ifstream& fileStreamToRead)
 {
-  std::cout << " Get File Stream for " << filename << std::endl;
-
   if( !itksys::SystemTools::FileExists( filename.c_str() ) )
     {
     std::string msg( "Vector File has not been created. " + filename );

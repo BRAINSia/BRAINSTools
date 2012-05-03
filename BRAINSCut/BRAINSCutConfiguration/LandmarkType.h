@@ -1,12 +1,12 @@
 #if 0
 #ifndef LandmarkType_h
 #define LandmarkType_h
-#include "XMLElementParser.h"
+#include "ElementParser.h"
 #include "StringValue.h"
-class LandmarkType : public XMLElementParser
+class LandmarkType : public ElementParser
 {
 public:
-  typedef XMLElementParser SuperClass;
+  typedef ElementParser SuperClass;
   virtual int PrintSelf(std::ostream & os, int indent) const
   {
     indent += SuperClass::PrintSelf(os, indent);
@@ -14,17 +14,17 @@ public:
     return indent + 2;
   }
 
-  LandmarkType() : XMLElementParser("Landmark")
+  LandmarkType() : ElementParser("Landmark")
   {
     this->Add(new StringValue("Type", ""), "Type");
     this->Add(new StringValue("Filename", ""), "Filename");
   }
 };
 
-class LandmarkList : public XMLElementParser
+class LandmarkList : public ElementParser
 {
 public:
-  LandmarkList() : XMLElementParser("LandmarkList")
+  LandmarkList() : ElementParser("LandmarkList")
   {
   }
 };

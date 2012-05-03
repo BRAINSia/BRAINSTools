@@ -745,7 +745,7 @@ int main(int argc, char * *argv)
       }
     }
 
-  std::vector<bool> duplicatesFound;
+  std::vector<bool> candidateDuplicatesList;
     {
     typedef AtlasRegistrationMethod<float, float> AtlasRegType;
     AtlasRegType::Pointer atlasreg = AtlasRegType::New();
@@ -1159,21 +1159,27 @@ int main(int argc, char * *argv)
           // positive definite, and this
           // occurs when two or more of the images are linearly dependant (i.e.
           // nearly the same image).
-          duplicatesFound = FindDuplicateImages(intraSubjectRegisteredImageList);
-          if( duplicatesFound.size() > 0 )
+          candidateDuplicatesList = FindDuplicateImages(intraSubjectRegisteredImageList);
+          if( candidateDuplicatesList.size() > 0 )
             {
-            for( size_t q = 0; q < duplicatesFound.size(); q++ )
+            unsigned int actualDuplicates = 0;
+            for( size_t q = 0; q < candidateDuplicatesList.size(); q++ )
               {
-              if( duplicatesFound[q] == true )
+              if( candidateDuplicatesList[q] == true )
                 {
                 muLogMacro(<< "WARNING: Found images that were very highly correlated." << std::endl );
                 muLogMacro(
                   << "WARNING: The image " << inputVolumes[q] << " must be removed from further processing"
                   << std::endl );
                 muLogMacro(<< "WARNING:" << std::endl );
+                ++actualDuplicates;
                 }
               }
-            return EXIT_FAILURE;
+            if( actualDuplicates > 0 )
+              {
+              muLogMacro(<< "EXITING because " << actualDuplicates << " duplicates found." << std::endl );
+              return EXIT_FAILURE;
+              }
             }
           }
         } // EndOriginalImagesList
@@ -1251,11 +1257,11 @@ int main(int argc, char * *argv)
     {
     // Now based on the duplicates found, update input lists to only use unique
     // images
-    intraSubjectRegisteredImageList = RemoveDuplicates(intraSubjectRegisteredImageList, duplicatesFound);
-    intraSubjectRegisteredRawImageList = RemoveDuplicates(intraSubjectRegisteredRawImageList, duplicatesFound);
-    inputVolumes = RemoveDuplicates(inputVolumes, duplicatesFound);
-    outputVolumes = RemoveDuplicates(outputVolumes, duplicatesFound);
-    inputVolumeTypes = RemoveDuplicates(inputVolumeTypes, duplicatesFound);
+    intraSubjectRegisteredImageList = RemoveDuplicates(intraSubjectRegisteredImageList, candidateDuplicatesList);
+    intraSubjectRegisteredRawImageList = RemoveDuplicates(intraSubjectRegisteredRawImageList, candidateDuplicatesList);
+    inputVolumes = RemoveDuplicates(inputVolumes, candidateDuplicatesList);
+    outputVolumes = RemoveDuplicates(outputVolumes, candidateDuplicatesList);
+    inputVolumeTypes = RemoveDuplicates(inputVolumeTypes, candidateDuplicatesList);
     }
 
   muLogMacro(<< "Rescale intensity of filtered images...\n");

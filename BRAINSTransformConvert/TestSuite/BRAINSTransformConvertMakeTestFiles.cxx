@@ -115,31 +115,6 @@ int main(int argc, char * *argv)
   affineName += "/AffineTransform.txt";
   itk::WriteTransformToDisk(affineTransform, affineName);
 
-  BSplineTransformType::Pointer bsplineTransform =
-    CreateTransform<BSplineTransformType>();
-
-  translation[0] = -1.0; translation[1] = 0.6; translation[2] = -0.5;
-  affineTransform->Translate(translation);
-
-  center[0] = 0.77; center[1] = -0.8; center[2] = 0.03;
-  affineTransform->SetCenter(center);
-
-  axis[0] = 0.0; axis[1] = -1.0; axis[2] = 0.0;
-  affineTransform->Rotate3D(axis, 0.45);
-
-  scale[0] = .8; scale[1] = .5; scale[2] = 0.3;
-  affineTransform->Scale(scale);
-
-  affineTransform->Shear(0, 1, 0.3);
-  affineTransform->Shear(1, 0, 0.4);
-  affineTransform->Shear(1, 2, 0.5);
-
-  bsplineTransform->SetBulkTransform(affineTransform.GetPointer() );
-
-  std::string bsplineName(argv[1]);
-  bsplineName += "/BSplineDeformableTransform.txt";
-  itk::WriteTransformToDisk(bsplineTransform, bsplineName);
-
   typedef itk::Image<signed short, 3> ImageType;
   ImageType::RegionType            region;
   ImageType::RegionType::SizeType  size;
@@ -169,5 +144,47 @@ int main(int argc, char * *argv)
   std::string testImageName(argv[1]);
   testImageName += "/TransformConvertTestImage.nii.gz";
   itkUtil::WriteImage<ImageType>(testImage, testImageName);
+
+  BSplineTransformType::Pointer bsplineTransform =
+    CreateTransform<BSplineTransformType>();
+
+  translation[0] = -1.0; translation[1] = 0.6; translation[2] = -0.5;
+  affineTransform->Translate(translation);
+
+  center[0] = 0.77; center[1] = -0.8; center[2] = 0.03;
+  affineTransform->SetCenter(center);
+
+  axis[0] = 0.0; axis[1] = -1.0; axis[2] = 0.0;
+  affineTransform->Rotate3D(axis, 0.45);
+
+  scale[0] = .8; scale[1] = .5; scale[2] = 0.3;
+  affineTransform->Scale(scale);
+
+  affineTransform->Shear(0, 1, 0.3);
+  affineTransform->Shear(1, 0, 0.4);
+  affineTransform->Shear(1, 2, 0.5);
+
+  bsplineTransform->SetBulkTransform(affineTransform.GetPointer() );
+
+  BSplineTransformType::PhysicalDimensionsType fixedPhysicalDimensions;
+  BSplineTransformType::MeshSizeType           meshSize;
+  for( unsigned int i = 0; i < 3; i++ )
+    {
+    fixedPhysicalDimensions[i] = spacing[i]
+      * static_cast<double>(region.GetSize()[i] - 1);
+    }
+  meshSize.Fill( 5 - BSplineTransformType::SplineOrder );
+  bsplineTransform->SetGridOrigin(origin);
+  bsplineTransform->SetGridRegion(region);
+  bsplineTransform->SetGridSpacing(spacing);
+
+  BSplineTransformType::ParametersType parameters(bsplineTransform->GetNumberOfParameters() );
+  parameters.Fill(0.0);
+  bsplineTransform->SetParameters(parameters);
+
+  std::string bsplineName(argv[1]);
+  bsplineName += "/BSplineDeformableTransform.txt";
+  itk::WriteTransformToDisk(bsplineTransform, bsplineName);
+
   return EXIT_SUCCESS;
 }

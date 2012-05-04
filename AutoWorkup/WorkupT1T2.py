@@ -39,49 +39,11 @@ package_check('networkx', '1.0', 'tutorial1')
 package_check('IPython', '0.10', 'tutorial1')
 
 from BRAINSTools import *
-from BRAINSTools.BRAINSABCext import *
 from BRAINSTools.ANTSWrapper import *
 from BRAINSTools.WarpAllAtlas import *
 from BRAINSTools.ants.normalize import WarpImageMultiTransform
 
-#######################  HACK:  Needed to make some global variables for quick
-#######################         processing needs
-#Generate by running a file system list "ls -1 $AtlasDir *.nii.gz *.xml *.fcsv *.wgts"
-atlas_file_list="AtlasPVDefinition.xml ALLPVAIR.nii.gz ALLPVBASALTISSUE.nii.gz ALLPVCRBLGM.nii.gz ALLPVCRBLWM.nii.gz ALLPVCSF.nii.gz ALLPVNOTCSF.nii.gz ALLPVNOTGM.nii.gz ALLPVNOTVB.nii.gz ALLPVNOTWM.nii.gz ALLPVSURFGM.nii.gz ALLPVVB.nii.gz ALLPVWM.nii.gz avg_t1.nii.gz avg_t2.nii.gz tempNOTVBBOX.nii.gz template_ABC_lables.nii.gz template_WMPM2_labels.nii.gz template_WMPM2_labels.txt template_brain.nii.gz template_cerebellum.nii.gz template_class.nii.gz template_headregion.nii.gz template_leftHemisphere.nii.gz template_nac_lables.nii.gz template_nac_lables.txt template_rightHemisphere.nii.gz template_t1.nii.gz template_t1_clipped.nii.gz template_t2.nii.gz template_t2_clipped.nii.gz template_ventricles.nii.gz probabilityMaps/l_caudate_ProbabilityMap.nii.gz probabilityMaps/r_caudate_ProbabilityMap.nii.gz probabilityMaps/l_hippocampus_ProbabilityMap.nii.gz probabilityMaps/r_hippocampus_ProbabilityMap.nii.gz probabilityMaps/l_putamen_ProbabilityMap.nii.gz probabilityMaps/r_putamen_ProbabilityMap.nii.gz probabilityMaps/l_thalamus_ProbabilityMap.nii.gz probabilityMaps/r_thalamus_ProbabilityMap.nii.gz spatialImages/phi.nii.gz spatialImages/rho.nii.gz spatialImages/theta.nii.gz"
-atlas_file_names=atlas_file_list.split(' ')
-atlas_file_names=["AtlasPVDefinition.xml","ALLPVAIR.nii.gz",
-                      "ALLPVBASALTISSUE.nii.gz","ALLPVCRBLGM.nii.gz",
-                      "ALLPVCRBLWM.nii.gz","ALLPVCSF.nii.gz","ALLPVNOTCSF.nii.gz",
-                      "ALLPVNOTGM.nii.gz","ALLPVNOTVB.nii.gz","ALLPVNOTWM.nii.gz",
-                      "ALLPVSURFGM.nii.gz","ALLPVVB.nii.gz","ALLPVWM.nii.gz",
-                      "avg_t1.nii.gz","avg_t2.nii.gz","tempNOTVBBOX.nii.gz",
-                      "template_ABC_lables.nii.gz","template_WMPM2_labels.nii.gz",
-                      "template_WMPM2_labels.txt","template_brain.nii.gz",
-                      "template_cerebellum.nii.gz","template_class.nii.gz",
-                      "template_headregion.nii.gz","template_leftHemisphere.nii.gz",
-                      "template_nac_lables.nii.gz","template_nac_lables.txt",
-                      "template_rightHemisphere.nii.gz","template_t1.nii.gz",
-                      "template_t1_clipped.nii.gz","template_t2.nii.gz",
-                      "template_t2_clipped.nii.gz","template_ventricles.nii.gz",
-                      "template_landmarks.fcsv","template_landmark_weights.csv",
-"probabilityMaps/l_caudate_ProbabilityMap.nii.gz",
-"probabilityMaps/r_caudate_ProbabilityMap.nii.gz",
-"probabilityMaps/l_hippocampus_ProbabilityMap.nii.gz",
-"probabilityMaps/r_hippocampus_ProbabilityMap.nii.gz",
-"probabilityMaps/l_putamen_ProbabilityMap.nii.gz",
-"probabilityMaps/r_putamen_ProbabilityMap.nii.gz",
-"probabilityMaps/l_thalamus_ProbabilityMap.nii.gz",
-"probabilityMaps/r_thalamus_ProbabilityMap.nii.gz",
-"spatialImages/phi.nii.gz",
-"spatialImages/rho.nii.gz",
-"spatialImages/theta.nii.gz"
-                      ]
-
-
-## Remove filename extensions for images, but replace . with _ for other file types
-atlas_file_keys=[os.path.basename(fn).replace('.nii.gz','').replace('.','_') for fn in atlas_file_names]
-atlas_outputs_filename_match = dict(zip(atlas_file_keys,atlas_file_names))
-
+from WorkupT1T2AtlasNode import MakeAtlasNode
 
 #############################################################################
 #############################################################################
@@ -106,20 +68,6 @@ def GetExtensionlessBaseName(filename):
         currBaseName = os.path.splitext(currBaseName)[0]
         currExt = os.path.splitext(currBaseName)[1]
     return currBaseName
-
-
-def MakeAtlasNode(atlasDirectory):
-    BAtlas = pe.Node(interface=nio.DataGrabber(outfields=atlas_file_keys),
-                                               name='BAtlas')
-    BAtlas.inputs.base_directory = atlasDirectory
-    BAtlas.inputs.template = '*'
-    ## Prefix every filename with atlasDirectory
-    atlas_search_paths=['{0}'.format(fn) for fn in atlas_file_names]
-    BAtlas.inputs.field_template = dict(zip(atlas_file_keys,atlas_search_paths))
-    ## Give 'atlasDirectory' as the substitution argument
-    atlas_template_args_match=[ [[]] for i in atlas_file_keys ] ##build a list of proper lenght with repeated entries
-    BAtlas.inputs.template_args = dict(zip(atlas_file_keys,atlas_template_args_match))
-    return BAtlas
 
 
 def get_list_element( nestedList, index ):
@@ -363,90 +311,14 @@ pe.sub(subs,test)
         baw200.connect(BAtlas,'template_t1',Resample2Atlas,'referenceVolume')
 
     if 'TISSUE_CLASSIFY' in WORKFLOW_COMPONENTS:
-        ########################################################
-        # Run BABCext on Multi-modal images
-        ########################################################
-        def MakeOneFileList(T1List,T2List,altT1):
-            """ This funciton uses altT1 for the first T1, and the append the rest of the T1's and T2's """
-            imagePathList=list()
-            imagePathList.append(altT1)
-            for i in T1List[1:]:
-                imagePathList.append(i)
-            for i in T2List[0:]:
-                imagePathList.append(i)
-            return imagePathList
-        makeImagePathList = pe.Node( Function(function=MakeOneFileList, input_names = ['T1List','T2List','altT1'], output_names = ['imagePathList']), run_without_submitting=True, name="99_makeImagePathList")
-        baw200.connect( [ (uidSource, makeImagePathList, [(('uid', getT1s, subjectDatabaseFile ), 'T1List')] ), ])
-        baw200.connect( [ (uidSource, makeImagePathList, [(('uid', getT2s, subjectDatabaseFile ), 'T2List')] ), ])
-        # -- Standard mode to make 256^3 images
-        baw200.connect( BCD,    'outputResampledVolume', makeImagePathList, 'altT1' )
-
-        def MakeOneFileTypeList(T1List,T2List):
-            input_types =       ["T1"]*len(T1List)
-            input_types.extend( ["T2"]*len(T2List) )
-            return input_types
-        makeImageTypeList = pe.Node( Function(function=MakeOneFileTypeList, input_names = ['T1List','T2List'], output_names = ['imageTypeList']), run_without_submitting=True, name="99_makeImageTypeList")
-
-        baw200.connect( [ (uidSource, makeImageTypeList, [(('uid', getT1s, subjectDatabaseFile ), 'T1List')] ), ])
-        baw200.connect( [ (uidSource, makeImageTypeList, [(('uid', getT2s, subjectDatabaseFile ), 'T2List')] ), ])
-
-        def MakeOutFileList(T1List,T2List):
-            def GetExtBaseName(filename):
-                '''
-                Get the filename without the extension.  Works for .ext and .ext.gz
-                '''
-                import os
-                currBaseName = os.path.basename(filename)
-                currExt = os.path.splitext(currBaseName)[1]
-                currBaseName = os.path.splitext(currBaseName)[0]
-                if currExt == ".gz":
-                    currBaseName = os.path.splitext(currBaseName)[0]
-                    currExt = os.path.splitext(currBaseName)[1]
-                return currBaseName
-            all_files=T1List
-            all_files.extend(T2List)
-            out_corrected_names=[]
-            for i in all_files:
-                out_name=GetExtBaseName(i)+"_corrected.nii.gz"
-                out_corrected_names.append(out_name)
-            return out_corrected_names
-        makeOutImageList = pe.Node( Function(function=MakeOutFileList, input_names = ['T1List','T2List'], output_names = ['outImageList']), run_without_submitting=True, name="99_makeOutImageList")
-        baw200.connect( [ (uidSource, makeOutImageList, [(('uid', getT1s, subjectDatabaseFile ), 'T1List')] ), ])
-        baw200.connect( [ (uidSource, makeOutImageList, [(('uid', getT2s, subjectDatabaseFile ), 'T2List')] ), ])
-
-        BABCext= pe.Node(interface=BRAINSABCext(), name="11_BABC")
-        many_cpu_BABC_options_dictionary={'qsub_args': '-S /bin/bash -pe smp1 4-12 -o /dev/null -e /dev/null '+CLUSTER_QUEUE, 'overwrite': True}
-        #many_cpu_BABC_options_dictionary={'qsub_args': '-S /bin/bash -pe smp1 4-12 -l mem_free=8000M -o /dev/null -e /dev/null '+CLUSTER_QUEUE, 'overwrite': True}
-        BABCext.plugin_args=many_cpu_BABC_options_dictionary
-        baw200.connect(makeImagePathList,'imagePathList',BABCext,'inputVolumes')
-        baw200.connect(makeImageTypeList,'imageTypeList',BABCext,'inputVolumeTypes')
-        baw200.connect(makeOutImageList,'outImageList',BABCext,'outputVolumes')
-        BABCext.inputs.debuglevel = 0
-        BABCext.inputs.maxIterations = 3
-        BABCext.inputs.maxBiasDegree = 4
-        BABCext.inputs.filterIteration = 3
-        BABCext.inputs.filterMethod = 'GradientAnisotropicDiffusion'
-        BABCext.inputs.gridSize = [28,20,24]
-        BABCext.inputs.outputFormat = "NIFTI"
-        BABCext.inputs.outputLabels = "brain_label_seg.nii.gz"
-        BABCext.inputs.outputDirtyLabels = "volume_label_seg.nii.gz"
-        BABCext.inputs.posteriorTemplate = "POSTERIOR_%s.nii.gz"
-        BABCext.inputs.atlasToSubjectTransform = "atlas_to_subject.mat"
-        #BABCext.inputs.implicitOutputs = ['t1_average_BRAINSABC.nii.gz', 't2_average_BRAINSABC.nii.gz']
-        BABCext.inputs.interpolationMode = InterpolationMode
-        BABCext.inputs.outputDir = './'
-
-        baw200.connect(BAtlas,'AtlasPVDefinition_xml',BABCext,'atlasDefinition')
-        baw200.connect(BLI,'outputTransformFilename',BABCext,'atlasToSubjectInitialTransform')
-        """
-        Get the first T1 and T2 corrected images from BABCext
-        """
-        bfc_files = pe.Node(Function(input_names=['in_files','T1_count'],
-                                   output_names=['t1_corrected','t2_corrected'],
-                                   function=get_first_T1_and_T2), name='99_bfc_files')
-
-        baw200.connect( [ (uidSource, bfc_files, [(('uid', getT1sLength, subjectDatabaseFile ), 'T1_count')] ), ])
-        baw200.connect(BABCext,'outputVolumes',bfc_files,'in_files')
+        from WorkupT1T2TissueClassifiy import CreateTissueClassifyWorkflow
+        myLocalTCWF= CreateTissueClassifyWorkflow("11_TissueClassify",CLUSTER_QUEUE,InterpolationMode)
+        baw200.connect( [ (uidSource, myLocalTCWF, [(('uid', getT1s, subjectDatabaseFile ), 'InputSpec.T1List')] ), ])
+        baw200.connect( [ (uidSource, myLocalTCWF, [(('uid', getT2s, subjectDatabaseFile ), 'InputSpec.T2List')] ), ])
+        baw200.connect( [ (uidSource, myLocalTCWF, [(('uid', getT1sLength, subjectDatabaseFile ), 'InputSpec.T1_count')] ), ])
+        baw200.connect( BCD,    'outputResampledVolume', myLocalTCWF, 'InputSpec.PrimaryT1' )
+        baw200.connect(BAtlas,'AtlasPVDefinition_xml',myLocalTCWF,'InputSpec.atlasDefinition')
+        baw200.connect(BLI,'outputTransformFilename',myLocalTCWF,'InputSpec.atlasToSubjectInitialTransform')
 
         """
         ResampleNACLabels
@@ -455,8 +327,8 @@ pe.sub(subs,test)
         ResampleAtlasNACLabels.inputs.interpolationMode = "NearestNeighbor"
         ResampleAtlasNACLabels.inputs.outputVolume = "atlasToSubjectNACLabels.nii.gz"
 
-        baw200.connect(BABCext,'atlasToSubjectTransform',ResampleAtlasNACLabels,'warpTransform')
-        baw200.connect(bfc_files,'t1_corrected',ResampleAtlasNACLabels,'referenceVolume')
+        baw200.connect(myLocalTCWF,'OutputSpec.atlasToSubjectTransform',ResampleAtlasNACLabels,'warpTransform')
+        baw200.connect(myLocalTCWF,'OutputSpec.t1_corrected',ResampleAtlasNACLabels,'referenceVolume')
         baw200.connect(BAtlas,'template_nac_lables',ResampleAtlasNACLabels,'inputVolume')
 
         """
@@ -468,9 +340,9 @@ pe.sub(subs,test)
         BMUSH.inputs.lowerThresholdFactor = 1.2
         BMUSH.inputs.upperThresholdFactor = 0.55
 
-        baw200.connect(bfc_files,'t1_corrected',BMUSH,'inputFirstVolume')
-        baw200.connect(bfc_files,'t2_corrected',BMUSH,'inputSecondVolume')
-        baw200.connect(BABCext,'outputLabels',BMUSH,'inputMaskVolume')
+        baw200.connect(myLocalTCWF,'OutputSpec.t1_corrected',BMUSH,'inputFirstVolume')
+        baw200.connect(myLocalTCWF,'OutputSpec.t2_corrected',BMUSH,'inputSecondVolume')
+        baw200.connect(myLocalTCWF,'OutputSpec.outputLabels',BMUSH,'inputMaskVolume')
 
         """
         BRAINSROIAuto
@@ -480,7 +352,7 @@ pe.sub(subs,test)
         BROI.inputs.otsuPercentileThreshold=0.01
         BROI.inputs.thresholdCorrectionFactor=1.0
         BROI.inputs.outputROIMaskVolume = "temproiAuto_t1_ACPC_corrected_BRAINSABC.nii.gz"
-        baw200.connect(bfc_files,'t1_corrected',BROI,'inputVolume')
+        baw200.connect(myLocalTCWF,'OutputSpec.t1_corrected',BROI,'inputVolume')
 
         """
         Split the implicit outputs of BABCext
@@ -489,7 +361,7 @@ pe.sub(subs,test)
                                  function = get_first_T1_and_T2), run_without_submitting=True, name="99_SplitAvgBABC")
         SplitAvgBABC.inputs.T1_count = 1 ## There is only 1 average T1 image.
 
-        baw200.connect(BABCext,'outputAverageImages',SplitAvgBABC,'in_files')
+        baw200.connect(myLocalTCWF,'OutputSpec.outputAverageImages',SplitAvgBABC,'in_files')
 
 
         """
@@ -580,7 +452,7 @@ pe.sub(subs,test)
             from WorkupT1T2PERSISTANCE_CHECK import CreatePERSISTANCE_CHECKWorkflow
             myLocalPERSISTANCE_CHECKWF= CreatePERSISTANCE_CHECKWorkflow("999999_PersistanceCheckingWorkflow")
             PERSISTANCE_CHECKWF.connect(SplitAvgBABC,'avgBABCT1',myLocalPERSISTANCE_CHECKWF,'fixedVolume')
-            PERSISTANCE_CHECKWF.connect(BABCext,'outputLabels',myLocalPERSISTANCE_CHECKWF,'fixedBinaryVolume')
+            PERSISTANCE_CHECKWF.connect(myLocalTCWF,'OutputSpec.outputLabels',myLocalPERSISTANCE_CHECKWF,'fixedBinaryVolume')
             PERSISTANCE_CHECKWF.connect(BAtlas,'template_t1',myLocalPERSISTANCE_CHECKWF,'movingVolume')
             PERSISTANCE_CHECKWF.connect(BAtlas,'template_brain',myLocalPERSISTANCE_CHECKWF,'movingBinaryVolume')
             PERSISTANCE_CHECKWF.connect(BLI,'outputTransformFilename',myLocalPERSISTANCE_CHECKWF,'initialTransform')
@@ -596,6 +468,5 @@ pe.sub(subs,test)
             """
         else:
             print "Skipping freesurfer"
-
     return baw200
 

@@ -199,14 +199,14 @@ def WorkupT1T2(mountPrefix,ExperimentBaseDirectory, subject_data_file, atlas_fna
     baw200 = pe.Workflow(name="BAW_20120104_workflow")
     baw200.config['execution'] = {
                                      'plugin':'Linear',
-                                     'stop_on_first_crash':'true',
+                                     #'stop_on_first_crash':'true',
                                      #'stop_on_first_rerun': 'true',
-                                     #'stop_on_first_crash':'false',
+                                     'stop_on_first_crash':'false',
                                      'stop_on_first_rerun': 'false',      ## This stops at first attempt to rerun, before running, and before deleting previous results.
                                      'hash_method': 'timestamp',
                                      'single_thread_matlab':'true',       ## Multi-core 2011a  multi-core for matrix multiplication.
                                      'remove_unnecessary_outputs':'false',
-                                     'use_relative_paths':'false',        ## relative paths should be on, require hash update when changed.
+                                     'use_relative_paths':'true',         ## relative paths should be on, require hash update when changed.
                                      'remove_node_directories':'false',   ## Experimental
                                      'local_hash_check':'true',           ##
                                      'job_finished_timeout':15            ##

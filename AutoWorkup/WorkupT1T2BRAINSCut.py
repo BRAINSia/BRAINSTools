@@ -140,7 +140,7 @@ def create_BRAINSCut_XML(rho,phi,theta,model,
     return os.path.realpath(xml_filename), [ r_struct_fname, l_struct_fname ]
 
 
-def CreateBRAINSCutSegmentationWorkflow(WFname);
+def CreateBRAINSCutSegmentationWorkflow(WFname):
     """ The purpose of this workflow is to debug the automatic deletion of files from the output directory.
     """
     BRAINSCutSegmentationWF= pe.Workflow(name=WFname)

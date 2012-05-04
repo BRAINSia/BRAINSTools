@@ -24,6 +24,7 @@ set(BRAINSCutCOMMONLIB_SRCS
   BRAINSCutApplyModel.cxx
   BRAINSCutTrainModel.cxx
   BRAINSCutVectorTrainingSet.cxx
+  BRAINSCutUtilities.cxx
   ${BRAINSCut_HDRS}
   )
 

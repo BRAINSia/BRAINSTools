@@ -1,7 +1,7 @@
 #ifndef BRAINSCutDataHandler_h
 #define BRAINSCutDataHandler_h
 
-#include "BRAINSCutPrimary.h"
+#include "BRAINSCutUtilities.h"
 
 /*
  * BRAINSCut Primary Class Starts here

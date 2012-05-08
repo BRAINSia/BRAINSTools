@@ -128,7 +128,7 @@ int main(int argc, char * *argv)
   region.SetSize(size);
   region.SetIndex(index);
   spacing[0] = spacing[1] = spacing[2] = 2.0;
-  origin[0] = -10; origin[1] = -10; origin[10] = 10;
+  origin[0] = -10; origin[1] = -10; origin[2] = 10;
 
   ImageType::Pointer testImage =
     itkUtil::AllocateImageFromRegionAndSpacing<ImageType>(region, spacing);

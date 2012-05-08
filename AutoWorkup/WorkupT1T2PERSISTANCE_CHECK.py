@@ -18,7 +18,7 @@ from BRAINSTools.BRAINSFit import *
     PERSISTANCE_CHECKWF.connect(BLI,'outputTransformFilename',myLocalPERSISTANCE_CHECKWF,'initialTransform')
 """
 
-def CreatePERSISTANCE_CHECKWorkflow(WFname);
+def CreatePERSISTANCE_CHECKWorkflow(WFname):
     """ The purpose of this workflow is to debug the automatic deletion of files from the output directory.
     """
     PERSISTANCE_CHECKWF= pe.Workflow(name=WFname)

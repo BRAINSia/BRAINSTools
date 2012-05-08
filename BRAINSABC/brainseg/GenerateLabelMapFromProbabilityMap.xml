@@ -20,16 +20,14 @@
       <description>The Input probaiblity images to be computed for lable maps</description>
       <channel>input</channel>
       <label>Input Image </label>
-      <default></default>
     </image>
     <!--  -->
     <image fileExtensions=".nii.gz,.nrrd">
       <name>outputLabelVolume</name>
       <longflag>outputLabelVolume</longflag>
       <description>The Input binary image for region of interest</description>
-      <channel>input</channel>
+      <channel>output</channel>
       <label>outputLabelVolume</label>
-      <default></default>
     </image>
     <!--  -->
   </parameters>

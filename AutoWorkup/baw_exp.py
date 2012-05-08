@@ -122,21 +122,25 @@ def main(argv=None):
     #  have the same environment as the job submission host.
     JOB_SCRIPT=get_global_sge_script(sys.path,PROGRAM_PATHS,CUSTOM_ENVIRONMENT)
     print JOB_SCRIPT
-    baw200.write_graph()
+	
     if input_arguments.wfrun == 'helium_all.q':
         baw200.run(plugin='SGE',
             plugin_args=dict(template=JOB_SCRIPT,qsub_args="-S /bin/bash -pe smp1 1-4 -l mem_free=4000M -o /dev/null -e /dev/null "+CLUSTER_QUEUE))
     elif input_arguments.wfrun == 'ipl_OSX':
+        baw200.write_graph()
         print "Running On ipl_OSX"
         baw200.run(plugin='SGE',
             plugin_args=dict(template=JOB_SCRIPT,qsub_args="-S /bin/bash -pe smp1 1-4 -l mem_free=4000M -o /dev/null -e /dev/null "+CLUSTER_QUEUE))
     elif input_arguments.wfrun == 'local_4':
+        baw200.write_graph()
         print "Running with 4 parallel processes on local machine"
         baw200.run(plugin='MultiProc', plugin_args={'n_procs' : 4})
     elif input_arguments.wfrun == 'local_12':
+        baw200.write_graph()
         print "Running with 12 parallel processes on local machine"
         baw200.run(plugin='MultiProc', plugin_args={'n_procs' : 4})
     elif input_arguments.wfrun == 'local':
+        baw200.write_graph()
         print "Running sequentially on local machine"
         baw200.run()
     else:

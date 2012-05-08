@@ -1,6 +1,6 @@
 #include "BRAINSCutTrainModel.h"
 #include "TrainingVectorConfigurationType.h"
-#include "fstream.h"
+#include <fstream>
 
 BRAINSCutTrainModel
 ::BRAINSCutTrainModel( BRAINSCutDataHandler & dataHandler ) :

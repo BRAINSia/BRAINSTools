@@ -109,7 +109,7 @@
       <longflag>method</longflag>
       <default>ANN</default>
       <element>RandomForest</element>
-      <element></element>
+      <element>ANN</element>
     </string-enumeration>
 </parameters>
 <parameters>

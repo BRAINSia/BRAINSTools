@@ -3,38 +3,35 @@
 #include <itkResampleImageFilter.h>
 #include <itkIdentityTransform.h>
 #include <itkLinearInterpolateImageFunction.h>
+#include <itkExceptionObject.h>
+#include "BRAINSResizeCLP.h"
 
 template <typename ImageType>
-int Resample(const std::string & inputVolume,
-             const std::string & outputVolume)
+int Resample(const std::string & inputVolume, const std::string & outputVolume, const double scaleFactor)
 {
   typename ImageType::Pointer inputImage;
   inputImage = itkUtil::ReadImage<ImageType>(inputVolume);
 
-  typename ImageType::RegionType region =
-    inputImage->GetLargestPossibleRegion();
+  typename ImageType::RegionType region = inputImage->GetLargestPossibleRegion();
   typename ImageType::SizeType    size(region.GetSize() );
   typename ImageType::SpacingType spacing(inputImage->GetSpacing() );
 
-  typedef typename
-    itk::ResampleImageFilter<ImageType, ImageType> FilterType;
+  typedef typename itk::ResampleImageFilter<ImageType, ImageType> FilterType;
   typename FilterType::Pointer filter(FilterType::New() );
 
-  typedef typename
-    itk::IdentityTransform<double, ImageType::ImageDimension>  TransformType;
+  typedef typename itk::IdentityTransform<double, ImageType::ImageDimension> TransformType;
   typename TransformType::Pointer transform(TransformType::New() );
   transform->SetIdentity();
   filter->SetTransform(transform);
 
-  typedef typename itk::LinearInterpolateImageFunction<
-      ImageType, double>  InterpolatorType;
+  typedef typename itk::LinearInterpolateImageFunction<ImageType, double> InterpolatorType;
   typename InterpolatorType::Pointer interpolator(InterpolatorType::New() );
   filter->SetInterpolator(interpolator);
   for( unsigned i = 0; i < 3; i++ )
     {
-    spacing[i] *= 4.0;
+    spacing[i] *= scaleFactor;
     size[i] = static_cast<typename ImageType::SizeType::SizeValueType>
-      (static_cast<double>(size[i]) / 4.0);
+      (static_cast<double>(size[i]) / scaleFactor);
     }
 
   filter->SetOutputSpacing(spacing);
@@ -44,7 +41,6 @@ int Resample(const std::string & inputVolume,
   filter->SetInput(inputImage);
 
   typename ImageType::Pointer outputImage;
-
   try
     {
     filter->Update();
@@ -54,47 +50,38 @@ int Resample(const std::string & inputVolume,
     {
     std::cerr << "Exception caught !" << std::endl;
     std::cerr << excep << std::endl;
+    return EXIT_FAILURE;
     }
-
   itkUtil::WriteImage<ImageType>(outputImage, outputVolume);
-  return 0;
+  return EXIT_SUCCESS;
 }
 
 int
 main(int argc, char * *argv)
 {
-  if( argc < 4 )
-    {
-    std::cerr << "BRAINSResize: "
-              << "Usage BRAINSResize pixType <inputImage> <outputImage"
-              << std::endl;
-    return EXIT_FAILURE;
-    }
-  std::string pixType(argv[1]);
-  std::string inputVolume(argv[2]);
-  std::string outputVolume(argv[3]);
+  PARSE_ARGS;
   try
     {
-    if( pixType == "short" )
+    if( pixelType == "short" )
       {
-      return Resample<itk::Image<short, 3> >(inputVolume, outputVolume);
+      return Resample<itk::Image<short, 3> >(inputVolume, outputVolume, scaleFactor);
       }
-    else if( pixType == "uint" )
+    else if( pixelType == "uint" )
       {
-      return Resample<itk::Image<unsigned int, 3> >(inputVolume, outputVolume);
+      return Resample<itk::Image<unsigned int, 3> >(inputVolume, outputVolume, scaleFactor);
       }
-    else if( pixType == "float" )
+    else if( pixelType == "float" )
       {
-      return Resample<itk::Image<float, 3> >(inputVolume, outputVolume);
+      return Resample<itk::Image<float, 3> >(inputVolume, outputVolume, scaleFactor);
       }
-    else if( pixType == "uchar" )
+    else if( pixelType == "uchar" )
       {
-      return Resample<itk::Image<unsigned char, 3> >(inputVolume, outputVolume);
+      return Resample<itk::Image<unsigned char, 3> >(inputVolume, outputVolume, scaleFactor);
       }
     }
-  catch( const itkException & e )
+  catch( itk::ExceptionObject & excep )
     {
-    std::cerr << "BRAINSResize " << e << std::endl;
+    std::cerr << "BRAINSResize " << excep << std::endl;
     return EXIT_FAILURE;
     }
   return EXIT_FAILURE;

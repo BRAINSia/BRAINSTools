@@ -10,6 +10,7 @@ configure_file(
 
 set(ALL_PROGS_LIST
   BRAINSResample
+  BRAINSResize
   )
 foreach(prog ${ALL_PROGS_LIST})
   StandardBRAINSBuildMacro(NAME ${prog} TARGET_LIBRARIES BRAINSCommonLib )

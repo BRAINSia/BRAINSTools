@@ -206,7 +206,7 @@ def WorkupT1T2(mountPrefix,ExperimentBaseDirectory, subject_data_file, atlas_fna
                                      'hash_method': 'timestamp',
                                      'single_thread_matlab':'true',       ## Multi-core 2011a  multi-core for matrix multiplication.
                                      'remove_unnecessary_outputs':'false',
-                                     'use_relative_paths':'true',         ## relative paths should be on, require hash update when changed.
+                                     'use_relative_paths':'false',         ## relative paths should be on, require hash update when changed.
                                      'remove_node_directories':'false',   ## Experimental
                                      'local_hash_check':'true',           ##
                                      'job_finished_timeout':15            ##
@@ -237,7 +237,7 @@ def WorkupT1T2(mountPrefix,ExperimentBaseDirectory, subject_data_file, atlas_fna
     BCD.inputs.outputResampledVolume = "BCD" + "_ACPC.nii.gz"
     BCD.inputs.outputLandmarksInInputSpace = "BCD" + "_Original.fcsv"
     BCD.inputs.outputLandmarksInACPCAlignedSpace = "BCD" + "_ACPC_Landmarks.fcsv"
-    BCD.inputs.outputMRML = "BCD" + "_ACPC_Scene.mrml"
+    #BCD.inputs.outputMRML = "BCD" + "_Scene.mrml"
     BCD.inputs.interpolationMode = InterpolationMode
     BCD.inputs.houghEyeDetectorMode = 1  # Look for dark eyes like on a T1 image, 0=Look for bright eyes like in a T2 image
     BCD.inputs.acLowerBound = 80.0 # Chop the data set 80mm below the AC PC point.

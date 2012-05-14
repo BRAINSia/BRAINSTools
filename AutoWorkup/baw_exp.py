@@ -110,6 +110,8 @@ def main(argv=None):
     CLUSTER_QUEUE=expConfig.get(input_arguments.processingEnvironment,'CLUSTER_QUEUE')
 
     print "Configuring Pipeline"
+    from nipype import config ## NOTE:  This needs to occur AFTER the PYTHON_AUX_PATHS has been modified
+    config.enable_debug_mode() ## NOTE:  This needs to occur AFTER the PYTHON_AUX_PATHS has been modified
     import WorkupT1T2 ## NOTE:  This needs to occur AFTER the PYTHON_AUX_PATHS has been modified
     baw200=WorkupT1T2.WorkupT1T2(mountPrefix,
       ExperimentBaseDirectory,

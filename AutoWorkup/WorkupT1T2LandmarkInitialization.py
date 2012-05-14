@@ -6,23 +6,26 @@ from nipype.interfaces.utility import Merge, Split, Function, Rename, IdentityIn
 import nipype.interfaces.io as nio   # Data i/o
 import nipype.pipeline.engine as pe  # pypeline engine
 
+import os
+
 from BRAINSTools import *
 
 """
-    from WorkupT1T2TissueClassify import CreateLandmarkInitializeWorkflow
-    myLocalTCWF= CreateLandmarkInitializeWorkflow("01_LandmarkInitialize")
-    landmarkInitializeWF.connect( [ (uidSource, myLocalTCWF, [(('uid', getFirstT1, subjectDatabaseFile ), 'inputsSpec.inputVolume')] ), ])
-    landmarkInitializeWF.connect( BAtlas, 'template_landmarks_fcsv', myLocalTCWF,'inputsSpec.inputMovingLandmarkFilename')
-    landmarkInitializeWF.connect( BAtlas, 'template_landmark_weights_csv', myLocalTCWF,'inputsSpec.inputWeightFilename')
+    from WorkupT1T2LandmarkInitialization import CreateLandmarkInitializeWorkflow
+    myLocalLMIWF= CreateLandmarkInitializeWorkflow("01_LandmarkInitialize")
+    landmarkInitializeWF.connect( [ (uidSource, myLocalLMIWF, [(('uid', getFirstT1, subjectDatabaseFile ), 'inputsSpec.inputVolume')] ), ])
+    landmarkInitializeWF.connect( BAtlas, 'template_landmarks_fcsv', myLocalLMIWF,'inputsSpec.atlasLandmarkFilename')
+    landmarkInitializeWF.connect( BAtlas, 'template_landmark_weights_csv', myLocalLMIWF,'inputsSpec.atlasWeightFilename')
+    landmarkInitializeWF.connect(BAtlas,'template_t1',myLocalLMIWF,'inputsSpec.atlasVolume')
     
 """
-def CreateLandmarkInitializeWorkflow(WFname,CLUSTER_QUEUE,InterpolationMode):
+def CreateLandmarkInitializeWorkflow(WFname,BCD_model_path,InterpolationMode,DoReverseInit=False):
     landmarkInitializeWF= pe.Workflow(name=WFname)
 
     inputsSpec = pe.Node(interface=IdentityInterface(fields=['inputVolume',
-        'inputMovingLandmarkFilename','inputWeightFilename']), name='InputSpec' )
+        'atlasLandmarkFilename','atlasWeightFilename','atlasVolume']), name='InputSpec' )
 
-    ########################################################
+    ########################################################/
     # Run ACPC Detect on first T1 Image - Base Image
     ########################################################
     BCD = pe.Node(interface=BRAINSConstellationDetector(), name="01_BCD")
@@ -48,23 +51,40 @@ def CreateLandmarkInitializeWorkflow(WFname,CLUSTER_QUEUE,InterpolationMode):
     BLI = pe.Node(interface=BRAINSLandmarkInitializer(), name="05_BLI")
     BLI.inputs.outputTransformFilename = "landmarkInitializer_atlas_to_subject_transform.mat"
 
+    landmarkInitializeWF.connect(inputsSpec, 'atlasWeightFilename', BLI, 'inputWeightFilename')
+    landmarkInitializeWF.connect(inputsSpec, 'atlasLandmarkFilename', BLI, 'inputMovingLandmarkFilename' )
     landmarkInitializeWF.connect(BCD,'outputLandmarksInACPCAlignedSpace', BLI,'inputFixedLandmarkFilename'),
     
-    landmarkInitializeWF.connect(inputsSpec, 'inputMovingLandmarkFilename', BLI, 'inputMovingLandmarkFilename' )
-    landmarkInitializeWF.connect(inputsSpec, 'inputWeightFilename', BLI, 'inputWeightFilename')
+    ## This is for debugging purposes, and it is not intended for general use.
+    if DoReverseInit == True:
+        ########################################################
+        # Run BLI subject_to_atlas
+        ########################################################
+        BLI2Atlas = pe.Node(interface=BRAINSLandmarkInitializer(), name="05_BLI2Atlas")
+        BLI2Atlas.inputs.outputTransformFilename = "landmarkInitializer_subject_to_atlas_transform.mat"
+
+        landmarkInitializeWF.connect(inputsSpec, 'atlasWeightFilename', BLI2Atlas, 'inputWeightFilename')
+        landmarkInitializeWF.connect(inputsSpec, 'atlasLandmarkFilename', BLI2Atlas, 'inputFixedLandmarkFilename' )
+        landmarkInitializeWF.connect(BCD,'outputLandmarksInInputSpace',BLI2Atlas,'inputMovingLandmarkFilename')
+        
+        Resample2Atlas=pe.Node(interface=BRAINSResample(),name="05_Resample2Atlas")
+        Resample2Atlas.inputs.interpolationMode = "Linear"
+        Resample2Atlas.inputs.outputVolume = "subject2atlas.nii.gz"
+
+        landmarkInitializeWF.connect(inputsSpec , 'inputVolume', Resample2Atlas, 'inputVolume')
+        landmarkInitializeWF.connect(BLI2Atlas,'outputTransformFilename',Resample2Atlas,'warpTransform')
+        landmarkInitializeWF.connect(inputsSpec,'atlasVolume',Resample2Atlas,'referenceVolume')
     
     #############
-    outputsSpec = pe.Node(interface=IdentityInterface(fields=['atlasToSubjectTransform','outputLabels',
-            't1_corrected','t2_corrected','outputAverageImages']), name='OutputSpec' )
+    outputsSpec = pe.Node(interface=IdentityInterface(fields=['outputLandmarksInACPCAlignedSpace','outputResampledVolume','outputLandmarksInInputSpace',
+            'outputTransform','outputMRML','atlasToSubjectTransform'
+            ]), name='OutputSpec' )
 
-    tissueClassifyWF.connect(bfc_files,'t1_corrected',outputsSpec,'t1_corrected')
-    tissueClassifyWF.connect(bfc_files,'t2_corrected',outputsSpec,'t2_corrected')
-
-    tissueClassifyWF.connect(BABCext,'outputVolumes',bfc_files, 'in_files')
-
-    tissueClassifyWF.connect(BABCext,'atlasToSubjectTransform',outputsSpec,'atlasToSubjectTransform')
-    tissueClassifyWF.connect(BABCext,'outputLabels',outputsSpec,'outputLabels')
-
-    tissueClassifyWF.connect(BABCext,'outputAverageImages',outputsSpec,'outputAverageImages')
+    landmarkInitializeWF.connect(BCD,'outputLandmarksInACPCAlignedSpace',outputsSpec,'outputLandmarksInACPCAlignedSpace')
+    landmarkInitializeWF.connect(BCD,'outputResampledVolume',outputsSpec,'outputResampledVolume')
+    landmarkInitializeWF.connect(BCD,'outputLandmarksInInputSpace',outputsSpec,'outputLandmarksInInputSpace')
+    landmarkInitializeWF.connect(BCD,'outputTransform',outputsSpec,'outputTransform')
+    landmarkInitializeWF.connect(BCD,'outputMRML',outputsSpec,'outputMRML')
+    landmarkInitializeWF.connect(BLI,'outputTransformFilename',outputsSpec,'atlasToSubjectTransform')
 
     return landmarkInitializeWF

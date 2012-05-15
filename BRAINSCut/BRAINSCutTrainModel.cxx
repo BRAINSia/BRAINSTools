@@ -139,7 +139,7 @@ BRAINSCutTrainModel
 {
   char tempid[10];
 
-  sprintf( tempid, "%09u", No + 1 );
+  sprintf( tempid, "%09u", No );
   std::string filename = myDataHandler.GetModelBaseName() + tempid;
 
   /** check the directory */
@@ -202,7 +202,7 @@ BRAINSCutTrainModel
 ::printANNTrainInformation( neuralNetType& myTrainer, unsigned int No )
 {
   std::cout << " Error, " << myTrainer.get_MSE()
-            << " Iteration, " << No + 1
+            << " Iteration, " << No
             << std::endl;
 }
 
@@ -232,11 +232,11 @@ BRAINSCutTrainModel
                     CvANN_MLP::SIGMOID_SYM,
                     activationSlope,
                     activationMinMax);
-  for( unsigned int currentIteration = 0;
+  for( unsigned int currentIteration = 1;
        currentIteration <= trainIteration;
        currentIteration++ )
     {
-    unsigned int subSetNo =  currentIteration % trainingDataSet->GetNumberOfSubSet();
+    unsigned int subSetNo =  (currentIteration - 1) % trainingDataSet->GetNumberOfSubSet();
     TrainWithUpdate( *trainner,
                      (currentIteration > 0),
                      *(trainingDataSet->GetTrainingSubSet(subSetNo) ) );

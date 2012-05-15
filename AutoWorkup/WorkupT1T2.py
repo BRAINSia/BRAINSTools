@@ -249,155 +249,37 @@ def WorkupT1T2(mountPrefix,ExperimentBaseDirectory, subject_data_file, atlas_fna
         baw200.connect( myLocalLMIWF, 'OutputSpec.outputResampledVolume', myLocalTCWF, 'InputSpec.PrimaryT1' )
         baw200.connect( myLocalLMIWF,'OutputSpec.atlasToSubjectTransform',myLocalTCWF,'InputSpec.atlasToSubjectInitialTransform')
 
+    ## Make deformed Atlas image space
+    if 'ANTS' in WORKFLOW_COMPONENTS:
+        from WorkupT1T2ANTS import CreateANTSRegistrationWorkflow
+        myLocalAntsWF = CreateANTSRegistrationWorkflow("31_ANTSRegistration",CLUSTER_QUEUE,-1)
+        baw200.connect( myLocalTCWF,'OutputSpec.t1_corrected',myLocalAntsWF,"InputSpec.fixedVolumesList")
+        baw200.connect( BAtlas,'template_t1',    myLocalAntsWF,"InputSpec.movingVolumesList")
+        baw200.connect(myLocalLMIWF,'OutputSpec.atlasToSubjectTransform',myLocalAntsWF,'InputSpec.initial_moving_transform')
+
+    if 'SEGMENTATION' in WORKFLOW_COMPONENTS:
+        pass
+    
+    if 'PERSISTANCE_CHECK' in WORKFLOW_COMPONENTS:
+        from WorkupT1T2PERSISTANCE_CHECK import CreatePERSISTANCE_CHECKWorkflow
+        myLocalPERSISTANCE_CHECKWF= CreatePERSISTANCE_CHECKWorkflow("999999_PersistanceCheckingWorkflow")
+        PERSISTANCE_CHECKWF.connect(SplitAvgBABC,'avgBABCT1',myLocalPERSISTANCE_CHECKWF,'fixedVolume')
+        PERSISTANCE_CHECKWF.connect(myLocalTCWF,'OutputSpec.outputLabels',myLocalPERSISTANCE_CHECKWF,'fixedBinaryVolume')
+        PERSISTANCE_CHECKWF.connect(BAtlas,'template_t1',myLocalPERSISTANCE_CHECKWF,'movingVolume')
+        PERSISTANCE_CHECKWF.connect(BAtlas,'template_brain',myLocalPERSISTANCE_CHECKWF,'movingBinaryVolume')
+        PERSISTANCE_CHECKWF.connect(myLocalLMIWF,'OutputSpec.atlasToSubjectTransform',myLocalPERSISTANCE_CHECKWF,'initialTransform')
+
+    if 'FREESURFER' in WORKFLOW_COMPONENTS:
+        from WorkupT1T2FreeSurfer import CreateFreeSurferWorkflow
+        myLocalFSWF= CreateFreeSurferWorkflow("Level1_FSTest")
+        baw200.connect(uidSource,'uid',myLocalFSWF,'InputSpec.subject_id')
+        baw200.connect(SplitAvgBABC,'avgBABCT1',myLocalFSWF,'InputSpec.T1_files')
         """
-        ResampleNACLabels
+        baw200.connect(myLocalFSWF,'OutputSpec.subject_id',...)
+        baw200.connect(myLocalFSWF,'OutputSpec.subject_dir',...)
         """
-        ResampleAtlasNACLabels=pe.Node(interface=BRAINSResample(),name="13_ResampleAtlasNACLabels")
-        ResampleAtlasNACLabels.inputs.interpolationMode = "NearestNeighbor"
-        ResampleAtlasNACLabels.inputs.outputVolume = "atlasToSubjectNACLabels.nii.gz"
-
-        baw200.connect(myLocalTCWF,'OutputSpec.atlasToSubjectTransform',ResampleAtlasNACLabels,'warpTransform')
-        baw200.connect(myLocalTCWF,'OutputSpec.t1_corrected',ResampleAtlasNACLabels,'referenceVolume')
-        baw200.connect(BAtlas,'template_nac_lables',ResampleAtlasNACLabels,'inputVolume')
-
-        """
-        BRAINSMush
-        """
-        BMUSH=pe.Node(interface=BRAINSMush(),name="15_BMUSH")
-        BMUSH.inputs.outputVolume = "MushImage.nii.gz"
-        BMUSH.inputs.outputMask = "MushMask.nii.gz"
-        BMUSH.inputs.lowerThresholdFactor = 1.2
-        BMUSH.inputs.upperThresholdFactor = 0.55
-
-        baw200.connect(myLocalTCWF,'OutputSpec.t1_corrected',BMUSH,'inputFirstVolume')
-        baw200.connect(myLocalTCWF,'OutputSpec.t2_corrected',BMUSH,'inputSecondVolume')
-        baw200.connect(myLocalTCWF,'OutputSpec.outputLabels',BMUSH,'inputMaskVolume')
-
-        """
-        BRAINSROIAuto
-        """
-        BROI = pe.Node(interface=BRAINSROIAuto(), name="17_BRAINSROIAuto")
-        BROI.inputs.closingSize=12
-        BROI.inputs.otsuPercentileThreshold=0.01
-        BROI.inputs.thresholdCorrectionFactor=1.0
-        BROI.inputs.outputROIMaskVolume = "temproiAuto_t1_ACPC_corrected_BRAINSABC.nii.gz"
-        baw200.connect(myLocalTCWF,'OutputSpec.t1_corrected',BROI,'inputVolume')
-
-        """
-        Split the implicit outputs of BABCext
-        """
-        SplitAvgBABC = pe.Node(Function(input_names=['in_files','T1_count'], output_names=['avgBABCT1','avgBABCT2'],
-                                 function = get_first_T1_and_T2), run_without_submitting=True, name="99_SplitAvgBABC")
-        SplitAvgBABC.inputs.T1_count = 1 ## There is only 1 average T1 image.
-
-        baw200.connect(myLocalTCWF,'OutputSpec.outputAverageImages',SplitAvgBABC,'in_files')
-
-
-        """
-        Gradient Anistropic Diffusion images for BRAINSCut
-        """
-        GADT1=pe.Node(interface=GradientAnisotropicDiffusionImageFilter(),name="27_GADT1")
-        GADT1.inputs.timeStep = 0.025
-        GADT1.inputs.conductance = 1
-        GADT1.inputs.numberOfIterations = 5
-        GADT1.inputs.outputVolume = "GADT1.nii.gz"
-
-        baw200.connect(SplitAvgBABC,'avgBABCT1',GADT1,'inputVolume')
-
-        GADT2=pe.Node(interface=GradientAnisotropicDiffusionImageFilter(),name="27_GADT2")
-        GADT2.inputs.timeStep = 0.025
-        GADT2.inputs.conductance = 1
-        GADT2.inputs.numberOfIterations = 5
-        GADT2.inputs.outputVolume = "GADT2.nii.gz"
-
-        def printFullPath(outFileFullPath):
-            print("="*80)
-            print("="*80)
-            print("="*80)
-            print("="*80)
-            print("{0}".format(outFileFullPath))
-            return outFileFullPath
-        printOutImage = pe.Node( Function(function=printFullPath, input_names = ['outFileFullPath'], output_names = ['genoutFileFullPath']), run_without_submitting=True, name="99_printOutImage")
-        baw200.connect( GADT2, 'outputVolume', printOutImage, 'outFileFullPath' )
-
-        baw200.connect(SplitAvgBABC,'avgBABCT2',GADT2,'inputVolume')
-
-        """
-        Sum the gradient images for BRAINSCut
-        """
-        SGI=pe.Node(interface=GenerateSummedGradientImage(),name="27_SGI")
-        SGI.inputs.outputFileName = "SummedGradImage.nii.gz"
-
-        baw200.connect(GADT1,'outputVolume',SGI,'inputVolume1')
-        baw200.connect(GADT2,'outputVolume',SGI,'inputVolume2')
-
-        if 'SEGMENTATION' in WORKFLOW_COMPONENTS:
-            pass
-        
-        ## Make deformed Atlas image space
-        if 'ANTS' in WORKFLOW_COMPONENTS:
-            many_cpu_sge_options_dictionary={'qsub_args': '-S /bin/bash -pe smp1 2-8 -l mem_free=5000M -o /dev/null -e /dev/null '+CLUSTER_QUEUE, 'overwrite': True}
-            print("""Run ANTS Registration""")
-            ComputeAtlasToSubjectTransform = pe.Node(interface=ANTSWrapper(), name="19_ComputeAtlasToSubjectTransform")
-            ComputeAtlasToSubjectTransform.plugin_args=many_cpu_sge_options_dictionary
-            ComputeAtlasToSubjectTransform.inputs.output_prefix = "ANTS_"
-
-            baw200.connect( SplitAvgBABC,'avgBABCT1',ComputeAtlasToSubjectTransform,"fixed_T1_image")
-            baw200.connect( SplitAvgBABC,'avgBABCT2',ComputeAtlasToSubjectTransform,"fixed_T2_image")
-            baw200.connect( BAtlas,'template_t1',    ComputeAtlasToSubjectTransform,"moving_T1_image")
-            baw200.connect( BAtlas,'template_t2',    ComputeAtlasToSubjectTransform,"moving_T2_image")
-            baw200.connect(myLocalLMIWF,'OutputSpec.atlasToSubjectTransform',ComputeAtlasToSubjectTransform,'initialTransform')
-            
-
-            #####################
-            #####################
-            #####################
-            WarpSubjectToAtlas = pe.Node(interface=WarpImageMultiTransform(), name = "20_WarpImageMultiTransform")
-            WarpSubjectToAtlas.plugin_args=many_cpu_sge_options_dictionary
-            WarpSubjectToAtlas.inputs.invert_affine=[0]   # only invert the transform at index 0
-            WarpSubjectToAtlas.inputs.dimension=3
-            WarpSubjectToAtlas.inputs.out_postfix='_To_Atlas'
-            baw200.connect( SplitAvgBABC,'avgBABCT1',WarpSubjectToAtlas,"moving_image")
-            baw200.connect( BAtlas,'template_t1', WarpSubjectToAtlas, 'reference_image')
-
-            makeInverseTransformList = pe.Node(interface=Function(function=MakeList,
-                                                                input_names=['firstElement','secondElement'],
-                                                                output_names=['outList']),
-                             run_without_submitting=True, name="99_MakeInverseTransformList")
-
-            baw200.connect(myLocalLMIWF,'OutputSpec.atlasToSubjectTransform',makeInverseTransformList,'firstElement')
-            baw200.connect(ComputeAtlasToSubjectTransform,'output_inversewarp',makeInverseTransformList,'secondElement')
-            baw200.connect( makeInverseTransformList, 'outList',WarpSubjectToAtlas, 'transformation_series')
-
-        if 'ANTSWARP_FIXME' in WORKFLOW_COMPONENTS:
-            WarpAtlas = pe.Node(interface=WarpAllAtlas(), name = "19_WarpAtlas")
-            WarpAtlas.inputs.moving_atlas = atlas_fname_wpath
-            WarpAtlas.inputs.deformed_atlas = "./template_t2.nii.gz"
-            #baw200.connect( ComputeAtlasToSubjectTransform,'output_affine', WarpAtlas,"affine_transform")
-            baw200.connect( myLocalLMIWF,'OutputSpec.atlasToSubjectTransform',WarpAtlas,'affine_transform')
-            baw200.connect( ComputeAtlasToSubjectTransform,'output_warp', WarpAtlas,"deformation_field")
-            baw200.connect( SplitAvgBABC,'avgBABCT1', WarpAtlas, 'reference_image')
-
-        if 'PERSISTANCE_CHECK' in WORKFLOW_COMPONENTS:
-            from WorkupT1T2PERSISTANCE_CHECK import CreatePERSISTANCE_CHECKWorkflow
-            myLocalPERSISTANCE_CHECKWF= CreatePERSISTANCE_CHECKWorkflow("999999_PersistanceCheckingWorkflow")
-            PERSISTANCE_CHECKWF.connect(SplitAvgBABC,'avgBABCT1',myLocalPERSISTANCE_CHECKWF,'fixedVolume')
-            PERSISTANCE_CHECKWF.connect(myLocalTCWF,'OutputSpec.outputLabels',myLocalPERSISTANCE_CHECKWF,'fixedBinaryVolume')
-            PERSISTANCE_CHECKWF.connect(BAtlas,'template_t1',myLocalPERSISTANCE_CHECKWF,'movingVolume')
-            PERSISTANCE_CHECKWF.connect(BAtlas,'template_brain',myLocalPERSISTANCE_CHECKWF,'movingBinaryVolume')
-            PERSISTANCE_CHECKWF.connect(myLocalLMIWF,'OutputSpec.atlasToSubjectTransform',myLocalPERSISTANCE_CHECKWF,'initialTransform')
-
-        if 'FREESURFER' in WORKFLOW_COMPONENTS:
-            from WorkupT1T2FreeSurfer import CreateFreeSurferWorkflow
-            myLocalFSWF= CreateFreeSurferWorkflow("Level1_FSTest")
-            baw200.connect(uidSource,'uid',myLocalFSWF,'InputSpec.subject_id')
-            baw200.connect(SplitAvgBABC,'avgBABCT1',myLocalFSWF,'InputSpec.T1_files')
-            """
-            baw200.connect(myLocalFSWF,'OutputSpec.subject_id',...)
-            baw200.connect(myLocalFSWF,'OutputSpec.subject_dir',...)
-            """
-        else:
-            print "Skipping freesurfer"
+    else:
+        print "Skipping freesurfer"
             
     if 0 == 1:
         baw200DataSink=pe.Node(nio.DataSink(),name="baw200DS")

@@ -21,11 +21,11 @@ source $utilitySRC
 ##
 ## check input arguments
 ##
-if [ $# != 5 ]; then
+if [ $# != 6 ]; then
   echo "Incorrect Number of Argument:: $#"  
   echo "Usage:::::"  
   echo "::::::::::"  
-  echo "$0 [ShuffledListFilename] [crossValidationTargetDirectory] [Date] [ROI List Filename] [XML Script]"
+  echo "$0 [ShuffledListFilename] [crossValidationTargetDirectory] [Date] [ROI List Filename] [XML Script] [Tag]"
   echo "::::::::::"  
   exit 1;
 fi
@@ -47,6 +47,7 @@ roiListFilename=$4;
   ## l_caudate true
   ## r_caudate true
   ##-----------------------
+Tag=$5
 
 
 # This function will do the 10 fold cross validation for the given list of file
@@ -114,7 +115,7 @@ do
    rm -f $currentListFile;
    generateListOfTrainAndApply $testIteration $pseudoRandomDataList $currentListFile
 
-   XMLGeneratorCommand="${GenerateXMLEXE} $currentListFile $roiListFilename $currentXMLFile $BRAINSBuild";
+   XMLGeneratorCommand="${GenerateXMLEXE} $currentListFile $roiListFilename $currentXMLFile $BRAINSBuild $Tag";
    printCommandAndRun "$XMLGeneratorCommand";
    
    ##

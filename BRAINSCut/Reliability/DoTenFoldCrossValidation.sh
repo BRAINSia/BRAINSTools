@@ -21,11 +21,11 @@ source $utilitySRC
 ##
 ## check input arguments
 ##
-if [ $# != 5 ]; then
+if [ $# != 6 ]; then
   echo "Incorrect Number of Argument:: $#"  
   echo "Usage:::::"  
   echo "::::::::::"  
-  echo "$0 [ShuffledListFilename] [crossValidationTargetDirectory] [Date] [ROI List Filename] [XML Script]"
+  echo "$0 [ShuffledListFilename] [crossValidationTargetDirectory] [Date] [ROI List Filename] [XML Script] [Tag]"
   echo "::::::::::"  
   exit 1;
 fi
@@ -47,7 +47,7 @@ roiListFilename=$4;
   ## l_caudate true
   ## r_caudate true
   ##-----------------------
-
+Tag=$6
 
 # This function will do the 10 fold cross validation for the given list of file
 
@@ -115,15 +115,15 @@ do
    generateListOfTrainAndApply $testIteration $pseudoRandomDataList $currentListFile
 
    #####for HN in 5 10 15 20 30 40 50 60 70 80 90 100 110
-   for HN in 60
+   for HN in 20 60
    do
-      currentXMLFile="${currentTargetDirectory}/${Date}_$HN.xml"
+      currentXMLFile="${currentTargetDirectory}/${Date}_${Tag}_$HN.xml"
       echo "from $startApplyIndex to $endApplyIndex"
 
       ##
       ## create xml file
       ##
-      XMLGeneratorCommand="${GenerateXMLEXE} $currentListFile $roiListFilename $currentXMLFile $HN $BRAINSBuild";
+      XMLGeneratorCommand="${GenerateXMLEXE} $currentListFile $roiListFilename $currentXMLFile $HN $BRAINSBuild $Tag";
       printCommandAndRun "$XMLGeneratorCommand";
    done
    
@@ -132,21 +132,21 @@ do
    ##
    
    # get the machine arch 
-   QSUBFile="${currentTargetDirectory}/runBRAINSCutSet${testIteration}${Date}.sh"
+   QSUBFile="${currentTargetDirectory}/runBRAINSCutSet${testIteration}${Date}${Tag}.sh"
    echo "QSUBFile name is :: $QSUBFile"
 
    qsubHeader $QSUBFile
 
-   for HN in 60
+   for HN in 20 60
    do
-     currentXMLFile="${currentTargetDirectory}/${Date}_$HN.xml"
+     currentXMLFile="${currentTargetDirectory}/${Date}_${Tag}_$HN.xml"
      echo " \${BRAINSBuild}/BRAINSCut --netConfiguration  ${currentXMLFile} --createVectors --trainModel --generateProbability">>$QSUBFile
    done
    ##for HN in 10 15 20 30 40 50 60 70 80 90 100 110
-   for HN in  60 
+   for HN in  20 60 
    do
-     currentXMLFile="${currentTargetDirectory}/${Date}_$HN.xml"
-     echo " \${BRAINSBuild}/BRAINSCut --netConfiguration  ${currentXMLFile} --trainModel ">>$QSUBFile
+     currentXMLFile="${currentTargetDirectory}/${Date}_${Tag}_$HN.xml"
+     echo " \${BRAINSBuild}/BRAINSCut --netConfiguration  ${currentXMLFile} --applyModel">>$QSUBFile
    done
 
    chmod 755 $QSUBFile

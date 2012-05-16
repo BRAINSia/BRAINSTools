@@ -18,14 +18,16 @@ from nipype.interfaces.freesurfer import ReconAll
 def CreateFreeSurferWorkflow(WFname):
     freesurferWF= pe.Workflow(name=WFname)
 
-    inputsSpec = pe.Node(interface=IdentityInterface(fields=['subject_id','T1_files']), name='InputSpec' )
-    print("""Run Freesurfer ReconAll at""")
-    fs_reconall = pe.Node(interface=ReconAll(),name="40_FS510")
-    freesurfer_sge_options_dictionary={'qsub_args': '-S /bin/bash -pe smp1 1 -l mem_free=3100M -o /dev/null -e /dev/null '+CLUSTER_QUEUE, 'overwrite': True}
-    fs_reconall.plugin_args=freesurfer_sge_options_dictionary
-    fs_reconall.inputs.directive = 'all'
-    freesurferWF.connect(inputsSpec,'subject_id',fs_reconall,'subject_id')
-    freesurferWF.connect(inputsSpec,'T1_files',  fs_reconall,'T1_files')
+    inputsSpec = pe.Node(interface=IdentityInterface(fields=['subject_id','T1_files','T2_files']), name='InputSpec' )
+    
+    if 0 == 1:     
+        print("""Run Freesurfer ReconAll at""")
+        fs_reconall = pe.Node(interface=ReconAll(),name="40_FS510")
+        freesurfer_sge_options_dictionary={'qsub_args': '-S /bin/bash -pe smp1 1 -l mem_free=3100M -o /dev/null -e /dev/null '+CLUSTER_QUEUE, 'overwrite': True}
+        fs_reconall.plugin_args=freesurfer_sge_options_dictionary
+        fs_reconall.inputs.directive = 'all'
+        freesurferWF.connect(inputsSpec,'subject_id',fs_reconall,'subject_id')
+        freesurferWF.connect(inputsSpec,'T1_files',  fs_reconall,'T1_files')
 
     if 0 == 1:
         print("""Run Freesurfer ReconAll at""")

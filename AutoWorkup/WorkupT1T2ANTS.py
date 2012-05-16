@@ -22,21 +22,43 @@ from BRAINSTools.ants.antsRegistration import *
 def CreateANTSRegistrationWorkflow(WFname,CLUSTER_QUEUE,NumberOfThreads=-1):
     ANTSWF= pe.Workflow(name=WFname)
 
-    inputsSpec = pe.Node(interface=IdentityInterface(fields=['fixedVolumesList','movingVolumesList','initial_moving_transform'
+    inputsSpec = pe.Node(interface=IdentityInterface(fields=['fixedVolumesList','movingVolumesList','initial_moving_transform',
+                                                             'fixedBinaryVolume','movingBinaryVolume'
         ]), name='InputSpec' )
 
     many_cpu_sge_options_dictionary={'qsub_args': '-S /bin/bash -pe smp1 2-8 -l mem_free=5000M -o /dev/null -e /dev/null '+CLUSTER_QUEUE, 'overwrite': True}
     print("""Run ANTS Registration""")
+    
+    BFitAtlasToSubject = pe.Node(interface=BRAINSFit(),name="30_BFitAtlasToSubjectAffine")
+    BFitAtlasToSubject.inputs.costMetric="MMI"
+    BFitAtlasToSubject.inputs.numberOfSamples=1000000
+    BFitAtlasToSubject.inputs.numberOfIterations=[1500]
+    BFitAtlasToSubject.inputs.numberOfHistogramBins=50
+    BFitAtlasToSubject.inputs.maximumStepLength=0.2
+    BFitAtlasToSubject.inputs.minimumStepLength=[0.000005]
+    BFitAtlasToSubject.inputs.transformType= ["Affine"]
+    BFitAtlasToSubject.inputs.maskInferiorCutOffFromCenter=65
+    BFitAtlasToSubject.inputs.outputVolume="Trial_Initializer_Output.nii.gz"
+    BFitAtlasToSubject.inputs.outputTransform="Trial_Initializer_Output.mat"
+    BFitAtlasToSubject.inputs.maskProcessingMode="ROIAUTO"
+    BFitAtlasToSubject.inputs.ROIAutoDilateSize=4
+    #BFitAtlasToSubject.inputs.maskProcessingMode="ROI"
+   # ANTSWF.connect(inputsSpec,'fixedBinaryVolume',BFitAtlasToSubject,'fixedBinaryVolume')
+   # ANTSWF.connect(inputsSpec,'movingBinaryVolume',BFitAtlasToSubject,'movingBinaryVolume')
+    ANTSWF.connect(inputsSpec,'fixedVolumesList',BFitAtlasToSubject,'fixedVolume')
+    ANTSWF.connect(inputsSpec,'movingVolumesList',BFitAtlasToSubject,'movingVolume')
+    ANTSWF.connect(inputsSpec,'initial_moving_transform',BFitAtlasToSubject,'initialTransform')
+    
     ComputeAtlasToSubjectTransform = pe.Node(interface=antsRegistration(), name="19_ComputeAtlasToSubjectTransform")
     ComputeAtlasToSubjectTransform.plugin_args=many_cpu_sge_options_dictionary
     
     ComputeAtlasToSubjectTransform.inputs.dimension=3
     ComputeAtlasToSubjectTransform.inputs.metric='CC'                  ## This is a family of interfaces, CC,MeanSquares,Demons,GC,MI,Mattes
     ComputeAtlasToSubjectTransform.inputs.transform='SyN[0.25,3.0,0.0]'
-    ComputeAtlasToSubjectTransform.inputs.n_iterations=[1]
+    ComputeAtlasToSubjectTransform.inputs.n_iterations=[100,35,10]
     ComputeAtlasToSubjectTransform.inputs.convergence_threshold=1e-6
-    ComputeAtlasToSubjectTransform.inputs.smoothing_sigmas=[0]
-    ComputeAtlasToSubjectTransform.inputs.shrink_factors=[1]
+    ComputeAtlasToSubjectTransform.inputs.smoothing_sigmas=[0,0,0]
+    ComputeAtlasToSubjectTransform.inputs.shrink_factors=[3,2,1]
     ComputeAtlasToSubjectTransform.inputs.use_histogram_matching=True
     ComputeAtlasToSubjectTransform.inputs.invert_initial_moving_transform=False
     ComputeAtlasToSubjectTransform.inputs.output_transform_prefix='antsRegPrefix_'
@@ -51,7 +73,7 @@ def CreateANTSRegistrationWorkflow(WFname,CLUSTER_QUEUE,NumberOfThreads=-1):
 
     ANTSWF.connect( inputsSpec,'fixedVolumesList', ComputeAtlasToSubjectTransform,"fixed_image")
     ANTSWF.connect( inputsSpec,'movingVolumesList',ComputeAtlasToSubjectTransform,"moving_image")
-    ANTSWF.connect( inputsSpec,'initial_moving_transform', ComputeAtlasToSubjectTransform,'initial_moving_transform')
+    ANTSWF.connect( BFitAtlasToSubject,'outputTransform', ComputeAtlasToSubjectTransform,'initial_moving_transform')
     
     if 1 == 1:
         TestResampleMovingImage=pe.Node(interface=BRAINSResample(),name="99_TestAffineRegistration")

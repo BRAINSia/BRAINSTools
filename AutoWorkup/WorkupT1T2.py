@@ -234,8 +234,8 @@ def WorkupT1T2(mountPrefix,ExperimentBaseDirectory, subject_data_file, atlas_fna
             DoReverseMapping = True
         myLocalLMIWF= CreateLandmarkInitializeWorkflow("01_LandmarkInitialize", BCD_model_path, InterpolationMode,DoReverseMapping)
         baw200.connect( [ (uidSource, myLocalLMIWF, [(('uid', getFirstT1, subjectDatabaseFile ), 'InputSpec.inputVolume')] ), ])
-        baw200.connect( BAtlas, 'template_landmarks_fcsv', myLocalLMIWF,'InputSpec.atlasLandmarkFilename')
-        baw200.connect( BAtlas, 'template_landmark_weights_csv', myLocalLMIWF,'InputSpec.atlasWeightFilename')
+        baw200.connect( BAtlas, 'template_landmarks_31_fcsv', myLocalLMIWF,'InputSpec.atlasLandmarkFilename')
+        baw200.connect( BAtlas, 'template_landmark_weights_31_csv', myLocalLMIWF,'InputSpec.atlasWeightFilename')
         if 'AUXLMK' in WORKFLOW_COMPONENTS:
             baw200.connect(BAtlas,'template_t1',myLocalLMIWF,'InputSpec.atlasVolume')
   
@@ -256,7 +256,10 @@ def WorkupT1T2(mountPrefix,ExperimentBaseDirectory, subject_data_file, atlas_fna
         baw200.connect( myLocalTCWF,'OutputSpec.t1_corrected',myLocalAntsWF,"InputSpec.fixedVolumesList")
         baw200.connect( BAtlas,'template_t1',    myLocalAntsWF,"InputSpec.movingVolumesList")
         baw200.connect(myLocalLMIWF,'OutputSpec.atlasToSubjectTransform',myLocalAntsWF,'InputSpec.initial_moving_transform')
-
+        # Must register the entire head, not just the brain!
+        baw200.connect(myLocalTCWF,'OutputSpec.outputHeadLabels',myLocalAntsWF,'InputSpec.fixedBinaryVolume')
+        baw200.connect(BAtlas,'template_headregion',myLocalAntsWF,'InputSpec.movingBinaryVolume')
+    
     if 'SEGMENTATION' in WORKFLOW_COMPONENTS:
         pass
     
@@ -274,6 +277,7 @@ def WorkupT1T2(mountPrefix,ExperimentBaseDirectory, subject_data_file, atlas_fna
         myLocalFSWF= CreateFreeSurferWorkflow("Level1_FSTest")
         baw200.connect(uidSource,'uid',myLocalFSWF,'InputSpec.subject_id')
         baw200.connect(SplitAvgBABC,'avgBABCT1',myLocalFSWF,'InputSpec.T1_files')
+        baw200.connect(SplitAvgBABC,'avgBABCT2',myLocalFSWF,'InputSpec.T2_files')
         """
         baw200.connect(myLocalFSWF,'OutputSpec.subject_id',...)
         baw200.connect(myLocalFSWF,'OutputSpec.subject_dir',...)

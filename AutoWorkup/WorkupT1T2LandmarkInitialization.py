@@ -14,8 +14,8 @@ from BRAINSTools import *
     from WorkupT1T2LandmarkInitialization import CreateLandmarkInitializeWorkflow
     myLocalLMIWF= CreateLandmarkInitializeWorkflow("01_LandmarkInitialize")
     landmarkInitializeWF.connect( [ (uidSource, myLocalLMIWF, [(('uid', getFirstT1, subjectDatabaseFile ), 'inputsSpec.inputVolume')] ), ])
-    landmarkInitializeWF.connect( BAtlas, 'template_landmarks_fcsv', myLocalLMIWF,'inputsSpec.atlasLandmarkFilename')
-    landmarkInitializeWF.connect( BAtlas, 'template_landmark_weights_csv', myLocalLMIWF,'inputsSpec.atlasWeightFilename')
+    landmarkInitializeWF.connect( BAtlas, 'template_landmarks_31_fcsv', myLocalLMIWF,'inputsSpec.atlasLandmarkFilename')
+    landmarkInitializeWF.connect( BAtlas, 'template_landmark_weights_31_csv', myLocalLMIWF,'inputsSpec.atlasWeightFilename')
     landmarkInitializeWF.connect(BAtlas,'template_t1',myLocalLMIWF,'inputsSpec.atlasVolume')
     
 """
@@ -71,9 +71,19 @@ def CreateLandmarkInitializeWorkflow(WFname,BCD_model_path,InterpolationMode,DoR
         Resample2Atlas.inputs.interpolationMode = "Linear"
         Resample2Atlas.inputs.outputVolume = "subject2atlas.nii.gz"
 
-        landmarkInitializeWF.connect(inputsSpec , 'inputVolume', Resample2Atlas, 'inputVolume')
+        landmarkInitializeWF.connect( inputsSpec , 'inputVolume', Resample2Atlas, 'inputVolume')
         landmarkInitializeWF.connect(BLI2Atlas,'outputTransformFilename',Resample2Atlas,'warpTransform')
         landmarkInitializeWF.connect(inputsSpec,'atlasVolume',Resample2Atlas,'referenceVolume')
+        
+    DO_DEBUG = True
+    if DO_DEBUG == True:
+        ResampleFromAtlas=pe.Node(interface=BRAINSResample(),name="05_ResampleFromAtlas")
+        ResampleFromAtlas.inputs.interpolationMode = "Linear"
+        ResampleFromAtlas.inputs.outputVolume = "atlas2subject.nii.gz"
+
+        landmarkInitializeWF.connect( inputsSpec , 'atlasVolume', ResampleFromAtlas, 'inputVolume')
+        landmarkInitializeWF.connect(BLI,'outputTransformFilename',ResampleFromAtlas,'warpTransform')
+        landmarkInitializeWF.connect(BCD,'outputResampledVolume',ResampleFromAtlas,'referenceVolume')
     
     #############
     outputsSpec = pe.Node(interface=IdentityInterface(fields=['outputLandmarksInACPCAlignedSpace','outputResampledVolume','outputLandmarksInInputSpace',

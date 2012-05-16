@@ -11,12 +11,67 @@
 
 typedef std::map<std::string, float> LandmarkWeightMapType;
 
-void CheckLandmarks( LandmarksMapType ldmk );
+static void CheckLandmarks( const LandmarksMapType & ldmk, const LandmarkWeightMapType & weightMap)
+{
+  if( ldmk.size() < 4 )
+    {
+    std::cerr << "At least 3 fiducual points must be specified. "
+              << std::endl;
+    exit(EXIT_FAILURE);
+    }
 
-LandmarkWeightMapType ReadLandmarkWeights( std::string weightFilename );
+  if( ldmk.find( "AC" ) == ldmk.end() ||
+      ldmk.find( "PC" ) == ldmk.end() ||
+      ldmk.find( "LE" ) == ldmk.end() ||
+      ldmk.find( "RE" ) == ldmk.end() )
+    {
+    std::cerr << " Base four landmarks ( AC, PC, left eye(LE), and right eye(RE) ) "
+              << " has to be provided"
+              << std::endl;
+    exit(EXIT_FAILURE);
+    }
+  for( std::map<std::string, float>::const_iterator i = weightMap.begin();
+       i != weightMap.end();
+       i++ )
+    {
+    if( ldmk.find( i->first ) == ldmk.end() )
+      {
+      std::cerr << "WARNING: Landmark not found: " << i->first << std::endl;
+      }
+#if defined(VERBOSE_OUTPUT)
+    else
+      {
+      std::cerr << "NOTE: Landmark found: " << i->first << std::endl;
+      }
+#endif
+    }
+}
+
+static LandmarkWeightMapType ReadLandmarkWeights( const std::string weightFilename )
+{
+  std::ifstream weightFileStream( weightFilename.c_str() );
+
+  if( !weightFileStream.is_open() )
+    {
+    std::cerr << "Fail to open weight file " << std::endl;
+    exit(EXIT_FAILURE);
+    }
+
+  std::string           line;
+  LandmarkWeightMapType landmarkWeightMap;
+  while( getline( weightFileStream, line ) )
+    {
+    const size_t      firstComma = line.find(',', 0);
+    const std::string landmark = line.substr( 0, firstComma );
+    const float       weight   = atof( (line.substr( firstComma + 1, line.length() - 1 ) ).c_str() );
+    landmarkWeightMap[landmark] = weight;
+    }
+
+  return landmarkWeightMap;
+}
 
 int
-main(int argc, char * *argv)
+main(int argc, char *argv[])
 {
   PARSE_ARGS;
 
@@ -31,23 +86,24 @@ main(int argc, char * *argv)
     exit(EXIT_FAILURE);
     }
 
-  /** read in *fcsv file */
-  LandmarksMapType fixedLandmarks = ReadSlicer3toITKLmk( inputFixedLandmarkFilename );
-  LandmarksMapType movingLandmarks = ReadSlicer3toITKLmk( inputMovingLandmarkFilename );
-
-  /** check four landmarks */
-  CheckLandmarks( fixedLandmarks );
-  CheckLandmarks( movingLandmarks );
-
   /** Landmark Weights */
   LandmarkWeightMapType landmarkWeightMap = ReadLandmarkWeights( inputWeightFilename );
+
+  /** read in *fcsv file */
+  /** check four landmarks */
+  std::cout << "Reading: " << inputFixedLandmarkFilename << std::endl;
+  LandmarksMapType fixedLandmarks = ReadSlicer3toITKLmk( inputFixedLandmarkFilename );
+  CheckLandmarks( fixedLandmarks, landmarkWeightMap );
+
+  std::cout << "Reading: " << inputMovingLandmarkFilename << std::endl;
+  LandmarksMapType movingLandmarks = ReadSlicer3toITKLmk( inputMovingLandmarkFilename );
+  CheckLandmarks( movingLandmarks, landmarkWeightMap );
 
   /** Landmark Initializaer */
   typedef double PixelType;
   const unsigned int Dimension = 3;
 
-  typedef itk::Image<PixelType, Dimension> ImageType;
-
+  typedef itk::Image<PixelType, Dimension>           ImageType;
   typedef itk::AffineTransform<PixelType, Dimension> AffineTransformType;
   AffineTransformType::Pointer affineTransform = AffineTransformType::New();
 
@@ -58,21 +114,18 @@ main(int argc, char * *argv)
   LandmarkBasedInitializerType::Pointer landmarkBasedInitializer =
     LandmarkBasedInitializerType::New();
 
-  typedef LandmarkBasedInitializerType::LandmarkPointContainer LandmarkContainerType;
-
-  LandmarkContainerType fixedLmks;
-  LandmarkContainerType movingLmks;
-
   typedef LandmarkBasedInitializerType::LandmarkWeightType LandmarkWeightContainerType;
   LandmarkWeightContainerType landmarkWgts;
 
-  typedef LandmarksMapType::const_iterator LandmarkIterator;
-  for( LandmarkIterator fixedIt = fixedLandmarks.begin();
+  typedef LandmarkBasedInitializerType::LandmarkPointContainer LandmarkContainerType;
+  LandmarkContainerType fixedLmks;
+  LandmarkContainerType movingLmks;
+  typedef LandmarksMapType::const_iterator LandmarkConstIterator;
+  for( LandmarkConstIterator fixedIt = fixedLandmarks.begin();
        fixedIt != fixedLandmarks.end();
        ++fixedIt )
     {
-    LandmarkIterator movingIt = movingLandmarks.find( fixedIt->first );
-
+    LandmarkConstIterator movingIt = movingLandmarks.find( fixedIt->first );
     if( movingIt != movingLandmarks.end() )
       {
       fixedLmks.push_back( fixedIt->second);
@@ -102,61 +155,10 @@ main(int argc, char * *argv)
 
   landmarkBasedInitializer->SetFixedLandmarks( fixedLmks );
   landmarkBasedInitializer->SetMovingLandmarks( movingLmks);
-
   landmarkBasedInitializer->SetTransform( affineTransform );
-
   landmarkBasedInitializer->InitializeTransform();
 
-  WriteTransformToDisk( affineTransform,
-                        outputTransformFilename);
+  WriteTransformToDisk( affineTransform, outputTransformFilename);
 
   return EXIT_SUCCESS;
-}
-
-void
-CheckLandmarks( LandmarksMapType ldmk )
-{
-  if( ldmk.size() < 4 )
-    {
-    std::cerr << "At least 3 fiducual points must be specified. "
-              << std::endl;
-    exit(EXIT_FAILURE);
-    }
-
-  if( ldmk.find( "AC" ) == ldmk.end() ||
-      ldmk.find( "PC" ) == ldmk.end() ||
-      ldmk.find( "LE" ) == ldmk.end() ||
-      ldmk.find( "RE" ) == ldmk.end() )
-    {
-    std::cerr << " Base four landmarks ( AC, PC, left eye(LE), and right eye(RE) ) "
-              << " has to be provided"
-              << std::endl;
-    exit(EXIT_FAILURE);
-    }
-}
-
-LandmarkWeightMapType
-ReadLandmarkWeights( std::string weightFilename )
-{
-  std::ifstream weightFileStream( weightFilename.c_str() );
-
-  if( !weightFileStream.is_open() )
-    {
-    std::cerr << "Fail to open weight file "
-              << std::endl;
-    exit(EXIT_FAILURE);
-    }
-
-  std::string           line;
-  LandmarkWeightMapType landmarkWeightMap;
-
-  while( getline( weightFileStream, line ) )
-    {
-    size_t            firstComma = line.find(',', 0);
-    const std::string landmark = line.substr( 0, firstComma );
-    const float       weight   = atof( (line.substr( firstComma + 1, line.length() - 1 ) ).c_str() );
-    landmarkWeightMap[landmark] = weight;
-    }
-
-  return landmarkWeightMap;
 }

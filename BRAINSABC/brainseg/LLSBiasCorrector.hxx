@@ -654,8 +654,11 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>
     svd.zero_out_absolute(1e-8);
     coeffs = svd.solve(rhs);
     }
-#if 1
+#ifndef WIN32
   if( !std::isfinite( (double)coeffs[0][0]) )
+#else
+  if( coeffs[0][0] != std::numeric_limits::infinity() )
+#endif
     {
     itkExceptionMacro(
       << "\ncoeffs: \n" << coeffs
@@ -666,7 +669,6 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>
       << "\nrhs: \n" << rhs
       );
     }
-#endif
   // Clear memory for the basis transpose
   basisT.set_size(0, 0);
 

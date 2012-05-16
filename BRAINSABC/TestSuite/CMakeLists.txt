@@ -8,6 +8,7 @@ include_directories(
 
 MakeTestDriverFromSEMTool(BRAINSABC BRAINSABCTest.cxx)
 
+if("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME BRAINSABCLongTest
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSABCTestDriver>
   --compare DATA{${TestData_DIR}/labels.nii.gz}
@@ -33,6 +34,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME BRAINSABCLongTest
   --atlasDefinition ${ReferenceAtlas_DIR}/${ATLAS_NAME}/AtlasPVDefinition.xml
   )
 set_tests_properties(BRAINSABCLongTest PROPERTIES TIMEOUT 6500)
+endif()
 
 if(0) # This should be restored after fixing.
   add_executable(BlendImageFilterTest BlendImageFilterTest.cxx)

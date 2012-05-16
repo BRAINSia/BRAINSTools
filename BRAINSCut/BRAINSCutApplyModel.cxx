@@ -149,23 +149,27 @@ BRAINSCutApplyModel
                     roiIDsOrderNumber, inputVectorGenerator.GetInputVectorSize() );
         std::string ANNContinuousOutputFilename = GetContinuousPredictionFilename( subject, currentROIName );
 
-        WritePredictROIProbabilityBasedOnReferenceImage( predictedOutputVector,
-                                                         imagesOfInterest.front(),
-                                                         deformedROIs.find( currentROIName )->second,
-                                                         ANNContinuousOutputFilename,
-                                                         roiIDsOrderNumber );
-
         /* post processing
          * may include hole-filling(closing), thresholding, and more adjustment
          */
         BinaryImagePointer mask;
         if( method == "ANN" )
           {
+          WritePredictROIProbabilityBasedOnReferenceImage( predictedOutputVector,
+                                                           imagesOfInterest.front(),
+                                                           deformedROIs.find( currentROIName )->second,
+                                                           ANNContinuousOutputFilename,
+                                                           0.0F );
           mask = PostProcessingANN( ANNContinuousOutputFilename,
                                     annOutputThreshold);
           }
         else if( method == "RandomForest" )
           {
+          WritePredictROIProbabilityBasedOnReferenceImage( predictedOutputVector,
+                                                           imagesOfInterest.front(),
+                                                           deformedROIs.find( currentROIName )->second,
+                                                           ANNContinuousOutputFilename,
+                                                           roiIDsOrderNumber );
           mask = PostProcessingRF( ANNContinuousOutputFilename );
           }
 
@@ -233,10 +237,10 @@ BRAINSCutApplyModel
   maskVolume = ThresholdImageAtLower( continuousImage, threshold);
 
   /* Get One label */
-  // maskVolume = GetOneConnectedRegion( maskVolume );
+  maskVolume = GetOneConnectedRegion( maskVolume );
 
   /* opening and closing to get rid of island and holes */
-  // maskVolume = FillHole( maskVolume );
+  maskVolume = FillHole( maskVolume );
   return maskVolume;
 }
 
@@ -301,6 +305,7 @@ BRAINSCutApplyModel
   thresholder->SetOutsideValue( 0 );
   thresholder->SetInsideValue( 1 );
   thresholder->SetLowerThreshold( thresholdValue );
+  thresholder->SetUpperThreshold( 255 );
   thresholder->Update();
 
   BinaryImagePointer mask = itkUtil::ScaleAndCast<WorkingImageType,

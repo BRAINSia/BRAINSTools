@@ -19,7 +19,7 @@ function qsubHeader( ){
    rm -f $outputFilename;
 
    macBRANISBuild="/ipldev/scratch/eunyokim/src/BRAINS20111028/build-Darwin/lib"
-   heliumBRAINSBuild="/scratch/PREDICT/regina/BRAINS/buildICC/lib"
+   heliumBRAINSBuild="/scratch/PREDICT/regina/BRAINS/buildICC-May/lib"
 
    echoOutTo "#!/bin/bash"                             $outputFilename 
    echoOutTo "#$ -N BCut${testIteration}"              $outputFilename

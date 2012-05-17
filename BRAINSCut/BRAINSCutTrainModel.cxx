@@ -238,7 +238,7 @@ BRAINSCutTrainModel
     {
     unsigned int subSetNo =  (currentIteration - 1) % trainingDataSet->GetNumberOfSubSet();
     TrainWithUpdate( *trainner,
-                     (currentIteration > 0),
+                     (currentIteration > 1), // after first iteration, update
                      *(trainingDataSet->GetTrainingSubSet(subSetNo) ) );
     SaveANNTrainModelAtIteration( *trainner, currentIteration );
     printANNTrainInformation( *trainner, currentIteration );

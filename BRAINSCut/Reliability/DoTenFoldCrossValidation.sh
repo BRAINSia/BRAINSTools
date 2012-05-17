@@ -7,7 +7,7 @@ ARCH=`uname`;
 if [ "$ARCH" == "Darwin" ]; then
   BRAINSBuild="/ipldev/scratch/eunyokim/src/BRAINS20111028/build-Darwin/";
 else
-  BRAINSBuild="/scratch/PREDICT/regina/BRAINS/buildICC/";
+  BRAINSBuild="/scratch/PREDICT/regina/BRAINS/buildICC-May/";
 fi
 
 ##
@@ -21,11 +21,11 @@ source $utilitySRC
 ##
 ## check input arguments
 ##
-if [ $# != 6 ]; then
+if [ $# != 5 ]; then
   echo "Incorrect Number of Argument:: $#"  
   echo "Usage:::::"  
   echo "::::::::::"  
-  echo "$0 [ShuffledListFilename] [crossValidationTargetDirectory] [Date] [ROI List Filename] [XML Script] [Tag]"
+  echo "$0 [ShuffledListFilename] [crossValidationTargetDirectory] [Date] [ROI List Filename] [XML Script] "
   echo "::::::::::"  
   exit 1;
 fi
@@ -47,7 +47,6 @@ roiListFilename=$4;
   ## l_caudate true
   ## r_caudate true
   ##-----------------------
-Tag=$6
 
 # This function will do the 10 fold cross validation for the given list of file
 
@@ -114,16 +113,28 @@ do
    rm -f $currentListFile;
    generateListOfTrainAndApply $testIteration $pseudoRandomDataList $currentListFile
 
-   #####for HN in 5 10 15 20 30 40 50 60 70 80 90 100 110
    for HN in 20 60
    do
-      currentXMLFile="${currentTargetDirectory}/${Date}_${Tag}_$HN.xml"
+      currentXMLFile="${currentTargetDirectory}/${Date}_ANN$HN.xml"
       echo "from $startApplyIndex to $endApplyIndex"
 
       ##
       ## create xml file
       ##
-      XMLGeneratorCommand="${GenerateXMLEXE} $currentListFile $roiListFilename $currentXMLFile $HN $BRAINSBuild $Tag";
+      XMLGeneratorCommand="${GenerateXMLEXE} $currentListFile $roiListFilename $currentXMLFile $HN $BRAINSBuild ANN$HN";
+      printCommandAndRun "$XMLGeneratorCommand";
+   done
+
+
+   for RF in 10 25 100
+   do
+      currentXMLFile="${currentTargetDirectory}/${Date}_RF$RF.xml"
+      echo "from $startApplyIndex to $endApplyIndex"
+
+      ##
+      ## create xml file
+      ##
+      XMLGeneratorCommand="${GenerateXMLEXE} $currentListFile $roiListFilename $currentXMLFile $HN $BRAINSBuild RF$RF";
       printCommandAndRun "$XMLGeneratorCommand";
    done
    
@@ -132,23 +143,28 @@ do
    ##
    
    # get the machine arch 
-   QSUBFile="${currentTargetDirectory}/runBRAINSCutSet${testIteration}${Date}${Tag}.sh"
+   QSUBFile="${currentTargetDirectory}/runBRAINSCutSet${testIteration}${Date}.sh"
    echo "QSUBFile name is :: $QSUBFile"
 
    qsubHeader $QSUBFile
 
-   for HN in 20 60
+   for HN in 20
    do
-     currentXMLFile="${currentTargetDirectory}/${Date}_${Tag}_$HN.xml"
-     echo " \${BRAINSBuild}/BRAINSCut --netConfiguration  ${currentXMLFile} --createVectors --trainModel --generateProbability">>$QSUBFile
-   done
-   ##for HN in 10 15 20 30 40 50 60 70 80 90 100 110
-   for HN in  20 60 
-   do
-     currentXMLFile="${currentTargetDirectory}/${Date}_${Tag}_$HN.xml"
-     echo " \${BRAINSBuild}/BRAINSCut --netConfiguration  ${currentXMLFile} --applyModel">>$QSUBFile
+     currentXMLFile="${currentTargetDirectory}/${Date}_ANN$HN.xml"
+     echo " \${BRAINSBuild}/BRAINSCut --netConfiguration  ${currentXMLFile} --createVectors --generateProbability --trainModel --applyModel">>$QSUBFile
    done
 
+   for HN in  60 
+   do
+     currentXMLFile="${currentTargetDirectory}/${Date}_ANN$HN.xml"
+     echo " \${BRAINSBuild}/BRAINSCut --netConfiguration  ${currentXMLFile} --applyModel --trainModel ">>$QSUBFile
+   done
+
+   for RF in  10 25 100
+   do
+     currentXMLFile="${currentTargetDirectory}/${Date}_RF$RF.xml"
+     echo " \${BRAINSBuild}/BRAINSCut --netConfiguration  ${currentXMLFile} --applyModel --trainModel --method RandomForest --numberOfTrees $RF --randomTreeDepth 100 --NoTrainingVectorShuffling">>$QSUBFile
+   done
    chmod 755 $QSUBFile
 
 done

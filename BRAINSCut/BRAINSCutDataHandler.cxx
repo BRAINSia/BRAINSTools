@@ -196,8 +196,21 @@ BRAINSCutDataHandler
   DisplacementFieldType::Pointer deformation = GetDeformationField( atlasSubjectRegistrationFilename );
   GenericTransformType::Pointer  genericTransform = GetGenericTransform( atlasSubjectRegistrationFilename );
 
+  std::string subjectFilenameToUse = subject.GetImageFilenameByType(registrationImageTypeToUse);
+
+  if( !itksys::SystemTools::FileExists( subjectFilenameToUse.c_str(), false ) )
+    {
+    std::cout << " Subject image file of "
+              << subjectFilenameToUse
+              << ", type of " << registrationImageTypeToUse
+              << ", does not exist. "
+              << std::endl;
+    exit(EXIT_FAILURE);
+    }
+
   WorkingImagePointer referenceImage =
     ReadImageByFilename( subject.GetImageFilenameByType(registrationImageTypeToUse) );
+
   const std::string transoformationPixelType = "float";
 
   warpedSpatialLocationImages.insert( std::pair<std::string, WorkingImagePointer>

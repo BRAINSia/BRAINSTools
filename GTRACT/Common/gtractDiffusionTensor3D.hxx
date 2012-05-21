@@ -59,7 +59,12 @@ gtractDiffusionTensor3D<TComponent>
   this->Superclass::ComputeEigenValues( eigenValues );
 
   // lambda.1
-  return vnl_math_abs(eigenValues[0]);
+  // return vnl_math_abs(eigenValues[0]);
+  std::cout << __LINE__ << " Eigen 0: " << vnl_math_abs(eigenValues[0]) << std::endl;
+  std::cout << __LINE__ << " Eigen 1: " << vnl_math_abs(eigenValues[1]) << std::endl;
+  std::cout << __LINE__ << " Eigen 2: " << vnl_math_abs(eigenValues[2]) << std::endl;
+  std::cout << " " << std::endl;
+  return vnl_math_abs(eigenValues[2]);
 }
 
 /**
@@ -75,7 +80,8 @@ gtractDiffusionTensor3D<TComponent>
   this->Superclass::ComputeEigenValues( eigenValues );
 
   // (lambda.2 + lambda.3)/2.0
-  return ( vnl_math_abs(eigenValues[1]) + vnl_math_abs(eigenValues[2]) ) / 2.0;
+  // return ( vnl_math_abs(eigenValues[1]) + vnl_math_abs(eigenValues[2]) ) / 2.0;
+  return ( vnl_math_abs(eigenValues[0]) + vnl_math_abs(eigenValues[1]) ) / 2.0;
 }
 
 /**

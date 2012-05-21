@@ -274,10 +274,12 @@ def WorkupT1T2(mountPrefix,ExperimentBaseDirectory, subject_data_file, atlas_fna
 
     if 'FREESURFER' in WORKFLOW_COMPONENTS:
         from WorkupT1T2FreeSurfer import CreateFreeSurferWorkflow
-        myLocalFSWF= CreateFreeSurferWorkflow("Level1_FSTest")
+        myLocalFSWF= CreateFreeSurferWorkflow("Level1_FSTest",CLUSTER_QUEUE)
         baw200.connect(uidSource,'uid',myLocalFSWF,'InputSpec.subject_id')
-        baw200.connect(SplitAvgBABC,'avgBABCT1',myLocalFSWF,'InputSpec.T1_files')
-        baw200.connect(SplitAvgBABC,'avgBABCT2',myLocalFSWF,'InputSpec.T2_files')
+        baw200.connect(myLocalTCWF,'OutputSpec.t1_corrected',myLocalFSWF,'InputSpec.T1_files')
+        baw200.connect(myLocalTCWF,'OutputSpec.t2_corrected',myLocalFSWF,'InputSpec.T2_files')
+        baw200.connect(myLocalTCWF,'OutputSpec.outputLabels',myLocalFSWF,'InputSpec.label_file')
+        
         """
         baw200.connect(myLocalFSWF,'OutputSpec.subject_id',...)
         baw200.connect(myLocalFSWF,'OutputSpec.subject_dir',...)

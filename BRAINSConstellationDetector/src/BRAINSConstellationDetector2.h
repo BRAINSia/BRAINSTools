@@ -154,6 +154,7 @@ public:
 
   /** Set the original input image before the Hough eye detector */
   itkSetObjectMacro(OriginalInputImage, SImageType);
+  itkGetObjectMacro(OriginalInputImage, SImageType);
 
   // Get Basic Outputs
 

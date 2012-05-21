@@ -262,7 +262,8 @@ int main(int argc, char *argv[])
     // transforms image to MSP aligned voxel lattice
     RigidTransformType::Pointer Tmsp = RigidTransformType::New();
     SImageType::Pointer         volumeMSP;
-    ComputeMSP(image, Tmsp, volumeMSP, centerOfHeadMass, mspQualityLevel);
+    double                      c_c = 0;
+    ComputeMSP(image, Tmsp, volumeMSP, centerOfHeadMass, mspQualityLevel, c_c);
 
     if( globalImagedebugLevel > 2 )
       {

@@ -104,6 +104,8 @@ bool BRAINSConstellationDetectorPrimary::Compute( void )
     }
   std::cout << "Processing: " << this->m_inputVolume << std::endl;
 
+  // std::cout << "original input file : " << reader->GetOutput() << std::endl;  //Added by Ali
+
   // ------------------------------------
   // Find center of head mass
   std::cout << "\nFinding center of head mass..." << std::endl;

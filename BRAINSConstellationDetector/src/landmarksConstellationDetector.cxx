@@ -9,6 +9,9 @@
 #include "landmarkIO.h"
 #include "itkOrthogonalize3DRotationMatrix.h"
 
+#include "itkFindCenterOfBrainFilter.h"
+#include "BRAINSHoughEyeDetector.h"
+
 SImageType::PointType
 landmarksConstellationDetector::FindCandidatePoints
   ( SImageType::Pointer volumeMSP,
@@ -177,8 +180,100 @@ void landmarksConstellationDetector::Compute( void )
     }
 
   // Compute the estimated MSP transform, and aligned image
+  double c_c = 0;
   ComputeMSP( this->m_VolOrig, this->m_finalTmsp,
-              this->m_VolumeMSP, this->m_CenterOfHeadMass, this->m_mspQualityLevel );
+              this->m_VolumeMSP, this->m_CenterOfHeadMass, this->m_mspQualityLevel, c_c );
+
+  // Try to compute a better estimation for MSP plane when Reflective correlation is not good enough
+  if( c_c > -0.7 )
+    {
+    std::cout << "\n============================================================="
+              << "\nBad Estimation for MSP Plane. Repeat the Procedure to Find a Better Estimation..." << std::endl;
+
+    // The current "m_CenterOfHeadMass" has been modified by the hough eye transform,
+    // So CM is computed again from the original input image
+    std::cout << "\nNeed to Find the center of head mass again..." << std::endl;
+    itk::FindCenterOfBrainFilter<SImageType>::Pointer findCenterFilter =
+      itk::FindCenterOfBrainFilter<SImageType>::New();
+    findCenterFilter->SetInput( this->m_OriginalInput );
+    findCenterFilter->SetAxis( 2 );
+    findCenterFilter->SetOtsuPercentileThreshold( 0.01 );
+    findCenterFilter->SetClosingSize( 7 );
+    findCenterFilter->SetHeadSizeLimit( 700 );
+    findCenterFilter->SetBackgroundValue( 0 );
+    findCenterFilter->Update();
+    SImageType::PointType centerOfHeadMass = findCenterFilter->GetCenterOfBrain();
+
+    // The current "this->m_VolOrig" is the output of the hough eye detector.
+    // First, MSP is computed again based on the original input
+    std::cout << "\nEstimating MSP Based on the original input..." << std::endl;
+    ComputeMSP( this->m_OriginalInput, this->m_finalTmsp,
+                this->m_VolumeMSP, centerOfHeadMass, this->m_mspQualityLevel, c_c );
+
+    // At this level, the MSP has not calculated properly by the ComputeMSP.
+    // The output of ComputeMSP is considered as a new input for the function to estimate a better reflective
+    // correlation.
+    SImageType::Pointer new_input = this->m_VolumeMSP;
+
+    // New transform is computed based on this new input, so this new input should be returned to the
+    // BRAINSConstellationDetector2 to be used for the final outputResampledVolume.
+    // "m_OriginalInput" will be returned to the BRAINSConstellationDetector2.
+    DuplicatorType::Pointer duplicator = DuplicatorType::New();
+    duplicator->SetInputImage( new_input );
+    duplicator->Update();
+    this->m_OriginalInput = duplicator->GetOutput();
+
+    // Before passing the new_input to the ComputeMSP function, we need to find its center of head mass,
+    // and run Hough eye detector on that.
+    std::cout << "\nFinding center of head mass for the MSP estimation output..." << std::endl;
+    itk::FindCenterOfBrainFilter<SImageType>::Pointer findCenterFilter2 =
+      itk::FindCenterOfBrainFilter<SImageType>::New();
+    findCenterFilter2->SetInput( new_input );
+    findCenterFilter2->SetAxis( 2 );
+    findCenterFilter2->SetOtsuPercentileThreshold( 0.01 );
+    findCenterFilter2->SetClosingSize( 7 );
+    findCenterFilter2->SetHeadSizeLimit( 700 );
+    findCenterFilter2->SetBackgroundValue( 0 );
+    findCenterFilter2->Update();
+    SImageType::PointType centerOfHeadMass_new = findCenterFilter2->GetCenterOfBrain();
+
+    std::cout << "\nFinding eye centers of the MSP estimation output with BRAINS Hough Eye Detector..." << std::endl;
+    itk::BRAINSHoughEyeDetector<SImageType, SImageType>::Pointer houghEyeDetector =
+      itk::BRAINSHoughEyeDetector<SImageType, SImageType>::New();
+    houghEyeDetector->SetInput( new_input );
+    houghEyeDetector->SetHoughEyeDetectorMode( 1 );
+    houghEyeDetector->SetWritedebuggingImagesLevel( 0 );
+    houghEyeDetector->SetCenterOfHeadMass( centerOfHeadMass_new );
+    try
+      {
+      houghEyeDetector->Update();
+      }
+    catch( itk::ExceptionObject & excep )
+      {
+      std::cerr << "Cannot find eye centers" << std::endl;
+      std::cerr << excep << std::endl;
+      }
+    catch( ... )
+      {
+      std::cout << "Failed to find eye centers exception occured" << std::endl;
+      }
+
+    this->m_HoughEyeTransform = houghEyeDetector->GetVersorTransform();
+    this->m_LEPoint = houghEyeDetector->GetLE();
+    this->m_REPoint = houghEyeDetector->GetRE();
+
+    // Transform the new center of head mass by the new hough eye transform.
+    SImageType::PointType houghTransformedCOHM_new =
+      houghEyeDetector->GetInvVersorTransform()->TransformPoint( centerOfHeadMass_new );
+
+    this->m_CenterOfHeadMass = houghTransformedCOHM_new;
+
+    // Final estimation of MSP plane
+    std::cout << "\nNew Estimation of MSP..." << std::endl;
+    ComputeMSP( houghEyeDetector->GetOutput(), this->m_finalTmsp,
+                this->m_VolumeMSP, houghTransformedCOHM_new, this->m_mspQualityLevel, c_c );
+    std::cout << "\n=============================================================" << std::endl;
+    }
 
   // In case hough eye detector failed
   if( this->m_HoughEyeFailure || ( globalImagedebugLevel > 1 ) )

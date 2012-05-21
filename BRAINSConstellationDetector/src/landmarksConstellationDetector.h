@@ -91,7 +91,17 @@ public:
 
   void SetVolOrig(SImageType::Pointer image)
   {
-    m_VolOrig = image;
+    m_VolOrig = image;  // This input is the output of Hough Eye detector
+  }
+
+  void SetOriginalInput(SImageType::Pointer image)
+  {
+    m_OriginalInput = image; // This is the original input of BCD
+  }
+
+  SImageType::Pointer GetOriginalInput(void) const
+  {
+    return this->m_OriginalInput; // Returns the original input of BCD
   }
 
   void SetInputTemplateModel(landmarksConstellationModelIO & myModel)
@@ -268,6 +278,7 @@ private:
   SImageType::PointType         m_CenterOfHeadMassEMSP;
   SImageType::PointType         m_BestCenter;
   SImageType::Pointer           m_VolOrig;
+  SImageType::Pointer           m_OriginalInput;
   SImageType::Pointer           m_VolumeMSP;
   landmarksConstellationModelIO m_InputTemplateModel;
   ValMapType                    m_TemplateRadius;

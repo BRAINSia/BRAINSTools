@@ -153,7 +153,7 @@ extern void InitializeRandomZeroOneDouble(RandomGeneratorType::IntegerType rseed
 
 extern void ComputeMSP(SImageType::Pointer image, RigidTransformType::Pointer & Tmsp,
                        SImageType::Pointer & transformedImage, const SImageType::PointType & centerOfHeadMass,
-                       const int qualityLevel);
+                       const int qualityLevel, double & cc);
 
 extern void ComputeMSP(SImageType::Pointer image, RigidTransformType::Pointer & Tmsp, const int qualityLevel);
 

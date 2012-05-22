@@ -68,8 +68,7 @@ ExternalData_add_test(${project_name}FetchData NAME TEST_BRAINSMeasureSurface0
           --scanId 0036195
           --subjectId 0036195 )
 
-#
-# this test is failing; Wen Li needs to ahve a look at it.
+
 ExternalData_add_test(${project_name}FetchData NAME TEST_BRAINSMeasureSurface1
   COMMAND $<TARGET_FILE:BRAINSMeasureSurface>
           --inputSurface DATA{${TestData_DIR}/0036195_leftTalLabels.vtk}

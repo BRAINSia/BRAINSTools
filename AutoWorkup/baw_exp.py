@@ -28,8 +28,12 @@ echo "STARTED at: $(date +'%F-%T')"
 echo "Ran on: $(hostname)"
 export PATH={BINPATH}
 export PYTHONPATH={PYTHONPATH}
-echo "With PYTHONPATH={PYTHONPATH}"
-echo "With PATH={BINPATH}"
+
+echo "========= CUSTOM ENVIORNMENT SETTINGS =========="
+echo "export PYTHONPATH={PYTHONPATH}"
+echo "export PATH={BINPATH}"
+echo "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+
 echo "With custom environment:"
 echo {CUSTENV}
 {CUSTENV}

@@ -38,6 +38,7 @@ target_link_libraries(BRAINSCutCOMMONLIB
   NetConfigurationCOMMONLIB
   ${ITK_LIBRARIES}
   ${OpenCV_LIBS}
+  ${VTK_LIBRARIES}
   )
 
 

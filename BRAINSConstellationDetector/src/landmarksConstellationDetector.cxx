@@ -273,6 +273,12 @@ void landmarksConstellationDetector::Compute( void )
     ComputeMSP( houghEyeDetector->GetOutput(), this->m_finalTmsp,
                 this->m_VolumeMSP, houghTransformedCOHM_new, this->m_mspQualityLevel, c_c );
     std::cout << "\n=============================================================" << std::endl;
+
+    if( c_c > -0.7 )
+      {
+      std::cout << "too large MSP estimation error at the final try!\n"
+                << "The estimation result is probably not reliable.\n" << std::endl;
+      }
     }
 
   // In case hough eye detector failed

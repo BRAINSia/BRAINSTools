@@ -148,7 +148,7 @@
       <name>splineGridSize</name>
       <longflag>splineGridSize</longflag>
       <label>B-Spline Grid Size</label>
-      <description>The number of subdivisions of the BSpline Grid to be centered on the image space.  Each dimension must have at least 3 subdivisions for the BSpline to be correctly computed. </description>
+      <description>The number of subdivisions of the BSpline Grid to be centered on the image space (in voxels).  Each dimension must have at least 3 subdivisions for the BSpline to be correctly computed. </description>
       <default>14,10,12</default>
     </integer-vector>
 
@@ -307,7 +307,7 @@
       <name>maxBSplineDisplacement</name>
       <longflag>maxBSplineDisplacement</longflag>
       <label>Maximum B-Spline Displacement</label>
-      <description> Sets the maximum allowed displacements in image physical coordinates for BSpline control grid along each axis.  A value of 0.0 indicates that the problem should be unbounded.  NOTE:  This only constrains the BSpline portion, and does not limit the displacement from the associated bulk transform.  This can lead to a substantial reduction in computation time in the BSpline optimizer.
+      <description> Sets the maximum allowed displacements in image physical coordinates (mm) for BSpline control grid along each axis.  A value of 0.0 indicates that the problem should be unbounded.  NOTE:  This only constrains the BSpline portion, and does not limit the displacement from the associated bulk transform.  This can lead to a substantial reduction in computation time in the BSpline optimizer.
       </description>
       <default>0.0</default>
     </double>
@@ -387,7 +387,7 @@
       <name>medianFilterSize</name>
       <longflag>medianFilterSize</longflag>
       <label>Median Filter Size</label>
-      <description>The radius for the optional MedianImageFilter preprocessing in all 3 directions.</description>
+      <description>The radius for the optional MedianImageFilter preprocessing in all 3 directions (in voxels).</description>
       <default>0,0,0</default>
     </integer-vector>
 
@@ -429,7 +429,7 @@
       <name>ROIAutoDilateSize</name>
       <longflag>ROIAutoDilateSize</longflag>
       <label> ROIAuto Dilate Size</label>
-      <description>This flag is only relavent when using ROIAUTO mode for initializing masks.  It defines the final dilation size to capture a bit of background outside the tissue region.  At setting of 10mm has been shown to help regularize a BSpline registration type so that there is some background constraints to match the edges of the head better.</description>
+      <description>This flag is only relavent when using ROIAUTO mode for initializing masks.  It defines the final dilation size to capture a bit of background outside the tissue region.  A setting of 10mm has been shown to help regularize a BSpline registration type so that there is some background constraints to match the edges of the head better.</description>
       <default>0.0</default>
     </double>
 

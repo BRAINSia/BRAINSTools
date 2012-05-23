@@ -193,7 +193,7 @@ def WorkupT1T2(mountPrefix,ExperimentBaseDirectory, subject_data_file, atlas_fna
     """
     subjectDatabaseFile=os.path.join( ExperimentBaseDirectory,'InternalWorkflowSubjectDB.pickle')
     multiLevel=createDBFile(subject_data_file,subjectDatabaseFile,mountPrefix)
-    
+
     print "Building Pipeline"
     ########### PIPELINE INITIALIZATION #############
     baw200 = pe.Workflow(name="BAW_20120104_workflow")
@@ -226,7 +226,7 @@ def WorkupT1T2(mountPrefix,ExperimentBaseDirectory, subject_data_file, atlas_fna
     uidSource.iterables = ('uid', multiLevel.keys() )
 
     BAtlas = MakeAtlasNode(atlas_fname_wpath) ## Call function to create node
-    
+
     if 'BASIC' in WORKFLOW_COMPONENTS:
         from WorkupT1T2LandmarkInitialization import CreateLandmarkInitializeWorkflow
         DoReverseMapping = False   # Set to true for debugging outputs
@@ -238,7 +238,7 @@ def WorkupT1T2(mountPrefix,ExperimentBaseDirectory, subject_data_file, atlas_fna
         baw200.connect( BAtlas, 'template_landmark_weights_31_csv', myLocalLMIWF,'InputSpec.atlasWeightFilename')
         if 'AUXLMK' in WORKFLOW_COMPONENTS:
             baw200.connect(BAtlas,'template_t1',myLocalLMIWF,'InputSpec.atlasVolume')
-  
+
     if 'TISSUE_CLASSIFY' in WORKFLOW_COMPONENTS:
         from WorkupT1T2TissueClassifiy import CreateTissueClassifyWorkflow
         myLocalTCWF= CreateTissueClassifyWorkflow("11_TissueClassify",CLUSTER_QUEUE,InterpolationMode)
@@ -259,10 +259,10 @@ def WorkupT1T2(mountPrefix,ExperimentBaseDirectory, subject_data_file, atlas_fna
         # Must register the entire head, not just the brain!
         baw200.connect(myLocalTCWF,'OutputSpec.outputHeadLabels',myLocalAntsWF,'InputSpec.fixedBinaryVolume')
         baw200.connect(BAtlas,'template_headregion',myLocalAntsWF,'InputSpec.movingBinaryVolume')
-    
+
     if 'SEGMENTATION' in WORKFLOW_COMPONENTS:
         pass
-    
+
     if 'PERSISTANCE_CHECK' in WORKFLOW_COMPONENTS:
         from WorkupT1T2PERSISTANCE_CHECK import CreatePERSISTANCE_CHECKWorkflow
         myLocalPERSISTANCE_CHECKWF= CreatePERSISTANCE_CHECKWorkflow("999999_PersistanceCheckingWorkflow")
@@ -279,14 +279,15 @@ def WorkupT1T2(mountPrefix,ExperimentBaseDirectory, subject_data_file, atlas_fna
         baw200.connect(myLocalTCWF,'OutputSpec.t1_corrected',myLocalFSWF,'InputSpec.T1_files')
         baw200.connect(myLocalTCWF,'OutputSpec.t2_corrected',myLocalFSWF,'InputSpec.T2_files')
         baw200.connect(myLocalTCWF,'OutputSpec.outputLabels',myLocalFSWF,'InputSpec.label_file')
-        
+        #baw200.connect(myLocalTCWF,'OutputSpec.outputLabels',myLocalFSWF,'InputSpec.mask_file') #Yes, the same file as label_file!
+
         """
         baw200.connect(myLocalFSWF,'OutputSpec.subject_id',...)
         baw200.connect(myLocalFSWF,'OutputSpec.subject_dir',...)
         """
     else:
         print "Skipping freesurfer"
-            
+
     if 0 == 1:
         baw200DataSink=pe.Node(nio.DataSink(),name="baw200DS")
         baw200DataSink.inputs.base_directory=ExperimentBaseDirectory + "FinalRepository"

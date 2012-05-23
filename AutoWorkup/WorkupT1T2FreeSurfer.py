@@ -21,15 +21,15 @@ def CreateFreeSurferWorkflow(WFname,CLUSTER_QUEUE):
 
     inputsSpec = pe.Node(interface=IdentityInterface(fields=['subject_id','T1_files','T2_files',
                                                              'label_file','mask_file']), name='InputSpec' )
-    
+
     mergeT1T2 = pe.Node(interface=Merge(2),name="Merge_T1T2")
     freesurferWF.connect(inputsSpec,'T1_files',  mergeT1T2,'in1')
     freesurferWF.connect(inputsSpec,'T2_files',  mergeT1T2,'in2')
-    
-    #Some constants based on assumpts about the label_file from BRAINSABC     
+
+    #Some constants based on assumpts about the label_file from BRAINSABC
     white_label = 1
     grey_label = 2
-    
+
     msLDA_GenerateWeights = pe.Node(interface=MS_LDA(),name="MS_LDA")
     MSLDA_sge_options_dictionary={'qsub_args': '-S /bin/bash -pe smp1 1 -l mem_free=300M -o /dev/null -e /dev/null '+CLUSTER_QUEUE, 'overwrite': True}
     msLDA_GenerateWeights.plugin_args=MSLDA_sge_options_dictionary
@@ -38,19 +38,19 @@ def CreateFreeSurferWorkflow(WFname,CLUSTER_QUEUE):
     msLDA_GenerateWeights.inputs.use_weights=False
     msLDA_GenerateWeights.inputs.output_synth = 'synth_out.nii.gz'
     #msLDA_GenerateWeights.inputs.shift = 0 # value to shift by
-    
+
     freesurferWF.connect(mergeT1T2,'out',  msLDA_GenerateWeights,'images')
     freesurferWF.connect(inputsSpec,'label_file',  msLDA_GenerateWeights,'label_file')
     #freesurferWF.connect(inputsSpec,'mask_file',  msLDA_GenerateWeights,'mask_file') ## Mask file MUST be unsigned char
 
-    if 0 == 1:     
+    if 1 == 1:
         print("""Run Freesurfer ReconAll at""")
         fs_reconall = pe.Node(interface=ReconAll(),name="40_FS510")
         freesurfer_sge_options_dictionary={'qsub_args': '-S /bin/bash -pe smp1 1 -l mem_free=3100M -o /dev/null -e /dev/null '+CLUSTER_QUEUE, 'overwrite': True}
         fs_reconall.plugin_args=freesurfer_sge_options_dictionary
         fs_reconall.inputs.directive = 'all'
         freesurferWF.connect(inputsSpec,'subject_id',fs_reconall,'subject_id')
-        freesurferWF.connect(inputsSpec,'T1_files',  fs_reconall,'T1_files')
+        freesurferWF.connect(msLDA_GenerateWeights,'output_synth',  fs_reconall,'T1_files')
 
     if 0 == 1:
         print("""Run Freesurfer ReconAll at""")

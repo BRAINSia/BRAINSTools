@@ -5,7 +5,6 @@ from nipype.interfaces.base import traits, isdefined, BaseInterface
 from nipype.interfaces.utility import Merge, Split, Function, Rename, IdentityInterface
 import nipype.interfaces.io as nio   # Data i/o
 import nipype.pipeline.engine as pe  # pypeline engine
-from nipype.interfaces.freesurfer import ReconAll
 
 from BRAINSTools.BRAINSABCext import *
 """
@@ -118,7 +117,7 @@ def CreateTissueClassifyWorkflow(WFname,CLUSTER_QUEUE,InterpolationMode):
     tissueClassifyWF.connect( inputsSpec, 'T1_count', bfc_files, 'T1_count')
 
     #############
-    outputsSpec = pe.Node(interface=IdentityInterface(fields=['atlasToSubjectTransform','outputLabels',
+    outputsSpec = pe.Node(interface=IdentityInterface(fields=['atlasToSubjectTransform','outputLabels','outputHeadLabels',
             't1_corrected','t2_corrected','outputAverageImages']), name='OutputSpec' )
 
     tissueClassifyWF.connect(bfc_files,'t1_corrected',outputsSpec,'t1_corrected')
@@ -128,6 +127,7 @@ def CreateTissueClassifyWorkflow(WFname,CLUSTER_QUEUE,InterpolationMode):
 
     tissueClassifyWF.connect(BABCext,'atlasToSubjectTransform',outputsSpec,'atlasToSubjectTransform')
     tissueClassifyWF.connect(BABCext,'outputLabels',outputsSpec,'outputLabels')
+    tissueClassifyWF.connect(BABCext,'outputDirtyLabels',outputsSpec,'outputHeadLabels')
 
     tissueClassifyWF.connect(BABCext,'outputAverageImages',outputsSpec,'outputAverageImages')
 

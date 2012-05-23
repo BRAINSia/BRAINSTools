@@ -149,6 +149,87 @@ def CreateBRAINSCutSegmentationWorkflow(WFname):
     
     BRAINSCutSegmentationWF.connect(inputsSpec,'subject_id',fs_reconall,'subject_id')
     BRAINSCutSegmentationWF.connect(inputsSpec,'T1_files',  fs_reconall,'T1_files')
+    """
+     ResampleNACLabels
+     """
+     ResampleAtlasNACLabels=pe.Node(interface=BRAINSResample(),name="13_ResampleAtlasNACLabels")
+     ResampleAtlasNACLabels.inputs.interpolationMode = "NearestNeighbor"
+     ResampleAtlasNACLabels.inputs.outputVolume = "atlasToSubjectNACLabels.nii.gz"
+
+     baw200.connect(myLocalTCWF,'OutputSpec.atlasToSubjectTransform',ResampleAtlasNACLabels,'warpTransform')
+     baw200.connect(myLocalTCWF,'OutputSpec.t1_corrected',ResampleAtlasNACLabels,'referenceVolume')
+     baw200.connect(BAtlas,'template_nac_lables',ResampleAtlasNACLabels,'inputVolume')
+
+     """
+     BRAINSMush
+     """
+     BMUSH=pe.Node(interface=BRAINSMush(),name="15_BMUSH")
+     BMUSH.inputs.outputVolume = "MushImage.nii.gz"
+     BMUSH.inputs.outputMask = "MushMask.nii.gz"
+     BMUSH.inputs.lowerThresholdFactor = 1.2
+     BMUSH.inputs.upperThresholdFactor = 0.55
+
+     baw200.connect(myLocalTCWF,'OutputSpec.t1_corrected',BMUSH,'inputFirstVolume')
+     baw200.connect(myLocalTCWF,'OutputSpec.t2_corrected',BMUSH,'inputSecondVolume')
+     baw200.connect(myLocalTCWF,'OutputSpec.outputLabels',BMUSH,'inputMaskVolume')
+
+     """
+     BRAINSROIAuto
+     """
+     BROI = pe.Node(interface=BRAINSROIAuto(), name="17_BRAINSROIAuto")
+     BROI.inputs.closingSize=12
+     BROI.inputs.otsuPercentileThreshold=0.01
+     BROI.inputs.thresholdCorrectionFactor=1.0
+     BROI.inputs.outputROIMaskVolume = "temproiAuto_t1_ACPC_corrected_BRAINSABC.nii.gz"
+     baw200.connect(myLocalTCWF,'OutputSpec.t1_corrected',BROI,'inputVolume')
+
+     """
+     Split the implicit outputs of BABCext
+     """
+     SplitAvgBABC = pe.Node(Function(input_names=['in_files','T1_count'], output_names=['avgBABCT1','avgBABCT2'],
+                              function = get_first_T1_and_T2), run_without_submitting=True, name="99_SplitAvgBABC")
+     SplitAvgBABC.inputs.T1_count = 1 ## There is only 1 average T1 image.
+
+     baw200.connect(myLocalTCWF,'OutputSpec.outputAverageImages',SplitAvgBABC,'in_files')
+
+
+     """
+     Gradient Anistropic Diffusion images for BRAINSCut
+     """
+     GADT1=pe.Node(interface=GradientAnisotropicDiffusionImageFilter(),name="27_GADT1")
+     GADT1.inputs.timeStep = 0.025
+     GADT1.inputs.conductance = 1
+     GADT1.inputs.numberOfIterations = 5
+     GADT1.inputs.outputVolume = "GADT1.nii.gz"
+
+     baw200.connect(SplitAvgBABC,'avgBABCT1',GADT1,'inputVolume')
+
+     GADT2=pe.Node(interface=GradientAnisotropicDiffusionImageFilter(),name="27_GADT2")
+     GADT2.inputs.timeStep = 0.025
+     GADT2.inputs.conductance = 1
+     GADT2.inputs.numberOfIterations = 5
+     GADT2.inputs.outputVolume = "GADT2.nii.gz"
+
+     def printFullPath(outFileFullPath):
+         print("="*80)
+         print("="*80)
+         print("="*80)
+         print("="*80)
+         print("{0}".format(outFileFullPath))
+         return outFileFullPath
+     printOutImage = pe.Node( Function(function=printFullPath, input_names = ['outFileFullPath'], output_names = ['genoutFileFullPath']), run_without_submitting=True, name="99_printOutImage")
+     baw200.connect( GADT2, 'outputVolume', printOutImage, 'outFileFullPath' )
+
+     baw200.connect(SplitAvgBABC,'avgBABCT2',GADT2,'inputVolume')
+
+     """
+     Sum the gradient images for BRAINSCut
+     """
+     SGI=pe.Node(interface=GenerateSummedGradientImage(),name="27_SGI")
+     SGI.inputs.outputFileName = "SummedGradImage.nii.gz"
+
+     baw200.connect(GADT1,'outputVolume',SGI,'inputVolume1')
+     baw200.connect(GADT2,'outputVolume',SGI,'inputVolume2')
 
     """
      Load the BRAINSCut models & probabiity maps.

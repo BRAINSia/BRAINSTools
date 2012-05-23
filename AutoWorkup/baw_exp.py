@@ -28,8 +28,12 @@ echo "STARTED at: $(date +'%F-%T')"
 echo "Ran on: $(hostname)"
 export PATH={BINPATH}
 export PYTHONPATH={PYTHONPATH}
-echo "With PYTHONPATH={PYTHONPATH}"
-echo "With PATH={BINPATH}"
+
+echo "========= CUSTOM ENVIORNMENT SETTINGS =========="
+echo "export PYTHONPATH={PYTHONPATH}"
+echo "export PATH={BINPATH}"
+echo "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+
 echo "With custom environment:"
 echo {CUSTENV}
 {CUSTENV}
@@ -108,8 +112,27 @@ def main(argv=None):
         print "FREESURFER NEEDS TO CHECK FOR SANE ENVIRONMENT HERE."
 
     CLUSTER_QUEUE=expConfig.get(input_arguments.processingEnvironment,'CLUSTER_QUEUE')
+    
+    ## Setup environment for CPU load balancing of ITK based programs.
+    import multiprocessing
+    total_CPUS=multiprocessing.cpu_count()
+    if input_arguments.wfrun == 'helium_all.q':
+        pass
+    elif input_arguments.wfrun == 'ipl_OSX':
+        pass
+    elif input_arguments.wfrun == 'local_4':
+        os.environ['NSLOTS']="{0}".format(total_CPUS/4)
+    elif input_arguments.wfrun == 'local_12':
+        os.environ['NSLOTS']="{0}".format(total_CPUS/12)
+    elif input_arguments.wfrun == 'local':
+        os.environ['NSLOTS']="{0}".format(total_CPUS/1)
+    else:
+        print "You must specify the run environment type."
+    
 
     print "Configuring Pipeline"
+    from nipype import config ## NOTE:  This needs to occur AFTER the PYTHON_AUX_PATHS has been modified
+    config.enable_debug_mode() ## NOTE:  This needs to occur AFTER the PYTHON_AUX_PATHS has been modified
     import WorkupT1T2 ## NOTE:  This needs to occur AFTER the PYTHON_AUX_PATHS has been modified
     baw200=WorkupT1T2.WorkupT1T2(mountPrefix,
       ExperimentBaseDirectory,
@@ -122,7 +145,7 @@ def main(argv=None):
     #  have the same environment as the job submission host.
     JOB_SCRIPT=get_global_sge_script(sys.path,PROGRAM_PATHS,CUSTOM_ENVIRONMENT)
     print JOB_SCRIPT
-	
+
     if input_arguments.wfrun == 'helium_all.q':
         baw200.run(plugin='SGE',
             plugin_args=dict(template=JOB_SCRIPT,qsub_args="-S /bin/bash -pe smp1 1-4 -l mem_free=4000M -o /dev/null -e /dev/null "+CLUSTER_QUEUE))

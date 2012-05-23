@@ -34,9 +34,12 @@ std::string globalResultsDir(".");       // A global variable to define where
 int globalImagedebugLevel(1000);         // A global variable to determine the
                                          // level of debugging to perform.
 
-void ComputeMSP(SImageType::Pointer image, RigidTransformType::Pointer & Tmsp,
+void ComputeMSP(SImageType::Pointer image,
+                RigidTransformType::Pointer & Tmsp,
                 SImageType::Pointer & transformedImage,
-                const SImageType::PointType & centerOfHeadMass, const int qualityLevel)
+                const SImageType::PointType & centerOfHeadMass,
+                const int qualityLevel,
+                double & cc)
 {
   if( qualityLevel == -1 )  // Assume image was pre-aligned outside of the
                             // program
@@ -88,6 +91,7 @@ void ComputeMSP(SImageType::Pointer image, RigidTransformType::Pointer & Tmsp,
     reflectionFunctor.SetDownSampledReferenceImage(image);
     Tmsp = reflectionFunctor.GetTransformToMSP();
     transformedImage = reflectionFunctor.GetMSPCenteredImage();
+    cc = reflectionFunctor.GetCC();
     }
 }
 

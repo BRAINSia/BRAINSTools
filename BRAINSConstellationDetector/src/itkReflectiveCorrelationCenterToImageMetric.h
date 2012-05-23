@@ -56,6 +56,7 @@ public:
     this->m_params = params;
     const double HARange = 25.0;
     const double BARange = 15.0;
+
     // rough search in neighborhood.
     const double one_degree = 1.0F * vnl_math::pi / 180.0F;
     const double HAStepSize = HARange * one_degree * .1;
@@ -380,11 +381,26 @@ public:
              GetTransformToMSP().GetPointer() );
   }
 
+  double GetCC(void) const
+  {
+    return m_cc;
+  }
+
+/*
   void Update(void)
   {
     this->m_Optimizer.minimize(this->m_params);
     std::cout << this->m_params[0] * 180.0 / vnl_math::pi << " " << this->m_params[1] * 180.0 / vnl_math::pi << " "
               << this->m_params[2] << " cc= " << this->f(this->m_params) << " iters= " << this->GetIterations()
+              << std::endl;
+  }
+*/
+  void Update(void)
+  {
+    this->m_Optimizer.minimize(this->m_params);
+    m_cc = this->f(this->m_params);
+    std::cout << this->m_params[0] * 180.0 / vnl_math::pi << " " << this->m_params[1] * 180.0 / vnl_math::pi << " "
+              << this->m_params[2] << " cc= " << m_cc << " iters= " << this->GetIterations()
               << std::endl;
   }
 
@@ -435,6 +451,7 @@ private:
   int                               m_Iterations;
   OptimizerType                     m_Optimizer;
   LinearInterpolatorType::Pointer   m_imInterp;
+  double                            m_cc;
 };
 
 namespace itk

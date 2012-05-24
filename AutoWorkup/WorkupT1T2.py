@@ -132,7 +132,7 @@ def createDBFile(subject_data_file,subjectDatabaseFile,mountPrefix):
     print "Building Subject List: " + subject_data_file
     subjData=csv.reader(open(subject_data_file,'rb'), delimiter=',', quotechar='"')
     myDB=dict()
-    multiLevel=AutoVivification()  #This should be replaced by a more nested dictionary
+    ExperimentDatabase=AutoVivification()  #This should be replaced by a more nested dictionary
     nestedDictionary=AutoVivification()
     for row in subjData:
         currDict=dict()
@@ -155,19 +155,31 @@ def createDBFile(subject_data_file,subjectDatabaseFile,mountPrefix):
                 currDict[imageType]=fullPaths
             currDict['site']=site
             currDict['subj']=subj
+            currDict['session']=session
 
             if validEntry == True:
                 myDB[session]=currDict
                 UNIQUE_ID=site+"_"+subj+"_"+session
                 nestedDictionary[site][subj][session]=currDict
-                multiLevel[UNIQUE_ID]=currDict
+                ExperimentDatabase[UNIQUE_ID]=currDict
         else:
             print "ERROR:  Invalid number of elements in row"
             print row
-    print "DICTIONARY",multiLevel
+    print "DICTIONARY",ExperimentDatabase
     from cPickle import dump
-    dump(multiLevel, open(subjectDatabaseFile,'w'))
-    return multiLevel
+    dump(ExperimentDatabase, open(subjectDatabaseFile,'w'))
+    return ExperimentDatabase
+
+def GenerateOutputPattern(ExperimentDatabase,DefaultNodeName):
+    """ This function generates output path substitutions for workflows and nodes that conform to a common standard.
+    """
+    patternList=[]
+    for key in ExperimentDatabase.keys():
+        currDictionary=ExperimentDatabase[key]
+        find_pat=DefaultNodeName+'/_uid_'+key
+        replace_pat=os.path.join(currDictionary['site'],currDictionary['subj'],currDictionary['session'],DefaultNodeName)
+        patternList.append( (find_pat,replace_pat) )
+    return patternList
 
 ###########################################################################
 ###########################################################################
@@ -192,7 +204,7 @@ def WorkupT1T2(mountPrefix,ExperimentBaseDirectory, subject_data_file, atlas_fna
     the path and filename of the atlas to use.
     """
     subjectDatabaseFile=os.path.join( ExperimentBaseDirectory,'InternalWorkflowSubjectDB.pickle')
-    multiLevel=createDBFile(subject_data_file,subjectDatabaseFile,mountPrefix)
+    ExperimentDatabase=createDBFile(subject_data_file,subjectDatabaseFile,mountPrefix)
 
     print "Building Pipeline"
     ########### PIPELINE INITIALIZATION #############
@@ -223,7 +235,7 @@ def WorkupT1T2(mountPrefix,ExperimentBaseDirectory, subject_data_file, atlas_fna
     paths, get them from the output path, or something else.
     """
     uidSource = pe.Node(interface=IdentityInterface(fields=['uid']),name='99_siteSource')
-    uidSource.iterables = ('uid', multiLevel.keys() )
+    uidSource.iterables = ('uid', ExperimentDatabase.keys() )
 
     BAtlas = MakeAtlasNode(atlas_fname_wpath) ## Call function to create node
 
@@ -238,6 +250,17 @@ def WorkupT1T2(mountPrefix,ExperimentBaseDirectory, subject_data_file, atlas_fna
         baw200.connect( BAtlas, 'template_landmark_weights_31_csv', myLocalLMIWF,'InputSpec.atlasWeightFilename')
         if 'AUXLMK' in WORKFLOW_COMPONENTS:
             baw200.connect(BAtlas,'template_t1',myLocalLMIWF,'InputSpec.atlasVolume')
+            
+        ### Now define where the final organized outputs should go.
+        BASIC_DataSink=pe.Node(nio.DataSink(),name="BASIC_DS")
+        BASIC_DataSink.inputs.base_directory=ExperimentBaseDirectory + "_Results"
+        BASIC_DataSink.inputs.regexp_substitutions = GenerateOutputPattern(ExperimentDatabase,'ACPCAlign')
+        
+        baw200.connect(myLocalLMIWF,'OutputSpec.outputLandmarksInACPCAlignedSpace',BASIC_DataSink,'ACPCAlign.@outputLandmarksInACPCAlignedSpace')
+        baw200.connect(myLocalLMIWF,'OutputSpec.outputResampledVolume',BASIC_DataSink,'ACPCAlign.@outputResampledVolume')
+        baw200.connect(myLocalLMIWF,'OutputSpec.outputLandmarksInInputSpace',BASIC_DataSink,'ACPCAlign.@outputLandmarksInInputSpace')
+        baw200.connect(myLocalLMIWF,'OutputSpec.outputTransform',BASIC_DataSink,'ACPCAlign.@outputTransform')
+        baw200.connect(myLocalLMIWF,'OutputSpec.atlasToSubjectTransform',BASIC_DataSink,'ACPCAlign.@atlasToSubjectTransform')
 
     if 'TISSUE_CLASSIFY' in WORKFLOW_COMPONENTS:
         from WorkupT1T2TissueClassifiy import CreateTissueClassifyWorkflow
@@ -248,6 +271,12 @@ def WorkupT1T2(mountPrefix,ExperimentBaseDirectory, subject_data_file, atlas_fna
         baw200.connect(BAtlas,'AtlasPVDefinition_xml',myLocalTCWF,'InputSpec.atlasDefinition')
         baw200.connect( myLocalLMIWF, 'OutputSpec.outputResampledVolume', myLocalTCWF, 'InputSpec.PrimaryT1' )
         baw200.connect( myLocalLMIWF,'OutputSpec.atlasToSubjectTransform',myLocalTCWF,'InputSpec.atlasToSubjectInitialTransform')
+        
+        ### Now define where the final organized outputs should go.
+        TC_DataSink=pe.Node(nio.DataSink(),name="TISSUE_CLASSIFY_DS")
+        TC_DataSink.inputs.base_directory=ExperimentBaseDirectory + "_Results"
+        TC_DataSink.inputs.regexp_substitutions = GenerateOutputPattern(ExperimentDatabase,'TissueClassify')
+        baw200.connect(myLocalTCWF, 'OutputSpec.TissueClassifyOutputDir', TC_DataSink,'TissueClassify.@TissueClassifyOutputDir')
 
     ## Make deformed Atlas image space
     if 'ANTS' in WORKFLOW_COMPONENTS:
@@ -263,15 +292,6 @@ def WorkupT1T2(mountPrefix,ExperimentBaseDirectory, subject_data_file, atlas_fna
     if 'SEGMENTATION' in WORKFLOW_COMPONENTS:
         pass
 
-    if 'PERSISTANCE_CHECK' in WORKFLOW_COMPONENTS:
-        from WorkupT1T2PERSISTANCE_CHECK import CreatePERSISTANCE_CHECKWorkflow
-        myLocalPERSISTANCE_CHECKWF= CreatePERSISTANCE_CHECKWorkflow("999999_PersistanceCheckingWorkflow")
-        PERSISTANCE_CHECKWF.connect(SplitAvgBABC,'avgBABCT1',myLocalPERSISTANCE_CHECKWF,'fixedVolume')
-        PERSISTANCE_CHECKWF.connect(myLocalTCWF,'OutputSpec.outputLabels',myLocalPERSISTANCE_CHECKWF,'fixedBinaryVolume')
-        PERSISTANCE_CHECKWF.connect(BAtlas,'template_t1',myLocalPERSISTANCE_CHECKWF,'movingVolume')
-        PERSISTANCE_CHECKWF.connect(BAtlas,'template_brain',myLocalPERSISTANCE_CHECKWF,'movingBinaryVolume')
-        PERSISTANCE_CHECKWF.connect(myLocalLMIWF,'OutputSpec.atlasToSubjectTransform',myLocalPERSISTANCE_CHECKWF,'initialTransform')
-
     if 'FREESURFER' in WORKFLOW_COMPONENTS:
         from WorkupT1T2FreeSurfer import CreateFreeSurferWorkflow
         myLocalFSWF= CreateFreeSurferWorkflow("Level1_FSTest",CLUSTER_QUEUE)
@@ -280,26 +300,32 @@ def WorkupT1T2(mountPrefix,ExperimentBaseDirectory, subject_data_file, atlas_fna
         baw200.connect(myLocalTCWF,'OutputSpec.t2_corrected',myLocalFSWF,'InputSpec.T2_files')
         baw200.connect(myLocalTCWF,'OutputSpec.outputLabels',myLocalFSWF,'InputSpec.label_file')
         #baw200.connect(myLocalTCWF,'OutputSpec.outputLabels',myLocalFSWF,'InputSpec.mask_file') #Yes, the same file as label_file!
+        
+        ### Now define where the final organized outputs should go.
+        baw200DataSink=pe.Node(nio.DataSink(),name="FREESURFER_DS")
+        baw200DataSink.inputs.base_directory=ExperimentBaseDirectory + "_Results"
+        baw200DataSink.inputs.regexp_substitutions = [
+            ('/_uid_(?P<myuid>[^/]*)',r'/\g<myuid>')
+            ]
+        baw200.connect(myLocalFSWF, 'OutputSpec.FreesurferOutputDirectory', baw200DataSink,'FREESURFER_SUBJ.@FreesurferOutputDirectory')
 
-        """
-        baw200.connect(myLocalFSWF,'OutputSpec.subject_id',...)
-        baw200.connect(myLocalFSWF,'OutputSpec.subject_dir',...)
-        """
     else:
         print "Skipping freesurfer"
 
-    if 0 == 1:
-        baw200DataSink=pe.Node(nio.DataSink(),name="baw200DS")
-        baw200DataSink.inputs.base_directory=ExperimentBaseDirectory + "FinalRepository"
-        baw200DataSink.inputs.regexp_substitutions = [
-            ('foo/_uid_(?P=<project>PHD_[0-9][0-9][0-9])_(?P=<subject>[0-9][0-9][0-9][0-9])_(?P=<session>[0-9][0-9][0-9][0-9][0-9])','test/\g<project>/\g<subject>/\g<session>')
-            ]
-        baw200.connect(myLocalLMIWF, 'OutputSpec.outputLandmarksInACPCAlignedSpace', baw200DataSink,'foo.@outputLandmarksInACPCAlignedSpace')
-        baw200.connect(myLocalLMIWF, 'OutputSpec.outputResampledVolume', baw200DataSink,'foo.@outputResampledVolume')
-        baw200.connect(myLocalLMIWF, 'OutputSpec.outputLandmarksInInputSpace', baw200DataSink,'foo.@outputLandmarksInInputSpace')
-        baw200.connect(myLocalLMIWF, 'OutputSpec.outputTransform', baw200DataSink,'foo.@outputTransform')
-        baw200.connect(myLocalLMIWF, 'OutputSpec.outputMRML', baw200DataSink,'foo.@outputMRML')
-        """
+        
+    return baw200
+
+
+
+#############
+## The following are just notes, and not really part of this script.
+##
+        #baw200.connect(myLocalLMIWF, 'OutputSpec.outputLandmarksInACPCAlignedSpace', baw200DataSink,'foo.@outputLandmarksInACPCAlignedSpace')
+        #baw200.connect(myLocalLMIWF, 'OutputSpec.outputResampledVolume', baw200DataSink,'foo.@outputResampledVolume')
+        #baw200.connect(myLocalLMIWF, 'OutputSpec.outputLandmarksInInputSpace', baw200DataSink,'foo.@outputLandmarksInInputSpace')
+        #baw200.connect(myLocalLMIWF, 'OutputSpec.outputTransform', baw200DataSink,'foo.@outputTransform')
+        #baw200.connect(myLocalLMIWF, 'OutputSpec.outputMRML', baw200DataSink,'foo.@outputMRML')
+"""
     subs=r'test/\g<project>/\g<subject>/\g<session>'
 pe.sub(subs,test)
 pat=r'foo/_uid_(?P<project>PHD_[0-9][0-9][0-9])_(?P<subject>[0-9][0-9][0-9][0-9])_(?P<session>[0-9][0-9][0-9][0-9][0-9])'
@@ -313,6 +339,15 @@ subs=r'test/\g<project>/\g<subject>/\g<session>/\g<modulename>'
 pe.sub(subs,test)
 pe=re.compile(pat)
 pe.sub(subs,test)
-    """
-    return baw200
+    
+    if 'PERSISTANCE_CHECK' in WORKFLOW_COMPONENTS:
+        from WorkupT1T2PERSISTANCE_CHECK import CreatePERSISTANCE_CHECKWorkflow
+        myLocalPERSISTANCE_CHECKWF= CreatePERSISTANCE_CHECKWorkflow("999999_PersistanceCheckingWorkflow")
+        PERSISTANCE_CHECKWF.connect(SplitAvgBABC,'avgBABCT1',myLocalPERSISTANCE_CHECKWF,'fixedVolume')
+        PERSISTANCE_CHECKWF.connect(myLocalTCWF,'OutputSpec.outputLabels',myLocalPERSISTANCE_CHECKWF,'fixedBinaryVolume')
+        PERSISTANCE_CHECKWF.connect(BAtlas,'template_t1',myLocalPERSISTANCE_CHECKWF,'movingVolume')
+        PERSISTANCE_CHECKWF.connect(BAtlas,'template_brain',myLocalPERSISTANCE_CHECKWF,'movingBinaryVolume')
+        PERSISTANCE_CHECKWF.connect(myLocalLMIWF,'OutputSpec.atlasToSubjectTransform',myLocalPERSISTANCE_CHECKWF,'initialTransform')
+"""
+
 

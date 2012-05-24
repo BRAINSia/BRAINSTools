@@ -118,7 +118,7 @@ def CreateTissueClassifyWorkflow(WFname,CLUSTER_QUEUE,InterpolationMode):
 
     #############
     outputsSpec = pe.Node(interface=IdentityInterface(fields=['atlasToSubjectTransform','outputLabels','outputHeadLabels',
-            't1_corrected','t2_corrected','outputAverageImages']), name='OutputSpec' )
+            't1_corrected','t2_corrected','outputAverageImages','TissueClassifyOutputDir']), name='OutputSpec' )
 
     tissueClassifyWF.connect(bfc_files,'t1_corrected',outputsSpec,'t1_corrected')
     tissueClassifyWF.connect(bfc_files,'t2_corrected',outputsSpec,'t2_corrected')
@@ -128,7 +128,8 @@ def CreateTissueClassifyWorkflow(WFname,CLUSTER_QUEUE,InterpolationMode):
     tissueClassifyWF.connect(BABCext,'atlasToSubjectTransform',outputsSpec,'atlasToSubjectTransform')
     tissueClassifyWF.connect(BABCext,'outputLabels',outputsSpec,'outputLabels')
     tissueClassifyWF.connect(BABCext,'outputDirtyLabels',outputsSpec,'outputHeadLabels')
-
     tissueClassifyWF.connect(BABCext,'outputAverageImages',outputsSpec,'outputAverageImages')
+    
+    tissueClassifyWF.connect(BABCext,'outputDir',outputsSpec,'TissueClassifyOutputDir')
 
     return tissueClassifyWF

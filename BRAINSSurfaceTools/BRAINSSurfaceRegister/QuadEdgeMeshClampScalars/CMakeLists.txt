@@ -8,10 +8,10 @@ set(CompareSurfacesProg ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/CompareSurfaces)
 
 ExternalData_add_test(${project_name}FetchData NAME TEST_SurfaceClampScalars
   COMMAND ${LAUNCH_EXE} ${QuadEdgeMeshClampScalarsProg}
-          --inputSurfaceFile DATA{${TestData_DIR}/0036195_leftSurfaceFeatures.vtk}
+          --inputSurfaceFile DATA{${TestData_DIR}/0036195_AssignArray.vtk}
           --outputSurfaceFile 0036195_ClampScalarsTest.vtk
-          --outputMin 100.0
-          --outputMax 200.0 )
+          --outputMin 10.0
+          --outputMax 20.0 )
 
 ExternalData_add_test(${project_name}FetchData NAME COMPARE_SurfaceClampScalars
   COMMAND ${LAUNCH_EXE} ${CompareSurfacesProg}

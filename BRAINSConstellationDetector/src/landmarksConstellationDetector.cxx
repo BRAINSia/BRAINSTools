@@ -184,8 +184,9 @@ void landmarksConstellationDetector::Compute( void )
   ComputeMSP( this->m_VolOrig, this->m_finalTmsp,
               this->m_VolumeMSP, this->m_CenterOfHeadMass, this->m_mspQualityLevel, c_c );
 
-  // Try to compute a better estimation for MSP plane when Reflective correlation is not good enough
-  if( c_c > -0.7 )
+  // Try to compute a better estimation for MSP plane when Reflective correlation is not good enough.
+  // 0.64 is choosed as the treshold by some statistical calculation on 23 successfully passed data.
+  if( c_c > -0.64 )
     {
     std::cout << "\n============================================================="
               << "\nBad Estimation for MSP Plane. Repeat the Procedure to Find a Better Estimation..." << std::endl;

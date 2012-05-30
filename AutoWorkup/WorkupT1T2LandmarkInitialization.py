@@ -12,7 +12,7 @@ from BRAINSTools import *
 
 """
     from WorkupT1T2LandmarkInitialization import CreateLandmarkInitializeWorkflow
-    myLocalLMIWF= CreateLandmarkInitializeWorkflow("01_LandmarkInitialize")
+    myLocalLMIWF= CreateLandmarkInitializeWorkflow("LandmarkInitialize")
     landmarkInitializeWF.connect( [ (uidSource, myLocalLMIWF, [(('uid', getFirstT1, subjectDatabaseFile ), 'inputsSpec.inputVolume')] ), ])
     landmarkInitializeWF.connect( BAtlas, 'template_landmarks_31_fcsv', myLocalLMIWF,'inputsSpec.atlasLandmarkFilename')
     landmarkInitializeWF.connect( BAtlas, 'template_landmark_weights_31_csv', myLocalLMIWF,'inputsSpec.atlasWeightFilename')
@@ -28,7 +28,7 @@ def CreateLandmarkInitializeWorkflow(WFname,BCD_model_path,InterpolationMode,DoR
     ########################################################/
     # Run ACPC Detect on first T1 Image - Base Image
     ########################################################
-    BCD = pe.Node(interface=BRAINSConstellationDetector(), name="01_BCD")
+    BCD = pe.Node(interface=BRAINSConstellationDetector(), name="BCD")
     ##  Use program default BCD.inputs.inputTemplateModel = T1ACPCModelFile
     ##BCD.inputs.outputVolume =   "BCD_OUT" + "_ACPC_InPlace.nii.gz"                #$# T1AcpcImageList
     BCD.inputs.outputTransform =  "BCD" + "_Original2ACPC_transform.mat"
@@ -48,7 +48,7 @@ def CreateLandmarkInitializeWorkflow(WFname,BCD_model_path,InterpolationMode,DoR
     ########################################################
     # Run BLI atlas_to_subject
     ########################################################
-    BLI = pe.Node(interface=BRAINSLandmarkInitializer(), name="05_BLI")
+    BLI = pe.Node(interface=BRAINSLandmarkInitializer(), name="BLI")
     BLI.inputs.outputTransformFilename = "landmarkInitializer_atlas_to_subject_transform.mat"
 
     landmarkInitializeWF.connect(inputsSpec, 'atlasWeightFilename', BLI, 'inputWeightFilename')
@@ -60,14 +60,14 @@ def CreateLandmarkInitializeWorkflow(WFname,BCD_model_path,InterpolationMode,DoR
         ########################################################
         # Run BLI subject_to_atlas
         ########################################################
-        BLI2Atlas = pe.Node(interface=BRAINSLandmarkInitializer(), name="05_BLI2Atlas")
+        BLI2Atlas = pe.Node(interface=BRAINSLandmarkInitializer(), name="BLI2Atlas")
         BLI2Atlas.inputs.outputTransformFilename = "landmarkInitializer_subject_to_atlas_transform.mat"
 
         landmarkInitializeWF.connect(inputsSpec, 'atlasWeightFilename', BLI2Atlas, 'inputWeightFilename')
         landmarkInitializeWF.connect(inputsSpec, 'atlasLandmarkFilename', BLI2Atlas, 'inputFixedLandmarkFilename' )
         landmarkInitializeWF.connect(BCD,'outputLandmarksInInputSpace',BLI2Atlas,'inputMovingLandmarkFilename')
         
-        Resample2Atlas=pe.Node(interface=BRAINSResample(),name="05_Resample2Atlas")
+        Resample2Atlas=pe.Node(interface=BRAINSResample(),name="Resample2Atlas")
         Resample2Atlas.inputs.interpolationMode = "Linear"
         Resample2Atlas.inputs.outputVolume = "subject2atlas.nii.gz"
 
@@ -77,7 +77,7 @@ def CreateLandmarkInitializeWorkflow(WFname,BCD_model_path,InterpolationMode,DoR
         
     DO_DEBUG = True
     if DO_DEBUG == True:
-        ResampleFromAtlas=pe.Node(interface=BRAINSResample(),name="05_ResampleFromAtlas")
+        ResampleFromAtlas=pe.Node(interface=BRAINSResample(),name="ResampleFromAtlas")
         ResampleFromAtlas.inputs.interpolationMode = "Linear"
         ResampleFromAtlas.inputs.outputVolume = "atlas2subject.nii.gz"
 

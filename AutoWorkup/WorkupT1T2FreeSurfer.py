@@ -44,7 +44,7 @@ def CreateFreeSurferWorkflow(WFname,CLUSTER_QUEUE):
     #freesurferWF.connect(inputsSpec,'mask_file',  msLDA_GenerateWeights,'mask_file') ## Mask file MUST be unsigned char
 
     print("""Run Freesurfer ReconAll at""")
-    fs_reconall = pe.Node(interface=ReconAll(),name="40_FS510")
+    fs_reconall = pe.Node(interface=ReconAll(),name="FS510")
     freesurfer_sge_options_dictionary={'qsub_args': '-S /bin/bash -pe smp1 1 -l mem_free=3100M -o /dev/null -e /dev/null '+CLUSTER_QUEUE, 'overwrite': True}
     fs_reconall.plugin_args=freesurfer_sge_options_dictionary
     fs_reconall.inputs.directive = 'all'

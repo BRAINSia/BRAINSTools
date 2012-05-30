@@ -9,7 +9,7 @@ import nipype.pipeline.engine as pe  # pypeline engine
 from BRAINSTools.BRAINSABCext import *
 """
     from WorkupT1T2TissueClassify import CreateTissueClassifyWorkflow
-    myLocalTCWF= CreateTissueClassifyWorkflow("11_TissueClassify")
+    myLocalTCWF= CreateTissueClassifyWorkflow("TissueClassify")
     tissueClassifyWF.connect( [ (uidSource, myLocalTCWF, [(('uid', getT1s, subjectDatabaseFile ), 'T1List')] ), ])
     tissueClassifyWF.connect( [ (uidSource, myLocalTCWF, [(('uid', getT2s, subjectDatabaseFile ), 'T2List')] ), ])
     tissueClassifyWF.connect( [ (uidSource, myLocalTCWF, [(('uid', getT1sLength, subjectDatabaseFile ), 'T1_count')] ), ])
@@ -84,7 +84,7 @@ def CreateTissueClassifyWorkflow(WFname,CLUSTER_QUEUE,InterpolationMode):
     tissueClassifyWF.connect( inputsSpec, 'T1List', makeOutImageList, 'T1List' )
     tissueClassifyWF.connect( inputsSpec, 'T2List', makeOutImageList, 'T2List' )
 
-    BABCext= pe.Node(interface=BRAINSABCext(), name="11_BABC")
+    BABCext= pe.Node(interface=BRAINSABCext(), name="BABC")
     many_cpu_BABC_options_dictionary={'qsub_args': '-S /bin/bash -pe smp1 4-12 -o /dev/null -e /dev/null '+CLUSTER_QUEUE, 'overwrite': True}
     #many_cpu_BABC_options_dictionary={'qsub_args': '-S /bin/bash -pe smp1 4-12 -l mem_free=8000M -o /dev/null -e /dev/null '+CLUSTER_QUEUE, 'overwrite': True}
     BABCext.plugin_args=many_cpu_BABC_options_dictionary

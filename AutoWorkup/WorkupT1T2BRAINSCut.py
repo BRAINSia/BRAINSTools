@@ -152,7 +152,7 @@ def CreateBRAINSCutSegmentationWorkflow(WFname):
     """
      ResampleNACLabels
      """
-     ResampleAtlasNACLabels=pe.Node(interface=BRAINSResample(),name="13_ResampleAtlasNACLabels")
+     ResampleAtlasNACLabels=pe.Node(interface=BRAINSResample(),name="ResampleAtlasNACLabels")
      ResampleAtlasNACLabels.inputs.interpolationMode = "NearestNeighbor"
      ResampleAtlasNACLabels.inputs.outputVolume = "atlasToSubjectNACLabels.nii.gz"
 
@@ -163,7 +163,7 @@ def CreateBRAINSCutSegmentationWorkflow(WFname):
      """
      BRAINSMush
      """
-     BMUSH=pe.Node(interface=BRAINSMush(),name="15_BMUSH")
+     BMUSH=pe.Node(interface=BRAINSMush(),name="BMUSH")
      BMUSH.inputs.outputVolume = "MushImage.nii.gz"
      BMUSH.inputs.outputMask = "MushMask.nii.gz"
      BMUSH.inputs.lowerThresholdFactor = 1.2
@@ -176,7 +176,7 @@ def CreateBRAINSCutSegmentationWorkflow(WFname):
      """
      BRAINSROIAuto
      """
-     BROI = pe.Node(interface=BRAINSROIAuto(), name="17_BRAINSROIAuto")
+     BROI = pe.Node(interface=BRAINSROIAuto(), name="BRAINSROIAuto")
      BROI.inputs.closingSize=12
      BROI.inputs.otsuPercentileThreshold=0.01
      BROI.inputs.thresholdCorrectionFactor=1.0
@@ -196,7 +196,7 @@ def CreateBRAINSCutSegmentationWorkflow(WFname):
      """
      Gradient Anistropic Diffusion images for BRAINSCut
      """
-     GADT1=pe.Node(interface=GradientAnisotropicDiffusionImageFilter(),name="27_GADT1")
+     GADT1=pe.Node(interface=GradientAnisotropicDiffusionImageFilter(),name="GADT1")
      GADT1.inputs.timeStep = 0.025
      GADT1.inputs.conductance = 1
      GADT1.inputs.numberOfIterations = 5
@@ -204,7 +204,7 @@ def CreateBRAINSCutSegmentationWorkflow(WFname):
 
      baw200.connect(SplitAvgBABC,'avgBABCT1',GADT1,'inputVolume')
 
-     GADT2=pe.Node(interface=GradientAnisotropicDiffusionImageFilter(),name="27_GADT2")
+     GADT2=pe.Node(interface=GradientAnisotropicDiffusionImageFilter(),name="GADT2")
      GADT2.inputs.timeStep = 0.025
      GADT2.inputs.conductance = 1
      GADT2.inputs.numberOfIterations = 5
@@ -225,7 +225,7 @@ def CreateBRAINSCutSegmentationWorkflow(WFname):
      """
      Sum the gradient images for BRAINSCut
      """
-     SGI=pe.Node(interface=GenerateSummedGradientImage(),name="27_SGI")
+     SGI=pe.Node(interface=GenerateSummedGradientImage(),name="SGI")
      SGI.inputs.outputFileName = "SummedGradImage.nii.gz"
 
      baw200.connect(GADT1,'outputVolume',SGI,'inputVolume1')
@@ -268,7 +268,7 @@ def CreateBRAINSCutSegmentationWorkflow(WFname):
      """
 
 
-     BFitAtlasToSubject = pe.Node(interface=BRAINSFit(),name="30_BFitAtlasToSubject")
+     BFitAtlasToSubject = pe.Node(interface=BRAINSFit(),name="BFitAtlasToSubject")
      BFitAtlasToSubject.inputs.costMetric="MMI"
      BFitAtlasToSubject.inputs.maskProcessingMode="ROI"
      BFitAtlasToSubject.inputs.numberOfSamples=100000

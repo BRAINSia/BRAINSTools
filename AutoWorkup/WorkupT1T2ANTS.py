@@ -16,7 +16,7 @@ from BRAINSTools.ants.ants import *
 
 """
     from WorkupT1T2ANTS import CreateANTSRegistrationWorkflow
-    myLocalAntsWF = CreateANTSRegistrationWorkflow("31_ANTSRegistration",CLUSTER_QUEUE)
+    myLocalAntsWF = CreateANTSRegistrationWorkflow("ANTSRegistration",CLUSTER_QUEUE)
     ANTSWF.connect( SplitAvgBABC,'avgBABCT1',myLocalAntsWF,"InputSpec.fixedVolumesList")
     ANTSWF.connect( BAtlas,'template_t1',    myLocalAntsWF,"InputSpec.movingVolumesList")
     ANTSWF.connect(myLocalLMIWF,'OutputSpec.atlasToSubjectTransform',myLocalAntsWF,'InputSpec.initial_moving_transform')

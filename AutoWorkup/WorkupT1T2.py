@@ -244,7 +244,7 @@ def WorkupT1T2(mountPrefix,ExperimentBaseDirectory, subject_data_file, atlas_fna
         DoReverseMapping = False   # Set to true for debugging outputs
         if 'AUXLMK' in WORKFLOW_COMPONENTS:
             DoReverseMapping = True
-        myLocalLMIWF= CreateLandmarkInitializeWorkflow("01_LandmarkInitialize", BCD_model_path, InterpolationMode,DoReverseMapping)
+        myLocalLMIWF= CreateLandmarkInitializeWorkflow("LandmarkInitialize", BCD_model_path, InterpolationMode,DoReverseMapping)
         baw200.connect( [ (uidSource, myLocalLMIWF, [(('uid', getFirstT1, subjectDatabaseFile ), 'InputSpec.inputVolume')] ), ])
         baw200.connect( BAtlas, 'template_landmarks_31_fcsv', myLocalLMIWF,'InputSpec.atlasLandmarkFilename')
         baw200.connect( BAtlas, 'template_landmark_weights_31_csv', myLocalLMIWF,'InputSpec.atlasWeightFilename')
@@ -264,7 +264,7 @@ def WorkupT1T2(mountPrefix,ExperimentBaseDirectory, subject_data_file, atlas_fna
 
     if 'TISSUE_CLASSIFY' in WORKFLOW_COMPONENTS:
         from WorkupT1T2TissueClassifiy import CreateTissueClassifyWorkflow
-        myLocalTCWF= CreateTissueClassifyWorkflow("11_TissueClassify",CLUSTER_QUEUE,InterpolationMode)
+        myLocalTCWF= CreateTissueClassifyWorkflow("TissueClassify",CLUSTER_QUEUE,InterpolationMode)
         baw200.connect( [ (uidSource, myLocalTCWF, [(('uid', getT1s, subjectDatabaseFile ), 'InputSpec.T1List')] ), ])
         baw200.connect( [ (uidSource, myLocalTCWF, [(('uid', getT2s, subjectDatabaseFile ), 'InputSpec.T2List')] ), ])
         baw200.connect( [ (uidSource, myLocalTCWF, [(('uid', getT1sLength, subjectDatabaseFile ), 'InputSpec.T1_count')] ), ])
@@ -281,7 +281,7 @@ def WorkupT1T2(mountPrefix,ExperimentBaseDirectory, subject_data_file, atlas_fna
     ## Make deformed Atlas image space
     if 'ANTS' in WORKFLOW_COMPONENTS:
         from WorkupT1T2ANTS import CreateANTSRegistrationWorkflow
-        myLocalAntsWF = CreateANTSRegistrationWorkflow("31_ANTSRegistration",CLUSTER_QUEUE,-1)
+        myLocalAntsWF = CreateANTSRegistrationWorkflow("ANTSRegistration",CLUSTER_QUEUE,-1)
         baw200.connect( myLocalTCWF,'OutputSpec.t1_corrected',myLocalAntsWF,"InputSpec.fixedVolumesList")
         baw200.connect( BAtlas,'template_t1',    myLocalAntsWF,"InputSpec.movingVolumesList")
         baw200.connect(myLocalLMIWF,'OutputSpec.atlasToSubjectTransform',myLocalAntsWF,'InputSpec.initial_moving_transform')

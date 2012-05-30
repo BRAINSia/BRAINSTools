@@ -95,6 +95,9 @@ def main(argv=None):
     ExperimentBaseDirectory=os.path.realpath(os.path.join(BASEOUTPUTDIR,ExperimentName))
     #    Define workup common reference data sets
     ATLASPATH=expConfig.get(input_arguments.processingEnvironment,'ATLASPATH')
+    if not os.path.exists(ATLASPATH):
+        print("ERROR:  Invalid Path for Atlas: {0}".format(ATLASPATH))
+        sys.exit(-1)
     BCDMODELPATH=expConfig.get(input_arguments.processingEnvironment,'BCDMODELPATH')
     CUSTOM_ENVIRONMENT=expConfig.get(input_arguments.processingEnvironment,'CUSTOM_ENVIRONMENT')
     CUSTOM_ENVIRONMENT=eval(CUSTOM_ENVIRONMENT)

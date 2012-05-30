@@ -1,41 +1,58 @@
+referenceDir="/Users/eunyokim//src/build/ReferenceAtlas-build/Atlas/Atlas_20120104/"
+subjectDir="/Users/eunyokim//TestImages/_uid_PHD_DTI_THP_THP0002_THP0002_UW1/"
+outputDir="/Users/eunyokim//TEST/"
+probabilityMapDir="/Users/eunyokim//TestImages/ProbabilityMaps/"
 
-python BRAINSCutCMD.py \
---inputSubjectT1Filename /hjohnson/HDNI/PREDICT_TRAINING/regina_ann/TrainingModels/BRAINSAutoWorkUpTest/B4AUTO.Regina/BAW_20120104_workflow/_uid_PHD_144_0619_96294/11_BABC/t1_average_BRAINSABC.nii.gz \
---inputSubjectT2Filename /hjohnson/HDNI/PREDICT_TRAINING/regina_ann/TrainingModels/BRAINSAutoWorkUpTest/B4AUTO.Regina/BAW_20120104_workflow/_uid_PHD_144_0619_96294/11_BABC/t2_average_BRAINSABC.nii.gz \
+
+
+BCutCMDDir="/Users/eunyokim/src/BRAINSStandAlone/AutoWorkup/BRAINSTools/"
+
+if [ $# == 4 ]; then
+  referenceDir=$1;
+  subjectDir=$2;
+  outputDir=$3;
+  probabilityMapDir=$4;
+fi
+
+mkdir -p $outputDir
+
+python $BCutCMDDir/BRAINSCutCMD.py \
+--inputSubjectT1Filename $subjectDir/11_BABC/t1_average_BRAINSABC.nii.gz \
+--inputSubjectT2Filename $subjectDir/11_BABC/t2_average_BRAINSABC.nii.gz \
 --inputSubjectSGFilename /hjohnson/HDNI/PREDICT_TRAINING/regina_ann/TrainingModels/FeatureImages/GadSG/96294_average_GAD_SG.nii.gz \
---inputSubjectBrainMaskFilename /hjohnson/HDNI/PREDICT_TRAINING/regina_ann/TrainingModels/BRAINSAutoWorkUpTest/B4AUTO.Regina/BAW_20120104_workflow/_uid_PHD_144_0619_96294/11_BABC/brain_label_seg.nii.gz \
---inputTemplateT1 /ipldev/scratch/eunyokim/src/BRAINS20111028/build-Darwin/ReferenceAtlas-build/Atlas/Atlas_20120104/template_t1.nii.gz \
---inputTemplateBrainMask /ipldev/scratch/eunyokim/src/BRAINS20111028/build-Darwin/ReferenceAtlas-build/Atlas/Atlas_20120104/template_brain.nii.gz \
---inputTemplateRhoFilename /ipldev/scratch/eunyokim/src/BRAINS20111028/build-Darwin/ReferenceAtlas-build/Atlas/Atlas_20120104/spatialImages/rho.nii.gz \
---inputTemplatePhiFilename /ipldev/scratch/eunyokim/src/BRAINS20111028/build-Darwin/ReferenceAtlas-build/Atlas/Atlas_20120104/spatialImages/phi.nii.gz \
---inputTemplateThetaFilename /ipldev/scratch/eunyokim/src/BRAINS20111028/build-Darwin/ReferenceAtlas-build/Atlas/Atlas_20120104/spatialImages/theta.nii.gz \
+--inputSubjectBrainMaskFilename $subjectDir/11_BABC/brain_label_seg.nii.gz \
+--deformationFromTemplateToSubject $subjectDir/11_BABC/atlas_to_subject.mat \
+--inputTemplateT1 $referenceDir/template_t1.nii.gz \
+--inputTemplateBrainMask $referenceDir/template_brain.nii.gz \
+--inputTemplateRhoFilename $referenceDir/spatialImages/rho.nii.gz \
+--inputTemplatePhiFilename $referenceDir/spatialImages/phi.nii.gz \
+--inputTemplateThetaFilename $referenceDir/spatialImages/theta.nii.gz \
 --trainingVectorFilename  dummyVector.txt \
---modelFilename /hjohnson/HDNI/PREDICT_TRAINING/regina_ann/TrainingModels/BRAINSAutoWorkUpTest/GadSG/Test9/TrainedModels/20110919ANNModel_allSubcorticals.txtD0050NT0050  \
---probabilityMapsLeftAccumben    /hjohnson/HDNI/PREDICT_TRAINING/regina_ann/TrainingModels/BRAINSAutoWorkUpTest/GadSG/Test9/ProbabilityMaps/l_accumben_ProbabilityMap.nii.gz \
---probabilityMapsRightAccumben   /hjohnson/HDNI/PREDICT_TRAINING/regina_ann/TrainingModels/BRAINSAutoWorkUpTest/GadSG/Test9/ProbabilityMaps/r_accumben_ProbabilityMap.nii.gz \
---probabilityMapsLeftCaudate     /hjohnson/HDNI/PREDICT_TRAINING/regina_ann/TrainingModels/BRAINSAutoWorkUpTest/GadSG/Test9/ProbabilityMaps/l_caudate_ProbabilityMap.nii.gz \
---probabilityMapsRightCaudate    /hjohnson/HDNI/PREDICT_TRAINING/regina_ann/TrainingModels/BRAINSAutoWorkUpTest/GadSG/Test9/ProbabilityMaps/r_caudate_ProbabilityMap.nii.gz \
---probabilityMapsLeftPutamen     /hjohnson/HDNI/PREDICT_TRAINING/regina_ann/TrainingModels/BRAINSAutoWorkUpTest/GadSG/Test9/ProbabilityMaps/l_putamen_ProbabilityMap.nii.gz \
---probabilityMapsRightPutamen    /hjohnson/HDNI/PREDICT_TRAINING/regina_ann/TrainingModels/BRAINSAutoWorkUpTest/GadSG/Test9/ProbabilityMaps/r_putamen_ProbabilityMap.nii.gz \
---probabilityMapsLeftGlobus      /hjohnson/HDNI/PREDICT_TRAINING/regina_ann/TrainingModels/BRAINSAutoWorkUpTest/GadSG/Test9/ProbabilityMaps/l_globus_ProbabilityMap.nii.gz \
---probabilityMapsRightGlobus     /hjohnson/HDNI/PREDICT_TRAINING/regina_ann/TrainingModels/BRAINSAutoWorkUpTest/GadSG/Test9/ProbabilityMaps/r_globus_ProbabilityMap.nii.gz \
---probabilityMapsLeftThalamus    /hjohnson/HDNI/PREDICT_TRAINING/regina_ann/TrainingModels/BRAINSAutoWorkUpTest/GadSG/Test9/ProbabilityMaps/l_thalamus_ProbabilityMap.nii.gz \
---probabilityMapsRightThalamus   /hjohnson/HDNI/PREDICT_TRAINING/regina_ann/TrainingModels/BRAINSAutoWorkUpTest/GadSG/Test9/ProbabilityMaps/r_thalamus_ProbabilityMap.nii.gz \
---probabilityMapsLeftHippocampus /hjohnson/HDNI/PREDICT_TRAINING/regina_ann/TrainingModels/BRAINSAutoWorkUpTest/GadSG/Test9/ProbabilityMaps/l_hippocampus_ProbabilityMap.nii.gz \
---probabilityMapsRightHippocampus /hjohnson/HDNI/PREDICT_TRAINING/regina_ann/TrainingModels/BRAINSAutoWorkUpTest/GadSG/Test9/ProbabilityMaps/r_hippocampus_ProbabilityMap.nii.gz \
---deformationFromTemplateToSubject /hjohnson/HDNI/PREDICT_TRAINING/regina_ann/TrainingModels/BRAINSAutoWorkUpTest/B4AUTO.Regina/BAW_20120104_workflow/_uid_PHD_054_0284_20715/11_BABC/atlas_to_subject.mat \
+--modelFilename /Users/eunyokim//TestImages/TrainedModels/RandomForestAllSubcorticalsBalancedModel.txtD0060NT0060  \
+--probabilityMapsLeftAccumben     $probabilityMapDir/l_accumben_ProbabilityMap.nii.gz \
+--probabilityMapsRightAccumben    $probabilityMapDir/r_accumben_ProbabilityMap.nii.gz \
+--probabilityMapsLeftCaudate      $probabilityMapDir/l_caudate_ProbabilityMap.nii.gz \
+--probabilityMapsRightCaudate     $probabilityMapDir/r_caudate_ProbabilityMap.nii.gz \
+--probabilityMapsLeftPutamen      $probabilityMapDir/l_putamen_ProbabilityMap.nii.gz \
+--probabilityMapsRightPutamen     $probabilityMapDir/r_putamen_ProbabilityMap.nii.gz \
+--probabilityMapsLeftGlobus       $probabilityMapDir/l_globus_ProbabilityMap.nii.gz \
+--probabilityMapsRightGlobus      $probabilityMapDir/r_globus_ProbabilityMap.nii.gz \
+--probabilityMapsLeftThalamus     $probabilityMapDir/l_thalamus_ProbabilityMap.nii.gz \
+--probabilityMapsRightThalamus    $probabilityMapDir/r_thalamus_ProbabilityMap.nii.gz \
+--probabilityMapsLeftHippocampus  $probabilityMapDir/l_hippocampus_ProbabilityMap.nii.gz \
+--probabilityMapsRightHippocampus $probabilityMapDir/r_hippocampus_ProbabilityMap.nii.gz \
 --deformationFromSubjectToTemplate dummy \
---outputBinaryLeftAccumben ./left_accumben.nii.gz \
---outputBinaryRightAccumben ./right_accumben.nii.gz \
---outputBinaryLeftCaudate ./left_caudate.nii.gz \
---outputBinaryRightCaudate ./right_caudate.nii.gz \
---outputBinaryLeftPutamen ./left_putamen.nii.gz \
---outputBinaryRightPutamen ./right_putamen.nii.gz \
---outputBinaryLeftGlobus ./left_globus.nii.gz \
---outputBinaryRightGlobus ./right_globus.nii.gz \
---outputBinaryLeftThalamus ./left_thalamus.nii.gz \
---outputBinaryRightThalamus ./right_thalamus.nii.gz \
---outputBinaryLeftHippocampus ./left_hippocampus.nii.gz \
---outputBinaryRightHippocampus ./right_hippocampus.nii.gz \
---xmlFilename /ipldev/scratch/eunyokim/src/BRAINS20111028/build-Darwin/BRAINSTools-build/BRAINSCut/TestSuite/TestSuite/NetConfigurations/output.xml
+--outputBinaryLeftAccumben $outputDir/left_accumben.nii.gz \
+--outputBinaryRightAccumben $outputDir/right_accumben.nii.gz \
+--outputBinaryLeftCaudate $outputDir/left_caudate.nii.gz \
+--outputBinaryRightCaudate $outputDir/right_caudate.nii.gz \
+--outputBinaryLeftPutamen $outputDir/left_putamen.nii.gz \
+--outputBinaryRightPutamen $outputDir/right_putamen.nii.gz \
+--outputBinaryLeftGlobus $outputDir/left_globus.nii.gz \
+--outputBinaryRightGlobus $outputDir/right_globus.nii.gz \
+--outputBinaryLeftThalamus $outputDir/left_thalamus.nii.gz \
+--outputBinaryRightThalamus $outputDir/right_thalamus.nii.gz \
+--outputBinaryLeftHippocampus $outputDir/left_hippocampus.nii.gz \
+--outputBinaryRightHippocampus $outputDir/right_hippocampus.nii.gz \
+--xmlFilename $outputDir/output.xml
 

@@ -39,6 +39,7 @@ atlas_file_names=["AtlasPVDefinition.xml","ALLPVAIR.nii.gz",
 "spatialImages/phi.nii.gz",
 "spatialImages/rho.nii.gz",
 "spatialImages/theta.nii.gz"
+
                       ]
 ## Remove filename extensions for images, but replace . with _ for other file types
 atlas_file_keys=[os.path.basename(fn).replace('.nii.gz','').replace('.','_') for fn in atlas_file_names]

@@ -193,17 +193,18 @@ def GenerateOutputPattern(ExperimentDatabase,DefaultNodeName):
 ###########################################################################
 ###########################################################################
 ###########################################################################
-def WorkupT1T2(mountPrefix,ExperimentBaseDirectory, subject_data_file, atlas_fname_wpath, BCD_model_path,
+def WorkupT1T2(mountPrefix,ExperimentBaseDirectoryCache, ExperimentBaseDirectoryResults, subject_data_file, atlas_fname_wpath, BCD_model_path,
                InterpolationMode="Linear", Mode=10,DwiList=[],WORKFLOW_COMPONENTS=[],CLUSTER_QUEUE=''):
     """
     Run autoworkup on all subjects data defined in the subject_data_file
 
     This is the main function to call when processing a data set with T1 & T2
-    data.  ExperimentBaseDirectory is the base of the directory to place results, T1Images & T2Images
+    data.  ExperimentBaseDirectoryPrefix is the base of the directory to place results, T1Images & T2Images
     are the lists of images to be used in the auto-workup. atlas_fname_wpath is
     the path and filename of the atlas to use.
     """
-    subjectDatabaseFile=os.path.join( ExperimentBaseDirectory,'InternalWorkflowSubjectDB.pickle')
+
+    subjectDatabaseFile=os.path.join( ExperimentBaseDirectoryCache,'InternalWorkflowSubjectDB.pickle')
     ExperimentDatabase=createDBFile(subject_data_file,subjectDatabaseFile,mountPrefix)
 
     print "Building Pipeline"
@@ -227,9 +228,9 @@ def WorkupT1T2(mountPrefix,ExperimentBaseDirectory, subject_data_file, atlas_fna
       'workflow_level':'DEBUG',
       'filemanip_level':'DEBUG',
       'interface_level':'DEBUG',
-      'log_directory': ExperimentBaseDirectory
+      'log_directory': ExperimentBaseDirectoryCache
     }
-    baw200.base_dir = ExperimentBaseDirectory +"_CACHE"
+    baw200.base_dir = ExperimentBaseDirectoryCache
 
     """TODO: Determine if we want to pass subjectID and scanID, always require full
     paths, get them from the output path, or something else.
@@ -250,12 +251,12 @@ def WorkupT1T2(mountPrefix,ExperimentBaseDirectory, subject_data_file, atlas_fna
         baw200.connect( BAtlas, 'template_landmark_weights_31_csv', myLocalLMIWF,'InputSpec.atlasWeightFilename')
         if 'AUXLMK' in WORKFLOW_COMPONENTS:
             baw200.connect(BAtlas,'template_t1',myLocalLMIWF,'InputSpec.atlasVolume')
-            
+
         ### Now define where the final organized outputs should go.
         BASIC_DataSink=pe.Node(nio.DataSink(),name="BASIC_DS")
-        BASIC_DataSink.inputs.base_directory=ExperimentBaseDirectory + "_Results"
+        BASIC_DataSink.inputs.base_directory=ExperimentBaseDirectoryResults
         BASIC_DataSink.inputs.regexp_substitutions = GenerateOutputPattern(ExperimentDatabase,'ACPCAlign')
-        
+
         baw200.connect(myLocalLMIWF,'OutputSpec.outputLandmarksInACPCAlignedSpace',BASIC_DataSink,'ACPCAlign.@outputLandmarksInACPCAlignedSpace')
         baw200.connect(myLocalLMIWF,'OutputSpec.outputResampledVolume',BASIC_DataSink,'ACPCAlign.@outputResampledVolume')
         baw200.connect(myLocalLMIWF,'OutputSpec.outputLandmarksInInputSpace',BASIC_DataSink,'ACPCAlign.@outputLandmarksInInputSpace')
@@ -271,10 +272,10 @@ def WorkupT1T2(mountPrefix,ExperimentBaseDirectory, subject_data_file, atlas_fna
         baw200.connect(BAtlas,'AtlasPVDefinition_xml',myLocalTCWF,'InputSpec.atlasDefinition')
         baw200.connect( myLocalLMIWF, 'OutputSpec.outputResampledVolume', myLocalTCWF, 'InputSpec.PrimaryT1' )
         baw200.connect( myLocalLMIWF,'OutputSpec.atlasToSubjectTransform',myLocalTCWF,'InputSpec.atlasToSubjectInitialTransform')
-        
+
         ### Now define where the final organized outputs should go.
         TC_DataSink=pe.Node(nio.DataSink(),name="TISSUE_CLASSIFY_DS")
-        TC_DataSink.inputs.base_directory=ExperimentBaseDirectory + "_Results"
+        TC_DataSink.inputs.base_directory=ExperimentBaseDirectoryResults
         TC_DataSink.inputs.regexp_substitutions = GenerateOutputPattern(ExperimentDatabase,'TissueClassify')
         baw200.connect(myLocalTCWF, 'OutputSpec.TissueClassifyOutputDir', TC_DataSink,'TissueClassify.@TissueClassifyOutputDir')
 
@@ -305,10 +306,10 @@ def WorkupT1T2(mountPrefix,ExperimentBaseDirectory, subject_data_file, atlas_fna
         baw200.connect(myLocalTCWF,'OutputSpec.t2_corrected',myLocalFSWF,'InputSpec.T2_files')
         baw200.connect(myLocalTCWF,'OutputSpec.outputLabels',myLocalFSWF,'InputSpec.label_file')
         #baw200.connect(myLocalTCWF,'OutputSpec.outputLabels',myLocalFSWF,'InputSpec.mask_file') #Yes, the same file as label_file!
-        
+
         ### Now define where the final organized outputs should go.
         baw200DataSink=pe.Node(nio.DataSink(),name="FREESURFER_DS")
-        baw200DataSink.inputs.base_directory=ExperimentBaseDirectory + "_Results"
+        baw200DataSink.inputs.base_directory=ExperimentBaseDirectoryResults
         baw200DataSink.inputs.regexp_substitutions = [
             ('/_uid_(?P<myuid>[^/]*)',r'/\g<myuid>')
             ]
@@ -317,7 +318,7 @@ def WorkupT1T2(mountPrefix,ExperimentBaseDirectory, subject_data_file, atlas_fna
     else:
         print "Skipping freesurfer"
 
-        
+
     return baw200
 
 
@@ -344,7 +345,7 @@ subs=r'test/\g<project>/\g<subject>/\g<session>/\g<modulename>'
 pe.sub(subs,test)
 pe=re.compile(pat)
 pe.sub(subs,test)
-    
+
     if 'PERSISTANCE_CHECK' in WORKFLOW_COMPONENTS:
         from WorkupT1T2PERSISTANCE_CHECK import CreatePERSISTANCE_CHECKWorkflow
         myLocalPERSISTANCE_CHECKWF= CreatePERSISTANCE_CHECKWorkflow("999999_PersistanceCheckingWorkflow")

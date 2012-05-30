@@ -10,6 +10,8 @@
 ##      PURPOSE.  See the above copyright notices for more information.
 ##
 #################################################################################
+import os
+import re
 import sys
 
 ##############################################################################
@@ -41,10 +43,29 @@ echo {CUSTENV}
 """.format(PYTHONPATH=PYTHONPATH,BINPATH=BASE_BUILDS,CUSTENV=custEnvString)
     return GLOBAL_SGE_SCRIPT
 
+# From http://stackoverflow.com/questions/1597649/replace-strings-in-files-by-python
+def file_replace(fname, out_fname, pat, s_after):
+    if fname == out_fname:
+        print "ERROR: input and output file names can not match"
+        sys.exit(-1)
+        return #input and output files can not match
+    # first, see if the pattern is even in the file.
+    with open(fname) as f:
+        if not any(re.search(pat, line) for line in f):
+            print "ERROR:  substitution pattern not found in reference file"
+            sys.exit(-1)
+            return # pattern does not occur in file so we are done.
+
+    # pattern is in the file, so perform replace operation.
+    with open(fname) as f:
+        out = open(out_fname, "w")
+        for line in f:
+            out.write(re.sub(pat, s_after, line))
+        out.close()
+
 def main(argv=None):
     import argparse
     import ConfigParser
-    import os
     import csv
     import string
 
@@ -92,13 +113,41 @@ def main(argv=None):
     FULL_EXPERIMENT_OUTPUTDIR=os.path.join(BASEOUTPUTDIR,ExperimentName)
     if not os.path.exists(FULL_EXPERIMENT_OUTPUTDIR):
         os.makedirs(FULL_EXPERIMENT_OUTPUTDIR)
-    ExperimentBaseDirectory=os.path.realpath(os.path.join(BASEOUTPUTDIR,ExperimentName))
+    ExperimentBaseDirectoryPrefix=os.path.realpath(os.path.join(BASEOUTPUTDIR,ExperimentName))
+    ExperimentBaseDirectoryCache=ExperimentBaseDirectoryPrefix+"_CACHE"
+    ExperimentBaseDirectoryResults=ExperimentBaseDirectoryPrefix +"_Results"
     #    Define workup common reference data sets
+    #    The ATLAS needs to be copied to the ExperimentBaseDirectoryPrefix
+    #    The ATLAS pathing must stay constant
     ATLASPATH=expConfig.get(input_arguments.processingEnvironment,'ATLASPATH')
     if not os.path.exists(ATLASPATH):
         print("ERROR:  Invalid Path for Atlas: {0}".format(ATLASPATH))
         sys.exit(-1)
+    CACHE_ATLASPATH=os.path.realpath(os.path.join(ExperimentBaseDirectoryCache,'Atlas'))
+    from distutils.dir_util import copy_tree
+    if not os.path.exists(CACHE_ATLASPATH):
+        print("Copying a reference of the atlas to the experiment cache directory: {0}".format(CACHE_ATLASPATH))
+        copy_tree(ATLASPATH,CACHE_ATLASPATH,preserve_mode=1,preserve_times=1)
+        ## Now generate the xml file with the correct pathing
+        file_replace(os.path.join(ATLASPATH,'AtlasPVDefinition.xml.in'),os.path.join(CACHE_ATLASPATH,'AtlasPVDefinition.xml'),"@ATLAS_DIRECTORY@",CACHE_ATLASPATH)
+    else:
+        print("Atlas already exists in experiment cache directory: {0}".format(CACHE_ATLASPATH))
+    #  Just to be safe, copy the model file as well
     BCDMODELPATH=expConfig.get(input_arguments.processingEnvironment,'BCDMODELPATH')
+    CACHE_BCDMODELPATH=os.path.join(ExperimentBaseDirectoryCache,os.path.basename(BCDMODELPATH))
+    from distutils.file_util import copy_file
+    for BCDModelFiles in ['LLSModel-2ndVersion.hdf5','T1-2ndVersion.mdl']:
+        orig=os.path.join(BCDMODELPATH,BCDModelFiles)
+        new=os.path.join(CACHE_BCDMODELPATH,BCDModelFiles)
+        if not os.path.exists(CACHE_BCDMODELPATH):
+            os.mkdir(CACHE_BCDMODELPATH)
+        if not os.path.exists(new):
+            print("Copying BCD Model file to cache directory: {0}".format(new))
+            copy_file(  orig, new,preserve_mode=1, preserve_times=1)
+        else:
+            print("BCD Model exists in cache directory: {0}".format(new))
+
+
     CUSTOM_ENVIRONMENT=expConfig.get(input_arguments.processingEnvironment,'CUSTOM_ENVIRONMENT')
     CUSTOM_ENVIRONMENT=eval(CUSTOM_ENVIRONMENT)
     ## Set custom environmental variables so that subproceses work properly (i.e. for Freesurfer)
@@ -115,7 +164,7 @@ def main(argv=None):
         print "FREESURFER NEEDS TO CHECK FOR SANE ENVIRONMENT HERE."
 
     CLUSTER_QUEUE=expConfig.get(input_arguments.processingEnvironment,'CLUSTER_QUEUE')
-    
+
     ## Setup environment for CPU load balancing of ITK based programs.
     import multiprocessing
     total_CPUS=multiprocessing.cpu_count()
@@ -137,10 +186,11 @@ def main(argv=None):
     config.enable_debug_mode() ## NOTE:  This needs to occur AFTER the PYTHON_AUX_PATHS has been modified
     import WorkupT1T2 ## NOTE:  This needs to occur AFTER the PYTHON_AUX_PATHS has been modified
     baw200=WorkupT1T2.WorkupT1T2(mountPrefix,
-      ExperimentBaseDirectory,
+      ExperimentBaseDirectoryCache,
+      ExperimentBaseDirectoryResults,
       session_db,
-      ATLASPATH,
-      BCDMODELPATH,WORKFLOW_COMPONENTS=WORKFLOW_COMPONENTS,CLUSTER_QUEUE=CLUSTER_QUEUE)
+      CACHE_ATLASPATH,
+      CACHE_BCDMODELPATH,WORKFLOW_COMPONENTS=WORKFLOW_COMPONENTS,CLUSTER_QUEUE=CLUSTER_QUEUE)
     print "Start Processing"
 
     ## Create the shell wrapper script for ensuring that all jobs running on remote hosts from SGE

@@ -208,7 +208,7 @@ def WorkupT1T2(mountPrefix,ExperimentBaseDirectory, subject_data_file, atlas_fna
 
     print "Building Pipeline"
     ########### PIPELINE INITIALIZATION #############
-    baw200 = pe.Workflow(name="BAW_20120104_workflow")
+    baw200 = pe.Workflow(name="BAW_20120530")
     baw200.config['execution'] = {
                                      'plugin':'Linear',
                                      #'stop_on_first_crash':'true',
@@ -229,7 +229,7 @@ def WorkupT1T2(mountPrefix,ExperimentBaseDirectory, subject_data_file, atlas_fna
       'interface_level':'DEBUG',
       'log_directory': ExperimentBaseDirectory
     }
-    baw200.base_dir = ExperimentBaseDirectory
+    baw200.base_dir = ExperimentBaseDirectory +"_CACHE"
 
     """TODO: Determine if we want to pass subjectID and scanID, always require full
     paths, get them from the output path, or something else.

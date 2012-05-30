@@ -290,10 +290,11 @@ def WorkupT1T2(mountPrefix,ExperimentBaseDirectory, subject_data_file, atlas_fna
         baw200.connect(BAtlas,'template_headregion',myLocalAntsWF,'InputSpec.movingBinaryVolume')
 
     if 'SEGMENTATION' in WORKFLOW_COMPONENTS:
+        from WorkupT1T2BRAINSCut import CreateBRAINSCutWorkflow
         myLocalSegWF = CreateBRAINSCutWorkflow("Segmentation",CLUSTER_QUEUE,BAtlas) ##Note:  Passing in the entire BAtlas Object here!
         baw200.connect( myLocalTCWF,'OutputSpec.t1_corrected',myLocalSegWF,"InputSpec.T1Volume")
         baw200.connect( myLocalTCWF,'OutputSpec.t2_corrected',myLocalSegWF,"InputSpec.T2Volume")
-        baw200.connect( mylocalTCWF,'OutputSpec.atlasToSubjectTransform',myLocalSegWF,'InputSpec.atlasToSubjectTransform')
+        baw200.connect( myLocalTCWF,'OutputSpec.atlasToSubjectTransform',myLocalSegWF,'InputSpec.atlasToSubjectTransform')
         pass
 
     if 'FREESURFER' in WORKFLOW_COMPONENTS:

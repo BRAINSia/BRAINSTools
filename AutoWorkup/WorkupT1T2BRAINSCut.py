@@ -8,16 +8,6 @@ import nipype.pipeline.engine as pe  # pypeline engine
 
 from BRAINSTools.BRAINSCut import *
 
-"""
-    from WorkupT1T2BRAINSCutSegmentation import CreateBRAINSCutSegmentationWorkflow
-    myLocalBRAINSCutSegmentationWF= CreateBRAINSCutSegmentationWorkflow("999999_PersistanceCheckingWorkflow")
-    BRAINSCutSegmentationWF.connect(SplitAvgBABC,'avgBABCT1',myLocalBRAINSCutSegmentationWF,'fixedVolume')
-    BRAINSCutSegmentationWF.connect(BABC,'outputLabels',myLocalBRAINSCutSegmentationWF,'fixedBinaryVolume')
-    BRAINSCutSegmentationWF.connect(BAtlas,'template_t1',myLocalBRAINSCutSegmentationWF,'movingVolume')
-    BRAINSCutSegmentationWF.connect(BAtlas,'template_brain',myLocalBRAINSCutSegmentationWF,'movingBinaryVolume')
-    BRAINSCutSegmentationWF.connect(BLI,'outputTransformFilename',myLocalBRAINSCutSegmentationWF,'initialTransform')
-"""
-
 
 def create_BRAINSCut_XML(rho,phi,theta,model,
                          r_probabilityMap,l_probabilityMap,
@@ -140,15 +130,203 @@ def create_BRAINSCut_XML(rho,phi,theta,model,
     return os.path.realpath(xml_filename), [ r_struct_fname, l_struct_fname ]
 
 
-def CreateBRAINSCutSegmentationWorkflow(WFname):
-    """ The purpose of this workflow is to debug the automatic deletion of files from the output directory.
+
+"""
+    from WorkupT1T2BRAINSCutSegmentation import CreateBRAINSCutSegmentationWorkflow
+    myLocalcutWF= CreateBRAINSCutSegmentationWorkflow("999999_PersistanceCheckingWorkflow")
+    cutWF.connect(SplitAvgBABC,'avgBABCT1',myLocalcutWF,'fixedVolume')
+    cutWF.connect(BABC,'outputLabels',myLocalcutWF,'fixedBinaryVolume')
+    cutWF.connect(BAtlas,'template_t1',myLocalcutWF,'movingVolume')
+    cutWF.connect(BAtlas,'template_brain',myLocalcutWF,'movingBinaryVolume')
+    cutWF.connect(BLI,'outputTransformFilename',myLocalcutWF,'initialTransform')
+"""
+def CreateBRAINSCutWorkflow(WFname,CLUSTER_QUEUE,atlasObject):
+    cutWF= pe.Workflow(name=WFname)
+
+    inputsSpec = pe.Node(interface=IdentityInterface(fields=['T1Volume','T2Volume',
+        'atlasToSubjectTransform']), name='InputSpec' )
+
     """
-    BRAINSCutSegmentationWF= pe.Workflow(name=WFname)
+    Gradient Anistropic Diffusion images for BRAINSCut
+    """
+    GADT1=pe.Node(interface=GradientAnisotropicDiffusionImageFilter(),name="GADT1")
+    GADT1.inputs.timeStep = 0.025
+    GADT1.inputs.conductance = 1
+    GADT1.inputs.numberOfIterations = 5
+    GADT1.inputs.outputVolume = "GADT1.nii.gz"
+
+    cutWF.connect(inputsSpec,'T1Volume',GADT1,'inputVolume')
+
+    GADT2=pe.Node(interface=GradientAnisotropicDiffusionImageFilter(),name="GADT2")
+    GADT2.inputs.timeStep = 0.025
+    GADT2.inputs.conductance = 1
+    GADT2.inputs.numberOfIterations = 5
+    GADT2.inputs.outputVolume = "GADT2.nii.gz"
+    cutWF.connect(inputsSpec,'T2Volume',GADT2,'inputVolume')
+
+    """
+    Sum the gradient images for BRAINSCut
+    """
+    SGI=pe.Node(interface=GenerateSummedGradientImage(),name="SGI")
+    SGI.inputs.outputFileName = "SummedGradImage.nii.gz"
+
+    cutWF.connect(GADT1,'outputVolume',SGI,'inputVolume1')
+    cutWF.connect(GADT2,'outputVolume',SGI,'inputVolume2')
+
+    """
+    BRAINSCut
+    """
+    RF12BC = pe.Node(interface=BRAINSCut12RF_Wrapper(),name="RF12_BRAINSCut")
+    RF12BC.inputs.trainingVectorFilename = "dummy.txt"
     
-    inputsSpec = pe.Node(interface=IdentityInterface(fields=['fixedVolume','fixedBinaryVolume','movingVolume','movingBinaryVolume','initialTransform']), name='InputSpec' )
+    cutWF.connect(inputSpec,'T1Volume',RF12BC,'inputSubjectT1Filename')
+    cutWF.connect(inputSpec,'T2Volume',RF12BC,'inputSubjectT2Filename')
+    cutWF.connect(SGI,'outputVolume',RF12BC,'inputSubjectSGFilename')
+    cutWF.connect(atlasObject,'template_t1',RF12BC,'inputTemplateT1')
+    cutWF.connect(atlasObject,'spatialImages/rho',RF12BC,'inputTemplateRhoFilename')
+    cutWF.connect(atlasObject,'spatialImages/phi',RF12BC,'inputTemplatePhiFilename')
+    cutWF.connect(atlasObject,'spatialImages/theta',RF12BC,'inputTemplateThetaFilename')
     
-    BRAINSCutSegmentationWF.connect(inputsSpec,'subject_id',fs_reconall,'subject_id')
-    BRAINSCutSegmentationWF.connect(inputsSpec,'T1_files',  fs_reconall,'T1_files')
+    
+    cutWF.connect(atlasObject,'probabilityMaps/l_accumben_ProbabilityMap',RF12BC,'probabilityMapsLeftAccumben')
+    cutWF.connect(atlasObject,'probabilityMaps/r_accumben_ProbabilityMap',RF12BC,'probabilityMapsRightAccumben')
+    cutWF.connect(atlasObject,'probabilityMaps/l_caudate_ProbabilityMap',RF12BC,'probabilityMapsLeftCaudate')
+    cutWF.connect(atlasObject,'probabilityMaps/r_caudate_ProbabilityMap',RF12BC,'probabilityMapsRightCaudate')
+    cutWF.connect(atlasObject,'probabilityMaps/l_globus_ProbabilityMap',RF12BC,'probabilityMapsLeftGlobus')
+    cutWF.connect(atlasObject,'probabilityMaps/r_globus_ProbabilityMap',RF12BC,'probabilityMapsRightGlobus')
+    cutWF.connect(atlasObject,'probabilityMaps/l_hippocampus_ProbabilityMap',RF12BC,'probabilityMapsLeftHippocampus')
+    cutWF.connect(atlasObject,'probabilityMaps/r_hippocampus_ProbabilityMap',RF12BC,'probabilityMapsRightHippocampus')
+    cutWF.connect(atlasObject,'probabilityMaps/l_putamen_ProbabilityMap',RF12BC,'probabilityMapsLeftPutamen')
+    cutWF.connect(atlasObject,'probabilityMaps/r_putamen_ProbabilityMap',RF12BC,'probabilityMapsRightPutamen')
+    cutWF.connect(atlasObject,'probabilityMaps/l_thalamus_ProbabilityMap',RF12BC,'probabilityMapsLeftThalamus')
+    cutWF.connect(atlasObject,'probabilityMaps/r_thalamus_ProbabilityMap',RF12BC,'probabilityMapsRightThalamus')
+    
+    cutWF.connect(inputsSpec,'atlasToSubjectTransform',RF12BC,'deformationFromTemplateToSubject')
+    RF12BC.inputs.modelFilename = '/tmp/model_here.mdl'
+
+    outputsSpec = pe.Node(interface=IdentityInterface(fields=[
+        'outputBinaryLeftAccumben','outputBinaryRightAccumben',
+        'outputBinaryLeftCaudate','outputBinaryRightCaudate',
+        'outputBinaryLeftGlobus','outputBinaryRightGlobus',
+        'outputBinaryLeftHippocampus','outputBinaryRightHippocampus',
+        'outputBinaryLeftPutamen','outputBinaryRightPutamen',
+        'outputBinaryLeftThalamus','outputBinaryRightThalamus',
+        'xmlFilename']), name='OutputSpec' )
+    
+    cutWF.connect(RF12BC,'outputBinaryLeftAccumben',outputsSpec,'outputBinaryLeftAccumben') 
+    cutWF.connect(RF12BC,'outputBinaryRightAccumben',outputsSpec,'outputBinaryRightAccumben') 
+    cutWF.connect(RF12BC,'outputBinaryLeftCaudate',outputsSpec,'outputBinaryLeftCaudate') 
+    cutWF.connect(RF12BC,'outputBinaryRightCaudate',outputsSpec,'outputBinaryRightCaudate') 
+    cutWF.connect(RF12BC,'outputBinaryLeftGlobus',outputsSpec,'outputBinaryLeftGlobus') 
+    cutWF.connect(RF12BC,'outputBinaryRightGlobus',outputsSpec,'outputBinaryRightGlobus') 
+    cutWF.connect(RF12BC,'outputBinaryLeftHippocampus',outputsSpec,'outputBinaryLeftHippocampus') 
+    cutWF.connect(RF12BC,'outputBinaryRightHippocampus',outputsSpec,'outputBinaryRightHippocampus') 
+    cutWF.connect(RF12BC,'outputBinaryLeftPutamen',outputsSpec,'outputBinaryLeftPutamen') 
+    cutWF.connect(RF12BC,'outputBinaryRightPutamen',outputsSpec,'outputBinaryRightPutamen') 
+    cutWF.connect(RF12BC,'outputBinaryLeftThalamus',outputsSpec,'outputBinaryLeftThalamus') 
+    cutWF.connect(RF12BC,'outputBinaryRightThalamus',outputsSpec,'outputBinaryRightThalamus') 
+    cutWF.connect(RF12BC,'xmlFilename',outputsSpec,'xmlFilename') 
+    
+    return cutWF
+    
+    
+    
+    ############ Garbage Do not run!!!
+def DontuseThis():
+    
+    
+    
+    """
+    Load the BRAINSCut models & probabiity maps.
+    """
+    BCM_outputs = ['phi','rho','theta',
+                   'r_probabilityMaps','l_probabilityMaps',
+                   'models']
+    BCM_Models = pe.Node(interface=nio.DataGrabber(input_names=['structures'],
+                                                   outfields=BCM_outputs),
+                         name='10_BCM_Models')
+    BCM_Models.inputs.base_directory = atlas_fname_wpath
+    BCM_Models.inputs.template_args['phi'] = [['spatialImages','phi','nii.gz']]
+    BCM_Models.inputs.template_args['rho'] = [['spatialImages','rho','nii.gz']]
+    BCM_Models.inputs.template_args['theta'] = [['spatialImages','theta','nii.gz']]
+    BCM_Models.inputs.template_args['r_probabilityMaps'] = [['structures']]
+    BCM_Models.inputs.template_args['l_probabilityMaps'] = [['structures']]
+    BCM_Models.inputs.template_args['models'] = [['structures']]
+
+    BRAINSCut_structures = ['caudate','thalamus','putamen','hippocampus']
+    #BRAINSCut_structures = ['caudate','thalamus']
+    BCM_Models.iterables = ( 'structures',  BRAINSCut_structures )
+    BCM_Models.inputs.template = '%s/%s.%s'
+    BCM_Models.inputs.field_template = dict(
+        r_probabilityMaps='probabilityMaps/r_%s_ProbabilityMap.nii.gz',
+        l_probabilityMaps='probabilityMaps/l_%s_ProbabilityMap.nii.gz',
+        models='modelFiles/%sModel*',
+        )
+
+    """
+    The xml creation and BRAINSCut need to be their own mini-pipeline that gets
+    executed once for each of the structures in BRAINSCut_structures.  This can be
+    accomplished with a map node and a new pipeline.
+    """
+    """
+    Create xml file for BRAINSCut
+    """
+
+
+    BFitAtlasToSubject = pe.Node(interface=BRAINSFit(),name="BFitAtlasToSubject")
+    BFitAtlasToSubject.inputs.costMetric="MMI"
+    BFitAtlasToSubject.inputs.maskProcessingMode="ROI"
+    BFitAtlasToSubject.inputs.numberOfSamples=100000
+    BFitAtlasToSubject.inputs.numberOfIterations=[1500,1500]
+    BFitAtlasToSubject.inputs.numberOfHistogramBins=50
+    BFitAtlasToSubject.inputs.maximumStepLength=0.2
+    BFitAtlasToSubject.inputs.minimumStepLength=[0.005,0.005]
+    BFitAtlasToSubject.inputs.transformType= ["Affine","BSpline"]
+    BFitAtlasToSubject.inputs.maxBSplineDisplacement= 7
+    BFitAtlasToSubject.inputs.maskInferiorCutOffFromCenter=65
+    BFitAtlasToSubject.inputs.splineGridSize=[28,20,24]
+    BFitAtlasToSubject.inputs.outputVolume="Trial_Initializer_Output.nii.gz"
+    BFitAtlasToSubject.inputs.outputTransform="Trial_Initializer_Output.mat"
+    cutWF.connect(SplitAvgBABC,'avgBABCT1',BFitAtlasToSubject,'fixedVolume')
+    cutWF.connect(BABC,'outputLabels',BFitAtlasToSubject,'fixedBinaryVolume')
+    cutWF.connect(BAtlas,'template_t1',BFitAtlasToSubject,'movingVolume')
+    cutWF.connect(BAtlas,'template_brain',BFitAtlasToSubject,'movingBinaryVolume')
+    cutWF.connect(BLI,'outputTransformFilename',BFitAtlasToSubject,'initialTransform')
+
+    CreateBRAINSCutXML = pe.Node(Function(input_names=['rho','phi','theta',
+                                                          'model',
+                                                          'r_probabilityMap',
+                                                          'l_probabilityMap',
+                                                          'atlasT1','atlasBrain',
+                                                          'subjT1','subjT2',
+                                                          'subjT1GAD','subjT2GAD',
+                                                          'subjSGGAD','subjBrain',
+                                                          'atlasToSubj','output_dir'],
+                                             output_names=['xml_filename','rl_structure_filename_list'],
+                                             function = create_BRAINSCut_XML),
+                                    overwrite = True,
+                                    name="CreateBRAINSCutXML")
+
+    ## HACK  Makde better directory
+    CreateBRAINSCutXML.inputs.output_dir = "." #os.path.join(cutWF.base_dir, "BRAINSCut_output")
+    cutWF.connect(BCM_Models,'models',CreateBRAINSCutXML,'model')
+    cutWF.connect(BCM_Models,'rho',CreateBRAINSCutXML,'rho')
+    cutWF.connect(BCM_Models,'phi',CreateBRAINSCutXML,'phi')
+    cutWF.connect(BCM_Models,'theta',CreateBRAINSCutXML,'theta')
+    cutWF.connect(BCM_Models,'r_probabilityMaps',CreateBRAINSCutXML,'r_probabilityMap')
+    cutWF.connect(BCM_Models,'l_probabilityMaps',CreateBRAINSCutXML,'l_probabilityMap')
+    cutWF.connect(BAtlas,'template_t1',CreateBRAINSCutXML,'atlasT1')
+    cutWF.connect(BAtlas,'template_brain',CreateBRAINSCutXML,'atlasBrain')
+    cutWF.connect(SplitAvgBABC,'avgBABCT1',CreateBRAINSCutXML,'subjT1')
+    cutWF.connect(SplitAvgBABC,'avgBABCT2',CreateBRAINSCutXML,'subjT2')
+    cutWF.connect(GADT1,'outputVolume',CreateBRAINSCutXML,'subjT1GAD')
+    cutWF.connect(GADT2,'outputVolume',CreateBRAINSCutXML,'subjT2GAD')
+    cutWF.connect(SGI,'outputFileName',CreateBRAINSCutXML,'subjSGGAD')
+    cutWF.connect(BABC,'outputLabels',CreateBRAINSCutXML,'subjBrain')
+    cutWF.connect(BFitAtlasToSubject,'outputTransform',CreateBRAINSCutXML,'atlasToSubj')
+    #CreateBRAINSCutXML.inputs.atlasToSubj = "INTERNAL_REGISTER.mat"
+    #cutWF.connect(BABC,'atlasToSubjectTransform',CreateBRAINSCutXML,'atlasToSubj')
+
     """
      ResampleNACLabels
      """
@@ -156,9 +334,9 @@ def CreateBRAINSCutSegmentationWorkflow(WFname):
      ResampleAtlasNACLabels.inputs.interpolationMode = "NearestNeighbor"
      ResampleAtlasNACLabels.inputs.outputVolume = "atlasToSubjectNACLabels.nii.gz"
 
-     baw200.connect(myLocalTCWF,'OutputSpec.atlasToSubjectTransform',ResampleAtlasNACLabels,'warpTransform')
-     baw200.connect(myLocalTCWF,'OutputSpec.t1_corrected',ResampleAtlasNACLabels,'referenceVolume')
-     baw200.connect(BAtlas,'template_nac_lables',ResampleAtlasNACLabels,'inputVolume')
+     cutWF.connect(myLocalTCWF,'OutputSpec.atlasToSubjectTransform',ResampleAtlasNACLabels,'warpTransform')
+     cutWF.connect(myLocalTCWF,'OutputSpec.t1_corrected',ResampleAtlasNACLabels,'referenceVolume')
+     cutWF.connect(BAtlas,'template_nac_lables',ResampleAtlasNACLabels,'inputVolume')
 
      """
      BRAINSMush
@@ -169,9 +347,9 @@ def CreateBRAINSCutSegmentationWorkflow(WFname):
      BMUSH.inputs.lowerThresholdFactor = 1.2
      BMUSH.inputs.upperThresholdFactor = 0.55
 
-     baw200.connect(myLocalTCWF,'OutputSpec.t1_corrected',BMUSH,'inputFirstVolume')
-     baw200.connect(myLocalTCWF,'OutputSpec.t2_corrected',BMUSH,'inputSecondVolume')
-     baw200.connect(myLocalTCWF,'OutputSpec.outputLabels',BMUSH,'inputMaskVolume')
+     cutWF.connect(myLocalTCWF,'OutputSpec.t1_corrected',BMUSH,'inputFirstVolume')
+     cutWF.connect(myLocalTCWF,'OutputSpec.t2_corrected',BMUSH,'inputSecondVolume')
+     cutWF.connect(myLocalTCWF,'OutputSpec.outputLabels',BMUSH,'inputMaskVolume')
 
      """
      BRAINSROIAuto
@@ -181,7 +359,7 @@ def CreateBRAINSCutSegmentationWorkflow(WFname):
      BROI.inputs.otsuPercentileThreshold=0.01
      BROI.inputs.thresholdCorrectionFactor=1.0
      BROI.inputs.outputROIMaskVolume = "temproiAuto_t1_ACPC_corrected_BRAINSABC.nii.gz"
-     baw200.connect(myLocalTCWF,'OutputSpec.t1_corrected',BROI,'inputVolume')
+     cutWF.connect(myLocalTCWF,'OutputSpec.t1_corrected',BROI,'inputVolume')
 
      """
      Split the implicit outputs of BABCext
@@ -190,25 +368,9 @@ def CreateBRAINSCutSegmentationWorkflow(WFname):
                               function = get_first_T1_and_T2), run_without_submitting=True, name="99_SplitAvgBABC")
      SplitAvgBABC.inputs.T1_count = 1 ## There is only 1 average T1 image.
 
-     baw200.connect(myLocalTCWF,'OutputSpec.outputAverageImages',SplitAvgBABC,'in_files')
+     cutWF.connect(myLocalTCWF,'OutputSpec.outputAverageImages',SplitAvgBABC,'in_files')
 
 
-     """
-     Gradient Anistropic Diffusion images for BRAINSCut
-     """
-     GADT1=pe.Node(interface=GradientAnisotropicDiffusionImageFilter(),name="GADT1")
-     GADT1.inputs.timeStep = 0.025
-     GADT1.inputs.conductance = 1
-     GADT1.inputs.numberOfIterations = 5
-     GADT1.inputs.outputVolume = "GADT1.nii.gz"
-
-     baw200.connect(SplitAvgBABC,'avgBABCT1',GADT1,'inputVolume')
-
-     GADT2=pe.Node(interface=GradientAnisotropicDiffusionImageFilter(),name="GADT2")
-     GADT2.inputs.timeStep = 0.025
-     GADT2.inputs.conductance = 1
-     GADT2.inputs.numberOfIterations = 5
-     GADT2.inputs.outputVolume = "GADT2.nii.gz"
 
      def printFullPath(outFileFullPath):
          print("="*80)
@@ -218,126 +380,4 @@ def CreateBRAINSCutSegmentationWorkflow(WFname):
          print("{0}".format(outFileFullPath))
          return outFileFullPath
      printOutImage = pe.Node( Function(function=printFullPath, input_names = ['outFileFullPath'], output_names = ['genoutFileFullPath']), run_without_submitting=True, name="99_printOutImage")
-     baw200.connect( GADT2, 'outputVolume', printOutImage, 'outFileFullPath' )
-
-     baw200.connect(SplitAvgBABC,'avgBABCT2',GADT2,'inputVolume')
-
-     """
-     Sum the gradient images for BRAINSCut
-     """
-     SGI=pe.Node(interface=GenerateSummedGradientImage(),name="SGI")
-     SGI.inputs.outputFileName = "SummedGradImage.nii.gz"
-
-     baw200.connect(GADT1,'outputVolume',SGI,'inputVolume1')
-     baw200.connect(GADT2,'outputVolume',SGI,'inputVolume2')
-
-    """
-     Load the BRAINSCut models & probabiity maps.
-     """
-     BCM_outputs = ['phi','rho','theta',
-                    'r_probabilityMaps','l_probabilityMaps',
-                    'models']
-     BCM_Models = pe.Node(interface=nio.DataGrabber(input_names=['structures'],
-                                                    outfields=BCM_outputs),
-                          name='10_BCM_Models')
-     BCM_Models.inputs.base_directory = atlas_fname_wpath
-     BCM_Models.inputs.template_args['phi'] = [['spatialImages','phi','nii.gz']]
-     BCM_Models.inputs.template_args['rho'] = [['spatialImages','rho','nii.gz']]
-     BCM_Models.inputs.template_args['theta'] = [['spatialImages','theta','nii.gz']]
-     BCM_Models.inputs.template_args['r_probabilityMaps'] = [['structures']]
-     BCM_Models.inputs.template_args['l_probabilityMaps'] = [['structures']]
-     BCM_Models.inputs.template_args['models'] = [['structures']]
-
-     BRAINSCut_structures = ['caudate','thalamus','putamen','hippocampus']
-     #BRAINSCut_structures = ['caudate','thalamus']
-     BCM_Models.iterables = ( 'structures',  BRAINSCut_structures )
-     BCM_Models.inputs.template = '%s/%s.%s'
-     BCM_Models.inputs.field_template = dict(
-         r_probabilityMaps='probabilityMaps/r_%s_ProbabilityMap.nii.gz',
-         l_probabilityMaps='probabilityMaps/l_%s_ProbabilityMap.nii.gz',
-         models='modelFiles/%sModel*',
-         )
-
-     """
-     The xml creation and BRAINSCut need to be their own mini-pipeline that gets
-     executed once for each of the structures in BRAINSCut_structures.  This can be
-     accomplished with a map node and a new pipeline.
-     """
-     """
-     Create xml file for BRAINSCut
-     """
-
-
-     BFitAtlasToSubject = pe.Node(interface=BRAINSFit(),name="BFitAtlasToSubject")
-     BFitAtlasToSubject.inputs.costMetric="MMI"
-     BFitAtlasToSubject.inputs.maskProcessingMode="ROI"
-     BFitAtlasToSubject.inputs.numberOfSamples=100000
-     BFitAtlasToSubject.inputs.numberOfIterations=[1500,1500]
-     BFitAtlasToSubject.inputs.numberOfHistogramBins=50
-     BFitAtlasToSubject.inputs.maximumStepLength=0.2
-     BFitAtlasToSubject.inputs.minimumStepLength=[0.005,0.005]
-     BFitAtlasToSubject.inputs.transformType= ["Affine","BSpline"]
-     BFitAtlasToSubject.inputs.maxBSplineDisplacement= 7
-     BFitAtlasToSubject.inputs.maskInferiorCutOffFromCenter=65
-     BFitAtlasToSubject.inputs.splineGridSize=[28,20,24]
-     BFitAtlasToSubject.inputs.outputVolume="Trial_Initializer_Output.nii.gz"
-     BFitAtlasToSubject.inputs.outputTransform="Trial_Initializer_Output.mat"
-     baw200.connect(SplitAvgBABC,'avgBABCT1',BFitAtlasToSubject,'fixedVolume')
-     baw200.connect(BABC,'outputLabels',BFitAtlasToSubject,'fixedBinaryVolume')
-     baw200.connect(BAtlas,'template_t1',BFitAtlasToSubject,'movingVolume')
-     baw200.connect(BAtlas,'template_brain',BFitAtlasToSubject,'movingBinaryVolume')
-     baw200.connect(BLI,'outputTransformFilename',BFitAtlasToSubject,'initialTransform')
-
-     CreateBRAINSCutXML = pe.Node(Function(input_names=['rho','phi','theta',
-                                                           'model',
-                                                           'r_probabilityMap',
-                                                           'l_probabilityMap',
-                                                           'atlasT1','atlasBrain',
-                                                           'subjT1','subjT2',
-                                                           'subjT1GAD','subjT2GAD',
-                                                           'subjSGGAD','subjBrain',
-                                                           'atlasToSubj','output_dir'],
-                                              output_names=['xml_filename','rl_structure_filename_list'],
-                                              function = create_BRAINSCut_XML),
-                                     overwrite = True,
-                                     name="CreateBRAINSCutXML")
-
-     ## HACK  Makde better directory
-     CreateBRAINSCutXML.inputs.output_dir = "." #os.path.join(baw200.base_dir, "BRAINSCut_output")
-     baw200.connect(BCM_Models,'models',CreateBRAINSCutXML,'model')
-     baw200.connect(BCM_Models,'rho',CreateBRAINSCutXML,'rho')
-     baw200.connect(BCM_Models,'phi',CreateBRAINSCutXML,'phi')
-     baw200.connect(BCM_Models,'theta',CreateBRAINSCutXML,'theta')
-     baw200.connect(BCM_Models,'r_probabilityMaps',CreateBRAINSCutXML,'r_probabilityMap')
-     baw200.connect(BCM_Models,'l_probabilityMaps',CreateBRAINSCutXML,'l_probabilityMap')
-     baw200.connect(BAtlas,'template_t1',CreateBRAINSCutXML,'atlasT1')
-     baw200.connect(BAtlas,'template_brain',CreateBRAINSCutXML,'atlasBrain')
-     baw200.connect(SplitAvgBABC,'avgBABCT1',CreateBRAINSCutXML,'subjT1')
-     baw200.connect(SplitAvgBABC,'avgBABCT2',CreateBRAINSCutXML,'subjT2')
-     baw200.connect(GADT1,'outputVolume',CreateBRAINSCutXML,'subjT1GAD')
-     baw200.connect(GADT2,'outputVolume',CreateBRAINSCutXML,'subjT2GAD')
-     baw200.connect(SGI,'outputFileName',CreateBRAINSCutXML,'subjSGGAD')
-     baw200.connect(BABC,'outputLabels',CreateBRAINSCutXML,'subjBrain')
-     baw200.connect(BFitAtlasToSubject,'outputTransform',CreateBRAINSCutXML,'atlasToSubj')
-     #CreateBRAINSCutXML.inputs.atlasToSubj = "INTERNAL_REGISTER.mat"
-     #baw200.connect(BABC,'atlasToSubjectTransform',CreateBRAINSCutXML,'atlasToSubj')
-
-     """
-     BRAINSCut
-     """
-     BRAINSCUT = pe.Node(interface=BRAINSCut(),name="BRAINSCUT",
-                            input_names=['netConfiguration'],
-                            output_names=['implicitOutputs'])
-     BRAINSCUT.inputs.applyModel = True
-     baw200.connect(CreateBRAINSCutXML,'xml_filename',BRAINSCUT,'netConfiguration')
-     baw200.connect(CreateBRAINSCutXML,'rl_structure_filename_list',BRAINSCUT,'implicitOutputs')
-
-     """
-     BRAINSTalairach
-     Not implemented yet.
-     """
-
-
-    outputsSpec = pe.Node(interface=IdentityInterface(fields=['outputVolume','outputTransform']), name='OutputSpec' )
-    
-    return BRAINSCutSegmentationWF
+     cutWF.connect( GADT2, 'outputVolume', printOutImage, 'outFileFullPath' )

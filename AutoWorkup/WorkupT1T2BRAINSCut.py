@@ -55,34 +55,47 @@ def CreateBRAINSCutWorkflow(WFname,CLUSTER_QUEUE,atlasObject):
     BRAINSCut
     """
     RF12BC = pe.Node(interface=RF12BRAINSCutWrapper(),name="RF12_BRAINSCut")
-    RF12BC.inputs.trainingVectorFilename = "dummy.txt"
+    RF12BC.inputs.trainingVectorFilename = "trainingVectorFilename.txt"
+    RF12BC.inputs.xmlFilename = "BRAINSCutSegmentationDefinition.xml"
+
+    RF12BC.inputs.outputBinaryLeftAccumben=     'l_Accumben_seg.nii.gz'
+    RF12BC.inputs.outputBinaryRightAccumben=    'r_Accumben_seg.nii.gz'
+    RF12BC.inputs.outputBinaryLeftCaudate=      'l_Caudate_seg.nii.gz'
+    RF12BC.inputs.outputBinaryRightCaudate=     'r_Caudate_seg.nii.gz'
+    RF12BC.inputs.outputBinaryLeftGlobus=       'l_Globus_seg.nii.gz'
+    RF12BC.inputs.outputBinaryRightGlobus=      'r_Globus_seg.nii.gz'
+    RF12BC.inputs.outputBinaryLeftHippocampus=  'l_Hippocampus_seg.nii.gz'
+    RF12BC.inputs.outputBinaryRightHippocampus= 'r_Hippocampus_seg.nii.gz'
+    RF12BC.inputs.outputBinaryLeftPutamen=      'l_Putamen_seg.nii.gz'
+    RF12BC.inputs.outputBinaryRightPutamen=     'r_Putamen_seg.nii.gz'
+    RF12BC.inputs.outputBinaryLeftThalamus=     'l_Thalamus_seg.nii.gz'
+    RF12BC.inputs.outputBinaryRightThalamus=    'r_Thalamus_seg.nii.gz'
 
     cutWF.connect(inputsSpec,'T1Volume',RF12BC,'inputSubjectT1Filename')
     cutWF.connect(inputsSpec,'T2Volume',RF12BC,'inputSubjectT2Filename')
     #cutWF.connect(SGI,'outputVolume',RF12BC,'inputSubjectSGFilename')
     cutWF.connect(SGI,'outputFileName',RF12BC,'inputSubjectSGFilename')
     cutWF.connect(atlasObject,'template_t1',RF12BC,'inputTemplateT1')
-    cutWF.connect(atlasObject,'spatialImages/rho',RF12BC,'inputTemplateRhoFilename')
-    cutWF.connect(atlasObject,'spatialImages/phi',RF12BC,'inputTemplatePhiFilename')
-    cutWF.connect(atlasObject,'spatialImages/theta',RF12BC,'inputTemplateThetaFilename')
+    cutWF.connect(atlasObject,'rho',RF12BC,'inputTemplateRhoFilename')
+    cutWF.connect(atlasObject,'phi',RF12BC,'inputTemplatePhiFilename')
+    cutWF.connect(atlasObject,'theta',RF12BC,'inputTemplateThetaFilename')
 
 
-    cutWF.connect(atlasObject,'probabilityMaps/l_accumben_ProbabilityMap',RF12BC,'probabilityMapsLeftAccumben')
-    cutWF.connect(atlasObject,'probabilityMaps/r_accumben_ProbabilityMap',RF12BC,'probabilityMapsRightAccumben')
-    cutWF.connect(atlasObject,'probabilityMaps/l_caudate_ProbabilityMap',RF12BC,'probabilityMapsLeftCaudate')
-    cutWF.connect(atlasObject,'probabilityMaps/r_caudate_ProbabilityMap',RF12BC,'probabilityMapsRightCaudate')
-    cutWF.connect(atlasObject,'probabilityMaps/l_globus_ProbabilityMap',RF12BC,'probabilityMapsLeftGlobus')
-    cutWF.connect(atlasObject,'probabilityMaps/r_globus_ProbabilityMap',RF12BC,'probabilityMapsRightGlobus')
-    cutWF.connect(atlasObject,'probabilityMaps/l_hippocampus_ProbabilityMap',RF12BC,'probabilityMapsLeftHippocampus')
-    cutWF.connect(atlasObject,'probabilityMaps/r_hippocampus_ProbabilityMap',RF12BC,'probabilityMapsRightHippocampus')
-    cutWF.connect(atlasObject,'probabilityMaps/l_putamen_ProbabilityMap',RF12BC,'probabilityMapsLeftPutamen')
-    cutWF.connect(atlasObject,'probabilityMaps/r_putamen_ProbabilityMap',RF12BC,'probabilityMapsRightPutamen')
-    cutWF.connect(atlasObject,'probabilityMaps/l_thalamus_ProbabilityMap',RF12BC,'probabilityMapsLeftThalamus')
-    cutWF.connect(atlasObject,'probabilityMaps/r_thalamus_ProbabilityMap',RF12BC,'probabilityMapsRightThalamus')
-    cutWF.connect(atlasObject,'modelFiles/RandomForestAllSubcorticalsBalancedModel_txtD0060NT0060',RF12BC,'modelFilename')
-    
+    cutWF.connect(atlasObject,'l_accumben_ProbabilityMap',RF12BC,'probabilityMapsLeftAccumben')
+    cutWF.connect(atlasObject,'r_accumben_ProbabilityMap',RF12BC,'probabilityMapsRightAccumben')
+    cutWF.connect(atlasObject,'l_caudate_ProbabilityMap',RF12BC,'probabilityMapsLeftCaudate')
+    cutWF.connect(atlasObject,'r_caudate_ProbabilityMap',RF12BC,'probabilityMapsRightCaudate')
+    cutWF.connect(atlasObject,'l_globus_ProbabilityMap',RF12BC,'probabilityMapsLeftGlobus')
+    cutWF.connect(atlasObject,'r_globus_ProbabilityMap',RF12BC,'probabilityMapsRightGlobus')
+    cutWF.connect(atlasObject,'l_hippocampus_ProbabilityMap',RF12BC,'probabilityMapsLeftHippocampus')
+    cutWF.connect(atlasObject,'r_hippocampus_ProbabilityMap',RF12BC,'probabilityMapsRightHippocampus')
+    cutWF.connect(atlasObject,'l_putamen_ProbabilityMap',RF12BC,'probabilityMapsLeftPutamen')
+    cutWF.connect(atlasObject,'r_putamen_ProbabilityMap',RF12BC,'probabilityMapsRightPutamen')
+    cutWF.connect(atlasObject,'l_thalamus_ProbabilityMap',RF12BC,'probabilityMapsLeftThalamus')
+    cutWF.connect(atlasObject,'r_thalamus_ProbabilityMap',RF12BC,'probabilityMapsRightThalamus')
+    cutWF.connect(atlasObject,'RandomForestAllSubcorticalsBalancedModel_txtD0060NT0060',RF12BC,'modelFilename')
+
     cutWF.connect(inputsSpec,'atlasToSubjectTransform',RF12BC,'deformationFromTemplateToSubject')
-    
 
     outputsSpec = pe.Node(interface=IdentityInterface(fields=[
         'outputBinaryLeftAccumben','outputBinaryRightAccumben',

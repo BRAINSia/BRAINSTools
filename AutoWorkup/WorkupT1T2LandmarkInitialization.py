@@ -17,7 +17,7 @@ from BRAINSTools import *
     landmarkInitializeWF.connect( BAtlas, 'template_landmarks_31_fcsv', myLocalLMIWF,'inputsSpec.atlasLandmarkFilename')
     landmarkInitializeWF.connect( BAtlas, 'template_landmark_weights_31_csv', myLocalLMIWF,'inputsSpec.atlasWeightFilename')
     landmarkInitializeWF.connect(BAtlas,'template_t1',myLocalLMIWF,'inputsSpec.atlasVolume')
-    
+
 """
 def CreateLandmarkInitializeWorkflow(WFname,BCD_model_path,InterpolationMode,DoReverseInit=False):
     landmarkInitializeWF= pe.Workflow(name=WFname)
@@ -54,7 +54,7 @@ def CreateLandmarkInitializeWorkflow(WFname,BCD_model_path,InterpolationMode,DoR
     landmarkInitializeWF.connect(inputsSpec, 'atlasWeightFilename', BLI, 'inputWeightFilename')
     landmarkInitializeWF.connect(inputsSpec, 'atlasLandmarkFilename', BLI, 'inputMovingLandmarkFilename' )
     landmarkInitializeWF.connect(BCD,'outputLandmarksInACPCAlignedSpace', BLI,'inputFixedLandmarkFilename'),
-    
+
     ## This is for debugging purposes, and it is not intended for general use.
     if DoReverseInit == True:
         ########################################################
@@ -66,7 +66,7 @@ def CreateLandmarkInitializeWorkflow(WFname,BCD_model_path,InterpolationMode,DoR
         landmarkInitializeWF.connect(inputsSpec, 'atlasWeightFilename', BLI2Atlas, 'inputWeightFilename')
         landmarkInitializeWF.connect(inputsSpec, 'atlasLandmarkFilename', BLI2Atlas, 'inputFixedLandmarkFilename' )
         landmarkInitializeWF.connect(BCD,'outputLandmarksInInputSpace',BLI2Atlas,'inputMovingLandmarkFilename')
-        
+
         Resample2Atlas=pe.Node(interface=BRAINSResample(),name="Resample2Atlas")
         Resample2Atlas.inputs.interpolationMode = "Linear"
         Resample2Atlas.inputs.outputVolume = "subject2atlas.nii.gz"
@@ -74,7 +74,7 @@ def CreateLandmarkInitializeWorkflow(WFname,BCD_model_path,InterpolationMode,DoR
         landmarkInitializeWF.connect( inputsSpec , 'inputVolume', Resample2Atlas, 'inputVolume')
         landmarkInitializeWF.connect(BLI2Atlas,'outputTransformFilename',Resample2Atlas,'warpTransform')
         landmarkInitializeWF.connect(inputsSpec,'atlasVolume',Resample2Atlas,'referenceVolume')
-        
+
     DO_DEBUG = True
     if DO_DEBUG == True:
         ResampleFromAtlas=pe.Node(interface=BRAINSResample(),name="ResampleFromAtlas")
@@ -84,7 +84,7 @@ def CreateLandmarkInitializeWorkflow(WFname,BCD_model_path,InterpolationMode,DoR
         landmarkInitializeWF.connect( inputsSpec , 'atlasVolume', ResampleFromAtlas, 'inputVolume')
         landmarkInitializeWF.connect(BLI,'outputTransformFilename',ResampleFromAtlas,'warpTransform')
         landmarkInitializeWF.connect(BCD,'outputResampledVolume',ResampleFromAtlas,'referenceVolume')
-    
+
     #############
     outputsSpec = pe.Node(interface=IdentityInterface(fields=['outputLandmarksInACPCAlignedSpace','outputResampledVolume','outputLandmarksInInputSpace',
             'outputTransform','outputMRML','atlasToSubjectTransform'

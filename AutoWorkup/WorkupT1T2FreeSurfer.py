@@ -50,7 +50,7 @@ def CreateFreeSurferWorkflow(WFname,CLUSTER_QUEUE):
     fs_reconall.inputs.directive = 'all'
     freesurferWF.connect(inputsSpec,'subject_id',fs_reconall,'subject_id')
     freesurferWF.connect(msLDA_GenerateWeights,'output_synth',  fs_reconall,'T1_files')
-    
+
     def MakeFreesurferOutputDirectory(subjects_dir,subject_id):
         return subjects_dir+'/'+subject_id
     computeFinalDirectory = pe.Node( Function(function=MakeFreesurferOutputDirectory, input_names = ['subjects_dir','subject_id'], output_names = ['FreesurferOutputDirectory']), run_without_submitting=True, name="99_computeFreesurferOutputDirectory")

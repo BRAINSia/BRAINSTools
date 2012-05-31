@@ -18,10 +18,10 @@ from BRAINSTools.BRAINSABCext import *
     tissueClassifyWF.connect(BLI,'outputTransformFilename',myLocalTCWF,'atlasToSubjectInitialTransform')
 """
 
-def get_first_T1_and_T2(in_files,T1_count): 
-    ''' 
+def get_first_T1_and_T2(in_files,T1_count):
+    '''
     Returns the first T1 and T2 file in in_files, based on offset in T1_count.
-    ''' 
+    '''
     return in_files[0],in_files[T1_count]
 
 
@@ -129,7 +129,7 @@ def CreateTissueClassifyWorkflow(WFname,CLUSTER_QUEUE,InterpolationMode):
     tissueClassifyWF.connect(BABCext,'outputLabels',outputsSpec,'outputLabels')
     tissueClassifyWF.connect(BABCext,'outputDirtyLabels',outputsSpec,'outputHeadLabels')
     tissueClassifyWF.connect(BABCext,'outputAverageImages',outputsSpec,'outputAverageImages')
-    
+
     tissueClassifyWF.connect(BABCext,'outputDir',outputsSpec,'TissueClassifyOutputDir')
 
     return tissueClassifyWF

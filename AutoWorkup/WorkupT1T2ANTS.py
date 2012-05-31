@@ -77,20 +77,20 @@ def CreateANTSRegistrationWorkflow(WFname,CLUSTER_QUEUE,NumberOfThreads=-1):
     #    ComputeAtlasToSubjectTransform.inputs.num_threads=NumberOfThreads
     # ComputeAtlasToSubjectTransform.inputs.fixedMask=SUBJ_A_small_T2_mask.nii.gz
     # ComputeAtlasToSubjectTransform.inputs.movingMask=SUBJ_B_small_T2_mask.nii.gz
-    
+
     ANTSWF.connect( inputsSpec,'fixedVolumesList', ComputeAtlasToSubjectTransform,"fixed_image")
     ANTSWF.connect( inputsSpec,'movingVolumesList',ComputeAtlasToSubjectTransform,"moving_image")
     ANTSWF.connect( BFitAtlasToSubject,'outputTransform', ComputeAtlasToSubjectTransform,'initial_moving_transform')
-    
+
     if 1 == 1:
         mergeAffineWarp = pe.Node(interface=Merge(2),name="Merge_AffineWarp")
         ANTSWF.connect(ComputeAtlasToSubjectTransform,'warp_transform',  mergeAffineWarp,'in1')
         ANTSWF.connect(BFitAtlasToSubject,'outputTransform',  mergeAffineWarp,'in2')
-    
+
         from nipype.interfaces.ants import WarpImageMultiTransform
         debugWarpTest = pe.Node(interface=WarpImageMultiTransform(), name="dbgWarpTest")
         # Not allowed as an input debugWarpTest.inputs.output_image = 'debugWarpedMovingToFixed.nii.gz'
-        
+
         ANTSWF.connect(inputsSpec, 'fixedVolumesList', debugWarpTest, 'reference_image')
         ANTSWF.connect(inputsSpec, 'movingVolumesList',debugWarpTest, 'moving_image')
         ANTSWF.connect(mergeAffineWarp,'out', debugWarpTest, 'transformation_series')

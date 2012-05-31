@@ -121,5 +121,3 @@ def CreateBRAINSCutWorkflow(WFname,CLUSTER_QUEUE,atlasObject):
     cutWF.connect(RF12BC,'xmlFilename',outputsSpec,'xmlFilename')
 
     return cutWF
-
-

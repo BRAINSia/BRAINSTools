@@ -110,12 +110,13 @@ def main(argv=None):
     #    Define platform specific output write paths
     mountPrefix=expConfig.get(input_arguments.processingEnvironment,'MOUNTPREFIX')
     BASEOUTPUTDIR=expConfig.get(input_arguments.processingEnvironment,'BASEOUTPUTDIR')
-    FULL_EXPERIMENT_OUTPUTDIR=os.path.join(BASEOUTPUTDIR,ExperimentName)
-    if not os.path.exists(FULL_EXPERIMENT_OUTPUTDIR):
-        os.makedirs(FULL_EXPERIMENT_OUTPUTDIR)
     ExperimentBaseDirectoryPrefix=os.path.realpath(os.path.join(BASEOUTPUTDIR,ExperimentName))
     ExperimentBaseDirectoryCache=ExperimentBaseDirectoryPrefix+"_CACHE"
     ExperimentBaseDirectoryResults=ExperimentBaseDirectoryPrefix +"_Results"
+    if not os.path.exists(ExperimentBaseDirectoryCache):
+        os.makedirs(ExperimentBaseDirectoryCache)
+    if not os.path.exists(ExperimentBaseDirectoryResults):
+        os.makedirs(ExperimentBaseDirectoryResults)
     #    Define workup common reference data sets
     #    The ATLAS needs to be copied to the ExperimentBaseDirectoryPrefix
     #    The ATLAS pathing must stay constant

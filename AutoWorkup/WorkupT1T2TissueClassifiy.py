@@ -113,7 +113,7 @@ def CreateTissueClassifyWorkflow(WFname,CLUSTER_QUEUE,InterpolationMode):
     """
     bfc_files = pe.Node(Function(input_names=['in_files','T1_count'],
                                output_names=['t1_corrected','t2_corrected'],
-                               function=get_first_T1_and_T2), name='99_bfc_files')
+                               function=get_first_T1_and_T2), run_without_submitting=True, name='99_bfc_files' )
     tissueClassifyWF.connect( inputsSpec, 'T1_count', bfc_files, 'T1_count')
 
     #############

@@ -22,7 +22,7 @@ def CreatePERSISTANCE_CHECKWorkflow(WFname):
     """ The purpose of this workflow is to debug the automatic deletion of files from the output directory.
     """
     PERSISTANCE_CHECKWF= pe.Workflow(name=WFname)
-    
+
     inputsSpec = pe.Node(interface=IdentityInterface(fields=['fixedVolume','fixedBinaryVolume','movingVolume','movingBinaryVolume','initialTransform']), name='InputSpec' )
     PERSISTANCE_CHECKWF.connect(inputsSpec,'subject_id',fs_reconall,'subject_id')
     PERSISTANCE_CHECKWF.connect(inputsSpec,'T1_files',  fs_reconall,'T1_files')
@@ -43,7 +43,7 @@ def CreatePERSISTANCE_CHECKWorkflow(WFname):
     PERSISTANCE_CHECK.inputs.splineGridSize=[28,20,24]
     PERSISTANCE_CHECK.inputs.outputVolume="Trial_Initializer_Output.nii.gz"
     PERSISTANCE_CHECK.inputs.outputTransform="Trial_Initializer_Output.mat"
-    
+
     PERSISTANCE_CHECKWF.connect(inputsSpec,'fixedVolume',       PERSISTANCE_CHECK,'fixedVolume')
     PERSISTANCE_CHECKWF.connect(inputsSpec,'fixedBinaryVolume', PERSISTANCE_CHECK,'fixedBinaryVolume')
     PERSISTANCE_CHECKWF.connect(inputsSpec,'movingVolume',      PERSISTANCE_CHECK,'movingVolume')
@@ -51,5 +51,5 @@ def CreatePERSISTANCE_CHECKWorkflow(WFname):
     PERSISTANCE_CHECKWF.connect(inputsSpec,'initialTransform',  PERSISTANCE_CHECK,'initialTransform')
 
     outputsSpec = pe.Node(interface=IdentityInterface(fields=['outputVolume','outputTransform']), name='OutputSpec' )
-    
+
     return PERSISTANCE_CHECKWF

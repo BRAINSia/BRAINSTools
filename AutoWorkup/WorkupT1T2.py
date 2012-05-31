@@ -291,10 +291,12 @@ def WorkupT1T2(mountPrefix,ExperimentBaseDirectoryCache, ExperimentBaseDirectory
         baw200.connect(BAtlas,'template_headregion',myLocalAntsWF,'InputSpec.movingBinaryVolume')
 
     if 'SEGMENTATION' in WORKFLOW_COMPONENTS:
+        def getListIndex( imageList, index):
+            return imageList[index]
         from WorkupT1T2BRAINSCut import CreateBRAINSCutWorkflow
         myLocalSegWF = CreateBRAINSCutWorkflow("Segmentation",CLUSTER_QUEUE,BAtlas) ##Note:  Passing in the entire BAtlas Object here!
-        baw200.connect( myLocalTCWF,'OutputSpec.t1_corrected',myLocalSegWF,"InputSpec.T1Volume")
-        baw200.connect( myLocalTCWF,'OutputSpec.t2_corrected',myLocalSegWF,"InputSpec.T2Volume")
+        baw200.connect( [ ( myLocalTCWF, myLocalSegWF, [ (( 'OutputSpec.outputAverageImages', getListIndex, 0 ), "InputSpec.T1Volume")] ), ] )
+        baw200.connect( [ ( myLocalTCWF, myLocalSegWF, [ (( 'OutputSpec.outputAverageImages', getListIndex, 1 ), "InputSpec.T2Volume")] ), ] )
         baw200.connect( myLocalTCWF,'OutputSpec.atlasToSubjectTransform',myLocalSegWF,'InputSpec.atlasToSubjectTransform')
         pass
 
@@ -355,5 +357,3 @@ pe.sub(subs,test)
         PERSISTANCE_CHECKWF.connect(BAtlas,'template_brain',myLocalPERSISTANCE_CHECKWF,'movingBinaryVolume')
         PERSISTANCE_CHECKWF.connect(myLocalLMIWF,'OutputSpec.atlasToSubjectTransform',myLocalPERSISTANCE_CHECKWF,'initialTransform')
 """
-
-

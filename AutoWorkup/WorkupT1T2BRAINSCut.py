@@ -55,6 +55,8 @@ def CreateBRAINSCutWorkflow(WFname,CLUSTER_QUEUE,atlasObject):
     BRAINSCut
     """
     RF12BC = pe.Node(interface=RF12BRAINSCutWrapper(),name="RF12_BRAINSCut")
+    many_cpu_RF12BC_options_dictionary={'qsub_args': '-S /bin/bash -pe smp1 4-12 -l mem_free=8000M -o /dev/null -e /dev/null '+CLUSTER_QUEUE, 'overwrite': True}
+    RF12BC.plugin_args=many_cpu_RF12BC_options_dictionary
     RF12BC.inputs.trainingVectorFilename = "trainingVectorFilename.txt"
     RF12BC.inputs.xmlFilename = "BRAINSCutSegmentationDefinition.xml"
 
@@ -73,13 +75,12 @@ def CreateBRAINSCutWorkflow(WFname,CLUSTER_QUEUE,atlasObject):
 
     cutWF.connect(inputsSpec,'T1Volume',RF12BC,'inputSubjectT1Filename')
     cutWF.connect(inputsSpec,'T2Volume',RF12BC,'inputSubjectT2Filename')
-    #cutWF.connect(SGI,'outputVolume',RF12BC,'inputSubjectSGFilename')
+    # Error cutWF.connect(SGI,'outputVolume',RF12BC,'inputSubjectSGFilename')
     cutWF.connect(SGI,'outputFileName',RF12BC,'inputSubjectSGFilename')
     cutWF.connect(atlasObject,'template_t1',RF12BC,'inputTemplateT1')
     cutWF.connect(atlasObject,'rho',RF12BC,'inputTemplateRhoFilename')
     cutWF.connect(atlasObject,'phi',RF12BC,'inputTemplatePhiFilename')
     cutWF.connect(atlasObject,'theta',RF12BC,'inputTemplateThetaFilename')
-
 
     cutWF.connect(atlasObject,'l_accumben_ProbabilityMap',RF12BC,'probabilityMapsLeftAccumben')
     cutWF.connect(atlasObject,'r_accumben_ProbabilityMap',RF12BC,'probabilityMapsRightAccumben')
@@ -121,5 +122,3 @@ def CreateBRAINSCutWorkflow(WFname,CLUSTER_QUEUE,atlasObject):
     cutWF.connect(RF12BC,'xmlFilename',outputsSpec,'xmlFilename')
 
     return cutWF
-
-

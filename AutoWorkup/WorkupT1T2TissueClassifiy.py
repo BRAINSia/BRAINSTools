@@ -18,10 +18,10 @@ from BRAINSTools.BRAINSABCext import *
     tissueClassifyWF.connect(BLI,'outputTransformFilename',myLocalTCWF,'atlasToSubjectInitialTransform')
 """
 
-def get_first_T1_and_T2(in_files,T1_count): 
-    ''' 
+def get_first_T1_and_T2(in_files,T1_count):
+    '''
     Returns the first T1 and T2 file in in_files, based on offset in T1_count.
-    ''' 
+    '''
     return in_files[0],in_files[T1_count]
 
 
@@ -85,8 +85,8 @@ def CreateTissueClassifyWorkflow(WFname,CLUSTER_QUEUE,InterpolationMode):
     tissueClassifyWF.connect( inputsSpec, 'T2List', makeOutImageList, 'T2List' )
 
     BABCext= pe.Node(interface=BRAINSABCext(), name="BABC")
-    many_cpu_BABC_options_dictionary={'qsub_args': '-S /bin/bash -pe smp1 4-12 -o /dev/null -e /dev/null '+CLUSTER_QUEUE, 'overwrite': True}
-    #many_cpu_BABC_options_dictionary={'qsub_args': '-S /bin/bash -pe smp1 4-12 -l mem_free=8000M -o /dev/null -e /dev/null '+CLUSTER_QUEUE, 'overwrite': True}
+    #many_cpu_BABC_options_dictionary={'qsub_args': '-S /bin/bash -pe smp1 4-12 -o /dev/null -e /dev/null '+CLUSTER_QUEUE, 'overwrite': True}
+    many_cpu_BABC_options_dictionary={'qsub_args': '-S /bin/bash -pe smp1 4-12 -l mem_free=8000M -o /dev/null -e /dev/null '+CLUSTER_QUEUE, 'overwrite': True}
     BABCext.plugin_args=many_cpu_BABC_options_dictionary
     tissueClassifyWF.connect(makeImagePathList,'imagePathList',BABCext,'inputVolumes')
     tissueClassifyWF.connect(makeImageTypeList,'imageTypeList',BABCext,'inputVolumeTypes')
@@ -129,7 +129,7 @@ def CreateTissueClassifyWorkflow(WFname,CLUSTER_QUEUE,InterpolationMode):
     tissueClassifyWF.connect(BABCext,'outputLabels',outputsSpec,'outputLabels')
     tissueClassifyWF.connect(BABCext,'outputDirtyLabels',outputsSpec,'outputHeadLabels')
     tissueClassifyWF.connect(BABCext,'outputAverageImages',outputsSpec,'outputAverageImages')
-    
+
     tissueClassifyWF.connect(BABCext,'outputDir',outputsSpec,'TissueClassifyOutputDir')
 
     return tissueClassifyWF

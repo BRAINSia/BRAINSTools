@@ -216,7 +216,10 @@ def main(argv=None):
         print "Running with 12 parallel processes on local machine"
         baw200.run(plugin='MultiProc', plugin_args={'n_procs' : 12})
     elif input_arguments.wfrun == 'local':
-        baw200.write_graph()
+        try:
+            baw200.write_graph()
+        except:
+            pass
         print "Running sequentially on local machine"
         baw200.run()
     else:

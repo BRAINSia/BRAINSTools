@@ -244,12 +244,13 @@ def WorkupT1T2(mountPrefix,ExperimentBaseDirectoryCache, ExperimentBaseDirectory
         from WorkupT1T2LandmarkInitialization import CreateLandmarkInitializeWorkflow
         DoReverseMapping = False   # Set to true for debugging outputs
         if 'AUXLMK' in WORKFLOW_COMPONENTS:
-            baw200.connect(BAtlas,'template_t1',myLocalLMIWF,'InputSpec.atlasVolume')
             DoReverseMapping = True
         myLocalLMIWF= CreateLandmarkInitializeWorkflow("LandmarkInitialize", BCD_model_path, InterpolationMode,DoReverseMapping)
         baw200.connect( [ (uidSource, myLocalLMIWF, [(('uid', getFirstT1, subjectDatabaseFile ), 'InputSpec.inputVolume')] ), ])
         baw200.connect( BAtlas, 'template_landmarks_31_fcsv', myLocalLMIWF,'InputSpec.atlasLandmarkFilename')
         baw200.connect( BAtlas, 'template_landmark_weights_31_csv', myLocalLMIWF,'InputSpec.atlasWeightFilename')
+        if 'AUXLMK' in WORKFLOW_COMPONENTS:
+            baw200.connect(BAtlas,'template_t1',myLocalLMIWF,'InputSpec.atlasVolume')
 
         ### Now define where the final organized outputs should go.
         BASIC_DataSink=pe.Node(nio.DataSink(),name="BASIC_DS")

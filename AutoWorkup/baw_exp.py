@@ -181,6 +181,8 @@ def main(argv=None):
         os.environ['NSLOTS']="{0}".format(total_CPUS/1)
     else:
         print "You must specify the run environment type. [helium_all.q,ipl_OSX,local_4,local_12,local]"
+        print input_arguments.wfrun
+        sys.exit(-1)
 
     print "Configuring Pipeline"
     from nipype import config ## NOTE:  This needs to occur AFTER the PYTHON_AUX_PATHS has been modified
@@ -223,7 +225,9 @@ def main(argv=None):
         print "Running sequentially on local machine"
         baw200.run()
     else:
-        print "You must specify the run environment type."
+        print "You must specify the run environment type. [helium_all.q,ipl_OSX,local_4,local_12,local]"
+        print input_arguments.wfrun
+        sys.exit(-1)
 
 
 if __name__ == "__main__":

@@ -11,6 +11,7 @@ BRAINSCutCreateVector
   myDataHandler.SetRhoPhiTheta();
   myDataHandler.SetTrainingVectorConfiguration();
   myDataHandler.SetGradientSize();
+  myDataHandler.SetNormalization();
 }
 
 void

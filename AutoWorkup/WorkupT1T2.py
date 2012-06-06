@@ -298,7 +298,25 @@ def WorkupT1T2(mountPrefix,ExperimentBaseDirectoryCache, ExperimentBaseDirectory
         baw200.connect( [ ( myLocalTCWF, myLocalSegWF, [ (( 'OutputSpec.outputAverageImages', getListIndex, 0 ), "InputSpec.T1Volume")] ), ] )
         baw200.connect( [ ( myLocalTCWF, myLocalSegWF, [ (( 'OutputSpec.outputAverageImages', getListIndex, 1 ), "InputSpec.T2Volume")] ), ] )
         baw200.connect( myLocalTCWF,'OutputSpec.atlasToSubjectTransform',myLocalSegWF,'InputSpec.atlasToSubjectTransform')
-        pass
+
+        ### Now define where the final organized outputs should go.
+        SEGMENTATION_DataSink=pe.Node(nio.DataSink(),name="SEGMENTATION_DS")
+        SEGMENTATION_DataSink.inputs.base_directory=ExperimentBaseDirectoryResults
+        SEGMENTATION_DataSink.inputs.regexp_substitutions = GenerateOutputPattern(ExperimentDatabase,'BRAINSCut')
+        baw200.connect(myLocalSegWF, 'OutputSpec.outputBinaryLeftAccumben',SEGMENTATION_DataSink, 'BRAINSCut.@outputBinaryLeftAccumben')
+        baw200.connect(myLocalSegWF, 'OutputSpec.outputBinaryRightAccumben',SEGMENTATION_DataSink, 'BRAINSCut.@outputBinaryRightAccumben')
+        baw200.connect(myLocalSegWF, 'OutputSpec.outputBinaryLeftCaudate',SEGMENTATION_DataSink, 'BRAINSCut.@outputBinaryLeftCaudate')
+        baw200.connect(myLocalSegWF, 'OutputSpec.outputBinaryRightCaudate',SEGMENTATION_DataSink, 'BRAINSCut.@outputBinaryRightCaudate')
+        baw200.connect(myLocalSegWF, 'OutputSpec.outputBinaryLeftGlobus',SEGMENTATION_DataSink, 'BRAINSCut.@outputBinaryLeftGlobus')
+        baw200.connect(myLocalSegWF, 'OutputSpec.outputBinaryRightGlobus',SEGMENTATION_DataSink, 'BRAINSCut.@outputBinaryRightGlobus')
+        baw200.connect(myLocalSegWF, 'OutputSpec.outputBinaryLeftHippocampus',SEGMENTATION_DataSink, 'BRAINSCut.@outputBinaryLeftHippocampus')
+        baw200.connect(myLocalSegWF, 'OutputSpec.outputBinaryRightHippocampus',SEGMENTATION_DataSink, 'BRAINSCut.@outputBinaryRightHippocampus')
+        baw200.connect(myLocalSegWF, 'OutputSpec.outputBinaryLeftPutamen',SEGMENTATION_DataSink, 'BRAINSCut.@outputBinaryLeftPutamen')
+        baw200.connect(myLocalSegWF, 'OutputSpec.outputBinaryRightPutamen',SEGMENTATION_DataSink, 'BRAINSCut.@outputBinaryRightPutamen')
+        baw200.connect(myLocalSegWF, 'OutputSpec.outputBinaryLeftThalamus',SEGMENTATION_DataSink, 'BRAINSCut.@outputBinaryLeftThalamus')
+        baw200.connect(myLocalSegWF, 'OutputSpec.outputBinaryRightThalamus',SEGMENTATION_DataSink, 'BRAINSCut.@outputBinaryRightThalamus')
+        baw200.connect(myLocalSegWF, 'OutputSpec.outputLabelImageName', SEGMENTATION_DataSink,'BRAINSCut.@outputLabelImageName')
+        baw200.connect(myLocalSegWF, 'OutputSpec.outputCSVFileName', SEGMENTATION_DataSink,'BRAINSCut.@outputCSVFileName')
 
     if 'FREESURFER' in WORKFLOW_COMPONENTS:
         from WorkupT1T2FreeSurfer import CreateFreeSurferWorkflow

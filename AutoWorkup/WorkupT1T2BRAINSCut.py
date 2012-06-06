@@ -9,6 +9,90 @@ import nipype.pipeline.engine as pe  # pypeline engine
 from BRAINSTools import *
 from BRAINSTools.RF12BRAINSCutWrapper import RF12BRAINSCutWrapper
 
+
+def CreateLabelMap(listOfImages,LabelImageName,CSVFileName):
+    """
+    A function to create a consolidated label map and a
+    csv file of volume measurements.
+    """
+    import SimpleITK as sitk
+    import os
+    import csv
+    orderOfPriority = [
+      "l_Caudate_seg"     ,
+      "r_Caudate_seg"     ,
+      "l_Putamen_seg"     ,
+      "r_Putamen_seg"     ,
+      "l_Hippocampus_seg" ,
+      "r_Hippocampus_seg" ,
+      "l_Accumben_seg"    ,
+      "r_Accumben_seg"    ,
+      "l_Globus_seg"      ,
+      "r_Globus_seg"      ,
+      "l_Thalamus_seg"    ,
+      "r_Thalamus_seg"
+    ]
+
+    valueDict={
+        "l_Caudate_seg"     : 1,
+        "r_Caudate_seg"     : 2,
+        "l_Putamen_seg"     : 3,
+        "r_Putamen_seg"     : 4,
+        "l_Hippocampus_seg" : 5,
+        "r_Hippocampus_seg" : 6,
+        "l_Accumben_seg"    : 7,
+        "r_Accumben_seg"    : 8,
+        "l_Globus_seg"      : 9,
+        "r_Globus_seg"      :10,
+        "l_Thalamus_seg"    :11,
+        "r_Thalamus_seg"    :12
+    }
+
+    labelImage = None
+    for segFN in listOfImages:
+        im = sitk.ReadImage(segFN)
+        im.GetSize()
+        structName=os.path.basename(segFN.replace(".nii.gz",""))
+        if labelImage is None:
+            labelImage = im*valueDict[structName]
+        else:
+            mask=sitk.Not(im)
+            ## Clear out an empty space for the next mask to be inserted
+            labelImage *= mask
+            ## Add in the mask image with it's proper label
+            labelImage = labelImage + im*valueDict[structName]
+    sitk.WriteImage(labelImage,LabelImageName)
+
+    ls = sitk.LabelStatisticsImageFilter()
+    ls.Execute(labelImage,labelImage)
+    ImageSpacing=labelImage.GetSpacing()
+    csvFile=open(CSVFileName,'w')
+    dWriter=csv.DictWriter(csvFile,['Structure','LabelCode','Volume_mm3','FileName'],restval='', extrasaction='raise', dialect='excel')
+    dWriter.writeheader()
+    writeDictionary=dict()
+    for name in orderOfPriority:
+        value = valueDict[name]
+        if ls.HasLabel(value):
+            #print "Displaying: ", name, value
+            myMeasurementMap = ls.GetMeasurementMap(value)
+            dictKeys=myMeasurementMap.GetVectorOfMeasurementNames()
+            dictValues=myMeasurementMap.GetVectorOfMeasurementValues()
+            measurementDict=dict(zip(dictKeys, dictValues))
+            structVolume=ImageSpacing[0]*ImageSpacing[1]*ImageSpacing[2]*measurementDict['Count']
+            writeDictionary['Volume_mm3']=structVolume
+            writeDictionary['Structure']=name
+            writeDictionary['LabelCode']=value
+            writeDictionary['FileName']=os.path.abspath(LabelImageName)
+            dWriter.writerow(writeDictionary)
+    return os.path.abspath(LabelImageName),os.path.abspath(CSVFileName)
+
+#==============================================
+#==============================================
+#==============================================
+#==============================================
+#==============================================
+#==============================================
+
 """
     from WorkupT1T2BRAINSCutSegmentation import CreateBRAINSCutSegmentationWorkflow
     myLocalcutWF= CreateBRAINSCutSegmentationWorkflow("999999_PersistanceCheckingWorkflow")
@@ -98,6 +182,28 @@ def CreateBRAINSCutWorkflow(WFname,CLUSTER_QUEUE,atlasObject):
 
     cutWF.connect(inputsSpec,'atlasToSubjectTransform',RF12BC,'deformationFromTemplateToSubject')
 
+    mergeAllLabels=pe.Node(interface=Merge(12),name="labelMergeNode")
+    # NOTE: Ordering is important
+    cutWF.connect(RF12BC,'outputBinaryLeftCaudate',mergeAllLabels,'in1')
+    cutWF.connect(RF12BC,'outputBinaryRightCaudate',mergeAllLabels,'in2')
+    cutWF.connect(RF12BC,'outputBinaryLeftPutamen',mergeAllLabels,'in3')
+    cutWF.connect(RF12BC,'outputBinaryRightPutamen',mergeAllLabels,'in4')
+    cutWF.connect(RF12BC,'outputBinaryLeftHippocampus',mergeAllLabels,'in5')
+    cutWF.connect(RF12BC,'outputBinaryRightHippocampus',mergeAllLabels,'in6')
+    cutWF.connect(RF12BC,'outputBinaryLeftAccumben',mergeAllLabels,'in7')
+    cutWF.connect(RF12BC,'outputBinaryRightAccumben',mergeAllLabels,'in8')
+    cutWF.connect(RF12BC,'outputBinaryLeftGlobus',mergeAllLabels,'in9')
+    cutWF.connect(RF12BC,'outputBinaryRightGlobus',mergeAllLabels,'in10')
+    cutWF.connect(RF12BC,'outputBinaryLeftThalamus',mergeAllLabels,'in11')
+    cutWF.connect(RF12BC,'outputBinaryRightThalamus',mergeAllLabels,'in12')
+
+    computeOneLabelMap = pe.Node(interface=Function(['listOfImages','LabelImageName','CSVFileName'],
+        ['outputLabelImageName','outputCSVFileName'],
+        function=CreateLabelMap),name="ComputeOneLabelMap")
+    computeOneLabelMap.inputs.LabelImageName="consolidated12LabelMap.nii.gz"
+    computeOneLabelMap.inputs.CSVFileName = "consolidated12LabelVolumes.csv"
+    cutWF.connect(mergeAllLabels,'out',computeOneLabelMap,'listOfImages')
+
     outputsSpec = pe.Node(interface=IdentityInterface(fields=[
         'outputBinaryLeftAccumben','outputBinaryRightAccumben',
         'outputBinaryLeftCaudate','outputBinaryRightCaudate',
@@ -105,8 +211,11 @@ def CreateBRAINSCutWorkflow(WFname,CLUSTER_QUEUE,atlasObject):
         'outputBinaryLeftHippocampus','outputBinaryRightHippocampus',
         'outputBinaryLeftPutamen','outputBinaryRightPutamen',
         'outputBinaryLeftThalamus','outputBinaryRightThalamus',
+        'outputLabelImageName','outputCSVFileName',
         'xmlFilename']), name='OutputSpec' )
 
+    cutWF.connect(computeOneLabelMap,'outputLabelImageName',outputsSpec,'outputLabelImageName')
+    cutWF.connect(computeOneLabelMap,'outputCSVFileName',outputsSpec,'outputCSVFileName')
     cutWF.connect(RF12BC,'outputBinaryLeftAccumben',outputsSpec,'outputBinaryLeftAccumben')
     cutWF.connect(RF12BC,'outputBinaryRightAccumben',outputsSpec,'outputBinaryRightAccumben')
     cutWF.connect(RF12BC,'outputBinaryLeftCaudate',outputsSpec,'outputBinaryLeftCaudate')

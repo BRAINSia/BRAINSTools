@@ -187,13 +187,8 @@ ESMDemonsRegistrationWithMaskFunction<TFixedImage, TMovingImage, TDisplacementFi
   m_MovingImageWarper->SetOutputSpacing(this->m_FixedImageSpacing);
   m_MovingImageWarper->SetOutputDirection(this->m_FixedImageDirection);
   m_MovingImageWarper->SetInput( this->GetMovingImage() );
-#if (ITK_VERSION_MAJOR < 4)
-  m_MovingImageWarper->SetDeformationField( this->GetDeformationField() );
-  m_MovingImageWarper->GetOutput()->SetRequestedRegion( this->GetDeformationField()->GetRequestedRegion() );
-#else
   m_MovingImageWarper->SetDisplacementField( this->GetDisplacementField() );
   m_MovingImageWarper->GetOutput()->SetRequestedRegion( this->GetDisplacementField()->GetRequestedRegion() );
-#endif
   m_MovingImageWarper->Update();
 
   // setup moving image interpolator for further access

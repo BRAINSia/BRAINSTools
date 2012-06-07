@@ -21,7 +21,6 @@
 #include "itkPDEDeformableRegistrationFunction.h"
 #include "itkCentralDifferenceImageFunction.h"
 #include "itkWarpImageFilter.h"
-
 #include "itkSpatialObject.h"
 
 namespace itk
@@ -92,13 +91,10 @@ public:
   typedef typename FixedImageType::SpacingType   SpacingType;
   typedef typename FixedImageType::DirectionType DirectionType;
 
-  /** Displacement field type. */
-#if (ITK_VERSION_MAJOR < 4)
-  typedef typename Superclass::DeformationFieldType DisplacementFieldType;
-#else
+  /** Deformation field type. */
   typedef typename Superclass::DisplacementFieldType DisplacementFieldType;
-#endif
-  typedef typename DisplacementFieldType::Pointer DisplacementFieldPointer;
+  typedef typename Superclass::DisplacementFieldTypePointer
+    DisplacementFieldTypePointer;
 
   /** Inherit some enums from the superclass. */
   itkStaticConstMacro(ImageDimension, unsigned int, Superclass::ImageDimension);
@@ -269,19 +265,14 @@ protected:
   void PrintSelf(std::ostream & os, Indent indent) const;
 
   /** FixedImage image neighborhood iterator type. */
-  typedef ConstNeighborhoodIterator<FixedImageType>
-    FixedImageNeighborhoodIteratorType;
+  typedef ConstNeighborhoodIterator<FixedImageType> FixedImageNeighborhoodIteratorType;
 
   /** A global data type for this class of equation. Used to store
    * iterators for the fixed image. */
   struct GlobalDataStruct
     {
     double m_SumOfSquaredDifference;
-#if (ITK_VERSION_MAJOR < 4)
-    unsigned long m_NumberOfPixelsProcessed;
-#else
     SizeValueType m_NumberOfPixelsProcessed;
-#endif
     double m_SumOfSquaredChange;
     };
 private:
@@ -323,15 +314,11 @@ private:
   /** The metric value is the mean square difference in intensity between
    * the fixed image and transforming moving image computed over the
    * the overlapping region between the two images. */
-  mutable double m_Metric;
-  mutable double m_SumOfSquaredDifference;
-#if (ITK_VERSION_MAJOR < 4)
-  mutable unsigned long m_NumberOfPixelsProcessed;
-#else
+  mutable double        m_Metric;
+  mutable double        m_SumOfSquaredDifference;
   mutable SizeValueType m_NumberOfPixelsProcessed;
-#endif
-  mutable double m_RMSChange;
-  mutable double m_SumOfSquaredChange;
+  mutable double        m_RMSChange;
+  mutable double        m_SumOfSquaredChange;
 
   /** Mutex lock to protect modification to metric. */
   mutable SimpleFastMutexLock m_MetricCalculationLock;

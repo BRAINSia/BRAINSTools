@@ -446,7 +446,7 @@ set_property(TEST ${BRAINSConstellationDetectorTestName}
             PROPERTY WILL_FAIL TRUE)
 
 
-if(${CMAKE_BUILD_TYPE} STREQUAL "Release")
+if("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
   set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_inputLandmarksEMSP)
   ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
     COMMAND $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
@@ -463,7 +463,7 @@ if(${CMAKE_BUILD_TYPE} STREQUAL "Release")
     --LLSModel DATA{${TestData_DIR}/LLSModel.hdf5}
     --inputLandmarksEMSP DATA{${TestData_DIR}/EMSP.fcsv})
   set_tests_properties(${BRAINSConstellationDetectorTestName} PROPERTIES TIMEOUT 9876)
-endif(${CMAKE_BUILD_TYPE} STREQUAL "Release")
+endif("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
 
 
 set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_inputVolumeError)
@@ -508,7 +508,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSTrimForegroundInDir
 ############################
 ############################
 
-if(${CMAKE_BUILD_TYPE} STREQUAL "Release")
+if("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
   set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTestForLandmarkCompare)
   ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
     COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
@@ -566,7 +566,7 @@ if(${CMAKE_BUILD_TYPE} STREQUAL "Release")
   set_property(TEST ${BRAINSConstellationDetectorTestName} APPEND PROPERTY
     DEPENDS BRAINSConstellationDetectorTestForLandmarkCompare)
 
-endif(${CMAKE_BUILD_TYPE} STREQUAL "Release")
+endif("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
 
 set(BRAINSConstellationDetectorTestName insertMidACPCpointTest) #This test aims to generate the output of the insertMidACPCpoint
                                                                 # program to be compared with the baseline file
@@ -618,7 +618,7 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetecto
     )
 
 #This test aims to generate the output of the landmarksConstellationWeights program to be compared with the baseline file
-if(${CMAKE_BUILD_TYPE} STREQUAL "Release")
+if("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
   set(BRAINSConstellationDetectorTestName landmarksConstellationWeightsTest) 
   ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
     COMMAND ${LAUNCH_EXE} $<TARGET_FILE:landmarksConstellationWeightsTestDriver>
@@ -637,6 +637,6 @@ if(${CMAKE_BUILD_TYPE} STREQUAL "Release")
     --inputLandmarkFile2 DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.wts} # Baseline file
     )
   set_property(TEST ${BRAINSConstellationDetectorTestName} APPEND PROPERTY DEPENDS landmarksConstellationWeightsTest)
-endif(${CMAKE_BUILD_TYPE} STREQUAL "Release")
+endif("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
 
 ExternalData_Add_Target( ${PROJECT_NAME}FetchData )  # Name of data management target

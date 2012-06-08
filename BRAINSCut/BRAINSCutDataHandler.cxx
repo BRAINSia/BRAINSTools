@@ -335,6 +335,7 @@ BRAINSCutDataHandler
     {
     normalization =  false;
     }
+  std::cout << "Get Normalization from XML file --> " << normalization << std::endl;
 }
 
 bool

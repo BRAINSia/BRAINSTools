@@ -69,7 +69,12 @@ ShuffleVectors::ReadHeader()
 
   filestr.close();
 
-  m_output_TVC = m_input_TVC * m_resampleProportion;
+  std::cout << "IVS = " << m_IVS << std::endl;
+  std::cout << "OVS = " << m_OVS << std::endl;
+
+  m_output_TVC = std::floor( (float)m_input_TVC * m_resampleProportion + 0.5F );
+  std::cout << m_input_TVC << " * " << m_resampleProportion << " = "
+            << "m_output_TVC == " << m_output_TVC << std::endl;
 }
 
 void
@@ -149,18 +154,18 @@ ShuffleVectors::ShuffleVectors() :
   m_OVS(0),
   m_input_TVC(0),
   m_output_TVC(0),
-  m_resampleProportion(0)
+  m_resampleProportion(0.0F)
 {
 }
 
 ShuffleVectors::ShuffleVectors(const std::string& inputVectorFilename,
                                const std::string& outputVectorFilename,
-                               int resampleProportion  ) :
+                               float resampleProportion  ) :
   m_IVS(0),
   m_OVS(0),
   m_input_TVC(0),
   m_output_TVC(0),
-  m_resampleProportion(0)
+  m_resampleProportion(0.0F)
 {
   std::cout << "Shuffle Vectors of ======================================= " << std::endl
             << inputVectorFilename << " to " << std::endl
@@ -186,6 +191,12 @@ ShuffleVectors::ShuffleVectors(const std::string& inputVectorFilename,
     m_outputHeaderFilename = outputVectorFilename + ".hdr";
     }
 
+  if( !itksys::SystemTools::FileExists( inputVectorFilename.c_str(), false ) )
+    {
+    std::cout << "ERROR: Cannot open " << inputVectorFilename
+              << ". \n The file does not exist."
+              << std::endl;
+    }
   m_resampleProportion = resampleProportion;
 }
 
@@ -242,8 +253,9 @@ ShuffleVectors::Shuffling()
       }
     if( inputVectorFileStream.eof() )
       {
-      if( vectorIndex % m_input_TVC == 1 )
+      if( (vectorIndex + 1) % m_input_TVC == 1 ) // vector index starts from 0
         {
+        std::cout << "*** Re-open the vector file" << std::endl;
         // read input vector file stream from the first again
         inputVectorFileStream.close();
         inputVectorFileStream.open( m_inputVectorFilename.c_str(),
@@ -252,7 +264,8 @@ ShuffleVectors::Shuffling()
       else
         {
         std::cerr << "Premature end of file at record "
-                  << vectorIndex << std::endl;
+                  << vectorIndex << std::endl
+                  << (vectorIndex + 1) % m_input_TVC << " != 1" << std::endl;
         break; // TODO throw error here
         }
       }
@@ -288,6 +301,7 @@ ShuffleVectors::Shuffling()
       std::cerr << "Record not properly terminated by sentinel value ::  "
                 << buf[m_IVS  + m_OVS] << " != "
                 << LineGuard
+                << " at Vector index " << vectorIndex
                 << std::endl;
       exit(EXIT_FAILURE); // TODO throw error here
       }

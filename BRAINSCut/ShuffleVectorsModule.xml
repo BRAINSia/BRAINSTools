@@ -25,13 +25,13 @@
      <description>output vector file name prefix. Usually end with .txt and header file has prost fix of .txt.hdr</description>
      <default></default>
    </file>
-   <integer>
+   <float>
      <name>resampleProportion</name>
      <longflag>resampleProportion</longflag>
      <label>resample proportion size. 1 means the same and 2 means upsample twice size, and 0.5 is downsampling in half</label>
      <channel>input</channel>
      <description>downsample size of 1 will be the same size as the input images, downsample size of 3 will throw 2/3 the vectors away.</description>
      <default>1</default>
-   </integer>
+   </float>
 </parameters>
 </executable>

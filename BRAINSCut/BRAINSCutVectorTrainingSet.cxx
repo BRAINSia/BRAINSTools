@@ -230,6 +230,10 @@ BRAINSCutVectorTrainingSet
                                                            temporaryResultFilename,
                                                            samplingProportion );
 
+  my_ShuffleVector->ReadHeader();
+  my_ShuffleVector->Shuffling();
+  my_ShuffleVector->WriteHeader();
+
   if( rename( temporaryResultFilename.c_str(), trainingVectorFilename.c_str() ) != 0 )
     {
     std::string msg = "Fail to rename from " + temporaryResultFilename + " to " + trainingVectorFilename;

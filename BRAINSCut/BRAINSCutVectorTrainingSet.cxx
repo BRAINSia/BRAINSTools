@@ -265,7 +265,7 @@ BRAINSCutVectorTrainingSet
   GetFileStreamToRead( trainingVectorFilename, readInFile );
 
   /* output file stream*/
-  int writeOutFIle = GetFileStreamToWrite( temporaryResultFilename );
+  int writeOutFile = GetFileStreamToWrite( temporaryResultFilename );
 
   scalarType * currentBuffer = new scalarType[bufferRecordSize];
   for( int i = 0; i < totalVectorSize; i++ )
@@ -276,11 +276,11 @@ BRAINSCutVectorTrainingSet
     if( shufflingOrder[i] < static_cast<std::ios::off_type>( totalVectorSize ) )
       {
       std::ios::off_type seekval = shufflingOrder[i] * static_cast<std::ios::off_type>(recordSize);
-      lseek( writeOutFIle, seekval, SEEK_SET);
-      (void)write( writeOutFIle, currentBuffer, recordSize );
+      lseek( writeOutFile, seekval, SEEK_SET);
+      (void)write( writeOutFile, currentBuffer, recordSize );
       }
     }
-  close( writeOutFIle );
+  close( writeOutFile );
   readInFile.close();
   if( rename( temporaryResultFilename.c_str(), trainingVectorFilename.c_str() ) != 0 )
     {

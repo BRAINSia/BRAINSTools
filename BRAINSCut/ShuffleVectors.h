@@ -56,7 +56,7 @@ private:
   //
   // - Down Sampling Size
   //
-  unsigned int m_downSampleSize;
+  unsigned int m_resampleProportion;
 };
 
 #endif

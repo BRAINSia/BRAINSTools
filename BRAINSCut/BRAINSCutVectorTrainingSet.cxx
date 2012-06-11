@@ -1,10 +1,11 @@
 #include "BRAINSCutVectorTrainingSet.h"
 #include "BRAINSCutExceptionStringHandler.h"
+#include "ShuffleVectors.h"
 
 #include <fstream>
-#include <vnl/vnl_random.h>
+// #include <vnl/vnl_random.h>
 
-#include <fcntl.h>
+// #include <fcntl.h>
 
 // ---------------------------//
 BRAINSCutVectorTrainingSet
@@ -139,39 +140,6 @@ BRAINSCutVectorTrainingSet
 }
 
 // ---------------------------//
-std::ios::off_type *
-BRAINSCutVectorTrainingSet::ShufflingOrder()
-{
-  typedef findUINT64Type<sizeof(unsigned long)>::unsigned64 unsigned64;
-
-  vnl_random randgen;
-
-#define randgen64()                                      \
-  ( ( static_cast<unsigned64>( randgen.lrand32() ) << 32 ) \
-    | static_cast<unsigned64>( randgen.lrand32() ) )
-
-  std::ios::off_type *rval = new std::ios::off_type[totalVectorSize];
-
-  if( rval == 0 )
-    {
-    return 0;
-    }
-  for( int i = 0; i < totalVectorSize; i++ )
-    {
-    rval[i] = static_cast<std::ios::off_type>( i );
-    }
-  // do the shuffle
-  for( std::ios::off_type i = totalVectorSize - 1; i > 0; i-- )
-    {
-    std::ios::off_type j( randgen64() % ( i + 1 ) ); // rand() % (i+1);
-    std::ios::off_type tmp(rval[i]);
-    rval[i] = rval[j];
-    rval[j] = tmp;
-    }
-  return rval;
-}
-
-// ---------------------------//
 inline
 int
 GetFileStreamToWrite( std::string filename)
@@ -250,38 +218,18 @@ BRAINSCutVectorTrainingSet
 // ---------------------------//
 void
 BRAINSCutVectorTrainingSet
-::ShuffleVectors()
+::RandomizeTrainingVector()
 {
   PrintDebuggingMessage( "this shuffling process will override current version of vector *" );
 
   std::string temporaryResultFilename = trainingVectorFilename;
   temporaryResultFilename += "Shuffled";
 
-  /* shuffle the order */
-  std::ios::off_type * shufflingOrder = ShufflingOrder();
+  const int        samplingProportion = 1; // shuffle order only (without up/down sampling)
+  ShuffleVectors * my_ShuffleVector = new ShuffleVectors(  trainingVectorFilename,
+                                                           temporaryResultFilename,
+                                                           samplingProportion );
 
-  /* input file stream */
-  std::ifstream readInFile;
-  GetFileStreamToRead( trainingVectorFilename, readInFile );
-
-  /* output file stream*/
-  int writeOutFile = GetFileStreamToWrite( temporaryResultFilename );
-
-  scalarType * currentBuffer = new scalarType[bufferRecordSize];
-  for( int i = 0; i < totalVectorSize; i++ )
-    {
-    // std::cout << "at " << i << " ::: ";
-    currentBuffer = ReadBufferFromFileStream( readInFile );
-
-    if( shufflingOrder[i] < static_cast<std::ios::off_type>( totalVectorSize ) )
-      {
-      std::ios::off_type seekval = shufflingOrder[i] * static_cast<std::ios::off_type>(recordSize);
-      lseek( writeOutFile, seekval, SEEK_SET);
-      (void)write( writeOutFile, currentBuffer, recordSize );
-      }
-    }
-  close( writeOutFile );
-  readInFile.close();
   if( rename( temporaryResultFilename.c_str(), trainingVectorFilename.c_str() ) != 0 )
     {
     std::string msg = "Fail to rename from " + temporaryResultFilename + " to " + trainingVectorFilename;

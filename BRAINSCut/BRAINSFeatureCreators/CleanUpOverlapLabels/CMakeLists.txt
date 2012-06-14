@@ -1,4 +1,4 @@
-project(ImageLabelCombine)
+project(CleanUpOverlapLabels)
 
 ## Build all the programs
 ##

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>Utilities.BRAINS</category>
+  <title> Clean Up Overla Labels</title>
+  <description> Take a series of input binary images and clean up for those overlapped area. Binary volumes given first always wins out</description>
+  <version>0.1.0</version>
+  <documentation-url></documentation-url>
+  <license></license>
+  <contributor>Eun Young Kim</contributor>
+  <acknowledgements></acknowledgements>
+
+  <parameters>
+    <label>IO</label>
+    <description>Input/output parameters</description>
+    <image multiple="true">
+      <name>inputBinaryVolumes</name>
+      <label>Input Binary Images</label>
+      <channel>input</channel>
+      <longflag>inputBinaryVolumes</longflag>
+      <description>The list of binary images to be checked and cleaned up. Order is important. Binary volume given first always wins out. </description>
+    </image>
+    <image multiple="true">
+      <name>outputBinaryVolumes</name>
+      <label>Output Label Volume</label>
+      <channel>output</channel>
+      <longflag>outputBinaryVolumes</longflag>
+      <description>The output label map images, with integer values in it. Each label value specified in the inputLabels is combined into this output label map volume</description>
+    </image>
+
+  </parameters>
+  
+</executable>

@@ -11,7 +11,7 @@ main(int argc, char * *argv)
   // Shuffled the vector:
   ShuffleVectors * my_ShuffleVector = new ShuffleVectors(  inputVectorFileBaseName,
                                                            outputVectorFileBaseName,
-                                                           downSampleSize );
+                                                           resampleProportion);
   my_ShuffleVector->ReadHeader();
   my_ShuffleVector->Shuffling();
   my_ShuffleVector->WriteHeader();

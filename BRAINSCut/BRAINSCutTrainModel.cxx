@@ -37,7 +37,7 @@ BRAINSCutTrainModel
   trainingDataSet->SetBufferRecordSize();
   if( doShuffle )
     {
-    trainingDataSet->ShuffleVectors();
+    trainingDataSet->RandomizeTrainingVector();
     }
   if( trainingDataSet->GetTotalVectorSize() > (int)trainMaximumDataSize )
     {

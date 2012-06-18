@@ -69,7 +69,12 @@ ShuffleVectors::ReadHeader()
 
   filestr.close();
 
-  m_output_TVC = m_input_TVC / m_downSampleSize;
+  std::cout << "IVS = " << m_IVS << std::endl;
+  std::cout << "OVS = " << m_OVS << std::endl;
+
+  m_output_TVC = std::floor( (float)m_input_TVC * m_resampleProportion + 0.5F );
+  std::cout << m_input_TVC << " * " << m_resampleProportion << " = "
+            << "m_output_TVC == " << m_output_TVC << std::endl;
 }
 
 void
@@ -119,19 +124,19 @@ ShuffleVectors::ShuffleOrder()
   ( ( static_cast<unsigned64>( randgen.lrand32() ) << 32 ) \
     | static_cast<unsigned64>( randgen.lrand32() ) )
 
-  std::ios::off_type *rval = new std::ios::off_type[m_input_TVC];
+  std::ios::off_type *rval = new std::ios::off_type[m_output_TVC];
 
   if( rval == 0 )
     {
     std::cout << "Can't allocate shuffled ordering"
               << std::endl;
     }
-  for( unsigned long i = 0; i < m_input_TVC; i++ )
+  for( unsigned long i = 0; i < m_output_TVC; i++ )
     {
     rval[i] = static_cast<std::ios::off_type>( i );
     }
   // do the shuffle
-  for( std::ios::off_type i = m_input_TVC - 1; i > 0; i-- )
+  for( std::ios::off_type i = m_output_TVC - 1; i > 0; i-- )
     {
     std::ios::off_type j( randgen64() % ( i + 1 ) ); // rand() % (i+1);
     std::ios::off_type tmp(rval[i]);
@@ -149,17 +154,18 @@ ShuffleVectors::ShuffleVectors() :
   m_OVS(0),
   m_input_TVC(0),
   m_output_TVC(0),
-  m_downSampleSize(0)
+  m_resampleProportion(0.0F)
 {
 }
 
-ShuffleVectors::ShuffleVectors(const std::string& inputVectorFilename, const std::string& outputVectorFilename,
-                               int downSampleSize  ) :
+ShuffleVectors::ShuffleVectors(const std::string& inputVectorFilename,
+                               const std::string& outputVectorFilename,
+                               float resampleProportion  ) :
   m_IVS(0),
   m_OVS(0),
   m_input_TVC(0),
   m_output_TVC(0),
-  m_downSampleSize(0)
+  m_resampleProportion(0.0F)
 {
   std::cout << "Shuffle Vectors of ======================================= " << std::endl
             << inputVectorFilename << " to " << std::endl
@@ -185,18 +191,24 @@ ShuffleVectors::ShuffleVectors(const std::string& inputVectorFilename, const std
     m_outputHeaderFilename = outputVectorFilename + ".hdr";
     }
 
-  m_downSampleSize = downSampleSize;
+  if( !itksys::SystemTools::FileExists( inputVectorFilename.c_str(), false ) )
+    {
+    std::cout << "ERROR: Cannot open " << inputVectorFilename
+              << ". \n The file does not exist."
+              << std::endl;
+    }
+  m_resampleProportion = resampleProportion;
 }
 
 void
 ShuffleVectors::Shuffling()
 {
   // read binary
-  std::ifstream binfile;
+  std::ifstream inputVectorFileStream;
 
-  binfile.open( m_inputVectorFilename.c_str(),
-                std::ios::in | std::ios::binary);
-  if( !binfile.is_open() )
+  inputVectorFileStream.open( m_inputVectorFilename.c_str(),
+                              std::ios::in | std::ios::binary);
+  if( !inputVectorFileStream.is_open() )
     {
     std::cout << "Can't open " << m_inputVectorFilename;
     }
@@ -227,7 +239,9 @@ ShuffleVectors::Shuffling()
    * include only those have (randomly assigned) index less
    * than a desired output size
    */
-  for( unsigned int vectorIndex = 0; vectorIndex < m_input_TVC; vectorIndex++ )
+  for( unsigned int vectorIndex = 0;
+       vectorIndex < m_output_TVC;
+       vectorIndex++ )
     {
     if( vectorIndex > current_percent * VectorsPerPercent )
       {
@@ -237,14 +251,26 @@ ShuffleVectors::Shuffling()
         std::cout << current_percent << "% " << std::endl;
         }
       }
-    if( binfile.eof() )
+    if( inputVectorFileStream.eof() )
       {
-      std::cerr << "Premature end of file at record "
-                << vectorIndex << std::endl;
-      break; // TODO throw error here
+      if( (vectorIndex + 1) % m_input_TVC == 1 ) // vector index starts from 0
+        {
+        std::cout << "*** Re-open the vector file" << std::endl;
+        // read input vector file stream from the first again
+        inputVectorFileStream.close();
+        inputVectorFileStream.open( m_inputVectorFilename.c_str(),
+                                    std::ios::in | std::ios::binary);
+        }
+      else
+        {
+        std::cerr << "Premature end of file at record "
+                  << vectorIndex << std::endl
+                  << (vectorIndex + 1) % m_input_TVC << " != 1" << std::endl;
+        break; // TODO throw error here
+        }
       }
     // read in the record
-    binfile.read( (char *)buf, recordsize );
+    inputVectorFileStream.read( (char *)buf, recordsize );
     /*
     std::cout<< " randomOrder[ "<< vectorIndex<<" ] :: "
              << randomOrder[vectorIndex]
@@ -275,6 +301,7 @@ ShuffleVectors::Shuffling()
       std::cerr << "Record not properly terminated by sentinel value ::  "
                 << buf[m_IVS  + m_OVS] << " != "
                 << LineGuard
+                << " at Vector index " << vectorIndex
                 << std::endl;
       exit(EXIT_FAILURE); // TODO throw error here
       }

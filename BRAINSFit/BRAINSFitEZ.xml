@@ -175,7 +175,7 @@
       <name>fixedBinaryVolume</name>
       <longflag>fixedBinaryVolume</longflag>
       <label>(ROI)Masking input fixed </label>
-      <description>Fixed Image binary mask volume, ONLY FOR MANUAL ROI mode.</description>
+      <description>Fixed Image binary mask volume, ONLY FOR MANUAL ROI mode. (Values are zero and non-zero.)</description>
       <default></default>
       <channel>input</channel>
     </image>
@@ -184,7 +184,7 @@
       <name>movingBinaryVolume</name>
       <longflag>movingBinaryVolume</longflag>
       <label>(ROI)Masking input moving</label>
-      <description>Moving Image binary mask volume, ONLY FOR MANUAL ROI mode.</description>
+      <description>Moving Image binary mask volume, ONLY FOR MANUAL ROI mode. (Values are zero and non-zero.)</description>
       <default></default>
       <channel>input</channel>
     </image>
@@ -193,7 +193,7 @@
       <name>outputFixedVolumeROI</name>
       <longflag>outputFixedVolumeROI</longflag>
       <label>(ROIAUTO) Output fixed mask</label>
-      <description>The ROI automatically found in fixed image, ONLY FOR ROIAUTO mode.</description>
+      <description>The ROI automatically found in fixed image, ONLY FOR ROIAUTO mode. (Values are zero and non-zero.)</description>
       <channel>output</channel>
     </image>
 
@@ -201,7 +201,7 @@
       <name>outputMovingVolumeROI</name>
       <longflag>outputMovingVolumeROI</longflag>
       <label>(ROIAUTO) Output moving mask</label>
-      <description>The ROI automatically found in moving image, ONLY FOR ROIAUTO mode.</description>
+      <description>The ROI automatically found in moving image, ONLY FOR ROIAUTO mode. (Values are zero and non-zero.)</description>
       <channel>output</channel>
     </image>
 

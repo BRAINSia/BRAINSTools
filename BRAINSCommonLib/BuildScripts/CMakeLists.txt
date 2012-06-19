@@ -2,8 +2,5 @@
 ### to define a separate project that contains all the
 ### goodie scripts needed to support the biulding
 ### the BRAINS* tools
-
 project(BRAINSBuildScripts)
 cmake_minimum_required(VERSION 2.8)
-
-#install( FILES License.txt DESTINATION ${CMAKE_INSTALL_PREFIX} )

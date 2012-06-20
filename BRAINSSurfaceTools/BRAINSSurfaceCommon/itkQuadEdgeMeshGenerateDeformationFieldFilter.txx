@@ -29,7 +29,7 @@ QuadEdgeMeshGenerateDeformationFieldFilter<TInputMesh, TInputPointSet, TOutputMe
 {
   this->SetNumberOfRequiredInputs( 2 );
   this->SetNumberOfRequiredOutputs( 1 );
-  this->SetNumberOfOutputs( 1 );
+  this->SetNumberOfIndexedOutputs( 1 );
 
   this->SetNthOutput( 0, OutputMeshType::New() );
 

@@ -524,7 +524,7 @@ DtiFastMarchingCostFilter<TLevelSet, TTensorImage>
 
       // Set speed of initial trial points to F=|dot
       // product(eigenvector(TrialPoint),eigenvector(TrialPoint)|
-      TVector trialEigvalue = m_EigenvectorImage->GetPixel(eigIndex).Get_vnl_vector();
+      TVector trialEigvalue = m_EigenvectorImage->GetPixel(eigIndex).GetVnlVector();
       normal = distance;
       normal = normal.normalize();
 
@@ -748,7 +748,7 @@ DtiFastMarchingCostFilter<TLevelSet, TTensorImage>
 
   // Compute Speed: F(r)=min[F(AlivePoint), |dot product(principal
   // eigenvector(AlivePoint),normal)| ]
-  TVector neighEigvalue = m_EigenvectorImage->GetPixel(neighIndex).Get_vnl_vector();
+  TVector neighEigvalue = m_EigenvectorImage->GetPixel(neighIndex).GetVnlVector();
   double  trialSpeedPixel = ( vnl_math_abs( dot_product(neighEigvalue, normal) ) );
 
   /*Scale trialSpeed by FA, Fractional Anisotropy of trial point*/
@@ -868,7 +868,7 @@ DtiFastMarchingCostFilter<TLevelSet, TTensorImage>
 
       // Compute Speed: F(r)= |dot product(principal
       // eigenvector(AlivePoint),normal)|
-      TVector aliveEigvalue = m_EigenvectorImage->GetPixel(eigIndex).Get_vnl_vector();
+      TVector aliveEigvalue = m_EigenvectorImage->GetPixel(eigIndex).GetVnlVector();
       double  maxSpeedPixel = vnl_math_abs( dot_product(aliveEigvalue, normal) );
 
       // Get max Speedvalue

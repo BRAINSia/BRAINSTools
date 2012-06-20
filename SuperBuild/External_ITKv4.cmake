@@ -72,9 +72,9 @@ if(NOT DEFINED ${extProjName}_DIR AND NOT ${USE_SYSTEM_${extProjName}})
       -DUSE_WRAP_ITK:BOOL=OFF ## HACK:  QUICK CHANGE
     )
   ### --- End Project specific additions
-  set(${proj}_REPOSITORY ${git_protocol}://itk.org/ITK.git CACHE STRING "" FORCE)
-  #set(${proj}_GIT_TAG v4.1rc04 CACHE STRING "" FORCE)
-  set(${proj}_GIT_TAG 636ab875441b97e19d25c7022454297b5a04ade9 CACHE STRING "" FORCE)
+  set(${proj}_REPOSITORY ${git_protocol}://itk.org/ITK.git)
+  set(${proj}_GIT_TAG d2e89708f05d5dc7df21501064f2adb474f4e033)
+  ## 2012-06-19 The feature freeze version that will become v4.2.0rc3
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${${proj}_REPOSITORY}
     GIT_TAG ${${proj}_GIT_TAG}

@@ -28,8 +28,8 @@ template <class TFixedMesh, class TMovingMesh, class TOutputMesh>
 QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TFixedMesh, TMovingMesh, TOutputMesh>
 ::QuadEdgeMeshSphericalDiffeomorphicDemonsFilter()
 {
-  this->SetNumberOfInputs( 2 );
-  this->SetNumberOfOutputs( 3 );
+  this->SetNumberOfIndexedInputs( 2 );
+  this->SetNumberOfIndexedOutputs( 3 );
 
   this->SetNumberOfRequiredInputs( 2 );
   this->SetNumberOfRequiredOutputs( 3 );

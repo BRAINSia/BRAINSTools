@@ -35,7 +35,7 @@ main(int argc, char *argv[])
   PARSE_ARGS;
   // define image with type of voxel
   typedef double PixelType;
-  const int Dimension = 3;
+  const unsigned int Dimension = 3;
   typedef itk::Image<PixelType, Dimension> InputImageType;
 
   // there has to be two input volumes and label volume

@@ -30,7 +30,7 @@ ResampleDestinationPointsQuadEdgeMeshFilter<TInputMesh, TFixedMesh, TReferenceMe
 {
   this->SetNumberOfRequiredInputs( 3 );
   this->SetNumberOfRequiredOutputs( 1 );
-  this->SetNumberOfOutputs( 1 );
+  this->SetNumberOfIndexedOutputs( 1 );
 
   this->SetNthOutput( 0, OutputPointSetType::New() );
 

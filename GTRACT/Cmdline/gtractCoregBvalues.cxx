@@ -270,7 +270,7 @@ int main(int argc, char *argv[])
       RigidTransformType::Pointer rigidTransform;
       rigidTransform =
         dynamic_cast<RigidTransformType *>(registerImageFilter->GetCurrentGenericTransform().GetPointer() );
-      curGradientDirection = rigidTransform->GetRotationMatrix().GetVnlMatrix() * curGradientDirection;
+      curGradientDirection = rigidTransform->GetMatrix().GetVnlMatrix() * curGradientDirection;
       }
     else
       {

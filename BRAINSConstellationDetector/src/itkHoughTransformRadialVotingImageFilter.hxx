@@ -180,7 +180,7 @@ HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>::ThreadedGenera
 
   ImageRegionConstIteratorWithIndex<InputImageType>
   image_it(inputImage, windowRegion);
-  image_it.Begin();
+  image_it.GoToBegin();
 
   const unsigned int sampling = static_cast<unsigned int>( 1. / m_SamplingRatio );
   unsigned int       counter = 1;
@@ -289,8 +289,8 @@ HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>::ComputeMeanRad
   ImageRegionConstIterator<InternalImageType> acc_it(m_AccumulatorImage, windowRegion);
   ImageRegionIterator<InternalImageType>      radius_it(m_RadiusImage, windowRegion);
 
-  acc_it.Begin();
-  radius_it.Begin();
+  acc_it.GoToBegin();
+  radius_it.GoToBegin();
   while( !acc_it.IsAtEnd() )
     {
     assert(!radius_it.IsAtEnd() );

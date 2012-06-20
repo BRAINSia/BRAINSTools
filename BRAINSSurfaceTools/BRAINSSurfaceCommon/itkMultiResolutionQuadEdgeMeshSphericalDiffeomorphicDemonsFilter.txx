@@ -40,8 +40,8 @@ template <class TMesh>
 MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>
 ::MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter()
 {
-  this->SetNumberOfInputs( 8 ); // four resolution levels, two meshes on each
-  this->SetNumberOfOutputs( 1 );
+  this->SetNumberOfIndexedInputs( 8 ); // four resolution levels, two meshes on each
+  this->SetNumberOfIndexedOutputs( 1 );
 
   this->SetNumberOfRequiredInputs( 8 ); // four resolution levels, two meshes on each
   this->SetNumberOfRequiredOutputs( 1 );

@@ -11,7 +11,7 @@ QuadEdgeMeshSplitFilter<TInputMesh, TOutputMesh>::QuadEdgeMeshSplitFilter() : Su
 {
   this->Superclass::SetNumberOfRequiredInputs( 1 );
   this->SetNumberOfRequiredOutputs( 2 );
-  this->SetNumberOfOutputs( 2 );
+  this->SetNumberOfIndexedOutputs( 2 );
   this->SetNthOutput( 0, OutputMeshType::New() );
   this->SetNthOutput( 1, OutputMeshType::New() );
 }

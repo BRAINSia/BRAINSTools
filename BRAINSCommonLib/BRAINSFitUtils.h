@@ -109,7 +109,7 @@ void DoCenteredTransformMaskClipping(
   typedef itk::ImageRegionIteratorWithIndex<MaskImageType> MaskIteratorType;
 
   MaskIteratorType fixedIter( fixedMaskImage, fixedMaskImage->GetLargestPossibleRegion() );
-  fixedIter.Begin();
+  fixedIter.GoToBegin();
   while( !fixedIter.IsAtEnd() )
     {
     fixedMaskImage->TransformIndexToPhysicalPoint(fixedIter.GetIndex(), location);
@@ -121,7 +121,7 @@ void DoCenteredTransformMaskClipping(
     }
 
   MaskIteratorType movingIter( movingMaskImage, movingMaskImage->GetLargestPossibleRegion() );
-  movingIter.Begin();
+  movingIter.GoToBegin();
   while( !movingIter.IsAtEnd() )
     {
     movingMaskImage->TransformIndexToPhysicalPoint(movingIter.GetIndex(), location);

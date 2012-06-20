@@ -633,7 +633,7 @@ void landmarksConstellationDetector::Compute( void )
         VersorZeroCenteredTransform->SetFixedParameters( ZeroCenteredTransform->GetFixedParameters() );
         itk::Versor<double>               versorRotation;
         const itk::Matrix<double, 3, 3> & CleanedOrthogonalized = itk::Orthogonalize3DRotationMatrix(
-            ZeroCenteredTransform->GetRotationMatrix() );
+            ZeroCenteredTransform->GetMatrix() );
         versorRotation.Set( CleanedOrthogonalized );
         VersorZeroCenteredTransform->SetRotation( versorRotation );
         VersorZeroCenteredTransform->SetTranslation( ZeroCenteredTransform->GetTranslation() );

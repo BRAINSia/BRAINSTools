@@ -228,7 +228,7 @@ void VectorImageRegisterVersorRigidFilter<TInputImage, TOutputImage>
       castImageFilter->SetInput( resampler->GetOutput() );
 
       /* Update the Gradient direction */
-      curGradientDirection = finalTransform->GetRotationMatrix().GetVnlMatrix() * curGradientDirection;
+      curGradientDirection = finalTransform->GetMatrix().GetVnlMatrix() * curGradientDirection;
       }
     else
       {

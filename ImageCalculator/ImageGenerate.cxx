@@ -209,7 +209,7 @@ int MakeImage(const std::string & filename,
     image->SetRegions(region);
     image->Allocate();
     IteratorType it(image, region);
-    for( it.GoToBegin(); it != it.End(); ++it )
+    for( it.GoToBegin(); it.IsAtEnd(); ++it )
       {
       it.Set(value);
       }

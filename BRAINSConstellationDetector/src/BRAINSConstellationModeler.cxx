@@ -291,7 +291,7 @@ int main(int argc, char *argv[])
     finalTransform->SetFixedParameters( ACPC_AlignedTransform->GetFixedParameters() );
     itk::Versor<double>               versorRotation; // was commented before
     const itk::Matrix<double, 3, 3> & NewCleanedOrthogonalized = itk::Orthogonalize3DRotationMatrix(
-        ACPC_AlignedTransform->GetRotationMatrix() );
+        ACPC_AlignedTransform->GetMatrix() );
     versorRotation.Set( NewCleanedOrthogonalized );
     finalTransform->SetRotation( versorRotation );
     finalTransform->SetTranslation( ACPC_AlignedTransform->GetTranslation() );

@@ -154,7 +154,7 @@ ComputeDiffusionTensorImageFilter
       if( !ErrFlg )
         {
         TVector ADCe = mMatrix * ADCm;
-        currentVoxel.Set_vnl_vector(ADCe);
+        currentVoxel.SetVnlVector(ADCe);
         }
       m_Output->SetPixel(TensorIndex, currentVoxel);
       }

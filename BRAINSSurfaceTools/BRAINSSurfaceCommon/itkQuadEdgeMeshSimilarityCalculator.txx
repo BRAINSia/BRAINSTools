@@ -28,7 +28,7 @@ QuadEdgeMeshSimilarityCalculator<TInputMesh1, TInputMesh2>
 {
   this->SetNumberOfRequiredInputs( 2 );
   this->SetNumberOfRequiredOutputs( 0 );
-  this->SetNumberOfOutputs( 0 );
+  this->SetNumberOfIndexedOutputs( 0 );
 
   this->m_Dice = 0.0;
   this->m_Jaccard = 0.0;

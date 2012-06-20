@@ -163,7 +163,7 @@ int main(int argc, char *argv[])
     // &curGradientDirection[1] << " " << &curGradientDirection[2] << std::endl;
 
     // Rotated the Diffusion Gradient
-    curGradientDirection = rigidTransform->GetRotationMatrix().GetVnlMatrix() * curGradientDirection;
+    curGradientDirection = rigidTransform->GetMatrix().GetVnlMatrix() * curGradientDirection;
 
     // Updated the Image MetaData Dictionary with Updated Gradient Information
     sprintf(tmpStr, " %18.15lf %18.15lf %18.15lf", curGradientDirection[0], curGradientDirection[1],

@@ -307,7 +307,7 @@ BRAINSConstellationDetector2<TInputImage, TOutputImage>
       this->m_VersorTransform->SetFixedParameters( ZeroCenteredTransform->GetFixedParameters() );
       itk::Versor<double>               versorRotation;
       const itk::Matrix<double, 3, 3> & CleanedOrthogonalized = itk::Orthogonalize3DRotationMatrix(
-          ZeroCenteredTransform->GetRotationMatrix() );
+          ZeroCenteredTransform->GetMatrix() );
       versorRotation.Set( CleanedOrthogonalized );
       this->m_VersorTransform->SetRotation(versorRotation);
       this->m_VersorTransform->SetTranslation( ZeroCenteredTransform->GetTranslation() );
@@ -327,14 +327,14 @@ BRAINSConstellationDetector2<TInputImage, TOutputImage>
     // std::endl;
     if( LMC::globalverboseFlag )
       {
-      std::cout << "VersorRotation: " << this->m_VersorTransform->GetRotationMatrix() << std::endl;
+      std::cout << "VersorRotation: " << this->m_VersorTransform->GetMatrix() << std::endl;
       std::cout << "itkVersorRigid3DTransform Parameters: " << this->m_VersorTransform->GetParameters() << std::endl;
       std::cout << "itkVersorRigid3DTransform FixedParameters: " << this->m_VersorTransform->GetFixedParameters()
                 << std::endl;
       std::cout << "itkVersorRigid3DTransform GetCenter(): " << this->m_VersorTransform->GetCenter() << std::endl;
       std::cout << "itkVersorRigid3DTransform GetTranslation(): " << this->m_VersorTransform->GetTranslation()
                 << std::endl;
-      std::cout << "itkVersorRigid3DTransform GetRotationMatrix(): " << this->m_VersorTransform->GetRotationMatrix()
+      std::cout << "itkVersorRigid3DTransform GetMatrix(): " << this->m_VersorTransform->GetMatrix()
                 << std::endl;
 
       std::cout << "itkRigid3DTransform Parameters: " << this->m_VersorTransform->GetParameters() << std::endl;
@@ -342,7 +342,7 @@ BRAINSConstellationDetector2<TInputImage, TOutputImage>
                 << std::endl;
       std::cout << "itkRigid3DTransform GetCenter(): " << this->m_VersorTransform->GetCenter() << std::endl;
       std::cout << "itkRigid3DTransform GetTranslation(): " << this->m_VersorTransform->GetTranslation() << std::endl;
-      std::cout << "itkRigid3DTransform GetRotationMatrix(): " << this->m_VersorTransform->GetRotationMatrix()
+      std::cout << "itkRigid3DTransform GetMatrix(): " << this->m_VersorTransform->GetMatrix()
                 << std::endl;
       std::cout << "itkVersorRigid3DTransform: \n" <<  this->m_VersorTransform << std::endl;
       std::cout << "itkRigid3DTransform: \n" <<  this->m_VersorTransform << std::endl;

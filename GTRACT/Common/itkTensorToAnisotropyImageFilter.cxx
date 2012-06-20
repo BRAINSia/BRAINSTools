@@ -186,7 +186,7 @@ TensorToAnisotropyImageFilter
     it = NeighborhoodIteratorType( radius, m_Input, *fit );
     for( it.GoToBegin(); !it.IsAtEnd(); ++it )
       {
-      TVector center = it.GetCenterPixel().Get_vnl_vector();
+      TVector center = it.GetCenterPixel().GetVnlVector();
       float   ai = 0;
       // ////////////////////////////////////////////////////////////////////////
       if( !center.is_zero() )
@@ -201,7 +201,7 @@ TensorToAnisotropyImageFilter
             continue;
             }
 
-          neighbor = it.GetPixel(i).Get_vnl_vector();
+          neighbor = it.GetPixel(i).GetVnlVector();
           if( !neighbor.is_zero() )
             {
             float temp;

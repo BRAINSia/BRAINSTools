@@ -396,7 +396,7 @@ typename TransformType::Pointer DoCenteredInitialization(
     quickSetVersor->SetTranslation( bestEulerAngles3D->GetTranslation() );
       {
       itk::Versor<double> localRotation;
-      localRotation.Set( bestEulerAngles3D->GetRotationMatrix() );
+      localRotation.Set( bestEulerAngles3D->GetMatrix() );
       quickSetVersor->SetRotation(localRotation);
       }
 #ifdef DEBUGGING_PRINT_IMAGES

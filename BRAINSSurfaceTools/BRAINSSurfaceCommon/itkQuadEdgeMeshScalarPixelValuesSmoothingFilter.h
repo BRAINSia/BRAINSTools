@@ -139,7 +139,7 @@ private:
 }
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkQuadEdgeMeshScalarPixelValuesSmoothingFilter.txx"
+#include "itkQuadEdgeMeshScalarPixelValuesSmoothingFilter.hxx"
 #endif
 
 #endif

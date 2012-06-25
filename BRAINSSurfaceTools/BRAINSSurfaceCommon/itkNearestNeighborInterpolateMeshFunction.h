@@ -93,7 +93,7 @@ private:
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkNearestNeighborInterpolateMeshFunction.txx"
+#include "itkNearestNeighborInterpolateMeshFunction.hxx"
 #endif
 
 #endif

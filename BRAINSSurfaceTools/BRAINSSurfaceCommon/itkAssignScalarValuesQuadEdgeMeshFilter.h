@@ -86,7 +86,7 @@ private:
 }
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkAssignScalarValuesQuadEdgeMeshFilter.txx"
+#include "itkAssignScalarValuesQuadEdgeMeshFilter.hxx"
 #endif
 
 #endif

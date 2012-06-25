@@ -50,12 +50,22 @@ public:
   itkStaticConstMacro(PointDimension, unsigned int, TPointSet::PointDimension);
 
   /** Typedefs related to the PointSet type */
-  typedef TPointSet                           PointSetType;
-  typedef typename PointSetType::ConstPointer PointSetConstPointer;
-  typedef typename PointSetType::PointType    PointType;
+  typedef TPointSet                                          PointSetType;
+  typedef typename PointSetType::ConstPointer                PointSetConstPointer;
+  typedef typename PointSetType::PointType                   PointType;
+  typedef typename PointSetType::PointsContainer             PointsContainer;
+  typedef typename PointSetType::PointsContainerPointer      PointsContainerPointer;
+  typedef typename PointSetType::PointsContainerConstPointer PointsContainerConstPointer;
+
+  typedef typename PointSetType::PointsContainerIterator      PointsContainerIteratorType;
+  typedef typename PointSetType::PointsContainerConstIterator PointsContainerConstIteratorType;
+
+  /** Define the specific PointSet Type */
+  typedef itk::PointSet<typename TPointSet::PixelType, PointDimension> ListSamplePointSetType;
 
   /** Type of the PointSet to List Adaptor. */
-  typedef itk::Statistics::PointSetToListSampleAdaptor<PointSetType> SampleAdaptorType;
+  /** define the sample according to the point size */
+  typedef itk::Statistics::PointSetToListSampleAdaptor<ListSamplePointSetType> SampleAdaptorType;
 
   typedef typename SampleAdaptorType::Pointer SampleAdaptorPointer;
 
@@ -98,7 +108,7 @@ private:
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkPointLocator2.txx"
+#include "itkPointLocator2.hxx"
 #endif
 
 #endif

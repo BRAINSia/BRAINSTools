@@ -102,7 +102,7 @@ private:
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkLinearInterpolateDeformationFieldMeshFunction.txx"
+#include "itkLinearInterpolateDeformationFieldMeshFunction.hxx"
 #endif
 
 #endif

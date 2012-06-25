@@ -18,7 +18,6 @@ ExternalData_add_test(${project_name}FetchData NAME COMPARE_SurfaceAssignArray
   COMMAND ${LAUNCH_EXE} ${CompareSurfacesProg}
           --inputSurfaceFile 0036195_AssignArrayTest.vtk
           --refSurfaceFile DATA{${TestData_DIR}/0036195_AssignArray.vtk} 
-          --vertexLocation 
           --scalarArray 
           --tolerance 1.0e-7 )
 

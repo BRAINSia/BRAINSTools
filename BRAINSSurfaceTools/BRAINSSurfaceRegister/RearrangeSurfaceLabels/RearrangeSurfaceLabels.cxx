@@ -87,44 +87,37 @@ int main( int argc, char * argv[] )
     labelArray->SetTuple1(i, labelTransform[label_i]);
     }
 
-  // attach label names from an external file
-  // std::ifstream fin(labelNameFile);
-  ifstream fin(labelNameFile.c_str() );
-  // fin.open(labelNameFile.c_str(),std::ifstream::app);
-  std::string                     labelName;
   vtkSmartPointer<vtkStringArray> nameArray = vtkSmartPointer<vtkStringArray>::New();
-  nameArray->SetName("LabelName");
-  nameArray->SetNumberOfValues(newLabel);
-  for( int i = 0; i < newLabel; i++ )
+  if( labelNameFile != "" )
     {
-    // fin.getline(labelName, 100);
-    getline(fin, labelName);
-    if( labelName == "" )
+    // attach label names from an external file
+    // std::ifstream fin(labelNameFile);
+    ifstream fin(labelNameFile.c_str() );
+    // fin.open(labelNameFile.c_str(),std::ifstream::app);
+    std::string labelName;
+
+    nameArray->SetName("LabelName");
+    nameArray->SetNumberOfValues(newLabel);
+    for( int i = 0; i < newLabel; i++ )
       {
-      std::cerr << "Number of label names does not match real number of labels." << std::endl;
-      }
-    else
-      {
-      nameArray->SetValue(i, labelName);
-      std::cout << labelName << std::endl;
+      // fin.getline(labelName, 100);
+      getline(fin, labelName);
+      if( labelName == "" )
+        {
+        std::cerr << "Number of label names does not match real number of labels." << std::endl;
+        }
+      else
+        {
+        nameArray->SetValue(i, labelName);
+        std::cout << labelName << std::endl;
+        }
       }
     }
-  // fin.close();
 
   vtkSmartPointer<vtkFieldData> fd = vtkSmartPointer<vtkFieldData>::New();
   fd->AddArray(nameArray);
 
   surface_in->SetFieldData(fd);
-
-//    //check if the label names show up on screen correctly
-//    vtkStringArray *testArray =
-// vtkStringArray::SafeDownCast(surface_in->GetFieldData()->GetAbstractArray("LabelName"));
-//    //vtkDataArray *testArray = surface_in->GetFieldData()->GetArray("LabelName");
-//    if (testArray != NULL){
-//    for (int i=0; i<testArray->GetNumberOfValues(); i++) {
-//        std::cout<<testArray->GetValue(i)<<std::endl;
-//    }
-//    }
 
   // write out the surface
   vtkSmartPointer<vtkPolyDataWriter> writer = vtkSmartPointer<vtkPolyDataWriter>::New();

@@ -104,7 +104,7 @@ private:
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkQuadEdgeMeshVTKPolyDataReader.txx"
+#include "itkQuadEdgeMeshVTKPolyDataReader.hxx"
 #endif
 
 #endif // _itkQuadEdgeMeshVTKPolyDataReader_h

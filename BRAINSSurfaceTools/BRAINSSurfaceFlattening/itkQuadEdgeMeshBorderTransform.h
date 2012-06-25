@@ -150,6 +150,6 @@ private:
   void operator =( const Self & );
 };
 }
-#include "itkQuadEdgeMeshBorderTransform.txx"
+#include "itkQuadEdgeMeshBorderTransform.hxx"
 
 #endif

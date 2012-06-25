@@ -74,14 +74,17 @@ int main( int argc, char * argv [] )
   filter->SetReferenceMesh(refReader->GetOutput() );
   filter->SetInput(inputReader->GetOutput() );
   filter->SetTransform( transform );
-  if( argc > 4 )
+
+  // set the interpolation type
+  if( interpolateType == "Nearest" )
     {
     filter->SetInterpolator( interpolator_n );
     }
-  else
+  else if( interpolateType == "Linear" )
     {
     filter->SetInterpolator( interpolator_l );
     }
+
   filter->Update();
 
   typedef itk::QuadEdgeMeshScalarDataVTKPolyDataWriter<MeshType> WriterType;

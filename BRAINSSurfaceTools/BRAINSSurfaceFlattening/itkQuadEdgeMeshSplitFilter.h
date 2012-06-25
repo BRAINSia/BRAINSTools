@@ -115,5 +115,5 @@ private:
 };
 }
 
-#include "itkQuadEdgeMeshSplitFilter.txx"
+#include "itkQuadEdgeMeshSplitFilter.hxx"
 #endif

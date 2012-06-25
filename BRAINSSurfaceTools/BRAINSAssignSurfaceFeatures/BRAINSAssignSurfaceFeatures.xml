@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>
+    BRAINS.Surface
+  </category>
+  <title>
+    BRAINS Assign Surface Features
+  </title>
+  <description>
+    Ths program calculate several types of geometry features (distanceFromPC, depth to a hull, cortical thickness, and mean_curvature) on the input surface. The geometry features will be added as arrays of the vtkPolyData of the output surface. If cortical thickness needs to be calculated, the input surface should be the inner surface. 
+  </description>
+  <version>1.0</version>
+  <documentation-url>http://www.nitrc.org/plugins/mwiki/index.php/brains:BRAINSMarchingCubes</documentation-url>
+  <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
+  <contributor>Wen Li and Vincent A. Magnotta</contributor>
+  <acknowledgements>Funding for this work was provided by NIH/NINDS award NS050568</acknowledgements>
+
+  <parameters>
+    <label>Input Files</label>
+    <file>
+      <name>inputSurfaceFile</name>
+      <longflag>inputSurfaceFile</longflag>
+      <description>Input Surface File Name</description>
+      <label>Input Surface File</label>
+      <channel>input</channel>
+    </file>
+
+    <file>
+      <name>outerSurfaceFile</name>
+      <longflag>outerSurfaceFile</longflag>
+      <description>Out-layer Surface for calculating cortical thickness</description>
+      <label>Outer Surface File</label>
+      <channel>input</channel>
+    </file>
+  </parameters>
+
+  <parameters>
+    <label>Output File</label>
+    <file>
+      <name>outputSurfaceFile</name>
+      <longflag>outputSurfaceFile</longflag>
+      <description>Output surface filename</description>
+      <label>Output Surface Filename</label>
+      <channel>output</channel>
+    </file>
+  </parameters>
+  
+  <parameters>   
+    <label>Distance-To-PC-Point Parameters</label>
+    
+    <boolean>
+      <name>distanceToPC_AP</name>
+      <longflag>distanceToPC_AP</longflag>
+      <description>calculate the geometry feature of distanceToPC in the direction of AnteriorToPosterior</description>
+      <label>distanceToPC_AP</label>
+      <default>false</default>
+    </boolean>
+    
+    <boolean>
+      <name>distanceToPC_IS</name>
+      <longflag>distanceToPC_IS</longflag>
+      <description>calculate the geometry feature of distanceToPC in the direction of InferiorToSuperior</description>
+      <label>distanceToPC_IS</label>
+      <default>false</default>
+    </boolean>   
+
+    <double-vector>
+      <name>PC</name>
+      <longflag>PC</longflag>
+      <description>Location of PC Point </description>
+      <label>PC Point</label>
+    </double-vector>
+
+  </parameters>
+
+  <parameters>
+    <label>Distance-To-Hull Parameters</label>
+
+    <boolean>
+      <name>distanceToHull</name>
+      <longflag>distanceToHull</longflag>
+      <description>calculate the geometry feature of distanceToHull</description>
+      <label>distanceToHull</label>
+      <default>false</default>
+    </boolean>
+
+  </parameters>
+
+  <parameters>
+    <label>CorticalThickness Parameters</label>
+
+    <boolean>
+      <name>corticalThickness</name>
+      <longflag>corticalThickness</longflag>
+      <description>calculate the geometry feature of corticalThickness</description>
+      <label>corticalThickness</label>
+      <default>false</default>
+    </boolean>
+
+    <double>
+      <name>maxThickness</name>
+      <longflag>maxThickness</longflag>
+      <description>The expected maximum cortical thickness</description>
+      <label>Max Thickness</label>
+      <default>4.0</default>
+    </double>
+
+  </parameters>
+
+  <parameters>
+    <label>Curvature Parameters</label>
+
+    <boolean>
+      <name>curvature</name>
+      <longflag>curvature</longflag>
+      <description>calculate the geometry feature of curvature</description>
+      <label>curvature</label>
+      <default>false</default>
+    </boolean>
+
+    <string-enumeration>
+      <name>curvatureType</name>
+      <longflag>curvatureType</longflag>
+      <description>The type of curvature to be calculated</description>
+      <label>Curvature Type</label>
+      <default>Mean</default>
+      <element>Gauss</element>
+      <element>Mean</element>
+    </string-enumeration>
+
+  </parameters>
+
+</executable>

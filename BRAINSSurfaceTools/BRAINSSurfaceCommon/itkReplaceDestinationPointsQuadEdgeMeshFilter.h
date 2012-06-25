@@ -85,7 +85,7 @@ private:
 }
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkReplaceDestinationPointsQuadEdgeMeshFilter.txx"
+#include "itkReplaceDestinationPointsQuadEdgeMeshFilter.hxx"
 #endif
 
 #endif

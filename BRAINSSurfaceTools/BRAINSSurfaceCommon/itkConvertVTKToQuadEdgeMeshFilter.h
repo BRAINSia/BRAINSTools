@@ -99,7 +99,7 @@ private:
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkConvertVTKToQuadEdgeMeshFilter.txx"
+#include "itkConvertVTKToQuadEdgeMeshFilter.hxx"
 #endif
 
 #endif // _itkConvertVTKToQuadEdgeMeshFilter_h

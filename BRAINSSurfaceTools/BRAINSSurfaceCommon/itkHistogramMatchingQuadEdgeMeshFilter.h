@@ -160,7 +160,7 @@ private:
 }
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkHistogramMatchingQuadEdgeMeshFilter.txx"
+#include "itkHistogramMatchingQuadEdgeMeshFilter.hxx"
 #endif
 
 #endif

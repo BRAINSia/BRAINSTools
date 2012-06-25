@@ -219,7 +219,7 @@ private:
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkNodeVectorJacobianCalculator.txx"
+#include "itkNodeVectorJacobianCalculator.hxx"
 #endif
 
 #endif

@@ -104,7 +104,7 @@ private:
 }
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkRescaleScalarsQuadEdgeMeshFilter.txx"
+#include "itkRescaleScalarsQuadEdgeMeshFilter.hxx"
 #endif
 
 #endif

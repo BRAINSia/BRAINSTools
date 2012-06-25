@@ -12,7 +12,7 @@
   <version>1.0</version>
   <documentation-url>http://www.nitrc.org/plugins/mwiki/index.php/brains:BRAINSSurfaceRegister</documentation-url>
   <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
-  <contributor>Wen Li and Luis Ibanez</contributor>
+  <contributor>Wen Li and Luis Ibanez and Vincent A. Magnotta</contributor>
   <acknowledgements>Funding for this work was provided by NIH/NINDS award NS050568</acknowledgements>
 
   <parameters>
@@ -36,7 +36,7 @@
           <longflag>lambda</longflag>
           <description>The value to control the smoothing effect.</description>
           <label>lambda</label>
-          <default>-1.0</default>
+          <default>1.0</default>
       </double>
       
       <double>

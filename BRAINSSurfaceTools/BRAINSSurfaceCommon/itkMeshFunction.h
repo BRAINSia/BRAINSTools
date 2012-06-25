@@ -111,7 +111,7 @@ private:
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkMeshFunction.txx"
+#include "itkMeshFunction.hxx"
 #endif
 
 #endif

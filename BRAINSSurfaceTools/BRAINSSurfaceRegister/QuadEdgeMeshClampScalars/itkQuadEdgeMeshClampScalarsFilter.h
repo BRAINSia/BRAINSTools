@@ -102,7 +102,7 @@ private:
 }
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkQuadEdgeMeshClampScalarsFilter.txx"
+#include "itkQuadEdgeMeshClampScalarsFilter.hxx"
 #endif
 
 #endif

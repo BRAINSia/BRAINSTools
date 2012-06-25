@@ -12,7 +12,7 @@
   <version>1.0</version>
   <documentation-url>http://www.nitrc.org/plugins/mwiki/index.php/brains:BRAINSSurfaceRegister</documentation-url>
   <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
-  <contributor>Wen Li</contributor>
+  <contributor>Wen Li and Vincent A. Magnotta</contributor>
   <acknowledgements>Funding for this work was provided by NIH/NINDS award NS050568</acknowledgements>
 
   <parameters>

@@ -17,7 +17,8 @@
 #include "cxcore.h"
 #include "cv.h"
 
-typedef CvANN_MLP_Revision OpenCVMLPType;
+// typedef CvANN_MLP_Revision OpenCVMLPType;
+typedef CvANN_MLP OpenCVMLPType;
 #include <stdint.h>
 
 /** Training data set definition */

@@ -3,7 +3,8 @@
 
 #include "BRAINSCutDataHandler.h"
 
-typedef CvANN_MLP_Revision neuralNetType;
+// typedef CvANN_MLP_Revision neuralNetType;
+typedef CvANN_MLP neuralNetType;
 
 namespace
 {

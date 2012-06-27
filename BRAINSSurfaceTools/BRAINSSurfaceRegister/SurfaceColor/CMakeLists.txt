@@ -16,9 +16,9 @@ ExternalData_add_test(${project_name}FetchData NAME TEST_SurfaceColor
 ExternalData_add_test(${project_name}FetchData NAME COMPARE_SurfaceColor
   COMMAND ${LAUNCH_EXE} ${CompareSurfacesProg}
           --inputSurfaceFile SurfaceColorTest.vtk
-          --refSurfaceFile DATA{${TestData_DIR}/SurfaceColor.vtk} 
-          --vertexLocation 
-          --scalarArray 
+          --refSurfaceFile DATA{${TestData_DIR}/SurfaceColor.vtk}
+          --vertexLocation
+          --scalarArray
           --tolerance 1.0e-7 )
 
 set_tests_properties( COMPARE_SurfaceColor PROPERTIES DEPENDS TEST_SurfaceColor )

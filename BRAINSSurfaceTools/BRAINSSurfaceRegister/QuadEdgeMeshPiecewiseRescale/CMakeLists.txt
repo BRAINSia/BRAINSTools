@@ -14,9 +14,9 @@ ExternalData_add_test(${project_name}FetchData NAME TEST_SurfacePiecewiseRescale
 ExternalData_add_test(${project_name}FetchData NAME COMPARE_SurfacePiecewiseRescale
   COMMAND ${LAUNCH_EXE} ${CompareSurfacesProg}
           --inputSurfaceFile Piecewised_IC4Test.vtk
-          --refSurfaceFile DATA{${TestData_DIR}/Piecewised_IC4.vtk} 
-          --vertexLocation 
-          --scalarArray 
+          --refSurfaceFile DATA{${TestData_DIR}/Piecewised_IC4.vtk}
+          --vertexLocation
+          --scalarArray
           --tolerance 1.0e-7 )
 
 set_tests_properties( COMPARE_SurfacePiecewiseRescale PROPERTIES DEPENDS TEST_SurfacePiecewiseRescale )

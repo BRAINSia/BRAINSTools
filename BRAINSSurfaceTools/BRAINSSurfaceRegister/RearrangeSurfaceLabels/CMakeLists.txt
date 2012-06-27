@@ -14,9 +14,9 @@ ExternalData_add_test(${project_name}FetchData NAME TEST_RearrangeSurfaceLabels
 ExternalData_add_test(${project_name}FetchData NAME COMPARE_RearrangeSurfaceLabels
   COMMAND ${LAUNCH_EXE} ${CompareSurfacesProg}
           --inputSurfaceFile RearrangedLabelsTest.vtk
-          --refSurfaceFile DATA{${TestData_DIR}/RearrangedLabels.vtk} 
-          --vertexLocation 
-          --scalarArray 
+          --refSurfaceFile DATA{${TestData_DIR}/RearrangedLabels.vtk}
+          --vertexLocation
+          --scalarArray
           --tolerance 1.0e-7 )
 
 set_tests_properties( COMPARE_RearrangeSurfaceLabels PROPERTIES DEPENDS TEST_RearrangeSurfaceLabels )

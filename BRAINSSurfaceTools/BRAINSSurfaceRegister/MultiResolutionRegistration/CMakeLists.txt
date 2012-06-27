@@ -29,8 +29,8 @@ ExternalData_add_test(${project_name}FetchData NAME TEST_SurfaceMultiResRegistra
 ExternalData_add_test(${project_name}FetchData NAME COMPARE_SurfaceMultiResRegistration1
   COMMAND ${LAUNCH_EXE} ${CompareSurfacesProg}
           --inputSurfaceFile deformed0036195_test.vtk
-          --refSurfaceFile DATA{${TestData_DIR}/deformed0036195.vtk} 
-          --vertexLocation 
+          --refSurfaceFile DATA{${TestData_DIR}/deformed0036195.vtk}
+          --vertexLocation
           --tolerance 1.0e-7 )
 
 set_tests_properties( COMPARE_SurfaceMultiResRegistration1 PROPERTIES DEPENDS TEST_SurfaceMultiResRegistration1 )

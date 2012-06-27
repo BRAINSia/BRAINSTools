@@ -23,17 +23,17 @@ ExternalData_add_test(${project_name}FetchData NAME TEST_SurfaceIcosahedronResam
 ExternalData_add_test(${project_name}FetchData NAME COMPARE_SurfaceIcosahedronResampler1
   COMMAND ${LAUNCH_EXE} ${CompareSurfacesProg}
           --inputSurfaceFile SimpleSurface1_test_IC4.vtk
-          --refSurfaceFile DATA{${TestData_DIR}/SimpleSurface1_IC4.vtk} 
-          --vertexLocation 
-          --scalarArray 
+          --refSurfaceFile DATA{${TestData_DIR}/SimpleSurface1_IC4.vtk}
+          --vertexLocation
+          --scalarArray
           --tolerance 1.0e-7 )
 
 ExternalData_add_test(${project_name}FetchData NAME COMPARE_SurfaceIcosahedronResampler2
   COMMAND ${LAUNCH_EXE} ${CompareSurfacesProg}
           --inputSurfaceFile SimpleSurface2_test_IC4.vtk
-          --refSurfaceFile DATA{${TestData_DIR}/SimpleSurface2_IC4.vtk} 
-          --vertexLocation 
-          --scalarArray 
+          --refSurfaceFile DATA{${TestData_DIR}/SimpleSurface2_IC4.vtk}
+          --vertexLocation
+          --scalarArray
           --tolerance 1.0e-7 )
 
 set_tests_properties( COMPARE_SurfaceIcosahedronResampler1 PROPERTIES DEPENDS TEST_SurfaceIcosahedronResampler1 )

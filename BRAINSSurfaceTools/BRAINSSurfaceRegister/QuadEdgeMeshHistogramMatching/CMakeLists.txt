@@ -15,9 +15,9 @@ ExternalData_add_test(${project_name}FetchData NAME TEST_SurfaceHistogramMatchin
 ExternalData_add_test(${project_name}FetchData NAME COMPARE_SurfaceHistogramMatching
   COMMAND ${LAUNCH_EXE} ${CompareSurfacesProg}
           --inputSurfaceFile 0036896_to_0036195_hmIC4Test.vtk
-          --refSurfaceFile DATA{${TestData_DIR}/0036896_to_0036195_hmIC4.vtk} 
-          --vertexLocation 
-          --scalarArray 
+          --refSurfaceFile DATA{${TestData_DIR}/0036896_to_0036195_hmIC4.vtk}
+          --vertexLocation
+          --scalarArray
           --tolerance 1.0e-7 )
 
 set_tests_properties( COMPARE_SurfaceHistogramMatching PROPERTIES DEPENDS TEST_SurfaceHistogramMatching )

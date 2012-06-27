@@ -17,9 +17,9 @@ ExternalData_add_test(${project_name}FetchData NAME TEST_SurfaceRemoveTinyLabels
 ExternalData_add_test(${project_name}FetchData NAME COMPARE_SurfaceRemoveTinyLabels
   COMMAND ${LAUNCH_EXE} ${CompareSurfacesProg}
           --inputSurfaceFile Removed21And37From49LabelsTest.vtk
-          --refSurfaceFile DATA{${TestData_DIR}/Removed21And37From49Labels.vtk} 
-          --vertexLocation 
-          --scalarArray 
+          --refSurfaceFile DATA{${TestData_DIR}/Removed21And37From49Labels.vtk}
+          --vertexLocation
+          --scalarArray
           --tolerance 1.0e-7 )
 
 set_tests_properties( COMPARE_SurfaceRemoveTinyLabels PROPERTIES DEPENDS TEST_SurfaceRemoveTinyLabels )

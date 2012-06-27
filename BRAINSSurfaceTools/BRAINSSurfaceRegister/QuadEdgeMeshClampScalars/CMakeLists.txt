@@ -16,9 +16,9 @@ ExternalData_add_test(${project_name}FetchData NAME TEST_SurfaceClampScalars
 ExternalData_add_test(${project_name}FetchData NAME COMPARE_SurfaceClampScalars
   COMMAND ${LAUNCH_EXE} ${CompareSurfacesProg}
           --inputSurfaceFile 0036195_ClampScalarsTest.vtk
-          --refSurfaceFile DATA{${TestData_DIR}/0036195_ClampScalars.vtk} 
-          --vertexLocation 
-          --scalarArray 
+          --refSurfaceFile DATA{${TestData_DIR}/0036195_ClampScalars.vtk}
+          --vertexLocation
+          --scalarArray
           --tolerance 1.0e-7 )
 
 set_tests_properties( COMPARE_SurfaceClampScalars PROPERTIES DEPENDS TEST_SurfaceClampScalars )

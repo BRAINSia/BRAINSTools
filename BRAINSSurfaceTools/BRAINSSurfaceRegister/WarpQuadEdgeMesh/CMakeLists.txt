@@ -16,9 +16,9 @@ ExternalData_add_test(${project_name}FetchData NAME TEST_SurfaceWarpQuadEdgeMesh
 ExternalData_add_test(${project_name}FetchData NAME COMPARE_SurfaceWarpQuadEdgeMesh
   COMMAND ${LAUNCH_EXE} ${CompareSurfacesProg}
           --inputSurfaceFile warped0036896HullTest.vtk
-          --refSurfaceFile DATA{${TestData_DIR}/warped0036896Hull.vtk} 
-          --vertexLocation 
-          --scalarArray 
+          --refSurfaceFile DATA{${TestData_DIR}/warped0036896Hull.vtk}
+          --vertexLocation
+          --scalarArray
           --tolerance 1.0e-7 )
 
 set_tests_properties( COMPARE_SurfaceWarpQuadEdgeMesh PROPERTIES DEPENDS TEST_SurfaceWarpQuadEdgeMesh )

@@ -16,9 +16,9 @@ ExternalData_add_test(${project_name}FetchData NAME TEST_SurfaceLabelCleanUp
 ExternalData_add_test(${project_name}FetchData NAME COMPARE_SurfaceLabelCleanUp
   COMMAND ${LAUNCH_EXE} ${CompareSurfacesProg}
           --inputSurfaceFile SurfaceLabelCleanUpTest.vtk
-          --refSurfaceFile DATA{${TestData_DIR}/SurfaceLabelCleanUp.vtk} 
-          --vertexLocation 
-          --scalarArray 
+          --refSurfaceFile DATA{${TestData_DIR}/SurfaceLabelCleanUp.vtk}
+          --vertexLocation
+          --scalarArray
           --tolerance 1.0e-7 )
 
 set_tests_properties( COMPARE_SurfaceLabelCleanUp PROPERTIES DEPENDS TEST_SurfaceLabelCleanUp )

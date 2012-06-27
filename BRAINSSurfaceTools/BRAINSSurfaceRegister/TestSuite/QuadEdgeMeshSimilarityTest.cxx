@@ -63,6 +63,8 @@ int main( int argc, char * argv [] )
 
   if( fabs(diceTest - diceExp) > tolerance )
     {
+    std::cout << "Dice Test: " << diceTest << std::endl;
+    std::cout << "Dice Expected: " << diceExp << std::endl;
     std::cout << "The resulted Dice is not expected." << std::endl;
     return EXIT_FAILURE;
     }

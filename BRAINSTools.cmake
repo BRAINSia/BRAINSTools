@@ -92,6 +92,7 @@ set(brains_modulenames
                   ##       further review before trusting it.
                   #  NOTE :  This program is not yet ready for use:  BRAINSContinuousClass
   BRAINSSurfaceTools
+  BRAINSContinuousClass
   )
 
 ## Tools that only work with ITKv4

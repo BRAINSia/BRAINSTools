@@ -201,9 +201,9 @@ inline void
 BRAINSCutTrainModel
 ::printANNTrainInformation( neuralNetType& myTrainer, unsigned int No )
 {
-  std::cout << " Error, " << myTrainer.get_MSE()
-            << " Iteration, " << No
-            << std::endl;
+  // std::cout << " Error, " << myTrainer.get_MSE()
+  //          << " Iteration, " << No
+  //          << std::endl;
 }
 
 inline int *
@@ -242,11 +242,13 @@ BRAINSCutTrainModel
                      *(trainingDataSet->GetTrainingSubSet(subSetNo) ) );
     SaveANNTrainModelAtIteration( *trainner, currentIteration );
     printANNTrainInformation( *trainner, currentIteration );
+    /*
     if( trainner->get_MSE()  < trainDesiredError )
       {
       std::cout << "CONVERGED with " << trainner->get_MSE() << std::endl;
       break;
       }
+      */
     }
 }
 

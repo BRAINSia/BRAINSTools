@@ -34,10 +34,11 @@ set(BRAINSCutCOMMONLIB_SRCS
 ## Build BRAINSCutCOMMONLIB library
 ##
 add_library(BRAINSCutCOMMONLIB STATIC ${BRAINSCutCOMMONLIB_SRCS})
+#message(FATAL_ERROR "${OpenCV_LIBS}")
 target_link_libraries(BRAINSCutCOMMONLIB
   NetConfigurationCOMMONLIB
   ${ITK_LIBRARIES}
-  ${OpenCV_LIBS}
+  ${OpenCV_LIBRARIES}
   ${VTK_LIBRARIES}
   )
 

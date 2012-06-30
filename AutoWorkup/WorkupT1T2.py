@@ -170,13 +170,16 @@ def createDBFile(subject_data_file,subjectDatabaseFile,mountPrefix):
     dump(ExperimentDatabase, open(subjectDatabaseFile,'w'))
     return ExperimentDatabase
 
-def GenerateOutputPattern(ExperimentDatabase,DefaultNodeName):
+def GenerateOutputPattern(ExperimentDatabase,DefaultNodeName,uidIsFirst=True):
     """ This function generates output path substitutions for workflows and nodes that conform to a common standard.
     """
     patternList=[]
     for key in ExperimentDatabase.keys():
         currDictionary=ExperimentDatabase[key]
-        find_pat=DefaultNodeName+'/_uid_'+key
+        if uidIsFirst == True:
+            find_pat=os.path.join(DefaultNodeName,'_uid_'+key)
+        else:
+            find_pat=os.path.join('_uid_'+key,DefaultNodeName)
         replace_pat=os.path.join(currDictionary['site'],currDictionary['subj'],currDictionary['session'],DefaultNodeName)
         patternList.append( (find_pat,replace_pat) )
     return patternList
@@ -319,8 +322,9 @@ def WorkupT1T2(mountPrefix,ExperimentBaseDirectoryCache, ExperimentBaseDirectory
         baw200.connect(myLocalSegWF, 'OutputSpec.outputCSVFileName', SEGMENTATION_DataSink,'BRAINSCut.@outputCSVFileName')
 
     if 'FREESURFER' in WORKFLOW_COMPONENTS:
+        RunAllFSComponents=True ## A hack to avoid 26 hour run of freesurfer
         from WorkupT1T2FreeSurfer import CreateFreeSurferWorkflow
-        myLocalFSWF= CreateFreeSurferWorkflow("Level1_FSTest",CLUSTER_QUEUE)
+        myLocalFSWF= CreateFreeSurferWorkflow("Level1_FSTest",CLUSTER_QUEUE,RunAllFSComponents)
         baw200.connect(uidSource,'uid',myLocalFSWF,'InputSpec.subject_id')
         baw200.connect(myLocalTCWF,'OutputSpec.t1_corrected',myLocalFSWF,'InputSpec.T1_files')
         baw200.connect(myLocalTCWF,'OutputSpec.t2_corrected',myLocalFSWF,'InputSpec.T2_files')
@@ -328,12 +332,26 @@ def WorkupT1T2(mountPrefix,ExperimentBaseDirectoryCache, ExperimentBaseDirectory
         #baw200.connect(myLocalTCWF,'OutputSpec.outputLabels',myLocalFSWF,'InputSpec.mask_file') #Yes, the same file as label_file!
 
         ### Now define where the final organized outputs should go.
-        baw200DataSink=pe.Node(nio.DataSink(),name="FREESURFER_DS")
-        baw200DataSink.inputs.base_directory=ExperimentBaseDirectoryResults
-        baw200DataSink.inputs.regexp_substitutions = [
-            ('/_uid_(?P<myuid>[^/]*)',r'/\g<myuid>')
-            ]
-        baw200.connect(myLocalFSWF, 'OutputSpec.FreesurferOutputDirectory', baw200DataSink,'FREESURFER_SUBJ.@FreesurferOutputDirectory')
+        if RunAllFSComponents == True:
+            baw200DataSink=pe.Node(nio.DataSink(),name="FREESURFER_DS")
+            baw200DataSink.inputs.base_directory=ExperimentBaseDirectoryResults
+            baw200DataSink.inputs.regexp_substitutions = [
+                ('/_uid_(?P<myuid>[^/]*)',r'/\g<myuid>')
+                ]
+            baw200.connect(myLocalFSWF, 'OutputSpec.FreesurferOutputDirectory', baw200DataSink,'FREESURFER_SUBJ.@FreesurferOutputDirectory')
+        ### Now define where the final organized outputs should go.
+        FSPREP_DataSink=pe.Node(nio.DataSink(),name="FREESURFER_PREP")
+        FSPREP_DataSink.inputs.base_directory=ExperimentBaseDirectoryResults
+	FREESURFER_PREP_PATTERNS = GenerateOutputPattern(ExperimentDatabase,'FREESURFER_PREP')
+        FSPREP_DataSink.inputs.regexp_substitutions = FREESURFER_PREP_PATTERNS
+        print "========================="
+        print "========================="
+        print "========================="
+        print FREESURFER_PREP_PATTERNS
+        print "========================="
+        print "========================="
+        print "========================="
+        baw200.connect(myLocalFSWF, 'OutputSpec.cnr_optimal_image', FSPREP_DataSink,'FREESURFER_PREP.@cnr_optimal_image')
 
     else:
         print "Skipping freesurfer"

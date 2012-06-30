@@ -16,7 +16,7 @@ from BRAINSTools.ants.ms_lda import *
     baw200.connect(SplitAvgBABC,'avgBABCT1',myLocalFSWF,'InputSpec.T1_files')
 """
 
-def CreateFreeSurferWorkflow(WFname,CLUSTER_QUEUE):
+def CreateFreeSurferWorkflow(WFname,CLUSTER_QUEUE,RunAllFSComponents=True):
     freesurferWF= pe.Workflow(name=WFname)
 
     inputsSpec = pe.Node(interface=IdentityInterface(fields=['subject_id','T1_files','T2_files',
@@ -42,24 +42,26 @@ def CreateFreeSurferWorkflow(WFname,CLUSTER_QUEUE):
     freesurferWF.connect(mergeT1T2,'out',  msLDA_GenerateWeights,'images')
     freesurferWF.connect(inputsSpec,'label_file',  msLDA_GenerateWeights,'label_file')
     #freesurferWF.connect(inputsSpec,'mask_file',  msLDA_GenerateWeights,'mask_file') ## Mask file MUST be unsigned char
-
-    print("""Run Freesurfer ReconAll at""")
-    fs_reconall = pe.Node(interface=ReconAll(),name="FS510")
-    freesurfer_sge_options_dictionary={'qsub_args': '-S /bin/bash -pe smp1 1 -l mem_free=3100M -o /dev/null -e /dev/null '+CLUSTER_QUEUE, 'overwrite': True}
-    fs_reconall.plugin_args=freesurfer_sge_options_dictionary
-    fs_reconall.inputs.directive = 'all'
-    freesurferWF.connect(inputsSpec,'subject_id',fs_reconall,'subject_id')
-    freesurferWF.connect(msLDA_GenerateWeights,'output_synth',  fs_reconall,'T1_files')
-
-    def MakeFreesurferOutputDirectory(subjects_dir,subject_id):
-        return subjects_dir+'/'+subject_id
-    computeFinalDirectory = pe.Node( Function(function=MakeFreesurferOutputDirectory, input_names = ['subjects_dir','subject_id'], output_names = ['FreesurferOutputDirectory']), run_without_submitting=True, name="99_computeFreesurferOutputDirectory")
-    freesurferWF.connect(fs_reconall,'subjects_dir',computeFinalDirectory,'subjects_dir')
-    freesurferWF.connect(fs_reconall,'subject_id',computeFinalDirectory,'subject_id')
+    
+    if RunAllFSComponents == True:
+        print("""Run Freesurfer ReconAll at""")
+        fs_reconall = pe.Node(interface=ReconAll(),name="FS510")
+        freesurfer_sge_options_dictionary={'qsub_args': '-S /bin/bash -pe smp1 1 -l mem_free=3100M -o /dev/null -e /dev/null '+CLUSTER_QUEUE, 'overwrite': True}
+        fs_reconall.plugin_args=freesurfer_sge_options_dictionary
+        fs_reconall.inputs.directive = 'all'
+        freesurferWF.connect(inputsSpec,'subject_id',fs_reconall,'subject_id')
+        freesurferWF.connect(msLDA_GenerateWeights,'output_synth',  fs_reconall,'T1_files')
+      
+        def MakeFreesurferOutputDirectory(subjects_dir,subject_id):
+            return subjects_dir+'/'+subject_id
+        computeFinalDirectory = pe.Node( Function(function=MakeFreesurferOutputDirectory, input_names = ['subjects_dir','subject_id'], output_names = ['FreesurferOutputDirectory']), run_without_submitting=True, name="99_computeFreesurferOutputDirectory")
+        freesurferWF.connect(fs_reconall,'subjects_dir',computeFinalDirectory,'subjects_dir')
+        freesurferWF.connect(fs_reconall,'subject_id',computeFinalDirectory,'subject_id')
 
     outputsSpec = pe.Node(interface=IdentityInterface(fields=['subject_id','subjects_dir','FreesurferOutputDirectory','cnr_optimal_image']), name='OutputSpec' )
-    freesurferWF.connect(fs_reconall,'subject_id',outputsSpec,'subject_id')
-    freesurferWF.connect(fs_reconall,'subjects_dir',outputsSpec,'subjects_dir')
-    freesurferWF.connect(computeFinalDirectory,'FreesurferOutputDirectory',outputsSpec,'FreesurferOutputDirectory')
+    if RunAllFSComponents == True: 
+        freesurferWF.connect(fs_reconall,'subject_id',outputsSpec,'subject_id')
+        freesurferWF.connect(fs_reconall,'subjects_dir',outputsSpec,'subjects_dir')
+        freesurferWF.connect(computeFinalDirectory,'FreesurferOutputDirectory',outputsSpec,'FreesurferOutputDirectory')
     freesurferWF.connect(msLDA_GenerateWeights,'output_synth',outputsSpec,'cnr_optimal_image')
     return freesurferWF

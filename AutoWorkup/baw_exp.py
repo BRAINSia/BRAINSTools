@@ -39,7 +39,7 @@ echo "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
 echo "With custom environment:"
 echo {CUSTENV}
 {CUSTENV}
-## NOTE:  nipype inserts the actaul commands that need running below this section.
+## NOTE:  nipype inserts the actual commands that need running below this section.
 """.format(PYTHONPATH=PYTHONPATH,BINPATH=BASE_BUILDS,CUSTENV=custEnvString)
     return GLOBAL_SGE_SCRIPT
 
@@ -201,13 +201,16 @@ def main(argv=None):
     JOB_SCRIPT=get_global_sge_script(sys.path,PROGRAM_PATHS,CUSTOM_ENVIRONMENT)
     print JOB_SCRIPT
 
+    SGEFlavor='SGE'
+    #SGEFlavor='SGEGraph'
     if input_arguments.wfrun == 'helium_all.q':
-        baw200.run(plugin='SGE',
+        baw200.run(plugin=SGEFlavor,
             plugin_args=dict(template=JOB_SCRIPT,qsub_args="-S /bin/bash -pe smp1 1-4 -l mem_free=4000M -o /dev/null -e /dev/null "+CLUSTER_QUEUE))
+            #plugin_args=dict(template=JOB_SCRIPT,qsub_args="-S /bin/bash -pe smp1 1-4 -l mem_free=4000M "+CLUSTER_QUEUE))
     elif input_arguments.wfrun == 'ipl_OSX':
         baw200.write_graph()
         print "Running On ipl_OSX"
-        baw200.run(plugin='SGE',
+        baw200.run(plugin=SGEFlavor,
             plugin_args=dict(template=JOB_SCRIPT,qsub_args="-S /bin/bash -pe smp1 1-4 -l mem_free=4000M -o /dev/null -e /dev/null "+CLUSTER_QUEUE))
     elif input_arguments.wfrun == 'local_4':
         baw200.write_graph()

@@ -679,7 +679,7 @@ void ImageCalculatorReadWrite( MetaCommand & command )
     spacingDifference[1] = AccImage->GetSpacing()[1] - image->GetSpacing()[1];
     spacingDifference[2] = AccImage->GetSpacing()[2] - image->GetSpacing()[2];
 
-    if( spacingDifference.two_norm() > 0.0001 ) // HACK:  Should be a percentage of the actaul spacing size.
+    if( spacingDifference.two_norm() > 0.0001 ) // HACK:  Should be a percentage of the actual spacing size.
       {
       itkGenericExceptionMacro(<< "ERROR: ::The pixel spacing of the images are not close enough.");
       }

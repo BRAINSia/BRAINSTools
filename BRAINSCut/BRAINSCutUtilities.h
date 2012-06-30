@@ -15,7 +15,8 @@
 /** include opencv library */
 #include "ml.h"
 #include "cxcore.h"
-#include "cv.h"
+
+#include "opencv2/flann/flann.hpp"
 
 // typedef CvANN_MLP_Revision OpenCVMLPType;
 typedef CvANN_MLP OpenCVMLPType;

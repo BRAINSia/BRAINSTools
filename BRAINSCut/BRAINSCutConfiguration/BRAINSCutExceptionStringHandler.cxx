@@ -1,17 +1,24 @@
 #include "BRAINSCutExceptionStringHandler.h"
 
+static std::string LocalFormatErrorStringWrapper(const std::string & errorString)
+{
+  std::string buildErrorString("****ERROR**** [BRAINSCutExceptionStringHandler]:: ");
+
+  buildErrorString += errorString;
+  buildErrorString += "\n";
+  return buildErrorString
+}
+
 BRAINSCutExceptionStringHandler
 ::BRAINSCutExceptionStringHandler(const std::string & errorString)
 {
-  this->m_ErrorString = "****ERROR**** [BRAINSCutExceptionStringHandler]:: ";
-  this->m_ErrorString += errorString;
-  this->m_ErrorString += "\n";
+  this->m_ErrorString = LocalFormatErrorStringWrapper(errorString);
 }
 
 BRAINSCutExceptionStringHandler
 ::BRAINSCutExceptionStringHandler(const char *errorString)
 {
-  BRAINSCutExceptionStringHandler( std::string( errorString ) );
+  this->m_ErrorString = LocalFormatErrorStringWrapper(errorString);
 }
 
 const std::string &

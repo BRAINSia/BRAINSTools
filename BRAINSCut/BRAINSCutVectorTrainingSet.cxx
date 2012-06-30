@@ -15,7 +15,7 @@ BRAINSCutVectorTrainingSet
   totalVectorSize(0),
   inputVectorSize(0),
   outputVectorSize(0),
-  shuffled(FALSE),
+  shuffled(false),
   recordSize(0),
   bufferRecordSize(0),
   numberOfSubSet(1),

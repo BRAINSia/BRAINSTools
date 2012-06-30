@@ -9,8 +9,10 @@ endif()
 #  set(OPENCV_GIT_TAG "FixNeuralNetwork_20111111") # USE THIS FOR UPDATED VERSION
 #  set(OPENCV_GIT_REPO "${git_protocol}://github.com/hjmjohnson/OpenCV.git") # USE THIS FOR UPDATED VERSION
 #else()
-  set(OPENCV_GIT_TAG "BRAINSCut_OpenCV") # USE THIS FOR UPDATED VERSION
   set(OPENCV_GIT_REPO "${git_protocol}://github.com/BRAINSia/OpenCV_TruncatedSVN.git") # USE THIS FOR UPDATED VERSION
+  set(OPENCV_GIT_TAG "BRAINSCut_OpenCV") # USE THIS FOR UPDATED VERSION
+  set(OPENCV_SVN_REPO "http://code.opencv.org/svn/opencv/trunk/opencv")
+  set(OPENCV_SVN_TAG  "8859") # This is the 2012-06-30 tag
 #endif()
 
 if(NOT DEFINED OpenCV_DIR)

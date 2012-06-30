@@ -35,25 +35,25 @@ int main( int argc, char * argv [] )
   if( int(deformedTemplateMeshList.size() ) != numSubs )
     {
     std::cerr << "number of deformed meshes do not agree with number of subjects" << std::endl;
-    return 1;
+    return EXIT_FAILURE;
     }
   // check the sphere files with scalar values
   if( int(sphereWithScalarsList.size() ) != numSubs )
     {
     std::cerr << "number of spheres with scalars do not agree with number of subjects" << std::endl;
-    return 1;
+    return EXIT_FAILURE;
     }
   // check template surface
   if( templateSurfaceFile == "" )
     {
     std::cerr << "the template surface file should be specified" << std::endl;
-    return 1;
+    return EXIT_FAILURE;
     }
   // check the template sphere with scalars
   if( templateSphereFile == "" )
     {
     std::cerr << "the template sphere with scalar values should be specified" << std::endl;
-    return 1;
+    return EXIT_FAILURE;
     }
 
   std::cout << "---------------------------------------------------" << std::endl;

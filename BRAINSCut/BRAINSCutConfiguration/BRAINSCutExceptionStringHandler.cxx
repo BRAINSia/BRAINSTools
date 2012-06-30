@@ -6,7 +6,7 @@ static std::string LocalFormatErrorStringWrapper(const std::string & errorString
 
   buildErrorString += errorString;
   buildErrorString += "\n";
-  return buildErrorString
+  return buildErrorString;
 }
 
 BRAINSCutExceptionStringHandler

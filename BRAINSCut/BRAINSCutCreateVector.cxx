@@ -185,7 +185,6 @@ BRAINSCutCreateVector
       // oneRowOutputVector));
 
       currentOutputVectorMap[itKeyFromIndex] = oneRowOutputVector;
-      OutputVectorMapType::const_iterator myIterator = currentOutputVectorMap.find(  itKeyFromIndex );
       }
     ++it;
     }

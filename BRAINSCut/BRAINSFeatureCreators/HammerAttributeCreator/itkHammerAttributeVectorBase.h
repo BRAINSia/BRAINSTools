@@ -90,7 +90,7 @@ public:
   {
   }
 
-  void PrintSelf(std::ostream & os, Indent indent) const
+  void PrintSelf(std::ostream & /*NOT IMPLEMENTED os*/, Indent /*NOT IMPLEMENTED indent*/) const
   {
   }
 };

@@ -24,7 +24,7 @@
       <label>Template Surface</label>
       <channel>input</channel>
     </file>
-    
+
     <file>
       <name>templateSphereFile</name>
       <longflag>templateSphereFile</longflag>
@@ -32,7 +32,7 @@
       <label>Template Sphere</label>
       <channel>input</channel>
     </file>
-    
+
     <geometry type="model" multiple="true">
       <name>deformedTemplateMeshList</name>
       <longflag>deformedTemplateMeshList</longflag>
@@ -40,7 +40,7 @@
       <label>Deformed Template Mesh List</label>
       <channel>input</channel>
      </geometry>
-    
+
     <geometry type="model" multiple="true">
       <name>sphereWithScalarsList</name>
       <longflag>sphereWithScalarsList</longflag>
@@ -48,19 +48,20 @@
       <label>Sphere With Scalars File List</label>
       <channel>input</channel>
     </geometry>
-    
+
   </parameters>
-    
+
   <parameters>
       <label>Average Parameters</label>
-      
+
       <integer>
           <name>numSubs</name>
           <longflag>numSubs</longflag>
           <description>The number of subjects excluding the template to generate the atlas</description>
           <label>Number of Subjects</label>
+          <default>-1</default>
       </integer>
-      
+
   </parameters>
 
   <parameters>

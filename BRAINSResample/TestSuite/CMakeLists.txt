@@ -19,7 +19,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateBRAINSResampleTest4
   --referenceVolume DATA{${TestData_DIR}/test.nii.gz}
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/applyWarp_test4.nii.gz
   --pixelType uchar
-  --warpTransform DATA{${TestData_DIR}/BRAINSFitTest_AffineRotationMasks.mat}
+  --warpTransform DATA{${TestData_DIR}/BRAINSFitTest_AffineRotationMasks.${XFRM_EXT}}
   )
 
 ## Should provide exactly the same result as BRAINSFit BRAINSFitTest_BSplineAnteScaleRotationRescaleHeadMasks test
@@ -36,7 +36,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateBRAINSResampleTest5
   --referenceVolume DATA{${TestData_DIR}/test.nii.gz}
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/applyWarp_test5.nii.gz
   --pixelType short
-  --warpTransform DATA{${TestData_DIR}/BRAINSFitTest_BSplineAnteScaleRotationRescaleHeadMasks.mat}
+  --warpTransform DATA{${TestData_DIR}/BRAINSFitTest_BSplineAnteScaleRotationRescaleHeadMasks.${XFRM_EXT}}
   )
 
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateBRAINSResampleTest6_nii
@@ -53,7 +53,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateBRAINSResampleTest6
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/applyWarp_test6.nii.gz
   --pixelType uchar
   --interpolationMode WindowedSinc
-  --warpTransform DATA{${TestData_DIR}/BRAINSFitTest_RigidRotationNoMasks.mat}
+  --warpTransform DATA{${TestData_DIR}/BRAINSFitTest_RigidRotationNoMasks.${XFRM_EXT}}
   )
 
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateBRAINSResampleTest7_nii
@@ -70,7 +70,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateBRAINSResampleTest7
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/applyWarp_test7.nii.gz
   --interpolationMode Linear
   --pixelType uchar
-  --warpTransform DATA{${TestData_DIR}/applyWarp_BSpline.mat}
+  --warpTransform DATA{${TestData_DIR}/applyWarp_BSpline.${XFRM_EXT}}
   )
 
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateBRAINSResampleTest1_nii
@@ -131,7 +131,7 @@ if(0) ##This functionality does not work yet
     --referenceVolume DATA{${TestData_DIR}/BRAINSFitTest_rotation.input.nii.gz}
     --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/applyWarp_test4.nii.gz
     --pixelType short
-    --warpTransform DATA{${TestData_DIR}/BRAINSFitTest_RigidRotationMasks.mat}
+    --warpTransform DATA{${TestData_DIR}/BRAINSFitTest_RigidRotationMasks.${XFRM_EXT}}
     )
 endif(0)
 

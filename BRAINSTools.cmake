@@ -62,6 +62,10 @@ include(ExternalData)
 
 set(TestData_DIR ${CMAKE_CURRENT_SOURCE_DIR}/TestData)
 
+#
+# choose between using HDF5 or MAT format transform files
+set(XFRM_EXT "mat" CACHE STRING "Choose the preferred transform file format")
+
 #-----------------------------------------------------------------------------
 # BRAINSCommonLib (Required)
 #-----------------------------------------------------------------------------

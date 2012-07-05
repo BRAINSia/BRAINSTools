@@ -35,6 +35,7 @@
       <element>ScaleVersor</element>
       <element>ScaleSkewVersor</element>
       <element>DisplacementField</element>
+      <element>Same</element>
     </string-enumeration>
 
     <image>

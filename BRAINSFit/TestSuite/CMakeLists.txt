@@ -43,14 +43,14 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --minimumStepLength 0.001
   --outputVolumePixelType uchar
   --transformType Affine
-  --initialTransform DATA{${TestData_DIR}/BRAINSFitTest_Initializer_RigidRotationNoMasks.mat}
+  --initialTransform DATA{${TestData_DIR}/BRAINSFitTest_Initializer_RigidRotationNoMasks.${XFRM_EXT}}
   --maskProcessingMode ROI
   --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
   --fixedBinaryVolume DATA{${TestData_DIR}/test_mask.nii.gz}
   --movingVolume DATA{${TestData_DIR}/rotation.test.nii.gz}
   --movingBinaryVolume DATA{${TestData_DIR}/rotation.test_mask.nii.gz}
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
-  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.mat
+  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
   --debugLevel 50
 )
 
@@ -72,11 +72,11 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --minimumStepLength 0.001
   --outputVolumePixelType uchar
   --transformType Affine
-  --initialTransform DATA{${TestData_DIR}/Initializer_0.05_${BRAINSFitTestName}.mat}
+  --initialTransform DATA{${TestData_DIR}/Initializer_0.05_${BRAINSFitTestName}.${XFRM_EXT}}
   --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
   --movingVolume DATA{${TestData_DIR}/rotation.test.nii.gz}
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
-  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.mat
+  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
 )
 
 set(BRAINSFitTestName BRAINSFitTest_AffineScaleMasks)
@@ -104,7 +104,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --movingVolume DATA{${TestData_DIR}/scale.test.nii.gz}
   --movingBinaryVolume DATA{${TestData_DIR}/scale.test_mask.nii.gz}
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
-  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.mat
+  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
 )
 
 set(BRAINSFitTestName BRAINSFitTest_AffineScaleNoMasks)
@@ -125,11 +125,11 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --minimumStepLength 0.001
   --outputVolumePixelType uchar
   --transformType Affine
-  --initialTransform DATA{${TestData_DIR}/Initializer_0.05_${BRAINSFitTestName}.mat}
+  --initialTransform DATA{${TestData_DIR}/Initializer_0.05_${BRAINSFitTestName}.${XFRM_EXT}}
   --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
   --movingVolume DATA{${TestData_DIR}/scale.test.nii.gz}
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
-  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.mat
+  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
 )
 
 set(BRAINSFitTestName BRAINSFitTest_AffineTranslationMasks)
@@ -157,7 +157,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --movingVolume DATA{${TestData_DIR}/translation.test.nii.gz}
   --movingBinaryVolume DATA{${TestData_DIR}/translation.test_mask.nii.gz}
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
-  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.mat
+  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
 )
 
 set(BRAINSFitTestName BRAINSFitTest_AffineTranslationNoMasks)
@@ -182,7 +182,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
   --movingVolume DATA{${TestData_DIR}/translation.test.nii.gz}
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
-  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.mat
+  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
 )
 
 
@@ -210,7 +210,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
   --movingVolume DATA{${TestData_DIR}/rotation.rescale.rigid.nii.gz}
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
-  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.mat
+  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
   --maxBSplineDisplacement 7.3
 )
 
@@ -233,12 +233,12 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --minimumStepLength 0.01
   --outputVolumePixelType short
   --maskProcessingMode ROIAUTO
-  --initialTransform DATA{${TestData_DIR}/Initializer_BRAINSFitTest_BSplineAnteScaleRotationRescaleHeadMasks.mat}
+  --initialTransform DATA{${TestData_DIR}/Initializer_BRAINSFitTest_BSplineAnteScaleRotationRescaleHeadMasks.${XFRM_EXT}}
   --transformType BSpline
   --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
   --movingVolume DATA{${TestData_DIR}/rotation.rescale.rigid.nii.gz}
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
-  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.mat
+  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
   --debugLevel 10
   --maxBSplineDisplacement 7.3
   --projectedGradientTolerance 1e-4
@@ -265,12 +265,12 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --minimumStepLength 0.005
   --outputVolumePixelType short
   --maskProcessingMode ROIAUTO
-  --initialTransform DATA{${TestData_DIR}/Initializer_BRAINSFitTest_BSplineOnlyRescaleHeadMasks.mat}
+  --initialTransform DATA{${TestData_DIR}/Initializer_BRAINSFitTest_BSplineOnlyRescaleHeadMasks.${XFRM_EXT}}
   --transformType BSpline
   --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
   --movingVolume DATA{${TestData_DIR}/rotation.rescale.rigid.nii.gz}
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
-  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.mat
+  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
   --maxBSplineDisplacement 7.3
 )
 
@@ -298,7 +298,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
   --movingVolume DATA{${TestData_DIR}/rotation.rescale.rigid.nii.gz}
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
-  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.mat
+  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
   --maxBSplineDisplacement 7.3
 )
 
@@ -329,7 +329,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
   --movingVolume DATA{${TestData_DIR}/rotation.rescale.rigid.nii.gz}
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
-  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.mat
+  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
   --maxBSplineDisplacement 7.3
 )
 
@@ -351,7 +351,7 @@ ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
   --minimumStepLength 0.001 --numberOfSamples 100000 --numberOfIterations 1500
   --numberOfHistogramBins 200
   --transformType Rigid --initializeTransformMode useMomentsAlign --translationScale 1000
-  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.mat
+  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
   )
 
@@ -378,7 +378,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
   --movingVolume DATA{${TestData_DIR}/rotation.test.nii.gz}
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
-  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.mat
+  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
 )
 
 set(BRAINSFitTestName BRAINSFitTest_RigidRotGeomNoMasks)
@@ -403,7 +403,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
   --movingVolume DATA{${TestData_DIR}/rotation.geom.test.nii.gz}
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
-  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.mat
+  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
 )
 
 set(BRAINSFitTestName BRAINSFitTest_RigidRotaRotaRotNoMasks)
@@ -428,7 +428,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
   --movingVolume DATA{${TestData_DIR}/rotation.test.nii.gz}
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
-  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.mat
+  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
 )
 
 set(BRAINSFitTestName BRAINSFitTest_RigidRotationHeadMasks)
@@ -449,12 +449,12 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --minimumStepLength 0.001
   --outputVolumePixelType uchar
   --transformType Rigid
-  --initialTransform DATA{${TestData_DIR}/Initializer_0.05_${BRAINSFitTestName}.mat}
+  --initialTransform DATA{${TestData_DIR}/Initializer_0.05_${BRAINSFitTestName}.${XFRM_EXT}}
   --maskProcessingMode ROIAUTO
   --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
   --movingVolume DATA{${TestData_DIR}/rotation.test.nii.gz}
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
-  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.mat
+  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
 )
 
 set(BRAINSFitTestName BRAINSFitTest_RigidRotationMasks)
@@ -482,7 +482,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --movingVolume DATA{${TestData_DIR}/rotation.test.nii.gz}
   --movingBinaryVolume DATA{${TestData_DIR}/rotation.test_mask.nii.gz}
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
-  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.mat
+  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
 )
 
 set(BRAINSFitTestName BRAINSFitTest_RigidRotationNoMasks)
@@ -504,11 +504,11 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --outputVolumePixelType uchar
   --transformType Rigid
   --interpolationMode WindowedSinc
-  --initialTransform DATA{${TestData_DIR}/Initializer_0.05_${BRAINSFitTestName}.mat}
+  --initialTransform DATA{${TestData_DIR}/Initializer_0.05_${BRAINSFitTestName}.${XFRM_EXT}}
   --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
   --movingVolume DATA{${TestData_DIR}/rotation.test.nii.gz}
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
-  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.mat
+  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
 )
 set(BRAINSFitTestName BRAINSFitTest_RigidRotationNoMasksRiginInPlaceInterp)
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
@@ -529,11 +529,11 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --outputVolumePixelType uchar
   --transformType Rigid
   --interpolationMode ResampleInPlace
-  --initialTransform DATA{${TestData_DIR}/Initializer_0.05_${BRAINSFitTestName}.mat}
+  --initialTransform DATA{${TestData_DIR}/Initializer_0.05_${BRAINSFitTestName}.${XFRM_EXT}}
   --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
   --movingVolume DATA{${TestData_DIR}/rotation.test.nii.gz}
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
-  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.mat
+  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
 )
 
 
@@ -560,7 +560,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
   --movingVolume DATA{${TestData_DIR}/rotation.rescale.test.nii.gz}
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
-  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.mat
+  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
 )
 
 set(BRAINSFitTestName BRAINSFitTest_ScaleSkewVersorRotationMasks)
@@ -581,14 +581,14 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --minimumStepLength 0.001
   --outputVolumePixelType uchar
   --transformType ScaleSkewVersor3D
-  --initialTransform DATA{${TestData_DIR}/BRAINSFitTest_Initializer_RigidRotationNoMasks.mat}
+  --initialTransform DATA{${TestData_DIR}/BRAINSFitTest_Initializer_RigidRotationNoMasks.${XFRM_EXT}}
   --maskProcessingMode ROI
   --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
   --fixedBinaryVolume DATA{${TestData_DIR}/test_mask.nii.gz}
   --movingVolume DATA{${TestData_DIR}/rotation.test.nii.gz}
   --movingBinaryVolume DATA{${TestData_DIR}/rotation.test_mask.nii.gz}
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
-  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.mat
+  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
 )
 
 set(BRAINSFitTestName BRAINSFitTest_ScaleSkewVersorRotationNoMasks)
@@ -609,11 +609,11 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --minimumStepLength 0.001
   --outputVolumePixelType uchar
   --transformType ScaleSkewVersor3D
-  --initialTransform DATA{${TestData_DIR}/Initializer_0.05_${BRAINSFitTestName}.mat}
+  --initialTransform DATA{${TestData_DIR}/Initializer_0.05_${BRAINSFitTestName}.${XFRM_EXT}}
   --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
   --movingVolume DATA{${TestData_DIR}/rotation.test.nii.gz}
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
-  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.mat
+  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
 )
 
 set(BRAINSFitTestName BRAINSFitTest_ScaleSkewVersorScaleMasks)
@@ -641,7 +641,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --movingVolume DATA{${TestData_DIR}/scale.test.nii.gz}
   --movingBinaryVolume DATA{${TestData_DIR}/scale.test_mask.nii.gz}
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
-  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.mat
+  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
 )
 
 set(BRAINSFitTestName BRAINSFitTest_ScaleSkewVersorScaleNoMasks)
@@ -662,11 +662,11 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --minimumStepLength 0.001
   --outputVolumePixelType uchar
   --transformType ScaleSkewVersor3D
-  --initialTransform DATA{${TestData_DIR}/Initializer_0.05_${BRAINSFitTestName}.mat}
+  --initialTransform DATA{${TestData_DIR}/Initializer_0.05_${BRAINSFitTestName}.${XFRM_EXT}}
   --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
   --movingVolume DATA{${TestData_DIR}/scale.test.nii.gz}
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
-  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.mat
+  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
 )
 
 set(BRAINSFitTestName BRAINSFitTest_ScaleTranslationRescaleHeadMasksNoInit)
@@ -693,7 +693,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
   --movingVolume DATA{${TestData_DIR}/translation.rescale.test.nii.gz}
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
-  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.mat
+  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
 )
 
 set(BRAINSFitTestName BRAINSFitTest_ScaleTranslationRescaleHeadMasksInit)
@@ -714,13 +714,13 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --minimumStepLength 0.001
   --outputVolumePixelType uchar
   --maskProcessingMode ROIAUTO
-  --initialTransform DATA{${TestData_DIR}/Initializer_BRAINSFitTest_TranslationRescaleHeadMasks.mat}
+  --initialTransform DATA{${TestData_DIR}/Initializer_BRAINSFitTest_TranslationRescaleHeadMasks.${XFRM_EXT}}
   --transformType ScaleVersor3D
   --permitParameterVariation 0,0,0,1,1,1,1,1,1
   --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
   --movingVolume DATA{${TestData_DIR}/translation.rescale.test.nii.gz}
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
-  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.mat
+  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
 )
 
 set(BRAINSFitTestName BRAINSFitTest_ScaleVersorRotationMasks)
@@ -741,14 +741,14 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --minimumStepLength 0.001
   --outputVolumePixelType uchar
   --transformType ScaleVersor3D
-  --initialTransform DATA{${TestData_DIR}/BRAINSFitTest_Initializer_RigidRotationNoMasks.mat}
+  --initialTransform DATA{${TestData_DIR}/BRAINSFitTest_Initializer_RigidRotationNoMasks.${XFRM_EXT}}
   --maskProcessingMode ROI
   --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
   --fixedBinaryVolume DATA{${TestData_DIR}/test_mask.nii.gz}
   --movingVolume DATA{${TestData_DIR}/rotation.test.nii.gz}
   --movingBinaryVolume DATA{${TestData_DIR}/rotation.test_mask.nii.gz}
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
-  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.mat
+  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
 )
 
 set(BRAINSFitTestName BRAINSFitTest_ScaleVersorRotationNoMasks)
@@ -769,11 +769,11 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --minimumStepLength 0.001
   --outputVolumePixelType uchar
   --transformType ScaleVersor3D
-  --initialTransform DATA{${TestData_DIR}/Initializer_0.05_${BRAINSFitTestName}.mat}
+  --initialTransform DATA{${TestData_DIR}/Initializer_0.05_${BRAINSFitTestName}.${XFRM_EXT}}
   --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
   --movingVolume DATA{${TestData_DIR}/rotation.test.nii.gz}
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
-  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.mat
+  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
 )
 
 set(BRAINSFitTestName BRAINSFitTest_ScaleVersorScaleMasks)
@@ -801,7 +801,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --movingVolume DATA{${TestData_DIR}/scale.test.nii.gz}
   --movingBinaryVolume DATA{${TestData_DIR}/scale.test_mask.nii.gz}
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
-  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.mat
+  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
 )
 
 set(BRAINSFitTestName BRAINSFitTest_ScaleVersorScaleNoMasks)
@@ -822,11 +822,11 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --minimumStepLength 0.001
   --outputVolumePixelType uchar
   --transformType ScaleVersor3D
-  --initialTransform DATA{${TestData_DIR}/Initializer_0.05_${BRAINSFitTestName}.mat}
+  --initialTransform DATA{${TestData_DIR}/Initializer_0.05_${BRAINSFitTestName}.${XFRM_EXT}}
   --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
   --movingVolume DATA{${TestData_DIR}/scale.test.nii.gz}
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
-  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.mat
+  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
 )
 
 if(Test_SignedDistanceData)
@@ -842,7 +842,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME BRAINSFitTest_SignedDistanc
   --minimumStepLength 0.001 --numberOfSamples 75000 --numberOfIterations 1500
   --numberOfHistogramBins 200
   --transformType Rigid --initializeTransformMode useMomentsAlign --translationScale 1000
-  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/TEST.mat
+  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/TEST.${XFRM_EXT}
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/TEST_output.nii.gz
   )
 endif(Test_SignedDistanceData)
@@ -872,7 +872,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
   --movingVolume DATA{${TestData_DIR}/rotationUShort.rescale.rigid.nii.gz}
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
-  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.mat
+  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
   --maxBSplineDisplacement 7.3
 )
 
@@ -902,7 +902,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
   --movingVolume DATA{${TestData_DIR}/rotationUShort.rescale.rigid.nii.gz}
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
-  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.mat
+  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
   --maxBSplineDisplacement 7.3
 )
 
@@ -927,7 +927,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
   --movingVolume DATA{${TestData_DIR}/test.nii.gz}
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
-  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.mat
+  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
 )
 
 set(BRAINSFitTestName BRAINSFitTest_NCAffineRotationMasks)
@@ -948,14 +948,14 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --minimumStepLength 0.001
   --outputVolumePixelType uchar
   --transformType Affine
-  --initialTransform DATA{${TestData_DIR}/BRAINSFitTest_Initializer_RigidRotationNoMasks.mat}
+  --initialTransform DATA{${TestData_DIR}/BRAINSFitTest_Initializer_RigidRotationNoMasks.${XFRM_EXT}}
   --maskProcessingMode ROI
   --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
   --fixedBinaryVolume DATA{${TestData_DIR}/test_mask.nii.gz}
   --movingVolume DATA{${TestData_DIR}/rotation.test.nii.gz}
   --movingBinaryVolume DATA{${TestData_DIR}/rotation.test_mask.nii.gz}
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
-  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.mat
+  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
   --debugLevel 50
 )
 
@@ -977,14 +977,14 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --minimumStepLength 0.001
   --outputVolumePixelType uchar
   --transformType ScaleSkewVersor3D
-  --initialTransform DATA{${TestData_DIR}/BRAINSFitTest_Initializer_RigidRotationNoMasks.mat}
+  --initialTransform DATA{${TestData_DIR}/BRAINSFitTest_Initializer_RigidRotationNoMasks.${XFRM_EXT}}
   --maskProcessingMode ROI
   --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
   --fixedBinaryVolume DATA{${TestData_DIR}/test_mask.nii.gz}
   --movingVolume DATA{${TestData_DIR}/rotation.test.nii.gz}
   --movingBinaryVolume DATA{${TestData_DIR}/rotation.test_mask.nii.gz}
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
-  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.mat
+  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
 )
 
 
@@ -1009,7 +1009,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
   --movingVolume DATA{${TestData_DIR}/test.nii.gz}
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
-  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.mat
+  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
 )
 
 set(BRAINSFitTestName BRAINSFitTest_MSEAffineRotationMasks)
@@ -1030,14 +1030,14 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --minimumStepLength 0.001
   --outputVolumePixelType uchar
   --transformType Affine
-  --initialTransform DATA{${TestData_DIR}/BRAINSFitTest_Initializer_RigidRotationNoMasks.mat}
+  --initialTransform DATA{${TestData_DIR}/BRAINSFitTest_Initializer_RigidRotationNoMasks.${XFRM_EXT}}
   --maskProcessingMode ROI
   --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
   --fixedBinaryVolume DATA{${TestData_DIR}/test_mask.nii.gz}
   --movingVolume DATA{${TestData_DIR}/rotation.test.nii.gz}
   --movingBinaryVolume DATA{${TestData_DIR}/rotation.test_mask.nii.gz}
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
-  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.mat
+  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
   --debugLevel 50
 )
 
@@ -1059,14 +1059,14 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --minimumStepLength 0.001
   --outputVolumePixelType uchar
   --transformType ScaleSkewVersor3D
-  --initialTransform DATA{${TestData_DIR}/BRAINSFitTest_Initializer_RigidRotationNoMasks.mat}
+  --initialTransform DATA{${TestData_DIR}/BRAINSFitTest_Initializer_RigidRotationNoMasks.${XFRM_EXT}}
   --maskProcessingMode ROI
   --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
   --fixedBinaryVolume DATA{${TestData_DIR}/test_mask.nii.gz}
   --movingVolume DATA{${TestData_DIR}/rotation.test.nii.gz}
   --movingBinaryVolume DATA{${TestData_DIR}/rotation.test_mask.nii.gz}
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
-  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.mat
+  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
 )
 
 set(BRAINSFitTestName BRAINSFitTest_MCMetricBrainToItself)
@@ -1090,7 +1090,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
   --movingVolume DATA{${TestData_DIR}/test.nii.gz}
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
-  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.mat
+  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
 )
 
 set(BRAINSFitTestName BRAINSFitTest_MCMetricMaskBrainToItself)
@@ -1114,7 +1114,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --fixedVolume DATA{${TestData_DIR}/testMask.nii.gz}
   --movingVolume DATA{${TestData_DIR}/testMask.nii.gz}
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.testMask.nii.gz
-  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.mat
+  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
 )
 
 set(BRAINSFitTestName BRAINSFitTest_MCAffineRotationMasks)
@@ -1135,14 +1135,14 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --minimumStepLength 0.001
   --outputVolumePixelType uchar
   --transformType Affine
-  --initialTransform DATA{${TestData_DIR}/BRAINSFitTest_Initializer_RigidRotationNoMasks.mat}
+  --initialTransform DATA{${TestData_DIR}/BRAINSFitTest_Initializer_RigidRotationNoMasks.${XFRM_EXT}}
   --maskProcessingMode ROI
   --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
   --fixedBinaryVolume DATA{${TestData_DIR}/test_mask.nii.gz}
   --movingVolume DATA{${TestData_DIR}/rotation.test.nii.gz}
   --movingBinaryVolume DATA{${TestData_DIR}/rotation.test_mask.nii.gz}
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
-  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.mat
+  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
   --debugLevel 50
 )
 
@@ -1164,14 +1164,14 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --minimumStepLength 0.001
   --outputVolumePixelType uchar
   --transformType ScaleSkewVersor3D
-  --initialTransform DATA{${TestData_DIR}/BRAINSFitTest_Initializer_RigidRotationNoMasks.mat}
+  --initialTransform DATA{${TestData_DIR}/BRAINSFitTest_Initializer_RigidRotationNoMasks.${XFRM_EXT}}
   --maskProcessingMode ROI
   --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
   --fixedBinaryVolume DATA{${TestData_DIR}/test_mask.nii.gz}
   --movingVolume DATA{${TestData_DIR}/rotation.test.nii.gz}
   --movingBinaryVolume DATA{${TestData_DIR}/rotation.test_mask.nii.gz}
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
-  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.mat
+  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
 )
 
 # Start of broken metric tests
@@ -1201,7 +1201,7 @@ if(RUN_EXTRA_METRIC_TESTS)
   #  --fixedVolume ${BRAINSCommonLib_DATA_DIRS}/test.nii.gz
   #  --movingVolume ${BRAINSCommonLib_DATA_DIRS}/test.nii.gz
   #  --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
-  #  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.mat
+  #  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
   #)
 
   # The Kappa Statistic metric is meant for binary images which is why
@@ -1231,7 +1231,7 @@ if(RUN_EXTRA_METRIC_TESTS)
     --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
     --movingVolume DATA{${TestData_DIR}/test.nii.gz}
     --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
-    --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.mat
+    --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
   )
 
   set(BRAINSFitTestName BRAINSFitTest_KSMetricBrainMaskToItself)
@@ -1256,7 +1256,7 @@ if(RUN_EXTRA_METRIC_TESTS)
     --fixedVolume DATA{${TestData_DIR}/testMask.nii.gz}
     --movingVolume DATA{${TestData_DIR}/testMask.nii.gz}
     --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.testMask.nii.gz
-    --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.mat
+    --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
   )
 
 
@@ -1278,14 +1278,14 @@ if(RUN_EXTRA_METRIC_TESTS)
     --minimumStepLength 0.001
     --outputVolumePixelType uchar
     --transformType Affine
-    --initialTransform DATA{${TestData_DIR}/BRAINSFitTest_Initializer_RigidRotationNoMasks.mat}
+    --initialTransform DATA{${TestData_DIR}/BRAINSFitTest_Initializer_RigidRotationNoMasks.${XFRM_EXT}}
     --maskProcessingMode ROI
     --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
     --fixedBinaryVolume DATA{${TestData_DIR}/test.nii.gz}
     --movingVolume DATA{${TestData_DIR}/rotation.test.nii.gz}
     --movingBinaryVolume DATA{${TestData_DIR}/rotation.test.nii.gz}
     --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
-    --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.mat
+    --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
     --debugLevel 50
   )
 
@@ -1307,14 +1307,14 @@ if(RUN_EXTRA_METRIC_TESTS)
     --minimumStepLength 0.001
     --outputVolumePixelType uchar
     --transformType ScaleSkewVersor3D
-    --initialTransform DATA{${TestData_DIR}/BRAINSFitTest_Initializer_RigidRotationNoMasks.mat}
+    --initialTransform DATA{${TestData_DIR}/BRAINSFitTest_Initializer_RigidRotationNoMasks.${XFRM_EXT}}
     --maskProcessingMode ROI
     --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
     --fixedBinaryVolume DATA{${TestData_DIR}/test.nii.gz}
     --movingVolume DATA{${TestData_DIR}/rotation.test.nii.gz}
     --movingBinaryVolume DATA{${TestData_DIR}/rotation.test.nii.gz}
     --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
-    --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.mat
+    --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
   )
 
   # Fails to converge when registering a brain to itself.
@@ -1339,7 +1339,7 @@ if(RUN_EXTRA_METRIC_TESTS)
     --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
     --movingVolume DATA{${TestData_DIR}/test.nii.gz}
     --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
-    --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.mat
+    --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
   )
 
   # Segfault when running this test
@@ -1364,7 +1364,7 @@ if(RUN_EXTRA_METRIC_TESTS)
     --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
     --movingVolume DATA{${TestData_DIR}/test.nii.gz}
     --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
-    --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.mat
+    --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
   )
 
   # Fails to converge when registering a brain to itself.
@@ -1389,7 +1389,7 @@ if(RUN_EXTRA_METRIC_TESTS)
     --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
     --movingVolume DATA{${TestData_DIR}/test.nii.gz}
     --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
-    --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.mat
+    --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
   )
 
   # Segfault when running this test
@@ -1414,7 +1414,7 @@ if(RUN_EXTRA_METRIC_TESTS)
     --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
     --movingVolume DATA{${TestData_DIR}/test.nii.gz}
     --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
-    --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.mat
+    --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
   )
 
   # Segfault when running this test
@@ -1439,7 +1439,7 @@ if(RUN_EXTRA_METRIC_TESTS)
     --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
     --movingVolume DATA{${TestData_DIR}/test.nii.gz}
     --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
-    --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.mat
+    --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
   )
 
   # Segfault when running this test
@@ -1464,7 +1464,7 @@ if(RUN_EXTRA_METRIC_TESTS)
     --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
     --movingVolume DATA{${TestData_DIR}/test.nii.gz}
     --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
-    --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.mat
+    --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
   )
 endif(RUN_EXTRA_METRIC_TESTS)
 
@@ -1490,14 +1490,14 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitEZTestName}
   --outputVolumePixelType uchar
   --transformType Affine
   --initializeTransformMode Off
-  --initialTransform DATA{${TestData_DIR}/BRAINSFitTest_Initializer_RigidRotationNoMasks.mat}
+  --initialTransform DATA{${TestData_DIR}/BRAINSFitTest_Initializer_RigidRotationNoMasks.${XFRM_EXT}}
   --maskProcessingMode ROI
   --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
   --fixedBinaryVolume DATA{${TestData_DIR}/test_mask.nii.gz}
   --movingVolume DATA{${TestData_DIR}/rotation.test.nii.gz}
   --movingBinaryVolume DATA{${TestData_DIR}/rotation.test_mask.nii.gz}
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
-  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.mat
+  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
   --debugLevel 50
 )
 

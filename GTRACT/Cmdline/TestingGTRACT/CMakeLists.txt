@@ -33,7 +33,7 @@ add_test(gtractCoregBvalues_Test ${LAUNCH_EXE} $<TARGET_FILE:GTRACT_CoregBvalues
   --fixedVolumeIndex 0 --debugLevel 0
   --eddyCurrentCorrection --relaxationFactor 0.25 --maximumStepSize 0.1
   --outputVolume ${GTRACT_TEST_OUTPUT_DIR}/b0_s.nhdr
-  --outputTransform ${GTRACT_TEST_OUTPUT_DIR}/b0_s.mat
+  --outputTransform ${GTRACT_TEST_OUTPUT_DIR}/b0_s.${XFRM_EXT}
 )
 
 add_test(gtractCoRegAnatomy_Rigid_Test ${LAUNCH_EXE} $<TARGET_FILE:GTRACT_CoRegAnatomy_TESTS>
@@ -41,7 +41,7 @@ add_test(gtractCoRegAnatomy_Rigid_Test ${LAUNCH_EXE} $<TARGET_FILE:GTRACT_CoRegA
      --inputVolume ${GTRACT_TEST_OUTPUT_DIR}/b0_s.nhdr
      --vectorIndex 0
      --inputAnatomicalVolume ${GTRACT_TEST_INPUT_DIR}/t1_002.nhdr
-     --outputTransformName ${GTRACT_TEST_OUTPUT_DIR}/rigid_s.mat
+     --outputTransformName ${GTRACT_TEST_OUTPUT_DIR}/rigid_s.${XFRM_EXT}
      --numberOfSamples 500000
      --transformType Rigid
 )
@@ -51,11 +51,11 @@ add_test(gtractCoRegAnatomy_Bspline_Test ${LAUNCH_EXE} $<TARGET_FILE:GTRACT_CoRe
      --inputVolume ${GTRACT_TEST_OUTPUT_DIR}/b0_s.nhdr
      --vectorIndex 0
      --inputAnatomicalVolume ${GTRACT_TEST_INPUT_DIR}/t1_002.nhdr
-     --outputTransformName ${GTRACT_TEST_OUTPUT_DIR}/bspline_s.mat
+     --outputTransformName ${GTRACT_TEST_OUTPUT_DIR}/bspline_s.${XFRM_EXT}
      --numberOfIterations 500
      --transformType Bspline
      --gradientTolerance 5e-6
-     --inputRigidTransform ${GTRACT_TEST_OUTPUT_DIR}/rigid_s.mat
+     --inputRigidTransform ${GTRACT_TEST_OUTPUT_DIR}/rigid_s.${XFRM_EXT}
      --gridSize 18,6,18
      --spatialScale 10
 )

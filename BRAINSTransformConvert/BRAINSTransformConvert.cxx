@@ -375,7 +375,31 @@ int main(int argc, char *argv[])
     outputXfrm = bsplineXfrm.GetPointer();
     }
 #endif
-  // write the resulting transform.
-  itk::WriteTransformToDisk(outputXfrm.GetPointer(), outputTransform);
+  if( outputTransformType == "Same" )
+    {
+    typedef itk::TransformFileWriter TransformWriterType;
+    TransformWriterType::Pointer transformWriter = TransformWriterType::New();
+    transformWriter->SetFileName(outputTransform);
+    for( itk::TransformFileReader::TransformListType::iterator it = transformList->begin();
+         it != transformList->end(); ++it )
+      {
+      transformWriter->AddTransform( (*it).GetPointer() );
+      }
+
+    try
+      {
+      transformWriter->Update();
+      }
+    catch( itk::ExceptionObject & excp )
+      {
+      std::cerr << "Can't write " << outputTransform << excp.GetDescription() << std::endl;
+      return EXIT_FAILURE;
+      }
+    }
+  else
+    {
+    // write the resulting transform.
+    itk::WriteTransformToDisk(outputXfrm.GetPointer(), outputTransform);
+    }
   return EXIT_SUCCESS;
 }

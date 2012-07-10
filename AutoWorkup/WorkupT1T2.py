@@ -293,6 +293,16 @@ def WorkupT1T2(mountPrefix,ExperimentBaseDirectoryCache, ExperimentBaseDirectory
         baw200.connect(myLocalTCWF,'OutputSpec.outputHeadLabels',myLocalAntsWF,'InputSpec.fixedBinaryVolume')
         baw200.connect(BAtlas,'template_headregion',myLocalAntsWF,'InputSpec.movingBinaryVolume')
 
+        ### Now define where the final organized outputs should go.
+        ANTS_DataSink=pe.Node(nio.DataSink(),name="ANTSRegistration_DS")
+        ANTS_DataSink.inputs.base_directory=ExperimentBaseDirectoryResults
+        ANTS_DataSink.inputs.regexp_substitutions = GenerateOutputPattern(ExperimentDatabase,'ANTSRegistration')
+        baw200.connect(myLocalAntsWF, 'OutputSpec.warped_image', ANTS_DataSink,'ANTSRegistration.@warped_image')
+        baw200.connect(myLocalAntsWF, 'OutputSpec.inverse_warped_image', ANTS_DataSink,'ANTSRegistration.@inverse_warped_image')
+        baw200.connect(myLocalAntsWF, 'OutputSpec.affine_transform', ANTS_DataSink,'ANTSRegistration.@affine_transform')
+        baw200.connect(myLocalAntsWF, 'OutputSpec.warp_transform', ANTS_DataSink,'ANTSRegistration.@warp_transform')
+        baw200.connect(myLocalAntsWF, 'OutputSpec.inverse_warp_transform', ANTS_DataSink,'ANTSRegistration.@inverse_warp_transform')
+
     if 'SEGMENTATION' in WORKFLOW_COMPONENTS:
         def getListIndex( imageList, index):
             return imageList[index]

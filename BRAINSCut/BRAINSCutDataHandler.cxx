@@ -409,7 +409,7 @@ BRAINSCutDataHandler
   sprintf( tempNTrees, "%04u", NTrees );
   std::cout << __LINE__ << "::" << __FILE__ << std::endl;
 
-  std::string filename = basename + "D" + tempDepth + "NT" + tempNTrees;
+  std::string filename = basename + "D" + tempDepth + "NT" + tempNTrees + ".gz";
 
   std::cout << __LINE__ << "::" << __FILE__ << std::endl;
   return filename;

@@ -1036,7 +1036,8 @@ template <class TFixedImage, class TMovingImage, class TDeformationField>
 void
 ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDeformationField>
 ::ThreadedComputeLinearElastic(DeformationFieldFFTPointer& coeff, float rho4delta_normalizer,
-                               const ThreadRegionType & regionToProcess, int)
+                               const ThreadRegionType & regionToProcess,
+                               int)
 {
   ImageRegionIterator<DeformationFieldFFTType> CoeffsIterator(coeff, regionToProcess);
   for( CoeffsIterator.GoToBegin();
@@ -1153,7 +1154,8 @@ ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDeformationField>
   if( threadId < total )
     {
     str->Filter->ThreadedComputeInverseConsistency(str->inverse0, str->inverse1, str->normalizer_InverseConsistency,
-                                                   splitRegion, threadId);
+                                                   splitRegion,
+                                                   threadId);
     }
 
   return ITK_THREAD_RETURN_VALUE;
@@ -1163,7 +1165,8 @@ template <class TFixedImage, class TMovingImage, class TDeformationField>
 void
 ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDeformationField>
 ::ThreadedComputeInverseConsistency(DeformationFieldFFTPointer& inv0, DeformationFieldFFTPointer& inv1,
-                                    float normalizer, const ThreadRegionType & regionToProcess, int)
+                                    float normalizer, const ThreadRegionType & regionToProcess,
+                                    int)
 {
   ImageRegionIterator<DeformationFieldFFTType>      coeffsIter0(m_Coefficients[0], regionToProcess);
   ImageRegionConstIterator<DeformationFieldFFTType> iter0(inv0, regionToProcess);

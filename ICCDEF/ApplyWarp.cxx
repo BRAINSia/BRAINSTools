@@ -216,8 +216,8 @@ int ApplyWarp(int argc, char *argv[])
     if( orientationRAI )
       {
       DeformationField = itkUtil::ReadImage<DeformationFieldType>(deformationVolume);
-      DeformationField = itkUtil::OrientImage<DeformationFieldType>(DeformationField,
-                                                                    itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RAI);
+      DeformationField = itkUtil::OrientImage<DeformationFieldType>(
+          DeformationField, itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RAI);
       }
     else
       {

@@ -102,7 +102,8 @@ template <class TInputImage, class TOutputImage>
 void
 ICCIterativeInverseDeformationFieldImageFilter<TInputImage, TOutputImage>
 ::ThreadedComputeInverse(InputImageConstPointer& inputPtr, OutputImagePointer& outputPtr,
-                         const ThreadRegionType & regionToProcess, int)
+                         const ThreadRegionType & regionToProcess,
+                         int)
 {
   OutputIterator     OutputIt = OutputIterator(outputPtr, regionToProcess);
   InputConstIterator InputIt = InputConstIterator(inputPtr, regionToProcess);

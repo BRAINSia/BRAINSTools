@@ -75,8 +75,8 @@ int AverageBrainGenerator(int argc, char *argv[])
 
   ImageType::Pointer templateImage;
   templateImage = itkUtil::ReadImage<ImageType>(templateVolume);
-  templateImage =
-    itkUtil::OrientImage<ImageType>(templateImage, itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RAI);
+  templateImage = itkUtil::OrientImage<ImageType>(templateImage,
+                                                  itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RAI);
   // Read Directory
 
   unsigned int numberOfFields = 0;

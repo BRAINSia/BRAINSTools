@@ -576,6 +576,7 @@ ICCDeformableFunction<TFixedImage, TMovingImage, TDeformationField>
           {
           pixel1[i] = pixel1[i] - (m_LandmarkWeight * smoothIter.Get() * iter.Get()[i]);            // *
                                                                                                     //
+                                                                                                    //
                                                                                                     // delta_normalizer);
           }
         coeffsIter.Set(pixel1);

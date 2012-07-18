@@ -65,8 +65,8 @@ IccdefPreprocessor<TInputImage, TOutputImage>
   // itk::NumericTraits< typename OutputImageType::PixelType >::max()
   // InputPixelType fixedMaximum = fixedMMImage->GetMaximum();
   typedef itk::RescaleIntensityImageFilter<InputImageType, InputImageType> RescaleIntensityImageType;
-  if( fixedMMImage->GetMaximum() > (InputPixelType)itk::NumericTraits<unsigned char>::max()
-      || fixedMMImage->GetMinimum() < (InputPixelType)itk::NumericTraits<unsigned char>::min() )
+  if( fixedMMImage->GetMaximum() > (InputPixelType) itk::NumericTraits<unsigned char>::max()
+      || fixedMMImage->GetMinimum() < (InputPixelType) itk::NumericTraits<unsigned char>::min() )
     {
     typename RescaleIntensityImageType::Pointer rescale_FixedImage = RescaleIntensityImageType::New();
     rescale_FixedImage->SetInput(this->m_InputFixedImage);
@@ -81,8 +81,8 @@ IccdefPreprocessor<TInputImage, TOutputImage>
                 << fixedMMImage->GetMaximum() << "] to: [0,255]" << std::endl;
       }
     }
-  if( movingMMImage->GetMaximum() > (InputPixelType)itk::NumericTraits<unsigned char>::max()
-      || movingMMImage->GetMinimum() < (InputPixelType)itk::NumericTraits<unsigned char>::min() )
+  if( movingMMImage->GetMaximum() > (InputPixelType) itk::NumericTraits<unsigned char>::max()
+      || movingMMImage->GetMinimum() < (InputPixelType) itk::NumericTraits<unsigned char>::min() )
     {
     typename RescaleIntensityImageType::Pointer rescale_MovingImage = RescaleIntensityImageType::New();
     rescale_MovingImage->SetInput(this->m_InputMovingImage);

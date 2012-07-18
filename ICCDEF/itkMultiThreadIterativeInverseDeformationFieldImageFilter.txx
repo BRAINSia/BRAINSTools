@@ -239,7 +239,8 @@ template <class TInputImage, class TOutputImage>
 void
 MultiThreadIterativeInverseDeformationFieldImageFilter<TInputImage, TOutputImage>
 ::ComputeInverse(InputImageConstPointer& inputPtr, OutputImagePointer& outputPtr,
-                 FieldInterpolatorPointer& inputFieldInterpolator, double spacing)
+                 FieldInterpolatorPointer& inputFieldInterpolator,
+                 double spacing)
 {
   ThreadStruct str;
 
@@ -287,7 +288,8 @@ void
 MultiThreadIterativeInverseDeformationFieldImageFilter<TInputImage, TOutputImage>
 ::ThreadedComputeInverse(InputImageConstPointer& inputPtr, OutputImagePointer& outputPtr,
                          FieldInterpolatorPointer& inputFieldInterpolator, double spacing,
-                         const ThreadRegionType & regionToProcess, int)
+                         const ThreadRegionType & regionToProcess,
+                         int)
 {
   OutputIterator              OutputIt = OutputIterator(outputPtr, regionToProcess);
   InputConstIterator          InputIt = InputConstIterator(inputPtr, regionToProcess);

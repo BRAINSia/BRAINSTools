@@ -179,8 +179,8 @@ public:
 
   virtual void ComputeMetric( void *globalData);
 
-  virtual PixelType  ComputeUpdate(const NeighborhoodType & neighborhood, void *globalData,
-                                   const FloatOffsetType & offset = FloatOffsetType(0.0) );
+  virtual PixelType  ComputeUpdate(const NeighborhoodType & neighborhood, void *globalData, const FloatOffsetType & offset = FloatOffsetType(
+                                       0.0) );
 
   /** Get the metric value. The metric value is the mean square difference
    * in intensity between the fixed image and transforming moving image

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8" ?>
+  <executable>
+  <category>BRAINS-Registration</category>
+  <title>Average Brain Generator</title>
+
+  <description>
+This programs creates synthesized average brain.
+  </description>
+  <version>0.1</version>
+  <documentation-url>http:://mri.radiology.uiowa.edu/mriwiki</documentation-url>
+  <license>NEED TO ADD</license>
+  <contributor>This tool was developed by Yongqiang Zhao.</contributor>
+
+  <parameters>
+    <label>Input Files </label>
+    <description>Parameters for specifying the deformation field, image to warp and resulting image space</description>
+
+    <image>
+      <name>inputDirectory</name>
+      <longflag>--inputDirectory</longflag>
+      <description>Image To Warp</description>
+      <label>Image To Warp</label>
+      <channel>input</channel>
+    </image>
+
+    <image>
+      <name>templateVolume</name>
+      <longflag>--templateVolume</longflag>
+      <description>Reference image defining the output space</description>
+      <label>Reference Image</label>
+      <channel>input</channel>
+    </image>
+
+    <string>
+      <name>resolusion</name>
+      <longflag>resolusion</longflag>
+      <label>Resolusion</label>
+      <description>The resolusion.</description>
+      <default>10000</default>
+    </string>
+   
+   <string>
+      <name>iteration</name>
+      <longflag>iteration</longflag>
+      <label>iteration</label>
+      <description>The iteration.</description>
+      <default>1760</default>
+    </string>
+
+  </parameters>
+
+  <parameters>
+    <label>Result File</label>
+    <description>Resulting deformed image</description>
+
+    <string-enumeration>
+      <name>pixelType</name>
+      <longflag>--pixelType</longflag>
+      <label>Pixel Type</label>
+      <description>Specifies the pixel type for the input/output images</description>
+      <default>uchar</default>
+      <element>uchar</element>
+      <element>short</element>
+      <element>ushort</element>
+      <element>int</element>
+      <element>uint</element>
+      <element>float</element>
+    </string-enumeration>
+
+    <file>
+      <name>outputVolume</name>
+      <longflag>--outputVolume</longflag>
+      <description>Resulting deformed image</description>
+      <label>Output Image</label>
+      <channel>output</channel>
+    </file>
+  </parameters>
+
+</executable>
+
+

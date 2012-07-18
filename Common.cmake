@@ -13,6 +13,7 @@ option(USE_GTRACT                          "Build GTRACT"                       
 option(USE_BRAINSContinuousClass           "Build BRAINSContinuousClass "          OFF)
 option(USE_AutoWorkup                      "Build AutoWorkup"                      OFF)
 option(USE_BRAINSSurfaceTools              "Build BRAINSSurfaceTools     "         OFF)
+option(USE_ICCDEF                          "Build ICCDEF     "                     OFF)
 
 set(ITK_VERSION_MAJOR 4 CACHE STRING "Choose the expected ITK major version to build BRAINS (3 or 4).")
 # Set the possible values of ITK major version for cmake-gui

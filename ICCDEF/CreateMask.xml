@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" ?>
+  <executable>
+  <category>BRAINS-Registration</category>
+  <title>Create Mask</title>
+
+  <description>
+This programs creates synthesized average brain.
+  </description>
+  <version>0.1</version>
+  <documentation-url>http:://mri.radiology.uiowa.edu/mriwiki</documentation-url>
+  <license>NEED TO ADD</license>
+  <contributor>This tool was developed by Yongqiang Zhao.</contributor>
+
+  <parameters>
+    <label>Input Files </label>
+    <description>Parameters for specifying the deformation field, image to warp and resulting image space</description>
+
+    <image>
+      <name>inputVolume</name>
+      <longflag>--inputVolume</longflag>
+      <description>Input Image</description>
+      <label>Input Image</label>
+      <channel>input</channel>
+    </image>
+
+    <integer>
+       <name>closingSize</name>
+       <longflag>closingSize</longflag>
+       <description>Closing Size</description>
+       <label>Closing size</label>
+       <default>7</default>
+    </integer>
+
+   <double>
+       <name>threshold</name>
+       <longflag>threshold</longflag>
+       <description>otsuPercentileThreshold</description>
+       <label>otsuPercentileThreshold</label>
+       <default>0.01</default>
+    </double>
+
+  </parameters>
+ 
+  <parameters>
+    <label>Output Files </label>
+     
+    <image>
+      <name>outputVolume</name>
+      <longflag>--outputVolume</longflag>
+      <description>Output Image</description>
+      <label>Output Image</label>
+      <channel>output</channel>
+    </image>
+  </parameters>
+
+</executable>

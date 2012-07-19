@@ -10,7 +10,7 @@
 #include "itkIndex.h"
 #include "itkSize.h"
 #include "itkExceptionObject.h"
-#include "itkBrains2MaskImageIOFactory.h"
+// #include "itkBrains2MaskImageIOFactory.h"
 #include "ICCDEFWarp.h"
 #include "iccdefRegistration_NewCLP.h"
 

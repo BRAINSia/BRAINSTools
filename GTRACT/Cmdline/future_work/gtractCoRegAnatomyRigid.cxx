@@ -167,7 +167,7 @@ int main(int argc, char * *argv)
   try
     {
     // registerImageFilter->Update( );
-    registerImageFilter->StartRegistration();
+    registerImageFilter->Update();
     }
   catch( itk::ExceptionObject & ex )
     {

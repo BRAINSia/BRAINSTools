@@ -497,7 +497,7 @@ int main(int argc, char *argv[])
       {
       myHelper->PrintCommandLine(true, "BF");
       }
-    myHelper->StartRegistration();
+    myHelper->Update();
     currentGenericTransform = myHelper->GetCurrentGenericTransform();
     MovingVolumeType::ConstPointer preprocessedMovingVolume = myHelper->GetPreprocessedMovingVolume();
 #if 0

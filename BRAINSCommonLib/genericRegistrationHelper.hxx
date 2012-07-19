@@ -369,7 +369,7 @@ template <typename TTransformType, typename TOptimizer, typename TFixedImage,
 void
 MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
                                      TMovingImage, MetricType>
-::StartRegistration(void)
+::Update(void)
 {
   if( !m_InitialTransformPassThruFlag )
     {
@@ -491,7 +491,7 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
                                      TMovingImage, MetricType>
 ::GenerateData()
 {
-  this->StartRegistration();
+  this->Update();
 }
 
 template <typename TTransformType, typename TOptimizer, typename TFixedImage,

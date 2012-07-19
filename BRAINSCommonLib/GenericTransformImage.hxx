@@ -52,7 +52,7 @@ TransformWarp(
   typedef typename itk::WarpImageFilter<InputImageType, OutputImageType, DisplacementImageType> WarpImageFilter;
   typename WarpImageFilter::Pointer warp = WarpImageFilter::New();
   warp->SetInput(inputImage);
-  warp->SetDeformationField(displacementField);
+  warp->SetDisplacementField(displacementField);
   warp->SetInterpolator(interp);
 
   if( ReferenceImage != NULL )

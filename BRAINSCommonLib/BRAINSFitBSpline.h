@@ -2,7 +2,7 @@
 #define __BRAINSFitBSpline_h
 
 #include <itkBSplineDeformableTransform.h>
-#include <itkBSplineDeformableTransformInitializer.h>
+#include <brainsBSplineDeformableTransformInitializer.h>
 #include <itkLBFGSBOptimizer.h>
 #include <itkTimeProbesCollectorBase.h>
 #include <itkImageRegistrationMethod.h>

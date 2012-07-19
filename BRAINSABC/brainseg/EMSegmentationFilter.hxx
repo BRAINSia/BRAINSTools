@@ -1466,7 +1466,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
           muLogMacro( << __FILE__ << " " << __LINE__ << " "  <<   std::endl );
           atlasToSubjectCounter++;
           }
-        atlasToSubjectRegistrationHelper->StartRegistration();
+        atlasToSubjectRegistrationHelper->Update();
         unsigned int actualIterations = atlasToSubjectRegistrationHelper->GetActualNumberOfIterations();
         muLogMacro( << "Registration tool " << actualIterations << " iterations." << std::endl );
 #if 0   // ERROR:  This is not working correctly, because the proper number of
@@ -1476,7 +1476,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
           double newGradientTolerance = atlasToSubjectRegistrationHelper->GetProjectedGradientTolerance() * 0.1;
           atlasToSubjectRegistrationHelper->SetProjectedGradientTolerance(newGradientTolerance);
           muLogMacro( << "Reducing Gradient Tolerance to " << newGradientTolerance << std::endl );
-          atlasToSubjectRegistrationHelper->StartRegistration();
+          atlasToSubjectRegistrationHelper->Update();
           actualIterations = atlasToSubjectRegistrationHelper->GetActualNumberOfIterations();
           muLogMacro( << "Registration tool " << actualIterations << " iterations." << std::endl );
           }

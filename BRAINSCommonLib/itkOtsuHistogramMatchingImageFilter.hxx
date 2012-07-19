@@ -19,7 +19,6 @@
 #include "itkNumericTraits.h"
 #include <vector>
 
-#include "itkOtsuThresholdImageCalculator.h"
 #include "BRAINSFitUtils.h"
 
 namespace itk

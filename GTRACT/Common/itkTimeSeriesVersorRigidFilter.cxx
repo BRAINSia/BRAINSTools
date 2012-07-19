@@ -167,7 +167,7 @@ void TimeSeriesVersorRigidFilter::Update()
 
     try
       {
-      registration->StartRegistration();
+      registration->Update();
       }
     catch( itk::ExceptionObject & err )
       {

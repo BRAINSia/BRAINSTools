@@ -6,8 +6,6 @@
 
 #include <itkNumericTraits.h>
 #include <itkMinimumMaximumImageFilter.h>
-// Not this:   #include <itkOtsuMultipleThresholdsCalculator.h>
-#include <itkOtsuThresholdImageCalculator.h>
 #include <itkCastImageFilter.h>
 
 namespace itk

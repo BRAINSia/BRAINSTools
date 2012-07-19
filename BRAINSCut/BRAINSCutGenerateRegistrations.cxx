@@ -276,7 +276,7 @@ BRAINSCutGenerateRegistrations
     BSplineRegistrationHelper->PrintCommandLine(true, "BSplineRegistrationHelper");
     }
 
-  BSplineRegistrationHelper->StartRegistration();
+  BSplineRegistrationHelper->Update();
 
   if( verbose > 0 )
     {

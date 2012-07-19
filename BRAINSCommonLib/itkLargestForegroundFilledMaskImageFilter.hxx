@@ -19,10 +19,9 @@
 #include <itkNumericTraits.h>
 #include <itkMinimumMaximumImageFilter.h>
 #include <itkScalarImageToHistogramGenerator.h>
-
-#include "itkOtsuThresholdCalculator.h"
-#include "itkImageToHistogramFilter.h"
-
+// Not this:   #include <itkOtsuMultipleThresholdsCalculator.h>
+#include <itkImageToHistogramFilter.h>
+#include <itkOtsuThresholdCalculator.h>
 #include <itkCastImageFilter.h>
 
 namespace itk
@@ -136,7 +135,6 @@ LargestForegroundFilledMaskImageFilter<TInputImage, TOutputImage>
     {
     // ##The Otsu thresholding stuff below should not be part of the new class,
     // it shout really be a separate function.
-    //
     typedef itk::Statistics::ImageToHistogramFilter<TInputImage> HistogramGeneratorType;
     typedef typename HistogramGeneratorType::HistogramType       HistogramType;
 
@@ -155,9 +153,8 @@ LargestForegroundFilledMaskImageFilter<TInputImage, TOutputImage>
     // std::cout << "whole-image-based otsuThreshold was: " << otsuThreshold <<
     // std::endl;
 
-    typename TInputImage::PixelType otsuThresholdResult =
-      static_cast<typename TInputImage::PixelType>
-      ( m_ThresholdCorrectionFactor * static_cast<double>( otsuThreshold ) );
+    const typename TInputImage::PixelType & otsuThresholdResult =
+      static_cast<typename TInputImage::PixelType>( m_ThresholdCorrectionFactor * otsuThreshold );
     threshold_low_foreground = otsuThresholdResult;
     }
 

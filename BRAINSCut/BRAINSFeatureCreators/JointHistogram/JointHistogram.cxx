@@ -35,8 +35,8 @@ main(int argc, char *argv[])
   PARSE_ARGS;
   // define image with type of voxel
   typedef double PixelType;
-  const unsigned int Dimension = 3;
-  typedef itk::Image<PixelType, Dimension> InputImageType;
+  const  unsigned long int Dimension = 3;
+  typedef itk::Image<PixelType, 3> InputImageType;
 
   // there has to be two input volumes and label volume
   if( ( inputVolumeInXAxis.empty() ) || (inputVolumeInYAxis.empty() ) )
@@ -154,9 +154,9 @@ main(int argc, char *argv[])
     imageInY->TransformPhysicalPointToIndex( currentPhysicalPoint, currentIndexOfY );
 
     bool imageInBoundary = true;
-    for( unsigned int dimIndex = 0; dimIndex < Dimension; dimIndex++ )
+    for( InputImageType::SizeType::SizeValueType dimIndex = 0; dimIndex < Dimension; dimIndex++ )
       {
-      if( currentIndexOfY[dimIndex] > imageInYSize[dimIndex] )
+      if( currentIndexOfY[dimIndex] > static_cast<InputImageType::IndexType::IndexValueType>( imageInYSize[dimIndex] ) )
         {
         imageInBoundary = false;
         }

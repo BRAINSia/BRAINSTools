@@ -187,7 +187,7 @@ public:
   itkGetConstMacro(ForceMINumberOfThreads, int);
 
   /** Method that initiates the registration. */
-  void StartRegistration(void);
+  void Update(void);
 
   void PrintCommandLine(const bool dumpTempVolumes, const std::string suffix) const;
 
@@ -400,7 +400,7 @@ BRAINSFitHelper::RunRegistration()
     {
     std::cout << "ERROR:  Invalid BRAINSFitHelper conversion" << __FILE__ << " " << __LINE__ << std::endl;
     }
-  myHelper->StartRegistration();
+  myHelper->Update();
   this->m_CurrentGenericTransform = myHelper->GetCurrentGenericTransform();
   this->m_ActualNumberOfIterations = myHelper->GetActualNumberOfIterations();
   this->m_PermittedNumberOfIterations = myHelper->GetPermittedNumberOfIterations();

@@ -191,7 +191,7 @@ public:
   itkSetMacro(RemoveIntensityOutliers, bool);
   itkGetConstMacro(RemoveIntensityOutliers, bool);
   /** Method that initiates the registration. */
-  void StartRegistration(void);
+  void Update(void);
 
   itkSetMacro(ForceMINumberOfThreads, int);
   itkGetConstMacro(ForceMINumberOfThreads, int);

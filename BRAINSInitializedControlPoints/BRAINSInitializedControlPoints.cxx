@@ -30,7 +30,7 @@ See License.txt or http://www.slicer.org/copyright/copyright.txt for details.
 #include "itkVectorImage.h"
 
 #include "itkBSplineDeformableTransform.h"
-#include "itkBSplineDeformableTransformInitializer.h"
+#include "brainsBSplineDeformableTransformInitializer.h"
 #include "Slicer3LandmarkIO.h"
 
 #include "BRAINSInitializedControlPointsCLP.h"
@@ -114,7 +114,7 @@ int main(int argc, char* argv[])
   typedef BSplineTransformType::RegionType TransformRegionType;
   typedef TransformRegionType::SizeType    TransformSizeType;
 
-  typedef itk::BSplineDeformableTransformInitializer
+  typedef itk::brainsBSplineDeformableTransformInitializer
     <BSplineTransformType, FixedVolumeType> InitializerType;
   InitializerType::Pointer transformInitializer = InitializerType::New();
 
@@ -148,7 +148,7 @@ int main(int argc, char* argv[])
   initialBSplineTransform->SetParameters(temp);
   // std::cout << transformInitializer << std::endl;
 
-  BSplineTransformType::ImagePointer coefficientImage = initialBSplineTransform->GetCoefficientImage()[0];
+  BSplineTransformType::ImagePointer coefficientImage = initialBSplineTransform->GetCoefficientImages()[0];
   std::cout << "fixedImage\n" << fixedImage << std::endl;
   std::cout << "coefficientImage\n" << coefficientImage << std::endl;
   std::cout << "initialBSplineTransform\n" << initialBSplineTransform << std::endl;

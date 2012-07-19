@@ -87,7 +87,7 @@ BRAINSFitHelper::BRAINSFitHelper() :
 }
 
 void
-BRAINSFitHelper::StartRegistration(void)
+BRAINSFitHelper::Update(void)
 {
   // Do remove intensity outliers if requested
   if(  m_RemoveIntensityOutliers > vcl_numeric_limits<float>::epsilon() )
@@ -577,6 +577,6 @@ BRAINSFitHelper::PrintCommandLine(const bool dumpTempVolumes, const std::string 
 void
 BRAINSFitHelper::GenerateData()
 {
-  this->StartRegistration();
+  this->Update();
 }
 } // end namespace itk

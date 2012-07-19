@@ -40,7 +40,7 @@ PURPOSE.  See the above copyright notices for more information.
 #include <itkThinPlateR2LogRSplineKernelTransform.h>
 #include <itkIdentityTransform.h>
 #include <itkVersorRigid3DTransform.h>
-#include <itkInverseDeformationFieldImageFilter.h>
+// #include <itkInverseDisplacementFieldImageFilter.h>
 
 #include "TransformToDisplacementField.h"
 

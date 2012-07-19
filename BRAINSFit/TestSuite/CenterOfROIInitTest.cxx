@@ -116,7 +116,7 @@ int main(int, char * *)
   myHelper->SetCurrentGenericTransform(NULL);
   myHelper->SetInitializeTransformMode("useCenterOfROIAlign");
   myHelper->SetTransformType(transformTypeVector);
-  myHelper->StartRegistration();
+  myHelper->Update();
 
   currentGenericTransform = myHelper->GetCurrentGenericTransform();
 

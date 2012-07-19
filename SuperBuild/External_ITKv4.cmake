@@ -64,13 +64,15 @@ if(NOT DEFINED ${extProjName}_DIR AND NOT ${USE_SYSTEM_${extProjName}})
   string(REPLACE "-fopenmp" "" ITK_CMAKE_CXX_FLAGS "${CMAKE_CX_FLAGS}")
   if(USE_ICCDEF)
     set(FFTWF_FLAGS -DUSE_FFTWF:BOOL=ON)
+  else()
+    set(FFTWF_FLAGS "")
   endif()
 
   set(${proj}_CMAKE_OPTIONS
       -DITK_LEGACY_REMOVE:BOOL=OFF
+      -DITKV3_COMPATIBILITY:BOOL=ON
       -DITK_BUILD_ALL_MODULES:BOOL=ON
       -DITK_USE_REVIEW:BOOL=ON
-      -DITKV3_COMPATIBILITY:BOOL=ON
       -DKWSYS_USE_MD5:BOOL=ON # Required by SlicerExecutionModel
       -DUSE_WRAP_ITK:BOOL=OFF ## HACK:  QUICK CHANGE
       ${FFTWF_FLAGS}
@@ -96,7 +98,6 @@ if(NOT DEFINED ${extProjName}_DIR AND NOT ${USE_SYSTEM_${extProjName}})
     DEPENDS
       ${${proj}_DEPENDENCIES}
     )
-
   set(${extProjName}_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
 else()
   if(${USE_SYSTEM_${extProjName}})

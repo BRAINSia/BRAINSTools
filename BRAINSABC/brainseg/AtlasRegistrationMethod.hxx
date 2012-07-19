@@ -337,7 +337,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
           muLogMacro( << __FILE__ << " " << __LINE__ << " "  <<  std::endl );
           IntraSubjectRegistration++;
           }
-        intraSubjectRegistrationHelper->StartRegistration();
+        intraSubjectRegistrationHelper->Update();
         const unsigned int actualIterations = intraSubjectRegistrationHelper->GetActualNumberOfIterations();
         muLogMacro( << "Registration tool " << actualIterations << " iterations." << std::endl );
         m_IntraSubjectTransforms[i] = intraSubjectRegistrationHelper->GetCurrentGenericTransform();
@@ -670,7 +670,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
             //
             // atlasToSubjectRegistrationHelper->SetUseWindowedSinc(useWindowedSinc);
             // TODO:  Need to make external/internal variable inside
-            // StartRegistration that
+            // Update that
             //       changes a variable to set the initialization mode
             //       "useCenterOfHeadAlign" works well for brain images, but
             // will break
@@ -727,7 +727,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
             muLogMacro( << __FILE__ << " " << __LINE__ << " "  <<   std::endl );
             originalAtlasToSubject++;
             }
-          atlasToSubjectRegistrationHelper->StartRegistration();
+          atlasToSubjectRegistrationHelper->Update();
           const unsigned int actualIterations = atlasToSubjectRegistrationHelper->GetActualNumberOfIterations();
           muLogMacro( << "Registration tool " << actualIterations << " iterations." << std::endl );
           m_AtlasToSubjectTransform = atlasToSubjectRegistrationHelper->GetCurrentGenericTransform();

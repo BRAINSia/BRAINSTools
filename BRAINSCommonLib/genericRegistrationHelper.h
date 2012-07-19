@@ -432,7 +432,7 @@ public:
   virtual void Initialize(void); // throw ( ExceptionObject );
 
   /** Method that initiates the registration. */
-  void StartRegistration(void);
+  void Update(void);
 
   /** Set/Get the Fixed image. */
   void SetFixedImage(FixedImagePointer fixedImage);

@@ -43,7 +43,7 @@ if(NOT DEFINED ${extProjName}_DIR OR NOT DEFINED ATLAS_NAME)
   endif()
 
   ### --- Project specific additions here
-  set(ATLAS_VERSION 20120627)
+  set(ATLAS_VERSION 20120711)
 
   set(${proj}_CMAKE_OPTIONS
       -DReferenceAtlas_XML_DIR:PATH=<BINARY_DIR>

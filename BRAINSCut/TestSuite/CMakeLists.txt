@@ -69,5 +69,25 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME RandomForestApplyModelTestF
   --applyModel --method RandomForest --randomTreeDepth 6 --numberOfTrees 6
   --netConfiguration ${OutputNetConfigurationForTesting})
 
+##
+## ordering of tests
+
+## data dependency
+set_property( TEST ANNGenerateProbabilityTest APPEND PROPERTY DEPENDS FakeTestToDownloadFiles)
+
+## series of ANN test 
+set_property( TEST ANNCreateVectorsTest       APPEND PROPERTY DEPENDS ANNGenerateProbabilityTest)
+set_property( TEST ANNTrainModelTest          APPEND PROPERTY DEPENDS ANNCreateVectorsTest)
+set_property( TEST ANNApplyModelTest          APPEND PROPERTY DEPENDS ANNTrainModelTest)
+
+## data dependency
+set_property( TEST ANNAllInOneTest            APPEND PROPERTY DEPENDS FakeTestToDownloadFiles)
+
+## random forest
+set_property( TEST RandomForestTrainModelTest  APPEND PROPERTY DEPENDS ANNCreateVectorsTest)
+set_property( TEST RandomForestApplyModelTest  APPEND PROPERTY DEPENDS RandomForestTrainModelTest)
+set_property( TEST RandomForestTrainModelTestFromCLP  APPEND PROPERTY DEPENDS ANNCreateVectorsTest)
+set_property( TEST RandomForestApplyModelTestFromCLP  APPEND PROPERTY DEPENDS RandomForestTrainModelTestFromCLP)
+
 ExternalData_Add_Target( ${PROJECT_NAME}FetchData )  # Name of data management target
 

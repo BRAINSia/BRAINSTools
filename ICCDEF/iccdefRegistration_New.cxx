@@ -2,31 +2,30 @@
    This is the main program of ICCDEF.
 */
 
-#include <iostream>
-#include <string>
-#include <fstream>
-#include <stdio.h>
-#include "itkImage.h"
-#include "itkIndex.h"
-#include "itkSize.h"
-#include "itkExceptionObject.h"
-// #include "itkBrains2MaskImageIOFactory.h"
-#include "ICCDEFWarp.h"
-#include "iccdefRegistration_NewCLP.h"
-
-#include "itkPDEDeformableRegistrationFilter.h"
+// #include <iostream>
+// #include <string>
+// #include <fstream>
+// #include <stdio.h>
 #include "itkArray.h"
+// #include "itkExceptionObject.h"
 #include "itkIO.h"
-#include "itkICCDeformableRegistrationFilter.h"
-#include "ReadMask.h"
+// #include "itkImage.h"
 #include "itkLabelStatisticsImageFilter.h"
-
-#include "commandIterationupdate.h"
+#include "itkPDEDeformableRegistrationFilter.h"
 #include "itkSpatialObjectReader.h"
-#include "itkBrains2LandmarkReader.h"
+
+// #include "itkBrains2MaskImageIOFactory.h"
 #ifdef USE_DEBUG_IMAGE_VIEWER
 #include "DebugImageViewerClient.h"
 #endif
+
+#include "ICCDEFWarp.h"
+#include "ReadMask.h"
+#include "commandIterationupdate.h"
+#include "iccdefRegistration_NewCLP.h"
+
+#include "itkICCDeformableRegistrationFilter.h"
+#include "itkBrains2LandmarkReader.h"
 
 struct ICCDEFWarpAppParameters
   {
@@ -36,21 +35,21 @@ struct ICCDEFWarpAppParameters
   std::string outputPrefix;
   std::string inputPixelType;
   std::string outputPixelType;
-  std::string outputForwardDeformationFieldVolume;
-  std::string outputBackwardDeformationFieldVolume;
+  std::string outputForwardDisplacementFieldVolume;
+  std::string outputBackwardDisplacementFieldVolume;
 
   bool forceCoronalZeroOrigin;
   bool outputDebug;
 
   int backgroundFillValue;
   itk::Size<3> medianFilterSize;
-//  std::string initialDeformationFieldVolume;
+//  std::string initialDisplacementFieldVolume;
   std::string initializeWithTransform;
-  std::string initialFixedDeformationFieldVolume;
-  std::string initialMovingDeformationFieldVolume;
+  std::string initialFixedDisplacementFieldVolume;
+  std::string initialMovingDisplacementFieldVolume;
 
   /** Smoothing sigma for the deformation field at each iteration.*/
-  float smoothDeformationFieldSigma;
+  float smoothDisplacementFieldSigma;
 
   /** Maximum lengthof an update vector. */
   float maxStepLength;
@@ -81,7 +80,7 @@ struct ICCDEFWarpAppParameters
   float harmonic_percent;
   bool normalization;
   bool outputDisplacement;
-  bool outputDeformationField;
+  bool outputDisplacementField;
   bool outputJacobianImage;
   bool useConsistentLandmark;
   bool useConsistentIntensity;
@@ -134,7 +133,7 @@ void ThirionFunction(const struct ICCDEFWarpAppParameters & command)
   typedef itk::Image<InPixelType, dims>              ImageType;
   typedef itk::Image<float, dims>                    TRealImage;
   typedef itk::Image<OutPixelType, dims>             OutputImageType;
-  typedef itk::Image<itk::Vector<float, dims>, dims> TDeformationField;
+  typedef itk::Image<itk::Vector<float, dims>, dims> TDisplacementField;
   // If optional landmark files given, will use landmark registration to
   // generate
   // a deformation field to prime the thirion demons registration.
@@ -205,7 +204,7 @@ void ThirionFunction(const struct ICCDEFWarpAppParameters & command)
   // Set up the demons filter
 
   typedef typename itk::ICCDeformableRegistrationFilter<TRealImage, TRealImage,
-                                                        TDeformationField> ActualRegistrationFilterType;
+                                                        TDisplacementField> ActualRegistrationFilterType;
   ActualRegistrationFilterType::Pointer filter
     = ActualRegistrationFilterType::New();
 
@@ -215,7 +214,7 @@ void ThirionFunction(const struct ICCDEFWarpAppParameters & command)
   filter->SetHarmonicPercent(command.harmonic_percent);
   filter->SetMinJac(command.min_Jacobian_value);
 
-  //  filter->SmoothDeformationFieldOn();
+  //  filter->SmoothDisplacementFieldOn();
 
   if( command.useConsistentIntensity )
     {
@@ -328,23 +327,23 @@ void ThirionFunction(const struct ICCDEFWarpAppParameters & command)
   app->SetRegistrationFilter(filter);
 
 #if 0
-  if( command.initialDeformationFieldVolume != "" )
+  if( command.initialDisplacementFieldVolume != "" )
     {
-    app->SetInitialDeformationFieldFilename(
-      command.initialDeformationFieldVolume.c_str() );
+    app->SetInitialDisplacementFieldFilename(
+      command.initialDisplacementFieldVolume.c_str() );
     }
 #endif
 
-  if( command.initialFixedDeformationFieldVolume != "" )
+  if( command.initialFixedDisplacementFieldVolume != "" )
     {
-    app->SetInitialFixedDeformationFieldFilename(
-      command.initialFixedDeformationFieldVolume.c_str() );
+    app->SetInitialFixedDisplacementFieldFilename(
+      command.initialFixedDisplacementFieldVolume.c_str() );
     }
 
-  if( command.initialMovingDeformationFieldVolume != "" )
+  if( command.initialMovingDisplacementFieldVolume != "" )
     {
-    app->SetInitialMovingDeformationFieldFilename(
-      command.initialMovingDeformationFieldVolume.c_str() );
+    app->SetInitialMovingDisplacementFieldFilename(
+      command.initialMovingDisplacementFieldVolume.c_str() );
     }
 
   if( command.initializeWithTransform != "" )
@@ -369,13 +368,13 @@ void ThirionFunction(const struct ICCDEFWarpAppParameters & command)
 
   app->SetMedianFilterSize(command.medianFilterSize);
 
-  if( command.outputForwardDeformationFieldVolume != "" )
+  if( command.outputForwardDisplacementFieldVolume != "" )
     {
-    app->SetForwardDeformationFieldOutputName(command.outputForwardDeformationFieldVolume);
+    app->SetForwardDisplacementFieldOutputName(command.outputForwardDisplacementFieldVolume);
     }
-  if( command.outputBackwardDeformationFieldVolume != "" )
+  if( command.outputBackwardDisplacementFieldVolume != "" )
     {
-    app->SetBackwardDeformationFieldOutputName(command.outputBackwardDeformationFieldVolume);
+    app->SetBackwardDisplacementFieldOutputName(command.outputBackwardDisplacementFieldVolume);
     }
 
   // Set the other optional arguments if specified by the user.
@@ -383,9 +382,9 @@ void ThirionFunction(const struct ICCDEFWarpAppParameters & command)
     {
     app->SetOutputDisplacement( command.outputDisplacement );
     }
-  if( command.outputDeformationField )
+  if( command.outputDisplacementField )
     {
-    app->SetOutputDeformationField(command.outputDeformationField);
+    app->SetOutputDisplacementField(command.outputDisplacementField);
     }
   if( command.outputJacobianImage )
     {
@@ -534,7 +533,7 @@ ProcessOutputType(struct ICCDEFWarpAppParameters & command)
 DebugImageViewerClient DebugImageDisplaySender;
 #endif
 
-int ICCDEFWarpPrimary(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
   struct ICCDEFWarpAppParameters command;
 
@@ -550,8 +549,8 @@ int ICCDEFWarpPrimary(int argc, char *argv[])
     command.fixedVolume = fixedVolume;
     command.outputPrefix = outputPrefix;
     command.outputDirectory = outputDirectory;
-    command.outputForwardDeformationFieldVolume = outputForwardDeformationFieldVolume;
-    command.outputBackwardDeformationFieldVolume = outputBackwardDeformationFieldVolume;
+    command.outputForwardDisplacementFieldVolume = outputForwardDisplacementFieldVolume;
+    command.outputBackwardDisplacementFieldVolume = outputBackwardDisplacementFieldVolume;
     command.inputPixelType = inputPixelType;
     command.outputPixelType = outputPixelType;
 //    command.outputDisplacementFieldPrefix = outputDisplacementFieldPrefix;
@@ -561,9 +560,9 @@ int ICCDEFWarpPrimary(int argc, char *argv[])
 
     command.backgroundFillValue = backgroundFillValue;
 
-//    command.initialDeformationFieldVolume = initialDeformationFieldVolume;
-    command.initialFixedDeformationFieldVolume = initialFixedDeformationFieldVolume;
-    command.initialMovingDeformationFieldVolume = initialMovingDeformationFieldVolume;
+//    command.initialDisplacementFieldVolume = initialDisplacementFieldVolume;
+    command.initialFixedDisplacementFieldVolume = initialFixedDisplacementFieldVolume;
+    command.initialMovingDisplacementFieldVolume = initialMovingDisplacementFieldVolume;
 //	command.jacobianImagePrefix = jacobianImagePrefix;
     command.initializeWithTransform = initializeWithTransform;
     command.regularizationWeight = regularizationWeight;
@@ -581,10 +580,10 @@ int ICCDEFWarpPrimary(int argc, char *argv[])
     command.numberOfIterations.SetSize(numberOfPyramidLevels);
 
     command.maxStepLength = maxStepLength;
-    command.smoothDeformationFieldSigma = smoothDeformationFieldSigma;
+    command.smoothDisplacementFieldSigma = smoothDisplacementFieldSigma;
     command.normalization = normalization;
     command.outputDisplacement = outputDisplacement;
-    command.outputDeformationField = outputDeformationField;
+    command.outputDisplacementField = outputDisplacementField;
     command.outputJacobianImage = outputJacobianImage;
 
     command.maskProcessingMode = maskProcessingMode;
@@ -625,9 +624,9 @@ int ICCDEFWarpPrimary(int argc, char *argv[])
       << std::endl
       << "               useConsistentLandmark: " << command.useConsistentLandmark
       << std::endl
-      << " outputForwardDeformationFieldVolume: " << command.outputForwardDeformationFieldVolume
+      << " outputForwardDisplacementFieldVolume: " << command.outputForwardDisplacementFieldVolume
       << std::endl
-      << "outputBackwardDeformationFieldVolume: " << command.outputBackwardDeformationFieldVolume
+      << "outputBackwardDisplacementFieldVolume: " << command.outputBackwardDisplacementFieldVolume
       << std::endl
       << "                        outputPrefix: " << command.outputPrefix
       << std::endl
@@ -641,9 +640,9 @@ int ICCDEFWarpPrimary(int argc, char *argv[])
       << std::endl
       << "                    medianFilterSize: " << command.medianFilterSize
       << std::endl
-      << "  initialFixedDeformationFieldVolume: " << command.initialFixedDeformationFieldVolume
+      << "  initialFixedDisplacementFieldVolume: " << command.initialFixedDisplacementFieldVolume
       << std::endl
-      << " initialMovingDeformationFieldVolume: " << command.initialMovingDeformationFieldVolume
+      << " initialMovingDisplacementFieldVolume: " << command.initialMovingDisplacementFieldVolume
       << std::endl
       << "             initializeWithTransform: " << command.initializeWithTransform
       << std::endl
@@ -657,7 +656,7 @@ int ICCDEFWarpPrimary(int argc, char *argv[])
       << std::endl
       << "                       maxStepLength: " << command.maxStepLength
       << std::endl
-      << "         smoothDeformationFieldSigma: " << command.smoothDeformationFieldSigma
+      << "         smoothDisplacementFieldSigma: " << command.smoothDisplacementFieldSigma
       << std::endl
       << "                    histogram levels: "
       << command.numberOfHistogramLevels << std::endl
@@ -684,8 +683,8 @@ int ICCDEFWarpPrimary(int argc, char *argv[])
 
   // if (outputVolume.size() == 0) { violated = true; std::cout << "
   //  --outputVolume Required! "  << std::endl; }
-  // if (outputDeformationFieldVolume.size() == 0) { violated = true; std::cout
-  // << "  --outputDeformationFieldVolume Required! "  << std::endl; }
+  // if (outputDisplacementFieldVolume.size() == 0) { violated = true; std::cout
+  // << "  --outputDisplacementFieldVolume Required! "  << std::endl; }
   // if (registrationParameters.size() == 0) { violated = true; std::cout << "
   //  --registrationParameters Required! "  << std::endl; }
   // if (inputPixelType.size() == 0) { violated = true; std::cout << "

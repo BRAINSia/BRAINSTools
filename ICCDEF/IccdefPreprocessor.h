@@ -86,11 +86,11 @@ public:
 
   /** Deformation field type. */
   typedef Image<FieldPixelType,
-                itkGetStaticConstMacro(ImageDimension)> TDeformationField;
+                itkGetStaticConstMacro(ImageDimension)> TDisplacementField;
 
   /** Set the initial Deformation Field. */
-  itkSetObjectMacro( InitialDeformationField, TDeformationField );
-  itkGetObjectMacro( InitialDeformationField, TDeformationField );
+  itkSetObjectMacro( InitialDisplacementField, TDisplacementField );
+  itkGetObjectMacro( InitialDisplacementField, TDisplacementField );
 
   /** Set the number of histogram levels to use. */
   itkSetMacro( NumberOfHistogramLevels, unsigned long );
@@ -192,7 +192,7 @@ private:
   typename OutputImageType::Pointer m_OutputMovingImage;
   typename OutputImageType::Pointer m_UnNormalizedMovingImage;
   typename OutputImageType::Pointer m_UnNormalizedFixedImage;
-  typename TDeformationField::Pointer m_InitialDeformationField;
+  typename TDisplacementField::Pointer m_InitialDisplacementField;
 
   unsigned long m_NumberOfHistogramLevels;
   unsigned long m_NumberOfMatchPoints;
@@ -224,7 +224,7 @@ private:
 }   // namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "IccdefPreprocessor.txx"
+#include "IccdefPreprocessor.hxx"
 #endif
 
 #endif // _IccdefPreprocessor_h

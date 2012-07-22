@@ -55,16 +55,16 @@
     </image> 
 
     <image>
-      <name>outputForwardDeformationFieldVolume</name>
-      <longflag>outputForwardDeformationFieldVolume</longflag>
+      <name>outputForwardDisplacementFieldVolume</name>
+      <longflag>outputForwardDisplacementFieldVolume</longflag>
       <description>output forward deformation field vector image.</description>
       <label>Output forward Deformation Field Volume</label>
       <channel>output</channel>
     </image>
 
     <image>
-      <name>outputBackwardDeformationFieldVolume</name>
-      <longflag>outputBackwardDeformationFieldVolume</longflag>
+      <name>outputBackwardDisplacementFieldVolume</name>
+      <longflag>outputBackwardDisplacementFieldVolume</longflag>
       <description>output backward deformation field vector image.</description>
       <label>Output backward Deformation Field Volume</label>
       <channel>output</channel>
@@ -76,9 +76,9 @@
     <label>ICCDEF Registration Parameters</label>
     <description>Input parameters controlling the ICCDEF Registation</description>
     <double>
-      <name>smoothDeformationFieldSigma</name>
+      <name>smoothDisplacementFieldSigma</name>
       <flag>s</flag>
-      <longflag alias="def_field_sigma">smoothDeformationFieldSigma</longflag>
+      <longflag alias="def_field_sigma">smoothDisplacementFieldSigma</longflag>
       <label>Deformation field smoothing sigma</label>
       <description>A gaussian smoothing value to be applied to the deformation feild/</description>
       <default>1.0</default>
@@ -133,8 +133,8 @@
     </boolean>
  
     <boolean>
-      <name>outputDeformationField</name>
-      <longflag>outputDeformationField</longflag>
+      <name>outputDisplacementField</name>
+      <longflag>outputDisplacementField</longflag>
       <description>Flag to indicate whether deformation field  are written </description>
       <label>Deformation Filed </label>
       <channel>input</channel>
@@ -260,16 +260,16 @@
 -->
 
     <image>
-      <name>initialMovingDeformationFieldVolume</name>
-      <longflag>initialMovingDeformationFieldVolume</longflag>
+      <name>initialMovingDisplacementFieldVolume</name>
+      <longflag>initialMovingDisplacementFieldVolume</longflag>
       <description>Initial deformation field vector image file name for moving image</description>
       <label>Initial Moving Deformation Field Volume</label>
       <channel>input</channel>
     </image>
 
     <image>
-      <name>initialFixedDeformationFieldVolume</name>
-      <longflag>initialFixedDeformationFieldVolume</longflag>
+      <name>initialFixedDisplacementFieldVolume</name>
+      <longflag>initialFixedDisplacementFieldVolume</longflag>
       <description>Initial deformation field vector image file name for fixed image</description>
       <label>Initial Fixed Deformation Field Volume</label>
       <channel>input</channel>

@@ -1,7 +1,7 @@
-#ifndef __itkICCIterativeInverseDeformationFieldImageFilter_txx
-#define __itkICCIterativeInverseDeformationFieldImageFilter_txx
+#ifndef __itkICCIterativeInverseDisplacementFieldImageFilter_txx
+#define __itkICCIterativeInverseDisplacementFieldImageFilter_txx
 
-#include "itkICCIterativeInverseDeformationFieldImageFilter.h"
+#include "itkICCIterativeInverseDisplacementFieldImageFilter.h"
 #include "itkProgressReporter.h"
 #include <vcl_algorithm.h>
 
@@ -10,8 +10,8 @@ namespace itk
 // ----------------------------------------------------------------------------
 // Constructor
 template <class TInputImage, class TOutputImage>
-ICCIterativeInverseDeformationFieldImageFilter<TInputImage,
-                                               TOutputImage>::ICCIterativeInverseDeformationFieldImageFilter()
+ICCIterativeInverseDisplacementFieldImageFilter<TInputImage,
+                                                TOutputImage>::ICCIterativeInverseDisplacementFieldImageFilter()
 {
   m_NumberOfIterations = 10000;
   m_StopValue = 1e-7F;
@@ -20,7 +20,7 @@ ICCIterativeInverseDeformationFieldImageFilter<TInputImage,
 
 // ----------------------------------------------------------------------------
 template <class TInputImage, class TOutputImage>
-void ICCIterativeInverseDeformationFieldImageFilter<TInputImage, TOutputImage>
+void ICCIterativeInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>
 ::GenerateData()
 {
   TimeType time;
@@ -51,12 +51,12 @@ void ICCIterativeInverseDeformationFieldImageFilter<TInputImage, TOutputImage>
   this->ComputeInverse(inputPtr, outputPtr);
 
   time.Stop();
-  m_Time = time.GetMeanTime();
+  m_Time = time.GetMean();
 }
 
 template <class TInputImage, class TOutputImage>
 void
-ICCIterativeInverseDeformationFieldImageFilter<TInputImage, TOutputImage>
+ICCIterativeInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>
 ::ComputeInverse(InputImageConstPointer& inputPtr, OutputImagePointer& outputPtr)
 {
   ThreadStruct str;
@@ -72,7 +72,7 @@ ICCIterativeInverseDeformationFieldImageFilter<TInputImage, TOutputImage>
 
 template <class TInputImage, class TOutputImage>
 ITK_THREAD_RETURN_TYPE
-ICCIterativeInverseDeformationFieldImageFilter<TInputImage, TOutputImage>
+ICCIterativeInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>
 ::ComputeInverseThreaderCallback(void * arg)
 {
   ThreadStruct * str;
@@ -100,7 +100,7 @@ ICCIterativeInverseDeformationFieldImageFilter<TInputImage, TOutputImage>
 
 template <class TInputImage, class TOutputImage>
 void
-ICCIterativeInverseDeformationFieldImageFilter<TInputImage, TOutputImage>
+ICCIterativeInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>
 ::ThreadedComputeInverse(InputImageConstPointer& inputPtr, OutputImagePointer& outputPtr,
                          const ThreadRegionType & regionToProcess,
                          int)
@@ -205,9 +205,9 @@ ICCIterativeInverseDeformationFieldImageFilter<TInputImage, TOutputImage>
 }
 
 template <class TInputImage, class TOutputImage>
-typename ICCIterativeInverseDeformationFieldImageFilter<TInputImage, TOutputImage>
+typename ICCIterativeInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>
 ::OutputImagePixelType
-ICCIterativeInverseDeformationFieldImageFilter<TInputImage, TOutputImage>
+ICCIterativeInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>
 ::TrilinearInterpolationFast(float& fDesiredX, float& fDesiredY, float& fDesiredZ, InputImageSizeType size)
 {
 #if defined(__sgi)
@@ -322,9 +322,9 @@ ICCIterativeInverseDeformationFieldImageFilter<TInputImage, TOutputImage>
 }
 
 template <class TInputImage, class TOutputImage>
-typename ICCIterativeInverseDeformationFieldImageFilter<TInputImage, TOutputImage>
+typename ICCIterativeInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>
 ::InputImageIndexType
-ICCIterativeInverseDeformationFieldImageFilter<TInputImage, TOutputImage>
+ICCIterativeInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>
 ::BoundaryIndexing(int iDesiredX,
                    int iDesiredY,
                    int iDesiredZ,
@@ -347,7 +347,7 @@ ICCIterativeInverseDeformationFieldImageFilter<TInputImage, TOutputImage>
 
 // ----------------------------------------------------------------------------
 template <class TInputImage, class TOutputImage>
-void ICCIterativeInverseDeformationFieldImageFilter<TInputImage, TOutputImage>
+void ICCIterativeInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>
 ::PrintSelf(std::ostream& os, Indent indent) const
 {
   Superclass::PrintSelf(os, indent);

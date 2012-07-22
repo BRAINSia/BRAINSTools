@@ -20,13 +20,13 @@ ICCDEFWarp<TImage, TRealImage, TOutputImage>
   m_AppendOutputFile = true;
 //  m_WarpedImageName = "none";
 
-  m_ForwardDeformationFieldOutputName = "none";
-  m_BackwardDeformationFieldOutputName = "none";
+  m_ForwardDisplacementFieldOutputName = "none";
+  m_BackwardDisplacementFieldOutputName = "none";
 //  m_DisplacementBaseName = "none";
   m_OutputPrefix = "";
   m_OutputDisplacement = false;
   m_OutputJacobianImage = false;
-  m_OutputDeformationField = false;
+  m_OutputDisplacementField = false;
 
   m_DefaultPixelValue = NumericTraits<PixelType>::Zero;
 
@@ -79,10 +79,10 @@ ICCDEFWarp<TImage, TRealImage, TOutputImage>
 {
   this->m_Registrator->SetOutputDisplacement( this->GetOutputDisplacement() );
   this->m_Registrator->SetOutputPrefix( this->GetOutputPrefix() );
-  this->m_Registrator->SetForwardDeformationFieldOutputName(
-    this->GetForwardDeformationFieldOutputName() );
-  this->m_Registrator->SetBackwardDeformationFieldOutputName(
-    this->GetBackwardDeformationFieldOutputName() );
+  this->m_Registrator->SetForwardDisplacementFieldOutputName(
+    this->GetForwardDisplacementFieldOutputName() );
+  this->m_Registrator->SetBackwardDisplacementFieldOutputName(
+    this->GetBackwardDisplacementFieldOutputName() );
   this->m_Registrator->SetFixedImage( this->m_Preprocessor->GetOutputFixedImage() );
   this->m_Registrator->SetMovingImage(
     this->m_Preprocessor->GetOutputMovingImage() );
@@ -96,10 +96,10 @@ ICCDEFWarp<TImage, TRealImage, TOutputImage>
   this->m_Registrator->SetNumberOfLevels( this->GetNumberOfLevels() );
   this->m_Registrator->SetNumberOfIterations(this->GetNumberOfIterations() );
   this->m_Registrator->SetOutDebug(this->GetOutDebug() );
-  this->m_Registrator->SetInitialFixedDeformationFieldFilename(this->m_InitialFixedDeformationFieldFilename);
-  this->m_Registrator->SetInitialMovingDeformationFieldFilename(this->m_InitialMovingDeformationFieldFilename);
+  this->m_Registrator->SetInitialFixedDisplacementFieldFilename(this->m_InitialFixedDisplacementFieldFilename);
+  this->m_Registrator->SetInitialMovingDisplacementFieldFilename(this->m_InitialMovingDisplacementFieldFilename);
   this->m_Registrator->SetOutputJacobianImage(this->GetOutputJacobianImage() );
-  this->m_Registrator->SetOutputDeformationField(this->GetOutputDeformationField() );
+  this->m_Registrator->SetOutputDisplacementField(this->GetOutputDisplacementField() );
 }
 }   // namespace itk
 

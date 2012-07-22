@@ -71,7 +71,7 @@ int ApplyWarp(int argc, char *argv[])
 
   const bool useTransform = (warpTransform.size() > 0);
     {
-    const bool useDeformationField = (deformationVolume.size() > 0);
+    const bool useDisplacementField = (deformationVolume.size() > 0);
 
     if( debug )
       {
@@ -83,7 +83,7 @@ int ApplyWarp(int argc, char *argv[])
       std::cout << "Orientation to RAI:" <<  orientationRAI << std::endl;
       std::cout << "Interpolation:     " <<  interpolationMode << std::endl;
       std::cout << "Background Value:  " <<  defaultValue << std::endl;
-      if( useDeformationField )
+      if( useDisplacementField )
         {
         std::cout << "Warp by Deformation Volume: " <<   deformationVolume   << std::endl;
         }
@@ -102,7 +102,7 @@ int ApplyWarp(int argc, char *argv[])
         << std::endl;
       }
 
-    if( useTransform == useDeformationField )
+    if( useTransform == useDisplacementField )
       {
       std::cout
         << "Choose one of the two possibilities, a BRAINSFit transform --or-- a high-dimensional deformation field."
@@ -141,11 +141,11 @@ int ApplyWarp(int argc, char *argv[])
 
   typedef float                                                                     VectorComponentType;
   typedef itk::Vector<VectorComponentType, GenericTransformImageNS::SpaceDimension> VectorPixelType;
-  typedef itk::Image<VectorPixelType,  GenericTransformImageNS::SpaceDimension>     DeformationFieldType;
+  typedef itk::Image<VectorPixelType,  GenericTransformImageNS::SpaceDimension>     DisplacementFieldType;
 
   // An empty SmartPointer constructor sets up someImage.IsNull() to represent a not-supplied state:
-  DeformationFieldType::Pointer DeformationField;
-  RefImageType::Pointer         ReferenceImage;
+  DisplacementFieldType::Pointer DisplacementField;
+  RefImageType::Pointer          ReferenceImage;
 
   if( useTransform )
     {
@@ -197,11 +197,11 @@ int ApplyWarp(int argc, char *argv[])
   else if( !useTransform ) // that is, it's a warp by deformation field:
     {
 #if 0
-    typedef itk::ImageFileReader<DeformationFieldType> DefFieldReaderType;
+    typedef itk::ImageFileReader<DisplacementFieldType> DefFieldReaderType;
     DefFieldReaderType::Pointer fieldImageReader = DefFieldReaderType::New();
     fieldImageReader->SetFileName( deformationVolume );
     fieldImageReader->Update();
-    DeformationField = fieldImageReader->GetOutput();
+    DisplacementField = fieldImageReader->GetOutput();
 
     if( referenceVolume.size() > 0 )
       {
@@ -215,13 +215,13 @@ int ApplyWarp(int argc, char *argv[])
 #endif
     if( orientationRAI )
       {
-      DeformationField = itkUtil::ReadImage<DeformationFieldType>(deformationVolume);
-      DeformationField = itkUtil::OrientImage<DeformationFieldType>(
-          DeformationField, itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RAI);
+      DisplacementField = itkUtil::ReadImage<DisplacementFieldType>(deformationVolume);
+      DisplacementField = itkUtil::OrientImage<DisplacementFieldType>(
+          DisplacementField, itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RAI);
       }
     else
       {
-      DeformationField = itkUtil::ReadImage<DeformationFieldType>(deformationVolume);
+      DisplacementField = itkUtil::ReadImage<DisplacementFieldType>(deformationVolume);
       }
     if( referenceVolume.size() > 0 )
       {
@@ -316,10 +316,10 @@ int ApplyWarp(int argc, char *argv[])
   ImageType::Pointer TransformedImage
     = GenericTransformImage<ImageType,
                             RefImageType,
-                            DeformationFieldType>(
+                            DisplacementFieldType>(
         PrincipalOperandImage,
         ReferenceImage,
-        DeformationField,
+        DisplacementField,
         defaultValue,
         itkBSplineTransform,
         ITKAffineTransform,

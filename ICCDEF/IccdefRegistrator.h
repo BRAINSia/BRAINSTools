@@ -48,7 +48,7 @@ namespace itk
 template <
   class TRealImage,
   class TOutputImage,
-  class TFieldValue = ITK_TYPENAME TRealImage::PixelType
+  class TFieldValue = typename TRealImage::PixelType
   >
 class IccdefRegistrator : public Object
 {
@@ -85,7 +85,7 @@ public:
 
   /** Deformation field type. */
   typedef Image<FieldPixelType,
-                itkGetStaticConstMacro(ImageDimension)> TDeformationField;
+                itkGetStaticConstMacro(ImageDimension)> TDisplacementField;
 
   /** Fixed Image Pyramid Type. */
   typedef RecursiveMultiResolutionPyramidImageFilter<
@@ -101,7 +101,7 @@ public:
   typedef MultiResolutionICCDeformableRegistration<
       RealImageType,
       RealImageType,
-      TDeformationField>    RegistrationType;
+      TDisplacementField>    RegistrationType;
 
   /** UnsignedIntArray type. */
   typedef Array<unsigned int> UnsignedIntArray;
@@ -111,7 +111,7 @@ public:
                      itkGetStaticConstMacro(ImageDimension)> ShrinkFactorsArray;
 
   /** Set the intial deformation field **/
-  itkSetObjectMacro(InitialDeformationField, TDeformationField);
+  itkSetObjectMacro(InitialDisplacementField, TDisplacementField);
 
   /** Set the fixed image. */
   itkSetObjectMacro( FixedImage, RealImageType );
@@ -132,17 +132,17 @@ public:
   /** Set the number of iterations per level. */
   itkSetMacro( NumberOfIterations, UnsignedIntArray );
 
-  itkSetStringMacro(InitialFixedDeformationFieldFilename);
-  itkGetStringMacro(InitialFixedDeformationFieldFilename);
+  itkSetStringMacro(InitialFixedDisplacementFieldFilename);
+  itkGetStringMacro(InitialFixedDisplacementFieldFilename);
 
-  itkSetStringMacro(InitialMovingDeformationFieldFilename);
-  itkGetStringMacro(InitialMovingDeformationFieldFilename);
+  itkSetStringMacro(InitialMovingDisplacementFieldFilename);
+  itkGetStringMacro(InitialMovingDisplacementFieldFilename);
 
   itkSetMacro(OutputJacobianImage, bool);
   itkGetConstMacro(OutputJacobianImage, bool);
 
-  itkSetMacro(OutputDeformationField, bool);
-  itkGetConstMacro(OutputDeformationField, bool);
+  itkSetMacro(OutputDisplacementField, bool);
+  itkGetConstMacro(OutputDisplacementField, bool);
 
   itkSetMacro(OutputDisplacement, bool);
   itkGetConstMacro(OutputDisplacement, bool);
@@ -152,11 +152,11 @@ public:
   itkGetStringMacro( OutputPrefix );
 
   /** Set Deformation field output file Name */
-  itkSetStringMacro(ForwardDeformationFieldOutputName);
-  itkGetStringMacro(ForwardDeformationFieldOutputName);
+  itkSetStringMacro(ForwardDisplacementFieldOutputName);
+  itkGetStringMacro(ForwardDisplacementFieldOutputName);
 
-  itkSetStringMacro(BackwardDeformationFieldOutputName);
-  itkGetStringMacro(BackwardDeformationFieldOutputName);
+  itkSetStringMacro(BackwardDisplacementFieldOutputName);
+  itkGetStringMacro(BackwardDisplacementFieldOutputName);
 
   /**Set histogram matching*/
   itkSetMacro(UseHistogramMatching, bool);
@@ -166,7 +166,7 @@ public:
   virtual void Execute();
 
   /** Get the deformation field. */
-  itkGetObjectMacro( DeformationField, TDeformationField );
+  itkGetObjectMacro( DisplacementField, TDisplacementField );
 
   /** Initialize registration at the start of new level. */
   void StartNewLevel();
@@ -179,7 +179,7 @@ public:
   itkGetMacro(DefaultPixelValue, typename RealImageType::PixelType);
 
   typedef ICCDeformableRegistrationFilter<RealImageType, RealImageType,
-                                          TDeformationField> BaseRegistrationFilterType;
+                                          TDisplacementField> BaseRegistrationFilterType;
   void SetRegistrationFilter(
     BaseRegistrationFilterType * filter)
   {
@@ -198,9 +198,9 @@ private:
   IccdefRegistrator( const Self & );  // purposely not implemented
   void operator=( const Self & );     // purposely not implemented
 
-  void WriteDisplacementComponents(TDeformationField *, std::string);
+  void WriteDisplacementComponents(TDisplacementField *, std::string);
 
-  typename TDeformationField::Pointer m_InitialDeformationField;
+  typename TDisplacementField::Pointer m_InitialDisplacementField;
   typename RealImageType::Pointer m_FixedImage;
   typename RealImageType::Pointer m_MovingImage;
   typename RealImageType::Pointer m_UnNormalizedMovingImage;
@@ -213,27 +213,27 @@ private:
   unsigned short   m_NumberOfLevels;
   UnsignedIntArray m_NumberOfIterations;
 
-  typename TDeformationField::Pointer m_DeformationField;
-  typename TDeformationField::Pointer m_BackwardDeformationField;
+  typename TDisplacementField::Pointer m_DisplacementField;
+  typename TDisplacementField::Pointer m_BackwardDisplacementField;
   unsigned long m_Tag;
   std::string   m_DisplacementBaseName;
   std::string   m_OutputPrefix;
-  std::string   m_ForwardDeformationFieldOutputName;
-  std::string   m_BackwardDeformationFieldOutputName;
+  std::string   m_ForwardDisplacementFieldOutputName;
+  std::string   m_BackwardDisplacementFieldOutputName;
   bool          m_OutDebug;
   bool          m_UseHistogramMatching;
-  std::string   m_InitialMovingDeformationFieldFilename;
-  std::string   m_InitialFixedDeformationFieldFilename;
+  std::string   m_InitialMovingDisplacementFieldFilename;
+  std::string   m_InitialFixedDisplacementFieldFilename;
   bool          m_OutputJacobianImage;
   bool          m_OutputDisplacement;
-  bool          m_OutputDeformationField;
+  bool          m_OutputDisplacementField;
   std::string   m_ForwardDir;
   std::string   m_BackwardDir;
 };
 }   // namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "IccdefRegistrator.txx"
+#include "IccdefRegistrator.hxx"
 #endif
 
 #endif

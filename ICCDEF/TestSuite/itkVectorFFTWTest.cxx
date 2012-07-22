@@ -1,8 +1,8 @@
 
 
 #include "itkImage.h"
-#include "itkVectorFFTWComplexConjugateToRealImageFilter.h"
-#include "itkVectorFFTWRealToComplexConjugateImageFilter.h"
+#include "itkVectorFFTWHalfHermitianToRealInverseFFTImageFilter.h"
+#include "itkVectorFFTWRealToHalfHermitianForwardFFTImageFilter.h"
 #include "itkVector.h"
 #include "itkImageRegionIterator.h"
 #include "itkImageFileWriter.h"
@@ -17,10 +17,10 @@ int itkVectorFFTWTest(int argc, char *argv[] )
 
   typedef  float PixelType;
   const unsigned int dims = 3;
-  typedef itk::Image<itk::Vector<PixelType, dims>, dims>                            ImageType;
-  typedef itk::VectorFFTWComplexConjugateToRealImageFilter<ImageType::PixelType, 3> FFTWComplexToRealImageType;
-  typedef itk::VectorFFTWRealToComplexConjugateImageFilter<ImageType::PixelType, 3> FFTWRealToComplexImageType;
-  typedef itk::ImageFileWriter<ImageType>                                           WriterType;
+  typedef itk::Image<itk::Vector<PixelType, dims>, dims>                                   ImageType;
+  typedef itk::VectorFFTWHalfHermitianToRealInverseFFTImageFilter<ImageType::PixelType, 3> FFTWComplexToRealImageType;
+  typedef itk::VectorFFTWRealToHalfHermitianForwardFFTImageFilter<ImageType::PixelType, 3> FFTWRealToComplexImageType;
+  typedef itk::ImageFileWriter<ImageType>                                                  WriterType;
 
   const ImageType::SizeType  imageSize = {{32, 32, 32}};
   const ImageType::IndexType imageIndex = {{0, 0, 0}};

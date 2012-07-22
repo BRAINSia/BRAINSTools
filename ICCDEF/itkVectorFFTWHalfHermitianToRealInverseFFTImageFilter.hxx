@@ -1,5 +1,5 @@
 /*
- *  itkVectorFFTComplexConjugateToRealImageFilter.txx
+ *  itkVectorFFTComplexConjugateToRealImageFilter.hxx
  *  iccdefRegistrationNew
  *
  *  Created by Yongqiang Zhao on 5/6/09.
@@ -7,11 +7,11 @@
  *
  */
 
-#ifndef __itkVectorFFTWComplexConjugateToRealImageFilter_txx
-#define __itkVectorFFTWComplexConjugateToRealImageFilter_txx
+#ifndef __itkVectorFFTWHalfHermitianToRealInverseFFTImageFilter_hxx
+#define __itkVectorFFTWHalfHermitianToRealInverseFFTImageFilter_hxx
 
-#include "itkVectorFFTWComplexConjugateToRealImageFilter.h"
-#include "itkFFTComplexConjugateToRealImageFilter.txx"
+#include "itkVectorFFTWHalfHermitianToRealInverseFFTImageFilter.h"
+#include "itkFFTWHalfHermitianToRealInverseFFTImageFilter.h"
 #include <iostream>
 #include "itkIndent.h"
 #include "itkMetaDataObject.h"
@@ -21,7 +21,7 @@ namespace itk
 {
 template <class TPixel, unsigned int Dimension>
 void
-VectorFFTWComplexConjugateToRealImageFilter<TPixel, Dimension>::GenerateOutputInformation()
+VectorFFTWHalfHermitianToRealInverseFFTImageFilter<TPixel, Dimension>::GenerateOutputInformation()
 {
   // call the superclass' implementation of this method
   Superclass::GenerateOutputInformation();
@@ -105,7 +105,7 @@ VectorFFTWComplexConjugateToRealImageFilter<TPixel, Dimension>::GenerateOutputIn
 
 template <class TPixel, unsigned int Dimension>
 void
-VectorFFTWComplexConjugateToRealImageFilter<TPixel, Dimension>::GenerateInputRequestedRegion()
+VectorFFTWHalfHermitianToRealInverseFFTImageFilter<TPixel, Dimension>::GenerateInputRequestedRegion()
 {
   Superclass::GenerateInputRequestedRegion();
 
@@ -120,7 +120,7 @@ VectorFFTWComplexConjugateToRealImageFilter<TPixel, Dimension>::GenerateInputReq
 
 template <typename TPixel, unsigned int VDimension>
 void
-VectorFFTWComplexConjugateToRealImageFilter<TPixel, VDimension>::GenerateData()
+VectorFFTWHalfHermitianToRealInverseFFTImageFilter<TPixel, VDimension>::GenerateData()
 {
   // get pointers to the input and output
   typename TInputImageType::ConstPointer  inputPtr  = this->GetInput();
@@ -209,9 +209,9 @@ VectorFFTWComplexConjugateToRealImageFilter<TPixel, VDimension>::GenerateData()
 
 template <typename TPixel, unsigned int VDimension>
 bool
-VectorFFTWComplexConjugateToRealImageFilter<TPixel, VDimension>::FullMatrix()
+VectorFFTWHalfHermitianToRealInverseFFTImageFilter<TPixel, VDimension>::FullMatrix()
 {
   return false;
 }
 } // namespace itk
-#endif // _itkVectorFFTWComplexConjugateToRealImageFilter_txx
+#endif // _itkVectorFFTWHalfHermitianToRealInverseFFTImageFilter_hxx

@@ -35,8 +35,8 @@ add_test(ValidateICCDEF_Test1_nii ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${ICCDEF_War
     -n 4
     -i 300,150,25,0
     --similarityWeight 5.0
-    --outputDeformationField
-    --outputForwardDeformationFieldVolume  forwardDF.nii.gz
+    --outputDisplacementField
+    --outputForwardDisplacementFieldVolume  forwardDF.nii.gz
 )
 
 add_test(ValidateICCDEF_Test2_nii ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${ICCDEF_Warp_TESTS}
@@ -78,8 +78,8 @@ add_test(ValidateICCDEF_Test3_nii ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${ICCDEF_War
     -n 2
     -i 25,0
     --similarityWeight 5.0
-    --initialMovingDeformationFieldVolume  ${iccdefRegistrationNew_BINARY_DIR}/test1/forward/test1_iteration450resolution2500_forward.nii.gz
-    --initialFixedDeformationFieldVolume ${iccdefRegistrationNew_BINARY_DIR}/test1/backward/test1_iteration450resolution2500_backward.nii.gz
+    --initialMovingDisplacementFieldVolume  ${iccdefRegistrationNew_BINARY_DIR}/test1/forward/test1_iteration450resolution2500_forward.nii.gz
+    --initialFixedDisplacementFieldVolume ${iccdefRegistrationNew_BINARY_DIR}/test1/backward/test1_iteration450resolution2500_backward.nii.gz
 )
 
 add_test(ValidateICCDEF_Test4_nii ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${ICCDEF_Warp_TESTS}
@@ -95,7 +95,7 @@ add_test(ValidateICCDEF_Test4_nii ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${ICCDEF_War
     --useConsistentIntensity
     -v
     -e
-    --outputDeformationField
+    --outputDisplacementField
     --outputJacobianImage
     --outputDisplacement
     --numberOfHistogramBins 256
@@ -148,8 +148,8 @@ add_test(ValidateICCDEF_Test6_nii ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${ICCDEF_War
     -n 2
     -i 5,0
     --useConsistentIntensity
-    --initialMovingDeformationFieldVolume  ${iccdefRegistrationNew_SOURCE_DIR}/TestData/initialMovingDeformationField.nii.gz
-    --initialFixedDeformationFieldVolume ${iccdefRegistrationNew_SOURCE_DIR}/TestData/initialFixedDeformationField.nii.gz
+    --initialMovingDisplacementFieldVolume  ${iccdefRegistrationNew_SOURCE_DIR}/TestData/initialMovingDisplacementField.nii.gz
+    --initialFixedDisplacementFieldVolume ${iccdefRegistrationNew_SOURCE_DIR}/TestData/initialFixedDisplacementField.nii.gz
     --similarityWeight 0.7
     --regularizationWeight 50.0
     --inverseWeight 10.0
@@ -221,8 +221,8 @@ set(UNIT_TESTS UnitTests)
 
 set(UnitTest_SRCS
 itkVectorFFTWTest.cxx
-itkIterativeInverseDeformationFieldFilterTest.cxx
-itkIterativeInverseDeformationFieldFilterTest2.cxx
+itkIterativeInverseDisplacementFieldFilterTest.cxx
+itkIterativeInverseDisplacementFieldFilterTest2.cxx
 )
 
 #add_test(itkVectorFFTWTest ${UNIT_TESTS}
@@ -253,22 +253,22 @@ add_test(itkVectorFFTWTest ${UNIT_TESTS}
      ${TEMP}/transformedImage.nii.gz
 )
 
-add_test(itkIterativeInverseDeformationFieldFilterTest ${UNIT_TESTS}
+add_test(itkIterativeInverseDisplacementFieldFilterTest ${UNIT_TESTS}
    --compare ${TEMP}/multiProcessImage.nii.gz
              ${TEMP}/singleProcessImage.nii.gz
   --compareNumberOfPixelsTolerance 0
   --compareIntensityTolerance 10
-   itkIterativeInverseDeformationFieldFilterTest
+   itkIterativeInverseDisplacementFieldFilterTest
      ${TEMP}/singleProcessImage.nii.gz
      ${TEMP}/multiProcessImage.nii.gz
 )
 
-add_test(itkIterativeInverseDeformationFieldFilterTest2 ${UNIT_TESTS}
+add_test(itkIterativeInverseDisplacementFieldFilterTest2 ${UNIT_TESTS}
    --compare ${TEMP}/originalImage.nii.gz
              ${TEMP}/inverse_test2.nii.gz
   --compareNumberOfPixelsTolerance 0
   --compareIntensityTolerance 10
-   itkIterativeInverseDeformationFieldFilterTest2
+   itkIterativeInverseDisplacementFieldFilterTest2
      ${TEMP}/originalImage.nii.gz
      ${TEMP}/inverse_test2.nii.gz
 )

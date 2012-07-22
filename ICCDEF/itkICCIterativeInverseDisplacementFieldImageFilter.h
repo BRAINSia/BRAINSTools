@@ -1,6 +1,6 @@
 
-#ifndef __itkICCIterativeInverseDeformationFieldImageFilter_h
-#define __itkICCIterativeInverseDeformationFieldImageFilter_h
+#ifndef __itkICCIterativeInverseDisplacementFieldImageFilter_h
+#define __itkICCIterativeInverseDisplacementFieldImageFilter_h
 
 #include "itkImageToImageFilter.h"
 
@@ -11,10 +11,10 @@
 
 namespace itk
 {
-/** \class ICCIterativeInverseDeformationFieldImageFilter
+/** \class ICCIterativeInverseDisplacementFieldImageFilter
  * \brief Computes the inverse of a deformation field.
  *
- * ICCIterativeInverseDeformationFieldImageFilter takes a deformation field as input and
+ * ICCIterativeInverseDisplacementFieldImageFilter takes a deformation field as input and
  * computes the deformation field that is its inverse. If the input deformation
  * field was mapping coordinates from a space A into a space B, the output of
  * this filter will map coordinates from the space B into the space A.
@@ -34,21 +34,21 @@ namespace itk
  */
 
 template <class TInputImage, class TOutputImage>
-class ITK_EXPORT ICCIterativeInverseDeformationFieldImageFilter :
+class ITK_EXPORT ICCIterativeInverseDisplacementFieldImageFilter :
   public         ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:
   /** Standard class typedefs. */
-  typedef ICCIterativeInverseDeformationFieldImageFilter Self;
-  typedef ImageToImageFilter<TInputImage, TOutputImage>  Superclass;
-  typedef SmartPointer<Self>                             Pointer;
-  typedef SmartPointer<const Self>                       ConstPointer;
+  typedef ICCIterativeInverseDisplacementFieldImageFilter Self;
+  typedef ImageToImageFilter<TInputImage, TOutputImage>   Superclass;
+  typedef SmartPointer<Self>                              Pointer;
+  typedef SmartPointer<const Self>                        ConstPointer;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(ICCIterativeInverseDeformationFieldImageFilter, ImageToImageFilter);
+  itkTypeMacro(ICCIterativeInverseDisplacementFieldImageFilter, ImageToImageFilter);
 
   /** Some typedefs. */
   typedef TInputImage                              InputImageType;
@@ -104,8 +104,8 @@ public:
   /** End concept checking */
 #endif
 protected:
-  ICCIterativeInverseDeformationFieldImageFilter();
-  ~ICCIterativeInverseDeformationFieldImageFilter()
+  ICCIterativeInverseDisplacementFieldImageFilter();
+  ~ICCIterativeInverseDisplacementFieldImageFilter()
   {
   }
 
@@ -128,18 +128,18 @@ protected:
 
   struct ThreadStruct
     {
-    ICCIterativeInverseDeformationFieldImageFilter *Filter;
+    ICCIterativeInverseDisplacementFieldImageFilter *Filter;
     InputImageConstPointer inputPtr;
     OutputImagePointer outputPtr;
     };
 private:
-  ICCIterativeInverseDeformationFieldImageFilter(const Self &); // purposely not implemented
-  void operator=(const Self &);                                 // purposely not implemented
+  ICCIterativeInverseDisplacementFieldImageFilter(const Self &); // purposely not implemented
+  void operator=(const Self &);                                  // purposely not implemented
 
   static ITK_THREAD_RETURN_TYPE ComputeInverseThreaderCallback(void * arg);
 };
 } // end namespace itk
 
-#include "itkICCIterativeInverseDeformationFieldImageFilter.txx"
+#include "itkICCIterativeInverseDisplacementFieldImageFilter.hxx"
 
 #endif

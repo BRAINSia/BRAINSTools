@@ -11,7 +11,7 @@
 #include "itkIO.h"
 #include "itkMedianImageFilter.h"
 
-#include "itkTransformToDeformationFieldSource.h"
+#include "itkTransformToDisplacementFieldSource.h"
 #include "itkTransformFactory.h"
 #include "itkTransformFileReader.h"
 #include "itkTransform.h"
@@ -170,10 +170,10 @@ IccdefPreprocessor<TInputImage, TOutputImage>
       exit(-1);
       }
 
-    //  #######Now use TransformToDeformationFieldSource
-    typedef itk::TransformToDeformationFieldSource<TDeformationField, double> DeformationFieldGeneratorType;
-    typedef typename DeformationFieldGeneratorType::TransformType             TransformType; // Only a templated base
-                                                                                             // class.
+    //  #######Now use TransformToDisplacementFieldSource
+    typedef itk::TransformToDisplacementFieldSource<TDisplacementField, double> DisplacementFieldGeneratorType;
+    typedef typename DisplacementFieldGeneratorType::TransformType              TransformType; // Only a templated base
+                                                                                               // class.
 
     std::cout << "Number of transforms = " << transforms->size() << std::endl;
 
@@ -217,7 +217,7 @@ IccdefPreprocessor<TInputImage, TOutputImage>
         }
       }
 
-    typename DeformationFieldGeneratorType::Pointer defGenerator = DeformationFieldGeneratorType::New();
+    typename DisplacementFieldGeneratorType::Pointer defGenerator = DisplacementFieldGeneratorType::New();
     defGenerator->SetOutputSize( m_InputFixedImage->GetLargestPossibleRegion().GetSize() );
     defGenerator->SetOutputSpacing( m_InputFixedImage->GetSpacing() );
     defGenerator->SetOutputOrigin( m_InputFixedImage->GetOrigin() );
@@ -234,19 +234,19 @@ IccdefPreprocessor<TInputImage, TOutputImage>
       std::cerr << err << std::endl;
       exit(-1);
       }
-    m_InitialDeformationField = defGenerator->GetOutput();
-    m_InitialDeformationField = itkUtil::OrientImage<TDeformationField>(m_InitialDeformationField,
-                                                                        m_InputFixedImage->GetDirection() );
+    m_InitialDisplacementField = defGenerator->GetOutput();
+    m_InitialDisplacementField = itkUtil::OrientImage<TDisplacementField>(m_InitialDisplacementField,
+                                                                          m_InputFixedImage->GetDirection() );
 
     // Warp the moving image with the initial deformation field
-    typedef itk::WarpImageFilter<TInputImage, TInputImage, TDeformationField> WarpImageType;
+    typedef itk::WarpImageFilter<TInputImage, TInputImage, TDisplacementField> WarpImageType;
     typename WarpImageType::Pointer warper = WarpImageType::New();
     warper->SetInput(m_InputMovingImage);
     warper->SetOutputOrigin(m_InputFixedImage->GetOrigin() );
     warper->SetOutputSpacing(m_InputFixedImage->GetSpacing() );
     warper->SetOutputDirection(m_InputFixedImage->GetDirection() );
-    warper->SetDeformationField(m_InitialDeformationField);
-    warper->GetOutput()->SetRequestedRegion(m_InitialDeformationField->GetRequestedRegion() );
+    warper->SetDisplacementField(m_InitialDisplacementField);
+    warper->GetOutput()->SetRequestedRegion(m_InitialDisplacementField->GetRequestedRegion() );
     warper->Update();
     m_InputMovingImage = warper->GetOutput();
     }

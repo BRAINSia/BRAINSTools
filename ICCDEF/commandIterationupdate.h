@@ -45,12 +45,12 @@ CommandIterationUpdate() {};
 
 typedef itk::Image< float, 3 > InternalImageType;
 typedef itk::Vector< float, 3 >    VectorPixelType;
-typedef itk::Image<  VectorPixelType, 3 > DeformationFieldType;
+typedef itk::Image<  VectorPixelType, 3 > DisplacementFieldType;
 
 typedef itk::PDEDeformableRegistrationFilter<
 InternalImageType,
 InternalImageType,
-DeformationFieldType>   RegistrationFilterType;
+DisplacementFieldType>   RegistrationFilterType;
 
 public:
 
@@ -83,42 +83,42 @@ public:
 
   typedef itk::Image<TPixel, VImageDimension>          InternalImageType;
   typedef itk::Vector<TPixel, VImageDimension>         VectorPixelType;
-  typedef itk::Image<VectorPixelType, VImageDimension> DeformationFieldType;
+  typedef itk::Image<VectorPixelType, VImageDimension> DisplacementFieldType;
 
   typedef itk::DemonsRegistrationFilter<
       InternalImageType,
       InternalImageType,
-      DeformationFieldType>   DemonsRegistrationFilterType;
+      DisplacementFieldType>   DemonsRegistrationFilterType;
 
   typedef itk::DiffeomorphicDemonsRegistrationFilter<
       InternalImageType,
       InternalImageType,
-      DeformationFieldType>   DiffeomorphicDemonsRegistrationFilterType;
+      DisplacementFieldType>   DiffeomorphicDemonsRegistrationFilterType;
 
   typedef itk::ICCDeformableRegistrationFilter<
       InternalImageType,
       InternalImageType,
-      DeformationFieldType>   ICCDeformableRegistrationFilterType;
+      DisplacementFieldType>   ICCDeformableRegistrationFilterType;
 
   typedef itk::FastSymmetricForcesDemonsRegistrationFilter<
       InternalImageType,
       InternalImageType,
-      DeformationFieldType>   FastSymmetricForcesDemonsRegistrationFilterType;
+      DisplacementFieldType>   FastSymmetricForcesDemonsRegistrationFilterType;
 
   typedef itk::MultiResolutionPDEDeformableRegistration<
       InternalImageType, InternalImageType,
-      DeformationFieldType, TPixel>   MultiResRegistrationFilterType;
+      DisplacementFieldType, TPixel>   MultiResRegistrationFilterType;
 
   typedef itk::DisplacementFieldJacobianDeterminantFilter<
-      DeformationFieldType, TPixel, InternalImageType> JacobianFilterType;
+      DisplacementFieldType, TPixel, InternalImageType> JacobianFilterType;
 
   typedef itk::MinimumMaximumImageCalculator<InternalImageType>
     MinMaxFilterType;
 
-  typedef itk::WarpHarmonicEnergyCalculator<DeformationFieldType>
+  typedef itk::WarpHarmonicEnergyCalculator<DisplacementFieldType>
     HarmonicEnergyCalculatorType;
 
-  typedef itk::VectorCentralDifferenceImageFunction<DeformationFieldType>
+  typedef itk::VectorCentralDifferenceImageFunction<DisplacementFieldType>
     WarpGradientCalculatorType;
 
   typedef typename WarpGradientCalculatorType::OutputType WarpGradientType;
@@ -131,7 +131,7 @@ private:
   typename JacobianFilterType::Pointer m_JacobianFilter;
   typename MinMaxFilterType::Pointer m_Minmaxfilter;
   typename HarmonicEnergyCalculatorType::Pointer m_HarmonicEnergyCalculator;
-  typename DeformationFieldType::ConstPointer m_TrueField;
+  typename DisplacementFieldType::ConstPointer m_TrueField;
   typename WarpGradientCalculatorType::Pointer m_TrueWarpGradientCalculator;
   typename WarpGradientCalculatorType::Pointer m_CompWarpGradientCalculator;
   typename InternalImageType::Pointer m_MovingImage;
@@ -147,7 +147,7 @@ public:
     m_FixedImage = img;
   }
 
-  void SetTrueField(const DeformationFieldType *truefield)
+  void SetTrueField(const DisplacementFieldType *truefield)
   {
     m_TrueField = truefield;
 
@@ -169,8 +169,8 @@ public:
       return;
       }
 
-    typename DeformationFieldType::Pointer deffield = 0;
-    typename DeformationFieldType::Pointer backdeffield = 0;
+    typename DisplacementFieldType::Pointer deffield = 0;
+    typename DisplacementFieldType::Pointer backdeffield = 0;
     unsigned int iter = vcl_numeric_limits<unsigned int>::max();
     double       metricbefore = -1.0;
     double       backmetricbefore = -1.0;
@@ -208,7 +208,7 @@ public:
       double tmp;
       if( m_TrueField )
         {
-        typedef itk::ImageRegionConstIteratorWithIndex<DeformationFieldType>
+        typedef itk::ImageRegionConstIteratorWithIndex<DisplacementFieldType>
           FieldIteratorType;
         FieldIteratorType currIter(
           deffield, deffield->GetLargestPossibleRegion() );
@@ -246,17 +246,17 @@ public:
 #if defined( USE_DEBUG_IMAGE_VIEWER )
       if( DebugImageDisplaySender.Enabled() )
         {
-        DebugImageDisplaySender.SendImage<DeformationFieldType>( deffield, 0, 0);
-        DebugImageDisplaySender.SendImage<DeformationFieldType>( deffield, 1, 1);
-        DebugImageDisplaySender.SendImage<DeformationFieldType>( deffield, 2, 2);
+        DebugImageDisplaySender.SendImage<DisplacementFieldType>( deffield, 0, 0);
+        DebugImageDisplaySender.SendImage<DisplacementFieldType>( deffield, 1, 1);
+        DebugImageDisplaySender.SendImage<DisplacementFieldType>( deffield, 2, 2);
         typedef typename itk::WarpImageFilter<InternalImageType,
-                                              InternalImageType, DeformationFieldType> WarpFilterType;
+                                              InternalImageType, DisplacementFieldType> WarpFilterType;
         typename WarpFilterType::Pointer warper = WarpFilterType::New();
         warper->SetInput(m_MovingImage);
         warper->SetOutputSpacing( deffield->GetSpacing() );
         warper->SetOutputOrigin( deffield->GetOrigin() );
         warper->SetOutputDirection( deffield->GetDirection() );
-        warper->SetDeformationField( deffield);
+        warper->SetDisplacementField( deffield);
         warper->Update();
         typename InternalImageType::Pointer
         DeformedMovingImagePtr = warper->GetOutput();
@@ -368,7 +368,7 @@ public:
 
       if( m_TrueField )
         {
-        typedef itk::ImageRegionConstIteratorWithIndex<DeformationFieldType>
+        typedef itk::ImageRegionConstIteratorWithIndex<DisplacementFieldType>
           FieldIteratorType;
         FieldIteratorType currIter(
           backdeffield, backdeffield->GetLargestPossibleRegion() );
@@ -406,17 +406,17 @@ public:
 #if defined( USE_DEBUG_IMAGE_VIEWER )
       if( DebugImageDisplaySender.Enabled() )
         {
-        DebugImageDisplaySender.SendImage<DeformationFieldType>( backdeffield, 0, 0);
-        DebugImageDisplaySender.SendImage<DeformationFieldType>( backdeffield, 1, 1);
-        DebugImageDisplaySender.SendImage<DeformationFieldType>( backdeffield, 2, 2);
+        DebugImageDisplaySender.SendImage<DisplacementFieldType>( backdeffield, 0, 0);
+        DebugImageDisplaySender.SendImage<DisplacementFieldType>( backdeffield, 1, 1);
+        DebugImageDisplaySender.SendImage<DisplacementFieldType>( backdeffield, 2, 2);
         typedef typename itk::WarpImageFilter<InternalImageType,
-                                              InternalImageType, DeformationFieldType> WarpFilterType;
+                                              InternalImageType, DisplacementFieldType> WarpFilterType;
         typename WarpFilterType::Pointer back_warper = WarpFilterType::New();
         back_warper->SetInput(m_FixedImage);
         back_warper->SetOutputSpacing( backdeffield->GetSpacing() );
         back_warper->SetOutputOrigin( backdeffield->GetOrigin() );
         back_warper->SetOutputDirection( backdeffield->GetDirection() );
-        back_warper->SetDeformationField( backdeffield);
+        back_warper->SetDisplacementField( backdeffield);
         back_warper->Update();
         typename InternalImageType::Pointer
         DeformedFixedImagePtr = back_warper->GetOutput();

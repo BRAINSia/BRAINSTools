@@ -41,7 +41,7 @@ include_directories(
 )
 
 set(ALL_PROGS_LIST
-  ApplyWarp
+  #  Should probably use BRAINSResample instead of ApplyWarp
   AverageBrainGenerator
   CreateMask
   iccdefRegistration_New

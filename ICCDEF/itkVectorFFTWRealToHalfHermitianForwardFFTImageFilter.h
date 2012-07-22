@@ -1,13 +1,13 @@
 /*
- *  itkVectorVectorFFTWRealToComplexConjugateImageFilter.h
+ *  itkVectorVectorFFTWRealToHalfHermitianForwardFFTImageFilter.h
  *  iccdefRegistrationNew
  *
  *  Created by Yongqiang Zhao on 5/6/09.
  *  Copyright 2009 UI. All rights reserved.
  *
  */
-#ifndef __itkVectorFFTWRealToComplexConjugateImageFilter_h
-#define __itkVectorFFTWRealToComplexConjugateImageFilter_h
+#ifndef __itkVectorFFTWRealToHalfHermitianForwardFFTImageFilter_h
+#define __itkVectorFFTWRealToHalfHermitianForwardFFTImageFilter_h
 
 #include <itkImageToImageFilter.h>
 #include <itkImage.h>
@@ -20,14 +20,14 @@
 
 namespace itk
 {
-/** /class VectorFFTWRealToComplexConjugateImageFilter
+/** /class VectorFFTWRealToHalfHermitianForwardFFTImageFilter
  * /brief
  *
  * \ingroup
  */
 
 template <class TPixel, unsigned int VDimension = 3>
-class ITK_EXPORT VectorFFTWRealToComplexConjugateImageFilter :
+class ITK_EXPORT VectorFFTWRealToHalfHermitianForwardFFTImageFilter :
   public         ImageToImageFilter<Image<TPixel, VDimension>,
                                     Image<Vector<std::complex<typename TPixel::ValueType>, 3>, VDimension> >
 {
@@ -36,7 +36,7 @@ public:
   typedef Image<TPixel, VDimension>                                              TInputImageType;
   typedef Image<Vector<std::complex<typename TPixel::ValueType>, 3>, VDimension> TOutputImageType;
 
-  typedef VectorFFTWRealToComplexConjugateImageFilter           Self;
+  typedef VectorFFTWRealToHalfHermitianForwardFFTImageFilter    Self;
   typedef ImageToImageFilter<TInputImageType, TOutputImageType> Superclass;
   typedef SmartPointer<Self>                                    Pointer;
   typedef SmartPointer<const Self>                              ConstPointer;
@@ -45,7 +45,7 @@ public:
   itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(VectorFFTWRealToComplexConjugateImageFilter,
+  itkTypeMacro(VectorFFTWRealToHalfHermitianForwardFFTImageFilter,
                ImageToImageFilter);
   /** Image type typedef support. */
   typedef TInputImageType              ImageType;
@@ -61,14 +61,14 @@ public:
   virtual void GenerateData();  // generates output from input
 
 protected:
-  VectorFFTWRealToComplexConjugateImageFilter() : m_PlanComputed(false),
+  VectorFFTWRealToHalfHermitianForwardFFTImageFilter() : m_PlanComputed(false),
     m_LastImageSize(0),
     m_InputBuffer(0),
     m_OutputBuffer(0)
   {
   }
 
-  ~VectorFFTWRealToComplexConjugateImageFilter()
+  ~VectorFFTWRealToHalfHermitianForwardFFTImageFilter()
   {
     if( m_PlanComputed )
       {
@@ -81,8 +81,8 @@ protected:
   virtual bool FullMatrix();
 
 private:
-  VectorFFTWRealToComplexConjugateImageFilter(const Self &); // purposely not implemented
-  void operator=(const Self &);                              // purposely not implemented
+  VectorFFTWRealToHalfHermitianForwardFFTImageFilter(const Self &); // purposely not implemented
+  void operator=(const Self &);                                     // purposely not implemented
 
   bool         m_PlanComputed;
   fftwf_plan   m_Plan;
@@ -94,7 +94,7 @@ private:
 } // namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkVectorFFTWRealToComplexConjugateImageFilter.txx"
+#include "itkVectorFFTWRealToHalfHermitianForwardFFTImageFilter.hxx"
 #endif
 
-#endif // __itkVectorFFTWRealToComplexConjugateImageFilter_h
+#endif // __itkVectorFFTWRealToHalfHermitianForwardFFTImageFilter_h

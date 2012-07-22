@@ -1,5 +1,5 @@
 /*
- *  itkVectorVectorFFTWRealToComplexConjugateImageFilter.txx
+ *  itkVectorVectorFFTWRealToHalfHermitianForwardFFTImageFilter.hxx
  *  iccdefRegistrationNew
  *
  *  Created by Yongqiang Zhao on 5/6/09.
@@ -7,11 +7,11 @@
  *
  */
 
-#ifndef __itkVectorFFTWRealToComplexConjugateImageFilter_txx
-#define __itkVectorFFTWRealToComplexConjugateImageFilter_txx
+#ifndef __itkVectorFFTWRealToHalfHermitianForwardFFTImageFilter_hxx
+#define __itkVectorFFTWRealToHalfHermitianForwardFFTImageFilter_hxx
 
-#include "itkVectorFFTWRealToComplexConjugateImageFilter.h"
-#include "itkFFTRealToComplexConjugateImageFilter.txx"
+#include "itkVectorFFTWRealToHalfHermitianForwardFFTImageFilter.h"
+#include "itkFFTWRealToHalfHermitianForwardFFTImageFilter.h"
 #include <iostream>
 #include "itkIndent.h"
 #include "itkMetaDataObject.h"
@@ -25,7 +25,7 @@ namespace itk
 
 template <class TPixel, unsigned int VDimension>
 void
-VectorFFTWRealToComplexConjugateImageFilter<TPixel, VDimension>
+VectorFFTWRealToHalfHermitianForwardFFTImageFilter<TPixel, VDimension>
 ::GenerateOutputInformation()
 {
   // call the superclass' implementation of this method
@@ -94,7 +94,7 @@ VectorFFTWRealToComplexConjugateImageFilter<TPixel, VDimension>
 
 template <class TPixel, unsigned int VDimension>
 void
-VectorFFTWRealToComplexConjugateImageFilter<TPixel, VDimension>
+VectorFFTWRealToHalfHermitianForwardFFTImageFilter<TPixel, VDimension>
 ::GenerateInputRequestedRegion()
 {
   // call the superclass' implementation of this method
@@ -114,7 +114,7 @@ VectorFFTWRealToComplexConjugateImageFilter<TPixel, VDimension>
 
 template <class TPixel, unsigned int VDimension>
 void
-VectorFFTWRealToComplexConjugateImageFilter<TPixel, VDimension>
+VectorFFTWRealToHalfHermitianForwardFFTImageFilter<TPixel, VDimension>
 ::EnlargeOutputRequestedRegion(DataObject *output)
 {
   Superclass::EnlargeOutputRequestedRegion(output);
@@ -124,7 +124,7 @@ VectorFFTWRealToComplexConjugateImageFilter<TPixel, VDimension>
 
 template <typename TPixel, unsigned int VDimension>
 void
-VectorFFTWRealToComplexConjugateImageFilter<TPixel, VDimension>::GenerateData()
+VectorFFTWRealToHalfHermitianForwardFFTImageFilter<TPixel, VDimension>::GenerateData()
 {
   // get pointers to the input and output
   typename TInputImageType::ConstPointer  inputPtr  = this->GetInput();
@@ -200,10 +200,10 @@ VectorFFTWRealToComplexConjugateImageFilter<TPixel, VDimension>::GenerateData()
 
 template <typename TPixel, unsigned int VDimension>
 bool
-VectorFFTWRealToComplexConjugateImageFilter<TPixel, VDimension>::FullMatrix()
+VectorFFTWRealToHalfHermitianForwardFFTImageFilter<TPixel, VDimension>::FullMatrix()
 {
   return false;
 }
 } // namespace itk
 
-#endif // _itkVectorFFTWRealToComplexConjugateImageFilter_txx
+#endif // _itkVectorFFTWRealToHalfHermitianForwardFFTImageFilter_hxx

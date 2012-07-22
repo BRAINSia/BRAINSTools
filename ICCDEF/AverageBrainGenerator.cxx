@@ -18,7 +18,7 @@ Zhao,Yongqiang
 #include "itkImageFileWriter.h"
 #include "itkImageRegionIterator.h"
 #include "itkIO.h"
-#include "itkICCIterativeInverseDeformationFieldImageFilter.h"
+#include "itkICCIterativeInverseDisplacementFieldImageFilter.h"
 #include "itkVectorIndexSelectionCastImageFilter.h"
 
 int AverageBrainGenerator(int argc, char *argv[])
@@ -70,8 +70,8 @@ int AverageBrainGenerator(int argc, char *argv[])
   typedef float                                   PixelType;
   typedef itk::Image<PixelType, Dimension>        ImageType;
   typedef itk::Vector<PixelType, Dimension>       VectorPixelType;
-  typedef itk::Image<VectorPixelType,  Dimension> DeformationFieldType;
-  DeformationFieldType::Pointer DeformationField = DeformationFieldType::New();
+  typedef itk::Image<VectorPixelType,  Dimension> DisplacementFieldType;
+  DisplacementFieldType::Pointer DisplacementField = DisplacementFieldType::New();
 
   ImageType::Pointer templateImage;
   templateImage = itkUtil::ReadImage<ImageType>(templateVolume);
@@ -81,17 +81,17 @@ int AverageBrainGenerator(int argc, char *argv[])
 
   unsigned int numberOfFields = 0;
 
-  DeformationField->CopyInformation(templateImage);
-  DeformationField->SetRegions(templateImage->GetLargestPossibleRegion() );
-  DeformationField->Allocate();
+  DisplacementField->CopyInformation(templateImage);
+  DisplacementField->SetRegions(templateImage->GetLargestPossibleRegion() );
+  DisplacementField->Allocate();
 
-  DeformationFieldType::PixelType zeros;
+  DisplacementFieldType::PixelType zeros;
   for( unsigned int j = 0; j < Dimension; j++ )
     {
     zeros[j] = 0.0;
     }
 
-  itk::ImageRegionIterator<DeformationFieldType> it(DeformationField, DeformationField->GetRequestedRegion() );
+  itk::ImageRegionIterator<DisplacementFieldType> it(DisplacementField, DisplacementField->GetRequestedRegion() );
 
   while( !it.IsAtEnd() )
     {
@@ -120,19 +120,19 @@ int AverageBrainGenerator(int argc, char *argv[])
               {
               // Compute the average displacement
               std::cout << subDir->GetFile(j) << std::endl;
-              typedef itk::ImageFileReader<DeformationFieldType> DFReaderType;
+              typedef itk::ImageFileReader<DisplacementFieldType> DFReaderType;
               DFReaderType::Pointer df_Reader = DFReaderType::New();
               std::string           fileName = path + "/" + subDir->GetFile(j);
               df_Reader->SetFileName(fileName);
               df_Reader->Update();
 
-              typedef itk::AddImageFilter<DeformationFieldType, DeformationFieldType,
-                                          DeformationFieldType> AddImageType;
+              typedef itk::AddImageFilter<DisplacementFieldType, DisplacementFieldType,
+                                          DisplacementFieldType> AddImageType;
               AddImageType::Pointer adder = AddImageType::New();
-              adder->SetInput1(DeformationField);
+              adder->SetInput1(DisplacementField);
               adder->SetInput2(df_Reader->GetOutput() );
               adder->Update();
-              DeformationField = adder->GetOutput();
+              DisplacementField = adder->GetOutput();
               numberOfFields++;
               }
             }
@@ -151,16 +151,16 @@ int AverageBrainGenerator(int argc, char *argv[])
     std::cout << "NEED at least 3 data sets to make an average!" << std::endl;
     }
 
-  typedef itk::MultiplyByConstantImageFilter<DeformationFieldType, float, DeformationFieldType> MultiplyImageType;
+  typedef itk::MultiplyByConstantImageFilter<DisplacementFieldType, float, DisplacementFieldType> MultiplyImageType;
   MultiplyImageType::Pointer multi = MultiplyImageType::New();
-  multi->SetInput(DeformationField);
+  multi->SetInput(DisplacementField);
   multi->SetConstant(1.0 / static_cast<float>(numberOfFields + 1) );
   multi->Update();
 
   // Compute the inverse of the average deformation field
-  typedef itk::ICCIterativeInverseDeformationFieldImageFilter<DeformationFieldType,
-                                                              DeformationFieldType> InverseDeformationFieldImageType;
-  InverseDeformationFieldImageType::Pointer inverse = InverseDeformationFieldImageType::New();
+  typedef itk::ICCIterativeInverseDisplacementFieldImageFilter<DisplacementFieldType,
+                                                               DisplacementFieldType> InverseDisplacementFieldImageType;
+  InverseDisplacementFieldImageType::Pointer inverse = InverseDisplacementFieldImageType::New();
   inverse->SetInput(multi->GetOutput() );
   inverse->SetStopValue(1.0e-6);
   inverse->SetNumberOfIterations(100);
@@ -168,7 +168,7 @@ int AverageBrainGenerator(int argc, char *argv[])
 
   // Write the displacement in each direction
 
-  typedef itk::VectorIndexSelectionCastImageFilter<DeformationFieldType, ImageType> ComponentFilterType;
+  typedef itk::VectorIndexSelectionCastImageFilter<DisplacementFieldType, ImageType> ComponentFilterType;
   ComponentFilterType::Pointer adaptor = ComponentFilterType::New();
   adaptor->SetInput(inverse->GetOutput() );
 
@@ -188,14 +188,14 @@ int AverageBrainGenerator(int argc, char *argv[])
     }
 
   // Warp the templateImage with the avergae displacement
-  typedef itk::WarpImageFilter<ImageType, ImageType, DeformationFieldType> WarpImageType;
+  typedef itk::WarpImageFilter<ImageType, ImageType, DisplacementFieldType> WarpImageType;
   WarpImageType::Pointer warper = WarpImageType::New();
 
   warper->SetInput(templateImage);
-  warper->SetOutputSpacing( DeformationField->GetSpacing() );
-  warper->SetOutputOrigin( DeformationField->GetOrigin() );
-  warper->SetOutputDirection( DeformationField->GetDirection() );
-  warper->SetDeformationField( inverse->GetOutput() );
+  warper->SetOutputSpacing( DisplacementField->GetSpacing() );
+  warper->SetOutputOrigin( DisplacementField->GetOrigin() );
+  warper->SetOutputDirection( DisplacementField->GetDirection() );
+  warper->SetDisplacementField( inverse->GetOutput() );
 
   warper->Update();
 

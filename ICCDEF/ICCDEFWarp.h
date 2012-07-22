@@ -19,7 +19,7 @@ template <typename TImage,
           >
 class ICCDEFWarp : public ICCApplicationBase<
     IccdefPreprocessor<TImage, TRealImage>,
-    IccdefRegistrator<TRealImage, TOutputImage, ITK_TYPENAME TRealImage::PixelType>
+    IccdefRegistrator<TRealImage, TOutputImage, typename TRealImage::PixelType>
     >
 {
 public:
@@ -29,7 +29,7 @@ public:
   typedef ICCApplicationBase<
       IccdefPreprocessor<TImage, TRealImage>,
       IccdefRegistrator<TRealImage, TRealImage,
-                        ITK_TYPENAME TRealImage::PixelType>
+                        typename TRealImage::PixelType>
       > Superclass;
   typedef SmartPointer<Self>       Pointer;
   typedef SmartPointer<const Self> ConstPointer;
@@ -37,7 +37,7 @@ public:
   /** Deformation field pixel type. */
   typedef float                     FieldValueType;
   typedef Vector<FieldValueType, 3> FieldPixelType;
-  typedef Image<FieldPixelType, 3>  TDeformationField;
+  typedef Image<FieldPixelType, 3>  TDisplacementField;
 
   /** Run-time type information (and related methods). */
   itkTypeMacro(ICCDEFWarp, ICCApplicationBase);
@@ -76,14 +76,14 @@ public:
   itkGetStringMacro(TheFixedImageFilename);
 
   /** Set the initial Displacement Field one of 3 ways. */
-//  itkSetStringMacro (InitialDeformationFieldFilename);
-//  itkGetStringMacro (InitialDeformationFieldFilename);
+//  itkSetStringMacro (InitialDisplacementFieldFilename);
+//  itkGetStringMacro (InitialDisplacementFieldFilename);
 
-  itkSetStringMacro(InitialFixedDeformationFieldFilename);
-  itkGetStringMacro(InitialFixedDeformationFieldFilename);
+  itkSetStringMacro(InitialFixedDisplacementFieldFilename);
+  itkGetStringMacro(InitialFixedDisplacementFieldFilename);
 
-  itkSetStringMacro(InitialMovingDeformationFieldFilename);
-  itkGetStringMacro(InitialMovingDeformationFieldFilename);
+  itkSetStringMacro(InitialMovingDisplacementFieldFilename);
+  itkGetStringMacro(InitialMovingDisplacementFieldFilename);
 
   itkSetStringMacro(InitialCoefficientFilename);
   itkGetStringMacro(InitialCoefficientFilename);
@@ -105,17 +105,17 @@ public:
   // itkSetStringMacro (OutputFilename);
 
   /**Set Deformation field output filename*/
-  itkSetStringMacro(ForwardDeformationFieldOutputName);
-  itkGetStringMacro(ForwardDeformationFieldOutputName);
+  itkSetStringMacro(ForwardDisplacementFieldOutputName);
+  itkGetStringMacro(ForwardDisplacementFieldOutputName);
 
-  itkSetStringMacro(BackwardDeformationFieldOutputName);
-  itkGetStringMacro(BackwardDeformationFieldOutputName);
+  itkSetStringMacro(BackwardDisplacementFieldOutputName);
+  itkGetStringMacro(BackwardDisplacementFieldOutputName);
   /**Set Jacobian Image prefix name*/
   itkSetMacro(OutputJacobianImage, bool);
   itkGetConstMacro(OutputJacobianImage, bool);
 
-  itkSetMacro(OutputDeformationField, bool);
-  itkGetConstMacro(OutputDeformationField, bool);
+  itkSetMacro(OutputDisplacementField, bool);
+  itkGetConstMacro(OutputDisplacementField, bool);
 
   itkSetMacro(OutputDisplacement, bool);
   itkGetConstMacro(OutputDisplacement, bool);
@@ -168,7 +168,7 @@ public:
   itkGetMacro(MedianFilterSize,  SizeType);
 
   /** Set the initial deformation field to prime registration */
-  //    itkSetObjectMacro(InitialDeformationField,TDeformationField);
+  //    itkSetObjectMacro(InitialDisplacementField,TDisplacementField);
   /** Set the Input Landmark Filename*/
 
   /**Set histogram matching*/
@@ -195,7 +195,7 @@ public:
   }
 
   typedef ICCDeformableRegistrationFilter<RealImageType, RealImageType,
-                                          TDeformationField>
+                                          TDisplacementField>
     BaseRegistrationFilterType;
   void SetRegistrationFilter(
     BaseRegistrationFilterType * filter)
@@ -220,9 +220,9 @@ private:
 
   std::string m_TheMovingImageFilename;
   std::string m_TheFixedImageFilename;
-  std::string m_InitialDeformationFieldFilename;
-  std::string m_InitialMovingDeformationFieldFilename;
-  std::string m_InitialFixedDeformationFieldFilename;
+  std::string m_InitialDisplacementFieldFilename;
+  std::string m_InitialMovingDisplacementFieldFilename;
+  std::string m_InitialFixedDisplacementFieldFilename;
   std::string m_InitialCoefficientFilename;
   std::string m_InitialTransformFilename;
 
@@ -236,20 +236,20 @@ private:
   bool m_ForceCoronalZeroOrigin;
   bool m_UseHistogramMatching;
   bool m_OutputDisplacement;
-  bool m_OutputDeformationField;
+  bool m_OutputDisplacementField;
   bool m_OutputJacobianImage;
 
   std::string m_OutNormalized;
   //    std::string m_OutDebug;
   std::string m_OutputFilename;
-  std::string m_ForwardDeformationFieldOutputName;
-  std::string m_BackwardDeformationFieldOutputName;
+  std::string m_ForwardDisplacementFieldOutputName;
+  std::string m_BackwardDisplacementFieldOutputName;
   bool        m_AppendOutputFile;
 
   PixelType m_DefaultPixelValue;
   SizeType  m_MedianFilterSize;
 
-  // typename TDeformationField::Pointer m_InitialDeformationField;
+  // typename TDisplacementField::Pointer m_InitialDisplacementField;
   unsigned long       m_NumberOfHistogramLevels;
   unsigned long       m_NumberOfMatchPoints;
   unsigned short      m_NumberOfLevels;
@@ -258,6 +258,6 @@ private:
 }          // namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "ICCDEFWarp.txx"
+#include "ICCDEFWarp.hxx"
 #endif
 #endif

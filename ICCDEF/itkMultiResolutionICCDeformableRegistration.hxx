@@ -22,8 +22,8 @@ namespace itk
 /*
  * Default constructor
  */
-template <class TFixedImage, class TMovingImage, class TDeformationField>
-MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDeformationField>
+template <class TFixedImage, class TMovingImage, class TDisplacementField>
+MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacementField>
 ::MultiResolutionICCDeformableRegistration()
 {
   this->SetNumberOfRequiredInputs(2);
@@ -36,7 +36,7 @@ MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDeformation
   m_FixedImagePyramid     = FixedImagePyramidType::New();
   m_FieldExpander12     = FieldExpanderType::New();
   m_FieldExpander21     = FieldExpanderType::New();
-  m_InitialDeformationField = NULL;
+  m_InitialDisplacementField = NULL;
 
   this->SetNumberOfRequiredOutputs( 2 );
   this->SetNthOutput( 0, this->MakeOutput( 0 ) );
@@ -55,15 +55,15 @@ MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDeformation
   m_CurrentLevel = 0;
 
   m_StopRegistrationFlag = false;
-  m_DeformationFieldOutputNamePrefix = "none";
+  m_DisplacementFieldOutputNamePrefix = "none";
 }
 
 /*
  * Set the moving image image.
  */
-template <class TFixedImage, class TMovingImage, class TDeformationField>
+template <class TFixedImage, class TMovingImage, class TDisplacementField>
 void
-MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDeformationField>
+MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacementField>
 ::SetMovingImage(
   const MovingImageType * ptr )
 {
@@ -73,10 +73,10 @@ MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDeformation
 /*
  * Get the moving image image.
  */
-template <class TFixedImage, class TMovingImage, class TDeformationField>
-const typename MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDeformationField>
+template <class TFixedImage, class TMovingImage, class TDisplacementField>
+const typename MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacementField>
 ::MovingImageType
-* MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDeformationField>
+* MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacementField>
 ::GetMovingImage(void) const
   {
   return dynamic_cast<const MovingImageType *>
@@ -86,9 +86,9 @@ const typename MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImag
 /*
  * Set the fixed image.
  */
-template <class TFixedImage, class TMovingImage, class TDeformationField>
+template <class TFixedImage, class TMovingImage, class TDisplacementField>
 void
-MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDeformationField>
+MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacementField>
 ::SetFixedImage(
   const FixedImageType * ptr )
 {
@@ -98,10 +98,10 @@ MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDeformation
 /*
  * Get the fixed image.
  */
-template <class TFixedImage, class TMovingImage, class TDeformationField>
-const typename MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDeformationField>
+template <class TFixedImage, class TMovingImage, class TDisplacementField>
+const typename MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacementField>
 ::FixedImageType
-* MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDeformationField>
+* MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacementField>
 ::GetFixedImage(void) const
   {
   return dynamic_cast<const FixedImageType *>
@@ -111,9 +111,9 @@ const typename MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImag
 /*
  *
  */
-template <class TFixedImage, class TMovingImage, class TDeformationField>
+template <class TFixedImage, class TMovingImage, class TDisplacementField>
 std::vector<SmartPointer<DataObject> >::size_type
-MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDeformationField>
+MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacementField>
 ::GetNumberOfValidRequiredInputs() const
 {
   typename std::vector<SmartPointer<DataObject> >::size_type num = 0;
@@ -134,9 +134,9 @@ MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDeformation
 /*
  * Set the number of multi-resolution levels
  */
-template <class TFixedImage, class TMovingImage, class TDeformationField>
+template <class TFixedImage, class TMovingImage, class TDisplacementField>
 void
-MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDeformationField>
+MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacementField>
 ::SetNumberOfLevels(
   unsigned int num )
 {
@@ -160,9 +160,9 @@ MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDeformation
 /*
  * Standard PrintSelf method.
  */
-template <class TFixedImage, class TMovingImage, class TDeformationField>
+template <class TFixedImage, class TMovingImage, class TDisplacementField>
 void
-MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDeformationField>
+MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacementField>
 ::PrintSelf(std::ostream& os, Indent indent) const
 {
   Superclass::PrintSelf(os, indent);
@@ -202,12 +202,12 @@ MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDeformation
  * registrator and field_expander.
  *
  */
-template <class TFixedImage, class TMovingImage, class TDeformationField>
+template <class TFixedImage, class TMovingImage, class TDisplacementField>
 void
-MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDeformationField>
+MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacementField>
 ::GenerateData()
 {
-  // DeformationFieldPointer NullDeformationFieldPointer = DeformationFieldType::New();
+  // DisplacementFieldPointer NullDisplacementFieldPointer = DisplacementFieldType::New();
 
   // Check for NULL images and pointers
   MovingImageConstPointer movingImage = this->GetMovingImage();
@@ -245,9 +245,9 @@ MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDeformation
   unsigned int fixedLevel = vnl_math_min( (int) m_CurrentLevel,
                                           (int) m_FixedImagePyramid->GetNumberOfLevels() );
 
-  DeformationFieldPointer tempField12 = this->m_InitialMovingDeformationField;
-  DeformationFieldPointer tempField21 = this->m_InitialFixedDeformationField;
-  bool                    lastShrinkFactorsAllOnes = false;
+  DisplacementFieldPointer tempField12 = this->m_InitialMovingDisplacementField;
+  DisplacementFieldPointer tempField21 = this->m_InitialFixedDisplacementField;
+  bool                     lastShrinkFactorsAllOnes = false;
 
   int iteration = 0;
 
@@ -255,7 +255,7 @@ MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDeformation
     {
     if( tempField12.IsNull() )
       {
-      m_RegistrationFilter->SetInitialDeformationField( NULL );
+      m_RegistrationFilter->SetInitialDisplacementField( NULL );
       }
     else
       {
@@ -277,7 +277,7 @@ MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDeformation
       tempField12 = m_FieldExpander12->GetOutput();
       tempField12->DisconnectPipeline();
 
-      m_RegistrationFilter->SetInitialForwardDeformationField( tempField12 );
+      m_RegistrationFilter->SetInitialForwardDisplacementField( tempField12 );
 
       m_FieldExpander21->SetInput( tempField21 );
       typename FloatImageType::Pointer mi =
@@ -294,7 +294,7 @@ MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDeformation
       tempField21 = m_FieldExpander21->GetOutput();
       tempField21->DisconnectPipeline();
 
-      m_RegistrationFilter->SetInitialBackwardDeformationField( tempField21 );
+      m_RegistrationFilter->SetInitialBackwardDisplacementField( tempField21 );
       }
 
     // setup registration filter and pyramids
@@ -325,19 +325,19 @@ MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDeformation
 //	tempField12->Print(std::cout,6);
 
 #if 0
-    typedef WarpImageFilter<TMovingImage, TMovingImage, TDeformationField> WarpImageType;
+    typedef WarpImageFilter<TMovingImage, TMovingImage, TDisplacementField> WarpImageType;
     typename WarpImageType::Pointer warper = WarpImageType::New();
     warper->SetOutputOrigin( m_FixedImagePyramid->GetOutput(fixedLevel)->GetOrigin() );
     warper->SetOutputSpacing(  m_FixedImagePyramid->GetOutput(fixedLevel)->GetSpacing()  );
     warper->SetOutputDirection(m_FixedImagePyramid->GetOutput(fixedLevel)->GetDirection() );
     warper->SetInput( m_MovingImagePyramid->GetOutput(fixedLevel) );
-    warper->SetDeformationField(tempField12 );
+    warper->SetDisplacementField(tempField12 );
     warper->GetOutput()->SetRequestedRegion( tempField12->GetRequestedRegion() );
     warper->Update();
 #endif
-    if( m_DeformationFieldOutputNamePrefix != "" && m_DeformationFieldOutputNamePrefix != "none" )
+    if( m_DisplacementFieldOutputNamePrefix != "" && m_DisplacementFieldOutputNamePrefix != "none" )
       {
-      std::string       name = m_DeformationFieldOutputNamePrefix + "_iteration"; // resolution";
+      std::string       name = m_DisplacementFieldOutputNamePrefix + "_iteration"; // resolution";
       std::stringstream ss1;
       std::string       str1;
       iteration += m_NumberOfIterations[m_CurrentLevel];
@@ -355,7 +355,7 @@ MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDeformation
       ss >> str;
       name = name + "resolution" + str;
 
-      typedef ImageFileWriter<TDeformationField> WriteImageType;
+      typedef ImageFileWriter<TDisplacementField> WriteImageType;
       typename WriteImageType::Pointer writer12 = WriteImageType::New();
       writer12->SetInput(tempField12);
       writer12->SetFileName("forward/" + name + "_forward.nii.gz");
@@ -441,18 +441,18 @@ MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDeformation
   m_RegistrationFilter->GetOutput(1)->ReleaseData();
 }
 
-template <class TFixedImage, class TMovingImage, class TDeformationField>
+template <class TFixedImage, class TMovingImage, class TDisplacementField>
 void
-MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDeformationField>
+MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacementField>
 ::StopRegistration()
 {
   m_RegistrationFilter->StopRegistration();
   m_StopRegistrationFlag = true;
 }
 
-template <class TFixedImage, class TMovingImage, class TDeformationField>
+template <class TFixedImage, class TMovingImage, class TDisplacementField>
 bool
-MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDeformationField>
+MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacementField>
 ::Halt()
 {
   // Halt the registration after the user-specified number of levels
@@ -480,9 +480,9 @@ MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDeformation
     }
 }
 
-template <class TFixedImage, class TMovingImage, class TDeformationField>
+template <class TFixedImage, class TMovingImage, class TDisplacementField>
 void
-MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDeformationField>
+MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacementField>
 ::GenerateOutputInformation()
 {
   typename DataObject::Pointer output;
@@ -509,9 +509,9 @@ MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDeformation
     }
 }
 
-template <class TFixedImage, class TMovingImage, class TDeformationField>
+template <class TFixedImage, class TMovingImage, class TDisplacementField>
 void
-MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDeformationField>
+MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacementField>
 ::GenerateInputRequestedRegion()
 {
   // call the superclass's implementation
@@ -528,10 +528,10 @@ MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDeformation
 
   // just propagate up the output requested region for
   // the fixed image and initial deformation field.
-  DeformationFieldPointer inputPtr =
-    const_cast<DeformationFieldType *>( this->GetInput() );
-  DeformationFieldPointer outputPtr = this->GetOutput();
-  FixedImagePointer       fixedPtr =
+  DisplacementFieldPointer inputPtr =
+    const_cast<DisplacementFieldType *>( this->GetInput() );
+  DisplacementFieldPointer outputPtr = this->GetOutput();
+  FixedImagePointer        fixedPtr =
     const_cast<FixedImageType *>( this->GetFixedImage() );
 
   if( inputPtr )
@@ -545,9 +545,9 @@ MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDeformation
     }
 }
 
-template <class TFixedImage, class TMovingImage, class TDeformationField>
+template <class TFixedImage, class TMovingImage, class TDisplacementField>
 void
-MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDeformationField>
+MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacementField>
 ::EnlargeOutputRequestedRegion(
   DataObject * ptr )
 {
@@ -555,9 +555,9 @@ MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDeformation
   Superclass::EnlargeOutputRequestedRegion( ptr );
 
   // set the output requested region to largest possible.
-  DeformationFieldType * outputPtr;
+  DisplacementFieldType * outputPtr;
 
-  outputPtr = dynamic_cast<DeformationFieldType *>( ptr );
+  outputPtr = dynamic_cast<DisplacementFieldType *>( ptr );
 
   if( outputPtr )
     {
@@ -565,21 +565,21 @@ MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDeformation
     }
 }
 
-template <class TFixedImage, class TMovingImage, class TDeformationField>
-DataObject::Pointer
-MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDeformationField>
-::MakeOutput(unsigned int idx)
+template <class TFixedImage, class TMovingImage, class TDisplacementField>
+ProcessObject::DataObjectPointer
+MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacementField>
+::MakeOutput(ProcessObject::DataObjectPointerArraySizeType idx)
 {
   switch( idx )
     {
     case 0:
       {
-      return static_cast<DataObject *>(TDeformationField::New().GetPointer() );
+      return static_cast<DataObject *>(TDisplacementField::New().GetPointer() );
       }
       break;
     case 1:
       {
-      return static_cast<DataObject *>(TDeformationField::New().GetPointer() );
+      return static_cast<DataObject *>(TDisplacementField::New().GetPointer() );
       }
       break;
     default:

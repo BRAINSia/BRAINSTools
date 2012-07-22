@@ -80,7 +80,7 @@ private:
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkBrains2LandmarkReader.txx"
+#include "itkBrains2LandmarkReader.hxx"
 #endif
 
 #endif // _itkBrains2LandmarkReader_h

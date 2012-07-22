@@ -75,7 +75,7 @@ protected:
 }   // namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "ICCApplicationBase.txx"
+#include "ICCApplicationBase.hxx"
 #endif
 
 #endif

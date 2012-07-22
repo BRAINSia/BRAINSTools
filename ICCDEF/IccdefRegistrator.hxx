@@ -35,7 +35,7 @@ template <
   class TOutputImage,
   class TFieldValue>
 void IccdefRegistrator<TRealImage, TOutputImage,
-                       TFieldValue>::WriteDisplacementComponents(TDeformationField * df, std::string prefix)
+                       TFieldValue>::WriteDisplacementComponents(TDisplacementField * df, std::string prefix)
 {
 //  typedef itk::Image<float, 3> OutputImageType;
   m_DefaultPixelValue = NumericTraits<PixelType>::One;
@@ -44,7 +44,7 @@ void IccdefRegistrator<TRealImage, TOutputImage,
   // into x,y,z components.
   typedef itk::Image<FieldValueType,
                      3>                  ComponentImageType;
-  typedef itk::VectorIndexSelectionCastImageFilter<TDeformationField,
+  typedef itk::VectorIndexSelectionCastImageFilter<TDisplacementField,
                                                    ComponentImageType> ComponentFilterType;
 
   std::string CurrentComponentFilename;
@@ -100,8 +100,8 @@ IccdefRegistrator<TRealImage, TOutputImage, TFieldValue>::IccdefRegistrator()
   // Images need to be set from the outside
   m_FixedImage = NULL;
   m_MovingImage = NULL;
-  m_DeformationField = NULL;
-  m_BackwardDeformationField = NULL;
+  m_DisplacementField = NULL;
+  m_BackwardDisplacementField = NULL;
 
   // Set up internal registrator with default components
   m_FixedImagePyramid = FixedImagePyramidType::New();
@@ -122,7 +122,7 @@ IccdefRegistrator<TRealImage, TOutputImage, TFieldValue>::IccdefRegistrator()
   m_Tag = m_Registration->AddObserver(IterationEvent(), command);
 
   typedef VectorLinearInterpolateNearestNeighborExtrapolateImageFunction<
-      TDeformationField, double> FieldInterpolatorType;
+      TDisplacementField, double> FieldInterpolatorType;
 
   typename FieldInterpolatorType::Pointer VectorInterpolator12
     = FieldInterpolatorType::New();
@@ -140,18 +140,18 @@ IccdefRegistrator<TRealImage, TOutputImage, TFieldValue>::IccdefRegistrator()
   m_NumberOfIterations.Fill(10);
   m_OutputPrefix = "none";
 
-  m_ForwardDeformationFieldOutputName = "none";
-  m_BackwardDeformationFieldOutputName = "none";
-  m_InitialFixedDeformationFieldFilename = "none";
-  m_InitialMovingDeformationFieldFilename = "none";
+  m_ForwardDisplacementFieldOutputName = "none";
+  m_BackwardDisplacementFieldOutputName = "none";
+  m_InitialFixedDisplacementFieldFilename = "none";
+  m_InitialMovingDisplacementFieldFilename = "none";
   m_OutputJacobianImage = false;
   m_OutputDisplacement = false;
-  m_OutputDeformationField = false;
+  m_OutputDisplacementField = false;
 
   m_UseHistogramMatching = false;
   m_OutDebug = false;
 
-  m_InitialDeformationField = NULL;
+  m_InitialDisplacementField = NULL;
   m_ForwardDir = "";
   m_BackwardDir = "";
 }
@@ -196,18 +196,18 @@ void IccdefRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute()
   m_ForwardDir = "forward";
   m_BackwardDir = "backward";
 
-  if( this->m_OutputDeformationField )
+  if( this->m_OutputDisplacementField )
     {
-    m_Registration->SetDeformationFieldOutputNamePrefix(m_OutputPrefix);
+    m_Registration->SetDisplacementFieldOutputNamePrefix(m_OutputPrefix);
     }
 
   // Setup the initial deformation field
-  if( this->m_InitialFixedDeformationFieldFilename != std::string("none")
-      && this->m_InitialFixedDeformationFieldFilename != std::string("") )
+  if( this->m_InitialFixedDisplacementFieldFilename != std::string("none")
+      && this->m_InitialFixedDisplacementFieldFilename != std::string("") )
     {
-    typedef   itk::ImageFileReader<TDeformationField> FieldReaderType;
+    typedef   itk::ImageFileReader<TDisplacementField> FieldReaderType;
     typename FieldReaderType::Pointer fieldReader = FieldReaderType::New();
-    fieldReader->SetFileName( m_InitialFixedDeformationFieldFilename.c_str() );
+    fieldReader->SetFileName( m_InitialFixedDisplacementFieldFilename.c_str() );
     try
       {
       fieldReader->Update();
@@ -218,15 +218,15 @@ void IccdefRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute()
       throw err;
       }
 
-    m_Registration->SetInitialFixedDeformationField(fieldReader->GetOutput() );
+    m_Registration->SetInitialFixedDisplacementField(fieldReader->GetOutput() );
     }
 
-  if( this->m_InitialMovingDeformationFieldFilename != std::string("none")
-      && this->m_InitialMovingDeformationFieldFilename != std::string("") )
+  if( this->m_InitialMovingDisplacementFieldFilename != std::string("none")
+      && this->m_InitialMovingDisplacementFieldFilename != std::string("") )
     {
-    typedef   itk::ImageFileReader<TDeformationField> FieldReaderType;
+    typedef   itk::ImageFileReader<TDisplacementField> FieldReaderType;
     typename FieldReaderType::Pointer fieldReader = FieldReaderType::New();
-    fieldReader->SetFileName( m_InitialMovingDeformationFieldFilename.c_str() );
+    fieldReader->SetFileName( m_InitialMovingDisplacementFieldFilename.c_str() );
     try
       {
       fieldReader->Update();
@@ -237,14 +237,14 @@ void IccdefRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute()
       throw err;
       }
 
-    m_Registration->SetInitialMovingDeformationField(fieldReader->GetOutput() );
+    m_Registration->SetInitialMovingDisplacementField(fieldReader->GetOutput() );
     }
 
 #if 0
-  if( this->m_InitialDeformationField.IsNotNull() )
+  if( this->m_InitialDisplacementField.IsNotNull() )
     {
-//    m_Registration->SetInitialDeformationField(this->m_InitialDeformationField);
-    m_Registration->SetInitialMovingDeformationField(this->m_InitialDeformationField);
+//    m_Registration->SetInitialDisplacementField(this->m_InitialDisplacementField);
+    m_Registration->SetInitialMovingDisplacementField(this->m_InitialDisplacementField);
     }
 #endif
 
@@ -269,12 +269,12 @@ void IccdefRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute()
 
   try
     {
-    m_DeformationField = m_Registration->GetOutput(0);
-    m_BackwardDeformationField = m_Registration->GetOutput(1);
-    if( m_DeformationField->GetDirection() != m_FixedImage->GetDirection() )
+    m_DisplacementField = m_Registration->GetOutput(0);
+    m_BackwardDisplacementField = m_Registration->GetOutput(1);
+    if( m_DisplacementField->GetDirection() != m_FixedImage->GetDirection() )
       {
       std::cout << "ERROR Directions don't match\n"
-                << m_DeformationField->GetDirection()
+                << m_DisplacementField->GetDirection()
                 << "\n"
                 << m_FixedImage->GetDirection()
                 << std::endl;
@@ -302,26 +302,26 @@ void IccdefRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute()
 
 #if 1
   // Write the output deformation fields if specified by the user.
-  if( this->m_ForwardDeformationFieldOutputName != std::string("none")
-      && this->m_ForwardDeformationFieldOutputName != std::string("") )
+  if( this->m_ForwardDisplacementFieldOutputName != std::string("none")
+      && this->m_ForwardDisplacementFieldOutputName != std::string("") )
     {
-    itkUtil::WriteImage<TDeformationField>(m_DeformationField,
-                                           this->m_ForwardDeformationFieldOutputName);
+    itkUtil::WriteImage<TDisplacementField>(m_DisplacementField,
+                                            this->m_ForwardDisplacementFieldOutputName);
     if( this->GetOutDebug() )
       {
       std::cout << "---Forward deformation field has been written "
-                << this->m_ForwardDeformationFieldOutputName << "--" << std::endl;
+                << this->m_ForwardDisplacementFieldOutputName << "--" << std::endl;
       }
     }
-  if( this->m_BackwardDeformationFieldOutputName != std::string("none")
-      && this->m_BackwardDeformationFieldOutputName != std::string("") )
+  if( this->m_BackwardDisplacementFieldOutputName != std::string("none")
+      && this->m_BackwardDisplacementFieldOutputName != std::string("") )
     {
-    itkUtil::WriteImage<TDeformationField>(m_BackwardDeformationField,
-                                           this->m_ForwardDeformationFieldOutputName);
+    itkUtil::WriteImage<TDisplacementField>(m_BackwardDisplacementField,
+                                            this->m_ForwardDisplacementFieldOutputName);
     if( this->GetOutDebug() )
       {
       std::cout << "---Backward deformation field has been written "
-                << this->m_BackwardDeformationFieldOutputName << "--" << std::endl;
+                << this->m_BackwardDisplacementFieldOutputName << "--" << std::endl;
       }
     }
 #endif
@@ -329,18 +329,18 @@ void IccdefRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute()
   //  Write out the displacement fields specified by the user.
   if( this->GetOutputDisplacement() )
     {
-    this->WriteDisplacementComponents(m_DeformationField, m_ForwardDir);
-    this->WriteDisplacementComponents(m_BackwardDeformationField, m_BackwardDir);
+    this->WriteDisplacementComponents(m_DisplacementField, m_ForwardDir);
+    this->WriteDisplacementComponents(m_BackwardDisplacementField, m_BackwardDir);
     }
 
   if( this->GetOutputJacobianImage() )
     {
     typedef itk::DisplacementFieldJacobianDeterminantFilter<
-        TDeformationField, FieldValueType, TRealImage> JacobianFilterType;
+        TDisplacementField, FieldValueType, TRealImage> JacobianFilterType;
 
     typename JacobianFilterType::Pointer m_ForwardJacobianFilter = JacobianFilterType::New();
     m_ForwardJacobianFilter->SetUseImageSpacing( true );
-    m_ForwardJacobianFilter->SetInput(m_DeformationField);
+    m_ForwardJacobianFilter->SetInput(m_DisplacementField);
     m_ForwardJacobianFilter->UpdateLargestPossibleRegion();
 
     typename TRealImage::Pointer fjPtr = m_ForwardJacobianFilter->GetOutput();
@@ -348,7 +348,7 @@ void IccdefRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute()
 
     typename JacobianFilterType::Pointer m_BackwardJacobianFilter = JacobianFilterType::New();
     m_BackwardJacobianFilter->SetUseImageSpacing( true );
-    m_BackwardJacobianFilter->SetInput(m_BackwardDeformationField);
+    m_BackwardJacobianFilter->SetInput(m_BackwardDisplacementField);
     m_BackwardJacobianFilter->UpdateLargestPossibleRegion();
     typename TRealImage::Pointer bjPtr = m_BackwardJacobianFilter->GetOutput();
     itkUtil::WriteImage<TRealImage>(bjPtr, this->m_BackwardDir + "/" + "Jacobian_backward.nii.gz");
@@ -361,7 +361,7 @@ void IccdefRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute()
     typename RealImageType::Pointer DeformedFixedImagePtr(0);
 
     typedef WarpImageFilter<RealImageType, RealImageType,
-                            TDeformationField> WarperType;
+                            TDisplacementField> WarperType;
     typename WarperType::Pointer warper = WarperType::New();
     if( this->GetUseHistogramMatching() == true )
       {
@@ -375,7 +375,7 @@ void IccdefRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute()
     warper->SetOutputSpacing( m_FixedImage->GetSpacing() );
     warper->SetOutputOrigin( m_FixedImage->GetOrigin() );
     warper->SetOutputDirection( m_FixedImage->GetDirection() );
-    warper->SetDeformationField( m_DeformationField);
+    warper->SetDisplacementField( m_DisplacementField);
     warper->Update();
     DeformedMovingImagePtr = warper->GetOutput();
 
@@ -384,7 +384,7 @@ void IccdefRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute()
     warperb->SetOutputSpacing( m_MovingImage->GetSpacing() );
     warperb->SetOutputOrigin( m_MovingImage->GetOrigin() );
     warperb->SetOutputDirection( m_MovingImage->GetDirection() );
-    warperb->SetDeformationField(m_BackwardDeformationField);
+    warperb->SetDisplacementField(m_BackwardDisplacementField);
     warperb->Update();
     DeformedFixedImagePtr = warperb->GetOutput();
 
@@ -393,7 +393,7 @@ void IccdefRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute()
       std::cout << "-----Direction of output warped image\n"
                 << DeformedMovingImagePtr->GetDirection()
                 << "\n-----Direction of deformation field\n"
-                << this->m_DeformationField->GetDirection() << std::endl;
+                << this->m_DisplacementField->GetDirection() << std::endl;
       }
     /*Write the output image.*/
     if( this->m_OutputPrefix != std::string("none") )

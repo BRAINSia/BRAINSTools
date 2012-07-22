@@ -3,10 +3,10 @@
 #include "itkVector.h"
 #include "itkImageRegionIterator.h"
 #include "itkImageFileWriter.h"
-#include "itkIterativeInverseDeformationFieldImageFilter.h"
-#include "itkMultiThreadIterativeInverseDeformationFieldImageFilter.h"
+#include "itkIterativeInverseDisplacementFieldImageFilter.h"
+#include "itkMultiThreadIterativeInverseDisplacementFieldImageFilter.h"
 
-int itkIterativeInverseDeformationFieldFilterTest(int argc, char *argv[] )
+int itkIterativeInverseDisplacementFieldFilterTest(int argc, char *argv[] )
 {
   if( argc < 2 )
     {
@@ -44,8 +44,8 @@ int itkIterativeInverseDeformationFieldFilterTest(int argc, char *argv[] )
     ++it;
     }
 
-  typedef itk::IterativeInverseDeformationFieldImageFilter<ImageType, ImageType> InverseDeformationFieldImageType;
-  InverseDeformationFieldImageType::Pointer inverse1 = InverseDeformationFieldImageType::New();
+  typedef itk::IterativeInverseDisplacementFieldImageFilter<ImageType, ImageType> InverseDisplacementFieldImageType;
+  InverseDisplacementFieldImageType::Pointer inverse1 = InverseDisplacementFieldImageType::New();
   inverse1->SetInput(img);
   inverse1->SetStopValue(1.0e-7);
   try
@@ -73,9 +73,9 @@ int itkIterativeInverseDeformationFieldFilterTest(int argc, char *argv[] )
     return EXIT_FAILURE;
     }
 
-  typedef itk::MultiThreadIterativeInverseDeformationFieldImageFilter<ImageType,
-                                                                      ImageType> InverseDeformationField1ImageType;
-  InverseDeformationField1ImageType::Pointer inverse2 = InverseDeformationField1ImageType::New();
+  typedef itk::MultiThreadIterativeInverseDisplacementFieldImageFilter<ImageType,
+                                                                       ImageType> InverseDisplacementField1ImageType;
+  InverseDisplacementField1ImageType::Pointer inverse2 = InverseDisplacementField1ImageType::New();
   inverse2->SetInput(img);
   inverse2->SetStopValue(1.0e-7);
   inverse2->Update();

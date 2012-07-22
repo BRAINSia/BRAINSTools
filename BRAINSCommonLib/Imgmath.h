@@ -32,9 +32,9 @@
 #include "itkMaximumImageFilter.h"
 // TODO:  add these correctly so we get multi-threading.
 #include "itkInvertIntensityImageFilter.h"
-#include "itkAddConstantToImageFilter.h"
-#include "itkDivideByConstantImageFilter.h"
-#include "itkMultiplyByConstantImageFilter.h"
+#include "itkAddImageFilter.h"
+#include "itkDivideImageFilter.h"
+#include "itkMultiplyImageFilter.h"
 #include "itkSqrtImageFilter.h"
 #include "itkExpImageFilter.h"
 #include "itkExpNegativeImageFilter.h"
@@ -181,6 +181,7 @@ typename ImageType::Pointer ImageAddConstant(
   const double shiftvalue)
 {
   // TODO:  This should be a UnaryImageFunctor operation to get multi-threading.
+  // KENT: Replace the use of this filter with itk::AddImageFilter
   typename ImageType::Pointer outImage = ImageType::New();
   outImage->SetRegions( input->GetLargestPossibleRegion() );
   outImage->CopyInformation(input);
@@ -203,10 +204,10 @@ typename ImageType::Pointer ImageMultiplyConstant(
   const typename ImageType::Pointer input,
   const double scalevalue)
 {
-  typedef typename itk::MultiplyByConstantImageFilter<ImageType, double, ImageType>
-    MultByConstFilterType;
-  typedef typename MultByConstFilterType::Pointer MultByConstFilterPointer;
-  MultByConstFilterPointer filt = MultByConstFilterType::New();
+  typedef typename itk::MultiplyImageFilter<ImageType, itk::Image<double, 3>, ImageType>
+    MultFilterType;
+  typedef typename MultFilterType::Pointer MultFilterPointer;
+  MultFilterPointer filt = MultFilterType::New();
   filt->SetInput(input);
   filt->SetConstant(scalevalue);
   filt->Update();

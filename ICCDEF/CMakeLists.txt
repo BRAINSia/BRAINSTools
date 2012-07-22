@@ -41,7 +41,7 @@ include_directories(
 )
 
 set(ALL_PROGS_LIST
-  #  Should probably use BRAINSResample instead of ApplyWarp
+  ApplyWarp
   AverageBrainGenerator
   CreateMask
   iccdefRegistration_New
@@ -54,9 +54,6 @@ foreach(prog ${ALL_PROGS_LIST})
   StandardBRAINSBuildMacro(NAME ${prog} TARGET_LIBRARIES ${ICCDEFLibraries})
 endforeach()
 
-
-if(0) ## HACK: KENT please clean this up and add this testing
 if(BUILD_TESTING)
   add_subdirectory(TestSuite)
 endif(BUILD_TESTING)
-endif()

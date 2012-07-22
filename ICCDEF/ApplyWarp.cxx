@@ -16,14 +16,13 @@ TODO:  NEED TO COMMENT WHAT THIS PROGRAM IS TO BE USED FOR
 #include "itkWindowedSincInterpolateImageFunction.h"
 #include "ApplyWarpCLP.h"
 
-// #include "itkBrains2MaskImageIO.h"
-// #include "itkBrains2MaskImageIOFactory.h"
 #include "itkBinaryThresholdImageFilter.h"
 #include "itkSignedMaurerDistanceMapImageFilter.h"
 #include "itkStatisticsImageFilter.h"
 #include "itkIO.h"
 
 #include "GenericTransformImage.h"
+
 #if 0
 static const unsigned int SpaceDimension = 3;
 static const unsigned int SplineOrder = 3;
@@ -246,66 +245,9 @@ int ApplyWarp(int argc, char *argv[])
 
   if( useTransform )
     {
+    std::cerr << "Invalid option, not implemented in ITKv4 version yet." << std::endl;
+    return -1;
 #if 0
-    bool definitelyBSpline = false;
-
-    itk::TransformFileReader::Pointer transformReader
-      = itk::TransformFileReader::New();
-
-    transformReader->SetFileName( warpTransform.c_str() );
-    transformReader->Update();
-
-    typedef itk::TransformFileReader::TransformListType *TransformListType;
-    TransformListType transforms = transformReader->GetTransformList();
-    std::cout << "Number of transforms = " << transforms->size() << std::endl;
-
-    itk::TransformFileReader::TransformListType::const_iterator it
-      = transforms->begin();
-
-    if( transforms->size() == 1 ) // There is no bulk transform.
-      {
-      BulkTransform = AffineTransformType::New();
-      BulkTransform->SetIdentity();
-      const std::string firstNameOfClass = ( *it )->GetNameOfClass();
-      std::cout << "FIRST (and only) NameOfClass = " << firstNameOfClass << std::endl;
-      definitelyBSpline = (firstNameOfClass == "BSplineDeformableTransform");
-      }
-    else // Pick up what we presume was the bulk transform.
-      {
-      BulkTransform = static_cast<AffineTransformType *>( ( *it ).GetPointer() );
-      const std::string firstNameOfClass = ( *it )->GetNameOfClass();
-      std::cout << "First (Bulk) NameOfClass = " << firstNameOfClass << std::endl;
-      it++;
-      const std::string secondNameOfClass = ( *it )->GetNameOfClass();
-      std::cout << "SECOND NameOfClass = " << secondNameOfClass << std::endl;
-      definitelyBSpline = (secondNameOfClass == "BSplineDeformableTransform");
-      }
-
-    if( definitelyBSpline )
-      {
-      itkBSplineTransform = static_cast<BSplineTransformType *>( ( *it ).GetPointer() );
-      itkBSplineTransform->SetBulkTransform( BulkTransform );
-      std::cout << "warpTransform recognized as a BSpline." << std::endl;
-      }
-    else
-      {
-      ITKAffineTransform = ReadTransform( warpTransform.c_str() );
-      std::cout << "warpTransform recognized as one of the linear transforms." << std::endl;
-
-      if( invertTransform )
-        {
-        AffineTransformType::Pointer ITKAffineTempTransform
-          = AffineTransformType::New();
-        ITKAffineTempTransform->SetIdentity();
-
-        ITKAffineTempTransform->SetFixedParameters(
-          ITKAffineTransform->GetFixedParameters() );
-        ITKAffineTempTransform->SetParameters(
-          ITKAffineTransform->GetParameters() );
-        ITKAffineTempTransform->GetInverse( ITKAffineTransform );
-        }
-      }
-#else
     ReadDotMatTransformFile(warpTransform,
                             itkBSplineTransform,
                             ITKAffineTransform,
@@ -320,14 +262,12 @@ int ApplyWarp(int argc, char *argv[])
         PrincipalOperandImage,
         ReferenceImage,
         DisplacementField,
+        NULL,
         defaultValue,
-        itkBSplineTransform,
-        ITKAffineTransform,
         interpolationMode,
         pixelType == "binary");
 
   // Write out the output image;  threshold it if necessary.
-
   if( pixelType == "binary" )
     {
     // A special case for dealing with binary images
@@ -440,6 +380,14 @@ int ApplyWarp(int argc, char *argv[])
 
 int main( int argc, char *argv[] )
 {
+  std::cout << "This program has been replaced by BRAINSResample.  PLEASE TRY TO AVOID USING THIS!" << std::endl;
+  std::cout << "This program has been replaced by BRAINSResample.  PLEASE TRY TO AVOID USING THIS!" << std::endl;
+  std::cout << "This program has been replaced by BRAINSResample.  PLEASE TRY TO AVOID USING THIS!" << std::endl;
+  std::cout << "This program has been replaced by BRAINSResample.  PLEASE TRY TO AVOID USING THIS!" << std::endl;
+  std::cout << "This program has been replaced by BRAINSResample.  PLEASE TRY TO AVOID USING THIS!" << std::endl;
+  std::cout << "This program has been replaced by BRAINSResample.  PLEASE TRY TO AVOID USING THIS!" << std::endl;
+  std::cout << "This program has been replaced by BRAINSResample.  PLEASE TRY TO AVOID USING THIS!" << std::endl;
+  std::cout << "This program has been replaced by BRAINSResample.  PLEASE TRY TO AVOID USING THIS!" << std::endl;
   // HACK:  BRAINS2 Masks are currently broken
   // The direction cosines are and the direction labels are not consistently being set.
   // itk::Brains2MaskImageIOFactory::RegisterOneFactory();

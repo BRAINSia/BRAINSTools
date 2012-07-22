@@ -1,21 +1,56 @@
+include_directories(${${LOCAL_RROJECT_NAME}_SOURCE_DIR})
 
-include_directories( ${iccdefRegistrationNew_SOURCE_DIR}/Common)
+MakeTestDriverFromSEMTool(ApplyWarp ApplyWarpTest.cxx)
+MakeTestDriverFromSEMTool(CreateMask CreateMaskTest.cxx)
+MakeTestDriverFromSEMTool(AverageBrainGenerator AverageBrainGeneratorTest.cxx)
+MakeTestDriverFromSEMTool(iccdefRegistration_New iccdefRegistration_NewTest.cxx)
 
 
-add_executable( ApplyWarpCLPTests  ApplyWarpCLPTests.cxx  )
-target_link_libraries(ApplyWarpCLPTests ITKAlgorithms ITKIO)
-set(Apply_Warp_TESTS ApplyWarpCLPTests )
+set(UNIT_TESTS UnitTests)
+set(UnitTest_SRCS
+itkVectorFFTWTest.cxx
+itkIterativeInverseDisplacementFieldFilterTest.cxx
+itkIterativeInverseDisplacementFieldFilterTest2.cxx
+)
 
-add_executable( ICCDEFWarpCLPTests
-       iccdefRegistration_New.cxx ICCDEFWarpCLPTests.cxx )
-target_link_libraries(ICCDEFWarpCLPTests
-                      ${FFTWF_LIB} ITKAlgorithms ITKIO
+#add_test(itkVectorFFTWTest ${UNIT_TESTS}
+#   --compare ${iccdefRegistrationNew__BINARY_DIR}/transformedImage.nii.gz
+#             ${iccdefRegistrationNew__BINARY_DIR}/originalImage.nii.gz
+#  --compareNumberOfPixelsTolerance 20
+#   itkVectorFFTWTest
+#     ${iccdefRegistrationNew__BINARY_DIR}/originalImage.nii.gz
+#     ${iccdefRegistrationNew__BINARY_DIR}/transformedImage.nii.gz
+#)
+
+#add_executable(UnitTests UnitTests.cxx ${UnitTest_SRCS})
+#target_link_libraries(UnitTests
+#    ${ITK_LIBRARIES} ${FFTWF_LIB}
+#)
+
+
+#set(UNIT_TESTS ${iccdefRegistrationNew_BINARY_DIR}/bin/UnitTests)
+set(UNIT_TESTS ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/UnitTests)
+set(TEMP ${iccdefRegistrationNew_BINARY_DIR})
+
+add_executable(UnitTests UnitTests.cxx ${UnitTest_SRCS})
+target_link_libraries(UnitTests ${ITK_LIBRARIES} ${FFTWF_LIB})
+
+if(0)
+
+add_executable( ApplyWarpTest  ApplyWarpTest.cxx  )
+target_link_libraries(ApplyWarpTest ${ITK_LIBRARIES})
+set(Apply_Warp_TESTS ApplyWarpTest )
+
+add_executable( ICCDEFWarpTest
+       iccdefRegistration_New.cxx ICCDEFWarpTest.cxx )
+target_link_libraries(ICCDEFWarpTest
+                      ${FFTWF_LIB} ${ITK_LIBRARIES}
 )
 
 if(USE_DEBUG_IMAGE_VIEWER)
-  target_link_libraries(ICCDEFWarpCLPTests ${FFTWF_LIB} ${KWWidgets_LIBRARIES} )
+  target_link_libraries(ICCDEFWarpTest ${FFTWF_LIB} ${KWWidgets_LIBRARIES} )
 endif(USE_DEBUG_IMAGE_VIEWER)
-set(ICCDEF_Warp_TESTS ICCDEFWarpCLPTests )
+set(ICCDEF_Warp_TESTS ICCDEFWarpTest )
 
 add_test(ValidateICCDEF_Test1_nii ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${ICCDEF_Warp_TESTS}
   --compare
@@ -217,33 +252,6 @@ add_test(ValidateApplyWarpTest4_nii ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${Apply_Wa
     --warpTransform ${iccdefRegistrationNew_SOURCE_DIR}/TestData/BRAINSFitTest_RigidRotationMasks.mat
 )
 
-set(UNIT_TESTS UnitTests)
-
-set(UnitTest_SRCS
-itkVectorFFTWTest.cxx
-itkIterativeInverseDisplacementFieldFilterTest.cxx
-itkIterativeInverseDisplacementFieldFilterTest2.cxx
-)
-
-#add_test(itkVectorFFTWTest ${UNIT_TESTS}
-#   --compare ${iccdefRegistrationNew__BINARY_DIR}/transformedImage.nii.gz
-#             ${iccdefRegistrationNew__BINARY_DIR}/originalImage.nii.gz
-#  --compareNumberOfPixelsTolerance 20
-#   itkVectorFFTWTest
-#     ${iccdefRegistrationNew__BINARY_DIR}/originalImage.nii.gz
-#     ${iccdefRegistrationNew__BINARY_DIR}/transformedImage.nii.gz
-#)
-
-#add_executable(UnitTests UnitTests.cxx ${UnitTest_SRCS})
-#target_link_libraries(UnitTests
-#    ITKAlgorithms ITKIO ${FFTWF_LIB}
-#)
-
-
-#set(UNIT_TESTS ${iccdefRegistrationNew_BINARY_DIR}/bin/UnitTests)
-set(UNIT_TESTS ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/UnitTests)
-set(TEMP ${iccdefRegistrationNew_BINARY_DIR})
-
 add_test(itkVectorFFTWTest ${UNIT_TESTS}
    --compare ${TEMP}/transformedImage.nii.gz
              ${TEMP}/originalImage.nii.gz
@@ -273,9 +281,4 @@ add_test(itkIterativeInverseDisplacementFieldFilterTest2 ${UNIT_TESTS}
      ${TEMP}/inverse_test2.nii.gz
 )
 
-add_executable(UnitTests ${iccdefRegistrationNew_SOURCE_DIR}/unit_test/UnitTests.cxx ${UnitTest_SRCS})
-target_link_libraries(UnitTests
-    ITKAlgorithms ITKIO ${FFTWF_LIB}
-)
-
-
+endif(0)

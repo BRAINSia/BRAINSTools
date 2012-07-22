@@ -232,7 +232,7 @@ void MultiThreadIterativeInverseDisplacementFieldImageFilter<TInputImage, TOutpu
     } // end else
 
   time.Stop();
-  m_Time = time.GetMeanTime();
+  m_Time = time.GetMean();
 }
 
 template <class TInputImage, class TOutputImage>

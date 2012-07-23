@@ -79,8 +79,7 @@ if(NOT DEFINED ${extProjName}_DIR AND NOT ${USE_SYSTEM_${extProjName}})
     )
   ### --- End Project specific additions
   set(${proj}_REPOSITORY ${git_protocol}://itk.org/ITK.git)
-  set(${proj}_GIT_TAG 4f2cf9ed707c262c17e4565217b6ebbaa03bcf0e)
-  ## 2012-06-19 The feature freeze version that will become v4.2.0rc3
+  set(${proj}_GIT_TAG 949f14eb4d34d3a9e58427e67b5a7ccd5ea77d0f) #2012-07-23 -- Includes LaplacianRecursiveGaussian bug fix.
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${${proj}_REPOSITORY}
     GIT_TAG ${${proj}_GIT_TAG}

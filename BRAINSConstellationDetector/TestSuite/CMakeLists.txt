@@ -1,8 +1,6 @@
 ## Set testing environment
 ##
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/obliq_setup.txt.in
-  ${CMAKE_CURRENT_BINARY_DIR}/obliq_setup.txt @ONLY IMMEDIATE)
 #configure_file(${CMAKE_CURRENT_SOURCE_DIR}/T1.mdl ${CMAKE_CURRENT_BINARY_DIR}/T1.mdl)
 set(DART_TESTING_TIMEOUT 15000)
 
@@ -69,17 +67,6 @@ endif()
 ## Test BRAINSConstellationModeler
 ##
 
-if ( 0 ) ## HACK:  Just silencing failing tests until they can be proper addressed
-  set(BRAINSConstellationModelerTestName BRAINSConstellationModelerTest_T1)
-  if(ConstellationModeler_TEST_causes_major_delay)
-    ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSConstellationModelerTestName}
-      COMMAND BRAINSConstellationModelerTest
-      BRAINSConstellationModelerTest
-      --inputTrainingList ${CMAKE_CURRENT_BINARY_DIR}/obliq_setup.txt
-      --outputModel ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationModelerTestName}.mdl
-      )
-  endif(ConstellationModeler_TEST_causes_major_delay)
-endif(0)
 
 ## Test BRAINSEyeDetector
 ##
@@ -135,7 +122,6 @@ if("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
     --acLowerBound 100)
 
   set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_backgroundValue)
-
   ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
     COMMAND $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
     --compare DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.nii.gz}
@@ -198,7 +184,6 @@ if("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
     --inputTemplateModel DATA{${TestData_DIR}/T1.mdl}
     --LLSModel DATA{${TestData_DIR}/LLSModel.hdf5}
     --interpolationMode BSpline)
-
 
   set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_mspLevel)
   ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
@@ -603,23 +588,30 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetecto
 set_property(TEST ${BRAINSConstellationDetectorTestName} APPEND PROPERTY DEPENDS landmarksConstellationAlignerTest)
 
 
-# Fetching training data
-# We want to fetch some data, but we do not want to use them explicity as an argument in any program. They just have been addressed later in a txt file. However, we cannot pass an empty command, so we have used "BCD --hlep", which is like a command that do nothing.
-set(BRAINSConstellationDetectorTestName fetchDataTobeUsedInInputTrainingList)
+set(BRAINSConstellationDetectorTestName BCD_HELP_TEST)
 ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
     BRAINSConstellationDetectorTest
-    --help DATA{${TestData_DIR}/TrainingCase1_T1.nii.gz} 
-     DATA{${TestData_DIR}/TrainingCase1.fcsv} 
-     DATA{${TestData_DIR}/TrainingCase2_T1.nii.gz}
-     DATA{${TestData_DIR}/TrainingCase2.fcsv}
-     DATA{${TestData_DIR}/TrainingCase3_T1.nii.gz}
-     DATA{${TestData_DIR}/TrainingCase3.fcsv}
-    )
+    --help
+   )
+
+
+# We want to fetch some data, but we do not want to use them explicity as an argument in
+# any program. They just have been addressed later in a txt file. However, we cannot pass
+# an empty command, so we have used "BCD --help", which is like a command that do nothing.
+set(BRAINSConstellationDetectorTestName fetchDataTobeUsedInInputTrainingList)
+ExternalData_expand_arguments(${PROJECT_NAME}FetchData TrainingCase1_T1_VAR DATA{${TestData_DIR}/TrainingCase1_T1.nii.gz})
+ExternalData_expand_arguments(${PROJECT_NAME}FetchData TrainingCase2_T1_VAR DATA{${TestData_DIR}/TrainingCase2_T1.nii.gz})
+ExternalData_expand_arguments(${PROJECT_NAME}FetchData TrainingCase3_T1_VAR DATA{${TestData_DIR}/TrainingCase3_T1.nii.gz})
+ExternalData_expand_arguments(${PROJECT_NAME}FetchData TrainingCase1_fcsv_VAR DATA{${TestData_DIR}/TrainingCase1.fcsv})
+ExternalData_expand_arguments(${PROJECT_NAME}FetchData TrainingCase2_fcsv_VAR DATA{${TestData_DIR}/TrainingCase2.fcsv})
+ExternalData_expand_arguments(${PROJECT_NAME}FetchData TrainingCase3_fcsv_VAR DATA{${TestData_DIR}/TrainingCase3.fcsv})
+## The following configure uses the paths from the previous ExternalData_expand_arguments
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/obliq_setup.txt.in ${CMAKE_CURRENT_BINARY_DIR}/obliq_setup.txt @ONLY IMMEDIATE)
 
 #This test aims to generate the output of the landmarksConstellationWeights program to be compared with the baseline file
 if("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
-  set(BRAINSConstellationDetectorTestName landmarksConstellationWeightsTest) 
+  set(BRAINSConstellationDetectorTestName landmarksConstellationWeightsTest)
   ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
     COMMAND ${LAUNCH_EXE} $<TARGET_FILE:landmarksConstellationWeightsTestDriver>
     ${BRAINSConstellationDetectorTestName}
@@ -629,6 +621,19 @@ if("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
     --outputWeightsList ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}.wts #output of the program
     )
   set_tests_properties(${BRAINSConstellationDetectorTestName} PROPERTIES TIMEOUT 15000)
+
+if ( 0 ) ## HACK:  Just silencing failing tests until they can be proper addressed
+  set(BRAINSConstellationModelerTestName BRAINSConstellationModelerTest_T1)
+  if(ConstellationModeler_TEST_causes_major_delay)
+    ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSConstellationModelerTestName}
+      COMMAND BRAINSConstellationModelerTest
+      BRAINSConstellationModelerTest
+      --inputTrainingList ${CMAKE_CURRENT_BINARY_DIR}/obliq_setup.txt
+      --outputModel ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationModelerTestName}.mdl
+      )
+  endif(ConstellationModeler_TEST_causes_major_delay)
+endif(0)
+
 
   set(BRAINSConstellationDetectorTestName landmarksWeightsCompareTest)
   ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}

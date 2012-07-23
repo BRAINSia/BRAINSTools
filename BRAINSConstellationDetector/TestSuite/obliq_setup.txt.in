@@ -34,15 +34,15 @@ r_sup_ext 8 16
 l_sup_ext 8 16
 END
 
-@CMAKE_CURRENT_BINARY_DIR@/../../ExternalData/TestData/TrainingCase1_T1.nii.gz
-@CMAKE_CURRENT_BINARY_DIR@/../../ExternalData/TestData/TrainingCase1.fcsv
+@TrainingCase1_T1_VAR@
+@TrainingCase1_fcsv_VAR@
 END
 
-@CMAKE_CURRENT_BINARY_DIR@/../../ExternalData/TestData/TrainingCase2_T1.nii.gz
-@CMAKE_CURRENT_BINARY_DIR@/../../ExternalData/TestData/TrainingCase2.fcsv
+@TrainingCase2_T1_VAR@
+@TrainingCase2_fcsv_VAR@
 END
 
-@CMAKE_CURRENT_BINARY_DIR@/../../ExternalData/TestData/TrainingCase3_T1.nii.gz
-@CMAKE_CURRENT_BINARY_DIR@/../../ExternalData/TestData/TrainingCase3.fcsv
+@TrainingCase3_T1_VAR@
+@TrainingCase3_fcsv_VAR@
 END
 

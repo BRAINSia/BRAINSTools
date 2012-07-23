@@ -147,7 +147,7 @@ void ThirionFunction(const struct ICCDEFWarpAppParameters & command)
       }
     else
       {
-      std::cout << "Directory is not existed!" << std::endl;
+      std::cout << "Directory does not exist!" << std::endl;
       exit(-1);
       }
     }
@@ -155,12 +155,12 @@ void ThirionFunction(const struct ICCDEFWarpAppParameters & command)
   std::string workingPath = itksys::SystemTools::GetCurrentWorkingDirectory();
   if( itksys::SystemTools::FileIsDirectory(command.outputPrefix.c_str() ) )
     {
-    std::string m_ForwardDir = command.outputPrefix + "/" + "forward";
+    const std::string m_ForwardDir = command.outputPrefix + "/" + "forward";
     if( !itksys::SystemTools::FileIsDirectory(m_ForwardDir.c_str() ) )
       {
       itksys::SystemTools::MakeDirectory(m_ForwardDir.c_str() );
       }
-    std::string m_BackwardDir = command.outputPrefix + "/" + "backward";
+    const std::string m_BackwardDir = command.outputPrefix + "/" + "backward";
     if( !itksys::SystemTools::FileIsDirectory(m_BackwardDir.c_str() ) )
       {
       itksys::SystemTools::MakeDirectory(m_BackwardDir.c_str() );

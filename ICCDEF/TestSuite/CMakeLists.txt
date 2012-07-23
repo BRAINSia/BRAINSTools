@@ -46,6 +46,7 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ValidateICCDEF_Test1_nii
    iccdefRegistration_NewTest
     -m DATA{${TestData_DIR}/image1.nii.gz}
     -f DATA{${TestData_DIR}/image2.nii.gz}
+    --outputDirectory ${iccdefRegistrationNew_BINARY_DIR}
     -o test1
     --useConsistentIntensity
     -v
@@ -56,20 +57,38 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ValidateICCDEF_Test1_nii
     -i 300,150,25,0
     --similarityWeight 5.0
     --outputDisplacementField
-    --outputForwardDisplacementFieldVolume  forwardDF.nii.gz
+    --outputForwardDisplacementFieldVolume  ${iccdefRegistrationNew_BINARY_DIR}/test1/forwardDF.nii.gz
 )
 
-if(0)
+ExternalData_add_test(${PROJECT_NAME}FetchData NAME ValidateApplyWarpTest1_nii
+  COMMAND ApplyWarpTestDriver
+  --compare
+    ${iccdefRegistrationNew_BINARY_DIR}/test1/forward/deformedMovingImage.nii.gz
+    ${iccdefRegistrationNew_BINARY_DIR}/ValidateApplyWarpTest1_nii_deformedMovingImage.nii.gz
+    --compareNumberOfPixelsTolerance 0
+    --compareIntensityTolerance 10
+  ApplyWarpTest
+    --inputVolume ${iccdefRegistrationNew_BINARY_DIR}/test1/HistogramModifiedMovingImage.nii.gz
+    --referenceVolume DATA{${TestData_DIR}/image2.nii.gz}
+    --deformationVolume ${iccdefRegistrationNew_BINARY_DIR}/test1/forwardDF.nii.gz
+    --orientationRAI --pixelType uchar
+    --outputVolume  ${iccdefRegistrationNew_BINARY_DIR}/ValidateApplyWarpTest1_nii_deformedMovingImage.nii.gz
+)
+set_property(TEST ValidateApplyWarpTest1_nii APPEND PROPERTY
+  DEPENDS ValidateICCDEF_Test1_nii)
 
-ExternalData_add_test(ValidateICCDEF_Test2_nii ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${ICCDEF_Warp_TESTS}
+
+ExternalData_add_test(${PROJECT_NAME}FetchData NAME  ValidateICCDEF_Test2_nii
+  COMMAND iccdefRegistration_NewTestDriver
   --compare
     DATA{${TestData_DIR}/iccdef_result2.nii.gz}
     ${iccdefRegistrationNew_BINARY_DIR}/test2/backward/deformedFixedImage.nii.gz
     --compareNumberOfPixelsTolerance 0
     --compareIntensityTolerance 10
-  ICCDEFWarpTest
+  iccdefRegistration_NewTest
     -m DATA{${TestData_DIR}/image1.nii.gz}
     -f DATA{${TestData_DIR}/image2.nii.gz}
+    --outputDirectory ${iccdefRegistrationNew_BINARY_DIR}
     -o test2
     --useConsistentIntensity
     -v
@@ -82,15 +101,17 @@ ExternalData_add_test(ValidateICCDEF_Test2_nii ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
     --similarityWeight 5.0
 )
 
-add_test(ValidateICCDEF_Test3_nii ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${ICCDEF_Warp_TESTS}
+ExternalData_add_test(${PROJECT_NAME}FetchData NAME ValidateICCDEF_Test3_nii
+  COMMAND iccdefRegistration_NewTestDriver
   --compare
     ${iccdefRegistrationNew_BINARY_DIR}/test1/forward/deformedMovingImage.nii.gz
     ${iccdefRegistrationNew_BINARY_DIR}/test3/forward/deformedMovingImage.nii.gz
     --compareNumberOfPixelsTolerance 0
     --compareIntensityTolerance 10
-  ICCDEFWarpTest
+  iccdefRegistration_NewTest
     -m DATA{${TestData_DIR}/image1.nii.gz}
     -f DATA{${TestData_DIR}/image2.nii.gz}
+    --outputDirectory ${iccdefRegistrationNew_BINARY_DIR}
     -o test3
     --useConsistentIntensity
     -v
@@ -104,15 +125,18 @@ add_test(ValidateICCDEF_Test3_nii ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${ICCDEF_War
     --initialFixedDisplacementFieldVolume ${iccdefRegistrationNew_BINARY_DIR}/test1/backward/test1_iteration450resolution2500_backward.nii.gz
 )
 
-add_test(ValidateICCDEF_Test4_nii ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${ICCDEF_Warp_TESTS}
+if(0) ## HACK: This test needs to be fixed!
+ExternalData_add_test(${PROJECT_NAME}FetchData NAME ValidateICCDEF_Test4_nii
+  COMMAND iccdefRegistration_NewTestDriver
   --compare
     ${iccdefRegistrationNew_BINARY_DIR}/test4/HistogramReferenceFixedImage.nii.gz
     ${iccdefRegistrationNew_BINARY_DIR}/test4/forward/deformedMovingImage.nii.gz
     --compareNumberOfPixelsTolerance 20
     --compareIntensityTolerance 10
-  ICCDEFWarpTest
+  iccdefRegistration_NewTest
     -m DATA{${TestData_DIR}/BRAINSFitTest_rotation.input.nii.gz}
     -f DATA{${TestData_DIR}/BRAINSFitTest_RigidRotationMasks.output.nii.gz}
+    --outputDirectory ${iccdefRegistrationNew_BINARY_DIR}
     -o test4
     --useConsistentIntensity
     -v
@@ -127,16 +151,19 @@ add_test(ValidateICCDEF_Test4_nii ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${ICCDEF_War
     --initializeWithTransform DATA{${TestData_DIR}/BRAINSFitTest_RigidRotationMasks.mat}
     --medianFilterSize 0,0,0
 )
+endif(0) #HACK: This test needs to be fixed!
 
-add_test(ValidateICCDEF_Test5_nii ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${ICCDEF_Warp_TESTS}
+ExternalData_add_test(${PROJECT_NAME}FetchData NAME ValidateICCDEF_Test5_nii
+  COMMAND iccdefRegistration_NewTestDriver
   --compare
     ${iccdefRegistrationNew_BINARY_DIR}/test5/forward/deformedMovingImage.nii.gz
     DATA{${TestData_DIR}/deformedMovingImage.nii.gz}
     --compareNumberOfPixelsTolerance 0
     --compareIntensityTolerance 10
-  ICCDEFWarpTest
+  iccdefRegistration_NewTest
     -m DATA{${TestData_DIR}/movingImage.nii.gz}
     -f DATA{${TestData_DIR}/fixedImage.nii.gz}
+    --outputDirectory ${iccdefRegistrationNew_BINARY_DIR}
     -o test5
     --fixedLandmark DATA{${TestData_DIR}/fixedlk.lnd}
     --movingLandmark DATA{${TestData_DIR}/movinglk.lnd}
@@ -151,15 +178,18 @@ add_test(ValidateICCDEF_Test5_nii ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${ICCDEF_War
     --medianFilterSize 0,0,0
 )
 
-add_test(ValidateICCDEF_Test6_nii ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${ICCDEF_Warp_TESTS}
+if(0) #HACK: This test needs to be fixed!
+ExternalData_add_test(${PROJECT_NAME}FetchData NAME ValidateICCDEF_Test6_nii
+  COMMAND iccdefRegistration_NewTestDriver
   --compare
     ${iccdefRegistrationNew_BINARY_DIR}/test6/backward/deformedFixedImage.nii.gz
     DATA{${TestData_DIR}/deformedFixedImage.nii.gz}
     --compareNumberOfPixelsTolerance 0
     --compareIntensityTolerance 10
-  ICCDEFWarpTest
+  iccdefRegistration_NewTest
     -m DATA{${TestData_DIR}/movingImage2.nii.gz}
     -f DATA{${TestData_DIR}/fixedImage2.nii.gz}
+    --outputDirectory ${iccdefRegistrationNew_BINARY_DIR}
     -o test6
     --fixedBinaryVolume DATA{${TestData_DIR}/fixedImage2_mask.nii.gz}
     --movingBinaryVolume DATA{${TestData_DIR}/movingImage2_mask.nii.gz}
@@ -177,24 +207,12 @@ add_test(ValidateICCDEF_Test6_nii ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${ICCDEF_War
     --inverseWeight 10.0
     --maskProcessingMode BOBF
 )
+endif(0) #HACK: This test needs to be fixed!
 
-
-add_test(ValidateApplyWarpTest1_nii ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${Apply_Warp_TESTS}
+if(0) ## These should be re-written to use BRAINSResample instead of ApplyWarp
+ExternalData_add_test(${PROJECT_NAME}FetchData NAME ValidateApplyWarpTest2_nii
+  COMMAND ApplyWarpTestDriver
   --compare
-    ${iccdefRegistrationNew_BINARY_DIR}/test1/forward/deformedMovingImage.nii.gz
-    ${iccdefRegistrationNew_BINARY_DIR}/test4_deformedMovingImage.nii.gz
-    --compareNumberOfPixelsTolerance 0
-    --compareIntensityTolerance 10
-  ApplyWarpTest
-    --inputVolume ${iccdefRegistrationNew_BINARY_DIR}/test1/HistogramModifiedMovingImage.nii.gz
-    --referenceVolume DATA{${TestData_DIR}/image2.nii.gz}
-    --deformationVolume ${iccdefRegistrationNew_BINARY_DIR}/test1/forwardDF.nii.gz
-    --orientationRAI --pixelType uchar
-    --outputVolume  test4_deformedMovingImage.nii.gz
-)
-
-add_test(ValidateApplyWarpTest2_nii ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${Apply_Warp_TESTS}
- --compare
      DATA{${TestData_DIR}/BRAINSFitTest_RigidRotationMasks.output.nii.gz}
      ${iccdefRegistrationNew_BINARY_DIR}/applyWarp_test2.nii.gz
      --compareIntensityTolerance 0
@@ -203,13 +221,14 @@ add_test(ValidateApplyWarpTest2_nii ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${Apply_Wa
    ApplyWarpTest
     --inputVolume DATA{${TestData_DIR}/BRAINSFitTest_rotation.input.nii.gz}
     --referenceVolume DATA{${TestData_DIR}/BRAINSFitTest_RigidRotationMasks.output.nii.gz}
+    --warpTransform DATA{${TestData_DIR}/BRAINSFitTest_RigidRotationMasks.mat}
     --outputVolume ${iccdefRegistrationNew_BINARY_DIR}/applyWarp_test2.nii.gz
     --pixelType short
-    --warpTransform DATA{${TestData_DIR}/BRAINSFitTest_RigidRotationMasks.mat}
 )
 
-add_test(ValidateApplyWarpTest3_nii ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${Apply_Warp_TESTS}
- --compare
+ExternalData_add_test(${PROJECT_NAME}FetchData NAME ValidateApplyWarpTest3_nii
+  COMMAND ApplyWarpTestDriver
+  --compare
      DATA{${TestData_DIR}/ValidateApplyWarpTest3.result.nii.gz}
      ${iccdefRegistrationNew_BINARY_DIR}/applyWarp_test3.nii.gz
      --compareIntensityTolerance 10
@@ -218,14 +237,15 @@ add_test(ValidateApplyWarpTest3_nii ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${Apply_Wa
    ApplyWarpTest
     --inputVolume DATA{${TestData_DIR}/BRAINSFitTest_rotation.input.nii.gz}
     --referenceVolume DATA{${TestData_DIR}/BRAINSFitTest_RigidRotationMasks.output.nii.gz}
+    --warpTransform DATA{${TestData_DIR}/BRAINSFitTest_RigidRotationMasks.mat}
     --outputVolume ${iccdefRegistrationNew_BINARY_DIR}/applyWarp_test3.nii.gz
     --pixelType float
     --interpolationMode WindowedSinc
-    --warpTransform DATA{${TestData_DIR}/BRAINSFitTest_RigidRotationMasks.mat}
 )
 
-add_test(ValidateApplyWarpTest4_nii ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${Apply_Warp_TESTS}
- --compare
+ExternalData_add_test(${PROJECT_NAME}FetchData NAME ValidateApplyWarpTest4_nii
+  COMMAND ApplyWarpTestDriver
+  --compare
      DATA{${TestData_DIR}/ValidateApplyWarpTest4.result.nii.gz}
      ${iccdefRegistrationNew_BINARY_DIR}/applyWarp_test4.nii.gz
      --compareIntensityTolerance 0
@@ -234,10 +254,11 @@ add_test(ValidateApplyWarpTest4_nii ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${Apply_Wa
    ApplyWarpTest
     --inputVolume DATA{${TestData_DIR}/BRAINSFitTest_rotation.input.nii.gz}
     --referenceVolume DATA{${TestData_DIR}/BRAINSFitTest_RigidRotationMasks.output.nii.gz}
+    --warpTransform DATA{${TestData_DIR}/BRAINSFitTest_RigidRotationMasks.mat}
     --outputVolume ${iccdefRegistrationNew_BINARY_DIR}/applyWarp_test4.nii.gz
     --pixelType binary
-    --warpTransform DATA{${TestData_DIR}/BRAINSFitTest_RigidRotationMasks.mat}
 )
+endif() ## HACK
 
 add_test(itkVectorFFTWTest ${UNIT_TESTS}
    --compare ${TEMP}/transformedImage.nii.gz
@@ -268,5 +289,6 @@ add_test(itkIterativeInverseDisplacementFieldFilterTest2 ${UNIT_TESTS}
      ${TEMP}/inverse_test2.nii.gz
 )
 
+if(0)
 endif(0)
 ExternalData_Add_Target( ${PROJECT_NAME}FetchData )  # Name of data management target

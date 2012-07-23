@@ -38,7 +38,7 @@ void IccdefRegistrator<TRealImage, TOutputImage,
                        TFieldValue>::WriteDisplacementComponents(TDisplacementField * df, std::string prefix)
 {
 //  typedef itk::Image<float, 3> OutputImageType;
-  m_DefaultPixelValue = NumericTraits<PixelType>::One;
+  this->m_DefaultPixelValue = NumericTraits<PixelType>::One;
 
   // we use the vector index selection filter to break the deformation field
   // into x,y,z components.
@@ -98,28 +98,28 @@ template <
 IccdefRegistrator<TRealImage, TOutputImage, TFieldValue>::IccdefRegistrator()
 {
   // Images need to be set from the outside
-  m_FixedImage = NULL;
-  m_MovingImage = NULL;
-  m_DisplacementField = NULL;
-  m_BackwardDisplacementField = NULL;
+  this->m_FixedImage = NULL;
+  this->m_MovingImage = NULL;
+  this->m_DisplacementField = NULL;
+  this->m_BackwardDisplacementField = NULL;
 
   // Set up internal registrator with default components
-  m_FixedImagePyramid = FixedImagePyramidType::New();
-  m_FixedImagePyramid->UseShrinkImageFilterOff();
-  m_MovingImagePyramid = MovingImagePyramidType::New();
-  m_MovingImagePyramid->UseShrinkImageFilterOff();
-  m_Registration = RegistrationType::New();
+  this->m_FixedImagePyramid = FixedImagePyramidType::New();
+  this->m_FixedImagePyramid->UseShrinkImageFilterOff();
+  this->m_MovingImagePyramid = MovingImagePyramidType::New();
+  this->m_MovingImagePyramid->UseShrinkImageFilterOff();
+  this->m_Registration = RegistrationType::New();
 
-//  m_Registration->SetFixedImagePyramid (m_FixedImagePyramid);
-//  m_Registration->SetMovingImagePyramid (m_MovingImagePyramid);
+//  this->m_Registration->SetFixedImagePyramid (this->m_FixedImagePyramid);
+//  this->m_Registration->SetMovingImagePyramid (this->m_MovingImagePyramid);
 
-  m_DefaultPixelValue =  NumericTraits<typename RealImageType::PixelType>::Zero;
+  this->m_DefaultPixelValue =  NumericTraits<typename RealImageType::PixelType>::Zero;
   // Setup an registration observer
   typedef SimpleMemberCommand<Self> CommandType;
   typename CommandType::Pointer command = CommandType::New();
   command->SetCallbackFunction(this, &Self::StartNewLevel);
 
-  m_Tag = m_Registration->AddObserver(IterationEvent(), command);
+  this->m_Tag = this->m_Registration->AddObserver(IterationEvent(), command);
 
   typedef VectorLinearInterpolateNearestNeighborExtrapolateImageFunction<
       TDisplacementField, double> FieldInterpolatorType;
@@ -130,30 +130,30 @@ IccdefRegistrator<TRealImage, TOutputImage, TFieldValue>::IccdefRegistrator()
   typename FieldInterpolatorType::Pointer VectorInterpolator21
     = FieldInterpolatorType::New();
 
-  m_Registration->GetFieldExpander12()->SetInterpolator(VectorInterpolator12);
-  m_Registration->GetFieldExpander21()->SetInterpolator(VectorInterpolator21);
+  this->m_Registration->GetFieldExpander12()->SetInterpolator(VectorInterpolator12);
+  this->m_Registration->GetFieldExpander21()->SetInterpolator(VectorInterpolator21);
 
   // Default parameters
-  m_NumberOfLevels = 1;
+  this->m_NumberOfLevels = 1;
 
-  m_NumberOfIterations = UnsignedIntArray(1);
-  m_NumberOfIterations.Fill(10);
-  m_OutputPrefix = "none";
+  this->m_NumberOfIterations = UnsignedIntArray(1);
+  this->m_NumberOfIterations.Fill(10);
+  this->m_OutputPrefix = "none";
 
-  m_ForwardDisplacementFieldOutputName = "none";
-  m_BackwardDisplacementFieldOutputName = "none";
-  m_InitialFixedDisplacementFieldFilename = "none";
-  m_InitialMovingDisplacementFieldFilename = "none";
-  m_OutputJacobianImage = false;
-  m_OutputDisplacement = false;
-  m_OutputDisplacementField = false;
+  this->m_ForwardDisplacementFieldOutputName = "none";
+  this->m_BackwardDisplacementFieldOutputName = "none";
+  this->m_InitialFixedDisplacementFieldFilename = "none";
+  this->m_InitialMovingDisplacementFieldFilename = "none";
+  this->m_OutputJacobianImage = false;
+  this->m_OutputDisplacement = false;
+  this->m_OutputDisplacementField = false;
 
-  m_UseHistogramMatching = false;
-  m_OutDebug = false;
+  this->m_UseHistogramMatching = false;
+  this->m_OutDebug = false;
 
-  m_InitialDisplacementField = NULL;
-  m_ForwardDir = "";
-  m_BackwardDir = "";
+  this->m_InitialDisplacementField = NULL;
+  this->m_ForwardDir = "forward";
+  this->m_BackwardDir = "backward";
 }
 
 template <
@@ -162,9 +162,9 @@ template <
   class TFieldValue>
 IccdefRegistrator<TRealImage, TOutputImage, TFieldValue>::~IccdefRegistrator()
 {
-  if( m_Tag )
+  if( this->m_Tag )
     {
-    m_Registration->RemoveObserver(m_Tag);
+    this->m_Registration->RemoveObserver(this->m_Tag);
     }
 }
 
@@ -177,28 +177,28 @@ void IccdefRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute()
 {
 #if 0
   // Setup the image pyramids
-  m_FixedImagePyramid->SetNumberOfLevels(m_NumberOfLevels);
-  m_FixedImagePyramid->SetStartingShrinkFactors(
-    m_FixedImageShrinkFactors.GetDataPointer() );
+  this->m_FixedImagePyramid->SetNumberOfLevels(this->m_NumberOfLevels);
+  this->m_FixedImagePyramid->SetStartingShrinkFactors(
+    this->m_FixedImageShrinkFactors.GetDataPointer() );
 
-  m_MovingImagePyramid->SetNumberOfLevels(m_NumberOfLevels);
-  m_MovingImagePyramid->
-  SetStartingShrinkFactors( m_MovingImageShrinkFactors.GetDataPointer() );
+  this->m_MovingImagePyramid->SetNumberOfLevels(this->m_NumberOfLevels);
+  this->m_MovingImagePyramid->
+  SetStartingShrinkFactors( this->m_MovingImageShrinkFactors.GetDataPointer() );
 #endif
 
-  m_Registration->SetFixedImage(m_FixedImage);
-  m_Registration->SetMovingImage(m_MovingImage);
+  this->m_Registration->SetFixedImage(this->m_FixedImage);
+  this->m_Registration->SetMovingImage(this->m_MovingImage);
 
-  m_Registration->SetNumberOfLevels(m_NumberOfLevels);
-  m_Registration->SetNumberOfIterations( m_NumberOfIterations.
-                                         data_block() );
+  this->m_Registration->SetNumberOfLevels(this->m_NumberOfLevels);
+  this->m_Registration->SetNumberOfIterations( this->m_NumberOfIterations.
+                                               data_block() );
 
-  m_ForwardDir = "forward";
-  m_BackwardDir = "backward";
+  this->m_ForwardDir = "forward";
+  this->m_BackwardDir = "backward";
 
   if( this->m_OutputDisplacementField )
     {
-    m_Registration->SetDisplacementFieldOutputNamePrefix(m_OutputPrefix);
+    this->m_Registration->SetDisplacementFieldOutputNamePrefix(this->m_OutputPrefix);
     }
 
   // Setup the initial deformation field
@@ -207,7 +207,7 @@ void IccdefRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute()
     {
     typedef   itk::ImageFileReader<TDisplacementField> FieldReaderType;
     typename FieldReaderType::Pointer fieldReader = FieldReaderType::New();
-    fieldReader->SetFileName( m_InitialFixedDisplacementFieldFilename.c_str() );
+    fieldReader->SetFileName( this->m_InitialFixedDisplacementFieldFilename.c_str() );
     try
       {
       fieldReader->Update();
@@ -218,7 +218,7 @@ void IccdefRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute()
       throw err;
       }
 
-    m_Registration->SetInitialFixedDisplacementField(fieldReader->GetOutput() );
+    this->m_Registration->SetInitialFixedDisplacementField(fieldReader->GetOutput() );
     }
 
   if( this->m_InitialMovingDisplacementFieldFilename != std::string("none")
@@ -226,7 +226,7 @@ void IccdefRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute()
     {
     typedef   itk::ImageFileReader<TDisplacementField> FieldReaderType;
     typename FieldReaderType::Pointer fieldReader = FieldReaderType::New();
-    fieldReader->SetFileName( m_InitialMovingDisplacementFieldFilename.c_str() );
+    fieldReader->SetFileName( this->m_InitialMovingDisplacementFieldFilename.c_str() );
     try
       {
       fieldReader->Update();
@@ -237,21 +237,21 @@ void IccdefRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute()
       throw err;
       }
 
-    m_Registration->SetInitialMovingDisplacementField(fieldReader->GetOutput() );
+    this->m_Registration->SetInitialMovingDisplacementField(fieldReader->GetOutput() );
     }
 
 #if 0
   if( this->m_InitialDisplacementField.IsNotNull() )
     {
-//    m_Registration->SetInitialDisplacementField(this->m_InitialDisplacementField);
-    m_Registration->SetInitialMovingDisplacementField(this->m_InitialDisplacementField);
+//    this->m_Registration->SetInitialDisplacementField(this->m_InitialDisplacementField);
+    this->m_Registration->SetInitialMovingDisplacementField(this->m_InitialDisplacementField);
     }
 #endif
 
   // Perform the registration.
   try
     {
-    m_Registration->Update();
+    this->m_Registration->Update();
     }
   catch( itk::ExceptionObject & err )
     {
@@ -269,23 +269,23 @@ void IccdefRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute()
 
   try
     {
-    m_DisplacementField = m_Registration->GetOutput(0);
-    m_BackwardDisplacementField = m_Registration->GetOutput(1);
-    if( m_DisplacementField->GetDirection() != m_FixedImage->GetDirection() )
+    this->m_DisplacementField = this->m_Registration->GetOutput(0);
+    this->m_BackwardDisplacementField = this->m_Registration->GetOutput(1);
+    if( this->m_DisplacementField->GetDirection() != this->m_FixedImage->GetDirection() )
       {
       std::cout << "ERROR Directions don't match\n"
-                << m_DisplacementField->GetDirection()
+                << this->m_DisplacementField->GetDirection()
                 << "\n"
-                << m_FixedImage->GetDirection()
+                << this->m_FixedImage->GetDirection()
                 << std::endl;
       exit(-1);
       }
-    if( m_Tag )
+    if( this->m_Tag )
       {
-      m_Registration->RemoveObserver(m_Tag);
-      m_Tag = 0;
+      this->m_Registration->RemoveObserver(this->m_Tag);
+      this->m_Tag = 0;
       }
-    m_Registration = NULL;
+    this->m_Registration = NULL;
     }
   catch( itk::ExceptionObject & err )
     {
@@ -305,7 +305,7 @@ void IccdefRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute()
   if( this->m_ForwardDisplacementFieldOutputName != std::string("none")
       && this->m_ForwardDisplacementFieldOutputName != std::string("") )
     {
-    itkUtil::WriteImage<TDisplacementField>(m_DisplacementField,
+    itkUtil::WriteImage<TDisplacementField>(this->m_DisplacementField,
                                             this->m_ForwardDisplacementFieldOutputName);
     if( this->GetOutDebug() )
       {
@@ -316,7 +316,7 @@ void IccdefRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute()
   if( this->m_BackwardDisplacementFieldOutputName != std::string("none")
       && this->m_BackwardDisplacementFieldOutputName != std::string("") )
     {
-    itkUtil::WriteImage<TDisplacementField>(m_BackwardDisplacementField,
+    itkUtil::WriteImage<TDisplacementField>(this->m_BackwardDisplacementField,
                                             this->m_ForwardDisplacementFieldOutputName);
     if( this->GetOutDebug() )
       {
@@ -329,8 +329,8 @@ void IccdefRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute()
   //  Write out the displacement fields specified by the user.
   if( this->GetOutputDisplacement() )
     {
-    this->WriteDisplacementComponents(m_DisplacementField, m_ForwardDir);
-    this->WriteDisplacementComponents(m_BackwardDisplacementField, m_BackwardDir);
+    this->WriteDisplacementComponents(this->m_DisplacementField, this->m_ForwardDir);
+    this->WriteDisplacementComponents(this->m_BackwardDisplacementField, this->m_BackwardDir);
     }
 
   if( this->GetOutputJacobianImage() )
@@ -338,19 +338,19 @@ void IccdefRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute()
     typedef itk::DisplacementFieldJacobianDeterminantFilter<
         TDisplacementField, FieldValueType, TRealImage> JacobianFilterType;
 
-    typename JacobianFilterType::Pointer m_ForwardJacobianFilter = JacobianFilterType::New();
-    m_ForwardJacobianFilter->SetUseImageSpacing( true );
-    m_ForwardJacobianFilter->SetInput(m_DisplacementField);
-    m_ForwardJacobianFilter->UpdateLargestPossibleRegion();
+    typename JacobianFilterType::Pointer localForwardJacobianFilter = JacobianFilterType::New();
+    localForwardJacobianFilter->SetUseImageSpacing( true );
+    localForwardJacobianFilter->SetInput(this->m_DisplacementField);
+    localForwardJacobianFilter->UpdateLargestPossibleRegion();
 
-    typename TRealImage::Pointer fjPtr = m_ForwardJacobianFilter->GetOutput();
+    typename TRealImage::Pointer fjPtr = localForwardJacobianFilter->GetOutput();
     itkUtil::WriteImage<TRealImage>(fjPtr, this->m_ForwardDir + "/" + "Jacobian_forward.nii.gz");
 
-    typename JacobianFilterType::Pointer m_BackwardJacobianFilter = JacobianFilterType::New();
-    m_BackwardJacobianFilter->SetUseImageSpacing( true );
-    m_BackwardJacobianFilter->SetInput(m_BackwardDisplacementField);
-    m_BackwardJacobianFilter->UpdateLargestPossibleRegion();
-    typename TRealImage::Pointer bjPtr = m_BackwardJacobianFilter->GetOutput();
+    typename JacobianFilterType::Pointer localBackwardJacobianFilter = JacobianFilterType::New();
+    localBackwardJacobianFilter->SetUseImageSpacing( true );
+    localBackwardJacobianFilter->SetInput(this->m_BackwardDisplacementField);
+    localBackwardJacobianFilter->UpdateLargestPossibleRegion();
+    typename TRealImage::Pointer bjPtr = localBackwardJacobianFilter->GetOutput();
     itkUtil::WriteImage<TRealImage>(bjPtr, this->m_BackwardDir + "/" + "Jacobian_backward.nii.gz");
     }
 
@@ -365,26 +365,26 @@ void IccdefRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute()
     typename WarperType::Pointer warper = WarperType::New();
     if( this->GetUseHistogramMatching() == true )
       {
-      warper->SetInput( m_MovingImage );
+      warper->SetInput( this->m_MovingImage );
       }
     else
       {
-      warper->SetInput( m_UnNormalizedMovingImage );
+      warper->SetInput( this->m_UnNormalizedMovingImage );
       }
 
-    warper->SetOutputSpacing( m_FixedImage->GetSpacing() );
-    warper->SetOutputOrigin( m_FixedImage->GetOrigin() );
-    warper->SetOutputDirection( m_FixedImage->GetDirection() );
-    warper->SetDisplacementField( m_DisplacementField);
+    warper->SetOutputSpacing( this->m_FixedImage->GetSpacing() );
+    warper->SetOutputOrigin( this->m_FixedImage->GetOrigin() );
+    warper->SetOutputDirection( this->m_FixedImage->GetDirection() );
+    warper->SetDisplacementField( this->m_DisplacementField);
     warper->Update();
     DeformedMovingImagePtr = warper->GetOutput();
 
     typename WarperType::Pointer warperb = WarperType::New();
-    warperb->SetInput(m_FixedImage);
-    warperb->SetOutputSpacing( m_MovingImage->GetSpacing() );
-    warperb->SetOutputOrigin( m_MovingImage->GetOrigin() );
-    warperb->SetOutputDirection( m_MovingImage->GetDirection() );
-    warperb->SetDisplacementField(m_BackwardDisplacementField);
+    warperb->SetInput(this->m_FixedImage);
+    warperb->SetOutputSpacing( this->m_MovingImage->GetSpacing() );
+    warperb->SetOutputOrigin( this->m_MovingImage->GetOrigin() );
+    warperb->SetOutputDirection( this->m_MovingImage->GetDirection() );
+    warperb->SetDisplacementField(this->m_BackwardDisplacementField);
     warperb->Update();
     DeformedFixedImagePtr = warperb->GetOutput();
 
@@ -399,24 +399,24 @@ void IccdefRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute()
     if( this->m_OutputPrefix != std::string("none") )
       {
       typename OutputImageType::Pointer CastImageSptr
-        = itkUtil::PreserveCast<RealImageType, OutputImageType>(
-            DeformedMovingImagePtr);
-      itkUtil::WriteImage<OutputImageType>(CastImageSptr,
-                                           this->m_ForwardDir + "/" + "deformedMovingImage.nii.gz");
+        = itkUtil::PreserveCast<RealImageType, OutputImageType>( DeformedMovingImagePtr);
+
+      const std::string deformedMovingFilename(this->m_ForwardDir + "/" + "deformedMovingImage.nii.gz" );
+      itkUtil::WriteImage<OutputImageType>(CastImageSptr, deformedMovingFilename);
 
       if( this->GetOutDebug() )
         {
-        std::cout << "---Deformed Moving Image has been written" << std::endl;
+        std::cout << "---Deformed Moving Image has been written: " << deformedMovingFilename << std::endl;
         }
 
       typename OutputImageType::Pointer CastImageSptr1
         = itkUtil::PreserveCast<RealImageType, OutputImageType>(DeformedFixedImagePtr);
-      itkUtil::WriteImage<OutputImageType>(CastImageSptr1,
-                                           this->m_BackwardDir + "/" + "deformedFixedImage.nii.gz");
+      const std::string deformedFixedFilename(this->m_BackwardDir + "/" + "deformedFixedImage.nii.gz");
+      itkUtil::WriteImage<OutputImageType>(CastImageSptr1, deformedFixedFilename);
 
       if( this->GetOutDebug() )
         {
-        std::cout << "---Deformed Fixed Image has been written" << std::endl;
+        std::cout << "---Deformed Fixed Image has been written: " << deformedFixedFilename << std::endl;
         }
       }
     }
@@ -431,7 +431,7 @@ void IccdefRegistrator<TRealImage, TOutputImage, TFieldValue>::StartNewLevel()
 {
   if( this->GetOutDebug() )
     {
-    std::cout << "--- Starting level " << m_Registration->GetCurrentLevel()
+    std::cout << "--- Starting level " << this->m_Registration->GetCurrentLevel()
               << std::endl;
     }
 }

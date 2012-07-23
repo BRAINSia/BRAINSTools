@@ -7,10 +7,11 @@
  *
  */
 
-#ifndef _itkMultiResolutionICCDeformableRegistration_txx
-#define _itkMultiResolutionICCDeformableRegistration_txx
+#ifndef __itkMultiResolutionICCDeformableRegistration_hxx
+#define __itkMultiResolutionICCDeformableRegistration_hxx
 #include "itkMultiResolutionICCDeformableRegistration.h"
 
+#include "itkRecursiveGaussianImageFilter.h"
 #include "itkRecursiveMultiResolutionPyramidImageFilter.h"
 #include "itkImageRegionIterator.h"
 #include "vnl/vnl_math.h"
@@ -19,18 +20,19 @@
 
 namespace itk
 {
-/*
+/**
  * Default constructor
  */
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
-MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacementField>
+template <class TFixedImage, class TMovingImage, class TDisplacementField, class TRealType>
+MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacementField, TRealType>
 ::MultiResolutionICCDeformableRegistration()
 {
   this->SetNumberOfRequiredInputs(2);
+  // Primary input is optional in this filter
+  this->RemoveRequiredInputName( "Primary" );
 
-  typename DefaultRegistrationType::Pointer registrator =
-    DefaultRegistrationType::New();
-  m_RegistrationFilter = RegistrationType::New();
+  typename RegistrationType::Pointer registrator = RegistrationType::New();
+  m_RegistrationFilter = dynamic_cast<RegistrationType *>( registrator.GetPointer() );
 
   m_MovingImagePyramid  = MovingImagePyramidType::New();
   m_FixedImagePyramid     = FixedImagePyramidType::New();
@@ -43,9 +45,9 @@ MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacemen
   this->SetNthOutput( 1, this->MakeOutput( 1 ) );
 
   m_NumberOfLevels = 3;
-  m_NumberOfIterations.resize( m_NumberOfLevels );
-  m_FixedImagePyramid->SetNumberOfLevels( m_NumberOfLevels );
-  m_MovingImagePyramid->SetNumberOfLevels( m_NumberOfLevels );
+  m_NumberOfIterations.SetSize(m_NumberOfLevels);
+  m_FixedImagePyramid->SetNumberOfLevels(m_NumberOfLevels);
+  m_MovingImagePyramid->SetNumberOfLevels(m_NumberOfLevels);
 
   unsigned int ilevel;
   for( ilevel = 0; ilevel < m_NumberOfLevels; ilevel++ )
@@ -61,11 +63,11 @@ MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacemen
 /*
  * Set the moving image image.
  */
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <class TFixedImage, class TMovingImage, class TDisplacementField, class TRealType>
 void
-MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacementField>
+MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacementField, TRealType>
 ::SetMovingImage(
-  const MovingImageType * ptr )
+  const MovingImageType *ptr)
 {
   this->ProcessObject::SetNthInput( 2, const_cast<MovingImageType *>( ptr ) );
 }
@@ -73,24 +75,24 @@ MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacemen
 /*
  * Get the moving image image.
  */
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
-const typename MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacementField>
+template <class TFixedImage, class TMovingImage, class TDisplacementField, class TRealType>
+const typename MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacementField, TRealType>
 ::MovingImageType
-* MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacementField>
+* MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacementField, TRealType>
 ::GetMovingImage(void) const
   {
   return dynamic_cast<const MovingImageType *>
-         ( this->ProcessObject::GetInput( 2 ) );
+         ( this->ProcessObject::GetInput(2) );
   }
 
 /*
  * Set the fixed image.
  */
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <class TFixedImage, class TMovingImage, class TDisplacementField, class TRealType>
 void
-MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacementField>
+MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacementField, TRealType>
 ::SetFixedImage(
-  const FixedImageType * ptr )
+  const FixedImageType *ptr)
 {
   this->ProcessObject::SetNthInput( 1, const_cast<FixedImageType *>( ptr ) );
 }
@@ -98,22 +100,22 @@ MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacemen
 /*
  * Get the fixed image.
  */
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
-const typename MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacementField>
+template <class TFixedImage, class TMovingImage, class TDisplacementField, class TRealType>
+const typename MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacementField, TRealType>
 ::FixedImageType
-* MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacementField>
+* MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacementField, TRealType>
 ::GetFixedImage(void) const
   {
   return dynamic_cast<const FixedImageType *>
-         ( this->ProcessObject::GetInput( 1 ) );
+         ( this->ProcessObject::GetInput(1) );
   }
 
 /*
  *
  */
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <class TFixedImage, class TMovingImage, class TDisplacementField, class TRealType>
 std::vector<SmartPointer<DataObject> >::size_type
-MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacementField>
+MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacementField, TRealType>
 ::GetNumberOfValidRequiredInputs() const
 {
   typename std::vector<SmartPointer<DataObject> >::size_type num = 0;
@@ -131,39 +133,39 @@ MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacemen
   return num;
 }
 
-/*
+/**
  * Set the number of multi-resolution levels
  */
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <class TFixedImage, class TMovingImage, class TDisplacementField, class TRealType>
 void
-MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacementField>
+MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacementField, TRealType>
 ::SetNumberOfLevels(
-  unsigned int num )
+  unsigned int num)
 {
   if( m_NumberOfLevels != num )
     {
     this->Modified();
     m_NumberOfLevels = num;
-    m_NumberOfIterations.resize( m_NumberOfLevels );
+    m_NumberOfIterations.SetSize(m_NumberOfLevels);
     }
 
   if( m_MovingImagePyramid && m_MovingImagePyramid->GetNumberOfLevels() != num )
     {
-    m_MovingImagePyramid->SetNumberOfLevels( m_NumberOfLevels );
+    m_MovingImagePyramid->SetNumberOfLevels(m_NumberOfLevels);
     }
   if( m_FixedImagePyramid && m_FixedImagePyramid->GetNumberOfLevels() != num )
     {
-    m_FixedImagePyramid->SetNumberOfLevels( m_NumberOfLevels );
+    m_FixedImagePyramid->SetNumberOfLevels(m_NumberOfLevels);
     }
 }
 
-/*
+/**
  * Standard PrintSelf method.
  */
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <class TFixedImage, class TMovingImage, class TDisplacementField, class TRealType>
 void
-MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacementField>
-::PrintSelf(std::ostream& os, Indent indent) const
+MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacementField, TRealType>
+::PrintSelf(std::ostream & os, Indent indent) const
 {
   Superclass::PrintSelf(os, indent);
 
@@ -202,48 +204,60 @@ MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacemen
  * registrator and field_expander.
  *
  */
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <class TFixedImage, class TMovingImage, class TDisplacementField, class TRealType>
 void
-MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacementField>
+MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacementField, TRealType>
 ::GenerateData()
 {
-  // DisplacementFieldPointer NullDisplacementFieldPointer = DisplacementFieldType::New();
-
   // Check for NULL images and pointers
   MovingImageConstPointer movingImage = this->GetMovingImage();
   FixedImageConstPointer  fixedImage = this->GetFixedImage();
 
   if( !movingImage || !fixedImage )
     {
-    itkExceptionMacro( << "Fixed and/or moving image not set" );
+    itkExceptionMacro(<< "Fixed and/or moving image not set");
     }
 
   if( !m_MovingImagePyramid || !m_FixedImagePyramid )
     {
-    itkExceptionMacro( << "Fixed and/or moving pyramid not set" );
+    itkExceptionMacro(<< "Fixed and/or moving pyramid not set");
     }
 
   if( !m_RegistrationFilter )
     {
-    itkExceptionMacro( << "Registration filter not set" );
+    itkExceptionMacro(<< "Registration filter not set");
     }
 
+  if( this->m_InitialDisplacementField && this->GetInput(0) )
+    {
+    itkExceptionMacro(<< "Only one initial deformation can be given. "
+                      << "SetInitialDisplacementField should not be used in "
+                      << "cunjunction with SetArbitraryInitialDisplacementField "
+                      << "or SetInput.");
+    }
+
+  // as per suggestion in this bug report:
+  // http://public.kitware.com/Bug/view.php?id=3590
+  // this should allow input images to be released, since
+  // they are no longer needed after generating the image pyramid
+  this->RestoreInputReleaseDataFlags();
+
   // Create the image pyramids.
-  m_MovingImagePyramid->SetInput( movingImage );
+  m_MovingImagePyramid->SetInput(movingImage);
   m_MovingImagePyramid->UpdateLargestPossibleRegion();
 
-  m_FixedImagePyramid->SetInput( fixedImage );
+  m_FixedImagePyramid->SetInput(fixedImage);
   m_FixedImagePyramid->UpdateLargestPossibleRegion();
 
   // Initializations
   m_CurrentLevel = 0;
   m_StopRegistrationFlag = false;
 
-  unsigned int movingLevel = vnl_math_min( (int) m_CurrentLevel,
-                                           (int) m_MovingImagePyramid->GetNumberOfLevels() );
+  unsigned int movingLevel = vnl_math_min( (int)m_CurrentLevel,
+                                           (int)m_MovingImagePyramid->GetNumberOfLevels() );
 
-  unsigned int fixedLevel = vnl_math_min( (int) m_CurrentLevel,
-                                          (int) m_FixedImagePyramid->GetNumberOfLevels() );
+  unsigned int fixedLevel = vnl_math_min( (int)m_CurrentLevel,
+                                          (int)m_FixedImagePyramid->GetNumberOfLevels() );
 
   DisplacementFieldPointer tempField12 = this->m_InitialMovingDisplacementField;
   DisplacementFieldPointer tempField21 = this->m_InitialFixedDisplacementField;
@@ -264,7 +278,7 @@ MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacemen
       m_FieldExpander12->SetInput( tempField12 );
 
       typename FloatImageType::Pointer fi =
-        m_FixedImagePyramid->GetOutput( fixedLevel );
+        m_FixedImagePyramid->GetOutput(fixedLevel);
       m_FieldExpander12->SetSize(
         fi->GetLargestPossibleRegion().GetSize() );
       m_FieldExpander12->SetOutputStartIndex(
@@ -273,7 +287,7 @@ MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacemen
       m_FieldExpander12->SetOutputSpacing( fi->GetSpacing() );
 
       m_FieldExpander12->UpdateLargestPossibleRegion();
-//      m_FieldExpander12->SetInput( NULL );
+      // m_FieldExpander12->SetInput( NULL );
       tempField12 = m_FieldExpander12->GetOutput();
       tempField12->DisconnectPipeline();
 
@@ -290,7 +304,7 @@ MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacemen
       m_FieldExpander21->SetOutputSpacing( mi->GetSpacing() );
 
       m_FieldExpander21->UpdateLargestPossibleRegion();
-//      m_FieldExpander21->SetInput( NULL );
+      // m_FieldExpander21->SetInput( NULL );
       tempField21 = m_FieldExpander21->GetOutput();
       tempField21->DisconnectPipeline();
 
@@ -302,7 +316,7 @@ MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacemen
     m_RegistrationFilter->SetFixedImage( m_FixedImagePyramid->GetOutput(fixedLevel) );
 
     m_RegistrationFilter->SetNumberOfIterations(
-      m_NumberOfIterations[m_CurrentLevel] );
+      m_NumberOfIterations[m_CurrentLevel]);
 
     // cache shrink factors for computing the next expand factors.
     lastShrinkFactorsAllOnes = true;
@@ -317,12 +331,11 @@ MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacemen
 
     // compute new deformation field
     m_RegistrationFilter->UpdateLargestPossibleRegion();
-
     tempField12 = m_RegistrationFilter->GetOutput(0);
     tempField12->DisconnectPipeline();
     tempField21 = m_RegistrationFilter->GetOutput(1);
     tempField21->DisconnectPipeline();
-//	tempField12->Print(std::cout,6);
+//  tempField12->Print(std::cout,6);
 
 #if 0
     typedef WarpImageFilter<TMovingImage, TMovingImage, TDisplacementField> WarpImageType;
@@ -370,10 +383,10 @@ MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacemen
     // Increment level counter.
     std::cout << "Level: " << m_CurrentLevel << std::endl;
     m_CurrentLevel++;
-    movingLevel = vnl_math_min( (int) m_CurrentLevel,
-                                (int) m_MovingImagePyramid->GetNumberOfLevels() );
-    fixedLevel = vnl_math_min( (int) m_CurrentLevel,
-                               (int) m_FixedImagePyramid->GetNumberOfLevels() );
+    movingLevel = vnl_math_min( (int)m_CurrentLevel,
+                                (int)m_MovingImagePyramid->GetNumberOfLevels() );
+    fixedLevel = vnl_math_min( (int)m_CurrentLevel,
+                               (int)m_FixedImagePyramid->GetNumberOfLevels() );
 
     // Invoke an iteration event.
     this->InvokeEvent( IterationEvent() );
@@ -381,11 +394,11 @@ MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacemen
     // We can release data from pyramid which are no longer required.
     if( movingLevel > 0 )
       {
-      m_MovingImagePyramid->GetOutput( movingLevel - 1 )->ReleaseData();
+      m_MovingImagePyramid->GetOutput(movingLevel - 1)->ReleaseData();
       }
     if( fixedLevel > 0 )
       {
-      m_FixedImagePyramid->GetOutput( fixedLevel - 1 )->ReleaseData();
+      m_FixedImagePyramid->GetOutput(fixedLevel - 1)->ReleaseData();
       }
     } // while not Halt()
 
@@ -396,7 +409,7 @@ MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacemen
     // to output of this filter
 
     // resample the field to the same size as the fixed image
-    m_FieldExpander12->SetInput( tempField12 );
+    m_FieldExpander12->SetInput(tempField12);
     m_FieldExpander12->SetSize(
       fixedImage->GetLargestPossibleRegion().GetSize() );
     m_FieldExpander12->SetOutputStartIndex(
@@ -416,9 +429,9 @@ MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacemen
     m_FieldExpander21->SetOutputSpacing( movingImage->GetSpacing() );
     m_FieldExpander21->SetOutputDirection( movingImage->GetDirection() );
     m_FieldExpander21->UpdateLargestPossibleRegion();
-//	  tempField21 = m_FieldExpander21->GetOutput();
-//	  tempField21->DisconnectPipeline();
-//	  tempField21->Print(std::cout,6);
+//    tempField21 = m_FieldExpander21->GetOutput();
+//    tempField21->DisconnectPipeline();
+//    tempField21->Print(std::cout,6);
     this->GraftNthOutput(1, m_FieldExpander21->GetOutput() );
 #endif
     }
@@ -432,27 +445,27 @@ MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacemen
     }
 
   // Release memory
-  m_FieldExpander12->SetInput( NULL );
+  m_FieldExpander12->SetInput(NULL);
   m_FieldExpander12->GetOutput()->ReleaseData();
-  m_FieldExpander21->SetInput( NULL );
+  m_FieldExpander21->SetInput(NULL);
   m_FieldExpander21->GetOutput()->ReleaseData();
-  m_RegistrationFilter->SetInput( NULL );
+  m_RegistrationFilter->SetInput(NULL);
   m_RegistrationFilter->GetOutput(0)->ReleaseData();
   m_RegistrationFilter->GetOutput(1)->ReleaseData();
 }
 
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <class TFixedImage, class TMovingImage, class TDisplacementField, class TRealType>
 void
-MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacementField>
+MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacementField, TRealType>
 ::StopRegistration()
 {
   m_RegistrationFilter->StopRegistration();
   m_StopRegistrationFlag = true;
 }
 
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <class TFixedImage, class TMovingImage, class TDisplacementField, class TRealType>
 bool
-MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacementField>
+MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacementField, TRealType>
 ::Halt()
 {
   // Halt the registration after the user-specified number of levels
@@ -470,7 +483,7 @@ MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacemen
     {
     return true;
     }
-  if( m_NumberOfIterations[m_CurrentLevel] == 0 )
+  else if( m_NumberOfIterations[m_CurrentLevel] == 0 )
     {
     return true;
     }
@@ -480,9 +493,9 @@ MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacemen
     }
 }
 
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <class TFixedImage, class TMovingImage, class TDisplacementField, class TRealType>
 void
-MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacementField>
+MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacementField, TRealType>
 ::GenerateOutputInformation()
 {
   typename DataObject::Pointer output;
@@ -498,20 +511,20 @@ MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacemen
     // Initial deforamtion field is not set.
     // Copy information from the fixed image.
     for( unsigned int idx = 0; idx <
-         this->GetNumberOfOutputs(); ++idx )
+         this->GetNumberOfIndexedOutputs(); ++idx )
       {
       output = this->GetOutput(idx);
       if( output )
         {
-        output->CopyInformation(this->GetFixedImage() );
+        output->CopyInformation( this->GetFixedImage() );
         }
       }
     }
 }
 
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <class TFixedImage, class TMovingImage, class TDisplacementField, class TRealType>
 void
-MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacementField>
+MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacementField, TRealType>
 ::GenerateInputRequestedRegion()
 {
   // call the superclass's implementation
@@ -545,17 +558,17 @@ MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacemen
     }
 }
 
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <class TFixedImage, class TMovingImage, class TDisplacementField, class TRealType>
 void
-MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacementField>
+MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacementField, TRealType>
 ::EnlargeOutputRequestedRegion(
-  DataObject * ptr )
+  DataObject *ptr)
 {
   // call the superclass's implementation
-  Superclass::EnlargeOutputRequestedRegion( ptr );
+  Superclass::EnlargeOutputRequestedRegion(ptr);
 
   // set the output requested region to largest possible.
-  DisplacementFieldType * outputPtr;
+  DisplacementFieldType *outputPtr;
 
   outputPtr = dynamic_cast<DisplacementFieldType *>( ptr );
 
@@ -565,9 +578,9 @@ MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacemen
     }
 }
 
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <class TFixedImage, class TMovingImage, class TDisplacementField, class TRealType>
 ProcessObject::DataObjectPointer
-MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacementField>
+MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacementField, TRealType>
 ::MakeOutput(ProcessObject::DataObjectPointerArraySizeType idx)
 {
   switch( idx )

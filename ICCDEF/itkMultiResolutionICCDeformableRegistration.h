@@ -11,14 +11,15 @@
 #define __itkMultiResolutionICCDeformableRegistration_h
 
 #include "itkImage.h"
-#include "itkImageToImageFilter.h"
-#include "itkPDEDeformableRegistrationFilter.h"
-#include "itkICCDeformableRegistrationFilter.h"
 #include "itkDemonsRegistrationFilter.h"
 #include "itkMultiResolutionPyramidImageFilter.h"
 #include "itkVectorResampleImageFilter.h"
+#include "itkArray.h"
 
 #include <vector>
+#include "itkImageToImageFilter.h"
+#include "itkPDEDeformableRegistrationFilter.h"
+#include "itkICCDeformableRegistrationFilter.h"
 
 namespace itk
 {
@@ -66,7 +67,7 @@ namespace itk
  *
  * \ingroup DeformableImageRegistration
  */
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
+template <class TFixedImage, class TMovingImage, class TDisplacementField, class TRealType = float>
 class ITK_EXPORT MultiResolutionICCDeformableRegistration :
   public         ImageToImageFilter<TDisplacementField, TDisplacementField>
 {
@@ -82,8 +83,8 @@ public:
   itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro( MultiResolutionICCDeformableRegistration,
-                ImageToImageFilter );
+  itkTypeMacro(MultiResolutionICCDeformableRegistration,
+               ImageToImageFilter);
 
   /** Fixed image type. */
   typedef TFixedImage                           FixedImageType;
@@ -98,75 +99,78 @@ public:
   /** Deformation field image type. */
   typedef TDisplacementField                      DisplacementFieldType;
   typedef typename DisplacementFieldType::Pointer DisplacementFieldPointer;
-
-  typedef typename DataObject::Pointer DataObjectPointer;
-
+#ifdef ITKV3_COMPATIBILITY
+  typedef TDisplacementField                     DeformationFieldType;
+  typedef typename DeformationFieldType::Pointer DeformationFieldPointer;
+#endif
   /** ImageDimension. */
-  itkStaticConstMacro(ImageDimension, unsigned int,
-                      FixedImageType::ImageDimension);
+  itkStaticConstMacro(ImageDimension, unsigned int, FixedImageType::ImageDimension);
 
   /** Internal float image type. */
-  typedef Image<float, itkGetStaticConstMacro(ImageDimension)> FloatImageType;
+  typedef Image<TRealType, itkGetStaticConstMacro(ImageDimension)> FloatImageType;
 
   /** The internal registration type. */
-  typedef ICCDeformableRegistrationFilter<
-      FloatImageType, FloatImageType, DisplacementFieldType> RegistrationType;
-  typedef typename RegistrationType::Pointer RegistrationPointer;
+  typedef ICCDeformableRegistrationFilter<FloatImageType, FloatImageType, DisplacementFieldType> RegistrationType;
+  typedef typename RegistrationType::Pointer                                                     RegistrationPointer;
 
   /** The default registration type. */
-  typedef DemonsRegistrationFilter<
-      FloatImageType, FloatImageType, DisplacementFieldType> DefaultRegistrationType;
+  typedef DemonsRegistrationFilter<FloatImageType, FloatImageType, DisplacementFieldType> DefaultRegistrationType;
 
   /** The fixed multi-resolution image pyramid type. */
-  typedef MultiResolutionPyramidImageFilter<
-      FixedImageType, FloatImageType> FixedImagePyramidType;
-  typedef typename FixedImagePyramidType::Pointer FixedImagePyramidPointer;
+  typedef MultiResolutionPyramidImageFilter<FixedImageType, FloatImageType> FixedImagePyramidType;
+  typedef typename FixedImagePyramidType::Pointer                           FixedImagePyramidPointer;
 
   /** The moving multi-resolution image pyramid type. */
-  typedef MultiResolutionPyramidImageFilter<
-      MovingImageType, FloatImageType> MovingImagePyramidType;
-  typedef typename MovingImagePyramidType::Pointer MovingImagePyramidPointer;
+  typedef MultiResolutionPyramidImageFilter<MovingImageType, FloatImageType> MovingImagePyramidType;
+  typedef typename MovingImagePyramidType::Pointer                           MovingImagePyramidPointer;
 
   /** The deformation field expander type. */
-  typedef VectorResampleImageFilter<
-      DisplacementFieldType, DisplacementFieldType> FieldExpanderType;
-  typedef typename FieldExpanderType::Pointer FieldExpanderPointer;
+  typedef VectorResampleImageFilter<DisplacementFieldType, DisplacementFieldType> FieldExpanderType;
+  typedef typename FieldExpanderType::Pointer                                     FieldExpanderPointer;
+
+  typedef Array<unsigned int> NumberOfIterationsType;
 
   /** Set the fixed image. */
-  virtual void SetFixedImage( const FixedImageType * ptr );
+  virtual void SetFixedImage(const FixedImageType *ptr);
 
   /** Get the fixed image. */
   const FixedImageType * GetFixedImage(void) const;
 
   /** Set the moving image. */
-  virtual void SetMovingImage( const MovingImageType * ptr );
+  virtual void SetMovingImage(const MovingImageType *ptr);
 
   /** Get the moving image. */
   const MovingImageType * GetMovingImage(void) const;
 
-  /** Set initial deformation field. */
-  virtual void SetInitialDisplacementField( DisplacementFieldType * ptr )
+  /** Set initial deformation field to be used as is (no smoothing, no
+   *  subsampling at the coarsest level of the pyramid. */
+  virtual void SetInitialDisplacementField(DisplacementFieldType *ptr)
   {
     this->m_InitialDisplacementField = ptr;
-    // itkExceptionMacro( << "This feature not implemented yet"  );
   }
 
-  virtual void SetInitialFixedDisplacementField( DisplacementFieldType * ptr )
+  /** Set initial deformation field. No assumption is made on the
+   *  input. It will therefore be smoothed and resampled to match the
+   *  images characteristics at the coarsest level of the pyramid. */
+  virtual void SetArbitraryInitialDisplacementField(DisplacementFieldType *ptr)
   {
-    this->m_InitialFixedDisplacementField = ptr;
-    // itkExceptionMacro( << "This feature not implemented yet"  );
-  }
-
-  virtual void SetInitialMovingDisplacementField( DisplacementFieldType * ptr )
-  {
-    this->m_InitialMovingDisplacementField = ptr;
-    // itkExceptionMacro( << "This feature not implemented yet"  );
+    this->SetInput(ptr);
   }
 
   /** Get output deformation field. */
   const DisplacementFieldType * GetDisplacementField(void)
   {
     return this->GetOutput();
+  }
+
+  virtual void SetInitialFixedDisplacementField( DisplacementFieldType * ptr )
+  {
+    this->m_InitialFixedDisplacementField = ptr;
+  }
+
+  virtual void SetInitialMovingDisplacementField( DisplacementFieldType * ptr )
+  {
+    this->m_InitialMovingDisplacementField = ptr;
   }
 
   DisplacementFieldPointer GetBackwardDisplacementField(void)
@@ -183,31 +187,31 @@ public:
   virtual std::vector<SmartPointer<DataObject> >::size_type GetNumberOfValidRequiredInputs() const;
 
   /** Set the internal registrator. */
-  itkSetObjectMacro( RegistrationFilter, RegistrationType );
+  itkSetObjectMacro(RegistrationFilter, RegistrationType);
 
   /** Get the internal registrator. */
-  itkGetObjectMacro( RegistrationFilter, RegistrationType );
+  itkGetObjectMacro(RegistrationFilter, RegistrationType);
 
   /** Set the fixed image pyramid. */
-  itkSetObjectMacro( FixedImagePyramid, FixedImagePyramidType );
+  itkSetObjectMacro(FixedImagePyramid, FixedImagePyramidType);
 
   /** Get the fixed image pyramid. */
-  itkGetObjectMacro( FixedImagePyramid, FixedImagePyramidType );
+  itkGetObjectMacro(FixedImagePyramid, FixedImagePyramidType);
 
   /** Set the moving image pyramid. */
-  itkSetObjectMacro( MovingImagePyramid, MovingImagePyramidType );
+  itkSetObjectMacro(MovingImagePyramid, MovingImagePyramidType);
 
   /** Get the moving image pyramid. */
-  itkGetObjectMacro( MovingImagePyramid, MovingImagePyramidType );
+  itkGetObjectMacro(MovingImagePyramid, MovingImagePyramidType);
 
   /** Set number of multi-resolution levels. */
-  virtual void SetNumberOfLevels( unsigned int num );
+  virtual void SetNumberOfLevels(unsigned int num);
 
   /** Get number of multi-resolution levels. */
-  itkGetConstReferenceMacro( NumberOfLevels, unsigned int );
+  itkGetConstReferenceMacro(NumberOfLevels, unsigned int);
 
   /** Get the current resolution level being processed. */
-  itkGetConstReferenceMacro( CurrentLevel, unsigned int );
+  itkGetConstReferenceMacro(CurrentLevel, unsigned int);
 
   /** Set number of iterations per multi-resolution levels. */
   itkSetVectorMacro( NumberOfIterations, unsigned int, m_NumberOfLevels );
@@ -222,16 +226,16 @@ public:
   virtual void StopRegistration();
 
   /** Set the moving image pyramid. */
-  itkSetObjectMacro( FieldExpander12, FieldExpanderType );
+  itkSetObjectMacro(FieldExpander12, FieldExpanderType);
 
   /** Get the moving image pyramid. */
-  itkGetObjectMacro( FieldExpander12, FieldExpanderType );
+  itkGetObjectMacro(FieldExpander12, FieldExpanderType);
 
-  /** Set the moving image pyramid. */
-  itkSetObjectMacro( FieldExpander21, FieldExpanderType );
+  /** Set number of iterations per multi-resolution levels. */
+  itkSetObjectMacro(FieldExpander21, FieldExpanderType);
 
-  /** Get the moving image pyramid. */
-  itkGetObjectMacro( FieldExpander21, FieldExpanderType );
+  /** Get number of iterations per multi-resolution levels. */
+  itkGetObjectMacro(FieldExpander21, FieldExpanderType);
 
   using Superclass::MakeOutput;
   virtual ProcessObject::DataObjectPointer MakeOutput(ProcessObject::DataObjectPointerArraySizeType idx);
@@ -244,7 +248,7 @@ protected:
   {
   }
 
-  void PrintSelf(std::ostream& os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const;
 
   /** Generate output data by performing the registration
    * at each resolution level. */
@@ -266,32 +270,45 @@ protected:
   /** The current implementation of this class does not supprot
    * streaming. As such it produces the output for the largest
    * possible region. */
-  virtual void EnlargeOutputRequestedRegion( DataObject *ptr );
+  virtual void EnlargeOutputRequestedRegion(DataObject *ptr);
 
   /** This method returns true to indicate that the registration should
    * terminate at the current resolution level. */
   virtual bool Halt();
 
+  /** Override VeriyInputInformation() since this filter's inputs do
+   * not need to occoupy the same physical space.
+   *
+   * \sa ProcessObject::VerifyInputInformation
+   */
+  virtual void VerifyInputInformation()
+  {
+  }
+
 private:
-  MultiResolutionICCDeformableRegistration(const Self &); // purposely not implemented
-  void operator=(const Self &);                           // purposely not implemented
+  MultiResolutionICCDeformableRegistration(const Self &); // purposely not
+                                                          // implemented
+  void operator=(const Self &);                           // purposely not
+
+  // implemented
 
   RegistrationPointer       m_RegistrationFilter;
   FixedImagePyramidPointer  m_FixedImagePyramid;
   MovingImagePyramidPointer m_MovingImagePyramid;
-  FieldExpanderPointer      m_FieldExpander12, m_FieldExpander21;
+  FieldExpanderPointer      m_FieldExpander12;
+  FieldExpanderPointer      m_FieldExpander21;
   DisplacementFieldPointer  m_InitialDisplacementField;
   DisplacementFieldPointer  m_InitialFixedDisplacementField;
   DisplacementFieldPointer  m_InitialMovingDisplacementField;
   DisplacementFieldPointer  m_BackwardDisplacementField;
+  std::string               m_DisplacementFieldOutputNamePrefix;
 
-  unsigned int              m_NumberOfLevels;
-  unsigned int              m_CurrentLevel;
-  std::vector<unsigned int> m_NumberOfIterations;
+  unsigned int           m_NumberOfLevels;
+  unsigned int           m_CurrentLevel;
+  NumberOfIterationsType m_NumberOfIterations;
 
   /** Flag to indicate user stop registration request. */
-  bool        m_StopRegistrationFlag;
-  std::string m_DisplacementFieldOutputNamePrefix;
+  bool m_StopRegistrationFlag;
 };
 } // end namespace itk
 

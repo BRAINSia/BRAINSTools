@@ -64,7 +64,7 @@ if(NOT DEFINED ${extProjName}_DIR AND NOT ${USE_SYSTEM_${extProjName}})
   string(REPLACE "-fopenmp" "" ITK_CMAKE_CXX_FLAGS "${CMAKE_CX_FLAGS}")
 
   set(${proj}_CMAKE_OPTIONS
-      -DITK_LEGACY_REMOVE:BOOL=ON
+      -DITK_LEGACY_REMOVE:BOOL=OFF
       -DITK_BUILD_ALL_MODULES:BOOL=ON
       -DITK_USE_REVIEW:BOOL=ON
       -DITKV3_COMPATIBILITY:BOOL=ON
@@ -73,7 +73,7 @@ if(NOT DEFINED ${extProjName}_DIR AND NOT ${USE_SYSTEM_${extProjName}})
     )
   ### --- End Project specific additions
   set(${proj}_REPOSITORY ${git_protocol}://itk.org/ITK.git)
-  set(${proj}_GIT_TAG d2e89708f05d5dc7df21501064f2adb474f4e033)
+  set(${proj}_GIT_TAG 4f2cf9ed707c262c17e4565217b6ebbaa03bcf0e)
   ## 2012-06-19 The feature freeze version that will become v4.2.0rc3
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${${proj}_REPOSITORY}
@@ -92,6 +92,7 @@ if(NOT DEFINED ${extProjName}_DIR AND NOT ${USE_SYSTEM_${extProjName}})
     DEPENDS
       ${${proj}_DEPENDENCIES}
     )
+
   set(${extProjName}_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
 else()
   if(${USE_SYSTEM_${extProjName}})

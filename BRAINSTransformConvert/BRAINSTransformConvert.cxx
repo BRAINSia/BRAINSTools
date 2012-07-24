@@ -7,7 +7,6 @@
 #include "itkImageRegionIterator.h"
 #include "GenericTransformImage.h"
 #include "itkTranslationTransform.h"
-#include "itkRigid3DTransform.h"
 
 //
 // transform ranking,
@@ -97,16 +96,6 @@ ExtractTransform(VersorRigid3DTransformType::Pointer & result,
     const VersorTransformType *versorXfrm = dynamic_cast<const VersorTransformType *>(source);
     result->SetRotation(versorXfrm->GetVersor() );
     result->SetCenter(versorXfrm->GetCenter() );
-    return true;
-    }
-  // rigid3d == rotation + translation.
-  if( IsClass(source, "Rigid3DTransform") )
-    {
-    typedef itk::Rigid3DTransform<double> Rigid3DTransformType;
-    const Rigid3DTransformType *rigid3DXfrm = dynamic_cast<const Rigid3DTransformType *>(source);
-    result->SetMatrix(rigid3DXfrm->GetMatrix() );
-    result->SetTranslation(rigid3DXfrm->GetTranslation() );
-    result->SetCenter(rigid3DXfrm->GetCenter() );
     return true;
     }
   return false;

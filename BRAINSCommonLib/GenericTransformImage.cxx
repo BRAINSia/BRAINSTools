@@ -14,7 +14,6 @@
 #include "itkQuaternionRigidTransform.h"
 #include "itkRigid2DTransform.h"
 #include "itkRigid3DPerspectiveTransform.h"
-#include "itkRigid3DTransform.h"
 #include "itkScalableAffineTransform.h"
 #include "itkScaleLogarithmicTransform.h"
 #include "itkScaleSkewVersor3DTransform.h"

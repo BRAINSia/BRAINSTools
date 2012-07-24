@@ -43,7 +43,6 @@
 #include <itkMersenneTwisterRandomVariateGenerator.h>
 #include <itkImageFileWriter.h>
 #include <itkSimilarity3DTransform.h>
-#include <itkRigid3DTransform.h>
 #include <itkVersorRigid3DTransform.h>
 
 #include "itkCylinderSpatialObject.h"
@@ -87,7 +86,6 @@ typedef itk::RGBPixel<unsigned char> RGBPixelType;
 typedef itk::Image<RGBPixelType, 3>  RGBImageType;
 typedef itk::Image<RGBPixelType, 2>  RGB2DImageType;
 
-// typedef itk::Rigid3DTransform<double> RigidTransformType;
 typedef itk::Euler3DTransform<double>       RigidTransformType;
 typedef itk::VersorRigid3DTransform<double> VersorTransformType;
 

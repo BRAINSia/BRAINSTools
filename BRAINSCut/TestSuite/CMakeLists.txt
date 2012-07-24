@@ -4,35 +4,36 @@
 ##
 ## BRAINSCut NetConfiguration(XML) file for testing
 ##
+
+message("TestData_DIR=${TestData_DIR}")
+
+## ExternalData_expand_arguments( name variable_name_to_be_used file_downloaded?)
+
+ExternalData_expand_arguments( ${PROJECT_NAME}FetchData AtlasToSubjectScan1 DATA{${TestData_DIR}/AtlasToSubjectScan1.${XFRM_EXT}} )
+  ExternalData_expand_arguments( ${PROJECT_NAME}FetchData scan1T1     DATA{${TestData_DIR}/scan1T1.nii.gz} )
+  ExternalData_expand_arguments( ${PROJECT_NAME}FetchData scan3T2     DATA{${TestData_DIR}/scan3T2.nii.gz} )
+  ExternalData_expand_arguments( ${PROJECT_NAME}FetchData AtlasToSubjectScan2 DATA{${TestData_DIR}/AtlasToSubjectScan2.${XFRM_EXT}} )
+  ExternalData_expand_arguments( ${PROJECT_NAME}FetchData scan1T2     DATA{${TestData_DIR}/scan1T2.nii.gz} )
+  ExternalData_expand_arguments( ${PROJECT_NAME}FetchData scan4Mask1  DATA{${TestData_DIR}/scan4Mask1.nii.gz} )
+  ExternalData_expand_arguments( ${PROJECT_NAME}FetchData AtlasToSubjectScan3 DATA{${TestData_DIR}/AtlasToSubjectScan3.${XFRM_EXT}} )
+  ExternalData_expand_arguments( ${PROJECT_NAME}FetchData scan2Mask1  DATA{${TestData_DIR}/scan2Mask1.nii.gz} )
+  ExternalData_expand_arguments( ${PROJECT_NAME}FetchData scan4T1     DATA{${TestData_DIR}/scan4T1.nii.gz} )
+  ExternalData_expand_arguments( ${PROJECT_NAME}FetchData AtlasToSubjectScan4 DATA{${TestData_DIR}/AtlasToSubjectScan4.${XFRM_EXT}} )
+  ExternalData_expand_arguments( ${PROJECT_NAME}FetchData scan2T1     DATA{${TestData_DIR}/scan2T1.nii.gz} )
+  ExternalData_expand_arguments( ${PROJECT_NAME}FetchData scan4T2     DATA{${TestData_DIR}/scan4T2.nii.gz} )
+  ExternalData_expand_arguments( ${PROJECT_NAME}FetchData SubjectToAtlasScan1 DATA{${TestData_DIR}/SubjectToAtlasScan1.${XFRM_EXT}} )
+  ExternalData_expand_arguments( ${PROJECT_NAME}FetchData scan2T2     DATA{${TestData_DIR}/scan2T2.nii.gz} )
+  ExternalData_expand_arguments( ${PROJECT_NAME}FetchData template_t1 DATA{${TestData_DIR}/template_t1.nii.gz} )
+  ExternalData_expand_arguments( ${PROJECT_NAME}FetchData SubjectToAtlasScan2 DATA{${TestData_DIR}/SubjectToAtlasScan2.${XFRM_EXT}} )
+  ExternalData_expand_arguments( ${PROJECT_NAME}FetchData scan3Mask1  DATA{${TestData_DIR}/scan3Mask1.nii.gz} )
+  ExternalData_expand_arguments( ${PROJECT_NAME}FetchData scan1Mask1  DATA{${TestData_DIR}/scan1Mask1.nii.gz} )
+  ExternalData_expand_arguments( ${PROJECT_NAME}FetchData scan3T1     DATA{${TestData_DIR}/scan3T1.nii.gz} )
+
+## 
 set( InputNetConfigurationForTesting ${BRAINSCut_SOURCE_DIR}/TestSuite/NetConfigurations/BRAINSCutTest.xml.in)
 set( OutputNetConfigurationForTesting ${CMAKE_CURRENT_BINARY_DIR}/TestSuite/NetConfigurations/BRAINSCutTest.xml )
 
 configure_file( ${InputNetConfigurationForTesting} ${OutputNetConfigurationForTesting}  IMMEDIATE @ONLY)
-
-message("TestData_DIR=${TestData_DIR}")
-
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME FakeTestToDownloadFiles
-  COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_LIST_DIR}/FakeTest.cmake
-  DATA{${TestData_DIR}/AtlasToSubjectScan1.${XFRM_EXT}}
-  DATA{${TestData_DIR}/scan1T1.nii.gz}
-  DATA{${TestData_DIR}/scan3T2.nii.gz}
-  DATA{${TestData_DIR}/AtlasToSubjectScan2.${XFRM_EXT}}
-  DATA{${TestData_DIR}/scan1T2.nii.gz}
-  DATA{${TestData_DIR}/scan4Mask1.nii.gz}
-  DATA{${TestData_DIR}/AtlasToSubjectScan3.${XFRM_EXT}}
-  DATA{${TestData_DIR}/scan2Mask1.nii.gz}
-  DATA{${TestData_DIR}/scan4T1.nii.gz}
-  DATA{${TestData_DIR}/AtlasToSubjectScan4.${XFRM_EXT}}
-  DATA{${TestData_DIR}/scan2T1.nii.gz}
-  DATA{${TestData_DIR}/scan4T2.nii.gz}
-  DATA{${TestData_DIR}/SubjectToAtlasScan1.${XFRM_EXT}}
-  DATA{${TestData_DIR}/scan2T2.nii.gz}
-  DATA{${TestData_DIR}/template_t1.nii.gz}
-  DATA{${TestData_DIR}/SubjectToAtlasScan2.${XFRM_EXT}}
-  DATA{${TestData_DIR}/scan3Mask1.nii.gz}
-  DATA{${TestData_DIR}/scan1Mask1.nii.gz}
-  DATA{${TestData_DIR}/scan3T1.nii.gz}
-  )
 
 ##
 ## BRAINSCut Test Run

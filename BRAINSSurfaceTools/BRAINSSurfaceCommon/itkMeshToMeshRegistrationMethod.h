@@ -110,9 +110,6 @@ public:
   /** Smart Pointer type to a DataObject. */
   typedef typename DataObject::Pointer DataObjectPointer;
 
-  /** Method that initiates the registration. */
-  void StartRegistration(void);
-
   /** Set/Get the Fixed Mesh. */
   itkSetConstObjectMacro( FixedMesh, FixedMeshType );
   itkGetConstObjectMacro( FixedMesh, FixedMeshType );

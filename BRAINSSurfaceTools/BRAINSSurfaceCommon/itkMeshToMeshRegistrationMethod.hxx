@@ -1,17 +1,17 @@
 /*=========================================================================
 
-  Program:   Insight Segmentation & Registration Toolkit
-  Module:    $RCSfile: itkMeshToMeshRegistrationMethod.txx,v $
-  Language:  C++
-  Date:      $Date: 2006-06-08 20:30:47 $
-  Version:   $Revision: 1.2 $
+Program:   Insight Segmentation & Registration Toolkit
+Module:    $RCSfile: itkMeshToMeshRegistrationMethod.txx,v $
+Language:  C++
+Date:      $Date: 2006-06-08 20:30:47 $
+Version:   $Revision: 1.2 $
 
-  Copyright (c) Insight Software Consortium. All rights reserved.
-  See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
+Copyright (c) Insight Software Consortium. All rights reserved.
+See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-     PURPOSE.  See the above copyright notices for more information.
+This software is distributed WITHOUT ANY WARRANTY; without even
+the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
 #ifndef __itkMeshToMeshRegistrationMethod_hxx
@@ -28,7 +28,7 @@ template <typename TFixedMesh, typename TMovingMesh>
 MeshToMeshRegistrationMethod<TFixedMesh, TMovingMesh>
 ::MeshToMeshRegistrationMethod()
 {
-  this->SetNumberOfRequiredOutputs( 1 );  // for the Transform
+  this->SetNumberOfRequiredOutputs( 1 );      // for the Transform
 
   m_FixedMesh   = 0;     // has to be provided by the user.
   m_MovingMesh  = 0;     // has to be provided by the user.
@@ -129,67 +129,6 @@ MeshToMeshRegistrationMethod<TFixedMesh, TMovingMesh>
 }
 
 /**
- * Starts the Registration Process
- */
-template <typename TFixedMesh, typename TMovingMesh>
-void
-MeshToMeshRegistrationMethod<TFixedMesh, TMovingMesh>
-::StartRegistration( void )
-{
-  // StartRegistration is an old API from before
-  // the RegistrationMethod was a subclass of ProcessObject.
-  // Historically, one could call StartRegistration() instead of
-  // calling Update().  However, when called directly by the user, the
-  // inputs to the RegistrationMethod may not be up to date.  This
-  // may cause an unexpected behavior.
-  //
-  // Since we cannot eliminate StartRegistration for backward
-  // compability reasons, we check whether StartRegistration was
-  // called directly or whether Update() (which in turn called
-  // StartRegistration()).
-  if( !m_Updating )
-    {
-    this->Update();
-    }
-  else
-    {
-    try
-      {
-      // initialize the interconnects between components
-      this->Initialize();
-      }
-    catch( ExceptionObject& err )
-      {
-      m_LastTransformParameters = ParametersType(1);
-      m_LastTransformParameters.Fill( 0.0f );
-
-      // pass exception to caller
-      throw err;
-      }
-
-    try
-      {
-      // do the optimization
-      m_Optimizer->StartOptimization();
-      }
-    catch( ExceptionObject& err )
-      {
-      // An error has occurred in the optimization.
-      // Update the parameters
-      m_LastTransformParameters = m_Optimizer->GetCurrentPosition();
-
-      // Pass exception to caller
-      throw err;
-      }
-
-    // get the results
-    m_LastTransformParameters = m_Optimizer->GetCurrentPosition();
-
-    m_Transform->SetParameters( m_LastTransformParameters );
-    }
-}
-
-/**
  * PrintSelf
  */
 template <typename TFixedMesh, typename TMovingMesh>
@@ -213,7 +152,39 @@ void
 MeshToMeshRegistrationMethod<TFixedMesh, TMovingMesh>
 ::GenerateData()
 {
-  this->StartRegistration();
+  try
+    {
+    // initialize the interconnects between components
+    this->Initialize();
+    }
+  catch( ExceptionObject& err )
+    {
+    m_LastTransformParameters = ParametersType(1);
+    m_LastTransformParameters.Fill( 0.0f );
+
+    // pass exception to caller
+    throw err;
+    }
+
+  try
+    {
+    // do the optimization
+    m_Optimizer->StartOptimization();
+    }
+  catch( ExceptionObject& err )
+    {
+    // An error has occurred in the optimization.
+    // Update the parameters
+    m_LastTransformParameters = m_Optimizer->GetCurrentPosition();
+
+    // Pass exception to caller
+    throw err;
+    }
+
+  // get the results
+  m_LastTransformParameters = m_Optimizer->GetCurrentPosition();
+
+  m_Transform->SetParameters( m_LastTransformParameters );
 }
 
 /**

@@ -80,9 +80,12 @@ CMAKE_DEPENDENT_OPTION(
   "BUILD_STYLE_UTILS" OFF
   )
 
+set(EXTERNAL_PROJECT_BUILD_TYPE "Release" CACHE STRING "Default build type for support libraries")
+
 option(USE_SYSTEM_ITK "Build using an externally defined version of ITK" OFF)
 option(USE_SYSTEM_SlicerExecutionModel "Build using an externally defined version of SlicerExecutionModel"  OFF)
 option(USE_SYSTEM_VTK "Build using an externally defined version of VTK" OFF)
+
 #
 # choose between using HDF5 or MAT format transform files
 set(XFRM_EXT "mat" CACHE STRING "Choose the preferred transform file format")
@@ -257,7 +260,29 @@ list(APPEND ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS
   )
 
 _expand_external_project_vars()
-set(COMMON_EXTERNAL_PROJECT_ARGS ${${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_ARGS})
+
+#
+# By default we want to build BRAINSTools stuff using the CMAKE_BUILD_TYPE of
+# the top level build, but build the support libraries in Release.
+# So make one list of parameters to pass to BRAINSTools when we build it and
+# another for all the prerequisite libraries
+#
+# since we use a macro to build the list of arguments, it's easier to modify the
+# list after it's built than try and conditionally change just the build type in the macro.
+
+set(BRAINSTOOLS_EXTERNAL_PROJECT_ARGS ${${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_ARGS})
+
+set(COMMON_EXTERNAL_PROJECT_ARGS)
+foreach(arg ${${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_ARGS})
+  if(arg MATCHES "-DCMAKE_BUILD_TYPE:STRING.*")
+    set(_arg -DCMAKE_BUILD_TYPE:STRING=${EXTERNAL_PROJECT_BUILD_TYPE})
+  else()
+    set(_arg ${arg})
+  endif()
+  list(APPEND COMMON_EXTERNAL_PROJECT_ARGS ${_arg})
+endforeach()
+
+message("COMMON_EXTERNAL_PROJECT_ARGS = ${COMMON_EXTERNAL_PROJECT_ARGS}")
 
 if(verbose)
   message("Inner external project args:")
@@ -288,7 +313,7 @@ ExternalProject_Add(${proj}
   CMAKE_ARGS
     --no-warn-unused-cli # HACK Only expected variables should be passed down.
     ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
-    ${COMMON_EXTERNAL_PROJECT_ARGS}
+    ${BRAINSTOOLS_EXTERNAL_PROJECT_ARGS}
     -D${LOCAL_PROJECT_NAME}_SUPERBUILD:BOOL=OFF
   INSTALL_COMMAND ""
   )

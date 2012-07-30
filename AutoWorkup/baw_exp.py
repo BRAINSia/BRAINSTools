@@ -91,7 +91,7 @@ def main(argv=None):
     expConfig.read(input_arguments.ExperimentConfig)
 
     # Experiment specific information
-    session_db=expConfig.get('EXPERIMENT_DATA','SESSION_DB')
+    subject_data_file=expConfig.get('EXPERIMENT_DATA','SESSION_DB')
     ExperimentName=expConfig.get('EXPERIMENT_DATA','EXPERIMENTNAME')
     WORKFLOW_COMPONENTS_STRING=expConfig.get('EXPERIMENT_DATA','WORKFLOW_COMPONENTS')
     WORKFLOW_COMPONENTS=eval(WORKFLOW_COMPONENTS_STRING)
@@ -157,7 +157,7 @@ def main(argv=None):
         #print "SETTING: ", key, value
         os.putenv(key,value)
         os.environ[key]=value
-    print os.environ
+    #print os.environ
     #sys.exit(-1)
 
     ## If freesurfer is requested, then ensure that a sane environment is available
@@ -191,7 +191,7 @@ def main(argv=None):
     baw200=WorkupT1T2.WorkupT1T2(mountPrefix,
       ExperimentBaseDirectoryCache,
       ExperimentBaseDirectoryResults,
-      session_db,
+      subject_data_file,
       CACHE_ATLASPATH,
       CACHE_BCDMODELPATH,WORKFLOW_COMPONENTS=WORKFLOW_COMPONENTS,CLUSTER_QUEUE=CLUSTER_QUEUE)
     print "Start Processing"
@@ -199,7 +199,7 @@ def main(argv=None):
     ## Create the shell wrapper script for ensuring that all jobs running on remote hosts from SGE
     #  have the same environment as the job submission host.
     JOB_SCRIPT=get_global_sge_script(sys.path,PROGRAM_PATHS,CUSTOM_ENVIRONMENT)
-    print JOB_SCRIPT
+    #print JOB_SCRIPT
 
     SGEFlavor='SGE'
     if input_arguments.wfrun == 'helium_all.q':

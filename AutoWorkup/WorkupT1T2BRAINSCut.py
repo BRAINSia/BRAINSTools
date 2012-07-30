@@ -178,7 +178,7 @@ def CreateBRAINSCutWorkflow(WFname,CLUSTER_QUEUE,atlasObject):
     cutWF.connect(atlasObject,'r_putamen_ProbabilityMap',RF12BC,'probabilityMapsRightPutamen')
     cutWF.connect(atlasObject,'l_thalamus_ProbabilityMap',RF12BC,'probabilityMapsLeftThalamus')
     cutWF.connect(atlasObject,'r_thalamus_ProbabilityMap',RF12BC,'probabilityMapsRightThalamus')
-    cutWF.connect(atlasObject,'RandomForestAllSubcorticalsBalancedModel_txtD0060NT0060',RF12BC,'modelFilename')
+    cutWF.connect(atlasObject,'RandomForestAllSubcorticalsBalancedModel_txtD0060NT0060_gz',RF12BC,'modelFilename')
 
     cutWF.connect(inputsSpec,'atlasToSubjectTransform',RF12BC,'deformationFromTemplateToSubject')
 

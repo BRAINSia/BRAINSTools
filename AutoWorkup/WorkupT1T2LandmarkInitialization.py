@@ -23,7 +23,9 @@ def CreateLandmarkInitializeWorkflow(WFname,BCD_model_path,InterpolationMode,DoR
     landmarkInitializeWF= pe.Workflow(name=WFname)
 
     inputsSpec = pe.Node(interface=IdentityInterface(fields=['inputVolume',
-        'atlasLandmarkFilename','atlasWeightFilename','atlasVolume']), name='InputSpec' )
+        'atlasLandmarkFilename','atlasWeightFilename','atlasVolume']),
+                         run_without_submitting=True,
+                         name='InputSpec' )
 
     ########################################################/
     # Run ACPC Detect on first T1 Image - Base Image
@@ -88,7 +90,9 @@ def CreateLandmarkInitializeWorkflow(WFname,BCD_model_path,InterpolationMode,DoR
     #############
     outputsSpec = pe.Node(interface=IdentityInterface(fields=['outputLandmarksInACPCAlignedSpace','outputResampledVolume','outputLandmarksInInputSpace',
             'outputTransform','outputMRML','atlasToSubjectTransform'
-            ]), name='OutputSpec' )
+            ]),
+            run_without_submitting=True,
+            name='OutputSpec' )
 
     landmarkInitializeWF.connect(BCD,'outputLandmarksInACPCAlignedSpace',outputsSpec,'outputLandmarksInACPCAlignedSpace')
     landmarkInitializeWF.connect(BCD,'outputResampledVolume',outputsSpec,'outputResampledVolume')

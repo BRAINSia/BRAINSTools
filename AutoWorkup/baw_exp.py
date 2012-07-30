@@ -171,6 +171,8 @@ def main(argv=None):
     total_CPUS=multiprocessing.cpu_count()
     if input_arguments.wfrun == 'helium_all.q':
         pass
+    elif input_arguments.wfrun == 'helium_all.q_graph':
+        pass
     elif input_arguments.wfrun == 'ipl_OSX':
         pass
     elif input_arguments.wfrun == 'local_4':
@@ -180,18 +182,32 @@ def main(argv=None):
     elif input_arguments.wfrun == 'local':
         os.environ['NSLOTS']="{0}".format(total_CPUS/1)
     else:
-        print "You must specify the run environment type. [helium_all.q,ipl_OSX,local_4,local_12,local]"
+        print "FAILED RUN: You must specify the run environment type. [helium_all.q,helium_all.q_graph,ipl_OSX,local_4,local_12,local]"
         print input_arguments.wfrun
         sys.exit(-1)
 
     print "Configuring Pipeline"
     from nipype import config ## NOTE:  This needs to occur AFTER the PYTHON_AUX_PATHS has been modified
     config.enable_debug_mode() ## NOTE:  This needs to occur AFTER the PYTHON_AUX_PATHS has been modified
+
+    import SessionDB
+    subjectDatabaseFile=os.path.join( ExperimentBaseDirectoryCache,'InternalWorkflowSubjectDB.db')
+    ExperimentDatabase=SessionDB.SessionDB(subjectDatabaseFile)
+    ## TODO:  Only make DB if db is older than subject_data_file.
+    if  os.path.getmtime(subjectDatabaseFile) < os.path.getmtime(subject_data_file):
+        ExperimentDatabase.MakeNewDB(subject_data_file,mountPrefix)
+        print "ENTIRE DB: "
+        print "^^^^^^^^^^^^^"
+        print ExperimentDatabase.getEverything()
+        print "^^^^^^^^^^^^^"
+    else:
+	print("Using cached database, {0}".format(subjectDatabaseFile))
+
     import WorkupT1T2 ## NOTE:  This needs to occur AFTER the PYTHON_AUX_PATHS has been modified
     baw200=WorkupT1T2.WorkupT1T2(mountPrefix,
       ExperimentBaseDirectoryCache,
       ExperimentBaseDirectoryResults,
-      subject_data_file,
+      subjectDatabaseFile,
       CACHE_ATLASPATH,
       CACHE_BCDMODELPATH,WORKFLOW_COMPONENTS=WORKFLOW_COMPONENTS,CLUSTER_QUEUE=CLUSTER_QUEUE)
     print "Start Processing"
@@ -205,7 +221,7 @@ def main(argv=None):
     if input_arguments.wfrun == 'helium_all.q':
         baw200.run(plugin=SGEFlavor,
             plugin_args=dict(template=JOB_SCRIPT,qsub_args="-S /bin/bash -pe smp1 1-4 -l mem_free=4000M -o /dev/null -e /dev/null "+CLUSTER_QUEUE))
-    if input_arguments.wfrun == 'helium_all.q_graph':
+    elif input_arguments.wfrun == 'helium_all.q_graph':
         SGEFlavor='SGEGraph' #Use the SGEGraph processing
         baw200.run(plugin=SGEFlavor,
             plugin_args=dict(template=JOB_SCRIPT,qsub_args="-S /bin/bash -pe smp1 1-4 -l mem_free=4000M -o /dev/null -e /dev/null "+CLUSTER_QUEUE))
@@ -230,7 +246,7 @@ def main(argv=None):
         print "Running sequentially on local machine"
         baw200.run()
     else:
-        print "You must specify the run environment type. [helium_all.q,ipl_OSX,local_4,local_12,local]"
+        print "You must specify the run environment type. [helium_all.q,helium_all.q_graph,ipl_OSX,local_4,local_12,local]"
         print input_arguments.wfrun
         sys.exit(-1)
 

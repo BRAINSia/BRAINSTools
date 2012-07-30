@@ -43,7 +43,7 @@ atlas_file_names=["AtlasPVDefinition.xml","ALLPVAIR.nii.gz",
 "spatialImages/phi.nii.gz",
 "spatialImages/rho.nii.gz",
 "spatialImages/theta.nii.gz",
-"modelFiles/RandomForestAllSubcorticalsBalancedModel.txtD0060NT0060"
+"modelFiles/RandomForestAllSubcorticalsBalancedModel.txtD0060NT0060.gz"
 
                       ]
 ## Remove filename extensions for images, but replace . with _ for other file types

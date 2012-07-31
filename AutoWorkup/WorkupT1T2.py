@@ -42,6 +42,8 @@ from BRAINSTools import *
 from BRAINSTools.ANTSWrapper import *
 from BRAINSTools.WarpAllAtlas import *
 from BRAINSTools.ants.normalize import WarpImageMultiTransform
+from BRAINSTools.ants import antsAverageImages
+#BRAINSTools/ants/buildtemplateparallel.py:import antsAverageImages
 
 from WorkupT1T2AtlasNode import MakeAtlasNode
 
@@ -135,12 +137,25 @@ def WorkupT1T2(mountPrefix,ExperimentBaseDirectoryCache, ExperimentBaseDirectory
             baw200.connect(subjInfoNode[sessionid],'allT2s',oneSubjWorkflow[sessionid],'InputSpec.allT2s')
             baw200.connect(subjInfoNode[sessionid],'allPDs',oneSubjWorkflow[sessionid],'InputSpec.allPDs')
             baw200.connect(subjInfoNode[sessionid],'allOthers',oneSubjWorkflow[sessionid],'InputSpec.allOthers')
-        numSessions=len(allSessions)
-        mergeSubjectSessionNames="99_MergeAllSessions"+str(subjectid)
-        MergeT1s[subjectid] = pe.Node(interface=Merge(numSessions),
-                                      run_without_submitting=True,
-                                      name=mergeSubjectSessionNames)
-        for sessionid in allSessions:
-            pass
+        if True: ## Merge all BCD_Results into a global average
+            numSessions=len(allSessions)
+            mergeSubjectSessionNames="99_MergeAllSessions"+str(subjectid)
+            MergeT1s[subjectid] = pe.Node(interface=Merge(numSessions),
+                                          run_without_submitting=True,
+                                          name=mergeSubjectSessionNames)
+            index=1
+            for sessionid in allSessions:
+                index_name='in'+str(index)
+                index+=1
+                baw200.connect(oneSubjWorkflow[sessionid],'OutputSpec.t1_average',MergeT1s[subjectid],index_name)
+
+
+            InitAvgImages=pe.Node(interface=antsAverageImages.AntsAverageImages(), name ='InitBCDAvgImages_'+str(subjectid))
+            InitAvgImages.inputs.dimension = 3
+            InitAvgImages.inputs.output_average_image = str(subjectid)+"_TissueClassAVG_T1.nii.gz"
+            InitAvgImages.inputs.normalize = 1
+
+            baw200.connect(MergeT1s[subjectid], 'out', InitAvgImages, 'images')
+            #baw200.connect(InitAvgImages, 'average_image', outputSpec, 'average_image')
 
     return baw200

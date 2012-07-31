@@ -128,7 +128,8 @@ def MakeOneSubWorkFlow(projectid, subjectid, sessionid, BAtlas, WORKFLOW_COMPONE
                          run_without_submitting=True,
                          name='InputSpec' )
 
-    outputsSpec = pe.Node(interface=IdentityInterface(fields=['BCD_ACPC_T1'
+    outputsSpec = pe.Node(interface=IdentityInterface(fields=['BCD_ACPC_T1',
+            't1_average','t2_average'
             ]),
             run_without_submitting=True,
             name='OutputSpec' )
@@ -178,14 +179,18 @@ def MakeOneSubWorkFlow(projectid, subjectid, sessionid, BAtlas, WORKFLOW_COMPONE
         ### Now define where the final organized outputs should go.
         TC_DataSink=pe.Node(nio.DataSink(),name="TISSUE_CLASSIFY_DS")
         TC_DataSink.inputs.base_directory=ExperimentBaseDirectoryResults
-        # -- # TC_DataSink.inputs.regexp_substitutions = GenerateOutputPattern(projectid, subjectid, sessionid,'TissueClassify',False)
+        TC_DataSink.inputs.regexp_substitutions = GenerateOutputPattern(projectid, subjectid, sessionid,'TissueClassify',False)
         T1T2WorkupSingle.connect(myLocalTCWF, 'OutputSpec.TissueClassifyOutputDir', TC_DataSink,'TissueClassify.@TissueClassifyOutputDir')
+
+        ### Now connect OutputSpec
+        T1T2WorkupSingle.connect(myLocalTCWF, 'OutputSpec.t1_average', outputsSpec,'t1_average')
+        T1T2WorkupSingle.connect(myLocalTCWF, 'OutputSpec.t2_average', outputsSpec,'t2_average')
 
     ## Make deformed Atlas image space
     if 'ANTS' in WORKFLOW_COMPONENTS:
         from WorkupT1T2ANTS import CreateANTSRegistrationWorkflow
         myLocalAntsWF = CreateANTSRegistrationWorkflow("ANTSRegistration",CLUSTER_QUEUE,-1)
-        T1T2WorkupSingle.connect( myLocalTCWF,'OutputSpec.t1_corrected',myLocalAntsWF,"InputSpec.fixedVolumesList")
+        T1T2WorkupSingle.connect( myLocalTCWF,'OutputSpec.t1_average',myLocalAntsWF,"InputSpec.fixedVolumesList")
         T1T2WorkupSingle.connect( BAtlas,'template_t1',    myLocalAntsWF,"InputSpec.movingVolumesList")
         T1T2WorkupSingle.connect(myLocalLMIWF,'OutputSpec.atlasToSubjectTransform',myLocalAntsWF,'InputSpec.initial_moving_transform')
         # Must register the entire head, not just the brain!
@@ -203,13 +208,11 @@ def MakeOneSubWorkFlow(projectid, subjectid, sessionid, BAtlas, WORKFLOW_COMPONE
         T1T2WorkupSingle.connect(myLocalAntsWF, 'OutputSpec.inverse_warp_transform', ANTS_DataSink,'ANTSRegistration.@inverse_warp_transform')
 
     if 'SEGMENTATION' in WORKFLOW_COMPONENTS:
-        def getListIndex( imageList, index):
-            return imageList[index]
         from WorkupT1T2BRAINSCut import CreateBRAINSCutWorkflow
         ## TODO:  Remove BAtlas From Here as well!
         myLocalSegWF = CreateBRAINSCutWorkflow("Segmentation",CLUSTER_QUEUE,BAtlas) ##Note:  Passing in the entire BAtlas Object here!
-        T1T2WorkupSingle.connect( [ ( myLocalTCWF, myLocalSegWF, [ (( 'OutputSpec.outputAverageImages', getListIndex, 0 ), "InputSpec.T1Volume")] ), ] )
-        T1T2WorkupSingle.connect( [ ( myLocalTCWF, myLocalSegWF, [ (( 'OutputSpec.outputAverageImages', getListIndex, 1 ), "InputSpec.T2Volume")] ), ] )
+        T1T2WorkupSingle.connect( myLocalTCWF,'OutputSpec.t1_average',myLocalSegWF,'InputSpec.T1Volume')
+        T1T2WorkupSingle.connect( myLocalTCWF,'OutputSpec.t2_average',myLocalSegWF,'InputSpec.T2Volume')
         T1T2WorkupSingle.connect( myLocalTCWF,'OutputSpec.atlasToSubjectTransform',myLocalSegWF,'InputSpec.atlasToSubjectTransform')
 
         ### Now define where the final organized outputs should go.
@@ -236,8 +239,8 @@ def MakeOneSubWorkFlow(projectid, subjectid, sessionid, BAtlas, WORKFLOW_COMPONE
         from WorkupT1T2FreeSurfer import CreateFreeSurferWorkflow
         myLocalFSWF= CreateFreeSurferWorkflow("Level1_FSTest",CLUSTER_QUEUE,RunAllFSComponents)
         T1T2WorkupSingle.connect(inputsSpec,'sessionid',myLocalFSWF,'InputSpec.subject_id')
-        T1T2WorkupSingle.connect(myLocalTCWF,'OutputSpec.t1_corrected',myLocalFSWF,'InputSpec.T1_files')
-        T1T2WorkupSingle.connect(myLocalTCWF,'OutputSpec.t2_corrected',myLocalFSWF,'InputSpec.T2_files')
+        T1T2WorkupSingle.connect(myLocalTCWF,'OutputSpec.t1_average',myLocalFSWF,'InputSpec.T1_files')
+        T1T2WorkupSingle.connect(myLocalTCWF,'OutputSpec.t2_average',myLocalFSWF,'InputSpec.T2_files')
         T1T2WorkupSingle.connect(myLocalTCWF,'OutputSpec.outputLabels',myLocalFSWF,'InputSpec.label_file')
         #T1T2WorkupSingle.connect(myLocalTCWF,'OutputSpec.outputLabels',myLocalFSWF,'InputSpec.mask_file') #Yes, the same file as label_file!
 

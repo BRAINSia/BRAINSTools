@@ -29,7 +29,9 @@ def CreateTissueClassifyWorkflow(WFname,CLUSTER_QUEUE,InterpolationMode):
         run_without_submitting=True,
         name='InputSpec' )
     outputsSpec = pe.Node(interface=IdentityInterface(fields=['atlasToSubjectTransform','outputLabels','outputHeadLabels',
-            't1_corrected','t2_corrected','outputAverageImages','TissueClassifyOutputDir']),
+            #'t1_corrected','t2_corrected',
+            't1_average','t2_average',
+            'TissueClassifyOutputDir']),
         run_without_submitting=True,
         name='OutputSpec' )
 
@@ -132,6 +134,7 @@ def CreateTissueClassifyWorkflow(WFname,CLUSTER_QUEUE,InterpolationMode):
     Get the first T1 and T2 corrected images from BABCext
     """
 
+    """ HACK:  THIS IS NOT NEEDED!  We should use the averged t1 and averaged t2 images instead!
     def get_first_T1_and_T2(in_files,T1_count):
         '''
         Returns the first T1 and T2 file in in_files, based on offset in T1_count.
@@ -143,16 +146,22 @@ def CreateTissueClassifyWorkflow(WFname,CLUSTER_QUEUE,InterpolationMode):
     tissueClassifyWF.connect( inputsSpec, 'T1_count', bfc_files, 'T1_count')
     tissueClassifyWF.connect(BABCext,'outputVolumes',bfc_files, 'in_files')
 
-    #############
 
     tissueClassifyWF.connect(bfc_files,'t1_corrected',outputsSpec,'t1_corrected')
     tissueClassifyWF.connect(bfc_files,'t2_corrected',outputsSpec,'t2_corrected')
+    """
 
 
+    #############
     tissueClassifyWF.connect(BABCext,'atlasToSubjectTransform',outputsSpec,'atlasToSubjectTransform')
     tissueClassifyWF.connect(BABCext,'outputLabels',outputsSpec,'outputLabels')
     tissueClassifyWF.connect(BABCext,'outputDirtyLabels',outputsSpec,'outputHeadLabels')
-    tissueClassifyWF.connect(BABCext,'outputAverageImages',outputsSpec,'outputAverageImages')
+
+    def getListIndex( imageList, index):
+        return imageList[index]
+    tissueClassifyWF.connect( [ ( BABCext, outputsSpec, [ (( 'outputAverageImages', getListIndex, 0 ), "t1_average")] ), ] )
+    tissueClassifyWF.connect( [ ( BABCext, outputsSpec, [ (( 'outputAverageImages', getListIndex, 1 ), "t2_average")] ), ] )
+    #tissueClassifyWF.connect( [ ( BABCext, outputsSpec, [ (( 'outputAverageImages', getListIndex, 2 ), "pd_average")] ), ] )
 
     tissueClassifyWF.connect(BABCext,'outputDir',outputsSpec,'TissueClassifyOutputDir')
 

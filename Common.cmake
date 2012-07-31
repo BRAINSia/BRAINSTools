@@ -10,6 +10,7 @@ option(USE_BRAINSROIAuto                   "Build BRAINSROIAuto"                
 option(USE_BRAINSResample                  "Build BRAINSResample"                  ON)
 option(USE_BRAINSDemonWarp                 "Build BRAINSDemonWarp "                ON)
 option(USE_GTRACT                          "Build GTRACT"                          ON)
+option(USE_ANTS                            "Build ANTS       "                     OFF)
 option(USE_BRAINSContinuousClass           "Build BRAINSContinuousClass "          OFF)
 option(USE_AutoWorkup                      "Build AutoWorkup"                      OFF)
 option(USE_BRAINSSurfaceTools              "Build BRAINSSurfaceTools     "         OFF)
@@ -59,6 +60,8 @@ CMAKE_DEPENDENT_OPTION(
   USE_ImageCalculator                 "Build ImageCalculator (ITKv4)"               OFF "USE_ITKv4" OFF)
 CMAKE_DEPENDENT_OPTION(
   USE_BRAINSSnapShotWriter            "Build BRAINSSnapShotWriter (ITKv4)"          OFF "USE_ITKv4" OFF)
+CMAKE_DEPENDENT_OPTION(
+  USE_ANTS            "Build ANTS"          OFF "USE_ITKv4" OFF)
 
 
 option(USE_DebugImageViewer "Build DebugImageViewer" OFF)

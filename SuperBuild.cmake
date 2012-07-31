@@ -115,6 +115,11 @@ if(USE_BRAINSCut)
   list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES OpenCV)
 endif()
 
+if(USE_ANTS)
+  list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES ANTS)
+endif()
+
+
 #-----------------------------------------------------------------------------
 # Define Superbuild global variables
 #-----------------------------------------------------------------------------
@@ -282,7 +287,10 @@ foreach(arg ${${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_ARGS})
   list(APPEND COMMON_EXTERNAL_PROJECT_ARGS ${_arg})
 endforeach()
 
-message("COMMON_EXTERNAL_PROJECT_ARGS = ${COMMON_EXTERNAL_PROJECT_ARGS}")
+message("COMMON_EXTERNAL_PROJECT_ARGS = ")
+foreach(x ${COMMON_EXTERNAL_PROJECT_ARGS})
+  message("   ${x}")
+endforeach()
 
 if(verbose)
   message("Inner external project args:")

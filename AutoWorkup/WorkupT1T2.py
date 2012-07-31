@@ -99,40 +99,48 @@ def WorkupT1T2(mountPrefix,ExperimentBaseDirectoryCache, ExperimentBaseDirectory
     import WorkupT1T2Single
     import SessionDB
     dbObject=SessionDB.SessionDB(subjectDatabaseFile)
-    for projectid in dbObject.getAllProjects():
-        #MergeT1s=dict()
-        for subjectid in dbObject.getSubjectsFromProject(projectid):
-            oneSubjWorkflow=dict()
-            subjInfoNode=dict()
-            allSessions = dbObject.getSessionsFromProjectSubject(projectid,subjectid)
-            for sessionid in allSessions:
-                print("PROJECT: {0} SUBJECT: {1} SESSION: {2}".format(projectid,subjectid,sessionid))
-                subjInfoNode[sessionid] = pe.Node(interface=IdentityInterface(fields=
-                        ['sessionid','subjectid','projectid',
-                         'ReferenceT1']),
-                        run_without_submitting=True,
-                        name='99_SubjInfoNode_'+str(subjectid)+"_"+str(sessionid) )
-                subjInfoNode[sessionid].inputs.projectid=projectid
-                subjInfoNode[sessionid].inputs.subjectid=subjectid
-                subjInfoNode[sessionid].inputs.sessionid=sessionid
-                subjInfoNode[sessionid].inputs.ReferenceT1=dbObject.getFirstT1(sessionid)
+    MergeT1s=dict()
+    for subjectid in dbObject.getAllSubjects():
+        oneSubjWorkflow=dict()
+        subjInfoNode=dict()
+        allSessions = dbObject.getSessionsFromSubject(subjectid)
+        for sessionid in allSessions:
+            projectid = dbObject.getProjFromSession(sessionid)
+            print("PROJECT: {0} SUBJECT: {1} SESSION: {2}".format(projectid,subjectid,sessionid))
+            subjInfoNode[sessionid] = pe.Node(interface=IdentityInterface(fields=
+                    ['sessionid','subjectid','projectid',
+                     'allT1s',
+                     'allT2s',
+                     'allPDs',
+                     'allOthers']),
+                    run_without_submitting=True,
+                    name='99_SubjInfoNode_'+str(subjectid)+"_"+str(sessionid) )
+            subjInfoNode[sessionid].inputs.projectid=projectid
+            subjInfoNode[sessionid].inputs.subjectid=subjectid
+            subjInfoNode[sessionid].inputs.sessionid=sessionid
+            subjInfoNode[sessionid].inputs.allT1s=dbObject.getFilenamesByScantype(sessionid,['T1-30','T1-15'])
+            subjInfoNode[sessionid].inputs.allT2s=dbObject.getFilenamesByScantype(sessionid,['T2-30','T2-15'])
+            subjInfoNode[sessionid].inputs.allPDs=dbObject.getFilenamesByScantype(sessionid,['PD-30','PD-15'])
+            subjInfoNode[sessionid].inputs.allOthers=dbObject.getFilenamesByScantype(sessionid,['OTHER-30','OTHER-15'])
 
-                oneSubjWorkflow[sessionid]=WorkupT1T2Single.MakeOneSubWorkFlow(
-                                  sessionid,BAtlas, WORKFLOW_COMPONENTS, 
-                                  BCD_model_path, InterpolationMode, CLUSTER_QUEUE, 
-                                  ExperimentBaseDirectoryResults, subjectDatabaseFile)
-                baw200.connect(subjInfoNode[sessionid],'projectid',oneSubjWorkflow[sessionid],'InputSpec.projectid')
-                baw200.connect(subjInfoNode[sessionid],'subjectid',oneSubjWorkflow[sessionid],'InputSpec.subjectid')
-                baw200.connect(subjInfoNode[sessionid],'sessionid',oneSubjWorkflow[sessionid],'InputSpec.sessionid')
-                baw200.connect(subjInfoNode[sessionid],'ReferenceT1',oneSubjWorkflow[sessionid],'InputSpec.ReferenceT1')
-            """
-            numSessions=len(allSessions)
-            MergeT1s[subjectid] = pe.Node(interface=util.Merge(numSessions),
-                                          run_without_submitting=True,
-                                          name="99_MergeAllSessions")
-
-            for sessionid in allSessions:
-                pass
-            """
+            oneSubjWorkflow[sessionid]=WorkupT1T2Single.MakeOneSubWorkFlow(
+                              projectid, subjectid, sessionid,
+                              BAtlas, WORKFLOW_COMPONENTS,
+                              BCD_model_path, InterpolationMode, CLUSTER_QUEUE,
+                              ExperimentBaseDirectoryResults)
+            baw200.connect(subjInfoNode[sessionid],'projectid',oneSubjWorkflow[sessionid],'InputSpec.projectid')
+            baw200.connect(subjInfoNode[sessionid],'subjectid',oneSubjWorkflow[sessionid],'InputSpec.subjectid')
+            baw200.connect(subjInfoNode[sessionid],'sessionid',oneSubjWorkflow[sessionid],'InputSpec.sessionid')
+            baw200.connect(subjInfoNode[sessionid],'allT1s',oneSubjWorkflow[sessionid],'InputSpec.allT1s')
+            baw200.connect(subjInfoNode[sessionid],'allT2s',oneSubjWorkflow[sessionid],'InputSpec.allT2s')
+            baw200.connect(subjInfoNode[sessionid],'allPDs',oneSubjWorkflow[sessionid],'InputSpec.allPDs')
+            baw200.connect(subjInfoNode[sessionid],'allOthers',oneSubjWorkflow[sessionid],'InputSpec.allOthers')
+        numSessions=len(allSessions)
+        mergeSubjectSessionNames="99_MergeAllSessions"+str(subjectid)
+        MergeT1s[subjectid] = pe.Node(interface=Merge(numSessions),
+                                      run_without_submitting=True,
+                                      name=mergeSubjectSessionNames)
+        for sessionid in allSessions:
+            pass
 
     return baw200

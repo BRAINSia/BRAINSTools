@@ -104,19 +104,18 @@ class SessionDB():
         filename = str(val[0][0])
         return filename
 
-    def getFilenamesByScantype(self, sessionid, scantype):
-        sqlCommand = "SELECT filename FROM SessionDB WHERE session='{0}' AND type='{1}' ORDER BY Qpos ASC;".format(sessionid, scantype)
-        val = self.getInfoFromDB(sqlCommand)
+    def getFilenamesByScantype(self, sessionid, scantypelist):
         returnList = list()
-        for i in val:
-            returnList.append(str(i[0]))
+        for currScanType in scantypelist:
+            sqlCommand = "SELECT filename FROM SessionDB WHERE session='{0}' AND type='{1}' ORDER BY Qpos ASC;".format(sessionid, currScanType)
+            val = self.getInfoFromDB(sqlCommand)
+            for i in val:
+                returnList.append(str(i[0]))
         return returnList
 
-    def findScanTypeLength(self, sessionid, scantype):
-        sqlCommand = "SELECT COUNT(DISTINCT filename) FROM SessionDB WHERE session='{0}' AND type='{1}';".format(sessionid, scantype)
-        val = self.getInfoFromDB(sqlCommand)
-        count = val[0][0]
-        return count
+    def findScanTypeLength(self, sessionid, scantypelist):
+        countList=self.getFilenamesByScantype(sessionid,scantypelist)
+        return len(countlist)
 
     def getT1sT2s(self, sessionid):
         sqlCommand = "SELECT filename FROM SessionDB WHERE session='{0}' ORDER BY type ASC, Qpos ASC;".format(sessionid)
@@ -151,8 +150,8 @@ class SessionDB():
             returnList.append(str(i[0]))
         return returnList
 
-    def getSessionsFromProjectSubject(self,proj,subj):
-        sqlCommand = "SELECT DISTINCT session FROM SessionDB WHERE project='{0}' AND subj='{1}';".format(proj,subj)
+    def getSessionsFromSubject(self,subj):
+        sqlCommand = "SELECT DISTINCT session FROM SessionDB WHERE subj='{0}';".format(subj)
         val = self.getInfoFromDB(sqlCommand)
         returnList = list()
         for i in val:

@@ -75,24 +75,21 @@ def get_list_element( nestedList, index ):
 def MakeList(firstElement,secondElement):
     return [firstElement, secondElement]
 
-def GenerateOutputPattern(subjectDatabaseFile,DefaultNodeName,uidIsFirst=True):
+def GenerateWFName(projectid, subjectid, sessionid):
+    return 'WF_'+str(subjectid)+"_"+str(sessionid)+"_"+str(projectid)
+
+def GenerateOutputPattern(projectid, subjectid, sessionid,DefaultNodeName,uidIsFirst):
     """ This function generates output path substitutions for workflows and nodes that conform to a common standard.
     """
+    WFName=""#GenerateWFName(projectid,subjectid,sessionid)
     patternList=[]
-    """
-    import SessionDB
-    dbObject=SessionDB.SessionDB(subjectDatabaseFile)
-    for session in dbObject.getAllSessions():
-        #print session,"HACK"
-        if uidIsFirst == True:
-            find_pat=os.path.join(DefaultNodeName,'_uid_'+session)
-        else:
-            find_pat=os.path.join('_uid_'+session,DefaultNodeName)
-        currProj=dbObject.getProjFromSession(session)
-        currSubj=dbObject.getSubjFromSession(session)
-        replace_pat=os.path.join(currProj,currSubj,session,DefaultNodeName)
-        patternList.append( (find_pat,replace_pat) )
-    """
+    if uidIsFirst == True:
+        find_pat=os.path.join(DefaultNodeName,WFName)
+    else:
+        find_pat=os.path.join(WFName,DefaultNodeName)
+    replace_pat=os.path.join(projectid,subjectid,sessionid,DefaultNodeName)
+    patternList.append( (find_pat,replace_pat) )
+    print "HACK:  PATTERNLIST:\n",patternList
     return patternList
 
 ###########################################################################
@@ -107,7 +104,7 @@ def GenerateOutputPattern(subjectDatabaseFile,DefaultNodeName,uidIsFirst=True):
 ###########################################################################
 ###########################################################################
 ###########################################################################
-def MakeOneSubWorkFlow(sessionid, BAtlas, WORKFLOW_COMPONENTS, BCD_model_path, InterpolationMode, CLUSTER_QUEUE, ExperimentBaseDirectoryResults, subjectDatabaseFile):
+def MakeOneSubWorkFlow(projectid, subjectid, sessionid, BAtlas, WORKFLOW_COMPONENTS, BCD_model_path, InterpolationMode, CLUSTER_QUEUE, ExperimentBaseDirectoryResults):
     """
     Run autoworkup on a single Subject
 
@@ -119,12 +116,14 @@ def MakeOneSubWorkFlow(sessionid, BAtlas, WORKFLOW_COMPONENTS, BCD_model_path, I
 
     print "Building Pipeline for ",sessionid
     ########### PIPELINE INITIALIZATION #############
-    subWorkflowName='WF_'+str(sessionid)
-    T1T2WorkupSingle = pe.Workflow(name=subWorkflowName)
+    T1T2WorkupSingle = pe.Workflow(name=GenerateWFName(projectid, subjectid, sessionid))
 
     inputsSpec = pe.Node(interface=IdentityInterface(fields=
                         ['sessionid','subjectid','projectid',
-                         'ReferenceT1'
+                         'allT1s',
+                         'allT2s',
+                         'allPDs',
+                         'allOthers'
                          ]),
                          run_without_submitting=True,
                          name='InputSpec' )
@@ -134,61 +133,16 @@ def MakeOneSubWorkFlow(sessionid, BAtlas, WORKFLOW_COMPONENTS, BCD_model_path, I
             run_without_submitting=True,
             name='OutputSpec' )
 
-
-    """
-    ### Get the first T1
-    def helperGetFirstT1(databaseName,sessionid):
-        import SessionDB
-        dbObject=SessionDB.SessionDB(databaseName)
-        ReferenceT1 = dbObject.getFirstT1(sessionid)
-        return ReferenceT1
-    ReferenceT1Source = pe.Node(interface=Function(
-                               input_names=['databaseName','sessionid'],
-                               output_names=['ReferenceT1'],
-                               function=helperGetFirstT1),
-                      run_without_submitting=True,
-                      name='99_ReferenceT1')
-    ReferenceT1Source.inputs.databaseName = subjectDatabaseFile
-    T1T2WorkupSingle.connect(inputsSpec,'sessionid',ReferenceT1Source,'sessionid')
-    """
-
-    ### Get all the T1's
-    def helperGetFilenamesByScantype(databaseName, scantype, sessionid ):
-        import SessionDB
-        dbObject=SessionDB.SessionDB(databaseName)
-        allScans = dbObject.getFilenamesByScantype(sessionid,scantype)
-        return allScans
-    allT1Source = pe.Node(interface=Function(
-                               input_names=['databaseName','scantype','sessionid'],
-                               output_names=['allT1s'],
-                               function=helperGetFilenamesByScantype),
-                      run_without_submitting=True,
-                      name='99_allT1s')
-    allT1Source.inputs.databaseName = subjectDatabaseFile
-    allT1Source.inputs.scantype = 'T1-30'
-    T1T2WorkupSingle.connect(inputsSpec,'sessionid',allT1Source,'sessionid')
-
-    ### Get all the T2's
-    allT2Source = pe.Node(interface=Function(
-                               input_names=['databaseName','scantype','sessionid'],
-                               output_names=['allT2s'],
-                               function=helperGetFilenamesByScantype),
-                      run_without_submitting=True,
-                      name='99_allT2s')
-    allT2Source.inputs.databaseName = subjectDatabaseFile
-    allT2Source.inputs.scantype = 'T2-30'
-    T1T2WorkupSingle.connect(inputsSpec,'sessionid',allT2Source,'sessionid')
-
-    def getAllT1sLength(allT1s):
-        return len(allT1s)
-
     if 'BASIC' in WORKFLOW_COMPONENTS:
         from WorkupT1T2LandmarkInitialization import CreateLandmarkInitializeWorkflow
         DoReverseMapping = False   # Set to true for debugging outputs
         if 'AUXLMK' in WORKFLOW_COMPONENTS:
             DoReverseMapping = True
         myLocalLMIWF= CreateLandmarkInitializeWorkflow("LandmarkInitialize", BCD_model_path, InterpolationMode,DoReverseMapping)
-        T1T2WorkupSingle.connect( inputsSpec, 'ReferenceT1', myLocalLMIWF, 'InputSpec.inputVolume')
+
+        def get_list_element( nestedList, index ):
+            return nestedList[index]
+        T1T2WorkupSingle.connect( [ ( inputsSpec, myLocalLMIWF, [ ( ( 'allT1s', get_list_element, 0 ), 'InputSpec.inputVolume') ] ), ] )
         T1T2WorkupSingle.connect( BAtlas, 'template_landmarks_31_fcsv', myLocalLMIWF,'InputSpec.atlasLandmarkFilename')
         T1T2WorkupSingle.connect( BAtlas, 'template_landmark_weights_31_csv', myLocalLMIWF,'InputSpec.atlasWeightFilename')
         if 'AUXLMK' in WORKFLOW_COMPONENTS:
@@ -197,7 +151,7 @@ def MakeOneSubWorkFlow(sessionid, BAtlas, WORKFLOW_COMPONENTS, BCD_model_path, I
         ### Now define where the final organized outputs should go.
         BASIC_DataSink=pe.Node(nio.DataSink(),name="BASIC_DS")
         BASIC_DataSink.inputs.base_directory=ExperimentBaseDirectoryResults
-        BASIC_DataSink.inputs.regexp_substitutions = GenerateOutputPattern(subjectDatabaseFile,'ACPCAlign')
+        BASIC_DataSink.inputs.regexp_substitutions = GenerateOutputPattern(projectid, subjectid, sessionid,'ACPCAlign',False)
 
         T1T2WorkupSingle.connect(myLocalLMIWF,'OutputSpec.outputLandmarksInACPCAlignedSpace',BASIC_DataSink,'ACPCAlign.@outputLandmarksInACPCAlignedSpace')
         T1T2WorkupSingle.connect(myLocalLMIWF,'OutputSpec.outputResampledVolume',BASIC_DataSink,'ACPCAlign.@outputResampledVolume')
@@ -210,9 +164,13 @@ def MakeOneSubWorkFlow(sessionid, BAtlas, WORKFLOW_COMPONENTS, BCD_model_path, I
     if 'TISSUE_CLASSIFY' in WORKFLOW_COMPONENTS:
         from WorkupT1T2TissueClassifiy import CreateTissueClassifyWorkflow
         myLocalTCWF= CreateTissueClassifyWorkflow("TissueClassify",CLUSTER_QUEUE,InterpolationMode)
-        T1T2WorkupSingle.connect( allT1Source, 'allT1s', myLocalTCWF, 'InputSpec.T1List')
-        T1T2WorkupSingle.connect( allT2Source, 'allT2s', myLocalTCWF, 'InputSpec.T2List')
-        T1T2WorkupSingle.connect( [ (allT1Source, myLocalTCWF, [(('allT1s', getAllT1sLength), 'InputSpec.T1_count')] ), ])
+        T1T2WorkupSingle.connect( inputsSpec, 'allT1s', myLocalTCWF, 'InputSpec.T1List')
+        T1T2WorkupSingle.connect( inputsSpec, 'allT2s', myLocalTCWF, 'InputSpec.T2List')
+        T1T2WorkupSingle.connect( inputsSpec, 'allPDs', myLocalTCWF, 'InputSpec.PDList')
+        T1T2WorkupSingle.connect( inputsSpec, 'allOthers', myLocalTCWF, 'InputSpec.OtherList')
+        def getAllT1sLength(allT1s):
+            return len(allT1s)
+        T1T2WorkupSingle.connect( [ (inputsSpec, myLocalTCWF, [(('allT1s', getAllT1sLength), 'InputSpec.T1_count')] ), ])
         T1T2WorkupSingle.connect( BAtlas,'AtlasPVDefinition_xml',myLocalTCWF,'InputSpec.atlasDefinition')
         T1T2WorkupSingle.connect( myLocalLMIWF, 'OutputSpec.outputResampledVolume', myLocalTCWF, 'InputSpec.PrimaryT1' )
         T1T2WorkupSingle.connect( myLocalLMIWF,'OutputSpec.atlasToSubjectTransform',myLocalTCWF,'InputSpec.atlasToSubjectInitialTransform')
@@ -220,7 +178,7 @@ def MakeOneSubWorkFlow(sessionid, BAtlas, WORKFLOW_COMPONENTS, BCD_model_path, I
         ### Now define where the final organized outputs should go.
         TC_DataSink=pe.Node(nio.DataSink(),name="TISSUE_CLASSIFY_DS")
         TC_DataSink.inputs.base_directory=ExperimentBaseDirectoryResults
-        TC_DataSink.inputs.regexp_substitutions = GenerateOutputPattern(subjectDatabaseFile,'TissueClassify')
+        # -- # TC_DataSink.inputs.regexp_substitutions = GenerateOutputPattern(projectid, subjectid, sessionid,'TissueClassify',False)
         T1T2WorkupSingle.connect(myLocalTCWF, 'OutputSpec.TissueClassifyOutputDir', TC_DataSink,'TissueClassify.@TissueClassifyOutputDir')
 
     ## Make deformed Atlas image space
@@ -237,7 +195,7 @@ def MakeOneSubWorkFlow(sessionid, BAtlas, WORKFLOW_COMPONENTS, BCD_model_path, I
         ### Now define where the final organized outputs should go.
         ANTS_DataSink=pe.Node(nio.DataSink(),name="ANTSRegistration_DS")
         ANTS_DataSink.inputs.base_directory=ExperimentBaseDirectoryResults
-        ANTS_DataSink.inputs.regexp_substitutions = GenerateOutputPattern(subjectDatabaseFile,'ANTSRegistration')
+        ANTS_DataSink.inputs.regexp_substitutions = GenerateOutputPattern(projectid, subjectid, sessionid,'ANTSRegistration',False)
         T1T2WorkupSingle.connect(myLocalAntsWF, 'OutputSpec.warped_image', ANTS_DataSink,'ANTSRegistration.@warped_image')
         T1T2WorkupSingle.connect(myLocalAntsWF, 'OutputSpec.inverse_warped_image', ANTS_DataSink,'ANTSRegistration.@inverse_warped_image')
         T1T2WorkupSingle.connect(myLocalAntsWF, 'OutputSpec.affine_transform', ANTS_DataSink,'ANTSRegistration.@affine_transform')
@@ -257,7 +215,7 @@ def MakeOneSubWorkFlow(sessionid, BAtlas, WORKFLOW_COMPONENTS, BCD_model_path, I
         ### Now define where the final organized outputs should go.
         SEGMENTATION_DataSink=pe.Node(nio.DataSink(),name="SEGMENTATION_DS")
         SEGMENTATION_DataSink.inputs.base_directory=ExperimentBaseDirectoryResults
-        SEGMENTATION_DataSink.inputs.regexp_substitutions = GenerateOutputPattern(subjectDatabaseFile,'BRAINSCut')
+        SEGMENTATION_DataSink.inputs.regexp_substitutions = GenerateOutputPattern(projectid, subjectid, sessionid,'BRAINSCut',False)
         T1T2WorkupSingle.connect(myLocalSegWF, 'OutputSpec.outputBinaryLeftAccumben',SEGMENTATION_DataSink, 'BRAINSCut.@outputBinaryLeftAccumben')
         T1T2WorkupSingle.connect(myLocalSegWF, 'OutputSpec.outputBinaryRightAccumben',SEGMENTATION_DataSink, 'BRAINSCut.@outputBinaryRightAccumben')
         T1T2WorkupSingle.connect(myLocalSegWF, 'OutputSpec.outputBinaryLeftCaudate',SEGMENTATION_DataSink, 'BRAINSCut.@outputBinaryLeftCaudate')
@@ -294,7 +252,7 @@ def MakeOneSubWorkFlow(sessionid, BAtlas, WORKFLOW_COMPONENTS, BCD_model_path, I
         ### Now define where the final organized outputs should go.
         FSPREP_DataSink=pe.Node(nio.DataSink(),name="FREESURFER_PREP")
         FSPREP_DataSink.inputs.base_directory=ExperimentBaseDirectoryResults
-        FREESURFER_PREP_PATTERNS = GenerateOutputPattern(subjectDatabaseFile,'FREESURFER_PREP')
+        FREESURFER_PREP_PATTERNS = GenerateOutputPattern(projectid, subjectid, sessionid,'FREESURFER_PREP',False)
         FSPREP_DataSink.inputs.regexp_substitutions = FREESURFER_PREP_PATTERNS
         print "========================="
         print "========================="

@@ -18,51 +18,63 @@ from BRAINSTools.BRAINSABCext import *
     tissueClassifyWF.connect(BLI,'outputTransformFilename',myLocalTCWF,'atlasToSubjectInitialTransform')
 """
 
-def get_first_T1_and_T2(in_files,T1_count):
-    '''
-    Returns the first T1 and T2 file in in_files, based on offset in T1_count.
-    '''
-    return in_files[0],in_files[T1_count]
-
 
 def CreateTissueClassifyWorkflow(WFname,CLUSTER_QUEUE,InterpolationMode):
     tissueClassifyWF= pe.Workflow(name=WFname)
 
-    inputsSpec = pe.Node(interface=IdentityInterface(fields=['T1List','T1_count','T2List','PrimaryT1',
+    inputsSpec = pe.Node(interface=IdentityInterface(fields=['T1List','T2List','PDList','OtherList',
+                                                             'T1_count',
+                                                             'PrimaryT1',
         'atlasDefinition','atlasToSubjectInitialTransform']),
         run_without_submitting=True,
         name='InputSpec' )
-
+    outputsSpec = pe.Node(interface=IdentityInterface(fields=['atlasToSubjectTransform','outputLabels','outputHeadLabels',
+            't1_corrected','t2_corrected','outputAverageImages','TissueClassifyOutputDir']),
+        run_without_submitting=True,
+        name='OutputSpec' )
 
 
     ########################################################
     # Run BABCext on Multi-modal images
     ########################################################
-    def MakeOneFileList(T1List,T2List,PrimaryT1):
+    def MakeOneFileList(T1List,T2List,PDList,OtherList,PrimaryT1):
         """ This funciton uses PrimaryT1 for the first T1, and the append the rest of the T1's and T2's """
         imagePathList=list()
-        imagePathList.append(PrimaryT1)
+        imagePathList.append(PrimaryT1) # Force replacement of the first element
         for i in T1List[1:]:
-            imagePathList.append(i)
+            imagePathList.append(i) # The reset of the elements
         for i in T2List[0:]:
             imagePathList.append(i)
+        for i in PDList[0:]:
+            imagePathList.append(i)
+        for i in OtherList[0:]:
+            imagePathList.append(i)
         return imagePathList
-    makeImagePathList = pe.Node( Function(function=MakeOneFileList, input_names = ['T1List','T2List','PrimaryT1'], output_names = ['imagePathList']), run_without_submitting=True, name="99_makeImagePathList")
+    makeImagePathList = pe.Node( Function(function=MakeOneFileList,
+                                          input_names = ['T1List','T2List','PDList','OtherList','PrimaryT1'],
+                                          output_names = ['imagePathList']), run_without_submitting=True, name="99_makeImagePathList")
     tissueClassifyWF.connect( inputsSpec, 'T1List', makeImagePathList, 'T1List' )
     tissueClassifyWF.connect( inputsSpec, 'T2List', makeImagePathList, 'T2List' )
+    tissueClassifyWF.connect( inputsSpec, 'PDList', makeImagePathList, 'PDList' )
+    tissueClassifyWF.connect( inputsSpec, 'OtherList', makeImagePathList, 'OtherList' )
     # -- Standard mode to make 256^3 images
     tissueClassifyWF.connect( inputsSpec, 'PrimaryT1', makeImagePathList, 'PrimaryT1' )
 
-    def MakeOneFileTypeList(T1List,T2List):
+    def MakeOneFileTypeList(T1List,T2List,PDList,OtherList):
         input_types =       ["T1"]*len(T1List)
         input_types.extend( ["T2"]*len(T2List) )
+        input_types.extend( ["PD"]*len(PDList) )
+        input_types.extend( ["OTHER"]*len(OtherList) )
         return input_types
-    makeImageTypeList = pe.Node( Function(function=MakeOneFileTypeList, input_names = ['T1List','T2List'], output_names = ['imageTypeList']), run_without_submitting=True, name="99_makeImageTypeList")
-
+    makeImageTypeList = pe.Node( Function(function=MakeOneFileTypeList,
+                                          input_names = ['T1List','T2List','PDList','OtherList'],
+                                          output_names = ['imageTypeList']), run_without_submitting=True, name="99_makeImageTypeList")
     tissueClassifyWF.connect( inputsSpec, 'T1List', makeImageTypeList, 'T1List' )
     tissueClassifyWF.connect( inputsSpec, 'T2List', makeImageTypeList, 'T2List' )
+    tissueClassifyWF.connect( inputsSpec, 'PDList', makeImageTypeList, 'PDList' )
+    tissueClassifyWF.connect( inputsSpec, 'OtherList', makeImageTypeList, 'OtherList' )
 
-    def MakeOutFileList(T1List,T2List):
+    def MakeOutFileList(T1List,T2List,PDList,OtherList):
         def GetExtBaseName(filename):
             '''
             Get the filename without the extension.  Works for .ext and .ext.gz
@@ -77,14 +89,20 @@ def CreateTissueClassifyWorkflow(WFname,CLUSTER_QUEUE,InterpolationMode):
             return currBaseName
         all_files=T1List
         all_files.extend(T2List)
+        all_files.extend(PDList)
+        all_files.extend(OtherList)
         out_corrected_names=[]
         for i in all_files:
             out_name=GetExtBaseName(i)+"_corrected.nii.gz"
             out_corrected_names.append(out_name)
         return out_corrected_names
-    makeOutImageList = pe.Node( Function(function=MakeOutFileList, input_names = ['T1List','T2List'], output_names = ['outImageList']), run_without_submitting=True, name="99_makeOutImageList")
+    makeOutImageList = pe.Node( Function(function=MakeOutFileList,
+                                         input_names = ['T1List','T2List','PDList','OtherList'],
+                                         output_names = ['outImageList']), run_without_submitting=True, name="99_makeOutImageList")
     tissueClassifyWF.connect( inputsSpec, 'T1List', makeOutImageList, 'T1List' )
     tissueClassifyWF.connect( inputsSpec, 'T2List', makeOutImageList, 'T2List' )
+    tissueClassifyWF.connect( inputsSpec, 'PDList', makeOutImageList, 'PDList' )
+    tissueClassifyWF.connect( inputsSpec, 'OtherList', makeOutImageList, 'OtherList' )
 
     BABCext= pe.Node(interface=BRAINSABCext(), name="BABC")
     #many_cpu_BABC_options_dictionary={'qsub_args': '-S /bin/bash -pe smp1 4-12                   -o /dev/null -e /dev/null '+CLUSTER_QUEUE, 'overwrite': True}
@@ -113,21 +131,23 @@ def CreateTissueClassifyWorkflow(WFname,CLUSTER_QUEUE,InterpolationMode):
     """
     Get the first T1 and T2 corrected images from BABCext
     """
+
+    def get_first_T1_and_T2(in_files,T1_count):
+        '''
+        Returns the first T1 and T2 file in in_files, based on offset in T1_count.
+        '''
+        return in_files[0],in_files[T1_count]
     bfc_files = pe.Node(Function(input_names=['in_files','T1_count'],
                                output_names=['t1_corrected','t2_corrected'],
                                function=get_first_T1_and_T2), run_without_submitting=True, name='99_bfc_files' )
     tissueClassifyWF.connect( inputsSpec, 'T1_count', bfc_files, 'T1_count')
+    tissueClassifyWF.connect(BABCext,'outputVolumes',bfc_files, 'in_files')
 
     #############
-    outputsSpec = pe.Node(interface=IdentityInterface(fields=['atlasToSubjectTransform','outputLabels','outputHeadLabels',
-            't1_corrected','t2_corrected','outputAverageImages','TissueClassifyOutputDir']),
-        run_without_submitting=True,
-        name='OutputSpec' )
 
     tissueClassifyWF.connect(bfc_files,'t1_corrected',outputsSpec,'t1_corrected')
     tissueClassifyWF.connect(bfc_files,'t2_corrected',outputsSpec,'t2_corrected')
 
-    tissueClassifyWF.connect(BABCext,'outputVolumes',bfc_files, 'in_files')
 
     tissueClassifyWF.connect(BABCext,'atlasToSubjectTransform',outputsSpec,'atlasToSubjectTransform')
     tissueClassifyWF.connect(BABCext,'outputLabels',outputsSpec,'outputLabels')

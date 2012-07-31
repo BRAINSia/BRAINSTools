@@ -127,7 +127,7 @@ def main(argv=None):
     CACHE_ATLASPATH=os.path.realpath(os.path.join(ExperimentBaseDirectoryCache,'Atlas'))
     from distutils.dir_util import copy_tree
     if not os.path.exists(CACHE_ATLASPATH):
-        print("Copying a reference of the atlas to the experiment cache directory: {0}".format(CACHE_ATLASPATH))
+        print("Copying a reference of the atlas to the experiment cache directory:\n    from: {0}\n    to: {1}".format(ATLASPATH,CACHE_ATLASPATH))
         copy_tree(ATLASPATH,CACHE_ATLASPATH,preserve_mode=1,preserve_times=1)
         ## Now generate the xml file with the correct pathing
         file_replace(os.path.join(ATLASPATH,'AtlasPVDefinition.xml.in'),os.path.join(CACHE_ATLASPATH,'AtlasPVDefinition.xml'),"@ATLAS_DIRECTORY@",CACHE_ATLASPATH)
@@ -194,14 +194,14 @@ def main(argv=None):
     subjectDatabaseFile=os.path.join( ExperimentBaseDirectoryCache,'InternalWorkflowSubjectDB.db')
     ExperimentDatabase=SessionDB.SessionDB(subjectDatabaseFile)
     ## TODO:  Only make DB if db is older than subject_data_file.
-    if  os.path.getmtime(subjectDatabaseFile) < os.path.getmtime(subject_data_file):
+    if ( not os.path.exists(subjectDatabaseFile) ) or ( os.path.getmtime(subjectDatabaseFile) < os.path.getmtime(subject_data_file) ):
         ExperimentDatabase.MakeNewDB(subject_data_file,mountPrefix)
         print "ENTIRE DB: "
         print "^^^^^^^^^^^^^"
         print ExperimentDatabase.getEverything()
         print "^^^^^^^^^^^^^"
     else:
-	print("Using cached database, {0}".format(subjectDatabaseFile))
+        print("Using cached database, {0}".format(subjectDatabaseFile))
 
     import WorkupT1T2 ## NOTE:  This needs to occur AFTER the PYTHON_AUX_PATHS has been modified
     baw200=WorkupT1T2.WorkupT1T2(mountPrefix,

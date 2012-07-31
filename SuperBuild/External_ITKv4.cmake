@@ -79,7 +79,7 @@ if(NOT DEFINED ${extProjName}_DIR AND NOT ${USE_SYSTEM_${extProjName}})
     )
   ### --- End Project specific additions
   set(${proj}_REPOSITORY ${git_protocol}://itk.org/ITK.git)
-  set(${proj}_GIT_TAG 2a5f945a6313e6d304a32f0a2567a0a127f39722) #2012-07-23 -- Includes LaplacianRecursiveGaussian bug fix.
+  set(${proj}_GIT_TAG a6fa799e4ac1779981a62d86716a89a3709440d3) #2012-07-23 -- Includes LaplacianRecursiveGaussian bug fix.
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${${proj}_REPOSITORY}
     GIT_TAG ${${proj}_GIT_TAG}

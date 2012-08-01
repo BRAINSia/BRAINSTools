@@ -60,10 +60,10 @@ from WorkupT1T2AtlasNode import MakeAtlasNode
 ###########################################################################
 ###########################################################################
 ###########################################################################
-def WorkupT1T2(mountPrefix,ExperimentBaseDirectoryCache, ExperimentBaseDirectoryResults, subjectDatabaseFile, atlas_fname_wpath, BCD_model_path,
+def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBaseDirectoryResults, ExperimentDatabase, atlas_fname_wpath, BCD_model_path,
                InterpolationMode="Linear", Mode=10,DwiList=[],WORKFLOW_COMPONENTS=[],CLUSTER_QUEUE=''):
     """
-    Run autoworkup on all subjects data defined in the subjectDatabaseFile
+    Run autoworkup on all subjects data defined in the ExperimentDatabase
 
     This is the main function to call when processing a data set with T1 & T2
     data.  ExperimentBaseDirectoryPrefix is the base of the directory to place results, T1Images & T2Images
@@ -99,16 +99,14 @@ def WorkupT1T2(mountPrefix,ExperimentBaseDirectoryCache, ExperimentBaseDirectory
 
     BAtlas = MakeAtlasNode(atlas_fname_wpath) ## Call function to create node
     import WorkupT1T2Single
-    import SessionDB
-    dbObject=SessionDB.SessionDB(subjectDatabaseFile)
     MergeT1s=dict()
-    for subjectid in dbObject.getAllSubjects():
+    if True:
         print("===================== SUBJECT: {0} ===========================".format(subjectid))
         oneSubjWorkflow=dict()
         subjInfoNode=dict()
-        allSessions = dbObject.getSessionsFromSubject(subjectid)
+        allSessions = ExperimentDatabase.getSessionsFromSubject(subjectid)
         for sessionid in allSessions:
-            projectid = dbObject.getProjFromSession(sessionid)
+            projectid = ExperimentDatabase.getProjFromSession(sessionid)
             print("PROJECT: {0} SUBJECT: {1} SESSION: {2}".format(projectid,subjectid,sessionid))
             subjInfoNode[sessionid] = pe.Node(interface=IdentityInterface(fields=
                     ['sessionid','subjectid','projectid',
@@ -121,10 +119,10 @@ def WorkupT1T2(mountPrefix,ExperimentBaseDirectoryCache, ExperimentBaseDirectory
             subjInfoNode[sessionid].inputs.projectid=projectid
             subjInfoNode[sessionid].inputs.subjectid=subjectid
             subjInfoNode[sessionid].inputs.sessionid=sessionid
-            subjInfoNode[sessionid].inputs.allT1s=dbObject.getFilenamesByScantype(sessionid,['T1-30','T1-15'])
-            subjInfoNode[sessionid].inputs.allT2s=dbObject.getFilenamesByScantype(sessionid,['T2-30','T2-15'])
-            subjInfoNode[sessionid].inputs.allPDs=dbObject.getFilenamesByScantype(sessionid,['PD-30','PD-15'])
-            subjInfoNode[sessionid].inputs.allOthers=dbObject.getFilenamesByScantype(sessionid,['OTHER-30','OTHER-15'])
+            subjInfoNode[sessionid].inputs.allT1s=ExperimentDatabase.getFilenamesByScantype(sessionid,['T1-30','T1-15'])
+            subjInfoNode[sessionid].inputs.allT2s=ExperimentDatabase.getFilenamesByScantype(sessionid,['T2-30','T2-15'])
+            subjInfoNode[sessionid].inputs.allPDs=ExperimentDatabase.getFilenamesByScantype(sessionid,['PD-30','PD-15'])
+            subjInfoNode[sessionid].inputs.allOthers=ExperimentDatabase.getFilenamesByScantype(sessionid,['OTHER-30','OTHER-15'])
 
             oneSubjWorkflow[sessionid]=WorkupT1T2Single.MakeOneSubWorkFlow(
                               projectid, subjectid, sessionid,

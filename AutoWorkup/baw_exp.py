@@ -204,52 +204,52 @@ def main(argv=None):
     print "^^^^^^^^^^^^^"
 
     import WorkupT1T2 ## NOTE:  This needs to occur AFTER the PYTHON_AUX_PATHS has been modified
-    baw200=WorkupT1T2.WorkupT1T2(mountPrefix,
-      ExperimentBaseDirectoryCache,
-      ExperimentBaseDirectoryResults,
-      subjectDatabaseFile,
-      CACHE_ATLASPATH,
-      CACHE_BCDMODELPATH,WORKFLOW_COMPONENTS=WORKFLOW_COMPONENTS,CLUSTER_QUEUE=CLUSTER_QUEUE)
-    print "Start Processing"
+    for subjectid in ExperimentDatabase.getAllSubjects():
+        baw200=WorkupT1T2.WorkupT1T2(subjectid,mountPrefix,
+          os.path.join(ExperimentBaseDirectoryCache,str(subjectid)),
+          ExperimentBaseDirectoryResults,
+          ExperimentDatabase,
+          CACHE_ATLASPATH,
+          CACHE_BCDMODELPATH,WORKFLOW_COMPONENTS=WORKFLOW_COMPONENTS,CLUSTER_QUEUE=CLUSTER_QUEUE)
+        print "Start Processing"
 
-    ## Create the shell wrapper script for ensuring that all jobs running on remote hosts from SGE
-    #  have the same environment as the job submission host.
-    JOB_SCRIPT=get_global_sge_script(sys.path,PROGRAM_PATHS,CUSTOM_ENVIRONMENT)
-    #print JOB_SCRIPT
+        ## Create the shell wrapper script for ensuring that all jobs running on remote hosts from SGE
+        #  have the same environment as the job submission host.
+        JOB_SCRIPT=get_global_sge_script(sys.path,PROGRAM_PATHS,CUSTOM_ENVIRONMENT)
+        #print JOB_SCRIPT
 
-    SGEFlavor='SGE'
-    if input_arguments.wfrun == 'helium_all.q':
-        baw200.run(plugin=SGEFlavor,
-            plugin_args=dict(template=JOB_SCRIPT,qsub_args="-S /bin/bash -pe smp1 1-4 -l mem_free=4000M -o /dev/null -e /dev/null "+CLUSTER_QUEUE))
-    elif input_arguments.wfrun == 'helium_all.q_graph':
-        SGEFlavor='SGEGraph' #Use the SGEGraph processing
-        baw200.run(plugin=SGEFlavor,
-            plugin_args=dict(template=JOB_SCRIPT,qsub_args="-S /bin/bash -pe smp1 1-4 -l mem_free=4000M -o /dev/null -e /dev/null "+CLUSTER_QUEUE))
-    elif input_arguments.wfrun == 'ipl_OSX':
-        baw200.write_graph()
-        print "Running On ipl_OSX"
-        baw200.run(plugin=SGEFlavor,
-            plugin_args=dict(template=JOB_SCRIPT,qsub_args="-S /bin/bash -pe smp1 1-4 -l mem_free=4000M -o /dev/null -e /dev/null "+CLUSTER_QUEUE))
-    elif input_arguments.wfrun == 'local_4':
-        baw200.write_graph()
-        print "Running with 4 parallel processes on local machine"
-        baw200.run(plugin='MultiProc', plugin_args={'n_procs' : 4})
-    elif input_arguments.wfrun == 'local_12':
-        baw200.write_graph()
-        print "Running with 12 parallel processes on local machine"
-        baw200.run(plugin='MultiProc', plugin_args={'n_procs' : 12})
-    elif input_arguments.wfrun == 'local':
-        try:
+        SGEFlavor='SGE'
+        if input_arguments.wfrun == 'helium_all.q':
+            baw200.run(plugin=SGEFlavor,
+                plugin_args=dict(template=JOB_SCRIPT,qsub_args="-S /bin/bash -pe smp1 1-4 -l mem_free=4000M -o /dev/null -e /dev/null "+CLUSTER_QUEUE))
+        elif input_arguments.wfrun == 'helium_all.q_graph':
+            SGEFlavor='SGEGraph' #Use the SGEGraph processing
+            baw200.run(plugin=SGEFlavor,
+                plugin_args=dict(template=JOB_SCRIPT,qsub_args="-S /bin/bash -pe smp1 1-4 -l mem_free=4000M -o /dev/null -e /dev/null "+CLUSTER_QUEUE))
+        elif input_arguments.wfrun == 'ipl_OSX':
             baw200.write_graph()
-        except:
-            pass
-        print "Running sequentially on local machine"
-        baw200.run()
-    else:
-        print "You must specify the run environment type. [helium_all.q,helium_all.q_graph,ipl_OSX,local_4,local_12,local]"
-        print input_arguments.wfrun
-        sys.exit(-1)
-
+            print "Running On ipl_OSX"
+            baw200.run(plugin=SGEFlavor,
+                plugin_args=dict(template=JOB_SCRIPT,qsub_args="-S /bin/bash -pe smp1 1-4 -l mem_free=4000M -o /dev/null -e /dev/null "+CLUSTER_QUEUE))
+        elif input_arguments.wfrun == 'local_4':
+            baw200.write_graph()
+            print "Running with 4 parallel processes on local machine"
+            baw200.run(plugin='MultiProc', plugin_args={'n_procs' : 4})
+        elif input_arguments.wfrun == 'local_12':
+            baw200.write_graph()
+            print "Running with 12 parallel processes on local machine"
+            baw200.run(plugin='MultiProc', plugin_args={'n_procs' : 12})
+        elif input_arguments.wfrun == 'local':
+            try:
+                baw200.write_graph()
+            except:
+                pass
+            print "Running sequentially on local machine"
+            baw200.run()
+        else:
+            print "You must specify the run environment type. [helium_all.q,helium_all.q_graph,ipl_OSX,local_4,local_12,local]"
+            print input_arguments.wfrun
+            sys.exit(-1)
 
 if __name__ == "__main__":
     sys.exit(main())

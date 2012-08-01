@@ -6,34 +6,30 @@ class SessionDB():
 
     def __init__(self, defaultDBName='TempFileForDB.db'):
         self.dbName = defaultDBName
+        self._local_openDB() 
 
-    def _local_createDB(self):
-        if os.path.exists(self.dbName):
-            os.remove(self.dbName)
-        local_connection = lite.connect(self.dbName)
-        dbCur = local_connection.cursor()
-        dbColTypes =  "project TEXT, subj TEXT, session TEXT, type TEXT, Qpos INT, filename TEXT"
-        dbCur.execute("CREATE TABLE SessionDB({0});".format(dbColTypes))
-        dbCur.close()
-        local_connection.commit()
-        local_connection.close()
-        local_connection=None
+    def _local_openDB(self):
+        self.connection = lite.connect(self.dbName)
+        self.cursor = self.connection.cursor()
 
     def _local_fillDB(self, sqlCommandList):
-        local_connection = lite.connect(self.dbName)
-        dbCur = local_connection.cursor()
         print "Filling SQLite database SessionDB.py"
         for sqlCommand in sqlCommandList:
-            dbCur.execute(sqlCommand)
-            local_connection.commit()
-        dbCur.close()
-        local_connection.close()
-        local_connection=None
+            self.cursor.execute(sqlCommand)
+        self.connection.commit()
         print "Finished filling SQLite database SessionDB.py"
 
-
     def MakeNewDB(self, subject_data_file, mountPrefix):
-        self._local_createDB()
+        ## First close so that we can delete.
+        self.cursor.close()
+        self.connection.close()
+        if os.path.exists(self.dbName):
+            os.remove(self.dbName)
+        self._local_openDB()
+
+        dbColTypes =  "project TEXT, subj TEXT, session TEXT, type TEXT, Qpos INT, filename TEXT"
+        self.cursor.execute("CREATE TABLE SessionDB({0});".format(dbColTypes))
+        self.connection.commit()
         sqlCommandList = list()
         print "Building Subject returnList: " + subject_data_file
         subjData=csv.reader(open(subject_data_file,'rb'), delimiter=',', quotechar='"')
@@ -79,14 +75,9 @@ class SessionDB():
         return sqlCommand
 
     def getInfoFromDB(self, sqlCommand):
-        local_connection = lite.connect(self.dbName)
-        dbCur = local_connection.cursor()
         #print("getInfoFromDB({0})".format(sqlCommand))
-        dbCur.execute(sqlCommand)
-        dbInfo = dbCur.fetchall()
-        dbCur.close()
-        local_connection.close()
-        local_connection=None
+        self.cursor.execute(sqlCommand)
+        dbInfo = self.cursor.fetchall()
         return dbInfo
 
     def getFirstScan(self, sessionid, scantype):
@@ -99,8 +90,8 @@ class SessionDB():
         scantype='T1-30'
         sqlCommand = "SELECT filename FROM SessionDB WHERE session='{0}' AND type='{1}' AND Qpos='0';".format(sessionid, scantype)
         val = self.getInfoFromDB(sqlCommand)
-        print "HACK: ",sqlCommand
-        print "HACK: ", val
+        #print "HACK: ",sqlCommand
+        #print "HACK: ", val
         filename = str(val[0][0])
         return filename
 

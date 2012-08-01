@@ -89,7 +89,6 @@ def GenerateOutputPattern(projectid, subjectid, sessionid,DefaultNodeName,uidIsF
         find_pat=os.path.join(WFName,DefaultNodeName)
     replace_pat=os.path.join(projectid,subjectid,sessionid,DefaultNodeName)
     patternList.append( (find_pat,replace_pat) )
-    print "HACK:  PATTERNLIST:\n",patternList
     return patternList
 
 ###########################################################################
@@ -114,7 +113,7 @@ def MakeOneSubWorkFlow(projectid, subjectid, sessionid, BAtlas, WORKFLOW_COMPONE
     the path and filename of the atlas to use.
     """
 
-    print "Building Pipeline for ",sessionid
+    # print "Building Pipeline for ",sessionid
     ########### PIPELINE INITIALIZATION #############
     T1T2WorkupSingle = pe.Workflow(name=GenerateWFName(projectid, subjectid, sessionid))
 
@@ -265,14 +264,15 @@ def MakeOneSubWorkFlow(projectid, subjectid, sessionid, BAtlas, WORKFLOW_COMPONE
         print "========================="
         print "========================="
         T1T2WorkupSingle.connect(myLocalFSWF, 'OutputSpec.cnr_optimal_image', FSPREP_DataSink,'FREESURFER_PREP.@cnr_optimal_image')
-
     else:
-        print "Skipping freesurfer"
-
+        pass
+        #print "Skipping freesurfer"
+    """
     try:
         T1T2WorkupSingle.write_graph()
     except:
         pass
+    """
 
     return T1T2WorkupSingle
 

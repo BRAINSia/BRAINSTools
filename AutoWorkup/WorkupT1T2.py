@@ -103,6 +103,7 @@ def WorkupT1T2(mountPrefix,ExperimentBaseDirectoryCache, ExperimentBaseDirectory
     dbObject=SessionDB.SessionDB(subjectDatabaseFile)
     MergeT1s=dict()
     for subjectid in dbObject.getAllSubjects():
+        print("===================== SUBJECT: {0} ===========================".format(subjectid))
         oneSubjWorkflow=dict()
         subjInfoNode=dict()
         allSessions = dbObject.getSessionsFromSubject(subjectid)

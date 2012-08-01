@@ -196,12 +196,12 @@ def main(argv=None):
     ## TODO:  Only make DB if db is older than subject_data_file.
     if ( not os.path.exists(subjectDatabaseFile) ) or ( os.path.getmtime(subjectDatabaseFile) < os.path.getmtime(subject_data_file) ):
         ExperimentDatabase.MakeNewDB(subject_data_file,mountPrefix)
-        print "ENTIRE DB: "
-        print "^^^^^^^^^^^^^"
-        print ExperimentDatabase.getEverything()
-        print "^^^^^^^^^^^^^"
     else:
         print("Using cached database, {0}".format(subjectDatabaseFile))
+    print "ENTIRE DB: "
+    print "^^^^^^^^^^^^^"
+    print ExperimentDatabase.getEverything()
+    print "^^^^^^^^^^^^^"
 
     import WorkupT1T2 ## NOTE:  This needs to occur AFTER the PYTHON_AUX_PATHS has been modified
     baw200=WorkupT1T2.WorkupT1T2(mountPrefix,

@@ -119,6 +119,9 @@ if(USE_ANTS)
   list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES ANTS)
 endif()
 
+if(USE_AutoWorkup)
+  list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES NIPYPE)
+endif()
 
 #-----------------------------------------------------------------------------
 # Define Superbuild global variables

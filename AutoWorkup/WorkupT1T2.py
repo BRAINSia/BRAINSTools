@@ -155,20 +155,21 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
             InitAvgImages.inputs.normalize = 1
             baw200.connect(MergeT1s[subjectid], 'out', InitAvgImages, 'images')
             """
-            ### USE ANTS
-            #from buildtemplateparallel import antsSimpleAverageWF, antsTemplateBuildSingleIterationWF
-            ### USE ANTS REGISTRATION
-            from BRAINSTools.ants.buildtemplateparallel_antsRegistration import antsTemplateBuildSingleIterationWF
             from BRAINSTools.ants.antsSimpleAverageWF import antsSimpleAverageWF
+            ### USE ANTS
+            from BRAINSTools.ants.buildtemplateparallel import ANTSTemplateBuildSingleIterationWF
+            ### USE ANTS REGISTRATION
+            #from BRAINSTools.ants.buildtemplateparallel_antsRegistration import antsRegistrationTemplateBuildSingleIterationWF
 
             myInitAvgWF = antsSimpleAverageWF()
             baw200.connect(MergeT1s[subjectid], 'out', myInitAvgWF, 'InputSpec.images')
 
-            buildTemplateIteration1 = antsTemplateBuildSingleIterationWF()
+            buildTemplateIteration1 = ANTSTemplateBuildSingleIterationWF('Iteration01')
             baw200.connect(MergeT1s[subjectid], 'out', buildTemplateIteration1, 'InputSpec.images')
             baw200.connect(myInitAvgWF, 'OutputSpec.average_image', buildTemplateIteration1, 'InputSpec.fixed_image')
 
-            buildTemplateIteration2 = buildTemplateIteration1.clone(name='buildTemplateIteration2')
+            #buildTemplateIteration2 = buildTemplateIteration1.clone(name='buildTemplateIteration2')
+            buildTemplateIteration2 = ANTSTemplateBuildSingleIterationWF('Iteration02')
             baw200.connect(MergeT1s[subjectid], 'out', buildTemplateIteration2, 'InputSpec.images')
             baw200.connect(buildTemplateIteration1, 'OutputSpec.template', buildTemplateIteration2, 'InputSpec.fixed_image')
             

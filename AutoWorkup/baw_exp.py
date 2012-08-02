@@ -200,7 +200,8 @@ def main(argv=None):
         print("Using cached database, {0}".format(subjectDatabaseFile))
     print "ENTIRE DB: "
     print "^^^^^^^^^^^^^"
-    print ExperimentDatabase.getEverything()
+    for row in ExperimentDatabase.getEverything():
+        print row
     print "^^^^^^^^^^^^^"
 
     import WorkupT1T2 ## NOTE:  This needs to occur AFTER the PYTHON_AUX_PATHS has been modified

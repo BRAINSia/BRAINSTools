@@ -34,6 +34,12 @@ class SessionDB():
         print "Building Subject returnList: " + subject_data_file
         subjData=csv.reader(open(subject_data_file,'rb'), delimiter=',', quotechar='"')
         for row in subjData:
+            if len(row) < 1:
+		# contine of it is an empty row
+                continue
+            if row[0][0] == '#':
+		# if the first character is a #, then it is commented out
+		continue
             if row[0] == 'project':
                 # continue if header line
                 continue

@@ -148,13 +148,30 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                 index+=1
                 baw200.connect(oneSubjWorkflow[sessionid],'OutputSpec.t1_average',MergeT1s[subjectid],index_name)
 
-
+	    """ Now part of ants directly
             InitAvgImages=pe.Node(interface=antsAverageImages.AntsAverageImages(), name ='InitBCDAvgImages_'+str(subjectid))
             InitAvgImages.inputs.dimension = 3
             InitAvgImages.inputs.output_average_image = str(subjectid)+"_TissueClassAVG_T1.nii.gz"
             InitAvgImages.inputs.normalize = 1
-
             baw200.connect(MergeT1s[subjectid], 'out', InitAvgImages, 'images')
+            """
+            ### USE ANTS
+            #from buildtemplateparallel import antsSimpleAverageWF, antsTemplateBuildSingleIterationWF
+            ### USE ANTS REGISTRATION
+            from BRAINSTools.ants.buildtemplateparallel_antsRegistration import antsTemplateBuildSingleIterationWF
+            from BRAINSTools.ants.antsSimpleAverageWF import antsSimpleAverageWF
+
+            myInitAvgWF = antsSimpleAverageWF()
+            baw200.connect(MergeT1s[subjectid], 'out', myInitAvgWF, 'InputSpec.images')
+
+            buildTemplateIteration1 = antsTemplateBuildSingleIterationWF()
+            baw200.connect(MergeT1s[subjectid], 'out', buildTemplateIteration1, 'InputSpec.images')
+            baw200.connect(myInitAvgWF, 'OutputSpec.average_image', buildTemplateIteration1, 'InputSpec.fixed_image')
+
+            buildTemplateIteration2 = buildTemplateIteration1.clone(name='buildTemplateIteration2')
+            baw200.connect(MergeT1s[subjectid], 'out', buildTemplateIteration2, 'InputSpec.images')
+            baw200.connect(buildTemplateIteration1, 'OutputSpec.template', buildTemplateIteration2, 'InputSpec.fixed_image')
+            
             #baw200.connect(InitAvgImages, 'average_image', outputSpec, 'average_image')
 
     return baw200

@@ -40,7 +40,7 @@
             <default></default>
             <description> A target input landmark name to be edited. This should be listed in the inputLandmakrFilename Given. </description>
             <channel>input</channel>
-        </string-vextor>
+        </string-vector>
 
         <string-vector>
           <name>setCutDirectionForLandmark</name>
@@ -50,14 +50,14 @@
           <description>Setting the cutting out direction of the input binary image to the one of anterior, posterior, left, right, superior or posterior. (ENUMERATION: ANTERIOR, POSTERIOR, LEFT, RIGHT, SUPERIOR, POSTERIOR) </description> 
         </string-vector>
 
-        <boolean-vector>
-            <name>setCutDirectionForObliquePlaneToNegative</name>
-            <label>Set Cut Direction For Oblique Plane To Negative</label>
-            <longflag>setCutDirectionForObliquePlaneToNegative</longflag>
-            <default>false</default>
-            <description> Setting the cutting out direction of the input binary image to be negative. If this is turn on, the mask will be thresholded out to the direction of inferior, posterior,  and/or left. Default behavrior is that cutting out to the direction of superior, anterior and/or right. </description>
+        <string-vector>
+            <name>setCutDirectionForObliquePlane</name>
+            <label>Set Cut Direction For Oblique Plane Negative</label>
+            <longflag>setCutDirectionForObliquePlane</longflag>
+            <default></default>
+            <description>If this is true, the mask will be thresholded out to the direction of inferior, posterior,  and/or left. Default behavrior is that cutting out to the direction of superior, anterior and/or right. </description>
             <channel>input</channel>
-        </boolean>
+        </string-vector>
 
         <string-vector multiple="true">
             <name>inputLandmarkNamesForObliquePlane</name>
@@ -66,6 +66,6 @@
             <default></default>
             <description> Three subset landmark names of inputLandmarksFilename for a oblique plane computation. The plane computed for binary volume editing. </description>
             <channel>input</channel>
-        </string>
+        </string-vector>
     </parameters>
 </executable>

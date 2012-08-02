@@ -26,6 +26,7 @@ set(ALL_PROGS_LIST
   fcsv_to_hdf5
   landmarksConstellationAligner
   landmarksConstellationWeights
+  BinaryMaskEditorBasedOnLandmarks
   )
 foreach(prog ${ALL_PROGS_LIST})
   StandardBRAINSBuildMacro(NAME ${prog} TARGET_LIBRARIES landmarksConstellationCOMMONLIB )

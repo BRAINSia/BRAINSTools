@@ -97,7 +97,6 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
     baw200.base_dir = ExperimentBaseDirectoryCache
 
 
-    BAtlas = MakeAtlasNode(atlas_fname_wpath) ## Call function to create node
     import WorkupT1T2Single
     MergeT1s=dict()
     if True:
@@ -105,6 +104,7 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
         oneSubjWorkflow=dict()
         subjInfoNode=dict()
         allSessions = ExperimentDatabase.getSessionsFromSubject(subjectid)
+        BAtlas = MakeAtlasNode(atlas_fname_wpath,"BAtlas_"+str(subjectid)) ## Call function to create node
         for sessionid in allSessions:
             projectid = ExperimentDatabase.getProjFromSession(sessionid)
             print("PROJECT: {0} SUBJECT: {1} SESSION: {2}".format(projectid,subjectid,sessionid))
@@ -164,12 +164,12 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
             myInitAvgWF = antsSimpleAverageWF()
             baw200.connect(MergeT1s[subjectid], 'out', myInitAvgWF, 'InputSpec.images')
 
-            buildTemplateIteration1 = ANTSTemplateBuildSingleIterationWF('Iteration01')
+            buildTemplateIteration1 = ANTSTemplateBuildSingleIterationWF('Iteration01',CLUSTER_QUEUE)
             baw200.connect(MergeT1s[subjectid], 'out', buildTemplateIteration1, 'InputSpec.images')
             baw200.connect(myInitAvgWF, 'OutputSpec.average_image', buildTemplateIteration1, 'InputSpec.fixed_image')
 
             #buildTemplateIteration2 = buildTemplateIteration1.clone(name='buildTemplateIteration2')
-            buildTemplateIteration2 = ANTSTemplateBuildSingleIterationWF('Iteration02')
+            buildTemplateIteration2 = ANTSTemplateBuildSingleIterationWF('Iteration02',CLUSTER_QUEUE)
             baw200.connect(MergeT1s[subjectid], 'out', buildTemplateIteration2, 'InputSpec.images')
             baw200.connect(buildTemplateIteration1, 'OutputSpec.template', buildTemplateIteration2, 'InputSpec.fixed_image')
             

@@ -50,9 +50,9 @@ atlas_file_names=["AtlasPVDefinition.xml","ALLPVAIR.nii.gz",
 atlas_file_keys=[os.path.basename(fn).replace('.nii.gz','').replace('.','_') for fn in atlas_file_names]
 atlas_outputs_filename_match = dict(zip(atlas_file_keys,atlas_file_names))
 
-def MakeAtlasNode(atlasDirectory):
+def MakeAtlasNode(atlasDirectory,AtlasNodeName):
     BAtlas = pe.Node(interface=nio.DataGrabber(outfields=atlas_file_keys),
-                                               name='BAtlas')
+                                               name=AtlasNodeName)
     BAtlas.inputs.base_directory = atlasDirectory
     BAtlas.inputs.template = '*'
     ## Prefix every filename with atlasDirectory

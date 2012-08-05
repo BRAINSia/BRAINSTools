@@ -99,6 +99,8 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
 
     import WorkupT1T2Single
     MergeT1s=dict()
+    MergeT2s=dict()
+    MergePosteriors=dict()
     if True:
         print("===================== SUBJECT: {0} ===========================".format(subjectid))
         oneSubjWorkflow=dict()
@@ -138,17 +140,54 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
             baw200.connect(subjInfoNode[sessionid],'allOthers',oneSubjWorkflow[sessionid],'InputSpec.allOthers')
         if True: ## Merge all BCD_Results into a global average
             numSessions=len(allSessions)
-            mergeSubjectSessionNames="99_MergeAllSessions"+str(subjectid)
+            mergeSubjectSessionNamesT1="99_MergeAllSessions_T1"+str(subjectid)
             MergeT1s[subjectid] = pe.Node(interface=Merge(numSessions),
                                           run_without_submitting=True,
-                                          name=mergeSubjectSessionNames)
+                                          name=mergeSubjectSessionNamesT1)
+            mergeSubjectSessionNamesT2="99_MergeAllSessions_T2"+str(subjectid)
+            MergeT2s[subjectid] = pe.Node(interface=Merge(numSessions),
+                                          run_without_submitting=True,
+                                          name=mergeSubjectSessionNamesT2)
+            mergeSubjectSessionNamesPosteriors="99_MergeAllSessions_Posteriors"+str(subjectid)
+            MergePosteriors[subjectid] = pe.Node(interface=Merge(numSessions),
+                                          run_without_submitting=True,
+                                          name=mergeSubjectSessionNamesPosteriors)
             index=1
+            #print("HACK: HACK: HACK:  {0}".format(allSessions))
             for sessionid in allSessions:
                 index_name='in'+str(index)
                 index+=1
                 baw200.connect(oneSubjWorkflow[sessionid],'OutputSpec.t1_average',MergeT1s[subjectid],index_name)
+                baw200.connect(oneSubjWorkflow[sessionid],'OutputSpec.t2_average',MergeT2s[subjectid],index_name)
+                baw200.connect(oneSubjWorkflow[sessionid],'OutputSpec.posteriorImages',MergePosteriors[subjectid],index_name)
 
-	    """ Now part of ants directly
+            def MergeByExtendListElements(t2_averageList,posteriorImagesList):
+                """ The posteriorImagesList must have an even multiple of 
+                   images in the list.
+                    a=['a','a','b','b','c','c']
+                    b=['1','2','3']
+                    output=[['1','a','a'],['2','b','b'],['3','c','c']]
+                """
+                mergedList=list()
+                repeatNumbers=len(posteriorImagesList)/len(t2_averageList)
+                posterior_index=0
+                for t2_index in range(0,len(t2_averageList)):
+                    this_subj_list=list()
+                    this_subj_list.append(t2_averageList[t2_index])
+                    for i in range(0,repeatNumbers):
+                        this_subj_list.append(posteriorImagesList[posterior_index])
+                        posterior_index+=1
+                    mergedList.append(this_subj_list)
+                return mergedList
+            MergeByExtendListElementsNode = pe.Node( Function(function=MergeByExtendListElements,
+                                          input_names = ['t2_averageList','posteriorImagesList'],
+                                          output_names = ['mergedList']),
+                                          run_without_submitting=True, name="99_MergeByExtendListElements")
+            MergeByExtendListElementsNode.inputs.preserve_nested_lists = True
+            baw200.connect( MergeT2s[subjectid],'out', MergeByExtendListElementsNode, 't2_averageList' )
+            baw200.connect( MergePosteriors[subjectid],'out', MergeByExtendListElementsNode, 'posteriorImagesList' )
+
+            """ Now part of ants directly
             InitAvgImages=pe.Node(interface=antsAverageImages.AntsAverageImages(), name ='InitBCDAvgImages_'+str(subjectid))
             InitAvgImages.inputs.dimension = 3
             InitAvgImages.inputs.output_average_image = str(subjectid)+"_TissueClassAVG_T1.nii.gz"
@@ -165,14 +204,16 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
             baw200.connect(MergeT1s[subjectid], 'out', myInitAvgWF, 'InputSpec.images')
 
             buildTemplateIteration1 = ANTSTemplateBuildSingleIterationWF('Iteration01',CLUSTER_QUEUE)
-            baw200.connect(MergeT1s[subjectid], 'out', buildTemplateIteration1, 'InputSpec.images')
             baw200.connect(myInitAvgWF, 'OutputSpec.average_image', buildTemplateIteration1, 'InputSpec.fixed_image')
+            baw200.connect(MergeT1s[subjectid], 'out', buildTemplateIteration1, 'InputSpec.images')
+            baw200.connect(MergeByExtendListElementsNode, 'mergedList', buildTemplateIteration1, 'InputSpec.passive_images_list')
 
             #buildTemplateIteration2 = buildTemplateIteration1.clone(name='buildTemplateIteration2')
             buildTemplateIteration2 = ANTSTemplateBuildSingleIterationWF('Iteration02',CLUSTER_QUEUE)
-            baw200.connect(MergeT1s[subjectid], 'out', buildTemplateIteration2, 'InputSpec.images')
             baw200.connect(buildTemplateIteration1, 'OutputSpec.template', buildTemplateIteration2, 'InputSpec.fixed_image')
-            
+            baw200.connect(MergeT1s[subjectid], 'out', buildTemplateIteration2, 'InputSpec.images')
+            baw200.connect(MergeByExtendListElementsNode, 'mergedList', buildTemplateIteration2, 'InputSpec.passive_images_list')
+
             #baw200.connect(InitAvgImages, 'average_image', outputSpec, 'average_image')
 
     return baw200

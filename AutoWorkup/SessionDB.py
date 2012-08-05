@@ -59,7 +59,7 @@ class SessionDB():
                     for i in range(len(fullPaths)):
                         imagePath = fullPaths[i]
                         if not os.path.exists(imagePath):
-                            print("Missing File: {0}".format(i))
+                            print("Missing File: {0}".format(imagePath))
                             validEntry=False
                         if validEntry == True:
                             currDict['Qpos'] = str(i)

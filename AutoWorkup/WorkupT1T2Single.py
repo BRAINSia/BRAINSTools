@@ -128,7 +128,8 @@ def MakeOneSubWorkFlow(projectid, subjectid, sessionid, BAtlas, WORKFLOW_COMPONE
                          name='InputSpec' )
 
     outputsSpec = pe.Node(interface=IdentityInterface(fields=['BCD_ACPC_T1',
-            't1_average','t2_average'
+            't1_average','t2_average',
+            'posteriorImages'
             ]),
             run_without_submitting=True,
             name='OutputSpec' )
@@ -184,6 +185,7 @@ def MakeOneSubWorkFlow(projectid, subjectid, sessionid, BAtlas, WORKFLOW_COMPONE
         ### Now connect OutputSpec
         T1T2WorkupSingle.connect(myLocalTCWF, 'OutputSpec.t1_average', outputsSpec,'t1_average')
         T1T2WorkupSingle.connect(myLocalTCWF, 'OutputSpec.t2_average', outputsSpec,'t2_average')
+        T1T2WorkupSingle.connect(myLocalTCWF, 'OutputSpec.posteriorImages', outputsSpec,'posteriorImages')
 
     return T1T2WorkupSingle
 

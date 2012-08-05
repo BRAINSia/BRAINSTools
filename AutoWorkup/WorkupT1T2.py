@@ -101,12 +101,13 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
     MergeT1s=dict()
     MergeT2s=dict()
     MergePosteriors=dict()
+    BAtlas=dict()
     if True:
         print("===================== SUBJECT: {0} ===========================".format(subjectid))
         oneSubjWorkflow=dict()
         subjInfoNode=dict()
         allSessions = ExperimentDatabase.getSessionsFromSubject(subjectid)
-        BAtlas = MakeAtlasNode(atlas_fname_wpath,"BAtlas_"+str(subjectid)) ## Call function to create node
+        BAtlas[subjectid] = MakeAtlasNode(atlas_fname_wpath,"BAtlas_"+str(subjectid)) ## Call function to create node
         for sessionid in allSessions:
             projectid = ExperimentDatabase.getProjFromSession(sessionid)
             print("PROJECT: {0} SUBJECT: {1} SESSION: {2}".format(projectid,subjectid,sessionid))
@@ -128,7 +129,7 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
 
             oneSubjWorkflow[sessionid]=WorkupT1T2Single.MakeOneSubWorkFlow(
                               projectid, subjectid, sessionid,
-                              BAtlas, WORKFLOW_COMPONENTS,
+                              BAtlas[subjectid], WORKFLOW_COMPONENTS,
                               BCD_model_path, InterpolationMode, CLUSTER_QUEUE,
                               ExperimentBaseDirectoryResults)
             baw200.connect(subjInfoNode[sessionid],'projectid',oneSubjWorkflow[sessionid],'InputSpec.projectid')

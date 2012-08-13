@@ -89,6 +89,7 @@ def GenerateOutputPattern(projectid, subjectid, sessionid,DefaultNodeName,uidIsF
         find_pat=os.path.join(WFName,DefaultNodeName)
     replace_pat=os.path.join(projectid,subjectid,sessionid,DefaultNodeName)
     patternList.append( (find_pat,replace_pat) )
+    print "HACK: ", patternList
     return patternList
 
 ###########################################################################

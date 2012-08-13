@@ -47,6 +47,20 @@ from BRAINSTools.ants import antsAverageImages
 
 from WorkupT1T2AtlasNode import MakeAtlasNode
 
+#HACK:  [('buildTemplateIteration2', 'SUBJECT_TEMPLATES/0249/buildTemplateIteration2')]
+def GenerateSubjectOutputPattern(subjectid):
+    """ This function generates output path substitutions for workflows and nodes that conform to a common standard.
+    """
+    patternList=[]
+    find_pat=os.path.join('ANTSTemplate','Iteration02_Reshaped.nii.gz')
+    replace_pat=os.path.join('SUBJECT_TEMPLATES',subjectid,'T1_RESHAPED.nii.gz')
+    patternList.append( (find_pat,replace_pat) )
+    find_pat=os.path.join('ANTSTemplate','_ReshapeAveragePassiveImageWithShapeUpdate[0-9]*')
+    replace_pat=os.path.join('SUBJECT_TEMPLATES',subjectid)
+    patternList.append( (find_pat,replace_pat) )
+    print "HACK: ", patternList
+    print "HACK: ", patternList
+    return patternList
 
 ###########################################################################
 ###########################################################################
@@ -202,5 +216,12 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
             baw200.connect(MergeByExtendListElementsNode, 'ListOfExtendedPassiveImages', buildTemplateIteration2, 'InputSpec.ListOfPassiveImagesDictionararies')
 
             #baw200.connect(InitAvgImages, 'average_image', outputSpec, 'average_image')
+
+            ### Now define where the final organized outputs should go.
+            SubjectTemplate_DataSink=pe.Node(nio.DataSink(),name="SubjectTemplate_DS")
+            SubjectTemplate_DataSink.inputs.base_directory=ExperimentBaseDirectoryResults
+            SubjectTemplate_DataSink.inputs.regexp_substitutions = GenerateSubjectOutputPattern(subjectid)
+            baw200.connect(buildTemplateIteration2,'OutputSpec.template',SubjectTemplate_DataSink,'ANTSTemplate.@template')
+            baw200.connect(buildTemplateIteration2,'OutputSpec.passive_deformed_templates',SubjectTemplate_DataSink,'ANTSTemplate.@passive_deformed_templates')
 
     return baw200

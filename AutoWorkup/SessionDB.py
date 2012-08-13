@@ -4,9 +4,13 @@ import csv
 
 class SessionDB():
 
-    def __init__(self, defaultDBName='TempFileForDB.db'):
+    def __init__(self, defaultDBName='TempFileForDB.db',subject_filter='00000000000'):
+        self.MasterTableName = "MasterDB"
         self.dbName = defaultDBName
-        self._local_openDB() 
+        self._local_openDB()
+        self.MasterQueryFilter = "SELECT * FROM {_tablename} WHERE subj='{_subjid}'".format(
+          _tablename=self.MasterTableName,
+          _subjid=subject_filter)
 
     def _local_openDB(self):
         self.connection = lite.connect(self.dbName)
@@ -28,18 +32,18 @@ class SessionDB():
         self._local_openDB()
 
         dbColTypes =  "project TEXT, subj TEXT, session TEXT, type TEXT, Qpos INT, filename TEXT"
-        self.cursor.execute("CREATE TABLE SessionDB({0});".format(dbColTypes))
+        self.cursor.execute("CREATE TABLE {tablename}({coltypes});".format(tablename=self.MasterTableName,coltypes=dbColTypes))
         self.connection.commit()
         sqlCommandList = list()
         print "Building Subject returnList: " + subject_data_file
         subjData=csv.reader(open(subject_data_file,'rb'), delimiter=',', quotechar='"')
         for row in subjData:
             if len(row) < 1:
-		# contine of it is an empty row
+                # contine of it is an empty row
                 continue
             if row[0][0] == '#':
-		# if the first character is a #, then it is commented out
-		continue
+                # if the first character is a #, then it is commented out
+                continue
             if row[0] == 'project':
                 # continue if header line
                 continue
@@ -72,12 +76,17 @@ class SessionDB():
         sqlCommandList
         self._local_fillDB(sqlCommandList)
 
+    def getSubjectFilter(self):
+        return self.MasterQueryFilter
+
     def makeSQLiteCommand(self, imageDict):
         keys = imageDict.keys()
         vals = imageDict.values()
         col_names = ",".join(keys)
         values = ', '.join(map(lambda x: "'" + x + "'", vals))
-        sqlCommand = "INSERT INTO SessionDB ({0}) VALUES ({1});".format(col_names, values)
+        sqlCommand = "INSERT INTO {_tablename} ({_col_names}) VALUES ({_values});".format(
+          _tablename=self.MasterTableName,
+          _col_names=col_names, _values=values)
         return sqlCommand
 
     def getInfoFromDB(self, sqlCommand):
@@ -87,14 +96,18 @@ class SessionDB():
         return dbInfo
 
     def getFirstScan(self, sessionid, scantype):
-        sqlCommand = "SELECT filename FROM SessionDB WHERE session='{0}' AND type='{1}' AND Qpos='0';".format(sessionid, scantype)
+        sqlCommand = "SELECT filename FROM ({_master_query}) WHERE session='{_sessionid}' AND type='{_scantype}' AND Qpos='0';".format(
+            _master_query=self.MasterQueryFilter,
+            _sessionid=sessionid, _scantype=scantype)
         val = self.getInfoFromDB(sqlCommand)
         filename = str(val[0][0])
         return filename
 
     def getFirstT1(self, sessionid):
         scantype='T1-30'
-        sqlCommand = "SELECT filename FROM SessionDB WHERE session='{0}' AND type='{1}' AND Qpos='0';".format(sessionid, scantype)
+        sqlCommand = "SELECT filename FROM ({_master_query}) WHERE session='{_sessionid}' AND type='{_scantype}' AND Qpos='0';".format(
+          _master_query=self.MasterQueryFilter,
+          _sessionid=sessionid, _scantype=scantype)
         val = self.getInfoFromDB(sqlCommand)
         #print "HACK: ",sqlCommand
         #print "HACK: ", val
@@ -104,7 +117,9 @@ class SessionDB():
     def getFilenamesByScantype(self, sessionid, scantypelist):
         returnList = list()
         for currScanType in scantypelist:
-            sqlCommand = "SELECT filename FROM SessionDB WHERE session='{0}' AND type='{1}' ORDER BY Qpos ASC;".format(sessionid, currScanType)
+            sqlCommand = "SELECT filename FROM ({_master_query}) WHERE session='{_sessionid}' AND type='{_scantype}' ORDER BY Qpos ASC;".format(
+                _master_query=self.MasterQueryFilter,
+                _sessionid=sessionid, _scantype=currScanType)
             val = self.getInfoFromDB(sqlCommand)
             for i in val:
                 returnList.append(str(i[0]))
@@ -115,7 +130,9 @@ class SessionDB():
         return len(countlist)
 
     def getT1sT2s(self, sessionid):
-        sqlCommand = "SELECT filename FROM SessionDB WHERE session='{0}' ORDER BY type ASC, Qpos ASC;".format(sessionid)
+        sqlCommand = "SELECT filename FROM ({_master_query}) WHERE session='{_sessionid}' ORDER BY type ASC, Qpos ASC;".format(
+          _master_query=self.MasterQueryFilter,
+          _sessionid=sessionid)
         val = self.getInfoFromDB(sqlCommand)
         returnList = list()
         for i in val:
@@ -123,7 +140,7 @@ class SessionDB():
         return returnList
 
     def getAllProjects(self):
-        sqlCommand = "SELECT DISTINCT project FROM SessionDB;"
+        sqlCommand = "SELECT DISTINCT project FROM ({_master_query});".format(_master_query=self.MasterQueryFilter)
         val = self.getInfoFromDB(sqlCommand)
         returnList = list()
         for i in val:
@@ -131,7 +148,7 @@ class SessionDB():
         return returnList
 
     def getAllSubjects(self):
-        sqlCommand = "SELECT DISTINCT subj FROM SessionDB;"
+        sqlCommand = "SELECT DISTINCT subj FROM ({_master_query});".format(_master_query=self.MasterQueryFilter)
         val = self.getInfoFromDB(sqlCommand)
         returnList = list()
         for i in val:
@@ -140,7 +157,7 @@ class SessionDB():
 
     def getAllSessions(self):
         #print("HACK:  This is a temporary until complete re-write")
-        sqlCommand = "SELECT DISTINCT session FROM SessionDB;"
+        sqlCommand = "SELECT DISTINCT session FROM ({_master_query});".format(_master_query=self.MasterQueryFilter)
         val = self.getInfoFromDB(sqlCommand)
         returnList = list()
         for i in val:
@@ -148,7 +165,9 @@ class SessionDB():
         return returnList
 
     def getSessionsFromSubject(self,subj):
-        sqlCommand = "SELECT DISTINCT session FROM SessionDB WHERE subj='{0}';".format(subj)
+        sqlCommand = "SELECT DISTINCT session FROM ({_master_query}) WHERE subj='{_subjid}';".format(
+          _master_query=self.MasterQueryFilter,
+          _subjid=subj)
         val = self.getInfoFromDB(sqlCommand)
         returnList = list()
         for i in val:
@@ -156,7 +175,7 @@ class SessionDB():
         return returnList
 
     def getEverything(self):
-        sqlCommand = "SELECT * FROM SessionDB;"
+        sqlCommand = "SELECT * FROM ({_master_query});".format(_master_query=self.MasterQueryFilter)
         val = self.getInfoFromDB(sqlCommand)
         returnList = list()
         for i in val:
@@ -164,7 +183,9 @@ class SessionDB():
         return returnList
 
     def getSubjectsFromProject(self,project):
-        sqlCommand = "SELECT DISTINCT subj FROM SessionDB WHERE project='{0}';".format(project)
+        sqlCommand = "SELECT DISTINCT subj FROM ({_master_query}) WHERE project='{_projectid}';".format(
+          _master_query=self.MasterQueryFilter,
+          _projectid=project)
         val = self.getInfoFromDB(sqlCommand)
         returnList = list()
         for i in val:
@@ -173,7 +194,9 @@ class SessionDB():
 
 
     def getSubjFromSession(self,session):
-        sqlCommand = "SELECT DISTINCT subj FROM SessionDB WHERE session='{0}';".format(session)
+        sqlCommand = "SELECT DISTINCT subj FROM ({_master_query}) WHERE session='{_sessionid}';".format(
+          _master_query=self.MasterQueryFilter,
+          _sessionid=session)
         val = self.getInfoFromDB(sqlCommand)
         returnList = list()
         for i in val:
@@ -184,7 +207,9 @@ class SessionDB():
         return returnList[0]
 
     def getProjFromSession(self,session):
-        sqlCommand = "SELECT DISTINCT project FROM SessionDB WHERE session='{0}';".format(session)
+        sqlCommand = "SELECT DISTINCT project FROM ({_master_query}) WHERE session='{_sessionid}';".format(
+          _master_query=self.MasterQueryFilter,
+          _sessionid=session)
         val = self.getInfoFromDB(sqlCommand)
         returnList = list()
         for i in val:

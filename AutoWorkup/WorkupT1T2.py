@@ -139,8 +139,8 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
             baw200.connect(subjInfoNode[sessionid],'allT2s',oneSubjWorkflow[sessionid],'InputSpec.allT2s')
             baw200.connect(subjInfoNode[sessionid],'allPDs',oneSubjWorkflow[sessionid],'InputSpec.allPDs')
             baw200.connect(subjInfoNode[sessionid],'allOthers',oneSubjWorkflow[sessionid],'InputSpec.allOthers')
-        if True: ## Merge all BCD_Results into a global average
-            numSessions=len(allSessions)
+        numSessions=len(allSessions)
+        if numSessions > 1: ## Merge all BCD_Results into a global average
             mergeSubjectSessionNamesT1="99_MergeAllSessions_T1"+str(subjectid)
             MergeT1s[subjectid] = pe.Node(interface=Merge(numSessions),
                                           run_without_submitting=True,
@@ -162,31 +162,17 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                 baw200.connect(oneSubjWorkflow[sessionid],'OutputSpec.t2_average',MergeT2s[subjectid],index_name)
                 baw200.connect(oneSubjWorkflow[sessionid],'OutputSpec.posteriorImages',MergePosteriors[subjectid],index_name)
 
-            def MergeByExtendListElements(t2_averageList,posteriorImagesList):
-                """ The posteriorImagesList must have an even multiple of 
-                   images in the list.
-                    a=['a','a','b','b','c','c']
-                    b=['1','2','3']
-                    output=[['1','a','a'],['2','b','b'],['3','c','c']]
-                """
-                mergedList=list()
-                repeatNumbers=len(posteriorImagesList)/len(t2_averageList)
-                posterior_index=0
+            def MergeByExtendListElements(t2_averageList,ListOfPosteriorImagesDictionary):
                 for t2_index in range(0,len(t2_averageList)):
-                    this_subj_list=list()
-                    this_subj_list.append(t2_averageList[t2_index])
-                    for i in range(0,repeatNumbers):
-                        this_subj_list.append(posteriorImagesList[posterior_index])
-                        posterior_index+=1
-                    mergedList.append(this_subj_list)
-                return mergedList
+                    ListOfPosteriorImagesDictionary[t2_index]['T2']=t2_averageList[t2_index]
+                return ListOfPosteriorImagesDictionary
             MergeByExtendListElementsNode = pe.Node( Function(function=MergeByExtendListElements,
-                                          input_names = ['t2_averageList','posteriorImagesList'],
-                                          output_names = ['mergedList']),
+                                          input_names = ['t2_averageList','ListOfPosteriorImagesDictionary'],
+                                          output_names = ['ListOfExtendedPassiveImages']),
                                           run_without_submitting=True, name="99_MergeByExtendListElements")
-            MergeByExtendListElementsNode.inputs.preserve_nested_lists = True
+            #MergeByExtendListElementsNode.inputs.preserve_nested_lists = True
             baw200.connect( MergeT2s[subjectid],'out', MergeByExtendListElementsNode, 't2_averageList' )
-            baw200.connect( MergePosteriors[subjectid],'out', MergeByExtendListElementsNode, 'posteriorImagesList' )
+            baw200.connect( MergePosteriors[subjectid],'out', MergeByExtendListElementsNode, 'ListOfPosteriorImagesDictionary' )
 
             """ Now part of ants directly
             InitAvgImages=pe.Node(interface=antsAverageImages.AntsAverageImages(), name ='InitBCDAvgImages_'+str(subjectid))
@@ -207,13 +193,13 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
             buildTemplateIteration1 = ANTSTemplateBuildSingleIterationWF('Iteration01',CLUSTER_QUEUE)
             baw200.connect(myInitAvgWF, 'OutputSpec.average_image', buildTemplateIteration1, 'InputSpec.fixed_image')
             baw200.connect(MergeT1s[subjectid], 'out', buildTemplateIteration1, 'InputSpec.images')
-            baw200.connect(MergeByExtendListElementsNode, 'mergedList', buildTemplateIteration1, 'InputSpec.passive_images_list')
+            baw200.connect(MergeByExtendListElementsNode, 'ListOfExtendedPassiveImages', buildTemplateIteration1, 'InputSpec.ListOfPassiveImagesDictionararies')
 
-            #buildTemplateIteration2 = buildTemplateIteration1.clone(name='buildTemplateIteration2')
+            buildTemplateIteration2 = buildTemplateIteration1.clone(name='buildTemplateIteration2')
             buildTemplateIteration2 = ANTSTemplateBuildSingleIterationWF('Iteration02',CLUSTER_QUEUE)
             baw200.connect(buildTemplateIteration1, 'OutputSpec.template', buildTemplateIteration2, 'InputSpec.fixed_image')
             baw200.connect(MergeT1s[subjectid], 'out', buildTemplateIteration2, 'InputSpec.images')
-            baw200.connect(MergeByExtendListElementsNode, 'mergedList', buildTemplateIteration2, 'InputSpec.passive_images_list')
+            baw200.connect(MergeByExtendListElementsNode, 'ListOfExtendedPassiveImages', buildTemplateIteration2, 'InputSpec.ListOfPassiveImagesDictionararies')
 
             #baw200.connect(InitAvgImages, 'average_image', outputSpec, 'average_image')
 

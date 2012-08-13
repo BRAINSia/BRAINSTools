@@ -153,7 +153,6 @@ def CreateTissueClassifyWorkflow(WFname,CLUSTER_QUEUE,InterpolationMode):
     tissueClassifyWF.connect(bfc_files,'t2_corrected',outputsSpec,'t2_corrected')
     """
 
-
     #############
     tissueClassifyWF.connect(BABCext,'atlasToSubjectTransform',outputsSpec,'atlasToSubjectTransform')
     tissueClassifyWF.connect(BABCext,'outputLabels',outputsSpec,'outputLabels')
@@ -166,6 +165,20 @@ def CreateTissueClassifyWorkflow(WFname,CLUSTER_QUEUE,InterpolationMode):
     #tissueClassifyWF.connect( [ ( BABCext, outputsSpec, [ (( 'outputAverageImages', getListIndex, 2 ), "pd_average")] ), ] )
 
     tissueClassifyWF.connect(BABCext,'outputDir',outputsSpec,'TissueClassifyOutputDir')
-    tissueClassifyWF.connect(BABCext,'posteriorImages',outputsSpec,'posteriorImages')
+
+    def MakePosteriorDictionaryFunc(posteriorImages):
+        posteriorNames=['WM','SURFGM','BGM','CRBLGM','CRBLWM','CSF','VB','NOTCSF','NOTGM','NOTWM','NOTVB','AIR']
+        if len(posteriorNames) != len(posteriorImages):
+            print "ERROR: ", posteriorNames
+            print "ERROR: ", postiorImages
+            return -1
+        temp_dictionary=dict(zip(posteriorNames,posteriorImages))
+        return temp_dictionary
+    MakePosteriorDictionaryNode = pe.Node( Function(function=MakePosteriorDictionaryFunc,
+                                      input_names = ['posteriorImages'],
+                                      output_names = ['posteriorDictionary']), run_without_submitting=True, name="99_makePosteriorDictionary")
+    tissueClassifyWF.connect(BABCext,'posteriorImages',MakePosteriorDictionaryNode,'posteriorImages')
+
+    tissueClassifyWF.connect(MakePosteriorDictionaryNode,'posteriorDictionary',outputsSpec,'posteriorImages')
 
     return tissueClassifyWF

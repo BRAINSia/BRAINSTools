@@ -76,7 +76,7 @@ def MakeList(firstElement,secondElement):
     return [firstElement, secondElement]
 
 def GenerateWFName(projectid, subjectid, sessionid,processing_phase):
-    return 'WF_'+str(subjectid)+"_"+str(sessionid)+"_"+str(projectid)+processing_phase
+    return 'WF_'+str(subjectid)+"_"+str(sessionid)+"_"+str(projectid)+"_"+processing_phase
 
 def GenerateOutputPattern(projectid, subjectid, sessionid,DefaultNodeName,uidIsFirst):
     """ This function generates output path substitutions for workflows and nodes that conform to a common standard.

@@ -142,7 +142,7 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
             PHASE_1_subjInfoNode[sessionid].inputs.allPDs=ExperimentDatabase.getFilenamesByScantype(sessionid,['PD-30','PD-15'])
             PHASE_1_subjInfoNode[sessionid].inputs.allOthers=ExperimentDatabase.getFilenamesByScantype(sessionid,['OTHER-30','OTHER-15'])
 
-            PROCESSING_PHASE=''
+            PROCESSING_PHASE='PHASE_1'
             PHASE_1_WORKFLOW_COMPONENTS =  ['BASIC','TISSUE_CLASSIFY']
             PHASE_1_oneSubjWorkflow[sessionid]=WorkupT1T2Single.MakeOneSubWorkFlow(
                               projectid, subjectid, sessionid,PROCESSING_PHASE,
@@ -309,7 +309,7 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                PHASE_2_subjInfoNode[sessionid].inputs.allPDs=ExperimentDatabase.getFilenamesByScantype(sessionid,['PD-30','PD-15'])
                PHASE_2_subjInfoNode[sessionid].inputs.allOthers=ExperimentDatabase.getFilenamesByScantype(sessionid,['OTHER-30','OTHER-15'])
 
-               PROCESSING_PHASE='_PHASE_2'
+               PROCESSING_PHASE='PHASE_2'
                PHASE_2_oneSubjWorkflow[sessionid]=WorkupT1T2Single.MakeOneSubWorkFlow(
                                  projectid, subjectid, sessionid,PROCESSING_PHASE,
                                  WORKFLOW_COMPONENTS,

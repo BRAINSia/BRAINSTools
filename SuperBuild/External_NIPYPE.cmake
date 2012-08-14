@@ -7,7 +7,7 @@ set(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED 1)
 
 set(proj NIPYPE)
 set(${proj}_GIT_REPOSITORY "git://github.com/nipy/nipype.git")
-set(${proj}_GIT_TAG "a77edf9ba9a8f2c21b220a247bbfba72d07b5e40")
+set(${proj}_GIT_TAG "9525f40ca782c6eec8be2db5604c33fd07c8eeb0")
 
 ExternalProject_Add(${proj}
   GIT_REPOSITORY ${${proj}_GIT_REPOSITORY}

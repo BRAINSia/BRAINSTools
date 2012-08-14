@@ -12,7 +12,7 @@ import os
 #atlas_file_list="AtlasPVDefinition.xml ALLPVAIR.nii.gz ALLPVBASALTISSUE.nii.gz ALLPVCRBLGM.nii.gz ALLPVCRBLWM.nii.gz ALLPVCSF.nii.gz ALLPVNOTCSF.nii.gz ALLPVNOTGM.nii.gz ALLPVNOTVB.nii.gz ALLPVNOTWM.nii.gz ALLPVSURFGM.nii.gz ALLPVVB.nii.gz ALLPVWM.nii.gz avg_t1.nii.gz avg_t2.nii.gz tempNOTVBBOX.nii.gz template_ABC_lables.nii.gz template_WMPM2_labels.nii.gz template_WMPM2_labels.txt template_brain.nii.gz template_cerebellum.nii.gz template_class.nii.gz template_headregion.nii.gz template_leftHemisphere.nii.gz template_nac_lables.nii.gz template_nac_lables.txt template_rightHemisphere.nii.gz template_t1.nii.gz template_t1_clipped.nii.gz template_t2.nii.gz template_t2_clipped.nii.gz template_ventricles.nii.gz probabilityMaps/l_caudate_ProbabilityMap.nii.gz probabilityMaps/r_caudate_ProbabilityMap.nii.gz probabilityMaps/l_hippocampus_ProbabilityMap.nii.gz probabilityMaps/r_hippocampus_ProbabilityMap.nii.gz probabilityMaps/l_putamen_ProbabilityMap.nii.gz probabilityMaps/r_putamen_ProbabilityMap.nii.gz probabilityMaps/l_thalamus_ProbabilityMap.nii.gz probabilityMaps/r_thalamus_ProbabilityMap.nii.gz spatialImages/phi.nii.gz spatialImages/rho.nii.gz spatialImages/theta.nii.gz"
 #atlas_file_names=atlas_file_list.split(' ')
 ## HACK
-atlas_file_names=["AtlasPVDefinition.xml","ALLPVAIR.nii.gz",
+atlas_file_names=["AtlasPVDefinition.xml","AtlasPVDefinition.xml.in","ALLPVAIR.nii.gz",
                       "ALLPVBASALTISSUE.nii.gz","ALLPVCRBLGM.nii.gz",
                       "ALLPVCRBLWM.nii.gz","ALLPVCSF.nii.gz","ALLPVNOTCSF.nii.gz",
                       "ALLPVNOTGM.nii.gz","ALLPVNOTVB.nii.gz","ALLPVNOTWM.nii.gz",

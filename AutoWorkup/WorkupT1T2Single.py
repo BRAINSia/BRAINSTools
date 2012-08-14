@@ -75,8 +75,8 @@ def get_list_element( nestedList, index ):
 def MakeList(firstElement,secondElement):
     return [firstElement, secondElement]
 
-def GenerateWFName(projectid, subjectid, sessionid):
-    return 'WF_'+str(subjectid)+"_"+str(sessionid)+"_"+str(projectid)
+def GenerateWFName(projectid, subjectid, sessionid,processing_phase):
+    return 'WF_'+str(subjectid)+"_"+str(sessionid)+"_"+str(projectid)+processing_phase
 
 def GenerateOutputPattern(projectid, subjectid, sessionid,DefaultNodeName,uidIsFirst):
     """ This function generates output path substitutions for workflows and nodes that conform to a common standard.
@@ -104,7 +104,7 @@ def GenerateOutputPattern(projectid, subjectid, sessionid,DefaultNodeName,uidIsF
 ###########################################################################
 ###########################################################################
 ###########################################################################
-def MakeOneSubWorkFlow(projectid, subjectid, sessionid, BAtlas, WORKFLOW_COMPONENTS, BCD_model_path, InterpolationMode, CLUSTER_QUEUE, ExperimentBaseDirectoryResults):
+def MakeOneSubWorkFlow(projectid, subjectid, sessionid,processing_phase, WORKFLOW_COMPONENTS, BCD_model_path, InterpolationMode, CLUSTER_QUEUE, ExperimentBaseDirectoryResults):
     """
     Run autoworkup on a single Subject
 
@@ -116,21 +116,25 @@ def MakeOneSubWorkFlow(projectid, subjectid, sessionid, BAtlas, WORKFLOW_COMPONE
 
     # print "Building Pipeline for ",sessionid
     ########### PIPELINE INITIALIZATION #############
-    T1T2WorkupSingle = pe.Workflow(name=GenerateWFName(projectid, subjectid, sessionid))
+    T1T2WorkupSingle = pe.Workflow(name=GenerateWFName(projectid, subjectid, sessionid,processing_phase))
 
     inputsSpec = pe.Node(interface=IdentityInterface(fields=
                         ['sessionid','subjectid','projectid',
                          'allT1s',
                          'allT2s',
                          'allPDs',
-                         'allOthers'
+                         'allOthers',
+                         'template_landmarks_31_fcsv',
+                         'template_landmark_weights_31_csv',
+                         'template_t1',
+                         'AtlasPVDefinition_xml'
                          ]),
                          run_without_submitting=True,
                          name='InputSpec' )
 
     outputsSpec = pe.Node(interface=IdentityInterface(fields=['BCD_ACPC_T1',
             't1_average','t2_average',
-            'posteriorImages'
+            'posteriorImages','outputLabels'
             ]),
             run_without_submitting=True,
             name='OutputSpec' )
@@ -145,10 +149,10 @@ def MakeOneSubWorkFlow(projectid, subjectid, sessionid, BAtlas, WORKFLOW_COMPONE
         def get_list_element( nestedList, index ):
             return nestedList[index]
         T1T2WorkupSingle.connect( [ ( inputsSpec, myLocalLMIWF, [ ( ( 'allT1s', get_list_element, 0 ), 'InputSpec.inputVolume') ] ), ] )
-        T1T2WorkupSingle.connect( BAtlas, 'template_landmarks_31_fcsv', myLocalLMIWF,'InputSpec.atlasLandmarkFilename')
-        T1T2WorkupSingle.connect( BAtlas, 'template_landmark_weights_31_csv', myLocalLMIWF,'InputSpec.atlasWeightFilename')
+        T1T2WorkupSingle.connect( inputsSpec, 'template_landmarks_31_fcsv', myLocalLMIWF,'InputSpec.atlasLandmarkFilename')
+        T1T2WorkupSingle.connect( inputsSpec, 'template_landmark_weights_31_csv', myLocalLMIWF,'InputSpec.atlasWeightFilename')
         if 'AUXLMK' in WORKFLOW_COMPONENTS:
-            T1T2WorkupSingle.connect(BAtlas,'template_t1',myLocalLMIWF,'InputSpec.atlasVolume')
+            T1T2WorkupSingle.connect(inputsSpec,'template_t1',myLocalLMIWF,'InputSpec.atlasVolume')
 
         ### Now define where the final organized outputs should go.
         BASIC_DataSink=pe.Node(nio.DataSink(),name="BASIC_DS")
@@ -173,7 +177,7 @@ def MakeOneSubWorkFlow(projectid, subjectid, sessionid, BAtlas, WORKFLOW_COMPONE
         def getAllT1sLength(allT1s):
             return len(allT1s)
         T1T2WorkupSingle.connect( [ (inputsSpec, myLocalTCWF, [(('allT1s', getAllT1sLength), 'InputSpec.T1_count')] ), ])
-        T1T2WorkupSingle.connect( BAtlas,'AtlasPVDefinition_xml',myLocalTCWF,'InputSpec.atlasDefinition')
+        T1T2WorkupSingle.connect( inputsSpec,'AtlasPVDefinition_xml',myLocalTCWF,'InputSpec.atlasDefinition')
         T1T2WorkupSingle.connect( myLocalLMIWF, 'OutputSpec.outputResampledVolume', myLocalTCWF, 'InputSpec.PrimaryT1' )
         T1T2WorkupSingle.connect( myLocalLMIWF,'OutputSpec.atlasToSubjectTransform',myLocalTCWF,'InputSpec.atlasToSubjectInitialTransform')
 
@@ -187,6 +191,7 @@ def MakeOneSubWorkFlow(projectid, subjectid, sessionid, BAtlas, WORKFLOW_COMPONE
         T1T2WorkupSingle.connect(myLocalTCWF, 'OutputSpec.t1_average', outputsSpec,'t1_average')
         T1T2WorkupSingle.connect(myLocalTCWF, 'OutputSpec.t2_average', outputsSpec,'t2_average')
         T1T2WorkupSingle.connect(myLocalTCWF, 'OutputSpec.posteriorImages', outputsSpec,'posteriorImages')
+        T1T2WorkupSingle.connect(myLocalTCWF, 'OutputSpec.outputLabels', outputsSpec,'outputLabels')
 
     return T1T2WorkupSingle
 

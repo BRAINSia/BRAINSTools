@@ -171,7 +171,7 @@ def MakeOneSubWorkFlow(projectid, subjectid, sessionid, BAtlas, WORKFLOW_COMPONE
         def getAllT1sLength(allT1s):
             return len(allT1s)
         T1T2WorkupSingle.connect( [ (inputsSpec, myLocalTCWF, [(('allT1s', getAllT1sLength), 'InputSpec.T1_count')] ), ])
-        T1T2WorkupSingle.connect( BAtlas,'AtlasPVDefinition_xml',myLocalTCWF,'InputSpec.atlasDefinition')
+        T1T2WorkupSingle.connect( BAtlas,'ExtendedAtlasDefinition.xml',myLocalTCWF,'InputSpec.atlasDefinition')
         T1T2WorkupSingle.connect( myLocalLMIWF, 'OutputSpec.outputResampledVolume', myLocalTCWF, 'InputSpec.PrimaryT1' )
         T1T2WorkupSingle.connect( myLocalLMIWF,'OutputSpec.atlasToSubjectTransform',myLocalTCWF,'InputSpec.atlasToSubjectInitialTransform')
 

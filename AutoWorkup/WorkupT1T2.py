@@ -87,7 +87,7 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
 
     print "Building Pipeline"
     ########### PIPELINE INITIALIZATION #############
-    baw200 = pe.Workflow(name="BAW_20120730")
+    baw200 = pe.Workflow(name="BAW_20120813")
     baw200.config['execution'] = {
                                      'plugin':'Linear',
                                      #'stop_on_first_crash':'true',
@@ -160,7 +160,7 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
             baw200.connect(BAtlas[subjectid],'template_landmarks_31_fcsv', PHASE_1_oneSubjWorkflow[sessionid],'InputSpec.template_landmarks_31_fcsv')
             baw200.connect(BAtlas[subjectid],'template_landmark_weights_31_csv', PHASE_1_oneSubjWorkflow[sessionid],'InputSpec.template_landmark_weights_31_csv')
             baw200.connect(BAtlas[subjectid],'template_t1', PHASE_1_oneSubjWorkflow[sessionid],'InputSpec.template_t1')
-            baw200.connect(BAtlas[subjectid],'AtlasPVDefinition_xml', PHASE_1_oneSubjWorkflow[sessionid],'InputSpec.AtlasPVDefinition_xml')
+            baw200.connect(BAtlas[subjectid],'ExtendedAtlasDefinition_xml', PHASE_1_oneSubjWorkflow[sessionid],'InputSpec.atlasDefinition')
 
         numSessions=len(allSessions)
         if numSessions > 1: ## Merge all BCD_Results into a global average
@@ -283,7 +283,7 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                     run_without_submitting=True,
                     name='99_MakeNewAtlasTemplate')
             MakeNewAtlasTemplateNode.inputs.outDefinition='AtlasDefinition_'+subjectid+'.xml'
-            baw200.connect(BAtlas[subjectid],'AtlasPVDefinition_xml_in',MakeNewAtlasTemplateNode,'AtlasTemplate')
+            baw200.connect(BAtlas[subjectid],'ExtendedAtlasDefinition_xml_in',MakeNewAtlasTemplateNode,'AtlasTemplate')
             baw200.connect(buildTemplateIteration2,'OutputSpec.template',MakeNewAtlasTemplateNode,'t1_image')
             baw200.connect(buildTemplateIteration2,'OutputSpec.passive_deformed_templates',MakeNewAtlasTemplateNode,'deformed_list')
 
@@ -326,5 +326,5 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                baw200.connect(BAtlas[subjectid],'template_landmarks_31_fcsv', PHASE_2_oneSubjWorkflow[sessionid],'InputSpec.template_landmarks_31_fcsv')
                baw200.connect(BAtlas[subjectid],'template_landmark_weights_31_csv', PHASE_2_oneSubjWorkflow[sessionid],'InputSpec.template_landmark_weights_31_csv')
                baw200.connect(buildTemplateIteration2,'OutputSpec.template', PHASE_2_oneSubjWorkflow[sessionid],'InputSpec.template_t1')
-               baw200.connect(MakeNewAtlasTemplateNode,'outAtlasFullPath', PHASE_2_oneSubjWorkflow[sessionid],'InputSpec.AtlasPVDefinition_xml')
+               baw200.connect(MakeNewAtlasTemplateNode,'outAtlasFullPath', PHASE_2_oneSubjWorkflow[sessionid],'InputSpec.atlasDefinition')
     return baw200

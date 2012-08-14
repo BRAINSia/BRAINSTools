@@ -132,7 +132,7 @@ def main(argv=None):
         print("Copying a reference of the atlas to the experiment cache directory:\n    from: {0}\n    to: {1}".format(ATLASPATH,CACHE_ATLASPATH))
         copy_tree(ATLASPATH,CACHE_ATLASPATH,preserve_mode=1,preserve_times=1)
         ## Now generate the xml file with the correct pathing
-        file_replace(os.path.join(ATLASPATH,'AtlasPVDefinition.xml.in'),os.path.join(CACHE_ATLASPATH,'AtlasPVDefinition.xml'),"@ATLAS_DIRECTORY@",CACHE_ATLASPATH)
+        file_replace(os.path.join(ATLASPATH,'ExtendedAtlasDefinition.xml.in'),os.path.join(CACHE_ATLASPATH,'ExtendedAtlasDefinition.xml'),"@ATLAS_DIRECTORY@",CACHE_ATLASPATH)
     else:
         print("Atlas already exists in experiment cache directory: {0}".format(CACHE_ATLASPATH))
     #  Just to be safe, copy the model file as well

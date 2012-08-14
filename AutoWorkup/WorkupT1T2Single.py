@@ -127,7 +127,7 @@ def MakeOneSubWorkFlow(projectid, subjectid, sessionid,processing_phase, WORKFLO
                          'template_landmarks_31_fcsv',
                          'template_landmark_weights_31_csv',
                          'template_t1',
-                         'AtlasPVDefinition_xml'
+                         'atlasDefinition'
                          ]),
                          run_without_submitting=True,
                          name='InputSpec' )
@@ -177,7 +177,7 @@ def MakeOneSubWorkFlow(projectid, subjectid, sessionid,processing_phase, WORKFLO
         def getAllT1sLength(allT1s):
             return len(allT1s)
         T1T2WorkupSingle.connect( [ (inputsSpec, myLocalTCWF, [(('allT1s', getAllT1sLength), 'InputSpec.T1_count')] ), ])
-        T1T2WorkupSingle.connect( inputsSpec,'AtlasPVDefinition_xml',myLocalTCWF,'InputSpec.atlasDefinition')
+        T1T2WorkupSingle.connect( inputsSpec,'atlasDefinition',myLocalTCWF,'InputSpec.atlasDefinition')
         T1T2WorkupSingle.connect( myLocalLMIWF, 'OutputSpec.outputResampledVolume', myLocalTCWF, 'InputSpec.PrimaryT1' )
         T1T2WorkupSingle.connect( myLocalLMIWF,'OutputSpec.atlasToSubjectTransform',myLocalTCWF,'InputSpec.atlasToSubjectInitialTransform')
 

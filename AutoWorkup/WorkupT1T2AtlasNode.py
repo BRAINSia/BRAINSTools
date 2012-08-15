@@ -13,11 +13,12 @@ import os
 #atlas_file_names=atlas_file_list.split(' ')
 ## HACK
 atlas_file_names=["AtlasPVDefinition.xml","AtlasPVDefinition.xml.in",
-  "ExtendedAtlasDefinition.xml","ExtendedAtlasDefinition.xml.in","ALLPVAIR.nii.gz",
-                      "ALLPVBASALTISSUE.nii.gz","ALLPVCRBLGM.nii.gz",
-                      "ALLPVCRBLWM.nii.gz","ALLPVCSF.nii.gz","ALLPVNOTCSF.nii.gz",
-                      "ALLPVNOTGM.nii.gz","ALLPVNOTVB.nii.gz","ALLPVNOTWM.nii.gz",
-                      "ALLPVSURFGM.nii.gz","ALLPVVB.nii.gz","ALLPVWM.nii.gz",
+  "ExtendedAtlasDefinition.xml","ExtendedAtlasDefinition.xml.in",
+  "ALLPVAIR.nii.gz",
+  "ALLPVBASALTISSUE.nii.gz","ALLPVCRBLGM.nii.gz",
+  "ALLPVCRBLWM.nii.gz","ALLPVCSF.nii.gz","ALLPVNOTCSF.nii.gz",
+  "ALLPVNOTGM.nii.gz","ALLPVNOTVB.nii.gz","ALLPVNOTWM.nii.gz",
+  "ALLPVSURFGM.nii.gz","ALLPVVB.nii.gz","ALLPVWM.nii.gz",
                       "avg_t1.nii.gz","avg_t2.nii.gz","tempNOTVBBOX.nii.gz",
                       "template_ABC_lables.nii.gz","template_WMPM2_labels.nii.gz",
                       "template_WMPM2_labels.txt","template_brain.nii.gz",

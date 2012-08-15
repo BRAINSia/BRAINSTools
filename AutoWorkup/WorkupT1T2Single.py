@@ -72,25 +72,12 @@ def GetExtensionlessBaseName(filename):
 
 def get_list_element( nestedList, index ):
     return nestedList[index]
+
 def MakeList(firstElement,secondElement):
     return [firstElement, secondElement]
 
 def GenerateWFName(projectid, subjectid, sessionid,processing_phase):
     return 'WF_'+str(subjectid)+"_"+str(sessionid)+"_"+str(projectid)+"_"+processing_phase
-
-def GenerateOutputPattern(projectid, subjectid, sessionid,DefaultNodeName,uidIsFirst):
-    """ This function generates output path substitutions for workflows and nodes that conform to a common standard.
-    """
-    WFName=""#GenerateWFName(projectid,subjectid,sessionid)
-    patternList=[]
-    if uidIsFirst == True:
-        find_pat=os.path.join(DefaultNodeName,WFName)
-    else:
-        find_pat=os.path.join(WFName,DefaultNodeName)
-    replace_pat=os.path.join(projectid,subjectid,sessionid,DefaultNodeName)
-    patternList.append( (find_pat,replace_pat) )
-    print "HACK: ", patternList
-    return patternList
 
 ###########################################################################
 ###########################################################################
@@ -104,7 +91,7 @@ def GenerateOutputPattern(projectid, subjectid, sessionid,DefaultNodeName,uidIsF
 ###########################################################################
 ###########################################################################
 ###########################################################################
-def MakeOneSubWorkFlow(projectid, subjectid, sessionid,processing_phase, WORKFLOW_COMPONENTS, BCD_model_path, InterpolationMode, CLUSTER_QUEUE, ExperimentBaseDirectoryResults):
+def MakeOneSubWorkFlow(projectid, subjectid, sessionid,processing_phase, WORKFLOW_COMPONENTS, BCD_model_path, InterpolationMode, CLUSTER_QUEUE):
     """
     Run autoworkup on a single Subject
 
@@ -132,9 +119,15 @@ def MakeOneSubWorkFlow(projectid, subjectid, sessionid,processing_phase, WORKFLO
                          run_without_submitting=True,
                          name='InputSpec' )
 
-    outputsSpec = pe.Node(interface=IdentityInterface(fields=['BCD_ACPC_T1',
+    outputsSpec = pe.Node(interface=IdentityInterface(fields=[
             't1_average','t2_average',
-            'posteriorImages','outputLabels'
+            'posteriorImages','outputLabels',
+            'TissueClassifyOutputDir',
+
+            'BCD_ACPC_T1',
+            'outputLandmarksInACPCAlignedSpace',
+            'outputLandmarksInInputSpace',
+            'outputTransform','atlasToSubjectTransform'
             ]),
             run_without_submitting=True,
             name='OutputSpec' )
@@ -153,19 +146,12 @@ def MakeOneSubWorkFlow(projectid, subjectid, sessionid,processing_phase, WORKFLO
         T1T2WorkupSingle.connect( inputsSpec, 'template_landmark_weights_31_csv', myLocalLMIWF,'InputSpec.atlasWeightFilename')
         if 'AUXLMK' in WORKFLOW_COMPONENTS:
             T1T2WorkupSingle.connect(inputsSpec,'template_t1',myLocalLMIWF,'InputSpec.atlasVolume')
-
-        ### Now define where the final organized outputs should go.
-        BASIC_DataSink=pe.Node(nio.DataSink(),name="BASIC_DS")
-        BASIC_DataSink.inputs.base_directory=ExperimentBaseDirectoryResults
-        BASIC_DataSink.inputs.regexp_substitutions = GenerateOutputPattern(projectid, subjectid, sessionid,'ACPCAlign',False)
-
-        T1T2WorkupSingle.connect(myLocalLMIWF,'OutputSpec.outputLandmarksInACPCAlignedSpace',BASIC_DataSink,'ACPCAlign.@outputLandmarksInACPCAlignedSpace')
-        T1T2WorkupSingle.connect(myLocalLMIWF,'OutputSpec.outputResampledVolume',BASIC_DataSink,'ACPCAlign.@outputResampledVolume')
-        T1T2WorkupSingle.connect(myLocalLMIWF,'OutputSpec.outputLandmarksInInputSpace',BASIC_DataSink,'ACPCAlign.@outputLandmarksInInputSpace')
-        T1T2WorkupSingle.connect(myLocalLMIWF,'OutputSpec.outputTransform',BASIC_DataSink,'ACPCAlign.@outputTransform')
-        T1T2WorkupSingle.connect(myLocalLMIWF,'OutputSpec.atlasToSubjectTransform',BASIC_DataSink,'ACPCAlign.@atlasToSubjectTransform')
         ### Now connect OutputSpec
-        T1T2WorkupSingle.connect( myLocalLMIWF, 'OutputSpec.outputResampledVolume', outputsSpec, 'BCD_ACPC_T1' )
+        T1T2WorkupSingle.connect(myLocalLMIWF, 'OutputSpec.outputResampledVolume', outputsSpec, 'BCD_ACPC_T1' )
+        T1T2WorkupSingle.connect(myLocalLMIWF,'OutputSpec.outputLandmarksInACPCAlignedSpace',outputsSpec,'outputLandmarksInACPCAlignedSpace')
+        T1T2WorkupSingle.connect(myLocalLMIWF,'OutputSpec.outputLandmarksInInputSpace',outputsSpec,'outputLandmarksInInputSpace')
+        T1T2WorkupSingle.connect(myLocalLMIWF,'OutputSpec.outputTransform',outputsSpec,'outputTransform')
+        T1T2WorkupSingle.connect(myLocalLMIWF,'OutputSpec.atlasToSubjectTransform',outputsSpec,'atlasToSubjectTransform')
 
     if 'TISSUE_CLASSIFY' in WORKFLOW_COMPONENTS:
         from WorkupT1T2TissueClassifiy import CreateTissueClassifyWorkflow
@@ -181,41 +167,11 @@ def MakeOneSubWorkFlow(projectid, subjectid, sessionid,processing_phase, WORKFLO
         T1T2WorkupSingle.connect( myLocalLMIWF, 'OutputSpec.outputResampledVolume', myLocalTCWF, 'InputSpec.PrimaryT1' )
         T1T2WorkupSingle.connect( myLocalLMIWF,'OutputSpec.atlasToSubjectTransform',myLocalTCWF,'InputSpec.atlasToSubjectInitialTransform')
 
-        ### Now define where the final organized outputs should go.
-        TC_DataSink=pe.Node(nio.DataSink(),name="TISSUE_CLASSIFY_DS")
-        TC_DataSink.inputs.base_directory=ExperimentBaseDirectoryResults
-        TC_DataSink.inputs.regexp_substitutions = GenerateOutputPattern(projectid, subjectid, sessionid,'TissueClassify',False)
-        T1T2WorkupSingle.connect(myLocalTCWF, 'OutputSpec.TissueClassifyOutputDir', TC_DataSink,'TissueClassify.@TissueClassifyOutputDir')
-
         ### Now connect OutputSpec
         T1T2WorkupSingle.connect(myLocalTCWF, 'OutputSpec.t1_average', outputsSpec,'t1_average')
         T1T2WorkupSingle.connect(myLocalTCWF, 'OutputSpec.t2_average', outputsSpec,'t2_average')
         T1T2WorkupSingle.connect(myLocalTCWF, 'OutputSpec.posteriorImages', outputsSpec,'posteriorImages')
         T1T2WorkupSingle.connect(myLocalTCWF, 'OutputSpec.outputLabels', outputsSpec,'outputLabels')
+        T1T2WorkupSingle.connect(myLocalTCWF, 'OutputSpec.TissueClassifyOutputDir', outputsSpec,'TissueClassifyOutputDir')
 
     return T1T2WorkupSingle
-
-#############
-## The following are just notes, and not really part of this script.
-##
-        #T1T2WorkupSingle.connect(myLocalLMIWF, 'OutputSpec.outputLandmarksInACPCAlignedSpace', T1T2WorkupSingleDataSink,'foo.@outputLandmarksInACPCAlignedSpace')
-        #T1T2WorkupSingle.connect(myLocalLMIWF, 'OutputSpec.outputResampledVolume', T1T2WorkupSingleDataSink,'foo.@outputResampledVolume')
-        #T1T2WorkupSingle.connect(myLocalLMIWF, 'OutputSpec.outputLandmarksInInputSpace', T1T2WorkupSingleDataSink,'foo.@outputLandmarksInInputSpace')
-        #T1T2WorkupSingle.connect(myLocalLMIWF, 'OutputSpec.outputTransform', T1T2WorkupSingleDataSink,'foo.@outputTransform')
-        #T1T2WorkupSingle.connect(myLocalLMIWF, 'OutputSpec.outputMRML', T1T2WorkupSingleDataSink,'foo.@outputMRML')
-"""
-    subs=r'test/\g<project>/\g<subject>/\g<session>'
-pe.sub(subs,test)
-pat=r'foo/_uid_(?P<project>PHD_[0-9][0-9][0-9])_(?P<subject>[0-9][0-9][0-9][0-9])_(?P<session>[0-9][0-9][0-9][0-9][0-9])'
-pe=re.compile(pat)
-pe.sub(subs,test)
-test
-test='foo/_uid_PHD_024_0003_12345'
-pe.sub(subs,test)
-pat=r'(?P<modulename>[^/]*)/_uid_(?P<project>PHD_[0-9][0-9][0-9])_(?P<subject>[0-9][0-9][0-9][0-9])_(?P<session>[0-9][0-9][0-9][0-9][0-9])'
-subs=r'test/\g<project>/\g<subject>/\g<session>/\g<modulename>'
-pe.sub(subs,test)
-pe=re.compile(pat)
-pe.sub(subs,test)
-
-"""

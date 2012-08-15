@@ -62,6 +62,17 @@ def GenerateSubjectOutputPattern(subjectid):
     print "HACK: ", patternList
     return patternList
 
+def GenerateOutputPattern(projectid, subjectid, sessionid,DefaultNodeName):
+    """ This function generates output path substitutions for workflows and nodes that conform to a common standard.
+    """
+    patternList=[]
+    find_pat=os.path.join(DefaultNodeName)
+    replace_pat=os.path.join(projectid,subjectid,sessionid,DefaultNodeName)
+    patternList.append( (find_pat,replace_pat) )
+    print "HACK: ", patternList
+    return patternList
+
+
 ###########################################################################
 ###########################################################################
 ###########################################################################
@@ -147,8 +158,7 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
             PHASE_1_oneSubjWorkflow[sessionid]=WorkupT1T2Single.MakeOneSubWorkFlow(
                               projectid, subjectid, sessionid,PROCESSING_PHASE,
                               PHASE_1_WORKFLOW_COMPONENTS,
-                              BCD_model_path, InterpolationMode, CLUSTER_QUEUE,
-                              ExperimentBaseDirectoryResults)
+                              BCD_model_path, InterpolationMode, CLUSTER_QUEUE)
             baw200.connect(PHASE_1_subjInfoNode[sessionid],'projectid',PHASE_1_oneSubjWorkflow[sessionid],'InputSpec.projectid')
             baw200.connect(PHASE_1_subjInfoNode[sessionid],'subjectid',PHASE_1_oneSubjWorkflow[sessionid],'InputSpec.subjectid')
             baw200.connect(PHASE_1_subjInfoNode[sessionid],'sessionid',PHASE_1_oneSubjWorkflow[sessionid],'InputSpec.sessionid')
@@ -261,8 +271,8 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                     'AVG_CAUDATEWARP_AVG_CAUDATE.nii.gz': '@ATLAS_DIRECTORY@/EXTENDED_CAUDATE.nii.gz',
                     'AVG_PUTAMENWARP_AVG_PUTAMEN.nii.gz': '@ATLAS_DIRECTORY@/EXTENDED_PUTAMEN.nii.gz',
                     'AVG_GLOBUSWARP_AVG_GLOBUS.nii.gz': '@ATLAS_DIRECTORY@/EXTENDED_GLOBUS.nii.gz',
-                    'AVG_THALAMUS_AVG_THALAMUS.nii.gz': '@ATLAS_DIRECTORY@/EXTENDED_THALAMUS.nii.gz',
-                    'AVG_HIPPOCAMPUS_AVG_HIPPOCAMPUS.nii.gz': '@ATLAS_DIRECTORY@/EXTENDED_HIPPOCAMPUS.nii.gz',
+                    'AVG_THALAMUSWARP_AVG_THALAMUS.nii.gz': '@ATLAS_DIRECTORY@/EXTENDED_THALAMUS.nii.gz',
+                    'AVG_HIPPOCAMPUSWARP_AVG_HIPPOCAMPUS.nii.gz': '@ATLAS_DIRECTORY@/EXTENDED_HIPPOCAMPUS.nii.gz',
                     'AVG_T2WARP_AVG_T2.nii.gz':'@ATLAS_DIRECTORY@/template_t2.nii.gz',
                     'AVG_BRAINMASKWARP_AVG_BRAINMASK.nii.gz':'@ATLAS_DIRECTORY@/template_brain.nii.gz',
                     'T1_RESHAPED.nii.gz':'@ATLAS_DIRECTORY@/template_t1.nii.gz'
@@ -296,6 +306,8 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
             ###### Starting Phase II
             PHASE_2_oneSubjWorkflow=dict()
             PHASE_2_subjInfoNode=dict()
+            BASIC_DataSink=dict()
+            TC_DataSink=dict()
             for sessionid in allSessions:
                projectid = ExperimentDatabase.getProjFromSession(sessionid)
                print("PHASE II PROJECT: {0} SUBJECT: {1} SESSION: {2}".format(projectid,subjectid,sessionid))
@@ -319,8 +331,7 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                PHASE_2_oneSubjWorkflow[sessionid]=WorkupT1T2Single.MakeOneSubWorkFlow(
                                  projectid, subjectid, sessionid,PROCESSING_PHASE,
                                  WORKFLOW_COMPONENTS,
-                                 BCD_model_path, InterpolationMode, CLUSTER_QUEUE,
-                                 ExperimentBaseDirectoryResults)
+                                 BCD_model_path, InterpolationMode, CLUSTER_QUEUE)
                baw200.connect(PHASE_2_subjInfoNode[sessionid],'projectid',PHASE_2_oneSubjWorkflow[sessionid],'InputSpec.projectid')
                baw200.connect(PHASE_2_subjInfoNode[sessionid],'subjectid',PHASE_2_oneSubjWorkflow[sessionid],'InputSpec.subjectid')
                baw200.connect(PHASE_2_subjInfoNode[sessionid],'sessionid',PHASE_2_oneSubjWorkflow[sessionid],'InputSpec.sessionid')
@@ -333,4 +344,22 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                baw200.connect(BAtlas[subjectid],'template_landmark_weights_31_csv', PHASE_2_oneSubjWorkflow[sessionid],'InputSpec.template_landmark_weights_31_csv')
                baw200.connect(buildTemplateIteration2,'OutputSpec.template', PHASE_2_oneSubjWorkflow[sessionid],'InputSpec.template_t1')
                baw200.connect(MakeNewAtlasTemplateNode,'outAtlasFullPath', PHASE_2_oneSubjWorkflow[sessionid],'InputSpec.atlasDefinition')
+
+               ### Now define where the final organized outputs should go.
+               BASIC_DataSink[sessionid]=pe.Node(nio.DataSink(),name="BASIC_DS_"+str(subjectid)+"_"+str(sessionid))
+               BASIC_DataSink[sessionid].inputs.base_directory=ExperimentBaseDirectoryResults
+               BASIC_DataSink[sessionid].inputs.regexp_substitutions = GenerateOutputPattern(projectid, subjectid, sessionid,'ACPCAlign')
+
+               baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'OutputSpec.outputLandmarksInACPCAlignedSpace',BASIC_DataSink[sessionid],'ACPCAlign.@outputLandmarksInACPCAlignedSpace')
+               baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'OutputSpec.BCD_ACPC_T1',BASIC_DataSink[sessionid],'ACPCAlign.@BCD_ACPC_T1')
+               baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'OutputSpec.outputLandmarksInInputSpace',BASIC_DataSink[sessionid],'ACPCAlign.@outputLandmarksInInputSpace')
+               baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'OutputSpec.outputTransform',BASIC_DataSink[sessionid],'ACPCAlign.@outputTransform')
+               baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'OutputSpec.atlasToSubjectTransform',BASIC_DataSink[sessionid],'ACPCAlign.@atlasToSubjectTransform')
+
+               ### Now define where the final organized outputs should go.
+               TC_DataSink[sessionid]=pe.Node(nio.DataSink(),name="TISSUE_CLASSIFY_DS_"+str(subjectid)+"_"+str(sessionid))
+               TC_DataSink[sessionid].inputs.base_directory=ExperimentBaseDirectoryResults
+               TC_DataSink[sessionid].inputs.regexp_substitutions = GenerateOutputPattern(projectid, subjectid, sessionid,'TissueClassify')
+               baw200.connect(PHASE_2_oneSubjWorkflow[sessionid], 'OutputSpec.TissueClassifyOutputDir', TC_DataSink[sessionid],'TissueClassify.@TissueClassifyOutputDir')
+
     return baw200

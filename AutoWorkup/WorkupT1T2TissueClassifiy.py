@@ -167,10 +167,10 @@ def CreateTissueClassifyWorkflow(WFname,CLUSTER_QUEUE,InterpolationMode):
     tissueClassifyWF.connect(BABCext,'outputDir',outputsSpec,'TissueClassifyOutputDir')
 
     def MakePosteriorDictionaryFunc(posteriorImages):
-        posteriorNames=['WM','SURFGM','BGM','CRBLGM','CRBLWM','CSF','VB','NOTCSF','NOTGM','NOTWM','NOTVB','AIR']
+        posteriorNames=['WM', 'SURFGM', 'ACCUMBEN', 'CAUDATE', 'PUTAMEN', 'GLOBUS', 'THALAMUS', 'HIPPOCAMPUS', 'CRBLGM', 'CRBLWM', 'CSF', 'VB', 'NOTCSF', 'NOTGM', 'NOTWM', 'NOTVB', 'AIR']
         if len(posteriorNames) != len(posteriorImages):
             print "ERROR: ", posteriorNames
-            print "ERROR: ", postiorImages
+            print "ERROR: ", posteriorImages
             return -1
         temp_dictionary=dict(zip(posteriorNames,posteriorImages))
         return temp_dictionary

@@ -195,6 +195,12 @@ public:
   itkGetMacro(TemplateGenericTransform, GenericTransformType::Pointer);
   itkSetMacro(TemplateGenericTransform, GenericTransformType::Pointer);
 
+  /**
+   * Set the index of the background region
+   */
+  itkGetMacro(AirIndex, LOOPITERTYPE);
+  itkSetMacro(AirIndex, LOOPITERTYPE);
+
   void SetWarpGrid(unsigned int gx, unsigned int gy, unsigned int gz)
   {
     m_WarpGrid[0] = gx;
@@ -319,6 +325,7 @@ private:
   std::vector<std::string> m_PriorNames;
   std::vector<size_t>      m_ClassToPriorMapping;
   RangeDBType              m_TissueTypeThresholdMapsRange;
+  LOOPITERTYPE             m_AirIndex;
 };
 
 #ifndef MU_MANUAL_INSTANTIATION

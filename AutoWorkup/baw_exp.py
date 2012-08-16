@@ -104,6 +104,8 @@ def main(argv=None):
     PYTHON_AUX_PATHS=PYTHON_AUX_PATHS.split(':')
     PYTHON_AUX_PATHS.extend(sys.path)
     sys.path=PYTHON_AUX_PATHS
+    #print sys.path
+    #import SimpleITK
     #     Prepend the shell environment search paths
     PROGRAM_PATHS=expConfig.get(input_arguments.processingEnvironment,'PROGRAM_PATHS')
     PROGRAM_PATHS=PROGRAM_PATHS.split(':')

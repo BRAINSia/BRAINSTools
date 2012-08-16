@@ -248,12 +248,12 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
             SubjectTemplate_DataSink.inputs.base_directory=ExperimentBaseDirectoryResults
             SubjectTemplate_DataSink.inputs.regexp_substitutions = GenerateSubjectOutputPattern(subjectid)
             baw200.connect(buildTemplateIteration2,'OutputSpec.template',SubjectTemplate_DataSink,'ANTSTemplate.@template')
-            baw200.connect(buildTemplateIteration2,'OutputSpec.passive_deformed_templates',SubjectTemplate_DataSink,'ANTSTemplate.@passive_deformed_templates')
 
             def MakeNewAtlasTemplate(t1_image,deformed_list,
                         AtlasTemplate,outDefinition):
                 import os
                 import sys
+                import SimpleITK as sitk
                 patternDict= {
                     'AVG_AIRWARP_AVG_AIR.nii.gz':'@ATLAS_DIRECTORY@/EXTENDED_AIR.nii.gz',
                     'AVG_BGMWARP_AVG_BGM.nii.gz':'@ATLAS_DIRECTORY@/EXTENDED_BASALTISSUE.nii.gz',
@@ -280,7 +280,52 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                 templateFile = open(AtlasTemplate,'r')
                 content = templateFile.read()              # read entire file into memory
                 templateFile.close()
+
+                ## Now clean up the posteriors based on anatomical knowlege.
+                ## sometimes the posteriors are not relevant for priors
+                ## due to anomolies around the edges.
+                load_images_list=dict()
                 for full_pathname in deformed_list:
+                        base_name=os.path.basename(full_pathname)
+                        if base_name in patternDict.keys():
+                            load_images_list[base_name]=sitk.ReadImage(full_pathname)
+                ## Make binary dilated mask
+                binmask=sitk.BinaryThreshold(load_images_list['AVG_BRAINMASKWARP_AVG_BRAINMASK.nii.gz'],1,1000000)
+                dilated5=sitk.DilateObjectMorphology(binmask,5)
+                dilated5=sitk.Cast(dilated5,sitk.sitkFloat32) # Convert to Float32 for multiply
+                binmask=None
+                ## Now clip the interior brain mask with dilated5
+                interiorPriors = [
+                    'AVG_BGMWARP_AVG_BGM.nii.gz',
+                    'AVG_CRBLGMWARP_AVG_CRBLGM.nii.gz',
+                    'AVG_CRBLWMWARP_AVG_CRBLWM.nii.gz',
+                    'AVG_CSFWARP_AVG_CSF.nii.gz',
+                    'AVG_SURFGMWARP_AVG_SURFGM.nii.gz',
+                    'AVG_VBWARP_AVG_VB.nii.gz',
+                    'AVG_WMWARP_AVG_WM.nii.gz',
+                    'AVG_ACCUMBENWARP_AVG_ACCUMBEN.nii.gz',
+                    'AVG_CAUDATEWARP_AVG_CAUDATE.nii.gz',
+                    'AVG_PUTAMENWARP_AVG_PUTAMEN.nii.gz',
+                    'AVG_GLOBUSWARP_AVG_GLOBUS.nii.gz',
+                    'AVG_THALAMUSWARP_AVG_THALAMUS.nii.gz',
+                    'AVG_HIPPOCAMPUSWARP_AVG_HIPPOCAMPUS.nii.gz',
+                    ]
+                clean_deformed_list=deformed_list
+                for index in range(0,len(deformed_list)):
+                        full_pathname=deformed_list[index]
+                        base_name=os.path.basename(full_pathname)
+                        if base_name in interiorPriors:
+                            curr=sitk.Cast(sitk.ReadImage(full_pathname),sitk.sitkFloat32)
+                            curr=curr*dilated5
+                            clipped_name='CLIPPED_'+base_name
+                            patternDict[clipped_name]=patternDict[base_name]
+                            sitk.WriteImage(curr,clipped_name)
+                            clean_deformed_list[index]=os.path.realpath(clipped_name)
+                            print "HACK: ", clean_deformed_list[index]
+                            curr=None
+                dilated5=None
+
+                for full_pathname in clean_deformed_list:
                         base_name=os.path.basename(full_pathname)
                         if base_name in patternDict.keys():
                                 content=content.replace(patternDict[base_name],full_pathname)
@@ -292,16 +337,17 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                 newFile = open(outAtlasFullPath, 'w')
                 newFile.write(content)  # write the file with the text substitution
                 newFile.close()
-                return outAtlasFullPath
+                return outAtlasFullPath,clean_deformed_list
             MakeNewAtlasTemplateNode = pe.Node(interface=Function(function=MakeNewAtlasTemplate,
                     input_names=['t1_image', 'deformed_list','AtlasTemplate','outDefinition'],
-                    output_names=['outAtlasFullPath']),
+                    output_names=['outAtlasFullPath','clean_deformed_list']),
                     run_without_submitting=True,
                     name='99_MakeNewAtlasTemplate')
             MakeNewAtlasTemplateNode.inputs.outDefinition='AtlasDefinition_'+subjectid+'.xml'
             baw200.connect(BAtlas[subjectid],'ExtendedAtlasDefinition_xml_in',MakeNewAtlasTemplateNode,'AtlasTemplate')
             baw200.connect(buildTemplateIteration2,'OutputSpec.template',MakeNewAtlasTemplateNode,'t1_image')
             baw200.connect(buildTemplateIteration2,'OutputSpec.passive_deformed_templates',MakeNewAtlasTemplateNode,'deformed_list')
+            baw200.connect(MakeNewAtlasTemplateNode,'clean_deformed_list',SubjectTemplate_DataSink,'ANTSTemplate.@passive_deformed_templates')
 
             ###### Starting Phase II
             PHASE_2_oneSubjWorkflow=dict()

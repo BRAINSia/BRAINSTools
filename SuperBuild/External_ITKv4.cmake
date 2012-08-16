@@ -79,7 +79,7 @@ if(NOT DEFINED ${extProjName}_DIR AND NOT ${USE_SYSTEM_${extProjName}})
     )
   ### --- End Project specific additions
   set(${proj}_REPOSITORY ${git_protocol}://itk.org/ITK.git)
-  set(${proj}_GIT_TAG 2d08b1f98530b9dcf0c5a3538c5968cadab3e987) #2012-08-01 -- Performance enhancement for MI and NCC
+  set(${proj}_GIT_TAG 1ac95d67a5bd0d759b59545780429107a37e0e1e) #2012-08-16 -- Performance enhancement for all V4 metrics
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${${proj}_REPOSITORY}
     GIT_TAG ${${proj}_GIT_TAG}

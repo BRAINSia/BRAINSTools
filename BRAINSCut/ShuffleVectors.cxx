@@ -251,24 +251,23 @@ ShuffleVectors::Shuffling()
         std::cout << current_percent << "% " << std::endl;
         }
       }
-    if( inputVectorFileStream.eof() )
+
+    if( (vectorIndex + 1) % m_input_TVC == 1 ) // vector index starts from 0
       {
-      if( (vectorIndex + 1) % m_input_TVC == 1 ) // vector index starts from 0
-        {
-        std::cout << "*** Re-open the vector file" << std::endl;
-        // read input vector file stream from the first again
-        inputVectorFileStream.close();
-        inputVectorFileStream.open( m_inputVectorFilename.c_str(),
-                                    std::ios::in | std::ios::binary);
-        }
-      else
-        {
-        std::cerr << "Premature end of file at record "
-                  << vectorIndex << std::endl
-                  << (vectorIndex + 1) % m_input_TVC << " != 1" << std::endl;
-        break; // TODO throw error here
-        }
+      std::cout << "*** Re-open the vector file" << std::endl;
+      // read input vector file stream from the first again
+      inputVectorFileStream.close();
+      inputVectorFileStream.open( m_inputVectorFilename.c_str(),
+                                  std::ios::in | std::ios::binary);
       }
+    else if( inputVectorFileStream.eof() )
+      {
+      std::cerr << "Premature end of file at record "
+                << vectorIndex << std::endl
+                << (vectorIndex + 1) % m_input_TVC << " != 1" << std::endl;
+      break; // TODO throw error here
+      }
+
     // read in the record
     inputVectorFileStream.read( (char *)buf, recordsize );
     /*

@@ -50,15 +50,37 @@ from WorkupT1T2AtlasNode import MakeAtlasNode
 #HACK:  [('buildTemplateIteration2', 'SUBJECT_TEMPLATES/0249/buildTemplateIteration2')]
 def GenerateSubjectOutputPattern(subjectid):
     """ This function generates output path substitutions for workflows and nodes that conform to a common standard.
-    """
+HACK:  [('ANTSTemplate/Iteration02_Reshaped.nii.gz', 'SUBJECT_TEMPLATES/0668/T1_RESHAPED.nii.gz'),
+('ANTSTemplate/_ReshapeAveragePassiveImageWithShapeUpdate[0-9]*', 'SUBJECT_TEMPLATES/0668')]
+subs=r'test/\g<project>/\g<subject>/\g<session>'
+pe.sub(subs,test)
+pat=r'foo/_uid_(?P<project>PHD_[0-9][0-9][0-9])_(?P<subject>[0-9][0-9][0-9][0-9])_(?P<session>[0-9][0-9][0-9][0-9][0-9])'
+pe=re.compile(pat)
+pe.sub(subs,test)
+test
+test='foo/_uid_PHD_024_0003_12345'
+pe.sub(subs,test)
+pat=r'(?P<modulename>[^/]*)/_uid_(?P<project>PHD_[0-9][0-9][0-9])_(?P<subject>[0-9][0-9][0-9][0-9])_(?P<session>[0-9][0-9][0-9][0-9][0-9])'
+subs=r'test/\g<project>/\g<subject>/\g<session>/\g<modulename>'
+pe.sub(subs,test)
+pe=re.compile(pat)
+pe.sub(subs,test)
+
+"""
     patternList=[]
+
     find_pat=os.path.join('ANTSTemplate','Iteration02_Reshaped.nii.gz')
-    replace_pat=os.path.join('SUBJECT_TEMPLATES',subjectid,'T1_RESHAPED.nii.gz')
+    replace_pat=os.path.join('SUBJECT_TEMPLATES',subjectid,r'AVG_T1.nii.gz')
     patternList.append( (find_pat,replace_pat) )
-    find_pat=os.path.join('ANTSTemplate','_ReshapeAveragePassiveImageWithShapeUpdate[0-9]*')
-    replace_pat=os.path.join('SUBJECT_TEMPLATES',subjectid)
+
+    find_pat=os.path.join('ANTSTemplate',r'_ReshapeAveragePassiveImageWithShapeUpdate[0-9]*/AVG_[A-Z0-9]*WARP_(?P<structure>AVG_[A-Z0-9]*.nii.gz)')
+    replace_pat=os.path.join('SUBJECT_TEMPLATES',subjectid,r'\g<structure>')
     patternList.append( (find_pat,replace_pat) )
-    print "HACK: ", patternList
+
+    find_pat=os.path.join('ANTSTemplate',r'CLIPPED_AVG_[A-Z]*WARP_(?P<structure>AVG_[A-Z]*.nii.gz)')
+    replace_pat=os.path.join('SUBJECT_TEMPLATES',subjectid,r'\g<structure>')
+    patternList.append( (find_pat,replace_pat) )
+
     print "HACK: ", patternList
     return patternList
 
@@ -293,7 +315,6 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                 binmask=sitk.BinaryThreshold(load_images_list['AVG_BRAINMASKWARP_AVG_BRAINMASK.nii.gz'],1,1000000)
                 dilated5=sitk.DilateObjectMorphology(binmask,5)
                 dilated5=sitk.Cast(dilated5,sitk.sitkFloat32) # Convert to Float32 for multiply
-                binmask=None
                 ## Now clip the interior brain mask with dilated5
                 interiorPriors = [
                     'AVG_BGMWARP_AVG_BGM.nii.gz',
@@ -314,7 +335,14 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                 for index in range(0,len(deformed_list)):
                         full_pathname=deformed_list[index]
                         base_name=os.path.basename(full_pathname)
+                        if base_name == 'AVG_BRAINMASKWARP_AVG_BRAINMASK.nii.gz':
+                            ### Make Brain Mask Binary
+                            clipped_name='CLIPPED_'+base_name
+                            patternDict[clipped_name]=patternDict[base_name]
+                            sitk.WriteImage(binmask,clipped_name)
+                            clean_deformed_list[index]=os.path.realpath(clipped_name)
                         if base_name in interiorPriors:
+                            ### Make clipped posteriors for brain regions
                             curr=sitk.Cast(sitk.ReadImage(full_pathname),sitk.sitkFloat32)
                             curr=curr*dilated5
                             clipped_name='CLIPPED_'+base_name
@@ -323,6 +351,7 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                             clean_deformed_list[index]=os.path.realpath(clipped_name)
                             print "HACK: ", clean_deformed_list[index]
                             curr=None
+                binmask=None
                 dilated5=None
 
                 for full_pathname in clean_deformed_list:

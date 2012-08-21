@@ -47,7 +47,7 @@ list(APPEND ExternalData_URL_TEMPLATES
   # Local data store populated by the ITK pre-commit hook
   "file:///${${PROJECT_NAME}_SOURCE_DIR}/.ExternalData/%(algo)/%(hash)"
   # Data published by Iowa Psychiatry web interface
-  "http://www.psychiatry.uiowa.edu/users/brainstestdata/ctestdata/%(algo)/%(hash)"
+  ## This server is now obsolete "http://www.psychiatry.uiowa.edu/users/brainstestdata/ctestdata/%(algo)/%(hash)"
   # Data published by MIDAS
   "http://midas.kitware.com/api/rest/midas.bitstream.by.hash?hash=%(hash)&algorithm=%(algo)"
   # Data published by developers using git-gerrit-push.

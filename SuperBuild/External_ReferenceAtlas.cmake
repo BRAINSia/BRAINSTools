@@ -50,7 +50,7 @@ if(NOT DEFINED ${extProjName}_DIR OR NOT DEFINED ATLAS_NAME)
       -DATLAS_VERSION:STRING=${ATLAS_VERSION}
       )
   ### --- End Project specific additions
-  set(ATLAS_URL http://www.psychiatry.uiowa.edu/users/brainstestdata/Atlas_${ATLAS_VERSION}.tar.gz)
+  set(ATLAS_URL http://slicer.kitware.com/midas3/download?items=6599?reult=Atlas_20120813.tar.gz) ## Midas version of Atlas:  Atlas_20120813.tar.gz
   set(ATLAS_NAME Atlas/Atlas_${ATLAS_VERSION})
   ExternalProject_add(${proj}
     URL ${ATLAS_URL}

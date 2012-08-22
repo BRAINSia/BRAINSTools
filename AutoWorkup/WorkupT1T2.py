@@ -94,6 +94,16 @@ def GenerateOutputPattern(projectid, subjectid, sessionid,DefaultNodeName):
     print "HACK: ", patternList
     return patternList
 
+def GenerateAccumulatorImagesOutputPattern(projectid, subjectid, sessionid):
+    """ This function generates output path substitutions for workflows and nodes that conform to a common standard.
+    """
+    patternList=[]
+    find_pat="POSTERIOR_"
+    replace_pat=os.path.join(projectid,subjectid,sessionid)+"/POSTERIOR_"
+    patternList.append( (find_pat,replace_pat) )
+    print "HACK: ", patternList
+    return patternList
+
 
 ###########################################################################
 ###########################################################################
@@ -370,7 +380,7 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
             MakeNewAtlasTemplateNode = pe.Node(interface=Function(function=MakeNewAtlasTemplate,
                     input_names=['t1_image', 'deformed_list','AtlasTemplate','outDefinition'],
                     output_names=['outAtlasFullPath','clean_deformed_list']),
-                    run_without_submitting=True,
+                    # This is a lot of work, so submit it run_without_submitting=True,
                     name='99_MakeNewAtlasTemplate')
             MakeNewAtlasTemplateNode.inputs.outDefinition='AtlasDefinition_'+subjectid+'.xml'
             baw200.connect(BAtlas[subjectid],'ExtendedAtlasDefinition_xml_in',MakeNewAtlasTemplateNode,'AtlasTemplate')
@@ -383,6 +393,9 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
             PHASE_2_subjInfoNode=dict()
             BASIC_DataSink=dict()
             TC_DataSink=dict()
+            AddLikeTissueSink=dict()
+            AccumulateLikeTissuePosteriorsNode=dict()
+            AccumulateLikeTissuePosteriors=dict()
             for sessionid in allSessions:
                projectid = ExperimentDatabase.getProjFromSession(sessionid)
                print("PHASE II PROJECT: {0} SUBJECT: {1} SESSION: {2}".format(projectid,subjectid,sessionid))
@@ -436,5 +449,74 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                TC_DataSink[sessionid].inputs.base_directory=ExperimentBaseDirectoryResults
                TC_DataSink[sessionid].inputs.regexp_substitutions = GenerateOutputPattern(projectid, subjectid, sessionid,'TissueClassify')
                baw200.connect(PHASE_2_oneSubjWorkflow[sessionid], 'OutputSpec.TissueClassifyOutputDir', TC_DataSink[sessionid],'TissueClassify.@TissueClassifyOutputDir')
+
+               ### Now clean up by adding together many of the items PHASE_2_oneSubjWorkflow
+               def AccumulateLikeTissuePosteriors(posteriorImages):
+                  import os
+                  import sys
+                  import SimpleITK as sitk
+                  ## Now clean up the posteriors based on anatomical knowlege.
+                  ## sometimes the posteriors are not relevant for priors
+                  ## due to anomolies around the edges.
+                  load_images_list=dict()
+                  for full_pathname in posteriorImages.values():
+                        base_name=os.path.basename(full_pathname)
+                        load_images_list[base_name]=sitk.ReadImage(full_pathname)
+                  GM_ACCUM=[
+                            'POSTERIOR_ACCUMBEN.nii.gz',
+                            'POSTERIOR_CAUDATE.nii.gz',
+                            'POSTERIOR_CRBLGM.nii.gz',
+                            'POSTERIOR_HIPPOCAMPUS.nii.gz',
+                            'POSTERIOR_PUTAMEN.nii.gz',
+                            'POSTERIOR_THALAMUS.nii.gz',
+                            'POSTERIOR_SURFGM.nii.gz',
+                           ]
+                  WM_ACCUM=[
+                            'POSTERIOR_CRBLWM.nii.gz',
+                            'POSTERIOR_WM.nii.gz'
+                            ]
+                  CSF_ACCUM=[
+                            'POSTERIOR_CSF.nii.gz',
+                            ]
+                  VB_ACCUM=[
+                            'POSTERIOR_VB.nii.gz',
+                            ]
+                  GLOBUS_ACCUM=[
+                            'POSTERIOR_GLOBUS.nii.gz',
+                            ]
+                  BACKGROUND_ACCUM=[
+                            'POSTERIOR_AIR.nii.gz',
+                            'POSTERIOR_NOTCSF.nii.gz',
+                            'POSTERIOR_NOTGM.nii.gz',
+                            'POSTERIOR_NOTVB.nii.gz',
+                            'POSTERIOR_NOTWM.nii.gz',
+                            ]
+                  SummaryDictionary={'POSTERIOR_GM_TOTAL.nii.gz':  GM_ACCUM, 'POSTERIOR_WM_TOTAL.nii.gz': WM_ACCUM,
+                                     'POSTERIOR_CSF_TOTAL.nii.gz': CSF_ACCUM, 'POSTERIOR_VB_TOTAL.nii.gz':VB_ACCUM,
+                                     'POSTERIOR_GLOBUS_TOTAL.nii.gz': GLOBUS_ACCUM,
+                                     'POSTERIOR_BACKGROUND_TOTAL.nii.gz': BACKGROUND_ACCUM }
+                  AccumulatePriorsList=list()
+                  for outname, inlist in SummaryDictionary.items():
+                        accum_image= load_images_list[ inlist[0] ] # copy first image
+                        for curr_image in range(1,len(inlist)):
+                            accum_image=accum_image + load_images_list[ inlist[curr_image] ]
+                        sitk.WriteImage(accum_image,outname)
+                        AccumulatePriorsList.append(os.path.realpath(outname))
+                  print "HACK \n\n\n\n\n\n\n HACK \n\n\n: AccumulatePriorsList\n",AccumulatePriorsList
+                  return AccumulatePriorsList
+               currentAccumulateLikeTissuePosteriorsName='AccumulateLikeTissuePosteriors_'+str(subjectid)+"_"+str(sessionid)
+               AccumulateLikeTissuePosteriorsNode[sessionid] = pe.Node(interface=Function(function=AccumulateLikeTissuePosteriors,
+                    input_names=['posteriorImages'],
+                    output_names=['AccumulatePriorsList']),
+                    name=currentAccumulateLikeTissuePosteriorsName)
+               baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],
+'OutputSpec.posteriorImages',AccumulateLikeTissuePosteriorsNode[sessionid],'posteriorImages')
+
+               ### Now define where the final organized outputs should go.
+               AddLikeTissueSink[sessionid]=pe.Node(nio.DataSink(),name="ACCUMULATED_POSTERIORS"+str(subjectid)+"_"+str(sessionid))
+               AddLikeTissueSink[sessionid].inputs.base_directory=ExperimentBaseDirectoryResults
+               #AddLikeTissueSink[sessionid].inputs.regexp_substitutions = GenerateAccumulatorImagesOutputPattern(projectid, subjectid, sessionid)
+               AddLikeTissueSink[sessionid].inputs.regexp_substitutions = GenerateOutputPattern(projectid, subjectid, sessionid,'ACCUMULATED_POSTERIORS')
+               baw200.connect(AccumulateLikeTissuePosteriorsNode[sessionid], 'AccumulatePriorsList', AddLikeTissueSink[sessionid],'ACCUMULATED_POSTERIORS.@AccumulateLikeTissuePosteriorsOutputDir')
 
     return baw200

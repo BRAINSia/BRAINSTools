@@ -32,8 +32,10 @@ set(SimpleITK_INSTALL_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/Si
 ExternalProject_add(SimpleITK
   SOURCE_DIR SimpleITK
   BINARY_DIR SimpleITK-build
-  GIT_REPOSITORY http://itk.org/SimpleITK.git
-  GIT_TAG dbd1c8aafd774626b5dc44731b373375cb595183
+  #   GIT_REPOSITORY ${git_protocol}://itk.org/SimpleITK.git
+  #   GIT_TAG dbd1c8aafd774626b5dc44731b373375cb595183
+  GIT_REPOSITORY ${git_protocol}://github.com/hjmjohnson/SimpleITK.git
+  GIT_TAG a8933ae6f2fa8faee5a526f4d536b812cf2dbee4
   CMAKE_ARGS
     -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}
     -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}

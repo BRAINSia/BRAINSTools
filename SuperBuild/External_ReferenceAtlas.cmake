@@ -43,14 +43,22 @@ if(NOT DEFINED ${extProjName}_DIR OR NOT DEFINED ATLAS_NAME)
   endif()
 
   ### --- Project specific additions here
-  set(ATLAS_VERSION 20120813)
+  set(ATLAS_VERSION ${ATLAS_VERSION})
 
   set(${proj}_CMAKE_OPTIONS
       -DReferenceAtlas_XML_DIR:PATH=<BINARY_DIR>
       -DATLAS_VERSION:STRING=${ATLAS_VERSION}
       )
   ### --- End Project specific additions
-  set(ATLAS_URL http://slicer.kitware.com/midas3/download?items=6599?reult=Atlas_20120813.tar.gz) ## Midas version of Atlas:  Atlas_20120813.tar.gz
+                                                  ## Midas version of Atlas:  Atlas_${ATLAS_VERSION}.tar.gz
+  set(ATLAS_URL "http://slicer.kitware.com/midas3/download?items=6599?result=Atlas_${ATLAS_VERSION}.tar.gz")
+                                                                    #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                                                    #  This is ignored by midas, but allows the filename for download
+                                                                    #  to be generated.
+                                                                    #  It is a hack that seems to work.
+                                                                    #  If the atlas needs to be changed, then the items=#### will 
+                                                                    #  need to be determined from the slicer.kitware.com
+                                                                    #  web page and filled in appropriately.
   set(ATLAS_NAME Atlas/Atlas_${ATLAS_VERSION})
   ExternalProject_add(${proj}
     URL ${ATLAS_URL}

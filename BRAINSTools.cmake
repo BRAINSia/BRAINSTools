@@ -48,6 +48,8 @@ list(APPEND ExternalData_URL_TEMPLATES
   "file:///${${PROJECT_NAME}_SOURCE_DIR}/.ExternalData/%(algo)/%(hash)"
   # Data published by Iowa Psychiatry web interface
   ## This server is now obsolete "http://www.psychiatry.uiowa.edu/users/brainstestdata/ctestdata/%(algo)/%(hash)"
+  ## The primary new home for data
+  "http://slicer.kitware.com/midas3/api/rest?method=midas.bitstream.download&checksum=%(hash)"
   # Data published by MIDAS
   "http://midas.kitware.com/api/rest/midas.bitstream.by.hash?hash=%(hash)&algorithm=%(algo)"
   # Data published by developers using git-gerrit-push.

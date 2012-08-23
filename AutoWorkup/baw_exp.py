@@ -196,7 +196,8 @@ def main(argv=None):
 
     import SessionDB
     subjectDatabaseFile=os.path.join( ExperimentBaseDirectoryCache,'InternalWorkflowSubjectDB.db')
-    ExperimentDatabase=SessionDB.SessionDB(subjectDatabaseFile,input_arguments.subject)
+    subject_list=input_arguments.subject.split(',')
+    ExperimentDatabase=SessionDB.SessionDB(subjectDatabaseFile,subject_list)
     ## TODO:  Only make DB if db is older than subject_data_file.
     if ( not os.path.exists(subjectDatabaseFile) ) or ( os.path.getmtime(subjectDatabaseFile) < os.path.getmtime(subject_data_file) ):
         ExperimentDatabase.MakeNewDB(subject_data_file,mountPrefix)

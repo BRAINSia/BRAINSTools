@@ -4,11 +4,16 @@ import csv
 
 class SessionDB():
 
-    def __init__(self, defaultDBName='TempFileForDB.db',subject_filter='00000000000'):
+    def __init__(self, defaultDBName='TempFileForDB.db',subject_list=[]):
         self.MasterTableName = "MasterDB"
         self.dbName = defaultDBName
         self._local_openDB()
-        self.MasterQueryFilter = "SELECT * FROM {_tablename} WHERE subj='{_subjid}'".format(
+        subject_filter="( "
+        for curr_subject in subject_list:
+            subject_filter+=  "'"+curr_subject+"',"
+        subject_filter=subject_filter.rstrip(',') # Remove last ,
+        subject_filter+=" )"
+        self.MasterQueryFilter = "SELECT * FROM {_tablename} WHERE subj IN {_subjid}".format(
           _tablename=self.MasterTableName,
           _subjid=subject_filter)
 

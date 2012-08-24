@@ -205,7 +205,7 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
             baw200.connect(BAtlas[subjectid],'ExtendedAtlasDefinition_xml', PHASE_1_oneSubjWorkflow[sessionid],'InputSpec.atlasDefinition')
 
         numSessions=len(allSessions)
-        if numSessions > 1: ## Merge all BCD_Results into a global average
+        if True or numSessions > 1: ## Merge all BCD_Results into a global average
             mergeSubjectSessionNamesT1="99_MergeAllSessions_T1"+str(subjectid)
             MergeT1s[subjectid] = pe.Node(interface=Merge(numSessions),
                                           run_without_submitting=True,
@@ -262,13 +262,17 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
             myInitAvgWF = antsSimpleAverageWF()
             baw200.connect(MergeT1s[subjectid], 'out', myInitAvgWF, 'InputSpec.images')
 
-            buildTemplateIteration1 = ANTSTemplateBuildSingleIterationWF('Iteration01',CLUSTER_QUEUE)
+            TEMPLATE_BUILD_RUN_MODE='MULTI_IMAGE'
+            if numSessions == 1:
+                TEMPLATE_BUILD_RUN_MODE='SINGLE_IMAGE'
+
+            buildTemplateIteration1 = ANTSTemplateBuildSingleIterationWF('Iteration01',CLUSTER_QUEUE,TEMPLATE_BUILD_RUN_MODE)
             baw200.connect(myInitAvgWF, 'OutputSpec.average_image', buildTemplateIteration1, 'InputSpec.fixed_image')
             baw200.connect(MergeT1s[subjectid], 'out', buildTemplateIteration1, 'InputSpec.images')
             baw200.connect(MergeByExtendListElementsNode, 'ListOfExtendedPassiveImages', buildTemplateIteration1, 'InputSpec.ListOfPassiveImagesDictionararies')
 
             buildTemplateIteration2 = buildTemplateIteration1.clone(name='buildTemplateIteration2')
-            buildTemplateIteration2 = ANTSTemplateBuildSingleIterationWF('Iteration02',CLUSTER_QUEUE)
+            buildTemplateIteration2 = ANTSTemplateBuildSingleIterationWF('Iteration02',CLUSTER_QUEUE,TEMPLATE_BUILD_RUN_MODE)
             baw200.connect(buildTemplateIteration1, 'OutputSpec.template', buildTemplateIteration2, 'InputSpec.fixed_image')
             baw200.connect(MergeT1s[subjectid], 'out', buildTemplateIteration2, 'InputSpec.images')
             baw200.connect(MergeByExtendListElementsNode, 'ListOfExtendedPassiveImages', buildTemplateIteration2, 'InputSpec.ListOfPassiveImagesDictionararies')
@@ -519,4 +523,52 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                AddLikeTissueSink[sessionid].inputs.regexp_substitutions = GenerateOutputPattern(projectid, subjectid, sessionid,'ACCUMULATED_POSTERIORS')
                baw200.connect(AccumulateLikeTissuePosteriorsNode[sessionid], 'AccumulatePriorsList', AddLikeTissueSink[sessionid],'ACCUMULATED_POSTERIORS.@AccumulateLikeTissuePosteriorsOutputDir')
 
+               ClipT1ImageWithBrainMaskNode=dict()
+               AtlasToSubjectantsRegistration=dict()
+               if True: ## Run the ANTS Registration from Atlas to Subject for BCut spatial priors propagation.
+                   ## Second clip to brain tissue region 
+                   ### Now clean up by adding together many of the items PHASE_2_oneSubjWorkflow
+                   def ClipT1ImageWithBrainMask(t1_image,brain_labels,clipped_file_name):
+                       import os
+                       import sys
+                       import SimpleITK as sitk
+                       ## Now clean up the posteriors based on anatomical knowlege.
+                       ## sometimes the posteriors are not relevant for priors
+                       ## due to anomolies around the edges.
+                       t1=sitk.Cast(sitk.ReadImage(t1_image),sitk.sitkFloat32)
+                       bl=sitk.Cast(sitk.ReadImage(brain_labels),sitk.sitkFloat32)
+                       clipped=t1*bl
+                       sitk.WriteImage(clipped,clipped_file_name)
+                       clipped_file=os.path.realpath(clipped_file_name)
+                       return clipped_file
+                    currentClipT1ImageWithBrainMaskName='ClipT1ImageWithBrainMask_'+str(subjectid)+"_"+str(sessionid)
+                    ClipT1ImageWithBrainMaskNode[sessionid] = pe.Node(interface=Function(function=ClipT1ImageWithBrainMask,
+                         input_names=['t1_image','brain_labels','clipped_file_name'],
+                         output_names=['clipped_file']),
+                         name=currentClipT1ImageWithBrainMaskName)
+                    ClipT1ImageWithBrainMaskNode[sessionid].inputs.clipped_file_name = 'clipped_t1.nii.gz'
+                    baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'OutputSpec.t1_average',ClipT1ImageWithBrainMaskNode[sessionid],'t1_image')
+                    baw200.connect(BAtlas[subjectid],'template_t1_clipped_nii_gz',ClipT1ImageWithBrainMaskNode[sessionid],'brain_labels')
+                   ### NOTE MAP NODE! warp each of the original images to the provided fixed_image as the template
+                   currentAtlasToSubjectantsRegistration='AtlasToSubjectantsRegistration_'+str(subjectid)+"_"+str(sessionid)
+                   AtlasToSubjectantsRegistration[subjectid]=pe.MapNode(interface=antsRegistration.antsRegistration(), name =
+currentAtlasToSubjectantsRegistration)
+                   AtlasToSubjectantsRegistration[subjectid].inputs.dimension = 3
+                   AtlasToSubjectantsRegistration[subjectid].inputs.output_transform_prefix = iterationPhasePrefix+'_tfm'
+                   AtlasToSubjectantsRegistration[subjectid].inputs.metric = 'Mattes'
+                   AtlasToSubjectantsRegistration[subjectid].inputs.metric_weight = 1
+                   AtlasToSubjectantsRegistration[subjectid].inputs.radius = 32 ## This is really number of bins
+                   AtlasToSubjectantsRegistration[subjectid].inputs.transform = ["Affine[2]","SyN[0.25,3.0,0.0]"]
+                   AtlasToSubjectantsRegistration[subjectid].inputs.number_of_iterations = [[1500, 200], [100, 50, 30]]
+                   AtlasToSubjectantsRegistration[subjectid].inputs.use_histogram_matching = True
+                   AtlasToSubjectantsRegistration[subjectid].inputs.shrink_factors = [[2,1],[3,2,1]]
+                   AtlasToSubjectantsRegistration[subjectid].inputs.smoothing_sigmas = [[1,0],[2,1,0]]
+                   AtlasToSubjectantsRegistration[subjectid].inputs.use_histogram_matching = True
+                   AtlasToSubjectantsRegistration[subjectid].inputs.use_estimate_learning_rate_once = True
+                   baw200.connect(BAtlas[subjectid],'template_t1_clipped_nii_gz',AtlasToSubjectantsRegistration[subjectid], 'moving_image')
+                   baw200.connect(ClipT1ImageWithBrainMaskNode[sessionid], 'clipped_file', AtlasToSubjectantsRegistration[subjectid], 'fixed_image')
+                   baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'OutputSpec.atlasToSubjectTransform',AtlasToSubjectantsRegistration[subjectid],'initial_moving_transform')
+
+        else:  ## Only one is available
+           pass
     return baw200

@@ -15,7 +15,7 @@ ExternalProject_Add(${proj}
   GIT_TAG ${${proj}_GIT_TAG}
   SOURCE_DIR ${proj}
   BINARY_DIR ${proj}-build
-  ${cmakeversion_external_update}
+  "${cmakeversion_external_update}"
   CMAKE_GENERATOR ${gen}
   CMAKE_ARGS
   ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}

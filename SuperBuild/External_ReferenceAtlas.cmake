@@ -43,7 +43,7 @@ if(NOT DEFINED ${extProjName}_DIR OR NOT DEFINED ATLAS_NAME)
   endif()
 
   ### --- Project specific additions here
-  set(ATLAS_VERSION ${ATLAS_VERSION})
+  set(ATLAS_VERSION 20120813)
 
   set(${proj}_CMAKE_OPTIONS
       -DReferenceAtlas_XML_DIR:PATH=<BINARY_DIR>
@@ -64,7 +64,7 @@ if(NOT DEFINED ${extProjName}_DIR OR NOT DEFINED ATLAS_NAME)
     URL ${ATLAS_URL}
     SOURCE_DIR ${proj}
     BINARY_DIR ${proj}-build
-    ${cmakeversion_external_update}
+    "${cmakeversion_external_update}"
     CMAKE_GENERATOR ${gen}
     CMAKE_ARGS
       ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}

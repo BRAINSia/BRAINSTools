@@ -62,7 +62,7 @@ if(NOT DEFINED ${extProjName}_DIR AND NOT ${USE_SYSTEM_${extProjName}})
   #      link properly if -fopenmp is used.
   string(REPLACE "-fopenmp" "" ITK_CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
   string(REPLACE "-fopenmp" "" ITK_CMAKE_CXX_FLAGS "${CMAKE_CX_FLAGS}")
-  if(USE_ICCDEF)
+  if(USE_ICCDEF OR USE_FFTWD OR USE_FFTWF)
     set(FFTWF_FLAGS -DUSE_FFTWF:BOOL=ON)
   else()
     set(FFTWF_FLAGS "")
@@ -79,13 +79,13 @@ if(NOT DEFINED ${extProjName}_DIR AND NOT ${USE_SYSTEM_${extProjName}})
     )
   ### --- End Project specific additions
   set(${proj}_REPOSITORY ${git_protocol}://itk.org/ITK.git)
-  set(${proj}_GIT_TAG 1520f84aeda7b9f1a5e878ac09dc6ffd29c8e1f1) #2012-08-23 -- Performance enhancement for all V4 metrics
+  set(${proj}_GIT_TAG 65f08a503d72eb86fcbcf86801c39adc5dc1bb06) #2012-08-28
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${${proj}_REPOSITORY}
     GIT_TAG ${${proj}_GIT_TAG}
     SOURCE_DIR ${proj}
     BINARY_DIR ${proj}-build
-    UPDATE_COMMAND ""
+    ${cmakeversion_external_update}
     CMAKE_GENERATOR ${gen}
     CMAKE_ARGS
       ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}

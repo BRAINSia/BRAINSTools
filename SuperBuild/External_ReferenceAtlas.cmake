@@ -64,7 +64,7 @@ if(NOT DEFINED ${extProjName}_DIR OR NOT DEFINED ATLAS_NAME)
     URL ${ATLAS_URL}
     SOURCE_DIR ${proj}
     BINARY_DIR ${proj}-build
-    UPDATE_COMMAND ""
+    ${cmakeversion_external_update}
     CMAKE_GENERATOR ${gen}
     CMAKE_ARGS
       ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}

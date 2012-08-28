@@ -34,6 +34,7 @@ ExternalProject_add(SimpleITK
   BINARY_DIR SimpleITK-build
   GIT_REPOSITORY ${git_protocol}://itk.org/SimpleITK.git
   GIT_TAG 846f020f7d6f2f282b75678e75fa1b5d3ac603a7        #Fix FFTW linkage
+  ${cmakeversion_external_update}
   CMAKE_ARGS
     -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}
     -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}

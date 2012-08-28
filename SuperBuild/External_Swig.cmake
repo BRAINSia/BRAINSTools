@@ -56,6 +56,7 @@ if(NOT SWIG_DIR)
     ExternalProject_add(Swig
       URL http://prdownloads.sourceforge.net/swig/swig-${TARGET_SWIG_VERSION}.tar.gz
       URL_MD5  8c2f6a9f51677647a64c8adb1b176299
+      ${cmakeversion_external_update}
       CONFIGURE_COMMAND ${swig_CONFIGURE_COMMAND}
       DEPENDS PCRE
       )

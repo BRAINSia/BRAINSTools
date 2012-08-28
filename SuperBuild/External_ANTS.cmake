@@ -7,7 +7,7 @@ set(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED 1)
 
 set(proj ANTS)
 set(${proj}_GIT_REPOSITORY "git://github.com/BRAINSia/ANTS.git")
-set(${proj}_GIT_TAG "a8b689bacfdfe3b1749eeb3aeb0ff90107d9d4b4")
+set(${proj}_GIT_TAG "14a2875a510c4a71f7435e44b1516812db6bc81b") #2012-08-28
 set(${proj}_DEPENDENCIES ${ITK_EXTERNAL_NAME} SlicerExecutionModel)
 
 ExternalProject_Add(${proj}
@@ -15,7 +15,7 @@ ExternalProject_Add(${proj}
   GIT_TAG ${${proj}_GIT_TAG}
   SOURCE_DIR ${proj}
   BINARY_DIR ${proj}-build
-  UPDATE_COMMAND ""
+  ${cmakeversion_external_update}
   CMAKE_GENERATOR ${gen}
   CMAKE_ARGS
   ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}

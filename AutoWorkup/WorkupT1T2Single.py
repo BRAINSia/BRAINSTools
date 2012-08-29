@@ -72,6 +72,11 @@ def GetExtensionlessBaseName(filename):
 
 def get_list_element( nestedList, index ):
     return nestedList[index]
+def getAllT1sLength(allT1s):
+    return len(allT1s)
+
+def get_list_element( nestedList, index ):
+    return nestedList[index]
 
 def MakeList(firstElement,secondElement):
     return [firstElement, secondElement]
@@ -139,8 +144,6 @@ def MakeOneSubWorkFlow(projectid, subjectid, sessionid,processing_phase, WORKFLO
             DoReverseMapping = True
         myLocalLMIWF= CreateLandmarkInitializeWorkflow("LandmarkInitialize", BCD_model_path, InterpolationMode,DoReverseMapping)
 
-        def get_list_element( nestedList, index ):
-            return nestedList[index]
         T1T2WorkupSingle.connect( [ ( inputsSpec, myLocalLMIWF, [ ( ( 'allT1s', get_list_element, 0 ), 'InputSpec.inputVolume') ] ), ] )
         T1T2WorkupSingle.connect( inputsSpec, 'template_landmarks_31_fcsv', myLocalLMIWF,'InputSpec.atlasLandmarkFilename')
         T1T2WorkupSingle.connect( inputsSpec, 'template_landmark_weights_31_csv', myLocalLMIWF,'InputSpec.atlasWeightFilename')
@@ -160,8 +163,6 @@ def MakeOneSubWorkFlow(projectid, subjectid, sessionid,processing_phase, WORKFLO
         T1T2WorkupSingle.connect( inputsSpec, 'allT2s', myLocalTCWF, 'InputSpec.T2List')
         T1T2WorkupSingle.connect( inputsSpec, 'allPDs', myLocalTCWF, 'InputSpec.PDList')
         T1T2WorkupSingle.connect( inputsSpec, 'allOthers', myLocalTCWF, 'InputSpec.OtherList')
-        def getAllT1sLength(allT1s):
-            return len(allT1s)
         T1T2WorkupSingle.connect( [ (inputsSpec, myLocalTCWF, [(('allT1s', getAllT1sLength), 'InputSpec.T1_count')] ), ])
         T1T2WorkupSingle.connect( inputsSpec,'atlasDefinition',myLocalTCWF,'InputSpec.atlasDefinition')
         T1T2WorkupSingle.connect( myLocalLMIWF, 'OutputSpec.outputResampledVolume', myLocalTCWF, 'InputSpec.PrimaryT1' )

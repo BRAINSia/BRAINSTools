@@ -104,7 +104,162 @@ def GenerateAccumulatorImagesOutputPattern(projectid, subjectid, sessionid):
     print "HACK: ", patternList
     return patternList
 
+def MergeByExtendListElements(t2_averageList,outputLabels_averageList,ListOfPosteriorImagesDictionary):
+    for t2_index in range(0,len(t2_averageList)):
+        ListOfPosteriorImagesDictionary[t2_index]['T2']=t2_averageList[t2_index]
+        ListOfPosteriorImagesDictionary[t2_index]['BRAINMASK']=outputLabels_averageList[t2_index]
+    return ListOfPosteriorImagesDictionary
 
+def MakeNewAtlasTemplate(t1_image,deformed_list,
+            AtlasTemplate,outDefinition):
+    import os
+    import sys
+    import SimpleITK as sitk
+    patternDict= {
+        'AVG_AIRWARP_AVG_AIR.nii.gz':'@ATLAS_DIRECTORY@/EXTENDED_AIR.nii.gz',
+        'AVG_BGMWARP_AVG_BGM.nii.gz':'@ATLAS_DIRECTORY@/EXTENDED_BASALTISSUE.nii.gz',
+        'AVG_CRBLGMWARP_AVG_CRBLGM.nii.gz':'@ATLAS_DIRECTORY@/EXTENDED_CRBLGM.nii.gz',
+        'AVG_CRBLWMWARP_AVG_CRBLWM.nii.gz':'@ATLAS_DIRECTORY@/EXTENDED_CRBLWM.nii.gz',
+        'AVG_CSFWARP_AVG_CSF.nii.gz': '@ATLAS_DIRECTORY@/EXTENDED_CSF.nii.gz',
+        'AVG_NOTCSFWARP_AVG_NOTCSF.nii.gz' :'@ATLAS_DIRECTORY@/EXTENDED_NOTCSF.nii.gz',
+        'AVG_NOTGMWARP_AVG_NOTGM.nii.gz': '@ATLAS_DIRECTORY@/EXTENDED_NOTGM.nii.gz',
+        'AVG_NOTVBWARP_AVG_NOTVB.nii.gz': '@ATLAS_DIRECTORY@/EXTENDED_NOTVB.nii.gz',
+        'AVG_NOTWMWARP_AVG_NOTWM.nii.gz': '@ATLAS_DIRECTORY@/EXTENDED_NOTWM.nii.gz',
+        'AVG_SURFGMWARP_AVG_SURFGM.nii.gz': '@ATLAS_DIRECTORY@/EXTENDED_SURFGM.nii.gz',
+        'AVG_VBWARP_AVG_VB.nii.gz': '@ATLAS_DIRECTORY@/EXTENDED_VB.nii.gz',
+        'AVG_WMWARP_AVG_WM.nii.gz':'@ATLAS_DIRECTORY@/EXTENDED_WM.nii.gz',
+        'AVG_ACCUMBENWARP_AVG_ACCUMBEN.nii.gz': '@ATLAS_DIRECTORY@/EXTENDED_ACCUMBEN.nii.gz',
+        'AVG_CAUDATEWARP_AVG_CAUDATE.nii.gz': '@ATLAS_DIRECTORY@/EXTENDED_CAUDATE.nii.gz',
+        'AVG_PUTAMENWARP_AVG_PUTAMEN.nii.gz': '@ATLAS_DIRECTORY@/EXTENDED_PUTAMEN.nii.gz',
+        'AVG_GLOBUSWARP_AVG_GLOBUS.nii.gz': '@ATLAS_DIRECTORY@/EXTENDED_GLOBUS.nii.gz',
+        'AVG_THALAMUSWARP_AVG_THALAMUS.nii.gz': '@ATLAS_DIRECTORY@/EXTENDED_THALAMUS.nii.gz',
+        'AVG_HIPPOCAMPUSWARP_AVG_HIPPOCAMPUS.nii.gz': '@ATLAS_DIRECTORY@/EXTENDED_HIPPOCAMPUS.nii.gz',
+        'AVG_T2WARP_AVG_T2.nii.gz':'@ATLAS_DIRECTORY@/template_t2.nii.gz',
+        'AVG_BRAINMASKWARP_AVG_BRAINMASK.nii.gz':'@ATLAS_DIRECTORY@/template_brain.nii.gz',
+        'T1_RESHAPED.nii.gz':'@ATLAS_DIRECTORY@/template_t1.nii.gz'
+        }
+    templateFile = open(AtlasTemplate,'r')
+    content = templateFile.read()              # read entire file into memory
+    templateFile.close()
+
+    ## Now clean up the posteriors based on anatomical knowlege.
+    ## sometimes the posteriors are not relevant for priors
+    ## due to anomolies around the edges.
+    load_images_list=dict()
+    for full_pathname in deformed_list:
+        base_name=os.path.basename(full_pathname)
+        if base_name in patternDict.keys():
+            load_images_list[base_name]=sitk.ReadImage(full_pathname)
+    ## Make binary dilated mask
+    binmask=sitk.BinaryThreshold(load_images_list['AVG_BRAINMASKWARP_AVG_BRAINMASK.nii.gz'],1,1000000)
+    dilated5=sitk.DilateObjectMorphology(binmask,5)
+    dilated5=sitk.Cast(dilated5,sitk.sitkFloat32) # Convert to Float32 for multiply
+    ## Now clip the interior brain mask with dilated5
+    interiorPriors = [
+        'AVG_BGMWARP_AVG_BGM.nii.gz',
+        'AVG_CRBLGMWARP_AVG_CRBLGM.nii.gz',
+        'AVG_CRBLWMWARP_AVG_CRBLWM.nii.gz',
+        'AVG_CSFWARP_AVG_CSF.nii.gz',
+        'AVG_SURFGMWARP_AVG_SURFGM.nii.gz',
+        'AVG_VBWARP_AVG_VB.nii.gz',
+        'AVG_WMWARP_AVG_WM.nii.gz',
+        'AVG_ACCUMBENWARP_AVG_ACCUMBEN.nii.gz',
+        'AVG_CAUDATEWARP_AVG_CAUDATE.nii.gz',
+        'AVG_PUTAMENWARP_AVG_PUTAMEN.nii.gz',
+        'AVG_GLOBUSWARP_AVG_GLOBUS.nii.gz',
+        'AVG_THALAMUSWARP_AVG_THALAMUS.nii.gz',
+        'AVG_HIPPOCAMPUSWARP_AVG_HIPPOCAMPUS.nii.gz',
+        ]
+    clean_deformed_list=deformed_list
+    for index in range(0,len(deformed_list)):
+        full_pathname=deformed_list[index]
+        base_name=os.path.basename(full_pathname)
+        if base_name == 'AVG_BRAINMASKWARP_AVG_BRAINMASK.nii.gz':
+            ### Make Brain Mask Binary
+            clipped_name='CLIPPED_'+base_name
+            patternDict[clipped_name]=patternDict[base_name]
+            sitk.WriteImage(binmask,clipped_name)
+            clean_deformed_list[index]=os.path.realpath(clipped_name)
+        if base_name in interiorPriors:
+            ### Make clipped posteriors for brain regions
+            curr=sitk.Cast(sitk.ReadImage(full_pathname),sitk.sitkFloat32)
+            curr=curr*dilated5
+            clipped_name='CLIPPED_'+base_name
+            patternDict[clipped_name]=patternDict[base_name]
+            sitk.WriteImage(curr,clipped_name)
+            clean_deformed_list[index]=os.path.realpath(clipped_name)
+            print "HACK: ", clean_deformed_list[index]
+            curr=None
+    binmask=None
+    dilated5=None
+
+    for full_pathname in clean_deformed_list:
+        base_name=os.path.basename(full_pathname)
+        if base_name in patternDict.keys():
+            content=content.replace(patternDict[base_name],full_pathname)
+    content=content.replace('@ATLAS_DIRECTORY@/template_t1.nii.gz',t1_image)
+    ## NOTE:  HEAD REGION CAN JUST BE T1 image.
+    content=content.replace('@ATLAS_DIRECTORY@/template_headregion.nii.gz',t1_image)
+    ## NOTE:  BRAIN REGION CAN JUST BE the label images.
+    outAtlasFullPath=os.path.realpath(outDefinition)
+    newFile = open(outAtlasFullPath, 'w')
+    newFile.write(content)  # write the file with the text substitution
+    newFile.close()
+    return outAtlasFullPath,clean_deformed_list
+
+def AccumulateLikeTissuePosteriors(posteriorImages):
+    import os
+    import sys
+    import SimpleITK as sitk
+    ## Now clean up the posteriors based on anatomical knowlege.
+    ## sometimes the posteriors are not relevant for priors
+    ## due to anomolies around the edges.
+    load_images_list=dict()
+    for full_pathname in posteriorImages.values():
+        base_name=os.path.basename(full_pathname)
+        load_images_list[base_name]=sitk.ReadImage(full_pathname)
+    GM_ACCUM=[
+              'POSTERIOR_ACCUMBEN.nii.gz',
+              'POSTERIOR_CAUDATE.nii.gz',
+              'POSTERIOR_CRBLGM.nii.gz',
+              'POSTERIOR_HIPPOCAMPUS.nii.gz',
+              'POSTERIOR_PUTAMEN.nii.gz',
+              'POSTERIOR_THALAMUS.nii.gz',
+              'POSTERIOR_SURFGM.nii.gz',
+             ]
+    WM_ACCUM=[
+              'POSTERIOR_CRBLWM.nii.gz',
+              'POSTERIOR_WM.nii.gz'
+              ]
+    CSF_ACCUM=[
+              'POSTERIOR_CSF.nii.gz',
+              ]
+    VB_ACCUM=[
+              'POSTERIOR_VB.nii.gz',
+              ]
+    GLOBUS_ACCUM=[
+              'POSTERIOR_GLOBUS.nii.gz',
+              ]
+    BACKGROUND_ACCUM=[
+              'POSTERIOR_AIR.nii.gz',
+              'POSTERIOR_NOTCSF.nii.gz',
+              'POSTERIOR_NOTGM.nii.gz',
+              'POSTERIOR_NOTVB.nii.gz',
+              'POSTERIOR_NOTWM.nii.gz',
+              ]
+    SummaryDictionary={'POSTERIOR_GM_TOTAL.nii.gz':  GM_ACCUM, 'POSTERIOR_WM_TOTAL.nii.gz': WM_ACCUM,
+                       'POSTERIOR_CSF_TOTAL.nii.gz': CSF_ACCUM, 'POSTERIOR_VB_TOTAL.nii.gz':VB_ACCUM,
+                       'POSTERIOR_GLOBUS_TOTAL.nii.gz': GLOBUS_ACCUM,
+                       'POSTERIOR_BACKGROUND_TOTAL.nii.gz': BACKGROUND_ACCUM }
+    AccumulatePriorsList=list()
+    for outname, inlist in SummaryDictionary.items():
+        accum_image= load_images_list[ inlist[0] ] # copy first image
+        for curr_image in range(1,len(inlist)):
+            accum_image=accum_image + load_images_list[ inlist[curr_image] ]
+        sitk.WriteImage(accum_image,outname)
+        AccumulatePriorsList.append(os.path.realpath(outname))
+    print "HACK \n\n\n\n\n\n\n HACK \n\n\n: AccumulatePriorsList\n",AccumulatePriorsList
+    return AccumulatePriorsList
 ###########################################################################
 ###########################################################################
 ###########################################################################
@@ -232,11 +387,6 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                 baw200.connect(PHASE_1_oneSubjWorkflow[sessionid],'OutputSpec.outputLabels',MergeOutputLabels[subjectid],index_name)
                 baw200.connect(PHASE_1_oneSubjWorkflow[sessionid],'OutputSpec.posteriorImages',MergePosteriors[subjectid],index_name)
 
-            def MergeByExtendListElements(t2_averageList,outputLabels_averageList,ListOfPosteriorImagesDictionary):
-                for t2_index in range(0,len(t2_averageList)):
-                    ListOfPosteriorImagesDictionary[t2_index]['T2']=t2_averageList[t2_index]
-                    ListOfPosteriorImagesDictionary[t2_index]['BRAINMASK']=outputLabels_averageList[t2_index]
-                return ListOfPosteriorImagesDictionary
             MergeByExtendListElementsNode = pe.Node( Function(function=MergeByExtendListElements,
                                           input_names = ['t2_averageList','outputLabels_averageList','ListOfPosteriorImagesDictionary'],
                                           output_names = ['ListOfExtendedPassiveImages']),
@@ -285,102 +435,6 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
             SubjectTemplate_DataSink.inputs.regexp_substitutions = GenerateSubjectOutputPattern(subjectid)
             baw200.connect(buildTemplateIteration2,'OutputSpec.template',SubjectTemplate_DataSink,'ANTSTemplate.@template')
 
-            def MakeNewAtlasTemplate(t1_image,deformed_list,
-                        AtlasTemplate,outDefinition):
-                import os
-                import sys
-                import SimpleITK as sitk
-                patternDict= {
-                    'AVG_AIRWARP_AVG_AIR.nii.gz':'@ATLAS_DIRECTORY@/EXTENDED_AIR.nii.gz',
-                    'AVG_BGMWARP_AVG_BGM.nii.gz':'@ATLAS_DIRECTORY@/EXTENDED_BASALTISSUE.nii.gz',
-                    'AVG_CRBLGMWARP_AVG_CRBLGM.nii.gz':'@ATLAS_DIRECTORY@/EXTENDED_CRBLGM.nii.gz',
-                    'AVG_CRBLWMWARP_AVG_CRBLWM.nii.gz':'@ATLAS_DIRECTORY@/EXTENDED_CRBLWM.nii.gz',
-                    'AVG_CSFWARP_AVG_CSF.nii.gz': '@ATLAS_DIRECTORY@/EXTENDED_CSF.nii.gz',
-                    'AVG_NOTCSFWARP_AVG_NOTCSF.nii.gz' :'@ATLAS_DIRECTORY@/EXTENDED_NOTCSF.nii.gz',
-                    'AVG_NOTGMWARP_AVG_NOTGM.nii.gz': '@ATLAS_DIRECTORY@/EXTENDED_NOTGM.nii.gz',
-                    'AVG_NOTVBWARP_AVG_NOTVB.nii.gz': '@ATLAS_DIRECTORY@/EXTENDED_NOTVB.nii.gz',
-                    'AVG_NOTWMWARP_AVG_NOTWM.nii.gz': '@ATLAS_DIRECTORY@/EXTENDED_NOTWM.nii.gz',
-                    'AVG_SURFGMWARP_AVG_SURFGM.nii.gz': '@ATLAS_DIRECTORY@/EXTENDED_SURFGM.nii.gz',
-                    'AVG_VBWARP_AVG_VB.nii.gz': '@ATLAS_DIRECTORY@/EXTENDED_VB.nii.gz',
-                    'AVG_WMWARP_AVG_WM.nii.gz':'@ATLAS_DIRECTORY@/EXTENDED_WM.nii.gz',
-                    'AVG_ACCUMBENWARP_AVG_ACCUMBEN.nii.gz': '@ATLAS_DIRECTORY@/EXTENDED_ACCUMBEN.nii.gz',
-                    'AVG_CAUDATEWARP_AVG_CAUDATE.nii.gz': '@ATLAS_DIRECTORY@/EXTENDED_CAUDATE.nii.gz',
-                    'AVG_PUTAMENWARP_AVG_PUTAMEN.nii.gz': '@ATLAS_DIRECTORY@/EXTENDED_PUTAMEN.nii.gz',
-                    'AVG_GLOBUSWARP_AVG_GLOBUS.nii.gz': '@ATLAS_DIRECTORY@/EXTENDED_GLOBUS.nii.gz',
-                    'AVG_THALAMUSWARP_AVG_THALAMUS.nii.gz': '@ATLAS_DIRECTORY@/EXTENDED_THALAMUS.nii.gz',
-                    'AVG_HIPPOCAMPUSWARP_AVG_HIPPOCAMPUS.nii.gz': '@ATLAS_DIRECTORY@/EXTENDED_HIPPOCAMPUS.nii.gz',
-                    'AVG_T2WARP_AVG_T2.nii.gz':'@ATLAS_DIRECTORY@/template_t2.nii.gz',
-                    'AVG_BRAINMASKWARP_AVG_BRAINMASK.nii.gz':'@ATLAS_DIRECTORY@/template_brain.nii.gz',
-                    'T1_RESHAPED.nii.gz':'@ATLAS_DIRECTORY@/template_t1.nii.gz'
-                    }
-                templateFile = open(AtlasTemplate,'r')
-                content = templateFile.read()              # read entire file into memory
-                templateFile.close()
-
-                ## Now clean up the posteriors based on anatomical knowlege.
-                ## sometimes the posteriors are not relevant for priors
-                ## due to anomolies around the edges.
-                load_images_list=dict()
-                for full_pathname in deformed_list:
-                        base_name=os.path.basename(full_pathname)
-                        if base_name in patternDict.keys():
-                            load_images_list[base_name]=sitk.ReadImage(full_pathname)
-                ## Make binary dilated mask
-                binmask=sitk.BinaryThreshold(load_images_list['AVG_BRAINMASKWARP_AVG_BRAINMASK.nii.gz'],1,1000000)
-                dilated5=sitk.DilateObjectMorphology(binmask,5)
-                dilated5=sitk.Cast(dilated5,sitk.sitkFloat32) # Convert to Float32 for multiply
-                ## Now clip the interior brain mask with dilated5
-                interiorPriors = [
-                    'AVG_BGMWARP_AVG_BGM.nii.gz',
-                    'AVG_CRBLGMWARP_AVG_CRBLGM.nii.gz',
-                    'AVG_CRBLWMWARP_AVG_CRBLWM.nii.gz',
-                    'AVG_CSFWARP_AVG_CSF.nii.gz',
-                    'AVG_SURFGMWARP_AVG_SURFGM.nii.gz',
-                    'AVG_VBWARP_AVG_VB.nii.gz',
-                    'AVG_WMWARP_AVG_WM.nii.gz',
-                    'AVG_ACCUMBENWARP_AVG_ACCUMBEN.nii.gz',
-                    'AVG_CAUDATEWARP_AVG_CAUDATE.nii.gz',
-                    'AVG_PUTAMENWARP_AVG_PUTAMEN.nii.gz',
-                    'AVG_GLOBUSWARP_AVG_GLOBUS.nii.gz',
-                    'AVG_THALAMUSWARP_AVG_THALAMUS.nii.gz',
-                    'AVG_HIPPOCAMPUSWARP_AVG_HIPPOCAMPUS.nii.gz',
-                    ]
-                clean_deformed_list=deformed_list
-                for index in range(0,len(deformed_list)):
-                        full_pathname=deformed_list[index]
-                        base_name=os.path.basename(full_pathname)
-                        if base_name == 'AVG_BRAINMASKWARP_AVG_BRAINMASK.nii.gz':
-                            ### Make Brain Mask Binary
-                            clipped_name='CLIPPED_'+base_name
-                            patternDict[clipped_name]=patternDict[base_name]
-                            sitk.WriteImage(binmask,clipped_name)
-                            clean_deformed_list[index]=os.path.realpath(clipped_name)
-                        if base_name in interiorPriors:
-                            ### Make clipped posteriors for brain regions
-                            curr=sitk.Cast(sitk.ReadImage(full_pathname),sitk.sitkFloat32)
-                            curr=curr*dilated5
-                            clipped_name='CLIPPED_'+base_name
-                            patternDict[clipped_name]=patternDict[base_name]
-                            sitk.WriteImage(curr,clipped_name)
-                            clean_deformed_list[index]=os.path.realpath(clipped_name)
-                            print "HACK: ", clean_deformed_list[index]
-                            curr=None
-                binmask=None
-                dilated5=None
-
-                for full_pathname in clean_deformed_list:
-                        base_name=os.path.basename(full_pathname)
-                        if base_name in patternDict.keys():
-                                content=content.replace(patternDict[base_name],full_pathname)
-                content=content.replace('@ATLAS_DIRECTORY@/template_t1.nii.gz',t1_image)
-                ## NOTE:  HEAD REGION CAN JUST BE T1 image.
-                content=content.replace('@ATLAS_DIRECTORY@/template_headregion.nii.gz',t1_image)
-                ## NOTE:  BRAIN REGION CAN JUST BE the label images.
-                outAtlasFullPath=os.path.realpath(outDefinition)
-                newFile = open(outAtlasFullPath, 'w')
-                newFile.write(content)  # write the file with the text substitution
-                newFile.close()
-                return outAtlasFullPath,clean_deformed_list
             MakeNewAtlasTemplateNode = pe.Node(interface=Function(function=MakeNewAtlasTemplate,
                     input_names=['t1_image', 'deformed_list','AtlasTemplate','outDefinition'],
                     output_names=['outAtlasFullPath','clean_deformed_list']),
@@ -401,164 +455,111 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
             AccumulateLikeTissuePosteriorsNode=dict()
             AccumulateLikeTissuePosteriors=dict()
             for sessionid in allSessions:
-               projectid = ExperimentDatabase.getProjFromSession(sessionid)
-               print("PHASE II PROJECT: {0} SUBJECT: {1} SESSION: {2}".format(projectid,subjectid,sessionid))
-               PHASE_2_subjInfoNode[sessionid] = pe.Node(interface=IdentityInterface(fields=
-                       ['sessionid','subjectid','projectid',
-                        'allT1s',
-                        'allT2s',
-                        'allPDs',
-                        'allOthers']),
-                       run_without_submitting=True,
-                       name='99_PHASE_2_SubjInfoNode_'+str(subjectid)+"_"+str(sessionid) )
-               PHASE_2_subjInfoNode[sessionid].inputs.projectid=projectid
-               PHASE_2_subjInfoNode[sessionid].inputs.subjectid=subjectid
-               PHASE_2_subjInfoNode[sessionid].inputs.sessionid=sessionid
-               PHASE_2_subjInfoNode[sessionid].inputs.allT1s=ExperimentDatabase.getFilenamesByScantype(sessionid,['T1-30','T1-15'])
-               PHASE_2_subjInfoNode[sessionid].inputs.allT2s=ExperimentDatabase.getFilenamesByScantype(sessionid,['T2-30','T2-15'])
-               PHASE_2_subjInfoNode[sessionid].inputs.allPDs=ExperimentDatabase.getFilenamesByScantype(sessionid,['PD-30','PD-15'])
-               PHASE_2_subjInfoNode[sessionid].inputs.allOthers=ExperimentDatabase.getFilenamesByScantype(sessionid,['OTHER-30','OTHER-15'])
+                projectid = ExperimentDatabase.getProjFromSession(sessionid)
+                print("PHASE II PROJECT: {0} SUBJECT: {1} SESSION: {2}".format(projectid,subjectid,sessionid))
+                PHASE_2_subjInfoNode[sessionid] = pe.Node(interface=IdentityInterface(fields=
+                        ['sessionid','subjectid','projectid',
+                         'allT1s',
+                         'allT2s',
+                         'allPDs',
+                         'allOthers']),
+                        run_without_submitting=True,
+                        name='99_PHASE_2_SubjInfoNode_'+str(subjectid)+"_"+str(sessionid) )
+                PHASE_2_subjInfoNode[sessionid].inputs.projectid=projectid
+                PHASE_2_subjInfoNode[sessionid].inputs.subjectid=subjectid
+                PHASE_2_subjInfoNode[sessionid].inputs.sessionid=sessionid
+                PHASE_2_subjInfoNode[sessionid].inputs.allT1s=ExperimentDatabase.getFilenamesByScantype(sessionid,['T1-30','T1-15'])
+                PHASE_2_subjInfoNode[sessionid].inputs.allT2s=ExperimentDatabase.getFilenamesByScantype(sessionid,['T2-30','T2-15'])
+                PHASE_2_subjInfoNode[sessionid].inputs.allPDs=ExperimentDatabase.getFilenamesByScantype(sessionid,['PD-30','PD-15'])
+                PHASE_2_subjInfoNode[sessionid].inputs.allOthers=ExperimentDatabase.getFilenamesByScantype(sessionid,['OTHER-30','OTHER-15'])
 
-               PROCESSING_PHASE='PHASE_2'
-               PHASE_2_oneSubjWorkflow[sessionid]=WorkupT1T2Single.MakeOneSubWorkFlow(
-                                 projectid, subjectid, sessionid,PROCESSING_PHASE,
-                                 WORKFLOW_COMPONENTS,
-                                 BCD_model_path, InterpolationMode, CLUSTER_QUEUE)
-               baw200.connect(PHASE_2_subjInfoNode[sessionid],'projectid',PHASE_2_oneSubjWorkflow[sessionid],'InputSpec.projectid')
-               baw200.connect(PHASE_2_subjInfoNode[sessionid],'subjectid',PHASE_2_oneSubjWorkflow[sessionid],'InputSpec.subjectid')
-               baw200.connect(PHASE_2_subjInfoNode[sessionid],'sessionid',PHASE_2_oneSubjWorkflow[sessionid],'InputSpec.sessionid')
-               baw200.connect(PHASE_2_subjInfoNode[sessionid],'allT1s',PHASE_2_oneSubjWorkflow[sessionid],'InputSpec.allT1s')
-               baw200.connect(PHASE_2_subjInfoNode[sessionid],'allT2s',PHASE_2_oneSubjWorkflow[sessionid],'InputSpec.allT2s')
-               baw200.connect(PHASE_2_subjInfoNode[sessionid],'allPDs',PHASE_2_oneSubjWorkflow[sessionid],'InputSpec.allPDs')
-               baw200.connect(PHASE_2_subjInfoNode[sessionid],'allOthers',PHASE_2_oneSubjWorkflow[sessionid],'InputSpec.allOthers')
+                PROCESSING_PHASE='PHASE_2'
+                PHASE_2_oneSubjWorkflow[sessionid]=WorkupT1T2Single.MakeOneSubWorkFlow(
+                                  projectid, subjectid, sessionid,PROCESSING_PHASE,
+                                  WORKFLOW_COMPONENTS,
+                                  BCD_model_path, InterpolationMode, CLUSTER_QUEUE)
+                baw200.connect(PHASE_2_subjInfoNode[sessionid],'projectid',PHASE_2_oneSubjWorkflow[sessionid],'InputSpec.projectid')
+                baw200.connect(PHASE_2_subjInfoNode[sessionid],'subjectid',PHASE_2_oneSubjWorkflow[sessionid],'InputSpec.subjectid')
+                baw200.connect(PHASE_2_subjInfoNode[sessionid],'sessionid',PHASE_2_oneSubjWorkflow[sessionid],'InputSpec.sessionid')
+                baw200.connect(PHASE_2_subjInfoNode[sessionid],'allT1s',PHASE_2_oneSubjWorkflow[sessionid],'InputSpec.allT1s')
+                baw200.connect(PHASE_2_subjInfoNode[sessionid],'allT2s',PHASE_2_oneSubjWorkflow[sessionid],'InputSpec.allT2s')
+                baw200.connect(PHASE_2_subjInfoNode[sessionid],'allPDs',PHASE_2_oneSubjWorkflow[sessionid],'InputSpec.allPDs')
+                baw200.connect(PHASE_2_subjInfoNode[sessionid],'allOthers',PHASE_2_oneSubjWorkflow[sessionid],'InputSpec.allOthers')
 
-               baw200.connect(BAtlas[subjectid],'template_landmarks_31_fcsv', PHASE_2_oneSubjWorkflow[sessionid],'InputSpec.template_landmarks_31_fcsv')
-               baw200.connect(BAtlas[subjectid],'template_landmark_weights_31_csv', PHASE_2_oneSubjWorkflow[sessionid],'InputSpec.template_landmark_weights_31_csv')
-               baw200.connect(buildTemplateIteration2,'OutputSpec.template', PHASE_2_oneSubjWorkflow[sessionid],'InputSpec.template_t1')
-               baw200.connect(MakeNewAtlasTemplateNode,'outAtlasFullPath', PHASE_2_oneSubjWorkflow[sessionid],'InputSpec.atlasDefinition')
+                baw200.connect(BAtlas[subjectid],'template_landmarks_31_fcsv', PHASE_2_oneSubjWorkflow[sessionid],'InputSpec.template_landmarks_31_fcsv')
+                baw200.connect(BAtlas[subjectid],'template_landmark_weights_31_csv', PHASE_2_oneSubjWorkflow[sessionid],'InputSpec.template_landmark_weights_31_csv')
+                baw200.connect(buildTemplateIteration2,'OutputSpec.template', PHASE_2_oneSubjWorkflow[sessionid],'InputSpec.template_t1')
+                baw200.connect(MakeNewAtlasTemplateNode,'outAtlasFullPath', PHASE_2_oneSubjWorkflow[sessionid],'InputSpec.atlasDefinition')
 
-               ### Now define where the final organized outputs should go.
-               BASIC_DataSink[sessionid]=pe.Node(nio.DataSink(),name="BASIC_DS_"+str(subjectid)+"_"+str(sessionid))
-               BASIC_DataSink[sessionid].inputs.base_directory=ExperimentBaseDirectoryResults
-               BASIC_DataSink[sessionid].inputs.regexp_substitutions = GenerateOutputPattern(projectid, subjectid, sessionid,'ACPCAlign')
+                ### Now define where the final organized outputs should go.
+                BASIC_DataSink[sessionid]=pe.Node(nio.DataSink(),name="BASIC_DS_"+str(subjectid)+"_"+str(sessionid))
+                BASIC_DataSink[sessionid].inputs.base_directory=ExperimentBaseDirectoryResults
+                BASIC_DataSink[sessionid].inputs.regexp_substitutions = GenerateOutputPattern(projectid, subjectid, sessionid,'ACPCAlign')
 
-               baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'OutputSpec.outputLandmarksInACPCAlignedSpace',BASIC_DataSink[sessionid],'ACPCAlign.@outputLandmarksInACPCAlignedSpace')
-               baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'OutputSpec.BCD_ACPC_T1',BASIC_DataSink[sessionid],'ACPCAlign.@BCD_ACPC_T1')
-               baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'OutputSpec.outputLandmarksInInputSpace',BASIC_DataSink[sessionid],'ACPCAlign.@outputLandmarksInInputSpace')
-               baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'OutputSpec.outputTransform',BASIC_DataSink[sessionid],'ACPCAlign.@outputTransform')
-               baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'OutputSpec.atlasToSubjectTransform',BASIC_DataSink[sessionid],'ACPCAlign.@atlasToSubjectTransform')
+                baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'OutputSpec.outputLandmarksInACPCAlignedSpace',BASIC_DataSink[sessionid],'ACPCAlign.@outputLandmarksInACPCAlignedSpace')
+                baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'OutputSpec.BCD_ACPC_T1',BASIC_DataSink[sessionid],'ACPCAlign.@BCD_ACPC_T1')
+                baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'OutputSpec.outputLandmarksInInputSpace',BASIC_DataSink[sessionid],'ACPCAlign.@outputLandmarksInInputSpace')
+                baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'OutputSpec.outputTransform',BASIC_DataSink[sessionid],'ACPCAlign.@outputTransform')
+                baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'OutputSpec.atlasToSubjectTransform',BASIC_DataSink[sessionid],'ACPCAlign.@atlasToSubjectTransform')
 
-               ### Now define where the final organized outputs should go.
-               TC_DataSink[sessionid]=pe.Node(nio.DataSink(),name="TISSUE_CLASSIFY_DS_"+str(subjectid)+"_"+str(sessionid))
-               TC_DataSink[sessionid].inputs.base_directory=ExperimentBaseDirectoryResults
-               TC_DataSink[sessionid].inputs.regexp_substitutions = GenerateOutputPattern(projectid, subjectid, sessionid,'TissueClassify')
-               baw200.connect(PHASE_2_oneSubjWorkflow[sessionid], 'OutputSpec.TissueClassifyOutputDir', TC_DataSink[sessionid],'TissueClassify.@TissueClassifyOutputDir')
+                ### Now define where the final organized outputs should go.
+                TC_DataSink[sessionid]=pe.Node(nio.DataSink(),name="TISSUE_CLASSIFY_DS_"+str(subjectid)+"_"+str(sessionid))
+                TC_DataSink[sessionid].inputs.base_directory=ExperimentBaseDirectoryResults
+                TC_DataSink[sessionid].inputs.regexp_substitutions = GenerateOutputPattern(projectid, subjectid, sessionid,'TissueClassify')
+                baw200.connect(PHASE_2_oneSubjWorkflow[sessionid], 'OutputSpec.TissueClassifyOutputDir', TC_DataSink[sessionid],'TissueClassify.@TissueClassifyOutputDir')
 
-               ### Now clean up by adding together many of the items PHASE_2_oneSubjWorkflow
-               def AccumulateLikeTissuePosteriors(posteriorImages):
-                  import os
-                  import sys
-                  import SimpleITK as sitk
-                  ## Now clean up the posteriors based on anatomical knowlege.
-                  ## sometimes the posteriors are not relevant for priors
-                  ## due to anomolies around the edges.
-                  load_images_list=dict()
-                  for full_pathname in posteriorImages.values():
-                        base_name=os.path.basename(full_pathname)
-                        load_images_list[base_name]=sitk.ReadImage(full_pathname)
-                  GM_ACCUM=[
-                            'POSTERIOR_ACCUMBEN.nii.gz',
-                            'POSTERIOR_CAUDATE.nii.gz',
-                            'POSTERIOR_CRBLGM.nii.gz',
-                            'POSTERIOR_HIPPOCAMPUS.nii.gz',
-                            'POSTERIOR_PUTAMEN.nii.gz',
-                            'POSTERIOR_THALAMUS.nii.gz',
-                            'POSTERIOR_SURFGM.nii.gz',
-                           ]
-                  WM_ACCUM=[
-                            'POSTERIOR_CRBLWM.nii.gz',
-                            'POSTERIOR_WM.nii.gz'
-                            ]
-                  CSF_ACCUM=[
-                            'POSTERIOR_CSF.nii.gz',
-                            ]
-                  VB_ACCUM=[
-                            'POSTERIOR_VB.nii.gz',
-                            ]
-                  GLOBUS_ACCUM=[
-                            'POSTERIOR_GLOBUS.nii.gz',
-                            ]
-                  BACKGROUND_ACCUM=[
-                            'POSTERIOR_AIR.nii.gz',
-                            'POSTERIOR_NOTCSF.nii.gz',
-                            'POSTERIOR_NOTGM.nii.gz',
-                            'POSTERIOR_NOTVB.nii.gz',
-                            'POSTERIOR_NOTWM.nii.gz',
-                            ]
-                  SummaryDictionary={'POSTERIOR_GM_TOTAL.nii.gz':  GM_ACCUM, 'POSTERIOR_WM_TOTAL.nii.gz': WM_ACCUM,
-                                     'POSTERIOR_CSF_TOTAL.nii.gz': CSF_ACCUM, 'POSTERIOR_VB_TOTAL.nii.gz':VB_ACCUM,
-                                     'POSTERIOR_GLOBUS_TOTAL.nii.gz': GLOBUS_ACCUM,
-                                     'POSTERIOR_BACKGROUND_TOTAL.nii.gz': BACKGROUND_ACCUM }
-                  AccumulatePriorsList=list()
-                  for outname, inlist in SummaryDictionary.items():
-                        accum_image= load_images_list[ inlist[0] ] # copy first image
-                        for curr_image in range(1,len(inlist)):
-                            accum_image=accum_image + load_images_list[ inlist[curr_image] ]
-                        sitk.WriteImage(accum_image,outname)
-                        AccumulatePriorsList.append(os.path.realpath(outname))
-                  print "HACK \n\n\n\n\n\n\n HACK \n\n\n: AccumulatePriorsList\n",AccumulatePriorsList
-                  return AccumulatePriorsList
-               currentAccumulateLikeTissuePosteriorsName='AccumulateLikeTissuePosteriors_'+str(subjectid)+"_"+str(sessionid)
-               AccumulateLikeTissuePosteriorsNode[sessionid] = pe.Node(interface=Function(function=AccumulateLikeTissuePosteriors,
-                    input_names=['posteriorImages'],
-                    output_names=['AccumulatePriorsList']),
-                    name=currentAccumulateLikeTissuePosteriorsName)
-               baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],
-'OutputSpec.posteriorImages',AccumulateLikeTissuePosteriorsNode[sessionid],'posteriorImages')
+                ### Now clean up by adding together many of the items PHASE_2_oneSubjWorkflow
+                currentAccumulateLikeTissuePosteriorsName='AccumulateLikeTissuePosteriors_'+str(subjectid)+"_"+str(sessionid)
+                AccumulateLikeTissuePosteriorsNode[sessionid] = pe.Node(interface=Function(function=AccumulateLikeTissuePosteriors,
+                     input_names=['posteriorImages'],
+                     output_names=['AccumulatePriorsList']),
+                     name=currentAccumulateLikeTissuePosteriorsName)
+                baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],
+ 'OutputSpec.posteriorImages',AccumulateLikeTissuePosteriorsNode[sessionid],'posteriorImages')
 
-               ### Now define where the final organized outputs should go.
-               AddLikeTissueSink[sessionid]=pe.Node(nio.DataSink(),name="ACCUMULATED_POSTERIORS"+str(subjectid)+"_"+str(sessionid))
-               AddLikeTissueSink[sessionid].inputs.base_directory=ExperimentBaseDirectoryResults
-               #AddLikeTissueSink[sessionid].inputs.regexp_substitutions = GenerateAccumulatorImagesOutputPattern(projectid, subjectid, sessionid)
-               AddLikeTissueSink[sessionid].inputs.regexp_substitutions = GenerateOutputPattern(projectid, subjectid, sessionid,'ACCUMULATED_POSTERIORS')
-               baw200.connect(AccumulateLikeTissuePosteriorsNode[sessionid], 'AccumulatePriorsList', AddLikeTissueSink[sessionid],'ACCUMULATED_POSTERIORS.@AccumulateLikeTissuePosteriorsOutputDir')
+                ### Now define where the final organized outputs should go.
+                AddLikeTissueSink[sessionid]=pe.Node(nio.DataSink(),name="ACCUMULATED_POSTERIORS"+str(subjectid)+"_"+str(sessionid))
+                AddLikeTissueSink[sessionid].inputs.base_directory=ExperimentBaseDirectoryResults
+                #AddLikeTissueSink[sessionid].inputs.regexp_substitutions = GenerateAccumulatorImagesOutputPattern(projectid, subjectid, sessionid)
+                AddLikeTissueSink[sessionid].inputs.regexp_substitutions = GenerateOutputPattern(projectid, subjectid, sessionid,'ACCUMULATED_POSTERIORS')
+                baw200.connect(AccumulateLikeTissuePosteriorsNode[sessionid], 'AccumulatePriorsList', AddLikeTissueSink[sessionid],'ACCUMULATED_POSTERIORS.@AccumulateLikeTissuePosteriorsOutputDir')
 
-               ClipT1ImageWithBrainMaskNode=dict()
-               AtlasToSubjectantsRegistration=dict()
-               if True: ## Run the ANTS Registration from Atlas to Subject for BCut spatial priors propagation.
-                   import PipeLineFunctionHelpers
-                   import BRAINSTools.ants.antsRegistration
-                   ## Second clip to brain tissue region
-                   ### Now clean up by adding together many of the items PHASE_2_oneSubjWorkflow
-                   currentClipT1ImageWithBrainMaskName='ClipT1ImageWithBrainMask_'+str(subjectid)+"_"+str(sessionid)
-                   ClipT1ImageWithBrainMaskNode[sessionid] = pe.Node(interface=Function(function=PipeLineFunctionHelpers.ClipT1ImageWithBrainMask,
-                         input_names=['t1_image','brain_labels','clipped_file_name'],
-                         output_names=['clipped_file']),
-                         name=currentClipT1ImageWithBrainMaskName)
-                   ClipT1ImageWithBrainMaskNode[sessionid].inputs.clipped_file_name = 'clipped_t1.nii.gz'
-                   baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'OutputSpec.t1_average',ClipT1ImageWithBrainMaskNode[sessionid],'t1_image')
-                   baw200.connect(BAtlas[subjectid],'template_t1_clipped',ClipT1ImageWithBrainMaskNode[sessionid],'brain_labels')
+                ClipT1ImageWithBrainMaskNode=dict()
+                AtlasToSubjectantsRegistration=dict()
+                if True: ## Run the ANTS Registration from Atlas to Subject for BCut spatial priors propagation.
+                    import PipeLineFunctionHelpers
+                    import BRAINSTools.ants.antsRegistration
+                    ## Second clip to brain tissue region
+                    ### Now clean up by adding together many of the items PHASE_2_oneSubjWorkflow
+                    currentClipT1ImageWithBrainMaskName='ClipT1ImageWithBrainMask_'+str(subjectid)+"_"+str(sessionid)
+                    ClipT1ImageWithBrainMaskNode[sessionid] = pe.Node(interface=Function(function=PipeLineFunctionHelpers.ClipT1ImageWithBrainMask,
+                          input_names=['t1_image','brain_labels','clipped_file_name'],
+                          output_names=['clipped_file']),
+                          name=currentClipT1ImageWithBrainMaskName)
+                    ClipT1ImageWithBrainMaskNode[sessionid].inputs.clipped_file_name = 'clipped_t1.nii.gz'
+                    baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'OutputSpec.t1_average',ClipT1ImageWithBrainMaskNode[sessionid],'t1_image')
+                    baw200.connect(BAtlas[subjectid],'template_t1_clipped',ClipT1ImageWithBrainMaskNode[sessionid],'brain_labels')
 
 
-                   currentAtlasToSubjectantsRegistration='AtlasToSubjectantsRegistration_'+str(subjectid)+"_"+str(sessionid)
-                   AtlasToSubjectantsRegistration[subjectid]=pe.Node(interface=BRAINSTools.ants.antsRegistration.antsRegistration(), name =
-currentAtlasToSubjectantsRegistration)
-                   AtlasToSubjectantsRegistration[subjectid].inputs.dimension = 3
-                   AtlasToSubjectantsRegistration[subjectid].inputs.output_transform_prefix = 'AtlasToSubject_' 
-                   AtlasToSubjectantsRegistration[subjectid].inputs.metric = 'Mattes'
-                   AtlasToSubjectantsRegistration[subjectid].inputs.metric_weight = 1
-                   AtlasToSubjectantsRegistration[subjectid].inputs.radius = 32 ## This is really number of bins
-                   AtlasToSubjectantsRegistration[subjectid].inputs.transform = ["Affine[2]","SyN[0.25,3.0,0.0]"]
-                   AtlasToSubjectantsRegistration[subjectid].inputs.number_of_iterations = [[1500, 200], [100, 50, 30]]
-                   AtlasToSubjectantsRegistration[subjectid].inputs.use_histogram_matching = True
-                   AtlasToSubjectantsRegistration[subjectid].inputs.shrink_factors = [[2,1],[3,2,1]]
-                   AtlasToSubjectantsRegistration[subjectid].inputs.smoothing_sigmas = [[1,0],[2,1,0]]
-                   AtlasToSubjectantsRegistration[subjectid].inputs.use_histogram_matching = True
-                   AtlasToSubjectantsRegistration[subjectid].inputs.use_estimate_learning_rate_once = True
-                   baw200.connect(BAtlas[subjectid],'template_t1_clipped',AtlasToSubjectantsRegistration[subjectid], 'moving_image')
-                   baw200.connect(ClipT1ImageWithBrainMaskNode[sessionid], 'clipped_file', AtlasToSubjectantsRegistration[subjectid], 'fixed_image')
-                   baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'OutputSpec.atlasToSubjectTransform',AtlasToSubjectantsRegistration[subjectid],'initial_moving_transform')
+                    currentAtlasToSubjectantsRegistration='AtlasToSubjectantsRegistration_'+str(subjectid)+"_"+str(sessionid)
+                    AtlasToSubjectantsRegistration[subjectid]=pe.Node(interface=BRAINSTools.ants.antsRegistration.antsRegistration(), name =
+ currentAtlasToSubjectantsRegistration)
+                    AtlasToSubjectantsRegistration[subjectid].inputs.dimension = 3
+                    AtlasToSubjectantsRegistration[subjectid].inputs.output_transform_prefix = 'AtlasToSubject_'
+                    AtlasToSubjectantsRegistration[subjectid].inputs.metric = 'Mattes'
+                    AtlasToSubjectantsRegistration[subjectid].inputs.metric_weight = 1
+                    AtlasToSubjectantsRegistration[subjectid].inputs.radius = 32 ## This is really number of bins
+                    AtlasToSubjectantsRegistration[subjectid].inputs.transform = ["Affine[2]","SyN[0.25,3.0,0.0]"]
+                    AtlasToSubjectantsRegistration[subjectid].inputs.number_of_iterations = [[1500, 200], [100, 50, 30]]
+                    AtlasToSubjectantsRegistration[subjectid].inputs.use_histogram_matching = True
+                    AtlasToSubjectantsRegistration[subjectid].inputs.shrink_factors = [[2,1],[3,2,1]]
+                    AtlasToSubjectantsRegistration[subjectid].inputs.smoothing_sigmas = [[1,0],[2,1,0]]
+                    AtlasToSubjectantsRegistration[subjectid].inputs.use_histogram_matching = True
+                    AtlasToSubjectantsRegistration[subjectid].inputs.use_estimate_learning_rate_once = True
+                    baw200.connect(BAtlas[subjectid],'template_t1_clipped',AtlasToSubjectantsRegistration[subjectid], 'moving_image')
+                    baw200.connect(ClipT1ImageWithBrainMaskNode[sessionid], 'clipped_file', AtlasToSubjectantsRegistration[subjectid], 'fixed_image')
+                    baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'OutputSpec.atlasToSubjectTransform',AtlasToSubjectantsRegistration[subjectid],'initial_moving_transform')
 
         else:  ## Only one is available
-           pass
+            pass
     return baw200

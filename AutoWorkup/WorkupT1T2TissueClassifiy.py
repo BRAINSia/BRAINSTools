@@ -18,6 +18,59 @@ from BRAINSTools.BRAINSABCext import *
     tissueClassifyWF.connect(BLI,'outputTransformFilename',myLocalTCWF,'atlasToSubjectInitialTransform')
 """
 
+def MakeOneFileList(T1List,T2List,PDList,OtherList,PrimaryT1):
+    """ This funciton uses PrimaryT1 for the first T1, and the append the rest of the T1's and T2's """
+    imagePathList=list()
+    imagePathList.append(PrimaryT1) # Force replacement of the first element
+    for i in T1List[1:]:
+        imagePathList.append(i) # The reset of the elements
+    for i in T2List[0:]:
+        imagePathList.append(i)
+    for i in PDList[0:]:
+        imagePathList.append(i)
+    for i in OtherList[0:]:
+        imagePathList.append(i)
+    return imagePathList
+def MakeOneFileTypeList(T1List,T2List,PDList,OtherList):
+    input_types =       ["T1"]*len(T1List)
+    input_types.extend( ["T2"]*len(T2List) )
+    input_types.extend( ["PD"]*len(PDList) )
+    input_types.extend( ["OTHER"]*len(OtherList) )
+    return input_types
+
+def MakeOutFileList(T1List,T2List,PDList,OtherList):
+    def GetExtBaseName(filename):
+        '''
+        Get the filename without the extension.  Works for .ext and .ext.gz
+        '''
+        import os
+        currBaseName = os.path.basename(filename)
+        currExt = os.path.splitext(currBaseName)[1]
+        currBaseName = os.path.splitext(currBaseName)[0]
+        if currExt == ".gz":
+            currBaseName = os.path.splitext(currBaseName)[0]
+            currExt = os.path.splitext(currBaseName)[1]
+        return currBaseName
+    all_files=T1List
+    all_files.extend(T2List)
+    all_files.extend(PDList)
+    all_files.extend(OtherList)
+    out_corrected_names=[]
+    for i in all_files:
+        out_name=GetExtBaseName(i)+"_corrected.nii.gz"
+        out_corrected_names.append(out_name)
+    return out_corrected_names
+
+def getListIndex( imageList, index):
+    return imageList[index]
+def MakePosteriorDictionaryFunc(posteriorImages):
+    posteriorNames=['WM', 'SURFGM', 'ACCUMBEN', 'CAUDATE', 'PUTAMEN', 'GLOBUS', 'THALAMUS', 'HIPPOCAMPUS', 'CRBLGM', 'CRBLWM', 'CSF', 'VB', 'NOTCSF', 'NOTGM', 'NOTWM', 'NOTVB', 'AIR']
+    if len(posteriorNames) != len(posteriorImages):
+        print "ERROR: ", posteriorNames
+        print "ERROR: ", posteriorImages
+        return -1
+    temp_dictionary=dict(zip(posteriorNames,posteriorImages))
+    return temp_dictionary
 
 def CreateTissueClassifyWorkflow(WFname,CLUSTER_QUEUE,InterpolationMode):
     tissueClassifyWF= pe.Workflow(name=WFname)
@@ -41,19 +94,6 @@ def CreateTissueClassifyWorkflow(WFname,CLUSTER_QUEUE,InterpolationMode):
     ########################################################
     # Run BABCext on Multi-modal images
     ########################################################
-    def MakeOneFileList(T1List,T2List,PDList,OtherList,PrimaryT1):
-        """ This funciton uses PrimaryT1 for the first T1, and the append the rest of the T1's and T2's """
-        imagePathList=list()
-        imagePathList.append(PrimaryT1) # Force replacement of the first element
-        for i in T1List[1:]:
-            imagePathList.append(i) # The reset of the elements
-        for i in T2List[0:]:
-            imagePathList.append(i)
-        for i in PDList[0:]:
-            imagePathList.append(i)
-        for i in OtherList[0:]:
-            imagePathList.append(i)
-        return imagePathList
     makeImagePathList = pe.Node( Function(function=MakeOneFileList,
                                           input_names = ['T1List','T2List','PDList','OtherList','PrimaryT1'],
                                           output_names = ['imagePathList']), run_without_submitting=True, name="99_makeImagePathList")
@@ -64,12 +104,6 @@ def CreateTissueClassifyWorkflow(WFname,CLUSTER_QUEUE,InterpolationMode):
     # -- Standard mode to make 256^3 images
     tissueClassifyWF.connect( inputsSpec, 'PrimaryT1', makeImagePathList, 'PrimaryT1' )
 
-    def MakeOneFileTypeList(T1List,T2List,PDList,OtherList):
-        input_types =       ["T1"]*len(T1List)
-        input_types.extend( ["T2"]*len(T2List) )
-        input_types.extend( ["PD"]*len(PDList) )
-        input_types.extend( ["OTHER"]*len(OtherList) )
-        return input_types
     makeImageTypeList = pe.Node( Function(function=MakeOneFileTypeList,
                                           input_names = ['T1List','T2List','PDList','OtherList'],
                                           output_names = ['imageTypeList']), run_without_submitting=True, name="99_makeImageTypeList")
@@ -78,28 +112,6 @@ def CreateTissueClassifyWorkflow(WFname,CLUSTER_QUEUE,InterpolationMode):
     tissueClassifyWF.connect( inputsSpec, 'PDList', makeImageTypeList, 'PDList' )
     tissueClassifyWF.connect( inputsSpec, 'OtherList', makeImageTypeList, 'OtherList' )
 
-    def MakeOutFileList(T1List,T2List,PDList,OtherList):
-        def GetExtBaseName(filename):
-            '''
-            Get the filename without the extension.  Works for .ext and .ext.gz
-            '''
-            import os
-            currBaseName = os.path.basename(filename)
-            currExt = os.path.splitext(currBaseName)[1]
-            currBaseName = os.path.splitext(currBaseName)[0]
-            if currExt == ".gz":
-                currBaseName = os.path.splitext(currBaseName)[0]
-                currExt = os.path.splitext(currBaseName)[1]
-            return currBaseName
-        all_files=T1List
-        all_files.extend(T2List)
-        all_files.extend(PDList)
-        all_files.extend(OtherList)
-        out_corrected_names=[]
-        for i in all_files:
-            out_name=GetExtBaseName(i)+"_corrected.nii.gz"
-            out_corrected_names.append(out_name)
-        return out_corrected_names
     makeOutImageList = pe.Node( Function(function=MakeOutFileList,
                                          input_names = ['T1List','T2List','PDList','OtherList'],
                                          output_names = ['outImageList']), run_without_submitting=True, name="99_makeOutImageList")
@@ -158,22 +170,12 @@ def CreateTissueClassifyWorkflow(WFname,CLUSTER_QUEUE,InterpolationMode):
     tissueClassifyWF.connect(BABCext,'outputLabels',outputsSpec,'outputLabels')
     tissueClassifyWF.connect(BABCext,'outputDirtyLabels',outputsSpec,'outputHeadLabels')
 
-    def getListIndex( imageList, index):
-        return imageList[index]
     tissueClassifyWF.connect( [ ( BABCext, outputsSpec, [ (( 'outputAverageImages', getListIndex, 0 ), "t1_average")] ), ] )
     tissueClassifyWF.connect( [ ( BABCext, outputsSpec, [ (( 'outputAverageImages', getListIndex, 1 ), "t2_average")] ), ] )
     #tissueClassifyWF.connect( [ ( BABCext, outputsSpec, [ (( 'outputAverageImages', getListIndex, 2 ), "pd_average")] ), ] )
 
     tissueClassifyWF.connect(BABCext,'outputDir',outputsSpec,'TissueClassifyOutputDir')
 
-    def MakePosteriorDictionaryFunc(posteriorImages):
-        posteriorNames=['WM', 'SURFGM', 'ACCUMBEN', 'CAUDATE', 'PUTAMEN', 'GLOBUS', 'THALAMUS', 'HIPPOCAMPUS', 'CRBLGM', 'CRBLWM', 'CSF', 'VB', 'NOTCSF', 'NOTGM', 'NOTWM', 'NOTVB', 'AIR']
-        if len(posteriorNames) != len(posteriorImages):
-            print "ERROR: ", posteriorNames
-            print "ERROR: ", posteriorImages
-            return -1
-        temp_dictionary=dict(zip(posteriorNames,posteriorImages))
-        return temp_dictionary
     MakePosteriorDictionaryNode = pe.Node( Function(function=MakePosteriorDictionaryFunc,
                                       input_names = ['posteriorImages'],
                                       output_names = ['posteriorDictionary']), run_without_submitting=True, name="99_makePosteriorDictionary")

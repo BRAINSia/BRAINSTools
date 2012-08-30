@@ -36,6 +36,7 @@ if(NOT DEFINED KWStyle_EXE AND NOT ${USE_SYSTEM_KWStyle})
     BINARY_DIR ${proj}-build
     "${cmakeversion_external_update}"
     CMAKE_ARGS
+      --no-warn-unused-cli
       ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
       -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_BINARY_DIR}/Utils
       -DCMAKE_BUILD_TYPE:STRING=Release

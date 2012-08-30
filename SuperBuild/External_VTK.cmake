@@ -153,6 +153,7 @@ if(NOT DEFINED ${extProjName}_DIR AND NOT ${USE_SYSTEM_${extProjName}})
     UPDATE_COMMAND ""
     CMAKE_GENERATOR ${gen}
     CMAKE_ARGS
+      --no-warn-unused-cli
       ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
       ${COMMON_EXTERNAL_PROJECT_ARGS}
       -DBUILD_EXAMPLES:BOOL=OFF

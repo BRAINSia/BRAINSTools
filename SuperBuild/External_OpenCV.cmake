@@ -27,7 +27,7 @@ if(NOT DEFINED OpenCV_DIR)
     GIT_TAG ${OPENCV_GIT_TAG}
     "${cmakeversion_external_update}"
     CMAKE_ARGS
-    --no-warn-unused-cli
+      --no-warn-unused-cli
       ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
       ${COMMON_EXTERNAL_PROJECT_ARGS}
       -DBUILD_EXAMPLES:BOOL=OFF

@@ -1,24 +1,10 @@
 
 include(CMakeDependentOption)
 
-#-----------------------------------------------------------------------------
-# Build option(s)
-#-----------------------------------------------------------------------------
-option(USE_BRAINSFit                       "Build BRAINSFit"                       ON)
-option(USE_BRAINSFitEZ                     "Build BRAINSFitEZ"                     ON)
-option(USE_BRAINSROIAuto                   "Build BRAINSROIAuto"                   ON)
-option(USE_BRAINSResample                  "Build BRAINSResample"                  ON)
-option(USE_BRAINSDemonWarp                 "Build BRAINSDemonWarp "                ON)
-option(USE_GTRACT                          "Build GTRACT"                          ON)
-option(USE_ANTS                            "Build ANTS       "                     OFF)
-option(USE_BRAINSContinuousClass           "Build BRAINSContinuousClass "          OFF)
-option(USE_AutoWorkup                      "Build AutoWorkup"                      OFF)
-option(USE_BRAINSSurfaceTools              "Build BRAINSSurfaceTools     "         OFF)
-option(USE_ICCDEF                          "Build ICCDEF     "                     OFF)
-
-set(ITK_VERSION_MAJOR 4 CACHE STRING "Choose the expected ITK major version to build BRAINS (3 or 4).")
+set(USE_ITKv4 ON)
+set(ITK_VERSION_MAJOR 4 CACHE STRING "Choose the expected ITK major version to build BRAINS only version 4 allowed.")
 # Set the possible values of ITK major version for cmake-gui
-set_property(CACHE ITK_VERSION_MAJOR PROPERTY STRINGS "3" "4")
+set_property(CACHE ITK_VERSION_MAJOR PROPERTY STRINGS "4")
 
 #-----------------------------------------------------------------------------
 # Set a default build type if none was specified
@@ -29,39 +15,36 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
 endif()
 
-if(NOT ${ITK_VERSION_MAJOR} STREQUAL "3" AND NOT ${ITK_VERSION_MAJOR} STREQUAL "4")
-  message(FATAL_ERROR "ITK_VERSION_MAJOR should be either 3 or 4")
-endif()
-
-set(USE_ITKv3 OFF)
-set(USE_ITKv4 ON)
 if(${ITK_VERSION_MAJOR} STREQUAL "3")
-  set(USE_ITKv3 ON)
-  set(USE_ITKv4 OFF)
+  message(FATAL_ERROR "ITKv3 is no longer supported")
 endif()
 
-CMAKE_DEPENDENT_OPTION(
-  USE_BRAINSABC                       "Build BRAINSABC (ITKv4)"                      ON "USE_ITKv4" ON)
-CMAKE_DEPENDENT_OPTION(
-  USE_BRAINSTransformConvert          "Build BRAINSTransformConvert (ITKv4)"         ON "USE_ITKv4" ON)
-CMAKE_DEPENDENT_OPTION(
-  USE_BRAINSConstellationDetector     "Build BRAINSConstellationDetector (ITKv4)"    ON "USE_ITKv4" ON)
-CMAKE_DEPENDENT_OPTION(
-  USE_BRAINSMush                      "Build BRAINSMush (ITKv4)"                     ON "USE_ITKv4" ON)
-CMAKE_DEPENDENT_OPTION(
-  USE_BRAINSInitializedControlPoints  "Build BRAINSInitializedControlPoints (ITKv4)" ON "USE_ITKv4" ON)
-CMAKE_DEPENDENT_OPTION(
-  USE_BRAINSMultiModeSegment          "Build BRAINSMultiModeSegment (ITKv4)"        OFF "USE_ITKv4" OFF)
-CMAKE_DEPENDENT_OPTION(
-  USE_BRAINSCut                       "Build BRAINSCut (ITKv4)"                     OFF "USE_ITKv4" OFF)
-CMAKE_DEPENDENT_OPTION(
-  USE_BRAINSLandmarkInitializer       "Build BRAINSLandmarkInitializer (ITKv4)"     ON  "USE_ITKv4" ON)
-CMAKE_DEPENDENT_OPTION(
-  USE_ImageCalculator                 "Build ImageCalculator (ITKv4)"               OFF "USE_ITKv4" OFF)
-CMAKE_DEPENDENT_OPTION(
-  USE_BRAINSSnapShotWriter            "Build BRAINSSnapShotWriter (ITKv4)"          OFF "USE_ITKv4" OFF)
-CMAKE_DEPENDENT_OPTION(
-  USE_ANTS            "Build ANTS"          OFF "USE_ITKv4" OFF)
+#-----------------------------------------------------------------------------
+# Build option(s)
+#-----------------------------------------------------------------------------
+option(USE_AutoWorkup                     "Build AutoWorkup"                     ON)
+option(USE_BRAINSFit                      "Build BRAINSFit"                      ON)
+option(USE_BRAINSFitEZ                    "Build BRAINSFitEZ"                    ON)
+option(USE_BRAINSROIAuto                  "Build BRAINSROIAuto"                  ON)
+option(USE_BRAINSResample                 "Build BRAINSResample"                 ON)
+option(USE_BRAINSDemonWarp                "Build BRAINSDemonWarp "               ON)
+option(USE_GTRACT                         "Build GTRACT"                         ON)
+option(USE_BRAINSABC                      "Build BRAINSABC"                      ON)
+option(USE_BRAINSTransformConvert         "Build BRAINSTransformConvert"         ON)
+option(USE_BRAINSConstellationDetector    "Build BRAINSConstellationDetector"    ON)
+option(USE_BRAINSMush                     "Build BRAINSMush"                     ON)
+option(USE_BRAINSInitializedControlPoints "Build BRAINSInitializedControlPoints" ON)
+option(USE_BRAINSMultiModeSegment         "Build BRAINSMultiModeSegment"         ON)
+option(USE_BRAINSCut                      "Build BRAINSCut"                      ON)
+option(USE_BRAINSLandmarkInitializer      "Build BRAINSLandmarkInitializer"      ON)
+option(USE_ImageCalculator                "Build ImageCalculator"                ON)
+option(USE_BRAINSSnapShotWriter           "Build BRAINSSnapShotWriter"           ON)
+option(USE_ANTS                           "Build ANTS"                           ON)
+
+## These are not yet ready for prime time.
+option(USE_BRAINSContinuousClass          "Build BRAINSContinuousClass "   OFF)
+option(USE_BRAINSSurfaceTools             "Build BRAINSSurfaceTools     "  OFF)
+option(USE_ICCDEF                         "Build ICCDEF     "              OFF)
 
 
 option(USE_DebugImageViewer "Build DebugImageViewer" OFF)

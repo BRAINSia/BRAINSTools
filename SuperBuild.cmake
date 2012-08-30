@@ -1,9 +1,5 @@
 
 #-----------------------------------------------------------------------------
-set(verbose FALSE)
-#-----------------------------------------------------------------------------
-
-#-----------------------------------------------------------------------------
 enable_language(C)
 enable_language(CXX)
 
@@ -294,12 +290,14 @@ foreach(arg ${${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_ARGS})
   list(APPEND COMMON_EXTERNAL_PROJECT_ARGS ${_arg})
 endforeach()
 
-message("COMMON_EXTERNAL_PROJECT_ARGS = ")
+#-----------------------------------------------------------------------------
+set(verbose FALSE)
+#-----------------------------------------------------------------------------
+if(verbose)
 foreach(x ${COMMON_EXTERNAL_PROJECT_ARGS})
-  message("   ${x}")
+  message("COMMON_EXTERNAL_PROJECT_ARGS:   ${x}")
 endforeach()
 
-if(verbose)
   message("Inner external project args:")
   foreach(arg ${${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_ARGS})
     message("  ${arg}")

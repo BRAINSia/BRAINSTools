@@ -4,10 +4,10 @@
 #include <iostream>
 
 class BooleanValue :
-  public XMLContents<const bool>
+  public XMLContents<bool>
 {
 public:
-  typedef XMLContents<const bool> SuperClass;
+  typedef XMLContents<bool> SuperClass;
   virtual int PrintSelf(std::ostream & os, int indent) const
   {
     indent += SuperClass::PrintSelf(os, indent);
@@ -16,8 +16,8 @@ public:
     return indent + 2;
   }
 
-  typedef const bool ReturnType;
-  BooleanValue(const std::string & name, ReturnType value) :
+  typedef bool ReturnType;
+  BooleanValue(const std::string & name, const ReturnType value) :
     XMLContents<ReturnType>(name),
     m_Value(value)
   {
@@ -28,7 +28,7 @@ public:
     return this->m_Value;
   }
 
-  void SetValue(ReturnType & s)
+  void SetValue(const ReturnType & s)
   {
     this->m_Value = s;
   }

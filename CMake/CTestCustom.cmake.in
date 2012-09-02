@@ -62,16 +62,17 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
   ".*detached.*HEAD.*"
 
   # NIPYPE warnings:
-  "NIPYPE-prefix.*warning"
+  ".*NIPYPE-prefix.*warning.*"
 
   # PCRE warnings:
-  "PCRE-prefixi.*warning"
+  ".*PCRE-prefix.*warning.*"
+  "PCRE.*warning"
 
   # Swig warnings:
   ".*Swig-prefix.*warning"
 
   # Open-CV warnings:
-  "OpenCV-build.*warning"
+  ".*OpenCV-build.*warning.*"
 
   # Numpy warnings
   "_configtest.*warning"

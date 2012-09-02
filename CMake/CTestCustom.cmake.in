@@ -58,17 +58,20 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
   "Microsoft SDKs."
   "VC.include."
 
+  # Ignore 'detached HEAD' warnings
+  ".*detached.*HEAD.*"
+
   # NIPYPE warnings:
-  "NIPYPE-prefix"
+  "NIPYPE-prefix.*warning"
 
   # PCRE warnings:
-  "PCRE-prefix"
+  "PCRE-prefixi.*warning"
 
   # Swig warnings:
-  "Swig-prefix"
+  ".*Swig-prefix.*warning"
 
   # Open-CV warnings:
-  "OpenCV-build"
+  "OpenCV-build.*warning"
 
   # Numpy warnings
   "_configtest.*warning"

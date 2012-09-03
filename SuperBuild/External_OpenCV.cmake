@@ -3,17 +3,10 @@ if(DEFINED OpenCV_DIR AND NOT EXISTS ${OpenCV_DIR})
   message(FATAL_ERROR "${extProjName}_DIR variable is defined but corresponds to non-existing directory (${${extProjName}_DIR})")
 endif()
 
-#option(USE_NEWOpenCV "A toggle flag for using the new OpenCV Version" OFF)
 
-#if( USE_NEWOpenCV )
-#  set(OPENCV_GIT_TAG "FixNeuralNetwork_20111111") # USE THIS FOR UPDATED VERSION
-#  set(OPENCV_GIT_REPO "${git_protocol}://github.com/hjmjohnson/OpenCV.git") # USE THIS FOR UPDATED VERSION
-#else()
-  set(OPENCV_GIT_REPO "${git_protocol}://github.com/BRAINSia/OpenCV_TruncatedSVN.git") # USE THIS FOR UPDATED VERSION
-  set(OPENCV_GIT_TAG "BRAINSCut_OpenCV") # USE THIS FOR UPDATED VERSION
-  set(OPENCV_SVN_REPO "http://code.opencv.org/svn/opencv/trunk/opencv")
-  set(OPENCV_SVN_TAG  "8859") # This is the 2012-06-30 tag
-#endif()
+set(OPENCV_GIT_REPO "${git_protocol}://github.com/BRAINSia/opencv.git") # USE THIS FOR UPDATED VERSION
+#set(OPENCV_GIT_TAG "BRAINSCut_Patches") # USE THIS FOR UPDATED VERSION
+set(OPENCV_GIT_TAG "20120903_UpdateForTesting") # USE THIS FOR UPDATED VERSION
 
 if(NOT DEFINED OpenCV_DIR)
   set(OpenCV_DEPEND OpenCV)

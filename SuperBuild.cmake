@@ -120,7 +120,6 @@ if(USE_AutoWorkup)
   list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES Swig)
   list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES SimpleITK)
   list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES NIPYPE)
-  list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES NIPYPE)
 endif()
 
 #-----------------------------------------------------------------------------

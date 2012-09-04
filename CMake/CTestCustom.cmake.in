@@ -73,6 +73,10 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
 
   # Open-CV warnings:
   ".*OpenCV-build.*warning.*"
+  ".*OpenCV.*"
+
+  # FFTW warnings:
+  ".*fftw.*"
 
   # Numpy warnings
   "_configtest.*warning"

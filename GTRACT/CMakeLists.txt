@@ -35,7 +35,7 @@ if(NOT VTK_FOUND)
     find_package(VTK REQUIRED)
     include(${VTK_USE_FILE})
 endif(NOT VTK_FOUND)
-link_libraries( vtkGraphics vtkImaging vtkIO vtkFiltering vtkCommon )
+link_libraries( ${VTK_LIBRARIES} )
 #-----------------------------------------------------------------------------
 # Configure files with settings for use by the build.
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/gtractConfigure.h.in

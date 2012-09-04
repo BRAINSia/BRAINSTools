@@ -11,13 +11,13 @@ if(DEFINED Swig_DIR AND NOT EXISTS ${Swig_DIR})
   message(FATAL_ERROR "Swig_DIR variable is defined but corresponds to non-existing directory")
 endif()
 
-set( TARGET_SWIG_VERSION 2.0.7 )
+set( TARGET_SWIG_VERSION 2.0.8 )
 if(NOT SWIG_DIR)
   if(WIN32)
     # swig.exe available as pre-built binary on Windows:
     ExternalProject_Add(Swig
       URL http://prdownloads.sourceforge.net/swig/swigwin-${TARGET_SWIG_VERSION}.zip
-      URL_MD5 4ab8064b1a8894c8577ef9d0fb2523c8
+      URL_MD5 b33724aaa42a736816d7f095e7d93e4f
       SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/swigwin-${TARGET_SWIG_VERSION}
       CONFIGURE_COMMAND ""
       BUILD_COMMAND ""
@@ -55,7 +55,7 @@ if(NOT SWIG_DIR)
 
     ExternalProject_add(Swig
       URL http://prdownloads.sourceforge.net/swig/swig-${TARGET_SWIG_VERSION}.tar.gz
-      URL_MD5  8c2f6a9f51677647a64c8adb1b176299
+      URL_MD5  69f917e870efc0712c06ab53217b28d1
       "${cmakeversion_external_update}"
       CONFIGURE_COMMAND ${swig_CONFIGURE_COMMAND}
       DEPENDS PCRE

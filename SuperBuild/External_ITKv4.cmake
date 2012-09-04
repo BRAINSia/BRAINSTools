@@ -79,7 +79,7 @@ if(NOT DEFINED ${extProjName}_DIR AND NOT ${USE_SYSTEM_${extProjName}})
     )
   ### --- End Project specific additions
   set(${proj}_REPOSITORY ${git_protocol}://itk.org/ITK.git)
-  set(${proj}_GIT_TAG 75908ebd872f23e8de2876a56a73b08197e9fc94) #2012-09-01
+  set(${proj}_GIT_TAG 764825ed3746014ab1b915154bdbcdfe248fdff8) #2012-09-04
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${${proj}_REPOSITORY}
     GIT_TAG ${${proj}_GIT_TAG}
@@ -88,6 +88,7 @@ if(NOT DEFINED ${extProjName}_DIR AND NOT ${USE_SYSTEM_${extProjName}})
     "${cmakeversion_external_update}"
     CMAKE_GENERATOR ${gen}
     CMAKE_ARGS
+      -Wno-dev
       --no-warn-unused-cli
       ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
       ${COMMON_EXTERNAL_PROJECT_ARGS}

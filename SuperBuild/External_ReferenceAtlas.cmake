@@ -68,6 +68,7 @@ if(NOT DEFINED ${extProjName}_DIR OR NOT DEFINED ATLAS_NAME)
     "${cmakeversion_external_update}"
     CMAKE_GENERATOR ${gen}
     CMAKE_ARGS
+      -Wno-dev
       --no-warn-unused-cli
       ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
       ${COMMON_EXTERNAL_PROJECT_ARGS}

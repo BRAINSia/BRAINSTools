@@ -20,6 +20,7 @@ if(NOT DEFINED OpenCV_DIR)
     GIT_TAG ${OPENCV_GIT_TAG}
     "${cmakeversion_external_update}"
     CMAKE_ARGS
+      -Wno-dev
       --no-warn-unused-cli
       ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
       ${COMMON_EXTERNAL_PROJECT_ARGS}
@@ -63,7 +64,6 @@ if(NOT DEFINED OpenCV_DIR)
 
       -DBUILD_SHARED_LIBS:BOOL=OFF
       -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_BINARY_DIR}/${proj}-install
-    UPDATE_COMMAND ""
     )
   set(OpenCV_DIR ${CMAKE_BINARY_DIR}/${proj}-install/share/OpenCV/)
 endif(NOT DEFINED OpenCV_DIR)

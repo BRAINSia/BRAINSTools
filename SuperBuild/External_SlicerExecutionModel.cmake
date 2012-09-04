@@ -60,6 +60,7 @@ if(NOT DEFINED ${extProjName}_DIR AND NOT ${USE_SYSTEM_${extProjName}})
     "${cmakeversion_external_update}"
     CMAKE_GENERATOR ${gen}
     CMAKE_ARGS
+      -Wno-dev
       --no-warn-unused-cli
       ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
       ${COMMON_EXTERNAL_PROJECT_ARGS}

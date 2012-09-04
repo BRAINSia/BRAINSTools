@@ -59,6 +59,7 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
   "VC.include."
 
   # Ignore 'detached HEAD' warnings
+  "Note.*checking out"
   ".*detached.*HEAD.*"
 
   # NIPYPE warnings:
@@ -70,6 +71,8 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
 
   # Swig warnings:
   ".*Swig-prefix.*warning"
+  "Note . None of the following packages are required for users to compile and install SWIG"
+  "CParse.*warning"
 
   # Open-CV warnings:
   ".*OpenCV-build.*warning.*"
@@ -170,6 +173,7 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
   "VTK.*Filtering.*cxx"
   "VTK.*IO.*cxx"
   "VTK.*Infovis.*cxx"
+  "VTK.*vtk.*warning"
   # exception specific to Mac/Carbon
   "VTK.Rendering.vtkCarbonRenderWindow.*warning.*(NewRgn|DiffRgn|EqualRgn|DisposeRgn).*is deprecated"
   # exception specific to Mac/X11
@@ -267,4 +271,7 @@ set(CTEST_CUSTOM_ERROR_EXCEPTION
   "NUMPY._configtest.*undefined reference"
   "_configtest.*error"
   "collect2: ld returned 1 exit status"
+
+  #SWIG 
+  "Note . None of the following packages are required for users to compile and install SWIG"
   )

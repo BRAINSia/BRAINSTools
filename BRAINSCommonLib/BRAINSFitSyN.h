@@ -9,7 +9,7 @@ typedef  RegistrationHelperType::ImageType              ImageType;
 typedef  RegistrationHelperType::CompositeTransformType CompositeTransformType;
 
 template <class FixedImageType, class MovingimageType>
-typename CompositeTransformType::TransformTypePointer
+typename CompositeTransformType::Pointer
 simpleSynReg( typename FixedImageType::Pointer & fixedImage,
               typename MovingimageType::Pointer & movingImage,
               typename CompositeTransformType::Pointer compositeInitialTransform )
@@ -75,10 +75,11 @@ simpleSynReg( typename FixedImageType::Pointer & fixedImage,
   // Get the output transform
   typename CompositeTransformType::Pointer outputCompositeTransform = regHelper->GetCompositeTransform();
   // write out transform actually computed, so skip the initial transform
-  typename CompositeTransformType::TransformTypePointer resultTransform =
-    outputCompositeTransform->GetNthTransform( 1 );
+  // typename CompositeTransformType::TransformTypePointer resultTransform = outputCompositeTransform->GetNthTransform(
+  // 1 );
 
-  return resultTransform;
+  // return resultTransform;
+  return outputCompositeTransform;
 }
 
 #endif

@@ -711,8 +711,13 @@ int main(int argc, char *argv[])
 
   if( localTransformType[localTransformType.size() - 1] == "SyN" )
     {
+    // CompositeTransformType::TransformTypePointer tempSyNFinalTransform =
+    // dynamic_cast<CompositeTransformType::TransformType *>( currentGenericTransform.GetPointer() );
+
+    CompositeTransformType::Pointer tempSyNCompositeTransform =
+      dynamic_cast<CompositeTransformType *>( currentGenericTransform.GetPointer() );
     CompositeTransformType::TransformTypePointer tempSyNFinalTransform =
-      dynamic_cast<CompositeTransformType::TransformType *>( currentGenericTransform.GetPointer() );
+      tempSyNCompositeTransform->GetNthTransform( 1 );
 
     if( tempSyNFinalTransform.IsNull() )
       {

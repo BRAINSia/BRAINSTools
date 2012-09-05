@@ -36,6 +36,12 @@ include(${GenerateCLP_USE_FILE})
 include(${SlicerExecutionModel_USE_FILE})
 include(${SlicerExecutionModel_CMAKE_DIR}/SEMMacroBuildCLI.cmake)
 
+# find ANTS includes
+include_directories(${ANTS_SOURCE_DIR}/Temporary)
+include_directories(${ANTS_SOURCE_DIR}/Utilities)
+include_directories(${ANTS_SOURCE_DIR}/Examples)
+include_directories(${ANTS_SOURCE_DIR}/ImageRegistration)
+
 #-----------------------------------------------------------------------------
 enable_testing()
 include(CTest)
@@ -119,6 +125,8 @@ if(USE_DebugImageViewer)
     DebugImageViewer)
 endif()
 
+message(STATUS "HACK:  Adding link directory ${BRAINSStandAlone_LIBRARY_PATH}")
+link_directories(${BRAINSStandAlone_LIBRARY_PATH})
 #-----------------------------------------------------------------------------
 # Add module sub-directory if USE_<MODULENAME> is both defined and true
 #-----------------------------------------------------------------------------

@@ -13,7 +13,7 @@ set(ALL_PROGS_LIST
   BRAINSFitEZ
   )
 
-set(BRAINSFitLibraries BRAINSCommonLib)
+set(BRAINSFitLibraries BRAINSCommonLib antsUtilities)
 DebugImageViewerLibAdditions(BRAINSFitLibraries)
 
 foreach(prog ${ALL_PROGS_LIST})

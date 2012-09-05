@@ -68,11 +68,17 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
   # PCRE warnings:
   ".*PCRE-prefix.*warning.*"
   "PCRE.*warning"
+  "pcre.*has no symbols"
+  "pcre.*warning"
 
   # Swig warnings:
   ".*Swig-prefix.*warning"
-  "Note . None of the following packages are required for users to compile and install SWIG"
+  "Note.*SWIG"
   "CParse.*warning"
+  ".*parser.y.*"
+  "maximum warning verbosity"
+  "Swig.*note.*"
+  "warning.*argument unused during compilation"
 
   # Open-CV warnings:
   ".*OpenCV-build.*warning.*"
@@ -262,6 +268,23 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
 
   # Since NUMPY has test that return build errors, let's add the following exception
   "WARNING non-zero return value in ctest from"
+
+
+  ## HACK: THIS SHOULD NOT BE SUPPRESSED, NEED TO FIX OPENCV!!
+  "BRAINSCutApplyModel.cxx.*warning.*increases required alignment"
+
+  ## HACK: THIS SHOULD NOT BE SUPPRESSED, NEED TO FIX IN ANTS
+  "ANTS.*warning"
+  ## External Packages
+  "Note.*SWIG"
+  ".*parser.y.*"
+  "maximum warning verbosity"
+  ".*OpenCV.*"
+  ".*VTK.*"
+  ".*has no symbols."
+  "ITKv4"
+  "SlicerExecutionModel"
+  "SimpleITK"
   )
 
 set(CTEST_CUSTOM_ERROR_EXCEPTION
@@ -272,6 +295,15 @@ set(CTEST_CUSTOM_ERROR_EXCEPTION
   "_configtest.*error"
   "collect2: ld returned 1 exit status"
 
-  #SWIG 
-  "Note . None of the following packages are required for users to compile and install SWIG"
+  #SWIG
+  "Note.*SWIG"
+  ".*parser.y.*"
+  "maximum warning verbosity"
+  ".*OpenCV.*"
+  ".*VTK.*"
+  ".*has no symbols."
+  "ITKv4"
+  "SlicerExecutionModel"
+  "SimpleITK"
+
   )

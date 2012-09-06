@@ -453,7 +453,6 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
             TC_DataSink=dict()
             AddLikeTissueSink=dict()
             AccumulateLikeTissuePosteriorsNode=dict()
-            AccumulateLikeTissuePosteriors=dict()
             for sessionid in allSessions:
                 projectid = ExperimentDatabase.getProjFromSession(sessionid)
                 print("PHASE II PROJECT: {0} SUBJECT: {1} SESSION: {2}".format(projectid,subjectid,sessionid))
@@ -546,16 +545,16 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
  currentAtlasToSubjectantsRegistration)
                     AtlasToSubjectantsRegistration[subjectid].inputs.dimension = 3
                     AtlasToSubjectantsRegistration[subjectid].inputs.output_transform_prefix = 'AtlasToSubject_'
-                    AtlasToSubjectantsRegistration[subjectid].inputs.metric = 'Mattes'
-                    AtlasToSubjectantsRegistration[subjectid].inputs.metric_weight = 1
-                    AtlasToSubjectantsRegistration[subjectid].inputs.radius = 32 ## This is really number of bins
-                    AtlasToSubjectantsRegistration[subjectid].inputs.transform = ["Affine[2]","SyN[0.25,3.0,0.0]"]
-                    AtlasToSubjectantsRegistration[subjectid].inputs.number_of_iterations = [[1500, 200], [100, 50, 30]]
-                    AtlasToSubjectantsRegistration[subjectid].inputs.use_histogram_matching = True
+                    AtlasToSubjectantsRegistration[subjectid].inputs.metric = ['Mattes','Mattes']
+                    AtlasToSubjectantsRegistration[subjectid].inputs.metric_weight = [1,1]
+                    AtlasToSubjectantsRegistration[subjectid].inputs.radius_or_number_of_bins = [32,32] ## This is really number of bins
+                    AtlasToSubjectantsRegistration[subjectid].inputs.transforms =           [ "Affine",  "SyN"              ]
+                    AtlasToSubjectantsRegistration[subjectid].inputs.transform_parameters = [ [ 2 ],     [ 0.25, 3.0, 0.0 ] ]
+                    AtlasToSubjectantsRegistration[subjectid].inputs.number_of_iterations = [[1500, 200], [100, 50, 30]     ]
+                    AtlasToSubjectantsRegistration[subjectid].inputs.use_histogram_matching = [ True, True ]
                     AtlasToSubjectantsRegistration[subjectid].inputs.shrink_factors = [[2,1],[3,2,1]]
                     AtlasToSubjectantsRegistration[subjectid].inputs.smoothing_sigmas = [[1,0],[2,1,0]]
-                    AtlasToSubjectantsRegistration[subjectid].inputs.use_histogram_matching = True
-                    AtlasToSubjectantsRegistration[subjectid].inputs.use_estimate_learning_rate_once = True
+                    AtlasToSubjectantsRegistration[subjectid].inputs.use_estimate_learning_rate_once = [True,True]
                     baw200.connect(BAtlas[subjectid],'template_t1_clipped',AtlasToSubjectantsRegistration[subjectid], 'moving_image')
                     baw200.connect(ClipT1ImageWithBrainMaskNode[sessionid], 'clipped_file', AtlasToSubjectantsRegistration[subjectid], 'fixed_image')
                     baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'OutputSpec.atlasToSubjectTransform',AtlasToSubjectantsRegistration[subjectid],'initial_moving_transform')

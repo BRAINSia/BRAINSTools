@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>BRAINS.Classify</category>
+  <title>Tissue Classification</title>
+  <description>This program will generate an 8-bit continuous tissue classified image based on BRAINSABC posterior images. </description>
+  <version>3.0</version>
+  <documentation-url>http://www.nitrc.org/plugins/mwiki/index.php/brains:BRAINSClassify</documentation-url>
+  <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
+  <contributor>Vincent A. Magnotta</contributor>
+  <acknowledgements>Funding for this work was provided by NIH/NINDS award NS050568</acknowledgements>
+
+  <parameters>
+    <label>Input Images</label>
+    
+    <image>
+      <name>inputWhiteVolume</name>
+      <longflag>--inputWhiteVolume</longflag>
+      <label>WM Posterior Volume</label>
+      <description>White Matter Posterior Volume</description>
+      <channel>input</channel>
+      <default></default>
+    </image>
+    
+    <image>
+      <name>inputBasalGmVolume</name>
+      <longflag>--inputBasalGmVolume</longflag>
+      <label>Basal GM Posterior Volume</label>
+      <description>Basal Grey Matter Posterior Volume</description>
+      <channel>input</channel>
+      <default></default>
+    </image>
+    
+    <image>
+      <name>inputSurfaceGmVolume</name>
+      <longflag>--inputSurfaceGmVolume</longflag>
+      <label>Surface GM Posterior Volume</label>
+      <description>Surface Grey Matter Posterior Volume</description>
+      <channel>input</channel>
+      <default></default>
+    </image>
+    
+    <image>
+      <name>inputCsfVolume</name>
+      <longflag>--inputCsfVolume</longflag>
+      <label>CSF Posterior Volume</label>
+      <description>CSF Posterior Volume</description>
+      <channel>input</channel>
+      <default></default>
+    </image>
+    
+    <image>
+      <name>inputVbVolume</name>
+      <longflag>--inputVbVolume</longflag>
+      <label>VB Posterior Volume</label>
+      <description>Venous Blood Posterior Volume</description>
+      <channel>input</channel>
+      <default></default>
+    </image>
+    
+    <image>
+      <name>inputCrblGmVolume</name>
+      <longflag>--inputCrblGmVolume</longflag>
+      <label>Cerebellum GM Posterior Volume</label>
+      <description>Cerebellum Grey Matter Posterior Volume</description>
+      <channel>input</channel>
+      <default></default>
+    </image>
+    
+    <image>
+      <name>inputCrblWmVolume</name>
+      <longflag>--inputCrblWmVolume</longflag>
+      <label>Cerebellum WM Posterior Volume</label>
+      <description>Cerebellum White Matter Posterior Volume</description>
+      <channel>input</channel>
+      <default></default>
+    </image>
+          
+  </parameters>
+  
+  
+  <parameters>
+    <label>Output Files</label>
+    
+    <file>
+      <name>outputVolume</name>
+      <longflag>--outputVolume</longflag>
+      <label>Output Image</label>
+      <description>Output Continuous Tissue Classified Image</description>
+      <channel>output</channel>
+      <default></default>
+    </file>
+       
+  </parameters>
+  
+</executable>

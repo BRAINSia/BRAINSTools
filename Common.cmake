@@ -45,7 +45,7 @@ option(USE_ANTS                           "Build ANTS"                          
 option(USE_BRAINSContinuousClass          "Build BRAINSContinuousClass "   OFF)
 option(USE_BRAINSSurfaceTools             "Build BRAINSSurfaceTools     "  OFF)
 option(USE_ICCDEF                         "Build ICCDEF     "              OFF)
-
+option(USE_BRAINSImageConvert             "Build BRAINSPosteriorToContinuousClass" OFF)
 
 option(USE_DebugImageViewer "Build DebugImageViewer" OFF)
 

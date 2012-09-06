@@ -44,8 +44,7 @@ list(APPEND ExternalData_URL_TEMPLATES
   # Local data store populated by the ITK pre-commit hook
   "file:///${${PROJECT_NAME}_SOURCE_DIR}/.ExternalData/%(algo)/%(hash)"
   # Data published by Iowa Psychiatry web interface
-  ## This server is now obsolete "http://www.psychiatry.uiowa.edu/users/brainstestdata/ctestdata/%(algo)/%(hash)"
-  ## The primary new home for data
+  ## The primary home for data
   "http://slicer.kitware.com/midas3/api/rest?method=midas.bitstream.download&checksum=%(hash)"
   # Data published by MIDAS
   "http://midas.kitware.com/api/rest/midas.bitstream.by.hash?hash=%(hash)&algorithm=%(algo)"
@@ -93,10 +92,10 @@ set(brains_modulenames
   BRAINSDemonWarp ## NOTE: This is off by default, but is valid for both ITKv3/4
                   ##       This builds just fine with ITKv3/4, but test cases need
                   ##       further review before trusting it.
-                  #  NOTE :  This program is not yet ready for use:  BRAINSContinuousClass
   BRAINSSurfaceTools
   ICCDEF
   BRAINSContinuousClass
+  BRAINSImageConvert
   )
 
 ## Tools that only work with ITKv4

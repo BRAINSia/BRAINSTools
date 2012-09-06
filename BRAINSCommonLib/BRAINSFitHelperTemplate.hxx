@@ -1688,7 +1688,6 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
 
       CompositeTransformType::Pointer initialSyNTransform = CompositeTransformType::New();
       CompositeTransformType::Pointer outputSyNTransform = CompositeTransformType::New();
-      // CompositeTransformType::TransformTypePointer outputSyNTransform;
 
       if( m_CurrentGenericTransform.IsNotNull() )
         {

@@ -74,11 +74,8 @@ simpleSynReg( typename FixedImageType::Pointer & fixedImage,
     }
   // Get the output transform
   typename CompositeTransformType::Pointer outputCompositeTransform = regHelper->GetCompositeTransform();
-  // write out transform actually computed, so skip the initial transform
-  // typename CompositeTransformType::TransformTypePointer resultTransform = outputCompositeTransform->GetNthTransform(
-  // 1 );
 
-  // return resultTransform;
+  // return composite result Transform;
   return outputCompositeTransform;
 }
 

@@ -21,7 +21,6 @@ PURPOSE.  See the above copyright notices for more information.
 #include "BRAINSThreadControl.h"
 #include "BRAINSFitHelper.h"
 #include "BRAINSFitCLP.h"
-#include "antsUtilities.h" // added by Ali
 
 // This program was modified from
 // Insight/Examples/Registration/ImageRegistration8.cxx
@@ -214,7 +213,7 @@ int main(int argc, char *argv[])
       }
     if( useSyN == true )
       {
-      localTransformType.push_back("SyN"); // added by Ali
+      localTransformType.push_back("SyN");
       }
     if( useComposite )
       {
@@ -711,11 +710,9 @@ int main(int argc, char *argv[])
 
   if( localTransformType[localTransformType.size() - 1] == "SyN" )
     {
-    // CompositeTransformType::TransformTypePointer tempSyNFinalTransform =
-    // dynamic_cast<CompositeTransformType::TransformType *>( currentGenericTransform.GetPointer() );
-
     CompositeTransformType::Pointer tempSyNCompositeTransform =
       dynamic_cast<CompositeTransformType *>( currentGenericTransform.GetPointer() );
+    // write out transform actually computed, so skip the initial transform
     CompositeTransformType::TransformTypePointer tempSyNFinalTransform =
       tempSyNCompositeTransform->GetNthTransform( 1 );
 

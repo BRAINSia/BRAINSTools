@@ -47,6 +47,9 @@ from BRAINSTools.ants import antsAverageImages
 
 from WorkupT1T2AtlasNode import MakeAtlasNode
 
+def getListIndex( imageList, index):
+    return imageList[index]
+
 #HACK:  [('buildTemplateIteration2', 'SUBJECT_TEMPLATES/0249/buildTemplateIteration2')]
 def GenerateSubjectOutputPattern(subjectid):
     """ This function generates output path substitutions for workflows and nodes that conform to a common standard.
@@ -247,19 +250,23 @@ def AccumulateLikeTissuePosteriors(posteriorImages):
               'POSTERIOR_NOTVB.nii.gz',
               'POSTERIOR_NOTWM.nii.gz',
               ]
-    SummaryDictionary={'POSTERIOR_GM_TOTAL.nii.gz':  GM_ACCUM, 'POSTERIOR_WM_TOTAL.nii.gz': WM_ACCUM,
-                       'POSTERIOR_CSF_TOTAL.nii.gz': CSF_ACCUM, 'POSTERIOR_VB_TOTAL.nii.gz':VB_ACCUM,
-                       'POSTERIOR_GLOBUS_TOTAL.nii.gz': GLOBUS_ACCUM,
-                       'POSTERIOR_BACKGROUND_TOTAL.nii.gz': BACKGROUND_ACCUM }
+    ## The next 2 items MUST be syncronized
+    AccumulatePriorsNames=['POSTERIOR_GM_TOTAL.nii.gz','POSTERIOR_WM_TOTAL.nii.gz',
+                        'POSTERIOR_CSF_TOTAL.nii.gz','POSTERIOR_VB_TOTAL.nii.gz',
+                        'POSTERIOR_GLOBUS_TOTAL.nii.gz','POSTERIOR_BACKGROUND_TOTAL.nii.gz']
+    ForcedOrderingLists=[GM_ACCUM,WM_ACCUM,CSF_ACCUM,VB_ACCUM,GLOBUS_ACCUM,BACKGROUND_ACCUM]
     AccumulatePriorsList=list()
-    for outname, inlist in SummaryDictionary.items():
+    for index in range(0,len(ForcedOrderingLists)):
+        outname=AccumulatePriorsNames[index]
+        inlist=ForcedOrderingLists[index]
         accum_image= load_images_list[ inlist[0] ] # copy first image
         for curr_image in range(1,len(inlist)):
             accum_image=accum_image + load_images_list[ inlist[curr_image] ]
         sitk.WriteImage(accum_image,outname)
         AccumulatePriorsList.append(os.path.realpath(outname))
-    print "HACK \n\n\n\n\n\n\n HACK \n\n\n: AccumulatePriorsList\n",AccumulatePriorsList
-    return AccumulatePriorsList
+    print "HACK \n\n\n\n\n\n\n HACK \n\n\n: {APL}\n".format(APL=AccumulatePriorsList)
+    print ": {APN}\n".format(APN=AccumulatePriorsNames)
+    return AccumulatePriorsList,AccumulatePriorsNames
 ###########################################################################
 ###########################################################################
 ###########################################################################
@@ -320,6 +327,7 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
         PHASE_1_oneSubjWorkflow=dict()
         PHASE_1_subjInfoNode=dict()
         allSessions = ExperimentDatabase.getSessionsFromSubject(subjectid)
+        print("Running sessions: {ses} for subject {sub}".format(ses=allSessions,sub=subjectid))
         BAtlas[subjectid] = MakeAtlasNode(atlas_fname_wpath,"BAtlas_"+str(subjectid)) ## Call function to create node
         for sessionid in allSessions:
             projectid = ExperimentDatabase.getProjFromSession(sessionid)
@@ -511,10 +519,10 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                 currentAccumulateLikeTissuePosteriorsName='AccumulateLikeTissuePosteriors_'+str(subjectid)+"_"+str(sessionid)
                 AccumulateLikeTissuePosteriorsNode[sessionid] = pe.Node(interface=Function(function=AccumulateLikeTissuePosteriors,
                      input_names=['posteriorImages'],
-                     output_names=['AccumulatePriorsList']),
+                     output_names=['AccumulatePriorsList','AccumulatePriorsNames']),
                      name=currentAccumulateLikeTissuePosteriorsName)
-                baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],
- 'OutputSpec.posteriorImages',AccumulateLikeTissuePosteriorsNode[sessionid],'posteriorImages')
+                baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'OutputSpec.posteriorImages',
+                               AccumulateLikeTissuePosteriorsNode[sessionid],'posteriorImages')
 
                 ### Now define where the final organized outputs should go.
                 AddLikeTissueSink[sessionid]=pe.Node(nio.DataSink(),name="ACCUMULATED_POSTERIORS"+str(subjectid)+"_"+str(sessionid))
@@ -525,6 +533,12 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
 
                 ClipT1ImageWithBrainMaskNode=dict()
                 AtlasToSubjectantsRegistration=dict()
+                myLocalSegWF=dict()
+                SEGMENTATION_DataSink=dict()
+                myLocalFSWF=dict()
+                FSPREP_DataSink=dict()
+                FS_DS=dict()
+
                 if True: ## Run the ANTS Registration from Atlas to Subject for BCut spatial priors propagation.
                     import PipeLineFunctionHelpers
                     import BRAINSTools.ants.antsRegistration
@@ -559,6 +573,67 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                     baw200.connect(ClipT1ImageWithBrainMaskNode[sessionid], 'clipped_file', AtlasToSubjectantsRegistration[subjectid], 'fixed_image')
                     baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'OutputSpec.atlasToSubjectTransform',AtlasToSubjectantsRegistration[subjectid],'initial_moving_transform')
 
-        else:  ## Only one is available
-            pass
+                if 'SEGMENTATION' in WORKFLOW_COMPONENTS:
+                    from WorkupT1T2BRAINSCut import CreateBRAINSCutWorkflow
+                    myLocalSegWF[subjectid] = CreateBRAINSCutWorkflow(projectid, subjectid, sessionid,'Segmentation',CLUSTER_QUEUE,BAtlas[subjectid]) ##Note:  Passing in the entire BAtlas Object here!
+                    baw200.connect( PHASE_2_oneSubjWorkflow[sessionid], 'OutputSpec.t1_average', myLocalSegWF[subjectid], "InputSpec.T1Volume" )
+                    baw200.connect( PHASE_2_oneSubjWorkflow[sessionid], 'OutputSpec.t2_average', myLocalSegWF[subjectid], "InputSpec.T2Volume")
+                    baw200.connect( PHASE_2_oneSubjWorkflow[sessionid], 'OutputSpec.outputLabels', myLocalSegWF[subjectid],"InputSpec.RegistrationROI")
+                    ## NOTE: Element 0 of AccumulatePriorsList is the accumulated GM tissue
+                    baw200.connect( [ ( AccumulateLikeTissuePosteriorsNode[sessionid], myLocalSegWF[subjectid],
+                                      [ (( 'AccumulatePriorsList', getListIndex, 0 ), "InputSpec.TotalGM")] ),
+] )
+
+                    baw200.connect( PHASE_2_oneSubjWorkflow[sessionid],'OutputSpec.atlasToSubjectTransform',myLocalSegWF[subjectid],'InputSpec.atlasToSubjectTransform')
+
+                    ### Now define where the final organized outputs should go.
+                    SEGMENTATION_DataSink[subjectid]=pe.Node(nio.DataSink(),name="SEGMENTATION_DS_"+str(subjectid)+"_"+str(sessionid))
+                    SEGMENTATION_DataSink[subjectid].inputs.base_directory=ExperimentBaseDirectoryResults
+                    SEGMENTATION_DataSink[subjectid].inputs.regexp_substitutions = GenerateOutputPattern(projectid, subjectid, sessionid,'BRAINSCut')
+                    baw200.connect(myLocalSegWF[subjectid], 'OutputSpec.outputBinaryLeftCaudate',SEGMENTATION_DataSink[subjectid], 'BRAINSCut.@outputBinaryLeftCaudate')
+                    baw200.connect(myLocalSegWF[subjectid], 'OutputSpec.outputBinaryRightCaudate',SEGMENTATION_DataSink[subjectid], 'BRAINSCut.@outputBinaryRightCaudate')
+                    baw200.connect(myLocalSegWF[subjectid], 'OutputSpec.outputBinaryLeftHippocampus',SEGMENTATION_DataSink[subjectid], 'BRAINSCut.@outputBinaryLeftHippocampus')
+                    baw200.connect(myLocalSegWF[subjectid], 'OutputSpec.outputBinaryRightHippocampus',SEGMENTATION_DataSink[subjectid], 'BRAINSCut.@outputBinaryRightHippocampus')
+                    baw200.connect(myLocalSegWF[subjectid], 'OutputSpec.outputBinaryLeftPutamen',SEGMENTATION_DataSink[subjectid], 'BRAINSCut.@outputBinaryLeftPutamen')
+                    baw200.connect(myLocalSegWF[subjectid], 'OutputSpec.outputBinaryRightPutamen',SEGMENTATION_DataSink[subjectid], 'BRAINSCut.@outputBinaryRightPutamen')
+                    baw200.connect(myLocalSegWF[subjectid], 'OutputSpec.outputBinaryLeftThalamus',SEGMENTATION_DataSink[subjectid], 'BRAINSCut.@outputBinaryLeftThalamus')
+                    baw200.connect(myLocalSegWF[subjectid], 'OutputSpec.outputBinaryRightThalamus',SEGMENTATION_DataSink[subjectid], 'BRAINSCut.@outputBinaryRightThalamus')
+                    baw200.connect(myLocalSegWF[subjectid], 'OutputSpec.outputLabelImageName', SEGMENTATION_DataSink[subjectid],'BRAINSCut.@outputLabelImageName')
+                    baw200.connect(myLocalSegWF[subjectid], 'OutputSpec.outputCSVFileName', SEGMENTATION_DataSink[subjectid],'BRAINSCut.@outputCSVFileName')
+
+                if 'FREESURFER' in WORKFLOW_COMPONENTS:
+                    RunAllFSComponents=True ## A hack to avoid 26 hour run of freesurfer
+                    from WorkupT1T2FreeSurfer import CreateFreeSurferWorkflow
+                    myLocalFSWF[subjectid]= CreateFreeSurferWorkflow(projectid, subjectid, sessionid,"Level1_FSTest",CLUSTER_QUEUE,RunAllFSComponents)
+                    baw200.connect(uidSource,'uid',myLocalFSWF[subjectid],'InputSpec.subject_id')
+                    baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'OutputSpec.t1_average',myLocalFSWF[subjectid],'InputSpec.T1_files')
+                    baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'OutputSpec.t2_average',myLocalFSWF[subjectid],'InputSpec.T2_files')
+                    baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'OutputSpec.outputLabels',myLocalFSWF[subjectid],'InputSpec.label_file')
+                    #baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'OutputSpec.outputLabels',myLocalFSWF[subjectid],'InputSpec.mask_file') #Yes, the same file as label_file!
+
+                    ### Now define where the final organized outputs should go.
+                    if RunAllFSComponents == True:
+                        FS_DS[subjectid]=pe.Node(nio.DataSink(),name="FREESURFER_DS_"+str(subjectid)+"_"+str(sessionid))
+                        FS_DS[subjectid].inputs.base_directory=ExperimentBaseDirectoryResults
+                        FS_DS[subjectid].inputs.regexp_substitutions = [
+                            ('/_uid_(?P<myuid>[^/]*)',r'/\g<myuid>')
+                            ]
+                        baw200.connect(myLocalFSWF[subjectid], 'OutputSpec.FreesurferOutputDirectory', FS_DS[subjectid],'FREESURFER_SUBJ.@FreesurferOutputDirectory')
+                    ### Now define where the final organized outputs should go.
+                    FSPREP_DataSink[subjectid]=pe.Node(nio.DataSink(),name="FREESURFER_PREP_"+str(subjectid)+"_"+str(sessionid))
+                    FSPREP_DataSink[subjectid].inputs.base_directory=ExperimentBaseDirectoryResults
+                    FREESURFER_PREP_PATTERNS = GenerateOutputPattern(projectid, subjectid, sessionid,'FREESURFER_PREP')
+                    FSPREP_DataSink[subjectid].inputs.regexp_substitutions = FREESURFER_PREP_PATTERNS
+                    print "========================="
+                    print "========================="
+                    print "========================="
+                    print FREESURFER_PREP_PATTERNS
+                    print "========================="
+                    print "========================="
+                    print "========================="
+                    baw200.connect(myLocalFSWF[subjectid], 'OutputSpec.cnr_optimal_image', FSPREP_DataSink[subjectid],'FREESURFER_PREP.@cnr_optimal_image')
+
+                else:
+                    print "Skipping freesurfer"
+
     return baw200

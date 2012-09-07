@@ -137,7 +137,7 @@ def MakeOneSubWorkFlow(projectid, subjectid, sessionid,processing_phase, WORKFLO
             run_without_submitting=True,
             name='OutputSpec' )
 
-    if 'BASIC' in WORKFLOW_COMPONENTS:
+    if True: #'BASIC' in WORKFLOW_COMPONENTS:
         from WorkupT1T2LandmarkInitialization import CreateLandmarkInitializeWorkflow
         DoReverseMapping = False   # Set to true for debugging outputs
         if 'AUXLMK' in WORKFLOW_COMPONENTS:
@@ -156,7 +156,7 @@ def MakeOneSubWorkFlow(projectid, subjectid, sessionid,processing_phase, WORKFLO
         T1T2WorkupSingle.connect(myLocalLMIWF,'OutputSpec.outputTransform',outputsSpec,'outputTransform')
         T1T2WorkupSingle.connect(myLocalLMIWF,'OutputSpec.atlasToSubjectTransform',outputsSpec,'atlasToSubjectTransform')
 
-    if 'TISSUE_CLASSIFY' in WORKFLOW_COMPONENTS:
+    if True: #'TISSUE_CLASSIFY' in WORKFLOW_COMPONENTS:
         from WorkupT1T2TissueClassifiy import CreateTissueClassifyWorkflow
         myLocalTCWF= CreateTissueClassifyWorkflow("TissueClassify",CLUSTER_QUEUE,InterpolationMode)
         T1T2WorkupSingle.connect( inputsSpec, 'allT1s', myLocalTCWF, 'InputSpec.T1List')

@@ -61,8 +61,11 @@ def MakeOutFileList(T1List,T2List,PDList,OtherList):
         out_corrected_names.append(out_name)
     return out_corrected_names
 
-def getListIndex( imageList, index):
-    return imageList[index]
+def getListIndexOrNoneIfOutOfRange( imageList, index):
+    if index < len(imageList):
+      return imageList[index]
+    else:
+      return None
 def MakePosteriorDictionaryFunc(posteriorImages):
     posteriorNames=['WM', 'SURFGM', 'ACCUMBEN', 'CAUDATE', 'PUTAMEN', 'GLOBUS', 'THALAMUS', 'HIPPOCAMPUS', 'CRBLGM', 'CRBLWM', 'CSF', 'VB', 'NOTCSF', 'NOTGM', 'NOTWM', 'NOTVB', 'AIR']
     if len(posteriorNames) != len(posteriorImages):
@@ -83,7 +86,7 @@ def CreateTissueClassifyWorkflow(WFname,CLUSTER_QUEUE,InterpolationMode):
         name='InputSpec' )
     outputsSpec = pe.Node(interface=IdentityInterface(fields=['atlasToSubjectTransform','outputLabels','outputHeadLabels',
             #'t1_corrected','t2_corrected',
-            't1_average','t2_average',
+            't1_average','t2_average','pd_average','fl_average',
             'TissueClassifyOutputDir',
             'posteriorImages'
             ]),
@@ -170,9 +173,13 @@ def CreateTissueClassifyWorkflow(WFname,CLUSTER_QUEUE,InterpolationMode):
     tissueClassifyWF.connect(BABCext,'outputLabels',outputsSpec,'outputLabels')
     tissueClassifyWF.connect(BABCext,'outputDirtyLabels',outputsSpec,'outputHeadLabels')
 
-    tissueClassifyWF.connect( [ ( BABCext, outputsSpec, [ (( 'outputAverageImages', getListIndex, 0 ), "t1_average")] ), ] )
-    tissueClassifyWF.connect( [ ( BABCext, outputsSpec, [ (( 'outputAverageImages', getListIndex, 1 ), "t2_average")] ), ] )
-    #tissueClassifyWF.connect( [ ( BABCext, outputsSpec, [ (( 'outputAverageImages', getListIndex, 2 ), "pd_average")] ), ] )
+    tissueClassifyWF.connect( BABCext , 'outputT1AverageImage', outputsSpec, 't1_average')
+    tissueClassifyWF.connect( BABCext , 'outputT2AverageImage', outputsSpec, 't2_average')
+    tissueClassifyWF.connect( BABCext , 'outputPDAverageImage', outputsSpec, 'pd_average')
+    tissueClassifyWF.connect( BABCext , 'outputFLAverageImage', outputsSpec, 'fl_average')
+    ##  remove tissueClassifyWF.connect( [ ( BABCext, outputsSpec, [ (( 'outputAverageImages', getListIndexOrNoneIfOutOfRange, 0 ), "t1_average")] ), ] )
+    ##  remove tissueClassifyWF.connect( [ ( BABCext, outputsSpec, [ (( 'outputAverageImages', getListIndexOrNoneIfOutOfRange, 1 ), "t2_average")] ), ] )
+    ##  remove tissueClassifyWF.connect( [ ( BABCext, outputsSpec, [ (( 'outputAverageImages', getListIndexOrNoneIfOutOfRange, 2 ), "pd_average")] ), ] )
 
     tissueClassifyWF.connect(BABCext,'outputDir',outputsSpec,'TissueClassifyOutputDir')
 

@@ -707,7 +707,7 @@ int main(int argc, char *argv[])
       }
     }
 #endif
-
+#ifdef USE_ANTS
   if( localTransformType[localTransformType.size() - 1] == "SyN" )
     {
     CompositeTransformType::Pointer tempSyNCompositeTransform =
@@ -724,8 +724,10 @@ int main(int argc, char *argv[])
     else
       {
       itk::ants::WriteTransform<3>( tempSyNFinalTransform, localOutputTransform );
+      std::cout << "SyN warped transform is written to the disk." << std::endl;
       }
     }
+#endif
   else
     {
     /*const int write_status=*/

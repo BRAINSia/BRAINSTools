@@ -36,7 +36,9 @@
 // TODO:  This needs to be moved to the top, and header files moved to this
 // header where needed.
 #include "BRAINSFitBSpline.h"
+#ifdef USE_ANTS
 #include "BRAINSFitSyN.h"
+#endif
 #include "BRAINSFitUtils.h"
 
 #include "ConvertToRigidAffine.h"

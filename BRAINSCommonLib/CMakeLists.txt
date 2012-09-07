@@ -15,14 +15,9 @@ include_directories(
 
 set(BRAINSCommonLib_SRCS GenericTransformImage.cxx BRAINSFitHelper.cxx Slicer3LandmarkWeightIO.cxx Slicer3LandmarkIO.cxx itkOrthogonalize3DRotationMatrix.cxx BRAINSThreadControl.cxx)
 
-include_directories(${ANTS_SOURCE_DIR}/Temporary)
-include_directories(${ANTS_SOURCE_DIR}/Utilities)
-include_directories(${ANTS_SOURCE_DIR}/Examples)
-include_directories(${ANTS_SOURCE_DIR}/ImageRegistration)
-
 ## Always build BRAINSCommonLib as static
 add_library(BRAINSCommonLib STATIC ${BRAINSCommonLib_SRCS})
-target_link_libraries(BRAINSCommonLib antsUtilities ${ITK_LIBRARIES} )
+target_link_libraries(BRAINSCommonLib ${ITK_LIBRARIES} ${ANTS_LIBS})
 
 install(TARGETS BRAINSCommonLib
   RUNTIME DESTINATION ${BRAINSTools_CLI_INSTALL_RUNTIME_DESTINATION} COMPONENT RuntimeLibraries

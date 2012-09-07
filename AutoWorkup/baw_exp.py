@@ -49,6 +49,7 @@ def file_replace(fname, out_fname, pat, s_after):
         print "ERROR: input and output file names can not match"
         sys.exit(-1)
         return #input and output files can not match
+
     # first, see if the pattern is even in the file.
     with open(fname) as f:
         if not any(re.search(pat, line) for line in f):

@@ -107,10 +107,17 @@ def GenerateAccumulatorImagesOutputPattern(projectid, subjectid, sessionid):
     print "HACK: ", patternList
     return patternList
 
-def MergeByExtendListElements(t2_averageList,outputLabels_averageList,ListOfPosteriorImagesDictionary):
+## This takes several lists and merges them, but it also removes all empty values from the lists
+def MergeByExtendListElements(t2_averageList,pd_averageList,fl_averageList,outputLabels_averageList,ListOfPosteriorImagesDictionary):
     for t2_index in range(0,len(t2_averageList)):
-        ListOfPosteriorImagesDictionary[t2_index]['T2']=t2_averageList[t2_index]
-        ListOfPosteriorImagesDictionary[t2_index]['BRAINMASK']=outputLabels_averageList[t2_index]
+        if t2_averageList[t2_index] is not None:
+            ListOfPosteriorImagesDictionary[t2_index]['T2']=t2_averageList[t2_index]
+        if pd_averageList[t2_index] is not None:
+            ListOfPosteriorImagesDictionary[t2_index]['PD']=pd_averageList[t2_index]
+        if fl_averageList[t2_index] is not None:
+            ListOfPosteriorImagesDictionary[t2_index]['FL']=fl_averageList[t2_index]
+        if outputLabels_averageList[t2_index] is not None:
+            ListOfPosteriorImagesDictionary[t2_index]['BRAINMASK']=outputLabels_averageList[t2_index]
     return ListOfPosteriorImagesDictionary
 
 def MakeNewAtlasTemplate(t1_image,deformed_list,
@@ -319,6 +326,8 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
     import WorkupT1T2Single
     MergeT1s=dict()
     MergeT2s=dict()
+    MergePDs=dict()
+    MergeFLs=dict()
     MergeOutputLabels=dict()
     MergePosteriors=dict()
     BAtlas=dict()
@@ -337,6 +346,7 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                      'allT1s',
                      'allT2s',
                      'allPDs',
+                     'allFLs',
                      'allOthers']),
                     run_without_submitting=True,
                     name='99_PHASE_1_SubjInfoNode_'+str(subjectid)+"_"+str(sessionid) )
@@ -346,6 +356,8 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
             PHASE_1_subjInfoNode[sessionid].inputs.allT1s=ExperimentDatabase.getFilenamesByScantype(sessionid,['T1-30','T1-15'])
             PHASE_1_subjInfoNode[sessionid].inputs.allT2s=ExperimentDatabase.getFilenamesByScantype(sessionid,['T2-30','T2-15'])
             PHASE_1_subjInfoNode[sessionid].inputs.allPDs=ExperimentDatabase.getFilenamesByScantype(sessionid,['PD-30','PD-15'])
+            PHASE_1_subjInfoNode[sessionid].inputs.allFLs=ExperimentDatabase.getFilenamesByScantype(sessionid,['FL-30','FL-15'])
+            print("HACK:  all FLs: {0}".format(ExperimentDatabase.getFilenamesByScantype(sessionid,['FL-30','FL-15'])))
             PHASE_1_subjInfoNode[sessionid].inputs.allOthers=ExperimentDatabase.getFilenamesByScantype(sessionid,['OTHER-30','OTHER-15'])
 
             PROCESSING_PHASE='PHASE_1'
@@ -360,6 +372,7 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
             baw200.connect(PHASE_1_subjInfoNode[sessionid],'allT1s',PHASE_1_oneSubjWorkflow[sessionid],'InputSpec.allT1s')
             baw200.connect(PHASE_1_subjInfoNode[sessionid],'allT2s',PHASE_1_oneSubjWorkflow[sessionid],'InputSpec.allT2s')
             baw200.connect(PHASE_1_subjInfoNode[sessionid],'allPDs',PHASE_1_oneSubjWorkflow[sessionid],'InputSpec.allPDs')
+            baw200.connect(PHASE_1_subjInfoNode[sessionid],'allFLs',PHASE_1_oneSubjWorkflow[sessionid],'InputSpec.allFLs')
             baw200.connect(PHASE_1_subjInfoNode[sessionid],'allOthers',PHASE_1_oneSubjWorkflow[sessionid],'InputSpec.allOthers')
 
             baw200.connect(BAtlas[subjectid],'template_landmarks_31_fcsv', PHASE_1_oneSubjWorkflow[sessionid],'InputSpec.template_landmarks_31_fcsv')
@@ -369,19 +382,27 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
 
         numSessions=len(allSessions)
         if True or numSessions > 1: ## Merge all BCD_Results into a global average
-            mergeSubjectSessionNamesT1="99_MergeAllSessions_T1"+str(subjectid)
+            mergeSubjectSessionNamesT1="99_MergeAllSessions_T1_"+str(subjectid)
             MergeT1s[subjectid] = pe.Node(interface=Merge(numSessions),
                                           run_without_submitting=True,
                                           name=mergeSubjectSessionNamesT1)
-            mergeSubjectSessionNamesT2="99_MergeAllSessions_T2"+str(subjectid)
+            mergeSubjectSessionNamesT2="99_MergeAllSessions_T2_"+str(subjectid)
             MergeT2s[subjectid] = pe.Node(interface=Merge(numSessions),
                                           run_without_submitting=True,
                                           name=mergeSubjectSessionNamesT2)
-            mergeSubjectSessionNamesoutputLabels="99_MergeAllSessions_outputLabels"+str(subjectid)
+            mergeSubjectSessionNamesPD="99_MergeAllSessions_PD_"+str(subjectid)
+            MergePDs[subjectid] = pe.Node(interface=Merge(numSessions),
+                                          run_without_submitting=True,
+                                          name=mergeSubjectSessionNamesPD)
+            mergeSubjectSessionNamesFL="99_MergeAllSessions_FL_"+str(subjectid)
+            MergeFLs[subjectid] = pe.Node(interface=Merge(numSessions),
+                                          run_without_submitting=True,
+                                          name=mergeSubjectSessionNamesFL)
+            mergeSubjectSessionNamesoutputLabels="99_MergeAllSessions_outputLabels_"+str(subjectid)
             MergeOutputLabels[subjectid] = pe.Node(interface=Merge(numSessions),
                                           run_without_submitting=True,
                                           name=mergeSubjectSessionNamesoutputLabels)
-            mergeSubjectSessionNamesPosteriors="99_MergeAllSessions_Posteriors"+str(subjectid)
+            mergeSubjectSessionNamesPosteriors="99_MergeAllSessions_Posteriors_"+str(subjectid)
             MergePosteriors[subjectid] = pe.Node(interface=Merge(numSessions),
                                           run_without_submitting=True,
                                           name=mergeSubjectSessionNamesPosteriors)
@@ -392,15 +413,21 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                 index+=1
                 baw200.connect(PHASE_1_oneSubjWorkflow[sessionid],'OutputSpec.t1_average',MergeT1s[subjectid],index_name)
                 baw200.connect(PHASE_1_oneSubjWorkflow[sessionid],'OutputSpec.t2_average',MergeT2s[subjectid],index_name)
+                baw200.connect(PHASE_1_oneSubjWorkflow[sessionid],'OutputSpec.pd_average',MergePDs[subjectid],index_name)
+                baw200.connect(PHASE_1_oneSubjWorkflow[sessionid],'OutputSpec.fl_average',MergeFLs[subjectid],index_name)
                 baw200.connect(PHASE_1_oneSubjWorkflow[sessionid],'OutputSpec.outputLabels',MergeOutputLabels[subjectid],index_name)
                 baw200.connect(PHASE_1_oneSubjWorkflow[sessionid],'OutputSpec.posteriorImages',MergePosteriors[subjectid],index_name)
 
             MergeByExtendListElementsNode = pe.Node( Function(function=MergeByExtendListElements,
-                                          input_names = ['t2_averageList','outputLabels_averageList','ListOfPosteriorImagesDictionary'],
+                                          input_names = ['t2_averageList',
+                                            'pd_averageList','fl_averageList',
+                                            'outputLabels_averageList','ListOfPosteriorImagesDictionary'],
                                           output_names = ['ListOfExtendedPassiveImages']),
                                           run_without_submitting=True, name="99_MergeByExtendListElements")
             #MergeByExtendListElementsNode.inputs.preserve_nested_lists = True
             baw200.connect( MergeT2s[subjectid],'out', MergeByExtendListElementsNode, 't2_averageList' )
+            baw200.connect( MergePDs[subjectid],'out', MergeByExtendListElementsNode, 'pd_averageList' )
+            baw200.connect( MergeFLs[subjectid],'out', MergeByExtendListElementsNode, 'fl_averageList' )
             baw200.connect( MergeOutputLabels[subjectid],'out', MergeByExtendListElementsNode, 'outputLabels_averageList' )
             baw200.connect( MergePosteriors[subjectid],'out', MergeByExtendListElementsNode, 'ListOfPosteriorImagesDictionary' )
 
@@ -469,6 +496,7 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                          'allT1s',
                          'allT2s',
                          'allPDs',
+                         'allFLs',
                          'allOthers']),
                         run_without_submitting=True,
                         name='99_PHASE_2_SubjInfoNode_'+str(subjectid)+"_"+str(sessionid) )
@@ -478,6 +506,7 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                 PHASE_2_subjInfoNode[sessionid].inputs.allT1s=ExperimentDatabase.getFilenamesByScantype(sessionid,['T1-30','T1-15'])
                 PHASE_2_subjInfoNode[sessionid].inputs.allT2s=ExperimentDatabase.getFilenamesByScantype(sessionid,['T2-30','T2-15'])
                 PHASE_2_subjInfoNode[sessionid].inputs.allPDs=ExperimentDatabase.getFilenamesByScantype(sessionid,['PD-30','PD-15'])
+                PHASE_2_subjInfoNode[sessionid].inputs.allFLs=ExperimentDatabase.getFilenamesByScantype(sessionid,['FL-30','FL-15'])
                 PHASE_2_subjInfoNode[sessionid].inputs.allOthers=ExperimentDatabase.getFilenamesByScantype(sessionid,['OTHER-30','OTHER-15'])
 
                 PROCESSING_PHASE='PHASE_2'
@@ -491,6 +520,7 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                 baw200.connect(PHASE_2_subjInfoNode[sessionid],'allT1s',PHASE_2_oneSubjWorkflow[sessionid],'InputSpec.allT1s')
                 baw200.connect(PHASE_2_subjInfoNode[sessionid],'allT2s',PHASE_2_oneSubjWorkflow[sessionid],'InputSpec.allT2s')
                 baw200.connect(PHASE_2_subjInfoNode[sessionid],'allPDs',PHASE_2_oneSubjWorkflow[sessionid],'InputSpec.allPDs')
+                baw200.connect(PHASE_2_subjInfoNode[sessionid],'allFLs',PHASE_2_oneSubjWorkflow[sessionid],'InputSpec.allFLs')
                 baw200.connect(PHASE_2_subjInfoNode[sessionid],'allOthers',PHASE_2_oneSubjWorkflow[sessionid],'InputSpec.allOthers')
 
                 baw200.connect(BAtlas[subjectid],'template_landmarks_31_fcsv', PHASE_2_oneSubjWorkflow[sessionid],'InputSpec.template_landmarks_31_fcsv')
@@ -525,7 +555,7 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                                AccumulateLikeTissuePosteriorsNode[sessionid],'posteriorImages')
 
                 ### Now define where the final organized outputs should go.
-                AddLikeTissueSink[sessionid]=pe.Node(nio.DataSink(),name="ACCUMULATED_POSTERIORS"+str(subjectid)+"_"+str(sessionid))
+                AddLikeTissueSink[sessionid]=pe.Node(nio.DataSink(),name="ACCUMULATED_POSTERIORS_"+str(subjectid)+"_"+str(sessionid))
                 AddLikeTissueSink[sessionid].inputs.base_directory=ExperimentBaseDirectoryResults
                 #AddLikeTissueSink[sessionid].inputs.regexp_substitutions = GenerateAccumulatorImagesOutputPattern(projectid, subjectid, sessionid)
                 AddLikeTissueSink[sessionid].inputs.regexp_substitutions = GenerateOutputPattern(projectid, subjectid, sessionid,'ACCUMULATED_POSTERIORS')

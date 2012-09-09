@@ -115,6 +115,7 @@ def MakeOneSubWorkFlow(projectid, subjectid, sessionid,processing_phase, WORKFLO
                          'allT1s',
                          'allT2s',
                          'allPDs',
+                         'allFLs',
                          'allOthers',
                          'template_landmarks_31_fcsv',
                          'template_landmark_weights_31_csv',
@@ -126,6 +127,7 @@ def MakeOneSubWorkFlow(projectid, subjectid, sessionid,processing_phase, WORKFLO
 
     outputsSpec = pe.Node(interface=IdentityInterface(fields=[
             't1_average','t2_average',
+            'pd_average','fl_average',
             'posteriorImages','outputLabels',
             'TissueClassifyOutputDir',
 
@@ -162,6 +164,7 @@ def MakeOneSubWorkFlow(projectid, subjectid, sessionid,processing_phase, WORKFLO
         T1T2WorkupSingle.connect( inputsSpec, 'allT1s', myLocalTCWF, 'InputSpec.T1List')
         T1T2WorkupSingle.connect( inputsSpec, 'allT2s', myLocalTCWF, 'InputSpec.T2List')
         T1T2WorkupSingle.connect( inputsSpec, 'allPDs', myLocalTCWF, 'InputSpec.PDList')
+        T1T2WorkupSingle.connect( inputsSpec, 'allFLs', myLocalTCWF, 'InputSpec.FLList')
         T1T2WorkupSingle.connect( inputsSpec, 'allOthers', myLocalTCWF, 'InputSpec.OtherList')
         T1T2WorkupSingle.connect( [ (inputsSpec, myLocalTCWF, [(('allT1s', getAllT1sLength), 'InputSpec.T1_count')] ), ])
         T1T2WorkupSingle.connect( inputsSpec,'atlasDefinition',myLocalTCWF,'InputSpec.atlasDefinition')
@@ -171,6 +174,8 @@ def MakeOneSubWorkFlow(projectid, subjectid, sessionid,processing_phase, WORKFLO
         ### Now connect OutputSpec
         T1T2WorkupSingle.connect(myLocalTCWF, 'OutputSpec.t1_average', outputsSpec,'t1_average')
         T1T2WorkupSingle.connect(myLocalTCWF, 'OutputSpec.t2_average', outputsSpec,'t2_average')
+        T1T2WorkupSingle.connect(myLocalTCWF, 'OutputSpec.pd_average', outputsSpec,'pd_average')
+        T1T2WorkupSingle.connect(myLocalTCWF, 'OutputSpec.fl_average', outputsSpec,'fl_average')
         T1T2WorkupSingle.connect(myLocalTCWF, 'OutputSpec.posteriorImages', outputsSpec,'posteriorImages')
         T1T2WorkupSingle.connect(myLocalTCWF, 'OutputSpec.outputLabels', outputsSpec,'outputLabels')
         T1T2WorkupSingle.connect(myLocalTCWF, 'OutputSpec.TissueClassifyOutputDir', outputsSpec,'TissueClassifyOutputDir')

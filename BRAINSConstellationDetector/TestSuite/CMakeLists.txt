@@ -79,7 +79,7 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/obliq_setup.txt.in ${CMAKE_CURRENT_BI
 ##
 set(BRAINSEyeDetectorTestName BRAINSEyeDetectorTest_T1)
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSEyeDetectorTestName}
-  COMMAND $<TARGET_FILE:BRAINSEyeDetectorTestDriver>
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSEyeDetectorTestDriver>
   --compare DATA{${TestData_DIR}/${BRAINSEyeDetectorTestName}_standard.nii.gz}
   ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSEyeDetectorTestName}_aligned.nii.gz
   --compareIntensityTolerance 0
@@ -94,7 +94,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSEyeDetectorTestName
 ##
 set(BRAINSAlignMSPTestName BRAINSAlignMSPTest_T1)
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSAlignMSPTestName}
-  COMMAND $<TARGET_FILE:BRAINSAlignMSPTestDriver>
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSAlignMSPTestDriver>
   --compare DATA{${TestData_DIR}/${BRAINSAlignMSPTestName}_standard.nii.gz}
   ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSAlignMSPTestName}_aligned.nii.gz
   --compareIntensityTolerance 50
@@ -111,7 +111,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSAlignMSPTestName}
 
 set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_forceHoughReportFailure)
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
-  COMMAND $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
   --compare DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.nii.gz}
          ${CMAKE_CURRENT_BINARY_DIR}/EMSP.nii.gz
   --compareIntensityTolerance 0
@@ -129,7 +129,7 @@ set_property(TEST ${BRAINSConstellationDetectorTestName}
 
 set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_inputVolumeError)
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
-  COMMAND $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
 
         BRAINSConstellationDetectorTest)
 set_property(TEST ${BRAINSConstellationDetectorTestName}
@@ -137,7 +137,7 @@ set_property(TEST ${BRAINSConstellationDetectorTestName}
 
 set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_LLSModelError)
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
-  COMMAND $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
 
         BRAINSConstellationDetectorTest
         --inputVolume DATA{${TestData_DIR}/T1.nii.gz}
@@ -149,7 +149,7 @@ set_property(TEST ${BRAINSConstellationDetectorTestName}
 ##
 set(BRAINSTrimForegroundInDirectionTestName BRAINSTrimForegroundInDirectionTest_T1)
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSTrimForegroundInDirectionTestName}
-  COMMAND $<TARGET_FILE:BRAINSTrimForegroundInDirectionTestDriver>
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSTrimForegroundInDirectionTestDriver>
   --compare DATA{${TestData_DIR}/${BRAINSTrimForegroundInDirectionTestName}_standard.nii.gz}
   ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSTrimForegroundInDirectionTestName}_aligned.nii.gz
   --compareIntensityTolerance 0
@@ -211,7 +211,7 @@ if("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
 
   set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_acLowerBound)
   ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
-    COMMAND $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
+    COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
     --compare DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.nii.gz}
     ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
     --compareIntensityTolerance 0
@@ -227,7 +227,7 @@ if("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
 
   set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_backgroundValue)
   ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
-    COMMAND $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
+    COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
     --compare DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.nii.gz}
     ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
     --compareIntensityTolerance 0
@@ -243,7 +243,7 @@ if("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
 
   set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_cutOutHeadInOutputResampledVolume)
   ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
-    COMMAND $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
+    COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
     --compare DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.nii.gz}
     ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
     --compareIntensityTolerance 0
@@ -259,7 +259,7 @@ if("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
 
   set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_cutOutHeadInOutputVolume)
   ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
-    COMMAND $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
+    COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
     --compare DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.nii.gz}
     ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
     --compareIntensityTolerance 0
@@ -275,7 +275,7 @@ if("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
 
   set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_interpolationMode)
   ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
-    COMMAND $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
+    COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
     --compare DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.nii.gz}
     ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
     --compareIntensityTolerance 0
@@ -291,7 +291,7 @@ if("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
 
   set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_mspLevel)
   ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
-    COMMAND $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
+    COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
     --compare DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.nii.gz}
     ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
     --compareIntensityTolerance 0
@@ -307,7 +307,7 @@ if("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
 
   set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_otsuThreshold)
   ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
-    COMMAND $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
+    COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
     --compare DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.nii.gz}
     ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
     --compareIntensityTolerance 0
@@ -323,7 +323,7 @@ if("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
 
   set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_outputUntransformedClippedVolume)
   ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
-    COMMAND $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
+    COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
     --compare DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.nii.gz}
     ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
     --compareIntensityTolerance 0
@@ -339,7 +339,7 @@ if("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
 
   set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_rac)
   ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
-    COMMAND $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
+    COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
     --compare DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.nii.gz}
     ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
     --compareIntensityTolerance 0
@@ -355,7 +355,7 @@ if("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
 
   set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_rescaleIntensity)
   ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
-    COMMAND $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
+    COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
     --compare DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.nii.gz}
     ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
     --compareIntensityTolerance 0
@@ -371,7 +371,7 @@ if("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
 
   set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_rescaleIntensityRange)
   ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
-    COMMAND $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
+    COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>UNCH_EXE}
     --compare DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.nii.gz}
     ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
     --compareIntensityTolerance 0
@@ -387,7 +387,7 @@ if("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
 
   set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_rmpj)
   ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
-    COMMAND $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
+    COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
     --compare DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.nii.gz}
     ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
     --compareIntensityTolerance 0
@@ -403,7 +403,7 @@ if("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
 
   set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_rpc)
   ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
-    COMMAND $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
+    COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
     --compare DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.nii.gz}
     ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
     --compareIntensityTolerance 0
@@ -419,7 +419,7 @@ if("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
 
   set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_rVN4)
   ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
-    COMMAND $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
+    COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
     --compare DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.nii.gz}
     ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
     --compareIntensityTolerance 0
@@ -435,7 +435,7 @@ if("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
 
   set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_rVN4-rpc-rac-rmpj)
   ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
-    COMMAND $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
+    COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
     --compare DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.nii.gz}
     ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
     --compareIntensityTolerance 0
@@ -454,7 +454,7 @@ if("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
 
   set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_T1_outputResampledVolume)
   ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
-    COMMAND $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
+    COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
     --compare DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.nii.gz}
     ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
     --compareIntensityTolerance 0
@@ -469,7 +469,7 @@ if("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
 
   set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_T1_outputVolume)
   ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
-    COMMAND $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
+    COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
     --compare DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.nii.gz}
     ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
     --compareIntensityTolerance 0
@@ -484,7 +484,7 @@ if("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
 
   set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_trimRescaledIntensities)
   ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
-    COMMAND $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
+    COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
     --compare DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.nii.gz}
     ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
     --compareIntensityTolerance 0
@@ -500,7 +500,7 @@ if("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
 
   set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_writeBranded2DImage)
   ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
-    COMMAND $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
+    COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
     --compare DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.png}
     ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.png
     --compareIntensityTolerance 0
@@ -516,7 +516,7 @@ if("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
 
   set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_inputLandmarksEMSP)
   ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
-    COMMAND $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
+    COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
     --compare DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.nii.gz}
     ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
     --compareIntensityTolerance 0

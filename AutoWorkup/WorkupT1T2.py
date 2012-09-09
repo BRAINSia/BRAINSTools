@@ -39,11 +39,7 @@ package_check('networkx', '1.0', 'tutorial1')
 package_check('IPython', '0.10', 'tutorial1')
 
 from BRAINSTools import *
-from BRAINSTools.ANTSWrapper import *
-from BRAINSTools.WarpAllAtlas import *
-from BRAINSTools.ants.normalize import WarpImageMultiTransform
-from BRAINSTools.ants import antsAverageImages
-#BRAINSTools/ants/buildtemplateparallel.py:import antsAverageImages
+from BRAINSTools.BTants.normalize import WarpImageMultiTransform
 
 from WorkupT1T2AtlasNode import MakeAtlasNode
 
@@ -431,18 +427,11 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
             baw200.connect( MergeOutputLabels[subjectid],'out', MergeByExtendListElementsNode, 'outputLabels_averageList' )
             baw200.connect( MergePosteriors[subjectid],'out', MergeByExtendListElementsNode, 'ListOfPosteriorImagesDictionary' )
 
-            """ Now part of ants directly
-            InitAvgImages=pe.Node(interface=antsAverageImages.AntsAverageImages(), name ='InitBCDAvgImages_'+str(subjectid))
-            InitAvgImages.inputs.dimension = 3
-            InitAvgImages.inputs.output_average_image = str(subjectid)+"_TissueClassAVG_T1.nii.gz"
-            InitAvgImages.inputs.normalize = 1
-            baw200.connect(MergeT1s[subjectid], 'out', InitAvgImages, 'images')
-            """
-            from BRAINSTools.ants.antsSimpleAverageWF import antsSimpleAverageWF
+            from BRAINSTools.BTants.antsSimpleAverageWF import antsSimpleAverageWF
             ### USE ANTS
-            from BRAINSTools.ants.buildtemplateparallel import ANTSTemplateBuildSingleIterationWF
+            from BRAINSTools.BTants.buildtemplateparallel import ANTSTemplateBuildSingleIterationWF
             ### USE ANTS REGISTRATION
-            #from BRAINSTools.ants.buildtemplateparallel_antsRegistration import antsRegistrationTemplateBuildSingleIterationWF
+            #from BRAINSTools.BTants.buildtemplateparallel_antsRegistration import antsRegistrationTemplateBuildSingleIterationWF
 
             myInitAvgWF = antsSimpleAverageWF()
             baw200.connect(MergeT1s[subjectid], 'out', myInitAvgWF, 'InputSpec.images')
@@ -571,7 +560,7 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
 
                 if True: ## Run the ANTS Registration from Atlas to Subject for BCut spatial priors propagation.
                     import PipeLineFunctionHelpers
-                    import BRAINSTools.ants.antsRegistration
+                    import BRAINSTools.BTants.antsRegistration
                     ## Second clip to brain tissue region
                     ### Now clean up by adding together many of the items PHASE_2_oneSubjWorkflow
                     currentClipT1ImageWithBrainMaskName='ClipT1ImageWithBrainMask_'+str(subjectid)+"_"+str(sessionid)
@@ -585,7 +574,7 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
 
 
                     currentAtlasToSubjectantsRegistration='AtlasToSubjectantsRegistration_'+str(subjectid)+"_"+str(sessionid)
-                    AtlasToSubjectantsRegistration[subjectid]=pe.Node(interface=BRAINSTools.ants.antsRegistration.antsRegistration(), name =
+                    AtlasToSubjectantsRegistration[subjectid]=pe.Node(interface=BRAINSTools.BTants.antsRegistration.antsRegistration(), name =
  currentAtlasToSubjectantsRegistration)
                     AtlasToSubjectantsRegistration[subjectid].inputs.dimension = 3
                     AtlasToSubjectantsRegistration[subjectid].inputs.output_transform_prefix = 'AtlasToSubject_'

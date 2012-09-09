@@ -7,7 +7,7 @@ import nipype.interfaces.io as nio   # Data i/o
 import nipype.pipeline.engine as pe  # pypeline engine
 from nipype.interfaces.freesurfer import ReconAll
 
-from BRAINSTools.ants.ms_lda import *
+from BRAINSTools.BTants.ms_lda import *
 
 """
     from WorkupT1T2FreeSurfer import CreateFreeSurferWorkflow

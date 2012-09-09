@@ -10,9 +10,9 @@ import os
 
 from BRAINSTools import *
 
-from BRAINSTools.ants.antsRegistration import *
+from BRAINSTools.BTants.antsRegistration import *
 
-from BRAINSTools.ants.ants import *
+from BRAINSTools.BTants.ants import *
 
 """
     from WorkupT1T2ANTS import CreateANTSRegistrationWorkflow
@@ -71,7 +71,7 @@ def CreateANTSRegistrationWorkflow(WFname,CLUSTER_QUEUE,NumberOfThreads=-1):
     ComputeAtlasToSubjectTransform.inputs.output_transform_prefix='antsRegPrefix_'
     ComputeAtlasToSubjectTransform.inputs.output_warped_image='moving_to_fixed.nii.gz'
     ComputeAtlasToSubjectTransform.inputs.output_inverse_warped_image='fixed_to_moving.nii.gz'
-    ComputeAtlasToSubjectTransform.inputs.num_threads=-1
+    #ComputeAtlasToSubjectTransform.inputs.num_threads=-1
     #if os.environ.has_key('NSLOTS'):
     #    ComputeAtlasToSubjectTransform.inputs.num_threads=int(os.environ.has_key('NSLOTS'))
     #else:

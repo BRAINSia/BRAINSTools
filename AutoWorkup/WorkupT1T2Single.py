@@ -39,9 +39,7 @@ package_check('networkx', '1.0', 'tutorial1')
 package_check('IPython', '0.10', 'tutorial1')
 
 from BRAINSTools import *
-from BRAINSTools.ANTSWrapper import *
-from BRAINSTools.WarpAllAtlas import *
-from BRAINSTools.ants.normalize import WarpImageMultiTransform
+from BRAINSTools.BTants.normalize import WarpImageMultiTransform
 
 from WorkupT1T2AtlasNode import MakeAtlasNode
 

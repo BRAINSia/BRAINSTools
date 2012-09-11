@@ -68,6 +68,7 @@ new/file/path blank in the blacklist file, but keep the comma:
 
 Common Usage: \n
 $ python updateAutoWorkupFile.py -a autoworkupfile -b blacklistfile
+
 Example:
 $ python updateAutoWorkupFile.py -a example_autoworkup.csv -b example_blacklist.csv"""))
     parser.add_argument('-a', '--autoWorkupFile', action='store', dest='autoWorkupFile', help='')

@@ -334,13 +334,19 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
         allSessions = ExperimentDatabase.getSessionsFromSubject(subjectid)
         print("Running sessions: {ses} for subject {sub}".format(ses=allSessions,sub=subjectid))
         BAtlas[subjectid] = MakeAtlasNode(atlas_fname_wpath,"BAtlas_"+str(subjectid)) ## Call function to create node
+
+       
         for sessionid in allSessions:
             global_AllT1s=ExperimentDatabase.getFilenamesByScantype(sessionid,['T1-30','T1-15'])
             global_AllT2s=ExperimentDatabase.getFilenamesByScantype(sessionid,['T2-30','T2-15'])
             global_AllPDs=ExperimentDatabase.getFilenamesByScantype(sessionid,['PD-30','PD-15'])
             global_AllFLs=ExperimentDatabase.getFilenamesByScantype(sessionid,['FL-30','FL-15'])
             global_AllOthers=ExperimentDatabase.getFilenamesByScantype(sessionid,['OTHER-30','OTHER-15'])
-            #print("HACK:  all FLs: {0}".format(ExperimentDatabase.getFilenamesByScantype(sessionid,['FL-30','FL-15'])))
+            print("HACK:  all T1s: {0} {1}".format(global_AllT1s, len(global_AllT1s) ))
+            print("HACK:  all T2s: {0} {1}".format(global_AllT2s, len(global_AllT2s) ))
+            print("HACK:  all PDs: {0} {1}".format(global_AllPDs, len(global_AllPDs) ))
+            print("HACK:  all FLs: {0} {1}".format(global_AllFLs, len(global_AllFLs) ))
+            print("HACK:  all Others: {0} {1}".format(global_AllOthers, len(global_AllOthers) ))
 
             projectid = ExperimentDatabase.getProjFromSession(sessionid)
             print("PROJECT: {0} SUBJECT: {1} SESSION: {2}".format(projectid,subjectid,sessionid))
@@ -598,7 +604,22 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                     baw200.connect(ClipT1ImageWithBrainMaskNode[sessionid], 'clipped_file', AtlasToSubjectantsRegistration[subjectid], 'fixed_image')
                     baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'OutputSpec.atlasToSubjectTransform',AtlasToSubjectantsRegistration[subjectid],'initial_moving_transform')
 
-                if 'SEGMENTATION' in WORKFLOW_COMPONENTS and len(global_AllT2s) > 0: # Currently only works with multi-modal_data
+                global_AllT1s=ExperimentDatabase.getFilenamesByScantype(sessionid,['T1-30','T1-15'])
+                global_AllT2s=ExperimentDatabase.getFilenamesByScantype(sessionid,['T2-30','T2-15'])
+                global_AllPDs=ExperimentDatabase.getFilenamesByScantype(sessionid,['PD-30','PD-15'])
+                global_AllFLs=ExperimentDatabase.getFilenamesByScantype(sessionid,['FL-30','FL-15'])
+                global_AllOthers=ExperimentDatabase.getFilenamesByScantype(sessionid,['OTHER-30','OTHER-15'])
+                print("HACK2:  all T1s: {0} {1}".format(global_AllT1s, len(global_AllT1s) ))
+                print("HACK2:  all T2s: {0} {1}".format(global_AllT2s, len(global_AllT2s) ))
+                print("HACK2:  all PDs: {0} {1}".format(global_AllPDs, len(global_AllPDs) ))
+                print("HACK2:  all FLs: {0} {1}".format(global_AllFLs, len(global_AllFLs) ))
+                print("HACK2:  all Others: {0} {1}".format(global_AllOthers, len(global_AllOthers) ))
+                if ( 'SEGMENTATION' in WORKFLOW_COMPONENTS ) : # Currently only works with multi-modal_data
+                     print("HACK SEGMENTATION IN  WORKFLOW_COMPONENTS")
+                if ( len(global_AllT2s) > 0 ): # Currently only works with multi-modal_data
+                    print("HACK len(global_AllT2s) > 0 ")
+                print("HACK")
+                if ( 'SEGMENTATION' in WORKFLOW_COMPONENTS ) and ( len(global_AllT2s) > 0 ): # Currently only works with multi-modal_data
                     from WorkupT1T2BRAINSCut import CreateBRAINSCutWorkflow
                     myLocalSegWF[subjectid] = CreateBRAINSCutWorkflow(projectid, subjectid, sessionid,'Segmentation',CLUSTER_QUEUE,BAtlas[subjectid]) ##Note:  Passing in the entire BAtlas Object here!
                     baw200.connect( PHASE_2_oneSubjWorkflow[sessionid], 'OutputSpec.t1_average', myLocalSegWF[subjectid], "InputSpec.T1Volume" )
@@ -625,6 +646,8 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                     baw200.connect(myLocalSegWF[subjectid], 'OutputSpec.outputBinaryRightThalamus',SEGMENTATION_DataSink[subjectid], 'BRAINSCut.@outputBinaryRightThalamus')
                     baw200.connect(myLocalSegWF[subjectid], 'OutputSpec.outputLabelImageName', SEGMENTATION_DataSink[subjectid],'BRAINSCut.@outputLabelImageName')
                     baw200.connect(myLocalSegWF[subjectid], 'OutputSpec.outputCSVFileName', SEGMENTATION_DataSink[subjectid],'BRAINSCut.@outputCSVFileName')
+                else:
+                    print("SKIPPING SEGMENTATION PHASE FOR {0} {1} {2}, lenT2s {3}".format(projectid, subjectid, sessionid, len(global_AllT2s) ))
 
                 if 'FREESURFER' in WORKFLOW_COMPONENTS and len(global_AllT2s) > 0: # Currently only works with multi-modal_data
                     RunAllFSComponents=True ## A hack to avoid 26 hour run of freesurfer

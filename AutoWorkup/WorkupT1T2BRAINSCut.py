@@ -17,36 +17,48 @@ def CreateLabelMap(listOfImages,LabelImageName,CSVFileName):
     A function to create a consolidated label map and a
     csv file of volume measurements.
     """
+
+    """
+    subjectANNLabel_l_caudate.nii.gz
+    subjectANNLabel_l_hippocampus.nii.gz
+    subjectANNLabel_l_putamen.nii.gz
+    subjectANNLabel_l_thalamus.nii.gz
+    subjectANNLabel_r_caudate.nii.gz
+    subjectANNLabel_r_hippocampus.nii.gz
+    subjectANNLabel_r_putamen.nii.gz
+    subjectANNLabel_r_thalamus.nii.gz
+    """
     import SimpleITK as sitk
     import os
     import csv
     orderOfPriority = [
-      "l_Caudate_seg"     ,
-      "r_Caudate_seg"     ,
-      "l_Putamen_seg"     ,
-      "r_Putamen_seg"     ,
-      "l_Hippocampus_seg" ,
-      "r_Hippocampus_seg" ,
-      "l_Thalamus_seg"    ,
-      "r_Thalamus_seg"
+      "l_caudate"     ,
+      "r_caudate"     ,
+      "l_putamen"     ,
+      "r_putamen"     ,
+      "l_hippocampus" ,
+      "r_hippocampus" ,
+      "l_thalamus"    ,
+      "r_thalamus"
     ]
 
     valueDict={
-        "l_Caudate_seg"     : 1,
-        "r_Caudate_seg"     : 2,
-        "l_Putamen_seg"     : 3,
-        "r_Putamen_seg"     : 4,
-        "l_Hippocampus_seg" : 5,
-        "r_Hippocampus_seg" : 6,
-        "l_Thalamus_seg"    : 7,
-        "r_Thalamus_seg"    : 8
+        "l_caudate"     : 1,
+        "r_caudate"     : 2,
+        "l_putamen"     : 3,
+        "r_putamen"     : 4,
+        "l_hippocampus" : 5,
+        "r_hippocampus" : 6,
+        "l_thalamus"    : 7,
+        "r_thalamus"    : 8
     }
 
     labelImage = None
     for segFN in listOfImages:
         im = sitk.ReadImage(segFN)
         im.GetSize()
-        structName=os.path.basename(segFN.replace(".nii.gz",""))
+        remove_pre_postfix=os.path.basename(segFN.replace(".nii.gz","").replace("subjectANNLabel_","").replace("_seg",""))
+        structName=remove_pre_postfix.lower()
         if labelImage is None:
             labelImage = im*valueDict[structName]
         else:
@@ -139,14 +151,25 @@ def CreateBRAINSCutWorkflow(projectid, subjectid, sessionid,WFName,CLUSTER_QUEUE
     RF8BC.inputs.trainingVectorFilename = "trainingVectorFilename.txt"
     RF8BC.inputs.xmlFilename = "BRAINSCutSegmentationDefinition.xml"
 
-    RF8BC.inputs.outputBinaryLeftCaudate=      'l_Caudate_seg.nii.gz'
-    RF8BC.inputs.outputBinaryRightCaudate=     'r_Caudate_seg.nii.gz'
-    RF8BC.inputs.outputBinaryLeftHippocampus=  'l_Hippocampus_seg.nii.gz'
-    RF8BC.inputs.outputBinaryRightHippocampus= 'r_Hippocampus_seg.nii.gz'
-    RF8BC.inputs.outputBinaryLeftPutamen=      'l_Putamen_seg.nii.gz'
-    RF8BC.inputs.outputBinaryRightPutamen=     'r_Putamen_seg.nii.gz'
-    RF8BC.inputs.outputBinaryLeftThalamus=     'l_Thalamus_seg.nii.gz'
-    RF8BC.inputs.outputBinaryRightThalamus=    'r_Thalamus_seg.nii.gz'
+    """ HACK These should be l_Caudate_seg.nii.gz
+    subjectANNLabel_l_caudate.nii.gz
+    subjectANNLabel_l_hippocampus.nii.gz
+    subjectANNLabel_l_putamen.nii.gz
+    subjectANNLabel_l_thalamus.nii.gz
+    subjectANNLabel_r_caudate.nii.gz
+    subjectANNLabel_r_hippocampus.nii.gz
+    subjectANNLabel_r_putamen.nii.gz
+    subjectANNLabel_r_thalamus.nii.gz
+    """
+
+    RF8BC.inputs.outputBinaryLeftCaudate=      'subjectANNLabel_l_caudate.nii.gz'
+    RF8BC.inputs.outputBinaryRightCaudate=     'subjectANNLabel_r_caudate.nii.gz'
+    RF8BC.inputs.outputBinaryLeftHippocampus=  'subjectANNLabel_l_hippocampus.nii.gz'
+    RF8BC.inputs.outputBinaryRightHippocampus= 'subjectANNLabel_r_hippocampus.nii.gz'
+    RF8BC.inputs.outputBinaryLeftPutamen=      'subjectANNLabel_l_putamen.nii.gz'
+    RF8BC.inputs.outputBinaryRightPutamen=     'subjectANNLabel_r_putamen.nii.gz'
+    RF8BC.inputs.outputBinaryLeftThalamus=     'subjectANNLabel_l_thalamus.nii.gz'
+    RF8BC.inputs.outputBinaryRightThalamus=    'subjectANNLabel_r_thalamus.nii.gz'
 
     cutWF.connect(inputsSpec,'T1Volume',RF8BC,'inputSubjectT1Filename')
     cutWF.connect(inputsSpec,'T2Volume',RF8BC,'inputSubjectT2Filename')
@@ -171,6 +194,8 @@ def CreateBRAINSCutWorkflow(projectid, subjectid, sessionid,WFName,CLUSTER_QUEUE
     cutWF.connect(atlasObject,'r_thalamus_ProbabilityMap',RF8BC,'probabilityMapsRightThalamus')
     ##TODO:
     cutWF.connect(atlasObject,'RandomForestAllSubcorticalsBalancedModel_txtD0060NT0060_gz',RF8BC,'modelFilename')
+    ##HACK: Needs to be fixed
+    #RF8BC.inputs.modelFilename='/nfsscratch/PREDICT/TEST_BRAINSCut/20120828ANNModel_Model_RF100.txt'
 
     cutWF.connect(inputsSpec,'atlasToSubjectTransform',RF8BC,'deformationFromTemplateToSubject')
 

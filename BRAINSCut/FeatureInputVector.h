@@ -129,5 +129,7 @@ private:
 
   inline std::pair<scalarType, scalarType>  SetMinMaxOfSubject( BinaryImageType::Pointer & labelImage,
                                                                 const WorkingImagePointer & Image );
+
+  bool DoUnitTests(); // A series of unit tests to verify results.
 };
 #endif

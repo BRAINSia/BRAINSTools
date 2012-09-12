@@ -238,6 +238,7 @@ BRAINSCutDataHandler
 ::GetImagesOfSubjectInOrder( WorkingImageVectorType& subjectImageList, DataSet& subject)
 {
   DataSet::StringVectorType imageListFromAtlas = atlasDataSet->GetImageTypes(); // T1, T2, SG, ...
+
   std::sort( imageListFromAtlas.begin(), imageListFromAtlas.end() );            // SG, T1, T2, ... ascending order
 
   for( DataSet::StringVectorType::iterator imgTyIt = imageListFromAtlas.begin();

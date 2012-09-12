@@ -75,8 +75,8 @@ BRAINSCutGenerateProbability
       currentROISubjectsCounter++;
       /** deform ROI to Atlas */
 
-      std::string currentRegistrationFilename = myDataHandler.GetSubjectToAtlasRegistrationFilename(
-          *(*currentSubjectIt) );
+      std::string currentRegistrationFilename =
+        myDataHandler.GetSubjectToAtlasRegistrationFilename( *(*currentSubjectIt) );
       /*std::string currentRegistrationFilename =
         (*currentSubjectIt)->GetRegistrationWithID( registrationID )
         ->GetAttribute<StringValue>( "SubjToAtlasRegistrationFIlename");*/

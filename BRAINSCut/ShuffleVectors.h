@@ -24,9 +24,7 @@ class ShuffleVectors
   //    - Eun Young (Regina) Kim
 public:
   ShuffleVectors();
-  ShuffleVectors( const std::string& inputFilename,
-                  const std::string& outputFilename,
-                  float downSampleSize = 1.0F );
+  ShuffleVectors( const std::string& inputFilename, const std::string& outputFilename, float downSampleSize = 1.0F );
   ~ShuffleVectors();
 
   void Shuffling();

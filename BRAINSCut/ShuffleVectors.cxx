@@ -158,8 +158,7 @@ ShuffleVectors::ShuffleVectors() :
 {
 }
 
-ShuffleVectors::ShuffleVectors(const std::string& inputVectorFilename,
-                               const std::string& outputVectorFilename,
+ShuffleVectors::ShuffleVectors(const std::string& inputVectorFilename, const std::string& outputVectorFilename,
                                float resampleProportion  ) :
   m_IVS(0),
   m_OVS(0),

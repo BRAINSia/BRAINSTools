@@ -23,7 +23,7 @@ FeatureInputVector
         index[0] = i;
         index[1] = j;
         index[2] = k;
-        const int                   currKey = HashKeyFromIndex( index );
+        const unsigned int          currKey = HashKeyFromIndex( index );
         WorkingImageType::IndexType outIndex = HashIndexFromKey(currKey);
         if( index != outIndex )
           {
@@ -357,7 +357,7 @@ FeatureInputVector
 }
 
 /* Hash Generator from index */
-int
+unsigned int
 FeatureInputVector
 ::HashKeyFromIndex( const WorkingImageType::IndexType index )
 {
@@ -365,7 +365,7 @@ FeatureInputVector
    * calculating offset
    * hashValue = i[2] + i[1]*s[1] + i[0]*s[0]*s[1]
    */
-  int hashValue = 0; // TODO HACK REGINA: HashKeys should be unsigned!
+  unsigned int hashValue = 0; // TODO HACK REGINA: HashKeys should be unsigned!
 
   const unsigned int lastDimensionIndex = DIMENSION - 1;
 
@@ -380,11 +380,10 @@ FeatureInputVector
 
 WorkingImageType::IndexType
 FeatureInputVector
-::HashIndexFromKey(const int offSet) // TODO HACK REGINA: HashKeys should be unsigned!
+::HashIndexFromKey(const unsigned int offSet) // TODO HACK REGINA: HashKeys should be unsigned!
 {
   WorkingImageType::IndexType key;
-
-  int remainedOffSet = offSet; // TODO HACK REGINA: HashKeys should be unsigned!
+  unsigned int                remainedOffSet = offSet; // TODO HACK REGINA: HashKeys should be unsigned!
 
   for( int d = DIMENSION - 1; d >= 0; d-- )
     {

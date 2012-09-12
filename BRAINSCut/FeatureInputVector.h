@@ -69,9 +69,9 @@ public:
    * This would not work if the size of image bigger than the size we are using here.
    * The size could be easily changed though.
    */
-  static int                         HashKeyFromIndex(const WorkingImageType::IndexType index);
+  static unsigned int HashKeyFromIndex(const WorkingImageType::IndexType index);
 
-  static WorkingImageType::IndexType HashIndexFromKey(const int offSet);
+  static WorkingImageType::IndexType HashIndexFromKey(const unsigned int offSet);
 
 private:
   int          gradientSize;

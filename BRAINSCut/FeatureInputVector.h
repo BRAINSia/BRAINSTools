@@ -5,6 +5,8 @@
 
 #include <itkLinearInterpolateImageFunction.h>
 #include <itkGradientImageFilter.h>
+
+typedef unsigned int hashKeyType;
 /*
  * Note
  * - this class is to compute input vector of ONE subject for a given ROI
@@ -67,9 +69,9 @@ public:
    * This would not work if the size of image bigger than the size we are using here.
    * The size could be easily changed though.
    */
-  static unsigned int HashKeyFromIndex(const WorkingImageType::IndexType index);
+  static hashKeyType HashKeyFromIndex(const WorkingImageType::IndexType index);
 
-  static WorkingImageType::IndexType HashIndexFromKey(const unsigned int offSet);
+  static WorkingImageType::IndexType HashIndexFromKey(const hashKeyType offSet);
 
 private:
   int          gradientSize;

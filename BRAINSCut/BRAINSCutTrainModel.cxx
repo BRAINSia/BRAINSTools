@@ -11,6 +11,7 @@ BRAINSCutTrainModel
   ANNHiddenNodesNumber(0),
   activationSlope(0),
   activationMinMax(0),
+  m_trainingDataSet(NULL),
   m_ANNLayerStructure(NULL)
 {
   myDataHandler = dataHandler;
@@ -24,6 +25,10 @@ BRAINSCutTrainModel
     {
     cvReleaseMat( &this->m_ANNLayerStructure );
     }
+  if( this->m_trainingDataSet != NULL )
+    {
+    delete this->m_trainingDataSet;
+    }
 }
 
 /** train */
@@ -34,33 +39,33 @@ BRAINSCutTrainModel
   myDataHandler.SetTrainVectorFilename();
   const std::string trainVectorFilename = myDataHandler.GetTrainVectorFilename();
 
-  trainingDataSet = new BRAINSCutVectorTrainingSet( trainVectorFilename );
+  this->m_trainingDataSet = new BRAINSCutVectorTrainingSet( trainVectorFilename );
   try
     {
-    trainingDataSet->ReadHeaderFileInformation();
+    this->m_trainingDataSet->ReadHeaderFileInformation();
     }
   catch( BRAINSCutExceptionStringHandler& e )
     {
     std::cout << e.Error();
     exit(EXIT_FAILURE);
     }
-  trainingDataSet->SetRecordSize();
-  trainingDataSet->SetBufferRecordSize();
+  this->m_trainingDataSet->SetRecordSize();
+  this->m_trainingDataSet->SetBufferRecordSize();
   if( doShuffle )
     {
-    trainingDataSet->RandomizeTrainingVector();
+    this->m_trainingDataSet->RandomizeTrainingVector();
     }
-  if( trainingDataSet->GetTotalVectorSize() > (int)trainMaximumDataSize )
+  if( this->m_trainingDataSet->GetTotalVectorSize() > (int)trainMaximumDataSize )
     {
     unsigned int numberOfSubSet =
-      (float)trainingDataSet->GetTotalVectorSize() / (float)trainMaximumDataSize;
+      (float)this->m_trainingDataSet->GetTotalVectorSize() / (float)trainMaximumDataSize;
     numberOfSubSet = ceil(numberOfSubSet) + 1;
     std::cout << "Divide subset into " << numberOfSubSet << std::endl;
-    trainingDataSet->SetNumberOfSubSet( numberOfSubSet );
+    this->m_trainingDataSet->SetNumberOfSubSet( numberOfSubSet );
     }
   else
     {
-    trainingDataSet->SetNumberOfSubSet( 1 );
+    this->m_trainingDataSet->SetNumberOfSubSet( 1 );
     }
 }
 
@@ -175,14 +180,14 @@ BRAINSCutTrainModel
                            int depth,
                            int nTree)
 {
-  char* cError = new char[40];
+  char cError[40];
 
   sprintf( cError, "%.5g", myTrainer.get_train_error() );
 
-  char* cDepth = new char[10];
+  char cDepth[10];
   sprintf( cDepth, "%d", depth );
 
-  char* cNTree = new char[10];
+  char cNTree[10];
   sprintf( cNTree, "%d", nTree);
 
   std::string line = "error,";
@@ -221,17 +226,13 @@ BRAINSCutTrainModel
             << std::endl;
 }
 
-int *
+void
 BRAINSCutTrainModel
-::GetANNLayerStructureArray()
+::FillANNLayerStructureArray3D( int * const layer ) const
 {
-  int * layer = new int[3];
-
-  layer[0] = trainingDataSet->GetInputVectorSize();
+  layer[0] = this->m_trainingDataSet->GetInputVectorSize();
   layer[1] = ANNHiddenNodesNumber;
-  layer[2] = trainingDataSet->GetOutputVectorSize();
-
-  return layer;
+  layer[2] = this->m_trainingDataSet->GetOutputVectorSize();
 }
 
 void
@@ -239,7 +240,9 @@ BRAINSCutTrainModel
 ::TrainANN()
 {
   neuralNetType * trainner = new neuralNetType();
-  int*            layer = GetANNLayerStructureArray();
+  int             layer[3];
+
+  this->FillANNLayerStructureArray3D(layer);
 
   cvInitMatHeader( this->m_ANNLayerStructure, 1, 3, CV_32SC1, layer );
 
@@ -251,10 +254,10 @@ BRAINSCutTrainModel
        currentIteration <= trainIteration;
        currentIteration++ )
     {
-    unsigned int subSetNo =  (currentIteration - 1) % trainingDataSet->GetNumberOfSubSet();
+    unsigned int subSetNo =  (currentIteration - 1) % this->m_trainingDataSet->GetNumberOfSubSet();
     TrainWithUpdate( *trainner,
                      (currentIteration > 1), // after first iteration, update
-                     *(trainingDataSet->GetTrainingSubSet(subSetNo) ) );
+                     *(this->m_trainingDataSet->GetTrainingSubSet(subSetNo) ) );
     SaveANNTrainModelAtIteration( *trainner, currentIteration );
     printANNTrainInformation( *trainner, currentIteration );
     /*
@@ -265,6 +268,7 @@ BRAINSCutTrainModel
       }
       */
     }
+  delete trainner;
 }
 
 /** random forest training */
@@ -300,9 +304,9 @@ BRAINSCutTrainModel
                 0
                 );
 
-  forest.train( trainingDataSet->GetTrainingSubSet(0)->pairedInput,
+  forest.train( this->m_trainingDataSet->GetTrainingSubSet(0)->pairedInput,
                 CV_ROW_SAMPLE,   // or CV_COL_SAMPLE
-                trainingDataSet->GetTrainingSubSet(0)->pairedOutputRF,
+                this->m_trainingDataSet->GetTrainingSubSet(0)->pairedOutputRF,
                 0,
                 0,    // CvMat* sampleIdx=0,
                 0,    // CvMat* varType=0,

@@ -16,22 +16,22 @@ BRAINSCutApplyModel
   : numberOfTrees(-1),
   depthOfTree(-1)
 {
-  myDataHandler = dataHandler;
+  this->m_myDataHandler = dataHandler;
   // TODO Take this apart to generate registration one by one!
-  myDataHandler.SetRegionsOfInterest();
-  myDataHandler.SetRegistrationParameters();
+  this->m_myDataHandler.SetRegionsOfInterest();
+  this->m_myDataHandler.SetRegistrationParameters();
 
-  myDataHandler.SetAtlasDataSet();
-  myDataHandler.SetRhoPhiTheta();
+  this->m_myDataHandler.SetAtlasDataSet();
+  this->m_myDataHandler.SetRhoPhiTheta();
 
-  myDataHandler.SetTrainingVectorConfiguration(); // this has to be before gradient size
-  myDataHandler.SetGradientSize();
+  this->m_myDataHandler.SetTrainingVectorConfiguration(); // this has to be before gradient size
+  this->m_myDataHandler.SetGradientSize();
 
-  myDataHandler.SetNormalization();
+  this->m_myDataHandler.SetNormalization();
 
-  gaussianSmoothingSigma = myDataHandler.GetGaussianSmoothingSigma();
-  trainIteration   = myDataHandler.GetTrainIteration();
-  applyDataSetList = myDataHandler.GetApplyDataSet();
+  gaussianSmoothingSigma = this->m_myDataHandler.GetGaussianSmoothingSigma();
+  trainIteration   = this->m_myDataHandler.GetTrainIteration();
+  applyDataSetList = this->m_myDataHandler.GetApplyDataSet();
 
   /** set default: ANN **/
   openCVANN = new OpenCVMLPType();
@@ -46,11 +46,11 @@ BRAINSCutApplyModel
   method = inputMethod;
   if( method ==  "ANN" )
     {
-    myDataHandler.SetTrainConfiguration( "ANNParameters" );
+    this->m_myDataHandler.SetTrainConfiguration( "ANNParameters" );
     }
   else
     {
-    myDataHandler.SetTrainConfiguration( "RandomForestParameters");
+    this->m_myDataHandler.SetTrainConfiguration( "RandomForestParameters");
     }
 }
 
@@ -61,23 +61,23 @@ BRAINSCutApplyModel
 {
   if( method ==  "ANN" )
     {
-    myDataHandler.SetANNTestingSSEFilename();
-    annOutputThreshold = myDataHandler.GetANNOutputThreshold();
-    myDataHandler.SetANNModelFilenameAtIteration( trainIteration);
+    this->m_myDataHandler.SetANNTestingSSEFilename();
+    annOutputThreshold = this->m_myDataHandler.GetANNOutputThreshold();
+    this->m_myDataHandler.SetANNModelFilenameAtIteration( trainIteration);
     ReadANNModelFile();
     }
   else if( method == "RandomForest" )
     {
-    if( myDataHandler.GetRandomForestModelFilename() == "" )
+    if( this->m_myDataHandler.GetRandomForestModelFilename() == "" )
       {
-      myDataHandler.SetRandomForestModelFilename( depthOfTree, numberOfTrees);
+      this->m_myDataHandler.SetRandomForestModelFilename( depthOfTree, numberOfTrees);
       }
     ReadRandomForestModelFile();
     }
 
   typedef BRAINSCutConfiguration::ApplyDataSetListType::iterator ApplySubjectIteratorType;
 
-  normalization = myDataHandler.GetNormalization();
+  normalization = this->m_myDataHandler.GetNormalization();
   for( ApplySubjectIteratorType subjectIt = applyDataSetList.begin();
        subjectIt != applyDataSetList.end();
        ++subjectIt )
@@ -95,16 +95,16 @@ BRAINSCutApplyModel
 
   std::map<std::string, WorkingImagePointer> deformedSpatialLocationImageList;
 
-  myDataHandler.GetDeformedSpatialLocationImages( deformedSpatialLocationImageList, subject );
+  this->m_myDataHandler.GetDeformedSpatialLocationImages( deformedSpatialLocationImageList, subject );
 
   WorkingImageVectorType imagesOfInterest;
-  myDataHandler.GetImagesOfSubjectInOrder(imagesOfInterest, subject);
+  this->m_myDataHandler.GetImagesOfSubjectInOrder(imagesOfInterest, subject);
 
   /** Warp probability map(ROI) onto the subject*/
   typedef std::map<std::string, WorkingImagePointer> DeformedROIMapType;
   DeformedROIMapType deformedROIs;
 
-  myDataHandler.GetDeformedROIs(deformedROIs, subject);
+  this->m_myDataHandler.GetDeformedROIs(deformedROIs, subject);
 
   /** Gaussian Smoothing if requested to cover broader area */
   if( gaussianSmoothingSigma > 0.0F )
@@ -120,26 +120,27 @@ BRAINSCutApplyModel
   /** Get input feature vectors based on subject images and deformed ROIs */
   FeatureInputVector inputVectorGenerator;
 
-  inputVectorGenerator.SetGradientSize( myDataHandler.GetGradientSize() );
+  inputVectorGenerator.SetGradientSize( this->m_myDataHandler.GetGradientSize() );
   inputVectorGenerator.SetImagesOfInterestInOrder( imagesOfInterest );
   inputVectorGenerator.SetImagesOfSpatialLocation( deformedSpatialLocationImageList );
   inputVectorGenerator.SetCandidateROIs( deformedROIs);
-  inputVectorGenerator.SetROIInOrder( myDataHandler.GetROIIDsInOrder() );
+  inputVectorGenerator.SetROIInOrder( this->m_myDataHandler.GetROIIDsInOrder() );
   inputVectorGenerator.SetInputVectorSize();
   inputVectorGenerator.SetNormalization( normalization );
 
   /* now iterate through the roi */
 
   unsigned int roiIDsOrderNumber = 0;
-  // for( DataSet::StringVectorType::iterator roiTyIt = myDataHandler.GetROIIDsInOrder().begin();
-  //     roiTyIt != myDataHandler.GetROIIDsInOrder().end();
+  // for( DataSet::StringVectorType::iterator roiTyIt = this->m_myDataHandler.GetROIIDsInOrder().begin();
+  //     roiTyIt != this->m_myDataHandler.GetROIIDsInOrder().end();
   //     ++roiTyIt ) // roiTyIt = Region of Interest Type Iterator
-  while( roiIDsOrderNumber < myDataHandler.GetROIIDsInOrder().size() )
+  while( roiIDsOrderNumber < this->m_myDataHandler.GetROIIDsInOrder().size() )
     {
-    const std::string currentROIName = std::string( myDataHandler.GetROIIDsInOrder()[roiIDsOrderNumber] );
+    const std::string currentROIName = std::string( this->m_myDataHandler.GetROIIDsInOrder()[roiIDsOrderNumber] );
 
     ProbabilityMapParser* roiDataSet =
-      myDataHandler.GetROIDataList()->GetMatching<ProbabilityMapParser>( "StructureID", currentROIName.c_str() );
+      this->m_myDataHandler.GetROIDataList()->GetMatching<ProbabilityMapParser>( "StructureID",
+                                                                                 currentROIName.c_str() );
     if( roiDataSet->GetAttribute<StringValue>("GenerateVector") == "true" )
       {
       InputVectorMapType  roiInputVector = inputVectorGenerator.GetFeatureInputOfROI( currentROIName );
@@ -184,7 +185,7 @@ BRAINSCutApplyModel
         {
         for( int currentIteration = 1; currentIteration <= trainIteration; currentIteration++ )
           {
-          myDataHandler.SetANNModelFilenameAtIteration( currentIteration );
+          this->m_myDataHandler.SetANNModelFilenameAtIteration( currentIteration );
           PredictROI( roiInputVector, predictedOutputVector,
                       roiIDsOrderNumber, inputVectorGenerator.GetInputVectorSize() );
           const std::string roiReferenceFilename = GetROIVolumeName( subject, currentROIName );
@@ -393,6 +394,11 @@ BRAINSCutApplyModel
               const unsigned int         roiNumber,
               const unsigned int         inputVectorSize) const
 {
+  const unsigned int NumberOfROIS = this->m_myDataHandler.GetROIIDsInOrder().size();
+  // The openCVOutput is unnecessary of RandomForest, but it is really cheap to do once.
+  // even if it is wasted effort.
+  CvMat * openCVOutput = cvCreateMat( 1, NumberOfROIS, CV_32FC1);
+
   /* initialize container of output vector*/
   resultOutputVector.clear();
   for( InputVectorMapType::iterator it = roiInputFeatureVector.begin();
@@ -408,14 +414,12 @@ BRAINSCutApplyModel
     /* predict */
     if( method == "ANN" )
       {
-      CvMat * openCVOutput = cvCreateMat( 1, myDataHandler.GetROIIDsInOrder().size(), CV_32FC1);
       openCVANN->predict( &openCVInputFeature, openCVOutput );
 
       /* insert result to the result output vector */
-      resultOutputVector.insert( std::pair<int, scalarType>(
+      resultOutputVector.insert( std::pair<hashKeyType, scalarType>(
                                    ( it->first ),
                                    CV_MAT_ELEM( *openCVOutput, scalarType, 0, roiNumber) ) );
-      cvReleaseMat(&openCVOutput);
       }
     else if( method == "RandomForest" )
       {
@@ -425,11 +429,12 @@ BRAINSCutApplyModel
       {
         response = 1.0F;
       }*/
-      resultOutputVector.insert( std::pair<int, scalarType>(  ( it->first ),
-                                                              response ) );
+      resultOutputVector.insert( std::pair<hashKeyType, scalarType>(  ( it->first ),
+                                                                      response ) );
       // std::cout<<"--> "<<response<<std::endl;
       }
     }
+  cvReleaseMat(&openCVOutput);
 }
 
 void
@@ -439,12 +444,12 @@ BRAINSCutApplyModel
   computeSSE = sse;
   if( computeSSE )
     {
-    ANNTestingSSEFileStream.open( myDataHandler.GetANNTestingSSEFilename().c_str(),
+    ANNTestingSSEFileStream.open( this->m_myDataHandler.GetANNTestingSSEFilename().c_str(),
                                   std::fstream::out );
     if( !ANNTestingSSEFileStream.good() )
       {
       std::string errorMsg = " Cannot open the file! :";
-      errorMsg += myDataHandler.GetANNTestingSSEFilename();
+      errorMsg += this->m_myDataHandler.GetANNTestingSSEFilename();
       std::cout << errorMsg << std::endl;
       throw BRAINSCutExceptionStringHandler( errorMsg );
       exit( EXIT_FAILURE );
@@ -457,7 +462,7 @@ void
 BRAINSCutApplyModel
 ::ReadANNModelFile()
 {
-  std::string ANNModelFilename = myDataHandler.GetANNModelFilename();
+  std::string ANNModelFilename = this->m_myDataHandler.GetANNModelFilename();
 
   if( !itksys::SystemTools::FileExists( ANNModelFilename.c_str() ) )
     {
@@ -473,7 +478,7 @@ void
 BRAINSCutApplyModel
 ::ReadRandomForestModelFile()
 {
-  const std::string randomForestFilename = myDataHandler.GetRandomForestModelFilename();
+  const std::string randomForestFilename = this->m_myDataHandler.GetRandomForestModelFilename();
 
   if( !itksys::SystemTools::FileExists( randomForestFilename.c_str() ) )
     {
@@ -577,7 +582,7 @@ BRAINSCutApplyModel
 {
   if( trees < 0 )
     {
-    numberOfTrees = myDataHandler.GetMaxTreeCount();
+    numberOfTrees = this->m_myDataHandler.GetMaxTreeCount();
     }
   else
     {
@@ -591,7 +596,7 @@ BRAINSCutApplyModel
 {
   if( depth < 0 )
     {
-    depthOfTree = myDataHandler.GetMaxDepth();
+    depthOfTree = this->m_myDataHandler.GetMaxDepth();
     }
   else
     {

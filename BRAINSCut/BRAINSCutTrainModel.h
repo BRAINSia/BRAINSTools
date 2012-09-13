@@ -33,7 +33,7 @@ public:
 
   inline void printANNTrainInformation( neuralNetType& myTrainer, unsigned int No );
 
-  inline int * GetANNLayerStructureArray();
+  void FillANNLayerStructureArray3D( int * const layer ) const;
 
   // TODO: REGINA all "Get" functions should be const
   /** setting function with net configuration */
@@ -124,7 +124,7 @@ private:
   std::string                 modelBasename;
   std::string                 ANNVectorFilenamePrefix;
   std::string                 RFErrorFilename;
-  BRAINSCutVectorTrainingSet* trainingDataSet;
+  BRAINSCutVectorTrainingSet* m_trainingDataSet;
 
   CvMat * m_ANNLayerStructure;
 };

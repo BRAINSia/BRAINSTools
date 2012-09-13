@@ -17,7 +17,9 @@ typedef unsigned int hashKeyType;
 class FeatureInputVector
 {
 public:
+
   FeatureInputVector();
+  int DoUnitTests() const; // A series of unit tests to verify results.
 
   /** constants definition */
   static const scalarType MIN;
@@ -129,7 +131,5 @@ private:
 
   inline std::pair<scalarType, scalarType>  SetMinMaxOfSubject( BinaryImageType::Pointer & labelImage,
                                                                 const WorkingImagePointer & Image );
-
-  bool DoUnitTests(); // A series of unit tests to verify results.
 };
 #endif

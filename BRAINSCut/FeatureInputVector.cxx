@@ -5,42 +5,44 @@
 const scalarType FeatureInputVector::MIN = -1.0F;
 const scalarType FeatureInputVector::MAX = 1.0F;
 
-bool
+const unsigned int                MAX_IMAGE_SIZE = 1024;
+const WorkingImageType::IndexType ConstantHashIndexSize = {{1024, 1024, 1024}};
+
+int
 FeatureInputVector
-::DoUnitTests(void)
+::DoUnitTests(void) const
 {
   std::cout << "INTERNAL TEST OF INDEX_KEY INPUTVECTOR" << std::endl;
-  bool allOK = true;
+  int allOK = EXIT_SUCCESS;
 
-  for( unsigned unsigned int i = 0; i < 256; i++ )
+  for( WorkingImageType::IndexType::IndexValueType i = 0; i < ConstantHashIndexSize[0]; i++ )
     {
-    for( unsigned unsigned int j = 0; j < 256; j++ )
+    for( WorkingImageType::IndexType::IndexValueType j = 0; j < ConstantHashIndexSize[1]; j++ )
       {
-      for( unsigned unsigned int k = 0; k < 256; k++ )
+      for( WorkingImageType::IndexType::IndexValueType k = 0; k < ConstantHashIndexSize[2]; k++ )
         {
         // QuickTest
         WorkingImageType::IndexType index;
         index[0] = i;
         index[1] = j;
         index[2] = k;
-        const hashKeyType           currKey = HashKeyFromIndex( index );
-        WorkingImageType::IndexType outIndex = HashIndexFromKey(currKey);
+        const hashKeyType                 currKey = HashKeyFromIndex( index );
+        const WorkingImageType::IndexType outIndex = HashIndexFromKey(currKey);
         if( index != outIndex )
           {
           std::cout << "HACK: UNIT TEST " << index << " = " << outIndex << " with key " << currKey << std::endl;
-          allOK = false;
+          allOK = EXIT_FAILURE;
           }
         }
       }
     }
-  if( !allOK )
+  if( allOK == EXIT_FAILURE )
     {
     std::cout << "ERROR: Hash lookups are not invertable." << std::endl;
-    // exit(-1);
     }
   else
     {
-    std::cout << "All hash lookups for images < 256^3 are validated." << std::endl;
+    std::cout << "All hash lookups for images < " << ConstantHashIndexSize << " are validated." << std::endl;
     }
   return allOK;
 }
@@ -55,9 +57,6 @@ FeatureInputVector
   gradientOfROI.clear();
   featureInputOfROI.clear();
   imageInterpolator = ImageLinearInterpolatorType::New();
-#if 1 // HACK: TODO: REGINA This needs to be in the test suite.
-  this->DoUnitTests();
-#endif
 }
 
 void
@@ -85,6 +84,18 @@ FeatureInputVector
     {
     itkGenericExceptionMacro(<< "::number of images for spatial location should be 3 not "
                              << SpatialLocationImages.size() );
+    }
+  // Ensure that images are sufficiently small to process correctly.
+  WorkingImageType::SizeType testSize =
+    SpatialLocationImages.find("rho")->second->GetLargestPossibleRegion().GetSize();
+  for( unsigned int q = 0; q < 3; q++ )
+    {
+    if( testSize[q] > MAX_IMAGE_SIZE )
+      {
+      std::cout << "ERROR: Image too large to process correctly" << std::endl;
+      std::cout << testSize << " must be less than " << ConstantHashIndexSize << std::endl;
+      exit(-1);
+      }
     }
   spatialLocations = SpatialLocationImages;
 }

@@ -73,8 +73,6 @@ typedef std::map<int, InputVectorType>  InputVectorMapType; // < index ,feature 
 typedef std::map<int, OutputVectorType> OutputVectorMapType;
 typedef std::map<int, scalarType>       PredictValueMapType;
 
-const WorkingImageType::IndexType ConstantHashIndexSize = {{255, 255, 255}};
-
 std::string GetAtlasToSubjectRegistrationFilename( DataSet& subject);
 
 std::string GetSubjectToAtlasRegistrationFilename( DataSet& subject);

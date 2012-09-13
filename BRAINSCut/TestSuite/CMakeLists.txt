@@ -7,6 +7,9 @@
 
 message("TestData_DIR=${TestData_DIR}")
 
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME TestHashKeyUnitTests
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:TestHashKey> )
+
 ## ExternalData_expand_arguments( name variable_name_to_be_used file_downloaded?)
 
 ExternalData_expand_arguments( ${PROJECT_NAME}FetchData AtlasToSubjectScan1 DATA{${TestData_DIR}/AtlasToSubjectScan1.${XFRM_EXT}} )
@@ -69,6 +72,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME RandomForestApplyModelTestF
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSCut>
   --applyModel --method RandomForest --randomTreeDepth 6 --numberOfTrees 6
   --netConfiguration ${OutputNetConfigurationForTesting})
+
 
 ##
 ## ordering of tests

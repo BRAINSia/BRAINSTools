@@ -55,5 +55,8 @@ foreach( prog ${ALL_PROGS_LIST} )
 endforeach()
 
 if(BUILD_TESTING)
-    add_subdirectory(TestSuite)
+  add_executable(TestHashKey TestHashKey.cxx)
+  target_link_libraries(TestHashKey BRAINSCutCOMMONLIB)
+  add_subdirectory(TestSuite)
 endif(BUILD_TESTING)
+

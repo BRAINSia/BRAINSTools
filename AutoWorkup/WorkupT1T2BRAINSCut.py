@@ -12,7 +12,7 @@ from BRAINSTools.RF8BRAINSCutWrapper import RF8BRAINSCutWrapper
 def GenerateWFName(projectid, subjectid, sessionid,WFName):
     return WFName+'_'+str(subjectid)+"_"+str(sessionid)+"_"+str(projectid)
 
-def CreateLabelMap(listOfImages,LabelImageName,CSVFileName):
+def CreateLabelMap(listOfImages,LabelImageName,CSVFileName,projectid, subjectid, sessionid):
     """
     A function to create a consolidated label map and a
     csv file of volume measurements.
@@ -73,7 +73,7 @@ def CreateLabelMap(listOfImages,LabelImageName,CSVFileName):
     ls.Execute(labelImage,labelImage)
     ImageSpacing=labelImage.GetSpacing()
     csvFile=open(CSVFileName,'w')
-    dWriter=csv.DictWriter(csvFile,['Structure','LabelCode','Volume_mm3','FileName'],restval='', extrasaction='raise', dialect='excel')
+    dWriter=csv.DictWriter(csvFile,['projectid', 'subjectid', 'sessionid','Structure','LabelCode','Volume_mm3'],restval='', extrasaction='raise', dialect='excel')
     dWriter.writeheader()
     writeDictionary=dict()
     for name in orderOfPriority:
@@ -88,7 +88,10 @@ def CreateLabelMap(listOfImages,LabelImageName,CSVFileName):
             writeDictionary['Volume_mm3']=structVolume
             writeDictionary['Structure']=name
             writeDictionary['LabelCode']=value
-            writeDictionary['FileName']=os.path.abspath(LabelImageName)
+            #writeDictionary['FileName']=os.path.abspath(LabelImageName)
+            writeDictionary['projectid']=projectid
+            writeDictionary['subjectid']=subjectid
+            writeDictionary['sessionid']=sessionid
             dWriter.writerow(writeDictionary)
     return os.path.abspath(LabelImageName),os.path.abspath(CSVFileName)
 
@@ -210,11 +213,15 @@ def CreateBRAINSCutWorkflow(projectid, subjectid, sessionid,WFName,CLUSTER_QUEUE
     cutWF.connect(RF8BC,'outputBinaryLeftThalamus',mergeAllLabels,'in7')
     cutWF.connect(RF8BC,'outputBinaryRightThalamus',mergeAllLabels,'in8')
 
-    computeOneLabelMap = pe.Node(interface=Function(['listOfImages','LabelImageName','CSVFileName'],
+    computeOneLabelMap = pe.Node(interface=Function(['listOfImages','LabelImageName','CSVFileName',
+         'projectid', 'subjectid', 'sessionid' ],
         ['outputLabelImageName','outputCSVFileName'],
         function=CreateLabelMap),name="ComputeOneLabelMap")
-    computeOneLabelMap.inputs.LabelImageName="consolidated12LabelMap.nii.gz"
-    computeOneLabelMap.inputs.CSVFileName = "consolidated12LabelVolumes.csv"
+    computeOneLabelMap.inputs.projectid=projectid
+    computeOneLabelMap.inputs.subjectid=subjectid
+    computeOneLabelMap.inputs.sessionid=sessionid
+    computeOneLabelMap.inputs.LabelImageName="allLabels_seg.nii.gz"
+    computeOneLabelMap.inputs.CSVFileName = "allLabels_seg.csv"
     cutWF.connect(mergeAllLabels,'out',computeOneLabelMap,'listOfImages')
 
     outputsSpec = pe.Node(interface=IdentityInterface(fields=[

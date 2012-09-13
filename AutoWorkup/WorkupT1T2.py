@@ -65,8 +65,11 @@ pe.sub(subs,test)
 pe=re.compile(pat)
 pe.sub(subs,test)
 
+/nfsscratch/PREDICT/johnsonhj/ExpandedExperiment/20120801.SubjectOrganized_Results/ANTSTemplate/CLIPPED_AVG_CSFWARP_AVG_CSF.nii.gz
+-> /nfsscratch/PREDICT/johnsonhj/ExpandedExperiment/20120801.SubjectOrganized_Results/SUBJECT_TEMPLATES/2013/AVG_CSF.nii.gz
 """
     patternList=[]
+
 
     find_pat=os.path.join('ANTSTemplate','Iteration02_Reshaped.nii.gz')
     replace_pat=os.path.join('SUBJECT_TEMPLATES',subjectid,r'AVG_T1.nii.gz')
@@ -635,7 +638,12 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                     ### Now define where the final organized outputs should go.
                     SEGMENTATION_DataSink[subjectid]=pe.Node(nio.DataSink(),name="SEGMENTATION_DS_"+str(subjectid)+"_"+str(sessionid))
                     SEGMENTATION_DataSink[subjectid].inputs.base_directory=ExperimentBaseDirectoryResults
-                    SEGMENTATION_DataSink[subjectid].inputs.regexp_substitutions = GenerateOutputPattern(projectid, subjectid, sessionid,'BRAINSCut')
+                    #SEGMENTATION_DataSink[subjectid].inputs.regexp_substitutions = GenerateOutputPattern(projectid, subjectid, sessionid,'BRAINSCut')
+                    #SEGMENTATION_DataSink[subjectid].inputs.regexp_substitutions = GenerateBRAINSCutImagesOutputPattern(projectid, subjectid, sessionid)
+                    SEGMENTATION_DataSink[subjectid].inputs.substitutions = [ ( 'BRAINSCut',os.path.join(projectid, subjectid, sessionid,'BRAINSCut') ),
+                                                                              ( 'subjectANNLabel_', '' ),
+                                                                              ( '.nii.gz', '_seg.nii.gz')
+                                                                            ]
                     baw200.connect(myLocalSegWF[subjectid], 'OutputSpec.outputBinaryLeftCaudate',SEGMENTATION_DataSink[subjectid], 'BRAINSCut.@outputBinaryLeftCaudate')
                     baw200.connect(myLocalSegWF[subjectid], 'OutputSpec.outputBinaryRightCaudate',SEGMENTATION_DataSink[subjectid], 'BRAINSCut.@outputBinaryRightCaudate')
                     baw200.connect(myLocalSegWF[subjectid], 'OutputSpec.outputBinaryLeftHippocampus',SEGMENTATION_DataSink[subjectid], 'BRAINSCut.@outputBinaryLeftHippocampus')

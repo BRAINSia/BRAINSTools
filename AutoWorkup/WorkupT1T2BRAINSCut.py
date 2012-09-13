@@ -149,12 +149,12 @@ def CreateBRAINSCutWorkflow(projectid, subjectid, sessionid,WFName,CLUSTER_QUEUE
     BRAINSCut
     """
     RF8BC = pe.Node(interface=RF8BRAINSCutWrapper(),name="RF8_BRAINSCut")
-    many_cpu_RF8BC_options_dictionary={'qsub_args': '-S /bin/bash -pe smp1 4-12 -l mem_free=8000M -o /dev/null -e /dev/null '+CLUSTER_QUEUE, 'overwrite': True}
+    many_cpu_RF8BC_options_dictionary={'qsub_args': '-S /bin/bash -pe smp1 4-12 -l big_mem=true,h_vmem=31G,mem_free=31G -o /dev/null -e /dev/null '+CLUSTER_QUEUE, 'overwrite': True}
     RF8BC.plugin_args=many_cpu_RF8BC_options_dictionary
     RF8BC.inputs.trainingVectorFilename = "trainingVectorFilename.txt"
     RF8BC.inputs.xmlFilename = "BRAINSCutSegmentationDefinition.xml"
 
-    """ HACK These should be l_Caudate_seg.nii.gz
+    """ HACK These should be l_caudate_seg.nii.gz
     subjectANNLabel_l_caudate.nii.gz
     subjectANNLabel_l_hippocampus.nii.gz
     subjectANNLabel_l_putamen.nii.gz

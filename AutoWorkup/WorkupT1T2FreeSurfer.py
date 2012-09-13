@@ -37,7 +37,7 @@ def CreateFreeSurferWorkflow(projectid, subjectid, sessionid,WFname,CLUSTER_QUEU
     grey_label = 2
 
     msLDA_GenerateWeights = pe.Node(interface=MS_LDA(),name="MS_LDA")
-    MSLDA_sge_options_dictionary={'qsub_args': '-S /bin/bash -pe smp1 1 -l mem_free=300M -o /dev/null -e /dev/null '+CLUSTER_QUEUE, 'overwrite': True}
+    MSLDA_sge_options_dictionary={'qsub_args': '-S /bin/bash -pe smp1 1 -l h_vmem=300M,mem_free=300M -o /dev/null -e /dev/null '+CLUSTER_QUEUE, 'overwrite': True}
     msLDA_GenerateWeights.plugin_args=MSLDA_sge_options_dictionary
     msLDA_GenerateWeights.inputs.lda_labels=[white_label,grey_label]
     msLDA_GenerateWeights.inputs.weight_file = 'weights.txt'
@@ -52,7 +52,7 @@ def CreateFreeSurferWorkflow(projectid, subjectid, sessionid,WFname,CLUSTER_QUEU
     if RunAllFSComponents == True:
         print("""Run Freesurfer ReconAll at""")
         fs_reconall = pe.Node(interface=ReconAll(),name="FS510")
-        freesurfer_sge_options_dictionary={'qsub_args': '-S /bin/bash -pe smp1 1 -l mem_free=3100M -o /dev/null -e /dev/null '+CLUSTER_QUEUE, 'overwrite': True}
+        freesurfer_sge_options_dictionary={'qsub_args': '-S /bin/bash -pe smp1 1 -l h_vmem=3100M,mem_free=3100M -o /dev/null -e /dev/null '+CLUSTER_QUEUE, 'overwrite': True}
         fs_reconall.plugin_args=freesurfer_sge_options_dictionary
         fs_reconall.inputs.directive = 'all'
         freesurferWF.connect(inputsSpec,'subject_id',fs_reconall,'subject_id')

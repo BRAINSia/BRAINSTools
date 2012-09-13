@@ -133,7 +133,7 @@ def CreateTissueClassifyWorkflow(WFname,CLUSTER_QUEUE,InterpolationMode):
 
     BABCext= pe.Node(interface=BRAINSABCext(), name="BABC")
     #many_cpu_BABC_options_dictionary={'qsub_args': '-S /bin/bash -pe smp1 4-12                   -o /dev/null -e /dev/null '+CLUSTER_QUEUE, 'overwrite': True}
-    many_cpu_BABC_options_dictionary={'qsub_args': '-S /bin/bash -pe smp1 4-12 -l mem_free=8000M -o /dev/null -e /dev/null '+CLUSTER_QUEUE, 'overwrite': True}
+    many_cpu_BABC_options_dictionary={'qsub_args': '-S /bin/bash -pe smp1 4-12 -l h_vmem=8G,mem_free=8G -o /dev/null -e /dev/null '+CLUSTER_QUEUE, 'overwrite': True}
     BABCext.plugin_args=many_cpu_BABC_options_dictionary
     tissueClassifyWF.connect(makeImagePathList,'imagePathList',BABCext,'inputVolumes')
     tissueClassifyWF.connect(makeImageTypeList,'imageTypeList',BABCext,'inputVolumeTypes')

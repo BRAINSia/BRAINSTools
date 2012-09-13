@@ -17,7 +17,7 @@ set(BRAINSCommonLib_SRCS GenericTransformImage.cxx BRAINSFitHelper.cxx Slicer3La
 
 ## Always build BRAINSCommonLib as static
 add_library(BRAINSCommonLib STATIC ${BRAINSCommonLib_SRCS})
-target_link_libraries(BRAINSCommonLib ${ITK_LIBRARIES} )
+target_link_libraries(BRAINSCommonLib ${ITK_LIBRARIES} ${ANTS_LIBS})
 
 install(TARGETS BRAINSCommonLib
   RUNTIME DESTINATION ${BRAINSTools_CLI_INSTALL_RUNTIME_DESTINATION} COMPONENT RuntimeLibraries

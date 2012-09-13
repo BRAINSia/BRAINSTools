@@ -24,7 +24,6 @@
 // TODO:  This needs to be moved to the top, and header files moved to this
 // header where needed.
 #include "BRAINSFitHelperTemplate.h"
-#include "BRAINSFitBSpline.h"
 #include "BRAINSFitUtils.h"
 
 #include "itkMacro.h"

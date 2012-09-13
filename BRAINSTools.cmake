@@ -33,6 +33,17 @@ include(${GenerateCLP_USE_FILE})
 include(${SlicerExecutionModel_USE_FILE})
 include(${SlicerExecutionModel_CMAKE_DIR}/SEMMacroBuildCLI.cmake)
 
+if(USE_ANTS)
+  # find ANTS includes
+  include_directories(${ANTS_SOURCE_DIR}/Temporary)
+  include_directories(${ANTS_SOURCE_DIR}/Utilities)
+  include_directories(${ANTS_SOURCE_DIR}/Examples)
+  include_directories(${ANTS_SOURCE_DIR}/ImageRegistration)
+  message(STATUS "HACK:  Adding link directory ${BRAINSStandAlone_LIBRARY_PATH}")
+  link_directories(${BRAINSStandAlone_LIBRARY_PATH})
+  set(ANTS_LIBS ${ANTS_LIBS} antsUtilities)
+endif()
+
 #-----------------------------------------------------------------------------
 enable_testing()
 include(CTest)

@@ -13,9 +13,8 @@ set(ALL_PROGS_LIST
   BRAINSFitEZ
   )
 
-set(BRAINSFitLibraries BRAINSCommonLib)
+set(BRAINSFitLibraries BRAINSCommonLib ${ANTS_LIBS})
 DebugImageViewerLibAdditions(BRAINSFitLibraries)
-
 foreach(prog ${ALL_PROGS_LIST})
   StandardBRAINSBuildMacro(NAME ${prog} TARGET_LIBRARIES ${BRAINSFitLibraries})
 endforeach()

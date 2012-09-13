@@ -31,11 +31,11 @@ ValidateTransformRankOrdering(const std::vector<std::string> & transformType)
   // B-Spline is before Rigid, or any other non-sensical ordering of the
   // transform types.
   // Rigid=1, ScaleVersor3D=2, ScaleSkewVersor3D=3, Affine=4, and (BSpline or
-  // ROIBspline)=5
+  // ROIBspline or SyN)=5
 #define VTROExceptionMacroMacro()                                       \
   itkGenericExceptionMacro(<< "Ordering of transforms does not proceed from\n" \
                            << "smallest to largest.  Please review settings for transformType.\n" \
-                           << "Rigid < ScaleVersor3D < ScaleSkewVersor3D < Affine < (BSpline | ROIBSpine)")
+                           << "Rigid < ScaleVersor3D < ScaleSkewVersor3D < Affine < (BSpline | ROIBSpine | SyN)")
 
   unsigned int CurrentTransformRank = 0;
 
@@ -107,6 +107,17 @@ ValidateTransformRankOrdering(const std::vector<std::string> & transformType)
         VTROExceptionMacroMacro();
         }
       }
+    else if( transformType[l] == "SyN" )
+      {
+      if( CurrentTransformRank <= 5 )
+        {
+        CurrentTransformRank = 5;
+        }
+      else
+        {
+        VTROExceptionMacroMacro();
+        }
+      }
 
     else
       {
@@ -119,17 +130,17 @@ ValidateTransformRankOrdering(const std::vector<std::string> & transformType)
 
 template <class FixedImageType, class MovingImageType, class TransformType,
           class SpecificInitializerType, typename MetricType>
-typename TransformType::Pointer DoCenteredInitialization(
-  typename FixedImageType::Pointer & orientedFixedVolume,
-  typename MovingImageType::Pointer & orientedMovingVolume,
-  ImageMaskPointer & fixedMask,         // NOTE:  This is both input and output
-                                        // variable,  the Mask is updated by
-                                        // this function
-  ImageMaskPointer & movingMask,        // NOTE:  This is both input and output
-                                        // variable,  the Mask is updated by
-                                        // this function
-  std::string & initializeTransformMode,
-  typename MetricType::Pointer & CostMetricObject)
+typename TransformType::Pointer
+DoCenteredInitialization( typename FixedImageType::Pointer & orientedFixedVolume,
+                          typename MovingImageType::Pointer & orientedMovingVolume,
+                          ImageMaskPointer & fixedMask,             // NOTE:  This is both input and output
+                                                                    // variable,  the Mask is updated by
+                                                                    // this function
+                          ImageMaskPointer & movingMask,            // NOTE:  This is both input and output
+                                                                    // variable,  the Mask is updated by
+                                                                    // this function
+                          std::string & initializeTransformMode,
+                          typename MetricType::Pointer & CostMetricObject )
 {
   typename TransformType::Pointer initialITKTransform = TransformType::New();
   initialITKTransform->SetIdentity();
@@ -1666,6 +1677,127 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
     else if( currentTransformType == "Composite3D" )
       {
       itkGenericExceptionMacro(<< "Composite Transform is not yet Implemented");
+      }
+    else if( currentTransformType == "SyN" )
+      {
+#ifdef USE_ANTS
+      //
+      // Process the bulkAffineTransform for SyN's transform initializer
+      //
+      AffineTransformType::Pointer bulkAffineTransform = AffineTransformType::New();
+      bulkAffineTransform->SetIdentity();
+
+      CompositeTransformType::Pointer initialSyNTransform = CompositeTransformType::New();
+      CompositeTransformType::Pointer outputSyNTransform = CompositeTransformType::New();
+
+      if( m_CurrentGenericTransform.IsNotNull() )
+        {
+        try
+          {
+          const std::string transformFileType = m_CurrentGenericTransform->GetNameOfClass();
+          if( transformFileType == "VersorRigid3DTransform" )
+            {
+            const VersorRigid3DTransformType::ConstPointer tempInitializerITKTransform =
+              dynamic_cast<VersorRigid3DTransformType const *>( m_CurrentGenericTransform.GetPointer() );
+            if( tempInitializerITKTransform.IsNull() )
+              {
+              std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
+              }
+            AssignRigid::AssignConvertedTransform(bulkAffineTransform,
+                                                  tempInitializerITKTransform);
+            initialSyNTransform->AddTransform(bulkAffineTransform);
+            }
+          else if( transformFileType == "ScaleVersor3DTransform" )
+            {
+            const ScaleVersor3DTransformType::ConstPointer tempInitializerITKTransform =
+              dynamic_cast<ScaleVersor3DTransformType const *>( m_CurrentGenericTransform.GetPointer() );
+            if( tempInitializerITKTransform.IsNull() )
+              {
+              std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
+              }
+            AssignRigid::AssignConvertedTransform(bulkAffineTransform,
+                                                  tempInitializerITKTransform);
+            initialSyNTransform->AddTransform(bulkAffineTransform);
+            }
+          else if( transformFileType == "ScaleSkewVersor3DTransform" )
+            {
+            const ScaleSkewVersor3DTransformType::ConstPointer tempInitializerITKTransform =
+              dynamic_cast<ScaleSkewVersor3DTransformType const *>( m_CurrentGenericTransform.GetPointer() );
+            if( tempInitializerITKTransform.IsNull() )
+              {
+              std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
+              }
+            AssignRigid::AssignConvertedTransform(bulkAffineTransform,
+                                                  tempInitializerITKTransform);
+            initialSyNTransform->AddTransform(bulkAffineTransform);
+            }
+          else if( transformFileType == "AffineTransform" )
+            {
+            const AffineTransformType::ConstPointer tempInitializerITKTransform =
+              dynamic_cast<AffineTransformType const *>( m_CurrentGenericTransform.GetPointer() );
+            if( tempInitializerITKTransform.IsNull() )
+              {
+              std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
+              }
+            AssignRigid::AssignConvertedTransform(bulkAffineTransform,
+                                                  tempInitializerITKTransform);
+            initialSyNTransform->AddTransform(bulkAffineTransform);
+            }
+          else if( transformFileType == "BSplineDeformableTransform" )
+            {
+            itkGenericExceptionMacro( << "ERROR: Improper transform initializer for SyN registration: "
+                                      << "BSpline Transform cannot be used as a transform initializer for SyN registration"
+                                      << std::endl);
+            }
+          else
+            {
+            itkGenericExceptionMacro( << "ERROR:  Invalid transform initializer type found:  "
+                                      << transformFileType )
+            }
+          }
+        catch( itk::ExceptionObject & excp )
+          {
+          std::cout << "[FAILED]" << std::endl;
+          std::cerr
+            << "Error while reading the m_CurrentGenericTransform"
+            << std::endl;
+          std::cerr << excp << std::endl;
+          return;
+          }
+        }
+
+      if( initialSyNTransform.IsNull() )
+        {
+        std::cout << "\n**********" << std::endl;
+        std::cout << "ERORR: Udefined intial transform for SyN registration:" << std::endl;
+        std::cout << "SyN registration process cannot be done!" << std::endl;
+        std::cout << "************" << std::endl;
+        }
+      else
+        {
+        outputSyNTransform =
+          simpleSynReg<FixedImageType, MovingImageType>( m_FixedVolume,
+                                                         m_MovingVolume,
+                                                         initialSyNTransform );
+        }
+
+      if( outputSyNTransform.IsNull() )
+        {
+        std::cout << "\n*******Error: the SyN registration has failed.********\n" << std::endl;
+        }
+      else
+        {
+        // CompositeTransformType has derived from itk::Transform, so we can directly assigne that to the
+        // m_CurrentGenericTransform that is a GenericTransformType.
+        m_CurrentGenericTransform = outputSyNTransform;
+        // Now turn of the initiallize code to off
+        localInitializeTransformMode = "Off";
+        }
+#else
+      std::cout << "******* Error: BRAINSFit cannot do the SyN registration ***"
+                << "\n******* To use SyN option, you should also build ANTS ***" << std::endl;
+      itkGenericExceptionMacro( << "******* Error: To use SyN registration, build ANTS too." << std::endl );
+#endif
       }
     else
       {

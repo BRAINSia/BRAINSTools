@@ -155,6 +155,7 @@ int main(int argc, char *argv[])
   itk::TransformFactory<ScaleSkewVersor3DTransformType>::RegisterTransform();
   itk::TransformFactory<AffineTransformType>::RegisterTransform();
   itk::TransformFactory<BSplineTransformType>::RegisterTransform();
+  itk::TransformFactory<CompositeTransformType>::RegisterTransform(); // added by Ali
 
 #ifdef USE_DebugImageViewer
   if( UseDebugImageViewer )
@@ -187,7 +188,7 @@ int main(int argc, char *argv[])
   // See if the individual boolean registration options are being used.  If any
   // of these are set, then transformType is not used.
   if( ( useRigid == true ) || ( useScaleVersor3D == true ) || ( useScaleSkewVersor3D == true )
-      || ( useAffine == true ) || ( useBSpline == true ) )
+      || ( useAffine == true ) || ( useBSpline == true ) || ( useSyN == true ) )
     {
     localTransformType.resize(0); // Set to zero length
     if( useRigid == true )
@@ -209,6 +210,10 @@ int main(int argc, char *argv[])
     if( useBSpline == true )
       {
       localTransformType.push_back("BSpline");
+      }
+    if( useSyN == true )
+      {
+      localTransformType.push_back("SyN");
       }
     if( useComposite )
       {
@@ -242,9 +247,11 @@ int main(int argc, char *argv[])
   if( linearTransform.size() > 0 )
     {
     localOutputTransform = linearTransform;
-    if( ( !localTransformType.empty() ) && ( localTransformType[localTransformType.size() - 1] == "BSpline" ) )
+    if( ( !localTransformType.empty() ) &&
+        ( (localTransformType[localTransformType.size() - 1] == "BSpline") ||
+          (localTransformType[localTransformType.size() - 1] == "SyN") ) )
       {
-      std::cout << "Error:  Linear transforms can not be used for BSpline registration!" << std::endl;
+      std::cout << "Error:  Linear transforms can not be used for BSpline or SyN registration!" << std::endl;
       return EXIT_FAILURE;
       }
     }
@@ -700,10 +707,33 @@ int main(int argc, char *argv[])
       }
     }
 #endif
+#ifdef USE_ANTS
+  if( localTransformType[localTransformType.size() - 1] == "SyN" )
+    {
+    CompositeTransformType::Pointer tempSyNCompositeTransform =
+      dynamic_cast<CompositeTransformType *>( currentGenericTransform.GetPointer() );
+    // write out transform actually computed, so skip the initial transform
+    CompositeTransformType::TransformTypePointer tempSyNFinalTransform =
+      tempSyNCompositeTransform->GetNthTransform( 1 );
 
-  /*const int write_status=*/
-  itk::WriteBothTransformsToDisk(currentGenericTransform.GetPointer(),
-                                 localOutputTransform, strippedOutputTransform);
+    if( tempSyNFinalTransform.IsNull() )
+      {
+      std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
+      return EXIT_FAILURE;
+      }
+    else
+      {
+      itk::ants::WriteTransform<3>( tempSyNFinalTransform, localOutputTransform );
+      std::cout << "SyN warped transform is written to the disk." << std::endl;
+      }
+    }
+#endif
+  else
+    {
+    /*const int write_status=*/
+    itk::WriteBothTransformsToDisk(currentGenericTransform.GetPointer(),
+                                   localOutputTransform, strippedOutputTransform);
+    }
 
 #if 0  // HACK:  This does not work properly when only an initializer transform
        // is used, or if the final transform is BSpline.

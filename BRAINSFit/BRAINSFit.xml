@@ -124,6 +124,13 @@
        <default>false</default>
     </boolean>
     <boolean>
+       <name>useSyN</name>
+       <longflag>useSyN</longflag>
+       <label>SyN </label>
+       <description>Perform a SyN registration as part of the sequential registration steps.  This family of options superceeds the use of transformType if any of them are set.</description>
+       <default>false</default>
+    </boolean>
+    <boolean>
        <name>useComposite</name>
        <longflag>useComposite</longflag>
        <label>Composite (many DOF) </label>
@@ -353,7 +360,7 @@
       <name>transformType</name>
       <longflag>transformType</longflag>
       <label>Transform Type</label>
-      <description>Specifies a list of registration types to be used.  The valid types are, Rigid, ScaleVersor3D, ScaleSkewVersor3D, Affine, and BSpline.  Specifiying more than one in a comma separated list will initialize the next stage with the previous results. If registrationClass flag is used, it overrides this parameter setting.</description>
+      <description>Specifies a list of registration types to be used.  The valid types are, Rigid, ScaleVersor3D, ScaleSkewVersor3D, Affine, BSpline and SyN.  Specifiying more than one in a comma separated list will initialize the next stage with the previous results. If registrationClass flag is used, it overrides this parameter setting.</description>
       <default></default>
     </string-vector>
 

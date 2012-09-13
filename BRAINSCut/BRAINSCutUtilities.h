@@ -24,14 +24,13 @@ typedef CvANN_MLP OpenCVMLPType;
 
 /** Training data set definition */
 
-typedef float   scalarType;
-typedef CvMat * matrixType;
+typedef float scalarType;
 
 struct pairedTrainingSetType
   {
-  matrixType pairedInput;
-  matrixType pairedOutput;
-  matrixType pairedOutputRF;
+  CvMat * pairedInput;
+  CvMat * pairedOutput;
+  CvMat * pairedOutputRF;
   unsigned int size;
   };
 

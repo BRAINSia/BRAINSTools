@@ -10,9 +10,20 @@ BRAINSCutTrainModel
   trainMaximumDataSize(0),
   ANNHiddenNodesNumber(0),
   activationSlope(0),
-  activationMinMax(0)
+  activationMinMax(0),
+  m_ANNLayerStructure(NULL)
 {
   myDataHandler = dataHandler;
+}
+
+BRAINSCutTrainModel
+::~BRAINSCutTrainModel()
+{
+  // Must release the memory so that it does not leak
+  if( this->m_ANNLayerStructure != NULL )
+    {
+    cvReleaseMat( &this->m_ANNLayerStructure );
+    }
 }
 
 /** train */
@@ -60,7 +71,11 @@ BRAINSCutTrainModel
 {
   myDataHandler.SetTrainConfiguration( "ANNParameters" );
   myDataHandler.SetTrainingVectorConfiguration();
-  ANNLayerStructure = cvCreateMat( 1, 3, CV_32SC1);
+  if( this->m_ANNLayerStructure != NULL )
+    {
+    cvReleaseMat( &this->m_ANNLayerStructure );
+    }
+  this->m_ANNLayerStructure = cvCreateMat( 1, 3, CV_32SC1);
 
   trainMaximumDataSize = myDataHandler.GetMaximumDataSize();
   trainIteration       = myDataHandler.GetTrainIteration();
@@ -226,9 +241,9 @@ BRAINSCutTrainModel
   neuralNetType * trainner = new neuralNetType();
   int*            layer = GetANNLayerStructureArray();
 
-  cvInitMatHeader( ANNLayerStructure, 1, 3, CV_32SC1, layer );
+  cvInitMatHeader( this->m_ANNLayerStructure, 1, 3, CV_32SC1, layer );
 
-  trainner->create( ANNLayerStructure,
+  trainner->create( this->m_ANNLayerStructure,
                     CvANN_MLP::SIGMOID_SYM,
                     activationSlope,
                     activationMinMax);

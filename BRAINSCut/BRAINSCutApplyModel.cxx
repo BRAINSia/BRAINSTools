@@ -390,8 +390,8 @@ inline void
 BRAINSCutApplyModel
 ::PredictROI( InputVectorMapType&  roiInputFeatureVector,
               PredictValueMapType& resultOutputVector,
-              unsigned int         roiNumber,
-              unsigned int         inputVectorSize)
+              const unsigned int         roiNumber,
+              const unsigned int         inputVectorSize) const
 {
   /* initialize container of output vector*/
   resultOutputVector.clear();
@@ -399,32 +399,27 @@ BRAINSCutApplyModel
        it != roiInputFeatureVector.end();
        ++it )
     {
-    /* convert input feature vector to array */
-    scalarType* arrayInputFeatureVector = new scalarType[inputVectorSize];
-    arrayInputFeatureVector = GetArrayFromVector( arrayInputFeatureVector,  it->second, inputVectorSize);
-
     /* get open cv type matrix from array for prediction */
-    matrixType openCVInputFeature = cvCreateMat( 1, inputVectorSize, CV_32FC1);
+    CvMat openCVInputFeature = cvMat( 1, inputVectorSize, CV_32FC1,
+                                      &(it->second[0]) ); //
+                                                          // http://stackoverflow.com/questions/6701816/how-to-use-a-stdvector-in-a-c-function
     // std::cout<<FeatureInputVector::HashIndexFromKey( it->first );
-    GetOpenCVMatrixFromArray( openCVInputFeature, arrayInputFeatureVector, inputVectorSize);
 
     /* predict */
-
     if( method == "ANN" )
       {
-      matrixType openCVOutput = cvCreateMat( 1, myDataHandler.GetROIIDsInOrder().size(), CV_32FC1);
-      openCVANN->predict( openCVInputFeature, openCVOutput );
+      CvMat * openCVOutput = cvCreateMat( 1, myDataHandler.GetROIIDsInOrder().size(), CV_32FC1);
+      openCVANN->predict( &openCVInputFeature, openCVOutput );
 
       /* insert result to the result output vector */
-      resultOutputVector.insert( std::pair<int, scalarType>(  ( it->first ),  CV_MAT_ELEM( *openCVOutput,
-                                                                                           scalarType,
-                                                                                           0,
-                                                                                           roiNumber) ) );
-      // HACK :  cvReleaseMat(&openCVOutput);
+      resultOutputVector.insert( std::pair<int, scalarType>(
+                                   ( it->first ),
+                                   CV_MAT_ELEM( *openCVOutput, scalarType, 0, roiNumber) ) );
+      cvReleaseMat(&openCVOutput);
       }
     else if( method == "RandomForest" )
       {
-      scalarType response = openCVRandomForest.predict( openCVInputFeature );
+      const scalarType response = openCVRandomForest.predict( &openCVInputFeature );
       // make binary input
       /*if( response > 0.5F )
       {
@@ -434,21 +429,7 @@ BRAINSCutApplyModel
                                                               response ) );
       // std::cout<<"--> "<<response<<std::endl;
       }
-    // HACK: YOU MUST RELEASE THE DYNAMICALLY ALLOCATED MEMORY!
-    // TODO: REGINA look at this as a possible memory freeing mechanism
-    // cvReleaseMat(&openCVInputFeature);
     }
-}
-
-inline void
-BRAINSCutApplyModel
-::GetOpenCVMatrixFromArray( matrixType& matrix, scalarType array[], unsigned int inputVectorSize)
-{
-  // for(int i=0; i<inputVectorSize; i++)
-  //  {
-  //  std::cout<<array[i]<<", ";
-  //  }
-  cvInitMatHeader( matrix, 1, inputVectorSize, CV_32FC1, array );
 }
 
 void
@@ -501,17 +482,6 @@ BRAINSCutApplyModel
     throw BRAINSCutExceptionStringHandler( errorMsg );
     }
   openCVRandomForest.load( randomForestFilename.c_str() );
-}
-
-inline scalarType *
-BRAINSCutApplyModel
-::GetArrayFromVector( scalarType array[], InputVectorType& vector, unsigned int inputVectorSize)
-{
-  for( unsigned int ai = 0; ai < inputVectorSize; ai++ )
-    {
-    array[ai] = vector[ai];
-    }
-  return array;
 }
 
 inline void

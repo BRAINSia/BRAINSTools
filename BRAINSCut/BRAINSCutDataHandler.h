@@ -65,7 +65,7 @@ public:
 
   std::string GetRFModelFilename( int depth, int NTrees);
 
-  DataSet::StringVectorType GetROIIDsInOrder();
+  DataSet::StringVectorType GetROIIDsInOrder() const;
 
   void        SetTrainVectorFilename();
 
@@ -150,7 +150,7 @@ protected:
 
   /**ProbabilityMaps*/
   ProbabilityMapList *      roiDataList;
-  DataSet::StringVectorType roiIDsInOrder;;
+  DataSet::StringVectorType m_roiIDsInOrder;
   unsigned int              roiCount;
 
   /** registration data set */

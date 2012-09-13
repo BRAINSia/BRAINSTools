@@ -38,8 +38,6 @@ public:
   typedef std::pair<scalarType, scalarType> minmaxPairType;
   typedef std::vector<minmaxPairType>       minmaxPairVectorType;
 
-  matrixType  GetInputVectorAt(WorkingImageVectorType & currentIndex);
-
   /** set functions */
   void SetGradientSize( unsigned int length);
 

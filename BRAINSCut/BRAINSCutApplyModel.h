@@ -72,12 +72,8 @@ private:
 
   /* inline functions */
 
-  inline void PredictROI( InputVectorMapType& roiInputFeatureVector, PredictValueMapType& resultOutputVector,
-                          const unsigned int roiNumber, const unsigned int inputVectorSize);
-
-  inline scalarType * GetArrayFromVector( scalarType array[], InputVectorType & vector, unsigned int inputVectorSize);
-
-  inline void         GetOpenCVMatrixFromArray( matrixType & matrix, scalarType array[], unsigned int inputVectorSize);
+  void PredictROI( InputVectorMapType& roiInputFeatureVector, PredictValueMapType& resultOutputVector,
+                   const unsigned int roiNumber, const unsigned int inputVectorSize) const;
 
   inline void WritePredictROIProbabilityBasedOnReferenceImage( const PredictValueMapType& predictedOutput,
                                                                const WorkingImagePointer& referenceImage,

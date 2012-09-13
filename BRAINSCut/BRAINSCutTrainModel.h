@@ -7,6 +7,7 @@ class BRAINSCutTrainModel
 {
 public:
   BRAINSCutTrainModel( BRAINSCutDataHandler & dataHandler );
+  virtual ~BRAINSCutTrainModel();
 
   /** train */
   void InitializeNeuralNetwork();
@@ -34,6 +35,7 @@ public:
 
   inline int * GetANNLayerStructureArray();
 
+  // TODO: REGINA all "Get" functions should be const
   /** setting function with net configuration */
   std::string GetModelBasename();
 
@@ -98,6 +100,7 @@ public:
   inline void appendToFile( std::string filename, std::string line);
 
 private:
+  // TODO:  REGINA:  These all need to be called with "m_" prefix
   BRAINSCutDataHandler myDataHandler;
 
   unsigned int trainIteration;
@@ -123,5 +126,5 @@ private:
   std::string                 RFErrorFilename;
   BRAINSCutVectorTrainingSet* trainingDataSet;
 
-  matrixType ANNLayerStructure;
+  CvMat * m_ANNLayerStructure;
 };

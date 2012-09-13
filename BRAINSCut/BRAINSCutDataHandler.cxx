@@ -102,9 +102,9 @@ BRAINSCutDataHandler
 
 DataSet::StringVectorType
 BRAINSCutDataHandler
-::GetROIIDsInOrder()
+::GetROIIDsInOrder() const
 {
-  return roiIDsInOrder;
+  return this->m_roiIDsInOrder;
 }
 
 void
@@ -112,9 +112,10 @@ BRAINSCutDataHandler
 ::SetRegionsOfInterest()
 {
   roiDataList = myConfiguration->Get<ProbabilityMapList>("ProbabilityMapList");
-  roiIDsInOrder = roiDataList->CollectAttValues<ProbabilityMapParser>("StructureID");
+  this->m_roiIDsInOrder = roiDataList->CollectAttValues<ProbabilityMapParser>("StructureID");
 
-  std::sort( roiIDsInOrder.begin(), roiIDsInOrder.end() ); // get l_caudate, l_globus, .. , r_caudate, r_globus..
+  std::sort( this->m_roiIDsInOrder.begin(), this->m_roiIDsInOrder.end() ); // get l_caudate, l_globus, .. , r_caudate,
+                                                                           // r_globus..
   roiCount = roiDataList->size();
 }
 
@@ -270,8 +271,8 @@ BRAINSCutDataHandler
 
   const std::string transformationPixelType = "float";
 
-  for( DataSet::StringVectorType::iterator roiTyIt = roiIDsInOrder.begin();
-       roiTyIt != roiIDsInOrder.end();
+  for( DataSet::StringVectorType::iterator roiTyIt = this->m_roiIDsInOrder.begin();
+       roiTyIt != this->m_roiIDsInOrder.end();
        ++roiTyIt )
     {
     std::string roiFilename = roiDataList->GetMatching<ProbabilityMapParser>( "StructureID", (*roiTyIt).c_str() )

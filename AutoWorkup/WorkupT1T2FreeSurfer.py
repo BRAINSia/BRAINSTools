@@ -23,7 +23,7 @@ def GenerateWFName(projectid, subjectid, sessionid,WFName):
     return WFName+'_'+str(subjectid)+"_"+str(sessionid)+"_"+str(projectid)
 
 def CreateFreeSurferWorkflow(projectid, subjectid, sessionid,WFname,CLUSTER_QUEUE,RunAllFSComponents=True):
-    freesurferWF= pe.Workflow(name=(projectid, subjectid, sessionid,WFname))
+    freesurferWF= pe.Workflow(name=GenerateWFName(projectid, subjectid, sessionid,WFname))
 
     inputsSpec = pe.Node(interface=IdentityInterface(fields=['subject_id','T1_files','T2_files',
                                                              'label_file','mask_file']), name='InputSpec' )

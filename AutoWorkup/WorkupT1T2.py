@@ -330,6 +330,7 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
     MergeOutputLabels=dict()
     MergePosteriors=dict()
     BAtlas=dict()
+    FREESURFER_ID=dict()
     if True:
         print("===================== SUBJECT: {0} ===========================".format(subjectid))
         PHASE_1_oneSubjWorkflow=dict()
@@ -338,7 +339,7 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
         print("Running sessions: {ses} for subject {sub}".format(ses=allSessions,sub=subjectid))
         BAtlas[subjectid] = MakeAtlasNode(atlas_fname_wpath,"BAtlas_"+str(subjectid)) ## Call function to create node
 
-       
+
         for sessionid in allSessions:
             global_AllT1s=ExperimentDatabase.getFilenamesByScantype(sessionid,['T1-30','T1-15'])
             global_AllT2s=ExperimentDatabase.getFilenamesByScantype(sessionid,['T2-30','T2-15'])
@@ -624,62 +625,70 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                 print("HACK")
                 if ( 'SEGMENTATION' in WORKFLOW_COMPONENTS ) and ( len(global_AllT2s) > 0 ): # Currently only works with multi-modal_data
                     from WorkupT1T2BRAINSCut import CreateBRAINSCutWorkflow
-                    myLocalSegWF[subjectid] = CreateBRAINSCutWorkflow(projectid, subjectid, sessionid,'Segmentation',CLUSTER_QUEUE,BAtlas[subjectid]) ##Note:  Passing in the entire BAtlas Object here!
-                    baw200.connect( PHASE_2_oneSubjWorkflow[sessionid], 'OutputSpec.t1_average', myLocalSegWF[subjectid], "InputSpec.T1Volume" )
-                    baw200.connect( PHASE_2_oneSubjWorkflow[sessionid], 'OutputSpec.t2_average', myLocalSegWF[subjectid], "InputSpec.T2Volume")
-                    baw200.connect( PHASE_2_oneSubjWorkflow[sessionid], 'OutputSpec.outputLabels', myLocalSegWF[subjectid],"InputSpec.RegistrationROI")
+                    myLocalSegWF[sessionid] = CreateBRAINSCutWorkflow(projectid, subjectid, sessionid,'Segmentation',CLUSTER_QUEUE,BAtlas[subjectid]) ##Note:  Passing in the entire BAtlas Object here!
+                    baw200.connect( PHASE_2_oneSubjWorkflow[sessionid], 'OutputSpec.t1_average', myLocalSegWF[sessionid], "InputSpec.T1Volume" )
+                    baw200.connect( PHASE_2_oneSubjWorkflow[sessionid], 'OutputSpec.t2_average', myLocalSegWF[sessionid], "InputSpec.T2Volume")
+                    baw200.connect( PHASE_2_oneSubjWorkflow[sessionid], 'OutputSpec.outputLabels', myLocalSegWF[sessionid],"InputSpec.RegistrationROI")
                     ## NOTE: Element 0 of AccumulatePriorsList is the accumulated GM tissue
-                    baw200.connect( [ ( AccumulateLikeTissuePosteriorsNode[sessionid], myLocalSegWF[subjectid],
+                    baw200.connect( [ ( AccumulateLikeTissuePosteriorsNode[sessionid], myLocalSegWF[sessionid],
                                       [ (( 'AccumulatePriorsList', getListIndex, 0 ), "InputSpec.TotalGM")] ),
 ] )
 
-                    baw200.connect( PHASE_2_oneSubjWorkflow[sessionid],'OutputSpec.atlasToSubjectTransform',myLocalSegWF[subjectid],'InputSpec.atlasToSubjectTransform')
+                    baw200.connect( PHASE_2_oneSubjWorkflow[sessionid],'OutputSpec.atlasToSubjectTransform',myLocalSegWF[sessionid],'InputSpec.atlasToSubjectTransform')
 
                     ### Now define where the final organized outputs should go.
-                    SEGMENTATION_DataSink[subjectid]=pe.Node(nio.DataSink(),name="SEGMENTATION_DS_"+str(subjectid)+"_"+str(sessionid))
-                    SEGMENTATION_DataSink[subjectid].inputs.base_directory=ExperimentBaseDirectoryResults
-                    #SEGMENTATION_DataSink[subjectid].inputs.regexp_substitutions = GenerateOutputPattern(projectid, subjectid, sessionid,'BRAINSCut')
-                    #SEGMENTATION_DataSink[subjectid].inputs.regexp_substitutions = GenerateBRAINSCutImagesOutputPattern(projectid, subjectid, sessionid)
-                    SEGMENTATION_DataSink[subjectid].inputs.substitutions = [ ( 'BRAINSCut',os.path.join(projectid, subjectid, sessionid,'BRAINSCut') ),
+                    SEGMENTATION_DataSink[sessionid]=pe.Node(nio.DataSink(),name="SEGMENTATION_DS_"+str(subjectid)+"_"+str(sessionid))
+                    SEGMENTATION_DataSink[sessionid].inputs.base_directory=ExperimentBaseDirectoryResults
+                    #SEGMENTATION_DataSink[sessionid].inputs.regexp_substitutions = GenerateOutputPattern(projectid, subjectid, sessionid,'BRAINSCut')
+                    #SEGMENTATION_DataSink[sessionid].inputs.regexp_substitutions = GenerateBRAINSCutImagesOutputPattern(projectid, subjectid, sessionid)
+                    SEGMENTATION_DataSink[sessionid].inputs.substitutions = [ ( 'BRAINSCut',os.path.join(projectid, subjectid, sessionid,'BRAINSCut') ),
                                                                               ( 'subjectANNLabel_', '' ),
                                                                               ( '.nii.gz', '_seg.nii.gz')
                                                                             ]
-                    baw200.connect(myLocalSegWF[subjectid], 'OutputSpec.outputBinaryLeftCaudate',SEGMENTATION_DataSink[subjectid], 'BRAINSCut.@outputBinaryLeftCaudate')
-                    baw200.connect(myLocalSegWF[subjectid], 'OutputSpec.outputBinaryRightCaudate',SEGMENTATION_DataSink[subjectid], 'BRAINSCut.@outputBinaryRightCaudate')
-                    baw200.connect(myLocalSegWF[subjectid], 'OutputSpec.outputBinaryLeftHippocampus',SEGMENTATION_DataSink[subjectid], 'BRAINSCut.@outputBinaryLeftHippocampus')
-                    baw200.connect(myLocalSegWF[subjectid], 'OutputSpec.outputBinaryRightHippocampus',SEGMENTATION_DataSink[subjectid], 'BRAINSCut.@outputBinaryRightHippocampus')
-                    baw200.connect(myLocalSegWF[subjectid], 'OutputSpec.outputBinaryLeftPutamen',SEGMENTATION_DataSink[subjectid], 'BRAINSCut.@outputBinaryLeftPutamen')
-                    baw200.connect(myLocalSegWF[subjectid], 'OutputSpec.outputBinaryRightPutamen',SEGMENTATION_DataSink[subjectid], 'BRAINSCut.@outputBinaryRightPutamen')
-                    baw200.connect(myLocalSegWF[subjectid], 'OutputSpec.outputBinaryLeftThalamus',SEGMENTATION_DataSink[subjectid], 'BRAINSCut.@outputBinaryLeftThalamus')
-                    baw200.connect(myLocalSegWF[subjectid], 'OutputSpec.outputBinaryRightThalamus',SEGMENTATION_DataSink[subjectid], 'BRAINSCut.@outputBinaryRightThalamus')
-                    baw200.connect(myLocalSegWF[subjectid], 'OutputSpec.outputLabelImageName', SEGMENTATION_DataSink[subjectid],'BRAINSCut.@outputLabelImageName')
-                    baw200.connect(myLocalSegWF[subjectid], 'OutputSpec.outputCSVFileName', SEGMENTATION_DataSink[subjectid],'BRAINSCut.@outputCSVFileName')
+                    baw200.connect(myLocalSegWF[sessionid], 'OutputSpec.outputBinaryLeftCaudate',SEGMENTATION_DataSink[sessionid], 'BRAINSCut.@outputBinaryLeftCaudate')
+                    baw200.connect(myLocalSegWF[sessionid], 'OutputSpec.outputBinaryRightCaudate',SEGMENTATION_DataSink[sessionid], 'BRAINSCut.@outputBinaryRightCaudate')
+                    baw200.connect(myLocalSegWF[sessionid], 'OutputSpec.outputBinaryLeftHippocampus',SEGMENTATION_DataSink[sessionid], 'BRAINSCut.@outputBinaryLeftHippocampus')
+                    baw200.connect(myLocalSegWF[sessionid], 'OutputSpec.outputBinaryRightHippocampus',SEGMENTATION_DataSink[sessionid], 'BRAINSCut.@outputBinaryRightHippocampus')
+                    baw200.connect(myLocalSegWF[sessionid], 'OutputSpec.outputBinaryLeftPutamen',SEGMENTATION_DataSink[sessionid], 'BRAINSCut.@outputBinaryLeftPutamen')
+                    baw200.connect(myLocalSegWF[sessionid], 'OutputSpec.outputBinaryRightPutamen',SEGMENTATION_DataSink[sessionid], 'BRAINSCut.@outputBinaryRightPutamen')
+                    baw200.connect(myLocalSegWF[sessionid], 'OutputSpec.outputBinaryLeftThalamus',SEGMENTATION_DataSink[sessionid], 'BRAINSCut.@outputBinaryLeftThalamus')
+                    baw200.connect(myLocalSegWF[sessionid], 'OutputSpec.outputBinaryRightThalamus',SEGMENTATION_DataSink[sessionid], 'BRAINSCut.@outputBinaryRightThalamus')
+                    baw200.connect(myLocalSegWF[sessionid], 'OutputSpec.outputLabelImageName', SEGMENTATION_DataSink[sessionid],'BRAINSCut.@outputLabelImageName')
+                    baw200.connect(myLocalSegWF[sessionid], 'OutputSpec.outputCSVFileName', SEGMENTATION_DataSink[sessionid],'BRAINSCut.@outputCSVFileName')
                 else:
                     print("SKIPPING SEGMENTATION PHASE FOR {0} {1} {2}, lenT2s {3}".format(projectid, subjectid, sessionid, len(global_AllT2s) ))
 
-                if 'FREESURFER' in WORKFLOW_COMPONENTS and len(global_AllT2s) > 0: # Currently only works with multi-modal_data
+
+                if ( len(global_AllT2s) > 0 ): # Currently only works with multi-modal_data
+                    print("HACK  FREESURFER len(global_AllT2s) > 0 ")
+                if ( 'FREESURFER' in WORKFLOW_COMPONENTS  ) and ( len(global_AllT2s) > 0 ): # Currently only works with multi-modal_data
                     RunAllFSComponents=True ## A hack to avoid 26 hour run of freesurfer
                     from WorkupT1T2FreeSurfer import CreateFreeSurferWorkflow
-                    myLocalFSWF[subjectid]= CreateFreeSurferWorkflow(projectid, subjectid, sessionid,"Level1_FSTest",CLUSTER_QUEUE,RunAllFSComponents)
-                    baw200.connect(uidSource,'uid',myLocalFSWF[subjectid],'InputSpec.subject_id')
-                    baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'OutputSpec.t1_average',myLocalFSWF[subjectid],'InputSpec.T1_files')
-                    baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'OutputSpec.t2_average',myLocalFSWF[subjectid],'InputSpec.T2_files')
-                    baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'OutputSpec.outputLabels',myLocalFSWF[subjectid],'InputSpec.label_file')
-                    #baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'OutputSpec.outputLabels',myLocalFSWF[subjectid],'InputSpec.mask_file') #Yes, the same file as label_file!
+                    myLocalFSWF[sessionid]= CreateFreeSurferWorkflow(projectid, subjectid, sessionid,"Level1_FSTest",CLUSTER_QUEUE,RunAllFSComponents)
+                    FREESURFER_ID[sessionid]= pe.Node(interface=IdentityInterface(fields=['FreeSurfer_ID']),
+                                                      run_without_submitting=True,
+                                                      name='99_FSNodeName'+str(subjectid)+"_"+str(sessionid) )
+                    FREESURFER_ID[sessionid].inputs.FreeSurfer_ID=str(subjectid)+"_"+str(sessionid)
+
+                    baw200.connect(FREESURFER_ID[sessionid],'FreeSurfer_ID',myLocalFSWF[sessionid],'InputSpec.subject_id')
+                    baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'OutputSpec.t1_average',myLocalFSWF[sessionid],'InputSpec.T1_files')
+                    baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'OutputSpec.t2_average',myLocalFSWF[sessionid],'InputSpec.T2_files')
+                    baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'OutputSpec.outputLabels',myLocalFSWF[sessionid],'InputSpec.label_file')
+                    #baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'OutputSpec.outputLabels',myLocalFSWF[sessionid],'InputSpec.mask_file') #Yes, the same file as label_file!
 
                     ### Now define where the final organized outputs should go.
                     if RunAllFSComponents == True:
-                        FS_DS[subjectid]=pe.Node(nio.DataSink(),name="FREESURFER_DS_"+str(subjectid)+"_"+str(sessionid))
-                        FS_DS[subjectid].inputs.base_directory=ExperimentBaseDirectoryResults
-                        FS_DS[subjectid].inputs.regexp_substitutions = [
+                        FS_DS[sessionid]=pe.Node(nio.DataSink(),name="FREESURFER_DS_"+str(subjectid)+"_"+str(sessionid))
+                        FS_DS[sessionid].inputs.base_directory=ExperimentBaseDirectoryResults
+                        FS_DS[sessionid].inputs.regexp_substitutions = [
                             ('/_uid_(?P<myuid>[^/]*)',r'/\g<myuid>')
                             ]
-                        baw200.connect(myLocalFSWF[subjectid], 'OutputSpec.FreesurferOutputDirectory', FS_DS[subjectid],'FREESURFER_SUBJ.@FreesurferOutputDirectory')
+                        baw200.connect(myLocalFSWF[sessionid], 'OutputSpec.FreesurferOutputDirectory', FS_DS[sessionid],'FREESURFER_SUBJ.@FreesurferOutputDirectory')
                     ### Now define where the final organized outputs should go.
-                    FSPREP_DataSink[subjectid]=pe.Node(nio.DataSink(),name="FREESURFER_PREP_"+str(subjectid)+"_"+str(sessionid))
-                    FSPREP_DataSink[subjectid].inputs.base_directory=ExperimentBaseDirectoryResults
+                    FSPREP_DataSink[sessionid]=pe.Node(nio.DataSink(),name="FREESURFER_PREP_"+str(subjectid)+"_"+str(sessionid))
+                    FSPREP_DataSink[sessionid].inputs.base_directory=ExperimentBaseDirectoryResults
                     FREESURFER_PREP_PATTERNS = GenerateOutputPattern(projectid, subjectid, sessionid,'FREESURFER_PREP')
-                    FSPREP_DataSink[subjectid].inputs.regexp_substitutions = FREESURFER_PREP_PATTERNS
+                    FSPREP_DataSink[sessionid].inputs.regexp_substitutions = FREESURFER_PREP_PATTERNS
                     print "========================="
                     print "========================="
                     print "========================="
@@ -687,7 +696,7 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                     print "========================="
                     print "========================="
                     print "========================="
-                    baw200.connect(myLocalFSWF[subjectid], 'OutputSpec.cnr_optimal_image', FSPREP_DataSink[subjectid],'FREESURFER_PREP.@cnr_optimal_image')
+                    baw200.connect(myLocalFSWF[sessionid], 'OutputSpec.cnr_optimal_image', FSPREP_DataSink[sessionid],'FREESURFER_PREP.@cnr_optimal_image')
 
                 else:
                     print "Skipping freesurfer"

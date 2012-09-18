@@ -141,7 +141,7 @@ def main(argv=None):
     BCDMODELPATH=expConfig.get(input_arguments.processingEnvironment,'BCDMODELPATH')
     CACHE_BCDMODELPATH=os.path.join(ExperimentBaseDirectoryCache,os.path.basename(BCDMODELPATH))
     from distutils.file_util import copy_file
-    for BCDModelFiles in ['LLSModel-2ndVersion.hdf5','T1-2ndVersion.mdl']:
+    for BCDModelFiles in ['LLSModel-2ndVersion.h5','T1-2ndVersion.mdl']:
         orig=os.path.join(BCDMODELPATH,BCDModelFiles)
         new=os.path.join(CACHE_BCDMODELPATH,BCDModelFiles)
         if not os.path.exists(CACHE_BCDMODELPATH):

@@ -76,7 +76,7 @@ int main( int argc, char *argv[] )
       return 1;
       }
 
-    llsModel = itksys::SystemTools::GetProgramPath( pathOut.c_str() ) + "/" + "LLSModel.hdf5";
+    llsModel = itksys::SystemTools::GetProgramPath( pathOut.c_str() ) + "/" + "LLSModel.h5";
     std::cout << "Set LLSModel to default: " << std::endl;
     std::cout << llsModel << std::endl;
     }

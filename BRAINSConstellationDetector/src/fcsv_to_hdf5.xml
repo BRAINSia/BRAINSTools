@@ -4,7 +4,7 @@
   <title>fcsv_to_matlab (BRAINS)</title>
   <description>Convert a collection of fcsv files to a HDF5 format file</description>
   <parameters>
-    <file fileExtensions=".hdf5">
+    <file fileExtensions=".h5">
       <name>outputFile</name>
       <label>Output HDF5 File</label>
       <flag>o</flag>

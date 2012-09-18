@@ -84,7 +84,7 @@ option(USE_SYSTEM_VTK "Build using an externally defined version of VTK" OFF)
 
 #
 # choose between using HDF5 or MAT format transform files
-set(XFRM_EXT "mat" CACHE STRING "Choose the preferred transform file format")
+set(XFRM_EXT "h5" CACHE STRING "Choose the preferred transform file format")
 
 #------------------------------------------------------------------------------
 # ${LOCAL_PROJECT_NAME} dependency list

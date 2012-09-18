@@ -24,7 +24,7 @@ BRAINSConstellationDetectorPrimary::BRAINSConstellationDetectorPrimary()
   this->m_verbose = false;
 
   this->m_inputTemplateModel = itksys::SystemTools::GetProgramPath( pathOut.c_str() ) + "/" + "T1.mdl";
-  this->m_llsModel = itksys::SystemTools::GetProgramPath( pathOut.c_str() ) + "/" + "LLSModel.hdf5";
+  this->m_llsModel = itksys::SystemTools::GetProgramPath( pathOut.c_str() ) + "/" + "LLSModel.h5";
 
   this->m_inputVolume = "";
   this->m_outputVolume = "";

@@ -66,4 +66,4 @@ if(NOT DEFINED OpenCV_DIR)
       -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_BINARY_DIR}/${proj}-install
     )
   set(OpenCV_DIR ${CMAKE_BINARY_DIR}/${proj}-install/share/OpenCV/)
-endif(NOT DEFINED OpenCV_DIR)
+endif()

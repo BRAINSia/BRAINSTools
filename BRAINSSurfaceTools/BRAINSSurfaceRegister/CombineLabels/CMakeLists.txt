@@ -24,4 +24,4 @@ set_tests_properties( COMPARE_SurfaceCombineLabels PROPERTIES DEPENDS TEST_Surfa
 
 ExternalData_Add_Target( ${project_name}FetchData )  # Name of data management target
 
-endif (BUILD_TESTING)
+endif ()

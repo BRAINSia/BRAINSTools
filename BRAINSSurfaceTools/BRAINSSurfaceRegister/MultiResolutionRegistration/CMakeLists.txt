@@ -37,4 +37,4 @@ set_tests_properties( COMPARE_SurfaceMultiResRegistration1 PROPERTIES DEPENDS TE
 
 ExternalData_Add_Target( ${project_name}FetchData )  # Name of data management target
 
-endif (BUILD_TESTING)
+endif ()

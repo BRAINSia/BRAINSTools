@@ -55,7 +55,7 @@ if(BRAINSTools_USE_QT)
   if(NOT QT4_FOUND)
     find_package(Qt4 4.6 COMPONENTS QtCore QtGui QtNetwork QtXml REQUIRED)
     include(${QT_USE_FILE})
-  endif(NOT QT4_FOUND)
+  endif()
 endif()
 
 

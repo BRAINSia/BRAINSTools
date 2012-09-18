@@ -82,12 +82,12 @@ if(NOT DEFINED ${extProjName}_DIR AND NOT ${USE_SYSTEM_${extProjName}})
         )
     endif()
     find_package(Qt4 REQUIRED)
-  else(${PROJECT_NAME}_USE_QT)
+  else()
     set(VTK_QT_ARGS
         -DVTK_USE_GUISUPPORT:BOOL=OFF
         -DVTK_USE_QT:BOOL=OFF
         )
-  endif(${LOCAL_PROJECT_NAME}_USE_QT)
+  endif()
 
   # Disable Tk when Python wrapping is enabled
   if (Slicer_USE_PYTHONQT)

@@ -4,19 +4,19 @@ project(DebugImageViewer)
 if(NOT ITK_FOUND) #See if it has already been found because this is a nested project
   find_package(ITK REQUIRED)
   include(${ITK_USE_FILE})
-endif(NOT ITK_FOUND)
+endif()
 
 if(NOT VTK_FOUND) #See if it has already been found because this is a nested project
   find_package(VTK REQUIRED)
   include(${VTK_USE_FILE})
-endif(NOT VTK_FOUND)
+endif()
 
 set(VTK_LIBRARIES QVTK vtkCommon vtkRendering)
 
 if(NOT QT4_FOUND)
   find_package(Qt4 COMPONENTS QtCore QtGui QtNetwork REQUIRED)
   include(${QT_USE_FILE})
-endif(NOT QT4_FOUND)
+endif()
 
 set(DebugImageViewerQT_HDRS
 QDebugImageViewerWindow.h

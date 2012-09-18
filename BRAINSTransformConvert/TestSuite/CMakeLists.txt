@@ -91,7 +91,7 @@ foreach(SourceTransform VersorRigid ScaleVersor ScaleSkewVersor Affine BSplineDe
           APPEND PROPERTY DEPENDS ${TransformConvertTestName})
         set_tests_properties(${BadTransformConvertTestName} PROPERTIES WILL_FAIL ON)
       endif()
-    endif(NOT "${SourceTransform}" STREQUAL "${TargetTransform}")
+    endif()
 
     # resample the test image using BRAINSResample
     # and original transform
@@ -120,14 +120,14 @@ foreach(SourceTransform VersorRigid ScaleVersor ScaleSkewVersor Affine BSplineDe
         --outputVolume ${ResampleWTargetOutputImage}
         --pixelType short
         --warpTransform ${TargetTransformName})
-    else(NOT "${TargetTransform}" STREQUAL "DisplacementField")
+    else()
       add_test(NAME ${ResampleWTargetTestName}
         COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSResample>
         --inputVolume ${TransformTestImage}
         --outputVolume ${ResampleWTargetOutputImage}
         --pixelType short
         --deformationVolume ${DisplacementVolumeImage})
-    endif(NOT "${TargetTransform}" STREQUAL "DisplacementField")
+    endif()
 
     #
     # depend on previous test, and BRAINSResample
@@ -142,5 +142,5 @@ foreach(SourceTransform VersorRigid ScaleVersor ScaleSkewVersor Affine BSplineDe
     set_property(TEST ${ImageCompareTestName} APPEND PROPERTY DEPENDS ${ResampleWSourceTestName})
     set_property(TEST ${ImageCompareTestName} APPEND PROPERTY DEPENDS ${ResampleWTargetTestName})
 
-  endforeach(TargetTransform)
-endforeach(SourceTransform)
+  endforeach()
+endforeach()

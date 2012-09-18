@@ -24,4 +24,4 @@ set_tests_properties( COMPARE_SurfaceResampleQuadEdgeMesh PROPERTIES DEPENDS TES
 
 ExternalData_Add_Target( ${project_name}FetchData )  # Name of data management target
 
-endif (BUILD_TESTING)
+endif ()

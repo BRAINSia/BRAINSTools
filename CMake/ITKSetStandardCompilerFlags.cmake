@@ -151,9 +151,9 @@ macro(check_compiler_platform_flags)
              -D_CRT_VCCLRIT_NO_DEPRECATE
              -D_SCL_SECURE_NO_DEPRECATE
              )
-         endif(NOT ITK_ENABLE_VISUAL_STUDIO_DEPRECATED_C_WARNINGS)
-       endif(NOT MINGW)
-  endif(WIN32)
+         endif()
+       endif()
+  endif()
 
   if(WIN32)
     # Some libraries (e.g. vxl libs) have no dllexport markup, so we can
@@ -171,16 +171,16 @@ macro(check_compiler_platform_flags)
         set(CMAKE_SHARED_LIBRARY_CREATE_CXX_FLAGS
           "-shared -Wl,--export-all-symbols -Wl,--enable-auto-import")
         set(CMAKE_EXE_LINKER_FLAGS "-Wl,--enable-auto-import")
-      endif(MINGW)
-    else(CMAKE_COMPILER_IS_GNUCXX)
+      endif()
+    else()
       if(BUILD_SHARED_LIBS)
         set(ITK_LIBRARY_BUILD_TYPE "SHARED")
-      else(BUILD_SHARED_LIBS)
+      else()
         set(ITK_LIBRARY_BUILD_TYPE "STATIC")
-      endif(BUILD_SHARED_LIBS)
+      endif()
       set(BUILD_SHARED_LIBS OFF)
-    endif(CMAKE_COMPILER_IS_GNUCXX)
-  endif(WIN32)
+    endif()
+  endif()
   #-----------------------------------------------------------------------------
   #ITK requires special compiler flags on some platforms.
   if(CMAKE_COMPILER_IS_GNUCXX)
@@ -204,16 +204,16 @@ macro(check_compiler_platform_flags)
          set(${listname} "${tmpFlags}")
          message("-fopenmp causes incorrect compliation of HDF, removing from ${listname}")
        endif()
-     endforeach(listname ${compile_flag_lists})
+     endforeach()
 
-   endif(APPLE)
+   endif()
 
    # gcc must have -msse2 option to enable sse2 support
    if(VNL_CONFIG_ENABLE_SSE2 OR VNL_CONFIG_ENABLE_SSE2_ROUNDING)
      set(ITK_REQUIRED_CXX_FLAGS "${ITK_REQUIRED_CXX_FLAGS} -msse2")
-   endif(VNL_CONFIG_ENABLE_SSE2 OR VNL_CONFIG_ENABLE_SSE2_ROUNDING)
+   endif()
 
-  endif(CMAKE_COMPILER_IS_GNUCXX)
+  endif()
 
   #-----------------------------------------------------------------------------
 
@@ -234,8 +234,8 @@ macro(check_compiler_platform_flags)
       CHECK_CXX_SOURCE_COMPILES("-library=stlport4" SUN_COMPILER_HAS_STL_PORT_4)
       if(SUN_COMPILER_HAS_STL_PORT_4)
         set(ITK_REQUIRED_CXX_FLAGS "${ITK_REQUIRED_CXX_FLAGS} -library=stlport4")
-      endif(SUN_COMPILER_HAS_STL_PORT_4)
-     endif(SUN_COMPILER)
+      endif()
+     endif()
   endif()
 
   # mingw thread support
@@ -256,9 +256,9 @@ macro(check_compiler_platform_flags)
     foreach(COMP_OPTION ${ALL_FLAGS})
       if("${COMP_OPTION}" STREQUAL "-frename-registers")
         message(FATAL_ERROR "-frename-registers causes runtime bugs.  It must be removed from your compilation options.")
-      endif("${COMP_OPTION}" STREQUAL "-frename-registers")
-    endforeach(COMP_OPTION)
-  endif(CMAKE_COMPILER_IS_GNUCXX)
+      endif()
+    endforeach()
+  endif()
 
   #-----------------------------------------------------------------------------
   # Set the compiler-specific flag for disabling optimization.

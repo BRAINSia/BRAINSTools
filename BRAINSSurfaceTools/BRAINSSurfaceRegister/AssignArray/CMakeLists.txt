@@ -25,4 +25,4 @@ set_tests_properties( COMPARE_SurfaceAssignArray PROPERTIES DEPENDS TEST_Surface
 
 ExternalData_Add_Target( ${project_name}FetchData )  # Name of data management target
 
-endif (BUILD_TESTING)
+endif ()

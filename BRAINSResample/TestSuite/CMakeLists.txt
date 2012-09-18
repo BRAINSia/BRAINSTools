@@ -133,6 +133,6 @@ if(0) ##This functionality does not work yet
     --pixelType short
     --warpTransform DATA{${TestData_DIR}/BRAINSFitTest_RigidRotationMasks.${XFRM_EXT}}
     )
-endif(0)
+endif()
 
 ExternalData_Add_Target( ${PROJECT_NAME}FetchData )  # Name of data management target

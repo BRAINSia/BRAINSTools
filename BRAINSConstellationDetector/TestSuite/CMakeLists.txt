@@ -45,7 +45,7 @@ foreach(prog ${ALL_PROGS_LIST})
   add_executable(${prog} ../landmarkStatistics/${prog}.cxx)
   target_link_libraries(${prog} BRAINSCommonLib ${ITK_LIBRARIES})
 endforeach()
-endif(0)
+endif()
 
 ## Simple programs
 ## Test BRAINSClipInferior
@@ -612,9 +612,9 @@ if ( 0 ) ## HACK:  Just silencing failing tests until they can be proper address
       --inputTrainingList ${CMAKE_CURRENT_BINARY_DIR}/obliq_setup.txt
       --outputModel ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationModelerTestName}.mdl
       )
-  endif(ConstellationModeler_TEST_causes_major_delay)
-endif(0)
+  endif()
+endif()
 
-endif("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
+endif()
 
 ExternalData_Add_Target( ${PROJECT_NAME}FetchData )  # Name of data management target

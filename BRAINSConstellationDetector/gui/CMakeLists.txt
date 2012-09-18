@@ -4,7 +4,7 @@ project(MedicalSlicerViewerGui)
   find_package(VTK REQUIRED)
   if(VTK_FOUND)
     include(${VTK_USE_FILE})
-  endif(VTK_FOUND)
+  endif()
 
   set(QT_QMAKE_EXECUTABLE ${VTK_QT_QMAKE_EXECUTABLE} CACHE FILEPATH "")
   set(QT_MOC_EXECUTABLE ${VTK_QT_MOC_EXECUTABLE} CACHE FILEPATH "")

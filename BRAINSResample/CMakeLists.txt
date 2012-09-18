@@ -19,4 +19,4 @@ endforeach()
 ### Add the Testing Subdirectory.
 if(BUILD_TESTING)
   add_subdirectory(TestSuite)
-endif(BUILD_TESTING)
+endif()

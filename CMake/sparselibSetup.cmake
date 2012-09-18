@@ -19,9 +19,9 @@ link_directories(${SPHARMP_BINARY_DIR}/bin)
 
 if(WIN32)
 add_definitions("-DCOMPLEX=std::complex<double>")
-else(WIN32)
+else()
 add_definitions('-DCOMPLEX=std::complex<double>')
-endif(WIN32)
+endif()
 
 link_libraries(SparseMatrixLib)
 

@@ -2,7 +2,6 @@ project(BRAINSConstellationDetector)
 #-----------------------------------------------------------------------------
 # Output directories.
 #
-
 add_subdirectory(src)
 add_subdirectory(landmarkStatistics)
 
@@ -12,7 +11,7 @@ add_subdirectory(landmarkStatistics)
 # Build test option
 if(BUILD_TESTING)
   add_subdirectory(TestSuite)
-endif(BUILD_TESTING)
+endif()
 
 # Build GUI option, the option is provided in src directory
 if(BUILD_WITH_GUI OR BRAINS3_USE_QT OR BRAINSTools_USE_QT)

@@ -113,5 +113,5 @@ ExternalData_add_test(${project_name}FetchData NAME TEST_BRAINSMeasureSurface3
 
 ExternalData_Add_Target( ${project_name}FetchData )  # Name of data management target
 
-endif (BUILD_TESTING)
+endif ()
 

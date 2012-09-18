@@ -23,4 +23,4 @@ set_tests_properties( COMPARE_SurfacePiecewiseRescale PROPERTIES DEPENDS TEST_Su
 
 ExternalData_Add_Target( ${project_name}FetchData )  # Name of data management target
 
-endif (BUILD_TESTING)
+endif ()

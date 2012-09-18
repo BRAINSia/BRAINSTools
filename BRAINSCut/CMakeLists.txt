@@ -58,5 +58,5 @@ if(BUILD_TESTING)
   add_executable(TestHashKey TestHashKey.cxx)
   target_link_libraries(TestHashKey BRAINSCutCOMMONLIB)
   add_subdirectory(TestSuite)
-endif(BUILD_TESTING)
+endif()
 

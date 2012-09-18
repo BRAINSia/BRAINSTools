@@ -31,7 +31,7 @@ if(USE_DebugImageViewer)
   if(NOT VTK_FOUND) #See if it has already been found because this is a nested project
     find_package(VTK REQUIRED)
     include(${VTK_USE_FILE})
-  endif(NOT VTK_FOUND)
+  endif()
 endif()
 
 add_library(BRAINSDemonWarpTemplatesLIB STATIC ${BRAINSDemonWarpTemplatesLIB_SRCS})
@@ -52,4 +52,4 @@ endforeach()
 ### Add the Testing Subdirectory.
 if(BUILD_TESTING)
   add_subdirectory(TestSuite)
-endif(BUILD_TESTING)
+endif()

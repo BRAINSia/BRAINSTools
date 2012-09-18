@@ -79,5 +79,5 @@ install(FILES ${TESTFILES_TO_INSTALL}
 ##HACK NEED BETTER TESTS add_directory( Test_FindCenterOfBrainFilter )
 if(BUILD_TESTING)
   add_subdirectory(TestSuite)
-endif(BUILD_TESTING)
+endif()
 

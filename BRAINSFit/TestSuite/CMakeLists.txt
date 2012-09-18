@@ -8,8 +8,8 @@ if(COMPILE_TEST_GENERATION_PROGRAMS)  ## These were programs needed to create th
   if(MakeMakeXfrmImage)
     add_executable(makexfrmedImage makexfrmedImage.cxx)
     target_link_libraries(makexfrmedImage ${ITK_LIBRARIES})
-  endif(MakeMakeXfrmImage)
-endif(COMPILE_TEST_GENERATION_PROGRAMS)
+  endif()
+endif()
 
 
 # Test the CenterOfROI Test
@@ -845,7 +845,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME BRAINSFitTest_SignedDistanc
   --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/TEST.${XFRM_EXT}
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/TEST_output.nii.gz
   )
-endif(Test_SignedDistanceData)
+endif()
 
 set(BRAINSFitTestName BRAINSFitTest_BSplineScaleRotationHeadMasksUShort)
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
@@ -1466,7 +1466,7 @@ if(RUN_EXTRA_METRIC_TESTS)
     --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
     --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
   )
-endif(RUN_EXTRA_METRIC_TESTS)
+endif()
 
 # Test for BRAINSFitEZ
 # TODO: Test xml parsing instead of algorithm (that's done with BRAINSFit tests)

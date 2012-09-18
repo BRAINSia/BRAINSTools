@@ -39,7 +39,7 @@ if(NOT StandardBRAINSBuildMacro)
       )
   if(NOT INTEGRATE_WITH_SLICER AND NOT BUILD_SHARED_LIBS)
     set(BUILD_STATIC_LIBRARY BUILD_STATIC_LIBRARY)
-  endif(NOT INTEGRATE_WITH_SLICER AND NOT BUILD_SHARED_LIBS)
+  endif()
 
   if(BRAINSTools_INSTALL_DEVELOPMENT)
     SEMMacroBuildCLI(
@@ -74,8 +74,8 @@ if(NOT StandardBRAINSBuildMacro)
     #    VERBOSE
     )
   endif()
-  endmacro(StandardBRAINSBuildMacro TOOLNAME)
-endif(NOT StandardBRAINSBuildMacro)
+  endmacro()
+endif()
 
 ###############################################################################
 ###############################################################################
@@ -109,7 +109,7 @@ macro(MakeTestDriverFromSEMTool SEMToolName SEMToolTestSourceName)
     LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
     ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
     )
-endmacro(MakeTestDriverFromSEMTool SEMToolName)
+endmacro()
 
 # DebugImageViewer Macro
 if(USE_DebugImageViewer)
@@ -117,13 +117,13 @@ if(USE_DebugImageViewer)
   if(NOT VTK_FOUND) #See if it has already been found because this is a nested project
     find_package(VTK REQUIRED)
     include(${VTK_USE_FILE})
-  endif(NOT VTK_FOUND)
+  endif()
 
   macro(DebugImageViewerLibAdditions LibVariable)
     list(APPEND ${LibVariable} ${VTK_LIBRARIES})
-  endmacro(DebugImageViewerLibAdditions)
-else(USE_DebugImageViewer)
+  endmacro()
+else()
   macro(DebugImageViewerLibAdditions LibVariable)
-  endmacro(DebugImageViewerLibAdditions)
+  endmacro()
 
-endif(USE_DebugImageViewer)
+endif()

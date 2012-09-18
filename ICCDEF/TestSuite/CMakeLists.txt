@@ -151,7 +151,7 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ValidateICCDEF_Test4_nii
     --initializeWithTransform DATA{${TestData_DIR}/BRAINSFitTest_RigidRotationMasks.mat}
     --medianFilterSize 0,0,0
 )
-endif(0) #HACK: This test needs to be fixed!
+endif() #HACK: This test needs to be fixed!
 
 ExternalData_add_test(${PROJECT_NAME}FetchData NAME ValidateICCDEF_Test5_nii
   COMMAND iccdefRegistration_NewTestDriver
@@ -207,7 +207,7 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ValidateICCDEF_Test6_nii
     --inverseWeight 10.0
     --maskProcessingMode BOBF
 )
-endif(0) #HACK: This test needs to be fixed!
+endif() #HACK: This test needs to be fixed!
 
 if(0) ## These should be re-written to use BRAINSResample instead of ApplyWarp
 ExternalData_add_test(${PROJECT_NAME}FetchData NAME ValidateApplyWarpTest2_nii
@@ -290,5 +290,5 @@ add_test(itkIterativeInverseDisplacementFieldFilterTest2 ${UNIT_TESTS}
 )
 
 if(0)
-endif(0)
+endif()
 ExternalData_Add_Target( ${PROJECT_NAME}FetchData )  # Name of data management target

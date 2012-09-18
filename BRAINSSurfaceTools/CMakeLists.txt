@@ -2,7 +2,7 @@
 find_package(VTK REQUIRED)
 if(VTK_FOUND)
   include(${VTK_USE_FILE})
-endif(VTK_FOUND)
+endif()
 
 include_directories(${CMAKE_CURRENT_LIST_DIR}/BRAINSSurfaceCommon)
 

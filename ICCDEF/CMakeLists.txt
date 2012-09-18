@@ -11,7 +11,7 @@ set(CMAKE_MODULE_PATH ${iccdefRegistrationNew_SOURCE_DIR} ${CMAKE_MODULE_PATH} )
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
   set(CMAKE_INSTALL_PREFIX "/opt/iccdefRegistration_New" CACHE PATH "Install path prefix,
      prepended onto install directories." FORCE)
-endif(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+endif()
 
 mark_as_advanced(USE_FFTWD)
 option(USE_FFTWD "Use double precision FFTW if found" OFF)
@@ -24,17 +24,17 @@ if( USE_FFTWD OR USE_FFTWF )
     if( USE_FFTWD )
       if( NOT FFTWD_FOUND)
         message(FATAL_ERROR "Cannot build iccdef without FFTW. Please set FFTWD_INCLUDE and FFTWD_LIB")
-      endif(NOT FFTWD_FOUND)
+      endif()
         link_libraries(${FFTWD_LIB})
-     endif( USE_FFTWD )
+     endif()
 
     if( USE_FFTWF )
       if( NOT FFTWF_FOUND )
         message(FATAL_ERROR "Cannot build iccdef without FFTW. Please set FFTWF_INCLUDE and FFTWF_LIB")
-      endif( NOT FFTWF_FOUND )
+      endif()
         link_libraries(${FFTWF_LIB})
-    endif( USE_FFTWF )
-endif( USE_FFTWD OR USE_FFTWF )
+    endif()
+endif()
 
 include_directories(
       ${FFTW_INCLUDE}
@@ -56,4 +56,4 @@ endforeach()
 
 if(BUILD_TESTING)
   add_subdirectory(TestSuite)
-endif(BUILD_TESTING)
+endif()

@@ -25,16 +25,16 @@ if(WIN32)
             -D_CRT_VCCLRIT_NO_DEPRECATE
             -D_SCL_SECURE_NO_DEPRECATE
             )
-        endif(NOT ITK_ENABLE_VISUAL_STUDIO_DEPRECATED_C_WARNINGS)
-      endif(NOT MINGW)
-    endif(NOT CYGWIN)
-  endif(NOT BORLAND)
-endif(WIN32)
+        endif()
+      endif()
+    endif()
+  endif()
+endif()
 
 if(NOT VTK_FOUND)
     find_package(VTK REQUIRED)
     include(${VTK_USE_FILE})
-endif(NOT VTK_FOUND)
+endif()
 link_libraries( ${VTK_LIBRARIES} )
 #-----------------------------------------------------------------------------
 # Configure files with settings for use by the build.

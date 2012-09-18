@@ -1,5 +1,3 @@
-project(BRAINSConstellationDetectorTool)
-
 ## Build landmarksConstellationCOMMONLIB library
 ##
 add_library(landmarksConstellationCOMMONLIB STATIC

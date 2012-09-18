@@ -1,11 +1,9 @@
 
 
-#configure_file(${BRAINSCommonLibProject_SOURCE_DIR}/CTestCustom.ctest ${BRAINSCommonLibProject_BINARY_DIR}/CTestCustom.ctest COPYONLY)
+#configure_file(${BRAINSCommonLib_SOURCE_DIR}/CTestCustom.ctest ${BRAINSCommonLib_BINARY_DIR}/CTestCustom.ctest COPYONLY)
 
 add_executable(PrettyPrintTableTest PrettyPrintTableTest.cxx)
-set_target_properties(PrettyPrintTableTest
-  PROPERTIES RUNTIME_OUTPUT_DIRECTORY
-  ${BRAINSCommonLibProject_BINARY_DIR})
+set_target_properties(PrettyPrintTableTest PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${BRAINSCommonLib_BINARY_DIR})
 
 add_test(NAME PrettyPrintTableTest COMMAND ${LAUNCH_EXE} $<TARGET_FILE:PrettyPrintTableTest>)
 

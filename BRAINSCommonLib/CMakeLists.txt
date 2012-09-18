@@ -1,4 +1,4 @@
-project(BRAINSCommonLibProject)
+project(BRAINSCommonLib)
 #-----------------------------------------------------------------------------
 # Output directories.
 #

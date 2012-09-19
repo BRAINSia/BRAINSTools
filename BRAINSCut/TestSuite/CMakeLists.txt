@@ -5,8 +5,6 @@
 ## BRAINSCut NetConfiguration(XML) file for testing
 ##
 
-message("TestData_DIR=${TestData_DIR}")
-
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME TestHashKeyUnitTests
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:TestHashKey> )
 

@@ -207,7 +207,7 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetecto
 ############################
 ############################
 
-if("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
+# if("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
 
   set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_acLowerBound)
   ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
@@ -615,6 +615,6 @@ if ( 0 ) ## HACK:  Just silencing failing tests until they can be proper address
   endif()
 endif()
 
-endif()
+# endif()
 
 ## - ExternalData_Add_Target( ${PROJECT_NAME}FetchData )  # Name of data management target

@@ -37,4 +37,4 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSMushTestName}
   --outputMask ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSMushTestName}_MushTest_BrainMask.nii.gz
 )
 
-ExternalData_Add_Target( ${PROJECT_NAME}FetchData )  # Name of data management target
+## - ExternalData_Add_Target( ${PROJECT_NAME}FetchData )  # Name of data management target

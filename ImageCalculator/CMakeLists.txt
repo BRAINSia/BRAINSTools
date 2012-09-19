@@ -1,4 +1,4 @@
-project(ImageCalculator)
+##- project(ImageCalculator)
 
 add_executable(ImageCalculator
   ImageCalculator.cxx

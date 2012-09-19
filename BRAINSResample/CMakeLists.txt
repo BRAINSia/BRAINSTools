@@ -1,4 +1,4 @@
-project(BRAINSResample)
+##- project(BRAINSResample)
 #-----------------------------------------------------------------------------
 # Output directories.
 #

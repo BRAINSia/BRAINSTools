@@ -13,4 +13,4 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME AutoWorkupDownloadData
     DATA{${TestData_DIR}/SUBJ_B_small_T2.nii.gz}
 )
 
-ExternalData_Add_Target( ${PROJECT_NAME}FetchData )  # Name of data management target
+## - ExternalData_Add_Target( ${PROJECT_NAME}FetchData )  # Name of data management target

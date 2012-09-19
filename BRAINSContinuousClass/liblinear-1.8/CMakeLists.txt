@@ -1,4 +1,4 @@
-project( liblinear )
+##- project( liblinear )
 
 cmake_minimum_required(VERSION 2.8)
 

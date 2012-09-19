@@ -1,4 +1,4 @@
-project(BRAINSABC)
+##- project(BRAINSABC)
 #-----------------------------------------------------------------------------
 # Output directories.
 #

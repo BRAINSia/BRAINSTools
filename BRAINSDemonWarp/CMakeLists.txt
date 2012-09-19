@@ -1,4 +1,4 @@
-project(BRAINSDemonWarp)
+##- project(BRAINSDemonWarp)
 #-----------------------------------------------------------------------------
 # Output directories.
 #

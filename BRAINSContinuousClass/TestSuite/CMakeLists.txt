@@ -17,4 +17,4 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateBRAINSContinuousCla
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/BRAINSContinuousClassTest_test.nii.gz
   )
 
-ExternalData_Add_Target( ${PROJECT_NAME}FetchData )  # Name of data management target
+## - ExternalData_Add_Target( ${PROJECT_NAME}FetchData )  # Name of data management target

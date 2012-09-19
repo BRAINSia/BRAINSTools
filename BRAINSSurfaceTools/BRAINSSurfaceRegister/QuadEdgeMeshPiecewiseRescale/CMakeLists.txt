@@ -21,6 +21,6 @@ ExternalData_add_test(${project_name}FetchData NAME COMPARE_SurfacePiecewiseResc
 
 set_tests_properties( COMPARE_SurfacePiecewiseRescale PROPERTIES DEPENDS TEST_SurfacePiecewiseRescale )
 
-ExternalData_Add_Target( ${project_name}FetchData )  # Name of data management target
+## - ExternalData_Add_Target( ${project_name}FetchData )  # Name of data management target
 
 endif ()

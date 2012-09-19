@@ -1,4 +1,4 @@
-project(iccdefRegistrationNew)
+##- project(iccdefRegistrationNew)
 set(LOCAL_RROJECT_NAME iccdefRegistrationNew)
 
 #-------------------------------------------------------------------------------

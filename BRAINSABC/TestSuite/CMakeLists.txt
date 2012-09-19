@@ -42,4 +42,4 @@ if(0) # This should be restored after fixing.
   ExternalData_add_test( ${PROJECT_NAME}FetchData NAME BlendImageFilterTest COMMAND ${LAUNCH_EXE}  $<TARGET_FILE:BlendImageFilterTest> )
 endif()
 
-ExternalData_Add_Target( ${PROJECT_NAME}FetchData )  # Name of data management target
+## - ExternalData_Add_Target( ${PROJECT_NAME}FetchData )  # Name of data management target

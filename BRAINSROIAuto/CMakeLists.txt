@@ -1,4 +1,4 @@
-project(BRAINSROIAuto)
+##- project(BRAINSROIAuto)
 #-----------------------------------------------------------------------------
 # Output directories.
 #

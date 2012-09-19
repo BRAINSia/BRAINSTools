@@ -23,6 +23,6 @@ ExternalData_add_test(${project_name}FetchData NAME COMPARE_SurfaceAssignArray
 
 set_tests_properties( COMPARE_SurfaceAssignArray PROPERTIES DEPENDS TEST_SurfaceAssignArray )
 
-ExternalData_Add_Target( ${project_name}FetchData )  # Name of data management target
+## - ExternalData_Add_Target( ${project_name}FetchData )  # Name of data management target
 
 endif ()

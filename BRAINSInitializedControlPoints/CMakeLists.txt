@@ -1,4 +1,4 @@
-project(BRAINSInitializedControlPoints)
+##- project(BRAINSInitializedControlPoints)
 #-----------------------------------------------------------------------------
 # Output directories.
 #

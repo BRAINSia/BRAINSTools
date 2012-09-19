@@ -1,4 +1,3 @@
-project(BRAINSTools)
 
 include(${CMAKE_CURRENT_LIST_DIR}/Common.cmake)
 
@@ -136,3 +135,4 @@ foreach(modulename ${brains_modulenames})
   endif()
 endforeach()
 
+ExternalData_Add_Target( ${PROJECT_NAME}FetchData )  # Name of data management target

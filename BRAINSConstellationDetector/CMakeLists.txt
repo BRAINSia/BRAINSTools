@@ -1,4 +1,4 @@
-project(BRAINSConstellationDetector)
+##- project(BRAINSConstellationDetector)
 #-----------------------------------------------------------------------------
 # Output directories.
 #

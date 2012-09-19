@@ -94,5 +94,5 @@ set_property( TEST RandomForestApplyModelTest  APPEND PROPERTY DEPENDS RandomFor
 set_property( TEST RandomForestTrainModelTestFromCLP  APPEND PROPERTY DEPENDS ANNCreateVectorsTest)
 set_property( TEST RandomForestApplyModelTestFromCLP  APPEND PROPERTY DEPENDS RandomForestTrainModelTestFromCLP)
 
-ExternalData_Add_Target( ${PROJECT_NAME}FetchData )  # Name of data management target
+## - ExternalData_Add_Target( ${PROJECT_NAME}FetchData )  # Name of data management target
 

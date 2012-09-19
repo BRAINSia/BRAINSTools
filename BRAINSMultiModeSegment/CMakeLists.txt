@@ -1,4 +1,4 @@
-project(BRAINSMultiModeSegment)
+##- project(BRAINSMultiModeSegment)
 #-----------------------------------------------------------------------------
 # Output directories.
 #

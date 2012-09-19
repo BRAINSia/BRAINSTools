@@ -1,4 +1,4 @@
-project(MedicalSlicerViewerGui)
+##- project(MedicalSlicerViewerGui)
 
   # Find VTK.
   find_package(VTK REQUIRED)

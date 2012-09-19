@@ -1,4 +1,4 @@
-project(SurfaceRegister)
+##- project(SurfaceRegister)
 
 add_subdirectory( MultiResolutionRegistration )
 add_subdirectory( AssignArray )

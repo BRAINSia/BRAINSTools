@@ -22,6 +22,6 @@ ExternalData_add_test(${project_name}FetchData NAME COMPARE_SurfaceResampleQuadE
 
 set_tests_properties( COMPARE_SurfaceResampleQuadEdgeMesh PROPERTIES DEPENDS TEST_SurfaceResampleQuadEdgeMesh )
 
-ExternalData_Add_Target( ${project_name}FetchData )  # Name of data management target
+## - ExternalData_Add_Target( ${project_name}FetchData )  # Name of data management target
 
 endif ()

@@ -1,4 +1,4 @@
-project(BRAINSMush)
+##- project(BRAINSMush)
 #-----------------------------------------------------------------------------
 # Output directories.
 #

@@ -643,4 +643,4 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateSymmetricLogDemons_
   )
 endif()  # Commend out the LogDemons tests.
 
-ExternalData_Add_Target( ${PROJECT_NAME}FetchData )  # Name of data management target
+## - ExternalData_Add_Target( ${PROJECT_NAME}FetchData )  # Name of data management target

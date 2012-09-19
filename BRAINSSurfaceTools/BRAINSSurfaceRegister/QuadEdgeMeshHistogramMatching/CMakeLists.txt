@@ -22,6 +22,6 @@ ExternalData_add_test(${project_name}FetchData NAME COMPARE_SurfaceHistogramMatc
 
 set_tests_properties( COMPARE_SurfaceHistogramMatching PROPERTIES DEPENDS TEST_SurfaceHistogramMatching )
 
-ExternalData_Add_Target( ${project_name}FetchData )  # Name of data management target
+## - ExternalData_Add_Target( ${project_name}FetchData )  # Name of data management target
 
 endif ()

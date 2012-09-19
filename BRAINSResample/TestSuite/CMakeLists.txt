@@ -135,4 +135,4 @@ if(0) ##This functionality does not work yet
     )
 endif()
 
-ExternalData_Add_Target( ${PROJECT_NAME}FetchData )  # Name of data management target
+## - ExternalData_Add_Target( ${PROJECT_NAME}FetchData )  # Name of data management target

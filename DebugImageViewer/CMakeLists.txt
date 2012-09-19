@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8)
-project(DebugImageViewer)
+##- project(DebugImageViewer)
 
 if(NOT ITK_FOUND) #See if it has already been found because this is a nested project
   find_package(ITK REQUIRED)

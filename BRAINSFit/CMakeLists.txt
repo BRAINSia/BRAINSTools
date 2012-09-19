@@ -1,4 +1,4 @@
-project(BRAINSFit)
+##- project(BRAINSFit)
 #-----------------------------------------------------------------------------
 # Output directories.
 #

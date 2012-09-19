@@ -1,4 +1,4 @@
-project(BRAINSLandmarkInitializer)
+##- project(BRAINSLandmarkInitializer)
 #-----------------------------------------------------------------------------
 # Output directories.
 #

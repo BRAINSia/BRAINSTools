@@ -1,4 +1,4 @@
-project(BRAINSImageConvert)
+##- project(BRAINSImageConvert)
 
 add_subdirectory(BRAINSPosteriorToContinuousClass)
 

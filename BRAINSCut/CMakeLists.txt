@@ -1,4 +1,4 @@
-project(BRAINSCut)
+##- project(BRAINSCut)
 
 message(STATUS "BRAINSCut OpenCV_DIR = ${OpenCV_DIR}")
 find_package( OpenCV REQUIRED)

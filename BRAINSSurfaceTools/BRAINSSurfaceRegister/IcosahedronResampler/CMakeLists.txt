@@ -40,6 +40,6 @@ set_tests_properties( COMPARE_SurfaceIcosahedronResampler1 PROPERTIES DEPENDS TE
 
 set_tests_properties( COMPARE_SurfaceIcosahedronResampler2 PROPERTIES DEPENDS TEST_SurfaceIcosahedronResampler2 )
 
-ExternalData_Add_Target( ${project_name}FetchData )  # Name of data management target
+## - ExternalData_Add_Target( ${project_name}FetchData )  # Name of data management target
 
 endif ()

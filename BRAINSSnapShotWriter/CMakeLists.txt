@@ -1,4 +1,4 @@
-project(BRAINSSnapShotWriter)
+##- project(BRAINSSnapShotWriter)
 #-----------------------------------------------------------------------------
 # Output directories.
 #

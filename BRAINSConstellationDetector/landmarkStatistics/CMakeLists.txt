@@ -1,4 +1,4 @@
-project(landmarkStatistics)
+##- project(landmarkStatistics)
 
 ## Build all the programs
 ##

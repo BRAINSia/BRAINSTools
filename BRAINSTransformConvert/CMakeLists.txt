@@ -1,4 +1,4 @@
-project(BRAINSTransformConvert)
+##- project(BRAINSTransformConvert)
 #-----------------------------------------------------------------------------
 # Output directories.
 #

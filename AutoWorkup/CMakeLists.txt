@@ -1,4 +1,4 @@
-project(AutoWorkup)
+##- project(AutoWorkup)
 
 #-----------------------------------------------------------------------------
 # Output directories.

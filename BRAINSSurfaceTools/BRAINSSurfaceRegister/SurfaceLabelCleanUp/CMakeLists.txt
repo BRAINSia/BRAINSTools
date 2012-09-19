@@ -23,6 +23,6 @@ ExternalData_add_test(${project_name}FetchData NAME COMPARE_SurfaceLabelCleanUp
 
 set_tests_properties( COMPARE_SurfaceLabelCleanUp PROPERTIES DEPENDS TEST_SurfaceLabelCleanUp )
 
-ExternalData_Add_Target( ${project_name}FetchData )  # Name of data management target
+## - ExternalData_Add_Target( ${project_name}FetchData )  # Name of data management target
 
 endif ()

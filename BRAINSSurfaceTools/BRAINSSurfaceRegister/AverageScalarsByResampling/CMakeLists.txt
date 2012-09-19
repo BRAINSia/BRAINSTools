@@ -25,6 +25,6 @@ ExternalData_add_test(${project_name}FetchData NAME COMPARE_SurfaceAverageScalar
 
 set_tests_properties( COMPARE_SurfaceAverageScalarsByResampling PROPERTIES DEPENDS TEST_SurfaceAverageScalarsByResampling )
 
-ExternalData_Add_Target( ${project_name}FetchData )  # Name of data management target
+## - ExternalData_Add_Target( ${project_name}FetchData )  # Name of data management target
 
 endif ()

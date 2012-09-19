@@ -1,4 +1,4 @@
-project( GTRACTCommonLib )
+##- project( GTRACTCommonLib )
 
 set(GTRACTCommon_SRC
   algo.cxx

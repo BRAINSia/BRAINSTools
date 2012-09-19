@@ -1502,4 +1502,4 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitEZTestName}
 )
 
 
-ExternalData_Add_Target( ${PROJECT_NAME}FetchData )  # Name of data management target
+## - ExternalData_Add_Target( ${PROJECT_NAME}FetchData )  # Name of data management target

@@ -111,7 +111,7 @@ ExternalData_add_test(${project_name}FetchData NAME TEST_BRAINSMeasureSurface3
           --gyralCurvatureResults 0.0967193,0.121922,0.100533,0.112673
           --sulcalCurvatureResults -0.0652248,-0.0795294,-0.0797638,-0.0840148 )
 
-ExternalData_Add_Target( ${project_name}FetchData )  # Name of data management target
+## - ExternalData_Add_Target( ${project_name}FetchData )  # Name of data management target
 
 endif ()
 

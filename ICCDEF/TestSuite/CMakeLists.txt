@@ -291,4 +291,4 @@ add_test(itkIterativeInverseDisplacementFieldFilterTest2 ${UNIT_TESTS}
 
 if(0)
 endif()
-ExternalData_Add_Target( ${PROJECT_NAME}FetchData )  # Name of data management target
+## - ExternalData_Add_Target( ${PROJECT_NAME}FetchData )  # Name of data management target

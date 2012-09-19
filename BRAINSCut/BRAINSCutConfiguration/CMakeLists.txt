@@ -1,4 +1,4 @@
-project(BRAINSCutConfiguration)
+##- project(BRAINSCutConfiguration)
 
 file(GLOB NetConfiguration_SRCS *.cxx)
 link_libraries( itksys )

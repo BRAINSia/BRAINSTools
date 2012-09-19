@@ -1,11 +1,10 @@
 ##- project(iccdefRegistrationNew)
-set(LOCAL_RROJECT_NAME iccdefRegistrationNew)
 
 #-------------------------------------------------------------------------------
 # OUTPUT DIRECTORIES
 #
-include_directories(${COMMON_BRAINSCOMMONLIB_SOURCE_DIR})
-link_directories(${COMMON_BRAINSCOMMONLIB_BINARY_DIR})
+##- include_directories(${COMMON_BRAINSCOMMONLIB_SOURCE_DIR})
+##- link_directories(${COMMON_BRAINSCOMMONLIB_BINARY_DIR})
 
 set(CMAKE_MODULE_PATH ${iccdefRegistrationNew_SOURCE_DIR} ${CMAKE_MODULE_PATH} )
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
@@ -19,7 +18,7 @@ mark_as_advanced(USE_FFTWF)
 option(USE_FFTWF "Use single precision FFTW if found" OFF)
 
 if( USE_FFTWD OR USE_FFTWF )
-    include(${iccdefRegistrationNew_SOURCE_DIR}/FindFFTW.cmake)
+   #include(${iccdefRegistrationNew_SOURCE_DIR}/FindFFTW.cmake)
     find_package( FFTW )
     if( USE_FFTWD )
       if( NOT FFTWD_FOUND)

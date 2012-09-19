@@ -1,8 +1,6 @@
 
 MakeTestDriverFromSEMTool(BRAINSMush BRAINSMushTest.cxx)
 
-configure_file(${BRAINSMush_SOURCE_DIR}/CTestCustom.ctest ${BRAINSMush_BINARY_DIR}/CTestCustom.ctest COPYONLY)
-
 ##  Test goes here:
 set(BRAINSMushTestName BRAINSMushTest_MaskGiven)
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSMushTestName}

@@ -32,8 +32,8 @@ ExternalData_expand_arguments( ${PROJECT_NAME}FetchData AtlasToSubjectScan1 DATA
   ExternalData_expand_arguments( ${PROJECT_NAME}FetchData scan1Mask1  DATA{${TestData_DIR}/scan1Mask1.nii.gz} )
   ExternalData_expand_arguments( ${PROJECT_NAME}FetchData scan3T1     DATA{${TestData_DIR}/scan3T1.nii.gz} )
 
-## 
-set( InputNetConfigurationForTesting ${BRAINSCut_SOURCE_DIR}/TestSuite/NetConfigurations/BRAINSCutTest.xml.in)
+##
+set( InputNetConfigurationForTesting ${BRAINSTools_SOURCE_DIR}/BRAINSCut/TestSuite/NetConfigurations/BRAINSCutTest.xml.in)
 set( OutputNetConfigurationForTesting ${CMAKE_CURRENT_BINARY_DIR}/TestSuite/NetConfigurations/BRAINSCutTest.xml )
 
 configure_file( ${InputNetConfigurationForTesting} ${OutputNetConfigurationForTesting}  IMMEDIATE @ONLY)

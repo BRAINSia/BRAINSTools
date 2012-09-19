@@ -1,7 +1,7 @@
 
 include_directories(
-  ${BRAINSABC_SOURCE_DIR}/brainseg
-  ${BRAINSABC_SOURCE_DIR}/common
+  ${BRAINSTools_SOURCE_DIR}/BRAINSABC/brainseg
+  ${BRAINSTools_SOURCE_DIR}/BRAINSABC/common
 )
 #  ${CMAKE_CURRENT_SOURCE_DIR}/../qhull
 

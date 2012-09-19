@@ -20,7 +20,7 @@ DebugImageViewerLibAdditions(CenterOfROIInitTestLibraries)
 
 target_link_libraries(CenterOfROIInitTest ${CenterOfROIInitTestLibraries} )
 
-set_target_properties(CenterOfROIInitTest PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${BRAINSFit_BINARY_DIR})
+set_target_properties(CenterOfROIInitTest PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${BRAINSTools_BINARY_DIR})
 ExternalData_add_test(${PROJECT_NAME}FetchData NAME CenterOfROIInitTest
   COMMAND ${LAUNCH_EXE}  $<TARGET_FILE:CenterOfROIInitTest>)
 

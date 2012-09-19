@@ -18,11 +18,11 @@ if(BUILD_TESTING)
     ImageCalculatorProcess3D.cxx)
   target_link_libraries(ImageCalculatorTests ${ITK_LIBRARIES})
   set_target_properties(ImageCalculatorTests PROPERTIES
-    RUNTIME_OUTPUT_DIRECTORY ${ImageCalculator_BINARY_DIR})
+    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/testbin)
 
-  set(IC_TSTDATA ${ImageCalculator_SOURCE_DIR}/TestImages)
+  set(IC_TSTDATA ${CMAKE_CURRENT_BINARY_DIR}/ImageCalculator/TestImages)
   set(IC_STATCMDS --statNPX --statMIN --statAVG --statMAX --statVAR --statSUM)
-  set(IC_BIN "${ImageCalculator_BINARY_DIR}")
+  set(IC_BIN "${CMAKE_CURRENT_BINARY_DIR}/testbin")
   set(IC_OUT --out "${IC_BIN}/Test.png")
   #Test to show arithmetic operation and printing the statistics.
   add_test(NAME ImageCalculator2DTest1 COMMAND $<TARGET_FILE:ImageCalculatorTests>

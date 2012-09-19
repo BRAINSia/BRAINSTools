@@ -1,7 +1,7 @@
 include_directories(
-  ${BRAINSABC_SOURCE_DIR}/brainseg
-  ${BRAINSABC_SOURCE_DIR}/common
-  ${BRAINSABC_BINARY_DIR}/brainseg
+  ${BRAINSTools_SOURCE_DIR}/BRAINSABC/brainseg
+  ${BRAINSTools_SOURCE_DIR}/BRAINSABC/common
+  ${BRAINSTools_BINARY_DIR}/BRAINSABC/brainseg
   )
 
 

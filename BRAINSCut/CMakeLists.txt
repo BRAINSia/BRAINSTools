@@ -6,7 +6,7 @@ find_package( OpenCV REQUIRED)
 ###
 add_subdirectory(BRAINSFeatureCreators)
 
-include_directories(${BRAINSCut_SOURCE_DIR}/BRAINSCutConfiguration)
+include_directories(${BRAINSTools_SOURCE_DIR}/BRAINSCut/BRAINSCutConfiguration)
 add_subdirectory(BRAINSCutConfiguration)
 
 

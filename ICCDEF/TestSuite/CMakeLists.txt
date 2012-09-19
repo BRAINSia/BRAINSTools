@@ -1,4 +1,4 @@
-include_directories(${${LOCAL_RROJECT_NAME}_SOURCE_DIR})
+include_directories(${BRAINSTools_SOURCE_DIR}/ICCDEF)
 
 MakeTestDriverFromSEMTool(ApplyWarp ApplyWarpTest.cxx)
 MakeTestDriverFromSEMTool(CreateMask CreateMaskTest.cxx)

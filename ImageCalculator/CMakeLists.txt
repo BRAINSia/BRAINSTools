@@ -20,7 +20,7 @@ if(BUILD_TESTING)
   set_target_properties(ImageCalculatorTests PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/testbin)
 
-  set(IC_TSTDATA ${CMAKE_CURRENT_BINARY_DIR}/ImageCalculator/TestImages)
+  set(IC_TSTDATA ${CMAKE_CURRENT_SOURCE_DIR}/TestImages)
   set(IC_STATCMDS --statNPX --statMIN --statAVG --statMAX --statVAR --statSUM)
   set(IC_BIN "${CMAKE_CURRENT_BINARY_DIR}/testbin")
   set(IC_OUT --out "${IC_BIN}/Test.png")

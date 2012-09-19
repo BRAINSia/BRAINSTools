@@ -65,7 +65,7 @@ list(APPEND ExternalData_URL_TEMPLATES
 # Tell ExternalData commands to transform raw files to content links.
 # TODO: Condition this feature on presence of our pre-commit hook.
 set(ExternalData_LINK_CONTENT MD5)
-set(ExternalData_SOURCE_ROOT ${${PROJECT_NAME}_SOURCE_DIR})
+##- Use default CMAKE_SOURCE_DIR set(ExternalData_SOURCE_ROOT ${${PROJECT_NAME}_SOURCE_DIR})
 include(ExternalData)
 
 set(TestData_DIR ${CMAKE_CURRENT_SOURCE_DIR}/TestData)
@@ -111,12 +111,12 @@ set(brains_modulenames
 ## Tools that only work with ITKv4
 if(ITK_VERSION_MAJOR GREATER 3)
   list(APPEND brains_modulenames
-    BRAINSConstellationDetector
-    BRAINSABC
     BRAINSMush
     BRAINSMultiModeSegment
     BRAINSInitializedControlPoints
     BRAINSTransformConvert
+    BRAINSConstellationDetector
+    BRAINSABC
     )
 endif()
 

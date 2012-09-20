@@ -6,7 +6,6 @@
 ##- include_directories(${COMMON_BRAINSCOMMONLIB_SOURCE_DIR})
 ##- link_directories(${COMMON_BRAINSCOMMONLIB_BINARY_DIR})
 
-set(CMAKE_MODULE_PATH ${iccdefRegistrationNew_SOURCE_DIR} ${CMAKE_MODULE_PATH} )
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
   set(CMAKE_INSTALL_PREFIX "/opt/iccdefRegistration_New" CACHE PATH "Install path prefix,
      prepended onto install directories." FORCE)
@@ -18,7 +17,6 @@ mark_as_advanced(USE_FFTWF)
 option(USE_FFTWF "Use single precision FFTW if found" OFF)
 
 if( USE_FFTWD OR USE_FFTWF )
-   #include(${iccdefRegistrationNew_SOURCE_DIR}/FindFFTW.cmake)
     find_package( FFTW )
     if( USE_FFTWD )
       if( NOT FFTWD_FOUND)

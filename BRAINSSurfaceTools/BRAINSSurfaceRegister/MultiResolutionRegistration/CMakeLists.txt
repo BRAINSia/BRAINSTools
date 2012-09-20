@@ -1,12 +1,11 @@
 StandardBRAINSBuildMacro(NAME MultiResolutionRegistration TARGET_LIBRARIES ${ITK_LIBRARIES})
 
 if (BUILD_TESTING)
-set(project_name MultiResolutionRegistration)
 
 set(MultiResolutionRegistrationProg ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/MultiResolutionRegistration)
 set(CompareSurfacesProg ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/CompareSurfaces)
 
-ExternalData_add_test(${project_name}FetchData NAME TEST_SurfaceMultiResRegistration1
+ExternalData_add_test(${PROJECT_NAME}FetchData NAME TEST_SurfaceMultiResRegistration1
   COMMAND ${LAUNCH_EXE} ${MultiResolutionRegistrationProg}
           --fixedMeshFileList DATA{${TestData_DIR}/0036195_left_sphereIC4.vtk}
           --fixedMeshFileList DATA{${TestData_DIR}/0036195_left_sphereIC5.vtk}
@@ -26,7 +25,7 @@ ExternalData_add_test(${project_name}FetchData NAME TEST_SurfaceMultiResRegistra
           --deformedFileName deformed0036195_test.vtk
           --deformationFieldFileName deformationFieldOn0036195_test.vtk )
 
-ExternalData_add_test(${project_name}FetchData NAME COMPARE_SurfaceMultiResRegistration1
+ExternalData_add_test(${PROJECT_NAME}FetchData NAME COMPARE_SurfaceMultiResRegistration1
   COMMAND ${LAUNCH_EXE} ${CompareSurfacesProg}
           --inputSurfaceFile deformed0036195_test.vtk
           --refSurfaceFile DATA{${TestData_DIR}/deformed0036195.vtk}
@@ -35,6 +34,6 @@ ExternalData_add_test(${project_name}FetchData NAME COMPARE_SurfaceMultiResRegis
 
 set_tests_properties( COMPARE_SurfaceMultiResRegistration1 PROPERTIES DEPENDS TEST_SurfaceMultiResRegistration1 )
 
-## - ExternalData_Add_Target( ${project_name}FetchData )  # Name of data management target
+## - ExternalData_Add_Target( ${PROJECT_NAME}FetchData )  # Name of data management target
 
 endif ()

@@ -13,17 +13,7 @@ set(CMAKE_MODULE_PATH
   )
 
 #-----------------------------------------------------------------------------
-set(expected_ITK_VERSION_MAJOR ${ITK_VERSION_MAJOR})
 find_package(ITK REQUIRED)
-if(${ITK_VERSION_MAJOR} VERSION_LESS ${expected_ITK_VERSION_MAJOR})
-  # Note: Since ITKv3 doesn't include a ITKConfigVersion.cmake file, let's check the version
-  #       explicitly instead of passing the version as an argument to find_package() command.
-  message(FATAL_ERROR "Could not find a configuration file for package \"ITK\" that is compatible "
-                      "with requested version \"${expected_ITK_VERSION_MAJOR}\".\n"
-                      "The following configuration files were considered but not accepted:\n"
-                      "  ${ITK_CONFIG}, version: ${ITK_VERSION_MAJOR}.${ITK_VERSION_MINOR}.${ITK_VERSION_PATCH}\n")
-endif()
-
 include(${ITK_USE_FILE})
 
 #-----------------------------------------------------------------------------
@@ -38,7 +28,6 @@ if(USE_ANTS)
   include_directories(${ANTS_SOURCE_DIR}/Utilities)
   include_directories(${ANTS_SOURCE_DIR}/Examples)
   include_directories(${ANTS_SOURCE_DIR}/ImageRegistration)
-  message(STATUS "HACK:  Adding link directory ${BRAINSStandAlone_LIBRARY_PATH}")
   link_directories(${BRAINSStandAlone_LIBRARY_PATH})
   set(ANTS_LIBS ${ANTS_LIBS} antsUtilities)
 endif()
@@ -72,7 +61,7 @@ set(TestData_DIR ${CMAKE_CURRENT_SOURCE_DIR}/TestData)
 
 #
 # choose between using HDF5 or MAT format transform files
-set(XFRM_EXT "mat" CACHE STRING "Choose the preferred transform file format")
+set(XFRM_EXT "h5" CACHE STRING "Choose the preferred transform file format")
 
 #-----------------------------------------------------------------------------
 # BRAINSCommonLib (Required)
@@ -106,19 +95,13 @@ set(brains_modulenames
   ICCDEF
   BRAINSContinuousClass
   BRAINSImageConvert
-  )
-
-## Tools that only work with ITKv4
-if(ITK_VERSION_MAJOR GREATER 3)
-  list(APPEND brains_modulenames
-    BRAINSMush
-    BRAINSMultiModeSegment
-    BRAINSInitializedControlPoints
-    BRAINSTransformConvert
-    BRAINSConstellationDetector
-    BRAINSABC
-    )
-endif()
+  BRAINSMush
+  BRAINSMultiModeSegment
+  BRAINSInitializedControlPoints
+  BRAINSTransformConvert
+  BRAINSConstellationDetector
+  BRAINSABC
+)
 
 if(USE_DebugImageViewer)
   list(APPEND brains_modulenames

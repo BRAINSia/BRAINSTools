@@ -5,6 +5,16 @@ set(USE_ITKv4 ON)
 set(ITK_VERSION_MAJOR 4 CACHE STRING "Choose the expected ITK major version to build BRAINS only version 4 allowed.")
 # Set the possible values of ITK major version for cmake-gui
 set_property(CACHE ITK_VERSION_MAJOR PROPERTY STRINGS "4")
+set(expected_ITK_VERSION_MAJOR ${ITK_VERSION_MAJOR})
+if(${ITK_VERSION_MAJOR} VERSION_LESS ${expected_ITK_VERSION_MAJOR})
+  # Note: Since ITKv3 doesn't include a ITKConfigVersion.cmake file, let's check the version
+  #       explicitly instead of passing the version as an argument to find_package() command.
+  message(FATAL_ERROR "Could not find a configuration file for package \"ITK\" that is compatible "
+                      "with requested version \"${expected_ITK_VERSION_MAJOR}\".\n"
+                      "The following configuration files were considered but not accepted:\n"
+                      "  ${ITK_CONFIG}, version: ${ITK_VERSION_MAJOR}.${ITK_VERSION_MINOR}.${ITK_VERSION_PATCH}\n")
+endif()
+
 
 #-----------------------------------------------------------------------------
 # Set a default build type if none was specified
@@ -86,7 +96,7 @@ include(PreventInBuildInstalls)
 #-----------------------------------------------------------------------------
 # CMake Function(s) and Macro(s)
 #-----------------------------------------------------------------------------
-if(CMAKE_PATCH_VERSION LESS 3)
+if(CMAKE_VERSION VERSION_LESS 2.8.3)
   include(Pre283CMakeParseArguments)
 else()
   include(CMakeParseArguments)
@@ -96,7 +106,6 @@ endif()
 # Platform check
 #-----------------------------------------------------------------------------
 set(PLATFORM_CHECK true)
-
 if(PLATFORM_CHECK)
   # See CMake/Modules/Platform/Darwin.cmake)
   #   6.x == Mac OSX 10.2 (Jaguar)
@@ -134,7 +143,7 @@ SETIFEMPTY(CMAKE_INSTALL_RUNTIME_DESTINATION bin)
 #-------------------------------------------------------------------------
 SETIFEMPTY(BRAINSTools_CLI_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
 SETIFEMPTY(BRAINSTools_CLI_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY})
-SETIFEMPTY(BRAINSTools_CLI_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
+SETIFEMPTY(BRAINSTools_CLI_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 
 #-------------------------------------------------------------------------
 SETIFEMPTY(BRAINSTools_CLI_INSTALL_LIBRARY_DESTINATION ${CMAKE_INSTALL_LIBRARY_DESTINATION})

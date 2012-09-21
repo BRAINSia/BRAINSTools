@@ -82,10 +82,6 @@ option(USE_SYSTEM_ITK "Build using an externally defined version of ITK" OFF)
 option(USE_SYSTEM_SlicerExecutionModel "Build using an externally defined version of SlicerExecutionModel"  OFF)
 option(USE_SYSTEM_VTK "Build using an externally defined version of VTK" OFF)
 
-#
-# choose between using HDF5 or MAT format transform files
-set(XFRM_EXT "h5" CACHE STRING "Choose the preferred transform file format")
-
 #------------------------------------------------------------------------------
 # ${LOCAL_PROJECT_NAME} dependency list
 #------------------------------------------------------------------------------
@@ -188,7 +184,6 @@ list(APPEND ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS
   CMAKE_MODULE_LINKER_FLAGS:STRING
   SITE:STRING
   BUILDNAME:STRING
-  XFRM_EXT:STRING
   )
 
 if(${LOCAL_PROJECT_NAME}_USE_QT)

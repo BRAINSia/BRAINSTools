@@ -83,6 +83,7 @@ def main(argv=None):
                        help='The name of the subject to process')
     group.add_argument('-ExperimentConfig', action="store", dest='ExperimentConfig', required=True,
                        help='The path to the file that describes the entire experiment')
+    parser.add_argument('--doshort', action='store', dest='doshort', default=True, help='If not present, do long')
     parser.add_argument('--version', action='version', version='%(prog)s 1.0')
     #parser.add_argument('-v', action='store_false', dest='verbose', default=True,
     #                    help='If not present, prints the locations')
@@ -210,13 +211,22 @@ def main(argv=None):
     print "^^^^^^^^^^^^^"
 
     import WorkupT1T2 ## NOTE:  This needs to occur AFTER the PYTHON_AUX_PATHS has been modified
+    import ShortWorkupT1T2
     for subjectid in ExperimentDatabase.getAllSubjects():
-        baw200=WorkupT1T2.WorkupT1T2(subjectid,mountPrefix,
-          os.path.join(ExperimentBaseDirectoryCache,str(subjectid)),
-          ExperimentBaseDirectoryResults,
-          ExperimentDatabase,
-          CACHE_ATLASPATH,
-          CACHE_BCDMODELPATH,WORKFLOW_COMPONENTS=WORKFLOW_COMPONENTS,CLUSTER_QUEUE=CLUSTER_QUEUE)
+        if input_arguments.doshort:
+            baw200=ShortWorkupT1T2.ShortWorkupT1T2(subjectid,mountPrefix,
+             os.path.join(ExperimentBaseDirectoryCache,str(subjectid)),
+             ExperimentBaseDirectoryResults,
+             ExperimentDatabase,
+             CACHE_ATLASPATH,
+             CACHE_BCDMODELPATH,WORKFLOW_COMPONENTS=WORKFLOW_COMPONENTS,CLUSTER_QUEUE=CLUSTER_QUEUE)
+        else:
+            baw200=WorkupT1T2.WorkupT1T2(subjectid,mountPrefix,
+              os.path.join(ExperimentBaseDirectoryCache,str(subjectid)),
+              ExperimentBaseDirectoryResults,
+              ExperimentDatabase,
+              CACHE_ATLASPATH,
+              CACHE_BCDMODELPATH,WORKFLOW_COMPONENTS=WORKFLOW_COMPONENTS,CLUSTER_QUEUE=CLUSTER_QUEUE)
         print "Start Processing"
 
         ## Create the shell wrapper script for ensuring that all jobs running on remote hosts from SGE

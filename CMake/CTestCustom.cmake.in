@@ -78,7 +78,7 @@ set(CTEST_CUSTOM_ERROR_MATCH
 
 set(CTEST_CUSTOM_WARNING_MATCH
   ${CTEST_CUSTOM_WARNING_MATCH}
-  "CMake Warning[ :]"
+  #"CMake Warning[ :]"
   )
 
 set(CTEST_CUSTOM_WARNING_EXCEPTION
@@ -301,6 +301,8 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
 
   ## HACK: THIS SHOULD NOT BE SUPPRESSED, NEED TO FIX OPENCV!!
   "BRAINSCutApplyModel.cxx.*warning.*increases required alignment"
+
+  "ModuleFactory.*warning.*SymbolPointer"
 
   ## HACK: THIS SHOULD NOT BE SUPPRESSED, NEED TO FIX IN ANTS
   "ANTS.*warning"

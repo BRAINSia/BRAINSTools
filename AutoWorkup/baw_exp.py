@@ -198,12 +198,15 @@ def main(argv=None):
     import SessionDB
     subjectDatabaseFile=os.path.join( ExperimentBaseDirectoryCache,'InternalWorkflowSubjectDB.db')
     subject_list=input_arguments.subject.split(',')
-    ExperimentDatabase=SessionDB.SessionDB(subjectDatabaseFile,subject_list)
     ## TODO:  Only make DB if db is older than subject_data_file.
     if ( not os.path.exists(subjectDatabaseFile) ) or ( os.path.getmtime(subjectDatabaseFile) < os.path.getmtime(subject_data_file) ):
+        ExperimentDatabase=SessionDB.SessionDB(subjectDatabaseFile,subject_list)
         ExperimentDatabase.MakeNewDB(subject_data_file,mountPrefix)
+        ExperimentDatabase=None
+        ExperimentDatabase=SessionDB.SessionDB(subjectDatabaseFile,subject_list)
     else:
         print("Using cached database, {0}".format(subjectDatabaseFile))
+        ExperimentDatabase=SessionDB.SessionDB(subjectDatabaseFile,subject_list)
     print "ENTIRE DB for {_subjid}: ".format(_subjid=ExperimentDatabase.getSubjectFilter())
     print "^^^^^^^^^^^^^"
     for row in ExperimentDatabase.getEverything():

@@ -21,11 +21,13 @@ class SessionDB():
         self.connection = lite.connect(self.dbName)
         self.cursor = self.connection.cursor()
 
-    def _local_fillDB(self, sqlCommandList):
+    def _local_fillDB_AndClose(self, sqlCommandList):
         print "Filling SQLite database SessionDB.py"
         for sqlCommand in sqlCommandList:
             self.cursor.execute(sqlCommand)
         self.connection.commit()
+        #self.cursor.close()
+        #self.connection.close()
         print "Finished filling SQLite database SessionDB.py"
 
     def MakeNewDB(self, subject_data_file, mountPrefix):
@@ -79,7 +81,7 @@ class SessionDB():
                 print "ERROR:  Invalid number of elements in row"
                 print row
         sqlCommandList
-        self._local_fillDB(sqlCommandList)
+        self._local_fillDB_AndClose(sqlCommandList)
 
     def getSubjectFilter(self):
         return self.MasterQueryFilter

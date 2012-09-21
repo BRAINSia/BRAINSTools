@@ -83,7 +83,7 @@ def main(argv=None):
                        help='The name of the subject to process')
     group.add_argument('-ExperimentConfig', action="store", dest='ExperimentConfig', required=True,
                        help='The path to the file that describes the entire experiment')
-    parser.add_argument('--doshort', action='store', dest='doshort', default=True, help='If not present, do long')
+    parser.add_argument('--doshort', action='store', dest='doshort', default=False, help='If not present, do long')
     parser.add_argument('--version', action='version', version='%(prog)s 1.0')
     #parser.add_argument('-v', action='store_false', dest='verbose', default=True,
     #                    help='If not present, prints the locations')

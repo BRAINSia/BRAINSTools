@@ -388,6 +388,10 @@ def ShortWorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, Experime
             baw200.connect(BAtlas[subjectid],'template_t1', PHASE_1_oneSubjWorkflow[sessionid],'InputSpec.template_t1')
             baw200.connect(BAtlas[subjectid],'ExtendedAtlasDefinition_xml', PHASE_1_oneSubjWorkflow[sessionid],'InputSpec.atlasDefinition')
 
+            BASIC_DataSink=dict()
+            TC_DataSink=dict()
+            AccumulateLikeTissuePosteriorsNode=dict()
+            AddLikeTissueSink=dict()
             if True:
                 ### Now define where the final organized outputs should go.
                 BASIC_DataSink[sessionid]=pe.Node(nio.DataSink(),name="BASIC_DS_"+str(subjectid)+"_"+str(sessionid))

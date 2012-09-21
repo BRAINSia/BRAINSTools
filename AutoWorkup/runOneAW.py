@@ -7,8 +7,20 @@ import sys
 class runOneAW():
 
     def main(self):
-        sessionPath = self.generateSessionCSV()
-        self.generateConfigFile(sessionPath)
+        self.sessionPath = os.path.join(input_arguments.experimentOutputDir, 'session.csv')
+        self.configPath = os.path.join(input_arguments.experimentOutputDir, 'localAW.config')
+        self.generateSessionCSV()
+        self.generateConfigFile()
+        self.executeAW()
+
+    def executeAW(self):
+        bawCommand = """time python /raid0/homes/jforbes/git/BRAINSStandAlone/AutoWorkup/baw_exp.py \
+ -ExperimentConfig {configFile} \
+ -pe LOCAL_ENVIRONMENT \
+ -wfrun local \
+ -subject {subject} \n""".format(configFile=self.configPath, subject=input_arguments.subject)
+        print '\nExecuting command: \n{bawCommand}'.format(bawCommand=bawCommand)
+        os.system(bawCommand)
 
     def generateSessionCSV(self):
         sessionDict = dict()
@@ -19,16 +31,15 @@ class runOneAW():
         if sessionDict == dict():
             print 'ERROR: No T1 or T2 images were given as input arguments.'
             sys.exit()
-        sessionPath = os.path.join(input_arguments.experimentOutputDir, 'session.csv')
         col_name_list = ["project", "subject", "session", "imagefiles"]
-        newFile = csv.writer(open(sessionPath, 'wb'), quoting=csv.QUOTE_ALL)
+        newFile = csv.writer(open(self.sessionPath, 'wb'), quoting=csv.QUOTE_ALL)
         newFile.writerow(col_name_list)
         line = (input_arguments.project, input_arguments.subject, input_arguments.session, sessionDict)
         newFile.writerow(line)
-        print 'The session csv file is located:   {0}'.format(sessionPath)
-        return sessionPath
+        print '\nThe session csv file has been generated: {0}\n'.format(self.sessionPath)
+        print line
 
-    def generateConfigFile(self, sessionPath):
+    def generateConfigFile(self):
         configString = """
 ###  INTENT  ###
 # The intent of this configuration file is to define all the information needed to
@@ -76,7 +87,8 @@ SESSION_DB=[replaceme_sessionDB]
 EXPERIMENTNAME=TutorialExperimentOutputs
 # Components of pipeline to run.  There are some branches of the workflow that are mostly for validation and experimentation.
 #WORKFLOW_COMPONENTS=['BASIC','TISSUE_CLASSIFY','SEGMENTATION','FREESURFER','ANTS','AUXLMK']
-WORKFLOW_COMPONENTS=['BASIC','TISSUE_CLASSIFY']
+#WORKFLOW_COMPONENTS=['BASIC','TISSUE_CLASSIFY']
+WORKFLOW_COMPONENTS=['BASIC']
 
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 # !!!!   Describe the processing environments that will be   !!!!
@@ -114,13 +126,12 @@ PROGRAM_PATHS=%(_BRAINSTOOLS_BUILD_PATH)s/lib:%(_BRAINSTOOLS_BUILD_PATH)s/bin:%(
 ATLASPATH=%(_BRAINSTOOLS_BUILD_PATH)s/ReferenceAtlas-build/Atlas/Atlas_20120830
 # The path to the model files to be used by BCD.
 BCDMODELPATH=%(_BRAINSTOOLS_BUILD_PATH)s/BRAINSTools-build/TestData"""
-        newConfigString = configString.replace('[replaceme_sessionDB]',sessionPath)
+        newConfigString = configString.replace('[replaceme_sessionDB]',self.sessionPath)
         editedConfigString = newConfigString.replace('[replaceme_outputDir]',input_arguments.experimentOutputDir)
-        configPath = os.path.join(input_arguments.experimentOutputDir, 'localAW.config')
-        handle = open(configPath, 'w')
+        handle = open(self.configPath, 'w')
         handle.write(editedConfigString)
         handle.close()
-        print 'The configuration file is located: {0}'.format(configPath)
+        print '\nThe configuration file has been generated: {0}'.format(self.configPath)
 
 if __name__ == "__main__":
     # Create and parse input arguments

@@ -659,12 +659,17 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                     print("SKIPPING SEGMENTATION PHASE FOR {0} {1} {2}, lenT2s {3}".format(projectid, subjectid, sessionid, len(global_AllT2s) ))
 
 
-                if ( len(global_AllT2s) > 0 ): # Currently only works with multi-modal_data
-                    print("HACK  FREESURFER len(global_AllT2s) > 0 ")
-                if ( 'FREESURFER' in WORKFLOW_COMPONENTS  ) and ( len(global_AllT2s) > 0 ): # Currently only works with multi-modal_data
+                if ( 'FREESURFER' in WORKFLOW_COMPONENTS  ):
+                    #RunAllFSComponents=False ## A hack to avoid 26 hour run of freesurfer
                     RunAllFSComponents=True ## A hack to avoid 26 hour run of freesurfer
                     from WorkupT1T2FreeSurfer import CreateFreeSurferWorkflow
-                    myLocalFSWF[sessionid]= CreateFreeSurferWorkflow(projectid, subjectid, sessionid,"Level1_FSTest",CLUSTER_QUEUE,RunAllFSComponents)
+                    if ( len(global_AllT2s) > 0 ): # If multi-modal, then create synthesized image before running
+                        print("HACK  FREESURFER len(global_AllT2s) > 0 ")
+                        myLocalFSWF[sessionid]= CreateFreeSurferWorkflow(projectid, subjectid, sessionid,"Level1_FSTest",
+                                                CLUSTER_QUEUE,RunAllFSComponents,True)
+                    else:
+                        myLocalFSWF[sessionid]= CreateFreeSurferWorkflow(projectid, subjectid, sessionid,"Level1_FSTest",
+                                                CLUSTER_QUEUE,RunAllFSComponents,False)
                     FREESURFER_ID[sessionid]= pe.Node(interface=IdentityInterface(fields=['FreeSurfer_ID']),
                                                       run_without_submitting=True,
                                                       name='99_FSNodeName'+str(subjectid)+"_"+str(sessionid) )

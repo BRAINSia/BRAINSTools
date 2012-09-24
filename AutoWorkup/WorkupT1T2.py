@@ -311,7 +311,7 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                                      'use_relative_paths':'false',         ## relative paths should be on, require hash update when changed.
                                      'remove_node_directories':'false',   ## Experimental
                                      'local_hash_check':'true',           ##
-                                     'job_finished_timeout':15            ##
+                                     'job_finished_timeout':30            ##
                                      }
     baw200.config['logging'] = {
       'workflow_level':'DEBUG',
@@ -574,7 +574,7 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                 FSPREP_DataSink=dict()
                 FS_DS=dict()
 
-                if True: ## Run the ANTS Registration from Atlas to Subject for BCut spatial priors propagation.
+                if True and ( 'SEGMENTATION' in WORKFLOW_COMPONENTS ): ## Run the ANTS Registration from Atlas to Subject for BCut spatial priors propagation.
                     import PipeLineFunctionHelpers
                     import BRAINSTools.BTants.antsRegistration
                     ## Second clip to brain tissue region

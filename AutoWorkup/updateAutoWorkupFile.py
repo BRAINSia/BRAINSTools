@@ -9,8 +9,10 @@ class UpdateAutoWorkup():
         handle = csv.reader(open(inputArguments.blackList, 'rb'), delimiter=',', quotechar='\"')
         blackListDict = dict()
         for row in handle:
-            if len(row) == 2:
+            if len(row) == 3:
                 blackListDict[row[0]] = row[1]
+            else:
+                print("WARNING: WRONG # of columns in csv (should be 3): {0}".format(row))
         return blackListDict, blackListDict.keys()
 
     def _generateNewPathName(self):
@@ -26,6 +28,7 @@ class UpdateAutoWorkup():
         newFile.writerow(col_name_list)
         oldFile = csv.reader(open(inputArguments.autoWorkupFile, 'rb'), delimiter=',', quotechar='\"')
         blackListDict, blackListKeys = self._getBlackList()
+        print blackListDict, blackListKeys
         for row in oldFile:
             ## skip header
             if oldFile.line_num > 1:

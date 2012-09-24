@@ -88,8 +88,8 @@ SESSION_DB=[replaceme_sessionDB]
 EXPERIMENTNAME=TutorialExperimentOutputs
 # Components of pipeline to run.  There are some branches of the workflow that are mostly for validation and experimentation.
 #WORKFLOW_COMPONENTS=['BASIC','TISSUE_CLASSIFY','SEGMENTATION','FREESURFER','ANTS','AUXLMK']
-WORKFLOW_COMPONENTS=['BASIC','TISSUE_CLASSIFY']
-#WORKFLOW_COMPONENTS=['BASIC']
+#WORKFLOW_COMPONENTS=['BASIC','TISSUE_CLASSIFY']
+WORKFLOW_COMPONENTS=['BASIC']
 
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 # !!!!   Describe the processing environments that will be   !!!!

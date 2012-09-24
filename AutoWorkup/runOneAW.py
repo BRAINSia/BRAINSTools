@@ -7,11 +7,18 @@ import sys
 class runOneAW():
 
     def main(self):
+        self.makeOuputDir()
         self.sessionPath = os.path.join(input_arguments.experimentOutputDir, 'session.csv')
         self.configPath = os.path.join(input_arguments.experimentOutputDir, 'localAW.config')
         self.generateSessionCSV()
         self.generateConfigFile()
         self.executeAW()
+
+    def makeOuputDir(self):
+        if os.path.exists(input_arguments.experimentOutputDir):
+            pass
+        else:
+            os.mkdir(input_arguments.experimentOutputDir)
 
     def executeAW(self):
         bawCommand = """time python /raid0/homes/jforbes/git/BRAINSStandAlone/AutoWorkup/baw_exp.py \

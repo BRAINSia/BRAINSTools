@@ -19,6 +19,7 @@ class runOneAW():
  -pe LOCAL_ENVIRONMENT \
  -wfrun local \
  -subject {subject} \n""".format(configFile=self.configPath, subject=input_arguments.subject)
+        print '-'*80
         print '\nExecuting command: \n{bawCommand}'.format(bawCommand=bawCommand)
         os.system(bawCommand)
 
@@ -87,8 +88,8 @@ SESSION_DB=[replaceme_sessionDB]
 EXPERIMENTNAME=TutorialExperimentOutputs
 # Components of pipeline to run.  There are some branches of the workflow that are mostly for validation and experimentation.
 #WORKFLOW_COMPONENTS=['BASIC','TISSUE_CLASSIFY','SEGMENTATION','FREESURFER','ANTS','AUXLMK']
-#WORKFLOW_COMPONENTS=['BASIC','TISSUE_CLASSIFY']
-WORKFLOW_COMPONENTS=['BASIC']
+WORKFLOW_COMPONENTS=['BASIC','TISSUE_CLASSIFY']
+#WORKFLOW_COMPONENTS=['BASIC']
 
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 # !!!!   Describe the processing environments that will be   !!!!
@@ -113,7 +114,7 @@ CLUSTER_QUEUE=-q OSX
 
 ############## -- You should not need to modify below here. ###########
 # Where to find the Autoworkup scripts.
-_BRAINSTOOLS_SCRIPTS=/ipldev/scratch/johnsonhj/src/BRAINSStandAlone/AutoWorkup
+_BRAINSTOOLS_SCRIPTS=[replaceme_brainToolsDir]/AutoWorkup
 # Where SimpleITK, required nipype, and other non-standard python packages reside
 ## _SIMPLE_ITK_PYTHON_PATH=/${CHANGEME_extra_apps_bin_dir}/opt/epd-7.2-1-rh5-x86_64/lib/python2.7/site-packages
 _SIMPLE_ITK_PYTHON_PATH=%(_BRAINSTOOLS_BUILD_PATH)s/SimpleITK-build/lib
@@ -126,12 +127,14 @@ PROGRAM_PATHS=%(_BRAINSTOOLS_BUILD_PATH)s/lib:%(_BRAINSTOOLS_BUILD_PATH)s/bin:%(
 ATLASPATH=%(_BRAINSTOOLS_BUILD_PATH)s/ReferenceAtlas-build/Atlas/Atlas_20120830
 # The path to the model files to be used by BCD.
 BCDMODELPATH=%(_BRAINSTOOLS_BUILD_PATH)s/BRAINSTools-build/TestData"""
-        newConfigString = configString.replace('[replaceme_sessionDB]',self.sessionPath)
-        editedConfigString = newConfigString.replace('[replaceme_outputDir]',input_arguments.experimentOutputDir)
+        firstReplace = configString.replace('[replaceme_sessionDB]',self.sessionPath)
+        secondReplace = firstReplace.replace('[replaceme_outputDir]',input_arguments.experimentOutputDir)
+        newConfigString = secondReplace.replace('[replaceme_brainToolsDir]',input_arguments.brainsToolsDir)
         handle = open(self.configPath, 'w')
-        handle.write(editedConfigString)
+        handle.write(newConfigString)
         handle.close()
         print '\nThe configuration file has been generated: {0}'.format(self.configPath)
+        print newConfigString
 
 if __name__ == "__main__":
     # Create and parse input arguments
@@ -144,7 +147,8 @@ $ python runOneAW.py -project NAMICHD -subject 10066 -session 100261 \
 -t1 /hjohnson/HDNI/AutoWorkupTutorial/10066/100261/ANONRAW/10066_100261_T1-30_2.nii.gz \
 /hjohnson/HDNI/AutoWorkupTutorial/10066/100261/ANONRAW/10066_100261_T1-30_22.nii.gz \
 -t2 /hjohnson/HDNI/AutoWorkupTutorial/10066/100261/ANONRAW/10066_100261_T2-30_3.nii.gz \
--experimentOutputDir /scratch/autoworkup/runOneAW/test"""))
+-experimentOutputDir /scratch/autoworkup/runOneAW/test \
+-brainsToolsDir /IPLlinux/raid0/homes/jforbes/git/BRAINSStandAlone"""))
     group = parser.add_argument_group('Required')
     group.add_argument('-project', action="store", dest='project', required=True,
                        help='The name of the project to process')
@@ -158,6 +162,8 @@ $ python runOneAW.py -project NAMICHD -subject 10066 -session 100261 \
                        help='The file name(s) of the T2 image(s) to process')
     group.add_argument('-experimentOutputDir', action="store", dest='experimentOutputDir', required=True,
                        help='The directory for the experiment output')
+    group.add_argument('-brainsToolsDir', action="store", dest='brainsToolsDir', required=True,
+                       help='The directory for BRAINSSTANDALONE')
     parser.add_argument('--version', action='version', version='%(prog)s 1.0')
     #parser.add_argument('-v', action='store_false', dest='verbose', default=True,
     #                    help='If not present, prints the locations')

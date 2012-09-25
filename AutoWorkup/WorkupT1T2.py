@@ -659,9 +659,9 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                     print("SKIPPING SEGMENTATION PHASE FOR {0} {1} {2}, lenT2s {3}".format(projectid, subjectid, sessionid, len(global_AllT2s) ))
 
 
-                if ( 'FREESURFER' in WORKFLOW_COMPONENTS  ):
-                    #RunAllFSComponents=False ## A hack to avoid 26 hour run of freesurfer
-                    RunAllFSComponents=True ## A hack to avoid 26 hour run of freesurfer
+                RunAllFSComponents=False ## A hack to avoid 26 hour run of freesurfer
+                #RunAllFSComponents=True ## A hack to avoid 26 hour run of freesurfer
+                if ( 'FREESURFER' in WORKFLOW_COMPONENTS ) and ( ( len(global_AllT2s) > 0 ) or RunAllFSComponents == True ):
                     from WorkupT1T2FreeSurfer import CreateFreeSurferWorkflow
                     if ( len(global_AllT2s) > 0 ): # If multi-modal, then create synthesized image before running
                         print("HACK  FREESURFER len(global_AllT2s) > 0 ")
@@ -675,10 +675,10 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                                                       name='99_FSNodeName'+str(subjectid)+"_"+str(sessionid) )
                     FREESURFER_ID[sessionid].inputs.FreeSurfer_ID=str(subjectid)+"_"+str(sessionid)
 
-                    baw200.connect(FREESURFER_ID[sessionid],'FreeSurfer_ID',myLocalFSWF[sessionid],'InputSpec.subject_id')
                     baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'OutputSpec.t1_average',myLocalFSWF[sessionid],'InputSpec.T1_files')
                     baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'OutputSpec.t2_average',myLocalFSWF[sessionid],'InputSpec.T2_files')
                     baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'OutputSpec.outputLabels',myLocalFSWF[sessionid],'InputSpec.label_file')
+                    baw200.connect(FREESURFER_ID[sessionid],'FreeSurfer_ID',myLocalFSWF[sessionid],'InputSpec.FreeSurfer_ID')
                     #baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'OutputSpec.outputLabels',myLocalFSWF[sessionid],'InputSpec.mask_file') #Yes, the same file as label_file!
 
                     ### Now define where the final organized outputs should go.

@@ -25,7 +25,7 @@ def GenerateWFName(projectid, subjectid, sessionid,WFName):
 def CreateFreeSurferWorkflow(projectid, subjectid, sessionid,WFname,CLUSTER_QUEUE,RunAllFSComponents=True,RunMultiMode=True):
     freesurferWF= pe.Workflow(name=GenerateWFName(projectid, subjectid, sessionid,WFname))
 
-    inputsSpec = pe.Node(interface=IdentityInterface(fields=['subject_id','T1_files','T2_files',
+    inputsSpec = pe.Node(interface=IdentityInterface(fields=['FreeSurfer_ID','T1_files','T2_files',
                                                              'label_file','mask_file']), name='InputSpec' )
     outputsSpec = pe.Node(interface=IdentityInterface(fields=['subject_id','subjects_dir',
                                      'FreesurferOutputDirectory','cnr_optimal_image']), name='OutputSpec' )
@@ -45,7 +45,8 @@ def CreateFreeSurferWorkflow(projectid, subjectid, sessionid,WFname,CLUSTER_QUEU
         msLDA_GenerateWeights.inputs.lda_labels=[white_label,grey_label]
         msLDA_GenerateWeights.inputs.weight_file = 'weights.txt'
         msLDA_GenerateWeights.inputs.use_weights=False
-        msLDA_GenerateWeights.inputs.vol_synth_file = 'synth_out.nii.gz'
+        msLDA_GenerateWeights.inputs.output_synth = 'synth_out.nii.gz'
+        #msLDA_GenerateWeights.inputs.vol_synth_file = 'synth_out.nii.gz'
         #msLDA_GenerateWeights.inputs.shift = 0 # value to shift by
 
         freesurferWF.connect(mergeT1T2,'out',  msLDA_GenerateWeights,'images')

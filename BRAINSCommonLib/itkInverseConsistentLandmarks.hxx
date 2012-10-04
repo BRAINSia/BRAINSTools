@@ -15,9 +15,9 @@
 #ifndef __itkInverseConsistentLandmarks_hxx
 #define __itkInverseConsistentLandmarks_hxx
 #include "itkInverseConsistentLandmarks.h"
-#include <stdio.h>
-#include <time.h>
-#include <math.h>
+#include <cstdio>
+#include <ctime>
+#include <cmath>
 #include <string>
 #include <iostream>
 

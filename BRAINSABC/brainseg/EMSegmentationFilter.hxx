@@ -6,8 +6,8 @@
 #include <sstream>
 #include <iomanip>
 
-#include <math.h>
-#include <stdlib.h>
+#include <cmath>
+#include <cstdlib>
 
 #include "itkAddImageFilter.h"
 #include "itkBSplineDownsampleImageFilter.h"

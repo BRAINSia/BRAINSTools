@@ -8,7 +8,7 @@
 #include <itkSpatialOrientation.h>
 #include <itkSpatialOrientationAdapter.h>
 #include <itkOrientImageFilter.h>
-#include <stdio.h>
+#include <cstdio>
 // #include <itkIO.h>
 // #include <itkIO2.h>
 

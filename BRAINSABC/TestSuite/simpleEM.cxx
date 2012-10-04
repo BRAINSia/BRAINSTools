@@ -29,7 +29,7 @@
 #include <string>
 #include <sstream>
 
-#include <stdlib.h>
+#include <cstdlib>
 // template <class inputPixelType,class outputPixelType,class priorPixelType>
 template <class priorPixelType, class inputPixelType>
 int simpleRunEMS( std::string t1Volume,

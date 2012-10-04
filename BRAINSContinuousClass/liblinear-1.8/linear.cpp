@@ -1,8 +1,8 @@
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdarg.h>
+#include <cmath>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <cstdarg>
 #include "linear.h"
 #include "tron.h"
 #ifdef USE_VNL_RANDOM

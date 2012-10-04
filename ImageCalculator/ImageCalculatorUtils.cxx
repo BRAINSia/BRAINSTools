@@ -15,9 +15,9 @@
 
 #include "ImageCalculatorUtils.h"
 #include "Imgmath.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 #include <vcl_cmath.h>
 #include <iostream>
 #include <metaCommand.h>

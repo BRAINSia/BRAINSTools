@@ -41,10 +41,10 @@
 #include <QPushButton>
 #include <QListWidget>
 
-#include "stdio.h"
+#include <cstdio>
 #include <iostream>
 #include <fstream>
-#include "string.h"
+#include <cstring>
 #include <map>
 #include <vector>
 

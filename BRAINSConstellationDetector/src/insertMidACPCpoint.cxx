@@ -14,7 +14,7 @@
 // {NameOfoutputlandmarkFile}.fcsv
 
 #include "itkImage.h"
-#include "math.h"
+#include <cmath>
 #include "Slicer3LandmarkIO.h"
 #include "insertMidACPCpointCLP.h"
 

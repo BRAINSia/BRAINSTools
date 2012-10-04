@@ -42,7 +42,7 @@ Minimal Input Example:
 #include "itkLargestForegroundFilledMaskImageFilter.h"
 
 #include <fstream>
-#include <math.h>
+#include <cmath>
 #include <string>
 
 #define PR(x) std::cout << #x " = " << x << "\n"; // a simple print macro for

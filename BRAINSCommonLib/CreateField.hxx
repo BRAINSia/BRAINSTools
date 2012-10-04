@@ -4,7 +4,7 @@
 #include "itkIOCommon.h"
 #include "itkVectorIndexSelectionCastImageFilter.h"
 #include "itkIO.h"
-#include <errno.h>
+#include <cerrno>
 
 namespace itk
 {

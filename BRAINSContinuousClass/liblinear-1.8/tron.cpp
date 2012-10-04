@@ -1,7 +1,7 @@
-#include <math.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdarg.h>
+#include <cmath>
+#include <cstdio>
+#include <cstring>
+#include <cstdarg>
 #include "tron.h"
 
 #ifndef min

@@ -16,7 +16,7 @@
 // The final output of this program is a new landmark fcsv file which contains the average coordinate of each landmark
 
 #include "itkImage.h"
-#include "math.h"
+#include <cmath>
 #include "Slicer3LandmarkIO.h"
 
 int main( int argc, char * argv[] )

@@ -16,9 +16,9 @@
 #include "itkImageFileReader.h"
 #include "itkImageDuplicator.h"
 
-#include "string.h"
+#include <cstring>
 #include <map>
-#include "stdio.h"
+#include <cstdio>
 #include <vector>
 #include <vnl/vnl_matlab_read.h>
 

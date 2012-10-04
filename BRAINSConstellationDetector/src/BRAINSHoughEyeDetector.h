@@ -18,7 +18,7 @@
 #include "itkRescaleIntensityImageFilter.h"
 #include "itkImageFileWriter.h"
 
-#include "string.h"
+#include <cstring>
 
 namespace itk
 {

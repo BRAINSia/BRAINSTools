@@ -15,7 +15,7 @@
 #include <fstream>
 #include <vector>
 #include <string>
-#include <stdio.h>
+#include <cstdio>
 
 #include "itkIO.h"
 #include "itkVector.h"

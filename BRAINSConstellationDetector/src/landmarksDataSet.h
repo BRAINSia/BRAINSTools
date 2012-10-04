@@ -11,7 +11,7 @@
 #include <map>
 #include <string>
 #include <iostream>
-#include <stdlib.h>
+#include <cstdlib>
 
 /*
  * This class contains a single set of landmarks and it's associated intensity image file.

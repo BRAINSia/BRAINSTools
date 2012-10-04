@@ -20,10 +20,10 @@
 #include "itkTransformFileWriter.h"
 #include "itkVersorRigid3DTransform.h"
 
-#include "stdio.h"
+#include <cstdio>
 #include <iostream>
 #include <fstream>
-#include "string.h"
+#include <cstring>
 #include <map>
 
 class BRAINSConstellationDetectorPrimary

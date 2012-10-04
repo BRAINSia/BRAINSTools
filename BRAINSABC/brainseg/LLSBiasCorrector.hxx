@@ -1,8 +1,8 @@
 #ifndef __LLSBiasCorrector_hxx
 #define __LLSBiasCorrector_hxx
 
-#include <float.h>
-#include <math.h>
+#include <cfloat>
+#include <cmath>
 #include <cmath>
 #include <iostream>
 

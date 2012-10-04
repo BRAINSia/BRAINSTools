@@ -19,7 +19,7 @@
 #ifndef __itkDtiStreamlineTrackingFilter_hxx
 #define __itkDtiStreamlineTrackingFilter_hxx
 
-#include <math.h>
+#include <cmath>
 
 #include "vtkFloatArray.h"
 #include "vtkPolyLine.h"

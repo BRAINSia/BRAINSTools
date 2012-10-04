@@ -16,7 +16,7 @@
 #include <vnl/vnl_vector.h>
 #include <vnl/algo/vnl_svd.h>
 #include <vcl_cmath.h>
-#include <stdio.h>
+#include <cstdio>
 
 /*
   *  The "Coordinate System" problem is closely related to generation

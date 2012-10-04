@@ -19,7 +19,7 @@
 #include <iostream>
 #include <fstream>
 
-#include <math.h>
+#include <cmath>
 
 #include <itkImage.h>
 #include <itkImageFileWriter.h>

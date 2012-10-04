@@ -17,8 +17,8 @@
 #include <vector>
 #include <fstream>
 #include <iostream>
-#include "math.h"
-#include "string.h"
+#include <cmath>
+#include <cstring>
 #include <map>
 
 inline void

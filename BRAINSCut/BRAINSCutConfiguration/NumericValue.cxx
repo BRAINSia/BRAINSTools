@@ -1,6 +1,6 @@
 #include "FloatValue.h"
 #include "IntValue.h"
-#include <stdlib.h>
+#include <cstdlib>
 #include "BRAINSCutExceptionStringHandler.h"
 
 //

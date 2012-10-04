@@ -33,7 +33,7 @@ case n:     PCn1         PCn2
 // Then, the average, variance and standard deviation of these distances are calculated over all n cases.
 
 #include "itkImage.h"
-#include "math.h"
+#include <cmath>
 #include "Slicer3LandmarkIO.h"
 
 int main( int argc, char * argv[] )

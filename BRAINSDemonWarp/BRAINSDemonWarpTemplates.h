@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 #include <fstream>
-#include <stdio.h>
+#include <cstdio>
 #include "itkImage.h"
 #include "itkIndex.h"
 #include "itkSize.h"

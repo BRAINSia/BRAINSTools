@@ -13,11 +13,11 @@
 // Use linear interpolation to keep the processing quick.
 #define __QUICK_RUNS_APPROXIMATION__
 
-#include <stdio.h>     // This include file should be removed, prefer constructs
+#include <cstdio>      // This include file should be removed, prefer constructs
                        // from the std library
-#include <stdlib.h>    // This include file should be removed, prefer constructs
+#include <cstdlib>     // This include file should be removed, prefer constructs
                        // from the std library
-#include <math.h>      // This include file should be removed, use vcl_math
+#include <cmath>       // This include file should be removed, use vcl_math
                        // instead
 #include <sys/types.h> // This include file should be removed, unix only
                        // non-portable
@@ -25,9 +25,9 @@
                        // non-portable
 #include <unistd.h>    // This include file should be removed, unix only
                        // non-portable
-#include <time.h>      // This include file should be removed, unix only
+#include <ctime>       // This include file should be removed, unix only
                        // non-portable
-#include <ctype.h>     // This include file should be removed, use vcl_math
+#include <cctype>      // This include file should be removed, use vcl_math
                        // instead
                        // #include <volume.h> //This include file should be
                        // removed

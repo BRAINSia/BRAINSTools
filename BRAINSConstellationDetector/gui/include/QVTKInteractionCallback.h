@@ -14,7 +14,7 @@
 #include <QObject>
 #include <QString>
 
-#include "math.h"
+#include <cmath>
 
 #include <QDebug>
 

@@ -10,7 +10,7 @@
 
 #include <map>
 #include <vector>
-#include <ctype.h>
+#include <cctype>
 
 class XMLElementParser :
   public XMLElementContainer

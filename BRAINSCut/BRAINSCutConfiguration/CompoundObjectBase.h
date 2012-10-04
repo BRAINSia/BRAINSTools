@@ -4,7 +4,7 @@
 #include "StringValue.h"
 #include <map>
 #include <vector>
-#include <ctype.h>
+#include <cctype>
 
 class CompoundObjectBase :
   public ProcessObjectBase

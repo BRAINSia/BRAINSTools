@@ -16,10 +16,10 @@
 #include "itkVersorRigid3DTransform.h"
 #include "itkEuler3DTransform.h"
 
-#include "stdio.h"
+#include <cstdio>
 #include <iostream>
 #include <fstream>
-#include "string.h"
+#include <cstring>
 #include <map>
 #include <vnl/vnl_cross.h>
 

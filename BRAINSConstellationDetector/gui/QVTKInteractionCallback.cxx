@@ -13,7 +13,7 @@
 #include "vtkRendererCollection.h"
 #include "vtkRenderWindow.h"
 #include "vtkInteractorStyleImage.h"
-#include "math.h"
+#include <cmath>
 
 // The mouse motion callback, to turn "Slicing" on and off
 void QVTKInteractionCallback::Execute(vtkObject *, unsigned long myEvent, void *)

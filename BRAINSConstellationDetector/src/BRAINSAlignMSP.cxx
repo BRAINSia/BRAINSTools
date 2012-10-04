@@ -28,7 +28,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 #include <sstream>
-#include <math.h>
+#include <cmath>
 #include <itkIntensityWindowingImageFilter.h>
 #include "BRAINSThreadControl.h"
 #include "landmarksConstellationCommon.h"

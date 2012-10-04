@@ -9,7 +9,6 @@
 #include <sstream>
 #include <vnl/vnl_random.h>
 #include <itksys/SystemTools.hxx>
-#include <stdint.h>
 
 class ShuffleVectors
 {

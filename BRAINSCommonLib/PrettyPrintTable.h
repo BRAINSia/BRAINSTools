@@ -1,6 +1,6 @@
 #ifndef __PrettyPrintTable_h
 #define __PrettyPrintTable_h
-#include <stdio.h>
+#include <cstdio>
 #include <vector>
 #include <string>
 #include <ostream>

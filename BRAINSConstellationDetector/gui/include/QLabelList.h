@@ -18,7 +18,7 @@
 #include <QColor>
 #include <QPalette>
 
-#include "assert.h"
+#include <cassert>
 #include <iostream>
 #include <map>
 #include <vector>

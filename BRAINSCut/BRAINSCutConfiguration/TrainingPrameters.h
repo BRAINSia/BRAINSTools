@@ -6,7 +6,7 @@
 #include "BooleanValue.h"
 #include "ElementParser.h"
 
-#include <stdlib.h> // For EXIT_SUCCESS
+#include <cstdlib> // For EXIT_SUCCESS
 
 class TrainingParameters : public ElementParser
 {

@@ -18,7 +18,7 @@
 #define _itkMixtureStatisticCostFunction_hxx
 
 #include "itkMixtureStatisticCostFunction.h"
-#include "assert.h"
+#include <cassert>
 
 namespace itk
 {

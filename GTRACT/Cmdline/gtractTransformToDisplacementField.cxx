@@ -25,9 +25,9 @@ PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <errno.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cerrno>
 
 #include <itkImageFileWriter.h>
 #include <itkImageFileReader.h>

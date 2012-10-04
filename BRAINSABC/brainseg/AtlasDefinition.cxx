@@ -2,7 +2,7 @@
 #include <expat.h>
 #include <iostream>
 #include <fstream>
-#include <stdlib.h>
+#include <cstdlib>
 #include <itksys/SystemTools.hxx>
 
 namespace // anon

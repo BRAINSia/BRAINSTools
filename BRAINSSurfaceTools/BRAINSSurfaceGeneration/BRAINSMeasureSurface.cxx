@@ -32,9 +32,9 @@
 
 #include "BRAINSMeasureSurfaceCLP.h"
 
-#include <stdlib.h>
+#include <cstdlib>
 #include <sys/stat.h>
-#include <time.h>
+#include <ctime>
 #include <algorithm>
 
 template <class T>

@@ -45,7 +45,7 @@ typedef ShortImageType::Pointer ShortImagePointer;
 #include <sstream>
 #include <map>
 
-#include <stdlib.h>
+#include <cstdlib>
 
 #include <StandardizeMaskIntensity.h>
 #include "BRAINSABCCLP.h"

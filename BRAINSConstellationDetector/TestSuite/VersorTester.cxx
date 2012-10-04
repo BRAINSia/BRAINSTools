@@ -1,5 +1,5 @@
 #include <sstream>
-#include <math.h>
+#include <cmath>
 
 #include <vnl/vnl_math.h>
 #include <itkPoint.h>

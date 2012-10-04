@@ -51,7 +51,7 @@
 
 #include "itkIO.h"
 
-#include <stdio.h>
+#include <cstdio>
 
 enum
   {

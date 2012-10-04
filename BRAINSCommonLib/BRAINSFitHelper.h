@@ -16,7 +16,7 @@
 #include <fstream>
 #include <vector>
 #include <string>
-#include <stdio.h>
+#include <cstdio>
 #include "itkImageRandomNonRepeatingConstIteratorWithIndex.h"
 
 #include "BRAINSCommonLibWin32Header.h"

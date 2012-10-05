@@ -3,23 +3,10 @@ include_directories(
   ${BRAINSTools_SOURCE_DIR}/BRAINSABC/brainseg
   ${BRAINSTools_SOURCE_DIR}/BRAINSABC/common
 )
-#  ${CMAKE_CURRENT_SOURCE_DIR}/../qhull
 
-set(QHULL_SRCS
-  ../qhull/user.c
-  ../qhull/global.c
-  ../qhull/stat.c
-  ../qhull/io.c
-  ../qhull/geom2.c
-  ../qhull/poly2.c
-  ../qhull/merge.c
-  ../qhull/qhull.c
-  ../qhull/geom.c
-  ../qhull/poly.c
-  ../qhull/qset.c
-  ../qhull/mem.c
-  QHullMSTClusteringProcess.cxx
-  )
+#set(QHULL_SRCS
+#  QHullMSTClusteringProcess.cxx
+#  )
 
 set(BRAINSABCCOMMONLIB_SRCS
   ../common/Log.cxx

@@ -5,6 +5,10 @@
 #define __BRAINSABCUtilities__h__
 
 #include "Log.h"
+
+#include <AtlasDefinition.h>
+#include <BRAINSFitHelper.h>
+
 #include <itkImage.h>
 #include <itkArray.h>
 
@@ -13,9 +17,7 @@
 #include <vnl/algo/vnl_matrix_inverse.h>
 
 #include <vector>
-
-#include <AtlasDefinition.h>
-#include <BRAINSFitHelper.h>
+#include <csignal>
 
 // The 200805 OpenMPv3.0 specificaiton allows unsigned iterators
 #if defined(_OPENMP)
@@ -31,15 +33,16 @@ typedef unsigned int LOOPITERTYPE;
 //  vnl_math_isnan(value) || vnl_math_isinf(value) )
 #if 1  // Runtime performance penalty that can be used to find faulty code
        // during debugging.
-#define CHECK_NAN( XXXTESTXXX, srcfile, srcline ) \
+#define CHECK_NAN( XXXTESTXXX, srcfile, srcline, extra_print ) \
     { \
     if( !vnl_math_isfinite( XXXTESTXXX ) ) \
       { \
-      std::cout << "Found " << XXXTESTXXX << " at " << srcfile << " " << srcline << std::endl; \
+      std::cout << "Found " << XXXTESTXXX << " at " << srcfile << " " << srcline << extra_print << std::endl; \
+      raise(SIGSEGV); \
       } \
     }
 #else
-#define CHECK_NAN( XXXTESTXXX, srcfile, srcline ) \
+#define CHECK_NAN( XXXTESTXXX, srcfile, srcline, extra_print ) \
                                 { }
 #endif
 

@@ -49,7 +49,11 @@ void NormalizeProbListInPlace(std::vector<typename TProbabilityImage::Pointer> &
           FloatingPrecision sumPrior = 0.0;
           for( unsigned int iprior = 0; iprior < numProbs; iprior++ )
             {
-            sumPrior += ProbList[iprior]->GetPixel(currIndex);
+            const FloatingPrecision & ProbListValue = ProbList[iprior]->GetPixel(currIndex);
+            CHECK_NAN(ProbListValue, __FILE__, __LINE__, "\n  sumPrior: " << sumPrior << "\n  currIndex: "
+                                                                          << currIndex << "\n ProbListValue: " << ProbListValue << "\n  iprior: "
+                                                                          << iprior );
+            sumPrior += ProbListValue;
             }
           if( sumPrior < 1e-20 )
             {
@@ -65,7 +69,11 @@ void NormalizeProbListInPlace(std::vector<typename TProbabilityImage::Pointer> &
             for( unsigned int iprior = 0; iprior < numProbs; iprior++ )
               {
               const FloatingPrecision normValue = ProbList[iprior]->GetPixel(currIndex) * invSumPrior;
-              CHECK_NAN(normValue, __FILE__, __LINE__);
+
+              CHECK_NAN(normValue, __FILE__, __LINE__, "\n  sumPrior: " << sumPrior << "\n  iprior: " << iprior << "\n  currIndex: "
+                                                                        << currIndex << "\n probList: "
+                                                                        << ProbList[iprior]->GetPixel(
+                          currIndex) << "\n  invSumPrior: " << invSumPrior );
               ProbList[iprior]->SetPixel(currIndex, normValue);
               }
             }

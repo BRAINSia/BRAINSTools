@@ -287,10 +287,14 @@ static void RescaleFunctionLocal( std::vector<FloatImageType::Pointer> & localLi
     }
 }
 
-static std::vector<bool> FindDuplicateImages(const std::vector<FloatImagePointer> candidateSameImageList )
+static std::vector<bool> FindDuplicateImages(const std::vector<FloatImagePointer> candidateSameImageList,
+                                             const std::vector<std::string> & inputVolumeTypes )
 {
   // Images with higher correlation are considered soo much the same that they are duplicates.
   const double IMAGES_SAME_CORRELATION_CUTOFF = 0.999;
+  const double IMAGES_DIFFERENT_CORRELATION_CUTOFF = 0.98; // If the types are different, then use a lower cut-off
+
+  // PD-T2 interleaved are often very much co-linear.
 
   typedef itk::IdentityTransform<double, FloatImageType::ImageDimension> IDTYPE;
   IDTYPE::Pointer myID = IDTYPE::New();
@@ -344,7 +348,11 @@ static std::vector<bool> FindDuplicateImages(const std::vector<FloatImagePointer
       const double correlationValue = vcl_abs(myNormalizer->GetValue(myID->GetParameters() ) );
       muLogMacro(
         << "Correlation value between image " << start << " and image " << q << ": " << correlationValue << std::endl);
-      if( correlationValue > IMAGES_SAME_CORRELATION_CUTOFF )
+      if( ( (inputVolumeTypes[start] == inputVolumeTypes[q]) && ( correlationValue > IMAGES_SAME_CORRELATION_CUTOFF ) )
+          ||
+          ( (inputVolumeTypes[start] != inputVolumeTypes[q]) &&
+            ( correlationValue > IMAGES_DIFFERENT_CORRELATION_CUTOFF ) )
+          )
         {
         isDuplicated[q] = true;
         }
@@ -1159,7 +1167,7 @@ int main(int argc, char * *argv)
           // positive definite, and this
           // occurs when two or more of the images are linearly dependant (i.e.
           // nearly the same image).
-          candidateDuplicatesList = FindDuplicateImages(intraSubjectRegisteredImageList);
+          candidateDuplicatesList = FindDuplicateImages(intraSubjectRegisteredImageList, inputVolumeTypes);
           if( candidateDuplicatesList.size() > 0 )
             {
             unsigned int actualDuplicates = 0;

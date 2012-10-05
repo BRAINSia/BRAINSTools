@@ -342,7 +342,9 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
   // Need to normalize priors before getting started.
   this->m_OriginalSpacePriors = priors;
   ZeroNegativeValuesInPlace<TProbabilityImage>(this->m_OriginalSpacePriors);
+  std::cout << "HACK HERE: " << __FILE__ << " " << __LINE__ << std::endl;
   NormalizeProbListInPlace<TProbabilityImage>(this->m_OriginalSpacePriors);
+  std::cout << "HACK HERE: " << __FILE__ << " " << __LINE__ << std::endl;
   this->m_OriginalSpacePriors = priors;
   this->Modified();
   m_UpdateRequired = true;
@@ -610,8 +612,8 @@ ComputeOnePosterior(
   const FloatingPrecision denom =
     vcl_pow(2 * vnl_math::pi, numChannels / 2.0) * vcl_sqrt(detcov) + vnl_math::eps;
   const FloatingPrecision invdenom = 1.0 / denom;
-  CHECK_NAN(invdenom, __FILE__, __LINE__);
-  MatrixType invcov = MatrixInverseType(currCovariance);
+  CHECK_NAN(invdenom, __FILE__, __LINE__, "\n  denom:" << denom );
+  const MatrixType invcov = MatrixInverseType(currCovariance);
 
   typename TProbabilityImage::Pointer post = TProbabilityImage::New();
   post->CopyInformation(prior);
@@ -651,7 +653,14 @@ ComputeOnePosterior(
             FloatingPrecision mahalo = 0.0;
             for( unsigned int ichan = 0; ichan < numChannels; ichan++ )
               {
-              mahalo += X(ichan, 0) * Y(ichan, 0);
+              const FloatingPrecision & currVal = X(ichan, 0) * Y(ichan, 0);
+              CHECK_NAN(currVal, __FILE__, __LINE__, "\n  currIndex: " << currIndex
+                                                                       << "\n  mahalo: " << mahalo
+                                                                       << "\n  ichan: " << ichan
+                                                                       << "\n  invcov: " << invcov
+                                                                       << "\n  X:  " << X
+                                                                       << "\n  Y:  " << Y );
+              mahalo += currVal;
               }
 
             // Note:  This is the maximum likelyhood estimate as described in
@@ -661,6 +670,12 @@ ComputeOnePosterior(
 
             const typename TProbabilityImage::PixelType currentPosterior =
               static_cast<typename TProbabilityImage::PixelType>( (priorScale * priorValue * likelihood) );
+            CHECK_NAN(currentPosterior, __FILE__, __LINE__, "\n  currIndex: " << currIndex
+                                                                              << "\n  priorScale: " << priorScale << "\n  priorValue: " << priorValue << "\n  likelihood: " << likelihood
+                                                                              << "\n  mahalo: " << mahalo
+                                                                              << "\n  invcov: " << invcov
+                                                                              << "\n  X:  " << X
+                                                                              << "\n  Y:  " << Y );
             post->SetPixel(currIndex, currentPosterior);
             }
           }
@@ -690,7 +705,7 @@ ComputePosteriors(const std::vector<typename TProbabilityImage::Pointer> & Prior
   for( unsigned int iclass = 0; iclass < numClasses; iclass++ )
     {
     const FloatingPrecision priorScale = PriorWeights[iclass];
-    CHECK_NAN(priorScale, __FILE__, __LINE__);
+    CHECK_NAN(priorScale, __FILE__, __LINE__, "\n  iclass: " << iclass );
 
     Posteriors[iclass] = ComputeOnePosterior<TInputImage, TProbabilityImage>(
         priorScale,
@@ -1610,7 +1625,9 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
       0, this->m_InputImages, this->m_WarpedPriors, currForgroundBrainMask);
     {
     BlendPosteriorsAndPriors<TProbabilityImage>(0.0, this->m_WarpedPriors, this->m_WarpedPriors, this->m_WarpedPriors);
+    std::cout << "HACK HERE: " << __FILE__ << " " << __LINE__ << std::endl;
     NormalizeProbListInPlace<TProbabilityImage>(this->m_WarpedPriors);
+    std::cout << "HACK HERE: " << __FILE__ << " " << __LINE__ << std::endl;
     if( this->m_DebugLevel > 9 )
       {
       this->WriteDebugBlendClippedPriors(0);
@@ -1688,7 +1705,9 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
       ComputePosteriors<TInputImage, TProbabilityImage>(this->m_WarpedPriors, this->m_PriorWeights,
                                                         this->m_CorrectedImages,
                                                         this->m_ListOfClassStatistics);
+    std::cout << "HACK HERE: " << __FILE__ << " " << __LINE__ << std::endl;
     NormalizeProbListInPlace<TProbabilityImage>(this->m_Posteriors);
+    std::cout << "HACK HERE: " << __FILE__ << " " << __LINE__ << std::endl;
     this->WriteDebugPosteriors(CurrentEMIteration);
     ComputeLabels<TProbabilityImage>(this->m_Posteriors, this->m_PriorIsForegroundPriorVector,
                                      this->m_PriorLabelCodeVector, this->m_NonAirRegion, this->m_DirtyLabels,
@@ -1736,7 +1755,9 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
         BlendPosteriorsAndPriors<TProbabilityImage>(1.0 - priorWeighting, this->m_Posteriors, this->m_WarpedPriors,
                                                     this->m_WarpedPriors);
         priorWeighting *= priorWeighting;
+        std::cout << "HACK HERE: " << __FILE__ << " " << __LINE__ << std::endl;
         NormalizeProbListInPlace<TProbabilityImage>(this->m_WarpedPriors);
+        std::cout << "HACK HERE: " << __FILE__ << " " << __LINE__ << std::endl;
         this->WriteDebugBlendClippedPriors(CurrentEMIteration);
         }
       }
@@ -1748,7 +1769,8 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
     // TODO: move to before prevL update
     deltaLogLikelihood = vcl_fabs( (logLikelihood - prevLogLikelihood) / prevLogLikelihood);
     // (logLikelihood - prevLogLikelihood) / vcl_fabs(prevLogLikelihood);
-    CHECK_NAN(deltaLogLikelihood, __FILE__, __LINE__);
+    CHECK_NAN(deltaLogLikelihood, __FILE__, __LINE__,
+              "\n logLikelihood: " << logLikelihood << "\n prevLogLikelihood: " << prevLogLikelihood );
     muLogMacro(
       << "delta vcl_log(likelihood) = " << deltaLogLikelihood << "  Convergence Tolerance: "
       << m_WarpLikelihoodTolerance <<  std::endl);
@@ -1765,7 +1787,8 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
 
     CurrentEMIteration++;
     const float biasIncrementInterval = (m_MaximumIterations / (m_MaxBiasDegree + 1) );
-    CHECK_NAN(biasIncrementInterval, __FILE__, __LINE__);
+    CHECK_NAN(biasIncrementInterval, __FILE__, __LINE__,
+              "\n m_MaximumIterations: " << m_MaximumIterations << "\n  m_MaxBiasDegree: " << m_MaxBiasDegree );
     // Bias correction
     if( m_MaxBiasDegree > 0 )
       {
@@ -1787,7 +1810,9 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
     ComputePosteriors<TInputImage, TProbabilityImage>(this->m_WarpedPriors, this->m_PriorWeights,
                                                       this->m_CorrectedImages,
                                                       this->m_ListOfClassStatistics);
+  std::cout << "HACK HERE: " << __FILE__ << " " << __LINE__ << std::endl;
   NormalizeProbListInPlace<TProbabilityImage>(this->m_Posteriors);
+  std::cout << "HACK HERE: " << __FILE__ << " " << __LINE__ << std::endl;
   this->WriteDebugPosteriors(CurrentEMIteration + 100);
   ComputeLabels<TProbabilityImage>(this->m_Posteriors, this->m_PriorIsForegroundPriorVector,
                                    this->m_PriorLabelCodeVector, this->m_NonAirRegion, this->m_DirtyLabels,

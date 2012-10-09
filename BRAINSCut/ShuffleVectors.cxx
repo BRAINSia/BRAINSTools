@@ -113,24 +113,16 @@ public:  typedef unsigned long unsigned64;
 };
 }
 
-std::ios::off_type *
-ShuffleVectors::ShuffleOrder()
+void
+ShuffleVectors::ShuffleOrder(std::vector<std::ios::off_type> & rval) const
 {
   typedef findUINT64Type<sizeof(unsigned long)>::unsigned64 unsigned64;
-
   vnl_random randgen;
-
 #define randgen64()                                      \
   ( ( static_cast<unsigned64>( randgen.lrand32() ) << 32 ) \
     | static_cast<unsigned64>( randgen.lrand32() ) )
 
-  std::ios::off_type *rval = new std::ios::off_type[m_output_TVC];
-
-  if( rval == 0 )
-    {
-    std::cout << "Can't allocate shuffled ordering"
-              << std::endl;
-    }
+  rval.resize(m_output_TVC);
   for( unsigned long i = 0; i < m_output_TVC; i++ )
     {
     rval[i] = static_cast<std::ios::off_type>( i );
@@ -143,7 +135,7 @@ ShuffleVectors::ShuffleOrder()
     rval[i] = rval[j];
     rval[j] = tmp;
     }
-  return rval;
+  return;
 }
 
 //
@@ -222,7 +214,8 @@ ShuffleVectors::Shuffling()
     }
   // make a shuffled output ordering
 
-  std::ios::off_type *randomOrder = ShuffleOrder();
+  std::vector<std::ios::off_type> randomOrder;
+  ShuffleOrder(randomOrder);
 
   unsigned recordsize = ( m_IVS + m_OVS + 1 ) * sizeof( float );
   float *  buf = new float[m_IVS + m_OVS + 1];
@@ -291,7 +284,7 @@ ShuffleVectors::Shuffling()
                << randomOrder[vectorIndex]
                << " @ "
                <<seekval <<std::endl;
-      //*/
+      */
       }
 
     if( buf[m_IVS  + m_OVS] != LineGuard )
@@ -307,5 +300,4 @@ ShuffleVectors::Shuffling()
   close(shuffledFile);
   std::cout << "done." << std::endl;
   delete[] buf;
-  delete[] randomOrder;
 }

@@ -34,9 +34,15 @@ BRAINSCutApplyModel
   applyDataSetList = this->m_myDataHandler.GetApplyDataSet();
 
   /** set default: ANN **/
-  openCVANN = new OpenCVMLPType();
+  this->m_openCVANN = new OpenCVMLPType();
 
   SetMethod( "ANN" );
+}
+
+BRAINSCutApplyModel
+::~BRAINSCutApplyModel()
+{
+  delete this->m_openCVANN;
 }
 
 void
@@ -414,7 +420,7 @@ BRAINSCutApplyModel
     /* predict */
     if( method == "ANN" )
       {
-      openCVANN->predict( &openCVInputFeature, openCVOutput );
+      this->m_openCVANN->predict( &openCVInputFeature, openCVOutput );
 
       /* insert result to the result output vector */
       resultOutputVector.insert( std::pair<hashKeyType, scalarType>(
@@ -471,7 +477,7 @@ BRAINSCutApplyModel
     throw BRAINSCutExceptionStringHandler( errorMsg );
     }
 
-  openCVANN->load( ANNModelFilename.c_str() );
+  this->m_openCVANN->load( ANNModelFilename.c_str() );
 }
 
 void

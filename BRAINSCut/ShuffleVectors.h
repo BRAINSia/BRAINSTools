@@ -35,7 +35,7 @@ public:
 private:
   std::string TempName( const char *s );
 
-  std::ios::off_type * ShuffleOrder();
+  void ShuffleOrder(std::vector<std::ios::off_type> & rval) const;
 
   //
   // Member Variables::

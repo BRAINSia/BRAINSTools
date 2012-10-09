@@ -14,6 +14,7 @@ public:
   {
   };
   BRAINSCutApplyModel( BRAINSCutDataHandler& dataHandler );
+  ~BRAINSCutApplyModel();
 
   void Apply();
 
@@ -61,7 +62,7 @@ private:
 
   scalarType      annOutputThreshold;
   scalarType      gaussianSmoothingSigma;
-  OpenCVMLPType * openCVANN;
+  OpenCVMLPType * m_openCVANN;
 
   CvRTrees openCVRandomForest;
 

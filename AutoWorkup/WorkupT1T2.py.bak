@@ -192,9 +192,9 @@ def MakeNewAtlasTemplate(t1_image,deformed_list,
             sitk.WriteImage(binmask,clipped_name)
             clean_deformed_list[index]=os.path.realpath(clipped_name)
         if base_name == 'AVG_T2WARP_AVG_T2.nii.gz':
-            T2File=full_pathname
+           T2File=full_pathname
         if base_name == 'AVG_PDWARP_AVG_PD.nii.gz':
-            PDFile=full_pathname
+           PDFile=full_pathname
         if base_name in interiorPriors:
             ### Make clipped posteriors for brain regions
             curr=sitk.Cast(sitk.ReadImage(full_pathname),sitk.sitkFloat32)
@@ -630,7 +630,7 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                 print("HACK2:  all FLs: {0} {1}".format(global_AllFLs, len(global_AllFLs) ))
                 print("HACK2:  all Others: {0} {1}".format(global_AllOthers, len(global_AllOthers) ))
                 if ( 'SEGMENTATION' in WORKFLOW_COMPONENTS ) : # Currently only works with multi-modal_data
-                    print("HACK SEGMENTATION IN  WORKFLOW_COMPONENTS")
+                     print("HACK SEGMENTATION IN  WORKFLOW_COMPONENTS")
                 if ( len(global_AllT2s) > 0 ): # Currently only works with multi-modal_data
                     print("HACK len(global_AllT2s) > 0 ")
                 print("HACK")

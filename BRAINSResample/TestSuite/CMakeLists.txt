@@ -135,4 +135,22 @@ if(0) ##This functionality does not work yet
     )
 endif()
 
+set(BRAINSResampleTestName BRAINSResampleTest_H5CompositeTransform)
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSResampleTestName}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSResampleTestDriver>
+  --compare DATA{${TestData_DIR}/test.nii.gz}
+            ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSResampleTestName}.result.nii.gz
+  --compareIntensityTolerance 9
+  --compareRadiusTolerance 1
+  --compareNumberOfPixelsTolerance 100
+  BRAINSResampleTest
+  --inputVolume DATA{${TestData_DIR}/rotation.test.nii.gz}
+  ## --referenceVolume DATA{${TestData_DIR}/test.nii.gz}
+  --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSResampleTestName}.result.nii.gz
+  --interpolationMode Linear
+  --warpTransform DATA{${TestData_DIR}/syn.benchmark.transform.h5}
+  ## --compositeTransform DATA{${TestData_DIR}/syn.benchmark.transform.h5}
+  ## --deformationVolume DATA{${TestData_DIR}/syn.benchmark.transform.h5}
+  )
+
 ## - ExternalData_Add_Target( ${PROJECT_NAME}FetchData )  # Name of data management target

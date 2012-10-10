@@ -4,9 +4,9 @@
 #include "antsUtilities.h"
 #include "itkantsRegistrationHelper.h"
 
-typedef  ants::RegistrationHelper<3>                    RegistrationHelperType;
-typedef  RegistrationHelperType::ImageType              ImageType;
-typedef  RegistrationHelperType::CompositeTransformType CompositeTransformType;
+typedef  ants::RegistrationHelper<3>                       SyNRegistrationHelperType;
+typedef  SyNRegistrationHelperType::ImageType              ImageType;
+typedef  SyNRegistrationHelperType::CompositeTransformType CompositeTransformType;
 
 template <class FixedImageType, class MovingimageType>
 typename CompositeTransformType::Pointer
@@ -14,71 +14,92 @@ simpleSynReg( typename FixedImageType::Pointer & fixedImage,
               typename MovingimageType::Pointer & movingImage,
               typename CompositeTransformType::Pointer compositeInitialTransform )
 {
-  typename RegistrationHelperType::Pointer regHelper = RegistrationHelperType::New();
+  typename SyNRegistrationHelperType::Pointer regHelper = SyNRegistrationHelperType::New();
+    {
+    const float lowerQuantile = 0.0;
+    const float upperQuantile = 1.0;
+    const bool  doWinsorize(false);
+    regHelper->SetWinsorizeImageIntensities(doWinsorize, lowerQuantile, upperQuantile);
+    }
+    {
+    const bool doHistogramMatch(true);
+    regHelper->SetUseHistogramMatching(doHistogramMatch);
+    }
+    {
+    const bool doEstimateLearningRateAtEachIteration = true;
+    regHelper->SetDoEstimateLearningRateAtEachIteration( doEstimateLearningRateAtEachIteration );
+    }
+  // --convergence [250x100x70,1e-6,15]
+    {
+    std::vector<std::vector<unsigned int> > iterationList;
+    std::vector<unsigned int>               iterations(3);
+    iterations[0] = 350;
+    iterations[1] = 200;
+    iterations[2] = 5;   // NOTE: 5 does not converge, but it gives a reasonable result, 70 converges.
+    iterationList.push_back(iterations);
+    regHelper->SetIterations( iterationList );
+    }
+    {
+    std::vector<double> convergenceThresholdList;
+    const double        convergenceThreshold = 5e-6;
+    convergenceThresholdList.push_back(convergenceThreshold);
+    regHelper->SetConvergenceThresholds( convergenceThresholdList );
+    }
+    {
+    std::vector<unsigned int> convergenceWindowSizeList;
+    const unsigned int        convergenceWindowSize = 20;
+    convergenceWindowSizeList.push_back(convergenceWindowSize);
+    regHelper->SetConvergenceWindowSizes( convergenceWindowSizeList );
+    }
 
-  std::string whichMetric = "mattes";
-  typename RegistrationHelperType::MetricEnumeration curMetric = regHelper->StringToMetricType(whichMetric);
-  float lowerQuantile = 0.0;
-  float upperQuantile = 1.0;
-  bool  doWinsorize(false);
-  regHelper->SetWinsorizeImageIntensities(doWinsorize, lowerQuantile, upperQuantile);
+    {
+    // --shrink-factors 3x2x1
+    std::vector<std::vector<unsigned int> > shrinkFactorsList;
+    std::vector<unsigned int>               factors(3);
+    factors[0] = 3;
+    factors[1] = 2;
+    factors[2] = 1;
+    shrinkFactorsList.push_back(factors);
+    regHelper->SetShrinkFactors( shrinkFactorsList );
+    }
+    {
+    // --smoothing-sigmas 3x2x0
+    std::vector<std::vector<float> > smoothingSigmasList;
+    std::vector<float>               sigmas(3);
+    sigmas[0] = 3;
+    sigmas[1] = 2;
+    sigmas[2] = 0;
+    smoothingSigmasList.push_back(sigmas);
+    regHelper->SetSmoothingSigmas( smoothingSigmasList );
+    }
 
-  bool doHistogramMatch(true);
-  regHelper->SetUseHistogramMatching(doHistogramMatch);
+    {
+    const std::string whichMetric = "cc";
+    typename SyNRegistrationHelperType::MetricEnumeration curMetric = regHelper->StringToMetricType(whichMetric);
+    const double weighting = 1.0;
+    typename SyNRegistrationHelperType::SamplingStrategy samplingStrategy = SyNRegistrationHelperType::none; // none
+    const unsigned int bins = 32;                                                                            // bins
+    const unsigned int radius = 5;
+    const double       samplingPercentage = 1.0;
 
-  bool doEstimateLearningRateAtEachIteration = true;
-  regHelper->SetDoEstimateLearningRateAtEachIteration( doEstimateLearningRateAtEachIteration );
-
-  std::vector<std::vector<unsigned int> > iterationList;
-  std::vector<double>                     convergenceThresholdList;
-  std::vector<unsigned int>               convergenceWindowSizeList;
-  std::vector<std::vector<unsigned int> > shrinkFactorsList;
-  std::vector<std::vector<float> >        smoothingSigmasList;
-
-  // --convergence [150x100x70,1e-6,10]
-  std::vector<unsigned int> iterations(3);
-  iterations[0] = 150; iterations[1] = 100; iterations[2] = 75;
-  double       convergenceThreshold = 1e-6;
-  unsigned int convergenceWindowSize = 10;    // ?
-  ants::antscout << "  number of levels = 3 " << std::endl;
-  iterationList.push_back(iterations);
-  convergenceThresholdList.push_back(convergenceThreshold);
-  convergenceWindowSizeList.push_back(convergenceWindowSize);
-
-  // --shrink-factors 3x2x1
-  std::vector<unsigned int> factors(3);
-  factors[0] = 3; factors[1] = 2; factors[2] = 1;
-  shrinkFactorsList.push_back(factors);
-
-  // --smoothing-sigmas 3x2x0
-  std::vector<float> sigmas(3);
-  sigmas[0] = 3; sigmas[1] = 2; sigmas[2] = 0;
-  smoothingSigmasList.push_back(sigmas);
-
-  float samplingPercentage = 1.0;
-  typename RegistrationHelperType::SamplingStrategy samplingStrategy = RegistrationHelperType::regular; // Regular
-  unsigned int binOption = 32;                                                                          // bins
-  regHelper->AddMetric(curMetric, fixedImage, movingImage, 1.0, samplingStrategy, binOption, 1, samplingPercentage);
-
-  // --transform "SyN[0.25,3.0,0.0]"
-  float       learningRate = 0.25;
-  const float varianceForUpdateField = 3.0;
-  const float varianceForTotalField = 0.0;
-
-  regHelper->AddSyNTransform(learningRate, varianceForUpdateField, varianceForTotalField);
+    regHelper->AddMetric(curMetric, fixedImage, movingImage, weighting, samplingStrategy, bins, radius,
+                         samplingPercentage);
+    }
+    {
+    // --transform "SyN[0.33,3.0,0.0]"
+    const float learningRate = 0.33;
+    const float varianceForUpdateField = 3.0;
+    const float varianceForTotalField = 0.0;
+    regHelper->AddSyNTransform(learningRate, varianceForUpdateField, varianceForTotalField);
+    }
   regHelper->SetMovingInitialTransform( compositeInitialTransform );
-  regHelper->SetIterations( iterationList );
-  regHelper->SetConvergenceWindowSizes( convergenceWindowSizeList );
-  regHelper->SetConvergenceThresholds( convergenceThresholdList );
-  regHelper->SetSmoothingSigmas( smoothingSigmasList );
-  regHelper->SetShrinkFactors( shrinkFactorsList );
+  regHelper->SetLogStream(std::cout);
   if( regHelper->DoRegistration() == EXIT_FAILURE )
     {
     ants::antscout << "FATAL ERROR: REGISTRATION PROCESS WAS UNSUCCESSFUL" << std::endl;
     }
   // Get the output transform
   typename CompositeTransformType::Pointer outputCompositeTransform = regHelper->GetCompositeTransform();
-
   // return composite result Transform;
   return outputCompositeTransform;
 }

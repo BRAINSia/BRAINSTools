@@ -67,20 +67,20 @@
     <label>Warping Parameters</label>
     <description>Parameters used to define home the image is warped</description>
 
-    <transform fileExtensions=".nrrd" type="nonlinear" >
+    <transform fileExtensions=".nrrd" type="nonlinear">
       <name>deformationVolume</name>
       <longflag>deformationVolume</longflag>
-      <description>Displacement Field to be used to warp the image</description>
-      <label>Displacement Field</label>
+      <description>Displacement Field to be used to warp the image (ITKv3 or earlier)</description>
+      <label>Displacement Field (deprecated)</label>
       <channel>input</channel>
       <default></default>
     </transform>
 
-    <transform fileExtensions=".mat">
+    <transform fileExtensions=".h5,.hdf5,.mat,.txt,.">
       <name>warpTransform</name>
       <longflag>warpTransform</longflag>
-      <label>Warp By Transform</label>
-      <description>Filename for the BRAINSFit transform used in place of the deformation field</description>
+      <label>Transform file</label>
+      <description>Filename for the BRAINSFit transform (ITKv3 or earlier) or composite transform file (ITKv4)</description>
       <channel>input</channel>
       <default></default>
     </transform>

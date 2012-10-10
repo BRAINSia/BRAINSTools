@@ -53,17 +53,19 @@ int main(int argc, char *argv[])
   // Call register default transforms
   itk::TransformFactoryBase::RegisterDefaultTransforms();
 #endif
-  itk::Object::SetGlobalWarningDisplay(false); // itk warnings aren't
-                                               // thread safe and in
-                                               // this program cause
-                                               // intermittent crashes.
+  itk::Object::SetGlobalWarningDisplay(false); // itk warnings aren't thread safe and in
+                                               // this program cause intermittent crashes.
 
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
 
   const bool debug = true;
   const bool useTransform = ( warpTransform.size() > 0 );
-
   const bool useDisplacementField = ( deformationVolume.size() > 0 );
+
+  if( useTransform && useDisplacementField )
+    {
+    return EXIT_FAILURE;
+    }
 
   if( debug )
     {
@@ -76,36 +78,21 @@ int main(int argc, char *argv[])
     std::cout << "Background Value: " <<  defaultValue << std::endl;
     if( useDisplacementField )
       {
-      std::cout << "Warp by Displacement Volume: " <<  deformationVolume   << std::endl;
+      std::cout << "Warp by Displacement Volume: " << deformationVolume << std::endl;
       }
     if( useTransform )
       {
-      std::cout << "Warp By Transform: "  <<   warpTransform << std::endl;
+      std::cout << "Warp By Transform: " << warpTransform << std::endl;
       }
     std::cout << "=====================================================" << std::endl;
     }
 
-  if( useTransform == useDisplacementField )
-    {
-    std::cout
-      << "Choose one of the two possibilities, "
-      "an ITK compliant transform (BSpline, Rigid, Versor3D, Affine) --or-- a high-dimensional"
-      "deformation field."
-      << std::endl;
-    return EXIT_FAILURE;
-    }
-
-  TBRAINSResampleInternalImageType::Pointer PrincipalOperandImage;  // One name
-                                                                    // for the
-                                                                    // image to
-                                                                    // be
-                                                                    // warped.
+  TBRAINSResampleInternalImageType::Pointer PrincipalOperandImage;  // image to be warped
     {
     typedef itk::ImageFileReader<TBRAINSResampleInternalImageType> ReaderType;
     ReaderType::Pointer imageReader = ReaderType::New();
     imageReader->SetFileName(inputVolume);
     imageReader->Update();
-
     PrincipalOperandImage = imageReader->GetOutput();
     }
 
@@ -114,55 +101,46 @@ int main(int argc, char *argv[])
   typedef itk::Vector<VectorComponentType, GenericTransformImageNS::SpaceDimension> VectorPixelType;
   typedef itk::Image<VectorPixelType,  GenericTransformImageNS::SpaceDimension>     DisplacementFieldType;
 
-  // An empty SmartPointer constructor sets up someImage.IsNull() to represent a
-  // not-supplied state:
+  // An empty SmartPointer constructor sets up someImage.IsNull() to represent a not-supplied state:
   DisplacementFieldType::Pointer             DisplacementField;
   TBRAINSResampleReferenceImageType::Pointer ReferenceImage;
 
-  if( useTransform )
+  typedef itk::ImageFileReader<TBRAINSResampleReferenceImageType> ReaderType;
+  ReaderType::Pointer refImageReader = ReaderType::New();
+  if( referenceVolume.size() > 0 )
     {
-    typedef itk::ImageFileReader<TBRAINSResampleReferenceImageType> ReaderType;
-    ReaderType::Pointer refImageReader = ReaderType::New();
-    if( referenceVolume.size() > 0 )
-      {
-      refImageReader->SetFileName(referenceVolume);
-      }
-    else
-      {
-      std::cout << "Alert:  missing Reference Volume defaulted to: " <<  inputVolume << std::endl;
-      refImageReader->SetFileName(inputVolume);
-      }
-    refImageReader->Update();
-    ReferenceImage = refImageReader->GetOutput();
+    refImageReader->SetFileName(referenceVolume);
     }
-  else if( !useTransform )  // that is, it's a warp by deformation field:
+  else
     {
-    typedef itk::ImageFileReader<DisplacementFieldType> DefFieldReaderType;
-    DefFieldReaderType::Pointer fieldImageReader = DefFieldReaderType::New();
-    fieldImageReader->SetFileName(deformationVolume);
-    fieldImageReader->Update();
-    DisplacementField = fieldImageReader->GetOutput();
-
-    if( referenceVolume.size() > 0 )
-      {
-      typedef itk::ImageFileReader<TBRAINSResampleReferenceImageType> ReaderType;
-      ReaderType::Pointer refImageReader = ReaderType::New();
-      refImageReader->SetFileName(referenceVolume);
-      refImageReader->Update();
-      ReferenceImage = refImageReader->GetOutput();
-      }
-    // else ReferenceImage.IsNull() represents the delayed default
+    std::cout << "Warning:  missing Reference Volume defaulted to inputVolume" << std::endl;
+    refImageReader->SetFileName(inputVolume);
     }
-
-  // Read optional transform:
+  refImageReader->Update();
+  ReferenceImage = refImageReader->GetOutput();
 
   // An empty SmartPointer constructor sets up someTransform.IsNull() to
   // represent a not-supplied state:
   GenericTransformType::Pointer genericTransform;
 
-  if( useTransform )
+  if( useDisplacementField )  // it's a warp deformation field
     {
-    genericTransform = itk::ReadTransformFromDisk(warpTransform);
+    typedef itk::ImageFileReader<DisplacementFieldType> DefFieldReaderType;
+    DefFieldReaderType::Pointer fieldImageReader = DefFieldReaderType::New();
+    fieldImageReader->SetFileName( deformationVolume );
+    fieldImageReader->Update();
+    DisplacementField = fieldImageReader->GetOutput();
+    }
+  else if( useTransform )
+    {
+    try
+      {
+      genericTransform = itk::ReadTransformFromDisk( warpTransform );
+      }
+    catch( itk::ExceptionObject & excp )
+      {
+      std::cout << "******* HERE *******" << std::endl;
+      }
     if( inverseTransform )
       {
       std::string transformFileType = genericTransform->GetNameOfClass();
@@ -213,11 +191,11 @@ int main(int argc, char *argv[])
         {
         std::cout << "*** ERROR ***" << std::endl
                   << " The transform type of " << transformFileType
-                  << " does NOT support inverse transformation"
-                  << std::endl;
+                  << " does NOT support inverse transformation" << std::endl;
         }
       }
     }
+  std::cout << "******* NOT HERE *******" << std::endl;
   TBRAINSResampleInternalImageType::Pointer TransformedImage =
     GenericTransformImage<TBRAINSResampleInternalImageType, TBRAINSResampleInternalImageType, DisplacementFieldType>(
       PrincipalOperandImage,

@@ -44,10 +44,12 @@ WorkingImagePointer ReadImageByFilename( const std::string  filename )
 
 DisplacementFieldType::Pointer GetDeformationField( std::string filename)
 {
-  const bool useTransform( filename.find(".mat") != std::string::npos );
+  const bool useTransform( filename.find(".mat") == std::string::npos ||
+                           filename.find(".h5") == std::string::npos );
 
   if( useTransform )
     {
+    std::cout << "Return null deformation. Use transformation instead." << std::endl;
     return NULL;
     }
   typedef itk::ImageFileReader<DisplacementFieldType> DeformationReaderType;
@@ -60,11 +62,13 @@ DisplacementFieldType::Pointer GetDeformationField( std::string filename)
 
 GenericTransformType::Pointer GetGenericTransform( std::string filename)
 {
-  const bool useDeformation( filename.find(".mat") == std::string::npos );
+  const bool useDeformation( filename.find(".mat") != std::string::npos &&
+                             filename.find(".h5") != std::string::npos &&
+                             filename.find(".txt") != std::string::npos );
 
   if( useDeformation )
     {
-    std::cout << "return null deformation" << std::endl;
+    std::cout << "Return null transformation. Use deformation instead." << std::endl;
     return NULL;
     }
   return itk::ReadTransformFromDisk( filename );

@@ -670,12 +670,15 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                     print("SKIPPING SEGMENTATION PHASE FOR {0} {1} {2}, lenT2s {3}".format(projectid, subjectid, sessionid, len(global_AllT2s) ))
 
 
+                ## Synthesized images are only valid for 3T where the T2 and T1 have approximately the same resolution.
+                global_All3T_T1s=ExperimentDatabase.getFilenamesByScantype(sessionid,['T1-30'])
+                global_All3T_T2s=ExperimentDatabase.getFilenamesByScantype(sessionid,['T2-30'])
                 RunAllFSComponents=False ## A hack to avoid 26 hour run of freesurfer
                 #RunAllFSComponents=True ## A hack to avoid 26 hour run of freesurfer
-                if ( 'FREESURFER' in WORKFLOW_COMPONENTS ) and ( ( len(global_AllT2s) > 0 ) or RunAllFSComponents == True ):
+                if ( 'FREESURFER' in WORKFLOW_COMPONENTS ) and ( ( len(global_All3T_T2s) > 0 ) or RunAllFSComponents == True ):
                     from WorkupT1T2FreeSurfer import CreateFreeSurferWorkflow
-                    if ( len(global_AllT2s) > 0 ): # If multi-modal, then create synthesized image before running
-                        print("HACK  FREESURFER len(global_AllT2s) > 0 ")
+                    if ( len(global_All3T_T2s) > 0 ): # If multi-modal, then create synthesized image before running
+                        print("HACK  FREESURFER len(global_All3T_T2s) > 0 ")
                         myLocalFSWF[sessionid]= CreateFreeSurferWorkflow(projectid, subjectid, sessionid,"Level1_FSTest",
                                                 CLUSTER_QUEUE,RunAllFSComponents,True)
                     else:

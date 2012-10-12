@@ -31,6 +31,7 @@ public:
    * :: the paried training set should be constructed with vector file name.
    */
   BRAINSCutVectorTrainingSet(std::string vectorFilenamePrefix);
+  ~BRAINSCutVectorTrainingSet();
 
   static const unsigned int MAXIMUMCHAR = 100;
 

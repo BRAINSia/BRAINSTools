@@ -8,14 +8,14 @@
 class BRAINSCutGenerateProbability
 {
 public:
-  BRAINSCutGenerateProbability( BRAINSCutDataHandler dataHandler);
+  BRAINSCutGenerateProbability( BRAINSCutDataHandler& dataHandler);
 
   void SetTrainingDataSetsList();
 
   void GenerateProbabilityMaps();
 
 private:
-  BRAINSCutDataHandler myDataHandler;
+  BRAINSCutDataHandler* myDataHandler;
 
   /** DataSets */
   std::list<DataSet *> trainingDataSetList;

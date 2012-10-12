@@ -75,7 +75,7 @@ public:
                                                                   WorkingImagePointer>& warpedSpatialLocationImages,
                                                          DataSet& subject );
 
-  void                  GetImagesOfSubjectInOrder( WorkingImageVectorType& subjectImageList, DataSet& subject);
+  void                  ReadImagesOfSubjectInOrder( WorkingImageVectorType& subjectImageList, DataSet& subject);
 
   void                  GetDeformedROIs( std::map<std::string,
                                                   WorkingImagePointer>& deformedROIs, DataSet& subject );

@@ -7,18 +7,18 @@
 
 /** constructors */
 BRAINSCutGenerateProbability
-::BRAINSCutGenerateProbability( BRAINSCutDataHandler dataHandler)
+::BRAINSCutGenerateProbability( BRAINSCutDataHandler& dataHandler)
 {
-  myDataHandler =  dataHandler;
+  myDataHandler =  &dataHandler;
   try
     {
-    myDataHandler.SetRegistrationParameters();
+    myDataHandler->SetRegistrationParameters();
 
-    myDataHandler.SetAtlasDataSet();
-    myDataHandler.SetAtlasImage();
+    myDataHandler->SetAtlasDataSet();
+    myDataHandler->SetAtlasImage();
 
-    myDataHandler.SetRegionsOfInterest();
-    trainingDataSetList = myDataHandler.GetTrainDataSet();
+    myDataHandler->SetRegionsOfInterest();
+    trainingDataSetList = myDataHandler->GetTrainDataSet();
     }
   catch( BRAINSCutExceptionStringHandler& e )
     {
@@ -59,13 +59,13 @@ BRAINSCutGenerateProbability
   GenerateSymmetricalSphericalCoordinateImage();
   /** iterate through the rois*/
   for( unsigned int currentROIAt = 0;
-       currentROIAt < myDataHandler.GetROICount();
+       currentROIAt < myDataHandler->GetROICount();
        currentROIAt++ )
     {
     WorkingImageType::Pointer currentAccumulatedImages;
-    CreateNewFloatImageFromTemplate( currentAccumulatedImages, myDataHandler.GetAtlasImage() );
+    CreateNewFloatImageFromTemplate( currentAccumulatedImages, myDataHandler->GetAtlasImage() );
 
-    std::string  currentROIID( (myDataHandler.GetROIIDsInOrder() )[currentROIAt] );
+    std::string  currentROIID( (myDataHandler->GetROIIDsInOrder() )[currentROIAt] );
     unsigned int currentROISubjectsCounter = 0;
     /** iterate through subject */
     for( std::list<DataSet *>::iterator currentSubjectIt = trainingDataSetList.begin();
@@ -76,7 +76,7 @@ BRAINSCutGenerateProbability
       /** deform ROI to Atlas */
 
       std::string currentRegistrationFilename =
-        myDataHandler.GetSubjectToAtlasRegistrationFilename( *(*currentSubjectIt) );
+        myDataHandler->GetSubjectToAtlasRegistrationFilename( *(*currentSubjectIt) );
       /*std::string currentRegistrationFilename =
         (*currentSubjectIt)->GetRegistrationWithID( registrationID )
         ->GetAttribute<StringValue>( "SubjToAtlasRegistrationFIlename");*/
@@ -86,7 +86,7 @@ BRAINSCutGenerateProbability
 
       WorkingImageType::Pointer currentDeformedROI = ImageWarper<WorkingImageType>( currentRegistrationFilename,
                                                                                     currentROIFilename,
-                                                                                    myDataHandler.GetAtlasImage() );
+                                                                                    myDataHandler->GetAtlasImage() );
       /** add the deformed roi to accumulator */
       currentAccumulatedImages =
         AddImageToAccumulator( currentDeformedROI, currentAccumulatedImages );
@@ -100,7 +100,7 @@ BRAINSCutGenerateProbability
     /** get roi object */
 
     ProbabilityMapParser *currentROISet =
-      myDataHandler.GetROIDataList()->GetMatching<ProbabilityMapParser>(
+      myDataHandler->GetROIDataList()->GetMatching<ProbabilityMapParser>(
         "StructureID", currentROIID.c_str() );
     /** smooth the accumulated image */
     float               GaussianSigma = currentROISet->GetAttribute<FloatValue>("Gaussian");
@@ -135,7 +135,7 @@ void
 BRAINSCutGenerateProbability
 ::GenerateSymmetricalSphericalCoordinateImage()
 {
-  const WorkingImageType::SizeType atlasImageSize( myDataHandler.GetAtlasImage()->GetLargestPossibleRegion().GetSize() );
+  const WorkingImageType::SizeType atlasImageSize( myDataHandler->GetAtlasImage()->GetLargestPossibleRegion().GetSize() );
 
   WorkingImageType::IndexType centerOfAtlas;
 
@@ -144,16 +144,16 @@ BRAINSCutGenerateProbability
   centerOfAtlas[2] = TruncatedHalf(atlasImageSize[2]);
 
   itk::Point<WorkingPixelType, DIMENSION> centerOfAtlasPhysicalSpace;
-  myDataHandler.GetAtlasImage()->TransformIndexToPhysicalPoint( centerOfAtlas, centerOfAtlasPhysicalSpace );
+  myDataHandler->GetAtlasImage()->TransformIndexToPhysicalPoint( centerOfAtlas, centerOfAtlasPhysicalSpace );
 
   WorkingImageType::Pointer rhoImage, phiImage, thetaImage;
 
-  CreateNewFloatImageFromTemplate(rhoImage, myDataHandler.GetAtlasImage() );
-  CreateNewFloatImageFromTemplate(phiImage, myDataHandler.GetAtlasImage() );
-  CreateNewFloatImageFromTemplate(thetaImage, myDataHandler.GetAtlasImage() );
+  CreateNewFloatImageFromTemplate(rhoImage, myDataHandler->GetAtlasImage() );
+  CreateNewFloatImageFromTemplate(phiImage, myDataHandler->GetAtlasImage() );
+  CreateNewFloatImageFromTemplate(thetaImage, myDataHandler->GetAtlasImage() );
 
   itk::ImageRegionIterator<WorkingImageType> it(
-    myDataHandler.GetAtlasImage(), myDataHandler.GetAtlasImage()->GetLargestPossibleRegion() );
+    myDataHandler->GetAtlasImage(), myDataHandler->GetAtlasImage()->GetLargestPossibleRegion() );
   it.GoToBegin();
 
   itk::ImageRegionIterator<WorkingImageType> rhoit(
@@ -174,7 +174,7 @@ BRAINSCutGenerateProbability
   while( !it.IsAtEnd() )
     {
     const WorkingImageType::IndexType CurrentIndex = it.GetIndex();
-    myDataHandler.GetAtlasImage()->TransformIndexToPhysicalPoint(CurrentIndex, currentLocationPhysicalSpace);
+    myDataHandler->GetAtlasImage()->TransformIndexToPhysicalPoint(CurrentIndex, currentLocationPhysicalSpace);
     for( unsigned i = 0; i < DIMENSION; i++ )
       {
       LocationWithRespectToCenterOfImageInMM[i] =
@@ -195,9 +195,9 @@ BRAINSCutGenerateProbability
     ++thetait;
     }
 
-  std::string RhoMapName =   myDataHandler.GetAtlasDataSet()->GetSpatialLocationFilenameByType("rho");
-  std::string PhiMapName =   myDataHandler.GetAtlasDataSet()->GetSpatialLocationFilenameByType("phi");
-  std::string ThetaMapName = myDataHandler.GetAtlasDataSet()->GetSpatialLocationFilenameByType("theta");
+  std::string RhoMapName =   myDataHandler->GetAtlasDataSet()->GetSpatialLocationFilenameByType("rho");
+  std::string PhiMapName =   myDataHandler->GetAtlasDataSet()->GetSpatialLocationFilenameByType("phi");
+  std::string ThetaMapName = myDataHandler->GetAtlasDataSet()->GetSpatialLocationFilenameByType("theta");
 
   std::string rhoPath = itksys::SystemTools::GetFilenamePath( RhoMapName );
   itksys::SystemTools::MakeDirectory( rhoPath.c_str() );

@@ -3,7 +3,7 @@
 #include <fstream>
 
 BRAINSCutTrainModel
-::BRAINSCutTrainModel( BRAINSCutDataHandler & dataHandler ) :
+::BRAINSCutTrainModel( BRAINSCutDataHandler& dataHandler ) :
   trainIteration(0),
   trainEpochIteration(0),
   trainDesiredError(0.0),

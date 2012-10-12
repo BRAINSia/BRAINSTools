@@ -18,8 +18,8 @@ public:
   void GenerateRegistrations();
 
 private:
-  BRAINSCutDataHandler myDataHandler;
-  bool                 atlasToSubjectRegistraionOn;
+  BRAINSCutDataHandler* myDataHandler;
+  bool                  atlasToSubjectRegistraionOn;
 
   std::list<DataSet *> subjectDataSets;
 

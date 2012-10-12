@@ -26,6 +26,14 @@ BRAINSCutVectorTrainingSet
   // trainingHeaderFilename += ".hdr";
 }
 
+BRAINSCutVectorTrainingSet
+::~BRAINSCutVectorTrainingSet()
+{
+  cvReleaseMat( &(currentTrainingSubSet->pairedInput) );
+  cvReleaseMat( &(currentTrainingSubSet->pairedOutput) );
+  cvReleaseMat( &(currentTrainingSubSet->pairedOutputRF) );
+}
+
 // ---------------------------//
 void
 BRAINSCutVectorTrainingSet

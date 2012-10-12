@@ -40,14 +40,14 @@ public:
 
   BinaryImagePointer ThresholdImageAtUpper( WorkingImagePointer& image, scalarType thresholdValue );
 
-  BinaryImagePointer ExtractLabel( BinaryImagePointer image, unsigned char thresholdValue );
+  BinaryImagePointer ExtractLabel( BinaryImagePointer& image, unsigned char thresholdValue );
 
-  BinaryImagePointer GetOneConnectedRegion( BinaryImagePointer image );
+  BinaryImagePointer GetOneConnectedRegion( BinaryImagePointer& image );
 
-  BinaryImagePointer FillHole( BinaryImagePointer mask);
+  BinaryImagePointer FillHole( BinaryImagePointer& mask);
 
 private:
-  BRAINSCutDataHandler                         m_myDataHandler;
+  BRAINSCutDataHandler*                        m_myDataHandler;
   BRAINSCutConfiguration::ApplyDataSetListType applyDataSetList;
 
   std::string method;
@@ -64,7 +64,7 @@ private:
   scalarType      gaussianSmoothingSigma;
   OpenCVMLPType * m_openCVANN;
 
-  CvRTrees openCVRandomForest;
+  CvRTrees* openCVRandomForest;
 
   /* private functions  */
   std::string GetANNModelBaseName();

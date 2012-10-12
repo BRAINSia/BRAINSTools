@@ -76,7 +76,7 @@ std::string GetAtlasToSubjectRegistrationFilename( DataSet& subject);
 
 std::string GetSubjectToAtlasRegistrationFilename( DataSet& subject);
 
-WorkingImagePointer SmoothImage( const WorkingImagePointer image, const float GaussianValue);
+WorkingImagePointer SmoothImage( const WorkingImagePointer& image, const float GaussianValue);
 
 WorkingImagePointer ReadImageByFilename( const std::string  filename );
 

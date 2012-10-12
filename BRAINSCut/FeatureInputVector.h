@@ -19,6 +19,7 @@ class FeatureInputVector
 public:
 
   FeatureInputVector();
+  ~FeatureInputVector();
   int DoUnitTests() const; // A series of unit tests to verify results.
 
   /** constants definition */
@@ -64,7 +65,7 @@ public:
   void NormalizationOfVector( InputVectorMapType& currentFeatureVector, std::string ROIName );
 
   /** get function(s) */
-  InputVectorMapType GetFeatureInputOfROI( std::string ROIName );
+  InputVectorMapType ComputeAndGetFeatureInputOfROI( std::string ROIName );
 
   /* HashGenerator From Index */
   /* hash function is based on fixed size of 'size'
@@ -95,7 +96,7 @@ private:
   std::map<std::string, GradientImageType> gradientOfROI;
 
   /** feature output*/
-  std::map<std::string, InputVectorMapType> featureInputOfROI;
+  // std::map<std::string, InputVectorMapType> featureInputOfROI;
 
   /** normalization parameters*/
   /*  mapping from ROIname to the vector of mean/max
@@ -104,7 +105,7 @@ private:
   std::map<std::string, minmaxPairVectorType> minmax;
 
   /** private functions */
-  void ComputeFeatureInputOfROI( std::string ROIName);
+  // void ComputeFeatureInputOfROI( std::string ROIName);
 
   void SetGradientImage( std::string ROIName );
 
@@ -122,7 +123,7 @@ private:
   inline void AddFeaturesImagesOfInterest( std::string ROIName, WorkingImageType::IndexType currentPixelIndex,
                                            std::vector<scalarType>::iterator & elementIterator);
 
-  inline void AddFeaturesAlongGradient( std::string ROIName, WorkingImagePointer featureImage,
+  inline void AddFeaturesAlongGradient( std::string ROIName, const WorkingImagePointer& featureImage,
                                         WorkingImageType::IndexType currentPixelIndex,
                                         std::vector<scalarType>::iterator & elementIterator );
 

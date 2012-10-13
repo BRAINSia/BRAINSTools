@@ -51,7 +51,7 @@ ExternalProject_add(SimpleITK
   SOURCE_DIR SimpleITK
   BINARY_DIR SimpleITK-build
   GIT_REPOSITORY ${git_protocol}://itk.org/SimpleITK.git
-  GIT_TAG f8e05e4a1fb051a291a7a4425ba33788cd73005d
+  GIT_TAG cc7bd86396b3b2da2e54a9465066171d129ae4b4
   "${cmakeversion_external_update}"
   CMAKE_ARGS
     -Wno-dev

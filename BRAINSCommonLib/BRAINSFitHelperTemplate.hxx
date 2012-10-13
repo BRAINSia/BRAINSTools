@@ -1811,9 +1811,10 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
       itkGenericExceptionMacro(
         << "Out of bounds access for transform vector!" << std::endl);
       }
-    m_GenericTransformList[currentTransformId++] = m_CurrentGenericTransform;
-    }
 
+    m_GenericTransformList[currentTransformId] = m_CurrentGenericTransform;
+    currentTransformId++;
+    }
   return;
 }
 

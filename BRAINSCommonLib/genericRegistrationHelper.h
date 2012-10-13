@@ -559,6 +559,8 @@ private:
   bool         m_ObserveIterations;
   // DEBUG OPTION:
   int m_ForceMINumberOfThreads;
+
+  ModifiedTimeType m_InternalTransformTime;
 };
 } // end namespace itk
 

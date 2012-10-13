@@ -17,7 +17,6 @@
 #include <vector>
 #include <string>
 #include <cstdio>
-#include "itkImageRandomNonRepeatingConstIteratorWithIndex.h"
 
 #include "BRAINSCommonLibWin32Header.h"
 
@@ -26,12 +25,13 @@
 #include "BRAINSFitHelperTemplate.h"
 #include "BRAINSFitUtils.h"
 
-#include "itkMacro.h"
-#include "itkIO.h"
 #include "GenericTransformImage.h"
-#include "itkFindCenterOfBrainFilter.h"
 #include "ReadMask.h"
 #include "BRAINSMacro.h"
+
+#include "itkIO.h"
+#include "itkFindCenterOfBrainFilter.h"
+#include "itkImageRandomNonRepeatingConstIteratorWithIndex.h"
 
 namespace itk
 {

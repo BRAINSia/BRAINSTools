@@ -28,6 +28,8 @@
 #include "itkStatisticsImageFilter.h"
 #include "itkImageDuplicator.h"
 
+extern void debug_catch(void);
+
 namespace itk
 {
 /*
@@ -371,6 +373,19 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
                                      TMovingImage, MetricType>
 ::Update(void)
 {
+  if( this->m_Transform.IsNotNull() )
+    {
+    // Update only if the input image has been modified
+    const ModifiedTimeType t1 = this->GetPrimaryOutput()->GetPipelineMTime();
+    const ModifiedTimeType t2 = this->m_Transform->GetMTime();
+    const ModifiedTimeType t = ( t1 > t2 ? t1 : t2 );
+    if( t == this->m_InternalTransformTime )
+      {
+      return; // No need to update
+      }
+    this->m_InternalTransformTime = t;
+    }
+
   if( !m_InitialTransformPassThruFlag )
     {
     bool               successful = false;
@@ -384,7 +399,7 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
         }
       catch( itk::ExceptionObject & err )
         {
-        // Attempt to auto-recover i too many samples were requested.
+        // Attempt to auto-recover if too many samples were requested.
         // std::cerr << "ExceptionObject caught !" << std::endl;
         // std::cerr << err << std::endl;
         // Pass exception to caller
@@ -423,11 +438,12 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
     m_FinalMetricValue = optimizer->GetValue();
     m_ActualNumberOfIterations = optimizer->GetCurrentIteration();
     m_Transform->SetParametersByValue(finalParameters);
+      {
+      this->m_InternalTransformTime = this->m_Transform->GetMTime();
+      }
     }
-
   typename TransformType::MatrixType matrix = m_Transform->GetMatrix();
   typename TransformType::OffsetType offset = m_Transform->GetOffset();
-
   std::cout << std::endl << "Matrix = " << std::endl << matrix << std::endl;
   std::cout << "Offset = " << offset << std::endl << std::endl;
 }

@@ -27,7 +27,7 @@ namespace itk
 {
 /** \class brainsBSplineDeformableTransformInitializer
  *
- * \breif HACK:  THIS IS AN EXACT DUPLICATE OF THE ITK VERSION, but without the header
+ * \brief HACK:  THIS IS AN EXACT DUPLICATE OF THE ITK VERSION, but without the header
  * guard for V3 compatibility.
  *
  * We know that this class has bugs, but they are not fixable in ITKv4 without breaking

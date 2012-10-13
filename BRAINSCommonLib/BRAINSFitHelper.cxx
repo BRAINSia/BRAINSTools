@@ -19,6 +19,14 @@
 #include "itkBinaryThresholdImageFilter.h"
 #include "itkNormalizedMutualInformationHistogramImageToImageMetric.h"
 
+// A little dummy function to make it easy to stop the debugger.
+void debug_catch(void)
+{
+  std::cout << "HERE" << __FILE__ << " " << __LINE__ << std::endl;
+
+  return;
+}
+
 MaskImageType::ConstPointer ExtractConstPointerToImageMaskFromImageSpatialObject(
   SpatialObjectType::ConstPointer inputSpatialObject)
 {

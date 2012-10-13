@@ -677,36 +677,6 @@ int main(int argc, char *argv[])
       }
     }
 
-#if 0  // HACK:  This does not work properly when only an initializer transform
-       // is used, or if the final transform is BSpline.
-       // GREG:  BRAINSFit currently does not determine if the registrations
-       // have not
-       // converged before reaching their maximum number of iterations.
-       //  Currently
-       // transforms are always written out, under the assumption that the
-       // registraiton converged.  We need to figure out how to determine if the
-       // registrations did not converge (i.e. maximum number of iterations were
-       // reached), and then not write out the transforms, unless explicitly
-       // demanded
-       // to write them out from a command line flag.
-       // GREG:  We should write a test, and document what the expected
-       // behaviors are
-       // when a multi-level registration is requested (Rigid,ScaleSkew,Affine),
-       // and
-       // one of the first types does not converge.
-       // HACK  This does not work properly until BSpline reports iterations
-       // correctly
-  if( actualIterations + 1 >= permittedIterations )
-    {
-    if( writeTransformOnFailure == false )    // taken right off the command
-                                              // line.
-      {
-      std::cout << "actualIterations: " << actualIterations << std::endl;
-      std::cout << "permittedIterations: " << permittedIterations << std::endl;
-      return failureExitCode;   // taken right off the command line.
-      }
-    }
-#endif
 #ifdef USE_ANTS
   if( localTransformType[localTransformType.size() - 1] == "SyN" )
     {
@@ -714,7 +684,8 @@ int main(int argc, char *argv[])
       dynamic_cast<CompositeTransformType *>( currentGenericTransform.GetPointer() );
     // write out transform actually computed, so skip the initial transform
     CompositeTransformType::TransformTypePointer tempSyNFinalTransform =
-      tempSyNCompositeTransform->GetNthTransform( 1 );
+      tempSyNCompositeTransform.GetPointer();
+// tempSyNCompositeTransform->GetNthTransform( 1 );
 
     if( tempSyNFinalTransform.IsNull() )
       {
@@ -727,23 +698,13 @@ int main(int argc, char *argv[])
       std::cout << "SyN warped transform is written to the disk." << std::endl;
       }
     }
-#endif
   else
+#endif
     {
     /*const int write_status=*/
     itk::WriteBothTransformsToDisk(currentGenericTransform.GetPointer(),
                                    localOutputTransform, strippedOutputTransform);
     }
-
-#if 0  // HACK:  This does not work properly when only an initializer transform
-       // is used, or if the final transform is BSpline.
-  if( actualIterations + 1 >= permittedIterations )
-    {
-    std::cout << "actualIterations: " << actualIterations << std::endl;
-    std::cout << "permittedIterations: " << permittedIterations << std::endl;
-    return failureExitCode;   // taken right off the command line.
-    }
-#endif
 
   return 0;
 }

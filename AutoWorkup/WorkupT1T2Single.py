@@ -39,7 +39,6 @@ package_check('networkx', '1.0', 'tutorial1')
 package_check('IPython', '0.10', 'tutorial1')
 
 from BRAINSTools import *
-from BRAINSTools.BTants.normalize import WarpImageMultiTransform
 
 from WorkupT1T2AtlasNode import MakeAtlasNode
 
@@ -129,7 +128,8 @@ def MakeOneSubWorkFlow(projectid, subjectid, sessionid,processing_phase, WORKFLO
             'posteriorImages','outputLabels',
             'TissueClassifyOutputDir',
 
-            'BCD_ACPC_T1',
+#            'BCD_ACPC_T1',
+            'BCD_ACPC_T1_CROPPED',
             'outputLandmarksInACPCAlignedSpace',
             'outputLandmarksInInputSpace',
             'outputTransform','atlasToSubjectTransform'
@@ -150,7 +150,8 @@ def MakeOneSubWorkFlow(projectid, subjectid, sessionid,processing_phase, WORKFLO
         if 'AUXLMK' in WORKFLOW_COMPONENTS:
             T1T2WorkupSingle.connect(inputsSpec,'template_t1',myLocalLMIWF,'InputSpec.atlasVolume')
         ### Now connect OutputSpec
-        T1T2WorkupSingle.connect(myLocalLMIWF, 'OutputSpec.outputResampledVolume', outputsSpec, 'BCD_ACPC_T1' )
+#        T1T2WorkupSingle.connect(myLocalLMIWF,'OutputSpec.outputResampledVolume', outputsSpec, 'BCD_ACPC_T1' )
+        T1T2WorkupSingle.connect(myLocalLMIWF,'OutputSpec.outputResampledCroppedVolume', outputsSpec, 'BCD_ACPC_T1_CROPPED' )
         T1T2WorkupSingle.connect(myLocalLMIWF,'OutputSpec.outputLandmarksInACPCAlignedSpace',outputsSpec,'outputLandmarksInACPCAlignedSpace')
         T1T2WorkupSingle.connect(myLocalLMIWF,'OutputSpec.outputLandmarksInInputSpace',outputsSpec,'outputLandmarksInInputSpace')
         T1T2WorkupSingle.connect(myLocalLMIWF,'OutputSpec.outputTransform',outputsSpec,'outputTransform')
@@ -166,7 +167,7 @@ def MakeOneSubWorkFlow(projectid, subjectid, sessionid,processing_phase, WORKFLO
         T1T2WorkupSingle.connect( inputsSpec, 'allOthers', myLocalTCWF, 'InputSpec.OtherList')
         T1T2WorkupSingle.connect( [ (inputsSpec, myLocalTCWF, [(('allT1s', getAllT1sLength), 'InputSpec.T1_count')] ), ])
         T1T2WorkupSingle.connect( inputsSpec,'atlasDefinition',myLocalTCWF,'InputSpec.atlasDefinition')
-        T1T2WorkupSingle.connect( myLocalLMIWF, 'OutputSpec.outputResampledVolume', myLocalTCWF, 'InputSpec.PrimaryT1' )
+        T1T2WorkupSingle.connect( myLocalLMIWF, 'OutputSpec.outputResampledCroppedVolume', myLocalTCWF, 'InputSpec.PrimaryT1' )
         T1T2WorkupSingle.connect( myLocalLMIWF,'OutputSpec.atlasToSubjectTransform',myLocalTCWF,'InputSpec.atlasToSubjectInitialTransform')
 
         ### Now connect OutputSpec

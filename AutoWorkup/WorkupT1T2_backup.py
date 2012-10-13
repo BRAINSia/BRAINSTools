@@ -39,6 +39,7 @@ package_check('networkx', '1.0', 'tutorial1')
 package_check('IPython', '0.10', 'tutorial1')
 
 from BRAINSTools import *
+from BRAINSTools.BTants.normalize import WarpImageMultiTransform
 
 from WorkupT1T2AtlasNode import MakeAtlasNode
 
@@ -106,65 +107,17 @@ def GenerateAccumulatorImagesOutputPattern(projectid, subjectid, sessionid):
     return patternList
 
 ## This takes several lists and merges them, but it also removes all empty values from the lists
-def MergeByExtendListElements(t1_averageList,t2_averageList,pd_averageList,fl_averageList,outputLabels_averageList,ListOfPosteriorImagesDictionary):
-    """
-ListOfImagesDictionaries=[
-{'T1':os.path.join(mydatadir,'01_T1_half.nii.gz'),'INV_T1':os.path.join(mydatadir,'01_T1_inv_half.nii.gz'),'LABEL_MAP':os.path.join(mydatadir,'01_T1_inv_half.nii
-  .gz')},
-{'T1':os.path.join(mydatadir,'02_T1_half.nii.gz'),'INV_T1':os.path.join(mydatadir,'02_T1_inv_half.nii.gz'),'LABEL_MAP':os.path.join(mydatadir,'02_T1_inv_half.nii
-  .gz')},
-{'T1':os.path.join(mydatadir,'03_T1_half.nii.gz'),'INV_T1':os.path.join(mydatadir,'03_T1_inv_half.nii.gz'),'LABEL_MAP':os.path.join(mydatadir,'03_T1_inv_half.nii
-  .gz')}
-]
-
-outputLabels_averageList = ['/IPLlinux/hjohnson/HDNI/20121009_TEST_NEW_BAW/RESULTS/20120801.SubjectOrganized_CACHE/0131/BAW_20120813/WF_0131_34285_PHD_024_PHASE_1/TissueClassify/BABC/brain_label_seg.nii.gz', '/IPLlinux/hjohnson/HDNI/20121009_TEST_NEW_BAW/RESULTS/20120801.SubjectOrganized_CACHE/0131/BAW_20120813/WF_0131_90863_PHD_024_PHASE_1/TissueClassify/BABC/brain_label_seg.nii.gz']
-pd_averageList = [None, None]
-t1_averageList = ['/IPLlinux/hjohnson/HDNI/20121009_TEST_NEW_BAW/RESULTS/20120801.SubjectOrganized_CACHE/0131/BAW_20120813/WF_0131_34285_PHD_024_PHASE_1/TissueClassify/BABC/t1_average_BRAINSABC.nii.gz', '/IPLlinux/hjohnson/HDNI/20121009_TEST_NEW_BAW/RESULTS/20120801.SubjectOrganized_CACHE/0131/BAW_20120813/WF_0131_90863_PHD_024_PHASE_1/TissueClassify/BABC/t1_average_BRAINSABC.nii.gz']
-t2_averageList = ['/IPLlinux/hjohnson/HDNI/20121009_TEST_NEW_BAW/RESULTS/20120801.SubjectOrganized_CACHE/0131/BAW_20120813/WF_0131_34285_PHD_024_PHASE_1/TissueClassify/BABC/t2_average_BRAINSABC.nii.gz', '/IPLlinux/hjohnson/HDNI/20121009_TEST_NEW_BAW/RESULTS/20120801.SubjectOrganized_CACHE/0131/BAW_20120813/WF_0131_90863_PHD_024_PHASE_1/TissueClassify/BABC/t2_average_BRAINSABC.nii.gz']
-
-"""
-    print "t1_averageList",t1_averageList
-    print "t2_averageList",t2_averageList
-    print "pd_averageList",pd_averageList
-    print "fl_averageList",fl_averageList
-    print "outputLabels_averageList",outputLabels_averageList
-    print "$$$$$$$$$$$$$$$$$$$$$$$"
-    print "ListOfPosteriorImagesDictionary",ListOfPosteriorImagesDictionary
-
-    ## Initial list with empty dictionaries
-    ListOfImagesDictionaries=[dict() for i in range(0,len(t1_averageList))]
-
-    registrationImageTypes=['T1'] ## ['T1','T2'] someday.
-    #DefaultContinuousInterpolationType='LanczosWindowedSinc' ## Could also be Linear for speed.
-    DefaultContinuousInterpolationType='Linear'
-    interpolationMapping={'T1':DefaultContinuousInterpolationType,
-                          'T2':DefaultContinuousInterpolationType,
-                          'PD':DefaultContinuousInterpolationType,
-                          'FL':DefaultContinuousInterpolationType,
-                          'BRAINMASK':'NearestNeighbor'
-                         }
-    ## NOTE:  ALl input lists MUST have the same number of elements (even if they are null)
-    for list_index in range(0,len(t1_averageList)):
-        if t1_averageList[list_index] is not None:
-            ListOfImagesDictionaries[list_index]['T1']=t1_averageList[list_index]
-        if t2_averageList[list_index] is not None:
-            ListOfImagesDictionaries[list_index]['T2']=t2_averageList[list_index]
-        if pd_averageList[list_index] is not None:
-            ListOfImagesDictionaries[list_index]['PD']=pd_averageList[list_index]
-        if fl_averageList[list_index] is not None:
-            ListOfImagesDictionaries[list_index]['FL']=fl_averageList[list_index]
-        if outputLabels_averageList[list_index] is not None:
-            ListOfImagesDictionaries[list_index]['BRAINMASK']=outputLabels_averageList[list_index]
-        this_subj_posteriors=ListOfPosteriorImagesDictionary[list_index]
-        for post_items in this_subj_posteriors.items():
-            print "post_items",post_items
-            ListOfImagesDictionaries[list_index][post_items[0]] = post_items[1]
-
-    print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
-    print "ListOfImagesDictionaries",ListOfImagesDictionaries
-    print "registrationImageTypes",registrationImageTypes
-    print "interpolationMapping",interpolationMapping
-    return ListOfImagesDictionaries,registrationImageTypes,interpolationMapping
+def MergeByExtendListElements(t2_averageList,pd_averageList,fl_averageList,outputLabels_averageList,ListOfPosteriorImagesDictionary):
+    for t2_index in range(0,len(t2_averageList)):
+        if t2_averageList[t2_index] is not None:
+            ListOfPosteriorImagesDictionary[t2_index]['T2']=t2_averageList[t2_index]
+        if pd_averageList[t2_index] is not None:
+            ListOfPosteriorImagesDictionary[t2_index]['PD']=pd_averageList[t2_index]
+        if fl_averageList[t2_index] is not None:
+            ListOfPosteriorImagesDictionary[t2_index]['FL']=fl_averageList[t2_index]
+        if outputLabels_averageList[t2_index] is not None:
+            ListOfPosteriorImagesDictionary[t2_index]['BRAINMASK']=outputLabels_averageList[t2_index]
+    return ListOfPosteriorImagesDictionary
 
 def MakeNewAtlasTemplate(t1_image,deformed_list,
             AtlasTemplate,outDefinition):
@@ -172,29 +125,27 @@ def MakeNewAtlasTemplate(t1_image,deformed_list,
     import sys
     import SimpleITK as sitk
     patternDict= {
-        'AVG_AIR.nii.gz':'@ATLAS_DIRECTORY@/EXTENDED_AIR.nii.gz',
-        'AVG_BGM.nii.gz':'@ATLAS_DIRECTORY@/EXTENDED_BASALTISSUE.nii.gz',
-        'AVG_CRBLGM.nii.gz':'@ATLAS_DIRECTORY@/EXTENDED_CRBLGM.nii.gz',
-        'AVG_CRBLWM.nii.gz':'@ATLAS_DIRECTORY@/EXTENDED_CRBLWM.nii.gz',
-        'AVG_CSF.nii.gz': '@ATLAS_DIRECTORY@/EXTENDED_CSF.nii.gz',
-        'AVG_NOTCSF.nii.gz' :'@ATLAS_DIRECTORY@/EXTENDED_NOTCSF.nii.gz',
-        'AVG_NOTGM.nii.gz': '@ATLAS_DIRECTORY@/EXTENDED_NOTGM.nii.gz',
-        'AVG_NOTVB.nii.gz': '@ATLAS_DIRECTORY@/EXTENDED_NOTVB.nii.gz',
-        'AVG_NOTWM.nii.gz': '@ATLAS_DIRECTORY@/EXTENDED_NOTWM.nii.gz',
-        'AVG_SURFGM.nii.gz': '@ATLAS_DIRECTORY@/EXTENDED_SURFGM.nii.gz',
-        'AVG_VB.nii.gz': '@ATLAS_DIRECTORY@/EXTENDED_VB.nii.gz',
-        'AVG_WM.nii.gz':'@ATLAS_DIRECTORY@/EXTENDED_WM.nii.gz',
-        'AVG_ACCUMBEN.nii.gz': '@ATLAS_DIRECTORY@/EXTENDED_ACCUMBEN.nii.gz',
-        'AVG_CAUDATE.nii.gz': '@ATLAS_DIRECTORY@/EXTENDED_CAUDATE.nii.gz',
-        'AVG_PUTAMEN.nii.gz': '@ATLAS_DIRECTORY@/EXTENDED_PUTAMEN.nii.gz',
-        'AVG_GLOBUS.nii.gz': '@ATLAS_DIRECTORY@/EXTENDED_GLOBUS.nii.gz',
-        'AVG_THALAMUS.nii.gz': '@ATLAS_DIRECTORY@/EXTENDED_THALAMUS.nii.gz',
-        'AVG_HIPPOCAMPUS.nii.gz': '@ATLAS_DIRECTORY@/EXTENDED_HIPPOCAMPUS.nii.gz',
-        'AVG_BRAINMASK.nii.gz':'@ATLAS_DIRECTORY@/template_brain.nii.gz',
-        'T1_RESHAPED.nii.gz':'@ATLAS_DIRECTORY@/template_t1.nii.gz',
-        'AVG_T2.nii.gz':'@ATLAS_DIRECTORY@/template_t2.nii.gz',
-        'AVG_PD.nii.gz':'@ATLAS_DIRECTORY@/template_t2.nii.gz',
-        'AVG_FL.nii.gz':'@ATLAS_DIRECTORY@/template_t2.nii.gz'
+        'AVG_AIRWARP_AVG_AIR.nii.gz':'@ATLAS_DIRECTORY@/EXTENDED_AIR.nii.gz',
+        'AVG_BGMWARP_AVG_BGM.nii.gz':'@ATLAS_DIRECTORY@/EXTENDED_BASALTISSUE.nii.gz',
+        'AVG_CRBLGMWARP_AVG_CRBLGM.nii.gz':'@ATLAS_DIRECTORY@/EXTENDED_CRBLGM.nii.gz',
+        'AVG_CRBLWMWARP_AVG_CRBLWM.nii.gz':'@ATLAS_DIRECTORY@/EXTENDED_CRBLWM.nii.gz',
+        'AVG_CSFWARP_AVG_CSF.nii.gz': '@ATLAS_DIRECTORY@/EXTENDED_CSF.nii.gz',
+        'AVG_NOTCSFWARP_AVG_NOTCSF.nii.gz' :'@ATLAS_DIRECTORY@/EXTENDED_NOTCSF.nii.gz',
+        'AVG_NOTGMWARP_AVG_NOTGM.nii.gz': '@ATLAS_DIRECTORY@/EXTENDED_NOTGM.nii.gz',
+        'AVG_NOTVBWARP_AVG_NOTVB.nii.gz': '@ATLAS_DIRECTORY@/EXTENDED_NOTVB.nii.gz',
+        'AVG_NOTWMWARP_AVG_NOTWM.nii.gz': '@ATLAS_DIRECTORY@/EXTENDED_NOTWM.nii.gz',
+        'AVG_SURFGMWARP_AVG_SURFGM.nii.gz': '@ATLAS_DIRECTORY@/EXTENDED_SURFGM.nii.gz',
+        'AVG_VBWARP_AVG_VB.nii.gz': '@ATLAS_DIRECTORY@/EXTENDED_VB.nii.gz',
+        'AVG_WMWARP_AVG_WM.nii.gz':'@ATLAS_DIRECTORY@/EXTENDED_WM.nii.gz',
+        'AVG_ACCUMBENWARP_AVG_ACCUMBEN.nii.gz': '@ATLAS_DIRECTORY@/EXTENDED_ACCUMBEN.nii.gz',
+        'AVG_CAUDATEWARP_AVG_CAUDATE.nii.gz': '@ATLAS_DIRECTORY@/EXTENDED_CAUDATE.nii.gz',
+        'AVG_PUTAMENWARP_AVG_PUTAMEN.nii.gz': '@ATLAS_DIRECTORY@/EXTENDED_PUTAMEN.nii.gz',
+        'AVG_GLOBUSWARP_AVG_GLOBUS.nii.gz': '@ATLAS_DIRECTORY@/EXTENDED_GLOBUS.nii.gz',
+        'AVG_THALAMUSWARP_AVG_THALAMUS.nii.gz': '@ATLAS_DIRECTORY@/EXTENDED_THALAMUS.nii.gz',
+        'AVG_HIPPOCAMPUSWARP_AVG_HIPPOCAMPUS.nii.gz': '@ATLAS_DIRECTORY@/EXTENDED_HIPPOCAMPUS.nii.gz',
+        'AVG_T2WARP_AVG_T2.nii.gz':'@ATLAS_DIRECTORY@/template_t2.nii.gz',
+        'AVG_BRAINMASKWARP_AVG_BRAINMASK.nii.gz':'@ATLAS_DIRECTORY@/template_brain.nii.gz',
+        'T1_RESHAPED.nii.gz':'@ATLAS_DIRECTORY@/template_t1.nii.gz'
         }
     templateFile = open(AtlasTemplate,'r')
     content = templateFile.read()              # read entire file into memory
@@ -203,16 +154,13 @@ def MakeNewAtlasTemplate(t1_image,deformed_list,
     ## Now clean up the posteriors based on anatomical knowlege.
     ## sometimes the posteriors are not relevant for priors
     ## due to anomolies around the edges.
-    print("\n\n\nALL_FILES: {0}\n\n\n".format(deformed_list))
     load_images_list=dict()
     for full_pathname in deformed_list:
         base_name=os.path.basename(full_pathname)
         if base_name in patternDict.keys():
             load_images_list[base_name]=sitk.ReadImage(full_pathname)
-        else:
-            print("MISSING FILE FROM patternDict: {0}".format(base_name))
     ## Make binary dilated mask
-    binmask=sitk.BinaryThreshold(load_images_list['AVG_BRAINMASK.nii.gz'],1,1000000)
+    binmask=sitk.BinaryThreshold(load_images_list['AVG_BRAINMASKWARP_AVG_BRAINMASK.nii.gz'],1,1000000)
     dilated5=sitk.DilateObjectMorphology(binmask,5)
     dilated5=sitk.Cast(dilated5,sitk.sitkFloat32) # Convert to Float32 for multiply
     ## Now clip the interior brain mask with dilated5
@@ -237,7 +185,7 @@ def MakeNewAtlasTemplate(t1_image,deformed_list,
     for index in range(0,len(deformed_list)):
         full_pathname=deformed_list[index]
         base_name=os.path.basename(full_pathname)
-        if base_name == 'AVG_BRAINMASK.nii.gz':
+        if base_name == 'AVG_BRAINMASKWARP_AVG_BRAINMASK.nii.gz':
             ### Make Brain Mask Binary
             clipped_name='CLIPPED_'+base_name
             patternDict[clipped_name]=patternDict[base_name]
@@ -494,55 +442,49 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                 baw200.connect(PHASE_1_oneSubjWorkflow[sessionid],'OutputSpec.posteriorImages',MergePosteriors[subjectid],index_name)
 
             MergeByExtendListElementsNode = pe.Node( Function(function=MergeByExtendListElements,
-                                          input_names = ['t1_averageList','t2_averageList',
+                                          input_names = ['t2_averageList',
                                             'pd_averageList','fl_averageList',
                                             'outputLabels_averageList','ListOfPosteriorImagesDictionary'],
-                                          output_names = ['ListOfImagesDictionaries','registrationImageTypes','interpolationMapping']),
+                                          output_names = ['ListOfExtendedPassiveImages']),
                                           run_without_submitting=True, name="99_MergeByExtendListElements")
-            baw200.connect( MergeT1s[subjectid],'out', MergeByExtendListElementsNode, 't1_averageList' )
+            #MergeByExtendListElementsNode.inputs.preserve_nested_lists = True
             baw200.connect( MergeT2s[subjectid],'out', MergeByExtendListElementsNode, 't2_averageList' )
             baw200.connect( MergePDs[subjectid],'out', MergeByExtendListElementsNode, 'pd_averageList' )
             baw200.connect( MergeFLs[subjectid],'out', MergeByExtendListElementsNode, 'fl_averageList' )
             baw200.connect( MergeOutputLabels[subjectid],'out', MergeByExtendListElementsNode, 'outputLabels_averageList' )
             baw200.connect( MergePosteriors[subjectid],'out', MergeByExtendListElementsNode, 'ListOfPosteriorImagesDictionary' )
 
-
+            from BRAINSTools.BTants.antsSimpleAverageWF import antsSimpleAverageWF
             ### USE ANTS
-            import nipype.interfaces.ants as ants
-            myInitAvgWF = pe.Node(interface=ants.AverageImages(), name ='Phase1_antsSimpleAverage')
-            myInitAvgWF.inputs.dimension = 3
-            myInitAvgWF.inputs.normalize = True
-            baw200.connect(MergeT1s[subjectid], 'out', myInitAvgWF, "images")
+            from BRAINSTools.BTants.buildtemplateparallel import ANTSTemplateBuildSingleIterationWF
+            ### USE ANTS REGISTRATION
+            #from BRAINSTools.BTants.buildtemplateparallel_antsRegistration import antsRegistrationTemplateBuildSingleIterationWF
+
+            myInitAvgWF = antsSimpleAverageWF()
+            baw200.connect(MergeT1s[subjectid], 'out', myInitAvgWF, 'InputSpec.images')
 
             TEMPLATE_BUILD_RUN_MODE='MULTI_IMAGE'
             if numSessions == 1:
                 TEMPLATE_BUILD_RUN_MODE='SINGLE_IMAGE'
 
-            ### USE ANTS REGISTRATION
-            #from nipype.workflows.smri.ants import antsRegistrationTemplateBuildSingleIterationWF
-            from BAWantsRegistrationBuildTemplate import BAWantsRegistrationTemplateBuildSingleIterationWF
-            buildTemplateIteration1=BAWantsRegistrationTemplateBuildSingleIterationWF('iteration01')
-            ## TODO:  Change these parameters
-            BeginANTS = buildTemplateIteration1.get_node("BeginANTS")
-            BeginANTS.plugin_args={'qsub_args': '-S /bin/bash -pe smp1 8-12 -l mem_free=6000M -o /dev/null -e /dev/null queue_name', 'overwrite': True}
-
-            baw200.connect(myInitAvgWF, 'output_average_image', buildTemplateIteration1, 'inputspec.fixed_image')
-            baw200.connect(MergeByExtendListElementsNode, 'ListOfImagesDictionaries', buildTemplateIteration1, 'inputspec.ListOfImagesDictionaries')
-            baw200.connect(MergeByExtendListElementsNode, 'registrationImageTypes', buildTemplateIteration1, 'inputspec.registrationImageTypes')
-            baw200.connect(MergeByExtendListElementsNode, 'interpolationMapping', buildTemplateIteration1, 'inputspec.interpolationMapping')
+            buildTemplateIteration1 = ANTSTemplateBuildSingleIterationWF('Iteration01',CLUSTER_QUEUE,TEMPLATE_BUILD_RUN_MODE)
+            baw200.connect(myInitAvgWF, 'OutputSpec.average_image', buildTemplateIteration1, 'InputSpec.fixed_image')
+            baw200.connect(MergeT1s[subjectid], 'out', buildTemplateIteration1, 'InputSpec.images')
+            baw200.connect(MergeByExtendListElementsNode, 'ListOfExtendedPassiveImages', buildTemplateIteration1, 'InputSpec.ListOfPassiveImagesDictionararies')
 
             buildTemplateIteration2 = buildTemplateIteration1.clone(name='buildTemplateIteration2')
-            buildTemplateIteration2 = BAWantsRegistrationTemplateBuildSingleIterationWF('Iteration02')
-            baw200.connect(buildTemplateIteration1, 'outputspec.template', buildTemplateIteration2, 'inputspec.fixed_image')
-            baw200.connect(MergeByExtendListElementsNode, 'ListOfImagesDictionaries', buildTemplateIteration2, 'inputspec.ListOfImagesDictionaries')
-            baw200.connect(MergeByExtendListElementsNode, 'registrationImageTypes', buildTemplateIteration2, 'inputspec.registrationImageTypes')
-            baw200.connect(MergeByExtendListElementsNode, 'interpolationMapping', buildTemplateIteration2, 'inputspec.interpolationMapping')
+            buildTemplateIteration2 = ANTSTemplateBuildSingleIterationWF('Iteration02',CLUSTER_QUEUE,TEMPLATE_BUILD_RUN_MODE)
+            baw200.connect(buildTemplateIteration1, 'OutputSpec.template', buildTemplateIteration2, 'InputSpec.fixed_image')
+            baw200.connect(MergeT1s[subjectid], 'out', buildTemplateIteration2, 'InputSpec.images')
+            baw200.connect(MergeByExtendListElementsNode, 'ListOfExtendedPassiveImages', buildTemplateIteration2, 'InputSpec.ListOfPassiveImagesDictionararies')
+
+            #baw200.connect(InitAvgImages, 'average_image', outputSpec, 'average_image')
 
             ### Now define where the final organized outputs should go.
             SubjectTemplate_DataSink=pe.Node(nio.DataSink(),name="SubjectTemplate_DS")
             SubjectTemplate_DataSink.inputs.base_directory=ExperimentBaseDirectoryResults
             SubjectTemplate_DataSink.inputs.regexp_substitutions = GenerateSubjectOutputPattern(subjectid)
-            baw200.connect(buildTemplateIteration2,'outputspec.template',SubjectTemplate_DataSink,'ANTSTemplate.@template')
+            baw200.connect(buildTemplateIteration2,'OutputSpec.template',SubjectTemplate_DataSink,'ANTSTemplate.@template')
 
             MakeNewAtlasTemplateNode = pe.Node(interface=Function(function=MakeNewAtlasTemplate,
                     input_names=['t1_image', 'deformed_list','AtlasTemplate','outDefinition'],
@@ -551,11 +493,10 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                     name='99_MakeNewAtlasTemplate')
             MakeNewAtlasTemplateNode.inputs.outDefinition='AtlasDefinition_'+subjectid+'.xml'
             baw200.connect(BAtlas[subjectid],'ExtendedAtlasDefinition_xml_in',MakeNewAtlasTemplateNode,'AtlasTemplate')
-            baw200.connect(buildTemplateIteration2,'outputspec.template',MakeNewAtlasTemplateNode,'t1_image')
-            baw200.connect(buildTemplateIteration2,'outputspec.passive_deformed_templates',MakeNewAtlasTemplateNode,'deformed_list')
+            baw200.connect(buildTemplateIteration2,'OutputSpec.template',MakeNewAtlasTemplateNode,'t1_image')
+            baw200.connect(buildTemplateIteration2,'OutputSpec.passive_deformed_templates',MakeNewAtlasTemplateNode,'deformed_list')
             baw200.connect(MakeNewAtlasTemplateNode,'clean_deformed_list',SubjectTemplate_DataSink,'ANTSTemplate.@passive_deformed_templates')
 
-            """
             ###### Starting Phase II
             PHASE_2_oneSubjWorkflow=dict()
             PHASE_2_subjInfoNode=dict()
@@ -609,8 +550,7 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                 BASIC_DataSink[sessionid].inputs.regexp_substitutions = GenerateOutputPattern(projectid, subjectid, sessionid,'ACPCAlign')
 
                 baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'OutputSpec.outputLandmarksInACPCAlignedSpace',BASIC_DataSink[sessionid],'ACPCAlign.@outputLandmarksInACPCAlignedSpace')
-#                baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'OutputSpec.BCD_ACPC_T1',BASIC_DataSink[sessionid],'ACPCAlign.@BCD_ACPC_T1')
-                baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'OutputSpec.BCD_ACPC_T1_CROPPED',BASIC_DataSink[sessionid],'ACPCAlign.@BCD_ACPC_T1_CROPPED')
+                baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'OutputSpec.BCD_ACPC_T1',BASIC_DataSink[sessionid],'ACPCAlign.@BCD_ACPC_T1')
                 baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'OutputSpec.outputLandmarksInInputSpace',BASIC_DataSink[sessionid],'ACPCAlign.@outputLandmarksInInputSpace')
                 baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'OutputSpec.outputTransform',BASIC_DataSink[sessionid],'ACPCAlign.@outputTransform')
                 baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'OutputSpec.atlasToSubjectTransform',BASIC_DataSink[sessionid],'ACPCAlign.@atlasToSubjectTransform')
@@ -730,15 +670,12 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                     print("SKIPPING SEGMENTATION PHASE FOR {0} {1} {2}, lenT2s {3}".format(projectid, subjectid, sessionid, len(global_AllT2s) ))
 
 
-                ## Synthesized images are only valid for 3T where the T2 and T1 have approximately the same resolution.
-                global_All3T_T1s=ExperimentDatabase.getFilenamesByScantype(sessionid,['T1-30'])
-                global_All3T_T2s=ExperimentDatabase.getFilenamesByScantype(sessionid,['T2-30'])
                 RunAllFSComponents=False ## A hack to avoid 26 hour run of freesurfer
                 #RunAllFSComponents=True ## A hack to avoid 26 hour run of freesurfer
-                if ( 'FREESURFER' in WORKFLOW_COMPONENTS ) and ( ( len(global_All3T_T2s) > 0 ) or RunAllFSComponents == True ):
+                if ( 'FREESURFER' in WORKFLOW_COMPONENTS ) and ( ( len(global_AllT2s) > 0 ) or RunAllFSComponents == True ):
                     from WorkupT1T2FreeSurfer import CreateFreeSurferWorkflow
-                    if ( len(global_All3T_T2s) > 0 ): # If multi-modal, then create synthesized image before running
-                        print("HACK  FREESURFER len(global_All3T_T2s) > 0 ")
+                    if ( len(global_AllT2s) > 0 ): # If multi-modal, then create synthesized image before running
+                        print("HACK  FREESURFER len(global_AllT2s) > 0 ")
                         myLocalFSWF[sessionid]= CreateFreeSurferWorkflow(projectid, subjectid, sessionid,"Level1_FSTest",
                                                 CLUSTER_QUEUE,RunAllFSComponents,True)
                     else:
@@ -779,5 +716,5 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
 
                 else:
                     print "Skipping freesurfer"
-            """
+
     return baw200

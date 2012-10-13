@@ -22,10 +22,21 @@ from BRAINSTools import *
 def CreateLandmarkInitializeWorkflow(WFname,BCD_model_path,InterpolationMode,DoReverseInit=False):
     landmarkInitializeWF= pe.Workflow(name=WFname)
 
+    #############
     inputsSpec = pe.Node(interface=IdentityInterface(fields=['inputVolume',
         'atlasLandmarkFilename','atlasWeightFilename','atlasVolume']),
                          run_without_submitting=True,
                          name='InputSpec' )
+
+    #############
+    outputsSpec = pe.Node(interface=IdentityInterface(fields=['outputLandmarksInACPCAlignedSpace',
+            'outputResampledVolume','outputResampledCroppedVolume',
+            'outputLandmarksInInputSpace',
+            'outputTransform','outputMRML','atlasToSubjectTransform'
+            ]),
+            run_without_submitting=True,
+            name='OutputSpec' )
+
 
     ########################################################/
     # Run ACPC Detect on first T1 Image - Base Image
@@ -87,13 +98,13 @@ def CreateLandmarkInitializeWorkflow(WFname,BCD_model_path,InterpolationMode,DoR
         landmarkInitializeWF.connect(BLI,'outputTransformFilename',ResampleFromAtlas,'warpTransform')
         landmarkInitializeWF.connect(BCD,'outputResampledVolume',ResampleFromAtlas,'referenceVolume')
 
-    #############
-    outputsSpec = pe.Node(interface=IdentityInterface(fields=['outputLandmarksInACPCAlignedSpace','outputResampledVolume','outputLandmarksInInputSpace',
-            'outputTransform','outputMRML','atlasToSubjectTransform'
-            ]),
-            run_without_submitting=True,
-            name='OutputSpec' )
+    BROIAUTO = pe.Node(interface=BRAINSROIAuto(), name="BROIAuto_cropped")
+    BROIAUTO.inputs.outputVolume="Cropped_BCD_ACPC_Aligned.nii.gz"
+    BROIAUTO.inputs.ROIAutoDilateSize=10
+    BROIAUTO.inputs.cropOutput=True
+    landmarkInitializeWF.connect(BCD,'outputResampledVolume', BROIAUTO,'inputVolume')
 
+    landmarkInitializeWF.connect(BROIAUTO,'outputVolume',outputsSpec,'outputResampledCroppedVolume')
     landmarkInitializeWF.connect(BCD,'outputLandmarksInACPCAlignedSpace',outputsSpec,'outputLandmarksInACPCAlignedSpace')
     landmarkInitializeWF.connect(BCD,'outputResampledVolume',outputsSpec,'outputResampledVolume')
     landmarkInitializeWF.connect(BCD,'outputLandmarksInInputSpace',outputsSpec,'outputLandmarksInInputSpace')

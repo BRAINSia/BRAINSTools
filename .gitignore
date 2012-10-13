@@ -16,3 +16,5 @@ CMakeFiles/*
 .ExternalData_MD5*
 *.pyc
 crash*
+*.swp
+.clang_complete

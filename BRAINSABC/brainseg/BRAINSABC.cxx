@@ -893,7 +893,7 @@ int main(int argc, char * *argv)
               + GetStripedImageFileNameExtension(inputVolumes[i]) + std::string(
                 "_to_")
               + GetStripedImageFileNameExtension(inputVolumes[0]) + suffixstr
-              + std::string(".mat");
+              + std::string(".h5");
             }
           atlasreg->SetIntraSubjectOriginalImageList(intraSubjectNoiseRemovedImageList);
           atlasreg->SetIntraSubjectTransformFileNames(intraSubjectTransformFileNames);
@@ -974,7 +974,7 @@ int main(int argc, char * *argv)
             + GetStripedImageFileNameExtension(templateVolumes[0])
             + std::string("_to_")
             + GetStripedImageFileNameExtension(inputVolumes[0]) + suffixstr
-            + std::string("PreSegmentation.mat");
+            + std::string("PreSegmentation.h5");
           atlasreg->SetAtlasToSubjectTransformFileName(atlasTransformFileName);
           }
 
@@ -1556,7 +1556,7 @@ int main(int argc, char * *argv)
         + GetStripedImageFileNameExtension(templateVolumes[0])
         + std::string("_to_")
         + GetStripedImageFileNameExtension( ( inputVolumes[0] ) )
-        + std::string("_") + defaultSuffix + "_PostSegmentation.mat";
+        + std::string("_") + defaultSuffix + "_PostSegmentation.h5";
         */
         const std::string postSegmentationTransformFileName = atlasToSubjectTransform;
         // NOTE:  Aliasing of smart-pointers up the polymorphic tree OK here

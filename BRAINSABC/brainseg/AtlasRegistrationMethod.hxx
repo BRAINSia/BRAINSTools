@@ -298,26 +298,32 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
           splineGridSize[1] = this->m_WarpGrid[1];
           splineGridSize[2] = this->m_WarpGrid[2];
           intraSubjectRegistrationHelper->SetSplineGridSize(splineGridSize);
-          intraSubjectRegistrationHelper->SetMaxBSplineDisplacement(6.0); //
-                                                                          // Setting
-                                                                          // max
-                                                                          //
-                                                                          // displace
-          //
-          //
-          //
+          // Setting max displace
+          intraSubjectRegistrationHelper->SetMaxBSplineDisplacement(6.0);
           // intraSubjectRegistrationHelper->SetUseExplicitPDFDerivativesMode(useExplicitPDFDerivativesMode);
-          //
-          //
-          //
           // intraSubjectRegistrationHelper->SetUseCachingOfBSplineWeightsMode(useCachingOfBSplineWeightsMode);
           }
-        //
-        //
+        else if( m_ImageLinearTransformChoice == "SyN" )
+          {
+          muLogMacro(<< "Registering (SyN) image " << i << " to first subject image." << std::endl);
+          std::vector<double> minimumStepSize(5);
+          minimumStepSize[0] = 0.00005;
+          minimumStepSize[1] = 0.005;
+          minimumStepSize[2] = 0.005;
+          minimumStepSize[3] = 0.005;
+          minimumStepSize[4] = 0.000005;
+          intraSubjectRegistrationHelper->SetMinimumStepLength(minimumStepSize);
+          std::vector<std::string> transformType(5);
+          transformType[0] = "Rigid";
+          transformType[1] = "ScaleVersor3D";
+          transformType[2] = "ScaleSkewVersor3D";
+          transformType[3] = "Affine";
+          transformType[4] = "SyN";
+          intraSubjectRegistrationHelper->SetTransformType(transformType);
+          }
         //
         // intraSubjectRegistrationHelper->SetBackgroundFillValue(backgroundFillValue);
         // NOT VALID When using initializeTransformMode
-        //
         //
         // intraSubjectRegistrationHelper->SetCurrentGenericTransform(currentGenericTransform);
         //  intraSubjectRegistrationHelper->SetUseWindowedSinc(useWindowedSinc);

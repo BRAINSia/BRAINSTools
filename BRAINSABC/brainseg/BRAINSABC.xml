@@ -55,16 +55,17 @@
     <element>Rigid</element>
     <element>Affine</element>
     <element>BSpline</element>
-    <default>Affine</default>
+    <element>SyN</element>
+    <default>SyN</default>
   </string-enumeration>
-  <transform fileExtensions=".mat">
+  <transform fileExtensions=".h5">
     <name>atlasToSubjectTransform</name>
     <label>Atlas to Subject Transform</label>
     <description>The trasform from atlas to the subject</description>
     <longflag>atlasToSubjectTransform</longflag>
     <channel>output</channel>
   </transform>
-  <transform fileExtensions=".mat">
+  <transform fileExtensions=".h5">
     <name>atlasToSubjectInitialTransform</name>
     <label>Atlas to Subject Initial Transform</label>
     <description>The initial trasform from atlas to the subject</description>

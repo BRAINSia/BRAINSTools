@@ -680,16 +680,15 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
                 atlasToSubjectInitialTransformName = this->m_AtlasToSubjectInitialTransform->GetNameOfClass();
                 }
 
-              if( !( (atlasToSubjectInitialTransformName.compare("AffineTransform") == 0 ) ||
-                     (atlasToSubjectInitialTransformName.compare("SyN") == 0 ) ) )
+              if( !( atlasToSubjectInitialTransformName.compare("SyN") == 0 ) )
                 {
+                minimumStepSize.push_back(0.0025);
                 minimumStepSize.push_back(0.0025);
                 minimumStepSize.push_back(0.0025);
                 minimumStepSize.push_back(0.0025);
                 transformType.push_back("Rigid");
                 transformType.push_back("ScaleVersor3D");
                 transformType.push_back("ScaleSkewVersor3D");
-                minimumStepSize.push_back(0.0025);
                 transformType.push_back("Affine");
                 }
               minimumStepSize.push_back(0.0025);

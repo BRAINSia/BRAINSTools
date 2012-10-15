@@ -102,7 +102,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
 
   m_NonAirRegion = 0;
 
-  m_AtlasTransformType = "invalid_TransformationTypeNotSet";
+  m_AtlasTransformType = "SyN"; // "invalid_TransformationTypeNotSet";
 
   m_UpdateTransformation = false;
 
@@ -1336,6 +1336,11 @@ void
 EMSegmentationFilter<TInputImage, TProbabilityImage>
 ::UpdateTransformation(const unsigned int /*CurrentEMIteration*/)
 {
+  if( m_AtlasTransformType == "SyN" )
+    {
+    muLogMacro(<< "HACK: " << m_AtlasTransformType <<  " not instumented for transformation update."  << std::endl );
+    return;
+    }
   muLogMacro(<< "Updating Warping with transform type: " << m_AtlasTransformType  << std::endl );
   if( m_UpdateTransformation == false )
     {
@@ -1356,19 +1361,10 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
     atlasToSubjectRegistrationHelper->SetTranslationScale(1000);
     atlasToSubjectRegistrationHelper->SetReproportionScale(1.0);
     atlasToSubjectRegistrationHelper->SetSkewScale(1.0);
-    //
-    //
-    //
-    // atlasToSubjectRegistrationHelper->SetBackgroundFillValue(backgroundFillValue);
-    // NOT VALID When using initializeTransformMode
-    //
-    //
-    // atlasToSubjectRegistrationHelper->SetCurrentGenericTransform(currentGenericTransform);
-    //
-    //
-    //
+
     // atlasToSubjectRegistrationHelper->SetMaskInferiorCutOffFromCenter(maskInferiorCutOffFromCenter);
     //  atlasToSubjectRegistrationHelper->SetUseWindowedSinc(useWindowedSinc);
+
     // Register each intrasubject image mode to first image
     atlasToSubjectRegistrationHelper->SetFixedVolume(m_CorrectedImages[vIndex]);
     // Register all atlas images to first image
@@ -1472,12 +1468,10 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
           // Setting max displace
           atlasToSubjectRegistrationHelper->SetMaxBSplineDisplacement(6.0);
           }
-        // else if( m_AtlastTransformType == "SyN" )
-        //  {
-        //   muLogMacro(
-        //    << "Registering (SyN) " << preprocessMovingString << "atlas(" << vIndex << ") to template(" << vIndex
-        //    << ") image." << std::endl);
-        //  }
+        else if( m_AtlasTransformType == "SyN" )
+          {
+          std::cerr << "ERROR:  NOT PROPERLY IMPLEMENTED YET HACK:" << std::endl;
+          }
         atlasToSubjectRegistrationHelper->SetCurrentGenericTransform(m_TemplateGenericTransform);
         if( this->m_DebugLevel > 9 )
           {
@@ -1568,7 +1562,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
 {
   if( m_AtlasTransformType == "invalid_TransformationTypeNotSet" )
     {
-    raise itk::Exception("The AtlasTransformType has NOT been set!")
+    itkGenericExceptionMacro( << "The AtlasTransformType has NOT been set!" << std::endl );
     }
   if( m_UpdateRequired )
     {

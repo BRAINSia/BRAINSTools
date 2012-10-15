@@ -1752,7 +1752,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
           else
             {
             itkGenericExceptionMacro( << "ERROR:  Invalid transform initializer type found:  "
-                                      << transformFileType )
+                                      << transformFileType );
             }
           }
         catch( itk::ExceptionObject & excp )

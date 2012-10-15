@@ -1401,6 +1401,8 @@ int main(int argc, char * *argv)
     segfilter->SetPriorIsForegroundPriorVector(priorIsForegroundPriorVector);
 
     segfilter->SetMaxBiasDegree(maxBiasDegree);
+    // TODO: Expose the transform type to the BRAINSABC command line
+    // segFilter->SetAtlasTransformType("SyN"); // atlasTransformType);
 
 #if 0
     // THIS ACTAULLY NEEDS TO BE USED FOR ONLY DOING THE FINAL ITERATION OF THE

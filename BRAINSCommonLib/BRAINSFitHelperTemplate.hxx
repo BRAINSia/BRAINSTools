@@ -1248,10 +1248,8 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
               std::cerr << "ERROR INITILIZATION FIXED PARAMETERS DO NOT MATCH: " << initialFixedParameters.GetSize()
                         << " != " << tempFixedInitialParameters.GetSize() << std::endl;
               }
-            if( checkMatch )             //  This ramus covers the hypothesis
-                                         // that
-            // the
-            // FixedParameters represent the grid locations of the spline nodes.
+            if( checkMatch ) //  This ramus covers the hypothesis that the FixedParameters
+                             //  represent the grid locations of the spline nodes.
               {
               for( unsigned int i = 0; i < initialFixedParameters.GetSize(); ++i )
                 {
@@ -1262,9 +1260,6 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
                             << " != " << tempFixedInitialParameters.GetElement(i) << std::endl;
                   }
                 }
-              }
-            if( checkMatch )
-              {
               BSplineTransformType::ParametersType tempInitialParameters =
                 tempInitializerITKTransform->GetParameters();
               if( initialBSplineTransform->GetNumberOfParameters() ==
@@ -1295,6 +1290,11 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
                 << "parameter dimensions as the one currently specified.");
               }
             }
+          else if( transformFileType == "CompositeTransform" )
+            {
+            itkGenericExceptionMacro( << "Composite transform initializer type found:  "
+                                      << transformFileType )
+            }
           else
             {
             itkGenericExceptionMacro( << "ERROR:  Invalid transform initializer type found:  "
@@ -1308,7 +1308,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
             << "Error while reading the m_CurrentGenericTransform"
             << std::endl;
           std::cerr << excp << std::endl;
-          return;
+          throw excp;
           }
         }
 

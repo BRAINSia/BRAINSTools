@@ -225,23 +225,32 @@ GenericTransformType::Pointer ReadTransformFromDisk(const std::string & initialT
   TransformListType                 currentTransformList;
   TransformListType::const_iterator currentTransformListIterator;
 
-  if( initialTransform.size() > 0 )
+  try
     {
-    std::cout
-      << "Read ITK transform from text file: "
-      << initialTransform << std::endl;
-
-    transformListReader->SetFileName( initialTransform.c_str() );
-
-    transformListReader->Update();
-
-    currentTransformList = *( transformListReader->GetTransformList() );
-    if( currentTransformList.size() == 0 )
+    if( initialTransform.size() > 0 )
       {
-      itkGenericExceptionMacro( << "Number of currentTransformList = " << currentTransformList.size()
-                                << "FATAL ERROR: Failed to read transform" << initialTransform);
+      std::cout << "Read ITK transform from file: " << initialTransform << std::endl;
+
+      transformListReader->SetFileName( initialTransform.c_str() );
+      transformListReader->Update();
+
+      currentTransformList = *( transformListReader->GetTransformList() );
+      if( currentTransformList.size() == 0 )
+        {
+        itkGenericExceptionMacro( << "Number of currentTransformList = " << currentTransformList.size()
+                                  << "FATAL ERROR: Failed to read transform" << initialTransform);
+        }
       }
     }
+  catch( itk::ExceptionObject & excp )
+    {
+    std::cerr << "[FAILED]" << std::endl;
+    std::cerr << "Error while reading the the file " << initialTransform << std::endl;
+    std::cerr << excp << std::endl;
+    throw excp;
+    }
+  std::cout << "HACK: " << currentTransformList.size() << "  "
+            << ( *( currentTransformList.begin() ) )->GetNameOfClass() << std::endl;
   if( currentTransformList.size() == 1 )  // Most simple transform types
     {
     // NOTE:  The dynamic casting here circumvents the standard smart pointer
@@ -319,22 +328,38 @@ GenericTransformType::Pointer ReadTransformFromDisk(const std::string & initialT
       genericTransform = tempCopy.GetPointer();
       }
 #if (ITK_VERSION_MAJOR > 3)
-    else if( transformFileType == "Composite" )
+    else if( transformFileType == "CompositeTransform" )
       {
-      const CompositeTransformType::ConstPointer tempInitializerITKTransform =
-        dynamic_cast<const CompositeTransformType *>( ( *( currentTransformList.begin() ) ).GetPointer() );
-      if( tempInitializerITKTransform.IsNull() )
+      try
         {
-        itkGenericExceptionMacro(<< "Error in type conversion");
+        const CompositeTransformType::ConstPointer tempInitializerITKTransform =
+          dynamic_cast<const CompositeTransformType *>( ( *( currentTransformList.begin() ) ).GetPointer() );
+        if( tempInitializerITKTransform.IsNull() )
+          {
+          itkGenericExceptionMacro(<< "Error in type conversion");
+          }
+        CompositeTransformType::Pointer                    tempCopy = CompositeTransformType::New();
+        const CompositeTransformType::TransformQueueType & transformQueue =
+          tempInitializerITKTransform->GetTransformQueue();
+        for( unsigned int i = 0; i < transformQueue.size(); ++i )
+          {
+          tempCopy->AddTransform(tempInitializerITKTransform->GetNthTransform(i) );
+          }
+        genericTransform = tempCopy.GetPointer();
         }
-      CompositeTransformType::Pointer                    tempCopy = CompositeTransformType::New();
-      const CompositeTransformType::TransformQueueType & transformQueue =
-        tempInitializerITKTransform->GetTransformQueue();
-      for( unsigned i = 0; i < transformQueue.size(); ++i )
+      catch( itk::ExceptionObject & excp )
         {
+        std::cerr << "[FAILED]" << std::endl;
+        std::cerr << "Error while reading the the file " << initialTransform << std::endl;
+        std::cerr << excp << std::endl;
+        throw excp;
         }
       }
 #endif
+    else
+      {
+      std::cerr << "ERROR:  Invalid type (" << transformFileType << ") " << __FILE__ << " " << __LINE__ << std::endl;
+      }
     }
   else if( currentTransformList.size() == 2 )  // A special case for
                                                // BSplineTransforms

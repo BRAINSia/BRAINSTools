@@ -54,7 +54,7 @@ int main(int argc, char *argv[])
   itk::TransformFactoryBase::RegisterDefaultTransforms();
 #endif
   itk::Object::SetGlobalWarningDisplay(false); // itk warnings aren't thread safe and in
-                                               // this program cause intermittent crashes.
+  // this program cause intermittent crashes.
 
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
 
@@ -139,7 +139,7 @@ int main(int argc, char *argv[])
       }
     catch( itk::ExceptionObject & excp )
       {
-      std::cout << "******* HERE *******" << std::endl;
+      std::cout << "******* HERE *******" << __FILE__ << " " << __LINE__ << std::endl;
       }
     if( inverseTransform )
       {
@@ -195,174 +195,182 @@ int main(int argc, char *argv[])
         }
       }
     }
-  std::cout << "******* NOT HERE *******" << std::endl;
-  TBRAINSResampleInternalImageType::Pointer TransformedImage =
-    GenericTransformImage<TBRAINSResampleInternalImageType, TBRAINSResampleInternalImageType, DisplacementFieldType>(
-      PrincipalOperandImage,
-      ReferenceImage,
-      DisplacementField,
-      genericTransform,
-      defaultValue,
-      interpolationMode,
-      pixelType == "binary");
-  if( gridSpacing.size() == TBRAINSResampleInternalImageType::ImageDimension )
+  try
     {
-    // find min/max pixels for image
-    typedef itk::StatisticsImageFilter<TBRAINSResampleInternalImageType> StatisticsFilterType;
+    TBRAINSResampleInternalImageType::Pointer TransformedImage =
+      GenericTransformImage<TBRAINSResampleInternalImageType, TBRAINSResampleInternalImageType, DisplacementFieldType>(
+        PrincipalOperandImage,
+        ReferenceImage,
+        DisplacementField,
+        genericTransform,
+        defaultValue,
+        interpolationMode,
+        pixelType == "binary");
+    if( gridSpacing.size() == TBRAINSResampleInternalImageType::ImageDimension )
+      {
+      // find min/max pixels for image
+      typedef itk::StatisticsImageFilter<TBRAINSResampleInternalImageType> StatisticsFilterType;
 
-    StatisticsFilterType::Pointer statsFilter =
-      StatisticsFilterType::New();
-    statsFilter->SetInput(TransformedImage);
-    statsFilter->Update();
-    TBRAINSResampleInternalImageType::PixelType minPixel( statsFilter->GetMinimum() );
-    TBRAINSResampleInternalImageType::PixelType maxPixel( statsFilter->GetMaximum() );
+      StatisticsFilterType::Pointer statsFilter =
+        StatisticsFilterType::New();
+      statsFilter->SetInput(TransformedImage);
+      statsFilter->Update();
+      TBRAINSResampleInternalImageType::PixelType minPixel( statsFilter->GetMinimum() );
+      TBRAINSResampleInternalImageType::PixelType maxPixel( statsFilter->GetMaximum() );
 
-    // create the grid
-    if( useTransform )
-      { // HACK:  Need to make handeling of transforms more elegant as is done
-        // in BRAINSFitHelper.
+      // create the grid
+      if( useTransform )
+        { // HACK:  Need to make handeling of transforms more elegant as is done
+          // in BRAINSFitHelper.
 #if (ITK_VERSION_MAJOR < 4)
-      typedef itk::TransformToDeformationFieldSource<DisplacementFieldType, double> ConverterType;
+        typedef itk::TransformToDeformationFieldSource<DisplacementFieldType, double> ConverterType;
 #else
-      typedef itk::TransformToDisplacementFieldSource<DisplacementFieldType, double> ConverterType;
+        typedef itk::TransformToDisplacementFieldSource<DisplacementFieldType, double> ConverterType;
 #endif
-      ConverterType::Pointer myConverter = ConverterType::New();
-      myConverter->SetTransform(genericTransform);
-      myConverter->SetOutputParametersFromImage(TransformedImage);
-      myConverter->Update();
-      DisplacementField = myConverter->GetOutput();
+        ConverterType::Pointer myConverter = ConverterType::New();
+        myConverter->SetTransform(genericTransform);
+        myConverter->SetOutputParametersFromImage(TransformedImage);
+        myConverter->Update();
+        DisplacementField = myConverter->GetOutput();
+        }
+      typedef itk::MaximumImageFilter<TBRAINSResampleInternalImageType> MaxFilterType;
+      typedef itk::GridForwardWarpImageFilterNew
+        <DisplacementFieldType, TBRAINSResampleInternalImageType> GFType;
+      GFType::Pointer GFFilter = GFType::New();
+      GFFilter->SetInput(DisplacementField);
+      GFType::GridSpacingType GridOffsets;
+      GridOffsets[0] = gridSpacing[0];
+      GridOffsets[1] = gridSpacing[1];
+      GridOffsets[2] = gridSpacing[2];
+      GFFilter->SetGridPixelSpacing(GridOffsets);
+      GFFilter->SetBackgroundValue(minPixel);
+      GFFilter->SetForegroundValue(maxPixel);
+      // merge grid with warped image
+      MaxFilterType::Pointer MFilter = MaxFilterType::New();
+      MFilter->SetInput1( GFFilter->GetOutput() );
+      MFilter->SetInput2(TransformedImage);
+      MFilter->Update();
+      TransformedImage = MFilter->GetOutput();
       }
-    typedef itk::MaximumImageFilter<TBRAINSResampleInternalImageType> MaxFilterType;
-    typedef itk::GridForwardWarpImageFilterNew
-      <DisplacementFieldType, TBRAINSResampleInternalImageType> GFType;
-    GFType::Pointer GFFilter = GFType::New();
-    GFFilter->SetInput(DisplacementField);
-    GFType::GridSpacingType GridOffsets;
-    GridOffsets[0] = gridSpacing[0];
-    GridOffsets[1] = gridSpacing[1];
-    GridOffsets[2] = gridSpacing[2];
-    GFFilter->SetGridPixelSpacing(GridOffsets);
-    GFFilter->SetBackgroundValue(minPixel);
-    GFFilter->SetForegroundValue(maxPixel);
-    // merge grid with warped image
-    MaxFilterType::Pointer MFilter = MaxFilterType::New();
-    MFilter->SetInput1( GFFilter->GetOutput() );
-    MFilter->SetInput2(TransformedImage);
-    MFilter->Update();
-    TransformedImage = MFilter->GetOutput();
-    }
 
-  // Write out the output image;  threshold it if necessary.
-  if( pixelType == "binary" )
-    {
-    // A special case for dealing with binary images
-    // where signed distance maps are warped and thresholds created
-    typedef short int                                                             MaskPixelType;
-    typedef itk::Image<MaskPixelType,  GenericTransformImageNS::SpaceDimension>   MaskImageType;
-    typedef itk::CastImageFilter<TBRAINSResampleInternalImageType, MaskImageType> CastImageFilter;
-    CastImageFilter::Pointer castFilter = CastImageFilter::New();
-    castFilter->SetInput(TransformedImage);
-    castFilter->Update();
+    // Write out the output image;  threshold it if necessary.
+    if( pixelType == "binary" )
+      {
+      // A special case for dealing with binary images
+      // where signed distance maps are warped and thresholds created
+      typedef short int                                                             MaskPixelType;
+      typedef itk::Image<MaskPixelType,  GenericTransformImageNS::SpaceDimension>   MaskImageType;
+      typedef itk::CastImageFilter<TBRAINSResampleInternalImageType, MaskImageType> CastImageFilter;
+      CastImageFilter::Pointer castFilter = CastImageFilter::New();
+      castFilter->SetInput(TransformedImage);
+      castFilter->Update();
 
-    MaskImageType::Pointer outputImage = castFilter->GetOutput();
-    typedef itk::ImageFileWriter<MaskImageType> WriterType;
-    WriterType::Pointer imageWriter = WriterType::New();
-    imageWriter->UseCompressionOn();
-    imageWriter->SetFileName(outputVolume);
-    imageWriter->SetInput( castFilter->GetOutput() );
-    imageWriter->Update();
-    }
-  else if( pixelType == "uchar" )
-    {
-    typedef unsigned char                                                        NewPixelType;
-    typedef itk::Image<NewPixelType, GenericTransformImageNS::SpaceDimension>    NewImageType;
-    typedef itk::CastImageFilter<TBRAINSResampleInternalImageType, NewImageType> CastImageFilter;
-    CastImageFilter::Pointer castFilter = CastImageFilter::New();
-    castFilter->SetInput(TransformedImage);
-    castFilter->Update();
+      MaskImageType::Pointer outputImage = castFilter->GetOutput();
+      typedef itk::ImageFileWriter<MaskImageType> WriterType;
+      WriterType::Pointer imageWriter = WriterType::New();
+      imageWriter->UseCompressionOn();
+      imageWriter->SetFileName(outputVolume);
+      imageWriter->SetInput( castFilter->GetOutput() );
+      imageWriter->Update();
+      }
+    else if( pixelType == "uchar" )
+      {
+      typedef unsigned char                                                        NewPixelType;
+      typedef itk::Image<NewPixelType, GenericTransformImageNS::SpaceDimension>    NewImageType;
+      typedef itk::CastImageFilter<TBRAINSResampleInternalImageType, NewImageType> CastImageFilter;
+      CastImageFilter::Pointer castFilter = CastImageFilter::New();
+      castFilter->SetInput(TransformedImage);
+      castFilter->Update();
 
-    typedef itk::ImageFileWriter<NewImageType> WriterType;
-    WriterType::Pointer imageWriter = WriterType::New();
-    imageWriter->UseCompressionOn();
-    imageWriter->SetFileName(outputVolume);
-    imageWriter->SetInput( castFilter->GetOutput() );
-    imageWriter->Update();
-    }
-  else if( pixelType == "short" )
-    {
-    typedef signed short                                                         NewPixelType;
-    typedef itk::Image<NewPixelType, GenericTransformImageNS::SpaceDimension>    NewImageType;
-    typedef itk::CastImageFilter<TBRAINSResampleInternalImageType, NewImageType> CastImageFilter;
-    CastImageFilter::Pointer castFilter = CastImageFilter::New();
-    castFilter->SetInput(TransformedImage);
-    castFilter->Update();
+      typedef itk::ImageFileWriter<NewImageType> WriterType;
+      WriterType::Pointer imageWriter = WriterType::New();
+      imageWriter->UseCompressionOn();
+      imageWriter->SetFileName(outputVolume);
+      imageWriter->SetInput( castFilter->GetOutput() );
+      imageWriter->Update();
+      }
+    else if( pixelType == "short" )
+      {
+      typedef signed short                                                         NewPixelType;
+      typedef itk::Image<NewPixelType, GenericTransformImageNS::SpaceDimension>    NewImageType;
+      typedef itk::CastImageFilter<TBRAINSResampleInternalImageType, NewImageType> CastImageFilter;
+      CastImageFilter::Pointer castFilter = CastImageFilter::New();
+      castFilter->SetInput(TransformedImage);
+      castFilter->Update();
 
-    typedef itk::ImageFileWriter<NewImageType> WriterType;
-    WriterType::Pointer imageWriter = WriterType::New();
-    imageWriter->UseCompressionOn();
-    imageWriter->SetFileName(outputVolume);
-    imageWriter->SetInput( castFilter->GetOutput() );
-    imageWriter->Update();
-    }
-  else if( pixelType == "ushort" )
-    {
-    typedef unsigned short                                                       NewPixelType;
-    typedef itk::Image<NewPixelType, GenericTransformImageNS::SpaceDimension>    NewImageType;
-    typedef itk::CastImageFilter<TBRAINSResampleInternalImageType, NewImageType> CastImageFilter;
-    CastImageFilter::Pointer castFilter = CastImageFilter::New();
-    castFilter->SetInput(TransformedImage);
-    castFilter->Update();
+      typedef itk::ImageFileWriter<NewImageType> WriterType;
+      WriterType::Pointer imageWriter = WriterType::New();
+      imageWriter->UseCompressionOn();
+      imageWriter->SetFileName(outputVolume);
+      imageWriter->SetInput( castFilter->GetOutput() );
+      imageWriter->Update();
+      }
+    else if( pixelType == "ushort" )
+      {
+      typedef unsigned short                                                       NewPixelType;
+      typedef itk::Image<NewPixelType, GenericTransformImageNS::SpaceDimension>    NewImageType;
+      typedef itk::CastImageFilter<TBRAINSResampleInternalImageType, NewImageType> CastImageFilter;
+      CastImageFilter::Pointer castFilter = CastImageFilter::New();
+      castFilter->SetInput(TransformedImage);
+      castFilter->Update();
 
-    typedef itk::ImageFileWriter<NewImageType> WriterType;
-    WriterType::Pointer imageWriter = WriterType::New();
-    imageWriter->UseCompressionOn();
-    imageWriter->SetFileName(outputVolume);
-    imageWriter->SetInput( castFilter->GetOutput() );
-    imageWriter->Update();
-    }
-  else if( pixelType == "int" )
-    {
-    typedef int                                                                  NewPixelType;
-    typedef itk::Image<NewPixelType, GenericTransformImageNS::SpaceDimension>    NewImageType;
-    typedef itk::CastImageFilter<TBRAINSResampleInternalImageType, NewImageType> CastImageFilter;
-    CastImageFilter::Pointer castFilter = CastImageFilter::New();
-    castFilter->SetInput(TransformedImage);
-    castFilter->Update();
+      typedef itk::ImageFileWriter<NewImageType> WriterType;
+      WriterType::Pointer imageWriter = WriterType::New();
+      imageWriter->UseCompressionOn();
+      imageWriter->SetFileName(outputVolume);
+      imageWriter->SetInput( castFilter->GetOutput() );
+      imageWriter->Update();
+      }
+    else if( pixelType == "int" )
+      {
+      typedef int                                                                  NewPixelType;
+      typedef itk::Image<NewPixelType, GenericTransformImageNS::SpaceDimension>    NewImageType;
+      typedef itk::CastImageFilter<TBRAINSResampleInternalImageType, NewImageType> CastImageFilter;
+      CastImageFilter::Pointer castFilter = CastImageFilter::New();
+      castFilter->SetInput(TransformedImage);
+      castFilter->Update();
 
-    typedef itk::ImageFileWriter<NewImageType> WriterType;
-    WriterType::Pointer imageWriter = WriterType::New();
-    imageWriter->UseCompressionOn();
-    imageWriter->SetFileName(outputVolume);
-    imageWriter->SetInput( castFilter->GetOutput() );
-    imageWriter->Update();
+      typedef itk::ImageFileWriter<NewImageType> WriterType;
+      WriterType::Pointer imageWriter = WriterType::New();
+      imageWriter->UseCompressionOn();
+      imageWriter->SetFileName(outputVolume);
+      imageWriter->SetInput( castFilter->GetOutput() );
+      imageWriter->Update();
+      }
+    else if( pixelType == "uint" )
+      {
+      typedef unsigned int                                                         NewPixelType;
+      typedef itk::Image<NewPixelType, GenericTransformImageNS::SpaceDimension>    NewImageType;
+      typedef itk::CastImageFilter<TBRAINSResampleInternalImageType, NewImageType> CastImageFilter;
+      CastImageFilter::Pointer castFilter = CastImageFilter::New();
+      castFilter->SetInput(TransformedImage);
+      castFilter->Update();
+      typedef itk::ImageFileWriter<NewImageType> WriterType;
+      WriterType::Pointer imageWriter = WriterType::New();
+      imageWriter->UseCompressionOn();
+      imageWriter->SetFileName(outputVolume);
+      imageWriter->SetInput( castFilter->GetOutput() );
+      imageWriter->Update();
+      }
+    else if( pixelType == "float" )
+      {
+      typedef itk::ImageFileWriter<TBRAINSResampleInternalImageType> WriterType;
+      WriterType::Pointer imageWriter = WriterType::New();
+      imageWriter->UseCompressionOn();
+      imageWriter->SetFileName(outputVolume);
+      imageWriter->SetInput(TransformedImage);
+      imageWriter->Update();
+      }
+    else
+      {
+      std::cout << "ERROR:  Invalid pixelType" << std::endl;
+      return EXIT_FAILURE;
+      }
     }
-  else if( pixelType == "uint" )
+  catch( itk::ExceptionObject & excp )
     {
-    typedef unsigned int                                                         NewPixelType;
-    typedef itk::Image<NewPixelType, GenericTransformImageNS::SpaceDimension>    NewImageType;
-    typedef itk::CastImageFilter<TBRAINSResampleInternalImageType, NewImageType> CastImageFilter;
-    CastImageFilter::Pointer castFilter = CastImageFilter::New();
-    castFilter->SetInput(TransformedImage);
-    castFilter->Update();
-    typedef itk::ImageFileWriter<NewImageType> WriterType;
-    WriterType::Pointer imageWriter = WriterType::New();
-    imageWriter->UseCompressionOn();
-    imageWriter->SetFileName(outputVolume);
-    imageWriter->SetInput( castFilter->GetOutput() );
-    imageWriter->Update();
-    }
-  else if( pixelType == "float" )
-    {
-    typedef itk::ImageFileWriter<TBRAINSResampleInternalImageType> WriterType;
-    WriterType::Pointer imageWriter = WriterType::New();
-    imageWriter->UseCompressionOn();
-    imageWriter->SetFileName(outputVolume);
-    imageWriter->SetInput(TransformedImage);
-    imageWriter->Update();
-    }
-  else
-    {
-    std::cout << "ERROR:  Invalid pixelType" << std::endl;
+    std::cout << "******* HERE *******" << __FILE__ << " " << __LINE__ << std::endl;
+    std::cout << excp << std::endl;
     return EXIT_FAILURE;
     }
   return EXIT_SUCCESS;

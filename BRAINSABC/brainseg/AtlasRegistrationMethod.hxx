@@ -665,14 +665,48 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
                                                                               //
                                                                               // displace
             }
+          else if( m_AtlasLinearTransformChoice == "SyN" )
+            {
+            muLogMacro(
+              << "Registering (SyN) " << preprocessMovingString << "atlas(" << atlasIter << ") to template("
+              << atlasIter << ") image." << std::endl);
+            std::vector<double>      minimumStepSize;
+            std::vector<std::string> transformType;
+            if( atlasIter == 0 )
+              {
+              std::string atlasToSubjectInitialTransformName = "";
+              if( this->m_AtlasToSubjectInitialTransform.IsNotNull() )
+                {
+                atlasToSubjectInitialTransformName = this->m_AtlasToSubjectInitialTransform->GetNameOfClass();
+                }
+
+              if( !( (atlasToSubjectInitialTransformName.compare("AffineTransform") == 0 ) ||
+                     (atlasToSubjectInitialTransformName.compare("SyN") == 0 ) ) )
+                {
+                minimumStepSize.push_back(0.0025);
+                minimumStepSize.push_back(0.0025);
+                minimumStepSize.push_back(0.0025);
+                transformType.push_back("Rigid");
+                transformType.push_back("ScaleVersor3D");
+                transformType.push_back("ScaleSkewVersor3D");
+                minimumStepSize.push_back(0.0025);
+                transformType.push_back("Affine");
+                }
+              minimumStepSize.push_back(0.0025);
+              transformType.push_back("SyN");
+              }
+            else
+              {
+              minimumStepSize.push_back(0.0025);
+              transformType.push_back("Affine");
+              }
+            atlasToSubjectRegistrationHelper->SetMinimumStepLength(minimumStepSize);
+            atlasToSubjectRegistrationHelper->SetTransformType(transformType);
+            }
           if( atlasIter == 0 )
             {
             //
-            //
-            //
             // atlasToSubjectRegistrationHelper->SetBackgroundFillValue(backgroundFillValue);
-            //
-            //
             //
             // atlasToSubjectRegistrationHelper->SetUseWindowedSinc(useWindowedSinc);
             // TODO:  Need to make external/internal variable inside
@@ -706,19 +740,8 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
           atlasToSubjectRegistrationHelper->SetCurrentGenericTransform(m_AtlasToSubjectTransform);
           if( this->m_DebugLevel > 9 && m_AtlasToSubjectTransform.IsNotNull() )
             {
-            muLogMacro( << "PRE_ASSIGNMENT" <<  atlasIter << "  " ); // <<
-                                                                     //
-                                                                     // transformType[0]
-                                                                     // << "
-                                                                     // first of
-                                                                     // " <<
-                                                                     //
-                                                                     // transformType.size()
-                                                                     // <<
-                                                                     //
-                                                                     //
-                                                                     // std::endl
-                                                                     // );
+            muLogMacro( << "PRE_ASSIGNMENT" <<  atlasIter << "  " );
+            // << transformType[0] << " first of " << transformType.size() << std::endl );
             muLogMacro(
               << __FILE__ << " " << __LINE__ << " " << m_AtlasToSubjectTransform->GetFixedParameters() <<   std::endl );
             muLogMacro(

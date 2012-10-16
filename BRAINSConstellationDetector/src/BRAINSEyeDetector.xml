@@ -19,11 +19,13 @@
       <name>inputVolume</name>
       <longflag>inputVolume</longflag>
       <description>The input volume</description>
+      <channel>input</channel>
     </image>
     <image>
       <name>outputVolume</name>
       <longflag>outputVolume</longflag>
       <description>The output volume</description>
+      <channel>output</channel>
     </image>
     <string>
       <name>debugDir</name>

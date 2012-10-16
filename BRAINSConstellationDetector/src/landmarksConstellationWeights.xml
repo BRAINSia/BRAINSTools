@@ -23,7 +23,7 @@
             </description>
             <channel>input</channel>
         </file>
-        <file fileExtensions=".h5">
+        <file fileExtensions=".h5,.hdf5,.mat,.txt">
             <name>llsModel</name>
             <label>Input LLS Model in HD5 format</label>
             <default></default>

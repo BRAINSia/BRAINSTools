@@ -32,7 +32,7 @@
   <!-- -->
   <parameters advanced="false">
     <label>Output Settings (At least one output must be specified.)</label>
-    <transform fileExtensions=".mat" type="bspline" reference="movingVolume">
+    <transform fileExtensions=".h5,.hdf5,.mat,.txt" type="bspline" reference="movingVolume">
       <name>bsplineTransform</name>
       <longflag>bsplineTransform</longflag>
       <label>Slicer BSpline Transform</label>
@@ -40,7 +40,7 @@
       <channel>output</channel>
     </transform>
 
-    <transform fileExtensions=".mat" type="linear" reference="movingVolume">
+    <transform fileExtensions=".h5,.hdf5,.mat,.txt" type="linear" reference="movingVolume">
       <name>linearTransform</name>
       <longflag>linearTransform</longflag>
       <label>Slicer Linear Transform</label>
@@ -63,7 +63,7 @@
     <label>Initialization of registration</label>
     <description>Options for initializing transform parameters to a initial starting point.</description>
 
-    <transform fileExtensions=".mat">
+    <transform fileExtensions=".h5,.hdf5,.mat,.txt">
       <name>initialTransform</name>
       <longflag>initialTransform</longflag>
       <label>Initialization transform</label>
@@ -348,7 +348,7 @@
   <parameters advanced="true">
     <label>Special Modes Parameters</label>
 
-    <transform fileExtensions=".mat" type="linear">
+    <transform fileExtensions=".h5,.hdf5,.mat,.txt" type="linear">
       <name>strippedOutputTransform</name>
       <longflag>strippedOutputTransform</longflag>
       <label>Stripped Output Transform</label>
@@ -364,7 +364,7 @@
       <default></default>
     </string-vector>
 
-    <transform fileExtensions=".mat" reference="movingVolume">
+    <transform fileExtensions=".h5,.hdf5,.mat,.txt" reference="movingVolume">
       <name>outputTransform</name>
       <longflag>outputTransform</longflag>
       <label>Output Transform</label>

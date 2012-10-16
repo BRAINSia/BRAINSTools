@@ -34,7 +34,10 @@ private:
                                                   typename WarperImageType::Pointer ReferenceImage  )
   {
     const bool useTransform = ( RegistrationFilename.find(".mat") != std::string::npos ||
-                                RegistrationFilename.find(".h5") != std::string::npos );
+                                RegistrationFilename.find(".h5") != std::string::npos ||
+                                RegistrationFilename.find(".hdf5") != std::string::npos ||
+                                RegistrationFilename.find(".txt") != std::string::npos
+                                );
 
     typename WarperImageType::Pointer PrincipalOperandImage; // One name for the
                                                              // image to be

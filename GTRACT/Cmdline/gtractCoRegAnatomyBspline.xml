@@ -40,7 +40,7 @@
       <channel>input</channel>
     </integer>
 
-    <transform fileExtensions=".mat">
+    <transform fileExtensions=".h5,.hdf5,.mat,.txt">
       <name>inputRigidTransform</name>
       <longflag>inputRigidTransform</longflag>
       <description>Required (for B-Spline type co-registration): input rigid transform file name. Used as a starting point for the anatomical B-Spline registration.</description>
@@ -54,7 +54,7 @@
     <label>Output Files</label>
     <description>Output file from rigid registrations</description>
 
-    <transform type="b-spline" fileExtensions=".mat">
+    <transform type="b-spline" fileExtensions=".h5,.hdf5,.mat,.txt">
       <name>outputBsplineTransform</name>
       <longflag>outputBsplineTransform</longflag>
       <description>Required: filename for the B-Spline fit transform.</description>

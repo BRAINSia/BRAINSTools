@@ -23,7 +23,7 @@
       <channel>input</channel>
     </image>
 
-    <transform fileExtensions=".mat">
+    <transform fileExtensions=".h5,.hdf5,.mat,.txt">
       <name>inputTransform</name>
       <longflag>inputTransform</longflag>
       <description>Required: transform file derived from rigid registration of b0 image to reference structural image.</description>

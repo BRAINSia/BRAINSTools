@@ -54,7 +54,7 @@
       <channel>output</channel>
     </image>
 
-    <transform fileExtensions=".mat">
+    <transform fileExtensions=".h5,.hdf5,.mat,.txt">
       <name>outputTransform</name>
       <longflag>outputTransform</longflag>
       <description>Registration 3D transforms concatenated in a single output file.  There are no tools that can use this, but can be used for debugging purposes.</description>

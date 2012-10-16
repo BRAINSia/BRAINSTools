@@ -27,7 +27,7 @@
             </description>
             <channel>input</channel>
         </file>
-        <file fileExtensions=".h5">
+        <file fileExtensions=".h5,.hdf5,.mat,.txt">
             <name>llsModel</name>
             <label>Input LLS Model in HD5 format</label>
             <default></default>
@@ -61,12 +61,12 @@
             <channel>output</channel>
             <default></default>
         </image>
-        <transform fileExtensions=".mat,.txt">
+        <transform fileExtensions=".h5,.hdf5,.mat,.txt">
             <name>outputTransform</name>
             <label>Output Transform</label>
             <default></default>
             <longflag>outputTransform</longflag>
-            <description>The filename for the original space to ACPC alignment to be written (in .mat format).
+            <description>The filename for the original space to ACPC alignment to be written (in .h5 format).
             </description>
             <channel>output</channel>
         </transform>

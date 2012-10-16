@@ -30,7 +30,7 @@
       <channel>input</channel>
     </image>
 
-    <transform fileExtensions=".mat">
+    <transform fileExtensions=".h5,.hdf5,.mat,.txt">
       <name>inputTransform</name>
       <longflag>inputTransform</longflag>
       <description>Required: input Rigid or Inverse-B-Spline transform file name</description>

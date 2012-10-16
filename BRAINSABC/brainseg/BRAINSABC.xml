@@ -58,7 +58,7 @@
     <element>SyN</element>
     <default>SyN</default>
   </string-enumeration>
-  <transform fileExtensions=".h5">
+  <transform fileExtensions=".h5,.hdf5,.mat,.txt">
     <name>atlasToSubjectTransform</name>
     <label>Atlas to Subject Transform</label>
     <description>The trasform from atlas to the subject</description>

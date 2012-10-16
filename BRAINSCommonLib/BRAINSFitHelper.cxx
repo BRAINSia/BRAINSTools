@@ -562,7 +562,7 @@ BRAINSFitHelper::PrintCommandLine(const bool dumpTempVolumes, const std::string 
     }
   if( m_CurrentGenericTransform.IsNotNull() )
     {
-    const std::string initialTransformString("DEBUGInitialTransform_" + suffix + ".mat");
+    const std::string initialTransformString("DEBUGInitialTransform_" + suffix + ".h5");
     WriteBothTransformsToDisk(this->m_CurrentGenericTransform.GetPointer(), initialTransformString, "");
     oss << "--initialTransform " << initialTransformString  << "  \\" << std::endl;
     }
@@ -572,7 +572,7 @@ BRAINSFitHelper::PrintCommandLine(const bool dumpTempVolumes, const std::string 
     std::cout << oss.str() << std::endl;
     }
     {
-    const std::string outputTransform("DEBUGOutputTransform" + suffix + ".mat");
+    const std::string outputTransform("DEBUGOutputTransform" + suffix + ".h5");
     oss << "--outputTransform " << outputTransform  << "  \\" << std::endl;
     std::cout << oss.str() << std::endl;
     }

@@ -25,7 +25,7 @@
       <longflag>movingLandmarks</longflag>
       <channel>input</channel>
     </point>
-    <transform fileExtensions=".mat" type="linear">
+    <transform fileExtensions=".h5,.hdf5,.mat,.txt" type="linear">
       <name>saveTransform</name>
       <label>Save transform</label>
       <description>Save the transform that results from registration</description>

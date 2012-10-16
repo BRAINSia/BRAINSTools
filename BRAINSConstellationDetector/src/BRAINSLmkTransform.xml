@@ -27,7 +27,7 @@
             </description>
             <channel>input</channel>
         </file>
-        <transform fileExtensions=".mat">
+        <transform fileExtensions=".h5,.hdf5,.mat,.txt">
             <name>outputAffineTransform</name>
             <label>Output Affine Transform</label>
             <default></default>

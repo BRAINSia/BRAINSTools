@@ -240,7 +240,7 @@
     </transform>
     -->
 
-    <transform fileExtensions=".mat">
+    <transform fileExtensions=".h5,.hdf5,.mat,.txt">
       <name>initializeWithTransform</name>
       <longflag>initializeWithTransform</longflag>
       <description>Initial Transform filename</description>

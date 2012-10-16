@@ -15,7 +15,7 @@
     <label>Input Image Files</label>
     <description>Parameters for specifying the rigid transform</description>
 
-    <transform fileExtensions=".mat" type="linear">
+    <transform fileExtensions=".h5,.hdf5,.mat,.txt" type="linear">
       <name>inputTransform</name>
       <longflag>inputTransform</longflag>
       <description>Required: input rigid transform file name</description>
@@ -29,7 +29,7 @@
     <label>Output Image Files</label>
     <description>Output file for inverse transform</description>
 
-    <transform fileExtensions=".mat" type="linear">
+    <transform fileExtensions=".h5,.hdf5,.mat,.txt" type="linear">
       <name>outputTransform</name>
       <longflag>outputTransform</longflag>
       <description>Required: output transform file name</description>

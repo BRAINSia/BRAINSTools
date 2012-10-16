@@ -64,6 +64,7 @@ GenericTransformType::Pointer GetGenericTransform( std::string filename)
 {
   const bool useDeformation( filename.find(".mat") != std::string::npos &&
                              filename.find(".h5") != std::string::npos &&
+                             filename.find(".hdf5") != std::string::npos &&
                              filename.find(".txt") != std::string::npos );
 
   if( useDeformation )

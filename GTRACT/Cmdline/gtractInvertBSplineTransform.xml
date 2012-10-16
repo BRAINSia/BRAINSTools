@@ -22,7 +22,7 @@
       <channel>input</channel>
     </image>
 
-    <transform fileExtensions=".mat" type="bspline">
+    <transform fileExtensions=".h5,.hdf5,.mat,.txt" type="bspline">
       <name>inputTransform</name>
       <longflag>inputTransform</longflag>
       <description>Required: input B-Spline transform file name</description>
@@ -36,7 +36,7 @@
     <label>Output Image Files</label>
     <description>Output file from conversion from Dicom to Nrrd</description>
 
-    <transform fileExtensions=".mat" type="bspline">
+    <transform fileExtensions=".h5,.hdf5,.mat,.txt" type="bspline">
       <name>outputTransform</name>
       <longflag>outputTransform</longflag>
       <description>Required: output transform file name</description>

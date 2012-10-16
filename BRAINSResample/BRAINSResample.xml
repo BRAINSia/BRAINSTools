@@ -76,7 +76,7 @@
       <default></default>
     </transform>
 
-    <transform fileExtensions=".h5,.hdf5,.mat,.txt,.">
+    <transform fileExtensions=".h5,.hdf5,.mat,.txt">
       <name>warpTransform</name>
       <longflag>warpTransform</longflag>
       <label>Transform file</label>

@@ -41,13 +41,13 @@ simpleSynReg( typename FixedImageType::Pointer & fixedImage,
     }
     {
     std::vector<double> convergenceThresholdList;
-    const double        convergenceThreshold = 5e-5;
+    const double        convergenceThreshold = 5e-6;
     convergenceThresholdList.push_back(convergenceThreshold);
     regHelper->SetConvergenceThresholds( convergenceThresholdList );
     }
     {
     std::vector<unsigned int> convergenceWindowSizeList;
-    const unsigned int        convergenceWindowSize = 10;
+    const unsigned int        convergenceWindowSize = 15;
     convergenceWindowSizeList.push_back(convergenceWindowSize);
     regHelper->SetConvergenceWindowSizes( convergenceWindowSizeList );
     }

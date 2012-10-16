@@ -143,6 +143,7 @@ def CreateTissueClassifyWorkflow(WFname,CLUSTER_QUEUE,InterpolationMode):
     BABCext.inputs.filterIteration = 3
     BABCext.inputs.filterMethod = 'GradientAnisotropicDiffusion'
     BABCext.inputs.atlasToSubjectTransformType = 'SyN'
+    BABCext.inputs.atlasToSubjectTransform = "atlasToSubjecSyN.h5"
     #BABCext.inputs.atlasToSubjectTransformType = 'BSpline'
     BABCext.inputs.gridSize = [28,20,24]
     BABCext.inputs.outputFormat = "NIFTI"

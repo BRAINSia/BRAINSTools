@@ -35,19 +35,19 @@ simpleSynReg( typename FixedImageType::Pointer & fixedImage,
     std::vector<unsigned int>               iterations(3);
     iterations[0] = 350;
     iterations[1] = 200;
-    iterations[2] = 5;   // NOTE: 5 does not converge, but it gives a reasonable result, 70 converges.
+    iterations[2] = 100;   // NOTE: 10 does not converge, but it gives a reasonable result, 70 converges.
     iterationList.push_back(iterations);
     regHelper->SetIterations( iterationList );
     }
     {
     std::vector<double> convergenceThresholdList;
-    const double        convergenceThreshold = 5e-6;
+    const double        convergenceThreshold = 5e-5;
     convergenceThresholdList.push_back(convergenceThreshold);
     regHelper->SetConvergenceThresholds( convergenceThresholdList );
     }
     {
     std::vector<unsigned int> convergenceWindowSizeList;
-    const unsigned int        convergenceWindowSize = 20;
+    const unsigned int        convergenceWindowSize = 10;
     convergenceWindowSizeList.push_back(convergenceWindowSize);
     regHelper->SetConvergenceWindowSizes( convergenceWindowSizeList );
     }

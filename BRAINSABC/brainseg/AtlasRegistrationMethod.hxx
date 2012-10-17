@@ -129,6 +129,21 @@ void
 AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
 ::RegisterImages()
 {
+  std::string atlasToSubjectInitialTransformName = "";
+
+  if( this->m_AtlasToSubjectInitialTransform.IsNotNull() )
+    {
+    atlasToSubjectInitialTransformName = this->m_AtlasToSubjectInitialTransform->GetNameOfClass();
+    std::cout << "****************************************" << std::endl;
+    std::cout << "atlasToSubjectInitialTransformName = " << atlasToSubjectInitialTransformName << std::endl;
+    std::cout << "****************************************" << std::endl;
+    }
+  else
+    {
+    std::cout << "****************************************" << std::endl;
+    std::cout << "atlasToSubjectInitialTransformName is null!" << std::endl;
+    std::cout << "****************************************" << std::endl;
+    }
   muLogMacro(<< "RegisterImages" << std::endl);
     {
     for( unsigned int i = 1; i < m_IntraSubjectOriginalImageList.size(); i++ )
@@ -562,16 +577,8 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
             const unsigned int       regLevels = (atlasIter == 0) ? 1 : 1;
             std::vector<double>      minimumStepSize(regLevels);
             std::vector<std::string> transformType(regLevels);
-            if( atlasIter == 0 )
-              {
-              minimumStepSize[1] = 0.0005;
-              transformType[0] = "Rigid";
-              }
-            else
-              {
-              minimumStepSize[0] = 0.0005;
-              transformType[0] = "Rigid";
-              }
+            minimumStepSize[1] = 0.0025;
+            transformType[0] = "Rigid";
             atlasToSubjectRegistrationHelper->SetMinimumStepLength(minimumStepSize);
             atlasToSubjectRegistrationHelper->SetTransformType(transformType);
             }
@@ -584,30 +591,19 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
             std::vector<std::string> transformType;
             if( atlasIter == 0 )
               {
-              std::string atlasToSubjectInitialTransformName = "";
-              if( this->m_AtlasToSubjectInitialTransform.IsNotNull() )
-                {
-                atlasToSubjectInitialTransformName = this->m_AtlasToSubjectInitialTransform->GetNameOfClass();
-                }
-
               if( !( (atlasToSubjectInitialTransformName.compare("AffineTransform") == 0 ) ||
                      (atlasToSubjectInitialTransformName.compare("BSpline") == 0 ) ) )
                 {
-                minimumStepSize.push_back(0.0005);
-                minimumStepSize.push_back(0.0005);
-                minimumStepSize.push_back(0.0005);
+                minimumStepSize.push_back(0.0025);
+                minimumStepSize.push_back(0.0025);
+                minimumStepSize.push_back(0.0025);
                 transformType.push_back("Rigid");
                 transformType.push_back("ScaleVersor3D");
                 transformType.push_back("ScaleSkewVersor3D");
                 }
-              minimumStepSize.push_back(0.0005);
-              transformType.push_back("Affine");
               }
-            else
-              {
-              minimumStepSize.push_back(0.0005);
-              transformType.push_back("Affine");
-              }
+            minimumStepSize.push_back(0.0025);
+            transformType.push_back("Affine");
             atlasToSubjectRegistrationHelper->SetMinimumStepLength(minimumStepSize);
             atlasToSubjectRegistrationHelper->SetTransformType(transformType);
             }
@@ -621,35 +617,24 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
             std::vector<std::string> transformType;
             if( atlasIter == 0 )
               {
-              std::string atlasToSubjectInitialTransformName = "";
-              if( this->m_AtlasToSubjectInitialTransform.IsNotNull() )
-                {
-                atlasToSubjectInitialTransformName = this->m_AtlasToSubjectInitialTransform->GetNameOfClass();
-                }
-
-              if( !( ( atlasToSubjectInitialTransformName.compare("Affine") == 0 ) ||
+              if( !( ( atlasToSubjectInitialTransformName.compare("AffineTransform") == 0 ) ||
                      (atlasToSubjectInitialTransformName.compare("BSpline") == 0 ) ) )
                 {
-                minimumStepSize.push_back(0.0005);
-                minimumStepSize.push_back(0.0005);
-                minimumStepSize.push_back(0.0005);
+                minimumStepSize.push_back(0.0025);
+                minimumStepSize.push_back(0.0025);
+                minimumStepSize.push_back(0.0025);
                 transformType.push_back("Rigid");
                 transformType.push_back("ScaleVersor3D");
                 transformType.push_back("ScaleSkewVersor3D");
                 }
-              else if( atlasToSubjectInitialTransformName.compare("Affine") == 0 )
+              else if( atlasToSubjectInitialTransformName.compare("AffineTransform") == 0 )
                 {
-                minimumStepSize.push_back(0.0005);
+                minimumStepSize.push_back(0.0025);
                 transformType.push_back("Affine");
                 }
-              minimumStepSize.push_back(0.0005);
-              transformType.push_back("BSpline");
               }
-            else
-              {
-              minimumStepSize.push_back(0.0005);
-              transformType.push_back("BSpline");
-              }
+            minimumStepSize.push_back(0.0025);
+            transformType.push_back("BSpline");
             atlasToSubjectRegistrationHelper->SetMinimumStepLength(minimumStepSize);
             atlasToSubjectRegistrationHelper->SetTransformType(transformType);
             std::vector<int> splineGridSize(3);
@@ -657,13 +642,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
             splineGridSize[1] = this->m_WarpGrid[1];
             splineGridSize[2] = this->m_WarpGrid[2];
             atlasToSubjectRegistrationHelper->SetSplineGridSize(splineGridSize);
-            atlasToSubjectRegistrationHelper->SetMaxBSplineDisplacement(6.0); //
-                                                                              //
-                                                                              // Setting
-                                                                              //
-                                                                              // max
-                                                                              //
-                                                                              // displace
+            atlasToSubjectRegistrationHelper->SetMaxBSplineDisplacement(6.0); // Setting max displacement
             }
           else if( m_AtlasLinearTransformChoice == "SyN" )
             {
@@ -674,30 +653,29 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
             std::vector<std::string> transformType;
             if( atlasIter == 0 )
               {
-              std::string atlasToSubjectInitialTransformName = "";
-              if( this->m_AtlasToSubjectInitialTransform.IsNotNull() )
-                {
-                atlasToSubjectInitialTransformName = this->m_AtlasToSubjectInitialTransform->GetNameOfClass();
-                }
-
               if( !( atlasToSubjectInitialTransformName.compare("SyN") == 0 ) )
                 {
-                minimumStepSize.push_back(0.0005);
-                minimumStepSize.push_back(0.0005);
-                minimumStepSize.push_back(0.0005);
-                minimumStepSize.push_back(0.0005);
+                minimumStepSize.push_back(0.0025);
+                minimumStepSize.push_back(0.0025);
+                minimumStepSize.push_back(0.0025);
+                minimumStepSize.push_back(0.0025);
                 transformType.push_back("Rigid");
                 transformType.push_back("ScaleVersor3D");
                 transformType.push_back("ScaleSkewVersor3D");
                 transformType.push_back("Affine");
                 }
-              minimumStepSize.push_back(0.0005);
+              else if( !( atlasToSubjectInitialTransformName.compare("AffineTransform") == 0 ) )
+                {
+                minimumStepSize.push_back(0.0025);
+                transformType.push_back("Affine");
+                }
+              minimumStepSize.push_back(0.0025);
               transformType.push_back("SyN");
               }
             else
               {
-              minimumStepSize.push_back(0.0005);
-              transformType.push_back("Affine");
+              minimumStepSize.push_back(0.0025);
+              transformType.push_back("SyN"); // "Affine"!!!
               }
             atlasToSubjectRegistrationHelper->SetMinimumStepLength(minimumStepSize);
             atlasToSubjectRegistrationHelper->SetTransformType(transformType);

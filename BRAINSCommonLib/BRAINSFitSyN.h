@@ -32,16 +32,17 @@ simpleSynReg( typename FixedImageType::Pointer & fixedImage,
   // --convergence [250x100x70,1e-6,15]
     {
     std::vector<std::vector<unsigned int> > iterationList;
-    std::vector<unsigned int>               iterations(3);
-    iterations[0] = 350;
-    iterations[1] = 200;
-    iterations[2] = 100;   // NOTE: 10 does not converge, but it gives a reasonable result, 70 converges.
+    std::vector<unsigned int>               iterations(4);
+    iterations[0] = 10000;
+    iterations[1] = 500;
+    iterations[2] = 500;
+    iterations[3] = 50;   // NOTE: 10 does not converge, but it gives a reasonable result, 70 converges.
     iterationList.push_back(iterations);
     regHelper->SetIterations( iterationList );
     }
     {
     std::vector<double> convergenceThresholdList;
-    const double        convergenceThreshold = 5e-6;
+    const double        convergenceThreshold = 1e-9;
     convergenceThresholdList.push_back(convergenceThreshold);
     regHelper->SetConvergenceThresholds( convergenceThresholdList );
     }
@@ -55,10 +56,11 @@ simpleSynReg( typename FixedImageType::Pointer & fixedImage,
     {
     // --shrink-factors 3x2x1
     std::vector<std::vector<unsigned int> > shrinkFactorsList;
-    std::vector<unsigned int>               factors(3);
-    factors[0] = 3;
-    factors[1] = 2;
-    factors[2] = 1;
+    std::vector<unsigned int>               factors(4);
+    factors[0] = 6;
+    factors[1] = 4;
+    factors[2] = 2;
+    factors[3] = 1;
     shrinkFactorsList.push_back(factors);
     regHelper->SetShrinkFactors( shrinkFactorsList );
     }
@@ -66,9 +68,10 @@ simpleSynReg( typename FixedImageType::Pointer & fixedImage,
     // --smoothing-sigmas 3x2x0
     std::vector<std::vector<float> > smoothingSigmasList;
     std::vector<float>               sigmas(3);
-    sigmas[0] = 3;
-    sigmas[1] = 2;
-    sigmas[2] = 0;
+    sigmas[0] = 6;
+    sigmas[1] = 4;
+    sigmas[2] = 2;
+    sigmas[3] = 0;
     smoothingSigmasList.push_back(sigmas);
     regHelper->SetSmoothingSigmas( smoothingSigmasList );
     }
@@ -79,7 +82,7 @@ simpleSynReg( typename FixedImageType::Pointer & fixedImage,
     const double weighting = 1.0;
     typename SyNRegistrationHelperType::SamplingStrategy samplingStrategy = SyNRegistrationHelperType::none; // none
     const unsigned int bins = 32;                                                                            // bins
-    const unsigned int radius = 5;
+    const unsigned int radius = 4;
     const double       samplingPercentage = 1.0;
 
     regHelper->AddMetric(curMetric, fixedImage, movingImage, weighting, samplingStrategy, bins, radius,
@@ -87,7 +90,7 @@ simpleSynReg( typename FixedImageType::Pointer & fixedImage,
     }
     {
     // --transform "SyN[0.33,3.0,0.0]"
-    const float learningRate = 0.33;
+    const float learningRate = 0.15;
     const float varianceForUpdateField = 3.0;
     const float varianceForTotalField = 0.0;
     regHelper->AddSyNTransform(learningRate, varianceForUpdateField, varianceForTotalField);

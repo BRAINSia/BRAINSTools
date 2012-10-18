@@ -120,7 +120,7 @@ def MakeOneSubWorkFlow(projectid, subjectid, sessionid,processing_phase, WORKFLO
                          'atlasDefinition'
                          ]),
                          run_without_submitting=True,
-                         name='InputSpec' )
+                         name='inputspec' )
 
     outputsSpec = pe.Node(interface=IdentityInterface(fields=[
             't1_average','t2_average',
@@ -135,7 +135,7 @@ def MakeOneSubWorkFlow(projectid, subjectid, sessionid,processing_phase, WORKFLO
             'outputTransform','atlasToSubjectTransform'
             ]),
             run_without_submitting=True,
-            name='OutputSpec' )
+            name='outputspec' )
 
     if True: #'BASIC' in WORKFLOW_COMPONENTS:
         from WorkupT1T2LandmarkInitialization import CreateLandmarkInitializeWorkflow
@@ -144,39 +144,39 @@ def MakeOneSubWorkFlow(projectid, subjectid, sessionid,processing_phase, WORKFLO
             DoReverseMapping = True
         myLocalLMIWF= CreateLandmarkInitializeWorkflow("LandmarkInitialize", BCD_model_path, InterpolationMode,DoReverseMapping)
 
-        T1T2WorkupSingle.connect( [ ( inputsSpec, myLocalLMIWF, [ ( ( 'allT1s', get_list_element, 0 ), 'InputSpec.inputVolume') ] ), ] )
-        T1T2WorkupSingle.connect( inputsSpec, 'template_landmarks_31_fcsv', myLocalLMIWF,'InputSpec.atlasLandmarkFilename')
-        T1T2WorkupSingle.connect( inputsSpec, 'template_landmark_weights_31_csv', myLocalLMIWF,'InputSpec.atlasWeightFilename')
+        T1T2WorkupSingle.connect( [ ( inputsSpec, myLocalLMIWF, [ ( ( 'allT1s', get_list_element, 0 ), 'inputspec.inputVolume') ] ), ] )
+        T1T2WorkupSingle.connect( inputsSpec, 'template_landmarks_31_fcsv', myLocalLMIWF,'inputspec.atlasLandmarkFilename')
+        T1T2WorkupSingle.connect( inputsSpec, 'template_landmark_weights_31_csv', myLocalLMIWF,'inputspec.atlasWeightFilename')
         if 'AUXLMK' in WORKFLOW_COMPONENTS:
-            T1T2WorkupSingle.connect(inputsSpec,'template_t1',myLocalLMIWF,'InputSpec.atlasVolume')
-        ### Now connect OutputSpec
-#        T1T2WorkupSingle.connect(myLocalLMIWF,'OutputSpec.outputResampledVolume', outputsSpec, 'BCD_ACPC_T1' )
-        T1T2WorkupSingle.connect(myLocalLMIWF,'OutputSpec.outputResampledCroppedVolume', outputsSpec, 'BCD_ACPC_T1_CROPPED' )
-        T1T2WorkupSingle.connect(myLocalLMIWF,'OutputSpec.outputLandmarksInACPCAlignedSpace',outputsSpec,'outputLandmarksInACPCAlignedSpace')
-        T1T2WorkupSingle.connect(myLocalLMIWF,'OutputSpec.outputLandmarksInInputSpace',outputsSpec,'outputLandmarksInInputSpace')
-        T1T2WorkupSingle.connect(myLocalLMIWF,'OutputSpec.outputTransform',outputsSpec,'outputTransform')
-        T1T2WorkupSingle.connect(myLocalLMIWF,'OutputSpec.atlasToSubjectTransform',outputsSpec,'atlasToSubjectTransform')
+            T1T2WorkupSingle.connect(inputsSpec,'template_t1',myLocalLMIWF,'inputspec.atlasVolume')
+        ### Now connect outputspec
+#        T1T2WorkupSingle.connect(myLocalLMIWF,'outputspec.outputResampledVolume', outputsSpec, 'BCD_ACPC_T1' )
+        T1T2WorkupSingle.connect(myLocalLMIWF,'outputspec.outputResampledCroppedVolume', outputsSpec, 'BCD_ACPC_T1_CROPPED' )
+        T1T2WorkupSingle.connect(myLocalLMIWF,'outputspec.outputLandmarksInACPCAlignedSpace',outputsSpec,'outputLandmarksInACPCAlignedSpace')
+        T1T2WorkupSingle.connect(myLocalLMIWF,'outputspec.outputLandmarksInInputSpace',outputsSpec,'outputLandmarksInInputSpace')
+        T1T2WorkupSingle.connect(myLocalLMIWF,'outputspec.outputTransform',outputsSpec,'outputTransform')
+        T1T2WorkupSingle.connect(myLocalLMIWF,'outputspec.atlasToSubjectTransform',outputsSpec,'atlasToSubjectTransform')
 
     if True: #'TISSUE_CLASSIFY' in WORKFLOW_COMPONENTS:
         from WorkupT1T2TissueClassifiy import CreateTissueClassifyWorkflow
         myLocalTCWF= CreateTissueClassifyWorkflow("TissueClassify",CLUSTER_QUEUE,InterpolationMode)
-        T1T2WorkupSingle.connect( inputsSpec, 'allT1s', myLocalTCWF, 'InputSpec.T1List')
-        T1T2WorkupSingle.connect( inputsSpec, 'allT2s', myLocalTCWF, 'InputSpec.T2List')
-        T1T2WorkupSingle.connect( inputsSpec, 'allPDs', myLocalTCWF, 'InputSpec.PDList')
-        T1T2WorkupSingle.connect( inputsSpec, 'allFLs', myLocalTCWF, 'InputSpec.FLList')
-        T1T2WorkupSingle.connect( inputsSpec, 'allOthers', myLocalTCWF, 'InputSpec.OtherList')
-        T1T2WorkupSingle.connect( [ (inputsSpec, myLocalTCWF, [(('allT1s', getAllT1sLength), 'InputSpec.T1_count')] ), ])
-        T1T2WorkupSingle.connect( inputsSpec,'atlasDefinition',myLocalTCWF,'InputSpec.atlasDefinition')
-        T1T2WorkupSingle.connect( myLocalLMIWF, 'OutputSpec.outputResampledCroppedVolume', myLocalTCWF, 'InputSpec.PrimaryT1' )
-        T1T2WorkupSingle.connect( myLocalLMIWF,'OutputSpec.atlasToSubjectTransform',myLocalTCWF,'InputSpec.atlasToSubjectInitialTransform')
+        T1T2WorkupSingle.connect( inputsSpec, 'allT1s', myLocalTCWF, 'inputspec.T1List')
+        T1T2WorkupSingle.connect( inputsSpec, 'allT2s', myLocalTCWF, 'inputspec.T2List')
+        T1T2WorkupSingle.connect( inputsSpec, 'allPDs', myLocalTCWF, 'inputspec.PDList')
+        T1T2WorkupSingle.connect( inputsSpec, 'allFLs', myLocalTCWF, 'inputspec.FLList')
+        T1T2WorkupSingle.connect( inputsSpec, 'allOthers', myLocalTCWF, 'inputspec.OtherList')
+        T1T2WorkupSingle.connect( [ (inputsSpec, myLocalTCWF, [(('allT1s', getAllT1sLength), 'inputspec.T1_count')] ), ])
+        T1T2WorkupSingle.connect( inputsSpec,'atlasDefinition',myLocalTCWF,'inputspec.atlasDefinition')
+        T1T2WorkupSingle.connect( myLocalLMIWF, 'outputspec.outputResampledCroppedVolume', myLocalTCWF, 'inputspec.PrimaryT1' )
+        T1T2WorkupSingle.connect( myLocalLMIWF,'outputspec.atlasToSubjectTransform',myLocalTCWF,'inputspec.atlasToSubjectInitialTransform')
 
-        ### Now connect OutputSpec
-        T1T2WorkupSingle.connect(myLocalTCWF, 'OutputSpec.t1_average', outputsSpec,'t1_average')
-        T1T2WorkupSingle.connect(myLocalTCWF, 'OutputSpec.t2_average', outputsSpec,'t2_average')
-        T1T2WorkupSingle.connect(myLocalTCWF, 'OutputSpec.pd_average', outputsSpec,'pd_average')
-        T1T2WorkupSingle.connect(myLocalTCWF, 'OutputSpec.fl_average', outputsSpec,'fl_average')
-        T1T2WorkupSingle.connect(myLocalTCWF, 'OutputSpec.posteriorImages', outputsSpec,'posteriorImages')
-        T1T2WorkupSingle.connect(myLocalTCWF, 'OutputSpec.outputLabels', outputsSpec,'outputLabels')
-        T1T2WorkupSingle.connect(myLocalTCWF, 'OutputSpec.TissueClassifyOutputDir', outputsSpec,'TissueClassifyOutputDir')
+        ### Now connect outputspec
+        T1T2WorkupSingle.connect(myLocalTCWF, 'outputspec.t1_average', outputsSpec,'t1_average')
+        T1T2WorkupSingle.connect(myLocalTCWF, 'outputspec.t2_average', outputsSpec,'t2_average')
+        T1T2WorkupSingle.connect(myLocalTCWF, 'outputspec.pd_average', outputsSpec,'pd_average')
+        T1T2WorkupSingle.connect(myLocalTCWF, 'outputspec.fl_average', outputsSpec,'fl_average')
+        T1T2WorkupSingle.connect(myLocalTCWF, 'outputspec.posteriorImages', outputsSpec,'posteriorImages')
+        T1T2WorkupSingle.connect(myLocalTCWF, 'outputspec.outputLabels', outputsSpec,'outputLabels')
+        T1T2WorkupSingle.connect(myLocalTCWF, 'outputspec.TissueClassifyOutputDir', outputsSpec,'TissueClassifyOutputDir')
 
     return T1T2WorkupSingle

@@ -188,21 +188,20 @@ def BAWantsRegistrationTemplateBuildSingleIterationWF(iterationPhasePrefix=''):
     BeginANTS=pe.MapNode(interface=Registration(), name = 'BeginANTS', iterfield=['moving_image'])
     BeginANTS.inputs.dimension = 3
     BeginANTS.inputs.output_transform_prefix = str(iterationPhasePrefix)+'_tfm'
-    BeginANTS.inputs.transforms =               ["Affine",           "SyN"]
-    BeginANTS.inputs.transform_parameters =     [[0.9],              [0.5,3.0,0.0]]
-    BeginANTS.inputs.metric =                   ['Mattes',           'CC']
-    #BeginANTS.inputs.metric =                  ['Mattes',           'Mattes']
-    BeginANTS.inputs.sampling_strategy =        ['Dense',            'Dense']
-    BeginANTS.inputs.sampling_percentage =      [1.0,                1.0]
-    BeginANTS.inputs.metric_weight =            [1.0,                1.0]
-    BeginANTS.inputs.radius_or_number_of_bins = [32,                 5]
-    BeginANTS.inputs.convergence_threshold =    [1e-6,               1e-6]
-    BeginANTS.inputs.convergence_window_size =  [20,                 15]
-    BeginANTS.inputs.number_of_iterations =     [[1000, 1000, 1000], [250, 150, 100]]
-    BeginANTS.inputs.use_histogram_matching =   [True,               True]
-    BeginANTS.inputs.shrink_factors =           [[4,2,1],            [3,2,1]]
-    BeginANTS.inputs.smoothing_sigmas =         [[4,2,0],            [3,2,0]]
-    BeginANTS.inputs.use_estimate_learning_rate_once = [False,       False]
+    BeginANTS.inputs.transforms =               ["Rigid",         "Affine",            "SyN"]
+    BeginANTS.inputs.transform_parameters =     [[0.1],           [0.1],               [0.15,3.0,0.0]]
+    BeginANTS.inputs.metric =                   ['Mattes',        'Mattes',            'CC']
+    BeginANTS.inputs.sampling_strategy =        ['Regular',       'Regular',           None]
+    BeginANTS.inputs.sampling_percentage =      [0.1,              0.1,                1.0]
+    BeginANTS.inputs.metric_weight =            [1.0,              1.0,                1.0]
+    BeginANTS.inputs.radius_or_number_of_bins = [32,               32,                 4]
+    BeginANTS.inputs.number_of_iterations =     [[2000,2000,2000], [1000, 1000, 1000], [10000,500,500,50]]
+    BeginANTS.inputs.convergence_threshold =    [1e-9,1e-9,1e-9]
+    BeginANTS.inputs.convergence_window_size =  [15,               15,                 15]
+    BeginANTS.inputs.use_histogram_matching =   [True,             True,               True]
+    BeginANTS.inputs.shrink_factors =           [[4,2,1],          [4,2,1],            [6,4,2,1]]
+    BeginANTS.inputs.smoothing_sigmas =         [[4,2,0],          [4,2,0],            [6,4,2,0]]
+    BeginANTS.inputs.use_estimate_learning_rate_once = [False,     False,              False]
     BeginANTS.inputs.write_composite_transform=True
 
     GetMovingImagesNode = pe.Node(interface=util.Function(function=GetMovingImages,

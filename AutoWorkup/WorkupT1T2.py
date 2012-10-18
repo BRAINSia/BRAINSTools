@@ -441,19 +441,19 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                               projectid, subjectid, sessionid,PROCESSING_PHASE,
                               PHASE_1_WORKFLOW_COMPONENTS,
                               BCD_model_path, InterpolationMode, CLUSTER_QUEUE)
-            baw200.connect(PHASE_1_subjInfoNode[sessionid],'projectid',PHASE_1_oneSubjWorkflow[sessionid],'InputSpec.projectid')
-            baw200.connect(PHASE_1_subjInfoNode[sessionid],'subjectid',PHASE_1_oneSubjWorkflow[sessionid],'InputSpec.subjectid')
-            baw200.connect(PHASE_1_subjInfoNode[sessionid],'sessionid',PHASE_1_oneSubjWorkflow[sessionid],'InputSpec.sessionid')
-            baw200.connect(PHASE_1_subjInfoNode[sessionid],'allT1s',PHASE_1_oneSubjWorkflow[sessionid],'InputSpec.allT1s')
-            baw200.connect(PHASE_1_subjInfoNode[sessionid],'allT2s',PHASE_1_oneSubjWorkflow[sessionid],'InputSpec.allT2s')
-            baw200.connect(PHASE_1_subjInfoNode[sessionid],'allPDs',PHASE_1_oneSubjWorkflow[sessionid],'InputSpec.allPDs')
-            baw200.connect(PHASE_1_subjInfoNode[sessionid],'allFLs',PHASE_1_oneSubjWorkflow[sessionid],'InputSpec.allFLs')
-            baw200.connect(PHASE_1_subjInfoNode[sessionid],'allOthers',PHASE_1_oneSubjWorkflow[sessionid],'InputSpec.allOthers')
+            baw200.connect(PHASE_1_subjInfoNode[sessionid],'projectid',PHASE_1_oneSubjWorkflow[sessionid],'inputspec.projectid')
+            baw200.connect(PHASE_1_subjInfoNode[sessionid],'subjectid',PHASE_1_oneSubjWorkflow[sessionid],'inputspec.subjectid')
+            baw200.connect(PHASE_1_subjInfoNode[sessionid],'sessionid',PHASE_1_oneSubjWorkflow[sessionid],'inputspec.sessionid')
+            baw200.connect(PHASE_1_subjInfoNode[sessionid],'allT1s',PHASE_1_oneSubjWorkflow[sessionid],'inputspec.allT1s')
+            baw200.connect(PHASE_1_subjInfoNode[sessionid],'allT2s',PHASE_1_oneSubjWorkflow[sessionid],'inputspec.allT2s')
+            baw200.connect(PHASE_1_subjInfoNode[sessionid],'allPDs',PHASE_1_oneSubjWorkflow[sessionid],'inputspec.allPDs')
+            baw200.connect(PHASE_1_subjInfoNode[sessionid],'allFLs',PHASE_1_oneSubjWorkflow[sessionid],'inputspec.allFLs')
+            baw200.connect(PHASE_1_subjInfoNode[sessionid],'allOthers',PHASE_1_oneSubjWorkflow[sessionid],'inputspec.allOthers')
 
-            baw200.connect(BAtlas[subjectid],'template_landmarks_31_fcsv', PHASE_1_oneSubjWorkflow[sessionid],'InputSpec.template_landmarks_31_fcsv')
-            baw200.connect(BAtlas[subjectid],'template_landmark_weights_31_csv', PHASE_1_oneSubjWorkflow[sessionid],'InputSpec.template_landmark_weights_31_csv')
-            baw200.connect(BAtlas[subjectid],'template_t1', PHASE_1_oneSubjWorkflow[sessionid],'InputSpec.template_t1')
-            baw200.connect(BAtlas[subjectid],'ExtendedAtlasDefinition_xml', PHASE_1_oneSubjWorkflow[sessionid],'InputSpec.atlasDefinition')
+            baw200.connect(BAtlas[subjectid],'template_landmarks_31_fcsv', PHASE_1_oneSubjWorkflow[sessionid],'inputspec.template_landmarks_31_fcsv')
+            baw200.connect(BAtlas[subjectid],'template_landmark_weights_31_csv', PHASE_1_oneSubjWorkflow[sessionid],'inputspec.template_landmark_weights_31_csv')
+            baw200.connect(BAtlas[subjectid],'template_t1', PHASE_1_oneSubjWorkflow[sessionid],'inputspec.template_t1')
+            baw200.connect(BAtlas[subjectid],'ExtendedAtlasDefinition_xml', PHASE_1_oneSubjWorkflow[sessionid],'inputspec.atlasDefinition')
 
         numSessions=len(allSessions)
         if True or numSessions > 1: ## Merge all BCD_Results into a global average
@@ -486,12 +486,12 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
             for sessionid in allSessions:
                 index_name='in'+str(index)
                 index+=1
-                baw200.connect(PHASE_1_oneSubjWorkflow[sessionid],'OutputSpec.t1_average',MergeT1s[subjectid],index_name)
-                baw200.connect(PHASE_1_oneSubjWorkflow[sessionid],'OutputSpec.t2_average',MergeT2s[subjectid],index_name)
-                baw200.connect(PHASE_1_oneSubjWorkflow[sessionid],'OutputSpec.pd_average',MergePDs[subjectid],index_name)
-                baw200.connect(PHASE_1_oneSubjWorkflow[sessionid],'OutputSpec.fl_average',MergeFLs[subjectid],index_name)
-                baw200.connect(PHASE_1_oneSubjWorkflow[sessionid],'OutputSpec.outputLabels',MergeOutputLabels[subjectid],index_name)
-                baw200.connect(PHASE_1_oneSubjWorkflow[sessionid],'OutputSpec.posteriorImages',MergePosteriors[subjectid],index_name)
+                baw200.connect(PHASE_1_oneSubjWorkflow[sessionid],'outputspec.t1_average',MergeT1s[subjectid],index_name)
+                baw200.connect(PHASE_1_oneSubjWorkflow[sessionid],'outputspec.t2_average',MergeT2s[subjectid],index_name)
+                baw200.connect(PHASE_1_oneSubjWorkflow[sessionid],'outputspec.pd_average',MergePDs[subjectid],index_name)
+                baw200.connect(PHASE_1_oneSubjWorkflow[sessionid],'outputspec.fl_average',MergeFLs[subjectid],index_name)
+                baw200.connect(PHASE_1_oneSubjWorkflow[sessionid],'outputspec.outputLabels',MergeOutputLabels[subjectid],index_name)
+                baw200.connect(PHASE_1_oneSubjWorkflow[sessionid],'outputspec.posteriorImages',MergePosteriors[subjectid],index_name)
 
             MergeByExtendListElementsNode = pe.Node( Function(function=MergeByExtendListElements,
                                           input_names = ['t1_averageList','t2_averageList',
@@ -555,7 +555,6 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
             baw200.connect(buildTemplateIteration2,'outputspec.passive_deformed_templates',MakeNewAtlasTemplateNode,'deformed_list')
             baw200.connect(MakeNewAtlasTemplateNode,'clean_deformed_list',SubjectTemplate_DataSink,'ANTSTemplate.@passive_deformed_templates')
 
-            """
             ###### Starting Phase II
             PHASE_2_oneSubjWorkflow=dict()
             PHASE_2_subjInfoNode=dict()
@@ -589,37 +588,37 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                                   projectid, subjectid, sessionid,PROCESSING_PHASE,
                                   WORKFLOW_COMPONENTS,
                                   BCD_model_path, InterpolationMode, CLUSTER_QUEUE)
-                baw200.connect(PHASE_2_subjInfoNode[sessionid],'projectid',PHASE_2_oneSubjWorkflow[sessionid],'InputSpec.projectid')
-                baw200.connect(PHASE_2_subjInfoNode[sessionid],'subjectid',PHASE_2_oneSubjWorkflow[sessionid],'InputSpec.subjectid')
-                baw200.connect(PHASE_2_subjInfoNode[sessionid],'sessionid',PHASE_2_oneSubjWorkflow[sessionid],'InputSpec.sessionid')
-                baw200.connect(PHASE_2_subjInfoNode[sessionid],'allT1s',PHASE_2_oneSubjWorkflow[sessionid],'InputSpec.allT1s')
-                baw200.connect(PHASE_2_subjInfoNode[sessionid],'allT2s',PHASE_2_oneSubjWorkflow[sessionid],'InputSpec.allT2s')
-                baw200.connect(PHASE_2_subjInfoNode[sessionid],'allPDs',PHASE_2_oneSubjWorkflow[sessionid],'InputSpec.allPDs')
-                baw200.connect(PHASE_2_subjInfoNode[sessionid],'allFLs',PHASE_2_oneSubjWorkflow[sessionid],'InputSpec.allFLs')
-                baw200.connect(PHASE_2_subjInfoNode[sessionid],'allOthers',PHASE_2_oneSubjWorkflow[sessionid],'InputSpec.allOthers')
+                baw200.connect(PHASE_2_subjInfoNode[sessionid],'projectid',PHASE_2_oneSubjWorkflow[sessionid],'inputspec.projectid')
+                baw200.connect(PHASE_2_subjInfoNode[sessionid],'subjectid',PHASE_2_oneSubjWorkflow[sessionid],'inputspec.subjectid')
+                baw200.connect(PHASE_2_subjInfoNode[sessionid],'sessionid',PHASE_2_oneSubjWorkflow[sessionid],'inputspec.sessionid')
+                baw200.connect(PHASE_2_subjInfoNode[sessionid],'allT1s',PHASE_2_oneSubjWorkflow[sessionid],'inputspec.allT1s')
+                baw200.connect(PHASE_2_subjInfoNode[sessionid],'allT2s',PHASE_2_oneSubjWorkflow[sessionid],'inputspec.allT2s')
+                baw200.connect(PHASE_2_subjInfoNode[sessionid],'allPDs',PHASE_2_oneSubjWorkflow[sessionid],'inputspec.allPDs')
+                baw200.connect(PHASE_2_subjInfoNode[sessionid],'allFLs',PHASE_2_oneSubjWorkflow[sessionid],'inputspec.allFLs')
+                baw200.connect(PHASE_2_subjInfoNode[sessionid],'allOthers',PHASE_2_oneSubjWorkflow[sessionid],'inputspec.allOthers')
 
-                baw200.connect(BAtlas[subjectid],'template_landmarks_31_fcsv', PHASE_2_oneSubjWorkflow[sessionid],'InputSpec.template_landmarks_31_fcsv')
-                baw200.connect(BAtlas[subjectid],'template_landmark_weights_31_csv', PHASE_2_oneSubjWorkflow[sessionid],'InputSpec.template_landmark_weights_31_csv')
-                baw200.connect(buildTemplateIteration2,'OutputSpec.template', PHASE_2_oneSubjWorkflow[sessionid],'InputSpec.template_t1')
-                baw200.connect(MakeNewAtlasTemplateNode,'outAtlasFullPath', PHASE_2_oneSubjWorkflow[sessionid],'InputSpec.atlasDefinition')
+                baw200.connect(BAtlas[subjectid],'template_landmarks_31_fcsv', PHASE_2_oneSubjWorkflow[sessionid],'inputspec.template_landmarks_31_fcsv')
+                baw200.connect(BAtlas[subjectid],'template_landmark_weights_31_csv', PHASE_2_oneSubjWorkflow[sessionid],'inputspec.template_landmark_weights_31_csv')
+                baw200.connect(buildTemplateIteration2,'outputspec.template', PHASE_2_oneSubjWorkflow[sessionid],'inputspec.template_t1')
+                baw200.connect(MakeNewAtlasTemplateNode,'outAtlasFullPath', PHASE_2_oneSubjWorkflow[sessionid],'inputspec.atlasDefinition')
 
                 ### Now define where the final organized outputs should go.
                 BASIC_DataSink[sessionid]=pe.Node(nio.DataSink(),name="BASIC_DS_"+str(subjectid)+"_"+str(sessionid))
                 BASIC_DataSink[sessionid].inputs.base_directory=ExperimentBaseDirectoryResults
                 BASIC_DataSink[sessionid].inputs.regexp_substitutions = GenerateOutputPattern(projectid, subjectid, sessionid,'ACPCAlign')
 
-                baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'OutputSpec.outputLandmarksInACPCAlignedSpace',BASIC_DataSink[sessionid],'ACPCAlign.@outputLandmarksInACPCAlignedSpace')
-#                baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'OutputSpec.BCD_ACPC_T1',BASIC_DataSink[sessionid],'ACPCAlign.@BCD_ACPC_T1')
-                baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'OutputSpec.BCD_ACPC_T1_CROPPED',BASIC_DataSink[sessionid],'ACPCAlign.@BCD_ACPC_T1_CROPPED')
-                baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'OutputSpec.outputLandmarksInInputSpace',BASIC_DataSink[sessionid],'ACPCAlign.@outputLandmarksInInputSpace')
-                baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'OutputSpec.outputTransform',BASIC_DataSink[sessionid],'ACPCAlign.@outputTransform')
-                baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'OutputSpec.atlasToSubjectTransform',BASIC_DataSink[sessionid],'ACPCAlign.@atlasToSubjectTransform')
+                baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'outputspec.outputLandmarksInACPCAlignedSpace',BASIC_DataSink[sessionid],'ACPCAlign.@outputLandmarksInACPCAlignedSpace')
+#                baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'outputspec.BCD_ACPC_T1',BASIC_DataSink[sessionid],'ACPCAlign.@BCD_ACPC_T1')
+                baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'outputspec.BCD_ACPC_T1_CROPPED',BASIC_DataSink[sessionid],'ACPCAlign.@BCD_ACPC_T1_CROPPED')
+                baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'outputspec.outputLandmarksInInputSpace',BASIC_DataSink[sessionid],'ACPCAlign.@outputLandmarksInInputSpace')
+                baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'outputspec.outputTransform',BASIC_DataSink[sessionid],'ACPCAlign.@outputTransform')
+                baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'outputspec.atlasToSubjectTransform',BASIC_DataSink[sessionid],'ACPCAlign.@atlasToSubjectTransform')
 
                 ### Now define where the final organized outputs should go.
                 TC_DataSink[sessionid]=pe.Node(nio.DataSink(),name="TISSUE_CLASSIFY_DS_"+str(subjectid)+"_"+str(sessionid))
                 TC_DataSink[sessionid].inputs.base_directory=ExperimentBaseDirectoryResults
                 TC_DataSink[sessionid].inputs.regexp_substitutions = GenerateOutputPattern(projectid, subjectid, sessionid,'TissueClassify')
-                baw200.connect(PHASE_2_oneSubjWorkflow[sessionid], 'OutputSpec.TissueClassifyOutputDir', TC_DataSink[sessionid],'TissueClassify.@TissueClassifyOutputDir')
+                baw200.connect(PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.TissueClassifyOutputDir', TC_DataSink[sessionid],'TissueClassify.@TissueClassifyOutputDir')
 
                 ### Now clean up by adding together many of the items PHASE_2_oneSubjWorkflow
                 currentAccumulateLikeTissuePosteriorsName='AccumulateLikeTissuePosteriors_'+str(subjectid)+"_"+str(sessionid)
@@ -627,7 +626,7 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                      input_names=['posteriorImages'],
                      output_names=['AccumulatePriorsList','AccumulatePriorsNames']),
                      name=currentAccumulateLikeTissuePosteriorsName)
-                baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'OutputSpec.posteriorImages',
+                baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'outputspec.posteriorImages',
                                AccumulateLikeTissuePosteriorsNode[sessionid],'posteriorImages')
 
                 ### Now define where the final organized outputs should go.
@@ -656,28 +655,33 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                           output_names=['clipped_file']),
                           name=currentClipT1ImageWithBrainMaskName)
                     ClipT1ImageWithBrainMaskNode[sessionid].inputs.clipped_file_name = 'clipped_t1.nii.gz'
-                    baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'OutputSpec.t1_average',ClipT1ImageWithBrainMaskNode[sessionid],'t1_image')
+                    baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'outputspec.t1_average',ClipT1ImageWithBrainMaskNode[sessionid],'t1_image')
                     baw200.connect(BAtlas[subjectid],'template_t1_clipped',ClipT1ImageWithBrainMaskNode[sessionid],'brain_labels')
 
 
                     currentAtlasToSubjectantsRegistration='AtlasToSubjectantsRegistration_'+str(subjectid)+"_"+str(sessionid)
-                    AtlasToSubjectantsRegistration[subjectid]=pe.Node(interface=BRAINSTools.BTants.antsRegistration.antsRegistration(), name =
- currentAtlasToSubjectantsRegistration)
+                    AtlasToSubjectantsRegistration[subjectid]=pe.Node(interface=Registration(), name = currentAtlasToSubjectantsRegistration)
                     AtlasToSubjectantsRegistration[subjectid].inputs.dimension = 3
+                    AtlasToSubjectantsRegistration[subjectid].inputs.transforms =               ["Rigid",         "Affine",            "SyN"]
+                    AtlasToSubjectantsRegistration[subjectid].inputs.transform_parameters =     [[0.1],           [0.1],               [0.15,3.0,0.0]]
+                    AtlasToSubjectantsRegistration[subjectid].inputs.metric =                   ['Mattes',        'Mattes',            'CC']
+                    AtlasToSubjectantsRegistration[subjectid].inputs.sampling_strategy =        ['Regular',       'Regular',           None]
+                    AtlasToSubjectantsRegistration[subjectid].inputs.sampling_percentage =      [0.1,              0.1,                1.0]
+                    AtlasToSubjectantsRegistration[subjectid].inputs.metric_weight =            [1.0,              1.0,                1.0]
+                    AtlasToSubjectantsRegistration[subjectid].inputs.radius_or_number_of_bins = [32,               32,                 4]
+                    AtlasToSubjectantsRegistration[subjectid].inputs.number_of_iterations =     [[2000,2000,2000], [1000, 1000, 1000], [10000,500,500,50]]
+                    AtlasToSubjectantsRegistration[subjectid].inputs.convergence_threshold =    [quickStepSize,quickStepSize,quickStepSize]
+                    AtlasToSubjectantsRegistration[subjectid].inputs.convergence_window_size =  [15,               15,                 15]
+                    AtlasToSubjectantsRegistration[subjectid].inputs.use_histogram_matching =   [True,             True,               True]
+                    AtlasToSubjectantsRegistration[subjectid].inputs.shrink_factors =           [[4,2,1],          [4,2,1],            [6,4,2,1]]
+                    AtlasToSubjectantsRegistration[subjectid].inputs.smoothing_sigmas =         [[4,2,0],          [4,2,0],            [6,4,2,0]]
+                    AtlasToSubjectantsRegistration[subjectid].inputs.use_estimate_learning_rate_once = [False,     False,              False]
+                    AtlasToSubjectantsRegistration[subjectid].inputs.write_composite_transform=True
                     AtlasToSubjectantsRegistration[subjectid].inputs.output_transform_prefix = 'AtlasToSubject_'
-                    AtlasToSubjectantsRegistration[subjectid].inputs.metric = ['Mattes','Mattes']
-                    AtlasToSubjectantsRegistration[subjectid].inputs.metric_weight = [1,1]
-                    AtlasToSubjectantsRegistration[subjectid].inputs.radius_or_number_of_bins = [32,32] ## This is really number of bins
-                    AtlasToSubjectantsRegistration[subjectid].inputs.transforms =           [ "Affine",  "SyN"              ]
-                    AtlasToSubjectantsRegistration[subjectid].inputs.transform_parameters = [ [ 2 ],     [ 0.25, 3.0, 0.0 ] ]
-                    AtlasToSubjectantsRegistration[subjectid].inputs.number_of_iterations = [[1500, 200], [100, 50, 30]     ]
-                    AtlasToSubjectantsRegistration[subjectid].inputs.use_histogram_matching = [ True, True ]
-                    AtlasToSubjectantsRegistration[subjectid].inputs.shrink_factors = [[2,1],[3,2,1]]
-                    AtlasToSubjectantsRegistration[subjectid].inputs.smoothing_sigmas = [[1,0],[2,1,0]]
-                    AtlasToSubjectantsRegistration[subjectid].inputs.use_estimate_learning_rate_once = [True,True]
+
                     baw200.connect(BAtlas[subjectid],'template_t1_clipped',AtlasToSubjectantsRegistration[subjectid], 'moving_image')
                     baw200.connect(ClipT1ImageWithBrainMaskNode[sessionid], 'clipped_file', AtlasToSubjectantsRegistration[subjectid], 'fixed_image')
-                    baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'OutputSpec.atlasToSubjectTransform',AtlasToSubjectantsRegistration[subjectid],'initial_moving_transform')
+                    baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'outputspec.atlasToSubjectTransform',AtlasToSubjectantsRegistration[subjectid],'initial_moving_transform')
 
                 global_AllT1s=ExperimentDatabase.getFilenamesByScantype(sessionid,['T1-30','T1-15'])
                 global_AllT2s=ExperimentDatabase.getFilenamesByScantype(sessionid,['T2-30','T2-15'])
@@ -697,15 +701,15 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                 if ( 'SEGMENTATION' in WORKFLOW_COMPONENTS ) and ( len(global_AllT2s) > 0 ): # Currently only works with multi-modal_data
                     from WorkupT1T2BRAINSCut import CreateBRAINSCutWorkflow
                     myLocalSegWF[sessionid] = CreateBRAINSCutWorkflow(projectid, subjectid, sessionid,'Segmentation',CLUSTER_QUEUE,BAtlas[subjectid]) ##Note:  Passing in the entire BAtlas Object here!
-                    baw200.connect( PHASE_2_oneSubjWorkflow[sessionid], 'OutputSpec.t1_average', myLocalSegWF[sessionid], "InputSpec.T1Volume" )
-                    baw200.connect( PHASE_2_oneSubjWorkflow[sessionid], 'OutputSpec.t2_average', myLocalSegWF[sessionid], "InputSpec.T2Volume")
-                    baw200.connect( PHASE_2_oneSubjWorkflow[sessionid], 'OutputSpec.outputLabels', myLocalSegWF[sessionid],"InputSpec.RegistrationROI")
+                    baw200.connect( PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.t1_average', myLocalSegWF[sessionid], "inputspec.T1Volume" )
+                    baw200.connect( PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.t2_average', myLocalSegWF[sessionid], "inputspec.T2Volume")
+                    baw200.connect( PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.outputLabels', myLocalSegWF[sessionid],"inputspec.RegistrationROI")
                     ## NOTE: Element 0 of AccumulatePriorsList is the accumulated GM tissue
                     baw200.connect( [ ( AccumulateLikeTissuePosteriorsNode[sessionid], myLocalSegWF[sessionid],
-                                      [ (( 'AccumulatePriorsList', getListIndex, 0 ), "InputSpec.TotalGM")] ),
+                                      [ (( 'AccumulatePriorsList', getListIndex, 0 ), "inputspec.TotalGM")] ),
 ] )
 
-                    baw200.connect( PHASE_2_oneSubjWorkflow[sessionid],'OutputSpec.atlasToSubjectTransform',myLocalSegWF[sessionid],'InputSpec.atlasToSubjectTransform')
+                    baw200.connect( PHASE_2_oneSubjWorkflow[sessionid],'outputspec.atlasToSubjectTransform',myLocalSegWF[sessionid],'inputspec.atlasToSubjectTransform')
 
                     ### Now define where the final organized outputs should go.
                     SEGMENTATION_DataSink[sessionid]=pe.Node(nio.DataSink(),name="SEGMENTATION_DS_"+str(subjectid)+"_"+str(sessionid))
@@ -716,16 +720,16 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                                                                               ( 'subjectANNLabel_', '' ),
                                                                               ( '.nii.gz', '_seg.nii.gz')
                                                                             ]
-                    baw200.connect(myLocalSegWF[sessionid], 'OutputSpec.outputBinaryLeftCaudate',SEGMENTATION_DataSink[sessionid], 'BRAINSCut.@outputBinaryLeftCaudate')
-                    baw200.connect(myLocalSegWF[sessionid], 'OutputSpec.outputBinaryRightCaudate',SEGMENTATION_DataSink[sessionid], 'BRAINSCut.@outputBinaryRightCaudate')
-                    baw200.connect(myLocalSegWF[sessionid], 'OutputSpec.outputBinaryLeftHippocampus',SEGMENTATION_DataSink[sessionid], 'BRAINSCut.@outputBinaryLeftHippocampus')
-                    baw200.connect(myLocalSegWF[sessionid], 'OutputSpec.outputBinaryRightHippocampus',SEGMENTATION_DataSink[sessionid], 'BRAINSCut.@outputBinaryRightHippocampus')
-                    baw200.connect(myLocalSegWF[sessionid], 'OutputSpec.outputBinaryLeftPutamen',SEGMENTATION_DataSink[sessionid], 'BRAINSCut.@outputBinaryLeftPutamen')
-                    baw200.connect(myLocalSegWF[sessionid], 'OutputSpec.outputBinaryRightPutamen',SEGMENTATION_DataSink[sessionid], 'BRAINSCut.@outputBinaryRightPutamen')
-                    baw200.connect(myLocalSegWF[sessionid], 'OutputSpec.outputBinaryLeftThalamus',SEGMENTATION_DataSink[sessionid], 'BRAINSCut.@outputBinaryLeftThalamus')
-                    baw200.connect(myLocalSegWF[sessionid], 'OutputSpec.outputBinaryRightThalamus',SEGMENTATION_DataSink[sessionid], 'BRAINSCut.@outputBinaryRightThalamus')
-                    baw200.connect(myLocalSegWF[sessionid], 'OutputSpec.outputLabelImageName', SEGMENTATION_DataSink[sessionid],'BRAINSCut.@outputLabelImageName')
-                    baw200.connect(myLocalSegWF[sessionid], 'OutputSpec.outputCSVFileName', SEGMENTATION_DataSink[sessionid],'BRAINSCut.@outputCSVFileName')
+                    baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryLeftCaudate',SEGMENTATION_DataSink[sessionid], 'BRAINSCut.@outputBinaryLeftCaudate')
+                    baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryRightCaudate',SEGMENTATION_DataSink[sessionid], 'BRAINSCut.@outputBinaryRightCaudate')
+                    baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryLeftHippocampus',SEGMENTATION_DataSink[sessionid], 'BRAINSCut.@outputBinaryLeftHippocampus')
+                    baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryRightHippocampus',SEGMENTATION_DataSink[sessionid], 'BRAINSCut.@outputBinaryRightHippocampus')
+                    baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryLeftPutamen',SEGMENTATION_DataSink[sessionid], 'BRAINSCut.@outputBinaryLeftPutamen')
+                    baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryRightPutamen',SEGMENTATION_DataSink[sessionid], 'BRAINSCut.@outputBinaryRightPutamen')
+                    baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryLeftThalamus',SEGMENTATION_DataSink[sessionid], 'BRAINSCut.@outputBinaryLeftThalamus')
+                    baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryRightThalamus',SEGMENTATION_DataSink[sessionid], 'BRAINSCut.@outputBinaryRightThalamus')
+                    baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputLabelImageName', SEGMENTATION_DataSink[sessionid],'BRAINSCut.@outputLabelImageName')
+                    baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputCSVFileName', SEGMENTATION_DataSink[sessionid],'BRAINSCut.@outputCSVFileName')
                 else:
                     print("SKIPPING SEGMENTATION PHASE FOR {0} {1} {2}, lenT2s {3}".format(projectid, subjectid, sessionid, len(global_AllT2s) ))
 
@@ -749,11 +753,11 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                                                       name='99_FSNodeName'+str(subjectid)+"_"+str(sessionid) )
                     FREESURFER_ID[sessionid].inputs.FreeSurfer_ID=str(subjectid)+"_"+str(sessionid)
 
-                    baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'OutputSpec.t1_average',myLocalFSWF[sessionid],'InputSpec.T1_files')
-                    baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'OutputSpec.t2_average',myLocalFSWF[sessionid],'InputSpec.T2_files')
-                    baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'OutputSpec.outputLabels',myLocalFSWF[sessionid],'InputSpec.label_file')
-                    baw200.connect(FREESURFER_ID[sessionid],'FreeSurfer_ID',myLocalFSWF[sessionid],'InputSpec.FreeSurfer_ID')
-                    #baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'OutputSpec.outputLabels',myLocalFSWF[sessionid],'InputSpec.mask_file') #Yes, the same file as label_file!
+                    baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'outputspec.t1_average',myLocalFSWF[sessionid],'inputspec.T1_files')
+                    baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'outputspec.t2_average',myLocalFSWF[sessionid],'inputspec.T2_files')
+                    baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'outputspec.outputLabels',myLocalFSWF[sessionid],'inputspec.label_file')
+                    baw200.connect(FREESURFER_ID[sessionid],'FreeSurfer_ID',myLocalFSWF[sessionid],'inputspec.FreeSurfer_ID')
+                    #baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'outputspec.outputLabels',myLocalFSWF[sessionid],'inputspec.mask_file') #Yes, the same file as label_file!
 
                     ### Now define where the final organized outputs should go.
                     if RunAllFSComponents == True:
@@ -762,7 +766,7 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                         FS_DS[sessionid].inputs.regexp_substitutions = [
                             ('/_uid_(?P<myuid>[^/]*)',r'/\g<myuid>')
                             ]
-                        baw200.connect(myLocalFSWF[sessionid], 'OutputSpec.FreesurferOutputDirectory', FS_DS[sessionid],'FREESURFER_SUBJ.@FreesurferOutputDirectory')
+                        baw200.connect(myLocalFSWF[sessionid], 'outputspec.FreesurferOutputDirectory', FS_DS[sessionid],'FREESURFER_SUBJ.@FreesurferOutputDirectory')
                     ### Now define where the final organized outputs should go.
                     FSPREP_DataSink[sessionid]=pe.Node(nio.DataSink(),name="FREESURFER_PREP_"+str(subjectid)+"_"+str(sessionid))
                     FSPREP_DataSink[sessionid].inputs.base_directory=ExperimentBaseDirectoryResults
@@ -775,9 +779,8 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                     print "========================="
                     print "========================="
                     print "========================="
-                    baw200.connect(myLocalFSWF[sessionid], 'OutputSpec.cnr_optimal_image', FSPREP_DataSink[sessionid],'FREESURFER_PREP.@cnr_optimal_image')
+                    baw200.connect(myLocalFSWF[sessionid], 'outputspec.cnr_optimal_image', FSPREP_DataSink[sessionid],'FREESURFER_PREP.@cnr_optimal_image')
 
                 else:
                     print "Skipping freesurfer"
-            """
     return baw200

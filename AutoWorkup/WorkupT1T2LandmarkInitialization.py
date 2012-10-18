@@ -26,7 +26,7 @@ def CreateLandmarkInitializeWorkflow(WFname,BCD_model_path,InterpolationMode,DoR
     inputsSpec = pe.Node(interface=IdentityInterface(fields=['inputVolume',
         'atlasLandmarkFilename','atlasWeightFilename','atlasVolume']),
                          run_without_submitting=True,
-                         name='InputSpec' )
+                         name='inputspec' )
 
     #############
     outputsSpec = pe.Node(interface=IdentityInterface(fields=['outputLandmarksInACPCAlignedSpace',
@@ -35,7 +35,7 @@ def CreateLandmarkInitializeWorkflow(WFname,BCD_model_path,InterpolationMode,DoR
             'outputTransform','outputMRML','atlasToSubjectTransform'
             ]),
             run_without_submitting=True,
-            name='OutputSpec' )
+            name='outputspec' )
 
 
     ########################################################/

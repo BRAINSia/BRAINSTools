@@ -373,19 +373,19 @@ def ShortWorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, Experime
                               projectid, subjectid, sessionid,PROCESSING_PHASE,
                               PHASE_1_WORKFLOW_COMPONENTS,
                               BCD_model_path, InterpolationMode, CLUSTER_QUEUE)
-            baw200.connect(PHASE_1_subjInfoNode[sessionid],'projectid',PHASE_1_oneSubjWorkflow[sessionid],'InputSpec.projectid')
-            baw200.connect(PHASE_1_subjInfoNode[sessionid],'subjectid',PHASE_1_oneSubjWorkflow[sessionid],'InputSpec.subjectid')
-            baw200.connect(PHASE_1_subjInfoNode[sessionid],'sessionid',PHASE_1_oneSubjWorkflow[sessionid],'InputSpec.sessionid')
-            baw200.connect(PHASE_1_subjInfoNode[sessionid],'allT1s',PHASE_1_oneSubjWorkflow[sessionid],'InputSpec.allT1s')
-            baw200.connect(PHASE_1_subjInfoNode[sessionid],'allT2s',PHASE_1_oneSubjWorkflow[sessionid],'InputSpec.allT2s')
-            baw200.connect(PHASE_1_subjInfoNode[sessionid],'allPDs',PHASE_1_oneSubjWorkflow[sessionid],'InputSpec.allPDs')
-            baw200.connect(PHASE_1_subjInfoNode[sessionid],'allFLs',PHASE_1_oneSubjWorkflow[sessionid],'InputSpec.allFLs')
-            baw200.connect(PHASE_1_subjInfoNode[sessionid],'allOthers',PHASE_1_oneSubjWorkflow[sessionid],'InputSpec.allOthers')
+            baw200.connect(PHASE_1_subjInfoNode[sessionid],'projectid',PHASE_1_oneSubjWorkflow[sessionid],'inputspec.projectid')
+            baw200.connect(PHASE_1_subjInfoNode[sessionid],'subjectid',PHASE_1_oneSubjWorkflow[sessionid],'inputspec.subjectid')
+            baw200.connect(PHASE_1_subjInfoNode[sessionid],'sessionid',PHASE_1_oneSubjWorkflow[sessionid],'inputspec.sessionid')
+            baw200.connect(PHASE_1_subjInfoNode[sessionid],'allT1s',PHASE_1_oneSubjWorkflow[sessionid],'inputspec.allT1s')
+            baw200.connect(PHASE_1_subjInfoNode[sessionid],'allT2s',PHASE_1_oneSubjWorkflow[sessionid],'inputspec.allT2s')
+            baw200.connect(PHASE_1_subjInfoNode[sessionid],'allPDs',PHASE_1_oneSubjWorkflow[sessionid],'inputspec.allPDs')
+            baw200.connect(PHASE_1_subjInfoNode[sessionid],'allFLs',PHASE_1_oneSubjWorkflow[sessionid],'inputspec.allFLs')
+            baw200.connect(PHASE_1_subjInfoNode[sessionid],'allOthers',PHASE_1_oneSubjWorkflow[sessionid],'inputspec.allOthers')
 
-            baw200.connect(BAtlas[subjectid],'template_landmarks_31_fcsv', PHASE_1_oneSubjWorkflow[sessionid],'InputSpec.template_landmarks_31_fcsv')
-            baw200.connect(BAtlas[subjectid],'template_landmark_weights_31_csv', PHASE_1_oneSubjWorkflow[sessionid],'InputSpec.template_landmark_weights_31_csv')
-            baw200.connect(BAtlas[subjectid],'template_t1', PHASE_1_oneSubjWorkflow[sessionid],'InputSpec.template_t1')
-            baw200.connect(BAtlas[subjectid],'ExtendedAtlasDefinition_xml', PHASE_1_oneSubjWorkflow[sessionid],'InputSpec.atlasDefinition')
+            baw200.connect(BAtlas[subjectid],'template_landmarks_31_fcsv', PHASE_1_oneSubjWorkflow[sessionid],'inputspec.template_landmarks_31_fcsv')
+            baw200.connect(BAtlas[subjectid],'template_landmark_weights_31_csv', PHASE_1_oneSubjWorkflow[sessionid],'inputspec.template_landmark_weights_31_csv')
+            baw200.connect(BAtlas[subjectid],'template_t1', PHASE_1_oneSubjWorkflow[sessionid],'inputspec.template_t1')
+            baw200.connect(BAtlas[subjectid],'ExtendedAtlasDefinition_xml', PHASE_1_oneSubjWorkflow[sessionid],'inputspec.atlasDefinition')
 
             BASIC_DataSink=dict()
             TC_DataSink=dict()
@@ -397,17 +397,17 @@ def ShortWorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, Experime
                 BASIC_DataSink[sessionid].inputs.base_directory=ExperimentBaseDirectoryResults
                 BASIC_DataSink[sessionid].inputs.regexp_substitutions = GenerateOutputPattern(projectid, subjectid, sessionid,'ACPCAlign')
 
-                baw200.connect(PHASE_1_oneSubjWorkflow[sessionid],'OutputSpec.outputLandmarksInACPCAlignedSpace',BASIC_DataSink[sessionid],'ACPCAlign.@outputLandmarksInACPCAlignedSpace')
-                baw200.connect(PHASE_1_oneSubjWorkflow[sessionid],'OutputSpec.BCD_ACPC_T1',BASIC_DataSink[sessionid],'ACPCAlign.@BCD_ACPC_T1')
-                baw200.connect(PHASE_1_oneSubjWorkflow[sessionid],'OutputSpec.outputLandmarksInInputSpace',BASIC_DataSink[sessionid],'ACPCAlign.@outputLandmarksInInputSpace')
-                baw200.connect(PHASE_1_oneSubjWorkflow[sessionid],'OutputSpec.outputTransform',BASIC_DataSink[sessionid],'ACPCAlign.@outputTransform')
-                baw200.connect(PHASE_1_oneSubjWorkflow[sessionid],'OutputSpec.atlasToSubjectTransform',BASIC_DataSink[sessionid],'ACPCAlign.@atlasToSubjectTransform')
+                baw200.connect(PHASE_1_oneSubjWorkflow[sessionid],'outputspec.outputLandmarksInACPCAlignedSpace',BASIC_DataSink[sessionid],'ACPCAlign.@outputLandmarksInACPCAlignedSpace')
+                baw200.connect(PHASE_1_oneSubjWorkflow[sessionid],'outputspec.BCD_ACPC_T1',BASIC_DataSink[sessionid],'ACPCAlign.@BCD_ACPC_T1')
+                baw200.connect(PHASE_1_oneSubjWorkflow[sessionid],'outputspec.outputLandmarksInInputSpace',BASIC_DataSink[sessionid],'ACPCAlign.@outputLandmarksInInputSpace')
+                baw200.connect(PHASE_1_oneSubjWorkflow[sessionid],'outputspec.outputTransform',BASIC_DataSink[sessionid],'ACPCAlign.@outputTransform')
+                baw200.connect(PHASE_1_oneSubjWorkflow[sessionid],'outputspec.atlasToSubjectTransform',BASIC_DataSink[sessionid],'ACPCAlign.@atlasToSubjectTransform')
 
                 ### Now define where the final organized outputs should go.
                 TC_DataSink[sessionid]=pe.Node(nio.DataSink(),name="TISSUE_CLASSIFY_DS_"+str(subjectid)+"_"+str(sessionid))
                 TC_DataSink[sessionid].inputs.base_directory=ExperimentBaseDirectoryResults
                 TC_DataSink[sessionid].inputs.regexp_substitutions = GenerateOutputPattern(projectid, subjectid, sessionid,'TissueClassify')
-                baw200.connect(PHASE_1_oneSubjWorkflow[sessionid], 'OutputSpec.TissueClassifyOutputDir', TC_DataSink[sessionid],'TissueClassify.@TissueClassifyOutputDir')
+                baw200.connect(PHASE_1_oneSubjWorkflow[sessionid], 'outputspec.TissueClassifyOutputDir', TC_DataSink[sessionid],'TissueClassify.@TissueClassifyOutputDir')
 
                 ### Now clean up by adding together many of the items PHASE_1_oneSubjWorkflow
                 currentAccumulateLikeTissuePosteriorsName='AccumulateLikeTissuePosteriors_'+str(subjectid)+"_"+str(sessionid)
@@ -415,7 +415,7 @@ def ShortWorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, Experime
                      input_names=['posteriorImages'],
                      output_names=['AccumulatePriorsList','AccumulatePriorsNames']),
                      name=currentAccumulateLikeTissuePosteriorsName)
-                baw200.connect(PHASE_1_oneSubjWorkflow[sessionid],'OutputSpec.posteriorImages',
+                baw200.connect(PHASE_1_oneSubjWorkflow[sessionid],'outputspec.posteriorImages',
                                AccumulateLikeTissuePosteriorsNode[sessionid],'posteriorImages')
 
                 ### Now define where the final organized outputs should go.

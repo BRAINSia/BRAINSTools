@@ -23,7 +23,7 @@ def CreatePERSISTANCE_CHECKWorkflow(WFname):
     """
     PERSISTANCE_CHECKWF= pe.Workflow(name=WFname)
 
-    inputsSpec = pe.Node(interface=IdentityInterface(fields=['fixedVolume','fixedBinaryVolume','movingVolume','movingBinaryVolume','initialTransform']), name='InputSpec' )
+    inputsSpec = pe.Node(interface=IdentityInterface(fields=['fixedVolume','fixedBinaryVolume','movingVolume','movingBinaryVolume','initialTransform']), name='inputspec' )
     PERSISTANCE_CHECKWF.connect(inputsSpec,'subject_id',fs_reconall,'subject_id')
     PERSISTANCE_CHECKWF.connect(inputsSpec,'T1_files',  fs_reconall,'T1_files')
 
@@ -50,6 +50,6 @@ def CreatePERSISTANCE_CHECKWorkflow(WFname):
     PERSISTANCE_CHECKWF.connect(inputsSpec,'movingBinaryVolume',PERSISTANCE_CHECK,'movingBinaryVolume')
     PERSISTANCE_CHECKWF.connect(inputsSpec,'initialTransform',  PERSISTANCE_CHECK,'initialTransform')
 
-    outputsSpec = pe.Node(interface=IdentityInterface(fields=['outputVolume','outputTransform']), name='OutputSpec' )
+    outputsSpec = pe.Node(interface=IdentityInterface(fields=['outputVolume','outputTransform']), name='outputspec' )
 
     return PERSISTANCE_CHECKWF

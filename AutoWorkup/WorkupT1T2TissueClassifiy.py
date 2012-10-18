@@ -87,7 +87,7 @@ def CreateTissueClassifyWorkflow(WFname,CLUSTER_QUEUE,InterpolationMode):
                                                              'PrimaryT1',
         'atlasDefinition','atlasToSubjectInitialTransform']),
         run_without_submitting=True,
-        name='InputSpec' )
+        name='inputspec' )
     outputsSpec = pe.Node(interface=IdentityInterface(fields=['atlasToSubjectTransform','outputLabels','outputHeadLabels',
             #'t1_corrected','t2_corrected',
             't1_average','t2_average','pd_average','fl_average',
@@ -95,7 +95,7 @@ def CreateTissueClassifyWorkflow(WFname,CLUSTER_QUEUE,InterpolationMode):
             'posteriorImages'
             ]),
         run_without_submitting=True,
-        name='OutputSpec' )
+        name='outputspec' )
 
 
     ########################################################

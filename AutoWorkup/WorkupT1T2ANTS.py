@@ -17,16 +17,16 @@ from BRAINSTools.BTants.ants import *
 """
     from WorkupT1T2ANTS import CreateANTSRegistrationWorkflow
     myLocalAntsWF = CreateANTSRegistrationWorkflow("ANTSRegistration",CLUSTER_QUEUE)
-    ANTSWF.connect( SplitAvgBABC,'avgBABCT1',myLocalAntsWF,"InputSpec.fixedVolumesList")
-    ANTSWF.connect( BAtlas,'template_t1',    myLocalAntsWF,"InputSpec.movingVolumesList")
-    ANTSWF.connect(myLocalLMIWF,'OutputSpec.atlasToSubjectTransform',myLocalAntsWF,'InputSpec.initial_moving_transform')
+    ANTSWF.connect( SplitAvgBABC,'avgBABCT1',myLocalAntsWF,"inputspec.fixedVolumesList")
+    ANTSWF.connect( BAtlas,'template_t1',    myLocalAntsWF,"inputspec.movingVolumesList")
+    ANTSWF.connect(myLocalLMIWF,'outputspec.atlasToSubjectTransform',myLocalAntsWF,'inputspec.initial_moving_transform')
 """
 def CreateANTSRegistrationWorkflow(WFname,CLUSTER_QUEUE,NumberOfThreads=-1):
     ANTSWF= pe.Workflow(name=WFname)
 
     inputsSpec = pe.Node(interface=IdentityInterface(fields=['fixedVolumesList','movingVolumesList','initial_moving_transform',
                                                              'fixedBinaryVolume','movingBinaryVolume','warpFixedVolumesList'
-        ]), name='InputSpec' )
+        ]), name='inputspec' )
 
     print("""Run ANTS Registration""")
 
@@ -99,7 +99,7 @@ def CreateANTSRegistrationWorkflow(WFname,CLUSTER_QUEUE,NumberOfThreads=-1):
     #############
     outputsSpec = pe.Node(interface=IdentityInterface(fields=['warped_image','inverse_warped_image','warp_transform',
             'inverse_warp_transform','affine_transform'
-            ]), name='OutputSpec' )
+            ]), name='outputspec' )
 
     ANTSWF.connect(ComputeAtlasToSubjectTransform,'warped_image',          outputsSpec,'warped_image')
     ANTSWF.connect(ComputeAtlasToSubjectTransform,'inverse_warped_image',  outputsSpec,'inverse_warped_image')
@@ -152,7 +152,7 @@ def TempHolderForOldAnts():
         #############
         outputsSpec = pe.Node(interface=IdentityInterface(fields=['warped_image','inverse_warped_image','warp_transform',
                 'inverse_warp_transform','affine_transform'
-                ]), name='OutputSpec' )
+                ]), name='outputspec' )
 
         #ANTSWF.connect(ANTS_AtlasToSubjectTransform,'warped_image',          outputsSpec,'warped_image')
         #ANTSWF.connect(ANTS_AtlasToSubjectTransform,'inverse_warped_image',  outputsSpec,'inverse_warped_image')

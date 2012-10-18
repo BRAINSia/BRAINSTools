@@ -12,8 +12,8 @@ from nipype.interfaces.freesurfer.model import MS_LDA
 """
     from WorkupT1T2FreeSurfer import CreateFreeSurferWorkflow
     myLocalFSWF= CreateFreeSurferWorkflow("HansFSTest")
-    baw200.connect(uidSource,'uid',myLocalFSWF,'InputSpec.subject_id')
-    baw200.connect(SplitAvgBABC,'avgBABCT1',myLocalFSWF,'InputSpec.T1_files')
+    baw200.connect(uidSource,'uid',myLocalFSWF,'inputspec.subject_id')
+    baw200.connect(SplitAvgBABC,'avgBABCT1',myLocalFSWF,'inputspec.T1_files')
 """
 
 def MakeFreesurferOutputDirectory(subjects_dir,subject_id):
@@ -26,9 +26,9 @@ def CreateFreeSurferWorkflow(projectid, subjectid, sessionid,WFname,CLUSTER_QUEU
     freesurferWF= pe.Workflow(name=GenerateWFName(projectid, subjectid, sessionid,WFname))
 
     inputsSpec = pe.Node(interface=IdentityInterface(fields=['FreeSurfer_ID','T1_files','T2_files',
-                                                             'label_file','mask_file']), name='InputSpec' )
+                                                             'label_file','mask_file']), name='inputspec' )
     outputsSpec = pe.Node(interface=IdentityInterface(fields=['subject_id','subjects_dir',
-                                     'FreesurferOutputDirectory','cnr_optimal_image']), name='OutputSpec' )
+                                     'FreesurferOutputDirectory','cnr_optimal_image']), name='outputspec' )
 
     if RunMultiMode:
         mergeT1T2 = pe.Node(interface=Merge(2),name="Merge_T1T2")

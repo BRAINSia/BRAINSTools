@@ -116,7 +116,7 @@ def CreateBRAINSCutWorkflow(projectid, subjectid, sessionid,WFName,CLUSTER_QUEUE
 
     inputsSpec = pe.Node(interface=IdentityInterface(fields=['T1Volume','T2Volume',
         'TotalGM','RegistrationROI',
-        'atlasToSubjectTransform']), name='InputSpec' )
+        'atlasToSubjectTransform']), name='inputspec' )
 
     """
     Gradient Anistropic Diffusion images for BRAINSCut
@@ -230,7 +230,7 @@ def CreateBRAINSCutWorkflow(projectid, subjectid, sessionid,WFName,CLUSTER_QUEUE
         'outputBinaryLeftPutamen','outputBinaryRightPutamen',
         'outputBinaryLeftThalamus','outputBinaryRightThalamus',
         'outputLabelImageName','outputCSVFileName',
-        'xmlFilename']), name='OutputSpec' )
+        'xmlFilename']), name='outputspec' )
 
     cutWF.connect(computeOneLabelMap,'outputLabelImageName',outputsSpec,'outputLabelImageName')
     cutWF.connect(computeOneLabelMap,'outputCSVFileName',outputsSpec,'outputCSVFileName')

@@ -42,7 +42,7 @@ def CreatePERSISTANCE_CHECKWorkflow(WFname):
     PERSISTANCE_CHECK.inputs.maskInferiorCutOffFromCenter=65
     PERSISTANCE_CHECK.inputs.splineGridSize=[28,20,24]
     PERSISTANCE_CHECK.inputs.outputVolume="Trial_Initializer_Output.nii.gz"
-    PERSISTANCE_CHECK.inputs.outputTransform="Trial_Initializer_Output.mat"
+    PERSISTANCE_CHECK.inputs.outputTransform="Trial_Initializer_Output.h5"
 
     PERSISTANCE_CHECKWF.connect(inputsSpec,'fixedVolume',       PERSISTANCE_CHECK,'fixedVolume')
     PERSISTANCE_CHECKWF.connect(inputsSpec,'fixedBinaryVolume', PERSISTANCE_CHECK,'fixedBinaryVolume')

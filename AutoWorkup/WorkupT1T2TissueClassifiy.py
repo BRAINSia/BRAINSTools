@@ -150,7 +150,7 @@ def CreateTissueClassifyWorkflow(WFname,CLUSTER_QUEUE,InterpolationMode):
     BABCext.inputs.outputLabels = "brain_label_seg.nii.gz"
     BABCext.inputs.outputDirtyLabels = "volume_label_seg.nii.gz"
     BABCext.inputs.posteriorTemplate = "POSTERIOR_%s.nii.gz"
-    BABCext.inputs.atlasToSubjectTransform = "atlas_to_subject.mat"
+    BABCext.inputs.atlasToSubjectTransform = "atlas_to_subject.h5"
     #BABCext.inputs.implicitOutputs = ['t1_average_BRAINSABC.nii.gz', 't2_average_BRAINSABC.nii.gz']
     BABCext.inputs.interpolationMode = InterpolationMode
     BABCext.inputs.outputDir = './'

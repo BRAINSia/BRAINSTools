@@ -44,7 +44,7 @@ def CreateLandmarkInitializeWorkflow(WFname,BCD_model_path,InterpolationMode,DoR
     BCD = pe.Node(interface=BRAINSConstellationDetector(), name="BCD")
     ##  Use program default BCD.inputs.inputTemplateModel = T1ACPCModelFile
     ##BCD.inputs.outputVolume =   "BCD_OUT" + "_ACPC_InPlace.nii.gz"                #$# T1AcpcImageList
-    BCD.inputs.outputTransform =  "BCD" + "_Original2ACPC_transform.mat"
+    BCD.inputs.outputTransform =  "BCD" + "_Original2ACPC_transform.h5"
     BCD.inputs.outputResampledVolume = "BCD" + "_ACPC.nii.gz"
     BCD.inputs.outputLandmarksInInputSpace = "BCD" + "_Original.fcsv"
     BCD.inputs.outputLandmarksInACPCAlignedSpace = "BCD" + "_ACPC_Landmarks.fcsv"
@@ -62,7 +62,7 @@ def CreateLandmarkInitializeWorkflow(WFname,BCD_model_path,InterpolationMode,DoR
     # Run BLI atlas_to_subject
     ########################################################
     BLI = pe.Node(interface=BRAINSLandmarkInitializer(), name="BLI")
-    BLI.inputs.outputTransformFilename = "landmarkInitializer_atlas_to_subject_transform.mat"
+    BLI.inputs.outputTransformFilename = "landmarkInitializer_atlas_to_subject_transform.h5"
 
     landmarkInitializeWF.connect(inputsSpec, 'atlasWeightFilename', BLI, 'inputWeightFilename')
     landmarkInitializeWF.connect(inputsSpec, 'atlasLandmarkFilename', BLI, 'inputMovingLandmarkFilename' )
@@ -74,7 +74,7 @@ def CreateLandmarkInitializeWorkflow(WFname,BCD_model_path,InterpolationMode,DoR
         # Run BLI subject_to_atlas
         ########################################################
         BLI2Atlas = pe.Node(interface=BRAINSLandmarkInitializer(), name="BLI2Atlas")
-        BLI2Atlas.inputs.outputTransformFilename = "landmarkInitializer_subject_to_atlas_transform.mat"
+        BLI2Atlas.inputs.outputTransformFilename = "landmarkInitializer_subject_to_atlas_transform.h5"
 
         landmarkInitializeWF.connect(inputsSpec, 'atlasWeightFilename', BLI2Atlas, 'inputWeightFilename')
         landmarkInitializeWF.connect(inputsSpec, 'atlasLandmarkFilename', BLI2Atlas, 'inputFixedLandmarkFilename' )

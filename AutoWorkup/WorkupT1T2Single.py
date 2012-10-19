@@ -168,7 +168,8 @@ def MakeOneSubWorkFlow(projectid, subjectid, sessionid,processing_phase, WORKFLO
         T1T2WorkupSingle.connect( [ (inputsSpec, myLocalTCWF, [(('allT1s', getAllT1sLength), 'inputspec.T1_count')] ), ])
         T1T2WorkupSingle.connect( inputsSpec,'atlasDefinition',myLocalTCWF,'inputspec.atlasDefinition')
         T1T2WorkupSingle.connect( myLocalLMIWF, 'outputspec.outputResampledCroppedVolume', myLocalTCWF, 'inputspec.PrimaryT1' )
-        T1T2WorkupSingle.connect( myLocalLMIWF,'outputspec.atlasToSubjectTransform',myLocalTCWF,'inputspec.atlasToSubjectInitialTransform')
+        ### HACK:  The following is not properly implemented and tested.
+        ### T1T2WorkupSingle.connect( myLocalLMIWF,'outputspec.atlasToSubjectTransform',myLocalTCWF,'inputspec.atlasToSubjectInitialTransform')
 
         ### Now connect outputspec
         T1T2WorkupSingle.connect(myLocalTCWF, 'outputspec.t1_average', outputsSpec,'t1_average')

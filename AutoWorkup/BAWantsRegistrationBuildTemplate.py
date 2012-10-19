@@ -239,7 +239,7 @@ def BAWantsRegistrationTemplateBuildSingleIterationWF(iterationPhasePrefix=''):
     ## Now average all affine transforms together
     AvgAffineTransform = pe.Node(interface=AverageAffineTransform(), name = 'AvgAffineTransform')
     AvgAffineTransform.inputs.dimension = 3
-    AvgAffineTransform.inputs.output_affine_transform = 'Avererage_'+str(iterationPhasePrefix)+'_Affine.mat'
+    AvgAffineTransform.inputs.output_affine_transform = 'Avererage_'+str(iterationPhasePrefix)+'_Affine.h5'
 
     SplitAffineAndWarpsNode = pe.Node(interface=util.Function(function=SplitAffineAndWarpComponents,
                                       input_names=['list_of_transforms_lists'],

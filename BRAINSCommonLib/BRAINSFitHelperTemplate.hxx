@@ -807,7 +807,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
           std::cerr
             << "Error while reading the m_CurrentGenericTransform" << std::endl;
           std::cerr << excp << std::endl;
-          return;
+          throw excp;
           }
         }
         {
@@ -902,7 +902,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
             << "Error while reading the m_CurrentGenericTransform"
             << std::endl;
           std::cerr << excp << std::endl;
-          return;
+          throw excp;
           }
         }
         {
@@ -1006,7 +1006,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
             << "Error while reading the m_CurrentGenericTransform"
             << std::endl;
           std::cerr << excp << std::endl;
-          return;
+          throw excp;
           }
         }
         {
@@ -1110,7 +1110,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
             << "Error while reading the m_CurrentGenericTransform"
             << std::endl;
           std::cerr << excp << std::endl;
-          return;
+          throw excp;
           }
         }
 
@@ -1619,7 +1619,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
             << "Error while reading the m_CurrentGenericTransform"
             << std::endl;
           std::cerr << excp << std::endl;
-          return;
+          throw excp;
           }
         }
 
@@ -1703,8 +1703,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
               {
               std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
               }
-            AssignRigid::AssignConvertedTransform(bulkAffineTransform,
-                                                  tempInitializerITKTransform);
+            AssignRigid::AssignConvertedTransform(bulkAffineTransform, tempInitializerITKTransform);
             initialSyNTransform->AddTransform(bulkAffineTransform);
             }
           else if( transformFileType == "ScaleVersor3DTransform" )
@@ -1715,8 +1714,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
               {
               std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
               }
-            AssignRigid::AssignConvertedTransform(bulkAffineTransform,
-                                                  tempInitializerITKTransform);
+            AssignRigid::AssignConvertedTransform(bulkAffineTransform, tempInitializerITKTransform);
             initialSyNTransform->AddTransform(bulkAffineTransform);
             }
           else if( transformFileType == "ScaleSkewVersor3DTransform" )
@@ -1727,8 +1725,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
               {
               std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
               }
-            AssignRigid::AssignConvertedTransform(bulkAffineTransform,
-                                                  tempInitializerITKTransform);
+            AssignRigid::AssignConvertedTransform(bulkAffineTransform, tempInitializerITKTransform);
             initialSyNTransform->AddTransform(bulkAffineTransform);
             }
           else if( transformFileType == "AffineTransform" )
@@ -1739,8 +1736,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
               {
               std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
               }
-            AssignRigid::AssignConvertedTransform(bulkAffineTransform,
-                                                  tempInitializerITKTransform);
+            AssignRigid::AssignConvertedTransform(bulkAffineTransform, tempInitializerITKTransform);
             initialSyNTransform->AddTransform(bulkAffineTransform);
             }
           else if( transformFileType == "BSplineDeformableTransform" )
@@ -1748,6 +1744,19 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
             itkGenericExceptionMacro( << "ERROR: Improper transform initializer for SyN registration: "
                                       << "BSpline Transform cannot be used as a transform initializer for SyN registration"
                                       << std::endl);
+            }
+          else if( transformFileType == "CompositeTransform" )
+            {
+            itkGenericExceptionMacro( << "ERROR:  Can not initialize SyN with CompositeTranform yet."
+                                      << transformFileType );
+            const CompositeTransformType::ConstPointer tempInitializerITKTransform =
+              dynamic_cast<CompositeTransformType const *>( m_CurrentGenericTransform.GetPointer() );
+            if( tempInitializerITKTransform.IsNull() )
+              {
+              std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
+              }
+            // AssignRigid::AssignConvertedTransform(bulkAffineTransform, tempInitializerITKTransform);
+            initialSyNTransform->AddTransform(bulkAffineTransform);
             }
           else
             {
@@ -1762,7 +1771,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
             << "Error while reading the m_CurrentGenericTransform"
             << std::endl;
           std::cerr << excp << std::endl;
-          return;
+          throw excp;
           }
         }
 

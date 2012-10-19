@@ -67,7 +67,7 @@ simpleSynReg( typename FixedImageType::Pointer & fixedImage,
     {
     // --smoothing-sigmas 3x2x0
     std::vector<std::vector<float> > smoothingSigmasList;
-    std::vector<float>               sigmas(3);
+    std::vector<float>               sigmas(4);
     sigmas[0] = 6;
     sigmas[1] = 4;
     sigmas[2] = 2;
@@ -100,6 +100,13 @@ simpleSynReg( typename FixedImageType::Pointer & fixedImage,
   if( regHelper->DoRegistration() == EXIT_FAILURE )
     {
     ants::antscout << "FATAL ERROR: REGISTRATION PROCESS WAS UNSUCCESSFUL" << std::endl;
+    ants::antscout << "FATAL ERROR: REGISTRATION PROCESS WAS UNSUCCESSFUL" << std::endl;
+    ants::antscout << "FATAL ERROR: REGISTRATION PROCESS WAS UNSUCCESSFUL" << std::endl;
+    ants::antscout << "FATAL ERROR: REGISTRATION PROCESS WAS UNSUCCESSFUL" << std::endl;
+    }
+  else
+    {
+    ants::antscout << "Finshed SyN stage" << std::endl;
     }
   // Get the output transform
   typename CompositeTransformType::Pointer outputCompositeTransform = regHelper->GetCompositeTransform();

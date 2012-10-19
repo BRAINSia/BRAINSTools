@@ -39,7 +39,7 @@ public:
   /** setting function with net configuration */
   std::string GetModelBasename();
 
-  std::string GetANNVectorFilenamePrefix();
+  std::string Getm_ANNVectorFilenamePrefix();
 
   void SetIteration();
 
@@ -49,7 +49,7 @@ public:
 
   void SetMaximumDataSize();
 
-  void SetANNHiddenNodesNumber();
+  void Setm_ANNHiddenNodesNumber();
 
   void SetActivatioinFunction();
 
@@ -72,9 +72,9 @@ public:
 
   unsigned int GetMaximumDataSize();
 
-  void SetANNHiddenNodesNumber( int hiddenNodes);
+  void Setm_ANNHiddenNodesNumber( int hiddenNodes);
 
-  int GetANNHiddenNodesNumber();
+  int Getm_ANNHiddenNodesNumber();
 
   void SetActivationFunction( float slope, float minMax);
 
@@ -101,29 +101,29 @@ public:
 
 private:
   // TODO:  REGINA:  These all need to be called with "m_" prefix
-  BRAINSCutDataHandler myDataHandler;
+  BRAINSCutDataHandler m_myDataHandler;
 
-  unsigned int trainIteration;
-  unsigned int trainEpochIteration;
-  float        trainDesiredError;
-  unsigned int trainMaximumDataSize;
+  unsigned int m_trainIteration;
+  unsigned int m_trainEpochIteration;
+  float        m_trainDesiredError;
+  unsigned int m_trainMaximumDataSize;
 
-  int ANNHiddenNodesNumber;
+  int m_ANNHiddenNodesNumber;
 
-  float activationSlope;
-  float activationMinMax;
+  float m_activationSlope;
+  float m_activationMinMax;
 
   /** random tree */
-  int  trainMaxDepth;
-  int  trainMinSampleCount;
-  bool trainUseSurrogates;
-  bool trainCalcVarImportance;
-  int  trainMaxTreeCount;
+  int  m_trainMaxDepth;
+  int  m_trainMinSampleCount;
+  bool m_trainUseSurrogates;
+  bool m_trainCalcVarImportance;
+  int  m_trainMaxTreeCount;
 
   /** common paramters */
-  std::string                 modelBasename;
-  std::string                 ANNVectorFilenamePrefix;
-  std::string                 RFErrorFilename;
+  std::string                 m_modelBasename;
+  std::string                 m_ANNVectorFilenamePrefix;
+  std::string                 m_RFErrorFilename;
   BRAINSCutVectorTrainingSet* m_trainingDataSet;
 
   CvMat * m_ANNLayerStructure;

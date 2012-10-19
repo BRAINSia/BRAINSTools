@@ -37,33 +37,33 @@ int main(int argc, char * *argv)
     errorMsg += modelConfigurationFilename;
     throw BRAINSCutExceptionStringHandler( errorMsg );
     }
-  BRAINSCutDataHandler dataHandler( modelConfigurationFilename );
+  BRAINSCutDataHandler m_dataHandler( modelConfigurationFilename );
 
-  BRAINSCutGenerateRegistrations registrationGenerator( dataHandler );
-  const bool                     applyDataSetOff = false;
-  const bool                     applyDataSetOn = true;
-  const bool                     shuffleTrainVector = (NoTrainingVectorShuffling != true );
+  BRAINSCutGenerateRegistrations m_registrationGenerator( m_dataHandler );
+  const bool                     m_applyDataSetOff = false;
+  const bool                     m_applyDataSetOn = true;
+  const bool                     m_shuffleTrainVector = (NoTrainingVectorShuffling != true );
 
-  std::cout << "shuffleTrainVector::" << shuffleTrainVector << std::endl;
+  std::cout << "m_shuffleTrainVector::" << m_shuffleTrainVector << std::endl;
 
   if( generateProbability )
     {
-    registrationGenerator.SetAtlasToSubjectRegistrationOn( false );
-    registrationGenerator.SetDataSet( applyDataSetOff );
-    registrationGenerator.GenerateRegistrations();
+    m_registrationGenerator.SetAtlasToSubjectRegistrationOn( false );
+    m_registrationGenerator.SetDataSet( m_applyDataSetOff );
+    m_registrationGenerator.GenerateRegistrations();
 
-    BRAINSCutGenerateProbability testBRAINSCutClass( dataHandler );
-    testBRAINSCutClass.GenerateProbabilityMaps();
+    BRAINSCutGenerateProbability m_probabilityMapGenerator( m_dataHandler );
+    m_probabilityMapGenerator.GenerateProbabilityMaps();
     }
   if( createVectors )
     {
-    registrationGenerator.SetAtlasToSubjectRegistrationOn( true );
-    registrationGenerator.SetDataSet( applyDataSetOff );
-    registrationGenerator.GenerateRegistrations();
+    m_registrationGenerator.SetAtlasToSubjectRegistrationOn( true );
+    m_registrationGenerator.SetDataSet( m_applyDataSetOff );
+    m_registrationGenerator.GenerateRegistrations();
 
-    BRAINSCutCreateVector testCreateVector( dataHandler);
-    testCreateVector.SetTrainingDataSet();
-    testCreateVector.CreateVectors();
+    BRAINSCutCreateVector m_trainingVectorCreator( m_dataHandler);
+    m_trainingVectorCreator.SetTrainingDataSet();
+    m_trainingVectorCreator.CreateVectors();
     }
   if( trainModel )
     {
@@ -71,10 +71,10 @@ int main(int argc, char * *argv)
       {
       try
         {
-        BRAINSCutTrainModel ANNTrain( dataHandler );
-        ANNTrain.InitializeNeuralNetwork();
-        ANNTrain.InitializeTrainDataSet( shuffleTrainVector );
-        ANNTrain.TrainANN();
+        BRAINSCutTrainModel m_ANNTrainer( m_dataHandler );
+        m_ANNTrainer.InitializeNeuralNetwork();
+        m_ANNTrainer.InitializeTrainDataSet( m_shuffleTrainVector );
+        m_ANNTrainer.TrainANN();
         }
       catch( BRAINSCutExceptionStringHandler& e )
         {
@@ -83,18 +83,18 @@ int main(int argc, char * *argv)
       }
     else if( method == "RandomForest" )
       {
-      BRAINSCutTrainModel RandomForestTrain( dataHandler );
-      RandomForestTrain.InitializeRandomForest();
-      RandomForestTrain.InitializeTrainDataSet( shuffleTrainVector);
+      BRAINSCutTrainModel m_RandomForestTrainer( m_dataHandler );
+      m_RandomForestTrainer.InitializeRandomForest();
+      m_RandomForestTrainer.InitializeTrainDataSet( m_shuffleTrainVector);
 
       // these set has to be **AFTER** InitializeTrainDataSet
       if( numberOfTrees > 0 && randomTreeDepth > 0 )
         {
-        RandomForestTrain.TrainRandomForestAt( randomTreeDepth, numberOfTrees );
+        m_RandomForestTrainer.TrainRandomForestAt( randomTreeDepth, numberOfTrees );
         }
       else
         {
-        RandomForestTrain.TrainRandomForest();
+        m_RandomForestTrainer.TrainRandomForest();
         }
       }
     else
@@ -108,23 +108,23 @@ int main(int argc, char * *argv)
     {
     try
       {
-      registrationGenerator.SetAtlasToSubjectRegistrationOn( true );
-      registrationGenerator.SetDataSet( applyDataSetOn );
-      registrationGenerator.GenerateRegistrations();
+      m_registrationGenerator.SetAtlasToSubjectRegistrationOn( true );
+      m_registrationGenerator.SetDataSet( m_applyDataSetOn );
+      m_registrationGenerator.GenerateRegistrations();
 
-      dataHandler.SetRandomForestModelFilename( modelFilename );
+      m_dataHandler.SetRandomForestModelFilename( modelFilename );
 
-      BRAINSCutApplyModel ApplyModule( dataHandler );
+      BRAINSCutApplyModel m_ModelApplier( m_dataHandler );
 
-      ApplyModule.SetMethod( method );
-      ApplyModule.SetComputeSSE( computeSSEOn );
+      m_ModelApplier.SetMethod( method );
+      m_ModelApplier.SetComputeSSE( computeSSEOn );
 
       if( method == "RandomForest" )
         {
-        ApplyModule.SetDepthOfTree( randomTreeDepth );
-        ApplyModule.SetNumberOfTrees( numberOfTrees );
+        m_ModelApplier.SetDepthOfTree( randomTreeDepth );
+        m_ModelApplier.SetNumberOfTrees( numberOfTrees );
         }
-      ApplyModule.Apply();
+      m_ModelApplier.Apply();
       }
     catch( BRAINSCutExceptionStringHandler& e )
       {

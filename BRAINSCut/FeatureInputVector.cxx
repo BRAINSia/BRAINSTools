@@ -49,37 +49,37 @@ FeatureInputVector
 
 FeatureInputVector
 ::FeatureInputVector() :
-  gradientSize(-1),
-  normalization(false)
+  m_gradientSize(-1),
+  m_normalization(false)
 {
-  spatialLocations.clear();
-  candidateROIs.clear();
-  gradientOfROI.clear();
-  imageInterpolator = ImageLinearInterpolatorType::New();
+  m_spatialLocations.clear();
+  m_candidateROIs.clear();
+  m_gradientOfROI.clear();
+  m_imageInterpolator = ImageLinearInterpolatorType::New();
 }
 
 FeatureInputVector
 ::~FeatureInputVector()
 {
-  this->imagesOfInterestInOrder.clear();
-  this->spatialLocations.clear();
-  this->gradientOfROI.clear();
-  this->minmax.clear();
-  this->candidateROIs.clear();
+  this->m_imagesOfInterestInOrder.clear();
+  this->m_spatialLocations.clear();
+  this->m_gradientOfROI.clear();
+  this->m_minmax.clear();
+  this->m_candidateROIs.clear();
 }
 
 void
 FeatureInputVector
 ::SetGradientSize(unsigned int length)
 {
-  gradientSize = length;
+  m_gradientSize = length;
 }
 
 void
 FeatureInputVector
 ::SetImagesOfInterestInOrder( WorkingImageVectorType& images)
 {
-  imagesOfInterestInOrder = images;
+  m_imagesOfInterestInOrder = images;
 }
 
 void
@@ -106,21 +106,21 @@ FeatureInputVector
       exit(-1);
       }
     }
-  spatialLocations = SpatialLocationImages;
+  m_spatialLocations = SpatialLocationImages;
 }
 
 void
 FeatureInputVector
 ::SetCandidateROIs( std::map<std::string, WorkingImagePointer>& candidateROIMap)
 {
-  candidateROIs = candidateROIMap;
+  m_candidateROIs = candidateROIMap;
 }
 
 void
 FeatureInputVector
 ::SetROIInOrder( DataSet::StringVectorType roiInOrder)
 {
-  roiIDsInOrder = roiInOrder;
+  m_roiIDsInOrder = roiInOrder;
 }
 
 void
@@ -129,7 +129,7 @@ FeatureInputVector
 {
   GradientFilterType::Pointer gradientFilter = GradientFilterType::New();
 
-  gradientFilter->SetInput( candidateROIs.find( ROIName)->second );
+  gradientFilter->SetInput( m_candidateROIs.find( ROIName)->second );
   try
     {
     gradientFilter->Update();
@@ -139,34 +139,34 @@ FeatureInputVector
     std::string errorMsg = " Fail to generate itk gradient image.";
     throw BRAINSCutExceptionStringHandler( errorMsg );
     }
-  gradientOfROI.insert( std::pair<std::string, GradientImageType>( ROIName, gradientFilter->GetOutput() ) );
+  m_gradientOfROI.insert( std::pair<std::string, GradientImageType>( ROIName, gradientFilter->GetOutput() ) );
 }
 
 void
 FeatureInputVector
 ::SetInputVectorSize()
 {
-  if( candidateROIs.empty() || imagesOfInterestInOrder.empty() || spatialLocations.empty() )
+  if( m_candidateROIs.empty() || m_imagesOfInterestInOrder.empty() || m_spatialLocations.empty() )
     {
     std::string errorMsg = " Cannot compute input vector size properly.";
     errorMsg += "Either ROI(probability maps) or feature images has to be set to compute input vector size.";
     throw BRAINSCutExceptionStringHandler( errorMsg );
     }
-  inputVectorSize = candidateROIs.size() + imagesOfInterestInOrder.size() * 3 + spatialLocations.size();
+  m_inputVectorSize = m_candidateROIs.size() + m_imagesOfInterestInOrder.size() * 3 + m_spatialLocations.size();
 }
 
 unsigned int
 FeatureInputVector
 ::GetInputVectorSize()
 {
-  return inputVectorSize;
+  return m_inputVectorSize;
 }
 
 void
 FeatureInputVector
 ::SetNormalization( const bool doNormalize)
 {
-  normalization = doNormalize;
+  m_normalization = doNormalize;
 };
 /*
 InputVectorMapType
@@ -197,7 +197,7 @@ FeatureInputVector
 
   InputVectorMapType currentFeatureVector;
 
-  WorkingImagePointer currentROIImage = candidateROIs.find( ROIName)->second;
+  WorkingImagePointer currentROIImage = m_candidateROIs.find( ROIName)->second;
 
   /* iterate through each voxel in the probability map */
   ImageRegionIteratorType eachVoxelInROI( currentROIImage, currentROIImage->GetLargestPossibleRegion() );
@@ -208,7 +208,7 @@ FeatureInputVector
     {
     if( (eachVoxelInROI.Value() > (0.0F + FLOAT_TOLERANCE) ) && (eachVoxelInROI.Value() < (1.0F - FLOAT_TOLERANCE) ) )
       {
-      InputVectorType           oneRowInputFeature( inputVectorSize );
+      InputVectorType           oneRowInputFeature( m_inputVectorSize );
       InputVectorType::iterator featureElementIterator = oneRowInputFeature.begin();
 
       AddCandidateROIFeature( eachVoxelInROI.GetIndex(), featureElementIterator);
@@ -222,8 +222,8 @@ FeatureInputVector
     ++eachVoxelInROI;
     }
 
-  /* normalization */
-  if( normalization )
+  /* m_normalization */
+  if( m_normalization )
     {
     SetNormalizationParameters( ROIName );
     NormalizationOfVector( currentFeatureVector, ROIName );
@@ -235,7 +235,7 @@ FeatureInputVector
   return InputVectorMapType(featureInputOfROI.find( ROIName )->second);
 }
 
-/* set normalization parameters */
+/* set m_normalization parameters */
 void
 FeatureInputVector
 ::SetNormalizationParameters( std::string ROIName )
@@ -246,24 +246,24 @@ FeatureInputVector
 
   ThresholdType::Pointer thresholder = ThresholdType::New();
 
-  thresholder->SetInput( candidateROIs.find( ROIName)->second );
+  thresholder->SetInput( m_candidateROIs.find( ROIName)->second );
   thresholder->SetLowerThreshold( 0.0F + FLOAT_TOLERANCE );
   thresholder->SetInsideValue(1);
   thresholder->Update();
 
   /* get min and max for each image type*/
 
-  minmaxPairVectorType currentMinMaxVector;
-  for( WorkingImageVectorType::const_iterator eachTypeOfImage = imagesOfInterestInOrder.begin();
-       eachTypeOfImage != imagesOfInterestInOrder.end();
+  m_minmaxPairVectorType currentMinMaxVector;
+  for( WorkingImageVectorType::const_iterator eachTypeOfImage = m_imagesOfInterestInOrder.begin();
+       eachTypeOfImage != m_imagesOfInterestInOrder.end();
        ++eachTypeOfImage )
     {
     BinaryImageType::Pointer binaryImage = thresholder->GetOutput();
-    minmaxPairType           eachMinMax = SetMinMaxOfSubject( binaryImage, *eachTypeOfImage );
+    m_minmaxPairType         eachMinMax = SetMinMaxOfSubject( binaryImage, *eachTypeOfImage );
     currentMinMaxVector.push_back( eachMinMax );
     }
 
-  minmax[ROIName] = currentMinMaxVector;
+  m_minmax[ROIName] = currentMinMaxVector;
 }
 
 /** inline functions */
@@ -289,11 +289,11 @@ FeatureInputVector
 ::AddCandidateROIFeature( WorkingImageType::IndexType currentPixelIndex,
                           std::vector<scalarType>::iterator & elementIterator)
 {
-  for( DataSet::StringVectorType::const_iterator roiStringIt = roiIDsInOrder.begin();
-       roiStringIt != roiIDsInOrder.end();
+  for( DataSet::StringVectorType::const_iterator roiStringIt = m_roiIDsInOrder.begin();
+       roiStringIt != m_roiIDsInOrder.end();
        ++roiStringIt )  // iterate each ROI candidates in order specified in "roi IDs in order"
     {
-    WorkingPixelType currentProbability = candidateROIs.find( *roiStringIt )->second->GetPixel( currentPixelIndex );
+    WorkingPixelType currentProbability = m_candidateROIs.find( *roiStringIt )->second->GetPixel( currentPixelIndex );
     if( currentProbability > 0.0F +  FLOAT_TOLERANCE )
       {
       AddValueToElement( MAX, elementIterator );
@@ -311,9 +311,9 @@ FeatureInputVector
                       std::vector<scalarType>::iterator & elementIterator)
 {
   // std::cout<<" (spatial) ";
-  AddValueToElement( spatialLocations.find("rho")->second->GetPixel( currentPixelIndex ), elementIterator );
-  AddValueToElement( spatialLocations.find("phi")->second->GetPixel( currentPixelIndex ), elementIterator );
-  AddValueToElement( spatialLocations.find("theta")->second->GetPixel( currentPixelIndex ), elementIterator );
+  AddValueToElement( m_spatialLocations.find("rho")->second->GetPixel( currentPixelIndex ), elementIterator );
+  AddValueToElement( m_spatialLocations.find("phi")->second->GetPixel( currentPixelIndex ), elementIterator );
+  AddValueToElement( m_spatialLocations.find("theta")->second->GetPixel( currentPixelIndex ), elementIterator );
 }
 
 inline void
@@ -322,8 +322,8 @@ FeatureInputVector
                                 WorkingImageType::IndexType currentPixelIndex,
                                 std::vector<scalarType>::iterator & elementIterator )
 {
-  for( WorkingImageVectorType::const_iterator wit = imagesOfInterestInOrder.begin();
-       wit != imagesOfInterestInOrder.end();
+  for( WorkingImageVectorType::const_iterator wit = m_imagesOfInterestInOrder.begin();
+       wit != m_imagesOfInterestInOrder.end();
        ++wit )
     {
     // std::cout<<"(IMG) ";
@@ -344,8 +344,8 @@ FeatureInputVector
 
   featureImage->TransformIndexToPhysicalPoint( currentPixelIndex, CenterPhysicalPoint );
 
-  imageInterpolator->SetInputImage( featureImage );
-  for( float i = -gradientSize; i <= gradientSize; i = i + 1.0F )
+  m_imageInterpolator->SetInputImage( featureImage );
+  for( float i = -m_gradientSize; i <= m_gradientSize; i = i + 1.0F )
     {
     // std::cout<<"(gradient at "<< i<<" )";
     itk::Point<WorkingPixelType, 3> gradientLocation = CenterPhysicalPoint;
@@ -358,7 +358,7 @@ FeatureInputVector
 
     featureImage->TransformPhysicalPointToContinuousIndex( gradientLocation, ContinuousIndexOfGradientLocation );
 
-    AddValueToElement( static_cast<scalarType>( imageInterpolator->
+    AddValueToElement( static_cast<scalarType>( m_imageInterpolator->
                                                 EvaluateAtContinuousIndex( ContinuousIndexOfGradientLocation ) ),
                        elementIterator );
     }
@@ -369,9 +369,9 @@ FeatureInputVector
 ::CalculateUnitDeltaAlongTheGradient( std::string ROIName,
                                       WorkingImageType::IndexType currentPixelIndex )
 {
-  WorkingPixelType deltaX = gradientOfROI.find( ROIName )->second->GetPixel( currentPixelIndex )[0];
-  WorkingPixelType deltaY = gradientOfROI.find( ROIName )->second->GetPixel( currentPixelIndex )[1];
-  WorkingPixelType deltaZ = gradientOfROI.find( ROIName )->second->GetPixel( currentPixelIndex )[2];
+  WorkingPixelType deltaX = m_gradientOfROI.find( ROIName )->second->GetPixel( currentPixelIndex )[0];
+  WorkingPixelType deltaY = m_gradientOfROI.find( ROIName )->second->GetPixel( currentPixelIndex )[1];
+  WorkingPixelType deltaZ = m_gradientOfROI.find( ROIName )->second->GetPixel( currentPixelIndex )[2];
 
   const scalarType Length = vcl_sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
   const scalarType inverseLength =  ( Length > 0.0F ) ? 1.0 / Length : 1;
@@ -437,30 +437,30 @@ FeatureInputVector
   /*std::cout << " * Min : " << statisticCalculator->GetMinimum(1)
             << " * Max : " << statisticCalculator->GetMaximum(1)
             << std::endl; */
-  return minmaxPairType( std::pair<scalarType, scalarType>( statisticCalculator->GetMinimum(1),
-                                                            statisticCalculator->GetMaximum(1) ) );
+  return m_minmaxPairType( std::pair<scalarType, scalarType>( statisticCalculator->GetMinimum(1),
+                                                              statisticCalculator->GetMaximum(1) ) );
 }
 
 void
 FeatureInputVector
 ::NormalizationOfVector( InputVectorMapType& currentFeatureVector, std::string ROIName )
 {
-  minmaxPairVectorType currentMinmaxPairVector = minmax.find(ROIName)->second;
+  m_minmaxPairVectorType currentMinmaxPairVector = m_minmax.find(ROIName)->second;
 
   for( InputVectorMapType::iterator eachInputVector = currentFeatureVector.begin();
        eachInputVector != currentFeatureVector.end();
        ++eachInputVector )
     {
     InputVectorType::iterator featureElementIterator = (eachInputVector->second).begin();
-    featureElementIterator += (roiIDsInOrder.size() + spatialLocations.size() );
-    for( minmaxPairVectorType::const_iterator minmaxIt = currentMinmaxPairVector.begin();
-         minmaxIt != currentMinmaxPairVector.end();
-         ++minmaxIt )
+    featureElementIterator += (m_roiIDsInOrder.size() + m_spatialLocations.size() );
+    for( m_minmaxPairVectorType::const_iterator m_minmaxIt = currentMinmaxPairVector.begin();
+         m_minmaxIt != currentMinmaxPairVector.end();
+         ++m_minmaxIt )
       {
-      for(  float i = -gradientSize; i <= gradientSize; i = i + 1.0F )
+      for(  float i = -m_gradientSize; i <= m_gradientSize; i = i + 1.0F )
         {
-        scalarType normalizedValue = ( *featureElementIterator - minmaxIt->first );
-        normalizedValue = normalizedValue / ( minmaxIt->second - minmaxIt->first );
+        scalarType normalizedValue = ( *featureElementIterator - m_minmaxIt->first );
+        normalizedValue = normalizedValue / ( m_minmaxIt->second - m_minmaxIt->first );
         *featureElementIterator = normalizedValue;
         featureElementIterator++;
         }

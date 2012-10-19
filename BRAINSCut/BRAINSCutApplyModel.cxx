@@ -13,8 +13,8 @@
 
 BRAINSCutApplyModel
 ::BRAINSCutApplyModel( BRAINSCutDataHandler& dataHandler )
-  : numberOfTrees(-1),
-  depthOfTree(-1)
+  : m_numberOfTrees(-1),
+  m_depthOfTree(-1)
 {
   this->m_myDataHandler = &dataHandler;
   // TODO Take this apart to generate registration one by one!
@@ -29,9 +29,9 @@ BRAINSCutApplyModel
 
   this->m_myDataHandler->SetNormalization();
 
-  gaussianSmoothingSigma = this->m_myDataHandler->GetGaussianSmoothingSigma();
-  trainIteration   = this->m_myDataHandler->GetTrainIteration();
-  applyDataSetList = this->m_myDataHandler->GetApplyDataSet();
+  m_gaussianSmoothingSigma = this->m_myDataHandler->GetGaussianSmoothingSigma();
+  m_trainIteration   = this->m_myDataHandler->GetTrainIteration();
+  m_applyDataSetList = this->m_myDataHandler->GetApplyDataSet();
 
   /** set default: ANN **/
   this->m_openCVANN = new OpenCVMLPType();
@@ -45,10 +45,10 @@ BRAINSCutApplyModel
   this->m_openCVANN->clear();
   delete this->m_openCVANN;
 
-  if(  method ==  "RandomForest" )
+  if(  m_method ==  "RandomForest" )
     {
-    this->openCVRandomForest->clear();
-    delete this->openCVRandomForest;
+    this->m_openCVRandomForest->clear();
+    delete this->m_openCVRandomForest;
     }
 }
 
@@ -56,14 +56,14 @@ void
 BRAINSCutApplyModel
 ::SetMethod( std::string inputMethod)
 {
-  method = inputMethod;
-  if( method ==  "ANN" )
+  m_method = inputMethod;
+  if( m_method ==  "ANN" )
     {
     this->m_myDataHandler->SetTrainConfiguration( "ANNParameters" );
     }
   else
     {
-    openCVRandomForest = new CvRTrees;
+    m_openCVRandomForest = new CvRTrees;
     this->m_myDataHandler->SetTrainConfiguration( "RandomForestParameters");
     }
 }
@@ -73,27 +73,27 @@ void
 BRAINSCutApplyModel
 ::Apply()
 {
-  if( method ==  "ANN" )
+  if( m_method ==  "ANN" )
     {
     this->m_myDataHandler->SetANNTestingSSEFilename();
-    annOutputThreshold = this->m_myDataHandler->GetANNOutputThreshold();
-    this->m_myDataHandler->SetANNModelFilenameAtIteration( trainIteration);
+    m_annOutputThreshold = this->m_myDataHandler->GetANNOutputThreshold();
+    this->m_myDataHandler->SetANNModelFilenameAtIteration( m_trainIteration);
     ReadANNModelFile();
     }
-  else if( method == "RandomForest" )
+  else if( m_method == "RandomForest" )
     {
     if( this->m_myDataHandler->GetRandomForestModelFilename() == "" )
       {
-      this->m_myDataHandler->SetRandomForestModelFilename( depthOfTree, numberOfTrees);
+      this->m_myDataHandler->SetRandomForestModelFilename( m_depthOfTree, m_numberOfTrees);
       }
     ReadRandomForestModelFile();
     }
 
   typedef BRAINSCutConfiguration::ApplyDataSetListType::iterator ApplySubjectIteratorType;
 
-  normalization = this->m_myDataHandler->GetNormalization();
-  for( ApplySubjectIteratorType subjectIt = applyDataSetList.begin();
-       subjectIt != applyDataSetList.end();
+  m_normalization = this->m_myDataHandler->GetNormalization();
+  for( ApplySubjectIteratorType subjectIt = m_applyDataSetList.begin();
+       subjectIt != m_applyDataSetList.end();
        ++subjectIt )
     {
     ApplyOnSubject( *(*subjectIt) );
@@ -121,13 +121,13 @@ BRAINSCutApplyModel
   this->m_myDataHandler->GetDeformedROIs(deformedROIs, subject);
 
   /** Gaussian Smoothing if requested to cover broader area */
-  if( gaussianSmoothingSigma > 0.0F )
+  if( m_gaussianSmoothingSigma > 0.0F )
     {
     for( DeformedROIMapType::iterator it = deformedROIs.begin();
          it != deformedROIs.end();
          ++it )
       {
-      deformedROIs[it->first] = SmoothImage( it->second, gaussianSmoothingSigma);
+      deformedROIs[it->first] = SmoothImage( it->second, m_gaussianSmoothingSigma);
       }
     }
 
@@ -140,7 +140,7 @@ BRAINSCutApplyModel
   inputVectorGenerator.SetCandidateROIs( deformedROIs);
   inputVectorGenerator.SetROIInOrder( this->m_myDataHandler->GetROIIDsInOrder() );
   inputVectorGenerator.SetInputVectorSize();
-  inputVectorGenerator.SetNormalization( normalization );
+  inputVectorGenerator.SetNormalization( m_normalization );
 
   /* now iterate through the roi */
 
@@ -160,7 +160,7 @@ BRAINSCutApplyModel
       InputVectorMapType  roiInputVector = inputVectorGenerator.ComputeAndGetFeatureInputOfROI( currentROIName );
       PredictValueMapType predictedOutputVector;
 
-      if( !computeSSE )
+      if( !m_computeSSE )
         {
         PredictROI( roiInputVector, predictedOutputVector,
                     roiIDsOrderNumber, inputVectorGenerator.GetInputVectorSize() );
@@ -171,7 +171,7 @@ BRAINSCutApplyModel
          * may include hole-filling(closing), thresholding, and more adjustment
          */
         BinaryImagePointer mask;
-        if( method == "ANN" )
+        if( m_method == "ANN" )
           {
           WritePredictROIProbabilityBasedOnReferenceImage( predictedOutputVector,
                                                            imagesOfInterest.front(),
@@ -179,9 +179,9 @@ BRAINSCutApplyModel
                                                            ANNContinuousOutputFilename,
                                                            1.0F );
           mask = PostProcessingANN( ANNContinuousOutputFilename,
-                                    annOutputThreshold);
+                                    m_annOutputThreshold);
           }
-        else if( method == "RandomForest" )
+        else if( m_method == "RandomForest" )
           {
           WritePredictROIProbabilityBasedOnReferenceImage( predictedOutputVector,
                                                            imagesOfInterest.front(),
@@ -198,7 +198,7 @@ BRAINSCutApplyModel
         }
       else /* testing phase */
         {
-        for( int currentIteration = 1; currentIteration <= trainIteration; currentIteration++ )
+        for( int currentIteration = 1; currentIteration <= m_trainIteration; currentIteration++ )
           {
           this->m_myDataHandler->SetANNModelFilenameAtIteration( currentIteration );
           PredictROI( roiInputVector, predictedOutputVector,
@@ -207,11 +207,11 @@ BRAINSCutApplyModel
           const std::string roiReferenceFilename = GetROIVolumeName( subject, currentROIName );
           const float       SSE = ComputeSSE( predictedOutputVector, roiReferenceFilename );
 
-          ANNTestingSSEFileStream << currentROIName
-                                  << ", subjectID, " << subjectID
-                                  << ", Iteration, " << currentIteration
-                                  << ", SSE, " << SSE
-                                  << std::endl;
+          m_ANNTestingSSEFileStream << currentROIName
+                                    << ", subjectID, " << subjectID
+                                    << ", Iteration, " << currentIteration
+                                    << ", SSE, " << SSE
+                                    << std::endl;
           }
         }
 
@@ -438,7 +438,7 @@ BRAINSCutApplyModel
     // std::cout<<FeatureInputVector::HashIndexFromKey( it->first );
 
     /* predict */
-    if( method == "ANN" )
+    if( m_method == "ANN" )
       {
       CvMat * openCVOutput = cvCreateMat( 1, NumberOfROIS, CV_32FC1 );
       this->m_openCVANN->predict( &openCVInputFeature, openCVOutput );
@@ -448,9 +448,9 @@ BRAINSCutApplyModel
                                    ( it->first ),
                                    CV_MAT_ELEM( *openCVOutput, scalarType, 0, roiNumber) ) );
       }
-    else if( method == "RandomForest" )
+    else if( m_method == "RandomForest" )
       {
-      const scalarType response = openCVRandomForest->predict( &openCVInputFeature );
+      const scalarType response = m_openCVRandomForest->predict( &openCVInputFeature );
       // make binary input
       /*if( response > 0.5F )
       {
@@ -467,12 +467,12 @@ void
 BRAINSCutApplyModel
 ::SetComputeSSE( const bool sse)
 {
-  computeSSE = sse;
-  if( computeSSE )
+  m_computeSSE = sse;
+  if( m_computeSSE )
     {
-    ANNTestingSSEFileStream.open( this->m_myDataHandler->GetANNTestingSSEFilename().c_str(),
-                                  std::fstream::out );
-    if( !ANNTestingSSEFileStream.good() )
+    m_ANNTestingSSEFileStream.open( this->m_myDataHandler->GetANNTestingSSEFilename().c_str(),
+                                    std::fstream::out );
+    if( !m_ANNTestingSSEFileStream.good() )
       {
       std::string errorMsg = " Cannot open the file! :";
       errorMsg += this->m_myDataHandler->GetANNTestingSSEFilename();
@@ -514,7 +514,7 @@ BRAINSCutApplyModel
     throw BRAINSCutExceptionStringHandler( errorMsg );
     }
   std::cout << "******* LOAD random forest file ********" << std::endl;
-  openCVRandomForest->load( randomForestFilename.c_str() );
+  m_openCVRandomForest->load( randomForestFilename.c_str() );
 }
 
 inline void
@@ -610,11 +610,11 @@ BRAINSCutApplyModel
 {
   if( trees < 0 )
     {
-    numberOfTrees = this->m_myDataHandler->GetMaxTreeCount();
+    m_numberOfTrees = this->m_myDataHandler->GetMaxTreeCount();
     }
   else
     {
-    numberOfTrees = trees;
+    m_numberOfTrees = trees;
     }
 }
 
@@ -624,10 +624,10 @@ BRAINSCutApplyModel
 {
   if( depth < 0 )
     {
-    depthOfTree = this->m_myDataHandler->GetMaxDepth();
+    m_depthOfTree = this->m_myDataHandler->GetMaxDepth();
     }
   else
     {
-    depthOfTree = depth;
+    m_depthOfTree = depth;
     }
 }

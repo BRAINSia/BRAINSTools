@@ -20,14 +20,15 @@ public:
   void WriteCurrentVectors( InputVectorMapType& pairedInput, OutputVectorMapType& pairedOutput,
                             std::ofstream& outputStream );
 
-  void WriteHeaderFile( std::string vectorFilename, int inputVectorSize, int outputVectorSize, int numberOfInputVector);
+  void WriteHeaderFile( std::string vectorFilename, int m_inputVectorSize, int m_outputVectorSize,
+                        int numberOfInputVector);
 
 private:
-  BRAINSCutDataHandler                         myDataHandler;
-  BRAINSCutConfiguration::TrainDataSetListType trainDataSetList;
+  BRAINSCutDataHandler                         m_myDataHandler;
+  BRAINSCutConfiguration::TrainDataSetListType m_trainDataSetList;
 
-  int inputVectorSize;
-  int outputVectorSize;
+  int m_inputVectorSize;
+  int m_outputVectorSize;
 
   OutputVectorMapType GetPairedOutput( std::map<std::string,
                                                 WorkingImagePointer>& deformedROIs, std::string roiName,

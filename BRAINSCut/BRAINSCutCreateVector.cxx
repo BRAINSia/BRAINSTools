@@ -3,15 +3,15 @@
 BRAINSCutCreateVector
 ::BRAINSCutCreateVector( BRAINSCutDataHandler dataHandler )
 {
-  myDataHandler = dataHandler;
+  m_myDataHandler = dataHandler;
 
-  myDataHandler.SetRegistrationParameters();
-  myDataHandler.SetAtlasDataSet();
-  myDataHandler.SetRegionsOfInterest();
-  myDataHandler.SetRhoPhiTheta();
-  myDataHandler.SetTrainingVectorConfiguration();
-  myDataHandler.SetGradientSize();
-  myDataHandler.SetNormalization();
+  m_myDataHandler.SetRegistrationParameters();
+  m_myDataHandler.SetAtlasDataSet();
+  m_myDataHandler.SetRegionsOfInterest();
+  m_myDataHandler.SetRhoPhiTheta();
+  m_myDataHandler.SetTrainingVectorConfiguration();
+  m_myDataHandler.SetGradientSize();
+  m_myDataHandler.SetNormalization();
 }
 
 void
@@ -24,11 +24,11 @@ BRAINSCutCreateVector
   int numberOfInputVector = 0;
 
   /* open up the output stream */
-  myDataHandler.SetTrainVectorFilename();
+  m_myDataHandler.SetTrainVectorFilename();
 
   std::ofstream outputVectorStream;
 
-  const std::string vectorFilename = myDataHandler.GetTrainVectorFilename();
+  const std::string vectorFilename = m_myDataHandler.GetTrainVectorFilename();
   const std::string vectorFileDirectory
     = itksys::SystemTools::GetFilenamePath( vectorFilename.c_str() );
 
@@ -48,8 +48,8 @@ BRAINSCutCreateVector
     itkGenericExceptionMacro(<< "Error: Could not open ANN vector file: "
                              << vectorFilename)
     }
-  for( TrainSubjectIteratorType subjectIt = trainDataSetList.begin();
-       subjectIt != trainDataSetList.end();
+  for( TrainSubjectIteratorType subjectIt = m_trainDataSetList.begin();
+       subjectIt != m_trainDataSetList.end();
        ++subjectIt )
     {
     numberOfInputVector += CreateSubjectVectors( *(*subjectIt), outputVectorStream);
@@ -57,7 +57,7 @@ BRAINSCutCreateVector
     }
   outputVectorStream.close();
 
-  WriteHeaderFile( vectorFilename, this->inputVectorSize, outputVectorSize, numberOfInputVector);
+  WriteHeaderFile( vectorFilename, this->m_inputVectorSize, m_outputVectorSize, numberOfInputVector);
 }
 
 void
@@ -66,7 +66,7 @@ BRAINSCutCreateVector
 {
   try
     {
-    trainDataSetList = myDataHandler.GetTrainDataSet();
+    m_trainDataSetList = m_myDataHandler.GetTrainDataSet();
     }
   catch( BRAINSCutExceptionStringHandler& e )
     {
@@ -80,40 +80,40 @@ BRAINSCutCreateVector
 {
   std::map<std::string, WorkingImagePointer> deformedSpatialLocationImageList;
 
-  myDataHandler.GetDeformedSpatialLocationImages( deformedSpatialLocationImageList, subject );
+  m_myDataHandler.GetDeformedSpatialLocationImages( deformedSpatialLocationImageList, subject );
 
   WorkingImageVectorType imagesOfInterest;
-  myDataHandler.ReadImagesOfSubjectInOrder(imagesOfInterest, subject);
+  m_myDataHandler.ReadImagesOfSubjectInOrder(imagesOfInterest, subject);
 
   std::map<std::string, WorkingImagePointer> deformedROIs;
-  myDataHandler.GetDeformedROIs(deformedROIs, subject);
+  m_myDataHandler.GetDeformedROIs(deformedROIs, subject);
 
   FeatureInputVector inputVectorGenerator;
 
-  inputVectorGenerator.SetGradientSize( myDataHandler.GetGradientSize() );
+  inputVectorGenerator.SetGradientSize( m_myDataHandler.GetGradientSize() );
   inputVectorGenerator.SetImagesOfInterestInOrder( imagesOfInterest );
   inputVectorGenerator.SetImagesOfSpatialLocation( deformedSpatialLocationImageList );
   inputVectorGenerator.SetCandidateROIs( deformedROIs);
-  inputVectorGenerator.SetROIInOrder( myDataHandler.GetROIIDsInOrder() );
+  inputVectorGenerator.SetROIInOrder( m_myDataHandler.GetROIIDsInOrder() );
   inputVectorGenerator.SetInputVectorSize();
-  inputVectorGenerator.SetNormalization( myDataHandler.GetNormalization() );
+  inputVectorGenerator.SetNormalization( m_myDataHandler.GetNormalization() );
 
-  inputVectorSize = inputVectorGenerator.GetInputVectorSize(); // TODO
-  outputVectorSize = myDataHandler.GetROIIDsInOrder().size();
+  m_inputVectorSize = inputVectorGenerator.GetInputVectorSize(); // TODO
+  m_outputVectorSize = m_myDataHandler.GetROIIDsInOrder().size();
 
   /* now iterate through the roi */
   unsigned int roiIDsOrderNumber = 0;
 
   int numberOfVectors = 0;
-  // for( DataSet::StringVectorType::iterator roiTyIt = myDataHandler.GetROIIDsInOrder().begin();
-  //     roiTyIt != myDataHandler.GetROIIDsInOrder().end();
+  // for( DataSet::StringVectorType::iterator roiTyIt = m_myDataHandler.GetROIIDsInOrder().begin();
+  //     roiTyIt != m_myDataHandler.GetROIIDsInOrder().end();
   //     ++roiTyIt ) // roiTyIt = Region of Interest Type Iterator
-  while( roiIDsOrderNumber <  myDataHandler.GetROIIDsInOrder().size() )
+  while( roiIDsOrderNumber <  m_myDataHandler.GetROIIDsInOrder().size() )
     {
-    std::string currentROI( myDataHandler.GetROIIDsInOrder()[roiIDsOrderNumber] );
+    std::string currentROI( m_myDataHandler.GetROIIDsInOrder()[roiIDsOrderNumber] );
 
     ProbabilityMapParser* roiDataSet =
-      myDataHandler.GetROIDataList()->GetMatching<ProbabilityMapParser>( "StructureID", currentROI.c_str() );
+      m_myDataHandler.GetROIDataList()->GetMatching<ProbabilityMapParser>( "StructureID", currentROI.c_str() );
 
     if( roiDataSet->GetAttribute<StringValue>("GenerateVector") == "true" )
       {
@@ -198,7 +198,7 @@ BRAINSCutCreateVector
                        OutputVectorMapType& pairedOutput,
                        std::ofstream& outputStream )
 {
-  int bufferSize       = (inputVectorSize + outputVectorSize + 1);
+  int bufferSize       = (m_inputVectorSize + m_outputVectorSize + 1);
 
   for( InputVectorMapType::iterator it = pairedInput.begin();
        it != pairedInput.end();
@@ -206,7 +206,7 @@ BRAINSCutCreateVector
     {
     scalarType *bufferToWrite = new scalarType[bufferSize];
     bufferToWrite[bufferSize - 1] = LineGuard;
-    for( int i = 0; i < outputVectorSize; i++ )
+    for( int i = 0; i < m_outputVectorSize; i++ )
       {
       if( pairedOutput.find( it->first) == pairedOutput.end() )
         {
@@ -218,9 +218,9 @@ BRAINSCutCreateVector
 
       bufferToWrite[i] = inputVector[i];
       }
-    for( int j = 0; j < inputVectorSize; j++ )
+    for( int j = 0; j < m_inputVectorSize; j++ )
       {
-      bufferToWrite[outputVectorSize + j] = (it->second)[j];
+      bufferToWrite[m_outputVectorSize + j] = (it->second)[j];
       }
 
     outputStream.write( (const char *) bufferToWrite, bufferSize * sizeof(scalarType) );

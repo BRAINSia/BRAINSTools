@@ -97,9 +97,11 @@ public:
   // itkSetMacro( IntraSubjectTransformFileNames, std::vector<std::string> );
   itkSetMacro( AtlasToSubjectTransformFileName, std::string );
 
+  // TODO: KENT:  Move all code from class definition to the .hxx file outside the class definition
   void SetIntraSubjectTransformFileNames(std::vector<std::string> userlist)
   {
     m_IntraSubjectTransformFileNames = userlist;
+    m_RegistrationUpdateNeeded = true;
   }
 
   void RegisterImages();
@@ -121,32 +123,38 @@ public:
   itkGetMacro(UseNonLinearInterpolation, bool);
   itkSetMacro(UseNonLinearInterpolation, bool);
 
-  void Update();
-
   void SetAtlasLinearTransformChoice(const std::string & c)
   {
     m_AtlasLinearTransformChoice = c;
+    m_RegistrationUpdateNeeded = true;
   }
 
   void SetImageLinearTransformChoice(const std::string & c)
   {
     m_ImageLinearTransformChoice = c;
+    m_RegistrationUpdateNeeded = true;
   }
 
   void SetWarpGrid(const unsigned int gx, const unsigned int gy, const unsigned int gz)
   {
     m_WarpGrid.resize(3); m_WarpGrid[0] = gx; m_WarpGrid[1] = gy; m_WarpGrid[2] = gz;
+    m_RegistrationUpdateNeeded = true;
   }
 
   // Get and set the input volume image types.  i.e. T1 or T2 or PD
   void SetInputVolumeTypes(const std::vector<std::string> & newInputVolumeTypes)
   {
     this->m_InputVolumeTypes = newInputVolumeTypes;
+    m_RegistrationUpdateNeeded = true;
   }
 
   void SetAtlasToSubjectInitialTransform( const GenericTransformType::Pointer atlasToSubjectInitialTransform)
   {
-    this->m_AtlasToSubjectInitialTransform = atlasToSubjectInitialTransform;
+    if( this->m_AtlasToSubjectInitialTransform != atlasToSubjectInitialTransform )
+      {
+      this->m_AtlasToSubjectInitialTransform = atlasToSubjectInitialTransform;
+      m_RegistrationUpdateNeeded = true;
+      }
   }
 
   std::vector<std::string> GetInputVolumeTypes(void) const
@@ -154,7 +162,12 @@ public:
     return this->m_InputVolumeTypes;
   }
 
+  void Update();
+
 protected:
+  void RegisterIntraSubjectImages(void);
+
+  void RegisterAtlasToSubjectImages(void);
 
   AtlasRegistrationMethod();
   ~AtlasRegistrationMethod();
@@ -186,7 +199,11 @@ private:
 
   bool m_UseNonLinearInterpolation;
   bool m_DoneRegistration;
-  bool m_Modified;
+  bool m_RegistrationUpdateNeeded; // TODO: KENT: The m_RegistrationUpdateNeeded is a hack to replicate the behavior
+                                   // that should come from using the modified times of the itk::Object class
+                                   //            All the Get/Set functions should use the itkSetMacro so that the
+                                   // itk::Object->Modified times are updated correctly, then we can just use that
+  //            modify status to determine when re-running is necessary.
 
   std::string m_AtlasLinearTransformChoice;
   std::string m_ImageLinearTransformChoice;

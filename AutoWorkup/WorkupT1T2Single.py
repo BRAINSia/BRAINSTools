@@ -127,12 +127,13 @@ def MakeOneSubWorkFlow(projectid, subjectid, sessionid,processing_phase, WORKFLO
             'pd_average','fl_average',
             'posteriorImages','outputLabels',
             'TissueClassifyOutputDir',
+            'TissueClassifyatlasToSubjectTransform',
 
 #            'BCD_ACPC_T1',
             'BCD_ACPC_T1_CROPPED',
             'outputLandmarksInACPCAlignedSpace',
             'outputLandmarksInInputSpace',
-            'outputTransform','atlasToSubjectTransform'
+            'outputTransform','LMIatlasToSubjectTransform'
             ]),
             run_without_submitting=True,
             name='outputspec' )
@@ -155,9 +156,9 @@ def MakeOneSubWorkFlow(projectid, subjectid, sessionid,processing_phase, WORKFLO
         T1T2WorkupSingle.connect(myLocalLMIWF,'outputspec.outputLandmarksInACPCAlignedSpace',outputsSpec,'outputLandmarksInACPCAlignedSpace')
         T1T2WorkupSingle.connect(myLocalLMIWF,'outputspec.outputLandmarksInInputSpace',outputsSpec,'outputLandmarksInInputSpace')
         T1T2WorkupSingle.connect(myLocalLMIWF,'outputspec.outputTransform',outputsSpec,'outputTransform')
-        T1T2WorkupSingle.connect(myLocalLMIWF,'outputspec.atlasToSubjectTransform',outputsSpec,'atlasToSubjectTransform')
+        T1T2WorkupSingle.connect(myLocalLMIWF,'outputspec.atlasToSubjectTransform',outputsSpec,'LMIatlasToSubjectTransform')
 
-    if True: #'TISSUE_CLASSIFY' in WORKFLOW_COMPONENTS:
+    if 'TISSUE_CLASSIFY' in WORKFLOW_COMPONENTS:
         from WorkupT1T2TissueClassifiy import CreateTissueClassifyWorkflow
         myLocalTCWF= CreateTissueClassifyWorkflow("TissueClassify",CLUSTER_QUEUE,InterpolationMode)
         T1T2WorkupSingle.connect( inputsSpec, 'allT1s', myLocalTCWF, 'inputspec.T1List')
@@ -179,5 +180,6 @@ def MakeOneSubWorkFlow(projectid, subjectid, sessionid,processing_phase, WORKFLO
         T1T2WorkupSingle.connect(myLocalTCWF, 'outputspec.posteriorImages', outputsSpec,'posteriorImages')
         T1T2WorkupSingle.connect(myLocalTCWF, 'outputspec.outputLabels', outputsSpec,'outputLabels')
         T1T2WorkupSingle.connect(myLocalTCWF, 'outputspec.TissueClassifyOutputDir', outputsSpec,'TissueClassifyOutputDir')
+        T1T2WorkupSingle.connect(myLocalTCWF, 'outputspec.atlasToSubjectTransform', outputsSpec,'TissueClassifyatlasToSubjectTransform')
 
     return T1T2WorkupSingle

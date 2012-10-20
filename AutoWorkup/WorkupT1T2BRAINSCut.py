@@ -9,6 +9,9 @@ import nipype.pipeline.engine as pe  # pypeline engine
 from BRAINSTools import *
 from BRAINSTools.RF8BRAINSCutWrapper import RF8BRAINSCutWrapper
 
+def getListIndex( imageList, index):
+    return imageList[index]
+
 def GenerateWFName(projectid, subjectid, sessionid,WFName):
     return WFName+'_'+str(subjectid)+"_"+str(sessionid)+"_"+str(projectid)
 
@@ -149,7 +152,8 @@ def CreateBRAINSCutWorkflow(projectid, subjectid, sessionid,WFName,CLUSTER_QUEUE
     BRAINSCut
     """
     RF8BC = pe.Node(interface=RF8BRAINSCutWrapper(),name="RF8_BRAINSCut")
-    many_cpu_RF8BC_options_dictionary={'qsub_args': '-S /bin/bash -pe smp1 4-6 -l big_mem=true,h_vmem=31G,mem_free=31G -o /dev/null -e /dev/null '+CLUSTER_QUEUE, 'overwrite': True}
+    many_cpu_RF8BC_options_dictionary={'qsub_args': '-S /bin/bash -pe smp1 2-8 -l big_mem=true,h_vmem=60G,mem_free=30G -o /dev/null -e /dev/null '+CLUSTER_QUEUE, 'overwrite': True}
+#many_cpu_RF8BC_options_dictionary={'qsub_args': '-S /bin/bash -pe smp1 4-6 -l big_mem=true,h_vmem=22G,mem_free=22G -o /dev/null -e /dev/null '+CLUSTER_QUEUE, 'overwrite': True}
     RF8BC.plugin_args=many_cpu_RF8BC_options_dictionary
     RF8BC.inputs.trainingVectorFilename = "trainingVectorFilename.txt"
     RF8BC.inputs.xmlFilename = "BRAINSCutSegmentationDefinition.xml"
@@ -200,7 +204,8 @@ def CreateBRAINSCutWorkflow(projectid, subjectid, sessionid,WFName,CLUSTER_QUEUE
     ##HACK: Needs to be fixed
     #RF8BC.inputs.modelFilename='/nfsscratch/PREDICT/TEST_BRAINSCut/20120828ANNModel_Model_RF100.txt'
 
-    cutWF.connect(inputsSpec,'atlasToSubjectTransform',RF8BC,'deformationFromTemplateToSubject')
+    ## Need to index from next line cutWF.connect(inputsSpec,'atlasToSubjectTransform',RF8BC,'deformationFromTemplateToSubject')
+    cutWF.connect( [ ( inputsSpec, RF8BC, [ (( 'atlasToSubjectTransform', getListIndex, 0 ), 'deformationFromTemplateToSubject')]), ] )
 
     mergeAllLabels=pe.Node(interface=Merge(8),name="labelMergeNode")
     # NOTE: Ordering is important

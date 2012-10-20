@@ -29,14 +29,13 @@ simpleSynReg( typename FixedImageType::Pointer & fixedImage,
     const bool doEstimateLearningRateAtEachIteration = true;
     regHelper->SetDoEstimateLearningRateAtEachIteration( doEstimateLearningRateAtEachIteration );
     }
-  // --convergence [250x100x70,1e-6,15]
     {
     std::vector<std::vector<unsigned int> > iterationList;
     std::vector<unsigned int>               iterations(4);
     iterations[0] = 10000;
     iterations[1] = 500;
     iterations[2] = 500;
-    iterations[3] = 50;   // NOTE: 10 does not converge, but it gives a reasonable result, 70 converges.
+    iterations[3] = 100;   // NOTE:  but it gives a reasonable result, 70 converges.
     iterationList.push_back(iterations);
     regHelper->SetIterations( iterationList );
     }

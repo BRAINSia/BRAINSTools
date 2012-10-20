@@ -132,7 +132,7 @@ def CreateTissueClassifyWorkflow(WFname,CLUSTER_QUEUE,InterpolationMode):
     tissueClassifyWF.connect( inputsSpec, 'OtherList', makeOutImageList, 'OtherList' )
 
     BABCext= pe.Node(interface=BRAINSABCext(), name="BABC")
-    many_cpu_BABC_options_dictionary={'qsub_args': '-S /bin/bash -pe smp1 4-8 -l h_vmem=18G,mem_free=8G -o /dev/null -e /dev/null '+CLUSTER_QUEUE, 'overwrite': True}
+    many_cpu_BABC_options_dictionary={'qsub_args': '-S /bin/bash -pe smp1 8-12 -l h_vmem=18G,mem_free=8G -o /dev/null -e /dev/null '+CLUSTER_QUEUE, 'overwrite': True}
     BABCext.plugin_args=many_cpu_BABC_options_dictionary
     tissueClassifyWF.connect(makeImagePathList,'imagePathList',BABCext,'inputVolumes')
     tissueClassifyWF.connect(makeImageTypeList,'imageTypeList',BABCext,'inputVolumeTypes')
@@ -145,7 +145,8 @@ def CreateTissueClassifyWorkflow(WFname,CLUSTER_QUEUE,InterpolationMode):
     BABCext.inputs.atlasToSubjectTransformType = 'SyN'
     BABCext.inputs.atlasToSubjectTransform = "atlasToSubjecSyN.h5"
     #BABCext.inputs.atlasToSubjectTransformType = 'BSpline'
-    BABCext.inputs.gridSize = [28,20,24]
+    #BABCext.inputs.gridSize = [28,20,24]
+    BABCext.inputs.gridSize = [10,10,10]
     BABCext.inputs.outputFormat = "NIFTI"
     BABCext.inputs.outputLabels = "brain_label_seg.nii.gz"
     BABCext.inputs.outputDirtyLabels = "volume_label_seg.nii.gz"

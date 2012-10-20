@@ -107,7 +107,7 @@ def main(argv=None):
     PYTHON_AUX_PATHS.extend(sys.path)
     sys.path=PYTHON_AUX_PATHS
     #print sys.path
-    #import SimpleITK
+    import SimpleITK as sitk
     #     Prepend the shell environment search paths
     PROGRAM_PATHS=expConfig.get(input_arguments.processingEnvironment,'PROGRAM_PATHS')
     PROGRAM_PATHS=PROGRAM_PATHS.split(':')
@@ -214,6 +214,11 @@ def main(argv=None):
         print row
     print "^^^^^^^^^^^^^"
 
+    ## Create the shell wrapper script for ensuring that all jobs running on remote hosts from SGE
+    #  have the same environment as the job submission host.
+    JOB_SCRIPT=get_global_sge_script(sys.path,PROGRAM_PATHS,CUSTOM_ENVIRONMENT)
+    print JOB_SCRIPT
+
     import WorkupT1T2 ## NOTE:  This needs to occur AFTER the PYTHON_AUX_PATHS has been modified
     import ShortWorkupT1T2
     for subjectid in ExperimentDatabase.getAllSubjects():
@@ -230,28 +235,23 @@ def main(argv=None):
               ExperimentBaseDirectoryResults,
               ExperimentDatabase,
               CACHE_ATLASPATH,
-              CACHE_BCDMODELPATH,WORKFLOW_COMPONENTS=WORKFLOW_COMPONENTS,CLUSTER_QUEUE=CLUSTER_QUEUE)
+              CACHE_BCDMODELPATH,WORKFLOW_COMPONENTS=WORKFLOW_COMPONENTS,CLUSTER_QUEUE=CLUSTER_QUEUE,SGE_JOB_SCRIPT=JOB_SCRIPT)
         print "Start Processing"
-
-        ## Create the shell wrapper script for ensuring that all jobs running on remote hosts from SGE
-        #  have the same environment as the job submission host.
-        JOB_SCRIPT=get_global_sge_script(sys.path,PROGRAM_PATHS,CUSTOM_ENVIRONMENT)
-        #print JOB_SCRIPT
 
         SGEFlavor='SGE'
         try:
             if input_arguments.wfrun == 'helium_all.q':
                 baw200.run(plugin=SGEFlavor,
-                    plugin_args=dict(template=JOB_SCRIPT,qsub_args="-S /bin/bash -pe smp1 2-12 -l h_vmem=19G,mem_free=9G -o /dev/null -e /dev/null "+CLUSTER_QUEUE))
+                    plugin_args=dict(template=JOB_SCRIPT,qsub_args="-S /bin/bash -pe smp1 6-12 -l h_vmem=19G,mem_free=9G -o /dev/null -e /dev/null "+CLUSTER_QUEUE))
             elif input_arguments.wfrun == 'helium_all.q_graph':
                 SGEFlavor='SGEGraph' #Use the SGEGraph processing
                 baw200.run(plugin=SGEFlavor,
-                    plugin_args=dict(template=JOB_SCRIPT,qsub_args="-S /bin/bash -pe smp1 2-12 -l h_vmem=19G,mem_free=9G -o /dev/null -e /dev/null "+CLUSTER_QUEUE))
+                    plugin_args=dict(template=JOB_SCRIPT,qsub_args="-S /bin/bash -pe smp1 6-12 -l h_vmem=19G,mem_free=9G -o /dev/null -e /dev/null "+CLUSTER_QUEUE))
             elif input_arguments.wfrun == 'ipl_OSX':
                 baw200.write_graph()
                 print "Running On ipl_OSX"
                 baw200.run(plugin=SGEFlavor,
-                    plugin_args=dict(template=JOB_SCRIPT,qsub_args="-S /bin/bash -pe smp1 2-12 -l h_vmem=19G,mem_free=9G -o /dev/null -e /dev/null "+CLUSTER_QUEUE))
+                    plugin_args=dict(template=JOB_SCRIPT,qsub_args="-S /bin/bash -pe smp1 6-12 -l h_vmem=19G,mem_free=9G -o /dev/null -e /dev/null "+CLUSTER_QUEUE))
             elif input_arguments.wfrun == 'local_4':
                 baw200.write_graph()
                 print "Running with 4 parallel processes on local machine"

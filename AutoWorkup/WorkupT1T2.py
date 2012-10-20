@@ -69,16 +69,16 @@ pe.sub(subs,test)
 """
     patternList=[]
 
-
-    find_pat=os.path.join('ANTSTemplate','Iteration02_Reshaped.nii.gz')
+    find_pat=os.path.join('ANTSTemplate','ReshapeAverageImageWithShapeUpdate.nii.gz')
     replace_pat=os.path.join('SUBJECT_TEMPLATES',subjectid,r'AVG_T1.nii.gz')
     patternList.append( (find_pat,replace_pat) )
 
-    find_pat=os.path.join('ANTSTemplate',r'_ReshapeAveragePassiveImageWithShapeUpdate[0-9]*/AVG_[A-Z0-9]*WARP_(?P<structure>AVG_[A-Z0-9]*.nii.gz)')
+#find_pat=os.path.join('ANTSTemplate',r'_ReshapeAveragePassiveImageWithShapeUpdate[0-9]*/AVG_[A-Z0-9]*WARP_(?P<structure>AVG_[A-Z0-9]*.nii.gz)')
+    find_pat=os.path.join('ANTSTemplate',r'_ReshapeAveragePassiveImageWithShapeUpdate[0-9]*/AVG_(?P<structure>.*.nii.gz)')
     replace_pat=os.path.join('SUBJECT_TEMPLATES',subjectid,r'\g<structure>')
     patternList.append( (find_pat,replace_pat) )
 
-    find_pat=os.path.join('ANTSTemplate',r'CLIPPED_AVG_[A-Z]*WARP_(?P<structure>AVG_[A-Z]*.nii.gz)')
+    find_pat=os.path.join('ANTSTemplate',r'CLIPPED_AVG_(?P<structure>.*.nii.gz)')
     replace_pat=os.path.join('SUBJECT_TEMPLATES',subjectid,r'\g<structure>')
     patternList.append( (find_pat,replace_pat) )
 
@@ -117,10 +117,10 @@ ListOfImagesDictionaries=[
   .gz')}
 ]
 
-outputLabels_averageList = ['/IPLlinux/hjohnson/HDNI/20121009_TEST_NEW_BAW/RESULTS/20120801.SubjectOrganized_CACHE/0131/BAW_20120813/WF_0131_34285_PHD_024_PHASE_1/TissueClassify/BABC/brain_label_seg.nii.gz', '/IPLlinux/hjohnson/HDNI/20121009_TEST_NEW_BAW/RESULTS/20120801.SubjectOrganized_CACHE/0131/BAW_20120813/WF_0131_90863_PHD_024_PHASE_1/TissueClassify/BABC/brain_label_seg.nii.gz']
+outputLabels_averageList = ['brain_label_seg.nii.gz', 'brain_label_seg.nii.gz']
 pd_averageList = [None, None]
-t1_averageList = ['/IPLlinux/hjohnson/HDNI/20121009_TEST_NEW_BAW/RESULTS/20120801.SubjectOrganized_CACHE/0131/BAW_20120813/WF_0131_34285_PHD_024_PHASE_1/TissueClassify/BABC/t1_average_BRAINSABC.nii.gz', '/IPLlinux/hjohnson/HDNI/20121009_TEST_NEW_BAW/RESULTS/20120801.SubjectOrganized_CACHE/0131/BAW_20120813/WF_0131_90863_PHD_024_PHASE_1/TissueClassify/BABC/t1_average_BRAINSABC.nii.gz']
-t2_averageList = ['/IPLlinux/hjohnson/HDNI/20121009_TEST_NEW_BAW/RESULTS/20120801.SubjectOrganized_CACHE/0131/BAW_20120813/WF_0131_34285_PHD_024_PHASE_1/TissueClassify/BABC/t2_average_BRAINSABC.nii.gz', '/IPLlinux/hjohnson/HDNI/20121009_TEST_NEW_BAW/RESULTS/20120801.SubjectOrganized_CACHE/0131/BAW_20120813/WF_0131_90863_PHD_024_PHASE_1/TissueClassify/BABC/t2_average_BRAINSABC.nii.gz']
+t1_averageList = ['t1_average_BRAINSABC.nii.gz', 't1_average_BRAINSABC.nii.gz']
+t2_averageList = ['t2_average_BRAINSABC.nii.gz', 't2_average_BRAINSABC.nii.gz']
 
 """
     print "t1_averageList",t1_averageList
@@ -134,6 +134,7 @@ t2_averageList = ['/IPLlinux/hjohnson/HDNI/20121009_TEST_NEW_BAW/RESULTS/2012080
     ## Initial list with empty dictionaries
     ListOfImagesDictionaries=[dict() for i in range(0,len(t1_averageList))]
 
+    ## HACK:  Need to make it so that AVG_AIR.nii.gz is has a background value of 1
     registrationImageTypes=['T1'] ## ['T1','T2'] someday.
     #DefaultContinuousInterpolationType='LanczosWindowedSinc' ## Could also be Linear for speed.
     DefaultContinuousInterpolationType='Linear'
@@ -349,7 +350,7 @@ def AccumulateLikeTissuePosteriors(posteriorImages):
 ###########################################################################
 ###########################################################################
 def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBaseDirectoryResults, ExperimentDatabase, atlas_fname_wpath, BCD_model_path,
-               InterpolationMode="Linear", Mode=10,DwiList=[],WORKFLOW_COMPONENTS=[],CLUSTER_QUEUE=''):
+               InterpolationMode="Linear", Mode=10,DwiList=[],WORKFLOW_COMPONENTS=[],CLUSTER_QUEUE='',SGE_JOB_SCRIPT='#!/bin/bash'):
     """
     Run autoworkup on all subjects data defined in the ExperimentDatabase
 
@@ -361,7 +362,7 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
 
     print "Building Pipeline"
     ########### PIPELINE INITIALIZATION #############
-    baw200 = pe.Workflow(name="BAW_20120813")
+    baw200 = pe.Workflow(name="BAW_20120813")  ### HACK: This needs to be specified in the config file.
     baw200.config['execution'] = {
                                      'plugin':'Linear',
                                      #'stop_on_first_crash':'true',
@@ -374,7 +375,7 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                                      'use_relative_paths':'false',         ## relative paths should be on, require hash update when changed.
                                      'remove_node_directories':'false',   ## Experimental
                                      'local_hash_check':'true',           ##
-                                     'job_finished_timeout':30            ##
+                                     'job_finished_timeout':45            ##
                                      }
     baw200.config['logging'] = {
       'workflow_level':'DEBUG',
@@ -523,8 +524,14 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
             from BAWantsRegistrationBuildTemplate import BAWantsRegistrationTemplateBuildSingleIterationWF
             buildTemplateIteration1=BAWantsRegistrationTemplateBuildSingleIterationWF('iteration01')
             ## TODO:  Change these parameters
-            BeginANTS = buildTemplateIteration1.get_node("BeginANTS")
-            BeginANTS.plugin_args={'qsub_args': '-S /bin/bash -pe smp1 8-12 -l mem_free=6000M -o /dev/null -e /dev/null queue_name', 'overwrite': True}
+            BeginANTS_iter1 = buildTemplateIteration1.get_node("BeginANTS")
+            BeginANTS_iter1.plugin_args={'template':SGE_JOB_SCRIPT,'qsub_args': '-S /bin/bash -pe smp1 8-12 -l mem_free=9000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE), 'overwrite': True}
+            wimtdeformed_iter1 = buildTemplateIteration1.get_node("wimtdeformed")
+            wimtdeformed_iter1.plugin_args={'template':SGE_JOB_SCRIPT,'qsub_args': '-S /bin/bash -pe smp1 2-4 -l mem_free=6000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE), 'overwrite': True}
+            AvgAffineTransform_iter1 = buildTemplateIteration1.get_node("AvgAffineTransform")
+            AvgAffineTransform_iter1.plugin_args={'template':SGE_JOB_SCRIPT,'qsub_args': '-S /bin/bash -pe smp1 1 -l mem_free=6000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE), 'overwrite': True}
+            wimtPassivedeformed_iter1 = buildTemplateIteration1.get_node("wimtPassivedeformed")
+            wimtPassivedeformed_iter1.plugin_args={'template':SGE_JOB_SCRIPT,'qsub_args': '-S /bin/bash -pe smp1 2-4 -l mem_free=6000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE), 'overwrite': True}
 
             baw200.connect(myInitAvgWF, 'output_average_image', buildTemplateIteration1, 'inputspec.fixed_image')
             baw200.connect(MergeByExtendListElementsNode, 'ListOfImagesDictionaries', buildTemplateIteration1, 'inputspec.ListOfImagesDictionaries')
@@ -533,6 +540,17 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
 
             buildTemplateIteration2 = buildTemplateIteration1.clone(name='buildTemplateIteration2')
             buildTemplateIteration2 = BAWantsRegistrationTemplateBuildSingleIterationWF('Iteration02')
+            ## TODO:  Change these parameters
+            BeginANTS_iter2 = buildTemplateIteration2.get_node("BeginANTS")
+            BeginANTS_iter2.plugin_args={'template':SGE_JOB_SCRIPT,'qsub_args': '-S /bin/bash -pe smp1 8-12 -l mem_free=9000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE), 'overwrite': True}
+            wimtdeformed_iter2 = buildTemplateIteration2.get_node("wimtdeformed")
+            wimtdeformed_iter2.plugin_args={'template':SGE_JOB_SCRIPT,'qsub_args': '-S /bin/bash -pe smp1 2-4 -l mem_free=6000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE), 'overwrite': True}
+            AvgAffineTransform_iter2 = buildTemplateIteration2.get_node("AvgAffineTransform")
+            AvgAffineTransform_iter2.plugin_args={'template':SGE_JOB_SCRIPT,'qsub_args': '-S /bin/bash -pe smp1 1 -l mem_free=6000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE), 'overwrite': True}
+            wimtPassivedeformed_iter2 = buildTemplateIteration2.get_node("wimtPassivedeformed")
+            wimtPassivedeformed_iter2.plugin_args={'template':SGE_JOB_SCRIPT,'qsub_args': '-S /bin/bash -pe smp1 2-4 -l mem_free=6000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE), 'overwrite': True}
+
+
             baw200.connect(buildTemplateIteration1, 'outputspec.template', buildTemplateIteration2, 'inputspec.fixed_image')
             baw200.connect(MergeByExtendListElementsNode, 'ListOfImagesDictionaries', buildTemplateIteration2, 'inputspec.ListOfImagesDictionaries')
             baw200.connect(MergeByExtendListElementsNode, 'registrationImageTypes', buildTemplateIteration2, 'inputspec.registrationImageTypes')
@@ -548,7 +566,9 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                     input_names=['t1_image', 'deformed_list','AtlasTemplate','outDefinition'],
                     output_names=['outAtlasFullPath','clean_deformed_list']),
                     # This is a lot of work, so submit it run_without_submitting=True,
+                    run_without_submitting=True, ### HACK:  THIS NODE REALLY SHOULD RUN ON THE CLUSTER!
                     name='99_MakeNewAtlasTemplate')
+            MakeNewAtlasTemplateNode.plugin_args={'template':SGE_JOB_SCRIPT,'qsub_args': '-S /bin/bash -pe smp1 1-1 -l mem_free=1000M -o /nfsscratch/PREDICT/hjohnson/TrackOn/scripts/MNA_out.out -e /nfsscratch/PREDICT/hjohnson/TrackOn/scripts/MNA_err.err {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE), 'overwrite': True}
             MakeNewAtlasTemplateNode.inputs.outDefinition='AtlasDefinition_'+subjectid+'.xml'
             baw200.connect(BAtlas[subjectid],'ExtendedAtlasDefinition_xml_in',MakeNewAtlasTemplateNode,'AtlasTemplate')
             baw200.connect(buildTemplateIteration2,'outputspec.template',MakeNewAtlasTemplateNode,'t1_image')
@@ -612,7 +632,8 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                 baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'outputspec.BCD_ACPC_T1_CROPPED',BASIC_DataSink[sessionid],'ACPCAlign.@BCD_ACPC_T1_CROPPED')
                 baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'outputspec.outputLandmarksInInputSpace',BASIC_DataSink[sessionid],'ACPCAlign.@outputLandmarksInInputSpace')
                 baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'outputspec.outputTransform',BASIC_DataSink[sessionid],'ACPCAlign.@outputTransform')
-                baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'outputspec.atlasToSubjectTransform',BASIC_DataSink[sessionid],'ACPCAlign.@atlasToSubjectTransform')
+                baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'outputspec.LMIatlasToSubjectTransform',BASIC_DataSink[sessionid],'ACPCAlign.@LMIatlasToSubjectTransform')
+                #baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'outputspec.TissueClassifyatlasToSubjectTransform',BASIC_DataSink[sessionid],'ACPCAlign.@TissueClassifyatlasToSubjectTransform')
 
                 ### Now define where the final organized outputs should go.
                 TC_DataSink[sessionid]=pe.Node(nio.DataSink(),name="TISSUE_CLASSIFY_DS_"+str(subjectid)+"_"+str(sessionid))
@@ -644,9 +665,9 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                 FSPREP_DataSink=dict()
                 FS_DS=dict()
 
-                if True and ( 'SEGMENTATION' in WORKFLOW_COMPONENTS ): ## Run the ANTS Registration from Atlas to Subject for BCut spatial priors propagation.
+                if 'SEGMENTATION' in WORKFLOW_COMPONENTS: ## Run the ANTS Registration from Atlas to Subject for BCut spatial priors propagation.
                     import PipeLineFunctionHelpers
-                    import BRAINSTools.BTants.antsRegistration
+
                     ## Second clip to brain tissue region
                     ### Now clean up by adding together many of the items PHASE_2_oneSubjWorkflow
                     currentClipT1ImageWithBrainMaskName='ClipT1ImageWithBrainMask_'+str(subjectid)+"_"+str(sessionid)
@@ -654,11 +675,11 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                           input_names=['t1_image','brain_labels','clipped_file_name'],
                           output_names=['clipped_file']),
                           name=currentClipT1ImageWithBrainMaskName)
-                    ClipT1ImageWithBrainMaskNode[sessionid].inputs.clipped_file_name = 'clipped_t1.nii.gz'
+                    ClipT1ImageWithBrainMaskNode[sessionid].inputs.clipped_file_name = 'clipped_from_BABC_labels_t1.nii.gz'
                     baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'outputspec.t1_average',ClipT1ImageWithBrainMaskNode[sessionid],'t1_image')
-                    baw200.connect(BAtlas[subjectid],'template_t1_clipped',ClipT1ImageWithBrainMaskNode[sessionid],'brain_labels')
+                    baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'outputspec.outputLabels',ClipT1ImageWithBrainMaskNode[sessionid],'brain_labels')
 
-
+                    from nipype.interfaces.ants import ( Registration, ApplyTransforms)
                     currentAtlasToSubjectantsRegistration='AtlasToSubjectantsRegistration_'+str(subjectid)+"_"+str(sessionid)
                     AtlasToSubjectantsRegistration[subjectid]=pe.Node(interface=Registration(), name = currentAtlasToSubjectantsRegistration)
                     AtlasToSubjectantsRegistration[subjectid].inputs.dimension = 3
@@ -669,8 +690,8 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                     AtlasToSubjectantsRegistration[subjectid].inputs.sampling_percentage =      [0.1,              0.1,                1.0]
                     AtlasToSubjectantsRegistration[subjectid].inputs.metric_weight =            [1.0,              1.0,                1.0]
                     AtlasToSubjectantsRegistration[subjectid].inputs.radius_or_number_of_bins = [32,               32,                 4]
-                    AtlasToSubjectantsRegistration[subjectid].inputs.number_of_iterations =     [[2000,2000,2000], [1000, 1000, 1000], [10000,500,500,50]]
-                    AtlasToSubjectantsRegistration[subjectid].inputs.convergence_threshold =    [quickStepSize,quickStepSize,quickStepSize]
+                    AtlasToSubjectantsRegistration[subjectid].inputs.number_of_iterations =     [[2000,2000,2000], [1000, 1000, 1000], [10000,500,500,200]]
+                    AtlasToSubjectantsRegistration[subjectid].inputs.convergence_threshold =    [1e-9,             1e-9,               1e-9]
                     AtlasToSubjectantsRegistration[subjectid].inputs.convergence_window_size =  [15,               15,                 15]
                     AtlasToSubjectantsRegistration[subjectid].inputs.use_histogram_matching =   [True,             True,               True]
                     AtlasToSubjectantsRegistration[subjectid].inputs.shrink_factors =           [[4,2,1],          [4,2,1],            [6,4,2,1]]
@@ -678,10 +699,13 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                     AtlasToSubjectantsRegistration[subjectid].inputs.use_estimate_learning_rate_once = [False,     False,              False]
                     AtlasToSubjectantsRegistration[subjectid].inputs.write_composite_transform=True
                     AtlasToSubjectantsRegistration[subjectid].inputs.output_transform_prefix = 'AtlasToSubject_'
+                    AtlasToSubjectantsRegistration[subjectid].inputs.winsorize_lower_quantile = 0.025
+                    AtlasToSubjectantsRegistration[subjectid].inputs.winsorize_upper_quantile = 0.975
+                    AtlasToSubjectantsRegistration[subjectid].inputs.collapse_linear_transforms_to_fixed_image_header = False
 
                     baw200.connect(BAtlas[subjectid],'template_t1_clipped',AtlasToSubjectantsRegistration[subjectid], 'moving_image')
                     baw200.connect(ClipT1ImageWithBrainMaskNode[sessionid], 'clipped_file', AtlasToSubjectantsRegistration[subjectid], 'fixed_image')
-                    baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'outputspec.atlasToSubjectTransform',AtlasToSubjectantsRegistration[subjectid],'initial_moving_transform')
+                    ## To be tested baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'outputspec.LMIatlasToSubjectTransform',AtlasToSubjectantsRegistration[subjectid],'initial_moving_transform')
 
                 global_AllT1s=ExperimentDatabase.getFilenamesByScantype(sessionid,['T1-30','T1-15'])
                 global_AllT2s=ExperimentDatabase.getFilenamesByScantype(sessionid,['T2-30','T2-15'])
@@ -694,9 +718,9 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                 print("HACK2:  all FLs: {0} {1}".format(global_AllFLs, len(global_AllFLs) ))
                 print("HACK2:  all Others: {0} {1}".format(global_AllOthers, len(global_AllOthers) ))
                 if ( 'SEGMENTATION' in WORKFLOW_COMPONENTS ) : # Currently only works with multi-modal_data
-                    print("HACK SEGMENTATION IN  WORKFLOW_COMPONENTS")
+                    print("HACK SEGMENTATION IN  WORKFLOW_COMPONENTS {0}".format(WORKFLOW_COMPONENTS))
                 if ( len(global_AllT2s) > 0 ): # Currently only works with multi-modal_data
-                    print("HACK len(global_AllT2s) > 0 ")
+                    print("HACK len(global_AllT2s) > 0 : {0}".format(len(global_AllT2s) ))
                 print("HACK")
                 if ( 'SEGMENTATION' in WORKFLOW_COMPONENTS ) and ( len(global_AllT2s) > 0 ): # Currently only works with multi-modal_data
                     from WorkupT1T2BRAINSCut import CreateBRAINSCutWorkflow
@@ -705,11 +729,9 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                     baw200.connect( PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.t2_average', myLocalSegWF[sessionid], "inputspec.T2Volume")
                     baw200.connect( PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.outputLabels', myLocalSegWF[sessionid],"inputspec.RegistrationROI")
                     ## NOTE: Element 0 of AccumulatePriorsList is the accumulated GM tissue
-                    baw200.connect( [ ( AccumulateLikeTissuePosteriorsNode[sessionid], myLocalSegWF[sessionid],
-                                      [ (( 'AccumulatePriorsList', getListIndex, 0 ), "inputspec.TotalGM")] ),
-] )
-
-                    baw200.connect( PHASE_2_oneSubjWorkflow[sessionid],'outputspec.atlasToSubjectTransform',myLocalSegWF[sessionid],'inputspec.atlasToSubjectTransform')
+                    baw200.connect( [ ( AccumulateLikeTissuePosteriorsNode[sessionid], myLocalSegWF[sessionid], [ (( 'AccumulatePriorsList', getListIndex, 0 ), "inputspec.TotalGM")] ),
+                                    ] )
+                    baw200.connect( AtlasToSubjectantsRegistration[subjectid],'composite_transform',myLocalSegWF[sessionid],'inputspec.atlasToSubjectTransform')
 
                     ### Now define where the final organized outputs should go.
                     SEGMENTATION_DataSink[sessionid]=pe.Node(nio.DataSink(),name="SEGMENTATION_DS_"+str(subjectid)+"_"+str(sessionid))
@@ -739,7 +761,7 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                 global_All3T_T2s=ExperimentDatabase.getFilenamesByScantype(sessionid,['T2-30'])
                 RunAllFSComponents=False ## A hack to avoid 26 hour run of freesurfer
                 #RunAllFSComponents=True ## A hack to avoid 26 hour run of freesurfer
-                if ( 'FREESURFER' in WORKFLOW_COMPONENTS ) and ( ( len(global_All3T_T2s) > 0 ) or RunAllFSComponents == True ):
+                if False: #( 'FREESURFER' in WORKFLOW_COMPONENTS ) and ( ( len(global_All3T_T2s) > 0 ) or RunAllFSComponents == True ):
                     from WorkupT1T2FreeSurfer import CreateFreeSurferWorkflow
                     if ( len(global_All3T_T2s) > 0 ): # If multi-modal, then create synthesized image before running
                         print("HACK  FREESURFER len(global_All3T_T2s) > 0 ")

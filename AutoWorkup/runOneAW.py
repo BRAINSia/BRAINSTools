@@ -155,7 +155,7 @@ $ python runOneAW.py -project NAMICHD -subject 10066 -session 100261 \
 /hjohnson/HDNI/AutoWorkupTutorial/10066/100261/ANONRAW/10066_100261_T1-30_22.nii.gz \
 -t2 /hjohnson/HDNI/AutoWorkupTutorial/10066/100261/ANONRAW/10066_100261_T2-30_3.nii.gz \
 -experimentOutputDir /scratch/autoworkup/runOneAW/test \
--brainsToolsDir /IPLlinux/raid0/homes/jforbes/git/BRAINSStandAlone"""))
+-brainsToolsDir /BRAINSStandAlone/build/directory"""))
     group = parser.add_argument_group('Required')
     group.add_argument('-project', action="store", dest='project', required=True,
                        help='The name of the project to process')

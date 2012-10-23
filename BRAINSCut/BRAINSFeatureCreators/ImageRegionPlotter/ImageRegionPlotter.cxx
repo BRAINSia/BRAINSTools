@@ -11,6 +11,7 @@
 #include "itkScalarImageToHistogramGenerator.h"
 #include "itkHistogramToProbabilityImageFilter.h"
 #include "itkMinimumMaximumImageCalculator.h"
+#include "itkBinaryThresholdImageFilter.h"
 
 #include "itkBRAINSROIAutoImageFilter.h"
 
@@ -229,6 +230,7 @@ main(int argc, char *argv[])
     image2Rescaler->SetOutputMinimum( MIN );
     image2Rescaler->SetOutputMaximum( MAX );
 
+    // read in input label image
     typedef itk::ImageFileReader<ProcessingImageType> LabelReaderType;
     LabelReaderType::Pointer labelReader = LabelReaderType::New();
 
@@ -250,13 +252,23 @@ main(int argc, char *argv[])
 
     if( !inputBinaryROIVolume.empty() )
       {
+      std::cout << "* Input Binary ROI Filename "  << inputBinaryROIVolume << std::endl;
       typedef itk::ImageFileReader<ROIImageType> ROIReaderType;
       ROIReaderType::Pointer roiReader = ROIReaderType::New();
 
       roiReader->SetFileName( inputBinaryROIVolume );
       roiReader->Update();
 
-      roiVolume = roiReader->GetOutput();
+      typedef itk::BinaryThresholdImageFilter<ROIImageType, ROIImageType> ThresholdType;
+      ThresholdType::Pointer thresholder = ThresholdType::New();
+
+      thresholder->SetInput( roiReader->GetOutput() );
+      thresholder->SetLowerThreshold( 1 );
+      thresholder->SetOutsideValue(0);
+      thresholder->SetInsideValue(1);
+      thresholder->Update();
+
+      roiVolume = thresholder->GetOutput();
       }
     else
       {

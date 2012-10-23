@@ -121,7 +121,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetect
          BRAINSConstellationDetectorTest
   --inputVolume DATA{${TestData_DIR}/2.nii.gz}
   --inputTemplateModel DATA{${TestData_DIR}/T1.mdl}
-  --LLSModel DATA{${TestData_DIR}/LLSModel.h5}
+  --LLSModel DATA{${TestData_DIR}/Transforms_h5/LLSModel.${XFRM_EXT}}
   --resultsDir ${CMAKE_CURRENT_BINARY_DIR}/
   --forceHoughEyeDetectorReportFailure)
 set_property(TEST ${BRAINSConstellationDetectorTestName}
@@ -222,7 +222,7 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetecto
     --inputVolume DATA{${TestData_DIR}/T1.nii.gz}
     --outputResampledVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
     --inputTemplateModel DATA{${TestData_DIR}/T1.mdl}
-    --LLSModel DATA{${TestData_DIR}/LLSModel.h5}
+    --LLSModel DATA{${TestData_DIR}/Transforms_h5/LLSModel.${XFRM_EXT}}
     --acLowerBound 100)
 
   set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_backgroundValue)
@@ -238,7 +238,7 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetecto
     --inputVolume DATA{${TestData_DIR}/T1.nii.gz}
     --outputResampledVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
     --inputTemplateModel DATA{${TestData_DIR}/T1.mdl}
-    --LLSModel DATA{${TestData_DIR}/LLSModel.h5}
+    --LLSModel DATA{${TestData_DIR}/Transforms_h5/LLSModel.${XFRM_EXT}}
     --BackgroundFillValue BIGNEG)
 
   set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_cutOutHeadInOutputResampledVolume)
@@ -254,7 +254,7 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetecto
     --inputVolume DATA{${TestData_DIR}/T1.nii.gz}
     --outputResampledVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
     --inputTemplateModel DATA{${TestData_DIR}/T1.mdl}
-    --LLSModel DATA{${TestData_DIR}/LLSModel.h5}
+    --LLSModel DATA{${TestData_DIR}/Transforms_h5/LLSModel.${XFRM_EXT}}
     --cutOutHeadInOutputVolume)
 
   set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_cutOutHeadInOutputVolume)
@@ -270,7 +270,7 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetecto
     --inputVolume DATA{${TestData_DIR}/T1.nii.gz}
     --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
     --inputTemplateModel DATA{${TestData_DIR}/T1.mdl}
-    --LLSModel DATA{${TestData_DIR}/LLSModel.h5}
+    --LLSModel DATA{${TestData_DIR}/Transforms_h5/LLSModel.${XFRM_EXT}}
     --cutOutHeadInOutputVolume)
 
   set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_interpolationMode)
@@ -286,7 +286,7 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetecto
     --inputVolume DATA{${TestData_DIR}/T1.nii.gz}
     --outputResampledVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
     --inputTemplateModel DATA{${TestData_DIR}/T1.mdl}
-    --LLSModel DATA{${TestData_DIR}/LLSModel.h5}
+    --LLSModel DATA{${TestData_DIR}/Transforms_h5/LLSModel.${XFRM_EXT}}
     --interpolationMode BSpline)
 
   set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_mspLevel)
@@ -302,7 +302,7 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetecto
     --inputVolume DATA{${TestData_DIR}/T1.nii.gz}
     --outputResampledVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
     --inputTemplateModel DATA{${TestData_DIR}/T1.mdl}
-    --LLSModel DATA{${TestData_DIR}/LLSModel.h5}
+    --LLSModel DATA{${TestData_DIR}/Transforms_h5/LLSModel.${XFRM_EXT}}
     --mspQualityLevel 3)
 
   set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_otsuThreshold)
@@ -318,7 +318,7 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetecto
     --inputVolume DATA{${TestData_DIR}/T1.nii.gz}
     --outputResampledVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
     --inputTemplateModel DATA{${TestData_DIR}/T1.mdl}
-    --LLSModel DATA{${TestData_DIR}/LLSModel.h5}
+    --LLSModel DATA{${TestData_DIR}/Transforms_h5/LLSModel.${XFRM_EXT}}
     --otsuPercentileThreshold 0.05)
 
   set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_outputUntransformedClippedVolume)
@@ -335,7 +335,7 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetecto
     ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
     --acLowerBound 100
     --inputTemplateModel DATA{${TestData_DIR}/T1.mdl}
-    --LLSModel DATA{${TestData_DIR}/LLSModel.h5})
+    --LLSModel DATA{${TestData_DIR}/Transforms_h5/LLSModel.${XFRM_EXT}})
 
   set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_rac)
   ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
@@ -350,7 +350,7 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetecto
     --inputVolume DATA{${TestData_DIR}/T1.nii.gz}
     --outputResampledVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
     --inputTemplateModel DATA{${TestData_DIR}/T1.mdl}
-    --LLSModel DATA{${TestData_DIR}/LLSModel.h5}
+    --LLSModel DATA{${TestData_DIR}/Transforms_h5/LLSModel.${XFRM_EXT}}
     --rac 200)
 
   set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_rescaleIntensity)
@@ -366,7 +366,7 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetecto
     --inputVolume DATA{${TestData_DIR}/T1.nii.gz}
     --outputResampledVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
     --inputTemplateModel DATA{${TestData_DIR}/T1.mdl}
-    --LLSModel DATA{${TestData_DIR}/LLSModel.h5}
+    --LLSModel DATA{${TestData_DIR}/Transforms_h5/LLSModel.${XFRM_EXT}}
     --rescaleIntensities)
 
   set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_rescaleIntensityRange)
@@ -382,7 +382,7 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetecto
     --inputVolume DATA{${TestData_DIR}/T1.nii.gz}
     --outputResampledVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
     --inputTemplateModel DATA{${TestData_DIR}/T1.mdl}
-    --LLSModel DATA{${TestData_DIR}/LLSModel.h5}
+    --LLSModel DATA{${TestData_DIR}/Transforms_h5/LLSModel.${XFRM_EXT}}
     --rescaleIntensitiesOutputRange 20,2000)
 
   set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_rmpj)
@@ -398,7 +398,7 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetecto
     --inputVolume DATA{${TestData_DIR}/T1.nii.gz}
     --outputResampledVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
     --inputTemplateModel DATA{${TestData_DIR}/T1.mdl}
-    --LLSModel DATA{${TestData_DIR}/LLSModel.h5}
+    --LLSModel DATA{${TestData_DIR}/Transforms_h5/LLSModel.${XFRM_EXT}}
     --rmpj 200)
 
   set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_rpc)
@@ -414,7 +414,7 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetecto
     --inputVolume DATA{${TestData_DIR}/T1.nii.gz}
     --outputResampledVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
     --inputTemplateModel DATA{${TestData_DIR}/T1.mdl}
-    --LLSModel DATA{${TestData_DIR}/LLSModel.h5}
+    --LLSModel DATA{${TestData_DIR}/Transforms_h5/LLSModel.${XFRM_EXT}}
     --rpc 200)
 
   set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_rVN4)
@@ -430,7 +430,7 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetecto
     --inputVolume DATA{${TestData_DIR}/T1.nii.gz}
     --outputResampledVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
     --inputTemplateModel DATA{${TestData_DIR}/T1.mdl}
-    --LLSModel DATA{${TestData_DIR}/LLSModel.h5}
+    --LLSModel DATA{${TestData_DIR}/Transforms_h5/LLSModel.${XFRM_EXT}}
     --rVN4 200)
 
   set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_rVN4-rpc-rac-rmpj)
@@ -446,7 +446,7 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetecto
     --inputVolume DATA{${TestData_DIR}/T1.nii.gz}
     --outputResampledVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
     --inputTemplateModel DATA{${TestData_DIR}/T1.mdl}
-    --LLSModel DATA{${TestData_DIR}/LLSModel.h5}
+    --LLSModel DATA{${TestData_DIR}/Transforms_h5/LLSModel.${XFRM_EXT}}
     --rmpj 200
     --rVN4 200
     --rac 200
@@ -465,7 +465,7 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetecto
     --inputVolume DATA{${TestData_DIR}/T1.nii.gz}
     --outputResampledVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
     --inputTemplateModel DATA{${TestData_DIR}/T1.mdl}
-    --LLSModel DATA{${TestData_DIR}/LLSModel.h5})
+    --LLSModel DATA{${TestData_DIR}/Transforms_h5/LLSModel.${XFRM_EXT}})
 
   set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_T1_outputVolume)
   ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
@@ -480,7 +480,7 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetecto
     --inputVolume DATA{${TestData_DIR}/T1.nii.gz}
     --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
     --inputTemplateModel DATA{${TestData_DIR}/T1.mdl}
-    --LLSModel DATA{${TestData_DIR}/LLSModel.h5})
+    --LLSModel DATA{${TestData_DIR}/Transforms_h5/LLSModel.${XFRM_EXT}})
 
   set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_trimRescaledIntensities)
   ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
@@ -495,7 +495,7 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetecto
     --inputVolume DATA{${TestData_DIR}/T1.nii.gz}
     --outputResampledVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
     --inputTemplateModel DATA{${TestData_DIR}/T1.mdl}
-    --LLSModel DATA{${TestData_DIR}/LLSModel.h5}
+    --LLSModel DATA{${TestData_DIR}/Transforms_h5/LLSModel.${XFRM_EXT}}
     --trimRescaledIntensities 2)
 
   set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_writeBranded2DImage)
@@ -511,7 +511,7 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetecto
     --inputVolume DATA{${TestData_DIR}/T1.nii.gz}
     --outputResampledVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
     --inputTemplateModel DATA{${TestData_DIR}/T1-2ndVersion.mdl}
-    --LLSModel DATA{${TestData_DIR}/LLSModel-2ndVersion.h5}
+    --LLSModel DATA{${TestData_DIR}/Transforms_h5/LLSModel-2ndVersion.${XFRM_EXT}}
     --writeBranded2DImage ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.png)
 
   set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_inputLandmarksEMSP)
@@ -527,7 +527,7 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetecto
     --inputVolume DATA{${TestData_DIR}/2.nii.gz}
     --outputResampledVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
     --inputTemplateModel DATA{${TestData_DIR}/T1.mdl}
-    --LLSModel DATA{${TestData_DIR}/LLSModel.h5}
+    --LLSModel DATA{${TestData_DIR}/Transforms_h5/LLSModel.${XFRM_EXT}}
     --inputLandmarksEMSP DATA{${TestData_DIR}/EMSP.fcsv})
   set_tests_properties(${BRAINSConstellationDetectorTestName} PROPERTIES TIMEOUT 9876)
 
@@ -536,7 +536,7 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetecto
     COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
     BRAINSConstellationDetectorTest
     --inputVolume DATA{${TestData_DIR}/T1.nii.gz}
-    --LLSModel DATA{${TestData_DIR}/LLSModel.h5}
+    --LLSModel DATA{${TestData_DIR}/Transforms_h5/LLSModel.${XFRM_EXT}}
     --inputTemplateModel DATA{${TestData_DIR}/T1.mdl}
     --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
     --outputLandmarksInACPCAlignedSpace ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_ACPCSpace_aligned.fcsv
@@ -590,7 +590,7 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetecto
     ${BRAINSConstellationDetectorTestName}
     --inputTrainingList ${CMAKE_CURRENT_BINARY_DIR}/obliq_setup.txt
     --inputTemplateModel DATA{${TestData_DIR}/T1-2ndVersion.mdl}
-    --LLSModel DATA{${TestData_DIR}/LLSModel-2ndVersion.h5}
+    --LLSModel DATA{${TestData_DIR}/Transforms_h5/LLSModel-2ndVersion.${XFRM_EXT} }
     --outputWeightsList ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}.wts #output of the program
     )
   set_tests_properties(${BRAINSConstellationDetectorTestName} PROPERTIES TIMEOUT 15000)

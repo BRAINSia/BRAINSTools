@@ -561,7 +561,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateInitialTransform_Te
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/ValidateInitialTransform_Test.nii.gz
   --outputPixelType short
   --outputDebug
-  --initializeWithTransform DATA{${TestData_DIR}/BRAINSFitTest_BSplineAnteScaleRotationRescaleHeadMasks.${XFRM_EXT}}
+  --initializeWithTransform DATA{${TestData_DIR}/Transforms_h5/BRAINSFitTest_BSplineAnteScaleRotationRescaleHeadMasks.${XFRM_EXT}}
   --smoothDisplacementFieldSigma 0.0
   --numberOfPyramidLevels 1
   --arrayOfPyramidLevelIterations 1

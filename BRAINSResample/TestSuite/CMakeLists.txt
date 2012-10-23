@@ -19,7 +19,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateBRAINSResampleTest4
   --referenceVolume DATA{${TestData_DIR}/test.nii.gz}
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/applyWarp_test4.nii.gz
   --pixelType uchar
-  --warpTransform DATA{${TestData_DIR}/BRAINSFitTest_AffineRotationMasks.${XFRM_EXT}}
+  --warpTransform DATA{${TestData_DIR}/Transforms_h5/BRAINSFitTest_AffineRotationMasks.${XFRM_EXT}}
   )
 
 ## Should provide exactly the same result as BRAINSFit BRAINSFitTest_BSplineAnteScaleRotationRescaleHeadMasks test
@@ -36,7 +36,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateBRAINSResampleTest5
   --referenceVolume DATA{${TestData_DIR}/test.nii.gz}
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/applyWarp_test5.nii.gz
   --pixelType short
-  --warpTransform DATA{${TestData_DIR}/BRAINSFitTest_BSplineAnteScaleRotationRescaleHeadMasks.${XFRM_EXT}}
+  --warpTransform DATA{${TestData_DIR}/Transforms_h5/BRAINSFitTest_BSplineAnteScaleRotationRescaleHeadMasks.${XFRM_EXT}}
   )
 
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateBRAINSResampleTest6_nii
@@ -53,7 +53,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateBRAINSResampleTest6
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/applyWarp_test6.nii.gz
   --pixelType uchar
   --interpolationMode WindowedSinc
-  --warpTransform DATA{${TestData_DIR}/BRAINSFitTest_RigidRotationNoMasks.${XFRM_EXT}}
+  --warpTransform DATA{${TestData_DIR}/Transforms_h5/BRAINSFitTest_RigidRotationNoMasks.${XFRM_EXT}}
   )
 
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateBRAINSResampleTest7_nii
@@ -70,7 +70,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateBRAINSResampleTest7
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/applyWarp_test7.nii.gz
   --interpolationMode Linear
   --pixelType uchar
-  --warpTransform DATA{${TestData_DIR}/applyWarp_BSpline.${XFRM_EXT}}
+  --warpTransform DATA{${TestData_DIR}/Transforms_h5/applyWarp_BSpline.${XFRM_EXT}}
   )
 
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateBRAINSResampleTest1_nii
@@ -131,7 +131,7 @@ if(0) ##This functionality does not work yet
     --referenceVolume DATA{${TestData_DIR}/BRAINSFitTest_rotation.input.nii.gz}
     --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/applyWarp_test4.nii.gz
     --pixelType short
-    --warpTransform DATA{${TestData_DIR}/BRAINSFitTest_RigidRotationMasks.${XFRM_EXT}}
+    --warpTransform DATA{${TestData_DIR}/Transforms_h5/BRAINSFitTest_RigidRotationMasks.${XFRM_EXT}}
     )
 endif()
 
@@ -148,9 +148,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSResampleTestName}
   ## --referenceVolume DATA{${TestData_DIR}/test.nii.gz}
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSResampleTestName}.result.nii.gz
   --interpolationMode Linear
-  --warpTransform DATA{${TestData_DIR}/syn.benchmark.transform.h5}
-  ## --compositeTransform DATA{${TestData_DIR}/syn.benchmark.transform.h5}
-  ## --deformationVolume DATA{${TestData_DIR}/syn.benchmark.transform.h5}
+  --warpTransform DATA{${TestData_DIR}/Transforms_h5/syn.benchmark.transform.h5}
   )
 
 ## - ExternalData_Add_Target( ${PROJECT_NAME}FetchData )  # Name of data management target

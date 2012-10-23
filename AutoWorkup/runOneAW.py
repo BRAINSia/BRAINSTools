@@ -20,11 +20,12 @@ class runOneAW():
             os.mkdir(input_arguments.experimentOutputDir)
 
     def executeAW(self):
-        bawCommand = """time python /raid0/homes/jforbes/git/BRAINSStandAlone/AutoWorkup/baw_exp.py \
+        bawCommand = """time python {brainsToolsScriptsDir}/AutoWorkup/baw_exp.py \
  -ExperimentConfig {configFile} \
  -pe LOCAL_ENVIRONMENT \
  -wfrun local \
- -subject {subject} \n""".format(configFile=self.configPath, subject=input_arguments.subject)
+ -subject {subject} \n""".format(brainsToolsScriptsDir= input_arguments.brainsToolsScriptsDir,
+                                 configFile=self.configPath, subject=input_arguments.subject)
         print '-'*80
         print '\nExecuting command: \n{bawCommand}'.format(bawCommand=bawCommand)
         os.system(bawCommand)
@@ -107,7 +108,7 @@ WORKFLOW_COMPONENTS=['BASIC']
 _FREESURFER_HOME=/ipldev/sharedopt/20110601/MacOSX_10.6/freesurfer
 _FREESURFER_PATH_EXT=%(_FREESURFER_HOME)s/bin:%(_FREESURFER_HOME)s/fsfast/bin:%(_FREESURFER_HOME)s/tktools:/opt/fsl/bin:%(_FREESURFER_HOME)s/mni/bin
 _GRAPHVIZ_BIN_DIR=/usr/local
-_BRAINSTOOLS_BUILD_PATH=/raid0/homes/jforbes/git/BRAINSStandAlone-build
+_BRAINSTOOLS_BUILD_PATH=[replaceme_brainsToolsBuildDir]
 # The prefix to add to all image files in the $(SESSION_DB) to account
 # for different file system mount points
 MOUNTPREFIX=
@@ -120,7 +121,7 @@ CLUSTER_QUEUE=-q OSX
 
 ############## -- You should not need to modify below here. ###########
 # Where to find the Autoworkup scripts.
-_BRAINSTOOLS_SCRIPTS=[replaceme_brainToolsDir]/AutoWorkup
+_BRAINSTOOLS_SCRIPTS=[replaceme_brainsToolsScriptsDir]/AutoWorkup
 # Where SimpleITK, required nipype, and other non-standard python packages reside
 ## _SIMPLE_ITK_PYTHON_PATH=/${CHANGEME_extra_apps_bin_dir}/opt/epd-7.2-1-rh5-x86_64/lib/python2.7/site-packages
 _SIMPLE_ITK_PYTHON_PATH=%(_BRAINSTOOLS_BUILD_PATH)s/SimpleITK-build/lib
@@ -135,7 +136,8 @@ ATLASPATH=%(_BRAINSTOOLS_BUILD_PATH)s/ReferenceAtlas-build/Atlas/Atlas_20120830
 BCDMODELPATH=%(_BRAINSTOOLS_BUILD_PATH)s/BRAINSTools-build/TestData"""
         firstReplace = configString.replace('[replaceme_sessionDB]',self.sessionPath)
         secondReplace = firstReplace.replace('[replaceme_outputDir]',input_arguments.experimentOutputDir)
-        newConfigString = secondReplace.replace('[replaceme_brainToolsDir]',input_arguments.brainsToolsDir)
+        thirdReplace = secondReplace.replace('[replaceme_brainsToolsScriptsDir]',input_arguments.brainsToolsScriptsDir)
+        newConfigString = thirdReplace.replace('[replaceme_brainsToolsBuildDir]',input_arguments.brainsToolsBuildDir)
         handle = open(self.configPath, 'w')
         handle.write(newConfigString)
         handle.close()
@@ -159,8 +161,10 @@ if __name__ == "__main__":
                        help='The file name(s) of the T2 image(s) to process')
     group.add_argument('-experimentOutputDir', action="store", dest='experimentOutputDir', required=True,
                        help='The directory for the experiment output')
-    group.add_argument('-brainsToolsDir', action="store", dest='brainsToolsDir', required=True,
-                       help='The directory for BRAINSSTANDALONE')
+    group.add_argument('-brainsToolsScriptsDir', action="store", dest='brainsToolsScriptsDir', required=True,
+                       help='The directory containing scripts for BRAINSSTANDALONE')
+    group.add_argument('-brainsToolsBuildDir', action="store", dest='brainsToolsBuildDir', required=True,
+                       help='The build directory for BRAINSSTANDALONE ')
     parser.add_argument('--version', action='version', version='%(prog)s 1.0')
     #parser.add_argument('-v', action='store_false', dest='verbose', default=True,
     #                    help='If not present, prints the locations')

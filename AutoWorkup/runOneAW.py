@@ -1,6 +1,5 @@
 import os
 import argparse
-import textwrap
 import csv
 import sys
 
@@ -145,17 +144,8 @@ BCDMODELPATH=%(_BRAINSTOOLS_BUILD_PATH)s/BRAINSTools-build/TestData"""
 
 if __name__ == "__main__":
     # Create and parse input arguments
-    parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
-                                     description=textwrap.dedent("""
-This program is used to run a mini version of AutoWorkup for a specific session and specified T1 and T2 files.
-
-Example Usage:
-$ python runOneAW.py -project NAMICHD -subject 10066 -session 100261 \
--t1 /hjohnson/HDNI/AutoWorkupTutorial/10066/100261/ANONRAW/10066_100261_T1-30_2.nii.gz \
-/hjohnson/HDNI/AutoWorkupTutorial/10066/100261/ANONRAW/10066_100261_T1-30_22.nii.gz \
--t2 /hjohnson/HDNI/AutoWorkupTutorial/10066/100261/ANONRAW/10066_100261_T2-30_3.nii.gz \
--experimentOutputDir /scratch/autoworkup/runOneAW/test \
--brainsToolsDir /BRAINSStandAlone/build/directory"""))
+    parser = argparse.ArgumentParser(description="This program is used to run a mini version of AutoWorkup "
+                                     "for a specific session and specified T1 and T2 files.")
     group = parser.add_argument_group('Required')
     group.add_argument('-project', action="store", dest='project', required=True,
                        help='The name of the project to process')

@@ -42,8 +42,7 @@ from BRAINSTools import *
 
 from WorkupT1T2AtlasNode import MakeAtlasNode
 
-def getListIndex( imageList, index):
-    return imageList[index]
+from PipeLineFunctionHelpers import getListIndex
 
 #HACK:  [('buildTemplateIteration2', 'SUBJECT_TEMPLATES/0249/buildTemplateIteration2')]
 def GenerateSubjectOutputPattern(subjectid):

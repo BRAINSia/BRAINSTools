@@ -7,10 +7,9 @@ import nipype.interfaces.io as nio   # Data i/o
 import nipype.pipeline.engine as pe  # pypeline engine
 
 from BRAINSTools import *
-from BRAINSTools.RF8BRAINSCutWrapper import RF8BRAINSCutWrapper
+from BRAINSTools.RF12BRAINSCutWrapper import RF12BRAINSCutWrapper
 
-def getListIndex( imageList, index):
-    return imageList[index]
+from PipeLineFunctionHelpers import getListIndex
 
 def GenerateWFName(projectid, subjectid, sessionid,WFName):
     return WFName+'_'+str(subjectid)+"_"+str(sessionid)+"_"+str(projectid)
@@ -21,16 +20,6 @@ def CreateLabelMap(listOfImages,LabelImageName,CSVFileName,projectid, subjectid,
     csv file of volume measurements.
     """
 
-    """
-    subjectANNLabel_l_caudate.nii.gz
-    subjectANNLabel_l_hippocampus.nii.gz
-    subjectANNLabel_l_putamen.nii.gz
-    subjectANNLabel_l_thalamus.nii.gz
-    subjectANNLabel_r_caudate.nii.gz
-    subjectANNLabel_r_hippocampus.nii.gz
-    subjectANNLabel_r_putamen.nii.gz
-    subjectANNLabel_r_thalamus.nii.gz
-    """
     import SimpleITK as sitk
     import os
     import csv
@@ -42,7 +31,11 @@ def CreateLabelMap(listOfImages,LabelImageName,CSVFileName,projectid, subjectid,
       "l_hippocampus" ,
       "r_hippocampus" ,
       "l_thalamus"    ,
-      "r_thalamus"
+      "r_thalamus"    ,
+      "l_accumben"    ,
+      "r_accumben"    ,
+      "l_globus"      ,
+      "r_globus"
     ]
 
     valueDict={
@@ -53,7 +46,11 @@ def CreateLabelMap(listOfImages,LabelImageName,CSVFileName,projectid, subjectid,
         "l_hippocampus" : 5,
         "r_hippocampus" : 6,
         "l_thalamus"    : 7,
-        "r_thalamus"    : 8
+        "r_thalamus"    : 8,
+        "l_accumben"    : 9,
+        "r_accumben"    :10,
+        "l_globus"      :11,
+        "r_globus"      :12
     }
 
     labelImage = None
@@ -151,12 +148,12 @@ def CreateBRAINSCutWorkflow(projectid, subjectid, sessionid,WFName,CLUSTER_QUEUE
     """
     BRAINSCut
     """
-    RF8BC = pe.Node(interface=RF8BRAINSCutWrapper(),name="RF8_BRAINSCut")
-    many_cpu_RF8BC_options_dictionary={'qsub_args': '-S /bin/bash -pe smp1 2-8 -l big_mem=true,h_vmem=60G,mem_free=30G -o /dev/null -e /dev/null '+CLUSTER_QUEUE, 'overwrite': True}
-#many_cpu_RF8BC_options_dictionary={'qsub_args': '-S /bin/bash -pe smp1 4-6 -l big_mem=true,h_vmem=22G,mem_free=22G -o /dev/null -e /dev/null '+CLUSTER_QUEUE, 'overwrite': True}
-    RF8BC.plugin_args=many_cpu_RF8BC_options_dictionary
-    RF8BC.inputs.trainingVectorFilename = "trainingVectorFilename.txt"
-    RF8BC.inputs.xmlFilename = "BRAINSCutSegmentationDefinition.xml"
+    RF12BC = pe.Node(interface=RF12BRAINSCutWrapper(),name="RF12_BRAINSCut")
+    many_cpu_RF12BC_options_dictionary={'qsub_args': '-S /bin/bash -pe smp1 2-8 -l big_mem=true,h_vmem=60G,mem_free=30G -o /dev/null -e /dev/null '+CLUSTER_QUEUE, 'overwrite': True}
+#many_cpu_RF12BC_options_dictionary={'qsub_args': '-S /bin/bash -pe smp1 4-6 -l big_mem=true,h_vmem=22G,mem_free=22G -o /dev/null -e /dev/null '+CLUSTER_QUEUE, 'overwrite': True}
+    RF12BC.plugin_args=many_cpu_RF12BC_options_dictionary
+    RF12BC.inputs.trainingVectorFilename = "trainingVectorFilename.txt"
+    RF12BC.inputs.xmlFilename = "BRAINSCutSegmentationDefinition.xml"
 
     """ HACK These should be l_caudate_seg.nii.gz
     subjectANNLabel_l_caudate.nii.gz
@@ -169,54 +166,66 @@ def CreateBRAINSCutWorkflow(projectid, subjectid, sessionid,WFName,CLUSTER_QUEUE
     subjectANNLabel_r_thalamus.nii.gz
     """
 
-    RF8BC.inputs.outputBinaryLeftCaudate=      'subjectANNLabel_l_caudate.nii.gz'
-    RF8BC.inputs.outputBinaryRightCaudate=     'subjectANNLabel_r_caudate.nii.gz'
-    RF8BC.inputs.outputBinaryLeftHippocampus=  'subjectANNLabel_l_hippocampus.nii.gz'
-    RF8BC.inputs.outputBinaryRightHippocampus= 'subjectANNLabel_r_hippocampus.nii.gz'
-    RF8BC.inputs.outputBinaryLeftPutamen=      'subjectANNLabel_l_putamen.nii.gz'
-    RF8BC.inputs.outputBinaryRightPutamen=     'subjectANNLabel_r_putamen.nii.gz'
-    RF8BC.inputs.outputBinaryLeftThalamus=     'subjectANNLabel_l_thalamus.nii.gz'
-    RF8BC.inputs.outputBinaryRightThalamus=    'subjectANNLabel_r_thalamus.nii.gz'
+    RF12BC.inputs.outputBinaryLeftCaudate=      'subjectANNLabel_l_caudate.nii.gz'
+    RF12BC.inputs.outputBinaryRightCaudate=     'subjectANNLabel_r_caudate.nii.gz'
+    RF12BC.inputs.outputBinaryLeftHippocampus=  'subjectANNLabel_l_hippocampus.nii.gz'
+    RF12BC.inputs.outputBinaryRightHippocampus= 'subjectANNLabel_r_hippocampus.nii.gz'
+    RF12BC.inputs.outputBinaryLeftPutamen=      'subjectANNLabel_l_putamen.nii.gz'
+    RF12BC.inputs.outputBinaryRightPutamen=     'subjectANNLabel_r_putamen.nii.gz'
+    RF12BC.inputs.outputBinaryLeftThalamus=     'subjectANNLabel_l_thalamus.nii.gz'
+    RF12BC.inputs.outputBinaryRightThalamus=    'subjectANNLabel_r_thalamus.nii.gz'
+    RF12BC.inputs.outputBinaryLeftAccumben=     'subjectANNLabel_l_accumben.nii.gz'
+    RF12BC.inputs.outputBinaryRightAccumben=    'subjectANNLabel_r_accumben.nii.gz'
+    RF12BC.inputs.outputBinaryLeftGlobus=       'subjectANNLabel_l_globus.nii.gz'
+    RF12BC.inputs.outputBinaryRightGlobus=      'subjectANNLabel_r_globus.nii.gz'
 
-    cutWF.connect(inputsSpec,'T1Volume',RF8BC,'inputSubjectT1Filename')
-    cutWF.connect(inputsSpec,'T2Volume',RF8BC,'inputSubjectT2Filename')
-    cutWF.connect(inputsSpec,'TotalGM',RF8BC,'inputSubjectTotalGMFilename')
-    cutWF.connect(inputsSpec,'RegistrationROI',RF8BC,'inputSubjectRegistrationROIFilename')
-    # Error cutWF.connect(SGI,'outputVolume',RF8BC,'inputSubjectGadSGFilename')
-    cutWF.connect(SGI,'outputFileName',RF8BC,'inputSubjectGadSGFilename')
-    cutWF.connect(atlasObject,'template_t1',RF8BC,'inputTemplateT1')
-    cutWF.connect(atlasObject,'template_brain',RF8BC,'inputTemplateRegistrationROIFilename')
+    cutWF.connect(inputsSpec,'T1Volume',RF12BC,'inputSubjectT1Filename')
+    cutWF.connect(inputsSpec,'T2Volume',RF12BC,'inputSubjectT2Filename')
+    #cutWF.connect(inputsSpec,'TotalGM',RF12BC,'inputSubjectTotalGMFilename')
+    #cutWF.connect(inputsSpec,'RegistrationROI',RF12BC,'inputSubjectRegistrationROIFilename')
+    # Error cutWF.connect(SGI,'outputVolume',RF12BC,'inputSubjectGadSGFilename')
+    cutWF.connect(SGI,'outputFileName',RF12BC,'inputSubjectGadSGFilename')
+    cutWF.connect(atlasObject,'template_t1',RF12BC,'inputTemplateT1')
+    #cutWF.connect(atlasObject,'template_brain',RF12BC,'inputTemplateRegistrationROIFilename')
 
-    cutWF.connect(atlasObject,'rho',RF8BC,'inputTemplateRhoFilename')
-    cutWF.connect(atlasObject,'phi',RF8BC,'inputTemplatePhiFilename')
-    cutWF.connect(atlasObject,'theta',RF8BC,'inputTemplateThetaFilename')
+    cutWF.connect(atlasObject,'rho',RF12BC,'inputTemplateRhoFilename')
+    cutWF.connect(atlasObject,'phi',RF12BC,'inputTemplatePhiFilename')
+    cutWF.connect(atlasObject,'theta',RF12BC,'inputTemplateThetaFilename')
 
-    cutWF.connect(atlasObject,'l_caudate_ProbabilityMap',RF8BC,'probabilityMapsLeftCaudate')
-    cutWF.connect(atlasObject,'r_caudate_ProbabilityMap',RF8BC,'probabilityMapsRightCaudate')
-    cutWF.connect(atlasObject,'l_hippocampus_ProbabilityMap',RF8BC,'probabilityMapsLeftHippocampus')
-    cutWF.connect(atlasObject,'r_hippocampus_ProbabilityMap',RF8BC,'probabilityMapsRightHippocampus')
-    cutWF.connect(atlasObject,'l_putamen_ProbabilityMap',RF8BC,'probabilityMapsLeftPutamen')
-    cutWF.connect(atlasObject,'r_putamen_ProbabilityMap',RF8BC,'probabilityMapsRightPutamen')
-    cutWF.connect(atlasObject,'l_thalamus_ProbabilityMap',RF8BC,'probabilityMapsLeftThalamus')
-    cutWF.connect(atlasObject,'r_thalamus_ProbabilityMap',RF8BC,'probabilityMapsRightThalamus')
+    cutWF.connect(atlasObject,'l_caudate_ProbabilityMap',RF12BC,'probabilityMapsLeftCaudate')
+    cutWF.connect(atlasObject,'r_caudate_ProbabilityMap',RF12BC,'probabilityMapsRightCaudate')
+    cutWF.connect(atlasObject,'l_hippocampus_ProbabilityMap',RF12BC,'probabilityMapsLeftHippocampus')
+    cutWF.connect(atlasObject,'r_hippocampus_ProbabilityMap',RF12BC,'probabilityMapsRightHippocampus')
+    cutWF.connect(atlasObject,'l_putamen_ProbabilityMap',RF12BC,'probabilityMapsLeftPutamen')
+    cutWF.connect(atlasObject,'r_putamen_ProbabilityMap',RF12BC,'probabilityMapsRightPutamen')
+    cutWF.connect(atlasObject,'l_thalamus_ProbabilityMap',RF12BC,'probabilityMapsLeftThalamus')
+    cutWF.connect(atlasObject,'r_thalamus_ProbabilityMap',RF12BC,'probabilityMapsRightThalamus')
+    cutWF.connect(atlasObject,'l_accumben_ProbabilityMap',RF12BC,'probabilityMapsLeftAccumben')
+    cutWF.connect(atlasObject,'r_accumben_ProbabilityMap',RF12BC,'probabilityMapsRightAccumben')
+    cutWF.connect(atlasObject,'l_globus_ProbabilityMap',RF12BC,'probabilityMapsLeftGlobus')
+    cutWF.connect(atlasObject,'r_globus_ProbabilityMap',RF12BC,'probabilityMapsRightGlobus')
     ##TODO:
-    cutWF.connect(atlasObject,'RandomForestAllSubcorticalsBalancedModel_txtD0060NT0060_gz',RF8BC,'modelFilename')
+    cutWF.connect(atlasObject,'RandomForestAllSubcorticalsBalancedModel_txtD0060NT0060_gz',RF12BC,'modelFilename')
     ##HACK: Needs to be fixed
-    #RF8BC.inputs.modelFilename='/nfsscratch/PREDICT/TEST_BRAINSCut/20120828ANNModel_Model_RF100.txt'
+    #RF12BC.inputs.modelFilename='/nfsscratch/PREDICT/TEST_BRAINSCut/20120828ANNModel_Model_RF100.txt'
 
-    ## Need to index from next line cutWF.connect(inputsSpec,'atlasToSubjectTransform',RF8BC,'deformationFromTemplateToSubject')
-    cutWF.connect( [ ( inputsSpec, RF8BC, [ (( 'atlasToSubjectTransform', getListIndex, 0 ), 'deformationFromTemplateToSubject')]), ] )
+    ## Need to index from next line cutWF.connect(inputsSpec,'atlasToSubjectTransform',RF12BC,'deformationFromTemplateToSubject')
+    cutWF.connect( [ ( inputsSpec, RF12BC, [ (( 'atlasToSubjectTransform', getListIndex, 0 ), 'deformationFromTemplateToSubject')]), ] )
 
-    mergeAllLabels=pe.Node(interface=Merge(8),name="labelMergeNode")
+    mergeAllLabels=pe.Node(interface=Merge(12),name="labelMergeNode")
     # NOTE: Ordering is important
-    cutWF.connect(RF8BC,'outputBinaryLeftCaudate',mergeAllLabels,'in1')
-    cutWF.connect(RF8BC,'outputBinaryRightCaudate',mergeAllLabels,'in2')
-    cutWF.connect(RF8BC,'outputBinaryLeftPutamen',mergeAllLabels,'in3')
-    cutWF.connect(RF8BC,'outputBinaryRightPutamen',mergeAllLabels,'in4')
-    cutWF.connect(RF8BC,'outputBinaryLeftHippocampus',mergeAllLabels,'in5')
-    cutWF.connect(RF8BC,'outputBinaryRightHippocampus',mergeAllLabels,'in6')
-    cutWF.connect(RF8BC,'outputBinaryLeftThalamus',mergeAllLabels,'in7')
-    cutWF.connect(RF8BC,'outputBinaryRightThalamus',mergeAllLabels,'in8')
+    cutWF.connect(RF12BC,'outputBinaryLeftCaudate',mergeAllLabels,'in1')
+    cutWF.connect(RF12BC,'outputBinaryRightCaudate',mergeAllLabels,'in2')
+    cutWF.connect(RF12BC,'outputBinaryLeftPutamen',mergeAllLabels,'in3')
+    cutWF.connect(RF12BC,'outputBinaryRightPutamen',mergeAllLabels,'in4')
+    cutWF.connect(RF12BC,'outputBinaryLeftHippocampus',mergeAllLabels,'in5')
+    cutWF.connect(RF12BC,'outputBinaryRightHippocampus',mergeAllLabels,'in6')
+    cutWF.connect(RF12BC,'outputBinaryLeftThalamus',mergeAllLabels,'in7')
+    cutWF.connect(RF12BC,'outputBinaryRightThalamus',mergeAllLabels,'in8') ## HACK:  CHECK ORDERING
+    cutWF.connect(RF12BC,'outputBinaryLeftAccumben',mergeAllLabels,'in9')
+    cutWF.connect(RF12BC,'outputBinaryRightAccumben',mergeAllLabels,'in10')
+    cutWF.connect(RF12BC,'outputBinaryLeftGlobus',mergeAllLabels,'in11')
+    cutWF.connect(RF12BC,'outputBinaryRightGlobus',mergeAllLabels,'in12')
 
     computeOneLabelMap = pe.Node(interface=Function(['listOfImages','LabelImageName','CSVFileName',
          'projectid', 'subjectid', 'sessionid' ],
@@ -234,19 +243,25 @@ def CreateBRAINSCutWorkflow(projectid, subjectid, sessionid,WFName,CLUSTER_QUEUE
         'outputBinaryLeftHippocampus','outputBinaryRightHippocampus',
         'outputBinaryLeftPutamen','outputBinaryRightPutamen',
         'outputBinaryLeftThalamus','outputBinaryRightThalamus',
+        'outputBinaryLeftAccumben','outputBinaryRightAccumben',
+        'outputBinaryLeftGlobus','outputBinaryRightGlobus',
         'outputLabelImageName','outputCSVFileName',
         'xmlFilename']), name='outputspec' )
 
     cutWF.connect(computeOneLabelMap,'outputLabelImageName',outputsSpec,'outputLabelImageName')
     cutWF.connect(computeOneLabelMap,'outputCSVFileName',outputsSpec,'outputCSVFileName')
-    cutWF.connect(RF8BC,'outputBinaryLeftCaudate',outputsSpec,'outputBinaryLeftCaudate')
-    cutWF.connect(RF8BC,'outputBinaryRightCaudate',outputsSpec,'outputBinaryRightCaudate')
-    cutWF.connect(RF8BC,'outputBinaryLeftHippocampus',outputsSpec,'outputBinaryLeftHippocampus')
-    cutWF.connect(RF8BC,'outputBinaryRightHippocampus',outputsSpec,'outputBinaryRightHippocampus')
-    cutWF.connect(RF8BC,'outputBinaryLeftPutamen',outputsSpec,'outputBinaryLeftPutamen')
-    cutWF.connect(RF8BC,'outputBinaryRightPutamen',outputsSpec,'outputBinaryRightPutamen')
-    cutWF.connect(RF8BC,'outputBinaryLeftThalamus',outputsSpec,'outputBinaryLeftThalamus')
-    cutWF.connect(RF8BC,'outputBinaryRightThalamus',outputsSpec,'outputBinaryRightThalamus')
-    cutWF.connect(RF8BC,'xmlFilename',outputsSpec,'xmlFilename')
+    cutWF.connect(RF12BC,'outputBinaryLeftCaudate',outputsSpec,'outputBinaryLeftCaudate')
+    cutWF.connect(RF12BC,'outputBinaryRightCaudate',outputsSpec,'outputBinaryRightCaudate')
+    cutWF.connect(RF12BC,'outputBinaryLeftHippocampus',outputsSpec,'outputBinaryLeftHippocampus')
+    cutWF.connect(RF12BC,'outputBinaryRightHippocampus',outputsSpec,'outputBinaryRightHippocampus')
+    cutWF.connect(RF12BC,'outputBinaryLeftPutamen',outputsSpec,'outputBinaryLeftPutamen')
+    cutWF.connect(RF12BC,'outputBinaryRightPutamen',outputsSpec,'outputBinaryRightPutamen')
+    cutWF.connect(RF12BC,'outputBinaryLeftThalamus',outputsSpec,'outputBinaryLeftThalamus')
+    cutWF.connect(RF12BC,'outputBinaryRightThalamus',outputsSpec,'outputBinaryRightThalamus')
+    cutWF.connect(RF12BC,'outputBinaryLeftAccumben',outputsSpec,'outputBinaryLeftAccumben')
+    cutWF.connect(RF12BC,'outputBinaryRightAccumben',outputsSpec,'outputBinaryRightAccumben')
+    cutWF.connect(RF12BC,'outputBinaryLeftGlobus',outputsSpec,'outputBinaryLeftGlobus')
+    cutWF.connect(RF12BC,'outputBinaryRightGlobus',outputsSpec,'outputBinaryRightGlobus')
+    cutWF.connect(RF12BC,'xmlFilename',outputsSpec,'xmlFilename')
 
     return cutWF

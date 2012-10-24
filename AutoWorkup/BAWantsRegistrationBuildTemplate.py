@@ -207,6 +207,8 @@ def BAWantsRegistrationTemplateBuildSingleIterationWF(iterationPhasePrefix=''):
     BeginANTS.inputs.smoothing_sigmas =         [[4,2,0],          [4,2,0],            [6,4,2,0]]
     BeginANTS.inputs.use_estimate_learning_rate_once = [False,     False,              False]
     BeginANTS.inputs.write_composite_transform=True
+    #BeginANTS.inputs.output_warped_image = 'atlas2subject.nii.gz'
+    #BeginANTS.inputs.output_inverse_warped_image = 'subject2atlas.nii.gz'
     """
     """ HACK: Until this can be made to work with many transform phases, we are going to assume
               that all initial images are actually rigidly aligned BEFORE the template building
@@ -231,6 +233,8 @@ def BAWantsRegistrationTemplateBuildSingleIterationWF(iterationPhasePrefix=''):
     BeginANTS.inputs.winsorize_lower_quantile = 0.025
     BeginANTS.inputs.winsorize_upper_quantile = 0.975
     BeginANTS.inputs.collapse_linear_transforms_to_fixed_image_header = False
+    #BeginANTS.inputs.output_warped_image = 'atlas2subject.nii.gz'
+    #BeginANTS.inputs.output_inverse_warped_image = 'subject2atlas.nii.gz'
 
     GetMovingImagesNode = pe.Node(interface=util.Function(function=GetMovingImages,
                                       input_names=['ListOfImagesDictionaries','registrationImageTypes','interpolationMapping'],
@@ -251,6 +255,7 @@ def BAWantsRegistrationTemplateBuildSingleIterationWF(iterationPhasePrefix=''):
                      name ='wimtdeformed')
     wimtdeformed.inputs.interpolation = 'Linear'
     wimtdeformed.default_value = 0
+    #HACK: Should try using forward_composite_transform
     TemplateBuildSingleIterationWF.connect(BeginANTS,'forward_transforms',wimtdeformed,'transforms')
     TemplateBuildSingleIterationWF.connect(BeginANTS,'forward_invert_flags',wimtdeformed,'invert_transform_flags')
     TemplateBuildSingleIterationWF.connect(GetMovingImagesNode, 'moving_images', wimtdeformed, 'input_image')

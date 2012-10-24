@@ -9,6 +9,8 @@
 ## AVOID REFORMATTING THIS FILE, it causes the hash to change in
 ## nipype and that require re-running the function.
 
+def getListIndex( imageList, index):
+    return imageList[index]
 
 def ClipT1ImageWithBrainMask(t1_image,brain_labels,clipped_file_name):
     import os
@@ -19,7 +21,8 @@ def ClipT1ImageWithBrainMask(t1_image,brain_labels,clipped_file_name):
     ## due to anomolies around the edges.
     t1=sitk.Cast(sitk.ReadImage(t1_image),sitk.sitkFloat32)
     bl=sitk.Cast(sitk.ReadImage(brain_labels),sitk.sitkFloat32)
-    clipped=t1*bl
+    bl_binary=sitk.Cast(sitk.BinaryThreshold(bl,1,1000000),sitk.sitkFloat32)
+    clipped=t1*bl_binary
     sitk.WriteImage(clipped,clipped_file_name)
     clipped_file=os.path.realpath(clipped_file_name)
     return clipped_file

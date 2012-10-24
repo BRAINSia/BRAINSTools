@@ -29,6 +29,7 @@ PURPOSE.  See the above copyright notices for more information.
 #include "itkAnalyzeImageIO.h"
 #include "itkMetaDataObject.h"
 #include "itkLabelStatisticsImageFilter.h"
+#include <itkSmartPointer.h>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -118,6 +119,9 @@ FunctorClassDeclare2(squareroot, sqrt( (double)a) );
     }
 
 #include "itkDiscreteGaussianImageFilter.h"
+#include "itkHistogramMatchingImageFilter.h"
+
+static std::stringstream EffectiveInputFilters;
 
 /*This function if called performs arithmetic operation with a constant value
  * to all the pixels in an input image.*/
@@ -149,6 +153,23 @@ DoGaussian( typename ImageType::Pointer input,  const double sigma )
   return fromFloatCaster->GetOutput();
 }
 
+/*This function if called performs histogram equalization with the given number of match points*/
+template <class ImageType>
+typename ImageType::Pointer
+DoHisteq( typename ImageType::Pointer ref, typename ImageType::Pointer input, const int NumOfMatchPoints )
+{
+  typedef itk::HistogramMatchingImageFilter<ImageType, ImageType> HistogramMatchingFilterType;
+  typename HistogramMatchingFilterType::Pointer matchingFilter = HistogramMatchingFilterType::New();
+  matchingFilter->SetSourceImage( input );
+  matchingFilter->SetReferenceImage( ref );
+  matchingFilter->SetNumberOfHistogramLevels( 256 );
+  matchingFilter->SetNumberOfMatchPoints( NumOfMatchPoints );
+  matchingFilter->ThresholdAtMeanIntensityOn();
+  matchingFilter->Update();
+
+  return matchingFilter->GetOutput();
+}
+
 /*This function if called performs arithmetic operation with a constant value
  * to all the pixels in an input image.*/
 template <class ImageType>
@@ -156,7 +177,6 @@ typename ImageType::Pointer
 Ifilters( typename ImageType::Pointer input,  MetaCommand command )
 {
   typedef typename ImageType::PixelType PixelType;
-  std::stringstream EffectiveInputFilters;
 
   typename ImageType::Pointer IntermediateImage = input;
   /*Multiplies a constant value to all the pixels of the Input image.*/
@@ -665,8 +685,21 @@ void ImageCalculatorReadWrite( MetaCommand & command )
       std::cerr << "Error reading the series " << std::endl;
       throw excp;
       }
+    typename ImageType::Pointer SubSequentImage = reader2->GetOutput();
 
-    typename ImageType::Pointer image = Ifilters<ImageType>(reader2->GetOutput(), command);
+    /*If the accumulator buffer is not empty, then every subsequent image is histogram equalized to the current
+      accumulator buffer.*/
+    if( command.GetValueAsString("IHisteq", "constant") != "" )
+      {
+      if( AccImage.IsNotNull() )
+        {
+        const int NumOfMatchPoints = static_cast<int>(command.GetValueAsInt("IHisteq", "constant") );
+        EffectiveInputFilters << "-ifhisteq " << static_cast<int>(NumOfMatchPoints) << " ";
+        SubSequentImage = DoHisteq<ImageType>(AccImage, reader2->GetOutput(), NumOfMatchPoints);
+        }
+      }
+
+    typename ImageType::Pointer image = Ifilters<ImageType>(SubSequentImage, command);
 
     // Check whether the image dimensions and the spacing are the same.
     if( (AccImage->GetLargestPossibleRegion().GetSize() != image->GetLargestPossibleRegion().GetSize() ) )

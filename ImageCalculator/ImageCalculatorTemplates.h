@@ -690,7 +690,6 @@ void ImageCalculatorReadWrite( MetaCommand & command )
     // Check whether the image dimensions and the spacing are the same.
     if( (AccImage->GetLargestPossibleRegion().GetSize() != SubSequentImage->GetLargestPossibleRegion().GetSize() ) )
       {
-      std::cerr << "Error:: The size of the images don't match." << std::endl;
       itkGenericExceptionMacro(<< "Error:: The size of the images don't match.");
       }
 
@@ -715,7 +714,6 @@ void ImageCalculatorReadWrite( MetaCommand & command )
 
     if( spacingDifference.two_norm() > 0.0001 ) // HACK:  Should be a percentage of the actual spacing size.
       {
-      std::cerr << "ERROR:: The pixel spacing of the images are not close enough." << std::endl;
       itkGenericExceptionMacro(<< "ERROR:: The pixel spacing of the images are not close enough.");
       }
     else if( AccImage->GetSpacing() != image->GetSpacing() )
@@ -724,7 +722,6 @@ void ImageCalculatorReadWrite( MetaCommand & command )
       }
     if( AccImage->GetDirection() != image->GetDirection() )
       {
-      std::cerr << "Error:: The orientation of the images are different." << std::endl;
       itkGenericExceptionMacro(<< "Error:: The orientation of the images are different.");
       }
 

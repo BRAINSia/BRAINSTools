@@ -46,6 +46,7 @@ if(BUILD_TESTING)
        --intype UCHAR --outtype UCHAR --add --ifgaussiansigma 1 --ofgaussiansigma 1
        --out ${IC_BIN}/ImageCalculator2DGaussianTest.png
        -d 2 ${IC_STATCMDS}  )
+  
   #Test for more than 2 images different data types for Input image and output image
   #
   # Test add
@@ -75,6 +76,19 @@ if(BUILD_TESTING)
         --intype UCHAR --outtype USHORT --sub
         --out ${IC_BIN}/ImageCalculator2DTest3.png
         -d 2 ${IC_STATCMDS}  )
+  #  
+  # Test histogram equalization on inputs before making the difference image
+  add_test(NAME ImageCalculator2DHisteqTest COMMAND $<TARGET_FILE:ImageCalculatorTests>
+    --compare
+       "${IC_BIN}/ImageCalculator2DHisteqTest.png"
+       "${IC_TSTDATA}/Histeq2DTest.png"
+    ImageCalculatorTest
+       --in "${IC_TSTDATA}/AllFiveHundreds.png"
+            "${IC_TSTDATA}/AllHundreds.png"
+       --intype UCHAR --outtype UCHAR --sub --ifhisteq 32
+       --out ${IC_BIN}/ImageCalculator2DHisteqTest.png
+       -d 2 ${IC_STATCMDS}  )
+      
   #
   # Test Mult
   add_test(NAME ImageCalc2DMult COMMAND $<TARGET_FILE:ImageCalculatorTests>

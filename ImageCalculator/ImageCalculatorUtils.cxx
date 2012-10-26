@@ -219,6 +219,13 @@ int PrimaryImageCalculatorRoutine(int argc, char *argv[])
   command.SetOptionLongTag("IGaussianSigma", "ifgaussiansigma");
   command.AddOptionField("IGaussianSigma", "constant", MetaCommand::FLOAT, false, "");
 
+  // If the accumulator buffer is not empty, then every subsequent image is histogram equalized to the current
+  // accumulator buffer.
+  command.SetOption("IHisteq", "", false,
+                    "Ifhisteq equalizes each image to the current accumulator buffer after reading.");
+  command.SetOptionLongTag("IHisteq", "ifhisteq");
+  command.AddOptionField("IHisteq", "constant", MetaCommand::INT, false, "");
+
   // Square the input image pixel values.
   command.SetOption("ISqr", "", false, "Square Accumulator Image After reading");
   command.SetOptionLongTag("ISqr", "ifsqr");

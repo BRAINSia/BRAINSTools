@@ -590,7 +590,7 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetecto
     ${BRAINSConstellationDetectorTestName}
     --inputTrainingList ${CMAKE_CURRENT_BINARY_DIR}/obliq_setup.txt
     --inputTemplateModel DATA{${TestData_DIR}/T1-2ndVersion.mdl}
-    --LLSModel DATA{${TestData_DIR}/Transforms_h5/LLSModel-2ndVersion.${XFRM_EXT} }
+    --LLSModel DATA{${TestData_DIR}/Transforms_h5/LLSModel-2ndVersion.${XFRM_EXT}}
     --outputWeightsList ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}.wts #output of the program
     )
   set_tests_properties(${BRAINSConstellationDetectorTestName} PROPERTIES TIMEOUT 15000)

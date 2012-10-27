@@ -74,11 +74,11 @@ pe.sub(subs,test)
 
 #find_pat=os.path.join('ANTSTemplate',r'_ReshapeAveragePassiveImageWithShapeUpdate[0-9]*/AVG_[A-Z0-9]*WARP_(?P<structure>AVG_[A-Z0-9]*.nii.gz)')
     find_pat=os.path.join('ANTSTemplate',r'_ReshapeAveragePassiveImageWithShapeUpdate[0-9]*/AVG_(?P<structure>.*.nii.gz)')
-    replace_pat=os.path.join('SUBJECT_TEMPLATES',subjectid,r'\g<structure>')
+    replace_pat=os.path.join('SUBJECT_TEMPLATES',subjectid,r'AVG_\g<structure>')
     patternList.append( (find_pat,replace_pat) )
 
     find_pat=os.path.join('ANTSTemplate',r'CLIPPED_AVG_(?P<structure>.*.nii.gz)')
-    replace_pat=os.path.join('SUBJECT_TEMPLATES',subjectid,r'\g<structure>')
+    replace_pat=os.path.join('SUBJECT_TEMPLATES',subjectid,r'AVG_\g<structure>')
     patternList.append( (find_pat,replace_pat) )
 
     print "HACK: ", patternList
@@ -704,9 +704,11 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                     AtlasToSubjectantsRegistration[subjectid].inputs.output_warped_image = 'atlas2subject.nii.gz'
                     AtlasToSubjectantsRegistration[subjectid].inputs.output_inverse_warped_image = 'subject2atlas.nii.gz'
 
-                    baw200.connect(BAtlas[subjectid],'template_t1_clipped',AtlasToSubjectantsRegistration[subjectid], 'moving_image')
-                    baw200.connect(ClipT1ImageWithBrainMaskNode[sessionid], 'clipped_file', AtlasToSubjectantsRegistration[subjectid], 'fixed_image')
-                    ## To be tested baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'outputspec.LMIatlasToSubjectTransform',AtlasToSubjectantsRegistration[subjectid],'initial_moving_transform')
+                    baw200.connect(BAtlas[subjectid],'template_t1',AtlasToSubjectantsRegistration[subjectid], 'moving_image')
+                    baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'outputspec.t1_average', AtlasToSubjectantsRegistration[subjectid], 'fixed_image')
+                    #baw200.connect(BAtlas[subjectid],'template_t1_clipped',AtlasToSubjectantsRegistration[subjectid], 'moving_image')
+                    #baw200.connect(ClipT1ImageWithBrainMaskNode[sessionid], 'clipped_file', AtlasToSubjectantsRegistration[subjectid], 'fixed_image')
+                    # To be tested baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'outputspec.LMIatlasToSubjectTransform',AtlasToSubjectantsRegistration[subjectid],'initial_moving_transform')
 
                 global_AllT1s=ExperimentDatabase.getFilenamesByScantype(sessionid,['T1-30','T1-15'])
                 global_AllT2s=ExperimentDatabase.getFilenamesByScantype(sessionid,['T2-30','T2-15'])
@@ -725,12 +727,14 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                 print("HACK")
                 if ( 'SEGMENTATION' in WORKFLOW_COMPONENTS ) and ( len(global_AllT2s) > 0 ): # Currently only works with multi-modal_data
                     from WorkupT1T2BRAINSCut import CreateBRAINSCutWorkflow
-                    myLocalSegWF[sessionid] = CreateBRAINSCutWorkflow(projectid, subjectid, sessionid,'Segmentation',CLUSTER_QUEUE,BAtlas[subjectid]) ##Note:  Passing in the entire BAtlas Object here!
+                    myLocalSegWF[sessionid] = CreateBRAINSCutWorkflow(projectid, subjectid, sessionid,'Segmentation',
+                                                              CLUSTER_QUEUE,BAtlas[subjectid]) ##Note:  Passing in the entire BAtlas Object here!
                     baw200.connect( PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.t1_average', myLocalSegWF[sessionid], "inputspec.T1Volume" )
                     baw200.connect( PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.t2_average', myLocalSegWF[sessionid], "inputspec.T2Volume")
                     baw200.connect( PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.outputLabels', myLocalSegWF[sessionid],"inputspec.RegistrationROI")
                     ## NOTE: Element 0 of AccumulatePriorsList is the accumulated GM tissue
-                    baw200.connect( [ ( AccumulateLikeTissuePosteriorsNode[sessionid], myLocalSegWF[sessionid], [ (( 'AccumulatePriorsList', getListIndex, 0 ), "inputspec.TotalGM")] ),
+                    baw200.connect( [ ( AccumulateLikeTissuePosteriorsNode[sessionid], myLocalSegWF[sessionid],
+                                    [ (( 'AccumulatePriorsList', getListIndex, 0 ), "inputspec.TotalGM")] ),
                                     ] )
                     baw200.connect( AtlasToSubjectantsRegistration[subjectid],'composite_transform',myLocalSegWF[sessionid],'inputspec.atlasToSubjectTransform')
 
@@ -739,24 +743,24 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                     SEGMENTATION_DataSink[sessionid].inputs.base_directory=ExperimentBaseDirectoryResults
                     #SEGMENTATION_DataSink[sessionid].inputs.regexp_substitutions = GenerateOutputPattern(projectid, subjectid, sessionid,'BRAINSCut')
                     #SEGMENTATION_DataSink[sessionid].inputs.regexp_substitutions = GenerateBRAINSCutImagesOutputPattern(projectid, subjectid, sessionid)
-                    SEGMENTATION_DataSink[sessionid].inputs.substitutions = [ ( 'BRAINSCut',os.path.join(projectid, subjectid, sessionid,'BRAINSCut') ),
+                    SEGMENTATION_DataSink[sessionid].inputs.substitutions = [ ( 'Segmentations',os.path.join(projectid, subjectid, sessionid,'Segmentations') ),
                                                                               ( 'subjectANNLabel_', '' ),
                                                                               ( '.nii.gz', '_seg.nii.gz')
                                                                             ]
-                    baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryLeftCaudate',SEGMENTATION_DataSink[sessionid], 'BRAINSCut.@outputBinaryLeftCaudate')
-                    baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryRightCaudate',SEGMENTATION_DataSink[sessionid], 'BRAINSCut.@outputBinaryRightCaudate')
-                    baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryLeftHippocampus',SEGMENTATION_DataSink[sessionid], 'BRAINSCut.@outputBinaryLeftHippocampus')
-                    baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryRightHippocampus',SEGMENTATION_DataSink[sessionid], 'BRAINSCut.@outputBinaryRightHippocampus')
-                    baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryLeftPutamen',SEGMENTATION_DataSink[sessionid], 'BRAINSCut.@outputBinaryLeftPutamen')
-                    baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryRightPutamen',SEGMENTATION_DataSink[sessionid], 'BRAINSCut.@outputBinaryRightPutamen')
-                    baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryLeftThalamus',SEGMENTATION_DataSink[sessionid], 'BRAINSCut.@outputBinaryLeftThalamus')
-                    baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryRightThalamus',SEGMENTATION_DataSink[sessionid], 'BRAINSCut.@outputBinaryRightThalamus')
-                    baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryLeftAccumben',SEGMENTATION_DataSink[sessionid], 'BRAINSCut.@outputBinaryLeftAccumben')
-                    baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryRightAccumben',SEGMENTATION_DataSink[sessionid], 'BRAINSCut.@outputBinaryRightAccumben')
-                    baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryLeftGlobus',SEGMENTATION_DataSink[sessionid], 'BRAINSCut.@outputBinaryLeftGlobus')
-                    baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryRightGlobus',SEGMENTATION_DataSink[sessionid], 'BRAINSCut.@outputBinaryRightGlobus')
-                    baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputLabelImageName', SEGMENTATION_DataSink[sessionid],'BRAINSCut.@outputLabelImageName')
-                    baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputCSVFileName', SEGMENTATION_DataSink[sessionid],'BRAINSCut.@outputCSVFileName')
+                    baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryLeftCaudate',SEGMENTATION_DataSink[sessionid], 'Segmentations.@outputBinaryLeftCaudate')
+                    baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryRightCaudate',SEGMENTATION_DataSink[sessionid], 'Segmentations.@outputBinaryRightCaudate')
+                    baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryLeftHippocampus',SEGMENTATION_DataSink[sessionid], 'Segmentations.@outputBinaryLeftHippocampus')
+                    baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryRightHippocampus',SEGMENTATION_DataSink[sessionid], 'Segmentations.@outputBinaryRightHippocampus')
+                    baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryLeftPutamen',SEGMENTATION_DataSink[sessionid], 'Segmentations.@outputBinaryLeftPutamen')
+                    baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryRightPutamen',SEGMENTATION_DataSink[sessionid], 'Segmentations.@outputBinaryRightPutamen')
+                    baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryLeftThalamus',SEGMENTATION_DataSink[sessionid], 'Segmentations.@outputBinaryLeftThalamus')
+                    baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryRightThalamus',SEGMENTATION_DataSink[sessionid], 'Segmentations.@outputBinaryRightThalamus')
+                    baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryLeftAccumben',SEGMENTATION_DataSink[sessionid], 'Segmentations.@outputBinaryLeftAccumben')
+                    baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryRightAccumben',SEGMENTATION_DataSink[sessionid], 'Segmentations.@outputBinaryRightAccumben')
+                    baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryLeftGlobus',SEGMENTATION_DataSink[sessionid], 'Segmentations.@outputBinaryLeftGlobus')
+                    baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryRightGlobus',SEGMENTATION_DataSink[sessionid], 'Segmentations.@outputBinaryRightGlobus')
+                    baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputLabelImageName', SEGMENTATION_DataSink[sessionid],'Segmentations.@outputLabelImageName')
+                    baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputCSVFileName', SEGMENTATION_DataSink[sessionid],'Segmentations.@outputCSVFileName')
                 else:
                     print("SKIPPING SEGMENTATION PHASE FOR {0} {1} {2}, lenT2s {3}".format(projectid, subjectid, sessionid, len(global_AllT2s) ))
 

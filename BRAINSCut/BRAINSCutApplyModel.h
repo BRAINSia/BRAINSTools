@@ -48,23 +48,23 @@ public:
 
 private:
   BRAINSCutDataHandler*                        m_myDataHandler;
-  BRAINSCutConfiguration::ApplyDataSetListType applyDataSetList;
+  BRAINSCutConfiguration::ApplyDataSetListType m_applyDataSetList;
 
-  std::string method;
-  bool        normalization;
-  bool        computeSSE;
-  int         trainIteration;
+  std::string m_method;
+  bool        m_normalization;
+  bool        m_computeSSE;
+  int         m_trainIteration;
 
-  int numberOfTrees;
-  int depthOfTree;
+  int m_numberOfTrees;
+  int m_depthOfTree;
 
-  std::fstream ANNTestingSSEFileStream;
+  std::fstream m_ANNTestingSSEFileStream;
 
-  scalarType      annOutputThreshold;
-  scalarType      gaussianSmoothingSigma;
+  scalarType      m_annOutputThreshold;
+  scalarType      m_gaussianSmoothingSigma;
   OpenCVMLPType * m_openCVANN;
 
-  CvRTrees* openCVRandomForest;
+  CvRTrees* m_openCVRandomForest;
 
   /* private functions  */
   std::string GetANNModelBaseName();

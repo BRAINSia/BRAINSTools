@@ -40,8 +40,8 @@ public:
                                               WorkingPixelType> ImageLinearInterpolatorType;
 
   /* min/max */
-  typedef std::pair<scalarType, scalarType> minmaxPairType;
-  typedef std::vector<minmaxPairType>       minmaxPairVectorType;
+  typedef std::pair<scalarType, scalarType> m_minmaxPairType;
+  typedef std::vector<m_minmaxPairType>     m_minmaxPairVectorType;
 
   /** set functions */
   void SetGradientSize( unsigned int length);
@@ -77,32 +77,32 @@ public:
   static WorkingImageType::IndexType HashIndexFromKey(const hashKeyType offSet);
 
 private:
-  int          gradientSize;
-  unsigned int inputVectorSize;
-  bool         normalization;
+  int          m_gradientSize;
+  unsigned int m_inputVectorSize;
+  bool         m_normalization;
 
-  ImageLinearInterpolatorType::Pointer imageInterpolator;
+  ImageLinearInterpolatorType::Pointer m_imageInterpolator;
 
-  WorkingImageVectorType    imagesOfInterestInOrder;
-  DataSet::StringVectorType roiIDsInOrder;
+  WorkingImageVectorType    m_imagesOfInterestInOrder;
+  DataSet::StringVectorType m_roiIDsInOrder;
 
   /** deformed rho/phi/theta images*/
-  std::map<std::string, WorkingImagePointer> spatialLocations;
+  std::map<std::string, WorkingImagePointer> m_spatialLocations;
 
   /** deformed candiateROIs */
-  std::map<std::string, WorkingImagePointer> candidateROIs;
+  std::map<std::string, WorkingImagePointer> m_candidateROIs;
 
   /** gradient image of ROI */
-  std::map<std::string, GradientImageType> gradientOfROI;
+  std::map<std::string, GradientImageType> m_gradientOfROI;
 
   /** feature output*/
   // std::map<std::string, InputVectorMapType> featureInputOfROI;
 
-  /** normalization parameters*/
+  /** m_normalization parameters*/
   /*  mapping from ROIname to the vector of mean/max
-   *  for given serios of imagesOfInterestInOrder
+   *  for given serios of m_imagesOfInterestInOrder
    */
-  std::map<std::string, minmaxPairVectorType> minmax;
+  std::map<std::string, m_minmaxPairVectorType> m_minmax;
 
   /** private functions */
   // void ComputeFeatureInputOfROI( std::string ROIName);

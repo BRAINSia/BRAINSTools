@@ -4,17 +4,17 @@
 
 BRAINSCutTrainModel
 ::BRAINSCutTrainModel( BRAINSCutDataHandler& dataHandler ) :
-  trainIteration(0),
-  trainEpochIteration(0),
-  trainDesiredError(0.0),
-  trainMaximumDataSize(0),
-  ANNHiddenNodesNumber(0),
-  activationSlope(0),
-  activationMinMax(0),
+  m_trainIteration(0),
+  m_trainEpochIteration(0),
+  m_trainDesiredError(0.0),
+  m_trainMaximumDataSize(0),
+  m_ANNHiddenNodesNumber(0),
+  m_activationSlope(0),
+  m_activationMinMax(0),
   m_trainingDataSet(NULL),
   m_ANNLayerStructure(NULL)
 {
-  myDataHandler = dataHandler;
+  m_myDataHandler = dataHandler;
 }
 
 BRAINSCutTrainModel
@@ -36,8 +36,8 @@ void
 BRAINSCutTrainModel
 ::InitializeTrainDataSet( bool doShuffle )
 {
-  myDataHandler.SetTrainVectorFilename();
-  const std::string trainVectorFilename = myDataHandler.GetTrainVectorFilename();
+  m_myDataHandler.SetTrainVectorFilename();
+  const std::string trainVectorFilename = m_myDataHandler.GetTrainVectorFilename();
 
   this->m_trainingDataSet = new BRAINSCutVectorTrainingSet( trainVectorFilename );
   try
@@ -55,10 +55,10 @@ BRAINSCutTrainModel
     {
     this->m_trainingDataSet->RandomizeTrainingVector();
     }
-  if( this->m_trainingDataSet->GetTotalVectorSize() > (int)trainMaximumDataSize )
+  if( this->m_trainingDataSet->GetTotalVectorSize() > (int)m_trainMaximumDataSize )
     {
     unsigned int numberOfSubSet =
-      (float)this->m_trainingDataSet->GetTotalVectorSize() / (float)trainMaximumDataSize;
+      (float)this->m_trainingDataSet->GetTotalVectorSize() / (float)m_trainMaximumDataSize;
     numberOfSubSet = ceil(numberOfSubSet) + 1;
     std::cout << "Divide subset into " << numberOfSubSet << std::endl;
     this->m_trainingDataSet->SetNumberOfSubSet( numberOfSubSet );
@@ -74,36 +74,36 @@ void
 BRAINSCutTrainModel
 ::InitializeNeuralNetwork()
 {
-  myDataHandler.SetTrainConfiguration( "ANNParameters" );
-  myDataHandler.SetTrainingVectorConfiguration();
+  m_myDataHandler.SetTrainConfiguration( "ANNParameters" );
+  m_myDataHandler.SetTrainingVectorConfiguration();
   if( this->m_ANNLayerStructure != NULL )
     {
     cvReleaseMat( &this->m_ANNLayerStructure );
     }
   this->m_ANNLayerStructure = cvCreateMat( 1, 3, CV_32SC1);
 
-  trainMaximumDataSize = myDataHandler.GetMaximumDataSize();
-  trainIteration       = myDataHandler.GetTrainIteration();
-  trainEpochIteration  = myDataHandler.GetEpochIteration();
-  trainDesiredError    = myDataHandler.GetDesiredError();
+  m_trainMaximumDataSize = m_myDataHandler.GetMaximumDataSize();
+  m_trainIteration       = m_myDataHandler.GetTrainIteration();
+  m_trainEpochIteration  = m_myDataHandler.GetEpochIteration();
+  m_trainDesiredError    = m_myDataHandler.GetDesiredError();
 
-  ANNHiddenNodesNumber = myDataHandler.GetANNHiddenNodesNumber();
+  m_ANNHiddenNodesNumber = m_myDataHandler.GetANNHiddenNodesNumber();
 
-  activationSlope = myDataHandler.GetActivationFunctionSlope();
-  activationMinMax = myDataHandler.GetActivationFunctionMinMax();
+  m_activationSlope = m_myDataHandler.GetActivationFunctionSlope();
+  m_activationMinMax = m_myDataHandler.GetActivationFunctionMinMax();
 }
 
 void
 BRAINSCutTrainModel
 ::InitializeRandomForest()
 {
-  myDataHandler.SetTrainConfiguration( "RandomForestParameters" );
-  myDataHandler.SetTrainingVectorConfiguration();
-  trainMaxDepth          = myDataHandler.GetMaxDepth();
-  trainMinSampleCount    = myDataHandler.GetMinSampleCount();
-  trainUseSurrogates     = myDataHandler.GetUseSurrogates();
-  trainCalcVarImportance = myDataHandler.GetCalcVarImportance();
-  trainMaxTreeCount      = myDataHandler.GetMaxTreeCount();
+  m_myDataHandler.SetTrainConfiguration( "RandomForestParameters" );
+  m_myDataHandler.SetTrainingVectorConfiguration();
+  m_trainMaxDepth          = m_myDataHandler.GetMaxDepth();
+  m_trainMinSampleCount    = m_myDataHandler.GetMinSampleCount();
+  m_trainUseSurrogates     = m_myDataHandler.GetUseSurrogates();
+  m_trainCalcVarImportance = m_myDataHandler.GetCalcVarImportance();
+  m_trainMaxTreeCount      = m_myDataHandler.GetMaxTreeCount();
 
   SetRFErrorFilename();
   SetRFErrorFile();
@@ -127,7 +127,7 @@ BRAINSCutTrainModel
                    0,    // Sample Index,
                    CvANN_MLP_TrainParams( cvTermCriteria( CV_TERMCRIT_ITER
                                                           | CV_TERMCRIT_EPS,
-                                                          trainEpochIteration, trainDesiredError),
+                                                          m_trainEpochIteration, m_trainDesiredError),
                                           CvANN_MLP_TrainParams::RPROP,  //
                                           0.1,                           //
                                           FLT_EPSILON ),
@@ -138,7 +138,7 @@ void
 BRAINSCutTrainModel
 ::SaveRFTrainModelAtIteration( CvRTrees& myTrainer, int depth, int NTrees)
 {
-  std::string filename = myDataHandler.GetRFModelFilename( depth, NTrees );
+  std::string filename = m_myDataHandler.GetRFModelFilename( depth, NTrees );
 
   try
     {
@@ -160,7 +160,7 @@ BRAINSCutTrainModel
   char tempid[10];
 
   sprintf( tempid, "%09u", No );
-  std::string filename = myDataHandler.GetModelBaseName() + tempid;
+  std::string filename = m_myDataHandler.GetModelBaseName() + tempid;
 
   /** check the directory */
   std::string path = itksys::SystemTools::GetFilenamePath( filename );
@@ -197,7 +197,7 @@ BRAINSCutTrainModel
   line += ", number of Tree, ";
   line += cNTree;
 
-  appendToFile( RFErrorFilename, line );
+  appendToFile( m_RFErrorFilename, line );
 }
 
 void
@@ -231,7 +231,7 @@ BRAINSCutTrainModel
 ::FillANNLayerStructureArray3D( int * const layer ) const
 {
   layer[0] = this->m_trainingDataSet->GetInputVectorSize();
-  layer[1] = ANNHiddenNodesNumber;
+  layer[1] = m_ANNHiddenNodesNumber;
   layer[2] = this->m_trainingDataSet->GetOutputVectorSize();
 }
 
@@ -248,10 +248,10 @@ BRAINSCutTrainModel
 
   trainner->create( this->m_ANNLayerStructure,
                     CvANN_MLP::SIGMOID_SYM,
-                    activationSlope,
-                    activationMinMax);
+                    m_activationSlope,
+                    m_activationMinMax);
   for( unsigned int currentIteration = 1;
-       currentIteration <= trainIteration;
+       currentIteration <= m_trainIteration;
        currentIteration++ )
     {
     unsigned int subSetNo =  (currentIteration - 1) % this->m_trainingDataSet->GetNumberOfSubSet();
@@ -261,7 +261,7 @@ BRAINSCutTrainModel
     SaveANNTrainModelAtIteration( *trainner, currentIteration );
     printANNTrainInformation( *trainner, currentIteration );
     /*
-    if( trainner->get_MSE()  < trainDesiredError )
+    if( trainner->get_MSE()  < m_trainDesiredError )
       {
       std::cout << "CONVERGED with " << trainner->get_MSE() << std::endl;
       break;
@@ -276,9 +276,9 @@ void
 BRAINSCutTrainModel
 ::TrainRandomForest()
 {
-  for( int depth = 1; depth <= trainMaxDepth; depth++ )
+  for( int depth = 1; depth <= m_trainMaxDepth; depth++ )
     {
-    for( int nTree = 2; nTree <= trainMaxTreeCount; nTree++ )
+    for( int nTree = 2; nTree <= m_trainMaxTreeCount; nTree++ )
       {
       TrainRandomForestAt( depth, nTree );
       }
@@ -292,13 +292,13 @@ BRAINSCutTrainModel
   CvRTrees   forest;
   CvRTParams randomTreeTrainParamters =
     CvRTParams( depth,
-                trainMinSampleCount,
+                m_trainMinSampleCount,
                 0.0F,                  // float  _regression_accuracy=0,
-                trainUseSurrogates,
-                10,                     // int    _max_categories=10,
-                0,                      // float* _priors,
-                trainCalcVarImportance, // bool   _calc_var_importance=false,
-                0,                      // int    _nactive_vars=0,
+                m_trainUseSurrogates,
+                10,                       // int    _max_categories=10,
+                0,                        // float* _priors,
+                m_trainCalcVarImportance, // bool   _calc_var_importance=false,
+                0,                        // int    _nactive_vars=0,
                 numberOfTree,
                 0,                     // float  forest_accuracy=0,
                 0
@@ -321,7 +321,7 @@ void
 BRAINSCutTrainModel
 ::SetRFErrorFilename()
 {
-  const std::string basename = myDataHandler.GetModelBaseName();
+  const std::string basename = m_myDataHandler.GetModelBaseName();
 
   if( basename.empty() )
     {
@@ -331,7 +331,7 @@ BRAINSCutTrainModel
               << std::endl;
     exit( EXIT_FAILURE );
     }
-  RFErrorFilename = basename + "ERROR.txt";
+  m_RFErrorFilename = basename + "ERROR.txt";
 }
 
 void
@@ -339,7 +339,7 @@ BRAINSCutTrainModel
 ::SetRFErrorFile()
 {
   std::fstream  filestr;
-  std::ifstream ifile(RFErrorFilename.c_str() );
+  std::ifstream ifile(m_RFErrorFilename.c_str() );
 
   if( ifile )
     {
@@ -349,11 +349,11 @@ BRAINSCutTrainModel
     return;
     }
 
-  filestr.open( RFErrorFilename.c_str(), std::fstream::out);
+  filestr.open( m_RFErrorFilename.c_str(), std::fstream::out);
 
   if( !filestr.good() )
     {
-    std::cout << "Cannot open the file :: " << RFErrorFilename << std::endl
+    std::cout << "Cannot open the file :: " << m_RFErrorFilename << std::endl
               << __LINE__ << "::" << __FILE__ << std::endl;
     exit( EXIT_FAILURE );
     }

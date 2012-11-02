@@ -127,7 +127,7 @@ Example Usage: \n
 $ python updateAutoWorkupFile_DWI.py -a example_autoworkup.csv -m DWI -d /paulsen/Experiments/20120814_DTIPREP
 """))
     parser.add_argument('-a', '--autoWorkupFile', action='store', dest='autoWorkupFile', help='')
-    parser.add_argument('-m', '--modality', action='store', dest='modality', help='T1-30, T2-30, or DWI')
+    parser.add_argument('-m', '--modality', action='store', dest='modality', help='T1-15, T1-30, T2-15, T2-30, PD-15, or DWI')
     parser.add_argument('-d', '--inputDir', action='store', dest='inputDir', help='Directory to search through for the new filepaths')
     inputArguments = parser.parse_args()
     Object = UpdateAutoWorkup()

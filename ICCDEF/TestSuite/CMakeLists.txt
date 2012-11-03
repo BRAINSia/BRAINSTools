@@ -6,36 +6,6 @@ MakeTestDriverFromSEMTool(AverageBrainGenerator AverageBrainGeneratorTest.cxx)
 MakeTestDriverFromSEMTool(iccdefRegistration_New iccdefRegistration_NewTest.cxx)
 
 
-set(UNIT_TESTS UnitTests)
-set(UnitTest_SRCS
-itkVectorFFTWTest.cxx
-itkIterativeInverseDisplacementFieldFilterTest.cxx
-itkIterativeInverseDisplacementFieldFilterTest2.cxx
-)
-
-#add_test(itkVectorFFTWTest ${UNIT_TESTS}
-#   --compare ${CMAKE_CURRENT_BINARY_DIR}/transformedImage.nii.gz
-#             ${CMAKE_CURRENT_BINARY_DIR}/originalImage.nii.gz
-#  --compareNumberOfPixelsTolerance 20
-#   itkVectorFFTWTest
-#     ${CMAKE_CURRENT_BINARY_DIR}/originalImage.nii.gz
-#     ${CMAKE_CURRENT_BINARY_DIR}/transformedImage.nii.gz
-#)
-
-#add_executable(UnitTests UnitTests.cxx ${UnitTest_SRCS})
-#target_link_libraries(UnitTests
-#    ${ITK_LIBRARIES} ${FFTWF_LIB}
-#)
-
-
-#set(UNIT_TESTS ${CMAKE_CURRENT_BINARY_DIR}/bin/UnitTests)
-set(UNIT_TESTS ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/UnitTests)
-set(TEMP ${CMAKE_CURRENT_BINARY_DIR})
-
-add_executable(UnitTests UnitTests.cxx ${UnitTest_SRCS})
-target_link_libraries(UnitTests ${ITK_LIBRARIES} ${FFTWF_LIB})
-
-
 ExternalData_add_test(${PROJECT_NAME}FetchData NAME ValidateICCDEF_Test1_nii
   COMMAND iccdefRegistration_NewTestDriver
   --compare
@@ -260,33 +230,58 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ValidateApplyWarpTest4_nii
 )
 endif() ## HACK
 
-add_test(itkVectorFFTWTest ${UNIT_TESTS}
-   --compare ${TEMP}/transformedImage.nii.gz
-             ${TEMP}/originalImage.nii.gz
-  --compareNumberOfPixelsTolerance 20
-   itkVectorFFTWTest
-     ${TEMP}/originalImage.nii.gz
-     ${TEMP}/transformedImage.nii.gz
+set(UnitTest_SRCS
+itkVectorFFTWTest.cxx
+itkIterativeInverseDisplacementFieldFilterTest.cxx
+itkIterativeInverseDisplacementFieldFilterTest2.cxx
 )
 
-add_test(itkIterativeInverseDisplacementFieldFilterTest ${UNIT_TESTS}
-   --compare ${TEMP}/multiProcessImage.nii.gz
-             ${TEMP}/singleProcessImage.nii.gz
+add_executable(UnitTests UnitTests.cxx ${UnitTest_SRCS})
+target_link_libraries(UnitTests ${ITK_LIBRARIES} ${FFTWF_LIB})
+
+#add_test(NAME itkVectorFFTWTest COMMAND $<TARGET_FILE:UnitTests>
+#   --compare ${CMAKE_CURRENT_BINARY_DIR}/transformedImage.nii.gz
+#             ${CMAKE_CURRENT_BINARY_DIR}/originalImage.nii.gz
+#  --compareNumberOfPixelsTolerance 20
+#   itkVectorFFTWTest
+#     ${CMAKE_CURRENT_BINARY_DIR}/originalImage.nii.gz
+#     ${CMAKE_CURRENT_BINARY_DIR}/transformedImage.nii.gz
+#)
+
+#add_executable(UnitTests UnitTests.cxx ${UnitTest_SRCS})
+#target_link_libraries(UnitTests
+#    ${ITK_LIBRARIES} ${FFTWF_LIB}
+#)
+
+set(UNIT_TEST_TEMP_DIR ${CMAKE_CURRENT_BINARY_DIR})
+
+add_test(NAME itkVectorFFTWTest COMMAND $<TARGET_FILE:UnitTests>
+   --compare ${UNIT_TEST_TEMP_DIR}/transformedImage.nii.gz
+             ${UNIT_TEST_TEMP_DIR}/originalImage.nii.gz
+  --compareNumberOfPixelsTolerance 20
+   itkVectorFFTWTest
+     ${UNIT_TEST_TEMP_DIR}/originalImage.nii.gz
+     ${UNIT_TEST_TEMP_DIR}/transformedImage.nii.gz
+)
+
+add_test(NAME itkIterativeInverseDisplacementFieldFilterTest COMMAND $<TARGET_FILE:UnitTests>
+   --compare ${UNIT_TEST_TEMP_DIR}/multiProcessImage.nii.gz
+             ${UNIT_TEST_TEMP_DIR}/singleProcessImage.nii.gz
   --compareNumberOfPixelsTolerance 0
   --compareIntensityTolerance 10
    itkIterativeInverseDisplacementFieldFilterTest
-     ${TEMP}/singleProcessImage.nii.gz
-     ${TEMP}/multiProcessImage.nii.gz
+     ${UNIT_TEST_TEMP_DIR}/singleProcessImage.nii.gz
+     ${UNIT_TEST_TEMP_DIR}/multiProcessImage.nii.gz
 )
 
-add_test(itkIterativeInverseDisplacementFieldFilterTest2 ${UNIT_TESTS}
-   --compare ${TEMP}/originalImage.nii.gz
-             ${TEMP}/inverse_test2.nii.gz
+add_test(NAME itkIterativeInverseDisplacementFieldFilterTest2 COMMAND $<TARGET_FILE:UnitTests>
+   --compare ${UNIT_TEST_TEMP_DIR}/originalImage.nii.gz
+             ${UNIT_TEST_TEMP_DIR}/inverse_test2.nii.gz
   --compareNumberOfPixelsTolerance 0
   --compareIntensityTolerance 10
    itkIterativeInverseDisplacementFieldFilterTest2
-     ${TEMP}/originalImage.nii.gz
-     ${TEMP}/inverse_test2.nii.gz
+     ${UNIT_TEST_TEMP_DIR}/originalImage.nii.gz
+     ${UNIT_TEST_TEMP_DIR}/inverse_test2.nii.gz
 )
 
 if(0)

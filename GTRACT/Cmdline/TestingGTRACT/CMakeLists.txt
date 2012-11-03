@@ -20,8 +20,7 @@ set(GTRACT_TEST_INPUT_DIR "${GTRACT_SOURCE_DIR}/Data")
 
 message(warning "${CMAKE_BUNDLE_OUTPUT_DIRECTORY}")
 
-#add_test(gtractCoregBvalues_Test ${CMAKE_BUNDLE_OUTPUT_DIRECTORY}/gtractCoregBvalues
-add_test(gtractCoregBvalues_Test ${LAUNCH_EXE} $<TARGET_FILE:GTRACT_CoregBvalues_TESTS>
+add_test(NAME gtractCoregBvalues_Test COMMAND ${LAUNCH_EXE} $<TARGET_FILE:GTRACT_CoregBvalues_TESTS>
  --compare
   ${GTRACT_SOURCE_DIR}/Data/b0_s.nhdr
   ${GTRACT_TEST_OUTPUT_DIR}/b0_s.nhdr
@@ -36,7 +35,7 @@ add_test(gtractCoregBvalues_Test ${LAUNCH_EXE} $<TARGET_FILE:GTRACT_CoregBvalues
   --outputTransform ${GTRACT_TEST_OUTPUT_DIR}/b0_s.${XFRM_EXT}
 )
 
-add_test(gtractCoRegAnatomy_Rigid_Test ${LAUNCH_EXE} $<TARGET_FILE:GTRACT_CoRegAnatomy_TESTS>
+add_test(NAME gtractCoRegAnatomy_Rigid_Test COMMAND ${LAUNCH_EXE} $<TARGET_FILE:GTRACT_CoRegAnatomy_TESTS>
    gtractCoRegAnatomyTest
      --inputVolume ${GTRACT_TEST_OUTPUT_DIR}/b0_s.nhdr
      --vectorIndex 0
@@ -46,7 +45,7 @@ add_test(gtractCoRegAnatomy_Rigid_Test ${LAUNCH_EXE} $<TARGET_FILE:GTRACT_CoRegA
      --transformType Rigid
 )
 
-add_test(gtractCoRegAnatomy_Bspline_Test ${LAUNCH_EXE} $<TARGET_FILE:GTRACT_CoRegAnatomy_TESTS>
+add_test(NAME gtractCoRegAnatomy_Bspline_Test COMMAND ${LAUNCH_EXE} $<TARGET_FILE:GTRACT_CoRegAnatomy_TESTS>
    gtractCoRegAnatomyTest
      --inputVolume ${GTRACT_TEST_OUTPUT_DIR}/b0_s.nhdr
      --vectorIndex 0

@@ -10,7 +10,7 @@ target_link_libraries(BRAINSCleanMask ${ITK_LIBRARIES})
 ## HACK: TODO: Make this test do something meaningful.
 #add_executable( itkResampleInPlaceImageFilterTest itkBasicFiltersTests.cxx )
 #target_link_libraries( itkResampleInPlaceImageFilterTest ITKIO ITKBasicFilters )
-#add_test( itkResampleInPlaceImageFilterTest itkResampleInPlaceImageFilterTest
+#add_test( NAME itkResampleInPlaceImageFilterTest COMMAND $<TARGET_FILE:itkResampleInPlaceImageFilterTest>
 #    itkResampleInPlaceImageFilterTest
 #    ${ITK_DATA_ROOT}/Input/itkResampleInPlaceImageFilterTest.nii.gz
 #    ${ITK_DATA_ROOT}/Baseline/Review/itkResampleInPlaceImageFilterTest.nii.gz

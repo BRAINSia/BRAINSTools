@@ -74,6 +74,12 @@ simpleSynReg( typename FixedImageType::Pointer & fixedImage,
     smoothingSigmasList.push_back(sigmas);
     regHelper->SetSmoothingSigmas( smoothingSigmasList );
     }
+    {
+    // Force all units to be in physcial space
+    std::vector<bool> smoothingSigmasAreInPhysicalUnitsList;
+    smoothingSigmasAreInPhysicalUnitsList.push_back(true);
+    regHelper->SetSmoothingSigmasAreInPhysicalUnits( smoothingSigmasAreInPhysicalUnitsList );
+    }
 
     {
     const std::string whichMetric = "cc";

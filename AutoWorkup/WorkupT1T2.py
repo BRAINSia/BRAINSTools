@@ -15,14 +15,6 @@ import os
 import csv
 import sys
 import string
-import argparse
-#"""Import necessary modules from nipype."""
-#from nipype.utils.config import config
-#config.set('logging', 'log_to_file', 'false')
-#config.set_log_dir(os.getcwd())
-#--config.set('logging', 'workflow_level', 'DEBUG')
-#--config.set('logging', 'interface_level', 'DEBUG')
-#--config.set('execution','remove_unnecessary_outputs','false')
 
 from nipype.interfaces.base import CommandLine, CommandLineInputSpec, TraitedSpec, File, Directory
 from nipype.interfaces.base import traits, isdefined, BaseInterface
@@ -682,21 +674,22 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                     currentAtlasToSubjectantsRegistration='AtlasToSubjectantsRegistration_'+str(subjectid)+"_"+str(sessionid)
                     AtlasToSubjectantsRegistration[subjectid]=pe.Node(interface=Registration(), name = currentAtlasToSubjectantsRegistration)
                     AtlasToSubjectantsRegistration[subjectid].inputs.dimension = 3
-                    AtlasToSubjectantsRegistration[subjectid].inputs.transforms =               ["Rigid",         "Affine",            "SyN"]
-                    AtlasToSubjectantsRegistration[subjectid].inputs.transform_parameters =     [[0.1],           [0.1],               [0.15,3.0,0.0]]
-                    AtlasToSubjectantsRegistration[subjectid].inputs.metric =                   ['Mattes',        'Mattes',            'CC']
-                    AtlasToSubjectantsRegistration[subjectid].inputs.sampling_strategy =        ['Regular',       'Regular',           None]
-                    AtlasToSubjectantsRegistration[subjectid].inputs.sampling_percentage =      [0.1,              0.1,                1.0]
-                    AtlasToSubjectantsRegistration[subjectid].inputs.metric_weight =            [1.0,              1.0,                1.0]
-                    AtlasToSubjectantsRegistration[subjectid].inputs.radius_or_number_of_bins = [32,               32,                 4]
-                    AtlasToSubjectantsRegistration[subjectid].inputs.number_of_iterations =     [[2000,2000,2000], [1000, 1000, 1000], [10000,500,500,200]]
-                    AtlasToSubjectantsRegistration[subjectid].inputs.convergence_threshold =    [1e-9,             1e-9,               1e-9]
-                    AtlasToSubjectantsRegistration[subjectid].inputs.convergence_window_size =  [15,               15,                 15]
-                    AtlasToSubjectantsRegistration[subjectid].inputs.use_histogram_matching =   [True,             True,               True]
-                    AtlasToSubjectantsRegistration[subjectid].inputs.shrink_factors =           [[4,2,1],          [4,2,1],            [6,4,2,1]]
-                    AtlasToSubjectantsRegistration[subjectid].inputs.smoothing_sigmas =         [[4,2,0],          [4,2,0],            [6,4,2,0]]
-                    AtlasToSubjectantsRegistration[subjectid].inputs.use_estimate_learning_rate_once = [False,     False,              False]
+                    AtlasToSubjectantsRegistration[subjectid].inputs.transforms =               ["Affine",            "SyN"]
+                    AtlasToSubjectantsRegistration[subjectid].inputs.transform_parameters =     [[0.1],               [0.15,3.0,0.0]]
+                    AtlasToSubjectantsRegistration[subjectid].inputs.metric =                   ['Mattes',            'CC']
+                    AtlasToSubjectantsRegistration[subjectid].inputs.sampling_strategy =        ['Regular',           None]
+                    AtlasToSubjectantsRegistration[subjectid].inputs.sampling_percentage =      [ 0.1,                1.0]
+                    AtlasToSubjectantsRegistration[subjectid].inputs.metric_weight =            [ 1.0,                1.0]
+                    AtlasToSubjectantsRegistration[subjectid].inputs.radius_or_number_of_bins = [ 32,                 4]
+                    AtlasToSubjectantsRegistration[subjectid].inputs.number_of_iterations =     [ [1000, 1000, 1000], [10000,500,500,200]]
+                    AtlasToSubjectantsRegistration[subjectid].inputs.convergence_threshold =    [ 1e-9,               1e-9]
+                    AtlasToSubjectantsRegistration[subjectid].inputs.convergence_window_size =  [ 15,                 15]
+                    AtlasToSubjectantsRegistration[subjectid].inputs.use_histogram_matching =   [ True,               True]
+                    AtlasToSubjectantsRegistration[subjectid].inputs.shrink_factors =           [ [4,2,1],            [6,4,2,1]]
+                    AtlasToSubjectantsRegistration[subjectid].inputs.smoothing_sigmas =         [ [4,2,0],            [6,4,2,0]]
+                    AtlasToSubjectantsRegistration[subjectid].inputs.use_estimate_learning_rate_once = [False,              False]
                     AtlasToSubjectantsRegistration[subjectid].inputs.write_composite_transform=True
+                    AtlasToSubjectantsRegistration[subjectid].inputs.collapse_output_transforms=True
                     AtlasToSubjectantsRegistration[subjectid].inputs.output_transform_prefix = 'AtlasToSubject_'
                     AtlasToSubjectantsRegistration[subjectid].inputs.winsorize_lower_quantile = 0.025
                     AtlasToSubjectantsRegistration[subjectid].inputs.winsorize_upper_quantile = 0.975
@@ -704,11 +697,11 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                     AtlasToSubjectantsRegistration[subjectid].inputs.output_warped_image = 'atlas2subject.nii.gz'
                     AtlasToSubjectantsRegistration[subjectid].inputs.output_inverse_warped_image = 'subject2atlas.nii.gz'
 
-                    baw200.connect(BAtlas[subjectid],'template_t1',AtlasToSubjectantsRegistration[subjectid], 'moving_image')
                     baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'outputspec.t1_average', AtlasToSubjectantsRegistration[subjectid], 'fixed_image')
+                    baw200.connect(BAtlas[subjectid],'template_t1',AtlasToSubjectantsRegistration[subjectid], 'moving_image')
+                    baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'outputspec.LMIatlasToSubjectTransform',AtlasToSubjectantsRegistration[subjectid],'initial_moving_transform')
                     #baw200.connect(BAtlas[subjectid],'template_t1_clipped',AtlasToSubjectantsRegistration[subjectid], 'moving_image')
                     #baw200.connect(ClipT1ImageWithBrainMaskNode[sessionid], 'clipped_file', AtlasToSubjectantsRegistration[subjectid], 'fixed_image')
-                    # To be tested baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'outputspec.LMIatlasToSubjectTransform',AtlasToSubjectantsRegistration[subjectid],'initial_moving_transform')
 
                 global_AllT1s=ExperimentDatabase.getFilenamesByScantype(sessionid,['T1-30','T1-15'])
                 global_AllT2s=ExperimentDatabase.getFilenamesByScantype(sessionid,['T2-30','T2-15'])

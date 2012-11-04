@@ -86,10 +86,7 @@ def main(argv=None):
                        help='The path to the file that describes the entire experiment')
     parser.add_argument('--doshort', action='store', dest='doshort', default=False, help='If not present, do long')
     parser.add_argument('--version', action='version', version='%(prog)s 1.0')
-    #parser.add_argument('-v', action='store_false', dest='verbose', default=True,
-    #                    help='If not present, prints the locations')
     input_arguments = parser.parse_args()
-
 
     expConfig = ConfigParser.ConfigParser()
     expConfig.read(input_arguments.ExperimentConfig)
@@ -106,8 +103,32 @@ def main(argv=None):
     PYTHON_AUX_PATHS=PYTHON_AUX_PATHS.split(':')
     PYTHON_AUX_PATHS.extend(sys.path)
     sys.path=PYTHON_AUX_PATHS
+    ######################################################################################
+    ###### Now ensure that all the required packages can be read in from this custom path
+    #\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
     #print sys.path
+    from nipype import config ## NOTE:  This needs to occur AFTER the PYTHON_AUX_PATHS has been modified
+    config.enable_debug_mode() ## NOTE:  This needs to occur AFTER the PYTHON_AUX_PATHS has been modified
+    ##############################################################################
+    from nipype.interfaces.base import CommandLine, CommandLineInputSpec, TraitedSpec, File, Directory
+    from nipype.interfaces.base import traits, isdefined, BaseInterface
+    from nipype.interfaces.utility import Merge, Split, Function, Rename, IdentityInterface
+    import nipype.interfaces.io as nio   # Data i/o
+    import nipype.pipeline.engine as pe  # pypeline engine
+    from nipype.interfaces.freesurfer import ReconAll
+    
+
+    from nipype.utils.misc import package_check
+    #package_check('nipype', '5.4', 'tutorial1') ## HACK: Check nipype version
+    package_check('numpy', '1.3', 'tutorial1')
+    package_check('scipy', '0.7', 'tutorial1')
+    package_check('networkx', '1.0', 'tutorial1')
+    package_check('IPython', '0.10', 'tutorial1')
+
+    ## Check to ensure that SimpleITK can be found
     import SimpleITK as sitk
+    #\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+    #####################################################################################
     #     Prepend the shell environment search paths
     PROGRAM_PATHS=expConfig.get(input_arguments.processingEnvironment,'PROGRAM_PATHS')
     PROGRAM_PATHS=PROGRAM_PATHS.split(':')
@@ -193,9 +214,6 @@ def main(argv=None):
         sys.exit(-1)
 
     print "Configuring Pipeline"
-    from nipype import config ## NOTE:  This needs to occur AFTER the PYTHON_AUX_PATHS has been modified
-    config.enable_debug_mode() ## NOTE:  This needs to occur AFTER the PYTHON_AUX_PATHS has been modified
-
     import SessionDB
     subjectDatabaseFile=os.path.join( ExperimentBaseDirectoryCache,'InternalWorkflowSubjectDB.db')
     subject_list=input_arguments.subject.split(',')
@@ -220,6 +238,7 @@ def main(argv=None):
     print JOB_SCRIPT
 
     import WorkupT1T2 ## NOTE:  This needs to occur AFTER the PYTHON_AUX_PATHS has been modified
+    print "TESTER"
     import ShortWorkupT1T2
     for subjectid in ExperimentDatabase.getAllSubjects():
         if input_arguments.doshort:

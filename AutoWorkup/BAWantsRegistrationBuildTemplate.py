@@ -188,9 +188,7 @@ def BAWantsRegistrationTemplateBuildSingleIterationWF(iterationPhasePrefix=''):
     ### NOTE MAP NODE! warp each of the original images to the provided fixed_image as the template
     BeginANTS=pe.MapNode(interface=Registration(), name = 'BeginANTS', iterfield=['moving_image'])
     BeginANTS.inputs.dimension = 3
-    """ This is the recommended set of parameters, but the behavior of the template builder assumes a 2 stage
-        transform where the first stage MUST be an Affine transform, and the second stage MUST be
-        a warp.
+    """ This is the recommended set of parameters from the ANTS developers """
     BeginANTS.inputs.output_transform_prefix = str(iterationPhasePrefix)+'_tfm'
     BeginANTS.inputs.transforms =               ["Rigid",         "Affine",            "SyN"]
     BeginANTS.inputs.transform_parameters =     [[0.1],           [0.1],               [0.15,3.0,0.0]]
@@ -207,34 +205,9 @@ def BAWantsRegistrationTemplateBuildSingleIterationWF(iterationPhasePrefix=''):
     BeginANTS.inputs.smoothing_sigmas =         [[4,2,0],          [4,2,0],            [6,4,2,0]]
     BeginANTS.inputs.use_estimate_learning_rate_once = [False,     False,              False]
     BeginANTS.inputs.write_composite_transform=True
-    #BeginANTS.inputs.output_warped_image = 'atlas2subject.nii.gz'
-    #BeginANTS.inputs.output_inverse_warped_image = 'subject2atlas.nii.gz'
-    """
-    """ HACK: Until this can be made to work with many transform phases, we are going to assume
-              that all initial images are actually rigidly aligned BEFORE the template building
-              phase is started.
-    """
-    BeginANTS.inputs.output_transform_prefix = str(iterationPhasePrefix)+'_tfm'
-    BeginANTS.inputs.transforms =                      ["Affine",           "SyN"]
-    BeginANTS.inputs.transform_parameters =            [[0.1],              [0.15,3.0,0.0]]
-    BeginANTS.inputs.metric =                          ['Mattes',           'CC']
-    BeginANTS.inputs.sampling_strategy =               ['Regular',          None]
-    BeginANTS.inputs.sampling_percentage =             [0.1,                1.0]
-    BeginANTS.inputs.metric_weight =                   [1.0,                1.0]
-    BeginANTS.inputs.radius_or_number_of_bins =        [32,                 4]
-    BeginANTS.inputs.number_of_iterations =            [[1000, 1000, 1000], [10000,500,500,200]]
-    BeginANTS.inputs.convergence_threshold =           [1e-9,               1e-9]
-    BeginANTS.inputs.convergence_window_size =         [15,                 15]
-    BeginANTS.inputs.use_histogram_matching =          [True,               True]
-    BeginANTS.inputs.shrink_factors =                  [[4,2,1],            [6,4,2,1]]
-    BeginANTS.inputs.smoothing_sigmas =                [[4,2,0],            [6,4,2,0]]
-    BeginANTS.inputs.use_estimate_learning_rate_once = [False,              False]
-    BeginANTS.inputs.write_composite_transform=True
-    BeginANTS.inputs.winsorize_lower_quantile = 0.025
-    BeginANTS.inputs.winsorize_upper_quantile = 0.975
-    BeginANTS.inputs.collapse_linear_transforms_to_fixed_image_header = False
-    #BeginANTS.inputs.output_warped_image = 'atlas2subject.nii.gz'
-    #BeginANTS.inputs.output_inverse_warped_image = 'subject2atlas.nii.gz'
+    BeginANTS.inputs.collapse_output_transforms=True
+    BeginANTS.inputs.output_warped_image = 'atlas2subject.nii.gz'
+    BeginANTS.inputs.output_inverse_warped_image = 'subject2atlas.nii.gz'
 
     GetMovingImagesNode = pe.Node(interface=util.Function(function=GetMovingImages,
                                       input_names=['ListOfImagesDictionaries','registrationImageTypes','interpolationMapping'],

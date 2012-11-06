@@ -33,6 +33,10 @@
 #include "TextureMeasureFilterCLP.h"
 #include "itkCastImageFilter.h"
 #include "itkBinaryThresholdImageFilter.h"
+
+#include <iostream>
+#include <fstream>
+
 int main( int argc, char *argv[] )
 {
   PARSE_ARGS;
@@ -169,61 +173,88 @@ int main( int argc, char *argv[] )
   TextureFilterType::FeatureValueVector::ConstIterator sIt;
   TextureFilterType::FeatureNameVector::ConstIterator  nIt;
 
+  /** output file ready */
+  std::ofstream outputFileStream;
+  try
+    {
+    outputFileStream.open( outputFilename.c_str() );
+    }
+  catch( std::exception& ex )
+    {
+    std::cout << "Opening file failed: " << outputFilename << std::endl;
+    std::cout << ex.what() << std::endl;
+    exit(EXIT_FAILURE);
+    }
+
   int counter;
   for( counter = 0, mIt = means->Begin(), sIt = stds->Begin(), nIt = featureNames->Begin();
        mIt != means->End(); ++mIt, counter++, ++nIt, ++sIt )
     {
-    int name = nIt.Value();
+    int         name = nIt.Value();
+    std::string outPrefixString("Feature, ");
 
     switch( name )
       {
       case 0:
         {
-        std::cout << "Energy                  " << ",";
+        outPrefixString +=  "Energy                  ,";
         }
         break;
       case 1:
         {
-        std::cout << "Entropy                  " << ",";
+        outPrefixString +=  "Entropy                  ,";
         }
         break;
       case 2:
         {
-        std::cout << "Correlation              " << ",";
+        outPrefixString +=  "Correlation              ,";
         }
         break;
       case 3:
         {
-        std::cout << "InverseDifferenceMoment  " << ",";
+        outPrefixString +=  "InverseDifferenceMoment  ,";
         }
         break;
       case 4:
         {
-        std::cout << "Inertia                  " << ",";
+        outPrefixString +=  "Inertia                  ,";
         }
         break;
       case 5:
         {
-        std::cout << "ClusterShade             " << ",";
+        outPrefixString +=  "ClusterShade             ,";
         }
         break;
       case 6:
         {
-        std::cout << "ClusterProminence        " << ",";
+        outPrefixString +=  "ClusterProminence        ,";
         }
         break;
       case 7:
         {
-        std::cout << "HaralickCorrelation      " << ",";
+        outPrefixString +=  "HaralickCorrelation      ,";
         }
         break;
       default:
-        std::cout << "Unknown Feature          " << ",";
+        outPrefixString +=  "Unknown Feature          ,";
       }
-    std::cout
-      << mIt.Value() << ","
-      << sIt.Value() << std::endl;
+    outPrefixString +=  "Mean,";
+    outputFileStream << outPrefixString;
+    std::cout << outPrefixString;
+
+    outputFileStream << mIt.Value();
+    std::cout << mIt.Value();
+
+    outputFileStream << ", std, ";
+    std::cout << ", std, ";
+
+    outputFileStream << sIt.Value();
+    std::cout << sIt.Value();
+
+    outputFileStream << "\n";
+    std::cout << "\n";
     }
 
+  outputFileStream.close();
   return 0;
 }

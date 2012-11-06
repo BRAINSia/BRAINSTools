@@ -42,6 +42,13 @@ The CannySegmentationLevelSet is commonly used to refine a manually generated ma
         <default>1</default>
         <channel>input</channel>
     </float>
+    <file>
+        <name>outputFilename</name>
+        <longflag>outputFilename</longflag>
+        <label>The output csv file name for computed textures</label>
+        <default>output.csv</default>
+        <channel>output</channel>
+    </file>
 
   </parameters>
 </executable>

@@ -4,8 +4,8 @@
 #include "BRAINSCutDataHandler.h"
 #include "FeatureInputVector.h"
 
-typedef itk::Image<unsigned char, DIMENSION> BinaryImageType;
-typedef BinaryImageType::Pointer             BinaryImagePointer;
+typedef itk::Image<unsigned char, DIMENSION> LabelImageType;
+typedef LabelImageType::Pointer              LabelImagePointerType;
 
 class BRAINSCutApplyModel
 {
@@ -32,19 +32,29 @@ public:
 
   void ReadRandomForestModelFile();
 
-  BinaryImagePointer PostProcessingANN( std::string continuousFilename, scalarType threshold );
+  LabelImagePointerType PostProcessingANN( std::string continuousFilename, scalarType threshold );
 
-  BinaryImagePointer PostProcessingRF( std::string labelImageFilename );
+  LabelImagePointerType PostProcessingRF( LabelImagePointerType& labelImage );
 
-  BinaryImagePointer ThresholdImageAtLower( WorkingImagePointer& image, scalarType thresholdValue );
+  LabelImagePointerType CombineLabel( LabelImagePointerType& resultLabel, LabelImagePointerType& currentLabel,
+                                      const unsigned char binaryToLabelValue = 0 );
 
-  BinaryImagePointer ThresholdImageAtUpper( WorkingImagePointer& image, scalarType thresholdValue );
+  LabelImagePointerType AmbiguousCountLabel( LabelImagePointerType& resultLabel, LabelImagePointerType& combinedLabel,
+                                             LabelImagePointerType& currentLabel );
 
-  BinaryImagePointer ExtractLabel( BinaryImagePointer& image, unsigned char thresholdValue );
+  LabelImagePointerType ThresholdImageAtLower( WorkingImagePointer& image, scalarType thresholdValue );
 
-  BinaryImagePointer GetOneConnectedRegion( BinaryImagePointer& image );
+  LabelImagePointerType ThresholdImageAtUpper( WorkingImagePointer& image, scalarType thresholdValue );
 
-  BinaryImagePointer FillHole( BinaryImagePointer& mask);
+  LabelImagePointerType ExtractLabel( const LabelImagePointerType& image, unsigned char thresholdValue );
+
+  LabelImagePointerType GetOneConnectedRegion( LabelImagePointerType& image );
+
+  LabelImagePointerType FillHole( LabelImagePointerType& mask);
+
+  LabelImagePointerType Closing( LabelImagePointerType& mask);
+
+  void WriteLabelMapToBinaryImages( const DataSet& subject, const LabelImagePointerType& labelMapImage );
 
 private:
   BRAINSCutDataHandler*                        m_myDataHandler;
@@ -82,11 +92,13 @@ private:
                                                                const std::string imageFilename,
                                                                const WorkingPixelType labelValue = HundredPercentValue);
 
-  inline std::string GetSubjectOutputDirectory( DataSet& subject);
+  inline std::string GetSubjectOutputDirectory( const DataSet& subject);
 
-  inline std::string GetContinuousPredictionFilename( DataSet& subject, std::string currentROIName);
+  inline std::string GetLabelMapFilename( const DataSet& subject );
 
-  inline std::string GetROIVolumeName( DataSet& subject, std::string currentROIName);
+  inline std::string GetContinuousPredictionFilename( const DataSet& subject, const std::string currentROIName);
+
+  inline std::string GetROIVolumeName( const DataSet& subject, const std::string currentROIName);
 };
 
 #endif

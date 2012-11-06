@@ -39,8 +39,8 @@ class ITK_EXPORT NodeVectorJacobianCalculator :
   public         FunctionBase<typename TInputMesh::PointIdentifier,
                               Matrix<
                                 typename NumericTraits<typename TVectorContainer::Element::ValueType>::RealType,
-                                ::itk::GetMeshDimension<TInputMesh>::PointDimension,
-                                ::itk::GetMeshDimension<TInputMesh>::PointDimension> >
+                                TInputMesh::PointDimension,
+                                TInputMesh::PointDimension> >
 {
 public:
   /** Standard class typedefs. */
@@ -48,8 +48,8 @@ public:
   typedef FunctionBase<typename TInputMesh::PointIdentifier,
                        Matrix<
                          typename NumericTraits<typename TVectorContainer::Element::ValueType>::RealType,
-                         ::itk::GetMeshDimension<TInputMesh>::PointDimension,
-                         ::itk::GetMeshDimension<TInputMesh>::PointDimension> >  Superclass;
+                         TInputMesh::PointDimension,
+                         TInputMesh::PointDimension> >  Superclass;
   typedef SmartPointer<Self>       Pointer;
   typedef SmartPointer<const Self> ConstPointer;
 
@@ -61,7 +61,7 @@ public:
 
   /** Dimension underlying input mesh. */
   itkStaticConstMacro(MeshDimension, unsigned int,
-                      ::itk::GetMeshDimension<TInputMesh>::PointDimension );
+                      TInputMesh::PointDimension );
 
   /** Point typedef support. */
   typedef TInputMesh                              InputMeshType;

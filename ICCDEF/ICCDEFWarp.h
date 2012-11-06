@@ -54,15 +54,14 @@ public:
                       TImage::ImageDimension);
 
   /** Type to hold the number of checker boxes per dimension */
-  typedef FixedArray<unsigned int, ::itk::GetImageDimension<
-                       TImage>::ImageDimension> PatternArrayType;
+  typedef FixedArray<unsigned int, TImage::ImageDimension> PatternArrayType;
 
   typedef typename ImageType::PixelType PixelType;
   typedef typename ImageType::IndexType IndexType;
   typedef typename ImageType::SizeType  SizeType;
 
   /** ShrinkFactors type. */
-  typedef FixedArray<unsigned int, itk::GetImageDimension<TImage>::ImageDimension> ShrinkFactorsType;
+  typedef FixedArray<unsigned int, TImage::ImageDimension> ShrinkFactorsType;
 
   /** IterationArray type. */
   typedef Array<unsigned int> IterationsArrayType;

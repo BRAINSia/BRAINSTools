@@ -75,8 +75,7 @@ public:
   itkStaticConstMacro(ImageDimension, unsigned int, TRealImage::ImageDimension);
 
   /** Type to hold the number of checker boxes per dimension */
-  typedef FixedArray<unsigned int,
-                     ::itk::GetImageDimension<TRealImage>::ImageDimension>  PatternArrayType;
+  typedef FixedArray<unsigned int, TRealImage::ImageDimension> PatternArrayType;
 
   /** Set Checker pattern */
   itkSetMacro(CheckerBoardPattern, PatternArrayType);

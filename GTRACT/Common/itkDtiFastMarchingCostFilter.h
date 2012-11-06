@@ -47,7 +47,7 @@ template <
   class TTensorImage = Image<itk::DiffusionTensor3D<float>, 3> >
 // class TTensorImage=
 //
-// Image<itk::DiffusionTensor3D<float>,::itk::GetImageDimension<TLevelSet>::ImageDimension>
+// Image<itk::DiffusionTensor3D<float>,TLevelSet::ImageDimension>
 // >
 
 class DtiFastMarchingCostFilter :

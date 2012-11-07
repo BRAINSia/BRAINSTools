@@ -21,9 +21,7 @@ class UpdateAutoWorkup():
                 session = row[2]
                 newImagesList = NewImageDict.getNewImagesList(project, subject, session)
                 scanDict = eval(row[3])
-                if newImagesList == []:
-                    pass
-                else:
+                if newImagesList != []:
                     if inputArguments.modality not in scanDict.keys():
                         scanDict[inputArguments.modality] = newImagesList
                     else:
@@ -46,7 +44,7 @@ class MakeNewImageDict():
         self.commandList = list()
         self.dbName = 'NewImages.db'
         self.dbTableName = 'NewImages'
-        self.newImagesFilepath = 'DWI_Images.list'
+        self.newImagesFilepath = '{}_Images.list'.format(inputArguments.modality)
         self._makeNewImagesFile()
         self._makeDB()
         self._createCommandList()

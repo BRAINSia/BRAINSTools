@@ -102,7 +102,7 @@ simpleSynReg( typename FixedImageType::Pointer & fixedImage,
     }
   regHelper->SetMovingInitialTransform( compositeInitialTransform );
   regHelper->SetLogStream(std::cout);
-  if( regHelper->DoRegistration() == EXIT_FAILURE )
+  if( regHelper->DoRegistration() != EXIT_SUCCESS )
     {
     ants::antscout << "FATAL ERROR: REGISTRATION PROCESS WAS UNSUCCESSFUL" << std::endl;
     ants::antscout << "FATAL ERROR: REGISTRATION PROCESS WAS UNSUCCESSFUL" << std::endl;

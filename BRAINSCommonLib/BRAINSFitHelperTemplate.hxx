@@ -364,6 +364,7 @@ DoCenteredInitialization( typename FixedImageType::Pointer & orientedFixedVolume
                 {
                 std::cout << "Caught an ITK exception: " << std::endl;
                 std::cout << err << " " << __FILE__ << " " << __LINE__ << std::endl;
+                throw err;
                 }
               char filename[300];
               sprintf(filename, "%05.2f_%05.2f_%05.2f.nii.gz",
@@ -384,7 +385,7 @@ DoCenteredInitialization( typename FixedImageType::Pointer & orientedFixedVolume
                   {
                   std::cout << "Exception Object caught: " << std::endl;
                   std::cout << err << std::endl;
-                  throw;
+                  throw err;
                   }
                 }
               }
@@ -438,6 +439,7 @@ DoCenteredInitialization( typename FixedImageType::Pointer & orientedFixedVolume
         {
         std::cout << "Caught an ITK exception: " << std::endl;
         std::cout << err << " " << __FILE__ << " " << __LINE__ << std::endl;
+        throw err;
         }
       char filename[300];
       sprintf(filename, "FINAL_%05.2f_%05.2f_%05.2f.nii.gz",
@@ -459,7 +461,7 @@ DoCenteredInitialization( typename FixedImageType::Pointer & orientedFixedVolume
           {
           std::cout << "Exception Object caught: " << std::endl;
           std::cout << err << std::endl;
-          throw;
+          throw err;
           }
         }
       }

@@ -7,7 +7,7 @@ set(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED 1)
 
 set(proj ANTS)
 set(${proj}_GIT_REPOSITORY "git://github.com/BRAINSia/ANTS.git")
-set(${proj}_GIT_TAG "ac03f63263ec9b9d7497c2f231f8b958f0a97c1e") #Fix -b flag failures
+set(${proj}_GIT_TAG "3975a50d212401dd1dff334fbaef368c8e0f2208") # Fixed bad ANTs API
 
 set(${proj}_DEPENDENCIES ${ITK_EXTERNAL_NAME} SlicerExecutionModel)
 

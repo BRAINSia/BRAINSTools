@@ -116,7 +116,7 @@ def main(argv=None):
     import nipype.interfaces.io as nio   # Data i/o
     import nipype.pipeline.engine as pe  # pypeline engine
     from nipype.interfaces.freesurfer import ReconAll
-    
+
 
     from nipype.utils.misc import package_check
     #package_check('nipype', '5.4', 'tutorial1') ## HACK: Check nipype version
@@ -161,17 +161,21 @@ def main(argv=None):
     else:
         print("Atlas already exists in experiment cache directory: {0}".format(CACHE_ATLASPATH))
     #  Just to be safe, copy the model file as well
-    BCDMODELPATH=expConfig.get(input_arguments.processingEnvironment,'BCDMODELPATH')
-    CACHE_BCDMODELPATH=os.path.join(ExperimentBaseDirectoryCache,os.path.basename(BCDMODELPATH))
+    BCDMODELPATH = expConfig.get(input_arguments.processingEnvironment, 'BCDMODELPATH')
+    CACHE_BCDMODELPATH = os.path.join(ExperimentBaseDirectoryCache, os.path.basename(BCDMODELPATH))
     from distutils.file_util import copy_file
-    for BCDModelFiles in ['LLSModel-2ndVersion.h5','T1-2ndVersion.mdl']:
-        orig=os.path.join(BCDMODELPATH,BCDModelFiles)
-        new=os.path.join(CACHE_BCDMODELPATH,BCDModelFiles)
+    for BCDModelFile in ['LLSModel-2ndVersion.h5', 'T1-2ndVersion.mdl']:
+        if BCDModelFile[-2:] == 'h5':
+            BCDModelFile = os.path.join('Transforms_h5', BCDModelFile)
+            if not os.path.exists(os.path.join(CACHE_BCDMODELPATH, 'Transforms_h5')):
+            os.mkdir(os.path.join(CACHE_BCDMODELPATH, 'Transforms_h5'))
+        orig = os.path.join(BCDMODELPATH, BCDModelFile)
+        new = os.path.join(CACHE_BCDMODELPATH, BCDModelFiles)
         if not os.path.exists(CACHE_BCDMODELPATH):
             os.mkdir(CACHE_BCDMODELPATH)
         if not os.path.exists(new):
             print("Copying BCD Model file to cache directory: {0}".format(new))
-            copy_file(  orig, new,preserve_mode=1, preserve_times=1)
+            copy_file(orig, new, preserve_mode=1, preserve_times=1)
         else:
             print("BCD Model exists in cache directory: {0}".format(new))
 

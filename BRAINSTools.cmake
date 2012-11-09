@@ -119,4 +119,10 @@ foreach(modulename ${brains_modulenames})
   endif()
 endforeach()
 
+# Slicer builds DWIConvert itself
+if(NOT INTEGRATE_WITH_SLICER AND USE_DWIConvert)
+  add_subdirectory(${DWIConvert_SOURCE_DIR}
+    ${CMAKE_CURRENT_BINARY_DIR}/DWIConvert)
+endif()
+
 ExternalData_Add_Target( ${PROJECT_NAME}FetchData )  # Name of data management target

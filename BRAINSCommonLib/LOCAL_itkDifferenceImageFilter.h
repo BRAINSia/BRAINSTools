@@ -132,23 +132,7 @@ private:
 };
 } // end namespace itk
 
-// Define instantiation macro for this template.
-#define ITK_TEMPLATE_LOCAL_DifferenceImageFilter(_, EXPORT, TypeX, TypeY)     \
-  namespace itk                                                         \
-  {                                                                     \
-  _( 2 ( class EXPORT LOCAL_DifferenceImageFilter<ITK_TEMPLATE_2 TypeX> ) ) \
-  namespace Templates                                                   \
-  {                                                                     \
-  typedef LOCAL_DifferenceImageFilter<ITK_TEMPLATE_2 TypeX>                 \
-    LOCAL_DifferenceImageFilter##TypeY;                                       \
-  }                                                                     \
-  }
-
-#if ITK_TEMPLATE_EXPLICIT
-#include "Templates/LOCAL_itkDifferenceImageFilter+-.h"
-#endif
-
-#if ITK_TEMPLATE_TXX
+#ifndef ITK_MANUAL_INSTANTIATION
 #include "LOCAL_itkDifferenceImageFilter.hxx"
 #endif
 

@@ -4,9 +4,9 @@
   <title>BRAINS Transform Convert</title>
   <description>Convert ITK transforms to higher order transforms</description>
   <version>1.0</version>
-  <documentation-url></documentation-url>
+  <documentation-url>A utility to convert between transform file formats.</documentation-url>
   <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt </license>
-  <contributor>Hans Johnson,Kent Williams</contributor>
+  <contributor>Hans J. Johnson,Kent Williams</contributor>
   <acknowledgements>
   </acknowledgements>
 
@@ -14,17 +14,19 @@
     <label>IO</label>
     <description>Input/output parameters</description>
     <transform>
+      <channel>input</channel>
       <name>inputTransform</name>
       <label>Transform File Name To Convert</label>
       <description></description>
       <longflag>--inputTransform</longflag>
     </transform>
-    <transform>
-      <name>outputTransform</name>
-      <label>Transform File Name To Save ConvertedTransform</label>
-      <description></description>
-      <longflag>--outputTransform</longflag>
-    </transform>
+    <image>
+      <channel>input</channel>
+      <name>referenceVolume</name>
+      <label>Reference image</label>
+      <longflag>--referenceVolume</longflag>
+    </image>
+
     <string-enumeration>
       <name>outputTransformType</name>
       <longflag>--outputTransformType</longflag>
@@ -39,17 +41,18 @@
     </string-enumeration>
 
     <image>
-      <name>referenceVolume</name>
-      <label>Reference image</label>
-
-      <longflag>--referenceVolume</longflag>
-    </image>
-
-    <image>
+      <channel>output</channel>
       <name>displacementVolume</name>
       <label>Output displacement field</label>
       <longflag>--displacementVolume</longflag>
     </image>
+    <transform>
+      <channel>output</channel>
+      <name>outputTransform</name>
+      <label>Transform File Name To Save ConvertedTransform</label>
+      <description></description>
+      <longflag>--outputTransform</longflag>
+    </transform>
 
   </parameters>
 

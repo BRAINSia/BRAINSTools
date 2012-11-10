@@ -8,7 +8,8 @@ import nipype.pipeline.engine as pe  # pypeline engine
 
 import os
 
-from BRAINSTools import *
+#from BRAINSTools import *
+from SEMTools import *
 
 """
     from WorkupT1T2LandmarkInitialization import CreateLandmarkInitializeWorkflow

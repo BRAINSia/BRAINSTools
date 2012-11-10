@@ -142,9 +142,11 @@ int main(int argc, char *argv[])
   /* Will Need some modification */
   vtkRCalculatorFilter* rcf = vtkRCalculatorFilter::New();
   rcf->SetInput(mt2->GetOutput());
-  rcf->PutTable(“x”);
+  rcf->PutTable("x
+          ");
   rcf->SetScriptFname( inputRscript.c_str() );
-  rcf->GetTable(“m”);
+  rcf->GetTable("m
+          ");
   rcf->GetOutput()
 
 

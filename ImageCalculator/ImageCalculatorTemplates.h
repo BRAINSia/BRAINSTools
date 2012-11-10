@@ -137,7 +137,7 @@ DoGaussian( typename ImageType::Pointer input,  const double sigma )
 
   typedef itk::DiscreteGaussianImageFilter<InternalImageType, InternalImageType> FilterType;
   /*============Filter the inputVolume using DiscreteGaussianImageFilter
-   *   Include setting the x and y directions of the input images and setting order·
+   *   Include setting the x and y directions of the input images and setting order
    *     to be zero, and including normalizing Gaussian filter==================*/
   typename FilterType::Pointer filter = FilterType::New();
   filter->SetVariance( sigma );

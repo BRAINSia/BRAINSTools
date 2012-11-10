@@ -29,7 +29,7 @@ namespace itk
  * transforms before hand if it is possible, and then we only need to resample the
  * input image with the final composed transform once.
  *
- * Here we present a more compact alternative – all information is stored in the header
+ * Here we present a more compact alternative, all information is stored in the header
  * of the image and there is no need to maintain the final transform any longer. ITK
  * image class has innate support for doing this.
  *

@@ -4,7 +4,7 @@
   <title>Canny Edge Detection</title>
 
   <description>Get the distance from a voxel to the nearest voxel of a given tissue type.</description>
-  <version>0.1.0.$Revision: 1 $(alpha)</version>
+  <version>0.1.0.(alpha)</version>
   <documentation-url>http:://www.na-mic.org/</documentation-url>
   <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt </license>
   <contributor>This tool was written by Hans J. Johnson.</contributor>
@@ -20,10 +20,6 @@
       <label>Input Tissue Label Volume</label>
       <channel>input</channel>
     </image>
-
-      float variance = 2.0;
-        float upperThreshold = 0.0;
-          float lowerThreshold = 0.0;
   <float>
     <name>variance</name>
     <longflag>--variance</longflag>
@@ -35,7 +31,7 @@
   <float>
     <name>upperThreshold</name>
     <longflag>--upperThreshold</longflag>
-    <description>Threshold is the lowest allowed value in the output image.  Its data type is· the same as the data type of the output image. Any values below the Threshold level will be replaced with the OutsideValue parameter value, whose default is zero.  </description>
+    <description>Threshold is the lowest allowed value in the output image.  Its data type is the same as the data type of the output image. Any values below the Threshold level will be replaced with the OutsideValue parameter value, whose default is zero.  </description>
     <label>Canny Lower Threshold Parameter</label>
     <channel>input</channel>
     <default>0.0</default>
@@ -43,7 +39,7 @@
   <float>
     <name>lowerThreshold</name>
     <longflag>--lowerThreshold</longflag>
-    <description>Threshold is the lowest allowed value in the output image.  Its data type is· the same as the data type of the output image. Any values below the Threshold level will be replaced with the OutsideValue parameter value, whose default is zero.  </description>
+    <description>Threshold is the lowest allowed value in the output image.  Its data type is the same as the data type of the output image. Any values below the Threshold level will be replaced with the OutsideValue parameter value, whose default is zero.  </description>
     <label>Canny Lower Threshold Parameter</label>
     <channel>input</channel>
     <default>1e10</default>

@@ -167,10 +167,9 @@ def main(argv=None):
     for BCDModelFile in ['LLSModel-2ndVersion.h5', 'T1-2ndVersion.mdl']:
         if BCDModelFile[-2:] == 'h5':
             BCDModelFile = os.path.join('Transforms_h5', BCDModelFile)
-            if not os.path.exists(os.path.join(CACHE_BCDMODELPATH, 'Transforms_h5')):
-            os.mkdir(os.path.join(CACHE_BCDMODELPATH, 'Transforms_h5'))
         orig = os.path.join(BCDMODELPATH, BCDModelFile)
-        new = os.path.join(CACHE_BCDMODELPATH, BCDModelFiles)
+        new = os.path.join(CACHE_BCDMODELPATH, BCDModelFile)
+        new = new.replace('Transforms_h5/','') # Flatten back out, even if you needed to get files from subdirectory.
         if not os.path.exists(CACHE_BCDMODELPATH):
             os.mkdir(CACHE_BCDMODELPATH)
         if not os.path.exists(new):

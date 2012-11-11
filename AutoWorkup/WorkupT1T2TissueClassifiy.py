@@ -6,7 +6,7 @@ from nipype.interfaces.utility import Merge, Split, Function, Rename, IdentityIn
 import nipype.interfaces.io as nio   # Data i/o
 import nipype.pipeline.engine as pe  # pypeline engine
 
-from BRAINSTools.BRAINSABCext import *
+from BRAINSABCext import *
 """
     from WorkupT1T2TissueClassify import CreateTissueClassifyWorkflow
     myLocalTCWF= CreateTissueClassifyWorkflow("TissueClassify")

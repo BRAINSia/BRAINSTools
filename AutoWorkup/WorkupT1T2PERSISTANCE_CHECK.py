@@ -6,7 +6,7 @@ from nipype.interfaces.utility import Merge, Split, Function, Rename, IdentityIn
 import nipype.interfaces.io as nio   # Data i/o
 import nipype.pipeline.engine as pe  # pypeline engine
 
-from BRAINSTools.BRAINSFit import *
+from SEMTools import *
 
 """
     from WorkupT1T2PERSISTANCE_CHECK import CreatePERSISTANCE_CHECKWorkflow

@@ -38,7 +38,7 @@ package_check('scipy', '0.7', 'tutorial1')
 package_check('networkx', '1.0', 'tutorial1')
 package_check('IPython', '0.10', 'tutorial1')
 
-from BRAINSTools import *
+from SEMTools import *
 
 from WorkupT1T2AtlasNode import MakeAtlasNode
 

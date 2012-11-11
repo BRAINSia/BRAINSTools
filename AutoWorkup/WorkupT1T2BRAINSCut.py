@@ -6,8 +6,8 @@ from nipype.interfaces.utility import Merge, Split, Function, Rename, IdentityIn
 import nipype.interfaces.io as nio   # Data i/o
 import nipype.pipeline.engine as pe  # pypeline engine
 
-from BRAINSTools import *
-from BRAINSTools.RF12BRAINSCutWrapper import RF12BRAINSCutWrapper
+from SEMTools import *
+from RF12BRAINSCutWrapper import RF12BRAINSCutWrapper
 
 from PipeLineFunctionHelpers import getListIndex
 

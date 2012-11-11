@@ -8,11 +8,7 @@ import nipype.pipeline.engine as pe  # pypeline engine
 
 import os
 
-from BRAINSTools import *
-
-from BRAINSTools.BTants.antsRegistration import *
-
-from BRAINSTools.BTants.ants import *
+from SEMTools import *
 
 """
     from WorkupT1T2ANTS import CreateANTSRegistrationWorkflow

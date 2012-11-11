@@ -8,7 +8,6 @@ import nipype.pipeline.engine as pe  # pypeline engine
 
 import os
 
-#from BRAINSTools import *
 from SEMTools import *
 
 """

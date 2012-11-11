@@ -134,7 +134,7 @@ _NIPYPE_CUSTOM_PATH=%(_BRAINSTOOLS_BUILD_PATH)s/NIPYPE
 PYTHON_AUX_PATHS=%(_NIPYPE_CUSTOM_PATH)s:%(_BRAINSTOOLS_SCRIPTS)s:%(_SIMPLE_ITK_PYTHON_PATH)s
 # Where to find BRAINSTools
 # Paths that need to be configured to find tools needed to run this workflow
-PROGRAM_PATHS=%(_BRAINSTOOLS_BUILD_PATH)s/lib:%(_BRAINSTOOLS_BUILD_PATH)s/bin:%(_BRAINSTOOLS_SCRIPTS)s/BRAINSTools:%(_FREESURFER_PATH_EXT)s:%(_GRAPHVIZ_BIN_DIR)s
+PROGRAM_PATHS=%(_BRAINSTOOLS_BUILD_PATH)s/lib:%(_BRAINSTOOLS_BUILD_PATH)s/bin:%(_BRAINSTOOLS_SCRIPTS)s:%(_FREESURFER_PATH_EXT)s:%(_GRAPHVIZ_BIN_DIR)s
 # The path to the reference atlas spact to be used in this analysis by all BRAINSTools
 ATLASPATH=%(_BRAINSTOOLS_BUILD_PATH)s/ReferenceAtlas-build/Atlas/Atlas_20120830
 # The path to the model files to be used by BCD.

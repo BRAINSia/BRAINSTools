@@ -101,6 +101,7 @@ set(brains_modulenames
   BRAINSTransformConvert
   BRAINSConstellationDetector
   BRAINSABC
+  ConvertBetweenFileFormats
 )
 
 if(USE_DebugImageViewer)

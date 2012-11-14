@@ -49,6 +49,7 @@ option(USE_BRAINSCut                      "Build BRAINSCut"                     
 option(USE_BRAINSLandmarkInitializer      "Build BRAINSLandmarkInitializer"      ON)
 option(USE_ImageCalculator                "Build ImageCalculator"                ON)
 option(USE_BRAINSSnapShotWriter           "Build BRAINSSnapShotWriter"           ON)
+option(USE_ConvertBetweenFileFormats      "Build ConvertBetweenFileFormats"      ON)
 if( NOT USE_ANTS )
 option(USE_ANTS                           "Build ANTS"                           ON)
 endif()

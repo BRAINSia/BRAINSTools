@@ -10,7 +10,7 @@ target_link_libraries(ImageCalculator ${ITK_LIBRARIES} )
 add_executable(ImageGenerate ImageGenerate.cxx )
 target_link_libraries(ImageGenerate ${ITK_LIBRARIES})
 
-if(BUILD_TESTING)
+if(BUILD_TESTING AND NOT Slicer_BUILD_BRAINSTOOLS)
 
   add_executable(ImageCalculatorTests
     ImageCalculatorTests.cxx ImageCalculatorUtils.cxx

@@ -50,6 +50,6 @@ foreach(prog ${ALL_PROGS_LIST})
 endforeach()
 
 ### Add the Testing Subdirectory.
-if(BUILD_TESTING)
+if(BUILD_TESTING AND NOT Slicer_BUILD_BRAINSTOOLS)
   add_subdirectory(TestSuite)
 endif()

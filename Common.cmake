@@ -49,7 +49,9 @@ option(USE_BRAINSCut                      "Build BRAINSCut"                     
 option(USE_BRAINSLandmarkInitializer      "Build BRAINSLandmarkInitializer"      ON)
 option(USE_ImageCalculator                "Build ImageCalculator"                ON)
 option(USE_BRAINSSnapShotWriter           "Build BRAINSSnapShotWriter"           ON)
+if( NOT USE_ANTS )
 option(USE_ANTS                           "Build ANTS"                           ON)
+endif()
 
 ## These are not yet ready for prime time.
 option(USE_BRAINSContinuousClass          "Build BRAINSContinuousClass "   OFF)

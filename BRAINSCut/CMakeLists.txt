@@ -58,7 +58,7 @@ if(1) ## HACK Regina many tests are failing and needs investigation,
       ## HACK Regina some tests are segmentation faulting
   add_subdirectory(TestSuite)
 endif()
-if(BUILD_TESTING)
+if(BUILD_TESTING AND NOT Slicer_BUILD_BRAINSTOOLS)
   add_executable(TestHashKey TestHashKey.cxx)
   target_link_libraries(TestHashKey BRAINSCutCOMMONLIB)
 endif()

@@ -132,7 +132,7 @@ t2_averageList = ['t2_average_BRAINSABC.nii.gz', 't2_average_BRAINSABC.nii.gz']
                           'T2':DefaultContinuousInterpolationType,
                           'PD':DefaultContinuousInterpolationType,
                           'FL':DefaultContinuousInterpolationType,
-                          'BRAINMASK':'NearestNeighbor'
+                          'BRAINMASK':'MultiLabel'
                          }
     ## NOTE:  ALl input lists MUST have the same number of elements (even if they are null)
     for list_index in range(0,len(t1_averageList)):
@@ -655,6 +655,10 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                 FSPREP_DataSink=dict()
                 FS_DS=dict()
 
+                MergeStage2AverageImages=dict()
+                MergeStage2BinaryVolumes=dict()
+                SnapShotWriter=dict()
+
                 if 'SEGMENTATION' in WORKFLOW_COMPONENTS: ## Run the ANTS Registration from Atlas to Subject for BCut spatial priors propagation.
                     import PipeLineFunctionHelpers
 
@@ -717,7 +721,7 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                 if ( len(global_AllT2s) > 0 ): # Currently only works with multi-modal_data
                     print("HACK len(global_AllT2s) > 0 : {0}".format(len(global_AllT2s) ))
                 print("HACK")
-                if ( 'SEGMENTATION' in WORKFLOW_COMPONENTS ) and ( len(global_AllT2s) > 0 ): # Currently only works with multi-modal_data
+                if ( False ) and ( 'SEGMENTATION' in WORKFLOW_COMPONENTS ) and ( len(global_AllT2s) > 0 ): # Currently only works with multi-modal_data
                     from WorkupT1T2BRAINSCut import CreateBRAINSCutWorkflow
                     myLocalSegWF[sessionid] = CreateBRAINSCutWorkflow(projectid, subjectid, sessionid,'Segmentation',
                                                               CLUSTER_QUEUE,BAtlas[subjectid]) ##Note:  Passing in the entire BAtlas Object here!
@@ -754,34 +758,46 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                     baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputLabelImageName', SEGMENTATION_DataSink[sessionid],'Segmentations.@outputLabelImageName')
                     baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputCSVFileName', SEGMENTATION_DataSink[sessionid],'Segmentations.@outputCSVFileName')
 
-                    ## SnapShotWriter for Segmented result checking:
-                    SnapShotWriter=pe.Node( interface=BRAINSSnapShotWriter(), name="SnapShotWriter")
+                    MergeStage2BinaryVolumesName="99_MergeStage2BinaryVolumes_"+str(sessionid)
+                    MergeStage2BinaryVolumes[sessionid] = pe.Node(interface=Merge(12),
+                                          run_without_submitting=True,
+                                          name=MergeStage2BinaryVolumesName)
+                    baw200.connect(SEGMENTATION_DataSink[sessionid], 'Segmentations.@outputBinaryLeftAccumben',     MergeStage2BinaryVolumes[sessionid], 'in1')
+                    baw200.connect(SEGMENTATION_DataSink[sessionid], 'Segmentations.@outputBinaryLeftCaudate',      MergeStage2BinaryVolumes[sessionid], 'in2')
+                    baw200.connect(SEGMENTATION_DataSink[sessionid], 'Segmentations.@outputBinaryLeftPutamen',      MergeStage2BinaryVolumes[sessionid], 'in3')
+                    baw200.connect(SEGMENTATION_DataSink[sessionid], 'Segmentations.@outputBinaryLeftGlobus',       MergeStage2BinaryVolumes[sessionid], 'in4')
+                    baw200.connect(SEGMENTATION_DataSink[sessionid], 'Segmentations.@outputBinaryLeftThalamus',     MergeStage2BinaryVolumes[sessionid], 'in5')
+                    baw200.connect(SEGMENTATION_DataSink[sessionid], 'Segmentations.@outputBinaryLeftHippocampus',  MergeStage2BinaryVolumes[sessionid], 'in6')
+
+                    baw200.connect(SEGMENTATION_DataSink[sessionid], 'Segmentations.@outputBinaryRightAccumben',    MergeStage2BinaryVolumes[sessionid], 'in7')
+                    baw200.connect(SEGMENTATION_DataSink[sessionid], 'Segmentations.@outputBinaryRightCaudate',     MergeStage2BinaryVolumes[sessionid], 'in8')
+                    baw200.connect(SEGMENTATION_DataSink[sessionid], 'Segmentations.@outputBinaryRightPutamen',     MergeStage2BinaryVolumes[sessionid], 'in9')
+                    baw200.connect(SEGMENTATION_DataSink[sessionid], 'Segmentations.@outputBinaryRightGlobus',      MergeStage2BinaryVolumes[sessionid], 'in10')
+                    baw200.connect(SEGMENTATION_DataSink[sessionid], 'Segmentations.@outputBinaryRightThalamus',    MergeStage2BinaryVolumes[sessionid], 'in11')
+                    baw200.connect(SEGMENTATION_DataSink[sessionid], 'Segmentations.@outputBinaryRightHippocampus', MergeStage2BinaryVolumes[sessionid], 'in12')
+
+                    MergeStage2AverageImagesName="99_mergeAvergeStage2Images_"+str(sessionid)
+                    MergeStage2AverageImages[sessionid] = pe.Node(interface=Merge(2),
+                                          run_without_submitting=True,
+                                          name=MergeStage2AverageImagesName)
+                    baw200.connect( PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.t1_average', MergeStage2AverageImages[sessionid], 'in1')
+                    baw200.connect( PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.t2_average', MergeStage2AverageImages[sessionid], 'in2')
+
+
+                    ## SnapShotWriter[sessionid] for Segmented result checking:
+                    SnapShotWriterNodeName="99_SnapShotWriter_"+str(sessionid)
+                    SnapShotWriter[sessionid]=pe.Node( interface=BRAINSSnapShotWriter(), name=SnapShotWriterNodeName)
 
                     ## output specification
-                    SnapShotWriter.inputs.outputFilename = 'snapShot.png'
+                    SnapShotWriter[sessionid].inputs.outputFilename = 'snapShot'+str(sessionid)+'.png'
 
                     ## neccessary parameters (FIXED)
-                    SnapShotWriter.inputs.inputPlaneDirection = "2,1,1,1,1,0,0"
-                    SnapShotWriter.inputs.inputSliceToExtractInPhysicalPoint = "-3,-7,-3,5,7,22,-22"
+                    SnapShotWriter[sessionid].inputs.inputPlaneDirection = [2,1,1,1,1,0,0]
+                    SnapShotWriter[sessionid].inputs.inputSliceToExtractInPhysicalPoint = [-3,-7,-3,5,7,22,-22]
                     
-                    ## connect SnapShotWriter to the baw200 
-                    baw200.connect( PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.t1_average', SnapShotWriter, 'inputVolumes')
-                    baw200.connect( PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.t2_average', SnapShotWriter, 'inputVolumes')
-
-                    baw200.connect(SEGMENTATION_DataSink[sessionid], 'Segmentations.@outputBinaryLeftAccumben', SnapShotWriter, 'inputBinaryVolumes')
-                    baw200.connect(SEGMENTATION_DataSink[sessionid], 'Segmentations.@outputBinaryLeftCaudate', SnapShotWriter, 'inputBinaryVolumes')
-                    baw200.connect(SEGMENTATION_DataSink[sessionid], 'Segmentations.@outputBinaryLeftPutamen', SnapShotWriter, 'inputBinaryVolumes')
-                    baw200.connect(SEGMENTATION_DataSink[sessionid], 'Segmentations.@outputBinaryLeftGlobus', SnapShotWriter, 'inputBinaryVolumes')
-                    baw200.connect(SEGMENTATION_DataSink[sessionid], 'Segmentations.@outputBinaryLeftThalamus', SnapShotWriter, 'inputBinaryVolumes')
-                    baw200.connect(SEGMENTATION_DataSink[sessionid], 'Segmentations.@outputBinaryLeftHippocampus', SnapShotWriter, 'inputBinaryVolumes')
-
-                    baw200.connect(SEGMENTATION_DataSink[sessionid], 'Segmentations.@outputBinaryRightAccumben', SnapShotWriter, 'inputBinaryVolumes')
-                    baw200.connect(SEGMENTATION_DataSink[sessionid], 'Segmentations.@outputBinaryRightCaudate', SnapShotWriter, 'inputBinaryVolumes')
-                    baw200.connect(SEGMENTATION_DataSink[sessionid], 'Segmentations.@outputBinaryRightPutamen', SnapShotWriter, 'inputBinaryVolumes')
-                    baw200.connect(SEGMENTATION_DataSink[sessionid], 'Segmentations.@outputBinaryRightGlobus', SnapShotWriter, 'inputBinaryVolumes')
-                    baw200.connect(SEGMENTATION_DataSink[sessionid], 'Segmentations.@outputBinaryRightThalamus', SnapShotWriter, 'inputBinaryVolumes')
-                    baw200.connect(SEGMENTATION_DataSink[sessionid], 'Segmentations.@outputBinaryRightHippocampus', SnapShotWriter, 'inputBinaryVolumes')
-
+                    ## connect SnapShotWriter[sessionid] to the baw200 
+                    baw200.connect( MergeStage2AverageImages[sessionid], 'out', SnapShotWriter[sessionid], 'inputVolumes')
+                    baw200.connect( MergeStage2BinaryVolumes[sessionid], 'out', SnapShotWriter[sessionid], 'inputBinaryVolumes')
 
                 else:
                     print("SKIPPING SEGMENTATION PHASE FOR {0} {1} {2}, lenT2s {3}".format(projectid, subjectid, sessionid, len(global_AllT2s) ))

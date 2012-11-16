@@ -293,8 +293,11 @@ def main(argv=None):
                 print "You must specify the run environment type. [helium_all.q,helium_all.q_graph,ipl_OSX,local_4,local_12,local]"
                 print input_arguments.wfrun
                 sys.exit(-1)
-        except:
-            pass
+        except Exception,err:
+            print "ERROR: EXCEPTION CAUGHT IN RUNNING"
+            raise err
+
+        return 0
 
 if __name__ == "__main__":
     sys.exit(main())

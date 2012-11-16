@@ -124,7 +124,8 @@ def MakeOneSubWorkFlow(projectid, subjectid, sessionid,processing_phase, WORKFLO
     outputsSpec = pe.Node(interface=IdentityInterface(fields=[
             't1_average','t2_average',
             'pd_average','fl_average',
-            'posteriorImages','outputLabels',
+            'posteriorImages',
+            'outputLabels','outputHeadLabels',
             'TissueClassifyOutputDir',
             'TissueClassifyatlasToSubjectTransform',
 
@@ -177,6 +178,7 @@ def MakeOneSubWorkFlow(projectid, subjectid, sessionid,processing_phase, WORKFLO
         T1T2WorkupSingle.connect(myLocalTCWF, 'outputspec.fl_average', outputsSpec,'fl_average')
         T1T2WorkupSingle.connect(myLocalTCWF, 'outputspec.posteriorImages', outputsSpec,'posteriorImages')
         T1T2WorkupSingle.connect(myLocalTCWF, 'outputspec.outputLabels', outputsSpec,'outputLabels')
+        T1T2WorkupSingle.connect(myLocalTCWF, 'outputspec.outputHeadLabels', outputsSpec,'outputHeadLabels')
         T1T2WorkupSingle.connect(myLocalTCWF, 'outputspec.TissueClassifyOutputDir', outputsSpec,'TissueClassifyOutputDir')
         T1T2WorkupSingle.connect(myLocalTCWF, 'outputspec.atlasToSubjectTransform', outputsSpec,'TissueClassifyatlasToSubjectTransform')
 

@@ -659,6 +659,12 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                 MergeStage2BinaryVolumes=dict()
                 SnapShotWriter=dict()
 
+                MergeSessionSubjectToAtlas=dict()
+                MergeMultiLabelSessionSubjectToAtlas=dict()
+                LinearSubjectToAtlasANTsApplyTransforms=dict()
+                MultiLabelSubjectToAtlasANTsApplyTransforms=dict()
+                Subj2Atlas_DS=dict()
+
                 if 'SEGMENTATION' in WORKFLOW_COMPONENTS: ## Run the ANTS Registration from Atlas to Subject for BCut spatial priors propagation.
                     import PipeLineFunctionHelpers
 
@@ -794,10 +800,73 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                     ## neccessary parameters (FIXED)
                     SnapShotWriter[sessionid].inputs.inputPlaneDirection = [2,1,1,1,1,0,0]
                     SnapShotWriter[sessionid].inputs.inputSliceToExtractInPhysicalPoint = [-3,-7,-3,5,7,22,-22]
-                    
-                    ## connect SnapShotWriter[sessionid] to the baw200 
+
+                    ## connect SnapShotWriter[sessionid] to the baw200
                     baw200.connect( MergeStage2AverageImages[sessionid], 'out', SnapShotWriter[sessionid], 'inputVolumes')
                     baw200.connect( MergeStage2BinaryVolumes[sessionid], 'out', SnapShotWriter[sessionid], 'inputBinaryVolumes')
+
+                    #=============================================================================================================================
+                    #======== Start warping subject to atlas images
+
+                    MergeSessionSubjectToAtlasName="99_MergeSessionSubjectToAtlas_"+str(sessionid)
+                    MergeSessionSubjectToAtlas[sessionid] = pe.Node(interface=Merge(15),
+                                          run_without_submitting=True,
+                                          name=MergeSessionSubjectToAtlasName)
+
+                    baw200.connect( PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.t1_average',       MergeSessionSubjectToAtlas[sessionid], 'in1')
+                    baw200.connect( PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.t2_average',       MergeSessionSubjectToAtlas[sessionid], 'in2')
+                    baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryLeftAccumben',     MergeSessionSubjectToAtlas[sessionid], 'in3')
+                    baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryLeftCaudate',      MergeSessionSubjectToAtlas[sessionid], 'in4')
+                    baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryLeftPutamen',      MergeSessionSubjectToAtlas[sessionid], 'in5')
+                    baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryLeftGlobus',       MergeSessionSubjectToAtlas[sessionid], 'in6')
+                    baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryLeftThalamus',     MergeSessionSubjectToAtlas[sessionid], 'in7')
+                    baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryLeftHippocampus',  MergeSessionSubjectToAtlas[sessionid], 'in8')
+                    baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryRightAccumben',    MergeSessionSubjectToAtlas[sessionid], 'in9')
+                    baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryRightCaudate',     MergeSessionSubjectToAtlas[sessionid], 'in10')
+                    baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryRightPutamen',     MergeSessionSubjectToAtlas[sessionid], 'in11')
+                    baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryRightGlobus',      MergeSessionSubjectToAtlas[sessionid], 'in12')
+                    baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryRightThalamus',    MergeSessionSubjectToAtlas[sessionid], 'in13')
+                    baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryRightHippocampus', MergeSessionSubjectToAtlas[sessionid], 'in14')
+
+                    def UnwrapPosteriorImagesFromDictionaryFunction(postDict):
+                        return postDict.values()
+                    baw200.connect( [ ( PHASE_2_oneSubjWorkflow[sessionid], MergeSessionSubjectToAtlas[sessionid],
+                                        [ ( ( 'outputspec.posteriorImages', UnwrapPosteriorImagesFromDictionaryFunction ), 'in15')] ) ] )
+
+                    LinearSubjectToAtlasANTsApplyTransformsName='LinearSubjectToAtlasANTsApplyTransforms_'+str(sessionid)
+                    LinearSubjectToAtlasANTsApplyTransforms[sessionid] = pe.MapNode(interface=ApplyTransforms(), iterfield=['input_image'],name=LinearSubjectToAtlasANTsApplyTransformsName)
+                    LinearSubjectToAtlasANTsApplyTransforms[sessionid].inputs.interpolation = 'Linear'
+                    baw200.connect(AtlasToSubjectantsRegistration[subjectid], 'reverse_transforms', LinearSubjectToAtlasANTsApplyTransforms[sessionid], 'transforms')
+                    baw200.connect(AtlasToSubjectantsRegistration[subjectid], 'reverse_invert_flags', LinearSubjectToAtlasANTsApplyTransforms[sessionid], 'invert_transform_flags')
+                    baw200.connect(BAtlas[subjectid],'template_t1', LinearSubjectToAtlasANTsApplyTransforms[sessionid], 'reference_image')
+                    baw200.connect(MergeSessionSubjectToAtlas[sessionid], 'out', LinearSubjectToAtlasANTsApplyTransforms[sessionid], 'input_image')
+
+
+                    MergeMultiLabelSessionSubjectToAtlasName="99_MergeMultiLabelSessionSubjectToAtlas_"+str(sessionid)
+                    MergeMultiLabelSessionSubjectToAtlas[sessionid] = pe.Node(interface=Merge(2),
+                                          run_without_submitting=True,
+                                          name=MergeMultiLabelSessionSubjectToAtlasName)
+
+                    baw200.connect( PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.outputLabels', MergeMultiLabelSessionSubjectToAtlas[sessionid], 'in1')
+                    baw200.connect( PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.outputHeadLabels', MergeMultiLabelSessionSubjectToAtlas[sessionid], 'in2')
+
+                    MultiLabelSubjectToAtlasANTsApplyTransformsName='MultiLabelSubjectToAtlasANTsApplyTransforms_'+str(sessionid)
+                    MultiLabelSubjectToAtlasANTsApplyTransforms[sessionid] = pe.MapNode(interface=ApplyTransforms(), iterfield=['input_image'],name=MultiLabelSubjectToAtlasANTsApplyTransformsName)
+                    MultiLabelSubjectToAtlasANTsApplyTransforms[sessionid].inputs.interpolation = 'MultiLabel'
+                    baw200.connect(AtlasToSubjectantsRegistration[subjectid], 'reverse_transforms', MultiLabelSubjectToAtlasANTsApplyTransforms[sessionid], 'transforms')
+                    baw200.connect(AtlasToSubjectantsRegistration[subjectid], 'reverse_invert_flags', MultiLabelSubjectToAtlasANTsApplyTransforms[sessionid], 'invert_transform_flags')
+                    baw200.connect(BAtlas[subjectid],'template_t1', MultiLabelSubjectToAtlasANTsApplyTransforms[sessionid], 'reference_image')
+                    baw200.connect(MergeMultiLabelSessionSubjectToAtlas[sessionid], 'out', MultiLabelSubjectToAtlasANTsApplyTransforms[sessionid], 'input_image')
+
+                    ### Now define where the final organized outputs should go.
+                    Subj2Atlas_DSName="SubjectToAtlas_"+str(sessionid)
+                    Subj2Atlas_DS[sessionid]=pe.Node(nio.DataSink(),name=Subj2Atlas_DSName)
+                    Subj2Atlas_DS[sessionid].inputs.base_directory=ExperimentBaseDirectoryResults
+                    #Subj2Atlas_DS[sessionid].inputs.regexp_substitutions = GenerateSubjectOutputPattern(subjectid)
+                    baw200.connect(LinearSubjectToAtlasANTsApplyTransforms[sessionid],'output_image',Subj2Atlas_DS[sessionid],'SubjectToAtlasWarped.@linear_output_images')
+                    #baw200.connect(MultiLabelSubjectToAtlasANTsApplyTransforms[sessionid],'output_image',Subj2Atlas_DS[sessionid],'SubjectToAtlasWarped.@multilabel_output_images')
+
+                    print("HACK:  DEBUGGING HERE")
 
                 else:
                     print("SKIPPING SEGMENTATION PHASE FOR {0} {1} {2}, lenT2s {3}".format(projectid, subjectid, sessionid, len(global_AllT2s) ))

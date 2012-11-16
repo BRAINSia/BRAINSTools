@@ -721,7 +721,7 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                 if ( len(global_AllT2s) > 0 ): # Currently only works with multi-modal_data
                     print("HACK len(global_AllT2s) > 0 : {0}".format(len(global_AllT2s) ))
                 print("HACK")
-                if ( False ) and ( 'SEGMENTATION' in WORKFLOW_COMPONENTS ) and ( len(global_AllT2s) > 0 ): # Currently only works with multi-modal_data
+                if ( 'SEGMENTATION' in WORKFLOW_COMPONENTS ) and ( len(global_AllT2s) > 0 ): # Currently only works with multi-modal_data
                     from WorkupT1T2BRAINSCut import CreateBRAINSCutWorkflow
                     myLocalSegWF[sessionid] = CreateBRAINSCutWorkflow(projectid, subjectid, sessionid,'Segmentation',
                                                               CLUSTER_QUEUE,BAtlas[subjectid]) ##Note:  Passing in the entire BAtlas Object here!
@@ -762,19 +762,19 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                     MergeStage2BinaryVolumes[sessionid] = pe.Node(interface=Merge(12),
                                           run_without_submitting=True,
                                           name=MergeStage2BinaryVolumesName)
-                    baw200.connect(SEGMENTATION_DataSink[sessionid], 'Segmentations.@outputBinaryLeftAccumben',     MergeStage2BinaryVolumes[sessionid], 'in1')
-                    baw200.connect(SEGMENTATION_DataSink[sessionid], 'Segmentations.@outputBinaryLeftCaudate',      MergeStage2BinaryVolumes[sessionid], 'in2')
-                    baw200.connect(SEGMENTATION_DataSink[sessionid], 'Segmentations.@outputBinaryLeftPutamen',      MergeStage2BinaryVolumes[sessionid], 'in3')
-                    baw200.connect(SEGMENTATION_DataSink[sessionid], 'Segmentations.@outputBinaryLeftGlobus',       MergeStage2BinaryVolumes[sessionid], 'in4')
-                    baw200.connect(SEGMENTATION_DataSink[sessionid], 'Segmentations.@outputBinaryLeftThalamus',     MergeStage2BinaryVolumes[sessionid], 'in5')
-                    baw200.connect(SEGMENTATION_DataSink[sessionid], 'Segmentations.@outputBinaryLeftHippocampus',  MergeStage2BinaryVolumes[sessionid], 'in6')
+                    baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryLeftAccumben',     MergeStage2BinaryVolumes[sessionid], 'in1')
+                    baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryLeftCaudate',      MergeStage2BinaryVolumes[sessionid], 'in2')
+                    baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryLeftPutamen',      MergeStage2BinaryVolumes[sessionid], 'in3')
+                    baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryLeftGlobus',       MergeStage2BinaryVolumes[sessionid], 'in4')
+                    baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryLeftThalamus',     MergeStage2BinaryVolumes[sessionid], 'in5')
+                    baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryLeftHippocampus',  MergeStage2BinaryVolumes[sessionid], 'in6')
 
-                    baw200.connect(SEGMENTATION_DataSink[sessionid], 'Segmentations.@outputBinaryRightAccumben',    MergeStage2BinaryVolumes[sessionid], 'in7')
-                    baw200.connect(SEGMENTATION_DataSink[sessionid], 'Segmentations.@outputBinaryRightCaudate',     MergeStage2BinaryVolumes[sessionid], 'in8')
-                    baw200.connect(SEGMENTATION_DataSink[sessionid], 'Segmentations.@outputBinaryRightPutamen',     MergeStage2BinaryVolumes[sessionid], 'in9')
-                    baw200.connect(SEGMENTATION_DataSink[sessionid], 'Segmentations.@outputBinaryRightGlobus',      MergeStage2BinaryVolumes[sessionid], 'in10')
-                    baw200.connect(SEGMENTATION_DataSink[sessionid], 'Segmentations.@outputBinaryRightThalamus',    MergeStage2BinaryVolumes[sessionid], 'in11')
-                    baw200.connect(SEGMENTATION_DataSink[sessionid], 'Segmentations.@outputBinaryRightHippocampus', MergeStage2BinaryVolumes[sessionid], 'in12')
+                    baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryRightAccumben',    MergeStage2BinaryVolumes[sessionid], 'in7')
+                    baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryRightCaudate',     MergeStage2BinaryVolumes[sessionid], 'in8')
+                    baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryRightPutamen',     MergeStage2BinaryVolumes[sessionid], 'in9')
+                    baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryRightGlobus',      MergeStage2BinaryVolumes[sessionid], 'in10')
+                    baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryRightThalamus',    MergeStage2BinaryVolumes[sessionid], 'in11')
+                    baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryRightHippocampus', MergeStage2BinaryVolumes[sessionid], 'in12')
 
                     MergeStage2AverageImagesName="99_mergeAvergeStage2Images_"+str(sessionid)
                     MergeStage2AverageImages[sessionid] = pe.Node(interface=Merge(2),

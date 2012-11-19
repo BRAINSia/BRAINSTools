@@ -344,9 +344,9 @@ ReadVTICastWriteImage( std::string inputFileName,
 #else
 template <class TOuptutPixelType>
 int
-ReadVTICastWriteImage( std::string inputFileName,
-                       std::string outputFileName,
-                       int dimension )
+ReadVTICastWriteImage( std::string,
+                       std::string,
+                       int )
 {
   return 0;
 }

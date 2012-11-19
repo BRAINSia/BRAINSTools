@@ -791,7 +791,7 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
 
 
                     ## SnapShotWriter[sessionid] for Segmented result checking:
-                    SnapShotWriterNodeName="99_SnapShotWriter_"+str(sessionid)
+                    SnapShotWriterNodeName="SnapShotWriter_"+str(sessionid)
                     SnapShotWriter[sessionid]=pe.Node( interface=BRAINSSnapShotWriter(), name=SnapShotWriterNodeName)
 
                     ## output specification
@@ -835,6 +835,7 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
 
                     LinearSubjectToAtlasANTsApplyTransformsName='LinearSubjectToAtlasANTsApplyTransforms_'+str(sessionid)
                     LinearSubjectToAtlasANTsApplyTransforms[sessionid] = pe.MapNode(interface=ApplyTransforms(), iterfield=['input_image'],name=LinearSubjectToAtlasANTsApplyTransformsName)
+                    LinearSubjectToAtlasANTsApplyTransforms[sessionid].plugin_args={'template':SGE_JOB_SCRIPT,'qsub_args': '-S /bin/bash -pe smp1 1 -l mem_free=1000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE), 'overwrite': True}
                     LinearSubjectToAtlasANTsApplyTransforms[sessionid].inputs.interpolation = 'Linear'
                     baw200.connect(AtlasToSubjectantsRegistration[subjectid], 'reverse_transforms', LinearSubjectToAtlasANTsApplyTransforms[sessionid], 'transforms')
                     baw200.connect(AtlasToSubjectantsRegistration[subjectid], 'reverse_invert_flags', LinearSubjectToAtlasANTsApplyTransforms[sessionid], 'invert_transform_flags')
@@ -852,6 +853,7 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
 
                     MultiLabelSubjectToAtlasANTsApplyTransformsName='MultiLabelSubjectToAtlasANTsApplyTransforms_'+str(sessionid)
                     MultiLabelSubjectToAtlasANTsApplyTransforms[sessionid] = pe.MapNode(interface=ApplyTransforms(), iterfield=['input_image'],name=MultiLabelSubjectToAtlasANTsApplyTransformsName)
+                    MultiLabelSubjectToAtlasANTsApplyTransforms[sessionid].plugin_args={'template':SGE_JOB_SCRIPT,'qsub_args': '-S /bin/bash -pe smp1 1 -l mem_free=1000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE), 'overwrite': True}
                     MultiLabelSubjectToAtlasANTsApplyTransforms[sessionid].inputs.interpolation = 'MultiLabel'
                     baw200.connect(AtlasToSubjectantsRegistration[subjectid], 'reverse_transforms', MultiLabelSubjectToAtlasANTsApplyTransforms[sessionid], 'transforms')
                     baw200.connect(AtlasToSubjectantsRegistration[subjectid], 'reverse_invert_flags', MultiLabelSubjectToAtlasANTsApplyTransforms[sessionid], 'invert_transform_flags')
@@ -859,10 +861,13 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                     baw200.connect(MergeMultiLabelSessionSubjectToAtlas[sessionid], 'out', MultiLabelSubjectToAtlasANTsApplyTransforms[sessionid], 'input_image')
 
                     ### Now define where the final organized outputs should go.
-                    Subj2Atlas_DSName="SubjectToAtlas_"+str(sessionid)
+                    Subj2Atlas_DSName="SubjectToAtlas_DS_"+str(sessionid)
                     Subj2Atlas_DS[sessionid]=pe.Node(nio.DataSink(),name=Subj2Atlas_DSName)
                     Subj2Atlas_DS[sessionid].inputs.base_directory=ExperimentBaseDirectoryResults
                     #Subj2Atlas_DS[sessionid].inputs.regexp_substitutions = GenerateSubjectOutputPattern(subjectid)
+                    Subj2Atlas_DS[sessionid].inputs.regexp_substitutions = [
+                            (r'_LinearSubjectToAtlasANTsApplyTransforms_[^/]*' ,r'' + sessionid + '/' )
+                            ]
                     baw200.connect(LinearSubjectToAtlasANTsApplyTransforms[sessionid],'output_image',Subj2Atlas_DS[sessionid],'SubjectToAtlasWarped.@linear_output_images')
                     #baw200.connect(MultiLabelSubjectToAtlasANTsApplyTransforms[sessionid],'output_image',Subj2Atlas_DS[sessionid],'SubjectToAtlasWarped.@multilabel_output_images')
 

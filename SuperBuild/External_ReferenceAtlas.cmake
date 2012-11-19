@@ -43,15 +43,17 @@ if(NOT DEFINED ${extProjName}_DIR OR NOT DEFINED ATLAS_NAME)
   endif()
 
   ### --- Project specific additions here
-  set(ATLAS_VERSION 20120830)
+  set(ATLAS_VERSION 20121118)
+  set(ATLAS_MIDAS_CODE http://slicer.kitware.com/midas3/download?bitstream=18244)
+  set(ATLAS_MD5 d41d8cd98f00b204e9800998ecf8427e)
 
   set(${proj}_CMAKE_OPTIONS
       -DReferenceAtlas_XML_DIR:PATH=<BINARY_DIR>
       -DATLAS_VERSION:STRING=${ATLAS_VERSION}
       )
   ### --- End Project specific additions
-                                                  ## Midas version of Atlas:  Atlas_${ATLAS_VERSION}.tar.gz
-  set(ATLAS_URL "http://slicer.kitware.com/midas3/download?items=6599?Atlas_${ATLAS_VERSION}.tar.gz")
+  ## Midas version of Atlas:  Atlas_${ATLAS_VERSION}.tar.gz
+  set(ATLAS_URL "${ATLAS_MIDAS_CODE}?Atlas_${ATLAS_VERSION}.tar.gz")
                                                                     #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
                                                                     #  This is ignored by midas, but allows the filename for download
                                                                     #  to be generated.
@@ -62,7 +64,7 @@ if(NOT DEFINED ${extProjName}_DIR OR NOT DEFINED ATLAS_NAME)
   set(ATLAS_NAME Atlas/Atlas_${ATLAS_VERSION})
   ExternalProject_add(${proj}
     URL ${ATLAS_URL}
-    URL_MD5 036e9ade22e76bc030ce6d594374b14c
+    URL_MD5 ${ATLAS_MD5}
     SOURCE_DIR ${proj}
     BINARY_DIR ${proj}-build
     "${cmakeversion_external_update}"

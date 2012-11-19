@@ -44,8 +44,8 @@ if(NOT DEFINED ${extProjName}_DIR OR NOT DEFINED ATLAS_NAME)
 
   ### --- Project specific additions here
   set(ATLAS_VERSION 20121118)
-  set(ATLAS_MIDAS_CODE http://slicer.kitware.com/midas3/download?bitstream=18244)
-  set(ATLAS_MD5 d41d8cd98f00b204e9800998ecf8427e)
+  set(ATLAS_MIDAS_CODE http://slicer.kitware.com/midas3/download?items=11251)
+  set(ATLAS_MD5 5a0b4c7fa1e20a05d545eb2739e1dc1b)
 
   set(${proj}_CMAKE_OPTIONS
       -DReferenceAtlas_XML_DIR:PATH=<BINARY_DIR>

@@ -170,13 +170,14 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
       // Register each intrasubject image mode to first image
       intraSubjectRegistrationHelper->SetFixedVolume(m_IntraSubjectOriginalImageList[0]);
       // TODO: Find way to turn on histogram equalization for same mode images
+      const int dilateSize = 15;
       intraSubjectRegistrationHelper->SetMovingVolume(m_IntraSubjectOriginalImageList[i]);
         {
         muLogMacro( << "Generating MovingImage Mask (Intrasubject  " << i << ")" <<  std::endl );
         typedef itk::BRAINSROIAutoImageFilter<InternalImageType, itk::Image<unsigned char, 3> > ROIAutoType;
         typename ROIAutoType::Pointer  ROIFilter = ROIAutoType::New();
         ROIFilter->SetInput(m_IntraSubjectOriginalImageList[i]);
-        ROIFilter->SetDilateSize(3); // Only use a very small non-tissue
+        ROIFilter->SetDilateSize(dilateSize); // Only use a very small non-tissue
         // region outside of head during initial
         // runnings
         ROIFilter->Update();
@@ -206,7 +207,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
           typedef itk::BRAINSROIAutoImageFilter<InternalImageType, itk::Image<unsigned char, 3> > ROIAutoType;
           typename ROIAutoType::Pointer  ROIFilter = ROIAutoType::New();
           ROIFilter->SetInput(m_IntraSubjectOriginalImageList[0]);
-          ROIFilter->SetDilateSize(3); // Only use a very small non-tissue
+          ROIFilter->SetDilateSize(dilateSize); // Only use a very small non-tissue
           // region outside of head during
           // initial runnings
           ROIFilter->Update();

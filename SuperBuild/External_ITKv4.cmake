@@ -79,7 +79,7 @@ if(NOT DEFINED ${extProjName}_DIR AND NOT ${USE_SYSTEM_${extProjName}})
     )
   ### --- End Project specific additions
   set(${proj}_REPOSITORY ${git_protocol}://itk.org/ITK.git)
-  set(${proj}_GIT_TAG e7916f7ea70b403b980ee62066ba5980aa16b454) #2012-11-07 NRRD install
+  set(${proj}_GIT_TAG 1b8e751f199db7c5bbbe3503c5a7c2be455eb57a) #2012-11-07 NRRD install
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${${proj}_REPOSITORY}
     GIT_TAG ${${proj}_GIT_TAG}

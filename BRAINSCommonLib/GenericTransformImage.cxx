@@ -458,7 +458,14 @@ void WriteTransformToDisk(GenericTransformType const *const MyTransform, const s
     TransformWriterType::Pointer transformWriter =  TransformWriterType::New();
     transformWriter->SetFileName( TransformFilename.c_str() );
 
+    const std::string extension = itksys::SystemTools::GetFilenameLastExtension(TransformFilename);
+    std::string       inverseTransformFileName(TransformFilename);
+    inverseTransformFileName.replace(inverseTransformFileName.end() - extension.size(),
+                                     inverseTransformFileName.end(), "_Inverse.h5");
+    TransformWriterType::Pointer inverseTransformWriter =  TransformWriterType::New();
+    inverseTransformWriter->SetFileName( inverseTransformFileName.c_str() );
     const std::string transformFileType = MyTransform->GetNameOfClass();
+    bool              inverseTransformExists = true;
     if( transformFileType == "BSplineDeformableTransform" )
       {
       const BSplineTransformType::ConstPointer tempInitializerITKTransform =
@@ -467,18 +474,42 @@ void WriteTransformToDisk(GenericTransformType const *const MyTransform, const s
         {
         itkGenericExceptionMacro(<< "Error in type conversion");
         }
-
-      // NOTE: Order was reversed in order to get BSpline first, then Bulk
-      // transform in order to
-      // try to appease Slicer3.
-      transformWriter->AddTransform(tempInitializerITKTransform);
+      // NOTE: Order was reversed to get BSpline first, then Bulk
+      // transform in an attempt to appease Slicer3.
       // Bulk transform is assumed to be second in Slicer3.
+      transformWriter->AddTransform(tempInitializerITKTransform);
       transformWriter->AddTransform( tempInitializerITKTransform->GetBulkTransform() );
+
+      if( tempInitializerITKTransform->GetInverseTransform().IsNull() )
+        {
+        inverseTransformExists = false;
+        }
+      else
+        {
+        inverseTransformWriter->AddTransform(tempInitializerITKTransform->GetInverseTransform() );
+        }
+      if( tempInitializerITKTransform->GetBulkTransform()->GetInverseTransform().IsNull() )
+        {
+        inverseTransformExists = false;
+        }
+      else
+        {
+        inverseTransformWriter->AddTransform( tempInitializerITKTransform->GetBulkTransform()->GetInverseTransform() );
+        }
       }
     else
       {
       transformWriter->AddTransform(MyTransform);
+      if( MyTransform->GetInverseTransform().IsNull() )
+        {
+        inverseTransformExists = false;
+        }
+      else
+        {
+        inverseTransformWriter->AddTransform(MyTransform->GetInverseTransform() );
+        }
       }
+
     try
       {
       transformWriter->Update();
@@ -487,7 +518,18 @@ void WriteTransformToDisk(GenericTransformType const *const MyTransform, const s
       {
       throw excp;
       }
-    // Test if the file exists.
+    if( inverseTransformExists )
+      {
+      try
+        {
+        inverseTransformWriter->Update();
+        }
+      catch( itk::ExceptionObject & excp )
+        {
+        // Writing the inverseTransform is optional,  throw excp;
+        }
+      }
+    // Test if the forward file exists.
     if( !itksys::SystemTools::FileExists( TransformFilename.c_str() ) )
       {
       itk::ExceptionObject e(__FILE__, __LINE__, "Failed to write file", "WriteTransformToDisk");

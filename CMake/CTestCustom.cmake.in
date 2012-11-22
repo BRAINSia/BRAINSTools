@@ -89,6 +89,8 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
 
   # Ignore 'detached HEAD' warnings
   "Note.*checking out"
+  #
+  "Note: checking out.*"
   ".*detached.*HEAD.*"
 
   # NIPYPE warnings:

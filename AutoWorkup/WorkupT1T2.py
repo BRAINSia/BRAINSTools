@@ -515,7 +515,7 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
             buildTemplateIteration1=BAWantsRegistrationTemplateBuildSingleIterationWF('iteration01')
             ## TODO:  Change these parameters
             BeginANTS_iter1 = buildTemplateIteration1.get_node("BeginANTS")
-            BeginANTS_iter1.plugin_args={'template':SGE_JOB_SCRIPT,'qsub_args': '-S /bin/bash -pe smp1 4-6 -l mem_free=9000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE), 'overwrite': True}
+            BeginANTS_iter1.plugin_args={'template':SGE_JOB_SCRIPT,'qsub_args': '-S /bin/bash -pe smp1 2-12 -l mem_free=9000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE), 'overwrite': True}
             wimtdeformed_iter1 = buildTemplateIteration1.get_node("wimtdeformed")
             wimtdeformed_iter1.plugin_args={'template':SGE_JOB_SCRIPT,'qsub_args': '-S /bin/bash -pe smp1 1-2 -l mem_free=6000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE), 'overwrite': True}
             AvgAffineTransform_iter1 = buildTemplateIteration1.get_node("AvgAffineTransform")
@@ -532,7 +532,7 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
             buildTemplateIteration2 = BAWantsRegistrationTemplateBuildSingleIterationWF('Iteration02')
             ## TODO:  Change these parameters
             BeginANTS_iter2 = buildTemplateIteration2.get_node("BeginANTS")
-            BeginANTS_iter2.plugin_args={'template':SGE_JOB_SCRIPT,'qsub_args': '-S /bin/bash -pe smp1 4-6 -l mem_free=9000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE), 'overwrite': True}
+            BeginANTS_iter2.plugin_args={'template':SGE_JOB_SCRIPT,'qsub_args': '-S /bin/bash -pe smp1 2-12 -l mem_free=9000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE), 'overwrite': True}
             wimtdeformed_iter2 = buildTemplateIteration2.get_node("wimtdeformed")
             wimtdeformed_iter2.plugin_args={'template':SGE_JOB_SCRIPT,'qsub_args': '-S /bin/bash -pe smp1 1-2 -l mem_free=6000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE), 'overwrite': True}
             AvgAffineTransform_iter2 = buildTemplateIteration2.get_node("AvgAffineTransform")
@@ -705,7 +705,7 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                     AtlasToSubjectantsRegistration[subjectid].inputs.collapse_linear_transforms_to_fixed_image_header = False
                     AtlasToSubjectantsRegistration[subjectid].inputs.output_warped_image = 'atlas2subject.nii.gz'
                     AtlasToSubjectantsRegistration[subjectid].inputs.output_inverse_warped_image = 'subject2atlas.nii.gz'
-                    AtlasToSubjectantsRegistration[subjectid].plugin_args={'template':SGE_JOB_SCRIPT,'qsub_args': '-S /bin/bash -pe smp1 4-6 -l mem_free=9000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE), 'overwrite': True}
+                    AtlasToSubjectantsRegistration[subjectid].plugin_args={'template':SGE_JOB_SCRIPT,'qsub_args': '-S /bin/bash -pe smp1 2-12 -l mem_free=9000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE), 'overwrite': True}
 
                     baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'outputspec.t1_average', AtlasToSubjectantsRegistration[subjectid], 'fixed_image')
                     baw200.connect(BAtlas[subjectid],'template_t1',AtlasToSubjectantsRegistration[subjectid], 'moving_image')

@@ -102,6 +102,7 @@ set(brains_modulenames
   BRAINSConstellationDetector
   BRAINSABC
   ConvertBetweenFileFormats
+  DWIConvert
 )
 
 if(USE_DebugImageViewer)
@@ -118,11 +119,5 @@ foreach(modulename ${brains_modulenames})
     add_subdirectory(${modulename})
   endif()
 endforeach()
-
-# Slicer builds DWIConvert itself
-if(NOT INTEGRATE_WITH_SLICER AND USE_DWIConvert)
-  add_subdirectory(${DWIConvert_SOURCE_DIR}
-    ${CMAKE_CURRENT_BINARY_DIR}/DWIConvert)
-endif()
 
 ExternalData_Add_Target( ${PROJECT_NAME}FetchData )  # Name of data management target

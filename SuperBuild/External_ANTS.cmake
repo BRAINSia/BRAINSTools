@@ -7,7 +7,7 @@ set(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED 1)
 
 set(proj ANTS)
 set(${proj}_GIT_REPOSITORY "git://github.com/BRAINSia/ANTS.git")
-set(${proj}_GIT_TAG "da474e7a3628a293b94b0558820e734dedc60c07")
+set(${proj}_GIT_TAG "920b729ebcb0d149364224d5b54df7b34a21137d")
 
 set(${proj}_DEPENDENCIES ${ITK_EXTERNAL_NAME} SlicerExecutionModel)
 

@@ -75,6 +75,8 @@ if(NOT DEFINED ${extProjName}_DIR AND NOT ${USE_SYSTEM_${extProjName}})
       -DITK_USE_REVIEW:BOOL=ON
       -DKWSYS_USE_MD5:BOOL=ON # Required by SlicerExecutionModel
       -DUSE_WRAP_ITK:BOOL=OFF ## HACK:  QUICK CHANGE
+      -DITK_USE_SYSTEM_DCMTK:BOOL=OFF
+      -DModule_ITKIODCMTK:BOOL=ON
       ${FFTWF_FLAGS}
     )
   ### --- End Project specific additions

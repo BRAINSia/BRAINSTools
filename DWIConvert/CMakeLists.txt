@@ -38,6 +38,6 @@ SEMMacroBuildCLI(
 )
 
 # several files needed down in ExtenededTesting
-if(BUILD_TESTING)
-  add_subdirectory(ExtendedTesting)
+if(BUILD_TESTING AND NOT Slicer_BUILD_BRAINSTOOLS)
+  add_subdirectory(TestSuite)
 endif()

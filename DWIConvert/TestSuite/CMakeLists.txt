@@ -13,13 +13,13 @@ foreach(CLP DWICompare DWISimpleCompare)
   generateclp(${CLP}_SOURCE ${CLP}.xml)
   add_executable(${CLP} ${${CLP}_SOURCE})
   target_link_libraries (${CLP} DWIConvertSupportLib )
-  set(${CLP}EXE ${DWIConvert_BINARY_DIR}/ExtendedTesting/${CLP})
+  set(${CLP}EXE ${DWIConvert_BINARY_DIR}/TestSuite/${CLP})
 endforeach()
 
 add_executable(FSLTextFileCompare FSLTextFileCompare.cxx)
 target_link_libraries (FSLTextFileCompare DWIConvertSupportLib )
 set(FSLTextFileCompareEXE
-  ${DWIConvert_BINARY_DIR}/ExtendedTesting/FSLTextFileCompare)
+  ${DWIConvert_BINARY_DIR}/TestSuite/FSLTextFileCompare)
 
 add_executable(NrrdToNIfTI NrrdToNIfTI.cxx)
 target_link_libraries(NrrdToNIfTI DWIConvertSupportLib)
@@ -30,7 +30,7 @@ add_dependencies(${CLP}Test ${CLP})
 target_link_libraries(${CLP}Test DWIConvertSupportLib )
 
 set (DWIConvertEXE ${Slicer_LAUNCH_COMMAND} ${DWIConvert_BINARY_DIR}/${CLP} )
-set (DWIConvert_TESTS ${Slicer_LAUNCH_COMMAND} ${DWIConvert_BINARY_DIR}/ExtendedTesting/${CLP}Test )
+set (DWIConvert_TESTS ${Slicer_LAUNCH_COMMAND} ${DWIConvert_BINARY_DIR}/TestSuite/${CLP}Test )
 
 if(NOT SETIFEMPTY)
 macro(SETIFEMPTY)
@@ -47,7 +47,7 @@ set(TEMP ${CMAKE_CURRENT_BINARY_DIR})
 include(${CMAKE_CURRENT_LIST_DIR}/MIDAS.cmake)
 SETIFEMPTY(MIDAS_REST_URL "http://midas.kitware.com/api/rest" CACHE STRING "The MIDAS server where testing data resides")
 
-set(MIDAS_KEY_DIR "${DWIConvert_SOURCE_DIR}/ExtendedTesting/keys")
+set(MIDAS_KEY_DIR "${DWIConvert_SOURCE_DIR}/TestSuite/keys")
 
 add_test(DWIConvertHelpTest ${DWIConvert_TESTS}
     DWIConvertTest

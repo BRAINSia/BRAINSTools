@@ -6,6 +6,7 @@
 #include <itkLinearInterpolateImageFunction.h>
 #include <itkGradientImageFilter.h>
 
+
 typedef unsigned int hashKeyType;
 /*
  * Note
@@ -22,20 +23,20 @@ public:
 
   int DoUnitTests() const; // A series of unit tests to verify results.
 
-  bool DoScalingUnitTests();
-
   /* normalization type */
   enum FeatureNormalizationMethodEnum
     {
     None,
     Linear,
-    Sigmoid_Q05,
-    DoubleSigmoid_Q05,
-    Sigmoid_Q01,
-    DoubleSigmoid_Q01,
-    zScore,
-    IQR
+    Sigmoid,
+    DoubleSigmoid,
+    zScore
     };
+  
+
+  /** constants definition */
+  static const scalarType MIN;
+  static const scalarType MAX;
 
   /** type definition */
   typedef itk::GradientImageFilter<WorkingImageType,
@@ -43,7 +44,7 @@ public:
                                    WorkingPixelType> GradientFilterType;
 
   typedef itk::Image<itk::CovariantVector<WorkingPixelType, DIMENSION>, DIMENSION>::Pointer
-    GradientImageType;
+  GradientImageType;
 
   typedef itk::Image<unsigned char, DIMENSION> BinaryImageType;
 
@@ -53,18 +54,17 @@ public:
   /* min/max */
   typedef std::pair<scalarType, scalarType> minmaxPairType;
   typedef std::vector<minmaxPairType>       minmaxPairVectorType;
+<<<<<<< HEAD
 
   /* normalizationParameters */
-  typedef unsigned int ImageTypeNo;
-  typedef std::string  ROITypeString;
-  typedef std::string  StatisticsString;
-
-  typedef std::map<ROITypeString,
-                   std::map<ImageTypeNo, std::map<StatisticsString, scalarType> > > NormalizationParameterType;
+  typedef std::map<std::string, scalarType>            normParamROIMapType; // ( 'min', v1),('max',v2),..
+  typedef std::map<std::string, normParamROIMapType >  normParamType;
+=======
+>>>>>>> 6c8cb10... Bug Fix
 
   /* normalizationParameters */
-  typedef std::map<std::string, scalarType>          normParamROIMapType;   // ( 'min', v1),('max',v2),..
-  typedef std::map<std::string, normParamROIMapType> normParamType;
+  typedef std::map<std::string, scalarType>            normParamROIMapType; // ( 'min', v1),('max',v2),..
+  typedef std::map<std::string, normParamROIMapType >  normParamType;
 
   /** set functions */
   void SetGradientSize( unsigned int length);
@@ -98,7 +98,6 @@ public:
    * The size could be easily changed though.
    */
   static hashKeyType HashKeyFromIndex(const WorkingImageType::IndexType index);
-
   static WorkingImageType::IndexType HashIndexFromKey(const hashKeyType offSet);
 
 private:
@@ -121,19 +120,19 @@ private:
   std::map<std::string, GradientImageType> m_gradientOfROI;
 
   /** feature output*/
-  // std::map<std::string, InputVectorMapType> featureInputOfROI;
+  //std::map<std::string, InputVectorMapType> featureInputOfROI;
 
   /** m_normalization parameters*/
   /*  mapping from ROIname to the vector of mean/max
    *  for given serios of m_imagesOfInterestInOrder
    */
   std::map<std::string, minmaxPairVectorType> m_minmax;
-  NormalizationParameterType                  m_statistics;
+  normParamType m_statistics;
 
-  std::map<std::string, FeatureNormalizationMethodEnum> m_featureNormalizationMap;
+  std::map< std::string, FeatureNormalizationMethodEnum > m_featureNormalizationMap;
 
   /** private functions */
-  // void ComputeFeatureInputOfROI( std::string ROIName);
+  //void ComputeFeatureInputOfROI( std::string ROIName);
 
   void SetGradientImage( std::string ROIName );
 
@@ -155,18 +154,14 @@ private:
                                         WorkingImageType::IndexType currentPixelIndex,
                                         std::vector<scalarType>::iterator & elementIterator );
 
-  inline std::map<std::string, scalarType> CalculateUnitDeltaAlongTheGradient(std::string ROIName,
-                                                                              WorkingImageType::IndexType currentPixelIndex );
+  inline std::map<std::string, scalarType> CalculateUnitDeltaAlongTheGradient(
+    std::string ROIName, WorkingImageType::IndexType currentPixelIndex );
 
   inline std::pair<scalarType, scalarType>  SetMinMaxOfSubject( BinaryImageType::Pointer & labelImage,
                                                                 const WorkingImagePointer & Image );
-
-  inline float Sigmoid( const float x, const float t, const float r );
-
-  inline float LinearScaling( float x, float min, float max );
-
-  inline float doubleSigmoid( const float x, const float t, const float r1, const float r2);
-
-  inline float ZScore( const float x, const float mu, const float sigma );
+  inline float sigmoid( const float x, const float t, const float r );
+  inline float linearScalining( float x, float min, float max );
+  inline float doubleSigmoid( const float x, const float t, 
+                              const float r1, const float r2);
 };
 #endif

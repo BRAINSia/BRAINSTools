@@ -96,7 +96,7 @@ BRAINSCutCreateVector
   inputVectorGenerator.SetCandidateROIs( deformedROIs);
   inputVectorGenerator.SetROIInOrder( m_myDataHandler.GetROIIDsInOrder() );
   inputVectorGenerator.SetInputVectorSize();
-  inputVectorGenerator.SetNormalization( m_myDataHandler.GetNormalization() );
+  inputVectorGenerator.SetNormalizationMethod( m_myDataHandler.GetNormalizationMethod() );
 
   m_inputVectorSize = inputVectorGenerator.GetInputVectorSize(); // TODO
   m_outputVectorSize = m_myDataHandler.GetROIIDsInOrder().size();
@@ -176,7 +176,7 @@ BRAINSCutCreateVector
       const int                         itKeyFromIndex = FeatureInputVector::HashKeyFromIndex( itIndex );
 
       /* fill the output vector with zeros */
-      OutputVectorType oneRowOutputVector( deformedROIs.size(), 0.0F ); // working pixel type =float
+      OutputVectorType oneRowOutputVector( deformedROIs.size(), ZeroPercentValue ); // working pixel type =float
 
       /* get the answer */
       oneRowOutputVector[roiNumber] = GetBinaryValue( subjectROIBinaryImage->GetPixel(itIndex) );
@@ -252,10 +252,10 @@ BRAINSCutCreateVector
 {
   if( value > 0.5F )
     {
-    return 1.0F;
+    return HundredPercentValue;
     }
   else
     {
-    return 0.0F;
+    return ZeroPercentValue;
     }
 }

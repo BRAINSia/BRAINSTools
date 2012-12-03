@@ -1,0 +1,4 @@
+siteID, subjectID, sessionID, featureImage
+site01, 001, 00001, "{'t2':'/IPLlinux/ipldev/scratch/eunyokim/src/BRAINSStandAlone/buildAnyTesting/BRAINSTools-build/ExternalData/TestData/scan1T1.nii.gz'}"
+site02, 002, 00002, "{'t2':'/IPLlinux/ipldev/scratch/eunyokim/src/BRAINSStandAlone/buildAnyTesting/BRAINSTools-build/ExternalData/TestData/scan2T1.nii.gz'}"
+site02, 002, 00003, "{'t2':'/IPLlinux/ipldev/scratch/eunyokim/src/BRAINSStandAlone/buildAnyTesting/BRAINSTools-build/ExternalData/TestData/scan3T1.nii.gz'}"

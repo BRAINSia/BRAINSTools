@@ -61,7 +61,7 @@ private:
   BRAINSCutConfiguration::ApplyDataSetListType m_applyDataSetList;
 
   std::string m_method;
-  bool        m_normalization;
+  std::string m_normalization;
   bool        m_computeSSE;
   int         m_trainIteration;
 

@@ -39,8 +39,8 @@ WorkingImagePointer ReadImageByFilename( const std::string  filename )
 
   readInImage = itkUtil::ScaleAndCast<ReadInImageType,
                                       WorkingImageType>(inputImage,
-                                                        ZeroPercentValue,
-                                                        HundredPercentValue);
+                                                        0.0F,
+                                                        1.0F );
   return readInImage;
 }
 

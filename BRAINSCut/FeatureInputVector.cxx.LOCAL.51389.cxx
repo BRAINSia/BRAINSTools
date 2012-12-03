@@ -2,42 +2,11 @@
 #include "BRAINSCutExceptionStringHandler.h"
 #include "itkLabelStatisticsImageFilter.h"
 
+const scalarType FeatureInputVector::MIN = -1.0F;
+const scalarType FeatureInputVector::MAX = 1.0F;
+
 const unsigned int                MAX_IMAGE_SIZE = 1024;
 const WorkingImageType::IndexType ConstantHashIndexSize = {{1024, 1024, 1024}};
-
-bool
-FeatureInputVector
-::DoScalingUnitTests()
-{
-  bool        allOK = true;
-  const float x = 1.0F;
-  const float min = 0.5F;
-  const float max = 1.5F;
-  // linear
-  const float linearAnswer = 0.5F;
-
-  if( linearAnswer != LinearScaling( x, min, max ) )
-    {
-    allOK = false;
-    }
-
-  if( !(doubleSigmoid( 0.5, 1, 1, 2) == Sigmoid( 0.5, 1, 1) ) )
-    {
-    allOK = false;
-    }
-
-  if( !(doubleSigmoid( 1.5, 1, 1, 2) == Sigmoid( 1.5, 1, 2) ) )
-    {
-    allOK = false;
-    }
-
-  if( !( ZScore( 0.0, 0, 1) != 0.0F ) )
-    {
-    allOK = false;
-    }
-
-  return allOK;
-}
 
 int
 FeatureInputVector
@@ -81,21 +50,12 @@ FeatureInputVector
 FeatureInputVector
 ::FeatureInputVector() :
   m_gradientSize(-1),
-  m_normalizationMethod("None")
+  m_normalization(false)
 {
   m_spatialLocations.clear();
   m_candidateROIs.clear();
   m_gradientOfROI.clear();
   m_imageInterpolator = ImageLinearInterpolatorType::New();
-
-  m_featureNormalizationMap["None"] = None;
-  m_featureNormalizationMap["Linear"] = Linear;
-  m_featureNormalizationMap["Sigmoid_Q05"] = Sigmoid_Q05;
-  m_featureNormalizationMap["DoubleSigmoid_Q05"] = DoubleSigmoid_Q05;
-  m_featureNormalizationMap["Sigmoid_Q01"] = Sigmoid_Q01;
-  m_featureNormalizationMap["DoubleSigmoid_Q01"] = DoubleSigmoid_Q01;
-  m_featureNormalizationMap["zScore"] = zScore;
-  m_featureNormalizationMap["IQR"] = IQR;
 }
 
 FeatureInputVector
@@ -204,33 +164,9 @@ FeatureInputVector
 
 void
 FeatureInputVector
-::SetLinearNormalizationOn()
+::SetNormalization( const bool doNormalize)
 {
-  SetNormalizationMethod( "Linear" );
-}
-
-void
-FeatureInputVector
-::SetNormalizationMethod( const std::string normalizationMethod )
-{
-  switch( m_featureNormalizationMap[normalizationMethod] )
-    {
-    case None:
-    case Linear:
-    case Sigmoid_Q05:
-    case DoubleSigmoid_Q05:
-    case Sigmoid_Q01:
-    case DoubleSigmoid_Q01:
-    case zScore:
-    case IQR:
-      m_normalizationMethod = normalizationMethod;
-      break;
-    default:
-      std::cout << "ERROR: No normalization method type support of "
-                << normalizationMethod << std::endl;
-      std::exit( EXIT_FAILURE );
-    }
-  return;
+  m_normalization = doNormalize;
 };
 /*
 InputVectorMapType
@@ -270,8 +206,7 @@ FeatureInputVector
 
   while( !eachVoxelInROI.IsAtEnd() )
     {
-    if( (eachVoxelInROI.Value() > (0.0F + FLOAT_TOLERANCE) ) &&
-        (eachVoxelInROI.Value() < (1.0F - FLOAT_TOLERANCE) ) )
+    if( (eachVoxelInROI.Value() > (0.0F + FLOAT_TOLERANCE) ) && (eachVoxelInROI.Value() < (1.0F - FLOAT_TOLERANCE) ) )
       {
       InputVectorType           oneRowInputFeature( m_inputVectorSize );
       InputVectorType::iterator featureElementIterator = oneRowInputFeature.begin();
@@ -288,8 +223,11 @@ FeatureInputVector
     }
 
   /* m_normalization */
-  SetNormalizationParameters( ROIName );
-  NormalizationOfVector( currentFeatureVector, ROIName );
+  if( m_normalization )
+    {
+    SetNormalizationParameters( ROIName );
+    NormalizationOfVector( currentFeatureVector, ROIName );
+    }
 
   /* insert computed vector */
   featureInputOfROI.insert(std::pair<std::string, InputVectorMapType>( ROIName, currentFeatureVector) );
@@ -302,8 +240,6 @@ void
 FeatureInputVector
 ::SetNormalizationParameters( std::string ROIName )
 {
-  const unsigned char defaultLabel = 1;
-
   /* threshold roi */
   typedef itk::BinaryThresholdImageFilter<WorkingImageType,
                                           BinaryImageType> ThresholdType;
@@ -312,70 +248,19 @@ FeatureInputVector
 
   thresholder->SetInput( m_candidateROIs.find( ROIName)->second );
   thresholder->SetLowerThreshold( 0.0F + FLOAT_TOLERANCE );
-  thresholder->SetInsideValue( defaultLabel );
+  thresholder->SetInsideValue(1);
   thresholder->Update();
 
   /* get min and max for each image type*/
 
-  minmaxPairVectorType currentMinMaxVector;
-  ImageTypeNo          ImageTypeNumber = 0;
+  m_minmaxPairVectorType currentMinMaxVector;
   for( WorkingImageVectorType::const_iterator eachTypeOfImage = m_imagesOfInterestInOrder.begin();
        eachTypeOfImage != m_imagesOfInterestInOrder.end();
        ++eachTypeOfImage )
     {
     BinaryImageType::Pointer binaryImage = thresholder->GetOutput();
-    minmaxPairType           eachMinMax = SetMinMaxOfSubject( binaryImage, *eachTypeOfImage );
+    m_minmaxPairType         eachMinMax = SetMinMaxOfSubject( binaryImage, *eachTypeOfImage );
     currentMinMaxVector.push_back( eachMinMax );
-
-    // better do here
-    typedef itk::LabelStatisticsImageFilter<WorkingImageType, BinaryImageType> StatisticCalculatorType;
-    StatisticCalculatorType::Pointer statisticCalculator = StatisticCalculatorType::New();
-
-    statisticCalculator->SetInput( *eachTypeOfImage );
-    statisticCalculator->SetLabelInput( binaryImage );
-
-    statisticCalculator->SetHistogramParameters( 100,
-                                                 0.0F,
-                                                 1.0F );
-    statisticCalculator->SetUseHistograms( true);
-    statisticCalculator->Update();
-    m_statistics[ROIName][ImageTypeNumber]["Minimum"] =  statisticCalculator->GetMinimum( defaultLabel );
-    m_statistics[ROIName][ImageTypeNumber]["Maximum"] =  statisticCalculator->GetMaximum( defaultLabel );
-    m_statistics[ROIName][ImageTypeNumber]["Mean"] =  statisticCalculator->GetMean( defaultLabel );
-    m_statistics[ROIName][ImageTypeNumber]["Sigma"] =  statisticCalculator->GetSigma( defaultLabel );
-    m_statistics[ROIName][ImageTypeNumber]["Median"] =  statisticCalculator->GetMedian( defaultLabel );
-
-    StatisticCalculatorType::HistogramPointer histogram = statisticCalculator->GetHistogram( defaultLabel );
-    m_statistics[ROIName][ImageTypeNumber]["Q_01"] = histogram->Quantile( 0, 0.01 );
-    m_statistics[ROIName][ImageTypeNumber]["Q_99"] = histogram->Quantile( 0, 0.99 );
-    m_statistics[ROIName][ImageTypeNumber]["Q_25"] = histogram->Quantile( 0, 0.25 );
-    m_statistics[ROIName][ImageTypeNumber]["Q_75"] = histogram->Quantile( 0, 0.75 );
-    m_statistics[ROIName][ImageTypeNumber]["Q_95"] = histogram->Quantile( 0, 0.95 );
-    m_statistics[ROIName][ImageTypeNumber]["Q_05"] = histogram->Quantile( 0, 0.05 );
-
-    std::cout << ROIName << " :: " << ImageTypeNumber << " :: Minimum :: "
-              << m_statistics[ROIName][ImageTypeNumber]["Minimum"]  << std::endl;
-    std::cout << ROIName << " :: " << ImageTypeNumber << " :: Maximum :: "
-              << m_statistics[ROIName][ImageTypeNumber]["Maximum"]  << std::endl;
-    std::cout << ROIName << " :: " << ImageTypeNumber << " :: Mean :: "
-              << m_statistics[ROIName][ImageTypeNumber]["Mean"]  << std::endl;
-    std::cout << ROIName << " :: " << ImageTypeNumber << " :: Sigma :: "
-              << m_statistics[ROIName][ImageTypeNumber]["Sigma"]  << std::endl;
-    std::cout << ROIName << " :: " << ImageTypeNumber << " :: Median :: "
-              << m_statistics[ROIName][ImageTypeNumber]["Median"]  << std::endl;
-    std::cout << ROIName << " :: " << ImageTypeNumber << " :: Q_01 :: "
-              << m_statistics[ROIName][ImageTypeNumber]["Q_01"]  << std::endl;
-    std::cout << ROIName << " :: " << ImageTypeNumber << " :: Q_05 :: "
-              << m_statistics[ROIName][ImageTypeNumber]["Q_05"]  << std::endl;
-    std::cout << ROIName << " :: " << ImageTypeNumber << " :: Q_25 :: "
-              << m_statistics[ROIName][ImageTypeNumber]["Q_25"]  << std::endl;
-    std::cout << ROIName << " :: " << ImageTypeNumber << " :: Q_75 :: "
-              << m_statistics[ROIName][ImageTypeNumber]["Q_75"]  << std::endl;
-    std::cout << ROIName << " :: " << ImageTypeNumber << " :: Q_95 :: "
-              << m_statistics[ROIName][ImageTypeNumber]["Q_95"]  << std::endl;
-    std::cout << ROIName << " :: " << ImageTypeNumber << " :: Q_99 :: "
-              << m_statistics[ROIName][ImageTypeNumber]["Q_99"]  << std::endl;
-    ImageTypeNumber++;
     }
 
   m_minmax[ROIName] = currentMinMaxVector;
@@ -411,11 +296,11 @@ FeatureInputVector
     WorkingPixelType currentProbability = m_candidateROIs.find( *roiStringIt )->second->GetPixel( currentPixelIndex );
     if( currentProbability > 0.0F +  FLOAT_TOLERANCE )
       {
-      AddValueToElement( HundredPercentValue, elementIterator );
+      AddValueToElement( MAX, elementIterator );
       }
     else
       {
-      AddValueToElement( ZeroPercentValue, elementIterator );
+      AddValueToElement( MIN, elementIterator );
       }
     }
 }
@@ -460,8 +345,7 @@ FeatureInputVector
   featureImage->TransformIndexToPhysicalPoint( currentPixelIndex, CenterPhysicalPoint );
 
   m_imageInterpolator->SetInputImage( featureImage );
-  const float gradientUnitSize = 1.0F;
-  for( float i = -m_gradientSize; i <= m_gradientSize; i = i + gradientUnitSize )
+  for( float i = -m_gradientSize; i <= m_gradientSize; i = i + 1.0F )
     {
     // std::cout<<"(gradient at "<< i<<" )";
     itk::Point<WorkingPixelType, 3> gradientLocation = CenterPhysicalPoint;
@@ -553,15 +437,15 @@ FeatureInputVector
   /*std::cout << " * Min : " << statisticCalculator->GetMinimum(1)
             << " * Max : " << statisticCalculator->GetMaximum(1)
             << std::endl; */
-  return minmaxPairType( std::pair<scalarType, scalarType>( statisticCalculator->GetMinimum(1),
-                                                            statisticCalculator->GetMaximum(1) ) );
+  return m_minmaxPairType( std::pair<scalarType, scalarType>( statisticCalculator->GetMinimum(1),
+                                                              statisticCalculator->GetMaximum(1) ) );
 }
 
 void
 FeatureInputVector
 ::NormalizationOfVector( InputVectorMapType& currentFeatureVector, std::string ROIName )
 {
-  minmaxPairVectorType currentMinmaxPairVector = m_minmax.find(ROIName)->second;
+  m_minmaxPairVectorType currentMinmaxPairVector = m_minmax.find(ROIName)->second;
 
   for( InputVectorMapType::iterator eachInputVector = currentFeatureVector.begin();
        eachInputVector != currentFeatureVector.end();
@@ -569,204 +453,17 @@ FeatureInputVector
     {
     InputVectorType::iterator featureElementIterator = (eachInputVector->second).begin();
     featureElementIterator += (m_roiIDsInOrder.size() + m_spatialLocations.size() );
-    /*for( minmaxPairVectorType::const_iterator m_minmaxIt = currentMinmaxPairVector.begin();
+    for( m_minmaxPairVectorType::const_iterator m_minmaxIt = currentMinmaxPairVector.begin();
          m_minmaxIt != currentMinmaxPairVector.end();
          ++m_minmaxIt )
       {
       for(  float i = -m_gradientSize; i <= m_gradientSize; i = i + 1.0F )
         {
-        if( m_normalizationMethod == "Linear" )
-            {
-            scalarType normalizedValue = ( *featureElementIterator - m_minmaxIt->first );
-            normalizedValue = normalizedValue / ( m_minmaxIt->second - m_minmaxIt->first );
-            *featureElementIterator = normalizedValue;
-            }
+        scalarType normalizedValue = ( *featureElementIterator - m_minmaxIt->first );
+        normalizedValue = normalizedValue / ( m_minmaxIt->second - m_minmaxIt->first );
+        *featureElementIterator = normalizedValue;
         featureElementIterator++;
         }
-      }*/
-    ImageTypeNo currentImgType = 0;
-    for( WorkingImageVectorType::const_iterator eachTypeOfImage = m_imagesOfInterestInOrder.begin();
-         eachTypeOfImage != m_imagesOfInterestInOrder.end();
-         ++eachTypeOfImage )
-      {
-      for(  float i = -m_gradientSize; i <= m_gradientSize; i = i + 1.0F )
-        {
-        if( m_normalizationMethod == "Linear" )
-          {
-          *featureElementIterator = LinearScaling( *featureElementIterator,
-                                                   m_statistics[ROIName][currentImgType]["Minimum"],
-                                                   m_statistics[ROIName][currentImgType]["Maximum"] );
-          }
-        else if( m_normalizationMethod == "Sigmoid_Q05" )
-          {
-          // Sigmoid
-          *featureElementIterator = Sigmoid( *featureElementIterator,
-                                             m_statistics[ROIName][currentImgType]["Median"],
-                                             m_statistics[ROIName][currentImgType]["Q_95"]
-                                             - m_statistics[ROIName][currentImgType]["Q_05"] );
-          }
-        else if( m_normalizationMethod == "Sigmoid_Q01" )
-          {
-          // Sigmoid
-          *featureElementIterator = Sigmoid( *featureElementIterator,
-                                             m_statistics[ROIName][currentImgType]["Median"],
-                                             m_statistics[ROIName][currentImgType]["Q_99"]
-                                             - m_statistics[ROIName][currentImgType]["Q_01"] );
-          }
-        else if( m_normalizationMethod == "DoubleSigmoid_Q05" )
-          {
-          *featureElementIterator = doubleSigmoid( *featureElementIterator,
-                                                   m_statistics[ROIName][currentImgType]["Median"],
-                                                   m_statistics[ROIName][currentImgType]["Median"]
-                                                   - m_statistics[ROIName][currentImgType]["Q_05"],
-                                                   m_statistics[ROIName][currentImgType]["Q_95"]
-                                                   - m_statistics[ROIName][currentImgType]["Median"] );
-          }
-        else if( m_normalizationMethod == "DoubleSigmoid_Q01" )
-          {
-          *featureElementIterator = doubleSigmoid( *featureElementIterator,
-                                                   m_statistics[ROIName][currentImgType]["Median"],
-                                                   m_statistics[ROIName][currentImgType]["Median"]
-                                                   - m_statistics[ROIName][currentImgType]["Q_01"],
-                                                   m_statistics[ROIName][currentImgType]["Q_99"]
-                                                   - m_statistics[ROIName][currentImgType]["Median"] );
-          }
-        else if( m_normalizationMethod == "zScore" )
-          {
-          *featureElementIterator = ZScore( *featureElementIterator,
-                                            m_statistics[ROIName][currentImgType]["Mean"],
-                                            m_statistics[ROIName][currentImgType]["Sigma"] );
-          }
-        else if( m_normalizationMethod == "IQR" )
-          {
-          float current_IQR = m_statistics[ROIName][currentImgType]["Q_75"]
-            - m_statistics[ROIName][currentImgType]["Q_25"];
-          *featureElementIterator = ZScore( *featureElementIterator,
-                                            m_statistics[ROIName][currentImgType]["Median"],
-                                            current_IQR );
-          }
-        else if( m_normalizationMethod == "None" )
-          {
-          // do nothing
-          }
-        else
-          {
-          std::cout << "In valid normalization type of " << m_normalizationMethod << std::endl;
-          std::exit( EXIT_FAILURE);
-          }
-        featureElementIterator++;
-        }
-      currentImgType++;
       }
     }
-}
-
-/* normalization is all to zero to one range */
-float
-FeatureInputVector
-::Sigmoid( const float x,
-           const float center,
-           const float range)
-{
-  //    1
-  // _____________
-  // 1 + exp( -2x )
-  float exp_value;
-  float return_value;
-
-  /*** Exponential calculation ***/
-  const float fixedSlopeConstant = 8.0F;
-
-  exp_value = exp( (double) -fixedSlopeConstant * ( x - center )  / range);
-
-  /*** Final Sigmoid value ***/
-  float sigmoid_value = 1 / (1 + exp_value);
-  return_value =  LinearScaling( sigmoid_value, 0.0F, 1.0F);
-  // std::cout<< " x = " << x << ", "
-  //         << " center = " << center << ", "
-  //         << " range = " << range << ", "
-  //         << " sigmoid = " << sigmoid_value <<","
-  //         << " returnValue = "<< return_value << std::endl;
-
-  return return_value;
-}
-
-float
-FeatureInputVector
-::LinearScaling( const float x,
-                 const float min,
-                 const float max )
-{
-  if( min == ZeroPercentValue && max == HundredPercentValue )
-    {
-    return x;
-    }
-
-  float newRange = HundredPercentValue - ZeroPercentValue;
-  float oldRange = max - min;
-  float return_value = ZeroPercentValue + ( x - min ) * ( newRange / oldRange );
-
-  return return_value;
-}
-
-float
-FeatureInputVector
-::ZScore( const float x,
-          const float mu,
-          const float sigma )
-{
-  float return_value;
-  float zScore_value = ( x - mu ) / sigma;
-
-  float sigma4Range = 4.0F;
-
-  return_value = LinearScaling( zScore_value, -sigma4Range, sigma4Range );
-  // std::cout<< " x = " << x << ", "
-  //          << " mu = " << mu << ", "
-  //          << " sigma = " << sigma << ", "
-  //          << " zScore = " << zScore_value<<","
-  //          << " returnValue = "<< return_value << std::endl;
-  return return_value;
-}
-
-float
-FeatureInputVector
-::doubleSigmoid( const float x,
-                 const float t,
-                 const float r1,
-                 const float r2)
-{
-  //           1
-  // ________________________
-  // 1 + exp( -2 * (s-t)/r )
-  float exp_value;
-  float return_value;
-  float r;
-
-  if( x > t )
-    {
-    r = r2;
-    }
-  else
-    {
-    r = r1;
-    }
-
-  /*** Exponential calculation ***/
-  const float fixedSlopeConstant = 8.0F;
-  exp_value = exp( (double) -fixedSlopeConstant * ( x - t ) / r);
-
-  /*** Final Sigmoid value ***/
-  float sigmoid_value = 1 / (1 + exp_value);
-
-  return_value = LinearScaling( sigmoid_value, 0.0F, 1.0F);
-
-  // std::cout<< " x = " << x << ", "
-  //         << " t = " << t << ", "
-  //         << " r1 = " << r1 << ", "
-  //         << " r2 = " << r2 << ", "
-  //         << " sigmoid = " << sigmoid_value <<","
-  //         << " returnValue = "<< return_value << std::endl;
-
-  return return_value;
 }

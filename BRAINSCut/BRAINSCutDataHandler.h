@@ -80,7 +80,7 @@ public:
   void                  GetDeformedROIs( std::map<std::string,
                                                   WorkingImagePointer>& deformedROIs, DataSet& subject );
 
-  bool                  GetNormalization();
+  std::string           GetNormalizationMethod();
 
   void                  SetNormalization();
 
@@ -143,13 +143,13 @@ protected:
   TrainingParameters *TrainConfiguration;
 
   /** atlas data set*/
-  DataSet *           atlasDataSet;
-  std::string         atlasFilename;
-  std::string         atlasBinaryFilename;
-  WorkingImagePointer atlasImage;
+  DataSet *           m_atlasDataSet;
+  std::string         m_atlasFilename;
+  std::string         m_atlasBinaryFilename;
+  WorkingImagePointer m_atlasImage;
 
   /**ProbabilityMaps*/
-  ProbabilityMapList *      roiDataList;
+  ProbabilityMapList *      m_roiDataList;
   DataSet::StringVectorType m_roiIDsInOrder;
   unsigned int              roiCount;
 
@@ -160,15 +160,15 @@ protected:
   int                               roiAutoDilateSize;
 
   /** Spatial Coordinate System Images*/
-  WorkingImagePointer rho;
-  WorkingImagePointer phi;
-  WorkingImagePointer theta;
+  WorkingImagePointer m_rho;
+  WorkingImagePointer m_phi;
+  WorkingImagePointer m_theta;
 
-  unsigned int gradientSize;
+  unsigned int m_gradientSize;
 
   /** vector file name */
-  std::string trainVectorFilename;
-  bool        normalization;
+  std::string m_trainVectorFilename;
+  std::string m_normalization;
 
   /** model name **/
   std::string ANNModelFilename;

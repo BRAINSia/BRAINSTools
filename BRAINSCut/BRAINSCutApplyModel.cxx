@@ -95,7 +95,7 @@ BRAINSCutApplyModel
 
   typedef BRAINSCutConfiguration::ApplyDataSetListType::iterator ApplySubjectIteratorType;
 
-  m_normalization = this->m_myDataHandler->GetNormalization();
+  m_normalization = this->m_myDataHandler->GetNormalizationMethod();
   for( ApplySubjectIteratorType subjectIt = m_applyDataSetList.begin();
        subjectIt != m_applyDataSetList.end();
        ++subjectIt )
@@ -144,7 +144,7 @@ BRAINSCutApplyModel
   inputVectorGenerator.SetCandidateROIs( deformedROIs);
   inputVectorGenerator.SetROIInOrder( this->m_myDataHandler->GetROIIDsInOrder() );
   inputVectorGenerator.SetInputVectorSize();
-  inputVectorGenerator.SetNormalization( m_normalization );
+  inputVectorGenerator.SetNormalizationMethod( m_normalization );
 
   /* now iterate through the roi */
 

@@ -229,9 +229,8 @@ DoCenteredInitialization( typename FixedImageType::Pointer & orientedFixedVolume
       typename ImageMaskSpatialObjectType::Pointer mask = ImageMaskSpatialObjectType::New();
       mask->SetImage( movingFindCenter->GetClippedImageMask() );
 
-      typename CHMMaskImageType::Pointer ClippedMask = movingFindCenter->GetClippedImageMask();
-      // itkUtil::WriteImage<CHMMaskImageType>( ClippedMask ,
-      // std::string("MOVING_MASK.nii.gz"));
+      // typename CHMMaskImageType::ConstPointer ClippedMask = movingFindCenter->GetClippedImageMask();
+      // itkUtil::WriteImage<CHMMaskImageType>( ClippedMask , std::string("MOVING_MASK.nii.gz"));
 
       mask->ComputeObjectToWorldTransform();
       typename SpatialObjectType::Pointer p = dynamic_cast<SpatialObjectType *>( mask.GetPointer() );
@@ -263,7 +262,7 @@ DoCenteredInitialization( typename FixedImageType::Pointer & orientedFixedVolume
       typename ImageMaskSpatialObjectType::Pointer mask = ImageMaskSpatialObjectType::New();
       mask->SetImage( fixedFindCenter->GetClippedImageMask() );
 
-      typename CHMMaskImageType::Pointer ClippedMask = fixedFindCenter->GetClippedImageMask();
+      // typename CHMMaskImageType::ConstPointer ClippedMask = fixedFindCenter->GetClippedImageMask();
 
       mask->ComputeObjectToWorldTransform();
       typename SpatialObjectType::Pointer p = dynamic_cast<SpatialObjectType *>( mask.GetPointer() );

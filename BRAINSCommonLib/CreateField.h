@@ -39,8 +39,8 @@ public:
   typedef typename ImageType::Pointer ImagePointer;
   itkStaticConstMacro(ImageDimension, unsigned int, TImage::ImageDimension);
   typedef Array<unsigned int> IterationsArrayType;
-  itkGetObjectMacro(ImageOne, ImageType);
-  itkGetObjectMacro(ImageTwo, ImageType);
+  itkGetConstObjectMacro(ImageOne, ImageType);
+  itkGetConstObjectMacro(ImageTwo, ImageType);
   itkSetObjectMacro(ImageOne, ImageType);
   itkSetObjectMacro(ImageTwo, ImageType);
   itkSetMacro(NumberOfHistogramLevels, unsigned long);
@@ -61,8 +61,8 @@ public:
   typedef TImage                             InputImageType;
   typedef typename InputImageType::PixelType InputPixelType;
   typedef T2Image                            OutputImageType;
-  itkGetObjectMacro(FixedImage, OutputImageType);
-  itkGetObjectMacro(MovingImage, OutputImageType);
+  itkGetConstObjectMacro(FixedImage, OutputImageType);
+  itkGetConstObjectMacro(MovingImage, OutputImageType);
   itkGetMacro(FixedImageMinimum, InputPixelType);
   itkGetMacro(MovingImageMinimum, InputPixelType);
 
@@ -86,7 +86,7 @@ public:
   itkSetClampMacro( NumberOfLevels, unsigned short, 1,
                     NumericTraits<unsigned short>::max() );
   itkSetMacro(NumberOfIterations, UnsignedIntArray);
-  itkGetObjectMacro(DisplacementField, TDisplacementField);
+  itkGetConstObjectMacro(DisplacementField, TDisplacementField);
   void StartNewLevel();
 
   void Execute();

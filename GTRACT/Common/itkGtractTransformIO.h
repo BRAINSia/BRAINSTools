@@ -64,10 +64,10 @@ public:
   itkSetObjectMacro(BSplineTransform, BSplineTransformType);
   itkSetObjectMacro(InverseBSplineTransform, ThinPlateSplineTransformType);
 
-  itkGetObjectMacro(RigidTransform, RigidTransformType);
-  itkGetObjectMacro(AffineTransform, AffineTransformType);
-  itkGetObjectMacro(BSplineTransform, BSplineTransformType);
-  itkGetObjectMacro(InverseBSplineTransform, ThinPlateSplineTransformType);
+  itkGetConstObjectMacro(RigidTransform, RigidTransformType);
+  itkGetConstObjectMacro(AffineTransform, AffineTransformType);
+  itkGetConstObjectMacro(BSplineTransform, BSplineTransformType);
+  itkGetConstObjectMacro(InverseBSplineTransform, ThinPlateSplineTransformType);
 
   /*** Additional API - Functions ***/
   void LoadTransform();

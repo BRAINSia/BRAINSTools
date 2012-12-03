@@ -127,7 +127,7 @@ public:
   itkSetObjectMacro( Transform, TransformType );
 
   /** Get a pointer to the Transform.  */
-  itkGetObjectMacro( Transform, TransformType );
+  itkGetConstObjectMacro( Transform, TransformType );
 
   /** Set the parameters defining the Transform. */
   void SetTransformParameters( const ParametersType & parameters ) const;

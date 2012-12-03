@@ -190,19 +190,19 @@ public:
   itkSetObjectMacro(RegistrationFilter, RegistrationType);
 
   /** Get the internal registrator. */
-  itkGetObjectMacro(RegistrationFilter, RegistrationType);
+  itkGetConstObjectMacro(RegistrationFilter, RegistrationType);
 
   /** Set the fixed image pyramid. */
   itkSetObjectMacro(FixedImagePyramid, FixedImagePyramidType);
 
   /** Get the fixed image pyramid. */
-  itkGetObjectMacro(FixedImagePyramid, FixedImagePyramidType);
+  itkGetConstObjectMacro(FixedImagePyramid, FixedImagePyramidType);
 
   /** Set the moving image pyramid. */
   itkSetObjectMacro(MovingImagePyramid, MovingImagePyramidType);
 
   /** Get the moving image pyramid. */
-  itkGetObjectMacro(MovingImagePyramid, MovingImagePyramidType);
+  itkGetConstObjectMacro(MovingImagePyramid, MovingImagePyramidType);
 
   /** Set number of multi-resolution levels. */
   virtual void SetNumberOfLevels(unsigned int num);
@@ -227,15 +227,15 @@ public:
 
   /** Set the moving image pyramid. */
   itkSetObjectMacro(FieldExpander12, FieldExpanderType);
-
-  /** Get the moving image pyramid. */
-  itkGetObjectMacro(FieldExpander12, FieldExpanderType);
-
-  /** Set number of iterations per multi-resolution levels. */
   itkSetObjectMacro(FieldExpander21, FieldExpanderType);
 
   /** Get number of iterations per multi-resolution levels. */
-  itkGetObjectMacro(FieldExpander21, FieldExpanderType);
+  itkGetObjectMacro(FieldExpander12, FieldExpanderType); // HACK: This should use the future implemented
+                                                         // itkGetModifiableObjectMacro
+  itkGetObjectMacro(FieldExpander21, FieldExpanderType); // HACK: This should use the future implemented
+                                                         // itkGetModifiableObjectMacro
+  itkGetConstObjectMacro(FieldExpander12, FieldExpanderType);
+  itkGetConstObjectMacro(FieldExpander21, FieldExpanderType);
 
   using Superclass::MakeOutput;
   virtual ProcessObject::DataObjectPointer MakeOutput(ProcessObject::DataObjectPointerArraySizeType idx);

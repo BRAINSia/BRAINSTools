@@ -32,8 +32,8 @@ public:
   itkStaticConstMacro(ImageDimension, unsigned int, TInputImage::ImageDimension);
 
   itkSetObjectMacro(InputImage, InputImageType);
-  itkGetObjectMacro(InputImage, InputImageType);
-  itkGetObjectMacro(OutputImage, OutputImageType);
+  itkGetConstObjectMacro(InputImage, InputImageType);
+  itkGetConstObjectMacro(OutputImage, OutputImageType);
 
   /** Set/Get value to replace thresholded pixels. Pixels that lie *
     *  within Lower and Upper (inclusive) will be replaced with this

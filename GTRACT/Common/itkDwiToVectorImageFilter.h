@@ -111,7 +111,7 @@ public:
 
   /** SetInput and GetOutput Macros */
   itkSetObjectMacro(Input, InputImageType);
-  itkGetObjectMacro(Output, OutputImageType);
+  itkGetConstObjectMacro(Output, OutputImageType);
 
   /** Image Sorting Function Macros */
   itkSetMacro(NumberDtiDirections, int);

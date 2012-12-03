@@ -41,7 +41,7 @@ public:
   itkSetStringMacro(DisplacementFieldName);
   itkSetStringMacro(DeformedImageName);
   itkGetStringMacro(DeformedImageName);
-  itkGetObjectMacro(DisplacementField, TDisplacementField);
+  itkGetConstObjectMacro(DisplacementField, TDisplacementField);
   void Update();
 
 protected:

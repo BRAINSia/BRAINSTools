@@ -81,7 +81,7 @@ public:
 
   /* SetInput and GetOutput Macros */
   itkSetObjectMacro(Input, InputImageType);
-  itkGetObjectMacro(Output, SpatialObjectType);
+  itkGetConstObjectMacro(Output, SpatialObjectType);
   itkSetObjectMacro(Transform, TransformType);
   itkGetMacro(Size, InputImageSizeType);
   itkSetMacro(Size, InputImageSizeType);

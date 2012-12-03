@@ -129,7 +129,7 @@ public:
 /* SetInput and GetOutput Macros */
   itkSetObjectMacro(FixedImage,  RegisterImageType);
   itkSetObjectMacro(MovingImage, RegisterImageType);
-  itkGetObjectMacro(Output,      TransformType);
+  itkGetConstObjectMacro(Output,      TransformType);
 
   itkSetMacro(NumberOfSpatialSamples, int);
   itkSetMacro(NumberOfIterations,     int);

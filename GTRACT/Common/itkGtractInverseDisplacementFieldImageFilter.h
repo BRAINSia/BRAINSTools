@@ -121,7 +121,7 @@ public:
   itkSetObjectMacro( KernelTransform, KernelTransformType );
 
   /** Get a pointer to the coordinate transform. */
-  itkGetObjectMacro( KernelTransform, KernelTransformType );
+  itkGetConstObjectMacro( KernelTransform, KernelTransformType );
 
   /** Set the size of the output image. */
   itkSetMacro( Size, SizeType );

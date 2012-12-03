@@ -116,7 +116,8 @@ public:
   itkGetConstMacro(ForceCoronalZeroOrigin, bool);
 
   /** Get pointer to the subject image. */
-  itkGetObjectMacro(InitialDisplacementField, TDisplacementField);
+  itkGetObjectMacro(InitialDisplacementField, TDisplacementField); // HACK:  Should provide modifiable form of this.
+  itkGetConstObjectMacro(InitialDisplacementField, TDisplacementField);
 
   /** Get the number of histogram bins. */
   itkGetConstMacro(NumberOfHistogramLevels, unsigned long);

@@ -60,12 +60,13 @@ public:
 
   itkGetConstMacro(CenterOfBrain, PointType);
   itkGetObjectMacro(TrimmedImage, TInputImage);
+  itkGetConstObjectMacro(TrimmedImage, TInputImage);
 
   itkSetConstObjectMacro(ImageMask, TMaskImage);
   itkGetConstObjectMacro(ImageMask, TMaskImage);
 
   // THIS IS OUTPUT ONLY  itkSetObjectMacro(ClippedImageMask, TMaskImage);
-  itkGetObjectMacro(ClippedImageMask, TMaskImage);
+  itkGetConstObjectMacro(ClippedImageMask, TMaskImage);
 
   // DEBUGGING STUFF
   itkSetMacro(GenerateDebugImages, bool);

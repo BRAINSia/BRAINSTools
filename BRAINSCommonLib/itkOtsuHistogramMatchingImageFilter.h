@@ -142,9 +142,9 @@ public:
   /** Methods to get the histograms of the source, reference, and
     * output. Objects are only valid after Update() has been called
     * on this filter. */
-  itkGetObjectMacro(SourceHistogram, HistogramType);
-  itkGetObjectMacro(ReferenceHistogram, HistogramType);
-  itkGetObjectMacro(OutputHistogram, HistogramType);
+  itkGetConstObjectMacro(SourceHistogram, HistogramType);
+  itkGetConstObjectMacro(ReferenceHistogram, HistogramType);
+  itkGetConstObjectMacro(OutputHistogram, HistogramType);
 
 #ifdef ITK_USE_CONCEPT_CHECKING
   /** Begin concept checking */

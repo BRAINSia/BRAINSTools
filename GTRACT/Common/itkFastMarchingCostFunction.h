@@ -87,7 +87,7 @@ public:
 
   /** Set/Get input Cost Image  */
   itkSetObjectMacro( CostImage, CostImageType );
-  itkGetObjectMacro( CostImage, CostImageType );
+  itkGetConstObjectMacro( CostImage, CostImageType );
 
   // Returns dimension of image
   unsigned int GetNumberOfParameters() const;

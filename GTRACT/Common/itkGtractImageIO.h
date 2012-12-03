@@ -64,11 +64,11 @@ public:
   itkSetObjectMacro(Rgb3dImage,   Rgb3dImageType);
   itkSetObjectMacro(TensorImage,  TensorImageType);
 
-  itkGetObjectMacro(Short3dImage, Short3dImageType);
-  itkGetObjectMacro(Short4dImage, Short4dImageType);
-  itkGetObjectMacro(Float3dImage, Float3dImageType);
-  itkGetObjectMacro(Rgb3dImage,   Rgb3dImageType);
-  itkGetObjectMacro(TensorImage,  TensorImageType);
+  itkGetConstObjectMacro(Short3dImage, Short3dImageType);
+  itkGetConstObjectMacro(Short4dImage, Short4dImageType);
+  itkGetConstObjectMacro(Float3dImage, Float3dImageType);
+  itkGetConstObjectMacro(Rgb3dImage,   Rgb3dImageType);
+  itkGetConstObjectMacro(TensorImage,  TensorImageType);
 
   /*** Additional API - Functions ***/
   void Load3dDICOMSeries();

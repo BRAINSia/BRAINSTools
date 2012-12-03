@@ -112,7 +112,8 @@ public:
   itkGetConstMacro(OutputMovingVolumeROI, std::string);
 
   itkSetObjectMacro(CostMetricObject, MetricType);
-  itkGetObjectMacro(CostMetricObject, MetricType);
+  itkGetObjectMacro(CostMetricObject, MetricType); // HACK:  Should not provide this interface
+  itkGetConstObjectMacro(CostMetricObject, MetricType);
 
   // TODO:  This should be converted to use the
   //       interpolation mechanisms from GenericTransform

@@ -155,7 +155,7 @@ public:
   itkSetObjectMacro(FixedImage, RegisterImageType);
   itkSetObjectMacro(MovingImage, RegisterImageType);
   itkSetConstObjectMacro(BulkTransform, BulkTransformType);
-  itkGetObjectMacro(Output, TransformType);
+  itkGetConstObjectMacro(Output, TransformType);
 
   itkSetMacro(SpatialSampleScale, int);
   itkSetMacro(MaximumNumberOfIterations, int);

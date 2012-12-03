@@ -193,10 +193,10 @@ public:
   itkGetConstMacro(GradientThreshold, InputCoordType);
 
   /** Get the radius image */
-  itkGetObjectMacro(RadiusImage, InternalImageType);
+  itkGetConstObjectMacro(RadiusImage, InternalImageType);
 
   /** Get the accumulator image */
-  itkGetObjectMacro(AccumulatorImage, InternalImageType);
+  itkGetConstObjectMacro(AccumulatorImage, InternalImageType);
 
   /** Set the scale of the derivative function (using DoG) */
   itkSetMacro(SigmaGradient, double);

@@ -146,10 +146,10 @@ public:
   itkSetMacro(WritedebuggingImagesLevel, unsigned int);
 
   /** Get the accumulator image */
-  itkGetObjectMacro(AccumulatorImage, TInputImage);
+  itkGetConstObjectMacro(AccumulatorImage, TInputImage);
 
   /** Get the RoI image */
-  itkGetObjectMacro(RoIImage, TInputImage);
+  itkGetConstObjectMacro(RoIImage, TInputImage);
 
   /** Get the rotation angle of the alignment process */
   itkGetMacro(RotAngle, InputPointType);
@@ -165,7 +165,9 @@ public:
 
   /** Get the versor transform of the detector */
   itkGetObjectMacro(VersorTransform, VersorTransformType);
+  itkGetConstObjectMacro(VersorTransform, VersorTransformType);
   itkGetObjectMacro(InvVersorTransform, VersorTransformType);
+  itkGetConstObjectMacro(InvVersorTransform, VersorTransformType);
 
   /** Get/Set the failure report */
   itkGetConstMacro(Failure, bool);

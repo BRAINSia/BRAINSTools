@@ -204,11 +204,11 @@ private:
   }
 
   itkSetObjectMacro(OutputImage,  LevelSetImageType);
-  itkGetObjectMacro(OutputImage,  LevelSetImageType);
+  itkGetConstObjectMacro(OutputImage,  LevelSetImageType);
   itkSetObjectMacro(TensorImage,  TensorImageType);
-  itkGetObjectMacro(TensorImage,  TensorImageType);
+  itkGetConstObjectMacro(TensorImage,  TensorImageType);
   itkSetObjectMacro(AnisotropyImage,  AnisotropyImageType);
-  itkGetObjectMacro(AnisotropyImage,  AnisotropyImageType);
+  itkGetConstObjectMacro(AnisotropyImage,  AnisotropyImageType);
 
   /** Set/Get the Normalization Factor for the Speed Image.
       The values in the Speed Image is divided by this

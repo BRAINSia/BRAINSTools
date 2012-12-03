@@ -85,7 +85,7 @@ public:
 
   /** The preprocessedMoving volume SHOULD NOT BE SET, you can get it out of the
     *  algorithm.*/
-  itkGetObjectMacro(PreprocessedMovingVolume, MovingVolumeType);
+  itkGetConstObjectMacro(PreprocessedMovingVolume, MovingVolumeType);
 
   itkSetObjectMacro(FixedBinaryVolume, FixedBinaryVolumeType);
   itkGetConstObjectMacro(FixedBinaryVolume, FixedBinaryVolumeType);
@@ -412,11 +412,10 @@ template <class TLocalCostMetric>
 typename TLocalCostMetric::Pointer
 BRAINSFitHelper::GetCostMetric()
 {
-  typedef typename TLocalCostMetric::FixedImageType  FixedImageType;
-  typedef typename TLocalCostMetric::MovingImageType MovingImageType;
-  typedef typename itk::BRAINSFitHelperTemplate<FixedImageType, MovingImageType>
-    HelperType;
-  typedef typename HelperType::MetricType GenericMetricType;
+  typedef typename TLocalCostMetric::FixedImageType                              FixedImageType;
+  typedef typename TLocalCostMetric::MovingImageType                             MovingImageType;
+  typedef typename itk::BRAINSFitHelperTemplate<FixedImageType, MovingImageType> HelperType;
+  typedef typename HelperType::MetricType                                        GenericMetricType;
 
   const typename HelperType::Pointer myHelper( dynamic_cast<HelperType *>(this->m_Helper.GetPointer() ) );
   if( myHelper.IsNull() )

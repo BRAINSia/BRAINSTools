@@ -191,7 +191,7 @@ public:
 
   /* SetInput and GetOutput Macros */
   itkSetObjectMacro(FixedImage, FixedImageType);
-  itkGetObjectMacro(Output, OutputImageType);
+  itkGetConstObjectMacro(Output, OutputImageType);
 
   itkSetMacro(NumberOfSpatialSamples, int);
   itkSetMacro(NumberOfHistogramBins, int);

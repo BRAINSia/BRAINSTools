@@ -105,7 +105,7 @@ public:
   itkTypeMacro(EigenVectorToColorImageFilter, itk::Object);
 
   itkSetObjectMacro(Input,  InputImageType);
-  itkGetObjectMacro(Output, OutputImageType);
+  itkGetConstObjectMacro(Output, OutputImageType);
   itkSetMacro(TensorShapeType, TensorShapeType);
 
   void Update();

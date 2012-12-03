@@ -104,7 +104,7 @@ public:
   /* SetInput and GetOutput Macros */
   itkSetObjectMacro(Input, BsplineTransformType);
   itkSetObjectMacro(ExampleImage, ImageType);
-  itkGetObjectMacro(Output, TransformType);
+  itkGetConstObjectMacro(Output, TransformType);
 
   itkSetMacro(XgridSize, int);
   itkSetMacro(YgridSize, int);

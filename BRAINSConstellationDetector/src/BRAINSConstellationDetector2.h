@@ -154,13 +154,15 @@ public:
 
   /** Set the original input image before the Hough eye detector */
   itkSetObjectMacro(OriginalInputImage, SImageType);
-  itkGetObjectMacro(OriginalInputImage, SImageType);
+  itkGetConstObjectMacro(OriginalInputImage, SImageType);
 
   // Get Basic Outputs
 
   /** Get the versor transform */
   itkGetObjectMacro(VersorTransform, VersorTransformType);
+  itkGetConstObjectMacro(VersorTransform, VersorTransformType);
   itkGetObjectMacro(InvVersorTransform, VersorTransformType);
+  itkGetConstObjectMacro(InvVersorTransform, VersorTransformType);
 
   /** Get the named points in original space */
   const LandmarksMapType & GetOriginalPoints()
@@ -181,13 +183,14 @@ public:
   }
 
   /** Get the interpolated output isotropic image */
-  itkGetObjectMacro(OutputResampledImage, SImageType);
+  itkGetConstObjectMacro(OutputResampledImage, SImageType);
 
   /** Get the output untransformed clipped volume */
-  itkGetObjectMacro(OutputUntransformedClippedVolume, SImageType);
+  itkGetConstObjectMacro(OutputUntransformedClippedVolume, SImageType);
 
   /** Get the Hough eye transform */
   itkGetObjectMacro(HoughEyeTransform, VersorTransformType);
+  itkGetConstObjectMacro(HoughEyeTransform, VersorTransformType);
 
   /** Set the Hough eye failure report */
   void SetHoughEyeFailure(const bool failure)

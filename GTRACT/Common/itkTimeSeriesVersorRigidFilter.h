@@ -147,7 +147,7 @@ public:
 
   /* SetInput and GetOutput Macros */
   itkSetObjectMacro(Input, InputImageType);
-  itkGetObjectMacro(Output, OutputImageType);
+  itkGetConstObjectMacro(Output, OutputImageType);
 
   itkSetMacro(NumberOfSpatialSamples, int);
   itkSetMacro(NumberOfIterations, int);

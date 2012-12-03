@@ -90,7 +90,8 @@ public:
 
   /** Set the initial Deformation Field. */
   itkSetObjectMacro( InitialDisplacementField, TDisplacementField );
-  itkGetObjectMacro( InitialDisplacementField, TDisplacementField );
+  itkGetObjectMacro( InitialDisplacementField, TDisplacementField ); // HACK: Should provide modifiable version of this.
+  itkGetConstObjectMacro( InitialDisplacementField, TDisplacementField );
 
   /** Set the number of histogram levels to use. */
   itkSetMacro( NumberOfHistogramLevels, unsigned long );
@@ -103,15 +104,18 @@ public:
 
   /** Get the output fixed image. */
   itkGetObjectMacro( OutputFixedImage, OutputImageType );
+  itkGetConstObjectMacro( OutputFixedImage, OutputImageType );
 
   /** Get the output moving image. */
   itkGetObjectMacro( OutputMovingImage, OutputImageType );
+  itkGetConstObjectMacro( OutputMovingImage, OutputImageType );
 
   /** Get the output moving image. */
-  itkGetObjectMacro( UnNormalizedMovingImage, OutputImageType );
+  itkGetConstObjectMacro( UnNormalizedMovingImage, OutputImageType );
+  itkGetConstObjectMacro( UnNormalizedMovingImage, OutputImageType );
 
   /** Get the output moving image. */
-  itkGetObjectMacro( UnNormalizedFixedImage, OutputImageType );
+  itkGetConstObjectMacro( UnNormalizedFixedImage, OutputImageType );
 
   /** Get minimum value of original fixed image. */
   itkGetMacro( FixedImageMinimum, InputPixelType );

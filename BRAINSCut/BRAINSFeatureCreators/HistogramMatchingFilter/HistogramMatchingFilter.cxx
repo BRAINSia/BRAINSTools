@@ -236,14 +236,13 @@ main(int argc, char *argv[])
     // //
 
     typedef  OtsuHistogramMatchingType::HistogramType HistogramType;
-    HistogramType::Pointer srcHG = OHFilter->GetSourceHistogram();
-    HistogramType::Pointer refHG = OHFilter->GetReferenceHistogram();
-    HistogramType::Pointer outHG = OHFilter->GetOutputHistogram();
+    HistogramType::ConstPointer srcHG = OHFilter->GetSourceHistogram();
+    HistogramType::ConstPointer refHG = OHFilter->GetReferenceHistogram();
+    HistogramType::ConstPointer outHG = OHFilter->GetOutputHistogram();
 
     HistogramType::ConstIterator srcIt = srcHG->Begin();
     HistogramType::ConstIterator refIt = refHG->Begin();
     HistogramType::ConstIterator outIt = outHG->Begin();
-
     HistogramType::ConstIterator endIt = srcHG->End();
 
     std::ofstream histFileStream;

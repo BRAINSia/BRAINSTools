@@ -190,7 +190,7 @@ public:
   virtual void Execute();
 
   /** Get the deformation field. */
-  itkGetObjectMacro(DisplacementField, TDisplacementField);
+  itkGetConstObjectMacro(DisplacementField, TDisplacementField);
 
   /** Initialize registration at the start of new level. */
   void StartNewLevel();

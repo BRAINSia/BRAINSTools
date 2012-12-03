@@ -455,7 +455,7 @@ public:
   // itkSetMacro( PermitParameterVariation, std::vector<int>      );
 
   itkSetObjectMacro(CostMetricObject, MetricType);
-  itkGetObjectMacro(CostMetricObject, MetricType);
+  itkGetConstObjectMacro(CostMetricObject, MetricType);
 
   itkSetMacro(NumberOfSamples,               unsigned int);
   itkSetMacro(NumberOfHistogramBins,         unsigned int);

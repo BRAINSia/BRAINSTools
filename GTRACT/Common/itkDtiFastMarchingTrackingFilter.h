@@ -95,9 +95,9 @@ public:
     StartPointsListType;
 
   itkSetObjectMacro( CostFN, CostFunctionType );
-  itkGetObjectMacro( CostFN, CostFunctionType );
+  itkGetConstObjectMacro( CostFN, CostFunctionType );
   itkSetObjectMacro(CostImage,  CostImageType);
-  itkGetObjectMacro(CostImage,  CostImageType);
+  itkGetConstObjectMacro(CostImage,  CostImageType);
 
   itkSetMacro(MaxStepSize, double);               // for Gradient Descent with
                                                   // default set to 1.0

@@ -81,7 +81,8 @@ public:
 
   /** Set the initial Displacement Field. */
   itkSetObjectMacro(InitialDisplacementField, TDisplacementField);
-  itkGetObjectMacro(InitialDisplacementField, TDisplacementField);
+  itkGetObjectMacro(InitialDisplacementField, TDisplacementField); // Should provide modifiable form of this
+  itkGetConstObjectMacro(InitialDisplacementField, TDisplacementField);
 
   /** Set the number of histogram levels to use. */
   itkSetMacro(NumberOfHistogramLevels, unsigned long);
@@ -93,16 +94,20 @@ public:
   virtual void Execute();
 
   /** Get the output fixed image. */
-  itkGetObjectMacro(OutputFixedImage, OutputImageType);
+  itkGetObjectMacro(OutputFixedImage, OutputImageType); // Hack should provide modifiable form of this
+  itkGetConstObjectMacro(OutputFixedImage, OutputImageType);
 
   /** Get the output moving image. */
-  itkGetObjectMacro(OutputMovingImage, OutputImageType);
+  itkGetObjectMacro(OutputMovingImage, OutputImageType); // HACK should provide modifiable form of this
+  itkGetConstObjectMacro(OutputMovingImage, OutputImageType);
 
   /** Get the output moving image. */
   itkGetObjectMacro(UnNormalizedMovingImage, OutputImageType);
+  itkGetConstObjectMacro(UnNormalizedMovingImage, OutputImageType);
 
   /** Get the output moving image. */
   itkGetObjectMacro(UnNormalizedFixedImage, OutputImageType);
+  itkGetConstObjectMacro(UnNormalizedFixedImage, OutputImageType);
 
   /** Get minimum value of original fixed image. */
   itkGetMacro(FixedImageMinimum, InputPixelType);

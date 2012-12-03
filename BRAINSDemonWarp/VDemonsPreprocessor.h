@@ -90,7 +90,8 @@ public:
 
   /** Set the initial Displacement Field. */
   itkSetObjectMacro(InitialDisplacementField, TDisplacementField);
-  itkGetObjectMacro(InitialDisplacementField, TDisplacementField);
+  itkGetObjectMacro(InitialDisplacementField, TDisplacementField); // HACK: Should provide modifiable form of this
+  itkGetConstObjectMacro(InitialDisplacementField, TDisplacementField);
 
   /** Set the number of histogram levels to use. */
   itkSetMacro(NumberOfHistogramLevels, unsigned long);

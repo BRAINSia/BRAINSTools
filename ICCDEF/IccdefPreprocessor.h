@@ -111,10 +111,11 @@ public:
   itkGetConstObjectMacro( OutputMovingImage, OutputImageType );
 
   /** Get the output moving image. */
-  itkGetConstObjectMacro( UnNormalizedMovingImage, OutputImageType );
+  itkGetObjectMacro( UnNormalizedMovingImage, OutputImageType );
   itkGetConstObjectMacro( UnNormalizedMovingImage, OutputImageType );
 
   /** Get the output moving image. */
+  itkGetObjectMacro( UnNormalizedFixedImage, OutputImageType );
   itkGetConstObjectMacro( UnNormalizedFixedImage, OutputImageType );
 
   /** Get minimum value of original fixed image. */

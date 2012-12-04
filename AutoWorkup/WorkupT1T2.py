@@ -649,6 +649,8 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
 
                 ClipT1ImageWithBrainMaskNode=dict()
                 AtlasToSubjectantsRegistration=dict()
+                AntsLabelWarpToSubject=dict()
+                AntsLabelWarpedToSubject_DS=dict()
                 myLocalSegWF=dict()
                 SEGMENTATION_DataSink=dict()
                 myLocalFSWF=dict()
@@ -805,6 +807,36 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                     ## connect SnapShotWriter[sessionid] to the baw200
                     baw200.connect( MergeStage2AverageImages[sessionid], 'out', SnapShotWriter[sessionid], 'inputVolumes')
                     baw200.connect( MergeStage2BinaryVolumes[sessionid], 'out', SnapShotWriter[sessionid], 'inputBinaryVolumes')
+                    #####
+                    ### Now define where the final organized outputs should go.
+                    baw200.connect( SnapShotWriter[sessionid], 'outputFilename',
+                                    SEGMENTATION_DataSink[sessionid], 'Segmentations.@outputSnapShot')
+                    #####
+
+                    ### Nec atlas label to subject space warping (WORKING)
+                    from nipype.interfaces.ants import ApplyTransforms
+                    currentAntsLabelWarpToSubject='AntsLabelWarpToSubject'+str(subjectid)+"_"+str(sessionid)
+                    AntsLabelWarpToSubject[sessionid] = pe.Node(interface=ApplyTransforms(),
+                                                                name = currentAntsLabelWarpToSubject)
+
+                    AntsLabelWarpToSubject[sessionid].inputs.dimension       = 3
+                    AntsLabelWarpToSubject[sessionid].inputs.output_image    = 'template_nac_lables.nii.gz'
+                    AntsLabelWarpToSubject[sessionid].inputs.interpolation   = "MultiLabel"
+                    baw200.connect( AtlasToSubjectantsRegistration[subjectid], 'composite_transform', # check with Hans, why not sessionid???
+                                    AntsLabelWarpToSubject[sessionid],         'transforms')
+                    baw200.connect( PHASE_2_oneSubjWorkflow[sessionid],        'outputspec.t1_average',
+                                    AntsLabelWarpToSubject[sessionid],         'reference_image')
+                    baw200.connect( BAtlas[subjectid],                         'template_nac_lables',
+                                    AntsLabelWarpToSubject[sessionid],         'input_image')
+                    #####
+                    ### Now define where the final organized outputs should go.
+                    AntsLabelWarpedToSubject_DSName="AntsLabelWarpedToSubject_DS_"+str(sessionid)
+                    AntsLabelWarpedToSubject_DS[sessionid]=pe.Node(nio.DataSink(),name=AntsLabelWarpedToSubject_DSName)
+                    AntsLabelWarpedToSubject_DS[sessionid].inputs.base_directory=ExperimentBaseDirectoryResults
+                    AntsLabelWarpedToSubject_DS[sessionid].inputs.substitutions = [ ( 'AntsLabelWarpedToSubject',os.path.join(projectid, subjectid, sessionid,'AntsLabelWarpedToSubject') )]
+                    baw200.connect( AntsLabelWarpToSubject[sessionid], 'output_image',
+                                    AntsLabelWarpedToSubject_DS[sessionid], 'AntsLabelWarpedToSubject')
+                    #####
 
                     #=============================================================================================================================
                     #======== Start warping subject to atlas images

@@ -7,19 +7,20 @@ include_directories(${DWIConvert_SOURCE_DIR})
 include_directories(${DWIConvert_BINARY_DIR})
 include_directories(${ModuleDescriptionParser_SOURCE_DIR})
 
+set(DWIBinDir ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 
 foreach(CLP DWICompare DWISimpleCompare)
   set ( ${CLP}_SOURCE ${CLP}.cxx)
   generateclp(${CLP}_SOURCE ${CLP}.xml)
   add_executable(${CLP} ${${CLP}_SOURCE})
   target_link_libraries (${CLP} DWIConvertSupportLib )
-  set(${CLP}EXE ${DWIConvert_BINARY_DIR}/TestSuite/${CLP})
+  set(${CLP}EXE ${DWIBinDir}/${CLP})
 endforeach()
 
 add_executable(FSLTextFileCompare FSLTextFileCompare.cxx)
 target_link_libraries (FSLTextFileCompare DWIConvertSupportLib )
 set(FSLTextFileCompareEXE
-  ${DWIConvert_BINARY_DIR}/TestSuite/FSLTextFileCompare)
+  ${DWIBinDir}/FSLTextFileCompare)
 
 add_executable(NrrdToNIfTI NrrdToNIfTI.cxx)
 target_link_libraries(NrrdToNIfTI DWIConvertSupportLib)
@@ -29,8 +30,9 @@ add_executable(${CLP}Test ${CLP}Test.cxx ${DWIConvertTest_SRC})
 add_dependencies(${CLP}Test ${CLP})
 target_link_libraries(${CLP}Test DWIConvertSupportLib )
 
-set (DWIConvertEXE ${Slicer_LAUNCH_COMMAND} ${DWIConvert_BINARY_DIR}/${CLP} )
-set (DWIConvert_TESTS ${Slicer_LAUNCH_COMMAND} ${DWIConvert_BINARY_DIR}/TestSuite/${CLP}Test )
+set (DWIConvertEXE ${Slicer_LAUNCH_COMMAND} ${DWIBinDir}/${CLP} )
+set (DWICompareEXE ${Slicer_LAUNCH_COMMAND} ${DWIBinDir}/DWICompare )
+set (DWIConvert_TESTS ${Slicer_LAUNCH_COMMAND} ${DWIBinDir}/${CLP}Test )
 
 if(NOT SETIFEMPTY)
 macro(SETIFEMPTY)
@@ -88,7 +90,7 @@ add_test(NAME FSLToNrrdTest
   -DNII_FILE=${TEMP}/GeSignaHDxTest.nii.gz
   -DNRRD_FILE=${TEMP}/FSLToNrrdTest.nrrd
   -DNRRD_COMPARE_FILE=${TEMP}/GeSignaHDxTest.nrrd
-  -DFSL_TO_NRRD=${DWIConvert_BINARY_DIR}/DWIConvert
+  -DFSL_TO_NRRD=${DWIConvertEXE}
   -D TEST_COMPARE_PROGRAM=${DWICompareEXE}
   -P ${CMAKE_CURRENT_LIST_DIR}/FSLToNrrdTest.cmake
 )
@@ -105,7 +107,7 @@ add_test(NAME NrrdToFSLTest
   -DVEC_FILE=${TEMP}/NrrdToFSLTest.bvec
   -DVAL_FILE=${TEMP}/NrrdToFSLTest.bval
   -DNII_FILE=${TEMP}/NrrdToFSLTest.nii.gz
-  -DNRRD_TO_FSL=${DWIConvert_BINARY_DIR}/DWIConvert
+  -DNRRD_TO_FSL=${DWIConvertEXE}
   -DTEST_COMPARE_PROGRAM=${DWISimpleCompareEXE}
   -DTEXT_COMPARE_PROGRAM=${FSLTextFileCompareEXE}
   -P ${CMAKE_CURRENT_LIST_DIR}/NrrdToFSLTest.cmake

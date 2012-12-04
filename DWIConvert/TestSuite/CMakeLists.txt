@@ -7,13 +7,14 @@ include_directories(${DWIConvert_SOURCE_DIR})
 include_directories(${DWIConvert_BINARY_DIR})
 include_directories(${ModuleDescriptionParser_SOURCE_DIR})
 
+set(DWIBinDir ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 
 foreach(CLP DWICompare DWISimpleCompare)
   set ( ${CLP}_SOURCE ${CLP}.cxx)
   generateclp(${CLP}_SOURCE ${CLP}.xml)
   add_executable(${CLP} ${${CLP}_SOURCE})
   target_link_libraries (${CLP} DWIConvertSupportLib )
-  set(${CLP}EXE ${DWIConvert_BINARY_DIR}/TestSuite/${CLP})
+  set(${CLP}EXE ${DWIBinDir}/${CLP})
 endforeach()
 
 add_executable(FSLTextFileCompare FSLTextFileCompare.cxx)
@@ -29,10 +30,9 @@ add_executable(${CLP}Test ${CLP}Test.cxx ${DWIConvertTest_SRC})
 add_dependencies(${CLP}Test ${CLP})
 target_link_libraries(${CLP}Test DWIConvertSupportLib )
 
-set(DWIBinDir ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 set (DWIConvertEXE ${Slicer_LAUNCH_COMMAND} ${DWIBinDir}/${CLP} )
 set (DWICompareEXE ${Slicer_LAUNCH_COMMAND} ${DWIBinDir}/DWICompare )
-set (DWIConvert_TESTS ${Slicer_LAUNCH_COMMAND} ${DWIBinDir}/TestSuite/${CLP}Test )
+set (DWIConvert_TESTS ${Slicer_LAUNCH_COMMAND} ${DWIBinDir}/${CLP}Test )
 
 if(NOT SETIFEMPTY)
 macro(SETIFEMPTY)

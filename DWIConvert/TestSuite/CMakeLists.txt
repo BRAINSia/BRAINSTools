@@ -20,7 +20,7 @@ endforeach()
 add_executable(FSLTextFileCompare FSLTextFileCompare.cxx)
 target_link_libraries (FSLTextFileCompare DWIConvertSupportLib )
 set(FSLTextFileCompareEXE
-  ${DWIConvert_BINARY_DIR}/TestSuite/FSLTextFileCompare)
+  ${DWIBinDir}/FSLTextFileCompare)
 
 add_executable(NrrdToNIfTI NrrdToNIfTI.cxx)
 target_link_libraries(NrrdToNIfTI DWIConvertSupportLib)

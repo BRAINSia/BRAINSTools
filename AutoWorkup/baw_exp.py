@@ -264,16 +264,16 @@ def main(argv=None):
         try:
             if input_arguments.wfrun == 'helium_all.q':
                 baw200.run(plugin=SGEFlavor,
-                    plugin_args=dict(template=JOB_SCRIPT,qsub_args="-S /bin/bash -pe smp1 6-12 -l h_vmem=19G,mem_free=9G -o /dev/null -e /dev/null "+CLUSTER_QUEUE))
+                    plugin_args=dict(template=JOB_SCRIPT,qsub_args="-S /bin/bash -pe smp1 1-12 -l h_vmem=19G,mem_free=9G -o /dev/null -e /dev/null "+CLUSTER_QUEUE))
             elif input_arguments.wfrun == 'helium_all.q_graph':
                 SGEFlavor='SGEGraph' #Use the SGEGraph processing
                 baw200.run(plugin=SGEFlavor,
-                    plugin_args=dict(template=JOB_SCRIPT,qsub_args="-S /bin/bash -pe smp1 6-12 -l h_vmem=19G,mem_free=9G -o /dev/null -e /dev/null "+CLUSTER_QUEUE))
+                    plugin_args=dict(template=JOB_SCRIPT,qsub_args="-S /bin/bash -pe smp1 1-12 -l h_vmem=19G,mem_free=9G -o /dev/null -e /dev/null "+CLUSTER_QUEUE))
             elif input_arguments.wfrun == 'ipl_OSX':
                 baw200.write_graph()
                 print "Running On ipl_OSX"
                 baw200.run(plugin=SGEFlavor,
-                    plugin_args=dict(template=JOB_SCRIPT,qsub_args="-S /bin/bash -pe smp1 6-12 -l h_vmem=19G,mem_free=9G -o /dev/null -e /dev/null "+CLUSTER_QUEUE))
+                    plugin_args=dict(template=JOB_SCRIPT,qsub_args="-S /bin/bash -pe smp1 1-12 -l h_vmem=19G,mem_free=9G -o /dev/null -e /dev/null "+CLUSTER_QUEUE))
             elif input_arguments.wfrun == 'local_4':
                 baw200.write_graph()
                 print "Running with 4 parallel processes on local machine"
@@ -294,10 +294,11 @@ def main(argv=None):
                 print input_arguments.wfrun
                 sys.exit(-1)
         except Exception,err:
-            print "ERROR: EXCEPTION CAUGHT IN RUNNING"
+            print("ERROR: EXCEPTION CAUGHT IN RUNNING SUBJECT {0}".format(subjectid))
             raise err
 
-        return 0
+    print("THIS RUN OF BAW FOR SUBJS {0} HAS COMPLETED".format(ExperimentDatabase.getAllSubjects()))
+    return 0
 
 if __name__ == "__main__":
     sys.exit(main())

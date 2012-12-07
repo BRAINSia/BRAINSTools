@@ -36,8 +36,8 @@ FSLToNrrd(const std::string & inputVolume,
     }
   std::vector<double>               BVals;
   std::vector<std::vector<double> > BVecs;
-  unsigned int                      bValCount;
-  unsigned int                      bVecCount;
+  unsigned int                      bValCount = 0;
+  unsigned int                      bVecCount = 0;
   double                            maxBValue(0.0);
   if( ReadBVals(BVals, bValCount, inputBValues, maxBValue) != EXIT_SUCCESS )
     {

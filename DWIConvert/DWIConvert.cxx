@@ -773,7 +773,7 @@ int main(int argc, char *argv[])
       ImageOrigin[2] = origin[2];
       }
 
-    unsigned int               numberOfSlicesPerVolume;
+    unsigned int               numberOfSlicesPerVolume = 0;
     std::map<std::string, int> sliceLocations;
     if( !multiSliceVolume )
       {

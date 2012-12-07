@@ -14,10 +14,14 @@ if __name__ == "__main__":
     source ${FREESURFER_HOME}/FreeSurferEnv.csh
     setenv SUBJECTS_DIR /IPLlinux/raid0/homes/jforbes/freesurfer/recon-all/autorecon1_copy
     recon-all -make all -subjid 0074_24832
+
+    Link to recon-all i/o table:
+    http://surfer.nmr.mgh.harvard.edu/fswiki/ReconAllDevTable
+
     """
                                      )
     parser.add_argument('-t', '--T1image', action='store', dest='T1image', help='Original T1 image')
-    parser.add_argument('-h', '--FSHomeDir', action='store', dest='SHomeDir',
+    parser.add_argument('-h', '--FSHomeDir', action='store', dest='FSHomeDir',
                         default='/ipldev/sharedopt/20110601/MacOSX_10.6/freesurfer',
                         help='Location of FreeSurfer (differs for Mac and Linux environments')
     parser.add_argument('-d', '--FSSubjDir', action='store', dest='FSSubjDir', help='FreeSurfer subjects directory')

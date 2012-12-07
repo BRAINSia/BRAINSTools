@@ -63,17 +63,32 @@ if(TEST_FSL_FLAG)
     message( FATAL_ERROR "Require TEST_TEMP_BVAL to be defined" )
   endif()
 
-  foreach(file VEC VAL)
-    file(READ ${TEST_BASELINE_B${file}} baseline)
-    file(READ ${TEST_TEMP_B${file}} testoutput)
-    if(testoutput STREQUAL baseline)
-      message("B${file} output matches")
-    else()
-      message(FATAL_ERROR "B${file} output doesn't match
-${testoutput}
-${baseline}")
-    endif()
-  endforeach()
+  if(NOT TEST_TEXT_COMPARE)
+    message( FATAL_ERROR "Require TEST_TEXT_COMPARE to be defined" )
+  endif()
+  set(Test_Compare_Command_Line
+    ${TEST_TEXT_COMPARE} ${TEST_BASELINE_BVEC} ${TEST_TEMP_BVEC}
+    ${TEST_BASELINE_BVAL} ${TEST_TEMP_BVAL})
+  message("Test_Compare_Command_Line=${Test_Compare_Command_Line}")
+  execute_process(COMMAND ${Test_Compare_Command_Line}
+    ERROR_VARIABLE TEST_ERROR
+    RESULT_VARIABLE TEST_RESULT)
+  if( TEST_RESULT )
+    message( FATAL_ERROR
+      "Failed: Test program ${TEST_TEXT_COMPARE} exited != 0.
+${TEST_ERROR}" )
+  endif( TEST_RESULT )
+#   foreach(file VEC VAL)
+#     file(READ ${TEST_BASELINE_B${file}} baseline)
+#     file(READ ${TEST_TEMP_B${file}} testoutput)
+#     if(testoutput STREQUAL baseline)
+#       message("B${file} output matches")
+#     else()
+#       message(FATAL_ERROR "B${file} output doesn't match
+# ${testoutput}
+# ${baseline}")
+#     endif()
+#   endforeach()
 endif()
 
 # if the return value is !=0 bail out

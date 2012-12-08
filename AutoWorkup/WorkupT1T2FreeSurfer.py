@@ -57,7 +57,7 @@ def CreateFreeSurferWorkflow(projectid, subjectid, sessionid,WFname,CLUSTER_QUEU
     if RunAllFSComponents == True:
         print("""Run Freesurfer ReconAll at""")
         fs_reconall = pe.Node(interface=ReconAll(),name="FS510")
-        freesurfer_sge_options_dictionary={'qsub_args': '-S /bin/bash -pe smp1 4 -l h_vmem=18G,mem_free=8 -o /dev/null -e /dev/null '+CLUSTER_QUEUE, 'overwrite': True}
+        freesurfer_sge_options_dictionary={'qsub_args': '-S /bin/bash -pe smp1 4 -l h_vmem=18G,mem_free=8G -o /dev/null -e /dev/null '+CLUSTER_QUEUE, 'overwrite': True}
         fs_reconall.plugin_args=freesurfer_sge_options_dictionary
         fs_reconall.inputs.directive = 'all'
         freesurferWF.connect(inputsSpec,'subject_id',fs_reconall,'subject_id')

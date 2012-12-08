@@ -149,7 +149,7 @@ def CreateBRAINSCutWorkflow(projectid, subjectid, sessionid,WFName,CLUSTER_QUEUE
     BRAINSCut
     """
     RF12BC = pe.Node(interface=RF12BRAINSCutWrapper(),name="RF12_BRAINSCut")
-    many_cpu_RF12BC_options_dictionary={'qsub_args': '-S /bin/bash -pe smp1 2-8 -l h_vmem=24G,mem_free=20G -o /dev/null -e /dev/null '+CLUSTER_QUEUE, 'overwrite': True}
+    many_cpu_RF12BC_options_dictionary={'qsub_args': '-S /bin/bash -pe smp1 8-8 -l h_vmem=24G,mem_free=20G -o /dev/null -e /dev/null '+CLUSTER_QUEUE, 'overwrite': True}
 #many_cpu_RF12BC_options_dictionary={'qsub_args': '-S /bin/bash -pe smp1 2-8 -l big_mem=true,h_vmem=60G,mem_free=30G -o /dev/null -e /dev/null '+CLUSTER_QUEUE, 'overwrite': True}
 #many_cpu_RF12BC_options_dictionary={'qsub_args': '-S /bin/bash -pe smp1 4-6 -l big_mem=true,h_vmem=22G,mem_free=22G -o /dev/null -e /dev/null '+CLUSTER_QUEUE, 'overwrite': True}
     RF12BC.plugin_args=many_cpu_RF12BC_options_dictionary

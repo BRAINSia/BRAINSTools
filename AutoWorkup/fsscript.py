@@ -1,153 +1,145 @@
 import argparse
-from nipype.interfaces.freesurfer.base import Info
-
-class ReconContainer(object):
-    def __init__(self, *args, **kwds):
-        self.shell = '/bin/tsch'
-        self.required = kwds['required']
-        self._checkFiles()
-        for key, val in kwargs.iteritems():
-            assert( key in self.__class__.__allowed )
-            setattr(self, key, val)
-        self.FS_SCRIPT = os.path.join(self.FREESURFER_HOME, self.FS_SCRIPT)
-        self._validateEnv()
-        return super(ReconContainer, self).__init__(*args, **kwds)
-
-    def setupEnv(self):
-        from os import setenv
-        from subprocess import check_call
-        setenv("FREESURFER_HOME", self.FREESURFER_HOME)
-        check_call(["source" self.FS_SCRIPT], shell=self.shell)
-        setenv("SUBJECTS_DIR", self.FS_SUBJECT_DIR)
-
-    def _checkFiles(self):
-        import os
-        for fname in self.required:
-            fullname = os.path.join(os.getcwd(), fname)
-            self._touchFile(fullname)
-            assert os.path.exists(fullname), "Required file does not exist and could not be created: %s" % fullname
-
-    def _touchFile(self, fullname):
-        from subprocess import check_call
-        check_call(['touch' fullname])
-
-    def _validateEnv(self):
-        import os.path.exists as exists
-        assert exists(self.FREESURFER_HOME), "FREESURFER_HOME doesn't exist: %s" % self.FREESURFER_HOME
-        assert exists(self.FS_SUBJECTS_DIR), "SUBJECTS_DIR doesn't exist: %s" % self.FS_SUBJECTS_DIR
-        assert exists(self.FS_SCRIPT, "FREESURFER script doesn't exist: %s" % self.FS_SCRIPT)
-
-def autoRecon1(*arg, **kwds):
-    """
-    TODO: Traditional Freesurfer stage (for comparison)
-    """
-    pass
+import os
+import subprocess
+import errno
+import SimpleITK as sitk
 
 def normalizeWM(t1, wm_prob):
     """This function will compute the mean value of wm and rescale the image so that the mean WM=100"""
-    from SimpleITK import BinaryThreshold, Cast, LabelStatisticsImageFilter, sitkFloat32, sitkUInt8
-    WM_MEAN_FINAL = 100.0
+    WM_MEAN_FINAL = 110.0
     WM_THRESHOLD = 0.66
-    wm_mask = BinaryThreshold(wm_prob, WM_THRESHOLD)
-    ls = LabelStatisticsImageFilter()
+    wm_mask = sitk.BinaryThreshold(wm_prob, WM_THRESHOLD)
+    ls = sitk.LabelStatisticsImageFilter()
     ls.Execute(t1, wm_mask)
     wm_value = 1
     myMeasurementMap = ls.GetMeasurementMap(wm_value)
     MeanWM = myMeasurementMap['Mean']
-    t1_new = Cast(Cast(t1, sitkFloat32) * WM_MEAN_FINAL / MeanWM, sitkUInt8)
+    t1_new = sitk.Cast(sitk.Cast(t1, sitk.sitkFloat32) * WM_MEAN_FINAL / MeanWM, sitk.sitkUInt8)
     return t1_new
 
-def baw_Recon1(*arg, **kwds):
-    import SimpleITK import ReadImage, BinaryThreshold
-    t1 = ReadImage(kwds['t1Image'])
-    t2 = ReadImage(kwds['t2Image'])
-    wm = ReadImage(kwds['wmProbImage'])
-    brain = ReadImage(kwds['brainLabel'])
-    t1_new = normalizeWM(t1, wm)
-    clipping = BinaryThreshold(brain, 1, 1000000) - BinaryThreshold(brain, 5, 5)
-    clipped = t1_new * clipping
+def mkdir_p(path):
+    try:
+        os.makedirs(path)
+    except OSError as exc: # Python >2.5
+        if exc.errno == errno.EEXIST and os.path.isdir(path):
+            pass
+        else: raise
 
-def autoRecon2(*arg, **kwds):
-    import os.path.sep as sep
-    from subprocess import check_call # import subprocess as sp
-    dir1 = 'orig' + sep
-    dir2 = 'transforms' + sep
-    required = (dir1 + '001.mgz',
-                dir1 + '002.mgz',
-                'rawavg.mgz',
-                'orig.mgz',
-                dir2 + 'talairach.auto.xfm'
-                dir2 + 'talairach.xfm',
-                dir2 + 'talairach_avi.log',
-                'nu.mgz',
-                'T1.mgz',
-                dir2 + 'talairach_with_skull.lta',
-                'brainmask.auto.mgz',
-                'brainmask.mgz')
-    container = ReconContainer(required=required. **kwds)
-    subj_id = kwds['subjID'] # TODO: Potential security risk - need to sanitize
-    with open('autoRecon2.log', 'w') as fID:
-        container.setupEnv()
-        check_call(['recon-all', '-autorecon2', '-debug', '-subjid', subj_id], stdout=fID, stderr=sp.STDOUT, shell=container.shell)
 
-def autoRecon3(*arg, **kwds):
-    import os.path.sep as sep
-    from subprocess import check_call
-    dir1 = '..' + sep + 'scripts' + sep
-    dir2 = 'transforms' + sep
-    required = (dir2 + 'talairach.lta',
-                'norm.mgz',
-                dir2 + 'talairach.m3z',
-                dir2 + 'talairach.m3z.inv.x.mgz',
-                dir2 + 'talairach.m3z.inv.y.mgz',
-                dir2 + 'talairach.m3z.inv.z.mgz',
-                'nu_noneck.mgz',
-                dir2 + 'talairach_with_skull_2.lta',
-                'aseg.auto_noCCseg.mgz',
-                'aseg.auto.mgz',
-                'aseg.mgz',
-                'brain.mgz',
-                'brain.finalsurfs.mgz',
-                'wm.seg.mgz',
-                'wm.asegedit.mgz',
-                'wm.mgz',
-                'filled.mgz',
-                dir1 + 'ponscc.cut.log',
-                'filled-pretess255.mgz', # Removed by Freesurfer
-                'lh.orig.nofix',
-                'filled-pretess127.mgz', # Removed by Freesurfer
-                'rh.orig.nofix',
-                'lh.smoothwm.nofix', 'rh.smoothwm.nofix',
-                'lh.inflated.nofix', 'rh.inflated.nofix',
-                'lh.qsphere.nofix',  'rh.qsphere.nofix',
-                'lh.orig',           'rh.orig',
-                'lh.inflated',       'rh.inflated', # Removed by Freesurfer
-                'lh.white',          'rh.white',
-                'lh.curv',           'rh.curv',
-                'lh.area',           'rh.area',
-                'lh.cortex.label',   'rh.cortex.label',
-                'lh.smoothwm',       'rh.smoothwm',
-                'lh.sulc',           'rh.sulc',
-                'lh.inflated.H',     'rh.inflated.H',
-                'lh.inflated.K'      'rh.inflated.K'
-        )
-    container = ReconContainer(required=required, **kwds)
-    subj_id = kwds['subjID'] # TODO: Potential security risk - need to sanitize
-    with open('autoRecon3.log', 'w') as fID:
-        container.setupEnv()
-        check_call(['recon-all', '-autorecon3', '-debug', '-subjid', subj_id], stdout=fID, stderr=sp.STDOUT, shell=container.shell)
+def make_dummy_file(fn):
+    """This function just makes a file with the correct name and time stamp"""
+    import time
+    mkdir_p(os.path.dirname(fn))
+    ff=open(fn,'w')
+    ff.write("DummyFile with Proper time stamp")
+    time.sleep(1) # 1 second
+    ff.close()
 
-def run(*arg, **kwds):
-    baw_Recon1(*arg, **kwds) # autoRecon1(*arg, **kwds)
-    autoRecon2(*arg, **kwds)
-    autoRecon3(*arg, **kwds)
+def IsFirstNewerThanSecond(firstFile, secondFile):
+    if not os.path.exists(firstFile):
+        print "ERROR: image missing", firstFile
+        return True
+    image_time=os.path.getmtime(firstFile)
+    if not os.path.exists(secondFile):
+        return True
+    reference_time=os.path.getmtime(secondFile)
+    return image_time > reference_time
+
+
+def run_mri_convert_script(niftiVol,mgzVol,FREESURFER_HOME,FS_SUBJECTS_DIR,FS_SCRIPT):
+    FS_SCRIPT_FN=os.path.join(FREESURFER_HOME,FS_SCRIPT)
+    mri_convert_script="""#!/bin/bash
+    export FREESURFER_HOME={FSHOME}
+    export SUBJECTS_DIR={FSSUBJDIR}
+    source {SOURCE_SCRIPT}
+    {FSHOME}/bin/mri_convert --out_data_type uchar {invol} {outvol}
+""".format(SOURCE_SCRIPT=FS_SCRIPT_FN,FSHOME=FREESURFER_HOME,FSSUBJDIR=FS_SUBJECTS_DIR,invol=niftiVol,outvol=mgzVol)
+    script_name=mgzVol+'_convert.sh'
+    script=open(script_name,'w')
+    script.write(mri_convert_script)
+    script.close()
+    os.chmod(script_name,0777)
+    script_name_stdout=mgzVol+'_convert.out'
+    script_name_stdout_fid=open(script_name_stdout,'w')
+    print "Starting mri_convert"
+    subprocess.check_call([script_name], stdout=script_name_stdout_fid, stderr=subprocess.STDOUT, shell='/bin/bash')
+    print "Ending mri_convert"
+    script_name_stdout_fid.close()
+    return
+
+def baw_Recon1(t1_fn,wm_fn,brain_fn,FREESURFER_HOME,FS_SUBJECTS_DIR,FS_SCRIPT,subjID):
+    base_subj_dir=os.path.join(FS_SUBJECTS_DIR,subjID,'mri')
+    output_brainmask_fn=os.path.join(base_subj_dir,'brainmask.nii.gz')
+    output_nu_fn=os.path.join(base_subj_dir,'nu.nii.gz')
+    output_brainmask_fn_mgz=os.path.join(base_subj_dir,'brainmask.mgz')
+    output_nu_fn_mgz=os.path.join(base_subj_dir,'nu.mgz')
+    if IsFirstNewerThanSecond(t1_fn,output_brainmask_fn_mgz):
+        print "PREPARING ALTERNATE recon-auto1 stage"
+        mkdir_p(base_subj_dir)
+        make_dummy_file(os.path.join(base_subj_dir,'orig/001.mgz') )
+        make_dummy_file(os.path.join(base_subj_dir,'rawavg.mgz') )
+        make_dummy_file(os.path.join(base_subj_dir,'orig.mgz') )
+        make_dummy_file(os.path.join(base_subj_dir,'transforms/talairach.auto.xfm') )
+        make_dummy_file(os.path.join(base_subj_dir,'transforms/talairach.xfm') )
+
+        t1 = sitk.ReadImage(t1_fn)
+        wm = sitk.ReadImage(wm_fn)
+        t1_new = sitk.Cast(normalizeWM(t1, wm),sitk.sitkUInt8)
+        sitk.WriteImage(t1_new,output_nu_fn)
+        run_mri_convert_script(output_nu_fn,output_nu_fn_mgz,FREESURFER_HOME,FS_SUBJECTS_DIR,FS_SCRIPT)
+
+        make_dummy_file(os.path.join(base_subj_dir,'T1.mgz') )
+        make_dummy_file(os.path.join(base_subj_dir,'transforms/talairach_with_skull.lta') )
+        make_dummy_file(os.path.join(base_subj_dir,'brainmask.auto.mgz') )
+        brain = sitk.ReadImage(brain_fn)
+        blood = sitk.BinaryThreshold(brain, 5, 5)
+        not_blood = 1 - blood
+        clipping = sitk.BinaryThreshold(brain, 1, 1000000) - blood
+        fill_size=2
+        ## HACK: Unfortunately we need to hole fill because of a WM bug in BABC where
+        ## some white matter is being classified as background when it it being avoid due
+        ## to too strict of multi-modal thresholding.
+        hole_filled=sitk.ErodeObjectMorphology(sitk.DilateObjectMorphology(clipping,fill_size),fill_size)
+        clipped = sitk.Cast(t1_new * hole_filled * not_blood,sitk.sitkUInt8)
+        sitk.WriteImage(clipped,output_brainmask_fn) ## brain_matter image with values normalized 0-110, no skull or surface blood
+        run_mri_convert_script(output_brainmask_fn,output_brainmask_fn_mgz,FREESURFER_HOME,FS_SUBJECTS_DIR,FS_SCRIPT)
+    else:
+        print "NOTHING TO BE DONE, SO SKIPPING."
+        return # Nothing to be done, files are already up-to-date.
+
+def runAutoReconStage(subjID,StageToRun,FREESURFER_HOME,FS_SUBJECTS_DIR,FS_SCRIPT):
+    FS_SCRIPT_FN=os.path.join(FREESURFER_HOME,FS_SCRIPT)
+    auto_recon_script="""#!/bin/bash
+export FREESURFER_HOME={FSHOME}
+export SUBJECTS_DIR={FSSUBJDIR}
+source {SOURCE_SCRIPT}
+{FSHOME}/bin/recon-all -debug -subjid {SUBJID} -make autorecon{AUTORECONSTAGE}
+""".format(SOURCE_SCRIPT=FS_SCRIPT_FN,FSHOME=FREESURFER_HOME,FSSUBJDIR=FS_SUBJECTS_DIR,AUTORECONSTAGE=StageToRun,SUBJID=subjID)
+    script_name=os.path.join(FS_SUBJECTS_DIR,subjID,'run_autorecon_stage'+str(StageToRun)+'.sh')
+    script=open(script_name,'w')
+    script.write(auto_recon_script)
+    script.close()
+    os.chmod(script_name,0777)
+    script_name_stdout=script_name+'_out'
+    script_name_stdout_fid=open(script_name_stdout,'w')
+    print "Starting auto_recon Stage: {0} for SubjectSession {1}".format(StageToRun,subjID)
+    subprocess.check_call([script_name], stdout=script_name_stdout_fid, stderr=subprocess.STDOUT, shell='/bin/bash')
+    print "Ending auto_recon Stage: {0} for SubjectSession {1}".format(StageToRun,subjID)
+    script_name_stdout_fid.close()
+    return
+
+def runAutoRecon(t1_fn,wm_fn,brain_fn,subjID,FREESURFER_HOME,FS_SUBJECTS_DIR,FS_SCRIPT):
+    """Run all stages of AutoRecon For Freesurfer, including the custom BAW initialization."""
+    baw_Recon1(t1_fn,wm_fn,brain_fn,FREESURFER_HOME,FS_SUBJECTS_DIR,FS_SCRIPT,subjID)
+    runAutoReconStage(subjID,2,FREESURFER_HOME,FS_SUBJECTS_DIR,FS_SCRIPT)
+    runAutoReconStage(subjID,3,FREESURFER_HOME,FS_SUBJECTS_DIR,FS_SCRIPT)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="""
     DELETE LATER: This is an just example of the commands required to run FreeSurfer recon-all:
-    /bin/tcsh
+    /bin/bash
     setenv FREESURFER_HOME /ipldev/sharedopt/20110601/MacOSX_10.6/freesurfer
-    source ${FREESURFER_HOME}/FreeSurferEnv.csh
+    source ${FREESURFER_HOME}/FreeSurferEnv.sh
     setenv SUBJECTS_DIR /IPLlinux/raid0/homes/jforbes/freesurfer/recon-all/autorecon1_copy
     recon-all -make all -subjid 0074_24832
 
@@ -156,18 +148,25 @@ if __name__ == "__main__":
 
     """)
     # TODO: Make parser group "Inputs"
-    parser.add_argument('-t1', '--T1image', action='store', dest='t1Image', help='Original T1 image')
-    parser.add_argument('-t2', '--T2image', action='store', dest='t2Image', help='Original T2 image')
-    parser.add_argument('-i', '--SubjID', action='store', dest='subjID', help='Subject_Session')
-    parser.add_argument('-b', '--BrainLabel', action='store', dest='brainLabel',
+    parser.add_argument('--T1image', action='store', dest='t1Image', help='Original T1 image')
+    #parser.add_argument('--T2image', action='store', dest='t2Image', help='Original T2 image')
+    parser.add_argument('--SubjID', action='store', dest='subjID', help='Subject_Session')
+    parser.add_argument('--BrainLabel', action='store', dest='brainLabel',
                         help='The normalized T1 image with the skull removed. Normalized 0-110 where white matter=110.')
-    parser.add_argument('-w', '--WMProb', action='store', dest='wmProbImage', help='')
+    parser.add_argument('--WMProb', action='store', dest='wmProbImage', help='')
     # TODO: Make parser group "Environment"
-    parser.add_argument('-h', '--FSHomeDir', action='store', dest='FREESURFER_HOME',
+    parser.add_argument('--FSHomeDir', action='store', dest='FREESURFER_HOME',
                         default='/ipldev/sharedopt/20110601/MacOSX_10.6/freesurfer',
                         help='Location of FreeSurfer (differs for Mac and Linux environments')
-    parser.add_argument('-d', '--FSSubjDir', action='store', dest='FS_SUBJECTS_DIR', help='FreeSurfer subjects directory')
-    parser.add_argument('-s', '--FSSource', action='store', dest='FS_SCRIPT',
-                        default='FreeSurferEnv.csh', help='')
-    kwds = vars(parser.parse_args())
-    return runAutoRecon(**kwds)
+    parser.add_argument('--FSSubjDir', action='store', dest='FS_SUBJECTS_DIR', help='FreeSurfer subjects directory')
+    parser.add_argument('--FSSource', action='store', dest='FS_SCRIPT',
+                        default='FreeSurferEnv.sh', help='')
+    all_args=parser.parse_args()
+
+    runAutoRecon(all_args.t1Image,
+                 all_args.wmProbImage,
+                 all_args.brainLabel,
+                 all_args.subjID,
+                 all_args.FREESURFER_HOME,
+                 all_args.FS_SUBJECTS_DIR,
+                 all_args.FS_SCRIPT)

@@ -820,7 +820,7 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                                                                 name = currentAntsLabelWarpToSubject)
 
                     AntsLabelWarpToSubject[sessionid].inputs.dimension       = 3
-                    AntsLabelWarpToSubject[sessionid].inputs.output_image    = 'warped_hncma-atlas.nii.gz'
+                    AntsLabelWarpToSubject[sessionid].inputs.output_image    = 'warped_hncma_atlas_seg.nii.gz'
                     AntsLabelWarpToSubject[sessionid].inputs.interpolation   = "MultiLabel"
                     baw200.connect( AtlasToSubjectantsRegistration[subjectid], 'composite_transform', # check with Hans, why not sessionid???
                                     AntsLabelWarpToSubject[sessionid],         'transforms')

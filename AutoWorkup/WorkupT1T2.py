@@ -820,13 +820,13 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                                                                 name = currentAntsLabelWarpToSubject)
 
                     AntsLabelWarpToSubject[sessionid].inputs.dimension       = 3
-                    AntsLabelWarpToSubject[sessionid].inputs.output_image    = 'template_nac_lables.nii.gz'
+                    AntsLabelWarpToSubject[sessionid].inputs.output_image    = 'warped_hncma-atlas.nii.gz'
                     AntsLabelWarpToSubject[sessionid].inputs.interpolation   = "MultiLabel"
                     baw200.connect( AtlasToSubjectantsRegistration[subjectid], 'composite_transform', # check with Hans, why not sessionid???
                                     AntsLabelWarpToSubject[sessionid],         'transforms')
                     baw200.connect( PHASE_2_oneSubjWorkflow[sessionid],        'outputspec.t1_average',
                                     AntsLabelWarpToSubject[sessionid],         'reference_image')
-                    baw200.connect( BAtlas[subjectid],                         'template_nac_lables',
+                    baw200.connect( BAtlas[subjectid],                         'hncma-atlas',
                                     AntsLabelWarpToSubject[sessionid],         'input_image')
                     #####
                     ### Now define where the final organized outputs should go.

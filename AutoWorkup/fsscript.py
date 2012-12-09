@@ -107,15 +107,63 @@ def baw_Recon1(t1_fn,wm_fn,brain_fn,FREESURFER_HOME,FS_SUBJECTS_DIR,FS_SCRIPT,su
         print "NOTHING TO BE DONE, SO SKIPPING."
         return # Nothing to be done, files are already up-to-date.
 
-def runAutoReconStage(subjID,StageToRun,FREESURFER_HOME,FS_SUBJECTS_DIR,FS_SCRIPT):
+def baw_FixBrainMask(wm_fn,brain_fn,FREESURFER_HOME,FS_SUBJECTS_DIR,FS_SCRIPT,subjID):
+    base_subj_dir=os.path.join(FS_SUBJECTS_DIR,subjID,'mri')
+    mkdir_p(base_subj_dir)
+
+    output_brainmask_fn=os.path.join(base_subj_dir,'brainmask.nii.gz')
+    output_nu_fn=os.path.join(base_subj_dir,'nu.nii.gz')
+
+    output_brainmask_fn_mgz=os.path.join(base_subj_dir,'brainmask.mgz')
+    output_nu_fn_mgz=os.path.join(base_subj_dir,'nu.mgz')
+    if True: #IsFirstNewerThanSecond(t1_fn,output_brainmask_fn_mgz):
+        print "Fixing BrainMask recon-auto1 stage"
+        run_mri_convert_script(output_nu_fn_mgz,output_nu_fn,FREESURFER_HOME,FS_SUBJECTS_DIR,FS_SCRIPT)
+        t1_new = sitk.ReadImage(output_nu_fn)
+        wm = sitk.ReadImage(wm_fn)
+
+        brain = sitk.ReadImage(brain_fn)
+        blood = sitk.BinaryThreshold(brain, 5, 5)
+        not_blood = 1 - blood
+        clipping = sitk.BinaryThreshold(brain, 1, 1000000) - blood
+        fill_size=2
+        ## HACK: Unfortunately we need to hole fill because of a WM bug in BABC where
+        ## some white matter is being classified as background when it it being avoid due
+        ## to too strict of multi-modal thresholding.
+        hole_filled=sitk.ErodeObjectMorphology(sitk.DilateObjectMorphology(clipping,fill_size),fill_size)
+        clipped = sitk.Cast(t1_new * hole_filled * not_blood,sitk.sitkUInt8)
+
+        sitk.WriteImage(clipped,output_brainmask_fn) ## brain_matter image with values normalized 0-110, no skull or surface blood
+        os.rename(output_brainmask_fn_mgz, output_brainmask_fn_mgz.replace('.mgz','_orig_backup.mgz'))
+        run_mri_convert_script(output_brainmask_fn,output_brainmask_fn_mgz,FREESURFER_HOME,FS_SUBJECTS_DIR,FS_SCRIPT)
+    else:
+        print "NOTHING TO BE DONE, SO SKIPPING."
+        return # Nothing to be done, files are already up-to-date.
+
+def runAutoReconStage(subjID,StageToRun,t1_fn,FREESURFER_HOME,FS_SUBJECTS_DIR,FS_SCRIPT):
     FS_SCRIPT_FN=os.path.join(FREESURFER_HOME,FS_SCRIPT)
+    base_subj_dir=os.path.join(FS_SUBJECTS_DIR,subjID,'mri')
+    orig_001_mgz_fn= os.path.join(base_subj_dir,'orig/001.mgz')
+    init_flags=""
+    if IsFirstNewerThanSecond(t1_fn,orig_001_mgz_fn):
+      mkdir_p(os.path.dirname(orig_001_mgz_fn))
+      run_mri_convert_script(t1_fn,orig_001_mgz_fn,FREESURFER_HOME,FS_SUBJECTS_DIR,FS_SCRIPT)
+      #init_flags=" -i {0} ".format(t1_fn)
+
     auto_recon_script="""#!/bin/bash
 export FREESURFER_HOME={FSHOME}
 export SUBJECTS_DIR={FSSUBJDIR}
 source {SOURCE_SCRIPT}
-{FSHOME}/bin/recon-all -debug -subjid {SUBJID} -make autorecon{AUTORECONSTAGE}
-""".format(SOURCE_SCRIPT=FS_SCRIPT_FN,FSHOME=FREESURFER_HOME,FSSUBJDIR=FS_SUBJECTS_DIR,AUTORECONSTAGE=StageToRun,SUBJID=subjID)
-    script_name=os.path.join(FS_SUBJECTS_DIR,subjID,'run_autorecon_stage'+str(StageToRun)+'.sh')
+{FSHOME}/bin/recon-all {INIT_COMMAND} -debug -subjid {SUBJID} -make autorecon{AUTORECONSTAGE}
+""".format(SOURCE_SCRIPT=FS_SCRIPT_FN,
+           FSHOME=FREESURFER_HOME,
+           FSSUBJDIR=FS_SUBJECTS_DIR,
+           AUTORECONSTAGE=StageToRun,
+           INIT_COMMAND=init_flags,
+           SUBJID=subjID)
+    base_run_dir=os.path.join(FS_SUBJECTS_DIR,'run_scripts',subjID)
+    mkdir_p(base_run_dir)
+    script_name=os.path.join(base_run_dir,'run_autorecon_stage'+str(StageToRun)+'.sh')
     script=open(script_name,'w')
     script.write(auto_recon_script)
     script.close()
@@ -130,9 +178,11 @@ source {SOURCE_SCRIPT}
 
 def runAutoRecon(t1_fn,wm_fn,brain_fn,subjID,FREESURFER_HOME,FS_SUBJECTS_DIR,FS_SCRIPT):
     """Run all stages of AutoRecon For Freesurfer, including the custom BAW initialization."""
-    baw_Recon1(t1_fn,wm_fn,brain_fn,FREESURFER_HOME,FS_SUBJECTS_DIR,FS_SCRIPT,subjID)
-    runAutoReconStage(subjID,2,FREESURFER_HOME,FS_SUBJECTS_DIR,FS_SCRIPT)
-    runAutoReconStage(subjID,3,FREESURFER_HOME,FS_SUBJECTS_DIR,FS_SCRIPT)
+## This did not work baw_Recon1(t1_fn,wm_fn,brain_fn,FREESURFER_HOME,FS_SUBJECTS_DIR,FS_SCRIPT,subjID)
+    runAutoReconStage(subjID,1,t1_fn,FREESURFER_HOME,FS_SUBJECTS_DIR,FS_SCRIPT)
+#baw_FixBrainMask(wm_fn,brain_fn,FREESURFER_HOME,FS_SUBJECTS_DIR,FS_SCRIPT,subjID)
+    runAutoReconStage(subjID,2,t1_fn,FREESURFER_HOME,FS_SUBJECTS_DIR,FS_SCRIPT)
+    runAutoReconStage(subjID,3,t1_fn,FREESURFER_HOME,FS_SUBJECTS_DIR,FS_SCRIPT)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="""

@@ -42,23 +42,7 @@ include(CTest)
 #-----------------------------------------------------------------------
 # Setup locations to find externally maintained test data.
 #-----------------------------------------------------------------------
-list(APPEND ExternalData_URL_TEMPLATES
-  # Local data store populated by the ITK pre-commit hook
-  "file:///${${PROJECT_NAME}_SOURCE_DIR}/.ExternalData/%(algo)/%(hash)"
-  # Data published by Iowa Psychiatry web interface
-  ## The primary home for data
-  "http://slicer.kitware.com/midas3/api/rest?method=midas.bitstream.download&checksum=%(hash)"
-  # Data published by MIDAS
-  # "http://midas.kitware.com/api/rest/midas.bitstream.by.hash?hash=%(hash)&algorithm=%(algo)"
-  # Data published by developers using git-gerrit-push.
-  # "http://www.itk.org/files/ExternalData/%(algo)/%(hash)"
-)
-
-# Tell ExternalData commands to transform raw files to content links.
-# TODO: Condition this feature on presence of our pre-commit hook.
-set(ExternalData_LINK_CONTENT MD5)
-##- Use default CMAKE_SOURCE_DIR set(ExternalData_SOURCE_ROOT ${${PROJECT_NAME}_SOURCE_DIR})
-include(ExternalData)
+include(BRAINSToolsExternalData)
 
 set(TestData_DIR ${CMAKE_CURRENT_SOURCE_DIR}/TestData)
 

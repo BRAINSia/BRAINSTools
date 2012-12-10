@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<executable>
+  <category>Segmentation.Specialized</category>
+  <title>Create Label Map From Probability Maps (BRAINS)</title>
+  <description>Given A list of Probability Maps, generate a LabelMap.
+  </description>
+  <parameters advanced="false">
+    <label>Input</label>
+    <description>Input parameters</description>
+
+    <image multiple="true">
+      <name>inputProbabilityVolume</name>
+      <label>Probability Image Files</label>
+      <longflag>inputProbabilityVolume</longflag>
+      <flag>i</flag>
+      <channel>input</channel>
+      <description>The list of proobabilityimages.</description>
+    </image>
+
+    <integer-vector>
+      <name>priorLabelCodes</name>
+      <label>Prior Label Codes</label>
+      <longflag>priorLabelCodes</longflag>
+      <description>A list of PriorLabelCode values used for coding the output label images</description>
+      <default></default>
+    </integer-vector>
+
+    <integer-vector>
+      <name>foregroundPriors</name>
+      <label>Foreground Priors</label>
+      <longflag>foregroundPriors</longflag>
+      <description>A list: For each Prior Label, 1 if foreground, 0 if background</description>
+      <default></default>
+    </integer-vector>
+
+    <image>
+      <name>nonAirRegionMask</name>
+      <label>Non-air Region Mask</label>
+      <longflag>nonAirRegionMask</longflag>
+      <channel>input</channel>
+      <description>a mask representing the "NonAirRegion" -- Just force pixels in this region to zero</description>
+    </image>
+
+    <double>
+      <name>inclusionThreshold</name>
+      <label>Inclusion Threshold</label>
+      <longflag>inclusionThreshold</longflag>
+      <description>tolerance for inclusion</description>
+      <default>0.0</default>
+    </double>
+
+  </parameters>
+
+  <parameters>
+    <label>Output</label>
+    <description>Output filename specifications</description>
+
+    <image>
+      <name>dirtyLabelVolume</name>
+      <label>Dirty Output Labels Volume</label>
+      <longflag>dirtyLabelVolume</longflag>
+      <channel>output</channel>
+      <description>the labels prior to cleaning</description>
+    </image>
+
+    <image>
+      <name>cleanLabelVolume</name>
+      <label>Clean Output Labels Volume</label>
+      <longflag>cleanLabelVolume</longflag>
+      <channel>output</channel>
+      <description>the foreground labels volume</description>
+    </image>
+  </parameters>
+
+</executable>

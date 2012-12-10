@@ -14,12 +14,10 @@ set(BRAINSABCCOMMONLIB_SRCS
   EMSParameters.cxx
   EMSegmentationFilter.h
   EMSegmentationFilter.hxx
-  EMSegmentationFilter_float+float.cxx
+  Emsegmentationfilter_float+float.cxx
   AtlasRegistrationMethod_float+float.cxx
   AtlasDefinition.cxx
   filterFloatImages.h
-  ExtractSingleLargestRegion.cxx
-  ExtractSingleLargestRegion.h
   BRAINSABCUtilities.cxx
   BRAINSABCUtilities.h
 )

@@ -78,7 +78,7 @@ int main(int argc, char * *argv)
   if( ClippedImageMask != "" )
     {
     MaskImageType::Pointer clippedMask =
-      filter->GetClippedImageMask();
+      const_cast<MaskImageType *>(filter->GetClippedImageMask() );
     itkUtil::WriteImage<MaskImageType>(clippedMask,
                                        ClippedImageMask);
     }

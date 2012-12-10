@@ -34,6 +34,8 @@ from SEMTools import *
 
 from WorkupT1T2AtlasNode import MakeAtlasNode
 from PipeLineFunctionHelpers import getListIndex
+from PipeLineFunctionHelpers import POSTERIORS
+from PipeLineFunctionHelpers import UnwrapPosteriorImagesFromDictionaryFunction
 
 #HACK:  [('buildTemplateIteration2', 'SUBJECT_TEMPLATES/0249/buildTemplateIteration2')]
 def GenerateSubjectOutputPattern(subjectid):
@@ -626,10 +628,28 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                 #baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'outputspec.TissueClassifyatlasToSubjectTransform',BASIC_DataSink[sessionid],'ACPCAlign.@TissueClassifyatlasToSubjectTransform')
 
                 ### Now define where the final organized outputs should go.
-                TC_DataSink[sessionid]=pe.Node(nio.DataSink(),name="TISSUE_CLASSIFY_DS_"+str(subjectid)+"_"+str(sessionid))
-                TC_DataSink[sessionid].inputs.base_directory=ExperimentBaseDirectoryResults
-                TC_DataSink[sessionid].inputs.regexp_substitutions = GenerateOutputPattern(projectid, subjectid, sessionid,'TissueClassify')
-                baw200.connect(PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.TissueClassifyOutputDir', TC_DataSink[sessionid],'TissueClassify.@TissueClassifyOutputDir')
+# -- DELETE TC_DataSink[sessionid]=pe.Node(nio.DataSink(),name="TISSUE_CLASSIFY_DS_"+str(subjectid)+"_"+str(sessionid))
+# -- DELETE TC_DataSink[sessionid].inputs.base_directory=ExperimentBaseDirectoryResults
+# -- DELETE TC_DataSink[sessionid].inputs.regexp_substitutions = GenerateOutputPattern(projectid, subjectid, sessionid,'TissueClassify')
+# -- DELETE baw200.connect(PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.TissueClassifyOutputDir', TC_DataSink[sessionid],'TissueClassify.@TissueClassifyOutputDir')
+
+                ### Now define where the final organized outputs should go.
+                ###     For posterior probability files, we need to use a MapNode for the keys from the
+                ### PHASE_2_oneSubjWorkflow[sessionid].outputspec.posteriorImages dictionary.  To use a MapNode, we must know
+                ### the list BEFORE we run the pipeline...
+                TC_DataSink[sessionid] = pe.Node(nio.DataSink(), name="TISSUE_CLASSIFY_DS_"+str(subjectid)+"_"+str(sessionid))
+                TC_DataSink[sessionid].inputs.base_directory = ExperimentBaseDirectoryResults
+                TC_DataSink[sessionid].inputs.regexp_substitutions = GenerateOutputPattern(projectid, subjectid,
+                                                                        sessionid, 'TissueClassify')
+                baw200.connect(PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.outputLabels', TC_DataSink[sessionid], 'TissueClassify.@outputLabels')
+                baw200.connect(PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.outputHeadLabels', TC_DataSink[sessionid], 'TissueClassify.@outputHeadLabels')
+                baw200.connect(PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.t1_average', TC_DataSink[sessionid], 'TissueClassify.@t1_average')
+                baw200.connect(PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.t2_average', TC_DataSink[sessionid], 'TissueClassify.@t2_average')
+                baw200.connect(PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.TissueClassifyatlasToSubjectTransform', TC_DataSink[sessionid], 'TissueClassify.@atlasToSubjectTransform')
+                baw200.connect(PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.TissueClassifyatlasToSubjectInverseTransform', TC_DataSink[sessionid], 'TissueClassify.@atlasToSubjectInverseTransform')
+
+                baw200.connect( [ ( PHASE_2_oneSubjWorkflow[sessionid], TC_DataSink[sessionid],
+                                [ ( ( 'outputspec.posteriorImages', UnwrapPosteriorImagesFromDictionaryFunction ), 'TissueClassify.@posteriors')] ) ] )
 
                 ### Now clean up by adding together many of the items PHASE_2_oneSubjWorkflow
                 currentAccumulateLikeTissuePosteriorsName='AccumulateLikeTissuePosteriors_'+str(subjectid)+"_"+str(sessionid)
@@ -861,8 +881,6 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                     baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryRightThalamus',    MergeSessionSubjectToAtlas[sessionid], 'in13')
                     baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryRightHippocampus', MergeSessionSubjectToAtlas[sessionid], 'in14')
 
-                    def UnwrapPosteriorImagesFromDictionaryFunction(postDict):
-                        return postDict.values()
                     baw200.connect( [ ( PHASE_2_oneSubjWorkflow[sessionid], MergeSessionSubjectToAtlas[sessionid],
                                         [ ( ( 'outputspec.posteriorImages', UnwrapPosteriorImagesFromDictionaryFunction ), 'in15')] ) ] )
 

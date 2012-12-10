@@ -20,7 +20,9 @@ class FSScriptInputSpec(CommandInputSpec):
     subj_id = traits.Str(argstr='--SubjID %s', desc='Subject_Session')
 
 class FSScriptOutputSpec(TraitedSpec):
-    pass
+    T1_out = File(exist=True, desc='brain.mgz')
+    label1_out = File(exist=True, desc='aparc+aseg.nii.gz')
+    label2_out = File(exist=True, desc='aparc.a2009+aseg.nii.gz')
 
 class FSScript(Command):
     """
@@ -34,4 +36,7 @@ class FSScript(Command):
 
     def _list_outputs(self):
         outputs = self._outputs().get()
+        outputs['T1_out'] = os.path.join(os.getcwd(), 'mri', 'brain.mgz')
+        outputs['label1_out'] = os.path.join(os.getcwd(), 'mri_nifti', 'aparc+aseg.nii.gz')
+        outputs['label2_out'] = os.path.join(os.getcwd(), 'mri_nifti', 'aparc.a2009+aseg.nii.gz')
         return outputs

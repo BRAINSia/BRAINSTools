@@ -126,8 +126,9 @@ def MakeOneSubWorkFlow(projectid, subjectid, sessionid,processing_phase, WORKFLO
             'pd_average','fl_average',
             'posteriorImages',
             'outputLabels','outputHeadLabels',
-            'TissueClassifyOutputDir',
+            #'TissueClassifyOutputDir',
             'TissueClassifyatlasToSubjectTransform',
+            'TissueClassifyatlasToSubjectInverseTransform',
 
 #            'BCD_ACPC_T1',
             'BCD_ACPC_T1_CROPPED',
@@ -179,7 +180,8 @@ def MakeOneSubWorkFlow(projectid, subjectid, sessionid,processing_phase, WORKFLO
         T1T2WorkupSingle.connect(myLocalTCWF, 'outputspec.posteriorImages', outputsSpec,'posteriorImages')
         T1T2WorkupSingle.connect(myLocalTCWF, 'outputspec.outputLabels', outputsSpec,'outputLabels')
         T1T2WorkupSingle.connect(myLocalTCWF, 'outputspec.outputHeadLabels', outputsSpec,'outputHeadLabels')
-        T1T2WorkupSingle.connect(myLocalTCWF, 'outputspec.TissueClassifyOutputDir', outputsSpec,'TissueClassifyOutputDir')
+           #T1T2WorkupSingle.connect(myLocalTCWF, 'outputspec.TissueClassifyOutputDir', outputsSpec,'TissueClassifyOutputDir')
         T1T2WorkupSingle.connect(myLocalTCWF, 'outputspec.atlasToSubjectTransform', outputsSpec,'TissueClassifyatlasToSubjectTransform')
+        T1T2WorkupSingle.connect(myLocalTCWF, 'outputspec.atlasToSubjectInverseTransform', outputsSpec,'TissueClassifyatlasToSubjectInverseTransform')
 
     return T1T2WorkupSingle

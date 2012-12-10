@@ -9,6 +9,11 @@
 ## AVOID REFORMATTING THIS FILE, it causes the hash to change in
 ## nipype and that require re-running the function.
 
+# Globals
+POSTERIORS = ['WM', 'SURFGM', 'ACCUMBEN', 'CAUDATE', 'PUTAMEN', 'GLOBUS', 'THALAMUS',
+              'HIPPOCAMPUS', 'CRBLGM', 'CRBLWM', 'CSF', 'VB', 'NOTCSF', 'NOTGM', 'NOTWM',
+              'NOTVB', 'AIR']
+
 def getListIndex( imageList, index):
     return imageList[index]
 
@@ -26,3 +31,6 @@ def ClipT1ImageWithBrainMask(t1_image,brain_labels,clipped_file_name):
     sitk.WriteImage(clipped,clipped_file_name)
     clipped_file=os.path.realpath(clipped_file_name)
     return clipped_file
+
+def UnwrapPosteriorImagesFromDictionaryFunction(postDict):
+    return postDict.values()

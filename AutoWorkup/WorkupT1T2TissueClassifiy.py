@@ -7,6 +7,7 @@ import nipype.interfaces.io as nio   # Data i/o
 import nipype.pipeline.engine as pe  # pypeline engine
 
 from BRAINSABCext import *
+
 """
     from WorkupT1T2TissueClassify import CreateTissueClassifyWorkflow
     myLocalTCWF= CreateTissueClassifyWorkflow("TissueClassify")
@@ -70,33 +71,37 @@ def getListIndexOrNoneIfOutOfRange( imageList, index):
       return imageList[index]
     else:
       return None
+
 def MakePosteriorDictionaryFunc(posteriorImages):
-    posteriorNames=['WM', 'SURFGM', 'ACCUMBEN', 'CAUDATE', 'PUTAMEN', 'GLOBUS', 'THALAMUS', 'HIPPOCAMPUS', 'CRBLGM', 'CRBLWM', 'CSF', 'VB', 'NOTCSF', 'NOTGM', 'NOTWM', 'NOTVB', 'AIR']
-    if len(posteriorNames) != len(posteriorImages):
+    from PipeLineFunctionHelpers import POSTERIORS
+    if len(POSTERIORS) != len(posteriorImages):
         print "ERROR: ", posteriorNames
-        print "ERROR: ", posteriorImages
+        print "ERROR: ", POSTERIORS
         return -1
-    temp_dictionary=dict(zip(posteriorNames,posteriorImages))
+    temp_dictionary = dict(zip(POSTERIORS, posteriorImages))
     return temp_dictionary
 
 def CreateTissueClassifyWorkflow(WFname,CLUSTER_QUEUE,InterpolationMode):
     tissueClassifyWF= pe.Workflow(name=WFname)
 
-    inputsSpec = pe.Node(interface=IdentityInterface(fields=['T1List','T2List','PDList','FLList','OtherList',
-                                                             'T1_count',
-                                                             'PrimaryT1',
-        'atlasDefinition','atlasToSubjectInitialTransform']),
+    inputsSpec = pe.Node(interface=IdentityInterface(fields=['T1List', 'T2List', 'PDList', 'FLList',
+                                                             'OtherList', 'T1_count', 'PrimaryT1',
+                                                             'atlasDefinition',
+                                                             'atlasToSubjectInitialTransform']),
         run_without_submitting=True,
         name='inputspec' )
-    outputsSpec = pe.Node(interface=IdentityInterface(fields=['atlasToSubjectTransform','outputLabels','outputHeadLabels',
-            #'t1_corrected','t2_corrected',
-            't1_average','t2_average','pd_average','fl_average',
-            'TissueClassifyOutputDir',
-            'posteriorImages'
-            ]),
-        run_without_submitting=True,
-        name='outputspec' )
-
+    outputsSpec = pe.Node(interface=IdentityInterface(fields=['atlasToSubjectTransform',
+                                                              'atlasToSubjectInverseTransform',
+                                                              'outputLabels',
+                                                              'outputHeadLabels', # ???
+                                                              #'t1_corrected', 't2_corrected',
+                                                              't1_average',
+                                                              't2_average',
+                                                              'pd_average',
+                                                              'fl_average',
+                                                              'posteriorImages']),
+                          run_without_submitting=True,
+                          name='outputspec' )
 
     ########################################################
     # Run BABCext on Multi-modal images
@@ -143,7 +148,6 @@ def CreateTissueClassifyWorkflow(WFname,CLUSTER_QUEUE,InterpolationMode):
     BABCext.inputs.filterIteration = 3
     BABCext.inputs.filterMethod = 'GradientAnisotropicDiffusion'
     BABCext.inputs.atlasToSubjectTransformType = 'SyN'
-    BABCext.inputs.atlasToSubjectTransform = "atlasToSubjecSyN.h5"
     #BABCext.inputs.atlasToSubjectTransformType = 'BSpline'
     #BABCext.inputs.gridSize = [28,20,24]
     BABCext.inputs.gridSize = [10,10,10]
@@ -184,6 +188,14 @@ def CreateTissueClassifyWorkflow(WFname,CLUSTER_QUEUE,InterpolationMode):
 
     #############
     tissueClassifyWF.connect(BABCext,'atlasToSubjectTransform',outputsSpec,'atlasToSubjectTransform')
+
+    def MakeInverseTransformFileName(TransformFileName):
+        """### HACK:  This function is to work around a deficiency in BRAINSABCext where the inverse transform name is not being computed properly
+          in the list outputs"""
+        fixed_inverse_name=TransformFileName.replace(".h5","_Inverse.h5")
+        return fixed_inverse_name
+
+    tissueClassifyWF.connect( [ ( BABCext, outputsSpec, [ (( 'atlasToSubjectTransform', MakeInverseTransformFileName ), "atlasToSubjectInverseTransform")] ), ] )
     tissueClassifyWF.connect(BABCext,'outputLabels',outputsSpec,'outputLabels')
     tissueClassifyWF.connect(BABCext,'outputDirtyLabels',outputsSpec,'outputHeadLabels')
 
@@ -194,8 +206,6 @@ def CreateTissueClassifyWorkflow(WFname,CLUSTER_QUEUE,InterpolationMode):
     ##  remove tissueClassifyWF.connect( [ ( BABCext, outputsSpec, [ (( 'outputAverageImages', getListIndexOrNoneIfOutOfRange, 0 ), "t1_average")] ), ] )
     ##  remove tissueClassifyWF.connect( [ ( BABCext, outputsSpec, [ (( 'outputAverageImages', getListIndexOrNoneIfOutOfRange, 1 ), "t2_average")] ), ] )
     ##  remove tissueClassifyWF.connect( [ ( BABCext, outputsSpec, [ (( 'outputAverageImages', getListIndexOrNoneIfOutOfRange, 2 ), "pd_average")] ), ] )
-
-    tissueClassifyWF.connect(BABCext,'outputDir',outputsSpec,'TissueClassifyOutputDir')
 
     MakePosteriorDictionaryNode = pe.Node( Function(function=MakePosteriorDictionaryFunc,
                                       input_names = ['posteriorImages'],

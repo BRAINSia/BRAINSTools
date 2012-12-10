@@ -223,6 +223,11 @@ def runAutoRecon(t1_fn,wm_fn,brain_fn,subjID,FREESURFER_HOME,FS_SUBJECTS_DIR,FS_
     baw_FixBrainMask(brain_fn,FREESURFER_HOME,FS_SUBJECTS_DIR,FS_SCRIPT,subjID)
     runAutoReconStage(subjID,2,t1_fn,FREESURFER_HOME,FS_SUBJECTS_DIR,FS_SCRIPT)
     runAutoReconStage(subjID,3,t1_fn,FREESURFER_HOME,FS_SUBJECTS_DIR,FS_SCRIPT)
+    dirname = os.path.join(FS_SUBJECTS_DIR,subjID)
+    t1 = os.path.join(dirname, 'mri', 'brain.mgz')
+    label1 = os.path.join(dirname, 'mri_nifti', 'aparc+aseg.nii.gz')
+    label2 = os.path.join(dirname, 'mri_nifti', 'aparc.a2009+aseg.nii.gz')
+    return t1, label1, label2
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="""
@@ -253,10 +258,10 @@ if __name__ == "__main__":
                         default='FreeSurferEnv.sh', help='')
     all_args=parser.parse_args()
 
-    runAutoRecon(all_args.t1Image,
-                 all_args.wmProbImage,
-                 all_args.brainLabel,
-                 all_args.subjID,
-                 all_args.FREESURFER_HOME,
-                 all_args.FS_SUBJECTS_DIR,
-                 all_args.FS_SCRIPT)
+    return runAutoRecon(all_args.t1Image,
+                        all_args.wmProbImage,
+                        all_args.brainLabel,
+                        all_args.subjID,
+                        all_args.FREESURFER_HOME,
+                        all_args.FS_SUBJECTS_DIR,
+                        all_args.FS_SCRIPT)

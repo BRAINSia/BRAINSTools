@@ -450,7 +450,11 @@ int main(int argc, char *argv[])
    *  FloatCodeText));
    * Note itk::ReadTransformFromDisk returns NULL if file name does not exist.
    */
-  GenericTransformType::Pointer currentGenericTransform = itk::ReadTransformFromDisk(initialTransform);
+  GenericTransformType::Pointer currentGenericTransform;
+  if( initialTransform != "" )
+    {
+    currentGenericTransform = itk::ReadTransformFromDisk(initialTransform);
+    }
 
   FixedVolumeType::Pointer resampledImage;
   /*

@@ -7,14 +7,6 @@ find_package(ITK 4 REQUIRED)
 
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR} ${CMAKE_MODULE_PATH})
 
-# SlicerExecutionModel
-find_package(SlicerExecutionModel REQUIRED GenerateCLP)
-include(${GenerateCLP_USE_FILE})
-
-if(${DCMTK_WITH_ICONV})
-find_package(LIBICONV REQUIRED)
-endif()
-
 set(DWIConvertSupportLib_SRCS
   FSLToNrrd.cxx
   NrrdToFSL.cxx
@@ -31,13 +23,16 @@ target_link_libraries(DWIConvertSupportLib ${ITK_LIBRARIES}  )
 
 set(MODULE_NAME DWIConvert)
 #-----------------------------------------------------------------------------
-SEMMacroBuildCLI(
-    NAME ${MODULE_NAME}
-    LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h
-    TARGET_LIBRARIES DWIConvertSupportLib
-)
+# SEMMacroBuildCLI(
+#     NAME ${MODULE_NAME}
+#     LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h
+#     TARGET_LIBRARIES DWIConvertSupportLib
+# )
 
 # several files needed down in ExtenededTesting
+StandardBRAINSBuildMacro(NAME DWIConvert
+  TARGET_LIBRARIES DWIConvertSupportLib)
+
 if(BUILD_TESTING AND NOT Slicer_BUILD_BRAINSTOOLS)
   add_subdirectory(TestSuite)
 endif()

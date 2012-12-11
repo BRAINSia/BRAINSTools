@@ -176,7 +176,7 @@ midas_add_test(NAME DWIConvertPhilipsAchievaBMatrixTest
   -P ${CMAKE_CURRENT_LIST_DIR}/DicomToNrrdDWICompareTest.cmake
   )
 
-midas_add_test(DWIConvertPhilipsAchieva2Test
+midas_add_test(NAME DWIConvertPhilipsAchieva2Test
   COMMAND ${CMAKE_COMMAND} -D TEST_PROGRAM=$<TARGET_FILE:DWIConvert>
   -D TEST_COMPARE_PROGRAM=$<TARGET_FILE:DWICompare>
   -D TEST_BASELINE=MIDAS{PhilipsAchieva2.nrrd.md5}

@@ -1636,9 +1636,10 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
     }
 
   // NOTE:  Labels are only needed if debugging them.
-  ComputeLabels<TProbabilityImage>(this->m_WarpedPriors, this->m_PriorIsForegroundPriorVector,
-                                   this->m_PriorLabelCodeVector, this->m_NonAirRegion, this->m_DirtyLabels,
-                                   this->m_CleanedLabels);
+  ComputeLabels<TProbabilityImage, ByteImageType, double>(this->m_WarpedPriors, this->m_PriorIsForegroundPriorVector,
+                                                          this->m_PriorLabelCodeVector, this->m_NonAirRegion,
+                                                          this->m_DirtyLabels,
+                                                          this->m_CleanedLabels);
   this->WriteDebugLabels(0);
   this->m_ListOfClassStatistics.resize(0); // Reset this to empty for debugging
                                            // purposes to induce failures when
@@ -1708,9 +1709,10 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
                                                         this->m_ListOfClassStatistics);
     NormalizeProbListInPlace<TProbabilityImage>(this->m_Posteriors);
     this->WriteDebugPosteriors(CurrentEMIteration);
-    ComputeLabels<TProbabilityImage>(this->m_Posteriors, this->m_PriorIsForegroundPriorVector,
-                                     this->m_PriorLabelCodeVector, this->m_NonAirRegion, this->m_DirtyLabels,
-                                     this->m_CleanedLabels);
+    ComputeLabels<TProbabilityImage, ByteImageType, double>(this->m_Posteriors, this->m_PriorIsForegroundPriorVector,
+                                                            this->m_PriorLabelCodeVector, this->m_NonAirRegion,
+                                                            this->m_DirtyLabels,
+                                                            this->m_CleanedLabels);
     this->WriteDebugLabels(CurrentEMIteration);
     this->m_CorrectedImages =
       CorrectBias(this->m_MaxBiasDegree, CurrentEMIteration, SubjectCandidateRegions, this->m_InputImages,
@@ -1809,13 +1811,15 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
                                                       this->m_ListOfClassStatistics);
   NormalizeProbListInPlace<TProbabilityImage>(this->m_Posteriors);
   this->WriteDebugPosteriors(CurrentEMIteration + 100);
-  ComputeLabels<TProbabilityImage>(this->m_Posteriors, this->m_PriorIsForegroundPriorVector,
-                                   this->m_PriorLabelCodeVector, this->m_NonAirRegion, this->m_DirtyLabels,
-                                   this->m_CleanedLabels);
+  ComputeLabels<TProbabilityImage, ByteImageType, double>(this->m_Posteriors, this->m_PriorIsForegroundPriorVector,
+                                                          this->m_PriorLabelCodeVector, this->m_NonAirRegion,
+                                                          this->m_DirtyLabels,
+                                                          this->m_CleanedLabels);
   FloatingPrecision inclusionThreshold = 0.75F;
-  ComputeLabels<TProbabilityImage>(this->m_Posteriors, this->m_PriorIsForegroundPriorVector,
-                                   this->m_PriorLabelCodeVector, this->m_NonAirRegion, this->m_DirtyThresholdedLabels,
-                                   this->m_ThresholdedLabels, inclusionThreshold);
+  ComputeLabels<TProbabilityImage, ByteImageType, double>(this->m_Posteriors, this->m_PriorIsForegroundPriorVector,
+                                                          this->m_PriorLabelCodeVector, this->m_NonAirRegion,
+                                                          this->m_DirtyThresholdedLabels,
+                                                          this->m_ThresholdedLabels, inclusionThreshold);
   this->WriteDebugLabels(CurrentEMIteration + 100);
 
   // Bias correction at full resolution, still using downsampled images

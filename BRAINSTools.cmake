@@ -90,7 +90,8 @@ set(brains_modulenames
   BRAINSABC
   ConvertBetweenFileFormats
   DWIConvert
-)
+  BRAINSCreateLabelMapFromProbabilityMaps
+  )
 
 if(USE_DebugImageViewer)
   list(APPEND brains_modulenames

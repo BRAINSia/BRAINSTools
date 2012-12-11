@@ -11,11 +11,13 @@ template std::vector<FloatImageType::Pointer> DuplicateImageList<FloatImageType>
 template std::vector<ShortImageType::Pointer> DuplicateImageList<ShortImageType>(
   const std::vector<ShortImageType::Pointer> & );
 
-template void ComputeLabels<FloatImageType>( std::vector<FloatImageType::Pointer> &, std::vector<bool> &,
-                                             vnl_vector<unsigned int> &, ByteImageType::Pointer &,
-                                             ByteImageType::Pointer &,
-                                             ByteImageType::Pointer &,
-                                             FloatingPrecision );
+template void ComputeLabels<FloatImageType,
+                            ByteImageType,
+                            double>( std::vector<FloatImageType::Pointer> &, std::vector<bool> &,
+                                     vnl_vector<unsigned int> &, ByteImageType::Pointer &,
+                                     ByteImageType::Pointer &,
+                                     ByteImageType::Pointer &,
+                                     FloatingPrecision );
 
 template void NormalizeProbListInPlace<FloatImageType>(std::vector<FloatImageType::Pointer> & );
 

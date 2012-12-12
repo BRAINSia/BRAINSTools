@@ -61,14 +61,14 @@
   <transform fileExtensions=".h5,.hdf5,.mat,.txt">
     <name>atlasToSubjectTransform</name>
     <label>Atlas to Subject Transform</label>
-    <description>The trasform from atlas to the subject</description>
+    <description>The transform from atlas to the subject</description>
     <longflag>atlasToSubjectTransform</longflag>
     <channel>output</channel>
   </transform>
   <transform fileExtensions=".h5">
     <name>atlasToSubjectInitialTransform</name>
     <label>Atlas to Subject Initial Transform</label>
-    <description>The initial trasform from atlas to the subject</description>
+    <description>The initial transform from atlas to the subject</description>
     <longflag>atlasToSubjectInitialTransform</longflag>
     <channel>output</channel>
   </transform>

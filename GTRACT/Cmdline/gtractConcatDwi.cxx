@@ -99,7 +99,7 @@ int main(int argc, char *argv[])
       }
     catch( itk::ExceptionObject & ex )
       {
-      std::cout << ex << std::endl;
+      std::cout << ex << std::endl << std::flush;
       throw;
       }
     // InputImages[i] = imageReader->GetOutput();

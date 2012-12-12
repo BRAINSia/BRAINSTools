@@ -6,7 +6,7 @@
   <description>Uses mathematical morphology to erode the input images.</description>
   <version>0.1.0.$Revision: 1 $(alpha)</version>
   <documentation-url>http:://www.na-mic.org/</documentation-url>
-  <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt </license>
+  <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
   <contributor>This tool was developed by Eun Young Kim.</contributor>
 
   <parameters>
@@ -61,7 +61,7 @@
       <name>inputSaltAndPepperProbability</name>
       <longflag>inputSaltAndPepperProbability</longflag>
       <description>Optional: probability for Salt and Pepper Noise</description>
-      <label>Salt and Pepper Noise Probability </label>
+      <label>Salt and Pepper Noise Probability</label>
       <default>-1</default>
       <channel>input</channel>
     </float>

@@ -19,7 +19,7 @@
       <longflag>inputVolumes</longflag>
       <description>The Input probaiblity images to be computed for lable maps</description>
       <channel>input</channel>
-      <label>Input Image </label>
+      <label>Input Image</label>
     </image>
     <!--  -->
     <image fileExtensions=".nii.gz,.nrrd">

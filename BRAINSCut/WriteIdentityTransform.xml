@@ -5,7 +5,7 @@
   <description>write identity transform to the disc.</description>
   <version> 1.0</version>
   <documentation-url></documentation-url>
-  <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt </license>
+  <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
   <contributor>Eunyoung Regin Kim</contributor>
   <acknowledgements></acknowledgements>
  <parameters>

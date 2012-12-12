@@ -8,7 +8,7 @@
   <version>4.0.0</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Modules:GTRACT</documentation-url>
   <license>http://mri.radiology.uiowa.edu/copyright/GTRACT-Copyright.txt</license>
-  <contributor>This tool was developed by Vincent Magnotta, Madhura Ingalhalikar, and Greg Harris </contributor>
+  <contributor>This tool was developed by Vincent Magnotta, Madhura Ingalhalikar, and Greg Harris</contributor>
 
 
   <parameters>

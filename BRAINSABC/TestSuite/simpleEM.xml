@@ -2,7 +2,7 @@
 <executable>
   <category>Segmentation.Specialized</category>
   <title>simpleEM (BRAINS)</title>
-  <description>Atlas-based tissue segmentation method </description>
+  <description>Atlas-based tissue segmentation method</description>
 
 <!-- ## testing for simpleEM -->
   <parameters>
@@ -66,7 +66,7 @@
     <boolean>
       <name>warp</name>
       <longflag>warp</longflag>
-      <label>warping </label>
+      <label>warping</label>
       <default>false</default>
       <channel>input</channel>
     </boolean>

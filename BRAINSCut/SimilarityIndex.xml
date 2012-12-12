@@ -5,7 +5,7 @@
   <description>Automatic analysis of BRAINSCut Output</description>
   <version> 1.0</version>
   <documentation-url></documentation-url>
-  <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt </license>
+  <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
   <contributor>Eunyoung Regin Kim</contributor>
   <acknowledgements></acknowledgements>
  <parameters>
@@ -13,14 +13,14 @@
      <name>outputCSVFilename</name>
      <label>outputCSVFilename</label>
      <longflag>outputCSVFilename</longflag>
-     <description>output CSV Filename </description>
+     <description>output CSV Filename</description>
      <channel>input</channel>
    </file>
    <image>
      <name>ANNContinuousVolume</name>
      <label>ANNContinuousVolume</label>
      <longflag>ANNContinuousVolume</longflag>
-     <description>ANN Continuous volume to be compared to the manual volume </description>
+     <description>ANN Continuous volume to be compared to the manual volume</description>
      <channel>input</channel>
    </image>
    <image>

@@ -62,7 +62,7 @@
       <name>preserveOutside</name>
       <longflag>preserveOutside</longflag>
       <description>For values outside the specified range, preserve those values.</description>
-      <label>Preserve values outside range </label>
+      <label>Preserve values outside range</label>
       <default>false</default>
     </boolean>
   </parameters>

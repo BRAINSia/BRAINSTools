@@ -242,7 +242,7 @@
         </string-enumeration>
     </parameters>
     <parameters advanced="true">
-        <label>Manual Override </label>
+        <label>Manual Override</label>
         <description> Manually force the location of the points in original image space.  </description>
         <float-vector>
             <name>forceACPoint</name>
@@ -301,7 +301,7 @@
         </boolean>
     </parameters>
     <parameters advanced="true">
-    <label>Model Override </label>
+    <label>Model Override</label>
     <description>Override the default values from the model files.</description>
         <double>
             <name>radiusMPJ</name>

@@ -5,7 +5,7 @@
   <description>Create 2D snapshot of input images. Mask images are color-coded</description>
   <version> 1.0</version>
   <documentation-url></documentation-url>
-  <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt </license>
+  <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
   <contributor>Eunyoung Regina Kim</contributor>
   <acknowledgements></acknowledgements>
  <parameters>

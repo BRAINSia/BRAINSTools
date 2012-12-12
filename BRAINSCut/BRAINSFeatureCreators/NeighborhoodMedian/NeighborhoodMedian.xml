@@ -6,7 +6,7 @@
   <description>Calculates the median, for the given neighborhood size, at each voxel of the input image.</description>
   <version>0.1.0.$Revision: 1 $(alpha)</version>
   <documentation-url>http:://www.na-mic.org/</documentation-url>
-  <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt </license>
+  <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
   <contributor>This tool was developed by Mark Scully and Jeremy Bockholt.</contributor>
 
 

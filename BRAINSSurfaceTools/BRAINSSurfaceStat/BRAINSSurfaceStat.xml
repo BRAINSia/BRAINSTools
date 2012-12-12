@@ -6,7 +6,7 @@
   <title>
     BRAINS Surface Statistics
   </title>
-  <description> This program allows the user to perform statistics on a surface using the R statistical language </description>
+  <description> This program allows the user to perform statistics on a surface using the R statistical language</description>
   <version>1.0</version>
   <documentation-url>NEED to ADD</documentation-url>
   <license>NEED to ADD</license>
@@ -52,7 +52,7 @@
     <string-enumeration>
       <name>freeSurferScalar</name>
       <longflag>freeSurferScalar</longflag>
-      <description>The type of FreeSurfer scalars to be analyzed </description>
+      <description>The type of FreeSurfer scalars to be analyzed</description>
       <label>FreeSurfer Type</label>
       <default>Thickness</default>
       <element>Thickness</element>

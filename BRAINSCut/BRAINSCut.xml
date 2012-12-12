@@ -5,8 +5,8 @@
   <description>Automatic Segmentation using neural networks</description>
   <version> 1.0</version>
   <documentation-url></documentation-url>
-  <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt </license>
-  <contributor>Vince Magnotta, Hans Johnson, Greg Harris, Kent Williams, Eunyoung Regina Kim </contributor>
+  <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
+  <contributor>Vince Magnotta, Hans Johnson, Greg Harris, Kent Williams, Eunyoung Regina Kim</contributor>
   <acknowledgements></acknowledgements>
  <parameters>
    <file>

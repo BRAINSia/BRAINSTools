@@ -3,10 +3,10 @@
     <category>Utilities.BRAINS</category>
   <title>CombineLabelToMask</title>
 
-  <description>Combine mask image which has different labels to one label mask </description>
+  <description>Combine mask image which has different labels to one label mask</description>
   <version>0.1.0.$Revision: 1 $(alpha)</version>
   <documentation-url>http:://www.na-mic.org/</documentation-url>
-  <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt </license>
+  <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
   <contributor>This tool was written by Eunyoung Regina Kim.</contributor>
 
   <parameters>

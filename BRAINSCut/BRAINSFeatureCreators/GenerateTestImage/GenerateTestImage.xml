@@ -2,23 +2,23 @@
 <executable>
   <category>Filtering.FeatureDetection</category>
   <title>DownSampleImage</title>
-  <description>Down sample image for testing </description>
+  <description>Down sample image for testing</description>
   <version> 1.0</version>
   <documentation-url></documentation-url>
-  <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt </license>
+  <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
   <contributor>Eun Young Kim</contributor>
   <acknowledgements></acknowledgements>
  <parameters>
    <image>
     <name>inputVolume</name>
     <longflag>inputVolume</longflag>
-    <description>input volume 1, usally t1 image </description>
+    <description>input volume 1, usally t1 image</description>
     <channel>input</channel>
    </image>
    <file>
       <name>outputVolume</name>
       <longflag>outputVolume</longflag>
-      <description>(required) output file name </description>
+      <description>(required) output file name</description>
       <channel>output</channel>
    </file>
    <double>

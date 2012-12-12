@@ -12,7 +12,7 @@ This programs creates synthesized average brain.
   <contributor>This tool was developed by Yongqiang Zhao.</contributor>
 
   <parameters>
-    <label>Input Files </label>
+    <label>Input Files</label>
     <description>Parameters for specifying the deformation field, image to warp and resulting image space</description>
 
     <image>
@@ -42,7 +42,7 @@ This programs creates synthesized average brain.
   </parameters>
  
   <parameters>
-    <label>Output Files </label>
+    <label>Output Files</label>
      
     <image>
       <name>outputVolume</name>

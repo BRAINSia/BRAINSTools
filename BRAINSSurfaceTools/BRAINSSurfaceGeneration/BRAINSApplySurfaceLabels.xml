@@ -17,7 +17,7 @@
 
   <parameters>
     <label>Input Files</label>
-    <description>Input files </description>
+    <description>Input files</description>
 
     <file>
       <name>inputLabelMap</name>
@@ -51,8 +51,8 @@
     <file>
       <name>outputSurface</name>
       <longflag>outputSurface</longflag>
-      <description>Output Surface </description>
-      <label>Output Surface </label>
+      <description>Output Surface</description>
+      <label>Output Surface</label>
       <channel>output</channel>
     </file>
   </parameters>

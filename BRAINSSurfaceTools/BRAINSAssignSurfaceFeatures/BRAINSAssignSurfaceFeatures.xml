@@ -67,7 +67,7 @@
     <double-vector>
       <name>PC</name>
       <longflag>PC</longflag>
-      <description>Location of PC Point </description>
+      <description>Location of PC Point</description>
       <label>PC Point</label>
     </double-vector>
 

@@ -3,7 +3,7 @@
   <category>Utilities.BRAINS</category>
   <title>Write Out Image Intensities
   </title>
-  <description> For Analysis </description>
+  <description> For Analysis</description>
   <version>0.1</version>
   <documentation-url></documentation-url>
   <license></license>
@@ -43,7 +43,7 @@
     <image>
       <name>inputLabelVolume</name>
       <longflag>inputLabelVolume</longflag>
-      <description>The Label Image </description>
+      <description>The Label Image</description>
       <channel>input</channel>
       <label>Input Label Image</label>
       <default></default>
@@ -61,7 +61,7 @@
       <name>outputJointHistogramData</name>
       <longflag>outputJointHistogramData</longflag>
       <channel>input</channel>
-      <description> output data file name </description>
+      <description> output data file name</description>
       <label>OutputDataFilename</label>
       <default>./output.txt</default>
     </string>
@@ -95,7 +95,7 @@
     <!--image>
       <name>DeformedProbabilityMapFilename</name>
       <longflag>DeformedProbabilityMapFilename</longflag>
-      <description>Deformed Probability Map Filename </description>
+      <description>Deformed Probability Map Filename</description>
       <channel>input</channel>
       <label>Deformed Probability Map Filename</label>
       <default></default>

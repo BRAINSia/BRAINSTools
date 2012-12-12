@@ -9,7 +9,7 @@
   </description>
   <version>3.0.0</version>
   <documentation-url>http://www.slicer.org/slicerWiki/index.php/Documentation/4.1/Modules/BRAINSDemonWarp</documentation-url>
-  <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt </license>
+  <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
   <contributor>This tool was developed by Hans J. Johnson and Greg Harris.</contributor>
   <acknowledgements>The development of this tool was supported by funding from grants NS050568 and NS40068 from the National Institute of Neurological Disorders and Stroke and grants MH31593, MH40856, from the National Institute of Mental Health.  </acknowledgements>
 
@@ -167,7 +167,7 @@
   </parameters>
 
   <parameters advanced="true">
-  <label> Input image pre-processing options </label>
+  <label> Input image pre-processing options</label>
   <description> Operations to perform on the images before starting the registration. </description>
     <boolean>
        <name>histogramMatch</name>
@@ -205,7 +205,7 @@
     </parameters>
 
   <parameters advanced="true">
-  <label> Displacement field initialziation </label>
+  <label> Displacement field initialziation</label>
   <description> Options for initializing the deformation field. </description>
 
     <transform fileExtensions=".nrrd" type="nonlinear">
@@ -252,7 +252,7 @@
   </parameters>
 
   <parameters advanced="true">
-  <label> Mask Options </label>
+  <label> Mask Options</label>
   <description> Options for setting binary masks for the registration. </description>
     <string-enumeration>
       <name>maskProcessingMode</name>
@@ -331,7 +331,7 @@
   </parameters>
 
   <parameters advanced="true">
-  <label> Advanced Options </label>
+  <label> Advanced Options</label>
   <description> Uncommon debugging or other advanced options. </description>
     <string>
       <name>outputDisplacementFieldPrefix</name>

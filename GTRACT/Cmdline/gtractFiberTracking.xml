@@ -69,7 +69,7 @@
       <name>inputTract</name>
       <longflag>inputTract</longflag>
       <description>Required (for Guided fiber tracking method): guide fiber in vtkPolydata file containing one tract line.</description>
-      <label>Guide Tract </label>
+      <label>Guide Tract</label>
       <channel>input</channel>
     </geometry>
 

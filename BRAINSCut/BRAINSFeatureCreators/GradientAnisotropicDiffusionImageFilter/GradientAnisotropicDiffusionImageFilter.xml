@@ -4,7 +4,7 @@
   <title>GradientAnisopropicDiffusionFilter</title>
 
   <description> Image Smoothing using Gradient Anisotropic Diffuesion Filer</description>
-  <contributor> This tool was developed by Eun Young Kim by modifying ITK Example </contributor>
+  <contributor> This tool was developed by Eun Young Kim by modifying ITK Example</contributor>
 
   <parameters>
     <label>Input Parameters</label>
@@ -40,7 +40,7 @@
       <name>conductance</name>
       <longflag>--conductance</longflag>
       <description>Conductance for diffusion process</description>
-      <label> Conductance </label>
+      <label> Conductance</label>
       <channel>input</channel>
       <default>1.0</default>
     </double>

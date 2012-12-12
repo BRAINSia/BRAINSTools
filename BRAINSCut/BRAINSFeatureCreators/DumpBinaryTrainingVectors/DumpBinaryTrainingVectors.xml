@@ -6,7 +6,7 @@
   <description>Uses mathematical morphology to erode the input images.</description>
   <version>0.1.0.$Revision: 1 $(alpha)</version>
   <documentation-url>http:://www.na-mic.org/</documentation-url>
-  <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt </license>
+  <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
   <contributor>This tool was developed by Mark Scully and Jeremy Bockholt.</contributor>
 
 
@@ -18,7 +18,7 @@
       <name>inputHeaderFilename</name>
       <longflag>--inputHeaderFilename</longflag>
       <description>Required: input header file name</description>
-      <label>Input Header Filename </label>
+      <label>Input Header Filename</label>
       <channel>input</channel>
     </image>
 

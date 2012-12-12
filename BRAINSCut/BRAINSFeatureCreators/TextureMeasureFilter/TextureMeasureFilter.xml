@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
   <category>Filtering.FeatureDetection</category>
-  <title> Canny Level Set Image Filter </title>
+  <title> Canny Level Set Image Filter</title>
   <description>
 The CannySegmentationLevelSet is commonly used to refine a manually generated manual mask.
   </description>

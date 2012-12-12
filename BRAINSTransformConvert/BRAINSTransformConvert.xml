@@ -5,7 +5,7 @@
   <description>Convert ITK transforms to higher order transforms</description>
   <version>1.0</version>
   <documentation-url>A utility to convert between transform file formats.</documentation-url>
-  <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt </license>
+  <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
   <contributor>Hans J. Johnson,Kent Williams</contributor>
   <acknowledgements>
   </acknowledgements>

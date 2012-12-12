@@ -5,26 +5,26 @@
   <description>Automatic FeatureImages using neural networks</description>
   <version> 1.0</version>
   <documentation-url></documentation-url>
-  <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt </license>
+  <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
   <contributor>Greg Harris, Eun Young Kim</contributor>
   <acknowledgements></acknowledgements>
  <parameters>
    <image>
     <name>inputVolume1</name>
     <longflag>inputVolume1</longflag>
-    <description>input volume 1, usally t1 image </description>
+    <description>input volume 1, usally t1 image</description>
     <channel>input</channel>
    </image>
    <image>
     <name>inputVolume2</name>
     <longflag>inputVolume2</longflag>
-    <description>input volume 2, usally t2 image </description>
+    <description>input volume 2, usally t2 image</description>
     <channel>input</channel>
    </image>
    <file>
       <name>outputFileName</name>
       <longflag>outputFileName</longflag>
-      <description>(required) output file name </description>
+      <description>(required) output file name</description>
       <channel>output</channel>
    </file>
    <boolean>

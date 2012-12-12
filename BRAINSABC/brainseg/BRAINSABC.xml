@@ -232,7 +232,7 @@
     <integer-vector>
       <name>gridSize</name>
       <description>Grid size for atlas warping with BSplines</description>
-      <label>BSpline Grid Size </label>
+      <label>BSpline Grid Size</label>
       <longflag>gridSize</longflag>
       <default>5,5,5</default>
     </integer-vector>

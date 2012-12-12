@@ -7,7 +7,7 @@
   </description>
   <version>0.1.0.$Revision: 1.4 $(alpha)</version>
   <documentation-url>http:://mri.radiology.uiowa.edu</documentation-url>
-  <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt </license>
+  <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
   <contributor>
   This tool is a modification by Steven Dunn of a program developed by Greg Harris and Ron Pierson.
   </contributor>
@@ -18,7 +18,7 @@
   <!-- This should follow some latex like framework for style, preferably something that is exportable from Papers.
   <publication>
      <title>Maximize Uniformity Summation Heuristic (MUSH): A highly accurate, simple method for intracranial delineation</title>
-     <authors>Ronald Pierson, Gregory Harris, Hans J. Johnson, Steve Dunn, Vincent A. Magnotta </authors>
+     <authors>Ronald Pierson, Gregory Harris, Hans J. Johnson, Steve Dunn, Vincent A. Magnotta</authors>
      <journal>Proc. of SPIE Vol. 7259, 2009 SPIE</journal>
      <doi>10.1117/12.812322</doi>
   </publication>

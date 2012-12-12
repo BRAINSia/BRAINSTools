@@ -160,7 +160,7 @@ def MakeOneSubWorkFlow(projectid, subjectid, sessionid,processing_phase, WORKFLO
         T1T2WorkupSingle.connect(myLocalLMIWF,'outputspec.atlasToSubjectTransform',outputsSpec,'LMIatlasToSubjectTransform')
 
     if 'TISSUE_CLASSIFY' in WORKFLOW_COMPONENTS:
-        from WorkupT1T2TissueClassifiy import CreateTissueClassifyWorkflow
+        from WorkupT1T2TissueClassify import CreateTissueClassifyWorkflow
         myLocalTCWF= CreateTissueClassifyWorkflow("TissueClassify",CLUSTER_QUEUE,InterpolationMode)
         T1T2WorkupSingle.connect( inputsSpec, 'allT1s', myLocalTCWF, 'inputspec.T1List')
         T1T2WorkupSingle.connect( inputsSpec, 'allT2s', myLocalTCWF, 'inputspec.T2List')

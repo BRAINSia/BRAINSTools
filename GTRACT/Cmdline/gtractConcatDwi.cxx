@@ -86,6 +86,8 @@ int main(int argc, char *argv[])
   VectorImageFilterType::Pointer indexImageToVectorImageFilter = VectorImageFilterType::New();
   int                            vectorIndex = 0;
   double                         baselineBvalue = 0.0;
+
+  NrrdImageType::PointType firstOrigin;
   for( unsigned i = 0; i < inputVolume.size(); i++ )
     {
     std::cout << "Reading volume:              " <<  inputVolume[i] << std::endl;
@@ -102,15 +104,32 @@ int main(int argc, char *argv[])
       }
     // InputImages[i] = imageReader->GetOutput();
 
-    itk::MetaDataDictionary currentMetaData = imageReader->GetOutput()->GetMetaDataDictionary();
-    std::string             NrrdValue;
+    itk::MetaDataDictionary  currentMetaData = imageReader->GetOutput()->GetMetaDataDictionary();
+    std::string              NrrdValue;
+    NrrdImageType::PointType currentOrigin = imageReader->GetOutput()->GetOrigin();
     if( i == 0 )
       {
+      firstOrigin = currentOrigin;
       resultMetaData = currentMetaData;
       itk::ExposeMetaData<std::string>(currentMetaData, "DWMRI_b-value", NrrdValue);
       baselineBvalue = atof( NrrdValue.c_str() );
       }
-
+    else
+      {
+      double distance =
+        vcl_sqrt(firstOrigin.SquaredEuclideanDistanceTo(currentOrigin) );
+      if( !ignoreOrigins && distance > 1.0E-3 )
+        {
+        std::cerr << "Origins differ " << firstOrigin
+                  << " " << currentOrigin << std::endl;
+        return EXIT_FAILURE;
+        }
+      else if( distance > 1.0E-6 )
+        {
+        // if there is a small difference make them the same
+        imageReader->GetOutput()->SetOrigin(firstOrigin);
+        }
+      }
     itk::ExposeMetaData<std::string>(currentMetaData, "DWMRI_b-value", NrrdValue);
     double currentBvalue = atof( NrrdValue.c_str() );
     double bValueScale = currentBvalue / baselineBvalue;

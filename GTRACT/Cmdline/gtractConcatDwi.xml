@@ -22,6 +22,12 @@
       <label>First Input Image Volume</label>
       <channel>input</channel>
     </image>
+    <boolean>
+      <name>ignoreOrigins</name>
+      <longflag>ignoreOrigins</longflag>
+      <description>If image origins are different force all images to origin of first image</description>
+      <default>false</default>
+    </boolean>
   </parameters>
 
   <parameters>

@@ -168,8 +168,16 @@ int main(int argc, char *argv[])
       vectorIndex++;
       }
     }
-  indexImageToVectorImageFilter->Update();
-  indexImageToVectorImageFilter->GetOutput()->SetMetaDataDictionary(resultMetaData);
+  try
+    {
+    indexImageToVectorImageFilter->Update();
+    indexImageToVectorImageFilter->GetOutput()->SetMetaDataDictionary(resultMetaData);
+    }
+  catch( itk::ExceptionObject & ex )
+    {
+    std::cout << ex << std::endl << std::flush;
+    throw;
+    }
 
   typedef itk::ImageFileWriter<NrrdImageType> WriterType;
   WriterType::Pointer nrrdWriter = WriterType::New();

@@ -4,11 +4,10 @@
 ##
 
 ## NOTES ON HOW TO RUN THIS.
-# export PATH=/ipldev/scratch/johnsonhj/src/BRAINSStandAlone-Darwin-clang/lib:${PATH}
-# export PYTHONPATH=/ipldev/sharedopt/20120201/Darwin_i386/PYTHON_MODULES/lib/python2.7/site-packages
-# export PYTHONPATH=/ipldev/sharedopt/20120201/Darwin_i386/PYTHON_MODULES
-# nipype/interfaces/slicer/generate_classes.py
-#cd ~/src/BRAINSStandAlone/AutoWorkup/SEMTools/; rm -rf ~/src/BRAINSStandAlone/AutoWorkup/SEMTools/* ; python ../BRAINSTools/local_generate_classes.py
+# build wiht all options turned on (even the non-default options)
+# export PATH=~/src/BSA-clang31/bin:${PATH}
+# export PYTHONPATH=~/src/BSA-clang31/NIPYPE
+#cd ~/src/BRAINSStandAlone/AutoWorkup/SEMTools/; rm -rf ~/src/BRAINSStandAlone/AutoWorkup/SEMTools/* ; python ../local_generate_classes.py
 
 from nipype.interfaces.slicer.generate_classes import generate_all_classes
 
@@ -24,11 +23,11 @@ modules_list = [
   'BRAINSConstellationDetector',
   'BRAINSConstellationModeler',
   'BRAINSContinuousClass',
+  'BRAINSCreateLabelMapFromProbabilityMaps',
   'BRAINSCut',
   'BRAINSDemonWarp',
   'BRAINSEyeDetector',
   'BRAINSFit',
-  'BRAINSFitEZ',
   'BRAINSFitEZ',
   'BRAINSInitializedControlPoints',
   'BRAINSLandmarkInitializer',
@@ -54,6 +53,7 @@ modules_list = [
   'CombineLabels',
   'CompareSurfaces',
   'CreateMask',
+  'DWIConvert',
   'DilateImage',
   'DilateMask',
   'DistanceMaps',

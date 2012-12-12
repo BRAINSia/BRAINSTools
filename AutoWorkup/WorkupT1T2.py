@@ -36,6 +36,7 @@ from WorkupT1T2AtlasNode import MakeAtlasNode
 from PipeLineFunctionHelpers import getListIndex
 from PipeLineFunctionHelpers import POSTERIORS
 from PipeLineFunctionHelpers import UnwrapPosteriorImagesFromDictionaryFunction
+from PipeLineFunctionHelpers import FixWMPartitioning
 
 #HACK:  [('buildTemplateIteration2', 'SUBJECT_TEMPLATES/0249/buildTemplateIteration2')]
 def GenerateSubjectOutputPattern(subjectid):
@@ -387,6 +388,8 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
     MergePosteriors=dict()
     BAtlas=dict()
     FREESURFER_ID=dict()
+    FixWMPartitioningNode=dict()
+    BRAINSCreateLabelMapFromProbabilityMapsNode=dict()
     if True:
         print("===================== SUBJECT: {0} ===========================".format(subjectid))
         PHASE_1_oneSubjWorkflow=dict()
@@ -627,11 +630,32 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                 baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'outputspec.LMIatlasToSubjectTransform',BASIC_DataSink[sessionid],'ACPCAlign.@LMIatlasToSubjectTransform')
                 #baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'outputspec.TissueClassifyatlasToSubjectTransform',BASIC_DataSink[sessionid],'ACPCAlign.@TissueClassifyatlasToSubjectTransform')
 
+
+
+
+                currentFixWMPartitioningName='FixWMPartitioning_'+str(subjectid)+"_"+str(sessionid)
+                FixWMPartitioningNode[sessionid] = pe.Node(interface=Function(function=FixWMPartitioning,
+                     input_names=['brainMask','PosteriorsList'],
+                     output_names=['UpdatedPosteriorsList','MatchingFGCodeList','MatchingLabelList','nonAirRegionMask']),
+                     name=currentFixWMPartitioningName)
+
+                baw200.connect(PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.outputLabels',FixWMPartitioningNode[sessionid],'brainMask')
+                baw200.connect( [ ( PHASE_2_oneSubjWorkflow[sessionid], FixWMPartitioningNode[sessionid],
+                                [ ( ( 'outputspec.posteriorImages', UnwrapPosteriorImagesFromDictionaryFunction ), 'PosteriorsList')] ) ] )
+
+                currentBRAINSCreateLabelMapFromProbabilityMapsName='BRAINSCreateLabelMapFromProbabilityMaps_'+str(subjectid)+"_"+str(sessionid)
+                BRAINSCreateLabelMapFromProbabilityMapsNode[sessionid] = pe.Node(interface=BRAINSCreateLabelMapFromProbabilityMaps(),
+                      name=currentBRAINSCreateLabelMapFromProbabilityMapsName)
+                baw200.connect(FixWMPartitioningNode[sessionid],'UpdatedPosteriorsList',BRAINSCreateLabelMapFromProbabilityMapsNode[sessionid],'inputProbabilityVolume')
+                baw200.connect(FixWMPartitioningNode[sessionid],'MatchingFGCodeList',BRAINSCreateLabelMapFromProbabilityMapsNode[sessionid],'foregroundPriors')
+                baw200.connect(FixWMPartitioningNode[sessionid],'MatchingLabelList',BRAINSCreateLabelMapFromProbabilityMapsNode[sessionid],'priorLabelCodes')
+                baw200.connect(FixWMPartitioningNode[sessionid],'nonAirRegionMask',BRAINSCreateLabelMapFromProbabilityMapsNode[sessionid],'nonAirRegionMask')
+
+                ## TODO:  Fix the file names
+                BRAINSCreateLabelMapFromProbabilityMapsNode[sessionid].inputs.dirtyLabelVolume = 'fixed_headlabels_seg.nii.gz'
+                BRAINSCreateLabelMapFromProbabilityMapsNode[sessionid].inputs.cleanLabelVolume = 'fixed_brainlabels_seg.nii.gz'
+
                 ### Now define where the final organized outputs should go.
-# -- DELETE TC_DataSink[sessionid]=pe.Node(nio.DataSink(),name="TISSUE_CLASSIFY_DS_"+str(subjectid)+"_"+str(sessionid))
-# -- DELETE TC_DataSink[sessionid].inputs.base_directory=ExperimentBaseDirectoryResults
-# -- DELETE TC_DataSink[sessionid].inputs.regexp_substitutions = GenerateOutputPattern(projectid, subjectid, sessionid,'TissueClassify')
-# -- DELETE baw200.connect(PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.TissueClassifyOutputDir', TC_DataSink[sessionid],'TissueClassify.@TissueClassifyOutputDir')
 
                 ### Now define where the final organized outputs should go.
                 ###     For posterior probability files, we need to use a MapNode for the keys from the
@@ -641,15 +665,14 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                 TC_DataSink[sessionid].inputs.base_directory = ExperimentBaseDirectoryResults
                 TC_DataSink[sessionid].inputs.regexp_substitutions = GenerateOutputPattern(projectid, subjectid,
                                                                         sessionid, 'TissueClassify')
-                baw200.connect(PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.outputLabels', TC_DataSink[sessionid], 'TissueClassify.@outputLabels')
-                baw200.connect(PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.outputHeadLabels', TC_DataSink[sessionid], 'TissueClassify.@outputHeadLabels')
+                baw200.connect(BRAINSCreateLabelMapFromProbabilityMapsNode[sessionid], 'cleanLabelVolume', TC_DataSink[sessionid], 'TissueClassify.@outputLabels')
+                baw200.connect(BRAINSCreateLabelMapFromProbabilityMapsNode[sessionid], 'dirtyLabelVolume', TC_DataSink[sessionid], 'TissueClassify.@outputHeadLabels')
                 baw200.connect(PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.t1_average', TC_DataSink[sessionid], 'TissueClassify.@t1_average')
                 baw200.connect(PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.t2_average', TC_DataSink[sessionid], 'TissueClassify.@t2_average')
                 baw200.connect(PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.TissueClassifyatlasToSubjectTransform', TC_DataSink[sessionid], 'TissueClassify.@atlasToSubjectTransform')
                 baw200.connect(PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.TissueClassifyatlasToSubjectInverseTransform', TC_DataSink[sessionid], 'TissueClassify.@atlasToSubjectInverseTransform')
 
-                baw200.connect( [ ( PHASE_2_oneSubjWorkflow[sessionid], TC_DataSink[sessionid],
-                                [ ( ( 'outputspec.posteriorImages', UnwrapPosteriorImagesFromDictionaryFunction ), 'TissueClassify.@posteriors')] ) ] )
+                baw200.connect( FixWMPartitioningNode[sessionid], 'UpdatedPosteriorsList',TC_DataSink[sessionid],'TissueClassify.@posteriors')
 
                 ### Now clean up by adding together many of the items PHASE_2_oneSubjWorkflow
                 currentAccumulateLikeTissuePosteriorsName='AccumulateLikeTissuePosteriors_'+str(subjectid)+"_"+str(sessionid)

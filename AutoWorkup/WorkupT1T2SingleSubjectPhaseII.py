@@ -103,7 +103,7 @@ def GenerateOutputPattern(projectid, subjectid, sessionid, DefaultNodeName, uidI
 ###########################################################################
 ###########################################################################
 ###########################################################################
-def MakeOneSubWorkFlow(projectid, subjectid, sessionid, BAtlas, WORKFLOW_COMPONENTS, BCD_model_path, InterpolationMode, CLUSTER_QUEUE, ExperimentBaseDirectoryResults):
+def MakeOneSubWorkFlow(projectid, subjectid, sessionid, BAtlas, WORKFLOW_COMPONENTS, BCD_model_path, InterpolationMode, CLUSTER_QUEUE,CLUSTER_QUEUE_LONG,ExperimentBaseDirectoryResults):
     """
     Run autoworkup on a single Subject
 
@@ -160,8 +160,8 @@ def MakeOneSubWorkFlow(projectid, subjectid, sessionid, BAtlas, WORKFLOW_COMPONE
         T1T2WorkupSingle.connect( myLocalLMIWF, 'outputspec.outputResampledVolume', outputsSpec, 'BCD_ACPC_T1' )
 
     if 'TISSUE_CLASSIFY' in WORKFLOW_COMPONENTS:
-        from WorkupT1T2TissueClassifiy import CreateTissueClassifyWorkflow
-        myLocalTCWF = CreateTissueClassifyWorkflow("TissueClassify", CLUSTER_QUEUE, InterpolationMode)
+        from WorkupT1T2TissueClassify import CreateTissueClassifyWorkflow
+        myLocalTCWF= CreateTissueClassifyWorkflow("TissueClassify",CLUSTER_QUEUE,CLUSTER_QUEUE_LONG,InterpolationMode)
         T1T2WorkupSingle.connect( inputsSpec, 'allT1s', myLocalTCWF, 'inputspec.T1List')
         T1T2WorkupSingle.connect( inputsSpec, 'allT2s', myLocalTCWF, 'inputspec.T2List')
         T1T2WorkupSingle.connect( inputsSpec, 'allPDs', myLocalTCWF, 'inputspec.PDList')
@@ -193,7 +193,7 @@ def MakeOneSubWorkFlow(projectid, subjectid, sessionid, BAtlas, WORKFLOW_COMPONE
     ## Make deformed Atlas image space
     if 'ANTS' in WORKFLOW_COMPONENTS:
         from WorkupT1T2ANTS import CreateANTSRegistrationWorkflow
-        myLocalAntsWF = CreateANTSRegistrationWorkflow("ANTSRegistration",CLUSTER_QUEUE,-1)
+        myLocalAntsWF = CreateANTSRegistrationWorkflow("ANTSRegistration",CLUSTER_QUEUE,CLUSTER_QUEUE_LONG,-1)
         T1T2WorkupSingle.connect( myLocalTCWF,'outputspec.t1_average',myLocalAntsWF,"inputspec.fixedVolumesList")
         T1T2WorkupSingle.connect( BAtlas,'template_t1',    myLocalAntsWF,"inputspec.movingVolumesList")
         T1T2WorkupSingle.connect(myLocalLMIWF,'outputspec.atlasToSubjectTransform',myLocalAntsWF,'inputspec.initial_moving_transform')
@@ -214,7 +214,7 @@ def MakeOneSubWorkFlow(projectid, subjectid, sessionid, BAtlas, WORKFLOW_COMPONE
     if 'SEGMENTATION' in WORKFLOW_COMPONENTS:
         from WorkupT1T2BRAINSCut import CreateBRAINSCutWorkflow
         ## TODO:  Remove BAtlas From Here as well!
-        myLocalSegWF = CreateBRAINSCutWorkflow("Segmentation",CLUSTER_QUEUE,BAtlas) ##Note:  Passing in the entire BAtlas Object here!
+        myLocalSegWF = CreateBRAINSCutWorkflow("Segmentation",CLUSTER_QUEUE,CLUSTER_QUEUE_LONG,BAtlas) ##Note:  Passing in the entire BAtlas Object here!
         T1T2WorkupSingle.connect( myLocalTCWF,'outputspec.t1_average',myLocalSegWF,'inputspec.T1Volume')
         T1T2WorkupSingle.connect( myLocalTCWF,'outputspec.t2_average',myLocalSegWF,'inputspec.T2Volume')
         T1T2WorkupSingle.connect( myLocalTCWF,'outputspec.atlasToSubjectTransform',myLocalSegWF,'inputspec.atlasToSubjectTransform')
@@ -241,7 +241,7 @@ def MakeOneSubWorkFlow(projectid, subjectid, sessionid, BAtlas, WORKFLOW_COMPONE
     if 'FREESURFER' in WORKFLOW_COMPONENTS:
         RunAllFSComponents=True ## A hack to avoid 26 hour run of freesurfer
         from WorkupT1T2FreeSurfer import CreateFreeSurferWorkflow
-        myLocalFSWF= CreateFreeSurferWorkflow("Level1_FSTest",CLUSTER_QUEUE,RunAllFSComponents)
+        myLocalFSWF= CreateFreeSurferWorkflow("Level1_FSTest",CLUSTER_QUEUE,CLUSTER_QUEUE_LONG,RunAllFSComponents)
         T1T2WorkupSingle.connect(inputsSpec,'sessionid',myLocalFSWF,'inputspec.subject_id')
         T1T2WorkupSingle.connect(myLocalTCWF,'outputspec.t1_average',myLocalFSWF,'inputspec.T1_files')
         T1T2WorkupSingle.connect(myLocalTCWF,'outputspec.t2_average',myLocalFSWF,'inputspec.T2_files')

@@ -92,7 +92,7 @@ def GenerateWFName(projectid, subjectid, sessionid,processing_phase):
 ###########################################################################
 ###########################################################################
 ###########################################################################
-def MakeOneSubWorkFlow(projectid, subjectid, sessionid,processing_phase, WORKFLOW_COMPONENTS, BCD_model_path, InterpolationMode, CLUSTER_QUEUE):
+def MakeOneSubWorkFlow(projectid, subjectid, sessionid,processing_phase, WORKFLOW_COMPONENTS, BCD_model_path, InterpolationMode, CLUSTER_QUEUE,CLUSTER_QUEUE_LONG):
     """
     Run autoworkup on a single Subject
 
@@ -161,7 +161,7 @@ def MakeOneSubWorkFlow(projectid, subjectid, sessionid,processing_phase, WORKFLO
 
     if 'TISSUE_CLASSIFY' in WORKFLOW_COMPONENTS:
         from WorkupT1T2TissueClassify import CreateTissueClassifyWorkflow
-        myLocalTCWF= CreateTissueClassifyWorkflow("TissueClassify",CLUSTER_QUEUE,InterpolationMode)
+        myLocalTCWF= CreateTissueClassifyWorkflow("TissueClassify",CLUSTER_QUEUE,CLUSTER_QUEUE_LONG,InterpolationMode)
         T1T2WorkupSingle.connect( inputsSpec, 'allT1s', myLocalTCWF, 'inputspec.T1List')
         T1T2WorkupSingle.connect( inputsSpec, 'allT2s', myLocalTCWF, 'inputspec.T2List')
         T1T2WorkupSingle.connect( inputsSpec, 'allPDs', myLocalTCWF, 'inputspec.PDList')

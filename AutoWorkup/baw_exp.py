@@ -195,6 +195,7 @@ def main(argv=None):
         print "FREESURFER NEEDS TO CHECK FOR SANE ENVIRONMENT HERE."
 
     CLUSTER_QUEUE=expConfig.get(input_arguments.processingEnvironment,'CLUSTER_QUEUE')
+    CLUSTER_QUEUE_LONG=expConfig.get(input_arguments.processingEnvironment,'CLUSTER_QUEUE_LONG')
 
     ## Setup environment for CPU load balancing of ITK based programs.
     import multiprocessing
@@ -250,14 +251,14 @@ def main(argv=None):
              ExperimentBaseDirectoryResults,
              ExperimentDatabase,
              CACHE_ATLASPATH,
-             CACHE_BCDMODELPATH,WORKFLOW_COMPONENTS=WORKFLOW_COMPONENTS,CLUSTER_QUEUE=CLUSTER_QUEUE)
+             CACHE_BCDMODELPATH,WORKFLOW_COMPONENTS=WORKFLOW_COMPONENTS,CLUSTER_QUEUE=CLUSTER_QUEUE,CLUSTER_QUEUE_LONG=CLUSTER_QUEUE_LONG)
         else:
             baw200=WorkupT1T2.WorkupT1T2(subjectid,mountPrefix,
               os.path.join(ExperimentBaseDirectoryCache,str(subjectid)),
               ExperimentBaseDirectoryResults,
               ExperimentDatabase,
               CACHE_ATLASPATH,
-              CACHE_BCDMODELPATH,WORKFLOW_COMPONENTS=WORKFLOW_COMPONENTS,CLUSTER_QUEUE=CLUSTER_QUEUE,SGE_JOB_SCRIPT=JOB_SCRIPT)
+              CACHE_BCDMODELPATH,WORKFLOW_COMPONENTS=WORKFLOW_COMPONENTS,CLUSTER_QUEUE=CLUSTER_QUEUE,CLUSTER_QUEUE_LONG=CLUSTER_QUEUE_LONG,SGE_JOB_SCRIPT=JOB_SCRIPT)
         print "Start Processing"
 
         SGEFlavor='SGE'

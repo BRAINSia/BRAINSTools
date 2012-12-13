@@ -17,7 +17,7 @@ from SEMTools import *
     ANTSWF.connect( BAtlas,'template_t1',    myLocalAntsWF,"inputspec.movingVolumesList")
     ANTSWF.connect(myLocalLMIWF,'outputspec.atlasToSubjectTransform',myLocalAntsWF,'inputspec.initial_moving_transform')
 """
-def CreateANTSRegistrationWorkflow(WFname,CLUSTER_QUEUE,NumberOfThreads=-1):
+def CreateANTSRegistrationWorkflow(WFname,CLUSTER_QUEUE,CLUSTER_QUEUE_LONG,NumberOfThreads=-1):
     ANTSWF= pe.Workflow(name=WFname)
 
     inputsSpec = pe.Node(interface=IdentityInterface(fields=['fixedVolumesList','movingVolumesList','initial_moving_transform',

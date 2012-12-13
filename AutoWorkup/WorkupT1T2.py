@@ -288,7 +288,7 @@ def MakeNewAtlasTemplate(t1_image,deformed_list,
 ###########################################################################
 ###########################################################################
 def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBaseDirectoryResults, ExperimentDatabase, atlas_fname_wpath, BCD_model_path,
-               InterpolationMode="Linear", Mode=10,DwiList=[],WORKFLOW_COMPONENTS=[],CLUSTER_QUEUE='',SGE_JOB_SCRIPT='#!/bin/bash'):
+               InterpolationMode="Linear", Mode=10,DwiList=[],WORKFLOW_COMPONENTS=[],CLUSTER_QUEUE='',CLUSTER_QUEUE_LONG='',SGE_JOB_SCRIPT='#!/bin/bash'):
     """
     Run autoworkup on all subjects data defined in the ExperimentDatabase
 
@@ -381,7 +381,7 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
             PHASE_1_oneSubjWorkflow[sessionid]=WorkupT1T2Single.MakeOneSubWorkFlow(
                               projectid, subjectid, sessionid,PROCESSING_PHASE,
                               PHASE_1_WORKFLOW_COMPONENTS,
-                              BCD_model_path, InterpolationMode, CLUSTER_QUEUE)
+                              BCD_model_path, InterpolationMode, CLUSTER_QUEUE,CLUSTER_QUEUE_LONG)
             baw200.connect(PHASE_1_subjInfoNode[sessionid],'projectid',PHASE_1_oneSubjWorkflow[sessionid],'inputspec.projectid')
             baw200.connect(PHASE_1_subjInfoNode[sessionid],'subjectid',PHASE_1_oneSubjWorkflow[sessionid],'inputspec.subjectid')
             baw200.connect(PHASE_1_subjInfoNode[sessionid],'sessionid',PHASE_1_oneSubjWorkflow[sessionid],'inputspec.sessionid')
@@ -465,7 +465,7 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
             buildTemplateIteration1=BAWantsRegistrationTemplateBuildSingleIterationWF('iteration01')
             ## TODO:  Change these parameters
             BeginANTS_iter1 = buildTemplateIteration1.get_node("BeginANTS")
-            BeginANTS_iter1.plugin_args={'template':SGE_JOB_SCRIPT,'qsub_args': '-S /bin/bash -pe smp1 5-12 -l mem_free=9000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE), 'overwrite': True}
+            BeginANTS_iter1.plugin_args={'template':SGE_JOB_SCRIPT,'qsub_args': '-S /bin/bash -pe smp1 4-8 -l mem_free=9000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE_LONG), 'overwrite': True}
             wimtdeformed_iter1 = buildTemplateIteration1.get_node("wimtdeformed")
             wimtdeformed_iter1.plugin_args={'template':SGE_JOB_SCRIPT,'qsub_args': '-S /bin/bash -pe smp1 1-2 -l mem_free=2000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE), 'overwrite': True}
             AvgAffineTransform_iter1 = buildTemplateIteration1.get_node("AvgAffineTransform")
@@ -482,7 +482,7 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
             buildTemplateIteration2 = BAWantsRegistrationTemplateBuildSingleIterationWF('Iteration02')
             ## TODO:  Change these parameters
             BeginANTS_iter2 = buildTemplateIteration2.get_node("BeginANTS")
-            BeginANTS_iter2.plugin_args={'template':SGE_JOB_SCRIPT,'qsub_args': '-S /bin/bash -pe smp1 5-12 -l mem_free=9000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE), 'overwrite': True}
+            BeginANTS_iter2.plugin_args={'template':SGE_JOB_SCRIPT,'qsub_args': '-S /bin/bash -pe smp1 4-8 -l mem_free=9000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE_LONG), 'overwrite': True}
             wimtdeformed_iter2 = buildTemplateIteration2.get_node("wimtdeformed")
             wimtdeformed_iter2.plugin_args={'template':SGE_JOB_SCRIPT,'qsub_args': '-S /bin/bash -pe smp1 1-2 -l mem_free=2000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE), 'overwrite': True}
             AvgAffineTransform_iter2 = buildTemplateIteration2.get_node("AvgAffineTransform")
@@ -547,7 +547,7 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                 PHASE_2_oneSubjWorkflow[sessionid]=WorkupT1T2Single.MakeOneSubWorkFlow(
                                   projectid, subjectid, sessionid,PROCESSING_PHASE,
                                   WORKFLOW_COMPONENTS,
-                                  BCD_model_path, InterpolationMode, CLUSTER_QUEUE)
+                                  BCD_model_path, InterpolationMode, CLUSTER_QUEUE,CLUSTER_QUEUE_LONG)
                 baw200.connect(PHASE_2_subjInfoNode[sessionid],'projectid',PHASE_2_oneSubjWorkflow[sessionid],'inputspec.projectid')
                 baw200.connect(PHASE_2_subjInfoNode[sessionid],'subjectid',PHASE_2_oneSubjWorkflow[sessionid],'inputspec.subjectid')
                 baw200.connect(PHASE_2_subjInfoNode[sessionid],'sessionid',PHASE_2_oneSubjWorkflow[sessionid],'inputspec.sessionid')
@@ -688,7 +688,7 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                     AtlasToSubjectantsRegistration[subjectid].inputs.collapse_linear_transforms_to_fixed_image_header = False
                     AtlasToSubjectantsRegistration[subjectid].inputs.output_warped_image = 'atlas2subject.nii.gz'
                     AtlasToSubjectantsRegistration[subjectid].inputs.output_inverse_warped_image = 'subject2atlas.nii.gz'
-                    AtlasToSubjectantsRegistration[subjectid].plugin_args={'template':SGE_JOB_SCRIPT,'qsub_args': '-S /bin/bash -pe smp1 5-12 -l mem_free=9000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE), 'overwrite': True}
+                    AtlasToSubjectantsRegistration[subjectid].plugin_args={'template':SGE_JOB_SCRIPT,'qsub_args': '-S /bin/bash -pe smp1 4-8 -l mem_free=9000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE_LONG), 'overwrite': True}
 
                     baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'outputspec.t1_average', AtlasToSubjectantsRegistration[subjectid], 'fixed_image')
                     baw200.connect(BAtlas[subjectid],'template_t1',AtlasToSubjectantsRegistration[subjectid], 'moving_image')
@@ -714,7 +714,7 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                 if ( 'SEGMENTATION' in WORKFLOW_COMPONENTS ) and ( len(global_AllT2s) > 0 ): # Currently only works with multi-modal_data
                     from WorkupT1T2BRAINSCut import CreateBRAINSCutWorkflow
                     myLocalSegWF[sessionid] = CreateBRAINSCutWorkflow(projectid, subjectid, sessionid,'Segmentation',
-                                                              CLUSTER_QUEUE,BAtlas[subjectid]) ##Note:  Passing in the entire BAtlas Object here!
+                                                              CLUSTER_QUEUE,CLUSTER_QUEUE_LONG,BAtlas[subjectid]) ##Note:  Passing in the entire BAtlas Object here!
                     baw200.connect( PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.t1_average', myLocalSegWF[sessionid], "inputspec.T1Volume" )
                     baw200.connect( PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.t2_average', myLocalSegWF[sessionid], "inputspec.T2Volume")
                     baw200.connect( PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.outputLabels', myLocalSegWF[sessionid],"inputspec.RegistrationROI")

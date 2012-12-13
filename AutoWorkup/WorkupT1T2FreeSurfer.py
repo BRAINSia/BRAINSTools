@@ -22,7 +22,7 @@ def MakeFreesurferOutputDirectory(subjects_dir,subject_id):
 def GenerateWFName(projectid, subjectid, sessionid,WFName):
     return WFName+'_'+str(subjectid)+"_"+str(sessionid)+"_"+str(projectid)
 
-def CreateFreeSurferWorkflow(projectid, subjectid, sessionid,WFname,CLUSTER_QUEUE,RunAllFSComponents=True,RunMultiMode=True):
+def CreateFreeSurferWorkflow(projectid, subjectid, sessionid,WFname,CLUSTER_QUEUE,CLUSTER_QUEUE_LONG,RunAllFSComponents=True,RunMultiMode=True):
     freesurferWF= pe.Workflow(name=GenerateWFName(projectid, subjectid, sessionid,WFname))
 
     inputsSpec = pe.Node(interface=IdentityInterface(fields=['FreeSurfer_ID','T1_files','T2_files',

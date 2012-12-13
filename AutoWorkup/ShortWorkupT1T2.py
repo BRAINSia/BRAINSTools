@@ -280,7 +280,7 @@ def AccumulateLikeTissuePosteriors(posteriorImages):
 ###########################################################################
 ###########################################################################
 def ShortWorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBaseDirectoryResults, ExperimentDatabase, atlas_fname_wpath, BCD_model_path,
-               InterpolationMode="Linear", Mode=10,DwiList=[],WORKFLOW_COMPONENTS=[],CLUSTER_QUEUE=''):
+               InterpolationMode="Linear", Mode=10,DwiList=[],WORKFLOW_COMPONENTS=[],CLUSTER_QUEUE='',CLUSTER_QUEUE_LONG=''):
     """
     Run autoworkup on all subjects data defined in the ExperimentDatabase
 
@@ -370,7 +370,7 @@ def ShortWorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, Experime
             PHASE_1_oneSubjWorkflow[sessionid]=WorkupT1T2Single.MakeOneSubWorkFlow(
                               projectid, subjectid, sessionid,PROCESSING_PHASE,
                               PHASE_1_WORKFLOW_COMPONENTS,
-                              BCD_model_path, InterpolationMode, CLUSTER_QUEUE)
+                              BCD_model_path, InterpolationMode, CLUSTER_QUEUE, CLUSTER_QUEUE_LONG)
             baw200.connect(PHASE_1_subjInfoNode[sessionid],'projectid',PHASE_1_oneSubjWorkflow[sessionid],'inputspec.projectid')
             baw200.connect(PHASE_1_subjInfoNode[sessionid],'subjectid',PHASE_1_oneSubjWorkflow[sessionid],'inputspec.subjectid')
             baw200.connect(PHASE_1_subjInfoNode[sessionid],'sessionid',PHASE_1_oneSubjWorkflow[sessionid],'inputspec.sessionid')

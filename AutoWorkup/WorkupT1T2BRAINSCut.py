@@ -111,7 +111,7 @@ def CreateLabelMap(listOfImages,LabelImageName,CSVFileName,projectid, subjectid,
     cutWF.connect(BAtlas,'template_brain',myLocalcutWF,'movingBinaryVolume')
     cutWF.connect(BLI,'outputTransformFilename',myLocalcutWF,'initialTransform')
 """
-def CreateBRAINSCutWorkflow(projectid, subjectid, sessionid,WFName,CLUSTER_QUEUE,atlasObject):
+def CreateBRAINSCutWorkflow(projectid, subjectid, sessionid,WFName,CLUSTER_QUEUE,CLUSTER_QUEUE_LONG,atlasObject):
     cutWF= pe.Workflow(name=GenerateWFName(projectid, subjectid, sessionid,WFName))
 
     inputsSpec = pe.Node(interface=IdentityInterface(fields=['T1Volume','T2Volume',

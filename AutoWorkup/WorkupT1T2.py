@@ -37,6 +37,7 @@ from PipeLineFunctionHelpers import getListIndex
 from PipeLineFunctionHelpers import POSTERIORS
 from PipeLineFunctionHelpers import UnwrapPosteriorImagesFromDictionaryFunction
 from PipeLineFunctionHelpers import FixWMPartitioning
+from PipeLineFunctionHelpers import AccumulateLikeTissuePosteriors
 
 #HACK:  [('buildTemplateIteration2', 'SUBJECT_TEMPLATES/0249/buildTemplateIteration2')]
 def GenerateSubjectOutputPattern(subjectid):
@@ -273,63 +274,7 @@ def MakeNewAtlasTemplate(t1_image,deformed_list,
     newFile.close()
     return outAtlasFullPath,clean_deformed_list
 
-def AccumulateLikeTissuePosteriors(posteriorImages):
-    import os
-    import sys
-    import SimpleITK as sitk
-    ## Now clean up the posteriors based on anatomical knowlege.
-    ## sometimes the posteriors are not relevant for priors
-    ## due to anomolies around the edges.
-    load_images_list=dict()
-    for full_pathname in posteriorImages.values():
-        base_name=os.path.basename(full_pathname)
-        load_images_list[base_name]=sitk.ReadImage(full_pathname)
-    GM_ACCUM=[
-              'POSTERIOR_ACCUMBEN.nii.gz',
-              'POSTERIOR_CAUDATE.nii.gz',
-              'POSTERIOR_CRBLGM.nii.gz',
-              'POSTERIOR_HIPPOCAMPUS.nii.gz',
-              'POSTERIOR_PUTAMEN.nii.gz',
-              'POSTERIOR_THALAMUS.nii.gz',
-              'POSTERIOR_SURFGM.nii.gz',
-             ]
-    WM_ACCUM=[
-              'POSTERIOR_CRBLWM.nii.gz',
-              'POSTERIOR_WM.nii.gz'
-              ]
-    CSF_ACCUM=[
-              'POSTERIOR_CSF.nii.gz',
-              ]
-    VB_ACCUM=[
-              'POSTERIOR_VB.nii.gz',
-              ]
-    GLOBUS_ACCUM=[
-              'POSTERIOR_GLOBUS.nii.gz',
-              ]
-    BACKGROUND_ACCUM=[
-              'POSTERIOR_AIR.nii.gz',
-              'POSTERIOR_NOTCSF.nii.gz',
-              'POSTERIOR_NOTGM.nii.gz',
-              'POSTERIOR_NOTVB.nii.gz',
-              'POSTERIOR_NOTWM.nii.gz',
-              ]
-    ## The next 2 items MUST be syncronized
-    AccumulatePriorsNames=['POSTERIOR_GM_TOTAL.nii.gz','POSTERIOR_WM_TOTAL.nii.gz',
-                        'POSTERIOR_CSF_TOTAL.nii.gz','POSTERIOR_VB_TOTAL.nii.gz',
-                        'POSTERIOR_GLOBUS_TOTAL.nii.gz','POSTERIOR_BACKGROUND_TOTAL.nii.gz']
-    ForcedOrderingLists=[GM_ACCUM,WM_ACCUM,CSF_ACCUM,VB_ACCUM,GLOBUS_ACCUM,BACKGROUND_ACCUM]
-    AccumulatePriorsList=list()
-    for index in range(0,len(ForcedOrderingLists)):
-        outname=AccumulatePriorsNames[index]
-        inlist=ForcedOrderingLists[index]
-        accum_image= load_images_list[ inlist[0] ] # copy first image
-        for curr_image in range(1,len(inlist)):
-            accum_image=accum_image + load_images_list[ inlist[curr_image] ]
-        sitk.WriteImage(accum_image,outname)
-        AccumulatePriorsList.append(os.path.realpath(outname))
-    print "HACK \n\n\n\n\n\n\n HACK \n\n\n: {APL}\n".format(APL=AccumulatePriorsList)
-    print ": {APN}\n".format(APN=AccumulatePriorsNames)
-    return AccumulatePriorsList,AccumulatePriorsNames
+
 ###########################################################################
 ###########################################################################
 ###########################################################################
@@ -623,15 +568,12 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                 BASIC_DataSink[sessionid].inputs.regexp_substitutions = GenerateOutputPattern(projectid, subjectid, sessionid,'ACPCAlign')
 
                 baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'outputspec.outputLandmarksInACPCAlignedSpace',BASIC_DataSink[sessionid],'ACPCAlign.@outputLandmarksInACPCAlignedSpace')
-#                baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'outputspec.BCD_ACPC_T1',BASIC_DataSink[sessionid],'ACPCAlign.@BCD_ACPC_T1')
+                #baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'outputspec.BCD_ACPC_T1',BASIC_DataSink[sessionid],'ACPCAlign.@BCD_ACPC_T1')
                 baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'outputspec.BCD_ACPC_T1_CROPPED',BASIC_DataSink[sessionid],'ACPCAlign.@BCD_ACPC_T1_CROPPED')
                 baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'outputspec.outputLandmarksInInputSpace',BASIC_DataSink[sessionid],'ACPCAlign.@outputLandmarksInInputSpace')
                 baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'outputspec.outputTransform',BASIC_DataSink[sessionid],'ACPCAlign.@outputTransform')
                 baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'outputspec.LMIatlasToSubjectTransform',BASIC_DataSink[sessionid],'ACPCAlign.@LMIatlasToSubjectTransform')
                 #baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'outputspec.TissueClassifyatlasToSubjectTransform',BASIC_DataSink[sessionid],'ACPCAlign.@TissueClassifyatlasToSubjectTransform')
-
-
-
 
                 currentFixWMPartitioningName='FixWMPartitioning_'+str(subjectid)+"_"+str(sessionid)
                 FixWMPartitioningNode[sessionid] = pe.Node(interface=Function(function=FixWMPartitioning,
@@ -658,9 +600,6 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                 ### Now define where the final organized outputs should go.
 
                 ### Now define where the final organized outputs should go.
-                ###     For posterior probability files, we need to use a MapNode for the keys from the
-                ### PHASE_2_oneSubjWorkflow[sessionid].outputspec.posteriorImages dictionary.  To use a MapNode, we must know
-                ### the list BEFORE we run the pipeline...
                 TC_DataSink[sessionid] = pe.Node(nio.DataSink(), name="TISSUE_CLASSIFY_DS_"+str(subjectid)+"_"+str(sessionid))
                 TC_DataSink[sessionid].inputs.base_directory = ExperimentBaseDirectoryResults
                 TC_DataSink[sessionid].inputs.regexp_substitutions = GenerateOutputPattern(projectid, subjectid,
@@ -680,8 +619,7 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                      input_names=['posteriorImages'],
                      output_names=['AccumulatePriorsList','AccumulatePriorsNames']),
                      name=currentAccumulateLikeTissuePosteriorsName)
-                baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'outputspec.posteriorImages',
-                               AccumulateLikeTissuePosteriorsNode[sessionid],'posteriorImages')
+                baw200.connect( FixWMPartitioningNode[sessionid],'UpdatedPosteriorsList', AccumulateLikeTissuePosteriorsNode[sessionid],'posteriorImages')
 
                 ### Now define where the final organized outputs should go.
                 AddLikeTissueSink[sessionid]=pe.Node(nio.DataSink(),name="ACCUMULATED_POSTERIORS_"+str(subjectid)+"_"+str(sessionid))
@@ -904,8 +842,7 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                     baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryRightThalamus',    MergeSessionSubjectToAtlas[sessionid], 'in13')
                     baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryRightHippocampus', MergeSessionSubjectToAtlas[sessionid], 'in14')
 
-                    baw200.connect( [ ( PHASE_2_oneSubjWorkflow[sessionid], MergeSessionSubjectToAtlas[sessionid],
-                                        [ ( ( 'outputspec.posteriorImages', UnwrapPosteriorImagesFromDictionaryFunction ), 'in15')] ) ] )
+                    baw200.connect( FixWMPartitioningNode[sessionid],'UpdatedPosteriorsList' ,MergeSessionSubjectToAtlas[sessionid], 'in15')
 
                     LinearSubjectToAtlasANTsApplyTransformsName='LinearSubjectToAtlasANTsApplyTransforms_'+str(sessionid)
                     LinearSubjectToAtlasANTsApplyTransforms[sessionid] = pe.MapNode(interface=ApplyTransforms(), iterfield=['input_image'],name=LinearSubjectToAtlasANTsApplyTransformsName)

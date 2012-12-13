@@ -91,6 +91,7 @@ set(brains_modulenames
   ConvertBetweenFileFormats
   DWIConvert
   BRAINSCreateLabelMapFromProbabilityMaps
+  BRAINSMultiSTAPLE
   )
 
 if(USE_DebugImageViewer)
@@ -104,7 +105,10 @@ endif()
 foreach(modulename ${brains_modulenames})
   # message("DEFINED USE_${modulename} AND ${USE_${modulename}}")
   if(DEFINED USE_${modulename} AND USE_${modulename})
+  #  message("Adding ${modulename}")
     add_subdirectory(${modulename})
+  #else()
+  #  message("USE_${modulename} = ${USE_${modulename}}")
   endif()
 endforeach()
 

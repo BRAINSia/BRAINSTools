@@ -61,6 +61,7 @@ option(USE_ICCDEF                         "Build ICCDEF     "              OFF)
 option(USE_BRAINSImageConvert             "Build BRAINSPosteriorToContinuousClass" OFF)
 option(USE_DWIConvert                     "Build DWIConvert" ON)
 option(USE_BRAINSCreateLabelMapFromProbabilityMaps "Build BRAINSCreateLabelMapFromProbabilityMaps" ON)
+option(USE_BRAINSMultiSTAPLE "Build BRAINSMultiSTAPLE" OFF)
 
 option(USE_DebugImageViewer "Build DebugImageViewer" OFF)
 

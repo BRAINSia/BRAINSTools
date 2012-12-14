@@ -59,10 +59,6 @@ class BRAINSABCext(BRAINSABC):
     output_spec = BRAINSABCextOutputSpec
 
     def _list_outputs(self):
-        ## HACK: This function is not being called properly.
-        ## -- The assert should be removed, and teh fixed_inverse_name
-        ## should be properly created.
-        assert False, "KILL HERE"
         custom_implied_outputs_with_no_inputs = ['posteriorImages',
                                                  'outputT1AverageImage',
                                                  'outputT2AverageImage',
@@ -90,14 +86,10 @@ class BRAINSABCext(BRAINSABC):
         PosteriorPaths = PosteriorOutputs.getPosteriorFileNameList(self.inputs.posteriorTemplate)
         outputs['posteriorImages'] = [os.path.abspath(postPath) for postPath in PosteriorPaths]
 
-        fixed_inverse_name=self.inputs.atlasToSubjectTransform.replace(".h5","_Inverse.h5")
-        print "\n"*20
-        print "LOOKHERE"
-        fixed_inverse_name=self.inputs.atlasToSubjectTransform.replace(".h5","_Inverse.h5")
-        print  fixed_inverse_name
-        print "\n"*20
-
-        outputs['atlasToSubjectInverseTransform'] = fixed_inverse_name
-
+        fixed_inverse_name=os.path.abspath(outputs['atlasToSubjectTransform'].replace(".h5","_Inverse.h5"))
+        if os.path.exists(fixed_inverse_name):
+            outputs['atlasToSubjectInverseTransform'] = fixed_inverse_name
+        else:
+            outputs['atlasToSubjectInverseTransform'] = None
         return outputs
 

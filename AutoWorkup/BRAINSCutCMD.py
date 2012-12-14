@@ -9,7 +9,7 @@ import subprocess
 
 def addProbabilityMapElement( probabilityMap, maskName, outputStream ):
     outputStream.write( "  <ProbabilityMap StructureID    = \""+ maskName + "\"\n")
-    outputStream.write( "      Gaussian       = \"0.5\"\n")
+    outputStream.write( "      Gaussian       = \"1.0\"\n")
     outputStream.write( "      GenerateVector = \"true\"\n")
     outputStream.write( "      Filename       = \""+ probabilityMap+"\"\n")
     outputStream.write( "   />\n")

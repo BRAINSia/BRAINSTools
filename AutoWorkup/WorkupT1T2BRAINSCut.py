@@ -206,7 +206,7 @@ def CreateBRAINSCutWorkflow(projectid, subjectid, sessionid,WFName,CLUSTER_QUEUE
     cutWF.connect(atlasObject,'l_globus_ProbabilityMap',RF12BC,'probabilityMapsLeftGlobus')
     cutWF.connect(atlasObject,'r_globus_ProbabilityMap',RF12BC,'probabilityMapsRightGlobus')
     ##TODO:
-    cutWF.connect(atlasObject,'RandomForestAllSubcorticalsBalancedModel_txtD0060NT0060_gz',RF12BC,'modelFilename')
+    cutWF.connect(atlasObject,'trainModelFile.txtD0060NT0060_gz',RF12BC,'modelFilename')
     ##HACK: Needs to be fixed
     #RF12BC.inputs.modelFilename='/nfsscratch/PREDICT/TEST_BRAINSCut/20120828ANNModel_Model_RF100.txt'
 

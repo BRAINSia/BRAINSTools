@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<executable>
+  <category>Segmentation.Specialized</category>
+  <title>Create best representative label map)</title>
+  <description>given a list of label map images, create a representative/average label map.
+  </description>
+  <parameters advanced="false">
+    <label>Input</label>
+    <description>Input parameters</description>
+
+    <image>
+      <name>inputCompositeT1Volume</name>
+      <label>Composite T1 Volume</label>
+      <longflag>inputCompositeT1Volume</longflag>
+      <channel>input</channel>
+      <description>Composite T1, all label maps transofrmed into the space for this image.</description>
+    </image>
+    
+    <image multiple="true">
+      <name>inputLabelVolume</name>
+      <label>Label Image Files</label>
+      <longflag>inputLabelVolume</longflag>
+      <channel>input</channel>
+      <description>The list of proobabilityimages.</description>
+    </image>
+
+    <file multiple="true" fileExtensions="h5|mat|txt">
+      <name>inputTransform</name>
+      <label>Input Transform</label>
+      <longflag>inputTransform</longflag>
+      <channel>input</channel>
+      <description>transforms to apply to label volumes</description>
+    </file>
+    <integer>
+      <name>labelForUndecidedPixels</name>
+      <label>Label For Undecided Pixels</label>
+      <longflag>labelForUndecidedPixels</longflag>
+      <description>Label for undecided pixels</description>
+      <default>-1</default>
+    </integer>
+  </parameters>
+  <parameters>
+    <label>Output</label>
+    <description>Output filename specifications</description>
+
+    <image>
+      <name>outputMultiSTAPLE</name>
+      <label>Average Label Volume</label>
+      <longflag>outputMultiSTAPLE</longflag>
+      <channel>output</channel>
+      <description>the MultiSTAPLE average of input label volumes</description>
+    </image>
+    <file fileExtensions="h5|mat|txt">
+      <name>outputConfusionMatrix</name>
+      <label>Output Confusion Matrix</label>
+      <longflag>outputConfusionMatrix</longflag>
+      <channel>output</channel>
+      <description>Confusion Matrix</description>
+    </file>
+
+  </parameters>
+
+</executable>

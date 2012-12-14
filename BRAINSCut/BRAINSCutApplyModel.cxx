@@ -562,7 +562,7 @@ BRAINSCutApplyModel
     KernelType::SizeType ballSize;
 
     /* Create the structuring element- a disk of radius 2 */
-    ballSize.Fill(0.2);
+    ballSize.Fill(1);
     ball.SetRadius( ballSize );
     ball.CreateStructuringElement();
     typedef itk::BinaryMorphologicalOpeningImageFilter<LabelImageType,

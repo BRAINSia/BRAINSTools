@@ -148,7 +148,7 @@ def CreateBRAINSCutWorkflow(projectid, subjectid, sessionid,WFName,CLUSTER_QUEUE
     """
     BRAINSCut
     """
-    RF12BC = pe.Node(interface=RF12BRAINSCutWrapper(),name="RF12_BRAINSCut")
+    RF12BC = pe.Node(interface=RF12BRAINSCutWrapper(),name="MRF12_BRAINSCut")
     many_cpu_RF12BC_options_dictionary={'qsub_args': '-S /bin/bash -pe smp1 8-8 -l h_vmem=24G,mem_free=20G -o /dev/null -e /dev/null '+CLUSTER_QUEUE, 'overwrite': True}
 #many_cpu_RF12BC_options_dictionary={'qsub_args': '-S /bin/bash -pe smp1 2-8 -l big_mem=true,h_vmem=60G,mem_free=30G -o /dev/null -e /dev/null '+CLUSTER_QUEUE, 'overwrite': True}
 #many_cpu_RF12BC_options_dictionary={'qsub_args': '-S /bin/bash -pe smp1 4-6 -l big_mem=true,h_vmem=22G,mem_free=22G -o /dev/null -e /dev/null '+CLUSTER_QUEUE, 'overwrite': True}
@@ -206,9 +206,7 @@ def CreateBRAINSCutWorkflow(projectid, subjectid, sessionid,WFName,CLUSTER_QUEUE
     cutWF.connect(atlasObject,'l_globus_ProbabilityMap',RF12BC,'probabilityMapsLeftGlobus')
     cutWF.connect(atlasObject,'r_globus_ProbabilityMap',RF12BC,'probabilityMapsRightGlobus')
     ##TODO:
-    cutWF.connect(atlasObject,'trainModelFile.txtD0060NT0060_gz',RF12BC,'modelFilename')
-    ##HACK: Needs to be fixed
-    #RF12BC.inputs.modelFilename='/nfsscratch/PREDICT/TEST_BRAINSCut/20120828ANNModel_Model_RF100.txt'
+    cutWF.connect(atlasObject,'trainModelFile_txtD0060NT0060_gz',RF12BC,'modelFilename')
 
     ## Need to index from next line cutWF.connect(inputsSpec,'atlasToSubjectTransform',RF12BC,'deformationFromTemplateToSubject')
     cutWF.connect( [ ( inputsSpec, RF12BC, [ (( 'atlasToSubjectTransform', getListIndex, 0 ), 'deformationFromTemplateToSubject')]), ] )

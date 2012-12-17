@@ -101,6 +101,16 @@ if(NOT DEFINED ${extProjName}_DIR AND NOT ${USE_SYSTEM_${extProjName}})
     DEPENDS
       ${${proj}_DEPENDENCIES}
     )
+  set(ITKFPICPatchScript ${CMAKE_CURRENT_LIST_DIR}/ITKFPICPatch.cmake)
+  ExternalProject_Add_Step(${proj} ${proj}-FixFPic
+    COMMENT "Make sure DCMTK gets built with -fpic"
+    DEPENDEES download
+    DEPENDERS configure
+    COMMAND ${CMAKE_COMMAND}
+    -DITKSource=<SOURCE_DIR>
+    -P ${ITKFPICPatchScript}
+    )
+
   set(${extProjName}_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
 else()
   if(${USE_SYSTEM_${extProjName}})

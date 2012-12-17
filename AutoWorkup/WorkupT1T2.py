@@ -606,8 +606,16 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                                                                         sessionid, 'TissueClassify')
                 baw200.connect(BRAINSCreateLabelMapFromProbabilityMapsNode[sessionid], 'cleanLabelVolume', TC_DataSink[sessionid], 'TissueClassify.@outputLabels')
                 baw200.connect(BRAINSCreateLabelMapFromProbabilityMapsNode[sessionid], 'dirtyLabelVolume', TC_DataSink[sessionid], 'TissueClassify.@outputHeadLabels')
-                baw200.connect(PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.t1_average', TC_DataSink[sessionid], 'TissueClassify.@t1_average')
-                baw200.connect(PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.t2_average', TC_DataSink[sessionid], 'TissueClassify.@t2_average')
+
+                from PipeLineFunctionHelpers import makeListOfValidImages
+                if len(global_AllT1s) > 0:
+                    baw200.connect( [ ( PHASE_2_oneSubjWorkflow[sessionid], TC_DataSink[sessionid], [ ( (  'outputspec.t1_average', makeListOfValidImages ), 'TissueClassify.@t1_average' ) ] ) ] )
+                if len(global_AllT2s) > 0:
+                    baw200.connect( [ ( PHASE_2_oneSubjWorkflow[sessionid], TC_DataSink[sessionid], [ ( (  'outputspec.t2_average', makeListOfValidImages ), 'TissueClassify.@t2_average' ) ] ) ] )
+                if len(global_AllPDs):
+                    baw200.connect( [ ( PHASE_2_oneSubjWorkflow[sessionid], TC_DataSink[sessionid], [ ( (  'outputspec.pd_average', makeListOfValidImages ), 'TissueClassify.@pd_average' ) ] ) ] )
+                if len(global_AllFLs):
+                    baw200.connect( [ ( PHASE_2_oneSubjWorkflow[sessionid], TC_DataSink[sessionid], [ ( (  'outputspec.fl_average', makeListOfValidImages ), 'TissueClassify.@fl_average' ) ] ) ] )
                 baw200.connect(PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.TissueClassifyatlasToSubjectTransform', TC_DataSink[sessionid], 'TissueClassify.@atlasToSubjectTransform')
                 baw200.connect(PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.TissueClassifyatlasToSubjectInverseTransform', TC_DataSink[sessionid], 'TissueClassify.@atlasToSubjectInverseTransform')
 

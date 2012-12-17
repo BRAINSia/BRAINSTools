@@ -17,6 +17,13 @@ POSTERIORS = ['WM', 'SURFGM', 'ACCUMBEN', 'CAUDATE', 'PUTAMEN', 'GLOBUS', 'THALA
               'HIPPOCAMPUS', 'CRBLGM', 'CRBLWM', 'CSF', 'VB', 'NOTCSF', 'NOTGM', 'NOTWM',
               'NOTVB', 'AIR']
 
+def makeListOfValidImages(imageFile):
+  if imageFile is None:
+        return [] # an empty iterable is a valid input to a data string
+  else:
+        return imageFile
+
+
 def getListIndex( imageList, index):
     return imageList[index]
 

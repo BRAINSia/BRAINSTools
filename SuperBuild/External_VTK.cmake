@@ -165,6 +165,19 @@ if(NOT DEFINED ${extProjName}_DIR AND NOT ${USE_SYSTEM_${extProjName}})
       ${${proj}_DEPENDENCIES}
     BUILD_COMMAND ${VTK_BUILD_STEP}
     )
+
+  if(APPLE)
+    set(VTKlongbranchPatchScript ${CMAKE_CURRENT_LIST_DIR}/VTKPatch.cmake)
+    ExternalProject_Add_Step(${proj} RmLongBranch
+      COMMENT "get rid of obsolete C/CXX flags"
+      DEPENDEES download
+      DEPENDERS configure
+      COMMAND ${CMAKE_COMMAND}
+      -DVTKSource=<SOURCE_DIR>
+      -P ${VTKlongbranchPatchScript}
+    )
+  endif(APPLE)
+
   set(${extProjName}_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
 else()
   if(${USE_SYSTEM_${extProjName}})

@@ -1,4 +1,4 @@
-#include "BRAINSMultiStapleCLP.h"
+#include "BRAINSMultiSTAPLECLP.h"
 #include "itkIO.h"
 #include "itkTransformFileReader.h"
 #include "itkTransformFileWriter.h"

@@ -81,7 +81,7 @@ if(NOT DEFINED ${extProjName}_DIR AND NOT ${USE_SYSTEM_${extProjName}})
     )
   ### --- End Project specific additions
   set(${proj}_REPOSITORY ${git_protocol}://itk.org/ITK.git)
-  set(${proj}_GIT_TAG 57011fe11b3106a9c03185c2af18c1ed197224c5) #2012-12-15
+  set(${proj}_GIT_TAG 4745c6654b968545d0e3328520e7907d50bab22c) #2012-12-15
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${${proj}_REPOSITORY}
     GIT_TAG ${${proj}_GIT_TAG}
@@ -101,16 +101,6 @@ if(NOT DEFINED ${extProjName}_DIR AND NOT ${USE_SYSTEM_${extProjName}})
     DEPENDS
       ${${proj}_DEPENDENCIES}
     )
-  set(ITKFPICPatchScript ${CMAKE_CURRENT_LIST_DIR}/ITKFPICPatch.cmake)
-  ExternalProject_Add_Step(${proj} ${proj}-FixFPic
-    COMMENT "Make sure DCMTK gets built with -fpic"
-    DEPENDEES download
-    DEPENDERS configure
-    COMMAND ${CMAKE_COMMAND}
-    -DITKSource=<SOURCE_DIR>
-    -P ${ITKFPICPatchScript}
-    )
-
   set(${extProjName}_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
 else()
   if(${USE_SYSTEM_${extProjName}})

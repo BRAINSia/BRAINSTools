@@ -9,6 +9,9 @@
 ## AVOID REFORMATTING THIS FILE, it causes the hash to change in
 ## nipype and that require re-running the function.
 
+import os
+import errno
+
 # Globals
 POSTERIORS = ['WM', 'SURFGM', 'ACCUMBEN', 'CAUDATE', 'PUTAMEN', 'GLOBUS', 'THALAMUS',
               'HIPPOCAMPUS', 'CRBLGM', 'CRBLWM', 'CSF', 'VB', 'NOTCSF', 'NOTGM', 'NOTWM',
@@ -35,17 +38,13 @@ def ClipT1ImageWithBrainMask(t1_image,brain_labels,clipped_file_name):
 def UnwrapPosteriorImagesFromDictionaryFunction(postDict):
     return postDict.values()
 
+def GetOnePosteriorImageFromDictionaryFunction(postDict,key):
+    return postDict[key]
+
 def FixWMPartitioning(brainMask,PosteriorsList):
     """"There were some errors in mis-classifications for WM/NON_WM"""
     import SimpleITK as sitk
     import os
-    print "\n"*15
-    print "Z"
-    print "Z===="
-    print PosteriorsList
-    print brainMask
-    print "Z===="
-    print "\n"*15
 
     def FillHolePreserveEdge(inputMask,HOLE_FILL_SIZE):
         """This function fills holes and tries to preserve
@@ -63,15 +62,15 @@ def FixWMPartitioning(brainMask,PosteriorsList):
     BM=sitk.BinaryThreshold(sitk.ReadImage(brainMask),1,1000)
     BM_FILLED= FillHolePreserveEdge(BM,3)
 
-    NOTCSF_index='-1'  #Note: Purposfully using '-1' as it will force an error.
-    CSF_index='-1'
-    NOTGM_index='-1'
-    GM_index='-1'
-    NOTWM_index='-1'
-    WM_index='-1'
-    NOTVB_index='-1'
-    VB_index='-1'
-    AIR_index='-1'
+    NOTCSF_index=None  #Note: Purposfully using '-1' as it will force an error.
+    CSF_index=None
+    NOTGM_index=None
+    GM_index=None
+    NOTWM_index=None
+    WM_index=None
+    NOTVB_index=None
+    VB_index=None
+    AIR_index=None
     for i in range(0,len(PosteriorsList)):
         if os.path.basename(PosteriorsList[i]) == 'POSTERIOR_NOTCSF.nii.gz':
             NOTCSF_index=i
@@ -143,15 +142,6 @@ def FixWMPartitioning(brainMask,PosteriorsList):
         MatchingFGCodeList.append(POSTERIOR_LABELS[post_key][0])
         MatchingLabelList.append(POSTERIOR_LABELS[post_key][1])
         
-    print "\n"*15
-    print "Y"
-    print "Y===="
-    print PosteriorsList
-    print brainMask
-    print "Y===="
-    UpdatedPosteriorsList
-    print "Y"
-    print "\n"*15
     return UpdatedPosteriorsList,MatchingFGCodeList,MatchingLabelList,nonAirRegionMask
 
 def AccumulateLikeTissuePosteriors(posteriorImages):
@@ -161,11 +151,6 @@ def AccumulateLikeTissuePosteriors(posteriorImages):
     ## Now clean up the posteriors based on anatomical knowlege.
     ## sometimes the posteriors are not relevant for priors
     ## due to anomolies around the edges.
-    print "\n"*15
-    print "X"
-    print posteriorImages
-    print "X"
-    print "\n"*15
 
     load_images_list=dict()
     for full_pathname in posteriorImages:
@@ -217,3 +202,24 @@ def AccumulateLikeTissuePosteriors(posteriorImages):
     print "HACK \n\n\n\n\n\n\n HACK \n\n\n: {APL}\n".format(APL=AccumulatePriorsList)
     print ": {APN}\n".format(APN=AccumulatePriorsNames)
     return AccumulatePriorsList,AccumulatePriorsNames
+
+
+def mkdir_p(path):
+    """ Safely make a new directory, checking if it already exists"""
+    try:
+        os.makedirs(path)
+    except OSError as exc: # Python >2.5
+        if exc.errno == errno.EEXIST and os.path.isdir(path):
+            pass
+        else: raise
+
+
+def make_dummy_file(fn):
+    """This function just makes a file with the correct name and time stamp"""
+    import time
+    mkdir_p(os.path.dirname(fn))
+    ff=open(fn,'w')
+    ff.write("DummyFile with Proper time stamp")
+    time.sleep(1) # 1 second
+    ff.close()
+

@@ -39,6 +39,20 @@
       <description>Label for undecided pixels</description>
       <default>-1</default>
     </integer>
+    <string>
+      <name>resampledVolumePrefix</name>
+      <label>Resampled Volume Prefix</label>
+      <longflag>resampledVolumePrefix</longflag>
+      <description>if given, write out resampled volumes with this prefix</description>
+      <default></default>
+    </string>
+    <boolean>
+      <name>skipResampling</name>
+      <label>Skip Resampling</label>
+      <longflag>skipResampling</longflag>
+      <description>Omit resampling images into reference space</description>
+      <default>false</default>
+    </boolean>
   </parameters>
   <parameters>
     <label>Output</label>

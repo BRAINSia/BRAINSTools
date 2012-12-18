@@ -97,7 +97,7 @@ def FixWMPartitioning(brainMask,PosteriorsList):
             VB_index=i
         elif os.path.basename(PosteriorsList[i]) == 'POSTERIOR_AIR.nii.gz':
             AIR_index=i
-                
+
     def ShiftValueForHardPartition(BM_FILLED,ShiftPosteriorsList,NOTREGION_index,REGION_index,REGION_NAME,NOTREGION_NAME):
         NOTREGION=sitk.ReadImage(ShiftPosteriorsList[NOTREGION_index])
         REGION=sitk.ReadImage(ShiftPosteriorsList[REGION_index])
@@ -117,13 +117,13 @@ def FixWMPartitioning(brainMask,PosteriorsList):
     UpdatedPosteriorsList = ShiftValueForHardPartition(BM_FILLED,UpdatedPosteriorsList,NOTGM_index,GM_index,'SURFGM','NOTGM')
     UpdatedPosteriorsList = ShiftValueForHardPartition(BM_FILLED,UpdatedPosteriorsList,NOTWM_index,WM_index,'WM','NOTWM')
     UpdatedPosteriorsList = ShiftValueForHardPartition(BM_FILLED,UpdatedPosteriorsList,NOTVB_index,VB_index,'VB','NOTVB')
-    
+
     AirMask=sitk.BinaryThreshold( sitk.ReadImage(PosteriorsList[AIR_index]),0.50,1000000)
     nonAirMask=sitk.Cast(1-AirMask,sitk.sitkUInt8)
     nonAirRegionMask=os.path.realpath('NonAirMask.nii.gz')
     sitk.WriteImage(nonAirMask,nonAirRegionMask)
-    
-    POSTERIOR_LABELS=dict()                          #(FG,Label) 
+
+    POSTERIOR_LABELS=dict()                          #(FG,Label)
     POSTERIOR_LABELS["POSTERIOR_ACCUMBEN.nii.gz"] =    (1,20)
     POSTERIOR_LABELS["POSTERIOR_AIR.nii.gz"] =         (0,0)
     POSTERIOR_LABELS["POSTERIOR_CAUDATE.nii.gz"] =     (1,21)
@@ -148,7 +148,7 @@ def FixWMPartitioning(brainMask,PosteriorsList):
         post_key=os.path.basename(full_post_path_fn)
         MatchingFGCodeList.append(POSTERIOR_LABELS[post_key][0])
         MatchingLabelList.append(POSTERIOR_LABELS[post_key][1])
-        
+
     return UpdatedPosteriorsList,MatchingFGCodeList,MatchingLabelList,nonAirRegionMask
 
 def AccumulateLikeTissuePosteriors(posteriorImages):

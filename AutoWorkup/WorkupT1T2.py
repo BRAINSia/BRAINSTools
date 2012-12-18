@@ -612,9 +612,9 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                     baw200.connect( [ ( PHASE_2_oneSubjWorkflow[sessionid], TC_DataSink[sessionid], [ ( (  'outputspec.t1_average', makeListOfValidImages ), 'TissueClassify.@t1_average' ) ] ) ] )
                 if len(global_AllT2s) > 0:
                     baw200.connect( [ ( PHASE_2_oneSubjWorkflow[sessionid], TC_DataSink[sessionid], [ ( (  'outputspec.t2_average', makeListOfValidImages ), 'TissueClassify.@t2_average' ) ] ) ] )
-                if len(global_AllPDs):
+                if len(global_AllPDs) > 0:
                     baw200.connect( [ ( PHASE_2_oneSubjWorkflow[sessionid], TC_DataSink[sessionid], [ ( (  'outputspec.pd_average', makeListOfValidImages ), 'TissueClassify.@pd_average' ) ] ) ] )
-                if len(global_AllFLs):
+                if len(global_AllFLs) > 0:
                     baw200.connect( [ ( PHASE_2_oneSubjWorkflow[sessionid], TC_DataSink[sessionid], [ ( (  'outputspec.fl_average', makeListOfValidImages ), 'TissueClassify.@fl_average' ) ] ) ] )
                 baw200.connect(PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.TissueClassifyatlasToSubjectTransform', TC_DataSink[sessionid], 'TissueClassify.@atlasToSubjectTransform')
                 baw200.connect(PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.TissueClassifyatlasToSubjectInverseTransform', TC_DataSink[sessionid], 'TissueClassify.@atlasToSubjectInverseTransform')

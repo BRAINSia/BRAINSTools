@@ -165,13 +165,18 @@ def baw_FixBrainMask(brain_fn,FS_SUBJECTS_DIR,FREESURFER_HOME,FS_SCRIPT,subject_
         print "NOTHING TO BE DONE, SO SKIPPING."
         return # Nothing to be done, files are already up-to-date.
 
+import shutil
+def removeDir(path):
+    if os.path.isdir(path):
+        shutil.rmtree(path)
+
 def runAutoReconStage(subject_id,StageToRun,t1_fn,FS_SUBJECTS_DIR,FREESURFER_HOME,FS_SCRIPT):
     FS_SCRIPT_FN=os.path.join(FREESURFER_HOME,FS_SCRIPT)
     base_subj_dir=os.path.join(FS_SUBJECTS_DIR,subject_id)
     orig_001_mgz_fn= os.path.join(base_subj_dir,'mri','orig','001.mgz')
     if IsFirstNewerThanSecond(t1_fn,orig_001_mgz_fn):
         if os.path.exists(base_subj_dir):
-            os.removedirs(base_subj_dir)
+            removeDir(base_subj_dir)
         mkdir_p(os.path.dirname(orig_001_mgz_fn))
         run_mri_convert_script(t1_fn,orig_001_mgz_fn,FS_SUBJECTS_DIR,FREESURFER_HOME,FS_SCRIPT)
 

@@ -80,6 +80,7 @@ def CreateFreeSurferWorkflow_custom(projectid, subjectid, sessionid,WFname,CLUST
 
         computeFinalDirectory = pe.Node( Function(function=MakeFreesurferOutputDirectory, input_names = ['subjects_dir','subject_id'], output_names = ['FreesurferOutputDirectory']), run_without_submitting=True, name="99_computeFreesurferOutputDirectory")
         freesurferWF.connect(inputsSpec,'subjects_dir',computeFinalDirectory,'subjects_dir')
+        freesurferWF.connect(inputsSpec,'FreeSurfer_ID',computeFinalDirectory,'subject_id')
 
         freesurferWF.connect(inputsSpec,'label_file',fs_reconall,'brainmask')
         freesurferWF.connect(inputsSpec,'wm_prob',fs_reconall,'wm_prob')

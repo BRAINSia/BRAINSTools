@@ -380,7 +380,7 @@ MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>
 {
   this->m_CurrentLevelRigidlyMappedFixedMesh = MeshType::New();
 
-  this->CopyMeshToMesh( this->m_CurrentLevelFixedMesh, this->m_CurrentLevelRigidlyMappedFixedMesh  );
+  CopyMeshToMesh<MeshType, MeshType>( this->m_CurrentLevelFixedMesh, this->m_CurrentLevelRigidlyMappedFixedMesh  );
 
   PointsContainer * fixedPoints = this->m_CurrentLevelRigidlyMappedFixedMesh->GetPoints();
 

@@ -299,7 +299,7 @@ QuadEdgeMeshBoundarySmoothFilter<TInputMesh, TOutputMesh>
     }
 
   deleteMesh->Clear();
-  this->CopyMeshToMesh(newMesh, deleteMesh);
+  CopyMeshToMesh<OutputMeshType, OutputMeshType>(newMesh, deleteMesh);
 
   return numChange;
 }
@@ -312,12 +312,12 @@ QuadEdgeMeshBoundarySmoothFilter<TInputMesh, TOutputMesh>
   const InputMeshType * in1 = this->GetInputMesh1();
   OutputMeshType *      out1 = this->GetOutputMesh1();
 
-  this->CopyMeshToMesh(in1, out1);
+  CopyMeshToMesh(in1, out1);
 
   const InputMeshType * in2 = this->GetInputMesh2();
   OutputMeshType *      out2 = this->GetOutputMesh2();
 
-  this->CopyMeshToMesh(in2, out2);
+  CopyMeshToMesh(in2, out2);
 }
 }
 

@@ -606,8 +606,16 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                                                                         sessionid, 'TissueClassify')
                 baw200.connect(BRAINSCreateLabelMapFromProbabilityMapsNode[sessionid], 'cleanLabelVolume', TC_DataSink[sessionid], 'TissueClassify.@outputLabels')
                 baw200.connect(BRAINSCreateLabelMapFromProbabilityMapsNode[sessionid], 'dirtyLabelVolume', TC_DataSink[sessionid], 'TissueClassify.@outputHeadLabels')
-                baw200.connect(PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.t1_average', TC_DataSink[sessionid], 'TissueClassify.@t1_average')
-                baw200.connect(PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.t2_average', TC_DataSink[sessionid], 'TissueClassify.@t2_average')
+
+                from PipeLineFunctionHelpers import makeListOfValidImages
+                if len(global_AllT1s) > 0:
+                    baw200.connect( [ ( PHASE_2_oneSubjWorkflow[sessionid], TC_DataSink[sessionid], [ ( (  'outputspec.t1_average', makeListOfValidImages ), 'TissueClassify.@t1_average' ) ] ) ] )
+                if len(global_AllT2s) > 0:
+                    baw200.connect( [ ( PHASE_2_oneSubjWorkflow[sessionid], TC_DataSink[sessionid], [ ( (  'outputspec.t2_average', makeListOfValidImages ), 'TissueClassify.@t2_average' ) ] ) ] )
+                if len(global_AllPDs) > 0:
+                    baw200.connect( [ ( PHASE_2_oneSubjWorkflow[sessionid], TC_DataSink[sessionid], [ ( (  'outputspec.pd_average', makeListOfValidImages ), 'TissueClassify.@pd_average' ) ] ) ] )
+                if len(global_AllFLs) > 0:
+                    baw200.connect( [ ( PHASE_2_oneSubjWorkflow[sessionid], TC_DataSink[sessionid], [ ( (  'outputspec.fl_average', makeListOfValidImages ), 'TissueClassify.@fl_average' ) ] ) ] )
                 baw200.connect(PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.TissueClassifyatlasToSubjectTransform', TC_DataSink[sessionid], 'TissueClassify.@atlasToSubjectTransform')
                 baw200.connect(PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.TissueClassifyatlasToSubjectInverseTransform', TC_DataSink[sessionid], 'TissueClassify.@atlasToSubjectInverseTransform')
 
@@ -891,17 +899,21 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                 ## Synthesized images are only valid for 3T where the T2 and T1 have approximately the same resolution.
                 global_All3T_T1s=ExperimentDatabase.getFilenamesByScantype(sessionid,['T1-30'])
                 global_All3T_T2s=ExperimentDatabase.getFilenamesByScantype(sessionid,['T2-30'])
-                RunAllFSComponents=False ## A hack to avoid 26 hour run of freesurfer
-                #RunAllFSComponents=True ## A hack to avoid 26 hour run of freesurfer
-                if False: #( 'FREESURFER' in WORKFLOW_COMPONENTS ) and ( ( len(global_All3T_T2s) > 0 ) or RunAllFSComponents == True ):
-                    from WorkupT1T2FreeSurfer import CreateFreeSurferWorkflow
+                #RunAllFSComponents=False ## A hack to avoid 26 hour run of freesurfer
+                RunAllFSComponents=True ## A hack to avoid 26 hour run of freesurfer
+                if ( 'FREESURFER' in WORKFLOW_COMPONENTS ) and ( ( len(global_All3T_T2s) > 0 ) or RunAllFSComponents == True ):
+                    from PipeLineFunctionHelpers import mkdir_p
+                    constructed_FS_SUBJECTS_DIR=os.path.join(ExperimentBaseDirectoryResults,'BAWFS_SUBJECTS')
+                    mkdir_p(constructed_FS_SUBJECTS_DIR)
+                    from WorkupT1T2FreeSurfer_custom import CreateFreeSurferWorkflow_custom
                     if ( len(global_All3T_T2s) > 0 ): # If multi-modal, then create synthesized image before running
                         print("HACK  FREESURFER len(global_All3T_T2s) > 0 ")
-                        myLocalFSWF[sessionid]= CreateFreeSurferWorkflow(projectid, subjectid, sessionid,"Level1_FSTest",
-                                                CLUSTER_QUEUE,RunAllFSComponents,True)
+                        myLocalFSWF[sessionid]= CreateFreeSurferWorkflow_custom(projectid, subjectid, sessionid,"Level1_FSTest",
+                                                CLUSTER_QUEUE,CLUSTER_QUEUE_LONG,RunAllFSComponents,True,constructed_FS_SUBJECTS_DIR)
                     else:
-                        myLocalFSWF[sessionid]= CreateFreeSurferWorkflow(projectid, subjectid, sessionid,"Level1_FSTest",
-                                                CLUSTER_QUEUE,RunAllFSComponents,False)
+                        myLocalFSWF[sessionid]= CreateFreeSurferWorkflow_custom(projectid, subjectid, sessionid,"Level1_FSTest",
+                                                CLUSTER_QUEUE,CLUSTER_QUEUE_LONG,RunAllFSComponents,False,constructed_FS_SUBJECTS_DIR)
+
                     FREESURFER_ID[sessionid]= pe.Node(interface=IdentityInterface(fields=['FreeSurfer_ID']),
                                                       run_without_submitting=True,
                                                       name='99_FSNodeName'+str(subjectid)+"_"+str(sessionid) )
@@ -910,6 +922,10 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                     baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'outputspec.t1_average',myLocalFSWF[sessionid],'inputspec.T1_files')
                     baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'outputspec.t2_average',myLocalFSWF[sessionid],'inputspec.T2_files')
                     baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'outputspec.outputLabels',myLocalFSWF[sessionid],'inputspec.label_file')
+
+                    from PipeLineFunctionHelpers import GetOnePosteriorImageFromDictionaryFunction 
+                    baw200.connect( [ ( PHASE_2_oneSubjWorkflow[sessionid], myLocalFSWF[sessionid],
+                                [ ( ( 'outputspec.posteriorImages', GetOnePosteriorImageFromDictionaryFunction, 'WM' ), 'inputspec.wm_prob')] ) ] )
                     baw200.connect(FREESURFER_ID[sessionid],'FreeSurfer_ID',myLocalFSWF[sessionid],'inputspec.FreeSurfer_ID')
                     #baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'outputspec.outputLabels',myLocalFSWF[sessionid],'inputspec.mask_file') #Yes, the same file as label_file!
 

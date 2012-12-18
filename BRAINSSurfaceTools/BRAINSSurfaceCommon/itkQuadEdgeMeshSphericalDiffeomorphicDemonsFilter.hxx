@@ -207,7 +207,7 @@ QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TFixedMesh, TMovingMesh, TOutputM
 {
   this->m_FixedMeshAtInitialDestinationPoints = FixedMeshType::New();
 
-  this->CopyMeshToMesh( this->m_FixedMesh, this->m_FixedMeshAtInitialDestinationPoints  );
+  CopyMeshToMesh<TFixedMesh, TFixedMesh>( this->m_FixedMesh, this->m_FixedMeshAtInitialDestinationPoints  );
 
   const DestinationPointSetType *       destinationPointSet = this->GetInitialDestinationPoints();
   const DestinationPointContainerType * destinationPoints = destinationPointSet->GetPoints();
@@ -429,7 +429,7 @@ QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TFixedMesh, TMovingMesh,
 {
   this->m_FixedMeshAtInitialDestinationPoints = FixedMeshType::New();
 
-  this->CopyMeshToMesh( this->m_FixedMesh, this->m_FixedMeshAtInitialDestinationPoints  );
+  CopyMeshToMesh<FixedMeshType, FixedMeshType>( this->m_FixedMesh, this->m_FixedMeshAtInitialDestinationPoints  );
 
   const FixedPointsContainer * points = this->m_FixedMesh->GetPoints();
 

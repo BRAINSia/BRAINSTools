@@ -5,7 +5,11 @@ file(READ ${vtkDetCFLAGS}
   code)
 
 string(REPLACE
-" -mlong-branch"
+"SET(VTK_REQUIRED_C_FLAGS \"\${VTK_REQUIRED_C_FLAGS} -mlong-branch\")"
+""
+code "${code}")
+string(REPLACE
+"SET(VTK_REQUIRED_CXX_FLAGS \"\${VTK_REQUIRED_CXX_FLAGS} -mlong-branch\")"
 ""
 code "${code}")
 

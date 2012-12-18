@@ -33,6 +33,7 @@ def CreateFreeSurferWorkflow_custom(projectid, subjectid, sessionid,WFname,CLUST
                                      'FreesurferOutputDirectory','cnr_optimal_image']), name='outputspec' )
 
     ### HACK: the nipype interface requires that this environmental variable is set before running
+    print "HACK SETTING SUBJECTS_DIR {0}".format(constructed_FS_SUBJECTS_DIR)
     os.environ['SUBJECTS_DIR']=constructed_FS_SUBJECTS_DIR
     inputsSpec.inputs.subjects_dir=constructed_FS_SUBJECTS_DIR  ## HACK
 

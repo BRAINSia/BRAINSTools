@@ -901,9 +901,10 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                 global_All3T_T2s=ExperimentDatabase.getFilenamesByScantype(sessionid,['T2-30'])
                 #RunAllFSComponents=False ## A hack to avoid 26 hour run of freesurfer
                 RunAllFSComponents=True ## A hack to avoid 26 hour run of freesurfer
-                if ( 'FREESURFER' in WORKFLOW_COMPONENTS ) and ( ( len(global_All3T_T2s) > 0 ) or RunAllFSComponents == True ):
+                if 'FREESURFER' in WORKFLOW_COMPONENTS: # and ( ( len(global_All3T_T2s) > 0 ) or RunAllFSComponents == True ):
+                    print "Doing Freesurfer"
                     from PipeLineFunctionHelpers import mkdir_p
-                    constructed_FS_SUBJECTS_DIR=os.path.join(ExperimentBaseDirectoryResults,'BAWFS_SUBJECTS')
+                    constructed_FS_SUBJECTS_DIR=os.path.join(ExperimentBaseDirectoryCache,'BAWFS_SUBJECTS')
                     mkdir_p(constructed_FS_SUBJECTS_DIR)
                     from WorkupT1T2FreeSurfer_custom import CreateFreeSurferWorkflow_custom
                     if ( len(global_All3T_T2s) > 0 ): # If multi-modal, then create synthesized image before running
@@ -950,7 +951,6 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                     print "========================="
                     print "========================="
                     baw200.connect(myLocalFSWF[sessionid], 'outputspec.cnr_optimal_image', FSPREP_DataSink[sessionid],'FREESURFER_PREP.@cnr_optimal_image')
-
                 else:
                     print "Skipping freesurfer"
     return baw200

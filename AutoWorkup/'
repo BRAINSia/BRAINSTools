@@ -212,10 +212,8 @@ def main(argv=None):
         os.environ['NSLOTS']="{0}".format(total_CPUS/12)
     elif input_arguments.wfrun == 'local':
         os.environ['NSLOTS']="{0}".format(total_CPUS/1)
-    elif input_arguments.wfrun == 'ds_runner':
-        os.environ['NSLOTS']="{0}".format(total_CPUS/1)
     else:
-        print "FAILED RUN: You must specify the run environment type. [helium_all.q,helium_all.q_graph,ipl_OSX,local_4,local_12,local,ds_runner]"
+        print "FAILED RUN: You must specify the run environment type. [helium_all.q,helium_all.q_graph,ipl_OSX,local_4,local_12,local]"
         print input_arguments.wfrun
         sys.exit(-1)
 
@@ -286,10 +284,10 @@ def main(argv=None):
                 print "Running with 12 parallel processes on local machine"
                 baw200.run(plugin='MultiProc', plugin_args={'n_procs' : 12})
             elif input_arguments.wfrun =='ds_runner':
-                class ds_runner(object):
+                class myrunner(object):
                     def run(self, graph, **kwargs):
                         for node in graph.nodes():
-                            if '_ds' in node.name.lower():
+                            if 'datasink' in node.name.lower():
                                 node.run()
                 baw200.run(plugin=ds_runner())
             elif input_arguments.wfrun == 'local':

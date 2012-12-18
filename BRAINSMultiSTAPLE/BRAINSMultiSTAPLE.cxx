@@ -60,32 +60,18 @@ int main(int argc, char *argv[])
     return 1;
     }
 
-  typedef itk::Image<unsigned char, 3> UCImageType;
+  typedef itk::Image<unsigned short, 3> USImageType;
 
-  UCImageType::Pointer compositeVolume;
-  try
-    {
-    std::cout << "Reading Composite Volume " << inputCompositeT1Volume
-              << std::endl;
-    compositeVolume = itkUtil::ReadImage<UCImageType>(inputCompositeT1Volume);
-    }
-  catch( itk::ExceptionObject & err )
-    {
-    std::cerr << err << std::endl;
-    return 1;
-    }
-  printImageStats<UCImageType>(compositeVolume);
-
-  typedef std::vector<UCImageType::Pointer> ImageList;
+  typedef std::vector<USImageType::Pointer> ImageList;
   ImageList inputLabelVolumes;
   for( std::vector<std::string>::const_iterator it = inputLabelVolume.begin();
        it != inputLabelVolume.end(); ++it )
     {
-    UCImageType::Pointer labelVolume;
+    USImageType::Pointer labelVolume;
     std::cout << "Reading " << (*it) << std::endl;
     try
       {
-      labelVolume = itkUtil::ReadImage<UCImageType>( (*it) );
+      labelVolume = itkUtil::ReadImage<USImageType>( (*it) );
       }
     catch( itk::ExceptionObject & err )
       {
@@ -95,129 +81,166 @@ int main(int argc, char *argv[])
     inputLabelVolumes.push_back(labelVolume);
     }
 
-  typedef std::vector<itk::TransformFileReader::TransformPointer>
-    TransformListType;
+  ImageList transformedLabelVolumes;
 
-  TransformListType inputTransforms;
-
-  if( inputTransform.size() > 0 )
+  // resample all input label images into a common space defined by
+  // the input Composite volume.
+  if( skipResampling )
     {
-    for( std::vector<std::string>::const_iterator it = inputTransform.begin();
-         it != inputTransform.end(); ++it )
+    for( ImageList::const_iterator it = inputLabelVolumes.begin();
+         it != inputLabelVolumes.end(); ++it )
       {
-      itk::TransformFileReader::TransformPointer curTransform;
-
-      itk::TransformFileReader::Pointer reader =
-        itk::TransformFileReader::New();
-      std::cout << "Reading " << (*it) << std::endl;
-      reader->SetFileName( (*it) );
-      try
-        {
-        reader->Update();
-        }
-      catch( itk::ExceptionObject & err )
-        {
-        std::cerr << err << std::endl;
-        return 1;
-        }
-      curTransform = reader->GetTransformList()->front();
-      inputTransforms.push_back(curTransform);
+      transformedLabelVolumes.push_back( (*it) );
       }
     }
   else
     {
-    std::cout << "No transforms specified, using Identity" << std::endl;
-    // fake it with identity transforms
-    typedef itk::IdentityTransform<double, 3> IDTransformType;
-
-    IDTransformType::Pointer                   idXfrm = IDTransformType::New();
-    itk::TransformFileReader::TransformPointer baseXfrm = idXfrm.GetPointer();
-    for( std::vector<std::string>::const_iterator it = inputLabelVolume.begin();
-         it != inputLabelVolume.end(); ++it )
-      {
-      inputTransforms.push_back(baseXfrm);
-      }
-    }
-
-  ImageList transformedLabelVolumes;
-
-  // set up interpolator function
-  // NOTE see ANTS/Examples/make_interpolator_snip.tmp line 113 --
-  // the sigma defaults to the image spacing apparently, but the
-  // sigma can also be specified on the command line.
-  typedef std::less<itk::NumericTraits<unsigned char>::RealType> ucharLess;
-  typedef itk::LabelImageGaussianInterpolateImageFunction<UCImageType, double, ucharLess>
-    InterpolationFunctionType;
-  InterpolationFunctionType::Pointer interpolateFunc =
-    InterpolationFunctionType::New();
-  double                   sigma[3];
-  UCImageType::SpacingType spacing = compositeVolume->GetSpacing();
-  for( unsigned i = 0; i < 3; ++i )
-    {
-    sigma[i] = spacing[i];
-    }
-  interpolateFunc->SetParameters(sigma, 4.0);
-
-  // resample all input label images into a common space defined by
-  // the input Composite volume.
-  std::vector<std::string>::const_iterator nameIt = inputLabelVolume.begin();
-  TransformListType::const_iterator        xfrmIt = inputTransforms.begin();
-  for( ImageList::const_iterator it = inputLabelVolumes.begin();
-       it != inputLabelVolumes.end(); ++it, ++xfrmIt, ++nameIt )
-    {
-    UCImageType::Pointer current = (*it);
-
-    itk::TransformFileReader::TransformPointer curTransformBase = (*xfrmIt);
-
-    typedef itk::ResampleImageFilter<UCImageType, UCImageType, double> ResampleFilterType;
-
-    std::cout << "Resampling " << (*nameIt) << std::flush;
-
-    const ResampleFilterType::TransformType *curTransform =
-      dynamic_cast<const ResampleFilterType::TransformType *>(curTransformBase.GetPointer() );
-    if( curTransform == 0 )
-      {
-      std::cerr << "Invalid transform " << curTransformBase << std::endl;
-      exit(1);
-      }
-    ResampleFilterType::Pointer resampler = ResampleFilterType::New();
+    USImageType::Pointer compositeVolume;
     try
       {
-      resampler->SetInput(current);
-      resampler->SetUseReferenceImage(true);
-      resampler->SetReferenceImage(compositeVolume);
-      resampler->SetInterpolator(interpolateFunc);
-      resampler->SetTransform(curTransform);
-      resampler->Update();
+      std::cout << "Reading Composite Volume " << inputCompositeT1Volume
+                << std::endl;
+      compositeVolume = itkUtil::ReadImage<USImageType>(inputCompositeT1Volume);
       }
     catch( itk::ExceptionObject & err )
       {
       std::cerr << err << std::endl;
       return 1;
       }
-    std::cout << " done." << std::endl;
-    printImageStats<UCImageType>(resampler->GetOutput() );
-    transformedLabelVolumes.push_back(resampler->GetOutput() );
+    printImageStats<USImageType>(compositeVolume);
+
+    typedef std::vector<itk::TransformFileReader::TransformPointer>
+      TransformListType;
+
+    TransformListType inputTransforms;
+
+    if( inputTransform.size() > 0 )
+      {
+      for( std::vector<std::string>::const_iterator it = inputTransform.begin();
+           it != inputTransform.end(); ++it )
+        {
+        itk::TransformFileReader::TransformPointer curTransform;
+
+        itk::TransformFileReader::Pointer reader =
+          itk::TransformFileReader::New();
+        std::cout << "Reading " << (*it) << std::endl;
+        reader->SetFileName( (*it) );
+        try
+          {
+          reader->Update();
+          }
+        catch( itk::ExceptionObject & err )
+          {
+          std::cerr << err << std::endl;
+          return 1;
+          }
+        curTransform = reader->GetTransformList()->front();
+        inputTransforms.push_back(curTransform);
+        }
+      }
+    else
+      {
+      std::cout << "No transforms specified, using Identity" << std::endl;
+      // fake it with identity transforms
+      typedef itk::IdentityTransform<double, 3> IDTransformType;
+
+      IDTransformType::Pointer                   idXfrm = IDTransformType::New();
+      itk::TransformFileReader::TransformPointer baseXfrm = idXfrm.GetPointer();
+      for( std::vector<std::string>::const_iterator it = inputLabelVolume.begin();
+           it != inputLabelVolume.end(); ++it )
+        {
+        inputTransforms.push_back(baseXfrm);
+        }
+      }
+    // set up interpolator function
+    // NOTE see ANTS/Examples/make_interpolator_snip.tmp line 113 --
+    // the sigma defaults to the image spacing apparently, but the
+    // sigma can also be specified on the command line.
+    typedef std::less<itk::NumericTraits<unsigned char>::RealType> ucharLess;
+    typedef itk::LabelImageGaussianInterpolateImageFunction<USImageType, double, ucharLess>
+      InterpolationFunctionType;
+    InterpolationFunctionType::Pointer interpolateFunc =
+      InterpolationFunctionType::New();
+    double                   sigma[3];
+    USImageType::SpacingType spacing = compositeVolume->GetSpacing();
+    for( unsigned i = 0; i < 3; ++i )
+      {
+      sigma[i] = spacing[i];
+      }
+    interpolateFunc->SetParameters(sigma, 4.0);
+
+    std::vector<std::string>::const_iterator nameIt = inputLabelVolume.begin();
+    TransformListType::const_iterator        xfrmIt = inputTransforms.begin();
+    for( ImageList::const_iterator it = inputLabelVolumes.begin();
+         it != inputLabelVolumes.end(); ++it, ++xfrmIt, ++nameIt )
+      {
+      USImageType::Pointer current = (*it);
+
+      itk::TransformFileReader::TransformPointer curTransformBase = (*xfrmIt);
+
+      typedef itk::ResampleImageFilter<USImageType, USImageType, double> ResampleFilterType;
+
+      std::cout << "Resampling " << (*nameIt) << std::flush;
+
+      const ResampleFilterType::TransformType *curTransform =
+        dynamic_cast<const ResampleFilterType::TransformType *>(curTransformBase.GetPointer() );
+      if( curTransform == 0 )
+        {
+        std::cerr << "Invalid transform " << curTransformBase << std::endl;
+        exit(1);
+        }
+      ResampleFilterType::Pointer resampler = ResampleFilterType::New();
+      try
+        {
+        resampler->SetInput(current);
+        resampler->SetUseReferenceImage(true);
+        resampler->SetReferenceImage(compositeVolume);
+        resampler->SetInterpolator(interpolateFunc);
+        resampler->SetTransform(curTransform);
+        resampler->Update();
+        }
+      catch( itk::ExceptionObject & err )
+        {
+        std::cerr << err << std::endl;
+        return 1;
+        }
+      std::cout << " done." << std::endl;
+      if( resampledVolumePrefix != "" )
+        {
+        std::string namePart(itksys::SystemTools::GetFilenameName( (*nameIt) ) );
+        std::string resampledName = resampledVolumePrefix;
+        resampledName += namePart;
+        std::cerr << "Writing " << resampledName << std::flush;
+        try
+          {
+          itkUtil::WriteImage<USImageType>(resampler->GetOutput(), resampledName);
+          }
+        catch( itk::ExceptionObject & err )
+          {
+          std::cerr << err << std::endl;
+          return 1;
+          }
+        std::cerr << " ... done." << std::endl;
+        }
+      printImageStats<USImageType>(resampler->GetOutput() );
+      transformedLabelVolumes.push_back(resampler->GetOutput() );
+      }
     }
 
-  typedef itk::Image<unsigned short, 3>                              USImageType;
-  typedef itk::MultiLabelSTAPLEImageFilter<UCImageType, USImageType> STAPLEFilterType;
+  typedef itk::MultiLabelSTAPLEImageFilter<USImageType, USImageType> STAPLEFilterType;
   STAPLEFilterType::Pointer STAPLEFilter = STAPLEFilterType::New();
+  STAPLEFilter->SetNumberOfThreads(1);
 
   if( labelForUndecidedPixels != -1 )
     {
     STAPLEFilter->SetLabelForUndecidedPixels(labelForUndecidedPixels);
     }
-
+  for( ImageList::const_iterator it = transformedLabelVolumes.begin();
+       it != transformedLabelVolumes.end(); ++it )
     {
-    unsigned i = 0;
-    for( ImageList::const_iterator it = transformedLabelVolumes.begin();
-         it != transformedLabelVolumes.end(); ++it, ++i )
-      {
-//    STAPLEFilter->PushBackInput((*it));
-      STAPLEFilter->SetInput(i, (*it) );
-      }
+    STAPLEFilter->PushBackInput( (*it) );
     }
+
   std::cout << "Running MultiLabel Staple filter " << std::flush;
   try
     {

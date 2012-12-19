@@ -18,3 +18,5 @@ CMakeFiles/*
 crash*
 *.swp
 .clang_complete
+*.orig
+.emacs.desktop

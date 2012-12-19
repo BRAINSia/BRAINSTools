@@ -39,6 +39,8 @@ from PipeLineFunctionHelpers import UnwrapPosteriorImagesFromDictionaryFunction
 from PipeLineFunctionHelpers import FixWMPartitioning
 from PipeLineFunctionHelpers import AccumulateLikeTissuePosteriors
 
+GLOBAL_DATA_SINK_REWRITE = True
+
 #HACK:  [('buildTemplateIteration2', 'SUBJECT_TEMPLATES/0249/buildTemplateIteration2')]
 def GenerateSubjectOutputPattern(subjectid):
     """ This function generates output path substitutions for workflows and nodes that conform to a common standard.
@@ -498,6 +500,7 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
 
             ### Now define where the final organized outputs should go.
             SubjectTemplate_DataSink=pe.Node(nio.DataSink(),name="SubjectTemplate_DS")
+            SubjectTemplate_DataSink.overwrite=GLOBAL_DATA_SINK_REWRITE
             SubjectTemplate_DataSink.inputs.base_directory=ExperimentBaseDirectoryResults
             SubjectTemplate_DataSink.inputs.regexp_substitutions = GenerateSubjectOutputPattern(subjectid)
             baw200.connect(buildTemplateIteration2,'outputspec.template',SubjectTemplate_DataSink,'ANTSTemplate.@template')
@@ -564,6 +567,7 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
 
                 ### Now define where the final organized outputs should go.
                 BASIC_DataSink[sessionid]=pe.Node(nio.DataSink(),name="BASIC_DS_"+str(subjectid)+"_"+str(sessionid))
+                BASIC_DataSink[sessionid].overwrite=GLOBAL_DATA_SINK_REWRITE
                 BASIC_DataSink[sessionid].inputs.base_directory=ExperimentBaseDirectoryResults
                 BASIC_DataSink[sessionid].inputs.regexp_substitutions = GenerateOutputPattern(projectid, subjectid, sessionid,'ACPCAlign')
 
@@ -601,6 +605,7 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
 
                 ### Now define where the final organized outputs should go.
                 TC_DataSink[sessionid] = pe.Node(nio.DataSink(), name="TISSUE_CLASSIFY_DS_"+str(subjectid)+"_"+str(sessionid))
+                TC_DataSink[sessionid].overwrite=GLOBAL_DATA_SINK_REWRITE
                 TC_DataSink[sessionid].inputs.base_directory = ExperimentBaseDirectoryResults
                 TC_DataSink[sessionid].inputs.regexp_substitutions = GenerateOutputPattern(projectid, subjectid,
                                                                         sessionid, 'TissueClassify')
@@ -734,6 +739,7 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
 
                     ### Now define where the final organized outputs should go.
                     SEGMENTATION_DataSink[sessionid]=pe.Node(nio.DataSink(),name="SEGMENTATION_DS_"+str(subjectid)+"_"+str(sessionid))
+                    SEGMENTATION_DataSink[sessionid].overwrite=GLOBAL_DATA_SINK_REWRITE
                     SEGMENTATION_DataSink[sessionid].inputs.base_directory=ExperimentBaseDirectoryResults
                     #SEGMENTATION_DataSink[sessionid].inputs.regexp_substitutions = GenerateOutputPattern(projectid, subjectid, sessionid,'BRAINSCut')
                     #SEGMENTATION_DataSink[sessionid].inputs.regexp_substitutions = GenerateBRAINSCutImagesOutputPattern(projectid, subjectid, sessionid)
@@ -821,6 +827,7 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                     ### Now define where the final organized outputs should go.
                     AntsLabelWarpedToSubject_DSName="AntsLabelWarpedToSubject_DS_"+str(sessionid)
                     AntsLabelWarpedToSubject_DS[sessionid]=pe.Node(nio.DataSink(),name=AntsLabelWarpedToSubject_DSName)
+                    AntsLabelWarpedToSubject_DS[sessionid].overwrite=GLOBAL_DATA_SINK_REWRITE
                     AntsLabelWarpedToSubject_DS[sessionid].inputs.base_directory=ExperimentBaseDirectoryResults
                     AntsLabelWarpedToSubject_DS[sessionid].inputs.substitutions = [ ( 'AntsLabelWarpedToSubject',os.path.join(projectid, subjectid, sessionid,'AntsLabelWarpedToSubject') )]
                     baw200.connect( AntsLabelWarpToSubject[sessionid], 'output_image',
@@ -882,6 +889,7 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                     ### Now define where the final organized outputs should go.
                     Subj2Atlas_DSName="SubjectToAtlas_DS_"+str(sessionid)
                     Subj2Atlas_DS[sessionid]=pe.Node(nio.DataSink(),name=Subj2Atlas_DSName)
+                    Subj2Atlas_DS[sessionid].overwrite=GLOBAL_DATA_SINK_REWRITE
                     Subj2Atlas_DS[sessionid].inputs.base_directory=ExperimentBaseDirectoryResults
                     #Subj2Atlas_DS[sessionid].inputs.regexp_substitutions = GenerateSubjectOutputPattern(subjectid)
                     Subj2Atlas_DS[sessionid].inputs.regexp_substitutions = [
@@ -933,6 +941,7 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                     ### Now define where the final organized outputs should go.
                     if RunAllFSComponents == True:
                         FS_DS[sessionid]=pe.Node(nio.DataSink(),name="FREESURFER_DS_"+str(subjectid)+"_"+str(sessionid))
+                        FS_DS[sessionid].overwrite=GLOBAL_DATA_SINK_REWRITE
                         FS_DS[sessionid].inputs.base_directory=ExperimentBaseDirectoryResults
                         FS_DS[sessionid].inputs.regexp_substitutions = [
                             ('/_uid_(?P<myuid>[^/]*)',r'/\g<myuid>')

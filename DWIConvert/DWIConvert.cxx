@@ -1163,17 +1163,24 @@ int main(int argc, char *argv[])
           // std::cout << "HACK: " << "B0FieldFound=" << B0FieldFound << ", b=" << b << ", DiffusionDirectionality=" <<
           // DiffusionDirectionality << std::endl;
 
-          if( StringContains(DiffusionDirectionality, "ISOTROPIC") )
-            { // Deal with images that are to be ignored
-              // std::cout << " SKIPPING ISOTROPIC Diffusion. " << std::endl;
-              // std::cout << "HACK: IGNORE IMAGEFILE:   " << k << " of " << filenames.size() << " " << filenames[k] <<
-              // std::endl;
-              // Ignore the Trace like image
-            ++nIgnoreVolume;
-            useVolume.push_back(0);
-            continue;
-            }
-          else if( ( !B0FieldFound || b == 0 ) || StringContains(DiffusionDirectionality, "NONE") )
+          // NOTE:  I don know who decided to discard ISOTROPIC
+          // volumes, but it never actually worked, so I going to
+          // treat them like "NONE" volumes, which hopefully will make
+          // it match what FreeSurfer mri_convert does.
+          // if ( StringContains(DiffusionDirectionality,"ISOTROPIC") )
+          //   { //Deal with images that are to be ignored
+          //   //std::cout << " SKIPPING ISOTROPIC Diffusion. " << std::endl;
+          //   //std::cout << "HACK: IGNORE IMAGEFILE:   " << k << " of " << filenames.size() << " " << filenames[k] <<
+          // std::endl;
+          //   // Ignore the Trace like image
+          //   ++nIgnoreVolume;
+          //   useVolume.push_back(0);
+          //   continue;
+          //   }
+          // else
+
+          if( ( !B0FieldFound || b == 0 ) || StringContains(DiffusionDirectionality, "NONE")
+              || StringContains(DiffusionDirectionality, "ISOTROPIC") )
             { // Deal with b0 images
             bValues.push_back(b);
             UnmodifiedDiffusionVectorsInDicomLPSCoordinateSystem.push_back(vect3d);

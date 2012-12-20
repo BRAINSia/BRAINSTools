@@ -304,6 +304,13 @@ Write4DVolume( VolumeType::Pointer & img, int nVolumes, const std::string & fnam
   size4D[2] = size3D[2] / nVolumes;
   size4D[3] = nVolumes;
 
+  if( (size4D[2] * nVolumes) != size3D[2] )
+    {
+    std::cerr << "#of slices in volume not evenly divisible by"
+              << " the number of volumes: slices = " << size3D[2]
+              << " volumes = " << nVolumes << " left-over slices = "
+              << size3D[2] % nVolumes << std::endl;
+    }
   Volume4DType::DirectionType direction4D;
   Volume4DType::SpacingType   spacing4D;
   Volume4DType::PointType     origin4D;
@@ -329,9 +336,9 @@ Write4DVolume( VolumeType::Pointer & img, int nVolumes, const std::string & fnam
   img4D->SetOrigin(origin4D);
 
   img4D->Allocate();
-  memcpy(img4D->GetBufferPointer(),
-         img->GetBufferPointer(),
-         img->GetLargestPossibleRegion().GetNumberOfPixels() * sizeof(PixelValueType) );
+  size_t bytecount = img4D->GetLargestPossibleRegion().GetNumberOfPixels();
+  bytecount *= sizeof(PixelValueType);
+  memcpy(img4D->GetBufferPointer(), img->GetBufferPointer(), bytecount);
 #if 0
     {
     itk::ImageFileWriter<VolumeType>::Pointer writer = itk::ImageFileWriter<VolumeType>::New();

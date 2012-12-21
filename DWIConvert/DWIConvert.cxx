@@ -1051,9 +1051,9 @@ int main(int argc, char *argv[])
 
     if( StringContains(vendor, "GE") )
       {
+#if 0
       // don't even try to convert DTI 6 Direction files
       std::string seriesDescription;
-#if 0
       if( allHeaders[0]->GetElementLO(0x0008, 0x103e, seriesDescription, false) == EXIT_SUCCESS &&
           StringContains(seriesDescription, "6 Directions") )
         {
@@ -1062,6 +1062,33 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
         }
 #endif
+      std::string ModelName;
+      // OK, so there is an accomdation made on the basis of one site
+      // having garbage BVal/GVectors.  It has to do with variations
+      // of behavior of the Signa HDxt scanner.
+      // In all cases, the data is thus:
+      // BVal = [0043,1039]
+      // GVec[0] = [0019.10bb] GVec[1] = [0019,10bc] GVec[2] = [0019,10bd]
+      // there are 3 possible encodings of this data for GE scanners:
+      // 1. As IS/DS -- integer an decimal strings -- the normal
+      // behavior
+      // 2. As OB, but the byte data is binary and may need byte
+      // swapping.
+      // 3. As OB, but it's actuall as case 1 -- numbers represented
+      // as strings.
+      // I'm accounting for these cases by looking specifically for
+      // the Signa HDxt scanner, and if it doesn't find IS/DS data,
+      // look for char strings in the OB data.
+      // Honestly this is not an optimal way to handle this
+      // situation. In an ideal world we'd have accurate knowledge of
+      // what each Scanner/Software Version is doing in these tags,
+      // and handle them accordingly. But we don't live in that world.
+      bool isSignaHDxt(false);
+      if( allHeaders[0]->GetElementLO(0x0008, 0x001090, ModelName, false) == EXIT_SUCCESS &&
+          ModelName == "Signa HDxt" )
+        {
+        isSignaHDxt = true;
+        }
       nSliceInVolume = numberOfSlicesPerVolume;
       nVolume = nSlice / nSliceInVolume;
 
@@ -1077,15 +1104,40 @@ int main(int argc, char *argv[])
         // for some weird reason this item in the GE dicom
         // header is stored as an IS (Integer String) element.
         ::itk::int32_t intb;
-        allHeaders[k]->GetElementISorOB(0x0043, 0x1039, intb);
+        if( !isSignaHDxt )
+          {
+          allHeaders[k]->GetElementISorOB(0x0043, 0x1039, intb);
+          }
+        else
+          {
+          if( allHeaders[k]->GetElementIS(0x0043, 0x1039, intb, false) != EXIT_SUCCESS )
+            {
+            std::string val;
+            allHeaders[k]->GetElementOB(0x0043, 0x1039, val);
+            size_t slashpos = val.find('\\');
+            val = val.substr(0, slashpos);
+            std::stringstream s(val);
+            s >> intb;
+            }
+          }
         float b = static_cast<float>(intb);
-        // allHeaders[k]->GetElementDS(0x0019, 0x10bb, 1, &vect3d[0]);
-        // allHeaders[k]->GetElementDS(0x0019, 0x10bc, 1, &vect3d[1]);
-        // allHeaders[k]->GetElementDS(0x0019, 0x10bd, 1, &vect3d[2]);
         for( unsigned elementNum = 0x10bb; elementNum <= 0x10bd; ++elementNum )
           {
           int vecI(elementNum - 0x10bb);
-          allHeaders[k]->GetElementDSorOB(0x0019, elementNum, vect3d[vecI]);
+          if( !isSignaHDxt )
+            {
+            allHeaders[k]->GetElementDSorOB(0x0019, elementNum, vect3d[vecI]);
+            }
+          else
+            {
+            if( allHeaders[k]->GetElementDS(0x0019, elementNum, 1, &vect3d[vecI], false) != EXIT_SUCCESS )
+              {
+              std::string val;
+              allHeaders[k]->GetElementOB(0x0019, elementNum, val);
+              std::stringstream s(val);
+              s >> vect3d[vecI];
+              }
+            }
           }
 
         vect3d[0] = -vect3d[0];

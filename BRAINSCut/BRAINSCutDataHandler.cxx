@@ -47,7 +47,7 @@ void
 BRAINSCutDataHandler
 ::SetAtlasDataSet()
 {
-  atlasDataSet = myConfiguration->GetAtlasDataSet();
+  m_atlasDataSet = myConfiguration->GetAtlasDataSet();
   std::cout << "registrationImageTypeToUse :: " << registrationImageTypeToUse << std::endl;
 
   if( registrationImageTypeToUse.empty() )
@@ -55,25 +55,25 @@ BRAINSCutDataHandler
     std::cout << "registrationImageTypeToUse is empty." << std::endl;
     exit(EXIT_FAILURE);
     }
-  atlasFilename = atlasDataSet->GetImageFilenameByType( registrationImageTypeToUse);
-  atlasBinaryFilename = atlasDataSet->GetMaskFilenameByType( "RegistrationROI" );
-  std::cout << atlasBinaryFilename << std::endl;
+  m_atlasFilename = m_atlasDataSet->GetImageFilenameByType( registrationImageTypeToUse);
+  m_atlasBinaryFilename = m_atlasDataSet->GetMaskFilenameByType( "RegistrationROI" );
+  std::cout << m_atlasBinaryFilename << std::endl;
 }
 
 void
 BRAINSCutDataHandler
 ::SetAtlasImage()
 {
-  atlasImage = ReadImageByFilename( atlasFilename );
+  m_atlasImage = ReadImageByFilename( m_atlasFilename );
 }
 
 void
 BRAINSCutDataHandler
 ::SetRhoPhiTheta()
 {
-  rho = ReadImageByFilename( atlasDataSet->GetSpatialLocationFilenameByType("rho") );
-  phi = ReadImageByFilename( atlasDataSet->GetSpatialLocationFilenameByType("phi") );
-  theta = ReadImageByFilename( atlasDataSet->GetSpatialLocationFilenameByType("theta") );
+  m_rho = ReadImageByFilename( m_atlasDataSet->GetSpatialLocationFilenameByType("rho") );
+  m_phi = ReadImageByFilename( m_atlasDataSet->GetSpatialLocationFilenameByType("phi") );
+  m_theta = ReadImageByFilename( m_atlasDataSet->GetSpatialLocationFilenameByType("theta") );
 }
 
 void
@@ -111,12 +111,12 @@ void
 BRAINSCutDataHandler
 ::SetRegionsOfInterest()
 {
-  roiDataList = myConfiguration->Get<ProbabilityMapList>("ProbabilityMapList");
-  this->m_roiIDsInOrder = roiDataList->CollectAttValues<ProbabilityMapParser>("StructureID");
+  m_roiDataList = myConfiguration->Get<ProbabilityMapList>("ProbabilityMapList");
+  this->m_roiIDsInOrder = m_roiDataList->CollectAttValues<ProbabilityMapParser>("StructureID");
 
   std::sort( this->m_roiIDsInOrder.begin(), this->m_roiIDsInOrder.end() ); // get l_caudate, l_globus, .. , r_caudate,
                                                                            // r_globus..
-  roiCount = roiDataList->size();
+  roiCount = m_roiDataList->size();
 }
 
 /** registration related */
@@ -218,19 +218,19 @@ BRAINSCutDataHandler
                                         ("rho", GenericTransformImage<WorkingImageType,
                                                                       WorkingImageType,
                                                                       DisplacementFieldType>
-                                          ( rho, referenceImage, deformation, genericTransform,
+                                          ( m_rho, referenceImage, deformation, genericTransform,
                                           0.0, "Linear", transoformationPixelType == "binary") ) );
   warpedSpatialLocationImages.insert( std::pair<std::string, WorkingImagePointer>
                                         ("phi", GenericTransformImage<WorkingImageType,
                                                                       WorkingImageType,
                                                                       DisplacementFieldType>
-                                          ( phi, referenceImage, deformation, genericTransform,
+                                          ( m_phi, referenceImage, deformation, genericTransform,
                                           0.0, "Linear", transoformationPixelType == "binary") ) );
   warpedSpatialLocationImages.insert( std::pair<std::string, WorkingImagePointer>
                                         ("theta", GenericTransformImage<WorkingImageType,
                                                                         WorkingImageType,
                                                                         DisplacementFieldType>
-                                          ( theta, referenceImage, deformation, genericTransform,
+                                          ( m_theta, referenceImage, deformation, genericTransform,
                                           0.0, "Linear", transoformationPixelType == "binary") ) );
 }
 
@@ -238,7 +238,7 @@ void
 BRAINSCutDataHandler
 ::ReadImagesOfSubjectInOrder( WorkingImageVectorType& subjectImageList, DataSet& subject)
 {
-  DataSet::StringVectorType imageListFromAtlas = atlasDataSet->GetImageTypes(); // T1, T2, SG, ...
+  DataSet::StringVectorType imageListFromAtlas = m_atlasDataSet->GetImageTypes(); // T1, T2, SG, ...
 
   std::sort( imageListFromAtlas.begin(), imageListFromAtlas.end() );            // SG, T1, T2, ... ascending order
 
@@ -275,7 +275,7 @@ BRAINSCutDataHandler
        roiTyIt != this->m_roiIDsInOrder.end();
        ++roiTyIt )
     {
-    std::string roiFilename = roiDataList->GetMatching<ProbabilityMapParser>( "StructureID", (*roiTyIt).c_str() )
+    std::string roiFilename = m_roiDataList->GetMatching<ProbabilityMapParser>( "StructureID", (*roiTyIt).c_str() )
       ->GetAttribute<StringValue>("Filename");
     WorkingImagePointer currentROI = ReadImageByFilename( roiFilename );
 
@@ -300,14 +300,14 @@ void
 BRAINSCutDataHandler
 ::SetGradientSize()
 {
-  gradientSize = trainingVectorConfiguration->GetAttribute<IntValue>("GradientProfileSize");
+  m_gradientSize = trainingVectorConfiguration->GetAttribute<IntValue>("GradientProfileSize");
 }
 
 unsigned int
 BRAINSCutDataHandler
 ::GetGradientSize()
 {
-  return gradientSize;
+  return m_gradientSize;
 }
 
 void
@@ -328,20 +328,24 @@ BRAINSCutDataHandler
 
   if( normalizationString == "true" )
     {
-    normalization = true;
+    m_normalization = "Linear";
+    }
+  else if( normalizationString == "false" )
+    {
+    m_normalization = "None";
     }
   else
     {
-    normalization =  false;
+    m_normalization = normalizationString;
     }
-  std::cout << "Get Normalization from XML file --> " << normalization << std::endl;
+  std::cout << "Get Normalization from XML file --> " << m_normalization << std::endl;
 }
 
-bool
+std::string
 BRAINSCutDataHandler
-::GetNormalization()
+::GetNormalizationMethod()
 {
-  return normalization;
+  return m_normalization;
 }
 
 /** model file name */
@@ -413,14 +417,14 @@ std::string
 BRAINSCutDataHandler
 ::GetAtlasFilename()
 {
-  return atlasFilename;
+  return m_atlasFilename;
 }
 
 std::string
 BRAINSCutDataHandler
 ::GetAtlasBinaryFilename()
 {
-  return atlasBinaryFilename;
+  return m_atlasBinaryFilename;
 }
 
 int
@@ -441,21 +445,21 @@ WorkingImagePointer
 BRAINSCutDataHandler
 ::GetAtlasImage()
 {
-  return atlasImage;
+  return m_atlasImage;
 }
 
 ProbabilityMapList *
 BRAINSCutDataHandler
 ::GetROIDataList()
 {
-  return roiDataList;
+  return m_roiDataList;
 }
 
 DataSet *
 BRAINSCutDataHandler
 ::GetAtlasDataSet()
 {
-  return atlasDataSet;
+  return m_atlasDataSet;
 }
 
 scalarType
@@ -524,11 +528,11 @@ void
 BRAINSCutDataHandler
 ::SetTrainVectorFilename()
 {
-  trainVectorFilename =
+  m_trainVectorFilename =
     trainingVectorConfiguration->GetAttribute<StringValue>("TrainingVectorFilename");
-  trainVectorFilename += "ANN"; // TODO
+  m_trainVectorFilename += "ANN"; // TODO
   std::cout << "+++++++++++++++++++++++++++++++++++++++++++++++++++" << std::endl;
-  std::cout << "vector file at " << trainVectorFilename << std::endl;
+  std::cout << "vector file at " << m_trainVectorFilename << std::endl;
   std::cout << "+++++++++++++++++++++++++++++++++++++++++++++++++++" << std::endl;
 }
 
@@ -536,12 +540,12 @@ std::string
 BRAINSCutDataHandler
 ::GetTrainVectorFilename()
 {
-  if( trainVectorFilename.empty() )
+  if( m_trainVectorFilename.empty() )
     {
     std::string msg = "The train vector file name is empty.\n";
     throw BRAINSCutExceptionStringHandler( msg );
     }
-  return trainVectorFilename;
+  return m_trainVectorFilename;
 }
 
 BRAINSCutConfiguration::TrainDataSetListType

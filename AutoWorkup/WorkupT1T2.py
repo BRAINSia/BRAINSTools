@@ -677,37 +677,37 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
 
                     from nipype.interfaces.ants import ( Registration, ApplyTransforms)
                     currentAtlasToSubjectantsRegistration='AtlasToSubjectantsRegistration_'+str(subjectid)+"_"+str(sessionid)
-                    AtlasToSubjectantsRegistration[subjectid]=pe.Node(interface=Registration(), name = currentAtlasToSubjectantsRegistration)
-                    AtlasToSubjectantsRegistration[subjectid].inputs.dimension = 3
-                    AtlasToSubjectantsRegistration[subjectid].inputs.transforms =               ["Affine",            "SyN"]
-                    AtlasToSubjectantsRegistration[subjectid].inputs.transform_parameters =     [[0.1],               [0.15,3.0,0.0]]
-                    AtlasToSubjectantsRegistration[subjectid].inputs.metric =                   ['Mattes',            'CC']
-                    AtlasToSubjectantsRegistration[subjectid].inputs.sampling_strategy =        ['Regular',           None]
-                    AtlasToSubjectantsRegistration[subjectid].inputs.sampling_percentage =      [ 0.1,                1.0]
-                    AtlasToSubjectantsRegistration[subjectid].inputs.metric_weight =            [ 1.0,                1.0]
-                    AtlasToSubjectantsRegistration[subjectid].inputs.radius_or_number_of_bins = [ 32,                 4]
-                    AtlasToSubjectantsRegistration[subjectid].inputs.number_of_iterations =     [ [1000, 1000, 1000], [10000,500,500,200]]
-                    AtlasToSubjectantsRegistration[subjectid].inputs.convergence_threshold =    [ 1e-9,               1e-9]
-                    AtlasToSubjectantsRegistration[subjectid].inputs.convergence_window_size =  [ 15,                 15]
-                    AtlasToSubjectantsRegistration[subjectid].inputs.use_histogram_matching =   [ True,               True]
-                    AtlasToSubjectantsRegistration[subjectid].inputs.shrink_factors =           [ [4,2,1],            [6,4,2,1]]
-                    AtlasToSubjectantsRegistration[subjectid].inputs.smoothing_sigmas =         [ [4,2,0],            [6,4,2,0]]
-                    AtlasToSubjectantsRegistration[subjectid].inputs.use_estimate_learning_rate_once = [False,              False]
-                    AtlasToSubjectantsRegistration[subjectid].inputs.write_composite_transform=True
-                    AtlasToSubjectantsRegistration[subjectid].inputs.collapse_output_transforms=True
-                    AtlasToSubjectantsRegistration[subjectid].inputs.output_transform_prefix = 'AtlasToSubject_'
-                    AtlasToSubjectantsRegistration[subjectid].inputs.winsorize_lower_quantile = 0.025
-                    AtlasToSubjectantsRegistration[subjectid].inputs.winsorize_upper_quantile = 0.975
-                    AtlasToSubjectantsRegistration[subjectid].inputs.collapse_linear_transforms_to_fixed_image_header = False
-                    AtlasToSubjectantsRegistration[subjectid].inputs.output_warped_image = 'atlas2subject.nii.gz'
-                    AtlasToSubjectantsRegistration[subjectid].inputs.output_inverse_warped_image = 'subject2atlas.nii.gz'
-                    AtlasToSubjectantsRegistration[subjectid].plugin_args={'template':SGE_JOB_SCRIPT,'qsub_args': '-S /bin/bash -pe smp1 4-8 -l mem_free=9000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE_LONG), 'overwrite': True}
+                    AtlasToSubjectantsRegistration[sessionid]=pe.Node(interface=Registration(), name = currentAtlasToSubjectantsRegistration)
+                    AtlasToSubjectantsRegistration[sessionid].inputs.dimension = 3
+                    AtlasToSubjectantsRegistration[sessionid].inputs.transforms =               ["Affine",            "SyN"]
+                    AtlasToSubjectantsRegistration[sessionid].inputs.transform_parameters =     [[0.1],               [0.15,3.0,0.0]]
+                    AtlasToSubjectantsRegistration[sessionid].inputs.metric =                   ['Mattes',            'CC']
+                    AtlasToSubjectantsRegistration[sessionid].inputs.sampling_strategy =        ['Regular',           None]
+                    AtlasToSubjectantsRegistration[sessionid].inputs.sampling_percentage =      [ 0.1,                1.0]
+                    AtlasToSubjectantsRegistration[sessionid].inputs.metric_weight =            [ 1.0,                1.0]
+                    AtlasToSubjectantsRegistration[sessionid].inputs.radius_or_number_of_bins = [ 32,                 4]
+                    AtlasToSubjectantsRegistration[sessionid].inputs.number_of_iterations =     [ [1000, 1000, 1000], [10000,500,500,200]]
+                    AtlasToSubjectantsRegistration[sessionid].inputs.convergence_threshold =    [ 1e-9,               1e-9]
+                    AtlasToSubjectantsRegistration[sessionid].inputs.convergence_window_size =  [ 15,                 15]
+                    AtlasToSubjectantsRegistration[sessionid].inputs.use_histogram_matching =   [ True,               True]
+                    AtlasToSubjectantsRegistration[sessionid].inputs.shrink_factors =           [ [4,2,1],            [6,4,2,1]]
+                    AtlasToSubjectantsRegistration[sessionid].inputs.smoothing_sigmas =         [ [4,2,0],            [6,4,2,0]]
+                    AtlasToSubjectantsRegistration[sessionid].inputs.use_estimate_learning_rate_once = [False,              False]
+                    AtlasToSubjectantsRegistration[sessionid].inputs.write_composite_transform=True
+                    AtlasToSubjectantsRegistration[sessionid].inputs.collapse_output_transforms=True
+                    AtlasToSubjectantsRegistration[sessionid].inputs.output_transform_prefix = 'AtlasToSubject_'
+                    AtlasToSubjectantsRegistration[sessionid].inputs.winsorize_lower_quantile = 0.025
+                    AtlasToSubjectantsRegistration[sessionid].inputs.winsorize_upper_quantile = 0.975
+                    AtlasToSubjectantsRegistration[sessionid].inputs.collapse_linear_transforms_to_fixed_image_header = False
+                    AtlasToSubjectantsRegistration[sessionid].inputs.output_warped_image = 'atlas2subject.nii.gz'
+                    AtlasToSubjectantsRegistration[sessionid].inputs.output_inverse_warped_image = 'subject2atlas.nii.gz'
+                    AtlasToSubjectantsRegistration[sessionid].plugin_args={'template':SGE_JOB_SCRIPT,'qsub_args': '-S /bin/bash -pe smp1 4-8 -l mem_free=9000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE_LONG), 'overwrite': True}
 
-                    baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'outputspec.t1_average', AtlasToSubjectantsRegistration[subjectid], 'fixed_image')
-                    baw200.connect(BAtlas[subjectid],'template_t1',AtlasToSubjectantsRegistration[subjectid], 'moving_image')
-                    baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'outputspec.LMIatlasToSubjectTransform',AtlasToSubjectantsRegistration[subjectid],'initial_moving_transform')
-                    #baw200.connect(BAtlas[subjectid],'template_t1_clipped',AtlasToSubjectantsRegistration[subjectid], 'moving_image')
-                    #baw200.connect(ClipT1ImageWithBrainMaskNode[sessionid], 'clipped_file', AtlasToSubjectantsRegistration[subjectid], 'fixed_image')
+                    baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'outputspec.t1_average', AtlasToSubjectantsRegistration[sessionid], 'fixed_image')
+                    baw200.connect(BAtlas[subjectid],'template_t1',AtlasToSubjectantsRegistration[sessionid], 'moving_image')
+                    baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'outputspec.LMIatlasToSubjectTransform',AtlasToSubjectantsRegistration[sessionid],'initial_moving_transform')
+                    #baw200.connect(BAtlas[subjectid],'template_t1_clipped',AtlasToSubjectantsRegistration[sessionid], 'moving_image')
+                    #baw200.connect(ClipT1ImageWithBrainMaskNode[sessionid], 'clipped_file', AtlasToSubjectantsRegistration[sessionid], 'fixed_image')
 
                 global_AllT1s=ExperimentDatabase.getFilenamesByScantype(sessionid,['T1-30','T1-15'])
                 global_AllT2s=ExperimentDatabase.getFilenamesByScantype(sessionid,['T2-30','T2-15'])
@@ -735,7 +735,7 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                     baw200.connect( [ ( AccumulateLikeTissuePosteriorsNode[sessionid], myLocalSegWF[sessionid],
                                     [ (( 'AccumulatePriorsList', getListIndex, 0 ), "inputspec.TotalGM")] ),
                                     ] )
-                    baw200.connect( AtlasToSubjectantsRegistration[subjectid],'composite_transform',myLocalSegWF[sessionid],'inputspec.atlasToSubjectTransform')
+                    baw200.connect( AtlasToSubjectantsRegistration[sessionid],'composite_transform',myLocalSegWF[sessionid],'inputspec.atlasToSubjectTransform')
 
                     ### Now define where the final organized outputs should go.
                     SEGMENTATION_DataSink[sessionid]=pe.Node(nio.DataSink(),name="SEGMENTATION_DS_"+str(subjectid)+"_"+str(sessionid))
@@ -817,7 +817,7 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                     AntsLabelWarpToSubject[sessionid].inputs.dimension       = 3
                     AntsLabelWarpToSubject[sessionid].inputs.output_image    = 'warped_hncma_atlas_seg.nii.gz'
                     AntsLabelWarpToSubject[sessionid].inputs.interpolation   = "MultiLabel"
-                    baw200.connect( AtlasToSubjectantsRegistration[subjectid], 'composite_transform', # check with Hans, why not sessionid???
+                    baw200.connect( AtlasToSubjectantsRegistration[sessionid], 'composite_transform', # check with Hans, why not sessionid???
                                     AntsLabelWarpToSubject[sessionid],         'transforms')
                     baw200.connect( PHASE_2_oneSubjWorkflow[sessionid],        'outputspec.t1_average',
                                     AntsLabelWarpToSubject[sessionid],         'reference_image')
@@ -863,8 +863,8 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                     LinearSubjectToAtlasANTsApplyTransforms[sessionid] = pe.MapNode(interface=ApplyTransforms(), iterfield=['input_image'],name=LinearSubjectToAtlasANTsApplyTransformsName)
                     LinearSubjectToAtlasANTsApplyTransforms[sessionid].plugin_args={'template':SGE_JOB_SCRIPT,'qsub_args': '-S /bin/bash -pe smp1 1 -l mem_free=1000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE), 'overwrite': True}
                     LinearSubjectToAtlasANTsApplyTransforms[sessionid].inputs.interpolation = 'Linear'
-                    baw200.connect(AtlasToSubjectantsRegistration[subjectid], 'reverse_transforms', LinearSubjectToAtlasANTsApplyTransforms[sessionid], 'transforms')
-                    baw200.connect(AtlasToSubjectantsRegistration[subjectid], 'reverse_invert_flags', LinearSubjectToAtlasANTsApplyTransforms[sessionid], 'invert_transform_flags')
+                    baw200.connect(AtlasToSubjectantsRegistration[sessionid], 'reverse_transforms', LinearSubjectToAtlasANTsApplyTransforms[sessionid], 'transforms')
+                    baw200.connect(AtlasToSubjectantsRegistration[sessionid], 'reverse_invert_flags', LinearSubjectToAtlasANTsApplyTransforms[sessionid], 'invert_transform_flags')
                     baw200.connect(BAtlas[subjectid],'template_t1', LinearSubjectToAtlasANTsApplyTransforms[sessionid], 'reference_image')
                     baw200.connect(MergeSessionSubjectToAtlas[sessionid], 'out', LinearSubjectToAtlasANTsApplyTransforms[sessionid], 'input_image')
 
@@ -881,8 +881,8 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                     MultiLabelSubjectToAtlasANTsApplyTransforms[sessionid] = pe.MapNode(interface=ApplyTransforms(), iterfield=['input_image'],name=MultiLabelSubjectToAtlasANTsApplyTransformsName)
                     MultiLabelSubjectToAtlasANTsApplyTransforms[sessionid].plugin_args={'template':SGE_JOB_SCRIPT,'qsub_args': '-S /bin/bash -pe smp1 1 -l mem_free=1000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE), 'overwrite': True}
                     MultiLabelSubjectToAtlasANTsApplyTransforms[sessionid].inputs.interpolation = 'MultiLabel'
-                    baw200.connect(AtlasToSubjectantsRegistration[subjectid], 'reverse_transforms', MultiLabelSubjectToAtlasANTsApplyTransforms[sessionid], 'transforms')
-                    baw200.connect(AtlasToSubjectantsRegistration[subjectid], 'reverse_invert_flags', MultiLabelSubjectToAtlasANTsApplyTransforms[sessionid], 'invert_transform_flags')
+                    baw200.connect(AtlasToSubjectantsRegistration[sessionid], 'reverse_transforms', MultiLabelSubjectToAtlasANTsApplyTransforms[sessionid], 'transforms')
+                    baw200.connect(AtlasToSubjectantsRegistration[sessionid], 'reverse_invert_flags', MultiLabelSubjectToAtlasANTsApplyTransforms[sessionid], 'invert_transform_flags')
                     baw200.connect(BAtlas[subjectid],'template_t1', MultiLabelSubjectToAtlasANTsApplyTransforms[sessionid], 'reference_image')
                     baw200.connect(MergeMultiLabelSessionSubjectToAtlas[sessionid], 'out', MultiLabelSubjectToAtlasANTsApplyTransforms[sessionid], 'input_image')
 

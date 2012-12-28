@@ -15,8 +15,9 @@ def addProbabilityMapElement( probabilityMap, maskName, outputStream ):
     outputStream.write( "   />\n")
 
 
-def xmlGenerator( args ):
-    outputStream = open( args.xmlFilename, 'w')
+def xmlGenerator( args, roi="" ):
+    xmlFilename = args.xmlFilename + roi + ".xml"
+    outputStream = open( xmlFilename, 'w')
     registrationID="BSpline_ROI"
 
     outputStream.write( "<AutoSegProcessDescription>\n" )
@@ -94,19 +95,24 @@ def xmlGenerator( args ):
     #
     # add probability maps (ROIs)
     #
-    addProbabilityMapElement( args.probabilityMapsLeftCaudate,     "l_caudate", outputStream);
-    addProbabilityMapElement( args.probabilityMapsLeftPutamen,     "l_putamen", outputStream);
-    addProbabilityMapElement( args.probabilityMapsLeftThalamus,    "l_thalamus", outputStream);
-    addProbabilityMapElement( args.probabilityMapsLeftHippocampus, "l_hippocampus", outputStream);
-    addProbabilityMapElement( args.probabilityMapsLeftAccumben,    "l_accumben", outputStream);
-    addProbabilityMapElement( args.probabilityMapsLeftGlobus,      "l_globus", outputStream);
-
-    addProbabilityMapElement( args.probabilityMapsRightCaudate,    "r_caudate", outputStream);
-    addProbabilityMapElement( args.probabilityMapsRightPutamen,    "r_putamen", outputStream);
-    addProbabilityMapElement( args.probabilityMapsRightThalamus,   "r_thalamus", outputStream);
-    addProbabilityMapElement( args.probabilityMapsRightHippocampus,"r_hippocampus", outputStream);
-    addProbabilityMapElement( args.probabilityMapsRightAccumben,   "r_accumben", outputStream);
-    addProbabilityMapElement( args.probabilityMapsRightGlobus,     "r_globus", outputStream);
+    if roi == "caudate":
+      addProbabilityMapElement( args.probabilityMapsLeftCaudate,     "l_caudate", outputStream);
+      addProbabilityMapElement( args.probabilityMapsRightCaudate,    "r_caudate", outputStream);
+    else if roi == 'putamen':
+      addProbabilityMapElement( args.probabilityMapsLeftPutamen,     "l_putamen", outputStream);
+      addProbabilityMapElement( args.probabilityMapsRightPutamen,    "r_putamen", outputStream);
+    else if roi == 'thalamus':
+      addProbabilityMapElement( args.probabilityMapsLeftThalamus,    "l_thalamus", outputStream);
+      addProbabilityMapElement( args.probabilityMapsRightThalamus,   "r_thalamus", outputStream);
+    else if roi == 'hippocampus':
+      addProbabilityMapElement( args.probabilityMapsLeftHippocampus, "l_hippocampus", outputStream);
+      addProbabilityMapElement( args.probabilityMapsRightHippocampus,"r_hippocampus", outputStream);
+    else if roi == 'accumben':
+      addProbabilityMapElement( args.probabilityMapsLeftAccumben,    "l_accumben", outputStream);
+      addProbabilityMapElement( args.probabilityMapsRightAccumben,   "r_accumben", outputStream);
+    else if roi == 'globus':
+      addProbabilityMapElement( args.probabilityMapsLeftGlobus,      "l_globus", outputStream);
+      addProbabilityMapElement( args.probabilityMapsRightGlobus,     "r_globus", outputStream);
 
     #
     # subject
@@ -146,6 +152,7 @@ def xmlGenerator( args ):
     outputStream.write( "</AutoSegProcessDescription>\n" )
     outputStream.close()
 
+    return xmlFilename
 
 ##
 ## main
@@ -214,19 +221,20 @@ brainscutParser.add_argument('--xmlFilename',help='BRAINSCut xml configuration f
 args=brainscutParser.parse_args()
 
 print( args )
-if args.xmlFilename != "":
-    xmlGenerator( args )
-else:
-    print("no xml filename is given to process")
+roiList = ['accumben', 'caudate', 'putamen', 'globus', 'thalamus', 'hippocampus']
 
-BRAINSCutCommand=["BRAINSCut" + " --applyModel " +
-                 " --netConfiguration " + args.xmlFilename +
-                 " --modelFilename " + args.modelFilename +
-                 " --method RandomForest" +
-                 " --numberOfTrees 60  --randomTreeDepth 60"
-                 ]
-print("HACK:  BRAINCUT COMMAND: {0}".format(BRAINSCutCommand))
-subprocess.call(BRAINSCutCommand, shell=True)
+for roi in roiList:
+    currentXmlFilename = xmlGenerator( args, roi )
+    currentModelFilename = args.modelFilename[-2] + '_' + roi + 'gz' # trainModelFile.txtD0060NT0060_accumben.gz
+    
+    BRAINSCutCommand=["BRAINSCut" + " --applyModel " +
+                     " --netConfiguration " + currentXmlFilename  +
+                     " --modelFilename " + currentModelFilename  +
+                     " --method RandomForest" +
+                     " --numberOfTrees 60  --randomTreeDepth 60"
+                     ]
+    print("HACK:  BRAINCUT COMMAND: {0}".format(BRAINSCutCommand))
+    subprocess.call(BRAINSCutCommand, shell=True)
 """
 script to be run
   BRAINSCut  --applyModel --netConfiguration BRAINSTools-build/BRAINSCut/TestSuite/TestSuite/NetConfigurations/output.xml --modelFilename TrainedModels/20110919ANNModel_allSubcorticals.txtD0050NT0050   --method RandomForest

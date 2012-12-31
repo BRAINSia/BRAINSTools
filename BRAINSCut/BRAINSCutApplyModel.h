@@ -32,7 +32,7 @@ public:
 
   LabelImagePointerType PostProcessingANN( std::string continuousFilename, scalarType threshold );
 
-  LabelImagePointerType PostProcessingRF( LabelImagePointerType& labelImage );
+  LabelImagePointerType PostProcessingRF( std::string labelImageFIlename, const unsigned char = 1 );
 
   LabelImagePointerType CombineLabel( LabelImagePointerType& resultLabel, LabelImagePointerType& currentLabel,
                                       const unsigned char binaryToLabelValue = 0 );
@@ -46,11 +46,13 @@ public:
 
   LabelImagePointerType ExtractLabel( const LabelImagePointerType& image, unsigned char thresholdValue );
 
-  LabelImagePointerType GetOneConnectedRegion( LabelImagePointerType& image );
+  LabelImagePointerType GetOneConnectedRegion( LabelImagePointerType& image, const unsigned char = 1 );
 
-  LabelImagePointerType FillHole( LabelImagePointerType& mask);
+  LabelImagePointerType FillHole( LabelImagePointerType& mask, const unsigned char = 1 );
 
-  LabelImagePointerType Closing( LabelImagePointerType& mask);
+  LabelImagePointerType Closing( LabelImagePointerType& mask, const unsigned char = 1 );
+
+  LabelImagePointerType Opening( LabelImagePointerType& image, const unsigned char = 1);
 
   void WriteLabelMapToBinaryImages( const DataSet& subject, const LabelImagePointerType& labelMapImage );
 

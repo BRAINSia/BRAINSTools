@@ -93,7 +93,8 @@ def unitWorkUp ( configurationFilename,
     vectorCreatorND.inputs.outputVectorFilename = 'oneROIVectorFile.txt'
     vectorCreatorND.inputs.outputXmlFilename = 'oneROICreateVectorNetConfiguration.xml'
     import ast
-    normalizationOption = ast.literal_eval( Options[ 'normalization'.lower()]  )
+    normalizationOption = Options[ 'normalization'.lower()]  
+    #normalizationOption = ast.literal_eval( Options[ 'normalization'.lower()]  )
     print( """Normalization Option: {str}
            """.format( str=normalizationOption ) )
     vectorCreatorND.iterables = ( 'normalization', normalizationOption )
@@ -149,7 +150,7 @@ def unitWorkUp ( configurationFilename,
     #                    '--numberOfTrees': 60,
     #                    '--randomTreeDepth ': 60 }
     import ast
-    methodFromConfiguFile = ast.literal_eval( Options['modelParameter'.lower()] )
+    methodFromConfiguFile =  Options['modelParameter'.lower()] 
     trainND.iterables= ( 'methodParameter', methodFromConfiguFile ) 
     trainND.inputs.outputXmlFilename = 'trianNetConfiguration.xml'
     trainND.inputs.outputModelFilenamePrefix = 'trainModelFile.txt'

@@ -236,23 +236,23 @@ def generateNewFilenames( nTest,
     return returnConfigFilename, returnMainListFilename, returnFeatureListFilenameDict
     
 #############################################################################
-def createConfigurationFileForCrossValidationUnitTest( p_configurationFilename,
-                                                       outputFilePrefix):
+def createConfigurationFileForCrossValidationUnitTest( inputConfigurationFilename,
+                                                       outputConfigurationFilenamePrefix):
     print("""****************************
           createConfigurationFileForCrossValidationUnitTest
           """)
     import os.path
-    outputFilePrefix = os.path.abspath( outputFilePrefix )
+    outputConfigurationFilenamePrefix = os.path.abspath( outputConfigurationFilenamePrefix )
 
     import ConfigurationParser
-    m_configurationMap =  ConfigurationParser.ConfigurationSectionMap( p_configurationFilename )
+    m_configurationMap =  ConfigurationParser.ConfigurationSectionMap( inputConfigurationFilename )
 
     # get list filenames
     import crossValidation as this
     listFilenames = m_configurationMap[ 'ListFiles' ]
-    mainListFilename = listFilenames['subjectListFilename'.lower() ] 
-    featureListFilenamesDict = listFilenames['featureListFileDictionary'.lower() ]
-    numberOfElementsInSubset = listFilenames[  'numberOfElementInSubset'.lower() ]
+    mainListFilename = listFilenames[ 'subjectListFilename'.lower() ] 
+    featureListFilenamesDict = listFilenames[ 'featureListFileDictionary'.lower() ]
+    numberOfElementsInSubset = listFilenames[ 'numberOfElementInSubset'.lower() ]
     numberOfTotalSession = sum(numberOfElementsInSubset)
 
     # read files into sessionID -> data
@@ -264,16 +264,15 @@ def createConfigurationFileForCrossValidationUnitTest( p_configurationFilename,
             featureSessionDict[ft] = this.readListFileBySessionID( featureListFilenamesDict[ft],
                                                                    numberOfTotalSession)
 
-
-    outputConfigFilenameDict= {}
     #{ iterate throug subsets
+    outputConfigFilenameDict= {}
     for nTest in range ( 0, len( numberOfElementsInSubset ) ): 
         trainApplyTagList = this.getTags( mainSessionDict.keys(),
                                           nTest, 
                                           numberOfElementsInSubset);
         newConfigFilename, newMainFilename, newFeatureFilenameDict = this.generateNewFilenames( nTest, 
                                    featureListFilenamesDict.keys(),
-                                   outputFilePrefix)
+                                   outputConfigurationFilenamePrefix)
         this.writeListFile( mainSessionDict, 
                             newMainFilename,
                             trainApplyTagList)
@@ -293,7 +292,7 @@ def createConfigurationFileForCrossValidationUnitTest( p_configurationFilename,
         print( newMainFilename['Apply'] )
         print( trainFeatureStr )
         print( applyFeatureStr )
-        this.writeConfigFile( p_configurationFilename,
+        this.writeConfigFile( inputConfigurationFilename,
                               newConfigFilename, 
                               {'subjectListFilename':newMainFilename['Train'],
                                'applySubjectListFilename':newMainFilename['Apply'],
@@ -335,8 +334,8 @@ def crossValidationWorkUp( crossValidationConfigurationFilename,
            """)
     createConfigurationFiles = pe.Node( name = "createConfigurationFiles",
                                         interface = Function(  
-                                           input_names = ['p_configurationFilename',
-                                                          'outputFilePrefix'],
+                                           input_names = ['inputConfigurationFilename',
+                                                          'outputConfigurationFilenamePrefix'],
                                            output_names = ['outputConfigFilenameDict'],
                                            function = this.createConfigurationFileForCrossValidationUnitTest )
                                       )
@@ -344,8 +343,8 @@ def crossValidationWorkUp( crossValidationConfigurationFilename,
     preprocessing = pe.Workflow( name = 'Preprocessing' )
     preprocessing.base_dir = baseDir +"/PreprocessingDir"
 
-    createConfigurationFiles.inputs.p_configurationFilename = crossValidationConfigurationFilename
-    createConfigurationFiles.inputs.outputFilePrefix = 'createConfigurationFiles'
+    createConfigurationFiles.inputs.inputConfigurationFilename = crossValidationConfigurationFilename
+    createConfigurationFiles.inputs.outputConfigurationFilenamePrefix = 'createConfigurationFiles'
     
     extractConfigurationFileListND = pe.Node( name = "extractConfigurationFileListND",
                                               interface = Function(
@@ -462,7 +461,7 @@ def crossValidationWorkUp( crossValidationConfigurationFilename,
                                 )
     vectorCreatorND.inputs.outputVectorFilename = 'oneROIVectorFile.txt'
     vectorCreatorND.inputs.outputXmlFilename = 'oneROICreateVectorNetConfiguration.xml'
-    normalizationOption = ast.literal_eval( Options[ 'normalization'.lower()]  )
+    normalizationOption = Options[ 'normalization'.lower()]  
     print( """Normalization Option: {str}
            """.format( str=normalizationOption ) )
     vectorCreatorND.iterables = ( 'normalization', normalizationOption )
@@ -522,7 +521,7 @@ def crossValidationWorkUp( crossValidationConfigurationFilename,
     #methodParameter = { '--method': 'RandomForest',
     #                    '--numberOfTrees': 60,
     #                    '--randomTreeDepth ': 60 }
-    methodFromConfiguFile = ast.literal_eval( Options['modelParameter'.lower()] )
+    methodFromConfiguFile = Options['modelParameter'.lower()] 
     trainND.iterables= ( 'methodParameter', methodFromConfiguFile)
                          
     trainND.inputs.outputXmlFilename = 'trianNetConfiguration.xml'
@@ -574,7 +573,10 @@ def crossValidationWorkUp( crossValidationConfigurationFilename,
                                              ('methodParameter_--method',''),
                                              ('RandomForest','RF/'),
                                              ('.--randomTreeDepth','TreeDepth'),
-                                             ('.--numberOfTrees','_TreeNumber')]
+                                             ('.--numberOfTrees','_TreeNumber'),
+                                             ('ANNContinuousPrediction(?P<roi>.+)(?P<session>\d\d\d\d\d).nii.gz',r'\g<session>_\g<roi>_ANNContinuous.nii.gz')
+                                             ]
+    #ANNContinuousPredictionl_accumben77478
 
     workflow.connect( [ ( applyND, LabelsDS,
                           [ ( ( 'outputLabelDict', getDictionaryValues), 'Labels')] ) ] )
@@ -602,6 +604,7 @@ def crossValidationWorkUp( crossValidationConfigurationFilename,
         #     Prepend the shell environment search paths
         PROGRAM_PATHS= binPath
         PROGRAM_PATHS=PROGRAM_PATHS.split(':')
+        import os
         PROGRAM_PATHS.extend(os.environ['PATH'].split(':'))                                                                           
         os.environ['PATH']=':'.join(PROGRAM_PATHS)
 
@@ -679,9 +682,9 @@ def main(argv=None):
     if not args.unitTest: 
         crossValidationWorkUp ( args.crossValidationConfigurationFilename,
                                 args.baseDir,
-                                args.PythonBinDir,
                                 args.runOption,
-                                args.BRAINSStandAloneSrcDir,
+                                args.PythonBinDir,
+                                args.BRAINSStandAloneSrcDir, 
                                 args.BRAINSStandAloneBuildDir)
     
     #-------------------------------- 

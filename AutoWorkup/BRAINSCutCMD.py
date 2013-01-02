@@ -98,19 +98,19 @@ def xmlGenerator( args, roi="" ):
     if roi == "caudate":
       addProbabilityMapElement( args.probabilityMapsLeftCaudate,     "l_caudate", outputStream);
       addProbabilityMapElement( args.probabilityMapsRightCaudate,    "r_caudate", outputStream);
-    else if roi == 'putamen':
+    elif roi == 'putamen':
       addProbabilityMapElement( args.probabilityMapsLeftPutamen,     "l_putamen", outputStream);
       addProbabilityMapElement( args.probabilityMapsRightPutamen,    "r_putamen", outputStream);
-    else if roi == 'thalamus':
+    elif roi == 'thalamus':
       addProbabilityMapElement( args.probabilityMapsLeftThalamus,    "l_thalamus", outputStream);
       addProbabilityMapElement( args.probabilityMapsRightThalamus,   "r_thalamus", outputStream);
-    else if roi == 'hippocampus':
+    elif roi == 'hippocampus':
       addProbabilityMapElement( args.probabilityMapsLeftHippocampus, "l_hippocampus", outputStream);
       addProbabilityMapElement( args.probabilityMapsRightHippocampus,"r_hippocampus", outputStream);
-    else if roi == 'accumben':
+    elif roi == 'accumben':
       addProbabilityMapElement( args.probabilityMapsLeftAccumben,    "l_accumben", outputStream);
       addProbabilityMapElement( args.probabilityMapsRightAccumben,   "r_accumben", outputStream);
-    else if roi == 'globus':
+    elif roi == 'globus':
       addProbabilityMapElement( args.probabilityMapsLeftGlobus,      "l_globus", outputStream);
       addProbabilityMapElement( args.probabilityMapsRightGlobus,     "r_globus", outputStream);
 
@@ -225,8 +225,8 @@ roiList = ['accumben', 'caudate', 'putamen', 'globus', 'thalamus', 'hippocampus'
 
 for roi in roiList:
     currentXmlFilename = xmlGenerator( args, roi )
-    currentModelFilename = args.modelFilename[-2] + '_' + roi + 'gz' # trainModelFile.txtD0060NT0060_accumben.gz
-    
+    currentModelFilename = args.modelFilename[:-3] + '_' + roi + '.gz' # trainModelFile.txtD0060NT0060_accumben.gz
+
     BRAINSCutCommand=["BRAINSCut" + " --applyModel " +
                      " --netConfiguration " + currentXmlFilename  +
                      " --modelFilename " + currentModelFilename  +

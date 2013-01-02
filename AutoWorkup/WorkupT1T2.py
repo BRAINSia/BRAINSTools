@@ -346,17 +346,22 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
         BAtlas[subjectid] = MakeAtlasNode(atlas_fname_wpath,"BAtlas_"+str(subjectid)) ## Call function to create node
 
 
+        global_AllT1s=dict()
+        global_AllT2s=dict()
+        global_AllPDs=dict()
+        global_AllFLs=dict()
+        global_AllOthers=dict()
         for sessionid in allSessions:
-            global_AllT1s=ExperimentDatabase.getFilenamesByScantype(sessionid,['T1-30','T1-15'])
-            global_AllT2s=ExperimentDatabase.getFilenamesByScantype(sessionid,['T2-30','T2-15'])
-            global_AllPDs=ExperimentDatabase.getFilenamesByScantype(sessionid,['PD-30','PD-15'])
-            global_AllFLs=ExperimentDatabase.getFilenamesByScantype(sessionid,['FL-30','FL-15'])
-            global_AllOthers=ExperimentDatabase.getFilenamesByScantype(sessionid,['OTHER-30','OTHER-15'])
-            print("HACK:  all T1s: {0} {1}".format(global_AllT1s, len(global_AllT1s) ))
-            print("HACK:  all T2s: {0} {1}".format(global_AllT2s, len(global_AllT2s) ))
-            print("HACK:  all PDs: {0} {1}".format(global_AllPDs, len(global_AllPDs) ))
-            print("HACK:  all FLs: {0} {1}".format(global_AllFLs, len(global_AllFLs) ))
-            print("HACK:  all Others: {0} {1}".format(global_AllOthers, len(global_AllOthers) ))
+            global_AllT1s[sessionid]=ExperimentDatabase.getFilenamesByScantype(sessionid,['T1-30','T1-15'])
+            global_AllT2s[sessionid]=ExperimentDatabase.getFilenamesByScantype(sessionid,['T2-30','T2-15'])
+            global_AllPDs[sessionid]=ExperimentDatabase.getFilenamesByScantype(sessionid,['PD-30','PD-15'])
+            global_AllFLs[sessionid]=ExperimentDatabase.getFilenamesByScantype(sessionid,['FL-30','FL-15'])
+            global_AllOthers[sessionid]=ExperimentDatabase.getFilenamesByScantype(sessionid,['OTHER-30','OTHER-15'])
+            print("HACK:  all T1s: {0} {1}".format(global_AllT1s[sessionid], len(global_AllT1s[sessionid]) ))
+            print("HACK:  all T2s: {0} {1}".format(global_AllT2s[sessionid], len(global_AllT2s[sessionid]) ))
+            print("HACK:  all PDs: {0} {1}".format(global_AllPDs[sessionid], len(global_AllPDs[sessionid]) ))
+            print("HACK:  all FLs: {0} {1}".format(global_AllFLs[sessionid], len(global_AllFLs[sessionid]) ))
+            print("HACK:  all Others: {0} {1}".format(global_AllOthers[sessionid], len(global_AllOthers[sessionid]) ))
 
             projectid = ExperimentDatabase.getProjFromSession(sessionid)
             print("PROJECT: {0} SUBJECT: {1} SESSION: {2}".format(projectid,subjectid,sessionid))
@@ -372,11 +377,11 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
             PHASE_1_subjInfoNode[sessionid].inputs.projectid=projectid
             PHASE_1_subjInfoNode[sessionid].inputs.subjectid=subjectid
             PHASE_1_subjInfoNode[sessionid].inputs.sessionid=sessionid
-            PHASE_1_subjInfoNode[sessionid].inputs.allT1s=global_AllT1s
-            PHASE_1_subjInfoNode[sessionid].inputs.allT2s=global_AllT2s
-            PHASE_1_subjInfoNode[sessionid].inputs.allPDs=global_AllPDs
-            PHASE_1_subjInfoNode[sessionid].inputs.allFLs=global_AllFLs
-            PHASE_1_subjInfoNode[sessionid].inputs.allOthers=global_AllOthers
+            PHASE_1_subjInfoNode[sessionid].inputs.allT1s=global_AllT1s[sessionid]
+            PHASE_1_subjInfoNode[sessionid].inputs.allT2s=global_AllT2s[sessionid]
+            PHASE_1_subjInfoNode[sessionid].inputs.allPDs=global_AllPDs[sessionid]
+            PHASE_1_subjInfoNode[sessionid].inputs.allFLs=global_AllFLs[sessionid]
+            PHASE_1_subjInfoNode[sessionid].inputs.allOthers=global_AllOthers[sessionid]
 
             PROCESSING_PHASE='PHASE_1'
             PHASE_1_WORKFLOW_COMPONENTS =  ['BASIC','TISSUE_CLASSIFY']
@@ -613,13 +618,14 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                 baw200.connect(BRAINSCreateLabelMapFromProbabilityMapsNode[sessionid], 'dirtyLabelVolume', TC_DataSink[sessionid], 'TissueClassify.@outputHeadLabels')
 
                 from PipeLineFunctionHelpers import makeListOfValidImages
-                if len(global_AllT1s) > 0:
+                if len(global_AllT1s[sessionid]) > 0:
                     baw200.connect( [ ( PHASE_2_oneSubjWorkflow[sessionid], TC_DataSink[sessionid], [ ( (  'outputspec.t1_average', makeListOfValidImages ), 'TissueClassify.@t1_average' ) ] ) ] )
-                if len(global_AllT2s) > 0:
+                if len(global_AllT2s[sessionid]) > 0:
+                    print "XXXXYYYY  {0}".format(global_AllT2s[sessionid])
                     baw200.connect( [ ( PHASE_2_oneSubjWorkflow[sessionid], TC_DataSink[sessionid], [ ( (  'outputspec.t2_average', makeListOfValidImages ), 'TissueClassify.@t2_average' ) ] ) ] )
-                if len(global_AllPDs) > 0:
+                if len(global_AllPDs[sessionid]) > 0:
                     baw200.connect( [ ( PHASE_2_oneSubjWorkflow[sessionid], TC_DataSink[sessionid], [ ( (  'outputspec.pd_average', makeListOfValidImages ), 'TissueClassify.@pd_average' ) ] ) ] )
-                if len(global_AllFLs) > 0:
+                if len(global_AllFLs[sessionid]) > 0:
                     baw200.connect( [ ( PHASE_2_oneSubjWorkflow[sessionid], TC_DataSink[sessionid], [ ( (  'outputspec.fl_average', makeListOfValidImages ), 'TissueClassify.@fl_average' ) ] ) ] )
                 baw200.connect(PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.TissueClassifyatlasToSubjectTransform', TC_DataSink[sessionid], 'TissueClassify.@atlasToSubjectTransform')
                 baw200.connect(PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.TissueClassifyatlasToSubjectInverseTransform', TC_DataSink[sessionid], 'TissueClassify.@atlasToSubjectInverseTransform')
@@ -709,22 +715,22 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                     #baw200.connect(BAtlas[subjectid],'template_t1_clipped',AtlasToSubjectantsRegistration[sessionid], 'moving_image')
                     #baw200.connect(ClipT1ImageWithBrainMaskNode[sessionid], 'clipped_file', AtlasToSubjectantsRegistration[sessionid], 'fixed_image')
 
-                global_AllT1s=ExperimentDatabase.getFilenamesByScantype(sessionid,['T1-30','T1-15'])
-                global_AllT2s=ExperimentDatabase.getFilenamesByScantype(sessionid,['T2-30','T2-15'])
-                global_AllPDs=ExperimentDatabase.getFilenamesByScantype(sessionid,['PD-30','PD-15'])
-                global_AllFLs=ExperimentDatabase.getFilenamesByScantype(sessionid,['FL-30','FL-15'])
-                global_AllOthers=ExperimentDatabase.getFilenamesByScantype(sessionid,['OTHER-30','OTHER-15'])
-                print("HACK2:  all T1s: {0} {1}".format(global_AllT1s, len(global_AllT1s) ))
-                print("HACK2:  all T2s: {0} {1}".format(global_AllT2s, len(global_AllT2s) ))
-                print("HACK2:  all PDs: {0} {1}".format(global_AllPDs, len(global_AllPDs) ))
-                print("HACK2:  all FLs: {0} {1}".format(global_AllFLs, len(global_AllFLs) ))
-                print("HACK2:  all Others: {0} {1}".format(global_AllOthers, len(global_AllOthers) ))
+                global_AllT1s[sessionid]=ExperimentDatabase.getFilenamesByScantype(sessionid,['T1-30','T1-15'])
+                global_AllT2s[sessionid]=ExperimentDatabase.getFilenamesByScantype(sessionid,['T2-30','T2-15'])
+                global_AllPDs[sessionid]=ExperimentDatabase.getFilenamesByScantype(sessionid,['PD-30','PD-15'])
+                global_AllFLs[sessionid]=ExperimentDatabase.getFilenamesByScantype(sessionid,['FL-30','FL-15'])
+                global_AllOthers[sessionid]=ExperimentDatabase.getFilenamesByScantype(sessionid,['OTHER-30','OTHER-15'])
+                print("HACK2:  all T1s: {0} {1}".format(global_AllT1s[sessionid], len(global_AllT1s[sessionid]) ))
+                print("HACK2:  all T2s: {0} {1}".format(global_AllT2s[sessionid], len(global_AllT2s[sessionid]) ))
+                print("HACK2:  all PDs: {0} {1}".format(global_AllPDs[sessionid], len(global_AllPDs[sessionid]) ))
+                print("HACK2:  all FLs: {0} {1}".format(global_AllFLs[sessionid], len(global_AllFLs[sessionid]) ))
+                print("HACK2:  all Others: {0} {1}".format(global_AllOthers[sessionid], len(global_AllOthers[sessionid]) ))
                 if ( 'SEGMENTATION' in WORKFLOW_COMPONENTS ) : # Currently only works with multi-modal_data
                     print("HACK SEGMENTATION IN  WORKFLOW_COMPONENTS {0}".format(WORKFLOW_COMPONENTS))
-                if ( len(global_AllT2s) > 0 ): # Currently only works with multi-modal_data
-                    print("HACK len(global_AllT2s) > 0 : {0}".format(len(global_AllT2s) ))
+                if ( len(global_AllT2s[sessionid]) > 0 ): # Currently only works with multi-modal_data
+                    print("HACK len(global_AllT2s[sessionid]) > 0 : {0}".format(len(global_AllT2s[sessionid]) ))
                 print("HACK")
-                if ( 'SEGMENTATION' in WORKFLOW_COMPONENTS ) and ( len(global_AllT2s) > 0 ): # Currently only works with multi-modal_data
+                if ( 'SEGMENTATION' in WORKFLOW_COMPONENTS ) and ( len(global_AllT2s[sessionid]) > 0 ): # Currently only works with multi-modal_data
                     from WorkupT1T2BRAINSCut import CreateBRAINSCutWorkflow
                     myLocalSegWF[sessionid] = CreateBRAINSCutWorkflow(projectid, subjectid, sessionid,'Segmentation',
                                                               CLUSTER_QUEUE,CLUSTER_QUEUE_LONG,BAtlas[subjectid]) ##Note:  Passing in the entire BAtlas Object here!
@@ -901,7 +907,7 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                     print("HACK:  DEBUGGING HERE")
 
                 else:
-                    print("SKIPPING SEGMENTATION PHASE FOR {0} {1} {2}, lenT2s {3}".format(projectid, subjectid, sessionid, len(global_AllT2s) ))
+                    print("SKIPPING SEGMENTATION PHASE FOR {0} {1} {2}, lenT2s {3}".format(projectid, subjectid, sessionid, len(global_AllT2s[sessionid]) ))
 
 
                 ## Synthesized images are only valid for 3T where the T2 and T1 have approximately the same resolution.

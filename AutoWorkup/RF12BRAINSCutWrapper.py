@@ -9,7 +9,7 @@ Purpose:       Wrap a convenience function for the BRAINSCut program in Nipype
 Requirements:  <<< Interface specifications >>>
 
 """
-from nipype.interfaces.base import ( File, TraitedSpec, Interface, CommandLineInputSpec, CommandLine, traits , isdefined)
+from nipype.interfaces.base import ( File, TraitedSpec, Interface, CommandLineInputSpec, CommandLine, traits, isdefined)
 import sys
 import os
 import warnings
@@ -20,6 +20,8 @@ class RF12BRAINSCutWrapperCLInputSpec(CommandLineInputSpec):
     inputSubjectT1Filename = File( desc="Subject T1 Volume", exists=True, mandatory=True, argstr="--inputSubjectT1Filename %s")
     inputSubjectT2Filename = File( desc="Subject T2 Volume", exists=True, mandatory=True, argstr="--inputSubjectT2Filename %s")
     inputSubjectGadSGFilename = File( desc="Subject SG Volume", exists=True, mandatory=True, argstr="--inputSubjectGadSGFilename %s")
+    vectorNormalization = traits.Enum("IQR","Linear","Sigmoid_Q01","Sigmoid_Q05","ZScore","NONE",
+        desc="The type of intensity normalization to use",exists=True,mandatory=True,argstr="--vectorNormalization %s")
 
     ### model specific
     modelFilename = File( desc="modelFilename", exists=True, mandatory=True, argstr="--modelFilename %s")
@@ -70,7 +72,7 @@ class RF12BRAINSCutWrapperCLInputSpec(CommandLineInputSpec):
     outputBinaryRightThalamus = File( desc = "Output binary file of right thalamus", exists = False, mandatory = True, argstr="--outputBinaryRightThalamus %s")
 
 class RF12BRAINSCutWrapperCLOutputSpec(TraitedSpec):
-    xmlFilename = File( desc = "Net configuration xml file", exists = True, mandatory = True)
+    xmlFilename = File( desc = "Net configuration xml file", exists = False, mandatory = False)
 
     outputBinaryLeftAccumben = File( desc = "Output binary file of left accumben", exists = True, mandatory = True)
     outputBinaryRightAccumben = File( desc = "Output binary file of right accumben", exists = True, mandatory = True)

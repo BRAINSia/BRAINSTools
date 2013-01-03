@@ -180,8 +180,7 @@ brainscutParser.add_argument('--inputTemplateThetaFilename', help='template thet
 brainscutParser.add_argument('--trainingVectorFilename', help='training vector filename', default="NA" )
 #brainscutParser.add_argument('--modelFileBasename', help='model filei base name for net configuration file (xml).', default="NA" )
 brainscutParser.add_argument('--modelFilename', help='model filename', default="NA", required=True )
-brainscutParser.add_argument('--vectorNormalization', help='feature vector normalization (liner)',
-                             default="true" )
+brainscutParser.add_argument('--vectorNormalization', help='feature vector normalization (IQR,Linear,Sigmoid_Q01,Sigmoid_Q05,ZScore,NONE)', required=True)
 
 # probability maps
 brainscutParser.add_argument('--probabilityMapsLeftCaudate', help='model probability maps for left caudate' , required=True)
@@ -219,6 +218,11 @@ brainscutParser.add_argument('--outputBinaryRightGlobus', help='output binary fi
 brainscutParser.add_argument('--xmlFilename',help='BRAINSCut xml configuration filename', default="output.xml")
 
 args=brainscutParser.parse_args()
+## HACK:  DOUBLE CHECK THAT IQR IS USED
+if args.vectorNormalization != "IQR":
+        print "ERROR:   ONLY IQR SUPPORTED AT THE MOMENT"
+        exit -1
+        
 
 print( args )
 roiList = ['accumben', 'caudate', 'putamen', 'globus', 'thalamus', 'hippocampus']

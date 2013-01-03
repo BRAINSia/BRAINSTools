@@ -749,7 +749,7 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                     SEGMENTATION_DataSink[sessionid].inputs.base_directory=ExperimentBaseDirectoryResults
                     #SEGMENTATION_DataSink[sessionid].inputs.regexp_substitutions = GenerateOutputPattern(projectid, subjectid, sessionid,'BRAINSCut')
                     #SEGMENTATION_DataSink[sessionid].inputs.regexp_substitutions = GenerateBRAINSCutImagesOutputPattern(projectid, subjectid, sessionid)
-                    SEGMENTATION_DataSink[sessionid].inputs.substitutions = [ ( 'Segmentations',os.path.join(projectid, subjectid, sessionid,'RFSegmentations') ),
+                    SEGMENTATION_DataSink[sessionid].inputs.substitutions = [ ( 'Segmentations',os.path.join(projectid, subjectid, sessionid,'SingleRFSegmentations') ),
                                                                               ( 'subjectANNLabel_', '' ),
                                                                               ( '.nii.gz', '_seg.nii.gz')
                                                                             ]

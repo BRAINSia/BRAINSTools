@@ -216,7 +216,15 @@ def CreateBRAINSCutWorkflow( projectid,
     cutWF.connect(atlasObject,'l_globus_ProbabilityMap',RF12BC,'probabilityMapsLeftGlobus')
     cutWF.connect(atlasObject,'r_globus_ProbabilityMap',RF12BC,'probabilityMapsRightGlobus')
     ##TODO:
-    cutWF.connect(atlasObject,'trainModelFile_txtD0060NT0060_gz',RF12BC,'modelFilename')
+    if not t1Only:
+        cutWF.connect(atlasObject,'trainModelFile_txtD0060NT0060_gz',RF12BC,'modelFilename')
+    else:
+        ### TODO:  Replace with proper atlasObject name in the future!!! This is a HACK
+        ### to avoid changing the hash keys of the input files from the atlas.
+        def ChangeModelPathDirectory(multiModalFileName):
+                return multiModalFileName.replace('modelFiles','T1OnlyModels')
+        cutWF.connect( [ ( atlasObject, RF12BC,
+                     [ ( ( 'trainModelFile_txtD0060NT0060_gz', ChangeModelPathDirectory ), 'modelFilename')] ) ] )
 
     ## Need to index from next line cutWF.connect(inputsSpec,'atlasToSubjectTransform',RF12BC,'deformationFromTemplateToSubject')
     cutWF.connect( [ ( inputsSpec, RF12BC, [ (( 'atlasToSubjectTransform', getListIndex, 0 ), 'deformationFromTemplateToSubject')]), ] )

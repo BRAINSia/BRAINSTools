@@ -27,7 +27,7 @@ def xmlGenerator( args, roi="" ):
     #
     outputStream.write( "  <DataSet Name=\"template\" Type=\"Atlas\" >\n")
     outputStream.write( "      <Image Type=\"T1\" Filename=\"{fn}\" />\n".format(fn=args.inputTemplateT1))
-    if args.inputSubjectT1Filename != "":
+    if args.inputSubjectT2Filename is not None:
         outputStream.write( "      <Image Type=\"T2\" Filename=\"{fn}\" />\n".format(fn="na"))
         outputStream.write( "      <Image Type=\"GadSG\" Filename=\"{fn}\" />\n".format(fn="na"))
     #outputStream.write( "      <Image Type=\"TotalGM\" Filename=\"{fn}\" />\n".format(fn="na"))
@@ -121,7 +121,7 @@ def xmlGenerator( args, roi="" ):
     outputStream.write( "  <DataSet Name=\"subject\" Type=\"Apply\"")
     outputStream.write( "      OutputDir=\"./\" >\n")
     outputStream.write( "    <Image Type=\"T1\" Filename=\""+args.inputSubjectT1Filename+"\" />\n")
-    if args.inputSubjectT1Filename != "":
+    if args.inputSubjectT2Filename is not None:
         outputStream.write( "    <Image Type=\"T2\" Filename=\""+args.inputSubjectT2Filename+"\" />\n")
         outputStream.write( "    <Image Type=\"GadSG\" Filename=\""+args.inputSubjectGadSGFilename+"\" />\n")
     #outputStream.write( "    <Image Type=\"TotalGM\" Filename=\"{fn}\" />\n".format(fn=args.inputSubjectTotalGMFilename))

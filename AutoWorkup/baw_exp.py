@@ -298,6 +298,7 @@ def main(argv=None):
                 except:
                     pass
                 print "Running sequentially on local machine"
+                #baw200.run(updatehash=True)
                 baw200.run()
             else:
                 print "You must specify the run environment type. [helium_all.q,helium_all.q_graph,ipl_OSX,local_4,local_12,local]"

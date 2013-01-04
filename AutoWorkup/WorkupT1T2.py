@@ -732,9 +732,9 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                 print("HACK")
                 if ( 'SEGMENTATION' in WORKFLOW_COMPONENTS ):
                     from WorkupT1T2BRAINSCut import CreateBRAINSCutWorkflow
+                    t1Only = not( len(global_AllT2s[sessionid]) > 0 )
                     myLocalSegWF[sessionid] = CreateBRAINSCutWorkflow(projectid, subjectid, sessionid,'Segmentation',
                                                                       CLUSTER_QUEUE,CLUSTER_QUEUE_LONG,BAtlas[subjectid], t1Only) ##Note:  Passing in the entire BAtlas Object here!
-                    myLocalSegWF[sessionid].inputs.t1Only = not( len(global_AllT2s[sessionid]) > 0 )
                     
                     baw200.connect( PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.t1_average', myLocalSegWF[sessionid], "inputspec.T1Volume" )
 

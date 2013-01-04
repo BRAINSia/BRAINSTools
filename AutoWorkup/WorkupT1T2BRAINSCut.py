@@ -111,39 +111,47 @@ def CreateLabelMap(listOfImages,LabelImageName,CSVFileName,projectid, subjectid,
     cutWF.connect(BAtlas,'template_brain',myLocalcutWF,'movingBinaryVolume')
     cutWF.connect(BLI,'outputTransformFilename',myLocalcutWF,'initialTransform')
 """
-def CreateBRAINSCutWorkflow(projectid, subjectid, sessionid,WFName,CLUSTER_QUEUE,CLUSTER_QUEUE_LONG,atlasObject):
+def CreateBRAINSCutWorkflow( projectid, 
+                             subjectid, 
+                             sessionid,
+                             WFName,
+                             CLUSTER_QUEUE,
+                             CLUSTER_QUEUE_LONG,
+                             atlasObject,
+                             t1Only = False ):
     cutWF= pe.Workflow(name=GenerateWFName(projectid, subjectid, sessionid,WFName))
 
     inputsSpec = pe.Node(interface=IdentityInterface(fields=['T1Volume','T2Volume',
         'TotalGM','RegistrationROI',
         'atlasToSubjectTransform']), name='inputspec' )
 
-    """
-    Gradient Anistropic Diffusion images for BRAINSCut
-    """
-    GADT1=pe.Node(interface=GradientAnisotropicDiffusionImageFilter(),name="GADT1")
-    GADT1.inputs.timeStep = 0.025
-    GADT1.inputs.conductance = 1
-    GADT1.inputs.numberOfIterations = 5
-    GADT1.inputs.outputVolume = "GADT1.nii.gz"
+    if not t1Only:
+        """
+        Gradient Anistropic Diffusion images for BRAINSCut
+        """
+        GADT1=pe.Node(interface=GradientAnisotropicDiffusionImageFilter(),name="GADT1")
+        GADT1.inputs.timeStep = 0.025
+        GADT1.inputs.conductance = 1
+        GADT1.inputs.numberOfIterations = 5
+        GADT1.inputs.outputVolume = "GADT1.nii.gz"
 
-    cutWF.connect(inputsSpec,'T1Volume',GADT1,'inputVolume')
+        cutWF.connect(inputsSpec,'T1Volume',GADT1,'inputVolume')
 
-    GADT2=pe.Node(interface=GradientAnisotropicDiffusionImageFilter(),name="GADT2")
-    GADT2.inputs.timeStep = 0.025
-    GADT2.inputs.conductance = 1
-    GADT2.inputs.numberOfIterations = 5
-    GADT2.inputs.outputVolume = "GADT2.nii.gz"
-    cutWF.connect(inputsSpec,'T2Volume',GADT2,'inputVolume')
+        GADT2=pe.Node(interface=GradientAnisotropicDiffusionImageFilter(),name="GADT2")
+        GADT2.inputs.timeStep = 0.025
+        GADT2.inputs.conductance = 1
+        GADT2.inputs.numberOfIterations = 5
+        GADT2.inputs.outputVolume = "GADT2.nii.gz"
+        cutWF.connect(inputsSpec,'T2Volume',GADT2,'inputVolume')
 
-    """
-    Sum the gradient images for BRAINSCut
-    """
-    SGI=pe.Node(interface=GenerateSummedGradientImage(),name="SGI")
-    SGI.inputs.outputFileName = "SummedGradImage.nii.gz"
+        """
+        Sum the gradient images for BRAINSCut
+        """
+        SGI=pe.Node(interface=GenerateSummedGradientImage(),name="SGI")
+        SGI.inputs.outputFileName = "SummedGradImage.nii.gz"
 
-    cutWF.connect(GADT1,'outputVolume',SGI,'inputVolume1')
-    cutWF.connect(GADT2,'outputVolume',SGI,'inputVolume2')
+        cutWF.connect(GADT1,'outputVolume',SGI,'inputVolume1')
+        cutWF.connect(GADT2,'outputVolume',SGI,'inputVolume2')
 
     """
     BRAINSCut
@@ -182,11 +190,12 @@ def CreateBRAINSCutWorkflow(projectid, subjectid, sessionid,WFName,CLUSTER_QUEUE
     RF12BC.inputs.outputBinaryRightGlobus=      'subjectANNLabel_r_globus.nii.gz'
 
     cutWF.connect(inputsSpec,'T1Volume',RF12BC,'inputSubjectT1Filename')
-    cutWF.connect(inputsSpec,'T2Volume',RF12BC,'inputSubjectT2Filename')
-    #cutWF.connect(inputsSpec,'TotalGM',RF12BC,'inputSubjectTotalGMFilename')
-    #cutWF.connect(inputsSpec,'RegistrationROI',RF12BC,'inputSubjectRegistrationROIFilename')
-    # Error cutWF.connect(SGI,'outputVolume',RF12BC,'inputSubjectGadSGFilename')
-    cutWF.connect(SGI,'outputFileName',RF12BC,'inputSubjectGadSGFilename')
+    if not t1Only:
+        cutWF.connect(inputsSpec,'T2Volume',RF12BC,'inputSubjectT2Filename')
+        #cutWF.connect(inputsSpec,'TotalGM',RF12BC,'inputSubjectTotalGMFilename')
+        #cutWF.connect(inputsSpec,'RegistrationROI',RF12BC,'inputSubjectRegistrationROIFilename')
+        # Error cutWF.connect(SGI,'outputVolume',RF12BC,'inputSubjectGadSGFilename')
+        cutWF.connect(SGI,'outputFileName',RF12BC,'inputSubjectGadSGFilename')
     cutWF.connect(atlasObject,'template_t1',RF12BC,'inputTemplateT1')
     #cutWF.connect(atlasObject,'template_brain',RF12BC,'inputTemplateRegistrationROIFilename')
 

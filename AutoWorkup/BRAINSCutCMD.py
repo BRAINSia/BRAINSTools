@@ -27,8 +27,9 @@ def xmlGenerator( args, roi="" ):
     #
     outputStream.write( "  <DataSet Name=\"template\" Type=\"Atlas\" >\n")
     outputStream.write( "      <Image Type=\"T1\" Filename=\"{fn}\" />\n".format(fn=args.inputTemplateT1))
-    outputStream.write( "      <Image Type=\"T2\" Filename=\"{fn}\" />\n".format(fn="na"))
-    outputStream.write( "      <Image Type=\"GadSG\" Filename=\"{fn}\" />\n".format(fn="na"))
+    if args.inputSubjectT1Filename != "":
+        outputStream.write( "      <Image Type=\"T2\" Filename=\"{fn}\" />\n".format(fn="na"))
+        outputStream.write( "      <Image Type=\"GadSG\" Filename=\"{fn}\" />\n".format(fn="na"))
     #outputStream.write( "      <Image Type=\"TotalGM\" Filename=\"{fn}\" />\n".format(fn="na"))
     #outputStream.write( "      <Mask  Type=\"RegistrationROI\" Filename=\"{fn}\" />\n".format(fn=args.inputTemplateRegistrationROIFilename))
 
@@ -120,8 +121,9 @@ def xmlGenerator( args, roi="" ):
     outputStream.write( "  <DataSet Name=\"subject\" Type=\"Apply\"")
     outputStream.write( "      OutputDir=\"./\" >\n")
     outputStream.write( "    <Image Type=\"T1\" Filename=\""+args.inputSubjectT1Filename+"\" />\n")
-    outputStream.write( "    <Image Type=\"T2\" Filename=\""+args.inputSubjectT2Filename+"\" />\n")
-    outputStream.write( "    <Image Type=\"GadSG\" Filename=\""+args.inputSubjectGadSGFilename+"\" />\n")
+    if args.inputSubjectT1Filename != "":
+        outputStream.write( "    <Image Type=\"T2\" Filename=\""+args.inputSubjectT2Filename+"\" />\n")
+        outputStream.write( "    <Image Type=\"GadSG\" Filename=\""+args.inputSubjectGadSGFilename+"\" />\n")
     #outputStream.write( "    <Image Type=\"TotalGM\" Filename=\"{fn}\" />\n".format(fn=args.inputSubjectTotalGMFilename))
     #outputStream.write( "    <Mask  Type=\"RegistrationROI\" Filename=\"{fn}\" />\n".format(fn=args.inputSubjectRegistrationROIFilename))
 
@@ -164,9 +166,9 @@ brainscutParser = argparse.ArgumentParser( description ='BRAINSCut command line 
 # input arguments
 #
 brainscutParser.add_argument('--inputSubjectT1Filename', help='T1 subject filename', required=True )
-brainscutParser.add_argument('--inputSubjectT2Filename', help='T2 subject filename', required=True )
+brainscutParser.add_argument('--inputSubjectT2Filename', help='T2 subject filename', required=False )
 #brainscutParser.add_argument('--inputSubjectTotalGMFilename', help='TotalGM filename', required=True )
-brainscutParser.add_argument('--inputSubjectGadSGFilename', help='GadSG subject filename', required=True )
+brainscutParser.add_argument('--inputSubjectGadSGFilename', help='GadSG subject filename', required=False )
 #brainscutParser.add_argument('--inputSubjectBrainMaskFilename', help='BrainMask subject filename' )
 #brainscutParser.add_argument('--inputSubjectRegistrationROIFilename', help='template brain mask filename' )
 

@@ -730,12 +730,17 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                 if ( len(global_AllT2s[sessionid]) > 0 ): # Currently only works with multi-modal_data
                     print("HACK len(global_AllT2s[sessionid]) > 0 : {0}".format(len(global_AllT2s[sessionid]) ))
                 print("HACK")
-                if ( 'SEGMENTATION' in WORKFLOW_COMPONENTS ) and ( len(global_AllT2s[sessionid]) > 0 ): # Currently only works with multi-modal_data
+                if ( 'SEGMENTATION' in WORKFLOW_COMPONENTS ):
                     from WorkupT1T2BRAINSCut import CreateBRAINSCutWorkflow
                     myLocalSegWF[sessionid] = CreateBRAINSCutWorkflow(projectid, subjectid, sessionid,'Segmentation',
-                                                              CLUSTER_QUEUE,CLUSTER_QUEUE_LONG,BAtlas[subjectid]) ##Note:  Passing in the entire BAtlas Object here!
+                                                                      CLUSTER_QUEUE,CLUSTER_QUEUE_LONG,BAtlas[subjectid], t1Only) ##Note:  Passing in the entire BAtlas Object here!
+                    myLocalSegWF[sessionid].inputs.t1Only = not( len(global_AllT2s[sessionid]) > 0 )
+                    
                     baw200.connect( PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.t1_average', myLocalSegWF[sessionid], "inputspec.T1Volume" )
-                    baw200.connect( PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.t2_average', myLocalSegWF[sessionid], "inputspec.T2Volume")
+
+                    if ( len(global_AllT2s[sessionid]) > 0 ): 
+                        baw200.connect( PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.t2_average', myLocalSegWF[sessionid], "inputspec.T2Volume")
+
                     baw200.connect( PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.outputLabels', myLocalSegWF[sessionid],"inputspec.RegistrationROI")
                     ## NOTE: Element 0 of AccumulatePriorsList is the accumulated GM tissue
                     baw200.connect( [ ( AccumulateLikeTissuePosteriorsNode[sessionid], myLocalSegWF[sessionid],

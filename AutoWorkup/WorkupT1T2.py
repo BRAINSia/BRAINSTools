@@ -796,7 +796,8 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                                           run_without_submitting=True,
                                           name=MergeStage2AverageImagesName)
                     baw200.connect( PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.t1_average', MergeStage2AverageImages[sessionid], 'in1')
-                    baw200.connect( PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.t2_average', MergeStage2AverageImages[sessionid], 'in2')
+                    if ( len(global_AllT2s[sessionid]) > 0 ): 
+                        baw200.connect( PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.t2_average', MergeStage2AverageImages[sessionid], 'in2')
 
 
                     ## SnapShotWriter[sessionid] for Segmented result checking:
@@ -849,26 +850,47 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                     #======== Start warping subject to atlas images
 
                     MergeSessionSubjectToAtlasName="99_MergeSessionSubjectToAtlas_"+str(sessionid)
-                    MergeSessionSubjectToAtlas[sessionid] = pe.Node(interface=Merge(15),
+                    if ( len(global_AllT2s[sessionid]) > 0 ): 
+                        MergeSessionSubjectToAtlas[sessionid] = pe.Node(interface=Merge(15),
                                           run_without_submitting=True,
                                           name=MergeSessionSubjectToAtlasName)
 
-                    baw200.connect( PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.t1_average',       MergeSessionSubjectToAtlas[sessionid], 'in1')
-                    baw200.connect( PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.t2_average',       MergeSessionSubjectToAtlas[sessionid], 'in2')
-                    baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryLeftAccumben',     MergeSessionSubjectToAtlas[sessionid], 'in3')
-                    baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryLeftCaudate',      MergeSessionSubjectToAtlas[sessionid], 'in4')
-                    baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryLeftPutamen',      MergeSessionSubjectToAtlas[sessionid], 'in5')
-                    baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryLeftGlobus',       MergeSessionSubjectToAtlas[sessionid], 'in6')
-                    baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryLeftThalamus',     MergeSessionSubjectToAtlas[sessionid], 'in7')
-                    baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryLeftHippocampus',  MergeSessionSubjectToAtlas[sessionid], 'in8')
-                    baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryRightAccumben',    MergeSessionSubjectToAtlas[sessionid], 'in9')
-                    baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryRightCaudate',     MergeSessionSubjectToAtlas[sessionid], 'in10')
-                    baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryRightPutamen',     MergeSessionSubjectToAtlas[sessionid], 'in11')
-                    baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryRightGlobus',      MergeSessionSubjectToAtlas[sessionid], 'in12')
-                    baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryRightThalamus',    MergeSessionSubjectToAtlas[sessionid], 'in13')
-                    baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryRightHippocampus', MergeSessionSubjectToAtlas[sessionid], 'in14')
+                        baw200.connect( PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.t1_average',       MergeSessionSubjectToAtlas[sessionid], 'in1')
+                        baw200.connect( PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.t2_average',       MergeSessionSubjectToAtlas[sessionid], 'in2')
+                        baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryLeftAccumben',     MergeSessionSubjectToAtlas[sessionid], 'in3')
+                        baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryLeftCaudate',      MergeSessionSubjectToAtlas[sessionid], 'in4')
+                        baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryLeftPutamen',      MergeSessionSubjectToAtlas[sessionid], 'in5')
+                        baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryLeftGlobus',       MergeSessionSubjectToAtlas[sessionid], 'in6')
+                        baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryLeftThalamus',     MergeSessionSubjectToAtlas[sessionid], 'in7')
+                        baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryLeftHippocampus',  MergeSessionSubjectToAtlas[sessionid], 'in8')
+                        baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryRightAccumben',    MergeSessionSubjectToAtlas[sessionid], 'in9')
+                        baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryRightCaudate',     MergeSessionSubjectToAtlas[sessionid], 'in10')
+                        baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryRightPutamen',     MergeSessionSubjectToAtlas[sessionid], 'in11')
+                        baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryRightGlobus',      MergeSessionSubjectToAtlas[sessionid], 'in12')
+                        baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryRightThalamus',    MergeSessionSubjectToAtlas[sessionid], 'in13')
+                        baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryRightHippocampus', MergeSessionSubjectToAtlas[sessionid], 'in14')
+                        baw200.connect( FixWMPartitioningNode[sessionid],'UpdatedPosteriorsList' ,MergeSessionSubjectToAtlas[sessionid], 'in15')
+                    else:
+                        MergeSessionSubjectToAtlas[sessionid] = pe.Node(interface=Merge(14),
+                                          run_without_submitting=True,
+                                          name=MergeSessionSubjectToAtlasName)
 
-                    baw200.connect( FixWMPartitioningNode[sessionid],'UpdatedPosteriorsList' ,MergeSessionSubjectToAtlas[sessionid], 'in15')
+                        baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryLeftAccumben',     MergeSessionSubjectToAtlas[sessionid], 'in1')
+                        baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryLeftCaudate',      MergeSessionSubjectToAtlas[sessionid], 'in2')
+                        baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryLeftPutamen',      MergeSessionSubjectToAtlas[sessionid], 'in3')
+                        baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryLeftGlobus',       MergeSessionSubjectToAtlas[sessionid], 'in4')
+                        baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryLeftThalamus',     MergeSessionSubjectToAtlas[sessionid], 'in5')
+                        baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryLeftHippocampus',  MergeSessionSubjectToAtlas[sessionid], 'in6')
+                        baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryRightAccumben',    MergeSessionSubjectToAtlas[sessionid], 'in7')
+                        baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryRightCaudate',     MergeSessionSubjectToAtlas[sessionid], 'in8')
+                        baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryRightPutamen',     MergeSessionSubjectToAtlas[sessionid], 'in9')
+                        baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryRightGlobus',      MergeSessionSubjectToAtlas[sessionid], 'in10')
+                        baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryRightThalamus',    MergeSessionSubjectToAtlas[sessionid], 'in11')
+                        baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryRightHippocampus', MergeSessionSubjectToAtlas[sessionid], 'in12')
+                        baw200.connect( FixWMPartitioningNode[sessionid],'UpdatedPosteriorsList' ,MergeSessionSubjectToAtlas[sessionid], 'in13')
+                        baw200.connect( PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.t1_average',       MergeSessionSubjectToAtlas[sessionid], 'in14')
+                        ## NOTE: SKIPPING baw200.connect( PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.t2_average',       MergeSessionSubjectToAtlas[sessionid], 'in2')
+
 
                     LinearSubjectToAtlasANTsApplyTransformsName='LinearSubjectToAtlasANTsApplyTransforms_'+str(sessionid)
                     LinearSubjectToAtlasANTsApplyTransforms[sessionid] = pe.MapNode(interface=ApplyTransforms(), iterfield=['input_image'],name=LinearSubjectToAtlasANTsApplyTransformsName)
@@ -888,6 +910,8 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                     baw200.connect( PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.outputLabels', MergeMultiLabelSessionSubjectToAtlas[sessionid], 'in1')
                     baw200.connect( PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.outputHeadLabels', MergeMultiLabelSessionSubjectToAtlas[sessionid], 'in2')
 
+                    ### This is taking this sessions RF label map back into NAC atlas space.
+                    #{
                     MultiLabelSubjectToAtlasANTsApplyTransformsName='MultiLabelSubjectToAtlasANTsApplyTransforms_'+str(sessionid)
                     MultiLabelSubjectToAtlasANTsApplyTransforms[sessionid] = pe.MapNode(interface=ApplyTransforms(), iterfield=['input_image'],name=MultiLabelSubjectToAtlasANTsApplyTransformsName)
                     MultiLabelSubjectToAtlasANTsApplyTransforms[sessionid].plugin_args={'template':SGE_JOB_SCRIPT,'qsub_args': '-S /bin/bash -pe smp1 1 -l mem_free=1000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE), 'overwrite': True}
@@ -896,6 +920,11 @@ def WorkupT1T2(subjectid,mountPrefix,ExperimentBaseDirectoryCache, ExperimentBas
                     baw200.connect(AtlasToSubjectantsRegistration[sessionid], 'reverse_invert_flags', MultiLabelSubjectToAtlasANTsApplyTransforms[sessionid], 'invert_transform_flags')
                     baw200.connect(BAtlas[subjectid],'template_t1', MultiLabelSubjectToAtlasANTsApplyTransforms[sessionid], 'reference_image')
                     baw200.connect(MergeMultiLabelSessionSubjectToAtlas[sessionid], 'out', MultiLabelSubjectToAtlasANTsApplyTransforms[sessionid], 'input_image')
+                    #}
+                    ### Now we must take the sessions to THIS SUBJECTS personalized atlas.
+                    #{
+                    #}
+                    
 
                     ### Now define where the final organized outputs should go.
                     Subj2Atlas_DSName="SubjectToAtlas_DS_"+str(sessionid)

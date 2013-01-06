@@ -1,9 +1,11 @@
 from nipype.interfaces.base import CommandLine, CommandLineInputSpec, TraitedSpec, File, Directory, traits, isdefined, InputMultiPath, OutputMultiPath
 import os
-from SEMTools.segmentation.specialized import  BRAINSABCOutputSpec, BRAINSABCInputSpec, BRAINSABC
-#from SEMTools import BRAINSABCInputSpec,BRAINSABCOutputSpec,BRAINSABC
+from SEMTools.segmentation.specialized import BRAINSABCOutputSpec, BRAINSABCInputSpec, BRAINSABC
+# from SEMTools import BRAINSABCInputSpec,BRAINSABCOutputSpec,BRAINSABC
 
 from xml.etree import ElementTree as et
+
+
 class GetPosteriorsFromAtlasXML():
 
     def __init__(self, xmlFile):
@@ -36,7 +38,7 @@ class GetPosteriorsFromAtlasXML():
         for priorType in self.priorTypeNameList:
             posteriorFileNameList.append("POSTERIOR_{priorT}.nii.gz".format(priorT=priorType))
             ## HACK:  The following is correct from the command line posteriorTemplate arguments
-            #posteriorFileNameList.append(posteriorTemplate % priorType)
+            # posteriorFileNameList.append(posteriorTemplate % priorType)
         return posteriorFileNameList
 
 """
@@ -45,17 +47,19 @@ class BRAINSABCextInputSpec(BRAINSABCInputSpec):
     posteriorImages = traits.Either(traits.Bool(True,desc="The automatically generated posterior images"), InputMultiPath(File(),), hash_files = False,argstr = "")
 """
 
+
 class BRAINSABCextOutputSpec(BRAINSABCOutputSpec):
     # Not convenient outputAverageImages = OutputMultiPath(File(exists=True), exists = True)
-    outputT1AverageImage = traits.Either( File(exists=True), None )
-    outputT2AverageImage = traits.Either( File(exists=True), None )
-    outputPDAverageImage = traits.Either( File(exists=True), None )
-    outputFLAverageImage = traits.Either( File(exists=True), None )
+    outputT1AverageImage = traits.Either(File(exists=True), None)
+    outputT2AverageImage = traits.Either(File(exists=True), None)
+    outputPDAverageImage = traits.Either(File(exists=True), None)
+    outputFLAverageImage = traits.Either(File(exists=True), None)
     posteriorImages = OutputMultiPath(File(exists=True), exists=True)
-    atlasToSubjectInverseTransform  = traits.Either( File(exists=True), None )
+    atlasToSubjectInverseTransform = traits.Either(File(exists=True), None)
+
 
 class BRAINSABCext(BRAINSABC):
-    #input_spec= BRAINSABCextInputSpec
+    # input_spec= BRAINSABCextInputSpec
     output_spec = BRAINSABCextOutputSpec
 
     def _list_outputs(self):
@@ -65,17 +69,17 @@ class BRAINSABCext(BRAINSABC):
                                                  'outputPDAverageImage',
                                                  'outputFLAverageImage',
                                                  'atlasToSubjectInverseTransform'
-                                                  ]
+                                                 ]
         full_outputs = self.output_spec().get()
         pruned_outputs = dict()
         for key, value in full_outputs.iteritems():
             if key not in custom_implied_outputs_with_no_inputs:
                 pruned_outputs[key] = value
-        outputs = super(BRAINSABCext,self)._outputs_from_inputs( pruned_outputs )
-        input_check = {'T1':('outputT1AverageImage', 't1_average_BRAINSABC.nii.gz'),
-                       'T2':('outputT2AverageImage', 't2_average_BRAINSABC.nii.gz'),
-                       'PD':('outputPDAverageImage', 'pd_average_BRAINSABC.nii.gz'),
-                       'FL':('outputFLAverageImage', 'fl_average_BRAINSABC.nii.gz')}
+        outputs = super(BRAINSABCext, self)._outputs_from_inputs(pruned_outputs)
+        input_check = {'T1': ('outputT1AverageImage', 't1_average_BRAINSABC.nii.gz'),
+                       'T2': ('outputT2AverageImage', 't2_average_BRAINSABC.nii.gz'),
+                       'PD': ('outputPDAverageImage', 'pd_average_BRAINSABC.nii.gz'),
+                       'FL': ('outputFLAverageImage', 'fl_average_BRAINSABC.nii.gz')}
         for key, values in input_check.iteritems():
             if key in self.inputs.inputVolumeTypes:
                 outputs[values[0]] = os.path.abspath(values[1])
@@ -86,10 +90,9 @@ class BRAINSABCext(BRAINSABC):
         PosteriorPaths = PosteriorOutputs.getPosteriorFileNameList(self.inputs.posteriorTemplate)
         outputs['posteriorImages'] = [os.path.abspath(postPath) for postPath in PosteriorPaths]
 
-        fixed_inverse_name=os.path.abspath(outputs['atlasToSubjectTransform'].replace(".h5","_Inverse.h5"))
+        fixed_inverse_name = os.path.abspath(outputs['atlasToSubjectTransform'].replace(".h5", "_Inverse.h5"))
         if os.path.exists(fixed_inverse_name):
             outputs['atlasToSubjectInverseTransform'] = fixed_inverse_name
         else:
             outputs['atlasToSubjectInverseTransform'] = None
         return outputs
-

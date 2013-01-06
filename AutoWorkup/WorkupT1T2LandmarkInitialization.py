@@ -19,44 +19,45 @@ from SEMTools import *
     landmarkInitializeWF.connect(BAtlas,'template_t1',myLocalLMIWF,'inputsSpec.atlasVolume')
 
 """
-def CreateLandmarkInitializeWorkflow(WFname,BCD_model_path,InterpolationMode,DoReverseInit=False):
-    landmarkInitializeWF= pe.Workflow(name=WFname)
+
+
+def CreateLandmarkInitializeWorkflow(WFname, BCD_model_path, InterpolationMode, DoReverseInit=False):
+    landmarkInitializeWF = pe.Workflow(name=WFname)
 
     #############
     inputsSpec = pe.Node(interface=IdentityInterface(fields=['inputVolume',
-        'atlasLandmarkFilename','atlasWeightFilename','atlasVolume']),
+                                                             'atlasLandmarkFilename', 'atlasWeightFilename', 'atlasVolume']),
                          run_without_submitting=True,
-                         name='inputspec' )
+                         name='inputspec')
 
     #############
     outputsSpec = pe.Node(interface=IdentityInterface(fields=['outputLandmarksInACPCAlignedSpace',
-            'outputResampledVolume','outputResampledCroppedVolume',
-            'outputLandmarksInInputSpace',
-            'outputTransform','outputMRML','atlasToSubjectTransform'
-            ]),
-            run_without_submitting=True,
-            name='outputspec' )
-
+                                                              'outputResampledVolume', 'outputResampledCroppedVolume',
+                                                              'outputLandmarksInInputSpace',
+                                                              'outputTransform', 'outputMRML', 'atlasToSubjectTransform'
+                                                              ]),
+                          run_without_submitting=True,
+                          name='outputspec')
 
     ########################################################/
     # Run ACPC Detect on first T1 Image - Base Image
     ########################################################
     BCD = pe.Node(interface=BRAINSConstellationDetector(), name="BCD")
     ##  Use program default BCD.inputs.inputTemplateModel = T1ACPCModelFile
-    ##BCD.inputs.outputVolume =   "BCD_OUT" + "_ACPC_InPlace.nii.gz"                #$# T1AcpcImageList
-    BCD.inputs.outputTransform =  "BCD" + "_Original2ACPC_transform.h5"
+    # BCD.inputs.outputVolume =   "BCD_OUT" + "_ACPC_InPlace.nii.gz"                #$# T1AcpcImageList
+    BCD.inputs.outputTransform = "BCD" + "_Original2ACPC_transform.h5"
     BCD.inputs.outputResampledVolume = "BCD" + "_ACPC.nii.gz"
     BCD.inputs.outputLandmarksInInputSpace = "BCD" + "_Original.fcsv"
     BCD.inputs.outputLandmarksInACPCAlignedSpace = "BCD" + "_ACPC_Landmarks.fcsv"
-    #BCD.inputs.outputMRML = "BCD" + "_Scene.mrml"
+    # BCD.inputs.outputMRML = "BCD" + "_Scene.mrml"
     BCD.inputs.interpolationMode = InterpolationMode
     BCD.inputs.houghEyeDetectorMode = 1  # Look for dark eyes like on a T1 image, 0=Look for bright eyes like in a T2 image
-    BCD.inputs.acLowerBound = 80.0 # Chop the data set 80mm below the AC PC point.
-    BCD.inputs.LLSModel = os.path.join(BCD_model_path,'LLSModel-2ndVersion.h5')
-    BCD.inputs.inputTemplateModel = os.path.join(BCD_model_path,'T1-2ndVersion.mdl')
+    BCD.inputs.acLowerBound = 80.0  # Chop the data set 80mm below the AC PC point.
+    BCD.inputs.LLSModel = os.path.join(BCD_model_path, 'LLSModel-2ndVersion.h5')
+    BCD.inputs.inputTemplateModel = os.path.join(BCD_model_path, 'T1-2ndVersion.mdl')
 
     # Entries below are of the form:
-    landmarkInitializeWF.connect( inputsSpec , 'inputVolume', BCD, 'inputVolume')
+    landmarkInitializeWF.connect(inputsSpec, 'inputVolume', BCD, 'inputVolume')
 
     ########################################################
     # Run BLI atlas_to_subject
@@ -65,8 +66,8 @@ def CreateLandmarkInitializeWorkflow(WFname,BCD_model_path,InterpolationMode,DoR
     BLI.inputs.outputTransformFilename = "landmarkInitializer_atlas_to_subject_transform.h5"
 
     landmarkInitializeWF.connect(inputsSpec, 'atlasWeightFilename', BLI, 'inputWeightFilename')
-    landmarkInitializeWF.connect(inputsSpec, 'atlasLandmarkFilename', BLI, 'inputMovingLandmarkFilename' )
-    landmarkInitializeWF.connect(BCD,'outputLandmarksInACPCAlignedSpace', BLI,'inputFixedLandmarkFilename'),
+    landmarkInitializeWF.connect(inputsSpec, 'atlasLandmarkFilename', BLI, 'inputMovingLandmarkFilename')
+    landmarkInitializeWF.connect(BCD, 'outputLandmarksInACPCAlignedSpace', BLI, 'inputFixedLandmarkFilename'),
 
     ## This is for debugging purposes, and it is not intended for general use.
     if DoReverseInit == True:
@@ -77,39 +78,39 @@ def CreateLandmarkInitializeWorkflow(WFname,BCD_model_path,InterpolationMode,DoR
         BLI2Atlas.inputs.outputTransformFilename = "landmarkInitializer_subject_to_atlas_transform.h5"
 
         landmarkInitializeWF.connect(inputsSpec, 'atlasWeightFilename', BLI2Atlas, 'inputWeightFilename')
-        landmarkInitializeWF.connect(inputsSpec, 'atlasLandmarkFilename', BLI2Atlas, 'inputFixedLandmarkFilename' )
-        landmarkInitializeWF.connect(BCD,'outputLandmarksInInputSpace',BLI2Atlas,'inputMovingLandmarkFilename')
+        landmarkInitializeWF.connect(inputsSpec, 'atlasLandmarkFilename', BLI2Atlas, 'inputFixedLandmarkFilename')
+        landmarkInitializeWF.connect(BCD, 'outputLandmarksInInputSpace', BLI2Atlas, 'inputMovingLandmarkFilename')
 
-        Resample2Atlas=pe.Node(interface=BRAINSResample(),name="Resample2Atlas")
+        Resample2Atlas = pe.Node(interface=BRAINSResample(), name="Resample2Atlas")
         Resample2Atlas.inputs.interpolationMode = "Linear"
         Resample2Atlas.inputs.outputVolume = "subject2atlas.nii.gz"
 
-        landmarkInitializeWF.connect( inputsSpec , 'inputVolume', Resample2Atlas, 'inputVolume')
-        landmarkInitializeWF.connect(BLI2Atlas,'outputTransformFilename',Resample2Atlas,'warpTransform')
-        landmarkInitializeWF.connect(inputsSpec,'atlasVolume',Resample2Atlas,'referenceVolume')
+        landmarkInitializeWF.connect(inputsSpec, 'inputVolume', Resample2Atlas, 'inputVolume')
+        landmarkInitializeWF.connect(BLI2Atlas, 'outputTransformFilename', Resample2Atlas, 'warpTransform')
+        landmarkInitializeWF.connect(inputsSpec, 'atlasVolume', Resample2Atlas, 'referenceVolume')
 
     DO_DEBUG = True
     if (DoReverseInit == True) and (DO_DEBUG == True):
-        ResampleFromAtlas=pe.Node(interface=BRAINSResample(),name="ResampleFromAtlas")
+        ResampleFromAtlas = pe.Node(interface=BRAINSResample(), name="ResampleFromAtlas")
         ResampleFromAtlas.inputs.interpolationMode = "Linear"
         ResampleFromAtlas.inputs.outputVolume = "atlas2subject.nii.gz"
 
-        landmarkInitializeWF.connect( inputsSpec , 'atlasVolume', ResampleFromAtlas, 'inputVolume')
-        landmarkInitializeWF.connect(BLI,'outputTransformFilename',ResampleFromAtlas,'warpTransform')
-        landmarkInitializeWF.connect(BCD,'outputResampledVolume',ResampleFromAtlas,'referenceVolume')
+        landmarkInitializeWF.connect(inputsSpec, 'atlasVolume', ResampleFromAtlas, 'inputVolume')
+        landmarkInitializeWF.connect(BLI, 'outputTransformFilename', ResampleFromAtlas, 'warpTransform')
+        landmarkInitializeWF.connect(BCD, 'outputResampledVolume', ResampleFromAtlas, 'referenceVolume')
 
     BROIAUTO = pe.Node(interface=BRAINSROIAuto(), name="BROIAuto_cropped")
-    BROIAUTO.inputs.outputVolume="Cropped_BCD_ACPC_Aligned.nii.gz"
-    BROIAUTO.inputs.ROIAutoDilateSize=10
-    BROIAUTO.inputs.cropOutput=True
-    landmarkInitializeWF.connect(BCD,'outputResampledVolume', BROIAUTO,'inputVolume')
+    BROIAUTO.inputs.outputVolume = "Cropped_BCD_ACPC_Aligned.nii.gz"
+    BROIAUTO.inputs.ROIAutoDilateSize = 10
+    BROIAUTO.inputs.cropOutput = True
+    landmarkInitializeWF.connect(BCD, 'outputResampledVolume', BROIAUTO, 'inputVolume')
 
-    landmarkInitializeWF.connect(BROIAUTO,'outputVolume',outputsSpec,'outputResampledCroppedVolume')
-    landmarkInitializeWF.connect(BCD,'outputLandmarksInACPCAlignedSpace',outputsSpec,'outputLandmarksInACPCAlignedSpace')
-    landmarkInitializeWF.connect(BCD,'outputResampledVolume',outputsSpec,'outputResampledVolume')
-    landmarkInitializeWF.connect(BCD,'outputLandmarksInInputSpace',outputsSpec,'outputLandmarksInInputSpace')
-    landmarkInitializeWF.connect(BCD,'outputTransform',outputsSpec,'outputTransform')
-    landmarkInitializeWF.connect(BCD,'outputMRML',outputsSpec,'outputMRML')
-    landmarkInitializeWF.connect(BLI,'outputTransformFilename',outputsSpec,'atlasToSubjectTransform')
+    landmarkInitializeWF.connect(BROIAUTO, 'outputVolume', outputsSpec, 'outputResampledCroppedVolume')
+    landmarkInitializeWF.connect(BCD, 'outputLandmarksInACPCAlignedSpace', outputsSpec, 'outputLandmarksInACPCAlignedSpace')
+    landmarkInitializeWF.connect(BCD, 'outputResampledVolume', outputsSpec, 'outputResampledVolume')
+    landmarkInitializeWF.connect(BCD, 'outputLandmarksInInputSpace', outputsSpec, 'outputLandmarksInInputSpace')
+    landmarkInitializeWF.connect(BCD, 'outputTransform', outputsSpec, 'outputTransform')
+    landmarkInitializeWF.connect(BCD, 'outputMRML', outputsSpec, 'outputMRML')
+    landmarkInitializeWF.connect(BLI, 'outputTransformFilename', outputsSpec, 'atlasToSubjectTransform')
 
     return landmarkInitializeWF

@@ -15,17 +15,19 @@ import re
 import sys
 
 ##############################################################################
-def get_global_sge_script(pythonPathsList,binPathsList,customEnvironment={}):
+
+
+def get_global_sge_script(pythonPathsList, binPathsList, customEnvironment={}):
     """This is a wrapper script for running commands on an SGE cluster
 so that all the python modules and commands are pathed properly"""
 
-    custEnvString=""
-    for key,value in customEnvironment.items():
-        custEnvString+="export "+key+"="+value+"\n"
+    custEnvString = ""
+    for key, value in customEnvironment.items():
+        custEnvString += "export " + key + "=" + value + "\n"
 
-    PYTHONPATH=":".join(pythonPathsList)
-    BASE_BUILDS=":".join(binPathsList)
-    GLOBAL_SGE_SCRIPT="""#!/bin/bash
+    PYTHONPATH = ":".join(pythonPathsList)
+    BASE_BUILDS = ":".join(binPathsList)
+    GLOBAL_SGE_SCRIPT = """#!/bin/bash
 echo "STARTED at: $(date +'%F-%T')"
 echo "Ran on: $(hostname)"
 export PATH={BINPATH}
@@ -40,22 +42,24 @@ echo "With custom environment:"
 echo {CUSTENV}
 {CUSTENV}
 ## NOTE:  nipype inserts the actual commands that need running below this section.
-""".format(PYTHONPATH=PYTHONPATH,BINPATH=BASE_BUILDS,CUSTENV=custEnvString)
+""".format(PYTHONPATH=PYTHONPATH, BINPATH=BASE_BUILDS, CUSTENV=custEnvString)
     return GLOBAL_SGE_SCRIPT
 
 # From http://stackoverflow.com/questions/1597649/replace-strings-in-files-by-python
+
+
 def file_replace(fname, out_fname, pat, s_after):
     if fname == out_fname:
         print "ERROR: input and output file names can not match"
         sys.exit(-1)
-        return #input and output files can not match
+        return  # input and output files can not match
 
     # first, see if the pattern is even in the file.
     with open(fname) as f:
         if not any(re.search(pat, line) for line in f):
             print "ERROR:  substitution pattern not found in reference file"
             sys.exit(-1)
-            return # pattern does not occur in file so we are done.
+            return  # pattern does not occur in file so we are done.
 
     # pattern is in the file, so perform replace operation.
     with open(fname) as f:
@@ -63,6 +67,7 @@ def file_replace(fname, out_fname, pat, s_after):
         for line in f:
             out.write(re.sub(pat, s_after, line))
         out.close()
+
 
 def main(argv=None):
     import argparse
@@ -92,23 +97,23 @@ def main(argv=None):
     expConfig.read(input_arguments.ExperimentConfig)
 
     # Experiment specific information
-    subject_data_file=expConfig.get('EXPERIMENT_DATA','SESSION_DB')
-    ExperimentName=expConfig.get('EXPERIMENT_DATA','EXPERIMENTNAME')
-    WORKFLOW_COMPONENTS_STRING=expConfig.get('EXPERIMENT_DATA','WORKFLOW_COMPONENTS')
-    WORKFLOW_COMPONENTS=eval(WORKFLOW_COMPONENTS_STRING)
+    subject_data_file = expConfig.get('EXPERIMENT_DATA', 'SESSION_DB')
+    ExperimentName = expConfig.get('EXPERIMENT_DATA', 'EXPERIMENTNAME')
+    WORKFLOW_COMPONENTS_STRING = expConfig.get('EXPERIMENT_DATA', 'WORKFLOW_COMPONENTS')
+    WORKFLOW_COMPONENTS = eval(WORKFLOW_COMPONENTS_STRING)
 
     # Platform specific information
     #     Prepend the python search paths
-    PYTHON_AUX_PATHS=expConfig.get(input_arguments.processingEnvironment,'PYTHON_AUX_PATHS')
-    PYTHON_AUX_PATHS=PYTHON_AUX_PATHS.split(':')
+    PYTHON_AUX_PATHS = expConfig.get(input_arguments.processingEnvironment, 'PYTHON_AUX_PATHS')
+    PYTHON_AUX_PATHS = PYTHON_AUX_PATHS.split(':')
     PYTHON_AUX_PATHS.extend(sys.path)
-    sys.path=PYTHON_AUX_PATHS
+    sys.path = PYTHON_AUX_PATHS
     ######################################################################################
     ###### Now ensure that all the required packages can be read in from this custom path
     #\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
-    #print sys.path
-    from nipype import config ## NOTE:  This needs to occur AFTER the PYTHON_AUX_PATHS has been modified
-    config.enable_debug_mode() ## NOTE:  This needs to occur AFTER the PYTHON_AUX_PATHS has been modified
+    # print sys.path
+    from nipype import config  # NOTE:  This needs to occur AFTER the PYTHON_AUX_PATHS has been modified
+    config.enable_debug_mode()  # NOTE:  This needs to occur AFTER the PYTHON_AUX_PATHS has been modified
     ##############################################################################
     from nipype.interfaces.base import CommandLine, CommandLineInputSpec, TraitedSpec, File, Directory
     from nipype.interfaces.base import traits, isdefined, BaseInterface
@@ -117,9 +122,8 @@ def main(argv=None):
     import nipype.pipeline.engine as pe  # pypeline engine
     from nipype.interfaces.freesurfer import ReconAll
 
-
     from nipype.utils.misc import package_check
-    #package_check('nipype', '5.4', 'tutorial1') ## HACK: Check nipype version
+    # package_check('nipype', '5.4', 'tutorial1') ## HACK: Check nipype version
     package_check('numpy', '1.3', 'tutorial1')
     package_check('scipy', '0.7', 'tutorial1')
     package_check('networkx', '1.0', 'tutorial1')
@@ -130,16 +134,16 @@ def main(argv=None):
     #\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
     #####################################################################################
     #     Prepend the shell environment search paths
-    PROGRAM_PATHS=expConfig.get(input_arguments.processingEnvironment,'PROGRAM_PATHS')
-    PROGRAM_PATHS=PROGRAM_PATHS.split(':')
+    PROGRAM_PATHS = expConfig.get(input_arguments.processingEnvironment, 'PROGRAM_PATHS')
+    PROGRAM_PATHS = PROGRAM_PATHS.split(':')
     PROGRAM_PATHS.extend(os.environ['PATH'].split(':'))
-    os.environ['PATH']=':'.join(PROGRAM_PATHS)
+    os.environ['PATH'] = ':'.join(PROGRAM_PATHS)
     #    Define platform specific output write paths
-    mountPrefix=expConfig.get(input_arguments.processingEnvironment,'MOUNTPREFIX')
-    BASEOUTPUTDIR=expConfig.get(input_arguments.processingEnvironment,'BASEOUTPUTDIR')
-    ExperimentBaseDirectoryPrefix=os.path.realpath(os.path.join(BASEOUTPUTDIR,ExperimentName))
-    ExperimentBaseDirectoryCache=ExperimentBaseDirectoryPrefix+"_CACHE"
-    ExperimentBaseDirectoryResults=ExperimentBaseDirectoryPrefix +"_Results"
+    mountPrefix = expConfig.get(input_arguments.processingEnvironment, 'MOUNTPREFIX')
+    BASEOUTPUTDIR = expConfig.get(input_arguments.processingEnvironment, 'BASEOUTPUTDIR')
+    ExperimentBaseDirectoryPrefix = os.path.realpath(os.path.join(BASEOUTPUTDIR, ExperimentName))
+    ExperimentBaseDirectoryCache = ExperimentBaseDirectoryPrefix + "_CACHE"
+    ExperimentBaseDirectoryResults = ExperimentBaseDirectoryPrefix + "_Results"
     if not os.path.exists(ExperimentBaseDirectoryCache):
         os.makedirs(ExperimentBaseDirectoryCache)
     if not os.path.exists(ExperimentBaseDirectoryResults):
@@ -147,17 +151,17 @@ def main(argv=None):
     #    Define workup common reference data sets
     #    The ATLAS needs to be copied to the ExperimentBaseDirectoryPrefix
     #    The ATLAS pathing must stay constant
-    ATLASPATH=expConfig.get(input_arguments.processingEnvironment,'ATLASPATH')
+    ATLASPATH = expConfig.get(input_arguments.processingEnvironment, 'ATLASPATH')
     if not os.path.exists(ATLASPATH):
         print("ERROR:  Invalid Path for Atlas: {0}".format(ATLASPATH))
         sys.exit(-1)
-    CACHE_ATLASPATH=os.path.realpath(os.path.join(ExperimentBaseDirectoryCache,'Atlas'))
+    CACHE_ATLASPATH = os.path.realpath(os.path.join(ExperimentBaseDirectoryCache, 'Atlas'))
     from distutils.dir_util import copy_tree
     if not os.path.exists(CACHE_ATLASPATH):
-        print("Copying a reference of the atlas to the experiment cache directory:\n    from: {0}\n    to: {1}".format(ATLASPATH,CACHE_ATLASPATH))
-        copy_tree(ATLASPATH,CACHE_ATLASPATH,preserve_mode=1,preserve_times=1)
+        print("Copying a reference of the atlas to the experiment cache directory:\n    from: {0}\n    to: {1}".format(ATLASPATH, CACHE_ATLASPATH))
+        copy_tree(ATLASPATH, CACHE_ATLASPATH, preserve_mode=1, preserve_times=1)
         ## Now generate the xml file with the correct pathing
-        file_replace(os.path.join(ATLASPATH,'ExtendedAtlasDefinition.xml.in'),os.path.join(CACHE_ATLASPATH,'ExtendedAtlasDefinition.xml'),"@ATLAS_DIRECTORY@",CACHE_ATLASPATH)
+        file_replace(os.path.join(ATLASPATH, 'ExtendedAtlasDefinition.xml.in'), os.path.join(CACHE_ATLASPATH, 'ExtendedAtlasDefinition.xml'), "@ATLAS_DIRECTORY@", CACHE_ATLASPATH)
     else:
         print("Atlas already exists in experiment cache directory: {0}".format(CACHE_ATLASPATH))
     #  Just to be safe, copy the model file as well
@@ -169,7 +173,7 @@ def main(argv=None):
             BCDModelFile = os.path.join('Transforms_h5', BCDModelFile)
         orig = os.path.join(BCDMODELPATH, BCDModelFile)
         new = os.path.join(CACHE_BCDMODELPATH, BCDModelFile)
-        new = new.replace('Transforms_h5/','') # Flatten back out, even if you needed to get files from subdirectory.
+        new = new.replace('Transforms_h5/', '')  # Flatten back out, even if you needed to get files from subdirectory.
         if not os.path.exists(CACHE_BCDMODELPATH):
             os.mkdir(CACHE_BCDMODELPATH)
         if not os.path.exists(new):
@@ -178,28 +182,27 @@ def main(argv=None):
         else:
             print("BCD Model exists in cache directory: {0}".format(new))
 
-
-    CUSTOM_ENVIRONMENT=expConfig.get(input_arguments.processingEnvironment,'CUSTOM_ENVIRONMENT')
-    CUSTOM_ENVIRONMENT=eval(CUSTOM_ENVIRONMENT)
+    CUSTOM_ENVIRONMENT = expConfig.get(input_arguments.processingEnvironment, 'CUSTOM_ENVIRONMENT')
+    CUSTOM_ENVIRONMENT = eval(CUSTOM_ENVIRONMENT)
     ## Set custom environmental variables so that subproceses work properly (i.e. for Freesurfer)
-    #print CUSTOM_ENVIRONMENT
-    for key,value in CUSTOM_ENVIRONMENT.items():
-        #print "SETTING: ", key, value
-        os.putenv(key,value)
-        os.environ[key]=value
-    #print os.environ
-    #sys.exit(-1)
+    # print CUSTOM_ENVIRONMENT
+    for key, value in CUSTOM_ENVIRONMENT.items():
+        # print "SETTING: ", key, value
+        os.putenv(key, value)
+        os.environ[key] = value
+    # print os.environ
+    # sys.exit(-1)
 
     ## If freesurfer is requested, then ensure that a sane environment is available
     if 'FREESURFER' in WORKFLOW_COMPONENTS:
         print "FREESURFER NEEDS TO CHECK FOR SANE ENVIRONMENT HERE."
 
-    CLUSTER_QUEUE=expConfig.get(input_arguments.processingEnvironment,'CLUSTER_QUEUE')
-    CLUSTER_QUEUE_LONG=expConfig.get(input_arguments.processingEnvironment,'CLUSTER_QUEUE_LONG')
+    CLUSTER_QUEUE = expConfig.get(input_arguments.processingEnvironment, 'CLUSTER_QUEUE')
+    CLUSTER_QUEUE_LONG = expConfig.get(input_arguments.processingEnvironment, 'CLUSTER_QUEUE_LONG')
 
     ## Setup environment for CPU load balancing of ITK based programs.
     import multiprocessing
-    total_CPUS=multiprocessing.cpu_count()
+    total_CPUS = multiprocessing.cpu_count()
     if input_arguments.wfrun == 'helium_all.q':
         pass
     elif input_arguments.wfrun == 'helium_all.q_graph':
@@ -207,13 +210,13 @@ def main(argv=None):
     elif input_arguments.wfrun == 'ipl_OSX':
         pass
     elif input_arguments.wfrun == 'local_4':
-        os.environ['NSLOTS']="{0}".format(total_CPUS/4)
+        os.environ['NSLOTS'] = "{0}".format(total_CPUS / 4)
     elif input_arguments.wfrun == 'local_12':
-        os.environ['NSLOTS']="{0}".format(total_CPUS/12)
+        os.environ['NSLOTS'] = "{0}".format(total_CPUS / 12)
     elif input_arguments.wfrun == 'local':
-        os.environ['NSLOTS']="{0}".format(total_CPUS/1)
+        os.environ['NSLOTS'] = "{0}".format(total_CPUS / 1)
     elif input_arguments.wfrun == 'ds_runner':
-        os.environ['NSLOTS']="{0}".format(total_CPUS/1)
+        os.environ['NSLOTS'] = "{0}".format(total_CPUS / 1)
     else:
         print "FAILED RUN: You must specify the run environment type. [helium_all.q,helium_all.q_graph,ipl_OSX,local_4,local_12,local,ds_runner]"
         print input_arguments.wfrun
@@ -221,17 +224,17 @@ def main(argv=None):
 
     print "Configuring Pipeline"
     import SessionDB
-    subjectDatabaseFile=os.path.join( ExperimentBaseDirectoryCache,'InternalWorkflowSubjectDB.db')
-    subject_list=input_arguments.subject.split(',')
+    subjectDatabaseFile = os.path.join(ExperimentBaseDirectoryCache, 'InternalWorkflowSubjectDB.db')
+    subject_list = input_arguments.subject.split(',')
     ## TODO:  Only make DB if db is older than subject_data_file.
-    if ( not os.path.exists(subjectDatabaseFile) ) or ( os.path.getmtime(subjectDatabaseFile) < os.path.getmtime(subject_data_file) ):
-        ExperimentDatabase=SessionDB.SessionDB(subjectDatabaseFile,subject_list)
-        ExperimentDatabase.MakeNewDB(subject_data_file,mountPrefix)
-        ExperimentDatabase=None
-        ExperimentDatabase=SessionDB.SessionDB(subjectDatabaseFile,subject_list)
+    if (not os.path.exists(subjectDatabaseFile)) or (os.path.getmtime(subjectDatabaseFile) < os.path.getmtime(subject_data_file)):
+        ExperimentDatabase = SessionDB.SessionDB(subjectDatabaseFile, subject_list)
+        ExperimentDatabase.MakeNewDB(subject_data_file, mountPrefix)
+        ExperimentDatabase = None
+        ExperimentDatabase = SessionDB.SessionDB(subjectDatabaseFile, subject_list)
     else:
         print("Using cached database, {0}".format(subjectDatabaseFile))
-        ExperimentDatabase=SessionDB.SessionDB(subjectDatabaseFile,subject_list)
+        ExperimentDatabase = SessionDB.SessionDB(subjectDatabaseFile, subject_list)
     print "ENTIRE DB for {_subjid}: ".format(_subjid=ExperimentDatabase.getSubjectFilter())
     print "^^^^^^^^^^^^^"
     for row in ExperimentDatabase.getEverything():
@@ -240,52 +243,52 @@ def main(argv=None):
 
     ## Create the shell wrapper script for ensuring that all jobs running on remote hosts from SGE
     #  have the same environment as the job submission host.
-    JOB_SCRIPT=get_global_sge_script(sys.path,PROGRAM_PATHS,CUSTOM_ENVIRONMENT)
+    JOB_SCRIPT = get_global_sge_script(sys.path, PROGRAM_PATHS, CUSTOM_ENVIRONMENT)
     print JOB_SCRIPT
 
-    import WorkupT1T2 ## NOTE:  This needs to occur AFTER the PYTHON_AUX_PATHS has been modified
+    import WorkupT1T2  # NOTE:  This needs to occur AFTER the PYTHON_AUX_PATHS has been modified
     print "TESTER"
     import ShortWorkupT1T2
     for subjectid in ExperimentDatabase.getAllSubjects():
         if input_arguments.doshort:
-            baw200=ShortWorkupT1T2.ShortWorkupT1T2(subjectid,mountPrefix,
-             os.path.join(ExperimentBaseDirectoryCache,str(subjectid)),
-             ExperimentBaseDirectoryResults,
-             ExperimentDatabase,
-             CACHE_ATLASPATH,
-             CACHE_BCDMODELPATH,WORKFLOW_COMPONENTS=WORKFLOW_COMPONENTS,CLUSTER_QUEUE=CLUSTER_QUEUE,CLUSTER_QUEUE_LONG=CLUSTER_QUEUE_LONG)
+            baw200 = ShortWorkupT1T2.ShortWorkupT1T2(subjectid, mountPrefix,
+                                                     os.path.join(ExperimentBaseDirectoryCache, str(subjectid)),
+                                                     ExperimentBaseDirectoryResults,
+                                                     ExperimentDatabase,
+                                                     CACHE_ATLASPATH,
+                                                     CACHE_BCDMODELPATH, WORKFLOW_COMPONENTS=WORKFLOW_COMPONENTS, CLUSTER_QUEUE=CLUSTER_QUEUE, CLUSTER_QUEUE_LONG=CLUSTER_QUEUE_LONG)
         else:
-            baw200=WorkupT1T2.WorkupT1T2(subjectid,mountPrefix,
-              os.path.join(ExperimentBaseDirectoryCache,str(subjectid)),
-              ExperimentBaseDirectoryResults,
-              ExperimentDatabase,
-              CACHE_ATLASPATH,
-              CACHE_BCDMODELPATH,WORKFLOW_COMPONENTS=WORKFLOW_COMPONENTS,CLUSTER_QUEUE=CLUSTER_QUEUE,CLUSTER_QUEUE_LONG=CLUSTER_QUEUE_LONG,SGE_JOB_SCRIPT=JOB_SCRIPT)
+            baw200 = WorkupT1T2.WorkupT1T2(subjectid, mountPrefix,
+                                           os.path.join(ExperimentBaseDirectoryCache, str(subjectid)),
+                                           ExperimentBaseDirectoryResults,
+                                           ExperimentDatabase,
+                                           CACHE_ATLASPATH,
+                                           CACHE_BCDMODELPATH, WORKFLOW_COMPONENTS=WORKFLOW_COMPONENTS, CLUSTER_QUEUE=CLUSTER_QUEUE, CLUSTER_QUEUE_LONG=CLUSTER_QUEUE_LONG, SGE_JOB_SCRIPT=JOB_SCRIPT)
         print "Start Processing"
 
-        SGEFlavor='SGE'
+        SGEFlavor = 'SGE'
         try:
             if input_arguments.wfrun == 'helium_all.q':
                 baw200.run(plugin=SGEFlavor,
-                    plugin_args=dict(template=JOB_SCRIPT,qsub_args="-S /bin/bash -pe smp1 1-12 -l h_vmem=19G,mem_free=9G -o /dev/null -e /dev/null "+CLUSTER_QUEUE))
+                           plugin_args=dict(template=JOB_SCRIPT, qsub_args="-S /bin/bash -pe smp1 1-12 -l h_vmem=19G,mem_free=9G -o /dev/null -e /dev/null " + CLUSTER_QUEUE))
             elif input_arguments.wfrun == 'helium_all.q_graph':
-                SGEFlavor='SGEGraph' #Use the SGEGraph processing
+                SGEFlavor = 'SGEGraph'  # Use the SGEGraph processing
                 baw200.run(plugin=SGEFlavor,
-                    plugin_args=dict(template=JOB_SCRIPT,qsub_args="-S /bin/bash -pe smp1 1-12 -l h_vmem=19G,mem_free=9G -o /dev/null -e /dev/null "+CLUSTER_QUEUE))
+                           plugin_args=dict(template=JOB_SCRIPT, qsub_args="-S /bin/bash -pe smp1 1-12 -l h_vmem=19G,mem_free=9G -o /dev/null -e /dev/null " + CLUSTER_QUEUE))
             elif input_arguments.wfrun == 'ipl_OSX':
                 baw200.write_graph()
                 print "Running On ipl_OSX"
                 baw200.run(plugin=SGEFlavor,
-                    plugin_args=dict(template=JOB_SCRIPT,qsub_args="-S /bin/bash -pe smp1 1-12 -l h_vmem=19G,mem_free=9G -o /dev/null -e /dev/null "+CLUSTER_QUEUE))
+                           plugin_args=dict(template=JOB_SCRIPT, qsub_args="-S /bin/bash -pe smp1 1-12 -l h_vmem=19G,mem_free=9G -o /dev/null -e /dev/null " + CLUSTER_QUEUE))
             elif input_arguments.wfrun == 'local_4':
                 baw200.write_graph()
                 print "Running with 4 parallel processes on local machine"
-                baw200.run(plugin='MultiProc', plugin_args={'n_procs' : 4})
+                baw200.run(plugin='MultiProc', plugin_args={'n_procs': 4})
             elif input_arguments.wfrun == 'local_12':
                 baw200.write_graph()
                 print "Running with 12 parallel processes on local machine"
-                baw200.run(plugin='MultiProc', plugin_args={'n_procs' : 12})
-            elif input_arguments.wfrun =='ds_runner':
+                baw200.run(plugin='MultiProc', plugin_args={'n_procs': 12})
+            elif input_arguments.wfrun == 'ds_runner':
                 class ds_runner(object):
                     def run(self, graph, **kwargs):
                         for node in graph.nodes():
@@ -298,13 +301,13 @@ def main(argv=None):
                 except:
                     pass
                 print "Running sequentially on local machine"
-                #baw200.run(updatehash=True)
+                # baw200.run(updatehash=True)
                 baw200.run()
             else:
                 print "You must specify the run environment type. [helium_all.q,helium_all.q_graph,ipl_OSX,local_4,local_12,local]"
                 print input_arguments.wfrun
                 sys.exit(-1)
-        except Exception,err:
+        except Exception, err:
             print("ERROR: EXCEPTION CAUGHT IN RUNNING SUBJECT {0}".format(subjectid))
             raise err
 

@@ -3,6 +3,7 @@ import csv
 import os
 import textwrap
 
+
 class UpdateAutoWorkup():
 
     def _getBlackList(self):

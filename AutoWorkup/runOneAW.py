@@ -3,6 +3,7 @@ import argparse
 import csv
 import sys
 
+
 class runOneAW():
 
     def main(self):
@@ -24,9 +25,9 @@ class runOneAW():
  -ExperimentConfig {configFile} \
  -pe LOCAL_ENVIRONMENT \
  -wfrun local \
- -subject {subject} \n""".format(brainsToolsScriptsDir= input_arguments.brainsToolsScriptsDir,
+ -subject {subject} \n""".format(brainsToolsScriptsDir=input_arguments.brainsToolsScriptsDir,
                                  configFile=self.configPath, subject=input_arguments.subject)
-        print '-'*80
+        print '-' * 80
         print '\nExecuting command: \n{bawCommand}'.format(bawCommand=bawCommand)
         os.system(bawCommand)
 
@@ -139,10 +140,10 @@ PROGRAM_PATHS=%(_BRAINSTOOLS_BUILD_PATH)s/lib:%(_BRAINSTOOLS_BUILD_PATH)s/bin:%(
 ATLASPATH=%(_BRAINSTOOLS_BUILD_PATH)s/ReferenceAtlas-build/Atlas/Atlas_20120830
 # The path to the model files to be used by BCD.
 BCDMODELPATH=%(_BRAINSTOOLS_BUILD_PATH)s/BRAINSTools-build/TestData"""
-        firstReplace = configString.replace('[replaceme_sessionDB]',self.sessionPath)
-        secondReplace = firstReplace.replace('[replaceme_outputDir]',input_arguments.experimentOutputDir)
-        thirdReplace = secondReplace.replace('[replaceme_brainsToolsScriptsDir]',input_arguments.brainsToolsScriptsDir)
-        newConfigString = thirdReplace.replace('[replaceme_brainsToolsBuildDir]',input_arguments.brainsToolsBuildDir)
+        firstReplace = configString.replace('[replaceme_sessionDB]', self.sessionPath)
+        secondReplace = firstReplace.replace('[replaceme_outputDir]', input_arguments.experimentOutputDir)
+        thirdReplace = secondReplace.replace('[replaceme_brainsToolsScriptsDir]', input_arguments.brainsToolsScriptsDir)
+        newConfigString = thirdReplace.replace('[replaceme_brainsToolsBuildDir]', input_arguments.brainsToolsBuildDir)
         handle = open(self.configPath, 'w')
         handle.write(newConfigString)
         handle.close()
@@ -171,7 +172,7 @@ if __name__ == "__main__":
     group.add_argument('-brainsToolsBuildDir', action="store", dest='brainsToolsBuildDir', required=True,
                        help='The build directory for BRAINSSTANDALONE ')
     parser.add_argument('--version', action='version', version='%(prog)s 1.0')
-    #parser.add_argument('-v', action='store_false', dest='verbose', default=True,
+    # parser.add_argument('-v', action='store_false', dest='verbose', default=True,
     #                    help='If not present, prints the locations')
     input_arguments = parser.parse_args()
 

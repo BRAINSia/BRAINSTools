@@ -4,6 +4,7 @@ import os
 import textwrap
 import sqlite3 as lite
 
+
 class UpdateAutoWorkup():
 
     def updateAutoWorkup(self):
@@ -37,6 +38,7 @@ class UpdateAutoWorkup():
         newPath = os.path.join(dirname, "{}_{}".format(inputArguments.modality, basename))
         return newPath
 
+
 class MakeNewImageDict():
 
     def __init__(self):
@@ -51,7 +53,7 @@ class MakeNewImageDict():
         self._fillDB()
 
     def _makeNewImagesFile(self):
-        command = 'find %s -name "*_DWI_CONCAT_QCed.nrrd" |awk -F/ \'{print "%s," $5 "," $6 "," $7 "," $0}\' |tee %s'%(
+        command = 'find %s -name "*_DWI_CONCAT_QCed.nrrd" |awk -F/ \'{print "%s," $5 "," $6 "," $7 "," $0}\' |tee %s' % (
             inputArguments.inputDir, inputArguments.modality, self.newImagesFilepath)
         os.system(command)
 
@@ -60,7 +62,7 @@ class MakeNewImageDict():
         for row in handle:
             if handle.line_num > 1:
                 if len(row) == 5:
-                    imageInfo = {'modality': row[0],'project': row[1], 'subject': row[2],
+                    imageInfo = {'modality': row[0], 'project': row[1], 'subject': row[2],
                                  'session': row[3], 'filepath': row[4]}
                     sqlCommand = self._makeSQLiteCommand(imageInfo)
                     self._appendCommand(sqlCommand)
@@ -70,10 +72,10 @@ class MakeNewImageDict():
     def _makeDB(self):
         if os.path.exists(self.dbName):
             os.remove(self.dbName)
-        dbColTypes =  "modality TEXT, project TEXT, subject TEXT, session TEXT, filepath TEXT"
+        dbColTypes = "modality TEXT, project TEXT, subject TEXT, session TEXT, filepath TEXT"
         con = lite.connect(self.dbName)
         dbCur = con.cursor()
-        dbCur.execute("CREATE TABLE {dbTableName}({dbColTypes});".format(dbColTypes=dbColTypes,dbTableName=self.dbTableName))
+        dbCur.execute("CREATE TABLE {dbTableName}({dbColTypes});".format(dbColTypes=dbColTypes, dbTableName=self.dbTableName))
         dbCur.close()
 
     def _fillDB(self):
@@ -97,7 +99,7 @@ class MakeNewImageDict():
         self.commandList.append(val)
 
     def getNewImagesList(self, project, subject, session):
-        sqlQuery = self._makeDBquery( project, subject, session)
+        sqlQuery = self._makeDBquery(project, subject, session)
         dbInfo = self._getInfoFromDB(sqlQuery)
         newImages = list()
         for item in dbInfo:

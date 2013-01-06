@@ -16,8 +16,8 @@ simpleSynReg( typename FixedImageType::Pointer & infixedImage,
 {
   typename SyNRegistrationHelperType::Pointer regHelper = SyNRegistrationHelperType::New();
     {
-    const float lowerQuantile = 0.0;
-    const float upperQuantile = 1.0;
+    const float lowerQuantile = 0.025;
+    const float upperQuantile = 0.975;
     const bool  doWinsorize(false);
     regHelper->SetWinsorizeImageIntensities(doWinsorize, lowerQuantile, upperQuantile);
     }
@@ -47,7 +47,7 @@ simpleSynReg( typename FixedImageType::Pointer & infixedImage,
     }
     {
     std::vector<unsigned int> convergenceWindowSizeList;
-    const unsigned int        convergenceWindowSize = 15;
+    const unsigned int        convergenceWindowSize = 25;
     convergenceWindowSizeList.push_back(convergenceWindowSize);
     regHelper->SetConvergenceWindowSizes( convergenceWindowSizeList );
     }
@@ -56,7 +56,7 @@ simpleSynReg( typename FixedImageType::Pointer & infixedImage,
     // --shrink-factors 3x2x1
     std::vector<std::vector<unsigned int> > shrinkFactorsList;
     std::vector<unsigned int>               factors(4);
-    factors[0] = 6;
+    factors[0] = 5;
     factors[1] = 4;
     factors[2] = 2;
     factors[3] = 1;
@@ -67,7 +67,7 @@ simpleSynReg( typename FixedImageType::Pointer & infixedImage,
     // --smoothing-sigmas 3x2x0
     std::vector<std::vector<float> > smoothingSigmasList;
     std::vector<float>               sigmas(4);
-    sigmas[0] = 6;
+    sigmas[0] = 5;
     sigmas[1] = 4;
     sigmas[2] = 2;
     sigmas[3] = 0;

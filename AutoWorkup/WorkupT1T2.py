@@ -697,7 +697,7 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
                     AtlasToSubjectantsRegistration[sessionid].inputs.metric_weight = [1.0, 1.0]
                     AtlasToSubjectantsRegistration[sessionid].inputs.radius_or_number_of_bins = [32, 4]
                     AtlasToSubjectantsRegistration[sessionid].inputs.number_of_iterations = [[1000, 1000, 1000], [10000, 500, 500, 200]]
-                    AtlasToSubjectantsRegistration[sessionid].inputs.convergence_threshold = [1e-9, 1e-9]
+                    AtlasToSubjectantsRegistration[sessionid].inputs.convergence_threshold = [5e-7, 5e-7]
                     AtlasToSubjectantsRegistration[sessionid].inputs.convergence_window_size = [15, 15]
                     AtlasToSubjectantsRegistration[sessionid].inputs.use_histogram_matching = [True, True]
                     AtlasToSubjectantsRegistration[sessionid].inputs.shrink_factors = [[4, 2, 1], [6, 4, 2, 1]]

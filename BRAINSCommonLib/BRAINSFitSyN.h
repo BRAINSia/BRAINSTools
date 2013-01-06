@@ -41,7 +41,7 @@ simpleSynReg( typename FixedImageType::Pointer & infixedImage,
     }
     {
     std::vector<double> convergenceThresholdList;
-    const double        convergenceThreshold = 1e-9;
+    const double        convergenceThreshold = 5e-7;
     convergenceThresholdList.push_back(convergenceThreshold);
     regHelper->SetConvergenceThresholds( convergenceThresholdList );
     }

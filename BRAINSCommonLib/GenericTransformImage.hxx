@@ -4,6 +4,7 @@
 #include <iostream>
 #include "GenericTransformImage.h"
 #include "itkResampleInPlaceImageFilter.h"
+#include "itkConstantBoundaryCondition.h"
 
 template <class InputImageType, class OutputImageType>
 typename OutputImageType::Pointer

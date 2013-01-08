@@ -16,7 +16,7 @@
 
 //
 // FFTWCommon defines proxy classes based on data types
-#if defined(USE_FFTWF) || defined(USE_FFTWD)
+#if defined(ITK_USE_FFTWF) || defined(ITK_USE_FFTWD)
 #include "fftw3.h"
 #endif
 

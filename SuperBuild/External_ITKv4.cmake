@@ -62,8 +62,8 @@ if(NOT DEFINED ${extProjName}_DIR AND NOT ${USE_SYSTEM_${extProjName}})
   #      link properly if -fopenmp is used.
   string(REPLACE "-fopenmp" "" ITK_CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
   string(REPLACE "-fopenmp" "" ITK_CMAKE_CXX_FLAGS "${CMAKE_CX_FLAGS}")
-  if(USE_ICCDEF OR USE_FFTWD OR USE_FFTWF)
-    set(FFTWF_FLAGS -DUSE_FFTWF:BOOL=ON)
+  if(USE_ICCDEF OR ITK_USE_FFTWD OR ITK_USE_FFTWF)
+    set(FFTWF_FLAGS -DITK_USE_FFTWF:BOOL=ON)
   else()
     set(FFTWF_FLAGS "")
   endif()
@@ -81,7 +81,7 @@ if(NOT DEFINED ${extProjName}_DIR AND NOT ${USE_SYSTEM_${extProjName}})
     )
   ### --- End Project specific additions
   set(${proj}_REPOSITORY ${git_protocol}://itk.org/ITK.git)
-  set(${proj}_GIT_TAG 4745c6654b968545d0e3328520e7907d50bab22c) #2012-12-15
+  set(${proj}_GIT_TAG c313377e1b54c82f4e5f4941edb55f8e5a3af733) #2013-01-06
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${${proj}_REPOSITORY}
     GIT_TAG ${${proj}_GIT_TAG}

@@ -519,6 +519,7 @@ int main(int argc, char *argv[])
     myHelper->SetPromptUserAfterDisplay(PromptAfterImageSend);
     myHelper->SetDebugLevel(debugLevel);
     myHelper->SetCostMetric(costMetric);
+    myHelper->SetUseROIBSpline(useROIBSpline);
     if( debugLevel > 7 )
       {
       myHelper->PrintCommandLine(true, "BF");

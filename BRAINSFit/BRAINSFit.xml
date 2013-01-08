@@ -159,6 +159,14 @@
       <default>14,10,12</default>
     </integer-vector>
 
+    <boolean>
+       <name>useROIBSpline</name>
+       <longflag>useROIBSpline</longflag>
+       <label>Define BSpline grid over the ROI bounding box </label>
+       <description>When set, will use the bounding box of the input ROIs to define spline grid support region. Otherwise will use the whole image.</description>
+       <default>false</default>
+    </boolean>
+
     <integer-vector>
       <name>numberOfIterations</name>
       <longflag>numberOfIterations</longflag>

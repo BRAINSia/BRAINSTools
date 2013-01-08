@@ -544,7 +544,8 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::BRAINSFitHelperTemplat
   m_FinalMetricValue(0.0),
   m_ObserveIterations(true),
   m_CostMetricObject(NULL),
-  m_PermitParameterVariation(0)
+  m_PermitParameterVariation(0),
+  m_UseROIBSpline(0)
 {
   m_SplineGridSize[0] = 14;
   m_SplineGridSize[1] = 10;
@@ -1181,13 +1182,89 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
                                                                  RegisterImageType> InitializerType;
         InitializerType::Pointer transformInitializer = InitializerType::New();
         transformInitializer->SetTransform(initialBSplineTransform);
-        transformInitializer->SetImage(m_FixedVolume);
+
+        if( m_UseROIBSpline )
+          {
+          ImageMaskSpatialObjectType::Pointer roiMask = ImageMaskSpatialObjectType::New();
+          if( m_MovingBinaryVolume.GetPointer() != NULL )
+            {
+            ImageMaskSpatialObjectType::Pointer movingImageMask =
+              dynamic_cast<ImageMaskSpatialObjectType *>(m_MovingBinaryVolume.GetPointer() );
+
+            typedef itk::ResampleImageFilter<MaskImageType, MaskImageType, double> ResampleFilterType;
+            ResampleFilterType::Pointer resampler = ResampleFilterType::New();
+
+            if( m_CurrentGenericTransform.IsNotNull() )
+              {
+              // resample the moving mask, if available
+              resampler->SetTransform(m_CurrentGenericTransform);
+              resampler->SetInput( movingImageMask->GetImage() );
+              resampler->SetOutputParametersFromImage( m_FixedVolume );
+              resampler->Update();
+              }
+            if( m_FixedBinaryVolume.GetPointer() != NULL )
+              {
+              typedef itk::AddImageFilter<MaskImageType, MaskImageType> AddFilterType;
+              ImageMaskSpatialObjectType::Pointer fixedImageMask =
+                dynamic_cast<ImageMaskSpatialObjectType *>(m_FixedBinaryVolume.GetPointer() );
+              AddFilterType::Pointer adder = AddFilterType::New();
+              adder->SetInput1(fixedImageMask->GetImage() );
+              adder->SetInput2(resampler->GetOutput() );
+              adder->Update();
+              roiMask->SetImage(adder->GetOutput() );
+              }
+            else
+              {
+              roiMask->SetImage(resampler->GetOutput() );
+              }
+            }
+          else if( m_FixedBinaryVolume.GetPointer() != NULL )
+            {
+            ImageMaskSpatialObjectType::Pointer fixedImageMask =
+              dynamic_cast<ImageMaskSpatialObjectType *>(m_FixedBinaryVolume.GetPointer() );
+            roiMask->SetImage(fixedImageMask->GetImage() );
+            }
+
+          else
+            {
+            std::cerr << "ERROR: ROIBSpline mode can only be used with ROI(s) specified!" << std::endl;
+            return;
+            }
+
+          typename FixedImageType::PointType roiOriginPt;
+          typename FixedImageType::IndexType roiOriginIdx;
+          typename FixedImageType::Pointer    roiImage = FixedImageType::New();
+          typename FixedImageType::RegionType roiRegion =
+            roiMask->GetAxisAlignedBoundingBoxRegion();
+          typename FixedImageType::SpacingType roiSpacing =
+            m_FixedVolume->GetSpacing();
+
+          roiOriginIdx.Fill(0);
+          m_FixedVolume->TransformIndexToPhysicalPoint(roiRegion.GetIndex(), roiOriginPt);
+          roiRegion.SetIndex(roiOriginIdx);
+          roiImage->SetRegions(roiRegion);
+          roiImage->Allocate();
+          roiImage->FillBuffer(1.);
+          roiImage->SetSpacing(roiSpacing);
+          roiImage->SetOrigin(roiOriginPt);
+          roiImage->SetDirection( m_FixedVolume->GetDirection() );
+
+          transformInitializer->SetImage(roiImage);
+          }
+        else
+          {
+          transformInitializer->SetImage(m_FixedVolume);
+          }
+
         TransformSizeType tempGridSize;
         tempGridSize[0] = m_SplineGridSize[0];
         tempGridSize[1] = m_SplineGridSize[1];
         tempGridSize[2] = m_SplineGridSize[2];
         transformInitializer->SetGridSizeInsideTheImage(tempGridSize);
         transformInitializer->InitializeTransform();
+
+        std::cerr << "BSpline initialized: " << initialBSplineTransform
+                  << std::endl;
         }
 
       if( m_CurrentGenericTransform.IsNotNull() )

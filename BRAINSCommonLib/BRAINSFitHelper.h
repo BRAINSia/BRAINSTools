@@ -157,6 +157,8 @@ public:
   itkGetConstMacro(PromptUserAfterDisplay, bool);
   itkSetMacro(ObserveIterations,        bool);
   itkGetConstMacro(ObserveIterations,        bool);
+  itkSetMacro(UseROIBSpline, bool);
+  itkGetConstMacro(UseROIBSpline, bool);
 
   const std::vector<GenericTransformType::Pointer> * GetGenericTransformListPtr()
   {
@@ -260,6 +262,7 @@ private:
   double                                     m_FinalMetricValue;
   bool                                       m_ObserveIterations;
   std::string                                m_CostMetric;
+  bool                                       m_UseROIBSpline;
   itk::Object::Pointer                       m_Helper;
   // DEBUG OPTION:
   int m_ForceMINumberOfThreads;
@@ -378,6 +381,7 @@ BRAINSFitHelper::SetupRegistration()
   myHelper->SetDebugLevel(this->m_DebugLevel);
   myHelper->SetCostMetricObject(localCostMetric);
   myHelper->SetForceMINumberOfThreads(this->m_ForceMINumberOfThreads);
+  myHelper->SetUseROIBSpline(this->m_UseROIBSpline);
   if( this->m_DebugLevel > 7 )
     {
     this->PrintCommandLine(true, "BF");

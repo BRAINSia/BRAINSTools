@@ -534,6 +534,38 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
             TC_DataSink = dict()
             AddLikeTissueSink = dict()
             AccumulateLikeTissuePosteriorsNode = dict()
+            STAPLE =  dict()
+            MergeSTAPLETransform = dict()
+            MergeSTAPLELabel = dict()
+            ANTSLabelWarpFromSubjectAtlasToSession = dict()
+
+            ### Multi Label STAPLE
+            currentSTAPLENDName = 'STAPLE' + str(subjectid) 
+            STAPLE[ subjectid ] = pe.Node( interface = BRAINSMultiSTAPLE(),
+                                           name=currentSTAPLENDName )
+            baw200.connect( buildTemplateIteration2,           'outputspec.template', 
+                            STAPLE[ subjectid ] ,              'inputCompositeT1Volume')
+            STAPLE[ subjectid ].inputs.outputMultiSTAPLE     = 'outputMultiStaple.nii.gz'
+            STAPLE[ subjectid ].inputs.outputConfusionMatrix = 'outputConfusionMatrix.mat'
+
+            ### Merge for Transform
+            currentMergeSTAPLETransform = 'MergeSTAPLETransform' + str(subjectid)
+            MergeSTAPLETransform[ subjectid ] = pe.Node( interface=Merge( len( allSessions) ),
+                                                         run_without_submitting=True,
+                                                         name=currentMergeSTAPLETransform)
+            baw200.connect( MergeSTAPLETransform[ subjectid ], 'out',
+                            STAPLE[ subjectid ], 'inputTransform')
+            ### Merge for Label
+            currentMergeSTAPLELabel = 'MergeSTAPLELabel' + str(subjectid)
+            MergeSTAPLELabel[ subjectid ] = pe.Node( interface=Merge( len( allSessions) ),
+                                                         run_without_submitting=True,
+                                                         name=currentMergeSTAPLELabel)
+            baw200.connect( MergeSTAPLELabel[ subjectid ], 'out',
+                            STAPLE[ subjectid ], 'inputLabelVolume')
+
+            # STAPLE::: session label and deformations are to be added in the for loop
+
+            #{
             for sessionid in allSessions:
                 projectid = ExperimentDatabase.getProjFromSession(sessionid)
                 print("PHASE II PROJECT: {0} SUBJECT: {1} SESSION: {2}".format(projectid, subjectid, sessionid))
@@ -719,6 +751,7 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
                     # baw200.connect(BAtlas[subjectid],'template_t1_clipped',AtlasToSubjectantsRegistration[sessionid], 'moving_image')
                     # baw200.connect(ClipT1ImageWithBrainMaskNode[sessionid], 'clipped_file', AtlasToSubjectantsRegistration[sessionid], 'fixed_image')
 
+
                 global_AllT1s[sessionid] = ExperimentDatabase.getFilenamesByScantype(sessionid, ['T1-30', 'T1-15'])
                 global_AllT2s[sessionid] = ExperimentDatabase.getFilenamesByScantype(sessionid, ['T2-30', 'T2-15'])
                 global_AllPDs[sessionid] = ExperimentDatabase.getFilenamesByScantype(sessionid, ['PD-30', 'PD-15'])
@@ -894,6 +927,9 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
                         baw200.connect(PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.t1_average', MergeSessionSubjectToAtlas[sessionid], 'in14')
                         ## NOTE: SKIPPING baw200.connect( PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.t2_average',       MergeSessionSubjectToAtlas[sessionid], 'in2')
 
+
+
+
                     LinearSubjectToAtlasANTsApplyTransformsName = 'LinearSubjectToAtlasANTsApplyTransforms_' + str(sessionid)
                     LinearSubjectToAtlasANTsApplyTransforms[sessionid] = pe.MapNode(interface=ApplyTransforms(), iterfield=['input_image'], name=LinearSubjectToAtlasANTsApplyTransformsName)
                     LinearSubjectToAtlasANTsApplyTransforms[sessionid].plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -pe smp1 1 -l mem_free=1000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE), 'overwrite': True}
@@ -940,8 +976,34 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
 
                     print("HACK:  DEBUGGING HERE")
 
+                    ### STAPLE continued...
+                    ### merge transforms and lables for STAPLE
+                    mergeSTAPLEInputNo = 'in' + str( allSessions.index( sessionid) +1 )
+                    baw200.connect( PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.TissueClassifyatlasToSubjectTransform', 
+                                    MergeSTAPLETransform[ subjectid ], mergeSTAPLEInputNo )
+                    baw200.connect( myLocalSegWF[sessionid],       'outputspec.outputLabelImageName',
+                                    MergeSTAPLELabel[ subjectid ], mergeSTAPLEInputNo )
+
+                    ### output of STAPLE warping to session space 
+                    ANTSLabelWarpFromSubjectAtlasToSessionName= 'ANTSLabelWarpFromSubjectAtlasToSession' + str(sessionid)
+                    ANTSLabelWarpFromSubjectAtlasToSession[ sessionid ] = pe.Node(interface=ApplyTransforms(), 
+                                                                                  name=ANTSLabelWarpFromSubjectAtlasToSessionName)
+                    ANTSLabelWarpFromSubjectAtlasToSession[ sessionid ].plugin_args = {'template': SGE_JOB_SCRIPT, 
+                                                                                     'qsub_args': '-S /bin/bash -pe smp1 1 -l mem_free=1000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE), 
+                                                                                     'overwrite': True}
+                    ANTSLabelWarpFromSubjectAtlasToSession[ sessionid ].inputs.interpolation = 'MultiLabel'
+                    ANTSLabelWarpFromSubjectAtlasToSession[ sessionid ].inputs.output_image  = 'RFWarpedLabel.nii.gz'
+                    baw200.connect( STAPLE[ subjectid ],                               'outputMultiSTAPLE',
+                                    ANTSLabelWarpFromSubjectAtlasToSession[sessionid], 'input_image')
+                    baw200.connect( PHASE_2_oneSubjWorkflow[ sessionid ],'outputspec.TissueClassifyatlasToSubjectInverseTransform', # CHECK IF THIS IS CORRECT ONE
+                                    ANTSLabelWarpFromSubjectAtlasToSession[ sessionid ], 'transforms')
+                    baw200.connect( PHASE_2_oneSubjWorkflow[ sessionid ],                'outputspec.t1_average', 
+                                    ANTSLabelWarpFromSubjectAtlasToSession[ sessionid ], 'reference_image')
+
                 else:
                     print("SKIPPING SEGMENTATION PHASE FOR {0} {1} {2}, lenT2s {3}".format(projectid, subjectid, sessionid, len(global_AllT2s[sessionid])))
+
+                #} end of "for sessionid in allSessions:"
 
                 ## Synthesized images are only valid for 3T where the T2 and T1 have approximately the same resolution.
                 global_All3T_T1s = ExperimentDatabase.getFilenamesByScantype(sessionid, ['T1-30'])

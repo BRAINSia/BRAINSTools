@@ -127,15 +127,22 @@ DoBSpline(typename BSplineTransformType::Pointer InitializerBsplineTransform,
   // the parameters to something different than those control points inside the
   // fixed image mask.
   OptimizerBoundSelectionType boundSelect( m_OutputBSplineTransform->GetNumberOfParameters() );
+  OptimizerBoundValueType     upperBound( m_OutputBSplineTransform->GetNumberOfParameters() );
+  OptimizerBoundValueType     lowerBound( m_OutputBSplineTransform->GetNumberOfParameters() );
+
   if( vcl_abs(m_MaxBSplineDisplacement) < 1e-12 )
     {
     boundSelect.Fill(0);
+    // even when optimization is unbounded, bounds are checked in
+    // LBFGSBOptimizer::StartOptimization()
+    upperBound.Fill(m_MaxBSplineDisplacement);
+    lowerBound.Fill(-m_MaxBSplineDisplacement);
+    optimizer->SetUpperBound(upperBound);
+    optimizer->SetLowerBound(lowerBound);
     }
   else
     {
     boundSelect.Fill(2);
-    OptimizerBoundValueType upperBound( m_OutputBSplineTransform->GetNumberOfParameters() );
-    OptimizerBoundValueType lowerBound( m_OutputBSplineTransform->GetNumberOfParameters() );
 
     upperBound.Fill(m_MaxBSplineDisplacement);
     lowerBound.Fill(-m_MaxBSplineDisplacement);

@@ -93,7 +93,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME compare_nifti COMMAND
           $<TARGET_FILE:ImageCompareTests> --compare DATA{${TestData_DIR}/image_in.mhd,image_in.raw} ${IMAGE_PATH_OUTPUTS}/image_in8.mhd Dummy)
 set_tests_properties(compare_nifti PROPERTIES DEPENDS ccvnt_from_nifti)
 
-add_executable(ImageCompareTests ../ImageCompareTests.cxx)
+add_executable(ImageCompareTests ImageCompareTests.cxx)
 target_link_libraries(ImageCompareTests ${ITK_LIBRARIES})
 
 ExternalData_Add_Target( ${PROJECT_NAME}FetchData )  # Name of data management target

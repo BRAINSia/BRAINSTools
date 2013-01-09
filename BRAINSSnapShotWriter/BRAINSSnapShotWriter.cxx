@@ -9,7 +9,7 @@
 #include "itkTileImageFilter.h"
 #include "itkFlipImageFilter.h"
 #include "itkLabelOverlayImageFilter.h"
-#include "itkComposeRGBImageFilter.h"
+#include "itkComposeImageFilter.h"
 #include "itkRGBPixel.h"
 
 #include "BRAINSSnapShotWriterCLP.h"
@@ -358,8 +358,8 @@ main(int argc, char * *argv)
                                        OutputGreyImageType,
                                        OutputRGBImageType> LabelOverlayFilter;
 
-  typedef itk::ComposeRGBImageFilter<OutputGreyImageType,
-                                     OutputRGBImageType> RGBComposeFilter;
+  typedef itk::ComposeImageFilter<OutputGreyImageType,
+                                  OutputRGBImageType> RGBComposeFilter;
 
   typedef std::vector<OutputRGBImageType::Pointer> OutputRGBImageVectorType;
 

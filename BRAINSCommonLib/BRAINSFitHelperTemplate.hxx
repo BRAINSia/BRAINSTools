@@ -162,6 +162,15 @@ DoCenteredInitialization( typename FixedImageType::Pointer & orientedFixedVolume
     }
   else if( initializeTransformMode == "useCenterOfROIAlign" )
     {
+    /*
+    if( movingMask == NULL || fixedMask == NULL)
+    {
+      //itkGenericExceptionMacro(<< "FAILURE:  Improper mode for initializeTransformMode: "
+      //                       << initializeTransformMode);
+      std::cerr << "CenterOfROIAlign initialization requires fixed and moving ROI specified!" << std::endl;
+      return initialITKTransform;
+    }*/
+
     typedef typename itk::ImageMaskSpatialObject<FixedImageType::ImageDimension> CROIImageMaskSpatialObjectType;
     typedef itk::Image<unsigned char, 3>                                         CROIMaskImageType;
     typename MovingImageType::PointType movingCenter;

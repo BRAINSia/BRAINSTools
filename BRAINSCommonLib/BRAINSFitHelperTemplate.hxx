@@ -162,14 +162,11 @@ DoCenteredInitialization( typename FixedImageType::Pointer & orientedFixedVolume
     }
   else if( initializeTransformMode == "useCenterOfROIAlign" )
     {
-    /*
-    if( movingMask == NULL || fixedMask == NULL)
-    {
-      //itkGenericExceptionMacro(<< "FAILURE:  Improper mode for initializeTransformMode: "
-      //                       << initializeTransformMode);
-      std::cerr << "CenterOfROIAlign initialization requires fixed and moving ROI specified!" << std::endl;
-      return initialITKTransform;
-    }*/
+    if( movingMask.IsNull() || fixedMask.IsNull() )
+      {
+      itkGenericExceptionMacro(<< "FAILURE:  Improper mode for initializeTransformMode: "
+                               << initializeTransformMode);
+      }
 
     typedef typename itk::ImageMaskSpatialObject<FixedImageType::ImageDimension> CROIImageMaskSpatialObjectType;
     typedef itk::Image<unsigned char, 3>                                         CROIMaskImageType;
@@ -634,6 +631,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::FitCommonCode(
   catch( itk::ExceptionObject& err )
     {
     // pass exception to caller
+    std::cerr << "Exception caught: " << err << std::endl;
     throw err;
     }
 

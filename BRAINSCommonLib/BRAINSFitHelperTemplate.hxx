@@ -569,6 +569,16 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::FitCommonCode(
 
   appMutualRegistration->SetNumberOfIterations( numberOfIterations);
 
+  // Set binary masks
+  if( m_FixedBinaryVolume.IsNotNull() )
+    {
+    appMutualRegistration->SetFixedBinaryVolume(m_FixedBinaryVolume);
+    }
+  if( m_MovingBinaryVolume.IsNotNull() )
+    {
+    appMutualRegistration->SetMovingBinaryVolume(m_MovingBinaryVolume);
+    }
+
   // TODO:  What do the following two lines really accomplish
   // debug parameter, suppressed from command line
   const bool initialTransformPassThru(false);

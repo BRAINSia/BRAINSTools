@@ -549,6 +549,28 @@ template <typename TTransformType, typename TOptimizer, typename TFixedImage,
 void
 MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
                                      TMovingImage, MetricType>
+::SetFixedBinaryVolume(FixedBinaryVolumePointer fixedMask)
+{
+  itkDebugMacro("setting Fixed Image mask to " << fixedMask);
+  this->m_FixedBinaryVolume = fixedMask;
+}
+
+template <typename TTransformType, typename TOptimizer, typename TFixedImage,
+          typename TMovingImage, typename MetricType>
+void
+MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
+                                     TMovingImage, MetricType>
+::SetMovingBinaryVolume(MovingBinaryVolumePointer movingMask)
+{
+  itkDebugMacro("setting Moving Image to " << movingMask);
+  this->m_MovingBinaryVolume = movingMask;
+}
+
+template <typename TTransformType, typename TOptimizer, typename TFixedImage,
+          typename TMovingImage, typename MetricType>
+void
+MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
+                                     TMovingImage, MetricType>
 ::SetInitialTransform(typename TransformType::Pointer initialTransform)
 {
   itkDebugMacro("setting Initial Transform to " << initialTransform);

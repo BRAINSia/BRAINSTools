@@ -173,6 +173,8 @@ public:
   itkGetConstMacro(PromptUserAfterDisplay, bool);
   itkSetMacro(ObserveIterations,        bool);
   itkGetConstMacro(ObserveIterations,        bool);
+  itkSetMacro(UseROIBSpline, bool);
+  itkGetConstMacro(UseROIBSpline, bool);
 
   const std::vector<GenericTransformType::Pointer> * GetGenericTransformListPtr()
   {
@@ -264,6 +266,7 @@ private:
   bool                                       m_PromptUserAfterDisplay;
   double                                     m_FinalMetricValue;
   bool                                       m_ObserveIterations;
+  bool                                       m_UseROIBSpline;
   typename MetricType::Pointer                 m_CostMetricObject;
   std::vector<int> m_PermitParameterVariation;
   // DEBUG OPTION:

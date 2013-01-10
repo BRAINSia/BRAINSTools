@@ -87,7 +87,8 @@ BRAINSFitHelper::BRAINSFitHelper() :
   m_ObserveIterations(true),
   m_CostMetric("MMI"), // Default to Mattes Mutual Information Metric
   m_Helper(NULL),
-  m_ForceMINumberOfThreads(-1)
+  m_ForceMINumberOfThreads(-1),
+  m_UseROIBSpline(false)
 {
   m_SplineGridSize[0] = 14;
   m_SplineGridSize[1] = 10;
@@ -576,6 +577,7 @@ BRAINSFitHelper::PrintCommandLine(const bool dumpTempVolumes, const std::string 
     oss << "--outputTransform " << outputTransform  << "  \\" << std::endl;
     std::cout << oss.str() << std::endl;
     }
+  oss << "--useROIBSpline " << this->m_UseROIBSpline << " \\" << std::endl;
   const std::string TesterScript("DEBUGScript" + suffix + ".sh");
   std::ofstream     myScript;
   myScript.open( TesterScript.c_str() );

@@ -186,7 +186,7 @@ void landmarksConstellationDetector::Compute( void )
 
   // Try to compute a better estimation for MSP plane when Reflective correlation is not good enough.
   // 0.64 is choosed as the treshold by some statistical calculation on 23 successfully passed data.
-  if( c_c > -0.64 )
+  if( c_c > -0.64 && !this->m_HoughEyeFailure )
     {
     std::cout << "\n============================================================="
               << "\nBad Estimation for MSP Plane. Repeat the Procedure to Find a Better Estimation..." << std::endl;

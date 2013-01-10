@@ -124,15 +124,14 @@ int main( int argc, char *argv[] )
   BCD.SetOutputVerificationScript( outputVerificationScript );
   BCD.SetOutputUntransformedClippedVolume( outputUntransformedClippedVolume );
 
-  // BCD.Compute();
   try
     {
     BCD.Compute();
     }
   catch( itk::ExceptionObject & err )
     {
-    std::cout << "Exception Object caught: " << std::endl;
-    std::cout << err << std::endl;
+    std::cerr << "Exception Object caught:\n"
+              << err << std::endl;
     return EXIT_FAILURE;
     }
 

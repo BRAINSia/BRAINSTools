@@ -1694,5 +1694,41 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitEZTestName}
   --debugLevel 50
 )
 
+# Test for ROIBSpline mode
+# TODO: Test xml parsing instead of algorithm (that's done with BRAINSFit tests)
+#set(BRAINSFitEZTestName BRAINSFitEZTest_ROIBSpline)
+set(BRAINSFitTestName BRAINSFitTest_ROIBSpline)
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
+  --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nrrd}
+            ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nrrd
+  --compareIntensityTolerance 7
+  --compareRadiusTolerance 0
+  --compareNumberOfPixelsTolerance 777
+  BRAINSFitTest
+  --costMetric MMI
+  --failureExitCode -1 --writeTransformOnFailure
+  --numberOfIterations 2500
+  --numberOfHistogramBins 50
+  --numberOfSamples 100000
+  --translationScale 1000
+  --minimumStepLength 0.005
+  --outputVolumePixelType ushort
+  --transformType Rigid,Affine,BSpline
+  --useROIBSpline
+  --splineGridSize 3,3,3
+  --initializeTransformMode useCenterOfROIAlign
+  --maskProcessingMode ROI
+  --forceMINumberOfThreads 1
+  --numberOfThreads 1
+  --fixedVolume DATA{${TestData_DIR}/ProstateIntraop.nrrd}
+  --fixedBinaryVolume DATA{${TestData_DIR}/ProstateIntraopMask.nrrd}
+  --movingVolume DATA{${TestData_DIR}/ProstatePreop.nrrd}
+  --movingBinaryVolume DATA{${TestData_DIR}/ProstatePreopMask.nrrd}
+  --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nrrd
+  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
+  --debugLevel 50
+)
+
 
 ## - ExternalData_Add_Target( ${PROJECT_NAME}FetchData )  # Name of data management target

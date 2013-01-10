@@ -24,18 +24,6 @@ set_target_properties(CenterOfROIInitTest PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${
 ExternalData_add_test(${PROJECT_NAME}FetchData NAME CenterOfROIInitTest
   COMMAND ${LAUNCH_EXE}  $<TARGET_FILE:CenterOfROIInitTest>)
 
-# Test the CenterOfROIROIBSplineReg Test
-add_executable(CenterOfROIInitROIBSplineRegTest CenterOfROIInitROIBSplineRegTest.cxx )
-set(CenterOfROIInitROIBSplineRegTestLibraries BRAINSCommonLib ${ITK_LIBRARIES} ${OPTIONAL_DEBUG_LINK_LIBRARIES} )
-
-DebugImageViewerLibAdditions(CenterOfROIInitROIBSplineRegTestLibraries)
-
-target_link_libraries(CenterOfROIInitROIBSplineRegTest ${CenterOfROIInitROIBSplineRegTestLibraries} )
-
-set_target_properties(CenterOfROIInitROIBSplineRegTest PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${BRAINSTools_BINARY_DIR})
-ExternalData_add_test(${PROJECT_NAME}FetchData NAME
-  CenterOfROIInitROIBSplineRegTest
-  COMMAND ${LAUNCH_EXE}  $<TARGET_FILE:CenterOfROIInitROIBSplineRegTest>)
 
 set(BRAINSFitTestName BRAINSFitTest_AffineRotationMasks)
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
@@ -1703,36 +1691,6 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitEZTestName}
   --movingBinaryVolume DATA{${TestData_DIR}/rotation.test_mask.nii.gz}
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
   --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
-  --debugLevel 50
-)
-
-set(BRAINSFitTestName BRAINSFitTest_ROIBSpline)
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
-  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
-  #  --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
-  #          ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
-  #--compareIntensityTolerance 7
-  #--compareRadiusTolerance 0
-  #--compareNumberOfPixelsTolerance 777
-  BRAINSFitTest
-  --costMetric MMI
-  --failureExitCode -1 --writeTransformOnFailure
-  --numberOfIterations 2500
-  --numberOfHistogramBins 200
-  --numberOfSamples 131072
-  --translationScale 250
-  --minimumStepLength 0.001
-  --outputVolumePixelType uchar
-  # --transformType Rigid,Affine
-  --maskProcessingMode ROI
-  --useROIBSpline
-  --initializeTransformMode useCenterOfROIAlign
-  --fixedVolume /Users/fedorov/Dropbox/ProstateRegistrationStudy/ProstateRegistrationValidation/Images/Case1-t2ax.nrrd
-  --fixedBinaryVolume /Users/fedorov/Dropbox/ProstateRegistrationStudy/ProstateRegistrationValidation/Segmentations/Rater1/Case1-t2ax-TG-rater1.nrrd
-  --movingBinaryVolume /Users/fedorov/Dropbox/ProstateRegistrationStudy/ProstateRegistrationValidation/Segmentations/Rater1/Case1-t2ax-intraop-TG-rater1.nrrd
-  --movingVolume /Users/fedorov/Dropbox/ProstateRegistrationStudy/ProstateRegistrationValidation/Images/Case1-t2ax-intraop.nrrd
-  --outputVolume /Users/fedorov/Temp/RegValidation/prostate_reg.nrrd
-  --outputTransform /Users/fedorov/Temp/RegValidation/prostate_reg.tfm
   --debugLevel 50
 )
 

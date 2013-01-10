@@ -30,12 +30,11 @@ ValidateTransformRankOrdering(const std::vector<std::string> & transformType)
   // dimensional, and throw an error if
   // B-Spline is before Rigid, or any other non-sensical ordering of the
   // transform types.
-  // Rigid=1, ScaleVersor3D=2, ScaleSkewVersor3D=3, Affine=4, and (BSpline or
-  // ROIBspline or SyN)=5
+  // Rigid=1, ScaleVersor3D=2, ScaleSkewVersor3D=3, Affine=4, and (BSpline or SyN)=5
 #define VTROExceptionMacroMacro()                                       \
   itkGenericExceptionMacro(<< "Ordering of transforms does not proceed from\n" \
                            << "smallest to largest.  Please review settings for transformType.\n" \
-                           << "Rigid < ScaleVersor3D < ScaleSkewVersor3D < Affine < (BSpline | ROIBSpine | SyN)")
+                           << "Rigid < ScaleVersor3D < ScaleSkewVersor3D < Affine < (BSpline | SyN)")
 
   unsigned int CurrentTransformRank = 0;
 
@@ -86,17 +85,6 @@ ValidateTransformRankOrdering(const std::vector<std::string> & transformType)
         }
       }
     else if( transformType[l] == "BSpline" )
-      {
-      if( CurrentTransformRank <= 5 )
-        {
-        CurrentTransformRank = 5;
-        }
-      else
-        {
-        VTROExceptionMacroMacro();
-        }
-      }
-    else if( transformType[l] == "ROIBSpline" )
       {
       if( CurrentTransformRank <= 5 )
         {

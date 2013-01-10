@@ -1695,8 +1695,6 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitEZTestName}
 )
 
 # Test for ROIBSpline mode
-# TODO: Test xml parsing instead of algorithm (that's done with BRAINSFit tests)
-#set(BRAINSFitEZTestName BRAINSFitEZTest_ROIBSpline)
 set(BRAINSFitTestName BRAINSFitTest_ROIBSpline)
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>

@@ -620,8 +620,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::FitCommonCode(
   catch( itk::ExceptionObject& err )
     {
     // pass exception to caller
-    std::cerr << "Exception caught: " << err << std::endl;
-    throw err;
+    itkGenericExceptionMacro(<< "Exception caught during registration: " << err);
     }
 
   // Put the transform on the CurrentTransformList
@@ -1215,7 +1214,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
 
           else
             {
-            std::cerr << "ERROR: ROIBSpline mode can only be used with ROI(s) specified!" << std::endl;
+            itkGenericExceptionMacro( << "ERROR: ROIBSpline mode can only be used with ROI(s) specified!");
             return;
             }
 
@@ -1251,8 +1250,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
         transformInitializer->SetGridSizeInsideTheImage(tempGridSize);
         transformInitializer->InitializeTransform();
 
-        std::cerr << "BSpline initialized: " << initialBSplineTransform
-                  << std::endl;
+        std::cout << "BSpline initialized: " << initialBSplineTransform << std::endl;
         }
 
       if( m_CurrentGenericTransform.IsNotNull() )

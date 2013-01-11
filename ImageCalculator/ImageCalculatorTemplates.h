@@ -26,7 +26,6 @@ PURPOSE.  See the above copyright notices for more information.
 #include "itkCastImageFilter.h"
 #include "itkOrientImageFilter.h"
 #include "itkSpatialOrientation.h"
-#include "itkAnalyzeImageIO.h"
 #include "itkMetaDataObject.h"
 #include "itkLabelStatisticsImageFilter.h"
 #include <itkSmartPointer.h>

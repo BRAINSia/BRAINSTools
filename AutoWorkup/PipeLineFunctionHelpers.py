@@ -16,6 +16,8 @@ import errno
 POSTERIORS = ['WM', 'SURFGM', 'ACCUMBEN', 'CAUDATE', 'PUTAMEN', 'GLOBUS', 'THALAMUS',
               'HIPPOCAMPUS', 'CRBLGM', 'CRBLWM', 'CSF', 'VB', 'NOTCSF', 'NOTGM', 'NOTWM',
               'NOTVB', 'AIR']
+def convertToList(element):
+    return [ element ]
 
 
 def makeListOfValidImages(imageFile):

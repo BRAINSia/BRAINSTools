@@ -2030,7 +2030,6 @@ int main(int argc, char *argv[])
       // in nrrd, size array is the number of pixels in 1st, 2nd, 3rd, ... dimensions
       header << "sizes: " << nCols << " " << nRows << " " << nSliceInVolume << " " << nUsableVolumes << std::endl;
       header << "thicknesses:  NaN  NaN " << sliceSpacing << " NaN" << std::endl;
-      header.setprecision(17);
       // need to check
       header << "space directions: "
              << "(" << (NRRDSpaceDirection[0][0]) << "," << (NRRDSpaceDirection[1][0]) << ","

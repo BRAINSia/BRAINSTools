@@ -72,6 +72,7 @@ if(NOT DEFINED ${extProjName}_DIR OR NOT DEFINED ATLAS_NAME)
     SVN_REVISION -r ${ATLAS_SVN_REVISION}
     SVN_USERNAME slicerbot
     SVN_PASSWORD slicer
+    SVN_TRUST_CERT
     SOURCE_DIR ${proj}
     BINARY_DIR ${proj}-build
     "${cmakeversion_external_update}"

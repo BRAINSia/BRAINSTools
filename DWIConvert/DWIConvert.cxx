@@ -2032,6 +2032,7 @@ int main(int argc, char *argv[])
       header << "sizes: " << nCols << " " << nRows << " " << nSliceInVolume << " " << nUsableVolumes << std::endl;
       header << "thicknesses:  NaN  NaN " << sliceSpacing << " NaN" << std::endl;
 
+      header.setprecision(17);
       // need to check
       header << "space directions: "
              << "(" << (NRRDSpaceDirection[0][0]) << "," << (NRRDSpaceDirection[1][0]) << ","

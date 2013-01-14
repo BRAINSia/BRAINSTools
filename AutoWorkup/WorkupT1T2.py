@@ -689,6 +689,7 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
                 AntsLabelWarpedToSubject_DS = dict()
                 myLocalSegWF = dict()
                 SEGMENTATION_DataSink = dict()
+                STAPLE_SEGMENTATION_DataSink = dict()
                 myLocalFSWF = dict()
                 FSPREP_DataSink = dict()
                 FS_DS = dict()
@@ -999,6 +1000,19 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
                                     ANTSLabelWarpFromSubjectAtlasToSession[ sessionid ], 'transforms')
                     baw200.connect( PHASE_2_oneSubjWorkflow[ sessionid ],                'outputspec.t1_average', 
                                     ANTSLabelWarpFromSubjectAtlasToSession[ sessionid ], 'reference_image')
+
+                    ### Now define where the final organized outputs should go.
+                    STAPLE_SEGMENTATION_DataSink[sessionid] = pe.Node(nio.DataSink(), name="STAPLE_SEGMENTATION_DS_" + str(subjectid) + "_" + str(sessionid))
+                    STAPLE_SEGMENTATION_DataSink[sessionid].overwrite = GLOBAL_DATA_SINK_REWRITE
+                    STAPLE_SEGMENTATION_DataSink[sessionid].inputs.base_directory = ExperimentBaseDirectoryResults
+                    # STAPLE_SEGMENTATION_DataSink[sessionid].inputs.regexp_substitutions = GenerateOutputPattern(projectid, subjectid, sessionid,'BRAINSCut')
+                    # STAPLE_SEGMENTATION_DataSink[sessionid].inputs.regexp_substitutions = GenerateBRAINSCutImagesOutputPattern(projectid, subjectid, sessionid)
+                    STAPLE_SEGMENTATION_DataSink[sessionid].inputs.substitutions = [('STAPLESegmentations', os.path.join(projectid, subjectid, sessionid, 'STAPLERFSegmentations')),
+                                                                              ('subjectANNLabel_', ''),
+                                                                              ('.nii.gz', '_seg.nii.gz')
+                                                                            ]
+                    baw200.connect(ANTSLabelWarpFromSubjectAtlasToSession[sessionid], 'output_image',
+                            STAPLE_SEGMENTATION_DataSink[sessionid], 'STAPLESegmentations.@output_image')
 
                 else:
                     print("SKIPPING SEGMENTATION PHASE FOR {0} {1} {2}, lenT2s {3}".format(projectid, subjectid, sessionid, len(global_AllT2s[sessionid])))

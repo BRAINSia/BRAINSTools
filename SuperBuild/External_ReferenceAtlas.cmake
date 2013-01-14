@@ -47,7 +47,7 @@ if(NOT DEFINED ${extProjName}_DIR OR NOT DEFINED ATLAS_NAME)
   # REMOVE set(ATLAS_MIDAS_CODE http://slicer.kitware.com/midas3/download?items=12780)
   # REMOVE set(ATLAS_MD5 ed9e635ef8681f2b0c666aa72e77021c)
   set(ATLAS_SVN_REPOSITORY https://www.nitrc.org/svn/brainstestdata/BRAINSAtlas)
-  set(ATLAS_SVN_REVISION 50)
+  set(ATLAS_SVN_REVISION 51)
 
 
   set(${proj}_CMAKE_OPTIONS

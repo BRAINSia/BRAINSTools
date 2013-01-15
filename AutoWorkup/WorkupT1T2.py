@@ -548,6 +548,12 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
             STAPLE[ subjectid ].inputs.outputMultiSTAPLE     = 'outputMultiStaple.nii.gz'
             STAPLE[ subjectid ].inputs.outputConfusionMatrix = 'outputConfusionMatrix.mat'
 
+            ### Store STAPLE output for subject-specific atlas
+            baw200.connect( STAPLE[ subjectid ], 'outputConfusionMatrix', 
+                            SubjectTemplate_DataSink, 'ANTSTemplate.@stapleConfusionMatrix')
+            baw200.connect( STAPLE[ subjectid ], 'outputMultiSTAPLE', 
+                            SubjectTemplate_DataSink, 'ANTSTemplate.@stapleOutputLabel')
+
             ### Merge for Transform
             currentMergeSTAPLETransform = 'MergeSTAPLETransform' + str(subjectid)
             MergeSTAPLETransform[ subjectid ] = pe.Node( interface=Merge( len( allSessions) ),

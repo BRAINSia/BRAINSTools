@@ -19,6 +19,27 @@ POSTERIORS = ['WM', 'SURFGM', 'ACCUMBEN', 'CAUDATE', 'PUTAMEN', 'GLOBUS', 'THALA
 def convertToList(element):
     return [ element ]
 
+def MakeInclusionMaskForGMStructures( posteriorDictionary ):
+    import SimpleITK as sitk
+
+    AIR_FN=posteriorDictionary['AIR']
+    CSF_FN=posteriorDictionary['CSF']
+    VB_FN=posteriorDictionary['VB']
+    WM_FN=posteriorDictionary['WM']
+
+    AIR_PROB=sitk.ReadImage(AIR_FN)
+    CSF_PROB=sitk.ReadImage(CSF_FN)
+    VB_PROB=sitk.ReadImage(VB_FN)
+    WM_PROB=sitk.ReadImage(WM_FN)
+
+    AIR_Region=sitk.BinaryThreshold(AIR_PROB,0.51,1.01,1,0)
+    CSF_Region=sitk.BinaryThreshold(CSF_PROB,0.51,1.01,1,0)
+    VB_Region=sitk.BinaryThreshold(VB_PROB,0.51,1.01,1,0)
+    WM_Region=sitk.BinaryThreshold(WM_PROB,0.99,1.01,1,0) #NOTE: Higher tolerance for WM regions!
+
+    outputCandidateRegion=sitk.BinaryThreshold(AIR_Region+CSF_Region+VB_Region+WM_Region,1,100,0,1) #NOTE: Inversion of input/output definitions
+
+    return outputCandidateRegion
 
 def makeListOfValidImages(imageFile):
     if imageFile is None:

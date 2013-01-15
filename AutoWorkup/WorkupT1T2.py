@@ -774,6 +774,8 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
                     myLocalSegWF[sessionid] = CreateBRAINSCutWorkflow(projectid, subjectid, sessionid, 'Segmentation',
                                                                       CLUSTER_QUEUE, CLUSTER_QUEUE_LONG, BAtlas[subjectid], t1Only)  # Note:  Passing in the entire BAtlas Object here!
 
+                    baw200.connect(PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.posteriorImages', myLocalSegWF[sessionid],
+                            "inputspec.posteriorDictionary")
                     baw200.connect(PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.t1_average', myLocalSegWF[sessionid], "inputspec.T1Volume")
 
                     if (len(global_AllT2s[sessionid]) > 0):

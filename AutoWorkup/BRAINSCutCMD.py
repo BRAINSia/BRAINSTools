@@ -59,7 +59,11 @@ def xmlGenerator(args, roi=""):
     outputStream.write("          TrainingModelFilename  = \"na\"\n")
     # outputStream.write( "          TrainingModelFilename  = \"/nfsscratch/PREDICT/TEST_BRAINSCut/20120828ANNModel_Model_RF100.txt\"\n")
     outputStream.write("          TestVectorFilename     = \"na\"\n")
-    outputStream.write("          Normalization          = \"" + args.vectorNormalization + "\"\n")
+    if roi == "caudate":
+        outputStream.write("          Normalization          = \"" + 'Linear' + "\"\n")
+    else:
+        outputStream.write("          Normalization          = \"" + args.vectorNormalization + "\"\n")
+
     outputStream.write("   />\n")
 
     #
@@ -125,6 +129,8 @@ def xmlGenerator(args, roi=""):
     if args.inputSubjectT2Filename is not None:
         outputStream.write("    <Image Type=\"T2\" Filename=\"" + args.inputSubjectT2Filename + "\" />\n")
         outputStream.write("    <Image Type=\"GadSG\" Filename=\"" + args.inputSubjectGadSGFilename + "\" />\n")
+    if roi == "caudate":
+        outputStream.write("    <Image Type=\"candiateRegion\" Filename=\"" + args.candidateRegion + "\" />\n")
     # outputStream.write( "    <Image Type=\"TotalGM\" Filename=\"{fn}\" />\n".format(fn=args.inputSubjectTotalGMFilename))
     # outputStream.write( "    <Mask  Type=\"RegistrationROI\" Filename=\"{fn}\" />\n".format(fn=args.inputSubjectRegistrationROIFilename))
 
@@ -162,6 +168,9 @@ def xmlGenerator(args, roi=""):
 ##
 
 brainscutParser = argparse.ArgumentParser(description='BRAINSCut command line argument parser')
+
+# HACK:  This is to allow special treatment of caudates with masking
+brainscutParser.add_argument('--candidateRegion', help='Specify the valid candidate region for caudate', required=True)
 
 #
 # input arguments
@@ -232,7 +241,10 @@ roiList = ['accumben', 'caudate', 'putamen', 'globus', 'thalamus', 'hippocampus'
 
 for roi in roiList:
     currentXmlFilename = xmlGenerator(args, roi)
-    currentModelFilename = args.modelFilename[:-3] + '_' + roi + '.gz'  # trainModelFile.txtD0060NT0060_accumben.gz
+    if roi == "caudate":
+        currentModelFilename = args.modelFilename[:-3] + '_' + roi + '_LinearWithMask.gz'  # trainModelFile.txtD0060NT0060_caudate_LinearWithMask.gz
+    else:
+        currentModelFilename = args.modelFilename[:-3] + '_' + roi + '.gz'  # trainModelFile.txtD0060NT0060_accumben.gz
 
     BRAINSCutCommand = ["BRAINSCut" + " --applyModel " +
                         " --netConfiguration " + currentXmlFilename +

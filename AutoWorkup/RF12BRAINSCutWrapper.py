@@ -21,6 +21,7 @@ class RF12BRAINSCutWrapperCLInputSpec(CommandLineInputSpec):
     ### subject specific
     inputSubjectT1Filename = File(desc="Subject T1 Volume", exists=True, mandatory=True, argstr="--inputSubjectT1Filename %s")
     inputSubjectT2Filename = File(desc="Subject T2 Volume", exists=True, mandatory=False, argstr="--inputSubjectT2Filename %s")
+    candidateRegion = File(desc="Valid region for finding GM structures", exists=True, mandatory=True, argstr="--candidateRegion %s")
     inputSubjectGadSGFilename = File(desc="Subject SG Volume", exists=True, mandatory=False, argstr="--inputSubjectGadSGFilename %s")
     vectorNormalization = traits.Enum("IQR", "Linear", "Sigmoid_Q01", "Sigmoid_Q05", "ZScore", "NONE",
                                       desc="The type of intensity normalization to use", exists=True, mandatory=True, argstr="--vectorNormalization %s")

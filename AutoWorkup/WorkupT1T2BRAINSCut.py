@@ -126,8 +126,9 @@ def CreateBRAINSCutWorkflow(projectid,
     cutWF = pe.Workflow(name=GenerateWFName(projectid, subjectid, sessionid, WFName))
 
     inputsSpec = pe.Node(interface=IdentityInterface(fields=['T1Volume', 'T2Volume',
-                                                             'TotalGM', 'RegistrationROI',
+                                                             'posteriorImageDictionary', 'RegistrationROI',
                                                              'atlasToSubjectTransform']), name='inputspec')
+
 
     if not t1Only:
         """
@@ -156,6 +157,7 @@ def CreateBRAINSCutWorkflow(projectid,
 
         cutWF.connect(GADT1, 'outputVolume', SGI, 'inputVolume1')
         cutWF.connect(GADT2, 'outputVolume', SGI, 'inputVolume2')
+
 
     """
     BRAINSCut
@@ -194,6 +196,14 @@ def CreateBRAINSCutWorkflow(projectid,
     RF12BC.inputs.outputBinaryRightGlobus = 'subjectANNLabel_r_globus.nii.gz'
 
     cutWF.connect(inputsSpec, 'T1Volume', RF12BC, 'inputSubjectT1Filename')
+
+    from PipeLineFunctionHelpers import MakeInclusionMaskForGMStructures;
+    makeCandidateRegionNode = pe.Node(interface=Function(['posteriorDictionary'],
+                                                    ['outputCandidateRegion'],
+                                                    function=MakeInclusionMaskForGMStructures), name="MakeCandidateRegion")
+    cutWF.connect(inputsSpec,'posteriorDictionary',makeCandidateRegionNode,'posteriorDictionary')
+    cutWF.connect(makeCandidateRegionNode,'outputCandidateRegion', RF12BC,'candidateRegion')
+
     if not t1Only:
         cutWF.connect(inputsSpec, 'T2Volume', RF12BC, 'inputSubjectT2Filename')
         # cutWF.connect(inputsSpec,'TotalGM',RF12BC,'inputSubjectTotalGMFilename')

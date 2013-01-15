@@ -269,23 +269,40 @@ def main(argv=None):
         SGEFlavor = 'SGE'
         try:
             if input_arguments.wfrun == 'helium_all.q':
+                try:
+                    baw200.write_graph()
+                except:
+                    pass
                 baw200.run(plugin=SGEFlavor,
                            plugin_args=dict(template=JOB_SCRIPT, qsub_args="-S /bin/bash -pe smp1 1-12 -l h_vmem=19G,mem_free=9G -o /dev/null -e /dev/null " + CLUSTER_QUEUE))
             elif input_arguments.wfrun == 'helium_all.q_graph':
+                try:
+                    baw200.write_graph()
+                except:
+                    pass
                 SGEFlavor = 'SGEGraph'  # Use the SGEGraph processing
                 baw200.run(plugin=SGEFlavor,
                            plugin_args=dict(template=JOB_SCRIPT, qsub_args="-S /bin/bash -pe smp1 1-12 -l h_vmem=19G,mem_free=9G -o /dev/null -e /dev/null " + CLUSTER_QUEUE))
             elif input_arguments.wfrun == 'ipl_OSX':
-                baw200.write_graph()
+                try:
+                    baw200.write_graph()
+                except:
+                    pass
                 print "Running On ipl_OSX"
                 baw200.run(plugin=SGEFlavor,
                            plugin_args=dict(template=JOB_SCRIPT, qsub_args="-S /bin/bash -pe smp1 1-12 -l h_vmem=19G,mem_free=9G -o /dev/null -e /dev/null " + CLUSTER_QUEUE))
             elif input_arguments.wfrun == 'local_4':
-                baw200.write_graph()
+                try:
+                    baw200.write_graph()
+                except:
+                    pass
                 print "Running with 4 parallel processes on local machine"
                 baw200.run(plugin='MultiProc', plugin_args={'n_procs': 4})
             elif input_arguments.wfrun == 'local_12':
-                baw200.write_graph()
+                try:
+                    baw200.write_graph()
+                except:
+                    pass
                 print "Running with 12 parallel processes on local machine"
                 baw200.run(plugin='MultiProc', plugin_args={'n_procs': 12})
             elif input_arguments.wfrun == 'ds_runner':

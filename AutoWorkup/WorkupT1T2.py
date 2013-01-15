@@ -783,9 +783,9 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
 
                     baw200.connect(PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.outputLabels', myLocalSegWF[sessionid], "inputspec.RegistrationROI")
                     ## NOTE: Element 0 of AccumulatePriorsList is the accumulated GM tissue
-                    baw200.connect([(AccumulateLikeTissuePosteriorsNode[sessionid], myLocalSegWF[sessionid],
-                                    [(('AccumulatePriorsList', getListIndex, 0), "inputspec.TotalGM")]),
-                                    ])
+                    # baw200.connect([(AccumulateLikeTissuePosteriorsNode[sessionid], myLocalSegWF[sessionid],
+                    #               [(('AccumulatePriorsList', getListIndex, 0), "inputspec.TotalGM")]),
+                    #               ])
                     baw200.connect(AtlasToSubjectantsRegistration[sessionid], 'composite_transform', myLocalSegWF[sessionid], 'inputspec.atlasToSubjectTransform')
 
                     ### Now define where the final organized outputs should go.

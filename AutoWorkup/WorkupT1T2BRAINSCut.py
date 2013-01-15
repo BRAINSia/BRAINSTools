@@ -126,7 +126,7 @@ def CreateBRAINSCutWorkflow(projectid,
     cutWF = pe.Workflow(name=GenerateWFName(projectid, subjectid, sessionid, WFName))
 
     inputsSpec = pe.Node(interface=IdentityInterface(fields=['T1Volume', 'T2Volume',
-                                                             'posteriorImageDictionary', 'RegistrationROI',
+                                                             'posteriorDictionary', 'RegistrationROI',
                                                              'atlasToSubjectTransform']), name='inputspec')
 
 

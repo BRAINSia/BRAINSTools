@@ -56,6 +56,8 @@ public:
 
   void WriteLabelMapToBinaryImages( const DataSet& subject, const LabelImagePointerType& labelMapImage );
 
+  WorkingImagePointer ClipImageWithBinaryMask( WorkingImagePointer& image, WorkingImagePointer mask);
+
 private:
   BRAINSCutDataHandler*                        m_myDataHandler;
   BRAINSCutConfiguration::ApplyDataSetListType m_applyDataSetList;

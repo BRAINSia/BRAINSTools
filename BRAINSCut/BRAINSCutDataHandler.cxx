@@ -234,6 +234,28 @@ BRAINSCutDataHandler
                                           0.0, "Linear", transoformationPixelType == "binary") ) );
 }
 
+WorkingImagePointer
+BRAINSCutDataHandler
+::GetCandidateRegion( DataSet& subject) const
+{
+  const std::string candidateRegionFilename = subject.GetImageFilenameByType( "candidateRegion" );
+
+  if( candidateRegionFilename == std::string("") )
+    {
+    std::cout << "* No candidate region is given! "
+              << std::endl;
+    return NULL;
+    }
+  else if( !itksys::SystemTools::FileExists( candidateRegionFilename.c_str() ) )
+    {
+    std::cout << "Requested candidateRegion file does not exists!" << std::endl
+              << ":: " <<  candidateRegionFilename  << std::endl;
+    std::exit( EXIT_FAILURE );
+    }
+  WorkingImagePointer candidateRegion = ReadImageByFilename( candidateRegionFilename );
+  return candidateRegion;
+}
+
 void
 BRAINSCutDataHandler
 ::ReadImagesOfSubjectInOrder( WorkingImageVectorType& subjectImageList, DataSet& subject)

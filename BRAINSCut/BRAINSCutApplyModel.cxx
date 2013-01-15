@@ -12,6 +12,7 @@
 #include <itkImageDuplicator.h>
 #include <itkLabelStatisticsImageFilter.h>
 #include <itkBinaryFillholeImageFilter.h>
+#include <itkMultiplyImageFilter.h>
 
 // TODO: consider using itk::LabelMap Hole filling process in ITK4
 
@@ -123,6 +124,19 @@ BRAINSCutApplyModel
   DeformedROIMapType deformedROIs;
 
   this->m_myDataHandler->GetDeformedROIs(deformedROIs, subject);
+
+  WorkingImagePointer candidateRegion =  m_myDataHandler->GetCandidateRegion( subject );
+
+  if( candidateRegion.IsNotNull() )
+    {
+    // TODO Clip deformed ROI here
+    for( DeformedROIMapType::iterator it = deformedROIs.begin();
+         it != deformedROIs.end();
+         it++ )
+      {
+      it->second = ClipImageWithBinaryMask( it->second, candidateRegion );
+      }
+    }
 
   /** Gaussian Smoothing if requested to cover broader area */
   if( m_gaussianSmoothingSigma > 0.0F )
@@ -467,8 +481,8 @@ BRAINSCutApplyModel
       LabelImagePointerType tempBinaryImage;
 
       tempBinaryImage = FillHole( tempExtractedBinaryImage );
-      tempBinaryImage = GetOneConnectedRegion( tempBinaryImage );
       tempBinaryImage = Closing( tempBinaryImage );
+      tempBinaryImage = GetOneConnectedRegion( tempBinaryImage );
 
       resultLabel = CombineLabel( resultLabel, tempBinaryImage, *vIt );
       }
@@ -501,6 +515,21 @@ BRAINSCutApplyModel
                                                                      0,
                                                                      255);
   return mask;
+}
+
+WorkingImagePointer
+BRAINSCutApplyModel
+::ClipImageWithBinaryMask( WorkingImagePointer& image, WorkingImagePointer mask)
+{
+  std::cout << "Clip image ..." << std::endl;
+
+  typedef itk::MultiplyImageFilter<WorkingImageType, WorkingImageType> ClipImageFilterType;
+  ClipImageFilterType::Pointer clipper = ClipImageFilterType::New();
+  clipper->SetInput1( image );
+  clipper->SetInput2( mask );
+  clipper->Update();
+
+  return clipper->GetOutput();
 }
 
 LabelImagePointerType

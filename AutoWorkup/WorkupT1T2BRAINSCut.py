@@ -198,11 +198,12 @@ def CreateBRAINSCutWorkflow(projectid,
     cutWF.connect(inputsSpec, 'T1Volume', RF12BC, 'inputSubjectT1Filename')
 
     from PipeLineFunctionHelpers import MakeInclusionMaskForGMStructures;
-    makeCandidateRegionNode = pe.Node(interface=Function(['posteriorDictionary'],
-                                                    ['outputCandidateRegion'],
+    makeCandidateRegionNode = pe.Node(interface=Function(['posteriorDictionary','candidateRegionFileName'],
+                                                    ['outputCandidateRegionFileName'],
                                                     function=MakeInclusionMaskForGMStructures), name="MakeCandidateRegion")
+    makeCandidateRegionNode.inputs.candidateRegionFileName = "RF12_CandidateRegionMask.nii.gz"
     cutWF.connect(inputsSpec,'posteriorDictionary',makeCandidateRegionNode,'posteriorDictionary')
-    cutWF.connect(makeCandidateRegionNode,'outputCandidateRegion', RF12BC,'candidateRegion')
+    cutWF.connect(makeCandidateRegionNode,'outputCandidateRegionFileName', RF12BC,'candidateRegion')
 
     if not t1Only:
         cutWF.connect(inputsSpec, 'T2Volume', RF12BC, 'inputSubjectT2Filename')

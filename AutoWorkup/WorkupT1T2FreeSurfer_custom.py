@@ -86,7 +86,6 @@ def CreateFreeSurferWorkflow_custom(projectid, subjectid, sessionid, WFname, CLU
         freesurferWF.connect(inputsSpec, 'FreeSurfer_ID', computeFinalDirectory, 'subject_id')
 
         freesurferWF.connect(inputsSpec, 'label_file', fs_reconall, 'brainmask')
-        freesurferWF.connect(inputsSpec, 'wm_prob', fs_reconall, 'wm_prob')
         freesurferWF.connect(inputsSpec, 'subjects_dir', fs_reconall, 'subjects_dir')
 
         freesurferWF.connect(inputsSpec, 'FreeSurfer_ID', outputsSpec, 'subject_id')

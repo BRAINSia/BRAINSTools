@@ -33,11 +33,13 @@ package_check('IPython', '0.10', 'tutorial1')
 from SEMTools import *
 
 from WorkupT1T2AtlasNode import MakeAtlasNode
+from PipeLineFunctionHelpers import mkdir_p
 from PipeLineFunctionHelpers import getListIndex
 from PipeLineFunctionHelpers import POSTERIORS
 from PipeLineFunctionHelpers import UnwrapPosteriorImagesFromDictionaryFunction
 from PipeLineFunctionHelpers import FixWMPartitioning
 from PipeLineFunctionHelpers import AccumulateLikeTissuePosteriors
+from WorkupT1T2FreeSurfer_custom import CreateFreeSurferWorkflow_custom, CreateFreesurferLongitudinalWorkflow
 
 GLOBAL_DATA_SINK_REWRITE = True
 
@@ -434,6 +436,10 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
             MergePosteriors[subjectid] = pe.Node(interface=Merge(numSessions),
                                                  run_without_submitting=True,
                                                  name=mergeSubjectSessionNamesPosteriors)
+            mergeSubjectSessionNamesFSLong = "99_MergeAllSessions_FSLong_" + str(subjectid)
+            MergeFSLong[subjectid] = pe.Node(interface=Merge(numSessions),
+                                             run_without_submitting=True,
+                                             name=mergeSubjectSessionNamesFSLong)
             index = 1
             # print("HACK: HACK: HACK:  {0}".format(allSessions))
             for sessionid in allSessions:
@@ -540,18 +546,18 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
             ANTSLabelWarpFromSubjectAtlasToSession = dict()
 
             ### Multi Label STAPLE
-            currentSTAPLENDName = 'STAPLE' + str(subjectid) 
+            currentSTAPLENDName = 'STAPLE' + str(subjectid)
             STAPLE[ subjectid ] = pe.Node( interface = BRAINSMultiSTAPLE(),
                                            name=currentSTAPLENDName )
-            baw200.connect( buildTemplateIteration2,           'outputspec.template', 
+            baw200.connect( buildTemplateIteration2,           'outputspec.template',
                             STAPLE[ subjectid ] ,              'inputCompositeT1Volume')
             STAPLE[ subjectid ].inputs.outputMultiSTAPLE     = 'outputMultiStaple.nii.gz'
             STAPLE[ subjectid ].inputs.outputConfusionMatrix = 'outputConfusionMatrix.mat'
 
             ### Store STAPLE output for subject-specific atlas
-            baw200.connect( STAPLE[ subjectid ], 'outputConfusionMatrix', 
+            baw200.connect( STAPLE[ subjectid ], 'outputConfusionMatrix',
                             SubjectTemplate_DataSink, 'ANTSTemplate.@stapleConfusionMatrix')
-            baw200.connect( STAPLE[ subjectid ], 'outputMultiSTAPLE', 
+            baw200.connect( STAPLE[ subjectid ], 'outputMultiSTAPLE',
                             SubjectTemplate_DataSink, 'ANTSTemplate.@stapleOutputLabel')
 
             ### Merge for Transform
@@ -988,17 +994,17 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
                     ### STAPLE continued...
                     ### merge transforms and lables for STAPLE
                     mergeSTAPLEInputNo = 'in' + str( allSessions.index( sessionid) +1 )
-                    baw200.connect( PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.TissueClassifyatlasToSubjectTransform', 
+                    baw200.connect( PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.TissueClassifyatlasToSubjectTransform',
                                     MergeSTAPLETransform[ subjectid ], mergeSTAPLEInputNo )
                     baw200.connect( myLocalSegWF[sessionid],       'outputspec.outputLabelImageName',
                                     MergeSTAPLELabel[ subjectid ], mergeSTAPLEInputNo )
 
-                    ### output of STAPLE warping to session space 
+                    ### output of STAPLE warping to session space
                     ANTSLabelWarpFromSubjectAtlasToSessionName= 'ANTSLabelWarpFromSubjectAtlasToSession' + str(sessionid)
-                    ANTSLabelWarpFromSubjectAtlasToSession[ sessionid ] = pe.Node(interface=ApplyTransforms(), 
+                    ANTSLabelWarpFromSubjectAtlasToSession[ sessionid ] = pe.Node(interface=ApplyTransforms(),
                                                                                   name=ANTSLabelWarpFromSubjectAtlasToSessionName)
-                    ANTSLabelWarpFromSubjectAtlasToSession[ sessionid ].plugin_args = {'template': SGE_JOB_SCRIPT, 
-                                                                                     'qsub_args': '-S /bin/bash -pe smp1 1 -l mem_free=1000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE), 
+                    ANTSLabelWarpFromSubjectAtlasToSession[ sessionid ].plugin_args = {'template': SGE_JOB_SCRIPT,
+                                                                                     'qsub_args': '-S /bin/bash -pe smp1 1 -l mem_free=1000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE),
                                                                                      'overwrite': True}
                     ANTSLabelWarpFromSubjectAtlasToSession[ sessionid ].inputs.interpolation = 'MultiLabel'
                     ANTSLabelWarpFromSubjectAtlasToSession[ sessionid ].inputs.output_image  = 'RFWarpedLabel.nii.gz'
@@ -1006,7 +1012,7 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
                                     ANTSLabelWarpFromSubjectAtlasToSession[sessionid], 'input_image')
                     baw200.connect( PHASE_2_oneSubjWorkflow[ sessionid ],'outputspec.TissueClassifyatlasToSubjectInverseTransform', # CHECK IF THIS IS CORRECT ONE
                                     ANTSLabelWarpFromSubjectAtlasToSession[ sessionid ], 'transforms')
-                    baw200.connect( PHASE_2_oneSubjWorkflow[ sessionid ],                'outputspec.t1_average', 
+                    baw200.connect( PHASE_2_oneSubjWorkflow[ sessionid ],                'outputspec.t1_average',
                                     ANTSLabelWarpFromSubjectAtlasToSession[ sessionid ], 'reference_image')
 
                     ### Now define where the final organized outputs should go.
@@ -1034,10 +1040,8 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
                 RunAllFSComponents = True  # A hack to avoid 26 hour run of freesurfer
                 if 'FREESURFER' in WORKFLOW_COMPONENTS:  # and ( ( len(global_All3T_T2s) > 0 ) or RunAllFSComponents == True ):
                     print "Doing Freesurfer"
-                    from PipeLineFunctionHelpers import mkdir_p
                     constructed_FS_SUBJECTS_DIR = os.path.join(ExperimentBaseDirectoryCache, 'BAWFS_SUBJECTS')
                     mkdir_p(constructed_FS_SUBJECTS_DIR)
-                    from WorkupT1T2FreeSurfer_custom import CreateFreeSurferWorkflow_custom
                     if (len(global_All3T_T2s) > 0):  # If multi-modal, then create synthesized image before running
                         print("HACK  FREESURFER len(global_All3T_T2s) > 0 ")
                         myLocalFSWF[sessionid] = CreateFreeSurferWorkflow_custom(projectid, subjectid, sessionid, "Level1_FSTest",
@@ -1085,4 +1089,36 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
                     baw200.connect(myLocalFSWF[sessionid], 'outputspec.cnr_optimal_image', FSPREP_DataSink[sessionid], 'FREESURFER_PREP.@cnr_optimal_image')
                 else:
                     print "Skipping freesurfer"
+        # Do longitudinal freesurfer
+        # sessions = allSessions
+        # subject = subjectid
+        FS_LONG_oneSubjWorkflow = CreateFreesurferLongitudinalWorkflow(projectid,
+                                                                       subjectid,
+                                                                       allSessions,
+                                                                       "FS55",
+                                                                       CLUSTER_QUEUE,
+                                                                       CLUSTER_QUEUE_LONG,
+                                                                       True,
+                                                                       True,
+                                                                       constructed_FS_SUBJECTS_DIR)
+        FREESURFER_SUBJ_ID = pe.Node(interface=IdentityInterface(fields=['FreeSurfer_ID']),
+                                     run_without_submitting=True,
+                                     name='99_FSNodeName' + str(subjectid))
+        FREESURFER_SUBJ_ID.inputs.FreeSurfer_ID = str(subjectid)
+
+        baw200.connect(FREESURFER_SUBJ_ID, 'Freesurfer_ID', FS_LONG_oneSubjWorkflow, 'inputspec.Freesurfer_ID')
+
+        FSTEMP_DataSink = pe.Node(nio.DataSink(), name='FREESURFER_TEMP_' + str(subjectid))
+        FREESURFER_TEMP_PATTERNS = GenerateOutputPattern(projectid, subjectid, 'FREESURFER_TEMP', '')
+        FSTEMP_DataSink[sessionid].inputs.regexp_substitutions = FREESURFER_TEMP_PATTERNS
+        FSTEMP[sessionid].overwrite = GLOBAL_DATA_SINK_REWRITE
+        baw200.connect(FS_LONG_oneSubjWorkflow, 'outputsSpec.FreesurferLongitudinalDir', FSTEMP_DataSink, 'FREESURFER_TEMP.@longitudinalDirs')
+        FSLONG_DataSink = dict()
+        for sessionid in allSessions:
+            FSLONG_DataSink[sessionid] = pe.Node(nio.DataSink(), name='_'.join(['FREESURFER_LONG', str(subjectid), str(sessionid)]))
+            FSLONG_DataSink[sessionid].inputs.base_directory = ExperimentBaseDirectoryResults
+            FREESURFER_LONG_PATTERNS = GenerateOutputPattern(projectid, subjectid, sessionid, 'FREESURFER_LONG')
+            FSLONG_DataSink[sessionid].inputs.regexp_substitutions = FREESURFER_LONG_PATTERNS
+            FSLONG[sessionid].overwrite = GLOBAL_DATA_SINK_REWRITE
+            baw200.connect(FS_LONG_oneSubjWorkflow, 'outputsSpec.FreesurferLongitudinalDir', FSLONG_DataSink[subjectid], 'FREESURFER_LONG.@longitudinalDirs')
     return baw200

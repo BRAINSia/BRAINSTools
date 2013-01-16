@@ -15,6 +15,7 @@ class FSScriptInputSpec(CommandLineInputSpec):
                      desc='The normalized T1 image with the skull removed. Normalized 0-110 where white matter=110.')
     session_ids = traits.List(traits.Str(), argstr='--session_ids %s', desc='List of sessions for a subject template')
     session_id = traits.Str(argstr='--session_id %s', desc='Session for a subject longitudinal analysis')
+    template_id = traits.Str(desc='Template ID used in longitudinal processing')
     # TODO: fs_env_script = traits.Str(argstr='--FSSource %s', default='${FREESURFER_HOME}/FreeSurferEnv.sh', desc='')
     # TODO: fs_home = Directory(argstr='--FSHomeDir %s', desc='Location of FreeSurfer (differs for Mac and Linux environments')
 
@@ -23,11 +24,8 @@ class FSScriptOutputSpec(TraitedSpec):
     T1_out = File(exist=True, desc='brain.mgz')
     label1_out = File(exist=True, desc='aparc+aseg.nii.gz')
     label2_out = File(exist=True, desc='aparc.a2009+aseg.nii.gz')
-    template_dir_out = Directory(exist=True, desc='Template directory for subject')
-    # long_T1_out = File(exist=True, desc='longitudinal T1 file {SESSION}.long.{SUBJECT}_template_brain.mgz')
-    # long_label1_out = File(exist=True, desc='{SESSION}.long.{SUBJECT}_template_aparc+aseg.nii.gz')
-    # long_label2_out = File(exist=True, desc='{SESSION}.long.{SUBJECT}_template_aparc.a2009+aseg.nii.gz')
-
+    outDir = Directory(exist=True, desc='Template directory for subject')
+    template_id = traits.Str(desc='Template ID from cross-sectional processing')
 
 
 class FSScript(CommandLine):
@@ -56,12 +54,11 @@ class FSScript(CommandLine):
             outputs['label1_out'] = os.path.join(os.getcwd(), 'mri_nifti', 'aparc+aseg.nii.gz')
             outputs['label2_out'] = os.path.join(os.getcwd(), 'mri_nifti', 'aparc.a2009+aseg.nii.gz')
         elif self.inputs.subcommand == 'template':
-            outputs['template_dir'] = os.path.join(os.getcwd(), self.inputs.subject_id + '_template')
+            outputs['outDir'] = os.path.join(os.getcwd(), self.inputs.subject_id + '_template')
+            outputs['template_id'] = self.inputs.subject_id + '_template'
         elif self.inputs.subcommand == 'longitudinal':
             session = self.inputs.session_id
             subject = self.inputs.subject_id.split("_")[0] ### BUG: This will NOT work for TRACK...
-            templateFile = '.'.join([session, 'long', subject + "_template_"])
-            outputs['T1_out'] = os.path.join(os.getcwd(), subject + "_template", 'mri', templateFile + 'brain.mgz')
-            outputs['label1_out'] = os.path.join(os.getcwd(), subject + "_template", 'mri_nifti', templateFile + 'aparc+aseg.nii.gz')
-            outputs['label2_out'] = os.path.join(os.getcwd(), subject + "_template", 'mri_nifti', templateFile + 'aparc.a2009+aseg.nii.gz')
+            templateFile = subject + "_" + session + ".long"
+            outputs['outDir'] = os.path.join(os.getcwd(), templateFile)
         return outputs

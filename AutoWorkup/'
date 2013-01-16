@@ -181,7 +181,7 @@ def main(argv=None):
 
     CUSTOM_ENVIRONMENT=expConfig.get(input_arguments.processingEnvironment,'CUSTOM_ENVIRONMENT')
     CUSTOM_ENVIRONMENT=eval(CUSTOM_ENVIRONMENT)
-    ## Set custom environmental variables so that subproceses work properly (i.e. for Freesurfer)
+    ## Set custom environmental variables so that subproceses work properly (i.e. for FreeSurfer)
     #print CUSTOM_ENVIRONMENT
     for key,value in CUSTOM_ENVIRONMENT.items():
         #print "SETTING: ", key, value

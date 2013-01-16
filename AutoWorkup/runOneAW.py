@@ -110,7 +110,7 @@ WORKFLOW_COMPONENTS=['BASIC']
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 [LOCAL_ENVIRONMENT]
-# Where to find Freesurfer base directory
+# Where to find FreeSurfer base directory
 _FREESURFER_HOME=/ipldev/sharedopt/20110601/MacOSX_10.6/freesurfer
 _FREESURFER_PATH_EXT=%(_FREESURFER_HOME)s/bin:%(_FREESURFER_HOME)s/fsfast/bin:%(_FREESURFER_HOME)s/tktools:/opt/fsl/bin:%(_FREESURFER_HOME)s/mni/bin
 _GRAPHVIZ_BIN_DIR=/usr/local

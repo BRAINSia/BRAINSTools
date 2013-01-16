@@ -17,7 +17,7 @@ from nipype.interfaces.freesurfer.model import MS_LDA
 """
 
 
-def MakeFreesurferOutputDirectory(subjects_dir, subject_id):
+def MakeFreeSurferOutputDirectory(subjects_dir, subject_id):
     return subjects_dir + '/' + subject_id
 
 
@@ -31,7 +31,7 @@ def CreateFreeSurferWorkflow(projectid, subjectid, sessionid, WFname, CLUSTER_QU
     inputsSpec = pe.Node(interface=IdentityInterface(fields=['FreeSurfer_ID', 'T1_files', 'T2_files',
                                                              'label_file', 'mask_file']), name='inputspec')
     outputsSpec = pe.Node(interface=IdentityInterface(fields=['subject_id', 'subjects_dir',
-                                                              'FreesurferOutputDirectory', 'cnr_optimal_image']), name='outputspec')
+                                                              'FreeSurferOutputDirectory', 'cnr_optimal_image']), name='outputspec')
 
     if RunMultiMode:
         mergeT1T2 = pe.Node(interface=Merge(2), name="Merge_T1T2")
@@ -58,7 +58,7 @@ def CreateFreeSurferWorkflow(projectid, subjectid, sessionid, WFname, CLUSTER_QU
         freesurferWF.connect(msLDA_GenerateWeights, 'vol_synth_file', outputsSpec, 'cnr_optimal_image')
 
     if RunAllFSComponents == True:
-        print("""Run Freesurfer ReconAll at""")
+        print("""Run FreeSurfer ReconAll at""")
         fs_reconall = pe.Node(interface=ReconAll(), name="FS510")
         freesurfer_sge_options_dictionary = {'qsub_args': '-S /bin/bash -pe smp1 4 -l h_vmem=18G,mem_free=8G -o /dev/null -e /dev/null ' + CLUSTER_QUEUE, 'overwrite': True}
         fs_reconall.plugin_args = freesurfer_sge_options_dictionary
@@ -71,11 +71,11 @@ def CreateFreeSurferWorkflow(projectid, subjectid, sessionid, WFname, CLUSTER_QU
             ## Use the output of the T1 only image
             freesurferWF.connect(inputsSpec, 'T1_files', fs_reconall, 'T1_files')
 
-        computeFinalDirectory = pe.Node(Function(function=MakeFreesurferOutputDirectory, input_names=['subjects_dir', 'subject_id'], output_names=['FreesurferOutputDirectory']), run_without_submitting=True, name="99_computeFreesurferOutputDirectory")
+        computeFinalDirectory = pe.Node(Function(function=MakeFreeSurferOutputDirectory, input_names=['subjects_dir', 'subject_id'], output_names=['FreeSurferOutputDirectory']), run_without_submitting=True, name="99_computeFreeSurferOutputDirectory")
         freesurferWF.connect(fs_reconall, 'subjects_dir', computeFinalDirectory, 'subjects_dir')
         freesurferWF.connect(fs_reconall, 'subject_id', computeFinalDirectory, 'subject_id')
 
         freesurferWF.connect(fs_reconall, 'subject_id', outputsSpec, 'subject_id')
         freesurferWF.connect(fs_reconall, 'subjects_dir', outputsSpec, 'subjects_dir')
-        freesurferWF.connect(computeFinalDirectory, 'FreesurferOutputDirectory', outputsSpec, 'FreesurferOutputDirectory')
+        freesurferWF.connect(computeFinalDirectory, 'FreeSurferOutputDirectory', outputsSpec, 'FreeSurferOutputDirectory')
     return freesurferWF

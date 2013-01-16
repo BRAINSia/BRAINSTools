@@ -39,7 +39,7 @@ from PipeLineFunctionHelpers import POSTERIORS
 from PipeLineFunctionHelpers import UnwrapPosteriorImagesFromDictionaryFunction
 from PipeLineFunctionHelpers import FixWMPartitioning
 from PipeLineFunctionHelpers import AccumulateLikeTissuePosteriors
-from WorkupT1T2FreeSurfer_custom import CreateFreeSurferWorkflow_custom, CreateFreesurferLongitudinalWorkflow
+from WorkupT1T2FreeSurfer_custom import CreateFreeSurferWorkflow_custom, CreateFreeSurferLongitudinalWorkflow
 
 GLOBAL_DATA_SINK_REWRITE = True
 
@@ -437,9 +437,6 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
                                                  run_without_submitting=True,
                                                  name=mergeSubjectSessionNamesPosteriors)
             mergeSubjectSessionNamesFSLong = "99_MergeAllSessions_FSLong_" + str(subjectid)
-            MergeFSLong[subjectid] = pe.Node(interface=Merge(numSessions),
-                                             run_without_submitting=True,
-                                             name=mergeSubjectSessionNamesFSLong)
             index = 1
             # print("HACK: HACK: HACK:  {0}".format(allSessions))
             for sessionid in allSessions:
@@ -1039,7 +1036,7 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
                 # RunAllFSComponents=False ## A hack to avoid 26 hour run of freesurfer
                 RunAllFSComponents = True  # A hack to avoid 26 hour run of freesurfer
                 if 'FREESURFER' in WORKFLOW_COMPONENTS:  # and ( ( len(global_All3T_T2s) > 0 ) or RunAllFSComponents == True ):
-                    print "Doing Freesurfer"
+                    print "Doing FreeSurfer"
                     constructed_FS_SUBJECTS_DIR = os.path.join(ExperimentBaseDirectoryCache, 'BAWFS_SUBJECTS')
                     mkdir_p(constructed_FS_SUBJECTS_DIR)
                     if (len(global_All3T_T2s) > 0):  # If multi-modal, then create synthesized image before running
@@ -1073,7 +1070,7 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
                         FS_DS[sessionid].inputs.regexp_substitutions = [
                             ('/_uid_(?P<myuid>[^/]*)', r'/\g<myuid>')
                             ]
-                        baw200.connect(myLocalFSWF[sessionid], 'outputspec.FreesurferOutputDirectory', FS_DS[sessionid], 'FREESURFER_SUBJ.@FreesurferOutputDirectory')
+                        baw200.connect(myLocalFSWF[sessionid], 'outputspec.FreeSurferOutputDirectory', FS_DS[sessionid], 'FREESURFER_SUBJ.@FreeSurferOutputDirectory')
                     ### Now define where the final organized outputs should go.
                     FSPREP_DataSink[sessionid] = pe.Node(nio.DataSink(), name="FREESURFER_PREP_" + str(subjectid) + "_" + str(sessionid))
                     FSPREP_DataSink[sessionid].inputs.base_directory = ExperimentBaseDirectoryResults
@@ -1092,7 +1089,7 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
         # Do longitudinal freesurfer
         # sessions = allSessions
         # subject = subjectid
-        FS_LONG_oneSubjWorkflow = CreateFreesurferLongitudinalWorkflow(projectid,
+        FS_LONG_oneSubjWorkflow = CreateFreeSurferLongitudinalWorkflow(projectid,
                                                                        subjectid,
                                                                        allSessions,
                                                                        "FS55",
@@ -1106,13 +1103,13 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
                                      name='99_FSNodeName' + str(subjectid))
         FREESURFER_SUBJ_ID.inputs.FreeSurfer_ID = str(subjectid)
 
-        baw200.connect(FREESURFER_SUBJ_ID, 'Freesurfer_ID', FS_LONG_oneSubjWorkflow, 'inputspec.Freesurfer_ID')
+        baw200.connect(FREESURFER_SUBJ_ID, 'FreeSurfer_ID', FS_LONG_oneSubjWorkflow, 'inputspec.FreeSurfer_ID')
 
         FSTEMP_DataSink = pe.Node(nio.DataSink(), name='FREESURFER_TEMP_' + str(subjectid))
         FREESURFER_TEMP_PATTERNS = GenerateOutputPattern(projectid, subjectid, 'FREESURFER_TEMP', '')
         FSTEMP_DataSink[sessionid].inputs.regexp_substitutions = FREESURFER_TEMP_PATTERNS
         FSTEMP[sessionid].overwrite = GLOBAL_DATA_SINK_REWRITE
-        baw200.connect(FS_LONG_oneSubjWorkflow, 'outputsSpec.FreesurferLongitudinalDir', FSTEMP_DataSink, 'FREESURFER_TEMP.@longitudinalDirs')
+        baw200.connect(FS_LONG_oneSubjWorkflow, 'outputsSpec.FreeSurferLongitudinalDir', FSTEMP_DataSink, 'FREESURFER_TEMP.@longitudinalDirs')
         FSLONG_DataSink = dict()
         for sessionid in allSessions:
             FSLONG_DataSink[sessionid] = pe.Node(nio.DataSink(), name='_'.join(['FREESURFER_LONG', str(subjectid), str(sessionid)]))
@@ -1120,5 +1117,5 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
             FREESURFER_LONG_PATTERNS = GenerateOutputPattern(projectid, subjectid, sessionid, 'FREESURFER_LONG')
             FSLONG_DataSink[sessionid].inputs.regexp_substitutions = FREESURFER_LONG_PATTERNS
             FSLONG[sessionid].overwrite = GLOBAL_DATA_SINK_REWRITE
-            baw200.connect(FS_LONG_oneSubjWorkflow, 'outputsSpec.FreesurferLongitudinalDir', FSLONG_DataSink[subjectid], 'FREESURFER_LONG.@longitudinalDirs')
+            baw200.connect(FS_LONG_oneSubjWorkflow, 'outputsSpec.FreeSurferLongitudinalDir', FSLONG_DataSink[subjectid], 'FREESURFER_LONG.@longitudinalDirs')
     return baw200

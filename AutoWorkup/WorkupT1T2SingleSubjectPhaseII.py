@@ -267,7 +267,7 @@ def MakeOneSubWorkFlow(projectid, subjectid, sessionid, BAtlas, WORKFLOW_COMPONE
             T1T2WorkupSingleDataSink.inputs.regexp_substitutions = [
                 ('/_uid_(?P<myuid>[^/]*)', r'/\g<myuid>')
             ]
-            T1T2WorkupSingle.connect(myLocalFSWF, 'outputspec.FreesurferOutputDirectory', T1T2WorkupSingleDataSink, 'FREESURFER_SUBJ.@FreesurferOutputDirectory')
+            T1T2WorkupSingle.connect(myLocalFSWF, 'outputspec.FreeSurferOutputDirectory', T1T2WorkupSingleDataSink, 'FREESURFER_SUBJ.@FreeSurferOutputDirectory')
         ### Now define where the final organized outputs should go.
         FSPREP_DataSink = pe.Node(nio.DataSink(), name="FREESURFER_PREP")
         FSPREP_DataSink.inputs.base_directory = ExperimentBaseDirectoryResults

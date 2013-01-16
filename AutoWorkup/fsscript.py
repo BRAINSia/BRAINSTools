@@ -297,7 +297,7 @@ def runLongitudinal(args, FREESURFER_HOME, FS_SCRIPT):
 
 
 def runAutoRecon(args, FREESURFER_HOME, FS_SCRIPT):
-    """Run all stages of AutoRecon For Freesurfer, including the custom BAW initialization."""
+    """Run all stages of AutoRecon For FreeSurfer, including the custom BAW initialization."""
     runAutoReconStage(args.subject_id, 1, args.T1_files, args.subjects_dir, FREESURFER_HOME, FS_SCRIPT)
     baw_FixBrainMask(args.brainmask, args.subjects_dir, FREESURFER_HOME, FS_SCRIPT, args.subject_id)
     runAutoReconStage(args.subject_id, 2, args.T1_files, args.subjects_dir, FREESURFER_HOME, FS_SCRIPT)
@@ -318,7 +318,7 @@ def runAutoRecon(args, FREESURFER_HOME, FS_SCRIPT):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="""
-    Run various Freesurfer's recon-all methods
+    Run various FreeSurfer's recon-all methods
     http://surfer.nmr.mgh.harvard.edu/fswiki/ReconAllDevTable
     http://surfer.nmr.mgh.harvard.edu/fswiki/OtherUsefulFlags
     """)

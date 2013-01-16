@@ -171,6 +171,7 @@ WriteBValues(const std::vector<TScalar> & bValues, const std::string & filename)
   std::ofstream bValFile;
 
   bValFile.open(filename.c_str(), std::ios::out | std::ios::binary);
+  bValFile.precision(17);
   if( !bValFile.is_open() || !bValFile.good() )
     {
     return EXIT_FAILURE;
@@ -197,6 +198,7 @@ WriteBVectors(const std::vector<std::vector<TScalar> > & bVectors,
   std::ofstream bVecFile;
 
   bVecFile.open(filename.c_str(), std::ios::out | std::ios::binary);
+  bVecFile.precision(17);
   if( !bVecFile.is_open() || !bVecFile.good() )
     {
     return EXIT_FAILURE;

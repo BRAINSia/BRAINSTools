@@ -76,6 +76,7 @@ FSLToNrrd(const std::string & inputVolume,
   // std::string headerFileName = outputDir + "/" + outputFileName;
 
   header.open(outputVolume.c_str(), std::ios::out | std::ios::binary);
+  header.precision(17);
   header << "NRRD0005" << std::endl;
   header << "type: short" << std::endl;
   header << "dimension: 4" << std::endl;

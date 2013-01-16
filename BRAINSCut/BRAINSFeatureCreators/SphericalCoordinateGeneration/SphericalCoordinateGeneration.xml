@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<executable>
+  <category> Testing.FeatureDetection </category>
+  <title> Spherical Coordinate Generation </title>
+  <description>
+    get the atlas image as input and generates the rho, phi and theta images.
+  </description>
+  <version>0.1.0.$Revision: 1 $(alpha)</version>
+  <documentation-url></documentation-url>
+  <license></license>
+  <contributor>Ali Ghayoor</contributor>
+  <acknowledgements></acknowledgements>
+
+  <parameters>
+    <label>IO</label>
+    <description>Input/output parameters</description>
+    <image>
+      <name>inputAtlasImage</name>
+      <longflag>--inputAtlasImage</longflag>
+      <label>Input Atlas Image</label>
+      <channel>input</channel>
+      <description>Input atlas image</description>
+    </image>
+    <string>
+      <name>outputPath</name>
+      <longflag>--outputPath</longflag>
+      <label>Output Path</label>
+      <channel>output</channel>
+      <description>Output path for rho, phi and theta images</description>
+    </string>
+  </parameters>
+
+</executable>

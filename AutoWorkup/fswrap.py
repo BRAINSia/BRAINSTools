@@ -25,8 +25,6 @@ class FSScriptOutputSpec(TraitedSpec):
     label1_out = File(exist=True, desc='aparc+aseg.nii.gz')
     label2_out = File(exist=True, desc='aparc.a2009+aseg.nii.gz')
     outDir = Directory(exist=True, desc='Template directory for subject')
-    template_id = traits.Str(desc='Template ID from cross-sectional processing')
-
 
 class FSScript(CommandLine):
     """
@@ -55,7 +53,6 @@ class FSScript(CommandLine):
             outputs['label2_out'] = os.path.join(os.getcwd(), 'mri_nifti', 'aparc.a2009+aseg.nii.gz')
         elif self.inputs.subcommand == 'template':
             outputs['outDir'] = os.path.join(os.getcwd(), self.inputs.subject_id + '_template')
-            outputs['template_id'] = self.inputs.subject_id + '_template'
         elif self.inputs.subcommand == 'longitudinal':
             session = self.inputs.session_id
             subject = self.inputs.subject_id.split("_")[0] ### BUG: This will NOT work for TRACK...

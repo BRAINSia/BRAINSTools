@@ -212,19 +212,12 @@ def runAutoReconStage(subject_id, StageToRun, t1_fn, subjects_dir, FREESURFER_HO
 
 def runSubjectTemplate(args, FREESURFER_HOME, FS_SCRIPT):
     """ Create the within-subject template """
-    subject_id = args.subject_id
+    subjectTemplate_id = args.subjectTemplate_id
     session_ids = args.session_ids
     subjects_dir = args.subjects_dir
     assert type(session_ids, list), "Must input a list of session_ids"
     StageToRun = "Within-SubjectTemplate"
     FS_SCRIPT_FN = os.path.join(FREESURFER_HOME, FS_SCRIPT)
-    base_subj_dir = os.path.join(subjects_dir, subject_id)
-    ## orig_001_mgz_fn = os.path.join(base_subj_dir,'mri','orig','001.mgz')
-    ## if IsFirstNewerThanSecond(t1_fn, orig_001_mgz_fn):
-    ##     if os.path.exists(base_subj_dir):
-    ##         removeDir(base_subj_dir)
-    ##     mkdir_p(os.path.dirname(orig_001_mgz_fn))
-    ##     run_mri_convert_script(t1_fn, orig_001_mgz_fn, subjects_dir, FREESURFER_HOME, FS_SCRIPT)
     auto_recon_script="""#!/bin/bash
     export FREESURFER_HOME={FSHOME}
     export SUBJECTS_DIR={FSSUBJDIR}
@@ -232,11 +225,11 @@ def runSubjectTemplate(args, FREESURFER_HOME, FS_SCRIPT):
     {FSHOME}/bin/recon-all -debug -base {TEMPLATEID}""".format(SOURCE_SCRIPT=FS_SCRIPT_FN,
                                                                FSHOME=FREESURFER_HOME,
                                                                FSSUBJDIR=subjects_dir,
-                                                               TEMPLATEID=subject_id + "_template")
+                                                               TEMPLATEID=subjectTemplate_id)
     for session_id in session_ids:
         auto_recon_script += " -tp {timepoint}".format(timepoint=session_id)
     auto_recon_script += " -all" #TODO: Can we break this up???
-    base_run_dir = os.path.join(subjects_dir,'run_scripts', subject_id)
+    base_run_dir = os.path.join(subjects_dir,'run_scripts', subjectTemplate_id)
     mkdir_p(base_run_dir)
     script_name = os.path.join(base_run_dir,'run_autorecon_stage_'+str(StageToRun)+'.sh')
     script = open(script_name, 'w')
@@ -245,9 +238,9 @@ def runSubjectTemplate(args, FREESURFER_HOME, FS_SCRIPT):
     os.chmod(script_name, 0777)
     script_name_stdout = script_name + '_out'
     script_name_stdout_fid = open(script_name_stdout, 'w')
-    print "Starting auto_recon Stage: {0} for SubjectSession {1}".format(StageToRun, subject_id)
+    print "Starting auto_recon Stage: {0} for SubjectSession {1}".format(StageToRun, subjectTemplate_id)
     subprocess.check_call([script_name], stdout=script_name_stdout_fid, stderr=subprocess.STDOUT, shell='/bin/bash')
-    print "Ending auto_recon Stage: {0} for SubjectSession {1}".format(StageToRun, subject_id)
+    print "Ending auto_recon Stage: {0} for SubjectSession {1}".format(StageToRun, subjectTemplate_id)
     script_name_stdout_fid.close()
     return
 
@@ -322,7 +315,6 @@ if __name__ == "__main__":
     http://surfer.nmr.mgh.harvard.edu/fswiki/ReconAllDevTable
     http://surfer.nmr.mgh.harvard.edu/fswiki/OtherUsefulFlags
     """)
-    parser.add_argument('--subject_id', action='store', dest='subject_id', help='Subject_Session')
     ## For the current nipype processing, the environments are set prior to running this script, so this code is not
     ## needed for using this script within the baw running envirionment.
     # TODO: Make parser group "Environment"
@@ -348,11 +340,13 @@ if __name__ == "__main__":
     # Create -make subparser
     autorecon = subparsers.add_parser('autorecon', help='Link to recon-all i/o table: http://surfer.nmr.mgh.harvard.edu/fswiki/ReconAllDevTable')
     autorecon.add_argument('--T1_files', action='store', dest='T1_files', help='Original T1 image')
+    autorecon.add_argument('--subject_id', action='store', dest='subject_id', help='Subject_Session')
     autorecon.add_argument('--brainmask', action='store', dest='brainmask',
                            help='The normalized T1 image with the skull removed. Normalized 0-110 where white matter=110.')
     autorecon.set_defaults(func=runAutoRecon)
     # Create -base subparser
     template = subparsers.add_parser('template', help='Link to recon-all longitudinal processing: http://surfer.nmr.mgh.harvard.edu/fswiki/LongitudinalProcessing')
+    template.add_argument('--subjectTemplate_id', action='store', dest='subjectTemplate_id', help='Subject_template')
     template.add_argument('--session_ids', action='store', dest='session_ids', nargs='+', help='List of sessions for a subject template')
     template.set_defaults(func=runSubjectTemplate)
     # Create -long subparser

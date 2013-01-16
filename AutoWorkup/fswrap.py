@@ -9,7 +9,7 @@ from nipype.interfaces.base import CommandLine, CommandLineInputSpec
 class FSScriptInputSpec(CommandLineInputSpec):
     subject_id = traits.Str(argstr='--subject_id %s', desc='Subject_Session')
     subjects_dir = Directory(argstr='--subjects_dir %s', desc='FreeSurfer subjects directory')
-    subcommand = traits.Str('autorecon', argstr='%s', position=0, usedefault=True, desc='Define which subcommand to run: options ="autorecon", "longitudinal"')
+    subcommand = traits.Str('autorecon', argstr='%s', position=0, usedefault=True, desc='Define which subcommand to run: options ="autorecon", "template", "longitudinal"')
     T1_files = File(argstr='--T1_files %s', exists=True, desc='Original T1 image')
     brainmask = File(argstr='--brainmask %s', exists=True,
                      desc='The normalized T1 image with the skull removed. Normalized 0-110 where white matter=110.')

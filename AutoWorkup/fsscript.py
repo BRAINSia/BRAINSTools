@@ -218,14 +218,16 @@ def runSubjectTemplate(args, FREESURFER_HOME, FS_SCRIPT):
     assert type(session_ids, list), "Must input a list of session_ids"
     StageToRun = "Within-SubjectTemplate"
     FS_SCRIPT_FN = os.path.join(FREESURFER_HOME, FS_SCRIPT)
-    auto_recon_script="""#!/bin/bash
+    auto_recon_script="""
+    #!/bin/bash
     export FREESURFER_HOME={FSHOME}
     export SUBJECTS_DIR={FSSUBJDIR}
     source {SOURCE_SCRIPT}
-    {FSHOME}/bin/recon-all -debug -base {TEMPLATEID}""".format(SOURCE_SCRIPT=FS_SCRIPT_FN,
-                                                               FSHOME=FREESURFER_HOME,
-                                                               FSSUBJDIR=subjects_dir,
-                                                               TEMPLATEID=subjectTemplate_id)
+    {FSHOME}/bin/recon-all -debug -base {TEMPLATEID}
+    """.format(SOURCE_SCRIPT=FS_SCRIPT_FN,
+               FSHOME=FREESURFER_HOME,
+               FSSUBJDIR=subjects_dir,
+               TEMPLATEID=subjectTemplate_id)
     for session_id in session_ids:
         auto_recon_script += " -tp {timepoint}".format(timepoint=session_id)
     auto_recon_script += " -all" #TODO: Can we break this up???
@@ -247,20 +249,12 @@ def runSubjectTemplate(args, FREESURFER_HOME, FS_SCRIPT):
 
 def runLongitudinal(args, FREESURFER_HOME, FS_SCRIPT):
     """ Create the longitudinal analysis """
-    subject_id = args.subject_id
     session_id = args.session_id
     subjects_dir = args.subjects_dir
     template_id = args.template_id
     assert type(session_id, str), "Must input a list of session_ids"
     StageToRun = "Longitudinal"
     FS_SCRIPT_FN = os.path.join(FREESURFER_HOME, FS_SCRIPT)
-    base_subj_dir = os.path.join(subjects_dir, subject_id)
-    ## orig_001_mgz_fn = os.path.join(base_subj_dir,'mri','orig','001.mgz')
-    ## if IsFirstNewerThanSecond(t1_fn, orig_001_mgz_fn):
-    ##     if os.path.exists(base_subj_dir):
-    ##         removeDir(base_subj_dir)
-    ##     mkdir_p(os.path.dirname(orig_001_mgz_fn))
-    ##     run_mri_convert_script(t1_fn, orig_001_mgz_fn, subjects_dir, FREESURFER_HOME, FS_SCRIPT)
     auto_recon_script = """
     #!/bin/bash
     export FREESURFER_HOME={FSHOME}
@@ -272,8 +266,8 @@ def runLongitudinal(args, FREESURFER_HOME, FS_SCRIPT):
                FSHOME=FREESURFER_HOME,
                FSSUBJDIR=subjects_dir,
                TEMPLATEID=template_id,
-               TIMEPOINT=session_id) #TODO: Can we break this up???
-    base_run_dir = os.path.join(subjects_dir,'run_scripts', subject_id)
+               TIMEPOINT=session_id)
+    base_run_dir = os.path.join(subjects_dir,'run_scripts', template_id)
     mkdir_p(base_run_dir)
     script_name = os.path.join(base_run_dir,'run_autorecon_stage_'+str(StageToRun)+'.sh')
     script = open(script_name, 'w')
@@ -282,9 +276,9 @@ def runLongitudinal(args, FREESURFER_HOME, FS_SCRIPT):
     os.chmod(script_name, 0777)
     script_name_stdout = script_name + '_out'
     script_name_stdout_fid = open(script_name_stdout, 'w')
-    print "Starting auto_recon Stage: {0} for SubjectSession {1}".format(StageToRun, subject_id)
+    print "Starting auto_recon Stage: {0} for SubjectSession {1}".format(StageToRun, template_id)
     subprocess.check_call([script_name], stdout=script_name_stdout_fid, stderr=subprocess.STDOUT, shell='/bin/bash')
-    print "Ending auto_recon Stage: {0} for SubjectSession {1}".format(StageToRun, subject_id)
+    print "Ending auto_recon Stage: {0} for SubjectSession {1}".format(StageToRun, template_id)
     script_name_stdout_fid.close()
     return
 
@@ -351,8 +345,8 @@ if __name__ == "__main__":
     template.set_defaults(func=runSubjectTemplate)
     # Create -long subparser
     longitudinal = subparsers.add_parser('longitudinal', help='Link to recon-all longitudinal processing: http://surfer.nmr.mgh.harvard.edu/fswiki/LongitudinalProcessing')
-    longitudinal.add_argument('--session_id', action='store', dest='session_id', help='Session for a subject longitudinal analysis')
-    longitudinal.add_argument('--template_id', action='store', dest='template_id', help='Template folder name (basename, not full path)')
+    longitudinal.add_argument('--session_id', action='store', dest='session_id', help='Session for a subject longitudinal analysis (in --session_ids from "template" option)')
+    longitudinal.add_argument('--template_id', action='store', dest='template_id', help='Template folder name (--subjectTemplate_id from "template" option)')
     longitudinal.set_defaults(func=runLongitudinal)
 
     all_args = parser.parse_args()

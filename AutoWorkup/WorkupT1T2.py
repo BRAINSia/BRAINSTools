@@ -39,7 +39,7 @@ from PipeLineFunctionHelpers import POSTERIORS
 from PipeLineFunctionHelpers import UnwrapPosteriorImagesFromDictionaryFunction
 from PipeLineFunctionHelpers import FixWMPartitioning
 from PipeLineFunctionHelpers import AccumulateLikeTissuePosteriors
-from WorkupT1T2FreeSurfer_custom import CreateFreeSurferWorkflow_custom, CreateFreeSurferSubjectTemplate
+from WorkupT1T2FreeSurfer_custom import CreateFreeSurferWorkflow_custom, CreateFreeSurferSubjectTemplate, CreateFreeSurferLongitudinalWorkflow
 
 GLOBAL_DATA_SINK_REWRITE = True
 
@@ -1107,11 +1107,11 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
                                                                                constructed_FS_SUBJECTS_DIR)
                 FREESURFER_SUBJ_ID = pe.Node(interface=IdentityInterface(fields=['subjectTemplate_id']),
                                              run_without_submitting=True,
-                                             name='99_FSNodeName_' + str(subjectid)+"_template")
-                FREESURFER_SUBJ_ID.inputs.subjectTemplate_id = str(subjectid)+"_template"
+                                             name='99_FSNodeName_' + str(subjectid) + "_template")
+                FREESURFER_SUBJ_ID.inputs.subjectTemplate_id = str(subjectid) + "_template"
 
                 baw200.connect(FREESURFER_SUBJ_ID, 'subjectTemplate_id', FS_TEMPLATE_oneSubjWorkflow, 'inputspec.subjectTemplate_id')
-                baw200.connect(FreeSurferSessionID_MergeNode[subjectid],'out',FS_TEMPLATE_oneSubjWorkflow, 'inputspec.FreeSurferSession_IDs')
+                baw200.connect(FreeSurferSessionID_MergeNode[subjectid],'out', FS_TEMPLATE_oneSubjWorkflow, 'inputspec.FreeSurferSession_IDs')
 
                 FSTEMP_DataSink[subjectid] = pe.Node(nio.DataSink(), name='FREESURFER_TEMP_' + str(subjectid))
                 FREESURFER_TEMP_PATTERNS = GenerateOutputPattern(projectid, subjectid, 'FREESURFER_TEMP', '')
@@ -1119,31 +1119,30 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
                 FSTEMP_DataSink[subjectid].overwrite = GLOBAL_DATA_SINK_REWRITE
                 baw200.connect(FS_TEMPLATE_oneSubjWorkflow, 'outputspec.FreeSurferTemplateDir', FSTEMP_DataSink[subjectid], 'FREESURFER_SUBJ.@FreeSurferTemplateDir')
                 #}
-                """
                 #{
                 FSLONG_DataSink = dict()
                 FS_LONG_oneSubjWorkflow = dict()
                 for sessionid in allSessions:
                     FS_LONG_oneSubjWorkflow[sessionid] = CreateFreeSurferLongitudinalWorkflow(projectid,
                                                                                subjectid,
-                                                                               allSessions,
+                                                                               sessionid,
                                                                                "FS55",
                                                                                CLUSTER_QUEUE,
                                                                                CLUSTER_QUEUE_LONG,
                                                                                True,
                                                                                True,
                                                                                constructed_FS_SUBJECTS_DIR)
-                    baw200.connect(FS_TEMPLATE_oneSubjWorkflow, 'outputspec.FreeSurferSubjectTemplateID',FS_LONG_oneSubjWorkflow,'')
+                    baw200.connect(FS_TEMPLATE_oneSubjWorkflow, 'outputspec.FreeSurferTemplateDir', FS_LONG_oneSubjWorkflow[sessionid], 'inputspec.SingleSubject_ID')
+                    # baw200.connect(FREESURFER_SUBJ_ID, 'subjectTemplate_id', FS_LONG_oneSubjWorkflow[sessionid], 'inputspec.SingleSubject_ID')
                     FSLONG_DataSink[sessionid] = pe.Node(nio.DataSink(), name='_'.join(['FREESURFER_LONG', str(subjectid), str(sessionid)]))
                     FSLONG_DataSink[sessionid].inputs.base_directory = ExperimentBaseDirectoryResults
                     FREESURFER_LONG_PATTERNS = GenerateOutputPattern(projectid, subjectid, sessionid, 'FREESURFER_LONG')
                     FSLONG_DataSink[sessionid].inputs.regexp_substitutions = FREESURFER_LONG_PATTERNS
                     FSLONG_DataSink[sessionid].overwrite = GLOBAL_DATA_SINK_REWRITE
-                    baw200.connect(FS_LONG_oneSubjWorkflow, 'outputspec.FreeSurferLongitudinalDir', FSLONG_DataSink[sessionid], 'FREESURFER_SUBJ.@longitudinalDirs')
+
+                    baw200.connect(FS_LONG_oneSubjWorkflow[sessionid], 'outputspec.FreeSurferLongitudinalDir', FSLONG_DataSink[sessionid], 'FREESURFER_SUBJ.@longitudinalDirs')
 
                 #} end of "for sessionid in allSessions:"
-                """
-
             else:
                 print "Skipping freesurfer"
     return baw200

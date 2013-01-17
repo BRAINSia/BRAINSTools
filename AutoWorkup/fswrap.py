@@ -13,6 +13,7 @@ class FSScriptInputSpec(CommandLineInputSpec):
     T1_files = File(argstr='--T1_files %s', exists=True, desc='Original T1 image')
     brainmask = File(argstr='--brainmask %s', exists=True,
                      desc='The normalized T1 image with the skull removed. Normalized 0-110 where white matter=110.')
+    subjectTemplate_id = traits.Str(argstr='--subjectTemplate_id %s', desc='Subject_template')
     session_ids = traits.List(traits.Str(), argstr='--session_ids %s', desc='List of sessions for a subject template')
     session_id = traits.Str(argstr='--session_id %s', desc='Session for a subject longitudinal analysis')
     template_id = traits.Str(desc='Template ID used in longitudinal processing')
@@ -52,10 +53,8 @@ class FSScript(CommandLine):
             outputs['label1_out'] = os.path.join(os.getcwd(), 'mri_nifti', 'aparc+aseg.nii.gz')
             outputs['label2_out'] = os.path.join(os.getcwd(), 'mri_nifti', 'aparc.a2009+aseg.nii.gz')
         elif self.inputs.subcommand == 'template':
-            outputs['outDir'] = os.path.join(os.getcwd(), self.inputs.subject_id + '_template')
+            outputs['outDir'] = os.path.join(os.getcwd(), self.inputs.subject_id)
         elif self.inputs.subcommand == 'longitudinal':
-            session = self.inputs.session_id
-            subject = self.inputs.subject_id.split("_")[0] ### BUG: This will NOT work for TRACK...
-            templateFile = subject + "_" + session + ".long"
+            templateFile = self.inputs.template_id + "_" + self.inputs.session_id + ".long"
             outputs['outDir'] = os.path.join(os.getcwd(), templateFile)
         return outputs

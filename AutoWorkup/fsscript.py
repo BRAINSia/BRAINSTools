@@ -220,7 +220,11 @@ def runSubjectTemplate(args, FREESURFER_HOME, FS_SCRIPT):
     print "Input a list of session_ids :{0}:".format(session_ids)
     print "subjects_dir :{0}:".format(subjects_dir)
     print "X"*80
+<<<<<<< HEAD
     assert isinstance(session_ids, list), "Must input a list of session_ids :{0}:".format(session_ids)
+=======
+    assert type(session_ids) == type(list()), "Must input a list of session_ids :{0}:".format(session_ids)
+>>>>>>> ENH: Fixed FS Logic for running Freesurfer Template building.
     StageToRun = "Within-SubjectTemplate"
     FS_SCRIPT_FN = os.path.join(FREESURFER_HOME, FS_SCRIPT)
     auto_recon_script="""#!/bin/bash
@@ -348,7 +352,8 @@ if __name__ == "__main__":
     template = subparsers.add_parser('template', help='Link to recon-all longitudinal processing: http://surfer.nmr.mgh.harvard.edu/fswiki/LongitudinalProcessing')
     template.add_argument('--subjectTemplate_id', action='store', dest='subjectTemplate_id', required=True, help='Subject_template')
     template.add_argument('--session_ids', action='store', dest='session_ids', nargs='+', required=True, help='List of sessions for a subject template')
-    template.add_argument('--subjects_dir', action='store', dest='subjects_dir', required=True, help='FreeSurfer subjects directory')
+    template.add_argument('--subjects_dir', action='store', dest='subjects_dir',required=True, help='FreeSurfer subjects directory')
+    #template.add_argument('--subject_id', action='store', dest='subject_id',required=True,  help='Subject_Session')
     template.set_defaults(func=runSubjectTemplate)
     # Create -long subparser
     longitudinal = subparsers.add_parser('longitudinal', help='Link to recon-all longitudinal processing: http://surfer.nmr.mgh.harvard.edu/fswiki/LongitudinalProcessing')

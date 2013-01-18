@@ -214,8 +214,9 @@ def runSubjectTemplate(args, FREESURFER_HOME, FS_SCRIPT):
     """ Create the within-subject template """
     subjectTemplate_id = args.subjectTemplate_id
     session_ids = args.session_ids
+    print session_ids
     subjects_dir = args.subjects_dir
-    assert type(session_ids, list), "Must input a list of session_ids"
+    assert isinstance(session_ids, list), "Must input a list of session_ids"
     StageToRun = "Within-SubjectTemplate"
     FS_SCRIPT_FN = os.path.join(FREESURFER_HOME, FS_SCRIPT)
     auto_recon_script="""
@@ -230,7 +231,7 @@ def runSubjectTemplate(args, FREESURFER_HOME, FS_SCRIPT):
                TEMPLATEID=subjectTemplate_id)
     for session_id in session_ids:
         auto_recon_script += " -tp {timepoint}".format(timepoint=session_id)
-    auto_recon_script += " -all" #TODO: Can we break this up???
+    auto_recon_script += " -all"
     base_run_dir = os.path.join(subjects_dir,'run_scripts', subjectTemplate_id)
     mkdir_p(base_run_dir)
     script_name = os.path.join(base_run_dir,'run_autorecon_stage_'+str(StageToRun)+'.sh')
@@ -304,15 +305,18 @@ def runAutoRecon(args, FREESURFER_HOME, FS_SCRIPT):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="""
+    parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
+                                     description="""
     Run various FreeSurfer's recon-all methods
-    http://surfer.nmr.mgh.harvard.edu/fswiki/ReconAllDevTable
-    http://surfer.nmr.mgh.harvard.edu/fswiki/OtherUsefulFlags
+                                     """, epilog="""
+    For more information:
+    ---------------------
+    * http://surfer.nmr.mgh.harvard.edu/fswiki/ReconAllDevTable
+    * http://surfer.nmr.mgh.harvard.edu/fswiki/OtherUsefulFlags
     """)
     ## For the current nipype processing, the environments are set prior to running this script, so this code is not
     ## needed for using this script within the baw running envirionment.
     # TODO: Make parser group "Environment"
-    parser.add_argument('--subjects_dir', action='store', dest='subjects_dir', help='FreeSurfer subjects directory')
     # TODO: parser.add_argument('--FSHomeDir', action='store', dest='FREESURFER_HOME',
     # TODO:                  default='/ipldev/sharedopt/20110601/MacOSX_10.6/freesurfer',
     # TODO:                  help='Location of FreeSurfer (differs for Mac and Linux environments')
@@ -333,21 +337,24 @@ if __name__ == "__main__":
     subparsers = parser.add_subparsers(help='Currently supported subprocesses: "autorecon", "template", "longitudinal"')
     # Create -make subparser
     autorecon = subparsers.add_parser('autorecon', help='Link to recon-all i/o table: http://surfer.nmr.mgh.harvard.edu/fswiki/ReconAllDevTable')
-    autorecon.add_argument('--T1_files', action='store', dest='T1_files', help='Original T1 image')
-    autorecon.add_argument('--subject_id', action='store', dest='subject_id', help='Subject_Session')
-    autorecon.add_argument('--brainmask', action='store', dest='brainmask',
+    autorecon.add_argument('--subjects_dir', action='store', dest='subjects_dir', required=True, help='FreeSurfer subjects directory')
+    autorecon.add_argument('--T1_files', action='store', dest='T1_files', required=True, help='Original T1 image')
+    autorecon.add_argument('--subject_id', action='store', dest='subject_id', required=True, help='Subject_Session')
+    autorecon.add_argument('--brainmask', action='store', dest='brainmask', required=True,
                            help='The normalized T1 image with the skull removed. Normalized 0-110 where white matter=110.')
     autorecon.set_defaults(func=runAutoRecon)
     # Create -base subparser
     template = subparsers.add_parser('template', help='Link to recon-all longitudinal processing: http://surfer.nmr.mgh.harvard.edu/fswiki/LongitudinalProcessing')
-    template.add_argument('--subjectTemplate_id', action='store', dest='subjectTemplate_id', help='Subject_template')
-    template.add_argument('--session_ids', action='store', dest='session_ids', nargs='+', help='List of sessions for a subject template')
+    template.add_argument('--subjects_dir', action='store', dest='subjects_dir', required=True, help='FreeSurfer subjects directory')
+    template.add_argument('--subjectTemplate_id', action='store', dest='subjectTemplate_id', required=True, help='Subject_template')
+    template.add_argument('--session_ids', action='store', dest='session_ids', nargs='+', required=True, help='List of sessions for a subject template')
     template.set_defaults(func=runSubjectTemplate)
     # Create -long subparser
     longitudinal = subparsers.add_parser('longitudinal', help='Link to recon-all longitudinal processing: http://surfer.nmr.mgh.harvard.edu/fswiki/LongitudinalProcessing')
-    longitudinal.add_argument('--session_id', action='store', dest='session_id', help='Session for a subject longitudinal analysis (in --session_ids from "template" option)')
-    longitudinal.add_argument('--template_id', action='store', dest='template_id', help='Template folder name (--subjectTemplate_id from "template" option)')
+    longitudinal.add_argument('--subjects_dir', action='store', dest='subjects_dir', required=True, help='FreeSurfer subjects directory')
+    longitudinal.add_argument('--session_id', action='store', dest='session_id', required=True, help='Session for a subject longitudinal analysis (in --session_ids from "template" option)')
+    longitudinal.add_argument('--template_id', action='store', dest='template_id', required=True, help='Template folder name (--subjectTemplate_id from "template" option)')
     longitudinal.set_defaults(func=runLongitudinal)
-
+    # Parse inputs and run correct function
     all_args = parser.parse_args()
-    all_args.func(args, local_FREESURFER_HOME, local_FS_SCRIPT)
+    all_args.func(all_args, local_FREESURFER_HOME, local_FS_SCRIPT)

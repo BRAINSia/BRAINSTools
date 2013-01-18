@@ -111,8 +111,9 @@ def CreateFreeSurferSubjectTemplate(projectid, subjectid, session_ids, WFname, C
     fs_template.plugin_args = freesurfer_sge_options_dictionary
     fs_template.inputs.session_ids = session_ids
     fs_template.inputs.subcommand = 'template'
-    subjectTemplate_freesurferWF.connect(inputsSpec, 'subjectTemplate_id', fs_template, 'subject_id')
+    subjectTemplate_freesurferWF.connect(inputsSpec, 'subjectTemplate_id', fs_template, 'subjectTemplate_id')
     subjectTemplate_freesurferWF.connect(inputsSpec, 'FreeSurferSession_IDs', fs_template, 'session_ids')
+    subjectTemplate_freesurferWF.connect(inputsSpec, 'subjects_dir', fs_template, 'subjects_dir')
 
     outputsSpec = pe.Node(interface=IdentityInterface(fields=['FreeSurferTemplateDir']), name='outputspec')
     subjectTemplate_freesurferWF.connect(fs_template, 'outDir', outputsSpec, 'FreeSurferTemplateDir')

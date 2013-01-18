@@ -338,17 +338,17 @@ if __name__ == "__main__":
     subparsers = parser.add_subparsers(help='Currently supported subprocesses: "autorecon", "template", "longitudinal"')
     # Create -make subparser
     autorecon = subparsers.add_parser('autorecon', help='Link to recon-all i/o table: http://surfer.nmr.mgh.harvard.edu/fswiki/ReconAllDevTable')
-    autorecon.add_argument('--subjects_dir', action='store', dest='subjects_dir', required=True, help='FreeSurfer subjects directory')
     autorecon.add_argument('--T1_files', action='store', dest='T1_files', required=True, help='Original T1 image')
     autorecon.add_argument('--subject_id', action='store', dest='subject_id', required=True, help='Subject_Session')
     autorecon.add_argument('--brainmask', action='store', dest='brainmask', required=True,
                            help='The normalized T1 image with the skull removed. Normalized 0-110 where white matter=110.')
+    autorecon.add_argument('--subjects_dir', action='store', dest='subjects_dir', help='FreeSurfer subjects directory')
     autorecon.set_defaults(func=runAutoRecon)
     # Create -base subparser
     template = subparsers.add_parser('template', help='Link to recon-all longitudinal processing: http://surfer.nmr.mgh.harvard.edu/fswiki/LongitudinalProcessing')
-    template.add_argument('--subjects_dir', action='store', dest='subjects_dir', required=True, help='FreeSurfer subjects directory')
     template.add_argument('--subjectTemplate_id', action='store', dest='subjectTemplate_id', required=True, help='Subject_template')
     template.add_argument('--session_ids', action='store', dest='session_ids', nargs='+', required=True, help='List of sessions for a subject template')
+    template.add_argument('--subjects_dir', action='store', dest='subjects_dir', required=True, help='FreeSurfer subjects directory')
     template.set_defaults(func=runSubjectTemplate)
     # Create -long subparser
     longitudinal = subparsers.add_parser('longitudinal', help='Link to recon-all longitudinal processing: http://surfer.nmr.mgh.harvard.edu/fswiki/LongitudinalProcessing')

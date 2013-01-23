@@ -77,7 +77,8 @@ def CreateFreeSurferWorkflow_custom(projectid, subjectid, sessionid, WFname, CLU
         freesurferWF.connect(inputsSpec, 'FreeSurfer_ID', fs_reconall, 'subject_id')
         if RunMultiMode:
             ## Use the output of the synthesized T1 with maximized contrast
-            freesurferWF.connect(msLDA_GenerateWeights, 'vol_synth_file', fs_reconall, 'T1_files')
+            ## HACK:  REMOVE FOR NOW NEEDS FURTHER TESTING freesurferWF.connect(msLDA_GenerateWeights, 'vol_synth_file', fs_reconall, 'T1_files')
+            freesurferWF.connect(inputsSpec, 'T1_files', fs_reconall, 'T1_files')
         else:
             ## Use the output of the T1 only image
             freesurferWF.connect(inputsSpec, 'T1_files', fs_reconall, 'T1_files')

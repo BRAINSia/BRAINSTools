@@ -92,7 +92,7 @@ source {SOURCE_SCRIPT}
     script_name_stdout_fid.close()
     return
 
-
+"""
 def baw_Recon1(t1_fn, wm_fn, brainmask, subjects_dir, FREESURFER_HOME, FS_SCRIPT, subject_id):
     base_subj_dir = os.path.join(subjects_dir, subject_id, 'mri')
     output_brainmask_fn = os.path.join(base_subj_dir, 'brainmask.nii.gz')
@@ -102,23 +102,26 @@ def baw_Recon1(t1_fn, wm_fn, brainmask, subjects_dir, FREESURFER_HOME, FS_SCRIPT
     if IsFirstNewerThanSecond(t1_fn, output_brainmask_fn_mgz):
         print "PREPARING ALTERNATE recon-auto1 stage"
         mkdir_p(base_subj_dir)
-        make_dummy_file(os.path.join(base_subj_dir, 'orig/001.mgz'))
-        make_dummy_file(os.path.join(base_subj_dir, 'rawavg.mgz'))
-        make_dummy_file(os.path.join(base_subj_dir, 'orig.mgz'))
-        make_dummy_file(
-            os.path.join(base_subj_dir, 'transforms/talairach.auto.xfm'))
-        make_dummy_file(
-            os.path.join(base_subj_dir, 'transforms/talairach.xfm'))
-
         t1 = sitk.ReadImage(t1_fn)
         wm = sitk.ReadImage(wm_fn)
         t1_new = sitk.Cast(normalizeWM(t1, wm), sitk.sitkUInt8)
+
+        orig_001_mgz_fn=os.path.join(base_subj_dir, 'orig/001.mgz')
+        sitk.WriteImage(t1_new,orig_001_mgz_fn)
+        rawavg_mgz_fn=os.path.join(base_subj_dir, 'rawavg.mgz')
+        sitk.WriteImage(t1_new,rawavg_mgz_fn)
+        orig_mgz_fn=os.path.join(base_subj_dir, 'orig.mgz')
+        sitk.WriteImage(t1_new,orig_mgz_fn)
+        make_dummy_file( os.path.join(base_subj_dir, 'transforms/talairach.auto.xfm'))
+        make_dummy_file( os.path.join(base_subj_dir, 'transforms/talairach.xfm'))
+
         sitk.WriteImage(t1_new, output_nu_fn)
+
+        t1_mgz=os.path.join(base_subj_dir, 'T1.mgz')
+        sitk.WriteImage(t1_new, t1_mgz)
         run_mri_convert_script(output_nu_fn, output_nu_fn_mgz, subjects_dir, FREESURFER_HOME, FS_SCRIPT)
 
-        make_dummy_file(os.path.join(base_subj_dir, 'T1.mgz'))
-        make_dummy_file(os.path.join(
-            base_subj_dir, 'transforms/talairach_with_skull.lta'))
+        make_dummy_file(os.path.join( base_subj_dir, 'transforms/talairach_with_skull.lta'))
         make_dummy_file(os.path.join(base_subj_dir, 'brainmask.auto.mgz'))
         brain = sitk.ReadImage(brain_fn)
         blood = sitk.BinaryThreshold(brain, 5, 5)
@@ -131,12 +134,11 @@ def baw_Recon1(t1_fn, wm_fn, brainmask, subjects_dir, FREESURFER_HOME, FS_SCRIPT
         hole_filled = sitk.ErodeObjectMorphology(sitk.DilateObjectMorphology(clipping, fill_size), fill_size)
         clipped = sitk.Cast(t1_new * hole_filled * not_blood, sitk.sitkUInt8)
         sitk.WriteImage(clipped, output_brainmask_fn)  # brain_matter image with values normalized 0-110, no skull or surface blood
-        run_mri_convert_script(output_brainmask_fn, output_brainmask_fn_mgz,
-                               subjects_dir, FREESURFER_HOME, FS_SCRIPT)
+        run_mri_convert_script(output_brainmask_fn, output_brainmask_fn_mgz, subjects_dir, FREESURFER_HOME, FS_SCRIPT)
     else:
         print "NOTHING TO BE DONE, SO SKIPPING."
         return  # Nothing to be done, files are already up-to-date.
-
+"""
 
 def baw_FixBrainMask(brainmask, subjects_dir, FREESURFER_HOME, FS_SCRIPT, subject_id):
     base_subj_dir = os.path.join(subjects_dir, subject_id, 'mri')
@@ -220,11 +222,7 @@ def runSubjectTemplate(args, FREESURFER_HOME, FS_SCRIPT):
     print "Input a list of session_ids :{0}:".format(session_ids)
     print "subjects_dir :{0}:".format(subjects_dir)
     print "X"*80
-<<<<<<< HEAD
     assert isinstance(session_ids, list), "Must input a list of session_ids :{0}:".format(session_ids)
-=======
-    assert type(session_ids) == type(list()), "Must input a list of session_ids :{0}:".format(session_ids)
->>>>>>> ENH: Fixed FS Logic for running Freesurfer Template building.
     StageToRun = "Within-SubjectTemplate"
     FS_SCRIPT_FN = os.path.join(FREESURFER_HOME, FS_SCRIPT)
     auto_recon_script="""#!/bin/bash

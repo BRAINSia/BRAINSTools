@@ -41,7 +41,8 @@ from PipeLineFunctionHelpers import FixWMPartitioning
 from PipeLineFunctionHelpers import AccumulateLikeTissuePosteriors
 from WorkupT1T2FreeSurfer_custom import CreateFreeSurferWorkflow_custom, CreateFreeSurferSubjectTemplate, CreateFreeSurferLongitudinalWorkflow
 
-GLOBAL_DATA_SINK_REWRITE = True
+#GLOBAL_DATA_SINK_REWRITE = True
+GLOBAL_DATA_SINK_REWRITE = False
 
 # HACK:  [('buildTemplateIteration2', 'SUBJECT_TEMPLATES/0249/buildTemplateIteration2')]
 

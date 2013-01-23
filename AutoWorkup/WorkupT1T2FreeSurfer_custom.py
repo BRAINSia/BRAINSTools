@@ -107,7 +107,7 @@ def CreateFreeSurferSubjectTemplate(projectid, subjectid, session_ids, WFname, C
     os.environ['SUBJECTS_DIR'] = constructed_FS_SUBJECTS_DIR
     inputsSpec.inputs.subjects_dir = constructed_FS_SUBJECTS_DIR  # HACK
     print("""Run FreeSurfer Within Subject Template at""")
-    fs_template = pe.Node(interface=fswrap.FSScript(), name="FS55_custom_cross_sectional")
+    fs_template = pe.Node(interface=fswrap.FSScript(), name="FS55_template_build_"+str(subjectid))
     fs_template.plugin_args = freesurfer_sge_options_dictionary
     fs_template.inputs.session_ids = session_ids
     fs_template.inputs.subcommand = 'template'
@@ -132,7 +132,7 @@ def CreateFreeSurferLongitudinalWorkflow(projectid, sessionid, subjectid, WFname
     os.environ['SUBJECTS_DIR'] = constructed_FS_SUBJECTS_DIR
     inputsSpec.inputs.subjects_dir = constructed_FS_SUBJECTS_DIR  # HACK
 
-    fs_longitudinal = pe.Node(interface=fswrap.FSScript(), name="FS55_custom_longitudinal")
+    fs_longitudinal = pe.Node(interface=fswrap.FSScript(), name="FS55_longitudinal_"+str(sessionid))
     fs_longitudinal.plugin_args = freesurfer_sge_options_dictionary
     fs_longitudinal.inputs.subcommand = 'longitudinal'
     fs_longitudinal.inputs.session_id = sessionid

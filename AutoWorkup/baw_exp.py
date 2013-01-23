@@ -274,7 +274,7 @@ def main(argv=None):
                 except:
                     pass
                 baw200.run(plugin=SGEFlavor,
-                           plugin_args=dict(template=JOB_SCRIPT, qsub_args="-S /bin/bash -pe smp1 1-12 -l h_vmem=19G,mem_free=9G -o /dev/null -e /dev/null " + CLUSTER_QUEUE))
+                           plugin_args=dict(template=JOB_SCRIPT, qsub_args="-S /bin/bash -cwd -pe smp1 1-12 -l h_vmem=19G,mem_free=9G -o /dev/null -e /dev/null " + CLUSTER_QUEUE))
             elif input_arguments.wfrun == 'helium_all.q_graph':
                 try:
                     baw200.write_graph()
@@ -282,7 +282,7 @@ def main(argv=None):
                     pass
                 SGEFlavor = 'SGEGraph'  # Use the SGEGraph processing
                 baw200.run(plugin=SGEFlavor,
-                           plugin_args=dict(template=JOB_SCRIPT, qsub_args="-S /bin/bash -pe smp1 1-12 -l h_vmem=19G,mem_free=9G -o /dev/null -e /dev/null " + CLUSTER_QUEUE))
+                           plugin_args=dict(template=JOB_SCRIPT, qsub_args="-S /bin/bash -cwd -pe smp1 1-12 -l h_vmem=19G,mem_free=9G -o /dev/null -e /dev/null " + CLUSTER_QUEUE))
             elif input_arguments.wfrun == 'ipl_OSX':
                 try:
                     baw200.write_graph()
@@ -290,7 +290,7 @@ def main(argv=None):
                     pass
                 print "Running On ipl_OSX"
                 baw200.run(plugin=SGEFlavor,
-                           plugin_args=dict(template=JOB_SCRIPT, qsub_args="-S /bin/bash -pe smp1 1-12 -l h_vmem=19G,mem_free=9G -o /dev/null -e /dev/null " + CLUSTER_QUEUE))
+                           plugin_args=dict(template=JOB_SCRIPT, qsub_args="-S /bin/bash -cwd -pe smp1 1-12 -l h_vmem=19G,mem_free=9G -o /dev/null -e /dev/null " + CLUSTER_QUEUE))
             elif input_arguments.wfrun == 'local_4':
                 try:
                     baw200.write_graph()

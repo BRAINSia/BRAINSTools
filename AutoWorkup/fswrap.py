@@ -53,7 +53,7 @@ class FSScript(CommandLine):
             outputs['label1_out'] = os.path.join(os.getcwd(), 'mri_nifti', 'aparc+aseg.nii.gz')
             outputs['label2_out'] = os.path.join(os.getcwd(), 'mri_nifti', 'aparc.a2009+aseg.nii.gz')
         elif self.inputs.subcommand == 'template':
-            outputs['outDir'] = os.path.join(os.getcwd(), self.inputs.subject_id)
+            outputs['outDir'] = os.path.join(os.getcwd(), self.inputs.subjectTemplate_id)
         elif self.inputs.subcommand == 'longitudinal':
             templateFile = self.inputs.template_id + "_" + self.inputs.session_id + ".long"
             outputs['outDir'] = os.path.join(os.getcwd(), templateFile)

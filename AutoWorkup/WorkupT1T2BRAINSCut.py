@@ -132,6 +132,29 @@ def CreateBRAINSCutWorkflow(projectid,
 
     if not t1Only:
         """
+        Denoised input for BRAINSCut
+        """
+        denosingTimeStep=0.0625
+        denosingConductance=0.4
+        denosingIteration=5
+
+        DenoisedT1 = pe.Node(interface=GradientAnisotropicDiffusionImageFilter(), name="DenoisedT1")
+        DenoisedT1.inputs.timeStep = denosingTimeStep
+        DenoisedT1.inputs.conductance = denosingConductance
+        DenoisedT1.inputs.numberOfIterations = denosingIteration
+        DenoisedT1.inputs.outputVolume = "DenoisedT1.nii.gz"
+
+        cutWF.connect(inputsSpec, 'T1Volume', DenoisedT1, 'inputVolume')
+
+        DenoisedT2 = pe.Node(interface=GradientAnisotropicDiffusionImageFilter(), name="DenoisedT2")
+        DenoisedT2.inputs.timeStep = denosingTimeStep
+        DenoisedT2.inputs.conductance = denosingConductance
+        DenoisedT2.inputs.numberOfIterations = denosingIteration
+        DenoisedT2.inputs.outputVolume = "DenoisedT2.nii.gz"
+
+        cutWF.connect(inputsSpec, 'T2Volume', DenoisedT2, 'inputVolume')
+
+        """
         Gradient Anistropic Diffusion images for BRAINSCut
         """
         GADT1 = pe.Node(interface=GradientAnisotropicDiffusionImageFilter(), name="GADT1")
@@ -156,7 +179,7 @@ def CreateBRAINSCutWorkflow(projectid,
         SGI.inputs.outputFileName = "SummedGradImage.nii.gz"
 
         cutWF.connect(GADT1, 'outputVolume', SGI, 'inputVolume1')
-        cutWF.connect(GADT2, 'outputVolume', SGI, 'inputVolume2')
+        
 
 
     """
@@ -195,7 +218,7 @@ def CreateBRAINSCutWorkflow(projectid,
     RF12BC.inputs.outputBinaryLeftGlobus = 'subjectANNLabel_l_globus.nii.gz'
     RF12BC.inputs.outputBinaryRightGlobus = 'subjectANNLabel_r_globus.nii.gz'
 
-    cutWF.connect(inputsSpec, 'T1Volume', RF12BC, 'inputSubjectT1Filename')
+    cutWF.connect( DenoisedT1, 'outputVolume', RF12BC, 'inputSubjectT1Filename')
 
     from PipeLineFunctionHelpers import MakeInclusionMaskForGMStructures;
     makeCandidateRegionNode = pe.Node(interface=Function(['posteriorDictionary','candidateRegionFileName'],
@@ -206,7 +229,7 @@ def CreateBRAINSCutWorkflow(projectid,
     cutWF.connect(makeCandidateRegionNode,'outputCandidateRegionFileName', RF12BC,'candidateRegion')
 
     if not t1Only:
-        cutWF.connect(inputsSpec, 'T2Volume', RF12BC, 'inputSubjectT2Filename')
+        cutWF.connect( DenoisedT2, 'outputVolume',  RF12BC, 'inputSubjectT2Filename')
         # cutWF.connect(inputsSpec,'TotalGM',RF12BC,'inputSubjectTotalGMFilename')
         # cutWF.connect(inputsSpec,'RegistrationROI',RF12BC,'inputSubjectRegistrationROIFilename')
         # Error cutWF.connect(SGI,'outputVolume',RF12BC,'inputSubjectGadSGFilename')

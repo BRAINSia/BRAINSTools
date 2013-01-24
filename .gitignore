@@ -20,3 +20,4 @@ crash*
 .clang_complete
 *.orig
 .emacs.desktop
+*.config

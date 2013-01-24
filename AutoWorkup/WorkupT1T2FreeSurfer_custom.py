@@ -77,13 +77,19 @@ def CreateFreeSurferWorkflow_custom(projectid, subjectid, sessionid, WFname, CLU
         freesurferWF.connect(inputsSpec, 'FreeSurfer_ID', fs_reconall, 'subject_id')
         if RunMultiMode:
             ## Use the output of the synthesized T1 with maximized contrast
-            ## HACK:  REMOVE FOR NOW NEEDS FURTHER TESTING freesurferWF.connect(msLDA_GenerateWeights, 'vol_synth_file', fs_reconall, 'T1_files')
+            ## HACK:  REMOVE FOR NOW - NEEDS FURTHER TESTING
+            ## freesurferWF.connect(msLDA_GenerateWeights, 'vol_synth_file', fs_reconall, 'T1_files')
             freesurferWF.connect(inputsSpec, 'T1_files', fs_reconall, 'T1_files')
+            ## END HACK
         else:
             ## Use the output of the T1 only image
             freesurferWF.connect(inputsSpec, 'T1_files', fs_reconall, 'T1_files')
 
-        computeFinalDirectory = pe.Node(Function(function=MakeFreeSurferOutputDirectory, input_names=['subjects_dir', 'subject_id'], output_names=['FreeSurferOutputDirectory']), run_without_submitting=True, name="99_computeFreeSurferOutputDirectory")
+        computeFinalDirectory = pe.Node(Function(function=MakeFreeSurferOutputDirectory,
+                                                 input_names=['subjects_dir', 'subject_id'],
+                                                 output_names=['FreeSurferOutputDirectory']),
+                                                 run_without_submitting=True,
+                                                 name="99_computeFreeSurferOutputDirectory")
         freesurferWF.connect(inputsSpec, 'subjects_dir', computeFinalDirectory, 'subjects_dir')
         freesurferWF.connect(inputsSpec, 'FreeSurfer_ID', computeFinalDirectory, 'subject_id')
 
@@ -91,7 +97,7 @@ def CreateFreeSurferWorkflow_custom(projectid, subjectid, sessionid, WFname, CLU
         freesurferWF.connect(inputsSpec, 'subjects_dir', fs_reconall, 'subjects_dir')
 
         freesurferWF.connect(inputsSpec, 'FreeSurfer_ID', outputsSpec, 'subject_id')
-        freesurferWF.connect(inputsSpec, 'subjects_dir', outputsSpec, 'subjects_dir')
+        freesurferWF.connect(fs_reconall, 'subjects_dir', outputsSpec, 'subjects_dir')
         freesurferWF.connect(computeFinalDirectory, 'FreeSurferOutputDirectory', outputsSpec, 'FreeSurferOutputDirectory')
     return freesurferWF
 

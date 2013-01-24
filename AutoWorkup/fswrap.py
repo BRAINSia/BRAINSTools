@@ -52,6 +52,7 @@ class FSScript(CommandLine):
             outputs['T1_out'] = os.path.join(os.getcwd(), 'mri', 'brain.mgz')
             outputs['label1_out'] = os.path.join(os.getcwd(), 'mri_nifti', 'aparc+aseg.nii.gz')
             outputs['label2_out'] = os.path.join(os.getcwd(), 'mri_nifti', 'aparc.a2009+aseg.nii.gz')
+            outputs['outDir'] = self.inputs.subjects_dir
         elif self.inputs.subcommand == 'template':
             outputs['outDir'] = os.path.join(os.getcwd(), self.inputs.subjectTemplate_id)
         elif self.inputs.subcommand == 'longitudinal':

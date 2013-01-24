@@ -800,13 +800,15 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
                     baw200.connect(AtlasToSubjectantsRegistration[sessionid], 'composite_transform', myLocalSegWF[sessionid], 'inputspec.atlasToSubjectTransform')
 
                     ### Now define where the final organized outputs should go.
-                    SEGMENTATION_DataSink[sessionid] = pe.Node(nio.DataSink(), name="SEGMENTATION_DS_" + str(subjectid) + "_" + str(sessionid))
+                    SEGMENTATION_DataSink[sessionid] = pe.Node(nio.DataSink(), name="DenoisedSegmentation_DS_" + str(subjectid) + "_" + str(sessionid))
                     SEGMENTATION_DataSink[sessionid].overwrite = GLOBAL_DATA_SINK_REWRITE
                     SEGMENTATION_DataSink[sessionid].inputs.base_directory = ExperimentBaseDirectoryResults
                     # SEGMENTATION_DataSink[sessionid].inputs.regexp_substitutions = GenerateOutputPattern(projectid, subjectid, sessionid,'BRAINSCut')
                     # SEGMENTATION_DataSink[sessionid].inputs.regexp_substitutions = GenerateBRAINSCutImagesOutputPattern(projectid, subjectid, sessionid)
                     SEGMENTATION_DataSink[sessionid].inputs.substitutions = [('Segmentations', os.path.join(projectid, subjectid, sessionid, 'DenoisedRFSegmentations')),
                                                                               ('subjectANNLabel_', ''),
+                                                                              ('ANNContinuousPrediction',''),
+                                                                              ('subject.nii.gz','.nii.gz'),
                                                                               ('.nii.gz', '_seg.nii.gz')
                                                                             ]
                     baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryLeftCaudate', SEGMENTATION_DataSink[sessionid], 'Segmentations.@outputBinaryLeftCaudate')

@@ -205,6 +205,7 @@ def CreateBRAINSCutWorkflow(projectid,
     subjectANNLabel_r_thalamus.nii.gz
     """
 
+    """
     RF12BC.inputs.outputBinaryLeftCaudate = 'subjectANNLabel_l_caudate.nii.gz'
     RF12BC.inputs.outputBinaryRightCaudate = 'subjectANNLabel_r_caudate.nii.gz'
     RF12BC.inputs.outputBinaryLeftHippocampus = 'subjectANNLabel_l_hippocampus.nii.gz'
@@ -217,6 +218,20 @@ def CreateBRAINSCutWorkflow(projectid,
     RF12BC.inputs.outputBinaryRightAccumben = 'subjectANNLabel_r_accumben.nii.gz'
     RF12BC.inputs.outputBinaryLeftGlobus = 'subjectANNLabel_l_globus.nii.gz'
     RF12BC.inputs.outputBinaryRightGlobus = 'subjectANNLabel_r_globus.nii.gz'
+    """
+    "ANNContinuousPredictionl_accumbensubject.nii.gz"
+    RF12BC.inputs.outputBinaryLeftCaudate = 'ANNContinuousPredictionl_caudatesubject.nii.gz'
+    RF12BC.inputs.outputBinaryRightCaudate = 'ANNContinuousPredictionr_caudatesubject.nii.gz'
+    RF12BC.inputs.outputBinaryLeftHippocampus = 'ANNContinuousPredictionl_hippocampussubject.nii.gz'
+    RF12BC.inputs.outputBinaryRightHippocampus = 'ANNContinuousPredictionr_hippocampussubject.nii.gz'
+    RF12BC.inputs.outputBinaryLeftPutamen = 'ANNContinuousPredictionl_putamensubject.nii.gz'
+    RF12BC.inputs.outputBinaryRightPutamen = 'ANNContinuousPredictionr_putamensubject.nii.gz'
+    RF12BC.inputs.outputBinaryLeftThalamus = 'ANNContinuousPredictionl_thalamussubject.nii.gz'
+    RF12BC.inputs.outputBinaryRightThalamus = 'ANNContinuousPredictionr_thalamussubject.nii.gz'
+    RF12BC.inputs.outputBinaryLeftAccumben = 'ANNContinuousPredictionl_accumbensubject.nii.gz'
+    RF12BC.inputs.outputBinaryRightAccumben = 'ANNContinuousPredictionr_accumbensubject.nii.gz'
+    RF12BC.inputs.outputBinaryLeftGlobus = 'ANNContinuousPredictionl_globussubject.nii.gz'
+    RF12BC.inputs.outputBinaryRightGlobus = 'ANNContinuousPredictionr_globussubject.nii.gz'
 
     cutWF.connect( DenoisedT1, 'outputVolume', RF12BC, 'inputSubjectT1Filename')
 

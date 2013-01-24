@@ -1140,8 +1140,10 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
                                                                                True,
                                                                                True,
                                                                                constructed_FS_SUBJECTS_DIR)
-                    baw200.connect(FS_TEMPLATE_oneSubjWorkflow, 'outputspec.FreeSurferTemplateDir', FS_LONG_oneSubjWorkflow[sessionid], 'inputspec.SingleSubject_ID')
-                    # baw200.connect(FREESURFER_SUBJ_ID, 'subjectTemplate_id', FS_LONG_oneSubjWorkflow[sessionid], 'inputspec.SingleSubject_ID')
+                    baw200.connect(myLocalFSWF[sessionid], 'outputsSpec.subject_id',
+                                   FS_LONG_oneSubjectWorkflow[sessionid], 'inputsSpec.FreeSurferSession_ID')
+                    baw200.connect(FS_TEMPLATE_oneSubjWorkflow, 'outputspec.FreeSurferTemplateDir',
+                                   FS_LONG_oneSubjWorkflow[sessionid], 'inputspec.SingleSubject_ID')
                     FSLONG_DataSink[sessionid] = pe.Node(nio.DataSink(), name='_'.join(['FREESURFER_LONG', str(subjectid), str(sessionid)]))
                     FSLONG_DataSink[sessionid].overwrite = GLOBAL_DATA_SINK_REWRITE
                     FSLONG_DataSink[sessionid].inputs.base_directory = ExperimentBaseDirectoryResults

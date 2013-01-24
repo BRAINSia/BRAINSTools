@@ -25,6 +25,7 @@ class FSScriptOutputSpec(TraitedSpec):
     T1_out = File(exist=True, desc='brain.mgz')
     label1_out = File(exist=True, desc='aparc+aseg.nii.gz')
     label2_out = File(exist=True, desc='aparc.a2009+aseg.nii.gz')
+    subject_id = traits.Str(desc='Subject_Session, pass-through from input')
     outDir = Directory(exist=True, desc='Template directory for subject')
 
 class FSScript(CommandLine):
@@ -52,7 +53,7 @@ class FSScript(CommandLine):
             outputs['T1_out'] = os.path.join(os.getcwd(), 'mri', 'brain.mgz')
             outputs['label1_out'] = os.path.join(os.getcwd(), 'mri_nifti', 'aparc+aseg.nii.gz')
             outputs['label2_out'] = os.path.join(os.getcwd(), 'mri_nifti', 'aparc.a2009+aseg.nii.gz')
-            outputs['session_id'] = self.inputs.subject_id
+            outputs['subject_id'] = self.inputs.subject_id
         elif self.inputs.subcommand == 'template':
             outputs['outDir'] = os.path.join(os.getcwd(), self.inputs.subjectTemplate_id)
         elif self.inputs.subcommand == 'longitudinal':

@@ -1094,7 +1094,7 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
                     print "========================="
                     print "========================="
                     baw200.connect(myLocalFSWF[sessionid], 'outputspec.cnr_optimal_image', FSPREP_DataSink[sessionid], 'FREESURFER_PREP.@cnr_optimal_image')
-                    baw200.connect(myLocalFSWF[sessionid], 'outputsSpec.subject_id',
+                    baw200.connect(myLocalFSWF[sessionid], 'outputspec.subject_id',
                                    FreeSurferSessionID_MergeNode[subjectid], 'in' + str(FSindex))
                     FSindex += 1
 
@@ -1140,8 +1140,8 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
                                                                                True,
                                                                                True,
                                                                                constructed_FS_SUBJECTS_DIR)
-                    baw200.connect(myLocalFSWF[sessionid], 'outputsSpec.subject_id',
-                                   FS_LONG_oneSubjectWorkflow[sessionid], 'inputsSpec.FreeSurferSession_ID')
+                    baw200.connect(myLocalFSWF[sessionid], 'outputspec.subject_id',
+                                   FS_LONG_oneSubjWorkflow[sessionid], 'inputspec.FreeSurferSession_ID')
                     baw200.connect(FS_TEMPLATE_oneSubjWorkflow, 'outputspec.FreeSurferTemplateDir',
                                    FS_LONG_oneSubjWorkflow[sessionid], 'inputspec.SingleSubject_ID')
                     FSLONG_DataSink[sessionid] = pe.Node(nio.DataSink(), name='_'.join(['FREESURFER_LONG', str(subjectid), str(sessionid)]))

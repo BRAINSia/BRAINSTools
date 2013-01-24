@@ -1094,9 +1094,8 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
                     print "========================="
                     print "========================="
                     baw200.connect(myLocalFSWF[sessionid], 'outputspec.cnr_optimal_image', FSPREP_DataSink[sessionid], 'FREESURFER_PREP.@cnr_optimal_image')
-                    baw200.connect([(myLocalFSWF[sessionid], FreeSurferSessionID_MergeNode[subjectid],
-                                 [(('outputsSpec.FreeSurferOutputDirectory', split('_')[-1]),
-                                   'in'+str(FSindex))])])
+                    baw200.connect(myLocalFSWF[sessionid], 'outputsSpec.subject_id',
+                                   FreeSurferSessionID_MergeNode[subjectid], 'in' + str(FSindex))
                     FSindex += 1
 
 
@@ -1105,20 +1104,22 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
                 ##HACK : Move later
                 FS_TEMPLATE_oneSubjWorkflow = CreateFreeSurferSubjectTemplate(projectid,
                                                                                subjectid,
-                                                                               allSessions,
                                                                                "FS55",
                                                                                CLUSTER_QUEUE,
                                                                                CLUSTER_QUEUE_LONG,
                                                                                True,
                                                                                True,
                                                                                constructed_FS_SUBJECTS_DIR)
+                baw200.connect(FreeSurferSessionID_MergeNode[subjectid], 'out',
+                               FS_TEMPLATE_oneSubjWorkflow, 'inputspec.FreeSurferSession_IDs')
+
                 FREESURFER_SUBJ_ID = pe.Node(interface=IdentityInterface(fields=['subjectTemplate_id']),
                                              run_without_submitting=True,
                                              name='99_FSNodeName_' + str(subjectid) + "_template")
                 FREESURFER_SUBJ_ID.inputs.subjectTemplate_id = str(subjectid) + "_template"
 
-                baw200.connect(FREESURFER_SUBJ_ID, 'subjectTemplate_id', FS_TEMPLATE_oneSubjWorkflow, 'inputspec.subjectTemplate_id')
-                baw200.connect(FreeSurferSessionID_MergeNode[subjectid], 'out', FS_TEMPLATE_oneSubjWorkflow, 'inputspec.FreeSurferSession_IDs')
+                baw200.connect(FREESURFER_SUBJ_ID, 'subjectTemplate_id',
+                               FS_TEMPLATE_oneSubjWorkflow, 'inputspec.subjectTemplate_id')
 
                 FSTEMP_DataSink[subjectid] = pe.Node(nio.DataSink(), name='FREESURFER_TEMP_' + str(subjectid))
                 FSTEMP_DataSink[subjectid].overwrite = GLOBAL_DATA_SINK_REWRITE

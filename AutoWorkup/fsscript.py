@@ -271,7 +271,7 @@ def runAutoRecon(args, FREESURFER_HOME, FS_SCRIPT):
     t1 = os.path.join(dirname, 'mri', 'brain.mgz')
     label1 = os.path.join(dirname, 'mri_nifti', 'aparc+aseg.nii.gz')
     label2 = os.path.join(dirname, 'mri_nifti', 'aparc.a2009+aseg.nii.gz')
-    return t1, label1, label2, args.subjects_dir
+    return t1, label1, label2, args.subject_id
 
 
 # def runLongitudinalAnalysis(args, FREESURFER_HOME, FS_SCRIPT):

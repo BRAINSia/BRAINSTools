@@ -95,13 +95,11 @@ def CreateFreeSurferWorkflow_custom(projectid, subjectid, sessionid, WFname, CLU
 
         freesurferWF.connect(inputsSpec, 'label_file', fs_reconall, 'brainmask')
         freesurferWF.connect(inputsSpec, 'subjects_dir', fs_reconall, 'subjects_dir')
-
-        freesurferWF.connect(inputsSpec, 'FreeSurfer_ID', outputsSpec, 'subject_id')
-        freesurferWF.connect(fs_reconall, 'subjects_dir', outputsSpec, 'subjects_dir')
+        freesurferWF.connect(fs_reconall, 'subject_id', outputsSpec, 'subject_id')
         freesurferWF.connect(computeFinalDirectory, 'FreeSurferOutputDirectory', outputsSpec, 'FreeSurferOutputDirectory')
     return freesurferWF
 
-def CreateFreeSurferSubjectTemplate(projectid, subjectid, session_ids, WFname, CLUSTER_QUEUE, CLUSTER_QUEUE_LONG, RunAllFSComponents=True, RunMultiMode=True, constructed_FS_SUBJECTS_DIR='/never_use_this', subcommand='template'):
+def CreateFreeSurferSubjectTemplate(projectid, subjectid, WFname, CLUSTER_QUEUE, CLUSTER_QUEUE_LONG, RunAllFSComponents=True, RunMultiMode=True, constructed_FS_SUBJECTS_DIR='/never_use_this', subcommand='template'):
     """ Construct the longitudinal workflow
     Step 1: Construct the within-subject cross-sectional template (using all subject's sessions)
     """
@@ -116,7 +114,6 @@ def CreateFreeSurferSubjectTemplate(projectid, subjectid, session_ids, WFname, C
     print("""Run FreeSurfer Within Subject Template at""")
     fs_template = pe.Node(interface=fswrap.FSScript(), name="FS52_base_"+str(subjectid))
     fs_template.plugin_args = freesurfer_sge_options_dictionary
-    fs_template.inputs.session_ids = session_ids
     fs_template.inputs.subcommand = 'template'
     subjectTemplate_freesurferWF.connect(inputsSpec, 'subjectTemplate_id', fs_template, 'subjectTemplate_id')
     subjectTemplate_freesurferWF.connect(inputsSpec, 'FreeSurferSession_IDs', fs_template, 'session_ids')

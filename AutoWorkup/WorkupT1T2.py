@@ -300,7 +300,7 @@ def MakeNewAtlasTemplate(t1_image, deformed_list,
 ###########################################################################
 ###########################################################################
 def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentBaseDirectoryResults, ExperimentDatabase, atlas_fname_wpath, BCD_model_path,
-               InterpolationMode="Linear", Mode=10, DwiList=[], WORKFLOW_COMPONENTS=[], CLUSTER_QUEUE='', CLUSTER_QUEUE_LONG='', SGE_JOB_SCRIPT='#!/bin/bash'):
+               GLOBAL_DATA_SINK_REWRITE, InterpolationMode="Linear", Mode=10, DwiList=[], WORKFLOW_COMPONENTS=[], CLUSTER_QUEUE='', CLUSTER_QUEUE_LONG='', SGE_JOB_SCRIPT='#!/bin/bash'):
     """
     Run autoworkup on all subjects data defined in the ExperimentDatabase
 
@@ -1079,9 +1079,10 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
                         FS_DS[sessionid].inputs.regexp_substitutions = [
                             ('/_uid_(?P<myuid>[^/]*)', r'/\g<myuid>')
                             ]
-                        baw200.connect(myLocalFSWF[sessionid], 'outputspec.FreeSurferOutputDirectory', FS_DS[sessionid], 'FREESURFER_SUBJ.@FreeSurferOutputDirectory')
+                        baw200.connect(myLocalFSWF[sessionid], 'outputspec.FreeSurferOutputDirectory', FS_DS[sessionid], 'FREESURFER52_SUBJECTS.@FreeSurferOutputDirectory')
                     ### Now define where the final organized outputs should go.
-                    FSPREP_DataSink[sessionid] = pe.Node(nio.DataSink(), name="FREESURFER_PREP_" + str(subjectid) + "_" + str(sessionid))
+                    FSPREP_DataSink[sessionid] = pe.Node(nio.DataSink(), name="FREESURFER_PREP_DS_" + str(subjectid) + "_" + str(sessionid))
+                    FSPREP_DataSink[sessionid].overwrite = GLOBAL_DATA_SINK_REWRITE
                     FSPREP_DataSink[sessionid].inputs.base_directory = ExperimentBaseDirectoryResults
                     FREESURFER_PREP_PATTERNS = GenerateOutputPattern(projectid, subjectid, sessionid, 'FREESURFER_PREP')
                     FSPREP_DataSink[sessionid].inputs.regexp_substitutions = FREESURFER_PREP_PATTERNS
@@ -1095,7 +1096,8 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
                     baw200.connect(myLocalFSWF[sessionid], 'outputspec.cnr_optimal_image', FSPREP_DataSink[sessionid], 'FREESURFER_PREP.@cnr_optimal_image')
 
                 #} end of "for sessionid in allSessions:"
-                #{  Do longitudinal
+                #{  Do template building
+                """
                 ##HACK : Move later
                 FS_TEMPLATE_oneSubjWorkflow = CreateFreeSurferSubjectTemplate(projectid,
                                                                                subjectid,
@@ -1115,12 +1117,12 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
                 baw200.connect(FreeSurferSessionID_MergeNode[subjectid],'out', FS_TEMPLATE_oneSubjWorkflow, 'inputspec.FreeSurferSession_IDs')
 
                 FSTEMP_DataSink[subjectid] = pe.Node(nio.DataSink(), name='FREESURFER_TEMP_' + str(subjectid))
+                FSTEMP_DataSink[subjectid].overwrite = GLOBAL_DATA_SINK_REWRITE
                 FREESURFER_TEMP_PATTERNS = GenerateOutputPattern(projectid, subjectid, 'FREESURFER_TEMP', '')
                 FSTEMP_DataSink[subjectid].inputs.regexp_substitutions = FREESURFER_TEMP_PATTERNS
-                FSTEMP_DataSink[subjectid].overwrite = GLOBAL_DATA_SINK_REWRITE
-                baw200.connect(FS_TEMPLATE_oneSubjWorkflow, 'outputspec.FreeSurferTemplateDir', FSTEMP_DataSink[subjectid], 'FREESURFER_SUBJ.@FreeSurferTemplateDir')
+                baw200.connect(FS_TEMPLATE_oneSubjWorkflow, 'outputspec.FreeSurferTemplateDir', FSTEMP_DataSink[subjectid], 'FREESURFER52_SUBJECTS.@FreeSurferTemplateDir')
                 #}
-                #{
+                #{ Do longitudinal analysis
                 FSLONG_DataSink = dict()
                 FS_LONG_oneSubjWorkflow = dict()
                 for sessionid in allSessions:
@@ -1136,14 +1138,15 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
                     baw200.connect(FS_TEMPLATE_oneSubjWorkflow, 'outputspec.FreeSurferTemplateDir', FS_LONG_oneSubjWorkflow[sessionid], 'inputspec.SingleSubject_ID')
                     # baw200.connect(FREESURFER_SUBJ_ID, 'subjectTemplate_id', FS_LONG_oneSubjWorkflow[sessionid], 'inputspec.SingleSubject_ID')
                     FSLONG_DataSink[sessionid] = pe.Node(nio.DataSink(), name='_'.join(['FREESURFER_LONG', str(subjectid), str(sessionid)]))
+                    FSLONG_DataSink[sessionid].overwrite = GLOBAL_DATA_SINK_REWRITE
                     FSLONG_DataSink[sessionid].inputs.base_directory = ExperimentBaseDirectoryResults
                     FREESURFER_LONG_PATTERNS = GenerateOutputPattern(projectid, subjectid, sessionid, 'FREESURFER_LONG')
                     FSLONG_DataSink[sessionid].inputs.regexp_substitutions = FREESURFER_LONG_PATTERNS
-                    FSLONG_DataSink[sessionid].overwrite = GLOBAL_DATA_SINK_REWRITE
 
-                    baw200.connect(FS_LONG_oneSubjWorkflow[sessionid], 'outputspec.FreeSurferLongitudinalDir', FSLONG_DataSink[sessionid], 'FREESURFER_SUBJ.@longitudinalDirs')
+                    baw200.connect(FS_LONG_oneSubjWorkflow[sessionid], 'outputspec.FreeSurferLongitudinalDir', FSLONG_DataSink[sessionid], 'FREESURFER52_SUBJECTS.@longitudinalDirs')
 
                 #} end of "for sessionid in allSessions:"
+                """
             else:
                 print "Skipping freesurfer"
     return baw200

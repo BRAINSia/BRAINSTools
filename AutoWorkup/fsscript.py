@@ -44,7 +44,10 @@ def run_mri_convert_script(niftiVol, mgzVol, subjects_dir, FREESURFER_HOME, FS_S
 export FREESURFER_HOME={FSHOME}
 export SUBJECTS_DIR={FSSUBJDIR}
 source {SOURCE_SCRIPT}
-{FSHOME}/bin/mri_convert --conform --out_data_type uchar {invol} {outvol}""".format(SOURCE_SCRIPT=FS_SCRIPT_FN,
+{FSHOME}/bin/mri_convert --conform --out_data_type uchar {invol} {outvol}
+status=$?
+exit $status
+""".format(SOURCE_SCRIPT=FS_SCRIPT_FN,
                                                                                          FSHOME=FREESURFER_HOME,
                                                                                          FSSUBJDIR=subjects_dir,
                                                                                          invol=niftiVol,
@@ -57,7 +60,9 @@ source {SOURCE_SCRIPT}
     script_name_stdout = mgzVol + '_convert.out'
     script_name_stdout_fid = open(script_name_stdout, 'w')
     print "Starting mri_convert"
-    subprocess.check_call([script_name], stdout=script_name_stdout_fid, stderr=subprocess.STDOUT, shell='/bin/bash')
+    scriptStatus = subprocess.check_call([script_name], stdout=script_name_stdout_fid, stderr=subprocess.STDOUT, shell='/bin/bash')
+    if scriptStatus != 0:
+        sys.exit(scriptStatus)
     print "Ending mri_convert"
     script_name_stdout_fid.close()
     return
@@ -71,6 +76,8 @@ export SUBJECTS_DIR={FSSUBJDIR}
 source {SOURCE_SCRIPT}
 {FSHOME}/bin/mri_add_xform_to_header -c {CURRENT}/transforms/talairach.xfm {maskvol} {maskvol}
 {FSHOME}/bin/mri_mask {invol} {maskvol} {outvol}
+status=$?
+exit $status
 """.format(SOURCE_SCRIPT=FS_SCRIPT_FN,
            FSHOME=FREESURFER_HOME,
            FSSUBJDIR=subjects_dir,
@@ -87,58 +94,12 @@ source {SOURCE_SCRIPT}
     script_name_stdout = output_brainmask_fn_mgz + '_convert.out'
     script_name_stdout_fid = open(script_name_stdout, 'w')
     print "Starting mri_mask"
-    subprocess.check_call([script_name], stdout=script_name_stdout_fid, stderr=subprocess.STDOUT, shell='/bin/bash')
+    scriptStatus = subprocess.check_call([script_name], stdout=script_name_stdout_fid, stderr=subprocess.STDOUT, shell='/bin/bash')
+    if scriptStatus != 0:
+        sys.exit(scriptStatus)
     print "Ending mri_mask"
     script_name_stdout_fid.close()
     return
-
-"""
-def baw_Recon1(t1_fn, wm_fn, brainmask, subjects_dir, FREESURFER_HOME, FS_SCRIPT, subject_id):
-    base_subj_dir = os.path.join(subjects_dir, subject_id, 'mri')
-    output_brainmask_fn = os.path.join(base_subj_dir, 'brainmask.nii.gz')
-    output_nu_fn = os.path.join(base_subj_dir, 'nu.nii.gz')
-    output_brainmask_fn_mgz = os.path.join(base_subj_dir, 'brainmask.mgz')
-    output_nu_fn_mgz = os.path.join(base_subj_dir, 'nu.mgz')
-    if IsFirstNewerThanSecond(t1_fn, output_brainmask_fn_mgz):
-        print "PREPARING ALTERNATE recon-auto1 stage"
-        mkdir_p(base_subj_dir)
-        t1 = sitk.ReadImage(t1_fn)
-        wm = sitk.ReadImage(wm_fn)
-        t1_new = sitk.Cast(normalizeWM(t1, wm), sitk.sitkUInt8)
-
-        orig_001_mgz_fn=os.path.join(base_subj_dir, 'orig/001.mgz')
-        sitk.WriteImage(t1_new,orig_001_mgz_fn)
-        rawavg_mgz_fn=os.path.join(base_subj_dir, 'rawavg.mgz')
-        sitk.WriteImage(t1_new,rawavg_mgz_fn)
-        orig_mgz_fn=os.path.join(base_subj_dir, 'orig.mgz')
-        sitk.WriteImage(t1_new,orig_mgz_fn)
-        make_dummy_file( os.path.join(base_subj_dir, 'transforms/talairach.auto.xfm'))
-        make_dummy_file( os.path.join(base_subj_dir, 'transforms/talairach.xfm'))
-
-        sitk.WriteImage(t1_new, output_nu_fn)
-
-        t1_mgz=os.path.join(base_subj_dir, 'T1.mgz')
-        sitk.WriteImage(t1_new, t1_mgz)
-        run_mri_convert_script(output_nu_fn, output_nu_fn_mgz, subjects_dir, FREESURFER_HOME, FS_SCRIPT)
-
-        make_dummy_file(os.path.join( base_subj_dir, 'transforms/talairach_with_skull.lta'))
-        make_dummy_file(os.path.join(base_subj_dir, 'brainmask.auto.mgz'))
-        brain = sitk.ReadImage(brain_fn)
-        blood = sitk.BinaryThreshold(brain, 5, 5)
-        not_blood = 1 - blood
-        clipping = sitk.BinaryThreshold(brain, 1, 1000000) - blood
-        fill_size = 2
-        ## HACK: Unfortunately we need to hole fill because of a WM bug in BABC where
-        ## some white matter is being classified as background when it it being avoid due
-        ## to too strict of multi-modal thresholding.
-        hole_filled = sitk.ErodeObjectMorphology(sitk.DilateObjectMorphology(clipping, fill_size), fill_size)
-        clipped = sitk.Cast(t1_new * hole_filled * not_blood, sitk.sitkUInt8)
-        sitk.WriteImage(clipped, output_brainmask_fn)  # brain_matter image with values normalized 0-110, no skull or surface blood
-        run_mri_convert_script(output_brainmask_fn, output_brainmask_fn_mgz, subjects_dir, FREESURFER_HOME, FS_SCRIPT)
-    else:
-        print "NOTHING TO BE DONE, SO SKIPPING."
-        return  # Nothing to be done, files are already up-to-date.
-"""
 
 def baw_FixBrainMask(brainmask, subjects_dir, FREESURFER_HOME, FS_SCRIPT, subject_id):
     base_subj_dir = os.path.join(subjects_dir, subject_id, 'mri')
@@ -191,6 +152,8 @@ export FREESURFER_HOME={FSHOME}
 export SUBJECTS_DIR={FSSUBJDIR}
 source {SOURCE_SCRIPT}
 {FSHOME}/bin/recon-all -debug -subjid {SUBJID} -make autorecon{AUTORECONSTAGE}
+status=$?
+exit $status
 """.format(SOURCE_SCRIPT=FS_SCRIPT_FN,
                FSHOME=FREESURFER_HOME,
                FSSUBJDIR=subjects_dir,
@@ -206,7 +169,9 @@ source {SOURCE_SCRIPT}
     script_name_stdout = script_name + '_out'
     script_name_stdout_fid = open(script_name_stdout, 'w')
     print "Starting auto_recon Stage: {0} for SubjectSession {1}".format(StageToRun, subject_id)
-    subprocess.check_call([script_name], stdout=script_name_stdout_fid, stderr=subprocess.STDOUT, shell='/bin/bash')
+    scriptStatus = subprocess.check_call([script_name], stdout=script_name_stdout_fid, stderr=subprocess.STDOUT, shell='/bin/bash')
+    if scriptStatus != 0:
+        sys.exit(scriptStatus)
     print "Ending auto_recon Stage: {0} for SubjectSession {1}".format(StageToRun, subject_id)
     script_name_stdout_fid.close()
     return
@@ -229,7 +194,10 @@ def runSubjectTemplate(args, FREESURFER_HOME, FS_SCRIPT):
 export FREESURFER_HOME={FSHOME}
 export SUBJECTS_DIR={FSSUBJDIR}
 source {SOURCE_SCRIPT}
-{FSHOME}/bin/recon-all -debug -base {TEMPLATEID} """.format(SOURCE_SCRIPT=FS_SCRIPT_FN,
+{FSHOME}/bin/recon-all -debug -base {TEMPLATEID}
+status=$?
+exit $status
+""".format(SOURCE_SCRIPT=FS_SCRIPT_FN,
                FSHOME=FREESURFER_HOME,
                FSSUBJDIR=subjects_dir,
                TEMPLATEID=subjectTemplate_id)
@@ -246,7 +214,9 @@ source {SOURCE_SCRIPT}
     script_name_stdout = script_name + '_out'
     script_name_stdout_fid = open(script_name_stdout, 'w')
     print "Starting auto_recon Stage: {0} for SubjectSession {1}".format(StageToRun, subjectTemplate_id)
-    subprocess.check_call([script_name], stdout=script_name_stdout_fid, stderr=subprocess.STDOUT, shell='/bin/bash')
+    scriptStatus = subprocess.check_call([script_name], stdout=script_name_stdout_fid, stderr=subprocess.STDOUT, shell='/bin/bash')
+    if scriptStatus != 0:
+        sys.exit(scriptStatus)
     print "Ending auto_recon Stage: {0} for SubjectSession {1}".format(StageToRun, subjectTemplate_id)
     script_name_stdout_fid.close()
     return
@@ -265,7 +235,9 @@ export FREESURFER_HOME={FSHOME}
 export SUBJECTS_DIR={FSSUBJDIR}
 source {SOURCE_SCRIPT}
 {FSHOME}/bin/recon-all -debug -long {TIMEPOINT} {TEMPLATEID} -all
+status=$?
 mv -n {FSSUBJDIR}/{TIMEPOINT}.long.{TEMPLATEID} {FSSUBJDIR}/{TEMPLATEID}_{TIMEPOINT}.long
+exit $status
 """.format(SOURCE_SCRIPT=FS_SCRIPT_FN,
                FSHOME=FREESURFER_HOME,
                FSSUBJDIR=subjects_dir,
@@ -281,7 +253,9 @@ mv -n {FSSUBJDIR}/{TIMEPOINT}.long.{TEMPLATEID} {FSSUBJDIR}/{TEMPLATEID}_{TIMEPO
     script_name_stdout = script_name + '_out'
     script_name_stdout_fid = open(script_name_stdout, 'w')
     print "Starting auto_recon Stage: {0} for SubjectSession {1}".format(StageToRun, template_id)
-    subprocess.check_call([script_name], stdout=script_name_stdout_fid, stderr=subprocess.STDOUT, shell='/bin/bash')
+    scriptStatus = subprocess.check_call([script_name], stdout=script_name_stdout_fid, stderr=subprocess.STDOUT, shell='/bin/bash')
+    if scriptStatus != 0:
+        sys.exit(scriptStatus)
     print "Ending auto_recon Stage: {0} for SubjectSession {1}".format(StageToRun, template_id)
     script_name_stdout_fid.close()
     return

@@ -15,8 +15,6 @@ import re
 import sys
 
 ##############################################################################
-GLOBAL_DATA_SINK_REWRITE = True
-
 
 def get_global_sge_script(pythonPathsList, binPathsList, customEnvironment={}):
     """This is a wrapper script for running commands on an SGE cluster
@@ -96,17 +94,18 @@ def setGlobalDatasinkRewrite(cli, cfg):
     :param cfg: configuration file value
     :type cfg: bool
 
-    Sets the global variable `GLOBAL_DATA_SINK_REWRITE` constant flag used in :mod:`WorkupT1T2()`
+    Sets the variable `GLOBAL_DATA_SINK_REWRITE` constant flag used in :mod:`WorkupT1T2()`
 
     """
     assert isinstance(cli, bool) and isinstance(cfg, bool), \
       "Inputs are not boolean: {0}, {1}".format(cli, cfg)
-    global GLOBAL_DATA_SINK_REWRITE
+    GLOBAL_DATA_SINK_REWRITE=False
     if cli or cfg:
         print "*** Ignoring datasinks for pipeline rewriting ***" # TODO: Use logging
         GLOBAL_DATA_SINK_REWRITE = False
     else:
         GLOBAL_DATA_SINK_REWRITE = True
+    return GLOBAL_DATA_SINK_REWRITE
 
 
 def main(argv=None):
@@ -140,8 +139,8 @@ def main(argv=None):
     expConfig.read(input_arguments.ExperimentConfig)
 
     # Pipeline-specific information
-    ignore_datasinks = expConfig.getboolean('PIPELINE', 'IGNORE_DATASINKS')
-    setGlobalDatasinkRewrite(input_arguments.ignore_datasinks, ignore_datasinks)
+    ignore_datasinks = expConfig.getboolean('PIPELINE', 'GLOBAL_DATA_SINK_REWRITE')
+    GLOBAL_DATA_SINK_REWRITE=setGlobalDatasinkRewrite(input_arguments.ignore_datasinks, ignore_datasinks)
 
     # Experiment specific information
     subject_data_file = expConfig.get('EXPERIMENT_DATA', 'SESSION_DB')
@@ -303,14 +302,18 @@ def main(argv=None):
                                                      ExperimentBaseDirectoryResults,
                                                      ExperimentDatabase,
                                                      CACHE_ATLASPATH,
-                                                     CACHE_BCDMODELPATH, WORKFLOW_COMPONENTS=WORKFLOW_COMPONENTS, CLUSTER_QUEUE=CLUSTER_QUEUE, CLUSTER_QUEUE_LONG=CLUSTER_QUEUE_LONG)
+                                                     CACHE_BCDMODELPATH,
+                                                     GLOBAL_DATA_SINK_REWRITE,
+                                                     WORKFLOW_COMPONENTS=WORKFLOW_COMPONENTS, CLUSTER_QUEUE=CLUSTER_QUEUE, CLUSTER_QUEUE_LONG=CLUSTER_QUEUE_LONG)
         else:
             baw200 = WorkupT1T2.WorkupT1T2(subjectid, mountPrefix,
                                            os.path.join(ExperimentBaseDirectoryCache, str(subjectid)),
                                            ExperimentBaseDirectoryResults,
                                            ExperimentDatabase,
                                            CACHE_ATLASPATH,
-                                           CACHE_BCDMODELPATH, WORKFLOW_COMPONENTS=WORKFLOW_COMPONENTS, CLUSTER_QUEUE=CLUSTER_QUEUE, CLUSTER_QUEUE_LONG=CLUSTER_QUEUE_LONG, SGE_JOB_SCRIPT=JOB_SCRIPT)
+                                           CACHE_BCDMODELPATH,
+                                           GLOBAL_DATA_SINK_REWRITE,
+                                           WORKFLOW_COMPONENTS=WORKFLOW_COMPONENTS, CLUSTER_QUEUE=CLUSTER_QUEUE, CLUSTER_QUEUE_LONG=CLUSTER_QUEUE_LONG, SGE_JOB_SCRIPT=JOB_SCRIPT)
         print "Start Processing"
 
         SGEFlavor = 'SGE'

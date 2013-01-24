@@ -290,6 +290,7 @@ def AccumulateLikeTissuePosteriors(posteriorImages):
 
 
 def ShortWorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentBaseDirectoryResults, ExperimentDatabase, atlas_fname_wpath, BCD_model_path,
+                    GLOBAL_DATA_SINK_REWRITE,
                     InterpolationMode="Linear", Mode=10, DwiList=[], WORKFLOW_COMPONENTS=[], CLUSTER_QUEUE='', CLUSTER_QUEUE_LONG=''):
     """
     Run autoworkup on all subjects data defined in the ExperimentDatabase

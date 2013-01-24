@@ -179,7 +179,7 @@ def CreateBRAINSCutWorkflow(projectid,
         SGI.inputs.outputFileName = "SummedGradImage.nii.gz"
 
         cutWF.connect(GADT1, 'outputVolume', SGI, 'inputVolume1')
-        
+        cutWF.connect(GADT2, 'outputVolume', SGI, 'inputVolume2')
 
 
     """

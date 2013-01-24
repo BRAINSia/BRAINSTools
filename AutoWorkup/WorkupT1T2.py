@@ -1097,7 +1097,6 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
 
                 #} end of "for sessionid in allSessions:"
                 #{  Do template building
-                """
                 ##HACK : Move later
                 FS_TEMPLATE_oneSubjWorkflow = CreateFreeSurferSubjectTemplate(projectid,
                                                                                subjectid,
@@ -1146,7 +1145,6 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
                     baw200.connect(FS_LONG_oneSubjWorkflow[sessionid], 'outputspec.FreeSurferLongitudinalDir', FSLONG_DataSink[sessionid], 'FREESURFER52_SUBJECTS.@longitudinalDirs')
 
                 #} end of "for sessionid in allSessions:"
-                """
             else:
                 print "Skipping freesurfer"
     return baw200

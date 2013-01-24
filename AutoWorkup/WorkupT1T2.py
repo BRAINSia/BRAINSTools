@@ -805,7 +805,7 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
                     SEGMENTATION_DataSink[sessionid].inputs.base_directory = ExperimentBaseDirectoryResults
                     # SEGMENTATION_DataSink[sessionid].inputs.regexp_substitutions = GenerateOutputPattern(projectid, subjectid, sessionid,'BRAINSCut')
                     # SEGMENTATION_DataSink[sessionid].inputs.regexp_substitutions = GenerateBRAINSCutImagesOutputPattern(projectid, subjectid, sessionid)
-                    SEGMENTATION_DataSink[sessionid].inputs.substitutions = [('Segmentations', os.path.join(projectid, subjectid, sessionid, 'SingleRFSegmentations')),
+                    SEGMENTATION_DataSink[sessionid].inputs.substitutions = [('Segmentations', os.path.join(projectid, subjectid, sessionid, 'DenoisedRFSegmentations')),
                                                                               ('subjectANNLabel_', ''),
                                                                               ('.nii.gz', '_seg.nii.gz')
                                                                             ]
@@ -1020,12 +1020,12 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
                     STAPLE_SEGMENTATION_DataSink[sessionid].inputs.base_directory = ExperimentBaseDirectoryResults
                     # STAPLE_SEGMENTATION_DataSink[sessionid].inputs.regexp_substitutions = GenerateOutputPattern(projectid, subjectid, sessionid,'BRAINSCut')
                     # STAPLE_SEGMENTATION_DataSink[sessionid].inputs.regexp_substitutions = GenerateBRAINSCutImagesOutputPattern(projectid, subjectid, sessionid)
-                    STAPLE_SEGMENTATION_DataSink[sessionid].inputs.substitutions = [('STAPLESegmentations', os.path.join(projectid, subjectid, sessionid, 'STAPLERFSegmentations')),
+                    STAPLE_SEGMENTATION_DataSink[sessionid].inputs.substitutions = [('DenoisedSTAPLESegmentations', os.path.join(projectid, subjectid, sessionid, 'STAPLERFSegmentations')),
                                                                               ('subjectANNLabel_', ''),
                                                                               ('.nii.gz', '_seg.nii.gz')
                                                                             ]
                     baw200.connect(ANTSLabelWarpFromSubjectAtlasToSession[sessionid], 'output_image',
-                            STAPLE_SEGMENTATION_DataSink[sessionid], 'STAPLESegmentations.@output_image')
+                            STAPLE_SEGMENTATION_DataSink[sessionid], 'DenoisedSTAPLESegmentations.@output_image')
 
                 else:
                     print("SKIPPING SEGMENTATION PHASE FOR {0} {1} {2}, lenT2s {3}".format(projectid, subjectid, sessionid, len(global_AllT2s[sessionid])))

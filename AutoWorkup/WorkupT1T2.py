@@ -853,6 +853,7 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
                     ## SnapShotWriter[sessionid] for Segmented result checking:
                     SnapShotWriterNodeName = "SnapShotWriter_" + str(sessionid)
                     SnapShotWriter[sessionid] = pe.Node(interface=BRAINSSnapShotWriter(), name=SnapShotWriterNodeName)
+                    SnapShotWriter[sessionid].plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp1 1-1 -l mem_free=1000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE_LONG), 'overwrite': True}
 
                     ## output specification
                     SnapShotWriter[sessionid].inputs.outputFilename = 'snapShot' + str(sessionid) + '.png'

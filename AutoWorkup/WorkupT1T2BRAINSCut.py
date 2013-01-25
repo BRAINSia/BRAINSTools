@@ -58,8 +58,10 @@ def CreateLabelMap(listOfImages, LabelImageName, CSVFileName, projectid, subject
     labelImage = None
     for segFN in listOfImages:
         im = sitk.ReadImage(segFN)
+        im = sitk.Cast(sitk.BinaryThreshold(im,0.51,1.01,1,0),sitk.sitkUInt8)
         im.GetSize()
         remove_pre_postfix = os.path.basename(segFN.replace(".nii.gz", "").replace("subjectANNLabel_", "").replace("_seg", ""))
+        remove_pre_postfix = os.path.basename(segFN.replace(".nii.gz", "").replace("ANNContinuousPrediction", "").replace("subject", ""))
         structName = remove_pre_postfix.lower()
         if labelImage is None:
             labelImage = im * valueDict[structName]

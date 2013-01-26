@@ -1,20 +1,20 @@
 /*=========================================================================
 
- Program:   BRAINS (Brain Research: Analysis of Images, Networks, and Systems)
- Module:    $RCSfile: $
- Language:  C++
- Date:      $Date: 2011/07/09 14:53:40 $
- Version:   $Revision: 1.0 $
+Program:   BRAINS (Brain Research: Analysis of Images, Networks, and Systems)
+Module:    $RCSfile: $
+Language:  C++
+Date:      $Date: 2011/07/09 14:53:40 $
+Version:   $Revision: 1.0 $
 
- Copyright (c) University of Iowa Department of Radiology. All rights reserved.
- See GTRACT-Copyright.txt or http://mri.radiology.uiowa.edu/copyright/GTRACT-Copyright.txt
- for details.
+Copyright (c) University of Iowa Department of Radiology. All rights reserved.
+See GTRACT-Copyright.txt or http://mri.radiology.uiowa.edu/copyright/GTRACT-Copyright.txt
+for details.
 
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notices for more information.
+This software is distributed WITHOUT ANY WARRANTY; without even
+the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+PURPOSE.  See the above copyright notices for more information.
 
- =========================================================================*/
+=========================================================================*/
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 

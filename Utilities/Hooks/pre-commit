@@ -17,6 +17,8 @@
 #
 #==========================================================================*/
 
+echo "Running the pre-commit hooks to keep the code base nice and clean"
+
 prohibited_list='~|\.o|\.a|\.lib|\.dyld|\.nii\.gz|\.nrrd|\.nhdr|\.img|\.hdr|\.img\.gz|\.hdr\.gz|\.png|\.tiff|\.jpeg'
 
 if git rev-parse --verify HEAD >/dev/null 2>&1
@@ -128,7 +130,7 @@ git --version | grep -q " \(1\.[0-6]\|1\.7\.[01]\)" &&
 approx_tab_in_indent=true || approx_tab_in_indent=false
 check_tab() {
 	lines=$(git diff-index -p --cached $against -- "$1" |
-	        grep '^+	') &&
+		grep '^+	') &&
 	echo "$lines" |
 	while read line; do
 		echo "$1: tab in indent." &&
@@ -205,7 +207,7 @@ by default but can be configured.  A limit for specific files or patterns
 may be set in ".gitattributes" with the "hooks.MaxObjectKiB" attribute.
 For example, the line
 
-  *.c              hooks.MaxObjectKiB=2048
+  *.c	      hooks.MaxObjectKiB=2048
 
 sets a limit of 2048 KiB for C source files.  See "git help attributes"
 for details on the .gitattributes format.  If no attribute has been set
@@ -231,7 +233,7 @@ check_size() {
 		  sed 's/^[^:]*: hooks.MaxObjectKiB: //')
 	case "$max_KiB" in
 		'unset')       return ;; # No maximum for this object.
-		'set')         max_KiB="$size_max_KiB" ;; # Use local default.
+		'set')	 max_KiB="$size_max_KiB" ;; # Use local default.
 		'unspecified') max_KiB="$size_max_KiB" ;; # Use local default.
 		*) size_validate_max_KiB || return ;;
 	esac
@@ -329,7 +331,7 @@ Then try the commit again.
 }
 
 diffs=$(git diff-index --cached $against -- |
-        sed -n '/^:[^:]/ {s/^://;p;}')
+	sed -n '/^:[^:]/ {s/^://;p;}')
 diffs_normal=$(echo "$diffs" | grep -v '^...... 160000')
 diffs_module=$(echo "$diffs" | grep    '^...... 160000')
 bad=$(
@@ -354,7 +356,7 @@ test -z "$bad" || die "$bad"
 ##-----------------------------------------------------------------------------
 ## Do not allow adding of files with .hxx extension.
 #diffs_added=$(git diff-index --diff-filter=A --cached $against -- |
-#        sed -n '/^:[^:]/ {s/^://;p;}')
+#	sed -n '/^:[^:]/ {s/^://;p;}')
 #diffs_normal_added=$(echo "$diffs" | grep -v '^...... 160000')
 #bad=$(
 #test -n "$diffs_normal" && echo "$diffs_normal" |
@@ -371,7 +373,7 @@ test -z "$bad" || die "$bad"
 # Merge checks.
 if test -n "$merge_head"; then
 	merge_diffs=$(git diff-index --cached $merge_head -- |
-	              sed -n '/^:[^:]/ {s/^://;p;}')
+		      sed -n '/^:[^:]/ {s/^://;p;}')
 else
 	merge_diffs=''
 fi

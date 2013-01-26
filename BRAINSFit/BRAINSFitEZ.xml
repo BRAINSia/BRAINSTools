@@ -36,7 +36,7 @@
     <transform fileExtensions=".h5,.hdf5,.mat,.txt" type="linear" reference="movingVolume">
       <name>linearTransform</name>
       <longflag>linearTransform</longflag>
-      <label>Slicer Resulting Transform</label>
+      <label>Slicer Linear Transform</label>
       <description>(optional) Filename to which save the estimated transform. NOTE: You must set at least one output object (either a deformed image or a transform.  NOTE: USE THIS ONLY IF THE FINAL TRANSFORM IS ---NOT--- BSpline</description>
       <channel>output</channel>
     </transform>
@@ -128,6 +128,13 @@
        <default>false</default>
     </boolean>
     <boolean>
+       <name>useSyN</name>
+       <longflag>useSyN</longflag>
+       <label>SyN</label>
+       <description>Perform a SyN registration as part of the sequential registration steps.  This family of options superceeds the use of transformType if any of them are set.</description>
+       <default>false</default>
+    </boolean>
+    <boolean>
        <name>useComposite</name>
        <longflag>useComposite</longflag>
        <label>Composite (many DOF) </label>
@@ -150,6 +157,14 @@
       <description>The number of subdivisions of the BSpline Grid to be centered on the image space (in voxels).  Each dimension must have at least 3 subdivisions for the BSpline to be correctly computed. </description>
       <default>14,10,12</default>
     </integer-vector>
+
+    <boolean>
+       <name>useROIBSpline</name>
+       <longflag>useROIBSpline</longflag>
+       <label>Define BSpline grid over the ROI bounding box </label>
+       <description>When set, will use the bounding box of the input ROIs to define spline grid support region. Otherwise will use the whole image.</description>
+       <default>false</default>
+    </boolean>
 
     <integer-vector>
       <name>numberOfIterations</name>

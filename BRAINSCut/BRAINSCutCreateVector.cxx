@@ -1,7 +1,9 @@
 #include "BRAINSCutCreateVector.h"
 
 BRAINSCutCreateVector
-::BRAINSCutCreateVector( BRAINSCutDataHandler dataHandler )
+::BRAINSCutCreateVector( BRAINSCutDataHandler dataHandler ) :
+  m_inputVectorSize(0),
+  m_outputVectorSize(0)
 {
   m_myDataHandler = dataHandler;
 

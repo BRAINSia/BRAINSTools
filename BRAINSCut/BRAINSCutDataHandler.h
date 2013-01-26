@@ -10,10 +10,8 @@
 class BRAINSCutDataHandler
 {
 public:
-  BRAINSCutDataHandler()
-  {
-  };
-  BRAINSCutDataHandler(std::string modelConfigurationFilenameFilename);
+  BRAINSCutDataHandler();
+  BRAINSCutDataHandler(const std::string & modelConfigurationFilenameFilename);
 
   void                     SetNetConfiguration();
 

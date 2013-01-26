@@ -15,11 +15,39 @@
 #include <itkMultiplyImageFilter.h>
 
 // TODO: consider using itk::LabelMap Hole filling process in ITK4
+BRAINSCutApplyModel
+::BRAINSCutApplyModel() :
+  m_myDataHandler(NULL),
+  m_applyDataSetList(),
+  m_method(""),
+  m_normalization(""),
+  m_computeSSE(true),
+  m_trainIteration(0),
+  m_numberOfTrees(0),
+  m_depthOfTree(0),
+  m_ANNTestingSSEFileStream(),
+  m_annOutputThreshold(0),
+  m_gaussianSmoothingSigma(0),
+  m_openCVANN(NULL),
+  m_openCVRandomForest(NULL)
+{
+}
 
 BRAINSCutApplyModel
-::BRAINSCutApplyModel( BRAINSCutDataHandler& dataHandler )
-  : m_numberOfTrees(-1),
-  m_depthOfTree(-1)
+::BRAINSCutApplyModel( BRAINSCutDataHandler& dataHandler ) :
+  m_myDataHandler(NULL),
+  m_applyDataSetList(),
+  m_method(""),
+  m_normalization(""),
+  m_computeSSE(true),
+  m_trainIteration(0),
+  m_numberOfTrees(0),
+  m_depthOfTree(0),
+  m_ANNTestingSSEFileStream(),
+  m_annOutputThreshold(0),
+  m_gaussianSmoothingSigma(0),
+  m_openCVANN(NULL),
+  m_openCVRandomForest(NULL)
 {
   this->m_myDataHandler = &dataHandler;
   // TODO Take this apart to generate registration one by one!

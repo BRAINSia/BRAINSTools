@@ -34,7 +34,7 @@
 #endif
 /** Set built-in type.  Creates member Set"name"() (e.g., SetVisibility()); */
 #define VECTORitkSetMacro(name, type)                           \
-  virtual void Set##name(const type _arg)                       \
+  virtual void Set##name(const type &_arg)                     \
     {                                                           \
     VECTORitkDebugMacro("setting " #name " to ", type, _arg);   \
       {                                                         \
@@ -46,7 +46,7 @@
 
 /** Get built-in type.  Creates member Get"name"() (e.g., GetVisibility()); */
 #define VECTORitkGetConstMacro(name, type)                                      \
-  virtual type Get##name()                                                      \
+  virtual const type &Get##name() const                                        \
     {                                                                           \
     VECTORitkDebugMacro("returning " << #name " of ", type, this->m_##name);    \
     return this->m_##name;                                                      \

@@ -123,7 +123,7 @@ int main(int argc, char *argv[])
     {
     orientImageFilter->Update();
     }
-  catch( itk::ExceptionObject e )
+  catch( itk::ExceptionObject & e )
     {
     std::cout << e << std::endl;
     throw;
@@ -177,7 +177,7 @@ int main(int argc, char *argv[])
     {
     orientCodeImageFilter->Update();
     }
-  catch( itk::ExceptionObject e )
+  catch( itk::ExceptionObject & e )
     {
     std::cout << e << std::endl;
     throw;

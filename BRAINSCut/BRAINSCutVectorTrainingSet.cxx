@@ -180,13 +180,13 @@ GetFileStreamToRead( std::string filename, std::ifstream& fileStreamToRead)
     fileStreamToRead.open( filename.c_str(),
                            std::ios::in | std::ios::binary );
     }
-  catch( std::ifstream::failure e )
+  catch( std::ifstream::failure & e )
     {
     std::cout << "Exception opening file::"
               << filename << std::endl
               << e.what() << std::endl;
     }
-  catch( BRAINSCutExceptionStringHandler& e )
+  catch( BRAINSCutExceptionStringHandler & e )
     {
     std::cout << e.Error();
     exit(EXIT_FAILURE);

@@ -147,25 +147,25 @@ LLSModel
     this->m_H5File = 0;
     }
   // catch failure caused by the H5File operations
-  catch( H5::FileIException error )
+  catch( H5::FileIException & error )
     {
     error.printError();
     return -1;
     }
   // catch failure caused by the DataSet operations
-  catch( H5::DataSetIException error )
+  catch( H5::DataSetIException & error )
     {
     error.printError();
     return -1;
     }
   // catch failure caused by the DataSpace operations
-  catch( H5::DataSpaceIException error )
+  catch( H5::DataSpaceIException & error )
     {
     error.printError();
     return -1;
     }
   // catch failure caused by the DataType operations
-  catch( H5::DataTypeIException error )
+  catch( H5::DataTypeIException & error )
     {
     error.printError();
     return -1;
@@ -302,25 +302,25 @@ LLSModel
     this->m_H5File = 0;
     }
   // catch failure caused by the H5File operations
-  catch( H5::FileIException error )
+  catch( H5::FileIException & error )
     {
     error.printError();
     return -1;
     }
   // catch failure caused by the DataSet operations
-  catch( H5::DataSetIException error )
+  catch( H5::DataSetIException & error )
     {
     error.printError();
     return -1;
     }
   // catch failure caused by the DataSpace operations
-  catch( H5::DataSpaceIException error )
+  catch( H5::DataSpaceIException & error )
     {
     error.printError();
     return -1;
     }
   // catch failure caused by the DataType operations
-  catch( H5::DataTypeIException error )
+  catch( H5::DataTypeIException & error )
     {
     error.printError();
     return -1;

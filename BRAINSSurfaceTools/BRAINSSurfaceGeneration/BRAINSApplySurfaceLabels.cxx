@@ -72,7 +72,7 @@ int main( int argc, char * *argv )
     {
     labelMapReader->Update();
     }
-  catch( itk::ExceptionObject exp )
+  catch( itk::ExceptionObject & exp )
     {
     std::cerr << "Exception caught!\n";
     std::cerr << exp << std::endl;
@@ -90,7 +90,7 @@ int main( int argc, char * *argv )
       {
       surfaceReader->Update();
       }
-    catch( vtkErrorCode exp )
+    catch( vtkErrorCode & exp )
       {
       std::cerr << "Exception caught!\n";
       std::cerr << exp.GetStringFromErrorCode( vtkErrorCode::FileNotFoundError) << std::endl;
@@ -105,7 +105,7 @@ int main( int argc, char * *argv )
       {
       surfaceReader->Update();
       }
-    catch( vtkErrorCode exp )
+    catch( vtkErrorCode & exp )
       {
       std::cerr << "Exception caught!\n";
       std::cerr << exp.GetStringFromErrorCode( vtkErrorCode::FileNotFoundError) << std::endl;

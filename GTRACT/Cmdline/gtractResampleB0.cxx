@@ -141,7 +141,7 @@ int main(int argc, char *argv[])
     {
     selectIndexImageFilter->Update();
     }
-  catch( itk::ExceptionObject e )
+  catch( itk::ExceptionObject & e )
     {
     std::cout << e << std::endl;
     throw;

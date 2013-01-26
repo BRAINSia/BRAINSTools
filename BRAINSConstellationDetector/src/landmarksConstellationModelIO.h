@@ -501,20 +501,20 @@ public:
       debugImage->FillBuffer(0.0);
       float center[3];
 
-      center[0] = ( DID.h + 1 ) / 2.0;
-      center[1] =
-        center[2] = ( DID.r + 0.5 );
+      center[0] = ( DID.h + 1.0 ) * 0.5;
+      center[1] = center[2] = ( DID.r + 0.5 );
 
-      IndexLocationVectorType::iterator locIt = DID.locations.begin();
-      FloatVectorType::iterator         floatIt = ( *meanIt ).begin();
-      for( ; locIt != DID.locations.end(); ++floatIt, ++locIt )
+      IndexLocationVectorType::const_iterator locIt = DID.locations.begin();
+      IndexLocationVectorType::const_iterator locItEnd = DID.locations.end();
+      for( FloatVectorType::iterator floatIt = ( *meanIt ).begin();
+           locIt != locItEnd;
+           ++floatIt, ++locIt )
         {
         FloatImageType::IndexType ind;
         for( unsigned k = 0; k < 3; k++ )
           {
           ind[k] = static_cast<FloatImageType::IndexValueType>( center[k] + ( *locIt )[k] );
           }
-        //          std::cerr << ind<< std::endl;
         debugImage->SetPixel( ind, ( *floatIt ) );
         }
       char buf[512];

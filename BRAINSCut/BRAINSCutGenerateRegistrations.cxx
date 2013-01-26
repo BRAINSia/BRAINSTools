@@ -271,14 +271,14 @@ BRAINSCutGenerateRegistrations
 
   // TODO: is this line really print before start registration????
 
-  if( verbose > 0 )
+  if( verbose == true )
     {
     BSplineRegistrationHelper->PrintCommandLine(true, "BSplineRegistrationHelper");
     }
 
   BSplineRegistrationHelper->Update();
 
-  if( verbose > 0 )
+  if( verbose == true )
     {
     std::cout << " - Write deformation " << std::endl
               << " :: " << OutputRegName

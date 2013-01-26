@@ -51,7 +51,7 @@ void
 ComputeDiffusionTensorImageFilter
 ::Update()
 {
-  if( m_UseMedianFilter > 0 )
+  if( m_UseMedianFilter == true )
     {
     typedef itk::MedianImageFilter<InputImageType, InputImageType> MedianFilterType;
     MedianFilterType::Pointer filter = MedianFilterType::New();

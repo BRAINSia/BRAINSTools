@@ -69,6 +69,7 @@ if(NOT DEFINED ${extProjName}_DIR AND NOT ${USE_SYSTEM_${extProjName}})
   endif()
 
   set(${proj}_CMAKE_OPTIONS
+      -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/${proj}-install
       -DITK_LEGACY_REMOVE:BOOL=OFF
       -DITKV3_COMPATIBILITY:BOOL=ON
       -DITK_BUILD_ALL_MODULES:BOOL=ON
@@ -97,11 +98,11 @@ if(NOT DEFINED ${extProjName}_DIR AND NOT ${USE_SYSTEM_${extProjName}})
       -DBUILD_EXAMPLES:BOOL=OFF
       -DBUILD_TESTING:BOOL=OFF
       ${${proj}_CMAKE_OPTIONS}
-    INSTALL_COMMAND ""
+## We really do want to install in order to limit # of include paths INSTALL_COMMAND ""
     DEPENDS
       ${${proj}_DEPENDENCIES}
     )
-  set(${extProjName}_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
+  set(${extProjName}_DIR ${CMAKE_BINARY_DIR}/${proj}-install/lib/cmake/ITK-4.4)
 else()
   if(${USE_SYSTEM_${extProjName}})
     find_package(${extProjName} ${ITK_VERSION_MAJOR} REQUIRED)

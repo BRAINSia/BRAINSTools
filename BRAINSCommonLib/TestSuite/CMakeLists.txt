@@ -2,13 +2,21 @@
 add_executable(PrettyPrintTableTest PrettyPrintTableTest.cxx)
 set_target_properties(PrettyPrintTableTest PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/testbin)
 
-add_test(NAME PrettyPrintTableTest COMMAND ${LAUNCH_EXE} $<TARGET_FILE:PrettyPrintTableTest>)
+add_executable( itkResampleInPlaceImageFilterTest itkResampleInPlaceImageFilterTest.cxx)
+set_target_properties(itkResampleInPlaceImageFilterTest PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/testbin)
+target_link_libraries( itkResampleInPlaceImageFilterTest ${ITK_LIBRARIES})
 
 add_executable(BRAINSCleanMask BRAINSCleanMask.cxx)
 target_link_libraries(BRAINSCleanMask ${ITK_LIBRARIES})
 
 StandardBRAINSBuildMacro(NAME FindCenterOfBrain
   TARGET_LIBRARIES BRAINSCommonLib)
+
+ExternalData_add_test(FindCenterOfBrainFetchData
+  NAME PrettyPrintTableTest
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:PrettyPrintTableTest>
+  ## No arguments
+  )
 
 ExternalData_add_test(FindCenterOfBrainFetchData
   NAME FindCenterOfBrainTest
@@ -57,11 +65,9 @@ set_property(TEST FindCenterOfBrainOutputTest APPEND PROPERTY DEPENDS
 ExternalData_add_target(FindCenterOfBrainFetchData)
 
 ## HACK: TODO: Make this test do something meaningful.
-#add_executable( itkResampleInPlaceImageFilterTest itkBasicFiltersTests.cxx )
-#target_link_libraries( itkResampleInPlaceImageFilterTest ITKIO ITKBasicFilters )
-#add_test( NAME itkResampleInPlaceImageFilterTest COMMAND $<TARGET_FILE:itkResampleInPlaceImageFilterTest>
-#    itkResampleInPlaceImageFilterTest
-#    ${ITK_DATA_ROOT}/Input/itkResampleInPlaceImageFilterTest.nii.gz
-#    ${ITK_DATA_ROOT}/Baseline/Review/itkResampleInPlaceImageFilterTest.nii.gz
-#    ${CMAKE_CURRENT_BINARY_DIR}/test_image.nii.gz
-#)
+## HACK: DAVID: This test is failing, but needs to have valid data added so that it will pass
+ExternalData_add_test(FindCenterOfBrainFetchData
+  NAME itkResampleInPlaceImageFilterTest
+  COMMAND $<TARGET_FILE:itkResampleInPlaceImageFilterTest>
+    itkResampleInPlaceImageFilterTest input1 transform1 checkresult
+)

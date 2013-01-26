@@ -36,7 +36,7 @@ inline bool Validate( double input, double desired, double tolerance )
   return abs( input - desired ) > tolerance * abs( desired );
 }
 
-int itkResampleInPlaceImageFilterTest( int argc, char * argv[] )
+int main( int argc, char * argv[] )
 {
   // Simple parameter check
   if( argc < 3 )

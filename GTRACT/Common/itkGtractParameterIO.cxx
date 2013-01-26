@@ -24,7 +24,11 @@
 namespace itk
 {
 GtractParameterIO
-::GtractParameterIO()
+::GtractParameterIO() :
+  m_Directions(),
+  m_Bvalue(0.0),
+  m_NumberOfDirections(0),
+  m_FileName("")
 {
 }
 

@@ -49,7 +49,11 @@ void LogisticRegressionSample<TSampleType>::SetLabel(unsigned int const & label)
 }
 
 template <typename TSampleType>
-LogisticRegression<TSampleType>::LogisticRegression(const unsigned int featureCount, const unsigned int totalSamples)
+LogisticRegression<TSampleType>::LogisticRegression(const unsigned int featureCount, const unsigned int totalSamples) :
+  m_sample(NULL),
+  m_label(0),
+  m_predictedProbability(),
+  m_labelSet(false)
 {
   this->m_sampleCount = 0;
   this->m_totalSamples = totalSamples;

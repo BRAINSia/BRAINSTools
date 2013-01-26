@@ -35,6 +35,7 @@ TimeSeriesVersorScaleSkewFilter::TimeSeriesVersorScaleSkewFilter()
 {
   m_NumberOfSpatialSamples = 100000;
   m_NumberOfIterations = 1000;
+  m_NumberOfHistogramBins = 0;
   m_TranslationScale = 1000.0;
   m_ScalingScale = 1.0;
   m_SkewScale = 1.0;

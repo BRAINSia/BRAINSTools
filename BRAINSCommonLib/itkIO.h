@@ -58,7 +58,7 @@ typename TImage::Pointer ReadImage(const std::string fileName)
       {
       std::cout << "Caught an exception: " << std::endl;
       std::cout << err << " " << __FILE__ << " " << __LINE__ << std::endl;
-      throw err;
+      throw;
       }
     catch( ... )
       {
@@ -82,7 +82,7 @@ typename TImage::Pointer ReadImage(const std::string fileName)
       {
       std::cout << "Caught an exception: " << std::endl;
       std::cout << err << " " << __FILE__ << " " << __LINE__ << std::endl;
-      throw err;
+      throw;
       }
     catch( ... )
       {
@@ -295,7 +295,7 @@ ScaleAndCast(const typename InputImageType::Pointer & image,
     }
   catch( itk::ExceptionObject & e )
     {
-    throw e;
+    throw;
     }
   typename OutputImageType::Pointer returnScaled = RealToProbMapCast->GetOutput();
   return returnScaled;

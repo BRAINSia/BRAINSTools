@@ -411,13 +411,13 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
         if( autoResetNumberOfSamplesMetric.IsNull() )
           {
           std::cout << "ERROR::" << __FILE__ << " " << __LINE__ << std::endl;
-          throw err;
+          throw;
           }
         unsigned int localNumberOfSamples = autoResetNumberOfSamplesMetric->GetNumberOfSpatialSamples();
         if( diff > localNumberOfSamples )
           {
           // we are done.  This can not be recovered from.
-          throw err;
+          throw;
           }
         localNumberOfSamples -= diff;
         autoResetNumberOfSamplesMetric->SetNumberOfSpatialSamples(localNumberOfSamples);

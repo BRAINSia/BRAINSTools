@@ -206,7 +206,7 @@ int WriteBothTransformsToDisk(const GenericTransformType::ConstPointer genericTr
     }
   catch( itk::ExceptionObject & excp )
     {
-    throw excp; // rethrow exception, handle in some other scope.
+    throw; // rethrow exception, handle in some other scope.
     }
   return 0;
 }
@@ -249,7 +249,7 @@ GenericTransformType::Pointer ReadTransformFromDisk(const std::string & initialT
     std::cerr << "[FAILED]" << std::endl;
     std::cerr << "Error while reading the the file " << initialTransform << std::endl;
     std::cerr << excp << std::endl;
-    throw excp;
+    throw;
     }
 
   if( currentTransformList.size() == 1 )  // Most simple transform types
@@ -517,7 +517,7 @@ void WriteTransformToDisk(GenericTransformType const *const MyTransform, const s
       }
     catch( itk::ExceptionObject & excp )
       {
-      throw excp;
+      throw;
       }
     if( inverseTransformExists )
       {

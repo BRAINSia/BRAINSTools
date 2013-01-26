@@ -33,7 +33,7 @@ TransformToDisplacementField(itk::ImageBase<DisplacementFieldPointerType::Object
     }
   catch( itk::ExceptionObject & err )
     {
-    throw err; // pass the buck up.
+    throw; // pass the buck up.
     }
   return todef->GetOutput();
 }

@@ -514,11 +514,11 @@ void DiffusionTensor3DReconstructionWithMaskImageFilter<TReferenceImagePixelType
   os << indent << "BValue: " << m_BValue << std::endl;
   if( this->m_GradientImageTypeEnumeration == GradientIsInManyImages )
     {
-    os << indent << "Gradient images haven been supplied " << std::endl;
+    os << indent << "Gradient images have been supplied " << std::endl;
     }
-  else if( this->m_GradientImageTypeEnumeration == GradientIsInManyImages )
+  else if( this->m_GradientImageTypeEnumeration == GradientIsInASingleImage )
     {
-    os << indent << "A multicomponent gradient image has been supplied" << std::endl;
+    os << indent << "A single multicomponent gradient image has been supplied" << std::endl;
     }
 }
 }

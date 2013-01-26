@@ -63,7 +63,7 @@ public:
 
   std::string GetRandomForestModelFilename();
 
-  std::string GetRFModelFilename( int depth, int NTrees);
+  std::string GetRFModelFilename( unsigned int depth, unsigned int NTrees);
 
   DataSet::StringVectorType GetROIIDsInOrder() const;
 

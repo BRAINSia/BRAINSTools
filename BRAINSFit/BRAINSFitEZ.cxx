@@ -20,6 +20,8 @@ PURPOSE.  See the above copyright notices for more information.
 #include "BRAINSCommonLib.h"
 #include "BRAINSThreadControl.h"
 #include "BRAINSFitHelper.h"
+// NOTE:  The only difference between BRAINSFit.cxx and BRAINSFitEZ.cxx it
+// the included XML file from below. Otherwise they should be kept in-sync.
 #include "BRAINSFitEZCLP.h"
 
 // This program was modified from
@@ -35,46 +37,6 @@ typedef itk::ImageFileReader<InputImageType>              FixedVolumeReaderType;
 typedef itk::ImageFileReader<InputImageType>              MovingVolumeReaderType;
 typedef AffineTransformType::Pointer                      AffineTransformPointer;
 // typedef itk::Vector<double, Dimension>           BRAINSFitVectorType;
-
-// This function deciphers the BackgroundFillValueString and returns a double
-// precision number based on the requested value
-// cppcheck-suppress unusedFunction
-double GetBackgroundFillValueFromString(
-  const std::string & BackgroundFillValueString)
-{
-  const std::string BIGNEGText("BIGNEG");
-  const std::string NaNText("NaN");
-  double            BackgroundFillValue = 0.0;
-
-  if( BackgroundFillValueString == BIGNEGText )
-    {
-    union
-      {
-      unsigned int i_val[2];
-      double d_val;
-      } FourByteHolder;
-    FourByteHolder.i_val[0] = 0xF000F000;
-    FourByteHolder.i_val[1] = 0xF000F000;
-    BackgroundFillValue = FourByteHolder.d_val;
-    }
-  else if( BackgroundFillValueString == NaNText )
-    {
-    union
-      {
-      unsigned int i_val[2];
-      double d_val;
-      } FourByteHolder;
-    FourByteHolder.i_val[0] = 0xFFFFFFFF;
-    FourByteHolder.i_val[1] = 0xFFFFFFFF;
-    BackgroundFillValue = FourByteHolder.d_val;
-    }
-  else
-    {
-    BackgroundFillValue =
-      static_cast<double>( atof( BackgroundFillValueString.c_str() ) );
-    }
-  return BackgroundFillValue;
-}
 
 template <class ImageType>
 typename ImageType::Pointer ExtractImage(
@@ -155,6 +117,7 @@ int main(int argc, char *argv[])
   itk::TransformFactory<ScaleSkewVersor3DTransformType>::RegisterTransform();
   itk::TransformFactory<AffineTransformType>::RegisterTransform();
   itk::TransformFactory<BSplineTransformType>::RegisterTransform();
+  itk::TransformFactory<CompositeTransformType>::RegisterTransform(); // added by Ali
 
 #ifdef USE_DebugImageViewer
   if( UseDebugImageViewer )
@@ -187,7 +150,7 @@ int main(int argc, char *argv[])
   // See if the individual boolean registration options are being used.  If any
   // of these are set, then transformType is not used.
   if( ( useRigid == true ) || ( useScaleVersor3D == true ) || ( useScaleSkewVersor3D == true )
-      || ( useAffine == true ) || ( useBSpline == true ) )
+      || ( useAffine == true ) || ( useBSpline == true ) || ( useSyN == true ) )
     {
     localTransformType.resize(0); // Set to zero length
     if( useRigid == true )
@@ -209,6 +172,10 @@ int main(int argc, char *argv[])
     if( useBSpline == true )
       {
       localTransformType.push_back("BSpline");
+      }
+    if( useSyN == true )
+      {
+      localTransformType.push_back("SyN");
       }
     if( useComposite )
       {
@@ -242,9 +209,11 @@ int main(int argc, char *argv[])
   if( linearTransform.size() > 0 )
     {
     localOutputTransform = linearTransform;
-    if( ( !localTransformType.empty() ) && ( localTransformType[localTransformType.size() - 1] == "BSpline" ) )
+    if( ( !localTransformType.empty() ) &&
+        ( (localTransformType[localTransformType.size() - 1] == "BSpline") ||
+          (localTransformType[localTransformType.size() - 1] == "SyN") ) )
       {
-      std::cout << "Error:  Linear transforms can not be used for BSpline registration!" << std::endl;
+      std::cout << "Error:  Linear transforms can not be used for BSpline or SyN registration!" << std::endl;
       return EXIT_FAILURE;
       }
     }
@@ -422,7 +391,7 @@ int main(int argc, char *argv[])
     }
   else if( maskProcessingMode == "ROI" )
     {
-    if( fixedBinaryVolume == "" || movingBinaryVolume == "" )
+    if( fixedBinaryVolume == "" && movingBinaryVolume == "" )
       {
       std::cout
         <<
@@ -430,20 +399,33 @@ int main(int argc, char *argv[])
         << std::endl;
       return EXIT_FAILURE;
       }
-    fixedMask = ReadImageMask<SpatialObjectType, Dimension>(
-        fixedBinaryVolume,
-        extractFixedVolume.GetPointer() );
-    movingMask = ReadImageMask<SpatialObjectType, Dimension>(
-        movingBinaryVolume,
-        extractMovingVolume.GetPointer() );
+    if( fixedBinaryVolume != "" )
+      {
+      fixedMask = ReadImageMask<SpatialObjectType, Dimension>(
+          fixedBinaryVolume,
+          extractFixedVolume.GetPointer() );
+      }
+    else
+      {
+      fixedMask = NULL;
+      }
+
+    if( movingBinaryVolume != "" )
+      {
+      movingMask = ReadImageMask<SpatialObjectType, Dimension>(
+          movingBinaryVolume,
+          extractMovingVolume.GetPointer() );
+      }
+    else
+      {
+      movingMask = NULL;
+      }
     }
-  /* This default fills the background with zeros
-   *  const double BackgroundFillValue =
-   * GetBackgroundFillValueFromString(command.GetValueAsString(BackgroundFillValueText,
-   *  FloatCodeText));
-   * Note itk::ReadTransformFromDisk returns NULL if file name does not exist.
-   */
-  GenericTransformType::Pointer currentGenericTransform = itk::ReadTransformFromDisk(initialTransform);
+  GenericTransformType::Pointer currentGenericTransform;
+  if( initialTransform != "" )
+    {
+    currentGenericTransform = itk::ReadTransformFromDisk(initialTransform);
+    }
 
   FixedVolumeType::Pointer resampledImage;
   /*
@@ -493,6 +475,7 @@ int main(int argc, char *argv[])
     myHelper->SetPromptUserAfterDisplay(PromptAfterImageSend);
     myHelper->SetDebugLevel(debugLevel);
     myHelper->SetCostMetric(costMetric);
+    myHelper->SetUseROIBSpline(useROIBSpline);
     if( debugLevel > 7 )
       {
       myHelper->PrintCommandLine(true, "BF");
@@ -670,50 +653,34 @@ int main(int argc, char *argv[])
       }
     }
 
-#if 0  // HACK:  This does not work properly when only an initializer transform
-       // is used, or if the final transform is BSpline.
-       // GREG:  BRAINSFit currently does not determine if the registrations
-       // have not
-       // converged before reaching their maximum number of iterations.
-       //  Currently
-       // transforms are always written out, under the assumption that the
-       // registraiton converged.  We need to figure out how to determine if the
-       // registrations did not converge (i.e. maximum number of iterations were
-       // reached), and then not write out the transforms, unless explicitly
-       // demanded
-       // to write them out from a command line flag.
-       // GREG:  We should write a test, and document what the expected
-       // behaviors are
-       // when a multi-level registration is requested (Rigid,ScaleSkew,Affine),
-       // and
-       // one of the first types does not converge.
-       // HACK  This does not work properly until BSpline reports iterations
-       // correctly
-  if( actualIterations + 1 >= permittedIterations )
+#ifdef USE_ANTS
+  if( localTransformType[localTransformType.size() - 1] == "SyN" )
     {
-    if( writeTransformOnFailure == false )    // taken right off the command
-                                              // line.
+    CompositeTransformType::Pointer tempSyNCompositeTransform =
+      dynamic_cast<CompositeTransformType *>( currentGenericTransform.GetPointer() );
+    // write out transform actually computed, so skip the initial transform
+    CompositeTransformType::TransformTypePointer tempSyNFinalTransform =
+      tempSyNCompositeTransform.GetPointer();
+// tempSyNCompositeTransform->GetNthTransform( 1 );
+
+    if( tempSyNFinalTransform.IsNull() )
       {
-      std::cout << "actualIterations: " << actualIterations << std::endl;
-      std::cout << "permittedIterations: " << permittedIterations << std::endl;
-      return failureExitCode;   // taken right off the command line.
+      std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
+      return EXIT_FAILURE;
+      }
+    else
+      {
+      itk::ants::WriteTransform<3>( tempSyNFinalTransform, localOutputTransform );
+      std::cout << "SyN warped transform is written to the disk." << std::endl;
       }
     }
+  else
 #endif
-
-  /*const int write_status=*/
-  itk::WriteBothTransformsToDisk(currentGenericTransform.GetPointer(),
-                                 localOutputTransform, strippedOutputTransform);
-
-#if 0  // HACK:  This does not work properly when only an initializer transform
-       // is used, or if the final transform is BSpline.
-  if( actualIterations + 1 >= permittedIterations )
     {
-    std::cout << "actualIterations: " << actualIterations << std::endl;
-    std::cout << "permittedIterations: " << permittedIterations << std::endl;
-    return failureExitCode;   // taken right off the command line.
+    /*const int write_status=*/
+    itk::WriteBothTransformsToDisk(currentGenericTransform.GetPointer(),
+                                   localOutputTransform, strippedOutputTransform);
     }
-#endif
 
   return 0;
 }

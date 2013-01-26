@@ -36,46 +36,6 @@ typedef itk::ImageFileReader<InputImageType>              MovingVolumeReaderType
 typedef AffineTransformType::Pointer                      AffineTransformPointer;
 // typedef itk::Vector<double, Dimension>           BRAINSFitVectorType;
 
-// This function deciphers the BackgroundFillValueString and returns a double
-// precision number based on the requested value
-// cppcheck-suppress unusedFunction
-double GetBackgroundFillValueFromString(
-  const std::string & BackgroundFillValueString)
-{
-  const std::string BIGNEGText("BIGNEG");
-  const std::string NaNText("NaN");
-  double            BackgroundFillValue = 0.0;
-
-  if( BackgroundFillValueString == BIGNEGText )
-    {
-    union
-      {
-      unsigned int i_val[2];
-      double d_val;
-      } FourByteHolder;
-    FourByteHolder.i_val[0] = 0xF000F000;
-    FourByteHolder.i_val[1] = 0xF000F000;
-    BackgroundFillValue = FourByteHolder.d_val;
-    }
-  else if( BackgroundFillValueString == NaNText )
-    {
-    union
-      {
-      unsigned int i_val[2];
-      double d_val;
-      } FourByteHolder;
-    FourByteHolder.i_val[0] = 0xFFFFFFFF;
-    FourByteHolder.i_val[1] = 0xFFFFFFFF;
-    BackgroundFillValue = FourByteHolder.d_val;
-    }
-  else
-    {
-    BackgroundFillValue =
-      static_cast<double>( atof( BackgroundFillValueString.c_str() ) );
-    }
-  return BackgroundFillValue;
-}
-
 template <class ImageType>
 typename ImageType::Pointer ExtractImage(
   typename InputImageType::Pointer & inputImage,
@@ -459,12 +419,6 @@ int main(int argc, char *argv[])
       movingMask = NULL;
       }
     }
-  /* This default fills the background with zeros
-   *  const double BackgroundFillValue =
-   * GetBackgroundFillValueFromString(command.GetValueAsString(BackgroundFillValueText,
-   *  FloatCodeText));
-   * Note itk::ReadTransformFromDisk returns NULL if file name does not exist.
-   */
   GenericTransformType::Pointer currentGenericTransform;
   if( initialTransform != "" )
     {

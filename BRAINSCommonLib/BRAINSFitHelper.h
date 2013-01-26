@@ -190,7 +190,7 @@ public:
   /** Method that initiates the registration. */
   void Update(void);
 
-  void PrintCommandLine(const bool dumpTempVolumes, const std::string suffix) const;
+  void PrintCommandLine(const bool dumpTempVolumes, const std::string & suffix) const;
 
 protected:
   BRAINSFitHelper();

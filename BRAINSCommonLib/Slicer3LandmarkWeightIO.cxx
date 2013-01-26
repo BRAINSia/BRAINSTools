@@ -7,8 +7,8 @@
 
 #include "Slicer3LandmarkWeightIO.h"
 
-extern void
-WriteITKtoSlicer3LmkWts( const std::string landmarksWeightFilename,
+void
+WriteITKtoSlicer3LmkWts( const std::string & landmarksWeightFilename,
                          const LandmarksWeightMapType & landmarks )
 {
   const std::string fullPathLandmarksWeightFileName = itksys::SystemTools::CollapseFullPath(

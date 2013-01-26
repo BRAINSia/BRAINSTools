@@ -31,7 +31,7 @@ typedef std::map<std::string, PointType> LandmarksMapType;
  * Output:
  * NONE
  */
-extern void WriteITKtoSlicer3Lmk( const std::string landmarksFilename, const LandmarksMapType & landmarks );
+extern void WriteITKtoSlicer3Lmk( const std::string & landmarksFilename, const LandmarksMapType & landmarks );
 
 /*
  * Read Slicer3 landmark list file (.fcsv) into a map of ITK points

@@ -31,7 +31,7 @@ typedef SOAdapterType::DirectionType   DirectionType;
   */
 /** read an image using ITK -- image-based template */
 template <typename TImage>
-typename TImage::Pointer ReadImage(const std::string fileName)
+typename TImage::Pointer ReadImage(const std::string & fileName)
 {
   typename TImage::Pointer image;
   std::string               extension = itksys::SystemTools::GetFilenameLastExtension(fileName);

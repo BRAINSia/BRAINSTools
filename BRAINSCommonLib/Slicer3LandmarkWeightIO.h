@@ -30,7 +30,7 @@ typedef std::map<std::string, double> LandmarksWeightMapType;
  * Output:
  * NONE
  */
-extern void WriteITKtoSlicer3LmkWts( const std::string landmarksWeightFilename,
+extern void WriteITKtoSlicer3LmkWts( const std::string & landmarksWeightFilename,
                                      const LandmarksWeightMapType & landmarks );
 
 /*

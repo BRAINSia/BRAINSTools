@@ -86,9 +86,9 @@ BRAINSFitHelper::BRAINSFitHelper() :
   m_FinalMetricValue(0.0),
   m_ObserveIterations(true),
   m_CostMetric("MMI"), // Default to Mattes Mutual Information Metric
+  m_UseROIBSpline(false),
   m_Helper(NULL),
-  m_ForceMINumberOfThreads(-1),
-  m_UseROIBSpline(false)
+  m_ForceMINumberOfThreads(-1)
 {
   m_SplineGridSize[0] = 14;
   m_SplineGridSize[1] = 10;
@@ -405,7 +405,7 @@ BRAINSFitHelper::PrintSelf(std::ostream & os, Indent indent) const
 }
 
 void
-BRAINSFitHelper::PrintCommandLine(const bool dumpTempVolumes, const std::string suffix) const
+BRAINSFitHelper::PrintCommandLine(const bool dumpTempVolumes, const std::string & suffix) const
 {
   std::cout << "The equivalent command line to the current run would be:" << std::endl;
 

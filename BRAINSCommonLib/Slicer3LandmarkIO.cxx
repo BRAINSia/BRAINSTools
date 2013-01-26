@@ -6,8 +6,8 @@
 
 #include "Slicer3LandmarkIO.h"
 
-extern void
-WriteITKtoSlicer3Lmk( const std::string landmarksFilename,
+void
+WriteITKtoSlicer3Lmk( const std::string & landmarksFilename,
                       const LandmarksMapType & landmarks )
 {
   const std::string fullPathLandmarksFileName = itksys::SystemTools::CollapseFullPath( landmarksFilename.c_str() );

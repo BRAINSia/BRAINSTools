@@ -266,8 +266,8 @@ private:
   bool                                       m_PromptUserAfterDisplay;
   double                                     m_FinalMetricValue;
   bool                                       m_ObserveIterations;
-  bool                                       m_UseROIBSpline;
-  typename MetricType::Pointer                 m_CostMetricObject;
+  typename MetricType::Pointer               m_CostMetricObject;
+  bool             m_UseROIBSpline;
   std::vector<int> m_PermitParameterVariation;
   // DEBUG OPTION:
   int m_ForceMINumberOfThreads;

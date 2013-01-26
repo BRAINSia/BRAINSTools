@@ -531,8 +531,9 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::BRAINSFitHelperTemplat
   m_FinalMetricValue(0.0),
   m_ObserveIterations(true),
   m_CostMetricObject(NULL),
+  m_UseROIBSpline(0),
   m_PermitParameterVariation(0),
-  m_UseROIBSpline(0)
+  m_ForceMINumberOfThreads(-1)
 {
   m_SplineGridSize[0] = 14;
   m_SplineGridSize[1] = 10;

@@ -77,7 +77,7 @@ template <class InputImageType>
 typename itk::InterpolateImageFunction<InputImageType,
                                        typename itk::NumericTraits<typename InputImageType::PixelType>::RealType>::
 Pointer
-GetInterpolatorFromString(const std::string interpolationMode)
+GetInterpolatorFromString(const std::string & interpolationMode)
 {
   typedef typename itk::NumericTraits<typename InputImageType::PixelType>::RealType TInterpolatorPrecisionType;
   typedef typename itk::ConstantBoundaryCondition<InputImageType>                   BoundaryConditionType;
@@ -206,7 +206,7 @@ typename OutputImageType::Pointer GenericTransformImage(
                                                             // ignored in the
                                                             // case of binary
                                                             // image!
-  const std::string interpolationMode,
+  const std::string & interpolationMode,
   const bool binaryFlag)
 {
   // FIRST will need to convert binary image to signed distance in case

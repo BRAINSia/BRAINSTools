@@ -204,7 +204,7 @@ typename OutputImageType::Pointer GenericTransformImage(
                                                             // ignored in the
                                                             // case of binary
                                                             // image!
-  const std::string interpolationMode,
+  const std::string & interpolationMode,
   const bool binaryFlag);
 
 #ifndef ITK_MANUAL_INSTANTIATION

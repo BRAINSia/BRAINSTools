@@ -798,7 +798,7 @@ This information is now completely contained in the byClassLandmarkMatrix object
 #if 1
   if( modelFile == "" )
     {
-    std::cerr << "Missing model file name" << std::cerr;
+    std::cerr << "Missing model file name" << std::endl;
     return 1;
     }
   LLSModel theModel;

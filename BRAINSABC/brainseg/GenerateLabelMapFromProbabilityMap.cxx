@@ -23,7 +23,7 @@ main(int argc, char *argv[])
   if( inputVolumes.size() < 1 )
     {
     std::cerr << argv[0] << ": Missing required probability maps"
-              << std::cerr;
+              << std::endl;
     return EXIT_FAILURE;
     }
 

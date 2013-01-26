@@ -121,7 +121,7 @@ int main(int argc, char *argv[])
   if( inputVolume == "" )
     {
     std::cerr << argv[0] << ": Missing required --inputVolume parameter"
-              << std::cerr;
+              << std::endl;
     return EXIT_FAILURE;
     }
   VolumeImageType::Pointer ImageInput =

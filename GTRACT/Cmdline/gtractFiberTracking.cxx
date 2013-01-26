@@ -188,7 +188,7 @@ int main(int argc, char *argv[])
   if( inputStartingSeedsLabelMapVolume == "" )
     {
     std::cerr << "Missing filename for input Starting Seeds Label Map Volume (--inputStartingSeedsLabelMapVolume)"
-              << std::cerr;
+              << std::endl;
     }
   typedef unsigned char                       MaskPixelType;
   typedef itk::Image<MaskPixelType, 3>        MaskImageType;

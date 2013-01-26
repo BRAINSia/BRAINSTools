@@ -36,6 +36,7 @@ void libsvmwrite(const char *filename, const mxArray *label_vec, const mxArray *
 		if(mexCallMATLAB(1, plhs, 1, prhs, "transpose"))
 		{
 			mexPrintf("Error: cannot transpose instance matrix\n");
+                        fclose(fp);
 			return;
 		}
 		instance_mat_col = plhs[0];

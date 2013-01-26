@@ -50,30 +50,26 @@ void LogisticRegressionSample<TSampleType>::SetLabel(unsigned int const & label)
 
 template <typename TSampleType>
 LogisticRegression<TSampleType>::LogisticRegression(const unsigned int featureCount, const unsigned int totalSamples) :
-  m_sample(NULL),
-  m_label(0),
-  m_predictedProbability(),
-  m_labelSet(false)
+  m_totalSamples(totalSamples),
+  m_featureCount(featureCount),
+  m_classOneLabel(0),
+  m_classTwoLabel(0),
+  m_classOneLabelSet(false),
+  m_classTwoLabelSet(false)
 {
   this->m_sampleCount = 0;
-  this->m_totalSamples = totalSamples;
   this->m_parameters.solver_type = L1R_LR;
   this->m_parameters.C = 1;
   this->m_parameters.eps = 0.01;
   this->m_parameters.nr_weight = 0;
   this->m_parameters.weight_label = NULL;
   this->m_parameters.weight = NULL;
-  this->m_featureCount = featureCount;
   this->m_problem.bias = 1;
   this->m_problem.n = this->m_problem.bias + this->m_featureCount;
   this->m_problem.l = this->m_totalSamples;
   this->m_problem.y = new int[totalSamples];
   this->m_problem.x = new struct feature_node *[this->m_problem.l];
   this->m_featureNodes = new struct feature_node[this->m_problem.n * this->m_problem.l];
-  this->m_classOneLabel = 0;
-  this->m_classTwoLabel = 0;
-  this->m_classOneLabelSet = false;
-  this->m_classTwoLabelSet = false;
 }
 
 template <typename TSampleType>

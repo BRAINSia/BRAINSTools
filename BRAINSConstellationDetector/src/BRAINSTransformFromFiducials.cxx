@@ -227,17 +227,19 @@ int main(int argc, char* argv[])
 
   GenericTransformType::Pointer genericTransform = NULL;
 
-  if( transformType == "Rigid" || transformType == "Translation" )
+  if( transformType == "Rigid" )
     {
     VersorRigidTransformType::Pointer rigidTransform = DoIt_Rigid(fixedPoints, movingPoints);
     // do nothing
-    if( transformType == "Translation" )
-      {
-      // Clear out the computed rotation if we only requested translation
-      itk::Versor<double> v;
-      v.SetIdentity();
-      rigidTransform->SetRotation(v);
-      }
+    genericTransform = rigidTransform.GetPointer();
+    }
+  else if( transformType == "Translation" )
+    {
+    VersorRigidTransformType::Pointer rigidTransform = DoIt_Rigid(fixedPoints, movingPoints);
+    // Clear out the computed rotation if we only requested translation
+    itk::Versor<double> v;
+    v.SetIdentity();
+    rigidTransform->SetRotation(v);
     genericTransform = rigidTransform.GetPointer();
     }
   else if( transformType == "Similarity" )

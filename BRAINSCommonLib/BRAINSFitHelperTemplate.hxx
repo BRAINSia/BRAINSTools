@@ -294,22 +294,21 @@ DoCenteredInitialization( typename FixedImageType::Pointer & orientedFixedVolume
 
     CostMetricObject->SetTransform(currentEulerAngles3D);
     CostMetricObject->Initialize();
-    double max_cc = 0.0;
     // void QuickSampleParameterSpace(void)
       {
       currentEulerAngles3D->SetRotation(0, 0, 0);
       // Initialize with current guess;
-      max_cc = CostMetricObject->GetValue( currentEulerAngles3D->GetParameters() );
-      const double HARange = 12.0;
-      const double PARange = 12.0;
+      double max_cc = CostMetricObject->GetValue( currentEulerAngles3D->GetParameters() );
       // rough search in neighborhood.
       const double one_degree = 1.0F * vnl_math::pi / 180.0F;
       const double HAStepSize = 3.0 * one_degree;
       const double PAStepSize = 3.0 * one_degree;
       // Quick search just needs to get an approximate angle correct.
         {
+        const double HARange = 12.0;
         for( double HA = -HARange * one_degree; HA <= HARange * one_degree; HA += HAStepSize )
           {
+          const double PARange = 12.0;
           for( double PA = -PARange * one_degree; PA <= PARange * one_degree; PA += PAStepSize )
             {
             currentEulerAngles3D->SetRotation(PA, 0, HA);

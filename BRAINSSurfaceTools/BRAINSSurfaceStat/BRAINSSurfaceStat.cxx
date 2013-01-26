@@ -121,36 +121,27 @@ int main(int argc, char *argv[])
       {
       if( numberOfPoints != surface->GetNumberOfPoints() )
         {
-        std::cerr << "Error: Invalid number of points in "
-                  << inputSurfaces[i] ";
+        std::cerr << "Error: Invalid number of points in " << inputSurfaces[i];
         std::cerr << std::endl;
-        std::cerr << "  Expected " << numberOfPoints << "but found
-          ";
+        std::cerr << "  Expected " << numberOfPoints << "but found ";
         std::cerr << surface->GetNumberOfPoints(); << std::endl;
         return 1;
+        }
+      }
+    /* Pack Data into an Array */
+    for( int j = 0; j < floatArray->GetNumberOfTuples(); j++ )
+      {
+      vertexData->SetValue(i, j, floatArray->GetValue(j) );
       }
     }
 
-    /* Pack Data into an Array */
-    for (int j=0;j<floatArray->GetNumberOfTuples();j++)
-    {
-      vertexData->SetValue(i, j,floatArray->GetValue(j));
-    }
-
-  }
-
   /* Will Need some modification */
   vtkRCalculatorFilter* rcf = vtkRCalculatorFilter::New();
-  rcf->SetInput(mt2->GetOutput());
-  rcf->PutTable("x
-          ");
+  rcf->SetInput(mt2->GetOutput() );
+  rcf->PutTable("x");
   rcf->SetScriptFname( inputRscript.c_str() );
-  rcf->GetTable("m
-          ");
+  rcf->GetTable("m");
   rcf->GetOutput()
-
-
 
   return 0;
 }
-

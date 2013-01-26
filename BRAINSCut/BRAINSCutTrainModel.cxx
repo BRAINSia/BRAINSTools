@@ -4,6 +4,7 @@
 
 BRAINSCutTrainModel
 ::BRAINSCutTrainModel( BRAINSCutDataHandler& dataHandler ) :
+  m_myDataHandler(dataHandler),
   m_trainIteration(0),
   m_trainEpochIteration(0),
   m_trainDesiredError(0.0),
@@ -11,10 +12,17 @@ BRAINSCutTrainModel
   m_ANNHiddenNodesNumber(0),
   m_activationSlope(0),
   m_activationMinMax(0),
+  m_trainMaxDepth(0),
+  m_trainMinSampleCount(0),
+  m_trainUseSurrogates(false),
+  m_trainCalcVarImportance(false),
+  m_trainMaxTreeCount(0),
+  m_modelBasename(""),
+  m_ANNVectorFilenamePrefix(""),
+  m_RFErrorFilename(""),
   m_trainingDataSet(NULL),
   m_ANNLayerStructure(NULL)
 {
-  m_myDataHandler = dataHandler;
 }
 
 BRAINSCutTrainModel

@@ -76,7 +76,7 @@ int read_data_from_csv(const char* filename, Mat data, Mat classes,
 
 /******************************************************************************/
 
-int main( int argc, char* * argv )
+int main( int, char* * argv )
 {
   // lets just check the version first
 

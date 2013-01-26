@@ -5,7 +5,10 @@
 
 // ----------------------------------------------------- //
 BRAINSCutGenerateRegistrations
-::BRAINSCutGenerateRegistrations(  BRAINSCutDataHandler& dataHandler )
+::BRAINSCutGenerateRegistrations(  BRAINSCutDataHandler& dataHandler ) :
+  myDataHandler(NULL),
+  atlasToSubjectRegistraionOn(false),
+  subjectDataSets()
 {
   myDataHandler =  &dataHandler;
   myDataHandler->SetRegistrationParameters();

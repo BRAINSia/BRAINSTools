@@ -1,27 +1,26 @@
 /*=========================================================================
-
-Program:   BRAINS (Brain Research: Analysis of Images, Networks, and Systems)
-Module:    $RCSfile: $
-Language:  C++
-Date:      $Date: 2008/11/12 14:53:40 $
-Version:   $Revision: 1.9 $
+Program: BRAINS (Brain Research: Analysis of Images, Networks, and Systems)
 
 Copyright (c) Iowa Mental Health Clinical Research Center. All rights reserved.
-See BRAINSCopyright.txt or http://www.psychiatry.uiowa.edu/HTML/Copyright.html
-for details.
 
-This software is distributed WITHOUT ANY WARRANTY; without even
-the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-PURPOSE.  See the above copyright notices for more information.
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0.txt
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 
 Input Example:
 
-./MixtureStatisticOptimizer --inputFirstVolume T1.nii.gz --inputSecondVolume T2.nii.gz --inputMaskVolume brainMask.nii.gz[optional] --desiredMean 10000 [optional] --desiredVariance 0 [optional] --seed "128,128,128" [optional]  --outputVolume mush_2.nii.gz [optional] --outputMask mask_2.nii.gz [optional] --outputWeightsFile weights.txt [optional] --boundingBoxSize "90,60,75" [optional] --boundingBoxStart "83,113,80" [optional]
+./BRAINSMush --inputFirstVolume T1.nii.gz --inputSecondVolume T2.nii.gz --inputMaskVolume brainMask.nii.gz[optional] --desiredMean 10000 [optional] --desiredVariance 0 [optional] --seed "128,128,128" [optional]  --outputVolume mush_2.nii.gz [optional] --outputMask mask_2.nii.gz [optional] --outputWeightsFile weights.txt [optional] --boundingBoxSize "90,60,75" [optional] --boundingBoxStart "83,113,80" [optional]
 
 Minimal Input Example:
-./MixtureStatisticOptimizer --inputFirstVolume T1.nii.gz --inputSecondVolume T2.nii.gz
-
-
+./BRAINSMush --inputFirstVolume T1.nii.gz --inputSecondVolume T2.nii.gz
 =========================================================================*/
 
 #include "BRAINSMush.h"

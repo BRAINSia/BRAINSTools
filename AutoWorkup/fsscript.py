@@ -190,20 +190,22 @@ def runSubjectTemplate(args, FREESURFER_HOME, FS_SCRIPT):
     assert isinstance(session_ids, list), "Must input a list of session_ids :{0}:".format(session_ids)
     StageToRun = "Within-SubjectTemplate"
     FS_SCRIPT_FN = os.path.join(FREESURFER_HOME, FS_SCRIPT)
+    allTimePointFlags = ""
+    for session_id in session_ids:
+        allTimePointFlags += " -tp {timepoint}".format(timepoint=session_id)
+    allTimePointFlags += " -all"
     auto_recon_script="""#!/bin/bash
 export FREESURFER_HOME={FSHOME}
 export SUBJECTS_DIR={FSSUBJDIR}
 source {SOURCE_SCRIPT}
-{FSHOME}/bin/recon-all -debug -base {TEMPLATEID}
+{FSHOME}/bin/recon-all -debug -base {TEMPLATEID} {ALL_TIME_POINTS}
 status=$?
 exit $status
 """.format(SOURCE_SCRIPT=FS_SCRIPT_FN,
                FSHOME=FREESURFER_HOME,
                FSSUBJDIR=subjects_dir,
-               TEMPLATEID=subjectTemplate_id)
-    for session_id in session_ids:
-        auto_recon_script += " -tp {timepoint}".format(timepoint=session_id)
-    auto_recon_script += " -all"
+               TEMPLATEID=subjectTemplate_id,
+               ALL_TIME_POINTS=allTimePointFlags)
     base_run_dir = os.path.join(subjects_dir,'run_scripts', subjectTemplate_id)
     mkdir_p(base_run_dir)
     script_name = os.path.join(base_run_dir,'run_autorecon_stage_'+str(StageToRun)+'.sh')

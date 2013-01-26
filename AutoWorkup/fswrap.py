@@ -16,7 +16,7 @@ class FSScriptInputSpec(CommandLineInputSpec):
     subjectTemplate_id = traits.Str(argstr='--subjectTemplate_id %s', desc='Subject_template')
     session_ids = traits.List(traits.Str(), argstr='--session_ids %s', desc='List of sessions for a subject template')
     session_id = traits.Str(argstr='--session_id %s', desc='Session for a subject longitudinal analysis')
-    template_id = traits.Str(desc='Template ID used in longitudinal processing')
+    template_id = traits.Str(argstr='--template_id %s', desc='Template ID used in longitudinal processing')
     # TODO: fs_env_script = traits.Str(argstr='--FSSource %s', default='${FREESURFER_HOME}/FreeSurferEnv.sh', desc='')
     # TODO: fs_home = Directory(argstr='--FSHomeDir %s', desc='Location of FreeSurfer (differs for Mac and Linux environments')
 

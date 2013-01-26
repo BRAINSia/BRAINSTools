@@ -141,6 +141,7 @@ def CreateFreeSurferLongitudinalWorkflow(projectid, subjectid, sessionid, WFname
     fs_longitudinal.inputs.subcommand = 'longitudinal'
     long_freesurferWF.connect(inputsSpec, 'SingleSubject_ID', fs_longitudinal, 'template_id')
     long_freesurferWF.connect(inputsSpec, 'FreeSurferSession_ID', fs_longitudinal, 'session_id')
+    long_freesurferWF.connect(inputsSpec, 'subjects_dir', fs_longitudinal, 'subjects_dir')
     outputsSpec = pe.Node(interface=IdentityInterface(fields=['FreeSurferLongitudinalDir']), name='outputspec')
     long_freesurferWF.connect(fs_longitudinal, 'outDir', outputsSpec, 'FreeSurferLongitudinalDir')
 

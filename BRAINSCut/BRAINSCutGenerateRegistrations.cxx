@@ -98,11 +98,11 @@ BRAINSCutGenerateRegistrations
 
 void
 BRAINSCutGenerateRegistrations
-::CreateTransformFile(const std::string MovingImageFilename,
-                      const std::string FixedImageFilename,
-                      const std::string MovingBinaryImageFilename,
-                      const std::string FixedBinaryImageFilename,
-                      const std::string OutputRegName,
+::CreateTransformFile(const std::string & MovingImageFilename,
+                      const std::string & FixedImageFilename,
+                      const std::string & MovingBinaryImageFilename,
+                      const std::string & FixedBinaryImageFilename,
+                      const std::string & OutputRegName,
                       bool verbose)
 {
   // Create Helper Class of BRAINSFit for BSpline Registraion.

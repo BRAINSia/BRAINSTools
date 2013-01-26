@@ -286,7 +286,7 @@ BRAINSCutApplyModel
 float
 BRAINSCutApplyModel
 ::ComputeSSE( const PredictValueMapType& predictedOutputVector,
-              const std::string roiReferenceFilename )
+              const std::string & roiReferenceFilename )
 {
   WorkingImagePointer ReferenceVolume = ReadImageByFilename( roiReferenceFilename );
 
@@ -788,8 +788,8 @@ BRAINSCutApplyModel
 ::WritePredictROIProbabilityBasedOnReferenceImage( const PredictValueMapType& predictedOutput,
                                                    const WorkingImagePointer& referenceImage,
                                                    const WorkingImagePointer& roi,
-                                                   const std::string imageFilename,
-                                                   const WorkingPixelType labelValue )
+                                                   const std::string & imageFilename,
+                                                   const WorkingPixelType & labelValue )
 {
   WorkingImagePointer ANNContinuousOutputImage = WorkingImageType::New();
 
@@ -840,7 +840,7 @@ BRAINSCutApplyModel
 /* get continuous file name */
 inline std::string
 BRAINSCutApplyModel
-::GetContinuousPredictionFilename( const DataSet& subject, const std::string currentROIName)
+::GetContinuousPredictionFilename( const DataSet& subject, const std::string & currentROIName)
 {
   const std::string subjectID(subject.GetAttribute<StringValue>("Name") );
 
@@ -857,7 +857,7 @@ BRAINSCutApplyModel
 /* get output mask file name of subject */
 inline std::string
 BRAINSCutApplyModel
-::GetROIVolumeName( const DataSet& subject, const std::string currentROIName)
+::GetROIVolumeName( const DataSet& subject, const std::string & currentROIName)
 {
   std::string       givenROIName = subject.GetMaskFilenameByType( currentROIName );
   const std::string subjectID(subject.GetAttribute<StringValue>("Name") );

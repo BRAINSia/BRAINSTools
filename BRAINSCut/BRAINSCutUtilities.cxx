@@ -27,7 +27,7 @@ SmoothImage( const WorkingImagePointer& image, const float GaussianValue)
   return smoothingFilter->GetOutput();
 }
 
-WorkingImagePointer ReadImageByFilename( const std::string  filename )
+WorkingImagePointer ReadImageByFilename( const std::string  & filename )
 {
   std::cout << "********************************************************" << std::endl;
   std::cout << "ReadImageByFilename::: " << filename << std::endl;

@@ -211,7 +211,7 @@ FeatureInputVector
 
 void
 FeatureInputVector
-::SetNormalizationMethod( const std::string normalizationMethod )
+::SetNormalizationMethod( const std::string & normalizationMethod )
 {
   switch( m_featureNormalizationMap[normalizationMethod] )
     {

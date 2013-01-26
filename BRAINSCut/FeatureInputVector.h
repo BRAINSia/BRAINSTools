@@ -85,7 +85,7 @@ public:
 
   void SetLinearNormalizationOn(); // deprecated soon
 
-  void SetNormalizationMethod( const std::string normalizationMethod );
+  void SetNormalizationMethod( const std::string & normalizationMethod );
 
   void NormalizationOfVector( InputVectorMapType& currentFeatureVector, std::string ROIName );
 

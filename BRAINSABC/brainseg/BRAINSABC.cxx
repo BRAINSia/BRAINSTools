@@ -287,7 +287,7 @@ static void RescaleFunctionLocal( std::vector<FloatImageType::Pointer> & localLi
     }
 }
 
-static std::vector<bool> FindDuplicateImages(const std::vector<FloatImagePointer> candidateSameImageList,
+static std::vector<bool> FindDuplicateImages(const std::vector<FloatImagePointer> & candidateSameImageList,
                                              const std::vector<std::string> & inputVolumeTypes )
 {
   // Images with higher correlation are considered soo much the same that they are duplicates.

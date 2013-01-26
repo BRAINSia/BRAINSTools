@@ -19,7 +19,7 @@ public:
 
   BRAINSCutConfiguration * GetNetConfiguration();
 
-  void        SetNetConfigurationFilename(const std::string filename);
+  void        SetNetConfigurationFilename(const std::string & filename);
 
   std::string GetNetConfigurationFilename();
 

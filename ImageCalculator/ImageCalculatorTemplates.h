@@ -560,7 +560,7 @@ void statfilters( const typename ImageType::Pointer AccImage, MetaCommand comman
   user specified data type. */
 template <class InPixelType, class PixelType, int dims>
 void ProcessOutputStage( const typename itk::Image<InPixelType, dims>::Pointer AccImage,
-                         const std::string outputImageFilename, MetaCommand command)
+                         const std::string & outputImageFilename, MetaCommand command)
 {
   typedef itk::Image<InPixelType, dims>                         InputImageType;
   typedef itk::Image<PixelType, dims>                           OutputImageType;

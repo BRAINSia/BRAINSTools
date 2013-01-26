@@ -86,7 +86,7 @@ std::string GetSubjectToAtlasRegistrationFilename( DataSet& subject);
 
 WorkingImagePointer SmoothImage( const WorkingImagePointer& image, const float GaussianValue);
 
-WorkingImagePointer ReadImageByFilename( const std::string  filename );
+WorkingImagePointer ReadImageByFilename( const std::string  & filename );
 
 DisplacementFieldType::Pointer GetDeformationField( std::string filename);
 

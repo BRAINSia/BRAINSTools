@@ -81,7 +81,7 @@ private:
   /* private functions  */
   std::string GetANNModelBaseName();
 
-  float ComputeSSE(const PredictValueMapType& predictedOutputVector, const std::string roiReferenceFilename );
+  float ComputeSSE(const PredictValueMapType& predictedOutputVector, const std::string & roiReferenceFilename );
 
   /* inline functions */
 
@@ -91,16 +91,16 @@ private:
   inline void WritePredictROIProbabilityBasedOnReferenceImage( const PredictValueMapType& predictedOutput,
                                                                const WorkingImagePointer& referenceImage,
                                                                const WorkingImagePointer& roi,
-                                                               const std::string imageFilename,
-                                                               const WorkingPixelType labelValue = HundredPercentValue);
+                                                               const std::string & imageFilename, const WorkingPixelType & labelValue =
+                                                                 HundredPercentValue);
 
   inline std::string GetSubjectOutputDirectory( const DataSet& subject);
 
   inline std::string GetLabelMapFilename( const DataSet& subject );
 
-  inline std::string GetContinuousPredictionFilename( const DataSet& subject, const std::string currentROIName);
+  inline std::string GetContinuousPredictionFilename( const DataSet& subject, const std::string & currentROIName);
 
-  inline std::string GetROIVolumeName( const DataSet& subject, const std::string currentROIName);
+  inline std::string GetROIVolumeName( const DataSet& subject, const std::string & currentROIName);
 };
 
 #endif

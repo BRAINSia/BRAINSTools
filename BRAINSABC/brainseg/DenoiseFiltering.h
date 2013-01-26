@@ -17,12 +17,10 @@ template <class TInputImageType>
 // TODO:  Input and outputs should be templated separately?
 typename TInputImageType::Pointer DenoiseFiltering(
   typename TInputImageType::Pointer img,
-  const std::string PrefilteringMethod,      // Select the type of denoising to
-                                             // do
+  const std::string & PrefilteringMethod,    // Select the type of denoising to do
   const unsigned int PrefilteringIterations, // Only used in AD and CF
   const double PrefilteringTimeStep,         // Only used in AD and CF
-  const std::vector<unsigned int>            // gridSize   //Only used in median
-                                             // filtering
+  const std::vector<unsigned int> &          // gridSize   //Only used in median filtering
   )
 {
   typename TInputImageType::Pointer denoisedImage = NULL;

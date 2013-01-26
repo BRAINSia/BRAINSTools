@@ -101,7 +101,7 @@ template <class TImageType>
 void
 CutBinaryVolumeByPlaneWithDirection( typename TImageType::Pointer * _imageVolume,
                                      ThreeLandmarksForPlane * currentPlane,
-                                     const std::string direction )
+                                     const std::string & direction )
 {
   typedef itk::ImageRegionIterator<TImageType> ImageRegionIteratorType;
   ImageRegionIteratorType it(  *_imageVolume,
@@ -130,7 +130,7 @@ template <class TImageType>
 void
 CutBinaryVolumeByPointWithDirection( typename TImageType::Pointer * _imageVolume,
                                      const PointType _landmark,
-                                     const std::string _direction )
+                                     const std::string & _direction )
 {
   // set directional constant for convenient programming
   enum DIRECTION

@@ -47,7 +47,7 @@ static void CheckLandmarks( const LandmarksMapType & ldmk, const LandmarkWeightM
     }
 }
 
-static LandmarkWeightMapType ReadLandmarkWeights( const std::string weightFilename )
+static LandmarkWeightMapType ReadLandmarkWeights( const std::string & weightFilename )
 {
   std::ifstream weightFileStream( weightFilename.c_str() );
 

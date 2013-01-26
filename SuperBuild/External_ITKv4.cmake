@@ -82,7 +82,7 @@ if(NOT DEFINED ${extProjName}_DIR AND NOT ${USE_SYSTEM_${extProjName}})
     )
   ### --- End Project specific additions
   set(${proj}_REPOSITORY ${git_protocol}://itk.org/ITK.git)
-  set(${proj}_GIT_TAG d88019c7405bb4abd2290519347f91c494577af5) #2013-01-09
+  set(${proj}_GIT_TAG d8fba0f7b3b1cf2fa01bcf3ee645ef32a2aa1755) #2013-01-25 New DCMTK for DWIConvert with clang
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${${proj}_REPOSITORY}
     GIT_TAG ${${proj}_GIT_TAG}

@@ -59,7 +59,7 @@ option(USE_BRAINSContinuousClass          "Build BRAINSContinuousClass "   OFF)
 option(USE_BRAINSSurfaceTools             "Build BRAINSSurfaceTools     "  OFF)
 option(USE_ICCDEF                         "Build ICCDEF     "              OFF)
 option(USE_BRAINSImageConvert             "Build BRAINSPosteriorToContinuousClass" OFF)
-option(USE_DWIConvert                     "Build DWIConvert"   OFF)  ## Until ITKv4 is fixed for DCMTK support
+option(USE_DWIConvert                     "Build DWIConvert"                ON)
 option(USE_BRAINSCreateLabelMapFromProbabilityMaps "Build BRAINSCreateLabelMapFromProbabilityMaps" ON)
 option(USE_BRAINSMultiSTAPLE "Build BRAINSMultiSTAPLE" OFF)
 

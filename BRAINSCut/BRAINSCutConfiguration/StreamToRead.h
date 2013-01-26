@@ -23,8 +23,8 @@ public:
   StreamToRead(const std::string & name, const std::string & filename);
   virtual ~StreamToRead();
 protected:
-  StreamToRead();         // purposefully not implemented : m_F(0) { }
-  void operator=(Self &); // purposefully not implemented
+  StreamToRead();                   // purposefully not implemented : m_F(0) { }
+  StreamToRead & operator=(Self &); // purposefully not implemented
 
 private:
   OutputType m_F;

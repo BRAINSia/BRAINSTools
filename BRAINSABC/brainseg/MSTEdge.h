@@ -23,7 +23,7 @@ public:
   {
   }
 
-  const MSTEdge & operator=(const MSTEdge & e)
+  MSTEdge & operator=(const MSTEdge & e)
   {
     this->i = e.i;
     this->j = e.j;

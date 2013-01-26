@@ -64,7 +64,7 @@ public:
 
 protected:
   Brains2LandmarkReader(const Self &);
-  void operator=(const Self &);
+  Brains2LandmarkReader & operator=(const Self &);
 
   Brains2LandmarkReader();
   virtual ~Brains2LandmarkReader()

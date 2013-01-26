@@ -205,6 +205,7 @@ int main( int argc, char * argv[] )
           }
 
         pixelValue = newValue;
+        delete [] counter;
         }
       }
 

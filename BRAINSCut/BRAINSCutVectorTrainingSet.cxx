@@ -218,6 +218,7 @@ BRAINSCutVectorTrainingSet
 
   if( buffer[bufferRecordSize - 1] != LineGuard )
     {
+    delete [] buffer;
     throw ( BRAINSCutExceptionStringHandler( "Record not properly terminated by sentinel value") );
     }
   return buffer;

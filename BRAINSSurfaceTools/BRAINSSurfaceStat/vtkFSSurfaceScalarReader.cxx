@@ -143,6 +143,7 @@ int vtkFSSurfaceScalarReader::ReadFSScalars()
     if( feof(scalarFile) )
       {
       vtkErrorMacro(<< "vtkFSSurfaceScalarReader.cxx Execute: Unexpected EOF after " << vIndex << " values read.");
+      free(FSscalars);
       return 0;
       }
 

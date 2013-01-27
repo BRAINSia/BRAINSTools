@@ -795,31 +795,31 @@ void ImageCalculatorReadWrite( MetaCommand & command )
     if( command.GetValueAsString("OutputPixelType", "PixelType" ) != "" )
       {
       // process the string for the data type
-      if( CompareNoCase( OutType.c_str(), std::string("UCHAR") ) == 0 )
+      if( CompareNoCase( OutType, std::string("UCHAR") ) == 0 )
         {
         ProcessOutputStage<PixelType, unsigned char, dims>(AccImage, outputFilename, command);
         }
-      else if( CompareNoCase( OutType.c_str(), std::string("SHORT") ) == 0 )
+      else if( CompareNoCase( OutType, std::string("SHORT") ) == 0 )
         {
         ProcessOutputStage<PixelType, short, dims>(AccImage, outputFilename, command);
         }
-      else if( CompareNoCase( OutType.c_str(), std::string("USHORT") ) == 0 )
+      else if( CompareNoCase( OutType, std::string("USHORT") ) == 0 )
         {
         ProcessOutputStage<PixelType, unsigned short, dims>(AccImage, outputFilename, command);
         }
-      else if( CompareNoCase( OutType.c_str(), std::string("INT") ) == 0 )
+      else if( CompareNoCase( OutType, std::string("INT") ) == 0 )
         {
         ProcessOutputStage<PixelType, int, dims>(AccImage, outputFilename, command);
         }
-      else if( CompareNoCase( OutType.c_str(), std::string("UINT") ) == 0 )
+      else if( CompareNoCase( OutType, std::string("UINT") ) == 0 )
         {
         ProcessOutputStage<PixelType, unsigned int, dims>(AccImage, outputFilename, command);
         }
-      else if( CompareNoCase( OutType.c_str(), std::string("FLOAT") ) == 0 )
+      else if( CompareNoCase( OutType, std::string("FLOAT") ) == 0 )
         {
         ProcessOutputStage<PixelType, float, dims>(AccImage, outputFilename, command);
         }
-      else if( CompareNoCase( OutType.c_str(), std::string("DOUBLE") ) == 0 )
+      else if( CompareNoCase( OutType, std::string("DOUBLE") ) == 0 )
         {
         ProcessOutputStage<PixelType, double, dims>(AccImage, outputFilename, command);
         }

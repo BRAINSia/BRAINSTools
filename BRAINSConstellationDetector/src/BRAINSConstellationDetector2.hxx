@@ -244,7 +244,7 @@ BRAINSConstellationDetector2<TInputImage, TOutputImage>
   myDetector.SetHoughEyeFailure( this->m_HoughEyeFailure );
 
   LandmarksMapType LandmarksEMSP = this->GetLandmarksEMSP();
-  if( LandmarksEMSP.size() > 0 )
+  if( !LandmarksEMSP.empty() )
     {
     myDetector.SetLandmarksEMSP( this->GetLandmarksEMSP() );
     }

@@ -327,7 +327,7 @@ main(int argc, char * *argv)
 
   /* combine binary images */
   Image3DVolumeType::Pointer labelMap = Image3DVolumeType::New();
-  if( image3DBinaries.size() > 0 )
+  if( !image3DBinaries.empty() )
     {
     labelMap->CopyInformation( image3DBinaries[0] );
     labelMap->SetRegions( image3DVolumes[0]->GetLargestPossibleRegion() );

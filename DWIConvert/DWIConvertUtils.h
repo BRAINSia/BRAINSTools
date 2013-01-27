@@ -108,7 +108,7 @@ RecoverBVectors(const TImage *img, std::vector<std::vector<double> > & bVecs)
       }
     bVecs.push_back(vec);
     }
-  if( bVecs.size() == 0 )
+  if( bVecs.empty() )
     {
     return EXIT_FAILURE;
     }

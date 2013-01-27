@@ -1207,7 +1207,7 @@ int vtkITKArchetypeImageSeriesReader::AssembleVolumeContainingArchetype()
       // find the position and orientation corresponding to this
       // file - it could be that all files in the set have the same index
       // (1) or that there is no position information
-      if( ImagePositionPatient.size() != 0 )
+      if( !ImagePositionPatient.empty() )
         {
         unsigned int kth_orientation = this->IndexImageOrientationPatient[k];
         unsigned int kth_position = this->IndexImagePositionPatient[k];

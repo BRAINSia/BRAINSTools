@@ -118,7 +118,7 @@ int main(int argc, char *argv[])
       {
       anisotropy = static_cast<float>( tensorPixel.GetAxialDiffusivity() );
       }
-    else if( anisotropyType == "RD"  ||  anisotropyType == "RD" )
+    else if( anisotropyType == "RD"  ||  anisotropyType == "rd" )
       {
       anisotropy = static_cast<float>( tensorPixel.GetRadialDiffusivity() );
       }

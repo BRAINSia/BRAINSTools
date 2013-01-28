@@ -81,6 +81,7 @@ set(EXTERNAL_PROJECT_BUILD_TYPE "Release" CACHE STRING "Default build type for s
 option(USE_SYSTEM_ITK "Build using an externally defined version of ITK" OFF)
 option(USE_SYSTEM_SlicerExecutionModel "Build using an externally defined version of SlicerExecutionModel"  OFF)
 option(USE_SYSTEM_VTK "Build using an externally defined version of VTK" OFF)
+option(USE_SYSTEM_DCMTK "Build using an externally defined version of DCMTK" OFF)
 
 #------------------------------------------------------------------------------
 # ${LOCAL_PROJECT_NAME} dependency list
@@ -88,7 +89,7 @@ option(USE_SYSTEM_VTK "Build using an externally defined version of VTK" OFF)
 
 set(ITK_EXTERNAL_NAME ITKv${ITK_VERSION_MAJOR})
 
-set(${LOCAL_PROJECT_NAME}_DEPENDENCIES ${ITK_EXTERNAL_NAME} SlicerExecutionModel)
+set(${LOCAL_PROJECT_NAME}_DEPENDENCIES DCMTK ${ITK_EXTERNAL_NAME} SlicerExecutionModel)
 
 if(BUILD_STYLE_UTILS)
   list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES Cppcheck KWStyle Uncrustify)
@@ -202,7 +203,9 @@ endif()
 
 _expand_external_project_vars()
 set(COMMON_EXTERNAL_PROJECT_ARGS ${${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_ARGS})
-SlicerMacroCheckExternalProjectDependency(${LOCAL_PROJECT_NAME})
+set(extProjName ${LOCAL_PROJECT_NAME})
+set(proj        ${LOCAL_PROJECT_NAME})
+SlicerMacroCheckExternalProjectDependency(${proj})
 
 #-----------------------------------------------------------------------------
 # Set CMake OSX variable to pass down the external project

@@ -28,8 +28,8 @@
 macro(SlicerMacroEmptyExternalProject proj dependencies)
 
   ExternalProject_Add(${proj}
-    SOURCE_DIR ${CMAKE_BINARY_DIR}/EMPTY_${proj}
-    BINARY_DIR EMPTY_${proj}-build
+    SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
+    BINARY_DIR ${proj}-build
     DOWNLOAD_COMMAND ""
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""

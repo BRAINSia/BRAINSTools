@@ -18,8 +18,8 @@ ProjectDependancyPush(CACHED_proj ${proj})
 # Make sure that the ExtProjName/IntProjName variables are unique globally
 # even if other External_${ExtProjName}.cmake files are sourced by
 # SlicerMacroCheckExternalProjectDependency
-set(extProjName ITK) #The find_package known name
-set(proj      ITKv4) #This local name
+set(extProjName DCMTK) #The find_package known name
+set(proj        DCMTK) #This local name
 
 #if(${USE_SYSTEM_${extProjName}})
 #  unset(${extProjName}_DIR CACHE)
@@ -32,9 +32,6 @@ endif()
 
 # Set dependency list
 set(${proj}_DEPENDENCIES "")
-if(${PROJECT_NAME}_BUILD_DICOM_SUPPORT)
-  list(APPEND ${proj}_DEPENDENCIES DCMTK)
-endif()
 
 # Include dependent projects if any
 SlicerMacroCheckExternalProjectDependency(${proj})
@@ -51,101 +48,55 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
       -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET})
   endif()
 
+  set(CMAKE_PROJECT_INCLUDE_EXTERNAL_PROJECT_ARG)
+  if(CTEST_USE_LAUNCHERS)
+    set(CMAKE_PROJECT_INCLUDE_EXTERNAL_PROJECT_ARG
+      "-DCMAKE_PROJECT_DCMTK_INCLUDE:FILEPATH=${CMAKE_ROOT}/Modules/CTestUseLaunchers.cmake")
+  endif()
+
   ### --- Project specific additions here
-  set(${proj}_DCMTK_ARGS)
-  if(${PROJECT_NAME}_BUILD_DICOM_SUPPORT)
-    set(${proj}_DCMTK_ARGS
-      -DITK_USE_SYSTEM_DCMTK:BOOL=ON
-      -DDCMTK_DIR:PATH=${DCMTK_DIR}
-      -DModule_ITKIODCMTK:BOOL=ON
-      )
-  endif()
-
-  if(${PROJECT_NAME}_BUILD_FFTWF_SUPPORT)
-    set(${proj}_FFTWF_ARGS
-      -DITK_USE_FFTWF:BOOL=ON
-      )
-  endif()
-  if(${PROJECT_NAME}_BUILD_FFTWD_SUPPORT)
-    set(${proj}_FFTWD_ARGS
-      -DITK_USE_FFTWD:BOOL=ON
-      )
-  endif()
-
-  set(${proj}_WRAP_ARGS)
-  #if(foo)
-    #set(${proj}_WRAP_ARGS
-    #  -DINSTALL_WRAP_ITK_COMPATIBILITY:BOOL=OFF
-    #  -DWRAP_float:BOOL=ON
-    #  -DWRAP_unsigned_char:BOOL=ON
-    #  -DWRAP_signed_short:BOOL=ON
-    #  -DWRAP_unsigned_short:BOOL=ON
-    #  -DWRAP_complex_float:BOOL=ON
-    #  -DWRAP_vector_float:BOOL=ON
-    #  -DWRAP_covariant_vector_float:BOOL=ON
-    #  -DWRAP_rgb_signed_short:BOOL=ON
-    #  -DWRAP_rgb_unsigned_char:BOOL=ON
-    #  -DWRAP_rgb_unsigned_short:BOOL=ON
-    #  -DWRAP_ITK_TCL:BOOL=OFF
-    #  -DWRAP_ITK_JAVA:BOOL=OFF
-    #  -DWRAP_ITK_PYTHON:BOOL=ON
-    #  -DPYTHON_EXECUTABLE:PATH=${${CMAKE_PROJECT_NAME}_PYTHON_EXECUTABLE}
-    #  -DPYTHON_INCLUDE_DIR:PATH=${${CMAKE_PROJECT_NAME}_PYTHON_INCLUDE}
-    #  -DPYTHON_LIBRARY:FILEPATH=${${CMAKE_PROJECT_NAME}_PYTHON_LIBRARY}
-    #  )
-  #endif()
-
-  # HACK This code fixes a loony problem with HDF5 -- it doesn't
-  #      link properly if -fopenmp is used.
-  string(REPLACE "-fopenmp" "" ITK_CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
-  string(REPLACE "-fopenmp" "" ITK_CMAKE_CXX_FLAGS "${CMAKE_CX_FLAGS}")
-
-  if(NOT DEFINED git_protocol)
-      set(git_protocol "git")
-  endif()
-
   set(${proj}_CMAKE_OPTIONS
-      -DBUILD_TESTING:BOOL=OFF
-      -DBUILD_EXAMPLES:BOOL=OFF
-      -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/${proj}-install
-      -DITK_LEGACY_REMOVE:BOOL=OFF
-      -DITKV3_COMPATIBILITY:BOOL=ON
-      -DITK_BUILD_ALL_MODULES:BOOL=ON
-      -DITK_USE_REVIEW:BOOL=ON
-      #-DITK_INSTALL_NO_DEVELOPMENT:BOOL=ON
-      -DITK_BUILD_ALL_MODULES:BOOL=ON
-      -DKWSYS_USE_MD5:BOOL=ON # Required by SlicerExecutionModel
-      -DITK_WRAPPING:BOOL=OFF #${BUILD_SHARED_LIBS} ## HACK:  QUICK CHANGE
-      -DITK_USE_SYSTEM_DCMTK:BOOL=${${PROJECT_NAME}_BUILD_DICOM_SUPPORT}
-      ${${proj}_DCMTK_ARGS}
-      ${${proj}_WRAP_ARGS}
-      ${${proj}_FFTWF_ARGS}
-      ${${proj}_FFTWD_ARGS}
-    )
+      -DDCMTK_WITH_DOXYGEN:BOOL=OFF
+      -DDCMTK_WITH_ZLIB:BOOL=OFF # see CTK github issue #25
+      -DDCMTK_WITH_OPENSSL:BOOL=OFF # see CTK github issue #25
+      -DDCMTK_WITH_PNG:BOOL=OFF # see CTK github issue #25
+      -DDCMTK_WITH_TIFF:BOOL=OFF  # see CTK github issue #25
+      -DDCMTK_WITH_XML:BOOL=OFF  # see CTK github issue #25
+      -DDCMTK_WITH_ICONV:BOOL=OFF  # see CTK github issue #178
+      -DDCMTK_FORCE_FPIC_ON_UNIX:BOOL=ON
+      -DDCMTK_OVERWRITE_WIN32_COMPILER_FLAGS:BOOL=OFF
+      -DDCMTK_WITH_WRAP:BOOL=OFF   # CTK does not build on Mac with this option turned ON due to library dependencies missing
+  )
   ### --- End Project specific additions
-  set(${proj}_REPOSITORY ${git_protocol}://itk.org/ITK.git)
-  set(${proj}_GIT_TAG d8fba0f7b3b1cf2fa01bcf3ee645ef32a2aa1755) #2013-01-25 New DCMTK for DWIConvert with clang
+  set(${proj}_REPOSITORY ${git_protocol}://github.com/commontk/DCMTK.git)
+  set(${proj}_GIT_TAG "d06e2b7d9bafb23df4e969482a68b50fc75aaaa9")
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${${proj}_REPOSITORY}
     GIT_TAG ${${proj}_GIT_TAG}
     SOURCE_DIR ${proj}
     BINARY_DIR ${proj}-build
+    INSTALL_DIR ${proj}-install
     "${cmakeversion_external_update}"
     CMAKE_GENERATOR ${gen}
     CMAKE_ARGS
       -Wno-dev
       --no-warn-unused-cli
-      ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
       ${COMMON_EXTERNAL_PROJECT_ARGS}
+      -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/${proj}-install
+      #-DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
+      ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
+      ${CMAKE_PROJECT_INCLUDE_EXTERNAL_PROJECT_ARG}
+      -DBUILD_EXAMPLES:BOOL=OFF
+      -DBUILD_TESTING:BOOL=OFF
       ${${proj}_CMAKE_OPTIONS}
 ## We really do want to install in order to limit # of include paths INSTALL_COMMAND ""
     DEPENDS
       ${${proj}_DEPENDENCIES}
   )
-  set(${extProjName}_DIR ${CMAKE_BINARY_DIR}/${proj}-install/lib/cmake/ITK-4.4)
+  set(${extProjName}_DIR ${CMAKE_BINARY_DIR}/${proj}-install)
 else()
   if(${USE_SYSTEM_${extProjName}})
-    find_package(${extProjName} ${ITK_VERSION_MAJOR} REQUIRED)
+    find_package(${extProjName} REQUIRED)
     if(NOT ${extProjName}_DIR)
       message(FATAL_ERROR "To use the system ${extProjName}, set ${extProjName}_DIR")
     endif()

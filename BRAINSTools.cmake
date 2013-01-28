@@ -35,6 +35,10 @@ if(USE_ANTS)
   set(ANTS_LIBS ${ANTS_LIBS} antsUtilities)
 endif()
 
+if(USE_ICCDEF OR ITK_USE_FFTWD OR ITK_USE_FFTWF)
+  set(${PROJECT_NAME}_BUILD_FFTWF_SUPPORT ON)
+endif()
+
 #-----------------------------------------------------------------------------
 enable_testing()
 include(CTest)
@@ -94,10 +98,15 @@ set(brains_modulenames
   BRAINSMultiSTAPLE
   )
 
+
 if(USE_DebugImageViewer)
   list(APPEND brains_modulenames
     DebugImageViewer)
 endif()
+
+## HACK: This is needed to get DWIConvert to build in installed tree
+## KENT: Please remove this line and make DWIConvert build by fixing ITK install of DCMTK
+include_directories(${ITK_INSTALL_PREFIX}/install)
 
 #-----------------------------------------------------------------------------
 # Add module sub-directory if USE_<MODULENAME> is both defined and true

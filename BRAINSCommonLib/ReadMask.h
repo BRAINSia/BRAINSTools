@@ -11,9 +11,8 @@ ReadImageMask(const std::string & filename,
 {
   typedef unsigned char                MaskPixelType;
   typedef itk::Image<MaskPixelType, 3> ReadMaskImageType;
-  typename ReadMaskImageType::Pointer OrientedMaskImage = NULL;
 
-  OrientedMaskImage = itkUtil::ReadImage<ReadMaskImageType>(filename);
+  typename ReadMaskImageType::Pointer OrientedMaskImage = itkUtil::ReadImage<ReadMaskImageType>(filename);
   // TODO:  May want to check that physical spaces overlap?
 
   // convert mask image to mask

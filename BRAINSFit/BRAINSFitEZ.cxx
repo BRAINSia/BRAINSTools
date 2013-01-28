@@ -284,7 +284,16 @@ int main(int argc, char *argv[])
     }
 
   // Need to ensure that the order of transforms is from smallest to largest.
-  itk::ValidateTransformRankOrdering(localTransformType);
+  try
+    {
+    itk::ValidateTransformRankOrdering(localTransformType);
+    }
+  catch( itk::ExceptionObject & err )
+    {
+    std::cout << "Exception Object caught: " << std::endl;
+    std::cout << err << std::endl;
+    throw;
+    }
 
   // Extracting a timeIndex cube from the fixed image goes here....
   // Also MedianFilter

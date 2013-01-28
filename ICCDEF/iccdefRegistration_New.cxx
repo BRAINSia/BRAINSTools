@@ -116,8 +116,8 @@ int CompareNoCase( const std::string & s, const std::string & s2 )
       {
       return ( toupper(*p) < toupper(*p2) ) ? -1 : 1;
       }
-    p++;
-    p2++;
+    ++p;
+    ++p2;
     }
 
   return ( s2.size() == s.size() ) ? 0 : ( s.size() < s2.size() ) ? -1 : 1;
@@ -593,11 +593,11 @@ int main(int argc, char *argv[])
     command.movingLandmark = movingLandmark;
 //    command.lowerThresholdForBOBF = lowerThresholdForBOBF;
 //    command.upperThresholdForBOBF = upperThresholdForBOBF;
-    for( int i = 0; i < numberOfPyramidLevels; i++ )
+    for( int i = 0; i < numberOfPyramidLevels; ++i )
       {
       command.numberOfIterations[i] = arrayOfPyramidLevelIterations[i];
       }
-    for( int i = 0; i < 3; i++ )
+    for( int i = 0; i < 3; ++i )
       {
       command.medianFilterSize[i] = medianFilterSize[i];
 //      command.seedForBOBF[i] = seedForBOBF[i];

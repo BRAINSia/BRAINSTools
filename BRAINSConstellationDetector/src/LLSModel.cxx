@@ -34,7 +34,7 @@ LLSModel
   hsize_t dim(vec.size() );
   double *buf(new double[dim]);
 
-  for( unsigned i(0); i < dim; i++ )
+  for( unsigned i(0); i < dim; ++i )
     {
     buf[i] = vec[i];
     }
@@ -112,7 +112,7 @@ LLSModel
     this->m_H5File->createGroup(LLSModel::m_LLSMeansGroupName);
     for( LLSMeansType::iterator it = this->m_LLSMeans.begin();
          it != this->m_LLSMeans.end();
-         it++ )
+         ++it )
       {
       std::string curVecName(LLSModel::m_LLSMeansGroupName);
       curVecName += "/";
@@ -123,7 +123,7 @@ LLSModel
     this->m_H5File->createGroup(LLSModel::m_LLSMatricesGroupName);
     for( LLSMatricesType::iterator it = this->m_LLSMatrices.begin();
          it != this->m_LLSMatrices.end();
-         it++ )
+         ++it )
       {
       std::string curMatName(LLSModel::m_LLSMatricesGroupName);
       curMatName += "/";
@@ -134,7 +134,7 @@ LLSModel
     this->m_H5File->createGroup(LLSModel::m_LLSSearchRadiiGroupName);
     for( LLSSearchRadiiType::iterator it = this->m_LLSSearchRadii.begin();
          it != this->m_LLSSearchRadii.end();
-         it++ )
+         ++it )
       {
       std::string curRadiusName(LLSModel::m_LLSSearchRadiiGroupName);
       curRadiusName += "/";
@@ -193,7 +193,7 @@ LLSModel
 
   double *buf = new double[dim];
   vecSet.read(buf, H5::PredType::NATIVE_DOUBLE);
-  for( unsigned i(0); i < dim; i++ )
+  for( unsigned i(0); i < dim; ++i )
     {
     vec[i] = buf[i];
     }
@@ -263,7 +263,7 @@ LLSModel
     H5::Group MeansGroup(this->m_H5File->openGroup(LLSModel::m_LLSMeansGroupName) );
 
     hsize_t numLLSMeans = MeansGroup.getNumObjs();
-    for( hsize_t i = 0; i < numLLSMeans; i++ )
+    for( hsize_t i = 0; i < numLLSMeans; ++i )
       {
       std::string LLSMeanName = MeansGroup.getObjnameByIdx(i);
       std::string curVecName(LLSModel::m_LLSMeansGroupName);
@@ -275,7 +275,7 @@ LLSModel
 
     H5::Group MatricesGroup(this->m_H5File->openGroup(LLSModel::m_LLSMatricesGroupName) );
     hsize_t   numLLSMatrices = MatricesGroup.getNumObjs();
-    for( hsize_t i = 0; i < numLLSMatrices; i++ )
+    for( hsize_t i = 0; i < numLLSMatrices; ++i )
       {
       std::string LLSMatrixName = MatricesGroup.getObjnameByIdx(i);
       std::string curMatName(LLSModel::m_LLSMatricesGroupName);
@@ -287,7 +287,7 @@ LLSModel
 
     H5::Group SearchRadiiGroup(this->m_H5File->openGroup(LLSModel::m_LLSSearchRadiiGroupName) );
     hsize_t   numSearchRadii = SearchRadiiGroup.getNumObjs();
-    for( hsize_t i = 0; i < numSearchRadii; i++ )
+    for( hsize_t i = 0; i < numSearchRadii; ++i )
       {
       std::string SearchRadiusName = SearchRadiiGroup.getObjnameByIdx(i);
       std::string curRadiusName(LLSModel::m_LLSSearchRadiiGroupName);

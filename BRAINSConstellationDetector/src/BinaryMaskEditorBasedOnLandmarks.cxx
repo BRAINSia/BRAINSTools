@@ -287,7 +287,7 @@ int main( int argc, char * argv[] )
   for( stringVectorIteratorType ldmkIt = inputLandmarkNames.begin(),
        dircIt = setCutDirectionForLandmark.begin();
        ldmkIt < inputLandmarkNames.end();
-       ldmkIt++, dircIt++ )
+       ++ldmkIt, ++dircIt )
     {
     if( landmarksSet.find( *ldmkIt ) == landmarksSet.end() )
       {
@@ -342,10 +342,10 @@ int main( int argc, char * argv[] )
     }
   for( LandMarkForPlaneType::const_iterator  inputLdmrIt = inputLandmarkNamesForObliquePlane.begin();
        inputLdmrIt < inputLandmarkNamesForObliquePlane.end();
-       inputLdmrIt++ )
+       ++inputLdmrIt )
     {
     ThreeLandmarksForPlane currentPlane;
-    for( unsigned int it = 0; it < 3; it++  ) // make sure we have only three ldmr per plane
+    for( unsigned int it = 0; it < 3; ++it  ) // make sure we have only three ldmr per plane
       {
       if( landmarksSet.find( *inputLdmrIt ) ==  landmarksSet.end() )
         {
@@ -370,7 +370,7 @@ int main( int argc, char * argv[] )
         currentPlane.C = currentLandmark;
         }
 
-      inputLdmrIt++;
+      ++inputLdmrIt;
       }
     currentPlane.SetNormal();
     myLandmarkSetForPlanes.push_back(currentPlane);

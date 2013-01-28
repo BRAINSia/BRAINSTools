@@ -60,7 +60,7 @@ BRAINSCutGenerateProbability
   /** iterate through the rois*/
   for( unsigned int currentROIAt = 0;
        currentROIAt < myDataHandler->GetROICount();
-       currentROIAt++ )
+       ++currentROIAt )
     {
     WorkingImageType::Pointer currentAccumulatedImages;
     CreateNewFloatImageFromTemplate( currentAccumulatedImages, myDataHandler->GetAtlasImage() );
@@ -70,9 +70,9 @@ BRAINSCutGenerateProbability
     /** iterate through subject */
     for( std::list<DataSet *>::iterator currentSubjectIt = trainingDataSetList.begin();
          currentSubjectIt != trainingDataSetList.end();
-         currentSubjectIt++ )
+         ++currentSubjectIt )
       {
-      currentROISubjectsCounter++;
+      ++currentROISubjectsCounter;
       /** deform ROI to Atlas */
 
       std::string currentRegistrationFilename =
@@ -175,7 +175,7 @@ BRAINSCutGenerateProbability
     {
     const WorkingImageType::IndexType CurrentIndex = it.GetIndex();
     myDataHandler->GetAtlasImage()->TransformIndexToPhysicalPoint(CurrentIndex, currentLocationPhysicalSpace);
-    for( unsigned i = 0; i < DIMENSION; i++ )
+    for( unsigned i = 0; i < DIMENSION; ++i )
       {
       LocationWithRespectToCenterOfImageInMM[i] =
         currentLocationPhysicalSpace[i] - centerOfAtlasPhysicalSpace[i];

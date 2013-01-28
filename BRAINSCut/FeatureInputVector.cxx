@@ -46,11 +46,11 @@ FeatureInputVector
   std::cout << "INTERNAL TEST OF INDEX_KEY INPUTVECTOR" << std::endl;
   int allOK = EXIT_SUCCESS;
 
-  for( WorkingImageType::IndexType::IndexValueType i = 0; i < ConstantHashIndexSize[0]; i++ )
+  for( WorkingImageType::IndexType::IndexValueType i = 0; i < ConstantHashIndexSize[0]; ++i )
     {
-    for( WorkingImageType::IndexType::IndexValueType j = 0; j < ConstantHashIndexSize[1]; j++ )
+    for( WorkingImageType::IndexType::IndexValueType j = 0; j < ConstantHashIndexSize[1]; ++j )
       {
-      for( WorkingImageType::IndexType::IndexValueType k = 0; k < ConstantHashIndexSize[2]; k++ )
+      for( WorkingImageType::IndexType::IndexValueType k = 0; k < ConstantHashIndexSize[2]; ++k )
         {
         // QuickTest
         WorkingImageType::IndexType index;
@@ -147,7 +147,7 @@ FeatureInputVector
   // Ensure that images are sufficiently small to process correctly.
   WorkingImageType::SizeType testSize =
     SpatialLocationImages.find("rho")->second->GetLargestPossibleRegion().GetSize();
-  for( unsigned int q = 0; q < 3; q++ )
+  for( unsigned int q = 0; q < 3; ++q )
     {
     if( testSize[q] > MAX_IMAGE_SIZE )
       {
@@ -385,7 +385,7 @@ FeatureInputVector
               << m_statistics[ROIName][ImageTypeNumber]["Q_95"]  << std::endl;
     std::cout << ROIName << " :: " << ImageTypeNumber << " :: Q_99 :: "
               << m_statistics[ROIName][ImageTypeNumber]["Q_99"]  << std::endl;
-    ImageTypeNumber++;
+    ++ImageTypeNumber;
     }
 
   m_minmax[ROIName] = currentMinMaxVector;
@@ -399,7 +399,7 @@ FeatureInputVector
   try
     {
     *elementIterator = value;
-    elementIterator++;
+    ++elementIterator;
     }
   catch( ... )
     {
@@ -524,7 +524,7 @@ FeatureInputVector
 
   const unsigned int lastDimensionIndex = DIMENSION - 1;
 
-  for( unsigned int i = 0; i < (lastDimensionIndex); i++ )
+  for( unsigned int i = 0; i < (lastDimensionIndex); ++i )
     {
     hashValue += index[i];
     hashValue *= ConstantHashIndexSize[i];
@@ -591,7 +591,7 @@ FeatureInputVector
             normalizedValue = normalizedValue / ( m_minmaxIt->second - m_minmaxIt->first );
             *featureElementIterator = normalizedValue;
             }
-        featureElementIterator++;
+        ++featureElementIterator;
         }
       }*/
     ImageTypeNo currentImgType = 0;
@@ -664,9 +664,9 @@ FeatureInputVector
           std::cout << "In valid normalization type of " << m_normalizationMethod << std::endl;
           std::exit( EXIT_FAILURE);
           }
-        featureElementIterator++;
+        ++featureElementIterator;
         }
-      currentImgType++;
+      ++currentImgType;
       }
     }
 }

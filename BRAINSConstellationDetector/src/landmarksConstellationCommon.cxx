@@ -404,9 +404,9 @@ itk::Matrix<double, 3, 3> GetMatrixInverse(const itk::Matrix<double, 3, 3> & inp
   itk::Matrix<double, 3, 3>::InternalMatrixType temp = input.GetInverse();
   itk::Matrix<double, 3, 3>                     output;
 
-  for( unsigned int r = 0; r < 3; r++ )
+  for( unsigned int r = 0; r < 3; ++r )
     {
-    for( unsigned int c = 0; c < 3; c++ )
+    for( unsigned int c = 0; c < 3; ++c )
       {
       output(r, c) = temp(r, c);
       }
@@ -433,7 +433,7 @@ PyramidFilterType::Pointer MakeThreeLevelPyramid(SImageType::Pointer refImage)
   // these are sizes found to work well for estimating MSP without making the
   // image too small.
   SImageType::SpacingType refImageSpacing = refImage->GetSpacing();
-  for( unsigned int c = 0; c < pyramidSchedule.cols(); c++ )
+  for( unsigned int c = 0; c < pyramidSchedule.cols(); ++c )
     {
     // about 8mm
     pyramidSchedule[0][c] = static_cast<unsigned int>( 2 * round(4.0 / refImageSpacing[c]) );
@@ -462,7 +462,7 @@ PyramidFilterType::Pointer MakeOneLevelPyramid(SImageType::Pointer refImage)
   // these are sizes found to work well for estimating MSP without making the
   // image too small.
   SImageType::SpacingType refImageSpacing = refImage->GetSpacing();
-  for( unsigned int c = 0; c < pyramidSchedule.cols(); c++ )
+  for( unsigned int c = 0; c < pyramidSchedule.cols(); ++c )
     {
     pyramidSchedule[0][c] = static_cast<unsigned int>( vcl_floor(4.0 / refImageSpacing[c] + 0.5) );
     }
@@ -576,15 +576,15 @@ int computeTemplateSize(const int r, const int h)
   const double r2 = r * r;
   int          size = 0;
 
-  for( double k = -r; k <= r; k++ )
+  for( double k = -r; k <= r; ++k )
     {
-    for( double j = -r; j <= r; j++ )
+    for( double j = -r; j <= r; ++j )
       {
-      for( double i = -h_2; i <= h_2; i++ )
+      for( double i = -h_2; i <= h_2; ++i )
         {
         if( ( i * i + j * j )  <= r2 )
           {
-          size++;
+          ++size;
           }
         }
       }
@@ -651,7 +651,7 @@ extractArray(SImageType::Pointer & image,
   int q = 0;
   result_array.resize( model.size() );
   for( landmarksConstellationModelIO::IndexLocationVectorType::const_iterator it = model.begin();
-       it != model.end(); it++, q++ )
+       it != model.end(); ++it, ++q )
     {
     const SImageType::PointType point = CenterPoint + *it;
     bool                        isin = imInterp->IsInsideBuffer(point);
@@ -684,7 +684,7 @@ extractArrayRemoveVectorMeanNormalize
   IndexLocationVectorType::const_iterator it = model.begin();
   std::vector<float>::iterator            resultIt = result_array.begin();
   // interpolate, accumulating mean as you go
-  for( ; it != model.end(); it++, resultIt++ )
+  for( ; it != model.end(); ++it, ++resultIt )
     {
     const SImageType::PointType point = CenterPoint + *it;
     bool                        isin = imInterp->IsInsideBuffer(point);
@@ -809,7 +809,7 @@ SImageType::PointType GetImageCenterPhysicalPoint(SImageType::Pointer & image)
 
   itk::ContinuousIndex<double, 3> centerIndex;
 
-  for( int q = 0; q < SImageType::ImageDimension; q++ )
+  for( int q = 0; q < SImageType::ImageDimension; ++q )
     {
     centerIndex[q] = 0.5 * ( imageOverallSize[q] - 1 );
     }

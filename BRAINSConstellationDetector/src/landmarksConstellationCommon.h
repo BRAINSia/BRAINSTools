@@ -190,7 +190,7 @@ ValuesType vectorNorm(const std::vector<ValuesType> & x)
   ValuesType norm = 0.0;
 
   for( typename std::vector<ValuesType>::const_iterator it = x.begin();
-       it != x.end(); it++ )
+       it != x.end(); ++it )
     {
     const ValuesType value = *it;
     norm += value * value;
@@ -230,7 +230,7 @@ void normalizeVector(std::vector<ValuesType> & x)
     return;
     }
   for( typename std::vector<ValuesType>::iterator it = x.begin();
-       it != x.end(); it++ )
+       it != x.end(); ++it )
     {
     *it /= norm;
     }
@@ -272,14 +272,14 @@ ValuesType removeVectorMean(std::vector<ValuesType> & x)
   ValuesType mean = 0.0;
 
   for( typename std::vector<ValuesType>::const_iterator it = x.begin();
-       it != x.end(); it++ )
+       it != x.end(); ++it )
     {
     mean += *it;
     }
   const ValuesType n = x.size();
   mean /= n;
   for( typename std::vector<ValuesType>::iterator it = x.begin();
-       it != x.end(); it++ )
+       it != x.end(); ++it )
     {
     *it -= mean;
     }
@@ -415,12 +415,12 @@ removeVectorMean(DType *x, DType *y, int n)
     {
     return 0.0;
     }
-  for( int i = 0; i < n; i++ )
+  for( int i = 0; i < n; ++i )
     {
     mean += static_cast<double>( x[i] );
     }
   mean /= n;
-  for( int i = 0; i < n; i++ )
+  for( int i = 0; i < n; ++i )
     {
     y[i] = static_cast<DType>( x[i] - mean );
     }
@@ -435,7 +435,7 @@ DType dot(DType *a, DType *b, int n)
 {
   float dot = 0.0;
 
-  for( int i = 0; i < n; i++ )
+  for( int i = 0; i < n; ++i )
     {
     dot += a[i] * b[i];
     }
@@ -451,12 +451,12 @@ double removeVectorMean(DType *y, int n)
     {
     return 0.0;
     }
-  for( int i = 0; i < n; i++ )
+  for( int i = 0; i < n; ++i )
     {
     mean += y[i];
     }
   mean /= n;
-  for( int i = 0; i < n; i++ )
+  for( int i = 0; i < n; ++i )
     {
     y[i] = y[i] - mean;
     }
@@ -474,8 +474,8 @@ DType dot(const std::vector<DType> & a, const std::vector<DType> & b)
   while( ait != a.end() && bit != b.end() )
     {
     dot += ( *ait ) * ( *bit );
-    ait++;
-    bit++;
+    ++ait;
+    ++bit;
     }
 
   return dot;
@@ -494,7 +494,7 @@ double standardDeviation(DType *x, int n)
     return 0.0;
     }
   sx = sxx = 0.0;
-  for( int i = 0; i < n; i++ )
+  for( int i = 0; i < n; ++i )
     {
     sx += x[i];
     sxx += x[i] * x[i];
@@ -521,7 +521,7 @@ double pearsonCorrelation(DTypeX *x, DTypeY *y, int n)
   double dum = 0.0;
 
   sx = sy = sxx = syy = sxy = 0.0;
-  for( int i = 0; i < n; i++ )
+  for( int i = 0; i < n; ++i )
     {
     sx += x[i];
     sxx += x[i] * x[i];
@@ -590,7 +590,7 @@ sample_mean(DType *x, int n)
     {
     return 0.0;
     }
-  for( int i = 0; i < n; i++ )
+  for( int i = 0; i < n; ++i )
     {
     mean += x[i];
     }
@@ -614,7 +614,7 @@ double sample_variance(DType *x, int n, double *mean)
     *mean = 0.0;
     return 0.0;
     }
-  for( int i = 0; i < n; i++ )
+  for( int i = 0; i < n; ++i )
     {
     sum_of_sq +=
       static_cast<double>( x[i] )
@@ -667,7 +667,7 @@ paired_samples_t(DType *x1, DType *x2, int n, int *df, double *meandiff)
     {
     return 0.0;
     }
-  for( int i = 0; i < n; i++ )
+  for( int i = 0; i < n; ++i )
     {
     x1[i] -= x2[i];
     }

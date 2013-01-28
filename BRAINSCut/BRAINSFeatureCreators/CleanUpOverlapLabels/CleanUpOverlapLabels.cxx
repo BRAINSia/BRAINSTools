@@ -59,7 +59,7 @@ int main( int argc, char * argv[] )
   std::vector<std::string>::iterator         inputBinaryVolumeStringIt;
   for( inputBinaryVolumeStringIt = inputBinaryVolumes.begin();
        inputBinaryVolumeStringIt < inputBinaryVolumes.end();
-       inputBinaryVolumeStringIt++ )
+       ++inputBinaryVolumeStringIt )
     {
     std::cout << "* Read image: " << *inputBinaryVolumeStringIt << std::endl;
     InputBinaryVolumeReaderType::Pointer reader = InputBinaryVolumeReaderType::New();
@@ -86,7 +86,7 @@ int main( int argc, char * argv[] )
   AddImageFilterType::Pointer adder = AddImageFilterType::New();
   for( unsigned int i = 1; // should start from second image
        i < inputBinaryVolumeVector.size();
-       i++ )
+       ++i )
     {
     adder->SetInput1( sumVolume );
     adder->SetInput2( inputBinaryVolumeVector[i] );
@@ -120,7 +120,7 @@ int main( int argc, char * argv[] )
   typedef itk::ImageFileWriter<InputBinaryImageType> WriterType;
   for( unsigned int i = 0;
        i < inputBinaryVolumeVector.size();
-       i++ )
+       ++i )
     {
     // write out overlap between current mask and summed mask
     ThresholdFilterType::Pointer maskThresholder = ThresholdFilterType::New();

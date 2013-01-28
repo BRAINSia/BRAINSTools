@@ -134,7 +134,7 @@ BRAINSCutCreateVector
       numberOfVectors += roiInputVector.size();
       }
 
-    roiIDsOrderNumber++;
+    ++roiIDsOrderNumber;
     }
 
   return numberOfVectors;
@@ -204,11 +204,11 @@ BRAINSCutCreateVector
 
   for( InputVectorMapType::iterator it = pairedInput.begin();
        it != pairedInput.end();
-       it++ )
+       ++it )
     {
     scalarType *bufferToWrite = new scalarType[bufferSize];
     bufferToWrite[bufferSize - 1] = LineGuard;
-    for( int i = 0; i < m_outputVectorSize; i++ )
+    for( int i = 0; i < m_outputVectorSize; ++i )
       {
       if( pairedOutput.find( it->first) == pairedOutput.end() )
         {
@@ -220,7 +220,7 @@ BRAINSCutCreateVector
 
       bufferToWrite[i] = inputVector[i];
       }
-    for( int j = 0; j < m_inputVectorSize; j++ )
+    for( int j = 0; j < m_inputVectorSize; ++j )
       {
       bufferToWrite[m_outputVectorSize + j] = (it->second)[j];
       }

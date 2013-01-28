@@ -527,7 +527,7 @@ void statfilters( const typename ImageType::Pointer AccImage, MetaCommand comman
   if( command.GetValueAsBool("Statallcodes", "statallcodes")  )
     {
     for( std::map<std::string, std::string>::const_iterator p = StatDescription.begin();
-         p != StatDescription.end(); p++ )
+         p != StatDescription.end(); ++p )
       {
       std::cout << p->first << '\t' << p->second << std::endl;
       }
@@ -547,7 +547,7 @@ void statfilters( const typename ImageType::Pointer AccImage, MetaCommand comman
       }
     }
     {
-    for( std::map<std::string, float>::const_iterator p = StatValues.begin(); p != StatValues.end(); p++ )
+    for( std::map<std::string, float>::const_iterator p = StatValues.begin(); p != StatValues.end(); ++p )
       {
       std::cout << p->first << ' ' << p->second << ",  ";
       }
@@ -615,7 +615,7 @@ private:
       this->resize(i + 1);
       _end = input.find_first_of(sep, start);
       (*this)[i] = input.substr(start, _end - start);
-      i++;
+      ++i;
       }
   }
 };
@@ -633,7 +633,7 @@ void ImageCalculatorReadWrite( MetaCommand & command )
   // Now split into separate filenames
   string_tokenizer InputList(tempFilenames, " ");
   // Finally, return the blanks to the filenames
-  for( size_t i = 0; i < InputList.size(); i++ )
+  for( size_t i = 0; i < InputList.size(); ++i )
     {
     ReplaceSubWithSub(InputList[i], "BACKSLASH_BLANK", " ");
     }
@@ -669,7 +669,7 @@ void ImageCalculatorReadWrite( MetaCommand & command )
     SqrImageSum = Imul<ImageType>(reader->GetOutput(), reader->GetOutput() );
     }
   /* Accumulator contains the first image initially and is updated by the next image at each count */
-  for( unsigned int currimage = 1; currimage < InputList.size(); currimage++ )
+  for( unsigned int currimage = 1; currimage < InputList.size(); ++currimage )
     {
     std::cout << "Reading image.... " << InputList.at(currimage).c_str() << std::endl;
 

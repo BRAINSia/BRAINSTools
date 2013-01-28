@@ -34,7 +34,7 @@ IccdefPreprocessor<TInputImage, TOutputImage>
 
   m_FixedBinaryVolume = "none";
   m_MovingBinaryVolume = "none";
-  for( unsigned i = 0; i < TInputImage::ImageDimension; i++ )
+  for( unsigned i = 0; i < TInputImage::ImageDimension; ++i )
     {
     m_MedianFilterSize[i] = 0;
     }
@@ -196,7 +196,7 @@ IccdefPreprocessor<TInputImage, TOutputImage>
       BulkTransform = static_cast<AffineTransformType *>( ( *it ).GetPointer() );
       const std::string firstNameOfClass = ( *it )->GetNameOfClass();
       std::cout << "First (Bulk) NameOfClass = " << firstNameOfClass << std::endl;
-      it++;
+      ++it;
       const std::string secondNameOfClass = ( *it )->GetNameOfClass();
       std::cout << "SECOND NameOfClass = " << secondNameOfClass << std::endl;
       baseTransform = ( *it ).GetPointer();

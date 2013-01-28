@@ -160,7 +160,7 @@ BRAINSCutApplyModel
     // TODO Clip deformed ROI here
     for( DeformedROIMapType::iterator it = deformedROIs.begin();
          it != deformedROIs.end();
-         it++ )
+         ++it )
       {
       it->second = ClipImageWithBinaryMask( it->second, candidateRegion );
       }
@@ -276,7 +276,7 @@ BRAINSCutApplyModel
         }
       else /* testing phase */
         {
-        for( int currentIteration = 1; currentIteration <= m_trainIteration; currentIteration++ )
+        for( int currentIteration = 1; currentIteration <= m_trainIteration; ++currentIteration )
           {
           this->m_myDataHandler->SetANNModelFilenameAtIteration( currentIteration );
           PredictROI( roiInputVector, predictedOutputVector,
@@ -294,7 +294,7 @@ BRAINSCutApplyModel
         }
       predictedOutputVector.clear();
       }
-    roiIDsOrderNumber++;
+    ++roiIDsOrderNumber;
     }
 
   if( m_method == "RandomForest" )
@@ -343,7 +343,7 @@ BRAINSCutApplyModel
     {
     for( unsigned char roiID = 0;
          roiID < this->m_myDataHandler->GetROIIDsInOrder().size();
-         roiID++ )
+         ++roiID )
       {
       LabelImagePointerType currentBinaryImage = ExtractLabel( labelMapImage,
                                                                roiID + 1  ); // label starts from 1
@@ -514,7 +514,7 @@ BRAINSCutApplyModel
 
       resultLabel = CombineLabel( resultLabel, tempBinaryImage, *vIt );
       }
-    labelNumber++;
+    ++labelNumber;
     }
   return resultLabel;
 }

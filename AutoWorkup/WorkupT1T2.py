@@ -1104,6 +1104,8 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
 
 
                 #} end of "for sessionid in allSessions:"
+
+                """ Template building is not yet working for FS52
                 #{  Do template building
                 ##HACK : Move later
                 FSBASE_oneSubjWorkflow = CreateFreeSurferSubjectTemplate(projectid,
@@ -1159,6 +1161,7 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
                     baw200.connect(FSLONG_oneSubjWorkflow[sessionid], 'outputspec.FreeSurferLongitudinalDir', FSLONG_DataSink[sessionid], 'FREESURFER52_SUBJECTS.@longitudinalDirs')
 
                 #} end of "for sessionid in allSessions:"
+                """
             else:
                 print "Skipping freesurfer"
     return baw200

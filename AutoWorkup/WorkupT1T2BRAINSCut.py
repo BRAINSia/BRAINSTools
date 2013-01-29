@@ -16,7 +16,7 @@ def GenerateWFName(projectid, subjectid, sessionid, WFName):
     return WFName + '_' + str(subjectid) + "_" + str(sessionid) + "_" + str(projectid)
 
 
-def CreateLabelMap(listOfImages, LabelImageName, CSVFileName, projectid, subjectid, sessionid):
+def CreateLabelMap(listOfImages, LabelImageName, CSVFileName, posteriorDictionary, projectid, subjectid, sessionid):
     """
     A function to create a consolidated label map and a
     csv file of volume measurements.
@@ -25,6 +25,33 @@ def CreateLabelMap(listOfImages, LabelImageName, CSVFileName, projectid, subject
     import SimpleITK as sitk
     import os
     import csv
+    def CleanUpSegmentationsWithExclusionProbabilityMaps( initial_seg, probMapOfExclusion, percentageThreshold = 0.85 ):
+        """This function is used to clean up grey matter sub-cortical segmentations
+    by removing tissue that is more than 85% chance of being either WM or CSF
+    The inputs are the initial segmentation, the WM Probability, and the CSF Probability
+    """
+        seg = sitk.Cast( initial_seg, sitk.sitkUInt8 )
+        print "AA", initial_seg
+        print "BB", dict(sitk.Statistics(seg))
+        exclude_Mask = sitk.Cast( sitk.BinaryThreshold( probMapOfExclusion, percentageThreshold, 1.0, 0, 1), sitk.sitkUInt8 )
+        print "CC", dict(sitk.Statistics(exclude_Mask))
+        cleanedUpSeg = seg * exclude_Mask
+        print "DD", dict(sitk.Statistics(cleanedUpSeg))
+        return cleanedUpSeg
+
+    def CleanUpGMSegmentationWithWMCSF( initial_seg_fn, posteriorDictionary, WMThreshold, CSFThreshold ):
+        initial_seg = sitk.Cast(sitk.ReadImage(initial_seg_fn), sitk.sitkUInt8 )
+
+        WM_FN=posteriorDictionary['WM']
+        WM_PROB=sitk.ReadImage(WM_FN)
+        WM_removed = CleanUpSegmentationsWithExclusionProbabilityMaps( initial_seg, WM_PROB, WMThreshold )
+
+        CSF_FN=posteriorDictionary['CSF']
+        CSF_PROB=sitk.ReadImage(CSF_FN)
+        CSF_removed = CleanUpSegmentationsWithExclusionProbabilityMaps( initial_seg, CSF_PROB, CSFThreshold )
+        return CSF_removed
+
+
     orderOfPriority = [
         "l_caudate",
         "r_caudate",
@@ -55,22 +82,33 @@ def CreateLabelMap(listOfImages, LabelImageName, CSVFileName, projectid, subject
         "r_globus": 12
     }
 
+    cleaned_labels_map = dict()
     labelImage = None
+    print "ZZZ"
+    x=0
     for segFN in listOfImages:
-        im = sitk.ReadImage(segFN)
-        im = sitk.Cast(sitk.BinaryThreshold(im,0.51,1.01,1,0),sitk.sitkUInt8)
-        im.GetSize()
-        remove_pre_postfix = os.path.basename(segFN.replace(".nii.gz", "").replace("subjectANNLabel_", "").replace("_seg", ""))
-        remove_pre_postfix = os.path.basename(segFN.replace(".nii.gz", "").replace("ANNContinuousPrediction", "").replace("subject", ""))
+        x=x+1
+        print x, segFN
+        ## Clean up the segmentations
+        curr_segROI = CleanUpGMSegmentationWithWMCSF(segFN, posteriorDictionary, 0.85, 0.85 )
+        print "Y"
+        curr_segROI.GetSize()
+        remove_pre_postfix = segFN.replace(".nii.gz", "")
+        remove_pre_postfix = os.path.basename(remove_pre_postfix.replace("subjectANNLabel_", "").replace("_seg", ""))
+        remove_pre_postfix = os.path.basename(remove_pre_postfix.replace("ANNContinuousPrediction", "").replace("subject", ""))
         structName = remove_pre_postfix.lower()
+        cleaned_fileName = os.path.join(os.path.dirname(segFN),"cleaned_"+structName+"_seg.nii.gz")
+        print "="*20,structName," ",cleaned_fileName
+        cleaned_labels_map[structName]=cleaned_fileName
+        sitk.WriteImage(curr_segROI, cleaned_fileName)
         if labelImage is None:
-            labelImage = im * valueDict[structName]
+            labelImage = curr_segROI * valueDict[structName]
         else:
-            mask = sitk.Not(im)
+            not_mask = sitk.Not(curr_segROI)
             ## Clear out an empty space for the next mask to be inserted
-            labelImage *= mask
+            labelImage *= not_mask
             ## Add in the mask image with it's proper label
-            labelImage = labelImage + im * valueDict[structName]
+            labelImage = labelImage + curr_segROI * valueDict[structName]
     sitk.WriteImage(labelImage, LabelImageName)
 
     ls = sitk.LabelStatisticsImageFilter()
@@ -97,7 +135,20 @@ def CreateLabelMap(listOfImages, LabelImageName, CSVFileName, projectid, subject
             writeDictionary['subjectid'] = subjectid
             writeDictionary['sessionid'] = sessionid
             dWriter.writerow(writeDictionary)
-    return os.path.abspath(LabelImageName), os.path.abspath(CSVFileName)
+
+    CleanedLeftCaudate = cleaned_labels_map['l_caudate']
+    CleanedRightCaudate = cleaned_labels_map['r_caudate']
+    CleanedLeftHippocampus = cleaned_labels_map['l_hippocampus']
+    CleanedRightHippocampus = cleaned_labels_map['r_hippocampus']
+    CleanedLeftPutamen = cleaned_labels_map['l_putamen']
+    CleanedRightPutamen = cleaned_labels_map['r_putamen']
+    CleanedLeftThalamus = cleaned_labels_map['l_thalamus']
+    CleanedRightThalamus = cleaned_labels_map['r_thalamus']
+    CleanedLeftAccumben = cleaned_labels_map['l_accumben']
+    CleanedRightAccumben = cleaned_labels_map['r_accumben']
+    CleanedLeftGlobus = cleaned_labels_map['l_globus']
+    CleanedRightGlobus = cleaned_labels_map['r_globus']
+    return os.path.abspath(LabelImageName), os.path.abspath(CSVFileName), CleanedLeftCaudate, CleanedRightCaudate, CleanedLeftHippocampus, CleanedRightHippocampus, CleanedLeftPutamen, CleanedRightPutamen, CleanedLeftThalamus, CleanedRightThalamus, CleanedLeftAccumben, CleanedRightAccumben, CleanedLeftGlobus, CleanedRightGlobus
 
 #==============================================
 #==============================================
@@ -207,7 +258,6 @@ def CreateBRAINSCutWorkflow(projectid,
     subjectANNLabel_r_thalamus.nii.gz
     """
 
-    """
     RF12BC.inputs.outputBinaryLeftCaudate = 'subjectANNLabel_l_caudate.nii.gz'
     RF12BC.inputs.outputBinaryRightCaudate = 'subjectANNLabel_r_caudate.nii.gz'
     RF12BC.inputs.outputBinaryLeftHippocampus = 'subjectANNLabel_l_hippocampus.nii.gz'
@@ -234,6 +284,7 @@ def CreateBRAINSCutWorkflow(projectid,
     RF12BC.inputs.outputBinaryRightAccumben = 'ANNContinuousPredictionr_accumbensubject.nii.gz'
     RF12BC.inputs.outputBinaryLeftGlobus = 'ANNContinuousPredictionl_globussubject.nii.gz'
     RF12BC.inputs.outputBinaryRightGlobus = 'ANNContinuousPredictionr_globussubject.nii.gz'
+    """
 
     cutWF.connect( DenoisedT1, 'outputVolume', RF12BC, 'inputSubjectT1Filename')
 
@@ -300,14 +351,29 @@ def CreateBRAINSCutWorkflow(projectid,
     cutWF.connect(RF12BC, 'outputBinaryRightGlobus', mergeAllLabels, 'in12')
 
     computeOneLabelMap = pe.Node(interface=Function(['listOfImages', 'LabelImageName', 'CSVFileName',
+                                                     'posteriorDictionary',
                                                      'projectid', 'subjectid', 'sessionid'],
-                                                    ['outputLabelImageName', 'outputCSVFileName'],
+                                                    ['outputLabelImageName', 'outputCSVFileName',
+                                                     'CleanedLeftCaudate',
+                                                     'CleanedRightCaudate',
+                                                     'CleanedLeftHippocampus',
+                                                     'CleanedRightHippocampus',
+                                                     'CleanedLeftPutamen',
+                                                     'CleanedRightPutamen',
+                                                     'CleanedLeftThalamus',
+                                                     'CleanedRightThalamus',
+                                                     'CleanedLeftAccumben',
+                                                     'CleanedRightAccumben',
+                                                     'CleanedLeftGlobus',
+                                                     'CleanedRightGlobus'
+                                                    ],
                                                     function=CreateLabelMap), name="ComputeOneLabelMap")
     computeOneLabelMap.inputs.projectid = projectid
     computeOneLabelMap.inputs.subjectid = subjectid
     computeOneLabelMap.inputs.sessionid = sessionid
     computeOneLabelMap.inputs.LabelImageName = "allLabels.nii.gz"
     computeOneLabelMap.inputs.CSVFileName = "allLabels_seg.csv"
+    cutWF.connect(inputsSpec, 'posteriorDictionary', computeOneLabelMap, 'posteriorDictionary')
     cutWF.connect(mergeAllLabels, 'out', computeOneLabelMap, 'listOfImages')
 
     outputsSpec = pe.Node(interface=IdentityInterface(fields=[
@@ -322,6 +388,20 @@ def CreateBRAINSCutWorkflow(projectid,
 
     cutWF.connect(computeOneLabelMap, 'outputLabelImageName', outputsSpec, 'outputLabelImageName')
     cutWF.connect(computeOneLabelMap, 'outputCSVFileName', outputsSpec, 'outputCSVFileName')
+
+    cutWF.connect(computeOneLabelMap, 'CleanedLeftCaudate', outputsSpec, 'outputBinaryLeftCaudate')
+    cutWF.connect(computeOneLabelMap, 'CleanedRightCaudate', outputsSpec, 'outputBinaryRightCaudate')
+    cutWF.connect(computeOneLabelMap, 'CleanedLeftHippocampus', outputsSpec, 'outputBinaryLeftHippocampus')
+    cutWF.connect(computeOneLabelMap, 'CleanedRightHippocampus', outputsSpec, 'outputBinaryRightHippocampus')
+    cutWF.connect(computeOneLabelMap, 'CleanedLeftPutamen', outputsSpec, 'outputBinaryLeftPutamen')
+    cutWF.connect(computeOneLabelMap, 'CleanedRightPutamen', outputsSpec, 'outputBinaryRightPutamen')
+    cutWF.connect(computeOneLabelMap, 'CleanedLeftThalamus', outputsSpec, 'outputBinaryLeftThalamus')
+    cutWF.connect(computeOneLabelMap, 'CleanedRightThalamus', outputsSpec, 'outputBinaryRightThalamus')
+    cutWF.connect(computeOneLabelMap, 'CleanedLeftAccumben', outputsSpec, 'outputBinaryLeftAccumben')
+    cutWF.connect(computeOneLabelMap, 'CleanedRightAccumben', outputsSpec, 'outputBinaryRightAccumben')
+    cutWF.connect(computeOneLabelMap, 'CleanedLeftGlobus', outputsSpec, 'outputBinaryLeftGlobus')
+    cutWF.connect(computeOneLabelMap, 'CleanedRightGlobus', outputsSpec, 'outputBinaryRightGlobus')
+    """
     cutWF.connect(RF12BC, 'outputBinaryLeftCaudate', outputsSpec, 'outputBinaryLeftCaudate')
     cutWF.connect(RF12BC, 'outputBinaryRightCaudate', outputsSpec, 'outputBinaryRightCaudate')
     cutWF.connect(RF12BC, 'outputBinaryLeftHippocampus', outputsSpec, 'outputBinaryLeftHippocampus')
@@ -334,6 +414,7 @@ def CreateBRAINSCutWorkflow(projectid,
     cutWF.connect(RF12BC, 'outputBinaryRightAccumben', outputsSpec, 'outputBinaryRightAccumben')
     cutWF.connect(RF12BC, 'outputBinaryLeftGlobus', outputsSpec, 'outputBinaryLeftGlobus')
     cutWF.connect(RF12BC, 'outputBinaryRightGlobus', outputsSpec, 'outputBinaryRightGlobus')
+    """
     cutWF.connect(RF12BC, 'xmlFilename', outputsSpec, 'xmlFilename')
 
     return cutWF

@@ -82,6 +82,7 @@ option(USE_SYSTEM_ITK "Build using an externally defined version of ITK" OFF)
 option(USE_SYSTEM_SlicerExecutionModel "Build using an externally defined version of SlicerExecutionModel"  OFF)
 option(USE_SYSTEM_VTK "Build using an externally defined version of VTK" OFF)
 option(USE_SYSTEM_DCMTK "Build using an externally defined version of DCMTK" OFF)
+option(${PROJECT_NAME}_BUILD_DICOM_SUPPORT "Build Dicom Support" ON)
 
 #------------------------------------------------------------------------------
 # ${LOCAL_PROJECT_NAME} dependency list
@@ -186,6 +187,7 @@ list(APPEND ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS
   CMAKE_MODULE_LINKER_FLAGS:STRING
   SITE:STRING
   BUILDNAME:STRING
+  ${PROJECT_NAME}_BUILD_DICOM_SUPPORT:BOOL
   )
 
 if(${LOCAL_PROJECT_NAME}_USE_QT)

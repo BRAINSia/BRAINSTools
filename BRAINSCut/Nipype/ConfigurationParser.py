@@ -44,7 +44,9 @@ def ConfigurationSectionMap( configurationFilename ):
                               "roibooleancreator",
                               "featurelistfiledictionary",
                               "applyFeatureListFileDictionary".lower(),
-                              'numberOfElementInSubset'.lower() ]
+                              'numberOfElementInSubset'.lower(),
+                              "modelParameter".lower(),
+                              "normalization"]
                               )
 
     m_configuration = ConfigParser.ConfigParser()
@@ -113,10 +115,9 @@ def BRAINSCutCMDFromConfigFile( configurationFilename,
 
 
     optionsDict = configurationMap[ 'Options' ]
-    #ROIDict = configurationMap[ 'ROI' ] 
-
-    #for key in outputXmlFilenameiterkeys():
-    #    print ("{key} ==> {value}".format( key=key, value=m_fileDescriptions[key] ) )
+    generalOption = ""
+    if optionsDict.has_key( 'createVectorOption'.lower() ):
+         generalOption = optionsDict[ 'createVectorOption'.lower() ] 
     
     from XMLConfigurationGenerator import xmlGenerator
 
@@ -163,14 +164,16 @@ def BRAINSCutCMDFromConfigFile( configurationFilename,
         subprocess.call(BRAINSCutCommand, shell=True)
     if createVectors:
         BRAINSCutCommand=["BRAINSCut" + " --createVectors" +
-                          " --netConfiguration " + p_xmlFilename 
+                          " --netConfiguration " + p_xmlFilename +
+                          " " + generalOption
                          ]
         print("HACK:  BRAINCUT COMMAND: {0}".format(BRAINSCutCommand))
         subprocess.call(BRAINSCutCommand, shell=True)
     if trainModel:
         BRAINSCutCommand=["BRAINSCut" + " --trainModel" +
                           " --netConfiguration " + p_xmlFilename +
-                          optionStr + " --NoTrainingVectorShuffling"
+                          optionStr + " --NoTrainingVectorShuffling" +
+                          " " + generalOption
                          ]
         print("HACK:  BRAINCUT COMMAND: {0}".format(BRAINSCutCommand))
         subprocess.call(BRAINSCutCommand, shell=True)
@@ -180,7 +183,8 @@ def BRAINSCutCMDFromConfigFile( configurationFilename,
         BRAINSCutCommand=["BRAINSCut" + " --applyModel" +
                           " --netConfiguration " + p_xmlFilename +
                           optionStr +
-                          " --modelFilename " + p_modelFilename 
+                          " --modelFilename " + p_modelFilename +
+                          " " + generalOption
                          ]
         print("HACK:  BRAINCUT COMMAND: {0}".format(BRAINSCutCommand))
         subprocess.call(BRAINSCutCommand, shell=True)
@@ -416,6 +420,7 @@ def BRAINSCutApplyModel( configurationFilename,
         outputSessionDict[ 'label' ] = glob.glob(  outputDir +"/*_ANNLabel_seg.nii.gz" ) 
         outputSessionDict[ 'ambigiousLabel' ] = glob.glob(  outputDir +"/*AmbiguousMap.nii.gz" ) 
         outputSessionDict[ 'defPrior' ] = glob.glob(   outputDir +"/*def.nii.gz" ) 
+        outputSessionDict[ 'rawOutput' ]  = glob.glob(   outputDir +"/ANNContinuous*.nii.gz" )
         outputLabelDict[ session ] = outputSessionDict 
         
     returnList[ 'outputLabelDict' ] = outputLabelDict 

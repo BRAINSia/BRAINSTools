@@ -7,27 +7,50 @@ import SimpleITK as sitk
 from ..config import _config
 
 posteriors = ['accumben', 'air', 'caudate', 'crblgm', 'crblwm', 'csf', 'globus', 'hippocampus', 'notcsf', 'notgm', 'notvb', 'notwm', 'putamen', 'surfgm', 'thalamus', 'vb', 'wm']
-_tolerance = [0.99, 1.01]
+accumulated = ['background_total', 'gm_total', 'csf_total', 'vb_total', 'globus_total', 'wm_total']
+
+_isAccumulated = False
+_tolerance = [0.51, 1.01]
 _tolerance_wm = [0.99, 1.01]
 
 
-def _formatPosteriorAssertString():
-    assertString = "Posterior label is not recognized: %s\nValid labels are:"
-    for p in posteriors:
+def _formatPartialAssertString():
+    """
+    Returns assertion string for label
+    """
+    assertString = "Partial label is not recognized: %s\nValid labels are:"
+    for p in posteriors + accumulated:
         assertString = '\n'.join([assertString, p.upper() + ','])
     assertString = assertString[:-1]
     return assertString
 
 
-def _checkPosteriorLabel(label):
-    errorString = _formatPosteriorAssertString()
-    assert label.lower() in posteriors, errorString % label
+def _checkLabel(label):
+    """
+    Verifies string is in the list of valid labels for partial volume resuls
+    """
+    errorString = _formatPartialAssertString()
+    assert label.lower() in posteriors + accumulated, errorString % label
+
+
+def _setIfAccumulated(label):
+    """
+    Sets _isAccumulated to True if label is in accumulated list
+    """
+    if label.lower() in accumulated:
+        global _isAccumulated
+        _isAccumulated = True
 
 
 def calculateBinaryVolume(dirname, label):
     label = label.upper()
-    _checkPosteriorLabel(label)
-    labelFile = os.path.join(dirname, 'POSTERIOR_'+ label + '.nii.gz')
+    _checkLabel(label)
+    _setIfAccumulated(label)
+    if _isAccumulated:
+        fileDir = _config.get('Results', 'accumulated')
+    else:
+        fileDir = _config.get('Results', 'posteriors')
+    labelFile = os.path.join(dirname, fileDir, 'POSTERIOR_'+ label + '.nii.gz')
     assert os.path.exists(labelFile), "File not found: %s" % labelFile
     image = sitk.ReadImage(labelFile)
     if label == 'WM':
@@ -45,9 +68,16 @@ def calculateBinaryVolume(dirname, label):
 
 
 def calculatePartialVolume(dirname, label):
+    """
+    """
     label = label.upper()
-    _checkPosteriorLabel(label)
-    labelFile = os.path.join(dirname, 'POSTERIOR_' + label + '.nii.gz')
+    _checkLabel(label)
+    _setIfAccumulated(label)
+    if _isAccumulated:
+        fileDir = _config.get('Results', 'accumulated')
+    else:
+        fileDir = _config.get('Results', 'posteriors')
+    labelFile = os.path.join(dirname, fileDir, 'POSTERIOR_' + label + '.nii.gz')
     assert os.path.exists(labelFile), "File not found: %s" % labelFile
     image = sitk.ReadImage(labelFile)
     nda = sitk.GetArrayFromImage(image)
@@ -59,9 +89,11 @@ def calculatePartialVolume(dirname, label):
 
 
 def getPartialVolume(args=[], kwds={}):
+    """
+
+    """
     dirname = labels = project = subject = session = experimentDir = None
     experimentDir = _config.get('Results', 'directory')
-    partialsDir = _config.get('Results', 'posteriors')
     for key, value in kwds:
         if key == 'dirname':
             dirname = check_file(value)
@@ -81,11 +113,6 @@ def getPartialVolume(args=[], kwds={}):
         project = args.pop()
     if labels is None:
         labels = args
-    if dirname is None:
-        try:
-            dirname = os.path.join(experimentDir, project, subject, session, partialsDir)
-        except Exception, err:
-            raise err
     ### DEBUGGING ###
     #print labels
     #print dirname
@@ -94,6 +121,11 @@ def getPartialVolume(args=[], kwds={}):
     #print session
     ### END DEBUG ###
     # labels = map(formatLabel, labels) # convert shorthand to human-readable
+    if dirname is None:
+        try:
+            dirname = check_file(os.path.join(experimentDir, project, subject, session))
+        except Exception, err:
+            raise err
     volume = 0.0
     for label in labels:
         volume += calculateBinaryVolume(dirname, label)

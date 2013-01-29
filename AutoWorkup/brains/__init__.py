@@ -1,6 +1,6 @@
 __version__ = 'beta'
-#import config
-#import metrics
+import config
+import metrics
 
 def check_file(filename):
     import os.path

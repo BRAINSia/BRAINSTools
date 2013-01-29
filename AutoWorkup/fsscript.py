@@ -198,8 +198,14 @@ def runSubjectTemplate(args, FREESURFER_HOME, FS_SCRIPT):
 export FREESURFER_HOME={FSHOME}
 export SUBJECTS_DIR={FSSUBJDIR}
 source {SOURCE_SCRIPT}
-{FSHOME}/bin/recon-all -debug -base {TEMPLATEID} {ALL_TIME_POINTS}
-status=$?
+
+if [ -f {FSSUBJDIR}/{TEMPLATEID}/stats/rh.entorhinal_exvivo.stats ]; then
+   echo "--- SKIPPING: {TEMPLATEID} sentinal file already exits: {FSSUBJDIR}/{TEMPLATEID}/stats/rh.entorhinal_exvivo.stats"
+   status=$?
+else
+   {FSHOME}/bin/recon-all -debug -base {TEMPLATEID} {ALL_TIME_POINTS}
+   status=$?
+fi
 exit $status
 """.format(SOURCE_SCRIPT=FS_SCRIPT_FN,
                FSHOME=FREESURFER_HOME,
@@ -229,16 +235,21 @@ def runLongitudinal(args, FREESURFER_HOME, FS_SCRIPT):
     session_id = args.session_id
     subjects_dir = args.subjects_dir
     template_id = args.template_id
-    assert type(session_id, str), "Must input a list of session_ids"
+    assert isinstance(session_id, str), "Must input a list of session_ids :{0}:".format(session_id)
     StageToRun = "Longitudinal"
     FS_SCRIPT_FN = os.path.join(FREESURFER_HOME, FS_SCRIPT)
     auto_recon_script = """#!/bin/bash
 export FREESURFER_HOME={FSHOME}
 export SUBJECTS_DIR={FSSUBJDIR}
 source {SOURCE_SCRIPT}
-{FSHOME}/bin/recon-all -debug -long {TIMEPOINT} {TEMPLATEID} -all
-status=$?
-mv -n {FSSUBJDIR}/{TIMEPOINT}.long.{TEMPLATEID} {FSSUBJDIR}/{TEMPLATEID}_{TIMEPOINT}.long
+if [ -f {FSSUBJDIR}/{TEMPLATEID}_{TIMEPOINT}.long/stats/rh.entorhinal_exvivo.stats ]; then
+   echo "--- SKIPPING: {TIMEPOINT}.long.{TEMPLATEID} file already exits: {FSSUBJDIR}/{TEMPLATEID}_{TIMEPOINT}.long/stats/rh.entorhinal_exvivo.stats"
+   status=$?
+else
+    {FSHOME}/bin/recon-all -debug -long {TIMEPOINT} {TEMPLATEID} -all
+    status=$?
+     # mv -n {FSSUBJDIR}/{TIMEPOINT}.long.{TEMPLATEID} {FSSUBJDIR}/{TEMPLATEID}_{TIMEPOINT}.long
+fi
 exit $status
 """.format(SOURCE_SCRIPT=FS_SCRIPT_FN,
                FSHOME=FREESURFER_HOME,

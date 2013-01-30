@@ -182,23 +182,37 @@ def CreateBRAINSCutWorkflow(projectid,
                                                              'posteriorDictionary', 'RegistrationROI',
                                                              'atlasToSubjectTransform']), name='inputspec')
 
+    """
+    Denoised T1 input for BRAINSCut
+    """
+    denosingTimeStep=0.0625
+    denosingConductance=0.4
+    denosingIteration=5
+
+    DenoisedT1 = pe.Node(interface=GradientAnisotropicDiffusionImageFilter(), name="DenoisedT1")
+    DenoisedT1.inputs.timeStep = denosingTimeStep
+    DenoisedT1.inputs.conductance = denosingConductance
+    DenoisedT1.inputs.numberOfIterations = denosingIteration
+    DenoisedT1.inputs.outputVolume = "DenoisedT1.nii.gz"
+
+    cutWF.connect(inputsSpec, 'T1Volume', DenoisedT1, 'inputVolume')
+
+    """
+    Gradient Anistropic Diffusion T1 images for BRAINSCut
+    """
+    GADT1 = pe.Node(interface=GradientAnisotropicDiffusionImageFilter(), name="GADT1")
+    GADT1.inputs.timeStep = 0.025
+    GADT1.inputs.conductance = 1
+    GADT1.inputs.numberOfIterations = 5
+    GADT1.inputs.outputVolume = "GADT1.nii.gz"
+
+    cutWF.connect(inputsSpec, 'T1Volume', GADT1, 'inputVolume')
+
 
     if not t1Only:
         """
-        Denoised input for BRAINSCut
+        Denoised T1 input for BRAINSCut
         """
-        denosingTimeStep=0.0625
-        denosingConductance=0.4
-        denosingIteration=5
-
-        DenoisedT1 = pe.Node(interface=GradientAnisotropicDiffusionImageFilter(), name="DenoisedT1")
-        DenoisedT1.inputs.timeStep = denosingTimeStep
-        DenoisedT1.inputs.conductance = denosingConductance
-        DenoisedT1.inputs.numberOfIterations = denosingIteration
-        DenoisedT1.inputs.outputVolume = "DenoisedT1.nii.gz"
-
-        cutWF.connect(inputsSpec, 'T1Volume', DenoisedT1, 'inputVolume')
-
         DenoisedT2 = pe.Node(interface=GradientAnisotropicDiffusionImageFilter(), name="DenoisedT2")
         DenoisedT2.inputs.timeStep = denosingTimeStep
         DenoisedT2.inputs.conductance = denosingConductance
@@ -208,16 +222,8 @@ def CreateBRAINSCutWorkflow(projectid,
         cutWF.connect(inputsSpec, 'T2Volume', DenoisedT2, 'inputVolume')
 
         """
-        Gradient Anistropic Diffusion images for BRAINSCut
+        Gradient Anistropic Diffusion T1 images for BRAINSCut
         """
-        GADT1 = pe.Node(interface=GradientAnisotropicDiffusionImageFilter(), name="GADT1")
-        GADT1.inputs.timeStep = 0.025
-        GADT1.inputs.conductance = 1
-        GADT1.inputs.numberOfIterations = 5
-        GADT1.inputs.outputVolume = "GADT1.nii.gz"
-
-        cutWF.connect(inputsSpec, 'T1Volume', GADT1, 'inputVolume')
-
         GADT2 = pe.Node(interface=GradientAnisotropicDiffusionImageFilter(), name="GADT2")
         GADT2.inputs.timeStep = 0.025
         GADT2.inputs.conductance = 1

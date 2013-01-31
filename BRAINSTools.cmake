@@ -27,7 +27,10 @@ include(${SlicerExecutionModel_CMAKE_DIR}/SEMMacroBuildCLI.cmake)
 
 if(USE_ANTS)
   # find ANTS includes
+  message( STATUS "XXXXXXXXXXXXX ${BOOST_INCLUDE_DIR} XXXXXXX")
+  include_directories(${BOOST_INCLUDE_DIR})
   include_directories(${ANTS_SOURCE_DIR}/Temporary)
+  include_directories(${ANTS_SOURCE_DIR}/Tensor)
   include_directories(${ANTS_SOURCE_DIR}/Utilities)
   include_directories(${ANTS_SOURCE_DIR}/Examples)
   include_directories(${ANTS_SOURCE_DIR}/ImageRegistration)

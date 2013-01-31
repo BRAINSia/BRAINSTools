@@ -112,6 +112,9 @@ endif()
 
 if(USE_ANTS)
   list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES ANTS)
+  set(BOOST_INCLUDE_DIR "${CMAKE_CURRENT_BINARY_DIR}/ANTS-build/boost-install/include" CACHE STRING "Default Invalid BOOST_INCLUDE_DIR" FORCE)
+else()
+  set(BOOST_INCLUDE_DIR "" CACHE STRING "Default Invalid BOOST_INCLUDE_DIR" FORCE)
 endif()
 
 if(USE_AutoWorkup)
@@ -264,6 +267,7 @@ list(APPEND ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS
   USE_DWIConvert:BOOL
   USE_ICCDEF:BOOL
   USE_ANTS:BOOL
+  BOOST_INCLUDE_DIR:PATH
   BRAINS_DEBUG_IMAGE_WRITE:BOOL
   INSTALL_RUNTIME_DESTINATION:STRING
   INSTALL_LIBRARY_DESTINATION:STRING
@@ -329,6 +333,8 @@ endif()
 #------------------------------------------------------------------------------
 # Configure and build
 #------------------------------------------------------------------------------
+
+
 set(proj ${LOCAL_PROJECT_NAME})
 ExternalProject_Add(${proj}
   DEPENDS ${${LOCAL_PROJECT_NAME}_DEPENDENCIES}
@@ -343,6 +349,7 @@ ExternalProject_Add(${proj}
     -D${LOCAL_PROJECT_NAME}_SUPERBUILD:BOOL=OFF
     -DANTS_SOURCE_DIR:PATH=${CMAKE_CURRENT_BINARY_DIR}/ANTS
     -DBRAINSStandAlone_LIBRARY_PATH:PATH=${CMAKE_CURRENT_BINARY_DIR}/lib
+#  -DBOOST_INCLUDE_DIR:PATH=${BOOST_INCLUDE_DIR}
   INSTALL_COMMAND ""
   )
 

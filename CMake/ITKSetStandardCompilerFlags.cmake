@@ -152,6 +152,13 @@ macro(check_compiler_platform_flags)
              -D_SCL_SECURE_NO_DEPRECATE
              )
          endif()
+         # With MS compilers on Win64, we need the /bigobj switch, else generated
+         # code results in objects with number of sections exceeding object file
+         # format.
+         # see http://msdn.microsoft.com/en-us/library/ms173499.aspx
+         if(MSVC_VERSION GREATER 1310)
+           set(ITK_REQUIRED_CXX_FLAGS "${ITK_REQUIRED_CXX_FLAGS} /bigobj")
+         endif()
        endif()
   endif()
 
@@ -192,7 +199,7 @@ macro(check_compiler_platform_flags)
        OUTPUT_VARIABLE _version ERROR_VARIABLE _version)
 
      # -fopenmp breaks compiling the HDF5 library in shared library mode
-     # on the OS X platform -- at least with gcc 4.2 from XCode.
+     # on the OS X platform -- at least with gcc 4.2 from Xcode.
      set(compile_flag_lists CMAKE_C_FLAGS CMAKE_CXX_FLAGS
        CMAKE_C_FLAGS_DEBUG CMAKE_C_FLAGS_MINSIZEREL
        CMAKE_C_FLAGS_RELEASE CMAKE_C_FLAGS_RELWITHDEBINFO
@@ -271,7 +278,6 @@ macro(check_compiler_platform_flags)
     CHECK_CXX_SOURCE_COMPILES(${ITK_CXX_DISABLE_OPTIMIZATION_FLAG} CXX_HAS_DISABLE_OPTIMIZATION_FLAG)
   endif()
 endmacro()#End the platform check function
-
 
 #-----------------------------------------------------------------------------
 #Check the set of warning flags the compiler supports

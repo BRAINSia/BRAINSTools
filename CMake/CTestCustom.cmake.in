@@ -9,32 +9,29 @@
 #-- #"{standard input}:[0-9][0-9]*: Warning: "
 #-- #)
 
-#-- #if("@CMAKE_SYSTEM@" MATCHES "OSF")
-#set(CTEST_CUSTOM_WARNING_EXCEPTION
-#    $ {CTEST_CUSTOM_WARNING_EXCEPTION}
-#    "fltk"
-#    "xforms"
-#    "vtkKWApplication"
-#    "vtkKWObject"
-#    )
-#-- #endif("@CMAKE_SYSTEM@" MATCHES "OSF")
-
-#-- #The following are brains2 warnings that just need to be suppressed because they are caused
-#-- #by third parties, and will never be fixed.
-#set(CTEST_CUSTOM_WARNING_EXCEPTION
-#  "Point.*may be used uninitialized"
-#  ".*was declared here.*"
-#    )
-##Intel compiler does not like itkLegacyMacro warning #1170
-
 #
 # For further details regarding this file,
-# see http://www.vtk.org/Wiki/CMake_Testing_With_CTest#Customizing_CTest
+# see http://www.cmake.org/Wiki/CMake_Testing_With_CTest#Customizing_CTest
 #
+# and
+# http://www.kitware.com/blog/home/post/27
+#
+#----------------------------------------------------------------------
 
 #-- #Reset maximum number of warnings so that they all show up.
 set(CTEST_CUSTOM_MAXIMUM_NUMBER_OF_WARNINGS 1000)
 set(CTEST_CUSTOM_MAXIMUM_NUMBER_OF_ERRORS   1000)
+
+# The following tests should not be run under valgrind
+set(CTEST_CUSTOM_MEMCHECK_IGNORE
+  @CTEST_CUSTOM_MEMCHECK_IGNORE@
+  )
+
+set(CTEST_EXTRA_COVERAGE_GLOB
+  Source/.*/*.h
+  Source/.*/*.txx
+  Source/.*/*.cxx
+  )
 
 set(CTEST_CUSTOM_COVERAGE_EXCLUDE
   ${CTEST_CUSTOM_COVERAGE_EXCLUDE}
@@ -66,20 +63,6 @@ set(CTEST_CUSTOM_COVERAGE_EXCLUDE
   ".*/generated_cpp/.*"
   )
 
-# The following tests should not be run under valgrind
-set(CTEST_CUSTOM_MEMCHECK_IGNORE
-
-  )
-
-set(CTEST_CUSTOM_ERROR_MATCH
-  ${CTEST_CUSTOM_ERROR_MATCH}
-  "CMake Error[ :]"
-  )
-
-set(CTEST_CUSTOM_WARNING_MATCH
-  ${CTEST_CUSTOM_WARNING_MATCH}
-  #"CMake Warning[ :]"
-  )
 
 set(CTEST_CUSTOM_WARNING_EXCEPTION
   ${CTEST_CUSTOM_WARNING_EXCEPTION}
@@ -173,11 +156,6 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
 
   # Make
   "warning: jobserver unavailable"
-
-  # Suppressing warnings about duplicate libraries in Darwin
-  # At some point this may be addressed by CMake feature request:
-  # http://public.kitware.com/Bug/view.php?id=10179
-  "ld: warning: duplicate dylib"
 
   # Suppressing warnings about GL_GLEXT_LEGACY, the link reported below
   # report a similar problem with GL_GLEXT_PROTOTYPE.
@@ -323,6 +301,28 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
   "CMake Warning:",
   "note: expanded from macro",
   ": note:",
+  )
+
+set(CTEST_CUSTOM_WARNING_MATCH
+  ${CTEST_CUSTOM_WARNING_MATCH}
+  #"CMake Warning[ :]"
+  )
+
+if(APPLE)
+set(CTEST_CUSTOM_WARNING_EXCEPTION
+  ${CTEST_CUSTOM_WARNING_EXCEPTION}
+  "warning -.: directory name .* does not exist"
+
+  # Suppressing warnings about duplicate libraries in Darwin
+  # At some point this may be addressed by CMake feature request:
+  # http://public.kitware.com/Bug/view.php?id=10179
+  "ld.*warning.*duplicate dylib.*"
+  )
+endif()
+
+set(CTEST_CUSTOM_ERROR_MATCH
+  ${CTEST_CUSTOM_ERROR_MATCH}
+  "CMake Error[ :]"
   )
 
 set(CTEST_CUSTOM_ERROR_EXCEPTION

@@ -2015,8 +2015,8 @@ int main(int argc, char *argv[])
       // std::string headerFileName = outputDir + "/" + outputFileName;
 
       header.open(outputVolumeHeaderName.c_str(), std::ios::out | std::ios::binary);
-      header << "NRRD0005" << std::endl;
-      header.precision(17);
+      header << "NRRD0005" << std::endl
+             << std::setprecision(17) << std::scientific;
 
       if( !nrrdFormat )
         {
@@ -2181,8 +2181,8 @@ int main(int argc, char *argv[])
 
       const std::string protocolGradientsFileName = outputVolumeHeaderName + ".txt";
       protocolGradientsFile.open( protocolGradientsFileName.c_str() );
-      protocolGradientsFile.precision(17);
       protocolGradientsFile << "ImageOrientationPatient (0020|0032): "
+                            << std::setprecision(17) << std::scientific
                             << LPSDirCos[0][0] << "\\" << LPSDirCos[1][0] << "\\" << LPSDirCos[2][0] << "\\"
                             << LPSDirCos[0][1] << "\\" << LPSDirCos[1][1] << "\\" << LPSDirCos[2][1] << "\\"
                             << std::endl;

@@ -11,7 +11,7 @@
 
   <parameters>
     <label>Input Images</label>
-    
+
     <image>
       <name>inputWhiteVolume</name>
       <longflag>--inputWhiteVolume</longflag>
@@ -20,7 +20,7 @@
       <channel>input</channel>
       <default></default>
     </image>
-    
+
     <image>
       <name>inputBasalGmVolume</name>
       <longflag>--inputBasalGmVolume</longflag>
@@ -29,7 +29,7 @@
       <channel>input</channel>
       <default></default>
     </image>
-    
+
     <image>
       <name>inputSurfaceGmVolume</name>
       <longflag>--inputSurfaceGmVolume</longflag>
@@ -38,7 +38,7 @@
       <channel>input</channel>
       <default></default>
     </image>
-    
+
     <image>
       <name>inputCsfVolume</name>
       <longflag>--inputCsfVolume</longflag>
@@ -47,7 +47,7 @@
       <channel>input</channel>
       <default></default>
     </image>
-    
+
     <image>
       <name>inputVbVolume</name>
       <longflag>--inputVbVolume</longflag>
@@ -56,7 +56,7 @@
       <channel>input</channel>
       <default></default>
     </image>
-    
+
     <image>
       <name>inputCrblGmVolume</name>
       <longflag>--inputCrblGmVolume</longflag>
@@ -65,7 +65,7 @@
       <channel>input</channel>
       <default></default>
     </image>
-    
+
     <image>
       <name>inputCrblWmVolume</name>
       <longflag>--inputCrblWmVolume</longflag>
@@ -74,13 +74,13 @@
       <channel>input</channel>
       <default></default>
     </image>
-          
+
   </parameters>
-  
-  
+
+
   <parameters>
     <label>Output Files</label>
-    
+
     <file>
       <name>outputVolume</name>
       <longflag>--outputVolume</longflag>
@@ -89,7 +89,7 @@
       <channel>output</channel>
       <default></default>
     </file>
-       
+
   </parameters>
-  
+
 </executable>

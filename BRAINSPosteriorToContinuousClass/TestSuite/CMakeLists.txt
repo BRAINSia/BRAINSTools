@@ -1,14 +1,14 @@
 include_directories(
-  ${BRAINSImageConvert_SOURCE_DIR}/BRAINSPosteriorToContinuousClass
+  ${BRAINSPosteriorToContinuousClass_SOURCE_DIR}/BRAINSPosteriorToContinuousClass
   )
 
 MakeTestDriverFromSEMTool(BRAINSPosteriorToContinuousClass BRAINSPosteriorToContinuousClassTest.cxx)
 
-set(BRAINSImageConvertTestName BRAINSPosteriorToContinuousClassTest)
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSImageConvertTestName}
+set(BRAINSPosteriorToContinuousClassTestName BRAINSPosteriorToContinuousClassTest)
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSPosteriorToContinuousClassTestName}
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSPosteriorToContinuousClass>
-  --compare DATA{${TestData_DIR}/${BRAINSImageConvertTestName}.result.nii.gz}
-            ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSImageConvertTestName}.output.nii.gz
+  --compare DATA{${TestData_DIR}/${BRAINSPosteriorToContinuousClassTestName}.result.nii.gz}
+            ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSPosteriorToContinuousClassTestName}.output.nii.gz
   --compareIntensityTolerance 7
   --compareRadiusTolerance 0
   --compareNumberOfPixelsTolerance 777
@@ -20,6 +20,6 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSImageConvertTestNam
   --inputSurfaceGmVolume ${ReferenceAtlas_DIR}/${ATLAS_NAME}/ALLPVSURFGM.nii.gz
   --inputWhiteVolume ${ReferenceAtlas_DIR}/${ATLAS_NAME}/ALLPVWM.nii.gz
   --inputBasalGmVolume ${ReferenceAtlas_DIR}/${ATLAS_NAME}/ALLPVBASALTISSUE.nii.gz
-  --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSImageConvertTestName}.output.nii.gz
+  --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSPosteriorToContinuousClassTestName}.output.nii.gz
 #  --debugLevel 50
 )

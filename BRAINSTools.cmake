@@ -88,7 +88,7 @@ set(brains_modulenames
   BRAINSSurfaceTools
   ICCDEF
   BRAINSContinuousClass
-  BRAINSImageConvert
+  BRAINSPosteriorToContinuousClass
   BRAINSMush
   BRAINSMultiModeSegment
   BRAINSInitializedControlPoints

@@ -41,14 +41,15 @@ if(NOT StandardBRAINSBuildMacro)
     set(BRAINSTools_BUILD_STATIC_LIBRARY BUILD_STATIC_LIBRARY)
   endif()
 
-  if( NOT INTEGRATE_WITH_SLICER )
-    #message(STATUS "SETTING EXECUTABLE ONLY  XXXXXXXXXXXXXXXXXXXXX")
+  if( NOT INTEGRATE_WITH_SLICER AND NOT BUILD_TESTING )
+    ## The testing framework requires the shared lib infrastructure.
+    ## to avoid building the executables twice.
     set(BRAINSTools_EXECUTABLE_ONLY EXECUTABLE_ONLY)
   endif()
 
     SEMMacroBuildCLI(
       NAME "${BRAINS_SEM_NAME}"
-#        ${BRAINSTools_EXECUTABLE_ONLY}
+        ${BRAINSTools_EXECUTABLE_ONLY}
         ${BRAINSTools_BUILD_STATIC_LIBRARY}
         ADDITIONAL_SRCS "${BRAINS_SEM_ADDITIONAL_SRCS}"
         LOGO_HEADER "${BRAINSCommonLib_BUILDSCRIPTS_DIR}/BRAINSLogo.h"
@@ -77,11 +78,6 @@ endif()
 ## to the SEM tools.
 macro(MakeTestDriverFromSEMTool SEMToolName SEMToolTestSourceName)
   set(SEMToolLibName        ${SEMToolName}Lib)
-
-  if(ITK_VERSION_MAJOR LESS 4)
-    ## BackPort files from ITKv4 need to be pushed to ITKv3 for backwards compatibility
-    include_directories(${BRAINSTools_SOURCE_DIR}/BRAINSCommonLib/itkV3TestKernel/include)
-  endif()
 
   set(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "#include \"itkTestDriverBeforeTest.inc\"")
   set(CMAKE_TESTDRIVER_AFTER_TESTMAIN "#include \"itkTestDriverAfterTest.inc\"")

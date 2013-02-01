@@ -7,7 +7,7 @@ from nipype.interfaces.base import CommandLine, CommandLineInputSpec
 
 
 class FSScriptInputSpec(CommandLineInputSpec):
-    subject_id = traits.Str(argstr='--subject_id %s', desc='Subject_Session')
+    subj_session_id = traits.Str(argstr='--subj_session_id %s', desc='Subject_Session')
     subjects_dir = Directory(argstr='--subjects_dir %s', desc='FreeSurfer subjects directory')
     subcommand = traits.Str('autorecon', argstr='%s', position=0, usedefault=True, desc='Define which subcommand to run: options ="autorecon", "template", "longitudinal"')
     T1_files = File(argstr='--T1_files %s', exists=True, desc='Original T1 image')
@@ -25,7 +25,7 @@ class FSScriptOutputSpec(TraitedSpec):
     T1_out = File(exist=True, desc='brain.mgz')
     label1_out = File(exist=True, desc='aparc+aseg.nii.gz')
     label2_out = File(exist=True, desc='aparc.a2009+aseg.nii.gz')
-    subject_id = traits.Str(desc='Subject_Session, pass-through from input')
+    subj_session_id = traits.Str(desc='Subject_Session, pass-through from input')
     outDir = Directory(exist=True, desc='Template directory for subject')
 
 class FSScript(CommandLine):
@@ -53,7 +53,7 @@ class FSScript(CommandLine):
             outputs['T1_out'] = os.path.join(os.getcwd(), 'mri', 'brain.mgz')
             outputs['label1_out'] = os.path.join(os.getcwd(), 'mri_nifti', 'aparc+aseg.nii.gz')
             outputs['label2_out'] = os.path.join(os.getcwd(), 'mri_nifti', 'aparc.a2009+aseg.nii.gz')
-            outputs['subject_id'] = self.inputs.subject_id
+            outputs['subj_session_id'] = self.inputs.subj_session_id
         elif self.inputs.subcommand == 'template':
             outputs['outDir'] = os.path.join(os.getcwd(), self.inputs.subjectTemplate_id)
         elif self.inputs.subcommand == 'longitudinal':

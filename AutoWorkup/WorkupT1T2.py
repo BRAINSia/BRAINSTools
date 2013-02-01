@@ -1099,14 +1099,13 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
                     print "========================="
                     print "========================="
                     baw200.connect(myLocalFSWF[sessionid], 'outputspec.cnr_optimal_image', FSPREP_DataSink[sessionid], 'FREESURFER_PREP.@cnr_optimal_image')
-                    baw200.connect(myLocalFSWF[sessionid], 'outputspec.subject_id',
+                    baw200.connect(myLocalFSWF[sessionid], 'outputspec.subj_session_id',
                                    FreeSurferSessionID_MergeNode[subjectid], 'in' + str(FSindex))
                     FSindex += 1
 
 
                 #} end of "for sessionid in allSessions:"
 
-                """ Template building is not yet working for FS52
                 #{  Do template building
                 ##HACK : Move later
                 FSBASE_oneSubjWorkflow = CreateFreeSurferSubjectTemplate(projectid,
@@ -1148,7 +1147,7 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
                                                                                True,
                                                                                True,
                                                                                constructed_FS_SUBJECTS_DIR)
-                    baw200.connect(myLocalFSWF[sessionid], 'outputspec.subject_id',
+                    baw200.connect(myLocalFSWF[sessionid], 'outputspec.subj_session_id',
                                    FSLONG_oneSubjWorkflow[sessionid], 'inputspec.FreeSurferSession_ID')
                     baw200.connect(FSBASE_oneSubjWorkflow, 'outputspec.FreeSurferTemplateDir',
                                    FSLONG_oneSubjWorkflow[sessionid], 'inputspec.SingleSubject_ID')
@@ -1162,7 +1161,6 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
                     baw200.connect(FSLONG_oneSubjWorkflow[sessionid], 'outputspec.FreeSurferLongitudinalDir', FSLONG_DataSink[sessionid], 'FREESURFER52_SUBJECTS.@longitudinalDirs')
 
                 #} end of "for sessionid in allSessions:"
-                """
             else:
                 print "Skipping freesurfer"
     return baw200

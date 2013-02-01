@@ -179,6 +179,20 @@ def main(argv=None):
     import SimpleITK as sitk
     #\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
     #####################################################################################
+    #  FreeSurfer is extraordinarly finicky and is easily confused and incorrect.
+    #  Force that all the FREESURFER env vars are set in subsequent scripts by
+    #  ensuring that rough versions of these environmental variables are not
+    #  set internal to this script.
+    prohibited_env_var_exists = False
+    for ENVVAR_TO_CHECK in ['FREESURFER_HOME','FSFAST_HOME','FSF_OUTPUT_FORMAT','SUBJECTS_DIR','MNI_DIR','FSL_DIR']:
+       if os.environ.has_key(ENVVAR_TO_CHECK):
+           prohibited_env_var_exists = True
+           print( "ERROR: Environmental Variable {0}={1} exists.  Please unset before continuing.".format(ENVVAR_TO_CHECK,os.environ[ENVVAR_TO_CHECK]) )
+    if prohibited_env_var_exists:
+       sys.exit(-1)
+
+    #\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+    #####################################################################################
     #     Prepend the shell environment search paths
     PROGRAM_PATHS = expConfig.get(input_arguments.processingEnvironment, 'PROGRAM_PATHS')
     PROGRAM_PATHS = PROGRAM_PATHS.split(':')

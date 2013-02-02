@@ -65,7 +65,7 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
     GIT_TAG ${${proj}_GIT_TAG}
     SOURCE_DIR ${proj}
     BUILD_COMMAND ""
-    "${cmakeversion_external_update}"
+    LOG_UPDATE 1
     CONFIGURE_COMMAND ""
     INSTALL_COMMAND ""
     DEPENDS

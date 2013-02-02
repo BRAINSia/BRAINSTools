@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.9)
+cmake_minimum_required(VERSION 2.8.9) #2.8.9 needed for ExternalProject Simplification
 cmake_policy(VERSION 2.8.9)
 
 set(PRIMARY_PROJECT_NAME NAMICExternalProjects)

@@ -13,7 +13,7 @@ set(CMAKE_MODULE_PATH
 #-----------------------------------------------------------------------------
 find_package(ITK REQUIRED)
 if(Slicer_BUILD_${PROJECT_NAME})
-  set(ITK_NO_IO_FACTORY_REGISTER_MANAGER 1) //Incorporate with Slicer Nicely
+  set(ITK_NO_IO_FACTORY_REGISTER_MANAGER 1) # Incorporate with Slicer nicely
 endif()
 include(${ITK_USE_FILE})
 

@@ -61,7 +61,7 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
     GIT_TAG ${${proj}_GIT_TAG}
     SOURCE_DIR ${proj}
     BUILD_IN_SOURCE 1
-    "${cmakeversion_external_update}"
+    LOG_UPDATE 1
     CONFIGURE_COMMAND ""
     BUILD_COMMAND HAVE_RULES=no ${CMAKE_MAKE_PROGRAM}
     INSTALL_COMMAND HAVE_RULES=no DESTDIR=${CMAKE_BINARY_DIR}/ PREFIX=Utils ${CMAKE_MAKE_PROGRAM} install

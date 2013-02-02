@@ -38,7 +38,7 @@ if(NOT SWIG_DIR)
       URL http://prdownloads.sourceforge.net/swig/swigwin-${TARGET_SWIG_VERSION}.zip
       URL_MD5 4ab8064b1a8894c8577ef9d0fb2523c8
       SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/swigwin-${TARGET_SWIG_VERSION}
-      "${cmakeversion_external_disable_update}"
+      LOG_UPDATE 1
       CONFIGURE_COMMAND ""
       BUILD_COMMAND ""
       INSTALL_COMMAND ""
@@ -76,7 +76,7 @@ if(NOT SWIG_DIR)
     ExternalProject_Add(${proj}
       URL http://prdownloads.sourceforge.net/swig/swig-${TARGET_SWIG_VERSION}.tar.gz
       URL_MD5  69f917e870efc0712c06ab53217b28d1
-      "${cmakeversion_external_update}"
+      LOG_UPDATE 1
       CONFIGURE_COMMAND ${swig_CONFIGURE_COMMAND}
       DEPENDS PCRE
       )

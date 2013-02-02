@@ -59,7 +59,7 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
       -DITK_DIR:PATH=${ITK_DIR}
       -DBUILD_EXAMPLES:BOOL=OFF
       -DBUILD_TESTING:BOOL=OFF
-      -DANTS_SUPERBUILD:BOOL=OFF
+      -DANTs_SUPERBUILD:BOOL=OFF
     )
 
   ### --- End Project specific additions

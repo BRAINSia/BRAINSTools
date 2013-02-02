@@ -1,5 +1,5 @@
-cmake_minimum_required(VERSION 2.8.3)
-cmake_policy(VERSION 2.8.3)
+cmake_minimum_required(VERSION 2.8.9)
+cmake_policy(VERSION 2.8.9)
 
 set(LOCAL_PROJECT_NAME BRAINSTools)
 
@@ -21,12 +21,6 @@ set(LOCAL_PROJECT_NAME BRAINSTools)
 #-----------------------------------------------------------------------------
 option(${LOCAL_PROJECT_NAME}_SUPERBUILD "Build ${LOCAL_PROJECT_NAME} and the projects it depends on via SuperBuild.cmake." ON)
 mark_as_advanced(${LOCAL_PROJECT_NAME}_SUPERBUILD)
-
-option(${LOCAL_PROJECT_NAME}_USE_QT "Find and use Qt with VTK to build GUI Tools" OFF)
-mark_as_advanced(${LOCAL_PROJECT_NAME}_USE_QT)
-
-option(${LOCAL_PROJECT_NAME}_INSTALL_DEVELOPMENT "Install development support include and libraries for external packages." OFF)
-mark_as_advanced(${LOCAL_PROJECT_NAME}_INSTALL_DEVELOPMENT)
 
 #-----------------------------------------------------------------------------
 # Superbuild script

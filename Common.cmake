@@ -1,6 +1,12 @@
 
 include(CMakeDependentOption)
 
+option(${LOCAL_PROJECT_NAME}_INSTALL_DEVELOPMENT "Install development support include and libraries for external packages." OFF)
+mark_as_advanced(${LOCAL_PROJECT_NAME}_INSTALL_DEVELOPMENT)
+
+option(${LOCAL_PROJECT_NAME}_USE_QT "Find and use Qt with VTK to build GUI Tools" OFF)
+mark_as_advanced(${LOCAL_PROJECT_NAME}_USE_QT)
+
 set(USE_ITKv4 ON)
 set(ITK_VERSION_MAJOR 4 CACHE STRING "Choose the expected ITK major version to build BRAINS only version 4 allowed.")
 # Set the possible values of ITK major version for cmake-gui

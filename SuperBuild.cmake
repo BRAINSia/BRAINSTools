@@ -103,7 +103,7 @@ set(${PRIMARY_PROJECT_NAME}_DEPENDENCIES
   PCRE
   Swig
 
-  ANTs
+#  -- This si itself a superbuild, and we are not ready to tackle that yet.  ANTs
 
   DoubleConvert
   qhull

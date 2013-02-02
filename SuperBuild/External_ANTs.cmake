@@ -84,14 +84,7 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
     INSTALL_COMMAND ""
     DEPENDS
     ${${proj}_DEPENDENCIES}
-    )
-    #  ExternalProject_Add_Step(${proj} forcebuild
-    #      COMMAND ${CMAKE_COMMAND} -E remove
-    #      ${CMAKE_CURRENT_BUILD_DIR}/${proj}-prefix/src/${proj}-stamp/${proj}-build
-    #      DEPENDEES configure
-    #      DEPENDERS build
-    #      ALWAYS 1
-    #    )
+  )
   set(${extProjName}_DIR ${CMAKE_BINARY_DIR}/${proj}-install/lib/cmake/ITK-4.4)
 else()
   if(${USE_SYSTEM_${extProjName}})

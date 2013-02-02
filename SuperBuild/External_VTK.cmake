@@ -123,10 +123,10 @@ if(NOT DEFINED ${extProjName}_DIR AND NOT ${USE_SYSTEM_${extProjName}})
 
   set(VTK_BUILD_STEP "")
   if(UNIX)
-    configure_file(SuperBuild/VTK_build_step.cmake.in
-      ${CMAKE_CURRENT_BINARY_DIR}/VTK_build_step.cmake
+    configure_file(SuperBuild/External_VTK_build_step.cmake.in
+      ${CMAKE_CURRENT_BINARY_DIR}/External_VTK_build_step.cmake
       @ONLY)
-    set(VTK_BUILD_STEP ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/VTK_build_step.cmake)
+    set(VTK_BUILD_STEP ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/External_VTK_build_step.cmake)
   endif()
 
   set(${proj}_CMAKE_OPTIONS
@@ -167,7 +167,7 @@ if(NOT DEFINED ${extProjName}_DIR AND NOT ${USE_SYSTEM_${extProjName}})
     BUILD_COMMAND ${VTK_BUILD_STEP}
     )
 
-  set(VTKPatchScript ${CMAKE_CURRENT_LIST_DIR}/VTKPatch.cmake)
+  set(VTKPatchScript ${CMAKE_CURRENT_LIST_DIR}/External_VTK_patch.cmake
   ExternalProject_Add_Step(${proj} VTKPatch
     COMMENT "get rid of obsolete C/CXX flags"
     DEPENDEES download

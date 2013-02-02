@@ -67,11 +67,11 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
     set(PYTHON_INCLUDE_PATH ${PYTHON_INCLUDE_DIRS})
   #  message("PYTHON_INCLUDE_DIRS=${PYTHON_INCLUDE_DIRS}")
   endif()
-  configure_file(SuperBuild/SimpleITK_install_step.cmake.in
-    ${CMAKE_CURRENT_BINARY_DIR}/SimpleITK_install_step.cmake
+  configure_file(SuperBuild/External_SimpleITK_install_step.cmake.in
+    ${CMAKE_CURRENT_BINARY_DIR}/External_SimpleITK_install_step.cmake
     @ONLY)
 
-  set(SimpleITK_INSTALL_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/SimpleITK_install_step.cmake)
+  set(SimpleITK_INSTALL_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/External_SimpleITK_install_step.cmake)
 
   set(${proj}_CMAKE_OPTIONS
     -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}

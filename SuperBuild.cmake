@@ -62,7 +62,7 @@ endif()
 #-----------------------------------------------------------------------------
 # Superbuild option(s)
 #-----------------------------------------------------------------------------
-option(BUILD_STYLE_UTILS "Build uncrustify, cppcheck, & KWStyle" OFF)
+option(BUILD_STYLE_UTILS "Build uncrustify, cppcheck, & KWStyle" ON)
 CMAKE_DEPENDENT_OPTION(
   USE_SYSTEM_Uncrustify "Use system Uncrustify program" OFF
   "BUILD_STYLE_UTILS" OFF
@@ -90,7 +90,27 @@ option(${PROJECT_NAME}_BUILD_DICOM_SUPPORT "Build Dicom Support" ON)
 
 set(ITK_EXTERNAL_NAME ITKv${ITK_VERSION_MAJOR})
 
-set(${PRIMARY_PROJECT_NAME}_DEPENDENCIES DoubleConvert DCMTK ${ITK_EXTERNAL_NAME} SlicerExecutionModel)
+
+## for i in SuperBuild/*; do  echo $i |sed 's/.*External_\([a-zA-Z]*\).*/\1/g'|fgrep -v cmake|fgrep -v Template; done|sort -u
+set(${PRIMARY_PROJECT_NAME}_DEPENDENCIES 
+  SlicerExecutionModel
+  ${ITK_EXTERNAL_NAME} 
+  DCMTK 
+  VTK
+  OpenCV
+
+  SimpleITK
+  PCRE
+  Swig
+
+  ANTs
+
+  DoubleConvert
+  qhull
+  NIPYPE
+  ReferenceAtlas
+#python
+  )
 
 if(BUILD_STYLE_UTILS)
   list(APPEND ${PRIMARY_PROJECT_NAME}_DEPENDENCIES Cppcheck KWStyle Uncrustify)

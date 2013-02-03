@@ -7,6 +7,7 @@ find_package( OpenCV REQUIRED)
 add_subdirectory(BRAINSFeatureCreators)
 
 include_directories(${BRAINSTools_SOURCE_DIR}/BRAINSCut/BRAINSCutConfiguration)
+include_directories(${BRAINSTools_SOURCE_DIR}/BRAINSCut)
 add_subdirectory(BRAINSCutConfiguration)
 
 
@@ -57,8 +58,4 @@ endforeach()
 if(1) ## HACK Regina many tests are failing and needs investigation,
       ## HACK Regina some tests are segmentation faulting
   add_subdirectory(TestSuite)
-endif()
-if(BUILD_TESTING AND NOT Slicer_BUILD_BRAINSTOOLS)
-  add_executable(TestHashKey TestHashKey.cxx)
-  target_link_libraries(TestHashKey BRAINSCutCOMMONLIB)
 endif()

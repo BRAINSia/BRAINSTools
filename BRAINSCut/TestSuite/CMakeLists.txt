@@ -7,6 +7,9 @@
 ## BRAINSCut NetConfiguration(XML) file for testing
 ##
 
+add_executable(TestHashKey TestHashKey.cxx)
+target_link_libraries(TestHashKey BRAINSCutCOMMONLIB)
+
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME TestHashKeyUnitTests
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:TestHashKey> )
 

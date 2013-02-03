@@ -56,6 +56,10 @@ option(USE_BRAINSLandmarkInitializer      "Build BRAINSLandmarkInitializer"     
 option(USE_ImageCalculator                "Build ImageCalculator"                ON)
 option(USE_BRAINSSnapShotWriter           "Build BRAINSSnapShotWriter"           ON)
 option(USE_ConvertBetweenFileFormats      "Build ConvertBetweenFileFormats"      OFF)
+option(USE_BRAINSMultiSTAPLE              "Build BRAINSMultiSTAPLE"              ON)
+option(USE_DWIConvert                     "Build DWIConvert"                     ON)
+option(USE_BRAINSCreateLabelMapFromProbabilityMaps "Build BRAINSCreateLabelMapFromProbabilityMaps" ON)
+
 if( NOT USE_ANTS )
 option(USE_ANTS                           "Build ANTS"                           ON)
 endif()
@@ -65,14 +69,19 @@ option(USE_BRAINSContinuousClass          "Build BRAINSContinuousClass "   OFF)
 option(USE_BRAINSSurfaceTools             "Build BRAINSSurfaceTools     "  OFF)
 option(USE_ICCDEF                         "Build ICCDEF     "              OFF)
 option(USE_BRAINSPosteriorToContinuousClass             "Build BRAINSPosteriorToContinuousClass" OFF)
-option(USE_DWIConvert                     "Build DWIConvert"                ON)
-option(USE_BRAINSCreateLabelMapFromProbabilityMaps "Build BRAINSCreateLabelMapFromProbabilityMaps" ON)
-option(USE_BRAINSMultiSTAPLE "Build BRAINSMultiSTAPLE" OFF)
 
 option(USE_DebugImageViewer "Build DebugImageViewer" OFF)
-
 option(BRAINS_DEBUG_IMAGE_WRITE "Enable writing out intermediate image results" OFF)
 
+if( USE_AutoWorkup )
+  find_package ( PythonLibs 2.6 REQUIRED )
+  find_package ( PythonInterp 2.6 REQUIRED )
+  set(PYTHON_INSTALL_CMAKE_ARGS
+        PYTHON_EXECUTABLE:PATH
+        PYTHON_LIBRARY:PATH
+        PYTHON_INCLUDE_DIR:PATH
+     )
+endif()
 if(BRAINSTools_USE_QT)
   if(NOT QT4_FOUND)
     find_package(Qt4 4.6 COMPONENTS QtCore QtGui QtNetwork QtXml REQUIRED)

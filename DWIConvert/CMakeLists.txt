@@ -5,6 +5,9 @@ enable_testing()
 
 find_package(ITK 4 REQUIRED)
 
+find_package(double-conversion REQUIRED)
+include_directories(${double-conversion_INCLUDE_DIRS})
+
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR} ${CMAKE_MODULE_PATH})
 
 set(DWIConvertSupportLib_SRCS
@@ -19,7 +22,8 @@ foreach(f ${DWIConvertSupportLib_SRCS})
 endforeach()
 
 add_library(DWIConvertSupportLib STATIC ${DWIConvertSupportLib_SRCS})
-target_link_libraries(DWIConvertSupportLib ${ITK_LIBRARIES}  )
+target_link_libraries(DWIConvertSupportLib ${ITK_LIBRARIES}
+  ${double-conversion_LIBRARIES} )
 
 set(MODULE_NAME DWIConvert)
 #-----------------------------------------------------------------------------

@@ -63,7 +63,7 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
     )
   ### --- End Project specific additions
   set(${proj}_REPOSITORY ${git_protocol}://github.com/BRAINSia/double-conversion.git)
-  set(${proj}_GIT_TAG 5674c48b0d7142afece5e389279c1472c92705b4)
+  set(${proj}_GIT_TAG 9014759697ed334753a8334e09ec8c01f9c53830)
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${${proj}_REPOSITORY}
     GIT_TAG ${${proj}_GIT_TAG}

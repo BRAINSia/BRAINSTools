@@ -1,5 +1,5 @@
-cmake_minimum_required(VERSION 2.8.9)
-cmake_policy(VERSION 2.8.9)
+cmake_minimum_required(VERSION 2.8.8)
+cmake_policy(VERSION 2.8.8)
 
 set(LOCAL_PROJECT_NAME BRAINSTools)
 

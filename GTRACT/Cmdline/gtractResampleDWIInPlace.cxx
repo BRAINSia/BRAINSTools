@@ -18,6 +18,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <cmath>
 
 #include <itkImage.h>
 #include <itkVectorImage.h>
@@ -29,7 +30,8 @@
 #include <itkImageRegionIterator.h>
 #include <itkImageRegionConstIterator.h>
 #include <itkTransformFileWriter.h>
-
+#include <itkMetaDataDictionary.h>
+#include <itkMetaDataObject.h>
 #include "GenericTransformImage.h"
 #include "BRAINSFitHelper.h"
 #include "BRAINSThreadControl.h"
@@ -134,9 +136,20 @@ int main(int argc, char *argv[])
   std::cout << "Read Image" << std::endl;
 
   NrrdImageType::Pointer        resampleImage = imageReader->GetOutput();
+  NrrdImageType::DirectionType  myDirection = resampleImage->GetDirection();
   itk::MetaDataDictionary       inputMetaDataDictionary = resampleImage->GetMetaDataDictionary();
-  GenericTransformType::Pointer baseTransform = itk::ReadTransformFromDisk(inputTransform);
-  RigidTransformType::Pointer   rigidTransform = dynamic_cast<RigidTransformType *>( baseTransform.GetPointer() );
+  GenericTransformType::Pointer baseTransform = NULL;
+  if( inputTransform == "ID" )
+    {
+    RigidTransformType::Pointer LocalRigidTransform = RigidTransformType::New();
+    LocalRigidTransform->SetIdentity();
+    baseTransform = LocalRigidTransform;
+    }
+  else
+    {
+    baseTransform = itk::ReadTransformFromDisk(inputTransform);
+    }
+  RigidTransformType::Pointer rigidTransform = dynamic_cast<RigidTransformType *>( baseTransform.GetPointer() );
   if( rigidTransform.IsNull() )
     {
     std::cerr << "Transform "
@@ -145,7 +158,30 @@ int main(int argc, char *argv[])
               << std::endl;
     return EXIT_FAILURE;
     }
+
+  // Get measurement frame and its inverse from DWI scan
+  std::vector<std::vector<double> > msrFrame;
+  itk::ExposeMetaData<std::vector<std::vector<double> > >( inputMetaDataDictionary, "NRRD_measurement frame",
+                                                           msrFrame );
+
+  vnl_matrix_fixed<double, 3, 3> DWIMeasurementFrame;
+  for( unsigned int i = 0; i < 3; i++ )
+    {
+    for( unsigned int j = 0; j < 3; j++ )
+      {
+      DWIMeasurementFrame[i][j] = msrFrame[i][j];
+      }
+    }
+  std::cout << "DWI measurement frame (DWIMeasurementFrame): " << DWIMeasurementFrame << std::endl;
+  vnl_matrix_fixed<double, 3, 3> DWIInverseMeasurementFrame = vnl_inverse( DWIMeasurementFrame );
+  std::cout << "DWI inverse measurement frame (DWIInverseMeasurementFrame): " << DWIInverseMeasurementFrame
+            << std::endl;
+
+  // Resample DWI in place
   resampleImage = SetVectorImageRigidTransformInPlace<NrrdImageType>(rigidTransform.GetPointer(), resampleImage);
+
+  std::cout << "Rigid transform matrix: " << rigidTransform->GetMatrix().GetVnlMatrix() << std::endl;
+  // Rotate gradient vectors by rigid transform and inverse measurement frame
   for( unsigned int i = 0; i < resampleImage->GetVectorLength(); i++ )
     {
     // Get Current Gradient Direction
@@ -159,11 +195,13 @@ int main(int argc, char *argv[])
     sscanf(
       NrrdValue.c_str(), " %lf %lf %lf", &curGradientDirection[0], &curGradientDirection[1], &curGradientDirection[2]);
 
-    //    std::cout << &curGradientDirection[0] << " " <<
-    // &curGradientDirection[1] << " " << &curGradientDirection[2] << std::endl;
-
-    // Rotated the Diffusion Gradient
-    curGradientDirection = rigidTransform->GetMatrix().GetVnlMatrix() * curGradientDirection;
+    // Rotate the diffusion gradient with rigid transform and inverse measurement frame
+    std::cout << "Current gradient direction (before rotation): " << curGradientDirection << std::endl;
+    RigidTransformType::Pointer inverseRigidTransform = RigidTransformType::New();
+    const bool                  invertWorked = rigidTransform->GetInverse( inverseRigidTransform );
+    curGradientDirection = inverseRigidTransform->GetMatrix().GetVnlMatrix() * DWIInverseMeasurementFrame
+      * curGradientDirection;
+    std::cout << "Current gradient direction (after rotation): " << curGradientDirection << std::endl;
 
     // Updated the Image MetaData Dictionary with Updated Gradient Information
     sprintf(tmpStr, " %18.15lf %18.15lf %18.15lf", curGradientDirection[0], curGradientDirection[1],
@@ -172,6 +210,23 @@ int main(int argc, char *argv[])
     itk::EncapsulateMetaData<std::string>(resampleImage->GetMetaDataDictionary(), KeyString, NrrdValue);
     }
 
+  // Set DWI measurement frame to identity by multiplying by its inverse
+  // Update Image MetaData Dictionary with new measurement frame
+  vnl_matrix_fixed<double, 3, 3> newMeasurementFrame = DWIInverseMeasurementFrame * DWIMeasurementFrame;
+  std::cout << "New measurement frame (newMeasurementFrame): " << newMeasurementFrame << std::endl;
+  std::vector<std::vector<double> > newMf(3);
+  for( unsigned int i = 0; i < 3; i++ )
+    {
+    newMf[i].resize(3);
+    for( unsigned int j = 0; j < 3; j++ )
+      {
+      newMf[i][j] = newMeasurementFrame[i][j];
+      }
+    }
+  itk::EncapsulateMetaData<std::vector<std::vector<double> > >(
+    resampleImage->GetMetaDataDictionary(), "NRRD_measurement frame", newMf );
+
+  // Write out resampled in place DWI
   typedef itk::ImageFileWriter<NrrdImageType> WriterType;
   WriterType::Pointer nrrdWriter = WriterType::New();
   nrrdWriter->UseCompressionOn();

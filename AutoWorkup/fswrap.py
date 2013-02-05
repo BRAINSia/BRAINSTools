@@ -7,26 +7,33 @@ from nipype.interfaces.base import CommandLine, CommandLineInputSpec
 
 
 class FSScriptInputSpec(CommandLineInputSpec):
-    subj_session_id = traits.Str(argstr='--subj_session_id %s', desc='Subject_Session')
-    subjects_dir = Directory(argstr='--subjects_dir %s', desc='FreeSurfer subjects directory')
+## CROSS first cross sectional analysis
+## BASE  second generate a subject specific base reference (template building)
+## LONG  third use the BASE, and CROSS to generate a new better informed cross sectional result.
+## Universal used
     subcommand = traits.Str('autorecon', argstr='%s', position=0, usedefault=True, desc='Define which subcommand to run: options ="autorecon", "template", "longitudinal"')
+    subjects_dir = Directory(argstr='--subjects_dir %s', desc='FreeSurfer subjects directory')
+
+## auto-recon CROSS flags
     T1_files = File(argstr='--T1_files %s', exists=True, desc='Original T1 image')
     brainmask = File(argstr='--brainmask %s', exists=True,
                      desc='The normalized T1 image with the skull removed. Normalized 0-110 where white matter=110.')
-    subjectTemplate_id = traits.Str(argstr='--subjectTemplate_id %s', desc='Subject_template')
-    session_ids = traits.List(traits.Str(), argstr='--session_ids %s', desc='List of sessions for a subject template')
-    session_id = traits.Str(argstr='--session_id %s', desc='Session for a subject longitudinal analysis')
-    template_id = traits.Str(argstr='--template_id %s', desc='Template ID used in longitudinal processing')
-    # TODO: fs_env_script = traits.Str(argstr='--FSSource %s', default='${FREESURFER_HOME}/FreeSurferEnv.sh', desc='')
-    # TODO: fs_home = Directory(argstr='--FSHomeDir %s', desc='Location of FreeSurfer (differs for Mac and Linux environments')
 
+## CROSS and LONG flags
+    subj_session_id = traits.Str(argstr='--subj_session_id %s', desc='Subject_Session used for "-subjid <> in cross sectional and used in -long <> for longitudinal')
+
+## BASE/Template building flags
+    list_all_subj_session_ids = traits.List(traits.Str(), argstr='--list_all_subj_session_ids %s', desc='List of sessions for a subject template')
+
+## LONG and BASE flags
+    base_template_id = traits.Str(argstr='--base_template_id %s', desc='The name of the result subdirectory (not full path) for the base/template processing to occur')
 
 class FSScriptOutputSpec(TraitedSpec):
     T1_out = File(exist=True, desc='brain.mgz')
     label1_out = File(exist=True, desc='aparc+aseg.nii.gz')
     label2_out = File(exist=True, desc='aparc.a2009+aseg.nii.gz')
-    subj_session_id = traits.Str(desc='Subject_Session, pass-through from input')
-    outDir = Directory(exist=True, desc='Template directory for subject')
+    processed_output_name = traits.Str(desc='The name of the subdirectory (not a full path) for this processing stage')
+    outDir = Directory(exist=True, desc='Full path to the output directory for this stage of processing')
 
 class FSScript(CommandLine):
     """
@@ -50,13 +57,16 @@ class FSScript(CommandLine):
     def _list_outputs(self):
         outputs = self._outputs().get()
         if self.inputs.subcommand == 'autorecon':
-            outputs['T1_out'] = os.path.join(os.getcwd(), 'mri', 'brain.mgz')
-            outputs['label1_out'] = os.path.join(os.getcwd(), 'mri_nifti', 'aparc+aseg.nii.gz')
-            outputs['label2_out'] = os.path.join(os.getcwd(), 'mri_nifti', 'aparc.a2009+aseg.nii.gz')
-            outputs['subj_session_id'] = self.inputs.subj_session_id
+            outputs['T1_out'] = os.path.join(self.inputs.subjects_dir, 'mri', 'brain.mgz')
+            outputs['label1_out'] = os.path.join(self.inputs.subjects_dir, 'mri_nifti', 'aparc+aseg.nii.gz')
+            outputs['label2_out'] = os.path.join(self.inputs.subjects_dir, 'mri_nifti', 'aparc.a2009+aseg.nii.gz')
+            outputs['processed_output_name'] = self.inputs.subj_session_id
+            outputs['outDir'] = os.path.join(self.inputs.subjects_dir, self.inputs.subj_session_id)
         elif self.inputs.subcommand == 'template':
-            outputs['outDir'] = os.path.join(os.getcwd(), self.inputs.subjectTemplate_id)
+            outputs['processed_output_name'] = self.inputs.base_template_id
+            outputs['outDir'] = os.path.join(self.inputs.subjects_dir, self.inputs.base_template_id)
         elif self.inputs.subcommand == 'longitudinal':
-            templateFile = self.inputs.template_id + "_" + self.inputs.session_id + ".long"
-            outputs['outDir'] = os.path.join(os.getcwd(), templateFile)
+            longitudinal_processed_output_name = self.inputs.subj_session_id + ".long." + self.inputs.base_template_id
+            outputs['processed_output_name'] = longitudinal_processed_output_name
+            outputs['outDir'] = os.path.join(self.inputs.subjects_dir, longitudinal_processed_output_name)
         return outputs

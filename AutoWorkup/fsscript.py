@@ -40,8 +40,8 @@ def IsFirstNewerThanSecond(firstFile, secondFile):
 def run_mri_convert_script(niftiVol, mgzVol, subjects_dir, subj_session_id, FREESURFER_HOME, FS_SCRIPT):
     FS_SCRIPT_FN = os.path.join(FREESURFER_HOME, FS_SCRIPT)
     mri_convert_script = """#!/bin/bash
-#$ -o {FSSUBJDIR}/{SUBJID}/scripts/mri_convert_qsub.out
-#$ -e {FSSUBJDIR}/{SUBJID}/scripts/mri_convert_qsub.err
+#$ -o {FSSUBJDIR}/{SUBJ_SESSION_ID}/scripts/mri_convert_qsub.out
+#$ -e {FSSUBJDIR}/{SUBJ_SESSION_ID}/scripts/mri_convert_qsub.err
 #$ -cwd
 export FREESURFER_HOME={FSHOME}
 export SUBJECTS_DIR={FSSUBJDIR}
@@ -52,7 +52,7 @@ exit $status
 """.format(SOURCE_SCRIPT=FS_SCRIPT_FN,
                                                                                          FSHOME=FREESURFER_HOME,
                                                                                          FSSUBJDIR=subjects_dir,
-                                                                                         SUBJID=subj_session_id,
+                                                                                         SUBJ_SESSION_ID=subj_session_id,
                                                                                          invol=niftiVol,
                                                                                          outvol=mgzVol)
     script_name = mgzVol + '_convert.sh'
@@ -74,8 +74,8 @@ exit $status
 def run_mri_mask_script(output_brainmask_fn_mgz, output_custom_brainmask_fn_mgz, output_nu_fn_mgz, subjects_dir, subj_session_id, FREESURFER_HOME, FS_SCRIPT):
     FS_SCRIPT_FN = os.path.join(FREESURFER_HOME, FS_SCRIPT)
     mri_mask_script = """#!/bin/bash
-#$ -o {FSSUBJDIR}/{SUBJID}/scripts/mri_mask_scipt_qsub.out
-#$ -e {FSSUBJDIR}/{SUBJID}/scripts/mri_mask_scipt_qsub.err
+#$ -o {FSSUBJDIR}/{SUBJ_SESSION_ID}/scripts/mri_mask_scipt_qsub.out
+#$ -e {FSSUBJDIR}/{SUBJ_SESSION_ID}/scripts/mri_mask_scipt_qsub.err
 #$ -cwd
 export FREESURFER_HOME={FSHOME}
 export SUBJECTS_DIR={FSSUBJDIR}
@@ -87,7 +87,7 @@ exit $status
 """.format(SOURCE_SCRIPT=FS_SCRIPT_FN,
            FSHOME=FREESURFER_HOME,
            FSSUBJDIR=subjects_dir,
-           SUBJID=subj_session_id,
+           SUBJ_SESSION_ID=subj_session_id,
            CURRENT=os.path.dirname(output_custom_brainmask_fn_mgz),
            invol=output_nu_fn_mgz,
            maskvol=output_custom_brainmask_fn_mgz,
@@ -154,23 +154,23 @@ def runAutoReconStage(subj_session_id, StageToRun, t1_fn, subjects_dir, FREESURF
         mkdir_p(os.path.dirname(orig_001_mgz_fn))
         run_mri_convert_script(t1_fn, orig_001_mgz_fn, subjects_dir, subj_session_id, FREESURFER_HOME, FS_SCRIPT)
     auto_recon_script="""#!/bin/bash
-#$ -o {FSSUBJDIR}/{SUBJID}/scripts/autorecon{AUTORECONSTAGE}_qsub.out
-#$ -e {FSSUBJDIR}/{SUBJID}/scripts/autorecon{AUTORECONSTAGE}_qsub.err
+#$ -o {FSSUBJDIR}/{SUBJ_SESSION_ID}/scripts/autorecon{AUTORECONSTAGE}_qsub.out
+#$ -e {FSSUBJDIR}/{SUBJ_SESSION_ID}/scripts/autorecon{AUTORECONSTAGE}_qsub.err
 #$ -cwd
 export FREESURFER_HOME={FSHOME}
 export SUBJECTS_DIR={FSSUBJDIR}
 source {SOURCE_SCRIPT}
 ## Need to delete the "IsRunning" flags, if nipype pipeline is running this, then nipype prevents duplicates
-rm -f {FSSUBJDIR}/{SUBJID}/scripts/Is*
+rm -f {FSSUBJDIR}/{SUBJ_SESSION_ID}/scripts/Is*
 
-{FSHOME}/bin/recon-all -debug -subjid {SUBJID} -make autorecon{AUTORECONSTAGE}
+{FSHOME}/bin/recon-all -debug -subjid {SUBJ_SESSION_ID} -make autorecon{AUTORECONSTAGE}
 status=$?
 exit $status
 """.format(SOURCE_SCRIPT=FS_SCRIPT_FN,
                FSHOME=FREESURFER_HOME,
                FSSUBJDIR=subjects_dir,
                AUTORECONSTAGE=StageToRun,
-               SUBJID=subj_session_id)
+               SUBJ_SESSION_ID=subj_session_id)
     base_run_dir = os.path.join(subjects_dir, subj_session_id, 'scripts')
     mkdir_p(base_run_dir)
     script_name = os.path.join(base_run_dir,'run_autorecon_stage'+str(StageToRun)+'.sh')
@@ -191,20 +191,20 @@ exit $status
 
 def runSubjectTemplate(args, FREESURFER_HOME, FS_SCRIPT):
     """ Create the within-subject template """
-    subjectTemplate_id = args.subjectTemplate_id
-    session_ids = args.session_ids
+    base_template_id = args.base_template_id
+    list_all_subj_session_ids = args.list_all_subj_session_ids
     subjects_dir = args.subjects_dir
     print "X"*80
-    print "subjectTemplate_id :{0}:".format(subjectTemplate_id)
-    print "Input a list of session_ids :{0}:".format(session_ids)
+    print "base_template_id :{0}:".format(base_template_id)
+    print "Input a list of list_all_subj_session_ids :{0}:".format(list_all_subj_session_ids)
     print "subjects_dir :{0}:".format(subjects_dir)
     print "X"*80
-    assert isinstance(session_ids, list), "Must input a list of session_ids :{0}:".format(session_ids)
+    assert isinstance(list_all_subj_session_ids, list), "Must input a list of list_all_subj_session_ids :{0}:".format(list_all_subj_session_ids)
     StageToRun = "Within-SubjectTemplate"
     FS_SCRIPT_FN = os.path.join(FREESURFER_HOME, FS_SCRIPT)
     allTimePointFlags = ""
-    for session_id in session_ids:
-        allTimePointFlags += " -tp {timepoint}".format(timepoint=session_id)
+    for subj_session_id in list_all_subj_session_ids:
+        allTimePointFlags += " -tp {timepoint}".format(timepoint=subj_session_id)
     allTimePointFlags += " -all"
     auto_recon_script="""#!/bin/bash
 #$ -o {FSSUBJDIR}/{TEMPLATEID}/scripts/base_{TEMPLATEID}_qsub.out
@@ -227,9 +227,9 @@ exit $status
 """.format(SOURCE_SCRIPT=FS_SCRIPT_FN,
                FSHOME=FREESURFER_HOME,
                FSSUBJDIR=subjects_dir,
-               TEMPLATEID=subjectTemplate_id,
+               TEMPLATEID=base_template_id,
                ALL_TIME_POINTS=allTimePointFlags)
-    base_run_dir = os.path.join(subjects_dir, subjectTemplate_id, 'scripts')
+    base_run_dir = os.path.join(subjects_dir, base_template_id, 'scripts')
     mkdir_p(base_run_dir)
     script_name = os.path.join(base_run_dir,'run_autorecon_stage_'+str(StageToRun)+'.sh')
     script = open(script_name, 'w')
@@ -238,21 +238,21 @@ exit $status
     os.chmod(script_name, 0777)
     script_name_stdout = script_name + '_out'
     script_name_stdout_fid = open(script_name_stdout, 'w')
-    print "Starting auto_recon Stage: {0} for SubjectSession {1}".format(StageToRun, subjectTemplate_id)
+    print "Starting auto_recon Stage: {0} for SubjectSession {1}".format(StageToRun, base_template_id)
     scriptStatus = subprocess.check_call([script_name], stdout=script_name_stdout_fid, stderr=subprocess.STDOUT, shell='/bin/bash')
     if scriptStatus != 0:
         sys.exit(scriptStatus)
-    print "Ending auto_recon Stage: {0} for SubjectSession {1}".format(StageToRun, subjectTemplate_id)
+    print "Ending auto_recon Stage: {0} for SubjectSession {1}".format(StageToRun, base_template_id)
     script_name_stdout_fid.close()
     return
 
 
 def runLongitudinal(args, FREESURFER_HOME, FS_SCRIPT):
     """ Create the longitudinal analysis """
-    session_long_id = args.session_id
+    subj_session_id = args.subj_session_id
     subjects_dir = args.subjects_dir
-    template_id = args.template_id
-    assert isinstance(session_long_id, str), "Must input a singel session_id as string :{0}:".format(session_long_id)
+    base_template_id = args.base_template_id
+    assert isinstance(subj_session_id, str), "Must input a singel subj_session_id as string :{0}:".format(subj_session_id)
     StageToRun = "Longitudinal"
     FS_SCRIPT_FN = os.path.join(FREESURFER_HOME, FS_SCRIPT)
     auto_recon_script = """#!/bin/bash
@@ -265,21 +265,21 @@ source {SOURCE_SCRIPT}
 ## Need to delete the "IsRunning" flags, if nipype pipeline is running this, then nipype prevents duplicates
 rm -f {FSSUBJDIR}/{LONGSESSIONID}/scripts/Is*
 
-if [ -f {FSSUBJDIR}/{TEMPLATEID}_{LONGSESSIONID}.long/stats/rh.entorhinal_exvivo.stats ]; then
-   echo "--- SKIPPING: {LONGSESSIONID}.long.{TEMPLATEID} file already exits: {FSSUBJDIR}/{TEMPLATEID}_{LONGSESSIONID}.long/stats/rh.entorhinal_exvivo.stats"
+if [ -f {FSSUBJDIR}/{LONGSESSIONID}.long.{TEMPLATEID}/stats/rh.entorhinal_exvivo.stats ]; then
+   echo "--- SKIPPING: {LONGSESSIONID}.long.{TEMPLATEID} file already exits: {FSSUBJDIR}/{LONGSESSIONID}.long.{TEMPLATEID}/stats/rh.entorhinal_exvivo.stats"
    status=$?
 else
-    {FSHOME}/bin/recon-all -debug -long {LONGSESSIONID} {TEMPLATEID} -all
-    status=$?
-     # mv -n {FSSUBJDIR}/{LONGSESSIONID}.long.{TEMPLATEID} {FSSUBJDIR}/{TEMPLATEID}_{LONGSESSIONID}.long
+   echo "--- RUNNING: {LONGSESSIONID}.long.{TEMPLATEID} file already exits: {FSSUBJDIR}/{LONGSESSIONID}.long.{TEMPLATEID}/stats/rh.entorhinal_exvivo.stats"
+   {FSHOME}/bin/recon-all -debug -long {LONGSESSIONID} {TEMPLATEID} -all
+   status=$?
 fi
 exit $status
 """.format(SOURCE_SCRIPT=FS_SCRIPT_FN,
                FSHOME=FREESURFER_HOME,
                FSSUBJDIR=subjects_dir,
-               TEMPLATEID=template_id,
-               LONGSESSIONID=session_long_id)
-    base_run_dir = os.path.join(subjects_dir, session_long_id, 'scripts')
+               TEMPLATEID=base_template_id,
+               LONGSESSIONID=subj_session_id)
+    base_run_dir = os.path.join(subjects_dir, subj_session_id, 'scripts')
     mkdir_p(base_run_dir)
     script_name = os.path.join(base_run_dir,'run_autorecon_stage_'+str(StageToRun)+'.sh')
     script = open(script_name, 'w')
@@ -288,11 +288,11 @@ exit $status
     os.chmod(script_name, 0777)
     script_name_stdout = script_name + '_out'
     script_name_stdout_fid = open(script_name_stdout, 'w')
-    print "Starting auto_recon Stage: {0} for SubjectSession {1}".format(StageToRun, template_id)
+    print "Starting auto_recon Stage: {0} for SubjectSession {1}".format(StageToRun, base_template_id)
     scriptStatus = subprocess.check_call([script_name], stdout=script_name_stdout_fid, stderr=subprocess.STDOUT, shell='/bin/bash')
     if scriptStatus != 0:
         sys.exit(scriptStatus)
-    print "Ending auto_recon Stage: {0} for SubjectSession {1}".format(StageToRun, template_id)
+    print "Ending auto_recon Stage: {0} for SubjectSession {1}".format(StageToRun, base_template_id)
     script_name_stdout_fid.close()
     return
 
@@ -338,29 +338,30 @@ if __name__ == "__main__":
         # local_FS_SCRIPT = os.path.join(local_FREESURFER_HOME,'FreeSurferEnv.sh')
         local_FS_SCRIPT = 'FreeSurferEnv.sh'
     except KeyError, err:
+        print KeyError
+        print err
         raise KeyError
     ### END HACK
     subparsers = parser.add_subparsers(help='Currently supported subprocesses: "autorecon", "template", "longitudinal"')
     # Create -make subparser
     autorecon = subparsers.add_parser('autorecon', help='Link to recon-all i/o table: http://surfer.nmr.mgh.harvard.edu/fswiki/ReconAllDevTable')
-    autorecon.add_argument('--T1_files', action='store', dest='T1_files', required=True, help='Original T1 image')
+    autorecon.add_argument('--subjects_dir', action='store', dest='subjects_dir', help='FreeSurfer subjects directory')
     autorecon.add_argument('--subj_session_id', action='store', dest='subj_session_id', required=True, help='Subject_Session')
+    autorecon.add_argument('--T1_files', action='store', dest='T1_files', required=True, help='Original T1 image')
     autorecon.add_argument('--brainmask', action='store', dest='brainmask', required=True,
                            help='The normalized T1 image with the skull removed. Normalized 0-110 where white matter=110.')
-    autorecon.add_argument('--subjects_dir', action='store', dest='subjects_dir', help='FreeSurfer subjects directory')
     autorecon.set_defaults(func=runAutoRecon)
     # Create -base subparser
     template = subparsers.add_parser('template', help='Link to recon-all longitudinal processing: http://surfer.nmr.mgh.harvard.edu/fswiki/LongitudinalProcessing')
-    template.add_argument('--subjectTemplate_id', action='store', dest='subjectTemplate_id', required=True, help='Subject_template')
-    template.add_argument('--session_ids', action='store', dest='session_ids', nargs='+', required=True, help='List of sessions for a subject template')
     template.add_argument('--subjects_dir', action='store', dest='subjects_dir',required=True, help='FreeSurfer subjects directory')
-    #template.add_argument('--subj_session_id', action='store', dest='subj_session_id',required=True,  help='Subject_Session')
+    template.add_argument('--base_template_id', action='store', dest='base_template_id', required=True, help='Subject_template')
+    template.add_argument('--list_all_subj_session_ids', action='store', dest='list_all_subj_session_ids', nargs='+', required=True, help='List of sessions for a subject template')
     template.set_defaults(func=runSubjectTemplate)
     # Create -long subparser
     longitudinal = subparsers.add_parser('longitudinal', help='Link to recon-all longitudinal processing: http://surfer.nmr.mgh.harvard.edu/fswiki/LongitudinalProcessing')
     longitudinal.add_argument('--subjects_dir', action='store', dest='subjects_dir', required=True, help='FreeSurfer subjects directory')
-    longitudinal.add_argument('--session_id', action='store', dest='session_id', required=True, help='Session for a subject longitudinal analysis (in --session_ids from "template" option)')
-    longitudinal.add_argument('--template_id', action='store', dest='template_id', required=True, help='Template folder name (--subjectTemplate_id from "template" option)')
+    longitudinal.add_argument('--subj_session_id', action='store', dest='subj_session_id', required=True, help='Subject_Session')
+    longitudinal.add_argument('--base_template_id', action='store', dest='base_template_id', required=True, help='Template folder name (--base_template_id from "template" option)')
     longitudinal.set_defaults(func=runLongitudinal)
     # Parse inputs and run correct function
     all_args = parser.parse_args()

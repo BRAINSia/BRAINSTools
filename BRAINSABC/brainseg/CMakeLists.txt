@@ -40,7 +40,8 @@ set(ALL_PROGS_LIST
   GenerateLabelMapFromProbabilityMap
   )
 foreach( prog ${ALL_PROGS_LIST} )
-  StandardBRAINSBuildMacro( NAME ${prog} TARGET_LIBRARIES BRAINSABCCOMMONLIB )
+  StandardBRAINSBuildMacro( NAME ${prog}
+    TARGET_LIBRARIES BRAINSABCCOMMONLIB ${double-conversion_LIBRARIES} )
 endforeach()
 
 if(0)

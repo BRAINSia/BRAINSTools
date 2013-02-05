@@ -205,9 +205,9 @@ DwiToVectorImageFilter<TInputImage, TOutputImage>
   NrrdValue = "DWMRI";
   itk::EncapsulateMetaData<std::string>(meta, "modality", NrrdValue);
 
-  char tmpStr[64];
-  sprintf(tmpStr, "%18.15lf", m_BValue);
-  NrrdValue = tmpStr;
+  DoubleToString doubleConvert;
+
+  NrrdValue = doubleConvert(m_BValue);
   itk::EncapsulateMetaData<std::string>(meta, "DWMRI_b-value", NrrdValue);
   /* We should apply direction vcl_cosines to gradient directions if requested by
     the user */
@@ -228,8 +228,11 @@ DwiToVectorImageFilter<TInputImage, TOutputImage>
       }
     for( int k = 0; k < 3; k++ )
       {
-      sprintf(tmpStr, " %18.15lf", curGradientDirection[k]);
-      NrrdValue += tmpStr;
+      NrrdValue += doubleConvert(curGradientDirection[k]);
+      if( k < 2 )
+        {
+        NrrdValue += ' ';
+        }
       }
     sprintf(tmpStr, "DWMRI_gradient_%04d", i);
     itk::EncapsulateMetaData<std::string>(meta, tmpStr, NrrdValue);

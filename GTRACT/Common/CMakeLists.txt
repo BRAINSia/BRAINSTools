@@ -17,5 +17,5 @@ set(GTRACTCommon_SRC
 )
 
 add_library(GTRACTCommon STATIC ${GTRACTCommon_SRC})
-target_link_libraries(GTRACTCommon BRAINSCommonLib ${VTK_LIBRARIES})
+target_link_libraries(GTRACTCommon BRAINSCommonLib ${VTK_LIBRARIES} ${double-conversion_LIBRARIES})
 

@@ -20,6 +20,7 @@
 #include <cmath>
 #include <string>
 #include <iostream>
+#include "DoubleToString.h"
 
 namespace itk
 {
@@ -229,6 +230,8 @@ template <typename PointStorageType, typename PointSetType>
 bool InverseConsistentLandmarks<PointStorageType, PointSetType>
 ::PrintPointTypes(void) const
 {
+  DoubleToString doubleConvert;
+
   printf("#IMAGEDIMS %6hu %6hu %6hu %6hu\n",
          ImageDims[0],
          ImageDims[1],
@@ -246,12 +249,23 @@ bool InverseConsistentLandmarks<PointStorageType, PointSetType>
        mapiter != this->end();
        ++mapiter )
     {
-    printf( "%12s %12.6f %12.6f %12.6f %12.5f %12.6f\n", mapiter->first.c_str(),
-            mapiter->second[0],
-            mapiter->second[1],
-            mapiter->second[2],
-            mapiter->second.GetT(),
-            mapiter->second.GetWeighting() );
+    std::cout << mapiter->first;
+    for( int  space = 0; space < 12 - mapiter->first.size(); ++space )
+      {
+      std::cout << ' ';
+      }
+    std::cout << ' ';
+    std::cout << doubleConvert(mapIter[0]) << ' '
+              << doubleConvert(mapIter[1]) << ' '
+              << doubleConvert(mapIter[2]) << ' '
+              << mapiter->second.GetT() << ' '
+              << mapiter->second.GetWeighting() << std::endl;
+    // printf( "%12s %12.6f %12.6f %12.6f %12.5f %12.6f\n", mapiter->first.c_str(),
+    //         mapiter->second[0],
+    //         mapiter->second[1],
+    //         mapiter->second[2],
+    //         mapiter->second.GetT(),
+    //         mapiter->second.GetWeighting() );
     }
   if( this->size() > 0 )
     {
@@ -1101,7 +1115,8 @@ InverseConsistentLandmarks<PointStorageType, PointSetType>
 ::WriteGECPointTypes(const std::string lmrkfilename) const
 {
   // Open the files
-  FILE *tempfile = fopen(lmrkfilename.c_str(), "w");
+  FILE *         tempfile = fopen(lmrkfilename.c_str(), "w");
+  DoubleToString doubleConvert;
 
   if( tempfile == NULL )
     {
@@ -1128,13 +1143,25 @@ InverseConsistentLandmarks<PointStorageType, PointSetType>
        mapiter != this->end();
        ++mapiter )
     {
-    fprintf( tempfile, "%12s %12.6f %12.6f %12.6f %12.5f %12.6f\n",
-             mapiter->first.c_str(),
-             mapiter->second[0],
-             mapiter->second[1],
-             mapiter->second[2],
-             mapiter->second.GetT(),
-             mapiter->second.GetWeighting() );
+//    fprintf( tempfile, "%12s %12.6f %12.6f %12.6f %12.5f %12.6f\n",
+    // mapiter->first.c_str(),
+    // mapiter->second[0],
+    // mapiter->second[1],
+    // mapiter->second[2],
+    // mapiter->second.GetT(),
+    // mapiter->second.GetWeighting() );
+    std::string s = mapiter->first;
+    s += ' ';
+    for( unsigned dir = 0; dir < 3; ++dir )
+      {
+      s += doubleConvert(mapiter->second[dir]);
+      s += ' ';
+      }
+    s += doubleConvert(mapiter->second.GetT() );
+    s += ' ';
+    s += doubleConvert(mapIter->GetWeighting);
+    s += '\n';
+    fputs(s.c_str(), tempFile);
     }
   fclose(tempfile);
   if( this->size() > 0 )

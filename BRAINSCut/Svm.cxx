@@ -1,4 +1,5 @@
 #include "Svm.h"
+#include "DoubleToString.h"
 typedef float       Qfloat;
 typedef signed char schar;
 #ifndef USE_OPENCV // Following function conflict with OpenCV
@@ -1862,18 +1863,19 @@ double svm_predict_probability(const svm_model *model,
 
 int svm_save_model(const char *model_file_name, const svm_model *model)
 {
-  FILE *fp = fopen(model_file_name, "w");
+  FILE *         fp = fopen(model_file_name, "w");
+  DoubleToString doubleConvert;
 
   if( fp == NULL )
     {
     return -1;
     }
   const svm_parameter & param = model->param;
-  fprintf(fp, "gamma %g\n", param.gamma);
+  fprintf(fp, "gamma %s\n", doubleConvert(param.gamma).c_str() );
   int l = model->l;
   fprintf(fp, "total_sv %d\n", l);
   fprintf(fp, "rho");
-  fprintf(fp, " %g", model->rho[0]);
+  fprintf(fp, " %s", doubleConvert(model->rho[0]).c_str() );
   fprintf(fp, "\n");
   if( model->probA )  // regression has probA only
     {
@@ -1901,11 +1903,11 @@ int svm_save_model(const char *model_file_name, const svm_model *model)
   const svm_node *const *SV = model->SV;
   for( int i = 0; i < l; i++ )
     {
-    fprintf(fp, "%.16g ", sv_coef[0][i]);
+    fprintf(fp, "%s ", doubleConvert(sv_coef[0][i]).c_str() );
     const svm_node *p = SV[i];
     while( p->index != -1 )
       {
-      fprintf(fp, "%d:%.8g ", p->index, p->value);
+      fprintf(fp, "%d:%s ", p->index, doubleConvert(p->value).c_str() );
       p++;
       }
 

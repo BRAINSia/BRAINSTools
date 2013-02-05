@@ -1,5 +1,7 @@
 
 add_executable(PrettyPrintTableTest PrettyPrintTableTest.cxx)
+target_link_libraries(PrettyPrintTableTest ${double-conversion_LIBRARIES} ${ITK_LIBRARIES} )
+
 set_target_properties(PrettyPrintTableTest PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/testbin)
 
 add_executable( itkResampleInPlaceImageFilterTest itkResampleInPlaceImageFilterTest.cxx)

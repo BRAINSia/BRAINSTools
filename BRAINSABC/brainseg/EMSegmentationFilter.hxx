@@ -1523,7 +1523,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
     EMIterationTable.add(iclass + 1, 1, std::string(": ") );
     for( unsigned int ichan = 0; ichan < numChannels; ichan++ )
       {
-      EMIterationTable.add(iclass + 1, ichan + 2, this->m_ListOfClassStatistics[iclass].m_Means[ichan], "%8.2f");
+      EMIterationTable.add(iclass + 1, ichan + 2, this->m_ListOfClassStatistics[iclass].m_Means[ichan]);
       }
     }
     {

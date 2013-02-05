@@ -34,7 +34,7 @@ set(ALL_PROGS_LIST
 #  gtractGraphSearchTracking
   )
 foreach(prog ${ALL_PROGS_LIST})
-  StandardBRAINSBuildMacro(NAME ${prog} TARGET_LIBRARIES GTRACTCommon )
+  StandardBRAINSBuildMacro(NAME ${prog} TARGET_LIBRARIES GTRACTCommon ${double-conversion_LIBRARIES} )
 endforeach()
 
 

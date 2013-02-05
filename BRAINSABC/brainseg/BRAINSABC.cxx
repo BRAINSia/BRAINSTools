@@ -610,7 +610,7 @@ int main(int argc, char * *argv)
   for( unsigned int pwi = 0; pwi < PriorNames.size(); pwi++ )
     {
     priorsWeightList[pwi] = atlasDefinitionParser.GetWeight(PriorNames[pwi]);
-    AtlasDefTable.add(currentRow, 2 + pwi, priorsWeightList[pwi], "%4.2f");
+    AtlasDefTable.add(currentRow, 2 + pwi, priorsWeightList[pwi]);
     }
 
   currentRow++;
@@ -677,8 +677,8 @@ int main(int argc, char * *argv)
         AtlasDefTable.add(currentRow + tt * 2 + 1, PriorNames.size() + 2 + 1, "]");
 
         temp_range_List[inputVolumeTypes[tt]] = atlasDefinitionParser.GetBounds(PriorNames[pwi], inputVolumeTypes[tt]);
-        AtlasDefTable.add(currentRow + tt * 2 + 0, 2 + pwi, temp_range_List[inputVolumeTypes[tt]].GetLower(), "%4.2f");
-        AtlasDefTable.add(currentRow + tt * 2 + 1, 2 + pwi, temp_range_List[inputVolumeTypes[tt]].GetUpper(), "%4.2f");
+        AtlasDefTable.add(currentRow + tt * 2 + 0, 2 + pwi, temp_range_List[inputVolumeTypes[tt]].GetLower() );
+        AtlasDefTable.add(currentRow + tt * 2 + 1, 2 + pwi, temp_range_List[inputVolumeTypes[tt]].GetUpper() );
         }
       }
     }

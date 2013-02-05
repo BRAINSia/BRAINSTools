@@ -40,7 +40,7 @@
 
 #include "gtractResampleDWIInPlaceCLP.h"
 #include "itkImageDuplicator.h"
-
+#include "DoubleToString.h"
 /**
  * \author Hans J. Johnson
  * \brief This templated function will duplicate the input image, change the direction and origin to refelect the physical space
@@ -84,7 +84,7 @@ int main(int argc, char *argv[])
 {
   PARSE_ARGS;
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
-
+  DoubleToString                                        doubleConvert;
   itk::AddExtraTransformRegister();
 
   bool debug = true;
@@ -204,9 +204,18 @@ int main(int argc, char *argv[])
     std::cout << "Current gradient direction (after rotation): " << curGradientDirection << std::endl;
 
     // Updated the Image MetaData Dictionary with Updated Gradient Information
-    sprintf(tmpStr, " %18.15lf %18.15lf %18.15lf", curGradientDirection[0], curGradientDirection[1],
-            curGradientDirection[2]);
-    NrrdValue = tmpStr;
+    // sprintf(tmpStr, " %18.15lf %18.15lf %18.15lf", curGradientDirection[0], curGradientDirection[1],
+    // curGradientDirection[2]);
+    // NrrdValue = tmpStr;
+    NrrdValue = " ";
+    for( unsigned dir = 0; dir < 3; ++dir )
+      {
+      if( i > 0 )
+        {
+        NrrdValue += " ";
+        }
+      NrrdValue += doubleConvert(curGradientDirection[dir]);
+      }
     itk::EncapsulateMetaData<std::string>(resampleImage->GetMetaDataDictionary(), KeyString, NrrdValue);
     }
 

@@ -4,7 +4,7 @@
 #include <vector>
 #include <string>
 #include <ostream>
-
+#include "DoubleToString.h"
 #if defined( _WIN32 ) || defined( _WIN64 )
 // Windows uses a different function name for this behavior.
 #define SNPRINTF_FUNC _snprintf
@@ -90,11 +90,18 @@ public:
 
   void add(const unsigned int row, const unsigned int column, const double x, const char *printf_format = 0)
   {
-    const char *format(printf_format == 0 ? "%lf" : printf_format);
-    char        buf[4096];
-
-    SNPRINTF_FUNC(buf, 4096, format, x);
-    this->add(row, column, buf);
+    if( printf_format != 0 )
+      {
+      char buf[4096];
+      SNPRINTF_FUNC(buf, 4096, printf_format, x);
+      this->add(row, column, buf);
+      }
+    else
+      {
+      DoubleToString doubleToString;
+      std::string    val = doubleToString(x);
+      this->add(row, column, val.c_str() );
+      }
   }
 
   void Print(std::ostream & output)

@@ -35,6 +35,7 @@
 #else
 #include <itkComposeImageFilter.h>
 #endif
+#include "DoubleToString.h"
 
 #include "gtractConcatDwiCLP.h"
 #include "BRAINSThreadControl.h"
@@ -42,9 +43,9 @@ int main(int argc, char *argv[])
 {
   PARSE_ARGS;
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
-
-  const int numberOfImages = inputVolume.size();
-  bool      debug = true;
+  DoubleToString                                        doubleConvert;
+  const int                                             numberOfImages = inputVolume.size();
+  bool                                                  debug = true;
   if( debug )
     {
     std::cout << "=====================================================" << std::endl;
@@ -152,7 +153,6 @@ int main(int argc, char *argv[])
       indexImageToVectorImageFilter->SetInput( vectorIndex, selectIndexImageFilter->GetOutput() );
 
       char tmpStr[64];
-      char tmpValue[64];
       char tokStr[64];
 
       sprintf(tmpStr, "DWMRI_gradient_%04u", j);
@@ -162,8 +162,14 @@ int main(int argc, char *argv[])
       double y = atof( strtok( NULL, " " ) );
       double z = atof( strtok( NULL, " " ) );
       sprintf(tmpStr, "DWMRI_gradient_%04d", vectorIndex);
-      sprintf(tmpValue, " %18.15lf %18.15lf %18.15lf", x * bValueScale, y * bValueScale, z * bValueScale);
-      NrrdValue = tmpValue;
+      // sprintf(tmpValue, " %18.15lf %18.15lf %18.15lf", x * bValueScale, y * bValueScale, z * bValueScale);
+      // NrrdValue = tmpValue;
+      NrrdValue = " ";
+      NrrdValue += doubleConvert(x * bValueScale);
+      NrrdValue += " ";
+      NrrdValue += doubleConvert(y * bValueScale);
+      NrrdValue += " ";
+      NrrdValue += doubleConvert(z * bValueScale);
       itk::EncapsulateMetaData<std::string>(resultMetaData, tmpStr, NrrdValue);
       vectorIndex++;
       }

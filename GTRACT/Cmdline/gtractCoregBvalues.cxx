@@ -38,13 +38,14 @@
 #include "gtractCoregBvaluesCLP.h"
 #include "BRAINSThreadControl.h"
 #include "itkOrthogonalize3DRotationMatrix.h"
+#include "DoubleToString.h"
 
 int main(int argc, char *argv[])
 {
   PARSE_ARGS;
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
-
-  bool debug = true;
+  DoubleToString                                        doubleConvert;
+  bool                                                  debug = true;
   if( debug )
     {
     std::cout << "=====================================================" << std::endl;
@@ -294,9 +295,18 @@ int main(int argc, char *argv[])
       }
 
     // Add the gradient direction to the resulting image
-    sprintf(tmpStr, " %18.15lf %18.15lf %18.15lf", curGradientDirection[0], curGradientDirection[1],
-            curGradientDirection[2]);
-    NrrdValue = tmpStr;
+    // sprintf(tmpStr, " %18.15lf %18.15lf %18.15lf", curGradientDirection[0], curGradientDirection[1],
+    //         curGradientDirection[2]);
+    // NrrdValue = tmpStr;
+    NrrdValue = " ";
+    for( unsigned dir = 0; dir < 3; ++dir )
+      {
+      if( i > 0 )
+        {
+        NrrdValue += " ";
+        }
+      NrrdValue += doubleConvert(curGradientDirection[dir]);
+      }
     itk::EncapsulateMetaData<std::string>(RegisteredImage->GetMetaDataDictionary(), KeyString, NrrdValue);
     }
 

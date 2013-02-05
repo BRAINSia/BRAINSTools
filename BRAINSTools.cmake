@@ -25,6 +25,12 @@ include(${GenerateCLP_USE_FILE})
 include(${SlicerExecutionModel_USE_FILE})
 include(${SlicerExecutionModel_CMAKE_DIR}/SEMMacroBuildCLI.cmake)
 
+#-----------------------------------------------------------------------------
+# use double-conversion library for consistent printing of double & float
+#-----------------------------------------------------------------------------
+find_package(double-conversion REQUIRED)
+include_directories(${double-conversion_INCLUDE_DIRS})
+
 if(USE_ANTS)
   # find ANTS includes
   message( STATUS "XXXXXXXXXXXXX ${BOOST_INCLUDE_DIR} XXXXXXX")

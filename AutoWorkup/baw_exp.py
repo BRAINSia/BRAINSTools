@@ -68,25 +68,25 @@ def file_replace(fname, out_fname, pat, s_after):
         out.close()
 
 
-def setGlobalDatasinkRewrite(cli, cfg):
+def setDataSinkRewriteValue(cli, cfg):
     """
-    Set the boolean GLOBAL_DATA_SINK_REWRITE
+    Return the behavior for boolean GLOBAL_DATA_SINK_REWRITE
 
-    If the flag '--ignore_datasinks' is set on the command line, pipeline will not rerun the
-    pipeline datasinks.  If not, then the configuration file entry 'REWRITE_DATASINKS' under the
+    If the flag '--rewrite_datasinks' is set on the command line, pipeline will force rerun of the
+    pipeline datasinks.  If not, then the configuration file entry 'GLOBAL_DATA_SINK_REWRITE' under the
     'PIPELINE' heading will control this behavior
 
     >>> import baw_exp as baw
-    >>> baw.setGlobalDatasinkRewrite(True, True); baw.GLOBAL_DATA_SINK_REWRITE
+    >>> baw.setDataSinkRewriteValue(True, True); baw.GLOBAL_DATA_SINK_REWRITE
     *** Ignoring datasinks for pipeline rewriting ***
     False
-    >>> baw.setGlobalDatasinkRewrite(False, True); baw.GLOBAL_DATA_SINK_REWRITE
+    >>> baw.setDataSinkRewriteValue(False, True); baw.GLOBAL_DATA_SINK_REWRITE
     *** Ignoring datasinks for pipeline rewriting ***
     False
-    >>> baw.setGlobalDatasinkRewrite(True, False); baw.GLOBAL_DATA_SINK_REWRITE
+    >>> baw.setDataSinkRewriteValue(True, False); baw.GLOBAL_DATA_SINK_REWRITE
     *** Ignoring datasinks for pipeline rewriting ***
     False
-    >>> baw.setGlobalDatasinkRewrite(False, False); baw.GLOBAL_DATA_SINK_REWRITE
+    >>> baw.setDataSinkRewriteValue(False, False); baw.GLOBAL_DATA_SINK_REWRITE
     True
 
     :param cli: command line value
@@ -95,16 +95,14 @@ def setGlobalDatasinkRewrite(cli, cfg):
     :type cfg: bool
 
     Sets the variable `GLOBAL_DATA_SINK_REWRITE` constant flag used in :mod:`WorkupT1T2()`
-
     """
-    assert isinstance(cli, bool) and isinstance(cfg, bool), \
-      "Inputs are not boolean: {0}, {1}".format(cli, cfg)
-    GLOBAL_DATA_SINK_REWRITE=False
+    assert isinstance(cli, bool) and isinstance(cfg, bool), "Inputs are not boolean: {0}, {1}".format(cli, cfg)
     if cli or cfg:
-        print "*** Ignoring datasinks for pipeline rewriting ***" # TODO: Use logging
-        GLOBAL_DATA_SINK_REWRITE = False
-    else:
+        print "*** Force datasinks rewriting for pipeline rewriting ***, commandline= {0}, configfile= {1}".format(cli,cfg) # TODO: Use logging
         GLOBAL_DATA_SINK_REWRITE = True
+    else:
+        print "*** Default datasink behavior for pipeline ***, commandline= {0}, configfile= {1}".format(cli,cfg) # TODO: Use logging
+        GLOBAL_DATA_SINK_REWRITE = False
     return GLOBAL_DATA_SINK_REWRITE
 
 
@@ -128,10 +126,9 @@ def main(argv=None):
                        help='The name of the subject to process')
     group.add_argument('-ExperimentConfig', action="store", dest='ExperimentConfig', required=True,
                        help='The path to the file that describes the entire experiment')
-    parser.add_argument('--doshort', action='store', dest='doshort', default=False, help='If not present, do long')
-    parser.add_argument('--ignore_datasinks', action='store_true',
-                        help='Use if the datasinks should not be rerun.\n \
-    Default: value in configuration file')
+    parser.add_argument('-doshort', action='store', dest='doshort', default=False, help='If not present, do long')
+    parser.add_argument('-rewrite_datasinks', action='store_true', default=False,
+                        help='Use if the datasinks should be forced rerun.\nDefault: value in configuration file')
     parser.add_argument('--version', action='version', version='%(prog)s 1.0')
     input_arguments = parser.parse_args()
 
@@ -139,8 +136,8 @@ def main(argv=None):
     expConfig.read(input_arguments.ExperimentConfig)
 
     # Pipeline-specific information
-    ignore_datasinks = expConfig.getboolean('PIPELINE', 'GLOBAL_DATA_SINK_REWRITE')
-    GLOBAL_DATA_SINK_REWRITE=setGlobalDatasinkRewrite(input_arguments.ignore_datasinks, ignore_datasinks)
+    GLOBAL_DATA_SINK_REWRITE_FROM_CONFIG = expConfig.getboolean('PIPELINE', 'GLOBAL_DATA_SINK_REWRITE')
+    GLOBAL_DATA_SINK_REWRITE=setDataSinkRewriteValue(input_arguments.rewrite_datasinks, GLOBAL_DATA_SINK_REWRITE_FROM_CONFIG)
 
     # Experiment specific information
     subject_data_file = expConfig.get('EXPERIMENT_DATA', 'SESSION_DB')

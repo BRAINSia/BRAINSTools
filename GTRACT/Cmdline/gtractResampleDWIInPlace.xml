@@ -8,7 +8,7 @@
   <version>4.0.0</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Modules:GTRACT</documentation-url>
   <license>http://mri.radiology.uiowa.edu/copyright/GTRACT-Copyright.txt</license>
-  <contributor>This tool was developed by Vincent Magnotta and Greg Harris.</contributor>
+  <contributor>This tool was developed by Vincent Magnotta, Greg Harris, Hans Johnson, and Joy Matsui.</contributor>
 
 
   <parameters>
@@ -41,6 +41,19 @@
 
   </parameters>
 
+  <parameters advanced="true">
+    <label>Main Parameters</label>
+
+    <integer-vector>
+      <name>imageOutputSize</name>
+      <longflag>imageOutputSize</longflag>
+      <label>Image Output Padding</label>
+      <description>The voxel lattice for the output image, padding is added if necessary. NOTE: if 0,0,0, then the inputVolume size is used.</description>
+      <default>0,0,0</default>
+    </integer-vector>
+  
+  </parameters>
+
   <parameters>
     <label>Output Files</label>
     <description></description>
@@ -48,7 +61,7 @@
     <image type="diffusion-weighted">
       <name>outputVolume</name>
       <longflag>outputVolume</longflag>
-      <description>Required: output image (NRRD file) that has been transformed into the space of the structural image.</description>
+      <description>Required: output image (NRRD file) that has been rigidly transformed into the space of the structural image and padded if image padding was changed from 0,0,0 default.</description>
       <label>Output File</label>
       <channel>output</channel>
     </image>

@@ -95,6 +95,8 @@ int main(int argc, char *argv[])
     std::cout << "Input Transform: " <<  inputTransform << std::endl;
     std::cout << "Output Image: " <<  outputVolume << std::endl;
     std::cout << "Debug Level: " << debugLevel << std::endl;
+    std::cout << "Image Output Size: "
+              << imageOutputSize[0] << "," << imageOutputSize[1] << "," << imageOutputSize[2] << std::endl;
     std::cout << "=====================================================" << std::endl;
     }
 
@@ -119,7 +121,7 @@ int main(int argc, char *argv[])
   typedef signed short                        PixelType;
   typedef itk::VectorImage<PixelType, 3>      NrrdImageType;
   typedef itk::VersorRigid3DTransform<double> RigidTransformType;
-
+  typedef itk::Image<PixelType, 3>            InputIndexImageType;
   typedef itk::ImageFileReader<NrrdImageType,
                                itk::DefaultConvertPixelTraits<PixelType> > FileReaderType;
   FileReaderType::Pointer imageReader = FileReaderType::New();
@@ -161,8 +163,8 @@ int main(int argc, char *argv[])
 
   // Get measurement frame and its inverse from DWI scan
   std::vector<std::vector<double> > msrFrame;
-  itk::ExposeMetaData<std::vector<std::vector<double> > >( inputMetaDataDictionary, "NRRD_measurement frame",
-                                                           msrFrame );
+  itk::ExposeMetaData<std::vector<std::vector<double> > >( inputMetaDataDictionary,
+                                                           "NRRD_measurement frame", msrFrame );
 
   vnl_matrix_fixed<double, 3, 3> DWIMeasurementFrame;
   for( unsigned int i = 0; i < 3; i++ )
@@ -172,10 +174,7 @@ int main(int argc, char *argv[])
       DWIMeasurementFrame[i][j] = msrFrame[i][j];
       }
     }
-  std::cout << "DWI measurement frame (DWIMeasurementFrame): " << DWIMeasurementFrame << std::endl;
   vnl_matrix_fixed<double, 3, 3> DWIInverseMeasurementFrame = vnl_inverse( DWIMeasurementFrame );
-  std::cout << "DWI inverse measurement frame (DWIInverseMeasurementFrame): " << DWIInverseMeasurementFrame
-            << std::endl;
 
   // Resample DWI in place
   resampleImage = SetVectorImageRigidTransformInPlace<NrrdImageType>(rigidTransform.GetPointer(), resampleImage);
@@ -196,12 +195,9 @@ int main(int argc, char *argv[])
       NrrdValue.c_str(), " %lf %lf %lf", &curGradientDirection[0], &curGradientDirection[1], &curGradientDirection[2]);
 
     // Rotate the diffusion gradient with rigid transform and inverse measurement frame
-    std::cout << "Current gradient direction (before rotation): " << curGradientDirection << std::endl;
     RigidTransformType::Pointer inverseRigidTransform = RigidTransformType::New();
-    const bool                  invertWorked = rigidTransform->GetInverse( inverseRigidTransform );
     curGradientDirection = inverseRigidTransform->GetMatrix().GetVnlMatrix() * DWIInverseMeasurementFrame
       * curGradientDirection;
-    std::cout << "Current gradient direction (after rotation): " << curGradientDirection << std::endl;
 
     // Updated the Image MetaData Dictionary with Updated Gradient Information
     // sprintf(tmpStr, " %18.15lf %18.15lf %18.15lf", curGradientDirection[0], curGradientDirection[1],
@@ -221,8 +217,7 @@ int main(int argc, char *argv[])
 
   // Set DWI measurement frame to identity by multiplying by its inverse
   // Update Image MetaData Dictionary with new measurement frame
-  vnl_matrix_fixed<double, 3, 3> newMeasurementFrame = DWIInverseMeasurementFrame * DWIMeasurementFrame;
-  std::cout << "New measurement frame (newMeasurementFrame): " << newMeasurementFrame << std::endl;
+  vnl_matrix_fixed<double, 3, 3>    newMeasurementFrame = DWIInverseMeasurementFrame * DWIMeasurementFrame;
   std::vector<std::vector<double> > newMf(3);
   for( unsigned int i = 0; i < 3; i++ )
     {
@@ -235,12 +230,114 @@ int main(int argc, char *argv[])
   itk::EncapsulateMetaData<std::vector<std::vector<double> > >(
     resampleImage->GetMetaDataDictionary(), "NRRD_measurement frame", newMf );
 
+  // Pad image
+  const NrrdImageType::RegionType    inputRegion = resampleImage->GetLargestPossibleRegion();
+  const NrrdImageType::SizeType      inputSize = inputRegion.GetSize();
+  const NrrdImageType::PointType     inputOrigin = resampleImage->GetOrigin();
+  const NrrdImageType::DirectionType inputDirection = resampleImage->GetDirection();
+  const NrrdImageType::SpacingType   inputSpacing = resampleImage->GetSpacing();
+
+  NrrdImageType::SizeType newSize;
+  std::vector<size_t>     imagePadding(6, 0);
+  for( int qq = 0; qq < 3; ++qq )
+    {
+    if( ( imageOutputSize[qq] > 0 ) && ( static_cast<itk::SizeValueType>( imageOutputSize[qq] )  > inputSize[qq] ) )
+      {
+      const size_t sizeDiff = imageOutputSize[qq] - inputSize[qq];
+      const size_t halfPadding = sizeDiff / 2;
+      const size_t isOddDiff = sizeDiff % 2;
+      imagePadding[qq] =  halfPadding  + isOddDiff;
+      imagePadding[qq + 3] = halfPadding;
+      }
+    newSize[qq] = inputSize[qq] + imagePadding[qq] + imagePadding[qq + 3];
+    }
+
+  vnl_matrix_fixed<double, 3, 3> inputDirectionMatrix;
+  vnl_matrix_fixed<double, 3, 3> inputSpacingMatrix;
+  for( unsigned int i = 0; i < 3; i++ )
+    {
+    for( unsigned int j = 0; j < 3; j++ )
+      {
+      inputDirectionMatrix[i][j] = inputDirection[i][j];
+      if( i == j )
+        {
+        inputSpacingMatrix[i][j] = inputSpacing[i];
+        }
+      else
+        {
+        inputSpacingMatrix[i][j] = 0.0;
+        }
+      }
+    }
+
+  vnl_matrix_fixed<double, 3, 3> spaceDirections = inputDirectionMatrix * inputSpacingMatrix;
+  vnl_matrix_fixed<double, 3, 4> newMatrix;
+  for( unsigned int i = 0; i < 3; i++ )
+    {
+    for( unsigned int j = 0; j < 4; j++ )
+      {
+      if( j == 3 )
+        {
+        newMatrix[i][j] = inputOrigin[i];
+        }
+      else
+        {
+        newMatrix[i][j] = spaceDirections[i][j];
+        }
+      }
+    }
+
+  vnl_matrix_fixed<double, 4, 1> voxelShift;
+  voxelShift[0][0] = -1.0 * ( double )( imagePadding[0] );
+  voxelShift[1][0] = -1.0 * ( double )( imagePadding[1] );
+  voxelShift[2][0] = -1.0 * ( double )( imagePadding[2] );
+  voxelShift[3][0] = 1.0;
+
+  vnl_matrix_fixed<double, 3, 1> newOriginMatrix = newMatrix * voxelShift;
+
+  NrrdImageType::PointType newOrigin;
+  for( unsigned int i = 0; i < 3; i++ )
+    {
+    newOrigin[i] = newOriginMatrix[i][0];
+    }
+
+  std::cout << "Input DWI Image Origin: ( " << inputOrigin[0] << ", " << inputOrigin[1] << ", " << inputOrigin[2]
+            << " )" << std::endl;
+  std::cout << "Input DWI Image Size: " << inputSize[0] << " " << inputSize[1] << " " << inputSize[2] << std::endl;
+  std::cout << " " << std::endl;
+  std::cout << "Output DWI Image Origin: ( " << newOrigin[0] << ", " << newOrigin[1] << ", " << newOrigin[2] << " )"
+            << std::endl;
+  std::cout << "Output DWI Image Size: " << newSize[0] << " " << newSize[1] << " " << newSize[2] << std::endl;
+
+  NrrdImageType::Pointer paddedImage = NrrdImageType::New();
+  paddedImage->CopyInformation(resampleImage);
+  paddedImage->SetVectorLength( resampleImage->GetVectorLength() );
+  paddedImage->SetMetaDataDictionary( resampleImage->GetMetaDataDictionary() );
+  paddedImage->SetRegions( newSize );
+  paddedImage->SetOrigin( newOrigin );
+  paddedImage->Allocate();
+
+  typedef itk::ImageRegionIterator<NrrdImageType> IteratorType;
+  IteratorType InIt( resampleImage, resampleImage->GetRequestedRegion() );
+  for( InIt.GoToBegin(); !InIt.IsAtEnd(); ++InIt )
+    {
+    NrrdImageType::IndexType InIndex = InIt.GetIndex();
+    NrrdImageType::IndexType OutIndex;
+    OutIndex[0] = InIndex[0] + imagePadding[0];
+    OutIndex[1] = InIndex[1] + imagePadding[1];
+    OutIndex[2] = InIndex[2] + imagePadding[2];
+
+    NrrdImageType::PixelType InImagePixel = resampleImage->GetPixel( InIndex );
+    paddedImage->SetPixel( OutIndex, InImagePixel );
+    paddedImage->Update();
+    }
+
   // Write out resampled in place DWI
   typedef itk::ImageFileWriter<NrrdImageType> WriterType;
   WriterType::Pointer nrrdWriter = WriterType::New();
   nrrdWriter->UseCompressionOn();
   nrrdWriter->UseInputMetaDataDictionaryOn();
-  nrrdWriter->SetInput( resampleImage );
+  nrrdWriter->SetInput( paddedImage );
   nrrdWriter->SetFileName( outputVolume );
   try
     {

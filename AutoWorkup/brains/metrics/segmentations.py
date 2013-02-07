@@ -4,7 +4,10 @@ import os.path
 import SimpleITK as sitk
 
 from ..config import _config
-labels = ['caudate', 'putamen', 'hippocampus', 'thalamus', 'accumben', 'globus']
+from ..common import check_file
+from .partials import calcutateBinaryVolume
+
+labels = ['caudate', 'putamen', 'hippocampus', 'thalamus', 'accumben', 'globus', 'icv']
 
 def constructLabels(labels):
     numbers = range(1,((len(labels)*2) + 1))
@@ -14,6 +17,7 @@ def constructLabels(labels):
         full_labels.append('_'.join(['left', label]))
         full_labels.append('_'.join(['right', label]))
     return full_labels, numbers
+
 
 def _moduleCreateLabels(labels):
     full_labels, numbers = constructLabels(labels)
@@ -37,7 +41,8 @@ def formatLabel(label):
 
 
 def calculateLabelVolume(dirname, label):
-    labelFile = os.path.join(dirname, _config.get('Results', 'segmentations'), label + '_seg.nii.gz')
+    labelFile = os.path.join(dirname, _config.get('Results', 'segmentations'),
+                             label + '_seg_seg.nii.gz')
     assert os.path.exists(labelFile), "File not found: %s" % labelFile
     image = sitk.ReadImage(labelFile)
     nda = sitk.GetArrayFromImage(image)
@@ -47,6 +52,12 @@ def calculateLabelVolume(dirname, label):
     print size
     return maskSum * size[0] * size[1] * size[2]
 
+
+def calculateICV(dirname):
+    filename = os.path.join(dirname, _config.get('Results', 'partials'),
+                             'fixed_brainlabels_seg.nii.gz')
+    filename = check_file(filename)
+    calculateBinaryVolume(filename)
 
 def getVolume(args=[], kwds={}):
     dirname = labels = project = subject = session = experimentDir = None
@@ -76,14 +87,6 @@ def getVolume(args=[], kwds={}):
             dirname = os.path.join(experimentDir, project, subject, session)
         except Exception, err:
             raise err
-    ### DEBUGGING ###
-    #print labels
-    #print dirname
-    #print project
-    #print subject
-    #print session
-    ### END DEBUG ###
-    # labels = map(formatLabel, labels) # convert shorthand to human-readable
     volume = 0.0
     for label in labels:
         volume += calculateLabelVolume(dirname, label)

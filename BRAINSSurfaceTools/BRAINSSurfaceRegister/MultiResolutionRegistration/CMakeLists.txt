@@ -1,4 +1,4 @@
-StandardBRAINSBuildMacro(NAME MultiResolutionRegistration TARGET_LIBRARIES ${ITK_LIBRARIES})
+StandardBRAINSBuildMacro(NAME MultiResolutionRegistration TARGET_LIBRARIES BRAINSCommonLib )
 
 if (BUILD_TESTING)
 

@@ -94,7 +94,14 @@ QuadEdgeMeshVectorDataVTKPolyDataWriter<TMesh>
         CellType* cellPointer = it.Value();
         if( cellPointer->GetType() != 1 )
           {
-          outputFile << doubleToString(c_it.Value() );
+          for( unsigned _i = 0; _i < c_it.Value().Size(); ++_i )
+            {
+            outputFile << doubleToString(c_it.Value()[_i]);
+            if( _i < 2 )
+              {
+              outputFile << " ";
+              }
+            }
           if( k++ % 3 == 0 )
             {
             outputFile << std::endl;

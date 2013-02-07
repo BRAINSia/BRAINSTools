@@ -273,7 +273,7 @@ int main( int argc, char * *argv )
 
       csvfile << ", " << doubleToString(sulcalArea->GetValue(i) );
       csvfile << ", " << doubleToString(sulcalThickness->GetValue(i) );
-      csvfile << ", " << doubleToString(sulcalCurvature->GetValue(i) << std::endl);
+      csvfile << ", " << doubleToString(sulcalCurvature->GetValue(i) ) << std::endl;
       }
 
     csvfile.close();

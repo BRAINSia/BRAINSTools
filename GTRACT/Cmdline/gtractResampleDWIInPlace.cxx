@@ -210,7 +210,7 @@ int main(int argc, char *argv[])
     NrrdValue = " ";
     for( unsigned dir = 0; dir < 3; ++dir )
       {
-      if( i > 0 )
+      if( dir > 0 )
         {
         NrrdValue += " ";
         }

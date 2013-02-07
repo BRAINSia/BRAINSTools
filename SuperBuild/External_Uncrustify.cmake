@@ -63,7 +63,7 @@ if(NOT ( DEFINED "${extProjName}_EXE" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
     GIT_TAG ${${proj}_GIT_TAG}
     SOURCE_EXE ${proj}
     BINARY_EXE ${proj}-build
-    LOG_UPDATE 1
+    ${cmakeversion_external_update} "${cmakeversion_external_update_value}"
     CONFIGURE_COMMAND <SOURCE_EXE>/configure --prefix=${CMAKE_BINARY_EXE}/Utils
     DEPENDS
       ${${proj}_DEPENDENCIES}

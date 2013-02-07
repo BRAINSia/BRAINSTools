@@ -61,7 +61,7 @@ if(NOT DEFINED ${extProjName}_EXE AND NOT ${USE_SYSTEM_${extProjName}})
     CVS_MODULE KWStyle
     SOURCE_DIR ${proj}
     BINARY_DIR ${proj}-build
-    LOG_UPDATE 1
+    ${cmakeversion_external_update} "${cmakeversion_external_update_value}"
     CMAKE_GENERATOR ${gen}
     CMAKE_ARGS
       -Wno-dev

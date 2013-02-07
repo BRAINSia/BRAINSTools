@@ -7,8 +7,8 @@
 #include "itkImageRegionIterator.h"
 #include "itkImageFileWriter.h"
 #include "vcl_algorithm.h"
-
 #include "BinaryMaskEditorBasedOnLandmarksCLP.h"
+#include "DoubleToString.h"
 
 class ThreeLandmarksForPlane
 {
@@ -23,6 +23,7 @@ public:
 
   void SetNormal()
   {
+    DoubleToString doubleConvert;
     // Determine AB and AC vector components
     VectorType AB;
 
@@ -30,9 +31,9 @@ public:
     AB[1] = B[1] - A[1];
     AB[2] = B[2] - A[2];
     std::cout << "AB::: ["
-              << AB[0] << ", "
-              << AB[1] << ", "
-              << AB[2] << " ]"
+              << doubleConvert(AB[0]) << ", "
+              << doubleConvert(AB[1]) << ", "
+              << doubleConvert(AB[2]) << " ]"
               << std::endl;
 
     VectorType AC;
@@ -40,9 +41,9 @@ public:
     AC[1] = C[1] - A[1];
     AC[2] = C[2] - A[2];
     std::cout << "AC::: ["
-              << AC[0] << ", "
-              << AC[1] << ", "
-              << AC[2] << " ]"
+              << doubleConvert(AC[0]) << ", "
+              << doubleConvert(AC[1]) << ", "
+              << doubleConvert(AC[2]) << " ]"
               << std::endl;
 
     // Find cross product components
@@ -56,9 +57,9 @@ public:
                                  + normal[2] * normal[2] );
 
     std::cout << "Normal::: Before Norm["
-              << normal[0] << ", "
-              << normal[1] << ", "
-              << normal[2] << " ]"
+              << doubleConvert(normal[0]) << ", "
+              << doubleConvert(normal[1]) << ", "
+              << doubleConvert(normal[2]) << " ]"
               << std::endl;
     normal[0] = normal[0] / magnitude;
     normal[1] = normal[1] / magnitude;
@@ -71,9 +72,9 @@ public:
       normal[2] = -normal[2];
       }
     std::cout << "Normal:::  After Norm["
-              << normal[0] << ", "
-              << normal[1] << ", "
-              << normal[2] << " ]"
+              << doubleConvert(normal[0]) << ", "
+              << doubleConvert(normal[1]) << ", "
+              << doubleConvert(normal[2]) << " ]"
               << std::endl;
   }
 

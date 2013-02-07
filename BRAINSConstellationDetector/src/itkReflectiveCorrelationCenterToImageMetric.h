@@ -31,6 +31,7 @@
 #include "landmarksConstellationCommon.h"
 #include "GenericTransformImage.h"
 #include "itkStatisticsImageFilter.h"
+#include "DoubleToString.h"
 
 // Optimize the A,B,C vector
 class Rigid3DCenterReflectorFunctor : public vnl_cost_function
@@ -89,11 +90,12 @@ public:
     // DEBUGGING INFORMATION
     if( LMC::globalverboseFlag == true )
       {
+      DoubleToString doubleToString;
       std::cout << "quick search 15 deg "
-                << " HA= " << this->m_params[0] * 180.0 / vnl_math::pi
-                << " BA= " << this->m_params[1] * 180.0 / vnl_math::pi
-                << " XO= " << this->m_params[2]
-                << " cc="  <<  this->f(this->m_params)
+                << " HA= " << doubleToString(this->m_params[0] * 180.0 / vnl_math::pi)
+                << " BA= " << doubleToString(this->m_params[1] * 180.0 / vnl_math::pi)
+                << " XO= " << doubleToString(this->m_params[2])
+                << " cc="  <<  doubleToString(this->f(this->m_params) )
                 << " iterations=" << this->GetIterations()
                 << std::endl;
       }
@@ -415,10 +417,14 @@ public:
 */
   void Update(void)
   {
+    DoubleToString doubleToString;
+
     this->m_Optimizer.minimize(this->m_params);
     m_cc = this->f(this->m_params);
-    std::cout << this->m_params[0] * 180.0 / vnl_math::pi << " " << this->m_params[1] * 180.0 / vnl_math::pi << " "
-              << this->m_params[2] << " cc= " << m_cc << " iters= " << this->GetIterations()
+    std::cout << doubleToString(this->m_params[0] * 180.0 / vnl_math::pi) << " "
+              << doubleToString(this->m_params[1] * 180.0 / vnl_math::pi) << " "
+              << this->m_params[2] << " cc= "
+              << doubleToString(m_cc) << " iters= " << this->GetIterations()
               << std::endl;
   }
 

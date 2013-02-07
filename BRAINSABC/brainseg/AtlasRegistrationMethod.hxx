@@ -134,15 +134,14 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
       {
       try
         {
-        muLogMacro(
-          << "Reading transform from file: " << this->m_IntraSubjectTransformFileNames[i] << "." << std::endl);
+        muLogMacro(<< "Reading transform from file: "
+                   << this->m_IntraSubjectTransformFileNames[i] << "." << std::endl);
         m_IntraSubjectTransforms[i] = itk::ReadTransformFromDisk(this->m_IntraSubjectTransformFileNames[i]);
         }
       catch( ... )
         {
-        muLogMacro(
-          << "Failed to read transform file caused exception." << this->m_IntraSubjectTransformFileNames[i]
-          <<  std::endl );
+        muLogMacro(<< "Failed to read transform file caused exception." << this->m_IntraSubjectTransformFileNames[i]
+                   <<  std::endl );
         itkExceptionMacro(<< "Failed to read transform file " <<  this->m_IntraSubjectTransformFileNames[i]);
         }
       }
@@ -349,8 +348,8 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
     muLogMacro( << "ERROR:  atlas and template image list sizes do not match. " <<   std::endl );
     muLogMacro( << "m_AtlasOriginalImageList.size() = " << m_AtlasOriginalImageList.size() <<   std::endl );
     muLogMacro( << "m_IntraSubjectTransforms.size() = " << m_IntraSubjectTransforms.size() <<   std::endl );
-    muLogMacro(
-      << "m_IntraSubjectOriginalImageList.size() = " << m_IntraSubjectOriginalImageList.size() <<   std::endl );
+    muLogMacro(<< "m_IntraSubjectOriginalImageList.size() = "
+               << m_IntraSubjectOriginalImageList.size() <<   std::endl );
     itkExceptionMacro(<< "ERROR:  atlas and template image list sizes do not match. "
                       << "m_AtlasOriginalImageList.size() = " << m_AtlasOriginalImageList.size() <<   std::endl
                       << "m_IntraSubjectTransforms.size() = " << m_IntraSubjectTransforms.size() <<   std::endl
@@ -366,16 +365,15 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
     {
     try
       {
-      muLogMacro(
-        << "Reading cached Atlas to subject transform: " << this->m_AtlasToSubjectTransformFileName << "."
-        << std::endl);
+      muLogMacro(<< "Reading cached Atlas to subject transform: "
+                 << this->m_AtlasToSubjectTransformFileName << "." << std::endl);
       m_AtlasToSubjectTransform = itk::ReadTransformFromDisk(this->m_AtlasToSubjectTransformFileName);
       // Note:  No need to write this transform to disk
       }
     catch( ... )
       {
-      muLogMacro(
-        << "Failed to read transform file caused exception." << this->m_AtlasToSubjectTransformFileName <<  std::endl );
+      muLogMacro(<< "Failed to read transform file caused exception."
+                 << this->m_AtlasToSubjectTransformFileName <<  std::endl );
       itkExceptionMacro(<< "Failed to read transform file " <<  this->m_AtlasToSubjectTransformFileName);
       }
     return;
@@ -460,7 +458,8 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
             writer->UseCompressionOn();
 
             std::ostringstream oss;
-            oss << this->m_OutputDebugDir << "Atlas_MovingMask_" << atlasReferenceImageIndex <<  ".nii.gz" << std::ends;
+            oss << this->m_OutputDebugDir << "Atlas_MovingMask_"
+                << atlasReferenceImageIndex <<  ".nii.gz" << std::ends;
             std::string fn = oss.str();
 
             writer->SetInput( movingMaskImage );
@@ -487,8 +486,8 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
             writer->UseCompressionOn();
 
             std::ostringstream oss;
-            oss << this->m_OutputDebugDir << "SubjectForAtlas_FixedMask_" << atlasReferenceImageIndex <<  ".nii.gz"
-                << std::ends;
+            oss << this->m_OutputDebugDir << "SubjectForAtlas_FixedMask_"
+                << atlasReferenceImageIndex <<  ".nii.gz";
             std::string fn = oss.str();
 
             writer->SetInput( fixedMaskImage );
@@ -524,9 +523,8 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
               }
             else if( atlasToSubjectInitialTransformName != "AffineTransform" )
               {
-              itkExceptionMacro(
-                <<
-                "ERROR: Invalid atlasToSubjectInitialTransformName type for m_AtlasLinearTransformChoice of type Affine" );
+              itkExceptionMacro( << "ERROR: Invalid atlasToSubjectInitialTransformName"
+                                 << " type for m_AtlasLinearTransformChoice of type Affine" );
               }
             minimumStepSize.push_back(0.0025);
             transformType.push_back("Affine");
@@ -561,9 +559,8 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
               }
             else if( atlasToSubjectInitialTransformName != "SyN" )
               {
-              itkExceptionMacro(
-                <<
-                "ERROR: Invalid atlasToSubjectInitialTransformName type for m_AtlasLinearTransformChoice of type SyN" );
+              itkExceptionMacro( << "ERROR: Invalid atlasToSubjectInitialTransformName"
+                                 << " type for m_AtlasLinearTransformChoice of type SyN" );
               }
             minimumStepSize.push_back(0.0025);
             transformType.push_back("SyN");
@@ -572,9 +569,9 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
             }
           else
             {
-            itkExceptionMacro(
-              << "ERROR: Invalid atlasToSubjectInitialTransformName type for m_AtlasLinearTransformChoice of type "
-              << m_AtlasLinearTransformChoice);
+            itkExceptionMacro(<< "ERROR: Invalid atlasToSubjectInitialTransformName"
+                              << " type for m_AtlasLinearTransformChoice of type "
+                              << m_AtlasLinearTransformChoice);
             }
           }
 
@@ -582,10 +579,10 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
           {
           muLogMacro( << "PRE_ASSIGNMENT" <<  atlasReferenceImageIndex << "  " );
           // << transformType[0] << " first of " << transformType.size() << std::endl );
-          muLogMacro(
-            << __FILE__ << " " << __LINE__ << " " << m_AtlasToSubjectTransform->GetFixedParameters() <<   std::endl );
-          muLogMacro(
-            << __FILE__ << " " << __LINE__ << " " << m_AtlasToSubjectTransform->GetParameters() <<   std::endl );
+          muLogMacro(<< __FILE__ << " " << __LINE__ << " "
+                     << m_AtlasToSubjectTransform->GetFixedParameters() <<   std::endl );
+          muLogMacro(<< __FILE__ << " " << __LINE__ << " "
+                     << m_AtlasToSubjectTransform->GetParameters() <<   std::endl );
           }
         if( this->m_DebugLevel > 9 )
           {
@@ -604,10 +601,10 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
           {
           muLogMacro( << "POST_ASSIGNMENT" <<  atlasReferenceImageIndex << "  " );
           // << transformType[0] << " first of " << transformType.size() << std::endl );
-          muLogMacro(
-            << __FILE__ << " " << __LINE__ << " " << m_AtlasToSubjectTransform->GetFixedParameters() <<   std::endl );
-          muLogMacro(
-            << __FILE__ << " " << __LINE__ << " " << m_AtlasToSubjectTransform->GetParameters() <<   std::endl );
+          muLogMacro(<< __FILE__ << " " << __LINE__
+                     << " " << m_AtlasToSubjectTransform->GetFixedParameters() <<   std::endl );
+          muLogMacro(<< __FILE__ << " " << __LINE__
+                     << " " << m_AtlasToSubjectTransform->GetParameters() <<   std::endl );
           }
         }
       } // End generating the best initial transform for atlas T1 to subject T1

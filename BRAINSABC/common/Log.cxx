@@ -57,8 +57,7 @@ Log
 
   if( m_Output.fail() )
     {
-    muExceptionMacro(
-      << "[Log::SetOutputFileName] Failed to open " << s);
+    muExceptionMacro(<< "[Log::SetOutputFileName] Failed to open " << s);
     }
 }
 

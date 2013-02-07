@@ -155,20 +155,23 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
 
   if( m_WarpedPriors.size() != m_PriorWeights.size() )
     {
-    itkExceptionMacro(<< "The PriorWeights vector size must match the number of priors listed." << std::endl );
+    itkExceptionMacro(<< "The PriorWeights vector size must match the"
+                      << " number of priors listed." << std::endl );
     }
   if( m_WarpedPriors.size() != m_PriorLabelCodeVector.size() )
     {
-    itkExceptionMacro(<< "The PriorLabelCodeVector vector size must match the number of priors listed." << std::endl );
+    itkExceptionMacro(<< "The PriorLabelCodeVector vector size must match the"
+                      << " number of priors listed." << std::endl );
     }
   if( m_WarpedPriors.size() != m_PriorUseForBiasVector.size() )
     {
-    itkExceptionMacro(<< "The PriorUseForBiasVector vector size must match the number of priors listed." << std::endl );
+    itkExceptionMacro(<< "The PriorUseForBiasVector vector size must match the"
+                      << " number of priors listed." << std::endl );
     }
   if( m_WarpedPriors.size() != m_PriorIsForegroundPriorVector.size() )
     {
-    itkExceptionMacro(
-      << "The PriorIsForegroundPriorVector vector size must match the number of priors listed." << std::endl );
+    itkExceptionMacro(<< "The PriorIsForegroundPriorVector vector size"
+                      << " must match the number of priors listed." << std::endl );
     }
 
   if( m_MaximumIterations == 0 )
@@ -192,8 +195,8 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
       const InputImageSizeType isize = m_InputImages[i]->GetLargestPossibleRegion().GetSize();
       if( size != isize )
         {
-        itkExceptionMacro(
-          << "Image data [" << i << "] 3D size mismatch " << size << " != " << isize << "." << std::endl );
+        itkExceptionMacro(<< "Image data [" << i << "] 3D size mismatch "
+                          << size << " != " << isize << "." << std::endl );
         }
       }
     for( unsigned i = 0; i < m_WarpedPriors.size(); i++ )
@@ -205,9 +208,9 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
       const ProbabilityImageSizeType psize = m_WarpedPriors[i]->GetLargestPossibleRegion().GetSize();
       if( size != psize )
         {
-        itkExceptionMacro(
-          << "Warped prior [" << i << "] and atlas data 3D size mismatch" << size << " != " << psize << "."
-          << std::endl );
+        itkExceptionMacro(<< "Warped prior [" << i << "] and atlas data 3D size mismatch"
+                          << size << " != " << psize << "."
+                          << std::endl );
         }
       }
     }
@@ -223,8 +226,8 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
       const InputImageSizeType asize = m_OriginalAtlasImages[i]->GetLargestPossibleRegion().GetSize();
       if( atlasSize != asize )
         {
-        itkExceptionMacro(
-          << "Image data [" << i << "] 3D size mismatch " << atlasSize << " != " << asize << "." << std::endl );
+        itkExceptionMacro(<< "Image data [" << i << "] 3D size mismatch "
+                          << atlasSize << " != " << asize << "." << std::endl );
         }
       }
     for( unsigned i = 0; i < m_OriginalSpacePriors.size(); i++ )
@@ -236,9 +239,9 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
       const ProbabilityImageSizeType psize = m_OriginalSpacePriors[i]->GetLargestPossibleRegion().GetSize();
       if( atlasSize != psize )
         {
-        itkExceptionMacro(
-          << "Normalized prior [" << i << "] and atlas 3D size mismatch" << atlasSize << " != " << psize << "."
-          << std::endl );
+        itkExceptionMacro(<< "Normalized prior [" << i << "] and atlas 3D size mismatch"
+                          << atlasSize << " != " << psize << "."
+                          << std::endl );
         }
       }
     }
@@ -312,7 +315,7 @@ void EMSegmentationFilter<TInputImage, TProbabilityImage>
                                                                     // debugging
                                                                     // purposes
                                                                     // only;
-    std::stringstream write_posteriors_level_stream("");
+    std::stringstream write_posteriors_level_stream;
     write_posteriors_level_stream << write_posteriors_level;
     for( unsigned int iprob = 0; iprob < numPosteriors; iprob++ )
       {
@@ -578,15 +581,14 @@ static double ComputeCovarianceDeterminant( const vnl_matrix<FloatingPrecision> 
 
   if( detcov <= 0.0 )
     {
-    itkGenericExceptionMacro(
-      << "Determinant of covariance "
-      << " is <= 0.0 (" << detcov << "), covariance matrix:" << std::endl
-      << currCovariance
-      <<
-      "\n\n\n This is indicative of providing two images that are related only through a linear depenancy\n"
-      <<
-      "at least two images are so close in their ratio of values that a degenerate covariance matrix\n"
-      << "would result, thus making an unstable calculation\n\n\n");
+    itkGenericExceptionMacro(<< "Determinant of covariance "
+                             << " is <= 0.0 (" << detcov << "), covariance matrix:"
+                             << std::endl << currCovariance
+                             << "\n\n\n This is indicative of providing two images"
+                             << " that are related only through a linear depenancy\n"
+                             << "at least two images are so close in their ratio of"
+                             << " values that a degenerate covariance matrix\n"
+                             << "would result, thus making an unstable calculation\n\n\n");
     }
   return detcov;
 }
@@ -670,7 +672,8 @@ ComputeOnePosterior(
             const typename TProbabilityImage::PixelType currentPosterior =
               static_cast<typename TProbabilityImage::PixelType>( (priorScale * priorValue * likelihood) );
             CHECK_NAN(currentPosterior, __FILE__, __LINE__, "\n  currIndex: " << currIndex
-                                                                              << "\n  priorScale: " << priorScale << "\n  priorValue: " << priorValue << "\n  likelihood: " << likelihood
+                                                                              << "\n  priorScale: " << priorScale << "\n  priorValue: " << priorValue
+                                                                              << "\n  likelihood: " << likelihood
                                                                               << "\n  mahalo: " << mahalo
                                                                               << "\n  invcov: " << invcov
                                                                               << "\n  X:  " << X
@@ -1031,9 +1034,9 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
         if( m_TissueTypeThresholdMapsRange[priorType].find(imageType) ==
             m_TissueTypeThresholdMapsRange[priorType].end() )
           {
-          muLogMacro(
-            << "NOT FOUND:" << "[" << priorType << "," << imageType << "]: [" << 0.00 << "," << 1.00 << "]"
-            <<  std::endl);
+          muLogMacro(<< "NOT FOUND:" << "[" << priorType << "," << imageType
+                     << "]: [" << 0.00 << "," << 1.00 << "]"
+                     <<  std::endl);
           QuantileLowerThreshold.SetElement(modeIndex, 0.00);
           QuantileUpperThreshold.SetElement(modeIndex, 1.00);
           }
@@ -1423,9 +1426,9 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
         // --AtlasTransformType [Rigid|Affine|BSpline|SyN], defaults to SyN.
         if( m_AtlasTransformType == "Rigid" )
           {
-          muLogMacro(
-            << "Registering (Rigid) " << preprocessMovingString << "atlas(" << vIndex << ") to template(" << vIndex
-            << ") image." << std::endl);
+          muLogMacro(<< "Registering (Rigid) " << preprocessMovingString << "atlas("
+                     << vIndex << ") to template(" << vIndex
+                     << ") image." << std::endl);
           std::vector<double> minimumStepSize(1);
           minimumStepSize[0] = 0.005; // NOTE: 0.005 for between subject
                                       // registration is probably about the
@@ -1449,9 +1452,9 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
           }
         else if( m_AtlasTransformType == "BSpline" )
           {
-          muLogMacro(
-            << "Registering (BSpline) " << preprocessMovingString << "atlas(" << vIndex << ") to template(" << vIndex
-            << ") image." << std::endl);
+          muLogMacro(<< "Registering (BSpline) " << preprocessMovingString << "atlas("
+                     << vIndex << ") to template(" << vIndex
+                     << ") image." << std::endl);
           std::vector<double> minimumStepSize(1);
           minimumStepSize[0] = 0.0025;
           atlasToSubjectRegistrationHelper->SetMinimumStepLength(minimumStepSize);

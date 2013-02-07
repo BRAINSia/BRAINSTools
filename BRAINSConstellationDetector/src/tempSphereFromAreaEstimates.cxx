@@ -36,6 +36,7 @@
 #include <itkMinimumMaximumImageCalculator.h>
 #include <itkHistogram.h>
 #include <vnl/vnl_math.h>
+#include "DoubleToString.h"
 
 double FindCenterOfBrainBasedOnTopOfHead(SImageType::Pointer & foreground,  SImageType::Pointer & volOrig,
                                          bool maximize, unsigned int axis,

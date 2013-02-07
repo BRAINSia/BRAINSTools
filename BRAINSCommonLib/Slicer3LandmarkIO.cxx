@@ -5,11 +5,12 @@
  */
 
 #include "Slicer3LandmarkIO.h"
-
+#include "DoubleToString.h"
 void
 WriteITKtoSlicer3Lmk( const std::string & landmarksFilename,
                       const LandmarksMapType & landmarks )
 {
+  DoubleToString    doubleConvert;
   const std::string fullPathLandmarksFileName = itksys::SystemTools::CollapseFullPath( landmarksFilename.c_str() );
 
   std::stringstream lmkPointStream;
@@ -24,9 +25,9 @@ WriteITKtoSlicer3Lmk( const std::string & landmarksFilename,
       // but ITK landmarks are in LPS, so we need to negate the first two
       // component of the landmark points.
       lmkPointStream <<     it->first       << ","
-                     << -( it->second[0] ) << ","
-                     << -( it->second[1] ) << ","
-                     << +( it->second[2] )
+                     << doubleConvert(-( it->second[0] ) ) << ","
+                     << doubleConvert(-( it->second[1] ) ) << ","
+                     << doubleConvert(+( it->second[2] ) )
                      << ",1,1\n"; // Note the last two columns are
                                   // ,visible,editable
       ++numNamedLandmarks;

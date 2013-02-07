@@ -536,7 +536,5 @@ BRAINSConstellationDetector2<TInputImage, TOutputImage>
 ::PrintSelf(std::ostream & os, Indent indent) const
 {
   Superclass::PrintSelf(os, indent);
-
-  // os << "Mode: " << this->m_Mode << std::endl;
 }
 }

@@ -218,9 +218,8 @@ void ANNTrain( // NetConfiguration & prob,
   if( ( InputVectorSize == 0 ) || ( NumberTrainingVectorsFromFile == 0 )
       || ( OutputVectorSize == 0 ) )
     {
-    std::cout
-      << "Input/output vector size and vector count must be non-zero."
-      << std::endl;
+    std::cout << "Input/output vector size and vector count must be non-zero."
+              << std::endl;
     return;
     }
   // set up shuffled ordering to read out of training vector file

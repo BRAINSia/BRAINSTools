@@ -21,11 +21,12 @@ set(BRAINSCommonLib_SRCS
   itkOrthogonalize3DRotationMatrix.cxx
   BRAINSThreadControl.cxx
   ExtractSingleLargestRegion.cxx
+  DoubleToString.cxx
 )
 
 ## Always build BRAINSCommonLib as static
 add_library(BRAINSCommonLib STATIC ${BRAINSCommonLib_SRCS})
-target_link_libraries(BRAINSCommonLib ${ITK_LIBRARIES} ${ANTS_LIBS})
+target_link_libraries(BRAINSCommonLib ${ITK_LIBRARIES} ${ANTS_LIBS} ${double-conversion_LIBRARIES})
 
 install(TARGETS BRAINSCommonLib
   RUNTIME DESTINATION ${BRAINSTools_CLI_INSTALL_RUNTIME_DESTINATION} COMPONENT RuntimeLibraries

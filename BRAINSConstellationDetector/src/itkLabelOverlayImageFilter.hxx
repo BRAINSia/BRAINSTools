@@ -117,8 +117,7 @@ LabelOverlayImageFilter<TInputImage, TLabelImage, TOutputImage>
      << static_cast<typename NumericTraits<double>::PrintType>( m_Opacity )
      << std::endl
      << indent << "BackgroundValue: "
-     << static_cast<
-    typename NumericTraits<LabelPixelType>::PrintType>( m_BackgroundValue )
+     << static_cast<typename NumericTraits<LabelPixelType>::PrintType>( m_BackgroundValue )
      << std::endl;
 }
 } // end namespace itk

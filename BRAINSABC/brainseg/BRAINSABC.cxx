@@ -561,12 +561,10 @@ int main(int argc, char * *argv)
   muLogMacro(<< "Program compiled on: " << __DATE__ << std::endl );
   muLogMacro(<< std::endl );
 
-  muLogMacro(
-    << "Hans J. Johnson - hans-johnson@uiowa.edu, has made significant"
-    << " edits to this front end of the BRAINSABC system.\n");
-  muLogMacro(
-    << "Original application was written by Marcel Prastawa - "
-    << "prastawa@sci.utah.edu, and is maintained as a separate program.\n");
+  muLogMacro(<< "Hans J. Johnson - hans-johnson@uiowa.edu, has made significant"
+             << " edits to this front end of the BRAINSABC system.\n");
+  muLogMacro(<< "Original application was written by Marcel Prastawa - "
+             << "prastawa@sci.utah.edu, and is maintained as a separate program.\n");
   muLogMacro(<< "This software is provided for research purposes only\n");
   muLogMacro(<< std::endl );
 
@@ -582,10 +580,9 @@ int main(int argc, char * *argv)
   muLogMacro(<< "Output Directory: " << outputDir << std::endl );
   muLogMacro(<< "Output Format: " << outputFormat << std::endl );
   muLogMacro(<< "Input images: \n");
-  muLogMacro(
-    << "Non-linear filtering, method: " << filterMethod << ", "
-    << filterIteration
-    << " iterations, dt = " << filterTimeStep << std::endl );
+  muLogMacro(<< "Non-linear filtering, method: " << filterMethod << ", "
+             << filterIteration
+             << " iterations, dt = " << filterTimeStep << std::endl );
 
   const AtlasDefinition::TissueTypeVector & PriorNames
     = atlasDefinitionParser.TissueTypes();
@@ -688,13 +685,11 @@ int main(int argc, char * *argv)
     AtlasDefTable.Print(oss);
     muLogMacro( << oss.str() );
     }
-  muLogMacro(
-    << "Max bias polynomial degree: " << maxBiasDegree << std::endl );
+  muLogMacro(<< "Max bias polynomial degree: " << maxBiasDegree << std::endl );
   muLogMacro(<< "Atlas warping: " << !atlasWarpingOff << std::endl );
-  muLogMacro(
-    << "Atlas warp spline grid size: " << gridSize[0] << " X "
-    << gridSize[1] << " X "
-    << gridSize[2] << std::endl );
+  muLogMacro(<< "Atlas warp spline grid size: " << gridSize[0] << " X "
+             << gridSize[1] << " X "
+             << gridSize[2] << std::endl );
   muLogMacro(<< std::endl );
   muLogMacro(<< "=== Start ===\n");
   muLogMacro(<< "Registering images using affine transform...\n");
@@ -742,13 +737,14 @@ int main(int argc, char * *argv)
     if( ti != tm.end() )
       {
       std::string temp = ti->second;
-      std::cerr << "STATUS:  Atlas image of type: " << inputVolumeTypes[q] << " added with filename: " << temp
-                << std::endl;
+      std::cerr << "STATUS:  Atlas image of type: " << inputVolumeTypes[q]
+                << " added with filename: " << temp << std::endl;
       templateVolumes[q] = temp;
       }
     else
       {
-      std::cerr << "ERROR:  Atlas image of type: " << inputVolumeTypes[q] << " not found in xml file." << std::endl;
+      std::cerr << "ERROR:  Atlas image of type: " << inputVolumeTypes[q]
+                << " not found in xml file." << std::endl;
       throw;
       }
     }
@@ -793,8 +789,7 @@ int main(int argc, char * *argv)
           std::vector<std::string> intraSubjectTransformFileNames( inputVolumes.size() );
           for( unsigned int i = 0; i < inputVolumes.size(); i++ )
             {
-            muLogMacro(
-              << "Reading image " << i + 1 << ": " << inputVolumes[i] << "...\n");
+            muLogMacro(<< "Reading image " << i + 1 << ": " << inputVolumes[i] << "...\n");
 
             ReaderPointer imgreader = ReaderType::New();
             imgreader->SetFileName( inputVolumes[i].c_str() );
@@ -920,14 +915,14 @@ int main(int argc, char * *argv)
             //             of atlas images.
             if( ( atlasIndex > 0 ) && ( templateVolumes[atlasIndex] == templateVolumes[atlasIndex - 1] ) )
               { // If they are the same name, then just use same reference
-              muLogMacro(
-                << "Referencing previous image " << atlasIndex + 1 << ": " << templateVolumes[atlasIndex] << "...\n");
+              muLogMacro(<< "Referencing previous image " << atlasIndex + 1
+                         << ": " << templateVolumes[atlasIndex] << "...\n");
               atlasOriginalImageList[atlasIndex] = atlasOriginalImageList[atlasIndex - 1];
               }
             else
               {
-              muLogMacro(
-                << "Reading image " << atlasIndex + 1 << ": " << templateVolumes[atlasIndex] << "...\n");
+              muLogMacro(<< "Reading image " << atlasIndex + 1
+                         << ": " << templateVolumes[atlasIndex] << "...\n");
 
               ReaderPointer imgreader = ReaderType::New();
               imgreader->SetFileName( templateVolumes[atlasIndex].c_str() );
@@ -987,8 +982,8 @@ int main(int argc, char * *argv)
                || ( atlasToSubjectTransformType.compare("SyN") == 0 ) )
             )
           {
-          muLogMacro(
-            "ERROR:  Invalid atlasToSubjectTransformType specified" << atlasToSubjectTransformType << std::endl);
+          muLogMacro("ERROR:  Invalid atlasToSubjectTransformType specified"
+                     << atlasToSubjectTransformType << std::endl);
           return EXIT_FAILURE;
           }
 
@@ -999,8 +994,8 @@ int main(int argc, char * *argv)
                || ( subjectIntermodeTransformType.compare("SyN") == 0 ) )
             )
           {
-          muLogMacro(
-            "ERROR:  Invalid subjectIntermodeTransformType specified" << subjectIntermodeTransformType << std::endl);
+          muLogMacro("ERROR:  Invalid subjectIntermodeTransformType specified"
+                     << subjectIntermodeTransformType << std::endl);
           return EXIT_FAILURE;
           }
 
@@ -1105,9 +1100,8 @@ int main(int argc, char * *argv)
             }
           catch( itk::ExceptionObject & excp )
             {
-            muLogMacro(
-              "ERROR:  Invalid atlasToSubjectInitialTransform specified" << atlasToSubjectInitialTransform
-                                                                         << std::endl);
+            muLogMacro("ERROR:  Invalid atlasToSubjectInitialTransform specified"
+                       << atlasToSubjectInitialTransform << std::endl);
             return EXIT_FAILURE;
             }
           }
@@ -1203,9 +1197,8 @@ int main(int argc, char * *argv)
         { // NOTE THIS IS REALLY ANNOYING FOR LARGE BSPLINE REGISTRATIONS!
         muLogMacro( << __FILE__ << " " << __LINE__ << " "
                     << atlasToSubjectPreSegmentationTransform->GetFixedParameters() << std::endl );
-        muLogMacro(
-          << __FILE__ << " " << __LINE__ << " " << atlasToSubjectPreSegmentationTransform->GetParameters()
-          << std::endl );
+        muLogMacro( << __FILE__ << " " << __LINE__ << " "
+                    << atlasToSubjectPreSegmentationTransform->GetParameters() << std::endl );
         }
       if( debuglevel > 4 )
         {

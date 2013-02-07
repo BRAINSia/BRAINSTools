@@ -37,6 +37,7 @@ benefits more from readability than speed.
 
 #include "itkPoint.h"
 #include "fcsv_to_hdf5CLP.h"
+#include "DoubleToString.h"
 
 #include "LLSModel.h"
 #include "BRAINSThreadControl.h"
@@ -829,15 +830,16 @@ This information is now completely contained in the byClassLandmarkMatrix object
   // txt version
   std::ofstream fid;
   fid.open("LME_EPCA.txt");
+  DoubleToString doubleToString;
   for( unsigned int i = 0; i < numNewLandmarks; i++ )
     {
     fid << byClassLandmarkMatrix["newLandmarks"][i].first << std::endl;
     for( unsigned int d = 0; d < dim; d++ )
       {
-      fid << s(d, i) << " ";
+      fid << doubleToString(s(d, i) ) << " ";
       }
     fid << std::endl;
-    fid << search_radius(i, 0) << std::endl;
+    fid << doubleToString(search_radius(i, 0) ) << std::endl;
     fid << M[i].rows() << std::endl;
     unsigned int l = 0;
     while( l < dim )
@@ -845,7 +847,7 @@ This information is now completely contained in the byClassLandmarkMatrix object
       vnl_vector<double> temp = M[i].get_column(l);
       for( unsigned int ll = 0; ll < M[i].rows(); ll++ )
         {
-        fid << temp[ll] << " ";
+        fid << doubleToString(temp[ll]) << " ";
         }
       fid << std::endl;
       l++;
@@ -860,7 +862,7 @@ This information is now completely contained in the byClassLandmarkMatrix object
   for( unsigned int i = 0; i < numNewLandmarks; i++ )
     {
     fid << byClassLandmarkMatrix["newLandmarks"][i].first << std::endl;
-    fid << search_radius(i, 0) << std::endl;
+    fid << doubleToString(search_radius(i, 0) ) << std::endl;
     }
   fid.close();
 
@@ -881,7 +883,7 @@ This information is now completely contained in the byClassLandmarkMatrix object
       }
     for( unsigned int d = 0; d < dim; d++ )
       {
-      fid << s(d, i) << " ";
+      fid << doubleToString(s(d, i) ) << " ";
       }
     fid << "];" << std::endl;
 
@@ -900,7 +902,7 @@ This information is now completely contained in the byClassLandmarkMatrix object
       vnl_vector<double> temp = M[i].get_column(l);
       for( unsigned int ll = 0; ll < M[i].rows(); ll++ )
         {
-        fid << temp[ll] << " ";
+        fid << doubleToString(temp[ll]) << " ";
         }
       fid << ";" << std::endl;
       l++;

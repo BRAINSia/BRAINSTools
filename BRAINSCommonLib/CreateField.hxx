@@ -117,8 +117,7 @@ void CreateField<TImage,
       {
       if( fscanf(paramFile, "%d", &uNumber) != 1 )
         {
-        itkExceptionMacro(
-          << "  Could not find subject starting shrink factor. ");
+        itkExceptionMacro(<< "  Could not find subject starting shrink factor. ");
         }
       m_Image2ShrinkFactors[j] = uNumber;
       }
@@ -178,13 +177,12 @@ void CreateField<TImage,
           != itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RIP )
         )
       {
-      std::cout
-        << "Image Directions are not the same or are not in RIP orientation "
-        << std::endl
-        << m_FixedImage->GetDirection()
-        << "=============" << std::endl
-        << m_MovingImage->GetDirection()
-        << std::endl;
+      std::cout << "Image Directions are not the same or are not in RIP orientation "
+                << std::endl
+                << m_FixedImage->GetDirection()
+                << "=============" << std::endl
+                << m_MovingImage->GetDirection()
+                << std::endl;
       }
     m_ImageOne = NULL;
     m_ImageTwo = NULL;

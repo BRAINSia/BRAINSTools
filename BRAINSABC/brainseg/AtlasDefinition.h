@@ -6,7 +6,7 @@
 #include <list>
 #include <map>
 #include <iostream>
-
+#include "DoubleToString.h"
 /** \class AtlasDefiniton */
 class AtlasDefinition
 {
@@ -46,7 +46,8 @@ public:
 
     void Print(void) const
     {
-      std::cout << "RANGE:  [" << m_Low << "," << m_High << "]" << std::endl;
+      DoubleToString ds;
+      std::cout << "RANGE:  [" << ds(m_Low) << "," << ds(m_High) << "]" << std::endl;
     }
 
 private:
@@ -217,6 +218,12 @@ private:
   void XMLChar(const char *buf);
 
 private:
+  /** convert to float or throw exception on failure */
+  double StrToD(const char *str, const char *message) const;
+
+  /** convert to long or throw exception on failure */
+  long   StrToL(const char *str, const char *message) const;
+
   TemplateMap      m_TemplateVolumes;
   std::string      m_TemplateBrainMask;
   std::string      m_TemplateHeadRegion;
@@ -348,9 +355,10 @@ private:
   std::string            m_LastFilename;
   std::string            m_LastType;
   std::list<std::string> m_XMLElementStack;
-  double                 m_LastWeight,
-    m_LastLower,
-    m_LastUpper;
+
+  double m_LastWeight;
+  double m_LastLower;
+  double m_LastUpper;
 
   int           m_LastGaussianClusterCount;
   int           m_LastLabelCode;

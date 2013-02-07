@@ -1,6 +1,7 @@
 #include "EMSParameters.h"
 
 #include "itksys/SystemTools.hxx"
+#include "DoubleToString.h"
 
 EMSParameters
 ::EMSParameters()
@@ -122,6 +123,8 @@ void
 EMSParameters
 ::PrintSelf(std::ostream & os, itk::Indent) const
 {
+  DoubleToString doubleConvert;
+
   os << "Suffix = " << m_Suffix << std::endl;
   os << "Atlas directory = " << m_AtlasDirectory << std::endl;
   os << "Atlas orientation = " << m_AtlasOrientation << std::endl;
@@ -133,7 +136,7 @@ EMSParameters
     os << "  " << m_Images[k] << " --- " << m_ImageOrientations[k] << std::endl;
     }
   os << "Filter iterations = " << m_FilterIterations << std::endl;
-  os << "Filter time step = " << m_FilterTimeStep << std::endl;
+  os << "Filter time step = " << doubleConvert(m_FilterTimeStep) << std::endl;
   os << "Max bias degree = " << m_MaxBiasDegree << std::endl;
   os << "Prior 1 = " << m_Prior1 << std::endl;
   os << "Prior 2 = " << m_Prior2 << std::endl;

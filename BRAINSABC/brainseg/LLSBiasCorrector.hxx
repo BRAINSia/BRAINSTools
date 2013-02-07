@@ -660,14 +660,12 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>
   if( coeffs[0][0] != std::numeric_limits::infinity() )
 #endif
     {
-    itkExceptionMacro(
-      << "\ncoeffs: \n" << coeffs
-      // << "\nlhs_ij: \n" << lhs_ij
-      << "\nbasisT: \n" << basisT
-      // << "\nWij_A: \n" << Wij_A
-      << "\nlhs: \n" << lhs
-      << "\nrhs: \n" << rhs
-      );
+    itkExceptionMacro(<< "\ncoeffs: \n" << coeffs
+                      // << "\nlhs_ij: \n" << lhs_ij
+                      << "\nbasisT: \n" << basisT
+                      // << "\nWij_A: \n" << Wij_A
+                      << "\nlhs: \n" << lhs
+                      << "\nrhs: \n" << rhs);
     }
   // Clear memory for the basis transpose
   basisT.set_size(0, 0);

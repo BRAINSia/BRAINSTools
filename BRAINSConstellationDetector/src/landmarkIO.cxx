@@ -12,6 +12,7 @@
 #include "hdf5.h"
 #include "H5Cpp.h"
 #endif
+#include "DoubleToString.h"
 
 RGBImageType::Pointer ReturnOrientedRGBImage(SImageType::Pointer inputImage)
 {
@@ -425,6 +426,7 @@ WriteMRMLFile(std::string outputMRML,
               const VersorTransformPointer versorTransform)
 {
   const unsigned int LocalImageDimension = 3;
+  DoubleToString     doubleToString;
 
   typedef short                                      PixelType;
   typedef itk::Image<PixelType, LocalImageDimension> ImageType;
@@ -513,7 +515,9 @@ WriteMRMLFile(std::string outputMRML,
     for( it = outputLandmarksInOutputSpaceMap.begin(); it != outputLandmarksInOutputSpaceMap.end(); ++it )
       {
       myfile << "id " << it->first << " labeltext " << it->first << " xyz "
-             << ( it->second )[0] << " " << ( it->second )[1] << " " << ( it->second )[2];
+             << doubleToString( ( it->second )[0]) << " "
+             << doubleToString( ( it->second )[1]) << " "
+             << doubleToString( ( it->second )[2]);
       if( ++index < outputLandmarksInOutputSpaceMap.size() )
         {
         myfile << " orientationwxyz 0 0 0 1 selected 1 visibility 1\n";
@@ -544,7 +548,9 @@ WriteMRMLFile(std::string outputMRML,
     for( it = outputLandmarksInInputSpaceMap.begin(); it != outputLandmarksInInputSpaceMap.end(); ++it )
       {
       myfile << "id " << it->first << " labeltext " << it->first << " xyz "
-             << ( it->second )[0] << " " << ( it->second )[1] << " " << ( it->second )[2];
+             << doubleToString( ( it->second )[0]) << " "
+             << doubleToString( ( it->second )[1]) << " "
+             << doubleToString( ( it->second )[2]);
       if( ++index < outputLandmarksInInputSpaceMap.size() )
         {
         myfile << " orientationwxyz 0 0 0 1 selected 1 visibility 1\n";
@@ -585,15 +591,19 @@ WriteMRMLFile(std::string outputMRML,
       {
       for( unsigned int j = 0; j < LocalImageDimension; ++j )
         {
-        myfile << direction(i, j) << " ";
+        myfile << doubleToString(direction(i, j) ) << " ";
         }
       }
     myfile
       << "\" spacing=\""
-      << spacing[0] << " " << spacing[1] << " " << spacing[2]
+      << doubleToString(spacing[0]) << " "
+      << doubleToString(spacing[1]) << " "
+      << doubleToString(spacing[2])
       << "\" origin=\""
-      << origin[0] << " " << origin[1] << " " << origin[2] <<
-
+      << doubleToString(origin[0]) << " "
+      << doubleToString(origin[1]) << " "
+      << doubleToString(origin[2])
+      <<
       "\" labelMap=\"0\"></Volume>\n<VolumeDisplay\n id=\"vtkMRMLScalarVolumeDisplayNode1\" name=\"vtkMRMLScalarVolumeDisplayNode1\" hideFromEditors=\"true\" selectable=\"true\" selected=\"false\" color=\"0.5 0.5 0.5\" selectedColor=\"1 0 0\" selectedAmbient=\"0.4\" ambient=\"0\" diffuse=\"1\" selectedSpecular=\"0.5\" specular=\"0\" power=\"1\" opacity=\"1\" visibility=\"true\" clipping=\"false\" sliceIntersectionVisibility=\"false\" backfaceCulling=\"true\" scalarVisibility=\"false\" vectorVisibility=\"false\" tensorVisibility=\"false\" autoScalarRange=\"true\" scalarRange=\"0 100\" colorNodeRef=\"vtkMRMLColorTableNodeGrey\"  window=\"204\" level=\"153\" upperThreshold=\"32767\" lowerThreshold=\"-32768\" interpolate=\"1\" autoWindowLevel=\"1\" applyThreshold=\"0\" autoThreshold=\"0\"></VolumeDisplay>\n";
     }
 
@@ -620,14 +630,18 @@ WriteMRMLFile(std::string outputMRML,
       {
       for( unsigned int j = 0; j < LocalImageDimension; ++j )
         {
-        myfile << direction(i, j) << " ";
+        myfile << doubleToString(direction(i, j) ) << " ";
         }
       }
     myfile
       << "\" spacing=\""
-      << spacing[0] << " " << spacing[1] << " " << spacing[2]
+      << doubleToString(spacing[0]) << " "
+      << doubleToString(spacing[1]) << " "
+      << doubleToString(spacing[2])
       << "\" origin=\""
-      << origin[0] << " " << origin[1] << " " << origin[2]
+      << doubleToString(origin[0]) << " "
+      << doubleToString(origin[1]) << " "
+      << doubleToString(origin[2])
       <<
       "\" labelMap=\"0\"></Volume>\n<VolumeDisplay\n id=\"vtkMRMLScalarVolumeDisplayNode2\" name=\"vtkMRMLScalarVolumeDisplayNode2\" hideFromEditors=\"true\" selectable=\"true\" selected=\"false\" color=\"0.5 0.5 0.5\" selectedColor=\"1 0 0\" selectedAmbient=\"0.4\" ambient=\"0\" diffuse=\"1\" selectedSpecular=\"0.5\" specular=\"0\" power=\"1\" opacity=\"1\" visibility=\"true\" clipping=\"false\" sliceIntersectionVisibility=\"false\" backfaceCulling=\"true\" scalarVisibility=\"false\" vectorVisibility=\"false\" tensorVisibility=\"false\" autoScalarRange=\"true\" scalarRange=\"0 100\" colorNodeRef=\"vtkMRMLColorTableNodeGrey\"  window=\"204\" level=\"153\" upperThreshold=\"32767\" lowerThreshold=\"-32768\" interpolate=\"1\" autoWindowLevel=\"1\" applyThreshold=\"0\" autoThreshold=\"0\"></VolumeDisplay>\n";
     }
@@ -651,7 +665,7 @@ WriteMRMLFile(std::string outputMRML,
       {
       for( unsigned int j = 0; j <  LocalImageDimension; ++j )
         {
-        myfile << tm(i, j) << " ";
+        myfile << doubleToString(tm(i, j) ) << " ";
         }
       }
     myfile << "\" ></LinearTransform>  \n";

@@ -27,8 +27,7 @@ int main(int argc, char * *argv)
     }
   catch( itk::ExceptionObject & e )
     {
-    std::cerr << "error reading " << inputVolume << std::endl
-              <<  e << std::endl;
+    std::cerr << "error reading " << inputVolume << std::endl <<  e << std::endl;
     return EXIT_FAILURE;
     }
   catch( ... )
@@ -48,8 +47,7 @@ int main(int argc, char * *argv)
     }
   catch( ... )
     {
-    std::cerr << "Error during processing of "
-              << inputVolume << std::endl;
+    std::cerr << "Error during processing of " << inputVolume << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -59,8 +57,7 @@ int main(int argc, char * *argv)
     }
   catch( itk::ExceptionObject & e )
     {
-    std::cerr << "error writing " << inputVolume << std::endl
-              <<  e << std::endl;
+    std::cerr << "error writing " << inputVolume << std::endl <<  e << std::endl;
     return EXIT_FAILURE;
     }
   catch( ... )

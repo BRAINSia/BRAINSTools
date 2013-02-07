@@ -376,8 +376,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
 
     if( imin != ( numClasses - 1 ) )
       {
-      muLogMacro(
-        << "  Replacing " << this->m_ListOfClassStatistics[imin].m_Means << " with zero\n");
+      muLogMacro(<< "  Replacing " << this->m_ListOfClassStatistics[imin].m_Means << " with zero\n");
       VectorType v = this->m_ListOfClassStatistics[numClasses - 1].m_Means;
       this->m_ListOfClassStatistics[imin].m_Means = v;
       }

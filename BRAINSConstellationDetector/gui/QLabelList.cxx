@@ -5,6 +5,7 @@
  */
 
 #include "QLabelList.h"
+#include "DoubleToString.h"
 
 void QLabelList::createListItemSlot(const QString & label)
 {
@@ -357,6 +358,8 @@ void QLabelList::saveAsLandmarks()
 
 void QLabelList::writeLandmarks()
 {
+  DoubleToString doubleConvert;
+
   assert(m_outputLandmarks.compare("") != 0);
   assert(m_inputVolume.compare("") != 0);
 
@@ -396,8 +399,11 @@ void QLabelList::writeLandmarks()
       {
       if( ( it->first ).compare("") != 0 )
         {
-        myfile << it->first << "," << -( it->second )[0] << "," << -( it->second )[1] << "," << ( it->second )[2]
-               << ",1,1\n";
+        myfile << it->first << ","
+               << doubleConvert(-( it->second )[0]) << ","
+               << doubleConvert(-( it->second )[1]) << ","
+               << doubleConvert( ( it->second )[2]) << ",1,1"
+               << std::endl;
         }
       }
 
@@ -428,34 +434,48 @@ void QLabelList::writeLandmarks()
     for( it = m_landmarks.begin(); it != m_landmarks.end(); ++it )
       {
       myfile << "id " << it->first << " labeltext " << it->first << " xyz "
-             << ( it->second )[0] << " " << ( it->second )[1] << " " << ( it->second )[2];
-      if( ++index < m_landmarks.size() )
-        {
-        myfile << " orientationwxyz 0 0 0 1 selected 1 visibility 1\n";
-        }
-      else
-        {
-        myfile << " orientationwxyz 0 0 0 1 selected 1 visibility 1\"></FiducialList>\n";
-        }
-      }
+             << doubleConvert( ( it->second )[0]) << " "
+             << doubleConvert( ( it->second )[1]) << " "
+             << doubleConvert ( ( ( it->second )[2]);
+                         if( ++index < m_landmarks.size() )
+                           {
+                           myfile << " orientationwxyz 0 0 0 1 selected 1 visibility 1\n";
+                           }
+                         else
+                           {
+                           myfile << " orientationwxyz 0 0 0 1 selected 1 visibility 1\"></FiducialList>\n";
+                           }
+                         }
 
-    myfile
-      <<
-      "<FiducialListStorage\n id=\"vtkMRMLFiducialListStorageNode1\" name=\"vtkMRMLFiducialListStorageNode1\" hideFromEditors=\"true\" selectable=\"true\" selected=\"false\" fileName=\""
-      << m_outputLandmarks
-      << "\" useCompression=\"1\" readState=\"0\" writeState=\"0\"></FiducialListStorage>\n";
+                         myfile << "<FiducialListStorage\n id=\"vtkMRMLFiducialListStorageNode1\" "
+                         << "name=\"vtkMRMLFiducialListStorageNode1\" hideFromEditors=\"true\" "
+                         << "selectable=\"true\" selected=\"false\" fileName=\""
+                         << m_outputLandmarks
+                         << "\" useCompression=\"1\" readState=\"0\" writeState=\"0\"></FiducialListStorage>\n"
+                         << "<VolumeArchetypeStorage\n id=\"vtkMRMLVolumeArchetypeStorageNode1\" "
+                         << "name=\"vtkMRMLVolumeArchetypeStorageNode1\" hideFromEditors=\"true\""
+                         << " selectable=\"true\" selected=\"false\" fileName=\""
+                         << imageFullFilename
+                         << "\" useCompression=\"1\" readState=\"0\" writeState=\"0\" "
+                         <<
+                         "centerImage=\"0\" singleFile=\"0\" UseOrientationFromFile=\"1\"></VolumeArchetypeStorage>\n"
+                         << "<Volume\n id=\"vtkMRMLScalarVolumeNode1\" name=\"" << imageFilenameWithoutPath
+                         << "\" hideFromEditors=\"false\" selectable=\"true\" selected=\"false\" "
+                         << "storageNodeRef=\"vtkMRMLVolumeArchetypeStorageNode1\" userTags=\"\" "
+                         << "displayNodeRef=\"vtkMRMLScalarVolumeDisplayNode1\" ijkToRASDirections=\"-1 "
+                         << "  -0   0 -0   -0   1 0 1 0 \" spacing=\"1 1 1\" origin=\"-0 -255 -0\" "
+                         << "labelMap=\"0\"></Volume>\n<VolumeDisplay\n id=\"vtkMRMLScalarVolumeDisplayNode1\" "
+                         << "name=\"vtkMRMLScalarVolumeDisplayNode1\" hideFromEditors=\"true\" "
+                         << "selectable=\"true\" selected=\"false\" color=\"0.5 0.5 0.5\" selectedColor=\"1 "
+                         << "0 0\" selectedAmbient=\"0.4\" ambient=\"0\" diffuse=\"1\" selectedSpecular=\"0.5\" "
+                         << "specular=\"0\" power=\"1\" opacity=\"1\" visibility=\"true\" clipping=\"false\" "
+                         << "sliceIntersectionVisibility=\"false\" backfaceCulling=\"true\" scalarVisibility=\"false\" "
+                         << "vectorVisibility=\"false\" tensorVisibility=\"false\" autoScalarRange=\"true\" "
+                         << "scalarRange=\"0 100\" colorNodeRef=\"vtkMRMLColorTableNodeGrey\"  "
+                         << "window=\"204\" level=\"153\" upperThreshold=\"32767\" lowerThreshold=\"-32768\" "
+                         <<
+                         "interpolate=\"1\" autoWindowLevel=\"1\" applyThreshold=\"0\" autoThreshold=\"0\"></VolumeDisplay>\n</MRML>\n";
 
-    myfile
-      <<
-      "<VolumeArchetypeStorage\n id=\"vtkMRMLVolumeArchetypeStorageNode1\" name=\"vtkMRMLVolumeArchetypeStorageNode1\" hideFromEditors=\"true\" selectable=\"true\" selected=\"false\" fileName=\""
-      << imageFullFilename
-      <<
-      "\" useCompression=\"1\" readState=\"0\" writeState=\"0\" centerImage=\"0\" singleFile=\"0\" UseOrientationFromFile=\"1\"></VolumeArchetypeStorage>\n";
-
-    myfile << "<Volume\n id=\"vtkMRMLScalarVolumeNode1\" name=\"" << imageFilenameWithoutPath
-           <<
-      "\" hideFromEditors=\"false\" selectable=\"true\" selected=\"false\" storageNodeRef=\"vtkMRMLVolumeArchetypeStorageNode1\" userTags=\"\" displayNodeRef=\"vtkMRMLScalarVolumeDisplayNode1\" ijkToRASDirections=\"-1   -0   0 -0   -0   1 0 1 0 \" spacing=\"1 1 1\" origin=\"-0 -255 -0\" labelMap=\"0\"></Volume>\n<VolumeDisplay\n id=\"vtkMRMLScalarVolumeDisplayNode1\" name=\"vtkMRMLScalarVolumeDisplayNode1\" hideFromEditors=\"true\" selectable=\"true\" selected=\"false\" color=\"0.5 0.5 0.5\" selectedColor=\"1 0 0\" selectedAmbient=\"0.4\" ambient=\"0\" diffuse=\"1\" selectedSpecular=\"0.5\" specular=\"0\" power=\"1\" opacity=\"1\" visibility=\"true\" clipping=\"false\" sliceIntersectionVisibility=\"false\" backfaceCulling=\"true\" scalarVisibility=\"false\" vectorVisibility=\"false\" tensorVisibility=\"false\" autoScalarRange=\"true\" scalarRange=\"0 100\" colorNodeRef=\"vtkMRMLColorTableNodeGrey\"  window=\"204\" level=\"153\" upperThreshold=\"32767\" lowerThreshold=\"-32768\" interpolate=\"1\" autoWindowLevel=\"1\" applyThreshold=\"0\" autoThreshold=\"0\"></VolumeDisplay>\n</MRML>\n";
-
-    output.close();
-    }
-}
+                         output.close();
+                         }
+                         }

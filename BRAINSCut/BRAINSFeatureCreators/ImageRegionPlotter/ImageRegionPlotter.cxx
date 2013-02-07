@@ -16,6 +16,7 @@
 #include "itkBRAINSROIAutoImageFilter.h"
 
 #include "itkLabelStatisticsImageFilter.h"
+#include "DoubleToString.h"
 #include <map>
 
 #include <fstream>
@@ -70,6 +71,8 @@ MapHistogramToImage( typename TImageType::Pointer inputImage,
                      std::string mapFilename,
                      bool verbose)
 {
+  DoubleToString doubleToString;
+
   /* ------------------------------------------------------------------------
    * Make Look Up Table
      ------------------------------------------------------------------------ */
@@ -122,11 +125,12 @@ MapHistogramToImage( typename TImageType::Pointer inputImage,
 
     if( verbose )
       {
-      std::cout << intensity << " <--> "
-                << quantile << std::endl;
+      std::cout << doubleToString(intensity) << " <--> "
+                << doubleToString(quantile) << std::endl;
       }
 
-    mapOutFileStream << intensity << "," << quantile
+    mapOutFileStream << doubleToString(intensity)
+                     << "," << doubleToString(quantile)
                      << std::endl;
     }
   mapOutFileStream.close();

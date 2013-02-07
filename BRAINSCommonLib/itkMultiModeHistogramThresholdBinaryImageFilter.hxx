@@ -161,9 +161,8 @@ MultiModeHistogramThresholdBinaryImageFilter<TInputImage, TOutputImage>
       typedef MultiplyImageFilter<IntegerImageType, IntegerImageType> IntersectMasksFilterType;
       if( accumulate->GetLargestPossibleRegion().GetSize() != thresholdImage->GetLargestPossibleRegion().GetSize() )
         {
-        itkExceptionMacro(
-          << "Image data size mismatch " << accumulate->GetLargestPossibleRegion().GetSize() << " != "
-          << thresholdImage->GetLargestPossibleRegion().GetSize() << "." << std::endl );
+        itkExceptionMacro(<< "Image data size mismatch " << accumulate->GetLargestPossibleRegion().GetSize() << " != "
+                          << thresholdImage->GetLargestPossibleRegion().GetSize() << "." << std::endl );
         }
       if( accumulate->GetSpacing() != thresholdImage->GetSpacing() )
         {

@@ -2,17 +2,18 @@
  * Author: Ali Ghayoor, Wei Lu
  * at Psychiatry Imaging Lab,
  * University of Iowa Health Care 2011
-
  */
 
 #include "Slicer3LandmarkWeightIO.h"
-
+#include "DoubleToString.h"
 void
 WriteITKtoSlicer3LmkWts( const std::string & landmarksWeightFilename,
                          const LandmarksWeightMapType & landmarks )
 {
-  const std::string fullPathLandmarksWeightFileName = itksys::SystemTools::CollapseFullPath(
-      landmarksWeightFilename.c_str() );
+  DoubleToString doubleConvert;
+
+  const std::string fullPathLandmarksWeightFileName =
+    itksys::SystemTools::CollapseFullPath( landmarksWeightFilename.c_str() );
 
   std::stringstream lmkWeightStream;
 
@@ -23,7 +24,7 @@ WriteITKtoSlicer3LmkWts( const std::string & landmarksWeightFilename,
     if( ( it->first ).compare("") != 0 )
       {
       lmkWeightStream << it->first << ","
-                      << it->second << std::endl;
+                      << doubleConvert(it->second) << std::endl;
 
       ++numNamedLandmarks;
       }

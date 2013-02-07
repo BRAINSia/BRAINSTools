@@ -98,17 +98,18 @@ LargestForegroundFilledMaskImageFilter<TInputImage, TOutputImage>
       }
     if( this->m_OtsuPercentileUpperThreshold > 1.5 )
       {
-      itkExceptionMacro(
-        << "To save the day, PRETENDING an apparently mistaken histogram-trimming"
-        " threshold >= 1.5 really indicates number of histogram bins"
-        " (3.5 rounds up and indicates quartiles, etc.):  "
-        << this->m_OtsuPercentileLowerThreshold << " " <<  this->m_OtsuPercentileUpperThreshold << " ");
+      itkExceptionMacro(<< "To save the day, PRETENDING an apparently mistaken histogram-trimming"
+                        " threshold >= 1.5 really indicates number of histogram bins"
+                        " (3.5 rounds up and indicates quartiles, etc.):  "
+                        << this->m_OtsuPercentileLowerThreshold << " "
+                        <<  this->m_OtsuPercentileUpperThreshold << " ");
       }
     if( this->m_OtsuPercentileLowerThreshold > 0.5  || this->m_OtsuPercentileUpperThreshold < 0.5 )
       {
       itkExceptionMacro(<< "Trimming back worthless PercentileThreshold"
                         " over the two-tailed maximum of 0.5:  "
-                        << this->m_OtsuPercentileLowerThreshold << " " <<  this->m_OtsuPercentileUpperThreshold << " ");
+                        << this->m_OtsuPercentileLowerThreshold << " "
+                        << this->m_OtsuPercentileUpperThreshold << " ");
       }
     }
   this->AllocateOutputs();
@@ -234,10 +235,9 @@ LargestForegroundFilledMaskImageFilter<TInputImage, TOutputImage>
         std::cout << "WARNING:  Attempting to close with a very large number of voxels:  "
                   << m_ClosingSize << " / " << ( relabel->GetOutput()->GetSpacing()[d] ) << " = " << ClosingVoxels
                   << std::endl;
-        std::cout
-          <<
-          "Perhaps there is a mis-match between the voxel spacing and the assumption that  ClosingSize is given in mm"
-          << std::endl;
+        std::cout << "Perhaps there is a mis-match between the voxel spacing"
+                  << " and the assumption that  ClosingSize is given in mm"
+                  << std::endl;
         }
       dilateBallSize[d] = ClosingVoxels;
       erodeBallSize[d]  = ClosingVoxels;

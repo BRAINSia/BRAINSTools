@@ -19,8 +19,7 @@ foreach(f ${DWIConvertSupportLib_SRCS})
 endforeach()
 
 add_library(DWIConvertSupportLib STATIC ${DWIConvertSupportLib_SRCS})
-target_link_libraries(DWIConvertSupportLib ${ITK_LIBRARIES}
-  ${double-conversion_LIBRARIES} )
+target_link_libraries(DWIConvertSupportLib ${ITK_LIBRARIES} )
 
 set(MODULE_NAME DWIConvert)
 #-----------------------------------------------------------------------------
@@ -32,7 +31,7 @@ set(MODULE_NAME DWIConvert)
 
 # several files needed down in ExtenededTesting
 StandardBRAINSBuildMacro(NAME DWIConvert
-  TARGET_LIBRARIES DWIConvertSupportLib)
+  TARGET_LIBRARIES BRAINSCommonLib DWIConvertSupportLib)
 
 if(BUILD_TESTING AND NOT Slicer_BUILD_BRAINSTOOLS)
   add_subdirectory(TestSuite)

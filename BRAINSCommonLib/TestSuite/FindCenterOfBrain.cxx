@@ -14,6 +14,7 @@
 #include "itkFindCenterOfBrainFilter.h"
 #include "itkIO.h"
 #include <FindCenterOfBrainCLP.h>
+#include "DoubleToString.h"
 
 int main(int argc, char * *argv)
 {
@@ -70,10 +71,11 @@ int main(int argc, char * *argv)
     }
   FindCenterFilterType::PointType center =
     filter->GetCenterOfBrain();
+  DoubleToString doubleConvert;
   std::cout << "Center Of Brain:"
-            << " " << center[0]
-            << " " << center[1]
-            << " " << center[2]
+            << " " << doubleConvert(center[0])
+            << " " << doubleConvert(center[1])
+            << " " << doubleConvert(center[2])
             << std::endl;
   if( ClippedImageMask != "" )
     {

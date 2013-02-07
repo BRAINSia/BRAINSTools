@@ -63,10 +63,9 @@ AssignConvertedTransform(AffineTransformPointer & result,
     }
   else
     {
-    std::cout
-      <<
-      "Error missing Pointer data, while assigning AffineTransformPointer := AffineTransformPointer."
-      << std::endl;
+    std::cout << "Error missing Pointer data, while assigning "
+              << "AffineTransformPointer := AffineTransformPointer."
+              << std::endl;
     throw;
     }
 }
@@ -98,10 +97,9 @@ AssignConvertedTransform(AffineTransformPointer & result,
     }
   else
     {
-    std::cout
-      <<
-      "Error missing Pointer data, while assigning AffineTransformPointer := VnlTransformMatrixType44."
-      << std::endl;
+    std::cout << "Error missing Pointer data, while assigning "
+              << "AffineTransformPointer := VnlTransformMatrixType44."
+              << std::endl;
     throw;
     }
 }
@@ -130,10 +128,9 @@ AssignConvertedTransform(VnlTransformMatrixType44 & result,
     }
   else
     {
-    std::cout
-      <<
-      "Error missing Pointer data, while assigning VnlTransformMatrixType44 := AffineTransformPointer."
-      << std::endl;
+    std::cout << "Error missing Pointer data, while assigning"
+              << " VnlTransformMatrixType44 := AffineTransformPointer."
+              << std::endl;
     throw;
     }
 }
@@ -154,10 +151,9 @@ AssignConvertedTransform(AffineTransformPointer & result,
     }
   else
     {
-    std::cout
-      <<
-      "Error missing Pointer data, assigning AffineTransformPointer := ScaleSkewVersor3DTransformPointer."
-      << std::endl;
+    std::cout << "Error missing Pointer data, assigning AffineTransformPointer"
+              << " := ScaleSkewVersor3DTransformPointer."
+              << std::endl;
     throw;
     }
 }
@@ -176,10 +172,9 @@ AssignConvertedTransform(ScaleSkewVersor3DTransformPointer & result,
     }
   else
     {
-    std::cout
-      <<
-      "Error missing Pointer data, assigning AffineTransformPointer := ScaleSkewVersor3DTransformPointer."
-      << std::endl;
+    std::cout << "Error missing Pointer data, assigning AffineTransformPointer "
+              << ":= ScaleSkewVersor3DTransformPointer."
+              << std::endl;
     throw;
     }
 }
@@ -203,10 +198,9 @@ AssignConvertedTransform(AffineTransformPointer & result,
     }
   else
     {
-    std::cout
-      <<
-      "Error missing Pointer data, assigning AffineTransformPointer := ScaleVersor3DTransformPointer."
-      << std::endl;
+    std::cout << "Error missing Pointer data, assigning AffineTransformPointer"
+              << " := ScaleVersor3DTransformPointer."
+              << std::endl;
     throw;
     }
 }
@@ -226,10 +220,9 @@ AssignConvertedTransform(ScaleVersor3DTransformPointer & result,
     }
   else
     {
-    std::cout
-      <<
-      "Error missing Pointer data, assigning ScaleVersor3DTransform := ScaleVersor3DTransformPointer."
-      << std::endl;
+    std::cout << "Error missing Pointer data, assigning ScaleVersor3DTransform"
+              << " := ScaleVersor3DTransformPointer."
+              << std::endl;
     throw;
     }
 }
@@ -254,10 +247,9 @@ AssignConvertedTransform(AffineTransformPointer & result,
     }
   else
     {
-    std::cout
-      <<
-      "Error missing Pointer data, assigning AffineTransformPointer := VersorRigid3DTransformPointer."
-      << std::endl;
+    std::cout << "Error missing Pointer data, assigning AffineTransformPointer"
+              << " := VersorRigid3DTransformPointer."
+              << std::endl;
     throw;
     }
 }
@@ -277,10 +269,9 @@ inline void AssignConvertedTransform(
     }
   else
     {
-    std::cout
-      <<
-      "Error missing Pointer data, assigning VersorRigid3DTransformPointer := VersorRigid3DTTransformPointer."
-      << std::endl;
+    std::cout << "Error missing Pointer data, assigning"
+              << " VersorRigid3DTransformPointer := VersorRigid3DTTransformPointer."
+              << std::endl;
     throw;
     }
 }
@@ -302,10 +293,9 @@ inline void AssignConvertedTransform(
     }
   else
     {
-    std::cout
-      <<
-      "Error missing Pointer data, assigning ScaleSkewVersor3DTransformPointer := ScaleVersor3DTransformPointer."
-      << std::endl;
+    std::cout << "Error missing Pointer data, assigning"
+              << " ScaleSkewVersor3DTransformPointer := ScaleVersor3DTransformPointer."
+              << std::endl;
     throw;
     }
 }
@@ -326,10 +316,9 @@ inline void AssignConvertedTransform(
     }
   else
     {
-    std::cout
-      <<
-      "Error missing Pointer data, assigning ScaleSkewVersor3DTransformPointer := VersorRigid3DTransformPointer."
-      << std::endl;
+    std::cout << "Error missing Pointer data, assigning"
+              << " ScaleSkewVersor3DTransformPointer := VersorRigid3DTransformPointer."
+              << std::endl;
     throw;
     }
 }
@@ -350,10 +339,9 @@ inline void AssignConvertedTransform(
     }
   else
     {
-    std::cout
-      <<
-      "Error missing Pointer data, assigning ScaleVersor3DTransformPointer := VersorRigid3DTransformPointer."
-      << std::endl;
+    std::cout << "Error missing Pointer data, assigning"
+              << " ScaleVersor3DTransformPointer := VersorRigid3DTransformPointer."
+              << std::endl;
     throw;
     }
 }
@@ -371,10 +359,9 @@ inline void ExtractVersorRigid3DTransform(
     }
   else
     {
-    std::cout
-      <<
-      "Error missing Pointer data, assigning VersorRigid3DTransformPointer := ScaleVersor3DTransformPointer."
-      << std::endl;
+    std::cout << "Error missing Pointer data, assigning"
+              << " VersorRigid3DTransformPointer := ScaleVersor3DTransformPointer."
+              << std::endl;
     throw;
     }
 }
@@ -392,10 +379,9 @@ inline void ExtractVersorRigid3DTransform(
     }
   else
     {
-    std::cout
-      <<
-      "Error missing Pointer data, assigning VersorRigid3DTransformPointer := ScaleSkewVersor3DTransformPointer."
-      << std::endl;
+    std::cout << "Error missing Pointer data, assigning"
+              << " VersorRigid3DTransformPointer := ScaleSkewVersor3DTransformPointer."
+              << std::endl;
     throw;
     }
 }
@@ -411,10 +397,9 @@ inline void ExtractVersorRigid3DTransform(
     }
   else
     {
-    std::cout
-      <<
-      "Error missing Pointer data, assigning VersorRigid3DTransformPointer := ScaleVersor3DTransformPointer."
-      << std::endl;
+    std::cout << "Error missing Pointer data, assigning"
+              << " VersorRigid3DTransformPointer := ScaleVersor3DTransformPointer."
+              << std::endl;
     throw;
     }
 }

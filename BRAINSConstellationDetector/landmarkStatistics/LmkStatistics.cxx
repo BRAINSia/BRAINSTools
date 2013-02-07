@@ -40,8 +40,7 @@ int main( int argc, char * argv[] )
 {
   if( argc < 2 )
     {
-    std::cerr << "Usage : " << argv[0]
-              << " <#of landmark pairs> <lmk-pair1> <lmk-pair2> ... <lmk-pairN>"
+    std::cerr << "Usage : " << argv[0] << " <#of landmark pairs> <lmk-pair1> <lmk-pair2> ... <lmk-pairN>"
               << std::endl;
     return EXIT_FAILURE;
     }

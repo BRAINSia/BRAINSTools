@@ -73,9 +73,8 @@ void DiffusionTensor3DReconstructionWithMaskImageFilter<TReferenceImagePixelType
       this->ProcessObject::GetInput(0)->GetNameOfClass() );
     if( strcmp(gradientImageClassName.c_str(), "VectorImage") != 0 )
       {
-      itkExceptionMacro(
-        << "There is only one Gradient image. I expect that to be a VectorImage. "
-        << "But its of type: " << gradientImageClassName );
+      itkExceptionMacro(<< "There is only one Gradient image. I expect that to be a VectorImage. "
+                        << "But its of type: " << gradientImageClassName );
       }
     }
   if( this->m_MaskImage.IsNotNull() )

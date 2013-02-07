@@ -210,9 +210,8 @@ CombinedComputeDistributions( const std::vector<typename ByteImageType::Pointer>
     {
     for( LOOPITERTYPE iclass = 0; iclass < (LOOPITERTYPE)numClasses; iclass++ )
       {
-      muLogMacro(
-        << "DEBUG USING NEW COVARIANCES: " << iclass << "\n" << ListOfClassStatistics[iclass].m_Covariance
-        << std::endl );
+      muLogMacro(<< "DEBUG USING NEW COVARIANCES: " << iclass << std::endl
+                 << ListOfClassStatistics[iclass].m_Covariance << std::endl );
       }
     }
   if( DebugLevel > 9 )

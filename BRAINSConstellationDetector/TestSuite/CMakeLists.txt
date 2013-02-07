@@ -7,7 +7,7 @@ set(DART_TESTING_TIMEOUT 15000)
 ## Test landmarksConstellationTrainingDefinitionIO
 ##
 add_executable(TestlandmarksConstellationTrainingDefinitionIO TestlandmarksConstellationTrainingDefinitionIO.cxx)
-target_link_libraries(TestlandmarksConstellationTrainingDefinitionIO ${ITK_LIBRARIES})
+target_link_libraries(TestlandmarksConstellationTrainingDefinitionIO BRAINSCommonLib ${ITK_LIBRARIES})
 
 set(ALL_TEST_PROGS
   BRAINSAlignMSP

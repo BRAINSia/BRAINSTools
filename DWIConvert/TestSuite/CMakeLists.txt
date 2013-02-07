@@ -25,7 +25,7 @@ target_link_libraries(NrrdToNIfTI DWIConvertSupportLib)
 set (CLP DWIConvert)
 add_executable(${CLP}Test ${CLP}Test.cxx ${DWIConvertTest_SRC})
 add_dependencies(${CLP}Test ${CLP})
-target_link_libraries(${CLP}Test DWIConvertSupportLib )
+target_link_libraries(${CLP}Test DWIConvertSupportLib BRAINSCommonLib )
 
 if(NOT SETIFEMPTY)
   macro(SETIFEMPTY)

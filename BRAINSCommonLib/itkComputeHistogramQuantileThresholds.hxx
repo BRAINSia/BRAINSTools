@@ -122,9 +122,8 @@ ComputeHistogramQuantileThresholds<TInputImage, TMaskImage>
 
     if( m_NumberOfValidHistogramsEntries <= 2 )  // then it is a binary image:
       {
-      std::cout
-        << "Image handled with only two catgegories; effectively, binary thresholding."
-        << std::endl;
+      std::cout << "Image handled with only two catgegories; effectively, binary thresholding."
+                << std::endl;
       }
     else
       {
@@ -134,22 +133,19 @@ ComputeHistogramQuantileThresholds<TInputImage, TMaskImage>
       m_UpperIntensityThresholdValue =
         static_cast<typename TInputImage::PixelType>
         ( histogram->Quantile(0, this->m_QuantileUpperThreshold) );
-      std::cout
-        << m_NumberOfValidHistogramsEntries
-        << " ValidHistogramsEntries,  "
-        << histogram->GetTotalFrequency()
-        << " TotalFrequency"
-        << std::endl;
-      std::cout
-        << m_QuantileLowerThreshold
-        << " ---> "
-        << static_cast<int>( m_LowerIntensityThresholdValue )
-        << std::endl;
-      std::cout
-        << m_QuantileUpperThreshold
-        << " ---> "
-        << static_cast<int>( m_UpperIntensityThresholdValue )
-        << std::endl;
+      std::cout << m_NumberOfValidHistogramsEntries
+                << " ValidHistogramsEntries,  "
+                << histogram->GetTotalFrequency()
+                << " TotalFrequency"
+                << std::endl
+                << m_QuantileLowerThreshold
+                << " ---> "
+                << static_cast<int>( m_LowerIntensityThresholdValue )
+                << std::endl
+                << m_QuantileUpperThreshold
+                << " ---> "
+                << static_cast<int>( m_UpperIntensityThresholdValue )
+                << std::endl;
       }
     }
   return;

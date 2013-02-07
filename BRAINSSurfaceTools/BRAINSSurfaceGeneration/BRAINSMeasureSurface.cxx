@@ -36,7 +36,7 @@
 #include <sys/stat.h>
 #include <ctime>
 #include <algorithm>
-
+#include "DoubleToString.h"
 template <class T>
 const T & min( const T & a, const T & b )
 {
@@ -62,7 +62,7 @@ int main( int argc, char * *argv )
     std::cout << "\t\t" << i << ": " << labels[i] << std::endl;
     }
   std::cout << "------------------------------------------------------" << std::endl;
-
+  DoubleToString doubleToString;
   // Read Surface
   vtkPolyData *surfaceData = vtkPolyData::New();
 
@@ -263,17 +263,17 @@ int main( int argc, char * *argv )
                 << ", " << labels[i - 1];
         }
 
-      csvfile << ", " << surfaceArea->GetValue(i);
-      csvfile << ", " << corticalThickness->GetValue(i);
-      csvfile << ", " << corticalCurvature->GetValue(i);
+      csvfile << ", " << doubleToString(surfaceArea->GetValue(i) );
+      csvfile << ", " << doubleToString(corticalThickness->GetValue(i) );
+      csvfile << ", " << doubleToString(corticalCurvature->GetValue(i) );
 
-      csvfile << ", " << gyralArea->GetValue(i);
-      csvfile << ", " << gyralThickness->GetValue(i);
-      csvfile << ", " << gyralCurvature->GetValue(i);
+      csvfile << ", " << doubleToString(gyralArea->GetValue(i) );
+      csvfile << ", " << doubleToString(gyralThickness->GetValue(i) );
+      csvfile << ", " << doubleToString(gyralCurvature->GetValue(i) );
 
-      csvfile << ", " << sulcalArea->GetValue(i);
-      csvfile << ", " << sulcalThickness->GetValue(i);
-      csvfile << ", " << sulcalCurvature->GetValue(i) << std::endl;
+      csvfile << ", " << doubleToString(sulcalArea->GetValue(i) );
+      csvfile << ", " << doubleToString(sulcalThickness->GetValue(i) );
+      csvfile << ", " << doubleToString(sulcalCurvature->GetValue(i) << std::endl);
       }
 
     csvfile.close();

@@ -4,6 +4,7 @@
 #include <fstream>
 #include <cstdlib>
 #include <itksys/SystemTools.hxx>
+#include "DoubleToString.h"
 
 namespace // anon
 {
@@ -120,12 +121,41 @@ AtlasDefinition::XMLStart(const char *el)
     }
 }
 
+double
+AtlasDefinition
+::StrToD(const char *str, const char *message) const
+{
+  char * last;
+  double rval = strtod(str, &last);
+
+  if( str == static_cast<const char *>(last) )
+    {
+    std::cerr << message << ' ' << this->m_LastXMLString << std::endl;
+    throw;
+    }
+  return rval;
+}
+
+long
+AtlasDefinition
+::StrToL(const char *str, const char *message) const
+{
+  char *last;
+  long  rval = strtol(str, &last, 10);
+
+  if( str == static_cast<const char *>(last) )
+    {
+    std::cerr << message << ' ' << this->m_LastXMLString << std::endl;
+    throw;
+    }
+  return rval;
+}
+
 void
 AtlasDefinition::XMLEnd(const char *el)
 {
   std::string El(el);
   const char *start = this->m_LastXMLString.c_str();
-  char *      last;
 
   // pop the current element name off the stack.
   this->m_XMLElementStack.pop_back();
@@ -156,80 +186,31 @@ AtlasDefinition::XMLEnd(const char *el)
     }
   else if( El == "Weight" )
     {
-    double w = strtod(start, &last);
-    if( start == (const char *)last )
-      {
-      std::cerr << "Bad Weight given " << this->m_LastXMLString
-                << std::endl;
-      throw;
-      }
-    this->m_LastWeight = w;
+    this->m_LastWeight = this->StrToD(start, "Bad Weight given");
     }
   else if( El == "lower" )
     {
-    double l = strtod(start, &last);
-    if( start == (const char *)last )
-      {
-      std::cerr << "Bad lower bound " << this->m_LastXMLString
-                << std::endl;
-      throw;
-      }
-    this->m_LastLower = l;
+    this->m_LastLower = this->StrToD(start, "Bad lower bound");
     }
   else if( El == "upper" )
     {
-    double u = strtod(start, &last);
-    if( start == (const char *)last )
-      {
-      std::cerr << "Bad upper bound " << this->m_LastXMLString
-                << std::endl;
-      throw;
-      }
-    this->m_LastUpper = u;
+    this->m_LastUpper = this->StrToD(start, "Bad upper bound");
     }
   else if( El == "GaussianClusterCount" )
     {
-    int GCC = strtol(start, &last, 10);
-    if( start == (const char *)last )
-      {
-      std::cerr << "Bad GaussianClusterCount given " << this->m_LastXMLString
-                << std::endl;
-      throw;
-      }
-    this->m_LastGaussianClusterCount = GCC;
+    this->m_LastGaussianClusterCount = this->StrToL(start, "Bad GaussianClusterCount");
     }
   else if( El == "LabelCode" )
     {
-    int GCC = strtol(start, &last, 10);
-    if( start == (const char *)last )
-      {
-      std::cerr << "Bad LabelCode given " << this->m_LastXMLString
-                << std::endl;
-      throw;
-      }
-    this->m_LastLabelCode = GCC;
+    this->m_LastLabelCode = this->StrToL(start, "Bad LabelCode");
     }
   else if( El == "UseForBias" )
     {
-    int UFB = strtol(start, &last, 10);
-    if( start == (const char *)last )
-      {
-      std::cerr << "Bad UseForBias given " << this->m_LastXMLString
-                << std::endl;
-      throw;
-      }
-    this->m_LastUseForBias = UFB;
+    this->m_LastUseForBias = this->StrToL(start, "Bad UseForBias");
     }
   else if( El == "IsForegroundPrior" )
     {
-    int UFB = strtol(start, &last, 10);
-    if( start == (const char *)last )
-      {
-      std::cerr << "Bad IsForegroundPrior given " << this->m_LastXMLString
-                << std::endl;
-      throw;
-      }
-    this->m_LastIsForegroundPrior = UFB;
+    this->m_LastIsForegroundPrior = this->StrToL(start, "Bad IsForegroundPrior");
     }
   else if( El == "BrainMask" )
     {
@@ -302,7 +283,16 @@ AtlasDefinition::InitFromXML(const std::string & XMLFilename)
     }
   xmlFile.close();
 
-  if( XML_Parse(parser, filebuf, fSize, 1) == 0 )
+  int parserReturn(1);
+  try
+    {
+    parserReturn = XML_Parse(parser, filebuf, fSize, 1);
+    }
+  catch( ... )
+    {
+    parserReturn = 0;
+    }
+  if( !parserReturn )
     {
     delete[] filebuf;
     std::cerr << "XML File parsing error" << std::endl;
@@ -314,6 +304,7 @@ AtlasDefinition::InitFromXML(const std::string & XMLFilename)
 void
 AtlasDefinition::DebugPrint()
 {
+  DoubleToString doubleConvert;
   std::cout << "<Atlas>" << std::endl;
 
   for( TemplateMap::iterator it
@@ -351,7 +342,7 @@ AtlasDefinition::DebugPrint()
               << it->second.GetFilename()
               << "</filename>" << std::endl
               << "    <Weight>"
-              << it->second.GetWeight()
+              << doubleConvert(it->second.GetWeight() )
               << "</Weight>" << std::endl
               << "    <GaussianClusterCount>"
               << it->second.GetGaussianClusterCount()
@@ -376,10 +367,10 @@ AtlasDefinition::DebugPrint()
                 << it2->first
                 << "</type>" << std::endl
                 << "      <lower>"
-                << it2->second.GetLower()
+                << doubleConvert(it2->second.GetLower() )
                 << "</lower>" << std::endl
                 << "      <upper>"
-                << it2->second.GetUpper()
+                << doubleConvert(it2->second.GetUpper() )
                 << "<upper>" << std::endl
                 << "    </bounds>" << std::endl;
       }

@@ -989,23 +989,20 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
           // transformFileType
           // == "ScaleVersor3DTransform"
             {
-            std::cout
-              <<
-              "Unsupported initial transform file -- TransformBase first transform typestring, "
-              << transformFileType
-              << " not equal to required type VersorRigid3DTransform "
-              << "OR ScaleVersor3DTransform OR ScaleSkewVersor3DTransform"
-              << std::endl;
+            std::cout << "Unsupported initial transform file -- TransformBase first transform typestring, "
+                      << transformFileType
+                      << " not equal to required type VersorRigid3DTransform "
+                      << "OR ScaleVersor3DTransform OR ScaleSkewVersor3DTransform"
+                      << std::endl;
             return;
             }
           }
         catch( itk::ExceptionObject & excp )
           {
           std::cout << "[FAILED]" << std::endl;
-          std::cerr
-            << "Error while reading the m_CurrentGenericTransform"
-            << std::endl;
-          std::cerr << excp << std::endl;
+          std::cerr << "Error while reading the m_CurrentGenericTransform"
+                    << std::endl
+                    << excp << std::endl;
           throw;
           }
         }
@@ -1094,8 +1091,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
           else              //  NO SUCH CASE!!
             {
             std::cout
-              <<
-              "Unsupported initial transform file -- TransformBase first transform typestring, "
+              << "Unsupported initial transform file -- TransformBase first transform typestring, "
               << transformFileType
               << " not equal to any recognized type VersorRigid3DTransform OR "
               << "ScaleVersor3DTransform OR ScaleSkewVersor3DTransform OR AffineTransform"
@@ -1106,10 +1102,8 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
         catch( itk::ExceptionObject & excp )
           {
           std::cout << "[FAILED]" << std::endl;
-          std::cerr
-            << "Error while reading the m_CurrentGenericTransform"
-            << std::endl;
-          std::cerr << excp << std::endl;
+          std::cerr << "Error while reading the m_CurrentGenericTransform"
+                    << std::endl << excp << std::endl;
           throw;
           }
         }
@@ -1536,10 +1530,8 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
         catch( itk::ExceptionObject & excp )
           {
           std::cout << "[FAILED]" << std::endl;
-          std::cerr
-            << "Error while reading the m_CurrentGenericTransform"
-            << std::endl;
-          std::cerr << excp << std::endl;
+          std::cerr << "Error while reading the m_CurrentGenericTransform"
+                    << std::endl << excp << std::endl;
           throw;
           }
         }

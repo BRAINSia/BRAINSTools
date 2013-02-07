@@ -14,7 +14,7 @@
 #include <itkContinuousIndex.h>
 #include "landmarksDataSet.h"
 #include "landmarksConstellationModelBase.h"
-
+#include "DoubleTostring.h"
 // HACK:  Remove the multiple inheritance here.
 class landmarksConstellationTrainingDefinitionIO : public landmarksConstellationModelBase,
   public std::vector<landmarksDataSet>   // This should be a private member
@@ -133,18 +133,20 @@ private:
 inline
 std::ostream & operator<<(std::ostream & os, const landmarksConstellationTrainingDefinitionIO & def)
 {
+  DoubleToString doubleToString;
+
   os << def.GetNumDataSets() << std::endl;
   os << def.GetSearchboxDims() << " "
      << def.GetResolutionUnits() << std::endl;
-  os << def.GetRadius("RP") << " "
-     << def.GetHeight("RP") << std::endl;
-  os << def.GetRadius("AC") << " "
-     << def.GetHeight("AC") << std::endl;
-  os << def.GetRadius("PC") << " "
-     << def.GetHeight("PC") << std::endl;
-  os << def.GetRadius("VN4") << " "
-     << def.GetHeight("VN4") << std::endl;
-  os << def.GetInitialRotationAngle() << " "
+  os << doubleToString(def.GetRadius("RP") ) << " "
+     << doubleToString(def.GetHeight("RP") ) << std::endl;
+  os << doubleToString(def.GetRadius("AC") ) << " "
+     << doubleToString(def.GetHeight("AC") ) << std::endl;
+  os << doubleToString(def.GetRadius("PC") ) << " "
+     << doubleToString(def.GetHeight("PC") ) << std::endl;
+  os << doubleToString(def.GetRadius("VN4") ) << " "
+     << doubleToString(def.GetHeight("VN4") ) << std::endl;
+  os << doubleToString(def.GetInitialRotationAngle() ) << " "
      << def.GetInitialRotationStep() << " "
      << def.GetNumRotationSteps() << std::endl << std::endl;
   for( unsigned int i = 0; i < def.GetNumDataSets(); i++ )

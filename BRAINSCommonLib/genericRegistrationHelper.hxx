@@ -172,9 +172,9 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
   if( ( m_PermitParameterVariation.size() != m_Transform->GetNumberOfParameters() )
       && ( m_PermitParameterVariation.size() != 0 ) )
     {
-    std::cout
-      << "WARNING:  The permit parameters SHOULD match the number of parameters used for this registration type."
-      << std::endl;
+    std::cout << "WARNING:  The permit parameters SHOULD match the number of"
+              << " parameters used for this registration type."
+              << std::endl;
     std::cout << "WARNING:  Padding with 1's for the unspecified parameters" << std::endl;
     std::cout << "m_PermitParameterVariation " << m_PermitParameterVariation.size() << " != "
               << m_Transform->GetNumberOfParameters() << std::endl;
@@ -203,8 +203,8 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
     }
   else      // Won't happen under BRAINSFitPrimary.
     {
-    itkGenericExceptionMacro(
-      << "FAILURE:  InitialTransform must be set in MultiModal3DMutualRegistrationHelper before Initialize is called.");
+    itkGenericExceptionMacro(<< "FAILURE:  InitialTransform must be set in"
+                             << " MultiModal3DMutualRegistrationHelper before Initialize is called.");
     //  m_Transform would be SetIdentity() if this case continued.
     }
 

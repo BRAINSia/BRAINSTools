@@ -98,7 +98,9 @@ set(${PRIMARY_PROJECT_NAME}_DEPENDENCIES
   DCMTK 
   VTK
   OpenCV
+  OpenJPEG
 
+  GDCM
   SimpleITK
   PCRE
   Swig

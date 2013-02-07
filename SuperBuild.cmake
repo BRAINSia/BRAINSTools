@@ -41,6 +41,19 @@ else()
   set(gen "${CMAKE_GENERATOR}")
 endif()
 
+
+# With CMake 2.8.9 or later, the UPDATE_COMMAND is required for updates to occur.
+# For earlier versions, we nullify the update state to prevent updates and
+# undesirable rebuild.
+option(FORCE_EXTERNAL_BUILDS "Force rebuilding of external project (if they are updated)" OFF)
+if(CMAKE_VERSION VERSION_LESS 2.8.9 OR NOT FORCE_EXTERNAL_BUILDS)
+  set(cmakeversion_external_update UPDATE_COMMAND)
+  set(cmakeversion_external_update_value "" )
+else()
+  set(cmakeversion_external_update LOG_UPDATE )
+  set(cmakeversion_external_update_value 1)
+endif()
+
 #-----------------------------------------------------------------------------
 # Platform check
 #-----------------------------------------------------------------------------
@@ -356,7 +369,7 @@ ExternalProject_Add(${proj}
   INSTALL_COMMAND ""
   )
 
-## Force rebuilding of the main subproject every time building from super structure
+# Force rebuilding of the main subproject every time building from super structure
 ExternalProject_Add_Step(${proj} forcebuild
     COMMAND ${CMAKE_COMMAND} -E remove
     ${CMAKE_CURRENT_BUILD_DIR}/${proj}-prefix/src/${proj}-stamp/${proj}-build

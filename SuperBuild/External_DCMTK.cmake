@@ -76,7 +76,7 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
     SOURCE_DIR ${proj}
     BINARY_DIR ${proj}-build
     INSTALL_DIR ${proj}-install
-    "${cmakeversion_external_update}"
+    ${cmakeversion_external_update} "${cmakeversion_external_update_value}"
     CMAKE_GENERATOR ${gen}
     CMAKE_ARGS
       -Wno-dev

@@ -89,16 +89,6 @@ if(BRAINSTools_USE_QT)
   endif()
 endif()
 
-
-# With CMake 2.8.9 or later, the UPDATE_COMMAND is required for updates to occur.
-# For earlier versions, we nullify the update state to prevent updates and
-# undesirable rebuild.
-if(CMAKE_VERSION VERSION_LESS 2.8.9)
-  set(cmakeversion_external_update UPDATE_COMMAND "")
-else()
-  set(cmakeversion_external_update LOG_UPDATE 1)
-endif()
-
 #-----------------------------------------------------------------------------
 # Update CMake module path
 #------------------------------------------------------------------------------

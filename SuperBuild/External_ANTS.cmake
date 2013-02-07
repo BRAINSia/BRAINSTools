@@ -16,7 +16,7 @@ ExternalProject_Add(${proj}
   GIT_TAG ${${proj}_GIT_TAG}
   SOURCE_DIR ${proj}
   BINARY_DIR ${proj}-build
-  "${cmakeversion_external_update}"
+  ${cmakeversion_external_update} "${cmakeversion_external_update_value}"
   CMAKE_GENERATOR ${gen}
   CMAKE_ARGS
    -Wno-dev
@@ -34,10 +34,10 @@ ExternalProject_Add(${proj}
   DEPENDS
   ${${proj}_DEPENDENCIES}
   )
-ExternalProject_Add_Step(${proj} forcebuild
-    COMMAND ${CMAKE_COMMAND} -E remove
-    ${CMAKE_CURRENT_BUILD_DIR}/${proj}-prefix/src/${proj}-stamp/${proj}-build
-    DEPENDEES configure
-    DEPENDERS build
-    ALWAYS 1
-  )
+#ExternalProject_Add_Step(${proj} forcebuild
+#    COMMAND ${CMAKE_COMMAND} -E remove
+#    ${CMAKE_CURRENT_BUILD_DIR}/${proj}-prefix/src/${proj}-stamp/${proj}-build
+#    DEPENDEES configure
+#    DEPENDERS build
+#    ALWAYS 1
+#  )

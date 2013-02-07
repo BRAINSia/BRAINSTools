@@ -75,7 +75,7 @@ if(NOT DEFINED ${extProjName}_DIR OR NOT DEFINED ATLAS_NAME)
     SVN_TRUST_CERT
     SOURCE_DIR ${proj}
     BINARY_DIR ${proj}-build
-    "${cmakeversion_external_update}"
+    ${cmakeversion_external_update} "${cmakeversion_external_update_value}"
     CMAKE_GENERATOR ${gen}
     CMAKE_ARGS
       -Wno-dev

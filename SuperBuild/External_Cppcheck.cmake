@@ -27,7 +27,7 @@ if(NOT DEFINED Cppcheck_EXE AND NOT ${USE_SYSTEM_Cppcheck})
     GIT_REPOSITORY ${Cppcheck_REPOSITORY}
     GIT_TAG ${Cppcheck_GIT_TAG}
     SOURCE_DIR ${proj}
-    "${cmakeversion_external_update}"
+    ${cmakeversion_external_update} "${cmakeversion_external_update_value}"
     BUILD_IN_SOURCE 1
     CONFIGURE_COMMAND ""
     BUILD_COMMAND HAVE_RULES=no ${CMAKE_MAKE_PROGRAM}

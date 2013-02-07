@@ -16,7 +16,7 @@ if(NOT DEFINED qhull_DIR)
 
     GIT_REPOSITORY ${QHULL_GIT_REPO}
     GIT_TAG ${QHULL_GIT_TAG}
-    "${cmakeversion_external_update}"
+    ${cmakeversion_external_update} "${cmakeversion_external_update_value}"
     CMAKE_ARGS
       -Wno-dev
       --no-warn-unused-cli

@@ -19,7 +19,7 @@ if(NOT DEFINED OpenCV_DIR)
 
     GIT_REPOSITORY ${OPENCV_GIT_REPO}
     GIT_TAG ${OPENCV_GIT_TAG}
-    "${cmakeversion_external_update}"
+    ${cmakeversion_external_update} "${cmakeversion_external_update_value}"
     CMAKE_ARGS
       -Wno-dev
       --no-warn-unused-cli

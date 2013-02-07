@@ -13,7 +13,7 @@ ExternalProject_Add(${proj}
   GIT_REPOSITORY ${${proj}_GIT_REPOSITORY}
   GIT_TAG ${${proj}_GIT_TAG}
   SOURCE_DIR ${proj}
-  "${cmakeversion_external_update}"
+  ${cmakeversion_external_update} "${cmakeversion_external_update_value}"
   CONFIGURE_COMMAND ""
   INSTALL_COMMAND ""
   BUILD_COMMAND ""

@@ -694,14 +694,11 @@ void ImageCalculatorReadWrite( MetaCommand & command )
 
     /*If the accumulator buffer is not empty, then every subsequent image is histogram equalized to the current
       accumulator buffer.*/
-    if( command.GetValueAsString("IHisteq", "constant") != "" )
+    if( command.GetValueAsString("IHisteq", "constant") != "" && AccImage.IsNotNull() )
       {
-      if( AccImage.IsNotNull() )
-        {
-        const int NumOfMatchPoints = static_cast<int>(command.GetValueAsInt("IHisteq", "constant") );
-        EffectiveInputFilters << "-ifhisteq " << static_cast<int>(NumOfMatchPoints) << " ";
-        SubSequentImage = DoHisteq<ImageType>(AccImage, reader2->GetOutput(), NumOfMatchPoints);
-        }
+      const int NumOfMatchPoints = static_cast<int>(command.GetValueAsInt("IHisteq", "constant") );
+      EffectiveInputFilters << "-ifhisteq " << static_cast<int>(NumOfMatchPoints) << " ";
+      SubSequentImage = DoHisteq<ImageType>(AccImage, reader2->GetOutput(), NumOfMatchPoints);
       }
 
     typename ImageType::Pointer image = Ifilters<ImageType>(SubSequentImage, command);

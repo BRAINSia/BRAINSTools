@@ -1,4 +1,4 @@
-In this document we give some example test commands for ImageCalculator. 
+In this document we give some example test commands for ImageCalculator.
 
 The first 2 tests are for 2d images and the third test is performed on 3d images
 
@@ -21,7 +21,7 @@ To verify
 We can subtract the Temp.png and UpperHalfHundreds.png to get AllZeroes.png
 
 
-    
+
 Test 2
 
 In this we see that we can add more than 2 inputs. ImageCalculator can take any number of inputs but in this example we add 5 images. We set the input Pixel Type as unsigned short and output as unsigned char for this example.
@@ -31,7 +31,7 @@ In this we see that we can add more than 2 inputs. ImageCalculator can take any 
  AVG: 500,  MAX: 500,  MIN: 500,  NPX: 400,  SUM: 200000,  VAR: 0,
 
 ImageCalculator provides scalar arithmetic operations on images.
-We can get the same result with scalar mutltiplication of AllHundreds.png  
+We can get the same result with scalar mutltiplication of AllHundreds.png
 <path to ImageCalculator.exe> -in 2 UpperHalfHundreds.png LowerHalfHundreds.png  -
 intype USHORT -outtype UCHAR -add -out Temp.png -Dimensions 2 -ofmulc 5
 
@@ -49,14 +49,3 @@ In this test we compare the 3d images. We divide a 5,5,5 image having all its pi
 
 To verify
 We can multiply the result with Hundred.hdr to get back ThreeHundred.hdr
-
-
-
-
-
-
-
-
-    
-
-

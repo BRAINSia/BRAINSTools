@@ -2061,7 +2061,7 @@ int main(int argc, char *argv[])
 
       header << "modality:=DWMRI" << std::endl;
       // this is the norminal BValue, i.e. the largest one.
-      header << "DWMRI_b-value:=" << maxBvalue << std::endl;
+      header << "DWMRI_b-value:=" << DoubleConvert(maxBvalue) << std::endl;
 
       //  the following three lines are for older NRRD format, where
       //  baseline images are always in the begining.

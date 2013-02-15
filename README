@@ -1,7 +1,7 @@
 The BRAINSStandAlone is a harness to assist in building the many
 BRAINSTools under development.
 
-Developers should run the "GitSetupEnvironmnet.sh" script to get started.
+Developers should run the "./Utilities/SetupForDevelopment.sh" script to get started.
 
 
 Example session for a clean build:
@@ -9,7 +9,7 @@ mkdir ~/src/mytester
 cd ~/src/mytester
 git clone git://github.com/BRAINSia/BRAINSStandAlone.git
 cd BRAINSStandAlone/
-bash GitSetupEnvironmnet.sh
+bash ./Utilities/SetupForDevelopment.sh
 mkdir -p ../BRAINSStandAlone-build
 cd ../BRAINSStandAlone-build/
 CC=/usr/bin/gcc-4.2 CXX=/usr/bin/g++-4.2 ccmake ../BRAINSStandAlone -DUSE_BRAINSFit:BOOL=ON -DUSE_BRAINSConstellationDetector:BOOL=ON -DUSE_BRAINSABC:BOOL=ON

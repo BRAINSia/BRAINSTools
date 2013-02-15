@@ -28,6 +28,7 @@ include(${SlicerExecutionModel_CMAKE_DIR}/SEMMacroBuildCLI.cmake)
 #-----------------------------------------------------------------------------
 # use double-conversion library for consistent printing of double & float
 #-----------------------------------------------------------------------------
+set(double-conversion_DIR ${DoubleConvert_DIR})
 find_package(double-conversion REQUIRED)
 include_directories(${double-conversion_INCLUDE_DIRS})
 

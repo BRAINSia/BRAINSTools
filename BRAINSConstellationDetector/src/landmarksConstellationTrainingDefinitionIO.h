@@ -14,7 +14,7 @@
 #include <itkContinuousIndex.h>
 #include "landmarksDataSet.h"
 #include "landmarksConstellationModelBase.h"
-#include "DoubleTostring.h"
+#include "DoubleToString.h"
 // HACK:  Remove the multiple inheritance here.
 class landmarksConstellationTrainingDefinitionIO : public landmarksConstellationModelBase,
   public std::vector<landmarksDataSet>   // This should be a private member

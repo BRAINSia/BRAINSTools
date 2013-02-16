@@ -12,6 +12,10 @@
 from nipype.interfaces.slicer.generate_classes import generate_all_classes
 
 modules_list = [
+#'ResampleDTILogEuclidean',
+  'dtiprocess',
+  'dtiestim',
+  'dtiaverage',
     'BRAINSMultiSTAPLE',
     'AssignArray',
     'AverageBrainGenerator',

@@ -1,3 +1,4 @@
+set(DART_TESTING_TIMEOUT 1000)
 
 MakeTestDriverFromSEMTool(BRAINSFit BRAINSFitTest.cxx)
 MakeTestDriverFromSEMTool(BRAINSFitEZ BRAINSFitEZTest.cxx)

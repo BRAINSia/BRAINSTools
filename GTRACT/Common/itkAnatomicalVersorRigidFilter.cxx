@@ -41,8 +41,6 @@ AnatomicalVersorRigidFilter::AnatomicalVersorRigidFilter()
   m_MaximumStepLength = 0.2;
   m_MinimumStepLength = 0.0001;
   m_RelaxationFactor = 0.5;
-  m_InitialRotationAxis = 0;
-  m_InitialRotationAngle = 0.0;
 }
 
 void AnatomicalVersorRigidFilter::Update()

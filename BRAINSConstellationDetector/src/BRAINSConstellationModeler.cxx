@@ -296,9 +296,8 @@ int main(int argc, char *argv[])
     finalTransform->SetRotation( versorRotation );
     finalTransform->SetTranslation( ACPC_AlignedTransform->GetTranslation() );
     // inverse transform
-    VersorTransformType::Pointer ACPC_AlignedTransform_INV = VersorTransformType::New();
-    SImageType::PointType        centerPoint = finalTransform->GetCenter();
-    centerPoint = finalTransform->GetCenter();
+    VersorTransformType::Pointer  ACPC_AlignedTransform_INV = VersorTransformType::New();
+    const SImageType::PointType & centerPoint = finalTransform->GetCenter();
     ACPC_AlignedTransform_INV->SetCenter( centerPoint );
     ACPC_AlignedTransform_INV->SetIdentity();
     finalTransform->GetInverse( ACPC_AlignedTransform_INV );

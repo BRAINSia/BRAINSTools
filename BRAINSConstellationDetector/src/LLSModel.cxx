@@ -99,9 +99,9 @@ LLSModel
     {
     return -1;
     }
-  if( this->m_LLSMeans.size() == 0 ||
-      this->m_LLSMatrices.size() == 0 ||
-      this->m_LLSSearchRadii.size() == 0 )
+  if( this->m_LLSMeans.empty() ||
+      this->m_LLSMatrices.empty() ||
+      this->m_LLSSearchRadii.empty() )
     {
     return -1;
     }

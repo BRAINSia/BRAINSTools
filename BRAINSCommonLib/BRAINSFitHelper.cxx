@@ -548,7 +548,7 @@ BRAINSFitHelper::PrintCommandLine(const bool dumpTempVolumes, const std::string 
     }
   oss << " \\" << std::endl;
 
-  if( this->m_PermitParameterVariation.size() > 0 )
+  if( !this->m_PermitParameterVariation.empty() )
     {
     oss << "--permitParameterVariation ";
     for( unsigned int q = 0; q < this->m_PermitParameterVariation.size(); ++q )

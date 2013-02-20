@@ -32,9 +32,9 @@ ExtractIndexType  GetSliceIndexToExtract(
   PercentIndexType               inputSliceToExtractInPercent,
   PhysicalPointIndexType          inputSliceToExtractInPhysicalPoint)
 {
-  if( inputSliceToExtractInIndex.size() == 0 &&
-      inputSliceToExtractInPercent.size() == 0 &&
-      inputSliceToExtractInPhysicalPoint.size() == 0  )
+  if( inputSliceToExtractInIndex.empty() &&
+      inputSliceToExtractInPercent.empty() &&
+      inputSliceToExtractInPhysicalPoint.empty() )
     {
     std::cout << "ERROR:: one of input index has to be entered "
               << std::endl;
@@ -42,14 +42,14 @@ ExtractIndexType  GetSliceIndexToExtract(
     }
 
   ExtractIndexType sliceIndexToExtract;
-  if( inputSliceToExtractInIndex.size() > 0 )
+  if( !inputSliceToExtractInIndex.empty() )
     {
     for( unsigned int i = 0; i < inputSliceToExtractInIndex.size(); i++ )
       {
       sliceIndexToExtract.push_back( inputSliceToExtractInIndex[i] );
       }
     }
-  else if( inputSliceToExtractInPhysicalPoint.size() > 0 )
+  else if( !inputSliceToExtractInPhysicalPoint.empty() )
     {
     for( unsigned int i = 0; i < inputSliceToExtractInPhysicalPoint.size(); i++ )
       {
@@ -70,7 +70,7 @@ ExtractIndexType  GetSliceIndexToExtract(
       sliceIndexToExtract.push_back( dummyIndex[planes[i]] );
       }
     }
-  else if( inputSliceToExtractInPercent.size() > 0 )
+  else if( !inputSliceToExtractInPercent.empty() )
     {
     for( unsigned int i = 0; i < inputSliceToExtractInPercent.size(); i++ )
       {
@@ -380,7 +380,7 @@ main(int argc, char * *argv)
 
       /** binaries */
       OutputGreyImageType::Pointer labelSlice;
-      if( image3DBinaries.size() > 0 )
+      if( !image3DBinaries.empty() )
         {
         /** rgb creator */
         LabelOverlayFilter::Pointer rgbComposer = LabelOverlayFilter::New();

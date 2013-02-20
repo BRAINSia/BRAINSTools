@@ -4,18 +4,15 @@
 #include "DoubleToString.h"
 
 EMSParameters
-::EMSParameters()
+::EMSParameters() :
+  m_Suffix(""),
+  m_AtlasDirectory(""),
+  m_AtlasOrientation("RAI"),
+  m_OutputDirectory(""),
+  m_OutputFormat("Meta")
+
 {
-  m_Suffix = "";
-
-  m_AtlasDirectory = "";
-
-  m_AtlasOrientation = "RAI";
-
   m_DoAtlasWarp = true;
-
-  m_OutputDirectory = "";
-  m_OutputFormat = "Meta";
 
   m_Images.clear();
   m_ImageOrientations.clear();

@@ -15,10 +15,10 @@ Log
 }
 
 Log
-::Log()
+::Log() :
+  m_OutputFileName("")
 {
   m_EchoFlag = true;
-  m_OutputFileName = "";
 }
 
 Log
@@ -28,10 +28,10 @@ Log
 }
 
 Log
-::Log(const Log & l)
+::Log(const Log & l) :
+  m_EchoFlag( l.m_EchoFlag ),
+  m_OutputFileName( l.m_OutputFileName )
 {
-  m_EchoFlag = l.m_EchoFlag;
-  m_OutputFileName = l.m_OutputFileName;
 }
 
 void

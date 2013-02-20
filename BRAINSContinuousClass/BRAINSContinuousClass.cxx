@@ -269,7 +269,6 @@ int ContinuousClassification(std::string t1VolumeName, std::string T2VolumeName,
         // White is more likely, check for veinous blood?
         if( predictedProbabilityEstimatesVeinousBloodVsAll[0] < predictedProbabilityEstimatesVeinousBloodVsAll[1] )
           {
-          predictedOutputPixelValue = outputOtherPixelValue;
           predictedOutputPixelValue = predictedProbabilityEstimatesVeinousBloodVsAll[0] * 100;
           }
         else

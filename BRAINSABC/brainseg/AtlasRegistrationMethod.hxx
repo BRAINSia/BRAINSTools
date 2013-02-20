@@ -31,8 +31,7 @@ GenericTransformType::Pointer MakeRigidIdentity(void)
   VersorRigid3DTransformType::Pointer rigidIdentity = VersorRigid3DTransformType::New();
 
   rigidIdentity->SetIdentity();
-  GenericTransformType::Pointer genericTransform = NULL;
-  genericTransform = rigidIdentity.GetPointer();
+  GenericTransformType::Pointer genericTransform = rigidIdentity.GetPointer();
   return genericTransform;
 }
 

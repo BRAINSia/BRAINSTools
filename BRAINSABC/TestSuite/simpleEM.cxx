@@ -44,7 +44,7 @@ int simpleRunEMS( std::string t1Volume,
                   int degreeOfBiasFieldCorrection,
                   double likelihoodTolerance)
 {
-  int status = -1;
+  const int status = -1;
   // PARSE_ARGS;
   /** read parameters            **/
   /** - read target input images **/
@@ -141,7 +141,6 @@ int simpleRunEMS( std::string t1Volume,
   if( T1FileName == "" && T2FileName == "" && PDFileName == "" )
     {
     std::cerr << " We need at lease one or more target image.\n";
-    status = -1;
     return status;
     }
   // Compute the brain outline in order to cut images later after bias
@@ -177,7 +176,6 @@ int simpleRunEMS( std::string t1Volume,
   if( PriorsList.size() != PriorWeights.size() )
     {
     std::cerr << " Number of List of Prior Image should be same to the Prior Weights List\n";
-    status = -1;
     return status;
     }
 
@@ -185,7 +183,6 @@ int simpleRunEMS( std::string t1Volume,
   if( PriorsList.empty() )
     {
     std::cerr << " There is no prior image at all, we need at least one image\n";
-    status = -1;
     return status;
     }
   else
@@ -300,8 +297,7 @@ int simpleRunEMS( std::string t1Volume,
 int main(int argc, char *argv[])
 {
   PARSE_ARGS;
-  int status = -1;
-  status
+  const int status
     = simpleRunEMS<float, float>(t1Volume,
                                  t2Volume,
                                  pdVolume,

@@ -19,9 +19,9 @@ Heap<T>
 
 template <class T>
 Heap<T>
-::Heap(const Heap<T> & h)
+::Heap(const Heap<T> & h) :
+  m_Elements(h.m_Elements)
 {
-  m_Elements = h.m_Elements;
 }
 
 template <class T>

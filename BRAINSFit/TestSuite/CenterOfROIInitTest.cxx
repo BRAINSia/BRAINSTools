@@ -85,9 +85,7 @@ int main(int, char * *)
 
   ImageType::Pointer eTfmImage = etfm2image->GetOutput();
 
-  GenericTransformType::Pointer       currentGenericTransform = NULL;
   VersorRigid3DTransformType::Pointer tempCopy = VersorRigid3DTransformType::New();
-  currentGenericTransform = tempCopy.GetPointer();
 
   // images and masks passed to helper are identical, but only masks will be used
   CastType::Pointer fixedImageCast = CastType::New();
@@ -118,7 +116,7 @@ int main(int, char * *)
   myHelper->SetTransformType(transformTypeVector);
   myHelper->Update();
 
-  currentGenericTransform = myHelper->GetCurrentGenericTransform();
+  GenericTransformType::Pointer currentGenericTransform = myHelper->GetCurrentGenericTransform();
 
   VersorRigid3DTransformType::ConstPointer versor3D =
     dynamic_cast<const VersorRigid3DTransformType *>(currentGenericTransform.GetPointer() );

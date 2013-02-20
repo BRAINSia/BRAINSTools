@@ -71,14 +71,13 @@ int main( int argc, char * argv[] )
 
   // Add all labels
 
-  InputBinaryImageType::Pointer sumVolume = InputBinaryImageType::New();
   typedef itk::ImageDuplicator<InputBinaryImageType> ImageDuplicatorType;
 
   ImageDuplicatorType::Pointer imageCopier = ImageDuplicatorType::New();
   imageCopier->SetInputImage( inputBinaryVolumeVector.front() );
   imageCopier->Update();
 
-  sumVolume = imageCopier->GetOutput();
+  InputBinaryImageType::Pointer sumVolume = imageCopier->GetOutput();
 
   typedef itk::AddImageFilter<InputBinaryImageType, InputBinaryImageType,
                               InputBinaryImageType> AddImageFilterType;

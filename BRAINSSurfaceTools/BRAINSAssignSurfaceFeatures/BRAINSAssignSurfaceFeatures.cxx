@@ -90,14 +90,12 @@ int main( int argc, char * *argv )
   std::cout << "------------------------------------------------------" << std::endl;
 
   // Read InputFile
-  vtkSmartPointer<vtkPolyData> surface = vtkSmartPointer<vtkPolyData>::New();
-
   vtkSmartPointer<vtkPolyDataReader> surfaceReader = vtkSmartPointer<vtkPolyDataReader>::New();
   surfaceReader->SetFileName(inputSurfaceFile.c_str() );
   surfaceReader->Update();
 
-  surface = surfaceReader->GetOutput();
-  int npoints = surface->GetNumberOfPoints();
+  vtkSmartPointer<vtkPolyData> surface = surfaceReader->GetOutput();
+  int                          npoints = surface->GetNumberOfPoints();
 
   // DistanceToPC
   int dir = 0; double distPC = 0.0;
@@ -177,8 +175,7 @@ int main( int argc, char * *argv )
     extractSurface->SetInput( CurrentMesh );
     extractSurface->Update();
 
-    vtkSmartPointer<vtkPolyData> hull = vtkSmartPointer<vtkPolyData>::New();
-    hull = extractSurface->GetOutput();
+    vtkSmartPointer<vtkPolyData> hull = extractSurface->GetOutput();
 
     // calculate the distance from surface to hull
     // create the cell locator
@@ -220,8 +217,7 @@ int main( int argc, char * *argv )
     outerSurfaceReader->SetFileName(outerSurfaceFile.c_str() );
     outerSurfaceReader->Update();
 
-    vtkSmartPointer<vtkPolyData> outerSurface = vtkSmartPointer<vtkPolyData>::New();
-    outerSurface = outerSurfaceReader->GetOutput();
+    vtkSmartPointer<vtkPolyData> outerSurface = outerSurfaceReader->GetOutput();
 
     // calculate the distance from input surface to the outer surface
     // create the cell locator

@@ -16,9 +16,9 @@ class Exception : public std::exception
 public:
 
   Exception()
-  throw ( )
+  throw ( ) :
+    m_Message("")
   {
-    m_Message = "";
   }
 
   ~Exception()

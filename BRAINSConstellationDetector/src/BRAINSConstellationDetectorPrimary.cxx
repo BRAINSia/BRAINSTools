@@ -173,7 +173,7 @@ bool BRAINSConstellationDetectorPrimary::Compute( void )
     }
   else
     {
-    if( landmarksEMSP.size() > 0 )
+    if( !landmarksEMSP.empty() )
       {
       constellation2->SetLandmarksEMSP( landmarksEMSP );
       }

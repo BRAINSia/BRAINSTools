@@ -86,8 +86,7 @@ int main( int argc, char * argv[] )
   imagereader->SetFileName(labelMapFile.c_str() );
   imagereader->Update();
 
-  ImageType::Pointer image = ImageType::New();
-  image = imagereader->GetOutput();
+  ImageType::ConstPointer image = imagereader->GetOutput();
 
   ImageType::SizeType  size = image->GetBufferedRegion().GetSize();
   ImageType::IndexType start = image->GetBufferedRegion().GetIndex();

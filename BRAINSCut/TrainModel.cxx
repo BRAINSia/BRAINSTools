@@ -305,8 +305,7 @@ void ANNTrain( // NetConfiguration & prob,
   std::ifstream vectorstr;
   vectorstr.open(ANNVectorFilename.c_str(), std::ios::in);
 
-  int                   lastSubSetNumber = -1;
-  neural_data_set_type *TrainSetPtr = 0;
+  int lastSubSetNumber = -1;
   // const std::string     ANNHeaderTestVectorFilename = ANNTestVectorFilename + ".hdr";
   std::ifstream testfilestr;
   // TODO: DELETE neural_data_set_type *TestSetPtr = 0;
@@ -334,14 +333,14 @@ void ANNTrain( // NetConfiguration & prob,
   // Initial Training
   std::cout << "* Initial Training ... ... "
             << std::endl;
-  TrainSetPtr = ExtractTrainingSubsetFromFile(vectorstr,
-                                              InputVectorSize,
-                                              OutputVectorSize,
-                                              NumSubSets,
-                                              0,
-                                              NumberTrainingVectorsFromFile,
-                                              verbose
-                                              );
+  const neural_data_set_type *TrainSetPtr = ExtractTrainingSubsetFromFile(vectorstr,
+                                                                          InputVectorSize,
+                                                                          OutputVectorSize,
+                                                                          NumSubSets,
+                                                                          0,
+                                                                          NumberTrainingVectorsFromFile,
+                                                                          verbose
+                                                                          );
   int first_iter = training_net->train( (TrainSetPtr->inputVector),
                                         (TrainSetPtr->outputVector),
                                         NULL, // SAMPLE WEIGHTS

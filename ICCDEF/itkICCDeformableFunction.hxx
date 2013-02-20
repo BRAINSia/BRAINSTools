@@ -263,22 +263,19 @@ ICCDeformableFunction<TFixedImage, TMovingImage, TDisplacementField>
     derivative->SetDirection(0);
     derivative->Update();
 
-    typename FloatImageType::Pointer tempX = FloatImageType::New();
-    tempX = derivative->GetOutput();
+    typename FloatImageType::Pointer tempX = derivative->GetOutput();
     tempX->DisconnectPipeline();
 
     derivative->SetDirection(1);
     derivative->Update();
 
-    typename FloatImageType::Pointer tempY = FloatImageType::New();
-    tempY = derivative->GetOutput();
+    typename FloatImageType::Pointer tempY = derivative->GetOutput();
     tempY->DisconnectPipeline();
 
     derivative->SetDirection(2);
     derivative->Update();
 
-    typename FloatImageType::Pointer tempZ = FloatImageType::New();
-    tempZ = derivative->GetOutput();
+    typename FloatImageType::Pointer tempZ = derivative->GetOutput();
     tempZ->DisconnectPipeline();
 
     float delta_normalizer = 1.0;

@@ -93,11 +93,9 @@ int main(int argc, char * *argv)
    */
   typedef itk::Image<float, 3> ImageType;
 
-  ImageType::Pointer firstImage = ImageType::New();
-  firstImage = LoadImage( inputFirstVolume.c_str() );
+  ImageType::Pointer firstImage = LoadImage( inputFirstVolume.c_str() );
 
-  ImageType::Pointer secondImage = ImageType::New();
-  secondImage = LoadImage( inputSecondVolume.c_str() );
+  ImageType::Pointer secondImage = LoadImage( inputSecondVolume.c_str() );
 
   /* ------------------------------------------------------------------------------------
    * Load or automatically generate the MaskImage to define the region on which
@@ -112,10 +110,9 @@ int main(int argc, char * *argv)
                                              // when no mask is specified on
                                              // command line
     {
-    MaskImageType::Pointer boxImage = MaskImageType::New();
-    boxImage = GenerateInitializerRegion(firstImage,
-                                         boundingBoxSize,
-                                         boundingBoxStart);
+    MaskImageType::Pointer boxImage = GenerateInitializerRegion(firstImage,
+                                                                boundingBoxSize,
+                                                                boundingBoxStart);
     GenerateBrainVolume(firstImage,
                         secondImage,
                         boxImage,
@@ -194,14 +191,12 @@ void GenerateBrainVolume(ImageType::Pointer & firstImage,
   /* ------------------------------------------------------------------------------------
    * Send to Optimizer
    */
-  ImageType::Pointer mixtureImage = ImageType::New();
-
-  mixtureImage = MixtureOptimizer(firstImage,
-                                  secondImage,
-                                  maskImage,
-                                  desiredMean,
-                                  desiredVariance,
-                                  outputWeightsFile);
+  ImageType::Pointer mixtureImage = MixtureOptimizer(firstImage,
+                                                     secondImage,
+                                                     maskImage,
+                                                     desiredMean,
+                                                     desiredVariance,
+                                                     outputWeightsFile);
 
   /* ------------------------------------------------------------------------------------
    * Generate brain volume mask (adapted but heavily modified from proc

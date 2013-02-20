@@ -1480,8 +1480,6 @@ int main(int argc, char *argv[])
             // UNC comments: The principal eigenvector of the bmatrix is to be extracted as
             // it's the gradient direction and trace of the matrix is the b-value
 
-            double bvalue = 0;
-
             // UNC comments: Fill out the 3x3 bmatrix with the 6 components read from the
             // DICOM header.
             bMatrix[0][0] = valueArray[0];
@@ -1509,7 +1507,7 @@ int main(int argc, char *argv[])
             std::cout << bMatrix[0][2] << "\t" << bMatrix[1][2] << "\t" << bMatrix[2][2] << std::endl;
 
             // UNC comments: The b-value si the trace of the bmatrix
-            bvalue = bMatrix[0][0] + bMatrix[1][1] + bMatrix[2][2];
+            const double bvalue = bMatrix[0][0] + bMatrix[1][1] + bMatrix[2][2];
             std::cout << bvalue << std::endl;
             // UNC comments: Even if the bmatrix is null, the svd decomposition set the 1st eigenvector
             // to (1,0,0). So we force the gradient direction to 0 if the bvalue is null

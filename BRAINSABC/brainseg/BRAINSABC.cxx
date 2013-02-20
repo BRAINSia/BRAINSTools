@@ -212,8 +212,7 @@ static std::vector<FloatImageType::Pointer> ResampleImageList(
     // HACK:  We can probably remove the mask generation from here.
     // The FOV mask, regions where intensities in all channels do not
     // match FOV code
-    ByteImageType::Pointer intraSubjectFOVIntersectionMask = NULL;
-    intraSubjectFOVIntersectionMask = ByteImageType::New();
+    ByteImageType::Pointer intraSubjectFOVIntersectionMask = ByteImageType::New();
     intraSubjectFOVIntersectionMask->CopyInformation(inputImageList[0]);
     intraSubjectFOVIntersectionMask->SetRegions( inputImageList[0]->GetLargestPossibleRegion() );
     intraSubjectFOVIntersectionMask->Allocate();
@@ -389,7 +388,7 @@ private:
 static FloatImageType::Pointer AverageImageList(
   const std::vector<FloatImageType::Pointer> & inputImageList)
 {
-  if( inputImageList.size() == 0 )
+  if( inputImageList.empty() )
     {
     // No images, something went wrong.
     throw EmptyVectorException();

@@ -3,10 +3,9 @@
 BRAINSCutCreateVector
 ::BRAINSCutCreateVector( BRAINSCutDataHandler dataHandler ) :
   m_inputVectorSize(0),
-  m_outputVectorSize(0)
+  m_outputVectorSize(0),
+  m_myDataHandler(dataHandler)
 {
-  m_myDataHandler = dataHandler;
-
   m_myDataHandler.SetRegistrationParameters();
   m_myDataHandler.SetAtlasDataSet();
   m_myDataHandler.SetRegionsOfInterest();

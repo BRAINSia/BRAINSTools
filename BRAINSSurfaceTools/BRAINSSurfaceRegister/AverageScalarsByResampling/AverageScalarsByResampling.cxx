@@ -124,14 +124,13 @@ int main( int argc, char * argv [] )
   MeshType::Pointer referenceMesh = MeshType::New();
   MeshType::Pointer resampledMesh = MeshType::New();
 
-  MeshType::Pointer outputMesh = MeshType::New();
   MeshType::Pointer newMesh = MeshType::New();
 
   InputMeshReaderType::Pointer inputWithScalarsReader = InputMeshReaderType::New();
   inputWithScalarsReader->SetFileName(templateSphereFile.c_str() );
   inputWithScalarsReader->Update();
 
-  outputMesh = inputWithScalarsReader->GetOutput();
+  MeshType::Pointer outputMesh = inputWithScalarsReader->GetOutput();
   outputMesh->DisconnectPipeline();
   for( int i = 0; i < numSubs; i++ )
     {

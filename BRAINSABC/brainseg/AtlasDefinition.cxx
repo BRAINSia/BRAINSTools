@@ -97,7 +97,7 @@ AtlasDefinition::AtlasDefinition() :
 const AtlasDefinition::TissueTypeVector &
 AtlasDefinition::TissueTypes()
 {
-  if( this->m_TissueTypes.size() == 0 )
+  if( this->m_TissueTypes.empty() )
     {
     for( PriorMapType::const_iterator it = this->m_PriorMap.begin();
          it != this->m_PriorMap.end();

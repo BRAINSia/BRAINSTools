@@ -66,7 +66,7 @@ public:
       std::string::size_type posA = CSVs.find(',');
       if( posA == std::string::npos )
         {
-        throw shortLine;
+        throw landmarksDataSet::shortLine;
         }
       std::string            PointName( CSVs.substr(0, posA - 0) );
       std::string::size_type posB = 0;
@@ -75,7 +75,7 @@ public:
         posB = CSVs.find(',', posA + 1);
         if( posB == std::string::npos )
           {
-          throw shortLine;
+          throw landmarksDataSet::shortLine;
           }
         std::string datum = CSVs.substr( posA + 1, posB - ( posA + 1 ) );
         tempPoint[j] = atof( datum.c_str() );

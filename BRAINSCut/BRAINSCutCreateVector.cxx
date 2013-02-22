@@ -71,7 +71,7 @@ BRAINSCutCreateVector
     }
   catch( BRAINSCutExceptionStringHandler& e )
     {
-    throw e;
+    throw;
     }
 }
 

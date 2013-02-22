@@ -35,6 +35,24 @@ BRAINSCutApplyModel
 }
 
 BRAINSCutApplyModel
+::BRAINSCutApplyModel( BRAINSCutApplyModel& applyModel ) :
+  m_myDataHandler(NULL),
+  m_applyDataSetList(),
+  m_method(""),
+  m_normalization(""),
+  m_computeSSE(true),
+  m_trainIteration(0),
+  m_numberOfTrees(0),
+  m_depthOfTree(0),
+  m_ANNTestingSSEFileStream(),
+  m_annOutputThreshold(0),
+  m_gaussianSmoothingSigma(0),
+  m_openCVANN(NULL),
+  m_openCVRandomForest(NULL)
+{
+}
+
+BRAINSCutApplyModel
 ::BRAINSCutApplyModel( BRAINSCutDataHandler& dataHandler ) :
   m_myDataHandler(NULL),
   m_applyDataSetList(),
@@ -756,7 +774,6 @@ BRAINSCutApplyModel
       errorMsg += this->m_myDataHandler->GetANNTestingSSEFilename();
       std::cout << errorMsg << std::endl;
       throw BRAINSCutExceptionStringHandler( errorMsg );
-      exit( EXIT_FAILURE );
       }
     }
 }

@@ -11,6 +11,9 @@ class BRAINSCutApplyModel
 {
 public:
   BRAINSCutApplyModel( BRAINSCutDataHandler& dataHandler );
+  BRAINSCutApplyModel( BRAINSCutApplyModel& applyModel ); // copy constructor which is recommended
+                                                          // since the class contains a pointer to
+                                                          // allocated memory.
   BRAINSCutApplyModel();
   ~BRAINSCutApplyModel();
 

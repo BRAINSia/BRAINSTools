@@ -163,14 +163,10 @@ void QVTKInteractionCallback::Execute(vtkObject *, unsigned long myEvent, void *
       if( zPhysicalLocation < bound[0] )
         {
         zPhysicalLocation = bound[0];
-        center[centerMapped] = zPhysicalLocation == physicalExtent[0] ?
-          physicalExtentIdentity[2 * centerMapped] : physicalExtentIdentity[2 * centerMapped + 1];
         }
       if( zPhysicalLocation > bound[1] )
         {
         zPhysicalLocation = bound[1];
-        center[centerMapped] = zPhysicalLocation == physicalExtent[0] ?
-          physicalExtentIdentity[2 * centerMapped] : physicalExtentIdentity[2 * centerMapped + 1];
         }
 
       // store the physical location
@@ -207,14 +203,10 @@ void QVTKInteractionCallback::Execute(vtkObject *, unsigned long myEvent, void *
       if( zPhysicalLocation < bound[2] )
         {
         zPhysicalLocation = bound[2];
-        center[centerMapped] = zPhysicalLocation == physicalExtent[2] ?
-          physicalExtentIdentity[2 * centerMapped] : physicalExtentIdentity[2 * centerMapped + 1];
         }
       if( zPhysicalLocation > bound[3] )
         {
         zPhysicalLocation = bound[3];
-        center[centerMapped] = zPhysicalLocation == physicalExtent[2] ?
-          physicalExtentIdentity[2 * centerMapped] : physicalExtentIdentity[2 * centerMapped + 1];
         }
 
       // store the physical location
@@ -251,14 +243,10 @@ void QVTKInteractionCallback::Execute(vtkObject *, unsigned long myEvent, void *
       if( zPhysicalLocation < bound[4] )
         {
         zPhysicalLocation = bound[4];
-        center[centerMapped] = zPhysicalLocation == physicalExtent[4] ?
-          physicalExtentIdentity[2 * centerMapped] : physicalExtentIdentity[2 * centerMapped + 1];
         }
       if( zPhysicalLocation > bound[5] )
         {
         zPhysicalLocation = bound[5];
-        center[centerMapped] = zPhysicalLocation == physicalExtent[4] ?
-          physicalExtentIdentity[2 * centerMapped] : physicalExtentIdentity[2 * centerMapped + 1];
         }
 
       // store the physical location
@@ -340,16 +328,10 @@ void QVTKInteractionCallback::Execute(vtkObject *, unsigned long myEvent, void *
         if( zPhysicalLocation < bound[0] )
           {
           zPhysicalLocation = bound[0];
-          center[centerMapped] = zPhysicalLocation == physicalExtent[0] ?
-            physicalExtentIdentity[2 * centerMapped] : physicalExtentIdentity[2 * centerMapped
-                                                                              + 1];
           }
         if( zPhysicalLocation > bound[1] )
           {
           zPhysicalLocation = bound[1];
-          center[centerMapped] = zPhysicalLocation == physicalExtent[0] ?
-            physicalExtentIdentity[2 * centerMapped] : physicalExtentIdentity[2 * centerMapped
-                                                                              + 1];
           }
 
         // store the physical location
@@ -386,16 +368,10 @@ void QVTKInteractionCallback::Execute(vtkObject *, unsigned long myEvent, void *
         if( zPhysicalLocation < bound[2] )
           {
           zPhysicalLocation = bound[2];
-          center[centerMapped] = zPhysicalLocation == physicalExtent[2] ?
-            physicalExtentIdentity[2 * centerMapped] : physicalExtentIdentity[2 * centerMapped
-                                                                              + 1];
           }
         if( zPhysicalLocation > bound[3] )
           {
           zPhysicalLocation = bound[3];
-          center[centerMapped] = zPhysicalLocation == physicalExtent[2] ?
-            physicalExtentIdentity[2 * centerMapped] : physicalExtentIdentity[2 * centerMapped
-                                                                              + 1];
           }
 
         // store the physical location
@@ -432,16 +408,10 @@ void QVTKInteractionCallback::Execute(vtkObject *, unsigned long myEvent, void *
         if( zPhysicalLocation < bound[4] )
           {
           zPhysicalLocation = bound[4];
-          center[centerMapped] = zPhysicalLocation == physicalExtent[4] ?
-            physicalExtentIdentity[2 * centerMapped] : physicalExtentIdentity[2 * centerMapped
-                                                                              + 1];
           }
         if( zPhysicalLocation > bound[5] )
           {
           zPhysicalLocation = bound[5];
-          center[centerMapped] = zPhysicalLocation == physicalExtent[4] ?
-            physicalExtentIdentity[2 * centerMapped] : physicalExtentIdentity[2 * centerMapped
-                                                                              + 1];
           }
 
         // store the physical location
@@ -1073,9 +1043,4 @@ void QVTKInteractionCallback::createListAddButtonSlot()
     + initPos.number( ( physicalExtent[2] + physicalExtent[3] ) / 2.0 ) + " "
     + initPos.number( ( physicalExtent[4] + physicalExtent[5] ) / 2.0 );
   emit createListItem(initPos);
-}
-
-void QVTKInteractionCallback::deleteListButtonSlot()
-{
-  emit deleteListItem();
 }

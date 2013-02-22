@@ -681,7 +681,7 @@ private:
   {
     if( f.bad() || f.eof() )
       {
-      throw writeFail;
+      throw landmarksConstellationModelIO::writeFail;
       }
     f.write( reinterpret_cast<char *>( &var ), sizeof( T ) );
   }
@@ -691,7 +691,7 @@ private:
   {
     if( f.bad() || f.eof() )
       {
-      throw readFail;
+      throw landmarksConstellationModelIO::readFail;
       }
     f.read( reinterpret_cast<char *>( &var ), sizeof( T ) );
     if( this->m_Swapped )

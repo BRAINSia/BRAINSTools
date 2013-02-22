@@ -42,11 +42,11 @@ public:
   {
     if( s.bad() )
       {
-      throw bad;
+      throw landmarksConstellationTrainingDefinitionIO::bad;
       }
     if( s.eof() )
       {
-      throw eof;
+      throw landmarksConstellationTrainingDefinitionIO::eof;
       }
     s >> var;
   }
@@ -116,7 +116,7 @@ public:
     catch( err_flags f )
       {
       std::cerr << "File read error "
-                << ( f == eof ?
+                << ( f == landmarksConstellationTrainingDefinitionIO::eof ?
            "unexpected end of file" :
            "file read error" )
                 << std::endl;

@@ -2,7 +2,7 @@
 
 double ddot_(int *n, double *sx, int *incx, double *sy, int *incy)
 {
-  long int i, m, nn, iincx, iincy;
+  long int nn, iincx, iincy;
   double stemp;
   long int ix, iy;
 
@@ -19,9 +19,10 @@ double ddot_(int *n, double *sx, int *incx, double *sy, int *incy)
   stemp = 0.0;
   if (nn > 0)
   {
+    long int i;
     if (iincx == 1 && iincy == 1) /* code for both increments equal to 1 */
     {
-      m = nn-4;
+      long int m = nn-4;
       for (i = 0; i < m; i += 5)
         stemp += sx[i] * sy[i] + sx[i+1] * sy[i+1] + sx[i+2] * sy[i+2] +
                  sx[i+3] * sy[i+3] + sx[i+4] * sy[i+4];

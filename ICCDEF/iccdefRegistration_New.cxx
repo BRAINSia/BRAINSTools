@@ -152,7 +152,6 @@ void ThirionFunction(const struct ICCDEFWarpAppParameters & command)
       }
     }
   std::cout << "Working directory:" << itksys::SystemTools::GetCurrentWorkingDirectory() << std::endl;
-  std::string workingPath = itksys::SystemTools::GetCurrentWorkingDirectory();
   if( itksys::SystemTools::FileIsDirectory(command.outputPrefix.c_str() ) )
     {
     const std::string m_ForwardDir = command.outputPrefix + "/" + "forward";
@@ -320,7 +319,6 @@ void ThirionFunction(const struct ICCDEFWarpAppParameters & command)
 
   if( command.outputDebug )
     {
-    std::ofstream fid(command.outputPrefix.c_str() );
     filter->AddObserver( itk::IterationEvent(), observer );
     }
 
@@ -446,7 +444,7 @@ void ThirionFunction(const struct ICCDEFWarpAppParameters & command)
     {
     std::cout << "Caught an ITK exception: " << std::endl;
     std::cout << err << " " << __FILE__ << " " << __LINE__ << std::endl;
-    throw err;
+    throw;
     }
   catch( ... )
     {

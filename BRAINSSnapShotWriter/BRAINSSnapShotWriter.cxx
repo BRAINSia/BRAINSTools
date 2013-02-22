@@ -313,11 +313,6 @@ main(int argc, char * *argv)
                                                              Image3DBinaryVectorType>
       ( inputBinaryVolumes );
 
-  /** index to extract */
-  IndexType              inputIndex         = inputSliceToExtractInIndex;
-  PercentIndexType       inputPercentIndex  = inputSliceToExtractInPercent;
-  PhysicalPointIndexType inputPhysicalIndex = inputSliceToExtractInPhysicalPoint;
-
   ExtractIndexType extractingSlices =
     GetSliceIndexToExtract<Image3DVolumeType>( image3DVolumes[0],
                                                inputPlaneDirection,

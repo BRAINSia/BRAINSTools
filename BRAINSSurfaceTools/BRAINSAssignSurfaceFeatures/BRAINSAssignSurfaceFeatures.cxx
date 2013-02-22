@@ -98,7 +98,6 @@ int main( int argc, char * *argv )
   int                          npoints = surface->GetNumberOfPoints();
 
   // DistanceToPC
-  int dir = 0; double distPC = 0.0;
   if( distanceToPC_AP || distanceToPC_IS )
     {
     double pcPoint[3];
@@ -115,7 +114,8 @@ int main( int argc, char * *argv )
     for( int i = 0; i < npoints; i++ )
       {
       surface->GetPoint(i, pOnSurface);
-
+      int    dir = 0;
+      double distPC = 0.0;
       if( distanceToPC_AP )
         {
         dir = 1;

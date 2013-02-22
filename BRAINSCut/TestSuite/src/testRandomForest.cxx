@@ -107,13 +107,12 @@ int main( int, char* * argv )
 
   var_type.at<uchar>(ATTRIBUTES_PER_SAMPLE, 0) = CV_VAR_CATEGORICAL;
 
-  double result;   // value returned from a prediction
-
   // load training and testing data sets
 
   if( read_data_from_csv(argv[1], training_data, training_classifications, NUMBER_OF_TRAINING_SAMPLES) &&
       read_data_from_csv(argv[2], testing_data, testing_classifications, NUMBER_OF_TESTING_SAMPLES) )
     {
+    double result;     // value returned from a prediction
     // define the parameters for training the random forest (trees)
 
     float priors[] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1}; // weights of each classification for classes

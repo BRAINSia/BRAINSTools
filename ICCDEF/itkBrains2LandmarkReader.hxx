@@ -178,8 +178,6 @@ void Brains2LandmarkReader<TPixelType, Dimension>
 
   itkDebugMacro( "Z Reso:" << line );
 
-  std::string zresLine( line, strlen("LANDMARK_Z_RESOLUTION: "), line.length() );
-
   float zRes = 0.0;
 
   if( sscanf(zdimLine.c_str(), "%f", &zRes) != 1 )

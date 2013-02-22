@@ -3,7 +3,7 @@
 int daxpy_(int *n, double *sa, double *sx, int *incx, double *sy,
            int *incy)
 {
-  long int i, m, ix, iy, nn, iincx, iincy;
+  long int nn, iincx, iincy;
   register double ssa;
 
   /* constant times a vector plus a vector.   
@@ -19,9 +19,10 @@ int daxpy_(int *n, double *sa, double *sx, int *incx, double *sy,
 
   if( nn > 0 && ssa != 0.0 )
   {
+    long int i;
     if (iincx == 1 && iincy == 1) /* code for both increments equal to 1 */
     {
-      m = nn-3;
+      long int m = nn-3;
       for (i = 0; i < m; i += 4)
       {
         sy[i] += ssa * sx[i];
@@ -34,8 +35,8 @@ int daxpy_(int *n, double *sa, double *sx, int *incx, double *sy,
     }
     else /* code for unequal increments or equal increments not equal to 1 */
     {
-      ix = iincx >= 0 ? 0 : (1 - nn) * iincx;
-      iy = iincy >= 0 ? 0 : (1 - nn) * iincy;
+      long int ix = iincx >= 0 ? 0 : (1 - nn) * iincx;
+      long int iy = iincy >= 0 ? 0 : (1 - nn) * iincy;
       for (i = 0; i < nn; i++)
       {
         sy[iy] += ssa * sx[ix];

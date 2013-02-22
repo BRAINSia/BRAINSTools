@@ -167,7 +167,7 @@ void itkSimpleDiffeomorphicRegistration::Update()
     {
     std::cout << "Caught an ITK exception: " << std::endl;
     std::cout << err << " " << __FILE__ << " " << __LINE__ << std::endl;
-    throw err;
+    throw;
     }
   catch( ... )
     {
@@ -183,7 +183,7 @@ void itkSimpleDiffeomorphicRegistration::Update()
     {
     std::cout << "Caught an ITK exception: " << std::endl;
     std::cout << err << " " << __FILE__ << " " << __LINE__ << std::endl;
-    throw err;
+    throw;
     }
   catch( ... )
     {

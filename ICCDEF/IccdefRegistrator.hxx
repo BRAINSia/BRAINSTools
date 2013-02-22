@@ -215,7 +215,7 @@ void IccdefRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute()
     catch( itk::ExceptionObject & err )
       {
       std::cerr << "Caught an ITK exception: " << std::endl;
-      throw err;
+      throw;
       }
 
     this->m_Registration->SetInitialFixedDisplacementField(fieldReader->GetOutput() );
@@ -234,7 +234,7 @@ void IccdefRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute()
     catch( itk::ExceptionObject & err )
       {
       std::cerr << "Caught an ITK exception: " << std::endl;
-      throw err;
+      throw;
       }
 
     this->m_Registration->SetInitialMovingDisplacementField(fieldReader->GetOutput() );
@@ -290,7 +290,7 @@ void IccdefRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute()
     {
     std::cout << "Caught an exception: " << std::endl;
     std::cout << err << " " << __FILE__ << " " << __LINE__ << std::endl;
-    throw err;
+    throw;
     }
   catch( ... )
     {

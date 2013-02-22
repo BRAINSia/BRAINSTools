@@ -79,10 +79,10 @@ int main( int argc, char *argv[] )
     }
 
   // if compare the vertex location
-  double pInput[3];
-  double pRef[3];
   if( vertexLocation )
     {
+    double pInput[3];
+    double pRef[3];
     for( vtkIdType i = 0; i < numberOfPoints; i++ )
       {
       inputSurface->GetPoint(i, pInput);

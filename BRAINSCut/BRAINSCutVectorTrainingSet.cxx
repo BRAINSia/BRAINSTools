@@ -149,24 +149,6 @@ BRAINSCutVectorTrainingSet
 
 // ---------------------------//
 inline
-int
-GetFileStreamToWrite( std::string filename)
-{
-  int fileStreamToWrite = open( filename.c_str(),
-                                O_WRONLY | O_CREAT | O_TRUNC,
-                                S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH );
-
-  if( fileStreamToWrite == -1 )
-    {
-    std::string msg( "Cannot Open FileStream of " );
-    msg += filename;
-    throw BRAINSCutExceptionStringHandler( msg );
-    }
-  return fileStreamToWrite;
-}
-
-// ---------------------------//
-inline
 void
 GetFileStreamToRead( std::string filename, std::ifstream& fileStreamToRead)
 {

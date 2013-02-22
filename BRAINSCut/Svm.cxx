@@ -54,15 +54,17 @@ private:
     Qfloat *data;
     int len;    // data[0,len) is cached in this entry
     };
-  head_t *head;
-  head_t  lru_head;
+  // head_t *head;
+  head_t lru_head;
   void lru_delete(head_t *h);
 
   void lru_insert(head_t *h);
 };
 Cache::Cache(int l_, int size_) : l(l_), size(size_)
 {
-  head = (head_t *)calloc( l, sizeof( head_t ) );  // initialized to 0
+  // head = (head_t *)calloc( l, sizeof( head_t ) );  // initialized to 0
+  std::vector<head_t> head(l);
+
   size /= sizeof( Qfloat );
   size -= l * sizeof( head_t ) / sizeof( Qfloat );
   size = max( (int)size, 2 * l);  // cache must be large enough for two columns
@@ -215,24 +217,9 @@ private:
   const double      coef0;
   static double dot(const svm_node *px, const svm_node *py);
 
-  double kernel_linear(int i, int j) const
-  {
-    return dot(x[i], x[j]);
-  }
-
-  double kernel_poly(int i, int j) const
-  {
-    return pow(gamma * dot(x[i], x[j]) + coef0, degree);
-  }
-
   double kernel_rbf(int i, int j) const
   {
     return exp( -gamma * ( x_square[i] + x_square[j] - 2 * dot(x[i], x[j]) ) );
-  }
-
-  double kernel_sigmoid(int i, int j) const
-  {
-    return tanh(gamma * dot(x[i], x[j]) + coef0);
   }
 };
 Kernel::Kernel(int l, svm_node *const *x_, const svm_parameter & param) : kernel_type(param.kernel_type),
@@ -1590,7 +1577,8 @@ void svm_group_classes(const svm_problem *prob,
 
 svm_model * svm_train(const svm_problem *prob, const svm_parameter *param)
 {
-  svm_model *model = Malloc(svm_model, 1);
+  // svm_model *model = Malloc(svm_model, 1);
+  svm_model *model = new svm_model;
 
   model->param = *param;
   model->free_sv = 0;
@@ -1637,8 +1625,10 @@ svm_model * svm_train(const svm_problem *prob, const svm_parameter *param)
     {
     nonzero[i] = false;
     }
-  decision_function *f = Malloc(decision_function, 1);
-  double *           probA = NULL, *probB = NULL;
+  // decision_function *f = Malloc(decision_function, 1);
+  decision_function *f = new decision_function;
+
+  double * probA = NULL, *probB = NULL;
   if( param->probability )
     {
     probA = Malloc(double, 1);
@@ -1925,7 +1915,9 @@ svm_model * svm_load_model(const char *model_file_name)
     {
     return NULL;
     }
-  svm_model *     model = Malloc(svm_model, 1);
+  // svm_model *     model = Malloc(svm_model, 1);
+  svm_model * model = new svm_model;
+
   svm_parameter & param = model->param;
   model->rho = NULL;
   model->probA = NULL;
@@ -2031,7 +2023,8 @@ svm_model * svm_load_model(const char *model_file_name)
   svm_node *x_space = NULL;
   if( l > 0 )
     {
-    x_space = Malloc(svm_node, elements);
+    // x_space = Malloc(svm_node, elements);
+    x_space = new svm_node[elements];
     }
   int j = 0;
   for( i = 0; i < l; i++ )

@@ -3,8 +3,8 @@
 
 double dnrm2_(int *n, double *x, int *incx)
 {
-  long int ix, nn, iincx;
-  double norm, scale, absxi, ssq, temp;
+  long int nn, iincx;
+  double norm;
 
 /*  DNRM2 returns the euclidean norm of a vector via the function   
     name, so that   
@@ -27,17 +27,18 @@ double dnrm2_(int *n, double *x, int *incx)
     }  
     else
     {
-      scale = 0.0;
-      ssq = 1.0;
+      long int scale = 0.0;
+      long int ssq = 1.0;
 
       /* The following loop is equivalent to this call to the LAPACK 
          auxiliary routine:   CALL SLASSQ( N, X, INCX, SCALE, SSQ ) */
 
-      for (ix=(nn-1)*iincx; ix>=0; ix-=iincx)
+      for (long int ix=(nn-1)*iincx; ix>=0; ix-=iincx)
       {
         if (x[ix] != 0.0)
         {
-          absxi = fabs(x[ix]);
+          long int absxi = fabs(x[ix]);
+          long int temp;
           if (scale < absxi)
           {
             temp = scale / absxi;

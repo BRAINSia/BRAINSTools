@@ -436,7 +436,6 @@ BRAINSCutDataHandler
     {
     std::cout << "Fail to get the ann model file name:: " << basename << std::endl;
     throw BRAINSCutExceptionStringHandler("Fail to get the ann model file name");
-    exit(EXIT_FAILURE);
     }
   return basename;
 }

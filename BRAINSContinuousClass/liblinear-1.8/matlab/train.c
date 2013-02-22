@@ -276,7 +276,6 @@ int read_problem_sparse(const mxArray *label_vec, const mxArray *instance_mat)
 void mexFunction( int nlhs, mxArray *plhs[],
 		int nrhs, const mxArray *prhs[] )
 {
-	const char *error_msg;
 	// fix random seed to have same results for each run
 	// (for cross validation)
 	srand(1);
@@ -285,6 +284,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 	if(nrhs > 1 && nrhs < 5)
 	{
 		int err=0;
+    const char *error_msg;
 
 		if(!mxIsDouble(prhs[0]) || !mxIsDouble(prhs[1])) {
 			mexPrintf("Error: label vector and instance matrix must be double\n");

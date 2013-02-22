@@ -133,12 +133,10 @@ ICCIterativeInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>
     const float         fBasePnt3 = static_cast<float>(index[2]) / fnz;
     const float         fBasePnt2 = static_cast<float>(index[1]) / fny;
     const float         fBasePnt1 = static_cast<float>(index[0]) / fnx;
-
-    unsigned int iIteration = 0;
-    float        fDelta1, fDelta2, fDelta3;
-    float        fDispU1, fDispU2, fDispU3;
-
+    float               fDispU1, fDispU2, fDispU3;
       {
+      unsigned int iIteration = 0;
+      float        fDelta1, fDelta2, fDelta3;
       /* Make an inital fGuess of where the next ConstPixel should come from */
       float fDestPnt1 = fBasePnt1;
       float fDestPnt2 = fBasePnt2;

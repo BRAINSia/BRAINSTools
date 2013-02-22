@@ -56,7 +56,7 @@ void do_predict(mxArray *plhs[], const mxArray *prhs[], struct model *model_, co
 	int label_vector_row_num, label_vector_col_num;
 	int feature_number, testing_instance_number;
 	int instance_index;
-	double *ptr_instance, *ptr_label, *ptr_predict_label;
+	double *ptr_label, *ptr_predict_label;
 	double *ptr_prob_estimates, *ptr_dec_values, *ptr;
 	struct feature_node *x;
 	mxArray *pplhs[1]; // instance sparse matrix in row format
@@ -98,7 +98,6 @@ void do_predict(mxArray *plhs[], const mxArray *prhs[], struct model *model_, co
 		return;
 	}
 
-	ptr_instance = mxGetPr(prhs[1]);
 	ptr_label    = mxGetPr(prhs[0]);
 
 	// transpose instance matrix
@@ -195,7 +194,6 @@ void exit_with_help()
 void mexFunction( int nlhs, mxArray *plhs[],
 		int nrhs, const mxArray *prhs[] )
 {
-	int prob_estimate_flag = 0;
 	struct model *model_;
 	char cmd[CMD_LEN];
 	col_format_flag = 0;
@@ -224,6 +222,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 	if(mxIsStruct(prhs[2]))
 	{
 		const char *error_msg;
+    int prob_estimate_flag = 0;
 
 		// parse options
 		if(nrhs>=4)

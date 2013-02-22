@@ -31,7 +31,8 @@ vtkFSSurfaceReader * vtkFSSurfaceReader::New()
 
   if( ret )
     {
-    return (vtkFSSurfaceReader *)ret;
+    // return (vtkFSSurfaceReader*)ret;
+    return dynamic_cast<vtkFSSurfaceReader *> ret;
     }
   // If the factory was unable to create the object, then create it here.
   return new vtkFSSurfaceReader;
@@ -73,9 +74,9 @@ vtkPolyData * vtkFSSurfaceReader::GetOutput()
     return NULL;
     }
 #if (VTK_MAJOR_VERSION >= 5)
-  return (vtkPolyData *)(this->GetOutput(0) );
+  return dynamic_cast<vtkPolyData *>(this->GetOutput(0) );
 #else
-  return (vtkPolyData *)(this->Outputs[0]);
+  return dynamic_cast<vtkPolyData *>(this->Outputs[0]);
 #endif
 }
 

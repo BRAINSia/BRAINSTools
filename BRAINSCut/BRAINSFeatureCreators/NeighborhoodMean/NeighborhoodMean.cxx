@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
     {
     std::cerr << argv[0] << ": exception caught !" << std::endl;
     std::cerr << excep << std::endl;
-    throw excep;
+    throw;
     }
 
   typedef itk::ImageFileWriter<ImageType> ImageWriterType;

@@ -183,28 +183,3 @@ void read_problem(const char *filename, mxArray *plhs[])
 	}
 }
 
-void mexFunction( int nlhs, mxArray *plhs[],
-		int nrhs, const mxArray *prhs[] )
-{
-	if(nrhs == 1)
-	{
-		char filename[256];
-
-		mxGetString(prhs[0], filename, mxGetN(prhs[0]) + 1);
-
-		if(filename == NULL)
-		{
-			mexPrintf("Error: filename is NULL\n");
-			return;
-		}
-
-		read_problem(filename, plhs);
-	}
-	else
-	{
-		exit_with_help();
-		fake_answer(plhs);
-		return;
-	}
-}
-

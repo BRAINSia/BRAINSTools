@@ -184,21 +184,6 @@ SubjectFilenameVector get_subject_filename_tuples(const std::string& file_glob_s
   return subjects;
 }
 
-// ----------
-// Get the matrix (in text format) for subjectids.
-static std::string get_all_subjectid_text(const std::vector<std::pair<std::string, std::string> >& subjects)
-{
-  std::string subjectid_text("Subject_ID = {\n");
-
-  for( std::vector<std::pair<std::string, std::string> >::const_iterator subject_iter = subjects.begin();
-       subject_iter != subjects.end(); ++subject_iter )
-    {
-    subjectid_text += "'" + subject_iter->first + "' ;\n";
-    }
-  subjectid_text += "}\n\n";
-  return subjectid_text;
-}
-
 // A map between the read in filename and the LandmarksMapType
 typedef std::map<std::string, LandmarksMapType> FileToLandmarksMapType;
 
@@ -339,7 +324,6 @@ int main(int argc, char* argv[])
     {
     subjectIDVec.push_back(it->first);
     }
-  std::string subjectid_text = get_all_subjectid_text(subjects);
 
   const FileToLandmarksMapType allFileToLandmarkMap =
     get_allFileToLandmarkMap(subjects);

@@ -159,8 +159,6 @@ void ANNTrain( // NetConfiguration & prob,
   std::string ANNVectorFilename = VectorFilename;
 
   ANNVectorFilename += "ANN";
-  std::string ANNTestVectorFilename = TestVectorFilename;
-  ANNTestVectorFilename += "ANN";
   std::string ANNModelFilename = ModelFilename;
   ANNModelFilename += "ANN";
   std::string ANNErrorFilename = ModelFilename;
@@ -305,14 +303,12 @@ void ANNTrain( // NetConfiguration & prob,
   std::ifstream vectorstr;
   vectorstr.open(ANNVectorFilename.c_str(), std::ios::in);
 
-  int lastSubSetNumber = -1;
-  // const std::string     ANNHeaderTestVectorFilename = ANNTestVectorFilename + ".hdr";
+  int           lastSubSetNumber = -1;
   std::ifstream testfilestr;
   // TODO: DELETE neural_data_set_type *TestSetPtr = 0;
   // TODO: DELETE int                   test_InputVectorSize = 0;
   // TODO: DELETE int                   test_OutputVectorSize = 0;
   // TODO: DELETE int                   test_NumberTrainingVectorsFromFile = 0;
-  std::ifstream testVectorStr;
   testfilestr.close();
   // To trace minimum traininig point
   double TrainSet_MinimumMSE = 100.0; int TrainSet_MinimumMSEPoint = 0;
@@ -548,53 +544,4 @@ static int Train(NetConfiguration & ANNConfiguration, int verbose)
       );
     }
   return 0;
-}
-
-int TrainModel(const std::string & XMLFile, int verbose, int StartIteration)
-{
-#if defined( NUMERIC_TRAP_TEST )
-  // turn on numeric exceptions...
-  _mm_setcsr( _MM_MASK_MASK & ~
-              ( _MM_MASK_OVERFLOW | _MM_MASK_INVALID | _MM_MASK_DIV_ZERO ) );
-#endif
-  NetConfiguration *     ANNConfiguration;
-  NetConfigurationParser ANNConfigurationParser = NetConfigurationParser( XMLFile );
-  ANNConfiguration = ANNConfigurationParser.GetNetConfiguration();
-
-  if( ANNConfiguration->Verify() != true )
-    {
-    std::cerr << "XML file " << " is invalid." << std::endl;
-    std::cerr << "FULL DUMP ===============================" << std::endl;
-    std::cerr << "FULL DUMP ===============================" << std::endl;
-    std::cerr << "FULL DUMP ===============================" << std::endl;
-    ANNConfiguration->PrintSelf(std::cerr, 0);
-    std::cerr << "FULL DUMP ===============================" << std::endl;
-    std::cerr << "FULL DUMP ===============================" << std::endl;
-    std::cerr << "FULL DUMP ===============================" << std::endl;
-    return -1;
-    }
-  // restart training
-  start_iteration = StartIteration;
-  int rval;
-  try
-    {
-    if( verbose )
-      {
-      std::cerr << "This will print out in detail with process....\n";
-      }
-    std::cout << "Training Model(s)" << std::endl;
-    rval = Train(*ANNConfiguration, verbose);
-    std::cout << "Finished Training" << std::endl;
-    }
-  catch( BRAINSCutExceptionStringHandler & ex )
-    {
-    std::cerr << ex.Error() << std::endl;
-    rval = -1;
-    }
-  catch( ... )
-    {
-    std::cerr << "Unidentified exception" << std::endl;
-    rval = -1;
-    }
-  return rval;
 }

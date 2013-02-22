@@ -57,65 +57,6 @@ EMSParameters
   m_ImageOrientations.clear();
 }
 
-bool
-EMSParameters
-::CheckValues() const
-{
-  if( m_Suffix.length() == 0 )
-    {
-    std::cerr << "Invalid Suffix length" << std::endl;
-    return false;
-    }
-
-  if( m_AtlasDirectory.length() == 0 )
-    {
-    std::cerr << "Invalid Atlas Directory" << std::endl;
-    return false;
-    }
-
-  if( m_OutputDirectory.length() == 0 )
-    {
-    std::cerr << "Invalid OutputDirectory" << std::endl;
-    return false;
-    }
-
-  bool validFormat = false;
-  if( itksys::SystemTools::Strucmp(m_OutputFormat.c_str(), "Analyze") == 0 )
-    {
-    validFormat = true;
-    }
-  if( itksys::SystemTools::Strucmp(m_OutputFormat.c_str(), "GIPL") == 0 )
-    {
-    validFormat = true;
-    }
-  if( itksys::SystemTools::Strucmp(m_OutputFormat.c_str(), "Nrrd") == 0 )
-    {
-    validFormat = true;
-    }
-  if( itksys::SystemTools::Strucmp(m_OutputFormat.c_str(), "Meta") == 0 )
-    {
-    validFormat = true;
-    }
-  if( itksys::SystemTools::Strucmp(m_OutputFormat.c_str(), "NIFTI") == 0 )
-    {
-    validFormat = true;
-    }
-
-  if( !validFormat )
-    {
-    std::cerr << "No valid image format defined." << std::endl;
-    return false;
-    }
-
-  if( m_Images.empty() )
-    {
-    std::cerr << "Images not defined." << std::endl;
-    return false;
-    }
-
-  return true;
-}
-
 void
 EMSParameters
 ::PrintSelf(std::ostream & os, itk::Indent) const

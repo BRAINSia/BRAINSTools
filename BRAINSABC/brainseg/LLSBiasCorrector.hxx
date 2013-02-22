@@ -110,7 +110,6 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>
 {
   muLogMacro(<< "LLSBiasCorrector: Computing means and variances..." << std::endl );
 
-  std::vector<double> ClassProbabilityWeightings;
   CombinedComputeDistributions<TInputImage, TProbabilityImage, MatrixType>(this->m_CandidateRegions, m_InputImages,
                                                                            m_BiasPosteriors,
                                                                            this->m_ListOfClassStatistics, //

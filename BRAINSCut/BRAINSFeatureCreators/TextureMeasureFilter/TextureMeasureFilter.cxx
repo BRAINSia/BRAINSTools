@@ -64,7 +64,7 @@ int main( int argc, char *argv[] )
     {
     std::cerr << "Exception Object Caught! " << std::endl;
     std::cerr << err << std::endl;
-    throw err;
+    throw;
     }
 
   /** Convert Type to unsigned char */
@@ -157,7 +157,7 @@ int main( int argc, char *argv[] )
     {
     std::cerr << "Exception Object Caught! " << std::endl;
     std::cerr << err << std::endl;
-    throw err;
+    throw;
     }
 
   /** Get output and display */

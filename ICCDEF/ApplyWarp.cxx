@@ -66,11 +66,10 @@ int ApplyWarp(int argc, char *argv[])
 {
   PARSE_ARGS;
 
-  const bool debug = true;
-
   const bool useTransform = (warpTransform.size() > 0);
     {
     const bool useDisplacementField = (deformationVolume.size() > 0);
+    const bool debug = true;
 
     if( debug )
       {

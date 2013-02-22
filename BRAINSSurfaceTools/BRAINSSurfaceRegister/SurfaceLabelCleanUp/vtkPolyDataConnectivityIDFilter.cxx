@@ -341,10 +341,11 @@ int vtkPolyDataConnectivityIDFilter::RequestData(
     {
     for( cellId = 0; cellId < numCells; cellId++ )
       {
-      int inReg, regionId;
+      int regionId;
       if( (regionId = this->Visited[cellId]) >= 0 )
         {
-        for( inReg = 0, i = 0; i < this->SpecifiedRegionIds->GetNumberOfIds(); i++ )
+        int inReg = 0;
+        for( i = 0; i < this->SpecifiedRegionIds->GetNumberOfIds(); i++ )
           {
           if( regionId == this->SpecifiedRegionIds->GetId(i) )
             {

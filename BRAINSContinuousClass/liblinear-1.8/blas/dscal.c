@@ -2,7 +2,7 @@
 
 int dscal_(int *n, double *sa, double *sx, int *incx)
 {
-  long int i, m, nincx, nn, iincx;
+  long int i, nn, iincx;
   double ssa;
 
   /* scales a vector by a constant.   
@@ -20,7 +20,7 @@ int dscal_(int *n, double *sa, double *sx, int *incx)
   {
     if (iincx == 1) /* code for increment equal to 1 */
     {
-      m = nn-4;
+      long int m = nn-4;
       for (i = 0; i < m; i += 5)
       {
         sx[i] = ssa * sx[i];
@@ -34,7 +34,7 @@ int dscal_(int *n, double *sa, double *sx, int *incx)
     }
     else /* code for increment not equal to 1 */
     {
-      nincx = nn * iincx;
+      long int nincx = nn * iincx;
       for (i = 0; i < nincx; i += iincx)
         sx[i] = ssa * sx[i];
     }

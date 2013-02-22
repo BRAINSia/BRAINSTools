@@ -95,22 +95,10 @@ BRAINSCutConfiguration::GetImageTypes() const
 
 // Set/Get Functions
 //
-void
-BRAINSCutConfiguration::SetImageTypeToUse( std::string imageTypeToUse )
-{
-  ImageTypeToUse = imageTypeToUse;
-}
-
 std::string
 BRAINSCutConfiguration::GetImageTypeToUse()
 {
   return ImageTypeToUse;
-}
-
-void
-BRAINSCutConfiguration::SetRegistrationID( std::string registrationID )
-{
-  RegistrationID = registrationID;
 }
 
 std::string

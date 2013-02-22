@@ -356,7 +356,7 @@ void statfilters( const typename ImageType::Pointer AccImage, MetaCommand comman
       {
       std::cerr << "Error reading the series " << std::endl;
       std::cerr << excp << std::endl;
-      throw excp;
+      throw;
       }
 
     havestatmask = true;
@@ -656,7 +656,7 @@ void ImageCalculatorReadWrite( MetaCommand & command )
   catch( itk::ExceptionObject & excp )
     {
     std::cerr << "Error reading the series " << std::endl;
-    throw excp;
+    throw;
     }
 
   // Create an Accumulator Image.
@@ -682,7 +682,7 @@ void ImageCalculatorReadWrite( MetaCommand & command )
     catch( itk::ExceptionObject & excp )
       {
       std::cerr << "Error reading the series " << std::endl;
-      throw excp;
+      throw;
       }
     typename ImageType::Pointer SubSequentImage = reader2->GetOutput();
 

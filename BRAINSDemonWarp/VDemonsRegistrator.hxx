@@ -78,7 +78,7 @@ void VDemonsRegistrator<TRealImage, TOutputImage,
   catch( itk::ExceptionObject & err )
     {
     std::cerr << err << std::endl;
-    throw err;
+    throw;
     }
 }
 
@@ -294,7 +294,7 @@ void VDemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute()
       {
       std::cout << "Caught an exception: " << std::endl;
       std::cout << err << " " << __FILE__ << " " << __LINE__ << std::endl;
-      throw err;
+      throw;
       }
     catch( ... )
       {
@@ -374,7 +374,7 @@ void VDemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute()
       {
       std::cout << "Caught an exception: " << std::endl;
       std::cout << err << " " << __FILE__ << " " << __LINE__ << std::endl;
-      throw err;
+      throw;
       }
     catch( ... )
       {
@@ -471,7 +471,7 @@ void VDemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute()
         {
         std::cout << "Caught an ITK exception: " << std::endl;
         std::cout << err << " " << __FILE__ << " " << __LINE__ << std::endl;
-        throw err;
+        throw;
         }
       typename RealImageType::Pointer CheckerImagePtr = checker->GetOutput();
       itkUtil::WriteImage<RealImageType>(CheckerImagePtr,

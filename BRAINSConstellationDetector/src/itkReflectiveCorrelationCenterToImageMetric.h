@@ -65,16 +65,12 @@ public:
     // Let the powell optimizer do all the work for determining the proper
     // offset
     // Quick search just needs to get an approximate angle correct.
-    // const double OffsetRange=8.0;
-    // const double OffsetStepSize=2.0;
-    const double Offset = 0.0;
-    // for(double Offset=-OffsetRange;Offset<=OffsetRange;
-    // Offset+=OffsetStepSize)
       {
       for( double HA = -HARange * one_degree; HA <= HARange * one_degree; HA += HAStepSize )
         {
         for( double BA = -BARange * one_degree; BA <= BARange * one_degree; BA += BAStepSize )
           {
+          const double Offset = 0.0;
           params[0] = HA;
           params[1] = BA;
           params[2] = Offset;

@@ -278,14 +278,11 @@ ICCDeformableFunction<TFixedImage, TMovingImage, TDisplacementField>
     typename FloatImageType::Pointer tempZ = derivative->GetOutput();
     tempZ->DisconnectPipeline();
 
-    float delta_normalizer = 1.0;
 //	m_SimilarityWeight *= 4.0 * m_MaximumUpdateStepLength ;
     typename TFixedImage::SizeType size = this->GetFixedImage()->GetLargestPossibleRegion().GetSize();
     float fnx = static_cast<float>(size[0]);
     float fny = static_cast<float>(size[1]);
     float fnz = static_cast<float>(size[2]);
-
-    delta_normalizer /= (fnx * fny * fnz);
 
 //	std::cout<<"m_SimilarityWeight:"<<m_SimilarityWeight<<std::endl;
 //	m_SimilarityWeight = 0.1; //40.0/256.0;
@@ -419,7 +416,7 @@ ICCDeformableFunction<TFixedImage, TMovingImage, TDisplacementField>
       typename DisplacementFieldFFTType::PixelType pixel1 = coeffsIter0.Get();
       for( unsigned i = 0; i < 3; i++ )
         {
-        pixel1[i] = pixel1[i] - (smoothIter.Get() * iter0.Get()[i]);        // * delta_normalizer);
+        pixel1[i] = pixel1[i] - (smoothIter.Get() * iter0.Get()[i]);
         }
       coeffsIter0.Set(pixel1);
       }
@@ -573,10 +570,7 @@ ICCDeformableFunction<TFixedImage, TMovingImage, TDisplacementField>
         typename DisplacementFieldFFTType::PixelType pixel1 = coeffsIter.Get();
         for( unsigned int i = 0; i < 3; i++ )
           {
-          pixel1[i] = pixel1[i] - (m_LandmarkWeight * smoothIter.Get() * iter.Get()[i]);            // *
-                                                                                                    //
-                                                                                                    //
-                                                                                                    // delta_normalizer);
+          pixel1[i] = pixel1[i] - (m_LandmarkWeight * smoothIter.Get() * iter.Get()[i]);
           }
         coeffsIter.Set(pixel1);
         }

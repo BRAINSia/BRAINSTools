@@ -74,32 +74,3 @@ void libsvmwrite(const char *filename, const mxArray *label_vec, const mxArray *
 	return;
 }
 
-void mexFunction( int nlhs, mxArray *plhs[],
-		int nrhs, const mxArray *prhs[] )
-{	
-	// Transform the input Matrix to libsvm format
-	if(nrhs == 3)
-	{
-		char filename[256];
-		if(!mxIsDouble(prhs[1]) || !mxIsDouble(prhs[2]))
-		{
-			mexPrintf("Error: label vector and instance matrix must be double\n");			
-			return;
-		}
-		
-		mxGetString(prhs[0], filename, mxGetN(prhs[0])+1);		
-
-		if(mxIsSparse(prhs[2]))
-			libsvmwrite(filename, prhs[1], prhs[2]);
-		else
-		{
-			mexPrintf("Instance_matrix must be sparse\n");			
-			return;
-		}
-	}
-	else
-	{
-		exit_with_help();		
-		return;
-	}
-}

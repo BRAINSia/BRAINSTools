@@ -159,9 +159,6 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
       ${VTK_MAC_ARGS}
     )
   ### --- End Project specific additions
-  if(NOT DEFINED git_protocol)
-      set(git_protocol "git")
-  endif()
   set(${proj}_REPOSITORY ${git_protocol}://vtk.org/VTK.git)
   set(${proj}_GIT_TAG "v5.10.0")
   ExternalProject_Add(${proj}

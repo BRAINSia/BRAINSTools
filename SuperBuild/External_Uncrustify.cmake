@@ -53,9 +53,6 @@ if(NOT ( DEFINED "${extProjName}_EXE" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
   )
 
   ### --- End Project specific additions
-  if(NOT DEFINED git_protocol)
-      set(git_protocol "git")
-  endif()
   set(${proj}_REPOSITORY ${git_protocol}://uncrustify.git.sourceforge.net/gitroot/uncrustify/uncrustify)
   set(${proj}_GIT_TAG 60f3681da60462eda539b78e0c6c3eea823481e5)
   ExternalProject_Add(${proj}

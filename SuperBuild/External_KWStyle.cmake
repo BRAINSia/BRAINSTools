@@ -53,9 +53,6 @@ if(NOT DEFINED ${extProjName}_EXE AND NOT ${USE_SYSTEM_${extProjName}})
       -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_BINARY_DIR}/Utils
   )
   ### --- End Project specific additions
-  if(NOT DEFINED git_protocol)
-      set(git_protocol "git")
-  endif()
   ExternalProject_Add(${proj}
     CVS_REPOSITORY :pserver:anoncvs@public.kitware.com:/cvsroot/KWStyle
     CVS_MODULE KWStyle

@@ -56,9 +56,6 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
       -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/${proj}-install
     )
   ### --- End Project specific additions
-  if(NOT DEFINED git_protocol)
-      set(git_protocol "git")
-  endif()
   set(${proj}_REPOSITORY ${git_protocol}://github.com/BRAINSia/double-conversion.git)
   set(${proj}_GIT_TAG 5674c48b0d7142afece5e389279c1472c92705b4)
   ExternalProject_Add(${proj}

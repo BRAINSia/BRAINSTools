@@ -55,9 +55,6 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
     )
 
   ### --- End Project specific additions
-  if(NOT DEFINED git_protocol)
-      set(git_protocol "git")
-  endif()
   set(${proj}_REPOSITORY "${git_protocol}://github.com/BRAINSia/nipype.git")
   set(${proj}_GIT_TAG "4461db214feb97fc6995f6694c133298ef13fe97")
   ExternalProject_Add(${proj}

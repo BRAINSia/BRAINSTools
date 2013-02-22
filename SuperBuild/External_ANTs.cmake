@@ -63,9 +63,6 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
     )
 
   ### --- End Project specific additions
-  if(NOT DEFINED git_protocol)
-      set(git_protocol "git")
-  endif()
   set(${proj}_REPOSITORY "git://github.com/stnava/ANTs.git")
   set(${proj}_GIT_TAG "6cb624225fe99047b562acb1a0cb053dc98dbc50") #2013-01-30 New Repository.
   ExternalProject_Add(${proj}

@@ -64,9 +64,6 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
       -DATLAS_VERSION:STRING=${ATLAS_VERSION}
       )
   ### --- End Project specific additions
-  if(NOT DEFINED git_protocol)
-      set(git_protocol "git")
-  endif()
   ExternalProject_Add(${proj}
     SVN_REPOSITORY ${ATLAS_SVN_REPOSITORY}
     SVN_REVISION -r ${ATLAS_SVN_REVISION}

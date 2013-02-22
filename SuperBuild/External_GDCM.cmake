@@ -56,9 +56,6 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
     )
 
   ### --- End Project specific additions
-  if(NOT DEFINED git_protocol)
-      set(git_protocol "git")
-  endif()
   set(${proj}_REPOSITORY "git://git.code.sf.net/p/gdcm/gdcm")
   set(${proj}_GIT_TAG "56ba41b476910babbe8841f0af26d187aa53e65e") #2013-01-30 New Repository.
   ExternalProject_Add(${proj}

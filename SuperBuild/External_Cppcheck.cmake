@@ -51,9 +51,6 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
   ### --- Project specific additions here
 
   ### --- End Project specific additions
-  if(NOT DEFINED git_protocol)
-      set(git_protocol "git")
-  endif()
   set(${proj}_REPOSITORY ${git_protocol}://github.com/danmar/cppcheck.git)
   set(${proj}_GIT_TAG origin/master)
   ExternalProject_Add(${proj}

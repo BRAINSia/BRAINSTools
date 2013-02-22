@@ -119,9 +119,6 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
       ${${proj}_FFTWD_ARGS}
     )
   ### --- End Project specific additions
-  if(NOT DEFINED git_protocol)
-      set(git_protocol "git")
-  endif()
   set(${proj}_REPOSITORY ${git_protocol}://itk.org/ITK.git)
   set(${proj}_GIT_TAG 3c03e162c7e287b81115e2175898482998b50a34) #2013-01-30 New FFTW DCMTK for DWIConvert with clang
   ExternalProject_Add(${proj}

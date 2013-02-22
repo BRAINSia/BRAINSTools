@@ -87,9 +87,6 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
   XXXX ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
   ### --- End Project specific additions
-  if(NOT DEFINED git_protocol)
-      set(git_protocol "git")
-  endif()
   set(${proj}_REPOSITORY ${git_protocol}://XXXX itk.org/ITK.git)
   set(${proj}_GIT_TAG XXXX 3c03e162c7e287b81115e2175898482998b50a34)
   ExternalProject_Add(${proj}

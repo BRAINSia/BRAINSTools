@@ -56,10 +56,6 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
     )
 
   ### --- End Project specific additions
-  if(NOT DEFINED git_protocol)
-      set(git_protocol "git")
-  endif()
-
   set(${proj}_REPOSITORY "http://openjpeg.googlecode.com/svn/trunk")
   set(${proj}_SVN_REVISION 2292) #2013-01-30 New Repository.
   ExternalProject_Add(${proj}

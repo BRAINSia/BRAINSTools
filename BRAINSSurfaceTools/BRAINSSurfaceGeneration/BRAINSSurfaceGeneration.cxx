@@ -115,7 +115,7 @@ int main( int argc, char * *argv )
     ici->SetOutputOrigin( 0, 0, 0 );
     ici->Update();
 
-    vtkTransform::Pointer transformIJKtoRAS = vtkTransform::New();
+    vtkTransform * transformIJKtoRAS = vtkTransform::New();
     transformIJKtoRAS->SetMatrix(reader->GetRasToIjkMatrix() );
     transformIJKtoRAS->Inverse();
 

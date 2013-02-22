@@ -5,6 +5,7 @@
 /** constructors */
 BRAINSCutDataHandler
 ::BRAINSCutDataHandler() :
+  trainingVectorConfiguration(NULL),
   TrainConfiguration(NULL),
   m_atlasDataSet(NULL),
   m_atlasFilename(""),
@@ -33,6 +34,7 @@ BRAINSCutDataHandler
 
 BRAINSCutDataHandler
 ::BRAINSCutDataHandler( const std::string & modelConfigurationFilename ) :
+  trainingVectorConfiguration(NULL),
   TrainConfiguration(NULL),
   m_atlasDataSet(NULL),
   m_atlasFilename(""),

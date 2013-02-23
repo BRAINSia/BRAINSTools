@@ -308,7 +308,28 @@ LargestForegroundFilledMaskImageFilter<TInputImage, TOutputImage>
     }
     {
     const typename IntegerImageType::IndexType SeedLocation =
-            { { ImageSize[0] - 1, ImageSize[1] - 1, ImageSize[2] - 1 } };
+      {
+        {
+        ImageSize
+        [
+          0
+        ]
+        -
+        1,
+        ImageSize
+        [
+          1
+        ]
+        -
+        1,
+        ImageSize
+        [
+          2
+        ]
+        -
+        1
+        }
+      };
     seededConnectedThresholdFilter->SetSeed(SeedLocation);
     }
 

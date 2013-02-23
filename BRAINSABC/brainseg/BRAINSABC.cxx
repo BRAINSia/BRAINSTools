@@ -895,7 +895,7 @@ int main(int argc, char * *argv)
 
           { // Read template images needed for atlas registration
             // muLogMacro(<< "Read template images");
-          if( templateVolumes.size() < 1 )
+          if( templateVolumes.empty() )
             {
             muLogMacro( <<  "No data images specified" << std::endl );
             return EXIT_FAILURE;

@@ -474,9 +474,6 @@ private:
   double                            m_cc;
 };
 
-namespace itk
-        {} // end namespace itk
-
 #ifndef ITK_MANUAL_INSTANTIATION
 #include "itkReflectiveCorrelationCenterToImageMetric.hxx"
 #endif

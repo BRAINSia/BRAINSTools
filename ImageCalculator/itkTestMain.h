@@ -49,7 +49,12 @@
 #if ITK_VERSION_MAJOR < 4
 #include "itkDifferenceImageFilter.h"
 namespace itk
-                              { typedef unsigned int SizeValueType; }
+{
+typedef
+  unsigned
+  int
+  SizeValueType;
+}
 #else
 #include "itkFloatingPointExceptions.h"
 #include "itkTestingComparisonImageFilter.h"

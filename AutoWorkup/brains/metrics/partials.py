@@ -68,7 +68,7 @@ def calculateBinaryVolume(dirname, label, _isAccumulated=True, tolerance=_tolera
                 maskSum += calculateBinaryVolume(dirname, sublabel, True)
         return maskSum
 
-    labelFile = os.path.join(dirname, fileDir, 'POSTERIOR_'+ label + '.nii.gz')
+    labelFile = os.path.join(dirname, fileDir, 'POSTERIOR_' + label + '.nii.gz')
     assert os.path.exists(labelFile), "File not found: %s" % labelFile
     image = sitk.ReadImage(labelFile)
     lowerTol, upperTol = tolerance
@@ -165,4 +165,3 @@ def getPosteriorVolume(*args, **kwds):
         else:
             volume += calculatePartialVolume(dirname, label, _isAccumulated)
     return volume
-

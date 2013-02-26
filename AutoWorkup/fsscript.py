@@ -37,6 +37,7 @@ def IsFirstNewerThanSecond(firstFile, secondFile):
         return True
     return False
 
+
 def run_mri_convert_script(niftiVol, mgzVol, subjects_dir, subj_session_id, FREESURFER_HOME, FS_SCRIPT):
     FS_SCRIPT_FN = os.path.join(FREESURFER_HOME, FS_SCRIPT)
     mri_convert_script = """#!/bin/bash
@@ -50,11 +51,11 @@ source {SOURCE_SCRIPT}
 status=$?
 exit $status
 """.format(SOURCE_SCRIPT=FS_SCRIPT_FN,
-                                                                                         FSHOME=FREESURFER_HOME,
-                                                                                         FSSUBJDIR=subjects_dir,
-                                                                                         SUBJ_SESSION_ID=subj_session_id,
-                                                                                         invol=niftiVol,
-                                                                                         outvol=mgzVol)
+           FSHOME=FREESURFER_HOME,
+           FSSUBJDIR=subjects_dir,
+           SUBJ_SESSION_ID=subj_session_id,
+           invol=niftiVol,
+           outvol=mgzVol)
     script_name = mgzVol + '_convert.sh'
     script = open(script_name, 'w')
     script.write(mri_convert_script)
@@ -108,6 +109,7 @@ exit $status
     script_name_stdout_fid.close()
     return
 
+
 def baw_FixBrainMask(brainmask, subjects_dir, FREESURFER_HOME, FS_SCRIPT, subj_session_id):
     base_subj_dir = os.path.join(subjects_dir, subj_session_id, 'mri')
     mkdir_p(base_subj_dir)
@@ -117,7 +119,7 @@ def baw_FixBrainMask(brainmask, subjects_dir, FREESURFER_HOME, FS_SCRIPT, subj_s
     output_nu_fn_mgz = os.path.join(base_subj_dir, 'nu.mgz')
     if IsFirstNewerThanSecond(brainmask, output_brainmask_fn_mgz) \
         or IsFirstNewerThanSecond(brainmask, output_nu_fn_mgz) \
-        or IsFirstNewerThanSecond(output_nu_fn_mgz, output_custom_brainmask_fn_mgz):
+            or IsFirstNewerThanSecond(output_nu_fn_mgz, output_custom_brainmask_fn_mgz):
         print "Fixing BrainMask recon-auto1 stage"
         brain = sitk.ReadImage(brainmask)
         blood = sitk.BinaryThreshold(brain, 5, 5)
@@ -130,9 +132,9 @@ def baw_FixBrainMask(brainmask, subjects_dir, FREESURFER_HOME, FS_SCRIPT, subj_s
         hole_filled = sitk.ErodeObjectMorphology(sitk.DilateObjectMorphology(clipping, fill_size), fill_size)
         final_mask = sitk.Cast(hole_filled * not_blood, sitk.sitkUInt8)
         ## Now make an mgz version of the binary custom brain mask
-        sitk.WriteImage(final_mask, output_custom_brainmask_fn) ## brain_matter mask with blood zero'ed out, and no "NOT" regions.
-        run_mri_convert_script(output_custom_brainmask_fn, output_custom_brainmask_fn_mgz, subjects_dir,subj_session_id, FREESURFER_HOME, FS_SCRIPT)
-        os.rename(output_brainmask_fn_mgz, output_brainmask_fn_mgz.replace('.mgz','_orig_backup.mgz'))
+        sitk.WriteImage(final_mask, output_custom_brainmask_fn)  # brain_matter mask with blood zero'ed out, and no "NOT" regions.
+        run_mri_convert_script(output_custom_brainmask_fn, output_custom_brainmask_fn_mgz, subjects_dir, subj_session_id, FREESURFER_HOME, FS_SCRIPT)
+        os.rename(output_brainmask_fn_mgz, output_brainmask_fn_mgz.replace('.mgz', '_orig_backup.mgz'))
         ## Multipy output_brainmask_fn_mgz =  output_custom_brainmask_fn_mgz * output_nu_fn_mgz
         run_mri_mask_script(output_brainmask_fn_mgz, output_custom_brainmask_fn_mgz, output_nu_fn_mgz, subjects_dir, subj_session_id, FREESURFER_HOME, FS_SCRIPT)
     else:
@@ -144,16 +146,17 @@ def removeDir(path):
     if os.path.isdir(path):
         shutil.rmtree(path)
 
+
 def runAutoReconStage(subj_session_id, StageToRun, t1_fn, subjects_dir, FREESURFER_HOME, FS_SCRIPT):
     FS_SCRIPT_FN = os.path.join(FREESURFER_HOME, FS_SCRIPT)
     base_subj_dir = os.path.join(subjects_dir, subj_session_id)
-    orig_001_mgz_fn = os.path.join(base_subj_dir,'mri','orig','001.mgz')
+    orig_001_mgz_fn = os.path.join(base_subj_dir, 'mri', 'orig', '001.mgz')
     if IsFirstNewerThanSecond(t1_fn, orig_001_mgz_fn):
         if os.path.exists(base_subj_dir):
             removeDir(base_subj_dir)
         mkdir_p(os.path.dirname(orig_001_mgz_fn))
         run_mri_convert_script(t1_fn, orig_001_mgz_fn, subjects_dir, subj_session_id, FREESURFER_HOME, FS_SCRIPT)
-    auto_recon_script="""#!/bin/bash
+    auto_recon_script = """#!/bin/bash
 #$ -o {FSSUBJDIR}/{SUBJ_SESSION_ID}/scripts/autorecon{AUTORECONSTAGE}_qsub.out
 #$ -e {FSSUBJDIR}/{SUBJ_SESSION_ID}/scripts/autorecon{AUTORECONSTAGE}_qsub.err
 #$ -cwd
@@ -173,7 +176,7 @@ exit $status
                SUBJ_SESSION_ID=subj_session_id)
     base_run_dir = os.path.join(subjects_dir, subj_session_id, 'scripts')
     mkdir_p(base_run_dir)
-    script_name = os.path.join(base_run_dir,'run_autorecon_stage'+str(StageToRun)+'.sh')
+    script_name = os.path.join(base_run_dir, 'run_autorecon_stage' + str(StageToRun) + '.sh')
     script = open(script_name, 'w')
     script.write(auto_recon_script)
     script.close()
@@ -194,11 +197,11 @@ def runSubjectTemplate(args, FREESURFER_HOME, FS_SCRIPT):
     base_template_id = args.base_template_id
     list_all_subj_session_ids = args.list_all_subj_session_ids
     subjects_dir = args.subjects_dir
-    print "X"*80
+    print "X" * 80
     print "base_template_id :{0}:".format(base_template_id)
     print "Input a list of list_all_subj_session_ids :{0}:".format(list_all_subj_session_ids)
     print "subjects_dir :{0}:".format(subjects_dir)
-    print "X"*80
+    print "X" * 80
     assert isinstance(list_all_subj_session_ids, list), "Must input a list of list_all_subj_session_ids :{0}:".format(list_all_subj_session_ids)
     StageToRun = "Within-SubjectTemplate"
     FS_SCRIPT_FN = os.path.join(FREESURFER_HOME, FS_SCRIPT)
@@ -206,7 +209,7 @@ def runSubjectTemplate(args, FREESURFER_HOME, FS_SCRIPT):
     for subj_session_id in list_all_subj_session_ids:
         allTimePointFlags += " -tp {timepoint}".format(timepoint=subj_session_id)
     allTimePointFlags += " -all"
-    auto_recon_script="""#!/bin/bash
+    auto_recon_script = """#!/bin/bash
 #$ -o {FSSUBJDIR}/{TEMPLATEID}/scripts/base_{TEMPLATEID}_qsub.out
 #$ -e {FSSUBJDIR}/{TEMPLATEID}/scripts/base_{TEMPLATEID}_qsub.err
 #$ -cwd
@@ -231,7 +234,7 @@ exit $status
                ALL_TIME_POINTS=allTimePointFlags)
     base_run_dir = os.path.join(subjects_dir, base_template_id, 'scripts')
     mkdir_p(base_run_dir)
-    script_name = os.path.join(base_run_dir,'run_autorecon_stage_'+str(StageToRun)+'.sh')
+    script_name = os.path.join(base_run_dir, 'run_autorecon_stage_' + str(StageToRun) + '.sh')
     script = open(script_name, 'w')
     script.write(auto_recon_script)
     script.close()
@@ -281,7 +284,7 @@ exit $status
                LONGSESSIONID=subj_session_id)
     base_run_dir = os.path.join(subjects_dir, subj_session_id, 'scripts')
     mkdir_p(base_run_dir)
-    script_name = os.path.join(base_run_dir,'run_autorecon_stage_'+str(StageToRun)+'.sh')
+    script_name = os.path.join(base_run_dir, 'run_autorecon_stage_' + str(StageToRun) + '.sh')
     script = open(script_name, 'w')
     script.write(auto_recon_script)
     script.close()
@@ -353,7 +356,7 @@ if __name__ == "__main__":
     autorecon.set_defaults(func=runAutoRecon)
     # Create -base subparser
     template = subparsers.add_parser('template', help='Link to recon-all longitudinal processing: http://surfer.nmr.mgh.harvard.edu/fswiki/LongitudinalProcessing')
-    template.add_argument('--subjects_dir', action='store', dest='subjects_dir',required=True, help='FreeSurfer subjects directory')
+    template.add_argument('--subjects_dir', action='store', dest='subjects_dir', required=True, help='FreeSurfer subjects directory')
     template.add_argument('--base_template_id', action='store', dest='base_template_id', required=True, help='Subject_template')
     template.add_argument('--list_all_subj_session_ids', action='store', dest='list_all_subj_session_ids', nargs='+', required=True, help='List of sessions for a subject template')
     template.set_defaults(func=runSubjectTemplate)

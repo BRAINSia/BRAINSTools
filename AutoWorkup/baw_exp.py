@@ -16,6 +16,7 @@ import sys
 
 ##############################################################################
 
+
 def get_global_sge_script(pythonPathsList, binPathsList, customEnvironment={}):
     """This is a wrapper script for running commands on an SGE cluster
 so that all the python modules and commands are pathed properly"""
@@ -98,10 +99,10 @@ def setDataSinkRewriteValue(cli, cfg):
     """
     assert isinstance(cli, bool) and isinstance(cfg, bool), "Inputs are not boolean: {0}, {1}".format(cli, cfg)
     if cli or cfg:
-        print "*** Force datasinks rewriting for pipeline rewriting ***, commandline= {0}, configfile= {1}".format(cli,cfg) # TODO: Use logging
+        print "*** Force datasinks rewriting for pipeline rewriting ***, commandline= {0}, configfile= {1}".format(cli, cfg)  # TODO: Use logging
         GLOBAL_DATA_SINK_REWRITE = True
     else:
-        print "*** Default datasink behavior for pipeline ***, commandline= {0}, configfile= {1}".format(cli,cfg) # TODO: Use logging
+        print "*** Default datasink behavior for pipeline ***, commandline= {0}, configfile= {1}".format(cli, cfg)  # TODO: Use logging
         GLOBAL_DATA_SINK_REWRITE = False
     return GLOBAL_DATA_SINK_REWRITE
 
@@ -137,7 +138,7 @@ def main(argv=None):
 
     # Pipeline-specific information
     GLOBAL_DATA_SINK_REWRITE_FROM_CONFIG = expConfig.getboolean('PIPELINE', 'GLOBAL_DATA_SINK_REWRITE')
-    GLOBAL_DATA_SINK_REWRITE=setDataSinkRewriteValue(input_arguments.rewrite_datasinks, GLOBAL_DATA_SINK_REWRITE_FROM_CONFIG)
+    GLOBAL_DATA_SINK_REWRITE = setDataSinkRewriteValue(input_arguments.rewrite_datasinks, GLOBAL_DATA_SINK_REWRITE_FROM_CONFIG)
 
     # Experiment specific information
     subject_data_file = expConfig.get('EXPERIMENT_DATA', 'SESSION_DB')
@@ -181,12 +182,12 @@ def main(argv=None):
     #  ensuring that rough versions of these environmental variables are not
     #  set internal to this script.
     prohibited_env_var_exists = False
-    for ENVVAR_TO_CHECK in ['FREESURFER_HOME','FSFAST_HOME','FSF_OUTPUT_FORMAT','SUBJECTS_DIR','MNI_DIR','FSL_DIR']:
-       if os.environ.has_key(ENVVAR_TO_CHECK):
-           prohibited_env_var_exists = True
-           print( "ERROR: Environmental Variable {0}={1} exists.  Please unset before continuing.".format(ENVVAR_TO_CHECK,os.environ[ENVVAR_TO_CHECK]) )
+    for ENVVAR_TO_CHECK in ['FREESURFER_HOME', 'FSFAST_HOME', 'FSF_OUTPUT_FORMAT', 'SUBJECTS_DIR', 'MNI_DIR', 'FSL_DIR']:
+        if ENVVAR_TO_CHECK in os.environ:
+            prohibited_env_var_exists = True
+            print("ERROR: Environmental Variable {0}={1} exists.  Please unset before continuing.".format(ENVVAR_TO_CHECK, os.environ[ENVVAR_TO_CHECK]))
     if prohibited_env_var_exists:
-       sys.exit(-1)
+        sys.exit(-1)
 
     #\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
     #####################################################################################

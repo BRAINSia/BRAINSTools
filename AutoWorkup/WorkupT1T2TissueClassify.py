@@ -200,7 +200,7 @@ def CreateTissueClassifyWorkflow(WFname, CLUSTER_QUEUE, CLUSTER_QUEUE_LONG, Inte
         """### HACK:  This function is to work around a deficiency in BRAINSABCext where the inverse transform name is not being computed properly
           in the list outputs"""
         fixed_inverse_name = TransformFileName.replace(".h5", "_Inverse.h5")
-        return [ fixed_inverse_name ]
+        return [fixed_inverse_name]
 
     tissueClassifyWF.connect([(BABCext, outputsSpec, [(('atlasToSubjectTransform', MakeInverseTransformFileName), "atlasToSubjectInverseTransform")]), ])
     tissueClassifyWF.connect(BABCext, 'outputLabels', outputsSpec, 'outputLabels')

@@ -5,6 +5,7 @@ def check_file(path):
         return full
     return None
 
+
 def parseLabelsFile():
     import os.path
     from ..config import _config
@@ -18,4 +19,3 @@ def parseLabelsFile():
                 parts = line.split(" ")
                 labelDict[int(parts[0])] = parts[1]
     return labelDict
-

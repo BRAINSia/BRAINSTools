@@ -12,10 +12,10 @@
 from nipype.interfaces.slicer.generate_classes import generate_all_classes
 
 modules_list = [
-#'ResampleDTILogEuclidean',
-  'dtiprocess',
-  'dtiestim',
-  'dtiaverage',
+    #'ResampleDTILogEuclidean',
+    'dtiprocess',
+    'dtiestim',
+    'dtiaverage',
     'BRAINSMultiSTAPLE',
     'AssignArray',
     'AverageBrainGenerator',
@@ -115,20 +115,20 @@ modules_list = [
     'gtractImageConformity',
     'gtractInvertBSplineTransform',
     'gtractInvertDisplacementField',
-  'gtractInvertRigidTransform',
-  'gtractResampleAnisotropy',
-  'gtractResampleB0',
-  'gtractResampleCodeImage',
-  'gtractResampleDWIInPlace',
-  'gtractResampleFibers',
-  'gtractTensor',
-  'gtractTransformToDisplacementField',
-  'iccdefRegistration_New',
-  'insertMidACPCpoint',
-  'landmarksConstellationAligner',
-  'landmarksConstellationWeights',
-  'SmoothingMeshScalars'
-  ]
+    'gtractInvertRigidTransform',
+    'gtractResampleAnisotropy',
+    'gtractResampleB0',
+    'gtractResampleCodeImage',
+    'gtractResampleDWIInPlace',
+    'gtractResampleFibers',
+    'gtractTensor',
+    'gtractTransformToDisplacementField',
+    'iccdefRegistration_New',
+    'insertMidACPCpoint',
+    'landmarksConstellationAligner',
+    'landmarksConstellationWeights',
+    'SmoothingMeshScalars'
+]
 
 launcher = ['']
 generate_all_classes(modules_list=modules_list, launcher=[])

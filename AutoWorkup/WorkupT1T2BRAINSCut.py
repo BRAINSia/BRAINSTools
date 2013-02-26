@@ -25,32 +25,32 @@ def CreateLabelMap(listOfImages, LabelImageName, CSVFileName, posteriorDictionar
     import SimpleITK as sitk
     import os
     import csv
-    def CleanUpSegmentationsWithExclusionProbabilityMaps( initial_seg, probMapOfExclusion, percentageThreshold = 0.85 ):
+
+    def CleanUpSegmentationsWithExclusionProbabilityMaps(initial_seg, probMapOfExclusion, percentageThreshold=0.85):
         """This function is used to clean up grey matter sub-cortical segmentations
     by removing tissue that is more than 85% chance of being either WM or CSF
     The inputs are the initial segmentation, the WM Probability, and the CSF Probability
     """
-        seg = sitk.Cast( initial_seg, sitk.sitkUInt8 )
+        seg = sitk.Cast(initial_seg, sitk.sitkUInt8)
         print "AA", initial_seg
         print "BB", dict(sitk.Statistics(seg))
-        exclude_Mask = sitk.Cast( sitk.BinaryThreshold( probMapOfExclusion, percentageThreshold, 1.0, 0, 1), sitk.sitkUInt8 )
+        exclude_Mask = sitk.Cast(sitk.BinaryThreshold(probMapOfExclusion, percentageThreshold, 1.0, 0, 1), sitk.sitkUInt8)
         print "CC", dict(sitk.Statistics(exclude_Mask))
         cleanedUpSeg = seg * exclude_Mask
         print "DD", dict(sitk.Statistics(cleanedUpSeg))
         return cleanedUpSeg
 
-    def CleanUpGMSegmentationWithWMCSF( initial_seg_fn, posteriorDictionary, WMThreshold, CSFThreshold ):
-        initial_seg = sitk.Cast(sitk.ReadImage(initial_seg_fn), sitk.sitkUInt8 )
+    def CleanUpGMSegmentationWithWMCSF(initial_seg_fn, posteriorDictionary, WMThreshold, CSFThreshold):
+        initial_seg = sitk.Cast(sitk.ReadImage(initial_seg_fn), sitk.sitkUInt8)
 
-        WM_FN=posteriorDictionary['WM']
-        WM_PROB=sitk.ReadImage(WM_FN)
-        WM_removed = CleanUpSegmentationsWithExclusionProbabilityMaps( initial_seg, WM_PROB, WMThreshold )
+        WM_FN = posteriorDictionary['WM']
+        WM_PROB = sitk.ReadImage(WM_FN)
+        WM_removed = CleanUpSegmentationsWithExclusionProbabilityMaps(initial_seg, WM_PROB, WMThreshold)
 
-        CSF_FN=posteriorDictionary['CSF']
-        CSF_PROB=sitk.ReadImage(CSF_FN)
-        CSF_removed = CleanUpSegmentationsWithExclusionProbabilityMaps( initial_seg, CSF_PROB, CSFThreshold )
+        CSF_FN = posteriorDictionary['CSF']
+        CSF_PROB = sitk.ReadImage(CSF_FN)
+        CSF_removed = CleanUpSegmentationsWithExclusionProbabilityMaps(initial_seg, CSF_PROB, CSFThreshold)
         return CSF_removed
-
 
     orderOfPriority = [
         "l_caudate",
@@ -85,21 +85,21 @@ def CreateLabelMap(listOfImages, LabelImageName, CSVFileName, posteriorDictionar
     cleaned_labels_map = dict()
     labelImage = None
     print "ZZZ"
-    x=0
+    x = 0
     for segFN in listOfImages:
-        x=x+1
+        x = x + 1
         print x, segFN
         ## Clean up the segmentations
-        curr_segROI = CleanUpGMSegmentationWithWMCSF(segFN, posteriorDictionary, 0.85, 0.85 )
+        curr_segROI = CleanUpGMSegmentationWithWMCSF(segFN, posteriorDictionary, 0.85, 0.85)
         print "Y"
         curr_segROI.GetSize()
         remove_pre_postfix = segFN.replace(".nii.gz", "")
         remove_pre_postfix = os.path.basename(remove_pre_postfix.replace("subjectANNLabel_", "").replace("_seg", ""))
         remove_pre_postfix = os.path.basename(remove_pre_postfix.replace("ANNContinuousPrediction", "").replace("subject", ""))
         structName = remove_pre_postfix.lower()
-        cleaned_fileName = os.path.join(os.path.dirname(segFN),"cleaned_"+structName+"_seg.nii.gz")
-        print "="*20,structName," ",cleaned_fileName
-        cleaned_labels_map[structName]=cleaned_fileName
+        cleaned_fileName = os.path.join(os.path.dirname(segFN), "cleaned_" + structName + "_seg.nii.gz")
+        print "=" * 20, structName, " ", cleaned_fileName
+        cleaned_labels_map[structName] = cleaned_fileName
         sitk.WriteImage(curr_segROI, cleaned_fileName)
         if labelImage is None:
             labelImage = curr_segROI * valueDict[structName]
@@ -185,9 +185,9 @@ def CreateBRAINSCutWorkflow(projectid,
     """
     Denoised T1 input for BRAINSCut
     """
-    denosingTimeStep=0.0625
-    denosingConductance=0.4
-    denosingIteration=5
+    denosingTimeStep = 0.0625
+    denosingConductance = 0.4
+    denosingIteration = 5
 
     DenoisedT1 = pe.Node(interface=GradientAnisotropicDiffusionImageFilter(), name="DenoisedT1")
     DenoisedT1.inputs.timeStep = denosingTimeStep
@@ -207,7 +207,6 @@ def CreateBRAINSCutWorkflow(projectid,
     GADT1.inputs.outputVolume = "GADT1.nii.gz"
 
     cutWF.connect(inputsSpec, 'T1Volume', GADT1, 'inputVolume')
-
 
     if not t1Only:
         """
@@ -239,7 +238,6 @@ def CreateBRAINSCutWorkflow(projectid,
 
         cutWF.connect(GADT1, 'outputVolume', SGI, 'inputVolume1')
         cutWF.connect(GADT2, 'outputVolume', SGI, 'inputVolume2')
-
 
     """
     BRAINSCut
@@ -292,18 +290,18 @@ def CreateBRAINSCutWorkflow(projectid,
     RF12BC.inputs.outputBinaryRightGlobus = 'ANNContinuousPredictionr_globussubject.nii.gz'
     """
 
-    cutWF.connect( DenoisedT1, 'outputVolume', RF12BC, 'inputSubjectT1Filename')
+    cutWF.connect(DenoisedT1, 'outputVolume', RF12BC, 'inputSubjectT1Filename')
 
-    from PipeLineFunctionHelpers import MakeInclusionMaskForGMStructures;
-    makeCandidateRegionNode = pe.Node(interface=Function(['posteriorDictionary','candidateRegionFileName'],
-                                                    ['outputCandidateRegionFileName'],
-                                                    function=MakeInclusionMaskForGMStructures), name="MakeCandidateRegion")
+    from PipeLineFunctionHelpers import MakeInclusionMaskForGMStructures
+    makeCandidateRegionNode = pe.Node(interface=Function(['posteriorDictionary', 'candidateRegionFileName'],
+                                                         ['outputCandidateRegionFileName'],
+                                                         function=MakeInclusionMaskForGMStructures), name="MakeCandidateRegion")
     makeCandidateRegionNode.inputs.candidateRegionFileName = "RF12_CandidateRegionMask.nii.gz"
-    cutWF.connect(inputsSpec,'posteriorDictionary',makeCandidateRegionNode,'posteriorDictionary')
-    cutWF.connect(makeCandidateRegionNode,'outputCandidateRegionFileName', RF12BC,'candidateRegion')
+    cutWF.connect(inputsSpec, 'posteriorDictionary', makeCandidateRegionNode, 'posteriorDictionary')
+    cutWF.connect(makeCandidateRegionNode, 'outputCandidateRegionFileName', RF12BC, 'candidateRegion')
 
     if not t1Only:
-        cutWF.connect( DenoisedT2, 'outputVolume',  RF12BC, 'inputSubjectT2Filename')
+        cutWF.connect(DenoisedT2, 'outputVolume', RF12BC, 'inputSubjectT2Filename')
         # cutWF.connect(inputsSpec,'TotalGM',RF12BC,'inputSubjectTotalGMFilename')
         # cutWF.connect(inputsSpec,'RegistrationROI',RF12BC,'inputSubjectRegistrationROIFilename')
         # Error cutWF.connect(SGI,'outputVolume',RF12BC,'inputSubjectGadSGFilename')
@@ -372,7 +370,7 @@ def CreateBRAINSCutWorkflow(projectid,
                                                      'CleanedRightAccumben',
                                                      'CleanedLeftGlobus',
                                                      'CleanedRightGlobus'
-                                                    ],
+                                                     ],
                                                     function=CreateLabelMap), name="ComputeOneLabelMap")
     computeOneLabelMap.inputs.projectid = projectid
     computeOneLabelMap.inputs.subjectid = subjectid

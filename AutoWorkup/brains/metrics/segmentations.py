@@ -9,8 +9,9 @@ from .partials import calcutateBinaryVolume
 
 labels = ['caudate', 'putamen', 'hippocampus', 'thalamus', 'accumben', 'globus', 'icv']
 
+
 def constructLabels(labels):
-    numbers = range(1,((len(labels)*2) + 1))
+    numbers = range(1, ((len(labels) * 2) + 1))
     full_labels = []
     index = 0
     for label in labels:
@@ -22,7 +23,7 @@ def constructLabels(labels):
 def _moduleCreateLabels(labels):
     full_labels, numbers = constructLabels(labels)
     labelMap = map(None, full_labels, numbers)
-    return dict(labelMap) # Use this variable
+    return dict(labelMap)  # Use this variable
 
 
 def formatLabel(label):
@@ -36,7 +37,7 @@ def formatLabel(label):
         side = 'right'
     else:
         raise ValueError('Label %s is not recognized: cannot determine side %s' % (label, side))
-    label = '_'.join([side,anatomy])
+    label = '_'.join([side, anatomy])
     return label
 
 
@@ -55,13 +56,14 @@ def calculateLabelVolume(dirname, label):
 
 def calculateICV(dirname):
     filename = os.path.join(dirname, _config.get('Results', 'partials'),
-                             'fixed_brainlabels_seg.nii.gz')
+                            'fixed_brainlabels_seg.nii.gz')
     filename = check_file(filename)
     calculateBinaryVolume(filename)
 
+
 def getVolume(args=[], kwds={}):
     dirname = labels = project = subject = session = experimentDir = None
-    experimentDir = _config.get('Results', 'directory') ### HACK
+    experimentDir = _config.get('Results', 'directory')  # HACK
     for key, value in kwds:
         if key == 'dirname':
             dirname = check_file(value)

@@ -193,8 +193,8 @@ def WFPerSubjectDef(inputListOfSubjectVolumes,
                                                                             'outputVolume',
                                                                             'outputCSVFilename'],
                                                                output_names=['outputCSV',
-                                           'outputVolume'],
-                                                          function=MyUtilities.NormalizeAndComputeStatOfROI)
+                                                                             'outputVolume'],
+                                                               function=MyUtilities.NormalizeAndComputeStatOfROI)
                                             )
     # inputs
 
@@ -203,16 +203,16 @@ def WFPerSubjectDef(inputListOfSubjectVolumes,
     # connect to the work flow
     WFPerSubject.add_nodes([NormalizeAndGetStatofROI_Node])
     WFPerSubject.connect(LabelStatistics, 'outputDictionarySet',
-                          NormalizeAndGetStatofROI_Node, 'inputSet_LabelStat')
+                         NormalizeAndGetStatofROI_Node, 'inputSet_LabelStat')
     WFPerSubject.connect(normalizationListNode, 'normalization',
-                          NormalizeAndGetStatofROI_Node, 'inputMethod')
+                         NormalizeAndGetStatofROI_Node, 'inputMethod')
 
     # datasink
     WFPerSubject.connect(NormalizeAndGetStatofROI_Node, 'outputCSV',
-                          datasink, 'labelStatistics.@Stat')
+                         datasink, 'labelStatistics.@Stat')
 
     WFPerSubject.connect(NormalizeAndGetStatofROI_Node, 'outputVolume',
-                          datasink, 'labelStatistics.@Volume')
+                         datasink, 'labelStatistics.@Volume')
     WFPerSubject.run()
     WFPerSubject.write_graph(graph2use='orig')
 

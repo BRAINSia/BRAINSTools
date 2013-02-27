@@ -1021,11 +1021,11 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
                     # STAPLE_SEGMENTATION_DataSink[sessionid].inputs.regexp_substitutions = GenerateOutputPattern(projectid, subjectid, sessionid,'BRAINSCut')
                     # STAPLE_SEGMENTATION_DataSink[sessionid].inputs.regexp_substitutions = GenerateBRAINSCutImagesOutputPattern(projectid, subjectid, sessionid)
                     STAPLE_SEGMENTATION_DataSink[sessionid].inputs.substitutions = [('CleanedDenoisedSTAPLESegmentations', os.path.join(projectid, subjectid, sessionid, 'STAPLERFSegmentations')),
-                                                                              ('subjectANNLabel_', ''),
-                                                                              ('.nii.gz', '_seg.nii.gz')
-                                                                            ]
+                                                                                    ('subjectANNLabel_', ''),
+                                                                                    ('.nii.gz', '_seg.nii.gz')
+                                                                                    ]
                     baw200.connect(ANTSLabelWarpFromSubjectAtlasToSession[sessionid], 'output_image',
-                            STAPLE_SEGMENTATION_DataSink[sessionid], 'CleanedDenoisedSTAPLESegmentations.@output_image')
+                                   STAPLE_SEGMENTATION_DataSink[sessionid], 'CleanedDenoisedSTAPLESegmentations.@output_image')
 
                 else:
                     print("SKIPPING SEGMENTATION PHASE FOR {0} {1} {2}, lenT2s {3}".format(projectid, subjectid, sessionid, len(global_AllT2s[sessionid])))
@@ -1052,14 +1052,14 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
                         # If multi-modal, then create synthesized image before running
                         print("HACK  FREESURFER len(global_All3T_T2s) > 0 ")
                     FSCROSS_WF[sessionid] = CreateFreeSurferWorkflow_custom(projectid, subjectid, sessionid,
-                                                                             "FSCROSS", CLUSTER_QUEUE,
-                                                                             CLUSTER_QUEUE_LONG,
-                                                                             RunAllFSComponents,
-                                                                             RunMultiMode,
-                                                                             constructed_FS_SUBJECTS_DIR)
+                                                                            "FSCROSS", CLUSTER_QUEUE,
+                                                                            CLUSTER_QUEUE_LONG,
+                                                                            RunAllFSComponents,
+                                                                            RunMultiMode,
+                                                                            constructed_FS_SUBJECTS_DIR)
                     FREESURFER_ID[sessionid] = pe.Node(interface=IdentityInterface(fields=['subj_session_id']),
-                                                      run_without_submitting=True,
-                                                      name='99_FSNodeName' + str(subjectid) + "_" + str(sessionid))
+                                                       run_without_submitting=True,
+                                                       name='99_FSNodeName' + str(subjectid) + "_" + str(sessionid))
                     FREESURFER_ID[sessionid].inputs.subj_session_id = str(subjectid) + "_" + str(sessionid)
 
                     baw200.connect(PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.t1_average', FSCROSS_WF[sessionid], 'inputspec.T1_files')
@@ -1068,7 +1068,7 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
 
                     from PipeLineFunctionHelpers import GetOnePosteriorImageFromDictionaryFunction
                     baw200.connect([(PHASE_2_oneSubjWorkflow[sessionid], FSCROSS_WF[sessionid],
-                                [(('outputspec.posteriorImages', GetOnePosteriorImageFromDictionaryFunction, 'WM'), 'inputspec.wm_prob')])])
+                                     [(('outputspec.posteriorImages', GetOnePosteriorImageFromDictionaryFunction, 'WM'), 'inputspec.wm_prob')])])
                     baw200.connect(FREESURFER_ID[sessionid], 'subj_session_id', FSCROSS_WF[sessionid], 'inputspec.subj_session_id')
                     ### Now define where the final organized outputs should go.
                     FSCROSS_DS_Name = "FSCROSS_DS_" + str(subjectid) + "_" + str(sessionid)
@@ -1096,13 +1096,13 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
                 #{  Do template building
                 # HACK : Move later
                 FSBASE_WF = CreateFreeSurferSubjectTemplate(projectid,
-                                                                               subjectid,
-                                                                               "FS52_BASE",
-                                                                               CLUSTER_QUEUE,
-                                                                               CLUSTER_QUEUE_LONG,
-                                                                               True,
-                                                                               True,
-                                                                               constructed_FS_SUBJECTS_DIR)
+                                                            subjectid,
+                                                            "FS52_BASE",
+                                                            CLUSTER_QUEUE,
+                                                            CLUSTER_QUEUE_LONG,
+                                                            True,
+                                                            True,
+                                                            constructed_FS_SUBJECTS_DIR)
 
                 FREESURFER_SUBJ_ID = pe.Node(interface=IdentityInterface(fields=['base_template_id']),
                                              run_without_submitting=True,
@@ -1126,14 +1126,14 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
                 FSLONG_WF = dict()
                 for sessionid in allSessions:
                     FSLONG_WF[sessionid] = CreateFreeSurferLongitudinalWorkflow(projectid,
-                                                                               subjectid,
-                                                                               sessionid,
-                                                                               "FS52_LONG",
-                                                                               CLUSTER_QUEUE,
-                                                                               CLUSTER_QUEUE_LONG,
-                                                                               True,
-                                                                               True,
-                                                                               constructed_FS_SUBJECTS_DIR)
+                                                                                subjectid,
+                                                                                sessionid,
+                                                                                "FS52_LONG",
+                                                                                CLUSTER_QUEUE,
+                                                                                CLUSTER_QUEUE_LONG,
+                                                                                True,
+                                                                                True,
+                                                                                constructed_FS_SUBJECTS_DIR)
                     baw200.connect(FSCROSS_WF[sessionid], 'outputspec.processed_output_name', FSLONG_WF[sessionid], 'inputspec.subj_session_id')
                     baw200.connect(FSBASE_WF, 'outputspec.processed_output_name', FSLONG_WF[sessionid], 'inputspec.base_template_id')
 

@@ -237,8 +237,8 @@ def BRAINSCutGenerateProbabilityMap(configurationFilename,
                                             createVectorsNormalization,
                                             trainModel,
                                             applyModel,
-                                dummyDict,
-                                dummyMethodParameter)
+                                            dummyDict,
+                                            dummyMethodParameter)
     returnProbMapList = returnList['probabilityMap']
     import sys
     if returnProbMapList.keys() != probabilityMapDict.keys():
@@ -255,10 +255,10 @@ def BRAINSCutGenerateProbabilityMap(configurationFilename,
 
 
 def BRAINSCutCreateVector(configurationFilename,
-                           probabilityMapDict,
-                           normalization,
-                           outputXmlFilename,
-                           outputVectorFilename):
+                          probabilityMapDict,
+                          normalization,
+                          outputXmlFilename,
+                          outputVectorFilename):
     print(BRAINSCutCreateVector)
     print(BRAINSCutCreateVector)
     print(BRAINSCutCreateVector)
@@ -287,18 +287,18 @@ def BRAINSCutCreateVector(configurationFilename,
     probabilityMapGaussianSigma = 1
     from ConfigurationParser import BRAINSCutCMDFromConfigFile
     returnList = BRAINSCutCMDFromConfigFile(configurationFilename,
-                                outputXmlFilename,
-                                probabilityMapDict,
-                                probabilityMapGaussianSigma,
-                                outputVectorFilename,
-                                dummyModelFilename,
-                                generateProbabilityMap,
-                                createVectors,
-                                normalization,
-                                trainModel,
-                                applyModel,
-                                dummyOutputDirDict,
-                                dummyMethodParameter)
+                                            outputXmlFilename,
+                                            probabilityMapDict,
+                                            probabilityMapGaussianSigma,
+                                            outputVectorFilename,
+                                            dummyModelFilename,
+                                            generateProbabilityMap,
+                                            createVectors,
+                                            normalization,
+                                            trainModel,
+                                            applyModel,
+                                            dummyOutputDirDict,
+                                            dummyMethodParameter)
     outputVectorFilename = returnList['inputVectorFilename']
     outputVectorHdrFilename = outputVectorFilename + ".hdr"
     outputXmlFilename = os.path.abspath(outputXmlFilename)
@@ -309,20 +309,20 @@ def BRAINSCutCreateVector(configurationFilename,
           outputNormalization = {on}
           outputXmlFilename = {oxf}
           """.format( ovf=outputVectorFilename,
-                         ovh=outputVectorHdrFilename,
-                         on=outputNormalization,
-                         oxf=outputXmlFilename))
+                      ovh=outputVectorHdrFilename,
+                      on=outputNormalization,
+                      oxf=outputXmlFilename))
     return outputVectorFilename, outputVectorHdrFilename, outputNormalization, outputXmlFilename
 
 #########################################################################################
 
 
 def BRAINSCutTrainModel(configurationFilename,
-                         inputVectorFilename,
-                         outputModelFilenamePrefix,
-                         outputXmlFilename,
-                         methodParameter
-                       ):
+                        inputVectorFilename,
+                        outputModelFilenamePrefix,
+                        outputXmlFilename,
+                        methodParameter
+                        ):
     import os.path
     import sys
 
@@ -348,18 +348,18 @@ def BRAINSCutTrainModel(configurationFilename,
     probabilityMapGaussianSigma = 1
     from ConfigurationParser import BRAINSCutCMDFromConfigFile
     returnList = BRAINSCutCMDFromConfigFile(configurationFilename,
-                                outputXmlFilename,
-                                dummyProbMapDict,
-                                probabilityMapGaussianSigma,
-                                p_inputVectorFilename,
-                                p_outputModelFilenamePrefix,
-                                generateProbabilityMap,
-                                createVectors,
-                                createvectorsNormalization,
-                                trainModel,
-                                applyModel,
-                                dummyOutputDirDict,
-                                methodParameter)
+                                            outputXmlFilename,
+                                            dummyProbMapDict,
+                                            probabilityMapGaussianSigma,
+                                            p_inputVectorFilename,
+                                            p_outputModelFilenamePrefix,
+                                            generateProbabilityMap,
+                                            createVectors,
+                                            createvectorsNormalization,
+                                            trainModel,
+                                            applyModel,
+                                            dummyOutputDirDict,
+                                            methodParameter)
 
     outputModelFileSearchStr = p_outputModelFilenamePrefix + "*" + str(methodParameter['--numberOfTrees']) + "*" + "*gz"
     import glob
@@ -370,11 +370,11 @@ def BRAINSCutTrainModel(configurationFilename,
 
 
 def BRAINSCutApplyModel(configurationFilename,
-                         probabilityMapDict,
-                         normalization,
-                         inputModelFilename,
-                         methodParameter,
-                         outputXmlFilename):
+                        probabilityMapDict,
+                        normalization,
+                        inputModelFilename,
+                        methodParameter,
+                        outputXmlFilename):
     import os.path
     import sys
     if type(normalization) == list:
@@ -407,18 +407,18 @@ def BRAINSCutApplyModel(configurationFilename,
     probabilityMapGaussianSigma = 1
     from ConfigurationParser import BRAINSCutCMDFromConfigFile
     returnList = BRAINSCutCMDFromConfigFile(configurationFilename,
-                                outputXmlFilename,
-                                p_probMapDict,
-                                probabilityMapGaussianSigma,
-                                dummyInputVectorFilename,
-                                inputModelFilename,
-                                generateProbabilityMap,
-                                createVectors,
-                                normalization,
-                                trainModel,
-                                applyModel,
-                                outputDirDict,
-                                methodParameter)
+                                            outputXmlFilename,
+                                            p_probMapDict,
+                                            probabilityMapGaussianSigma,
+                                            dummyInputVectorFilename,
+                                            inputModelFilename,
+                                            generateProbabilityMap,
+                                            createVectors,
+                                            normalization,
+                                            trainModel,
+                                            applyModel,
+                                            outputDirDict,
+                                            methodParameter)
     import glob
     outputLabelDict = {}
     for session in returnList['outputDirDict'].iterkeys():
@@ -475,7 +475,7 @@ def updating(originalFilename,
 
 
 def ConfigurationFileEditor(originalFilename,
-                             editedFilenamePrefix):
+                            editedFilenamePrefix):
     print(ConfigurationFileEditor)
     print(ConfigurationFileEditor)
     print(ConfigurationFileEditor)
@@ -502,8 +502,8 @@ def ConfigurationFileEditor(originalFilename,
         newValues = [new_ROIDict]
         whatToChange = dict(zip(varToChange, newValues))
         editedFilenames[roi] = updating(originalFilename,
-                                           new_ConfigFilename,
-                                           whatToChange)
+                                        new_ConfigFilename,
+                                        whatToChange)
 
     return editedFilenames.values()
 
@@ -572,7 +572,7 @@ def BalanceInputVectors(inputVectorFilenames):
 
 
 def CombineInputVectors(inputVectorFilenames,
-                         outputVectorFilename):
+                        outputVectorFilename):
     outFile = open(outputVectorFilename, "w")
     for inFilename in inputVectorFilenames:
         inFile = open(inFilename, "r")

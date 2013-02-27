@@ -182,15 +182,15 @@ def unitWorkUp(configurationFilename,
         #                    '--randomTreeDepth ': 60 }
         applyND.inputs.outputXmlFilename = 'applyConfiguration.xml'
         workflow.connect(probabilityMapGeneratorND, 'outputConfigurationFilename',
-                        applyND, 'configurationFilename')
+                         applyND, 'configurationFilename')
         workflow.connect(vectorCreatorND, 'outputNormalization',
-                          applyND, 'normalization')
+                         applyND, 'normalization')
         workflow.connect(probabilityMapGeneratorND, 'probabilityMapDict',
-                          applyND, 'probabilityMapDict')
+                         applyND, 'probabilityMapDict')
         workflow.connect(trainND, 'outputTrainedModelFilename',
-                          applyND, 'inputModelFilename')
+                         applyND, 'inputModelFilename')
         workflow.connect(trainND, 'outputMethodParameter',
-                          applyND, 'methodParameter')
+                         applyND, 'methodParameter')
         #
         # analysis
         #
@@ -227,8 +227,8 @@ def main(argv=None):
     args = argParser.parse_args()
 
     unitWorkUp(args.configurationFilename,
-                args.doApply,
-                args.baseDir)
+               args.doApply,
+               args.baseDir)
 
 if __name__ == "__main__":
     import sys

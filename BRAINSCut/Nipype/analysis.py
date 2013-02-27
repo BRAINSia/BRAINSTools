@@ -498,12 +498,12 @@ def experimentAnalysis(resultDir,
 
 
 def similarityComputeWorkflow(ResultDir,
-                               OutputDir,
-                               ExperimentalConfigurationFile,
-                               runOption,
-                               PythonBinDir,
-                               BRAINSStandAloneSrcDir,
-                               BRAINSStandAloneBuildDir):
+                              OutputDir,
+                              ExperimentalConfigurationFile,
+                              runOption,
+                              PythonBinDir,
+                              BRAINSStandAloneSrcDir,
+                              BRAINSStandAloneBuildDir):
 
     import sys
     import nipype.interfaces.io as nio
@@ -558,18 +558,18 @@ def similarityComputeWorkflow(ResultDir,
 
     from nipype.interfaces.utility import Function
     experimentalND = pe.Node(name='experimentalND',
-                              interface=Function(input_names=['resultDir',
-                                                                 'outputCSVFilename',
-                                                                 'normalization',
-                                                                 'methodParameter',
-                                                                 'manualDict',
-                                                                 'roiList',
-                                                                 'sessionIDList',
-                                                                 'doRawComparison'],
-                                                    output_names='outputCSVFilename',
-                                                    function=this.experimentAnalysis
-                                                   )
-                              )
+                             interface=Function(input_names=['resultDir',
+                                                             'outputCSVFilename',
+                                                             'normalization',
+                                                             'methodParameter',
+                                                             'manualDict',
+                                                             'roiList',
+                                                             'sessionIDList',
+                                                             'doRawComparison'],
+                                                output_names='outputCSVFilename',
+                                                function=this.experimentAnalysis
+                                                )
+                             )
     experimentalND.inputs.resultDir = ResultDir
     experimentalND.inputs.outputCSVFilename = 'experimentalResult.csv'
     experimentalND.inputs.roiList = roiList
@@ -577,22 +577,22 @@ def similarityComputeWorkflow(ResultDir,
     experimentalND.inputs.sessionIDList = sessionList
     # experimentalND.inputs.doRawComparison = doRawComparison
     experimentalND.iterables = [('normalization', normalizationOptions),
-                                 ('methodParameter', methodOptions),
-                                 ('doRawComparison', [True, False])
-                               ]
+                                ('methodParameter', methodOptions),
+                                ('doRawComparison', [True, False])
+                                ]
     workflow.add_nodes([experimentalND])
 
     summaryND = pe.Node(name='summaryND',
-                         interface=Function(input_names=['inputCSVFilename',
-                                                              'outputCSVPrefix'
-                                                              ],
-                                               output_names=['outputCSVList'],
-                                               function=this.computeSummaryFromCSV)
+                        interface=Function(input_names=['inputCSVFilename',
+                                                        'outputCSVPrefix'
+                                                        ],
+                                           output_names=['outputCSVList'],
+                                           function=this.computeSummaryFromCSV)
                         )
 
     summaryND.inputs.outputCSVPrefix = 'summaryOutput'
     workflow.connect(experimentalND, 'outputCSVFilename',
-                      summaryND, 'inputCSVFilename')
+                     summaryND, 'inputCSVFilename')
 
     if runOption == "cluster":
         ############################################
@@ -616,12 +616,12 @@ def similarityComputeWorkflow(ResultDir,
         os.environ['PATH'] = ':'.join(PROGRAM_PATHS)
 
         Cluster_Script = get_global_sge_script(PYTHON_AUX_PATHS,
-                                                PROGRAM_PATHS,
-                                                {}
-                                              )
+                                               PROGRAM_PATHS,
+                                               {}
+                                               )
         workflow.run(plugin='SGE',
-                      plugin_args=dict(template=Cluster_Script,
-                                          qsub_args="-S /bin/bash -pe smp1 4-8 -o /dev/null "))
+                     plugin_args=dict(template=Cluster_Script,
+                                      qsub_args="-S /bin/bash -pe smp1 4-8 -o /dev/null "))
     else:
         workflow.run()
 
@@ -643,36 +643,36 @@ def main(argv=None):
         auto workflow arguments for cross validation
         """)
     argWfGrp.add_argument('--experimentalConfigurationFile',
-        help="""experimentalConfigurationFile
+                          help="""experimentalConfigurationFile
         Configuration file name with FULL PATH""",
-        dest='experimentalConfigurationFile', required=True)
+                          dest='experimentalConfigurationFile', required=True)
     argWfGrp.add_argument( '--expDir',    help="""expDir
         """,
-        dest='expDir', required=False, default=".")
+                           dest='expDir', required=False, default=".")
     argWfGrp.add_argument( '--baseDir',    help="""baseDir
         """,
-        dest='baseDir', required=False, default=".")
+                           dest='baseDir', required=False, default=".")
     argWfGrp.add_argument( '--runOption',    help="""runOption [local/cluster]
         """,
-        dest='runOption', required=False, default="local")
+                           dest='runOption', required=False, default="local")
     argWfGrp.add_argument( '--PythonBinDir',    help="""PythonBinDir [local/cluster]
         """,
-        dest='PythonBinDir', required=False, default="NA")
+                           dest='PythonBinDir', required=False, default="NA")
     argWfGrp.add_argument( '--BRAINSStandAloneSrcDir',    help="""BRAINSStandAloneSrcDir [local/cluster]
         """,
-        dest='BRAINSStandAloneSrcDir', required=False, default="NA")
+                           dest='BRAINSStandAloneSrcDir', required=False, default="NA")
     argWfGrp.add_argument( '--BRAINSStandAloneBuildDir',    help="""BRAINSStandAloneBuildDir [local/cluster]
         """,
-        dest='BRAINSStandAloneBuildDir', required=False, default="NA")
+                           dest='BRAINSStandAloneBuildDir', required=False, default="NA")
 
     args = argParser.parse_args()
     similarityComputeWorkflow(args.expDir,
-                               args.baseDir,
-                               args.experimentalConfigurationFile,
-                               args.runOption,
-                               args.PythonBinDir,
-                               args.BRAINSStandAloneSrcDir,
-                               args.BRAINSStandAloneBuildDir)
+                              args.baseDir,
+                              args.experimentalConfigurationFile,
+                              args.runOption,
+                              args.PythonBinDir,
+                              args.BRAINSStandAloneSrcDir,
+                              args.BRAINSStandAloneBuildDir)
 
 
 import sys

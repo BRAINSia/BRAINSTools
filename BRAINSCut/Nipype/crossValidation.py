@@ -425,14 +425,14 @@ def crossValidationWorkUp(crossValidationConfigurationFilename,
     probabilityMapGeneratorND = pe.Node(name="probabilityMapGeneratorND",
                                         interface=Function(
                                              input_names=['configurationFilename',
-                                       'probabilityMapDict',
-                                                            'gaussianSigma',
-                                                            'outputXmlFilename'],
+                                                          'probabilityMapDict',
+                                                          'gaussianSigma',
+                                                          'outputXmlFilename'],
                                              output_names=['probabilityMapDict',
-                                                              'outputXmlFilename',
-                                                              'outputConfigurationFilename'],
+                                                           'outputXmlFilename',
+                                                           'outputConfigurationFilename'],
                                              function=ConfigurationParser.BRAINSCutGenerateProbabilityMap)
-                                       )
+                                        )
 
     probabilityMapGeneratorND.inputs.outputXmlFilename = 'netConfiguration.xml'
 
@@ -442,7 +442,7 @@ def crossValidationWorkUp(crossValidationConfigurationFilename,
     probabilityMapGeneratorND.inputs.gaussianSigma = gaussianSigmaParam
 
     workflow.connect(probMapFilenameGenerator, 'probabilityMapFilename',
-                      probabilityMapGeneratorND, 'probabilityMapDict')
+                     probabilityMapGeneratorND, 'probabilityMapDict')
 
     #
     #--------------------------------  create vectors for each ROI
@@ -451,31 +451,31 @@ def crossValidationWorkUp(crossValidationConfigurationFilename,
           configFileND
           """)
     configFileND = pe.Node(name="configFileND",
-                            interface=Function(
+                           interface=Function(
                                 input_names=['originalFilename',
-                                               'editedFilenamePrefix'],
+                                             'editedFilenamePrefix'],
                                 output_names=['editedFilenames'],
                                 function=ConfigurationParser.ConfigurationFileEditor)
-                          )
+                           )
 
     configFileND.inputs.editedFilenamePrefix = 'ROI'
     workflow.connect(probabilityMapGeneratorND, 'outputConfigurationFilename',
-                      configFileND, 'originalFilename')
+                     configFileND, 'originalFilename')
 
     vectorCreatorND = pe.MapNode(name="vectorCreatorND",
-                                  interface=Function(
+                                 interface=Function(
                                       input_names=['configurationFilename',
-                                                     'probabilityMapDict',
-                                                     'normalization',
-                                                     'outputXmlFilename',
-                                                     'outputVectorFilename'],
+                                                   'probabilityMapDict',
+                                                   'normalization',
+                                                   'outputXmlFilename',
+                                                   'outputVectorFilename'],
                                       output_names=['outputVectorFilename',
-                                                      'outputVectorHdrFilename',
-                                                      'outputNormalization',
-                                                      'outputXmlFilename'],
+                                                    'outputVectorHdrFilename',
+                                                    'outputNormalization',
+                                                    'outputXmlFilename'],
                                       function=ConfigurationParser.BRAINSCutCreateVector),
-                                  iterfield=['configurationFilename']
-                                )
+                                 iterfield=['configurationFilename']
+                                 )
     vectorCreatorND.inputs.outputVectorFilename = 'oneROIVectorFile.txt'
     vectorCreatorND.inputs.outputXmlFilename = 'oneROICreateVectorNetConfiguration.xml'
     normalizationOption = Options['normalization'.lower()]
@@ -486,9 +486,9 @@ def crossValidationWorkUp(crossValidationConfigurationFilename,
     #--------------------------------  workflow connections
     #
     workflow.connect(configFileND, 'editedFilenames',
-                      vectorCreatorND, 'configurationFilename')
+                     vectorCreatorND, 'configurationFilename')
     workflow.connect(probabilityMapGeneratorND, 'probabilityMapDict',
-                      vectorCreatorND, 'probabilityMapDict')
+                     vectorCreatorND, 'probabilityMapDict')
 
     #
     #--------------------------------  balance and combine each ROI vectors
@@ -497,25 +497,25 @@ def crossValidationWorkUp(crossValidationConfigurationFilename,
           balanceND
           """)
     balaceND = pe.Node(name="balanceND",
-                        interface=Function(
+                       interface=Function(
                             input_names=['inputVectorFilenames'],
                             output_names=['outputVectorFilenames',
-                                            'outputVectorHdrFilenames'],
+                                          'outputVectorHdrFilenames'],
                             function=ConfigurationParser.BalanceInputVectors)
-                      )
+                       )
     workflow.connect(vectorCreatorND, 'outputVectorFilename',
-                      balaceND, 'inputVectorFilenames')
+                     balaceND, 'inputVectorFilenames')
 
     combineND = pe.Node(name="combineND",
-                         interface=Function(
+                        interface=Function(
                             input_names=['inputVectorFilenames',
-                                           'outputVectorFilename'],
+                                         'outputVectorFilename'],
                             output_names=['outputVectorFilename',
-                                            'outputVectorHdrFilename'],
+                                          'outputVectorHdrFilename'],
                             function=ConfigurationParser.CombineInputVectors)
-                       )
+                        )
     workflow.connect(balaceND, 'outputVectorFilenames',
-                      combineND, 'inputVectorFilenames')
+                     combineND, 'inputVectorFilenames')
 
     combineND.inputs.outputVectorFilename = 'allCombinedVector.txtANN'
     #
@@ -525,16 +525,16 @@ def crossValidationWorkUp(crossValidationConfigurationFilename,
           trainND
           """)
     trainND = pe.Node(name="trainND",
-                       interface=Function(
+                      interface=Function(
                            input_names=['configurationFilename',
-                                          'inputVectorFilename',
-                                          'outputModelFilenamePrefix',
-                                          'outputXmlFilename',
-                                          'methodParameter'],
+                                        'inputVectorFilename',
+                                        'outputModelFilenamePrefix',
+                                        'outputXmlFilename',
+                                        'methodParameter'],
                            output_names=['outputTrainedModelFilename',
-                                           'outputMethodParameter'],
+                                         'outputMethodParameter'],
                            function=ConfigurationParser.BRAINSCutTrainModel)
-                     )
+                      )
     # methodParameter = { '--method': 'RandomForest',
     #                    '--numberOfTrees': 60,
     #                    '--randomTreeDepth ': 60 }
@@ -545,38 +545,38 @@ def crossValidationWorkUp(crossValidationConfigurationFilename,
     trainND.inputs.outputModelFilenamePrefix = 'trainModelFile.txt'
 
     workflow.connect(probabilityMapGeneratorND, 'outputConfigurationFilename',
-                      trainND, 'configurationFilename')
+                     trainND, 'configurationFilename')
     workflow.connect(combineND, 'outputVectorFilename',
-                      trainND, 'inputVectorFilename')
+                     trainND, 'inputVectorFilename')
     #
     #--------------------------------  apply
     #
     applyND = pe.Node(name="applyND",
-                       interface=Function(
+                      interface=Function(
                            input_names=['configurationFilename',
-                                          'probabilityMapDict',
-                                          'normalization',
-                                          'inputModelFilename',
-                                          'methodParameter',
-                                          'outputXmlFilename'
-                                          ],
+                                        'probabilityMapDict',
+                                        'normalization',
+                                        'inputModelFilename',
+                                        'methodParameter',
+                                        'outputXmlFilename'
+                                        ],
                            output_names=['outputLabelDict'],
                            function=ConfigurationParser.BRAINSCutApplyModel)
-                     )
+                      )
     # methodParameter = { '--method': 'RandomForest',
     #                    '--numberOfTrees': 60,
     #                    '--randomTreeDepth ': 60 }
     applyND.inputs.outputXmlFilename = 'applyConfiguration.xml'
     workflow.connect(probabilityMapGeneratorND, 'outputConfigurationFilename',
-                      applyND, 'configurationFilename')
+                     applyND, 'configurationFilename')
     workflow.connect(vectorCreatorND, 'outputNormalization',
-                      applyND, 'normalization')
+                     applyND, 'normalization')
     workflow.connect(probabilityMapGeneratorND, 'probabilityMapDict',
-                      applyND, 'probabilityMapDict')
+                     applyND, 'probabilityMapDict')
     workflow.connect(trainND, 'outputTrainedModelFilename',
-                      applyND, 'inputModelFilename')
+                     applyND, 'inputModelFilename')
     workflow.connect(trainND, 'outputMethodParameter',
-                      applyND, 'methodParameter')
+                     applyND, 'methodParameter')
 
     #####################################################################################
     # Data Sink
@@ -585,18 +585,18 @@ def crossValidationWorkUp(crossValidationConfigurationFilename,
     LabelsDS = pe.Node(nio.DataSink(), name='LabelDS')
     LabelsDS.inputs.base_directory = os.path.join(baseDir, "Result")
     LabelsDS.inputs.regexp_substitutions = [('/_', '/'),
-                                             ('configurationFilename.*_Test', 'Test'),
-                                             ('_configuration.config/normalization_', '/'),
-                                             ('methodParameter_--method', ''),
-                                             ('RandomForest', 'RF/'),
-                                             ('.--randomTreeDepth', 'TreeDepth'),
-                                             ('.--numberOfTrees', '_TreeNumber'),
-                                             ('ANNContinuousPrediction(?P<roi>.+)(?P<session>\d\d\d\d\d).nii.gz', r'\g<session>_\g<roi>_ANNContinuous.nii.gz')
-                                             ]
+                                            ('configurationFilename.*_Test', 'Test'),
+                                            ('_configuration.config/normalization_', '/'),
+                                            ('methodParameter_--method', ''),
+                                            ('RandomForest', 'RF/'),
+                                            ('.--randomTreeDepth', 'TreeDepth'),
+                                            ('.--numberOfTrees', '_TreeNumber'),
+                                            ('ANNContinuousPrediction(?P<roi>.+)(?P<session>\d\d\d\d\d).nii.gz', r'\g<session>_\g<roi>_ANNContinuous.nii.gz')
+                                            ]
     # ANNContinuousPredictionl_accumben77478
 
     workflow.connect([(applyND, LabelsDS,
-                          [(('outputLabelDict', getDictionaryValues), 'Labels')])])
+                       [(('outputLabelDict', getDictionaryValues), 'Labels')])])
 
     #####################################################################################
     # analysis
@@ -627,12 +627,12 @@ def crossValidationWorkUp(crossValidationConfigurationFilename,
         os.environ['PATH'] = ':'.join(PROGRAM_PATHS)
 
         Cluster_Script = get_global_sge_script(PYTHON_AUX_PATHS,
-                                                PROGRAM_PATHS,
-                                                {}
-                                              )
+                                               PROGRAM_PATHS,
+                                               {}
+                                               )
         workflow.run(plugin='SGE',
-                      plugin_args=dict(template=Cluster_Script,
-                                          qsub_args="-S /bin/bash -pe smp1 4-8 -o /dev/null "))
+                     plugin_args=dict(template=Cluster_Script,
+                                      qsub_args="-S /bin/bash -pe smp1 4-8 -o /dev/null "))
     else:
         print("""************************
               run
@@ -667,31 +667,31 @@ def main(argv=None):
         auto workflow arguments for cross validation
         """)
     argWfGrp.add_argument('--crossValidationConfigurationFilename',
-        help="""configurationFilename
+                          help="""configurationFilename
         Configuration file name with FULL PATH""",
-        dest='crossValidationConfigurationFilename', required=True)
+                          dest='crossValidationConfigurationFilename', required=True)
     argWfGrp.add_argument( '--baseDir',    help="""baseDir
         """,
-        dest='baseDir', required=False, default=".")
+                           dest='baseDir', required=False, default=".")
     argWfGrp.add_argument( '--runOption',    help="""runOption [local/cluster]
         """,
-        dest='runOption', required=False, default="local")
+                           dest='runOption', required=False, default="local")
     argWfGrp.add_argument( '--PythonBinDir',    help="""PythonBinDir [local/cluster]
         """,
-        dest='PythonBinDir', required=False, default="NA")
+                           dest='PythonBinDir', required=False, default="NA")
     argWfGrp.add_argument( '--BRAINSStandAloneSrcDir',    help="""BRAINSStandAloneSrcDir [local/cluster]
         """,
-        dest='BRAINSStandAloneSrcDir', required=False, default="NA")
+                           dest='BRAINSStandAloneSrcDir', required=False, default="NA")
     argWfGrp.add_argument( '--BRAINSStandAloneBuildDir',    help="""BRAINSStandAloneBuildDir [local/cluster]
         """,
-        dest='BRAINSStandAloneBuildDir', required=False, default="NA")
+                           dest='BRAINSStandAloneBuildDir', required=False, default="NA")
 
     # test arguments
     argTestGrp = argParser.add_argument_group( 'argTestGrp', """****************************
         arguments for testing
         """)
     argTestGrp.add_argument('--unitTest', action='store_true',
-        dest='unitTest', help="""****************************
+                            dest='unitTest', help="""****************************
         List of test function name
         """)
     args = argParser.parse_args()
@@ -699,11 +699,11 @@ def main(argv=None):
     #--------------------------------
     if not args.unitTest:
         crossValidationWorkUp(args.crossValidationConfigurationFilename,
-                                args.baseDir,
-                                args.runOption,
-                                args.PythonBinDir,
-                                args.BRAINSStandAloneSrcDir,
-                                args.BRAINSStandAloneBuildDir)
+                              args.baseDir,
+                              args.runOption,
+                              args.PythonBinDir,
+                              args.BRAINSStandAloneSrcDir,
+                              args.BRAINSStandAloneBuildDir)
 
     #--------------------------------
     if args.unitTest:
@@ -718,12 +718,12 @@ def main(argv=None):
         sessionList = ["s1", "s2", "s3", "s4", "s5", "s6", "s7", "s8", "s9", "s10", "s11", "s12"]
         getRandomizedSessionOrder(sessionList)
         myTag = getTags(sessionList,
-                         2,
-                         testElementPerSubject)
+                        2,
+                        testElementPerSubject)
         featureFilenameDict = {'f1': 'f1.csv', 'f2': 'f2.csv'}
         configFilename, mainFilenameDict, featureFilenameDict = generateNewFilenames(3,
-                                                   featureFilenameDict.keys(),
-                                                   "outputPrefix")
+                                                                                     featureFilenameDict.keys(),
+                                                                                     "outputPrefix")
         import ConfigurationParser
         m_configurationMap = ConfigurationParser.ConfigurationSectionMap(args.crossValidationConfigurationFilename)
 
@@ -731,11 +731,11 @@ def main(argv=None):
         mainListFilename = listFiles['subjectListFilename'.lower()]
         sessionDict = readListFileBySessionID(mainListFilename)
         myTag = getTags(sessionDict.keys(),
-                         2,
-                         listFiles['numberOfElementInSubset'.lower()])
+                        2,
+                        listFiles['numberOfElementInSubset'.lower()])
         writeListFile(sessionDict,
-                       mainFilenameDict,
-                       myTag)
+                      mainFilenameDict,
+                      myTag)
 
 
 import sys

@@ -53,19 +53,19 @@ if(NOT ( DEFINED "${extProjName}_EXE" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
   )
 
   ### --- End Project specific additions
-  set(${proj}_REPOSITORY ${git_protocol}://uncrustify.git.sourceforge.net/gitroot/uncrustify/uncrustify)
-  set(${proj}_GIT_TAG 60f3681da60462eda539b78e0c6c3eea823481e5)
+  set(${proj}_REPOSITORY "${git_protocol}://github.com/bengardner/uncrustify.git")
+  set(${proj}_GIT_TAG "84dde5e2f8722dcfb511a1d264b0834b95f6f294")
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${${proj}_REPOSITORY}
     GIT_TAG ${${proj}_GIT_TAG}
-    SOURCE_EXE ${proj}
-    BINARY_EXE ${proj}-build
+    SOURCE_DIR ${proj}
+    BINARY_DIR ${proj}-build
     ${cmakeversion_external_update} "${cmakeversion_external_update_value}"
-    CONFIGURE_COMMAND <SOURCE_EXE>/configure --prefix=${CMAKE_BINARY_EXE}/Utils
+    CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=${CMAKE_BINARY_DIR}/Utils
     DEPENDS
       ${${proj}_DEPENDENCIES}
   )
-  set(${extProjName}_EXE ${CMAKE_BINARY_EXE}/Utils/bin/uncrustify)
+  set(${extProjName}_EXE ${CMAKE_BINARY_DIR}/Utils/bin/uncrustify)
 else()
   if(${USE_SYSTEM_${extProjName}})
     find_package(${extProjName} ${${extProjName}_REQUIRED_VERSION} REQUIRED)

@@ -134,7 +134,7 @@ endif()
 list(APPEND ${PRIMARY_PROJECT_NAME}_DEPENDENCIES SimpleITK)
 list(APPEND SimpleITK_DEPENDENCIES PCRE Swig)
 list(APPEND ${PRIMARY_PROJECT_NAME}_DEPENDENCIES NIPYPE)
-
+list(APPEND ${PRIMARY_PROJECT_NAME}_DEPENDENCIES Ipopt)
 #-----------------------------------------------------------------------------
 # Define Superbuild global variables
 #-----------------------------------------------------------------------------

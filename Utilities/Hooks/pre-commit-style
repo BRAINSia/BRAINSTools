@@ -285,7 +285,7 @@ Please install cppcheck or set the executable location with
 run_cppcheck_on_file() {
 	file="$1"
         echo "Running cppcheck on $file "
-	if [ $(echo "$file" | grep -c "\.h\|\.cpp\|\.cxx\|\.c\|\.txx|\.hxx") != 0 ]; then
+	if [ $(echo "$file" | grep -c "\.h\>\|\.cpp\>\|\.cxx\>\|\.c\>\|\.txx\>|\.hxx\>") != 0 ]; then
 
 	        echo Run: $cppcheck_path -q --enable=all --force --inline-suppr --template='{file}:{line},{severity},{id},{message}' "${file}"
 		output=$( $cppcheck_path -q --enable=all --force --inline-suppr --template='{file}:{line},{severity},{id},{message}' "${file}" 2>&1 | grep -v missingInclude)

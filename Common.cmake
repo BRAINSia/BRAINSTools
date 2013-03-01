@@ -1,4 +1,20 @@
 
+#-----------------------------------------------------------------------------
+# Update CMake module path
+#------------------------------------------------------------------------------
+set(CMAKE_MODULE_PATH
+  ${${PROJECT_NAME}_SOURCE_DIR}/CMake
+  ${${PROJECT_NAME}_BINARY_DIR}/CMake
+  ${CMAKE_MODULE_PATH}
+  )
+
+#-----------------------------------------------------------------------------
+# Sanity checks
+#------------------------------------------------------------------------------
+include(PreventInSourceBuilds)
+include(PreventInBuildInstalls)
+include(itkCheckSourceTree)
+
 include(CMakeDependentOption)
 
 option(${LOCAL_PROJECT_NAME}_INSTALL_DEVELOPMENT "Install development support include and libraries for external packages." OFF)
@@ -88,21 +104,6 @@ if(BRAINSTools_USE_QT)
     include(${QT_USE_FILE})
   endif()
 endif()
-
-#-----------------------------------------------------------------------------
-# Update CMake module path
-#------------------------------------------------------------------------------
-set(CMAKE_MODULE_PATH
-  ${${PROJECT_NAME}_SOURCE_DIR}/CMake
-  ${${PROJECT_NAME}_BINARY_DIR}/CMake
-  ${CMAKE_MODULE_PATH}
-  )
-
-#-----------------------------------------------------------------------------
-# Sanity checks
-#------------------------------------------------------------------------------
-include(PreventInSourceBuilds)
-include(PreventInBuildInstalls)
 
 #-----------------------------------------------------------------------------
 # CMake Function(s) and Macro(s)

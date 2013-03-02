@@ -561,7 +561,7 @@ int main(int argc, char *argv[])
 //    command.initialDisplacementFieldVolume = initialDisplacementFieldVolume;
     command.initialFixedDisplacementFieldVolume = initialFixedDisplacementFieldVolume;
     command.initialMovingDisplacementFieldVolume = initialMovingDisplacementFieldVolume;
-//	command.jacobianImagePrefix = jacobianImagePrefix;
+//  command.jacobianImagePrefix = jacobianImagePrefix;
     command.initializeWithTransform = initializeWithTransform;
     command.regularizationWeight = regularizationWeight;
     command.similarityWeight = similarityWeight;

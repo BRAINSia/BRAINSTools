@@ -64,7 +64,7 @@ void Brains2LandmarkReader<TPixelType, Dimension>
   std::string pointLine(line, strlen("LANDMARK_NUMBER_OF_POINTS: "), line.length() );
   int         numberOfPoints = -1;
 
-  if( sscanf(pointLine.c_str(), "%d", &numberOfPoints) != 1 )
+  if( sscanf(pointLine.c_str(), "%8d", &numberOfPoints) != 1 )
     {
     itkExceptionMacro("ERROR: Failed to read numberOfPoints\n"
                       "       pointLine= " << pointLine );
@@ -91,7 +91,7 @@ void Brains2LandmarkReader<TPixelType, Dimension>
 
   int xDim = 0;
 
-  if( sscanf(xdimLine.c_str(), "%d", &xDim) != 1 )
+  if( sscanf(xdimLine.c_str(), "%8d", &xDim) != 1 )
     {
     itkExceptionMacro("ERROR: Failed to read x Dimension\n"
                       "       xDim= " << xDim );
@@ -109,7 +109,7 @@ void Brains2LandmarkReader<TPixelType, Dimension>
 
   float xRes = 0.0;
 
-  if( sscanf(xresLine.c_str(), "%f", &xRes) != 1 )
+  if( sscanf(xresLine.c_str(), "%17f", &xRes) != 1 )
     {
     itkExceptionMacro("ERROR: Failed to read x resolution.\n"
                       "       xRes= " << xRes );
@@ -127,7 +127,7 @@ void Brains2LandmarkReader<TPixelType, Dimension>
 
   int yDim = 0;
 
-  if( sscanf(ydimLine.c_str(), "%d", &yDim) != 1 )
+  if( sscanf(ydimLine.c_str(), "%8d", &yDim) != 1 )
     {
     itkExceptionMacro("ERROR: Failed to read y Dimension\n"
                       "       yDim= " << yDim );
@@ -146,7 +146,7 @@ void Brains2LandmarkReader<TPixelType, Dimension>
 
   float yRes = 0.0;
 
-  if( sscanf(yresLine.c_str(), "%f", &yRes) != 1 )
+  if( sscanf(yresLine.c_str(), "%17f", &yRes) != 1 )
     {
     itkExceptionMacro("ERROR: Failed to read y resolution.\n"
                       "       yRes= " << yRes );
@@ -164,7 +164,7 @@ void Brains2LandmarkReader<TPixelType, Dimension>
 
   int zDim = 0;
 
-  if( sscanf(zdimLine.c_str(), "%d", &zDim) != 1 )
+  if( sscanf(zdimLine.c_str(), "%8d", &zDim) != 1 )
     {
     itkExceptionMacro("ERROR: Failed to read z Dimension\n"
                       "       zDim= " << zDim );
@@ -180,7 +180,7 @@ void Brains2LandmarkReader<TPixelType, Dimension>
 
   float zRes = 0.0;
 
-  if( sscanf(zdimLine.c_str(), "%f", &zRes) != 1 )
+  if( sscanf(zdimLine.c_str(), "%17f", &zRes) != 1 )
     {
     itkExceptionMacro("ERROR: Failed to read z resolution.\n"
                       "       zRes= " << zRes );
@@ -202,7 +202,7 @@ void Brains2LandmarkReader<TPixelType, Dimension>
     {
     std::getline(inputFile, line);
     //   std::cout<<"2end:"<<line<<std::endl;
-    sscanf(line.c_str(), "%d %f %f %f", &id, &x, &y, &z );
+    sscanf(line.c_str(), "%8d %17f %17f %17f", &id, &x, &y, &z );
     //   std::cout<<id<<":  "<<x<<","<<y<<","<<z<<std::endl;
     if( x > xDim || x < 0 || y > yDim || y < 0 || z > zDim || z < 0 )
       {

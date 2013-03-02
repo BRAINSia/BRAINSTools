@@ -278,14 +278,11 @@ ICCDeformableFunction<TFixedImage, TMovingImage, TDisplacementField>
     typename FloatImageType::Pointer tempZ = derivative->GetOutput();
     tempZ->DisconnectPipeline();
 
-//	m_SimilarityWeight *= 4.0 * m_MaximumUpdateStepLength ;
-    typename TFixedImage::SizeType size = this->GetFixedImage()->GetLargestPossibleRegion().GetSize();
-    float fnx = static_cast<float>(size[0]);
-    float fny = static_cast<float>(size[1]);
-    float fnz = static_cast<float>(size[2]);
+//  m_SimilarityWeight *= 4.0 * m_MaximumUpdateStepLength ;
+//  typename TFixedImage::SizeType size = this->GetFixedImage()->GetLargestPossibleRegion().GetSize();
 
-//	std::cout<<"m_SimilarityWeight:"<<m_SimilarityWeight<<std::endl;
-//	m_SimilarityWeight = 0.1; //40.0/256.0;
+//  std::cout<<"m_SimilarityWeight:"<<m_SimilarityWeight<<std::endl;
+//  m_SimilarityWeight = 0.1; //40.0/256.0;
 
     // Compute the similarity
     DisplacementFieldTypePointer similarity = DisplacementFieldType::New();
@@ -606,7 +603,7 @@ void
 ICCDeformableFunction<TFixedImage, TMovingImage, TDisplacementField>
 ::ComputeMetric( void * gd)
 {
-  GlobalDataStruct *globalData = (GlobalDataStruct *)gd;
+  GlobalDataStruct *globalData = reinterpret_cast<GlobalDataStruct *>(gd);
 
   // WARNING!! We compute the global data without taking into account the current update step.
   // There are several reasons for that: If an exponential, a smoothing or any other operation
@@ -644,7 +641,7 @@ ICCDeformableFunction<TFixedImage, TMovingImage, TDisplacementField>
           {
           globalData->m_SumOfSquaredDifference += vnl_math_sqr( speedValue );
           globalData->m_NumberOfPixelsProcessed += 1;
-          //		globalData->m_SumOfSquaredChange += update.GetSquaredNorm();
+          //    globalData->m_SumOfSquaredChange += update.GetSquaredNorm();
           }
         }
       }
@@ -661,13 +658,13 @@ ICCDeformableFunction<TFixedImage, TMovingImage, TDisplacementField>
 
       const double speedValue = fixedValue - movingValue;
 
-      //	  std::cout<<"speedValue"<<speedValue<<std::endl;
+      //    std::cout<<"speedValue"<<speedValue<<std::endl;
 
       if( globalData )
         {
         globalData->m_SumOfSquaredDifference += vnl_math_sqr( speedValue );
         globalData->m_NumberOfPixelsProcessed += 1;
-        //		globalData->m_SumOfSquaredChange += update.GetSquaredNorm();
+        //    globalData->m_SumOfSquaredChange += update.GetSquaredNorm();
         }
       }
     }
@@ -695,7 +692,7 @@ void
 ICCDeformableFunction<TFixedImage, TMovingImage, TDisplacementField>
 ::ReleaseGlobalDataPointer( void *gd ) const
 {
-  GlobalDataStruct * globalData = (GlobalDataStruct *) gd;
+  GlobalDataStruct * globalData = reinterpret_cast<GlobalDataStruct *>( gd );
 
   m_MetricCalculationLock.Lock();
   m_SumOfSquaredDifference += globalData->m_SumOfSquaredDifference;

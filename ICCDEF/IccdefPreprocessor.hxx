@@ -341,8 +341,8 @@ IccdefPreprocessor<TInputImage, TOutputImage>
   m_OutputFixedImage = itkUtil::CopyImage<TOutputImage>(
       m_UnNormalizedFixedImage);
 
-//	itkUtil::Normalize<TOutputImage>(m_OutputFixedImage);
-//	itkUtil::Normalize<TOutputImage>(m_OutputMovingImage);
+//  itkUtil::Normalize<TOutputImage>(m_OutputFixedImage);
+//  itkUtil::Normalize<TOutputImage>(m_OutputMovingImage);
 
   if( this->GetOutDebug() )
     {

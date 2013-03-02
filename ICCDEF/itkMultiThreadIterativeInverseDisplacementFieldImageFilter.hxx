@@ -23,7 +23,6 @@ template <class TInputImage, class TOutputImage>
 void MultiThreadIterativeInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>
 ::GenerateData()
 {
-  const unsigned int ImageDimension = InputImageType::ImageDimension;
   TimeType           time;
 
   time.Start(); // time measurement
@@ -86,18 +85,10 @@ void MultiThreadIterativeInverseDisplacementFieldImageFilter<TInputImage, TOutpu
     // calculate the inverted field
     InputImagePointType  mappedPoint, newPoint;
     OutputImagePointType point, originalPoint, newRemappedPoint;
-//    OutputImageIndexType index;
     OutputImagePixelType        displacement, outputValue;
     FieldInterpolatorOutputType forwardVector;
     double                      spacing = inputPtr->GetSpacing()[0];
-//    double smallestError = 0;
-//    int stillSamePoint;
     InputImageRegionType region = inputPtr->GetLargestPossibleRegion();
-    unsigned int         numberOfPoints = 1;
-    for( unsigned int i = 0; i < ImageDimension; i++ )
-      {
-      numberOfPoints *= region.GetSize()[i];
-      }
 
     ProgressReporter progress(this, 0,
                               m_NumberOfIterations
@@ -108,6 +99,7 @@ void MultiThreadIterativeInverseDisplacementFieldImageFilter<TInputImage, TOutpu
 
     ComputeInverse(inputPtr, outputPtr, inputFieldInterpolator, spacing);
 /*
+    const unsigned int ImageDimension = InputImageType::ImageDimension;
     InputIt.GoToBegin();
     OutputIt.GoToBegin();
     while( !OutputIt.IsAtEnd() )

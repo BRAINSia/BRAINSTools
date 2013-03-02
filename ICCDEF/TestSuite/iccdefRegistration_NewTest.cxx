@@ -13,7 +13,7 @@
 
 extern "C" MODULE_IMPORT int ModuleEntryPoint(int, char * []);
 
-int iccdefRegistration_NewTest(int argc, char* argv[])
+extern int iccdefRegistration_NewTest(int argc, char* argv[])
 {
   return ModuleEntryPoint(argc, argv);
 }

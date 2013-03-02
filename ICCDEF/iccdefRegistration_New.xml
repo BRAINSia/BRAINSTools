@@ -52,7 +52,7 @@
       <description>Output Directory must exists prior to running the program.</description>
       <label>Output Directory</label>
       <channel>output</channel>
-    </image> 
+    </image>
 
     <image>
       <name>outputForwardDisplacementFieldVolume</name>
@@ -131,7 +131,7 @@
       <channel>input</channel>
       <default>0</default>
     </boolean>
- 
+
     <boolean>
       <name>outputDisplacementField</name>
       <longflag>outputDisplacementField</longflag>
@@ -141,7 +141,7 @@
       <default>0</default>
     </boolean>
 
- 
+
     <boolean>
       <name>forceCoronalZeroOrigin</name>
       <longflag>forceCoronalZeroOrigin</longflag>
@@ -204,7 +204,7 @@
       <label>Input Moving Mask Filename</label>
       <channel>input</channel>
     </file>
-   
+
     <file>
       <name>fixedLandmark</name>
       <longflag>fixedLandmark</longflag>
@@ -220,7 +220,7 @@
       <label>Input Moving Landmark Filename</label>
       <channel>input</channel>
     </file>
-    
+
 <!--
     <integer>
       <name>lowerThresholdForBOBF</name>
@@ -328,7 +328,7 @@
        <label>Intensity Normalization</label>
        <default>false</default>
     </boolean>
- 
+
     <boolean>
        <name>useConsistentIntensity</name>
        <longflag>useConsistentIntensity</longflag>

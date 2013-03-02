@@ -38,7 +38,7 @@ This programs creates synthesized average brain.
       <description>The resolusion.</description>
       <default>10000</default>
     </string>
-   
+
    <string>
       <name>iteration</name>
       <longflag>iteration</longflag>

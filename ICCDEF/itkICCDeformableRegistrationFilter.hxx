@@ -181,7 +181,7 @@ ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
         {
         out.Value() =  static_cast<typename TDisplacementField::PixelType>(in.Get() ); // Supports input image adaptors
                                                                                        // only
-//			std::cout<<"out.Value:"<<out.Value()<<std::endl;
+//      std::cout<<"out.Value:"<<out.Value()<<std::endl;
         ++in;
         ++out;
         }
@@ -920,8 +920,8 @@ ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
       this->ComputeLinearElastic(m_Coefficients[1], normalizer_Regularization);
       }
     }
-//	this->ComputeLinearElastic(m_Coefficients[0]);
-//	this->ComputeLinearElastic(m_Coefficients[1]);
+//  this->ComputeLinearElastic(m_Coefficients[0]);
+//  this->ComputeLinearElastic(m_Coefficients[1]);
   for( unsigned int i = 0; i < this->GetNumberOfOutputs(); i++ )
     {
     m_FFTc2rs[i]->SetInput(m_Coefficients[i]);
@@ -990,8 +990,8 @@ ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
   str.Filter = this;
   str.coeff = coeff;
   str.normalizer_Regularization = normalizer;
-//	 str.fft = m_InvFFT12;
-//	 std::cout<<"Number:"<<this->GetNumberOfThreads()<<std::endl;
+//   str.fft = m_InvFFT12;
+//   std::cout<<"Number:"<<this->GetNumberOfThreads()<<std::endl;
   this->GetMultiThreader()->SetNumberOfThreads(this->GetNumberOfThreads() );
   this->GetMultiThreader()->SetSingleMethod(this->ComputeLinearElasticThreaderCallback, &str);
   this->GetMultiThreader()->SingleMethodExecute();
@@ -1117,8 +1117,8 @@ ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
   str.inverse0 = inv0;
   str.inverse1 = inv1;
   str.normalizer_InverseConsistency = normalizer;
-//	 str.coeff = coeff;
-//	 std::cout<<"Number:"<<this->GetNumberOfThreads()<<std::endl;
+//   str.coeff = coeff;
+//   std::cout<<"Number:"<<this->GetNumberOfThreads()<<std::endl;
   this->GetMultiThreader()->SetNumberOfThreads(this->GetNumberOfThreads() );
   this->GetMultiThreader()->SetSingleMethod(this->ComputeInverseConsistencyThreaderCallback, &str);
   this->GetMultiThreader()->SingleMethodExecute();

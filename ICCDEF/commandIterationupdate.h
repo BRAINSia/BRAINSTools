@@ -147,16 +147,6 @@ public:
     m_FixedImage = img;
   }
 
-  void SetTrueField(const DisplacementFieldType *truefield)
-  {
-    m_TrueField = truefield;
-
-    m_TrueWarpGradientCalculator = WarpGradientCalculatorType::New();
-    m_TrueWarpGradientCalculator->SetInputImage( m_TrueField );
-
-    m_CompWarpGradientCalculator =  WarpGradientCalculatorType::New();
-  }
-
   void Execute(itk::Object *caller, const itk::EventObject & event)
   {
     Execute( (const itk::Object *)caller, event );
@@ -364,7 +354,7 @@ public:
       double fieldDist = -1.0;
       double fieldGradDist = -1.0;
       double tmp;
-//	  m_headerwritten = false;
+//    m_headerwritten = false;
 
       if( m_TrueField )
         {

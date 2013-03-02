@@ -4,7 +4,7 @@
 #include <iostream>
 #include "itkTestMain.h"
 
-void RegisterTests()
+extern void RegisterTests()
 {
   REGISTER_TEST(ICCDEFWarpTest);
 }

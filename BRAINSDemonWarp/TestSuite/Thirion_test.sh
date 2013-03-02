@@ -31,7 +31,7 @@ else
 fi
 ${1}/bin/SqErr.exe ${gaussoutput}/ThirionDemons/standard.nii.gz ${TestDir}/test.nii.gz ${TestDir}/testvar.nii.gz |grep SQERR | tee ${TestDir}/test
 
-#GetValue function returns the required values from a given file 
+#GetValue function returns the required values from a given file
 function GetValue ()
 {
 FILE=$1
@@ -40,7 +40,7 @@ COLUMN=$3
 GetValue_Result=$(cat  ${FILE} | head -${LINE} | tail -1 | awk '{print $'${COLUMN}'}')
 }
 
-#Isclose function tests whether the test values ar within 5% of the standard result. 
+#Isclose function tests whether the test values ar within 5% of the standard result.
 function IsClose ()
 {
 TEST_VALUE=$1

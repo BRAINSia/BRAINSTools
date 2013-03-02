@@ -12,7 +12,7 @@
   <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
   <contributor>Steven A. Dunn and Vincent A. Magnotta</contributor>
   <acknowledgements>
-  This work was developed by the University of Iowa Departments of Radiology and Psychiatry. This software was supported in part of NIH/NINDS award NS050568.  
+  This work was developed by the University of Iowa Departments of Radiology and Psychiatry. This software was supported in part of NIH/NINDS award NS050568.
   </acknowledgements>
 
   <parameters>
@@ -43,7 +43,7 @@
       <channel>input</channel>
     </file>
   </parameters>
-  
+
   <parameters>
     <label>Output File</label>
     <description>Output File</description>

@@ -1,7 +1,7 @@
 # author: Eunyoung Regina Kim
 # 2011 Nov
 # ---------------------------------------------------------------------------- #
-# from the list file 
+# from the list file
 # compute 'manual' and 'ann' volume and 'similarity index' along
 # the different threshold with BRAINSCut Post processing step
 # ---------------------------------------------------------------------------- #
@@ -17,7 +17,7 @@ if [ $# != 5 ]; then
 fi
 
 #
-# Similarity Index execution 
+# Similarity Index execution
 SIExe="$BRAINSBuild/SimilarityIndex";
 
 #
@@ -27,10 +27,10 @@ SIExe="$BRAINSBuild/SimilarityIndex";
 
 #
 # list file ex)
-# [AutoWorkUp Dir] [Manual Dir] 
+# [AutoWorkUp Dir] [Manual Dir]
 # ex)
 # /paulsen/IPIG/predict_3T_MR/site-024/0706/43258/10_AUTO.NN3Tv20110418  ANN2011May04ManualCompleted
-# /paulsen/MRx/PHD_120/0057/34479/10_AUTO.NN3Tv20111003 ANN20111006_ManualTrimForANN 
+# /paulsen/MRx/PHD_120/0057/34479/10_AUTO.NN3Tv20111003 ANN20111006_ManualTrimForANN
 # /paulsen/IPIG/predict_3T_MR/site-048/0217/52712/10_AUTO.NN3Tv20110418  ANN2011May04ManualCompleted
 
 
@@ -75,14 +75,14 @@ do
 
    #
    # Compute Similarity index -------------------------------------------------- #
-   SIManualROI=(`ls $autoWorkUpDir/$manDir/${subjectID}_${side}_${ROIName}.nii.gz`) ; 
+   SIManualROI=(`ls $autoWorkUpDir/$manDir/${subjectID}_${side}_${ROIName}.nii.gz`) ;
    MendatoryFileExists $SIManualROI;
    SIAnnROI=(`ls $inputANNDir/Test*/${subjectID}_${inputHN}/ANNContinuousPrediction${side}_${ROIName}${subjectID}.nii.gz`)
    MendatoryFileExists $SIAnnROI
 
    SIThresholdInterval="0.01"
    CSVOutputFileOfCurrentScan="${OutputDir}/${side}_${ROIName}_${subjectID}.csv"
-   
+
    SICommand="$SIExe --inputManualVolume   $SIManualROI \
                      --ANNContinuousVolume $SIAnnROI    \
                      --thresholdInterval   $SIThresholdInterval";
@@ -118,7 +118,7 @@ do
       echo "do                                                   ">>$QSUBFile
       echo "  echo \"$subjectID, \$line \" >> ${CSVOutputFileOfCurrentScan}TEMP;">>$QSUBFile
       echo "done < $CSVOutputFileOfCurrentScan                   ">>$QSUBFile
-   
+
       echo "mv ${CSVOutputFileOfCurrentScan}TEMP $CSVOutputFileOfCurrentScan">>$QSUBFile
       chmod 755 $QSUBFile;
    fi;
@@ -144,7 +144,7 @@ do
   SIList=$RScriptListFile;
   SIPlotOutputPlotFilename="${RScriptListFile}.pdf";
   SIPlotRScript="$BRAINSBuild/../../BRAINSStandAlone/BRAINSCut/Reliability/RelativeOverlapPlot.R"
-   
+
   SIPlotR="R --slave --args $SIList $SIPlotOutputPlotFilename < $SIPlotRScript "
   echo "$SIPlotR" >> $RScript ;
   chmod 755 $RScript;

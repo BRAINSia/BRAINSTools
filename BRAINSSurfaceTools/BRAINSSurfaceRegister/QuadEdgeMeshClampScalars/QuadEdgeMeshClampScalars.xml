@@ -27,10 +27,10 @@
     </file>
 
   </parameters>
-    
+
   <parameters>
       <label>Clamping Parameters</label>
-      
+
       <double>
           <name>outputMin</name>
           <longflag>outputMin</longflag>
@@ -38,7 +38,7 @@
           <label>Output Minimum</label>
           <default>-1.0</default>
       </double>
-      
+
       <double>
           <name>outputMax</name>
           <longflag>outputMax</longflag>
@@ -46,7 +46,7 @@
           <label>Output Maximum</label>
           <default>1.0</default>
       </double>
-      
+
   </parameters>
 
   <parameters>

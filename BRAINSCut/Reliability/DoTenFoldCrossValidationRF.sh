@@ -22,14 +22,14 @@ source $utilitySRC
 ## check input arguments
 ##
 if [ $# != 6 ]; then
-  echo "Incorrect Number of Argument:: $#"  
-  echo "Usage:::::"  
-  echo "::::::::::"  
+  echo "Incorrect Number of Argument:: $#"
+  echo "Usage:::::"
+  echo "::::::::::"
   echo "$0 [ShuffledListFilename] [crossValidationTargetDirectory] [Date] [ROI List Filename] [XML Script] [Tag]"
-  echo "::::::::::"  
+  echo "::::::::::"
   exit 1;
 fi
-## 
+##
 GenerateXMLEXE=$5;
 
 pseudoRandomDataList=$1;
@@ -117,12 +117,12 @@ do
 
    XMLGeneratorCommand="${GenerateXMLEXE} $currentListFile $roiListFilename $currentXMLFile $BRAINSBuild $Tag";
    printCommandAndRun "$XMLGeneratorCommand";
-   
+
    ##
    ## create qsub file
    ##
-   
-   # get the machine arch 
+
+   # get the machine arch
    QSUBFile="${currentTargetDirectory}/runBRAINSCutSet${testIteration}${Date}.sh"
    echo "QSUBFile name is :: $QSUBFile"
 

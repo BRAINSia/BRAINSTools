@@ -7,7 +7,7 @@
     BRAINS Surface Generation
   </title>
   <description>
-    This program generates surfaces from itk images with an iso-contour value. It can also take a surface as input. The surface decimation and smoothing will be applied on the generated surface. The primary purpose of this program is to generate the cortical surface of the brain.  
+    This program generates surfaces from itk images with an iso-contour value. It can also take a surface as input. The surface decimation and smoothing will be applied on the generated surface. The primary purpose of this program is to generate the cortical surface of the brain.
   </description>
   <version>1.0</version>
   <documentation-url>http://www.nitrc.org/plugins/mwiki/index.php/brains:BRAINSMarchingCubes</documentation-url>
@@ -52,9 +52,9 @@
 
 
   <parameters>
-    
+
     <label>MarchingCubes Parameters</label>
-    
+
     <double>
       <name>surfaceValue</name>
       <longflag>surfaceValue</longflag>
@@ -70,13 +70,13 @@
       <label>genus number</label>
       <default>false</default>
     </boolean>
-    
+
   </parameters>
 
 
   <parameters>
     <label>Decimation Parameters</label>
-    
+
     <boolean>
       <name>decimateSurface</name>
       <longflag>decimateSurface</longflag>
@@ -84,7 +84,7 @@
       <label>decimate the surface</label>
       <default>false</default>
     </boolean>
-    
+
     <integer>
       <name>numberOfElements</name>
       <longflag>numberOfElements</longflag>
@@ -98,7 +98,7 @@
 
   <parameters>
     <label>Smoothing Parameters</label>
-    
+
     <boolean>
       <name>smoothSurface</name>
       <longflag>smoothSurface</longflag>
@@ -106,7 +106,7 @@
       <label>Smooth the surface</label>
       <default>false</default>
     </boolean>
-    
+
     <integer>
       <name>numIterations</name>
       <longflag>numIterations</longflag>

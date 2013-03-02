@@ -23,7 +23,7 @@
       <label>Input Image In X Axis</label>
       <default></default>
     </image>
-    
+
     <!--  -->
     <image>
       <name>inputVolumeInYAxis</name>
@@ -33,7 +33,7 @@
       <label>Input Image In Y Axis</label>
       <default></default>
     </image>
-    
+
     <!--  -->
     <image>
       <name>inputMaskVolumeInXAxis</name>

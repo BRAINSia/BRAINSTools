@@ -25,7 +25,7 @@
       <label>Fixed Mesh File List</label>
       <channel>input</channel>
      </geometry>
-    
+
     <geometry type="model" multiple="true">
       <name>movingMeshFileList</name>
       <longflag>movingMeshFileList</longflag>
@@ -33,7 +33,7 @@
       <label>Moving Mesh File List</label>
       <channel>input</channel>
     </geometry>
-    
+
     <file>
       <name>fixedMeshFileName</name>
       <longflag>fixedMeshFileName</longflag>
@@ -41,7 +41,7 @@
       <label>Fixed Mesh</label>
       <channel>input</channel>
     </file>
-    
+
     <file>
       <name>movingMeshFileName</name>
       <longflag>movingMeshFileName</longflag>
@@ -50,38 +50,38 @@
       <channel>input</channel>
     </file>
   </parameters>
-    
+
   <parameters>
       <label>Registration Parameters</label>
-      
+
       <integer-vector>
           <name>rigidIterations</name>
           <longflag>rigidIterations</longflag>
           <description>The number of iterations for rigid (rotational) registration in each level</description>
           <label>Rigid Iterations</label>
       </integer-vector>
-      
+
       <integer-vector>
           <name>demonsIterations</name>
           <longflag>demonsIterations</longflag>
           <description>The number of iterations for spherical demons registration in each level</description>
           <label>Demons Iterations</label>
       </integer-vector>
-      
+
       <integer-vector>
           <name>smoothIterations</name>
           <longflag>smoothIterations</longflag>
           <description>The number of iterations for smoothing the displacement in each level</description>
           <label>Smoothing Iterations</label>
       </integer-vector>
-      
+
       <double-vector>
           <name>metricSignificance</name>
           <longflag>metricSignificance</longflag>
           <description>The percentage of change of metric (mean squared distance) used to stop the registration in each level</description>
           <label>Metric Significance</label>
       </double-vector>
-      
+
       <integer>
           <name>resolutionLevels</name>
           <longflag>resolutionLevels</longflag>
@@ -89,7 +89,7 @@
           <label>Resolution Levels</label>
           <default>4</default>
       </integer>
-      
+
   </parameters>
 
   <parameters>
@@ -102,7 +102,7 @@
       <label>Deformed Mesh File Name Res4</label>
       <channel>output</channel>
     </file>
-    
+
     <file>
       <name>deformedFileName</name>
       <longflag>deformedFileName</longflag>
@@ -110,7 +110,7 @@
       <label>Deformed Mesh File Name Res4</label>
       <channel>output</channel>
     </file>
-    
+
     <file>
       <name>deformationFieldFileName</name>
       <longflag>deformationFieldFileName</longflag>

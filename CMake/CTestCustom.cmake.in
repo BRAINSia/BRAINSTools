@@ -297,7 +297,7 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
   "SlicerExecutionModel"
   "SimpleITK"
 
-  ".*has no symbols", 
+  ".*has no symbols",
   "CMake Warning:",
   "note: expanded from macro",
   ": note:",

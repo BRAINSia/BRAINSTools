@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Set the library paths such that all locally built shared 
+# Set the library paths such that all locally built shared
 # libraries are found and used
 # ahead of system libs
 package=BRAINSStandAlone
@@ -132,11 +132,11 @@ for BUILD_TYPE in Debug Release
 do
     B3Build=${top}/${BUILD_TYPE}-${Compiler}
     if [ "$BUILD_TYPE" = "Debug" -a "$coverage" = "1" ] ; then
-	CXXFLAGS="${CXXFLAGS} -g -O0 -Wall -W -Wshadow -Wunused-variable \
-	    -Wunused-parameter -Wunused-function -Wunused -Wno-system-headers \
-	    -Wno-deprecated -Woverloaded-virtual -Wwrite-strings -fprofile-arcs -ftest-coverage"
-	CFLAGS="${CFLAGS} -g -O0 -Wall -W -fprofile-arcs -ftest-coverage"
-	LDFLAGS="${LDFLAGS} -fprofile-arcs -ftest-coverage"
+  CXXFLAGS="${CXXFLAGS} -g -O0 -Wall -W -Wshadow -Wunused-variable \
+      -Wunused-parameter -Wunused-function -Wunused -Wno-system-headers \
+      -Wno-deprecated -Woverloaded-virtual -Wwrite-strings -fprofile-arcs -ftest-coverage"
+  CFLAGS="${CFLAGS} -g -O0 -Wall -W -fprofile-arcs -ftest-coverage"
+  LDFLAGS="${LDFLAGS} -fprofile-arcs -ftest-coverage"
     fi
     if [ "$BUILD_TYPE" = "Debug" -a "$doValgrind" = "1" ] ; then
         VALGRINDFLAGS=-DMEMORYCHECK_COMMAND:FILEPATH=`which valgrind`
@@ -154,14 +154,14 @@ do
         -G "Unix Makefiles" \
         -DCMAKE_CXX_COMPILER:STRING="${CXX}" \
         -DCMAKE_C_COMPILER:STRING="${CC}" \
-	-DCMAKE_C_FLAGS:STRING="${CFLAGS}" \
-	-DCMAKE_CXX_FLAGS:STRING="${CXXFLAGS}" \
-	-DCMAKE_EXE_LINKER_FLAGS:STRING="${LDFLAGS}" \
-	-DCMAKE_MODULE_LINKER_FLAGS:STRING="${LDFLAGS}" \
-	-DCMAKE_SHARED_LINKER_FLAGS:STRING="${LDFLAGS}" \
-	-DBUILDNAME:STRING="${OsName}-${Compiler}-${BUILD_TYPE}" \
+  -DCMAKE_C_FLAGS:STRING="${CFLAGS}" \
+  -DCMAKE_CXX_FLAGS:STRING="${CXXFLAGS}" \
+  -DCMAKE_EXE_LINKER_FLAGS:STRING="${LDFLAGS}" \
+  -DCMAKE_MODULE_LINKER_FLAGS:STRING="${LDFLAGS}" \
+  -DCMAKE_SHARED_LINKER_FLAGS:STRING="${LDFLAGS}" \
+  -DBUILDNAME:STRING="${OsName}-${Compiler}-${BUILD_TYPE}" \
         -DBUILD_SHARED_LIBS:BOOL=Off \
-	-DCMAKE_BUILD_TYPE:STRING=${BUILD_TYPE} \
+  -DCMAKE_BUILD_TYPE:STRING=${BUILD_TYPE} \
         ${VALGRINDFLAGS} \
         ${top}/BRAINSStandAlone
     echo "Building in `pwd`"
@@ -171,15 +171,15 @@ do
     make clean
     if [ "$doValGrind" != "1" ] ; then
         if [ $scriptname = "nightly.sh" ] ; then
-	    ctest -j ${NPROCS} -D Nightly
+      ctest -j ${NPROCS} -D Nightly
         else
-	    ctest -j ${NPROCS} -D Experimental
+      ctest -j ${NPROCS} -D Experimental
         fi
     else
         if [ $scriptname = "nightly.sh" ] ; then
-	    ctest -j ${NPROCS} -D NightlyMemoryCheck
+      ctest -j ${NPROCS} -D NightlyMemoryCheck
         else
-	    ctest -j ${NPROCS} -D ExperimentalMemoryCheck
+      ctest -j ${NPROCS} -D ExperimentalMemoryCheck
         fi
     fi
     cd ..

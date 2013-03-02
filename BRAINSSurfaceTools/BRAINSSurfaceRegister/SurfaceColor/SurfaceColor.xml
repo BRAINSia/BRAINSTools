@@ -7,7 +7,7 @@
     BRAINS Surface Color
   </title>
   <description>
-    This program assigns labels from a labelmap image to the surface 
+    This program assigns labels from a labelmap image to the surface
   </description>
   <version>1.0</version>
   <documentation-url>http://www.nitrc.org/plugins/mwiki/index.php/brains:BRAINSSurfaceRegister</documentation-url>
@@ -25,7 +25,7 @@
       <label>Input Surface</label>
       <channel>input</channel>
     </file>
-      
+
       <file>
           <name>labelMapFile</name>
           <longflag>labelMapFile</longflag>
@@ -35,10 +35,10 @@
       </file>
 
   </parameters>
-  
+
   <parameters>
       <label>Color Parameters</label>
-      
+
       <double>
           <name>radius</name>
           <longflag>radius</longflag>
@@ -46,7 +46,7 @@
           <label>radius</label>
           <default>5.0</default>
       </double>
-      
+
       <integer>
           <name>numOfLabels</name>
           <longflag>numOfLabels</longflag>
@@ -54,7 +54,7 @@
           <label>Number of Labels</label>
           <default>48</default>
       </integer>
-      
+
      <boolean>
           <name>increaseRadius</name>
           <longflag>increaseRadius</longflag>
@@ -62,7 +62,7 @@
           <label>Increase Radius</label>
           <default>false</default>
       </boolean>
-      
+
   </parameters>
 
   <parameters>

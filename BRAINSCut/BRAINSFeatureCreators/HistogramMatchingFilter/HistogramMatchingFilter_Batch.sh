@@ -1,14 +1,14 @@
 #!/bin/sh
-# 
+#
 # 2011 JAN Eun Young(Regina) Kim
 #
 # Read list of file and produce series of histogram for analaze
 #
 #
 
-# :: 
-# :: Execution Locations:: 
-# :: 
+# ::
+# :: Execution Locations::
+# ::
 
 bin_path="/scratch/eunyokim/src/BRAINS-Build/src/BRAINSTools/BRAINSCut-build/FeatureCreators/bin/";
 src_path="/scratch/eunyokim/src/BRAINS3/BRAINSTools/BRAINSCut/FeatureCreators/HistogramMatchingFilter/"
@@ -16,10 +16,10 @@ src_path="/scratch/eunyokim/src/BRAINS3/BRAINSTools/BRAINSCut/FeatureCreators/Hi
 R_cmd="HistogramMatchingFilter.R"
 C_cmd="HistogramMatchingFilter"
 
-# :: 
+# ::
 # :: Read in List
-# :: 
-# :: 
+# ::
+# ::
 # ::
 # ::
 # ::
@@ -51,16 +51,16 @@ do
   outputHistogramFilename="$outputDir/${scanID}_AdjustedHisgoram.nii.gz.dat";
   histogramFigureFilename="$outputDir/${scanID}_Histogram.png";
 
-  
 
-  # 
+
+  #
   # Generate Adjusted Histogram Image
   #
 
   generateHistCMD="${bin_path}/${C_cmd} \
                     --inputImageFileanme ${inputImageFilename} \
-                    --referenceFilename ${referenceFilename} 
-                    --outputFilename ${histogramOutputFilename} 
+                    --referenceFilename ${referenceFilename}
+                    --outputFilename ${histogramOutputFilename}
                     --outputHistogramFilename ${outputHistogramFilename} ";
   echo "#----------------------------------------------------------------------#"
   echo ${generateHistCMD}
@@ -84,8 +84,8 @@ do
   outputHistogramFilename="$outputDir/${scanID}_AdjustedHisgoram.nii.gz.dat";
   histogramFigureFilename="$outputDir/${scanID}_Histogram.png";
 
-  
-  # 
+
+  #
   # Generate Histogram Figure
   #
 
@@ -96,8 +96,8 @@ do
 
   echo "#----------------------------------------------------------------------#"
   #echo $drawHistogram >> ${outputHistogramFilename}_BATCH.sh
-  echo $drawHistogram 
+  echo $drawHistogram
   echo "#----------------------------------------------------------------------#"
-  $drawHistogram 
+  $drawHistogram
 
 done < $listFilename

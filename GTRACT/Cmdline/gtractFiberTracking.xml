@@ -154,7 +154,7 @@
     <float>
       <name>curvatureThreshold</name>
       <longflag>curvatureThreshold</longflag>
-      <description>Curvature threshold in degrees (recommended for Free	fiber tracking)</description>
+      <description>Curvature threshold in degrees (recommended for Free  fiber tracking)</description>
       <label>Curvature Threshold</label>
       <default>45.0</default>
       <channel>input</channel>
@@ -268,7 +268,7 @@
       <channel>input</channel>
     </float>
 
-    
+
   </parameters>
   <parameters>
     <label>Multiprocessing Control</label>

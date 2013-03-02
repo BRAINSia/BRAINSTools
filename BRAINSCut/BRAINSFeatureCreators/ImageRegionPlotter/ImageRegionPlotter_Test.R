@@ -1,5 +1,5 @@
 # ------------------------------------------------------------------------------------ #
-# * Plot Countour Plot ( Bivariate Density Plot) 
+# * Plot Countour Plot ( Bivariate Density Plot)
 #  USAGE::
 #  $ R --slave --args  filename1 filename2 outputFigurename < plot_Bivariate.R
 # ------------------------------------------------------------------------------------ #
@@ -35,14 +35,14 @@ LabelMap <- nifti.image.read( labelMapFilename );
 #
 # * Get Labels in the LabelMap
 #
-labelList <- levels( factor(LabelMap[,,]) ); 
+labelList <- levels( factor(LabelMap[,,]) );
 
 #
 # * Compute Histogram and Plotting
 #
 
 require(ks);
-label_color <- cbind( rgb( 1,0,0,0.01),  
+label_color <- cbind( rgb( 1,0,0,0.01),
                       rgb( 0,1,0,0.01),
                       rgb( 0,0,1,0.01),
                       rgb( 0,1,1,0.01),
@@ -50,7 +50,7 @@ label_color <- cbind( rgb( 1,0,0,0.01),
                       rgb( 1,1,0,0.01) );
 
 png( outputFilename );
-# 
+#
 # First Basic Plot [Skipping 0]
 #
 print( paste(" Plot Label :: " , labelList[4] ));
@@ -58,10 +58,10 @@ ImgLab1 <- Img1[,,][ which( LabelMap[,,] == labelList[4] ) ] ;
 ImgLab2 <- Img2[,,][ which( LabelMap[,,] == labelList[4] ) ] ;
 H.pi <- Hpi.diag( x=cbind( ImgLab1, ImgLab2 ), binned=TRUE);
 fhat <- kde( cbind( ImgLab1, ImgLab2 ),
-             H=H.pi, 
+             H=H.pi,
              binned=TRUE);
 
-plot( fhat, 
+plot( fhat,
       cont=seq(10,90,by=20) ,col="red");
      #drawpoints=TRUE,
 #      pch=".",
@@ -76,9 +76,9 @@ plot( fhat,
 #  ImgLab2 <- Img2[,,][ which( LabelMap[,,] == labelList[ label_index ] ) ] ;
 #  H.pi <- Hpi.diag( x=cbind( ImgLab1, ImgLab2 ), binned=TRUE);
 #  fhat <- kde( cbind( ImgLab1, ImgLab2 ),
-#               H=H.pi, 
+#               H=H.pi,
 #               binned=TRUE);
-#  plot( fhat, 
+#  plot( fhat,
 #        cont=seq(10,90,by=20),
 #        #drawpoints=TRUE,
 #        pch=".",

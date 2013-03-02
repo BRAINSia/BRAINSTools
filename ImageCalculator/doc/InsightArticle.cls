@@ -24,7 +24,7 @@
 %  These set up the fonts for the documents.
 %
 %  The "times" package makes the default font the PostScript Times
-%  font, which makes for smaller PostScript and a font that more people 
+%  font, which makes for smaller PostScript and a font that more people
 %  like.
 %
 \RequirePackage{times}\typeout{Using Times instead of Computer Modern.}
@@ -49,7 +49,7 @@
 % distribution.
 %
 % The "fancyhdr" package makes nicer page footers reasonable to
-% implement, and is used to put the chapter and section information in 
+% implement, and is used to put the chapter and section information in
 % the footers.
 %
 \RequirePackage{fancyhdr}\typeout{Using fancier footers than usual.}
@@ -71,11 +71,11 @@
 
 % Define command to make reference to on-line Doxygen documentation
 \newcommand{\doxygen}[1]{
-\href{http://www.itk.org/Doxygen/html/classitk_1_1#1.html}{\code{itk::#1}}}  
+\href{http://www.itk.org/Doxygen/html/classitk_1_1#1.html}{\code{itk::#1}}}
 
 % Define command to make reference to on-line Doxygen documentation
 \newcommand{\subdoxygen}[2]{
-\href{http://www.itk.org/Doxygen/html/classitk_1_1#1_1_1#2.html}{\code{itk::#1::#2}}}  
+\href{http://www.itk.org/Doxygen/html/classitk_1_1#1_1_1#2.html}{\code{itk::#1::#2}}}
 
 % Define command for the standard comment introducing classes with similar functionalities
 \newcommand{\relatedClasses}{
@@ -122,7 +122,7 @@
   \itk@doHorizontalRule
   \vspace{12pt}
   \itk@doing@page@targetstrue
-}  
+}
 
 % Fix the theindex environment to add an entry to the Table of
 % Contents; this is much nicer than just having to jump to the end of
@@ -137,8 +137,8 @@
 
 \@ifundefined{fancyhf}{
   \pagestyle{plain}}{
-  \pagestyle{normal}}		% start this way; change for
-\pagenumbering{arabic}		% ToC & chapters
+  \pagestyle{normal}}    % start this way; change for
+\pagenumbering{arabic}    % ToC & chapters
 \setcounter{secnumdepth}{2}
 
 \thispagestyle{empty}

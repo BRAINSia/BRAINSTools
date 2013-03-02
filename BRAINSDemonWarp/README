@@ -52,13 +52,13 @@ displacement fields, (suffix of xdisp.hdr, ydisp.hdr, zdisp.hdr will be added).
  --outputDisplacementFieldVolume: Write the deformation fields with -O option
  --outputDebug: This option is to write all the intermediate images, debug information and metric value
 file for debugging purposes with -v option.
- --maskProcessingMode- What mode to use for using the masks: NOMASK|ROI AU T O|ROI |BOBF . 
-If ROIAUTO is choosen, then the mask is implicitly deﬁned using a otsu forground and hole ﬁlling 
-algorithm. Where the Region Of Interest mode uses the masks to deﬁne what parts of the image 
-should be used for computing the deformation ﬁeld. Brain Only Background Fill uses the masks to 
-pre-process the input images by clipping and ﬁlling in the background with a predeﬁned value. The 
-option of BOBF is to make Brain Only Background Filled(BOBF) images.(default: NOMASK) 
- --movingBinaryVolume- Mask ﬁlename for desired region of interest in the Moving image. 
+ --maskProcessingMode- What mode to use for using the masks: NOMASK|ROI AU T O|ROI |BOBF .
+If ROIAUTO is choosen, then the mask is implicitly deﬁned using a otsu forground and hole ﬁlling
+algorithm. Where the Region Of Interest mode uses the masks to deﬁne what parts of the image
+should be used for computing the deformation ﬁeld. Brain Only Background Fill uses the masks to
+pre-process the input images by clipping and ﬁlling in the background with a predeﬁned value. The
+option of BOBF is to make Brain Only Background Filled(BOBF) images.(default: NOMASK)
+ --movingBinaryVolume- Mask ﬁlename for desired region of interest in the Moving image.
  --ﬁxedBinaryVolume- Mask ﬁlename for desired region of interest in the Fixed image.
  --lowerThreasholdForBOBF: Lower Threshold for performing BOBF. Default 0
  --upperThresholdForBOBF: Upper Threshold for performing BOBF. Default 70
@@ -72,10 +72,10 @@ Default 1,1,1
  --initializeWithFourier: Initial Coefficient filename.
  --initializeWithTransform: Initial Transform filename
 matched.
- --weightFactors: Weight factors for different modal images(only for VBRAINSDemonWarpCLP) with -w option. Default 1.0,1.0 
+ --weightFactors: Weight factors for different modal images(only for VBRAINSDemonWarpCLP) with -w option. Default 1.0,1.0
 
 For example:
-1.BRAINSDemonWarpCLP -f fixedimage.nii.gz -m movingimage.nii.gz -o outputimage.nii.gz -O outputdeformationfield.nii.gz -n 5 -s 3.0 -e –numberOfHistogramBins 1024 –numberOfMatchPoints 7 -i 1000, 400,300,200,100 -v 
+1.BRAINSDemonWarpCLP -f fixedimage.nii.gz -m movingimage.nii.gz -o outputimage.nii.gz -O outputdeformationfield.nii.gz -n 5 -s 3.0 -e –numberOfHistogramBins 1024 –numberOfMatchPoints 7 -i 1000, 400,300,200,100 -v
 
 2.VBRAINSDemonWarpCLP -f fixedimage1.nii.gz,fixedimage2.nii.gz -m movingimage1.nii.gz,movingimage2.nii.gz -o outputimage.nii.gz -O outputdeformationfield.nii.gz -n 5 -s 3.0 -w 0.5,0.5  -e –numberOfHistogramBins 1024 –numberOfMatchPoints 7 -i 1000, 400,300,200,100 -v –registrationFilterType Diffeomorphic
 

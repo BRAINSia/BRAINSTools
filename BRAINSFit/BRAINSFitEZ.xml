@@ -533,7 +533,7 @@
         <name>costMetric</name>
         <longflag>costMetric</longflag>
         <label>Cost Metric</label>
-	<description>The cost metric to be used during fitting. Defaults to MMI. Options are MMI (Mattes Mutual Information), MSE (Mean Square Error), NC (Normalized Correlation), MC (Match Cardinality for binary images)</description>
+  <description>The cost metric to be used during fitting. Defaults to MMI. Options are MMI (Mattes Mutual Information), MSE (Mean Square Error), NC (Normalized Correlation), MC (Match Cardinality for binary images)</description>
         <default>MMI</default>
         <element>MMI</element>
         <element>MSE</element>

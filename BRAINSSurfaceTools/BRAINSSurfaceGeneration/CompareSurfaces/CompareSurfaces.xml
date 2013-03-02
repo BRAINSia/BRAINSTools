@@ -35,7 +35,7 @@
       <channel>input</channel>
     </file>
   </parameters>
-  
+
     <parameters>
 
       <label>Comparison Parameters</label>
@@ -55,7 +55,7 @@
         <label>Scalar Array</label>
         <default>false</default>
       </boolean>
-        
+
       <boolean>
         <name>cellData</name>
         <longflag>cellData</longflag>
@@ -71,7 +71,7 @@
       <label>Tolerance</label>
       <default>1.0e-7</default>
     </double>
-      
+
     </parameters>
 
 

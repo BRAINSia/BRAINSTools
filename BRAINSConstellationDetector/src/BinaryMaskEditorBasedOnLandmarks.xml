@@ -47,7 +47,7 @@
           <label>Set Cut Direction For Landmark</label>
           <longflag>setCutDirectionForLandmark</longflag>
           <default></default>
-          <description>Setting the cutting out direction of the input binary image to the one of anterior, posterior, left, right, superior or posterior. (ENUMERATION: ANTERIOR, POSTERIOR, LEFT, RIGHT, SUPERIOR, POSTERIOR) </description> 
+          <description>Setting the cutting out direction of the input binary image to the one of anterior, posterior, left, right, superior or posterior. (ENUMERATION: ANTERIOR, POSTERIOR, LEFT, RIGHT, SUPERIOR, POSTERIOR) </description>
         </string-vector>
 
         <string-vector>

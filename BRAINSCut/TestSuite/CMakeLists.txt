@@ -61,7 +61,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ANNAllInOneTest
   --netConfiguration ${OutputNetConfigurationForTesting})
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME RandomForestTrainModelTest
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSCut>
-  --trainModel --method RandomForest 
+  --trainModel --method RandomForest
   --netConfiguration ${OutputNetConfigurationForTesting})
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME RandomForestApplyModelTest
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSCut>
@@ -84,7 +84,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME RandomForestApplyModelTestF
 ## data dependency
 set_property( TEST ANNGenerateProbabilityTest APPEND PROPERTY DEPENDS FakeTestToDownloadFiles)
 
-## series of ANN test 
+## series of ANN test
 set_property( TEST ANNCreateVectorsTest       APPEND PROPERTY DEPENDS ANNGenerateProbabilityTest)
 set_property( TEST ANNTrainModelTest          APPEND PROPERTY DEPENDS ANNCreateVectorsTest)
 set_property( TEST ANNApplyModelTest          APPEND PROPERTY DEPENDS ANNTrainModelTest)

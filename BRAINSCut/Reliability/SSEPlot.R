@@ -9,12 +9,12 @@
 
 myArg                <- commandArgs();
 dtFilename           <- as.character( myArg[4] ); # first argument excluding R slave
-outputFilenamePrefix <- as.character( myArg[5] ); # second argument excluding R slave 
+outputFilenamePrefix <- as.character( myArg[5] ); # second argument excluding R slave
 
 # ---------------------------------------------------------------------------- #
 plotLine <- function( dt, lineColor)
 {
-  points( dt$iteration, dt$SSE, 
+  points( dt$iteration, dt$SSE,
           col=lineColor,
           type="l", lty=2, lwd=1);
 }
@@ -61,12 +61,12 @@ for( currentStructure in structureList)
   minMeanSSEIteration <-currentMeanSSE$iteration[which.min( currentMeanSSE$x )];
 
   abline(v=minMeanSSEIteration, col="black", lwd=2, lty=2 );
-  mtext( paste(" Min SSE=", round(minMeanSSE,4)," at ", minMeanSSEIteration ), 
+  mtext( paste(" Min SSE=", round(minMeanSSE,4)," at ", minMeanSSEIteration ),
          side=3, # at the top
          line=-1
       );
 
-    
+
   # plot dotted line of individual subjects
   for( currentSubject in subjectList )
   {
@@ -76,8 +76,8 @@ for( currentStructure in structureList)
     colorIndex<- colorIndex+1;
   }
   title( currentStructure );
-  legend( max(dt$iteration)*1.05,range.max*1.1, 
-          c("mean",subjectList), 
+  legend( max(dt$iteration)*1.05,range.max*1.1,
+          c("mean",subjectList),
           col=c("darkblue",myColorList[1:colorIndex-1]), pch=20, lty=1, bty="n",
           cex=0.8);
   print( myColorList[1:colorIndex-1] );

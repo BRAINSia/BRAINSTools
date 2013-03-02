@@ -7,7 +7,7 @@
     BRAINS Surface Flattening
   </title>
   <description>
-    This program flattens the genus zero cortical surface onto a sphere. 
+    This program flattens the genus zero cortical surface onto a sphere.
   </description>
   <version>1.0</version>
   <documentation-url></documentation-url>
@@ -38,9 +38,9 @@
   </parameters>
 
   <parameters>
-    
+
     <label>Flattening Parameters</label>
-    
+
     <double>
       <name>sphereRadius</name>
       <longflag>sphereRadius</longflag>
@@ -67,13 +67,13 @@
       <element>y</element>
       <element>z</element>
     </string-enumeration>
-    
+
   </parameters>
 
 
   <parameters>
     <label>Rotation Parameters</label>
-    
+
     <boolean>
       <name>rotate</name>
       <longflag>rotate</longflag>
@@ -92,7 +92,7 @@
       <element>y</element>
       <element>z</element>
     </string-enumeration>
-    
+
   </parameters>
 
 </executable>

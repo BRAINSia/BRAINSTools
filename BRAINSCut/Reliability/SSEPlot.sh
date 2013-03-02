@@ -3,11 +3,11 @@ ANNModelDirPrefix=$1
 subDir=$2
 OutputDir=$3
 if [ $# != 3 ]; then
-  echo "Incorrect Number of Argument:: $#"  
-  echo "Usage::----------------------------------------------------"  
+  echo "Incorrect Number of Argument:: $#"
+  echo "Usage::----------------------------------------------------"
   echo "$0 [ANN Model Dir Prefix] [subDir] [Output Dir]"
   echo " ex)  $0 /scratch/PREDICT/regina/ANN20111112T1T2/Test TrainedModels4  /scratch/PREDICT/regina/ANN20111112T1T2/SSE04"
-  echo ":----------------------------------------------------------"  
+  echo ":----------------------------------------------------------"
   exit 1;
 fi
 
@@ -30,4 +30,4 @@ do
   cat $file >> $SSECollectionFilename;
 done
 
-bash R --slave --args $SSECollectionFilename $OutputDir/${subDir} < $RScript 
+bash R --slave --args $SSECollectionFilename $OutputDir/${subDir} < $RScript

@@ -1,5 +1,5 @@
 drawLines<-function( dt, lineType, count,
-                     error.min, error.max, NTree.min, NTree.max, myColors, numDepth) 
+                     error.min, error.max, NTree.min, NTree.max, myColors, numDepth)
 {
 ## start counting
   currCnt <- 1;
@@ -9,7 +9,7 @@ drawLines<-function( dt, lineType, count,
   print( paste( error.min, error.max))
   plot( subDt$NTree, subDt$error,
         type=lineType,
-        pch=20, 
+        pch=20,
         cex=2,
         xlim=c(NTree.min,NTree.max),
         ylim=c(error.min,error.max),
@@ -19,12 +19,12 @@ drawLines<-function( dt, lineType, count,
 
 
 ## add plots
-  for( currCnt in 2:length(numDepth) ) 
+  for( currCnt in 2:length(numDepth) )
     {
     currDepth <- numDepth[ currCnt ];
     subDt <- subset( dt, dt$depth==currDepth );
     points( subDt$NTree, subDt$error,
-            type=lineType, 
+            type=lineType,
             pch=20,
             cex=2,
             col=myColors[ currCnt+count ]);
@@ -62,7 +62,7 @@ plotOOB <- function( filename, titleTxt, detailDepth, magnifiedPlot=F)
 
 pdf( paste(titleTxt,".pdf",sep=""));##, width=500, height=800 );
 
-## 
+##
   par( fig=c(0,1,0,1), new=T );
   drawLines( dt , "o", 0,
              error.min, error.max, NTree.min, NTree.max, myColors, numDepth);
@@ -72,7 +72,7 @@ pdf( paste(titleTxt,".pdf",sep=""));##, width=500, height=800 );
 
   print (numDepth)
 ##
-  legend( "topright", 
+  legend( "topright",
           c("depth",numDepth),
           col=c("black",myColors),
           bty="n",
@@ -81,8 +81,8 @@ pdf( paste(titleTxt,".pdf",sep=""));##, width=500, height=800 );
           );
 #require(fields);
 
-# image.plot( legend.only=T, 
-#             zlim=c( numDepth[1], numDepth[length(numDepth)]), 
+# image.plot( legend.only=T,
+#             zlim=c( numDepth[1], numDepth[length(numDepth)]),
 #             legend.shrink = 0.8,
 #             col=rainbow(length( numDepth)) );
 
@@ -92,7 +92,7 @@ pdf( paste(titleTxt,".pdf",sep=""));##, width=500, height=800 );
   magDT <- subset( dt, dt$depth > detailDepth );
   print(magDT)
   magNumDepth = as.numeric(levels(factor( magDT$depth)) );
-  
+
   rect( 20,min( magDT$error ), 101,max( magDT$error ),
         border="red");
 

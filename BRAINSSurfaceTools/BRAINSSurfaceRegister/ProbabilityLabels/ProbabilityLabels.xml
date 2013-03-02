@@ -27,10 +27,10 @@
      </geometry>
 
   </parameters>
-  
+
   <parameters>
     <label>Probability Parameters</label>
-    
+
     <boolean>
       <name>mostLikely</name>
       <longflag>mostLikely</longflag>
@@ -38,7 +38,7 @@
       <label>mostLikely</label>
       <default>false</default>
     </boolean>
-    
+
     <boolean>
       <name>probability</name>
       <longflag>probability</longflag>
@@ -46,9 +46,9 @@
       <label>probability</label>
       <default>false</default>
     </boolean>
-    
+
     </parameters>
-    
+
   <parameters>
     <label>Output Parameters</label>
 

@@ -22,14 +22,14 @@ source $utilitySRC
 ## check input arguments
 ##
 if [ $# != 5 ]; then
-  echo "Incorrect Number of Argument:: $#"  
-  echo "Usage:::::"  
-  echo "::::::::::"  
+  echo "Incorrect Number of Argument:: $#"
+  echo "Usage:::::"
+  echo "::::::::::"
   echo "$0 [ShuffledListFilename] [crossValidationTargetDirectory] [Date] [ROI List Filename] [XML Script] "
-  echo "::::::::::"  
+  echo "::::::::::"
   exit 1;
 fi
-## 
+##
 GenerateXMLEXE=$5;
 
 pseudoRandomDataList=$1;
@@ -137,12 +137,12 @@ do
       XMLGeneratorCommand="${GenerateXMLEXE} $currentListFile $roiListFilename $currentXMLFile $HN $BRAINSBuild RF$RF";
       printCommandAndRun "$XMLGeneratorCommand";
    done
-   
+
    ##
    ## create qsub file
    ##
-   
-   # get the machine arch 
+
+   # get the machine arch
    QSUBFile="${currentTargetDirectory}/runBRAINSCutSet${testIteration}${Date}.sh"
    echo "QSUBFile name is :: $QSUBFile"
 
@@ -154,7 +154,7 @@ do
      echo " \${BRAINSBuild}/BRAINSCut --netConfiguration  ${currentXMLFile} --createVectors --generateProbability --trainModel --applyModel">>$QSUBFile
    done
 
-   for HN in  60 
+   for HN in  60
    do
      currentXMLFile="${currentTargetDirectory}/${Date}_ANN$HN.xml"
      echo " \${BRAINSBuild}/BRAINSCut --netConfiguration  ${currentXMLFile} --applyModel --trainModel ">>$QSUBFile

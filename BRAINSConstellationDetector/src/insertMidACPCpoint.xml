@@ -3,7 +3,7 @@
   <category>Utilities.BRAINS</category>
   <title>MidACPC Landmark Insertion</title>
   <description>
-  This program gets a landmark fcsv file and adds a new landmark as the midpoint between AC and PC points to the output landmark fcsv file	
+  This program gets a landmark fcsv file and adds a new landmark as the midpoint between AC and PC points to the output landmark fcsv file
   </description>
   <version> </version>
   <documentation-url> </documentation-url>
@@ -18,7 +18,7 @@
 
     <file>
       <name>inputLandmarkFile</name>
-      <longflag>--inputLandmarkFile</longflag> 
+      <longflag>--inputLandmarkFile</longflag>
       <label>Input landmark file</label>
       <channel>input</channel>
       <description>Input landmark file (.fcsv)</description>
@@ -26,7 +26,7 @@
 
     <file>
       <name>outputLandmarkFile</name>
-      <longflag>--outputLandmarkFile</longflag> 
+      <longflag>--outputLandmarkFile</longflag>
       <label>Output landmark file</label>
       <channel>output</channel>
       <description>Output landmark file (.fcsv)</description>

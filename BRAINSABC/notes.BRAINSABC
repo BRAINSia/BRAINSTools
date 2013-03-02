@@ -12,9 +12,9 @@ I've now committed the clean compiling code for BRAINSABC.  There is a dashboard
        ========================================
       -Program compiled on: Feb 16 2009
       +Program compiled on: Feb 17 2009
-       
+
        Using ITK version 3.10.2
-       
+
       @@ -51,7 +51,7 @@
        Cropping images based on atlas priors...
        Non-linear filtering of registered images...

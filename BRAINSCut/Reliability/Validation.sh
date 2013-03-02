@@ -5,8 +5,8 @@
 
 WorkingDir=$1;
 if [ $# != 4 ]; then
-  echo "Incorrect Number of Argument"  
-  echo "Usage::"  
+  echo "Incorrect Number of Argument"
+  echo "Usage::"
   echo "$0 [working directory] [GenerateValidationXML Script] [MaskListFile ][HNList]"
   exit 1;
 fi
@@ -35,7 +35,7 @@ fi
 SSEScript="$BRAINSSRC/../../BRAINSStandAlone/BRAINSCut/Reliability/SSEPlot.sh";
 UtilityrSRC="$BRAINSSRC/../../BRAINSStandAlone/BRAINSCut/Reliability/utilities.sh";
 
-source $UtilityrSRC 
+source $UtilityrSRC
 
 ## Generate Validation XML file script
 XMLFileEXE=$2;
@@ -65,27 +65,27 @@ do
           ## ---------------- QSUB -----------------------
           QSUBFile="${WorkingDir}/Test$TEST/runValidation${TEST}_HN${HN}.sh"
           echo "QSUBFile name is :: $QSUBFile"
-          qsubHeader $QSUBFile      
+          qsubHeader $QSUBFile
           currentXMLFile="${WorkingDir}/Test$TEST/${DATE}_${HN}_Validation.xml"
           echo " \${BRAINSBuild}/BRAINSCut --netConfiguration  ${currentXMLFile} --computeSSEOn  --applyModel">>$QSUBFile
           chmod 755 $QSUBFile
         done
-      
 
-      
+
+
       ## ---------------- QSUB -----------------------
 done
 
 for HN in $HNList
 do
-   ## Analyze output 
+   ## Analyze output
    SSEOutputDir="$WorkingDir/SSE$HN/"
    mkdir -p $SSEOutputDir;
 
    SSEOutput="$SSEOutputDir/CallSSEPlotAlongTrainedModel.sh";
    rm -f $SSEOutput;
    echo "bash $SSEScript $WorkingDir/Test TrainedModels$HN  $SSEOutputDir" >> $SSEOutput;
-   echo "bash $SSEScript $WorkingDir/Test TrainedModels$HN  $SSEOutputDir" 
+   echo "bash $SSEScript $WorkingDir/Test TrainedModels$HN  $SSEOutputDir"
    echo "$SSEOutput"
 
    chmod 755 $SSEOutput

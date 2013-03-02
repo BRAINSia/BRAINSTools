@@ -61,7 +61,7 @@ if(NOT DEFINED ${extProjName}_DIR OR NOT DEFINED ATLAS_NAME)
                                                                     #  This is ignored by midas, but allows the filename for download
                                                                     #  to be generated.
                                                                     #  It is a hack that seems to work.
-                                                                    #  If the atlas needs to be changed, then the items=#### will 
+                                                                    #  If the atlas needs to be changed, then the items=#### will
                                                                     #  need to be determined from the slicer.kitware.com
                                                                     #  web page and filled in appropriately.
   set(ATLAS_NAME Atlas/Atlas_${ATLAS_VERSION})

@@ -7,7 +7,7 @@
     BRAINS Assign Array
   </title>
   <description>
-    This program assigns array (scalars) from the source surface to the target surface. 
+    This program assigns array (scalars) from the source surface to the target surface.
   </description>
   <version>1.0</version>
   <documentation-url>http://www.nitrc.org/plugins/mwiki/index.php/brains:BRAINSSurfaceRegister</documentation-url>
@@ -25,7 +25,7 @@
       <label>Source Surface</label>
       <channel>input</channel>
     </file>
-      
+
       <file>
           <name>targetSurfaceFile</name>
           <longflag>targetSurfaceFile</longflag>
@@ -33,7 +33,7 @@
           <label>Target Surface</label>
           <channel>input</channel>
       </file>
-      
+
     <string>
       <name>getArrayName</name>
       <longflag>getArrayName</longflag>
@@ -42,7 +42,7 @@
       <default>scalars</default>
       <channel>input</channel>
     </string>
-    
+
     <string>
       <name>setArrayName</name>
       <longflag>setArrayName</longflag>

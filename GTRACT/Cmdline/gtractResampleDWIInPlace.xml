@@ -30,7 +30,7 @@
       <label>Input Transform</label>
       <channel>input</channel>
     </transform>
-    
+
     <integer>
       <name>debugLevel</name>
       <label>Debug option</label>
@@ -51,7 +51,7 @@
       <description>The voxel lattice for the output image, padding is added if necessary. NOTE: if 0,0,0, then the inputVolume size is used.</description>
       <default>0,0,0</default>
     </integer-vector>
-  
+
   </parameters>
 
   <parameters>

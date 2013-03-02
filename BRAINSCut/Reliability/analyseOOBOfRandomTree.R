@@ -1,5 +1,5 @@
 drawLines<-function( dt, lineType, count,
-                     error.min, error.max, NTree.min, NTree.max, myColors, numDepth) 
+                     error.min, error.max, NTree.min, NTree.max, myColors, numDepth)
 {
 ## start counting
   currCnt <- 1;
@@ -8,7 +8,7 @@ drawLines<-function( dt, lineType, count,
   subDt <- subset( dt, dt$depth==currDepth );
   plot( subDt$NTree, subDt$error,
         type=lineType,
-        pch=20, 
+        pch=20,
         xlim=c(NTree.min,NTree.max),
         ylim=c(error.min,error.max),
         ann = FALSE,
@@ -17,12 +17,12 @@ drawLines<-function( dt, lineType, count,
 
 
 ## add plots
-  for( currCnt in 2:length(numDepth) ) 
+  for( currCnt in 2:length(numDepth) )
     {
     currDepth <- numDepth[ currCnt ];
     subDt <- subset( dt, dt$depth==currDepth );
     points( subDt$NTree, subDt$error,
-            type=lineType, 
+            type=lineType,
             pch=20,
             col=myColors[ currCnt+count ]);
     }
@@ -51,7 +51,7 @@ plotOOB <- function( filename, titleTxt, detailDepth)
 
 pdf( paste(titleTxt,".pdf",sep=""));##, width=500, height=800 );
 
-## 
+##
   par( fig=c(0,1,0,1), new=T );
   drawLines( dt , "o", 1,
              error.min, error.max, NTree.min, NTree.max, myColors, numDepth);
@@ -60,22 +60,22 @@ pdf( paste(titleTxt,".pdf",sep=""));##, width=500, height=800 );
          ylab="out of bag training error" );
 
 ##
-  legend( "topright", 
+  legend( "topright",
           "depth",
           bty="n",
           cex=1.2
           );
   require(fields);
 
-  image.plot( legend.only=T, 
-              zlim=c( numDepth[1], numDepth[length(numDepth)]), 
+  image.plot( legend.only=T,
+              zlim=c( numDepth[1], numDepth[length(numDepth)]),
               legend.shrink = 0.8,
               col=rainbow(length( numDepth)) );
 
 ## magnified plot
   magDT <- subset( dt, dt$depth > detailDepth );
   magNumDepth = as.numeric(levels(factor( magDT$depth)) );
-  
+
   rect( 0,min( magDT$error ), 101,max( magDT$error ),
         border="red");
 

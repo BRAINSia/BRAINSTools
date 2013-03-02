@@ -27,10 +27,10 @@
     </file>
 
   </parameters>
-    
+
   <parameters>
       <label>Resampling Parameters</label>
-      
+
     <string-enumeration>
       <name>interpolateType</name>
       <longflag>interpolateType</longflag>
@@ -40,7 +40,7 @@
       <element>Nearest</element>
       <element>Linear</element>
     </string-enumeration>
-    
+
       <integer>
           <name>resolution</name>
           <longflag>resolution</longflag>
@@ -48,7 +48,7 @@
           <label>resolution</label>
           <default>4</default>
       </integer>
-      
+
       <double>
           <name>radius</name>
           <longflag>radius</longflag>
@@ -56,7 +56,7 @@
           <label>Sphere Radius</label>
           <default>1.0</default>
       </double>
-      
+
   </parameters>
 
   <parameters>

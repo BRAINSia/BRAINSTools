@@ -27,10 +27,10 @@
     </file>
 
   </parameters>
-    
+
     <parameters>
         <label>Label Parameters</label>
-        
+
     <integer>
         <name>keepLabel</name>
         <longflag>keepLabel</longflag>
@@ -38,7 +38,7 @@
         <label>Keep Label</label>
         <default>0</default>
     </integer>
-    
+
     <integer>
         <name>removeLabel</name>
         <longflag>removeLabel</longflag>
@@ -47,7 +47,7 @@
         <default>0</default>
     </integer>
   </parameters>
-    
+
   <parameters>
     <label>Output Parameters</label>
 

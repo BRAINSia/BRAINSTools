@@ -19,13 +19,13 @@
   <Mask Type="type" Filename="filename" />
   <!-- Type = l_hippo | r_hippo etc -->
 
-  <!-- List of Registrations 
+  <!-- List of Registrations
     -- For any run, only one is used, selected by
     -- the RegistrationID field in the RegistrationParam element
     -->
-  <Registration SubjToAtlasRegistration="filename" 
+  <Registration SubjToAtlasRegistration="filename"
                 AtlasToSubjRegistration="filename"
-                LandmarkType="type" 
+                LandmarkType="type"
                 ID="id" />
   <!-- SubjToAtlasRegistration,AtlasToRegistration are
     -- images of 3d vectors defining deformation to register the current
@@ -38,14 +38,14 @@
    <!-- List of Probability Map objects. These specify the outputs -->
    <ProbabilityMapParser StructureID="id" Gaussian="num" Filename="filename" />
    <!-- StructureID -- specifies the anatomical structure, must correspond
-     -- to the structure to a Mask type 
+     -- to the structure to a Mask type
      -- Gaussian -- floating pt number for Gaussian sigma
      -- Filename -- output filename to store the probability map
      -->
-   
-   <RegistrationConfigurationParser Type="type" 
-                       ImageType="Type" 
-                       Command="Registratioin Command" 
+
+   <RegistrationConfigurationParser Type="type"
+                       ImageType="Type"
+                       Command="Registratioin Command"
                        RegistrationID="id" />
    <!-- Type = ICCDef, Thirion, MutualInformation
      -- Command = the command to run to generate either an XFRM file (i.e. rigid transform)
@@ -85,11 +85,11 @@
     <!-- VectorSize = training vector size
       -- GaussianSize = ??? SVM parameter
       -->
-   
-    <ApplyModel CutOutThresh="0.05" 
-                CutOutGaussian="0.5" 
-                MaskThresh="127" 
-                DefDir="/scratch/kent/brains2/MACOSX/DEBUG/src/iplProg/XMLBRAINSCut/" 
+
+    <ApplyModel CutOutThresh="0.05"
+                CutOutGaussian="0.5"
+                MaskThresh="127"
+                DefDir="/scratch/kent/brains2/MACOSX/DEBUG/src/iplProg/XMLBRAINSCut/"
                 />
     <!-- CutOutThres =
       -- CutOutGaussian =

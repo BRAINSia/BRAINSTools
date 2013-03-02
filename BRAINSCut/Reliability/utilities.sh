@@ -8,7 +8,7 @@ function qsubHeader( ){
 
    if [ $# != 1 ]; then
      echo "Incorrect Number of Argument:: $#";
-     echo "Usage:::::" 
+     echo "Usage:::::"
      echo "::::::::::"
      echo "$0 outputFilename "
      echo "::::::::::"
@@ -21,7 +21,7 @@ function qsubHeader( ){
    macBRANISBuild="/ipldev/scratch/eunyokim/src/BRAINS20111028/build-Darwin/lib"
    heliumBRAINSBuild="/scratch/PREDICT/regina/BRAINS/buildICC-May/lib"
 
-   echoOutTo "#!/bin/bash"                             $outputFilename 
+   echoOutTo "#!/bin/bash"                             $outputFilename
    echoOutTo "#$ -N BCut${testIteration}"              $outputFilename
    echoOutTo "#$ -j yes"                               $outputFilename
    echoOutTo "#$ -o $outputFilename.log"               $outputFilename

@@ -2,15 +2,15 @@
 
 # this function is calling from BatchAnalaysis.sh
 # EX)
-# bash R --slave --args ListFIle < $SIPlotRScript 
+# bash R --slave --args ListFIle < $SIPlotRScript
 
 #
 # list file includes:
 # subjectID, CSVThresholdFilename, ROIName
 
 myArg             <- commandArgs();
-listFilename      <- as.character( myArg[4] ); # first argument excluding R slave 
-plotName          <- as.character( myArg[5] ); # first argument excluding R slave 
+listFilename      <- as.character( myArg[4] ); # first argument excluding R slave
+plotName          <- as.character( myArg[5] ); # first argument excluding R slave
 
 dtList <- read.csv( listFilename );
 
@@ -42,7 +42,7 @@ OneSubjectPlotOfSI <- function( subjectID, csvFilename, ROIName, myColor, cumula
 MeanSIPlot <- function( data  )
 {
   meanSI <- rowMeans( data[ 2: ncol(data) ] );
-  points( data$threshold, meanSI, 
+  points( data$threshold, meanSI,
           type="l" ,lwd="3", lty=4,col="darkblue" );
 
   SI <-  max( meanSI );
@@ -59,7 +59,7 @@ MeanSIPlot <- function( data  )
 }
 
 # ---------------------------------------------------------------------------- #
-# ICC 
+# ICC
 # ---------------------------------------------------------------------------- #
 ICCPlot <- function( man, dt )
 {
@@ -79,7 +79,7 @@ ICCPlot <- function( man, dt )
   for( currentThresholdRow in 2:nrow( dt ) )
   {
     annData<-dt[ currentThresholdRow,2];
-    for( i in 2:NoSubject) 
+    for( i in 2:NoSubject)
     {
       annData<-rbind(annData,dt[ currentThresholdRow,i+1]) ; # first element is threshold
     }
@@ -118,7 +118,7 @@ ICCPlot <- function( man, dt )
   abline( v=iccAThreshold, col="red", lty=3, lwd=2);
 
   # description on the plot
-  MaximumICCAText <- paste( "Maximum ICC(A)  : ", 
+  MaximumICCAText <- paste( "Maximum ICC(A)  : ",
                              round( iccA, roundPrecision ) ,
                             " at ", iccAThreshold )
   mtext( MaximumICCAText, side=1, line=-2 );
@@ -127,7 +127,7 @@ ICCPlot <- function( man, dt )
                             " at ", iccCThreshold  );
   mtext( MaximumICCCText,side=1, line=-3 );
 
-  legend( "topright", 
+  legend( "topright",
           c( "ICC(A)","ICC(C)" ),
           col=c("darkblue", "red"),
           lty=1, lwd=2,
@@ -135,10 +135,10 @@ ICCPlot <- function( man, dt )
 
 # return threshold value at best agreement
   c(ICCmaximumAgreementIndex, iccA, iccAThreshold, iccC, iccCThreshold);
-  
+
 }
 # ---------------------------------------------------------------------------- #
-# final plot of volumetric measurement at the maxumum agreement 
+# final plot of volumetric measurement at the maxumum agreement
 # ---------------------------------------------------------------------------- #
 VolumetricComparisonPlot <- function( manual, ann, threshold)
 {
@@ -150,7 +150,7 @@ VolumetricComparisonPlot <- function( manual, ann, threshold)
   manualVolume<-manual[1];
   for( i in 2:NoSubject)
   {
-    annVolume <- rbind( annVolume, 
+    annVolume <- rbind( annVolume,
                         ann[ threshold, i+1 ] );
     manualVolume<-rbind( manualVolume, manual[i] );
 
@@ -180,18 +180,18 @@ VolumetricComparisonPlot <- function( manual, ann, threshold)
   mtext( paste( "y = ",fit.slope , " x + ", fit.intercept ) ,
          side=1, line=-1 );
 
-  lines( c( range.min, range.max ), 
+  lines( c( range.min, range.max ),
          y= c(( range.min*fit.slope+fit.intercept), range.max*fit.slope+fit.intercept),
-         col="red") 
+         col="red")
   lines( c( range.min, range.max), y=c( range.min, range.max),
          lty=2);
-            
+
   Legend.x <- range.max + 0.1*vol.range ;
   Legend.y <- range.max + 0.1*vol.range ;
-  
+
   print( ann );
-  legend( Legend.x, Legend.y, 
-          colnames(ann)[1:NoSubject+1], 
+  legend( Legend.x, Legend.y,
+          colnames(ann)[1:NoSubject+1],
           cex=0.8,
           pch=c(21,22,23,24,25),col=seq(1,NoSubject,1),
           bty="n");
@@ -230,7 +230,7 @@ plot( currentDT$threshold, currentDT$SI,
       xlab="threshold", ylab="similarity index, ICC" ,
       xlim=c(0.0,1.0), ylim=c(0.0,1.0) );
 title( currentROIName );
-    
+
 # plot rest of subjects
 
 for( i in 2:numberOfSubject )
@@ -266,11 +266,11 @@ dev.off();
 
 # summary stats
 summaryStatOutputFilename <- paste(plotName, "txt", sep=".");
-outputData<-c( currentROIName, meanSIPlotResults, iccResults[2:5], linearFitResults ); 
+outputData<-c( currentROIName, meanSIPlotResults, iccResults[2:5], linearFitResults );
 outputData<-t(outputData);
 
 write.table( outputData , file=summaryStatOutputFilename , append=FALSE ,
              col.names=c( "roi","SI","SIThreshold", "iccA", "iccAThreshold","iccC","iccCThreshold","slope","intercept") ,
              row.names=FALSE,
-             sep=",", quote=FALSE);  
+             sep=",", quote=FALSE);
 

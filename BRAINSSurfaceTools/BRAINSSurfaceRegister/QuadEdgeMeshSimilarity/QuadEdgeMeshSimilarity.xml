@@ -25,7 +25,7 @@
       <label>Input Surface1</label>
       <channel>input</channel>
     </file>
-    
+
     <file>
       <name>inputSurfaceFile2</name>
       <longflag>inputSurfaceFile2</longflag>
@@ -34,10 +34,10 @@
       <channel>input</channel>
     </file>
   </parameters>
-  
+
   <parameters>
     <label>Similarity Parameters</label>
-    
+
     <string>
       <name>labelName1</name>
       <longflag>labelName1</longflag>
@@ -45,7 +45,7 @@
       <label>Array Name1</label>
       <default>scalars</default>
     </string>
-    
+
     <string>
       <name>labelName2</name>
       <longflag>labelName2</longflag>
@@ -53,7 +53,7 @@
       <label>Array Name2</label>
       <default>scalars</default>
     </string>
-    
+
      <boolean>
           <name>average</name>
           <longflag>average</longflag>
@@ -61,9 +61,9 @@
           <label>Average Dice and Jaccard</label>
           <default>false</default>
       </boolean>
-    
+
   </parameters>
-    
+
   <parameters>
     <label>Output Parameters</label>
 

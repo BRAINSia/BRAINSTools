@@ -13,9 +13,9 @@ plot_RO_ROI <-function(ListFile,OutputDir,ROI){
     if( listOfFile$Type[i] == "Apply" ) {
         subjects[count] <- unlist(strsplit( listOfFile$directory[i], "/"))[7]
         print( paste(OutputDir,"/",ROI,"RO_Vs_Threshold",subjects[count],".txt", sep="" ) )
-        assign( paste( "tb",count,sep=""), 
+        assign( paste( "tb",count,sep=""),
                read.table(  paste(OutputDir,"/",ROI,"RO_Vs_Threshold",subjects[count],".txt", sep="" ),
-                                  sep=":",header=T ) 
+                                  sep=":",header=T )
                )
         count<-count+1;
         print(count)
@@ -57,20 +57,20 @@ points( tb10$Th, tb10$RO, col=my_color[10], type="l")
 ## plotting of average
 ##
 #print(
-#     rowMeans( 
+#     rowMeans(
 #       matrix(
 #         c( tb1$RO , tb2$RO ,tb3$RO , tb4$RO ,tb5$RO , tb6$RO ,tb7$RO ),
 #         ncol=7),
-#     ) 
+#     )
 #)
-RO_means <- rowMeans( 
+RO_means <- rowMeans(
                matrix(
-                 c( tb1$RO , tb2$RO ,tb3$RO , tb4$RO ,tb5$RO , 
+                 c( tb1$RO , tb2$RO ,tb3$RO , tb4$RO ,tb5$RO ,
                     tb6$RO ,tb7$RO , tb8$RO
                     , tb9$RO ,tb10$RO
                     ),
                  ncol=Nsample),
-            ) 
+            )
 
 points( tb1$Th,
         RO_means,
@@ -135,21 +135,21 @@ legend( min( 0.4 , tb1$Th[ max_avg_loc] ), 0.4 , line_1 , bty="n", col="red", ce
 legend( min( 0.4 , tb1$Th[ max_avg_loc]), 0.35, line_2 , bty="n", col="red", cex=1.3)
 
 
-vol_min <- min( rbind( max_avg_ref_vol, max_avg_man_vol ) ) 
-vol_max <- max( rbind( max_avg_ref_vol, max_avg_man_vol ) ) 
+vol_min <- min( rbind( max_avg_ref_vol, max_avg_man_vol ) )
+vol_max <- max( rbind( max_avg_ref_vol, max_avg_man_vol ) )
 range <- ( vol_max - vol_min )
 
-plot( max_avg_ref_vol ,  max_avg_man_vol , 
+plot( max_avg_ref_vol ,  max_avg_man_vol ,
       xlim=c( vol_min - 0.1*range , vol_max + 0.1*range),
       ylim=c( vol_min - 0.1*range , vol_max + 0.1*range),
-      col=my_color[1:Nsample], 
+      col=my_color[1:Nsample],
       pch=16,
       xlab="Reference Volume (1000cc)",
       ylab="ANN Volume (1000cc)")
 title( ROI )
-legend( "bottomright", 
+legend( "bottomright",
         c(subjects[1:Nsample], "Average of RO"),
-        col=c( my_color[1:Nsample], "darkblue" ), 
+        col=c( my_color[1:Nsample], "darkblue" ),
         pch=15,
         bty="n",
         cex=1.3)

@@ -7,7 +7,7 @@
     BRAINS Warp Quad Edge Mesh
   </title>
   <description>
-      This program warps scalar values from the moving mesh to the fixed mesh using a deformation field (deformed fixed). The output mesh has points from the fixed mesh with scalar values from the moving mesh. So it should "look" like the moving mesh, as the result of registration. 
+      This program warps scalar values from the moving mesh to the fixed mesh using a deformation field (deformed fixed). The output mesh has points from the fixed mesh with scalar values from the moving mesh. So it should "look" like the moving mesh, as the result of registration.
   </description>
   <version>1.0</version>
   <documentation-url>http://www.nitrc.org/plugins/mwiki/index.php/brains:BRAINSSurfaceRegister</documentation-url>
@@ -25,7 +25,7 @@
       <label>Fixed Mesh</label>
       <channel>input</channel>
     </file>
-    
+
     <file>
       <name>movingMeshFile</name>
       <longflag>movingMeshFile</longflag>
@@ -33,7 +33,7 @@
       <label>Moving Mesh</label>
       <channel>input</channel>
     </file>
-    
+
     <file>
       <name>deformedMeshFile</name>
       <longflag>deformedMeshFile</longflag>
@@ -43,10 +43,10 @@
     </file>
 
   </parameters>
-  
+
   <parameters>
     <label>Interpolate Parameters</label>
-    
+
     <string-enumeration>
       <name>interpolateType</name>
       <longflag>interpolateType</longflag>
@@ -56,9 +56,9 @@
       <element>Nearest</element>
       <element>Linear</element>
     </string-enumeration>
-    
+
   </parameters>
-    
+
   <parameters>
     <label>Output Parameters</label>
 

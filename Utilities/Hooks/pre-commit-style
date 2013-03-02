@@ -268,29 +268,29 @@ fi
 #-----------------------------------------------------------------------------
 # cppcheck.
 check_for_cppcheck() {
-	cppcheck_path=$(git config hooks.cppcheck.path)
-	if [ x"$cppcheck_path" == x ]; then
-		cppcheck_path=$(which cppcheck)
-		if [ x"$cppcheck_path" == x ]; then
-			echo "cppcheck executable was not found.
+  cppcheck_path=$(git config hooks.cppcheck.path)
+  if [ x"$cppcheck_path" == x ]; then
+    cppcheck_path=$(which cppcheck)
+    if [ x"$cppcheck_path" == x ]; then
+      echo "cppcheck executable was not found.
 Please install cppcheck or set the executable location with
   git config hooks.cppcheck.path /path/to/cppcheck
   See http://cppcheck.sourceforge.net/"
-			return 1
-		fi
-	fi
-	return 0
+      return 1
+    fi
+  fi
+  return 0
 }
 
 run_cppcheck_on_file() {
-	file="$1"
+  file="$1"
         echo "Running cppcheck on $file "
-	if [ $(echo "$file" | grep -c "\.h\>\|\.cpp\>\|\.cxx\>\|\.c\>\|\.txx\>|\.hxx\>") != 0 ]; then
+  if [ $(echo "$file" | grep -c "\.h\>\|\.cpp\>\|\.cxx\>\|\.c\>\|\.txx\>|\.hxx\>") != 0 ]; then
 
-	        echo Run: $cppcheck_path -q --enable=all --force --inline-suppr --template='{file}:{line},{severity},{id},{message}' "${file}"
-		output=$( $cppcheck_path -q --enable=all --force --inline-suppr --template='{file}:{line},{severity},{id},{message}' "${file}" 2>&1 | grep -v missingInclude)
-		if [ x"$output" != x ]; then
-			die "Error(s) when running cppcheck on $file:
+          echo Run: $cppcheck_path -q --enable=all --force --inline-suppr --template='{file}:{line},{severity},{id},{message}' "${file}"
+    output=$( $cppcheck_path -q --enable=all --force --inline-suppr --template='{file}:{line},{severity},{id},{message}' "${file}" 2>&1 | grep -v missingInclude)
+    if [ x"$output" != x ]; then
+      die "Error(s) when running cppcheck on $file:
 $output
 
 To suppress an individual false-positive, insert a "suppression" in the code
@@ -301,26 +301,26 @@ before the 'erroneous' line, as follows:
 To suppress all errors in all files, disable cppcheck, as:
 
 git config --bool hooks.cppcheck false
-			"
-		fi
+      "
+    fi
 
-	fi # end if run cppcheck on file
+  fi # end if run cppcheck on file
 }
 
 run_cppcheck() {
-	check_for_cppcheck
-	if [ $? != 0 ]; then
-		exit 1
-	fi
+  check_for_cppcheck
+  if [ $? != 0 ]; then
+    exit 1
+  fi
 
-	git diff-index --cached --diff-filter=ACMR --name-only $against -- |
-	while read file; do
-		run_cppcheck_on_file "$file" || return
-	done # end for changed files
+  git diff-index --cached --diff-filter=ACMR --name-only $against -- |
+  while read file; do
+    run_cppcheck_on_file "$file" || return
+  done # end for changed files
 }
 
 do_cppcheck=$(git config --bool hooks.cppcheck) || do_cppcheck=false
 if $do_cppcheck; then
-	run_cppcheck || exit 1
+  run_cppcheck || exit 1
 fi
 # vim: set filetype=sh tabstop=8 softtabstop=8 shiftwidth=8 noexpandtab :

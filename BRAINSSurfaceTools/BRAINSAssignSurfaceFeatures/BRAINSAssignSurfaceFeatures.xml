@@ -7,7 +7,7 @@
     BRAINS Assign Surface Features
   </title>
   <description>
-    Ths program calculate several types of geometry features (distanceFromPC, depth to a hull, cortical thickness, and mean_curvature) on the input surface. The geometry features will be added as arrays of the vtkPolyData of the output surface. If cortical thickness needs to be calculated, the input surface should be the inner surface. 
+    Ths program calculate several types of geometry features (distanceFromPC, depth to a hull, cortical thickness, and mean_curvature) on the input surface. The geometry features will be added as arrays of the vtkPolyData of the output surface. If cortical thickness needs to be calculated, the input surface should be the inner surface.
   </description>
   <version>1.0</version>
   <documentation-url>http://www.nitrc.org/plugins/mwiki/index.php/brains:BRAINSMarchingCubes</documentation-url>
@@ -44,10 +44,10 @@
       <channel>output</channel>
     </file>
   </parameters>
-  
-  <parameters>   
+
+  <parameters>
     <label>Distance-To-PC-Point Parameters</label>
-    
+
     <boolean>
       <name>distanceToPC_AP</name>
       <longflag>distanceToPC_AP</longflag>
@@ -55,14 +55,14 @@
       <label>distanceToPC_AP</label>
       <default>false</default>
     </boolean>
-    
+
     <boolean>
       <name>distanceToPC_IS</name>
       <longflag>distanceToPC_IS</longflag>
       <description>calculate the geometry feature of distanceToPC in the direction of InferiorToSuperior</description>
       <label>distanceToPC_IS</label>
       <default>false</default>
-    </boolean>   
+    </boolean>
 
     <double-vector>
       <name>PC</name>

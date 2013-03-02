@@ -25,7 +25,7 @@
       <label>Input Mesh</label>
       <channel>input</channel>
     </file>
-    
+
     <file>
       <name>refMeshFile</name>
       <longflag>refMeshFile</longflag>
@@ -34,10 +34,10 @@
       <channel>input</channel>
     </file>
   </parameters>
-  
+
   <parameters>
     <label>Interpolate Parameters</label>
-    
+
     <string-enumeration>
       <name>interpolateType</name>
       <longflag>interpolateType</longflag>
@@ -47,9 +47,9 @@
       <element>Nearest</element>
       <element>Linear</element>
     </string-enumeration>
-    
+
   </parameters>
-    
+
   <parameters>
     <label>Output Parameters</label>
 

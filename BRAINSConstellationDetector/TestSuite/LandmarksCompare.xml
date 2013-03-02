@@ -18,7 +18,7 @@
 
     <file>
       <name>inputLandmarkFile1</name>
-      <longflag>--inputLandmarkFile1</longflag> 
+      <longflag>--inputLandmarkFile1</longflag>
       <label>First input file</label>
       <channel>input</channel>
       <description>First input landmark file (.fcsv or .wts)</description>
@@ -26,7 +26,7 @@
 
     <file>
       <name>inputLandmarkFile2</name>
-      <longflag>--inputLandmarkFile2</longflag> 
+      <longflag>--inputLandmarkFile2</longflag>
       <label>Second input file</label>
       <channel>input</channel>
       <description>Second input landmark file (.fcsv or .wts)</description>

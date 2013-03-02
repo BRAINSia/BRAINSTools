@@ -40,5 +40,5 @@ do
                                ${program} ${ANNFilename}  $ManualFilename \
                                |grep :|tee $ANNOutputDir/${s}RO_Vs_Threshold${subject}.txt
       done
-    fi 
+    fi
 done

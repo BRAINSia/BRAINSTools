@@ -27,10 +27,10 @@
     </file>
 
   </parameters>
-    
+
   <parameters>
       <label>Smoothing Parameters</label>
-      
+
       <double>
           <name>lambda</name>
           <longflag>lambda</longflag>
@@ -38,7 +38,7 @@
           <label>lambda</label>
           <default>1.0</default>
       </double>
-      
+
       <double>
           <name>iterations</name>
           <longflag>iterations</longflag>
@@ -46,7 +46,7 @@
           <label>Number of Iterations</label>
           <default>5</default>
       </double>
-      
+
   </parameters>
 
   <parameters>

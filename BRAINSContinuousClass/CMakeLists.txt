@@ -7,7 +7,7 @@ set(ALL_PROGS_LIST
     BRAINSContinuousClass
   )
 foreach(prog ${ALL_PROGS_LIST})
-	StandardBRAINSBuildMacro(NAME ${prog} TARGET_LIBRARIES liblinear ${ITK_LIBRARIES} )
+  StandardBRAINSBuildMacro(NAME ${prog} TARGET_LIBRARIES liblinear ${ITK_LIBRARIES} )
 endforeach()
 
 ### Add the Testing Subdirectory.

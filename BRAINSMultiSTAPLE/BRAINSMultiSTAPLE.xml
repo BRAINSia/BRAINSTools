@@ -16,7 +16,7 @@
       <channel>input</channel>
       <description>Composite T1, all label maps transofrmed into the space for this image.</description>
     </image>
-    
+
     <image multiple="true">
       <name>inputLabelVolume</name>
       <label>Label Image Files</label>

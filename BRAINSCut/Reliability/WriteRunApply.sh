@@ -22,14 +22,14 @@ source $utilitySRC
 ## check input arguments
 ##
 if [ $# != 4 ]; then
-  echo "Incorrect Number of Argument:: $#"  
-  echo "Usage:::::"  
-  echo "::::::::::"  
+  echo "Incorrect Number of Argument:: $#"
+  echo "Usage:::::"
+  echo "::::::::::"
   echo "$0 [ShuffledListFilename] [crossValidationTargetDirectory] [Date] [ROI List Filename] "
-  echo "::::::::::"  
+  echo "::::::::::"
   exit 1;
 fi
-## 
+##
 
 pseudoRandomDataList=$1;
   ## pseudoRandomDataList Ex )
@@ -55,7 +55,7 @@ do
    ##
    ## create qsub file
    ##
-   
+
    for HN in 5 10 15 20 25 30 35 40 45 50 55 60 65 70 75 80
    do
      QSUBFile="${currentTargetDirectory}/runApply${testIteration}${Date}${HN}.sh"

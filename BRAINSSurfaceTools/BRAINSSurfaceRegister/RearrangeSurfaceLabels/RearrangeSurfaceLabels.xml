@@ -25,7 +25,7 @@
       <label>Input Surface</label>
       <channel>input</channel>
     </file>
-    
+
     <file>
       <name>labelNameFile</name>
       <longflag>labelNameFile</longflag>
@@ -35,7 +35,7 @@
     </file>
 
   </parameters>
-    
+
   <parameters>
     <label>Output Parameters</label>
 

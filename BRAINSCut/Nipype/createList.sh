@@ -20,9 +20,9 @@ do
     roiDict="{$roiDict}"
 
     ################################################################################
-    
+
     imageDict=""
-    for type in t1 
+    for type in t1
     do
         filename=(`ls $inputDir/${session}_${type}_average_BRAINSABC.nii.gz`)
         if [ "$imageDict" == "" ]; then
@@ -57,4 +57,4 @@ do
 
     deformationDict="{'atlasToSubject':'$atlasToSubject','subjectToAtlas':'$subjectToAtlas'}"
     echo $site, $subject, $session, \"$imageDict\"
-done < subjectTest.list 
+done < subjectTest.list

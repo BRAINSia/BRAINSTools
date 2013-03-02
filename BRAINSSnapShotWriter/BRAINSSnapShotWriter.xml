@@ -18,7 +18,7 @@
      <description>Input image volume list to be extracted as 2D image. Multiple input is possible. At least one input is required.</description>
      <default></default>
    </image>
-   
+
    <image multiple="true">
      <name>inputBinaryVolumes</name>
      <longflag>inputBinaryVolumes</longflag>
@@ -72,7 +72,7 @@
      <description>2D file name of input images. Required.</description>
      <default></default>
    </file>
-   
+
 </parameters>
 
 </executable>

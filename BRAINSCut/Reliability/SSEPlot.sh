@@ -18,7 +18,7 @@ else
   BRAINSSRC="/scratch/PREDICT/regina/BRAINS/"
 fi
 
-RScript="$BRAINSSRC/BRAINSStandAlone/BRAINSCut/Reliability/SSEPlot.R"
+RScript="$BRAINSSRC/BRAINSTools/BRAINSCut/Reliability/SSEPlot.R"
 
 
 mkdir -p $OutputDir

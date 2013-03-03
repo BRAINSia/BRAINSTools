@@ -143,7 +143,7 @@ do
   # Relative Overlap Graph ------------------------------------------------------ #
   SIList=$RScriptListFile;
   SIPlotOutputPlotFilename="${RScriptListFile}.pdf";
-  SIPlotRScript="$BRAINSBuild/../../BRAINSStandAlone/BRAINSCut/Reliability/RelativeOverlapPlot.R"
+  SIPlotRScript="$BRAINSBuild/../../BRAINSTools/BRAINSCut/Reliability/RelativeOverlapPlot.R"
 
   SIPlotR="R --slave --args $SIList $SIPlotOutputPlotFilename < $SIPlotRScript "
   echo "$SIPlotR" >> $RScript ;

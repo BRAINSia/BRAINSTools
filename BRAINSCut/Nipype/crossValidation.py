@@ -332,8 +332,8 @@ def crossValidationWorkUp(crossValidationConfigurationFilename,
                           baseDir,
                           runOption,
                           PythonBinDir,
-                          BRAINSStandAloneSrcDir,
-                          BRAINSStandAloneBuildDir):
+                          BRAINSToolsSrcDir,
+                          BRAINSToolsBuildDir):
     print("""****************************
           crossValidationWorkUp
           """)
@@ -609,9 +609,9 @@ def crossValidationWorkUp(crossValidationConfigurationFilename,
         ############################################
         # Platform specific information
         #     Prepend the python search paths
-        pythonPath = BRAINSStandAloneSrcDir + "/BRAINSCut/BRAINSFeatureCreators/RobustStatisticComputations:" + BRAINSStandAloneSrcDir + "/AutoWorkup/:" + BRAINSStandAloneSrcDir + "/AutoWorkup/BRAINSTools/:" + BRAINSStandAloneBuildDir + "/SimpleITK-build/bin/" + \
-            BRAINSStandAloneBuildDir + "/SimpleITK-build/lib:" + PythonBinDir
-        binPath = BRAINSStandAloneBuildDir + "/bin:" + BRAINSStandAloneBuildDir + "/lib"
+        pythonPath = BRAINSToolsSrcDir + "/BRAINSCut/BRAINSFeatureCreators/RobustStatisticComputations:" + BRAINSToolsSrcDir + "/AutoWorkup/:" + BRAINSToolsSrcDir + "/AutoWorkup/BRAINSTools/:" + BRAINSToolsBuildDir + "/SimpleITK-build/bin/" + \
+            BRAINSToolsBuildDir + "/SimpleITK-build/lib:" + PythonBinDir
+        binPath = BRAINSToolsBuildDir + "/bin:" + BRAINSToolsBuildDir + "/lib"
 
         PYTHON_AUX_PATHS = pythonPath
         PYTHON_AUX_PATHS = PYTHON_AUX_PATHS.split(':')
@@ -679,12 +679,12 @@ def main(argv=None):
     argWfGrp.add_argument( '--PythonBinDir',    help="""PythonBinDir [local/cluster]
         """,
                            dest='PythonBinDir', required=False, default="NA")
-    argWfGrp.add_argument( '--BRAINSStandAloneSrcDir',    help="""BRAINSStandAloneSrcDir [local/cluster]
+    argWfGrp.add_argument( '--BRAINSToolsSrcDir',    help="""BRAINSToolsSrcDir [local/cluster]
         """,
-                           dest='BRAINSStandAloneSrcDir', required=False, default="NA")
-    argWfGrp.add_argument( '--BRAINSStandAloneBuildDir',    help="""BRAINSStandAloneBuildDir [local/cluster]
+                           dest='BRAINSToolsSrcDir', required=False, default="NA")
+    argWfGrp.add_argument( '--BRAINSToolsBuildDir',    help="""BRAINSToolsBuildDir [local/cluster]
         """,
-                           dest='BRAINSStandAloneBuildDir', required=False, default="NA")
+                           dest='BRAINSToolsBuildDir', required=False, default="NA")
 
     # test arguments
     argTestGrp = argParser.add_argument_group( 'argTestGrp', """****************************
@@ -702,8 +702,8 @@ def main(argv=None):
                               args.baseDir,
                               args.runOption,
                               args.PythonBinDir,
-                              args.BRAINSStandAloneSrcDir,
-                              args.BRAINSStandAloneBuildDir)
+                              args.BRAINSToolsSrcDir,
+                              args.BRAINSToolsBuildDir)
 
     #--------------------------------
     if args.unitTest:

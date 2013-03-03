@@ -13,7 +13,7 @@ fi
 ##
 ## Set utility script
 ##
-utilitySRC="$BRAINSBuild/../BRAINSStandAlone/BRAINSCut/Reliability/utilities.sh"
+utilitySRC="$BRAINSBuild/../BRAINSTools/BRAINSCut/Reliability/utilities.sh"
 source $utilitySRC
 
 

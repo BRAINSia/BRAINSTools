@@ -502,8 +502,8 @@ def similarityComputeWorkflow(ResultDir,
                               ExperimentalConfigurationFile,
                               runOption,
                               PythonBinDir,
-                              BRAINSStandAloneSrcDir,
-                              BRAINSStandAloneBuildDir):
+                              BRAINSToolsSrcDir,
+                              BRAINSToolsBuildDir):
 
     import sys
     import nipype.interfaces.io as nio
@@ -598,9 +598,9 @@ def similarityComputeWorkflow(ResultDir,
         ############################################
         # Platform specific information
         #     Prepend the python search paths
-        pythonPath = BRAINSStandAloneSrcDir + "/BRAINSCut/BRAINSFeatureCreators/RobustStatisticComputations:" + BRAINSStandAloneSrcDir + "/AutoWorkup/:" + BRAINSStandAloneSrcDir + "/AutoWorkup/BRAINSTools/:" + BRAINSStandAloneBuildDir + "/SimpleITK-build/bin/" + \
-            BRAINSStandAloneBuildDir + "/SimpleITK-build/lib:" + PythonBinDir
-        binPath = BRAINSStandAloneBuildDir + "/bin:" + BRAINSStandAloneBuildDir + "/lib"
+        pythonPath = BRAINSToolsSrcDir + "/BRAINSCut/BRAINSFeatureCreators/RobustStatisticComputations:" + BRAINSToolsSrcDir + "/AutoWorkup/:" + BRAINSToolsSrcDir + "/AutoWorkup/BRAINSTools/:" + BRAINSToolsBuildDir + "/SimpleITK-build/bin/" + \
+            BRAINSToolsBuildDir + "/SimpleITK-build/lib:" + PythonBinDir
+        binPath = BRAINSToolsBuildDir + "/bin:" + BRAINSToolsBuildDir + "/lib"
 
         PYTHON_AUX_PATHS = pythonPath
         PYTHON_AUX_PATHS = PYTHON_AUX_PATHS.split(':')
@@ -658,12 +658,12 @@ def main(argv=None):
     argWfGrp.add_argument( '--PythonBinDir',    help="""PythonBinDir [local/cluster]
         """,
                            dest='PythonBinDir', required=False, default="NA")
-    argWfGrp.add_argument( '--BRAINSStandAloneSrcDir',    help="""BRAINSStandAloneSrcDir [local/cluster]
+    argWfGrp.add_argument( '--BRAINSToolsSrcDir',    help="""BRAINSToolsSrcDir [local/cluster]
         """,
-                           dest='BRAINSStandAloneSrcDir', required=False, default="NA")
-    argWfGrp.add_argument( '--BRAINSStandAloneBuildDir',    help="""BRAINSStandAloneBuildDir [local/cluster]
+                           dest='BRAINSToolsSrcDir', required=False, default="NA")
+    argWfGrp.add_argument( '--BRAINSToolsBuildDir',    help="""BRAINSToolsBuildDir [local/cluster]
         """,
-                           dest='BRAINSStandAloneBuildDir', required=False, default="NA")
+                           dest='BRAINSToolsBuildDir', required=False, default="NA")
 
     args = argParser.parse_args()
     similarityComputeWorkflow(args.expDir,
@@ -671,8 +671,8 @@ def main(argv=None):
                               args.experimentalConfigurationFile,
                               args.runOption,
                               args.PythonBinDir,
-                              args.BRAINSStandAloneSrcDir,
-                              args.BRAINSStandAloneBuildDir)
+                              args.BRAINSToolsSrcDir,
+                              args.BRAINSToolsBuildDir)
 
 
 import sys
@@ -683,9 +683,9 @@ if __name__ == "__main__":
 # unit test
 #
 # ResultDir = "/hjohnson/HDNI/PREDICT_TRAINING/regina_ann/TrainingModels/BAW2012Dec/Experiment_20121222/Result/Labels/"
-# outputDir = '/ipldev/scratch/eunyokim/src/BRAINSStandAlone/BRAINSStandAlone/BRAINSCut/Nipype/'
+# outputDir = '/ipldev/scratch/eunyokim/src/BRAINSTools/BRAINSTools/BRAINSCut/Nipype/'
 #
-# outputCSVFilename = '/ipldev/scratch/eunyokim/src/BRAINSStandAlone/BRAINSStandAlone/BRAINSCut/Nipype/output.csv'
+# outputCSVFilename = '/ipldev/scratch/eunyokim/src/BRAINSTools/BRAINSTools/BRAINSCut/Nipype/output.csv'
 # normalization = 'Linear'
 # methodParameter = 'TreeDepth50_TreeNumber50'
 # configFilename = '/hjohnson/HDNI/PREDICT_TRAINING/regina_ann/TrainingModels/BAW2012Dec/Dec22/model.config'

@@ -5,7 +5,7 @@ probabilityMapDir="/Users/eunyokim//TestImages/ProbabilityMaps/"
 
 
 
-BCutCMDDir="/Users/eunyokim/src/BRAINSStandAlone/AutoWorkup/BRAINSTools/"
+BCutCMDDir="/Users/eunyokim/src/BRAINSTools/AutoWorkup/BRAINSTools/"
 
 if [ $# == 4 ]; then
   referenceDir=$1;

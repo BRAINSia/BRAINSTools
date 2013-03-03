@@ -91,7 +91,7 @@ def findInputImagesForSubject(inputT1, BRAINSAtlasDir, outputDir):
 
     import WFPerSubject
 
-    # inputTemplateDir = "/ipldev/scratch/eunyokim/src/BRAINSStandAlone/build20121015/ReferenceAtlas-build/Atlas/Atlas_20120830/"
+    # inputTemplateDir = "/ipldev/scratch/eunyokim/src/BRAINSTools/build20121015/ReferenceAtlas-build/Atlas/Atlas_20120830/"
 
     WFPerSubject.WFPerSubjectDef(result,
                                  BRAINSAtlasDir,
@@ -125,11 +125,11 @@ def main(argv=None):
     group.add_argument('--outputBaseDir', action="store",
                        dest='outputBaseDir', required=True,
                             help='The output base directory to store results/caches from nipype')
-    group.add_argument('--BRAINSStandAloneBuildDir', action="store",
-                       dest='BRAINSStandAloneBuildDir', required=True,
+    group.add_argument('--BRAINSToolsBuildDir', action="store",
+                       dest='BRAINSToolsBuildDir', required=True,
                             help='BRAINS stand alone BUILD directory to be used')
-    group.add_argument('--BRAINSStandAloneSrcDir', action="store",
-                       dest='BRAINSStandAloneSrcDir', required=True,
+    group.add_argument('--BRAINSToolsSrcDir', action="store",
+                       dest='BRAINSToolsSrcDir', required=True,
                             help='BRAINS stand alone SOURCE directory to be used')
     group.add_argument('--PythonBinDir', action="store",
                        dest='PythonBinDir', required=True,
@@ -217,13 +217,13 @@ def main(argv=None):
     findRestInputsFromT1.inputs.BRAINSAtlasDir = inputArg.BRAINSAtlasDir
 
     # if cluster
-    # BAWSrcDir="/nfsscratch/PREDICT/regina/src/BRAINSStandAloneSrc//BRAINSStandAlone/"
-    # BAWBuildDir="/nfsscratch/PREDICT/regina/src/BRAINSStandAloneSrc/build_20121016/"
+    # BAWSrcDir="/nfsscratch/PREDICT/regina/src/BRAINSToolsSrc//BRAINSTools/"
+    # BAWBuildDir="/nfsscratch/PREDICT/regina/src/BRAINSToolsSrc/build_20121016/"
 
-    pythonPath = inputArg.BRAINSStandAloneSrcDir + "/BRAINSCut/BRAINSFeatureCreators/RobustStatisticComputations:" + inputArg.BRAINSStandAloneSrcDir + "/AutoWorkup/:" + inputArg.BRAINSStandAloneSrcDir + "/AutoWorkup/BRAINSTools/:" + inputArg.BRAINSStandAloneBuildDir + \
-        "/SimpleITK-build/bin/" + inputArg.BRAINSStandAloneBuildDir + "/SimpleITK-build/lib:" + inputArg.PythonBinDir
+    pythonPath = inputArg.BRAINSToolsSrcDir + "/BRAINSCut/BRAINSFeatureCreators/RobustStatisticComputations:" + inputArg.BRAINSToolsSrcDir + "/AutoWorkup/:" + inputArg.BRAINSToolsSrcDir + "/AutoWorkup/BRAINSTools/:" + inputArg.BRAINSToolsBuildDir + \
+        "/SimpleITK-build/bin/" + inputArg.BRAINSToolsBuildDir + "/SimpleITK-build/lib:" + inputArg.PythonBinDir
     #+ ":" + inputArg.NipypeBinDir + ":" + inputArg.NipypeLibDir
-    binPath = inputArg.BRAINSStandAloneBuildDir + "/bin:" + inputArg.BRAINSStandAloneBuildDir + "/lib"
+    binPath = inputArg.BRAINSToolsBuildDir + "/bin:" + inputArg.BRAINSToolsBuildDir + "/lib"
 
     myWF.add_nodes([findRestInputsFromT1])
     ############################################

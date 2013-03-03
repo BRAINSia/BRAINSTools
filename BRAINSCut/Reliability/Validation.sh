@@ -32,8 +32,8 @@ else
 fi
 
 ## Sum of squar error script
-SSEScript="$BRAINSSRC/../../BRAINSStandAlone/BRAINSCut/Reliability/SSEPlot.sh";
-UtilityrSRC="$BRAINSSRC/../../BRAINSStandAlone/BRAINSCut/Reliability/utilities.sh";
+SSEScript="$BRAINSSRC/../../BRAINSTools/BRAINSCut/Reliability/SSEPlot.sh";
+UtilityrSRC="$BRAINSSRC/../../BRAINSTools/BRAINSCut/Reliability/utilities.sh";
 
 source $UtilityrSRC
 

@@ -612,34 +612,34 @@ def CombineInputVectors(inputVectorFilenames,
     return os.path.abspath(outShuffleFileBase), outShuffleFileBase + ".hdr"
 
 configFileTestStr = """[AtlasDescription]
-t1 =       /ipldev/scratch/eunyokim/src/BRAINSStandAlone/build_LongitudinalSegmentationPipelineTrial/ReferenceAtlas-build/Atlas/Atlas_20121120/template_t1.nii.gz
-rho =      /ipldev/scratch/eunyokim/src/BRAINSStandAlone/build_LongitudinalSegmentationPipelineTrial/ReferenceAtlas-build/Atlas/Atlas_20121120/spatialImages/rho.nii.gz
-phi =      /ipldev/scratch/eunyokim/src/BRAINSStandAlone/build_LongitudinalSegmentationPipelineTrial/ReferenceAtlas-build/Atlas/Atlas_20121120/spatialImages/phi.nii.gz
-theta =    /ipldev/scratch/eunyokim/src/BRAINSStandAlone/build_LongitudinalSegmentationPipelineTrial/ReferenceAtlas-build/Atlas/Atlas_20121120/spatialImages/theta.nii.gz
+t1 =       /ipldev/scratch/eunyokim/src/BRAINSTools/build_LongitudinalSegmentationPipelineTrial/ReferenceAtlas-build/Atlas/Atlas_20121120/template_t1.nii.gz
+rho =      /ipldev/scratch/eunyokim/src/BRAINSTools/build_LongitudinalSegmentationPipelineTrial/ReferenceAtlas-build/Atlas/Atlas_20121120/spatialImages/rho.nii.gz
+phi =      /ipldev/scratch/eunyokim/src/BRAINSTools/build_LongitudinalSegmentationPipelineTrial/ReferenceAtlas-build/Atlas/Atlas_20121120/spatialImages/phi.nii.gz
+theta =    /ipldev/scratch/eunyokim/src/BRAINSTools/build_LongitudinalSegmentationPipelineTrial/ReferenceAtlas-build/Atlas/Atlas_20121120/spatialImages/theta.nii.gz
 
 [ROI]
-roiList=  {'l_accumben'   : '/ipldev/scratch/eunyokim/src/BRAINSStandAlone/BRAINSStandAlone/BRAINSCut/Nipype/probabilityMaps/l_accumben_probaiblityMap.nii.gz',
-           'l_caudate'    : '/ipldev/scratch/eunyokim/src/BRAINSStandAlone/BRAINSStandAlone/BRAINSCut/Nipype/probabilityMaps/l_caudate_probaiblityMap.nii.gz',
-           'l_putamen'    : '/ipldev/scratch/eunyokim/src/BRAINSStandAlone/BRAINSStandAlone/BRAINSCut/Nipype/probabilityMaps/l_putamen_probaiblityMap.nii.gz',
-           'l_globus'     : '/ipldev/scratch/eunyokim/src/BRAINSStandAlone/BRAINSStandAlone/BRAINSCut/Nipype/probabilityMaps/l_globus_probaiblityMap.nii.gz',
-           'l_thalamus'   : '/ipldev/scratch/eunyokim/src/BRAINSStandAlone/BRAINSStandAlone/BRAINSCut/Nipype/probabilityMaps/l_thalamus_probaiblityMap.nii.gz',
-           'l_hippocampus': '/ipldev/scratch/eunyokim/src/BRAINSStandAlone/BRAINSStandAlone/BRAINSCut/Nipype/probabilityMaps/l_hippocampus_probaiblityMap.nii.gz',
-           'r_accumben'   : '/ipldev/scratch/eunyokim/src/BRAINSStandAlone/BRAINSStandAlone/BRAINSCut/Nipype/probabilityMaps/r_accumben_probaiblityMap.nii.gz',
-           'r_caudate'    : '/ipldev/scratch/eunyokim/src/BRAINSStandAlone/BRAINSStandAlone/BRAINSCut/Nipype/probabilityMaps/r_caudate_probaiblityMap.nii.gz',
-           'r_putamen'    : '/ipldev/scratch/eunyokim/src/BRAINSStandAlone/BRAINSStandAlone/BRAINSCut/Nipype/probabilityMaps/r_putamen_probaiblityMap.nii.gz',
-           'r_globus'     : '/ipldev/scratch/eunyokim/src/BRAINSStandAlone/BRAINSStandAlone/BRAINSCut/Nipype/probabilityMaps/r_globus_probaiblityMap.nii.gz',
-           'r_thalamus'   : '/ipldev/scratch/eunyokim/src/BRAINSStandAlone/BRAINSStandAlone/BRAINSCut/Nipype/probabilityMaps/r_thalamus_probaiblityMap.nii.gz',
-           'r_hippocampus': '/ipldev/scratch/eunyokim/src/BRAINSStandAlone/BRAINSStandAlone/BRAINSCut/Nipype/probabilityMaps/r_hippocampus_probaiblityMap.nii.gz'}
+roiList=  {'l_accumben'   : '/ipldev/scratch/eunyokim/src/BRAINSTools/BRAINSTools/BRAINSCut/Nipype/probabilityMaps/l_accumben_probaiblityMap.nii.gz',
+           'l_caudate'    : '/ipldev/scratch/eunyokim/src/BRAINSTools/BRAINSTools/BRAINSCut/Nipype/probabilityMaps/l_caudate_probaiblityMap.nii.gz',
+           'l_putamen'    : '/ipldev/scratch/eunyokim/src/BRAINSTools/BRAINSTools/BRAINSCut/Nipype/probabilityMaps/l_putamen_probaiblityMap.nii.gz',
+           'l_globus'     : '/ipldev/scratch/eunyokim/src/BRAINSTools/BRAINSTools/BRAINSCut/Nipype/probabilityMaps/l_globus_probaiblityMap.nii.gz',
+           'l_thalamus'   : '/ipldev/scratch/eunyokim/src/BRAINSTools/BRAINSTools/BRAINSCut/Nipype/probabilityMaps/l_thalamus_probaiblityMap.nii.gz',
+           'l_hippocampus': '/ipldev/scratch/eunyokim/src/BRAINSTools/BRAINSTools/BRAINSCut/Nipype/probabilityMaps/l_hippocampus_probaiblityMap.nii.gz',
+           'r_accumben'   : '/ipldev/scratch/eunyokim/src/BRAINSTools/BRAINSTools/BRAINSCut/Nipype/probabilityMaps/r_accumben_probaiblityMap.nii.gz',
+           'r_caudate'    : '/ipldev/scratch/eunyokim/src/BRAINSTools/BRAINSTools/BRAINSCut/Nipype/probabilityMaps/r_caudate_probaiblityMap.nii.gz',
+           'r_putamen'    : '/ipldev/scratch/eunyokim/src/BRAINSTools/BRAINSTools/BRAINSCut/Nipype/probabilityMaps/r_putamen_probaiblityMap.nii.gz',
+           'r_globus'     : '/ipldev/scratch/eunyokim/src/BRAINSTools/BRAINSTools/BRAINSCut/Nipype/probabilityMaps/r_globus_probaiblityMap.nii.gz',
+           'r_thalamus'   : '/ipldev/scratch/eunyokim/src/BRAINSTools/BRAINSTools/BRAINSCut/Nipype/probabilityMaps/r_thalamus_probaiblityMap.nii.gz',
+           'r_hippocampus': '/ipldev/scratch/eunyokim/src/BRAINSTools/BRAINSTools/BRAINSCut/Nipype/probabilityMaps/r_hippocampus_probaiblityMap.nii.gz'}
 
 
 [FileDescriptions]
-xmlFilename    = /ipldev/scratch/eunyokim/src/BRAINSStandAlone/BRAINSStandAlone/BRAINSCut/Nipype/output.xml
-vectorFilename = /ipldev/scratch/eunyokim/src/BRAINSStandAlone/BRAINSStandAlone/BRAINSCut/Nipype/vectorfile.txt
-modelFilename  = /ipldev/scratch/eunyokim/src/BRAINSStandAlone/BRAINSStandAlone/BRAINSCut/Nipype/modelfile.txt
+xmlFilename    = /ipldev/scratch/eunyokim/src/BRAINSTools/BRAINSTools/BRAINSCut/Nipype/output.xml
+vectorFilename = /ipldev/scratch/eunyokim/src/BRAINSTools/BRAINSTools/BRAINSCut/Nipype/vectorfile.txt
+modelFilename  = /ipldev/scratch/eunyokim/src/BRAINSTools/BRAINSTools/BRAINSCut/Nipype/modelfile.txt
 
 [ListFiles]
-subjectListFilename  = /ipldev/scratch/eunyokim/src/BRAINSStandAlone/BRAINSStandAlone/BRAINSCut/Nipype/test.csv
-featureListFileDictionary = {'gadSG':'/ipldev/scratch/eunyokim/src/BRAINSStandAlone/BRAINSStandAlone/BRAINSCut/Nipype/testGadFeatureList.csv'}
+subjectListFilename  = /ipldev/scratch/eunyokim/src/BRAINSTools/BRAINSTools/BRAINSCut/Nipype/test.csv
+featureListFileDictionary = {'gadSG':'/ipldev/scratch/eunyokim/src/BRAINSTools/BRAINSTools/BRAINSCut/Nipype/testGadFeatureList.csv'}
 
 [Options]
 imageTypeToUse = t1

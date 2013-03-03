@@ -83,13 +83,12 @@ ICCDEFWarp<TImage, TRealImage, TOutputImage>
     this->GetForwardDisplacementFieldOutputName() );
   this->m_Registrator->SetBackwardDisplacementFieldOutputName(
     this->GetBackwardDisplacementFieldOutputName() );
-  this->m_Registrator->SetFixedImage( this->m_Preprocessor->GetOutputFixedImage() );
-  this->m_Registrator->SetMovingImage(
-    this->m_Preprocessor->GetOutputMovingImage() );
+  this->m_Registrator->SetFixedImage( this->m_Preprocessor->GetModifiableOutputFixedImage() );
+  this->m_Registrator->SetMovingImage( this->m_Preprocessor->GetModifiableOutputMovingImage() );
   this->m_Registrator->SetUnNormalizedMovingImage(
-    this->m_Preprocessor->GetUnNormalizedMovingImage() );
+    this->m_Preprocessor->GetModifiableUnNormalizedMovingImage() );
   this->m_Registrator->SetUnNormalizedFixedImage(
-    this->m_Preprocessor->GetUnNormalizedFixedImage() );
+    this->m_Preprocessor->GetModifiableUnNormalizedFixedImage() );
   this->m_Registrator->SetDefaultPixelValue(
     this->m_Preprocessor->GetDefaultPixelValue() );
   this->m_Registrator->SetUseHistogramMatching( this->GetUseHistogramMatching() );

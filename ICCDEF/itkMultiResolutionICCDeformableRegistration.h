@@ -230,12 +230,8 @@ public:
   itkSetObjectMacro(FieldExpander21, FieldExpanderType);
 
   /** Get number of iterations per multi-resolution levels. */
-  itkGetObjectMacro(FieldExpander12, FieldExpanderType); // HACK: This should use the future implemented
-                                                         // itkGetModifiableObjectMacro
-  itkGetObjectMacro(FieldExpander21, FieldExpanderType); // HACK: This should use the future implemented
-                                                         // itkGetModifiableObjectMacro
-  itkGetConstObjectMacro(FieldExpander12, FieldExpanderType);
-  itkGetConstObjectMacro(FieldExpander21, FieldExpanderType);
+  itkGetModifiableObjectMacro(FieldExpander12, FieldExpanderType);
+  itkGetModifiableObjectMacro(FieldExpander21, FieldExpanderType);
 
   using Superclass::MakeOutput;
   virtual ProcessObject::DataObjectPointer MakeOutput(ProcessObject::DataObjectPointerArraySizeType idx);

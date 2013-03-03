@@ -27,7 +27,7 @@ RGBImageType::Pointer ReturnOrientedRGBImage(SImageType::Pointer inputImage)
     DuplicatorType::Pointer duplicator = DuplicatorType::New();
     duplicator->SetInputImage(inputImage);
     duplicator->Update();
-    inputStatsImage = duplicator->GetOutput();
+    inputStatsImage = duplicator->GetModifiableOutput();
     }
 
   itk::StatisticsImageFilter<SImageType>::Pointer stats = itk::StatisticsImageFilter<SImageType>::New();
@@ -256,7 +256,7 @@ MakePointBranded3DImage(SImageType::ConstPointer in,
     DuplicatorType::Pointer duplicator = DuplicatorType::New();
     duplicator->SetInputImage(inputImage);
     duplicator->Update();
-    inputStatsImage = duplicator->GetOutput();
+    inputStatsImage = duplicator->GetModifiableOutput();
     }
 
   itk::StatisticsImageFilter<SImageType>::Pointer stats = itk::StatisticsImageFilter<SImageType>::New();

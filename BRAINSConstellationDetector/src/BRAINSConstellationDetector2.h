@@ -159,9 +159,7 @@ public:
   // Get Basic Outputs
 
   /** Get the versor transform */
-  itkGetObjectMacro(VersorTransform, VersorTransformType);
   itkGetConstObjectMacro(VersorTransform, VersorTransformType);
-  itkGetObjectMacro(InvVersorTransform, VersorTransformType);
   itkGetConstObjectMacro(InvVersorTransform, VersorTransformType);
 
   /** Get the named points in original space */
@@ -189,8 +187,7 @@ public:
   itkGetConstObjectMacro(OutputUntransformedClippedVolume, SImageType);
 
   /** Get the Hough eye transform */
-  itkGetObjectMacro(HoughEyeTransform, VersorTransformType);
-  itkGetConstObjectMacro(HoughEyeTransform, VersorTransformType);
+  itkGetModifiableObjectMacro(HoughEyeTransform, VersorTransformType);
 
   /** Set the Hough eye failure report */
   void SetHoughEyeFailure(const bool failure)

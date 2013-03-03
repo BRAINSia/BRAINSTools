@@ -155,7 +155,7 @@ void DemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute()
     typename FieldInterpolatorType::Pointer VectorInterpolator =
       FieldInterpolatorType::New();
 
-    m_Registration->GetFieldExpander()->SetInterpolator(VectorInterpolator);
+    m_Registration->GetModifiableFieldExpander()->SetInterpolator(VectorInterpolator);
 
     m_Registration->SetFixedImagePyramid(m_FixedImagePyramid);
     m_Registration->SetMovingImagePyramid(m_MovingImagePyramid);

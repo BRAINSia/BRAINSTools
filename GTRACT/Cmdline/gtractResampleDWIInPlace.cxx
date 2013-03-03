@@ -71,7 +71,7 @@ typename IOImageType::Pointer SetVectorImageRigidTransformInPlace(
   typename DuplicatorType::Pointer duplicator = DuplicatorType::New();
   duplicator->SetInputImage(InputImage);
   duplicator->Update();
-  typename IOImageType::Pointer OutputAlignedImage = duplicator->GetOutput();
+  typename IOImageType::Pointer OutputAlignedImage = duplicator->GetModifiableOutput();
   // Now change the Origin and Direction to make data aligned.
   OutputAlignedImage->SetOrigin(
     InvOfRigidTransform->GetMatrix() * InputImage->GetOrigin() + InvOfRigidTransform->GetTranslation() );

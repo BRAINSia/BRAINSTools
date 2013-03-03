@@ -198,6 +198,7 @@ public:
   void SetTheMovingImageShrinkFactors(const ShrinkFactorsType & shrinkfactors)
   {
     this->m_TheMovingImageShrinkFactors = shrinkfactors;
+    this->Modified();
   }
 
   /** Get the subject image starting shrink factors. */
@@ -205,6 +206,7 @@ public:
   void SetTheFixedImageShrinkFactors(const ShrinkFactorsType & shrinkfactors)
   {
     this->m_TheFixedImageShrinkFactors = shrinkfactors;
+    this->Modified();
   }
 
   /** Get the number of iterations at each level. */
@@ -212,6 +214,7 @@ public:
   void SetNumberOfIterations(const IterationsArrayType & iterations)
   {
     m_NumberOfIterations = iterations;
+    this->Modified();
   }
 
   typedef itk::PDEDeformableRegistrationFilter<RealImageType, RealImageType,
@@ -221,6 +224,7 @@ public:
     BaseRegistrationFilterType *filter)
   {
     this->m_Registrator->SetRegistrationFilter(filter);
+    this->Modified();
   }
 
 protected:

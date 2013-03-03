@@ -274,7 +274,7 @@ BRAINSCutApplyModel
             DuplicatorType::Pointer labelDuplicator = DuplicatorType::New();
             labelDuplicator->SetInputImage( mask );
             labelDuplicator->Update();
-            resultLabelFromRF = labelDuplicator->GetOutput();
+            resultLabelFromRF = labelDuplicator->GetModifiableOutput();
 
             ambiguousLabelFromRF = LabelImageType::New();
             ambiguousLabelFromRF->CopyInformation( mask );

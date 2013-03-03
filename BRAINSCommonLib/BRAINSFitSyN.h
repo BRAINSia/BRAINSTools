@@ -127,7 +127,7 @@ simpleSynReg( typename FixedImageType::Pointer & infixedImage,
     ants::antscout << "Finshed SyN stage" << std::endl;
     }
   // Get the output transform
-  typename CompositeTransformType::Pointer outputCompositeTransform = regHelper->GetCompositeTransform();
+  typename CompositeTransformType::Pointer outputCompositeTransform = regHelper->GetModifiableCompositeTransform();
   // return composite result Transform;
   return outputCompositeTransform;
 }

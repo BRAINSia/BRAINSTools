@@ -541,7 +541,7 @@ void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
       extent[3] = region.GetIndex()[1] + region.GetSize()[1] - 1;
       extent[4] = region.GetIndex()[2];
       extent[5] = region.GetIndex()[2] + region.GetSize()[2] - 1;
-      imageIO = imageReader->GetImageIO();
+      imageIO = imageReader->GetModifiableImageIO();
       if( imageIO.GetPointer() == NULL )
         {
         itkGenericExceptionMacro(
@@ -567,7 +567,7 @@ void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
           itk::ImageFileReader<ImageType>::New();
         imageReader->SetFileName(this->FileNames[0].c_str() );
         imageReader->UpdateOutputInformation();
-        imageIO = imageReader->GetImageIO();
+        imageIO = imageReader->GetModifiableImageIO();
         seriesReader->SetImageIO(imageIO);
         }
       if( this->UseNativeCoordinateOrientation )
@@ -601,7 +601,7 @@ void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
       extent[3] = region.GetIndex()[1] + region.GetSize()[1] - 1;
       extent[4] = region.GetIndex()[2];
       extent[5] = region.GetIndex()[2] + region.GetSize()[2] - 1;
-      imageIO = seriesReader->GetImageIO();
+      imageIO = seriesReader->GetModifiableImageIO();
       }
     }
   catch( ... )

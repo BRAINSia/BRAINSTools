@@ -347,7 +347,7 @@ CopyImage(const typename ImageType::Pointer & input)
   typename ImageDupeType::Pointer MyDuplicator = ImageDupeType::New();
   MyDuplicator->SetInputImage(input);
   MyDuplicator->Update();
-  return MyDuplicator->GetOutput();
+  return MyDuplicator->GetModifiableOutput();
 }
 
 /** Common code for allocating an image, allowing the region and spacing to be

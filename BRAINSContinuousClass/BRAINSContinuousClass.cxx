@@ -200,7 +200,7 @@ int ContinuousClassification(std::string t1VolumeName, std::string T2VolumeName,
   typename ImageDuplicatorType::Pointer t1DuplicateImageFilter = ImageDuplicatorType::New();
   t1DuplicateImageFilter->SetInputImage(t1Reader->GetOutput() );
   t1DuplicateImageFilter->Update();
-  typename ImageType::Pointer outputImage = t1DuplicateImageFilter->GetOutput();
+  typename ImageType::Pointer outputImage = t1DuplicateImageFilter->GetModifiableOutput();
 
   double predictedProbabilityEstimatesWhiteVsGray[2];
   double predictedProbabilityEstimatesWhiteVsCSF[2];

@@ -50,7 +50,7 @@ void ComputeMSP(SImageType::Pointer image,
     itk::ImageDuplicator<SImageType>::Pointer MSP = itk::ImageDuplicator<SImageType>::New();
     MSP->SetInputImage(image);
     MSP->Update();
-    transformedImage = MSP->GetOutput();
+    transformedImage = MSP->GetModifiableOutput();
     }
   else
     {
@@ -143,7 +143,7 @@ void CreatedebugPlaneImage(SImageType::Pointer referenceImage, const std::string
   itk::ImageDuplicator<SImageType>::Pointer MSP = itk::ImageDuplicator<SImageType>::New();
   MSP->SetInputImage(referenceImage);
   MSP->Update();
-  SImageType::Pointer           MSPImage = MSP->GetOutput();
+  SImageType::Pointer           MSPImage = MSP->GetModifiableOutput();
   const SImageType::SpacingType imSpacing = MSPImage->GetSpacing();
   SImageType::PointType         CenterOfImage = GetImageCenterPhysicalPoint(MSPImage);
 
@@ -175,9 +175,8 @@ SImageType::Pointer CreatedebugPlaneImage(SImageType::Pointer referenceImage,
   itk::ImageDuplicator<SImageType>::Pointer MSP = itk::ImageDuplicator<SImageType>::New();
   MSP->SetInputImage(referenceImage);
   MSP->Update();
-  SImageType::Pointer           MSPImage = MSP->GetOutput();
+  SImageType::Pointer           MSPImage = MSP->GetModifiableOutput();
   const SImageType::SpacingType imSpacing = MSPImage->GetSpacing();
-
   SImageType::PointType CenterOfImage = GetImageCenterPhysicalPoint(MSPImage);
     {
     itk::ImageRegionIteratorWithIndex<SImageType> mspIt( MSPImage, MSPImage->GetLargestPossibleRegion() );
@@ -242,7 +241,7 @@ SImageType::Pointer CreatedebugPlaneImage(SImageType::Pointer referenceImage,
   itk::ImageDuplicator<SImageType>::Pointer duplicator = itk::ImageDuplicator<SImageType>::New();
   duplicator->SetInputImage(referenceImage);
   duplicator->Update();
-  SImageType::Pointer RasterImage = duplicator->GetOutput();
+  SImageType::Pointer RasterImage = duplicator->GetModifiableOutput();
 
   itk::ImageRegionIteratorWithIndex<SImageType> rasterIt( RasterImage, RasterImage->GetLargestPossibleRegion() );
   itk::ImageRegionIteratorWithIndex<SImageType> rplaneIt( RotatedPlane, RotatedPlane->GetLargestPossibleRegion() );

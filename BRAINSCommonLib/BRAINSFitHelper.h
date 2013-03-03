@@ -88,9 +88,9 @@ public:
   itkGetConstObjectMacro(PreprocessedMovingVolume, MovingVolumeType);
 
   itkSetObjectMacro(FixedBinaryVolume, FixedBinaryVolumeType);
-  itkGetConstObjectMacro(FixedBinaryVolume, FixedBinaryVolumeType);
+  itkGetModifiableObjectMacro(FixedBinaryVolume, FixedBinaryVolumeType);
   itkSetObjectMacro(MovingBinaryVolume, MovingBinaryVolumeType);
-  itkGetConstObjectMacro(MovingBinaryVolume, MovingBinaryVolumeType);
+  itkGetModifiableObjectMacro(MovingBinaryVolume, MovingBinaryVolumeType);
 
   itkSetMacro(OutputFixedVolumeROI,  std::string);
   itkGetConstMacro(OutputFixedVolumeROI,  std::string);
@@ -427,7 +427,7 @@ BRAINSFitHelper::GetCostMetric()
     std::cout << "ERROR:  Invalid BRAINSFitHelper conversion" << __FILE__ << " " << __LINE__ << std::endl;
     }
 
-  const typename GenericMetricType::Pointer metric = myHelper->GetCostMetricObject();
+  const typename GenericMetricType::Pointer metric = myHelper->GetModifiableCostMetricObject();
   typename TLocalCostMetric::Pointer rval = dynamic_cast<TLocalCostMetric *>(metric.GetPointer() );
   if( rval.IsNull() )
     {

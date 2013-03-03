@@ -92,7 +92,7 @@ VBRAINSDemonWarp<TImage, TRealImage, TOutputImage>
   this->m_Preprocessor->SetInputFixedImage( this->m_Parser->GetTheFixedImages() );
   this->m_Preprocessor->SetInputMovingImage( this->m_Parser->GetTheMovingImages() );
   this->m_Preprocessor->SetInitialDisplacementField(
-    this->m_Parser->GetInitialDisplacementField() );
+    this->m_Parser->GetModifiableInitialDisplacementField() );
   this->m_Preprocessor->SetUseHistogramMatching( this->GetUseHistogramMatching() );
   this->m_Preprocessor->SetNumberOfHistogramLevels(
     this->m_Parser->GetNumberOfHistogramLevels() );
@@ -108,7 +108,7 @@ VBRAINSDemonWarp<TImage, TRealImage, TOutputImage>
   this->m_Preprocessor->SetOutDebug( this->GetOutDebug() );
   this->m_Preprocessor->SetMedianFilterSize( this->GetMedianFilterSize() );
   this->m_Preprocessor->SetInitialDisplacementField(
-    this->m_Parser->GetInitialDisplacementField() );
+    this->m_Parser->GetModifiableInitialDisplacementField() );
   //  this->m_Preprocessor->SetWeightFactors( this->GetWeightFactors() );
 }
 
@@ -129,7 +129,7 @@ VBRAINSDemonWarp<TImage, TRealImage, TOutputImage>
   this->m_Registrator->SetMovingImage( this->m_Preprocessor->GetOutputMovingImage() );
   this->m_Registrator->SetUnNormalizedMovingImage( this->m_Preprocessor->GetUnNormalizedMovingImage() );
   this->m_Registrator->SetUnNormalizedFixedImage( this->m_Preprocessor->GetUnNormalizedFixedImage() );
-  this->m_Registrator->SetInitialDisplacementField( this->m_Parser->GetInitialDisplacementField() );
+  this->m_Registrator->SetInitialDisplacementField( this->m_Parser->GetModifiableInitialDisplacementField() );
   this->m_Registrator->SetDefaultPixelValue( this->m_Preprocessor->GetDefaultPixelValue() );
   this->m_Registrator->SetUseHistogramMatching( this->GetUseHistogramMatching() );
   this->m_Registrator->SetNumberOfLevels( this->m_Parser->GetNumberOfLevels() );

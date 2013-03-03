@@ -59,8 +59,7 @@ public:
   itkGetConstMacro(BackgroundValue, PixelType);
 
   itkGetConstMacro(CenterOfBrain, PointType);
-  itkGetObjectMacro(TrimmedImage, TInputImage);
-  itkGetConstObjectMacro(TrimmedImage, TInputImage);
+  itkGetModifiableObjectMacro(TrimmedImage, TInputImage);
 
   itkSetConstObjectMacro(ImageMask, TMaskImage);
   itkGetConstObjectMacro(ImageMask, TMaskImage);

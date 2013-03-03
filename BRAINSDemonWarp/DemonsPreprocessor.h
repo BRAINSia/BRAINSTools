@@ -81,8 +81,7 @@ public:
 
   /** Set the initial Displacement Field. */
   itkSetObjectMacro(InitialDisplacementField, TDisplacementField);
-  itkGetObjectMacro(InitialDisplacementField, TDisplacementField); // Should provide modifiable form of this
-  itkGetConstObjectMacro(InitialDisplacementField, TDisplacementField);
+  itkGetModifiableObjectMacro(InitialDisplacementField, TDisplacementField);
 
   /** Set the number of histogram levels to use. */
   itkSetMacro(NumberOfHistogramLevels, unsigned long);
@@ -93,21 +92,13 @@ public:
   /** Method to execute the preprocessing. */
   virtual void Execute();
 
-  /** Get the output fixed image. */
-  itkGetObjectMacro(OutputFixedImage, OutputImageType); // Hack should provide modifiable form of this
-  itkGetConstObjectMacro(OutputFixedImage, OutputImageType);
+  /** Get the output fixed/moving image. */
+  itkGetModifiableObjectMacro(OutputFixedImage, OutputImageType);
+  itkGetModifiableObjectMacro(OutputMovingImage, OutputImageType);
 
-  /** Get the output moving image. */
-  itkGetObjectMacro(OutputMovingImage, OutputImageType); // HACK should provide modifiable form of this
-  itkGetConstObjectMacro(OutputMovingImage, OutputImageType);
-
-  /** Get the output moving image. */
-  itkGetObjectMacro(UnNormalizedMovingImage, OutputImageType);
-  itkGetConstObjectMacro(UnNormalizedMovingImage, OutputImageType);
-
-  /** Get the output moving image. */
-  itkGetObjectMacro(UnNormalizedFixedImage, OutputImageType);
-  itkGetConstObjectMacro(UnNormalizedFixedImage, OutputImageType);
+  /** Get the output fixed/moving image. */
+  itkGetModifiableObjectMacro(UnNormalizedMovingImage, OutputImageType);
+  itkGetModifiableObjectMacro(UnNormalizedFixedImage, OutputImageType);
 
   /** Get minimum value of original fixed image. */
   itkGetMacro(FixedImageMinimum, InputPixelType);

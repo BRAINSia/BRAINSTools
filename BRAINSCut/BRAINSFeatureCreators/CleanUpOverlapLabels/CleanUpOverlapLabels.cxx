@@ -77,7 +77,7 @@ int main( int argc, char * argv[] )
   imageCopier->SetInputImage( inputBinaryVolumeVector.front() );
   imageCopier->Update();
 
-  InputBinaryImageType::Pointer sumVolume = imageCopier->GetOutput();
+  InputBinaryImageType::Pointer sumVolume = imageCopier->GetModifiableOutput();
 
   typedef itk::AddImageFilter<InputBinaryImageType, InputBinaryImageType,
                               InputBinaryImageType> AddImageFilterType;

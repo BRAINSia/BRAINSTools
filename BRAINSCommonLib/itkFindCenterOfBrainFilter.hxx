@@ -93,7 +93,7 @@ FindCenterOfBrainFilter<TInputImage, TMaskImage>
     typename itk::ImageDuplicator<MaskImageType>::Pointer id = itk::ImageDuplicator<MaskImageType>::New();
     id->SetInputImage(this->m_ImageMask);
     id->Update();
-    LFFimage = id->GetOutput();
+    LFFimage = id->GetModifiableOutput();
     }
 
   //  LFFimage will initially hold just a tissue LFFimage mask region (a
@@ -317,7 +317,7 @@ FindCenterOfBrainFilter<TInputImage, TMaskImage>
       typename itk::ImageDuplicator<MaskImageType>::Pointer id = itk::ImageDuplicator<MaskImageType>::New();
       id->SetInputImage(this->m_ImageMask);
       id->Update();
-      this->m_ClippedImageMask = id->GetOutput();
+      this->m_ClippedImageMask = id->GetModifiableOutput();
       }
     typedef typename itk::ImageRegionIteratorWithIndex<MaskImageType> MaskImageIteratorType;
     MaskImageIteratorType ClippedMaskPixel( this->m_ClippedImageMask,
@@ -327,7 +327,7 @@ FindCenterOfBrainFilter<TInputImage, TMaskImage>
       typename itk::ImageDuplicator<TInputImage>::Pointer id = itk::ImageDuplicator<TInputImage>::New();
       id->SetInputImage( this->GetInput() );
       id->Update();
-      this->m_TrimmedImage = id->GetOutput();
+      this->m_TrimmedImage = id->GetModifiableOutput();
       }
 
     typedef typename itk::ImageRegionIteratorWithIndex<TInputImage> TInputIteratorType;

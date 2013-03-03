@@ -123,8 +123,8 @@ VDemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::VDemonsRegistrator()
   typename FieldInterpolatorType::Pointer VectorInterpolator =
     FieldInterpolatorType::New();
 
-  m_Registration->GetFieldExpander()->SetInterpolator(VectorInterpolator);
-  m_VectorRegistration->GetFieldExpander()->SetInterpolator(VectorInterpolator);
+  m_Registration->GetModifiableFieldExpander()->SetInterpolator(VectorInterpolator);
+  m_VectorRegistration->GetModifiableFieldExpander()->SetInterpolator(VectorInterpolator);
 
   // Default parameters
   m_NumberOfLevels = 1;

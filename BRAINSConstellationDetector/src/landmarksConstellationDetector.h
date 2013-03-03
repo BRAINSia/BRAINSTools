@@ -203,7 +203,7 @@ public:
 
     duplicator->SetInputImage(this->m_VolOrig);
     duplicator->Update();
-    SImageType::Pointer taggedImage = duplicator->GetOutput();
+    SImageType::Pointer taggedImage = duplicator->GetModifiableOutput();
 
     SImageType::PixelType low, high;
     setLowHigh<SImageType>(taggedImage, low, high, 0.01F);

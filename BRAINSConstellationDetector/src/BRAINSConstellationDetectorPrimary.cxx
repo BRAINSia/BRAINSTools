@@ -186,7 +186,7 @@ bool BRAINSConstellationDetectorPrimary::Compute( void )
       constellation2->SetLEPoint( houghEyeDetector->GetLE() );
       constellation2->SetREPoint( houghEyeDetector->GetRE() );
       constellation2->SetInput( houghEyeDetector->GetOutput() );
-      constellation2->SetHoughEyeTransform( houghEyeDetector->GetVersorTransform() );
+      constellation2->SetHoughEyeTransform( houghEyeDetector->GetModifiableVersorTransform() );
       constellation2->SetCenterOfHeadMass( houghTransformedCOHM );
       }
     else

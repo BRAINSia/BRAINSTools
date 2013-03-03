@@ -163,9 +163,9 @@ main(int argc, char *argv[])
 
     typedef SimpleHistogramMatchingType::HistogramType HistogramType;
 
-    HistogramType::Pointer srcHG = SHFilter->GetSourceHistogram();
-    HistogramType::Pointer refHG = SHFilter->GetReferenceHistogram();
-    HistogramType::Pointer outHG = SHFilter->GetOutputHistogram();
+    HistogramType::ConstPointer srcHG = SHFilter->GetSourceHistogram();
+    HistogramType::ConstPointer refHG = SHFilter->GetReferenceHistogram();
+    HistogramType::ConstPointer outHG = SHFilter->GetOutputHistogram();
 
     HistogramType::ConstIterator srcIt = srcHG->Begin();
     HistogramType::ConstIterator refIt = refHG->Begin();

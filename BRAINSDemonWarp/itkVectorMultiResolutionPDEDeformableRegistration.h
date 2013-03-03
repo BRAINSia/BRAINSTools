@@ -217,11 +217,7 @@ public:
 
   /** Set the moving image pyramid. */
   itkSetObjectMacro(FieldExpander, FieldExpanderType);
-
-  /** Get the moving image pyramid. */
-  itkGetObjectMacro(FieldExpander, FieldExpanderType); // HACK: This should use the future implemented
-                                                       // itkGetModifiableObjectMacro
-  itkGetConstObjectMacro(FieldExpander, FieldExpanderType);
+  itkGetModifiableObjectMacro(FieldExpander, FieldExpanderType);
 
   /** Get number of iterations per multi-resolution levels. */
   virtual const unsigned int * GetNumberOfIterations() const

@@ -90,9 +90,9 @@ void
 BRAINSDemonWarp<TImage, TRealImage, TOutputImage>
 ::InitializePreprocessor()
 {
-  this->m_Preprocessor->SetInputFixedImage( this->m_Parser->GetTheFixedImage() );
-  this->m_Preprocessor->SetInputMovingImage( this->m_Parser->GetTheMovingImage() );
-  this->m_Preprocessor->SetInitialDisplacementField( this->m_Parser->GetInitialDisplacementField() );
+  this->m_Preprocessor->SetInputFixedImage( this->m_Parser->GetModifiableTheFixedImage() );
+  this->m_Preprocessor->SetInputMovingImage( this->m_Parser->GetModifiableTheMovingImage() );
+  this->m_Preprocessor->SetInitialDisplacementField( this->m_Parser->GetModifiableInitialDisplacementField() );
   this->m_Preprocessor->SetUseHistogramMatching( this->GetUseHistogramMatching() );
   this->m_Preprocessor->SetNumberOfHistogramLevels( this->m_Parser->GetNumberOfHistogramLevels() );
   this->m_Preprocessor->SetNumberOfMatchPoints( this->m_Parser->GetNumberOfMatchPoints() );
@@ -105,7 +105,7 @@ BRAINSDemonWarp<TImage, TRealImage, TOutputImage>
   this->m_Preprocessor->SetSeed( this->GetSeed() );
   this->m_Preprocessor->SetOutDebug( this->GetOutDebug() );
   this->m_Preprocessor->SetMedianFilterSize( this->GetMedianFilterSize() );
-  this->m_Preprocessor->SetInitialDisplacementField( this->m_Parser->GetInitialDisplacementField() );
+  this->m_Preprocessor->SetInitialDisplacementField( this->m_Parser->GetModifiableInitialDisplacementField() );
 }
 
 /*This method initializes the registration process. The preprocessed output
@@ -121,10 +121,10 @@ BRAINSDemonWarp<TImage, TRealImage, TOutputImage>
   this->m_Registrator->SetCheckerBoardFilename( this->GetCheckerBoardFilename() );
   this->m_Registrator->SetDisplacementFieldOutputName( this->GetDisplacementFieldOutputName() );
   this->m_Registrator->SetCheckerBoardPattern( this->GetCheckerBoardPattern() );
-  this->m_Registrator->SetFixedImage( this->m_Preprocessor->GetOutputFixedImage() );
-  this->m_Registrator->SetMovingImage( this->m_Preprocessor->GetOutputMovingImage() );
-  this->m_Registrator->SetUnNormalizedMovingImage( this->m_Preprocessor->GetUnNormalizedMovingImage() );
-  this->m_Registrator->SetUnNormalizedFixedImage( this->m_Preprocessor->GetUnNormalizedFixedImage() );
+  this->m_Registrator->SetFixedImage( this->m_Preprocessor->GetModifiableOutputFixedImage() );
+  this->m_Registrator->SetMovingImage( this->m_Preprocessor->GetModifiableOutputMovingImage() );
+  this->m_Registrator->SetUnNormalizedMovingImage( this->m_Preprocessor->GetModifiableUnNormalizedMovingImage() );
+  this->m_Registrator->SetUnNormalizedFixedImage( this->m_Preprocessor->GetModifiableUnNormalizedFixedImage() );
 
   typedef typename Superclass::PreprocessorType::OutputImageType PPOutputImageType;
   DebugOutputWName(PPOutputImageType, this->m_Preprocessor->GetOutputFixedImage(), PreprocessorFixedImage);
@@ -134,7 +134,7 @@ BRAINSDemonWarp<TImage, TRealImage, TOutputImage>
   DebugOutputWName(PPOutputImageType,
                    this->m_Preprocessor->GetUnNormalizedMovingImage(), PreprocessorUnNormalizedMovingImage);
 
-  this->m_Registrator->SetInitialDisplacementField( this->m_Parser->GetInitialDisplacementField() );
+  this->m_Registrator->SetInitialDisplacementField( this->m_Parser->GetModifiableInitialDisplacementField() );
   this->m_Registrator->SetDefaultPixelValue( this->m_Preprocessor->GetDefaultPixelValue() );
   this->m_Registrator->SetUseHistogramMatching( this->GetUseHistogramMatching() );
   this->m_Registrator->SetNumberOfLevels( this->m_Parser->GetNumberOfLevels() );

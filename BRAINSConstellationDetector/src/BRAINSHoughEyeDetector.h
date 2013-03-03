@@ -164,10 +164,8 @@ public:
   itkGetConstMacro(MinInputPixelValue, OutputPixelType);
 
   /** Get the versor transform of the detector */
-  itkGetObjectMacro(VersorTransform, VersorTransformType);
-  itkGetConstObjectMacro(VersorTransform, VersorTransformType);
-  itkGetObjectMacro(InvVersorTransform, VersorTransformType);
-  itkGetConstObjectMacro(InvVersorTransform, VersorTransformType);
+  itkGetModifiableObjectMacro(VersorTransform, VersorTransformType);
+  itkGetModifiableObjectMacro(InvVersorTransform, VersorTransformType);
 
   /** Get/Set the failure report */
   itkGetConstMacro(Failure, bool);

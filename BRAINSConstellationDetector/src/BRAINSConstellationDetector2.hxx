@@ -153,7 +153,7 @@ BRAINSConstellationDetector2<TInputImage, TOutputImage>
     DuplicatorType::Pointer duplicator = DuplicatorType::New();
     duplicator->SetInputImage(this->m_OriginalInputImage);
     duplicator->Update();
-    volOrig = duplicator->GetOutput();
+    volOrig = duplicator->GetModifiableOutput();
     }
 
   // RPPC is a vector on the MSP that points from the RP point to the PC.
@@ -225,12 +225,12 @@ BRAINSConstellationDetector2<TInputImage, TOutputImage>
     duplicator->SetInputImage( this->GetInput() );
     duplicator->Update();
     // The detector will use the output image after the Hough eye detector
-    myDetector.SetVolOrig( duplicator->GetOutput() );
+    myDetector.SetVolOrig( duplicator->GetModifiableOutput() );
 
     // The detector also needs the original input if it has to fix a bad estimation of the MSP
     duplicator->SetInputImage( image );
     duplicator->Update();
-    myDetector.SetOriginalInput( duplicator->GetOutput() );
+    myDetector.SetOriginalInput( duplicator->GetModifiableOutput() );
     }
 
   myDetector.SetInputTemplateModel( myModel );

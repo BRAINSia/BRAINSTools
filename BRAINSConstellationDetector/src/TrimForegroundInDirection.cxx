@@ -76,7 +76,7 @@ SImageType::PointType TrimForegroundInDirection(SImageType::Pointer & foreground
 
   findCenterFilter->Update();
 
-  foreground = findCenterFilter->GetTrimmedImage();
+  foreground = findCenterFilter->GetModifiableTrimmedImage();
   SImageType::PointType center = findCenterFilter->GetCenterOfBrain();
   return center;
 }

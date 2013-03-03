@@ -222,7 +222,7 @@ void landmarksConstellationDetector::Compute( void )
     DuplicatorType::Pointer duplicator = DuplicatorType::New();
     duplicator->SetInputImage( new_input );
     duplicator->Update();
-    this->m_OriginalInput = duplicator->GetOutput();
+    this->m_OriginalInput = duplicator->GetModifiableOutput();
 
     // Before passing the new_input to the ComputeMSP function, we need to find its center of head mass,
     // and run Hough eye detector on that.
@@ -259,7 +259,7 @@ void landmarksConstellationDetector::Compute( void )
       std::cout << "Failed to find eye centers exception occured" << std::endl;
       }
 
-    this->m_HoughEyeTransform = houghEyeDetector->GetVersorTransform();
+    this->m_HoughEyeTransform = houghEyeDetector->GetModifiableVersorTransform();
     this->m_LEPoint = houghEyeDetector->GetLE();
     this->m_REPoint = houghEyeDetector->GetRE();
 

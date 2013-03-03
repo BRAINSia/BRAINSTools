@@ -407,7 +407,7 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
         //
         // lower the number of samples you request
         typename MetricType::Pointer autoResetNumberOfSamplesMetric =
-          dynamic_cast<MetricType *>( this->m_Registration->GetMetric() );
+          dynamic_cast<MetricType *>( this->m_Registration->GetModifiableMetric() );
         if( autoResetNumberOfSamplesMetric.IsNull() )
           {
           std::cout << "ERROR::" << __FILE__ << " " << __LINE__ << std::endl;

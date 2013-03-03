@@ -102,9 +102,9 @@ public:
   itkGetConstObjectMacro(MovingVolume, MovingImageType);
 
   itkSetObjectMacro(FixedBinaryVolume, FixedBinaryVolumeType);
-  itkGetConstObjectMacro(FixedBinaryVolume, FixedBinaryVolumeType);
+  itkGetModifiableObjectMacro(FixedBinaryVolume, FixedBinaryVolumeType);
   itkSetObjectMacro(MovingBinaryVolume, MovingBinaryVolumeType);
-  itkGetConstObjectMacro(MovingBinaryVolume, MovingBinaryVolumeType);
+  itkGetModifiableObjectMacro(MovingBinaryVolume, MovingBinaryVolumeType);
 
   itkSetMacro(OutputFixedVolumeROI,  std::string);
   itkGetConstMacro(OutputFixedVolumeROI,  std::string);
@@ -112,8 +112,7 @@ public:
   itkGetConstMacro(OutputMovingVolumeROI, std::string);
 
   itkSetObjectMacro(CostMetricObject, MetricType);
-  itkGetObjectMacro(CostMetricObject, MetricType); // HACK:  Should not provide this interface
-  itkGetConstObjectMacro(CostMetricObject, MetricType);
+  itkGetModifiableObjectMacro(CostMetricObject, MetricType);
 
   // TODO:  This should be converted to use the
   //       interpolation mechanisms from GenericTransform
@@ -149,7 +148,6 @@ public:
   itkGetConstMacro(MaxBSplineDisplacement,        double);
   itkSetMacro(BackgroundFillValue,           double);
   itkGetConstMacro(BackgroundFillValue,           double);
-  VECTORitkSetMacro(TransformType, std::vector<std::string> );
   itkSetMacro(InitializeTransformMode, std::string);
   itkGetConstMacro(InitializeTransformMode, std::string);
   itkSetMacro(UseExplicitPDFDerivativesMode, std::string);
@@ -158,6 +156,10 @@ public:
   itkGetConstMacro(MaskInferiorCutOffFromCenter, double);
   itkSetMacro(CurrentGenericTransform,  GenericTransformType::Pointer);
   itkGetConstMacro(CurrentGenericTransform,  GenericTransformType::Pointer);
+
+  // cppcheck-suppress unusedFunction
+  VECTORitkSetMacro(TransformType, std::vector<std::string> );
+  // cppcheck-suppress unusedFunction
   VECTORitkSetMacro(SplineGridSize, std::vector<int>       );
 
   itkGetConstMacro(ActualNumberOfIterations,      unsigned int);

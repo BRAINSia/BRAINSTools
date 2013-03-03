@@ -120,20 +120,15 @@ public:
   void Execute();
 
   /** Get pointer to the atlas image. */
-  itkGetObjectMacro(TheMovingImage, ImageType);
-  itkGetConstObjectMacro(TheMovingImage, ImageType);
-
-  /** Get pointer to the subject image. */
-  itkGetObjectMacro(TheFixedImage, ImageType); // HACK: should provide modifieable version of this
-  itkGetConstObjectMacro(TheFixedImage, ImageType);
+  itkGetModifiableObjectMacro(TheMovingImage, ImageType);
+  itkGetModifiableObjectMacro(TheFixedImage, ImageType);
 
   /**force Centered Image.*/
   itkSetMacro(ForceCoronalZeroOrigin, bool);
   itkGetConstMacro(ForceCoronalZeroOrigin, bool);
 
   /** Get pointer to the subject image. */
-  itkGetObjectMacro(InitialDisplacementField, TDisplacementField); // HACK: Should provide modifiable version of this
-  itkGetConstObjectMacro(InitialDisplacementField, TDisplacementField);
+  itkGetModifiableObjectMacro(InitialDisplacementField, TDisplacementField);
 
   /** Get the number of histogram bins. */
   itkGetConstMacro(NumberOfHistogramLevels, unsigned long);

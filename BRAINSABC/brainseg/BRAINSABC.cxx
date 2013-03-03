@@ -408,7 +408,7 @@ static FloatImageType::Pointer AverageImageList(
   DuplicatorType::Pointer duplicator = DuplicatorType::New();
   duplicator->SetInputImage(inputImageList[0]);
   duplicator->Update();
-  FloatImageType::Pointer averageImage = duplicator->GetOutput();
+  FloatImageType::Pointer averageImage = duplicator->GetModifiableOutput();
 
   // Create an image iterator over the first image.
   typedef itk::ImageRegionIterator<FloatImageType> ImageRegionIteratorType;

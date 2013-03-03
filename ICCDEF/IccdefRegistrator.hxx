@@ -130,8 +130,8 @@ IccdefRegistrator<TRealImage, TOutputImage, TFieldValue>::IccdefRegistrator()
   typename FieldInterpolatorType::Pointer VectorInterpolator21
     = FieldInterpolatorType::New();
 
-  this->m_Registration->GetFieldExpander12()->SetInterpolator(VectorInterpolator12);
-  this->m_Registration->GetFieldExpander21()->SetInterpolator(VectorInterpolator21);
+  this->m_Registration->GetModifiableFieldExpander12()->SetInterpolator(VectorInterpolator12);
+  this->m_Registration->GetModifiableFieldExpander21()->SetInterpolator(VectorInterpolator21);
 
   // Default parameters
   this->m_NumberOfLevels = 1;

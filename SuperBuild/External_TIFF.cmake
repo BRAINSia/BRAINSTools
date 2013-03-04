@@ -7,6 +7,8 @@ if(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED)
 endif()
 set(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED 1)
 
+include(${CMAKE_CURRENT_LIST_DIR}/EP_Autoconf_Utils.cmake)
+
 ## External_${extProjName}.cmake files can be recurisvely included,
 ## and cmake variables are global, so when including sub projects it
 ## is important make the extProjName and proj variables
@@ -18,8 +20,8 @@ ProjectDependancyPush(CACHED_proj ${proj})
 # Make sure that the ExtProjName/IntProjName variables are unique globally
 # even if other External_${ExtProjName}.cmake files are sourced by
 # SlicerMacroCheckExternalProjectDependency
-set(extProjName DoubleConvert) #The find_package known name
-set(proj        DoubleConvert) #This local name
+set(extProjName TIFF) #The find_package known name
+set(proj        TIFF) #This local name
 
 #if(${USE_SYSTEM_${extProjName}})
 #  unset(${extProjName}_DIR CACHE)
@@ -31,60 +33,56 @@ if(DEFINED ${extProjName}_DIR AND NOT EXISTS ${${extProjName}_DIR})
 endif()
 
 # Set dependency list
-set(${proj}_DEPENDENCIES "")
-if(${PROJECT_NAME}_BUILD_DICOM_SUPPORT)
-  list(APPEND ${proj}_DEPENDENCIES DCMTK)
-endif()
+set(${proj}_DEPENDENCIES JPEG)
 
 # Include dependent projects if any
 SlicerMacroCheckExternalProjectDependency(${proj})
 
-if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}" AND NOT "${USE_SYSTEM_${extProjName}}" ) ) )
+if(NOT ( DEFINED "${extProjName}_DIR"
+      OR ( DEFINED "${USE_SYSTEM_${extProjName}}"
+        AND NOT "${USE_SYSTEM_${extProjName}}" ) ) )
   #message(STATUS "${__indent}Adding project ${proj}")
 
-  # Set CMake OSX variable to pass down the external project
-  set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
+  set(TIFF_URL "http://download.osgeo.org/libtiff/tiff-4.0.3.tar.gz")
+  set(TIFF_MD5 "051c1068e6a0627f461948c365290410")
   if(APPLE)
-    list(APPEND CMAKE_OSX_EXTERNAL_PROJECT_ARGS
-      -DCMAKE_OSX_ARCHITECTURES=${CMAKE_OSX_ARCHITECTURES}
-      -DCMAKE_OSX_SYSROOT=${CMAKE_OSX_SYSROOT}
-      -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET})
+    set(APPLE_CFLAGS " -DHAVE_APPLE_OPENGL_FRAMEWORK")
   endif()
 
-  ### --- Project specific additions here
+  AutoConf_FLAGS(${proj}_CFLAGS C "${APPLE_CFLAGS}")
+  AutoConf_FLAGS(${proj}_CXXFLAGS CXX "${APPLE_CFLAGS}")
 
-  if(NOT DEFINED git_protocol)
-      set(git_protocol "git")
-  endif()
-
-  set(${proj}_CMAKE_OPTIONS
-      -DBUILD_TESTING:BOOL=OFF
-      -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/${proj}-install
-    )
   ### --- End Project specific additions
-  set(${proj}_REPOSITORY ${git_protocol}://github.com/BRAINSia/double-conversion.git)
-  set(${proj}_GIT_TAG e5e143791e4815ac19b10570e010d83d55c2c25b)
   ExternalProject_Add(${proj}
-    GIT_REPOSITORY ${${proj}_REPOSITORY}
-    GIT_TAG ${${proj}_GIT_TAG}
+    URL ${TIFF_URL}
+    ${URL_HASH_CLAUSE}
+    URL_MD5 ${TIFF_MD5}
     SOURCE_DIR ${proj}
     BINARY_DIR ${proj}-build
+    INSTALL_DIR ${proj}-install
     ${cmakeversion_external_update} "${cmakeversion_external_update_value}"
     CMAKE_GENERATOR ${gen}
-    CMAKE_ARGS
-      -Wno-dev
-      --no-warn-unused-cli
-      ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
-      ${COMMON_EXTERNAL_PROJECT_ARGS}
-      ${${proj}_CMAKE_OPTIONS}
-## We really do want to install in order to limit # of include paths INSTALL_COMMAND ""
+    CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=<INSTALL_DIR>
+    --enable-shared=No
+    --enable-static=Yes
+    --with-jpeg-lib-dir=${JPEG_LIB_DIR}
+    --with-jpeg-include-dir=${JPEG_INCLUDE_DIR}
+    CC=${CMAKE_C_COMPILER}
+    CXX=${CMAKE_CXX_COMPILER}
+    "CFLAGS=${${proj}_CFLAGS}"
+    "CXXFLAGS=${${proj}_CXXFLAGS}"
     DEPENDS
       ${${proj}_DEPENDENCIES}
   )
-  set(${extProjName}_DIR ${CMAKE_BINARY_DIR}/${proj}-install/lib/cmake/double-conversion)
+
+  set(${extProjName}_DIR ${CMAKE_BINARY_DIR}/${proj}-install)
+  set(${extProjName}_INCLUDE_DIR
+    ${CMAKE_BINARY_DIR}/${proj}-install/include)
+  set(${extProjName}_LIBRARY
+    ${CMAKE_BINARY_DIR}/${proj}-install/lib/libtiff.a)
 else()
   if(${USE_SYSTEM_${extProjName}})
-    find_package(${extProjName} ${ITK_VERSION_MAJOR} REQUIRED)
+    find_package(${extProjName} REQUIRED)
     if(NOT ${extProjName}_DIR)
       message(FATAL_ERROR "To use the system ${extProjName}, set ${extProjName}_DIR")
     endif()

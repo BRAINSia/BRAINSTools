@@ -31,7 +31,7 @@ if(DEFINED ${extProjName}_DIR AND NOT EXISTS ${${extProjName}_DIR})
 endif()
 
 # Set dependency list
-set(${proj}_DEPENDENCIES "")
+set(${proj}_DEPENDENCIES TIFF)
 
 # Include dependent projects if any
 SlicerMacroCheckExternalProjectDependency(${proj})
@@ -57,19 +57,27 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
   ### --- Project specific additions here
   set(${proj}_CMAKE_OPTIONS
       -DDCMTK_WITH_DOXYGEN:BOOL=OFF
-      -DDCMTK_WITH_ZLIB:BOOL=OFF # see CTK github issue #25
+      -DDCMTK_WITH_ZLIB:BOOL=ON # see CTK github issue #25
       -DDCMTK_WITH_OPENSSL:BOOL=OFF # see CTK github issue #25
       -DDCMTK_WITH_PNG:BOOL=OFF # see CTK github issue #25
-      -DDCMTK_WITH_TIFF:BOOL=OFF  # see CTK github issue #25
+      -DDCMTK_WITH_TIFF:BOOL=ON  # see CTK github issue #25
       -DDCMTK_WITH_XML:BOOL=OFF  # see CTK github issue #25
       -DDCMTK_WITH_ICONV:BOOL=OFF  # see CTK github issue #178
       -DDCMTK_FORCE_FPIC_ON_UNIX:BOOL=ON
       -DDCMTK_OVERWRITE_WIN32_COMPILER_FLAGS:BOOL=OFF
       -DDCMTK_WITH_WRAP:BOOL=OFF   # CTK does not build on Mac with this option turned ON due to library dependencies missing
+#      -DTIFF_DIR:PATH=${TIFF_DIR}
+      -DTIFF_LIBRARY:FILEPATH=${TIFF_LIBRARY}
+      -DTIFF_INCLUDE_DIR:PATH=${TIFF_INCLUDE_DIR}
+      -DJPEG_LIBRARY:FILEPATH=${JPEG_LIBRARY}
+      -DJPEG_INCLUDE_DIR:PATH=${JPEG_INCLUDE_DIR}
   )
   ### --- End Project specific additions
-  set(${proj}_REPOSITORY ${git_protocol}://github.com/commontk/DCMTK.git)
-  set(${proj}_GIT_TAG "d06e2b7d9bafb23df4e969482a68b50fc75aaaa9")
+#  set(${proj}_REPOSITORY ${git_protocol}://github.com/commontk/DCMTK.git)
+#  set(${proj}_GIT_TAG "d06e2b7d9bafb23df4e969482a68b50fc75aaaa9")
+  set(${proj}_REPOSITORY https://github.com/InsightSoftwareConsortium/DCMTK.git)
+  set(${proj}_GIT_TAG AddProperConfig)
+
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${${proj}_REPOSITORY}
     GIT_TAG ${${proj}_GIT_TAG}
@@ -93,7 +101,7 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
     DEPENDS
       ${${proj}_DEPENDENCIES}
   )
-  set(${extProjName}_DIR ${CMAKE_BINARY_DIR}/${proj}-install)
+  set(${extProjName}_DIR ${CMAKE_BINARY_DIR}/${proj}-install/lib/cmake/dcmtk)
 else()
   if(${USE_SYSTEM_${extProjName}})
     find_package(${extProjName} REQUIRED)

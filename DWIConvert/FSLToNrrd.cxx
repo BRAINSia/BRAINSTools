@@ -78,6 +78,9 @@ FSLToNrrd(const std::string & inputVolume,
   header.open(outputVolume.c_str(), std::ios::out | std::ios::binary);
   header.precision(17);
   header << "NRRD0005" << std::endl;
+  header << "# This file was created by DWIConvert version 1.0" << std::endl
+         << "# https://github.com/BRAINSia/BRAINSTools" << std::endl
+         << "# part of the BRAINSTools package." << std::endl
   header << "type: short" << std::endl;
   header << "dimension: 4" << std::endl;
 

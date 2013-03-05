@@ -1967,6 +1967,22 @@ int main(int argc, char *argv[])
       header << "NRRD0005" << std::endl
              << std::setprecision(17) << std::scientific;
 
+      // stamp with DWIConvert branding
+      header << "# This file was created by DWIConvert version 1.0" << std::endl
+             << "# https://github.com/BRAINSia/BRAINSTools" << std::endl
+             << "# part of the BRAINSTools package." << std::endl
+             << "# Command line options:" << std::endl
+             << "# --smallGradientThreshold " << smallGradientThreshold << std::endl;
+      if(useIdentityMeaseurementFrame)
+        {
+        header << "# --useIdentityMeasurementFrame" << std::endl;
+        }
+      if(useBMatrixGradientDirections)
+        {
+        header << "# --useBMatrixGradientDirections" << std::endl;
+        }
+      header << "#" << std::endl << "#" << std::endl;
+
       if( !nrrdFormat )
         {
         header << "content: exists(" << itksys::SystemTools::GetFilenameName(outputVolumeDataName) << ",0)"

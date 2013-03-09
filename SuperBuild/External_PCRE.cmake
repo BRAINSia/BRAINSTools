@@ -33,8 +33,8 @@ configure_file(
 set(pcre_CONFIGURE_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/pcre_configure_step.cmake)
 
 ExternalProject_add(PCRE
-  URL http://downloads.sourceforge.net/project/pcre/pcre/8.31/pcre-8.31.tar.gz
-  URL_MD5 fab1bb3b91a4c35398263a5c1e0858c1
+  URL http://downloads.sourceforge.net/project/pcre/pcre/8.32/pcre-8.32.tar.gz
+  URL_MD5 234792d19a6c3c34a13ff25df82c1ce7
   ${cmakeversion_external_update} "${cmakeversion_external_update_value}"
   CONFIGURE_COMMAND ${pcre_CONFIGURE_COMMAND}
   )

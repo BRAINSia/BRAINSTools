@@ -81,8 +81,8 @@ FSLToNrrd(const std::string & inputVolume,
   header << "# This file was created by DWIConvert version 1.0" << std::endl
          << "# https://github.com/BRAINSia/BRAINSTools" << std::endl
          << "# part of the BRAINSTools package." << std::endl
-  header << "type: short" << std::endl;
-  header << "dimension: 4" << std::endl;
+         << "type: short" << std::endl
+         << "dimension: 4" << std::endl;
 
   // need to check
   header << "space: left-posterior-superior" << std::endl;

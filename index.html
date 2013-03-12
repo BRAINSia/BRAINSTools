@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="BRAINSTools : A suite of tools for medical image processing focused on brain analysis" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>BRAINSTools</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/BRAINSia/BRAINSTools">View on GitHub</a>
+
+          <h1 id="project_title">BRAINSTools</h1>
+          <h2 id="project_tagline">A suite of tools for medical image processing focused on brain analysis</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/BRAINSia/BRAINSTools/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/BRAINSia/BRAINSTools/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>Developers</h1>
+
+<p>To get started, run: </p>
+
+<pre><code>./Utilities/SetupForDevelopment.sh
+</code></pre>
+
+<hr><p>Example session for a clean build:</p>
+
+<pre><code>mkdir ~/src/mytester
+cd ~/src/mytester
+git clone git://github.com/BRAINSia/BRAINSTools.git
+cd BRAINSTools/
+bash ./Utilities/SetupForDevelopment.sh
+mkdir -p ../BRAINSTools-build
+cd ../BRAINSTools-build/
+
+CC=/usr/bin/gcc-4.2 /
+CXX=/usr/bin/g++-4.2 /
+ccmake ../BRAINSTools /
+-DUSE_BRAINSFit:BOOL=ON /
+-DUSE_BRAINSConstellationDetector:BOOL=ON /
+-DUSE_BRAINSABC:BOOL=ON
+
+make -j24 -k
+</code></pre>
+
+<p><em>NOTE:  The fetching of data still has problems with parallel builds, so we need to restart it a few times</em></p>
+
+<pre><code>make
+make
+make
+</code></pre>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">BRAINSTools maintained by <a href="https://github.com/BRAINSia">BRAINSia</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>

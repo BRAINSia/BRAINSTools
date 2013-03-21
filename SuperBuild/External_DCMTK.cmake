@@ -68,8 +68,9 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
       -DDCMTK_WITH_WRAP:BOOL=OFF   # CTK does not build on Mac with this option turned ON due to library dependencies missing
   )
   ### --- End Project specific additions
-  set(${proj}_REPOSITORY ${git_protocol}://github.com/commontk/DCMTK.git)
-  set(${proj}_GIT_TAG "d06e2b7d9bafb23df4e969482a68b50fc75aaaa9")
+  set(${proj}_REPOSITORY ${git_protocol}://github.com/InsightSoftwareConsortium/DCMTK.git)
+  set(${proj}_GIT_TAG "257e800c42f40ff3207a9242fa225c850c56dd07")
+
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${${proj}_REPOSITORY}
     GIT_TAG ${${proj}_GIT_TAG}

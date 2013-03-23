@@ -99,6 +99,11 @@ BRAINSROIAUTOWriteOutputVolume(VolumeImageType::Pointer image,
       {
       desiredSize[i] = maxIndex[i] - minIndex[i] - 1;
       }
+    //Now make the desiredSize an even number.
+    for( VolumeMaskType::IndexType::IndexValueType i = 0; i < VolumeMaskType::ImageDimension; ++i )
+      {
+      desiredSize[i] += (desiredSize[i] % 2); //If even number, then add 0, if odd number, then add 1.
+      }
     VolumeMaskType::RegionType desiredRegion(minIndex, desiredSize);
 
     typedef itk::ExtractImageFilter<WriteOutImageType, WriteOutImageType> ExtractorType;

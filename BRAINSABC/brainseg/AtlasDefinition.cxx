@@ -4,7 +4,7 @@
 #include <fstream>
 #include <cstdlib>
 #include <itksys/SystemTools.hxx>
-#include "DoubleToString.h"
+#include "itkNumberToString.h"
 
 namespace // anon
 {
@@ -304,7 +304,7 @@ AtlasDefinition::InitFromXML(const std::string & XMLFilename)
 void
 AtlasDefinition::DebugPrint()
 {
-  DoubleToString doubleConvert;
+  itk::NumberToString<double> doubleConvert;
   std::cout << "<Atlas>" << std::endl;
 
   for( TemplateMap::iterator it

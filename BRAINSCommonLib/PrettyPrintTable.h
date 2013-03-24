@@ -4,7 +4,7 @@
 #include <vector>
 #include <string>
 #include <ostream>
-#include "DoubleToString.h"
+#include "itkNumberToString.h"
 #if defined( _WIN32 ) || defined( _WIN64 )
 // Windows uses a different function name for this behavior.
 #define SNPRINTF_FUNC _snprintf
@@ -98,7 +98,7 @@ public:
       }
     else
       {
-      DoubleToString doubleToString;
+      itk::NumberToString<double> doubleToString;
       std::string    val = doubleToString(x);
       this->add(row, column, val.c_str() );
       }

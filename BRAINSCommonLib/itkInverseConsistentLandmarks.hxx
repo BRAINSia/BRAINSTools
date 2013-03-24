@@ -20,7 +20,7 @@
 #include <cmath>
 #include <string>
 #include <iostream>
-#include "DoubleToString.h"
+#include "itkNumberToString.h"
 
 namespace itk
 {
@@ -230,7 +230,7 @@ template <typename PointStorageType, typename PointSetType>
 bool InverseConsistentLandmarks<PointStorageType, PointSetType>
 ::PrintPointTypes(void) const
 {
-  DoubleToString doubleConvert;
+  itk::NumberToString<double> doubleConvert;
 
   printf("#IMAGEDIMS %6hu %6hu %6hu %6hu\n",
          ImageDims[0],
@@ -1116,7 +1116,7 @@ InverseConsistentLandmarks<PointStorageType, PointSetType>
 {
   // Open the files
   FILE *         tempfile = fopen(lmrkfilename.c_str(), "w");
-  DoubleToString doubleConvert;
+  itk::NumberToString<double> doubleConvert;
 
   if( tempfile == NULL )
     {

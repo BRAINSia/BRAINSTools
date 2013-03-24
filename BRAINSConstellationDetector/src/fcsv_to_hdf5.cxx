@@ -37,7 +37,7 @@ benefits more from readability than speed.
 
 #include "itkPoint.h"
 #include "fcsv_to_hdf5CLP.h"
-#include "DoubleToString.h"
+#include "itkNumberToString.h"
 
 #include "LLSModel.h"
 #include "BRAINSThreadControl.h"
@@ -814,7 +814,7 @@ This information is now completely contained in the byClassLandmarkMatrix object
   // txt version
   std::ofstream fid;
   fid.open("LME_EPCA.txt");
-  DoubleToString doubleToString;
+  itk::NumberToString<double> doubleToString;
   for( unsigned int i = 0; i < numNewLandmarks; i++ )
     {
     fid << byClassLandmarkMatrix["newLandmarks"][i].first << std::endl;

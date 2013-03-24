@@ -8,7 +8,7 @@
 #include "itkImageFileWriter.h"
 #include "vcl_algorithm.h"
 #include "BinaryMaskEditorBasedOnLandmarksCLP.h"
-#include "DoubleToString.h"
+#include "itkNumberToString.h"
 
 class ThreeLandmarksForPlane
 {
@@ -23,7 +23,7 @@ public:
 
   void SetNormal()
   {
-    DoubleToString doubleConvert;
+    itk::NumberToString<double> doubleConvert;
     // Determine AB and AC vector components
     VectorType AB;
 

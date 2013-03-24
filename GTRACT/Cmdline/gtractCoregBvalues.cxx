@@ -38,13 +38,13 @@
 #include "gtractCoregBvaluesCLP.h"
 #include "BRAINSThreadControl.h"
 #include "itkOrthogonalize3DRotationMatrix.h"
-#include "DoubleToString.h"
+#include "itkNumberToString.h"
 
 int main(int argc, char *argv[])
 {
   PARSE_ARGS;
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
-  DoubleToString                                        doubleConvert;
+  itk::NumberToString<double>                                        doubleConvert;
   bool                                                  debug = true;
   if( debug )
     {

@@ -14,7 +14,7 @@
 #include "itkFindCenterOfBrainFilter.h"
 #include "itkIO.h"
 #include <FindCenterOfBrainCLP.h>
-#include "DoubleToString.h"
+#include "itkNumberToString.h"
 
 int main(int argc, char * *argv)
 {
@@ -71,7 +71,7 @@ int main(int argc, char * *argv)
     }
   FindCenterFilterType::PointType center =
     filter->GetCenterOfBrain();
-  DoubleToString doubleConvert;
+  itk::NumberToString<double> doubleConvert;
   std::cout << "Center Of Brain:"
             << " " << doubleConvert(center[0])
             << " " << doubleConvert(center[1])

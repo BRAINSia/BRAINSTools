@@ -14,7 +14,7 @@
 #include <itkContinuousIndex.h>
 #include "landmarksDataSet.h"
 #include "landmarksConstellationModelBase.h"
-#include "DoubleToString.h"
+#include "itkNumberToString.h"
 // HACK:  Remove the multiple inheritance here.
 class landmarksConstellationTrainingDefinitionIO : public landmarksConstellationModelBase,
   public std::vector<landmarksDataSet>   // This should be a private member
@@ -133,7 +133,7 @@ private:
 inline
 std::ostream & operator<<(std::ostream & os, const landmarksConstellationTrainingDefinitionIO & def)
 {
-  DoubleToString doubleToString;
+  itk::NumberToString<double> doubleToString;
 
   os << def.GetNumDataSets() << std::endl;
   os << def.GetSearchboxDims() << " "

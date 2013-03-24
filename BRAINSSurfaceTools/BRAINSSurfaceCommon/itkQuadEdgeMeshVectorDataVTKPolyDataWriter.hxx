@@ -20,7 +20,7 @@
 
 #include "itkQuadEdgeMeshVectorDataVTKPolyDataWriter.h"
 #include "itkMeasurementVectorTraits.h"
-#include "DoubleToString.h"
+#include "itkNumberToString.h"
 
 namespace itk
 {
@@ -60,7 +60,7 @@ QuadEdgeMeshVectorDataVTKPolyDataWriter<TMesh>
 ::WriteCellData()
 {
   CellDataContainerConstPointer celldata = this->m_Input->GetCellData();
-  DoubleToString                doubleToString;
+  itk::NumberToString<double>                doubleToString;
 
   if( celldata )
     {
@@ -123,7 +123,7 @@ QuadEdgeMeshVectorDataVTKPolyDataWriter<TMesh>
 ::WritePointData()
 {
   PointDataContainerConstPointer pointdata = this->m_Input->GetPointData();
-  DoubleToString                 doubleToString;
+  itk::NumberToString<double>                 doubleToString;
 
   if( pointdata )
     {

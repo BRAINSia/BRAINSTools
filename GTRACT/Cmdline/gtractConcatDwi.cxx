@@ -35,7 +35,7 @@
 #else
 #include <itkComposeImageFilter.h>
 #endif
-#include "DoubleToString.h"
+#include "itkNumberToString.h"
 
 #include "gtractConcatDwiCLP.h"
 #include "BRAINSThreadControl.h"
@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
 {
   PARSE_ARGS;
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
-  DoubleToString                                        doubleConvert;
+  itk::NumberToString<double>                                        doubleConvert;
   const int                                             numberOfImages = inputVolume.size();
   bool                                                  debug = true;
   if( debug )

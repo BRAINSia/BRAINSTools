@@ -5,12 +5,12 @@
  */
 
 #include "Slicer3LandmarkIO.h"
-#include "DoubleToString.h"
+#include "itkNumberToString.h"
 void
 WriteITKtoSlicer3Lmk( const std::string & landmarksFilename,
                       const LandmarksMapType & landmarks )
 {
-  DoubleToString    doubleConvert;
+  itk::NumberToString<double>    doubleConvert;
   const std::string fullPathLandmarksFileName = itksys::SystemTools::CollapseFullPath( landmarksFilename.c_str() );
 
   std::stringstream lmkPointStream;

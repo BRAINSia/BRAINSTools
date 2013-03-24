@@ -5,12 +5,12 @@
  */
 
 #include "Slicer3LandmarkWeightIO.h"
-#include "DoubleToString.h"
+#include "itkNumberToString.h"
 void
 WriteITKtoSlicer3LmkWts( const std::string & landmarksWeightFilename,
                          const LandmarksWeightMapType & landmarks )
 {
-  DoubleToString doubleConvert;
+  itk::NumberToString<double> doubleConvert;
 
   const std::string fullPathLandmarksWeightFileName =
     itksys::SystemTools::CollapseFullPath( landmarksWeightFilename.c_str() );

@@ -12,7 +12,7 @@
 #include <sstream>
 #include <iomanip>
 #include <string>
-#include "DoubleToString.h"
+#include "itkNumberToString.h"
 
 template <typename TArg>
 int
@@ -196,7 +196,7 @@ inline int
 WriteBVectors(const std::vector<std::vector<TScalar> > & bVectors,
               const std::string & filename)
 {
-  DoubleToString DoubleConvert;
+  itk::NumberToString<double> DoubleConvert;
   std::ofstream  bVecFile;
 
   bVecFile.open(filename.c_str(), std::ios::out | std::ios::binary);

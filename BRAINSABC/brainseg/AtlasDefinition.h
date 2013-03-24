@@ -6,7 +6,7 @@
 #include <list>
 #include <map>
 #include <iostream>
-#include "DoubleToString.h"
+#include "itkNumberToString.h"
 /** \class AtlasDefiniton */
 class AtlasDefinition
 {
@@ -46,7 +46,7 @@ public:
 
     void Print(void) const
     {
-      DoubleToString ds;
+      itk::NumberToString<double> ds;
       std::cout << "RANGE:  [" << ds(m_Low) << "," << ds(m_High) << "]" << std::endl;
     }
 

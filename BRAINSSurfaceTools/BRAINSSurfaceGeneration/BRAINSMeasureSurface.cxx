@@ -36,7 +36,7 @@
 #include <sys/stat.h>
 #include <ctime>
 #include <algorithm>
-#include "DoubleToString.h"
+#include "itkNumberToString.h"
 template <class T>
 const T & min( const T & a, const T & b )
 {
@@ -62,7 +62,7 @@ int main( int argc, char * *argv )
     std::cout << "\t\t" << i << ": " << labels[i] << std::endl;
     }
   std::cout << "------------------------------------------------------" << std::endl;
-  DoubleToString doubleToString;
+  itk::NumberToString<double> doubleToString;
   // Read Surface
   vtkPolyData *surfaceData = vtkPolyData::New();
 

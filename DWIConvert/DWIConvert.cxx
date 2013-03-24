@@ -48,7 +48,7 @@ DICOM Data Dictionary: http://medical.nema.org/Dicom/2011/11_06pu.pdf
 #include "djdecode.h"
 #include "StringContains.h"
 #include "DWIConvertUtils.h"
-#include "DoubleToString.h"
+#include "itkNumberToString.h"
 
 unsigned int ConvertFromCharPtr(const char *s)
 {
@@ -410,7 +410,7 @@ int main(int argc, char *argv[])
   PARSE_ARGS;
 
   // just need one instance to do double to string conversions
-  DoubleToString DoubleConvert;
+  itk::NumberToString<double> DoubleConvert;
 
   if( conversionMode == "FSLToNrrd" )
     {

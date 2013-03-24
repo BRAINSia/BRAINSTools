@@ -5,7 +5,7 @@
  */
 
 #include "QLabelList.h"
-#include "DoubleToString.h"
+#include "itkNumberToString.h"
 
 void QLabelList::createListItemSlot(const QString & label)
 {
@@ -358,7 +358,7 @@ void QLabelList::saveAsLandmarks()
 
 void QLabelList::writeLandmarks()
 {
-  DoubleToString doubleConvert;
+  itk::NumberToString<double> doubleConvert;
 
   assert(m_outputLandmarks.compare("") != 0);
   assert(m_inputVolume.compare("") != 0);

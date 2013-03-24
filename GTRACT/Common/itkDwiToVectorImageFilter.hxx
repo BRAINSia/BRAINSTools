@@ -205,7 +205,7 @@ DwiToVectorImageFilter<TInputImage, TOutputImage>
   NrrdValue = "DWMRI";
   itk::EncapsulateMetaData<std::string>(meta, "modality", NrrdValue);
 
-  DoubleToString doubleConvert;
+  itk::NumberToString<double> doubleConvert;
 
   NrrdValue = doubleConvert(m_BValue);
   itk::EncapsulateMetaData<std::string>(meta, "DWMRI_b-value", NrrdValue);

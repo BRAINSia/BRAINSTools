@@ -40,7 +40,7 @@
 
 #include "gtractResampleDWIInPlaceCLP.h"
 #include "itkImageDuplicator.h"
-#include "DoubleToString.h"
+#include "itkNumberToString.h"
 /**
  * \author Hans J. Johnson
  * \brief This templated function will duplicate the input image, change the direction and origin to refelect the physical space
@@ -84,7 +84,7 @@ int main(int argc, char *argv[])
 {
   PARSE_ARGS;
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
-  DoubleToString                                        doubleConvert;
+  itk::NumberToString<double>                                        doubleConvert;
   itk::AddExtraTransformRegister();
 
   bool debug = true;

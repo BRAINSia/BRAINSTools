@@ -21,7 +21,6 @@ set(BRAINSCommonLib_SRCS
   itkOrthogonalize3DRotationMatrix.cxx
   BRAINSThreadControl.cxx
   ExtractSingleLargestRegion.cxx
-  DoubleToString.cxx
 )
 
 ## Always build BRAINSCommonLib as static

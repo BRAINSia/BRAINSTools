@@ -1,7 +1,7 @@
 #include "EMSParameters.h"
 
 #include "itksys/SystemTools.hxx"
-#include "DoubleToString.h"
+#include "itkNumberToString.h"
 
 EMSParameters
 ::EMSParameters() :
@@ -61,7 +61,7 @@ void
 EMSParameters
 ::PrintSelf(std::ostream & os, itk::Indent) const
 {
-  DoubleToString doubleConvert;
+  itk::NumberToString<double> doubleConvert;
 
   os << "Suffix = " << m_Suffix << std::endl;
   os << "Atlas directory = " << m_AtlasDirectory << std::endl;

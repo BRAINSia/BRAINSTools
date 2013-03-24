@@ -31,7 +31,7 @@
 #include "landmarksConstellationCommon.h"
 #include "GenericTransformImage.h"
 #include "itkStatisticsImageFilter.h"
-#include "DoubleToString.h"
+#include "itkNumberToString.h"
 
 // Optimize the A,B,C vector
 class Rigid3DCenterReflectorFunctor : public vnl_cost_function
@@ -86,7 +86,7 @@ public:
     // DEBUGGING INFORMATION
     if( LMC::globalverboseFlag == true )
       {
-      DoubleToString doubleToString;
+      itk::NumberToString<double> doubleToString;
       std::cout << "quick search 15 deg "
                 << " HA= " << doubleToString(this->m_params[0] * 180.0 / vnl_math::pi)
                 << " BA= " << doubleToString(this->m_params[1] * 180.0 / vnl_math::pi)
@@ -413,7 +413,7 @@ public:
 */
   void Update(void)
   {
-    DoubleToString doubleToString;
+    itk::NumberToString<double> doubleToString;
 
     this->m_Optimizer.minimize(this->m_params);
     m_cc = this->f(this->m_params);

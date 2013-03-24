@@ -12,7 +12,7 @@
 #include "hdf5.h"
 #include "H5Cpp.h"
 #endif
-#include "DoubleToString.h"
+#include "itkNumberToString.h"
 
 RGBImageType::Pointer ReturnOrientedRGBImage(SImageType::Pointer inputImage)
 {
@@ -426,7 +426,7 @@ WriteMRMLFile(std::string outputMRML,
               const VersorTransformPointer versorTransform)
 {
   const unsigned int LocalImageDimension = 3;
-  DoubleToString     doubleToString;
+  itk::NumberToString<double>     doubleToString;
 
   typedef short                                      PixelType;
   typedef itk::Image<PixelType, LocalImageDimension> ImageType;

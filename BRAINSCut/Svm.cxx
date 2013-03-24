@@ -1,5 +1,5 @@
 #include "Svm.h"
-#include "DoubleToString.h"
+#include "itkNumberToString.h"
 typedef float       Qfloat;
 typedef signed char schar;
 #ifndef USE_OPENCV // Following function conflict with OpenCV
@@ -1854,7 +1854,7 @@ double svm_predict_probability(const svm_model *model,
 int svm_save_model(const char *model_file_name, const svm_model *model)
 {
   FILE *         fp = fopen(model_file_name, "w");
-  DoubleToString doubleConvert;
+  itk::NumberToString<double> doubleConvert;
 
   if( fp == NULL )
     {

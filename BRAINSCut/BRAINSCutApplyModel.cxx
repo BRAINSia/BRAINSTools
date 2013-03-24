@@ -13,7 +13,7 @@
 #include <itkLabelStatisticsImageFilter.h>
 #include <itkBinaryFillholeImageFilter.h>
 #include <itkMultiplyImageFilter.h>
-#include "DoubleToString.h"
+#include "itkNumberToString.h"
 
 // TODO: consider using itk::LabelMap Hole filling process in ITK4
 BRAINSCutApplyModel
@@ -157,7 +157,7 @@ void
 BRAINSCutApplyModel
 ::ApplyOnSubject( DataSet& subject)
 {
-  DoubleToString    doubleToString;
+  itk::NumberToString<double>    doubleToString;
   const std::string subjectID(subject.GetAttribute<StringValue>("Name") );
 
   std::map<std::string, WorkingImagePointer> deformedSpatialLocationImageList;

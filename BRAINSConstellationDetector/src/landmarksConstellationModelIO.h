@@ -13,7 +13,7 @@
 
 #include "itkByteSwapper.h"
 #include "itkIO.h"
-#include "DoubleToString.h"
+#include "itkNumberToString.h"
 #include <vector>
 #include <fstream>
 #include <iostream>
@@ -232,7 +232,7 @@ public:
     //
     //
     // //////////////////////////////////////////////////////////////////////////
-    DoubleToString doubleToString;
+    itk::NumberToString<double> doubleToString;
     std::ofstream  output( filename.c_str() ); // open setup file for reading
 
     if( !output.is_open() )
@@ -612,7 +612,7 @@ public:
           const Float2DVectorType & a,
           const Float2DVectorType & b)
   {
-    DoubleToString doubleToString;
+    itk::NumberToString<double> doubleToString;
 
     for( unsigned i = 0; i < a.size(); i++ )
       {

@@ -65,6 +65,7 @@ if(NOT ( DEFINED "${extProjName}_DIR"
     CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=<INSTALL_DIR>
     --enable-shared=No
     --enable-static=Yes
+    --disable-lzma
     --with-jpeg-lib-dir=${JPEG_LIB_DIR}
     --with-jpeg-include-dir=${JPEG_INCLUDE_DIR}
     CC=${CMAKE_C_COMPILER}

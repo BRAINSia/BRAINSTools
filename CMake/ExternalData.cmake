@@ -49,6 +49,11 @@
 #    %(algo)     <ext>     Description
 #    -------     -----     -----------
 #    MD5         .md5      Message-Digest Algorithm 5, RFC 1321
+#    SHA1        .sha1     US Secure Hash Algorithm 1, RFC 3174
+#    SHA224      .sha224   US Secure Hash Algorithms, RFC 4634
+#    SHA256      .sha256   US Secure Hash Algorithms, RFC 4634
+#    SHA384      .sha384   US Secure Hash Algorithms, RFC 4634
+#    SHA512      .sha512   US Secure Hash Algorithms, RFC 4634
 # Note that the hashes are used only for unique data identification and
 # download verification.  This is not security software.
 #
@@ -135,44 +140,24 @@
 # Variables ExternalData_TIMEOUT_INACTIVITY and ExternalData_TIMEOUT_ABSOLUTE
 # set the download inactivity and absolute timeouts, in seconds.  The defaults
 # are 60 seconds and 300 seconds, respectively.  Set either timeout to 0
-# seconds to disable enforcement.  The inactivity timeout is enforced only
-# with CMake >= 2.8.5.
+# seconds to disable enforcement.
 
 #=============================================================================
 # Copyright 2010-2013 Kitware, Inc.
-# All rights reserved.
 #
-# Redistribution and use in source and binary forms, with or without
-# modification, are permitted provided that the following conditions
-# are met:
+# Distributed under the OSI-approved BSD License (the "License");
+# see accompanying file Copyright.txt for details.
 #
-# * Redistributions of source code must retain the above copyright
-#   notice, this list of conditions and the following disclaimer.
-#
-# * Redistributions in binary form must reproduce the above copyright
-#   notice, this list of conditions and the following disclaimer in the
-#   documentation and/or other materials provided with the distribution.
-#
-# * Neither the names of Kitware, Inc., the Insight Software Consortium,
-#   nor the names of their contributors may be used to endorse or promote
-#   products derived from this software without specific prior written
-#   permission.
-#
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+# This software is distributed WITHOUT ANY WARRANTY; without even the
+# implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the License for more information.
 #=============================================================================
+# (To distribute this file outside of CMake, substitute the full
+#  License text for the above reference.)
 
 function(ExternalData_add_test target)
-  ExternalData_expand_arguments("${target}" testArgs ${ARGN})
+  # Expand all arguments as a single string to preserve escaped semicolons.
+  ExternalData_expand_arguments("${target}" testArgs "${ARGN}")
   add_test(${testArgs})
 endfunction()
 
@@ -207,7 +192,7 @@ function(ExternalData_add_target target)
                                  -DExternalData_ACTION=local
                                  -DExternalData_CONFIG=${config}
                                  -P ${_ExternalData_SELF}
-        DEPENDS "${name}"
+        MAIN_DEPENDENCY "${name}"
         )
       list(APPEND files "${file}")
     endif()
@@ -238,7 +223,7 @@ function(ExternalData_add_target target)
                                  -DExternalData_CONFIG=${config}
                                  -P ${_ExternalData_SELF}
         # Update whenever the object hash changes.
-        DEPENDS "${name}${ext}"
+        MAIN_DEPENDENCY "${name}${ext}"
         )
       list(APPEND files "${file}${stamp}")
     endif()
@@ -250,13 +235,17 @@ endfunction()
 
 function(ExternalData_expand_arguments target outArgsVar)
   # Replace DATA{} references with real arguments.
-  set(data_regex "DATA{([^{}\r\n]*)}")
+  set(data_regex "DATA{([^;{}\r\n]*)}")
   set(other_regex "([^D]|D[^A]|DA[^T]|DAT[^A]|DATA[^{])+|.")
   set(outArgs "")
+  # This list expansion un-escapes semicolons in list element values so we
+  # must re-escape them below anywhere a new list expansion will occur.
   foreach(arg IN LISTS ARGN)
     if("x${arg}" MATCHES "${data_regex}")
+      # Re-escape in-value semicolons before expansion in foreach below.
+      string(REPLACE ";" "\\;" tmp "${arg}")
       # Split argument into DATA{}-pieces and other pieces.
-      string(REGEX MATCHALL "${data_regex}|${other_regex}" pieces "${arg}")
+      string(REGEX MATCHALL "${data_regex}|${other_regex}" pieces "${tmp}")
       # Compose output argument with DATA{}-pieces replaced.
       set(outArg "")
       foreach(piece IN LISTS pieces)
@@ -270,11 +259,13 @@ function(ExternalData_expand_arguments target outArgsVar)
           set(outArg "${outArg}${piece}")
         endif()
       endforeach()
-      list(APPEND outArgs "${outArg}")
     else()
       # No replacements needed in this argument.
-      list(APPEND outArgs "${arg}")
+      set(outArg "${arg}")
     endif()
+    # Re-escape in-value semicolons in resulting list.
+    string(REPLACE ";" "\\;" outArg "${outArg}")
+    list(APPEND outArgs "${outArg}")
   endforeach()
   set("${outArgsVar}" "${outArgs}" PARENT_SCOPE)
 endfunction()
@@ -282,30 +273,22 @@ endfunction()
 #-----------------------------------------------------------------------------
 # Private helper interface
 
+set(_ExternalData_REGEX_ALGO "MD5|SHA1|SHA224|SHA256|SHA384|SHA512")
+set(_ExternalData_REGEX_EXT "md5|sha1|sha224|sha256|sha384|sha512")
 set(_ExternalData_SELF "${CMAKE_CURRENT_LIST_FILE}")
 get_filename_component(_ExternalData_SELF_DIR "${_ExternalData_SELF}" PATH)
 
 function(_ExternalData_compute_hash var_hash algo file)
-  if("${algo}" STREQUAL "MD5")
-    # TODO: Errors
-    execute_process(COMMAND "${CMAKE_COMMAND}" -E md5sum "${file}"
-      OUTPUT_VARIABLE output)
-    string(SUBSTRING "${output}" 0 32 hash)
+  if("${algo}" MATCHES "^${_ExternalData_REGEX_ALGO}$")
+    file("${algo}" "${file}" hash)
     set("${var_hash}" "${hash}" PARENT_SCOPE)
   else()
-    # TODO: Other hashes.
     message(FATAL_ERROR "Hash algorithm ${algo} unimplemented.")
   endif()
 endfunction()
 
 function(_ExternalData_random var)
-  if(NOT ${CMAKE_VERSION} VERSION_LESS 2.8.5)
-    string(RANDOM LENGTH 6 random)
-  elseif(EXISTS /dev/urandom)
-    file(READ /dev/urandom random LIMIT 4 HEX)
-  else()
-    message(FATAL_ERROR "CMake >= 2.8.5 required in this environment")
-  endif()
+  string(RANDOM LENGTH 6 random)
   set("${var}" "${random}" PARENT_SCOPE)
 endfunction()
 
@@ -322,7 +305,7 @@ function(_ExternalData_atomic_write file content)
 endfunction()
 
 function(_ExternalData_link_content name var_ext)
-  if("${ExternalData_LINK_CONTENT}" MATCHES "^(MD5)$")
+  if("${ExternalData_LINK_CONTENT}" MATCHES "^(${_ExternalData_REGEX_ALGO})$")
     set(algo "${ExternalData_LINK_CONTENT}")
   else()
     message(FATAL_ERROR
@@ -332,7 +315,7 @@ function(_ExternalData_link_content name var_ext)
   _ExternalData_compute_hash(hash "${algo}" "${name}")
   get_filename_component(dir "${name}" PATH)
   set(staged "${dir}/.ExternalData_${algo}_${hash}")
-  set(ext ".md5")
+  string(TOLOWER ".${algo}" ext)
   _ExternalData_atomic_write("${name}${ext}" "${hash}\n")
   file(RENAME "${name}" "${staged}")
   set("${var_ext}" "${ext}" PARENT_SCOPE)
@@ -561,7 +544,7 @@ endmacro()
 function(_ExternalData_arg_find_files pattern regex)
   file(GLOB globbed RELATIVE "${top_src}" "${top_src}/${pattern}*")
   foreach(entry IN LISTS globbed)
-    if("x${entry}" MATCHES "^x(.*)(\\.md5)$")
+    if("x${entry}" MATCHES "^x(.*)(\\.(${_ExternalData_REGEX_EXT}))$")
       set(relname "${CMAKE_MATCH_1}")
       set(alg "${CMAKE_MATCH_2}")
     else()
@@ -639,14 +622,10 @@ function(_ExternalData_download_file url file err_var msg_var)
   set(retry 3)
   while(retry)
     math(EXPR retry "${retry} - 1")
-    if("${CMAKE_VERSION}" VERSION_GREATER 2.8.4.20110602)
-      if(ExternalData_TIMEOUT_INACTIVITY)
-        set(inactivity_timeout INACTIVITY_TIMEOUT ${ExternalData_TIMEOUT_INACTIVITY})
-      elseif(NOT "${ExternalData_TIMEOUT_INACTIVITY}" EQUAL 0)
-        set(inactivity_timeout INACTIVITY_TIMEOUT 60)
-      else()
-        set(inactivity_timeout "")
-      endif()
+    if(ExternalData_TIMEOUT_INACTIVITY)
+      set(inactivity_timeout INACTIVITY_TIMEOUT ${ExternalData_TIMEOUT_INACTIVITY})
+    elseif(NOT "${ExternalData_TIMEOUT_INACTIVITY}" EQUAL 0)
+      set(inactivity_timeout INACTIVITY_TIMEOUT 60)
     else()
       set(inactivity_timeout "")
     endif()
@@ -748,8 +727,8 @@ if("${ExternalData_ACTION}" STREQUAL "fetch")
   file(READ "${name}${ext}" hash)
   string(STRIP "${hash}" hash)
 
-  if("${ext}" STREQUAL ".md5")
-    set(algo "MD5")
+  if("${ext}" MATCHES "^\\.(${_ExternalData_REGEX_EXT})$")
+    string(TOUPPER "${CMAKE_MATCH_1}" algo)
   else()
     message(FATAL_ERROR "Unknown hash algorithm extension \"${ext}\"")
   endif()

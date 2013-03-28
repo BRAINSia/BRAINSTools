@@ -89,9 +89,8 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
   ".*gmake.*: warning.*"
 
   # JPEG warnings:
-  ".*JPEG/jdmarker.c.*"
-  ".*JPEG/rdcolmap.c.*"
-  ".*TIFF/libtiff.*"
+  ".*/JPEG.*"
+  ".*/TIFF.*"
 
   # Swig warnings:
   ".*Swig-prefix.*warning.*"

@@ -21,6 +21,7 @@ if(NOT StandardBRAINSBuildMacro)
   include(${SlicerExecutionModel_CMAKE_DIR}/SEMMacroBuildCLI.cmake)
   macro(StandardBRAINSBuildMacro)
     set(options
+      EXECUTABLE_ONLY
     )
     set(oneValueArgs
       NAME
@@ -44,6 +45,9 @@ if(NOT StandardBRAINSBuildMacro)
   if( NOT INTEGRATE_WITH_SLICER AND NOT BUILD_TESTING )
     ## The testing framework requires the shared lib infrastructure.
     ## to avoid building the executables twice.
+    set(BRAINSTools_EXECUTABLE_ONLY EXECUTABLE_ONLY)
+  endif()
+  if ( ${BRAINS_SEM_EXECUTABLE_ONLY} )
     set(BRAINSTools_EXECUTABLE_ONLY EXECUTABLE_ONLY)
   endif()
 

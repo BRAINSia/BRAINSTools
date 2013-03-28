@@ -28,7 +28,7 @@ set(MODULE_NAME DWIConvert)
 # )
 
 # several files needed down in ExtenededTesting
-StandardBRAINSBuildMacro(NAME DWIConvert
+StandardBRAINSBuildMacro(NAME DWIConvert EXECUTABLE_ONLY
   TARGET_LIBRARIES BRAINSCommonLib DWIConvertSupportLib)
 
 if(BUILD_TESTING AND NOT Slicer_BUILD_BRAINSTOOLS)

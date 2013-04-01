@@ -73,10 +73,8 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
       -DJPEG_INCLUDE_DIR:PATH=${JPEG_INCLUDE_DIR}
   )
   ### --- End Project specific additions
-#  set(${proj}_REPOSITORY ${git_protocol}://github.com/commontk/DCMTK.git)
-#  set(${proj}_GIT_TAG "d06e2b7d9bafb23df4e969482a68b50fc75aaaa9")
-  set(${proj}_REPOSITORY https://github.com/InsightSoftwareConsortium/DCMTK.git)
-  set(${proj}_GIT_TAG AddProperConfig)
+  set(${proj}_REPOSITORY ${git_protocol}://github.com/commontk/DCMTK.git)
+  set(${proj}_GIT_TAG "f461865d1759854db56e4c840991c81c77e45bb9")
 
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${${proj}_REPOSITORY}

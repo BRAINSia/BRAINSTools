@@ -285,9 +285,14 @@ void landmarksConstellationDetector::Compute( void )
   // In case hough eye detector failed
   if( this->m_HoughEyeFailure || ( globalImagedebugLevel > 1 ) )
     {
+    const std::string EMSP_Fiducial_file_name("EMSP.fcsv");
+    //ADD MetaData for EMSP_FCSV_FILENAME
+    itk::MetaDataDictionary &dict = this->m_VolumeMSP->GetMetaDataDictionary();
+    const char * const metaDataEMSP_FCSVName = "EMSP_FCSV_FILENAME";
+    itk::EncapsulateMetaData<std::string>(dict,metaDataEMSP_FCSVName,EMSP_Fiducial_file_name.c_str());
+
     // write EMSP aligned image
-    itkUtil::WriteImage<SImageType>
-      ( this->m_VolumeMSP, this->m_ResultsDir + "/EMSP.nii.gz" );
+    itkUtil::WriteImage<SImageType> ( this->m_VolumeMSP, this->m_ResultsDir + "/EMSP.nrrd" );
 
     if( this->m_HoughEyeFailure )
       {
@@ -297,11 +302,11 @@ void landmarksConstellationDetector::Compute( void )
       zeroEyeCenters["LE"] = zeroPoint;
       zeroEyeCenters["RE"] = zeroPoint;
       WriteITKtoSlicer3Lmk
-        ( this->m_ResultsDir + "/EMSP.fcsv", zeroEyeCenters );
+        ( this->m_ResultsDir + "/"+EMSP_Fiducial_file_name, zeroEyeCenters );
       itkGenericExceptionMacro(<< "EMSP aligned image and zero eye centers "
                                << "landmarks are written to " << std::endl
                                << this->m_ResultsDir << ". Use GUI corrector to "
-                               << "correct the landmarks on EMSP.fcsv.");
+                               << "correct the landmarks in." << EMSP_Fiducial_file_name);
       }
     }
 

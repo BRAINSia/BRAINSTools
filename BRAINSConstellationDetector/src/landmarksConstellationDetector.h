@@ -205,7 +205,8 @@ public:
     duplicator->Update();
     SImageType::Pointer taggedImage = duplicator->GetModifiableOutput();
 
-    SImageType::PixelType low, high;
+    SImageType::PixelType low=0.0;
+    SImageType::PixelType high=0.0;
     setLowHigh<SImageType>(taggedImage, low, high, 0.01F);
 
     SImageType::IndexType PTIndex;

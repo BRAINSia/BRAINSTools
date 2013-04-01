@@ -62,14 +62,6 @@ bool BRAINSConstellationDetectorPrimary::Compute( void )
   // Read external files
   std::cout << "\nReading in external files..." << std::endl;
 
-  // load corresponding landmarks in EMSP aligned space from file if possible
-  LandmarksMapType landmarksEMSP;
-
-  if( this->m_inputLandmarksEMSP.compare( "" ) != 0 )
-    {
-    landmarksEMSP = ReadSlicer3toITKLmk( this->m_inputLandmarksEMSP );
-    }
-
   // read in lls model file
   std::map<std::string, std::vector<double> > llsMeans;
   std::map<std::string, MatrixType>           llsMatrices;
@@ -103,6 +95,33 @@ bool BRAINSConstellationDetectorPrimary::Compute( void )
               << err << std::endl;
     }
   std::cout << "Processing: " << this->m_inputVolume << std::endl;
+
+  {
+  const char * const metaDataEMSP_FCSVName = "EMSP_FCSV_FILENAME";
+  itk::MetaDataDictionary &dict = reader->GetOutput()->GetMetaDataDictionary();
+  std::string ImageMetaDataEMSPFileOverride =  "" ;
+  // if it exists and the string matches what we put in on the image to write, AOK.
+  if(itk::ExposeMetaData<std::string>(dict,metaDataEMSP_FCSVName,ImageMetaDataEMSPFileOverride) != false )
+    {
+    std::string directoryName=itksys::SystemTools::GetParentDirectory(this->m_inputVolume.c_str());
+    if(directoryName == "")
+      {
+      directoryName = ".";
+      }
+    this->m_inputLandmarksEMSP = directoryName + "/" + ImageMetaDataEMSPFileOverride;
+
+    std::cout << "STATUS:  Found meta-data for EMSP override with value: " << this->m_inputLandmarksEMSP << std::endl;
+    }
+  }
+
+
+  // load corresponding landmarks in EMSP aligned space from file if possible
+  LandmarksMapType landmarksEMSP;
+  if( this->m_inputLandmarksEMSP.compare( "" ) != 0 )
+    {
+    landmarksEMSP = ReadSlicer3toITKLmk( this->m_inputLandmarksEMSP );
+    }
+
 
   // std::cout << "original input file : " << reader->GetOutput() << std::endl;  //Added by Ali
 

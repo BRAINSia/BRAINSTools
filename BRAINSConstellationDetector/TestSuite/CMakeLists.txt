@@ -113,7 +113,7 @@ set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_forceHou
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
   --compare DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.nii.gz}
-         ${CMAKE_CURRENT_BINARY_DIR}/EMSP.nii.gz
+         ${CMAKE_CURRENT_BINARY_DIR}/EMSP.nrrd
   --compareIntensityTolerance 0
   --compareRadiusTolerance 0
   --compareNumberOfPixelsTolerance 0

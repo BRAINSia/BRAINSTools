@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>
+  BRAINS.Segmentation
+  </category>
+  <title>
+  Talairach Mask
+  </title>
+  <description>
+  This program creates a binary image representing the specified Talairach region. The input is an example image to define the physical space for the resulting image, the Talairach grid representation in VTK format, and the file containing the Talairach box definitions to be generated. These can be combined in BRAINS to create a label map using the procedure Brains::WorkupUtils::CreateLabelMapFromBinaryImages. </description>
+  <version>0.1</version>
+  <documentation-url>http://www.nitrc.org/plugins/mwiki/index.php/brains:BRAINSTalairachMask</documentation-url>
+  <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
+  <contributor>
+  Steven Dunn and Vincent Magnotta
+  </contributor>
+  <acknowledgements>Funding for this work was provided by NIH/NINDS award NS050568</acknowledgements>
+
+  <parameters>
+    <label>Input Parameters</label>
+    <description>Input parameters to be used in generating the Talairach mask</description>
+
+    <image>
+      <name>inputVolume</name>
+      <longflag>inputVolume</longflag>
+      <description>Input image used to define physical space of resulting mask</description>
+      <label>AC-PC Aligned Image</label>
+      <channel>input</channel>
+    </image>
+
+    <file>
+      <name>talairachParameters</name>
+      <longflag>talairachParameters</longflag>
+      <description>Name of the Talairach parameter file.</description>
+      <label>Talairach Parameters</label>
+      <channel>input</channel>
+    </file>
+
+    <file>
+      <name>talairachBox</name>
+      <longflag>talairachBox</longflag>
+      <description>Name of the Talairach box file.</description>
+      <label>Talairach Box</label>
+      <channel>input</channel>
+    </file>
+
+    <string-enumeration>
+      <name>hemisphereMode</name>
+      <longflag>hemisphereMode</longflag>
+      <description>Mode for box creation: left, right, both</description>
+      <label>Mode</label>
+      <default>both</default>
+      <element>left</element>
+      <element>right</element>
+      <element>both</element>
+    </string-enumeration>
+
+    <boolean>
+      <name>expand</name>
+      <longflag>expand</longflag>
+      <description>Expand exterior box to include surface CSF</description>
+      <label>Expand Exterior</label>
+      <channel>input</channel>
+      <default>false</default>
+    </boolean>
+
+  </parameters>
+
+  <parameters>
+    <label>Output Parameters</label>
+    <description>Output Parameters</description>
+
+   <image>
+      <name>outputVolume</name>
+      <longflag>outputVolume</longflag>
+      <description>Output filename for the resulting binary image</description>
+      <label>Mask Image</label>
+      <channel>output</channel>
+    </image>
+
+  </parameters>
+</executable>

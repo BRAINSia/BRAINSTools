@@ -93,6 +93,7 @@ set(brains_modulenames
   BRAINSMultiModeSegment
   BRAINSInitializedControlPoints
   BRAINSTransformConvert
+  BRAINSTalairach
   BRAINSConstellationDetector
   BRAINSABC
   ConvertBetweenFileFormats

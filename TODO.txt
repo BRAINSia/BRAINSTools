@@ -1,0 +1,62 @@
+This is just random notes to collect comments and discussions about this project. 
+
+==============
+Add TIFF, GDCM, JPEG, packages to this the list of External_Packages items needed.
+
+Add calatk, BRAINSTools, CTK to the list of External_Packages
+
+==============
+Consider a consolidated install location rather than subjproject install locations.  This would better mirror what would happen with "USE_SYSTEM_XXXX" behaviors.
+
+==============
+Comments and considerations from Brad L.
+
+
+From: Bradley Lowekamp <blowekamp@mail.nih.gov>
+Date: Monday, February 4, 2013 8:22 AM
+To: Hans Johnson <hans-johnson@uiowa.edu>
+Cc: Jean-Christophe Fillion-Robin <jchris.fillionr@kitware.com>, Steve Pieper <pieper@bwh.harvard.edu>, Francois Budin <fbudin@unc.edu>, Kent Williams <norman-k-williams@uiowa.edu>, David Welch <david-welch@uiowa.edu>, Matt McCormick <matt.mccormick@kitware.com>, Martin Styner <martin_styner@ieee.org>, Ron Kikinis <kikinis@bwh.harvard.edu>
+Subject: Re: Project for demonstrating building SuperBuild modules across projects
+
+Hans,
+
+This looks like an awesome amount of work, in both quantity and quality.
+
+There are numerous things I have figured out that I have had to do differently, were needed in the SimpleITK superbuild.
+
+For example, I am passing different variable commonly to the sub-builds. I am including the *_DEBUG *_RELEASE etc, variants of many of the variables due to a need to tweak these options on certain platforms.
+
+Additionally, I found that I could not pass "CMAKE_OSX_ARCHITECTURES" on the command line when targeting multiple platforms. This was because I could not escape the ";" which separates the architectures. Related I am wondering if there is a reason you don't pass these OSX specific variables through your _expand_external_project_vars. Also in that macro you could use CMake introspection to determining the variable type instead of having to pass it in the list.
+
+Brad
+
+On Feb 2, 2013, at 1:57 PM, "Johnson, Hans J" <hans-johnson@uiowa.edu> wrote:
+
+All,
+
+I've built a project for constructing all the super build modules needed by various projects.
+
+https://github.com/BRAINSia/NAMICExternalProjects
+
+This will help to provide a common set of build tools needed for many of the SuperBuild Projects that NAMIC is supporting.  Hopefully this will allow new projects to learn form this for making consistent build environments.
+
+Here is the list of SuperBuild like systems that are knockoffs of one another but not really maintainable consistently.
+
+BRAINSStandAlone
+ANTs
+DTIPrep
+DTIAtlasBuilder
+Slicer
+DTIAtlasFiberTracker
+DTIReg
+DTIprocess
+SimpleITK
+GDCM
+
+All these projects have overlap in the ExternalProjects needed.  This project has no single "product", but rather is designed to provide a common location for making a consistent platform that can be re-used in all the other projects.
+
+I've added a lot of documentation and tried to document how to deploy this mechanism.
+
+Hans
+
+

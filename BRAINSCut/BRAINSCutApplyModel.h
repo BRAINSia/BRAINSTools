@@ -11,9 +11,6 @@ class BRAINSCutApplyModel
 {
 public:
   BRAINSCutApplyModel( BRAINSCutDataHandler& dataHandler );
-  BRAINSCutApplyModel( BRAINSCutApplyModel& applyModel ); // copy constructor which is recommended
-                                                          // since the class contains a pointer to
-                                                          // allocated memory.
   BRAINSCutApplyModel();
   ~BRAINSCutApplyModel();
 
@@ -62,6 +59,10 @@ public:
   WorkingImagePointer ClipImageWithBinaryMask( WorkingImagePointer& image, WorkingImagePointer mask);
 
 protected:
+  BRAINSCutApplyModel( BRAINSCutApplyModel & ); // purposely not implemented
+  // copy constructor which is recommended
+  // since the class contains a pointer to
+  // allocated memory.
 private:
   BRAINSCutDataHandler*                        m_myDataHandler;
   BRAINSCutConfiguration::ApplyDataSetListType m_applyDataSetList;

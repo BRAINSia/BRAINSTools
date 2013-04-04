@@ -24,11 +24,10 @@ public:
                         int numberOfInputVector);
 
 private:
-  BRAINSCutDataHandler                         m_myDataHandler;
-  BRAINSCutConfiguration::TrainDataSetListType m_trainDataSetList;
-
   int m_inputVectorSize;
   int m_outputVectorSize;
+  BRAINSCutDataHandler                         m_myDataHandler;
+  BRAINSCutConfiguration::TrainDataSetListType m_trainDataSetList;
 
   OutputVectorMapType GetPairedOutput( std::map<std::string,
                                                 WorkingImagePointer>& deformedROIs, std::string roiName,

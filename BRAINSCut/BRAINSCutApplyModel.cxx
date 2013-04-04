@@ -34,6 +34,7 @@ BRAINSCutApplyModel
 {
 }
 
+#if 0
 BRAINSCutApplyModel
 ::BRAINSCutApplyModel( BRAINSCutApplyModel& applyModel ) :
   m_myDataHandler(NULL),
@@ -51,6 +52,7 @@ BRAINSCutApplyModel
   m_openCVRandomForest(NULL)
 {
 }
+#endif
 
 BRAINSCutApplyModel
 ::BRAINSCutApplyModel( BRAINSCutDataHandler& dataHandler ) :

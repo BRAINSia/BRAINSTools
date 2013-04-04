@@ -73,7 +73,7 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
   # Ignore 'detached HEAD' warnings
   ".*Note: checking out.*"
   ".*detached.*HEAD.*"
-  ".*warning generated\..*"
+  ".*warning generated..*"
 
   # NIPYPE warnings:
   ".*NIPYPE-prefix.*warning.*"
@@ -88,9 +88,9 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
   ".*gmake.*: warning.*"
 
   # JPEG warnings:
-  ".*\/JPEG.*"
+  ".*/JPEG.*"
   ".*warning: unused parameter .*cinfo.*"
-  ".*\/TIFF.*"
+  ".*/TIFF.*"
 
   # Swig warnings:
   ".*Swig-prefix.*warning.*"

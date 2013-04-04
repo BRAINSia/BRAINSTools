@@ -1,4 +1,3 @@
-
 include(${CMAKE_CURRENT_LIST_DIR}/Common.cmake)
 
 #-----------------------------------------------------------------------------
@@ -45,6 +44,10 @@ endif()
 #-----------------------------------------------------------------------------
 enable_testing()
 include(CTest)
+#Set the global max TIMEOUT for CTest jobs.  This is very large for the moment
+#and should be revisted to reduce based on "LONG/SHORT" test times, set to 1 hr for now
+set(CTEST_TEST_TIMEOUT 1800 CACHE STRING "Maximum seconds allowed before CTest will kill the test." FORCE)
+set(DART_TESTING_TIMEOUT ${CTEST_TEST_TIMEOUT} CACHE STRING "Maximum seconds allowed before CTest will kill the test." FORCE)
 
 #-----------------------------------------------------------------------
 # Setup locations to find externally maintained test data.

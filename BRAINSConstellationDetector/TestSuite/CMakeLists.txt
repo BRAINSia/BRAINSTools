@@ -1,8 +1,6 @@
 ## Set testing environment
 ##
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
-#configure_file(${CMAKE_CURRENT_SOURCE_DIR}/T1.mdl ${CMAKE_CURRENT_BINARY_DIR}/T1.mdl)
-set(DART_TESTING_TIMEOUT 15000)
 
 ## Test landmarksConstellationTrainingDefinitionIO
 ##

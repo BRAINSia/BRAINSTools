@@ -104,6 +104,7 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
 
   # Open-CV warnings:
   ".*OpenCV-build.*warning.*"
+  ".*OpenCV-install.*warning.*"
   ".*OpenCV.*"
 
   # FFTW warnings:
@@ -306,10 +307,13 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
   "SlicerExecutionModel"
   "SimpleITK"
 
-  ".*has no symbols",
-  "CMake Warning:",
-  "note: expanded from macro",
-  ": note:",
+  ".*has no symbols"
+  "CMake Warning:"
+  "note: expanded from macro"
+  ": note:"
+  "vrscanl.c.* warning: unused parameter"
+  "boost/archive/iterators/transform_width.hpp"
+  "/usr/bin/libtool: warning same member name"
   )
 
 set(CTEST_CUSTOM_WARNING_MATCH

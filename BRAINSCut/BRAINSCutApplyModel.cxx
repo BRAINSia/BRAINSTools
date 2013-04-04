@@ -480,11 +480,11 @@ BRAINSCutApplyModel
     maskVolume = ThresholdImageAtLower( continuousImage, threshold);
 
     /* Get One label */
-    maskVolume = Opening( maskVolume );
-    maskVolume = GetOneConnectedRegion( maskVolume );
+    maskVolume = Opening( maskVolume, 1 );
+    maskVolume = GetOneConnectedRegion( maskVolume, 1 );
 
     /* opening and closing to get rid of island and holes */
-    maskVolume = Closing( maskVolume );
+    maskVolume = Closing( maskVolume, 1 );
     }
   catch( itk::ExceptionObject & ex )
     {
@@ -625,8 +625,7 @@ BRAINSCutApplyModel
 
 LabelImagePointerType
 BRAINSCutApplyModel
-::GetOneConnectedRegion( LabelImagePointerType& image,
-                         const unsigned char labelValue)
+::GetOneConnectedRegion( LabelImagePointerType& image, const unsigned char labelValue)
 {
   LabelImagePointerType resultMask;
 
@@ -648,7 +647,7 @@ BRAINSCutApplyModel
 
     LabelImagePointerType multipleLabelVolume = relabelInOrder->GetOutput();
     /* get the label one */
-    resultMask = ExtractLabel( multipleLabelVolume, 1 );
+    resultMask = ExtractLabel( multipleLabelVolume, labelValue ); //NOTE: This used to be hard-coded to 1, and labelValue was not used in the function at all
     }
   catch( itk::ExceptionObject& ex )
     {

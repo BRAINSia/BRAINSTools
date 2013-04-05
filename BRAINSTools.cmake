@@ -37,10 +37,6 @@ if(USE_ANTS)
   set(ANTS_LIBS ${ANTS_LIBS} antsUtilities)
 endif()
 
-if(USE_ICCDEF OR ITK_USE_FFTWD OR ITK_USE_FFTWF)
-  set(${PROJECT_NAME}_BUILD_FFTWF_SUPPORT ON)
-endif()
-
 #-----------------------------------------------------------------------------
 enable_testing()
 include(CTest)

@@ -98,6 +98,11 @@ if( USE_AutoWorkup )
         PYTHON_INCLUDE_DIR:PATH
      )
 endif()
+
+if(USE_ICCDEF OR ITK_USE_FFTWD OR ITK_USE_FFTWF)
+  set(${PROJECT_NAME}_BUILD_FFTWF_SUPPORT ON)
+endif()
+
 if(BRAINSTools_USE_QT)
   if(NOT QT4_FOUND)
     find_package(Qt4 4.6 COMPONENTS QtCore QtGui QtNetwork QtXml REQUIRED)

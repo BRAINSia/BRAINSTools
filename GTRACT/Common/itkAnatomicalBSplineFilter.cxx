@@ -25,7 +25,7 @@
 #include <itkExtractImageFilter.h>
 #include "itkMetaDataObject.h"
 #include "itkProgressAccumulator.h"
-#include <brainsBSplineDeformableTransformInitializer.h>
+#include <itkBSplineDeformableTransformInitializer.h>
 #include <iostream>
 
 namespace itk
@@ -112,7 +112,7 @@ void AnatomicalBSplineFilter::Update()
   m_Output->SetGridRegion( bsplineRegion );
 #endif
 
-  typedef itk::brainsBSplineDeformableTransformInitializer<TransformType, RegisterImageType> InitializerType;
+  typedef itk::BSplineDeformableTransformInitializer<TransformType, RegisterImageType> InitializerType;
   InitializerType::Pointer transformInitializer = InitializerType::New();
   transformInitializer->SetTransform( m_Output );
   transformInitializer->SetImage( m_FixedImage );

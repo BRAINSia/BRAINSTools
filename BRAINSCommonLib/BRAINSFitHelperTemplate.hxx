@@ -16,7 +16,7 @@
 #include "itkStatisticsLabelObject.h"
 #include "itkLabelImageToStatisticsLabelMapFilter.h"
 #include "itkMacro.h"
-#include "brainsBSplineDeformableTransformInitializer.h"
+#include "itkBSplineDeformableTransformInitializer.h"
 
 namespace itk
 {
@@ -1153,7 +1153,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
           TransformRegionType;
         typedef TransformRegionType::SizeType
           TransformSizeType;
-        typedef itk::brainsBSplineDeformableTransformInitializer<BSplineTransformType,
+        typedef itk::BSplineDeformableTransformInitializer<BSplineTransformType,
                                                                  RegisterImageType> InitializerType;
         InitializerType::Pointer transformInitializer = InitializerType::New();
         transformInitializer->SetTransform(initialBSplineTransform);

@@ -2,7 +2,7 @@
 #define __BRAINSFitBSpline_h
 
 #include <itkBSplineDeformableTransform.h>
-#include <brainsBSplineDeformableTransformInitializer.h>
+#include <itkBSplineDeformableTransformInitializer.h>
 #include <itkLBFGSBOptimizer.h>
 #include <itkTimeProbesCollectorBase.h>
 #include <itkImageRegistrationMethod.h>
@@ -133,23 +133,16 @@ DoBSpline(typename BSplineTransformType::Pointer InitializerBsplineTransform,
   if( vcl_abs(m_MaxBSplineDisplacement) < 1e-12 )
     {
     boundSelect.Fill(0);
-    // even when optimization is unbounded, bounds are checked in
-    // LBFGSBOptimizer::StartOptimization()
-    upperBound.Fill(m_MaxBSplineDisplacement);
-    lowerBound.Fill(-m_MaxBSplineDisplacement);
-    optimizer->SetUpperBound(upperBound);
-    optimizer->SetLowerBound(lowerBound);
     }
   else
     {
     boundSelect.Fill(2);
-
-    upperBound.Fill(m_MaxBSplineDisplacement);
-    lowerBound.Fill(-m_MaxBSplineDisplacement);
-    optimizer->SetUpperBound(upperBound);
-    optimizer->SetLowerBound(lowerBound);
     }
+  upperBound.Fill(m_MaxBSplineDisplacement);
+  lowerBound.Fill(-m_MaxBSplineDisplacement);
   optimizer->SetBoundSelection(boundSelect);
+  optimizer->SetUpperBound(upperBound);
+  optimizer->SetLowerBound(lowerBound);
 
   optimizer->SetCostFunctionConvergenceFactor(m_CostFunctionConvergenceFactor);
   optimizer->SetProjectedGradientTolerance(m_ProjectedGradientTolerance);

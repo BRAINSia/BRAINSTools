@@ -1,6 +1,6 @@
 MakeTestDriverFromSEMTool(BRAINSMultiSTAPLE BRAINSMultiSTAPLETest.cxx)
 
-if(0) //This test takes way to long to run at the current scale.  It needs to be made smaller
+if(0) #This test takes way to long to run at the current scale.  It needs to be made smaller
 ExternalData_add_test(BRAINSMultiSTAPLEFetchData
   NAME BRAINSMultiSTAPLETest
   COMMAND $<TARGET_FILE:BRAINSMultiSTAPLE>

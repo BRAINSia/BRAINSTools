@@ -49,10 +49,6 @@ void PrintImageMinAndMax(TImage *inputImage)
 int main(int argc, char *argv[])
 {
   PARSE_ARGS;
-#if ITK_VERSION_MAJOR > 3
-  // Call register default transforms
-  itk::TransformFactoryBase::RegisterDefaultTransforms();
-#endif
   itk::Object::SetGlobalWarningDisplay(false); // itk warnings aren't thread safe and in
   // this program cause intermittent crashes.
 

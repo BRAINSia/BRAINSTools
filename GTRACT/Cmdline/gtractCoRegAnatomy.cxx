@@ -35,9 +35,6 @@ int main(int argc, char *argv[])
   PARSE_ARGS;
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
 
-  itk::TransformFactory<itk::ScaleVersor3DTransform<double> >::RegisterTransform();
-  itk::TransformFactory<itk::ScaleVersor3DTransform<float> >::RegisterTransform();
-
   std::vector<int> GridSize;
   GridSize.push_back( gridSize[0] );
   GridSize.push_back( gridSize[1] );

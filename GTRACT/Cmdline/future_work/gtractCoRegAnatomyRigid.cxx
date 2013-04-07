@@ -31,7 +31,6 @@
 int main(int argc, char * *argv)
 {
   PARSE_ARGS;
-  itk::AddExtraTransformRegister();
 
   bool debug = true;
   if( debug )

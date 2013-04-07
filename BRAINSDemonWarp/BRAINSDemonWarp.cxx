@@ -18,10 +18,6 @@ DebugImageViewerClient DebugImageDisplaySender;
 
 int main(int argc, char *argv[])
 {
-  // Apparently when you register one transform, you need to register all your
-  // transforms.
-  itk::AddExtraTransformRegister();
-
   struct BRAINSDemonWarpAppParameters command;
 
     {

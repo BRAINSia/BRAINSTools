@@ -113,7 +113,6 @@ int main( int argc, char *argv[] )
 {
   PARSE_ARGS;
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
-// itk::AddExtraTransformRegister();
 
   const unsigned int Dimension = 3;
   typedef unsigned short                      PixelType;

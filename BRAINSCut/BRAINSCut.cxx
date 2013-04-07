@@ -19,12 +19,6 @@ int main(int argc, char * *argv)
 {
   PARSE_ARGS;
 
-  /* Solution from Kent
-   * ITK4 resigration initilization
-   */
-  // Call register default transforms
-  // itk::TransformFactoryBase::RegisterDefaultTransforms();
-
   if( !netConfiguration.empty() && modelConfigurationFilename.empty() )
     {
     modelConfigurationFilename = netConfiguration;

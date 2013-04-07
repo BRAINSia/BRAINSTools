@@ -36,7 +36,6 @@ int main(int argc, char *argv[])
 {
   PARSE_ARGS;
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
-  itk::AddExtraTransformRegister();
 
   int xSize = landmarkDensity[0];
   int ySize = landmarkDensity[1];
@@ -60,9 +59,6 @@ int main(int argc, char *argv[])
   typedef itk::ThinPlateR2LogRSplineKernelTransform<
       BSplineCoordinateRepType, 3>     ThinPlateSplineTransformType;
 
-  itk::AddExtraTransformRegister();
-
-  typedef signed short PixelType;
 
   typedef signed short PixelType;
 

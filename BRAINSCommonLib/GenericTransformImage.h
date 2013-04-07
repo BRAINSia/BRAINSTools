@@ -155,8 +155,6 @@ extern int WriteBothTransformsToDisk(const GenericTransformType::ConstPointer ge
   */
 extern int WriteStrippedRigidTransformToDisk(const GenericTransformType::ConstPointer genericTransformToWrite,
                                              const std::string & strippedOutputTransform);
-
-extern void AddExtraTransformRegister(void);
 }
 
 /**

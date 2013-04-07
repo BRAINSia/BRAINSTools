@@ -113,14 +113,6 @@ ValidationInputParser<TImage>
     // within
     //      the regression test suite.
 
-    // VBRAINSDemonWarpPrimary.cxx
-    // Review reading of transform files from BRAINSFit code for
-    // reading Versor/Euler/Affine file from
-    // Apparently when you register one transform, you need to register all your
-    // transforms.
-    //
-    AddExtraTransformRegister();
-
     //  #######Now use TransformToDisplacementFieldSource
 #if (ITK_VERSION_MAJOR < 4)
     typedef itk::TransformToDeformationFieldSource<TDisplacementField, double> DisplacementFieldGeneratorType;

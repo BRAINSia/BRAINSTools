@@ -52,7 +52,6 @@ int main(int argc, char *argv[])
 {
   PARSE_ARGS;
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
-  itk::AddExtraTransformRegister();
 
   std::cout << "Input Transform: " <<  inputTransform << std::endl;
   std::cout << "Reference Image: " <<  inputReferenceVolume << std::endl;
@@ -65,8 +64,6 @@ int main(int argc, char *argv[])
   typedef itk::Image<signed short, 3>              ReferenceImageType;
   typedef itk::ImageFileReader<ReferenceImageType> ReferenceReaderType;
 
-  // TODO:  May need to add the TPS transform type to
-  // "AddExtraTransformRegister"
   typedef itk::ThinPlateR2LogRSplineKernelTransform<double, 3> ThinPlateSplineTransformType;
 
 #if (ITK_VERSION_MAJOR < 4)
@@ -75,8 +72,6 @@ int main(int argc, char *argv[])
   typedef itk::TransformToDisplacementFieldSource<DisplacementFieldType, double> DisplacementFieldGeneratorType;
 #endif
   typedef DisplacementFieldGeneratorType::TransformType TransformType;
-
-  itk::AddExtraTransformRegister();
 
   // Read the Reference file
   ReferenceReaderType::Pointer referenceReader = ReferenceReaderType::New();

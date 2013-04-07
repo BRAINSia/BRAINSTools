@@ -85,7 +85,6 @@ int main(int argc, char *argv[])
   PARSE_ARGS;
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
   itk::NumberToString<double>                                        doubleConvert;
-  itk::AddExtraTransformRegister();
 
   bool debug = true;
   if( debug )

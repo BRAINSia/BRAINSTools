@@ -387,17 +387,6 @@ int main( int argc, char *argv[] )
   std::cout << "This program has been replaced by BRAINSResample.  PLEASE TRY TO AVOID USING THIS!" << std::endl;
   std::cout << "This program has been replaced by BRAINSResample.  PLEASE TRY TO AVOID USING THIS!" << std::endl;
   std::cout << "This program has been replaced by BRAINSResample.  PLEASE TRY TO AVOID USING THIS!" << std::endl;
-  // HACK:  BRAINS2 Masks are currently broken
-  // The direction cosines are and the direction labels are not consistently being set.
-  // itk::Brains2MaskImageIOFactory::RegisterOneFactory();
-
-  // Apparently when you register one transform, you need to register all your
-  // transforms.
-  itk::TransformFactory<VersorRigid3DTransformType>::RegisterTransform();
-  itk::TransformFactory<ScaleVersor3DTransformType>::RegisterTransform();
-  itk::TransformFactory<ScaleSkewVersor3DTransformType>::RegisterTransform();
-  itk::TransformFactory<AffineTransformType>::RegisterTransform();
-  itk::TransformFactory<BSplineTransformType>::RegisterTransform();
 
   return ApplyWarp(argc, argv);
 }

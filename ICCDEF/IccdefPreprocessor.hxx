@@ -132,14 +132,6 @@ IccdefPreprocessor<TInputImage, TOutputImage>
 
   if( m_InitialTransformFilename != "" )
     {
-    // Review reading of transform files from BRAINSFit code for
-    // reading Versor/Euler/Affine file from
-
-    itk::TransformFactory<VersorRigid3DTransformType>::RegisterTransform();
-    itk::TransformFactory<ScaleSkewVersor3DTransformType>::RegisterTransform();
-    itk::TransformFactory<AffineTransformType>::RegisterTransform();
-    itk::TransformFactory<BSplineTransformType>::RegisterTransform();
-
     //
     // read in the initial ITKTransform
     //

@@ -54,7 +54,6 @@ int main(int argc, char *argv[])
 {
   PARSE_ARGS;
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
-  itk::AddExtraTransformRegister();
 
   typedef signed short                   PixelType;
   typedef double                         TensorPixelType;

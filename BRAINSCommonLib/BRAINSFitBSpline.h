@@ -58,7 +58,6 @@ DoBSpline(typename BSplineTransformType::Pointer InitializerBsplineTransform,
   typedef typename BSplineTransformType::DirectionType  TransformDirectionType;
   typedef typename BSplineTransformType::ParametersType TransformParametersType;
 
-  typedef typename itk::LBFGSBOptimizer OptimizerType;
 
   typedef typename itk::LinearInterpolateImageFunction<
       RegisterImageType,
@@ -68,18 +67,18 @@ DoBSpline(typename BSplineTransformType::Pointer InitializerBsplineTransform,
       RegisterImageType,
       RegisterImageType>          RegistrationType;
 
-  typedef typename BSplineTransformType::Pointer     TransformTypePointer;
-  typedef typename OptimizerType::Pointer            OptimizerTypePointer;
-  typedef typename OptimizerType::ParametersType     OptimizerParameterType;
-  typedef typename OptimizerType::ScalesType         OptimizerScalesType;
-  typedef typename OptimizerType::BoundSelectionType OptimizerBoundSelectionType;
-  typedef typename OptimizerType::BoundValueType     OptimizerBoundValueType;
+  typedef typename BSplineTransformType::Pointer           TransformTypePointer;
+  typedef typename itk::LBFGSBOptimizer                    LBFGSBOptimizerType;
+  typedef typename LBFGSBOptimizerType::Pointer            LBFGSBOptimizerTypePointer;
+  typedef typename LBFGSBOptimizerType::ParametersType     OptimizerParameterType;
+  typedef typename LBFGSBOptimizerType::ScalesType         OptimizerScalesType;
+  typedef typename LBFGSBOptimizerType::BoundSelectionType OptimizerBoundSelectionType;
+  typedef typename LBFGSBOptimizerType::BoundValueType     OptimizerBoundValueType;
 
   typedef typename InterpolatorType::Pointer InterpolatorTypePointer;
   typedef typename RegistrationType::Pointer RegistrationTypePointer;
 
-  typedef typename itk::ResampleImageFilter<
-      RegisterImageType,
+  typedef typename itk::ResampleImageFilter< RegisterImageType,
       RegisterImageType>     ResampleFilterType;
 
   // TODO:  Expose these to the command line for consistancy.
@@ -88,9 +87,6 @@ DoBSpline(typename BSplineTransformType::Pointer InitializerBsplineTransform,
   const int m_MaximumNumberOfEvaluations = 900;
   const int m_MaximumNumberOfCorrections = 12;
 
-  OptimizerTypePointer    optimizer     = OptimizerType::New();
-  InterpolatorTypePointer interpolator  = InterpolatorType::New();
-  RegistrationTypePointer registration  = RegistrationType::New();
 
   typename BSplineTransformType::Pointer m_OutputBSplineTransform = BSplineTransformType::New();
   m_OutputBSplineTransform->SetIdentity();
@@ -99,8 +95,11 @@ DoBSpline(typename BSplineTransformType::Pointer InitializerBsplineTransform,
   m_OutputBSplineTransform->SetParametersByValue( InitializerBsplineTransform->GetParameters() );
 
   /** Set up the Registration */
+  RegistrationTypePointer registration = RegistrationType::New();
   registration->SetMetric(CostMetricObject);
-  registration->SetOptimizer(optimizer);
+  LBFGSBOptimizerTypePointer LBFGSBoptimizer = LBFGSBOptimizerType::New();
+  registration->SetOptimizer(LBFGSBoptimizer);
+  InterpolatorTypePointer interpolator = InterpolatorType::New();
   registration->SetInterpolator(interpolator);
   registration->SetTransform(m_OutputBSplineTransform);
 
@@ -126,10 +125,8 @@ DoBSpline(typename BSplineTransformType::Pointer InitializerBsplineTransform,
   // constrian
   // the parameters to something different than those control points inside the
   // fixed image mask.
-  OptimizerBoundSelectionType boundSelect( m_OutputBSplineTransform->GetNumberOfParameters() );
-  OptimizerBoundValueType     upperBound( m_OutputBSplineTransform->GetNumberOfParameters() );
-  OptimizerBoundValueType     lowerBound( m_OutputBSplineTransform->GetNumberOfParameters() );
 
+  OptimizerBoundSelectionType boundSelect( m_OutputBSplineTransform->GetNumberOfParameters() );
   if( vcl_abs(m_MaxBSplineDisplacement) < 1e-12 )
     {
     boundSelect.Fill(0);
@@ -138,26 +135,33 @@ DoBSpline(typename BSplineTransformType::Pointer InitializerBsplineTransform,
     {
     boundSelect.Fill(2);
     }
+  OptimizerBoundValueType upperBound( m_OutputBSplineTransform->GetNumberOfParameters() );
   upperBound.Fill(m_MaxBSplineDisplacement);
+  OptimizerBoundValueType lowerBound( m_OutputBSplineTransform->GetNumberOfParameters() );
   lowerBound.Fill(-m_MaxBSplineDisplacement);
-  optimizer->SetBoundSelection(boundSelect);
-  optimizer->SetUpperBound(upperBound);
-  optimizer->SetLowerBound(lowerBound);
 
-  optimizer->SetCostFunctionConvergenceFactor(m_CostFunctionConvergenceFactor);
-  optimizer->SetProjectedGradientTolerance(m_ProjectedGradientTolerance);
-  optimizer->SetMaximumNumberOfIterations(m_MaximumNumberOfIterations);
-  optimizer->SetMaximumNumberOfEvaluations(m_MaximumNumberOfEvaluations);
-  optimizer->SetMaximumNumberOfCorrections(m_MaximumNumberOfCorrections);
+  LBFGSBoptimizer->SetBoundSelection(boundSelect);
+  std::cout << "PRE : " << LBFGSBoptimizer->GetUpperBound().size() << " " << upperBound.size() << std::endl;
+  LBFGSBoptimizer->SetUpperBound(upperBound);
+  std::cout << "POST: " << LBFGSBoptimizer->GetUpperBound().size() << " " << upperBound.size() << std::endl;
 
-  // Create the Command observer and register it with the optimizer.
+  std::cout << "PRE : " << LBFGSBoptimizer->GetLowerBound().size() << " " << lowerBound.size() << std::endl;
+  LBFGSBoptimizer->SetLowerBound(lowerBound);
+  std::cout << "POST: " << LBFGSBoptimizer->GetLowerBound().size() << " " << lowerBound.size() << std::endl;
+
+  LBFGSBoptimizer->SetCostFunctionConvergenceFactor(m_CostFunctionConvergenceFactor);
+  LBFGSBoptimizer->SetProjectedGradientTolerance(m_ProjectedGradientTolerance);
+  LBFGSBoptimizer->SetMaximumNumberOfIterations(m_MaximumNumberOfIterations);
+  LBFGSBoptimizer->SetMaximumNumberOfEvaluations(m_MaximumNumberOfEvaluations);
+  LBFGSBoptimizer->SetMaximumNumberOfCorrections(m_MaximumNumberOfCorrections);
+
+  // Create the Command observer and register it with the LBFGSBoptimizer.
   // TODO:  make this output optional.
-  //
 
   const bool ObserveIterations = true;
   if( ObserveIterations == true )
     {
-    typedef BRAINSFit::CommandIterationUpdate<OptimizerType, BSplineTransformType, RegisterImageType>
+    typedef BRAINSFit::CommandIterationUpdate<LBFGSBOptimizerType, BSplineTransformType, RegisterImageType>
       CommandIterationUpdateType;
     typename CommandIterationUpdateType::Pointer observer =
       CommandIterationUpdateType::New();
@@ -167,7 +171,7 @@ DoBSpline(typename BSplineTransformType::Pointer InitializerBsplineTransform,
     observer->SetMovingImage(m_MovingVolume);
     observer->SetFixedImage(m_FixedVolume);
     observer->SetTransform(m_OutputBSplineTransform);
-    optimizer->AddObserver(itk::IterationEvent(), observer);
+    LBFGSBoptimizer->AddObserver(itk::IterationEvent(), observer);
     }
 
   /* Now start the execute function */
@@ -190,15 +194,12 @@ DoBSpline(typename BSplineTransformType::Pointer InitializerBsplineTransform,
     return NULL;
     }
 
-  OptimizerType::ParametersType finalParameters =
-    registration->GetLastTransformParameters();
-
   collector.Report();
-  std::cout << "Stop condition from optimizer." << optimizer->GetStopConditionDescription() << std::endl;
+  std::cout << "Stop condition from LBFGSBoptimizer." << LBFGSBoptimizer->GetStopConditionDescription() << std::endl;
 
   /* This call is required to copy the parameters */
+  const LBFGSBOptimizerType::ParametersType finalParameters = registration->GetLastTransformParameters();
   m_OutputBSplineTransform->SetParametersByValue(finalParameters);
-  //  std::cout << "DELETEME:  " << finalParameters << std::endl;
   return m_OutputBSplineTransform;
 }
 

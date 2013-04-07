@@ -125,6 +125,22 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
   # warning: ‘...’ may be used uninitialized in this function
   "numpy.(core).*warning.*(assignment|defined but not used|uninitialized)"
   "NUMPY.*Warning"
+  "NUMPY._configtest.*undefined reference"
+  "_configtest.*error"
+  "collect2: ld returned 1 exit status"
+
+  #Superbuild
+  "Note.*SWIG"
+  ".*parser.y.*"
+  "maximum warning verbosity"
+  ".*OpenCV.*"
+  ".*VTK.*"
+  ".*has no symbols."
+  "ITKv4"
+  "SlicerExecutionModel"
+  "SimpleITK"
+  ".*Warning while building.*"
+
   # Mac
   "numpy.core.src.multiarray.descriptor.*was declared here"
 
@@ -357,4 +373,6 @@ set(CTEST_CUSTOM_ERROR_EXCEPTION
   "SlicerExecutionModel"
   "SimpleITK"
 
+  #Superbuild
+  ".*Warning while building.*"
   )

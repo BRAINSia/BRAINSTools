@@ -43,7 +43,7 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
 
   set(${proj}_URL
     "http://www.infai.org/jpeg/files?get=jpegsrc.v09a.tar.gz")
-  set(${proj}_MD5 "bfe3a70e9bb7e97f0e7b7a4c663f873c")
+  set(${proj}_MD5 "21e8b467c55a8eb5a6b28ad9ff1e8086")
 
   AutoConf_FLAGS(${proj}_CFLAGS C "")
   AutoConf_FLAGS(${proj}_CXXFLAGS CXX "")

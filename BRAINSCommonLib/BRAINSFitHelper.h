@@ -410,6 +410,12 @@ BRAINSFitHelper::RunRegistration()
   this->m_GenericTransformList.resize(myHelper->GetGenericTransformListPtr()->size() );
   std::copy(myHelper->GetGenericTransformListPtr()->begin(),
             myHelper->GetGenericTransformListPtr()->end(), this->m_GenericTransformList.begin() );
+
+  // Find the final metric value based on the used metric type and returned output transform
+  typename TLocalCostMetric::Pointer finalMetric = this->GetCostMetric<TLocalCostMetric>();
+  finalMetric->SetTransform(this->m_CurrentGenericTransform);
+  finalMetric->Initialize();
+  this->m_FinalMetricValue = finalMetric->GetValue( this->m_CurrentGenericTransform->GetParameters() );
 }
 
 template <class TLocalCostMetric>

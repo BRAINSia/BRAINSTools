@@ -495,9 +495,36 @@ int main(int argc, char *argv[])
       }
 //    actualIterations = myHelper->GetActualNumberOfIterations();
 //    permittedIterations = myHelper->GetPermittedNumberOfIterations();
-    /*
+      /*
       allLevelsIterations=myHelper->GetAccumulatedNumberOfIterationsForAllLevels();
       */
+
+      //If --logFileReport myReport.csv is specified on the command line, then write out this simple CSV file.
+    if( logFileReport != "" )
+      {
+      const double finalMetricValue = myHelper->GetFinalMetricValue();
+      std::stringstream myLogFileReportStream; // ( logFileReport );
+      myLogFileReportStream << "#MetricName,MetricValue,FixedImageName,FixedMaskName,MovingImageName,MovingMaskName" << std::endl;
+      myLogFileReportStream << costMetric << ",";
+      myLogFileReportStream << finalMetricValue << ",";
+      myLogFileReportStream << fixedVolume << ",";
+      myLogFileReportStream << fixedBinaryVolume << ",";
+      myLogFileReportStream << movingVolume << ",";
+      myLogFileReportStream << movingBinaryVolume << std::endl;
+
+      std::ofstream     LogScript;
+      LogScript.open( logFileReport.c_str() );
+      if( !LogScript.is_open() )
+        {
+        std::cerr << "Error: Can't write log file report file "
+        << logFileReport << std::endl;
+        std::cerr.flush();
+        return EXIT_FAILURE;
+        }
+      LogScript << myLogFileReportStream.str();
+      LogScript.close();
+      }
+
     }
   /*
    *  At this point we can save the resampled image.
@@ -629,22 +656,6 @@ int main(int argc, char *argv[])
     itk::WriteBothTransformsToDisk(currentGenericTransform.GetPointer(),
                                    localOutputTransform, strippedOutputTransform);
     }
-#if 0 //TODO: ALI implement this
-  //If --logFileReport myReport.csv is specified on the command line, then write out this simple CSV file.
-  if( logFileReport != "" )
-    {
-    const double finalMetricValue = myHelper->GetFinalMetricValue();
-    myLogFileReportStream ( logFileReport );
-    myLogFileReportStream << "FixedImageName,FixedMaskName,MovingImageName,MovingMaskName,MetricName,MetricValue" << std::endl;
-    myLogFileReportStream << fixedVolume << ","
-    myLogFileReportStream << fixedBinaryVolume << ","
-    myLogFileReportStream << movingVolume << ","
-    myLogFileReportStream << movingBinaryVolume << ","
-    myLogFileReportStream << costMetric << ","
-    myLogFileReportStream << finalMetricValue << std::endl;
-    }
-
-#endif
 
   return 0;
 }

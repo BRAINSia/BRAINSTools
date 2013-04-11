@@ -565,7 +565,7 @@
       <name>logFileReport</name>
       <longflag>logFileReport</longflag>
       <label>Log File Report</label>
-      <description>A file to write out final information report in CSV file: FixedImageName,FixedMaskName,MovingImageName,MovingMaskName,MetricName,MetricValue</description>
+      <description>A file to write out final information report in CSV file: MetricName,MetricValue,FixedImageName,FixedMaskName,MovingImageName,MovingMaskName</description>
       <default></default>
       <channel>output</channel>
     </file>

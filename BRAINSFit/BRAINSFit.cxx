@@ -678,6 +678,22 @@ int main(int argc, char *argv[])
     itk::WriteBothTransformsToDisk(currentGenericTransform.GetPointer(),
                                    localOutputTransform, strippedOutputTransform);
     }
+#if 0 //TODO: ALI implement this
+  //If --logFileReport myReport.csv is specified on the command line, then write out this simple CSV file.
+  if( logFileReport != "" )
+    {
+    const double finalMetricValue = myHelper->GetFinalMetricValue();
+    myLogFileReportStream ( logFileReport );
+    myLogFileReportStream << "FixedImageName,FixedMaskName,MovingImageName,MovingMaskName,MetricName,MetricValue" << std::endl;
+    myLogFileReportStream << fixedVolume << ","
+    myLogFileReportStream << fixedBinaryVolume << ","
+    myLogFileReportStream << movingVolume << ","
+    myLogFileReportStream << movingBinaryVolume << ","
+    myLogFileReportStream << costMetric << ","
+    myLogFileReportStream << finalMetricValue << std::endl;
+    }
+
+#endif
 
   return 0;
 }

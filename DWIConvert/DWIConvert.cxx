@@ -1799,6 +1799,13 @@ int main(int argc, char *argv[])
       return EXIT_SUCCESS;
       }
 
+    //
+    // fMRI Output -- doesn't need DWI data.
+    if(fMRIOutput)
+      {
+      FreeHeaders(allHeaders);
+      return Write4DVolume(dmImage,nUsableVolumes,outputVolumeHeaderName);
+      }
     // FSLOutput requires a NIfT file
     if( conversionMode != "DicomToFSL" )
       {

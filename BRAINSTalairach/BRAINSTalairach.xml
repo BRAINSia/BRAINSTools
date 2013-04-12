@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>
+  BRAINS.Segmentation
+  </category>
+  <title>
+  BRAINS Talairach
+  </title>
+  <description>
+  This program creates a VTK structured grid defining the Talairach coordinate system based on four points: AC, PC, IRP, and SLA. The resulting structred grid can be written as either a classic VTK file or the new VTK XML file format. Two representations of the resulting grid can be written. The first is a bounding box representation that also contains the location of the AC and PC points. The second representation is the full Talairach grid representation that includes the additional rows of boxes added to the inferior allowing full coverage of the cerebellum. </description>
+  <version>0.1</version>
+  <documentation-url>http://www.nitrc.org/plugins/mwiki/index.php/brains:BRAINSTalairach</documentation-url>
+  <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
+  <contributor>
+  Steven Dunn and Vincent Magnotta
+  </contributor>
+  <acknowledgements>Funding for this work was provided by NIH/NINDS award NS050568</acknowledgements>
+
+  <parameters>
+    <label>Input Parameters</label>
+    <description>Input parameters to be used in generating the structured grid</description>
+
+    <double-vector>
+      <name>AC</name>
+      <longflag>AC</longflag>
+      <description>Location of AC Point </description>
+      <label>AC Point</label>
+      <channel>input</channel>
+    </double-vector>
+
+    <boolean>
+      <name>ACisIndex</name>
+      <longflag>ACisIndex</longflag>
+      <description>AC Point is Index</description>
+      <label>AC Index</label>
+      <channel>input</channel>
+      <default>0</default>
+    </boolean>
+
+    <double-vector>
+      <name>PC</name>
+      <longflag>PC</longflag>
+      <description>Location of PC Point </description>
+      <label>PC Point</label>
+      <channel>input</channel>
+    </double-vector>
+
+    <boolean>
+      <name>PCisIndex</name>
+      <longflag>PCisIndex</longflag>
+      <description>PC Point is Index</description>
+      <label>PC Index</label>
+      <channel>input</channel>
+      <default>0</default>
+    </boolean>
+
+    <double-vector>
+      <name>SLA</name>
+      <longflag>SLA</longflag>
+      <description>Location of SLA Point </description>
+      <label>SLA Point</label>
+      <channel>input</channel>
+    </double-vector>
+
+    <boolean>
+      <name>SLAisIndex</name>
+      <longflag>SLAisIndex</longflag>
+      <description>SLA Point is Index</description>
+      <label>SLA Index</label>
+      <channel>input</channel>
+      <default>0</default>
+    </boolean>
+
+    <double-vector>
+      <name>IRP</name>
+      <longflag>IRP</longflag>
+      <description>Location of IRP Point </description>
+      <label>IRP Point</label>
+      <channel>input</channel>
+    </double-vector>
+
+    <boolean>
+      <name>IRPisIndex</name>
+      <longflag>IRPisIndex</longflag>
+      <description>IRP Point is Index</description>
+      <label>IRP Index</label>
+      <channel>input</channel>
+      <default>0</default>
+    </boolean>
+
+    <image>
+      <name>inputVolume</name>
+      <longflag>inputVolume</longflag>
+      <description>Input image used to define physical space of images</description>
+      <label>AC-PC Aligned Image</label>
+      <channel>input</channel>
+    </image>
+
+  </parameters>
+
+  <parameters>
+    <label>Output Parameters</label>
+    <description>Output Parameters</description>
+
+   <file>
+      <name>outputBox</name>
+      <longflag>outputBox</longflag>
+      <description>Name of the resulting Talairach Bounding Box file</description>
+      <label>Talairach Box</label>
+      <channel>output</channel>
+    </file>
+
+  <file>
+      <name>outputGrid</name>
+      <longflag>outputGrid</longflag>
+      <description>Name of the resulting Talairach Grid file</description>
+      <label>Talairach Grid</label>
+      <channel>output</channel>
+    </file>
+  </parameters>
+</executable>

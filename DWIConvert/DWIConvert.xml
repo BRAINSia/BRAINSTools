@@ -38,6 +38,13 @@
       <channel>output</channel>
       <description><![CDATA[Output filename (.nhdr or .nrrd)]]></description>
     </image>
+    <boolean>
+      <name>fMRIOutput</name>
+      <longflag>--fMRI</longflag>
+      <label>Output fMRI file</label>
+      <description>Output a NRRD file, but no Gradients</description>
+      <!-- booleans default to false -->
+    </boolean>
   </parameters>
 
   <parameters>

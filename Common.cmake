@@ -63,6 +63,7 @@ option(USE_BRAINSDemonWarp                "Build BRAINSDemonWarp "              
 option(USE_GTRACT                         "Build GTRACT"                         ON)
 option(USE_BRAINSABC                      "Build BRAINSABC"                      ON)
 option(USE_BRAINSTransformConvert         "Build BRAINSTransformConvert"         ON)
+option(USE_BRAINSTalairach                "Build BRAINSTalairach"                ON)
 option(USE_BRAINSConstellationDetector    "Build BRAINSConstellationDetector"    ON)
 option(USE_BRAINSMush                     "Build BRAINSMush"                     ON)
 option(USE_BRAINSInitializedControlPoints "Build BRAINSInitializedControlPoints" ON)

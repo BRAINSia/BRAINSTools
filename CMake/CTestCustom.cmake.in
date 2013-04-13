@@ -88,6 +88,7 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
   ".*gmake.*: warning.*"
 
   # JPEG warnings:
+  ".*JPEG/jccoefct.c.*"
   ".*/JPEG.*"
   ".*warning: unused parameter .*cinfo.*"
   ".*/TIFF.*"
@@ -356,6 +357,7 @@ set(CTEST_CUSTOM_ERROR_MATCH
 
 set(CTEST_CUSTOM_ERROR_EXCEPTION
   ${CTEST_CUSTOM_ERROR_EXCEPTION}
+  ${CTEST_CUSTOM_WARNING_EXCEPTION}
   # Numpy errors
   "NUMPY.*Warning"
   "NUMPY._configtest.*undefined reference"

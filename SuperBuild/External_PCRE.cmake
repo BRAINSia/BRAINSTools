@@ -35,6 +35,10 @@ set(pcre_CONFIGURE_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/pcre_
 ExternalProject_add(PCRE
   URL http://downloads.sourceforge.net/project/pcre/pcre/8.32/pcre-8.32.tar.gz
   URL_MD5 234792d19a6c3c34a13ff25df82c1ce7
+  LOG_CONFIGURE 0  # Wrap configure in script to ignore log output from dashboards
+  LOG_BUILD     0  # Wrap build in script to to ignore log output from dashboards
+  LOG_TEST      0  # Wrap test in script to to ignore log output from dashboards
+  LOG_INSTALL   0  # Wrap install in script to to ignore log output from dashboards
   ${cmakeversion_external_update} "${cmakeversion_external_update_value}"
   CONFIGURE_COMMAND ${pcre_CONFIGURE_COMMAND}
   )

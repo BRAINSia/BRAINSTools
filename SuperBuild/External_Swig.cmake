@@ -56,6 +56,10 @@ if(NOT SWIG_DIR)
     ExternalProject_add(Swig
       URL http://prdownloads.sourceforge.net/swig/swig-${TARGET_SWIG_VERSION}.tar.gz
       URL_MD5  54d534b14a70badc226129159412ea85
+      LOG_CONFIGURE 0  # Wrap configure in script to ignore log output from dashboards
+      LOG_BUILD     0  # Wrap build in script to to ignore log output from dashboards
+      LOG_TEST      0  # Wrap test in script to to ignore log output from dashboards
+      LOG_INSTALL   0  # Wrap install in script to to ignore log output from dashboards
       ${cmakeversion_external_update} "${cmakeversion_external_update_value}"
       CONFIGURE_COMMAND ${swig_CONFIGURE_COMMAND}
       DEPENDS PCRE

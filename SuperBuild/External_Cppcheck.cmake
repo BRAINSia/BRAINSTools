@@ -58,6 +58,10 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
     GIT_TAG ${${proj}_GIT_TAG}
     SOURCE_DIR ${proj}
     BUILD_IN_SOURCE 1
+    LOG_CONFIGURE 0  # Wrap configure in script to ignore log output from dashboards
+    LOG_BUILD     0  # Wrap build in script to to ignore log output from dashboards
+    LOG_TEST      0  # Wrap test in script to to ignore log output from dashboards
+    LOG_INSTALL   0  # Wrap install in script to to ignore log output from dashboards
     ${cmakeversion_external_update} "${cmakeversion_external_update_value}"
     CONFIGURE_COMMAND ""
     BUILD_COMMAND HAVE_RULES=no ${CMAKE_MAKE_PROGRAM}

@@ -1007,244 +1007,251 @@ int main(int argc, char *argv[])
 
     if( StringContains(vendor, "GE") )
       {
-#if 0
-      // don't even try to convert DTI 6 Direction files
-      std::string seriesDescription;
-      if( allHeaders[0]->GetElementLO(0x0008, 0x103e, seriesDescription, false) == EXIT_SUCCESS &&
-          StringContains(seriesDescription, "6 Directions") )
-        {
-        std::cerr << "Can't recover B-value & diffusion directions from DTI - 6 Directions scans" << std::endl;
-        FreeHeaders(allHeaders);
-        return EXIT_FAILURE;
-        }
-#endif
-      std::string ModelName;
-      // OK, so there is an accomdation made on the basis of one site
-      // having garbage BVal/GVectors.  It has to do with variations
-      // of behavior of the Signa HDxt scanner.
-      // In all cases, the data is thus:
-      // BVal = [0043,1039]
-      // GVec[0] = [0019.10bb] GVec[1] = [0019,10bc] GVec[2] = [0019,10bd]
-      // there are 3 possible encodings of this data for GE scanners:
-      // 1. As IS/DS -- integer an decimal strings -- the normal
-      // behavior
-      // 2. As OB, but the byte data is binary and may need byte
-      // swapping.
-      // 3. As OB, but it's actuall as case 1 -- numbers represented
-      // as strings.
-      // I'm accounting for these cases by looking specifically for
-      // the Signa HDxt scanner, and if it doesn't find IS/DS data,
-      // look for char strings in the OB data.
-      // Honestly this is not an optimal way to handle this
-      // situation. In an ideal world we'd have accurate knowledge of
-      // what each Scanner/Software Version is doing in these tags,
-      // and handle them accordingly. But we don't live in that world.
-      bool isSignaHDxt(false);
-      if( allHeaders[0]->GetElementLO(0x0008, 0x001090, ModelName, false) == EXIT_SUCCESS &&
-          ModelName == "Signa HDxt" )
-        {
-        isSignaHDxt = true;
-        }
       nSliceInVolume = numberOfSlicesPerVolume;
       nVolume = nSlice / nSliceInVolume;
-
-      // assume volume interleaving
-      std::cout << "Number of Slices: " << nSlice << std::endl;
-      std::cout << "Number of Volume: " << nVolume << std::endl;
-      std::cout << "Number of Slices in each volume: " << nSliceInVolume << std::endl;
-      for( unsigned int k = 0; k < nSlice; k += nSliceInVolume )
+      if(!fMRIOutput)
         {
-        // parsing bvalue and gradient directions
-        vnl_vector_fixed<double, 3> vect3d;
-        vect3d.fill( 0 );
-        // for some weird reason this item in the GE dicom
-        // header is stored as an IS (Integer String) element.
-        ::itk::int32_t intb;
-        if( !isSignaHDxt )
+#if 0
+        // don't even try to convert DTI 6 Direction files
+        std::string seriesDescription;
+        if( allHeaders[0]->GetElementLO(0x0008, 0x103e, seriesDescription, false) == EXIT_SUCCESS &&
+            StringContains(seriesDescription, "6 Directions") )
           {
-          allHeaders[k]->GetElementISorOB(0x0043, 0x1039, intb);
+          std::cerr << "Can't recover B-value & diffusion directions from DTI - 6 Directions scans" << std::endl;
+          FreeHeaders(allHeaders);
+          return EXIT_FAILURE;
           }
-        else
+#endif
+        // don't bother with gvec/bval stuff if just FMRI Output
+        std::string ModelName;
+        // OK, so there is an accomdation made on the basis of one site
+        // having garbage BVal/GVectors.  It has to do with variations
+        // of behavior of the Signa HDxt scanner.
+        // In all cases, the data is thus:
+        // BVal = [0043,1039]
+        // GVec[0] = [0019.10bb] GVec[1] = [0019,10bc] GVec[2] = [0019,10bd]
+        // there are 3 possible encodings of this data for GE scanners:
+        // 1. As IS/DS -- integer an decimal strings -- the normal
+        // behavior
+        // 2. As OB, but the byte data is binary and may need byte
+        // swapping.
+        // 3. As OB, but it's actuall as case 1 -- numbers represented
+        // as strings.
+        // I'm accounting for these cases by looking specifically for
+        // the Signa HDxt scanner, and if it doesn't find IS/DS data,
+        // look for char strings in the OB data.
+        // Honestly this is not an optimal way to handle this
+        // situation. In an ideal world we'd have accurate knowledge of
+        // what each Scanner/Software Version is doing in these tags,
+        // and handle them accordingly. But we don't live in that world.
+        bool isSignaHDxt(false);
+        if( allHeaders[0]->GetElementLO(0x0008, 0x001090, ModelName, false) == EXIT_SUCCESS &&
+            ModelName == "Signa HDxt" )
           {
-          if( allHeaders[k]->GetElementIS(0x0043, 0x1039, intb, false) != EXIT_SUCCESS )
-            {
-            std::string val;
-            allHeaders[k]->GetElementOB(0x0043, 0x1039, val);
-            size_t slashpos = val.find('\\');
-            val = val.substr(0, slashpos);
-            std::stringstream s(val);
-            s >> intb;
-            }
+          isSignaHDxt = true;
           }
-        float b = static_cast<float>(intb);
-        for( unsigned elementNum = 0x10bb; elementNum <= 0x10bd; ++elementNum )
+
+        // assume volume interleaving
+        std::cout << "Number of Slices: " << nSlice << std::endl;
+        std::cout << "Number of Volume: " << nVolume << std::endl;
+        std::cout << "Number of Slices in each volume: " << nSliceInVolume << std::endl;
+        for( unsigned int k = 0; k < nSlice; k += nSliceInVolume )
           {
-          int vecI(elementNum - 0x10bb);
+          // parsing bvalue and gradient directions
+          vnl_vector_fixed<double, 3> vect3d;
+          vect3d.fill( 0 );
+          // for some weird reason this item in the GE dicom
+          // header is stored as an IS (Integer String) element.
+          ::itk::int32_t intb;
           if( !isSignaHDxt )
             {
-            allHeaders[k]->GetElementDSorOB(0x0019, elementNum, vect3d[vecI]);
+            allHeaders[k]->GetElementISorOB(0x0043, 0x1039, intb);
             }
           else
             {
-            if( allHeaders[k]->GetElementDS(0x0019, elementNum, 1, &vect3d[vecI], false) != EXIT_SUCCESS )
+            if( allHeaders[k]->GetElementIS(0x0043, 0x1039, intb, false) != EXIT_SUCCESS )
               {
               std::string val;
-              allHeaders[k]->GetElementOB(0x0019, elementNum, val);
+              allHeaders[k]->GetElementOB(0x0043, 0x1039, val);
+              size_t slashpos = val.find('\\');
+              val = val.substr(0, slashpos);
               std::stringstream s(val);
-              s >> vect3d[vecI];
+              s >> intb;
               }
             }
-          }
+          float b = static_cast<float>(intb);
+          for( unsigned elementNum = 0x10bb; elementNum <= 0x10bd; ++elementNum )
+            {
+            int vecI(elementNum - 0x10bb);
+            if( !isSignaHDxt )
+              {
+              allHeaders[k]->GetElementDSorOB(0x0019, elementNum, vect3d[vecI]);
+              }
+            else
+              {
+              if( allHeaders[k]->GetElementDS(0x0019, elementNum, 1, &vect3d[vecI], false) != EXIT_SUCCESS )
+                {
+                std::string val;
+                allHeaders[k]->GetElementOB(0x0019, elementNum, val);
+                std::stringstream s(val);
+                s >> vect3d[vecI];
+                }
+              }
+            }
 
-        vect3d[0] = -vect3d[0];
-        vect3d[1] = -vect3d[1];
+          vect3d[0] = -vect3d[0];
+          vect3d[1] = -vect3d[1];
 
-        bValues.push_back( b );
-        if( b == 0 )
-          {
-          vect3d.fill( 0 );
-          UnmodifiedDiffusionVectorsInDicomLPSCoordinateSystem.push_back(vect3d);
-          DiffusionVectors.push_back(vect3d);
-          }
-        else
-          {
-          UnmodifiedDiffusionVectorsInDicomLPSCoordinateSystem.push_back(vect3d);
-          // vect3d.normalize();
-          DiffusionVectors.push_back(vect3d);
-          }
+          bValues.push_back( b );
+          if( b == 0 )
+            {
+            vect3d.fill( 0 );
+            UnmodifiedDiffusionVectorsInDicomLPSCoordinateSystem.push_back(vect3d);
+            DiffusionVectors.push_back(vect3d);
+            }
+          else
+            {
+            UnmodifiedDiffusionVectorsInDicomLPSCoordinateSystem.push_back(vect3d);
+            // vect3d.normalize();
+            DiffusionVectors.push_back(vect3d);
+            }
 
-        std::cout << "B-value: " << b
-                  << "; diffusion direction: "
-                  << DoubleConvert(vect3d[0])
-                  << ", "
-                  << DoubleConvert(vect3d[1])
-                  << ", "
-                  << DoubleConvert(vect3d[2]) << std::endl;
+          std::cout << "B-value: " << b
+                    << "; diffusion direction: "
+                    << DoubleConvert(vect3d[0])
+                    << ", "
+                    << DoubleConvert(vect3d[1])
+                    << ", "
+                    << DoubleConvert(vect3d[2]) << std::endl;
+          }
         }
       }
     else if( StringContains(vendor, "PHILIPS") )
       {
       if( nSlice > 1 )
         {
-        // assume volume interleaving
-        std::cout << "Number of Slices: " << nSlice << std::endl;
-        std::cout << "Number of Volumes: " << nVolume << std::endl;
-        std::cout << "Number of Slices in each volume: " << nSliceInVolume << std::endl;
-        // NOTE:  Philips interleaves the directions, so the all gradient directions can be
-        // determined in the first "nVolume" slices which represents the first slice from each
-        // of the gradient volumes.
-        for( unsigned int k = 0; k < nVolume; ++k )
+        if(!fMRIOutput)
           {
-          std::string DiffusionDirectionality;
-          bool        useSupplement49Definitions(false);
-          if( allHeaders[k]->GetElementCSorOB(0x0018, 0x9075, DiffusionDirectionality, false) == EXIT_SUCCESS )
+          // assume volume interleaving
+          std::cout << "Number of Slices: " << nSlice << std::endl;
+          std::cout << "Number of Volumes: " << nVolume << std::endl;
+          std::cout << "Number of Slices in each volume: " << nSliceInVolume << std::endl;
+          // NOTE:  Philips interleaves the directions, so the all gradient directions can be
+          // determined in the first "nVolume" slices which represents the first slice from each
+          // of the gradient volumes.
+          for( unsigned int k = 0; k < nVolume; ++k )
             {
-            useSupplement49Definitions = true;
-            }
+            std::string DiffusionDirectionality;
+            bool        useSupplement49Definitions(false);
+            if( allHeaders[k]->GetElementCSorOB(0x0018, 0x9075, DiffusionDirectionality, false) == EXIT_SUCCESS )
+              {
+              useSupplement49Definitions = true;
+              }
 
-          bool   B0FieldFound = false;
-          double b = 0.0;
-          if( useSupplement49Definitions == true )
-            {
-            B0FieldFound = allHeaders[k]->GetElementFD(0x0018, 0x9087, b, false) == EXIT_SUCCESS;
-            }
-          else
-            {
-            float floatB;
-            if( allHeaders[k]->GetElementFLorOB(0x2001, 0x1003, floatB, false) == EXIT_SUCCESS )
-              {
-              B0FieldFound = true;
-              }
-            if( B0FieldFound )
-              {
-              b = static_cast<double>(floatB);
-              }
-            std::string tag;
-            allHeaders[k]->GetElementCSorOB(0x2001, 0x1004, tag, false );
-            if( StringContains(tag, "I") && b != 0 )
-              {
-              DiffusionDirectionality = "ISOTROPIC";
-              }
-            }
-
-          vnl_vector_fixed<double, 3> vect3d;
-          vect3d.fill( 0 );
-          if( StringContains(DiffusionDirectionality, "ISOTROPIC") )
-            { // Deal with images that are to be ignored
-            ++nIgnoreVolume;
-            useVolume.push_back(0);
-            continue;
-            }
-          else if( ( !B0FieldFound || b == 0 ) || StringContains(DiffusionDirectionality, "NONE") )
-            { // Deal with b0 images
-            bValues.push_back(b);
-            UnmodifiedDiffusionVectorsInDicomLPSCoordinateSystem.push_back(vect3d);
-            DiffusionVectors.push_back(vect3d);
-            useVolume.push_back(1);
-            continue;
-            }
-          else if( StringContains(DiffusionDirectionality, "DIRECTIONAL") || ( DiffusionDirectionality == "" ) )
-            { // Deal with gradient direction images
-            bValues.push_back(b);
-            useVolume.push_back(1);
+            bool   B0FieldFound = false;
+            double b = 0.0;
             if( useSupplement49Definitions == true )
               {
-              double doubleArray[3];
-              // Use alternate method to get value out of a sequence header (Some Phillips Data).
-              if( allHeaders[k]->GetElementFD(0x0018, 0x9089, 3, doubleArray, false) != EXIT_SUCCESS )
-                {
-                // std::cout << "Looking for  0018|9089 in sequence 0018,9076" << std::endl;
-                // gdcm::SeqEntry *
-                // DiffusionSeqEntry=allHeaders[k]->GetSeqEntry(0x0018,0x9076);
-                itk::DCMTKSequence DiffusionSeqEntry;
-                allHeaders[k]->GetElementSQ(0x0018, 0x9076, DiffusionSeqEntry);
-                // const unsigned int
-                // n=DiffusionSeqEntry->GetNumberOfSQItems();
-                unsigned int n = DiffusionSeqEntry.card();
-                if( n == 0 )
-                  {
-                  std::cout << "ERROR:  Sequence entry 0018|9076 has no items." << std::endl;
-                  FreeHeaders(allHeaders);
-                  return EXIT_FAILURE;
-                  }
-                DiffusionSeqEntry.GetElementFD(0x0018, 0x9089, 3, doubleArray);
-                }
-              vect3d[0] = doubleArray[0];
-              vect3d[1] = doubleArray[1];
-              vect3d[2] = doubleArray[2];
-              std::cout << "===== gradient orientations:" << k << " "
-                        << inputFileNames[k] << " (0018,9089) " << " " << vect3d << std::endl;
+              B0FieldFound = allHeaders[k]->GetElementFD(0x0018, 0x9087, b, false) == EXIT_SUCCESS;
               }
             else
               {
-              float tmp[3];
-              /*const bool b0exist =*/
-              allHeaders[k]->GetElementFLorOB( 0x2005, 0x10b0, tmp[0] );
-              allHeaders[k]->GetElementFLorOB( 0x2005, 0x10b1, tmp[1] );
-              allHeaders[k]->GetElementFLorOB( 0x2005, 0x10b2, tmp[2] );
-              vect3d[0] = static_cast<double>(tmp[0]);
-              vect3d[1] = static_cast<double>(tmp[1]);
-              vect3d[2] = static_cast<double>(tmp[2]);
+              float floatB;
+              if( allHeaders[k]->GetElementFLorOB(0x2001, 0x1003, floatB, false) == EXIT_SUCCESS )
+                {
+                B0FieldFound = true;
+                }
+              if( B0FieldFound )
+                {
+                b = static_cast<double>(floatB);
+                }
+              std::string tag;
+              allHeaders[k]->GetElementCSorOB(0x2001, 0x1004, tag, false );
+              if( StringContains(tag, "I") && b != 0 )
+                {
+                DiffusionDirectionality = "ISOTROPIC";
+                }
               }
 
-            UnmodifiedDiffusionVectorsInDicomLPSCoordinateSystem.push_back(vect3d);
-            // vect3d.normalize();
-            DiffusionVectors.push_back(vect3d);
-            }
-          else // Have no idea why we'd be here so error out
-            {
-            std::cout << "ERROR: DiffusionDirectionality was "
-                      << DiffusionDirectionality << "  Don't know what to do with that..." << std::endl;
-            FreeHeaders(allHeaders);
-            return EXIT_FAILURE;
-            }
+            vnl_vector_fixed<double, 3> vect3d;
+            vect3d.fill( 0 );
+            if( StringContains(DiffusionDirectionality, "ISOTROPIC") )
+              { // Deal with images that are to be ignored
+              ++nIgnoreVolume;
+              useVolume.push_back(0);
+              continue;
+              }
+            else if( ( !B0FieldFound || b == 0 ) || StringContains(DiffusionDirectionality, "NONE") )
+              { // Deal with b0 images
+              bValues.push_back(b);
+              UnmodifiedDiffusionVectorsInDicomLPSCoordinateSystem.push_back(vect3d);
+              DiffusionVectors.push_back(vect3d);
+              useVolume.push_back(1);
+              continue;
+              }
+            else if( StringContains(DiffusionDirectionality, "DIRECTIONAL") || ( DiffusionDirectionality == "" ) )
+              { // Deal with gradient direction images
+              bValues.push_back(b);
+              useVolume.push_back(1);
+              if( useSupplement49Definitions == true )
+                {
+                double doubleArray[3];
+                // Use alternate method to get value out of a sequence header (Some Phillips Data).
+                if( allHeaders[k]->GetElementFD(0x0018, 0x9089, 3, doubleArray, false) != EXIT_SUCCESS )
+                  {
+                  // std::cout << "Looking for  0018|9089 in sequence 0018,9076" << std::endl;
+                  // gdcm::SeqEntry *
+                  // DiffusionSeqEntry=allHeaders[k]->GetSeqEntry(0x0018,0x9076);
+                  itk::DCMTKSequence DiffusionSeqEntry;
+                  allHeaders[k]->GetElementSQ(0x0018, 0x9076, DiffusionSeqEntry);
+                  // const unsigned int
+                  // n=DiffusionSeqEntry->GetNumberOfSQItems();
+                  unsigned int n = DiffusionSeqEntry.card();
+                  if( n == 0 )
+                    {
+                    std::cout << "ERROR:  Sequence entry 0018|9076 has no items." << std::endl;
+                    FreeHeaders(allHeaders);
+                    return EXIT_FAILURE;
+                    }
+                  DiffusionSeqEntry.GetElementFD(0x0018, 0x9089, 3, doubleArray);
+                  }
+                vect3d[0] = doubleArray[0];
+                vect3d[1] = doubleArray[1];
+                vect3d[2] = doubleArray[2];
+                std::cout << "===== gradient orientations:" << k << " "
+                          << inputFileNames[k] << " (0018,9089) " << " " << vect3d << std::endl;
+                }
+              else
+                {
+                float tmp[3];
+                /*const bool b0exist =*/
+                allHeaders[k]->GetElementFLorOB( 0x2005, 0x10b0, tmp[0] );
+                allHeaders[k]->GetElementFLorOB( 0x2005, 0x10b1, tmp[1] );
+                allHeaders[k]->GetElementFLorOB( 0x2005, 0x10b2, tmp[2] );
+                vect3d[0] = static_cast<double>(tmp[0]);
+                vect3d[1] = static_cast<double>(tmp[1]);
+                vect3d[2] = static_cast<double>(tmp[2]);
+                }
 
-          std::cout << "B-value: " << b
-                    << "; diffusion direction: "
-                    << DoubleConvert(vect3d[0]) << ", "
-                    << DoubleConvert(vect3d[1]) << ", "
-                    << DoubleConvert(vect3d[2])
-                    << std::endl;
+              UnmodifiedDiffusionVectorsInDicomLPSCoordinateSystem.push_back(vect3d);
+              // vect3d.normalize();
+              DiffusionVectors.push_back(vect3d);
+              }
+            else // Have no idea why we'd be here so error out
+              {
+              std::cout << "ERROR: DiffusionDirectionality was "
+                        << DiffusionDirectionality << "  Don't know what to do with that..." << std::endl;
+              FreeHeaders(allHeaders);
+              return EXIT_FAILURE;
+              }
+
+            std::cout << "B-value: " << b
+                      << "; diffusion direction: "
+                      << DoubleConvert(vect3d[0]) << ", "
+                      << DoubleConvert(vect3d[1]) << ", "
+                      << DoubleConvert(vect3d[2])
+                      << std::endl;
+            }
           }
         }
       else
@@ -1352,13 +1359,6 @@ int main(int argc, char *argv[])
 
         numberOfSlicesPerVolume = sliceLocations.size();
 
-        // de-interleave slices if the origins of the first 2 slices
-        // are the same.
-        if( origins[0] == origins[1] )
-          {
-          // interleaved image
-          DeInterleaveVolume(readerOutput, numberOfSlicesPerVolume, perFrameFunctionalGroup.card() );
-          }
 
         std::cout << "LPS Matrix: " << std::endl << LPSDirCos << std::endl;
         std::cout << "Volume Origin: " << std::endl << ImageOrigin[0] << ","
@@ -1382,12 +1382,18 @@ int main(int argc, char *argv[])
                     << DoubleConvert(DiffusionVectors[k2][2])
                     << ", b-value: " << bValues[k2] << std::endl;
           }
+        // de-interleave slices if the origins of the first 2 slices
+        // are the same.
+        if( origins[0] == origins[1] )
+          {
+          // interleaved image
+          DeInterleaveVolume(readerOutput, numberOfSlicesPerVolume, perFrameFunctionalGroup.card() );
+          }
         }
       }
     else if( StringContains(vendor, "SIEMENS") )
       {
       int nStride = 1;
-
       if( !SliceMosaic )
         {
         std::cout << orthoSliceSpacing << std::endl;
@@ -1406,190 +1412,193 @@ int main(int argc, char *argv[])
         std::cout << "Number of Slices in each volume: " << nSliceInVolume << std::endl;
         nStride = 1;
         }
-      // JTM - Determine bvalues from all gradients
-      for( unsigned int k = 0; k < nSlice; k += nStride )
+      if(!fMRIOutput)
         {
-        // in Siemens, this entry is a 'CSA Header' which is blob
-        // of mixed text & binary data.  Pretty annoying but there you
-        // have it.
-        std::string diffusionInfoString;;
-        allHeaders[k]->GetElementOB( 0x0029, 0x1010, diffusionInfoString );
-
-        // parse B_value from 0029,1010 tag
-        std::vector<double> valueArray(0);
-
-        int nItems = ExtractSiemensDiffusionInformation(diffusionInfoString, "B_value", valueArray);
-        if( nItems != 1 )
+        // JTM - Determine bvalues from all gradients
+        for( unsigned int k = 0; k < nSlice; k += nStride )
           {
-          vnl_vector_fixed<double, 3> vect3d;
-          // B_Value is missing -- the punt position is to count this
-          // volume as having a B_value & Gradient Direction of zero
-          std::cout << "Warning: Cannot find complete information on B_value in 0029|1010" << std::endl;
-          bValues.push_back( 0.0 );
-          vect3d.fill( 0.0 );
-          UnmodifiedDiffusionVectorsInDicomLPSCoordinateSystem.push_back(vect3d);
-          DiffusionVectors.push_back(vect3d);
-          continue;
-          }
+          // in Siemens, this entry is a 'CSA Header' which is blob
+          // of mixed text & binary data.  Pretty annoying but there you
+          // have it.
+          std::string diffusionInfoString;;
+          allHeaders[k]->GetElementOB( 0x0029, 0x1010, diffusionInfoString );
 
-        // we got a 'valid' B-value
-        // If we're trusting the gradient directions in the header,
-        // then all we need to do here is save the bValue.
-        if( !useBMatrixGradientDirections )
-          {
-          valueArray.resize(0);
-          ExtractSiemensDiffusionInformation(diffusionInfoString, "B_value", valueArray);
+          // parse B_value from 0029,1010 tag
+          std::vector<double> valueArray(0);
 
-          bValues.push_back( valueArray[0] );
-          }
-        else
-          {
-          // JTM - Patch from UNC: fill the nhdr header with the gradient directions and
-          // bvalues computed out of the BMatrix
-          valueArray.resize(0);
-          nItems = ExtractSiemensDiffusionInformation(diffusionInfoString, "B_matrix", valueArray);
-          vnl_matrix_fixed<double, 3, 3> bMatrix;
-
-          if( nItems == 6 )
+          int nItems = ExtractSiemensDiffusionInformation(diffusionInfoString, "B_value", valueArray);
+          if( nItems != 1 )
             {
-            std::cout << "=============================================" << std::endl;
-            std::cout << "BMatrix calculations..." << std::endl;
-            // UNC comments: We get the value of the b-value tag in the header.
-            // We won't use it as is, but just to locate the B0 images.
-            // This check must be added, otherwise the bmatrix of the B0 is not
-            // read properly (it's not an actual field in the DICOM header of the B0).
-            std::vector<double> bval_tmp(0);
-            bool                b0_image = false;
-
-            // UNC comments: Get the bvalue
-            nItems = ExtractSiemensDiffusionInformation(diffusionInfoString, "B_value", bval_tmp);
-            if( bval_tmp[0] == 0 )
-              {
-              b0_image = true;
-              }
-
-            // UNC comments: The principal eigenvector of the bmatrix is to be extracted as
-            // it's the gradient direction and trace of the matrix is the b-value
-
-            // UNC comments: Fill out the 3x3 bmatrix with the 6 components read from the
-            // DICOM header.
-            bMatrix[0][0] = valueArray[0];
-            bMatrix[0][1] = valueArray[1];
-            bMatrix[0][2] = valueArray[2];
-            bMatrix[1][1] = valueArray[3];
-            bMatrix[1][2] = valueArray[4];
-            bMatrix[2][2] = valueArray[5];
-            bMatrix[1][0] = bMatrix[0][1];
-            bMatrix[2][0] = bMatrix[0][2];
-            bMatrix[2][1] = bMatrix[1][2];
-
-            // UNC comments: Computing the decomposition
-            vnl_svd<double> svd(bMatrix);
-
-            // UNC comments: Extracting the principal eigenvector i.e. the gradient direction
             vnl_vector_fixed<double, 3> vect3d;
-            vect3d[0] = svd.U(0, 0);
-            vect3d[1] = svd.U(1, 0);
-            vect3d[2] = svd.U(2, 0);
-
-            std::cout << "BMatrix: " << std::endl;
-            std::cout << bMatrix[0][0] << std::endl;
-            std::cout << bMatrix[0][1] << "\t" << bMatrix[1][1] << std::endl;
-            std::cout << bMatrix[0][2] << "\t" << bMatrix[1][2] << "\t" << bMatrix[2][2] << std::endl;
-
-            // UNC comments: The b-value si the trace of the bmatrix
-            const double bvalue = bMatrix[0][0] + bMatrix[1][1] + bMatrix[2][2];
-            std::cout << bvalue << std::endl;
-            // UNC comments: Even if the bmatrix is null, the svd decomposition set the 1st eigenvector
-            // to (1,0,0). So we force the gradient direction to 0 if the bvalue is null
-            if( (b0_image == true) || (bvalue == 0) )
-              {
-              std::cout << "B0 image detected: gradient direction and bvalue forced to 0" << std::endl;
-              vect3d[0] = 0;
-              vect3d[1] = 0;
-              vect3d[2] = 0;
-              std::cout << "Gradient coordinates: " << vect3d[0] << " " << vect3d[1] << " " << vect3d[2] << std::endl;
-              bValues.push_back(0);
-              }
-            else
-              {
-              std::cout << "Gradient coordinates: " << vect3d[0] << " " << vect3d[1] << " " << vect3d[2] << std::endl;
-              bValues.push_back(bvalue);
-              }
+            // B_Value is missing -- the punt position is to count this
+            // volume as having a B_value & Gradient Direction of zero
+            std::cout << "Warning: Cannot find complete information on B_value in 0029|1010" << std::endl;
+            bValues.push_back( 0.0 );
+            vect3d.fill( 0.0 );
+            UnmodifiedDiffusionVectorsInDicomLPSCoordinateSystem.push_back(vect3d);
             DiffusionVectors.push_back(vect3d);
+            continue;
             }
-          else
+
+          // we got a 'valid' B-value
+          // If we're trusting the gradient directions in the header,
+          // then all we need to do here is save the bValue.
+          if( !useBMatrixGradientDirections )
             {
             valueArray.resize(0);
             ExtractSiemensDiffusionInformation(diffusionInfoString, "B_value", valueArray);
-            vnl_vector_fixed<double, 3> vect3d;
+
             bValues.push_back( valueArray[0] );
-            vect3d[0] = 0;
-            vect3d[1] = 0;
-            vect3d[2] = 0;
-            DiffusionVectors.push_back(vect3d);
-            }
-          }
-        }
-
-      if( useBMatrixGradientDirections == false )
-        {
-        for( unsigned int k = 0; k < nSlice; k += nStride )
-          {
-          std::cout << "=======================================" << std::endl << std::endl;
-          std::string diffusionInfoString;
-          allHeaders[k]->GetElementOB(0x0029, 0x1010, diffusionInfoString );
-
-          std::vector<double>         valueArray;
-          vnl_vector_fixed<double, 3> vect3d;
-
-          // parse DiffusionGradientDirection from 0029,1010 tag
-          valueArray.resize(0);
-          int nItems =
-            ExtractSiemensDiffusionInformation(diffusionInfoString, "DiffusionGradientDirection", valueArray);
-          if( nItems != 3 )  // did not find enough information
-            {
-            std::cout << "Warning: Cannot find complete information on DiffusionGradientDirection in 0029|1010"
-                      << std::endl;
-            vect3d.fill( 0 );
-            UnmodifiedDiffusionVectorsInDicomLPSCoordinateSystem.push_back(vect3d);
-            DiffusionVectors.push_back(vect3d);
             }
           else
             {
-            std::cout << "Number of Directions : " << nItems << std::endl;
-            std::cout << "   Directions 0: " << valueArray[0] << std::endl;
-            std::cout << "   Directions 1: " << valueArray[1] << std::endl;
-            std::cout << "   Directions 2: " << valueArray[2] << std::endl;
-            double DiffusionVector_magnitude;
-            vect3d[0] = valueArray[0];
-            vect3d[1] = valueArray[1];
-            vect3d[2] = valueArray[2];
+            // JTM - Patch from UNC: fill the nhdr header with the gradient directions and
+            // bvalues computed out of the BMatrix
+            valueArray.resize(0);
+            nItems = ExtractSiemensDiffusionInformation(diffusionInfoString, "B_matrix", valueArray);
+            vnl_matrix_fixed<double, 3, 3> bMatrix;
 
-            DiffusionVector_magnitude = sqrt(
+            if( nItems == 6 )
+              {
+              std::cout << "=============================================" << std::endl;
+              std::cout << "BMatrix calculations..." << std::endl;
+              // UNC comments: We get the value of the b-value tag in the header.
+              // We won't use it as is, but just to locate the B0 images.
+              // This check must be added, otherwise the bmatrix of the B0 is not
+              // read properly (it's not an actual field in the DICOM header of the B0).
+              std::vector<double> bval_tmp(0);
+              bool                b0_image = false;
+
+              // UNC comments: Get the bvalue
+              nItems = ExtractSiemensDiffusionInformation(diffusionInfoString, "B_value", bval_tmp);
+              if( bval_tmp[0] == 0 )
+                {
+                b0_image = true;
+                }
+
+              // UNC comments: The principal eigenvector of the bmatrix is to be extracted as
+              // it's the gradient direction and trace of the matrix is the b-value
+
+              // UNC comments: Fill out the 3x3 bmatrix with the 6 components read from the
+              // DICOM header.
+              bMatrix[0][0] = valueArray[0];
+              bMatrix[0][1] = valueArray[1];
+              bMatrix[0][2] = valueArray[2];
+              bMatrix[1][1] = valueArray[3];
+              bMatrix[1][2] = valueArray[4];
+              bMatrix[2][2] = valueArray[5];
+              bMatrix[1][0] = bMatrix[0][1];
+              bMatrix[2][0] = bMatrix[0][2];
+              bMatrix[2][1] = bMatrix[1][2];
+
+              // UNC comments: Computing the decomposition
+              vnl_svd<double> svd(bMatrix);
+
+              // UNC comments: Extracting the principal eigenvector i.e. the gradient direction
+              vnl_vector_fixed<double, 3> vect3d;
+              vect3d[0] = svd.U(0, 0);
+              vect3d[1] = svd.U(1, 0);
+              vect3d[2] = svd.U(2, 0);
+
+              std::cout << "BMatrix: " << std::endl;
+              std::cout << bMatrix[0][0] << std::endl;
+              std::cout << bMatrix[0][1] << "\t" << bMatrix[1][1] << std::endl;
+              std::cout << bMatrix[0][2] << "\t" << bMatrix[1][2] << "\t" << bMatrix[2][2] << std::endl;
+
+              // UNC comments: The b-value si the trace of the bmatrix
+              const double bvalue = bMatrix[0][0] + bMatrix[1][1] + bMatrix[2][2];
+              std::cout << bvalue << std::endl;
+              // UNC comments: Even if the bmatrix is null, the svd decomposition set the 1st eigenvector
+              // to (1,0,0). So we force the gradient direction to 0 if the bvalue is null
+              if( (b0_image == true) || (bvalue == 0) )
+                {
+                std::cout << "B0 image detected: gradient direction and bvalue forced to 0" << std::endl;
+                vect3d[0] = 0;
+                vect3d[1] = 0;
+                vect3d[2] = 0;
+                std::cout << "Gradient coordinates: " << vect3d[0] << " " << vect3d[1] << " " << vect3d[2] << std::endl;
+                bValues.push_back(0);
+                }
+              else
+                {
+                std::cout << "Gradient coordinates: " << vect3d[0] << " " << vect3d[1] << " " << vect3d[2] << std::endl;
+                bValues.push_back(bvalue);
+                }
+              DiffusionVectors.push_back(vect3d);
+              }
+            else
+              {
+              valueArray.resize(0);
+              ExtractSiemensDiffusionInformation(diffusionInfoString, "B_value", valueArray);
+              vnl_vector_fixed<double, 3> vect3d;
+              bValues.push_back( valueArray[0] );
+              vect3d[0] = 0;
+              vect3d[1] = 0;
+              vect3d[2] = 0;
+              DiffusionVectors.push_back(vect3d);
+              }
+            }
+          }
+
+        if( useBMatrixGradientDirections == false )
+          {
+          for( unsigned int k = 0; k < nSlice; k += nStride )
+            {
+            std::cout << "=======================================" << std::endl << std::endl;
+            std::string diffusionInfoString;
+            allHeaders[k]->GetElementOB(0x0029, 0x1010, diffusionInfoString );
+
+            std::vector<double>         valueArray;
+            vnl_vector_fixed<double, 3> vect3d;
+
+            // parse DiffusionGradientDirection from 0029,1010 tag
+            valueArray.resize(0);
+            int nItems =
+              ExtractSiemensDiffusionInformation(diffusionInfoString, "DiffusionGradientDirection", valueArray);
+            if( nItems != 3 )  // did not find enough information
+              {
+              std::cout << "Warning: Cannot find complete information on DiffusionGradientDirection in 0029|1010"
+                        << std::endl;
+              vect3d.fill( 0 );
+              UnmodifiedDiffusionVectorsInDicomLPSCoordinateSystem.push_back(vect3d);
+              DiffusionVectors.push_back(vect3d);
+              }
+            else
+              {
+              std::cout << "Number of Directions : " << nItems << std::endl;
+              std::cout << "   Directions 0: " << valueArray[0] << std::endl;
+              std::cout << "   Directions 1: " << valueArray[1] << std::endl;
+              std::cout << "   Directions 2: " << valueArray[2] << std::endl;
+              double DiffusionVector_magnitude;
+              vect3d[0] = valueArray[0];
+              vect3d[1] = valueArray[1];
+              vect3d[2] = valueArray[2];
+
+              DiffusionVector_magnitude = sqrt(
                 (vect3d[0] * vect3d[0]) + (vect3d[1] * vect3d[1]) + (vect3d[2] * vect3d[2]) );
 
-            std::cout << "DiffusionVector_magnitude " << DiffusionVector_magnitude << std::endl;
-            if( DiffusionVector_magnitude <= smallGradientThreshold )
-              {
-              std::cout << "ERROR: Gradient vector with unreasonably small magnitude exists." << std::endl;
-              std::cout << "Gradient #" << k << " with magnitude " << DiffusionVector_magnitude << std::endl;
-              std::cout << "Please set useBMatrixGradientDirections to calculate gradient directions "
-                        << "from the scanner B Matrix to alleviate this problem." << std::endl;
-              FreeHeaders(allHeaders);
-              return EXIT_FAILURE;
-              }
+              std::cout << "DiffusionVector_magnitude " << DiffusionVector_magnitude << std::endl;
+              if( DiffusionVector_magnitude <= smallGradientThreshold )
+                {
+                std::cout << "ERROR: Gradient vector with unreasonably small magnitude exists." << std::endl;
+                std::cout << "Gradient #" << k << " with magnitude " << DiffusionVector_magnitude << std::endl;
+                std::cout << "Please set useBMatrixGradientDirections to calculate gradient directions "
+                          << "from the scanner B Matrix to alleviate this problem." << std::endl;
+                FreeHeaders(allHeaders);
+                return EXIT_FAILURE;
+                }
 
-            UnmodifiedDiffusionVectorsInDicomLPSCoordinateSystem.push_back(vect3d);
-            // vect3d.normalize();
-            DiffusionVectors.push_back(vect3d);
-            int p = bValues.size();
-            std::cout << "Image#: " << k
-                      << " BV: " << bValues[p - 1] << " GD: "
-                      << DoubleConvert(DiffusionVectors[k / nStride][0]) << ","
-                      << DoubleConvert(DiffusionVectors[k / nStride][1]) << ","
-                      << DoubleConvert(DiffusionVectors[k / nStride][2])
-                      << std::endl;
+              UnmodifiedDiffusionVectorsInDicomLPSCoordinateSystem.push_back(vect3d);
+              // vect3d.normalize();
+              DiffusionVectors.push_back(vect3d);
+              int p = bValues.size();
+              std::cout << "Image#: " << k
+                        << " BV: " << bValues[p - 1] << " GD: "
+                        << DoubleConvert(DiffusionVectors[k / nStride][0]) << ","
+                        << DoubleConvert(DiffusionVectors[k / nStride][1]) << ","
+                        << DoubleConvert(DiffusionVectors[k / nStride][2])
+                        << std::endl;
+              }
             }
           }
         }
@@ -1799,15 +1808,8 @@ int main(int argc, char *argv[])
       return EXIT_SUCCESS;
       }
 
-    //
-    // fMRI Output -- doesn't need DWI data.
-    if(fMRIOutput)
-      {
-      FreeHeaders(allHeaders);
-      return Write4DVolume(dmImage,nUsableVolumes,outputVolumeHeaderName);
-      }
     // FSLOutput requires a NIfT file
-    if( conversionMode != "DicomToFSL" )
+    if( conversionMode != "DicomToFSL" && !fMRIOutput)
       {
       if( !nrrdFormat )
         {
@@ -1842,9 +1844,8 @@ int main(int argc, char *argv[])
       }
     else
       {
-      // copy the computed reference frame to the image so that NIFTI
-      // writes the correct stuff out. NIFTI writer
-      // expects RAS?
+      // copy the computed reference frame to the image so that ITK
+      // writes the correct stuff out.
       itk::Matrix<double, 3, 3> NIfTIDirCos = LPSDirCos;
       for( unsigned i = 0; i < 3; ++i )
         {
@@ -1857,10 +1858,16 @@ int main(int argc, char *argv[])
       VolumeType::PointType origin;
       origin[0] = ImageOrigin[0]; origin[1] = ImageOrigin[1]; origin[2] = ImageOrigin[2];
       dmImage->SetOrigin(origin);
+
       if( Write4DVolume(dmImage, nUsableVolumes, outputVolumeHeaderName) != EXIT_SUCCESS )
         {
         FreeHeaders(allHeaders);
         return EXIT_FAILURE;
+        }
+      else if(fMRIOutput) // skip writing out GVec/BValue files
+        {
+        FreeHeaders(allHeaders);
+        return EXIT_SUCCESS;
         }
       }
     const vnl_matrix_fixed<double, 3, 3> InverseMeasurementFrame = MeasurementFrame.GetInverse();

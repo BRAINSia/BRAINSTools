@@ -1,3 +1,80 @@
+
+#
+# list of all tarballs to download
+set(DWITarDir ${TestData_DIR}/DWI_TestData_TARBALLS)
+
+set(ALL_DICOM_TARBALLS
+${DWITarDir}/DWIConvertGeSignaHdxBMatrixTest.tar.gz
+${DWITarDir}/DWIConvertGeSignaHdxBigEndianTest.tar.gz
+${DWITarDir}/DWIConvertGeSignaHdxFSLTest.tar.gz
+${DWITarDir}/DWIConvertGeSignaHdxTest.tar.gz
+${DWITarDir}/DWIConvertGeSignaHdxtBMatrixTest.tar.gz
+${DWITarDir}/DWIConvertGeSignaHdxtTest.tar.gz
+${DWITarDir}/DWIConvertPhilipsAchieva2BMatrixTest.tar.gz
+${DWITarDir}/DWIConvertPhilipsAchieva2Test.tar.gz
+${DWITarDir}/DWIConvertPhilipsAchieva3Test.tar.gz
+${DWITarDir}/DWIConvertPhilipsAchieva4Test.tar.gz
+${DWITarDir}/DWIConvertPhilipsAchieva6Test.tar.gz
+${DWITarDir}/DWIConvertPhilipsAchieva7Test.tar.gz
+${DWITarDir}/DWIConvertPhilipsAchievaBMatrixTest.tar.gz
+${DWITarDir}/DWIConvertPhilipsAchievaBigEndianTest.tar.gz
+${DWITarDir}/DWIConvertPhilipsAchievaTest.tar.gz
+${DWITarDir}/DWIConvertSiemensTrioSyngo2004A1Test.tar.gz
+${DWITarDir}/DWIConvertSiemensTrioSyngo2004A2Test.tar.gz
+${DWITarDir}/DWIConvertSiemensTrioTim2Test.tar.gz
+${DWITarDir}/DWIConvertSiemensTrioTim3Test.tar.gz
+${DWITarDir}/DWIConvertSiemensTrioTimBigEndian1Test.tar.gz
+${DWITarDir}/DWIConvertSiemensTrioTimTest.tar.gz
+${DWITarDir}/DWIConvertSiemensVerioTest.tar.gz
+${DWITarDir}/GeSignaHDx.tar.gz
+${DWITarDir}/GeSignaHDxBigEndian.tar.gz
+${DWITarDir}/GeSignaHDxt.tar.gz
+${DWITarDir}/PhilipsAchieva1.tar.gz
+${DWITarDir}/PhilipsAchieva2.tar.gz
+${DWITarDir}/PhilipsAchieva3.tar.gz
+${DWITarDir}/PhilipsAchieva4.tar.gz
+${DWITarDir}/PhilipsAchieva6.tar.gz
+${DWITarDir}/PhilipsAchieva7.tar.gz
+${DWITarDir}/PhilipsAchievaBigEndian1.tar.gz
+${DWITarDir}/SiemensTrio-Syngo2004A-1.tar.gz
+${DWITarDir}/SiemensTrio-Syngo2004A-2.tar.gz
+${DWITarDir}/SiemensTrioTim1.tar.gz
+${DWITarDir}/SiemensTrioTim2.tar.gz
+${DWITarDir}/SiemensTrioTim3.tar.gz
+${DWITarDir}/SiemensTrioTimBigEndian1.tar.gz
+${DWITarDir}/SiemensVerio.tar.gz
+)
+
+
+# accumulator for test names that actually force
+# unpacking tars to directories
+set(DWITarDownloadTestNames)
+
+foreach( curr_tarball ${ALL_DICOM_TARBALLS} )
+  # use base tar name for test name
+  get_filename_component(base_filename "${curr_tarball}" NAME)
+  set(test_name Uncompress_${base_filename})
+
+  ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${test_name}
+    WORKING_DIRECTORY ${DWIConvert_BINARY_DIR}
+    COMMAND  ${CMAKE_COMMAND} -E tar xzf DATA{${curr_tarball}}
+  )
+  list(APPEND DWITarDownloadTestNames ${test_name})
+endforeach()
+
+#
+# make a test depend on the tarball downloads.
+# This will make the test TestName depend on ALL the
+# test targets responsible for untarring dicom series,
+# but it beats having a unique dependency clause for
+# each test
+function(AddDataDependency TestName)
+  foreach(datatest ${DWITarDownloadTestNames})
+    set_property(TEST ${TestName} APPEND PROPERTY DEPENDS ${datatest})
+  endforeach()
+endfunction()
+
+
 #
 # Test CLI executables
 #
@@ -7,8 +84,8 @@ include_directories(${DWIConvert_SOURCE_DIR})
 include_directories(${DWIConvert_BINARY_DIR})
 include_directories(${ModuleDescriptionParser_SOURCE_DIR})
 
-set(DWIBinDir ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
-
+#
+# build compare programs
 foreach(CLP DWICompare DWISimpleCompare)
   set ( ${CLP}_SOURCE ${CLP}.cxx)
   generateclp(${CLP}_SOURCE ${CLP}.xml)
@@ -16,74 +93,75 @@ foreach(CLP DWICompare DWISimpleCompare)
   target_link_libraries (${CLP} DWIConvertSupportLib )
 endforeach()
 
+#
+# build FSL test program
 add_executable(FSLTextFileCompare FSLTextFileCompare.cxx)
 target_link_libraries (FSLTextFileCompare DWIConvertSupportLib )
 
+#
+# This program not currently used but hey, might come in
+# handy.
 add_executable(NrrdToNIfTI NrrdToNIfTI.cxx)
 target_link_libraries(NrrdToNIfTI DWIConvertSupportLib)
 
-set (CLP DWIConvert)
-add_executable(${CLP}Test ${CLP}Test.cxx ${DWIConvertTest_SRC})
-add_dependencies(${CLP}Test ${CLP})
-target_link_libraries(${CLP}Test DWIConvertSupportLib BRAINSCommonLib )
+#
+# This isn't used; we use a CMake Script to handle running the
+# tests. The test framework file compare wouldn't work properly
+# with vector images
+# set (CLP DWIConvert)
+# add_executable(${CLP}Test ${CLP}Test.cxx ${DWIConvertTest_SRC})
+# target_link_libraries(${CLP}Test DWIConvertSupportLib BRAINSCommonLib )
+#
+# add_test(NAME DWIConvertHelpTest
+#   COMMAND ${SLICER_LAUNCH_COMMAND} $<TARGET_FILE:DWIConvertTest> DWIConvertTest --help
+#   )
 
-if(NOT SETIFEMPTY)
-  macro(SETIFEMPTY)
-    set(KEY ${ARGV0})
-    set(VALUE ${ARGV1})
-    if(NOT ${KEY})
-      set(${ARGV})
-    endif(NOT ${KEY})
-  endmacro(SETIFEMPTY KEY VALUE)
-endif(NOT SETIFEMPTY)
+# dump results in current binary dir.
+set(TstOutput ${CMAKE_CURRENT_BINARY_DIR})
 
-set(TEMP ${CMAKE_CURRENT_BINARY_DIR})
+set(DWIBASELINE_DIR ${TestData_DIR}/DWI_TestData_OUTPUTS)
 
-include(${CMAKE_CURRENT_LIST_DIR}/MIDAS.cmake)
-SETIFEMPTY(MIDAS_REST_URL "http://midas.kitware.com/api/rest" CACHE STRING "The MIDAS server where testing data resides")
-
-set(MIDAS_KEY_DIR "${DWIConvert_SOURCE_DIR}/TestSuite/keys")
-
-add_test(NAME DWIConvertHelpTest
-  COMMAND ${SLICER_LAUNCH_COMMAND} $<TARGET_FILE:DWIConvertTest> DWIConvertTest --help
-  )
-
+#
+# pretty useless test except for slight increase in coverage
+# and verify the programs got built
 add_test(NAME DWIConvertDWICompareHelpTest
   COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:DWICompare>
   --help
   )
 
-midas_add_test(NAME DWIConvertGeSignaHdxTest COMMAND ${CMAKE_COMMAND}
+ExternalData_Add_Test( ${PROJECT_NAME}FetchData NAME DWIConvertGeSignaHdxTest COMMAND ${CMAKE_COMMAND}
   -D TEST_PROGRAM=$<TARGET_FILE:DWIConvert>
   -D TEST_COMPARE_PROGRAM=$<TARGET_FILE:DWICompare>
-  -D TEST_BASELINE=MIDAS{GeSignaHDx.nrrd.md5}
-  -D TEST_INPUT=MIDAS_TGZ{GeSignaHDx.tar.gz.md5}
-  -D TEST_TEMP_OUTPUT=${TEMP}/GeSignaHDxTest.nrrd
+  -D TEST_BASELINE=DATA{${DWIBASELINE_DIR}/GeSignaHDx.nrrd}
+  -D TEST_INPUT=${DWIConvert_BINARY_DIR}/GeSignaHDx
+  -D TEST_TEMP_OUTPUT=${TstOutput}/GeSignaHDxTest.nrrd
   -P ${CMAKE_CURRENT_LIST_DIR}/DicomToNrrdDWICompareTest.cmake
   )
+AddDataDependency(DWIConvertGeSignaHdxTest)
 
-midas_add_test(NAME DWIConvertGeSignaHdxFSLTest COMMAND ${CMAKE_COMMAND}
+ExternalData_Add_Test( ${PROJECT_NAME}FetchData NAME DWIConvertGeSignaHdxFSLTest COMMAND ${CMAKE_COMMAND}
   -D TEST_PROGRAM=$<TARGET_FILE:DWIConvert>
   -D TEST_COMPARE_PROGRAM=$<TARGET_FILE:DWISimpleCompare>
   -D TEST_TEXT_COMPARE=$<TARGET_FILE:FSLTextFileCompare>
-  -D TEST_BASELINE=MIDAS{GeSignaHDx.nii.gz.md5}
-  -D TEST_BASELINE_BVEC=MIDAS{GeSignaHDx.bvec.md5}
-  -D TEST_BASELINE_BVAL=MIDAS{GeSignaHDx.bval.md5}
-  -D TEST_INPUT=MIDAS_TGZ{GeSignaHDx.tar.gz.md5}
-  -D TEST_TEMP_OUTPUT=${TEMP}/GeSignaHDxTest.nii.gz
+  -D TEST_BASELINE=DATA{${DWIBASELINE_DIR}/GeSignaHDx.nii.gz}
+  -D TEST_BASELINE_BVEC=DATA{${DWIBASELINE_DIR}/GeSignaHDx.bvec}
+  -D TEST_BASELINE_BVAL=DATA{${DWIBASELINE_DIR}/GeSignaHDx.bval}
+  -D TEST_INPUT=${DWIConvert_BINARY_DIR}/GeSignaHDx
+  -D TEST_TEMP_OUTPUT=${TstOutput}/GeSignaHDxTest.nii.gz
   -D TEST_FSL_FLAG=ON
-  -D TEST_TEMP_BVEC=${TEMP}/GeSignaHDxTest.bvec
-  -D TEST_TEMP_BVAL=${TEMP}/GeSignaHDxTest.bval
+  -D TEST_TEMP_BVEC=${TstOutput}/GeSignaHDxTest.bvec
+  -D TEST_TEMP_BVAL=${TstOutput}/GeSignaHDxTest.bval
   -P ${CMAKE_CURRENT_LIST_DIR}/DicomToNrrdDWICompareTest.cmake
   )
+AddDataDependency(DWIConvertGeSignaHdxFSLTest)
 
 add_test(NAME FSLToNrrdTest
   COMMAND ${CMAKE_COMMAND}
-  -DVEC_FILE=${TEMP}/GeSignaHDxTest.bvec
-  -DVAL_FILE=${TEMP}/GeSignaHDxTest.bval
-  -DNII_FILE=${TEMP}/GeSignaHDxTest.nii.gz
-  -DNRRD_FILE=${TEMP}/FSLToNrrdTest.nrrd
-  -DNRRD_COMPARE_FILE=${TEMP}/GeSignaHDxTest.nrrd
+  -DVEC_FILE=${TstOutput}/GeSignaHDxTest.bvec
+  -DVAL_FILE=${TstOutput}/GeSignaHDxTest.bval
+  -DNII_FILE=${TstOutput}/GeSignaHDxTest.nii.gz
+  -DNRRD_FILE=${TstOutput}/FSLToNrrdTest.nrrd
+  -DNRRD_COMPARE_FILE=${TstOutput}/GeSignaHDxTest.nrrd
   -DFSL_TO_NRRD=$<TARGET_FILE:DWIConvert>
   -D TEST_COMPARE_PROGRAM=$<TARGET_FILE:DWICompare>
   -P ${CMAKE_CURRENT_LIST_DIR}/FSLToNrrdTest.cmake
@@ -94,13 +172,13 @@ set_property(TEST FSLToNrrdTest
 
 add_test(NAME NrrdToFSLTest
   COMMAND ${CMAKE_COMMAND}
-  -DNRRD_FILE=${TEMP}/FSLToNrrdTest.nrrd
-  -DVEC_COMPARE_FILE=${TEMP}/GeSignaHDxTest.bvec
-  -DVAL_COMPARE_FILE=${TEMP}/GeSignaHDxTest.bval
-  -DNII_COMPARE_FILE=${TEMP}/GeSignaHDxTest.nii.gz
-  -DVEC_FILE=${TEMP}/NrrdToFSLTest.bvec
-  -DVAL_FILE=${TEMP}/NrrdToFSLTest.bval
-  -DNII_FILE=${TEMP}/NrrdToFSLTest.nii.gz
+  -DNRRD_FILE=${TstOutput}/FSLToNrrdTest.nrrd
+  -DVEC_COMPARE_FILE=${TstOutput}/GeSignaHDxTest.bvec
+  -DVAL_COMPARE_FILE=${TstOutput}/GeSignaHDxTest.bval
+  -DNII_COMPARE_FILE=${TstOutput}/GeSignaHDxTest.nii.gz
+  -DVEC_FILE=${TstOutput}/NrrdToFSLTest.bvec
+  -DVAL_FILE=${TstOutput}/NrrdToFSLTest.bval
+  -DNII_FILE=${TstOutput}/NrrdToFSLTest.nii.gz
   -DNRRD_TO_FSL=$<TARGET_FILE:DWIConvert>
   -DTEST_COMPARE_PROGRAM=$<TARGET_FILE:DWISimpleCompare>
   -DTEXT_COMPARE_PROGRAM=$<TARGET_FILE:FSLTextFileCompare>
@@ -110,195 +188,216 @@ add_test(NAME NrrdToFSLTest
 set_property(TEST NrrdToFSLTest
   APPEND PROPERTY DEPENDS FSLToNrrdTest)
 
-midas_add_test(NAME DWIConvertGeSignaHdxBigEndianTest
+ExternalData_Add_Test( ${PROJECT_NAME}FetchData NAME DWIConvertGeSignaHdxBigEndianTest
   COMMAND ${CMAKE_COMMAND} -D TEST_PROGRAM=$<TARGET_FILE:DWIConvert>
   -D TEST_COMPARE_PROGRAM=$<TARGET_FILE:DWICompare>
-  -D TEST_BASELINE=MIDAS{GeSignaHDx.nrrd.md5}
-  -D TEST_INPUT=MIDAS_TGZ{GeSignaHDxBigEndian.tar.gz.md5}
-  -D TEST_TEMP_OUTPUT=${TEMP}/GeSignaHDxBigEndianTest.nrrd
+  -D TEST_BASELINE=DATA{${DWIBASELINE_DIR}/GeSignaHDx.nrrd}
+  -D TEST_INPUT=${DWIConvert_BINARY_DIR}/GeSignaHDxBigEndian
+  -D TEST_TEMP_OUTPUT=${TstOutput}/GeSignaHDxBigEndianTest.nrrd
   -P ${CMAKE_CURRENT_LIST_DIR}/DicomToNrrdDWICompareTest.cmake
   )
+AddDataDependency(DWIConvertGeSignaHdxBigEndianTest)
 
-midas_add_test(NAME DWIConvertGeSignaHdxBMatrixTest
+ExternalData_Add_Test( ${PROJECT_NAME}FetchData NAME DWIConvertGeSignaHdxBMatrixTest
   COMMAND ${CMAKE_COMMAND} -D TEST_PROGRAM=$<TARGET_FILE:DWIConvert>
   -D TEST_COMPARE_PROGRAM=$<TARGET_FILE:DWICompare>
-  -D TEST_BASELINE=MIDAS{GeSignaHDx.nrrd.md5}
-  -D TEST_INPUT=MIDAS_TGZ{GeSignaHDx.tar.gz.md5}
-  -D TEST_TEMP_OUTPUT=${TEMP}/GeSignaHDxTest.nrrd
+  -D TEST_BASELINE=DATA{${DWIBASELINE_DIR}/GeSignaHDx.nrrd}
+  -D TEST_INPUT=${DWIConvert_BINARY_DIR}/GeSignaHDx
+  -D TEST_TEMP_OUTPUT=${TstOutput}/GeSignaHDxTest.nrrd
   -D TEST_PROGRAM_ARGS=--useBMatrixGradientDirections
   -P ${CMAKE_CURRENT_LIST_DIR}/DicomToNrrdDWICompareTest.cmake
   )
+AddDataDependency(DWIConvertGeSignaHdxBMatrixTest)
 
-midas_add_test(NAME DWIConvertGeSignaHdxtTest
+ExternalData_Add_Test( ${PROJECT_NAME}FetchData NAME DWIConvertGeSignaHdxtTest
   COMMAND ${CMAKE_COMMAND} -D TEST_PROGRAM=$<TARGET_FILE:DWIConvert>
   -D TEST_COMPARE_PROGRAM=$<TARGET_FILE:DWICompare>
-  -D TEST_BASELINE=MIDAS{GeSignaHDxt.nrrd.md5}
-  -D TEST_INPUT=MIDAS_TGZ{GeSignaHDxt.tar.gz.md5}
-  -D TEST_TEMP_OUTPUT=${TEMP}/GeSignaHDxtTest.nrrd
+  -D TEST_BASELINE=DATA{${DWIBASELINE_DIR}/GeSignaHDxt.nrrd}
+  -D TEST_INPUT=${DWIConvert_BINARY_DIR}/GeSignaHDxt
+  -D TEST_TEMP_OUTPUT=${TstOutput}/GeSignaHDxtTest.nrrd
   -P ${CMAKE_CURRENT_LIST_DIR}/DicomToNrrdDWICompareTest.cmake
   )
+AddDataDependency(DWIConvertGeSignaHdxtTest)
 
-midas_add_test(NAME DWIConvertGeSignaHdxtBMatrixTest
+ExternalData_Add_Test( ${PROJECT_NAME}FetchData NAME DWIConvertGeSignaHdxtBMatrixTest
   COMMAND ${CMAKE_COMMAND} -D TEST_PROGRAM=$<TARGET_FILE:DWIConvert>
   -D TEST_COMPARE_PROGRAM=$<TARGET_FILE:DWICompare>
-  -D TEST_BASELINE=MIDAS{GeSignaHDxt.nrrd.md5}
-  -D TEST_INPUT=MIDAS_TGZ{GeSignaHDxt.tar.gz.md5}
-  -D TEST_TEMP_OUTPUT=${TEMP}/GeSignaHDxtTest.nrrd
+  -D TEST_BASELINE=DATA{${DWIBASELINE_DIR}/GeSignaHDxt.nrrd}
+  -D TEST_INPUT=${DWIConvert_BINARY_DIR}/GeSignaHDxt
+  -D TEST_TEMP_OUTPUT=${TstOutput}/GeSignaHDxtTest.nrrd
   -D TEST_PROGRAM_ARGS=--useBMatrixGradientDirections
   -P ${CMAKE_CURRENT_LIST_DIR}/DicomToNrrdDWICompareTest.cmake
   )
+AddDataDependency(DWIConvertGeSignaHdxtBMatrixTest)
 
-midas_add_test(NAME DWIConvertPhilipsAchievaTest
+ExternalData_Add_Test( ${PROJECT_NAME}FetchData NAME DWIConvertPhilipsAchievaTest
   COMMAND ${CMAKE_COMMAND} -D TEST_PROGRAM=$<TARGET_FILE:DWIConvert>
   -D TEST_COMPARE_PROGRAM=$<TARGET_FILE:DWICompare>
-  -D TEST_BASELINE=MIDAS{PhilipsAchieva1.nrrd.md5}
-  -D TEST_INPUT=MIDAS_TGZ{PhilipsAchieva1.tar.gz.md5}
-  -D TEST_TEMP_OUTPUT=${TEMP}/PhilipsAchieva1Test.nrrd
+  -D TEST_BASELINE=DATA{${DWIBASELINE_DIR}/PhilipsAchieva1.nrrd}
+  -D TEST_INPUT=${DWIConvert_BINARY_DIR}/PhilipsAchieva1
+  -D TEST_TEMP_OUTPUT=${TstOutput}/PhilipsAchieva1Test.nrrd
   -P ${CMAKE_CURRENT_LIST_DIR}/DicomToNrrdDWICompareTest.cmake
   )
+AddDataDependency(DWIConvertPhilipsAchievaTest)
 
-midas_add_test(NAME DWIConvertPhilipsAchievaBigEndianTest
+ExternalData_Add_Test( ${PROJECT_NAME}FetchData NAME DWIConvertPhilipsAchievaBigEndianTest
   COMMAND ${CMAKE_COMMAND} -D TEST_PROGRAM=$<TARGET_FILE:DWIConvert>
   -D TEST_COMPARE_PROGRAM=$<TARGET_FILE:DWICompare>
-  -D TEST_BASELINE=MIDAS{PhilipsAchieva1.nrrd.md5}
-  -D TEST_INPUT=MIDAS_TGZ{PhilipsAchievaBigEndian1.tar.gz.md5}
-  -D TEST_TEMP_OUTPUT=${TEMP}/PhilipsAchievaBigEndian1Test.nrrd
+  -D TEST_BASELINE=DATA{${DWIBASELINE_DIR}/PhilipsAchieva1.nrrd}
+  -D TEST_INPUT=${DWIConvert_BINARY_DIR}/PhilipsAchievaBigEndian1
+  -D TEST_TEMP_OUTPUT=${TstOutput}/PhilipsAchievaBigEndian1Test.nrrd
   -P ${CMAKE_CURRENT_LIST_DIR}/DicomToNrrdDWICompareTest.cmake
   )
+AddDataDependency(DWIConvertPhilipsAchievaBigEndianTest)
 
-midas_add_test(NAME DWIConvertPhilipsAchievaBMatrixTest
+ExternalData_Add_Test( ${PROJECT_NAME}FetchData NAME DWIConvertPhilipsAchievaBMatrixTest
   COMMAND ${CMAKE_COMMAND} -D TEST_PROGRAM=$<TARGET_FILE:DWIConvert>
   -D TEST_COMPARE_PROGRAM=$<TARGET_FILE:DWICompare>
-  -D TEST_BASELINE=MIDAS{PhilipsAchieva1.nrrd.md5}
-  -D TEST_INPUT=MIDAS_TGZ{PhilipsAchieva1.tar.gz.md5}
-  -D TEST_TEMP_OUTPUT=${TEMP}/PhilipsAchieva1Test.nrrd
+  -D TEST_BASELINE=DATA{${DWIBASELINE_DIR}/PhilipsAchieva1.nrrd}
+  -D TEST_INPUT=${DWIConvert_BINARY_DIR}/PhilipsAchieva1
+  -D TEST_TEMP_OUTPUT=${TstOutput}/PhilipsAchieva1Test.nrrd
   -D TEST_PROGRAM_ARGS=--useBMatrixGradientDirections
   -P ${CMAKE_CURRENT_LIST_DIR}/DicomToNrrdDWICompareTest.cmake
   )
+AddDataDependency(DWIConvertPhilipsAchievaBMatrixTest)
 
-midas_add_test(NAME DWIConvertPhilipsAchieva2Test
+ExternalData_Add_Test( ${PROJECT_NAME}FetchData NAME DWIConvertPhilipsAchieva2Test
   COMMAND ${CMAKE_COMMAND} -D TEST_PROGRAM=$<TARGET_FILE:DWIConvert>
   -D TEST_COMPARE_PROGRAM=$<TARGET_FILE:DWICompare>
-  -D TEST_BASELINE=MIDAS{PhilipsAchieva2.nrrd.md5}
-  -D TEST_INPUT=MIDAS_TGZ{PhilipsAchieva2.tar.gz.md5}
-  -D TEST_TEMP_OUTPUT=${TEMP}/PhilipsAchieva2Test.nrrd
+  -D TEST_BASELINE=DATA{${DWIBASELINE_DIR}/PhilipsAchieva2.nrrd}
+  -D TEST_INPUT=${DWIConvert_BINARY_DIR}/PhilipsAchieva2
+  -D TEST_TEMP_OUTPUT=${TstOutput}/PhilipsAchieva2Test.nrrd
   -P ${CMAKE_CURRENT_LIST_DIR}/DicomToNrrdDWICompareTest.cmake
   )
+AddDataDependency(DWIConvertPhilipsAchieva2Test)
 
-midas_add_test(NAME DWIConvertPhilipsAchieva2BMatrixTest
+ExternalData_Add_Test( ${PROJECT_NAME}FetchData NAME DWIConvertPhilipsAchieva2BMatrixTest
   COMMAND ${CMAKE_COMMAND} -D TEST_PROGRAM=$<TARGET_FILE:DWIConvert>
   -D TEST_COMPARE_PROGRAM=$<TARGET_FILE:DWICompare>
-  -D TEST_BASELINE=MIDAS{PhilipsAchieva2.nrrd.md5}
-  -D TEST_INPUT=MIDAS_TGZ{PhilipsAchieva2.tar.gz.md5}
-  -D TEST_TEMP_OUTPUT=${TEMP}/PhilipsAchieva2Test.nrrd
+  -D TEST_BASELINE=DATA{${DWIBASELINE_DIR}/PhilipsAchieva2.nrrd}
+  -D TEST_INPUT=${DWIConvert_BINARY_DIR}/PhilipsAchieva2
+  -D TEST_TEMP_OUTPUT=${TstOutput}/PhilipsAchieva2Test.nrrd
   -D TEST_PROGRAM_ARGS=--useBMatrixGradientDirections
   -P ${CMAKE_CURRENT_LIST_DIR}/DicomToNrrdDWICompareTest.cmake
   )
+AddDataDependency(DWIConvertPhilipsAchieva2BMatrixTest)
 
-midas_add_test(NAME DWIConvertPhilipsAchieva3Test
+ExternalData_Add_Test( ${PROJECT_NAME}FetchData NAME DWIConvertPhilipsAchieva3Test
   COMMAND ${CMAKE_COMMAND} -D TEST_PROGRAM=$<TARGET_FILE:DWIConvert>
   -D TEST_COMPARE_PROGRAM=$<TARGET_FILE:DWICompare>
-  -D TEST_BASELINE=MIDAS{PhilipsAchieva3.nrrd.md5}
-  -D TEST_INPUT=MIDAS_TGZ{PhilipsAchieva3.tar.gz.md5}
-  -D TEST_TEMP_OUTPUT=${TEMP}/PhilipsAchieva3Test.nrrd
+  -D TEST_BASELINE=DATA{${DWIBASELINE_DIR}/PhilipsAchieva3.nrrd}
+  -D TEST_INPUT=${DWIConvert_BINARY_DIR}/PhilipsAchieva3
+  -D TEST_TEMP_OUTPUT=${TstOutput}/PhilipsAchieva3Test.nrrd
   -P ${CMAKE_CURRENT_LIST_DIR}/DicomToNrrdDWICompareTest.cmake
   )
+AddDataDependency(DWIConvertPhilipsAchieva3Test)
 
-midas_add_test(NAME DWIConvertPhilipsAchieva4Test
+ExternalData_Add_Test( ${PROJECT_NAME}FetchData NAME DWIConvertPhilipsAchieva4Test
   COMMAND ${CMAKE_COMMAND} -D TEST_PROGRAM=$<TARGET_FILE:DWIConvert>
   -D TEST_COMPARE_PROGRAM=$<TARGET_FILE:DWICompare>
-  -D TEST_BASELINE=MIDAS{PhilipsAchieva4.nrrd.md5}
-  -D TEST_INPUT=MIDAS_TGZ{PhilipsAchieva4.md5}
-  -D TEST_TEMP_OUTPUT=${TEMP}/PhilipsAchieva4Test.nrrd
+  -D TEST_BASELINE=DATA{${DWIBASELINE_DIR}/PhilipsAchieva4.nrrd}
+  -D TEST_INPUT=${DWIConvert_BINARY_DIR}/PhilipsAchieva4
+  -D TEST_TEMP_OUTPUT=${TstOutput}/PhilipsAchieva4Test.nrrd
   -P ${CMAKE_CURRENT_LIST_DIR}/DicomToNrrdDWICompareTest.cmake
   )
+AddDataDependency(DWIConvertPhilipsAchieva4Test)
 
-midas_add_test(NAME DWIConvertPhilipsAchieva6Test
+ExternalData_Add_Test( ${PROJECT_NAME}FetchData NAME DWIConvertPhilipsAchieva6Test
   COMMAND ${CMAKE_COMMAND} -D TEST_PROGRAM=$<TARGET_FILE:DWIConvert>
   -D TEST_COMPARE_PROGRAM=$<TARGET_FILE:DWICompare>
-  -D TEST_BASELINE=MIDAS{PhilipsAchieva6.nrrd.md5}
-  -D TEST_INPUT=MIDAS_TGZ{PhilipsAchieva6.md5}
-  -D TEST_TEMP_OUTPUT=${TEMP}/PhilipsAchieva6Test.nrrd
+  -D TEST_BASELINE=DATA{${DWIBASELINE_DIR}/PhilipsAchieva6.nrrd}
+  -D TEST_INPUT=${DWIConvert_BINARY_DIR}/PhilipsAchieva6
+  -D TEST_TEMP_OUTPUT=${TstOutput}/PhilipsAchieva6Test.nrrd
   -P ${CMAKE_CURRENT_LIST_DIR}/DicomToNrrdDWICompareTest.cmake
   )
+AddDataDependency(DWIConvertPhilipsAchieva6Test)
 
-midas_add_test(NAME DWIConvertPhilipsAchieva7Test
+ExternalData_Add_Test( ${PROJECT_NAME}FetchData NAME DWIConvertPhilipsAchieva7Test
   COMMAND ${CMAKE_COMMAND} -D TEST_PROGRAM=$<TARGET_FILE:DWIConvert>
   -D TEST_COMPARE_PROGRAM=$<TARGET_FILE:DWICompare>
-  -D TEST_BASELINE=MIDAS{PhilipsAchieva7.nrrd.md5}
-  -D TEST_INPUT=MIDAS_TGZ{PhilipsAchieva7.md5}
-  -D TEST_TEMP_OUTPUT=${TEMP}/PhilipsAchieva7Test.nrrd
+  -D TEST_BASELINE=DATA{${DWIBASELINE_DIR}/PhilipsAchieva7.nrrd}
+  -D TEST_INPUT=${DWIConvert_BINARY_DIR}/PhilipsAchieva7
+  -D TEST_TEMP_OUTPUT=${TstOutput}/PhilipsAchieva7Test.nrrd
   -P ${CMAKE_CURRENT_LIST_DIR}/DicomToNrrdDWICompareTest.cmake
   )
+AddDataDependency(DWIConvertPhilipsAchieva7Test)
 
-midas_add_test(NAME DWIConvertSiemensTrioTimTest
+ExternalData_Add_Test( ${PROJECT_NAME}FetchData NAME DWIConvertSiemensTrioTimTest
   COMMAND ${CMAKE_COMMAND} -D TEST_PROGRAM=$<TARGET_FILE:DWIConvert>
   -D TEST_COMPARE_PROGRAM=$<TARGET_FILE:DWICompare>
-  -D TEST_BASELINE=MIDAS{SiemensTrioTim1.nrrd.md5}
-  -D TEST_INPUT=MIDAS_TGZ{SiemensTrioTim1.md5}
-  -D TEST_TEMP_OUTPUT=${TEMP}/SiemensTrioTim1Test.nrrd
+  -D TEST_BASELINE=DATA{${DWIBASELINE_DIR}/SiemensTrioTim1.nrrd}
+  -D TEST_INPUT=${DWIConvert_BINARY_DIR}/SiemensTrioTim1
+  -D TEST_TEMP_OUTPUT=${TstOutput}/SiemensTrioTim1Test.nrrd
   -D TEST_PROGRAM_ARGS=--useBMatrixGradientDirections
   -P ${CMAKE_CURRENT_LIST_DIR}/DicomToNrrdDWICompareTest.cmake
   )
+AddDataDependency(DWIConvertSiemensTrioTimTest)
 
-midas_add_test(NAME DWIConvertSiemensTrioTimBigEndian1Test
+ExternalData_Add_Test( ${PROJECT_NAME}FetchData NAME DWIConvertSiemensTrioTimBigEndian1Test
   COMMAND ${CMAKE_COMMAND} -D TEST_PROGRAM=$<TARGET_FILE:DWIConvert>
   -D TEST_COMPARE_PROGRAM=$<TARGET_FILE:DWICompare>
-  -D TEST_BASELINE=MIDAS{SiemensTrioTim1.nrrd.md5}
-  -D TEST_INPUT=MIDAS_TGZ{SiemensTrioTimBigEndian1.md5}
-  -D TEST_TEMP_OUTPUT=${TEMP}/SiemensTrioTimBigEndian1Test.nrrd
+  -D TEST_BASELINE=DATA{${DWIBASELINE_DIR}/SiemensTrioTim1.nrrd}
+  -D TEST_INPUT=${DWIConvert_BINARY_DIR}/SiemensTrioTimBigEndian1
+  -D TEST_TEMP_OUTPUT=${TstOutput}/SiemensTrioTimBigEndian1Test.nrrd
   -D TEST_PROGRAM_ARGS=--useBMatrixGradientDirections
   -P ${CMAKE_CURRENT_LIST_DIR}/DicomToNrrdDWICompareTest.cmake
   )
+AddDataDependency(DWIConvertSiemensTrioTimBigEndian1Test)
 
-midas_add_test(NAME DWIConvertSiemensTrioTim2Test
+ExternalData_Add_Test( ${PROJECT_NAME}FetchData NAME DWIConvertSiemensTrioTim2Test
   COMMAND ${CMAKE_COMMAND} -D TEST_PROGRAM=$<TARGET_FILE:DWIConvert>
   -D TEST_COMPARE_PROGRAM=$<TARGET_FILE:DWICompare>
-  -D TEST_BASELINE=MIDAS{SiemensTrioTim2.nrrd.md5}
-  -D TEST_INPUT=MIDAS_TGZ{SiemensTrioTim2.md5}
-  -D TEST_TEMP_OUTPUT=${TEMP}/SiemensTrioTim2Test.nrrd
+  -D TEST_BASELINE=DATA{${DWIBASELINE_DIR}/SiemensTrioTim2.nrrd}
+  -D TEST_INPUT=${DWIConvert_BINARY_DIR}/SiemensTrioTim2
+  -D TEST_TEMP_OUTPUT=${TstOutput}/SiemensTrioTim2Test.nrrd
   -D TEST_PROGRAM_ARGS=--useBMatrixGradientDirections
   -P ${CMAKE_CURRENT_LIST_DIR}/DicomToNrrdDWICompareTest.cmake
   )
+AddDataDependency(DWIConvertSiemensTrioTim2Test)
 
-midas_add_test(NAME DWIConvertSiemensTrioTim3Test
+ExternalData_Add_Test( ${PROJECT_NAME}FetchData NAME DWIConvertSiemensTrioTim3Test
   COMMAND ${CMAKE_COMMAND} -D TEST_PROGRAM=$<TARGET_FILE:DWIConvert>
   -D TEST_COMPARE_PROGRAM=$<TARGET_FILE:DWICompare>
-  -D TEST_BASELINE=MIDAS{SiemensTrioTim3.nrrd.md5}
-  -D TEST_INPUT=MIDAS_TGZ{SiemensTrioTim3.md5}
-  -D TEST_TEMP_OUTPUT=${TEMP}/SiemensTrioTim3Test.nrrd
+  -D TEST_BASELINE=DATA{${DWIBASELINE_DIR}/SiemensTrioTim3.nrrd}
+  -D TEST_INPUT=${DWIConvert_BINARY_DIR}/SiemensTrioTim3
+  -D TEST_TEMP_OUTPUT=${TstOutput}/SiemensTrioTim3Test.nrrd
   -D TEST_PROGRAM_ARGS=--useBMatrixGradientDirections
   -P ${CMAKE_CURRENT_LIST_DIR}/DicomToNrrdDWICompareTest.cmake
   )
+AddDataDependency(DWIConvertSiemensTrioTim3Test)
 
-midas_add_test(NAME DWIConvertSiemensVerioTest
+ExternalData_Add_Test( ${PROJECT_NAME}FetchData NAME DWIConvertSiemensVerioTest
   COMMAND ${CMAKE_COMMAND}
   -D TEST_PROGRAM=$<TARGET_FILE:DWIConvert>
   -D TEST_COMPARE_PROGRAM=$<TARGET_FILE:DWICompare>
-  -D TEST_BASELINE=MIDAS{SiemensVerio.nrrd.md5}
-  -D TEST_INPUT=MIDAS_TGZ{SiemensVerio.md5}
-  -D TEST_TEMP_OUTPUT=${TEMP}/SiemensVerio.nrrd
+  -D TEST_BASELINE=DATA{${DWIBASELINE_DIR}/SiemensVerio.nrrd}
+  -D TEST_INPUT=${DWIConvert_BINARY_DIR}/SiemensVerio
+  -D TEST_TEMP_OUTPUT=${TstOutput}/SiemensVerio.nrrd
   -D TEST_PROGRAM_ARGS=--useBMatrixGradientDirections
   -P ${CMAKE_CURRENT_LIST_DIR}/DicomToNrrdDWICompareTest.cmake
   )
+AddDataDependency(DWIConvertSiemensVerioTest)
 
-midas_add_test(NAME DWIConvertSiemensTrio_Syngo2004A_1Test
+ExternalData_Add_Test( ${PROJECT_NAME}FetchData NAME DWIConvertSiemensTrio_Syngo2004A_1Test
   COMMAND ${CMAKE_COMMAND} -D TEST_PROGRAM=$<TARGET_FILE:DWIConvert>
   -D TEST_COMPARE_PROGRAM=$<TARGET_FILE:DWICompare>
-  -D TEST_BASELINE=MIDAS{SiemensTrio-Syngo2004A-1.nrrd.md5}
-  -D TEST_INPUT=MIDAS_TGZ{SiemensTrio-Syngo2004A-1.md5}
-  -D TEST_TEMP_OUTPUT=${TEMP}/SiemensTrio-Syngo2004A-1.nrrd
+  -D TEST_BASELINE=DATA{${DWIBASELINE_DIR}/SiemensTrio-Syngo2004A-1.nrrd}
+  -D TEST_INPUT=${DWIConvert_BINARY_DIR}/SiemensTrio-Syngo2004A-1
+  -D TEST_TEMP_OUTPUT=${TstOutput}/SiemensTrio-Syngo2004A-1.nrrd
   -D TEST_PROGRAM_ARGS=--useBMatrixGradientDirections
   -P ${CMAKE_CURRENT_LIST_DIR}/DicomToNrrdDWICompareTest.cmake
   )
+AddDataDependency(DWIConvertSiemensTrio_Syngo2004A_1Test)
 
-midas_add_test(NAME DWIConvertSiemensTrio_Syngo2004A_2Test
+ExternalData_Add_Test( ${PROJECT_NAME}FetchData NAME DWIConvertSiemensTrio_Syngo2004A_2Test
   COMMAND ${CMAKE_COMMAND} -D TEST_PROGRAM=$<TARGET_FILE:DWIConvert>
   -D TEST_COMPARE_PROGRAM=$<TARGET_FILE:DWICompare>
-  -D TEST_BASELINE=MIDAS{SiemensTrio-Syngo2004A-2.nrrd.md5}
-  -D TEST_INPUT=MIDAS_TGZ{SiemensTrio-Syngo2004A-2.md5}
-  -D TEST_TEMP_OUTPUT=${TEMP}/SiemensTrio-Syngo2004A-2.nrrd
+  -D TEST_BASELINE=DATA{${DWIBASELINE_DIR}/SiemensTrio-Syngo2004A-2.nrrd}
+  -D TEST_INPUT=${DWIConvert_BINARY_DIR}/SiemensTrio-Syngo2004A-2
+  -D TEST_TEMP_OUTPUT=${TstOutput}/SiemensTrio-Syngo2004A-2.nrrd
   -D TEST_PROGRAM_ARGS=--useBMatrixGradientDirections
   -P ${CMAKE_CURRENT_LIST_DIR}/DicomToNrrdDWICompareTest.cmake
   )
+AddDataDependency(DWIConvertSiemensTrio_Syngo2004A_2Test)
 
+ExternalData_Add_Target( ${PROJECT_NAME}FetchData )  # Name of data management target

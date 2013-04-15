@@ -41,16 +41,15 @@ SlicerMacroCheckExternalProjectDependency(${proj})
 if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}" AND NOT "${USE_SYSTEM_${extProjName}}" ) ) )
 
 
-  set(${proj}_URL
-    "http://www.infai.org/jpeg/files?get=jpegsrc.v09a.tar.gz")
-  set(${proj}_MD5 "21e8b467c55a8eb5a6b28ad9ff1e8086")
+  set(${proj}_REPOSITORY ${git_protocol}://github.com/BRAINSia/JPeg9A.git)
+  set(${proj}_GIT_TAG f81d85ba9c4e95b959b0b78f8dff54524bf10672)
 
   AutoConf_FLAGS(${proj}_CFLAGS C "")
   AutoConf_FLAGS(${proj}_CXXFLAGS CXX "")
 
   ExternalProject_Add(${proj}
-    URL ${${proj}_URL}
-    URL_MD5 ${${proj}_MD5}
+    GIT_REPOSITORY ${${proj}_REPOSITORY}
+    GIT_TAG ${${proj}_GIT_TAG}
     SOURCE_DIR ${proj}
     BINARY_DIR ${proj}-build
     INSTALL_DIR ${proj}-install

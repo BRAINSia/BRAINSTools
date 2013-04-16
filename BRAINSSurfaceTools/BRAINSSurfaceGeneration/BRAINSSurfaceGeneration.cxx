@@ -41,6 +41,7 @@
 #include "itkVTKPolyDataWriter.h"
 
 #include "BRAINSSurfaceGenerationCLP.h"
+#include "BRAINSvtkV6Compat.h"
 
 #include <vtksys/SystemTools.hxx>
 #include <vtkSmartPointer.h>
@@ -110,7 +111,7 @@ int main( int argc, char * *argv )
 
     vtkSmartPointer<vtkImageChangeInformation> ici =
       vtkSmartPointer<vtkImageChangeInformation>::New();
-    ici->SetInput(reader->GetOutput() );
+    BRAINSvtkV6_SetInputData( ici, reader->GetOutput() );
     ici->SetOutputSpacing( 1, 1, 1 );
     ici->SetOutputOrigin( 0, 0, 0 );
     ici->Update();
@@ -121,7 +122,7 @@ int main( int argc, char * *argv )
 
     vtkSmartPointer<vtkImageMarchingCubes> marchingcubes =
       vtkSmartPointer<vtkImageMarchingCubes>::New();
-    marchingcubes->SetInput(ici->GetOutput() );
+    BRAINSvtkV6_SetInputData( marchingcubes, ici->GetOutput() );
     marchingcubes->SetValue(0, surfaceValue);
     marchingcubes->ComputeScalarsOff();
     marchingcubes->ComputeNormalsOff();
@@ -131,19 +132,19 @@ int main( int argc, char * *argv )
     // largest connected region
     vtkSmartPointer<vtkPolyDataConnectivityFilter> largest =
       vtkSmartPointer<vtkPolyDataConnectivityFilter>::New();
-    largest->SetInput(marchingcubes->GetOutput() );
+    BRAINSvtkV6_SetInputData( largest, marchingcubes->GetOutput() );
     largest->SetExtractionModeToLargestRegion();
     largest->Update();
 
     vtkSmartPointer<vtkCleanPolyData> clean = vtkSmartPointer<vtkCleanPolyData>::New();
-    clean->SetInput(largest->GetOutput() );
+    BRAINSvtkV6_SetInputData( clean, largest->GetOutput() );
     clean->ConvertPolysToLinesOff();
     clean->ConvertLinesToPointsOff();
     clean->Update();
 
     vtkSmartPointer<vtkTransformPolyDataFilter> transformer =
       vtkSmartPointer<vtkTransformPolyDataFilter>::New();
-    transformer->SetInput(clean->GetOutput() );
+    BRAINSvtkV6_SetInputData( transformer, clean->GetOutput() );
     transformer->SetTransform(transformIJKtoRAS);
     transformer->Update();
 
@@ -168,7 +169,7 @@ int main( int argc, char * *argv )
     int iNumberOfCells =  surface->GetNumberOfCells();
 
     vtkExtractEdges *extractEdges = vtkExtractEdges::New();
-    extractEdges->SetInput( surface );
+    BRAINSvtkV6_SetInputData( extractEdges,  surface );
     extractEdges->Update();
 
     int iNumberOfEdges = extractEdges->GetOutput()->GetNumberOfLines();

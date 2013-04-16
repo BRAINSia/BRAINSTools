@@ -35,6 +35,8 @@
 
 #include "gtractFiberTrackingCLP.h"
 #include "BRAINSThreadControl.h"
+#include "BRAINSvtkV6Compat.h"
+
 template <class TImageType>
 void AdaptOriginAndDirection( typename TImageType::Pointer image )
 {
@@ -287,7 +289,7 @@ int main(int argc, char *argv[])
 
     vtkTransformPolyDataFilter *transformGuideFiber = vtkTransformPolyDataFilter::New();
     transformGuideFiber->SetTransform(rasToijkTransform);
-    transformGuideFiber->SetInput( guideFiber );
+    BRAINSvtkV6_SetInputData( transformGuideFiber,  guideFiber );
     transformGuideFiber->Update();
 
     typedef itk::DtiGuidedTrackingFilter<TensorImageType, AnisotropyImageType, MaskImageType> GuideTrackingFilterType;
@@ -402,21 +404,21 @@ int main(int argc, char *argv[])
 
   vtkTransformPolyDataFilter *transformPolyData = vtkTransformPolyDataFilter::New();
   transformPolyData->SetTransform(ijkToRasTransform);
-  transformPolyData->SetInput( fibers );
+  BRAINSvtkV6_SetInputData( transformPolyData,  fibers );
   transformPolyData->Update();
 
   if( writeXMLPolyDataFile )
     {
     vtkXMLPolyDataWriter *fiberWriter = vtkXMLPolyDataWriter::New();
     fiberWriter->SetFileName( outputTract.c_str() );
-    fiberWriter->SetInput( transformPolyData->GetOutput() );
+    BRAINSvtkV6_SetInputData( fiberWriter,  transformPolyData->GetOutput() );
     fiberWriter->Update();
     }
   else
     {
     vtkPolyDataWriter *fiberWriter = vtkPolyDataWriter::New();
     fiberWriter->SetFileName( outputTract.c_str() );
-    fiberWriter->SetInput( transformPolyData->GetOutput() );
+    BRAINSvtkV6_SetInputData( fiberWriter,  transformPolyData->GetOutput() );
     fiberWriter->Update();
     }
   return EXIT_SUCCESS;

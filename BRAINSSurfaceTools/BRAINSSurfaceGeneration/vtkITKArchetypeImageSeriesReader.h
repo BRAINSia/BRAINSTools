@@ -27,7 +27,14 @@ Version:   $Revision$
 #ifndef __vtkITKArchetypeImageSeriesReader_h
 #define __vtkITKArchetypeImageSeriesReader_h
 
+#include "vtkConfigure.h"
+
+#if (VTK_MAJOR_VERSION < 6)
 #include "vtkImageSource.h"
+#else
+#include "vtkImageAlgorithm.h"
+#endif
+
 #include "vtkMatrix4x4.h"
 #include "itkSpatialOrientation.h"
 #include <vector>
@@ -40,15 +47,23 @@ Version:   $Revision$
 #include "gdcmDict.h"           /// access to dictionary
 #include "gdcmDictEntry.h"      /// access to dictionary
 #include "gdcmGlobal.h"         /// access to dictionary
-
+#include "vtkConfigure.h"
 #include "vtkITK.h"
 
+#if (VTK_MAJOR_VERSION < 6)
 class VTK_ITK_EXPORT vtkITKArchetypeImageSeriesReader : public vtkImageSource
+#else
+class VTK_ITK_EXPORT vtkITKArchetypeImageSeriesReader : public vtkImageAlgorithm
+#endif
 {
 public:
   static vtkITKArchetypeImageSeriesReader * New();
 
+#if (VTK_MAJOR_VERSION < 6)
   vtkTypeRevisionMacro(vtkITKArchetypeImageSeriesReader, vtkImageSource);
+#else
+  vtkTypeRevisionMacro(vtkITKArchetypeImageSeriesReader, vtkImageAlgorithm);
+#endif
   void PrintSelf(ostream& os, vtkIndent indent);
 
   typedef itk::SpatialOrientation::ValidCoordinateOrientationFlags CoordinateOrientationCode;

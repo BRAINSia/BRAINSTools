@@ -27,6 +27,7 @@
 #include "itkImageFileWriter.h"
 #include "itkPoint.h"
 #include "itkImageIteratorWithIndex.h"
+#include "BRAINSvtkV6Compat.h"
 
 int main(int argc, char *argv[])
 {
@@ -178,14 +179,14 @@ int main(int argc, char *argv[])
     if( extension == ".vtk" )
       {
       vtkStructuredGridWriter *writer = vtkStructuredGridWriter::New();
-      writer->SetInput( talairach );
+      BRAINSvtkV6_SetInputData( writer,  talairach );
       writer->SetFileName( outputGrid.c_str() );
       writer->Update();
       }
     else
       {
       vtkXMLStructuredGridWriter *writer = vtkXMLStructuredGridWriter::New();
-      writer->SetInput( talairach );
+      BRAINSvtkV6_SetInputData( writer,  talairach );
       writer->SetFileName( outputGrid.c_str() );
       writer->Update();
       }
@@ -201,14 +202,14 @@ int main(int argc, char *argv[])
     if( extension == ".vtk" )
       {
       vtkStructuredGridWriter *writer = vtkStructuredGridWriter::New();
-      writer->SetInput( talairach );
+      BRAINSvtkV6_SetInputData( writer,  talairach );
       writer->SetFileName( outputBox.c_str() );
       writer->Update();
       }
     else
       {
       vtkXMLStructuredGridWriter *writer = vtkXMLStructuredGridWriter::New();
-      writer->SetInput( talairach );
+      BRAINSvtkV6_SetInputData( writer,  talairach );
       writer->SetFileName( outputBox.c_str() );
       writer->Update();
       }

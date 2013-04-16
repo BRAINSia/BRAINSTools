@@ -23,6 +23,7 @@
 #include "vtkPointData.h"
 #include "AssignArrayCLP.h"
 #include "vtkSmartPointer.h"
+#include "BRAINSvtkV6Compat.h"
 
 int main( int argc, char * argv[] )
 {
@@ -109,7 +110,7 @@ int main( int argc, char * argv[] )
     }
 
   vtkSmartPointer<vtkPolyDataWriter> writer = vtkSmartPointer<vtkPolyDataWriter>::New();
-  writer->SetInput(target);
+  BRAINSvtkV6_SetInputData( writer, target);
   writer->SetFileName(outputSurfaceFile.c_str() );
   writer->Update();
 

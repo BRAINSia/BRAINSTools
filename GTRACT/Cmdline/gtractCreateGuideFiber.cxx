@@ -32,6 +32,7 @@
 #include <vtkXMLPolyDataReader.h>
 #include <vtkAppendPolyData.h>
 #include <vtkSplineFilter.h>
+#include "BRAINSvtkV6Compat.h"
 
 // ///////////// VTK Version Compatibility   //////////////////////////////
 #ifndef vtkFloatingPointType
@@ -75,7 +76,7 @@ int main(int argc, char *argv[])
     }
 
   vtkSplineFilter *spline = vtkSplineFilter::New();
-  spline->SetInput( fiberTract );
+  BRAINSvtkV6_SetInputData( spline,  fiberTract );
   spline->SetSubdivideToSpecified();
   spline->SetNumberOfSubdivisions( numberOfPoints );
   spline->Update();
@@ -119,14 +120,14 @@ int main(int argc, char *argv[])
     {
     vtkXMLPolyDataWriter *tractWriter = vtkXMLPolyDataWriter::New();
     tractWriter->SetFileName( outputFiber.c_str() );
-    tractWriter->SetInput( guideFiber );
+    BRAINSvtkV6_SetInputData( tractWriter,  guideFiber );
     tractWriter->Update();
     }
   else
     {
     vtkPolyDataWriter *tractWriter = vtkPolyDataWriter::New();
     tractWriter->SetFileName( outputFiber.c_str() );
-    tractWriter->SetInput( guideFiber );
+    BRAINSvtkV6_SetInputData( tractWriter,  guideFiber );
     tractWriter->Update();
     }
   return EXIT_SUCCESS;

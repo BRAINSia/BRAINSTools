@@ -33,6 +33,7 @@ PURPOSE.  See the above copyright notices for more information.
 #include "vtkSmartPointer.h"
 
 #include "SurfaceColorCLP.h"
+#include "BRAINSvtkV6Compat.h"
 
 int main( int argc, char * argv[] )
 {
@@ -68,7 +69,7 @@ int main( int argc, char * argv[] )
   rasOrientation->SetMatrix( orientationMatrix );
 
   vtkSmartPointer<vtkTransformPolyDataFilter> resampleSurface = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
-  resampleSurface->SetInput( surfacereader->GetOutput() );
+  BRAINSvtkV6_SetInputData( resampleSurface,  surfacereader->GetOutput() );
   resampleSurface->SetTransform( rasOrientation );
   resampleSurface->Update();
 
@@ -224,12 +225,12 @@ int main( int argc, char * argv[] )
 
   // Put the surface back into its original orientation
   vtkSmartPointer<vtkTransformPolyDataFilter> revertedSurface = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
-  revertedSurface->SetInput( surface );
+  BRAINSvtkV6_SetInputData( revertedSurface,  surface );
   revertedSurface->SetTransform( rasOrientation->GetInverse() );
   revertedSurface->Update();
 
   vtkSmartPointer<vtkPolyDataWriter> writer = vtkSmartPointer<vtkPolyDataWriter>::New();
-  writer->SetInput(revertedSurface->GetOutput() );
+  BRAINSvtkV6_SetInputData( writer, revertedSurface->GetOutput() );
   writer->SetFileName(outputSurfaceFile.c_str() );
   writer->SetFileTypeToASCII();
   writer->Update();

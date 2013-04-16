@@ -24,7 +24,7 @@
 #include "vtkDenseArray.h"
 #include "vtkIntArray.h"
 #include "vtkFloatArray.h"
-
+#include "BRAINSvtkV6Compat.h"
 #include "ProbabilityLabelsCLP.h"
 
 int main( int argc, char * argv[] )
@@ -194,7 +194,7 @@ int main( int argc, char * argv[] )
     }
   // write outSurface
   vtkSmartPointer<vtkPolyDataWriter> writer = vtkSmartPointer<vtkPolyDataWriter>::New();
-  writer->SetInput(templateMesh);
+  BRAINSvtkV6_SetInputData( writer, templateMesh);
   writer->SetFileName(outputMeshFile.c_str() );
   writer->Update();
 

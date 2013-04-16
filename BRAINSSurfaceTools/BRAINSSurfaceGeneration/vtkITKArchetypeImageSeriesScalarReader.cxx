@@ -17,6 +17,7 @@
 #include "vtkImageData.h"
 #include "vtkObjectFactory.h"
 #include "vtkPointData.h"
+#include "vtkDataArray.h"
 #include <vtkCommand.h>
 
 #include "itkOrientImageFilter.h"
@@ -57,10 +58,15 @@ void vtkITKArchetypeImageSeriesScalarReader::ExecuteData(vtkDataObject *output)
 // removed UpdateInformation: generates an error message
 //   from VTK and doesn't appear to be needed...
 // data->UpdateInformation();
+#if (VTK_MAJOR_VERSION < 6)
   data->SetExtent(0, 0, 0, 0, 0, 0);
   data->AllocateScalars();
   data->SetExtent(data->GetWholeExtent() );
-
+#else
+  vtkInformation *dataInfo = data->GetInformation();
+  data->AllocateScalars(dataInfo);
+  data->SetExtent(data->GetExtent());
+#endif
   /// SCALAR MACRO
 #define vtkITKExecuteDataFromSeries(typeN, type) \
   case typeN: \

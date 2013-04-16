@@ -145,7 +145,12 @@ if(NOT DEFINED ${extProjName}_DIR AND NOT ${USE_SYSTEM_${extProjName}})
       )
   ### --- End Project specific additions
   set(${proj}_REPOSITORY ${git_protocol}://vtk.org/VTK.git)
+if(USE_VTK_VERSION_6)
+  set(${proj}_GIT_TAG "86d156256c76a9845a43b5411bfd32a732fe7ead")
+else()
   set(${proj}_GIT_TAG "v5.10.0")
+endif()
+
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${${proj}_REPOSITORY}
     GIT_TAG ${${proj}_GIT_TAG}
@@ -171,6 +176,7 @@ if(NOT DEFINED ${extProjName}_DIR AND NOT ${USE_SYSTEM_${extProjName}})
     BUILD_COMMAND ${VTK_BUILD_STEP}
     )
 
+if(NOT USE_VTK_VERSION_6)
   set(VTKPatchScript ${CMAKE_CURRENT_LIST_DIR}/VTKPatch.cmake)
   ExternalProject_Add_Step(${proj} VTKPatch
     COMMENT "get rid of obsolete C/CXX flags"
@@ -180,8 +186,11 @@ if(NOT DEFINED ${extProjName}_DIR AND NOT ${USE_SYSTEM_${extProjName}})
     -DVTKSource=<SOURCE_DIR>
     -P ${VTKPatchScript}
     )
-
   set(${extProjName}_DIR ${CMAKE_BINARY_DIR}/${proj}-install/lib/vtk-5.10)
+else()
+  set(${extProjName}_DIR ${CMAKE_BINARY_DIR}/${proj}-install/lib/cmake/vtk-6.0)
+endif()
+
 else()
   if(${USE_SYSTEM_${extProjName}})
     set(VTK_VERSION_MAJOR 5)

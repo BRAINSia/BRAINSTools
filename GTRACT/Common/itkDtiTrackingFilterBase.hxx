@@ -34,7 +34,7 @@
 
 #include "itkDtiTrackingFilterBase.h"
 // #include "algo.h"
-
+#include "BRAINSvtkV6Compat.h"
 #include <iostream>
 
 namespace itk
@@ -235,8 +235,8 @@ DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType>
   data->GetPointData()->SetTensors(fiberTensors);
 
   vtkAppendPolyData *append = vtkAppendPolyData::New();
-  append->AddInput( this->m_Output );
-  append->AddInput( data );
+  BRAINSvtkV6_AddInputData(append, this->m_Output );
+  BRAINSvtkV6_AddInputData(append, data );
   append->Update();
   // need to erase the old m_Output
   //  vtkPolyData *former = this->m_Output;

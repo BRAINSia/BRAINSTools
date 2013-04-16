@@ -26,6 +26,7 @@
 #include "vtkDataArray.h"
 #include "vtkMaskLabel.h"
 #include "SurfaceLabelCleanUpCLP.h"
+#include "BRAINSvtkV6Compat.h"
 
 int SurfaceConnectivityCells(vtkSmartPointer<vtkPolyData> mesh);
 
@@ -82,7 +83,7 @@ int main( int argc, char * argv[] )
     }
 
   vtkSmartPointer<vtkPolyDataWriter> writer = vtkSmartPointer<vtkPolyDataWriter>::New();
-  writer->SetInput(surface_in);
+  BRAINSvtkV6_SetInputData( writer, surface_in);
   writer->SetFileName(outputSurfaceFile.c_str() );
   writer->Update();
 
@@ -120,13 +121,13 @@ int SurfaceConnectivityCells(vtkSmartPointer<vtkPolyData> mesh)
 
     // mask out the label regions first
     // mask filter keeps the number of points
-    mask->SetInput(mesh);
+    BRAINSvtkV6_SetInputData( mask, mesh);
     mask->LabelOnlyOn();
     mask->SetLabel(label_i);
     mask->Update();
 
     // extract connected regions for the masked regions
-    connect->SetInput(mask->GetOutput() );
+    BRAINSvtkV6_SetInputData( connect, mask->GetOutput() );
     connect->ColorRegionsOn();
     connect->SetExtractionModeToAllRegions();
     connect->Update();
@@ -144,7 +145,9 @@ int SurfaceConnectivityCells(vtkSmartPointer<vtkPolyData> mesh)
         connect->SetExtractionModeToSpecifiedRegions();
 
         island = connect->GetOutput();
+#if (VTK_MAJOR_VERSION < 6)
         island->Update();
+#endif
         island->BuildLinks();
 
         int ncells = island->GetNumberOfCells();
@@ -305,12 +308,12 @@ int SurfaceConnectivityPoints(vtkSmartPointer<vtkPolyData> mesh)
 
     // mask out the label regions first
     // mask filter keeps the number of points
-    mask->SetInput(mesh);
+    BRAINSvtkV6_SetInputData( mask, mesh);
     mask->SetLabel(label_i);
     mask->Update();
 
     // extract connected regions for the masked regions
-    connect->SetInput(mask->GetOutput() );
+    BRAINSvtkV6_SetInputData( connect, mask->GetOutput() );
     connect->ColorRegionsOn();
     connect->SetExtractionModeToAllRegions();
     connect->Update();
@@ -328,7 +331,9 @@ int SurfaceConnectivityPoints(vtkSmartPointer<vtkPolyData> mesh)
         connect->SetExtractionModeToSpecifiedRegions();
 
         island = connect->GetOutput();
+#if (VTK_MAJOR_VERSION < 6)
         island->Update();
+#endif
         island->BuildLinks();
 
         int ncells = island->GetNumberOfCells();
@@ -432,7 +437,7 @@ int RemoveIsolatedPoints(vtkSmartPointer<vtkPolyData> mesh)
 
     // mask out the label regions first
     // mask filter keeps the number of points
-    mask->SetInput(mesh);
+    BRAINSvtkV6_SetInputData( mask, mesh);
     mask->SetLabel(label_i);
     mask->Update();
 
@@ -562,7 +567,7 @@ void FlipSharpTriangles(vtkSmartPointer<vtkPolyData> mesh)
 
       // mask out the label regions first
       // mask filter keeps the number of points
-      mask->SetInput(mesh);
+      BRAINSvtkV6_SetInputData( mask, mesh);
       mask->SetLabel(label_i);
       mask->LabelOnlyOn();
       mask->Update();

@@ -19,7 +19,7 @@
 #include "vtkStructuredGrid.h"
 #include <vector>
 
-class VTK_FILTERING_EXPORT vtkTalairachGrid : public vtkStructuredGrid
+class vtkTalairachGrid : public vtkStructuredGrid
 {
 public:
   static vtkTalairachGrid * New();

@@ -7,7 +7,7 @@
 # build wiht all options turned on (even the non-default options)
 # export PATH=~/src/BSA-clang31/bin:${PATH}
 # export PYTHONPATH=~/src/BSA-clang31/NIPYPE
-# cd ~/src/BRAINSTools/AutoWorkup/SEMTools/; rm -rf ~/src/BRAINSTools/AutoWorkup/SEMTools/* ; python ../local_generate_classes.py
+# cd ~/src/BRAINSStandAlone/AutoWorkup/SEMTools/; rm -rf ~/src/BRAINSStandAlone/AutoWorkup/SEMTools/* ; python ../local_generate_classes.py
 
 from nipype.interfaces.slicer.generate_classes import generate_all_classes
 

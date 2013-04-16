@@ -35,6 +35,8 @@ class FSScriptOutputSpec(TraitedSpec):
     label2_out = File(exist=True, desc='aparc.a2009+aseg.nii.gz')
     processed_output_name = traits.Str(desc='The name of the subdirectory (not a full path) for this processing stage')
     outDir = Directory(exist=True, desc='Full path to the output directory for this stage of processing')
+    ## HACK: TEST
+    subj_session_id = traits.Str(desc='Subject_Session used for "-subjid <> in cross sectional and used in -long <> for longitudinal')
 
 
 class FSScript(CommandLine):
@@ -59,6 +61,8 @@ class FSScript(CommandLine):
 
     def _list_outputs(self):
         outputs = self._outputs().get()
+        ## HACK: TEST
+        outputs['subj_session_id'] = self.inputs.subj_session_id
         if self.inputs.subcommand == 'autorecon':
             outputs['T1_out'] = os.path.join(self.inputs.subjects_dir, 'mri', 'brain.mgz')
             outputs['label1_out'] = os.path.join(self.inputs.subjects_dir, 'mri_nifti', 'aparc+aseg.nii.gz')

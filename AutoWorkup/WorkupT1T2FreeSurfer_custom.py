@@ -45,7 +45,7 @@ def CreateFreeSurferWorkflow_custom(projectid, subjectid, sessionid, WFname, CLU
         grey_label = 2
 
         msLDA_GenerateWeights = pe.Node(interface=MS_LDA(), name="MS_LDA")
-        MSLDA_sge_options_dictionary = {'qsub_args': '-S /bin/bash -pe smp1 1 -l h_vmem=12G,mem_free=2G -o /dev/null -e /dev/null ' + CLUSTER_QUEUE, 'overwrite': True}
+        MSLDA_sge_options_dictionary = {'qsub_args': '-S /bin/bash -pe smp1 4 -l h_vmem=12G,mem_free=2G -o /dev/null -e /dev/null ' + CLUSTER_QUEUE, 'overwrite': True}
         msLDA_GenerateWeights.plugin_args = MSLDA_sge_options_dictionary
         msLDA_GenerateWeights.inputs.lda_labels = [white_label, grey_label]
         msLDA_GenerateWeights.inputs.weight_file = 'weights.txt'
@@ -63,7 +63,7 @@ def CreateFreeSurferWorkflow_custom(projectid, subjectid, sessionid, WFname, CLU
     if RunAllFSComponents == True:
         print("""Run FreeSurfer ReconAll at""")
         fs_reconall = pe.Node(interface=fswrap.FSScript(), name="FS52_cross_" + str(sessionid))
-        freesurfer_sge_options_dictionary = {'qsub_args': '-S /bin/bash -pe smp1 1 -l h_vmem=18G,mem_free=8G ' + CLUSTER_QUEUE, 'overwrite': True}
+        freesurfer_sge_options_dictionary = {'qsub_args': '-S /bin/bash -pe smp1 4 -l h_vmem=10G,mem_free=10G ' + CLUSTER_QUEUE, 'overwrite': True}
         fs_reconall.plugin_args = freesurfer_sge_options_dictionary
         fs_reconall.inputs.subcommand = 'autorecon'
         # fs_reconall.inputs.directive = 'all'
@@ -100,7 +100,7 @@ def CreateFreeSurferSubjectTemplate(projectid, subjectid, WFname, CLUSTER_QUEUE,
     inputsSpec.inputs.subjects_dir = constructed_FS_SUBJECTS_DIR  # HACK
     print("""Run FreeSurfer Within Subject Template at""")
     fs_template = pe.Node(interface=fswrap.FSScript(), name="FS52_base_" + str(subjectid))
-    freesurfer_sge_options_dictionary = {'qsub_args': '-S /bin/bash -pe smp1 1 -l h_vmem=18G,mem_free=8G ' + CLUSTER_QUEUE, 'overwrite': True}
+    freesurfer_sge_options_dictionary = {'qsub_args': '-S /bin/bash -pe smp1 4 -l h_vmem=10G,mem_free=10G ' + CLUSTER_QUEUE, 'overwrite': True}
     fs_template.plugin_args = freesurfer_sge_options_dictionary
     fs_template.inputs.subcommand = 'template'
     subjectTemplate_freesurferWF.connect(inputsSpec, 'subjects_dir', fs_template, 'subjects_dir')
@@ -126,7 +126,7 @@ def CreateFreeSurferLongitudinalWorkflow(projectid, subjectid, sessionid, WFname
     inputsSpec.inputs.subjects_dir = constructed_FS_SUBJECTS_DIR  # HACK
 
     fs_longitudinal = pe.Node(interface=fswrap.FSScript(), name="FS52_long_" + str(sessionid))
-    freesurfer_sge_options_dictionary = {'qsub_args': '-S /bin/bash -pe smp1 1 -l h_vmem=18G,mem_free=8G ' + CLUSTER_QUEUE, 'overwrite': True}
+    freesurfer_sge_options_dictionary = {'qsub_args': '-S /bin/bash -pe smp1 4 -l h_vmem=10G,mem_free=10G ' + CLUSTER_QUEUE, 'overwrite': True}
     fs_longitudinal.plugin_args = freesurfer_sge_options_dictionary
     fs_longitudinal.inputs.subcommand = 'longitudinal'
     long_freesurferWF.connect(inputsSpec, 'subjects_dir', fs_longitudinal, 'subjects_dir')

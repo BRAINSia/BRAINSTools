@@ -56,6 +56,7 @@ def MakeAtlasNode(atlasDirectory, AtlasNodeName):
                      run_without_submitting=True,
                      name=AtlasNodeName)
     BAtlas.inputs.base_directory = atlasDirectory
+    BAtlas.inputs.sort_filelist = False
     BAtlas.inputs.template = '*'
     ## Prefix every filename with atlasDirectory
     atlas_search_paths = ['{0}'.format(fn) for fn in atlas_file_names]

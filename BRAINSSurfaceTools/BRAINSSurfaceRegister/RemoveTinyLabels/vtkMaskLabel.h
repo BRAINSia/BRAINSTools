@@ -35,7 +35,7 @@
 
 #include "vtkPolyDataAlgorithm.h"
 
-class VTK_GRAPHICS_EXPORT vtkMaskLabel : public vtkPolyDataAlgorithm
+class vtkMaskLabel : public vtkPolyDataAlgorithm
 {
 public:
   static vtkMaskLabel * New();

@@ -53,6 +53,7 @@
 
 #include "algo.h"
 #include "GtractTypes.h"
+#include "BRAINSvtkV6Compat.h"
 
 // ///////////// VTK Version Compatibility   //////////////////////////////
 #ifndef vtkFloatingPointType
@@ -274,14 +275,14 @@ int main( int argc, char *argv[] )
     {
     vtkXMLPolyDataWriter *fiberWriter = vtkXMLPolyDataWriter::New();
     fiberWriter->SetFileName( outputTract.c_str() );
-    fiberWriter->SetInput( inputFiber );
+    BRAINSvtkV6_SetInputData( fiberWriter,  inputFiber );
     fiberWriter->Update();
     }
   else
     {
     vtkPolyDataWriter *fiberWriter = vtkPolyDataWriter::New();
     fiberWriter->SetFileName( outputTract.c_str() );
-    fiberWriter->SetInput( inputFiber );
+    BRAINSvtkV6_SetInputData( fiberWriter,  inputFiber );
     fiberWriter->Update();
     }
   return EXIT_SUCCESS;

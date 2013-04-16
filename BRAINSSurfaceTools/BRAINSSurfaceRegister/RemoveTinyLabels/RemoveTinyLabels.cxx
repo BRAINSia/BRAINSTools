@@ -26,6 +26,7 @@
 
 #include "vtkMaskLabel.h"
 #include "RemoveTinyLabelsCLP.h"
+#include "BRAINSvtkV6Compat.h"
 
 int main( int argc, char * argv[] )
 {
@@ -91,14 +92,14 @@ int main( int argc, char * argv[] )
     // std::cout<<"remove label: "<<label<<std::endl;
 
     // analyze each label in the list
-    mask->SetInput(reader->GetOutput() );
+    BRAINSvtkV6_SetInputData( mask, reader->GetOutput() );
     mask->SetLabel(label);
     mask->Update();
 
     // replace the labels on mask->output if it is not null
     if( mask->GetOutput()->GetNumberOfCells() )
       {
-      connect->SetInput(mask->GetOutput() );
+      BRAINSvtkV6_SetInputData( connect, mask->GetOutput() );
       connect->SetExtractionModeToAllRegions();
       connect->Update();
 
@@ -168,7 +169,7 @@ int main( int argc, char * argv[] )
       }
     }
 
-  writer->SetInput(surface_in);
+  BRAINSvtkV6_SetInputData(writer, surface_in);
   writer->SetFileName(outputSurfaceFile.c_str() );
   writer->Update();
 

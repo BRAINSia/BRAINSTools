@@ -27,6 +27,8 @@
 #include "vtkPoints.h"
 #include "vtkCurvatures.h"
 
+#include "BRAINSvtkV6Compat.h"
+
 #include "BRAINSAssignSurfaceFeaturesCLP.h"
 
 #include <vtkSmartPointer.h>
@@ -167,12 +169,12 @@ int main( int argc, char * *argv )
     {
     // generate a convex hull
     vtkSmartPointer<vtkDelaunay3D> del = vtkSmartPointer<vtkDelaunay3D>::New();
-    del->SetInput( surface );
+    BRAINSvtkV6_SetInputData( del, surface );
 
     vtkUnstructuredGrid *CurrentMesh = del->GetOutput();
 
     vtkSmartPointer<vtkGeometryFilter> extractSurface = vtkSmartPointer<vtkGeometryFilter>::New();
-    extractSurface->SetInput( CurrentMesh );
+    BRAINSvtkV6_SetInputData(extractSurface, CurrentMesh );
     extractSurface->Update();
 
     vtkSmartPointer<vtkPolyData> hull = extractSurface->GetOutput();
@@ -258,7 +260,7 @@ int main( int argc, char * *argv )
   if( curvature )
     {
     vtkSmartPointer<vtkCurvatures> curve = vtkSmartPointer<vtkCurvatures>::New();
-    curve->SetInput(surface);
+    BRAINSvtkV6_SetInputData(curve, surface);
     curve->SetCurvatureTypeToMean();
     if( curvatureType == "Gauss" )
       {
@@ -290,7 +292,7 @@ int main( int argc, char * *argv )
 
   // write the output surface
   vtkSmartPointer<vtkPolyDataWriter> surfaceWriter = vtkSmartPointer<vtkPolyDataWriter>::New();
-  surfaceWriter->SetInput( surface );
+  BRAINSvtkV6_SetInputData( surfaceWriter,  surface );
   surfaceWriter->SetFileName( outputSurfaceFile.c_str() );
   surfaceWriter->Update();
 

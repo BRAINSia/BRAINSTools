@@ -3,12 +3,6 @@
 # Output directories.
 #
 
-# Find VTK.
-find_package(VTK REQUIRED)
-if(VTK_FOUND)
-  include(${VTK_USE_FILE})
-endif()
-
 set(ALL_PROGS_LIST
       BRAINSTalairach
       BRAINSTalairachMask

@@ -31,10 +31,6 @@ if(WIN32)
   endif()
 endif()
 
-if(NOT VTK_FOUND)
-    find_package(VTK REQUIRED)
-    include(${VTK_USE_FILE})
-endif()
 link_libraries( ${VTK_LIBRARIES} )
 #-----------------------------------------------------------------------------
 # Configure files with settings for use by the build.

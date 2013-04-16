@@ -27,13 +27,6 @@ set(BRAINSDemonWarpTemplatesLIB_SRCS
          BRAINSDemonWarpTemplates.cxx
 )
 
-if(USE_DebugImageViewer)
-  if(NOT VTK_FOUND) #See if it has already been found because this is a nested project
-    find_package(VTK REQUIRED)
-    include(${VTK_USE_FILE})
-  endif()
-endif()
-
 add_library(BRAINSDemonWarpTemplatesLIB STATIC ${BRAINSDemonWarpTemplatesLIB_SRCS})
 
 set(BRAINSDemonWarpTemplatesLIBLibraries BRAINSCommonLib)

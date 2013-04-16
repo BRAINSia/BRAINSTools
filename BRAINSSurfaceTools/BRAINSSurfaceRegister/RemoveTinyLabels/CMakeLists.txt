@@ -4,17 +4,14 @@ StandardBRAINSBuildMacro(NAME RemoveTinyLabels
 
 if (BUILD_TESTING)
 
-set(RemoveTinyLabelsProg ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/RemoveTinyLabels)
-set(CompareSurfacesProg ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/CompareSurfaces)
-
 ExternalData_add_test(${PROJECT_NAME}FetchData NAME TEST_SurfaceRemoveTinyLabels
-  COMMAND ${LAUNCH_EXE} ${RemoveTinyLabelsProg}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:RemoveTinyLabels>
           --inputSurfaceFile DATA{${TestData_DIR}/0036195_left_49Labels.vtk}
           --outputSurfaceFile Removed21And37From49LabelsTest.vtk
           --labelList 21,37 )
 
 ExternalData_add_test(${PROJECT_NAME}FetchData NAME COMPARE_SurfaceRemoveTinyLabels
-  COMMAND ${LAUNCH_EXE} ${CompareSurfacesProg}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:CompareSurfaces>
           --inputSurfaceFile Removed21And37From49LabelsTest.vtk
           --refSurfaceFile DATA{${TestData_DIR}/Removed21And37From49Labels.vtk}
           --vertexLocation

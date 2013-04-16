@@ -2,18 +2,15 @@ StandardBRAINSBuildMacro(NAME QuadEdgeMeshClampScalars TARGET_LIBRARIES ${ITK_LI
 
 if (BUILD_TESTING)
 
-set(QuadEdgeMeshClampScalarsProg ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/QuadEdgeMeshClampScalars)
-set(CompareSurfacesProg ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/CompareSurfaces)
-
 ExternalData_add_test(${PROJECT_NAME}FetchData NAME TEST_SurfaceClampScalars
-  COMMAND ${LAUNCH_EXE} ${QuadEdgeMeshClampScalarsProg}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:QuadEdgeMeshClampScalars>
           --inputSurfaceFile DATA{${TestData_DIR}/0036195_AssignArray.vtk}
           --outputSurfaceFile 0036195_ClampScalarsTest.vtk
           --outputMin 10.0
           --outputMax 20.0 )
 
 ExternalData_add_test(${PROJECT_NAME}FetchData NAME COMPARE_SurfaceClampScalars
-  COMMAND ${LAUNCH_EXE} ${CompareSurfacesProg}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:CompareSurfaces>
           --inputSurfaceFile 0036195_ClampScalarsTest.vtk
           --refSurfaceFile DATA{${TestData_DIR}/0036195_ClampScalars.vtk}
           --vertexLocation

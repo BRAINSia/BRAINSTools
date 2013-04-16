@@ -2,16 +2,13 @@ StandardBRAINSBuildMacro(NAME SmoothingMeshScalars TARGET_LIBRARIES ${ITK_LIBRAR
 
 if (BUILD_TESTING)
 
-set(SmoothingMeshScalarsProg ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/SmoothingMeshScalars)
-set(CompareSurfacesProg ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/CompareSurfaces)
-
 ExternalData_add_test(${PROJECT_NAME}FetchData NAME TEST_SurfaceSmoothingMeshScalars
-  COMMAND ${LAUNCH_EXE} ${SmoothingMeshScalarsProg}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:SmoothingMeshScalars>
           --inputSurfaceFile DATA{${TestData_DIR}/Piecewised_IC4.vtk}
           --outputSurfaceFile SmoothedScalarTest.vtk )
 
 ExternalData_add_test(${PROJECT_NAME}FetchData NAME COMPARE_SurfaceSmoothingMeshScalars
-  COMMAND ${LAUNCH_EXE} ${CompareSurfacesProg}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:CompareSurfaces>
           --inputSurfaceFile SmoothedScalarTest.vtk
           --refSurfaceFile DATA{${TestData_DIR}/SmoothedScalar_IC4.vtk}
           --vertexLocation

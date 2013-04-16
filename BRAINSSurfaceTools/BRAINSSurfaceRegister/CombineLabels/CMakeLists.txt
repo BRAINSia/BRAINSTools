@@ -2,17 +2,14 @@ StandardBRAINSBuildMacro(NAME CombineLabels TARGET_LIBRARIES ${ITK_LIBRARIES} ${
 
 if (BUILD_TESTING)
 
-set(CombineLabelsProg ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/CombineLabels)
-set(CompareSurfacesProg ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/CompareSurfaces)
-
 ExternalData_add_test(${PROJECT_NAME}FetchData NAME TEST_SurfaceCombineLabels
-  COMMAND ${LAUNCH_EXE} ${CombineLabelsProg}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:CombineLabels>
           --inputSurfaceFile DATA{${TestData_DIR}/0036195_left_49Labels.vtk}
           --outputSurfaceFile CombineLabel0036195Test.vtk
           --removeLabel 49 )
 
 ExternalData_add_test(${PROJECT_NAME}FetchData NAME COMPARE_SurfaceCombineLabels
-  COMMAND ${LAUNCH_EXE} ${CompareSurfacesProg}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:CompareSurfaces>
           --inputSurfaceFile CombineLabel0036195Test.vtk
           --refSurfaceFile DATA{${TestData_DIR}/CombineLabel0036195.vtk}
           --vertexLocation

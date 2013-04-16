@@ -2,25 +2,23 @@ StandardBRAINSBuildMacro(NAME IcosahedronResampler TARGET_LIBRARIES ${ITK_LIBRAR
 
 if (BUILD_TESTING)
 
-set(IcosahedronResamplerProg ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/IcosahedronResampler)
-set(CompareSurfacesProg ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/CompareSurfaces)
 
 ExternalData_add_test(${PROJECT_NAME}FetchData NAME TEST_SurfaceIcosahedronResampler1
-  COMMAND ${LAUNCH_EXE} ${IcosahedronResamplerProg}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:IcosahedronResampler>
           --inputSurfaceFile DATA{${TestData_DIR}/SimpleSurface1.vtk}
           --outputSurfaceFile SimpleSurface1_test_IC4.vtk
           --resolution 4
           --radius 100 )
 
 ExternalData_add_test(${PROJECT_NAME}FetchData NAME TEST_SurfaceIcosahedronResampler2
-  COMMAND ${LAUNCH_EXE} ${IcosahedronResamplerProg}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:IcosahedronResampler>
           --inputSurfaceFile DATA{${TestData_DIR}/SimpleSurface2.vtk}
           --outputSurfaceFile SimpleSurface2_test_IC4.vtk
           --resolution 4
           --radius 100 )
 
 ExternalData_add_test(${PROJECT_NAME}FetchData NAME COMPARE_SurfaceIcosahedronResampler1
-  COMMAND ${LAUNCH_EXE} ${CompareSurfacesProg}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:CompareSurfaces>
           --inputSurfaceFile SimpleSurface1_test_IC4.vtk
           --refSurfaceFile DATA{${TestData_DIR}/SimpleSurface1_IC4.vtk}
           --vertexLocation
@@ -28,7 +26,7 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME COMPARE_SurfaceIcosahedronRe
           --tolerance 1.0e-7 )
 
 ExternalData_add_test(${PROJECT_NAME}FetchData NAME COMPARE_SurfaceIcosahedronResampler2
-  COMMAND ${LAUNCH_EXE} ${CompareSurfacesProg}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:CompareSurfaces>
           --inputSurfaceFile SimpleSurface2_test_IC4.vtk
           --refSurfaceFile DATA{${TestData_DIR}/SimpleSurface2_IC4.vtk}
           --vertexLocation

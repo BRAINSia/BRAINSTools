@@ -2,18 +2,15 @@ StandardBRAINSBuildMacro(NAME SurfaceColor TARGET_LIBRARIES ${ITK_LIBRARIES} ${V
 
 if (BUILD_TESTING)
 
-set(SurfaceColorProg ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/SurfaceColor)
-set(CompareSurfacesProg ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/CompareSurfaces)
-
 ExternalData_add_test(${PROJECT_NAME}FetchData NAME TEST_SurfaceColor
-  COMMAND ${LAUNCH_EXE} ${SurfaceColorProg}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:SurfaceColor>
           --inputSurfaceFile DATA{${TestData_DIR}/0036195_left_49Labels.vtk}
           --labelMapFile DATA{${TestData_DIR}/0036195_left_transformedLabelMap.nii.gz}
           --outputSurfaceFile SurfaceColorTest.vtk
           --numOfLabels 49 )
 
 ExternalData_add_test(${PROJECT_NAME}FetchData NAME COMPARE_SurfaceColor
-  COMMAND ${LAUNCH_EXE} ${CompareSurfacesProg}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:CompareSurfaces>
           --inputSurfaceFile SurfaceColorTest.vtk
           --refSurfaceFile DATA{${TestData_DIR}/SurfaceColor.vtk}
           --vertexLocation

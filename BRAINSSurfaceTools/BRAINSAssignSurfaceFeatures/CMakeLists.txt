@@ -6,7 +6,7 @@ set(BRAINSAssignSurfaceFeaturesProg ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/BRAINSAssi
 set(CompareSurfacesProg ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/CompareSurfaces)
 
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME TEST_BRAINSAssignSurfaceFeatures
-  COMMAND ${LAUNCH_EXE} ${BRAINSAssignSurfaceFeaturesProg}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSAssignSurfaceFeatures>
           --inputSurfaceFile DATA{${TestData_DIR}/0036195_SurfaceGeneration.vtk}
           --outerSurfaceFile DATA{${TestData_DIR}/0036195_leftTissueClass130.vtk}
           --outputSurfaceFile 0036195_SurfaceFeaturesTest.vtk
@@ -20,7 +20,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME TEST_BRAINSAssignSurfaceFea
           --curvatureType Mean )
 
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME COMPARE_BRAINSAssignSurfaceFeatures
-  COMMAND ${LAUNCH_EXE} ${CompareSurfacesProg}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:CompareSurfaces>
           --inputSurfaceFile 0036195_SurfaceFeaturesTest.vtk
           --refSurfaceFile DATA{${TestData_DIR}/0036195_leftSurfaceFeatures.vtk}
           --vertexLocation

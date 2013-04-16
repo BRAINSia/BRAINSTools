@@ -2,16 +2,13 @@ StandardBRAINSBuildMacro(NAME QuadEdgeMeshPiecewiseRescale TARGET_LIBRARIES ${IT
 
 if (BUILD_TESTING)
 
-set(PiecewiseRescaleProg ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/QuadEdgeMeshPiecewiseRescale)
-set(CompareSurfacesProg ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/CompareSurfaces)
-
 ExternalData_add_test(${PROJECT_NAME}FetchData NAME TEST_SurfacePiecewiseRescale
-  COMMAND ${LAUNCH_EXE} ${PiecewiseRescaleProg}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:QuadEdgeMeshPiecewiseRescale>
           --inputSurfaceFile DATA{${TestData_DIR}/0036195_left_sphereIC4.vtk}
           --outputSurfaceFile Piecewised_IC4Test.vtk )
 
 ExternalData_add_test(${PROJECT_NAME}FetchData NAME COMPARE_SurfacePiecewiseRescale
-  COMMAND ${LAUNCH_EXE} ${CompareSurfacesProg}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:CompareSurfaces>
           --inputSurfaceFile Piecewised_IC4Test.vtk
           --refSurfaceFile DATA{${TestData_DIR}/Piecewised_IC4.vtk}
           --vertexLocation

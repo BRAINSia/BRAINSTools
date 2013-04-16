@@ -2,11 +2,8 @@ StandardBRAINSBuildMacro(NAME ProbabilityLabels TARGET_LIBRARIES ${ITK_LIBRARIES
 
 if (BUILD_TESTING)
 
-set(ProbabilityLabelsProg ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/ProbabilityLabels)
-set(CompareSurfacesProg ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/CompareSurfaces)
-
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME TEST_SurfaceProbabilityLabels
-  COMMAND ${LAUNCH_EXE} ${ProbabilityLabelsProg}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:ProbabilityLabels>
           --inputMeshList DATA{${TestData_DIR}/0436396_left_ManualLabels.vtk}
           --inputMeshList DATA{${TestData_DIR}/0436396_left_ManualLabels.vtk}
           --outputMeshFile ProbabilityLabelsTest.vtk
@@ -14,7 +11,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME TEST_SurfaceProbabilityLabe
           --mostLikely )
 
 ExternalData_add_test(${PROJECT_NAME}FetchData NAME COMPARE_SurfaceProbabilityLabels
-  COMMAND ${LAUNCH_EXE} ${CompareSurfacesProg}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:CompareSurfaces>
           --inputSurfaceFile ProbabilityLabelsTest.vtk
           --refSurfaceFile DATA{${TestData_DIR}/ProbabilityLabels.vtk}
           --vertexLocation

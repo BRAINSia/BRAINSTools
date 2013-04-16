@@ -4,16 +4,13 @@ StandardBRAINSBuildMacro(NAME SurfaceLabelCleanUp
 
 if (BUILD_TESTING)
 
-set(SurfaceLabelCleanUpProg ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/SurfaceLabelCleanUp)
-set(CompareSurfacesProg ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/CompareSurfaces)
-
 ExternalData_add_test(${PROJECT_NAME}FetchData NAME TEST_SurfaceLabelCleanUp
-  COMMAND ${LAUNCH_EXE} ${SurfaceLabelCleanUpProg}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:SurfaceLabelCleanUp>
           --inputSurfaceFile DATA{${TestData_DIR}/0036195_left_49Labels.vtk}
           --outputSurfaceFile SurfaceLabelCleanUpTest.vtk )
 
 ExternalData_add_test(${PROJECT_NAME}FetchData NAME COMPARE_SurfaceLabelCleanUp
-  COMMAND ${LAUNCH_EXE} ${CompareSurfacesProg}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:CompareSurfaces>
           --inputSurfaceFile SurfaceLabelCleanUpTest.vtk
           --refSurfaceFile DATA{${TestData_DIR}/SurfaceLabelCleanUp.vtk}
           --vertexLocation

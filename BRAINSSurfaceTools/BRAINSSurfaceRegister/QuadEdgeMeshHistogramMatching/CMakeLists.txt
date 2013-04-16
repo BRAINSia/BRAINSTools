@@ -2,17 +2,14 @@ StandardBRAINSBuildMacro(NAME QuadEdgeMeshHistogramMatching  TARGET_LIBRARIES ${
 
 if (BUILD_TESTING)
 
-set(HistogramMatchingProg ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/QuadEdgeMeshHistogramMatching)
-set(CompareSurfacesProg ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/CompareSurfaces)
-
 ExternalData_add_test(${PROJECT_NAME}FetchData NAME TEST_SurfaceHistogramMatching
-  COMMAND ${LAUNCH_EXE} ${HistogramMatchingProg}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:QuadEdgeMeshHistogramMatching>
           --refSurfaceFile DATA{${TestData_DIR}/0036195_left_sphereIC4.vtk}
           --inputSurfaceFile DATA{${TestData_DIR}/0036896_left_sphereIC4.vtk}
           --outputSurfaceFile 0036896_to_0036195_hmIC4Test.vtk )
 
 ExternalData_add_test(${PROJECT_NAME}FetchData NAME COMPARE_SurfaceHistogramMatching
-  COMMAND ${LAUNCH_EXE} ${CompareSurfacesProg}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:CompareSurfaces>
           --inputSurfaceFile 0036896_to_0036195_hmIC4Test.vtk
           --refSurfaceFile DATA{${TestData_DIR}/0036896_to_0036195_hmIC4.vtk}
           --vertexLocation

@@ -2,18 +2,15 @@ StandardBRAINSBuildMacro(NAME WarpQuadEdgeMesh TARGET_LIBRARIES ${ITK_LIBRARIES}
 
 if (BUILD_TESTING)
 
-set(WarpQuadEdgeMeshProg ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WarpQuadEdgeMesh)
-set(CompareSurfacesProg ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/CompareSurfaces)
-
 ExternalData_add_test(${PROJECT_NAME}FetchData NAME TEST_SurfaceWarpQuadEdgeMesh
-  COMMAND ${LAUNCH_EXE} ${WarpQuadEdgeMeshProg}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:WarpQuadEdgeMesh>
           --fixedMeshFile DATA{${TestData_DIR}/0036195_left_sphere.vtk}
           --movingMeshFile DATA{${TestData_DIR}/0036896_left_sphereIC6.vtk}
           --deformedMeshFile DATA{${TestData_DIR}/deformed0036195.vtk}
           --outputMeshFile warped0036896HullTest.vtk)
 
 ExternalData_add_test(${PROJECT_NAME}FetchData NAME COMPARE_SurfaceWarpQuadEdgeMesh
-  COMMAND ${LAUNCH_EXE} ${CompareSurfacesProg}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:CompareSurfaces>
           --inputSurfaceFile warped0036896HullTest.vtk
           --refSurfaceFile DATA{${TestData_DIR}/warped0036896Hull.vtk}
           --vertexLocation

@@ -2,11 +2,8 @@ StandardBRAINSBuildMacro(NAME AssignArray TARGET_LIBRARIES ${ITK_LIBRARIES} ${VT
 
 if (BUILD_TESTING)
 
-set(AssignArrayProg ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/AssignArray)
-set(CompareSurfacesProg ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/CompareSurfaces)
-
 ExternalData_add_test(${PROJECT_NAME}FetchData NAME TEST_SurfaceAssignArray
-  COMMAND ${LAUNCH_EXE} ${AssignArrayProg}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:AssignArray>
           --targetSurfaceFile DATA{${TestData_DIR}/0036195_left_5000_sphere0.vtk}
           --sourceSurfaceFile DATA{${TestData_DIR}/0036195_leftSurfaceFeatures.vtk}
           --outputSurfaceFile 0036195_AssignArrayTest.vtk
@@ -14,7 +11,7 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME TEST_SurfaceAssignArray
           --getArrayName distToHull )
 
 ExternalData_add_test(${PROJECT_NAME}FetchData NAME COMPARE_SurfaceAssignArray
-  COMMAND ${LAUNCH_EXE} ${CompareSurfacesProg}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:CompareSurfaces>
           --inputSurfaceFile 0036195_AssignArrayTest.vtk
           --refSurfaceFile DATA{${TestData_DIR}/0036195_AssignArray.vtk}
           --scalarArray

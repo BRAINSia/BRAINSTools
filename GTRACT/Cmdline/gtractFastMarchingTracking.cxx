@@ -39,6 +39,8 @@
 #include "GtractTypes.h"
 #include "gtractFastMarchingTrackingCLP.h"
 #include "BRAINSThreadControl.h"
+#include "BRAINSvtkV6Compat.h"
+
 template <class TImageType>
 void AdaptOriginAndDirection( typename TImageType::Pointer image )
 {
@@ -225,14 +227,14 @@ int main(int argc, char *argv[])
     {
     vtkXMLPolyDataWriter *fiberWriter = vtkXMLPolyDataWriter::New();
     fiberWriter->SetFileName( outputTract.c_str() );
-    fiberWriter->SetInput( fibers );
+    BRAINSvtkV6_SetInputData( fiberWriter,  fibers );
     fiberWriter->Update();
     }
   else
     {
     vtkPolyDataWriter *fiberWriter = vtkPolyDataWriter::New();
     fiberWriter->SetFileName( outputTract.c_str() );
-    fiberWriter->SetInput( fibers );
+    BRAINSvtkV6_SetInputData( fiberWriter,  fibers );
     fiberWriter->Update();
     }
   return EXIT_SUCCESS;

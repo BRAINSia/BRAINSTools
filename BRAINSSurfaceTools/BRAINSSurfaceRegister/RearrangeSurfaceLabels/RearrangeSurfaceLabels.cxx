@@ -30,6 +30,7 @@
 #include <iomanip>  // format manipulation
 
 #include "RearrangeSurfaceLabelsCLP.h"
+#include "BRAINSvtkV6Compat.h"
 
 int main( int argc, char * argv[] )
 {
@@ -122,7 +123,7 @@ int main( int argc, char * argv[] )
   // write out the surface
   vtkSmartPointer<vtkPolyDataWriter> writer = vtkSmartPointer<vtkPolyDataWriter>::New();
 
-  writer->SetInput(surface_in);
+  BRAINSvtkV6_SetInputData( writer, surface_in);
   writer->SetFileName(outputSurfaceFile.c_str() );
   writer->Update();
   delete [] frequency;

@@ -22,6 +22,7 @@
 #include "vtkPointData.h"
 #include "vtkSmartPointer.h"
 #include "vtkDataArray.h"
+#include "BRAINSvtkV6Compat.h"
 
 #include "CombineLabelsCLP.h"
 
@@ -65,7 +66,7 @@ int main( int argc, char * argv[] )
 
   // write output Surface
   vtkSmartPointer<vtkPolyDataWriter> writer = vtkSmartPointer<vtkPolyDataWriter>::New();
-  writer->SetInput(inputSurface);
+  BRAINSvtkV6_SetInputData( writer, inputSurface);
   writer->SetFileName(outputSurfaceFile.c_str() );
   writer->Update();
 

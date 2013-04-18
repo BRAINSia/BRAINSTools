@@ -17,6 +17,8 @@
 #include "vtkObjectFactory.h"
 #include "vtkMath.h"
 
+#include "BRAINSvtkV6Compat.h"
+
 #include "itkTimeProbe.h"
 
 // Commented out redefinition of ExceptionMacro
@@ -668,7 +670,7 @@ void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
       }
     }
 
-  output->SetWholeExtent(extent);
+  BRAINSvtkV6_SetExtent(output, extent);
   if( this->UseNativeScalarType )
     {
     if( imageIO.GetPointer() == NULL )
@@ -726,8 +728,13 @@ void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
     this->SetNumberOfComponents(imageIO->GetNumberOfComponents() );
     }
 
+#if (VTK_MAJOR_VERSION < 6)
   output->SetScalarType(this->OutputScalarType);
   output->SetNumberOfScalarComponents(this->GetNumberOfComponents() );
+#else
+  vtkImageData::SetScalarType(this->OutputScalarType,output->GetInformation());
+  vtkImageData::SetNumberOfScalarComponents(this->GetNumberOfComponents(),output->GetInformation());
+#endif
 
   // Copy the MetaDataDictionary from the ITK layer to the VTK layer
   if( imageIO.GetPointer() != NULL )
@@ -789,20 +796,13 @@ const char * vtkITKArchetypeImageSeriesReader::GetNthFileName( int idxSeriesInst
       {
       continue;
       }
+    else if( count == n )
+      {
+      return this->AllFileNames[k].c_str();
+      }
     else
       {
-      if( count == n )
-        {
-        return this->AllFileNames[k].c_str();
-        }
-      else if( count == 0 )
-        {
-        count++;
-        }
-      else
-        {
-        count++;
-        }
+      count++;
       }
     }
   return NULL;

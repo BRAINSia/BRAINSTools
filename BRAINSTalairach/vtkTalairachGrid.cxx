@@ -18,6 +18,8 @@
 #include "vtkUnstructuredGrid.h"
 #include "vtkTalairachGrid.h"
 #include "vtkStructuredGridWriter.h"
+#include "BRAINSvtkV6Compat.h"
+
 #define PR(x) std::cout << #x " = " << x << "\n"; // a simple print macro for
                                                    // use when debugging
 
@@ -989,7 +991,7 @@ void vtkTalairachGrid::WriteTalairachGrid(std::string filename)
   vtkStructuredGridWriter *gridWriter = vtkStructuredGridWriter::New();
 
   gridWriter->SetFileName( filename.c_str() );
-  gridWriter->SetInput(talairachGrid);
+  BRAINSvtkV6_SetInputData( gridWriter, talairachGrid);
   gridWriter->Write();
 }
 
@@ -998,7 +1000,7 @@ void vtkTalairachGrid::WriteBoundingBoxGrid(std::string filename)
   vtkStructuredGridWriter *gridWriter = vtkStructuredGridWriter::New();
 
   gridWriter->SetFileName( filename.c_str() );
-  gridWriter->SetInput(boundingBoxGrid);
+  BRAINSvtkV6_SetInputData( gridWriter, boundingBoxGrid);
   gridWriter->Write();
 }
 

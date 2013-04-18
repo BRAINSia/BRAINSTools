@@ -45,6 +45,8 @@
 
 #include "BRAINSApplySurfaceLabelsCLP.h"
 
+#include "BRAINSvtkV6Compat.h"
+
 #include "vtkDataSetWriter.h"
 
 #include "vtkTransform.h"
@@ -122,7 +124,7 @@ int main( int argc, char * *argv )
   rasOrientation->SetMatrix( orientationMatrix );
 
   vtkTransformPolyDataFilter *resampleSurface = vtkTransformPolyDataFilter::New();
-  resampleSurface->SetInput( surface );
+  BRAINSvtkV6_SetInputData( resampleSurface,  surface );
   resampleSurface->SetTransform( rasOrientation );
   resampleSurface->Update();
 
@@ -203,7 +205,7 @@ int main( int argc, char * *argv )
   // Put the surface back into its original orientation
 
   vtkTransformPolyDataFilter *revertedSurface = vtkTransformPolyDataFilter::New();
-  revertedSurface->SetInput( resampleSurface->GetOutput() );
+  BRAINSvtkV6_SetInputData( revertedSurface,  resampleSurface->GetOutput() );
   revertedSurface->SetTransform( rasOrientation->GetInverse() );
   revertedSurface->Update();
 
@@ -215,7 +217,7 @@ int main( int argc, char * *argv )
   if( extension == ".vtk" )
     {
     vtkPolyDataWriter *surfaceWriter = vtkPolyDataWriter::New();
-    surfaceWriter->SetInput( surface );
+    BRAINSvtkV6_SetInputData( surfaceWriter,  surface );
     surfaceWriter->SetFileName( outputSurface.c_str() );
     surfaceWriter->Update();
     surfaceWriter->Delete();
@@ -223,7 +225,7 @@ int main( int argc, char * *argv )
   else
     {
     vtkXMLPolyDataWriter *surfaceWriter = vtkXMLPolyDataWriter::New();
-    surfaceWriter->SetInput( surface );
+    BRAINSvtkV6_SetInputData( surfaceWriter,  surface );
     surfaceWriter->SetFileName( outputSurface.c_str() );
     surfaceWriter->SetDataModeToAscii();
     surfaceWriter->Update();

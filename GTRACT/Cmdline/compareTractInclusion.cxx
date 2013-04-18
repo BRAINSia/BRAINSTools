@@ -34,6 +34,7 @@
 #include <vtkAppendPolyData.h>
 #include <vtkSplineFilter.h>
 #include "vnl/vnl_math.h"
+#include "BRAINSvtkV6Compat.h"
 
 // ///////////// VTK Version Compatibility   //////////////////////////////
 #ifndef vtkFloatingPointType
@@ -164,7 +165,7 @@ int main(int argc, char * argv[])
     }
 
   vtkSplineFilter *testSpline = vtkSplineFilter::New();
-  testSpline->SetInput( testFiberTract );
+  BRAINSvtkV6_SetInputData( testSpline,  testFiberTract );
   testSpline->SetSubdivideToSpecified();
   testSpline->SetNumberOfSubdivisions( numberOfPoints );
   testSpline->Update();
@@ -172,7 +173,7 @@ int main(int argc, char * argv[])
   vtkPolyData *resampledTestFibers = testSpline->GetOutput();
 
   vtkSplineFilter *standardSpline = vtkSplineFilter::New();
-  standardSpline->SetInput( standardFiberTract );
+  BRAINSvtkV6_SetInputData( standardSpline,  standardFiberTract );
   standardSpline->SetSubdivideToSpecified();
   standardSpline->SetNumberOfSubdivisions( numberOfPoints );
   standardSpline->Update();

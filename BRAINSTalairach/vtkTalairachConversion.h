@@ -10,7 +10,7 @@
 
 class vtkStructuredGrid;
 
-class VTK_FILTERING_EXPORT vtkTalairachConversion : public vtkDataObjectAlgorithm
+class vtkTalairachConversion : public vtkDataObjectAlgorithm
 {
 public:
   static vtkTalairachConversion * New();

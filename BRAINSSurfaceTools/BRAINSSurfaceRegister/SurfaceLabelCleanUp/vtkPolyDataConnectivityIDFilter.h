@@ -56,7 +56,7 @@ class vtkDataArray;
 class vtkIdList;
 class vtkIdTypeArray;
 
-class VTK_GRAPHICS_EXPORT vtkPolyDataConnectivityIDFilter : public vtkPolyDataAlgorithm
+class vtkPolyDataConnectivityIDFilter : public vtkPolyDataAlgorithm
 {
 public:
   vtkTypeRevisionMacro(vtkPolyDataConnectivityIDFilter, vtkPolyDataAlgorithm);

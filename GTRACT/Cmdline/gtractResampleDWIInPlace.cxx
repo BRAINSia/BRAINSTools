@@ -164,14 +164,24 @@ int main(int argc, char *argv[])
   std::vector<std::vector<double> > msrFrame;
   itk::ExposeMetaData<std::vector<std::vector<double> > >( inputMetaDataDictionary,
                                                            "NRRD_measurement frame", msrFrame );
-
   vnl_matrix_fixed<double, 3, 3> DWIMeasurementFrame;
-  for( unsigned int i = 0; i < 3; i++ )
+  if( msrFrame.size() != 0 )
     {
-    for( unsigned int j = 0; j < 3; j++ )
+    for( unsigned int i = 0; i < 3; i++ )
       {
-      DWIMeasurementFrame[i][j] = msrFrame[i][j];
+      for( unsigned int j = 0; j < 3; j++ )
+        {
+        DWIMeasurementFrame[i][j] = msrFrame[i][j];
+        }
       }
+    }
+  else
+    {
+    std::cout << "File does not have NRRD measurement frame metadata!"
+              << std::endl
+              << "If this is not a DWI NRRD file (e.g. fMRI NIFTI, etc.), you can safely ignore this"
+              << std::endl;
+    DWIMeasurementFrame.set_identity();
     }
   vnl_matrix_fixed<double, 3, 3> DWIInverseMeasurementFrame = vnl_inverse( DWIMeasurementFrame );
 

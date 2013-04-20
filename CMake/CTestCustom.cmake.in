@@ -88,10 +88,11 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
   ".*gmake.*: warning.*"
 
   # JPEG warnings:
-  ".*JPEG/jccoefct.c.*"
-  ".*/JPEG.*"
+  ".*JPEG.*"
+  ".*TIFF.*"
+  ".*NIPYPE.*"
+  ".*DCMTK.*"
   ".*warning: unused parameter .*cinfo.*"
-  ".*/TIFF.*"
 
   # Swig warnings:
   ".*Swig-prefix.*warning.*"

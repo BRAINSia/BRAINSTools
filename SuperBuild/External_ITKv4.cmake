@@ -140,7 +140,7 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
     )
   ### --- End Project specific additions
   set(${proj}_REPOSITORY ${git_protocol}://itk.org/ITK.git)
-  set(${proj}_GIT_TAG ae8bd15daed65dd033fb169183ef931d8a306462) #2013-04-13 Update for std::copy performance.
+  set(${proj}_GIT_TAG d730c4f610dbd78a1b5a84d45053be5be586fd6b) #2013-04-22 ITK_FUTURE_LEGACY_REMOVE
 
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${${proj}_REPOSITORY}

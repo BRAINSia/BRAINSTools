@@ -59,31 +59,6 @@ unsigned int ConvertFromCharPtr(const char *s)
     {
     rval += ( (unsigned int)s[i]) << (i * 8);
     }
-// this makes no sense, according to what I've read, but apparently,
-// the uint32 numbers in the CSA header are little-endian even in
-// files with BigEndian transfer syntax.#if 0
-#if 0
-
-  switch( xferSyntax )
-    {
-    case EXS_LittleEndianImplicit:
-    case EXS_LittleEndianExplicit:
-      {
-      itk::ByteSwapper<unsigned int>::SwapFromSystemToLittleEndian(&rval);
-      }
-      break;
-    case EXS_BigEndianImplicit:
-    case EXS_BigEndianExplicit:
-      {
-      itk::ByteSwapper<unsigned int>::SwapFromSystemToBigEndian(&rval);
-      }
-      break;
-    default:
-      {
-      }
-      break;
-    }
-#endif
   return rval;
 }
 
@@ -334,7 +309,7 @@ Write4DVolume( VolumeType::Pointer & img, int nVolumes, const std::string & fnam
   size_t bytecount = img4D->GetLargestPossibleRegion().GetNumberOfPixels();
   bytecount *= sizeof(PixelValueType);
   memcpy(img4D->GetBufferPointer(), img->GetBufferPointer(), bytecount);
-#if 0
+#if DEBUG_WRITE4DVOLUME
     {
     itk::ImageFileWriter<VolumeType>::Pointer writer = itk::ImageFileWriter<VolumeType>::New();
     writer->SetFileName( "dwi3dconvert.nii.gz");
@@ -656,7 +631,9 @@ int main(int argc, char *argv[])
         SliceMosaic = true;
         }
       }
-    else if( !StringContains(vendor, "GE") && !StringContains(vendor, "PHILIPS") )
+    else if( !StringContains(vendor, "GE") &&
+             !StringContains(vendor, "PHILIPS") &&
+             !StringContains(vendor,"HITACHI") )
       {
       std::cerr << "Unrecognized scanner vendor |"
                 << vendor << "|" << std::endl;
@@ -777,7 +754,7 @@ int main(int argc, char *argv[])
           std::cout << "Dicom images are ordered in a slice interleaving way." << std::endl;
           // reorder slices into a volume interleaving manner
           DeInterleaveVolume(readerOutput, numberOfSlicesPerVolume, nSlice);
-#if 0
+#ifdef DEBUG_DWIConvert
           itk::ImageFileWriter<VolumeType>::Pointer writer = itk::ImageFileWriter<VolumeType>::New();
           writer->SetFileName( "deinterleave.nrrd");
           writer->SetInput( readerOutput );
@@ -956,6 +933,11 @@ int main(int argc, char *argv[])
       {
       // special handling for philips multi-frame dicom later.
       }
+    else if( StringContains(vendor, "HITACHI") )
+      {
+      // any changes to origin/spacing/orientation go here
+      SliceOrderIS = false;
+      }
     else
       {
       std::cout << " Warning: vendor type not valid" << std::endl;
@@ -1011,17 +993,6 @@ int main(int argc, char *argv[])
       nVolume = nSlice / nSliceInVolume;
       if(!fMRIOutput)
         {
-#if 0
-        // don't even try to convert DTI 6 Direction files
-        std::string seriesDescription;
-        if( allHeaders[0]->GetElementLO(0x0008, 0x103e, seriesDescription, false) == EXIT_SUCCESS &&
-            StringContains(seriesDescription, "6 Directions") )
-          {
-          std::cerr << "Can't recover B-value & diffusion directions from DTI - 6 Directions scans" << std::endl;
-          FreeHeaders(allHeaders);
-          return EXIT_FAILURE;
-          }
-#endif
         // don't bother with gvec/bval stuff if just FMRI Output
         std::string ModelName;
         // OK, so there is an accomdation made on the basis of one site
@@ -1603,6 +1574,27 @@ int main(int argc, char *argv[])
           }
         }
       }
+    else if( StringContains(vendor, "HITACHI") )
+      {
+      nVolume = nSlice / numberOfSlicesPerVolume;
+      nSliceInVolume = numberOfSlicesPerVolume;
+      for(unsigned int k = 0; k < nSlice; k += numberOfSlicesPerVolume)
+        {
+        itk::DCMTKSequence SharedFunctionalGroupsSequence;
+        allHeaders[k]->GetElementSQ(0x5200,0x9229,SharedFunctionalGroupsSequence);
+        double b = 0.0;
+        SharedFunctionalGroupsSequence.GetElementFD(0x0018,0x9087,b);
+        bValues.push_back(b);
+        double doubleArray[3];
+        SharedFunctionalGroupsSequence.GetElementFD(0x0018,0x9089,3,doubleArray);
+        vnl_vector_fixed<double, 3> vect3d;
+        for(unsigned g = 0; g < 3; ++g)
+          {
+          vect3d[g] = doubleArray[g];
+          }
+        DiffusionVectors.push_back(vect3d);
+        }
+      }
     else
       {
       std::cout << "ERROR: Unknown scanner vendor " << vendor << std::endl;
@@ -1674,130 +1666,32 @@ int main(int argc, char *argv[])
 //      unsigned int bad_slice_counter = 0;
       for( unsigned int k = 0; k < original_slice_number; ++k )
         {
-#if 0
-        // bad_gradient_indices never used, so this is pointless
-        for( unsigned int j = 0; j < bad_gradient_indices.size(); ++j )
+        unsigned int new_k = k /* - bad_slice_counter */;
+
+        dmRegion.SetIndex(2, new_k);
+        itk::ImageRegionIteratorWithIndex<VolumeType> dmIt( dmImage, dmRegion );
+
+        // figure out the mosaic region for this slice
+        int sliceIndex = k;
+
+        // int nBlockPerSlice = mMosaic*nMosaic;
+        int slcMosaic = sliceIndex / (nSliceInVolume);
+        sliceIndex -= slcMosaic * nSliceInVolume;
+        int colMosaic = sliceIndex / mMosaic;
+        int rawMosaic = sliceIndex - mMosaic * colMosaic;
+        region.SetIndex( 0, rawMosaic * dmSize[0] );
+        region.SetIndex( 1, colMosaic * dmSize[1] );
+        region.SetIndex( 2, slcMosaic );
+
+        itk::ImageRegionConstIteratorWithIndex<VolumeType> imIt( img, region );
+        for( dmIt.GoToBegin(), imIt.GoToBegin(); !dmIt.IsAtEnd(); ++dmIt, ++imIt )
           {
-          unsigned int start_bad_slice_number = bad_gradient_indices[j] * nSliceInVolume;
-          unsigned int end_bad_slice_number = start_bad_slice_number + (nSliceInVolume - 1);
-
-          if( k >= start_bad_slice_number && k <= end_bad_slice_number )
-            {
-            bad_slice = true;
-            ++bad_slice_counter;
-            break;
-            }
-          else
-            {
-            bad_slice = false;
-            }
-          }
-        if( bad_slice == false )
-#endif
-          {
-          unsigned int new_k = k /* - bad_slice_counter */;
-
-          dmRegion.SetIndex(2, new_k);
-          itk::ImageRegionIteratorWithIndex<VolumeType> dmIt( dmImage, dmRegion );
-
-          // figure out the mosaic region for this slice
-          int sliceIndex = k;
-
-          // int nBlockPerSlice = mMosaic*nMosaic;
-          int slcMosaic = sliceIndex / (nSliceInVolume);
-          sliceIndex -= slcMosaic * nSliceInVolume;
-          int colMosaic = sliceIndex / mMosaic;
-          int rawMosaic = sliceIndex - mMosaic * colMosaic;
-          region.SetIndex( 0, rawMosaic * dmSize[0] );
-          region.SetIndex( 1, colMosaic * dmSize[1] );
-          region.SetIndex( 2, slcMosaic );
-
-          itk::ImageRegionConstIteratorWithIndex<VolumeType> imIt( img, region );
-          for( dmIt.GoToBegin(), imIt.GoToBegin(); !dmIt.IsAtEnd(); ++dmIt, ++imIt )
-            {
-            dmIt.Set( imIt.Get() );
-            }
+          dmIt.Set( imIt.Get() );
           }
         }
       }
-    else if( StringContains(vendor, "PHILIPS") )
+    else if( StringContains(vendor, "PHILIPS")  || StringContains(vendor, "HITACHI") )
       {
-#if 0
-      // this code, if you use it, scrambles the image data.
-      VolumeType::Pointer img = readerOutput;
-
-      VolumeType::RegionType region = img->GetLargestPossibleRegion();
-      VolumeType::SizeType   size = region.GetSize();
-
-      VolumeType::SizeType dmSize = size;
-      dmSize[2] = nSliceInVolume * (nUsableVolumes);
-
-      region.SetSize( dmSize );
-      dmImage = VolumeType::New();
-      dmImage->CopyInformation( img );
-      dmImage->SetRegions( region );
-      dmImage->Allocate();
-
-      VolumeType::RegionType dmRegion = dmImage->GetLargestPossibleRegion();
-      dmRegion.SetSize(2, 1);
-      region.SetSize(0, dmSize[0]);
-      region.SetSize(1, dmSize[1]);
-      region.SetSize(2, 1);
-
-      unsigned int count = 0;
-      for( unsigned int i = 0; i < nVolume; ++i )
-        {
-        if( useVolume[i] == 1 )
-          {
-          for( unsigned int k = 0; k < nSliceInVolume; ++k )
-            {
-            dmRegion.SetIndex(0, 0);
-            dmRegion.SetIndex(1, 0);
-            dmRegion.SetIndex(2, count * (nSliceInVolume) + k);
-            itk::ImageRegionIteratorWithIndex<VolumeType> dmIt( dmImage, dmRegion );
-
-            // figure out the region for this slice
-            const int sliceIndex = k * nVolume + i;
-            region.SetIndex( 0, 0 );
-            region.SetIndex( 1, 0 );
-            region.SetIndex( 2, sliceIndex );
-
-            itk::ImageRegionConstIteratorWithIndex<VolumeType> imIt( img, region );
-            for( dmIt.GoToBegin(), imIt.GoToBegin(); !dmIt.IsAtEnd(); ++dmIt, ++imIt )
-              {
-              dmIt.Set( imIt.Get() );
-              }
-            }
-          ++count;
-          }
-        }
-      // Verify sizes
-      if( count != bValues.size() )
-        {
-        std::cout << "ERROR:  bValues are the wrong size." <<  count << " != " << bValues.size() << std::endl;
-        FreeHeaders(allHeaders);
-        return EXIT_FAILURE;
-        }
-      if( count != DiffusionVectors.size() )
-        {
-        std::cout << "ERROR:  DiffusionVectors are the wrong size." <<  count << " != " << DiffusionVectors.size()
-                  << std::endl;
-        FreeHeaders(allHeaders);
-        return EXIT_FAILURE;
-        }
-      if( count != UnmodifiedDiffusionVectorsInDicomLPSCoordinateSystem.size() )
-        {
-        std::cout << "ERROR:  UnmodifiedDiffusionVectorsInDicomLPSCoordinateSystem are the wrong size."
-                  <<  count << " != " << UnmodifiedDiffusionVectorsInDicomLPSCoordinateSystem.size() << std::endl;
-        FreeHeaders(allHeaders);
-        return EXIT_FAILURE;
-        }
-#endif
-      // INSANE VERY BAD NO GOOD HACK! All the code above is terrible
-      // and generates a garbage image. I only noticed it because I
-      // though I was actually supposed to write it out to the NRRD
-      // file, when in fact the image with skipped volumes is built
-      // but never used in the original program.
       dmImage = readerOutput;
       }
     else

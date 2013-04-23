@@ -1,8 +1,4 @@
 ##- project(BRAINSFeatureCreaters)
-cmake_minimum_required(VERSION 2.8)
-cmake_policy(VERSION 2.8)
-
-
 
 add_subdirectory(CannyEdge)
 add_subdirectory(DilateImage)

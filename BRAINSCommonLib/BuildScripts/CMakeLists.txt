@@ -3,4 +3,3 @@
 ### goodie scripts needed to support the biulding
 ### the BRAINS* tools
 project(BRAINSBuildScripts)
-cmake_minimum_required(VERSION 2.8)

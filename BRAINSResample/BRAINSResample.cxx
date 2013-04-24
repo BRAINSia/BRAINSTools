@@ -267,7 +267,16 @@ int main(int argc, char *argv[])
       imageWriter->UseCompressionOn();
       imageWriter->SetFileName(outputVolume);
       imageWriter->SetInput( castFilter->GetOutput() );
-      imageWriter->Update();
+      try
+        {
+        imageWriter->Update();
+        }
+      catch( itk::ExceptionObject & excp )
+        {
+        std::cout << "******* HERE *******" << __FILE__ << " " << __LINE__ << std::endl;
+        std::cout << excp << std::endl;
+        return EXIT_FAILURE;
+        }
       }
     else if( pixelType == "uchar" )
       {
@@ -283,7 +292,16 @@ int main(int argc, char *argv[])
       imageWriter->UseCompressionOn();
       imageWriter->SetFileName(outputVolume);
       imageWriter->SetInput( castFilter->GetOutput() );
-      imageWriter->Update();
+      try
+        {
+        imageWriter->Update();
+        }
+      catch( itk::ExceptionObject & excp )
+        {
+        std::cout << "******* HERE *******" << __FILE__ << " " << __LINE__ << std::endl;
+        std::cout << excp << std::endl;
+        return EXIT_FAILURE;
+        }
       }
     else if( pixelType == "short" )
       {
@@ -299,7 +317,16 @@ int main(int argc, char *argv[])
       imageWriter->UseCompressionOn();
       imageWriter->SetFileName(outputVolume);
       imageWriter->SetInput( castFilter->GetOutput() );
-      imageWriter->Update();
+      try
+        {
+        imageWriter->Update();
+        }
+      catch( itk::ExceptionObject & excp )
+        {
+        std::cout << "******* HERE *******" << __FILE__ << " " << __LINE__ << std::endl;
+        std::cout << excp << std::endl;
+        return EXIT_FAILURE;
+        }
       }
     else if( pixelType == "ushort" )
       {
@@ -315,7 +342,16 @@ int main(int argc, char *argv[])
       imageWriter->UseCompressionOn();
       imageWriter->SetFileName(outputVolume);
       imageWriter->SetInput( castFilter->GetOutput() );
-      imageWriter->Update();
+      try
+        {
+        imageWriter->Update();
+        }
+      catch( itk::ExceptionObject & excp )
+        {
+        std::cout << "******* HERE *******" << __FILE__ << " " << __LINE__ << std::endl;
+        std::cout << excp << std::endl;
+        return EXIT_FAILURE;
+        }
       }
     else if( pixelType == "int" )
       {
@@ -331,7 +367,16 @@ int main(int argc, char *argv[])
       imageWriter->UseCompressionOn();
       imageWriter->SetFileName(outputVolume);
       imageWriter->SetInput( castFilter->GetOutput() );
-      imageWriter->Update();
+      try
+        {
+        imageWriter->Update();
+        }
+      catch( itk::ExceptionObject & excp )
+        {
+        std::cout << "******* HERE *******" << __FILE__ << " " << __LINE__ << std::endl;
+        std::cout << excp << std::endl;
+        return EXIT_FAILURE;
+        }
       }
     else if( pixelType == "uint" )
       {
@@ -346,7 +391,16 @@ int main(int argc, char *argv[])
       imageWriter->UseCompressionOn();
       imageWriter->SetFileName(outputVolume);
       imageWriter->SetInput( castFilter->GetOutput() );
-      imageWriter->Update();
+      try
+        {
+        imageWriter->Update();
+        }
+      catch( itk::ExceptionObject & excp )
+        {
+        std::cout << "******* HERE *******" << __FILE__ << " " << __LINE__ << std::endl;
+        std::cout << excp << std::endl;
+        return EXIT_FAILURE;
+        }
       }
     else if( pixelType == "float" )
       {
@@ -355,7 +409,16 @@ int main(int argc, char *argv[])
       imageWriter->UseCompressionOn();
       imageWriter->SetFileName(outputVolume);
       imageWriter->SetInput(TransformedImage);
-      imageWriter->Update();
+      try
+        {
+        imageWriter->Update();
+        }
+      catch( itk::ExceptionObject & excp )
+        {
+        std::cout << "******* HERE *******" << __FILE__ << " " << __LINE__ << std::endl;
+        std::cout << excp << std::endl;
+        return EXIT_FAILURE;
+        }
       }
     else
       {

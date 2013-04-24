@@ -380,6 +380,16 @@ DeInterleaveVolume(VolumeType::Pointer & volume,
     }
 }
 
+//
+// type for points. Needed because std::vector can't handle array of
+// POD as a type parameter
+class location
+{
+public:
+  double location[3];
+  double &operator[](unsigned index) { return location[index]; }
+};
+
 int main(int argc, char *argv[])
 {
   PARSE_ARGS;
@@ -554,7 +564,8 @@ int main(int argc, char *argv[])
     std::cerr << "No pixel data in series" << std::endl;
     return EXIT_FAILURE;
     }
-  // reorder the filename list
+
+  // record the filenames
   inputFileNames.resize( 0 );
   for( unsigned i = 0; i < allHeaders.size(); ++i )
     {
@@ -563,27 +574,24 @@ int main(int argc, char *argv[])
     }
 
   // find vendor and modality
-  std::string vendor;
+  std::string vendor("");
+  std::string modality("");
   try
     {
     allHeaders[0]->GetElementLO(0x0008, 0x0070, vendor);
     strupper(vendor);
-    }
-  catch( itk::ExceptionObject & excp )
-    {
-    std::cerr << "Can't get vendor name from DICOM file" << excp << std::endl;
-    FreeHeaders(allHeaders);
-    return EXIT_FAILURE;
-    }
-
-  std::string modality;
-  try
-    {
     allHeaders[0]->GetElementCS(0x0008, 0x0060, modality);
     }
   catch( itk::ExceptionObject & excp )
     {
-    std::cerr << "Can't find modality in DICOM file" << excp << std::endl;
+    if(vendor.empty())
+      {
+      std::cerr << "Can't get vendor name from DICOM file" << excp << std::endl;
+      }
+    else if(modality.empty())
+      {
+      std::cerr << "Can't find modality in DICOM file" << excp << std::endl;
+      }
     FreeHeaders(allHeaders);
     return EXIT_FAILURE;
     }
@@ -715,6 +723,8 @@ int main(int argc, char *argv[])
 
     unsigned int               numberOfSlicesPerVolume = 0;
     std::map<std::string, int> sliceLocations;
+    double SliceThickness = 0;
+
     if( !multiSliceVolume )
       {
       // Make a hash of the sliceLocations in order to get the correct
@@ -722,16 +732,23 @@ int main(int argc, char *argv[])
       std::vector<int>         sliceLocationIndicator;
       std::vector<std::string> sliceLocationStrings;
 
+      std::vector<location> sliceOrigins;;
+
       sliceLocationIndicator.resize( nSlice );
       for( unsigned int k = 0; k < nSlice; ++k )
         {
         std::string originString;
-
         allHeaders[k]->GetElementDS(0x0020, 0x0032, originString );
+
+        location origin;
+        allHeaders[k]->GetElementDS(0x0020,0x0032, 3, origin.location);
+        sliceOrigins.push_back(origin);
+
         sliceLocationStrings.push_back( originString );
         sliceLocations[originString]++;
         // std::cerr << inputFileNames[k] << " " << originString << std::endl;
         }
+
       for( unsigned int k = 0; k < nSlice; ++k )
         {
         std::map<std::string, int>::iterator it = sliceLocations.find( sliceLocationStrings[k] );
@@ -748,12 +765,15 @@ int main(int argc, char *argv[])
         if( sliceLocationIndicator[0] != sliceLocationIndicator[1] )
           {
           std::cout << "Dicom images are ordered in a volume interleaving way." << std::endl;
+          SliceThickness = fabs(sliceOrigins[0][2] - sliceOrigins[1][2]);
           }
         else
           {
           std::cout << "Dicom images are ordered in a slice interleaving way." << std::endl;
+          SliceThickness = fabs(sliceOrigins[0][2] - sliceOrigins[numberOfSlicesPerVolume+1][2]);
           // reorder slices into a volume interleaving manner
           DeInterleaveVolume(readerOutput, numberOfSlicesPerVolume, nSlice);
+
 #ifdef DEBUG_DWIConvert
           itk::ImageFileWriter<VolumeType>::Pointer writer = itk::ImageFileWriter<VolumeType>::New();
           writer->SetFileName( "deinterleave.nrrd");
@@ -763,6 +783,8 @@ int main(int argc, char *argv[])
           }
         }
       }
+    std::cerr << "Slice thickness reported in DICOM " << DoubleConvert(sliceSpacing)
+              << " computed from slice origins " << DoubleConvert(SliceThickness) << std::endl;
     itk::Matrix<double, 3, 3> MeasurementFrame;
     MeasurementFrame.SetIdentity();
 

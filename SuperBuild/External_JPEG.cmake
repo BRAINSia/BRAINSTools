@@ -42,7 +42,7 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
 
 
   set(${proj}_REPOSITORY ${git_protocol}://github.com/BRAINSia/JPeg9A.git)
-  set(${proj}_GIT_TAG f81d85ba9c4e95b959b0b78f8dff54524bf10672)
+  set(${proj}_GIT_TAG BRAINSTools_CompilerCleanup)
 
   AutoConf_FLAGS(${proj}_CFLAGS C "")
   AutoConf_FLAGS(${proj}_CXXFLAGS CXX "")

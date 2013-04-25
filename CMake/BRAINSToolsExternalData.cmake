@@ -1,8 +1,8 @@
 get_filename_component(_ITKExternalData_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
 
 #Need a long timeout for DWI huge data sets
-set(ExternalData_TIMEOUT_INACTIVITY 300)
-set(ExternalData_TIMEOUT_ABSOLUTE   360)
+set(ExternalData_TIMEOUT_INACTIVITY 900)
+set(ExternalData_TIMEOUT_ABSOLUTE   1360)
 
 if(NOT COMMAND ExternalData_add_test)
   if(EXISTS ${CMAKE_ROOT}/Modules/ExternalData.cmake)

@@ -1,0 +1,417 @@
+#ifndef __DWIConverter_h
+#define __DWIConverter_h
+#include <vector>
+#include <algorithm>
+#include "itkMatrix.h"
+#include "itkImageSeriesReader.h"
+#include "itkImageFileReader.h"
+#include "itkImage.h"
+#include "itkDCMTKFileReader.h"
+#include "itkDCMTKImageIO.h"
+#include "StringContains.h"
+
+/** the DWIConverter is a base class for all scanner-specific
+ *  converters.  It handles the tasks that are required for all
+ *  scanners. In particular it loads the DICOM directory, and fills
+ *  out various data fields needed by the DWIConvert program in order
+ *  to write out NRRD and other files.
+ */
+class DWIConverter
+{
+public:
+  typedef short                               PixelValueType;
+  typedef itk::Image<PixelValueType, 3>       VolumeType;
+  typedef VolumeType::SpacingType             SpacingType;
+  typedef itk::ImageSeriesReader<VolumeType>  ReaderType;
+  typedef ReaderType::FileNamesContainer      FileNamesContainer;
+  typedef itk::ImageFileReader<VolumeType>    SingleFileReaderType;
+  typedef itk::DCMTKSeriesFileNames           InputNamesGeneratorType;
+  typedef std::vector<itk::DCMTKFileReader *> DCMTKFileVector;
+  typedef vnl_vector_fixed<double,3>          DiffusionVectorType;
+  typedef std::vector<DiffusionVectorType>    DiffusionVecVectorType;
+  typedef itk::Matrix<double, 3, 3>           RotationMatrixType;
+  typedef itk::Vector<double, 3>              PointType;
+  DWIConverter(DCMTKFileVector &allHeaders,
+               FileNamesContainer &inputFileNames,
+               bool useBMatrixGradientDirections) : m_Headers(allHeaders),
+                                                    m_InputFileNames(inputFileNames),
+                                                    m_Rows(0),
+                                                    m_Cols(0),
+                                                    m_SlicesPerVolume(0),
+                                                    m_XRes(0.0),
+                                                    m_YRes(0.0),
+                                                    m_SliceSpacing(0.0),
+                                                    m_MultiSliceVolume(false),
+                                                    m_SliceOrderIS(true),
+                                                    m_NSlice(0),
+                                                    m_NVolume(0),
+                                                    m_UseBMatrixGradientDirections(useBMatrixGradientDirections)
+    {
+
+
+      this->m_Origin.Fill(0.0);
+      this->m_NRRDSpaceDefinition = "left-posterior-superior";;
+      this->m_NRRDSpaceDirection.SetIdentity();
+      this->m_MeasurementFrame.SetIdentity();
+      this->m_LPSDirCos.SetIdentity();
+      this->m_SpacingMatrix.SetIdentity();
+      this->m_OrientationMatrix.SetIdentity();
+    }
+
+  virtual ~DWIConverter() {}
+
+  virtual void LoadDicomDirectory()
+    {
+      //
+      // load the volume, either single or multivolume.
+      m_NSlice = this->m_InputFileNames.size();
+      itk::DCMTKImageIO::Pointer dcmtkIO = itk::DCMTKImageIO::New();
+      if( this->m_InputFileNames.size() > 1 )
+        {
+        ReaderType::Pointer reader = ReaderType::New();
+        reader->SetImageIO( dcmtkIO );
+        reader->SetFileNames( this->m_InputFileNames );
+        try
+          {
+          reader->Update();
+          }
+        catch( itk::ExceptionObject & excp )
+          {
+          std::cerr << "Exception thrown while reading DICOM volume"
+                    << std::endl;
+          std::cerr << excp << std::endl;
+          throw;
+          }
+        m_Volume = reader->GetOutput();
+        m_MultiSliceVolume = false;
+        }
+      else
+        {
+        SingleFileReaderType::Pointer reader =
+          SingleFileReaderType::New();
+        reader->SetImageIO( dcmtkIO );
+        reader->SetFileName( this->m_InputFileNames[0] );
+        m_NSlice = this->m_InputFileNames.size();
+        try
+          {
+          reader->Update();
+          }
+        catch( itk::ExceptionObject & excp )
+          {
+          std::cerr << "Exception thrown while reading the series" << std::endl;
+          std::cerr << excp << std::endl;
+          throw;
+          }
+        m_Volume = reader->GetOutput();
+        m_MultiSliceVolume = true;
+        }
+
+      // figure out image dimensions
+      m_Headers[0]->GetElementUS(0x0028, 0x0010, this->m_Rows);
+      m_Headers[0]->GetElementUS(0x0028, 0x0011, this->m_Cols);
+
+      // spacing
+      double spacing[3];
+      m_Headers[0]->GetSpacing(spacing);
+      m_YRes = spacing[1];
+      m_XRes = spacing[0];
+      m_SliceSpacing = spacing[2];
+
+      // origin
+      double origin[3];
+      m_Headers[0]->GetOrigin(origin);
+      for(unsigned int i = 0; i < 3; ++i) { this->m_Origin[i] = origin[i]; }
+
+      // a map of ints keyed by the slice location string
+      // reported in the dicom file.  The number of slices per
+      // volume is the same as the number of unique slice locations
+      std::map<std::string, int> sliceLocations;
+      //
+      // check for interleave
+      if( !this->m_MultiSliceVolume )
+        {
+        // Make a hash of the sliceLocations in order to get the correct
+        // count.  This is more reliable since SliceLocation may not be available.
+        std::vector<int>         sliceLocationIndicator;
+        std::vector<std::string> sliceLocationStrings;
+
+        sliceLocationIndicator.resize( this->m_NSlice );
+        for( unsigned int k = 0; k < this->m_NSlice; ++k )
+          {
+          std::string originString;
+          this->m_Headers[k]->GetElementDS(0x0020, 0x0032, originString );
+          sliceLocationStrings.push_back( originString );
+          sliceLocations[originString]++;
+          }
+
+        // this seems like a crazy way to figure out if slices are
+        // interleaved, but it works. Perhaps replace with comparing
+        // the reported location between the first two slices?
+        // Would be less clever-looking and devious, but would require
+        // less computation.
+        for( unsigned int k = 0; k < this->m_NSlice; ++k )
+          {
+          std::map<std::string, int>::iterator it = sliceLocations.find( sliceLocationStrings[k] );
+          sliceLocationIndicator[k] = distance( sliceLocations.begin(), it );
+          }
+
+        this->m_SlicesPerVolume = sliceLocations.size();
+        std::cout << "=================== this->m_SlicesPerVolume:" << this->m_SlicesPerVolume << std::endl;
+
+        // if the this->m_SlicesPerVolume == 1, de-interleaving won't do
+        // anything so there's no point in doing it.
+        if( this->m_NSlice >= 2 && this->m_SlicesPerVolume > 1 )
+          {
+          if( sliceLocationIndicator[0] != sliceLocationIndicator[1] )
+            {
+            std::cout << "Dicom images are ordered in a volume interleaving way." << std::endl;
+            }
+          else
+            {
+            std::cout << "Dicom images are ordered in a slice interleaving way." << std::endl;
+            // reorder slices into a volume interleaving manner
+            DeInterleaveVolume();
+            }
+          }
+        }
+
+    // check ImageOrientationPatient and figure out slice direction in
+    // L-P-I (right-handed) system.
+    // In Dicom, the coordinate frame is L-P by default. Look at
+    // http://medical.nema.org/dicom/2007/07_03pu.pdf ,  page 301
+    double dirCosArray[6];
+    // 0020,0037 -- Image Orientation (Patient)
+    this->m_Headers[0]->GetDirCosArray(dirCosArray);
+    double *dirCosArrayP = dirCosArray;
+    for( unsigned i = 0; i < 2; ++i )
+      {
+      for( unsigned j = 0; j < 3; ++j, ++dirCosArrayP )
+        {
+        this->m_LPSDirCos[j][i] = *dirCosArrayP;
+        }
+      }
+
+    // Cross product, this gives I-axis direction
+    this->m_LPSDirCos[0][2] = this->m_LPSDirCos[1][0] * this->m_LPSDirCos[2][1] -
+      this->m_LPSDirCos[2][0] * this->m_LPSDirCos[1][1];
+    this->m_LPSDirCos[1][2] = this->m_LPSDirCos[2][0] * this->m_LPSDirCos[0][1] -
+      this->m_LPSDirCos[0][0] * this->m_LPSDirCos[2][1];
+    this->m_LPSDirCos[2][2] = this->m_LPSDirCos[0][0] * this->m_LPSDirCos[1][1] -
+      this->m_LPSDirCos[1][0] * this->m_LPSDirCos[0][1];
+
+    std::cout << "ImageOrientationPatient (0020:0037): ";
+    std::cout << "LPS Orientation Matrix" << std::endl;
+    std::cout << this->m_LPSDirCos << std::endl;
+
+    this->m_SpacingMatrix.Fill(0.0);
+    this->m_SpacingMatrix[0][0] = this->m_XRes;
+    this->m_SpacingMatrix[1][1] = this->m_YRes;
+    this->m_SpacingMatrix[2][2] = this->m_SliceSpacing;
+    std::cout << "this->m_SpacingMatrix" << std::endl;
+    std::cout << this->m_SpacingMatrix << std::endl;
+
+    this->m_OrientationMatrix.SetIdentity();
+
+    this->m_NRRDSpaceDirection = this->m_LPSDirCos * this->m_OrientationMatrix * this->m_SpacingMatrix;
+
+    std::cout << "NRRDSpaceDirection" << std::endl;
+    std::cout << this->m_NRRDSpaceDirection << std::endl;
+
+    }
+  /** extract dwi data -- vendor specific so must happen in subclass
+   *  implementing this method.
+   */
+  virtual void ExtractDWIData() = 0;
+
+  /** access methods for image data */
+  const DiffusionVecVectorType &GetDiffusionVectors() const { return this->m_DiffusionVectors; }
+
+  const std::vector<float> &GetBValues() const { return this->m_BValues; }
+
+  VolumeType::Pointer GetDiffusionVolume() const { return this->m_Volume; }
+
+  SpacingType GetSpacing()
+    {
+      SpacingType spacing;
+      spacing[0] = this->m_XRes;
+      spacing[1] = this->m_YRes;
+      spacing[2] = this->m_SliceSpacing;
+      return spacing;
+    }
+
+  VolumeType::PointType GetOrigin() const
+    {
+      VolumeType::PointType rval;
+      rval[0] = this->m_Origin[0];
+      rval[1] = this->m_Origin[1];
+      rval[2] = this->m_Origin[2];
+      return rval;
+    }
+
+  RotationMatrixType   GetLPSDirCos() const { return this->m_LPSDirCos; }
+
+  RotationMatrixType GetMeasurementFrame() const { return this->m_MeasurementFrame; }
+
+  RotationMatrixType GetNRRDSpaceDirection() const { return  m_NRRDSpaceDirection; }
+
+  unsigned int GetNVolume() const { return this->m_NVolume; }
+
+  std::string GetNRRDSpaceDefinition() const { return this->m_NRRDSpaceDefinition; }
+
+  unsigned short GetRows() const { return m_Rows; }
+
+  unsigned short GetCols() const { return m_Cols; }
+
+  unsigned int GetSlicesPerVolume() const { return m_SlicesPerVolume; }
+
+protected:
+  /* determine if slice order is inferior to superior */
+  void DetermineSliceOrderIS()
+    {
+      double image0Origin[3];
+      this->m_Headers[0]->GetElementDS(0x0020, 0x0032, 3, image0Origin);
+      std::cout << "Slice 0: " << image0Origin[0] << " "
+                << image0Origin[1] << " " << image0Origin[2] << std::endl;
+
+      // assume volume interleaving, i.e. the second dicom file stores
+      // the second slice in the same volume as the first dicom file
+      double image1Origin[3];
+      this->m_Headers[1]->GetElementDS(0x0020, 0x0032, 3, image1Origin);
+      std::cout << "Slice 1: " << image1Origin[0] << " " << image1Origin[1]
+                << " " << image1Origin[2] << std::endl;
+
+      image1Origin[0] -= image0Origin[0];
+      image1Origin[1] -= image0Origin[1];
+      image1Origin[2] -= image0Origin[2];
+      double x1 = image1Origin[0] * (this->m_NRRDSpaceDirection[0][2])
+        + image1Origin[1] * (this->m_NRRDSpaceDirection[1][2])
+        + image1Origin[2] * (this->m_NRRDSpaceDirection[2][2]);
+      if( x1 < 0 )
+        {
+        this->m_SliceOrderIS = false;
+        }
+    }
+  /** the SliceOrderIS flag can be computed (as above) but if it's
+   *  invariant, the derived classes can just set the flag. This method
+   *  fixes up the NRRDSpaceDirection after the flag is set.
+   */
+  void SetDirectionsFromSliceOrder()
+    {
+      if(this->m_SliceOrderIS)
+        {
+        this->m_NRRDSpaceDirection[0][2] = -this->m_NRRDSpaceDirection[0][2];
+        this->m_NRRDSpaceDirection[1][2] = -this->m_NRRDSpaceDirection[1][2];
+        this->m_NRRDSpaceDirection[2][2] = -this->m_NRRDSpaceDirection[2][2];
+        }
+    }
+
+  /* given a sequence of dicom files where all the slices for location
+   * 0 are folled by all the slices for location 1, etc. This method
+   * transforms it into a sequence of volumes
+   */
+  void
+  DeInterleaveVolume()
+    {
+      size_t NVolumes = this->m_NSlice / this->m_SlicesPerVolume;
+
+      VolumeType::RegionType R = this->m_Volume->GetLargestPossibleRegion();
+
+      R.SetSize(2, 1);
+      std::vector<VolumeType::PixelType> v(this->m_NSlice);
+      std::vector<VolumeType::PixelType> w(this->m_NSlice);
+
+      itk::ImageRegionIteratorWithIndex<VolumeType> I(this->m_Volume, R );
+      // permute the slices by extracting the 1D array of voxels for
+      // a particular {x,y} position, then re-ordering the voxels such
+      // that all the voxels for a particular volume are adjacent
+      for( I.GoToBegin(); !I.IsAtEnd(); ++I )
+        {
+        VolumeType::IndexType idx = I.GetIndex();
+        // extract all values in one "column"
+        for( unsigned int k = 0; k < this->m_NSlice; ++k )
+          {
+          idx[2] = k;
+          v[k] = this->m_Volume->GetPixel( idx );
+          }
+        // permute
+        for( unsigned int k = 0; k < NVolumes; ++k )
+          {
+          for( unsigned int m = 0; m < this->m_SlicesPerVolume; ++m )
+            {
+            w[(k * this->m_SlicesPerVolume) + m] = v[(m * NVolumes) + k];
+            }
+          }
+        // put things back in order
+        for( unsigned int k = 0; k < this->m_NSlice; ++k )
+          {
+          idx[2] = k;
+          this->m_Volume->SetPixel( idx, w[k] );
+          }
+        }
+    }
+  /** add vendor-specific flags; */
+  virtual void AddFlagsToDictionary() = 0;
+  /** one file reader per DICOM file in dataset */
+  DCMTKFileVector     m_Headers;
+  /** the names of all the filenames, needed to use
+   *  itk::ImageSeriesReader
+   */
+  FileNamesContainer  m_InputFileNames;
+
+  /** dimensions */
+  unsigned short      m_Rows;
+  unsigned short      m_Cols;
+  unsigned int        m_SlicesPerVolume;
+
+  /** spacing */
+  double              m_XRes;
+  double              m_YRes;
+  double              m_SliceSpacing;
+
+  /** image origin */
+  PointType            m_Origin;
+
+  /** rotation matrix for image data */
+  RotationMatrixType   m_NRRDSpaceDirection;
+  /** measurement from for gradients if different than patient
+   *  reference frame.
+   */
+  RotationMatrixType   m_MeasurementFrame;
+  /** potentially the measurement frame */
+  RotationMatrixType   m_LPSDirCos;
+  /** matrix with just spacing information, used a couple places */
+  RotationMatrixType   m_SpacingMatrix;
+  /** this is always identity, could be eliminated but
+   *  someone thought it was necessary at some point.
+   */
+  RotationMatrixType   m_OrientationMatrix;
+  /** the current dataset is represented in a single file */
+  bool                m_MultiSliceVolume;
+  /** slice order is inferior/superior? */
+  bool                m_SliceOrderIS;
+  /** the image read from the DICOM dataset */
+  VolumeType::Pointer m_Volume;
+  /** number of total slices */
+  unsigned int        m_NSlice;
+  /** number of gradient volumes */
+  unsigned int        m_NVolume;
+
+  /** list of B Values for each volume */
+  std::vector<float>  m_BValues;
+  /** list of gradient vectors */
+  DiffusionVecVectorType      m_DiffusionVectors;
+  /** double conversion instance, for optimal printing of numbers as
+   *  text
+   */
+  itk::NumberToString<double> m_DoubleConvert;
+  /** use the BMatrix to compute gradients in Siemens data instead of
+   *  the reported graients. which are in many cases bogus.
+   */
+  bool                        m_UseBMatrixGradientDirections;
+  /** again this is always the same (so far) but someone thought
+   *  it might be important to change it.
+   */
+  std::string                 m_NRRDSpaceDefinition;
+};
+
+#endif // __DWIConverter_h

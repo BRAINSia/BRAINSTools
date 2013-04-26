@@ -44,10 +44,10 @@ class SessionDB():
         self.cursor.execute("CREATE TABLE {tablename}({coltypes});".format(tablename=self.MasterTableName, coltypes=dbColTypes))
         self.connection.commit()
         sqlCommandList = list()
-        missingFilesLog=self.dbName+"_MissingFiles.log"
-        missingCount=0
+        missingFilesLog = self.dbName + "_MissingFiles.log"
+        missingCount = 0
         print("MISSING FILES RECORED IN {0}".format(missingFilesLog))
-        missingFiles = open(missingFilesLog,'w')
+        missingFiles = open(missingFilesLog, 'w')
         print "Building Subject returnList: " + subject_data_file
         subjData = csv.reader(open(subject_data_file, 'rb'), delimiter=',', quotechar='"')
         for row in subjData:
@@ -93,14 +93,13 @@ class SessionDB():
         sqlCommandList
         self._local_fillDB_AndClose(sqlCommandList)
         if missingCount > 0:
-          if os.path.exists(self.dbName):
-              os.remove(self.dbName)
-          missingFiles.close()
-          sys.exit(-1)
+            if os.path.exists(self.dbName):
+                os.remove(self.dbName)
+            missingFiles.close()
+            sys.exit(-1)
         else:
-          missingFiles.write("NO_MISSING_FILES")
+            missingFiles.write("NO_MISSING_FILES")
         missingFiles.close()
-
 
     def getSubjectFilter(self):
         return self.MasterQueryFilter

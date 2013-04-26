@@ -1,5 +1,4 @@
-The BRAINSTools is a harness to assist in building the many
-BRAINSTools under development.
+The BRAINSTools is a harness to assist in building the many of the BRAINSTools under development.
 
 Developers should run the "./Utilities/SetupForDevelopment.sh" script to get started.
 
@@ -12,9 +11,17 @@ cd BRAINSTools/
 bash ./Utilities/SetupForDevelopment.sh
 mkdir -p ../BRAINSTools-build
 cd ../BRAINSTools-build/
-CC=/usr/bin/gcc-4.2 CXX=/usr/bin/g++-4.2 ccmake ../BRAINSTools -DUSE_BRAINSFit:BOOL=ON -DUSE_BRAINSConstellationDetector:BOOL=ON -DUSE_BRAINSABC:BOOL=ON
-make -j24 -k ; ## NOTE:  The fetching of data still has problems with parallel builds, so we need to restart it a efw times
-make
-make
+CC=/usr/bin/gcc-4.2 CXX=/usr/bin/g++-4.2 ccmake ../BRAINSTools \
+-DUSE_BRAINSConstellationDetector:BOOL=ON \
+-DUSE_BRAINSABC:BOOL=ON
+## NOTE: If you are using a version of Python different from the system default, CMake will ignore your
+##       environment variables.  To ensure CMake points to the right version, you need to set the
+##       following variables as well:
+## -DCMAKE_PROGRAM_PATH:PATH=/path/to/python/bin \
+## -DCMAKE_LIBRARY_PATH:PATH=/path/to/python/lib \
+## -DCMAKE_INCLUDE_PATH:PATH=/path/to/python/include
+make -j24 -k ;
+## NOTE: The fetching of data still has problems with parallel builds, so we need to restart it at least
+#        once
 make
 

@@ -79,16 +79,18 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
   ".*NIPYPE-prefix.*warning.*"
 
   # PCRE warnings:
+  ".*pcre.*warning.*"
   ".*PCRE-prefix.*warning.*"
   ".*PCRE.*warning.*"
   ".*pcre.*has no symbols.*"
-  ".*pcre.*warning*"
 
   ".*checking for C compiler warning.*"
   ".*gmake.*: warning.*"
 
   # JPEG warnings:
   ".*JPEG.*"
+  ".*tif_.*warning"
+  ".*templ.c.*warning"
   ".*TIFF.*"
   ".*NIPYPE.*"
   ".*DCMTK.*"

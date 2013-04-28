@@ -47,7 +47,7 @@ ExternalData_expand_arguments(FindCenterOFBrainFetchData FindCenterClippedImageM
 ExternalData_expand_arguments(FindCenterOfBrainFetchData
   FindCenterTrimmedImage DATA{${TestData_DIR}/FindCenter/FindCenterTrimmedImage.nii.gz})
 
-if( 0 )
+if( ${BRAINSTools_MAX_TEST_LEVEL} GREATER 8) # This should be restored after fixing.
 ExternalData_add_test(FindCenterOfBrainFetchData
   NAME FindCenterOfBrainOutputTest
   COMMAND $<TARGET_FILE:ImageCompare>

@@ -59,6 +59,17 @@ mark_as_advanced(ENABLE_EXTENDED_TESTING)
 set(CTEST_TEST_TIMEOUT 1800 CACHE STRING "Maximum seconds allowed before CTest will kill the test." FORCE)
 set(DART_TESTING_TIMEOUT ${CTEST_TEST_TIMEOUT} CACHE STRING "Maximum seconds allowed before CTest will kill the test." FORCE)
 
+## BRAINSTools_MAX_TEST_LEVEL adjusts how agressive the test suite is
+## so that long running tests or incomplete tests can easily be
+## silenced
+## 1 - Run the absolute minimum very fast tests (These should always pass before any code commit)
+## 3 - Run fast tests on continous builds (These need immediate attention if they begin to fail)
+## 5 - Run moderate nightly tests (These need immediate attention if they begin to fail)
+## 7 - Run long running extensive test that are a burden to normal development (perhaps test 1x per week)
+## 8 - Run tests that fail due to incomplete test building, these are good ideas for test that we don't have time to make robust)
+## 9 - Run silly tests that don't have much untility
+set(BRAINSTools_MAX_TEST_LEVEL 4 CACHE STRING "Testing level for managing test burden")
+
 #-----------------------------------------------------------------------
 # Setup locations to find externally maintained test data.
 #-----------------------------------------------------------------------
@@ -114,7 +125,6 @@ set(brains_modulenames
   BRAINSCreateLabelMapFromProbabilityMaps
   BRAINSMultiSTAPLE
   )
-
 
 if(USE_DebugImageViewer)
   list(APPEND brains_modulenames

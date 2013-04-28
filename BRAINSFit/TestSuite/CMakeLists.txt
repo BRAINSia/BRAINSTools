@@ -1181,8 +1181,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
 )
 
-set(RUN_SYN_TESTS ON)
-if(RUN_SYN_TESTS)
+if( ${BRAINSTools_MAX_TEST_LEVEL} GREATER 5) #These test takes way to long to run all the time
   set(SyNCompareIntensityTol 9.0)
   set(SyNCompareRadius 0)
   set(SyNComparePixelTol 3000) # Roughly 0.5% of the head on a 64^3 image
@@ -1364,7 +1363,7 @@ if(RUN_SYN_TESTS)
     --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${SyNSkewTestName}.test.nii.gz
     --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${SyNSkewTestName}.${XFRM_EXT}
   )
-endif(RUN_SYN_TESTS)
+endif()
 
 
 # Start of broken metric tests

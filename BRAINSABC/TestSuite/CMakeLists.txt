@@ -8,7 +8,7 @@ include_directories(
 
 MakeTestDriverFromSEMTool(BRAINSABC BRAINSABCTest.cxx)
 
-# if("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
+if( ${BRAINSTools_MAX_TEST_LEVEL} GREATER 5) #These test takes way to long to run all the time
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME BRAINSABCLongTest
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSABCTestDriver>
   --compare DATA{${TestData_DIR}/labels.nii.gz}
@@ -34,9 +34,9 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME BRAINSABCLongTest
   --atlasDefinition ${ReferenceAtlas_DIR}/${ATLAS_NAME}/AtlasPVDefinition.xml
   )
 set_tests_properties(BRAINSABCLongTest PROPERTIES TIMEOUT 6500)
-# endif()
+endif()
 
-if(0) # This should be restored after fixing.
+if( ${BRAINSTools_MAX_TEST_LEVEL} GREATER 8) # This should be restored after fixing.
   add_executable(BlendImageFilterTest BlendImageFilterTest.cxx)
   target_link_libraries(BlendImageFilterTest ${ITK_LIBRARIES})
   ExternalData_add_test( ${PROJECT_NAME}FetchData NAME BlendImageFilterTest COMMAND ${LAUNCH_EXE}  $<TARGET_FILE:BlendImageFilterTest> )

@@ -116,7 +116,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateBRAINSResampleTest3
   --deformationVolume DATA{${TestData_DIR}/OutDefField_orientedImage.nii.gz}
   )
 
-if(0) ##This functionality does not work yet
+if( ${BRAINSTools_MAX_TEST_LEVEL} GREATER 8) ##This functionality does not work yet
   ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateBRAINSResampleInvertTest
     COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSResampleTestDriver>
     --compare
@@ -135,7 +135,7 @@ if(0) ##This functionality does not work yet
     )
 endif()
 
-if(ENABLE_EXTENDED_TESTING)
+if( ${BRAINSTools_MAX_TEST_LEVEL} GREATER 5)
 # TODO Fix the code to accept displace field inputs
 # I think this test is failing because the displacement field is and
 # "itkImage" rather than a "itkTransform that stores and itkImage"

@@ -32,7 +32,7 @@ foreach(prog ${ALL_PROGS_LIST})
   StandardBRAINSBuildMacro(NAME ${prog} TARGET_LIBRARIES landmarksConstellationCOMMONLIB )
 endforeach()
 
-if(0)
+if( ${BRAINSTools_MAX_TEST_LEVEL} GREATER 8) # This should be restored after fixing.
 ## Programs for landmarks statistics. These programs do not have any xml file
 set(ALL_PROGS_LIST
     LmkStatistics
@@ -51,7 +51,7 @@ endif()
 # add_executable(BRAINSClipInferiorTest BRAINSClipInferiorTest.cxx)
 # target_link_libraries(BRAINSClipInferiorTest BRAINSClipInferiorCOMMONLIB)
 
-if(0)
+if( ${BRAINSTools_MAX_TEST_LEVEL} GREATER 8) # This should be restored after fixing.
 ## Test Versor,  This does not currently have a formal test, so disable building it.
 ## TODO:  Create a test for the VersorTester
 ##
@@ -582,17 +582,6 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetecto
   set_property(TEST ${BRAINSConstellationDetectorTestName} APPEND PROPERTY
     DEPENDS BRAINSConstellationDetectorTestForLandmarkCompare)
 
-  set(BRAINSConstellationDetectorTestName landmarksConstellationWeightsTest)
-  ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
-    COMMAND ${LAUNCH_EXE} $<TARGET_FILE:landmarksConstellationWeightsTestDriver>
-    ${BRAINSConstellationDetectorTestName}
-    --inputTrainingList ${CMAKE_CURRENT_BINARY_DIR}/obliq_setup.txt
-    --inputTemplateModel DATA{${TestData_DIR}/T1-2ndVersion.mdl}
-    --LLSModel DATA{${TestData_DIR}/Transforms_h5/LLSModel-2ndVersion.${XFRM_EXT}}
-    --outputWeightsList ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}.wts #output of the program
-    )
-  set_tests_properties(${BRAINSConstellationDetectorTestName} PROPERTIES TIMEOUT 15000)
-
   set(BRAINSConstellationDetectorTestName landmarksWeightsCompareTest)
   ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
     COMMAND ${LAUNCH_EXE} $<TARGET_FILE:LandmarksCompare>
@@ -612,6 +601,20 @@ if ( 0 ) ## HACK:  Just silencing failing tests until they can be proper address
       )
   endif()
 endif()
+
+if(0)  ## This is a very long running test that is too intensive for everyday testing
+  set(BRAINSConstellationDetectorTestName landmarksConstellationWeightsTest)
+  ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
+    COMMAND ${LAUNCH_EXE} $<TARGET_FILE:landmarksConstellationWeightsTestDriver>
+    ${BRAINSConstellationDetectorTestName}
+    --inputTrainingList ${CMAKE_CURRENT_BINARY_DIR}/obliq_setup.txt
+    --inputTemplateModel DATA{${TestData_DIR}/T1-2ndVersion.mdl}
+    --LLSModel DATA{${TestData_DIR}/Transforms_h5/LLSModel-2ndVersion.${XFRM_EXT}}
+    --outputWeightsList ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}.wts #output of the program
+    )
+  set_tests_properties(${BRAINSConstellationDetectorTestName} PROPERTIES TIMEOUT 15000)
+endif()
+
 
 # endif()
 

@@ -349,7 +349,16 @@ endif()
 #------------------------------------------------------------------------------
 # Configure and build
 #------------------------------------------------------------------------------
-
+## BRAINSTools_MAX_TEST_LEVEL adjusts how agressive the test suite is
+## so that long running tests or incomplete tests can easily be
+## silenced
+## 1 - Run the absolute minimum very fast tests (These should always pass before any code commit)
+## 3 - Run fast tests on continous builds (These need immediate attention if they begin to fail)
+## 5 - Run moderate nightly tests (These need immediate attention if they begin to fail)
+## 7 - Run long running extensive test that are a burden to normal development (perhaps test 1x per week)
+## 8 - Run tests that fail due to incomplete test building, these are good ideas for test that we don't have time to make robust)
+## 9 - Run silly tests that don't have much untility
+set(BRAINSTools_MAX_TEST_LEVEL 3 CACHE STRING "Testing level for managing test burden")
 
 set(proj ${LOCAL_PROJECT_NAME})
 ExternalProject_Add(${proj}
@@ -362,6 +371,7 @@ ExternalProject_Add(${proj}
     --no-warn-unused-cli # HACK Only expected variables should be passed down.
     ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
     ${BRAINSTOOLS_EXTERNAL_PROJECT_ARGS}
+    -DBRAINSTools_MAX_TEST_LEVEL:STRING=${BRAINSTools_MAX_TEST_LEVEL}
     -D${LOCAL_PROJECT_NAME}_SUPERBUILD:BOOL=OFF
     -DANTS_SOURCE_DIR:PATH=${CMAKE_CURRENT_BINARY_DIR}/ANTS
     -DBRAINSTools_LIBRARY_PATH:PATH=${CMAKE_CURRENT_BINARY_DIR}/lib

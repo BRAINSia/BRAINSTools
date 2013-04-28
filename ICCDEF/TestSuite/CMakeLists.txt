@@ -95,7 +95,7 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ValidateICCDEF_Test3_nii
     --initialFixedDisplacementFieldVolume ${CMAKE_CURRENT_BINARY_DIR}/test1/backward/test1_iteration450resolution2500_backward.nii.gz
 )
 
-if(0) ## HACK: This test needs to be fixed!
+if( ${BRAINSTools_MAX_TEST_LEVEL} GREATER 8) ##This functionality does not work yet
 ExternalData_add_test(${PROJECT_NAME}FetchData NAME ValidateICCDEF_Test4_nii
   COMMAND iccdefRegistration_NewTestDriver
   --compare
@@ -148,7 +148,7 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ValidateICCDEF_Test5_nii
     --medianFilterSize 0,0,0
 )
 
-if(0) #HACK: This test needs to be fixed!
+if( ${BRAINSTools_MAX_TEST_LEVEL} GREATER 8) ##This functionality does not work yet
 ExternalData_add_test(${PROJECT_NAME}FetchData NAME ValidateICCDEF_Test6_nii
   COMMAND iccdefRegistration_NewTestDriver
   --compare
@@ -179,7 +179,8 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ValidateICCDEF_Test6_nii
 )
 endif() #HACK: This test needs to be fixed!
 
-if(0) ## These should be re-written to use BRAINSResample instead of ApplyWarp
+## These should be re-written to use BRAINSResample instead of ApplyWarp
+if( ${BRAINSTools_MAX_TEST_LEVEL} GREATER 8) ##This functionality does not work yet
 ExternalData_add_test(${PROJECT_NAME}FetchData NAME ValidateApplyWarpTest2_nii
   COMMAND ApplyWarpTestDriver
   --compare
@@ -284,6 +285,4 @@ add_test(NAME itkIterativeInverseDisplacementFieldFilterTest2 COMMAND $<TARGET_F
      ${UNIT_TEST_TEMP_DIR}/inverse_test2.nii.gz
 )
 
-if(0)
-endif()
 ## - ExternalData_Add_Target( ${PROJECT_NAME}FetchData )  # Name of data management target

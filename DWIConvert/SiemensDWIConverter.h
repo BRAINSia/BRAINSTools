@@ -204,7 +204,6 @@ public:
             }
           else
             {
-#if 1
             // silently returning zero gradient vectors is a problem,
             // but it is also necessary for some fiels.
             valueArray.resize(0);
@@ -215,11 +214,6 @@ public:
             vect3d[1] = 0;
             vect3d[2] = 0;
             this->m_DiffusionVectors.push_back(vect3d);
-#else
-            // can't depend on missing BMatrix only in defective files
-            itkGenericExceptionMacro(<< "No BMatrix found, can't use --useBMatrixGradientDirections"
-                                     << " for this dataset")
-#endif
             }
           }
         }
@@ -283,6 +277,23 @@ public:
             }
           }
         }
+      //
+      // test gradients. It is OK for one or more guide images to have
+      // zero gradients, but all gradients == 0 is an error. It means
+      // that the gradient data is missing.
+      DiffusionVecVectorType::iterator nonZ =
+        std::find_if(this->m_DiffusionVectors.begin(),
+                     this->m_DiffusionVectors.end(),
+                     SiemensDWIConverter::IsZeroMag);
+      if(nonZ == this->m_DiffusionVectors.end())
+        {
+        itkGenericExceptionMacro(<< "Dataset has no diffusion vectors");
+        }
+    }
+private:
+  static bool IsZeroMag(DiffusionVectorType vec)
+    {
+      return vec.magnitude() != 0.0;
     }
 protected:
   /** turn a mosaic image back into a sequential volume image */

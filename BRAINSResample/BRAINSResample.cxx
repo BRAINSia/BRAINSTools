@@ -22,6 +22,7 @@
 #include "itkSignedMaurerDistanceMapImageFilter.h"
 #include "itkStatisticsImageFilter.h"
 #include "itkMaximumImageFilter.h"
+#include "itkDisplacementFieldTransform.h"
 #include "GenericTransformImage.h"
 
 #include "TransformToDisplacementField.h"
@@ -93,12 +94,12 @@ int main(int argc, char *argv[])
     }
 
   // Read ReferenceVolume and DeformationVolume
-  typedef float                                                                     VectorComponentType;
+  typedef double                                                                    VectorComponentType;
   typedef itk::Vector<VectorComponentType, GenericTransformImageNS::SpaceDimension> VectorPixelType;
   typedef itk::Image<VectorPixelType,  GenericTransformImageNS::SpaceDimension>     DisplacementFieldType;
-
+  typedef itk::DisplacementFieldTransform<VectorComponentType,GenericTransformImageNS::SpaceDimension>
+    DisplacementFieldTransformType;
   // An empty SmartPointer constructor sets up someImage.IsNull() to represent a not-supplied state:
-  DisplacementFieldType::Pointer             DisplacementField;
   TBRAINSResampleReferenceImageType::Pointer ReferenceImage;
 
   typedef itk::ImageFileReader<TBRAINSResampleReferenceImageType> ReaderType;
@@ -121,11 +122,17 @@ int main(int argc, char *argv[])
 
   if( useDisplacementField )  // it's a warp deformation field
     {
+    DisplacementFieldType::Pointer DisplacementField;
+
     typedef itk::ImageFileReader<DisplacementFieldType> DefFieldReaderType;
     DefFieldReaderType::Pointer fieldImageReader = DefFieldReaderType::New();
     fieldImageReader->SetFileName( deformationVolume );
     fieldImageReader->Update();
     DisplacementField = fieldImageReader->GetOutput();
+    DisplacementFieldTransformType::Pointer dispTransform =
+      DisplacementFieldTransformType::New();
+    dispTransform->SetDisplacementField(DisplacementField.GetPointer());
+    genericTransform = dispTransform.GetPointer();
     }
   else if( useTransform )
     {
@@ -197,7 +204,7 @@ int main(int argc, char *argv[])
       GenericTransformImage<TBRAINSResampleInternalImageType, TBRAINSResampleInternalImageType, DisplacementFieldType>(
         PrincipalOperandImage,
         ReferenceImage,
-        DisplacementField,
+        // DisplacementField,
         genericTransform,
         defaultValue,
         interpolationMode,
@@ -214,6 +221,7 @@ int main(int argc, char *argv[])
       TBRAINSResampleInternalImageType::PixelType minPixel( statsFilter->GetMinimum() );
       TBRAINSResampleInternalImageType::PixelType maxPixel( statsFilter->GetMaximum() );
 
+      DisplacementFieldType::Pointer DisplacementField;
       // create the grid
       if( useTransform )
         { // HACK:  Need to make handeling of transforms more elegant as is done

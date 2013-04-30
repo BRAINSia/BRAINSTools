@@ -1,6 +1,7 @@
 #include "BRAINSCutDataHandler.h"
 #include "XMLConfigurationFileParser.h"
 #include "GenericTransformImage.h"
+#include "itkDisplacementFieldTransform.h"
 
 /** constructors */
 BRAINSCutDataHandler
@@ -250,6 +251,17 @@ BRAINSCutDataHandler
   DisplacementFieldType::Pointer deformation = GetDeformationField( atlasSubjectRegistrationFilename );
   GenericTransformType::Pointer  genericTransform = GetGenericTransform( atlasSubjectRegistrationFilename );
 
+  // GenericTransformImage's behavior was OR not and -- if both a
+  // deformation and a genericTransform were non-null then the generic
+  // transform was ignored.
+  if(deformation.IsNotNull())
+    {
+    typedef itk::DisplacementFieldTransform<DeformationScalarType,DisplacementFieldType::ImageDimension>
+      DisplacementFieldTransformType;
+    DisplacementFieldTransformType::Pointer dispXfrm = DisplacementFieldTransformType::New();
+    dispXfrm->SetDisplacementField(deformation);
+    genericTransform = dispXfrm.GetPointer();
+    }
   std::string subjectFilenameToUse = subject.GetImageFilenameByType(registrationImageTypeToUse);
 
   if( !itksys::SystemTools::FileExists( subjectFilenameToUse.c_str(), false ) )
@@ -271,19 +283,19 @@ BRAINSCutDataHandler
                                         ("rho", GenericTransformImage<WorkingImageType,
                                                                       WorkingImageType,
                                                                       DisplacementFieldType>
-                                          ( m_rho, referenceImage, deformation, genericTransform,
+                                          ( m_rho, referenceImage, genericTransform,
                                           0.0, "Linear", transoformationPixelType == "binary") ) );
   warpedSpatialLocationImages.insert( std::pair<std::string, WorkingImagePointer>
                                         ("phi", GenericTransformImage<WorkingImageType,
                                                                       WorkingImageType,
                                                                       DisplacementFieldType>
-                                          ( m_phi, referenceImage, deformation, genericTransform,
+                                          ( m_phi, referenceImage, genericTransform,
                                           0.0, "Linear", transoformationPixelType == "binary") ) );
   warpedSpatialLocationImages.insert( std::pair<std::string, WorkingImagePointer>
                                         ("theta", GenericTransformImage<WorkingImageType,
                                                                         WorkingImageType,
                                                                         DisplacementFieldType>
-                                          ( m_theta, referenceImage, deformation, genericTransform,
+                                          ( m_theta, referenceImage, genericTransform,
                                           0.0, "Linear", transoformationPixelType == "binary") ) );
 }
 
@@ -341,6 +353,18 @@ BRAINSCutDataHandler
   DisplacementFieldType::Pointer deformation = GetDeformationField( atlasSubjectRegistrationFilename );
   GenericTransformType::Pointer  genericTransform = GetGenericTransform( atlasSubjectRegistrationFilename );
 
+  // GenericTransformImage's behavior was OR not and -- if both a
+  // deformation and a genericTransform were non-null then the generic
+  // transform was ignored.
+  if(deformation.IsNotNull())
+    {
+    typedef itk::DisplacementFieldTransform<DeformationScalarType,DisplacementFieldType::ImageDimension>
+      DisplacementFieldTransformType;
+    DisplacementFieldTransformType::Pointer dispXfrm = DisplacementFieldTransformType::New();
+    dispXfrm->SetDisplacementField(deformation);
+    genericTransform = dispXfrm.GetPointer();
+    }
+
   WorkingImagePointer referenceImage =
     ReadImageByFilename( subject.GetImageFilenameByType(registrationImageTypeToUse) );
 
@@ -358,8 +382,7 @@ BRAINSCutDataHandler
                          (*roiTyIt), GenericTransformImage<WorkingImageType,
                                                            WorkingImageType,
                                                            DisplacementFieldType>
-                           ( currentROI, referenceImage, deformation,
-                           genericTransform, 0.0, "Linear",
+                         ( currentROI, referenceImage,genericTransform, 0.0, "Linear",
                            transformationPixelType == "binary") ) );
     }
 }

@@ -94,23 +94,6 @@ void AnatomicalBSplineFilter::Update()
 
   // bsplineRegion.SetSize( totalGridSize );
 
-#if 0
-
-  TransformSpacingType spacing = m_FixedImage->GetSpacing();
-  TransformOriginType  origin = m_FixedImage->GetOrigin();
-
-  RegisterImageSizeType fixedImageSize = fixedImageRegion.GetSize();
-  for( unsigned int r = 0; r < 3; r++ )
-    {
-    spacing[r] *= vcl_floor( static_cast<double>( fixedImageSize[r] - 1 )
-                             / static_cast<double>( gridSizeOnImage[r] - 1 ) );
-    origin[r]  -=  spacing[r];
-    }
-
-  m_Output->SetGridSpacing( spacing );
-  m_Output->SetGridOrigin( origin );
-  m_Output->SetGridRegion( bsplineRegion );
-#endif
 
   typedef itk::BSplineDeformableTransformInitializer<TransformType, RegisterImageType> InitializerType;
   InitializerType::Pointer transformInitializer = InitializerType::New();

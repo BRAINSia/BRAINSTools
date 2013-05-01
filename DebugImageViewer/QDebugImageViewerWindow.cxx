@@ -130,18 +130,6 @@ QDebugImageViewerWindow::stateChanged(QAbstractSocket::SocketState state)
     case QAbstractSocket::ClosingState:
     //   0       The socket is not connected.
     case QAbstractSocket::UnconnectedState:
-#if 0
-      if( this->m_Socket != 0 )
-        {
-        disconnect(this->m_Socket, SIGNAL(readyRead() ),
-                   this, SLOT(readImage() ) );
-
-        disconnect(this->m_Socket, SIGNAL(stateChanged(QAbstractSocket::SocketState) ),
-                   this, SLOT(stateChanged(QAbstractSocket::SocketState) ) );
-        delete this->m_Socket;
-        this->m_Socket = 0;
-        }
-#endif
       break;
     //   1       The socket is performing a host name lookup.
     case QAbstractSocket::HostLookupState:
@@ -235,14 +223,6 @@ QDebugImageViewerWindow::readImage()
     std::cerr << "Error reading socket" << std::endl;
     exit(1);
     }
-#if 0
-  std::cerr << "DebugImageViewer: size = " << imageSize
-            << " spacing = " << imageSpacing << std::endl
-            << "orientation = " << orientation
-            << " viewIndex = " <<  " bufferSize " << bufferSize
-            << std::endl;
-  std::cerr.flush();
-#endif
   if( viewIndex < this->m_ViewCount )
     {
     this->m_ImageDisplayList[viewIndex]->SetImage(xferImage);

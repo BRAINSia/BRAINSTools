@@ -176,19 +176,6 @@ GridForwardWarpImageFilterNew<TDisplacementField, TOutputImage>
             for( LineIteratorType lineIter(outputPtr, refIndex, targetIndex);
                  !lineIter.IsAtEnd(); ++lineIter )
               {
-#if 0
-              typename TOutputImage::IndexType testIndex = lineIter.GetIndex();
-              bool lineIsInside = true;
-              for( unsigned int j = 0; j < ImageDimension; j++ )
-                {
-                if( ( testIndex[j] < FirstIndex[j] ) || ( testIndex[j] >= OnePastValidIndex[j] ) )
-                  {
-                  lineIsInside = false;
-                  break;
-                  }
-                }
-              if( lineIsInside )
-#endif
                 {
                 lineIter.Set(m_ForegroundValue);
                 }

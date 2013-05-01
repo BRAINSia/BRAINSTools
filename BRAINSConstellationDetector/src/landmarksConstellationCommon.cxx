@@ -312,39 +312,9 @@ void ComputeEulerAnglesFromRotationMatrix(const itk::Matrix<double, 3, 3> &  m,
   initialHeadingAngle = vcl_asin(m[1][0]);
 }
 
-#if 0
-itk::Matrix<double, 3, 3> CreateRotationMatrixFromAngles(const double alpha, const double beta, const double gamma)
-{
-  // alpha is rotate the X axis -- Attitude
-  // beta is rotate the Y axis  -- Bank
-  // gamma is rotate the Z axis -- Heading
-  const double ca = vcl_cos(alpha);
-  const double sa = vcl_sin(alpha);
-  const double cb = vcl_cos(beta);
-  const double sb = vcl_sin(beta);
-  const double cg = vcl_cos(gamma);
-  const double sg = vcl_sin(gamma);
-
-  itk::Matrix<double, 3, 3> R;
-
-  R(0, 0) = cb * cg;  R(0, 1) = -ca * sg + sa * sb * cg; R(0, 2) = sa * sg + ca * sb * cg;
-  R(1, 0) = cb * sg;  R(1, 1) = ca * cg + sa * sb * sg;  R(1, 2) = -sa * cg + ca * sb * sg;
-  R(2, 0) = -sb;    R(2, 1) = sa * cb;           R(2, 2) = ca * cb;
-  itk::Matrix<double, 3, 3>::InternalMatrixType test =
-    R.GetVnlMatrix() * R.GetTranspose();
-  if( !test.is_identity(1.0e-10) )
-    {
-    std::cout << "Computed matrix is not orthogonal!!!" << std::endl;
-    std::cout << R << std::endl;
-    }
-  return R;
-}
-
-#endif
 
 itk::Versor<double> CreateRotationVersorFromAngles(const double alpha, const double beta, const double gamma)
 {
-#if 1
   // http://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles
   // psi = alpha is rotate the X axis -- Attitude
   // theta= beta is rotate the Y axis  -- Bank
@@ -365,12 +335,6 @@ itk::Versor<double> CreateRotationVersorFromAngles(const double alpha, const dou
   itk::Versor<double> v;
   v.Set(q[0], q[1], q[2], q[3]);
   return v;
-#else
-  itk::Matrix<double, 3, 3> R = CreateRotationMatrixFromAngles(alpha, beta, gamma);
-  itk::Versor<double>       v;
-  v.Set(R);
-  return v;
-#endif
 }
 
 VersorTransformType::Pointer ConvertToVersorRigid3D(RigidTransformType::Pointer RT)

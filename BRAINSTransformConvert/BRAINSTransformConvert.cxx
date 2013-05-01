@@ -351,19 +351,6 @@ int main(int argc, char *argv[])
       }
     outputXfrm = scaleSkewVersorXfrm.GetPointer();
     }
-#if 0
-  else if( outputTransformType == "BSplineDeformable" )
-    {
-    BSplineTransformType::Pointer bsplineXfrm =
-      BSplineTransformType::New();
-    if( ExtractTransform(bsplineXfrm, inputXfrm.GetPointer() ) == false )
-      {
-      TransformConvertError(inputXfrm, "BSplineDeformable Transform");
-      return EXIT_FAILURE;
-      }
-    outputXfrm = bsplineXfrm.GetPointer();
-    }
-#endif
   if( outputTransformType == "Same" )
     {
     typedef itk::TransformFileWriter TransformWriterType;

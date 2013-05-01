@@ -56,11 +56,6 @@ public:
 
   virtual int PrintSelf(std::ostream & os, int indent) const = 0;
 
-#if 0
-    {
-    os << "===ProcessObjectBase===!" << std::endl;
-    }
-#endif
   const std::string & GetName() const
   {
     return m_Name;

@@ -109,38 +109,6 @@ DuplicateImageList(const std::vector<typename TInputImage::Pointer> & inputList)
   return outputList;
 }
 
-#if 0
-template <class ImageType>
-void WinnerTakesAll(std::vector<typename ImageType::Pointer> & listOfImages)
-{
-  itk::ImageRegionIteratorWithIndex<ImageType> it(listOfImages[0], listOfImages[0]->GetLargestPossibleRegion() );
-
-  while( !it.IsAtEnd() )
-    {
-    const typename ImageType::IndexType currIndex = it.GetIndex();
-    unsigned int currMaxIndex = 0;
-    typename ImageType::PixelType currMax = listOfImages[0]->GetPixel(currIndex);
-    typename ImageType::PixelType sum = currMax;
-    listOfImages[0]->SetPixel(currIndex, 0);
-    for( unsigned int im = 1; im < listOfImages.size(); im++ )
-      {
-      const typename ImageType::PixelType currValue = listOfImages[im]->GetPixel(currIndex);
-      sum += currValue;
-      if( currValue > currMax )
-        {
-        currMax = currValue;
-        currMaxIndex = im;
-        }
-      listOfImages[im]->SetPixel(currIndex, 0);
-      }
-    listOfImages[currMaxIndex]->SetPixel(currIndex, sum);
-    ++it;
-    }
-
-  return;
-}
-
-#endif
 
 template <class TProbabilityImage>
 typename ByteImageType::Pointer ComputeForegroundProbMask(
@@ -188,30 +156,6 @@ typename ByteImageType::Pointer ComputeForegroundProbMask(
         }
       }
     }
-#if 0
-    {
-    // Pre-Dilate mask
-    typedef itk::BinaryBallStructuringElement<unsigned char, 3> StructElementType;
-    typedef
-      itk::BinaryDilateImageFilter<ByteImageType, ByteImageType,
-                                   StructElementType> DilateType;
-
-    StructElementType structel;
-    structel.SetRadius(1);
-    structel.CreateStructuringElement();
-
-    typename DilateType::Pointer dil = DilateType::New();
-    dil->SetDilateValue(50);
-    dil->SetKernel(structel);
-    dil->SetInput(currForegroundMask);
-
-    dil->Update();
-
-    ByteImagePointer dilmask = dil->GetOutput();
-    // a simple assignment is probably sufficient, test both ways?
-    currForegroundMask = CopyImage<ByteImageType>(dilmask);
-    }
-#endif
   return currForegroundMask;
 }
 

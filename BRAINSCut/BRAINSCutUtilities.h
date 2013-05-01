@@ -66,7 +66,7 @@ typedef WorkingImageType::Pointer               WorkingImagePointer;
 typedef std::vector<WorkingImagePointer> WorkingImageVectorType;
 
 /* Deformations */
-typedef float                                         DeformationScalarType;
+typedef double                                        DeformationScalarType;
 typedef itk::Vector<DeformationScalarType, DIMENSION> DeformationPixelType;
 typedef itk::Image<DeformationPixelType, DIMENSION>   DisplacementFieldType;
 

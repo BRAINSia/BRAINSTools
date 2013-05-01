@@ -196,7 +196,7 @@ template <typename InputImageType, class OutputImageType, typename DisplacementI
 typename OutputImageType::Pointer GenericTransformImage(
   InputImageType const *const OperandImage,
   const itk::ImageBase<InputImageType::ImageDimension> *ReferenceImage,
-  typename DisplacementImageType::Pointer DisplacementField,
+  // typename DisplacementImageType::Pointer DisplacementField,
   typename GenericTransformType::Pointer genericTransform,
   typename InputImageType::PixelType suggestedDefaultValue, // NOTE:  This is
                                                             // ignored in the

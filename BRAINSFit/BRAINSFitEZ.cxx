@@ -520,7 +520,7 @@ int main(int argc, char *argv[])
       resampledImage = GenericTransformImage<MovingVolumeType, FixedVolumeType, DisplacementFieldType>(
           preprocessedMovingVolume,
           extractFixedVolume,
-          NULL,
+          // NULL, // deformation field
           currentGenericTransform,
           backgroundFillValue,
           interpolationMode,

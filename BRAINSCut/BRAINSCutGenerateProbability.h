@@ -3,6 +3,7 @@
 
 #include "BRAINSCutDataHandler.h"
 #include "BRAINSCutConfiguration.h"
+#include "itkDisplacementFieldTransform.h"
 #include <itkIO.h>
 
 class BRAINSCutGenerateProbability
@@ -51,7 +52,7 @@ private:
       PrincipalOperandImage = imageReader->GetOutput();
       }
 
-    typedef float                                        VectorComponentType;
+    typedef double                                        VectorComponentType;
     typedef typename itk::Vector<VectorComponentType, 3> VectorPixelType;
     typedef typename itk::Image<VectorPixelType,  3>     DisplacementFieldType;
 
@@ -59,8 +60,19 @@ private:
     // a
     // not-supplied state:
     typename DisplacementFieldType::Pointer DisplacementField;
+    // An empty SmartPointer constructor sets up someTransform.IsNull() to
+    // represent a not-supplied state:
+    typename GenericTransformType::Pointer genericTransform;
     // typename WarperImageType::Pointer ReferenceImage;
     // if there is no *mat file.
+    //
+    // HACK ALERT HACK ALERT
+    // The GenericTransformImage function would apply either a
+    // 'generic' transform or a DisplacementField transform. If both
+    // were non-null, the DisplacementField took precedence. To get
+    // the same behavior with the DisplacementField parameter removed
+    // you have to enforce this 'OR NOT AND' behavior at the point of
+    // call
     if( !useTransform )  // that is, it's a warp by deformation field:
       {
       typedef typename itk::ImageFileReader<DisplacementFieldType> DefFieldReaderType;
@@ -74,12 +86,14 @@ private:
       // field and reference image have same dimensions.
 
       // and---  ReferenceImage.IsNull() represents the delayed default
+      typedef itk::DisplacementFieldTransform<DeformationScalarType,DisplacementFieldType::ImageDimension>
+        DisplacementFieldTransformType;
+      typename DisplacementFieldTransformType::Pointer dispXfrm =
+        DisplacementFieldTransformType::New();
+      dispXfrm->SetDisplacementField(DisplacementField.GetPointer());
+      genericTransform = dispXfrm.GetPointer();
       }
-
-    // An empty SmartPointer constructor sets up someTransform.IsNull() to
-    // represent a not-supplied state:
-    typename GenericTransformType::Pointer genericTransform;
-    if( useTransform )  // IF there EXIST *mat file.
+    else // there EXIST *mat file.
       {
       std::cout << "!!!!!!!!!!!! CAUTION !!!!!!!!!!!!!!!!!!!" << std::endl
                 << "* Mat file exists!" << std::endl
@@ -94,7 +108,6 @@ private:
       GenericTransformImage<WarperImageType, WarperImageType, DisplacementFieldType>(
         PrincipalOperandImage,
         ReferenceImage,
-        DisplacementField,
         genericTransform,
         defaultValue,
         interpolationMode,

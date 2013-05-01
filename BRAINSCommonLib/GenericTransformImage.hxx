@@ -200,7 +200,7 @@ template <typename InputImageType, typename OutputImageType, typename Displaceme
 typename OutputImageType::Pointer GenericTransformImage(
   InputImageType const *const OperandImage,
   const itk::ImageBase<InputImageType::ImageDimension> *ReferenceImage,
-  typename DisplacementImageType::Pointer DisplacementField,
+  // typename DisplacementImageType::Pointer DisplacementField,
   typename GenericTransformType::Pointer genericTransform,
   typename InputImageType::PixelType suggestedDefaultValue, // NOTE:  This is
                                                             // ignored in the
@@ -297,52 +297,37 @@ typename OutputImageType::Pointer GenericTransformImage(
   // One name for the intermediate resampled float image.
   typename InputImageType::Pointer TransformedImage;
 
-  if( DisplacementField.IsNull() )  // (useTransform)
+  // std::cout<< " Displacement Field is Null... " << std::endl;
+  if( genericTransform.IsNotNull() )
     {
-    // std::cout<< " Displacement Field is Null... " << std::endl;
-    if( genericTransform.IsNotNull() )
+    if( interpolationMode == "ResampleInPlace" )
       {
-      if( interpolationMode == "ResampleInPlace" )
-        {
-        typedef itk::ResampleInPlaceImageFilter<InputImageType, OutputImageType> ResampleIPFilterType;
-        typedef typename ResampleIPFilterType::Pointer                           ResampleIPFilterPointer;
+      typedef itk::ResampleInPlaceImageFilter<InputImageType, OutputImageType> ResampleIPFilterType;
+      typedef typename ResampleIPFilterType::Pointer                           ResampleIPFilterPointer;
 
-        const VersorRigid3DTransformType::ConstPointer tempInitializerITKTransform =
-          dynamic_cast<VersorRigid3DTransformType const *>( genericTransform.GetPointer() );
-        if( tempInitializerITKTransform.IsNull() )
-          {
-          std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
-          std::cout << "ResampleInPlace is only allowed with rigid transform type." << std::endl;
-          }
-
-        ResampleIPFilterPointer resampleIPFilter = ResampleIPFilterType::New();
-        resampleIPFilter->SetInputImage( PrincipalOperandImage.GetPointer() );
-        resampleIPFilter->SetRigidTransform( tempInitializerITKTransform.GetPointer() );
-        resampleIPFilter->Update();
-        TransformedImage = resampleIPFilter->GetOutput();
-        }
-      else
+      const VersorRigid3DTransformType::ConstPointer tempInitializerITKTransform =
+        dynamic_cast<VersorRigid3DTransformType const *>( genericTransform.GetPointer() );
+      if( tempInitializerITKTransform.IsNull() )
         {
-        TransformedImage = TransformResample<InputImageType, OutputImageType>(
-            PrincipalOperandImage,
-            ReferenceImage,
-            suggestedDefaultValue,
-            GetInterpolatorFromString<InputImageType>(interpolationMode),
-            genericTransform);
+        std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
+        std::cout << "ResampleInPlace is only allowed with rigid transform type." << std::endl;
         }
+
+      ResampleIPFilterPointer resampleIPFilter = ResampleIPFilterType::New();
+      resampleIPFilter->SetInputImage( PrincipalOperandImage.GetPointer() );
+      resampleIPFilter->SetRigidTransform( tempInitializerITKTransform.GetPointer() );
+      resampleIPFilter->Update();
+      TransformedImage = resampleIPFilter->GetOutput();
       }
-    }
-
-  else if( DisplacementField.IsNotNull() )
-    {
-    //  std::cout<< "Displacement Field is given, so applied to the image..." <<
-    // std::endl;
-    TransformedImage = TransformWarp<InputImageType, OutputImageType, DisplacementImageType>(
+    else
+      {
+      TransformedImage = TransformResample<InputImageType, OutputImageType>(
         PrincipalOperandImage,
         ReferenceImage,
         suggestedDefaultValue,
         GetInterpolatorFromString<InputImageType>(interpolationMode),
-        DisplacementField);
+        genericTransform);
+      }
     }
 
   // FINALLY will need to convert signed distance to binary image in case

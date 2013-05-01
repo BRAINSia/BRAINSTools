@@ -184,39 +184,6 @@ void VectorImageRegisterAffineFilter<TInputImage, TOutputImage>
 
       OptimizerParameterType finalParameters = registration->GetLastTransformParameters();
 
-#if 0
-      const double       rotatorXX              = finalParameters[0];
-      const double       rotatorXY              = finalParameters[1];
-      const double       rotatorXZ              = finalParameters[2];
-      const double       rotatorYX              = finalParameters[3];
-      const double       rotatorYY              = finalParameters[4];
-      const double       rotatorYZ              = finalParameters[5];
-      const double       rotatorZX              = finalParameters[6];
-      const double       rotatorZY              = finalParameters[7];
-      const double       rotatorZZ              = finalParameters[8];
-      const double       finalTranslationX      = finalParameters[9];
-      const double       finalTranslationY     = finalParameters[10];
-      const double       finalTranslationZ     = finalParameters[11];
-      const unsigned int numberOfIterations = optimizer->GetCurrentIteration();
-      const double       bestValue = optimizer->GetValue();
-
-      itkDebugMacro("\tResult = ");
-      itkDebugMacro("\t\trotator XX      = " << rotatorXX);
-      itkDebugMacro("\t\trotator XY      = " << rotatorXY);
-      itkDebugMacro("\t\trotator XZ      = " << rotatorXZ);
-      itkDebugMacro("\t\trotator YX      = " << rotatorYX);
-      itkDebugMacro("\t\trotator YY      = " << rotatorYY);
-      itkDebugMacro("\t\trotator YZ      = " << rotatorYZ);
-      itkDebugMacro("\t\trotator ZX      = " << rotatorZX);
-      itkDebugMacro("\t\trotator ZY      = " << rotatorZY);
-      itkDebugMacro("\t\trotator ZZ      = " << rotatorZZ);
-      itkDebugMacro("\t\tTranslation X = " << finalTranslationX);
-      itkDebugMacro("\t\tTranslation Y = " << finalTranslationY);
-      itkDebugMacro("\t\tTranslation Z = " << finalTranslationZ);
-      itkDebugMacro("\t\tIterations    = " << numberOfIterations);
-      itkDebugMacro("\t\tMetric value  = " << bestValue);
-#endif
-
       transform->SetParameters( finalParameters );
 
       /* This step can probably be removed */

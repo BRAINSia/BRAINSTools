@@ -67,14 +67,6 @@ ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
   m_sqr33 = ComplexImageType::New();
   m_SmoothFilter = ComplexImageType::New();
 
-#if 0
-  m_WarpedFixedMask = MaskImageType::New();
-  m_WarpedMovingMask = MaskImageType::New();
-
-  m_FixedMask = MaskType::New();
-  m_MovingMask = MaskType::New();
-#endif
-
 //  m_FixedLandmark = LandmarkType::New();
 //  m_MovingLandmark = LandmarkType::New();
   m_Alpha = 0.1;
@@ -318,23 +310,6 @@ ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
     // Set different landmark matching weight at different resolusion
     f->SetLandmarkWeight(this->GetLandmarkWeight() );
     b->SetLandmarkWeight(this->GetLandmarkWeight() );
-#if 0
-    if( this->GetOutput(0)->GetLargestPossibleRegion().GetSize()[0] > 32 )
-      {
-      f->SetSigma(this->GetSimilarityWeight() / 2.0);
-      b->SetSigma(this->GetSimilarityWeight() / 2.0);
-      }
-    else if( this->GetOutput(0)->GetLargestPossibleRegion().GetSize()[0] > 64 )
-      {
-      f->SetSigma(this->GetSimilarityWeight() / 4.0);
-      b->SetSigma(this->GetSimilarityWeight() / 4.0);
-      }
-    else
-      {
-      f->SetSigma(this->GetSimilarityWeight() );
-      b->SetSigma(this->GetSimilarityWeight() );
-      }
-#endif
     }
 
   // Compute D[k], Initialize harmonic
@@ -710,35 +685,6 @@ ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
   return drfp->GetRMSChange();
 }
 
-#if 0
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
-typename ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
-::GradientType
-ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
-::GetUseGradientType() const
-{
-  const ICCDeformableFunctionType *drfp = this->GetForwardRegistrationFunctionType();
-
-  return drfp->GetUseGradientType();
-}
-
-/**
- *
- */
-template <class TFixedImage, class TMovingImage, class TDisplacementField>
-void
-ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
-::SetUseGradientType(GradientType gtype)
-{
-  ICCDeformableFunctionType *drfpf = this->GetForwardRegistrationFunctionType();
-
-  drfpf->SetUseGradientType(gtype);
-  ICCDeformableFunctionType *drfpb = this->GetBackwardRegistrationFunctionType();
-  drfpb->SetUseGradientType(gtype);
-}
-
-#endif
-
 /**
  *
  */
@@ -804,12 +750,6 @@ ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
 {
   // If we smooth the update buffer before applying it, then the are
   // approximating a viscuous problem as opposed to an elastic problem
-#if 0
-  if( this->GetSmoothUpdateField() )
-    {
-    this->SmoothUpdateField();
-    }
-#endif
 
   // Compute inverse consistency
   typedef SubtractImageFilter<DisplacementFieldType,
@@ -934,15 +874,6 @@ ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
 
   this->SetRMSChange( drfp->GetRMSChange() );
 
-  /**
-   * Smooth the deformation field
-   */
-#if 0
-  if( this->GetSmoothDisplacementField() )
-    {
-    this->SmoothDisplacementField();
-    }
-#endif
 }
 
 template <class TFixedImage, class TMovingImage, class TDisplacementField>

@@ -296,28 +296,6 @@ BRAINSHoughEyeDetector<TInputImage, TOutputImage>
       image->TransformIndexToPhysicalPoint( stopIndex, physicalStopLocation );
       }
 
-#if 0
-    // Compute the bound of image
-    double bound[6];
-    bound[0] =
-      physicalStartLocation[0] < physicalStopLocation[0] ?
-      physicalStartLocation[0] : physicalStopLocation[0];
-    bound[1] =
-      physicalStartLocation[0] >= physicalStopLocation[0] ?
-      physicalStartLocation[0] : physicalStopLocation[0];
-    bound[2] =
-      physicalStartLocation[1] < physicalStopLocation[1] ?
-      physicalStartLocation[1] : physicalStopLocation[1];
-    bound[3] =
-      physicalStartLocation[1] >= physicalStopLocation[1] ?
-      physicalStartLocation[1] : physicalStopLocation[1];
-    bound[4] =
-      physicalStartLocation[2] < physicalStopLocation[2] ?
-      physicalStartLocation[2] : physicalStopLocation[2];
-    bound[5] =
-      physicalStartLocation[2] >= physicalStopLocation[2] ?
-      physicalStartLocation[2] : physicalStopLocation[2];
-#endif
 
     // Space coordinate origin -> center of eye centers of input image
     VersorVectorType translation1;

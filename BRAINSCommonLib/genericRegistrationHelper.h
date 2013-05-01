@@ -78,30 +78,6 @@ void MakeDebugJointHistogram(const std::string & debugOutputDirectory, const typ
      << "_"
      << std::setw( 4 ) << std::setfill( '0' ) << currentIteration
      << ".png";
-  // typename JOINTPDFType::ConstPointer =
-  // typedef itk::CastImageFilter<JointPDFType, itk::Image< unsigned short, 2 >
-  // > CasterType;
-  // typedef itk::RescaleIntensityImageFilter<JointPDFType, itk::Image<unsigned short, 2> > CasterType;
-  // typedef itk::ShiftScaleImageFilter<JointPDFType, itk::Image< unsigned char,
-  // 2 > > CasterType;
-  // typename CasterType::Pointer myCaster = CasterType::New();
-  // myCaster->SetInput(myHistogram);
-  // myCaster->SetShift(0);
-  // myCaster->SetScale(255);
-  // myCaster->Update();
-  //
-#if 0
-  typedef itk::StatisticsImageFilter<JointPDFType> StatisticsImageFilterType;
-  typename StatisticsImageFilterType::Pointer statisticsImageFilter = StatisticsImageFilterType::New();
-  statisticsImageFilter->SetInput(myHistogram);
-  statisticsImageFilter->Update();
-
-  const float histMean = statisticsImageFilter->GetMean();
-  std::cout << "Mean: " << histMean << std::endl;
-  std::cout << "Std.: " << statisticsImageFilter->GetSigma() << std::endl;
-  std::cout << "Min: " << statisticsImageFilter->GetMinimum() << std::endl;
-  std::cout << "Max: " << statisticsImageFilter->GetMaximum() << std::endl;
-#endif
 
   itk::ImageRegionConstIterator<JointPDFType> origIter(myHistogram, myHistogram->GetLargestPossibleRegion() );
   origIter.GoToBegin();

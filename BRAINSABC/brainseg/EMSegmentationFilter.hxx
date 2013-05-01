@@ -1486,19 +1486,6 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
         atlasToSubjectRegistrationHelper->Update();
         unsigned int actualIterations = atlasToSubjectRegistrationHelper->GetActualNumberOfIterations();
         muLogMacro( << "Registration tool " << actualIterations << " iterations." << std::endl );
-#if 0   // ERROR:  This is not working correctly, because the proper number of
-        // iterations is not reportd by the optimizer.
-        while( actualIterations == 0 )
-          {
-          double newGradientTolerance = atlasToSubjectRegistrationHelper->GetProjectedGradientTolerance() * 0.1;
-          atlasToSubjectRegistrationHelper->SetProjectedGradientTolerance(newGradientTolerance);
-          muLogMacro( << "Reducing Gradient Tolerance to " << newGradientTolerance << std::endl );
-          atlasToSubjectRegistrationHelper->Update();
-          actualIterations = atlasToSubjectRegistrationHelper->GetActualNumberOfIterations();
-          muLogMacro( << "Registration tool " << actualIterations << " iterations." << std::endl );
-          }
-
-#endif
         m_TemplateGenericTransform = atlasToSubjectRegistrationHelper->GetCurrentGenericTransform();
         }
       }
@@ -1652,15 +1639,6 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
                 this->m_WarpedPriors, this->m_PriorUseForBiasVector, this->m_SampleSpacing, this->m_DebugLevel,
                 this->m_OutputDebugDir);
   WriteDebugCorrectedImages(this->m_CorrectedImages, 0);
-#if 0  // This is probably overkill since the update of NonAirRegion is likely
-       // not making much in changes at this level of bias correction! Otsu
-       // works well even in hightly biased images
-  this->m_NonAirRegion = ComputeTissueRegion<TInputImage, ByteImageType>(this->m_CorrectedImages[0], 0);
-  if( this->m_DebugLevel > 5 )
-    {
-    this->WriteDebugHeadRegion(0);
-    }
-#endif
   this->m_ListOfClassStatistics =
     ComputeDistributions<TInputImage, TProbabilityImage>(SubjectCandidateRegions, this->m_WarpedPriors,
                                                          this->m_CorrectedImages,
@@ -1842,15 +1820,6 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
       ComputeDistributions<TInputImage, TProbabilityImage>(SubjectCandidateRegions, this->m_Posteriors,
                                                            this->m_CorrectedImages,
                                                            this->m_DebugLevel);
-#if 0  // This is probably overkill since the update of NonAirRegion is likely
-       // not making much in changes at this level of bias correction! Otsu
-       // works well even in hightly biased images
-    this->m_NonAirRegion = ComputeTissueRegion<TInputImage, ByteImageType>(this->m_CorrectedImages[0], 0);
-    if( this->m_DebugLevel > 9 )
-      {
-      this->WriteDebugHeadRegion(0);
-      }
-#endif
     this->m_RawCorrectedImages =
       CorrectBias(biasdegree, CurrentEMIteration + 100, SubjectCandidateRegions, this->m_RawInputImages,
                   this->m_CleanedLabels, this->m_NonAirRegion, this->m_Posteriors, this->m_PriorUseForBiasVector,

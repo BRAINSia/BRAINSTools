@@ -23,29 +23,6 @@ TODO:  NEED TO COMMENT WHAT THIS PROGRAM IS TO BE USED FOR
 
 #include "GenericTransformImage.h"
 
-#if 0
-static const unsigned int SpaceDimension = 3;
-static const unsigned int SplineOrder = 3;
-typedef double CoordinateRepType;
-typedef itk::BSplineDeformableTransform<
-    CoordinateRepType,
-    SpaceDimension,
-    SplineOrder> BSplineTransformType;
-
-typedef itk::AffineTransform<double, 3>         AffineTransformType;
-typedef itk::VersorRigid3DTransform<double>     VersorRigid3DTransformType;
-typedef itk::ScaleVersor3DTransform<double>     ScaleVersor3DTransformType;
-typedef itk::ScaleSkewVersor3DTransform<double> ScaleSkewVersor3DTransformType;
-
-//  These were hoisted from the ApplyWarp main executable.
-//  REFACTOR:  It turned out to be very inconvenient to let RefImage differ from Image.
-const unsigned int GenericTransformImageNS::SpaceDimension = 3;
-typedef float                                                             PixelType;
-typedef itk::Image<PixelType, GenericTransformImageNS::SpaceDimension>    ImageType;
-typedef float                                                             RefPixelType;
-typedef itk::Image<RefPixelType, GenericTransformImageNS::SpaceDimension> RefImageType;
-#endif
-
 // A filter to debug the min/max values
 template <class TImage>
 void PrintImageMinAndMax(TImage * inputImage)
@@ -113,15 +90,6 @@ int ApplyWarp(int argc, char *argv[])
   typedef itk::Image<float, 3> RefImageType;
   ImageType::Pointer PrincipalOperandImage;  // One name for the image to be warped.
     {
-#if 0
-    typedef itk::ImageFileReader<ImageType> ReaderType;
-    ReaderType::Pointer imageReader = ReaderType::New();
-    imageReader->SetFileName( inputVolume );
-    imageReader->Update();
-
-    PrincipalOperandImage = imageReader->GetOutput();
-    // PrincipalOperandImage->DisconnectPipeline();
-#endif
 
     if( orientationRAI )
       {
@@ -147,21 +115,6 @@ int ApplyWarp(int argc, char *argv[])
 
   if( useTransform )
     {
-#if 0
-    typedef itk::ImageFileReader<RefImageType> ReaderType;
-    ReaderType::Pointer refImageReader = ReaderType::New();
-    if( referenceVolume.size() > 0 )
-      {
-      refImageReader->SetFileName( referenceVolume );
-      }
-    else
-      {
-      std::cout << "Alert:  missing Reference Volume defaulted to: " <<  inputVolume << std::endl;
-      refImageReader->SetFileName( inputVolume );
-      }
-    refImageReader->Update();
-    ReferenceImage = refImageReader->GetOutput();
-#endif
 
     if( referenceVolume.size() > 0 )
       {
@@ -194,23 +147,6 @@ int ApplyWarp(int argc, char *argv[])
     }
   else if( !useTransform ) // that is, it's a warp by deformation field:
     {
-#if 0
-    typedef itk::ImageFileReader<DisplacementFieldType> DefFieldReaderType;
-    DefFieldReaderType::Pointer fieldImageReader = DefFieldReaderType::New();
-    fieldImageReader->SetFileName( deformationVolume );
-    fieldImageReader->Update();
-    DisplacementField = fieldImageReader->GetOutput();
-
-    if( referenceVolume.size() > 0 )
-      {
-      typedef itk::ImageFileReader<RefImageType> ReaderType;
-      ReaderType::Pointer refImageReader = ReaderType::New();
-      refImageReader->SetFileName( referenceVolume );
-      refImageReader->Update();
-      ReferenceImage = refImageReader->GetOutput();
-      }
-    // else ReferenceImage.IsNull() represents the delayed default
-#endif
     if( orientationRAI )
       {
       DisplacementField = itkUtil::ReadImage<DisplacementFieldType>(deformationVolume);
@@ -246,12 +182,6 @@ int ApplyWarp(int argc, char *argv[])
     {
     std::cerr << "Invalid option, not implemented in ITKv4 version yet." << std::endl;
     return -1;
-#if 0
-    ReadDotMatTransformFile(warpTransform,
-                            itkBSplineTransform,
-                            ITKAffineTransform,
-                            invertTransform);
-#endif
     }
 
   ImageType::Pointer TransformedImage

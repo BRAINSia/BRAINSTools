@@ -121,30 +121,6 @@ public:
   typedef Transform<CoordinateRepType, itkGetStaticConstMacro(SpaceDimension),
                     itkGetStaticConstMacro(SpaceDimension)> BulkTransformType;
   typedef BulkTransformType::ConstPointer BulkTransformPointer;
-#if 0
-  /*
-  void SetBulkTransform( BulkTransformPointer &BulkTransform )
-  {
-  m_Output->SetBulkTransform( BulkTransform );
-  }
-   */
-
-  /** ImageDimension constants * /
-    itkStaticConstMacro(InputImageDimension, unsigned int,
-    TInputImage::ImageDimension);
-    itkStaticConstMacro(OutputImageDimension, unsigned int,
-    TOutputImage::ImageDimension);
-
-  / ** The dimensions of the input image must equal those of the
-  output image. * /
-  itkConceptMacro(SameDimension,
-  (Concept::SameDimension<itkGetStaticConstMacro(InputImageDimension),itkGetStaticConstMacro(OutputImageDimension)>));
-
-  / ** The dimension of the input image must be 4. * /
-  itkConceptMacro(DimensionShouldBe4,
-  (Concept::SameDimension<itkGetStaticConstMacro(InputImageDimension),4>));
-   */
-#endif
   /** Standard New method. */
   itkNewMacro(Self);
 

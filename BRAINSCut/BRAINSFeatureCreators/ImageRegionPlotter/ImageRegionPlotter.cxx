@@ -169,18 +169,6 @@ MapHistogramToImage( typename TImageType::Pointer inputImage,
 /*
  * main function
  */
-#if 0
-void dummy(void)
-{
-  int * x = malloc( 10 * sizeof(int) );
-
-  x[10] = 0;
-
-  // not a freed???
-  return;
-}
-
-#endif
 int
 main(int argc, char *argv[])
 {

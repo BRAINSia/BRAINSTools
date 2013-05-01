@@ -262,21 +262,7 @@ int main(int argc, char* argv[])
     genericTransform = NULL;
     return EXIT_FAILURE;
     }
-#if 0
-  // Convert into an affine transform for saving to slicer
-  itk::AffineTransform<double, 3>::Pointer atransform =
-    itk::AffineTransform<double, 3>::New();
 
-  atransform->SetCenter(genericTransform->GetCenter() );
-  atransform->SetMatrix(genericTransform->GetMatrix() );
-  atransform->SetTranslation(genericTransform->GetTranslation() );
-
-  itk::TransformFileWriter::Pointer twriter = itk::TransformFileWriter::New();
-  twriter->SetInput(atransform);
-  twriter->SetFileName(saveTransform);
-
-  twriter->Update();
-#endif
   WriteTransformToDisk(genericTransform.GetPointer(), saveTransform);
 
   return EXIT_SUCCESS;

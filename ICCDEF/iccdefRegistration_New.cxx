@@ -236,20 +236,6 @@ void ThirionFunction(const struct ICCDEFWarpAppParameters & command)
       {
       // Read Landmark spatial objects
       // what type is the landmark file?
-#if 0
-      typedef  itk::SpatialObjectReader<dims, InPixelType> SpatialObjectReaderType;
-      typedef  itk::LandmarkSpatialObject<dims>            LandmarkSpatialObjectType;
-      typename SpatialObjectReaderType::Pointer fixedLandmarkReader = SpatialObjectReaderType::New();
-      fixedLandmarkReader->SetFileName(command.fixedLandmark.c_str() );
-      fixedLandmarkReader->Update();
-      filter->SetFixedLandmark(dynamic_cast<LandmarkSpatialObjectType *>(fixedLandmarkReader->GetGroup().GetPointer() ) );
-
-      typename SpatialObjectReaderType::Pointer movingLandmarkReader = SpatialObjectReaderType::New();
-      movingLandmarkReader->SetFileName(command.movingLandmark.c_str() );
-      movingLandmarkReader->Update();
-      filter->SetMovingLandmark(
-        dynamic_cast<LandmarkSpatialObjectType *>(movingLandmarkReader->GetGroup().GetPointer() ) );
-#endif
 
       // Transform index point to physical point
       typename  TRealImage::Pointer fixedVolume
@@ -282,37 +268,6 @@ void ThirionFunction(const struct ICCDEFWarpAppParameters & command)
     exit(-1);
     }
 
-#if 0
-  if( command.maskProcessingMode == "ROI" )
-    {
-    if( ( command.fixedBinaryVolume == "" )
-        || ( command.movingBinaryVolume == "" ) )
-      {
-      std::cout
-        << "ERROR:  Must specify mask file names when ROI is used for the maskProcessingMode" << std::endl;
-      exit(-1);
-      }
-    std::cout << "Registration with Mask!!!!!!!" << std::endl;
-    typename  TRealImage::Pointer fixedVolume
-      = itkUtil::ReadImageRAI<TRealImage>( command.fixedVolume.c_str() );
-    typename  TRealImage::Pointer movingVolume
-      = itkUtil::ReadImageRAI<TRealImage>( command.movingVolume.c_str() );
-
-    fixedMask = ReadImageMask<ImageMaskType, dims>(
-        command.fixedBinaryVolume,
-        fixedVolume->GetDirection(),
-        fixedVolume->GetOrigin() );
-    movingMask = ReadImageMask<ImageMaskType, dims>(
-        command.movingBinaryVolume,
-        movingVolume->GetDirection(),
-        movingVolume->GetOrigin() );
-
-    filter->SetFixedImageMask(fixedMask);
-    filter->SetMovingImageMask(movingMask);
-    filter->SetBackgroundFilledValue(command.backgroundFillValue);
-    }
-
-#endif
 
   typename CommandIterationUpdate<float,  3>::Pointer observer
     = CommandIterationUpdate<float, 3>::New();
@@ -323,14 +278,6 @@ void ThirionFunction(const struct ICCDEFWarpAppParameters & command)
     }
 
   app->SetRegistrationFilter(filter);
-
-#if 0
-  if( command.initialDisplacementFieldVolume != "" )
-    {
-    app->SetInitialDisplacementFieldFilename(
-      command.initialDisplacementFieldVolume.c_str() );
-    }
-#endif
 
   if( command.initialFixedDisplacementFieldVolume != "" )
     {

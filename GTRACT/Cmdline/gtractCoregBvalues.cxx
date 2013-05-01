@@ -222,20 +222,6 @@ int main(int argc, char *argv[])
     registerImageFilter->SetDebugLevel(debugLevel);
     registerImageFilter->SetInitializeTransformMode("useMomentsAlign" );
 
-#if 0
-    if( debug )
-      {
-      registerImageFilter->DebugOn();
-      }
-    if( outputTransform.size() > 0 )
-      {
-      registerImageFilter->SetOutputParameterFile( outputTransform );
-      }
-    if( registerB0Only )
-      {
-      registerImageFilter->SetRegisterB0Only( true );
-      }
-#endif
 
     try
       {

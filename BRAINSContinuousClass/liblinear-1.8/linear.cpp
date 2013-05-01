@@ -131,24 +131,9 @@ static void print_string_stdout(const char *s)
 
 static void (*liblinear_print_string) (const char *) = &print_string_stdout;
 
-#if 0
-static void info(const char *fmt, ...)
-{
-  char    buf[BUFSIZ];
-  va_list ap;
-
-  va_start(ap, fmt);
-  vsprintf(buf, fmt, ap);
-  va_end(ap);
-  (*liblinear_print_string)(buf);
-}
-
-#else
 static void info(const char *, ...)
 {
 }
-
-#endif
 
 class l2r_lr_fun : public function
 {

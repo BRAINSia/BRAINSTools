@@ -309,27 +309,6 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
   std::cout << "REGISTRATION THREADS USED: " << this->m_Registration->GetNumberOfThreads()
             << " of " << itk::MultiThreader::GetGlobalDefaultNumberOfThreads() <<  std::endl;
 
-#if 0
-  // if (globalVerbose)
-  if( 0 )
-    {
-    std::cout << "Initializer, RelaxationFactor: " << m_RelaxationFactor
-              << "." << std::endl;
-    std::cout << "Initializer, MaximumStepLength: " << m_MaximumStepLength
-              << "." << std::endl;
-    std::cout << "Initializer, MinimumStepLength: " << m_MinimumStepLength
-              << "." << std::endl;
-    std::cout << "Initializer, NumberOfIterations: " << m_NumberOfIterations
-              << "." << std::endl;
-    std::cout << "Registration, Transform : " << m_Transform << "."
-              << std::endl;
-    std::cout << "Registration, FixedImage : " << m_FixedImage << "."
-              << std::endl;
-    std::cout << "Registration, MovingImage : " << m_MovingImage << "."
-              << std::endl;
-    }
-#endif
-
   // Create the Command observer and register it with the optimizer.
   // TODO:  make this output optional.
   //

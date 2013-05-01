@@ -233,19 +233,6 @@ public:
         DebugImageDisplaySender.SendImage<DisplacementFieldType>(deffield, 0, 0);
         DebugImageDisplaySender.SendImage<DisplacementFieldType>(deffield, 1, 1);
         DebugImageDisplaySender.SendImage<DisplacementFieldType>(deffield, 2, 2);
-#if 0
-        typedef typename itk::WarpImageFilter<InternalImageType,
-                                              InternalImageType, DisplacementFieldType> WarpFilterType;
-        typename WarpFilterType::Pointer warper = WarpFilterType::New();
-        warper->SetInput(m_MovingImage);
-        warper->SetOutputSpacing( deffield->GetSpacing() );
-        warper->SetOutputOrigin( deffield->GetOrigin() );
-        warper->SetOutputDirection( deffield->GetDirection() );
-        warper->SetDisplacementField(deffield);
-        warper->Update();
-        typename InternalImageType::Pointer
-        DeformedMovingImagePtr = warper->GetOutput();
-#else
         typename InternalImageType::Pointer
         DeformedMovingImagePtr =
           TransformWarp<InternalImageType, InternalImageType, DisplacementFieldType>(
@@ -258,7 +245,6 @@ public:
         //        std::cerr << std::endl << "************IMAGES
         // SENT*************" << std::endl;
         }
-#endif
 #endif  // defined(USE_DebugImageViewer)
 
       m_HarmonicEnergyCalculator->SetImage(deffield);

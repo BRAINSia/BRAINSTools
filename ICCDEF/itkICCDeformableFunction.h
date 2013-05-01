@@ -311,18 +311,6 @@ public:
     return this->m_LandmarkWeight;
   }
 
-#if 0
-  virtual void SetChi(double sm)
-  {
-    this->m_Chi = sm;
-  }
-
-  virtual double GetChi() const
-  {
-    return this->m_Chi;
-  }
-
-#endif
   virtual void SetSmoothFilter(ComplexImagePointer& filter)
   {
     m_SmoothFilter = filter;
@@ -363,28 +351,6 @@ public:
     m_MovingLandmark = lk;
   }
 
-#if 0
-  virtual void SetFixedImageBackground(float bk)
-  {
-    m_FixedImageBackground = bk;
-  }
-
-  virtual float GetFixedImageBackground() const
-  {
-    return m_FixedImageBackground;
-  }
-
-  virtual void SetMovingImageBackground(float bk)
-  {
-    m_MovingImageBackground = bk;
-  }
-
-  virtual float GetMovingImageBackground() const
-  {
-    return m_MovingImageBackground;
-  }
-
-#endif
 protected:
   ICCDeformableFunction();
   ~ICCDeformableFunction()

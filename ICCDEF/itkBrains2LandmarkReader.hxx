@@ -23,13 +23,6 @@ Brains2LandmarkReader<TPixelType, Dimension>
   m_ReferenceImage = ImageType::New();
 }
 
-#if 0
-Brains2LandmarkReader
-::~Brains2LandmarkReader()
-{
-}
-
-#endif
 template <class TPixelType, unsigned Dimension>
 void Brains2LandmarkReader<TPixelType, Dimension>
 ::Update()

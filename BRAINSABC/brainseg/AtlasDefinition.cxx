@@ -65,22 +65,6 @@ XMLcharhandler(void *data, const char *txt, int txtlen)
 }
 }
 }
-#if 0
-const char *AtlasDefinition::tissueTypes[] =
-  {
-  "WM",
-  "GM",
-  "BGM",
-  "CSF",
-  "VB",
-  "NOTCSF",
-  "NOTGM",
-  "NOTVB",
-  "NOTWM",
-  "AIR",
-  0
-  };
-#endif
 
 AtlasDefinition::AtlasDefinition() :
   m_LastWeight(0.0),

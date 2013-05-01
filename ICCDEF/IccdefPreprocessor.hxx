@@ -272,7 +272,6 @@ IccdefPreprocessor<TInputImage, TOutputImage>
     m_InputMovingImage = medianFilter->GetOutput();
     }
 
-#if 1
   // Create UnNormalized...Images
     {
     this->m_UnNormalizedFixedImage
@@ -284,7 +283,6 @@ IccdefPreprocessor<TInputImage, TOutputImage>
       = itkUtil::PreserveCast<TInputImage, TOutputImage>(
           this->m_InputMovingImage);
     }
-#endif
 
   m_OutputMovingImage = itkUtil::CopyImage<TOutputImage>(
       m_UnNormalizedMovingImage);
@@ -299,19 +297,6 @@ IccdefPreprocessor<TInputImage, TOutputImage>
       {
       std::cout << "Performing Histogram Matching \n";
       }
-#if 0
-    typedef MinimumMaximumImageCalculator<OutputImageType> MinMaxFilterType;
-    typename MinMaxFilterType::Pointer minmaxfilter = MinMaxFilterType::New();
-    minmaxfilter->SetImage(m_UnNormalizedFixedImage);
-    minmaxfilter->ComputeMaximum();
-    minmaxfilter->ComputeMinimum();
-    if( ( minmaxfilter->GetMaximum() - minmaxfilter->GetMinimum() ) <
-        m_NumberOfHistogramLevels )
-      {
-      std::cout << "The intensity of range is less than Histogram levels!!"
-                << std::endl;
-      }
-#else
     if( ( vcl_numeric_limits<typename OutputImageType::PixelType>::max()
           - vcl_numeric_limits<typename OutputImageType::PixelType>::min() ) <
         m_NumberOfHistogramLevels )
@@ -319,7 +304,6 @@ IccdefPreprocessor<TInputImage, TOutputImage>
       std::cout << "The intensity of range is less than Histogram levels!!"
                 << std::endl;
       }
-#endif
     histogramfilter->SetInput( m_UnNormalizedMovingImage  );
     histogramfilter->SetReferenceImage( m_UnNormalizedFixedImage);
 
@@ -360,34 +344,6 @@ typename IccdefPreprocessor<TInputImage,
 {
   InputImagePointer Mask = itkUtil::ReadImage<InputImageType>(MaskName);
 
-#if 0
-  if( ( m_UnNormalizedFixedImage->GetLargestPossibleRegion().GetSize() !=
-        Mask->GetLargestPossibleRegion().GetSize() )
-      || ( m_UnNormalizedFixedImage->GetSpacing() != Mask->GetSpacing() ) )
-    {
-#if 0       // DEBUG:  No need to resample if everyting is done in physical
-            // coordinates.
-    Mask = itkUtil::ResampleImage<TOutputImage, TOutputImage>(
-        Mask,
-        m_UnNormalizedFixedImage
-        ->GetLargestPossibleRegion().GetSize(),
-        m_UnNormalizedFixedImage
-        ->GetSpacing(),
-        m_UnNormalizedFixedImage
-        ->GetOrigin(),
-        m_UnNormalizedFixedImage
-        ->GetDirection(),
-        this->
-        m_DefaultPixelValue
-        );
-#endif
-    if( this->GetOutDebug() )
-      {
-      std::cout << "Writing Resampled Output image" << std::endl;
-      itkUtil::WriteImage<TOutputImage>(Mask, "Resampled.mask");
-      }
-    }
-#endif
   typedef BOBFFilter<InputImageType, InputImageType> BOBFFilterType;
   typename BOBFFilterType::Pointer BOBFfilter = BOBFFilterType::New();
   if( this->GetOutDebug() )
@@ -397,19 +353,7 @@ typename IccdefPreprocessor<TInputImage,
       "Making Brain only Background filled image with the following parameters. "
       << std::endl;
     std::cout << "Background fill Value:  " << m_DefaultPixelValue << std::endl;
-#if 0
-    std::cout << "Lower Threshold:  " << m_Lower << std::endl;
-    std::cout << "Upper Threshold:  " << m_Upper << std::endl;
-    std::cout << "Neighborhood:  " << m_Radius << std::endl;
-    std::cout << "Seed :  " << m_Seed  << std::endl;
-#endif
     }
-#if 0
-  BOBFfilter->SetLower(m_Lower );
-  BOBFfilter->SetUpper( m_Upper );
-  BOBFfilter->SetRadius( m_Radius );
-  BOBFfilter->SetSeed( m_Seed );
-#endif
 
   BOBFfilter->SetReplaceValue( (InputPixelType)m_DefaultPixelValue );
   BOBFfilter->SetInputImage( input );

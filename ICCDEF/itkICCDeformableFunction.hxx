@@ -165,14 +165,12 @@ void
 ICCDeformableFunction<TFixedImage, TMovingImage, TDisplacementField>
 ::InitializeIteration()
 {
-#if 1
   if( !this->GetMovingImage() || !this->GetFixedImage()
       || !m_MovingImageInterpolator )
     {
     itkExceptionMacro(
       << "MovingImage, FixedImage and/or Interpolator not set" );
     }
-#endif
 
   m_SumOfSquaredDifference  = 0.0;
   m_NumberOfPixelsProcessed = 0L;
@@ -224,41 +222,7 @@ ICCDeformableFunction<TFixedImage, TMovingImage, TDisplacementField>
     {
     typename DerivativeType::Pointer derivative = DerivativeType::New();
 
-#if 0
-    if( this->GetMovingImageMask() && this->GetFixedImageMask() )
-      {
-      typename MovingImageType::Pointer maskedMovingImage = MovingImageType::New();
-      maskedMovingImage->SetRegions(m_MovingImageWarper->GetOutput()->GetLargestPossibleRegion() );
-      maskedMovingImage->Allocate();
-      maskedMovingImage->SetSpacing(m_MovingImageWarper->GetOutput()->GetSpacing() );
-      maskedMovingImage->SetOrigin(m_MovingImageWarper->GetOutput()->GetOrigin() );
-      maskedMovingImage->SetDirection(m_MovingImageWarper->GetOutput()->GetDirection() );
-
-      typedef ImageRegionIterator<MaskImageType> IterationMaskImageType;
-      IterationImageType maskIter(maskedMovingImage, maskedMovingImage->GetRequestedRegion() );
-      IterationImageType mIt(m_MovingImageWarper->GetOutput(),
-                             m_MovingImageWarper->GetOutput()->GetRequestedRegion() );
-      IterationMaskImageType dit(m_MovingMaskImageWarper->GetOutput(),
-                                 m_MovingMaskImageWarper->GetOutput()->GetRequestedRegion() );
-      for( maskIter.GoToBegin(), mIt.GoToBegin(), dit.GoToBegin(); !maskIter.IsAtEnd(); ++maskIter, ++mIt, ++dit )
-        {
-        if( dit.Get() > 0 )
-          {
-          maskIter.Set(mIt.Get() );
-          }
-        else
-          {
-          maskIter.Set(m_BackgroundFilledValue);
-          }
-        }
-      // itkUtil::WriteImage<MovingImageType>(maskedMovingImage,"maskedImage.nii.gz");
-      derivative->SetInput(maskedMovingImage);
-      }
-    else
-#endif
-      {
-      derivative->SetInput(m_MovingImageWarper->GetOutput() );
-      }
+    derivative->SetInput(m_MovingImageWarper->GetOutput() );
     // compute the derivative of Warped image
     derivative->SetDirection(0);
     derivative->Update();
@@ -302,92 +266,17 @@ ICCDeformableFunction<TFixedImage, TMovingImage, TDisplacementField>
     IterationImageType zIter(tempZ, tempZ->GetRequestedRegion() );
 
     typename TDisplacementField::PixelType pixel;
-#if 0
-    if( this->GetMovingImageMask() && this->GetFixedImageMask() )
-      {
-      for( def12Iter.GoToBegin(),
+    for( def12Iter.GoToBegin(),
            fit.GoToBegin(), mit.GoToBegin(), xIter.GoToBegin(), yIter.GoToBegin(), zIter.GoToBegin();
-           !def12Iter.IsAtEnd(); ++def12Iter, ++fit, ++mit, ++xIter, ++yIter, ++zIter )
-        {
-        typename DisplacementFieldType::IndexType index = def12Iter.GetIndex();
-        typename FixedImageType::PointType fixedPoint;
-        this->GetFixedImage()->TransformIndexToPhysicalPoint(index, fixedPoint);
-        if( this->GetFixedImageMask()->IsInside(fixedPoint) &&
-            (m_MovingMaskImageWarper->GetOutput()->GetPixel(index) > 0) )
-          {
-          pixel[0] = 4.0 * m_MaximumUpdateStepLength * m_SimilarityWeight * (mit.Get() - fit.Get() ) * xIter.Get();
-          pixel[1] = 4.0 * m_MaximumUpdateStepLength * m_SimilarityWeight * (mit.Get() - fit.Get() ) * yIter.Get();
-          pixel[2] = 4.0 * m_MaximumUpdateStepLength * m_SimilarityWeight * (mit.Get() - fit.Get() ) * zIter.Get();
-          }
-        else if( !this->GetFixedImageMask()->IsInside(fixedPoint) &&
-                 (m_MovingMaskImageWarper->GetOutput()->GetPixel(index) > 0) )
-          {
-          pixel[0] = 4.0 * m_MaximumUpdateStepLength * m_SimilarityWeight
-            * (mit.Get() - m_BackgroundFilledValue) * xIter.Get();
-          pixel[1] = 4.0 * m_MaximumUpdateStepLength * m_SimilarityWeight
-            * (mit.Get() - m_BackgroundFilledValue) * yIter.Get();
-          pixel[2] = 4.0 * m_MaximumUpdateStepLength * m_SimilarityWeight
-            * (mit.Get() - m_BackgroundFilledValue) * zIter.Get();
-          }
-        else if( this->GetFixedImageMask()->IsInside(fixedPoint) &&
-                 (m_MovingMaskImageWarper->GetOutput()->GetPixel(index) <= 0) )
-          {
-          pixel[0] = 4.0 * m_MaximumUpdateStepLength * m_SimilarityWeight
-            * (m_BackgroundFilledValue - fit.Get() ) * xIter.Get();
-          pixel[1] = 4.0 * m_MaximumUpdateStepLength * m_SimilarityWeight
-            * (m_BackgroundFilledValue - fit.Get() ) * yIter.Get();
-          pixel[2] = 4.0 * m_MaximumUpdateStepLength * m_SimilarityWeight
-            * (m_BackgroundFilledValue - fit.Get() ) * zIter.Get();
-          }
-        else
-          {
-          pixel.Fill(0.0);
-#if 0
-          pixel[0] = 4.0 * m_MaximumUpdateStepLength * m_SimilarityWeight
-            * (m_MovingImageBackground - m_FixedImageBackground) * xIter.Get();
-          pixel[1] = 4.0 * m_MaximumUpdateStepLength * m_SimilarityWeight
-            * (m_MovingImageBackground - m_FixedImageBackground) * yIter.Get();
-          pixel[2] = 4.0 * m_MaximumUpdateStepLength * m_SimilarityWeight
-            * (m_MovingImageBackground - m_FixedImageBackground) * zIter.Get();
-#endif
-          }
-        def12Iter.Set(pixel);
-        }
-      }
-    else
-#endif
+         !def12Iter.IsAtEnd(); ++def12Iter, ++fit, ++mit, ++xIter, ++yIter, ++zIter )
       {
-      for( def12Iter.GoToBegin(),
-           fit.GoToBegin(), mit.GoToBegin(), xIter.GoToBegin(), yIter.GoToBegin(), zIter.GoToBegin();
-           !def12Iter.IsAtEnd(); ++def12Iter, ++fit, ++mit, ++xIter, ++yIter, ++zIter )
-        {
-        pixel[0] = 4.0 * m_MaximumUpdateStepLength * m_SimilarityWeight * (mit.Get() - fit.Get() ) * xIter.Get();
-        pixel[1] = 4.0 * m_MaximumUpdateStepLength * m_SimilarityWeight * (mit.Get() - fit.Get() ) * yIter.Get();
-        pixel[2] = 4.0 * m_MaximumUpdateStepLength * m_SimilarityWeight * (mit.Get() - fit.Get() ) * zIter.Get();
-        def12Iter.Set(pixel);
-        }
+      pixel[0] = 4.0 * m_MaximumUpdateStepLength * m_SimilarityWeight * (mit.Get() - fit.Get() ) * xIter.Get();
+      pixel[1] = 4.0 * m_MaximumUpdateStepLength * m_SimilarityWeight * (mit.Get() - fit.Get() ) * yIter.Get();
+      pixel[2] = 4.0 * m_MaximumUpdateStepLength * m_SimilarityWeight * (mit.Get() - fit.Get() ) * zIter.Get();
+      def12Iter.Set(pixel);
       }
     similarity->Modified();
     // Write the similarity measure image
-#if 0
-    typedef Image<float, 3>                                                           RealImageType;
-    typedef VectorIndexSelectionCastImageFilter<DisplacementFieldType, RealImageType> SelectImageType;
-    typename SelectImageType::Pointer caster = SelectImageType::New();
-    caster->SetInput(similarity);
-    for( unsigned int i = 0; i < 3; i++ )
-      {
-      caster->SetIndex(i);
-      caster->Update();
-      std::string       name = "Similarity";
-      std::stringstream out;
-      out << i;
-      std::string name1 = out.str();
-      name = name + name1 + ".nii.gz";
-      typename FixedImageType::Pointer simi = FixedImageType::New();
-      simi = caster->GetOutput();
-      itkUtil::WriteImage<RealImageType>(simi, name);
-      }
-#endif
 /*
   typename  DisplacementFieldFFTType::Pointer coeff =  DisplacementFieldFFTType::New();
    typename FFTWRealToComplexType::Pointer fft12 = FFTWRealToComplexType::New();
@@ -479,11 +368,6 @@ ICCDeformableFunction<TFixedImage, TMovingImage, TDisplacementField>
         this->GetFixedImage()->TransformPhysicalPointToIndex(warpedMovingPoint, pixelIndex1);
         this->GetFixedImage()->TransformIndexToPhysicalPoint(pixelIndex1, warpedMovingPoint);
         warpedMovingLandmark->SetPoint(pointID, warpedMovingPoint);
-#if 0
-        std::cout << "Deformation field: " << this->GetDisplacementField()->GetPixel(pixelIndex) << std::endl;
-        std::cout << "fixed point: " << fixedPoint << std::endl;
-        std::cout << "warped moving point: " << warpedMovingPoint << std::endl;
-#endif
         // std::cout<<"difference: "<<difference<<std::endl;
         fixedLandmark->SetPoint(pointID, movingPoint);
         ++mlit;
@@ -491,19 +375,6 @@ ICCDeformableFunction<TFixedImage, TMovingImage, TDisplacementField>
         pointID++;
         }
 
-#if 0
-      // typename KernelPointSetType::PointsContainer::ConstIterator  pit;
-      pit = m_FixedLandmark->GetPoints()->Begin();
-      pointID = 0;
-      while( pit != m_FixedLandmark->GetPoints()->End() )
-        {
-        // std::cout<<"fixed Landmark Position: "<<pit.Value()<<std::endl;
-        fixedLandmark->SetPoint(pointID, pit.Value() );
-        ++pit;
-        pointID++;
-        }
-
-#endif
       // warpedMovingLandmark->SetPoints(list);
       // Wondering to use physical space point or index point??????
       // Using kernel transform
@@ -533,22 +404,6 @@ ICCDeformableFunction<TFixedImage, TMovingImage, TDisplacementField>
         defIter.Set(def);
         }
       this->GetDisplacementField()->Modified();
-#if 0
-      mlit = m_MovingLandmark->GetPoints()->Begin();
-      flit = m_FixedLandmark->GetPoints()->Begin();
-      while( mlit != m_MovingLandmark->GetPoints()->End() )
-        {
-        this->GetMovingImage()->TransformPhysicalPointToIndex(mlit.Value(), pixelIndex);
-        this->GetFixedImage()->TransformIndexToPhysicalPoint(pixelIndex, movingPoint);
-        point = transform->TransformPoint(movingPoint);
-        std::cout << "moving point: " << movingPoint << std::endl;
-        std::cout << "warped moving point: " << point << std::endl;
-        std::cout << "displacement: " << point - movingPoint << std::endl;
-        ++mlit;
-        ++flit;
-        }
-
-#endif
 
       typename FFTWRealToComplexType::Pointer fft_filter = FFTWRealToComplexType::New();
       fft_filter->SetInput(this->GetDisplacementField() );

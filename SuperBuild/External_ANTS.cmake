@@ -7,7 +7,7 @@ set(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED 1)
 
 set(proj ANTS)
 set(${proj}_GIT_REPOSITORY "git://github.com/stnava/ANTs.git")
-set(${proj}_GIT_TAG "adbbeeecfbbaef43fa5251f8a310577839d90926") #2013-04-24 MALF preparations
+set(${proj}_GIT_TAG "2e907d081e21514d2edc736f8894d991f79cbab7")
 
 set(${proj}_DEPENDENCIES ${ITK_EXTERNAL_NAME} SlicerExecutionModel)
 

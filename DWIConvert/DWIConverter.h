@@ -45,7 +45,8 @@ public:
                                                     m_SliceOrderIS(true),
                                                     m_NSlice(0),
                                                     m_NVolume(0),
-                                                    m_UseBMatrixGradientDirections(useBMatrixGradientDirections)
+                                                    m_UseBMatrixGradientDirections(useBMatrixGradientDirections),
+                                                    m_IsInterleaved(false)
     {
 
 
@@ -169,6 +170,7 @@ public:
           else
             {
             std::cout << "Dicom images are ordered in a slice interleaving way." << std::endl;
+            this->m_IsInterleaved = true;
             // reorder slices into a volume interleaving manner
             DeInterleaveVolume();
             }
@@ -269,15 +271,16 @@ protected:
   void DetermineSliceOrderIS()
     {
       double image0Origin[3];
-      this->m_Headers[0]->GetElementDS(0x0020, 0x0032, 3, image0Origin);
+      this->m_Headers[0]->GetOrigin(image0Origin);
       std::cout << "Slice 0: " << image0Origin[0] << " "
                 << image0Origin[1] << " " << image0Origin[2] << std::endl;
 
       // assume volume interleaving, i.e. the second dicom file stores
       // the second slice in the same volume as the first dicom file
       double image1Origin[3];
-      this->m_Headers[1]->GetElementDS(0x0020, 0x0032, 3, image1Origin);
-      std::cout << "Slice 1: " << image1Origin[0] << " " << image1Origin[1]
+      unsigned long nextSlice = this->m_IsInterleaved ? this->m_NVolume : 1;
+      this->m_Headers[nextSlice]->GetOrigin(image1Origin);
+      std::cout << "Slice " << nextSlice << ": " << image1Origin[0] << " " << image1Origin[1]
                 << " " << image1Origin[2] << std::endl;
 
       image1Origin[0] -= image0Origin[0];
@@ -299,6 +302,11 @@ protected:
     {
       if(this->m_SliceOrderIS)
         {
+        std::cout << "Slice order is IS" << std::endl;
+        }
+      else
+        {
+        std::cout << "Slice order is SI" << std::endl;
         this->m_NRRDSpaceDirection[0][2] = -this->m_NRRDSpaceDirection[0][2];
         this->m_NRRDSpaceDirection[1][2] = -this->m_NRRDSpaceDirection[1][2];
         this->m_NRRDSpaceDirection[2][2] = -this->m_NRRDSpaceDirection[2][2];
@@ -352,11 +360,11 @@ protected:
   /** add vendor-specific flags; */
   virtual void AddFlagsToDictionary() = 0;
   /** one file reader per DICOM file in dataset */
-  DCMTKFileVector     m_Headers;
+  DCMTKFileVector     &m_Headers;
   /** the names of all the filenames, needed to use
    *  itk::ImageSeriesReader
    */
-  FileNamesContainer  m_InputFileNames;
+  FileNamesContainer  &m_InputFileNames;
 
   /** dimensions */
   unsigned short      m_Rows;
@@ -408,6 +416,8 @@ protected:
    *  the reported graients. which are in many cases bogus.
    */
   bool                        m_UseBMatrixGradientDirections;
+  /** track if images is interleaved */
+  bool                        m_IsInterleaved;
   /** again this is always the same (so far) but someone thought
    *  it might be important to change it.
    */

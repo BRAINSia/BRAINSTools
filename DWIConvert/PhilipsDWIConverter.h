@@ -1,6 +1,7 @@
 #ifndef __PhilipsDWIConverter_h
 #define __PhilipsDWIConverter_h
 #include "DWIConverter.h"
+#include "itkExtractImageFilter.h"
 
 /** specific converter for Philips scanners */
 class PhilipsDWIConverter : public DWIConverter
@@ -75,7 +76,7 @@ public:
           vnl_vector_fixed<double, 3> vect3d;
           vect3d.fill( 0 );
           if( StringContains(DiffusionDirectionality, "ISOTROPIC") )
-            { // Deal with images that are to be ignored
+            {
             continue;
             }
           else if( ( !B0FieldFound || b == 0 ) || StringContains(DiffusionDirectionality, "NONE") )
@@ -272,8 +273,31 @@ public:
           DeInterleaveVolume();
           }
         }
+      // deal with trailing isotropic images
+      unsigned long trailingVolumes = this->m_NVolume - this->m_DiffusionVectors.size();
+      if(trailingVolumes > 0)
+        {
+        std::cout << "# of Volumes " << this->m_NVolume << " # of Diffusion Vectors "
+                  << this->m_DiffusionVectors.size() << " Removing "
+                  << trailingVolumes << " Isotropic volumes." << std::endl;
+        typedef itk::ExtractImageFilter<VolumeType,VolumeType> ExtractImageFilterType;
+        ExtractImageFilterType::Pointer extractImageFilter = ExtractImageFilterType::New();
+
+        VolumeType::RegionType desiredRegion = this->m_Volume->GetLargestPossibleRegion();
+        VolumeType::SizeType desiredSize = desiredRegion.GetSize();
+        desiredSize[2] -= (trailingVolumes * this->m_SlicesPerVolume);
+        desiredRegion.SetSize(desiredSize);
+        extractImageFilter->SetExtractionRegion(desiredRegion);
+        extractImageFilter->SetInput(this->m_Volume);
+        extractImageFilter->Update();
+        this->m_Volume = extractImageFilter->GetOutput();
+        this->m_NVolume -= trailingVolumes;
+        }
     }
 protected:
+  /** # of trailing images to ignore */
+  unsigned int        m_NTrailingImagesToIgnore;
+
   virtual void AddFlagsToDictionary()
     {
       // relevant Philips private tags

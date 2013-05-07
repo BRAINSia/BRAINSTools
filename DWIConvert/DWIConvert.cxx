@@ -568,27 +568,8 @@ int main(int argc, char *argv[])
       }
     else
       {
-      unsigned int original_volume_number = converter->GetNVolume() /* + bad_gradient_indices.size() */;
-
-      // above, where the gradientVectors is filled out, the same
-      // logic is used to skip bad gradients.  Only good gradients are
-      // put into the gradientVectors.  The gradient rejection logic
-      // is duplicated below, so the gradient numbers will be correct
-      // in the nrrd header
       unsigned int gradientVecIndex = 0;
-      for( unsigned int k = 0; k < original_volume_number; ++k )
-        {
-        // bool print_gradient = true;
-
-        // for (unsigned int j = 0; j < bad_gradient_indices.size(); ++j)
-        //   {
-        //   if (k == bad_gradient_indices[j])
-        //     {
-        //     print_gradient = false;
-        //     break;
-        //     }
-        //   }
-        // if (print_gradient == true)
+      for( unsigned int k = 0; k < gradientVectors.size(); ++k )
         {
         header << "DWMRI_gradient_" << std::setw(4) << std::setfill('0') << k << ":="
                << DoubleConvert(gradientVectors[gradientVecIndex][0] ) << "   "
@@ -596,7 +577,6 @@ int main(int argc, char *argv[])
                << DoubleConvert(gradientVectors[gradientVecIndex][2] )
                << std::endl;
         ++gradientVecIndex;
-        }
         }
       }
     // write data in the same file is .nrrd was chosen

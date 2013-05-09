@@ -30,6 +30,7 @@ public:
     {
       this->DWIConverter::LoadDicomDirectory();
       std::string ImageType;
+      this->m_MeasurementFrame.SetIdentity();
       this->m_Headers[0]->GetElementCS(0x0008, 0x0008, ImageType);
       if(StringContains(ImageType,"MOSAIC"))
         {
@@ -72,6 +73,8 @@ public:
           }
         std::cout << "Mosaic in " << this->m_MMosaic << " X " << this->m_NMosaic
                   << " blocks (total number of blocks = " << valueArray[0] << ")." << std::endl;
+        this->DetermineSliceOrderIS();
+        this->SetDirectionsFromSliceOrder();
         this->DeMosaic();
         }
       else
@@ -82,8 +85,8 @@ public:
         this->m_NVolume = this->m_NSlice / this->m_SlicesPerVolume;
         this->m_Stride = this->m_SlicesPerVolume; // Stride used in extracting the bval/gvec.
         this->DetermineSliceOrderIS();
+        this->SetDirectionsFromSliceOrder();
         }
-      this->SetDirectionsFromSliceOrder();
     }
   /** find the bvalues and gradient vectors */
   void ExtractDWIData()
@@ -391,7 +394,6 @@ protected:
                                      const std::string & nameString,
                                      std::vector<double>& valueArray)
     {
-      std::cerr << "TagString: " << tagString << std::endl;
       ::size_t atPosition = tagString.find( nameString );
 
       if( atPosition == std::string::npos )

@@ -9,7 +9,7 @@
 #include "itkDCMTKFileReader.h"
 #include "itkDCMTKImageIO.h"
 #include "StringContains.h"
-
+#include <algorithm>
 /** the DWIConverter is a base class for all scanner-specific
  *  converters.  It handles the tasks that are required for all
  *  scanners. In particular it loads the DICOM directory, and fills
@@ -121,7 +121,7 @@ public:
       // origin
       double origin[3];
       m_Headers[0]->GetOrigin(origin);
-      for(unsigned int i = 0; i < 3; ++i) { this->m_Origin[i] = origin[i]; }
+      std::copy(origin,origin+3,this->m_Origin.GetDataPointer());
 
       // a map of ints keyed by the slice location string
       // reported in the dicom file.  The number of slices per

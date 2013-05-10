@@ -30,7 +30,7 @@ public:
     }
   void ExtractDWIData()
     {
-      if( this->m_NSlice > 1 )
+      if( !this->m_MultiSliceVolume )
         {
         // assume volume interleaving
         std::cout << "Number of Slices: " << this->m_NSlice << std::endl;
@@ -160,11 +160,11 @@ public:
         double             dwbValue;
 
         this->m_Headers[0]->GetElementSQ(0x5200, 0x9230, perFrameFunctionalGroup);
-        unsigned int nItems = static_cast<unsigned int>(perFrameFunctionalGroup.card());
+        this->m_NSlice = perFrameFunctionalGroup.card();
 
         // have to determine if volume slices are interleaved
         std::string origins[2];
-        for( unsigned int i = 0; i < nItems; ++i )
+        for( unsigned int i = 0; i < this->m_NSlice; ++i )
           {
           itk::DCMTKItem curItem;
           perFrameFunctionalGroup.GetElementItem(i, curItem);
@@ -240,7 +240,7 @@ public:
               }
             }
           }
-
+        // update values needed for (possible) de-interleave
         this->m_SlicesPerVolume = sliceLocations.size();
 
 
@@ -256,7 +256,7 @@ public:
 
         this->m_MeasurementFrame = this->m_LPSDirCos;
 
-        this->m_NVolume = nItems / this->m_SlicesPerVolume;
+        this->m_NVolume = this->m_NSlice / this->m_SlicesPerVolume;
         for( unsigned int k2 = 0; k2 < this->m_BValues.size(); ++k2 )
           {
           std::cout << k2 << ": direction: "

@@ -1,7 +1,9 @@
 #
 # script to download DICOM files, convert them and compare them
 # with the already converted files in /paulsen/MRx
-
+#
+# NOTE: this will only work on the PINC computer network
+#
 #imports
 import glob
 import os
@@ -123,84 +125,108 @@ def remove_zip(dir,number):
     for f in glob.glob(pat):
         os.remove(f)
 
+def remove_already_processed(nrrdList,processedFname):
+    processed = get_all_nrrds_from_file(processedFname)
+    # if any files have been processed
+    if processed:
+        return filter(lambda x: x not in processed,nrrdList)
+    else:
+        return nrrdList
+
 def main(XNAT, nrrds):
-    errFName = DEST_BASE
-    errFName += '/ErrorScans.txt'
-    errFile = open(errFName,'w')
+    # keep track of files that did not pass
+    errFName = DEST_BASE + '/ErrorScans.txt'
+    if os.path.isfile(errFName):
+        nrrds = remove_already_processed(nrrds,errFName)
+        errFile = open(errFName,'a')
+    else:
+        errFile = open(errFName,'w')
 
-    for nr in nrrds:
-        pss = get_project_subject_session(nr)
-        # print pss
-        sn = get_series_number(nr)
-        scans = get_scans(XNAT, pss)
-        print 'Downloading DICOM for ', nr
-        download_scan(scans, DEST_BASE, str(sn))
-        remove_zip(DEST_BASE,sn)
+    # also track all files that did pass
+    passFName = DEST_BASE + "/PassedScans.txt"
+    if os.path.isfile(passFName):
+        nrrds = remove_already_processed(nrrds,errFName)
+        passFile = open(passFName,'a')
+    else:
+        passFile = open(passFName,'w')
 
-        dicomdir = DEST_BASE
-        dicomdir += '/'
-        dicomdir += pss[-1]
-        dicomdir += '/scans/'
-        dicomdir += sn
-        dicomdir += '-'
-        dicomdir += get_scan_type(nr)
-        dicomdir += '/resources/DICOM/files'
 
-        outvol = os.path.basename(nr)
-        convertcmd = [ DWICONVERT, '--inputDicomDirectory', \
-                           dicomdir, '--outputVolume', outvol ]
+    try:
+        for nr in nrrds:
+            pss = get_project_subject_session(nr)
+            # print pss
+            sn = get_series_number(nr)
+            scans = get_scans(XNAT, pss)
+            print 'Downloading DICOM for ', nr
+            download_scan(scans, DEST_BASE, str(sn))
+            remove_zip(DEST_BASE,sn)
 
-        #
-        # find out vendor
-        firstDicom = dicomdir
-        firstDicom += '/'
-        firstDicom += os.listdir(dicomdir)[0]
-        ds = dicom.read_file(firstDicom,stop_before_pixels=True)
-        vendor = ds[0x0008,0x0070].value
+            dicomdir = DEST_BASE + '/' \
+                + pss[-1] \
+                + '/scans/' \
+                + sn \
+                + '-' \
+                + get_scan_type(nr) \
+                + '/resources/DICOM/files'
 
-        if re.search("[Ss][Ii][Ee][Mm][Ee][Nn][Ss]", vendor) is None:
-            pass
-        else:
-            convertcmd.append('--useBMatrixGradientDirections')
+            outvol = os.path.basename(nr)
+            convertcmd = [ DWICONVERT, '--inputDicomDirectory', \
+                               dicomdir, '--outputVolume', outvol ]
+
+            #
+            # find out vendor
+            firstDicom = dicomdir + '/' + os.listdir(dicomdir)[0]
+
+            ds = dicom.read_file(firstDicom,stop_before_pixels=True)
+            vendor = ds[0x0008,0x0070].value
+
+            if re.search("[Ss][Ii][Ee][Mm][Ee][Nn][Ss]", vendor) is None:
+                pass
+            else:
+                convertcmd.append('--useBMatrixGradientDirections')
             print 'Using B-Matrix for gradients'
 
-        print 'Converting ', dicomdir, ' to ', outvol
+            print 'Converting ', dicomdir, ' to ', outvol
 
-        try:
-            subprocess.check_output(convertcmd, stderr=subprocess.STDOUT, env = os.environ)
-        except subprocess.CalledProcessError:
-            print "can't convert ", dicomdir
-            continue
+            try:
+                subprocess.check_output(convertcmd, stderr=subprocess.STDOUT, env = os.environ)
+            except subprocess.CalledProcessError:
+                print "can't convert ", dicomdir
+                continue
 
-        print 'Comparing ', nr, ' and ', outvol
-        comparecmd = [ DWICOMPARE, '--inputVolume1', nr, \
-                           '--inputVolume2', outvol, '--checkDWIData' ]
-        convertresult = 0
-        try:
-            subprocess.check_call(comparecmd)
-        except subprocess.CalledProcessError,e:
-            convertresult = e.returncode
+            print 'Comparing ', nr, ' and ', outvol
+            comparecmd = [ DWICOMPARE, '--inputVolume1', nr, \
+                               '--inputVolume2', outvol, '--checkDWIData' ]
+            convertresult = 0
+            try:
+                subprocess.check_call(comparecmd)
+            except subprocess.CalledProcessError,e:
+                convertresult = e.returncode
 
-        if convertresult == 0:
-            print 'conversion of ', nr, ' matches'
-            #
-            # clean up
-            projdir = DEST_BASE
-            projdir += '/'
-            projdir += pss[-1]
-            shutil.rmtree(projdir)
-            os.remove(outvol)
-        else:
-            print 'conversion of ',nr, ' does not match'
-            message = nr + " doesn't match " + outvol + '\n'
-            errFile.write(message)
+            if convertresult == 0:
+                print 'conversion of ', nr, ' matches'
+                #
+                # clean up
+                projdir = DEST_BASE
+                projdir += '/'
+                projdir += pss[-1]
+                shutil.rmtree(projdir)
+                os.remove(outvol)
+                passFile.write(nr + '\n')
+            else:
+                print 'conversion of ',nr, ' does not match'
+                errFile.write(nr + '\n')
+    except:
+        print ''
+        print 'Error during processing'
+    passFile.close()
     errFile.close()
 
 
 
 if __name__ == '__main__':
     xnatUrl = 'https://www.predict-hd.net/xnat'
-    XNAT = Interface(server=xnatUrl, user='williamsnk', cachedir='/scratch/kent/DWI_test/cache')
+    XNAT = Interface(server=xnatUrl, user='williamsnk',cachedir='/scratch/kent/DWI_test/cache')
 
     if not os.path.isfile('kent_nrrds.txt'):
         write_nrrds_to_file()

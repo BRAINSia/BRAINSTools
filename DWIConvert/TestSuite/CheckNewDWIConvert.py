@@ -200,8 +200,7 @@ def main(XNAT, nrrds):
 
 if __name__ == '__main__':
     xnatUrl = 'https://www.predict-hd.net/xnat'
-    XNAT = Interface(server=xnatUrl, user='williamsnk', password='5effete9echidna', \
-                         cachedir='/scratch/kent/DWI_test/cache')
+    XNAT = Interface(server=xnatUrl, user='williamsnk', cachedir='/scratch/kent/DWI_test/cache')
 
     if not os.path.isfile('kent_nrrds.txt'):
         write_nrrds_to_file()

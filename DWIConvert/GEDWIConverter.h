@@ -15,7 +15,6 @@ public:
   virtual ~GEDWIConverter() {}
   virtual void LoadDicomDirectory()
     {
-      this->AddFlagsToDictionary();
       this->DWIConverter::LoadDicomDirectory();
       this->m_MeasurementFrame = this->m_LPSDirCos;
       this->DetermineSliceOrderIS();
@@ -48,7 +47,7 @@ public:
       // and handle them accordingly. But we don't live in that world.
       bool isSignaHDxt(false);
       if( this->m_Headers[0]->GetElementLO(0x0008, 0x001090, ModelName, false) == EXIT_SUCCESS &&
-          ModelName == "Signa HDxt" )
+          (ModelName == "Signa HDxt" || ModelName == "SIGNA HDx" ) )
         {
         isSignaHDxt = true;
         }

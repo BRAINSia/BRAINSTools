@@ -64,6 +64,9 @@ public:
   virtual void LoadDicomDirectory()
     {
       //
+      // add vendor-specific flags to dictionary
+      this->AddFlagsToDictionary();
+      //
       // load the volume, either single or multivolume.
       m_NSlice = this->m_InputFileNames.size();
       itk::DCMTKImageIO::Pointer dcmtkIO = itk::DCMTKImageIO::New();

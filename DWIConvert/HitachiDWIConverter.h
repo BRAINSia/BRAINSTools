@@ -1,3 +1,4 @@
+
 #ifndef __HitachiDWIConverter_h
 #define __HitachiDWIConverter_h
 #include "DWIConverter.h"
@@ -19,7 +20,6 @@ public:
    */
   virtual void LoadDicomDirectory()
     {
-      this->DWIConverter::LoadDicomDirectory();
       this->m_SliceOrderIS = false;
       this->SetDirectionsFromSliceOrder();
       this->m_NVolume = this->m_NSlice / this->m_SlicesPerVolume;

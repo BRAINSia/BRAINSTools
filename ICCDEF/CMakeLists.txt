@@ -12,7 +12,6 @@ if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 endif()
 
 set(ALL_PROGS_LIST
-  ApplyWarp
   AverageBrainGenerator
   CreateMask
   iccdefRegistration_New

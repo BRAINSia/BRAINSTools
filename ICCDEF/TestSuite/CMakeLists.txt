@@ -1,6 +1,5 @@
 include_directories(${BRAINSTools_SOURCE_DIR}/ICCDEF)
 
-MakeTestDriverFromSEMTool(ApplyWarp ApplyWarpTest.cxx)
 MakeTestDriverFromSEMTool(CreateMask CreateMaskTest.cxx)
 MakeTestDriverFromSEMTool(AverageBrainGenerator AverageBrainGeneratorTest.cxx)
 MakeTestDriverFromSEMTool(iccdefRegistration_New iccdefRegistration_NewTest.cxx)
@@ -29,24 +28,6 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ValidateICCDEF_Test1_nii
     --outputDisplacementField
     --outputForwardDisplacementFieldVolume  ${CMAKE_CURRENT_BINARY_DIR}/test1/forwardDF.nii.gz
 )
-
-ExternalData_add_test(${PROJECT_NAME}FetchData NAME ValidateApplyWarpTest1_nii
-  COMMAND ApplyWarpTestDriver
-  --compare
-    ${CMAKE_CURRENT_BINARY_DIR}/test1/forward/deformedMovingImage.nii.gz
-    ${CMAKE_CURRENT_BINARY_DIR}/ValidateApplyWarpTest1_nii_deformedMovingImage.nii.gz
-    --compareNumberOfPixelsTolerance 0
-    --compareIntensityTolerance 10
-  ApplyWarpTest
-    --inputVolume ${CMAKE_CURRENT_BINARY_DIR}/test1/HistogramModifiedMovingImage.nii.gz
-    --referenceVolume DATA{${TestData_DIR}/image2.nii.gz}
-    --deformationVolume ${CMAKE_CURRENT_BINARY_DIR}/test1/forwardDF.nii.gz
-    --orientationRAI --pixelType uchar
-    --outputVolume  ${CMAKE_CURRENT_BINARY_DIR}/ValidateApplyWarpTest1_nii_deformedMovingImage.nii.gz
-)
-set_property(TEST ValidateApplyWarpTest1_nii APPEND PROPERTY
-  DEPENDS ValidateICCDEF_Test1_nii)
-
 
 ExternalData_add_test(${PROJECT_NAME}FetchData NAME  ValidateICCDEF_Test2_nii
   COMMAND iccdefRegistration_NewTestDriver
@@ -178,58 +159,6 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ValidateICCDEF_Test6_nii
     --maskProcessingMode BOBF
 )
 endif() #HACK: This test needs to be fixed!
-
-## These should be re-written to use BRAINSResample instead of ApplyWarp
-if( ${BRAINSTools_MAX_TEST_LEVEL} GREATER 8) ##This functionality does not work yet
-ExternalData_add_test(${PROJECT_NAME}FetchData NAME ValidateApplyWarpTest2_nii
-  COMMAND ApplyWarpTestDriver
-  --compare
-     DATA{${TestData_DIR}/BRAINSFitTest_RigidRotationMasks.output.nii.gz}
-     ${CMAKE_CURRENT_BINARY_DIR}/applyWarp_test2.nii.gz
-     --compareIntensityTolerance 0
-     --compareRadiusTolerance 0
-     --compareNumberOfPixelsTolerance 0
-   ApplyWarpTest
-    --inputVolume DATA{${TestData_DIR}/BRAINSFitTest_rotation.input.nii.gz}
-    --referenceVolume DATA{${TestData_DIR}/BRAINSFitTest_RigidRotationMasks.output.nii.gz}
-    --warpTransform DATA{${TestData_DIR}/BRAINSFitTest_RigidRotationMasks.mat}
-    --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/applyWarp_test2.nii.gz
-    --pixelType short
-)
-
-ExternalData_add_test(${PROJECT_NAME}FetchData NAME ValidateApplyWarpTest3_nii
-  COMMAND ApplyWarpTestDriver
-  --compare
-     DATA{${TestData_DIR}/ValidateApplyWarpTest3.result.nii.gz}
-     ${CMAKE_CURRENT_BINARY_DIR}/applyWarp_test3.nii.gz
-     --compareIntensityTolerance 10
-     --compareRadiusTolerance 0
-     --compareNumberOfPixelsTolerance 20
-   ApplyWarpTest
-    --inputVolume DATA{${TestData_DIR}/BRAINSFitTest_rotation.input.nii.gz}
-    --referenceVolume DATA{${TestData_DIR}/BRAINSFitTest_RigidRotationMasks.output.nii.gz}
-    --warpTransform DATA{${TestData_DIR}/BRAINSFitTest_RigidRotationMasks.mat}
-    --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/applyWarp_test3.nii.gz
-    --pixelType float
-    --interpolationMode WindowedSinc
-)
-
-ExternalData_add_test(${PROJECT_NAME}FetchData NAME ValidateApplyWarpTest4_nii
-  COMMAND ApplyWarpTestDriver
-  --compare
-     DATA{${TestData_DIR}/ValidateApplyWarpTest4.result.nii.gz}
-     ${CMAKE_CURRENT_BINARY_DIR}/applyWarp_test4.nii.gz
-     --compareIntensityTolerance 0
-     --compareRadiusTolerance 0
-     --compareNumberOfPixelsTolerance 0
-   ApplyWarpTest
-    --inputVolume DATA{${TestData_DIR}/BRAINSFitTest_rotation.input.nii.gz}
-    --referenceVolume DATA{${TestData_DIR}/BRAINSFitTest_RigidRotationMasks.output.nii.gz}
-    --warpTransform DATA{${TestData_DIR}/BRAINSFitTest_RigidRotationMasks.mat}
-    --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/applyWarp_test4.nii.gz
-    --pixelType binary
-)
-endif() ## HACK
 
 set(UnitTest_SRCS
 itkVectorFFTWTest.cxx

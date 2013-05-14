@@ -168,21 +168,6 @@ extern SImageType::PointType GetCenterOfHeadMass(SImageType::Pointer volume);
 
 extern SImageType::Pointer MakeIsoTropicReferenceImage();
 
-#if 0
-// #include <itkConstantBoundaryCondition.h>
-#include <itkWindowedSincInterpolateImageFunction.h>
-// TODO:  Replace double precision with single precision math.
-typedef itk::ConstantBoundaryCondition<SImageType> BoundaryConditionType;
-static const unsigned int WindowedSincHammingWindowRadius = 5;
-typedef itk::Function::HammingWindowFunction<WindowedSincHammingWindowRadius, double, double> WindowFunctionType;
-typedef itk::WindowedSincInterpolateImageFunction<
-    SImageType,
-    WindowedSincHammingWindowRadius,
-    WindowFunctionType,
-    BoundaryConditionType,
-    double>    WindowedSincInterpolatorType;
-#endif
-
 /*****************************************************************************/
 template <class ValuesType>
 ValuesType vectorNorm(const std::vector<ValuesType> & x)

@@ -91,16 +91,8 @@ public:
   typedef typename InputImageType::InternalPixelType  InputImageValueType;
   typedef typename InputImagePixelType::ComponentType InputImageVectorComponentType;
 
-#if 0
-  /* The pixel type of FixedImageType should be based on the
-   * InputImageValueType. However, the Mac compiler 4.0.1
-   * does not like this. Currently this is hardcoded
-   */
-  typedef itk::Image<signed short, 3> FixedImageType;
-#else
   //  typedef typename itk::Image<unsigned short,3>  FixedImageType;
   typedef typename itk::Image<InputImageVectorComponentType, 3> FixedImageType;
-#endif
   typedef typename FixedImageType::Pointer   FixedImagePointer;
   typedef typename FixedImageType::PixelType FixedImagePixelType;
 
@@ -139,19 +131,8 @@ public:
       FixedImageType,
       FixedImageType>    ResampleFilterType;
 
-#if 0
-  /* The output image type should be CastImageType for the
-   * CastFilter. However, the Mac compiler 4.0.1
-   * does not like this. Currently this is hardcoded to be
-   * the FixedImageType to make it a scalar
-   */
-  typedef itk::CastImageFilter<
-      FixedImageType,
-      FixedImageType>    CastFilterType;
-#else
   typedef itk::CastImageFilter<FixedImageType,
                                CastImageType>    CastFilterType;
-#endif
 
   typedef typename VectorIndexFilterType::Pointer    VectorIndexFilterPointer;
   typedef typename TransformType::Pointer            TransformTypePointer;

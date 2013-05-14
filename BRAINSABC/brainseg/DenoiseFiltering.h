@@ -75,50 +75,5 @@ typename TInputImageType::Pointer DenoiseFiltering(
   return img;
 }
 
-#if 0
-< !--Standard options for the denoising phase of a program-- >
-< integer - vector >
-< name > medianFilterSize</ name>
-< longflag > medianFilterSize</ longflag>
-< label > Median Filter Size</ label>
-< description > The radius for the optional MedianImageFilter preprocessing in all 3 directions.< / description >
-< default > 0, 0, 0 < / default >
-< / integer - vector >
-< integer >
-< name > filterIteration</ name>
-< description > Filter iterations</ description>
-< label > Filter Iterations</ label>
-< longflag > filterIteration</ longflag>
-< default > 10 < / default >
-< constraints >
-< minimum > 0 < / minimum >
-< maximum > 50 < / maximum >
-< step > 1 < / step >
-< / constraints >
-< / integer >
-< float >
-< name > filterTimeStep</ name>
-< description > Filter time step</ description>
-< label > Filter Time Step</ label>
-< longflag > filterTimeStep</ longflag>
-< default > 0.01 < / default >
-< constraints >
-< minimum > 0 < / minimum >
-< maximum > 0.5 < / maximum >
-< step > 0.01 < / step >
-< / constraints >
-< / float >
-< string - enumeration >
-< name > filterMethod</ name>
-< label > Filter Method</ label>
-< longflag > filterMethod</ longflag>
-< description > Filter method for preprocessing of registration</ description>
-< element > None</ element>
-< element > CurvatureFlow</ element>
-< element > GradientAnisotropicDiffusion</ element>
-< element > Median</ element>
-< default > None</ default>
-< / string - enumeration >
-#endif
 
 #endif

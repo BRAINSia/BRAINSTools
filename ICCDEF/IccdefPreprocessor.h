@@ -138,25 +138,6 @@ public:
   itkSetStringMacro(MovingBinaryVolume );
   itkGetStringMacro( MovingBinaryVolume );
 
-#if 0
-  /** Set/Get the lower threshold. The default is 0. */
-  itkSetMacro(Lower, PixelType);
-  itkGetMacro(Lower, PixelType);
-
-  /** Set/Get the upper threshold. The default is 70 */
-  itkSetMacro(Upper, PixelType);
-  itkGetMacro(Upper, PixelType);
-
-  /** Set the radius of the neighborhood used for a mask. */
-  itkSetMacro(Radius, SizeType);
-  /** Get the radius of the neighborhood used to compute the median */
-  itkGetConstReferenceMacro(Radius, SizeType);
-
-  /** Set the Seed of the neighborhood used for a mask. */
-  itkSetMacro(Seed, IndexType);
-  /** Get the radius of the neighborhood used to compute the median */
-  itkGetConstReferenceMacro(Seed, IndexType);
-#endif
 
   itkSetMacro(DefaultPixelValue,  PixelType);
   itkGetMacro(DefaultPixelValue,  PixelType);

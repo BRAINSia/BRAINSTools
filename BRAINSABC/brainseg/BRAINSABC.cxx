@@ -804,34 +804,6 @@ int main(int argc, char * *argv)
               }
             // Initialize with file read in
             FloatImageType::Pointer typewiseEqualizedToFirstImage = imgreader->GetOutput();
-#if 0       // This needs more testing.
-            // Now go looking to see if this image type has already been found,
-            // and equalize to the first image of this type if found.
-            for( unsigned int prevImageIndex = 0; prevImageIndex < i; prevImageIndex++ )
-              {
-              if( inputVolumeTypes[i] == inputVolumeTypes[prevImageIndex] )
-              // If it matches a  previous found image type,
-              // then histogram equalize
-                {
-                muLogMacro( << "Equalizing image (" << i << ") to image (" << prevImageIndex << ")" << std::endl );
-                typedef itk::HistogramMatchingImageFilter<FloatImageType,
-                                                          FloatImageType> HistogramMatchingFilterType;
-                HistogramMatchingFilterType::Pointer histogramfilter
-                  = HistogramMatchingFilterType::New();
-
-                histogramfilter->SetInput( imgreader->GetOutput() );
-                histogramfilter->SetReferenceImage( intraSubjectNoiseRemovedImageList[prevImageIndex] );
-
-                histogramfilter->SetNumberOfHistogramLevels( 128 );
-                histogramfilter->SetNumberOfMatchPoints( 16 );
-                // histogramfilter->ThresholdAtMeanIntensityOn();
-                histogramfilter->Update();
-                // Overwrite if necessary.
-                typewiseEqualizedToFirstImage = histogramfilter->GetOutput();
-                break;
-                }
-              }
-#endif
 
             // Normalize Image Intensities:
             muLogMacro( << "Standardizing Intensities: ...\n" );
@@ -842,47 +814,43 @@ int main(int argc, char * *argv)
                 1, 0.95 * MAX_IMAGE_OUTPUT_VALUE,
                 0, MAX_IMAGE_OUTPUT_VALUE);
             muLogMacro( << "done.\n" );
-#if 1
+            {
+            std::vector<unsigned int> unused_gridSize;
+            double                    localFilterTimeStep = filterTimeStep;
+            if( localFilterTimeStep <= 0 )
               {
-              std::vector<unsigned int> unused_gridSize;
-              double                    localFilterTimeStep = filterTimeStep;
-              if( localFilterTimeStep <= 0 )
+              FloatImageType::SpacingType::ValueType minPixelSize =
+                vcl_numeric_limits<FloatImageType::SpacingType::ValueType>::max();
+              const FloatImageType::SpacingType & imageSpacing = intraSubjectRawImageList[i]->GetSpacing();
+              for( int is = 0; is < FloatImageType::ImageDimension; ++is )
                 {
-                FloatImageType::SpacingType::ValueType minPixelSize =
-                  vcl_numeric_limits<FloatImageType::SpacingType::ValueType>::max();
-                const FloatImageType::SpacingType & imageSpacing = intraSubjectRawImageList[i]->GetSpacing();
-                for( int is = 0; is < FloatImageType::ImageDimension; ++is )
-                  {
-                  minPixelSize = vcl_min( minPixelSize, imageSpacing[is]);
-                  }
-                localFilterTimeStep =
-                  ( (minPixelSize - vcl_numeric_limits<FloatImageType::SpacingType::ValueType>::epsilon() )
-                    / ( vcl_pow(2.0, FloatImageType::ImageDimension + 1 ) )
+                minPixelSize = vcl_min( minPixelSize, imageSpacing[is]);
+                }
+              localFilterTimeStep =
+                ( (minPixelSize - vcl_numeric_limits<FloatImageType::SpacingType::ValueType>::epsilon() )
+                  / ( vcl_pow(2.0, FloatImageType::ImageDimension + 1 ) )
                   );
-                }
-              intraSubjectNoiseRemovedImageList[i] =
-                DenoiseFiltering<FloatImageType>(intraSubjectRawImageList[i], filterMethod, filterIteration,
-                                                 localFilterTimeStep,
-                                                 unused_gridSize);
-              if( debuglevel > 1 )
-                {
-                // DEBUG:  This code is for debugging purposes only;
-                typedef itk::ImageFileWriter<FloatImageType> WriterType;
-                WriterType::Pointer writer = WriterType::New();
-                writer->UseCompressionOn();
-
-                std::stringstream template_index_stream("");
-                template_index_stream << i;
-                const std::string fn = outputDir + "/DENOISED_INDEX_" + template_index_stream.str() + ".nii.gz";
-                writer->SetInput(intraSubjectNoiseRemovedImageList[i]);
-                writer->SetFileName(fn.c_str() );
-                writer->Update();
-                muLogMacro( << "DEBUG:  Wrote image " << fn <<  std::endl);
-                }
               }
-#else
-            intraSubjectNoiseRemovedImageList[i] = intraSubjectRawImageList[i];
-#endif
+            intraSubjectNoiseRemovedImageList[i] =
+              DenoiseFiltering<FloatImageType>(intraSubjectRawImageList[i], filterMethod, filterIteration,
+                                               localFilterTimeStep,
+                                               unused_gridSize);
+            if( debuglevel > 1 )
+              {
+              // DEBUG:  This code is for debugging purposes only;
+              typedef itk::ImageFileWriter<FloatImageType> WriterType;
+              WriterType::Pointer writer = WriterType::New();
+              writer->UseCompressionOn();
+
+              std::stringstream template_index_stream("");
+              template_index_stream << i;
+              const std::string fn = outputDir + "/DENOISED_INDEX_" + template_index_stream.str() + ".nii.gz";
+              writer->SetInput(intraSubjectNoiseRemovedImageList[i]);
+              writer->SetFileName(fn.c_str() );
+              writer->Update();
+              muLogMacro( << "DEBUG:  Wrote image " << fn <<  std::endl);
+              }
+            }
             intraSubjectTransformFileNames[i] = outputDir
               + GetStripedImageFileNameExtension(inputVolumes[i]) + std::string(
                 "_to_")
@@ -1278,56 +1246,6 @@ int main(int argc, char * *argv)
   // Start the segmentation process.
   for( unsigned int segmentationLevel = 0; segmentationLevel < 1; segmentationLevel++ )
     {
-#if 0
-    // Prior Names
-    // Prior Names         : [ AIR  GM    BGM  CSF  NOTCSF NOTGM NOTVB NOTWM VB
-    //   WM    ]
-    // Prior weight scales : [ 1.00 1.00  1.00 1.00 1.00   1.00  1.00  1.00
-    //  1.00 0.50  ]
-    // Prior Label Codes   : [ 0    2     3    4    6      7     9     8     5
-    //    1     ]
-    std::map<unsigned int, std::vector<unsigned int> > ParentLabels;
-    // Air
-    ParentLabels[100].push_back(0);
-    // GM-BGM-NOTGM
-    ParentLabels[101].push_back(2);
-    ParentLabels[101].push_back(3);
-    ParentLabels[101].push_back(7);
-    // CSF-NOTCSF
-    ParentLabels[102].push_back(4);
-    ParentLabels[102].push_back(6);
-    // WM-NOTWM
-    ParentLabels[103].push_back(1);
-    ParentLabels[103].push_back(8);
-    // VB-NOTVB
-    ParentLabels[104].push_back(5);
-    ParentLabels[104].push_back(9);
-
-    std::map<unsigned int, std::string> ParentLabelNames;
-    for(
-      std::map<unsigned int, std::vector<unsigned int> >::const_iterator plIter = ParentLabels.begin();
-      plIter != ParentLabels.end(); plIter++ )
-      {
-      std::string combinedName = "";
-      bool        firstpass = true;
-      for(
-        std::vector<unsigned int>::const_iterator vIter = plIter->second.begin();
-        vIter != plIter->second.end(); vIter++ )
-        {
-        if( firstpass )
-          {
-          firstpass = false;
-          }
-        else
-          {
-          combinedName += "-";
-          }
-        combinedName += PriorNames[*vIter];
-        }
-      ParentLabelNames[plIter->first] = combinedName;
-      }
-
-#endif
 
     SegFilterType::Pointer segfilter = SegFilterType::New();
     // __MAX__PROBS
@@ -1395,19 +1313,6 @@ int main(int argc, char * *argv)
     segfilter->SetMaxBiasDegree(maxBiasDegree);
     // TODO: Expose the transform type to the BRAINSABC command line
     // segfilter->SetAtlasTransformType("SyN"); // atlasTransformType);
-
-#if 0
-    // THIS ACTAULLY NEEDS TO BE USED FOR ONLY DOING THE FINAL ITERATION OF THE
-    // SEGMENTATION PROCESS AND SKIPPING MOST OF EMLoop
-    // If this "Post" transform is given, then jump over the looping, and
-    // warp priors,do estimates, and bias correct in one step.
-      {
-      ReadGenericTransform;
-
-      segfilter->SetTemplateGenericTransform();
-      // Turn off warping, and just use the input given from disk.
-      }
-#endif
 
     if( !atlasWarpingOff )
       {

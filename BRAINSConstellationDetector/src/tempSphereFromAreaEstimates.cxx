@@ -138,9 +138,6 @@ double FindCenterOfBrainBasedOnTopOfHead(SImageType::Pointer & foreground,  SIma
     // Now foreground holds both the silouette information and the
     // distance-from-extermum information.
     }
-#if 0
-  return true;
-#endif
 
   // ////////////////////////////////////////////////////////////////////////
   //  This will populate a histogram to make an increasing volume distribution.
@@ -148,13 +145,6 @@ double FindCenterOfBrainBasedOnTopOfHead(SImageType::Pointer & foreground,  SIma
     typedef itk::Statistics::Histogram<double, 1> HistogramType;
 
     typedef itk::ImageRegionIteratorWithIndex<SImageType> Iterator;
-
-#if 0
-    typedef itk::MinimumMaximumImageCalculator<SImageType> minMaxCalcType;
-    minMaxCalcType::Pointer minMaxCalc = minMaxCalcType::New();
-    minMaxCalc->SetImage(foreground);
-    minMaxCalc->Compute();
-#endif
 
     double maxval = 0;
     double minval = vcl_numeric_limits<double>::max();
@@ -189,13 +179,6 @@ double FindCenterOfBrainBasedOnTopOfHead(SImageType::Pointer & foreground,  SIma
     size[0] = numBins;
     std::cout << "Histo values " << minval << " ...  " << maxval << " -> " << numBins << std::endl;
 
-#if 0
-    itk::ImageFileWriter<SImageType>::Pointer dbgWriter = itk::ImageFileWriter<SImageType>::New();
-    dbgWriter->UseCompressionOn();
-    dbgWriter->SetFileName("distmap.nii.gz");
-    dbgWriter->SetInput(foreground);
-    dbgWriter->Update();
-#endif
 
     HistogramType::MeasurementVectorType minValVector, maxValVector;
     minValVector[0] = minval;
@@ -376,17 +359,6 @@ double FindCenterOfBrainBasedOnTopOfHead(SImageType::Pointer & foreground,  SIma
       // what
       // is
       // radius.
-#if 0
-      std::cout << "HISTOGRAM: " << index << "," << histoIter.GetFrequency() << "," << minValVector[0] << ","
-                << maxValVector[0] << std::endl;
-      // std::cout << " SupInf_thickness " << SupInf_thickness;
-      // std::cout << " RLbyAP_area " << RLbyAP_area;
-      std::cout << "ForegroundLevel = " << ForegroundLevel;
-      std::cout << " CUMULATIVEVolume: " << CummulativeVolume;
-      std::cout << " MAXCrossSectonalArea: " << MaxCrossSectionalArea << "  CurrentCrossSectionalArea: "
-                << CurrentCrossSectionalArea << " DesiredVolumeToIncludeBeforeClipping: "
-                << DesiredVolumeToIncludeBeforeClipping << std::endl;
-#endif
       if( ( CurrentDistanceFromTopOfHead > 100.0 )                          //
                                                                             // Can
                                                                             // not
@@ -417,31 +389,6 @@ double FindCenterOfBrainBasedOnTopOfHead(SImageType::Pointer & foreground,  SIma
                   << DesiredVolumeToIncludeBeforeClipping  << std::endl;
         exitLoop = true;
         }
-#if 0 // This just does not work in many cases.
-      if( ( ( CurrentCrossSectionalArea  > MaxCrossSectionalArea * .25 )
-            && ( CurrentCrossSectionalArea < 0.65 * MaxCrossSectionalArea ) )  //
-                                                                               // If
-                                                                               // a
-                                                                               // constriction
-                                                                               // of
-                                                                               // 75%
-                                                                               // max
-                                                                               // occurs,
-                                                                               // then
-                                                                               // assume
-                                                                               // that
-                                                                               // the
-                                                                               // neck
-                                                                               // area
-                                                                               // has
-                                                                               // been
-                                                                               // entered.
-          )
-        {
-        std::cout << "NECK CONSTRICTION CRITERIA MET, so exiting." << std::endl;
-        exitLoop = true;
-        }
-#endif
       // Now ForegroundLevel represents where to threshold the head from the
       // neck.
       }

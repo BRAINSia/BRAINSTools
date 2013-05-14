@@ -142,7 +142,7 @@ int main(int argc, char *argv[])
       }
     catch( itk::ExceptionObject & excp )
       {
-      std::cout << "******* HERE *******" << __FILE__ << " " << __LINE__ << std::endl;
+      std::cout << "******* HERE *******" << __FILE__ << " " << __LINE__ << excp << std::endl;
       }
     if( inverseTransform )
       {

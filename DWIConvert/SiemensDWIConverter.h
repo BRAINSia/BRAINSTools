@@ -290,7 +290,8 @@ public:
                      SiemensDWIConverter::IsZeroMag);
       if(nonZ == this->m_DiffusionVectors.end())
         {
-        itkGenericExceptionMacro(<< "Dataset has no diffusion vectors");
+        std::cerr << this->m_InputFileNames[0] << " has no non-zero diffusion vectors" << std::endl;
+        itkGenericExceptionMacro(<< "" );
         }
     }
 private:

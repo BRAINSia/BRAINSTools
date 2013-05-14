@@ -47,7 +47,8 @@ public:
       // and handle them accordingly. But we don't live in that world.
       bool isSignaHDxt(false);
       if( this->m_Headers[0]->GetElementLO(0x0008, 0x001090, ModelName, false) == EXIT_SUCCESS &&
-          (ModelName == "Signa HDxt" || ModelName == "SIGNA HDx" ) )
+          (ModelName == "Signa HDxt" || ModelName == "SIGNA HDx"
+           || ModelName == "GENESIS_SIGNA") )
         {
         isSignaHDxt = true;
         }

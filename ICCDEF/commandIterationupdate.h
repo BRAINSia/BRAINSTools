@@ -392,29 +392,6 @@ public:
         std::cout << "d(.,true) " << fieldDist << " - ";
         std::cout << "d(.,Jac(true)) " << fieldGradDist << " - ";
         }
-#if 0
-#if defined( USE_DEBUG_IMAGE_VIEWER )
-      if( DebugImageDisplaySender.Enabled() )
-        {
-        DebugImageDisplaySender.SendImage<DisplacementFieldType>( backdeffield, 0, 0);
-        DebugImageDisplaySender.SendImage<DisplacementFieldType>( backdeffield, 1, 1);
-        DebugImageDisplaySender.SendImage<DisplacementFieldType>( backdeffield, 2, 2);
-        typedef typename itk::WarpImageFilter<InternalImageType,
-                                              InternalImageType, DisplacementFieldType> WarpFilterType;
-        typename WarpFilterType::Pointer back_warper = WarpFilterType::New();
-        back_warper->SetInput(m_FixedImage);
-        back_warper->SetOutputSpacing( backdeffield->GetSpacing() );
-        back_warper->SetOutputOrigin( backdeffield->GetOrigin() );
-        back_warper->SetOutputDirection( backdeffield->GetDirection() );
-        back_warper->SetDisplacementField( backdeffield);
-        back_warper->Update();
-        typename InternalImageType::Pointer
-        DeformedFixedImagePtr = back_warper->GetOutput();
-        DebugImageDisplaySender.SendImage<InternalImageType>(DeformedFixedImagePtr, 3);
-        //       std::cerr << std::endl << "************IMAGES SENT*************" << std::endl;
-        }
-#endif // defined(USE_DEBUG_IMAGE_VIEWER)
-#endif
       m_HarmonicEnergyCalculator->SetImage( backdeffield );
       m_HarmonicEnergyCalculator->Compute();
       const double backharmonicEnergy

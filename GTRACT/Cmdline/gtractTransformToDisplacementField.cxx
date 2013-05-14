@@ -93,15 +93,7 @@ int main(int argc, char *argv[])
   GenericTransformType::Pointer baseTransform = itk::ReadTransformFromDisk(inputTransform);
 
   DisplacementFieldGeneratorType::Pointer defGenerator = DisplacementFieldGeneratorType::New();
-#if 0
-  defGenerator->SetOutputSize( image->GetLargestPossibleRegion().GetSize() );
-  defGenerator->SetOutputSpacing( image->GetSpacing() );
-  defGenerator->SetOutputOrigin( image->GetOrigin() );
-  defGenerator->SetOutputIndex( image->GetLargestPossibleRegion().GetIndex() );
-  defGenerator->SetOutputDirection( image->GetDirection() );
-#else
   defGenerator->SetOutputParametersFromImage( image );
-#endif
   defGenerator->SetTransform(baseTransform);
   try
     {

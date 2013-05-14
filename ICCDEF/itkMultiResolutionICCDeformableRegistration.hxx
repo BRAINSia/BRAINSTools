@@ -337,17 +337,6 @@ MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacemen
     tempField21->DisconnectPipeline();
 //  tempField12->Print(std::cout,6);
 
-#if 0
-    typedef WarpImageFilter<TMovingImage, TMovingImage, TDisplacementField> WarpImageType;
-    typename WarpImageType::Pointer warper = WarpImageType::New();
-    warper->SetOutputOrigin( m_FixedImagePyramid->GetOutput(fixedLevel)->GetOrigin() );
-    warper->SetOutputSpacing(  m_FixedImagePyramid->GetOutput(fixedLevel)->GetSpacing()  );
-    warper->SetOutputDirection(m_FixedImagePyramid->GetOutput(fixedLevel)->GetDirection() );
-    warper->SetInput( m_MovingImagePyramid->GetOutput(fixedLevel) );
-    warper->SetDisplacementField(tempField12 );
-    warper->GetOutput()->SetRequestedRegion( tempField12->GetRequestedRegion() );
-    warper->Update();
-#endif
     if( m_DisplacementFieldOutputNamePrefix != "" && m_DisplacementFieldOutputNamePrefix != "none" )
       {
       std::string       name = m_DisplacementFieldOutputNamePrefix + "_iteration"; // resolution";

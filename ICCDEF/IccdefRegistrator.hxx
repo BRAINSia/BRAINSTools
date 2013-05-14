@@ -71,13 +71,6 @@ void IccdefRegistrator<TRealImage, TOutputImage,
 
       itkUtil::WriteImage<ComponentImageType>(DisplacementComponentImagePtr,
                                               CurrentComponentFilename);
-#if 0
-      typedef itk::ImageFileWriter<ComponentImageType> FileWriterType;
-      FileWriterType::Pointer DisplacementImageWriter = FileWriterType::New();
-      DisplacementImageWriter->SetInput(DisplacementComponentImagePtr);
-      DisplacementImageWriter->SetFileName( CurrentComponentFilename.c_str() );
-      DisplacementImageWriter->Update();
-#endif
       }
     }
   catch( itk::ExceptionObject & e )
@@ -175,16 +168,6 @@ template <
   class TFieldValue>
 void IccdefRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute()
 {
-#if 0
-  // Setup the image pyramids
-  this->m_FixedImagePyramid->SetNumberOfLevels(this->m_NumberOfLevels);
-  this->m_FixedImagePyramid->SetStartingShrinkFactors(
-    this->m_FixedImageShrinkFactors.GetDataPointer() );
-
-  this->m_MovingImagePyramid->SetNumberOfLevels(this->m_NumberOfLevels);
-  this->m_MovingImagePyramid->
-  SetStartingShrinkFactors( this->m_MovingImageShrinkFactors.GetDataPointer() );
-#endif
 
   this->m_Registration->SetFixedImage(this->m_FixedImage);
   this->m_Registration->SetMovingImage(this->m_MovingImage);
@@ -239,14 +222,6 @@ void IccdefRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute()
 
     this->m_Registration->SetInitialMovingDisplacementField(fieldReader->GetOutput() );
     }
-
-#if 0
-  if( this->m_InitialDisplacementField.IsNotNull() )
-    {
-//    this->m_Registration->SetInitialDisplacementField(this->m_InitialDisplacementField);
-    this->m_Registration->SetInitialMovingDisplacementField(this->m_InitialDisplacementField);
-    }
-#endif
 
   // Perform the registration.
   try

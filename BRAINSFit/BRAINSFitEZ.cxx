@@ -482,37 +482,6 @@ int main(int argc, char *argv[])
     myHelper->Update();
     currentGenericTransform = myHelper->GetCurrentGenericTransform();
     MovingVolumeType::ConstPointer preprocessedMovingVolume = myHelper->GetPreprocessedMovingVolume();
-#if 0
-    if( interpolationMode == "ResampleInPlace" )
-      {
-      % {
-        VersorRigid3DTransformType::ConstPointer versor3D =
-          dynamic_cast<const VersorRigid3DTransformType *>(currentGenericTransform.GetPointer() );
-        if( versor3D.IsNotNull() )
-          {
-          FixedVolumeType::Pointer tempInPlaceResample = itk::SetRigidTransformInPlace<FixedVolumeType>(
-              versor3D.GetPointer(), extractMovingVolume.GetPointer() );
-          resampledImage = itkUtil::TypeCast<FixedVolumeType, MovingVolumeType>(tempInPlaceResample);
-          }
-        else
-          {
-          // This should be an exception thow instead of exit.
-          std::cout << "could not convert to rigid versor type" << std::endl;
-          return EXIT_FAILURE;
-          }
-        }
-      else
-        {
-        // Remember:  the Data is Moving's, the shape is Fixed's.
-        resampledImage = TransformResample<MovingVolumeType, FixedVolumeType>(
-            preprocessedMovingVolume,
-            extractFixedVolume,
-            backgroundFillValue,
-            GetInterpolatorFromString<MovingVolumeType>(interpolationMode),
-            currentGenericTransform);
-        }
-      }
-#else
       {
       typedef float                                                                     VectorComponentType;
       typedef itk::Vector<VectorComponentType, GenericTransformImageNS::SpaceDimension> VectorPixelType;
@@ -526,7 +495,6 @@ int main(int argc, char *argv[])
           interpolationMode,
           false);
       }
-#endif
 //    actualIterations = myHelper->GetActualNumberOfIterations();
 //    permittedIterations = myHelper->GetPermittedNumberOfIterations();
     /*
@@ -618,23 +586,6 @@ int main(int argc, char *argv[])
                             WriteOutImageType>(resampledImage) );
       itkUtil::WriteImage<WriteOutImageType>(CastImage, outputVolume);
       }
-#if 0
-    else if( outputVolumePixelType == "char" )
-      {
-      // itkUtil::WriteCastImage<itk::Image<signed char,
-      // FixedVolumeType::ImageDimension>,
-      // FixedVolumeType>(resampledImage,outputVolume);
-      typedef itk::Image<char,
-                         FixedVolumeType::ImageDimension> WriteOutImageType;
-      WriteOutImageType::Pointer CastImage =
-        ( scaleOutputValues == true ) ?
-        ( itkUtil::PreserveCast<FixedVolumeType,
-                                WriteOutImageType>(resampledImage) ) :
-        ( itkUtil::TypeCast<FixedVolumeType,
-                            WriteOutImageType>(resampledImage) );
-      itkUtil::WriteImage<WriteOutImageType>(CastImage, outputVolume);
-      }
-#endif
     else if( outputVolumePixelType == "uchar" )
       {
       // itkUtil::WriteCastImage<itk::Image<unsigned char,

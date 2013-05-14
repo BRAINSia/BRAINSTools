@@ -352,17 +352,6 @@ private:
   ComplexImagePointer                        m_sqr11, m_sqr12, m_sqr13, m_sqr22, m_sqr23, m_sqr33;
   ComplexImagePointer                        m_SmoothFilter;
 
-#if 0
-  MaskImagePointer m_WarpedFixedMask;
-  MaskImagePointer m_WarpedMovingMask;
-
-  MaskPointer m_FixedMask;
-  MaskPointer m_MovingMask;
-
-  LandmarkPointer m_FixedLandmark;
-  LandmarkPointer m_MovingLandmark;
-#endif
-
   float m_Alpha, m_Gamma, m_Beta;
   float m_RegularizationWeight;
   float m_InverseWeight;

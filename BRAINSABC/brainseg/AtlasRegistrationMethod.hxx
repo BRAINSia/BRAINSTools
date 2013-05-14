@@ -13,7 +13,6 @@
 
 // MI registration module
 #include "AtlasRegistrationMethod.h"
-#include "RegistrationParameters.h"
 
 #include "vnl/vnl_math.h"
 
@@ -605,96 +604,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
                    << " " << m_AtlasToSubjectTransform->GetParameters() <<   std::endl );
         }
       }
-    // End generating the best initial transform for atlas T1 to subject T1
-#if 0
-    // Update the registration with all the other non-primary images.
-      {
-      for( unsigned int atlasIter = 1; atlasIter < m_AtlasOriginalImageList.size(); atlasIter++ )
-        {
-        // Save code snippets for future integration 2012-10-18
-          { // Set the fixed image
-          InternalImageType::Pointer currentWarpedIntraSubject = NULL;
-          // NOTE: This is to save memory, so just resample the images as needed
-          // to avoid keeping an extra copy of them
-          if( atlasReferenceImageIndex == 0 )
-            { // First subject image does not need to be resampled
-            currentWarpedIntraSubject = m_IntraSubjectOriginalImageList[0];
-            }
-          else
-            { // All other subject images must be resampled
-            typedef itk::ResampleImageFilter<InternalImageType, InternalImageType> ResampleType;
-            typedef ResampleType::Pointer                                          ResamplePointer;
-
-            ResamplePointer resampler = ResampleType::New();
-            resampler->SetInput(m_IntraSubjectOriginalImageList[atlasReferenceImageIndex]);
-            resampler->SetTransform(m_IntraSubjectTransforms[atlasIter]);
-            resampler->SetOutputParametersFromImage(m_IntraSubjectOriginalImageList[0]);
-            resampler->SetDefaultPixelValue(0);
-            resampler->Update();
-            currentWarpedIntraSubject = resampler->GetOutput();
-            }
-          atlasToSubjectRegistrationHelper->SetFixedVolume(currentWarpedIntraSubject);
-          }
-        std::string preprocessMovingString("");
-          { // Set the moving image
-            // TODO:  Just turn histogram matching off at this point.
-            // histogram matching often help in the registration for difficult
-            // cases
-            // Need to find some way to quantify how much it helps/hurts.
-            // Changed so FLAIR doesn't get histogram matched to non-existing
-            // atlas
-            // const bool histogramMatch=true;//Setting histogram matching to true
-          const bool histogramMatch = false;
-          // const bool histogramMatch=(m_InputVolumeTypes[atlasIter]=="FLAIR")?false:true;
-          if( histogramMatch )
-            {
-            typedef itk::HistogramMatchingImageFilter<InternalImageType,
-                                                      InternalImageType> HistogramMatchingFilterType;
-            HistogramMatchingFilterType::Pointer histogramfilter
-              = HistogramMatchingFilterType::New();
-
-            histogramfilter->SetInput( m_AtlasOriginalImageList[atlasIter]  );
-            histogramfilter->SetReferenceImage( atlasToSubjectRegistrationHelper->GetFixedVolume() );
-
-            histogramfilter->SetNumberOfHistogramLevels( 128 );
-            histogramfilter->SetNumberOfMatchPoints( 2 );
-            histogramfilter->ThresholdAtMeanIntensityOn();
-            histogramfilter->Update();
-            InternalImageType::Pointer equalizedMovingImage = histogramfilter->GetOutput();
-            if( equalizedMovingImage->GetLargestPossibleRegion().GetSize() !=
-                m_AtlasOriginalImageList[atlasIter]->GetLargestPossibleRegion().GetSize() )
-              {
-              itkExceptionMacro(<< "Histogram equalized image has wrong size." );
-              }
-            preprocessMovingString = "histogram equalized ";
-            atlasToSubjectRegistrationHelper->SetMovingVolume(equalizedMovingImage);
-            if( this->m_DebugLevel > 7 )
-              {
-              typedef itk::ImageFileWriter<InternalImageType> ShortWriterType;
-              ShortWriterType::Pointer writer = ShortWriterType::New();
-              writer->UseCompressionOn();
-
-              std::string fn =
-                this->m_OutputDebugDir + std::string("AtlasPostHistogram_") + ".nii.gz";
-
-              writer->SetInput( equalizedMovingImage );
-              writer->SetFileName(fn.c_str() );
-              writer->Update();
-              muLogMacro( << __FILE__ << " " << __LINE__ << " "  <<   std::endl );
-              itkExceptionMacro(<< "Histogram match");
-              }
-            }
-          else
-            {
-            atlasToSubjectRegistrationHelper->SetMovingVolume(m_AtlasOriginalImageList[atlasIter]);
-            }
-          }
-        // muLogMacro( << "Refining transform with information from atlas " << atlasIter << " of " <<
-        // m_AtlasOriginalImageList.size() << " to subject image " << atlasIter << "." << std::endl);
-        // Code for updateing and refining the registration for all non-zero index locations.  Not implemented yet.
-        }
-      }
-#endif
+      // End generating the best initial transform for atlas T1 to subject T1
       {
       muLogMacro(<< "Writing " << this->m_AtlasToSubjectTransformFileName << "." << std::endl);
       WriteTransformToDisk(m_AtlasToSubjectTransform, this->m_AtlasToSubjectTransformFileName);

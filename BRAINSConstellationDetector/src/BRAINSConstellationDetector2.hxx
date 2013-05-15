@@ -62,6 +62,7 @@ BRAINSConstellationDetector2<TInputImage, TOutputImage>
   this->m_OutputImage = NULL;
   this->m_OutputResampledImage = NULL;
   this->m_OutputUntransformedClippedVolume = NULL;
+  this->m_ClippingFactorImage = NULL ;
 
   /** Advanced parameters */
   /** Manual Override */
@@ -488,7 +489,7 @@ BRAINSConstellationDetector2<TInputImage, TOutputImage>
           ResampleFilter->SetTransform(this->m_InvVersorTransform);
           ResampleFilter->Update();
           // typename
-          SImageType::Pointer clippingFactorImage = ResampleFilter->GetOutput();
+          this->m_ClippingFactorImage = ResampleFilter->GetOutput();
           // itkUtil::WriteImage<SImageType>(clippingFactorImage,"ClippingImage.nii.gz");
 
           // Multiply the raw input image by the clipping factor image:
@@ -496,7 +497,7 @@ BRAINSConstellationDetector2<TInputImage, TOutputImage>
           // typename
           MultiplyFilterType::Pointer MultiplyFilter = MultiplyFilterType::New();
           MultiplyFilter->SetInput1(image);
-          MultiplyFilter->SetInput2(clippingFactorImage);
+          MultiplyFilter->SetInput2(this->m_ClippingFactorImage);
           MultiplyFilter->Update();
           this->m_OutputUntransformedClippedVolume = MultiplyFilter->GetOutput();
           }

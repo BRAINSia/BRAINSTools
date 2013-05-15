@@ -100,27 +100,7 @@
             </description>
             <channel>output</channel>
         </file>
-        <file fileExtensions=".fcsv">
-            <name>inputLandmarksPaired</name>
-            <label>Input Landmarks Paired</label>
-            <longflag>inputLandmarksPaired</longflag>
-            <default></default>
-            <description>
-              Paired use with outputLandmarks. It indicates the input landmark list filename (in a format of .fcsv) which contains the landmarks to be trainsformed to acpc-aligned space. The alignment transform will be calculated form the base landmarks provided, and then the rest of the landmarks are directly transformed to the acpc-aligned space rather than to estimate one by one.
-            </description>
-            <channel>input</channel>
-        </file>
-        <file fileExtensions=".fcsv">
-            <name>outputLandmarksPaired</name>
-            <label>Output Landmarks Paired</label>
-            <longflag>outputLandmarksPaired</longflag>
-            <default></default>
-            <description>
-              Paired use with inputLandmarks (in a format of .fcsv). It indicates the output acpc-aligned landmark list filename. The aligned landmarks are the landamrks that are defined in the file named inputLandmarks transformed by the acpc versor transform calculated by the constellation detector.
-            </description>
-            <channel>output</channel>
-        </file>
-        <file fileExtensions=".mrml">
+         <file fileExtensions=".mrml">
             <name>outputMRML</name>
             <label>Output MRML Filename</label>
             <longflag>outputMRML</longflag>
@@ -396,5 +376,34 @@
       <description>Explicitly specify the maximum number of threads to use.</description>
       <default>1</default>
     </integer>
+        <image>
+            <name>atlasVolume</name>
+            <longflag>atlasVolume</longflag>
+            <label>Atlas Volume Filename</label>
+            <description>Atlas volume image to be used for BRAINSFit registration</description>
+            <channel>input</channel>
+            <default></default>
+        </image>
+
+        <file fileExtensions=".fcsv">
+            <name>atlasLandmarks</name>
+            <label>Atlas Landmarks </label>
+            <default></default>
+            <longflag>atlasLandmarks</longflag>
+            <description>Atlas landmarks to be used for BRAINSFit registration initialization
+            </description>
+            <channel>input</channel>
+        </file>
+        
+	 <file fileExtensions=".fcsv">
+            <name>atlasLandmarkWeights</name>
+            <label>Atlas Landmarks Weights</label>
+            <default></default>
+            <longflag>atlasLandmarkWeights</longflag>
+            <description>Weights associated with atlas landmarks to be used for BRAINSFit registration initialization
+            </description>
+            <channel>input</channel>
+        </file>
+
         </parameters>
 </executable>

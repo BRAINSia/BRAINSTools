@@ -186,6 +186,9 @@ public:
   /** Get the output untransformed clipped volume */
   itkGetConstObjectMacro(OutputUntransformedClippedVolume, SImageType);
 
+  /** Get the clipping volume */
+  itkGetConstObjectMacro(ClippingFactorImage, SImageType);
+
   /** Get the Hough eye transform */
   itkGetModifiableObjectMacro(HoughEyeTransform, VersorTransformType);
 
@@ -321,6 +324,7 @@ protected:
   SImageType::Pointer m_OutputResampledImage;          // Output image w/
                                                        // interpolation
   SImageType::Pointer m_OutputUntransformedClippedVolume;
+  SImageType::Pointer m_ClippingFactorImage ;
 
   /** Advanced parameters */
   /** Manual Override */

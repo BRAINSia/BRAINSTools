@@ -27,9 +27,9 @@ int main( int argc, char *argv[] )
       && ( outputTransform.compare( "" ) == 0 )
       && ( outputLandmarksInACPCAlignedSpace.compare( "" ) == 0 )
       && ( outputLandmarksInInputSpace.compare( "" ) == 0 )
-      && ( outputUntransformedClippedVolume.compare( "" ) == 0 )
-      && ( ( inputLandmarksPaired.compare( "" ) == 0 ) ||
-           ( outputLandmarksPaired.compare( "" ) == 0 ) ) )
+      && ( outputUntransformedClippedVolume.compare( "" ) == 0 ) )
+      //      && ( ( inputLandmarksPaired.compare( "" ) == 0 ) ||
+      //   ( outputLandmarksPaired.compare( "" ) == 0 ) ) )
     {
     std::cout << "WARNING: None of the main output filename is specified!" << std::endl;
     std::cout << "Try to specify at least one of the following output filenames:" << std::endl;
@@ -87,6 +87,9 @@ int main( int argc, char *argv[] )
   BCD.SetInputLandmarksEMSP( inputLandmarksEMSP );
   BCD.SetLLSModel( llsModel );
   BCD.SetInputVolume( inputVolume );
+  BCD.SetAtlasVolume ( atlasVolume ) ;
+  BCD.SetAtlasLandmarks ( atlasLandmarks ) ;
+  BCD.SetAtlasLandmarkWeights ( atlasLandmarkWeights ) ;
   BCD.SetForceHoughEyeDetectorReportFailure( forceHoughEyeDetectorReportFailure );
   BCD.SetHoughEyeDetectorMode( houghEyeDetectorMode );
   BCD.SetResultsDir( resultsDir );
@@ -115,8 +118,8 @@ int main( int argc, char *argv[] )
   BCD.SetOutputTransform( outputTransform );
   BCD.SetOutputVolume( outputVolume );
   BCD.SetOutputResampledVolume( outputResampledVolume );
-  BCD.SetInputLandmarksPaired( inputLandmarksPaired );
-  BCD.SetOutputLandmarksPaired( outputLandmarksPaired );
+  //  BCD.SetInputLandmarksPaired( inputLandmarksPaired );
+  //  BCD.SetOutputLandmarksPaired( outputLandmarksPaired );
   BCD.SetOutputLandmarksInInputSpace( outputLandmarksInInputSpace );
   BCD.SetOutputLandmarksInACPCAlignedSpace( outputLandmarksInACPCAlignedSpace );
   BCD.SetOutputLandmarkWeights( outputLandmarkWeights );

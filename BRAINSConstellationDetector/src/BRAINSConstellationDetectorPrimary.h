@@ -19,12 +19,20 @@
 #include "itkImageFileWriter.h"
 #include "itkTransformFileWriter.h"
 #include "itkVersorRigid3DTransform.h"
+#include "itkTranslationTransform.h"
+
+#include "itkResampleInPlaceImageFilter.h"
+#include "itkMultiplyImageFilter.h"
 
 #include <cstdio>
 #include <iostream>
 #include <fstream>
 #include <cstring>
 #include <map>
+
+#include "itkLandmarkBasedTransformInitializer.h"
+#include "itkCastImageFilter.h"
+#include <BRAINSFitHelper.h>
 
 class BRAINSConstellationDetectorPrimary
 {
@@ -49,6 +57,7 @@ public:
   typedef itk::BRAINSConstellationDetector2<ImageType, ImageType> Constellation2Type;
   typedef itk::TransformFileWriter                                TransformWriterType;
   typedef itk::VersorRigid3DTransform<double>                     VersorTransformType;
+  typedef itk::TranslationTransform <double,3>                    TranslationTransformType ;
   std::string pathOut;
   std::string errorMsg;
 
@@ -132,6 +141,21 @@ public:
   void SetVerbose(bool verbose)
   {
     this->m_verbose = verbose;
+  }
+
+  void SetAtlasVolume ( std::string atlasVolume ) 
+  {
+    this->m_atlasVolume = atlasVolume ;
+  }
+
+  void SetAtlasLandmarks ( std::string atlasLandmarks ) 
+  {
+    this->m_atlasLandmarks = atlasLandmarks ;
+  }
+
+  void SetAtlasLandmarkWeights ( std::string atlasLandmarkWeights ) 
+  {
+    this->m_atlasLandmarkWeights = atlasLandmarkWeights ;
   }
 
   void SetInputTemplateModel(std::string inputTemplateModel)
@@ -305,6 +329,9 @@ private:
   std::string m_writeBranded2DImage;
   std::string m_backgroundFillValueString;
   std::string m_interpolationMode;
+  std::string m_atlasVolume ;
+  std::string m_atlasLandmarks ;
+  std::string m_atlasLandmarkWeights ;
 
   std::vector<int> m_rescaleIntensitiesOutputRange;   // default = [40,4000]
 

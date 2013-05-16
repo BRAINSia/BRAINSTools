@@ -15,22 +15,31 @@ from pyxnat import Interface
 
 # Directory root for finding current converted files
 PREDICT_BASE = '/paulsen/MRx'
+
 # Directory to hold test data
-DEST_BASE = '/scratch/kent/DWI_test'
+DEST_BASE = '/scratch/kent/DWI_test/TestResults'
+
 # User ID for contacting xnat instance
 HAWKEYEID = 'williamsnk'
+
 # URL for XNAT server
 XNATURL = 'https://www.predict-hd.net/xnat'
+
 # XNat cache directory
-CACHEDIR = '/scratch/kent/DWI_test/cache'
+CACHE_DIR = DEST_BASE + '/cache'
+
 # DWIconvert program path
-DWICONVERT = '/scratch/kent/BRAINSTools/build/bin/DWIConvert'
+DWICONVERT = '/scratch/kent/BRAINSTools/release/bin/DWIConvert'
+
 # Comparison program
-DWICOMPARE = '/scratch/kent/BRAINSTools/build/bin/DWISimpleCompare'
+DWICOMPARE = '/scratch/kent/BRAINSTools/release/bin/DWISimpleCompare'
+
+# cached list of all already-converted scans
+ALL_SCANS = '/scratch/kent/DWI_test/TestResults/AllScans.txt'
 
 #
 # caches the list of all NRRD files in the PREDICT base dir
-def write_nrrds_to_file(file_name='/scratch/kent/DWI_test/kent_nrrds.txt'):
+def write_nrrds_to_file(file_name):
     nrrds = glob.glob(PREDICT_BASE + '/*/*/*/ANONRAW/*.nrrd')
     with open(file_name, 'w') as fn:
         for nr in nrrds:
@@ -38,11 +47,12 @@ def write_nrrds_to_file(file_name='/scratch/kent/DWI_test/kent_nrrds.txt'):
 
 #
 # read in cached file list
-def get_all_nrrds_from_file(file_name='/scratch/kent/DWI_test/kent_nrrds.txt'):
+def get_all_nrrds_from_file(file_name):
     nrrds = []
     with open(file_name, 'rU') as fn:
         for f in fn:
             nrrds.append(f.rstrip())
+    print file_name, " size ", len(nrrds)
     return nrrds
 
 #
@@ -129,26 +139,41 @@ def remove_already_processed(nrrdList,processedFname):
     processed = get_all_nrrds_from_file(processedFname)
     # if any files have been processed
     if processed:
-        return filter(lambda x: x not in processed,nrrdList)
+        origsize = len(nrrdList)
+        processedsize = len(processed)
+        rval = filter(lambda x: x not in processed,nrrdList)
+        print processedFname
+        print"Original # of files ", origsize, \
+            " # processed ", processedsize, \
+            "# new list len ", len(rval)
+
     else:
-        return nrrdList
+        rval = nrrdList
+    return rval
 
 def main(XNAT, nrrds):
     # keep track of files that did not pass
     errFName = DEST_BASE + '/ErrorScans.txt'
     if os.path.isfile(errFName):
         nrrds = remove_already_processed(nrrds,errFName)
-        errFile = open(errFName,'a')
+        errFile = open(errFName,'a',0)
     else:
-        errFile = open(errFName,'w')
+        errFile = open(errFName,'w',0)
 
     # also track all files that did pass
     passFName = DEST_BASE + "/PassedScans.txt"
     if os.path.isfile(passFName):
-        nrrds = remove_already_processed(nrrds,errFName)
-        passFile = open(passFName,'a')
+        nrrds = remove_already_processed(nrrds,passFName)
+        passFile = open(passFName,'a',0)
     else:
-        passFile = open(passFName,'w')
+        passFile = open(passFName,'w',0)
+
+    failedConversionsFName = DEST_BASE + "/FailedConversions.txt"
+    if os.path.isfile(failedConversionsFName):
+        nrrds = remove_already_processed(nrrds,failedConversionsFName)
+        failedConversions = open(failedConversionsFName,"a",0)
+    else:
+        failedConversions = open(failedConversionsFName,"w",0)
 
 
     try:
@@ -158,8 +183,15 @@ def main(XNAT, nrrds):
             sn = get_series_number(nr)
             scans = get_scans(XNAT, pss)
             print 'Downloading DICOM for ', nr
-            download_scan(scans, DEST_BASE, str(sn))
-            remove_zip(DEST_BASE,sn)
+            try:
+                download_scan(scans, DEST_BASE, str(sn))
+                remove_zip(DEST_BASE,sn)
+            except KeyboardInterrupt:
+                print 'Keyboard Interrupt'
+                break
+            except:
+                print "Error downloading files for ", nr
+                continue
 
             dicomdir = DEST_BASE + '/' \
                 + pss[-1] \
@@ -169,7 +201,7 @@ def main(XNAT, nrrds):
                 + get_scan_type(nr) \
                 + '/resources/DICOM/files'
 
-            outvol = os.path.basename(nr)
+            outvol = DEST_BASE + '/' + os.path.basename(nr)
             convertcmd = [ DWICONVERT, '--inputDicomDirectory', \
                                dicomdir, '--outputVolume', outvol ]
 
@@ -179,19 +211,25 @@ def main(XNAT, nrrds):
 
             ds = dicom.read_file(firstDicom,stop_before_pixels=True)
             vendor = ds[0x0008,0x0070].value
+            model = ds[0x0008,0x1090].value
+            print "Scanner vendor ", vendor, " model ",model
 
-            if re.search("[Ss][Ii][Ee][Mm][Ee][Nn][Ss]", vendor) is None:
+            if re.search("SIEMENS", vendor.upper()) is None:
                 pass
-            else:
+            elif re.search("ALLEGRA",model.upper()) is None and \
+                    re.search("TRIOTIM",mode.upper()) is None:
                 convertcmd.append('--useBMatrixGradientDirections')
-            print 'Using B-Matrix for gradients'
+                print 'Using B-Matrix for gradients'
 
             print 'Converting ', dicomdir, ' to ', outvol
-
+            print "Command line",convertcmd
             try:
                 subprocess.check_output(convertcmd, stderr=subprocess.STDOUT, env = os.environ)
-            except subprocess.CalledProcessError:
+#                subprocess.call(convertcmd, stderr=subprocess.STDOUT, env = os.environ)
+            except subprocess.CalledProcessError as error:
                 print "can't convert ", dicomdir
+                print '\n', error.output
+                failedConversions.write(nr + '\n')
                 continue
 
             print 'Comparing ', nr, ' and ', outvol
@@ -216,22 +254,24 @@ def main(XNAT, nrrds):
             else:
                 print 'conversion of ',nr, ' does not match'
                 errFile.write(nr + '\n')
+    except KeyboardInterrupt:
+        print 'Keyboard Interrupt'
+        pass
     except:
         print ''
         print 'Error during processing'
     passFile.close()
     errFile.close()
-
+    failedConversions.close()
 
 
 if __name__ == '__main__':
     xnatUrl = 'https://www.predict-hd.net/xnat'
-    XNAT = Interface(server=xnatUrl, user='williamsnk',cachedir='/scratch/kent/DWI_test/cache')
+    XNAT = Interface(server=xnatUrl, user='williamsnk',cachedir=CACHE_DIR)
 
-    if not os.path.isfile('kent_nrrds.txt'):
-        write_nrrds_to_file()
+    if not os.path.isfile(ALL_SCANS):
+        write_nrrds_to_file(ALL_SCANS)
 
-    nrrds = get_all_nrrds_from_file()
+    nrrds = get_all_nrrds_from_file(ALL_SCANS)
     main(XNAT, nrrds)
-    print len(nrrds)
     pass

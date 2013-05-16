@@ -249,7 +249,17 @@ int main(int argc, char *argv[])
   DWIConverterFactory converterFactory(inputDicomDirectory,
                                        useBMatrixGradientDirections,
                                        smallGradientThreshold);
-  DWIConverter *converter = converterFactory.New();
+  DWIConverter *converter;
+  try
+    {
+    converter = converterFactory.New();
+    }
+  catch( itk::ExceptionObject &excp)
+    {
+    std::cerr << "Exception creating converter " << excp << std::endl;
+    return EXIT_FAILURE;
+    }
+
 
   // read Dicom directory
   try
@@ -258,6 +268,7 @@ int main(int argc, char *argv[])
     }
   catch( itk::ExceptionObject &excp)
     {
+    std::cerr << "Exception creating converter " << excp << std::endl;
     delete converter;
     return EXIT_FAILURE;
     }
@@ -280,6 +291,7 @@ int main(int argc, char *argv[])
     }
   catch( itk::ExceptionObject &excp)
     {
+    std::cerr << "Exception extracting gradient vectors " << excp << std::endl;
     delete converter;
     return EXIT_FAILURE;
     }
@@ -309,7 +321,7 @@ int main(int argc, char *argv[])
       catch( itk::ExceptionObject & excp )
         {
         std::cerr << "Exception thrown while writing the series to"
-                  << outputVolumeDataName << std::endl;
+                  << outputVolumeDataName << " " << excp << std::endl;
         std::cerr << excp << std::endl;
         delete converter;
         return EXIT_FAILURE;

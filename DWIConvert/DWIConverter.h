@@ -159,8 +159,17 @@ public:
           sliceLocationIndicator[k] = distance( sliceLocations.begin(), it );
           }
 
+        // sanity check on # of volumes versus # of dicom files
+        if(this->m_Headers.size() % sliceLocations.size() != 0)
+          {
+          itkGenericExceptionMacro(<< "Missing DICOM Slice files: Number of slice files ("
+                            << this->m_Headers.size() << ") not evenly divisible by"
+                            << " the number of slice locations ");
+          }
+
         this->m_SlicesPerVolume = sliceLocations.size();
         std::cout << "=================== this->m_SlicesPerVolume:" << this->m_SlicesPerVolume << std::endl;
+
 
         // if the this->m_SlicesPerVolume == 1, de-interleaving won't do
         // anything so there's no point in doing it.

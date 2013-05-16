@@ -16,7 +16,8 @@
 #define __EMSegmentationFilter_h
 
 #include "BRAINSABCUtilities.h"
-
+#include <map>
+#include <list>
 class AtlasDefinition;
 
 /**
@@ -50,12 +51,16 @@ public:
   typedef typename TInputImage::SizeType    InputImageSizeType;
   typedef typename TInputImage::SpacingType InputImageSpacingType;
 
+  typedef typename std::vector<InputImagePointer>         InputImageVector;
+  typedef typename std::map<std::string,InputImageVector> MapOfImagesByType;
+
   typedef typename ByteImageType::Pointer    ByteImagePointer;
   typedef typename ByteImageType::IndexType  ByteImageIndexType;
   typedef typename ByteImageType::OffsetType ByteImageOffsetType;
   typedef typename ByteImageType::PixelType  ByteImagePixelType;
   typedef typename ByteImageType::RegionType ByteImageRegionType;
   typedef typename ByteImageType::SizeType   ByteImageSizeType;
+  typedef std::vector<ByteImagePointer>      ByteImageVectorType;
 
   typedef itk::Image<short, itkGetStaticConstMacro(ImageDimension)> ShortImageType;
   typedef typename ShortImageType::Pointer                          ShortImagePointer;
@@ -73,6 +78,7 @@ public:
   typedef typename ProbabilityImageType::RegionType  ProbabilityImageRegionType;
   typedef typename ProbabilityImageType::SizeType    ProbabilityImageSizeType;
   typedef typename ProbabilityImageType::SpacingType ProbabilityImageSpacingType;
+  typedef std::vector<ProbabilityImagePointer>       ProbabilityImageVectorType;
 
   typedef vnl_vector<FloatingPrecision>         VectorType;
   typedef vnl_vector<unsigned int>              IntVectorType;
@@ -120,49 +126,49 @@ public:
 
   // Get and set the input volume image types.  i.e. T1 or T2 or PD
   void SetInputVolumeTypes(const std::vector<std::string> & newInputVolumeTypes)
-  {
-    this->m_InputVolumeTypes = newInputVolumeTypes;
-  }
+    {
+      this->m_InputVolumeTypes = newInputVolumeTypes;
+    }
 
   std::vector<std::string> GetInputVolumeTypes(void) const
-  {
-    return this->m_InputVolumeTypes;
-  }
+    {
+      return this->m_InputVolumeTypes;
+    }
 
-  void SetPriors(std::vector<ProbabilityImagePointer> probs);
+  void SetPriors(ProbabilityImageVectorType probs);
 
   void SetPriorWeights(VectorType w);
 
   IntVectorType GetPriorLabelCodeVector( void ) const
-  {
-    return m_PriorLabelCodeVector;
-  }
+    {
+      return m_PriorLabelCodeVector;
+    }
 
   void SetPriorLabelCodeVector(IntVectorType n);
 
   BoolVectorType GetPriorUseForBiasVector( void ) const
-  {
-    return m_PriorUseForBiasVector;
-  }
+    {
+      return m_PriorUseForBiasVector;
+    }
 
   void SetPriorUseForBiasVector(const BoolVectorType& n);
 
   BoolVectorType GetPriorIsForegroundPriorVector( void ) const
-  {
-    return m_PriorIsForegroundPriorVector;
-  }
+    {
+      return m_PriorIsForegroundPriorVector;
+    }
 
   void SetPriorIsForegroundPriorVector(const BoolVectorType& n);
 
   void SetPriorNames(const std::vector<std::string> & newPriorNames)
-  {
-    this->m_PriorNames = newPriorNames;
-  }
+    {
+      this->m_PriorNames = newPriorNames;
+    }
 
   std::vector<std::string> GetPriorNames(void) const
-  {
-    return this->m_PriorNames;
-  }
+    {
+      return this->m_PriorNames;
+    }
 
   ByteImagePointer GetOutput(void);
 
@@ -170,11 +176,11 @@ public:
 
   ByteImagePointer GetThresholdedOutput(void);
 
-  std::vector<ProbabilityImagePointer> GetPosteriors();
+  ProbabilityImageVectorType GetPosteriors();
 
-  std::vector<InputImagePointer> GetCorrected();
+  InputImageVector GetCorrected();
 
-  std::vector<InputImagePointer> GetRawCorrected();
+  InputImageVector GetRawCorrected();
 
   void Update();
 
@@ -202,18 +208,18 @@ public:
   itkSetMacro(AirIndex, LOOPITERTYPE);
 
   void SetWarpGrid(unsigned int gx, unsigned int gy, unsigned int gz)
-  {
-    m_WarpGrid[0] = gx;
-    m_WarpGrid[1] = gy;
-    m_WarpGrid[2] = gz;
-    this->Modified();
-  }
+    {
+      m_WarpGrid[0] = gx;
+      m_WarpGrid[1] = gy;
+      m_WarpGrid[2] = gz;
+      this->Modified();
+    }
 
   void SetTissueTypeThresholdMapsRange(const RangeDBType & newRangeDB)
-  {
-    this->m_TissueTypeThresholdMapsRange = newRangeDB;
-    this->Modified();
-  }
+    {
+      this->m_TissueTypeThresholdMapsRange = newRangeDB;
+      this->Modified();
+    }
 
 protected:
 
@@ -261,22 +267,45 @@ private:
 
   void InitializePosteriors(void);
 
-  std::vector<ProbabilityImagePointer> m_WarpedPriors;
-  std::vector<ProbabilityImagePointer> m_OriginalSpacePriors;
-  std::vector<ProbabilityImagePointer> m_Posteriors;
+  typename TProbabilityImage::Pointer
+  ComputeOnePosterior(const FloatingPrecision priorScale,
+                      const typename TProbabilityImage::Pointer prior,
+                      const vnl_matrix<FloatingPrecision> currCovariance,
+                      const vnl_vector<FloatingPrecision> currMeans,
+                      const std::vector<typename TInputImage::Pointer> & intensityImages);
+
+  std::vector<typename TProbabilityImage::Pointer>
+  ComputePosteriors(const std::vector<typename TProbabilityImage::Pointer> & Priors,
+                    const vnl_vector<FloatingPrecision> & PriorWeights,
+                    const std::vector<typename TInputImage::Pointer> & IntensityImages,
+                    std::vector<RegionStats> & ListOfClassStatistics);
+
+  std::vector<RegionStats> ComputeDistributions(const ByteImageVectorType &SubjectCandidateRegions,
+                                                const ProbabilityImageVectorType &probAllDistributions);
+
+  void BlendPosteriorsAndPriors(const double blendPosteriorPercentage,
+                                const ProbabilityImageVectorType & ProbList1,
+                                const ProbabilityImageVectorType & ProbList2,
+                                ProbabilityImageVectorType & ReturnBlendedProbList);
+
+  void CheckLoopAgainstFilterOutput(ByteImagePointer &loopImg, ByteImagePointer & filterImg);
+
+  ProbabilityImageVectorType m_WarpedPriors;
+  ProbabilityImageVectorType m_OriginalSpacePriors;
+  ProbabilityImageVectorType m_Posteriors;
 
   std::string m_AtlasTransformType;
 
   // Variable set if the inputs are modified
-  std::vector<InputImagePointer> m_InputImages;
-  std::vector<InputImagePointer> m_RawInputImages;
-  std::vector<InputImagePointer> m_CorrectedImages;
-  std::vector<InputImagePointer> m_RawCorrectedImages;
+  InputImageVector               m_InputImages;
+  InputImageVector               m_RawInputImages;
+  InputImageVector               m_CorrectedImages;
+  InputImageVector               m_RawCorrectedImages;
   std::vector<std::string>       m_InputVolumeTypes;
 
   ByteImagePointer               m_TemplateBrainMask;
-  std::vector<InputImagePointer> m_OriginalAtlasImages;
-  std::vector<InputImagePointer> m_WarpedAtlasImages;
+  InputImageVector m_OriginalAtlasImages;
+  InputImageVector m_WarpedAtlasImages;
 
   // final output
   ByteImagePointer m_DirtyLabels;

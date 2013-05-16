@@ -117,6 +117,7 @@ CombinedComputeDistributions( const std::vector<typename ByteImageType::Pointer>
       }
     }
 
+    // IPEK compute covariance
   // Compute the covariances
   std::vector<MatrixType> oldCovariances(ListOfClassStatistics.size() );
   if( (LOOPITERTYPE)oldCovariances.size() != numClasses )

@@ -119,21 +119,30 @@ int DoIt( int argc, char * argv[], PixelType )
         double gradientDot = dot_product(firstGradientVector, secondGradientVector);
 
         double magnitudesProduct = secondGradientVector.magnitude() * firstGradientVector.magnitude();
-        double sendToArcCos = gradientDot / magnitudesProduct;
-
-        sendToArcCos = ( sendToArcCos > 1 ) ? 1 : sendToArcCos;
-        // Avoid numerical precision problems
-        sendToArcCos = ( sendToArcCos < -1 ) ? -1 : sendToArcCos;
-        // Avoid numerical precision problems
-
-        const double gradientAngle = vcl_abs( vcl_acos(sendToArcCos) * 180.0 * vnl_math::one_over_pi);
-
-        double gradientMinAngle = vcl_min( gradientAngle, vcl_abs(180.0 - gradientAngle) );
-        if( gradientMinAngle > gradientToleranceForSameness )
+        if(vnl_math_abs(magnitudesProduct) <= vnl_math::eps)
           {
           std::cout << "GradientValueStrings don't match! " << firstGradientValueString
                     << " != " << secondGradientValueString << std::endl;
           failure = true;
+          }
+        else
+          {
+          double sendToArcCos = gradientDot / magnitudesProduct;
+
+          sendToArcCos = ( sendToArcCos > 1 ) ? 1 : sendToArcCos;
+          // Avoid numerical precision problems
+          sendToArcCos = ( sendToArcCos < -1 ) ? -1 : sendToArcCos;
+          // Avoid numerical precision problems
+
+          const double gradientAngle = vcl_abs( vcl_acos(sendToArcCos) * 180.0 * vnl_math::one_over_pi);
+
+          double gradientMinAngle = vcl_min( gradientAngle, vcl_abs(180.0 - gradientAngle) );
+          if( gradientMinAngle > gradientToleranceForSameness )
+            {
+            std::cout << "GradientValueStrings don't match! " << firstGradientValueString
+                      << " != " << secondGradientValueString << std::endl;
+            failure = true;
+            }
           }
         }
       }

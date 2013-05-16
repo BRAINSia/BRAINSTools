@@ -19,7 +19,6 @@ endforeach()
 add_library(DWIConvertSupportLib STATIC ${DWIConvertSupportLib_SRCS})
 target_link_libraries(DWIConvertSupportLib ${ITK_LIBRARIES} )
 
-set(MODULE_NAME DWIConvert)
 #-----------------------------------------------------------------------------
 # SEMMacroBuildCLI(
 #     NAME ${MODULE_NAME}
@@ -29,6 +28,8 @@ set(MODULE_NAME DWIConvert)
 
 # several files needed down in ExtenededTesting
 StandardBRAINSBuildMacro(NAME DWIConvert EXECUTABLE_ONLY
+  TARGET_LIBRARIES BRAINSCommonLib DWIConvertSupportLib)
+StandardBRAINSBuildMacro(NAME DWIConvertOld EXECUTABLE_ONLY
   TARGET_LIBRARIES BRAINSCommonLib DWIConvertSupportLib)
 
 if(BUILD_TESTING AND NOT Slicer_BUILD_BRAINSTOOLS)

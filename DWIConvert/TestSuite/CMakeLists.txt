@@ -384,7 +384,6 @@ ExternalData_Add_Test( ${PROJECT_NAME}FetchData NAME DWIConvertSiemensTrio_Syngo
   -D TEST_BASELINE=DATA{${DWIBASELINE_DIR}/SiemensTrio-Syngo2004A-1.nrrd}
   -D TEST_INPUT=${DWIConvert_BINARY_DIR}/SiemensTrio-Syngo2004A-1
   -D TEST_TEMP_OUTPUT=${TstOutput}/SiemensTrio-Syngo2004A-1.nrrd
-  -D TEST_PROGRAM_ARGS=--useBMatrixGradientDirections
   -P ${CMAKE_CURRENT_LIST_DIR}/DicomToNrrdDWICompareTest.cmake
   )
 AddDataDependency(DWIConvertSiemensTrio_Syngo2004A_1Test)
@@ -395,7 +394,6 @@ ExternalData_Add_Test( ${PROJECT_NAME}FetchData NAME DWIConvertSiemensTrio_Syngo
   -D TEST_BASELINE=DATA{${DWIBASELINE_DIR}/SiemensTrio-Syngo2004A-2.nrrd}
   -D TEST_INPUT=${DWIConvert_BINARY_DIR}/SiemensTrio-Syngo2004A-2
   -D TEST_TEMP_OUTPUT=${TstOutput}/SiemensTrio-Syngo2004A-2.nrrd
-  -D TEST_PROGRAM_ARGS=--useBMatrixGradientDirections
   -P ${CMAKE_CURRENT_LIST_DIR}/DicomToNrrdDWICompareTest.cmake
   )
 AddDataDependency(DWIConvertSiemensTrio_Syngo2004A_2Test)

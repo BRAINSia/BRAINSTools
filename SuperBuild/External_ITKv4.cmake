@@ -122,6 +122,8 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
       -DITK_WRAPPING:BOOL=OFF #${BUILD_SHARED_LIBS} ## HACK:  QUICK CHANGE
       -DITK_USE_SYSTEM_DCMTK:BOOL=${${PROJECT_NAME}_BUILD_DICOM_SUPPORT}
 
+      -DFetch_MGHIO:BOOL=ON  # Allow building of the MGHIO classes
+
       -DITK_USE_SYSTEM_TIFF:BOOL=ON
       -DTIFF_LIBRARY:FILEPATH=${TIFF_LIBRARY}
       -DTIFF_INCLUDE_DIR:PATH=${TIFF_INCLUDE_DIR}
@@ -139,9 +141,11 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
       ${${proj}_FFTWD_ARGS}
     )
   ### --- End Project specific additions
-  set(${proj}_REPOSITORY ${git_protocol}://itk.org/ITK.git)
-  set(${proj}_GIT_TAG 5b263b127912d475268cb314d7783435dd82bd4f)
+#set(${proj}_REPOSITORY ${git_protocol}://itk.org/ITK.git)
+#set(${proj}_GIT_TAG 2dcef7731b02af8a410e80347ae0466c4769f1d0)
 
+  set(${proj}_REPOSITORY ${git_protocol}://github.com/hjmjohnson/ITK.git)
+  set(${proj}_GIT_TAG AddMGHImageIO)
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${${proj}_REPOSITORY}
     GIT_TAG ${${proj}_GIT_TAG}

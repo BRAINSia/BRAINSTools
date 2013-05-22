@@ -22,9 +22,9 @@ package_check('scipy', '0.7', 'tutorial1')
 package_check('networkx', '1.0', 'tutorial1')
 package_check('IPython', '0.10', 'tutorial1')
 
+import os
 ## Check to ensure that SimpleITK can be found
 #import SimpleITK as sitk
-import os
 
 SLICER_REFERENCE_DIR='/scratch/DWI_DATA'
 SLICER_RESULTS_DIR='/scratch/DWI_DATA/SlicerResults'
@@ -33,7 +33,7 @@ ExperimentBaseDirectoryCache = SLICER_RESULTS_DIR
 #\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 #####################################################################################
 #     Prepend the shell environment search paths
-PROGRAM_PATHS = '/Users/johnsonhj/src/BT-build/bin'
+PROGRAM_PATHS = '/Users/johnsonhj/src/BT-build/bin:/usr/local/bin'
 PROGRAM_PATHS = PROGRAM_PATHS.split(':')
 PROGRAM_PATHS.extend(os.environ['PATH'].split(':'))
 os.environ['PATH'] = ':'.join(PROGRAM_PATHS)
@@ -132,7 +132,7 @@ DWI_AutoProcess.connect(DWI_DG,'FSWMParc',ResampleWMParc2ACPC,'inputVolume')
 DWI_AutoProcess.connect(DWI_DG,'ACPCT1',ResampleWMParc2ACPC,'referenceVolume')
 
 
-#DWI_AutoProcess.write_graph()
+DWI_AutoProcess.write_graph()
 #DWI_AutoProcess._write_report_info()
 DWI_AutoProcess.run()
 

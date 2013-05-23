@@ -19,7 +19,6 @@
 #include "itkImageFileWriter.h"
 #include "itkTransformFileWriter.h"
 #include "itkVersorRigid3DTransform.h"
-#include "itkTranslationTransform.h"
 
 #include "itkResampleInPlaceImageFilter.h"
 #include "itkMultiplyImageFilter.h"
@@ -57,7 +56,6 @@ public:
   typedef itk::BRAINSConstellationDetector2<ImageType, ImageType> Constellation2Type;
   typedef itk::TransformFileWriter                                TransformWriterType;
   typedef itk::VersorRigid3DTransform<double>                     VersorTransformType;
-  typedef itk::TranslationTransform <double,3>                    TranslationTransformType ;
   std::string pathOut;
   std::string errorMsg;
 

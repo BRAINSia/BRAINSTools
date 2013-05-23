@@ -537,9 +537,9 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetecto
     --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.nii.gz
     --outputLandmarksInACPCAlignedSpace ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_ACPCSpace_aligned.fcsv
     --outputLandmarksInInputSpace ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_InputSpace_aligned.fcsv
-    --outputLandmarkWeights ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.wts
-    --inputLandmarksPaired DATA{${TestData_DIR}/BRAINSConstellationDetectorTest_outputLandmarksInInputSpace_standard.fcsv}
-    --outputLandmarksPaired ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_Paired_aligned.fcsv
+    #--outputLandmarkWeights ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.wts
+    #--inputLandmarksPaired DATA{${TestData_DIR}/BRAINSConstellationDetectorTest_outputLandmarksInInputSpace_standard.fcsv}
+    #--outputLandmarksPaired ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_Paired_aligned.fcsv
     --outputVerificationScript ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_aligned.sh
     )
   set_tests_properties(${BRAINSConstellationDetectorTestName} PROPERTIES TIMEOUT 9876)
@@ -562,23 +562,23 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetecto
   set_property(TEST ${BRAINSConstellationDetectorTestName} APPEND PROPERTY
     DEPENDS BRAINSConstellationDetectorTestForLandmarkCompare)
 
-  set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_outputLandmarkWeights)
-  ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
-    COMMAND ${LAUNCH_EXE} $<TARGET_FILE:LandmarksCompare>
-    --inputLandmarkFile1 ${CMAKE_CURRENT_BINARY_DIR}/BRAINSConstellationDetectorTestForLandmarkCompare_aligned.wts
-    --inputLandmarkFile2 DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.wts} # Baseline file
-    )
-  set_property(TEST ${BRAINSConstellationDetectorTestName} APPEND PROPERTY
-    DEPENDS BRAINSConstellationDetectorTestForLandmarkCompare)
+  #set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_outputLandmarkWeights)
+  #ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
+  #  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:LandmarksCompare>
+  #  --inputLandmarkFile1 ${CMAKE_CURRENT_BINARY_DIR}/BRAINSConstellationDetectorTestForLandmarkCompare_aligned.wts
+  #  --inputLandmarkFile2 DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.wts} # Baseline file
+  #  )
+  #set_property(TEST ${BRAINSConstellationDetectorTestName} APPEND PROPERTY
+  #  DEPENDS BRAINSConstellationDetectorTestForLandmarkCompare)
 
-  set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_LandmarksPaired)
-  ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
-    COMMAND ${LAUNCH_EXE} $<TARGET_FILE:LandmarksCompare>
-    --inputLandmarkFile1 ${CMAKE_CURRENT_BINARY_DIR}/BRAINSConstellationDetectorTestForLandmarkCompare_Paired_aligned.fcsv
-    --inputLandmarkFile2 DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.fcsv} # Baseline file
-    )
-  set_property(TEST ${BRAINSConstellationDetectorTestName} APPEND PROPERTY
-    DEPENDS BRAINSConstellationDetectorTestForLandmarkCompare)
+  #set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_LandmarksPaired)
+  #ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
+  #  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:LandmarksCompare>
+  #  --inputLandmarkFile1 ${CMAKE_CURRENT_BINARY_DIR}/BRAINSConstellationDetectorTestForLandmarkCompare_Paired_aligned.fcsv
+  #  --inputLandmarkFile2 DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.fcsv} # Baseline file
+  #  )
+  #set_property(TEST ${BRAINSConstellationDetectorTestName} APPEND PROPERTY
+#    DEPENDS BRAINSConstellationDetectorTestForLandmarkCompare)
 if( ${BRAINSTools_MAX_TEST_LEVEL} GREATER 8) # This should be restored after fixing.
 ## HACK:  Just silencing failing tests until they can be proper addressed
   set(BRAINSConstellationModelerTestName BRAINSConstellationModelerTest_T1)
@@ -593,24 +593,24 @@ if( ${BRAINSTools_MAX_TEST_LEVEL} GREATER 8) # This should be restored after fix
 endif()
 
 if( ${BRAINSTools_MAX_TEST_LEVEL} GREATER 5) ## This is a very long running test that is too intensive for everyday testing
-  set(BRAINSConstellationDetectorTestName landmarksConstellationWeightsTest)
-  ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
-    COMMAND ${LAUNCH_EXE} $<TARGET_FILE:landmarksConstellationWeightsTestDriver>
-    ${BRAINSConstellationDetectorTestName}
-    --inputTrainingList ${CMAKE_CURRENT_BINARY_DIR}/obliq_setup.txt
-    --inputTemplateModel DATA{${TestData_DIR}/T1-2ndVersion.mdl}
-    --LLSModel DATA{${TestData_DIR}/Transforms_h5/LLSModel-2ndVersion.${XFRM_EXT}}
-    --outputWeightsList ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}.wts #output of the program
-    )
-  set_tests_properties(${BRAINSConstellationDetectorTestName} PROPERTIES TIMEOUT 15000)
+  #set(BRAINSConstellationDetectorTestName landmarksConstellationWeightsTest)
+  #ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
+  #  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:landmarksConstellationWeightsTestDriver>
+  #  ${BRAINSConstellationDetectorTestName}
+  #  --inputTrainingList ${CMAKE_CURRENT_BINARY_DIR}/obliq_setup.txt
+  #  --inputTemplateModel DATA{${TestData_DIR}/T1-2ndVersion.mdl}
+  #  --LLSModel DATA{${TestData_DIR}/Transforms_h5/LLSModel-2ndVersion.${XFRM_EXT}}
+  #  --outputWeightsList ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}.wts #output of the program
+  #  )
+  #set_tests_properties(${BRAINSConstellationDetectorTestName} PROPERTIES TIMEOUT 15000)
 
-  set(BRAINSConstellationDetectorTestName landmarksWeightsCompareTest)
-  ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
-    COMMAND ${LAUNCH_EXE} $<TARGET_FILE:LandmarksCompare>
-    --inputLandmarkFile1 ${CMAKE_CURRENT_BINARY_DIR}/landmarksConstellationWeightsTest.wts # output of the landmarksConstellationWeightsTest
-    --inputLandmarkFile2 DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.wts} # Baseline file
-    )
-  set_property(TEST ${BRAINSConstellationDetectorTestName} APPEND PROPERTY DEPENDS landmarksConstellationWeightsTest)
+  #set(BRAINSConstellationDetectorTestName landmarksWeightsCompareTest)
+  #ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
+  #  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:LandmarksCompare>
+  #  --inputLandmarkFile1 ${CMAKE_CURRENT_BINARY_DIR}/landmarksConstellationWeightsTest.wts # output of the landmarksConstellationWeightsTest
+  #  --inputLandmarkFile2 DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.wts} # Baseline file
+  #  )
+  #set_property(TEST ${BRAINSConstellationDetectorTestName} APPEND PROPERTY DEPENDS landmarksConstellationWeightsTest)
 
 endif()
 

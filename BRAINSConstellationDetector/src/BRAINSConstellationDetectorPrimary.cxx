@@ -249,6 +249,9 @@ bool BRAINSConstellationDetectorPrimary::Compute( void )
   constellation2->SetOriginalInputImage( reader->GetOutput() );
   constellation2->Update();
 
+  VersorTransformType::Pointer acpcTransformFromConstellation2 = VersorTransformType::New();
+  acpcTransformFromConstellation2->SetParameters( constellation2->GetVersorTransform()->GetParameters() );
+
   // Get the final transform
   VersorTransformType::Pointer finalTransform = VersorTransformType::New();
   VersorTransformType::Pointer invFinalTransform = VersorTransformType::New();
@@ -407,21 +410,22 @@ bool BRAINSConstellationDetectorPrimary::Compute( void )
 	  //itk::WriteTransformToDisk(versorRigid.GetPointer(),"/Users/ioguz/forAli/brainsFitTransformRigid.txt" );
 	  // as a final step, translate the AC back to the origin.
 
+	  LandmarkConstIterator acIter = acpcLandmarks.find( "AC" );
+	  VersorRigidTransformType::OutputPointType acOrigPoint = acpcTransformFromConstellation2->TransformPoint ( acIter->second ) ;
+
 	  finalTransform->SetParameters( versorRigid->GetParameters() );
 	  finalTransform->GetInverse ( invFinalTransform );
 
-	  TranslationTransformType::Pointer AC2OriginTranslation = TranslationTransformType::New();
-	  TranslationTransformType::OutputVectorType translation;
-	  LandmarkConstIterator acIter = acpcLandmarks.find( "AC" );
-	  TranslationTransformType::OutputPointType acPoint = invFinalTransform->TransformPoint ( acIter->second ) ;
-	  translation[0] = -acPoint[0] ;
-	  translation[1] = -acPoint[1] ;
-	  translation[2] = -acPoint[2] ;
-	  AC2OriginTranslation->Translate ( translation ) ;
-	  //VersorRigidTransformType::Pointer translateVersor = itk::ComputeRigidTransformFromGeneric ( AC2OriginTranslation.GetPointer() ) ;
-	  //versorRigid->Compose( translateVersor, true ) ;
-	  finalTransform->SetParameters( versorRigid->GetParameters() );
-	  finalTransform->GetInverse ( invFinalTransform );
+	  VersorRigidTransformType::OutputPointType acPoint = invFinalTransform->TransformPoint ( acOrigPoint ) ;
+	  VersorRigidTransformType::OffsetType translation ;
+	  translation[0] = -acPoint[0] ; translation[1] = -acPoint[1] ; translation[2] = -acPoint[2] ;
+	  //std::cout << "AC-BCDspace " << acIter->second[0] << " " << acIter->second[1] << " " << acIter->second[2] << std::endl ;
+	  //std::cout << "ACOrig " << acOrigPoint[0] << " " << acOrigPoint[1] << " " << acOrigPoint[2] << std::endl ;
+	  //std::cout << "AC " << acPoint[0] << " " << acPoint[1] << " " << acPoint[2] << std::endl ;
+	  invFinalTransform->Translate( translation, true ) ;
+	  invFinalTransform->GetInverse ( finalTransform );
+	  VersorRigidTransformType::OutputPointType acFinalPoint =  invFinalTransform->TransformPoint ( acOrigPoint ) ;
+	  //std::cout << "AC Final " << acFinalPoint[0] << " " << acFinalPoint[1] << " " << acFinalPoint[2] << std::endl ;
         }
       else 
 	{
@@ -429,22 +433,25 @@ bool BRAINSConstellationDetectorPrimary::Compute( void )
 	}
     } 
 
-
   // Landmark weights. All of them equal 1 wright now, but they should be calculated later
   LandmarksWeightMapType LandmarksWeightMap;
   double                 weights = 1;
 
   // Save landmarks in input/output or original/aligned space
-  VersorTransformType::Pointer acpcTransformFromConstellation2 = VersorTransformType::New();
-  acpcTransformFromConstellation2->SetParameters( constellation2->GetVersorTransform()->GetParameters() );
-
   LandmarksMapType::const_iterator lit = constellation2->GetAlignedPoints().begin();
   for( ; lit != constellation2->GetAlignedPoints().end(); ++lit )
     {
       VersorTransformType::OutputPointType transformedPoint = acpcTransformFromConstellation2->TransformPoint( lit->second );
-      this->m_outputLandmarksInACPCAlignedSpaceMap[lit->first] = invFinalTransform->TransformPoint ( transformedPoint ) ;
-    // not final transform any more - rather, this is just the original acpc transform XXX
-    this->m_outputLandmarksInInputSpaceMap[lit->first] = transformedPoint ;
+      this->m_outputLandmarksInInputSpaceMap[lit->first] = transformedPoint ;
+      if ( this->m_atlasVolume.empty() )
+	{
+	  this->m_outputLandmarksInACPCAlignedSpaceMap[lit->first] = lit->second ;
+	}
+      else
+	{
+	  // not final transform any more - rather, this is just the original acpc transform XXX
+	  this->m_outputLandmarksInACPCAlignedSpaceMap[lit->first] = invFinalTransform->TransformPoint ( transformedPoint ) ;
+	}
     // or something like constellation2->GetOriginalPoints()[lit->first];
 
     LandmarksWeightMap[lit->first] = weights;
@@ -473,6 +480,7 @@ bool BRAINSConstellationDetectorPrimary::Compute( void )
   std::string preferedOutputReferenceImage = "";
   if( this->m_outputVolume.compare( "" ) != 0 )
     {
+      // TODO: don't know what this is
     preferedOutputReferenceImage = this->m_outputVolume;
     // This will be overwritten if outputResampledVolume is set
     // Write the aligned image to a file
@@ -497,14 +505,21 @@ bool BRAINSConstellationDetectorPrimary::Compute( void )
     preferedOutputReferenceImage = this->m_outputResampledVolume; 
     // This will be overwritten if outputResampledVolume is set
     // Write the aligned image to a file
-    typedef itk::ResampleInPlaceImageFilter<ImageType, ImageType> ResampleFilterType;
-    ResampleFilterType::Pointer resampleFilter = ResampleFilterType::New();
-    resampleFilter->SetInputImage( reader->GetOutput() );
-    resampleFilter->SetRigidTransform( finalTransform );
-    resampleFilter->Update();
+
     WriterType::Pointer writer = WriterType::New();
     writer->SetFileName( this->m_outputResampledVolume );
-    writer->SetInput( resampleFilter->GetOutput() );
+
+    short BackgroundFillValue;
+    if( this->m_backgroundFillValueString == std::string("BIGNEG") )
+      {
+	BackgroundFillValue = -32768;
+      }
+    else
+      {
+	BackgroundFillValue = atoi( this->m_backgroundFillValueString.c_str() );
+      }
+    // the input image may have rescaled intensities, etc
+    writer->SetInput( TransformResample<SImageType, SImageType>( constellation2->GetImageToBeResampled(), MakeIsoTropicReferenceImage(), BackgroundFillValue, GetInterpolatorFromString<SImageType>(this->m_interpolationMode), finalTransform.GetPointer() ) ) ;
     writer->SetUseCompression( true );
     try
       {
@@ -590,13 +605,15 @@ bool BRAINSConstellationDetectorPrimary::Compute( void )
     WriterType::Pointer writer = WriterType::New();
     writer->SetFileName( this->m_outputUntransformedClippedVolume );
 
-    typedef itk::MultiplyImageFilter<ImageType, ImageType> MultiplyFilterType;  
-    MultiplyFilterType::Pointer MultiplyFilter = MultiplyFilterType::New();
-    MultiplyFilter->SetInput1( reader->GetOutput() );
-    MultiplyFilter->SetInput2( constellation2->GetClippingFactorImage() );
-    MultiplyFilter->Update();
+    // i dont know why i thought this needed to be modified.
+    // typedef itk::MultiplyImageFilter<ImageType, ImageType> MultiplyFilterType;
+    // MultiplyFilterType::Pointer MultiplyFilter = MultiplyFilterType::New();
+    // MultiplyFilter->SetInput1( reader->GetOutput() );
+    // MultiplyFilter->SetInput2( constellation2->GetClippingFactorImage() );
+    // MultiplyFilter->Update();
 
-    writer->SetInput( MultiplyFilter->GetOutput() ) ;
+    // writer->SetInput( MultiplyFilter->GetOutput() ) ;
+    writer->SetInput ( constellation2->GetOutputUntransformedClippedVolume () ) ;
     writer->SetUseCompression( true );
     try
       {

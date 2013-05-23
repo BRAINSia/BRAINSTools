@@ -122,7 +122,7 @@ int main( int argc, char *argv[] )
   //  BCD.SetOutputLandmarksPaired( outputLandmarksPaired );
   BCD.SetOutputLandmarksInInputSpace( outputLandmarksInInputSpace );
   BCD.SetOutputLandmarksInACPCAlignedSpace( outputLandmarksInACPCAlignedSpace );
-  BCD.SetOutputLandmarkWeights( outputLandmarkWeights );
+  //BCD.SetOutputLandmarkWeights( outputLandmarkWeights );
   BCD.SetOutputMRML( outputMRML );
   BCD.SetOutputVerificationScript( outputVerificationScript );
   BCD.SetOutputUntransformedClippedVolume( outputUntransformedClippedVolume );

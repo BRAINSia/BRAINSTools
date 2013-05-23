@@ -389,6 +389,7 @@ BRAINSConstellationDetector2<TInputImage, TOutputImage>
       {
       image = myDetector.GetOriginalInput();   // image -> myDetector(modification May happen) -> image
 
+      this->m_ImageToBeResampled = image ;
         {
         // const SImageType * constImage( this->m_OriginalInputImage.GetPointer() );
         const SImageType * constImage( image.GetPointer() );

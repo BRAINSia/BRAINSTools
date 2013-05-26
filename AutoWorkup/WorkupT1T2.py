@@ -747,6 +747,7 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
                     AtlasToSubjectantsRegistration[sessionid].inputs.use_histogram_matching = [True, True]
                     AtlasToSubjectantsRegistration[sessionid].inputs.shrink_factors = [[4, 2, 1], [5, 4, 2, 1]]
                     AtlasToSubjectantsRegistration[sessionid].inputs.smoothing_sigmas = [[4, 2, 0], [5, 4, 2, 0]]
+                    AtlasToSubjectantsRegistration[sessionid].inputs.sigma_units = ["vox","vox"]
                     AtlasToSubjectantsRegistration[sessionid].inputs.use_estimate_learning_rate_once = [False, False]
                     AtlasToSubjectantsRegistration[sessionid].inputs.write_composite_transform = True
                     AtlasToSubjectantsRegistration[sessionid].inputs.collapse_output_transforms = True

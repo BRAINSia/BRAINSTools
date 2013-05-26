@@ -62,6 +62,7 @@ def CreateANTSRegistrationWorkflow(WFname, CLUSTER_QUEUE, CLUSTER_QUEUE_LONG, Nu
     ComputeAtlasToSubjectTransform.inputs.number_of_iterations = [250, 100, 20]
     ComputeAtlasToSubjectTransform.inputs.convergence_threshold = 1e-7
     ComputeAtlasToSubjectTransform.inputs.smoothing_sigmas = [0, 0, 0]
+    ComputeAtlasToSubjectTransform.inputs.sigma_units = ["vox"]
     ComputeAtlasToSubjectTransform.inputs.shrink_factors = [3, 2, 1]
     ComputeAtlasToSubjectTransform.inputs.use_estimate_learning_rate_once = True
     ComputeAtlasToSubjectTransform.inputs.use_histogram_matching = True

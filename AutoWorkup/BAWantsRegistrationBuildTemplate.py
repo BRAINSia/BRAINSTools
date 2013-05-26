@@ -210,6 +210,7 @@ def BAWantsRegistrationTemplateBuildSingleIterationWF(iterationPhasePrefix=''):
     BeginANTS.inputs.use_histogram_matching = [True, True, True, True]
     BeginANTS.inputs.number_of_iterations = [[2000, 2000], [2000, 2000], [1000, 1000, 100], [10000, 500, 500, 200]]
     BeginANTS.inputs.smoothing_sigmas = [[4, 2], [5, 2], [4, 2, 1], [5, 4, 2, 0]]
+    BeginANTS.inputs.sigma_units = ["vox","vox","vox","vox"]
     BeginANTS.inputs.shrink_factors = [[4, 2], [5, 2], [4, 2, 1], [5, 4, 2, 1]]
     BeginANTS.inputs.use_estimate_learning_rate_once = [False, False, False, False]
     BeginANTS.inputs.write_composite_transform = True

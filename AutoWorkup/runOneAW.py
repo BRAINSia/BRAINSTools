@@ -64,7 +64,7 @@ class runOneAW():
 # with continuations in the style of RFC 822 (see section 3.1.1)
 #
 ### How to run an experiment:
-#  python ${CHANGEME_PATH_TO_BRAINSSTANDALONE_SOURCE}/AutoWorkup/baw_exp.py \
+#  python ${CHANGEME_PATH_TO_BRAINSTOOLS_SOURCE}/AutoWorkup/baw_exp.py \
 #               -ExperimentConfig ${1} -pe ${2} -wfrun ${3} -subject ${4}
 #          ${1} -- This file
 #          ${2} -- One of the defined environments from this file
@@ -168,9 +168,9 @@ if __name__ == "__main__":
     group.add_argument('-experimentOutputDir', action="store", dest='experimentOutputDir', required=True,
                        help='The directory for the experiment output')
     group.add_argument('-brainsToolsScriptsDir', action="store", dest='brainsToolsScriptsDir', required=True,
-                       help='The directory containing scripts for BRAINSSTANDALONE')
+                       help='The directory containing scripts for BRAINSTOOLS')
     group.add_argument('-brainsToolsBuildDir', action="store", dest='brainsToolsBuildDir', required=True,
-                       help='The build directory for BRAINSSTANDALONE ')
+                       help='The build directory for BRAINSTOOLS ')
     parser.add_argument('--version', action='version', version='%(prog)s 1.0')
     # parser.add_argument('-v', action='store_false', dest='verbose', default=True,
     #                    help='If not present, prints the locations')

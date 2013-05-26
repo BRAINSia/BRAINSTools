@@ -50,7 +50,7 @@ CLUSTER_QUEUE = '-q OSX'
 
 # Platform specific information
 #     Prepend the python search paths
-PYTHON_AUX_PATHS = '/raid0/homes/johnsonhj/src/BRAINSStandAlone/AutoWorkup:/raid0/homes/johnsonhj/src/BSA-clang31/SimpleITK-build/XXXWrapping/:/raid0/homes/johnsonhj/src/BSA-clang31/NIPYPE'
+PYTHON_AUX_PATHS = '/raid0/homes/johnsonhj/src/BRAINSTools/AutoWorkup:/raid0/homes/johnsonhj/src/BSA-clang31/SimpleITK-build/XXXWrapping/:/raid0/homes/johnsonhj/src/BSA-clang31/NIPYPE'
 PYTHON_AUX_PATHS = PYTHON_AUX_PATHS.split(':')
 PYTHON_AUX_PATHS.extend(sys.path)
 sys.path = PYTHON_AUX_PATHS

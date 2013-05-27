@@ -22,16 +22,15 @@
 
 #include "itkResampleInPlaceImageFilter.h"
 #include "itkMultiplyImageFilter.h"
+#include "itkLandmarkBasedTransformInitializer.h"
+#include "itkCastImageFilter.h"
+#include <BRAINSFitHelper.h>
 
 #include <cstdio>
 #include <iostream>
 #include <fstream>
 #include <cstring>
 #include <map>
-
-#include "itkLandmarkBasedTransformInitializer.h"
-#include "itkCastImageFilter.h"
-#include <BRAINSFitHelper.h>
 
 class BRAINSConstellationDetectorPrimary
 {
@@ -141,19 +140,19 @@ public:
     this->m_verbose = verbose;
   }
 
-  void SetAtlasVolume ( std::string atlasVolume ) 
+  void SetAtlasVolume( const std::string & atlasVolume )
   {
-    this->m_atlasVolume = atlasVolume ;
+    this->m_atlasVolume = atlasVolume;
   }
 
-  void SetAtlasLandmarks ( std::string atlasLandmarks ) 
+  void SetAtlasLandmarks ( const std::string & atlasLandmarks )
   {
-    this->m_atlasLandmarks = atlasLandmarks ;
+    this->m_atlasLandmarks = atlasLandmarks;
   }
 
-  void SetAtlasLandmarkWeights ( std::string atlasLandmarkWeights ) 
+  void SetAtlasLandmarkWeights ( const std::string & atlasLandmarkWeights )
   {
-    this->m_atlasLandmarkWeights = atlasLandmarkWeights ;
+    this->m_atlasLandmarkWeights = atlasLandmarkWeights;
   }
 
   void SetInputTemplateModel(std::string inputTemplateModel)

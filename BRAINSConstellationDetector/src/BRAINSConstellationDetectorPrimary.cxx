@@ -250,17 +250,19 @@ bool BRAINSConstellationDetectorPrimary::Compute( void )
   constellation2->Update();
 
   VersorTransformType::Pointer acpcTransformFromConstellation2 = VersorTransformType::New();
+  //TODO: CHECK acpcTransformFromConstellation2->SetFixedParameters( constellation2->GetVersorTransform()->GetFixedParameters() );
   acpcTransformFromConstellation2->SetParameters( constellation2->GetVersorTransform()->GetParameters() );
 
   // Get the final transform
   VersorTransformType::Pointer finalTransform = VersorTransformType::New();
   VersorTransformType::Pointer invFinalTransform = VersorTransformType::New();
-  if ( this->m_atlasVolume.empty() ) 
+  if ( this->m_atlasVolume.empty() )
     {
+      //TODO: CHECK finalTransform->SetFixedParameters( constellation2->GetVersorTransform()->GetFixedParameters() )
       finalTransform->SetParameters( constellation2->GetVersorTransform()->GetParameters() );
       finalTransform->GetInverse ( invFinalTransform );
     }
-  else 
+  else
     {
       ReaderType::Pointer atlasReader = ReaderType::New();
       atlasReader->SetFileName( this->m_atlasVolume );
@@ -270,29 +272,29 @@ bool BRAINSConstellationDetectorPrimary::Compute( void )
 	}
       catch( itk::ExceptionObject & err )
 	{
-	  std::cerr << " Error while reading image file( s ) with ITK:\n "
+	  std::cerr << "Error while reading atlasVolume file:\n "
 		    << err << std::endl;
 	}
 
       std::cout << "read atlas" << std::endl ;
       // TODO: prob needs a try-catch
-      LandmarksMapType referenceAtlasLandmarks = ReadSlicer3toITKLmk ( this->m_atlasLandmarks ) ;
+      LandmarksMapType referenceAtlasLandmarks = ReadSlicer3toITKLmk ( this->m_atlasLandmarks );
       std::cout << "read atlas landmarks " << std::endl ;
 
-      LandmarksMapType acpcLandmarks = constellation2->GetAlignedPoints() ;
+      LandmarksMapType acpcLandmarks = constellation2->GetAlignedPoints();
 
       // Now take invFinalTransform, and  IGNORE THE VERSION from line 253create a better version of invFinalTransform using BRAINSFit.
-      // take the the subjects landmarks in original space, and  landmarks from a reference Atlas, and compute an initial affine transform 
+      // take the the subjects landmarks in original space, and  landmarks from a reference Atlas, and compute an initial affine transform
       //( using logic from BRAINSLandmarkInitializer) and create initToAtlasAffineTransform.
-    
+
       typedef itk::AffineTransform<double, Dimension> AffineTransformType;
       AffineTransformType::Pointer initToAtlasAffineTransform = AffineTransformType::New();
-      
+
       typedef itk::LandmarkBasedTransformInitializer < AffineTransformType, ImageType, ImageType> LandmarkBasedInitializerType;
       LandmarkBasedInitializerType::Pointer landmarkBasedInitializer = LandmarkBasedInitializerType::New();
 
       typedef std::map<std::string, float> WeightType;
-      WeightType landmarkWeights ; 
+      WeightType landmarkWeights ;
       if ( this->m_atlasLandmarkWeights != "" )
 	{
 	  std::cout << "setting weights. " << std::endl ;
@@ -313,13 +315,11 @@ bool BRAINSConstellationDetectorPrimary::Compute( void )
 	      landmarkWeights[landmark] = weight;
 	    }
 	}
-      
+
       typedef LandmarkBasedInitializerType::LandmarkPointContainer LandmarkContainerType;
       LandmarkContainerType fixedLmks;
       LandmarkContainerType movingLmks;
       typedef LandmarksMapType::const_iterator LandmarkConstIterator;
-      //std::cout << "atlas #: " <<  referenceAtlasLandmarks.size() << std::endl ;
-      //std::cout << "moving #: " << acpcLandmarks.size() << std::endl ;
       LandmarkBasedInitializerType::LandmarkWeightType landmarkWgts;
 
       for( LandmarkConstIterator fixedIt = referenceAtlasLandmarks.begin(); fixedIt != referenceAtlasLandmarks.end(); ++fixedIt )
@@ -329,7 +329,7 @@ bool BRAINSConstellationDetectorPrimary::Compute( void )
 	    {
 	      fixedLmks.push_back( fixedIt->second);
 	      movingLmks.push_back( movingIt->second);
-	      if( !this->m_atlasLandmarkWeights.empty() ) 
+	      if( !this->m_atlasLandmarkWeights.empty() )
 		{
 		  if( landmarkWeights.find( fixedIt->first ) != landmarkWeights.end() )
 		    {
@@ -351,20 +351,16 @@ bool BRAINSConstellationDetectorPrimary::Compute( void )
 	}
 
       if ( !this->m_atlasLandmarkWeights.empty() )
-	landmarkBasedInitializer->SetLandmarkWeight ( landmarkWgts ) ;
+	landmarkBasedInitializer->SetLandmarkWeight ( landmarkWgts );
 
-      landmarkBasedInitializer->SetFixedLandmarks( fixedLmks ) ;
-      landmarkBasedInitializer->SetMovingLandmarks( movingLmks ) ;
+      landmarkBasedInitializer->SetFixedLandmarks( fixedLmks );
+      landmarkBasedInitializer->SetMovingLandmarks( movingLmks );
       landmarkBasedInitializer->SetTransform( initToAtlasAffineTransform );
       landmarkBasedInitializer->InitializeTransform();
 
-      //WriteTransformToDisk( initToAtlasAffineTransform,"/Users/ioguz/forAli/initToAtlasAffineTransform.txt" );
-
-      initToAtlasAffineTransform->Compose( constellation2->GetVersorTransform() , true ) ;
-      //WriteTransformToDisk( initToAtlasAffineTransform,"/Users/ioguz/forAli/initToAtlasComposedTransform.txt" );
-      //WriteTransformToDisk( constellation2->GetVersorTransform(),"/Users/ioguz/forAli/constellationTransform.txt" );
+      initToAtlasAffineTransform->Compose( constellation2->GetVersorTransform() , true );
       typedef itk::BRAINSFitHelper HelperType ;
-      HelperType::Pointer brainsFitHelper = HelperType::New () ;
+      HelperType::Pointer brainsFitHelper = HelperType::New ();
 
       // Now Run BRAINSFitHelper class initialized with initToAtlasAffineTransform, original image, and atlas image
       // adapted from BRAINSABC/brainseg/AtlasRegistrationMethod.hxx - do I need to change any of these parameters?
@@ -383,12 +379,12 @@ bool BRAINSConstellationDetectorPrimary::Compute( void )
       CastFilterType::Pointer fixedCastFilter = CastFilterType::New();
       fixedCastFilter->SetInput( atlasReader->GetOutput() );
       fixedCastFilter->Update();
-      brainsFitHelper->SetFixedVolume( fixedCastFilter->GetOutput() ) ;
+      brainsFitHelper->SetFixedVolume( fixedCastFilter->GetOutput() );
 
-      CastFilterType::Pointer movingCastFilter = CastFilterType::New() ;
-      movingCastFilter->SetInput ( reader->GetOutput () ) ;
+      CastFilterType::Pointer movingCastFilter = CastFilterType::New();
+      movingCastFilter->SetInput ( reader->GetOutput () );
       movingCastFilter->Update();
-      brainsFitHelper->SetMovingVolume( movingCastFilter->GetOutput() ) ;
+      brainsFitHelper->SetMovingVolume( movingCastFilter->GetOutput() );
 
       std::vector<double> minimumStepSize(1);
       minimumStepSize[0] = 0.005;
@@ -397,49 +393,55 @@ bool BRAINSConstellationDetectorPrimary::Compute( void )
       transformType[0] = "Affine";
       brainsFitHelper->SetTransformType(transformType);
 
-      brainsFitHelper->SetCurrentGenericTransform( initToAtlasAffineTransform.GetPointer() ) ;
+      brainsFitHelper->SetCurrentGenericTransform( initToAtlasAffineTransform.GetPointer() );
       brainsFitHelper->Update();
-      // now take the new invFinalTransform
-      WriteTransformToDisk( brainsFitHelper->GetCurrentGenericTransform() ,"/Users/ioguz/forAli/brainsFitTransform.txt" );
-      
+      //TODO: REMOVE ioguz WriteTransformToDisk( brainsFitHelper->GetCurrentGenericTransform() ,"/Users/ioguz/forAli/brainsFitTransform.txt" );
+
       typedef VersorRigid3DTransformType VersorRigidTransformType;
-      VersorRigidTransformType::Pointer versorRigid = itk::ComputeRigidTransformFromGeneric( brainsFitHelper->GetCurrentGenericTransform().GetPointer() );
-      if( versorRigid.IsNotNull() )
+      VersorRigidTransformType::Pointer brainsFitExtractedVersorRigid =
+        itk::ComputeRigidTransformFromGeneric( brainsFitHelper->GetCurrentGenericTransform().GetPointer() );
+      if ( brainsFitExtractedVersorRigid.IsNull() )
         {
-	  //std::cout << "versorRigid is not null. " << std::endl ;
-	  //itk::WriteTransformToDisk(versorRigid.GetPointer(),"/Users/ioguz/forAli/brainsFitTransformRigid.txt" );
-	  // as a final step, translate the AC back to the origin.
-
-	  LandmarkConstIterator acIter = acpcLandmarks.find( "AC" );
-	  VersorRigidTransformType::OutputPointType acOrigPoint = acpcTransformFromConstellation2->TransformPoint ( acIter->second ) ;
-
-	  finalTransform->SetParameters( versorRigid->GetParameters() );
-	  finalTransform->GetInverse ( invFinalTransform );
-
-	  VersorRigidTransformType::OutputPointType acPoint = invFinalTransform->TransformPoint ( acOrigPoint ) ;
-	  VersorRigidTransformType::OffsetType translation ;
-	  translation[0] = -acPoint[0] ; translation[1] = -acPoint[1] ; translation[2] = -acPoint[2] ;
-	  //std::cout << "AC-BCDspace " << acIter->second[0] << " " << acIter->second[1] << " " << acIter->second[2] << std::endl ;
-	  //std::cout << "ACOrig " << acOrigPoint[0] << " " << acOrigPoint[1] << " " << acOrigPoint[2] << std::endl ;
-	  //std::cout << "AC " << acPoint[0] << " " << acPoint[1] << " " << acPoint[2] << std::endl ;
-	  invFinalTransform->Translate( translation, true ) ;
-	  invFinalTransform->GetInverse ( finalTransform );
-	  VersorRigidTransformType::OutputPointType acFinalPoint =  invFinalTransform->TransformPoint ( acOrigPoint ) ;
-	  //std::cout << "AC Final " << acFinalPoint[0] << " " << acFinalPoint[1] << " " << acFinalPoint[2] << std::endl ;
+        //Fail if something weird happens.  TODO: This should throw an exception.
+        std::cout << "brainsFitExtractedVersorRigid is null. It means we're not registering to the atlas, after all." << std::endl ;
+        std::cout << "FAILIING" << std::endl;
+        exit(-1);
         }
-      else 
-	{
-	  std::cout << "versorRigid is null. sticking with constellation2 output. this is a bad thing. it means we're not registering to the atlas, after all." << std::endl ;
-	}
-    } 
+
+      // as a final step, translate the AC back to the origin.
+        {
+        LandmarkConstIterator acIter = acpcLandmarks.find( "AC" );
+        const VersorRigidTransformType::OutputPointType acOrigPoint =
+          acpcTransformFromConstellation2->TransformPoint ( acIter->second );
+
+        //TODO: CHECK finalTransform->SetFixedParameters( brainsFitExtractedVersorRigid->GetFixedParameters() );
+        finalTransform->SetParameters( brainsFitExtractedVersorRigid->GetParameters() );
+        finalTransform->GetInverse ( invFinalTransform );
+
+        //TODO:  CHECK if this can be less convoluted. Too many inverses used.  translate the forward by positive
+        //rather than inverse by negative.
+        //
+        VersorRigidTransformType::OutputPointType acPoint = invFinalTransform->TransformPoint ( acOrigPoint );
+          {
+          VersorRigidTransformType::OffsetType translation ;
+          translation[0] = -acPoint[0];
+          translation[1] = -acPoint[1];
+          translation[2] = -acPoint[2];
+          invFinalTransform->Translate( translation, true );
+          }
+        invFinalTransform->GetInverse ( finalTransform );
+
+        // TODO: Remove VersorRigidTransformType::OutputPointType acFinalPoint =  invFinalTransform->TransformPoint ( acOrigPoint );
+        }
+    }
 
   // Landmark weights. All of them equal 1 wright now, but they should be calculated later
   LandmarksWeightMapType LandmarksWeightMap;
   double                 weights = 1;
 
   // Save landmarks in input/output or original/aligned space
-  LandmarksMapType::const_iterator lit = constellation2->GetAlignedPoints().begin();
-  for( ; lit != constellation2->GetAlignedPoints().end(); ++lit )
+  for( LandmarksMapType::const_iterator lit = constellation2->GetAlignedPoints().begin();
+    lit != constellation2->GetAlignedPoints().end(); ++lit )
     {
       VersorTransformType::OutputPointType transformedPoint = acpcTransformFromConstellation2->TransformPoint( lit->second );
       this->m_outputLandmarksInInputSpaceMap[lit->first] = transformedPoint ;
@@ -450,10 +452,9 @@ bool BRAINSConstellationDetectorPrimary::Compute( void )
       else
 	{
 	  // not final transform any more - rather, this is just the original acpc transform XXX
-	  this->m_outputLandmarksInACPCAlignedSpaceMap[lit->first] = invFinalTransform->TransformPoint ( transformedPoint ) ;
+	  this->m_outputLandmarksInACPCAlignedSpaceMap[lit->first] = invFinalTransform->TransformPoint ( transformedPoint );
 	}
     // or something like constellation2->GetOriginalPoints()[lit->first];
-
     LandmarksWeightMap[lit->first] = weights;
     }
 
@@ -480,7 +481,6 @@ bool BRAINSConstellationDetectorPrimary::Compute( void )
   std::string preferedOutputReferenceImage = "";
   if( this->m_outputVolume.compare( "" ) != 0 )
     {
-      // TODO: don't know what this is
     preferedOutputReferenceImage = this->m_outputVolume;
     // This will be overwritten if outputResampledVolume is set
     // Write the aligned image to a file
@@ -502,12 +502,12 @@ bool BRAINSConstellationDetectorPrimary::Compute( void )
 
   if( this->m_outputResampledVolume.compare( "" ) != 0 )
     {
-    preferedOutputReferenceImage = this->m_outputResampledVolume; 
+    preferedOutputReferenceImage = this->m_outputResampledVolume;
     // This will be overwritten if outputResampledVolume is set
     // Write the aligned image to a file
-
     WriterType::Pointer writer = WriterType::New();
     writer->SetFileName( this->m_outputResampledVolume );
+    // TODO: Encapsulate this for applying a transform resampling.
 
     short BackgroundFillValue;
     if( this->m_backgroundFillValueString == std::string("BIGNEG") )
@@ -519,7 +519,13 @@ bool BRAINSConstellationDetectorPrimary::Compute( void )
 	BackgroundFillValue = atoi( this->m_backgroundFillValueString.c_str() );
       }
     // the input image may have rescaled intensities, etc
-    writer->SetInput( TransformResample<SImageType, SImageType>( constellation2->GetImageToBeResampled(), MakeIsoTropicReferenceImage(), BackgroundFillValue, GetInterpolatorFromString<SImageType>(this->m_interpolationMode), finalTransform.GetPointer() ) ) ;
+    writer->SetInput(
+      TransformResample<SImageType, SImageType>(
+        constellation2->GetImageToBeResampled(),
+        MakeIsoTropicReferenceImage(),
+        BackgroundFillValue,
+        GetInterpolatorFromString<SImageType>(this->m_interpolationMode),
+        finalTransform.GetPointer() ) );
     writer->SetUseCompression( true );
     try
       {
@@ -604,16 +610,7 @@ bool BRAINSConstellationDetectorPrimary::Compute( void )
     {
     WriterType::Pointer writer = WriterType::New();
     writer->SetFileName( this->m_outputUntransformedClippedVolume );
-
-    // i dont know why i thought this needed to be modified.
-    // typedef itk::MultiplyImageFilter<ImageType, ImageType> MultiplyFilterType;
-    // MultiplyFilterType::Pointer MultiplyFilter = MultiplyFilterType::New();
-    // MultiplyFilter->SetInput1( reader->GetOutput() );
-    // MultiplyFilter->SetInput2( constellation2->GetClippingFactorImage() );
-    // MultiplyFilter->Update();
-
-    // writer->SetInput( MultiplyFilter->GetOutput() ) ;
-    writer->SetInput ( constellation2->GetOutputUntransformedClippedVolume () ) ;
+    writer->SetInput( constellation2->GetOutputUntransformedClippedVolume () );
     writer->SetUseCompression( true );
     try
       {

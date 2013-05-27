@@ -62,7 +62,7 @@ BRAINSConstellationDetector2<TInputImage, TOutputImage>
   this->m_OutputImage = NULL;
   this->m_OutputResampledImage = NULL;
   this->m_OutputUntransformedClippedVolume = NULL;
-  this->m_ClippingFactorImage = NULL ;
+  this->m_ClippingFactorImage = NULL;
 
   /** Advanced parameters */
   /** Manual Override */
@@ -386,7 +386,8 @@ BRAINSConstellationDetector2<TInputImage, TOutputImage>
       }
 
       {
-      this->m_ImageToBeResampled = myDetector.GetOriginalInput();   // image -> myDetector(modification May happen) -> image
+      this->m_ImageToBeResampled = myDetector.GetOriginalInput();   // image -> myDetector(modification May happen) ->
+                                                                    // image
 
         {
         // const SImageType * constImage( this->m_OriginalInputImage.GetPointer() );
@@ -531,4 +532,5 @@ BRAINSConstellationDetector2<TInputImage, TOutputImage>
 {
   Superclass::PrintSelf(os, indent);
 }
+
 }

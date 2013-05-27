@@ -85,9 +85,9 @@ int main( int argc, char *argv[] )
   BCD.SetInputLandmarksEMSP( inputLandmarksEMSP );
   BCD.SetLLSModel( llsModel );
   BCD.SetInputVolume( inputVolume );
-  BCD.SetAtlasVolume ( atlasVolume ) ;
-  BCD.SetAtlasLandmarks ( atlasLandmarks ) ;
-  BCD.SetAtlasLandmarkWeights ( atlasLandmarkWeights ) ;
+  BCD.SetAtlasVolume( atlasVolume );
+  BCD.SetAtlasLandmarks( atlasLandmarks );
+  BCD.SetAtlasLandmarkWeights( atlasLandmarkWeights );
   BCD.SetForceHoughEyeDetectorReportFailure( forceHoughEyeDetectorReportFailure );
   BCD.SetHoughEyeDetectorMode( houghEyeDetectorMode );
   BCD.SetResultsDir( resultsDir );

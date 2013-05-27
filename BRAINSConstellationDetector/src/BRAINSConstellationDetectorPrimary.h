@@ -145,12 +145,12 @@ public:
     this->m_atlasVolume = atlasVolume;
   }
 
-  void SetAtlasLandmarks ( const std::string & atlasLandmarks )
+  void SetAtlasLandmarks( const std::string & atlasLandmarks )
   {
     this->m_atlasLandmarks = atlasLandmarks;
   }
 
-  void SetAtlasLandmarkWeights ( const std::string & atlasLandmarkWeights )
+  void SetAtlasLandmarkWeights( const std::string & atlasLandmarkWeights )
   {
     this->m_atlasLandmarkWeights = atlasLandmarkWeights;
   }
@@ -326,9 +326,9 @@ private:
   std::string m_writeBranded2DImage;
   std::string m_backgroundFillValueString;
   std::string m_interpolationMode;
-  std::string m_atlasVolume ;
-  std::string m_atlasLandmarks ;
-  std::string m_atlasLandmarkWeights ;
+  std::string m_atlasVolume;
+  std::string m_atlasLandmarks;
+  std::string m_atlasLandmarkWeights;
 
   std::vector<int> m_rescaleIntensitiesOutputRange;   // default = [40,4000]
 

@@ -327,8 +327,8 @@ protected:
   SImageType::Pointer m_OutputResampledImage;          // Output image w/
                                                        // interpolation
   SImageType::Pointer m_OutputUntransformedClippedVolume;
-  SImageType::Pointer m_ClippingFactorImage ;
-  SImageType::Pointer m_ImageToBeResampled ;
+  SImageType::Pointer m_ClippingFactorImage;
+  SImageType::Pointer m_ImageToBeResampled;
 
   /** Advanced parameters */
   /** Manual Override */
@@ -361,6 +361,7 @@ private:
   void operator=(const Self &)
   {
   }
+
 };
 } // end namespace itk
 

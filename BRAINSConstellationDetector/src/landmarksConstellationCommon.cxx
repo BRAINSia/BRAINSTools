@@ -713,8 +713,8 @@ SImageType::Pointer CreateTestCenteredRotatedImage2(const RigidTransformType::Po
   // ////// Compose test rotation with the translated ACPC alignment
   RigidTransformType::Pointer Point_Centered_TestRotated = RigidTransformType::New();
 
-  Point_Centered_TestRotated->SetParameters( ACPC_MSP_AlignedTransform->GetParameters() );
   Point_Centered_TestRotated->SetFixedParameters( ACPC_MSP_AlignedTransform->GetFixedParameters() );
+  Point_Centered_TestRotated->SetParameters( ACPC_MSP_AlignedTransform->GetParameters() );
   Point_Centered_TestRotated->Compose(Point_Rotate, true); // TODO:  Perhaps
                                                            // change sign of
                                                            // Point_Translate,

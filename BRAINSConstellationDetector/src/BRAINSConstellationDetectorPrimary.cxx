@@ -249,8 +249,7 @@ bool BRAINSConstellationDetectorPrimary::Compute( void )
   constellation2->Update();
 
   VersorTransformType::Pointer acpcTransformFromConstellation2 = VersorTransformType::New();
-  // TODO: CHECK acpcTransformFromConstellation2->SetFixedParameters(
-  // constellation2->GetVersorTransform()->GetFixedParameters() );
+  acpcTransformFromConstellation2->SetFixedParameters( constellation2->GetVersorTransform()->GetFixedParameters() );
   acpcTransformFromConstellation2->SetParameters( constellation2->GetVersorTransform()->GetParameters() );
 
   // Get the final transform
@@ -258,7 +257,7 @@ bool BRAINSConstellationDetectorPrimary::Compute( void )
   VersorTransformType::Pointer invFinalTransform = VersorTransformType::New();
   if( this->m_atlasVolume.empty() )
     {
-    // TODO: CHECK finalTransform->SetFixedParameters( constellation2->GetVersorTransform()->GetFixedParameters() )
+    finalTransform->SetFixedParameters( constellation2->GetVersorTransform()->GetFixedParameters() )
     finalTransform->SetParameters( constellation2->GetVersorTransform()->GetParameters() );
     finalTransform->GetInverse( invFinalTransform );
     }
@@ -421,7 +420,7 @@ bool BRAINSConstellationDetectorPrimary::Compute( void )
       const VersorRigidTransformType::OutputPointType acOrigPoint =
         acpcTransformFromConstellation2->TransformPoint( acIter->second );
 
-      // TODO: CHECK finalTransform->SetFixedParameters( brainsFitExtractedVersorRigid->GetFixedParameters() );
+      finalTransform->SetFixedParameters( brainsFitExtractedVersorRigid->GetFixedParameters() );
       finalTransform->SetParameters( brainsFitExtractedVersorRigid->GetParameters() );
       finalTransform->GetInverse( invFinalTransform );
 

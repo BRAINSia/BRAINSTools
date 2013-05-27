@@ -149,7 +149,6 @@ BRAINSConstellationDetector2<TInputImage, TOutputImage>
   // Wei: We will get the input image from filter input rather than an external
   // file
   SImageType::Pointer volOrig;
-  SImageType::Pointer image;
     {
     DuplicatorType::Pointer duplicator = DuplicatorType::New();
     duplicator->SetInputImage(this->m_OriginalInputImage);
@@ -212,11 +211,11 @@ BRAINSConstellationDetector2<TInputImage, TOutputImage>
     remapIntensityFilter->SetWindowMaximum(maxPixel);
     remapIntensityFilter->Update();
 
-    image = remapIntensityFilter->GetOutput();
+    this->m_ImageToBeResampled = remapIntensityFilter->GetOutput();
     }
   else
     {
-    image = volOrig;
+    this->m_ImageToBeResampled = volOrig;
     }
 
   landmarksConstellationDetector myDetector;
@@ -229,7 +228,7 @@ BRAINSConstellationDetector2<TInputImage, TOutputImage>
     myDetector.SetVolOrig( duplicator->GetModifiableOutput() );
 
     // The detector also needs the original input if it has to fix a bad estimation of the MSP
-    duplicator->SetInputImage( image );
+    duplicator->SetInputImage( this->m_ImageToBeResampled );
     duplicator->Update();
     myDetector.SetOriginalInput( duplicator->GetModifiableOutput() );
     }
@@ -387,12 +386,11 @@ BRAINSConstellationDetector2<TInputImage, TOutputImage>
       }
 
       {
-      image = myDetector.GetOriginalInput();   // image -> myDetector(modification May happen) -> image
+      this->m_ImageToBeResampled = myDetector.GetOriginalInput();   // image -> myDetector(modification May happen) -> image
 
-      this->m_ImageToBeResampled = image ;
         {
         // const SImageType * constImage( this->m_OriginalInputImage.GetPointer() );
-        const SImageType * constImage( image.GetPointer() );
+        const SImageType * constImage( this->m_ImageToBeResampled.GetPointer() );
 
         ResampleIPFilterPointer resampleIPFilter = ResampleIPFilterType::New();
         resampleIPFilter->SetInputImage( constImage );
@@ -403,7 +401,7 @@ BRAINSConstellationDetector2<TInputImage, TOutputImage>
         }
 
         {
-        this->m_OutputResampledImage = TransformResample<SImageType, SImageType>( image,
+        this->m_OutputResampledImage = TransformResample<SImageType, SImageType>( this->m_ImageToBeResampled,
                                                                                   MakeIsoTropicReferenceImage(),
                                                                                   BackgroundFillValue,
                                                                                   GetInterpolatorFromString<SImageType>(
@@ -474,30 +472,24 @@ BRAINSConstellationDetector2<TInputImage, TOutputImage>
               }
             }
           // Map the ZeroOne image through the inverse zero-centered transform
-          // to
-          // make the clipping factor image:
+          // to make the clipping factor image:
           typedef itk::NearestNeighborInterpolateImageFunction<SImageType, double> NearestNeighborInterpolatorType;
-          // typename
           NearestNeighborInterpolatorType::Pointer interpolator = NearestNeighborInterpolatorType::New();
           typedef itk::ResampleImageFilter<SImageType, SImageType> ResampleFilterType;
-          // typename
           ResampleFilterType::Pointer ResampleFilter = ResampleFilterType::New();
           ResampleFilter->SetInput(ZeroOneImage);
           ResampleFilter->SetInterpolator(interpolator);
           ResampleFilter->SetDefaultPixelValue(0);
-          ResampleFilter->SetOutputParametersFromImage(image);
+          ResampleFilter->SetOutputParametersFromImage(this->m_ImageToBeResampled);
 
           ResampleFilter->SetTransform(this->m_InvVersorTransform);
           ResampleFilter->Update();
-          // typename
           this->m_ClippingFactorImage = ResampleFilter->GetOutput();
-          // itkUtil::WriteImage<SImageType>(clippingFactorImage,"ClippingImage.nii.gz");
 
           // Multiply the raw input image by the clipping factor image:
           typedef itk::MultiplyImageFilter<SImageType, SImageType> MultiplyFilterType;
-          // typename
           MultiplyFilterType::Pointer MultiplyFilter = MultiplyFilterType::New();
-          MultiplyFilter->SetInput1(image);
+          MultiplyFilter->SetInput1(this->m_ImageToBeResampled);
           MultiplyFilter->SetInput2(this->m_ClippingFactorImage);
           MultiplyFilter->Update();
           this->m_OutputUntransformedClippedVolume = MultiplyFilter->GetOutput();

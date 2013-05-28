@@ -9,6 +9,7 @@
  Redistributions of source code must retain the above copyright notice,
  this list of conditions and the following disclaimer.
  Redistributions in binary form must reproduce the above copyright notice,
+eendif // __PrepareOutputImages_h__
  this list of conditions and the following disclaimer in the documentation
  and/or other materials provided with the distribution.
  Neither the name of the  President and Fellows of Harvard College
@@ -30,8 +31,9 @@
 
  =========================================================================*/
 
+#include "PrepareOutputImages.h"
+#include "landmarksConstellationDetector.h"
 #include "BRAINSConstellationDetector2.h"
-#include "GenericTransformImage.h"
 #include "itkOrthogonalize3DRotationMatrix.h"
 
 namespace itk
@@ -39,7 +41,7 @@ namespace itk
 template <class TInputImage, class TOutputImage>
 BRAINSConstellationDetector2<TInputImage, TOutputImage>
 ::BRAINSConstellationDetector2()
-{
+  {
   /** Essential Parameters */
   // Inputs
   this->m_InputTemplateModel = "";
@@ -62,7 +64,6 @@ BRAINSConstellationDetector2<TInputImage, TOutputImage>
   this->m_OutputImage = NULL;
   this->m_OutputResampledImage = NULL;
   this->m_OutputUntransformedClippedVolume = NULL;
-  this->m_ClippingFactorImage = NULL;
 
   /** Advanced parameters */
   /** Manual Override */
@@ -88,7 +89,7 @@ BRAINSConstellationDetector2<TInputImage, TOutputImage>
   // Outputs
   this->m_WriteBranded2DImage = "";
   this->m_ResultsDir = "./";
-}
+  }
 
 template <class TInputImage, class TOutputImage>
 void
@@ -98,7 +99,6 @@ BRAINSConstellationDetector2<TInputImage, TOutputImage>
   // file pointer for opening the setup file
   // /////////////////////////////////////////////////////////////////////////////////////////////
   LMC::globalverboseFlag = this->m_Verbose;
-
   globalImagedebugLevel = this->m_WritedebuggingImagesLevel;
 
   // /////////////////////////////////////////////////////////////////////////////////////////////
@@ -131,13 +131,8 @@ BRAINSConstellationDetector2<TInputImage, TOutputImage>
   // Override some landmarks by user
   vnl_vector<double> templateRadius;    // in units of mm
   templateRadius.set_size(4);
-  templateRadius[0] = ( this->m_RadiusMPJ <= 0 ) ? myModel.GetRadius("RP") : this->m_RadiusMPJ; //
-                                                                                                //
-                                                                                                // =
-                                                                                                //
-                                                                                                // RP
-                                                                                                //
-                                                                                                // radius
+  templateRadius[0] = ( this->m_RadiusMPJ <= 0 ) ? myModel.GetRadius("RP") : this->m_RadiusMPJ;
+
   templateRadius[1] = ( this->m_RadiusAC <= 0 ) ? myModel.GetRadius("AC") : this->m_RadiusAC;
   templateRadius[2] = ( this->m_RadiusPC <= 0 ) ? myModel.GetRadius("PC") : this->m_RadiusPC;
   templateRadius[3] = ( this->m_RadiusVN4 <= 0 ) ? myModel.GetRadius("VN4") : this->m_RadiusVN4;
@@ -299,230 +294,110 @@ BRAINSConstellationDetector2<TInputImage, TOutputImage>
   myDetector.Compute();
 
     {
-      {
-      RigidTransformType::Pointer ZeroCenteredTransform =
-        myDetector.GetACPCAlignedZeroCenteredTransform();
+    RigidTransformType::Pointer ZeroCenteredTransform =
+      myDetector.GetACPCAlignedZeroCenteredTransform();
 
-      this->m_VersorTransform = VersorTransformType::New();
-      this->m_VersorTransform->SetFixedParameters( ZeroCenteredTransform->GetFixedParameters() );
-      itk::Versor<double>               versorRotation;
-      const itk::Matrix<double, 3, 3> & CleanedOrthogonalized = itk::Orthogonalize3DRotationMatrix(
-          ZeroCenteredTransform->GetMatrix() );
-      versorRotation.Set( CleanedOrthogonalized );
-      this->m_VersorTransform->SetRotation(versorRotation);
-      this->m_VersorTransform->SetTranslation( ZeroCenteredTransform->GetTranslation() );
-      }
-
-    this->m_InvVersorTransform = VersorTransformType::New();
-    const SImageType::PointType centerPoint = this->m_VersorTransform->GetCenter();
-    this->m_InvVersorTransform->SetCenter(centerPoint);
-    this->m_InvVersorTransform->SetIdentity();
-    this->m_VersorTransform->GetInverse(this->m_InvVersorTransform);
-
-    // std::cout << "versor         transform parameters are " <<
-    // ZeroCenteredTransform->GetParameters() << std::endl;
-    // std::cout << "versor inverse transform parameters are " <<
-    // this->m_InvVersorTransform->GetParameters() << std::endl;
-    // std::cout << "               transform parameters are nice, huh?" <<
-    // std::endl;
-    if( LMC::globalverboseFlag )
-      {
-      std::cout << "VersorRotation: " << this->m_VersorTransform->GetMatrix() << std::endl;
-      std::cout << "itkVersorRigid3DTransform Parameters: " << this->m_VersorTransform->GetParameters() << std::endl;
-      std::cout << "itkVersorRigid3DTransform FixedParameters: " << this->m_VersorTransform->GetFixedParameters()
-                << std::endl;
-      std::cout << "itkVersorRigid3DTransform GetCenter(): " << this->m_VersorTransform->GetCenter() << std::endl;
-      std::cout << "itkVersorRigid3DTransform GetTranslation(): " << this->m_VersorTransform->GetTranslation()
-                << std::endl;
-      std::cout << "itkVersorRigid3DTransform GetMatrix(): " << this->m_VersorTransform->GetMatrix()
-                << std::endl;
-
-      std::cout << "itkRigid3DTransform Parameters: " << this->m_VersorTransform->GetParameters() << std::endl;
-      std::cout << "itkRigid3DTransform FixedParameters: " << this->m_VersorTransform->GetFixedParameters()
-                << std::endl;
-      std::cout << "itkRigid3DTransform GetCenter(): " << this->m_VersorTransform->GetCenter() << std::endl;
-      std::cout << "itkRigid3DTransform GetTranslation(): " << this->m_VersorTransform->GetTranslation() << std::endl;
-      std::cout << "itkRigid3DTransform GetMatrix(): " << this->m_VersorTransform->GetMatrix()
-                << std::endl;
-      std::cout << "itkVersorRigid3DTransform: \n" <<  this->m_VersorTransform << std::endl;
-      std::cout << "itkRigid3DTransform: \n" <<  this->m_VersorTransform << std::endl;
-      }
-
-    if( globalImagedebugLevel > 3 )
-      {
-      SImageType::Pointer TaggedOriginalImage = myDetector.GetTaggedImage();
-      itkUtil::WriteImage<SImageType>(TaggedOriginalImage, this->m_ResultsDir + "/TAGGED_POINTS.nii.gz");
-        {
-        SImageType::Pointer isoTaggedImage =
-          TransformResample<SImageType, SImageType>(
-            TaggedOriginalImage, MakeIsoTropicReferenceImage(), BackgroundFillValue,
-            GetInterpolatorFromString<SImageType>("Linear"), this->m_VersorTransform.GetPointer() );
-        itkUtil::WriteImage<SImageType>(isoTaggedImage, this->m_ResultsDir + "/ISO_Lmk_MSP.nii.gz");
-        }
-        {
-        SImageType::Pointer VersorisoTaggedImage =
-          TransformResample<SImageType, SImageType>(
-            TaggedOriginalImage, MakeIsoTropicReferenceImage(), BackgroundFillValue,
-            GetInterpolatorFromString<SImageType>("Linear"), this->m_VersorTransform.GetPointer() );
-        itkUtil::WriteImage<SImageType>(VersorisoTaggedImage, this->m_ResultsDir + "/Versor_ISO_Lmk_MSP.nii.gz");
-        }
-        {
-        RigidTransformType::Pointer OrigSpaceCenterOfGravityCentered = myDetector.GetTransformToMSP();
-        SImageType::Pointer         RigidMSPImage =
-          TransformResample<SImageType, SImageType>(
-            TaggedOriginalImage, MakeIsoTropicReferenceImage(), BackgroundFillValue,
-            GetInterpolatorFromString<SImageType>("Linear"), OrigSpaceCenterOfGravityCentered.GetPointer() );
-        itkUtil::WriteImage<SImageType>(RigidMSPImage, this->m_ResultsDir + "/RigidMSPImage_Lmk_MSP.nii.gz");
-        }
-      }
-
-    double PhysicalLowerBound = /* ACy when zero-centered is ... */ 0.0 - this->m_AcLowerBound;
-    for( LandmarksMapType::const_iterator lit = myDetector.GetNamedPoints().begin();
-         lit != myDetector.GetNamedPoints().end(); ++lit )
-      {
-      this->m_AlignedPoints[lit->first] =
-        this->m_InvVersorTransform->TransformPoint
-          ( myDetector.GetOriginalSpaceNamedPoint(lit->first) );
-      }
-
-      {
-      this->m_ImageToBeResampled = myDetector.GetOriginalInput();   // image -> myDetector(modification May happen) ->
-                                                                    // image
-
-        {
-        // const SImageType * constImage( this->m_OriginalInputImage.GetPointer() );
-        const SImageType * constImage( this->m_ImageToBeResampled.GetPointer() );
-
-        ResampleIPFilterPointer resampleIPFilter = ResampleIPFilterType::New();
-        resampleIPFilter->SetInputImage( constImage );
-        resampleIPFilter->SetRigidTransform( m_VersorTransform.GetPointer() );
-        resampleIPFilter->Update();
-        this->m_OutputImage = resampleIPFilter->GetOutput();
-        this->GraftOutput(m_OutputImage);
-        }
-
-        {
-        this->m_OutputResampledImage = TransformResample<SImageType, SImageType>( this->m_ImageToBeResampled,
-                                                                                  MakeIsoTropicReferenceImage(),
-                                                                                  BackgroundFillValue,
-                                                                                  GetInterpolatorFromString<SImageType>(
-                                                                                    this->m_InterpolationMode),
-                                                                                  this->m_VersorTransform.GetPointer() );
-        }
-
-        {
-        // ======================== Start
-        // ======================== Start
-        //  HACK -- chopping based on AcLowerBound
-        //  This is ugly code that could be re-written much simpler.
-        //
-        typedef itk::ImageRegionIteratorWithIndex<SImageType> IteratorType;
-        const double thousand = 1000.0;   // we need a DOUBLE constant, not a
-        // FLOAT constant, for exact switch
-        // comparisons.
-        if( this->m_AcLowerBound < thousand )
-          {
-          // First Process the OutputResampledImage
-          std::cout << "Chopping image below physical location: " << PhysicalLowerBound << "." << std::endl;
-          ChopImageBelowLowerBound<SImageType>(this->m_OutputResampledImage, BackgroundFillValue, PhysicalLowerBound);
-          ChopImageBelowLowerBound<SImageType>(this->m_OutputImage, BackgroundFillValue, PhysicalLowerBound);
-
-          // Second Create a mask for inverse resampling to orignal space
-          SImageType::Pointer ZeroOneImage = SImageType::New();
-          ZeroOneImage->CopyInformation(this->m_OutputResampledImage);
-          // don't forget to do SetRegions here!
-          ZeroOneImage->SetRegions( this->m_OutputResampledImage->GetLargestPossibleRegion() );
-          ZeroOneImage->Allocate();
-          ZeroOneImage->FillBuffer(1);
-          ChopImageBelowLowerBound<SImageType>(ZeroOneImage, BackgroundFillValue, PhysicalLowerBound);
-
-          if( this->m_CutOutHeadInOutputVolume )  // Restrict mask to head
-                                                  // tissue region if necessary
-            {
-            //  No double opportunity when generating both kinds of images.
-            const unsigned int closingSize = 7;
-            //            SImageType::Pointer HeadOutlineMaskImage =
-            // FindLargestForgroundFilledMask<SImageType>(
-            // this->m_OutputResampledImage, this->m_OtsuPercentileThreshold,
-            // closingSize );
-            typedef itk::LargestForegroundFilledMaskImageFilter<SImageType> LFFMaskFilterType;
-            LFFMaskFilterType::Pointer LFF = LFFMaskFilterType::New();
-            LFF->SetInput(this->m_OutputResampledImage);
-            LFF->SetOtsuPercentileThreshold(this->m_OtsuPercentileThreshold);
-            LFF->SetClosingSize(closingSize);
-            LFF->Update();
-            SImageType::Pointer HeadOutlineMaskImage =  LFF->GetOutput();
-
-            IteratorType ItZeroOneImage( ZeroOneImage, ZeroOneImage->GetRequestedRegion() );
-            ItZeroOneImage.GoToBegin();
-            IteratorType ItOutputResampledImage( this->m_OutputResampledImage,
-                                                 this->m_OutputResampledImage->GetRequestedRegion() );
-            ItOutputResampledImage.GoToBegin();
-            IteratorType ItHead( HeadOutlineMaskImage, HeadOutlineMaskImage->GetLargestPossibleRegion() );
-            ItHead.GoToBegin();
-            while( !ItHead.IsAtEnd() )
-              {
-              if( ItHead.Get() == 0 )
-                {
-                ItOutputResampledImage.Set(0);
-                ItZeroOneImage.Set(0);
-                }
-              ++ItZeroOneImage;
-              ++ItOutputResampledImage;
-              ++ItHead;
-              }
-            }
-          // Map the ZeroOne image through the inverse zero-centered transform
-          // to make the clipping factor image:
-          typedef itk::NearestNeighborInterpolateImageFunction<SImageType, double> NearestNeighborInterpolatorType;
-          NearestNeighborInterpolatorType::Pointer interpolator = NearestNeighborInterpolatorType::New();
-          typedef itk::ResampleImageFilter<SImageType, SImageType> ResampleFilterType;
-          ResampleFilterType::Pointer ResampleFilter = ResampleFilterType::New();
-          ResampleFilter->SetInput(ZeroOneImage);
-          ResampleFilter->SetInterpolator(interpolator);
-          ResampleFilter->SetDefaultPixelValue(0);
-          ResampleFilter->SetOutputParametersFromImage(this->m_ImageToBeResampled);
-
-          ResampleFilter->SetTransform(this->m_InvVersorTransform);
-          ResampleFilter->Update();
-          this->m_ClippingFactorImage = ResampleFilter->GetOutput();
-
-          // Multiply the raw input image by the clipping factor image:
-          typedef itk::MultiplyImageFilter<SImageType, SImageType> MultiplyFilterType;
-          MultiplyFilterType::Pointer MultiplyFilter = MultiplyFilterType::New();
-          MultiplyFilter->SetInput1(this->m_ImageToBeResampled);
-          MultiplyFilter->SetInput2(this->m_ClippingFactorImage);
-          MultiplyFilter->Update();
-          this->m_OutputUntransformedClippedVolume = MultiplyFilter->GetOutput();
-          }
-        // ======================== Stop
-        // ======================== Stop
-        }
-      if( this->m_WriteBranded2DImage.compare("") != 0 )
-        {
-        /*
-        for( LandmarksMapType::const_iterator lit = m_AlignedPoints.begin(); lit != m_AlignedPoints.end(); ++lit )
-        {
-            std::cout << lit->first << "=" << lit->second[0] << "," << lit->second[1] << "," << lit->second[2] << std::endl << std::endl;
-        }
-
-        std::cout << "filename : " << this->m_WriteBranded2DImage << std::endl;
-
-        itkUtil::WriteImage<SImageType>(this->m_OutputResampledImage, "m_OutputResampledImage.nii.gz");
-
-        double height = myDetector.GetModelHeight("AC");
-        */
-
-        MakeBranded2DImage(this->m_OutputResampledImage.GetPointer(), myDetector,
-                           this->m_AlignedPoints["RP"],
-                           this->m_AlignedPoints["AC"],
-                           this->m_AlignedPoints["PC"],
-                           this->m_AlignedPoints["VN4"],
-                           this->m_AlignedPoints["CM"],
-                           this->m_WriteBranded2DImage);
-        }
-      }     //  scope of this->m_OutputResampledImage
+    this->m_VersorTransform = VersorTransformType::New();
+    this->m_VersorTransform->SetFixedParameters( ZeroCenteredTransform->GetFixedParameters() );
+    itk::Versor<double>               versorRotation;
+    const itk::Matrix<double, 3, 3> & CleanedOrthogonalized = itk::Orthogonalize3DRotationMatrix(
+      ZeroCenteredTransform->GetMatrix() );
+    versorRotation.Set( CleanedOrthogonalized );
+    this->m_VersorTransform->SetRotation(versorRotation);
+    this->m_VersorTransform->SetTranslation( ZeroCenteredTransform->GetTranslation() );
     }
+
+  this->m_InvVersorTransform = VersorTransformType::New();
+  const SImageType::PointType centerPoint = this->m_VersorTransform->GetCenter();
+  this->m_InvVersorTransform->SetCenter(centerPoint);
+  this->m_InvVersorTransform->SetIdentity();
+  this->m_VersorTransform->GetInverse(this->m_InvVersorTransform);
+
+  // std::cout << "versor         transform parameters are " <<
+  // ZeroCenteredTransform->GetParameters() << std::endl;
+  // std::cout << "versor inverse transform parameters are " <<
+  // this->m_InvVersorTransform->GetParameters() << std::endl;
+  // std::cout << "               transform parameters are nice, huh?" <<
+  // std::endl;
+  if( LMC::globalverboseFlag )
+    {
+    std::cout << "VersorRotation: " << this->m_VersorTransform->GetMatrix() << std::endl;
+    std::cout << "itkVersorRigid3DTransform Parameters: " << this->m_VersorTransform->GetParameters() << std::endl;
+    std::cout << "itkVersorRigid3DTransform FixedParameters: " << this->m_VersorTransform->GetFixedParameters()
+      << std::endl;
+    std::cout << "itkVersorRigid3DTransform GetCenter(): " << this->m_VersorTransform->GetCenter() << std::endl;
+    std::cout << "itkVersorRigid3DTransform GetTranslation(): " << this->m_VersorTransform->GetTranslation()
+                                                                   << std::endl;
+    std::cout << "itkVersorRigid3DTransform GetMatrix(): " << this->m_VersorTransform->GetMatrix()
+                                                              << std::endl;
+
+    std::cout << "itkRigid3DTransform Parameters: " << this->m_VersorTransform->GetParameters() << std::endl;
+    std::cout << "itkRigid3DTransform FixedParameters: " << this->m_VersorTransform->GetFixedParameters()
+      << std::endl;
+    std::cout << "itkRigid3DTransform GetCenter(): " << this->m_VersorTransform->GetCenter() << std::endl;
+    std::cout << "itkRigid3DTransform GetTranslation(): " << this->m_VersorTransform->GetTranslation() << std::endl;
+    std::cout << "itkRigid3DTransform GetMatrix(): " << this->m_VersorTransform->GetMatrix()
+                                                        << std::endl;
+    std::cout << "itkVersorRigid3DTransform: \n" <<  this->m_VersorTransform << std::endl;
+    std::cout << "itkRigid3DTransform: \n" <<  this->m_VersorTransform << std::endl;
+    }
+
+  if( globalImagedebugLevel > 3 )
+    {
+    SImageType::Pointer TaggedOriginalImage = myDetector.GetTaggedImage();
+    itkUtil::WriteImage<SImageType>(TaggedOriginalImage, this->m_ResultsDir + "/TAGGED_POINTS.nii.gz");
+      {
+      SImageType::Pointer isoTaggedImage =
+        TransformResample<SImageType, SImageType>(
+          TaggedOriginalImage, MakeIsoTropicReferenceImage(), BackgroundFillValue,
+          GetInterpolatorFromString<SImageType>("Linear"), this->m_VersorTransform.GetPointer() );
+      itkUtil::WriteImage<SImageType>(isoTaggedImage, this->m_ResultsDir + "/ISO_Lmk_MSP.nii.gz");
+      }
+      {
+      SImageType::Pointer VersorisoTaggedImage =
+        TransformResample<SImageType, SImageType>(
+          TaggedOriginalImage, MakeIsoTropicReferenceImage(), BackgroundFillValue,
+          GetInterpolatorFromString<SImageType>("Linear"), this->m_VersorTransform.GetPointer() );
+      itkUtil::WriteImage<SImageType>(VersorisoTaggedImage, this->m_ResultsDir + "/Versor_ISO_Lmk_MSP.nii.gz");
+      }
+      {
+      RigidTransformType::Pointer OrigSpaceCenterOfGravityCentered = myDetector.GetTransformToMSP();
+      SImageType::Pointer         RigidMSPImage =
+        TransformResample<SImageType, SImageType>(
+          TaggedOriginalImage, MakeIsoTropicReferenceImage(), BackgroundFillValue,
+          GetInterpolatorFromString<SImageType>("Linear"), OrigSpaceCenterOfGravityCentered.GetPointer() );
+      itkUtil::WriteImage<SImageType>(RigidMSPImage, this->m_ResultsDir + "/RigidMSPImage_Lmk_MSP.nii.gz");
+      }
+    }
+#if 0
+  itk::PrepareOutputImages(this->m_OutputResampledImage,
+    this->m_OutputImage,
+    this->m_OutputUntransformedClippedVolume,
+    myDetector.GetOriginalInput(), //Input RO
+    this->m_VersorTransform.GetPointer(), //Input RO
+    this->m_InvVersorTransform.GetPointer(), //Input RO
+    myDetector.GetNamedPoints(),
+    this->m_AlignedPoints,
+    this->m_AcLowerBound, //Input RO
+    BackgroundFillValue, //Input RO
+    this->m_InterpolationMode, //Input RO
+    this->m_CutOutHeadInOutputVolume, //Input RO
+    this->m_OtsuPercentileThreshold //Input RO
+  );
+
+  this->GraftOutput(this->m_OutputImage);
+
+  if( this->m_WriteBranded2DImage.compare("") != 0 )
+    {
+    MakeBranded2DImage(this->m_OutputResampledImage.GetPointer(), myDetector,
+      this->m_AlignedPoints["RP"],
+      this->m_AlignedPoints["AC"],
+      this->m_AlignedPoints["PC"],
+      this->m_AlignedPoints["VN4"],
+      this->m_AlignedPoints["CM"],
+      this->m_WriteBranded2DImage);
+    }
+#endif
 }
 
 template <class TInputImage, class TOutputImage>

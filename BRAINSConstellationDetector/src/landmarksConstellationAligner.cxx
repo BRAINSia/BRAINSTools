@@ -16,6 +16,8 @@
 #include "itkVersorRigid3DTransform.h"
 #include "itkEuler3DTransform.h"
 
+#include "PrepareOutputImages.h"
+
 #include <cstdio>
 #include <iostream>
 #include <fstream>
@@ -37,63 +39,7 @@ typedef itk::VersorRigid3DTransform<double>        VersorTransformType;
 typedef itk::Euler3DTransform<double>              RigidTransformType;
 
 // F U N C T I O N S //////////////////////////////////////////////////////////
-
-SImageType::PointType GetOriginalSpaceNamedPoint(const LandmarksMapType & landmarks, const std::string & NamedPoint)
-{
-  LandmarksMapType::const_iterator itpair = landmarks.find(NamedPoint);
-
-  if( itpair == landmarks.end() )
-    {
-    std::cout << "ERROR:  " << NamedPoint << " not found in list." << std::endl;
-    return SImageType::PointType();
-    }
-  return itpair->second;
-}
-
 //////////////////
-RigidTransformType::Pointer computeTmspFromPoints(SImageType::PointType RP,
-                                                  SImageType::PointType AC,
-                                                  SImageType::PointType PC,
-                                                  SImageType::PointType DesiredCenter)
-{
-  // a variable to store correlation coefficient values
-  SImageType::PointType::VectorType ACPC = PC - AC;
-
-  ACPC.Normalize();
-  SImageType::PointType::VectorType ACRP = RP - AC;
-
-  vnl_vector_fixed<double, 3>       NormalToMSPPlane = vnl_cross_3d( ACPC.GetVnlVector(), ACRP.GetVnlVector() );
-  SImageType::PointType::VectorType NormalToMSPPlaneVector;
-  NormalToMSPPlaneVector[0] = NormalToMSPPlane[0];
-  NormalToMSPPlaneVector[1] = NormalToMSPPlane[1];
-  NormalToMSPPlaneVector[2] = NormalToMSPPlane[2];
-  NormalToMSPPlaneVector.Normalize();
-  if( NormalToMSPPlaneVector[0] < 0 )
-    {
-    NormalToMSPPlaneVector *= -1.0;
-    }
-
-  double PlaneNormalBank = -vcl_atan2(NormalToMSPPlaneVector[2], NormalToMSPPlaneVector[0]);
-  // Rotate the "Y" (i.e. Anterior to Posterior Axis)
-  double PlaneNormalHeading = vcl_sin(NormalToMSPPlaneVector[1]);
-  // Rotate the "Z" (i.e. Inferior to Superior Axis)
-  double PlaneNormalAttitude = vcl_sin(ACPC[2]);
-
-  SImageType::PointType::VectorType CenterOffset = AC.GetVectorFromOrigin() - DesiredCenter.GetVectorFromOrigin();
-
-  RigidTransformType::Pointer AlignMSPTransform = RigidTransformType::New();
-  AlignMSPTransform->SetCenter(DesiredCenter);
-  AlignMSPTransform->SetRotation(PlaneNormalAttitude, PlaneNormalBank, PlaneNormalHeading);
-    {
-    // Clean up the rotation to make it orthogonal:
-    const itk::Matrix<double, 3, 3> & CleanedOrthogonalized = itk::Orthogonalize3DRotationMatrix(
-        AlignMSPTransform->GetMatrix() );
-    AlignMSPTransform->SetMatrix( CleanedOrthogonalized );
-    }
-  AlignMSPTransform->SetTranslation(CenterOffset);
-
-  return AlignMSPTransform;
-}
 
 //////////////////
 RigidTransformType::Pointer GetACPCAlignedZeroCenteredTransform(const LandmarksMapType & landmarks)
@@ -101,15 +47,11 @@ RigidTransformType::Pointer GetACPCAlignedZeroCenteredTransform(const LandmarksM
   SImageType::PointType ZeroCenter;
 
   ZeroCenter.Fill(0.0);
-  RigidTransformType::Pointer landmarkDefinedACPCAlignedToZeroTransform = computeTmspFromPoints(GetOriginalSpaceNamedPoint(
-                                                                                                  landmarks,
-                                                                                                  "RP"),
-                                                                                                GetOriginalSpaceNamedPoint(
-                                                                                                  landmarks,
-                                                                                                  "AC"),
-                                                                                                GetOriginalSpaceNamedPoint(
-                                                                                                  landmarks, "PC"),
-                                                                                                ZeroCenter);
+  RigidTransformType::Pointer landmarkDefinedACPCAlignedToZeroTransform = computeTmspFromPoints(
+    GetOriginalSpaceNamedPoint( landmarks, "RP"),
+    GetOriginalSpaceNamedPoint( landmarks, "AC"),
+    GetOriginalSpaceNamedPoint( landmarks, "PC"),
+    ZeroCenter);
   return landmarkDefinedACPCAlignedToZeroTransform;
 }
 

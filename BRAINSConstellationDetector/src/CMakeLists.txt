@@ -5,6 +5,7 @@ add_library(landmarksConstellationCOMMONLIB STATIC
   landmarksConstellationDetector.cxx
   TrimForegroundInDirection.cxx
   LLSModel.cxx
+  PrepareOutputImages.cxx
   BRAINSConstellationDetectorPrimary.cxx)
 target_link_libraries(landmarksConstellationCOMMONLIB BRAINSCommonLib ${ITK_LIBRARIES})
 

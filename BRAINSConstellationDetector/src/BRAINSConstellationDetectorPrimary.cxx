@@ -257,7 +257,7 @@ bool BRAINSConstellationDetectorPrimary::Compute( void )
   VersorTransformType::Pointer invFinalTransform = VersorTransformType::New();
   if( this->m_atlasVolume.empty() )
     {
-    finalTransform->SetFixedParameters( constellation2->GetVersorTransform()->GetFixedParameters() )
+    finalTransform->SetFixedParameters( constellation2->GetVersorTransform()->GetFixedParameters() );
     finalTransform->SetParameters( constellation2->GetVersorTransform()->GetParameters() );
     finalTransform->GetInverse( invFinalTransform );
     }

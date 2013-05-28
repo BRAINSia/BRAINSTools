@@ -12,6 +12,7 @@
 #include "itkAffineTransform.h"
 #include "itkOtsuThresholdImageFilter.h"
 #include "Slicer3LandmarkIO.h"
+#include "PrepareOutputImages.h"
 
 #include <map>
 
@@ -44,37 +45,14 @@ public:
     this->m_MidlinePointsList.push_back("mid_sup");
   }
 
-  /**
-   * Returns the named point (AC,PC,VN4,RP) in the space of the
-   * original image.
-   *
-   * @author hjohnson (12/14/2008)
-   *
-   * @param NamedPoint
-   *
-   * @return SImageType::PointType
-   */
-  SImageType::PointType GetOriginalSpaceNamedPoint(const std::string & NamedPoint) const
-  {
-    LandmarksMapType::const_iterator itpair = this->m_NamedPoint.find(NamedPoint);
-
-    if( itpair == this->m_NamedPoint.end() )
-      {
-      std::cout << "ERROR:  " << NamedPoint << " not found in list." << std::endl;
-      return SImageType::PointType();
-      }
-    return itpair->second;
-  }
-
-  // Force the setting of the point values to override those that were
-  // specified.
+  // Force the setting of the point values to override those that were specified.
   void SetOriginalSpaceNamedPoint(const std::string & NamedPoint, const SImageType::PointType & PointValue)
   {
     this->m_NamedPoint[NamedPoint] = PointValue;
     return;
   }
 
-  const LandmarksMapType & GetNamedPoints()
+  const LandmarksMapType & GetNamedPoints(void) const
   {
     return this->m_NamedPoint;
   }
@@ -210,13 +188,13 @@ public:
     setLowHigh<SImageType>(taggedImage, low, high, 0.01F);
 
     SImageType::IndexType PTIndex;
-    taggedImage->TransformPhysicalPointToIndex(this->GetOriginalSpaceNamedPoint("AC"), PTIndex);
+    taggedImage->TransformPhysicalPointToIndex(GetOriginalSpaceNamedPoint(this->GetNamedPoints(),"AC"), PTIndex);
     taggedImage->SetPixel(PTIndex, high);
-    taggedImage->TransformPhysicalPointToIndex(this->GetOriginalSpaceNamedPoint("PC"), PTIndex);
+    taggedImage->TransformPhysicalPointToIndex(GetOriginalSpaceNamedPoint(this->GetNamedPoints(),"PC"), PTIndex);
     taggedImage->SetPixel(PTIndex, high);
-    taggedImage->TransformPhysicalPointToIndex(this->GetOriginalSpaceNamedPoint("VN4"), PTIndex);
+    taggedImage->TransformPhysicalPointToIndex(GetOriginalSpaceNamedPoint(this->GetNamedPoints(),"VN4"), PTIndex);
     taggedImage->SetPixel(PTIndex, high);
-    taggedImage->TransformPhysicalPointToIndex(this->GetOriginalSpaceNamedPoint("RP"), PTIndex);
+    taggedImage->TransformPhysicalPointToIndex(GetOriginalSpaceNamedPoint(this->GetNamedPoints(),"RP"), PTIndex);
     taggedImage->SetPixel(PTIndex, high);
     return taggedImage;
   }
@@ -228,9 +206,9 @@ public:
     ZeroCenter.Fill(0.0);
     RigidTransformType::Pointer
       landmarkDefinedACPCAlignedToZeroTransform =
-      computeTmspFromPoints(this->GetOriginalSpaceNamedPoint("RP"),
-                            this->GetOriginalSpaceNamedPoint("AC"),
-                            this->GetOriginalSpaceNamedPoint("PC"),
+      computeTmspFromPoints(GetOriginalSpaceNamedPoint(this->GetNamedPoints(),"RP"),
+                            GetOriginalSpaceNamedPoint(this->GetNamedPoints(),"AC"),
+                            GetOriginalSpaceNamedPoint(this->GetNamedPoints(),"PC"),
                             ZeroCenter);
     return landmarkDefinedACPCAlignedToZeroTransform;
   }

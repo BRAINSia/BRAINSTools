@@ -74,6 +74,7 @@ extern bool globalverboseFlag;
 //
 //
 // ////////////////////////////////////////////////////////////////////////////////////////////////
+
 typedef float                 vertexType[4][3];
 typedef itk::Image<short, 3>  SImageType;
 typedef itk::Image<double, 3> DImageType3D;
@@ -81,6 +82,9 @@ typedef itk::Image<float, 3>  FImageType3D;
 // typedef itk::Image<short,2> SImageType2D;
 typedef itk::Image<double, 2> DImageType2D;
 typedef itk::Image<float, 2>  FImageType2D;
+
+typedef SImageType::PointType                              SImagePointType;
+typedef std::map<std::string, SImagePointType>             LandmarksMapType;
 
 typedef itk::RGBPixel<unsigned char> RGBPixelType;
 typedef itk::Image<RGBPixelType, 3>  RGBImageType;

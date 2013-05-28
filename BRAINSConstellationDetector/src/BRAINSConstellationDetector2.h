@@ -89,12 +89,7 @@ public:
   typedef SmartPointer<const Self>                   ConstPointer;
 
   itkStaticConstMacro(Dimension, unsigned int, SImageType::ImageDimension);
-  typedef SImageType::PointType                              SImagePointType;
   typedef vnl_matrix<double>                                 MatrixType;
-  typedef std::map<std::string, SImagePointType>             LandmarksMapType;
-  typedef ImageDuplicator<SImageType>                        DuplicatorType;
-  typedef ResampleInPlaceImageFilter<SImageType, SImageType> ResampleIPFilterType;
-  typedef typename ResampleIPFilterType::Pointer             ResampleIPFilterPointer;
 
   /** Run-time type information (and related methods) */
   itkTypeMacro(BRAINSConstellationDetector2, ImageToImageFilter);
@@ -185,9 +180,6 @@ public:
 
   /** Get the output untransformed clipped volume */
   itkGetConstObjectMacro(OutputUntransformedClippedVolume, SImageType);
-
-  /** Get the clipping volume */
-  itkGetConstObjectMacro(ClippingFactorImage, SImageType);
 
   /** Get the image to be resampled */
   itkGetConstObjectMacro(ImageToBeResampled, SImageType);
@@ -327,7 +319,6 @@ protected:
   SImageType::Pointer m_OutputResampledImage;          // Output image w/
                                                        // interpolation
   SImageType::Pointer m_OutputUntransformedClippedVolume;
-  SImageType::Pointer m_ClippingFactorImage;
   SImageType::Pointer m_ImageToBeResampled;
 
   /** Advanced parameters */

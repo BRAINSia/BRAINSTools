@@ -30,7 +30,7 @@
 #include "BRAINSThreadControl.h"
 #include "BRAINSClipInferiorCLP.h"
 #include "itkIO.h"
-typedef itk::Image<short, 3> SImageType;
+#include "landmarksConstellationCommon.h"
 
 #include "ChopImageBelowLowerBound.h"
 

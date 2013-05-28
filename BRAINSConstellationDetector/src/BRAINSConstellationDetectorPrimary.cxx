@@ -32,9 +32,6 @@ BRAINSConstellationDetectorPrimary::BRAINSConstellationDetectorPrimary()
   this->m_outputTransform = "";
   this->m_outputLandmarksInInputSpace = "";
   this->m_outputLandmarksInACPCAlignedSpace = "";
-  this->m_outputLandmarkWeights = "";   // SHOULD BE DELETED
-  this->m_inputLandmarksPaired = "";    // SHOULD BE DELETED
-  this->m_outputLandmarksPaired = "";   // SHOULD BE DELETED
   this->m_outputMRML = "";
   this->m_outputVerificationScript = "";
   this->m_outputUntransformedClippedVolume = "";
@@ -255,7 +252,6 @@ bool BRAINSConstellationDetectorPrimary::Compute( void )
 
   // Save landmarks in input/output or original/aligned space
   this->m_outputLandmarksInACPCAlignedSpaceMap = constellation2->GetAlignedPoints();
-  this->
 
   // TODO: Use PrepareOutputsLandmarks here.
   for( LandmarksMapType::const_iterator lit = constellation2->GetAlignedPoints().begin(); lit != constellation2->GetAlignedPoints().end(); ++lit )
@@ -270,7 +266,7 @@ bool BRAINSConstellationDetectorPrimary::Compute( void )
   if( this->m_outputTransform.compare( "" ) != 0 )
     {
     TransformWriterType::Pointer writer = TransformWriterType::New();
-    writer->SetInput( finalTransform );
+    writer->SetInput( constellation2->GetVersorTransform() );
     writer->SetFileName( this->m_outputTransform );
     try
       {
@@ -331,7 +327,7 @@ bool BRAINSConstellationDetectorPrimary::Compute( void )
         MakeIsoTropicReferenceImage().GetPointer(),
         BackgroundFillValue,
         GetInterpolatorFromString<SImageType>(this->m_interpolationMode).GetPointer(),
-        finalTransform.GetPointer() ) );
+        constellation2->GetVersorTransform() ) );
     writer->SetUseCompression( true );
     try
       {
@@ -345,33 +341,7 @@ bool BRAINSConstellationDetectorPrimary::Compute( void )
     std::cout << "The output resampled output volume is written." << std::endl;
     }
 
-  // TODO: Due to writing a new Aligner, these flags are not needed anymore and they should be deleted
-  if( ( this->m_outputLandmarksPaired.compare( "" ) != 0 ) &&
-      ( this->m_inputLandmarksPaired.compare( "" ) != 0 ) )
-    {
-    LandmarksMapType                 origLandmarks = ReadSlicer3toITKLmk( this->m_inputLandmarksPaired );
-    LandmarksMapType                 alignedLandmarks;
-    for(
-    LandmarksMapType::const_iterator olit = origLandmarks.begin();
-      ; olit != origLandmarks.end(); ++olit )
-      {
-      alignedLandmarks[olit->first] = invFinalTransform->TransformPoint( olit->second );
-      }
-    WriteITKtoSlicer3Lmk( this->m_outputLandmarksPaired, alignedLandmarks );
-    std::cout << "The acpc-aligned landmark list file is written." << std::endl;
-    }
-  else if( ( ( this->m_outputLandmarksPaired.compare( "" ) != 0 ) &&
-             ( this->m_inputLandmarksPaired.compare( "" ) == 0 ) )
-           ||
-           ( ( this->m_outputLandmarksPaired.compare( "" ) == 0 ) &&
-             ( this->m_inputLandmarksPaired.compare( "" ) != 0 ) ) )
-    {
-    std::cerr << "The outputLandmark parameter should be paired with"
-              << "the inputLandmark parameter." << std::endl;
-    std::cerr << "No output acpc-aligned landmark list file is generated" << std::endl;
-    }
   // ------------------------
-
   if( this->m_outputLandmarksInInputSpace.compare( "" ) != 0 )
     {
     WriteITKtoSlicer3Lmk( this->m_outputLandmarksInInputSpace,
@@ -401,7 +371,7 @@ bool BRAINSConstellationDetectorPrimary::Compute( void )
                    this->m_outputTransform,
                    this->m_outputLandmarksInInputSpaceMap,
                    this->m_outputLandmarksInACPCAlignedSpaceMap,
-                   finalTransform );
+                   constellation2->GetVersorTransform() );
     std::cout << "The output mrml scene file is written." << std::endl;
     }
 

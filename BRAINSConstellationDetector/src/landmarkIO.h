@@ -50,7 +50,7 @@ extern void WriteMRMLFile(std::string outputMRML, std::string outputLandmarksInI
                           std::string outputLandmarksInOutputSpace, std::string inputVolume, std::string outputVolume,
                           std::string outputTransform, const LandmarksMapType & outputLandmarksInInputSpaceMap,
                           const LandmarksMapType & outputLandmarksInOutputSpaceMap,
-                          const VersorTransformPointer versorTransform);
+                          VersorTransformType::ConstPointer versorTransform);
 
 // load linear least squares model for selected landmarks
 // .load from txt file

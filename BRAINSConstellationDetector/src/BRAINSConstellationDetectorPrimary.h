@@ -188,21 +188,6 @@ public:
     this->m_outputLandmarksInACPCAlignedSpace = outputLandmarksInACPCAlignedSpace;
   }
 
-  void SetOutputLandmarkWeights(std::string outputLandmarkWeights)   // SHOULD BE DELETED
-  {
-    this->m_outputLandmarkWeights = outputLandmarkWeights;
-  }
-
-  void SetInputLandmarksPaired(std::string inputLandmarksPaired)     // SHOULD BE DELETED
-  {
-    this->m_inputLandmarksPaired = inputLandmarksPaired;
-  }
-
-  void SetOutputLandmarksPaired(std::string outputLandmarksPaired)   // SHOULD BE DELETED
-  {
-    this->m_outputLandmarksPaired = outputLandmarksPaired;
-  }
-
   void SetOutputMRML(std::string outputMRML)
   {
     this->m_outputMRML = outputMRML;
@@ -309,9 +294,6 @@ private:
   std::string m_outputTransform;
   std::string m_outputLandmarksInInputSpace;
   std::string m_outputLandmarksInACPCAlignedSpace;
-  std::string m_outputLandmarkWeights;   // SHOULD BE DELETED
-  std::string m_inputLandmarksPaired;    // SHOULD BE DELETED
-  std::string m_outputLandmarksPaired;   // SHOULD BE DELETED
   std::string m_outputMRML;
   std::string m_outputVerificationScript;
   std::string m_outputUntransformedClippedVolume;

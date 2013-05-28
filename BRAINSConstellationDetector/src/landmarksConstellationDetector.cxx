@@ -46,7 +46,7 @@ landmarksConstellationDetector::FindCandidatePoints
   maskInterp->SetInputImage( mask_LR );
 
   // For all regions within the search radius around the center
-  std::vector<float>    CurrentPoint_test_vec;
+  std::vector<float>    CurrentPoint_test_vec(model.size());
   SImageType::PointType currentPointLocation;
   currentPointLocation[0] = CenterOfSearchArea[0];
   currentPointLocation[1] = CenterOfSearchArea[1];
@@ -92,6 +92,7 @@ landmarksConstellationDetector::FindCandidatePoints
       return GuessPoint;
       }
     }
+
   for( double LeftToRight = CenterOfSearchArea[0] - LR_restrictions;
        LeftToRight < LeftToRight_END; LeftToRight += deltaLR )
     {
@@ -117,12 +118,13 @@ landmarksConstellationDetector::FindCandidatePoints
               )
             {
             extractArrayRemoveVectorMeanNormalize
-              ( volumeMSP, currentPointLocation, model, CurrentPoint_test_vec );
+              ( imInterp, currentPointLocation, model, CurrentPoint_test_vec );
 
             double cc_rotation_max = 0.0;
             for( unsigned int curr_rotationAngle = 0;
                  curr_rotationAngle < TemplateMean.size(); curr_rotationAngle++ )
               {
+              //TODO:  Look at using std::inner_product
               const double cc =
                 dot( CurrentPoint_test_vec, TemplateMean[curr_rotationAngle] );
               cc_rotation_max = ( cc > cc_rotation_max ) ? cc : cc_rotation_max;

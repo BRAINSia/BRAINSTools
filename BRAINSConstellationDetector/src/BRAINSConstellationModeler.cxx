@@ -330,8 +330,9 @@ int main(int argc, char *argv[])
       }
 
     // Build template for each landmark
-    std::map<std::string, SImageType::PointType>::iterator it;
-    for( it = mDef[currentDataset].begin(); it != mDef[currentDataset].end(); ++it )
+    for(
+      std::map<std::string, SImageType::PointType>::iterator it = mDef[currentDataset].begin();
+      it != mDef[currentDataset].end(); ++it )
       {
       std::cout << "Training template for " << it->first << std::endl;
       const SImageType::PointType origPoint = it->second;
@@ -365,12 +366,14 @@ int main(int argc, char *argv[])
           }
 
         // TODO:  The following 3 function calls may be a performance problem,
-        // and it should be
-        //       straight forward to refactor this into a single function
-        // extractZeroMeanNormalizedVector
-        //       that has the same signature as extractArray, but has many fewer
+        // and it should be  straight forward to refactor this into a single function
+        // extractZeroMeanNormalizedVector that has the same signature as extractArray, but has many fewer
         // loop iterations.
-        extractArray( image_TestRotated, transformedPoint, myModel.m_VectorIndexLocations[it->first],
+        LinearInterpolatorType::Pointer imInterp = LinearInterpolatorType::New();
+        imInterp->SetInputImage(image_TestRotated);
+        //Resize the model internal vector.
+        myModel.AccessTemplate(it->first, currentDataset, currentAngle).resize( myModel.m_VectorIndexLocations[it->first].size() );
+        extractArray( imInterp, transformedPoint, myModel.m_VectorIndexLocations[it->first],
                       myModel.AccessTemplate(it->first, currentDataset, currentAngle) );
         removeVectorMean( myModel.AccessTemplate(it->first, currentDataset, currentAngle) );
         normalizeVector( myModel.AccessTemplate(it->first, currentDataset, currentAngle) );

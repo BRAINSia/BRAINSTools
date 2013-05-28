@@ -295,14 +295,18 @@ ValuesType removeVectorMean(std::vector<ValuesType> & x)
  * @param result_array
  */
 extern
-void extractArray(SImageType::Pointer & image, const SImageType::PointType & CenterPoint,
-                  const landmarksConstellationModelIO::IndexLocationVectorType & model,
-                  std::vector<float> & result_array);
+void extractArray(
+  LinearInterpolatorType::Pointer imInterp,
+  const SImageType::PointType & CenterPoint,
+  const landmarksConstellationModelIO::IndexLocationVectorType & model,
+  std::vector<float> & result_array);
 
 extern
-void extractArrayRemoveVectorMeanNormalize(SImageType::Pointer & image, const SImageType::PointType & CenterPoint,
-                                           const landmarksConstellationModelIO::IndexLocationVectorType & model,
-                                           std::vector<float> & result_array);
+void extractArrayRemoveVectorMeanNormalize(
+  LinearInterpolatorType::Pointer imInterp,
+  const SImageType::PointType & CenterPoint,
+  const landmarksConstellationModelIO::IndexLocationVectorType & model,
+  std::vector<float> & result_array);
 
 inline
 static std::string

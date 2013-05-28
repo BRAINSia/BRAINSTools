@@ -593,24 +593,19 @@ SImageType::PointType::VectorType initialAC(const SImageType::PointType & RP,  c
 }
 
 void
-extractArray(SImageType::Pointer & image,
+extractArray(LinearInterpolatorType::Pointer imInterp,
              const SImageType::PointType & CenterPoint,
              const landmarksConstellationModelIO::IndexLocationVectorType & model,
              std::vector<float> & result_array)
 {
-  // TODO:  Move the LinearInterpolator to the function parameter, because the
-  // image is never needed.
-  LinearInterpolatorType::Pointer imInterp = LinearInterpolatorType::New();
+  typedef double AccumulatorType;
 
-  imInterp->SetInputImage(image);
   int q = 0;
-  result_array.resize( model.size() );
   for( landmarksConstellationModelIO::IndexLocationVectorType::const_iterator it = model.begin();
        it != model.end(); ++it, ++q )
     {
-    const SImageType::PointType point = CenterPoint + *it;
-    bool                        isin = imInterp->IsInsideBuffer(point);
-    if( isin )
+    const SImageType::PointType & point = CenterPoint + *it;
+    if( imInterp->IsInsideBuffer(point) )
       {
       result_array[q] = imInterp->Evaluate(point);
       }
@@ -622,28 +617,24 @@ extractArray(SImageType::Pointer & image,
 }
 
 void
-extractArrayRemoveVectorMeanNormalize
-  (SImageType::Pointer & image,
+extractArrayRemoveVectorMeanNormalize(
+  LinearInterpolatorType::Pointer imInterp,
   const SImageType::PointType & CenterPoint,
   const landmarksConstellationModelIO::IndexLocationVectorType & model,
   std::vector<float> & result_array)
 {
-  // TODO:  Move the LinearInterpolator to the function parameter, because the
-  // image is never needed.
-  LinearInterpolatorType::Pointer imInterp = LinearInterpolatorType::New();
-
-  imInterp->SetInputImage(image);
-  result_array.resize( model.size() );
-  double mean(0.0);
-  landmarksConstellationModelIO::
-  IndexLocationVectorType::const_iterator it = model.begin();
-  std::vector<float>::iterator            resultIt = result_array.begin();
+  typedef double AccumulatorType;
   // interpolate, accumulating mean as you go
-  for( ; it != model.end(); ++it, ++resultIt )
+  AccumulatorType mean(0.0);
+  {
+  const landmarksConstellationModelIO::IndexLocationVectorType::const_iterator theEnd= model.end();
+  std::vector<float>::iterator resultIt = result_array.begin();
+  for(
+    landmarksConstellationModelIO::IndexLocationVectorType::const_iterator it = model.begin();
+    it != theEnd; ++it, ++resultIt )
     {
-    const SImageType::PointType point = CenterPoint + *it;
-    bool                        isin = imInterp->IsInsideBuffer(point);
-    if( isin )
+    const SImageType::PointType & point = CenterPoint + *it;
+    if( imInterp->IsInsideBuffer(point) )
       {
       ( *resultIt ) = imInterp->Evaluate(point);
       }
@@ -653,31 +644,38 @@ extractArrayRemoveVectorMeanNormalize
       }
     mean += ( *resultIt );
     }
+  }
 
   // remove mean, accumulating norm as you go.
   mean /= result_array.size();
-  double norm = 0.0;
-  for( resultIt = result_array.begin();
-       resultIt != result_array.end(); ++resultIt )
+  AccumulatorType norm = 0.0;
     {
-    double v( ( *resultIt ) - mean );
-    *resultIt = v;
-    norm += v * v;
-
-    // debug abnormal behavior of norm!
-    // std::cout << v << " " << norm << std::endl;
-    }
-  norm = vcl_sqrt(norm);
-  if( norm < vcl_numeric_limits<double>::epsilon() )
-    {
-    std::cout << "WARNING:  ZERO NORM VECTOR." << __FILE__ << __LINE__ << std::endl;
-    return;
-    }
-  // normalize array
-  for( resultIt = result_array.begin();
-       resultIt != result_array.end(); ++resultIt )
-    {
-    *resultIt /= norm;
+    const std::vector<float>::const_iterator theEnd = result_array.end();
+    for(
+      std::vector<float>::iterator resultIt = result_array.begin();
+      resultIt != theEnd; ++resultIt )
+      {
+      const AccumulatorType v( ( *resultIt ) - mean );
+      *resultIt = v;
+      norm += v * v;
+      }
+    norm = vcl_sqrt(norm);
+    if( norm < vcl_numeric_limits<AccumulatorType>::epsilon() )
+      {
+      std::cout << "WARNING:  ZERO NORM VECTOR." << __FILE__ << __LINE__ << std::endl;
+      return;
+      }
+    // normalize array
+    //TODO:  Try std::transform<> here.
+    const AccumulatorType norm_inverse = 1.0/norm;
+      {
+      for(
+        std::vector<float>::iterator resultIt = result_array.begin();
+        resultIt != theEnd; ++resultIt )
+        {
+        *resultIt *= norm_inverse;
+        }
+      }
     }
 }
 

@@ -1,5 +1,5 @@
-#include "PrepareOutputImages.h"
 
+#include "PrepareOutputImages.h"
 #include "itkOrthogonalize3DRotationMatrix.h"
 #include "ChopImageBelowLowerBound.h"
 #include "itkLargestForegroundFilledMaskImageFilter.h"
@@ -59,10 +59,10 @@ namespace itk
 
       {
       lOutputResampledImage = TransformResample<SImageType, SImageType>(
-        lImageToBeResampled,
-        MakeIsoTropicReferenceImage(),
+        lImageToBeResampled.GetPointer(),
+        MakeIsoTropicReferenceImage().GetPointer(),
         BackgroundFillValue,
-        GetInterpolatorFromString<SImageType>( lInterpolationMode),
+        GetInterpolatorFromString<SImageType>( lInterpolationMode).GetPointer(),
         lVersorTransform.GetPointer() );
       }
 

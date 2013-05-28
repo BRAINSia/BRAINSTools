@@ -318,10 +318,9 @@ int main(int argc, char *argv[])
       const SImageType::PointType finalPC = ACPC_AlignedTransform_INV->TransformPoint(origPC);
       const SImageType::PointType finalVN4 = ACPC_AlignedTransform_INV->TransformPoint(origVN4);
 
-      // TransformResample( inputImage, referenceImage, defaultValue, interpolationMode, transform )
       SImageType::Pointer volumeACPC_Aligned =
-        TransformResample<SImageType, SImageType>( image, image, BackgroundFillValue,
-                                                   GetInterpolatorFromString<SImageType>("Linear"),
+        TransformResample<SImageType, SImageType>( image.GetPointer(), image.GetPointer(), BackgroundFillValue,
+                                                   GetInterpolatorFromString<SImageType>("Linear").GetPointer(),
                                                    ACPC_AlignedTransform.GetPointer() );
 
       itkUtil::WriteImage<SImageType>( volumeACPC_Aligned, resultsDir + "/ACPC_Aligned_"

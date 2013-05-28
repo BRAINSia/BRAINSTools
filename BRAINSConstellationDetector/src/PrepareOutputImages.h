@@ -7,6 +7,10 @@
 namespace itk
 {
 
+  extern SImageType::PointType GetOriginalSpaceNamedPoint(
+    const LandmarksMapType & landmarks,
+    const std::string & NamedPoint);
+
   extern void PrepareOutputImages(SImageType::Pointer & lOutputResampledImage,
     SImageType::Pointer & lOutputImage,
     SImageType::Pointer & lOutputUntransformedClippedVolume,
@@ -21,10 +25,5 @@ namespace itk
     const bool lCutOutHeadInOutputVolume,
     const double lOtsuPercentileThreshold
   );
-
-  extern SImageType::PointType GetOriginalSpaceNamedPoint(
-    const LandmarksMapType & landmarks,
-    const std::string & NamedPoint);
-
 }
 #endif // __PrepareOutputImages_h__

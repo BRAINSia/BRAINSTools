@@ -295,11 +295,11 @@ BRAINSCutGenerateRegistrations
   WorkingImageType::Pointer DeformedMovingImage;
   DeformedMovingImage = TransformResample<WorkingImageType,
                                           WorkingImageType>(
-      movingVolume,
-      fixedVolume,
+      movingVolume.GetPointer(),
+      fixedVolume.GetPointer(),
       0.0F,
-      GetInterpolatorFromString<WorkingImageType>("Linear"),
-      BSplineRegistrationHelper->GetCurrentGenericTransform() );
+      GetInterpolatorFromString<WorkingImageType>("Linear").GetPointer(),
+      BSplineRegistrationHelper->GetCurrentGenericTransform().GetPointer() );
 
   typedef itk::ImageFileWriter<WorkingImageType> DeformedVolumeWriterType;
 

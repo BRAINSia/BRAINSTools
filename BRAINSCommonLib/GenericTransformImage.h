@@ -163,14 +163,13 @@ extern int WriteStrippedRigidTransformToDisk(const GenericTransformType::ConstPo
   */
 template <class InputImageType, class OutputImageType>
 typename OutputImageType::Pointer
-  TransformResample(
-  InputImageType const *const inputImage,
-  const itk::ImageBase<InputImageType::ImageDimension> * const ReferenceImage,
-  typename InputImageType::PixelType defaultValue,
+TransformResample(
+  typename InputImageType::ConstPointer inputImage,
+  typename itk::ImageBase<InputImageType::ImageDimension>::ConstPointer ReferenceImage,
+  const typename InputImageType::PixelType defaultValue,
   typename itk::InterpolateImageFunction<InputImageType,
-                                         typename itk::NumericTraits<typename InputImageType::PixelType>::RealType>
-  ::Pointer interp,
-  typename GenericTransformType::Pointer transform);
+  typename itk::NumericTraits<typename InputImageType::PixelType>::RealType>::Pointer interp,
+  typename GenericTransformType::ConstPointer transform);
 
 /**
   * \author Hans J. Johnson

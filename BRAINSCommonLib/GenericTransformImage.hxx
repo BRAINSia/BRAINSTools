@@ -9,21 +9,20 @@
 template <class InputImageType, class OutputImageType>
 typename OutputImageType::Pointer
 TransformResample(
-  InputImageType const *const inputImage,
-  const itk::ImageBase<InputImageType::ImageDimension> * const ReferenceImage,
-  typename InputImageType::PixelType defaultValue,
+  typename InputImageType::ConstPointer inputImage,
+  typename itk::ImageBase<InputImageType::ImageDimension>::ConstPointer ReferenceImage,
+  const typename InputImageType::PixelType defaultValue,
   typename itk::InterpolateImageFunction<InputImageType,
-                                         typename itk::NumericTraits<typename InputImageType::PixelType>::RealType>
-  ::Pointer interp,
-  typename GenericTransformType::Pointer transform)
+           typename itk::NumericTraits<typename InputImageType::PixelType>::RealType>::Pointer interp,
+  typename GenericTransformType::ConstPointer transform)
 {
   typedef typename itk::ResampleImageFilter<InputImageType, OutputImageType> ResampleImageFilter;
   typename ResampleImageFilter::Pointer resample = ResampleImageFilter::New();
   resample->SetInput(inputImage);
-  resample->SetTransform(transform);
-  resample->SetInterpolator(interp);
+  resample->SetTransform(transform.GetPointer());
+  resample->SetInterpolator(interp.GetPointer());
 
-  if( ReferenceImage != NULL )
+  if( ReferenceImage.IsNotNull() )
     {
     resample->SetOutputParametersFromImage(ReferenceImage);
     }
@@ -322,11 +321,12 @@ typename OutputImageType::Pointer GenericTransformImage(
     else
       {
       TransformedImage = TransformResample<InputImageType, OutputImageType>(
-        PrincipalOperandImage,
+        PrincipalOperandImage.GetPointer(),
+        //TODO:  Change function signature to be a ConstPointer instead of a raw pointer ReferenceImage.GetPointer(),
         ReferenceImage,
         suggestedDefaultValue,
-        GetInterpolatorFromString<InputImageType>(interpolationMode),
-        genericTransform);
+        GetInterpolatorFromString<InputImageType>(interpolationMode).GetPointer(),
+        genericTransform.GetPointer());
       }
     }
 

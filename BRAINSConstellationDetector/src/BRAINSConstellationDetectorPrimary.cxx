@@ -529,9 +529,9 @@ bool BRAINSConstellationDetectorPrimary::Compute( void )
     writer->SetInput(
       TransformResample<SImageType, SImageType>(
         constellation2->GetImageToBeResampled(),
-        MakeIsoTropicReferenceImage(),
+        MakeIsoTropicReferenceImage().GetPointer(),
         BackgroundFillValue,
-        GetInterpolatorFromString<SImageType>(this->m_interpolationMode),
+        GetInterpolatorFromString<SImageType>(this->m_interpolationMode).GetPointer(),
         finalTransform.GetPointer() ) );
     writer->SetUseCompression( true );
     try

@@ -226,17 +226,9 @@ SImageType::Pointer CreatedebugPlaneImage(SImageType::Pointer referenceImage,
 
   RigidTransformType::Pointer invMSPTransform = RigidTransformType::New();
   MSPTransform->GetInverse(invMSPTransform);
-#if 1
   SImageType::Pointer RotatedPlane = TransformResample<SImageType, SImageType>(
-      MSPImage, MSPImage, /* DEFAULT TO ZERO */ 0,
-      GetInterpolatorFromString<SImageType>("Linear"), invMSPTransform.GetPointer() );
-#else
-  SImageType::Pointer RotatedPlane = GenericImageResample<SImageType, SImageType, LinearInterpolatorType>(
-      MSPImage,
-      invMSPTransform,
-      /* DEFAULT TO ZERO */
-      0);
-#endif
+      MSPImage.GetPointer(), MSPImage.GetPointer(), /* DEFAULT TO ZERO */ 0,
+      GetInterpolatorFromString<SImageType>("Linear").GetPointer(), invMSPTransform.GetPointer() );
 
   itk::ImageDuplicator<SImageType>::Pointer duplicator = itk::ImageDuplicator<SImageType>::New();
   duplicator->SetInputImage(referenceImage);
@@ -721,16 +713,9 @@ SImageType::Pointer CreateTestCenteredRotatedImage2(const RigidTransformType::Po
                                                            // and the remove the
                                                            // true flag.
 
-#if 1
   SImageType::Pointer image_Point_TestRotated = TransformResample<SImageType, SImageType>(
-      image, image, /* DEFAULT TO ZERO */ 0,
-      GetInterpolatorFromString<SImageType>("Linear"), Point_Centered_TestRotated.GetPointer() );
-#else
-  SImageType::Pointer image_Point_TestRotated = GenericImageResample<SImageType, SImageType, LinearInterpolatorType>(
-      image,
-      Point_Centered_TestRotated,
-      /* DEFAULT TO ZERO */ 0);
-#endif
+      image.GetPointer(), image.GetPointer(), /* DEFAULT TO ZERO */ 0,
+      GetInterpolatorFromString<SImageType>("Linear").GetPointer(), Point_Centered_TestRotated.GetPointer() );
 
   RigidTransformType::Pointer invPoint_Centered_TestRotated = RigidTransformType::New();
   Point_Centered_TestRotated->GetInverse(invPoint_Centered_TestRotated);

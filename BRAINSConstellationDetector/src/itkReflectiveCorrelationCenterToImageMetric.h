@@ -390,10 +390,10 @@ public:
     SImageType::PixelType minPixelValue = statisticsFilter->GetMinimum();
 
     return TransformResample<SImageType, SImageType>
-             ( this->m_OriginalImage,
-             MakeIsoTropicReferenceImage(),
+             ( this->m_OriginalImage.GetPointer(),
+             MakeIsoTropicReferenceImage().GetPointer(),
              minPixelValue,
-             GetInterpolatorFromString<SImageType>("Linear"),
+             GetInterpolatorFromString<SImageType>("Linear").GetPointer(),
              GetTransformToMSP().GetPointer() );
   }
 

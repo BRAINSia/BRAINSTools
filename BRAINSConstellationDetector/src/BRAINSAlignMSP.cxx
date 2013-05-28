@@ -135,8 +135,8 @@ int main(int argc, char *argv[])
     {
     // Remember:  the Data is Moving's, the shape is Fixed's.
     SImageType::Pointer interpImage = TransformResample<SImageType, SImageType>(
-        image, image, BackgroundFillValue,
-        GetInterpolatorFromString<SImageType>(interpolationMode), Tmsp.GetPointer() );
+        image.GetPointer(), image.GetPointer(), BackgroundFillValue,
+        GetInterpolatorFromString<SImageType>(interpolationMode).GetPointer(), Tmsp.GetPointer() );
     itkUtil::WriteImage<SImageType>(interpImage, resampleMSP);
     }
   if( globalImagedebugLevel > 3 )

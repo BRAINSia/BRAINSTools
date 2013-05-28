@@ -24,9 +24,6 @@ namespace itk
     SImageType::Pointer & lOutputUntransformedClippedVolume,
     SImageType::ConstPointer lImageToBeResampled,
     VersorTransformType::ConstPointer lVersorTransform,
-    VersorTransformType::ConstPointer lInvVersorTransform,
-    const LandmarksMapType & inputLmks,
-    LandmarksMapType & outputLmks,
     const double lACLowerBound,
     const short int BackgroundFillValue,
     const std::string & lInterpolationMode,
@@ -37,14 +34,6 @@ namespace itk
     typedef ImageDuplicator<SImageType>                        DuplicatorType;
     typedef ResampleInPlaceImageFilter<SImageType, SImageType> ResampleIPFilterType;
     typedef ResampleIPFilterType::Pointer                      ResampleIPFilterPointer;
-
-    for( LandmarksMapType::const_iterator lit = inputLmks.begin();
-      lit != inputLmks.end(); ++lit )
-      {
-      outputLmks[lit->first] =
-        lInvVersorTransform->TransformPoint
-        ( GetOriginalSpaceNamedPoint(inputLmks, lit->first) );
-      }
 
     const double PhysicalLowerBound = /* ACy when zero-centered is ... */ 0.0 - lACLowerBound;
       {
@@ -134,8 +123,14 @@ namespace itk
         ResampleFilter->SetInterpolator(interpolator);
         ResampleFilter->SetDefaultPixelValue(0);
         ResampleFilter->SetOutputParametersFromImage(lImageToBeResampled);
-
-        ResampleFilter->SetTransform(lInvVersorTransform);
+          {
+          VersorTransformType::Pointer lInvVersorTransform = VersorTransformType::New();
+          const SImageType::PointType centerPoint = lVersorTransform->GetCenter();
+          lInvVersorTransform->SetCenter(centerPoint);
+          lInvVersorTransform->SetIdentity();
+          lVersorTransform->GetInverse(lInvVersorTransform);
+          ResampleFilter->SetTransform(lInvVersorTransform);
+          }
         ResampleFilter->Update();
         SImageType::Pointer lClippingFactorImage = ResampleFilter->GetOutput();
 
@@ -149,6 +144,30 @@ namespace itk
         }
       // ======================== Stop
       // ======================== Stop
+      }
+    }
+
+  void PrepareOutputLandmarks(
+    VersorTransformType::ConstPointer lVersorTransform,
+    const LandmarksMapType & inputLmks,
+    LandmarksMapType & outputLmks
+  )
+    {
+    VersorTransformType::Pointer lInvVersorTransform = VersorTransformType::New();
+      {
+      const SImageType::PointType centerPoint = lVersorTransform->GetCenter();
+      lInvVersorTransform->SetCenter(centerPoint);
+      lInvVersorTransform->SetIdentity();
+      lVersorTransform->GetInverse(lInvVersorTransform);
+      }
+
+
+    for( LandmarksMapType::const_iterator lit = inputLmks.begin();
+      lit != inputLmks.end(); ++lit )
+      {
+      outputLmks[lit->first] =
+        lInvVersorTransform->TransformPoint
+        ( GetOriginalSpaceNamedPoint(inputLmks, lit->first) );
       }
     }
 }

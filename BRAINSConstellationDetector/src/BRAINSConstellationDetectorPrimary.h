@@ -20,12 +20,6 @@
 #include "itkTransformFileWriter.h"
 #include "itkVersorRigid3DTransform.h"
 
-#include "itkResampleInPlaceImageFilter.h"
-#include "itkMultiplyImageFilter.h"
-#include "itkLandmarkBasedTransformInitializer.h"
-#include "itkCastImageFilter.h"
-#include <BRAINSFitHelper.h>
-
 #include <cstdio>
 #include <iostream>
 #include <fstream>
@@ -52,7 +46,6 @@ public:
   typedef itk::ImageFileWriter<ImageType>                         WriterType;
   typedef itk::FindCenterOfBrainFilter<ImageType>                 FindCenterFilter;
   typedef itk::BRAINSHoughEyeDetector<ImageType, ImageType>       HoughEyeDetectorType;
-  typedef itk::BRAINSConstellationDetector2<ImageType, ImageType> Constellation2Type;
   typedef itk::TransformFileWriter                                TransformWriterType;
   typedef itk::VersorRigid3DTransform<double>                     VersorTransformType;
   std::string pathOut;

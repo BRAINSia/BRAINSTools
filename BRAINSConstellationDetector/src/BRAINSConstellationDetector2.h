@@ -267,6 +267,10 @@ public:
     return m_landmarksEMSP;
   }
 
+  itkSetMacro(atlasVolume, std::string);
+  itkSetMacro(atlasLandmarks, std::string);
+  itkSetMacro(atlasLandmarkWeights, std::string);
+
 protected:
 
   BRAINSConstellationDetector2();
@@ -343,6 +347,11 @@ protected:
   unsigned int m_WritedebuggingImagesLevel; // default = 0
   std::string  m_WriteBranded2DImage;
   std::string  m_ResultsDir;                    // default = "./"
+
+  std::string  m_atlasVolume; // The reference atlas image
+  std::string  m_atlasLandmarks; // The reference atlas landmarks
+  std::string  m_atlasLandmarkWeights; // The reference atlas landmark weights
+
 private:
 
   BRAINSConstellationDetector2(const Self &)

@@ -8,6 +8,14 @@
 #include "landmarksConstellationDetector.h"
 #include "BRAINSConstellationDetector2.h"
 #include "itkOrthogonalize3DRotationMatrix.h"
+#include "itkLandmarkBasedTransformInitializer.h"
+
+#include "itkResampleInPlaceImageFilter.h"
+#include "itkMultiplyImageFilter.h"
+#include "itkLandmarkBasedTransformInitializer.h"
+#include "itkCastImageFilter.h"
+#include <BRAINSFitHelper.h>
+
 
 namespace itk
 {
@@ -33,7 +41,6 @@ BRAINSConstellationDetector2<TInputImage, TOutputImage>
   // Outputs
   this->m_Transform = "";
   this->m_VersorTransform = NULL;
-  this->m_InvVersorTransform = NULL;
   this->m_OutputImage = NULL;
   this->m_OutputResampledImage = NULL;
   this->m_OutputUntransformedClippedVolume = NULL;
@@ -280,18 +287,200 @@ BRAINSConstellationDetector2<TInputImage, TOutputImage>
     this->m_VersorTransform->SetTranslation( ZeroCenteredTransform->GetTranslation() );
     }
 
-  this->m_InvVersorTransform = VersorTransformType::New();
-  const SImageType::PointType centerPoint = this->m_VersorTransform->GetCenter();
-  this->m_InvVersorTransform->SetCenter(centerPoint);
-  this->m_InvVersorTransform->SetIdentity();
-  this->m_VersorTransform->GetInverse(this->m_InvVersorTransform);
 
-  // std::cout << "versor         transform parameters are " <<
-  // ZeroCenteredTransform->GetParameters() << std::endl;
-  // std::cout << "versor inverse transform parameters are " <<
-  // this->m_InvVersorTransform->GetParameters() << std::endl;
-  // std::cout << "               transform parameters are nice, huh?" <<
-  // std::endl;
+  ////////////////////////////
+  // START BRAINSFit alternative
+    if( ! this->m_atlasVolume.empty() )
+      {
+      typedef itk::ImageFileReader<SImageType> AtlasReaderType;
+      AtlasReaderType::Pointer atlasReader = AtlasReaderType::New();
+      atlasReader->SetFileName( this->m_atlasVolume );
+      try
+        {
+        atlasReader->Update();
+        }
+      catch( itk::ExceptionObject & err )
+        {
+        std::cerr << "Error while reading atlasVolume file:\n "
+          << err << std::endl;
+        }
+
+      std::cout << "read atlas" << std::endl;
+      // TODO: prob needs a try-catch
+      LandmarksMapType referenceAtlasLandmarks = ReadSlicer3toITKLmk( this->m_atlasLandmarks );
+      std::cout << "read atlas landmarks " << std::endl;
+      LandmarksMapType acpcLandmarks;
+      itk::PrepareOutputLandmarks(
+        this->m_VersorTransform.GetPointer(), //Input RO
+        myDetector.GetNamedPoints(),
+        acpcLandmarks
+      );
+
+      // Create a better version of this->m_VersorTransform using BRAINSFit.
+      // take the the subjects landmarks in original space, and  landmarks from a reference Atlas, and compute an initial
+      // affine transform
+      // ( using logic from BRAINSLandmarkInitializer) and create initToAtlasAffineTransform.
+
+      typedef itk::AffineTransform<double, Dimension> AffineTransformType;
+      typename AffineTransformType::Pointer initToAtlasAffineTransform = AffineTransformType::New();
+
+      typedef itk::LandmarkBasedTransformInitializer<AffineTransformType, SImageType, SImageType> LandmarkBasedInitializerType;
+      typename LandmarkBasedInitializerType::Pointer landmarkBasedInitializer = LandmarkBasedInitializerType::New();
+
+      typedef std::map<std::string, float> WeightType;
+      WeightType landmarkWeights;
+      if( this->m_atlasLandmarkWeights != "" )
+        {
+        std::cout << "setting weights. " << std::endl;
+        std::ifstream weightFileStream( this->m_atlasLandmarkWeights.c_str() );
+
+        if( !weightFileStream.is_open() )
+          {
+          std::cerr << "Fail to open weight file " << std::endl;
+          exit(EXIT_FAILURE);
+          }
+
+        std::string line;
+        while( getline( weightFileStream, line ) )
+          {
+          const size_t      firstComma = line.find(',', 0);
+          const std::string landmark = line.substr( 0, firstComma );
+          const float       weight   = atof( (line.substr( firstComma + 1, line.length() - 1 ) ).c_str() );
+          landmarkWeights[landmark] = weight;
+          }
+        }
+
+      typedef typename LandmarkBasedInitializerType::LandmarkPointContainer LandmarkContainerType;
+      LandmarkContainerType fixedLmks;
+      LandmarkContainerType movingLmks;
+      typedef typename  LandmarksMapType::const_iterator LandmarkConstIterator;
+      typename LandmarkBasedInitializerType::LandmarkWeightType landmarkWgts;
+      for( LandmarkConstIterator fixedIt = referenceAtlasLandmarks.begin(); fixedIt != referenceAtlasLandmarks.end();
+        ++fixedIt )
+        {
+        LandmarkConstIterator movingIt = acpcLandmarks.find( fixedIt->first );
+        if( movingIt != acpcLandmarks.end() )
+          {
+          fixedLmks.push_back( fixedIt->second);
+          movingLmks.push_back( movingIt->second);
+          if( !this->m_atlasLandmarkWeights.empty() )
+            {
+            if( landmarkWeights.find( fixedIt->first ) != landmarkWeights.end() )
+              {
+              landmarkWgts.push_back( landmarkWeights[fixedIt->first] );
+              }
+            else
+              {
+              std::cout << "Landmark for " << fixedIt->first << " does not exist. "
+                << "Set the weight to 0.5 "
+                << std::endl;
+              landmarkWgts.push_back( 0.5F );
+              }
+            }
+          }
+        else
+          {
+          std::cout << "i shouldnt be here" << std::endl;
+          exit(-1);
+          //TODO:  Throw exception
+          }
+        }
+
+      if( !this->m_atlasLandmarkWeights.empty() )
+        {
+        landmarkBasedInitializer->SetLandmarkWeight( landmarkWgts );
+        }
+
+      landmarkBasedInitializer->SetFixedLandmarks( fixedLmks );
+      landmarkBasedInitializer->SetMovingLandmarks( movingLmks );
+      landmarkBasedInitializer->SetTransform( initToAtlasAffineTransform );
+      landmarkBasedInitializer->InitializeTransform();
+
+      initToAtlasAffineTransform->Compose( this->m_VersorTransform, true );
+      typedef itk::BRAINSFitHelper HelperType;
+      HelperType::Pointer brainsFitHelper = HelperType::New();
+
+      // Now Run BRAINSFitHelper class initialized with initToAtlasAffineTransform, original image, and atlas image
+      // adapted from BRAINSABC/brainseg/AtlasRegistrationMethod.hxx - do I need to change any of these parameters?
+      brainsFitHelper->SetNumberOfSamples(500000);
+      brainsFitHelper->SetNumberOfHistogramBins(50);
+      std::vector<int> numberOfIterations(1);
+      numberOfIterations[0] = 1500;
+      brainsFitHelper->SetNumberOfIterations(numberOfIterations);
+      brainsFitHelper->SetTranslationScale(1000);
+      brainsFitHelper->SetReproportionScale(1.0);
+      brainsFitHelper->SetSkewScale(1.0);
+
+      typedef itk::Image<float, 3>                            FloatImageType;
+      typedef itk::CastImageFilter<SImageType, FloatImageType> CastFilterType;
+
+        {
+        typename CastFilterType::Pointer fixedCastFilter = CastFilterType::New();
+        fixedCastFilter->SetInput( atlasReader->GetOutput() );
+        fixedCastFilter->Update();
+        brainsFitHelper->SetFixedVolume( fixedCastFilter->GetOutput() );
+
+        typename CastFilterType::Pointer movingCastFilter = CastFilterType::New();
+        movingCastFilter->SetInput( this->GetInput() );
+        movingCastFilter->Update();
+        brainsFitHelper->SetMovingVolume( movingCastFilter->GetOutput() );
+        }
+
+      std::vector<double> minimumStepSize(1);
+      minimumStepSize[0] = 0.005;
+      brainsFitHelper->SetMinimumStepLength(minimumStepSize);
+      std::vector<std::string> transformType(1);
+      transformType[0] = "Affine";
+      brainsFitHelper->SetTransformType(transformType);
+
+      brainsFitHelper->SetCurrentGenericTransform( initToAtlasAffineTransform.GetPointer() );
+      brainsFitHelper->Update();
+
+      this->m_VersorTransform =
+        itk::ComputeRigidTransformFromGeneric( brainsFitHelper->GetCurrentGenericTransform().GetPointer() );
+      if( this->m_VersorTransform.IsNull() )
+        {
+        // Fail if something weird happens.  TODO: This should throw an exception.
+        std::cout << "this->m_VersorTransform is null. It means we're not registering to the atlas, after all."
+          << std::endl;
+        std::cout << "FAILIING" << std::endl;
+        exit(-1);
+        }
+
+      //TODO: Translate found ACPoint
+#if 0
+      // as a final step, translate the AC back to the origin.
+        {
+        LandmarkConstIterator                           acIter = acpcLandmarks.find( "AC" );
+        const VersorRigid3DTransformType::OutputPointType acOrigPoint =
+          "A transform of some sort here"->TransformPoint( acIter->second );
+
+        VersorTransformType::Pointer finalTransform = VersorTransformType::New();
+        finalTransform->SetFixedParameters( this->m_VersorTransform->GetFixedParameters() );
+        finalTransform->SetParameters( this->m_VersorTransform->GetParameters() );
+        finalTransform->GetInverse( invFinalTransform );
+
+        // TODO:  CHECK if this can be less convoluted. Too many inverses used.  translate the forward by positive
+        // rather than inverse by negative.
+        //
+        VersorRigid3DTransformType::OutputPointType acPoint = invFinalTransform->TransformPoint( acOrigPoint );
+          {
+          VersorRigid3DTransformType::OffsetType translation;
+          translation[0] = -acPoint[0];
+          translation[1] = -acPoint[1];
+          translation[2] = -acPoint[2];
+          invFinalTransform->Translate( translation, true );
+          }
+        invFinalTransform->GetInverse( finalTransform );
+
+        // TODO: Remove VersorRigid3DTransformType::OutputPointType acFinalPoint =  invFinalTransform->TransformPoint (
+        // acOrigPoint );
+        }
+#endif
+      }
+  ///END BRAINSFIT_ALTERNATIVE
+  ////////////////////////////
+
   if( LMC::globalverboseFlag )
     {
     std::cout << "VersorRotation: " << this->m_VersorTransform->GetMatrix() << std::endl;
@@ -314,6 +503,24 @@ BRAINSConstellationDetector2<TInputImage, TOutputImage>
     std::cout << "itkVersorRigid3DTransform: \n" <<  this->m_VersorTransform << std::endl;
     std::cout << "itkRigid3DTransform: \n" <<  this->m_VersorTransform << std::endl;
     }
+
+  itk::PrepareOutputImages(this->m_OutputResampledImage,
+    this->m_OutputImage,
+    this->m_OutputUntransformedClippedVolume,
+    myDetector.GetOriginalInput().GetPointer(), //Input RO
+    this->m_VersorTransform.GetPointer(), //Input RO
+    this->m_AcLowerBound, //Input RO
+    BackgroundFillValue, //Input RO
+    this->m_InterpolationMode, //Input RO
+    this->m_CutOutHeadInOutputVolume, //Input RO
+    this->m_OtsuPercentileThreshold //Input RO
+  );
+
+  itk::PrepareOutputLandmarks(
+    this->m_VersorTransform.GetPointer(), //Input RO
+    myDetector.GetNamedPoints(),
+    this->m_AlignedPoints
+  );
 
   if( globalImagedebugLevel > 3 )
     {
@@ -342,23 +549,6 @@ BRAINSConstellationDetector2<TInputImage, TOutputImage>
       itkUtil::WriteImage<SImageType>(RigidMSPImage, this->m_ResultsDir + "/RigidMSPImage_Lmk_MSP.nii.gz");
       }
     }
-  itk::PrepareOutputImages(this->m_OutputResampledImage,
-    this->m_OutputImage,
-    this->m_OutputUntransformedClippedVolume,
-    myDetector.GetOriginalInput().GetPointer(), //Input RO
-    this->m_VersorTransform.GetPointer(), //Input RO
-    this->m_InvVersorTransform.GetPointer(), //Input RO
-    myDetector.GetNamedPoints(),
-    this->m_AlignedPoints,
-    this->m_AcLowerBound, //Input RO
-    BackgroundFillValue, //Input RO
-    this->m_InterpolationMode, //Input RO
-    this->m_CutOutHeadInOutputVolume, //Input RO
-    this->m_OtsuPercentileThreshold //Input RO
-  );
-
-  this->GraftOutput(this->m_OutputImage);
-
   if( this->m_WriteBranded2DImage.compare("") != 0 )
     {
     MakeBranded2DImage(this->m_OutputResampledImage.GetPointer(), myDetector,
@@ -369,6 +559,7 @@ BRAINSConstellationDetector2<TInputImage, TOutputImage>
       this->m_AlignedPoints["CM"],
       this->m_WriteBranded2DImage);
     }
+  //TODO:  This is never used.  The important output is the versor transform! this->GraftOutput(this->m_OutputImage);
 }
 
 template <class TInputImage, class TOutputImage>

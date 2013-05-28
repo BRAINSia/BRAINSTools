@@ -16,14 +16,17 @@ namespace itk
     SImageType::Pointer & lOutputUntransformedClippedVolume,
     SImageType::ConstPointer lImageToBeResampled,
     VersorTransformType::ConstPointer lVersorTransform,
-    VersorTransformType::ConstPointer lInvVersorTransform,
-    const LandmarksMapType & inputLmks,
-    LandmarksMapType & outputLmks,
     const double lACLowerBound,
     const short int BackgroundFillValue,
     const std::string & lInterpolationMode,
     const bool lCutOutHeadInOutputVolume,
     const double lOtsuPercentileThreshold
   );
+
+  extern void PrepareOutputLandmarks(
+    VersorTransformType::ConstPointer lVersorTransform,
+    const LandmarksMapType & inputLmks,
+    LandmarksMapType & outputLmks
+    );
 }
 #endif // __PrepareOutputImages_h__

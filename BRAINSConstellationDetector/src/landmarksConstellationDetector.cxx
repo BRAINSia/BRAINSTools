@@ -216,9 +216,6 @@ void landmarksConstellationDetector::Compute( void )
     // correlation.
     SImageType::Pointer new_input = this->m_VolumeMSP;
 
-    // New transform is computed based on this new input, so this new input should be returned to the
-    // BRAINSConstellationDetector2 to be used for the final outputResampledVolume.
-    // "m_OriginalInput" will be returned to the BRAINSConstellationDetector2.
     DuplicatorType::Pointer duplicator = DuplicatorType::New();
     duplicator->SetInputImage( new_input );
     duplicator->Update();

@@ -24,6 +24,7 @@ class HistogramMatchingFilterOutputSpec(TraitedSpec):
 
 
 class HistogramMatchingFilter(SEMLikeCommandLine):
+
     """title: Write Out Image Intensities
 
 category: BRAINS.Utilities

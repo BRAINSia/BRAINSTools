@@ -16,6 +16,7 @@ class GenerateCsfClippedFromClassifiedImageOutputSpec(TraitedSpec):
 
 
 class GenerateCsfClippedFromClassifiedImage(SEMLikeCommandLine):
+
     """title: GenerateCsfClippedFromClassifiedImage
 
 category: FeatureCreator

@@ -18,6 +18,7 @@ class gtractTransformToDisplacementFieldOutputSpec(TraitedSpec):
 
 
 class gtractTransformToDisplacementField(SEMLikeCommandLine):
+
     """title: Create Displacement Field
 
 category: Diffusion.GTRACT
@@ -55,6 +56,7 @@ class gtractInvertBSplineTransformOutputSpec(TraitedSpec):
 
 
 class gtractInvertBSplineTransform(SEMLikeCommandLine):
+
     """title: B-Spline Transform Inversion
 
 category: Diffusion.GTRACT
@@ -91,6 +93,7 @@ class gtractConcatDwiOutputSpec(TraitedSpec):
 
 
 class gtractConcatDwi(SEMLikeCommandLine):
+
     """title: Concat DWI Images
 
 category: Diffusion.GTRACT
@@ -128,6 +131,7 @@ class gtractAverageBvaluesOutputSpec(TraitedSpec):
 
 
 class gtractAverageBvalues(SEMLikeCommandLine):
+
     """title: Average B-Values
 
 category: Diffusion.GTRACT
@@ -176,6 +180,7 @@ class gtractCoregBvaluesOutputSpec(TraitedSpec):
 
 
 class gtractCoregBvalues(SEMLikeCommandLine):
+
     """title: Coregister B-Values
 
 category: Diffusion.GTRACT
@@ -214,6 +219,7 @@ class gtractResampleAnisotropyOutputSpec(TraitedSpec):
 
 
 class gtractResampleAnisotropy(SEMLikeCommandLine):
+
     """title: Resample Anisotropy
 
 category: Diffusion.GTRACT
@@ -252,6 +258,7 @@ class gtractResampleCodeImageOutputSpec(TraitedSpec):
 
 
 class gtractResampleCodeImage(SEMLikeCommandLine):
+
     """title: Resample Code Image
 
 category: Diffusion.GTRACT
@@ -288,6 +295,7 @@ class gtractCopyImageOrientationOutputSpec(TraitedSpec):
 
 
 class gtractCopyImageOrientation(SEMLikeCommandLine):
+
     """title: Copy Image Orientation
 
 category: Diffusion.GTRACT
@@ -325,6 +333,7 @@ class gtractCreateGuideFiberOutputSpec(TraitedSpec):
 
 
 class gtractCreateGuideFiber(SEMLikeCommandLine):
+
     """title: Create Guide Fiber
 
 category: Diffusion.GTRACT
@@ -361,6 +370,7 @@ class gtractAnisotropyMapOutputSpec(TraitedSpec):
 
 
 class gtractAnisotropyMap(SEMLikeCommandLine):
+
     """title: Anisotropy Map
 
 category: Diffusion.GTRACT
@@ -398,6 +408,7 @@ class gtractClipAnisotropyOutputSpec(TraitedSpec):
 
 
 class gtractClipAnisotropy(SEMLikeCommandLine):
+
     """title: Clip Anisotropy
 
 category: Diffusion.GTRACT
@@ -437,6 +448,7 @@ class gtractResampleB0OutputSpec(TraitedSpec):
 
 
 class gtractResampleB0(SEMLikeCommandLine):
+
     """title: Resample B0
 
 category: Diffusion.GTRACT
@@ -472,6 +484,7 @@ class gtractInvertRigidTransformOutputSpec(TraitedSpec):
 
 
 class gtractInvertRigidTransform(SEMLikeCommandLine):
+
     """title: Rigid Transform Inversion
 
 category: Diffusion.GTRACT
@@ -508,6 +521,7 @@ class gtractImageConformityOutputSpec(TraitedSpec):
 
 
 class gtractImageConformity(SEMLikeCommandLine):
+
     """title: Image Conformity
 
 category: Diffusion.GTRACT
@@ -548,6 +562,7 @@ class compareTractInclusionOutputSpec(TraitedSpec):
 
 
 class compareTractInclusion(SEMLikeCommandLine):
+
     """title: Compare Tracts
 
 category: Diffusion.GTRACT
@@ -594,6 +609,7 @@ class gtractFastMarchingTrackingOutputSpec(TraitedSpec):
 
 
 class gtractFastMarchingTracking(SEMLikeCommandLine):
+
     """title: Fast Marching Tracking
 
 category: Diffusion.GTRACT
@@ -631,6 +647,7 @@ class gtractInvertDisplacementFieldOutputSpec(TraitedSpec):
 
 
 class gtractInvertDisplacementField(SEMLikeCommandLine):
+
     """title: Invert Displacement Field
 
 category: Diffusion.GTRACT
@@ -669,15 +686,19 @@ class gtractCoRegAnatomyInputSpec(CommandLineInputSpec):
     spatialScale = traits.Int(desc="Scales the number of voxels in the image by this value to specify the number of voxels used in the registration", argstr="--spatialScale %d")
     convergence = traits.Float(desc="Convergence Factor", argstr="--convergence %f")
     gradientTolerance = traits.Float(desc="Gradient Tolerance", argstr="--gradientTolerance %f")
-    maxBSplineDisplacement = traits.Float(desc=" Sets the maximum allowed displacements in image physical coordinates for BSpline control grid along each axis.  A value of 0.0 indicates that the problem should be unbounded.  NOTE:  This only constrains the BSpline portion, and does not limit the displacement from the associated bulk transform.  This can lead to a substantial reduction in computation time in the BSpline optimizer.,       ", argstr="--maxBSplineDisplacement %f")
+    maxBSplineDisplacement = traits.Float(
+        desc=" Sets the maximum allowed displacements in image physical coordinates for BSpline control grid along each axis.  A value of 0.0 indicates that the problem should be unbounded.  NOTE:  This only constrains the BSpline portion, and does not limit the displacement from the associated bulk transform.  This can lead to a substantial reduction in computation time in the BSpline optimizer.,       ", argstr="--maxBSplineDisplacement %f")
     maximumStepSize = traits.Float(desc="Maximum permitted step size to move in the selected 3D fit", argstr="--maximumStepSize %f")
     minimumStepSize = traits.Float(desc="Minimum required step size to move in the selected 3D fit without converging -- decrease this to make the fit more exacting", argstr="--minimumStepSize %f")
     translationScale = traits.Float(desc="How much to scale up changes in position compared to unit rotational changes in radians -- decrease this to put more translation in the fit", argstr="--translationScale %f")
     relaxationFactor = traits.Float(desc="Fraction of gradient from Jacobian to attempt to move in the selected 3D fit", argstr="--relaxationFactor %f")
     numberOfSamples = traits.Int(desc="Number of voxels sampled for mutual information computation in the selected 3D fit", argstr="--numberOfSamples %d")
-    useMomentsAlign = traits.Bool(desc="MomentsAlign assumes that the center of mass of the images represent similar structures.  Perform a MomentsAlign registration as part of the sequential registration steps.   This option MUST come first, and CAN NOT be used with either CenterOfHeadLAlign, GeometryAlign, or initialTransform file.  This family of options superceeds the use of transformType if any of them are set.", argstr="--useMomentsAlign ")
-    useGeometryAlign = traits.Bool(desc="GeometryAlign on assumes that the center of the voxel lattice of the images represent similar structures. Perform a GeometryCenterAlign registration as part of the sequential registration steps.   This option MUST come first, and CAN NOT be used with either MomentsAlign, CenterOfHeadAlign, or initialTransform file.  This family of options superceeds the use of transformType if any of them are set.", argstr="--useGeometryAlign ")
-    useCenterOfHeadAlign = traits.Bool(desc="CenterOfHeadAlign attempts to find a hemisphere full of foreground voxels from the superior direction as an estimate of where the center of a head shape would be to drive a center of mass estimate.  Perform a CenterOfHeadAlign registration as part of the sequential registration steps.   This option MUST come first, and CAN NOT be used with either MomentsAlign, GeometryAlign, or initialTransform file.  This family of options superceeds the use of transformType if any of them are set.", argstr="--useCenterOfHeadAlign ")
+    useMomentsAlign = traits.Bool(
+        desc="MomentsAlign assumes that the center of mass of the images represent similar structures.  Perform a MomentsAlign registration as part of the sequential registration steps.   This option MUST come first, and CAN NOT be used with either CenterOfHeadLAlign, GeometryAlign, or initialTransform file.  This family of options superceeds the use of transformType if any of them are set.", argstr="--useMomentsAlign ")
+    useGeometryAlign = traits.Bool(
+        desc="GeometryAlign on assumes that the center of the voxel lattice of the images represent similar structures. Perform a GeometryCenterAlign registration as part of the sequential registration steps.   This option MUST come first, and CAN NOT be used with either MomentsAlign, CenterOfHeadAlign, or initialTransform file.  This family of options superceeds the use of transformType if any of them are set.", argstr="--useGeometryAlign ")
+    useCenterOfHeadAlign = traits.Bool(
+        desc="CenterOfHeadAlign attempts to find a hemisphere full of foreground voxels from the superior direction as an estimate of where the center of a head shape would be to drive a center of mass estimate.  Perform a CenterOfHeadAlign registration as part of the sequential registration steps.   This option MUST come first, and CAN NOT be used with either MomentsAlign, GeometryAlign, or initialTransform file.  This family of options superceeds the use of transformType if any of them are set.", argstr="--useCenterOfHeadAlign ")
     numberOfThreads = traits.Int(desc="Explicitly specify the maximum number of threads to use.", argstr="--numberOfThreads %d")
 
 
@@ -686,6 +707,7 @@ class gtractCoRegAnatomyOutputSpec(TraitedSpec):
 
 
 class gtractCoRegAnatomy(SEMLikeCommandLine):
+
     """title: Coregister B0 to Anatomy B-Spline
 
 category: Diffusion.GTRACT
@@ -727,6 +749,7 @@ class gtractResampleDWIInPlaceOutputSpec(TraitedSpec):
 
 
 class gtractResampleDWIInPlace(SEMLikeCommandLine):
+
     """title: Resample DWI In Place
 
 category: Diffusion.GTRACT
@@ -770,6 +793,7 @@ class gtractCostFastMarchingOutputSpec(TraitedSpec):
 
 
 class gtractCostFastMarching(SEMLikeCommandLine):
+
     """title: Cost Fast Marching
 
 category: Diffusion.GTRACT
@@ -830,6 +854,7 @@ class gtractFiberTrackingOutputSpec(TraitedSpec):
 
 
 class gtractFiberTracking(SEMLikeCommandLine):
+
     """title: Fiber Tracking
 
 category: Diffusion.GTRACT
@@ -867,6 +892,7 @@ class extractNrrdVectorIndexOutputSpec(TraitedSpec):
 
 
 class extractNrrdVectorIndex(SEMLikeCommandLine):
+
     """title: Extract Nrrd Index
 
 category: Diffusion.GTRACT
@@ -905,6 +931,7 @@ class gtractResampleFibersOutputSpec(TraitedSpec):
 
 
 class gtractResampleFibers(SEMLikeCommandLine):
+
     """title: Resample Fibers
 
 category: Diffusion.GTRACT
@@ -930,13 +957,15 @@ acknowledgements: Funding for this version of the GTRACT program was provided by
 
 
 class gtractTensorInputSpec(CommandLineInputSpec):
-    inputVolume = File(desc="Required: input image 4D NRRD image. Must contain data based on at least 6 distinct diffusion directions. The inputVolume is allowed to have multiple b0 and gradient direction images. Averaging of the b0 image is done internally in this step. Prior averaging of the DWIs is not required.", exists=True, argstr="--inputVolume %s")
+    inputVolume = File(
+        desc="Required: input image 4D NRRD image. Must contain data based on at least 6 distinct diffusion directions. The inputVolume is allowed to have multiple b0 and gradient direction images. Averaging of the b0 image is done internally in this step. Prior averaging of the DWIs is not required.", exists=True, argstr="--inputVolume %s")
     outputVolume = traits.Either(traits.Bool, File(), hash_files=False, desc="Required: name of output NRRD file containing the Tensor vector image", argstr="--outputVolume %s")
     medianFilterSize = InputMultiPath(traits.Int, desc="Median filter radius in all 3 directions", sep=",", argstr="--medianFilterSize %s")
     maskProcessingMode = traits.Enum(
         "NOMASK", "ROIAUTO", "ROI", desc="ROIAUTO:  mask is implicitly defined using a otsu forground and hole filling algorithm. ROI: Uses the masks to define what parts of the image should be used for computing the transform. NOMASK: no mask used", argstr="--maskProcessingMode %s")
     maskVolume = File(desc="Mask Image, if maskProcessingMode is ROI", exists=True, argstr="--maskVolume %s")
-    backgroundSuppressingThreshold = traits.Int(desc="Image threshold to suppress background. This sets a threshold used on the b0 image to remove background voxels from processing. Typically, values of 100 and 500 work well for Siemens and GE DTI data, respectively. Check your data particularly in the globus pallidus to make sure the brain tissue is not being eliminated with this threshold.", argstr="--backgroundSuppressingThreshold %d")
+    backgroundSuppressingThreshold = traits.Int(
+        desc="Image threshold to suppress background. This sets a threshold used on the b0 image to remove background voxels from processing. Typically, values of 100 and 500 work well for Siemens and GE DTI data, respectively. Check your data particularly in the globus pallidus to make sure the brain tissue is not being eliminated with this threshold.", argstr="--backgroundSuppressingThreshold %d")
     resampleIsotropic = traits.Bool(desc="Flag to resample to isotropic voxels. Enabling this feature is recommended if fiber tracking will be performed.", argstr="--resampleIsotropic ")
     size = traits.Float(desc="Isotropic voxel size to resample to", argstr="--size %f")
     b0Index = traits.Int(desc="Index in input vector index to extract", argstr="--b0Index %d")
@@ -950,6 +979,7 @@ class gtractTensorOutputSpec(TraitedSpec):
 
 
 class gtractTensor(SEMLikeCommandLine):
+
     """title: Tensor Estimation
 
 category: Diffusion.GTRACT

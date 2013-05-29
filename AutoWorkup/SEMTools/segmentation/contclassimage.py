@@ -18,6 +18,7 @@ class BRAINSContinuousClassOutputSpec(TraitedSpec):
 
 
 class BRAINSContinuousClass(SEMLikeCommandLine):
+
     """title:  Predict Lesions
 
 category: Segmentation.ContClassImage

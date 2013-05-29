@@ -19,6 +19,7 @@ class GenerateSummedGradientImageOutputSpec(TraitedSpec):
 
 
 class GenerateSummedGradientImage(SEMLikeCommandLine):
+
     """title: GenerateSummedGradient
 
 category: Filtering.FeatureDetection
@@ -57,6 +58,7 @@ class CannySegmentationLevelSetImageFilterOutputSpec(TraitedSpec):
 
 
 class CannySegmentationLevelSetImageFilter(SEMLikeCommandLine):
+
     """title:  Canny Level Set Image Filter
 
 category: Filtering.FeatureDetection
@@ -94,6 +96,7 @@ class DilateImageOutputSpec(TraitedSpec):
 
 
 class DilateImage(SEMLikeCommandLine):
+
     """title: Dilate Image
 
 category: Filtering.FeatureDetection
@@ -127,6 +130,7 @@ class TextureFromNoiseImageFilterOutputSpec(TraitedSpec):
 
 
 class TextureFromNoiseImageFilter(SEMLikeCommandLine):
+
     """title: TextureFromNoiseImageFilter
 
 category: Filtering.FeatureDetection
@@ -160,6 +164,7 @@ class FlippedDifferenceOutputSpec(TraitedSpec):
 
 
 class FlippedDifference(SEMLikeCommandLine):
+
     """title: Flip Image
 
 category: Filtering.FeatureDetection
@@ -197,6 +202,7 @@ class CannyEdgeOutputSpec(TraitedSpec):
 
 
 class CannyEdge(SEMLikeCommandLine):
+
     """title: Canny Edge Detection
 
 category: Filtering.FeatureDetection
@@ -231,6 +237,7 @@ class ErodeImageOutputSpec(TraitedSpec):
 
 
 class ErodeImage(SEMLikeCommandLine):
+
     """title: Erode Image
 
 category: Filtering.FeatureDetection
@@ -265,6 +272,7 @@ class GenerateBrainClippedImageOutputSpec(TraitedSpec):
 
 
 class GenerateBrainClippedImage(SEMLikeCommandLine):
+
     """title: GenerateBrainClippedImage
 
 category: Filtering.FeatureDetection
@@ -297,6 +305,7 @@ class NeighborhoodMedianOutputSpec(TraitedSpec):
 
 
 class NeighborhoodMedian(SEMLikeCommandLine):
+
     """title: Neighborhood Median
 
 category: Filtering.FeatureDetection
@@ -332,6 +341,7 @@ class GenerateTestImageOutputSpec(TraitedSpec):
 
 
 class GenerateTestImage(SEMLikeCommandLine):
+
     """title: DownSampleImage
 
 category: Filtering.FeatureDetection
@@ -364,6 +374,7 @@ class NeighborhoodMeanOutputSpec(TraitedSpec):
 
 
 class NeighborhoodMean(SEMLikeCommandLine):
+
     """title: Neighborhood Mean
 
 category: Filtering.FeatureDetection
@@ -398,6 +409,7 @@ class DistanceMapsOutputSpec(TraitedSpec):
 
 
 class DistanceMaps(SEMLikeCommandLine):
+
     """title: Mauerer Distance
 
 category: Filtering.FeatureDetection
@@ -433,6 +445,7 @@ class TextureMeasureFilterOutputSpec(TraitedSpec):
 
 
 class TextureMeasureFilter(SEMLikeCommandLine):
+
     """title:  Canny Level Set Image Filter
 
 category: Filtering.FeatureDetection
@@ -471,6 +484,7 @@ class DilateMaskOutputSpec(TraitedSpec):
 
 
 class DilateMask(SEMLikeCommandLine):
+
     """title: Dilate Image
 
 category: Filtering.FeatureDetection
@@ -507,6 +521,7 @@ class HammerAttributeCreatorOutputSpec(TraitedSpec):
 
 
 class HammerAttributeCreator(SEMLikeCommandLine):
+
     """title: HAMMER Feature Vectors
 
 category: Filtering.FeatureDetection
@@ -540,6 +555,7 @@ class STAPLEAnalysisOutputSpec(TraitedSpec):
 
 
 class STAPLEAnalysis(SEMLikeCommandLine):
+
     """title: Dilate Image
 
 category: Filtering.FeatureDetection
@@ -575,6 +591,7 @@ class GradientAnisotropicDiffusionImageFilterOutputSpec(TraitedSpec):
 
 
 class GradientAnisotropicDiffusionImageFilter(SEMLikeCommandLine):
+
     """title: GradientAnisopropicDiffusionFilter
 
 category: Filtering.FeatureDetection
@@ -606,6 +623,7 @@ class NoiseGeneratorOutputSpec(TraitedSpec):
 
 
 class NoiseGenerator(SEMLikeCommandLine):
+
     """title: Add Noise
 
 category: Filtering.FeatureDetection

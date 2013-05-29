@@ -20,6 +20,7 @@ class CompareSurfacesOutputSpec(TraitedSpec):
 
 
 class CompareSurfaces(SEMLikeCommandLine):
+
     """title:
     Surface Comparision
 

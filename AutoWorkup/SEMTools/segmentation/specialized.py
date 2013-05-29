@@ -31,6 +31,7 @@ class BRAINSCutOutputSpec(TraitedSpec):
 
 
 class BRAINSCut(SEMLikeCommandLine):
+
     """title: BRAINSCut (BRAINS)
 
 category: Segmentation.Specialized
@@ -60,7 +61,8 @@ class BRAINSROIAutoInputSpec(CommandLineInputSpec):
     otsuPercentileThreshold = traits.Float(desc="Parameter to the Otsu threshold algorithm.", argstr="--otsuPercentileThreshold %f")
     thresholdCorrectionFactor = traits.Float(desc="A factor to scale the Otsu algorithm's result threshold, in case clipping mangles the image.", argstr="--thresholdCorrectionFactor %f")
     closingSize = traits.Float(desc="The Closing Size (in millimeters) for largest connected filled mask.  This value is divided by image spacing and rounded to the next largest voxel number.", argstr="--closingSize %f")
-    ROIAutoDilateSize = traits.Float(desc="This flag is only relavent when using ROIAUTO mode for initializing masks.  It defines the final dilation size to capture a bit of background outside the tissue region.  At setting of 10mm has been shown to help regularize a BSpline registration type so that there is some background constraints to match the edges of the head better.", argstr="--ROIAutoDilateSize %f")
+    ROIAutoDilateSize = traits.Float(
+        desc="This flag is only relavent when using ROIAUTO mode for initializing masks.  It defines the final dilation size to capture a bit of background outside the tissue region.  At setting of 10mm has been shown to help regularize a BSpline registration type so that there is some background constraints to match the edges of the head better.", argstr="--ROIAutoDilateSize %f")
     outputVolumePixelType = traits.Enum("float", "short", "ushort", "int", "uint", "uchar", desc="The output image Pixel Type is the scalar datatype for representation of the Output Volume.", argstr="--outputVolumePixelType %s")
     numberOfThreads = traits.Int(desc="Explicitly specify the maximum number of threads to use.", argstr="--numberOfThreads %d")
 
@@ -71,6 +73,7 @@ class BRAINSROIAutoOutputSpec(TraitedSpec):
 
 
 class BRAINSROIAuto(SEMLikeCommandLine):
+
     """title: Foreground masking (BRAINS)
 
 category: Segmentation.Specialized
@@ -99,23 +102,28 @@ class BRAINSConstellationDetectorInputSpec(CommandLineInputSpec):
     inputTemplateModel = File(desc="User-specified template model.,             ", exists=True, argstr="--inputTemplateModel %s")
     LLSModel = File(desc="Linear least squares model filename in HD5 format", exists=True, argstr="--LLSModel %s")
     inputVolume = File(desc="Input image in which to find ACPC points", exists=True, argstr="--inputVolume %s")
-    outputVolume = traits.Either(traits.Bool, File(), hash_files=False, desc="ACPC-aligned output image with the same voxels, but updated origin, and direction cosign so that the AC point would fall at the physical location (0.0,0.0,0.0), and the mid-sagital plane is the plane where physical L/R coordinate is 0.0.", argstr="--outputVolume %s")
+    outputVolume = traits.Either(traits.Bool, File(), hash_files=False,
+                                 desc="ACPC-aligned output image with the same voxels, but updated origin, and direction cosign so that the AC point would fall at the physical location (0.0,0.0,0.0), and the mid-sagital plane is the plane where physical L/R coordinate is 0.0.", argstr="--outputVolume %s")
     outputResampledVolume = traits.Either(traits.Bool, File(), hash_files=False, desc="ACPC-aligned output image in a resampled unifor space.  Currently this is a 1mm, 256^3, Identity direction image.", argstr="--outputResampledVolume %s")
     outputTransform = traits.Either(traits.Bool, File(), hash_files=False, desc="The filename for the original space to ACPC alignment to be written (in .h5 format).,             ", argstr="--outputTransform %s")
-    outputLandmarksInInputSpace = traits.Either(traits.Bool, File(), hash_files=False, desc=",               The filename for the new subject-specific landmark definition file in the same format produced by Slicer3 (.fcsv) with the landmarks in the original image space (the detected RP, AC, PC, and VN4) in it to be written.,             ", argstr="--outputLandmarksInInputSpace %s")
-    outputLandmarksInACPCAlignedSpace = traits.Either(traits.Bool, File(), hash_files=False, desc=",               The filename for the new subject-specific landmark definition file in the same format produced by Slicer3 (.fcsv) with the landmarks in the output image space (the detected RP, AC, PC, and VN4) in it to be written.,             ", argstr="--outputLandmarksInACPCAlignedSpace %s")
-    outputLandmarkWeights = traits.Either(traits.Bool, File(), hash_files=False, desc=",               The filename for the list of the landmarks and their correspond weight in (.wts) format.,             ", argstr="--outputLandmarkWeights %s")
-    outputMRML = traits.Either(traits.Bool, File(), hash_files=False, desc=",               The filename for the new subject-specific scene definition file in the same format produced by Slicer3 (in .mrml format). Only the components that were specified by the user on command line would be generated. Compatible components include inputVolume, outputVolume, outputLandmarksInInputSpace, outputLandmarksInACPCAlignedSpace, and outputTransform.,             ", argstr="--outputMRML %s")
-    outputVerificationScript = traits.Either(traits.Bool, File(
-    ), hash_files=False, desc=",               The filename for the Slicer3 script that verifies the aligned landmarks against the aligned image file.  This will happen only in conjunction with saveOutputLandmarks and an outputVolume.,             ", argstr="--outputVerificationScript %s")
+    outputLandmarksInInputSpace = traits.Either(
+        traits.Bool, File(), hash_files=False, desc=",               The filename for the new subject-specific landmark definition file in the same format produced by Slicer3 (.fcsv) with the landmarks in the original image space (the detected RP, AC, PC, and VN4) in it to be written.,             ", argstr="--outputLandmarksInInputSpace %s")
+    outputLandmarksInACPCAlignedSpace = traits.Either(
+        traits.Bool, File(), hash_files=False, desc=",               The filename for the new subject-specific landmark definition file in the same format produced by Slicer3 (.fcsv) with the landmarks in the output image space (the detected RP, AC, PC, and VN4) in it to be written.,             ", argstr="--outputLandmarksInACPCAlignedSpace %s")
+    outputMRML = traits.Either(traits.Bool, File(), hash_files=False,
+                               desc=",               The filename for the new subject-specific scene definition file in the same format produced by Slicer3 (in .mrml format). Only the components that were specified by the user on command line would be generated. Compatible components include inputVolume, outputVolume, outputLandmarksInInputSpace, outputLandmarksInACPCAlignedSpace, and outputTransform.,             ", argstr="--outputMRML %s")
+    outputVerificationScript = traits.Either(
+        traits.Bool, File(), hash_files=False, desc=",               The filename for the Slicer3 script that verifies the aligned landmarks against the aligned image file.  This will happen only in conjunction with saveOutputLandmarks and an outputVolume.,             ", argstr="--outputVerificationScript %s")
     mspQualityLevel = traits.Int(
         desc=",                 Flag cotrols how agressive the MSP is estimated. 0=quick estimate (9 seconds), 1=normal estimate (11 seconds), 2=great estimate (22 seconds), 3=best estimate (58 seconds), NOTE: -1= Prealigned so no estimate!.,             ", argstr="--mspQualityLevel %d")
     otsuPercentileThreshold = traits.Float(desc=",                 This is a parameter to FindLargestForegroundFilledMask, which is employed when acLowerBound is set and an outputUntransformedClippedVolume is requested.,             ", argstr="--otsuPercentileThreshold %f")
-    acLowerBound = traits.Float(desc=",                 When generating a resampled output image, replace the image with the BackgroundFillValue everywhere below the plane This Far in physical units (millimeters) below (inferior to) the AC point (as found by the model.)  The oversize default was chosen to have no effect.  Based on visualizing a thousand masks in the IPIG study, we recommend a limit no smaller than 80.0 mm.,             ", argstr="--acLowerBound %f")
+    acLowerBound = traits.Float(
+        desc=",                 When generating a resampled output image, replace the image with the BackgroundFillValue everywhere below the plane This Far in physical units (millimeters) below (inferior to) the AC point (as found by the model.)  The oversize default was chosen to have no effect.  Based on visualizing a thousand masks in the IPIG study, we recommend a limit no smaller than 80.0 mm.,             ", argstr="--acLowerBound %f")
     cutOutHeadInOutputVolume = traits.Bool(desc=",                 Flag to cut out just the head tissue when producing an (un)transformed clipped volume.,             ", argstr="--cutOutHeadInOutputVolume ")
     outputUntransformedClippedVolume = traits.Either(traits.Bool, File(), hash_files=False, desc="Output image in which to store neck-clipped input image, with the use of --acLowerBound and maybe --cutOutHeadInUntransformedVolume.", argstr="--outputUntransformedClippedVolume %s")
     rescaleIntensities = traits.Bool(desc=",                 Flag to turn on rescaling image intensities on input.,             ", argstr="--rescaleIntensities ")
-    trimRescaledIntensities = traits.Float(desc=",                 Turn on clipping the rescaled image one-tailed on input.  Units of standard deviations above the mean.  Very large values are very permissive.  Non-positive value turns clipping off.  Defaults to removing 0.00001 of a normal tail above the mean.,             ", argstr="--trimRescaledIntensities %f")
+    trimRescaledIntensities = traits.Float(
+        desc=",                 Turn on clipping the rescaled image one-tailed on input.  Units of standard deviations above the mean.  Very large values are very permissive.  Non-positive value turns clipping off.  Defaults to removing 0.00001 of a normal tail above the mean.,             ", argstr="--trimRescaledIntensities %f")
     rescaleIntensitiesOutputRange = InputMultiPath(
         traits.Int, desc=",                 This pair of integers gives the lower and upper bounds on the signal portion of the output image.  Out-of-field voxels are taken from BackgroundFillValue.,             ", sep=",", argstr="--rescaleIntensitiesOutputRange %s")
     BackgroundFillValue = traits.Str(desc="Fill the background of image with specified short int value. Enter number or use BIGNEG for a large negative number.", argstr="--BackgroundFillValue %s")
@@ -125,7 +133,8 @@ class BRAINSConstellationDetectorInputSpec(CommandLineInputSpec):
     forcePCPoint = InputMultiPath(traits.Float, desc=",                 Use this flag to manually specify the PC point from the original image on the command line.,             ", sep=",", argstr="--forcePCPoint %s")
     forceVN4Point = InputMultiPath(traits.Float, desc=",                 Use this flag to manually specify the VN4 point from the original image on the command line.,             ", sep=",", argstr="--forceVN4Point %s")
     forceRPPoint = InputMultiPath(traits.Float, desc=",                 Use this flag to manually specify the RP point from the original image on the command line.,             ", sep=",", argstr="--forceRPPoint %s")
-    inputLandmarksEMSP = File(desc=",               The filename for the new subject-specific landmark definition file in the same format produced by Slicer3 (in .fcsv) with the landmarks in the estimated MSP aligned space to be loaded. The detector will only process landmarks not enlisted on the file.,             ", exists=True, argstr="--inputLandmarksEMSP %s")
+    inputLandmarksEMSP = File(
+        desc=",               The filename for the new subject-specific landmark definition file in the same format produced by Slicer3 (in .fcsv) with the landmarks in the estimated MSP aligned space to be loaded. The detector will only process landmarks not enlisted on the file.,             ", exists=True, argstr="--inputLandmarksEMSP %s")
     forceHoughEyeDetectorReportFailure = traits.Bool(desc=",                 Flag indicates whether the Hough eye detector should report failure,             ", argstr="--forceHoughEyeDetectorReportFailure ")
     rmpj = traits.Float(desc=",               Search radius for MPJ in unit of mm,             ", argstr="--rmpj %f")
     rac = traits.Float(desc=",               Search radius for AC in unit of mm,             ", argstr="--rac %f")
@@ -137,6 +146,9 @@ class BRAINSConstellationDetectorInputSpec(CommandLineInputSpec):
     resultsDir = traits.Either(traits.Bool, Directory(), hash_files=False, desc=",               The directory for the debuging images to be written.,             ", argstr="--resultsDir %s")
     writedebuggingImagesLevel = traits.Int(desc=",                 This flag controls if debugging images are produced.  By default value of 0 is no images.  Anything greater than zero will be increasing level of debugging images.,             ", argstr="--writedebuggingImagesLevel %d")
     numberOfThreads = traits.Int(desc="Explicitly specify the maximum number of threads to use.", argstr="--numberOfThreads %d")
+    atlasVolume = File(desc="Atlas volume image to be used for BRAINSFit registration", exists=True, argstr="--atlasVolume %s")
+    atlasLandmarks = File(desc="Atlas landmarks to be used for BRAINSFit registration initialization,             ", exists=True, argstr="--atlasLandmarks %s")
+    atlasLandmarkWeights = File(desc="Weights associated with atlas landmarks to be used for BRAINSFit registration initialization,             ", exists=True, argstr="--atlasLandmarkWeights %s")
 
 
 class BRAINSConstellationDetectorOutputSpec(TraitedSpec):
@@ -147,8 +159,8 @@ class BRAINSConstellationDetectorOutputSpec(TraitedSpec):
         desc=",               The filename for the new subject-specific landmark definition file in the same format produced by Slicer3 (.fcsv) with the landmarks in the original image space (the detected RP, AC, PC, and VN4) in it to be written.,             ", exists=True)
     outputLandmarksInACPCAlignedSpace = File(
         desc=",               The filename for the new subject-specific landmark definition file in the same format produced by Slicer3 (.fcsv) with the landmarks in the output image space (the detected RP, AC, PC, and VN4) in it to be written.,             ", exists=True)
-    outputLandmarkWeights = File(desc=",               The filename for the list of the landmarks and their correspond weight in (.wts) format.,             ", exists=True)
-    outputMRML = File(desc=",               The filename for the new subject-specific scene definition file in the same format produced by Slicer3 (in .mrml format). Only the components that were specified by the user on command line would be generated. Compatible components include inputVolume, outputVolume, outputLandmarksInInputSpace, outputLandmarksInACPCAlignedSpace, and outputTransform.,             ", exists=True)
+    outputMRML = File(
+        desc=",               The filename for the new subject-specific scene definition file in the same format produced by Slicer3 (in .mrml format). Only the components that were specified by the user on command line would be generated. Compatible components include inputVolume, outputVolume, outputLandmarksInInputSpace, outputLandmarksInACPCAlignedSpace, and outputTransform.,             ", exists=True)
     outputVerificationScript = File(desc=",               The filename for the Slicer3 script that verifies the aligned landmarks against the aligned image file.  This will happen only in conjunction with saveOutputLandmarks and an outputVolume.,             ", exists=True)
     outputUntransformedClippedVolume = File(desc="Output image in which to store neck-clipped input image, with the use of --acLowerBound and maybe --cutOutHeadInUntransformedVolume.", exists=True)
     writeBranded2DImage = File(desc=",               The filename for the 2D .png branded midline debugging image.  This will happen only in conjunction with requesting an outputVolume.,             ", exists=True)
@@ -156,6 +168,7 @@ class BRAINSConstellationDetectorOutputSpec(TraitedSpec):
 
 
 class BRAINSConstellationDetector(SEMLikeCommandLine):
+
     """title: Brain Landmark Constellation Detector (BRAINS)
 
 category: Segmentation.Specialized
@@ -173,7 +186,8 @@ documentation-url: http://www.nitrc.org/projects/brainscdetector/
     input_spec = BRAINSConstellationDetectorInputSpec
     output_spec = BRAINSConstellationDetectorOutputSpec
     _cmd = " BRAINSConstellationDetector "
-    _outputs_filenames = {'outputVolume': 'outputVolume.nii.gz', 'outputResampledVolume': 'outputResampledVolume.nii.gz', 'outputMRML': 'outputMRML.mrml', 'resultsDir': 'resultsDir', 'outputTransform': 'outputTransform.h5', 'writeBranded2DImage': 'writeBranded2DImage.png', 'outputLandmarksInACPCAlignedSpace': 'outputLandmarksInACPCAlignedSpace.fcsv', 'outputLandmarksInInputSpace': 'outputLandmarksInInputSpace.fcsv', 'outputLandmarkWeights': 'outputLandmarkWeights.wts', 'outputUntransformedClippedVolume': 'outputUntransformedClippedVolume.nii.gz', 'outputVerificationScript': 'outputVerificationScript.sh'}
+    _outputs_filenames = {'outputVolume': 'outputVolume.nii.gz', 'outputMRML': 'outputMRML.mrml', 'resultsDir': 'resultsDir', 'outputResampledVolume': 'outputResampledVolume.nii.gz', 'outputTransform': 'outputTransform.h5', 'writeBranded2DImage': 'writeBranded2DImage.png',
+                          'outputLandmarksInACPCAlignedSpace': 'outputLandmarksInACPCAlignedSpace.fcsv', 'outputLandmarksInInputSpace': 'outputLandmarksInInputSpace.fcsv', 'outputUntransformedClippedVolume': 'outputUntransformedClippedVolume.nii.gz', 'outputVerificationScript': 'outputVerificationScript.sh'}
 
 
 class BRAINSCreateLabelMapFromProbabilityMapsInputSpec(CommandLineInputSpec):
@@ -192,6 +206,7 @@ class BRAINSCreateLabelMapFromProbabilityMapsOutputSpec(TraitedSpec):
 
 
 class BRAINSCreateLabelMapFromProbabilityMaps(SEMLikeCommandLine):
+
     """title: Create Label Map From Probability Maps (BRAINS)
 
 category: Segmentation.Specialized
@@ -224,6 +239,7 @@ class BinaryMaskEditorBasedOnLandmarksOutputSpec(TraitedSpec):
 
 
 class BinaryMaskEditorBasedOnLandmarks(SEMLikeCommandLine):
+
     """title: BRAINS Binary Mask Editor Based On Landmarks(BRAINS)
 
 category: Segmentation.Specialized
@@ -260,6 +276,7 @@ class BRAINSMultiSTAPLEOutputSpec(TraitedSpec):
 
 
 class BRAINSMultiSTAPLE(SEMLikeCommandLine):
+
     """title: Create best representative label map)
 
 category: Segmentation.Specialized
@@ -284,13 +301,14 @@ class BRAINSABCInputSpec(CommandLineInputSpec):
     atlasToSubjectTransform = traits.Either(traits.Bool, File(), hash_files=False, desc="The transform from atlas to the subject", argstr="--atlasToSubjectTransform %s")
     atlasToSubjectInitialTransform = traits.Either(traits.Bool, File(), hash_files=False, desc="The initial transform from atlas to the subject", argstr="--atlasToSubjectInitialTransform %s")
     subjectIntermodeTransformType = traits.Enum("ID", "Rigid", "Affine", "BSpline", desc=" What type of linear transform type do you want to use to register the atlas to the reference subject image.", argstr="--subjectIntermodeTransformType %s")
-    outputVolumes = traits.Either(traits.Bool, InputMultiPath(File(
-    ), ), hash_files=False, desc="Corrected Output Images: should specify the same number of images as inputVolume, if only one element is given, then it is used as a file pattern where %s is replaced by the imageVolumeType, and %d by the index list location.", argstr="--outputVolumes %s...")
+    outputVolumes = traits.Either(traits.Bool, InputMultiPath(
+        File(), ), hash_files=False, desc="Corrected Output Images: should specify the same number of images as inputVolume, if only one element is given, then it is used as a file pattern where %s is replaced by the imageVolumeType, and %d by the index list location.", argstr="--outputVolumes %s...")
     outputLabels = traits.Either(traits.Bool, File(), hash_files=False, desc="Output Label Image", argstr="--outputLabels %s")
     outputDirtyLabels = traits.Either(traits.Bool, File(), hash_files=False, desc="Output Dirty Label Image", argstr="--outputDirtyLabels %s")
     posteriorTemplate = traits.Str(desc="filename template for Posterior output files", argstr="--posteriorTemplate %s")
     outputFormat = traits.Enum("NIFTI", "Meta", "Nrrd", desc="Output format", argstr="--outputFormat %s")
-    interpolationMode = traits.Enum("BSpline", "NearestNeighbor", "WindowedSinc", "Linear", "ResampleInPlace", "Hamming", "Cosine", "Welch", "Lanczos", "Blackman", desc="Type of interpolation to be used when applying transform to moving volume.  Options are Linear, NearestNeighbor, BSpline, WindowedSinc, or ResampleInPlace.  The ResampleInPlace option will create an image with the same discrete voxel values and will adjust the origin and direction of the physical space interpretation.", argstr="--interpolationMode %s")
+    interpolationMode = traits.Enum("BSpline", "NearestNeighbor", "WindowedSinc", "Linear", "ResampleInPlace", "Hamming", "Cosine", "Welch", "Lanczos", "Blackman",
+                                    desc="Type of interpolation to be used when applying transform to moving volume.  Options are Linear, NearestNeighbor, BSpline, WindowedSinc, or ResampleInPlace.  The ResampleInPlace option will create an image with the same discrete voxel values and will adjust the origin and direction of the physical space interpretation.", argstr="--interpolationMode %s")
     maxIterations = traits.Int(desc="Filter iterations", argstr="--maxIterations %d")
     medianFilterSize = InputMultiPath(traits.Int, desc="The radius for the optional MedianImageFilter preprocessing in all 3 directions.", sep=",", argstr="--medianFilterSize %s")
     filterIteration = traits.Int(desc="Filter iterations", argstr="--filterIteration %d")
@@ -310,14 +328,15 @@ class BRAINSABCOutputSpec(TraitedSpec):
     outputDir = Directory(desc="Ouput directory", exists=True)
     atlasToSubjectTransform = File(desc="The transform from atlas to the subject", exists=True)
     atlasToSubjectInitialTransform = File(desc="The initial transform from atlas to the subject", exists=True)
-    outputVolumes = OutputMultiPath(
-        File(exists=True), desc="Corrected Output Images: should specify the same number of images as inputVolume, if only one element is given, then it is used as a file pattern where %s is replaced by the imageVolumeType, and %d by the index list location.", exists=True)
+    outputVolumes = OutputMultiPath(File(
+        exists=True), desc="Corrected Output Images: should specify the same number of images as inputVolume, if only one element is given, then it is used as a file pattern where %s is replaced by the imageVolumeType, and %d by the index list location.", exists=True)
     outputLabels = File(desc="Output Label Image", exists=True)
     outputDirtyLabels = File(desc="Output Dirty Label Image", exists=True)
     implicitOutputs = OutputMultiPath(File(exists=True), desc="Outputs to be made available to NiPype. Needed because not all BRAINSABC outputs have command line arguments.", exists=True)
 
 
 class BRAINSABC(SEMLikeCommandLine):
+
     """title: Intra-subject registration, bias Correction, and tissue classification (BRAINS)
 
 category: Segmentation.Specialized
@@ -330,8 +349,8 @@ description: Atlas-based tissue segmentation method.  This is an algorithmic ext
     input_spec = BRAINSABCInputSpec
     output_spec = BRAINSABCOutputSpec
     _cmd = " BRAINSABC "
-    _outputs_filenames = {'outputLabels': 'outputLabels.nii.gz', 'atlasToSubjectTransform': 'atlasToSubjectTransform.h5', 'atlasToSubjectInitialTransform': 'atlasToSubjectInitialTransform.h5', 'outputDirtyLabels': 'outputDirtyLabels.nii.gz', 'outputVolumes': 'outputVolumes.nii.gz',
-                          'outputDir': 'outputDir', 'implicitOutputs': 'implicitOutputs.nii.gz'}
+    _outputs_filenames = {'outputLabels': 'outputLabels.nii.gz', 'atlasToSubjectTransform': 'atlasToSubjectTransform.h5', 'atlasToSubjectInitialTransform': 'atlasToSubjectInitialTransform.h5',
+                          'outputDirtyLabels': 'outputDirtyLabels.nii.gz', 'outputVolumes': 'outputVolumes.nii.gz', 'outputDir': 'outputDir', 'implicitOutputs': 'implicitOutputs.nii.gz'}
 
 
 class ESLRInputSpec(CommandLineInputSpec):
@@ -351,6 +370,7 @@ class ESLROutputSpec(TraitedSpec):
 
 
 class ESLR(SEMLikeCommandLine):
+
     """title: Clean Contiguous Label Map (BRAINS)
 
 category: Segmentation.Specialized

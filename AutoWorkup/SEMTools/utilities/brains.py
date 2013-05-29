@@ -10,12 +10,15 @@ class BRAINSConstellationModelerInputSpec(CommandLineInputSpec):
     verbose = traits.Bool(desc=",               Show more verbose output,             ", argstr="--verbose ")
     inputTrainingList = File(desc=",               Setup file, giving all parameters for training up a template model for each landmark.,             ", exists=True, argstr="--inputTrainingList %s")
     outputModel = traits.Either(traits.Bool, File(), hash_files=False, desc=",               The full filename of the output model file.,             ", argstr="--outputModel %s")
-    saveOptimizedLandmarks = traits.Bool(desc=",               Flag to make a new subject-specific landmark definition file in the same format produced by Slicer3 with the optimized landmark (the detected RP, AC, and PC) in it.  Useful to tighten the variances in the ConstellationModeler.,             ", argstr="--saveOptimizedLandmarks ")
-    optimizedLandmarksFilenameExtender = traits.Str(desc=",                If the trainingList is (indexFullPathName) and contains landmark data filenames [path]/[filename].fcsv ,  make the optimized landmarks filenames out of [path]/[filename](thisExtender) and the optimized version of the input trainingList out of (indexFullPathName)(thisExtender) , when you rewrite all the landmarks according to the saveOptimizedLandmarks flag.,             ", argstr="--optimizedLandmarksFilenameExtender %s")
+    saveOptimizedLandmarks = traits.Bool(
+        desc=",               Flag to make a new subject-specific landmark definition file in the same format produced by Slicer3 with the optimized landmark (the detected RP, AC, and PC) in it.  Useful to tighten the variances in the ConstellationModeler.,             ", argstr="--saveOptimizedLandmarks ")
+    optimizedLandmarksFilenameExtender = traits.Str(
+        desc=",                If the trainingList is (indexFullPathName) and contains landmark data filenames [path]/[filename].fcsv ,  make the optimized landmarks filenames out of [path]/[filename](thisExtender) and the optimized version of the input trainingList out of (indexFullPathName)(thisExtender) , when you rewrite all the landmarks according to the saveOptimizedLandmarks flag.,             ", argstr="--optimizedLandmarksFilenameExtender %s")
     resultsDir = traits.Either(traits.Bool, Directory(), hash_files=False, desc=",               The directory for the results to be written.,             ", argstr="--resultsDir %s")
     mspQualityLevel = traits.Int(desc=",                 Flag cotrols how agressive the MSP is estimated.  0=quick estimate (9 seconds), 1=normal estimate (11 seconds), 2=great estimate (22 seconds), 3=best estimate (58 seconds).,             ", argstr="--mspQualityLevel %d")
     rescaleIntensities = traits.Bool(desc=",                 Flag to turn on rescaling image intensities on input.,             ", argstr="--rescaleIntensities ")
-    trimRescaledIntensities = traits.Float(desc=",                 Turn on clipping the rescaled image one-tailed on input.  Units of standard deviations above the mean.  Very large values are very permissive.  Non-positive value turns clipping off.  Defaults to removing 0.00001 of a normal tail above the mean.,             ", argstr="--trimRescaledIntensities %f")
+    trimRescaledIntensities = traits.Float(
+        desc=",                 Turn on clipping the rescaled image one-tailed on input.  Units of standard deviations above the mean.  Very large values are very permissive.  Non-positive value turns clipping off.  Defaults to removing 0.00001 of a normal tail above the mean.,             ", argstr="--trimRescaledIntensities %f")
     rescaleIntensitiesOutputRange = InputMultiPath(
         traits.Int, desc=",                 This pair of integers gives the lower and upper bounds on the signal portion of the output image.  Out-of-field voxels are taken from BackgroundFillValue.,             ", sep=",", argstr="--rescaleIntensitiesOutputRange %s")
     BackgroundFillValue = traits.Str(desc="Fill the background of image with specified short int value. Enter number or use BIGNEG for a large negative number.", argstr="--BackgroundFillValue %s")
@@ -29,6 +32,7 @@ class BRAINSConstellationModelerOutputSpec(TraitedSpec):
 
 
 class BRAINSConstellationModeler(SEMLikeCommandLine):
+
     """title: Generate Landmarks Model (BRAINS)
 
 category: Utilities.BRAINS
@@ -55,6 +59,7 @@ class landmarksConstellationWeightsOutputSpec(TraitedSpec):
 
 
 class landmarksConstellationWeights(SEMLikeCommandLine):
+
     """title: Generate Landmarks Weights (BRAINS)
 
 category: Utilities.BRAINS
@@ -85,6 +90,7 @@ class BRAINSTrimForegroundInDirectionOutputSpec(TraitedSpec):
 
 
 class BRAINSTrimForegroundInDirection(SEMLikeCommandLine):
+
     """title: Trim Foreground In Direction (BRAINS)
 
 category: Utilities.BRAINS
@@ -119,6 +125,7 @@ class BRAINSLmkTransformOutputSpec(TraitedSpec):
 
 
 class BRAINSLmkTransform(SEMLikeCommandLine):
+
     """title: Landmark Transform (BRAINS)
 
 category: Utilities.BRAINS
@@ -165,6 +172,7 @@ class BRAINSMushOutputSpec(TraitedSpec):
 
 
 class BRAINSMush(SEMLikeCommandLine):
+
     """title:  Brain Extraction from T1/T2 image (BRAINS)
 
 category: Utilities.BRAINS
@@ -203,7 +211,8 @@ class BRAINSAlignMSPInputSpec(CommandLineInputSpec):
     writedebuggingImagesLevel = traits.Int(desc=",           This flag controls if debugging images are produced.  By default value of 0 is no images.  Anything greater than zero will be increasing level of debugging images.,       ", argstr="--writedebuggingImagesLevel %d")
     mspQualityLevel = traits.Int(desc=",           Flag cotrols how agressive the MSP is estimated.  0=quick estimate (9 seconds), 1=normal estimate (11 seconds), 2=great estimate (22 seconds), 3=best estimate (58 seconds).,       ", argstr="--mspQualityLevel %d")
     rescaleIntensities = traits.Bool(desc=",           Flag to turn on rescaling image intensities on input.,       ", argstr="--rescaleIntensities ")
-    trimRescaledIntensities = traits.Float(desc=",           Turn on clipping the rescaled image one-tailed on input.  Units of standard deviations above the mean.  Very large values are very permissive.  Non-positive value turns clipping off.  Defaults to removing 0.00001 of a normal tail above the mean.,       ", argstr="--trimRescaledIntensities %f")
+    trimRescaledIntensities = traits.Float(
+        desc=",           Turn on clipping the rescaled image one-tailed on input.  Units of standard deviations above the mean.  Very large values are very permissive.  Non-positive value turns clipping off.  Defaults to removing 0.00001 of a normal tail above the mean.,       ", argstr="--trimRescaledIntensities %f")
     rescaleIntensitiesOutputRange = InputMultiPath(traits.Int, desc=",           This pair of integers gives the lower and upper bounds on the signal portion of the output image.  Out-of-field voxels are taken from BackgroundFillValue.,       ", sep=",", argstr="--rescaleIntensitiesOutputRange %s")
     BackgroundFillValue = traits.Str(desc="Fill the background of image with specified short int value. Enter number or use BIGNEG for a large negative number.", argstr="--BackgroundFillValue %s")
     interpolationMode = traits.Enum("NearestNeighbor", "Linear", "ResampleInPlace", "BSpline", "WindowedSinc", "Hamming", "Cosine", "Welch", "Lanczos", "Blackman",
@@ -217,6 +226,7 @@ class BRAINSAlignMSPOutputSpec(TraitedSpec):
 
 
 class BRAINSAlignMSP(SEMLikeCommandLine):
+
     """title: Align Mid Saggital Brain (BRAINS)
 
 category: Utilities.BRAINS
@@ -245,6 +255,7 @@ class BRAINSTransformConvertOutputSpec(TraitedSpec):
 
 
 class BRAINSTransformConvert(SEMLikeCommandLine):
+
     """title: BRAINS Transform Convert
 
 category: Utilities.BRAINS
@@ -280,6 +291,7 @@ class landmarksConstellationAlignerOutputSpec(TraitedSpec):
 
 
 class landmarksConstellationAligner(SEMLikeCommandLine):
+
     """title: MidACPC Landmark Insertion
 
 category: Utilities.BRAINS
@@ -319,6 +331,7 @@ class BRAINSEyeDetectorOutputSpec(TraitedSpec):
 
 
 class BRAINSEyeDetector(SEMLikeCommandLine):
+
     """title: Eye Detector (BRAINS)
 
 category: Utilities.BRAINS
@@ -348,6 +361,7 @@ class BRAINSLinearModelerEPCAOutputSpec(TraitedSpec):
 
 
 class BRAINSLinearModelerEPCA(SEMLikeCommandLine):
+
     """title: Landmark Linear Modeler (BRAINS)
 
 category: Utilities.BRAINS
@@ -383,6 +397,7 @@ class BRAINSInitializedControlPointsOutputSpec(TraitedSpec):
 
 
 class BRAINSInitializedControlPoints(SEMLikeCommandLine):
+
     """title: Initialized Control Points (BRAINS)
 
 category:  Utilities.BRAINS
@@ -419,6 +434,7 @@ class CleanUpOverlapLabelsOutputSpec(TraitedSpec):
 
 
 class CleanUpOverlapLabels(SEMLikeCommandLine):
+
     """title:  Clean Up Overla Labels
 
 category: Utilities.BRAINS
@@ -440,7 +456,8 @@ contributor: Eun Young Kim
 class BRAINSClipInferiorInputSpec(CommandLineInputSpec):
     inputVolume = File(desc="Input image to make a clipped short int copy from.", exists=True, argstr="--inputVolume %s")
     outputVolume = traits.Either(traits.Bool, File(), hash_files=False, desc="Output image, a short int copy of the upper portion of the input image, filled with BackgroundFillValue.", argstr="--outputVolume %s")
-    acLowerBound = traits.Float(desc=",                 When the input image to the output image, replace the image with the BackgroundFillValue everywhere below the plane This Far in physical units (millimeters) below (inferior to) the AC point (assumed to be the voxel field middle.)  The oversize default was chosen to have no effect.  Based on visualizing a thousand masks in the IPIG study, we recommend a limit no smaller than 80.0 mm.,             ", argstr="--acLowerBound %f")
+    acLowerBound = traits.Float(
+        desc=",                 When the input image to the output image, replace the image with the BackgroundFillValue everywhere below the plane This Far in physical units (millimeters) below (inferior to) the AC point (assumed to be the voxel field middle.)  The oversize default was chosen to have no effect.  Based on visualizing a thousand masks in the IPIG study, we recommend a limit no smaller than 80.0 mm.,             ", argstr="--acLowerBound %f")
     BackgroundFillValue = traits.Str(desc="Fill the background of image with specified short int value. Enter number or use BIGNEG for a large negative number.", argstr="--BackgroundFillValue %s")
     numberOfThreads = traits.Int(desc="Explicitly specify the maximum number of threads to use.", argstr="--numberOfThreads %d")
 
@@ -450,6 +467,7 @@ class BRAINSClipInferiorOutputSpec(TraitedSpec):
 
 
 class BRAINSClipInferior(SEMLikeCommandLine):
+
     """title: Clip Inferior of Center of Brain (BRAINS)
 
 category: Utilities.BRAINS
@@ -478,6 +496,7 @@ class GenerateLabelMapFromProbabilityMapOutputSpec(TraitedSpec):
 
 
 class GenerateLabelMapFromProbabilityMap(SEMLikeCommandLine):
+
     """title: Label Map from Probability Images
 
 category: Utilities.BRAINS
@@ -511,6 +530,7 @@ class BRAINSLandmarkInitializerOutputSpec(TraitedSpec):
 
 
 class BRAINSLandmarkInitializer(SEMLikeCommandLine):
+
     """title: BRAINSLandmarkInitializer
 
 category: Utilities.BRAINS
@@ -547,6 +567,7 @@ class BRAINSMultiModeSegmentOutputSpec(TraitedSpec):
 
 
 class BRAINSMultiModeSegment(SEMLikeCommandLine):
+
     """title: Segment based on rectangular region of joint histogram (BRAINS)
 
 category: Utilities.BRAINS
@@ -580,6 +601,7 @@ class insertMidACPCpointOutputSpec(TraitedSpec):
 
 
 class insertMidACPCpoint(SEMLikeCommandLine):
+
     """title: MidACPC Landmark Insertion
 
 category: Utilities.BRAINS
@@ -622,6 +644,7 @@ class BRAINSSnapShotWriterOutputSpec(TraitedSpec):
 
 
 class BRAINSSnapShotWriter(SEMLikeCommandLine):
+
     """title: BRAINSSnapShotWriter
 
 category: Utilities.BRAINS
@@ -656,6 +679,7 @@ class JointHistogramOutputSpec(TraitedSpec):
 
 
 class JointHistogram(SEMLikeCommandLine):
+
     """title: Write Out Image Intensities
 
 
@@ -689,6 +713,7 @@ class ShuffleVectorsModuleOutputSpec(TraitedSpec):
 
 
 class ShuffleVectorsModule(SEMLikeCommandLine):
+
     """title: ShuffleVectors
 
 category: Utilities.BRAINS
@@ -726,6 +751,7 @@ class ImageRegionPlotterOutputSpec(TraitedSpec):
 
 
 class ImageRegionPlotter(SEMLikeCommandLine):
+
     """title: Write Out Image Intensities
 
 

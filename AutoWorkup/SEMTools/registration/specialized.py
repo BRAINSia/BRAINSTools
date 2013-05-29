@@ -58,6 +58,7 @@ class VBRAINSDemonWarpOutputSpec(TraitedSpec):
 
 
 class VBRAINSDemonWarp(SEMLikeCommandLine):
+
     """title: Vector Demon Registration (BRAINS)
 
 category: Registration.Specialized
@@ -106,7 +107,8 @@ class BRAINSDemonWarpInputSpec(CommandLineInputSpec):
     medianFilterSize = InputMultiPath(traits.Int, desc="Median filter radius in all 3 directions.  When images have a lot of salt and pepper noise, this step can improve the registration.", sep=",", argstr="--medianFilterSize %s")
     initializeWithDisplacementField = File(desc="Initial deformation field vector image file name", exists=True, argstr="--initializeWithDisplacementField %s")
     initializeWithTransform = File(desc="Initial Transform filename", exists=True, argstr="--initializeWithTransform %s")
-    maskProcessingMode = traits.Enum("NOMASK", "ROIAUTO", "ROI", "BOBF", desc="What mode to use for using the masks: NOMASK|ROIAUTO|ROI|BOBF.  If ROIAUTO is choosen, then the mask is implicitly defined using a otsu forground and hole filling algorithm. Where the Region Of Interest mode uses the masks to define what parts of the image should be used for computing the deformation field.  Brain Only Background Fill uses the masks to pre-process the input images by clipping and filling in the background with a predefined value.", argstr="--maskProcessingMode %s")
+    maskProcessingMode = traits.Enum(
+        "NOMASK", "ROIAUTO", "ROI", "BOBF", desc="What mode to use for using the masks: NOMASK|ROIAUTO|ROI|BOBF.  If ROIAUTO is choosen, then the mask is implicitly defined using a otsu forground and hole filling algorithm. Where the Region Of Interest mode uses the masks to define what parts of the image should be used for computing the deformation field.  Brain Only Background Fill uses the masks to pre-process the input images by clipping and filling in the background with a predefined value.", argstr="--maskProcessingMode %s")
     fixedBinaryVolume = File(desc="Mask filename for desired region of interest in the Fixed image.", exists=True, argstr="--fixedBinaryVolume %s")
     movingBinaryVolume = File(desc="Mask filename for desired region of interest in the Moving image.", exists=True, argstr="--movingBinaryVolume %s")
     lowerThresholdForBOBF = traits.Int(desc="Lower threshold for performing BOBF", argstr="--lowerThresholdForBOBF %d")
@@ -136,6 +138,7 @@ class BRAINSDemonWarpOutputSpec(TraitedSpec):
 
 
 class BRAINSDemonWarp(SEMLikeCommandLine):
+
     """title: Demon Registration (BRAINS)
 
 category: Registration.Specialized
@@ -178,6 +181,7 @@ class BRAINSTransformFromFiducialsOutputSpec(TraitedSpec):
 
 
 class BRAINSTransformFromFiducials(SEMLikeCommandLine):
+
     """title: Fiducial Registration (BRAINS)
 
 category: Registration.Specialized

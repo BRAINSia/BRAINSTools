@@ -1,4 +1,7 @@
 
+#include "itkIO.h"
+#include <BRAINSFitHelper.h>
+
 #include "PrepareOutputImages.h"
 #include "itkOrthogonalize3DRotationMatrix.h"
 #include "ChopImageBelowLowerBound.h"
@@ -75,7 +78,6 @@ namespace itk
         // Second Create a mask for inverse resampling to orignal space
         SImageType::Pointer ZeroOneImage = SImageType::New();
         ZeroOneImage->CopyInformation(lOutputResampledImage);
-        // don't forget to do SetRegions here!
         ZeroOneImage->SetRegions( lOutputResampledImage->GetLargestPossibleRegion() );
         ZeroOneImage->Allocate();
         ZeroOneImage->FillBuffer(1);

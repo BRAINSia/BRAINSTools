@@ -176,7 +176,7 @@ public:
   }
 
   /** Get the interpolated output isotropic image */
-  // NO LONGER USED:  Need final transform itkGetConstObjectMacro(OutputResampledImage, SImageType);
+  itkGetConstObjectMacro(OutputResampledImage, SImageType);
 
   /** Get the output untransformed clipped volume */
   itkGetConstObjectMacro(OutputUntransformedClippedVolume, SImageType);

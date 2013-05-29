@@ -321,13 +321,7 @@ bool BRAINSConstellationDetectorPrimary::Compute( void )
       BackgroundFillValue = atoi( this->m_backgroundFillValueString.c_str() );
       }
     // the input image may have rescaled intensities, etc
-    writer->SetInput(
-      TransformResample<SImageType, SImageType>(
-        constellation2->GetImageToBeResampled(),
-        MakeIsoTropicReferenceImage().GetPointer(),
-        BackgroundFillValue,
-        GetInterpolatorFromString<SImageType>(this->m_interpolationMode).GetPointer(),
-        constellation2->GetVersorTransform() ) );
+    writer->SetInput( constellation2->GetOutputResampledImage() );
     writer->SetUseCompression( true );
     try
       {

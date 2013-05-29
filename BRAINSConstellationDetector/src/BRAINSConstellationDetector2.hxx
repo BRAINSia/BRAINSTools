@@ -447,7 +447,7 @@ BRAINSConstellationDetector2<TInputImage, TOutputImage>
         exit(-1);
         }
 
-      //TODO: Translate found ACPoint
+      //TODO: HACK:  Translate found ACPoint
 #if 0
       // as a final step, translate the AC back to the origin.
         {
@@ -559,7 +559,7 @@ BRAINSConstellationDetector2<TInputImage, TOutputImage>
       this->m_AlignedPoints["CM"],
       this->m_WriteBranded2DImage);
     }
-  //TODO:  This is never used.  The important output is the versor transform! this->GraftOutput(this->m_OutputImage);
+  this->GraftOutput(this->m_OutputImage);
 }
 
 template <class TInputImage, class TOutputImage>

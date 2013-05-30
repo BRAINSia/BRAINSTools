@@ -101,9 +101,7 @@ option(${PROJECT_NAME}_BUILD_DICOM_SUPPORT "Build Dicom Support" ON)
 # ${LOCAL_PROJECT_NAME} dependency list
 #------------------------------------------------------------------------------
 
-set(ITK_EXTERNAL_NAME ITKv${ITK_VERSION_MAJOR})
-
-set(${LOCAL_PROJECT_NAME}_DEPENDENCIES DCMTK ${ITK_EXTERNAL_NAME} SlicerExecutionModel)
+set(${LOCAL_PROJECT_NAME}_DEPENDENCIES DCMTK ITKv4 SlicerExecutionModel)
 
 if(BUILD_STYLE_UTILS)
   list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES Cppcheck KWStyle Uncrustify)
@@ -135,7 +133,11 @@ if(USE_AutoWorkup)
   list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES Swig)
   list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES SimpleITK)
   list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES NIPYPE)
+
 endif()
+list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES teem)
+list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES Boost)
+list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES UKF)
 
 #-----------------------------------------------------------------------------
 # Define Superbuild global variables

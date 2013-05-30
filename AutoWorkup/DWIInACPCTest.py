@@ -170,14 +170,14 @@ def MergeByExtendListElements(FAImageList):
     return ListOfImagesDictionaries, registrationImageTypes, interpolationMapping
 
 
-def CreateDWIWorkFlow(SESSION_TUPLE, BASE_STRUCT, BASE_DWI):
-    WFname = "DWIWorkflow_" + str(SESSION_TUPLE[0]) + "_" + str(SESSION_TUPLE[1]) + "_" + str(SESSION_TUPLE[2])
+def CreateDWIWorkFlow(SESSIONS_TO_PROCESS, BASE_STRUCT, BASE_DWI):
+    WFname = "DWIWorkflow_" + str(SESSIONS_TO_PROCESS[0]) + "_" + str(SESSIONS_TO_PROCESS[1]) + "_" + str(SESSIONS_TO_PROCESS[2])
     DWIWorkflow = pe.Workflow(name=WFname)
     # DWIWorkflow.base_dir = os.path.join(CACHE_BASE,session_name)
 
     inputsSpec = pe.Node(interface=IdentityInterface(fields=['SESSION_TUPLE']),
                          name='inputspec')
-    inputsSpec.inputs.SESSION_TUPLE = SESSION_TUPLE
+    inputsSpec.inputs.SESSION_TUPLE = SESSIONS_TO_PROCESS
 
     GetFileNamesNode = pe.Node(interface=Function(function=GetDWIReferenceImagesFromSessionID,
                                input_names=['SESSION_TUPLE', 'BASE_STRUCT', 'BASE_DWI'],
@@ -401,144 +401,144 @@ if True:
     MasterDWIWorkflow.connect(sessionNode, 'SESSIONS_TO_PROCESS', myDWIWorkflow, 'SESSIONS_TO_PROCESS')
     MasterDWIWorkflow.connect(sessionNode, 'BASE_STRUCT', myDWIWorkflow, 'BASE_STRUCT')
     MasterDWIWorkflow.connect(sessionNode, 'BASE_DWI', myDWIWorkflow, 'BASE_DWI')
+    if False:
+        ## Now do template building with FA's
+        import nipype.interfaces.ants as ants
 
-    ## Now do template building with FA's
-    import nipype.interfaces.ants as ants
+        initAvg = pe.Node(interface=ants.AverageImages(), name='initAvg')
+        initAvg.inputs.dimension = 3
+        initAvg.inputs.normalize = True
 
-    initAvg = pe.Node(interface=ants.AverageImages(), name='initAvg')
-    initAvg.inputs.dimension = 3
-    initAvg.inputs.normalize = True
+        MergeByExtendListElementsNode = pe.Node(interface=Function(function=MergeByExtendListElements, input_names=['FAImageList'], output_names=['ListOfImagesDictionaries', 'registrationImageTypes', 'interpolationMapping']), run_without_submitting=True, name="99_FAMergeByExtendListElements")
 
-    MergeByExtendListElementsNode = pe.Node(interface=Function(function=MergeByExtendListElements, input_names=['FAImageList'], output_names=['ListOfImagesDictionaries', 'registrationImageTypes', 'interpolationMapping']), run_without_submitting=True, name="99_FAMergeByExtendListElements")
+        from nipype.interfaces.base import CommandLine, CommandLineInputSpec, TraitedSpec, File, Directory, traits, isdefined, InputMultiPath, OutputMultiPath
+        import os
 
-    from nipype.interfaces.base import CommandLine, CommandLineInputSpec, TraitedSpec, File, Directory, traits, isdefined, InputMultiPath, OutputMultiPath
-    import os
+        class ResampleDTIlogEuclideanInputSpec(CommandLineInputSpec):
+            in_file = File(argstr='%s', exists=True, mandatory=True, position=-2, desc="The input file for Resampledtilogeuclidean")
+            out_file = File(argstr='%s', exists=False, mandatory=True, position=-1, desc="The output file for Resampledtilogeuclidean")
+            transformationFile = File(argstr='--transformationFile %s', exists=True, mandatory=True, desc="The affine transformation file for Resampledtilogeuclidean")
+            Reference = File(argstr='--Reference %s', exists=True, mandatory=True, desc="The reference file for ResampleDTIlogEuclidean output")
+            defField = File(argstr='--defField %s', exists=True, mandatory=True, desc="The deformation file for ResampleDTIlogEuclidean output")
+            hfieldtype = traits.Enum('hfield', 'displacement', argstr="--hfieldtype %s", desc="Set if the deformation field is an -Field")
+            interpolation = traits.Enum('linear', 'nn', 'ws', 'bs', argstr="--interpolation %s", desc="Sampling algorithm")
+            transform_tensor_method = traits.Enum('PPD', 'FS', argstr="--transform_tensor_method %s", desc="Chooses between 2 methods to transform the tensors: Finite Strain (FS), faster but less accurate, or Preservation of the Principal Direction (PPD)")
 
-    class ResampleDTIlogEuclideanInputSpec(CommandLineInputSpec):
-        in_file = File(argstr='%s', exists=True, mandatory=True, position=-2, desc="The input file for Resampledtilogeuclidean")
-        out_file = File(argstr='%s', exists=False, mandatory=True, position=-1, desc="The output file for Resampledtilogeuclidean")
-        transformationFile = File(argstr='--transformationFile %s', exists=True, mandatory=True, desc="The affine transformation file for Resampledtilogeuclidean")
-        Reference = File(argstr='--Reference %s', exists=True, mandatory=True, desc="The reference file for ResampleDTIlogEuclidean output")
-        defField = File(argstr='--defField %s', exists=True, mandatory=True, desc="The deformation file for ResampleDTIlogEuclidean output")
-        hfieldtype = traits.Enum('hfield', 'displacement', argstr="--hfieldtype %s", desc="Set if the deformation field is an -Field")
-        interpolation = traits.Enum('linear', 'nn', 'ws', 'bs', argstr="--interpolation %s", desc="Sampling algorithm")
-        transform_tensor_method = traits.Enum('PPD', 'FS', argstr="--transform_tensor_method %s", desc="Chooses between 2 methods to transform the tensors: Finite Strain (FS), faster but less accurate, or Preservation of the Principal Direction (PPD)")
+        class ResampleDTIlogEuclideanOutputSpec(TraitedSpec):
+            out_file = traits.File(exists=False, desc="The output file for Resampledtilogeuclidean")
 
-    class ResampleDTIlogEuclideanOutputSpec(TraitedSpec):
-        out_file = traits.File(exists=False, desc="The output file for Resampledtilogeuclidean")
+        class ResampleDTIlogEuclidean(CommandLine):
+            _cmd = "ResampleDTIlogEuclidean"
+            input_spec = ResampleDTIlogEuclideanInputSpec
+            output_spec = ResampleDTIlogEuclideanOutputSpec
 
-    class ResampleDTIlogEuclidean(CommandLine):
-        _cmd = "ResampleDTIlogEuclidean"
-        input_spec = ResampleDTIlogEuclideanInputSpec
-        output_spec = ResampleDTIlogEuclideanOutputSpec
+            def _list_outputs(self):
+                outputs = self.output_spec().get()
+                outputs['out_file'] = self.inputs.out_file
+                return outputs
 
-        def _list_outputs(self):
-            outputs = self.output_spec().get()
-            outputs['out_file'] = self.inputs.out_file
-            return outputs
+        def getElement(inputList, index):
+            """ Custom function to get out affine and deformation fields from BeginANTS output list """
+            return inputList[int(index)]
 
-    def getElement(inputList, index):
-        """ Custom function to get out affine and deformation fields from BeginANTS output list """
-        return inputList[int(index)]
+        ResampleDTI = pe.MapNode(interface=ResampleDTIlogEuclidean(), iterfield=['in_file'], name='ResampleDTI')
+        ResampleDTI.inputs.hfieldtype = 'displacement'
+        ResampleDTI.inputs.interpolation = 'linear'
+        ResampleDTI.inputs.transform_tensor_method = 'PPD'
+        """
+        ***********
+        """
+        mergeFA = pe.Node(interface=Merge(len(SESSIONS_TO_PROCESS)), name='99_mergeFA')
+        mergeTensor = pe.Node(interface=Merge(len(SESSIONS_TO_PROCESS)), name='99_mergeTensor')
+        count = 1
+        for SESSION_TUPLE in SESSIONS_TO_PROCESS:
+            myDWIWorkflow = CreateDWIWorkFlow(SESSION_TUPLE, BASE_STRUCT, BASE_DWI)
+            MasterDWIWorkflow.connect(myDWIWorkflow, "outputspec.FAImage", mergeFA, 'in' + str(count))
+            MasterDWIWorkflow.connect(myDWIWorkflow, 'outputspec.tensor_image', mergeTensor, 'in' + str(count))
+            count += 1
 
-    ResampleDTI = pe.MapNode(interface=ResampleDTIlogEuclidean(), iterfield=['in_file'], name='ResampleDTI')
-    ResampleDTI.inputs.hfieldtype = 'displacement'
-    ResampleDTI.inputs.interpolation = 'linear'
-    ResampleDTI.inputs.transform_tensor_method = 'PPD'
-    """
-    ***********
-    """
-    mergeFA = pe.Node(interface=Merge(len(SESSIONS_TO_PROCESS)), name='99_mergeFA')
-    mergeTensor = pe.Node(interface=Merge(len(SESSIONS_TO_PROCESS)), name='99_mergeTensor')
-    count = 1
-    for SESSION_TUPLE in SESSIONS_TO_PROCESS:
-        myDWIWorkflow = CreateDWIWorkFlow(SESSION_TUPLE, BASE_STRUCT, BASE_DWI)
-        MasterDWIWorkflow.connect(myDWIWorkflow, "outputspec.FAImage", mergeFA, 'in' + str(count))
-        MasterDWIWorkflow.connect(myDWIWorkflow, 'outputspec.tensor_image', mergeTensor, 'in' + str(count))
-        count += 1
+        MasterDWIWorkflow.connect(mergeFA, 'out', MergeByExtendListElementsNode, 'FAImageList')
+        MasterDWIWorkflow.connect(mergeFA, 'out', initAvg, "images")
 
-    MasterDWIWorkflow.connect(mergeFA, 'out', MergeByExtendListElementsNode, 'FAImageList')
-    MasterDWIWorkflow.connect(mergeFA, 'out', initAvg, "images")
+        # resampleIDNode = pe.Node(interface=IdentityInterface(fields=['in_file', 'SESSIONS_TO_PROCESS']), name='99_resampleIdentity')
+        # MasterDWIWorkflow.connect(mergeTensor, 'out', resampleIDNode, 'in_file')
+        # MasterDWIWorkflow.connect(resampleIDNode, 'in_file', ResampleDTI, 'in_file')
+        MasterDWIWorkflow.connect(mergeTensor, 'out', ResampleDTI, 'in_file')
 
-    # resampleIDNode = pe.Node(interface=IdentityInterface(fields=['in_file', 'SESSIONS_TO_PROCESS']), name='99_resampleIdentity')
-    # MasterDWIWorkflow.connect(mergeTensor, 'out', resampleIDNode, 'in_file')
-    # MasterDWIWorkflow.connect(resampleIDNode, 'in_file', ResampleDTI, 'in_file')
-    MasterDWIWorkflow.connect(mergeTensor, 'out', ResampleDTI, 'in_file')
+        ### USE ANTS REGISTRATION
+        from BAWantsRegistrationBuildTemplate import BAWantsRegistrationTemplateBuildSingleIterationWF
+        buildTemplateIteration1 = BAWantsRegistrationTemplateBuildSingleIterationWF('iteration01')
 
-    ### USE ANTS REGISTRATION
-    from BAWantsRegistrationBuildTemplate import BAWantsRegistrationTemplateBuildSingleIterationWF
-    buildTemplateIteration1 = BAWantsRegistrationTemplateBuildSingleIterationWF('iteration01')
+        ## TODO:  Change these parameters
+        BeginANTS_iter1 = buildTemplateIteration1.get_node("BeginANTS")
+        BeginANTS_iter1.plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp1 4-8 -l mem_free=9000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE_LONG), 'overwrite': True}
 
-    ## TODO:  Change these parameters
-    BeginANTS_iter1 = buildTemplateIteration1.get_node("BeginANTS")
-    BeginANTS_iter1.plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp1 4-8 -l mem_free=9000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE_LONG), 'overwrite': True}
+        wimtdeformed_iter1 = buildTemplateIteration1.get_node("wimtdeformed")
+        wimtdeformed_iter1.plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp1 1-2 -l mem_free=2000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE), 'overwrite': True}
 
-    wimtdeformed_iter1 = buildTemplateIteration1.get_node("wimtdeformed")
-    wimtdeformed_iter1.plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp1 1-2 -l mem_free=2000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE), 'overwrite': True}
+        AvgAffineTransform_iter1 = buildTemplateIteration1.get_node("AvgAffineTransform")
+        AvgAffineTransform_iter1.plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp1 1 -l mem_free=2000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE), 'overwrite': True}
 
-    AvgAffineTransform_iter1 = buildTemplateIteration1.get_node("AvgAffineTransform")
-    AvgAffineTransform_iter1.plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp1 1 -l mem_free=2000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE), 'overwrite': True}
+        wimtPassivedeformed_iter1 = buildTemplateIteration1.get_node("wimtPassivedeformed")
+        wimtPassivedeformed_iter1.plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp1 1-2 -l mem_free=2000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE), 'overwrite': True}
 
-    wimtPassivedeformed_iter1 = buildTemplateIteration1.get_node("wimtPassivedeformed")
-    wimtPassivedeformed_iter1.plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp1 1-2 -l mem_free=2000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE), 'overwrite': True}
+        MasterDWIWorkflow.connect(initAvg, 'output_average_image', buildTemplateIteration1, 'inputspec.fixed_image')
+        MasterDWIWorkflow.connect(MergeByExtendListElementsNode, 'ListOfImagesDictionaries', buildTemplateIteration1, 'inputspec.ListOfImagesDictionaries')
+        MasterDWIWorkflow.connect(MergeByExtendListElementsNode, 'registrationImageTypes', buildTemplateIteration1, 'inputspec.registrationImageTypes')
+        MasterDWIWorkflow.connect(MergeByExtendListElementsNode, 'interpolationMapping', buildTemplateIteration1, 'inputspec.interpolationMapping')
 
-    MasterDWIWorkflow.connect(initAvg, 'output_average_image', buildTemplateIteration1, 'inputspec.fixed_image')
-    MasterDWIWorkflow.connect(MergeByExtendListElementsNode, 'ListOfImagesDictionaries', buildTemplateIteration1, 'inputspec.ListOfImagesDictionaries')
-    MasterDWIWorkflow.connect(MergeByExtendListElementsNode, 'registrationImageTypes', buildTemplateIteration1, 'inputspec.registrationImageTypes')
-    MasterDWIWorkflow.connect(MergeByExtendListElementsNode, 'interpolationMapping', buildTemplateIteration1, 'inputspec.interpolationMapping')
+        buildTemplateIteration2 = buildTemplateIteration1.clone(name='buildTemplateIteration2')
+        buildTemplateIteration2 = BAWantsRegistrationTemplateBuildSingleIterationWF('Iteration02')
+        MasterDWIWorkflow.connect([(buildTemplateIteration2, ResampleDTI, [(('BeginANTS.forward_transforms', getElement, 0), 'transformationFile')])])
+        MasterDWIWorkflow.connect([(buildTemplateIteration2, ResampleDTI, [(('BeginANTS.forward_transforms', getElement, 1), 'defField')])])
+        MasterDWIWorkflow.connect(buildTemplateIteration2, 'outputspec.template', ResampleDTI, 'Reference')
+        ## TODO:  Change these parameters
+        BeginANTS_iter2 = buildTemplateIteration2.get_node("BeginANTS")
+        BeginANTS_iter2.plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp1 4-8 -l mem_free=9000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE_LONG), 'overwrite': True}
 
-    buildTemplateIteration2 = buildTemplateIteration1.clone(name='buildTemplateIteration2')
-    buildTemplateIteration2 = BAWantsRegistrationTemplateBuildSingleIterationWF('Iteration02')
-    MasterDWIWorkflow.connect([(buildTemplateIteration2, ResampleDTI, [(('BeginANTS.forward_transforms', getElement, 0), 'transformationFile')])])
-    MasterDWIWorkflow.connect([(buildTemplateIteration2, ResampleDTI, [(('BeginANTS.forward_transforms', getElement, 1), 'defField')])])
-    MasterDWIWorkflow.connect(buildTemplateIteration2, 'outputspec.template', ResampleDTI, 'Reference')
-    ## TODO:  Change these parameters
-    BeginANTS_iter2 = buildTemplateIteration2.get_node("BeginANTS")
-    BeginANTS_iter2.plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp1 4-8 -l mem_free=9000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE_LONG), 'overwrite': True}
+        wimtdeformed_iter2 = buildTemplateIteration2.get_node("wimtdeformed")
+        wimtdeformed_iter2.plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp1 1-2 -l mem_free=2000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE), 'overwrite': True}
 
-    wimtdeformed_iter2 = buildTemplateIteration2.get_node("wimtdeformed")
-    wimtdeformed_iter2.plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp1 1-2 -l mem_free=2000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE), 'overwrite': True}
+        AvgAffineTransform_iter2 = buildTemplateIteration2.get_node("AvgAffineTransform")
+        AvgAffineTransform_iter2.plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp1 1 -l mem_free=2000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE), 'overwrite': True}
 
-    AvgAffineTransform_iter2 = buildTemplateIteration2.get_node("AvgAffineTransform")
-    AvgAffineTransform_iter2.plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp1 1 -l mem_free=2000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE), 'overwrite': True}
+        wimtPassivedeformed_iter2 = buildTemplateIteration2.get_node("wimtPassivedeformed")
+        wimtPassivedeformed_iter2.plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp1 1-2 -l mem_free=2000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE), 'overwrite': True}
 
-    wimtPassivedeformed_iter2 = buildTemplateIteration2.get_node("wimtPassivedeformed")
-    wimtPassivedeformed_iter2.plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp1 1-2 -l mem_free=2000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE), 'overwrite': True}
+        MasterDWIWorkflow.connect(buildTemplateIteration1, 'outputspec.template', buildTemplateIteration2, 'inputspec.fixed_image')
+        MasterDWIWorkflow.connect(MergeByExtendListElementsNode, 'ListOfImagesDictionaries', buildTemplateIteration2, 'inputspec.ListOfImagesDictionaries')
+        MasterDWIWorkflow.connect(MergeByExtendListElementsNode, 'registrationImageTypes', buildTemplateIteration2, 'inputspec.registrationImageTypes')
+        MasterDWIWorkflow.connect(MergeByExtendListElementsNode, 'interpolationMapping', buildTemplateIteration2, 'inputspec.interpolationMapping')
 
-    MasterDWIWorkflow.connect(buildTemplateIteration1, 'outputspec.template', buildTemplateIteration2, 'inputspec.fixed_image')
-    MasterDWIWorkflow.connect(MergeByExtendListElementsNode, 'ListOfImagesDictionaries', buildTemplateIteration2, 'inputspec.ListOfImagesDictionaries')
-    MasterDWIWorkflow.connect(MergeByExtendListElementsNode, 'registrationImageTypes', buildTemplateIteration2, 'inputspec.registrationImageTypes')
-    MasterDWIWorkflow.connect(MergeByExtendListElementsNode, 'interpolationMapping', buildTemplateIteration2, 'inputspec.interpolationMapping')
+        DWIAverageSink = pe.Node(interface=nio.DataSink(), name="DWIAverageSink")
+        #""" 'Average DTIEstim_Process and average deformed DTI image' """
+        DWIAverageSink = pe.Node(interface=nio.DataSink(), name='DWIAverageSink')
+        DWIAverageSink.inputs.base_directory = '/scratch/20130214_DWIPROCESSING_NIPYPE'
+        DWIAverageSink.inputs.container = os.path.join("DWIPrototype_Results")
+        # DWIAverageSink.inputs.regexp_substitutions = [('Average/*/', 'Average/')]
 
-    DWIAverageSink = pe.Node(interface=nio.DataSink(), name="DWIAverageSink")
-    #""" 'Average DTIEstim_Process and average deformed DTI image' """
-    DWIAverageSink = pe.Node(interface=nio.DataSink(), name='DWIAverageSink')
-    DWIAverageSink.inputs.base_directory = '/scratch/20130214_DWIPROCESSING_NIPYPE'
-    DWIAverageSink.inputs.container = os.path.join("DWIPrototype_Results")
-    # DWIAverageSink.inputs.regexp_substitutions = [('Average/*/', 'Average/')]
+        MasterDWIWorkflow.connect(buildTemplateIteration2, 'AvgAffineTransform.affine_transform',
+                                  DWIAverageSink, 'Average.@transforms')
+        MasterDWIWorkflow.connect(buildTemplateIteration2, 'AvgWarpImages.output_average_image',
+                                  DWIAverageSink, 'Average.@passive_transforms')
+        MasterDWIWorkflow.connect(buildTemplateIteration2, 'outputspec.template',
+                                  DWIAverageSink, 'Average.@template')
+        MasterDWIWorkflow.connect(buildTemplateIteration2, 'outputspec.passive_deformed_templates',
+                                  DWIAverageSink, 'Average.@passive')
+        MasterDWIWorkflow.connect(initAvg, 'output_average_image', DWIAverageSink, 'Average.@image')
 
-    MasterDWIWorkflow.connect(buildTemplateIteration2, 'AvgAffineTransform.affine_transform',
-                              DWIAverageSink, 'Average.@transforms')
-    MasterDWIWorkflow.connect(buildTemplateIteration2, 'AvgWarpImages.output_average_image',
-                              DWIAverageSink, 'Average.@passive_transforms')
-    MasterDWIWorkflow.connect(buildTemplateIteration2, 'outputspec.template',
-                              DWIAverageSink, 'Average.@template')
-    MasterDWIWorkflow.connect(buildTemplateIteration2, 'outputspec.passive_deformed_templates',
-                              DWIAverageSink, 'Average.@passive')
-    MasterDWIWorkflow.connect(initAvg, 'output_average_image', DWIAverageSink, 'Average.@image')
+        DTIDataSink = pe.MapNode(interface=nio.DataSink(infields=['Output.@out_file']),
+                                 iterfield=['container', 'Output.@out_file'],
+                                 name='DTIDataSink')
+        DTIDataSink.inputs.base_directory = '/scratch/20130214_DWIPROCESSING_NIPYPE/DWIPrototype_Results'
+        # DWIDataSink.inputs.regex_substitutions = [('/Output/*/','/')]
 
-    DTIDataSink = pe.MapNode(interface=nio.DataSink(infields=['Output.@out_file']),
-                             iterfield=['container', 'Output.@out_file'],
-                             name='DTIDataSink')
-    DTIDataSink.inputs.base_directory = '/scratch/20130214_DWIPROCESSING_NIPYPE/DWIPrototype_Results'
-    # DWIDataSink.inputs.regex_substitutions = [('/Output/*/','/')]
-
-    def sinkContainer(args):
-        import os.path
-        retval = []
-        for tup in args:
-            retval.append(os.path.join(*tup))
-        return retval
+        def sinkContainer(args):
+            import os.path
+            retval = []
+            for tup in args:
+                retval.append(os.path.join(*tup))
+            return retval
 
 """
     MasterDWIWorkflow.connect([(resampleIDNode, DTIDataSink,[(('SESSIONS_TO_PROCESS', sinkContainer), 'container')])])

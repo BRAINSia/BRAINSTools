@@ -141,11 +141,9 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
       ${${proj}_FFTWD_ARGS}
     )
   ### --- End Project specific additions
-#set(${proj}_REPOSITORY ${git_protocol}://itk.org/ITK.git)
-#set(${proj}_GIT_TAG 2dcef7731b02af8a410e80347ae0466c4769f1d0)
+  set(${proj}_REPOSITORY ${git_protocol}://itk.org/ITK.git)
+  set(${proj}_GIT_TAG 581ab6bfa20301baf7bdf21fa1b73b422d31f80c)
 
-  set(${proj}_REPOSITORY ${git_protocol}://github.com/hjmjohnson/ITK.git)
-  set(${proj}_GIT_TAG AddMGHImageIO)
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${${proj}_REPOSITORY}
     GIT_TAG ${${proj}_GIT_TAG}

@@ -37,6 +37,7 @@ import sys
 #\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 #####################################################################################
 #     Prepend the shell environment search paths
+import os
 PROGRAM_PATHS = '/Users/johnsonhj/src/BT-build/bin:/Users/johnsonhj/src/ANTs-clang/bin:/Users/johnsonhj/src/DTIPrep-build/bin:/usr/local/bin'
 PROGRAM_PATHS = PROGRAM_PATHS.split(':')
 PROGRAM_PATHS.extend(os.environ['PATH'].split(':'))
@@ -209,9 +210,9 @@ def CreateDWIWorkFlow(SESSION_TUPLE, BASE_STRUCT, BASE_DWI):
     BFitB0_T2.inputs.backgroundFillValue = 0.0
     BFitB0_T2.inputs.initializeTransformMode = 'useCenterOfHeadAlign'
 
-    BFitB0_T2.inputs.outputTransform = "B0ToT2_AffineTransform.h5"
-    BFitB0_T2.inputs.strippedOutputTransform = "B0ToT2_RigidTransform.h5"
-    BFitB0_T2.inputs.outputVolume = "B0_in_T2Space_Output.nii.gz"
+    BFitB0_T2.inputs.outputTransform = 'B0ToT2_AffineTransform.h5'
+    BFitB0_T2.inputs.strippedOutputTransform = 'B0ToT2_RigidTransform.h5'
+    BFitB0_T2.inputs.outputVolume = 'B0_in_T2Space_Output.nii.gz'
 
     ### DWIWorkflow.connect(inputsSpec, 'T2Volume', BFitB0_T2, 'fixedVolume')
     DWIWorkflow.connect(GetFileNamesNode, 'FixImage', BFitB0_T2, 'fixedVolume')
@@ -227,10 +228,19 @@ def CreateDWIWorkFlow(SESSION_TUPLE, BASE_STRUCT, BASE_DWI):
     DWIWorkflow.connect(GetFileNamesNode, 'FixImage', DWIRIP, 'referenceVolume')
     DWIWorkflow.connect(GetFileNamesNode, 'MovingDWI', DWIRIP, 'inputVolume')
 
+    DWIRIP_lowRes = pe.Node(interface=gtractResampleDWIInPlace(), name="DWIRIP_B0ToT2_lowRes")
+    DWIRIP_lowRes.inputs.outputVolume = 'ACPC_DWI.nrrd'
+    DWIRIP_lowRes.inputs.outputResampledB0 = 'ACPC_B0.nrrd'
+    # DWIRIP.inputs.imageOutputSize = [164,164,100]
+
+    DWIWorkflow.connect(BFitB0_T2, 'strippedOutputTransform', DWIRIP_lowRes, 'inputTransform')
+    # NOT USED IN THIS PATH! DWIWorkflow.connect(GetFileNamesNode, 'FixImage', DWIRIP_lowRes, 'referenceVolume')
+    DWIWorkflow.connect(GetFileNamesNode, 'MovingDWI', DWIRIP_lowRes, 'inputVolume')
+
     ## TODO:  Replace with ANTS
-    BSPLINE_T2_TO_RIPB0 = pe.Node(interface=BRAINSFit(), name="BSPLINE_T2_TO_RIPB0")
+    BSPLINE_T2_TO_RIPB0 = pe.Node(interface=BRAINSFit(), name='BSPLINE_T2_TO_RIPB0')
     # BSPLINE_T2_TO_RIPB0.plugin_args = BF_cpu_sge_options_dictionary
-    BSPLINE_T2_TO_RIPB0.inputs.costMetric = "MMI"
+    BSPLINE_T2_TO_RIPB0.inputs.costMetric = 'MMI'
     BSPLINE_T2_TO_RIPB0.inputs.numberOfSamples = 100000
     BSPLINE_T2_TO_RIPB0.inputs.numberOfIterations = [1500]
     BSPLINE_T2_TO_RIPB0.inputs.numberOfHistogramBins = 50

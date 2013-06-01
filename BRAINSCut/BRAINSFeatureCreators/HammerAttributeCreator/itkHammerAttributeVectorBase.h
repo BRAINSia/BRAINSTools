@@ -30,7 +30,7 @@ namespace itk
   *
   */
 template <typename TValueType, unsigned int VLength = 3>
-class ITK_EXPORT HammerAttributeVectorBase :
+class HammerAttributeVectorBase :
   public         FixedArray<TValueType, VLength>
 {
 public:

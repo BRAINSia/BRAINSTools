@@ -29,7 +29,7 @@ namespace itk
   */
 template <typename TCoordinateType, unsigned int NDimensions,
           typename TInputImage>
-class ITK_EXPORT TransformAdaptor : public LightProcessObject
+class TransformAdaptor : public LightProcessObject
 {
 public:
 

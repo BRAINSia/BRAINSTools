@@ -50,7 +50,7 @@ namespace itk
   * \ingroup GradientFilters
   */
 template <class TInputImage, class TOutputImage>
-class ITK_EXPORT HammerTissueAttributeVectorImageFilter :
+class HammerTissueAttributeVectorImageFilter :
   public         ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:

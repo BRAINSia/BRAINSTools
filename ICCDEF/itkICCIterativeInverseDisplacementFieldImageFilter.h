@@ -34,7 +34,7 @@ namespace itk
  */
 
 template <class TInputImage, class TOutputImage>
-class ITK_EXPORT ICCIterativeInverseDisplacementFieldImageFilter :
+class ICCIterativeInverseDisplacementFieldImageFilter :
   public         ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:

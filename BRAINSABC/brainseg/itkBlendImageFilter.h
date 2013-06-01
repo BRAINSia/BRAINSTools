@@ -26,7 +26,7 @@ namespace itk
  *  \brief Blend 2 images based using weights for each images
  */
 template <class TInputImage, class TOutputImage>
-class ITK_EXPORT BlendImageFilter : public ImageToImageFilter<TInputImage, TOutputImage>
+class BlendImageFilter : public ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:
   /** Standard class typedefs. */

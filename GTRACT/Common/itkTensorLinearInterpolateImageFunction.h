@@ -24,7 +24,7 @@
 namespace itk
 {
 template <class TInputImage, class TCoordRep = float>
-class ITK_EXPORT TensorLinearInterpolateImageFunction :
+class TensorLinearInterpolateImageFunction :
   public         TensorInterpolateImageFunction<TInputImage, TCoordRep>
 {
 public:

@@ -33,7 +33,7 @@ namespace itk
  * \sa InPlaceImageFilter
  */
 template <class TInputImage, class TOutputImage = TInputImage>
-class ITK_EXPORT AdditiveGaussianNoiseImageFilter :
+class AdditiveGaussianNoiseImageFilter :
   public
   InPlaceImageFilter<TInputImage, TOutputImage>
 {

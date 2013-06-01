@@ -35,7 +35,7 @@ namespace itk
  *
  * */
 template <class TInputMesh>
-class ITK_EXPORT LinearInterpolateMeshFunction :
+class LinearInterpolateMeshFunction :
   public         InterpolateMeshFunction<TInputMesh>
 {
 public:

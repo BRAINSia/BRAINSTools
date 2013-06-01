@@ -61,7 +61,7 @@ namespace itk
   *
   */
 template <class TFixedImage, class TMovingImage, class TDisplacementField>
-class ITK_EXPORT VectorESMDemonsRegistrationFunction :
+class VectorESMDemonsRegistrationFunction :
   public         PDEDeformableRegistrationFunction<TFixedImage,
                                                    TMovingImage, TDisplacementField>
 {

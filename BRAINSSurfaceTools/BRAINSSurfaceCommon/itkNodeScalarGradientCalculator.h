@@ -36,7 +36,7 @@ namespace itk
  *
  * */
 template <class TInputMesh, class TPointDataContainer = double>
-class ITK_EXPORT NodeScalarGradientCalculator :
+class NodeScalarGradientCalculator :
   public         FunctionBase<typename TInputMesh::PointIdentifier,
                               CovariantVector<
                                 typename NumericTraits<typename TPointDataContainer::Element>::RealType,

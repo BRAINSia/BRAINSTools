@@ -80,7 +80,7 @@ namespace itk
  * */
 
 template <class TInputImage, class TOutputImage>
-class ITK_EXPORT HoughTransformRadialVotingImageFilter :
+class HoughTransformRadialVotingImageFilter :
   public         ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:

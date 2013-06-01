@@ -38,7 +38,7 @@ namespace itk
  *
  */
 template <class TOutputMesh>
-class ITK_EXPORT IcosahedralRegularSphereMeshSource : public MeshSource<TOutputMesh>
+class IcosahedralRegularSphereMeshSource : public MeshSource<TOutputMesh>
 {
 public:
   /** Standard "Self" typedef. */

@@ -60,7 +60,7 @@ namespace itk
  * \ingroup ImageToImageFilter
  */
 template <class TInputImage, class TOutputImage>
-class ITK_EXPORT GtractInverseDisplacementFieldImageFilter :
+class GtractInverseDisplacementFieldImageFilter :
   public         ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:

@@ -37,7 +37,7 @@ namespace itk
  * \ingroup ITKTestKernel
  */
 template <class TInputImage, class TOutputImage>
-class ITK_EXPORT LOCAL_DifferenceImageFilter :
+class LOCAL_DifferenceImageFilter :
   public         ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:

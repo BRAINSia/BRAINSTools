@@ -40,7 +40,7 @@ namespace itk
  */
 
 template <class TFixedMesh,  class TMovingMesh>
-class ITK_EXPORT MeshToMeshMetric : public SingleValuedCostFunction
+class MeshToMeshMetric : public SingleValuedCostFunction
 {
 public:
 

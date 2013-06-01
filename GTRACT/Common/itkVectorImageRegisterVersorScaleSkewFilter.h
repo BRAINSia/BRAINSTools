@@ -66,7 +66,7 @@ namespace itk
  */
 
 template <class TInputImage, class TOutputImage>
-class ITK_EXPORT VectorImageRegisterVersorScaleSkewFilter :
+class VectorImageRegisterVersorScaleSkewFilter :
   public         ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:

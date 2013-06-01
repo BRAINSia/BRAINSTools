@@ -37,7 +37,7 @@ namespace itk
  *
  */
 template <class TMesh, class TBasisSystem>
-class ITK_EXPORT TriangleListBasisSystemCalculator : public Object
+class TriangleListBasisSystemCalculator : public Object
 {
 public:
   /** Standard class typedefs. */

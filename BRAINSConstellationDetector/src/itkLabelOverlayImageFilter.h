@@ -46,7 +46,7 @@ namespace itk
  *
  */
 template <typename  TInputImage, class TLabelImage, typename  TOutputImage>
-class ITK_EXPORT LabelOverlayImageFilter :
+class LabelOverlayImageFilter :
   public
   BinaryFunctorImageFilter<TInputImage, TLabelImage, TOutputImage,
                            Functor::LabelOverlayFunctor<

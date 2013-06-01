@@ -28,7 +28,7 @@ template <
   class TInputImage,
   class TCoordRep = float // ,typename TComponent = float
   >
-class ITK_EXPORT TensorInterpolateImageFunction :
+class TensorInterpolateImageFunction :
   public         ImageFunction<
     TInputImage,
     SymmetricSecondRankTensor<double, 3>,

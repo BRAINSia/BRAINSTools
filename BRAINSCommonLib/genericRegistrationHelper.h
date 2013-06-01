@@ -345,7 +345,7 @@ namespace itk
 // TODO:  Remove default MetricType here, and force a choice
 template <typename TTransformType, typename TOptimizer, typename TFixedImage,
           typename TMovingImage, typename MetricType>
-class ITK_EXPORT MultiModal3DMutualRegistrationHelper : public ProcessObject
+class MultiModal3DMutualRegistrationHelper : public ProcessObject
 {
 public:
   /** Standard class typedefs. */

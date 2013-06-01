@@ -37,7 +37,7 @@ namespace itk
  * \ingroup TriangleBasisSystems
  */
 template <class TVector, unsigned int NSubspaceDimension>
-class ITK_EXPORT TriangleBasisSystem
+class TriangleBasisSystem
 {
 public:
   typedef TVector VectorType;

@@ -34,7 +34,7 @@ namespace itk
  * backwards compatibility.
  */
 template <class TTransform, class TImage>
-class ITK_EXPORT brainsBSplineDeformableTransformInitializer : public Object
+class brainsBSplineDeformableTransformInitializer : public Object
 {
 public:
   /** Standard class typedefs. */

@@ -60,7 +60,7 @@ namespace itk
   */
 template <class TFixedImage, class TMovingImage, class TDisplacementField,
           class TRealType = float>
-class ITK_EXPORT VectorMultiResolutionPDEDeformableRegistration :
+class VectorMultiResolutionPDEDeformableRegistration :
   public         ImageToImageFilter<TDisplacementField, TDisplacementField>
 {
 public:

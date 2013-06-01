@@ -58,7 +58,7 @@ namespace itk
  * \ingroup RegistrationFilters
  */
 template <typename TFixedMesh, typename TMovingMesh>
-class ITK_EXPORT MeshToMeshRegistrationMethod : public ProcessObject
+class MeshToMeshRegistrationMethod : public ProcessObject
 {
 public:
   /** Standard class typedefs. */

@@ -65,7 +65,7 @@ namespace itk
  */
 
 template <class TInputImage, class TOutputImage>
-class ITK_EXPORT VectorImageRegisterVersorRigidFilter :
+class VectorImageRegisterVersorRigidFilter :
   public         ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:

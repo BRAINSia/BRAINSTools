@@ -6,7 +6,7 @@
 namespace itk
 {
 template <class TInputImage, class TOutputImage>
-class ITK_EXPORT ApplyMaskImageFilter :
+class ApplyMaskImageFilter :
   public         ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:    /* define methods available to everyone */

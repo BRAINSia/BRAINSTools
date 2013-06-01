@@ -28,7 +28,7 @@ namespace itk
  * \ingroup Operators
  */
 template <class TInputImage>
-class ITK_EXPORT PeakSignalToNoiseRatioCalculator : public Object
+class PeakSignalToNoiseRatioCalculator : public Object
 {
 public:
   /** Standard class typedefs. */

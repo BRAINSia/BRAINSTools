@@ -35,7 +35,7 @@ namespace itk
   */
 
 template <typename TImage>
-class ITK_EXPORT VValidationInputParser : public Object
+class VValidationInputParser : public Object
 {
 public:
 

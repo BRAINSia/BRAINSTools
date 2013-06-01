@@ -9,7 +9,7 @@ namespace itk
 /** \class BOBFilter
   */
 template <class TInputImage, class TOutputImage>
-class ITK_EXPORT BOBFFilter :
+class BOBFFilter :
   public         ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:

@@ -36,7 +36,7 @@ namespace itk
  * \sa InPlaceImageFilter
  */
 template <class TInputImage, class TOutputImage = TInputImage>
-class ITK_EXPORT SpeckleNoiseImageFilter :
+class SpeckleNoiseImageFilter :
   public
   InPlaceImageFilter<TInputImage, TOutputImage>
 {

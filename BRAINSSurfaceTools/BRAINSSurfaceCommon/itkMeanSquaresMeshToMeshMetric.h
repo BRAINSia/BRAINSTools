@@ -44,7 +44,7 @@ namespace itk
  * \ingroup RegistrationMetrics
  */
 template <class TFixedMesh, class TMovingMesh>
-class ITK_EXPORT MeanSquaresMeshToMeshMetric :
+class MeanSquaresMeshToMeshMetric :
   public         MeshToMeshMetric<TFixedMesh, TMovingMesh>
 {
 public:

@@ -33,7 +33,7 @@ namespace itk
   *
   */
 template <typename TInputImage, typename TOutputImage>
-class ITK_EXPORT VDemonsPreprocessor : public Object
+class VDemonsPreprocessor : public Object
 {
 public:
 

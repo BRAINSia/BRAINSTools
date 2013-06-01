@@ -36,7 +36,7 @@ namespace itk
  * \sa InPlaceImageFilter
  */
 template <class TInputImage, class TOutputImage = TInputImage>
-class ITK_EXPORT SaltAndPepperNoiseImageFilter :
+class SaltAndPepperNoiseImageFilter :
   public
   InPlaceImageFilter<TInputImage, TOutputImage>
 {

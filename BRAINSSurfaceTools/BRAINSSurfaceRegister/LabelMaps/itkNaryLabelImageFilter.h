@@ -85,7 +85,7 @@ public:
 }
 
 template <class TInputImage, class TOutputImage>
-class ITK_EXPORT NaryLabelImageFilter :
+class NaryLabelImageFilter :
   public
   NaryFunctorImageFilter<TInputImage, TOutputImage,
                          Functor::NaryLabel<typename TInputImage::PixelType, typename TOutputImage::PixelType> >

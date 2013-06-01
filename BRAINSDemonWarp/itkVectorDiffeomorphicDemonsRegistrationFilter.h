@@ -80,7 +80,7 @@ namespace itk
  * \ingroup DeformableImageRegistration MultiThreaded
  */
 template <class TFixedImage, class TMovingImage, class TDisplacementField>
-class ITK_EXPORT VectorDiffeomorphicDemonsRegistrationFilter :
+class VectorDiffeomorphicDemonsRegistrationFilter :
   public         PDEDeformableRegistrationFilter<TFixedImage, TMovingImage,
                                                  TDisplacementField>
 {

@@ -22,7 +22,7 @@
 namespace itk
 {
 template <class TFixedImage, class TMovingImage, class TDisplacementField>
-class ITK_EXPORT ICCDeformableFunction :
+class ICCDeformableFunction :
   public         PDEDeformableRegistrationFunction<TFixedImage,
                                                    TMovingImage, TDisplacementField>
 {

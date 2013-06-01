@@ -28,7 +28,7 @@ namespace itk
   * \brief Abstract base class for attribute vector used by Hammer
   *
   */
-class ITK_EXPORT HammerTissueAttributeVector :
+class HammerTissueAttributeVector :
   public         HammerAttributeVectorBase<unsigned char, 5>
 {
 public:

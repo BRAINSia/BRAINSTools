@@ -49,7 +49,7 @@ typedef itk::AffineTransform<double, 3> AffineTransformType;
   */
 
 template <typename TImage>
-class ITK_EXPORT ValidationInputParser : public Object
+class ValidationInputParser : public Object
 {
 public:
 

@@ -29,7 +29,7 @@
 
 template <class TCoordinateType,
           unsigned int NDimensions = 3>
-class ITK_EXPORT CrossOverAffineSystem : public itk::LightProcessObject
+class CrossOverAffineSystem : public itk::LightProcessObject
 {
 public:
   /** Standard class typedefs. */

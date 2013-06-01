@@ -77,7 +77,7 @@ namespace itk
 // Software Guide : EndLatex
 
 template <class TInputImage, class TOutputImage>
-class ITK_EXPORT BRAINSConstellationDetector2 :
+class BRAINSConstellationDetector2 :
   public         ImageToImageFilter<SImageType, SImageType>
 {
 public:

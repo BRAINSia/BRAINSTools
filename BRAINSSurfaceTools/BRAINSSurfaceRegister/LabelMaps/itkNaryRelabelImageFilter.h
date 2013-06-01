@@ -44,7 +44,7 @@ namespace itk
  */
 
 template <class TInputImage, class TOutputImage>
-class ITK_EXPORT NaryRelabelImageFilter :
+class NaryRelabelImageFilter :
   public         InPlaceImageFilter<TInputImage, TOutputImage>
 
 {

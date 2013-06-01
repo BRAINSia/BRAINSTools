@@ -32,7 +32,7 @@ namespace itk
   *
   */
 template <typename TInputImage, typename TOutputImage>
-class ITK_EXPORT DemonsPreprocessor : public Object
+class DemonsPreprocessor : public Object
 {
 public:
 

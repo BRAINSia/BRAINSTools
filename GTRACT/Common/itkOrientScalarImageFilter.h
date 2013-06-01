@@ -106,7 +106,7 @@ namespace itk
  * \endcode
  */
 template <class TInputImage, class TOutputImage>
-class ITK_EXPORT OrientScalarImageFilter :
+class OrientScalarImageFilter :
   public         ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:

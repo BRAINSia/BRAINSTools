@@ -112,7 +112,7 @@ namespace itk
  */
 template <typename TInputImage, typename TOutputImage = TInputImage,
           typename TWeights = float>
-class ITK_EXPORT MultiLabelSTAPLEImageFilter :
+class MultiLabelSTAPLEImageFilter :
   public         ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:

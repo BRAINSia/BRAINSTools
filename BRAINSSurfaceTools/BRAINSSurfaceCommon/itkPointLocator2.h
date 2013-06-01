@@ -32,7 +32,7 @@ namespace itk
  *
  */
 template <class TPointSet>
-class ITK_EXPORT PointLocator2 : public Object
+class PointLocator2 : public Object
 {
 public:
   /** Standard class typedefs. */

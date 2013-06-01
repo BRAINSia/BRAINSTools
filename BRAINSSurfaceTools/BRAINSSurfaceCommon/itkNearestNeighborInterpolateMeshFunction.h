@@ -33,7 +33,7 @@ namespace itk
  *
  * */
 template <class TInputMesh>
-class ITK_EXPORT NearestNeighborInterpolateMeshFunction :
+class NearestNeighborInterpolateMeshFunction :
   public         InterpolateMeshFunction<TInputMesh>
 {
 public:

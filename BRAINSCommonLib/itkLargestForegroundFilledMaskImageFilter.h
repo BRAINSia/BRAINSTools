@@ -36,7 +36,7 @@ namespace itk
   *
   */
 template <class TInputImage, class TOutputImage = TInputImage>
-class ITK_EXPORT LargestForegroundFilledMaskImageFilter :
+class LargestForegroundFilledMaskImageFilter :
   public         ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:

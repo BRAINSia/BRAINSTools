@@ -37,7 +37,7 @@ namespace Testing
 * \ingroup ITKTestKernel
 */
 template <typename  TInputImage, typename  TOutputImage = TInputImage>
-class ITK_EXPORT StretchIntensityImageFilter : public ImageSource<TOutputImage>
+class StretchIntensityImageFilter : public ImageSource<TOutputImage>
 {
 public:
   /** Standard class typedefs. */

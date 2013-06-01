@@ -42,7 +42,7 @@ namespace itk
  * \ingroup GeometricTransforms
  */
 template <class TInputImage, class TOutputImage>
-class ITK_EXPORT ResampleInPlaceImageFilter :
+class ResampleInPlaceImageFilter :
   public         ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:

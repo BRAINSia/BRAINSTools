@@ -125,7 +125,7 @@ typedef int ThreadIdType;
 template <class TReferenceImagePixelType,
           class TGradientImagePixelType = TReferenceImagePixelType,
           class TTensorPixelType = double>
-class ITK_EXPORT DiffusionTensor3DReconstructionWithMaskImageFilter :
+class DiffusionTensor3DReconstructionWithMaskImageFilter :
   public         ImageToImageFilter<Image<TReferenceImagePixelType, 3>,
                                     Image<DiffusionTensor3D<TTensorPixelType>, 3> >
 {

@@ -23,7 +23,7 @@
 namespace itk
 {
 template <class TInputImage, class TOutputImage>
-class ITK_EXPORT BRAINSHoughEyeDetector :
+class BRAINSHoughEyeDetector :
   public         ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:

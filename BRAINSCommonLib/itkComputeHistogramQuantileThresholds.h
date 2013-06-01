@@ -15,7 +15,7 @@ namespace itk
   *
   */
 template <class TInputImage, class TMaskImage>
-class ITK_EXPORT ComputeHistogramQuantileThresholds :
+class ComputeHistogramQuantileThresholds :
   public         Object
 {
 public:

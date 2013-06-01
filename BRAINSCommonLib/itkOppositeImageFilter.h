@@ -69,7 +69,7 @@ public:
 }
 
 template <class TInputImage, class TOutputImage>
-class ITK_EXPORT OppositeImageFilter :
+class OppositeImageFilter :
   public
   UnaryFunctorImageFilter<TInputImage, TOutputImage,
                           Functor::Opposite<

@@ -47,7 +47,7 @@ namespace itk
  * \ingroup MeshFunctions
  */
 template <class TInputMesh, class TOutput>
-class ITK_EXPORT MeshFunction :
+class MeshFunction :
   public         FunctionBase<typename TInputMesh::PointType, TOutput>
 {
 public:

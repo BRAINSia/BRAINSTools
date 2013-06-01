@@ -37,7 +37,7 @@ namespace itk
  *
  */
 template <typename TInputImage, typename TOutputImage>
-class ITK_EXPORT IccdefPreprocessor : public Object
+class IccdefPreprocessor : public Object
 {
 public:
 

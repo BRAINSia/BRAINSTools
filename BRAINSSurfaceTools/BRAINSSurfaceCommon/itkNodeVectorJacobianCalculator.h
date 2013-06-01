@@ -35,7 +35,7 @@ namespace itk
  *
  * */
 template <class TInputMesh, class TVectorContainer>
-class ITK_EXPORT NodeVectorJacobianCalculator :
+class NodeVectorJacobianCalculator :
   public         FunctionBase<typename TInputMesh::PointIdentifier,
                               Matrix<
                                 typename NumericTraits<typename TVectorContainer::Element::ValueType>::RealType,

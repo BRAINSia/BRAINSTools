@@ -15,7 +15,7 @@ namespace itk
   *
   */
 template <class TInputImage, class TOutputImage = Image<unsigned short, TInputImage::ImageDimension> >
-class ITK_EXPORT MultiModeHistogramThresholdBinaryImageFilter :
+class MultiModeHistogramThresholdBinaryImageFilter :
   public         ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:

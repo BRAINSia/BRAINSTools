@@ -173,6 +173,7 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetecto
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:LandmarksCompare>
   --inputLandmarkFile1 ${CMAKE_CURRENT_BINARY_DIR}/insertMidACPCpointTest_ACPCSpace_aligned.fcsv # output of the insertMidACPCpoint
   --inputLandmarkFile2 DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.fcsv} # Baseline file
+  --tolerance 0.00001
   )
 set_property(TEST ${BRAINSConstellationDetectorTestName} APPEND PROPERTY DEPENDS insertMidACPCpointTest)
 
@@ -189,6 +190,7 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetecto
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:LandmarksCompare>
   --inputLandmarkFile1 ${CMAKE_CURRENT_BINARY_DIR}/landmarksConstellationAlignerTest.fcsv # output of the landmarksConstellationAlignerTest
   --inputLandmarkFile2 DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.fcsv} # Baseline file
+  --tolerance 0.00001
   )
 set_property(TEST ${BRAINSConstellationDetectorTestName} APPEND PROPERTY DEPENDS landmarksConstellationAlignerTest)
 
@@ -546,6 +548,7 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetecto
     COMMAND ${LAUNCH_EXE} $<TARGET_FILE:LandmarksCompare>
     --inputLandmarkFile1 ${CMAKE_CURRENT_BINARY_DIR}/BRAINSConstellationDetectorTestForLandmarkCompare_ACPCSpace_aligned.fcsv
     --inputLandmarkFile2 DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.fcsv} # Baseline file
+  --tolerance 0.00001
     )
   set_property(TEST ${BRAINSConstellationDetectorTestName} APPEND PROPERTY
     DEPENDS BRAINSConstellationDetectorTestForLandmarkCompare)
@@ -555,6 +558,7 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetecto
     COMMAND ${LAUNCH_EXE} $<TARGET_FILE:LandmarksCompare>
     --inputLandmarkFile1 ${CMAKE_CURRENT_BINARY_DIR}/BRAINSConstellationDetectorTestForLandmarkCompare_InputSpace_aligned.fcsv
     --inputLandmarkFile2 DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.fcsv} # Baseline file
+  --tolerance 0.00001
     )
   set_property(TEST ${BRAINSConstellationDetectorTestName} APPEND PROPERTY
     DEPENDS BRAINSConstellationDetectorTestForLandmarkCompare)
@@ -564,6 +568,7 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetecto
   #  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:LandmarksCompare>
   #  --inputLandmarkFile1 ${CMAKE_CURRENT_BINARY_DIR}/BRAINSConstellationDetectorTestForLandmarkCompare_aligned.wts
   #  --inputLandmarkFile2 DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.wts} # Baseline file
+  # --tolerance 0.00001
   #  )
   #set_property(TEST ${BRAINSConstellationDetectorTestName} APPEND PROPERTY
   #  DEPENDS BRAINSConstellationDetectorTestForLandmarkCompare)

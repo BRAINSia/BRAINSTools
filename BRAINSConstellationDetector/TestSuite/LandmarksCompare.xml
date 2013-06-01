@@ -32,6 +32,14 @@
       <description>Second input landmark file (.fcsv or .wts)</description>
     </file>
 
+    <double>
+      <name>tolerance</name>
+      <longflag>tolerance</longflag>
+      <label>The maximum error (in mm) allowed in each direction of a landmark</label>
+      <description>The maximum error (in mm) allowed in each direction of a landmark</description>
+      <default>0.0</default>
+    </double>
+
   </parameters>
 
 </executable>

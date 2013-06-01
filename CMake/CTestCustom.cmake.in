@@ -73,6 +73,7 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
   # Ignore 'detached HEAD' warnings
   ".*Note: checking out.*"
   ".*detached.*HEAD.*"
+  "HEAD is now"
   ".*warning generated..*"
 
   # NIPYPE warnings:
@@ -83,6 +84,7 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
   ".*PCRE-prefix.*warning.*"
   ".*PCRE.*warning.*"
   ".*pcre.*has no symbols.*"
+  "cast from.*char.*to.*pcre_.*"
 
   ".*checking for C compiler warning.*"
   ".*gmake.*: warning.*"

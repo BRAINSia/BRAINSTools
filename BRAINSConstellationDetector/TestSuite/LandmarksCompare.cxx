@@ -42,12 +42,13 @@ int main( int argc, char * argv[] )
       {
       for( unsigned int i = 0 ; i < 3 ; ++i )
         {
-        if ( vcl_abs(lmk1iter->second[i] - lmk2iter->second[i]) > tolerance )
+        const double error_term = vcl_abs(lmk1iter->second[i] - lmk2iter->second[i]);
+        if ( error_term > tolerance )
           {
-          std::cout << "lmks differ by greater than tolerance" << std::endl;
+          std::cout << "lmk" << lmk1iter->first << "[" << i << "] differ by greater than tolerance" << std::endl;
           std::cout << "| "<< lmk1iter->second[i]
                     << " - " << lmk2iter->second[i]
-                    << " | > " << tolerance << std::endl;
+                    << " | = " << error_term << " is greater than " << tolerance << std::endl;
           allSame = false;
           }
         }

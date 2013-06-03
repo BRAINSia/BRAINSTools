@@ -9,18 +9,13 @@
 
 #include "landmarksConstellationCommon.h"
 #include "landmarksConstellationDetector.h"
-#include "itkOtsuThresholdImageFilter.h"
 #include "landmarksConstellationModelIO.h"
-#include "itkAffineTransform.h"
 #include "itkVersorRigid3DTransform.h"
-#include "itkImageFileReader.h"
-#include "itkImageDuplicator.h"
 
 #include <cstring>
-#include <map>
 #include <cstdio>
+#include <map>
 #include <vector>
-#include <vnl/vnl_matlab_read.h>
 
 typedef std::map<std::string, SImageType::PointType> LandmarksMapType;
 typedef vnl_matrix<double>                           MatrixType;

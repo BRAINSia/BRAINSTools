@@ -310,17 +310,6 @@ bool BRAINSConstellationDetectorPrimary::Compute( void )
     WriterType::Pointer writer = WriterType::New();
     writer->SetFileName( this->m_outputResampledVolume );
     // TODO: Encapsulate this for applying a transform resampling.
-
-    short BackgroundFillValue;
-    if( this->m_backgroundFillValueString == std::string("BIGNEG") )
-      {
-      BackgroundFillValue = -32768;
-      }
-    else
-      {
-      BackgroundFillValue = atoi( this->m_backgroundFillValueString.c_str() );
-      }
-    // the input image may have rescaled intensities, etc
     writer->SetInput( constellation2->GetOutputResampledImage() );
     writer->SetUseCompression( true );
     try

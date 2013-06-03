@@ -53,17 +53,19 @@ template <typename DType>
 void sample_variance(const std::vector<DType> & x, DType *mean, DType *var)
 {
   const DType n = x.size();
-  DType       sum_of_sq = 0.0;
-  DType       sum = 0.0;
 
   if( n == 1 )  // not possible to compute variance of a single sample
     {
     *mean = x[0];
     *var = 0.0;
     }
-  for( typename std::vector<DType>::const_iterator it = x.begin(); it != x.end(); ++it )
+
+  DType       sum_of_sq = 0.0;
+  DType       sum = 0.0;
+  const typename std::vector<DType>::const_iterator theEnd = x.end();
+  for( typename std::vector<DType>::const_iterator it = x.begin(); it != theEnd; ++it )
     {
-    const DType value = *it;
+    const DType & value = *it;
     sum_of_sq += value * value;
     sum += value;
     }
@@ -158,7 +160,7 @@ int main(int argc, char *argv[])
                                                       // file for
     // reading
     char linebuf[300];
-    for( int lineNum = 0; lineNum < 6; lineNum++ )
+    for( int lineNum = 0; lineNum < 6; ++lineNum )
       {
       prevMSPOptFile.getline(linebuf, 300);  // read to end of line;  line size
       // ends up in gcount()
@@ -167,7 +169,8 @@ int main(int argc, char *argv[])
     prevMSPOptFile.close();
     }
   // //////////////////////////////////////////////////////////////////////////
-  for( unsigned int currentDataset = 0; currentDataset < mDef.GetNumDataSets(); currentDataset++ )
+  const unsigned int & mDefNumDataSets = mDef.GetNumDataSets();
+  for( unsigned int currentDataset = 0; currentDataset < mDefNumDataSets; ++currentDataset )
     {
     std::cout << "====================================================================================" << std::endl;
     std::cout << "PROCESSING:" <<  mDef[currentDataset].GetImageFilename() << std::endl;
@@ -388,7 +391,7 @@ int main(int argc, char *argv[])
 
   /* PRINT FOR TEST ////////////////////////////////////////////
   std::cout << "\nPROCESSING AC transformed values in MSP aligned space by 'Reflective Correlation' method:" << std::endl;
-  for( unsigned int currentDataset = 0; currentDataset < mDef.GetNumDataSets(); currentDataset++ )
+  for( unsigned int currentDataset = 0; currentDataset < mDefNumDataSets; currentDataset++ )
     {
         std::cout << "====================================================================================" << std::endl;
         std::cout << currentDataset+1 << "#: " << ac_InMSPAlignedSpace[currentDataset] << std::endl;

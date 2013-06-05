@@ -37,6 +37,8 @@
 #include "BRAINSFitBSpline.h"
 #include "BRAINSFitUtils.h"
 #include "BRAINSFitSyN.h"
+#include "BRAINSABCUtilities.h"
+#include "LLSBiasCorrector.h"
 
 // #include "QHullMSTClusteringProcess.h"
 #include "AtlasDefinition.h"
@@ -91,7 +93,6 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
   m_RawInputImages.clear();
   m_CorrectedImages.clear();
   m_RawCorrectedImages.clear();
-  m_InputVolumeTypes.clear();
 
   m_TemplateBrainMask = NULL;
   m_OriginalAtlasImages.clear();
@@ -184,19 +185,29 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
     itkExceptionMacro(<< "No input images" << std::endl );
     }
 
-  {
-  const InputImageSizeType size = m_InputImages[0]->GetLargestPossibleRegion().GetSize();
-  for( unsigned i = 1; i < m_InputImages.size(); i++ )
+  const InputImageSizeType size =
+    this->GetFirstInputImage()->GetLargestPossibleRegion().GetSize();
+
+  for(typename MapOfInputImageVectors::iterator mapIt = this->m_InputImages.begin();
+      mapIt != this->m_InputImages.end(); ++mapIt)
     {
-    if( m_InputImages[i]->GetImageDimension() != 3 )
+    for(typename InputImageVector::iterator imIt = mapIt->second.begin();
+        imIt != mapIt->second.end(); ++imIt)
       {
-      itkExceptionMacro(<< "InputImage [" << i << "] has invalid dimension: only supports 3D images" << std::endl );
-      }
-    const InputImageSizeType isize = m_InputImages[i]->GetLargestPossibleRegion().GetSize();
-    if( size != isize )
-      {
-      itkExceptionMacro(<< "Image data [" << i << "] 3D size mismatch "
-                        << size << " != " << isize << "." << std::endl );
+      if( (*imIt)->GetImageDimension() != 3 )
+        {
+        itkExceptionMacro(<< "InputImage ["
+                          << mapIt->first << " " << std::distance(mapIt->second.begin(),imIt)
+                          << "] has invalid dimension: only supports 3D images" << std::endl );
+        }
+      const InputImageSizeType isize = (*imIt)->GetLargestPossibleRegion().GetSize();
+      if( size != isize )
+        {
+        itkExceptionMacro(<< "Image data ["
+                          << mapIt->first << " " << std::distance(mapIt->second.begin(),imIt)
+                          << "] 3D size mismatch "
+                          << size << " != " << isize << "." << std::endl );
+        }
       }
     }
   for( unsigned i = 0; i < m_WarpedPriors.size(); i++ )
@@ -213,44 +224,59 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
                         << std::endl );
       }
     }
-  }
 
-  {
-  const InputImageSizeType atlasSize = m_OriginalAtlasImages[0]->GetLargestPossibleRegion().GetSize();
-  for( unsigned i = 1; i < m_OriginalAtlasImages.size(); i++ )
+  const InputImageSizeType atlasSize =
+    this->GetFirstOriginalAtlasImage()->GetLargestPossibleRegion().GetSize();
+  for(typename MapOfInputImageVectors::iterator mapIt = this->m_OriginalAtlasImages.begin();
+      mapIt != this->m_OriginalAtlasImages.end(); ++mapIt)
     {
-    if( m_OriginalAtlasImages[i]->GetImageDimension() != 3 )
+    for(typename InputImageVector::iterator imIt = mapIt->second.begin();
+        imIt != mapIt->second.end(); ++imIt)
       {
-      itkExceptionMacro(<< "Atlas Image [" << i << "] has invalid dimension: only supports 3D images" << std::endl );
-      }
-    const InputImageSizeType asize = m_OriginalAtlasImages[i]->GetLargestPossibleRegion().GetSize();
-    if( atlasSize != asize )
-      {
-      itkExceptionMacro(<< "Image data [" << i << "] 3D size mismatch "
-                        << atlasSize << " != " << asize << "." << std::endl );
+      if( (*imIt)->GetImageDimension() != 3 )
+        {
+        itkExceptionMacro(<< "Atlas Image ["
+                          << mapIt->first << " "
+                          << std::distance(mapIt->second.begin(),imIt)
+                          << "] has invalid dimension: only supports 3D images" << std::endl );
+        }
+      const InputImageSizeType asize = (*imIt)->GetLargestPossibleRegion().GetSize();
+      if( atlasSize != asize )
+        {
+        itkExceptionMacro(<< "Image data ["
+                          << mapIt->first << " "
+                          << std::distance(mapIt->second.begin(),imIt)
+                          << "] 3D size mismatch "
+                          << atlasSize << " != " << asize << "." << std::endl );
+        }
       }
     }
-  for( unsigned i = 0; i < m_OriginalSpacePriors.size(); i++ )
+
+  for(typename ProbabilityImageVectorType::iterator imIt = this->m_OriginalSpacePriors.begin();
+      imIt != this->m_OriginalSpacePriors.end(); ++imIt)
     {
-    if( m_OriginalSpacePriors[i]->GetImageDimension() != 3 )
+    if( (*imIt)->GetImageDimension() != 3 )
       {
-      itkExceptionMacro(<< "Prior [" << i << "] has invalid dimension: only supports 3D images" << std::endl );
+      itkExceptionMacro(<< "Prior ["
+                        << std::distance(this->m_OriginalSpacePriors.begin(),imIt)
+                        << "] has invalid dimension: only supports 3D images" << std::endl );
       }
-    const ProbabilityImageSizeType psize = m_OriginalSpacePriors[i]->GetLargestPossibleRegion().GetSize();
+    const ProbabilityImageSizeType psize = (*imIt)->GetLargestPossibleRegion().GetSize();
     if( atlasSize != psize )
       {
-      itkExceptionMacro(<< "Normalized prior [" << i << "] and atlas 3D size mismatch"
+      itkExceptionMacro(<< "Normalized prior ["
+                        << std::distance(this->m_OriginalSpacePriors.begin(),imIt)
+                        << "] and atlas 3D size mismatch"
                         << atlasSize << " != " << psize << "."
                         << std::endl );
       }
     }
-  }
 }
 
 template <class TInputImage, class TProbabilityImage>
 void
 EMSegmentationFilter<TInputImage, TProbabilityImage>
-::SetInputImages(const InputImageVector & newInputImages)
+::SetInputImages(const MapOfInputImageVectors newInputImages)
 {
   muLogMacro(<< "SetInputImages" << std::endl);
 
@@ -268,7 +294,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
 template <class TInputImage, class TProbabilityImage>
 void
 EMSegmentationFilter<TInputImage, TProbabilityImage>
-::SetRawInputImages(const InputImageVector & newInputImages)
+::SetRawInputImages(const MapOfInputImageVectors newInputImages)
 {
   muLogMacro(<< "SetRawInputImages" << std::endl);
 
@@ -286,7 +312,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
 template <class TInputImage, class TProbabilityImage>
 void
 EMSegmentationFilter<TInputImage, TProbabilityImage>
-::SetOriginalAtlasImages(const InputImageVector & newAtlasImages)
+::SetOriginalAtlasImages(const MapOfInputImageVectors newAtlasImages)
 {
   muLogMacro(<< "SetAtlasImages" << std::endl);
 
@@ -361,13 +387,15 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
 
   if( w.size() != m_OriginalSpacePriors.size() )
     {
-    itkExceptionMacro(<< "Number of prior weights invalid" << w.size() << " != " << m_OriginalSpacePriors.size() );
+    itkExceptionMacro(<< "Number of prior weights invalid"
+                      << w.size() << " != " << m_OriginalSpacePriors.size() );
     }
   for( unsigned i = 0; i < w.size(); i++ )
     {
     if( w[i] == 0.0 )
       {
-      itkExceptionMacro(<< "Prior weight " << i << " is zero" << std::endl );
+      itkExceptionMacro(<< "Prior weight "
+                        << i << " is zero" << std::endl );
       }
     }
 
@@ -492,7 +520,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
 }
 
 template <class TInputImage, class TProbabilityImage>
-std::vector<typename EMSegmentationFilter<TInputImage, TProbabilityImage>::InputImagePointer>
+typename EMSegmentationFilter<TInputImage, TProbabilityImage>::MapOfInputImageVectors
 EMSegmentationFilter<TInputImage, TProbabilityImage>
 ::GetCorrected()
 {
@@ -500,7 +528,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
 }
 
 template <class TInputImage, class TProbabilityImage>
-std::vector<typename EMSegmentationFilter<TInputImage, TProbabilityImage>::InputImagePointer>
+typename EMSegmentationFilter<TInputImage, TProbabilityImage>::MapOfInputImageVectors
 EMSegmentationFilter<TInputImage, TProbabilityImage>
 ::GetRawCorrected()
 {
@@ -536,21 +564,6 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
     }
 }
 
-namespace
-{
-template <class ImageType>
-typename ImageType::Pointer
-CopyImage(const typename ImageType::Pointer & input )
-{
-  typedef itk::ImageDuplicator<ImageType> ImageDupeType;
-  typename ImageDupeType::Pointer MyDuplicator = ImageDupeType::New();
-  MyDuplicator->SetInputImage(input);
-  MyDuplicator->Update();
-  return MyDuplicator->GetOutput();
-}
-}
-
-
 template <class TInputImage, class TProbabilityImage>
 std::vector<RegionStats>
 EMSegmentationFilter<TInputImage, TProbabilityImage>
@@ -568,7 +581,8 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
   // LLSBiasCorrector which unfortunately does NOT keep track of the
   // types of input images.  So there may need to be a custom version
   // of this method that groups by image type
-  CombinedComputeDistributions<TInputImage, TProbabilityImage, MatrixType>(SubjectCandidateRegions, this->m_CorrectedImages,
+  CombinedComputeDistributions<TInputImage, TProbabilityImage, MatrixType>(SubjectCandidateRegions,
+                                                                           this->m_CorrectedImages,
                                                                            probabilityMaps,
                                                                            outputStats,
                                                                            this->m_DebugLevel,
@@ -598,23 +612,25 @@ static double ComputeCovarianceDeterminant( const vnl_matrix<FloatingPrecision> 
 template <class TInputImage, class TProbabilityImage>
 typename TProbabilityImage::Pointer
 EMSegmentationFilter<TInputImage, TProbabilityImage>
-::ComputeOnePosterior(
-  const FloatingPrecision priorScale,
+::ComputeOnePosterior(const FloatingPrecision priorScale,
   const typename TProbabilityImage::Pointer prior,
   const vnl_matrix<FloatingPrecision> currCovariance,
-  const vnl_vector<FloatingPrecision> currMeans,
-  const std::vector<typename TInputImage::Pointer> & intensityImages
-  )
+  typename RegionStats::MeanMapType &currMeans,
+  const MapOfInputImageVectors & intensityImages)
 {
   typedef vnl_matrix<FloatingPrecision>         MatrixType;
   typedef vnl_matrix_inverse<FloatingPrecision> MatrixInverseType;
 
-  const unsigned          numChannels = currMeans.size();
+  // FOR IPEK & GARY -- this is a stopgap -- even though we use a map
+  // of image lists instead of an image list, we're still computing
+  // ImageList.size() * ImageList.size() covariance.
+  unsigned          numModalities = currMeans.size();
+
   const FloatingPrecision detcov = ComputeCovarianceDeterminant(currCovariance);
 
   // Normalizing constant for the Gaussian
   const FloatingPrecision denom =
-    vcl_pow(2 * vnl_math::pi, numChannels / 2.0) * vcl_sqrt(detcov) + vnl_math::eps;
+    vcl_pow(2 * vnl_math::pi, numModalities / 2.0) * vcl_sqrt(detcov) + vnl_math::eps;
   const FloatingPrecision invdenom = 1.0 / denom;
   CHECK_NAN(invdenom, __FILE__, __LINE__, "\n  denom:" << denom );
   const MatrixType invcov = MatrixInverseType(currCovariance);
@@ -625,7 +641,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
   post->Allocate();
 
   const typename TProbabilityImage::SizeType size = post->GetLargestPossibleRegion().GetSize();
-  {
+
 #if defined(LOCAL_USE_OPEN_MP)
 #pragma omp parallel for
 #endif
@@ -645,17 +661,38 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
         // the desired class is significantly higher than 1%.
         const typename TProbabilityImage::PixelType minPriorValue = 0.0;
         const typename TProbabilityImage::PixelType priorValue = (prior->GetPixel(currIndex) + minPriorValue);
-        {
-        MatrixType X(numChannels, 1);
-        for( unsigned int ichan = 0; ichan < numChannels; ichan++ )
+        // MatrixType X(numModalities, 1);
+        // {
+        // for(typename RegionStats::MeanMapType::const_iterator mapIt = currMeans.begin();
+        //     mapIt != currMeans.end(); ++mapIt)
+        //   {
+        //   for(typename RegionStats::VectorType::const_iterator vecIt = mapIt->second.begin();
+        //       vecIt != mapIt->second.end(); ++vecIt, ++ichan)
+        //     {
+        //     X(ichan, 0) =
+        //       tmpIntensityImages[ichan]->GetPixel(currIndex) - (*vecIt);
+        //     }
+        //   }
+        // }
+
+        MatrixType X(numModalities, 1);
+        unsigned long zz = 0;
+        for(typename MapOfInputImageVectors::const_iterator mapIt = intensityImages.begin();
+            mapIt != intensityImages.end(); ++mapIt, ++zz)
           {
-          X(ichan, 0) =
-            intensityImages[ichan]->GetPixel(currIndex) - currMeans[ichan];
+          double curAvg(0.0);
+          const double curMean = currMeans[mapIt->first];
+          const double numCurModality = static_cast<double>(mapIt->second.size());
+          for(unsigned xx = 0; xx < numCurModality; ++xx)
+            {
+            curAvg += (mapIt->second[xx]->GetPixel(currIndex) - curMean);
+            }
+          X(zz,0) = curAvg / numCurModality;
           }
 
         const MatrixType  Y = invcov * X;
         FloatingPrecision mahalo = 0.0;
-        for( unsigned int ichan = 0; ichan < numChannels; ichan++ )
+        for(unsigned int ichan = 0; ichan < numModalities; ichan++ )
           {
           const FloatingPrecision & currVal = X(ichan, 0) * Y(ichan, 0);
           CHECK_NAN(currVal, __FILE__, __LINE__, "\n  currIndex: " << currIndex
@@ -683,10 +720,8 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
                   << "\n  Y:  " << Y );
         post->SetPixel(currIndex, currentPosterior);
         }
-        }
       }
     }
-  }
   return post;
 }
 
@@ -695,7 +730,7 @@ typename EMSegmentationFilter<TInputImage, TProbabilityImage>::ProbabilityImageV
 EMSegmentationFilter<TInputImage, TProbabilityImage>
 ::ComputePosteriors(const ProbabilityImageVectorType & Priors,
                     const vnl_vector<FloatingPrecision> & PriorWeights,
-                    const std::vector<typename TInputImage::Pointer> & IntensityImages,
+                    const MapOfInputImageVectors & IntensityImages,
                     std::vector<RegionStats> & ListOfClassStatistics)
 {
   // Compute initial distribution parameters
@@ -774,29 +809,37 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
 template <class TInputImage, class TProbabilityImage>
 void
 EMSegmentationFilter<TInputImage, TProbabilityImage>
-::WriteDebugCorrectedImages(const std::vector<typename TInputImage::Pointer> & correctImageList,
+::WriteDebugCorrectedImages(const MapOfInputImageVectors &correctImageList,
                             const unsigned int CurrentEMIteration ) const
 {
-  if( this->m_DebugLevel > 8 )
-    { // DEBUG:  This code is for debugging purposes only;
-    std::stringstream CurrentEMIteration_stream("");
-    CurrentEMIteration_stream << CurrentEMIteration;
-    for( unsigned int vIndex = 0; vIndex < correctImageList.size(); vIndex++ )
+  if(this->m_DebugLevel <= 8)
+    {
+    return;
+    }
+  std::stringstream CurrentEMIteration_stream("");
+  CurrentEMIteration_stream << CurrentEMIteration;
+  for(typename MapOfInputImageVectors::const_iterator mapIt = correctImageList.begin();
+      mapIt != correctImageList.end(); ++mapIt)
+    {
+    for(typename InputImageVector::const_iterator imIt = mapIt->second.begin();
+        imIt != mapIt->second.end(); ++imIt)
       {
-      { // DEBUG:  This code is for debugging purposes only;
       typedef itk::ImageFileWriter<InputImageType> WriterType;
       typename WriterType::Pointer writer = WriterType::New();
       writer->UseCompressionOn();
-
       std::stringstream template_index_stream("");
-      template_index_stream << vIndex;
-      const std::string fn = this->m_OutputDebugDir + "/CORRECTED_INDEX_" + template_index_stream.str() + "_LEVEL_"
-        + CurrentEMIteration_stream.str() + ".nii.gz";
-      writer->SetInput(correctImageList[vIndex]);
+      template_index_stream << std::distance(mapIt->second.begin(),imIt);
+      const std::string fn = this->m_OutputDebugDir
+        + "/CORRECTED_INDEX_"
+        + mapIt->first
+        + template_index_stream.str()
+        + "_LEVEL_"
+        + CurrentEMIteration_stream.str()
+        + ".nii.gz";
+      writer->SetInput((*imIt));
       writer->SetFileName(fn.c_str() );
       writer->Update();
       muLogMacro( << "DEBUG:  Wrote image " << fn <<  std::endl);
-      }
       }
     }
 }
@@ -883,12 +926,13 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
     }
 }
 
-template <class TInputImage>
-std::vector<typename TInputImage::Pointer>
-WarpImageList(const std::vector<typename TInputImage::Pointer> & originalList,
-              const typename TInputImage::Pointer referenceOutput,
-              const std::vector<typename TInputImage::PixelType> & backgroundValues,
-              const GenericTransformType::Pointer warpTransform)
+template <class TInputImage, class TProbabilityImage>
+typename EMSegmentationFilter<TInputImage, TProbabilityImage>::ProbabilityImageVectorType
+EMSegmentationFilter<TInputImage, TProbabilityImage>
+::WarpImageList(ProbabilityImageVectorType &originalList,
+                const InputImagePointer  referenceOutput,
+                const BackgroundValueVector & backgroundValues,
+                const GenericTransformType::Pointer warpTransform)
 {
   if( originalList.size() != backgroundValues.size() )
     {
@@ -897,7 +941,6 @@ WarpImageList(const std::vector<typename TInputImage::Pointer> & originalList,
   std::vector<typename TInputImage::Pointer> warpedList(originalList.size() );
 
   typedef itk::ResampleImageFilter<TInputImage, TInputImage> ResamplerType;
-  {
   for( unsigned int vIndex = 0; vIndex < originalList.size(); vIndex++ )
     {
     typename ResamplerType::Pointer warper = ResamplerType::New();
@@ -910,7 +953,37 @@ WarpImageList(const std::vector<typename TInputImage::Pointer> & originalList,
     warper->Update();
     warpedList[vIndex] = warper->GetOutput();
     }
-  }
+  return warpedList;
+}
+
+template <class TInputImage, class TProbabilityImage>
+typename EMSegmentationFilter<TInputImage, TProbabilityImage>::MapOfInputImageVectors
+EMSegmentationFilter<TInputImage, TProbabilityImage>
+::WarpImageList(MapOfInputImageVectors &originalList,
+                const InputImagePointer referenceOutput,
+                const GenericTransformType::Pointer warpTransform)
+{
+  typedef itk::ResampleImageFilter<TInputImage, TInputImage> ResamplerType;
+
+  MapOfInputImageVectors warpedList;
+
+  for(typename MapOfInputImageVectors::iterator mapIt = originalList.begin();
+      mapIt != originalList.end(); ++mapIt)
+    {
+    for(typename InputImageVector::iterator imIt = mapIt->second.begin();
+        imIt != mapIt->second.end(); ++imIt)
+      {
+      typename ResamplerType::Pointer warper = ResamplerType::New();
+      warper->SetInput(*imIt);
+      warper->SetTransform(warpTransform);
+
+      // warper->SetInterpolator(linearInt); // Default is linear
+      warper->SetOutputParametersFromImage(referenceOutput);
+      warper->SetDefaultPixelValue(0);
+      warper->Update();
+      warpedList[mapIt->first].push_back(warper->GetOutput());
+      }
+    }
   return warpedList;
 }
 
@@ -924,46 +997,50 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
   CurrentEMIteration_stream << CurrentEMIteration;
   if( this->m_DebugLevel > 9 )
     {
-    for( unsigned int vIndex = 0; vIndex < this->m_WarpedAtlasImages.size(); vIndex++ )
+    for(typename MapOfInputImageVectors::const_iterator mapIt =
+          this->m_WarpedAtlasImages.begin();
+        mapIt != this->m_WarpedAtlasImages.end(); ++mapIt)
       {
-      typedef itk::ImageFileWriter<InputImageType> WriterType;
-      typename WriterType::Pointer writer = WriterType::New();
-      writer->UseCompressionOn();
+      for(typename InputImageVector::const_iterator imIt = mapIt->second.begin();
+          imIt != mapIt->second.end(); ++imIt)
+        {
+        typedef itk::ImageFileWriter<InputImageType> WriterType;
+        typename WriterType::Pointer writer = WriterType::New();
+        writer->UseCompressionOn();
 
-      std::stringstream template_index_stream("");
-      template_index_stream << vIndex;
-      const std::string fn = this->m_OutputDebugDir + "/WARPED_ATLAS_INDEX_" + template_index_stream.str()
-        + "_LEVEL_" + CurrentEMIteration_stream.str() + ".nii.gz";
-      writer->SetInput(m_WarpedAtlasImages[vIndex]);
-      writer->SetFileName(fn.c_str() );
-      writer->Update();
-      muLogMacro( << "DEBUG:  Wrote image " << fn <<  std::endl);
+        std::stringstream template_index_stream("");
+        template_index_stream << mapIt->first
+                              << std::distance(mapIt->second.begin(),imIt);
+        const std::string fn = this->m_OutputDebugDir + "/WARPED_ATLAS_INDEX_" + template_index_stream.str()
+          + "_LEVEL_" + CurrentEMIteration_stream.str() + ".nii.gz";
+        writer->SetInput((*imIt));
+        writer->SetFileName(fn.c_str() );
+        writer->Update();
+        muLogMacro( << "DEBUG:  Wrote image " << fn <<  std::endl);
+        }
       }
     }
 }
 
 template <class TInputImage, class TProbabilityImage>
-std::vector<typename TInputImage::Pointer>
+typename EMSegmentationFilter<TInputImage, TProbabilityImage>::MapOfInputImageVectors
 EMSegmentationFilter<TInputImage, TProbabilityImage>
 ::GenerateWarpedAtlasImages(void)
 {
-  // TODO:  Need to make this cleaner.
-  std::vector<typename TInputImage::PixelType> backgroundValues(m_OriginalAtlasImages.size() );
-  std::fill(backgroundValues.begin(), backgroundValues.end(), 0);
-
   this->m_WarpedAtlasImages =
-    WarpImageList<TProbabilityImage>(this->m_OriginalAtlasImages, this->m_InputImages[0], backgroundValues,
-                                     this->m_TemplateGenericTransform);
+    this->WarpImageList(this->m_OriginalAtlasImages,
+                        GetMapVectorFirstElement(this->m_InputImages),
+                        this->m_TemplateGenericTransform);
   return m_WarpedAtlasImages;
 }
 
 template <class TInputImage, class TProbabilityImage>
-std::vector<typename ByteImageType::Pointer>
+typename EMSegmentationFilter<TInputImage, TProbabilityImage>::ByteImageVectorType
 EMSegmentationFilter<TInputImage, TProbabilityImage>
 ::UpdateIntensityBasedClippingOfPriors(const unsigned int CurrentEMIteration,
-                                       const std::vector<typename TInputImage::Pointer> & intensityList,
-                                       ProbabilityImageVectorType & WarpedPriorsList,
-                                       typename ByteImageType::Pointer ForegroundBrainRegion)
+                                       const MapOfInputImageVectors &intensityList,
+                                       const ProbabilityImageVectorType &WarpedPriorsList,
+                                       typename ByteImageType::Pointer &ForegroundBrainRegion)
 {
   // #################################################################
   // #################################################################
@@ -984,7 +1061,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
   for( LOOPITERTYPE i = 0; i < (LOOPITERTYPE)WarpedPriorsList.size(); i++ )
     {
     typename ByteImageType::Pointer probThreshImage = NULL;
-    {
+
     typedef itk::BinaryThresholdImageFilter<TProbabilityImage, ByteImageType> ProbThresholdType;
     typename ProbThresholdType::Pointer probThresh = ProbThresholdType::New();
     probThresh->SetInput(  WarpedPriorsList[i] );
@@ -1018,38 +1095,44 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
       writer->UseCompressionOn();
       writer->Update();
       }
-    }
+
 
     const unsigned int numberOfModes = intensityList.size();
     typedef typename itk::MultiModeHistogramThresholdBinaryImageFilter<InputImageType,
-                                                                       ByteImageType> ThresholdRegionFinderType;
+      ByteImageType> ThresholdRegionFinderType;
     typename ThresholdRegionFinderType::ThresholdArrayType QuantileLowerThreshold(numberOfModes);
     typename ThresholdRegionFinderType::ThresholdArrayType QuantileUpperThreshold(numberOfModes);
     typename ThresholdRegionFinderType::Pointer thresholdRegionFinder = ThresholdRegionFinderType::New();
     // TODO:  Need to define PortionMaskImage from deformed probspace
     thresholdRegionFinder->SetBinaryPortionImage(ForegroundBrainRegion);
-    for( LOOPITERTYPE modeIndex = 0; modeIndex < (LOOPITERTYPE)numberOfModes; modeIndex++ )
+    unsigned int modeIndex = 0;
+    for(typename MapOfInputImageVectors::const_iterator mapIt = intensityList.begin();
+        mapIt != intensityList.end(); ++mapIt)
       {
-      thresholdRegionFinder->SetInput(modeIndex, intensityList[modeIndex]);
-      const std::string imageType = this->m_InputVolumeTypes[modeIndex];
-      const std::string priorType = this->m_PriorNames[i];
-      if( m_TissueTypeThresholdMapsRange[priorType].find(imageType) ==
-          m_TissueTypeThresholdMapsRange[priorType].end() )
+      for(typename InputImageVector::const_iterator imIt = mapIt->second.begin();
+          imIt != mapIt->second.end(); ++imIt, ++modeIndex)
         {
-        muLogMacro(<< "NOT FOUND:" << "[" << priorType << "," << imageType
-                   << "]: [" << 0.00 << "," << 1.00 << "]"
-                   <<  std::endl);
-        QuantileLowerThreshold.SetElement(modeIndex, 0.00);
-        QuantileUpperThreshold.SetElement(modeIndex, 1.00);
-        }
-      else
-        {
-        const float lower = m_TissueTypeThresholdMapsRange[priorType][imageType].GetLower();
-        const float upper = m_TissueTypeThresholdMapsRange[priorType][imageType].GetUpper();
-        muLogMacro( <<  "[" << priorType << "," << imageType << "]: [" << lower << "," << upper << "]" <<  std::endl);
-        QuantileLowerThreshold.SetElement(modeIndex, lower);
-        QuantileUpperThreshold.SetElement(modeIndex, upper);
-        m_TissueTypeThresholdMapsRange[priorType][imageType].Print();
+        thresholdRegionFinder->SetInput(modeIndex, (*imIt));
+        const std::string imageType = mapIt->first;
+        const std::string priorType = this->m_PriorNames[i];
+        if( m_TissueTypeThresholdMapsRange[priorType].find(imageType) ==
+            m_TissueTypeThresholdMapsRange[priorType].end() )
+          {
+          muLogMacro(<< "NOT FOUND:" << "[" << priorType << "," << imageType
+                     << "]: [" << 0.00 << "," << 1.00 << "]"
+                     <<  std::endl);
+          QuantileLowerThreshold.SetElement(modeIndex, 0.00);
+          QuantileUpperThreshold.SetElement(modeIndex, 1.00);
+          }
+        else
+          {
+          const float lower = m_TissueTypeThresholdMapsRange[priorType][imageType].GetLower();
+          const float upper = m_TissueTypeThresholdMapsRange[priorType][imageType].GetUpper();
+          muLogMacro( <<  "[" << priorType << "," << imageType << "]: [" << lower << "," << upper << "]" <<  std::endl);
+          QuantileLowerThreshold.SetElement(modeIndex, lower);
+          QuantileUpperThreshold.SetElement(modeIndex, upper);
+          m_TissueTypeThresholdMapsRange[priorType][imageType].Print();
+          }
         }
       }
     // Assume upto (2*0.025)% of intensities are noise that corrupts the image
@@ -1178,11 +1261,12 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
 }
 
 template <class TInputImage, class TProbabilityImage>
-std::vector<typename ByteImageType::Pointer>
+typename EMSegmentationFilter<TInputImage, TProbabilityImage>::ByteImageVectorType
 EMSegmentationFilter<TInputImage, TProbabilityImage>
-::ForceToOne(const unsigned int, const std::vector<typename TInputImage::Pointer> &,
-             ProbabilityImageVectorType & WarpedPriorsList,
-             typename ByteImageType::Pointer )
+::ForceToOne(const unsigned int /* CurrentEMIteration */,
+             // const MapOfInputImageVectors &intensityList,
+             ProbabilityImageVectorType &WarpedPriorsList,
+             typename ByteImageType::Pointer /* NonAirRegion */)
 {
   // #################################################################
   // #################################################################
@@ -1193,7 +1277,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
   // For each intensityList, get it's type, and then create an "anded mask of
   // candidate regions"
   // using the table from BRAINSMultiModeHistogramThresholder.
-  std::vector<typename ByteImageType::Pointer> subjectCandidateRegions;
+  ByteImageVectorType subjectCandidateRegions;
 
   subjectCandidateRegions.resize(WarpedPriorsList.size() );
   { // StartValid Regions Section
@@ -1353,146 +1437,157 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
       << "WARNING: WARNING: WARNING: WARNING:  Doing warping even though it was turned off from the command line"
       << std::endl);
     }
-  for( unsigned int vIndex = 0; vIndex < m_OriginalAtlasImages.size() && vIndex < m_CorrectedImages.size(); vIndex++ )
+  for(typename MapOfInputImageVectors::iterator imMapIt =
+        this->m_CorrectedImages.begin();
+      imMapIt != this->m_CorrectedImages.end(); ++imMapIt)
     {
-    typedef itk::BRAINSFitHelper HelperType;
-    HelperType::Pointer atlasToSubjectRegistrationHelper = HelperType::New();
-    atlasToSubjectRegistrationHelper->SetNumberOfSamples(500000);
-    atlasToSubjectRegistrationHelper->SetNumberOfHistogramBins(50);
-    std::vector<int> numberOfIterations(1);
-    numberOfIterations[0] = 1500;
-    atlasToSubjectRegistrationHelper->SetNumberOfIterations(numberOfIterations);
-    //  atlasToSubjectRegistrationHelper->SetMaximumStepLength(maximumStepSize);
-    atlasToSubjectRegistrationHelper->SetTranslationScale(1000);
-    atlasToSubjectRegistrationHelper->SetReproportionScale(1.0);
-    atlasToSubjectRegistrationHelper->SetSkewScale(1.0);
-
-    // atlasToSubjectRegistrationHelper->SetMaskInferiorCutOffFromCenter(maskInferiorCutOffFromCenter);
-    //  atlasToSubjectRegistrationHelper->SetUseWindowedSinc(useWindowedSinc);
-
-    // Register each intrasubject image mode to first image
-    atlasToSubjectRegistrationHelper->SetFixedVolume(m_CorrectedImages[vIndex]);
-    // Register all atlas images to first image
-    {
-    if( false /* m_AtlasTransformType == ID_TRANSFORM */ )
+    typename InputImageVector::iterator imIt = imMapIt->second.begin();
+    typename InputImageVector::iterator atIt =
+      this->m_OriginalAtlasImages[imMapIt->first].begin();
+    for(; imIt != imMapIt->second.end()
+          && atIt != this->m_OriginalAtlasImages[imMapIt->first].end();
+        ++imIt, ++atIt)
       {
-      muLogMacro(<< "Registering (Identity) atlas to first image." << std::endl);
-      // TODO: m_AtlasToSubjectTransform = MakeRigidIdentity();
-      }
-    else // continue;
-      {
-      std::string preprocessMovingString("");
-      // const bool histogramMatch=true;//Setting histogram matching to true
+      typedef itk::BRAINSFitHelper HelperType;
+      HelperType::Pointer atlasToSubjectRegistrationHelper = HelperType::New();
+      atlasToSubjectRegistrationHelper->SetNumberOfSamples(500000);
+      atlasToSubjectRegistrationHelper->SetNumberOfHistogramBins(50);
+      std::vector<int> numberOfIterations(1);
+      numberOfIterations[0] = 1500;
+      atlasToSubjectRegistrationHelper->SetNumberOfIterations(numberOfIterations);
+      //  atlasToSubjectRegistrationHelper->SetMaximumStepLength(maximumStepSize);
+      atlasToSubjectRegistrationHelper->SetTranslationScale(1000);
+      atlasToSubjectRegistrationHelper->SetReproportionScale(1.0);
+      atlasToSubjectRegistrationHelper->SetSkewScale(1.0);
 
-      // Setting histogram matching to false because it appears to have been
-      // causing problems for some images.
-      const bool histogramMatch = false;
-      if( histogramMatch )
-        {
-        typedef itk::HistogramMatchingImageFilter<InputImageType,
-                                                  InputImageType> HistogramMatchingFilterType;
-        typename HistogramMatchingFilterType::Pointer histogramfilter
-          = HistogramMatchingFilterType::New();
+      // atlasToSubjectRegistrationHelper->SetMaskInferiorCutOffFromCenter(maskInferiorCutOffFromCenter);
+      //  atlasToSubjectRegistrationHelper->SetUseWindowedSinc(useWindowedSinc);
 
-        histogramfilter->SetInput( m_OriginalAtlasImages[vIndex]  );
-        histogramfilter->SetReferenceImage( m_CorrectedImages[vIndex] );
+      // Register each intrasubject image mode to first image
+      atlasToSubjectRegistrationHelper->SetFixedVolume((*imIt));
+      // Register all atlas images to first image
+      if( false /* m_AtlasTransformType == ID_TRANSFORM */ )
+        {
+        muLogMacro(<< "Registering (Identity) atlas to first image." << std::endl);
+        // TODO: m_AtlasToSubjectTransform = MakeRigidIdentity();
+        }
+      else // continue;
+        {
+        std::string preprocessMovingString("");
+        // const bool histogramMatch=true;//Setting histogram matching to true
 
-        histogramfilter->SetNumberOfHistogramLevels( 50 );
-        histogramfilter->SetNumberOfMatchPoints( 10 );
-        histogramfilter->ThresholdAtMeanIntensityOn();
-        histogramfilter->Update();
-        typename InputImageType::Pointer equalizedMovingImage = histogramfilter->GetOutput();
-        atlasToSubjectRegistrationHelper->SetMovingVolume(equalizedMovingImage);
-        preprocessMovingString = "histogram equalized ";
+        // Setting histogram matching to false because it appears to have been
+        // causing problems for some images.
+        const bool histogramMatch = false;
+        if( histogramMatch )
+          {
+          typedef itk::HistogramMatchingImageFilter<InputImageType,
+            InputImageType> HistogramMatchingFilterType;
+          typename HistogramMatchingFilterType::Pointer histogramfilter
+            = HistogramMatchingFilterType::New();
+
+          histogramfilter->SetInput( (*atIt) );
+          histogramfilter->SetReferenceImage( (*imIt) );
+
+          histogramfilter->SetNumberOfHistogramLevels( 50 );
+          histogramfilter->SetNumberOfMatchPoints( 10 );
+          histogramfilter->ThresholdAtMeanIntensityOn();
+          histogramfilter->Update();
+          typename InputImageType::Pointer equalizedMovingImage = histogramfilter->GetOutput();
+          atlasToSubjectRegistrationHelper->SetMovingVolume(equalizedMovingImage);
+          preprocessMovingString = "histogram equalized ";
+          }
+        else
+          {
+          atlasToSubjectRegistrationHelper->SetMovingVolume((*atIt));
+          preprocessMovingString = "";
+          }
+        typedef itk::BRAINSROIAutoImageFilter<InputImageType, itk::Image<unsigned char, 3> > ROIAutoType;
+        typename ROIAutoType::Pointer  ROIFilter = ROIAutoType::New();
+        ROIFilter->SetInput((*atIt));
+        ROIFilter->SetDilateSize(10);
+        ROIFilter->Update();
+        atlasToSubjectRegistrationHelper->SetMovingBinaryVolume(ROIFilter->GetSpatialObjectROI() );
+
+        typedef itk::BRAINSROIAutoImageFilter<InputImageType, itk::Image<unsigned char, 3> > ROIAutoType;
+        ROIFilter = ROIAutoType::New();
+        ROIFilter->SetInput((*imIt));
+        ROIFilter->SetDilateSize(10);
+        ROIFilter->Update();
+        atlasToSubjectRegistrationHelper->SetFixedBinaryVolume(ROIFilter->GetSpatialObjectROI() );
+
+        if( m_AtlasTransformType == "Rigid" )
+          {
+          muLogMacro(<< "Registering (Rigid) " << preprocessMovingString << "atlas("
+                     << imMapIt->first << std::distance(imMapIt->second.begin(),imIt)
+                     << ") to template("
+                     << imMapIt->first << std::distance(imMapIt->second.begin(),imIt)
+                     << ") image." << std::endl);
+          std::vector<double> minimumStepSize(1);
+          minimumStepSize[0] = 0.005; // NOTE: 0.005 for between subject
+          // registration is probably about the
+          // limit.
+          atlasToSubjectRegistrationHelper->SetMinimumStepLength(minimumStepSize);
+          std::vector<std::string> transformType(1);
+          transformType[0] = "Rigid";
+          atlasToSubjectRegistrationHelper->SetTransformType(transformType);
+          }
+        else if( m_AtlasTransformType == "Affine" )
+          {
+          muLogMacro(
+            << "Registering (Affine) " << preprocessMovingString << "atlas("
+            << imMapIt->first << std::distance(imMapIt->second.begin(),imIt)
+            << ") to template("
+            << imMapIt->first << std::distance(imMapIt->second.begin(),imIt)
+            << ") image." << std::endl);
+          std::vector<double> minimumStepSize(1);
+          minimumStepSize[0] = 0.0025;
+          atlasToSubjectRegistrationHelper->SetMinimumStepLength(minimumStepSize);
+          std::vector<std::string> transformType(1);
+          transformType[0] = "Affine";
+          atlasToSubjectRegistrationHelper->SetTransformType(transformType);
+          }
+        else if( m_AtlasTransformType == "BSpline" )
+          {
+          muLogMacro(<< "Registering (BSpline) " << preprocessMovingString << "atlas("
+                     << imMapIt->first << std::distance(imMapIt->second.begin(),imIt)
+                     << ") to template("
+                     << imMapIt->first << std::distance(imMapIt->second.begin(),imIt)
+                     << ") image." << std::endl);
+          std::vector<double> minimumStepSize(1);
+          minimumStepSize[0] = 0.0025;
+          atlasToSubjectRegistrationHelper->SetMinimumStepLength(minimumStepSize);
+          std::vector<std::string> transformType(1);
+          transformType[0] = "BSpline";
+          atlasToSubjectRegistrationHelper->SetTransformType(transformType);
+          std::vector<int> splineGridSize(3);
+          splineGridSize[0] = m_WarpGrid[0];
+          splineGridSize[1] = m_WarpGrid[1];
+          splineGridSize[2] = m_WarpGrid[2];
+          atlasToSubjectRegistrationHelper->SetSplineGridSize(splineGridSize);
+          // Setting max displace
+          atlasToSubjectRegistrationHelper->SetMaxBSplineDisplacement(6.0);
+          }
+        else if( m_AtlasTransformType == "SyN" )
+          {
+          std::cerr << "ERROR:  NOT PROPERLY IMPLEMENTED YET HACK:" << std::endl;
+          }
+        atlasToSubjectRegistrationHelper->SetCurrentGenericTransform(m_TemplateGenericTransform);
+        if( this->m_DebugLevel > 9 )
+          {
+          static unsigned int atlasToSubjectCounter = 0;
+          std::stringstream   ss;
+          ss << std::setw(3) << std::setfill('0') << atlasToSubjectCounter;
+          atlasToSubjectRegistrationHelper->PrintCommandLine(true, std::string("AtlasToSubjectUpdate") + ss.str() );
+          muLogMacro( << __FILE__ << " " << __LINE__ << " "  <<   std::endl );
+          atlasToSubjectCounter++;
+          }
+        atlasToSubjectRegistrationHelper->Update();
+        unsigned int actualIterations = atlasToSubjectRegistrationHelper->GetActualNumberOfIterations();
+        muLogMacro( << "Registration tool " << actualIterations << " iterations." << std::endl );
+        m_TemplateGenericTransform = atlasToSubjectRegistrationHelper->GetCurrentGenericTransform();
         }
-      else
-        {
-        atlasToSubjectRegistrationHelper->SetMovingVolume(m_OriginalAtlasImages[vIndex]);
-        preprocessMovingString = "";
-        }
-      {
-      typedef itk::BRAINSROIAutoImageFilter<InputImageType, itk::Image<unsigned char, 3> > ROIAutoType;
-      typename ROIAutoType::Pointer  ROIFilter = ROIAutoType::New();
-      ROIFilter->SetInput(m_OriginalAtlasImages[vIndex]);
-      ROIFilter->SetDilateSize(10);
-      ROIFilter->Update();
-      atlasToSubjectRegistrationHelper->SetMovingBinaryVolume(ROIFilter->GetSpatialObjectROI() );
       }
-      {
-      typedef itk::BRAINSROIAutoImageFilter<InputImageType, itk::Image<unsigned char, 3> > ROIAutoType;
-      typename ROIAutoType::Pointer  ROIFilter = ROIAutoType::New();
-      ROIFilter->SetInput(m_CorrectedImages[vIndex]);
-      ROIFilter->SetDilateSize(10);
-      ROIFilter->Update();
-      atlasToSubjectRegistrationHelper->SetFixedBinaryVolume(ROIFilter->GetSpatialObjectROI() );
-      }
-      // KENT TODO:  Need to expose the transform type to the command line
-      // --AtlasTransformType [Rigid|Affine|BSpline|SyN], defaults to SyN.
-      if( m_AtlasTransformType == "Rigid" )
-        {
-        muLogMacro(<< "Registering (Rigid) " << preprocessMovingString << "atlas("
-                   << vIndex << ") to template(" << vIndex
-                   << ") image." << std::endl);
-        std::vector<double> minimumStepSize(1);
-        minimumStepSize[0] = 0.005; // NOTE: 0.005 for between subject
-        // registration is probably about the
-        // limit.
-        atlasToSubjectRegistrationHelper->SetMinimumStepLength(minimumStepSize);
-        std::vector<std::string> transformType(1);
-        transformType[0] = "Rigid";
-        atlasToSubjectRegistrationHelper->SetTransformType(transformType);
-        }
-      else if( m_AtlasTransformType == "Affine" )
-        {
-        muLogMacro(
-          << "Registering (Affine) " << preprocessMovingString << "atlas(" << vIndex << ") to template(" << vIndex
-          << ") image." << std::endl);
-        std::vector<double> minimumStepSize(1);
-        minimumStepSize[0] = 0.0025;
-        atlasToSubjectRegistrationHelper->SetMinimumStepLength(minimumStepSize);
-        std::vector<std::string> transformType(1);
-        transformType[0] = "Affine";
-        atlasToSubjectRegistrationHelper->SetTransformType(transformType);
-        }
-      else if( m_AtlasTransformType == "BSpline" )
-        {
-        muLogMacro(<< "Registering (BSpline) " << preprocessMovingString << "atlas("
-                   << vIndex << ") to template(" << vIndex
-                   << ") image." << std::endl);
-        std::vector<double> minimumStepSize(1);
-        minimumStepSize[0] = 0.0025;
-        atlasToSubjectRegistrationHelper->SetMinimumStepLength(minimumStepSize);
-        std::vector<std::string> transformType(1);
-        transformType[0] = "BSpline";
-        atlasToSubjectRegistrationHelper->SetTransformType(transformType);
-        std::vector<int> splineGridSize(3);
-        splineGridSize[0] = m_WarpGrid[0];
-        splineGridSize[1] = m_WarpGrid[1];
-        splineGridSize[2] = m_WarpGrid[2];
-        atlasToSubjectRegistrationHelper->SetSplineGridSize(splineGridSize);
-        // Setting max displace
-        atlasToSubjectRegistrationHelper->SetMaxBSplineDisplacement(6.0);
-        }
-      else if( m_AtlasTransformType == "SyN" )
-        {
-        std::cerr << "ERROR:  NOT PROPERLY IMPLEMENTED YET HACK:" << std::endl;
-        }
-      atlasToSubjectRegistrationHelper->SetCurrentGenericTransform(m_TemplateGenericTransform);
-      if( this->m_DebugLevel > 9 )
-        {
-        static unsigned int atlasToSubjectCounter = 0;
-        std::stringstream   ss;
-        ss << std::setw(3) << std::setfill('0') << atlasToSubjectCounter;
-        atlasToSubjectRegistrationHelper->PrintCommandLine(true, std::string("AtlasToSubjectUpdate") + ss.str() );
-        muLogMacro( << __FILE__ << " " << __LINE__ << " "  <<   std::endl );
-        atlasToSubjectCounter++;
-        }
-      atlasToSubjectRegistrationHelper->Update();
-      unsigned int actualIterations = atlasToSubjectRegistrationHelper->GetActualNumberOfIterations();
-      muLogMacro( << "Registration tool " << actualIterations << " iterations." << std::endl );
-      m_TemplateGenericTransform = atlasToSubjectRegistrationHelper->GetCurrentGenericTransform();
-      }
-    }
     }
 }
 
@@ -1501,30 +1596,38 @@ void
 EMSegmentationFilter<TInputImage, TProbabilityImage>
 ::WritePartitionTable(const unsigned int CurrentEMIteration) const
 {
-  const unsigned int numChannels = this->m_CorrectedImages.size();
   const unsigned int numPriors = this->m_WarpedPriors.size();
 
   muLogMacro(<< "\n\nEM iteration " << CurrentEMIteration <<  std::endl);
   muLogMacro(<< "---------------------" << std::endl);
   PrettyPrintTable EMIterationTable;
-  for( unsigned int ichan = 0; ichan < numChannels; ichan++ )
-    {
-    EMIterationTable.add(0, ichan + 2, this->m_InputVolumeTypes[ichan]);
-    }
+  {
+  unsigned int ichan = 0;
+  for(typename MapOfInputImageVectors::const_iterator mapIt = this->m_InputImages.begin();
+      mapIt != this->m_InputImages.end(); ++mapIt)
+    for(typename InputImageVector::const_iterator imIt = mapIt->second.begin();
+        imIt != mapIt->second.end(); ++imIt,++ichan)
+      {
+      EMIterationTable.add(0, ichan + 2, mapIt->first);
+      }
+  }
   for( unsigned int iclass = 0; iclass < numPriors; iclass++ )
     {
+    unsigned int ichan = 0;
     EMIterationTable.add(iclass + 1, 0, std::string("Class ") + this->m_PriorNames[iclass] + " mean ");
     EMIterationTable.add(iclass + 1, 1, std::string(": ") );
-    for( unsigned int ichan = 0; ichan < numChannels; ichan++ )
+    for(typename RegionStats::MeanMapType::const_iterator classIt =
+          this->m_ListOfClassStatistics[iclass].m_Means.begin();
+        classIt != this->m_ListOfClassStatistics[iclass].m_Means.end();
+        ++classIt)
       {
-      EMIterationTable.add(iclass + 1, ichan + 2, this->m_ListOfClassStatistics[iclass].m_Means[ichan]);
+      EMIterationTable.add(iclass + 1, ichan + 2, classIt->second);
       }
     }
-  {
+
   std::ostringstream oss;
   EMIterationTable.Print(oss);
   muLogMacro( << oss.str() );
-  }
 }
 
 template <class TInputImage, class TProbabilityImage>
@@ -1590,24 +1693,23 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
     itkExceptionMacro( << "ERROR:  Must suppply an intial transformation!" );
     }
 
-  this->m_NonAirRegion = ComputeTissueRegion<TInputImage, ByteImageType>(this->m_InputImages[0], 3);
+  this->m_NonAirRegion = ComputeTissueRegion<TInputImage, ByteImageType>(this->GetFirstInputImage(), 3);
   if( this->m_DebugLevel > 9 )
     {
     this->WriteDebugHeadRegion(0);
     }
 
   this->m_WarpedPriors =
-    WarpImageList<TProbabilityImage>(this->m_OriginalSpacePriors, this->m_InputImages[0],
-                                     this->m_PriorsBackgroundValues,
-                                     this->m_TemplateGenericTransform);
+    WarpImageList(this->m_OriginalSpacePriors, this->GetFirstInputImage(),
+                  this->m_PriorsBackgroundValues,
+                  this->m_TemplateGenericTransform);
   if( this->m_DebugLevel > 9 )
     {
     this->WriteDebugWarpedAtlasPriors(0);
-    std::vector<typename TInputImage::PixelType> backgroundValues(m_OriginalAtlasImages.size() );
-    std::fill(backgroundValues.begin(), backgroundValues.end(), 0);
     this->m_WarpedAtlasImages =
-      WarpImageList<TProbabilityImage>(this->m_OriginalAtlasImages, this->m_InputImages[0], backgroundValues,
-                                       this->m_TemplateGenericTransform);
+      WarpImageList(this->m_OriginalAtlasImages,
+                    this->GetFirstInputImage(),
+                    this->m_TemplateGenericTransform);
     this->WriteDebugWarpedAtlasImages(0);
     }
   typename ByteImageType::Pointer
@@ -1618,8 +1720,11 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
     WriteDebugForegroundMask(currForgroundBrainMask, 0);
     }
 
-  std::vector<ByteImagePointer> SubjectCandidateRegions = this->UpdateIntensityBasedClippingOfPriors(
-    0, this->m_InputImages, this->m_WarpedPriors, currForgroundBrainMask);
+  std::vector<ByteImagePointer> SubjectCandidateRegions =
+    this->UpdateIntensityBasedClippingOfPriors(0,
+                                               this->m_InputImages,
+                                               this->m_WarpedPriors,
+                                               currForgroundBrainMask);
   {
   this->BlendPosteriorsAndPriors(0.0, this->m_WarpedPriors, this->m_WarpedPriors, this->m_WarpedPriors);
   NormalizeProbListInPlace<TProbabilityImage>(this->m_WarpedPriors);
@@ -1659,6 +1764,12 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
     try
       {
       ComputeCovarianceDeterminant( this->m_ListOfClassStatistics[q].m_Covariance );
+      }
+    catch( itk::ExceptionObject &excp)
+      {
+      std::cerr << "Error computing covariance " << std::endl;
+      std::cerr << excp << std::endl;
+      throw;
       }
     catch( ... )
       {
@@ -1718,20 +1829,22 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
     //
     // m_TemplateGenericTransform.
     this->m_WarpedPriors =
-      WarpImageList<TProbabilityImage>(this->m_OriginalSpacePriors, this->m_InputImages[0],
-                                       this->m_PriorsBackgroundValues,
-                                       this->m_TemplateGenericTransform);
+      WarpImageList(this->m_OriginalSpacePriors,
+                    this->GetFirstInputImage(),
+                    this->m_PriorsBackgroundValues,
+                    this->m_TemplateGenericTransform);
     if( this->m_DebugLevel > 9 )
       {
       this->WriteDebugWarpedAtlasPriors(CurrentEMIteration);
-      std::vector<typename TInputImage::PixelType> backgroundValues(m_OriginalAtlasImages.size() );
-      std::fill(backgroundValues.begin(), backgroundValues.end(), 0);
       this->m_WarpedAtlasImages =
-        WarpImageList<TProbabilityImage>(this->m_OriginalAtlasImages, this->m_InputImages[0], backgroundValues,
-                                         this->m_TemplateGenericTransform);
+        WarpImageList(this->m_OriginalAtlasImages,
+                      this->GetFirstInputImage(),
+                      this->m_TemplateGenericTransform);
       this->WriteDebugWarpedAtlasImages(CurrentEMIteration);
       }
-    SubjectCandidateRegions = this->ForceToOne(CurrentEMIteration, this->m_CorrectedImages, this->m_WarpedPriors,
+    SubjectCandidateRegions = this->ForceToOne(CurrentEMIteration,
+                                               // this->m_CorrectedImages,
+                                               this->m_WarpedPriors,
                                                this->m_CleanedLabels);
     {
     this->BlendPosteriorsAndPriors(1.0 - priorWeighting, this->m_Posteriors, this->m_WarpedPriors,
@@ -1829,4 +1942,75 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
   this->WritePartitionTable(0 + 100);
 }
 
+template <class TInputImage, class TProbabilityImage>
+typename EMSegmentationFilter<TInputImage, TProbabilityImage>::MapOfInputImageVectors
+EMSegmentationFilter<TInputImage, TProbabilityImage>
+::CorrectBias(const unsigned int degree,
+              const unsigned int CurrentEMIteration,
+              const ByteImageVectorType & CandidateRegions,
+              MapOfInputImageVectors & inputImages,
+              const ByteImageType::Pointer currentBrainMask,
+              const ByteImageType::Pointer currentForegroundMask,
+              const ProbabilityImageVectorType & probImages,
+              const BoolVectorType & probUseForBias,
+              const FloatingPrecision sampleSpacing,
+              const int DebugLevel,
+              const std::string& OutputDebugDir)
+{
+
+  if( degree == 0 )
+    {
+    muLogMacro(<< "Skipping Bias correction, polynomial degree = " << degree <<  std::endl);
+    return inputImages;
+    }
+  muLogMacro(<< "Bias correction, polynomial degree = " << degree <<  std::endl);
+
+  // Perform bias correction
+  const unsigned int                   numClasses = probImages.size();
+  std::vector<FloatImageType::Pointer> biasPosteriors;
+  std::vector<ByteImageType::Pointer>  biasCandidateRegions;
+
+  for( unsigned int iclass = 0; iclass < numClasses; iclass++ )
+    {
+    const unsigned iprior = iclass;
+    if( probUseForBias[iprior] == 1 )
+      {
+      // Focus only on FG classes, more accurate if bg classification is bad
+      // but sacrifices accuracy in border regions (tend to overcorrect)
+      biasPosteriors.push_back(probImages[iclass]);
+      biasCandidateRegions.push_back(CandidateRegions[iclass]);
+      }
+    }
+
+  itk::TimeProbe BiasCorrectorTimer;
+  BiasCorrectorTimer.Start();
+  typedef LLSBiasCorrector<CorrectIntensityImageType, FloatImageType> BiasCorrectorType;
+  typedef BiasCorrectorType::Pointer                                  BiasCorrectorPointer;
+
+  BiasCorrectorPointer biascorr = BiasCorrectorType::New();
+  biascorr->SetMaxDegree(degree);
+  // biascorr->SetMaximumBiasMagnitude(5.0);
+  // biascorr->SetSampleSpacing(2.0*SampleSpacing);
+  biascorr->SetSampleSpacing(1);
+  biascorr->SetWorkingSpacing(sampleSpacing);
+  biascorr->SetForegroundBrainMask(currentBrainMask);
+  biascorr->SetAllTissueMask(currentForegroundMask);
+  biascorr->SetProbabilities(biasPosteriors, biasCandidateRegions);
+  biascorr->SetDebugLevel(DebugLevel);
+  biascorr->SetOutputDebugDir(OutputDebugDir);
+
+  if( DebugLevel > 0 )
+    {
+    biascorr->DebugOn();
+    }
+
+  biascorr->SetInputImages(inputImages);
+  MapOfInputImageVectors correctedImages = biascorr->CorrectImages(CurrentEMIteration);
+
+  BiasCorrectorTimer.Stop();
+  itk::RealTimeClock::TimeStampType elapsedTime = BiasCorrectorTimer.GetTotal();
+  muLogMacro(<< "Computing BiasCorrection took " << elapsedTime << " " << BiasCorrectorTimer.GetUnit() << std::endl);
+
+  return correctedImages;
+}
 #endif

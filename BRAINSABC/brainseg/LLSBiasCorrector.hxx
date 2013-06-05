@@ -70,7 +70,7 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>
     itkExceptionMacro(<< "No input image specified" << std::endl );
     }
 
-  if( m_InputImages[0]->GetImageDimension() != 3 )
+  if( this->GetFirstInputImage()->GetImageDimension() != 3 )
     {
     itkExceptionMacro(<< "Input dimension invalid: only supports 3D images" << std::endl );
     }
@@ -80,10 +80,10 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>
     itkExceptionMacro(<< "Must have one or more class probabilities" << std::endl );
     }
 
-  const InputImageSizeType size = m_InputImages[0]->GetLargestPossibleRegion().GetSize();
+  const InputImageSizeType size = this->GetFirstInputImage()->GetLargestPossibleRegion().GetSize();
   for( unsigned int i = 1; i < m_InputImages.size(); i++ )
     {
-    const InputImageSizeType size_i = m_InputImages[i]->GetLargestPossibleRegion().GetSize();
+    const InputImageSizeType size_i = this->GetFirstInputImage()->GetLargestPossibleRegion().GetSize();
     if( size != size_i )
       {
       itkExceptionMacro(<< "Image sizes do not match" << std::endl );
@@ -233,25 +233,25 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>
   m_ValidIndicies.reserve(size[2] * size[1] * size[0] / (8 * skips[0] * skips[1] * skips[2]) );
 
   m_ValidIndicies.resize(0);
+  {
+  // Not parallizable! ORDER IS IMPORTANT  //#pragma omp parallel for
+  // reduction(+:numEquations) default(shared)
+  for( long kk = 0; kk < (long)size[2]; kk += skips[2] )
     {
-    // Not parallizable! ORDER IS IMPORTANT  //#pragma omp parallel for
-    // reduction(+:numEquations) default(shared)
-    for( long kk = 0; kk < (long)size[2]; kk += skips[2] )
+    for( long jj = 0; jj < (long)size[1]; jj += skips[1] )
       {
-      for( long jj = 0; jj < (long)size[1]; jj += skips[1] )
+      for( long ii = 0; ii < (long)size[0]; ii += skips[0] )
         {
-        for( long ii = 0; ii < (long)size[0]; ii += skips[0] )
+        const ProbabilityImageIndexType currIndex = {{ii, jj, kk}};
+        if( m_ForegroundBrainMask->GetPixel(currIndex) != 0 )
           {
-          const ProbabilityImageIndexType currIndex = {{ii, jj, kk}};
-          if( m_ForegroundBrainMask->GetPixel(currIndex) != 0 )
-            {
-            m_ValidIndicies.push_back(currIndex);
-            // numEquations++;
-            }
+          m_ValidIndicies.push_back(currIndex);
+          // numEquations++;
           }
         }
       }
     }
+  }
   numEquations = m_ValidIndicies.size();
   muLogMacro(<< "Linear system size = " << numEquations << " x " << numCoefficients << std::endl);
 
@@ -268,83 +268,83 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>
 
   m_Basis.set_size(numEquations, numCoefficients);
 
-    {
-    // Coordinate scaling and offset parameters
-    unsigned long long int local_XMu_x = 0;
-    unsigned long long int local_XMu_y = 0;
-    unsigned long long int local_XMu_z = 0;
-      {
+  {
+  // Coordinate scaling and offset parameters
+  unsigned long long int local_XMu_x = 0;
+  unsigned long long int local_XMu_y = 0;
+  unsigned long long int local_XMu_z = 0;
+  {
 #if defined(LOCAL_USE_OPEN_MP)
 #pragma omp parallel for default(shared) reduction(+:local_XMu_x,local_XMu_y,local_XMu_z)
 #endif
-      for( unsigned int kk = 0; kk < numEquations; kk++ )
-        {
-        const ProbabilityImageIndexType & currIndex = m_ValidIndicies[kk];
-        local_XMu_x += currIndex[0];
-        local_XMu_y += currIndex[1];
-        local_XMu_z += currIndex[2];
-        }
-      }
-    const double invNumEquations = 1.0 / static_cast<double>(numEquations);
-    m_XMu[0] = static_cast<double>(local_XMu_x) * invNumEquations;
-    m_XMu[1] = static_cast<double>(local_XMu_y) * invNumEquations;
-    m_XMu[2] = static_cast<double>(local_XMu_z) * invNumEquations;
-    }
-
+  for( unsigned int kk = 0; kk < numEquations; kk++ )
     {
-    double local_XStd_x = 0.0;
-    double local_XStd_y = 0.0;
-    double local_XStd_z = 0.0;
-      {
+    const ProbabilityImageIndexType & currIndex = m_ValidIndicies[kk];
+    local_XMu_x += currIndex[0];
+    local_XMu_y += currIndex[1];
+    local_XMu_z += currIndex[2];
+    }
+  }
+  const double invNumEquations = 1.0 / static_cast<double>(numEquations);
+  m_XMu[0] = static_cast<double>(local_XMu_x) * invNumEquations;
+  m_XMu[1] = static_cast<double>(local_XMu_y) * invNumEquations;
+  m_XMu[2] = static_cast<double>(local_XMu_z) * invNumEquations;
+  }
+
+  {
+  double local_XStd_x = 0.0;
+  double local_XStd_y = 0.0;
+  double local_XStd_z = 0.0;
+  {
 #if defined(LOCAL_USE_OPEN_MP)
 #pragma omp parallel for default(shared) reduction(+:local_XStd_x,local_XStd_y,local_XStd_z)
 #endif
-      for( unsigned int kk = 0; kk < numEquations; kk++ )
-        {
-        const ProbabilityImageIndexType & currIndex = m_ValidIndicies[kk];
-        const double                      diff0 = static_cast<double>(currIndex[0]) - m_XMu[0];
-        local_XStd_x += diff0 * diff0;
-        const double diff1 = static_cast<double>(currIndex[1]) - m_XMu[1];
-        local_XStd_y += diff1 * diff1;
-        const double diff2 = static_cast<double>(currIndex[2]) - m_XMu[2];
-        local_XStd_z += diff2 * diff2;
-        }
-      }
-    m_XStd[0] = vcl_sqrt(local_XStd_x / numEquations);
-    m_XStd[1] = vcl_sqrt(local_XStd_y / numEquations);
-    m_XStd[2] = vcl_sqrt(local_XStd_z / numEquations);
-    }
-
+  for( unsigned int kk = 0; kk < numEquations; kk++ )
     {
-    // Row and column indices
-    // Fill in polynomial basis values
+    const ProbabilityImageIndexType & currIndex = m_ValidIndicies[kk];
+    const double                      diff0 = static_cast<double>(currIndex[0]) - m_XMu[0];
+    local_XStd_x += diff0 * diff0;
+    const double diff1 = static_cast<double>(currIndex[1]) - m_XMu[1];
+    local_XStd_y += diff1 * diff1;
+    const double diff2 = static_cast<double>(currIndex[2]) - m_XMu[2];
+    local_XStd_z += diff2 * diff2;
+    }
+  }
+  m_XStd[0] = vcl_sqrt(local_XStd_x / numEquations);
+  m_XStd[1] = vcl_sqrt(local_XStd_y / numEquations);
+  m_XStd[2] = vcl_sqrt(local_XStd_z / numEquations);
+  }
+
+  {
+  // Row and column indices
+  // Fill in polynomial basis values
 #if defined(LOCAL_USE_OPEN_MP)
 #pragma omp parallel for default(shared)
 #endif
-    for( unsigned int r = 0; r < numEquations; r++ )
+  for( unsigned int r = 0; r < numEquations; r++ )
+    {
+    const ProbabilityImageIndexType & currIndex = m_ValidIndicies[r];
+    unsigned int                      c = 0;
+    for( unsigned int order = 0; order <= m_MaxDegree; order++ )
       {
-      const ProbabilityImageIndexType & currIndex = m_ValidIndicies[r];
-      unsigned int                      c = 0;
-      for( unsigned int order = 0; order <= m_MaxDegree; order++ )
+      for( unsigned int xorder = 0; xorder <= order; xorder++ )
         {
-        for( unsigned int xorder = 0; xorder <= order; xorder++ )
+        for( unsigned int yorder = 0; yorder <= ( order - xorder ); yorder++ )
           {
-          for( unsigned int yorder = 0; yorder <= ( order - xorder ); yorder++ )
-            {
-            const int zorder = order - xorder - yorder;
+          const int zorder = order - xorder - yorder;
 
-            const double xc = ( currIndex[0] - m_XMu[0] ) / m_XStd[0];
-            const double yc = ( currIndex[1] - m_XMu[1] ) / m_XStd[1];
-            const double zc = ( currIndex[2] - m_XMu[2] ) / m_XStd[2];
+          const double xc = ( currIndex[0] - m_XMu[0] ) / m_XStd[0];
+          const double yc = ( currIndex[1] - m_XMu[1] ) / m_XStd[1];
+          const double zc = ( currIndex[2] - m_XMu[2] ) / m_XStd[2];
 
-            m_Basis(r, c)
-              = mypow(xc, xorder) * mypow(yc, yorder) * mypow(zc, zorder);
-            c++;
-            }
+          m_Basis(r, c)
+            = mypow(xc, xorder) * mypow(yc, yorder) * mypow(zc, zorder);
+          c++;
           }
         }
       }
     }
+  }
 }
 
 template <class TInputImage, class TProbabilityImage>
@@ -382,7 +382,7 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>
 }
 
 template <class TInputImage, class TProbabilityImage>
-std::vector<typename TInputImage::Pointer>
+typename LLSBiasCorrector<TInputImage, TProbabilityImage>::MapOfInputImageVectors
 LLSBiasCorrector<TInputImage, TProbabilityImage>
 ::CorrectImages(const unsigned int CurrentIterationID)
 {
@@ -392,14 +392,14 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>
   // Verify input
   this->CheckInputs();
 
-  const InputImageSizeType size = m_InputImages[0]->GetLargestPossibleRegion().GetSize();
+  const InputImageSizeType size = this->GetFirstInputImage()->GetLargestPossibleRegion().GetSize();
 
   // Compute means and variances
   this->ComputeDistributions();
 
 #ifdef USE_HALF_RESOLUTION
   // Compute skips along each dimension
-  const InputImageSpacingType spacing = m_InputImages[0]->GetSpacing();
+  const InputImageSpacingType spacing = this->GetFirstInputImage()->GetSpacing();
 
   unsigned int sampleofft[3];
   sampleofft[0] = (unsigned int)vcl_floor(m_SampleSpacing / spacing[0]);
@@ -452,7 +452,8 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>
   //  const unsigned int workingofft[3] ={ {1,1,1} };
 #endif
 
-  const unsigned int numChannels = m_InputImages.size();
+  unsigned int numChannels = TotalMapSize(this->m_InputImages);
+
   const unsigned int numClasses = m_BiasPosteriors.size();
 
   /* if m_MaxDegree = 4/3/2, then this is 35/20/10 */
@@ -488,26 +489,26 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>
   // Note: vnl_qr gives Q mxm and R mxn for A mxn
 
   MatrixType basisT;
+  {
+  MatrixQRType qr(m_Basis);
+
+  // Get economy size R (square)
+  MatrixType R(numCoefficients, numCoefficients, 0);
+
+  {
+  MatrixType Rfull = qr.R();  /* right triangular matrix */
+  for( unsigned int r = 0; r < numCoefficients; r++ )
     {
-    MatrixQRType qr(m_Basis);
-
-    // Get economy size R (square)
-    MatrixType R(numCoefficients, numCoefficients, 0);
-
+    for( unsigned int c = r; c < numCoefficients; c++ )
       {
-      MatrixType Rfull = qr.R();  /* right triangular matrix */
-      for( unsigned int r = 0; r < numCoefficients; r++ )
-        {
-        for( unsigned int c = r; c < numCoefficients; c++ )
-          {
-          R(r, c) = Rfull(r, c);
-          }
-        }
-      // Rfull.set_size(1, 1);
+      R(r, c) = Rfull(r, c);
       }
-    // NOTE: to get mxn Q from vnl_qr, Q'*Q = id nxn
-    basisT = m_Basis * MatrixInverseType(R);
     }
+  // Rfull.set_size(1, 1);
+  }
+  // NOTE: to get mxn Q from vnl_qr, Q'*Q = id nxn
+  basisT = m_Basis * MatrixInverseType(R);
+  }
   basisT.inplace_transpose(); // basisT = Q'
 #else
   // Do this instead for ordinary weighted LSQ
@@ -529,14 +530,27 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>
   muLogMacro(<< "Fill rhs" << std::endl );
   rhs.fill(0.0);
 
+  // Compute ratio between original and flat image, weighted using posterior
+  // probability and inverse covariance
+
+  {
+  unsigned int ichan = 0;
+  for(typename MapOfInputImageVectors::const_iterator mapIt =
+        this->m_InputImages.begin();
+      mapIt != this->m_InputImages.end(); ++mapIt)
     {
-    // Compute ratio between original and flat image, weighted using posterior
-    // probability and inverse covariance
-    for( LOOPITERTYPE ichan = 0; ichan < (LOOPITERTYPE) numChannels; ichan++ )
+    for(typename InputImageVector::const_iterator imIt = mapIt->second.begin();
+        imIt != mapIt->second.end(); ++imIt, ++ichan)
       {
       MatrixType R_i(numEquations, 1, 0.0);
-      for( unsigned int jchan = 0; jchan < numChannels; jchan++ )
+
+      unsigned int jchan = 0;
+      for(typename MapOfInputImageVectors::const_iterator mapIt2 = this->m_InputImages.begin();
+          mapIt2 != this->m_InputImages.end(); ++mapIt2)
         {
+        unsigned int jchan2 = 0;
+        for(typename InputImageVector::const_iterator imIt2 = mapIt2->second.begin();
+            imIt2 != mapIt2->second.end(); ++imIt2, ++jchan,++jchan2)
           {
 #if defined(LOCAL_USE_OPEN_MP)
 #pragma omp parallel for default(shared)
@@ -553,11 +567,11 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>
               const double       w = m_BiasPosteriors[iclass]->GetPixel(currIndex)
                 * invCov(ichan, jchan);
               sumW += w;
-              recon += w * this->m_ListOfClassStatistics[iclass].m_Means[jchan];
+              recon += w * this->m_ListOfClassStatistics[iclass].m_Means[mapIt2->first][jchan2];
               }
             recon /= sumW;
 
-            const double bias = LOGP( m_InputImages[jchan]->GetPixel(currIndex) ) - recon;
+            const double bias = LOGP( (*imIt2)->GetPixel(currIndex) ) - recon;
             R_i(eq, 0) += sumW * bias;
             }
           }
@@ -575,97 +589,96 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>
         rhs(ichan * numEquations + row, 0) = R_i(row, 0);
         }
 #endif
-      } // for ichan
+      }
     }
+  }
 
   muLogMacro(<< "Fill lhs" << std::endl );
 
   // Compute LHS using replicated basis entries, weighted using posterior
   // probability and inverse covariance
+#if defined(LOCAL_USE_OPEN_MP)
+#pragma omp parallel for default(shared)
+#endif
+  for(unsigned int ichan = 0; ichan < (LOOPITERTYPE)numChannels; ichan++ )
     {
 #if defined(LOCAL_USE_OPEN_MP)
 #pragma omp parallel for default(shared)
 #endif
-    for( LOOPITERTYPE ichan = 0; ichan < (LOOPITERTYPE)numChannels; ichan++ )
+    for( LOOPITERTYPE jchan = 0; jchan < (LOOPITERTYPE)numChannels; jchan++ )
       {
-#if defined(LOCAL_USE_OPEN_MP)
-#pragma omp parallel for default(shared)
-#endif
-      for( LOOPITERTYPE jchan = 0; jchan < (LOOPITERTYPE)numChannels; jchan++ )
-        {
-        MatrixType Wij_A(numEquations, numCoefficients, 0.0);
-          {
+      MatrixType Wij_A(numEquations, numCoefficients, 0.0);
+      {
 #if defined(LOCAL_USE_OPEN_MP)
 #pragma omp parallel for shared(Wij_A) // default(shared)
 #endif
-          for( unsigned int eq = 0; eq < numEquations; eq++ )
-            {
-            const ProbabilityImageIndexType & currIndex = m_ValidIndicies[eq];
-            double                            sumW = DBL_EPSILON;
-            for( unsigned int iclass = 0; iclass < numClasses; iclass++ )
-              {
-              const MatrixType & invCov = invCovars[iclass];
-              double             w = m_BiasPosteriors[iclass]->GetPixel(currIndex)
-                * invCov(ichan, jchan);
-              sumW += w;
-              }
-            for( unsigned int col = 0; col < numCoefficients; col++ )
-              {
-              Wij_A(eq, col) = sumW * m_Basis(eq, col);
-              }
-            }
+      for( unsigned int eq = 0; eq < numEquations; eq++ )
+        {
+        const ProbabilityImageIndexType & currIndex = m_ValidIndicies[eq];
+        double                            sumW = DBL_EPSILON;
+        for( unsigned int iclass = 0; iclass < numClasses; iclass++ )
+          {
+          const MatrixType & invCov = invCovars[iclass];
+          double             w = m_BiasPosteriors[iclass]->GetPixel(currIndex)
+            * invCov(ichan, jchan);
+          sumW += w;
           }
+        for( unsigned int col = 0; col < numCoefficients; col++ )
+          {
+          Wij_A(eq, col) = sumW * m_Basis(eq, col);
+          }
+        }
+      }
 
 #if LLSBIAS_USE_NORMAL_EQUATION
-        MatrixType lhs_ij = basisT * Wij_A;
-        for( unsigned int row = 0; row < numCoefficients; row++ )
+      MatrixType lhs_ij = basisT * Wij_A;
+      for( unsigned int row = 0; row < numCoefficients; row++ )
+        {
+        for( unsigned int col = 0; col < numCoefficients; col++ )
           {
-          for( unsigned int col = 0; col < numCoefficients; col++ )
-            {
-            lhs(row + ichan * numCoefficients, col + jchan * numCoefficients)
-              = lhs_ij(row, col);
-            }
+          lhs(row + ichan * numCoefficients, col + jchan * numCoefficients)
+            = lhs_ij(row, col);
           }
+        }
 #else
-        for( unsigned int row = 0; row < numEquations; row++ )
+      for( unsigned int row = 0; row < numEquations; row++ )
+        {
+        for( unsigned int col = 0; col < numCoefficients; col++ )
           {
-          for( unsigned int col = 0; col < numCoefficients; col++ )
-            {
-            lhs(row + ichan * numEquations, col + jchan * numCoefficients)
-              = Wij_A(row, col);
-            }
+          lhs(row + ichan * numEquations, col + jchan * numCoefficients)
+            = Wij_A(row, col);
           }
+        }
 #endif
-        } // for jchan
-      }   // for ichan
-    }
+      } // for jchan
+    }   // for ichan
 
   muLogMacro(<< "Solve " << lhs.rows() << " x " << lhs.columns() << std::endl);
 
   // Use VNL to solve linear system
   MatrixType coeffs;
-    {
-    // MatrixQRType qr(lhs);
-    // coeffs = qr.solve(rhs);
-    // SVD more expensive, should be more accurate
-    MatrixSVDType svd(lhs);
+  {
+  // MatrixQRType qr(lhs);
+  // coeffs = qr.solve(rhs);
+  // SVD more expensive, should be more accurate
+  MatrixSVDType svd(lhs);
 
-    svd.zero_out_absolute(1e-8);
-    coeffs = svd.solve(rhs);
-    }
+  svd.zero_out_absolute(1e-8);
+  coeffs = svd.solve(rhs);
+  }
 #ifndef WIN32
   if( !std::isfinite( (double)coeffs[0][0]) )
 #else
-  if( coeffs[0][0] != std::numeric_limits::infinity() )
+    if( coeffs[0][0] != std::numeric_limits::infinity() )
 #endif
-    {
-    itkExceptionMacro(<< "\ncoeffs: \n" << coeffs
-                      // << "\nlhs_ij: \n" << lhs_ij
-                      << "\nbasisT: \n" << basisT
-                      // << "\nWij_A: \n" << Wij_A
-                      << "\nlhs: \n" << lhs
-                      << "\nrhs: \n" << rhs);
-    }
+      {
+      itkExceptionMacro(<< "\ncoeffs: \n" << coeffs
+                        // << "\nlhs_ij: \n" << lhs_ij
+                        << "\nbasisT: \n" << basisT
+                        // << "\nWij_A: \n" << Wij_A
+                        << "\nlhs: \n" << lhs
+                        << "\nrhs: \n" << rhs);
+      }
   // Clear memory for the basis transpose
   basisT.set_size(0, 0);
 
@@ -677,26 +690,31 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>
   // Remove bias
   muLogMacro(<< "Correcting input images..." << std::endl );
 
-  std::vector<InputImagePointer> outputs(numChannels);
-  for( unsigned int ichan = 0; ichan < numChannels; ichan++ )
+  MapOfInputImageVectors outputs;
+  {
+  unsigned int ichan = 0;
+  for(typename MapOfInputImageVectors::const_iterator mapIt = this->m_InputImages.begin();
+      mapIt != this->m_InputImages.end(); ++mapIt)
     {
-    outputs[ichan] = InternalImageType::New();
-    outputs[ichan]->CopyInformation(this->m_InputImages[ichan]);
-    outputs[ichan]->SetRegions( this->m_InputImages[ichan]->GetLargestPossibleRegion() );
-    outputs[ichan]->Allocate();
-    outputs[ichan]->FillBuffer(0);
-
-    // Compute the vcl_log transformed bias field
-    InternalImagePointer biasIntensityScaleFactor = InternalImageType::New();
-    biasIntensityScaleFactor->CopyInformation(this->m_InputImages[ichan]);
-    biasIntensityScaleFactor->SetRegions( this->m_InputImages[ichan]->GetLargestPossibleRegion() );
-    biasIntensityScaleFactor->Allocate();
-    biasIntensityScaleFactor->FillBuffer(0);
-
-    double maxBiasInForegroundMask = vcl_numeric_limits<double>::min();
-    double minBiasInForegroundMask = vcl_numeric_limits<double>::max();
-
+    for(typename InputImageVector::const_iterator imIt = mapIt->second.begin();
+        imIt != mapIt->second.end(); ++imIt, ++ichan)
       {
+      InternalImagePointer curOutput = InternalImageType::New();
+      curOutput->CopyInformation((*imIt));
+      curOutput->SetRegions( (*imIt)->GetLargestPossibleRegion() );
+      curOutput->Allocate();
+      curOutput->FillBuffer(0);
+
+      // Compute the vcl_log transformed bias field
+      InternalImagePointer biasIntensityScaleFactor = InternalImageType::New();
+      biasIntensityScaleFactor->CopyInformation(curOutput);
+      biasIntensityScaleFactor->SetRegions( curOutput->GetLargestPossibleRegion() );
+      biasIntensityScaleFactor->Allocate();
+      biasIntensityScaleFactor->FillBuffer(0);
+
+      double maxBiasInForegroundMask = vcl_numeric_limits<double>::min();
+      double minBiasInForegroundMask = vcl_numeric_limits<double>::max();
+
 #if defined(LOCAL_USE_OPEN_MP)
 #pragma omp parallel for shared(maxBiasInForegroundMask,minBiasInForegroundMask) default(shared)
 #endif
@@ -732,7 +750,7 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>
               }
 
             const ByteImagePixelType maskValue = m_ForegroundBrainMask->GetPixel(currIndex);
-            /* NOTE:  For regions listed as background, clamp the outputs[ichan]
+            /* NOTE:  For regions listed as background, clamp the outputs[ichan
               */
             if( vnl_math_isnan(logFitValue) || vnl_math_isinf(logFitValue) )
               {
@@ -751,15 +769,14 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>
                 minBiasInForegroundMask = multiplicitiveBiasCorrectionFactor;
                 }
               }
-            biasIntensityScaleFactor->SetPixel(currIndex, (InternalImagePixelType)multiplicitiveBiasCorrectionFactor);
+            biasIntensityScaleFactor->SetPixel(currIndex,
+                                               (InternalImagePixelType)multiplicitiveBiasCorrectionFactor);
             } // for currIndex[0]
           }
         }
-      }
-    std::cout << "Foreground Mask Bias Correction MIN: " << minBiasInForegroundMask << " MAX: "
-              << maxBiasInForegroundMask << std::endl;
-    // Correct image using (clamped) bias field)
-      {
+      std::cout << "Foreground Mask Bias Correction MIN: " << minBiasInForegroundMask << " MAX: "
+                << maxBiasInForegroundMask << std::endl;
+      // Correct image using (clamped) bias field)
 #if defined(LOCAL_USE_OPEN_MP)
 #pragma omp parallel for default(shared)
 #endif
@@ -770,19 +787,20 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>
           for( long ii = 0; ii < (long)size[0]; ii++ )
             {
             const ProbabilityImageIndexType currIndex = {{ii, jj, kk}};
-            double                          multiplicitiveBiasCorrectionFactor = biasIntensityScaleFactor->GetPixel(
-                currIndex);
+
+            double multiplicitiveBiasCorrectionFactor =
+              biasIntensityScaleFactor->GetPixel(currIndex);
             if( multiplicitiveBiasCorrectionFactor > maxBiasInForegroundMask )  //
-                                                                                //
-                                                                                // CLAMP
+              //
+              // CLAMP
               {
               multiplicitiveBiasCorrectionFactor = maxBiasInForegroundMask;
               biasIntensityScaleFactor->SetPixel(currIndex,
                                                  (InternalImagePixelType) multiplicitiveBiasCorrectionFactor );
               }
             else if( multiplicitiveBiasCorrectionFactor < minBiasInForegroundMask )  //
-                                                                                     //
-                                                                                     // CLAMP
+              //
+              // CLAMP
               {
               multiplicitiveBiasCorrectionFactor = minBiasInForegroundMask;
               biasIntensityScaleFactor->SetPixel(currIndex,
@@ -793,51 +811,50 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>
               // Now clamp intensities outside the probability mask region to
               // the min and
               // max of inside the mask region.
-              outputs[ichan]->SetPixel(currIndex, 0 );
+              curOutput->SetPixel(currIndex, 0 );
               }
             else
               {
-              const double originalPixelValue = m_InputImages[ichan]->GetPixel(currIndex);
+              const double originalPixelValue = (*imIt)->GetPixel(currIndex);
               const double correctedPixelValue = originalPixelValue * multiplicitiveBiasCorrectionFactor;
-              outputs[ichan]->SetPixel(currIndex, (InputImagePixelType)correctedPixelValue);
+              curOutput->SetPixel(currIndex, (InputImagePixelType)correctedPixelValue);
               }
             } // for currIndex[0]
           }
         }
-      }
 
-      {
       std::cout << "Standardizing Bias Corrected Intensities: ...";
-      outputs[ichan]
-        = StandardizeMaskIntensity<InputImageType, ByteImageType>(
-            outputs[ichan],
-            this->m_ForegroundBrainMask,
-            0.0005, 1.0 - 0.0005,
-            1, 0.95 * MAX_IMAGE_OUTPUT_VALUE,
-            0, MAX_IMAGE_OUTPUT_VALUE);
+      curOutput
+        = StandardizeMaskIntensity<InputImageType, ByteImageType>(curOutput,
+                                                                  this->m_ForegroundBrainMask,
+                                                                  0.0005, 1.0 - 0.0005,
+                                                                  1, 0.95 * MAX_IMAGE_OUTPUT_VALUE,
+                                                                  0, MAX_IMAGE_OUTPUT_VALUE);
       std::cout << "done." << std::endl;
-      }
-    if( this->m_DebugLevel > 7 )
-      { // DEBUG:  This code is for debugging purposes only;
-      typedef itk::ImageFileWriter<InputImageType> WriterType;
-      typename WriterType::Pointer writer = WriterType::New();
-      writer->UseCompressionOn();
 
-      std::stringstream CurrentIterationID_stream("");
-      CurrentIterationID_stream << CurrentIterationID;
-      std::stringstream template_index_stream("");
-      template_index_stream << ichan;
-      const std::string fn = this->m_OutputDebugDir + "/BIAS_INDEX_" + template_index_stream.str() + "_LEVEL_"
-        + CurrentIterationID_stream.str() + ".nii.gz";
-      writer->SetInput(biasIntensityScaleFactor);
-      writer->SetFileName(fn.c_str() );
-      writer->Update();
-      muLogMacro( << "DEBUG:  Wrote image " << fn <<  std::endl);
-      }
-    //
-    } // for ichan
-  // Remove internal references to input images when done
-  m_InputImages.clear();
+      outputs[mapIt->first].push_back(curOutput);
+
+      if( this->m_DebugLevel > 7 )
+        { // DEBUG:  This code is for debugging purposes only;
+        typedef itk::ImageFileWriter<InputImageType> WriterType;
+        typename WriterType::Pointer writer = WriterType::New();
+        writer->UseCompressionOn();
+
+        std::stringstream CurrentIterationID_stream("");
+        CurrentIterationID_stream << CurrentIterationID;
+        std::stringstream template_index_stream("");
+        template_index_stream << mapIt->first << std::distance(mapIt->second.begin(),imIt);
+        const std::string fn = this->m_OutputDebugDir + "/BIAS_INDEX_" + template_index_stream.str() + "_LEVEL_"
+          + CurrentIterationID_stream.str() + ".nii.gz";
+        writer->SetInput(biasIntensityScaleFactor);
+        writer->SetFileName(fn.c_str() );
+        writer->Update();
+        muLogMacro( << "DEBUG:  Wrote image " << fn <<  std::endl);
+        }
+      //
+      } // for ichan
+    }
+  }
   CorrectImagesTimer.Stop();
   itk::RealTimeClock::TimeStampType elapsedTime = CorrectImagesTimer.GetTotal();
   muLogMacro(<< "Correcting Images took " << elapsedTime << " " << CorrectImagesTimer.GetUnit() << std::endl);

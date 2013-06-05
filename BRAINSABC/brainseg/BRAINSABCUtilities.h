@@ -66,7 +66,7 @@ public:
   typedef vnl_matrix<FloatingPrecision>         MatrixType;
   typedef vnl_matrix_inverse<FloatingPrecision> MatrixInverseType;
   typedef vnl_vector<FloatingPrecision>         VectorType;
-
+  typedef std::map<std::string,VectorType>      MapOfVectors;
   RegionStats() : m_Means(), m_Covariance(), m_Weighting(0.0)
   {
   }
@@ -74,10 +74,10 @@ public:
   void resize(const unsigned int numChannels)
   {
     this->m_Covariance = MatrixType(numChannels, numChannels);
-    this->m_Means.set_size(numChannels);
+    this->m_Means.clear();
   }
 
-  VectorType m_Means;             // One measure per image channel type;
+  MapOfVectors m_Means;             // One measure per image channel type;
   MatrixType m_Covariance;        // Matrix of covariances of class by image
                                   // channel
   FloatingPrecision m_Weighting;  // The strength of this class.
@@ -86,10 +86,17 @@ public:
 #include "BRAINSABCUtilities.hxx"
 
 // External Templates to improve compilation times.
-extern std::vector<CorrectIntensityImageType::Pointer> CorrectBias(const unsigned int degree,
-                                                                   const unsigned int CurrentEMIteration,
-                                                                   const std::vector<ByteImageType::Pointer> & CandidateRegions, const std::vector<CorrectIntensityImageType::Pointer> & inputImages, const ByteImageType::Pointer currentBrainMask, const ByteImageType::Pointer currentForegroundMask, const std::vector<FloatImageType::Pointer> & probImages, const std::vector<bool> & probUseForBias, const FloatingPrecision sampleSpacing, const int DebugLevel,
-                                                                   const std::string& OutputDebugDir);
+extern std::vector<CorrectIntensityImageType::Pointer>
+CorrectBias(const unsigned int degree,
+            const unsigned int CurrentEMIteration,
+            const std::vector<ByteImageType::Pointer> & CandidateRegions,
+            const std::vector<CorrectIntensityImageType::Pointer> & inputImages,
+            const ByteImageType::Pointer currentBrainMask,
+            const ByteImageType::Pointer currentForegroundMask,
+            const std::vector<FloatImageType::Pointer> & probImages,
+            const std::vector<bool> & probUseForBias,
+            const FloatingPrecision sampleSpacing, const int DebugLevel,
+            const std::string& OutputDebugDir);
 
 extern template std::vector<FloatImagePointerType> DuplicateImageList<FloatImageType>(
   const std::vector<FloatImagePointerType> & );
@@ -108,5 +115,21 @@ extern template void ComputeLabels<FloatImageType,
 extern template void NormalizeProbListInPlace<FloatImageType>(std::vector<FloatImageType::Pointer> & );
 
 extern template void ZeroNegativeValuesInPlace<FloatImageType>(  std::vector<FloatImageType::Pointer> & );
+
+template <class TMap>
+unsigned int TotalMapSize(const TMap &map)
+{
+  unsigned int rval = 0;
+  for(typename TMap::const_iterator mapIt = map.begin();
+      mapIt != map.end(); ++mapIt)
+    {
+    for(typename TMap::mapped_type::const_iterator listIt =
+          mapIt->second.begin(); listIt != mapIt->second.end(); ++listIt)
+      {
+      ++rval;
+      }
+    }
+  return rval;
+}
 
 #endif // __BRAINSABCUtilities__h__

@@ -1,4 +1,4 @@
-#include "EMSegmentationFilter.hxx"
+#include "EMSegmentationFilter.h"
 
 #include "itkImage.h"
 

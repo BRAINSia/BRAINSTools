@@ -21,6 +21,14 @@
 
 typedef itk::Point<double, 3>            PointType;
 typedef std::map<std::string, PointType> LandmarksMapType;
+typedef std::map<std::string, float> LandmarkWeightMapType;
+
+/*
+ * Read lmk weights
+ * weightFilename  -
+ * Output: A map of weights
+ */
+LandmarkWeightMapType ReadLandmarkWeights( const std::string & weightFilename );
 
 /*
  * Write ITK landmarks to a Slicer3 landmark list file (.fcsv)

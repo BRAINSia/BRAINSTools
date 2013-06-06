@@ -59,6 +59,8 @@
 
 #include <itkScalarImageToHistogramGenerator.h>
 
+#include "GenericTransformImage.h"
+
 extern const unsigned int MAX_ROTATIONS_TESTED;
 extern const unsigned int MAXITER;
 extern const unsigned int DEL;
@@ -675,4 +677,5 @@ paired_samples_t(DType *x1, DType *x2, int n, int *df, double *meandiff)
   return t;
 }
 
+extern void WriteTransformToDisk( GenericTransformType * myTransform , const std::string & filename  );
 #endif

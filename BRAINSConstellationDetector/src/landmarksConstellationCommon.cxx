@@ -792,3 +792,20 @@ SImageType::Pointer MakeIsoTropicReferenceImage(void)
   // NOTE:  No need to allocate the image memory, it is just used as a template.
   return isotropicReferenceVolume;
 }
+
+void WriteTransformToDisk( GenericTransformType * myTransform , const std::string & filename  )
+{
+  itk::TransformFileWriter::Pointer writer = itk::TransformFileWriter::New();
+  writer->SetInput( myTransform );
+  writer->SetFileName( filename );
+  try
+    {
+    writer->Update();
+    }
+  catch( itk::ExceptionObject & excep )
+    {
+    std::cerr << "Cannot write the outputTransform file!" << std::endl;
+    std::cerr << excep << std::endl;
+    }
+  std::cout << "The output rigid transform file is written." << std::endl;
+}

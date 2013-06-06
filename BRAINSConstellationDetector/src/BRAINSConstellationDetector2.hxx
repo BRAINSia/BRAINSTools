@@ -12,13 +12,14 @@
 
 #include "itkResampleInPlaceImageFilter.h"
 #include "itkMultiplyImageFilter.h"
-#include "itkLandmarkBasedTransformInitializer.h"
 #include "itkCastImageFilter.h"
 #include <BRAINSFitHelper.h>
 
 
 namespace itk
 {
+
+
 template <class TInputImage, class TOutputImage>
 BRAINSConstellationDetector2<TInputImage, TOutputImage>
 ::BRAINSConstellationDetector2()
@@ -281,6 +282,7 @@ BRAINSConstellationDetector2<TInputImage, TOutputImage>
     this->m_VersorTransform->SetTranslation( ZeroCenteredTransform->GetTranslation() );
     }
 
+  WriteTransformToDisk( this->m_VersorTransform.GetPointer(), std::string("/tmp/OrigToACPC_VersorTransformLINE_291.mat") );
 
   ////////////////////////////
   // START BRAINSFit alternative
@@ -315,35 +317,13 @@ BRAINSConstellationDetector2<TInputImage, TOutputImage>
       // affine transform
       // ( using logic from BRAINSLandmarkInitializer) and create initToAtlasAffineTransform.
 
-      typedef itk::AffineTransform<double, Dimension> AffineTransformType;
-      typename AffineTransformType::Pointer initToAtlasAffineTransform = AffineTransformType::New();
-
-      typedef itk::LandmarkBasedTransformInitializer<AffineTransformType, SImageType, SImageType> LandmarkBasedInitializerType;
-      typename LandmarkBasedInitializerType::Pointer landmarkBasedInitializer = LandmarkBasedInitializerType::New();
-
       typedef std::map<std::string, float> WeightType;
       WeightType landmarkWeights;
       if( this->m_atlasLandmarkWeights != "" )
         {
-        std::cout << "setting weights. " << std::endl;
-        std::ifstream weightFileStream( this->m_atlasLandmarkWeights.c_str() );
-
-        if( !weightFileStream.is_open() )
-          {
-          std::cerr << "Fail to open weight file " << std::endl;
-          exit(EXIT_FAILURE);
-          }
-
-        std::string line;
-        while( getline( weightFileStream, line ) )
-          {
-          const size_t      firstComma = line.find(',', 0);
-          const std::string landmark = line.substr( 0, firstComma );
-          const float       weight   = atof( (line.substr( firstComma + 1, line.length() - 1 ) ).c_str() );
-          landmarkWeights[landmark] = weight;
-          }
+        landmarkWeights = ReadLandmarkWeights( this->m_atlasLandmarkWeights.c_str() );
         }
-
+      typedef itk::LandmarkBasedTransformInitializer<AffineTransformType, SImageType, SImageType> LandmarkBasedInitializerType;
       typedef typename LandmarkBasedInitializerType::LandmarkPointContainer LandmarkContainerType;
       LandmarkContainerType fixedLmks;
       LandmarkContainerType movingLmks;
@@ -380,17 +360,22 @@ BRAINSConstellationDetector2<TInputImage, TOutputImage>
           }
         }
 
+      typedef itk::LandmarkBasedTransformInitializer<AffineTransformType, SImageType, SImageType> LandmarkBasedInitializerType;
+      typename LandmarkBasedInitializerType::Pointer landmarkBasedInitializer = LandmarkBasedInitializerType::New();
+
       if( !this->m_atlasLandmarkWeights.empty() )
         {
         landmarkBasedInitializer->SetLandmarkWeight( landmarkWgts );
         }
-
       landmarkBasedInitializer->SetFixedLandmarks( fixedLmks );
       landmarkBasedInitializer->SetMovingLandmarks( movingLmks );
+
+      typedef itk::AffineTransform<double, Dimension> AffineTransformType;
+      typename AffineTransformType::Pointer initToAtlasAffineTransform = AffineTransformType::New();
       landmarkBasedInitializer->SetTransform( initToAtlasAffineTransform );
       landmarkBasedInitializer->InitializeTransform();
 
-      initToAtlasAffineTransform->Compose( this->m_VersorTransform, true );
+      //HACK:  THIS IS WRONG!  m_VersorTransform was used to set movingLmks! initToAtlasAffineTransform->Compose( this->m_VersorTransform, true );
       typedef itk::BRAINSFitHelper HelperType;
       HelperType::Pointer brainsFitHelper = HelperType::New();
 

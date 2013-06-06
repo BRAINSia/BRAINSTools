@@ -6,6 +6,31 @@
 
 #include "Slicer3LandmarkIO.h"
 #include "itkNumberToString.h"
+
+LandmarkWeightMapType ReadLandmarkWeights( const std::string & weightFilename )
+{
+  std::ifstream weightFileStream( weightFilename.c_str() );
+
+  if( !weightFileStream.is_open() )
+    {
+    std::cerr << "Fail to open weight file " << std::endl;
+    exit(EXIT_FAILURE);
+    }
+
+  std::string           line;
+  LandmarkWeightMapType landmarkWeightMap;
+  while( getline( weightFileStream, line ) )
+    {
+    const size_t      firstComma = line.find(',', 0);
+    const std::string landmark = line.substr( 0, firstComma );
+    const float       weight   = atof( (line.substr( firstComma + 1, line.length() - 1 ) ).c_str() );
+    landmarkWeightMap[landmark] = weight;
+    }
+
+  return landmarkWeightMap;
+}
+
+
 void
 WriteITKtoSlicer3Lmk( const std::string & landmarksFilename,
                       const LandmarksMapType & landmarks )

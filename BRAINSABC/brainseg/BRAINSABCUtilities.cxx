@@ -89,9 +89,10 @@ std::vector<CorrectIntensityImageType::Pointer> CorrectBias(
     {
     biascorr->DebugOn();
     }
-
-  biascorr->SetInputImages(inputImages);
-  correctedImages = biascorr->CorrectImages(CurrentEMIteration);
+  BiasCorrectorType::MapOfInputImageVectors bcInput;
+  bcInput["first"] = inputImages;
+  biascorr->SetInputImages(bcInput);
+  correctedImages = biascorr->CorrectImages(CurrentEMIteration)["first"];
 
   BiasCorrectorTimer.Stop();
   itk::RealTimeClock::TimeStampType elapsedTime = BiasCorrectorTimer.GetTotal();

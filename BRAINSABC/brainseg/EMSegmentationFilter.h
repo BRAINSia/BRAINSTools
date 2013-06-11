@@ -51,8 +51,10 @@ public:
   typedef typename TInputImage::SizeType    InputImageSizeType;
   typedef typename TInputImage::SpacingType InputImageSpacingType;
 
-  typedef typename std::vector<InputImagePointer>         InputImageVector;
-  typedef typename std::map<std::string,InputImageVector> MapOfImagesByType;
+  typedef std::vector<InputImagePixelType> BackgroundValueVector;
+
+  typedef std::vector<InputImagePointer> InputImageVector;
+  typedef std::map<std::string, InputImageVector> MapOfInputImageVectors;
 
   typedef typename ByteImageType::Pointer    ByteImagePointer;
   typedef typename ByteImageType::IndexType  ByteImageIndexType;
@@ -111,29 +113,18 @@ public:
   itkSetMacro(SampleSpacing, FloatingPrecision);
   itkGetMacro(SampleSpacing, FloatingPrecision);
 
-  void SetInputImages(const std::vector<InputImagePointer> & newInputImages);
+  void SetInputImages(const MapOfInputImageVectors newInputImages);
 
-  void SetRawInputImages(const std::vector<InputImagePointer> & newInputImages);
+  void SetRawInputImages(const MapOfInputImageVectors newInputImages);
 
-  void SetOriginalAtlasImages(const std::vector<InputImagePointer> & newTemplateImages);
+  void SetOriginalAtlasImages(const MapOfInputImageVectors newTemplateImages);
 
   //
   //  itkGetMacro(WarpedAtlasImages,std::vector<InputImagePointer>);
-  std::vector<InputImagePointer> GenerateWarpedAtlasImages(void);
+  MapOfInputImageVectors GenerateWarpedAtlasImages(void);
 
   itkSetMacro(TemplateBrainMask, ByteImagePointer);
   itkGetMacro(TemplateBrainMask, ByteImagePointer);
-
-  // Get and set the input volume image types.  i.e. T1 or T2 or PD
-  void SetInputVolumeTypes(const std::vector<std::string> & newInputVolumeTypes)
-    {
-      this->m_InputVolumeTypes = newInputVolumeTypes;
-    }
-
-  std::vector<std::string> GetInputVolumeTypes(void) const
-    {
-      return this->m_InputVolumeTypes;
-    }
 
   void SetPriors(ProbabilityImageVectorType probs);
 
@@ -178,9 +169,9 @@ public:
 
   ProbabilityImageVectorType GetPosteriors();
 
-  InputImageVector GetCorrected();
+  MapOfInputImageVectors GetCorrected();
 
-  InputImageVector GetRawCorrected();
+  MapOfInputImageVectors  GetRawCorrected();
 
   void Update();
 
@@ -234,13 +225,16 @@ protected:
 
   void UpdateTransformation(const unsigned int CurrentEMIteration);
 
-  std::vector<typename ByteImageType::Pointer> UpdateIntensityBasedClippingOfPriors(
-    const unsigned int CurrentEMIteration, const std::vector<typename TInputImage::Pointer> &intensityList,
-    std::vector<typename TProbabilityImage::Pointer> &WarpedPriorsList, typename ByteImageType::Pointer NonAirRegion);
+  ByteImageVectorType
+  UpdateIntensityBasedClippingOfPriors(const unsigned int CurrentEMIteration,
+                                       const MapOfInputImageVectors  &intensityList,
+                                       const ProbabilityImageVectorType &WarpedPriorsList,
+                                       ByteImagePointer &NonAirRegion);
 
-  std::vector<typename ByteImageType::Pointer> ForceToOne(
-    const unsigned int CurrentEMIteration, const std::vector<typename TInputImage::Pointer> &intensityList,
-    std::vector<typename TProbabilityImage::Pointer> &WarpedPriorsList, typename ByteImageType::Pointer NonAirRegion);
+  ByteImageVectorType ForceToOne(const unsigned int CurrentEMIteration,
+                                 // const MapOfInputImageVectors &intensityList,
+                                 ProbabilityImageVectorType &WarpedPriorsList,
+                                 typename ByteImageType::Pointer NonAirRegion);
 private:
 
   void WritePartitionTable(const unsigned int CurrentEMIteration) const;
@@ -260,7 +254,7 @@ private:
   void WriteDebugForegroundMask(const ByteImageType::Pointer & currForegroundMask,
                                 const unsigned int CurrentEMIteration) const;
 
-  void WriteDebugCorrectedImages(const std::vector<typename TInputImage::Pointer> & correctImageList,
+  void WriteDebugCorrectedImages(const MapOfInputImageVectors & correctImageList,
                                  const unsigned int CurrentEMIteration ) const;
 
   unsigned int ComputePriorLookupTable(void);
@@ -271,13 +265,13 @@ private:
   ComputeOnePosterior(const FloatingPrecision priorScale,
                       const typename TProbabilityImage::Pointer prior,
                       const vnl_matrix<FloatingPrecision> currCovariance,
-                      const vnl_vector<FloatingPrecision> currMeans,
-                      const std::vector<typename TInputImage::Pointer> & intensityImages);
+                      const typename RegionStats::MapOfVectors currMeans,
+                      const MapOfInputImageVectors & intensityImages);
 
   std::vector<typename TProbabilityImage::Pointer>
   ComputePosteriors(const std::vector<typename TProbabilityImage::Pointer> & Priors,
                     const vnl_vector<FloatingPrecision> & PriorWeights,
-                    const std::vector<typename TInputImage::Pointer> & IntensityImages,
+                    const MapOfInputImageVectors & IntensityImages,
                     std::vector<RegionStats> & ListOfClassStatistics);
 
   std::vector<RegionStats> ComputeDistributions(const ByteImageVectorType &SubjectCandidateRegions,
@@ -290,6 +284,50 @@ private:
 
   void CheckLoopAgainstFilterOutput(ByteImagePointer &loopImg, ByteImagePointer & filterImg);
 
+  ProbabilityImageVectorType  WarpImageList(ProbabilityImageVectorType& originalList,
+                                            const typename TInputImage::Pointer referenceOutput,
+                                            const BackgroundValueVector & backgroundValues,
+                                            const GenericTransformType::Pointer warpTransform);
+  MapOfInputImageVectors WarpImageList(MapOfInputImageVectors &originalList,
+                                     const InputImagePointer referenceOutput,
+                                     const GenericTransformType::Pointer warpTransform);
+   // External Templates to improve compilation times.
+  MapOfInputImageVectors
+  CorrectBias(const unsigned int degree,
+              const unsigned int CurrentEMIteration,
+              const ByteImageVectorType & CandidateRegions,
+              MapOfInputImageVectors & inputImages,
+              const ByteImageType::Pointer currentBrainMask,
+              const ByteImageType::Pointer currentForegroundMask,
+              const ProbabilityImageVectorType & probImages,
+              const BoolVectorType & probUseForBias,
+              const FloatingPrecision sampleSpacing,
+              const int DebugLevel,
+              const std::string& OutputDebugDir);
+
+  InputImagePointer GetFirstInputImage()
+    {
+      return *(this->m_InputImages.begin()->second.begin());
+    }
+  InputImagePointer GetFirstOriginalAtlasImage()
+    {
+      return *(this->m_OriginalAtlasImages.begin()->second.begin());
+    }
+  template <typename TMap>
+  unsigned long MapofListsSize(const TMap &theMap)
+    {
+      unsigned long count = 0;
+      for(typename TMap::iterator mapIt = theMap.begin(); mapIt != theMap.end(); ++mapIt)
+        {
+        for(typename TMap::mapped_type::iterator it = mapIt->second.begin();
+            it != mapIt->second.end(); ++it)
+          {
+          ++count;
+          }
+        }
+      return count;
+    }
+
   ProbabilityImageVectorType m_WarpedPriors;
   ProbabilityImageVectorType m_OriginalSpacePriors;
   ProbabilityImageVectorType m_Posteriors;
@@ -297,15 +335,14 @@ private:
   std::string m_AtlasTransformType;
 
   // Variable set if the inputs are modified
-  InputImageVector               m_InputImages;
-  InputImageVector               m_RawInputImages;
-  InputImageVector               m_CorrectedImages;
-  InputImageVector               m_RawCorrectedImages;
-  std::vector<std::string>       m_InputVolumeTypes;
+  MapOfInputImageVectors m_InputImages;
+  MapOfInputImageVectors m_RawInputImages;
+  MapOfInputImageVectors m_CorrectedImages;
+  MapOfInputImageVectors m_RawCorrectedImages;
+  MapOfInputImageVectors m_OriginalAtlasImages;
+  MapOfInputImageVectors m_WarpedAtlasImages;
 
-  ByteImagePointer               m_TemplateBrainMask;
-  InputImageVector m_OriginalAtlasImages;
-  InputImageVector m_WarpedAtlasImages;
+  ByteImagePointer           m_TemplateBrainMask;
 
   // final output
   ByteImagePointer m_DirtyLabels;
@@ -336,7 +373,7 @@ private:
   BoolVectorType m_PriorIsForegroundPriorVector;
   bool           m_PriorIsForegroundPriorVectorSet;
 
-  std::vector<typename TInputImage::PixelType> m_PriorsBackgroundValues;
+  BackgroundValueVector m_PriorsBackgroundValues;
 
   std::string m_OutputDebugDir;
 

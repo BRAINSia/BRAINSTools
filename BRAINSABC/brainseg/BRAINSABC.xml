@@ -12,7 +12,7 @@
     <description>Input parameters</description>
 
     <image multiple="true">
-      <name>inputVolumes</name>
+      <name>input_Volumes</name>
       <label>Image Files</label>
       <longflag>inputVolumes</longflag>
       <flag>i</flag>
@@ -30,7 +30,7 @@
 
     <!-- TODO:  Would rather have a string-enumeration  muliple="true" -->
     <string-vector>
-      <name>inputVolumeTypes</name>
+      <name>input_VolumeTypes</name>
       <label>Image Types</label>
       <description>The list of input image types corresponding to the inputVolumes.</description>
       <longflag>inputVolumeTypes</longflag>
@@ -88,7 +88,7 @@
     <label>Output</label>
     <description>Output filename specifications</description>
     <image multiple="true" fileExtensions=".nii.gz,.nrrd">
-      <name>outputVolumes</name>
+      <name>output_Volumes</name>
       <label>Output Volumes</label>
       <longflag>outputVolumes</longflag>
       <channel>output</channel>

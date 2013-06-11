@@ -82,12 +82,6 @@ BRAINSConstellationDetector2<TInputImage, TOutputImage>
   globalImagedebugLevel = this->m_WritedebuggingImagesLevel;
 
   // /////////////////////////////////////////////////////////////////////////////////////////////
-  char modelfile[1024];
-    {
-    strcpy( modelfile, this->m_InputTemplateModel.c_str() );
-    }
-
-  // /////////////////////////////////////////////////////////////////////////////////////////////
   short BackgroundFillValue;
   if( this->m_BackgroundFillValueString == std::string("BIGNEG") )
     {
@@ -100,11 +94,11 @@ BRAINSConstellationDetector2<TInputImage, TOutputImage>
   // /////////////////////////////////////////////////////////////////////////////////////////////
   // read information from the setup file, and initialize some variables
   landmarksConstellationModelIO myModel;
-  myModel.ReadModelFile( std::string(modelfile) );
+  myModel.ReadModelFile( this->m_InputTemplateModel );
 
   if( LMC::globalverboseFlag )
     {
-    std::cout << "Using Model File: " << modelfile << std::endl;
+    std::cout << "Using Model File: " << this->m_InputTemplateModel << std::endl;
     myModel.PrintHeaderInfo();
     }
 

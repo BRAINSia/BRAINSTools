@@ -94,7 +94,7 @@ bool BRAINSConstellationDetectorPrimary::Compute( void )
   catch( itk::ExceptionObject & err )
     {
     std::cerr << " Error while reading image file( s ) with ITK:\n "
-              << err << std::endl;
+      << err << std::endl;
     }
   std::cout << "Processing: " << this->m_inputVolume << std::endl;
 
@@ -143,7 +143,7 @@ bool BRAINSConstellationDetectorPrimary::Compute( void )
   HoughEyeDetectorType::Pointer houghEyeDetector = HoughEyeDetectorType::New();
 
   if( ( landmarksEMSP.find( "LE" ) != landmarksEMSP.end() )
-      && ( landmarksEMSP.find( "RE" ) != landmarksEMSP.end() ) )
+    && ( landmarksEMSP.find( "RE" ) != landmarksEMSP.end() ) )
     {
     std::cout << "\nLoaded eye centers information for BRAINS Hough Eye Detector." << std::endl;
     std::cout << "Skip estimation steps for eye centers." << std::endl;
@@ -184,7 +184,7 @@ bool BRAINSConstellationDetectorPrimary::Compute( void )
   itk::BRAINSConstellationDetector2<ImageType, ImageType>::Pointer constellation2 = itk::BRAINSConstellationDetector2<ImageType, ImageType>::New();
 
   if( ( landmarksEMSP.find( "LE" ) != landmarksEMSP.end() )
-      && ( landmarksEMSP.find( "RE" ) != landmarksEMSP.end() ) )
+    && ( landmarksEMSP.find( "RE" ) != landmarksEMSP.end() ) )
     {
     constellation2->SetInput( reader->GetOutput() );
     constellation2->SetLandmarksEMSP( landmarksEMSP );
@@ -256,7 +256,7 @@ bool BRAINSConstellationDetectorPrimary::Compute( void )
   // TODO: Use PrepareOutputsLandmarks here.
   for( LandmarksMapType::const_iterator lit = constellation2->GetAlignedPoints().begin(); lit != constellation2->GetAlignedPoints().end(); ++lit )
     {
-    const VersorTransformType::OutputPointType transformedPoint = constellation2->GetVersorTransform()->TransformPoint( lit->second );
+    const VersorTransformType::OutputPointType transformedPoint = constellation2->GetOrigToACPCVersorTransform()->TransformPoint( lit->second );
     this->m_outputLandmarksInInputSpaceMap[lit->first] = transformedPoint;
     }
 
@@ -266,7 +266,7 @@ bool BRAINSConstellationDetectorPrimary::Compute( void )
   if( this->m_outputTransform.compare( "" ) != 0 )
     {
     TransformWriterType::Pointer writer = TransformWriterType::New();
-    writer->SetInput( constellation2->GetVersorTransform() );
+    writer->SetInput( constellation2->GetOrigToACPCVersorTransform() );
     writer->SetFileName( this->m_outputTransform );
     try
       {
@@ -328,14 +328,14 @@ bool BRAINSConstellationDetectorPrimary::Compute( void )
   if( this->m_outputLandmarksInInputSpace.compare( "" ) != 0 )
     {
     WriteITKtoSlicer3Lmk( this->m_outputLandmarksInInputSpace,
-                          this->m_outputLandmarksInInputSpaceMap );
+      this->m_outputLandmarksInInputSpaceMap );
     std::cout << "The output landmarks list file in the original space is written." << std::endl;
     }
 
   if( this->m_outputLandmarksInACPCAlignedSpace.compare( "" ) != 0 )
     {
     WriteITKtoSlicer3Lmk( this->m_outputLandmarksInACPCAlignedSpace,
-                          this->m_outputLandmarksInACPCAlignedSpaceMap );
+      this->m_outputLandmarksInACPCAlignedSpaceMap );
     std::cout << "The output landmarks list file in the output space is written." << std::endl;
     if( preferedOutputReferenceImage.compare( "" ) == 0 )
       {
@@ -347,14 +347,14 @@ bool BRAINSConstellationDetectorPrimary::Compute( void )
   if( this->m_outputMRML.compare( "" ) != 0 )
     {
     WriteMRMLFile( this->m_outputMRML,
-                   this->m_outputLandmarksInInputSpace,
-                   this->m_outputLandmarksInACPCAlignedSpace,
-                   this->m_inputVolume,
-                   preferedOutputReferenceImage,
-                   this->m_outputTransform,
-                   this->m_outputLandmarksInInputSpaceMap,
-                   this->m_outputLandmarksInACPCAlignedSpaceMap,
-                   constellation2->GetVersorTransform() );
+      this->m_outputLandmarksInInputSpace,
+      this->m_outputLandmarksInACPCAlignedSpace,
+      this->m_inputVolume,
+      preferedOutputReferenceImage,
+      this->m_outputTransform,
+      this->m_outputLandmarksInInputSpaceMap,
+      this->m_outputLandmarksInACPCAlignedSpaceMap,
+      constellation2->GetOrigToACPCVersorTransform() );
     std::cout << "The output mrml scene file is written." << std::endl;
     }
 
@@ -377,11 +377,11 @@ bool BRAINSConstellationDetectorPrimary::Compute( void )
     }
 
   if( ( this->m_outputVerificationScript.compare( "" ) != 0 )
-      && ( this->m_outputLandmarksInACPCAlignedSpace.compare( "" ) != 0 )
-      && ( this->m_outputVolume.compare( "" ) != 0 ) )
+    && ( this->m_outputLandmarksInACPCAlignedSpace.compare( "" ) != 0 )
+    && ( this->m_outputVolume.compare( "" ) != 0 ) )
     {
     writeVerificationScript( this->m_outputVerificationScript, this->m_outputVolume,
-                             this->m_outputLandmarksInACPCAlignedSpace );
+      this->m_outputLandmarksInACPCAlignedSpace );
     std::cout << "The verification script is written." << std::endl;
     }
   return EXIT_SUCCESS;

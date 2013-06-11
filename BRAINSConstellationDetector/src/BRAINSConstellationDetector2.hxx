@@ -13,8 +13,7 @@
 #include "itkResampleInPlaceImageFilter.h"
 #include "itkMultiplyImageFilter.h"
 #include "itkCastImageFilter.h"
-#include <BRAINSFitHelper.h>
-
+#include "GenericTransformImage.h"
 
 namespace itk
 {
@@ -41,7 +40,7 @@ BRAINSConstellationDetector2<TInputImage, TOutputImage>
 
   // Outputs
   this->m_Transform = "";
-  this->m_VersorTransform = NULL;
+  this->m_OrigToACPCVersorTransform = NULL;
   this->m_OutputImage = NULL;
   this->m_OutputResampledImage = NULL;
   this->m_OutputUntransformedClippedVolume = NULL;
@@ -118,12 +117,12 @@ BRAINSConstellationDetector2<TInputImage, TOutputImage>
 
   // Wei: We will get the input image from filter input rather than an external
   // file
-  SImageType::Pointer volOrig;
+  SImageType::Pointer copyOfOriginalInputImage;
     {
     DuplicatorType::Pointer duplicator = DuplicatorType::New();
     duplicator->SetInputImage(this->m_OriginalInputImage);
     duplicator->Update();
-    volOrig = duplicator->GetModifiableOutput();
+    copyOfOriginalInputImage = duplicator->GetModifiableOutput();
     }
 
   // RPPC is a vector on the MSP that points from the RP point to the PC.
@@ -134,14 +133,15 @@ BRAINSConstellationDetector2<TInputImage, TOutputImage>
     {
     itk::StatisticsImageFilter<SImageType>::Pointer stats =
       itk::StatisticsImageFilter<SImageType>::New();
-    stats->SetInput(volOrig);
+    stats->SetInput(copyOfOriginalInputImage);
     stats->Update();
     SImageType::PixelType minPixel( stats->GetMinimum() );
     SImageType::PixelType maxPixel( stats->GetMaximum() );
 
     if( this->m_TrimRescaledIntensities > 0.0 )
       {
-      // REFACTOR: a histogram would be traditional here, but seems
+      // TODO:  Ali Consider updating this
+      //  REFACTOR: a histogram would be traditional here, but seems
       // over-the-top;
       // I did this because it seemed to me if I knew mean, sigma, max and min,
       // then I know Something about extreme outliers.
@@ -151,6 +151,7 @@ BRAINSConstellationDetector2<TInputImage, TOutputImage>
       const double meanOrig( stats->GetMean() );
       const double sigmaOrig( stats->GetSigma() );
 
+      // TODO:  Ali Consider updating this
       // REFACTOR:  In percentiles, 0.0005 two-tailed has worked in the past.
       // It only makes sense to trim the upper bound since the lower bound would
       // most likely
@@ -174,33 +175,38 @@ BRAINSConstellationDetector2<TInputImage, TOutputImage>
 
     itk::IntensityWindowingImageFilter<SImageType, SImageType>::Pointer remapIntensityFilter =
       itk::IntensityWindowingImageFilter<SImageType, SImageType>::New();
-    remapIntensityFilter->SetInput(volOrig);
+    remapIntensityFilter->SetInput(copyOfOriginalInputImage);
     remapIntensityFilter->SetOutputMaximum(this->m_RescaleIntensitiesOutputRange[1]);
     remapIntensityFilter->SetOutputMinimum(this->m_RescaleIntensitiesOutputRange[0]);
     remapIntensityFilter->SetWindowMinimum(minPixel);
     remapIntensityFilter->SetWindowMaximum(maxPixel);
     remapIntensityFilter->Update();
 
-    this->m_ImageToBeResampled = remapIntensityFilter->GetOutput();
+    this->m_CleanedIntensityOriginalInputImage = remapIntensityFilter->GetOutput();
     }
   else
     {
-    this->m_ImageToBeResampled = volOrig;
+    this->m_CleanedIntensityOriginalInputImage = copyOfOriginalInputImage;
     }
 
   landmarksConstellationDetector myDetector;
     {
     // a little abuse of the duplicator here
     DuplicatorType::Pointer duplicator = DuplicatorType::New();
-    duplicator->SetInputImage( this->GetInput() );
+    // Use HoughEyeAlignedImage + HoughTransform as starting point.
+    duplicator->SetInputImage( this->GetHoughEyeAlignedImage().GetPointer() );
     duplicator->Update();
     // The detector will use the output image after the Hough eye detector
-    myDetector.SetVolOrig( duplicator->GetModifiableOutput() );
-
+    myDetector.SetVolumeRoughAlignedWithHoughEye( duplicator->GetModifiableOutput() );
+    myDetector.SetHoughEyeFailure( this->m_HoughEyeFailure );
+    }
+    {
     // The detector also needs the original input if it has to fix a bad estimation of the MSP
-    duplicator->SetInputImage( this->m_ImageToBeResampled );
-    duplicator->Update();
-    myDetector.SetOriginalInput( duplicator->GetModifiableOutput() );
+    //HACK: TODO:  Why duplicate?  This seems crazy
+    DuplicatorType::Pointer duplicator2 = DuplicatorType::New();
+    duplicator2->SetInputImage( this->m_CleanedIntensityOriginalInputImage );
+    duplicator2->Update();
+    myDetector.SetOriginalInputImage( duplicator2->GetModifiableOutput() );
     }
 
   myDetector.SetInputTemplateModel( myModel );
@@ -266,228 +272,41 @@ BRAINSConstellationDetector2<TInputImage, TOutputImage>
       }
     }
 
+  myDetector.SetatlasVolume( this->GetatlasVolume() );
+  myDetector.SetatlasLandmarks( this->GetatlasLandmarks() );
+  myDetector.SetatlasLandmarkWeights( this->GetatlasLandmarkWeights() );
+
   myDetector.Compute();
-
-    {
-    RigidTransformType::Pointer ZeroCenteredTransform =
-      myDetector.GetACPCAlignedZeroCenteredTransform();
-
-    this->m_VersorTransform = VersorTransformType::New();
-    this->m_VersorTransform->SetFixedParameters( ZeroCenteredTransform->GetFixedParameters() );
-    itk::Versor<double>               versorRotation;
-    const itk::Matrix<double, 3, 3> & CleanedOrthogonalized = itk::Orthogonalize3DRotationMatrix(
-      ZeroCenteredTransform->GetMatrix() );
-    versorRotation.Set( CleanedOrthogonalized );
-    this->m_VersorTransform->SetRotation(versorRotation);
-    this->m_VersorTransform->SetTranslation( ZeroCenteredTransform->GetTranslation() );
-    }
-
-  WriteTransformToDisk( this->m_VersorTransform.GetPointer(), std::string("/tmp/OrigToACPC_VersorTransformLINE_291.mat") );
-
-  ////////////////////////////
-  // START BRAINSFit alternative
-    if( ! this->m_atlasVolume.empty() )
-      {
-      typedef itk::ImageFileReader<SImageType> AtlasReaderType;
-      AtlasReaderType::Pointer atlasReader = AtlasReaderType::New();
-      atlasReader->SetFileName( this->m_atlasVolume );
-      try
-        {
-        atlasReader->Update();
-        }
-      catch( itk::ExceptionObject & err )
-        {
-        std::cerr << "Error while reading atlasVolume file:\n "
-          << err << std::endl;
-        }
-
-      std::cout << "read atlas" << std::endl;
-      // TODO: prob needs a try-catch
-      LandmarksMapType referenceAtlasLandmarks = ReadSlicer3toITKLmk( this->m_atlasLandmarks );
-      std::cout << "read atlas landmarks " << std::endl;
-      LandmarksMapType acpcLandmarks;
-      itk::PrepareOutputLandmarks(
-        this->m_VersorTransform.GetPointer(), //Input RO
-        myDetector.GetNamedPoints(),
-        acpcLandmarks
-      );
-
-      // Create a better version of this->m_VersorTransform using BRAINSFit.
-      // take the the subjects landmarks in original space, and  landmarks from a reference Atlas, and compute an initial
-      // affine transform
-      // ( using logic from BRAINSLandmarkInitializer) and create initToAtlasAffineTransform.
-
-      typedef std::map<std::string, float> WeightType;
-      WeightType landmarkWeights;
-      if( this->m_atlasLandmarkWeights != "" )
-        {
-        landmarkWeights = ReadLandmarkWeights( this->m_atlasLandmarkWeights.c_str() );
-        }
-      typedef itk::LandmarkBasedTransformInitializer<AffineTransformType, SImageType, SImageType> LandmarkBasedInitializerType;
-      typedef typename LandmarkBasedInitializerType::LandmarkPointContainer LandmarkContainerType;
-      LandmarkContainerType fixedLmks;
-      LandmarkContainerType movingLmks;
-      typedef typename  LandmarksMapType::const_iterator LandmarkConstIterator;
-      typename LandmarkBasedInitializerType::LandmarkWeightType landmarkWgts;
-      for( LandmarkConstIterator fixedIt = referenceAtlasLandmarks.begin(); fixedIt != referenceAtlasLandmarks.end();
-        ++fixedIt )
-        {
-        LandmarkConstIterator movingIt = acpcLandmarks.find( fixedIt->first );
-        if( movingIt != acpcLandmarks.end() )
-          {
-          fixedLmks.push_back( fixedIt->second);
-          movingLmks.push_back( movingIt->second);
-          if( !this->m_atlasLandmarkWeights.empty() )
-            {
-            if( landmarkWeights.find( fixedIt->first ) != landmarkWeights.end() )
-              {
-              landmarkWgts.push_back( landmarkWeights[fixedIt->first] );
-              }
-            else
-              {
-              std::cout << "Landmark for " << fixedIt->first << " does not exist. "
-                << "Set the weight to 0.5 "
-                << std::endl;
-              landmarkWgts.push_back( 0.5F );
-              }
-            }
-          }
-        else
-          {
-          std::cout << "i shouldnt be here" << std::endl;
-          exit(-1);
-          //TODO:  Throw exception
-          }
-        }
-
-      typedef itk::LandmarkBasedTransformInitializer<AffineTransformType, SImageType, SImageType> LandmarkBasedInitializerType;
-      typename LandmarkBasedInitializerType::Pointer landmarkBasedInitializer = LandmarkBasedInitializerType::New();
-
-      if( !this->m_atlasLandmarkWeights.empty() )
-        {
-        landmarkBasedInitializer->SetLandmarkWeight( landmarkWgts );
-        }
-      landmarkBasedInitializer->SetFixedLandmarks( fixedLmks );
-      landmarkBasedInitializer->SetMovingLandmarks( movingLmks );
-
-      typedef itk::AffineTransform<double, Dimension> AffineTransformType;
-      typename AffineTransformType::Pointer initToAtlasAffineTransform = AffineTransformType::New();
-      landmarkBasedInitializer->SetTransform( initToAtlasAffineTransform );
-      landmarkBasedInitializer->InitializeTransform();
-
-      //HACK:  THIS IS WRONG!  m_VersorTransform was used to set movingLmks! initToAtlasAffineTransform->Compose( this->m_VersorTransform, true );
-      typedef itk::BRAINSFitHelper HelperType;
-      HelperType::Pointer brainsFitHelper = HelperType::New();
-
-      // Now Run BRAINSFitHelper class initialized with initToAtlasAffineTransform, original image, and atlas image
-      // adapted from BRAINSABC/brainseg/AtlasRegistrationMethod.hxx - do I need to change any of these parameters?
-      brainsFitHelper->SetNumberOfSamples(500000);
-      brainsFitHelper->SetNumberOfHistogramBins(50);
-      std::vector<int> numberOfIterations(1);
-      numberOfIterations[0] = 1500;
-      brainsFitHelper->SetNumberOfIterations(numberOfIterations);
-      brainsFitHelper->SetTranslationScale(1000);
-      brainsFitHelper->SetReproportionScale(1.0);
-      brainsFitHelper->SetSkewScale(1.0);
-
-      typedef itk::Image<float, 3>                            FloatImageType;
-      typedef itk::CastImageFilter<SImageType, FloatImageType> CastFilterType;
-
-        {
-        typename CastFilterType::Pointer fixedCastFilter = CastFilterType::New();
-        fixedCastFilter->SetInput( atlasReader->GetOutput() );
-        fixedCastFilter->Update();
-        brainsFitHelper->SetFixedVolume( fixedCastFilter->GetOutput() );
-
-        typename CastFilterType::Pointer movingCastFilter = CastFilterType::New();
-        movingCastFilter->SetInput( this->GetInput() );
-        movingCastFilter->Update();
-        brainsFitHelper->SetMovingVolume( movingCastFilter->GetOutput() );
-        }
-
-      std::vector<double> minimumStepSize(1);
-      minimumStepSize[0] = 0.005;
-      brainsFitHelper->SetMinimumStepLength(minimumStepSize);
-      std::vector<std::string> transformType(1);
-      transformType[0] = "Affine";
-      brainsFitHelper->SetTransformType(transformType);
-
-      brainsFitHelper->SetCurrentGenericTransform( initToAtlasAffineTransform.GetPointer() );
-      brainsFitHelper->Update();
-
-      this->m_VersorTransform =
-        itk::ComputeRigidTransformFromGeneric( brainsFitHelper->GetCurrentGenericTransform().GetPointer() );
-      if( this->m_VersorTransform.IsNull() )
-        {
-        // Fail if something weird happens.  TODO: This should throw an exception.
-        std::cout << "this->m_VersorTransform is null. It means we're not registering to the atlas, after all."
-          << std::endl;
-        std::cout << "FAILIING" << std::endl;
-        exit(-1);
-        }
-
-      //TODO: HACK:  Translate found ACPoint
-#if 0
-      // as a final step, translate the AC back to the origin.
-        {
-        LandmarkConstIterator                           acIter = acpcLandmarks.find( "AC" );
-        const VersorRigid3DTransformType::OutputPointType acOrigPoint =
-          "A transform of some sort here"->TransformPoint( acIter->second );
-
-        VersorTransformType::Pointer finalTransform = VersorTransformType::New();
-        finalTransform->SetFixedParameters( this->m_VersorTransform->GetFixedParameters() );
-        finalTransform->SetParameters( this->m_VersorTransform->GetParameters() );
-        finalTransform->GetInverse( invFinalTransform );
-
-        // TODO:  CHECK if this can be less convoluted. Too many inverses used.  translate the forward by positive
-        // rather than inverse by negative.
-        //
-        VersorRigid3DTransformType::OutputPointType acPoint = invFinalTransform->TransformPoint( acOrigPoint );
-          {
-          VersorRigid3DTransformType::OffsetType translation;
-          translation[0] = -acPoint[0];
-          translation[1] = -acPoint[1];
-          translation[2] = -acPoint[2];
-          invFinalTransform->Translate( translation, true );
-          }
-        invFinalTransform->GetInverse( finalTransform );
-
-        // TODO: Remove VersorRigid3DTransformType::OutputPointType acFinalPoint =  invFinalTransform->TransformPoint (
-        // acOrigPoint );
-        }
-#endif
-      }
-  ///END BRAINSFIT_ALTERNATIVE
-  ////////////////////////////
+  this->m_OrigToACPCVersorTransform = myDetector.GetImageOrigToACPCVersorTransform();
 
   if( LMC::globalverboseFlag )
     {
-    std::cout << "VersorRotation: " << this->m_VersorTransform->GetMatrix() << std::endl;
-    std::cout << "itkVersorRigid3DTransform Parameters: " << this->m_VersorTransform->GetParameters() << std::endl;
-    std::cout << "itkVersorRigid3DTransform FixedParameters: " << this->m_VersorTransform->GetFixedParameters()
+    std::cout << "VersorRotation: " << this->m_OrigToACPCVersorTransform->GetMatrix() << std::endl;
+    std::cout << "itkVersorRigid3DTransform Parameters: " << this->m_OrigToACPCVersorTransform->GetParameters() << std::endl;
+    std::cout << "itkVersorRigid3DTransform FixedParameters: " << this->m_OrigToACPCVersorTransform->GetFixedParameters()
       << std::endl;
-    std::cout << "itkVersorRigid3DTransform GetCenter(): " << this->m_VersorTransform->GetCenter() << std::endl;
-    std::cout << "itkVersorRigid3DTransform GetTranslation(): " << this->m_VersorTransform->GetTranslation()
+    std::cout << "itkVersorRigid3DTransform GetCenter(): " << this->m_OrigToACPCVersorTransform->GetCenter() << std::endl;
+    std::cout << "itkVersorRigid3DTransform GetTranslation(): " << this->m_OrigToACPCVersorTransform->GetTranslation()
                                                                    << std::endl;
-    std::cout << "itkVersorRigid3DTransform GetMatrix(): " << this->m_VersorTransform->GetMatrix()
+    std::cout << "itkVersorRigid3DTransform GetMatrix(): " << this->m_OrigToACPCVersorTransform->GetMatrix()
                                                               << std::endl;
 
-    std::cout << "itkRigid3DTransform Parameters: " << this->m_VersorTransform->GetParameters() << std::endl;
-    std::cout << "itkRigid3DTransform FixedParameters: " << this->m_VersorTransform->GetFixedParameters()
+    std::cout << "itkRigid3DTransform Parameters: " << this->m_OrigToACPCVersorTransform->GetParameters() << std::endl;
+    std::cout << "itkRigid3DTransform FixedParameters: " << this->m_OrigToACPCVersorTransform->GetFixedParameters()
       << std::endl;
-    std::cout << "itkRigid3DTransform GetCenter(): " << this->m_VersorTransform->GetCenter() << std::endl;
-    std::cout << "itkRigid3DTransform GetTranslation(): " << this->m_VersorTransform->GetTranslation() << std::endl;
-    std::cout << "itkRigid3DTransform GetMatrix(): " << this->m_VersorTransform->GetMatrix()
+    std::cout << "itkRigid3DTransform GetCenter(): " << this->m_OrigToACPCVersorTransform->GetCenter() << std::endl;
+    std::cout << "itkRigid3DTransform GetTranslation(): " << this->m_OrigToACPCVersorTransform->GetTranslation() << std::endl;
+    std::cout << "itkRigid3DTransform GetMatrix(): " << this->m_OrigToACPCVersorTransform->GetMatrix()
                                                         << std::endl;
-    std::cout << "itkVersorRigid3DTransform: \n" <<  this->m_VersorTransform << std::endl;
-    std::cout << "itkRigid3DTransform: \n" <<  this->m_VersorTransform << std::endl;
+    std::cout << "itkVersorRigid3DTransform: \n" <<  this->m_OrigToACPCVersorTransform << std::endl;
+    std::cout << "itkRigid3DTransform: \n" <<  this->m_OrigToACPCVersorTransform << std::endl;
     }
 
   itk::PrepareOutputImages(this->m_OutputResampledImage,
     this->m_OutputImage,
     this->m_OutputUntransformedClippedVolume,
-    myDetector.GetOriginalInput().GetPointer(), //Input RO
-    this->m_VersorTransform.GetPointer(), //Input RO
+    myDetector.GetOriginalInputImage().GetPointer(), //Input RO
+    this->m_OrigToACPCVersorTransform.GetPointer(), //Input RO
     this->m_AcLowerBound, //Input RO
     BackgroundFillValue, //Input RO
     this->m_InterpolationMode, //Input RO
@@ -495,11 +314,6 @@ BRAINSConstellationDetector2<TInputImage, TOutputImage>
     this->m_OtsuPercentileThreshold //Input RO
   );
 
-  itk::PrepareOutputLandmarks(
-    this->m_VersorTransform.GetPointer(), //Input RO
-    myDetector.GetNamedPoints(),
-    this->m_AlignedPoints
-  );
 
   if( globalImagedebugLevel > 3 )
     {
@@ -509,14 +323,14 @@ BRAINSConstellationDetector2<TInputImage, TOutputImage>
       SImageType::Pointer isoTaggedImage =
         TransformResample<SImageType, SImageType>(
           TaggedOriginalImage.GetPointer(), MakeIsoTropicReferenceImage().GetPointer(), BackgroundFillValue,
-          GetInterpolatorFromString<SImageType>("Linear").GetPointer(), this->m_VersorTransform.GetPointer() );
+          GetInterpolatorFromString<SImageType>("Linear").GetPointer(), this->m_OrigToACPCVersorTransform.GetPointer() );
       itkUtil::WriteImage<SImageType>(isoTaggedImage, this->m_ResultsDir + "/ISO_Lmk_MSP.nii.gz");
       }
       {
       SImageType::Pointer VersorisoTaggedImage =
         TransformResample<SImageType, SImageType>(
           TaggedOriginalImage.GetPointer(), MakeIsoTropicReferenceImage().GetPointer(), BackgroundFillValue,
-          GetInterpolatorFromString<SImageType>("Linear").GetPointer(), this->m_VersorTransform.GetPointer() );
+          GetInterpolatorFromString<SImageType>("Linear").GetPointer(), this->m_OrigToACPCVersorTransform.GetPointer() );
       itkUtil::WriteImage<SImageType>(VersorisoTaggedImage, this->m_ResultsDir + "/Versor_ISO_Lmk_MSP.nii.gz");
       }
       {
@@ -528,6 +342,12 @@ BRAINSConstellationDetector2<TInputImage, TOutputImage>
       itkUtil::WriteImage<SImageType>(RigidMSPImage, this->m_ResultsDir + "/RigidMSPImage_Lmk_MSP.nii.gz");
       }
     }
+
+  itk::ApplyInverseOfTransformToLandmarks(
+    this->m_OrigToACPCVersorTransform.GetPointer(), //Input RO
+    myDetector.GetOriginalSpaceNamedPoints(),
+    this->m_AlignedPoints
+  );
   if( this->m_WriteBranded2DImage.compare("") != 0 )
     {
     MakeBranded2DImage(this->m_OutputResampledImage.GetPointer(), myDetector,

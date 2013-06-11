@@ -151,11 +151,19 @@ public:
   itkSetObjectMacro(OriginalInputImage, SImageType);
   itkGetConstObjectMacro(OriginalInputImage, SImageType);
 
+  /** GetHoughEyeAlignedImage */
+  SImageType::ConstPointer GetHoughEyeAlignedImage(void) const
+    {
+    SImageType::ConstPointer internalImage = this->GetInput(0);
+    return internalImage;
+    }
+
+
   // Get Basic Outputs
 
   /** Get the versor transform */
-  itkGetConstObjectMacro(VersorTransform, VersorTransformType);
-  itkGetConstObjectMacro(InvVersorTransform, VersorTransformType);
+  itkGetConstObjectMacro(OrigToACPCVersorTransform, VersorTransformType);
+  itkGetConstObjectMacro(ACPCToOrigVersorTransform, VersorTransformType);
 
   /** Get the named points in original space */
   const LandmarksMapType & GetOriginalPoints()
@@ -182,7 +190,7 @@ public:
   itkGetConstObjectMacro(OutputUntransformedClippedVolume, SImageType);
 
   /** Get the image to be resampled */
-  itkGetConstObjectMacro(ImageToBeResampled, SImageType);
+  itkGetConstObjectMacro(CleanedIntensityOriginalInputImage, SImageType);
 
   /** Get the Hough eye transform */
   itkGetModifiableObjectMacro(HoughEyeTransform, VersorTransformType);
@@ -271,6 +279,10 @@ public:
   itkSetMacro(atlasLandmarks, std::string);
   itkSetMacro(atlasLandmarkWeights, std::string);
 
+  itkGetMacro(atlasVolume, std::string);
+  itkGetMacro(atlasLandmarks, std::string);
+  itkGetMacro(atlasLandmarkWeights, std::string);
+
 protected:
 
   BRAINSConstellationDetector2();
@@ -314,8 +326,8 @@ protected:
   std::map<std::string, double>  m_SearchRadii;
 
   // Outputs
-  VersorTransformType::Pointer m_VersorTransform;
-  VersorTransformType::Pointer m_InvVersorTransform;
+  VersorTransformType::Pointer m_OrigToACPCVersorTransform;
+  VersorTransformType::Pointer m_ACPCToOrigVersorTransform;
   LandmarksMapType             m_AlignedPoints;
   LandmarksMapType             m_OriginalPoints;
   SImageType::Pointer          m_OutputImage;          // Output image w/o
@@ -323,7 +335,7 @@ protected:
   SImageType::Pointer m_OutputResampledImage;          // Output image w/
                                                        // interpolation
   SImageType::Pointer m_OutputUntransformedClippedVolume;
-  SImageType::Pointer m_ImageToBeResampled;
+  SImageType::Pointer m_CleanedIntensityOriginalInputImage;
 
   /** Advanced parameters */
   /** Manual Override */
@@ -348,9 +360,9 @@ protected:
   std::string  m_WriteBranded2DImage;
   std::string  m_ResultsDir;                    // default = "./"
 
-  std::string  m_atlasVolume; // The reference atlas image
-  std::string  m_atlasLandmarks; // The reference atlas landmarks
-  std::string  m_atlasLandmarkWeights; // The reference atlas landmark weights
+  std::string m_atlasVolume; // The reference atlas image
+  std::string m_atlasLandmarks; // The reference atlas landmarks
+  std::string m_atlasLandmarkWeights; // The reference atlas landmark weights
 
 private:
 

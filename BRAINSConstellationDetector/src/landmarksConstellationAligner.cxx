@@ -48,9 +48,9 @@ RigidTransformType::Pointer GetACPCAlignedZeroCenteredTransform(const LandmarksM
 
   ZeroCenter.Fill(0.0);
   RigidTransformType::Pointer landmarkDefinedACPCAlignedToZeroTransform = computeTmspFromPoints(
-    GetOriginalSpaceNamedPoint( landmarks, "RP"),
-    GetOriginalSpaceNamedPoint( landmarks, "AC"),
-    GetOriginalSpaceNamedPoint( landmarks, "PC"),
+    GetNamedPointFromLandmarkList( landmarks, "RP"),
+    GetNamedPointFromLandmarkList( landmarks, "AC"),
+    GetNamedPointFromLandmarkList( landmarks, "PC"),
     ZeroCenter);
   return landmarkDefinedACPCAlignedToZeroTransform;
 }

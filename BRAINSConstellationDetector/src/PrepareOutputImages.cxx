@@ -10,7 +10,7 @@
 namespace itk
 {
 
-  SImageType::PointType GetOriginalSpaceNamedPoint(const LandmarksMapType & landmarks, const std::string & NamedPoint)
+  SImageType::PointType GetNamedPointFromLandmarkList(const LandmarksMapType & landmarks, const std::string & NamedPoint)
     {
     LandmarksMapType::const_iterator itpair = landmarks.find(NamedPoint);
 
@@ -149,7 +149,7 @@ namespace itk
       }
     }
 
-  void PrepareOutputLandmarks(
+  void ApplyInverseOfTransformToLandmarks(
     VersorTransformType::ConstPointer lVersorTransform,
     const LandmarksMapType & inputLmks,
     LandmarksMapType & outputLmks
@@ -163,13 +163,13 @@ namespace itk
       lVersorTransform->GetInverse(lInvVersorTransform);
       }
 
-
+    outputLmks.clear();
     for( LandmarksMapType::const_iterator lit = inputLmks.begin();
       lit != inputLmks.end(); ++lit )
       {
       outputLmks[lit->first] =
         lInvVersorTransform->TransformPoint
-        ( GetOriginalSpaceNamedPoint(inputLmks, lit->first) );
+        ( GetNamedPointFromLandmarkList(inputLmks, lit->first) );
       }
     }
 }

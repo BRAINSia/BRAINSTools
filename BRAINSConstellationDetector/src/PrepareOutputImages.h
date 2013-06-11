@@ -7,7 +7,7 @@
 namespace itk
 {
 
-  extern SImageType::PointType GetOriginalSpaceNamedPoint(
+  extern SImageType::PointType GetNamedPointFromLandmarkList(
     const LandmarksMapType & landmarks,
     const std::string & NamedPoint);
 
@@ -23,7 +23,7 @@ namespace itk
     const double lOtsuPercentileThreshold
   );
 
-  extern void PrepareOutputLandmarks(
+  extern void ApplyInverseOfTransformToLandmarks(
     VersorTransformType::ConstPointer lVersorTransform,
     const LandmarksMapType & inputLmks,
     LandmarksMapType & outputLmks

@@ -48,13 +48,13 @@ public:
   // Force the setting of the point values to override those that were specified.
   void SetOriginalSpaceNamedPoint(const std::string & NamedPoint, const SImageType::PointType & PointValue)
   {
-    this->m_NamedPoint[NamedPoint] = PointValue;
+    this->m_OriginalSpaceNamedPoints[NamedPoint] = PointValue;
     return;
   }
 
-  const LandmarksMapType & GetNamedPoints(void) const
+  const LandmarksMapType & GetOriginalSpaceNamedPoints(void) const
   {
-    return this->m_NamedPoint;
+    return this->m_OriginalSpaceNamedPoints;
   }
 
   void SetMSPQualityLevel(const int newLevel)
@@ -67,19 +67,19 @@ public:
     m_TemplateRadius = NewTemplateRadius;
   }
 
-  void SetVolOrig(SImageType::Pointer image)
+  void SetVolumeRoughAlignedWithHoughEye(SImageType::Pointer image)
   {
-    m_VolOrig = image;  // This input is the output of Hough Eye detector
+    m_VolumeRoughAlignedWithHoughEye = image;  // This input is the output of Hough Eye detector
   }
 
-  void SetOriginalInput(SImageType::Pointer image)
+  void SetOriginalInputImage(SImageType::Pointer image)
   {
-    m_OriginalInput = image; // This is the original input of BCD
+    m_OriginalInputImage = image; // This is the original input of BCD
   }
 
-  SImageType::Pointer GetOriginalInput(void) const
+  SImageType::Pointer GetOriginalInputImage(void) const
   {
-    return this->m_OriginalInput; // Returns the original input of BCD
+    return this->m_OriginalInputImage; // Returns the original input of BCD
   }
 
   void SetInputTemplateModel(landmarksConstellationModelIO & myModel)
@@ -179,8 +179,7 @@ public:
   {
     itk::ImageDuplicator<SImageType>::Pointer duplicator = itk::ImageDuplicator<SImageType>::New();
 
-    duplicator->SetInputImage(this->m_VolOrig);
-    duplicator->Update();
+    duplicator->SetInputImage(this->GetOriginalInputImage());
     SImageType::Pointer taggedImage = duplicator->GetModifiableOutput();
 
     SImageType::PixelType low=0.0;
@@ -188,37 +187,42 @@ public:
     setLowHigh<SImageType>(taggedImage, low, high, 0.01F);
 
     SImageType::IndexType PTIndex;
-    taggedImage->TransformPhysicalPointToIndex(GetOriginalSpaceNamedPoint(this->GetNamedPoints(),"AC"), PTIndex);
+    taggedImage->TransformPhysicalPointToIndex(GetNamedPointFromLandmarkList(this->GetOriginalSpaceNamedPoints(),"AC"), PTIndex);
     taggedImage->SetPixel(PTIndex, high);
-    taggedImage->TransformPhysicalPointToIndex(GetOriginalSpaceNamedPoint(this->GetNamedPoints(),"PC"), PTIndex);
+    taggedImage->TransformPhysicalPointToIndex(GetNamedPointFromLandmarkList(this->GetOriginalSpaceNamedPoints(),"PC"), PTIndex);
     taggedImage->SetPixel(PTIndex, high);
-    taggedImage->TransformPhysicalPointToIndex(GetOriginalSpaceNamedPoint(this->GetNamedPoints(),"VN4"), PTIndex);
+    taggedImage->TransformPhysicalPointToIndex(GetNamedPointFromLandmarkList(this->GetOriginalSpaceNamedPoints(),"VN4"), PTIndex);
     taggedImage->SetPixel(PTIndex, high);
-    taggedImage->TransformPhysicalPointToIndex(GetOriginalSpaceNamedPoint(this->GetNamedPoints(),"RP"), PTIndex);
+    taggedImage->TransformPhysicalPointToIndex(GetNamedPointFromLandmarkList(this->GetOriginalSpaceNamedPoints(),"RP"), PTIndex);
     taggedImage->SetPixel(PTIndex, high);
     return taggedImage;
   }
 
-  RigidTransformType::Pointer GetACPCAlignedZeroCenteredTransform(void) const
-  {
-    SImageType::PointType ZeroCenter;
-
-    ZeroCenter.Fill(0.0);
-    RigidTransformType::Pointer
-      landmarkDefinedACPCAlignedToZeroTransform =
-      computeTmspFromPoints(GetOriginalSpaceNamedPoint(this->GetNamedPoints(),"RP"),
-                            GetOriginalSpaceNamedPoint(this->GetNamedPoints(),"AC"),
-                            GetOriginalSpaceNamedPoint(this->GetNamedPoints(),"PC"),
-                            ZeroCenter);
-    return landmarkDefinedACPCAlignedToZeroTransform;
-  }
 
   SImageType::Pointer GetVolumeMSP()
   {
     return this->m_VolumeMSP;
   }
 
+  void SetatlasVolume( const std::string & atlasVolume )
+    {
+    this->m_atlasVolume = atlasVolume;
+    }
+  void SetatlasLandmarks( const std::string & atlasLandmarks )
+    {
+    this->m_atlasLandmarks = atlasLandmarks;
+    }
+  void SetatlasLandmarkWeights( const std::string & atlasLandmarkWeights )
+    {
+    this->m_atlasLandmarkWeights = atlasLandmarkWeights;
+    }
+
+  VersorTransformType::Pointer GetImageOrigToACPCVersorTransform(void) const;
+  void ComputeFinalRefinedACPCAlignedTransform(void);
+protected:
+
 private:
+  VersorTransformType::Pointer ComputeACPCAlignedZeroCenteredTransform(void);
 
   // Linear model estimation using EPCA
   void LinearEstimation( LandmarksMapType & namedPoints, const std::vector<std::string> & processingList,
@@ -252,38 +256,31 @@ private:
                                             const bool ComputeOutsideSearchRadius, double & cc_Max,
                                             const std::string & mapID);
 
-private:
   RigidTransformType::Pointer   m_TmspBasedOnReflectionCrossCorrelation;
   SImageType::PointType         m_CenterOfHeadMassEMSP;
   SImageType::PointType         m_BestCenter;
-  SImageType::Pointer           m_VolOrig;
-  SImageType::Pointer           m_OriginalInput;
+  SImageType::Pointer           m_VolumeRoughAlignedWithHoughEye;
+  SImageType::Pointer           m_OriginalInputImage;
   SImageType::Pointer           m_VolumeMSP;
   landmarksConstellationModelIO m_InputTemplateModel;
   ValMapType                    m_TemplateRadius;
   int                           m_mspQualityLevel;
   std::string                   m_ResultsDir;
 
-  LandmarksMapType m_NamedPoint;                  // named points in the
+  LandmarksMapType m_OriginalSpaceNamedPoints;             // named points in the
                                                   // original space
                                                   // even before the Hough eye
                                                   // detector
+
   LandmarksMapType m_NamedPointEMSP;              // named points in EMSP space
-  LandmarksMapType m_NamedPointACPC;              // named points in
-                                                  // ACPC-aligned space
-  LandmarksMapType m_NamedPointACPCRaw;           // reserve this map to avoid
-                                                  // the
-                                                  // accumulation of local
-                                                  // search
-                                                  // errors
+
   std::vector<std::string> m_MidlinePointsList;   // name list of the landmarks
                                                   // that
                                                   // should be treated as
                                                   // midline landmarks
 
   RigidTransformType::Pointer  m_finalTmsp;
-  VersorTransformType::Pointer m_VersorTransform;
-  VersorTransformType::Pointer m_InvVersorTransform;
+  VersorTransformType::Pointer m_ImageOrigToACPCVersorTransform;
 
   // Wei: Read in LE, RE value for linear model estimation
   VersorTransformType::Pointer m_HoughEyeTransform;
@@ -305,6 +302,10 @@ private:
                                                                 // subtracted by
                                                                 // PCA
   std::map<std::string, double> m_SearchRadii;
+
+  std::string m_atlasVolume; // The reference atlas image
+  std::string m_atlasLandmarks; // The reference atlas landmarks
+  std::string m_atlasLandmarkWeights; // The reference atlas landmark weights
 };
 
 #endif // __landmarksConstellationDetector__h

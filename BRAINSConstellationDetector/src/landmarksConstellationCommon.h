@@ -458,6 +458,7 @@ double removeVectorMean(DType *y, int n)
   return mean;
 }
 
+#include <numeric>
 // ///////////////////////////////////////////////////////
 template <class DType>
 DType dot(const std::vector<DType> & a, const std::vector<DType> & b)
@@ -473,8 +474,10 @@ DType dot(const std::vector<DType> & a, const std::vector<DType> & b)
     ++ait;
     ++bit;
     }
-
   return dot;
+#else
+  return std::inner_product(a.begin(),a.end(),b.begin(),static_cast<DType>(0.0) );
+#endif
 }
 
 // ///////////////////////////////////////////////////////

@@ -142,7 +142,7 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
     )
   ### --- End Project specific additions
   set(${proj}_REPOSITORY ${git_protocol}://itk.org/ITK.git)
-  set(${proj}_GIT_TAG 221e29268a931779c09cfd7a14bf72440d934860)
+  set(${proj}_GIT_TAG d864ce9171c4d37331f9114175a6443421da5dd9)
   set(ITK_VERSION_ID ITK-4.5)
 
   ExternalProject_Add(${proj}

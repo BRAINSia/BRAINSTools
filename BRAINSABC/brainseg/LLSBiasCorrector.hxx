@@ -446,13 +446,15 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>
     {
     workingofft[2] = MIN_SKIP_SIZE;
     }
-  muLogMacro(
-    << "Working offsets: " << workingofft[0] << " x " << workingofft[1] << " x " << workingofft[2] << std::endl);
+  muLogMacro(<< "Working offsets: "
+             << workingofft[0] << " x "
+             << workingofft[1] << " x "
+             << workingofft[2] << std::endl);
 #else
   //  const unsigned int workingofft[3] ={ {1,1,1} };
 #endif
 
-  unsigned int numChannels = TotalMapSize(this->m_InputImages);
+  unsigned int numModalities = this->m_InputImages.size();
 
   const unsigned int numClasses = m_BiasPosteriors.size();
 
@@ -516,14 +518,14 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>
 #endif
 
 #if LLSBIAS_USE_NORMAL_EQUATION
-  MatrixType lhs(numCoefficients * numChannels, numCoefficients * numChannels);
+  MatrixType lhs(numCoefficients * numModalities, numCoefficients * numModalities);
 
-  MatrixType rhs(numCoefficients * numChannels, 1);
+  MatrixType rhs(numCoefficients * numModalities, 1);
 
 #else
-  MatrixType lhs(numEquations * numChannels, numCoefficients * numChannels);
+  MatrixType lhs(numEquations * numModalities, numCoefficients * numModalities);
 
-  MatrixType rhs(numEquations * numChannels, 1);
+  MatrixType rhs(numEquations * numModalities, 1);
 
 #endif
 
@@ -598,12 +600,12 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>
 #if defined(LOCAL_USE_OPEN_MP)
 #pragma omp parallel for default(shared)
 #endif
-  for(unsigned int ichan = 0; ichan < (LOOPITERTYPE)numChannels; ichan++ )
+  for(unsigned int ichan = 0; ichan < (LOOPITERTYPE)numModalities; ichan++ )
     {
 #if defined(LOCAL_USE_OPEN_MP)
 #pragma omp parallel for default(shared)
 #endif
-    for( LOOPITERTYPE jchan = 0; jchan < (LOOPITERTYPE)numChannels; jchan++ )
+    for( LOOPITERTYPE jchan = 0; jchan < (LOOPITERTYPE)numModalities; jchan++ )
       {
       MatrixType Wij_A(numEquations, numCoefficients, 0.0);
       {
@@ -692,10 +694,10 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>
   {
   unsigned int ichan = 0;
   for(typename MapOfInputImageVectors::const_iterator mapIt = this->m_InputImages.begin();
-      mapIt != this->m_InputImages.end(); ++mapIt)
+      mapIt != this->m_InputImages.end(); ++mapIt,++ichan)
     {
     for(typename InputImageVector::const_iterator imIt = mapIt->second.begin();
-        imIt != mapIt->second.end(); ++imIt, ++ichan)
+        imIt != mapIt->second.end(); ++imIt)
       {
       InternalImagePointer curOutput = InternalImageType::New();
       curOutput->CopyInformation((*imIt));

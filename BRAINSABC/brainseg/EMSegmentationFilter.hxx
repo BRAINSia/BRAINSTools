@@ -1097,7 +1097,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
       }
 
 
-    const unsigned int numberOfModes = intensityList.size();
+    const unsigned int numberOfModes = TotalMapSize(intensityList);
     typedef typename itk::MultiModeHistogramThresholdBinaryImageFilter<InputImageType,
       ByteImageType> ThresholdRegionFinderType;
     typename ThresholdRegionFinderType::ThresholdArrayType QuantileLowerThreshold(numberOfModes);

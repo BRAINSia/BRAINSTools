@@ -60,7 +60,7 @@
     <directory>
       <name>outputDirectory</name>
       <longflag>--outputDirectory</longflag>
-      <label>Output Directtory</label>
+      <label>Output Directory</label>
       <channel>output</channel>
       <description><![CDATA[Directory holding the output NRRD format]]></description>
       <default>.</default>
@@ -101,7 +101,7 @@
       <name>useBMatrixGradientDirections</name>
       <longflag>--useBMatrixGradientDirections</longflag>
       <label>Use BMatrix Gradient Directions</label>
-      <description><![CDATA[Fill the nhdr header with the gradient directions and bvalues computed out of the BMatrix. Only changes behavior for Siemens data.]]></description>
+      <description><![CDATA[Fill the nhdr header with the gradient directions and bvalues computed out of the BMatrix. Only changes behavior for Siemens data.  In some cases the standard public gradients are not properly computed.  The gradients can emperically computed from the private BMatrix fields.  In some cases the private BMatrix is consistent with the public grandients, but not in all cases, when it exists BMatrix is usually most robust.]]></description>
       <default>false</default>
     </boolean>
   </parameters>

@@ -73,9 +73,9 @@ option(USE_BRAINSLandmarkInitializer      "Build BRAINSLandmarkInitializer"     
 option(USE_ImageCalculator                "Build ImageCalculator"                ON)
 option(USE_BRAINSSnapShotWriter           "Build BRAINSSnapShotWriter"           ON)
 option(USE_ConvertBetweenFileFormats      "Build ConvertBetweenFileFormats"      OFF)
-option(USE_BRAINSMultiSTAPLE              "Build BRAINSMultiSTAPLE"              ON)
+option(USE_BRAINSMultiSTAPLE              "Build BRAINSMultiSTAPLE"              OFF)
 option(USE_DWIConvert                     "Build DWIConvert"                     ON)
-option(USE_BRAINSCreateLabelMapFromProbabilityMaps "Build BRAINSCreateLabelMapFromProbabilityMaps" ON)
+option(USE_BRAINSCreateLabelMapFromProbabilityMaps "Build BRAINSCreateLabelMapFromProbabilityMaps" OFF)
 
 if( NOT USE_ANTS )
 option(USE_ANTS                           "Build ANTS"                           ON)

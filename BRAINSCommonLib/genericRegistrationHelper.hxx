@@ -60,10 +60,12 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
   m_SkewScale(25.0),
   m_InitialTransformPassThruFlag(false),
   m_BackgroundFillValue(0.0),
+  m_ActualNumberOfIterations(0),
   m_DisplayDeformedImage(false),
   m_PromptUserAfterDisplay(false),
   m_FinalMetricValue(0),
-  m_ObserveIterations(true)
+  m_ObserveIterations(true),
+  m_ForceMINumberOfThreads(-1)
 {
   this->SetNumberOfRequiredOutputs(1);    // for the Transform
 

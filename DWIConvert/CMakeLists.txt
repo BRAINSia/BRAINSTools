@@ -29,8 +29,6 @@ target_link_libraries(DWIConvertSupportLib ${ITK_LIBRARIES} )
 # several files needed down in ExtenededTesting
 StandardBRAINSBuildMacro(NAME DWIConvert EXECUTABLE_ONLY
   TARGET_LIBRARIES BRAINSCommonLib DWIConvertSupportLib)
-StandardBRAINSBuildMacro(NAME DWIConvertOld EXECUTABLE_ONLY
-  TARGET_LIBRARIES BRAINSCommonLib DWIConvertSupportLib)
 
 if(BUILD_TESTING AND NOT Slicer_BUILD_BRAINSTOOLS)
   add_subdirectory(TestSuite)

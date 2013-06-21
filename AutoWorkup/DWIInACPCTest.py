@@ -37,7 +37,6 @@ import sys
 #\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 #####################################################################################
 #     Prepend the shell environment search paths
-import os
 PROGRAM_PATHS = '/Users/johnsonhj/src/BT-build/bin:/Users/johnsonhj/src/ANTs-clang/bin:/Users/johnsonhj/src/DTIPrep-build/bin:/usr/local/bin'
 PROGRAM_PATHS = PROGRAM_PATHS.split(':')
 PROGRAM_PATHS.extend(os.environ['PATH'].split(':'))
@@ -51,7 +50,7 @@ CLUSTER_QUEUE = '-q OSX'
 
 # Platform specific information
 #     Prepend the python search paths
-PYTHON_AUX_PATHS = '/raid0/homes/johnsonhj/src/BRAINSTools/AutoWorkup:/raid0/homes/johnsonhj/src/BSA-clang31/SimpleITK-build/XXXWrapping/:/raid0/homes/johnsonhj/src/BSA-clang31/NIPYPE'
+PYTHON_AUX_PATHS = '/Users/johnsonhj/src/BRAINSTools/AutoWorkup:/Users/johnsonhj/src/BT-build/SimpleITK-build/XXXWrapping/:/Users/johnsonhj/src/BT-build/NIPYPE'
 PYTHON_AUX_PATHS = PYTHON_AUX_PATHS.split(':')
 PYTHON_AUX_PATHS.extend(sys.path)
 sys.path = PYTHON_AUX_PATHS
@@ -68,31 +67,31 @@ from SEMTools import *
 
 
 def get_global_sge_script(pythonPathsList, binPathsList, customEnvironment={}):
-    """This is a wrapper script for running commands on an SGE cluster
-so that all the python modules and commands are pathed properly"""
+    '''This is a wrapper script for running commands on an SGE cluster
+so that all the python modules and commands are pathed properly'''
 
-    custEnvString = ""
+    custEnvString = ''
     for key, value in customEnvironment.items():
-        custEnvString += "export " + key + "=" + value + "\n"
+        custEnvString += 'export ' + key + '=' + value + '\n'
 
-    PYTHONPATH = ":".join(pythonPathsList)
-    BASE_BUILDS = ":".join(binPathsList)
-    GLOBAL_SGE_SCRIPT = """#!/bin/bash
-echo "STARTED at: $(date +'%F-%T')"
-echo "Ran on: $(hostname)"
+    PYTHONPATH = ':'.join(pythonPathsList)
+    BASE_BUILDS = ':'.join(binPathsList)
+    GLOBAL_SGE_SCRIPT = '''#!/bin/bash
+echo 'STARTED at: $(date +'%F-%T')'
+echo 'Ran on: $(hostname)'
 export PATH={BINPATH}
 export PYTHONPATH={PYTHONPATH}
 
-echo "========= CUSTOM ENVIORNMENT SETTINGS =========="
-echo "export PYTHONPATH={PYTHONPATH}"
-echo "export PATH={BINPATH}"
-echo "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+echo '========= CUSTOM ENVIORNMENT SETTINGS =========='
+echo 'export PYTHONPATH={PYTHONPATH}'
+echo 'export PATH={BINPATH}'
+echo '^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^'
 
-echo "With custom environment:"
+echo 'With custom environment:'
 echo {CUSTENV}
 {CUSTENV}
 ## NOTE:  nipype inserts the actual commands that need running below this section.
-""".format(PYTHONPATH=PYTHONPATH, BINPATH=BASE_BUILDS, CUSTENV=custEnvString)
+'''.format(PYTHONPATH=PYTHONPATH, BINPATH=BASE_BUILDS, CUSTENV=custEnvString)
     return GLOBAL_SGE_SCRIPT
 
 ## Create the shell wrapper script for ensuring that all jobs running on remote hosts from SGE
@@ -102,15 +101,15 @@ SGE_JOB_SCRIPT = JOB_SCRIPT
 
 
 def GetDWIReferenceImagesFromSessionID(SESSION_TUPLE, BASE_STRUCT, BASE_DWI):
-    """A function to extract file names from base parameters"""
+    '''A function to extract file names from base parameters'''
     import os
     import glob
     PROJ_ID = SESSION_TUPLE[0]
     SUBJ_ID = SESSION_TUPLE[1]
     SESSION_ID = SESSION_TUPLE[2]
-    FixImageList = glob.glob("{BASE_STRUCT}/{PROJ_ID}/{SUBJ_ID}/{SESSION_ID}/TissueClassify/t2_average_BRAINSABC.nii.gz".format(BASE_STRUCT=BASE_STRUCT, PROJ_ID=PROJ_ID, SUBJ_ID=SUBJ_ID, SESSION_ID=SESSION_ID))
-    FixMaskImageList = glob.glob("{BASE_STRUCT}/{PROJ_ID}/{SUBJ_ID}/{SESSION_ID}/TissueClassify/fixed_brainlabels_seg.nii.gz".format(BASE_STRUCT=BASE_STRUCT, PROJ_ID=PROJ_ID, SUBJ_ID=SUBJ_ID, SESSION_ID=SESSION_ID))
-    MovingGlobPattern = "{BASE_DWI}/{PROJ_ID}/{SUBJ_ID}/{SESSION_ID}/*/*_[Cc][oO][nN][Cc][aA][tT]_QCed.nrrd".format(
+    FixImageList = glob.glob('{BASE_STRUCT}/{PROJ_ID}/{SUBJ_ID}/{SESSION_ID}/TissueClassify/t2_average_BRAINSABC.nii.gz'.format(BASE_STRUCT=BASE_STRUCT, PROJ_ID=PROJ_ID, SUBJ_ID=SUBJ_ID, SESSION_ID=SESSION_ID))
+    FixMaskImageList = glob.glob('{BASE_STRUCT}/{PROJ_ID}/{SUBJ_ID}/{SESSION_ID}/TissueClassify/fixed_brainlabels_seg.nii.gz'.format(BASE_STRUCT=BASE_STRUCT, PROJ_ID=PROJ_ID, SUBJ_ID=SUBJ_ID, SESSION_ID=SESSION_ID))
+    MovingGlobPattern = '{BASE_DWI}/{PROJ_ID}/{SUBJ_ID}/{SESSION_ID}/*/*_[Cc][oO][nN][Cc][aA][tT]_QCed.nrrd'.format(
         BASE_DWI=BASE_DWI, PROJ_ID=PROJ_ID, SUBJ_ID=SUBJ_ID, SESSION_ID=SESSION_ID)
 
     print(MovingGlobPattern)
@@ -121,24 +120,24 @@ def GetDWIReferenceImagesFromSessionID(SESSION_TUPLE, BASE_STRUCT, BASE_DWI):
 
     ## Should check that each list has 1 element
 
-    print "^" * 80
+    print '^' * 80
     print SESSION_TUPLE
     print BASE_STRUCT
     print BASE_DWI
-    print "^" * 80
+    print '^' * 80
     print FixImageList
     print FixMaskImageList
     print MovingDWIList
-    print "^" * 80
+    print '^' * 80
     FixImage = FixImageList[0]
     FixMaskImage = FixMaskImageList[0]
     MovingDWI = MovingDWIList[0]
 
-    print "=" * 80
+    print '=' * 80
     print FixImage
     print FixMaskImage
     print MovingDWI
-    print "=" * 80
+    print '=' * 80
 
     return PROJ_ID, SUBJ_ID, SESSION_ID, FixImage, FixMaskImage, MovingDWI
 
@@ -150,12 +149,12 @@ def MergeByExtendListElements(FAImageList):
         ListOfImagesDictionaries.append({'FA': FAImage, 'DUMMY': FAImage})
     ## HACK:  Need to make it so that AVG_AIR.nii.gz is has a background value of 1
     registrationImageTypes = ['FA']  # ['T1','T2'] someday.
-    """
+    '''
     ***********
     HACK: Here's the deal - interpolationMapping is supposed to define the type of interpolation done in
           the call to antsRegistration(), NOT define the function to call in the registration node!
     ***********
-    """
+    '''
     # DefaultContinuousInterpolationType='LanczosWindowedSinc' ## Could also be Linear for speed.
     DefaultContinuousInterpolationType = 'Linear'
     DTIinterpolationType = 'ResampleDTIlogEuclidean'
@@ -170,19 +169,19 @@ def MergeByExtendListElements(FAImageList):
     return ListOfImagesDictionaries, registrationImageTypes, interpolationMapping
 
 
-def CreateDWIWorkFlow(SESSIONS_TO_PROCESS, BASE_STRUCT, BASE_DWI):
-    WFname = "DWIWorkflow_" + str(SESSIONS_TO_PROCESS[0]) + "_" + str(SESSIONS_TO_PROCESS[1]) + "_" + str(SESSIONS_TO_PROCESS[2])
+def CreateDWIWorkFlow(SESSION_TUPLE, BASE_STRUCT, BASE_DWI):
+    WFname = 'DWIWorkflow_' + str(SESSION_TUPLE[0]) + '_' + str(SESSION_TUPLE[1]) + '_' + str(SESSION_TUPLE[2])
     DWIWorkflow = pe.Workflow(name=WFname)
     # DWIWorkflow.base_dir = os.path.join(CACHE_BASE,session_name)
 
     inputsSpec = pe.Node(interface=IdentityInterface(fields=['SESSION_TUPLE']),
                          name='inputspec')
-    inputsSpec.inputs.SESSION_TUPLE = SESSIONS_TO_PROCESS
+    inputsSpec.inputs.SESSION_TUPLE = SESSION_TUPLE
 
     GetFileNamesNode = pe.Node(interface=Function(function=GetDWIReferenceImagesFromSessionID,
                                input_names=['SESSION_TUPLE', 'BASE_STRUCT', 'BASE_DWI'],
                                output_names=['PROJ_ID', 'SUBJ_ID', 'SESSION_ID', 'FixImage', 'FixMaskImage', 'MovingDWI']),
-                               run_without_submitting=True, name="99_GetDWIReferenceImagesFromSessionID")
+                               run_without_submitting=True, name='99_GetDWIReferenceImagesFromSessionID')
     GetFileNamesNode.inputs.BASE_STRUCT = BASE_STRUCT
     GetFileNamesNode.inputs.BASE_DWI = BASE_DWI
 
@@ -192,11 +191,11 @@ def CreateDWIWorkFlow(SESSIONS_TO_PROCESS, BASE_STRUCT, BASE_DWI):
                                                               'Lambda1Image', 'Lambda2Image', 'Lambda3Image', 'tensor_image']),
                           name='outputspec')
 
-    BFitB0_T2 = pe.Node(interface=BRAINSFit(), name="B0ToT2_Rigid")
+    BFitB0_T2 = pe.Node(interface=BRAINSFit(), name='B0ToT2_Rigid')
     # BF_cpu_sge_options_dictionary = {'qsub_args': '-S /bin/bash -pe smp1 2-12 -l h_vmem=14G,mem_free=4G -o /dev/null -e /dev/null ' + CLUSTER_QUEUE, 'overwrite': True}
 
     # BFitB0_T2.plugin_args = BF_cpu_sge_options_dictionary
-    BFitB0_T2.inputs.costMetric = "MMI"
+    BFitB0_T2.inputs.costMetric = 'MMI'
     BFitB0_T2.inputs.numberOfSamples = 100000
     BFitB0_T2.inputs.numberOfIterations = [1500]
     BFitB0_T2.inputs.numberOfHistogramBins = 50
@@ -205,7 +204,7 @@ def CreateDWIWorkFlow(SESSIONS_TO_PROCESS, BASE_STRUCT, BASE_DWI):
     BFitB0_T2.inputs.useRigid = True
     BFitB0_T2.inputs.useAffine = True  # Use Affine/but extract Rigid. Using initial transform from BRAINSABC
     BFitB0_T2.inputs.maskInferiorCutOffFromCenter = 65
-    BFitB0_T2.inputs.maskProcessingMode = "ROIAUTO"
+    BFitB0_T2.inputs.maskProcessingMode = 'ROIAUTO'
     BFitB0_T2.inputs.ROIAutoDilateSize = 13
     BFitB0_T2.inputs.backgroundFillValue = 0.0
     BFitB0_T2.inputs.initializeTransformMode = 'useCenterOfHeadAlign'
@@ -219,7 +218,7 @@ def CreateDWIWorkFlow(SESSIONS_TO_PROCESS, BASE_STRUCT, BASE_DWI):
     ### DWIWorkflow.connect(inputsSpec, 'DWIVolume', BFitB0_T2, 'movingVolume')
     DWIWorkflow.connect(GetFileNamesNode, 'MovingDWI', BFitB0_T2, 'movingVolume')
 
-    DWIRIP = pe.Node(interface=gtractResampleDWIInPlace(), name="DWIRIP_B0ToT2")
+    DWIRIP = pe.Node(interface=gtractResampleDWIInPlace(), name='DWIRIP_B0ToT2')
     DWIRIP.inputs.outputVolume = 'ACPC_DWI.nrrd'
     DWIRIP.inputs.outputResampledB0 = 'ACPC_B0.nrrd'
     # DWIRIP.inputs.imageOutputSize = [164,164,100]
@@ -228,7 +227,7 @@ def CreateDWIWorkFlow(SESSIONS_TO_PROCESS, BASE_STRUCT, BASE_DWI):
     DWIWorkflow.connect(GetFileNamesNode, 'FixImage', DWIRIP, 'referenceVolume')
     DWIWorkflow.connect(GetFileNamesNode, 'MovingDWI', DWIRIP, 'inputVolume')
 
-    DWIRIP_lowRes = pe.Node(interface=gtractResampleDWIInPlace(), name="DWIRIP_B0ToT2_lowRes")
+    DWIRIP_lowRes = pe.Node(interface=gtractResampleDWIInPlace(), name='DWIRIP_B0ToT2_lowRes')
     DWIRIP_lowRes.inputs.outputVolume = 'ACPC_DWI.nrrd'
     DWIRIP_lowRes.inputs.outputResampledB0 = 'ACPC_B0.nrrd'
     # DWIRIP.inputs.imageOutputSize = [164,164,100]
@@ -255,25 +254,25 @@ def CreateDWIWorkFlow(SESSIONS_TO_PROCESS, BASE_STRUCT, BASE_DWI):
     # BSPLINE_T2_TO_RIPB0.inputs.useROIBSpline = True
 
     ##  This needs to be debugged, it should work. BSPLINE_T2_TO_RIPB0.inputs.useROIBSpline = True
-    BSPLINE_T2_TO_RIPB0.inputs.useExplicitPDFDerivativesMode = "AUTO"
-    BSPLINE_T2_TO_RIPB0.inputs.useCachingOfBSplineWeightsMode = "ON"
+    BSPLINE_T2_TO_RIPB0.inputs.useExplicitPDFDerivativesMode = 'AUTO'
+    BSPLINE_T2_TO_RIPB0.inputs.useCachingOfBSplineWeightsMode = 'ON'
     BSPLINE_T2_TO_RIPB0.inputs.maxBSplineDisplacement = 24
     BSPLINE_T2_TO_RIPB0.inputs.splineGridSize = [14, 10, 12]
 
     BSPLINE_T2_TO_RIPB0.inputs.maskInferiorCutOffFromCenter = 65
-    BSPLINE_T2_TO_RIPB0.inputs.maskProcessingMode = "ROIAUTO"
+    BSPLINE_T2_TO_RIPB0.inputs.maskProcessingMode = 'ROIAUTO'
     BSPLINE_T2_TO_RIPB0.inputs.ROIAutoDilateSize = 13
     BSPLINE_T2_TO_RIPB0.inputs.backgroundFillValue = 0.0
     BSPLINE_T2_TO_RIPB0.inputs.initializeTransformMode = 'useCenterOfHeadAlign'
 
-    BSPLINE_T2_TO_RIPB0.inputs.bsplineTransform = "T2ToRIPB0_BSplineTransform.h5"
-    BSPLINE_T2_TO_RIPB0.inputs.outputVolume = "T2ToRIPB0_Output.nii.gz"
+    BSPLINE_T2_TO_RIPB0.inputs.bsplineTransform = 'T2ToRIPB0_BSplineTransform.h5'
+    BSPLINE_T2_TO_RIPB0.inputs.outputVolume = 'T2ToRIPB0_Output.nii.gz'
 
     DWIWorkflow.connect(DWIRIP, 'outputVolume', BSPLINE_T2_TO_RIPB0, 'fixedVolume')
     ### DWIWorkflow.connect(inputsSpec, 'T2Volume', BSPLINE_T2_TO_RIPB0, 'movingVolume')
     DWIWorkflow.connect(GetFileNamesNode, 'FixImage', BSPLINE_T2_TO_RIPB0, 'movingVolume')
 
-    RESAMPLE_BRAINMASK = pe.Node(interface=BRAINSResample(), name="RESAMPLE_BRAINMASK")
+    RESAMPLE_BRAINMASK = pe.Node(interface=BRAINSResample(), name='RESAMPLE_BRAINMASK')
     RESAMPLE_BRAINMASK.inputs.interpolationMode = 'NearestNeighbor'  # This needs to be debugged'Binary'
     RESAMPLE_BRAINMASK.inputs.outputVolume = 'DeformedBrainMaskDWIRIP.nrrd'
     RESAMPLE_BRAINMASK.inputs.pixelType = 'uchar'
@@ -283,20 +282,20 @@ def CreateDWIWorkFlow(SESSIONS_TO_PROCESS, BASE_STRUCT, BASE_DWI):
     DWIWorkflow.connect(GetFileNamesNode, 'FixMaskImage', RESAMPLE_BRAINMASK, 'inputVolume')
     DWIWorkflow.connect(DWIRIP, 'outputResampledB0', RESAMPLE_BRAINMASK, 'referenceVolume')
 
-    DTIEstim = pe.Node(interface=dtiestim(), name="DTIEstim_Process")
-    DTIEstim.inputs.method = "wls"
+    DTIEstim = pe.Node(interface=dtiestim(), name='DTIEstim_Process')
+    DTIEstim.inputs.method = 'wls'
     DTIEstim.inputs.tensor_output = 'DTI_Output.nrrd'
     DWIWorkflow.connect(DWIRIP, 'outputVolume', DTIEstim, 'dwi_image')
     DWIWorkflow.connect(RESAMPLE_BRAINMASK, 'outputVolume', DTIEstim, 'brain_mask')
 
-    DTIProcess = pe.Node(interface=dtiprocess(), name="DTIProcess")
-    DTIProcess.inputs.fa_output = "FA.nrrd"
-    DTIProcess.inputs.md_output = "MD.nrrd"
-    DTIProcess.inputs.RD_output = "RD.nrrd"
-    DTIProcess.inputs.frobenius_norm_output = "frobenius_norm_output.nrrd"
-    DTIProcess.inputs.lambda1_output = "lambda1_output.nrrd"
-    DTIProcess.inputs.lambda2_output = "lambda2_output.nrrd"
-    DTIProcess.inputs.lambda3_output = "lambda3_output.nrrd"
+    DTIProcess = pe.Node(interface=dtiprocess(), name='DTIProcess')
+    DTIProcess.inputs.fa_output = 'FA.nrrd'
+    DTIProcess.inputs.md_output = 'MD.nrrd'
+    DTIProcess.inputs.RD_output = 'RD.nrrd'
+    DTIProcess.inputs.frobenius_norm_output = 'frobenius_norm_output.nrrd'
+    DTIProcess.inputs.lambda1_output = 'lambda1_output.nrrd'
+    DTIProcess.inputs.lambda2_output = 'lambda2_output.nrrd'
+    DTIProcess.inputs.lambda3_output = 'lambda3_output.nrrd'
     DTIProcess.inputs.scalar_float = True
 
     DWIWorkflow.connect(DTIEstim, 'tensor_output', DTIProcess, 'dti_image')
@@ -332,15 +331,15 @@ def CreateDWIWorkFlow(SESSIONS_TO_PROCESS, BASE_STRUCT, BASE_DWI):
 
 # <codecell>
 
-SESSIONS_TO_PROCESS = [('HDNI_001', '068044003', '068044003_20120522_30')]
-#\"\"\"                 ,('PHD_024','0029','84091'),
+SESSION_TUPLE = [('HDNI_001', '068044003', '068044003_20120522_30')]
+#\'\'\'                 ,('PHD_024','0029','84091'),
 #                     ('PHD_024','0091','60387'),('PHD_024','0091','78867'),('PHD_024','0093','50120'),
 #                     ('PHD_024','0093','60307'),('PHD_024','0093','88775'),('PHD_024','0122','42742'),
 #                     ('PHD_024','0122','63892'),('PHD_024','0131','76658'),('PHD_024','0131','90863'),
 #                     ('PHD_024','0132','38235'),('PHD_024','0132','43991'),('PHD_024','0132','74443'),
-#      "                     ('PHD_024','0133','63793'),('PHD_024','0133','81826'),('PHD_024','0137','11834'),
-#      "                     ('PHD_024','0138','84460'),('PHD_024','0140','31352')]\"\"\"
-"""
+#      '                     ('PHD_024','0133','63793'),('PHD_024','0133','81826'),('PHD_024','0137','11834'),
+#      '                     ('PHD_024','0138','84460'),('PHD_024','0140','31352')]\'\'\'
+'''
 SLICER_REFERENCE_DIR='/scratch/DWI_DATA'
 SLICER_RESULTS_DIR='/scratch/DWI_DATA/SlicerResults'
     DWIQCed='20121019_DTIPrep/HDNI_001/068044003/068044003_20120522_30/DTIPrepOutput/068044003_068044003_20120522_30_DWI_CONCAT_QCed.nrrd',
@@ -348,21 +347,21 @@ SLICER_RESULTS_DIR='/scratch/DWI_DATA/SlicerResults'
     ACPCT2='20130109_TrackOn_Results/HDNI_001/068044003/068044003_20120522_30/TissueClassify/t2_average_BRAINSABC.nii.gz',
     FST1='20130109_TrackOn_Results/FREESURFER52_SUBJECTS/068044003_068044003_20120522_30/mri/T1.mgz',
     FSWMParc='20130109_TrackOn_Results/FREESURFER52_SUBJECTS/068044003_068044003_20120522_30/mri/wmparc.mgz'
-"""
+'''
 BASE_STRUCT = '/scratch/DWI_DATA/20130109_TrackOn_Results'
 BASE_DWI = '/scratch/DWI_DATA/20121019_DTIPrep'
 
 # <markdowncell>
 
 # The desired behavior would be to use a MapNode here
-MasterWFname = "ManySubjectDWIPrototype"
+MasterWFname = 'ManySubjectDWIPrototype'
 MasterDWIWorkflow = pe.Workflow(name=MasterWFname)
-#      "\"\"\"
+#      '\'\'\'
 #      ***********
-#      "Changed the cache directory"
-#      "***********
-#      "\"\"\"
-BASE_DIR = os.path.join('/scratch/DWI_DATA/HANS_test', "HansMasterWFname")
+#      'Changed the cache directory'
+#      '***********
+#      '\'\'\'
+BASE_DIR = os.path.join('/scratch/DWI_DATA/HANS_test', 'HansMasterWFname')
 MasterDWIWorkflow.base_dir = BASE_DIR
 
 MasterDWIWorkflow.config['execution'] = {
@@ -388,17 +387,17 @@ MasterDWIWorkflow.config['logging'] = {
 
 
 if True:
-    sessionNode = pe.Node(interface=IdentityInterface(fields=['SESSIONS_TO_PROCESS', 'BASE_STRUCT', 'BASE_DWI']), name='sessionNode')
-    sessionNode.inputs.SESSIONS_TO_PROCESS = SESSIONS_TO_PROCESS
+    sessionNode = pe.Node(interface=IdentityInterface(fields=['SESSION_TUPLE', 'BASE_STRUCT', 'BASE_DWI']), name='sessionNode')
+    sessionNode.inputs.SESSION_TUPLE = SESSION_TUPLE
     sessionNode.inputs.BASE_STRUCT = BASE_STRUCT
     sessionNode.inputs.BASE_DWI = BASE_DWI
     myDWIWorkflow = pe.MapNode(interface=Function(function=CreateDWIWorkFlow,
-                                                  input_names=['SESSIONS_TO_PROCESS', 'BASE_STRUCT', 'BASE_DWI'],
+                                                  input_names=['SESSION_TUPLE', 'BASE_STRUCT', 'BASE_DWI'],
                                                   output_names=['FAImage', 'MDImage', 'RDImage', 'FrobeniusNormImage',
                                                                 'Lambda1Image', 'Lambda2Image', 'Lambda3Image', 'tensor_output']),
-                               iterfield=['SESSIONS_TO_PROCESS'],
+                               iterfield=['SESSION_TUPLE'],
                                name='myDWIWorkflow')
-    MasterDWIWorkflow.connect(sessionNode, 'SESSIONS_TO_PROCESS', myDWIWorkflow, 'SESSIONS_TO_PROCESS')
+    MasterDWIWorkflow.connect(sessionNode, 'SESSION_TUPLE', myDWIWorkflow, 'SESSION_TUPLE')
     MasterDWIWorkflow.connect(sessionNode, 'BASE_STRUCT', myDWIWorkflow, 'BASE_STRUCT')
     MasterDWIWorkflow.connect(sessionNode, 'BASE_DWI', myDWIWorkflow, 'BASE_DWI')
     if False:
@@ -409,26 +408,26 @@ if True:
         initAvg.inputs.dimension = 3
         initAvg.inputs.normalize = True
 
-        MergeByExtendListElementsNode = pe.Node(interface=Function(function=MergeByExtendListElements, input_names=['FAImageList'], output_names=['ListOfImagesDictionaries', 'registrationImageTypes', 'interpolationMapping']), run_without_submitting=True, name="99_FAMergeByExtendListElements")
+        MergeByExtendListElementsNode = pe.Node(interface=Function(function=MergeByExtendListElements, input_names=['FAImageList'], output_names=['ListOfImagesDictionaries', 'registrationImageTypes', 'interpolationMapping']), run_without_submitting=True, name='99_FAMergeByExtendListElements')
 
         from nipype.interfaces.base import CommandLine, CommandLineInputSpec, TraitedSpec, File, Directory, traits, isdefined, InputMultiPath, OutputMultiPath
         import os
 
         class ResampleDTIlogEuclideanInputSpec(CommandLineInputSpec):
-            in_file = File(argstr='%s', exists=True, mandatory=True, position=-2, desc="The input file for Resampledtilogeuclidean")
-            out_file = File(argstr='%s', exists=False, mandatory=True, position=-1, desc="The output file for Resampledtilogeuclidean")
-            transformationFile = File(argstr='--transformationFile %s', exists=True, mandatory=True, desc="The affine transformation file for Resampledtilogeuclidean")
-            Reference = File(argstr='--Reference %s', exists=True, mandatory=True, desc="The reference file for ResampleDTIlogEuclidean output")
-            defField = File(argstr='--defField %s', exists=True, mandatory=True, desc="The deformation file for ResampleDTIlogEuclidean output")
-            hfieldtype = traits.Enum('hfield', 'displacement', argstr="--hfieldtype %s", desc="Set if the deformation field is an -Field")
-            interpolation = traits.Enum('linear', 'nn', 'ws', 'bs', argstr="--interpolation %s", desc="Sampling algorithm")
-            transform_tensor_method = traits.Enum('PPD', 'FS', argstr="--transform_tensor_method %s", desc="Chooses between 2 methods to transform the tensors: Finite Strain (FS), faster but less accurate, or Preservation of the Principal Direction (PPD)")
+            in_file = File(argstr='%s', exists=True, mandatory=True, position=-2, desc='The input file for Resampledtilogeuclidean')
+            out_file = File(argstr='%s', exists=False, mandatory=True, position=-1, desc='The output file for Resampledtilogeuclidean')
+            transformationFile = File(argstr='--transformationFile %s', exists=True, mandatory=True, desc='The affine transformation file for Resampledtilogeuclidean')
+            Reference = File(argstr='--Reference %s', exists=True, mandatory=True, desc='The reference file for ResampleDTIlogEuclidean output')
+            defField = File(argstr='--defField %s', exists=True, mandatory=True, desc='The deformation file for ResampleDTIlogEuclidean output')
+            hfieldtype = traits.Enum('hfield', 'displacement', argstr='--hfieldtype %s', desc='Set if the deformation field is an -Field')
+            interpolation = traits.Enum('linear', 'nn', 'ws', 'bs', argstr='--interpolation %s', desc='Sampling algorithm')
+            transform_tensor_method = traits.Enum('PPD', 'FS', argstr='--transform_tensor_method %s', desc='Chooses between 2 methods to transform the tensors: Finite Strain (FS), faster but less accurate, or Preservation of the Principal Direction (PPD)')
 
         class ResampleDTIlogEuclideanOutputSpec(TraitedSpec):
-            out_file = traits.File(exists=False, desc="The output file for Resampledtilogeuclidean")
+            out_file = traits.File(exists=False, desc='The output file for Resampledtilogeuclidean')
 
         class ResampleDTIlogEuclidean(CommandLine):
-            _cmd = "ResampleDTIlogEuclidean"
+            _cmd = 'ResampleDTIlogEuclidean'
             input_spec = ResampleDTIlogEuclideanInputSpec
             output_spec = ResampleDTIlogEuclideanOutputSpec
 
@@ -438,29 +437,29 @@ if True:
                 return outputs
 
         def getElement(inputList, index):
-            """ Custom function to get out affine and deformation fields from BeginANTS output list """
+            ''' Custom function to get out affine and deformation fields from BeginANTS output list '''
             return inputList[int(index)]
 
         ResampleDTI = pe.MapNode(interface=ResampleDTIlogEuclidean(), iterfield=['in_file'], name='ResampleDTI')
         ResampleDTI.inputs.hfieldtype = 'displacement'
         ResampleDTI.inputs.interpolation = 'linear'
         ResampleDTI.inputs.transform_tensor_method = 'PPD'
-        """
+        '''
         ***********
-        """
-        mergeFA = pe.Node(interface=Merge(len(SESSIONS_TO_PROCESS)), name='99_mergeFA')
-        mergeTensor = pe.Node(interface=Merge(len(SESSIONS_TO_PROCESS)), name='99_mergeTensor')
+        '''
+        mergeFA = pe.Node(interface=Merge(len(SESSION_TUPLE)), name='99_mergeFA')
+        mergeTensor = pe.Node(interface=Merge(len(SESSION_TUPLE)), name='99_mergeTensor')
         count = 1
-        for SESSION_TUPLE in SESSIONS_TO_PROCESS:
+        for SESSION_TUPLE in SESSION_TUPLE:
             myDWIWorkflow = CreateDWIWorkFlow(SESSION_TUPLE, BASE_STRUCT, BASE_DWI)
-            MasterDWIWorkflow.connect(myDWIWorkflow, "outputspec.FAImage", mergeFA, 'in' + str(count))
+            MasterDWIWorkflow.connect(myDWIWorkflow, 'outputspec.FAImage', mergeFA, 'in' + str(count))
             MasterDWIWorkflow.connect(myDWIWorkflow, 'outputspec.tensor_image', mergeTensor, 'in' + str(count))
             count += 1
 
         MasterDWIWorkflow.connect(mergeFA, 'out', MergeByExtendListElementsNode, 'FAImageList')
-        MasterDWIWorkflow.connect(mergeFA, 'out', initAvg, "images")
+        MasterDWIWorkflow.connect(mergeFA, 'out', initAvg, 'images')
 
-        # resampleIDNode = pe.Node(interface=IdentityInterface(fields=['in_file', 'SESSIONS_TO_PROCESS']), name='99_resampleIdentity')
+        # resampleIDNode = pe.Node(interface=IdentityInterface(fields=['in_file', 'SESSION_TUPLE']), name='99_resampleIdentity')
         # MasterDWIWorkflow.connect(mergeTensor, 'out', resampleIDNode, 'in_file')
         # MasterDWIWorkflow.connect(resampleIDNode, 'in_file', ResampleDTI, 'in_file')
         MasterDWIWorkflow.connect(mergeTensor, 'out', ResampleDTI, 'in_file')
@@ -470,16 +469,16 @@ if True:
         buildTemplateIteration1 = BAWantsRegistrationTemplateBuildSingleIterationWF('iteration01')
 
         ## TODO:  Change these parameters
-        BeginANTS_iter1 = buildTemplateIteration1.get_node("BeginANTS")
+        BeginANTS_iter1 = buildTemplateIteration1.get_node('BeginANTS')
         BeginANTS_iter1.plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp1 4-8 -l mem_free=9000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE_LONG), 'overwrite': True}
 
-        wimtdeformed_iter1 = buildTemplateIteration1.get_node("wimtdeformed")
+        wimtdeformed_iter1 = buildTemplateIteration1.get_node('wimtdeformed')
         wimtdeformed_iter1.plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp1 1-2 -l mem_free=2000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE), 'overwrite': True}
 
-        AvgAffineTransform_iter1 = buildTemplateIteration1.get_node("AvgAffineTransform")
+        AvgAffineTransform_iter1 = buildTemplateIteration1.get_node('AvgAffineTransform')
         AvgAffineTransform_iter1.plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp1 1 -l mem_free=2000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE), 'overwrite': True}
 
-        wimtPassivedeformed_iter1 = buildTemplateIteration1.get_node("wimtPassivedeformed")
+        wimtPassivedeformed_iter1 = buildTemplateIteration1.get_node('wimtPassivedeformed')
         wimtPassivedeformed_iter1.plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp1 1-2 -l mem_free=2000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE), 'overwrite': True}
 
         MasterDWIWorkflow.connect(initAvg, 'output_average_image', buildTemplateIteration1, 'inputspec.fixed_image')
@@ -493,16 +492,16 @@ if True:
         MasterDWIWorkflow.connect([(buildTemplateIteration2, ResampleDTI, [(('BeginANTS.forward_transforms', getElement, 1), 'defField')])])
         MasterDWIWorkflow.connect(buildTemplateIteration2, 'outputspec.template', ResampleDTI, 'Reference')
         ## TODO:  Change these parameters
-        BeginANTS_iter2 = buildTemplateIteration2.get_node("BeginANTS")
+        BeginANTS_iter2 = buildTemplateIteration2.get_node('BeginANTS')
         BeginANTS_iter2.plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp1 4-8 -l mem_free=9000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE_LONG), 'overwrite': True}
 
-        wimtdeformed_iter2 = buildTemplateIteration2.get_node("wimtdeformed")
+        wimtdeformed_iter2 = buildTemplateIteration2.get_node('wimtdeformed')
         wimtdeformed_iter2.plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp1 1-2 -l mem_free=2000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE), 'overwrite': True}
 
-        AvgAffineTransform_iter2 = buildTemplateIteration2.get_node("AvgAffineTransform")
+        AvgAffineTransform_iter2 = buildTemplateIteration2.get_node('AvgAffineTransform')
         AvgAffineTransform_iter2.plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp1 1 -l mem_free=2000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE), 'overwrite': True}
 
-        wimtPassivedeformed_iter2 = buildTemplateIteration2.get_node("wimtPassivedeformed")
+        wimtPassivedeformed_iter2 = buildTemplateIteration2.get_node('wimtPassivedeformed')
         wimtPassivedeformed_iter2.plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp1 1-2 -l mem_free=2000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE), 'overwrite': True}
 
         MasterDWIWorkflow.connect(buildTemplateIteration1, 'outputspec.template', buildTemplateIteration2, 'inputspec.fixed_image')
@@ -510,11 +509,11 @@ if True:
         MasterDWIWorkflow.connect(MergeByExtendListElementsNode, 'registrationImageTypes', buildTemplateIteration2, 'inputspec.registrationImageTypes')
         MasterDWIWorkflow.connect(MergeByExtendListElementsNode, 'interpolationMapping', buildTemplateIteration2, 'inputspec.interpolationMapping')
 
-        DWIAverageSink = pe.Node(interface=nio.DataSink(), name="DWIAverageSink")
-        #""" 'Average DTIEstim_Process and average deformed DTI image' """
+        DWIAverageSink = pe.Node(interface=nio.DataSink(), name='DWIAverageSink')
+        #''' 'Average DTIEstim_Process and average deformed DTI image' '''
         DWIAverageSink = pe.Node(interface=nio.DataSink(), name='DWIAverageSink')
         DWIAverageSink.inputs.base_directory = '/scratch/20130214_DWIPROCESSING_NIPYPE'
-        DWIAverageSink.inputs.container = os.path.join("DWIPrototype_Results")
+        DWIAverageSink.inputs.container = os.path.join('DWIPrototype_Results')
         # DWIAverageSink.inputs.regexp_substitutions = [('Average/*/', 'Average/')]
 
         MasterDWIWorkflow.connect(buildTemplateIteration2, 'AvgAffineTransform.affine_transform',
@@ -540,10 +539,10 @@ if True:
                 retval.append(os.path.join(*tup))
             return retval
 
-"""
-    MasterDWIWorkflow.connect([(resampleIDNode, DTIDataSink,[(('SESSIONS_TO_PROCESS', sinkContainer), 'container')])])
+'''
+    MasterDWIWorkflow.connect([(resampleIDNode, DTIDataSink,[(('SESSION_TUPLE', sinkContainer), 'container')])])
     MasterDWIWorkflow.connect(ResampleDTI, 'out_file', DTIDataSink, 'Output.@out_file')
-"""
+'''
 
 
 # <markdowncell>
@@ -555,7 +554,7 @@ if True:
 import multiprocessing
 total_CPUS = multiprocessing.cpu_count()
 NUMPARALLEL = 1
-os.environ['NSLOTS'] = "{0}".format(total_CPUS / NUMPARALLEL)
+os.environ['NSLOTS'] = '{0}'.format(total_CPUS / NUMPARALLEL)
 
 MasterDWIWorkflow.write_graph()
 
@@ -567,7 +566,7 @@ if True:
 else:
     MasterDWIWorkflow.run(plugin=SGEFlavor,
                           plugin_args=dict(template=JOB_SCRIPT,
-                                           qsub_args="-S /bin/bash -cwd -pe smp1 1-12 -l h_vmem=19G,mem_free=2G -o /dev/null -e /dev/null " + "-q OSX"))
+                                           qsub_args='-S /bin/bash -cwd -pe smp1 1-12 -l h_vmem=19G,mem_free=2G -o /dev/null -e /dev/null ' + '-q OSX'))
 
 
 print sys.argv

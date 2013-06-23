@@ -56,7 +56,6 @@ endif()
 #-----------------------------------------------------------------------------
 option(USE_AutoWorkup                     "Build AutoWorkup"                     ON)
 option(USE_BRAINSFit                      "Build BRAINSFit"                      ON)
-option(USE_BRAINSFitEZ                    "Build BRAINSFitEZ"                    ON)
 option(USE_BRAINSROIAuto                  "Build BRAINSROIAuto"                  ON)
 option(USE_BRAINSResample                 "Build BRAINSResample"                 ON)
 option(USE_BRAINSDemonWarp                "Build BRAINSDemonWarp "               ON)

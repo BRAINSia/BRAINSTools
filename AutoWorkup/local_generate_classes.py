@@ -33,7 +33,6 @@ modules_list = [
     'BRAINSDemonWarp',
     'BRAINSEyeDetector',
     'BRAINSFit',
-    'BRAINSFitEZ',
     'BRAINSInitializedControlPoints',
     'BRAINSLandmarkInitializer',
     'BRAINSLinearModelerEPCA',

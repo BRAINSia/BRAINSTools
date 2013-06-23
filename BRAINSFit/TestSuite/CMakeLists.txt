@@ -1,6 +1,5 @@
 
 MakeTestDriverFromSEMTool(BRAINSFit BRAINSFitTest.cxx)
-MakeTestDriverFromSEMTool(BRAINSFitEZ BRAINSFitEZTest.cxx)
 
 if(COMPILE_TEST_GENERATION_PROGRAMS)  ## These were programs needed to create the test suite, but are not needed for actual testing!
   # The following program was used to generate TestData/test2.nii.gz
@@ -1659,39 +1658,6 @@ if(RUN_EXTRA_METRIC_TESTS)
     --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
   )
 endif()
-
-# Test for BRAINSFitEZ
-# TODO: Test xml parsing instead of algorithm (that's done with BRAINSFit tests)
-set(BRAINSFitEZTestName BRAINSFitEZTest_AffineRotationMasks)
-set(BRAINSFitTestName BRAINSFitTest_AffineRotationMasks)
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitEZTestName}
-  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitEZTestDriver>
-  --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
-            ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
-  --compareIntensityTolerance 7
-  --compareRadiusTolerance 0
-  --compareNumberOfPixelsTolerance 777
-  BRAINSFitEZTest
-  --costMetric MMI
-  --failureExitCode -1 --writeTransformOnFailure
-  --numberOfIterations 2500
-  --numberOfHistogramBins 200
-  --numberOfSamples 131072
-  --translationScale 250
-  --minimumStepLength 0.001
-  --outputVolumePixelType uchar
-  --transformType Affine
-  --initializeTransformMode Off
-  --initialTransform DATA{${TestData_DIR}/Transforms_h5/BRAINSFitTest_Initializer_RigidRotationNoMasks.${XFRM_EXT}}
-  --maskProcessingMode ROI
-  --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
-  --fixedBinaryVolume DATA{${TestData_DIR}/test_mask.nii.gz}
-  --movingVolume DATA{${TestData_DIR}/rotation.test.nii.gz}
-  --movingBinaryVolume DATA{${TestData_DIR}/rotation.test_mask.nii.gz}
-  --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
-  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
-  --debugLevel 50
-)
 
 # Test for ROIBSpline mode
 set(BRAINSFitTestName BRAINSFitTest_ROIBSpline)

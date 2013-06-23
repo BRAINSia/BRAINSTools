@@ -21,7 +21,6 @@ class fcsv_to_hdf5OutputSpec(TraitedSpec):
 
 
 class fcsv_to_hdf5(SEMLikeCommandLine):
-
     """title: fcsv_to_matlab (BRAINS)
 
 category: Utility.BRAINS

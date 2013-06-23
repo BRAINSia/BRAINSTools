@@ -22,7 +22,6 @@ class BRAINSPosteriorToContinuousClassOutputSpec(TraitedSpec):
 
 
 class BRAINSPosteriorToContinuousClass(SEMLikeCommandLine):
-
     """title: Tissue Classification
 
 category: BRAINS.Classify

@@ -19,7 +19,6 @@ class IcosahedronResamplerOutputSpec(TraitedSpec):
 
 
 class IcosahedronResampler(SEMLikeCommandLine):
-
     """title:
     BRAINS Resample Sphere Using Icosahedron
 
@@ -62,7 +61,6 @@ class QuadEdgeMeshClampScalarsOutputSpec(TraitedSpec):
 
 
 class QuadEdgeMeshClampScalars(SEMLikeCommandLine):
-
     """title:
     BRAINS Clamp Scalars
 
@@ -105,7 +103,6 @@ class BRAINSApplySurfaceLabelsOutputSpec(TraitedSpec):
 
 
 class BRAINSApplySurfaceLabels(SEMLikeCommandLine):
-
     """title:
     BRAINS Surface Label Map
 
@@ -154,7 +151,6 @@ class BRAINSSurfaceGenerationOutputSpec(TraitedSpec):
 
 
 class BRAINSSurfaceGeneration(SEMLikeCommandLine):
-
     """title:
     BRAINS Surface Generation
 
@@ -195,7 +191,6 @@ class LabelMapsOutputSpec(TraitedSpec):
 
 
 class LabelMaps(SEMLikeCommandLine):
-
     """title:
     BRAINS Label Maps
 
@@ -238,7 +233,6 @@ class QuadEdgeMeshHistogramMatchingOutputSpec(TraitedSpec):
 
 
 class QuadEdgeMeshHistogramMatching(SEMLikeCommandLine):
-
     """title:
     BRAINS Histogram Matching
 
@@ -281,7 +275,6 @@ class ResampleQuadEdgeMeshOutputSpec(TraitedSpec):
 
 
 class ResampleQuadEdgeMesh(SEMLikeCommandLine):
-
     """title:
     BRAINS Resample Quad Edge Mesh
 
@@ -325,7 +318,6 @@ class QuadEdgeMeshPiecewiseRescaleOutputSpec(TraitedSpec):
 
 
 class QuadEdgeMeshPiecewiseRescale(SEMLikeCommandLine):
-
     """title:
     BRAINS Piesewise Rescale
 
@@ -369,7 +361,6 @@ class AssignArrayOutputSpec(TraitedSpec):
 
 
 class AssignArray(SEMLikeCommandLine):
-
     """title:
     BRAINS Assign Array
 
@@ -414,7 +405,6 @@ class SurfaceColorOutputSpec(TraitedSpec):
 
 
 class SurfaceColor(SEMLikeCommandLine):
-
     """title:
     BRAINS Surface Color
 
@@ -475,7 +465,6 @@ class BRAINSMeasureSurfaceOutputSpec(TraitedSpec):
 
 
 class BRAINSMeasureSurface(SEMLikeCommandLine):
-
     """title:
     BRAINS Surface Measures
 
@@ -516,7 +505,6 @@ class SurfaceLabelCleanUpOutputSpec(TraitedSpec):
 
 
 class SurfaceLabelCleanUp(SEMLikeCommandLine):
-
     """title:
     BRAINS Surface Label Clean Up
 
@@ -569,7 +557,6 @@ class MultiResolutionRegistrationOutputSpec(TraitedSpec):
 
 
 class MultiResolutionRegistration(SEMLikeCommandLine):
-
     """title:
     BRAINS Multi Resolution Registration
 
@@ -619,7 +606,6 @@ class BRAINSAssignSurfaceFeaturesOutputSpec(TraitedSpec):
 
 
 class BRAINSAssignSurfaceFeatures(SEMLikeCommandLine):
-
     """title:
     BRAINS Assign Surface Features
 
@@ -662,7 +648,6 @@ class ProbabilityLabelsOutputSpec(TraitedSpec):
 
 
 class ProbabilityLabels(SEMLikeCommandLine):
-
     """title:
     BRAINS Probability Labels
 
@@ -704,7 +689,6 @@ class RemoveTinyLabelsOutputSpec(TraitedSpec):
 
 
 class RemoveTinyLabels(SEMLikeCommandLine):
-
     """title:
     BRAINS Remove Labels
 
@@ -749,7 +733,6 @@ class AverageScalarsByResamplingOutputSpec(TraitedSpec):
 
 
 class AverageScalarsByResampling(SEMLikeCommandLine):
-
     """title:
     BRAINS Average Scalar Values
 
@@ -793,7 +776,6 @@ class WarpQuadEdgeMeshOutputSpec(TraitedSpec):
 
 
 class WarpQuadEdgeMesh(SEMLikeCommandLine):
-
     """title:
     BRAINS Warp Quad Edge Mesh
 
@@ -835,7 +817,6 @@ class RearrangeSurfaceLabelsOutputSpec(TraitedSpec):
 
 
 class RearrangeSurfaceLabels(SEMLikeCommandLine):
-
     """title:
     BRAINS Rearrange Labels
 
@@ -881,7 +862,6 @@ class BRAINSSurfaceFlatteningOutputSpec(TraitedSpec):
 
 
 class BRAINSSurfaceFlattening(SEMLikeCommandLine):
-
     """title:
     BRAINS Surface Flattening
 
@@ -922,7 +902,6 @@ class SmoothingMeshScalarsOutputSpec(TraitedSpec):
 
 
 class SmoothingMeshScalars(SEMLikeCommandLine):
-
     """title:
     BRAINS Smooth Scalars
 
@@ -967,7 +946,6 @@ class QuadEdgeMeshSimilarityOutputSpec(TraitedSpec):
 
 
 class QuadEdgeMeshSimilarity(SEMLikeCommandLine):
-
     """title:
     BRAINS Quad Edge Mesh Similarity
 
@@ -1010,7 +988,6 @@ class CombineLabelsOutputSpec(TraitedSpec):
 
 
 class CombineLabels(SEMLikeCommandLine):
-
     """title:
     BRAINS Combine Labels
 

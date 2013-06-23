@@ -18,7 +18,6 @@ class SimilarityIndexOutputSpec(TraitedSpec):
 
 
 class SimilarityIndex(SEMLikeCommandLine):
-
     """title: BRAINSCut:SimilarityIndexComputation
 
 category: BRAINS.Segmentation

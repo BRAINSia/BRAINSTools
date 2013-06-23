@@ -15,10 +15,9 @@ class DWIConvertInputSpec(CommandLineInputSpec):
     outputDirectory = traits.Either(traits.Bool, Directory(), hash_files=False, desc="Directory holding the output NRRD format", argstr="--outputDirectory %s")
     gradientVectorFile = traits.Either(traits.Bool, File(), hash_files=False, desc="Text file giving gradient vectors", argstr="--gradientVectorFile %s")
     smallGradientThreshold = traits.Float(desc="If a gradient magnitude is greater than 0 and less than smallGradientThreshold, then DWIConvert will display an error message and quit, unless the useBMatrixGradientDirections option is set.", argstr="--smallGradientThreshold %f")
-    writeProtocolGradientsFile = traits.Bool(
-        desc="Write the protocol gradients to a file suffixed by \'.txt\' as they were specified in the procol by multiplying each diffusion gradient direction by the measurement frame.  This file is for debugging purposes only, the format is not fixed, and will likely change as debugging of new dicom formats is necessary.", argstr="--writeProtocolGradientsFile ")
+    writeProtocolGradientsFile = traits.Bool(desc="Write the protocol gradients to a file suffixed by \'.txt\' as they were specified in the procol by multiplying each diffusion gradient direction by the measurement frame.  This file is for debugging purposes only, the format is not fixed, and will likely change as debugging of new dicom formats is necessary.", argstr="--writeProtocolGradientsFile ")
     useIdentityMeaseurementFrame = traits.Bool(desc="Adjust all the gradients so that the measurement frame is an identity matrix.", argstr="--useIdentityMeaseurementFrame ")
-    useBMatrixGradientDirections = traits.Bool(desc="Fill the nhdr header with the gradient directions and bvalues computed out of the BMatrix. Only changes behavior for Siemens data.", argstr="--useBMatrixGradientDirections ")
+    useBMatrixGradientDirections = traits.Bool(desc="Fill the nhdr header with the gradient directions and bvalues computed out of the BMatrix. Only changes behavior for Siemens data.  In some cases the standard public gradients are not properly computed.  The gradients can emperically computed from the private BMatrix fields.  In some cases the private BMatrix is consistent with the public grandients, but not in all cases, when it exists BMatrix is usually most robust.", argstr="--useBMatrixGradientDirections ")
     inputBValues = File(desc="B Values text file", exists=True, argstr="--inputBValues %s")
     inputBVectors = File(desc="B Vector text file", exists=True, argstr="--inputBVectors %s")
     outputBValues = traits.Either(traits.Bool, File(), hash_files=False, desc="B Values text file", argstr="--outputBValues %s")
@@ -34,7 +33,6 @@ class DWIConvertOutputSpec(TraitedSpec):
 
 
 class DWIConvert(SEMLikeCommandLine):
-
     """title: DWIConverter
 
 category: Diffusion.Diffusion Data Conversion

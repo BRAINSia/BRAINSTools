@@ -18,7 +18,6 @@ class dtiaverageOutputSpec(TraitedSpec):
 
 
 class dtiaverage(SEMLikeCommandLine):
-
     """title: DTIAverage
 
 category: Diffusion.DTIProcess
@@ -73,7 +72,6 @@ class dtiestimOutputSpec(TraitedSpec):
 
 
 class dtiestim(SEMLikeCommandLine):
-
     """title: dtiestim
 
 category: Diffusion.DTIProcess
@@ -165,7 +163,6 @@ class dtiprocessOutputSpec(TraitedSpec):
 
 
 class dtiprocess(SEMLikeCommandLine):
-
     """title: dtiprocess
 
 category: Diffusion.DTIProcess
@@ -200,5 +197,4 @@ contributor: Casey Goodlett
     input_spec = dtiprocessInputSpec
     output_spec = dtiprocessOutputSpec
     _cmd = " dtiprocess "
-    _outputs_filenames = {'fa_gradmag_output': 'fa_gradmag_output.nii', 'fa_gradient_output': 'fa_gradient_output.nii', 'lambda1_output': 'lambda1_output.nii', 'lambda2_output': 'lambda2_output.nii', 'color_fa_output': 'color_fa_output.nii', 'fa_output': 'fa_output.nii', 'frobenius_norm_output': 'frobenius_norm_output.nii', 'principal_eigenvector_output':
-                          'principal_eigenvector_output.nii', 'forward': 'forward.nii', 'dof_file': 'dof_file', 'lambda3_output': 'lambda3_output.nii', 'negative_eigenvector_output': 'negative_eigenvector_output.nii', 'md_output': 'md_output.nii', 'RD_output': 'RD_output.nii', 'deformation_output': 'deformation_output.nii', 'rot_output': 'rot_output.nii'}
+    _outputs_filenames = {'fa_gradmag_output': 'fa_gradmag_output.nii', 'fa_gradient_output': 'fa_gradient_output.nii', 'lambda1_output': 'lambda1_output.nii', 'lambda2_output': 'lambda2_output.nii', 'color_fa_output': 'color_fa_output.nii', 'fa_output': 'fa_output.nii', 'frobenius_norm_output': 'frobenius_norm_output.nii', 'principal_eigenvector_output': 'principal_eigenvector_output.nii', 'forward': 'forward.nii', 'dof_file': 'dof_file', 'lambda3_output': 'lambda3_output.nii', 'negative_eigenvector_output': 'negative_eigenvector_output.nii', 'md_output': 'md_output.nii', 'RD_output': 'RD_output.nii', 'deformation_output': 'deformation_output.nii', 'rot_output': 'rot_output.nii'}

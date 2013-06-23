@@ -5,8 +5,8 @@
 
 ## NOTES ON HOW TO RUN THIS.
 # build wiht all options turned on (even the non-default options)
-# export PATH=~/src/BSA-clang31/bin:${PATH}
-# export PYTHONPATH=~/src/BSA-clang31/NIPYPE
+# export PATH=~/src/BT-build/bin:${PATH}
+# export PYTHONPATH=~/src/BT-build/NIPYPE
 # cd ~/src/BRAINSTools/AutoWorkup/SEMTools/; rm -rf ~/src/BRAINSTools/AutoWorkup/SEMTools/* ; python ../local_generate_classes.py
 # for i in $(find ~/src/BRAINSTools/AutoWorkup/SEMTools  -name "*.py"); do  autopep8 --max-line-length=300 -i ${i}; done
 
@@ -14,6 +14,7 @@ from nipype.interfaces.slicer.generate_classes import generate_all_classes
 
 modules_list = [
     #'ResampleDTILogEuclidean',
+    'UKFTractography',
     'dtiprocess',
     'dtiestim',
     'dtiaverage',
@@ -27,7 +28,6 @@ modules_list = [
     'BRAINSClipInferior',
     'BRAINSConstellationDetector',
     'BRAINSConstellationModeler',
-    'BRAINSContinuousClass',
     'BRAINSCreateLabelMapFromProbabilityMaps',
     'BRAINSCut',
     'BRAINSDemonWarp',

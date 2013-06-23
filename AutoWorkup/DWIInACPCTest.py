@@ -99,7 +99,38 @@ echo {CUSTENV}
 JOB_SCRIPT = get_global_sge_script(sys.path, PROGRAM_PATHS, CUSTOM_ENVIRONMENT)
 SGE_JOB_SCRIPT = JOB_SCRIPT
 
+def MergeByExtendListElements(FAImageList):
+    ## Initial list with empty dictionaries
+    ListOfImagesDictionaries = list()
+    for FAImage in FAImageList:
+        ListOfImagesDictionaries.append({'FA': FAImage, 'DUMMY': FAImage})
+    ## HACK:  Need to make it so that AVG_AIR.nii.gz is has a background value of 1
+    registrationImageTypes = ['FA']  # ['T1','T2'] someday.
+    '''
+    ***********
+    HACK: Here's the deal - interpolationMapping is supposed to define the type of interpolation done in
+          the call to antsRegistration(), NOT define the function to call in the registration node!
+    ***********
+    '''
+    # DefaultContinuousInterpolationType='LanczosWindowedSinc' ## Could also be Linear for speed.
+    DefaultContinuousInterpolationType = 'Linear'
+    DTIinterpolationType = 'ResampleDTIlogEuclidean'
+    interpolationMapping = {'T1': DefaultContinuousInterpolationType,
+                            'T2': DefaultContinuousInterpolationType,
+                            'PD': DefaultContinuousInterpolationType,
+                            'FL': DefaultContinuousInterpolationType,
+                            'FA': DefaultContinuousInterpolationType,
+                            'DUMMY': DefaultContinuousInterpolationType,
+                            'BRAINMASK': 'MultiLabel',
+                            'DTI': DTIinterpolationType}
+    return ListOfImagesDictionaries, registrationImageTypes, interpolationMapping
 
+
+def CreateDWIWorkFlow(SESSION_TUPLE, BASE_STRUCT, BASE_DWI):
+
+    return MasterDWIWorkflow
+
+#############################
 def GetDWIReferenceImagesFromSessionID(SESSION_TUPLE, BASE_STRUCT, BASE_DWI):
     '''A function to extract file names from base parameters'''
     import os
@@ -140,197 +171,18 @@ def GetDWIReferenceImagesFromSessionID(SESSION_TUPLE, BASE_STRUCT, BASE_DWI):
     print '=' * 80
 
     return PROJ_ID, SUBJ_ID, SESSION_ID, FixImage, FixMaskImage, MovingDWI
+#################################
 
 
-def MergeByExtendListElements(FAImageList):
-    ## Initial list with empty dictionaries
-    ListOfImagesDictionaries = list()
-    for FAImage in FAImageList:
-        ListOfImagesDictionaries.append({'FA': FAImage, 'DUMMY': FAImage})
-    ## HACK:  Need to make it so that AVG_AIR.nii.gz is has a background value of 1
-    registrationImageTypes = ['FA']  # ['T1','T2'] someday.
-    '''
-    ***********
-    HACK: Here's the deal - interpolationMapping is supposed to define the type of interpolation done in
-          the call to antsRegistration(), NOT define the function to call in the registration node!
-    ***********
-    '''
-    # DefaultContinuousInterpolationType='LanczosWindowedSinc' ## Could also be Linear for speed.
-    DefaultContinuousInterpolationType = 'Linear'
-    DTIinterpolationType = 'ResampleDTIlogEuclidean'
-    interpolationMapping = {'T1': DefaultContinuousInterpolationType,
-                            'T2': DefaultContinuousInterpolationType,
-                            'PD': DefaultContinuousInterpolationType,
-                            'FL': DefaultContinuousInterpolationType,
-                            'FA': DefaultContinuousInterpolationType,
-                            'DUMMY': DefaultContinuousInterpolationType,
-                            'BRAINMASK': 'MultiLabel',
-                            'DTI': DTIinterpolationType}
-    return ListOfImagesDictionaries, registrationImageTypes, interpolationMapping
-
-
-def CreateDWIWorkFlow(SESSION_TUPLE, BASE_STRUCT, BASE_DWI):
-    WFname = 'DWIWorkflow_' + str(SESSION_TUPLE[0]) + '_' + str(SESSION_TUPLE[1]) + '_' + str(SESSION_TUPLE[2])
-    DWIWorkflow = pe.Workflow(name=WFname)
-    # DWIWorkflow.base_dir = os.path.join(CACHE_BASE,session_name)
-
-    inputsSpec = pe.Node(interface=IdentityInterface(fields=['SESSION_TUPLE']),
-                         name='inputspec')
-    inputsSpec.inputs.SESSION_TUPLE = SESSION_TUPLE
-
-    GetFileNamesNode = pe.Node(interface=Function(function=GetDWIReferenceImagesFromSessionID,
-                               input_names=['SESSION_TUPLE', 'BASE_STRUCT', 'BASE_DWI'],
-                               output_names=['PROJ_ID', 'SUBJ_ID', 'SESSION_ID', 'FixImage', 'FixMaskImage', 'MovingDWI']),
-                               run_without_submitting=True, name='99_GetDWIReferenceImagesFromSessionID')
-    GetFileNamesNode.inputs.BASE_STRUCT = BASE_STRUCT
-    GetFileNamesNode.inputs.BASE_DWI = BASE_DWI
-
-    DWIWorkflow.connect(inputsSpec, 'SESSION_TUPLE', GetFileNamesNode, 'SESSION_TUPLE')
-
-    outputsSpec = pe.Node(interface=IdentityInterface(fields=['FAImage', 'MDImage', 'RDImage', 'FrobeniusNormImage',
-                                                              'Lambda1Image', 'Lambda2Image', 'Lambda3Image', 'tensor_image']),
-                          name='outputspec')
-
-    BFitB0_T2 = pe.Node(interface=BRAINSFit(), name='B0ToT2_Rigid')
-    # BF_cpu_sge_options_dictionary = {'qsub_args': '-S /bin/bash -pe smp1 2-12 -l h_vmem=14G,mem_free=4G -o /dev/null -e /dev/null ' + CLUSTER_QUEUE, 'overwrite': True}
-
-    # BFitB0_T2.plugin_args = BF_cpu_sge_options_dictionary
-    BFitB0_T2.inputs.costMetric = 'MMI'
-    BFitB0_T2.inputs.numberOfSamples = 100000
-    BFitB0_T2.inputs.numberOfIterations = [1500]
-    BFitB0_T2.inputs.numberOfHistogramBins = 50
-    BFitB0_T2.inputs.maximumStepLength = 0.2
-    BFitB0_T2.inputs.minimumStepLength = [0.00005]
-    BFitB0_T2.inputs.useRigid = True
-    BFitB0_T2.inputs.useAffine = True  # Use Affine/but extract Rigid. Using initial transform from BRAINSABC
-    BFitB0_T2.inputs.maskInferiorCutOffFromCenter = 65
-    BFitB0_T2.inputs.maskProcessingMode = 'ROIAUTO'
-    BFitB0_T2.inputs.ROIAutoDilateSize = 13
-    BFitB0_T2.inputs.backgroundFillValue = 0.0
-    BFitB0_T2.inputs.initializeTransformMode = 'useCenterOfHeadAlign'
-
-    BFitB0_T2.inputs.outputTransform = 'B0ToT2_AffineTransform.h5'
-    BFitB0_T2.inputs.strippedOutputTransform = 'B0ToT2_RigidTransform.h5'
-    BFitB0_T2.inputs.outputVolume = 'B0_in_T2Space_Output.nii.gz'
-
-    ### DWIWorkflow.connect(inputsSpec, 'T2Volume', BFitB0_T2, 'fixedVolume')
-    DWIWorkflow.connect(GetFileNamesNode, 'FixImage', BFitB0_T2, 'fixedVolume')
-    ### DWIWorkflow.connect(inputsSpec, 'DWIVolume', BFitB0_T2, 'movingVolume')
-    DWIWorkflow.connect(GetFileNamesNode, 'MovingDWI', BFitB0_T2, 'movingVolume')
-
-    DWIRIP = pe.Node(interface=gtractResampleDWIInPlace(), name='DWIRIP_B0ToT2')
-    DWIRIP.inputs.outputVolume = 'ACPC_DWI.nrrd'
-    DWIRIP.inputs.outputResampledB0 = 'ACPC_B0.nrrd'
-    # DWIRIP.inputs.imageOutputSize = [164,164,100]
-
-    DWIWorkflow.connect(BFitB0_T2, 'strippedOutputTransform', DWIRIP, 'inputTransform')
-    DWIWorkflow.connect(GetFileNamesNode, 'FixImage', DWIRIP, 'referenceVolume')
-    DWIWorkflow.connect(GetFileNamesNode, 'MovingDWI', DWIRIP, 'inputVolume')
-
-    DWIRIP_lowRes = pe.Node(interface=gtractResampleDWIInPlace(), name='DWIRIP_B0ToT2_lowRes')
-    DWIRIP_lowRes.inputs.outputVolume = 'ACPC_DWI.nrrd'
-    DWIRIP_lowRes.inputs.outputResampledB0 = 'ACPC_B0.nrrd'
-    # DWIRIP.inputs.imageOutputSize = [164,164,100]
-
-    DWIWorkflow.connect(BFitB0_T2, 'strippedOutputTransform', DWIRIP_lowRes, 'inputTransform')
-    # NOT USED IN THIS PATH! DWIWorkflow.connect(GetFileNamesNode, 'FixImage', DWIRIP_lowRes, 'referenceVolume')
-    DWIWorkflow.connect(GetFileNamesNode, 'MovingDWI', DWIRIP_lowRes, 'inputVolume')
-
-    ## TODO:  Replace with ANTS
-    BSPLINE_T2_TO_RIPB0 = pe.Node(interface=BRAINSFit(), name='BSPLINE_T2_TO_RIPB0')
-    # BSPLINE_T2_TO_RIPB0.plugin_args = BF_cpu_sge_options_dictionary
-    BSPLINE_T2_TO_RIPB0.inputs.costMetric = 'MMI'
-    BSPLINE_T2_TO_RIPB0.inputs.numberOfSamples = 100000
-    BSPLINE_T2_TO_RIPB0.inputs.numberOfIterations = [1500]
-    BSPLINE_T2_TO_RIPB0.inputs.numberOfHistogramBins = 50
-    BSPLINE_T2_TO_RIPB0.inputs.maximumStepLength = 0.2
-    BSPLINE_T2_TO_RIPB0.inputs.minimumStepLength = [0.00025, 0.00025, 0.00025, 0.00025, 0.00025]
-    BSPLINE_T2_TO_RIPB0.inputs.useRigid = True
-    BSPLINE_T2_TO_RIPB0.inputs.useScaleVersor3D = True
-    BSPLINE_T2_TO_RIPB0.inputs.useScaleSkewVersor3D = True
-    BSPLINE_T2_TO_RIPB0.inputs.useAffine = True  # Using initial transform from BRAINSABC
-
-    BSPLINE_T2_TO_RIPB0.inputs.useBSpline = True
-    # BSPLINE_T2_TO_RIPB0.inputs.useROIBSpline = True
-
-    ##  This needs to be debugged, it should work. BSPLINE_T2_TO_RIPB0.inputs.useROIBSpline = True
-    BSPLINE_T2_TO_RIPB0.inputs.useExplicitPDFDerivativesMode = 'AUTO'
-    BSPLINE_T2_TO_RIPB0.inputs.useCachingOfBSplineWeightsMode = 'ON'
-    BSPLINE_T2_TO_RIPB0.inputs.maxBSplineDisplacement = 24
-    BSPLINE_T2_TO_RIPB0.inputs.splineGridSize = [14, 10, 12]
-
-    BSPLINE_T2_TO_RIPB0.inputs.maskInferiorCutOffFromCenter = 65
-    BSPLINE_T2_TO_RIPB0.inputs.maskProcessingMode = 'ROIAUTO'
-    BSPLINE_T2_TO_RIPB0.inputs.ROIAutoDilateSize = 13
-    BSPLINE_T2_TO_RIPB0.inputs.backgroundFillValue = 0.0
-    BSPLINE_T2_TO_RIPB0.inputs.initializeTransformMode = 'useCenterOfHeadAlign'
-
-    BSPLINE_T2_TO_RIPB0.inputs.bsplineTransform = 'T2ToRIPB0_BSplineTransform.h5'
-    BSPLINE_T2_TO_RIPB0.inputs.outputVolume = 'T2ToRIPB0_Output.nii.gz'
-
-    DWIWorkflow.connect(DWIRIP, 'outputVolume', BSPLINE_T2_TO_RIPB0, 'fixedVolume')
-    ### DWIWorkflow.connect(inputsSpec, 'T2Volume', BSPLINE_T2_TO_RIPB0, 'movingVolume')
-    DWIWorkflow.connect(GetFileNamesNode, 'FixImage', BSPLINE_T2_TO_RIPB0, 'movingVolume')
-
-    RESAMPLE_BRAINMASK = pe.Node(interface=BRAINSResample(), name='RESAMPLE_BRAINMASK')
-    RESAMPLE_BRAINMASK.inputs.interpolationMode = 'NearestNeighbor'  # This needs to be debugged'Binary'
-    RESAMPLE_BRAINMASK.inputs.outputVolume = 'DeformedBrainMaskDWIRIP.nrrd'
-    RESAMPLE_BRAINMASK.inputs.pixelType = 'uchar'
-
-    DWIWorkflow.connect(BSPLINE_T2_TO_RIPB0, 'bsplineTransform', RESAMPLE_BRAINMASK, 'warpTransform')
-    ### DWIWorkflow.connect(inputsSpec, 'BrainMask',RESAMPLE_BRAINMASK,'inputVolume')
-    DWIWorkflow.connect(GetFileNamesNode, 'FixMaskImage', RESAMPLE_BRAINMASK, 'inputVolume')
-    DWIWorkflow.connect(DWIRIP, 'outputResampledB0', RESAMPLE_BRAINMASK, 'referenceVolume')
-
-    DTIEstim = pe.Node(interface=dtiestim(), name='DTIEstim_Process')
-    DTIEstim.inputs.method = 'wls'
-    DTIEstim.inputs.tensor_output = 'DTI_Output.nrrd'
-    DWIWorkflow.connect(DWIRIP, 'outputVolume', DTIEstim, 'dwi_image')
-    DWIWorkflow.connect(RESAMPLE_BRAINMASK, 'outputVolume', DTIEstim, 'brain_mask')
-
-    DTIProcess = pe.Node(interface=dtiprocess(), name='DTIProcess')
-    DTIProcess.inputs.fa_output = 'FA.nrrd'
-    DTIProcess.inputs.md_output = 'MD.nrrd'
-    DTIProcess.inputs.RD_output = 'RD.nrrd'
-    DTIProcess.inputs.frobenius_norm_output = 'frobenius_norm_output.nrrd'
-    DTIProcess.inputs.lambda1_output = 'lambda1_output.nrrd'
-    DTIProcess.inputs.lambda2_output = 'lambda2_output.nrrd'
-    DTIProcess.inputs.lambda3_output = 'lambda3_output.nrrd'
-    DTIProcess.inputs.scalar_float = True
-
-    DWIWorkflow.connect(DTIEstim, 'tensor_output', DTIProcess, 'dti_image')
-    DWIWorkflow.connect(DTIEstim, 'tensor_output', outputsSpec, 'tensor_image')
-    DWIWorkflow.connect(DTIProcess, 'fa_output', outputsSpec, 'FAImage')
-    DWIWorkflow.connect(DTIProcess, 'md_output', outputsSpec, 'MDImage')
-    DWIWorkflow.connect(DTIProcess, 'RD_output', outputsSpec, 'RDImage')
-    DWIWorkflow.connect(DTIProcess, 'frobenius_norm_output', outputsSpec, 'FrobeniusNormImage')
-    DWIWorkflow.connect(DTIProcess, 'lambda1_output', outputsSpec, 'Lambda1Image')
-    DWIWorkflow.connect(DTIProcess, 'lambda2_output', outputsSpec, 'Lambda2Image')
-    DWIWorkflow.connect(DTIProcess, 'lambda3_output', outputsSpec, 'Lambda3Image')
-
-    DWIDataSink = pe.Node(interface=nio.DataSink(), name='DWIDataSink')
-    DWIDataSink.inputs.base_directory = '/scratch/20130214_DWIPROCESSING_NIPYPE/DWIPrototype_Results'
-    # DWIDataSink.inputs.regex_substitutions = [('/Output/*/','/')]
-
-    def sinkContainer(_tuple):
-        import os.path
-        return os.path.join(*_tuple)
-
-    DWIWorkflow.connect([(inputsSpec, DWIDataSink, [(('SESSION_TUPLE', sinkContainer), 'container')])])
-
-    DWIWorkflow.connect(outputsSpec, 'FAImage', DWIDataSink, 'Output.@FAImage')
-    DWIWorkflow.connect(outputsSpec, 'MDImage', DWIDataSink, 'Output.@MDImage')
-    DWIWorkflow.connect(outputsSpec, 'RDImage', DWIDataSink, 'Output.@RDImage')
-    DWIWorkflow.connect(outputsSpec, 'FrobeniusNormImage', DWIDataSink, 'Output.@FrobeniusNormImage')
-    DWIWorkflow.connect(outputsSpec, 'Lambda1Image', DWIDataSink, 'Output.@Lambda1Image')
-    DWIWorkflow.connect(outputsSpec, 'Lambda2Image', DWIDataSink, 'Output.@Lambda2Image')
-    DWIWorkflow.connect(outputsSpec, 'Lambda3Image', DWIDataSink, 'Output.@Lambda3Image')
-    DWIWorkflow.connect(outputsSpec, 'tensor_image', DWIDataSink, 'Output.@tensor_image')
-
-    return DWIWorkflow
-
+################
+################
+################
+################
+################
+################
+################
+##                  MAIN WORK HERE
 # <codecell>
-
 SESSION_TUPLE = [('HDNI_001', '068044003', '068044003_20120522_30')]
 #\'\'\'                 ,('PHD_024','0029','84091'),
 #                     ('PHD_024','0091','60387'),('PHD_024','0091','78867'),('PHD_024','0093','50120'),
@@ -350,8 +202,6 @@ SLICER_RESULTS_DIR='/scratch/DWI_DATA/SlicerResults'
 '''
 BASE_STRUCT = '/scratch/DWI_DATA/20130109_TrackOn_Results'
 BASE_DWI = '/scratch/DWI_DATA/20121019_DTIPrep'
-
-# <markdowncell>
 
 # The desired behavior would be to use a MapNode here
 MasterWFname = 'ManySubjectDWIPrototype'
@@ -385,170 +235,10 @@ MasterDWIWorkflow.config['logging'] = {
     'log_directory': BASE_DIR
 }
 
-
-if True:
-    sessionNode = pe.Node(interface=IdentityInterface(fields=['SESSION_TUPLE', 'BASE_STRUCT', 'BASE_DWI']), name='sessionNode')
-    sessionNode.inputs.SESSION_TUPLE = SESSION_TUPLE
-    sessionNode.inputs.BASE_STRUCT = BASE_STRUCT
-    sessionNode.inputs.BASE_DWI = BASE_DWI
-    myDWIWorkflow = pe.MapNode(interface=Function(function=CreateDWIWorkFlow,
-                                                  input_names=['SESSION_TUPLE', 'BASE_STRUCT', 'BASE_DWI'],
-                                                  output_names=['FAImage', 'MDImage', 'RDImage', 'FrobeniusNormImage',
-                                                                'Lambda1Image', 'Lambda2Image', 'Lambda3Image', 'tensor_output']),
-                               iterfield=['SESSION_TUPLE'],
-                               name='myDWIWorkflow')
-    MasterDWIWorkflow.connect(sessionNode, 'SESSION_TUPLE', myDWIWorkflow, 'SESSION_TUPLE')
-    MasterDWIWorkflow.connect(sessionNode, 'BASE_STRUCT', myDWIWorkflow, 'BASE_STRUCT')
-    MasterDWIWorkflow.connect(sessionNode, 'BASE_DWI', myDWIWorkflow, 'BASE_DWI')
-    if False:
-        ## Now do template building with FA's
-        import nipype.interfaces.ants as ants
-
-        initAvg = pe.Node(interface=ants.AverageImages(), name='initAvg')
-        initAvg.inputs.dimension = 3
-        initAvg.inputs.normalize = True
-
-        MergeByExtendListElementsNode = pe.Node(interface=Function(function=MergeByExtendListElements, input_names=['FAImageList'], output_names=['ListOfImagesDictionaries', 'registrationImageTypes', 'interpolationMapping']), run_without_submitting=True, name='99_FAMergeByExtendListElements')
-
-        from nipype.interfaces.base import CommandLine, CommandLineInputSpec, TraitedSpec, File, Directory, traits, isdefined, InputMultiPath, OutputMultiPath
-        import os
-
-        class ResampleDTIlogEuclideanInputSpec(CommandLineInputSpec):
-            in_file = File(argstr='%s', exists=True, mandatory=True, position=-2, desc='The input file for Resampledtilogeuclidean')
-            out_file = File(argstr='%s', exists=False, mandatory=True, position=-1, desc='The output file for Resampledtilogeuclidean')
-            transformationFile = File(argstr='--transformationFile %s', exists=True, mandatory=True, desc='The affine transformation file for Resampledtilogeuclidean')
-            Reference = File(argstr='--Reference %s', exists=True, mandatory=True, desc='The reference file for ResampleDTIlogEuclidean output')
-            defField = File(argstr='--defField %s', exists=True, mandatory=True, desc='The deformation file for ResampleDTIlogEuclidean output')
-            hfieldtype = traits.Enum('hfield', 'displacement', argstr='--hfieldtype %s', desc='Set if the deformation field is an -Field')
-            interpolation = traits.Enum('linear', 'nn', 'ws', 'bs', argstr='--interpolation %s', desc='Sampling algorithm')
-            transform_tensor_method = traits.Enum('PPD', 'FS', argstr='--transform_tensor_method %s', desc='Chooses between 2 methods to transform the tensors: Finite Strain (FS), faster but less accurate, or Preservation of the Principal Direction (PPD)')
-
-        class ResampleDTIlogEuclideanOutputSpec(TraitedSpec):
-            out_file = traits.File(exists=False, desc='The output file for Resampledtilogeuclidean')
-
-        class ResampleDTIlogEuclidean(CommandLine):
-            _cmd = 'ResampleDTIlogEuclidean'
-            input_spec = ResampleDTIlogEuclideanInputSpec
-            output_spec = ResampleDTIlogEuclideanOutputSpec
-
-            def _list_outputs(self):
-                outputs = self.output_spec().get()
-                outputs['out_file'] = self.inputs.out_file
-                return outputs
-
-        def getElement(inputList, index):
-            ''' Custom function to get out affine and deformation fields from BeginANTS output list '''
-            return inputList[int(index)]
-
-        ResampleDTI = pe.MapNode(interface=ResampleDTIlogEuclidean(), iterfield=['in_file'], name='ResampleDTI')
-        ResampleDTI.inputs.hfieldtype = 'displacement'
-        ResampleDTI.inputs.interpolation = 'linear'
-        ResampleDTI.inputs.transform_tensor_method = 'PPD'
-        '''
-        ***********
-        '''
-        mergeFA = pe.Node(interface=Merge(len(SESSION_TUPLE)), name='99_mergeFA')
-        mergeTensor = pe.Node(interface=Merge(len(SESSION_TUPLE)), name='99_mergeTensor')
-        count = 1
-        for SESSION_TUPLE in SESSION_TUPLE:
-            myDWIWorkflow = CreateDWIWorkFlow(SESSION_TUPLE, BASE_STRUCT, BASE_DWI)
-            MasterDWIWorkflow.connect(myDWIWorkflow, 'outputspec.FAImage', mergeFA, 'in' + str(count))
-            MasterDWIWorkflow.connect(myDWIWorkflow, 'outputspec.tensor_image', mergeTensor, 'in' + str(count))
-            count += 1
-
-        MasterDWIWorkflow.connect(mergeFA, 'out', MergeByExtendListElementsNode, 'FAImageList')
-        MasterDWIWorkflow.connect(mergeFA, 'out', initAvg, 'images')
-
-        # resampleIDNode = pe.Node(interface=IdentityInterface(fields=['in_file', 'SESSION_TUPLE']), name='99_resampleIdentity')
-        # MasterDWIWorkflow.connect(mergeTensor, 'out', resampleIDNode, 'in_file')
-        # MasterDWIWorkflow.connect(resampleIDNode, 'in_file', ResampleDTI, 'in_file')
-        MasterDWIWorkflow.connect(mergeTensor, 'out', ResampleDTI, 'in_file')
-
-        ### USE ANTS REGISTRATION
-        from BAWantsRegistrationBuildTemplate import BAWantsRegistrationTemplateBuildSingleIterationWF
-        buildTemplateIteration1 = BAWantsRegistrationTemplateBuildSingleIterationWF('iteration01')
-
-        ## TODO:  Change these parameters
-        BeginANTS_iter1 = buildTemplateIteration1.get_node('BeginANTS')
-        BeginANTS_iter1.plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp1 4-8 -l mem_free=9000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE_LONG), 'overwrite': True}
-
-        wimtdeformed_iter1 = buildTemplateIteration1.get_node('wimtdeformed')
-        wimtdeformed_iter1.plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp1 1-2 -l mem_free=2000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE), 'overwrite': True}
-
-        AvgAffineTransform_iter1 = buildTemplateIteration1.get_node('AvgAffineTransform')
-        AvgAffineTransform_iter1.plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp1 1 -l mem_free=2000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE), 'overwrite': True}
-
-        wimtPassivedeformed_iter1 = buildTemplateIteration1.get_node('wimtPassivedeformed')
-        wimtPassivedeformed_iter1.plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp1 1-2 -l mem_free=2000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE), 'overwrite': True}
-
-        MasterDWIWorkflow.connect(initAvg, 'output_average_image', buildTemplateIteration1, 'inputspec.fixed_image')
-        MasterDWIWorkflow.connect(MergeByExtendListElementsNode, 'ListOfImagesDictionaries', buildTemplateIteration1, 'inputspec.ListOfImagesDictionaries')
-        MasterDWIWorkflow.connect(MergeByExtendListElementsNode, 'registrationImageTypes', buildTemplateIteration1, 'inputspec.registrationImageTypes')
-        MasterDWIWorkflow.connect(MergeByExtendListElementsNode, 'interpolationMapping', buildTemplateIteration1, 'inputspec.interpolationMapping')
-
-        buildTemplateIteration2 = buildTemplateIteration1.clone(name='buildTemplateIteration2')
-        buildTemplateIteration2 = BAWantsRegistrationTemplateBuildSingleIterationWF('Iteration02')
-        MasterDWIWorkflow.connect([(buildTemplateIteration2, ResampleDTI, [(('BeginANTS.forward_transforms', getElement, 0), 'transformationFile')])])
-        MasterDWIWorkflow.connect([(buildTemplateIteration2, ResampleDTI, [(('BeginANTS.forward_transforms', getElement, 1), 'defField')])])
-        MasterDWIWorkflow.connect(buildTemplateIteration2, 'outputspec.template', ResampleDTI, 'Reference')
-        ## TODO:  Change these parameters
-        BeginANTS_iter2 = buildTemplateIteration2.get_node('BeginANTS')
-        BeginANTS_iter2.plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp1 4-8 -l mem_free=9000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE_LONG), 'overwrite': True}
-
-        wimtdeformed_iter2 = buildTemplateIteration2.get_node('wimtdeformed')
-        wimtdeformed_iter2.plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp1 1-2 -l mem_free=2000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE), 'overwrite': True}
-
-        AvgAffineTransform_iter2 = buildTemplateIteration2.get_node('AvgAffineTransform')
-        AvgAffineTransform_iter2.plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp1 1 -l mem_free=2000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE), 'overwrite': True}
-
-        wimtPassivedeformed_iter2 = buildTemplateIteration2.get_node('wimtPassivedeformed')
-        wimtPassivedeformed_iter2.plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp1 1-2 -l mem_free=2000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE), 'overwrite': True}
-
-        MasterDWIWorkflow.connect(buildTemplateIteration1, 'outputspec.template', buildTemplateIteration2, 'inputspec.fixed_image')
-        MasterDWIWorkflow.connect(MergeByExtendListElementsNode, 'ListOfImagesDictionaries', buildTemplateIteration2, 'inputspec.ListOfImagesDictionaries')
-        MasterDWIWorkflow.connect(MergeByExtendListElementsNode, 'registrationImageTypes', buildTemplateIteration2, 'inputspec.registrationImageTypes')
-        MasterDWIWorkflow.connect(MergeByExtendListElementsNode, 'interpolationMapping', buildTemplateIteration2, 'inputspec.interpolationMapping')
-
-        DWIAverageSink = pe.Node(interface=nio.DataSink(), name='DWIAverageSink')
-        #''' 'Average DTIEstim_Process and average deformed DTI image' '''
-        DWIAverageSink = pe.Node(interface=nio.DataSink(), name='DWIAverageSink')
-        DWIAverageSink.inputs.base_directory = '/scratch/20130214_DWIPROCESSING_NIPYPE'
-        DWIAverageSink.inputs.container = os.path.join('DWIPrototype_Results')
-        # DWIAverageSink.inputs.regexp_substitutions = [('Average/*/', 'Average/')]
-
-        MasterDWIWorkflow.connect(buildTemplateIteration2, 'AvgAffineTransform.affine_transform',
-                                  DWIAverageSink, 'Average.@transforms')
-        MasterDWIWorkflow.connect(buildTemplateIteration2, 'AvgWarpImages.output_average_image',
-                                  DWIAverageSink, 'Average.@passive_transforms')
-        MasterDWIWorkflow.connect(buildTemplateIteration2, 'outputspec.template',
-                                  DWIAverageSink, 'Average.@template')
-        MasterDWIWorkflow.connect(buildTemplateIteration2, 'outputspec.passive_deformed_templates',
-                                  DWIAverageSink, 'Average.@passive')
-        MasterDWIWorkflow.connect(initAvg, 'output_average_image', DWIAverageSink, 'Average.@image')
-
-        DTIDataSink = pe.MapNode(interface=nio.DataSink(infields=['Output.@out_file']),
-                                 iterfield=['container', 'Output.@out_file'],
-                                 name='DTIDataSink')
-        DTIDataSink.inputs.base_directory = '/scratch/20130214_DWIPROCESSING_NIPYPE/DWIPrototype_Results'
-        # DWIDataSink.inputs.regex_substitutions = [('/Output/*/','/')]
-
-        def sinkContainer(args):
-            import os.path
-            retval = []
-            for tup in args:
-                retval.append(os.path.join(*tup))
-            return retval
-
 '''
     MasterDWIWorkflow.connect([(resampleIDNode, DTIDataSink,[(('SESSION_TUPLE', sinkContainer), 'container')])])
     MasterDWIWorkflow.connect(ResampleDTI, 'out_file', DTIDataSink, 'Output.@out_file')
 '''
-
-
-# <markdowncell>
-
-# Now Start Processing
-# ====================
 
 # <codecell>
 import multiprocessing
@@ -559,6 +249,189 @@ os.environ['NSLOTS'] = '{0}'.format(total_CPUS / NUMPARALLEL)
 MasterDWIWorkflow.write_graph()
 
 SGEFlavor = 'SGE'
+
+import nipype
+from nipype.interfaces.base import CommandLine, CommandLineInputSpec, TraitedSpec, File, Directory
+from nipype.interfaces.base import traits, isdefined, BaseInterface
+from nipype.interfaces.utility import Merge, Split, Function, Rename, IdentityInterface
+import nipype.interfaces.io as nio   # Data i/oS
+import nipype.pipeline.engine as pe  # pypeline engine
+from nipype.interfaces.freesurfer import ReconAll
+
+from SEMTools import BRAINSFit,gtractResampleDWIInPlace,dtiestim,dtiprocess
+
+inputsSpec = pe.Node(interface=IdentityInterface(fields=['SESSION_TUPLE']), name='inputspec')
+inputsSpec.iterables = ('SESSION_TUPLE',SESSION_TUPLE)
+
+GetFileNamesNode = pe.Node(interface=Function(function=GetDWIReferenceImagesFromSessionID,
+                           input_names=['SESSION_TUPLE', 'BASE_STRUCT', 'BASE_DWI'],
+                           output_names=['PROJ_ID', 'SUBJ_ID', 'SESSION_ID', 'FixImage', 'FixMaskImage', 'MovingDWI']),
+                           run_without_submitting=True, name='99_GetDWIReferenceImagesFromSessionID')
+GetFileNamesNode.inputs.BASE_STRUCT = BASE_STRUCT
+GetFileNamesNode.inputs.BASE_DWI = BASE_DWI
+
+MasterDWIWorkflow.connect(inputsSpec, 'SESSION_TUPLE', GetFileNamesNode, 'SESSION_TUPLE')
+
+outputsSpec = pe.Node(interface=IdentityInterface(fields=['FAImage', 'MDImage', 'RDImage', 'FrobeniusNormImage',
+                                                          'Lambda1Image', 'Lambda2Image', 'Lambda3Image', 'tensor_image']),
+                      name='outputspec')
+
+BFitB0_T2 = pe.Node(interface=BRAINSFit(), name='B0ToT2_Rigid')
+# BF_cpu_sge_options_dictionary = {'qsub_args': '-S /bin/bash -pe smp1 2-12 -l h_vmem=14G,mem_free=4G -o /dev/null -e /dev/null ' + CLUSTER_QUEUE, 'overwrite': True}
+
+# BFitB0_T2.plugin_args = BF_cpu_sge_options_dictionary
+BFitB0_T2.inputs.costMetric = 'MMI'
+BFitB0_T2.inputs.numberOfSamples = 100000
+BFitB0_T2.inputs.numberOfIterations = [1500]
+BFitB0_T2.inputs.numberOfHistogramBins = 50
+BFitB0_T2.inputs.maximumStepLength = 0.2
+BFitB0_T2.inputs.minimumStepLength = [0.00005]
+BFitB0_T2.inputs.useRigid = True
+BFitB0_T2.inputs.useAffine = True  # Use Affine/but extract Rigid. Using initial transform from BRAINSABC
+BFitB0_T2.inputs.maskInferiorCutOffFromCenter = 65
+BFitB0_T2.inputs.maskProcessingMode = 'ROIAUTO'
+BFitB0_T2.inputs.ROIAutoDilateSize = 13
+BFitB0_T2.inputs.backgroundFillValue = 0.0
+BFitB0_T2.inputs.initializeTransformMode = 'useCenterOfHeadAlign'
+
+BFitB0_T2.inputs.outputTransform = 'B0ToT2_AffineTransform.h5'
+BFitB0_T2.inputs.strippedOutputTransform = 'B0ToT2_RigidTransform.h5'
+BFitB0_T2.inputs.outputVolume = 'B0_in_T2Space_Output.nii.gz'
+
+### MasterDWIWorkflow.connect(inputsSpec, 'T2Volume', BFitB0_T2, 'fixedVolume')
+MasterDWIWorkflow.connect(GetFileNamesNode, 'FixImage', BFitB0_T2, 'fixedVolume')
+### MasterDWIWorkflow.connect(inputsSpec, 'DWIVolume', BFitB0_T2, 'movingVolume')
+MasterDWIWorkflow.connect(GetFileNamesNode, 'MovingDWI', BFitB0_T2, 'movingVolume')
+
+DWIRIP = pe.Node(interface=gtractResampleDWIInPlace(), name='DWIRIP_B0ToT2')
+DWIRIP.inputs.outputVolume = 'ACPC_DWI.nrrd'
+DWIRIP.inputs.outputResampledB0 = 'ACPC_B0.nrrd'
+# DWIRIP.inputs.imageOutputSize = [164,164,100]
+
+MasterDWIWorkflow.connect(BFitB0_T2, 'strippedOutputTransform', DWIRIP, 'inputTransform')
+MasterDWIWorkflow.connect(GetFileNamesNode, 'FixImage', DWIRIP, 'referenceVolume')
+MasterDWIWorkflow.connect(GetFileNamesNode, 'MovingDWI', DWIRIP, 'inputVolume')
+
+
+DWIRIP_lowRes = pe.Node(interface=gtractResampleDWIInPlace(), name='DWIRIP_B0ToT2_lowRes')
+DWIRIP_lowRes.inputs.outputVolume = 'ACPC_DWI.nrrd'
+DWIRIP_lowRes.inputs.outputResampledB0 = 'ACPC_B0.nrrd'
+
+MasterDWIWorkflow.connect(BFitB0_T2, 'strippedOutputTransform', DWIRIP_lowRes, 'inputTransform')
+# NOT USED IN THIS PATH! MasterDWIWorkflow.connect(GetFileNamesNode, 'FixImage', DWIRIP_lowRes, 'referenceVolume')
+MasterDWIWorkflow.connect(GetFileNamesNode, 'MovingDWI', DWIRIP_lowRes, 'inputVolume')
+
+## TODO:  Replace with ANTS
+BSPLINE_T2_TO_RIPB0 = pe.Node(interface=BRAINSFit(), name='BSPLINE_T2_TO_RIPB0')
+# BSPLINE_T2_TO_RIPB0.plugin_args = BF_cpu_sge_options_dictionary
+BSPLINE_T2_TO_RIPB0.inputs.costMetric = 'MMI'
+BSPLINE_T2_TO_RIPB0.inputs.numberOfSamples = 100000
+BSPLINE_T2_TO_RIPB0.inputs.numberOfIterations = [1500]
+BSPLINE_T2_TO_RIPB0.inputs.numberOfHistogramBins = 50
+BSPLINE_T2_TO_RIPB0.inputs.maximumStepLength = 0.2
+BSPLINE_T2_TO_RIPB0.inputs.minimumStepLength = [0.00025, 0.00025, 0.00025, 0.00025, 0.00025]
+BSPLINE_T2_TO_RIPB0.inputs.useRigid = True
+BSPLINE_T2_TO_RIPB0.inputs.useScaleVersor3D = True
+BSPLINE_T2_TO_RIPB0.inputs.useScaleSkewVersor3D = True
+BSPLINE_T2_TO_RIPB0.inputs.useAffine = True  # Using initial transform from BRAINSABC
+
+BSPLINE_T2_TO_RIPB0.inputs.useBSpline = True
+# BSPLINE_T2_TO_RIPB0.inputs.useROIBSpline = True
+
+##  This needs to be debugged, it should work. BSPLINE_T2_TO_RIPB0.inputs.useROIBSpline = True
+BSPLINE_T2_TO_RIPB0.inputs.useExplicitPDFDerivativesMode = 'AUTO'
+BSPLINE_T2_TO_RIPB0.inputs.useCachingOfBSplineWeightsMode = 'ON'
+BSPLINE_T2_TO_RIPB0.inputs.maxBSplineDisplacement = 24
+BSPLINE_T2_TO_RIPB0.inputs.splineGridSize = [14, 10, 12]
+
+BSPLINE_T2_TO_RIPB0.inputs.maskInferiorCutOffFromCenter = 65
+BSPLINE_T2_TO_RIPB0.inputs.maskProcessingMode = 'ROIAUTO'
+BSPLINE_T2_TO_RIPB0.inputs.ROIAutoDilateSize = 13
+BSPLINE_T2_TO_RIPB0.inputs.backgroundFillValue = 0.0
+BSPLINE_T2_TO_RIPB0.inputs.initializeTransformMode = 'useCenterOfHeadAlign'
+
+BSPLINE_T2_TO_RIPB0.inputs.bsplineTransform = 'T2ToRIPB0_BSplineTransform.h5'
+BSPLINE_T2_TO_RIPB0.inputs.outputVolume = 'T2ToRIPB0_Output.nii.gz'
+
+MasterDWIWorkflow.connect(DWIRIP_lowRes, 'outputVolume', BSPLINE_T2_TO_RIPB0, 'fixedVolume')
+### MasterDWIWorkflow.connect(inputsSpec, 'T2Volume', BSPLINE_T2_TO_RIPB0, 'movingVolume')
+MasterDWIWorkflow.connect(GetFileNamesNode, 'FixImage', BSPLINE_T2_TO_RIPB0, 'movingVolume')
+
+RESAMPLE_BRAINMASK = pe.Node(interface=BRAINSResample(), name='RESAMPLE_BRAINMASK')
+RESAMPLE_BRAINMASK.inputs.interpolationMode = 'NearestNeighbor'  # This needs to be debugged'Binary'
+RESAMPLE_BRAINMASK.inputs.outputVolume = 'DeformedBrainMaskDWIRIP.nrrd'
+RESAMPLE_BRAINMASK.inputs.pixelType = 'binary'
+
+MasterDWIWorkflow.connect(BSPLINE_T2_TO_RIPB0, 'bsplineTransform', RESAMPLE_BRAINMASK, 'warpTransform')
+### MasterDWIWorkflow.connect(inputsSpec, 'BrainMask',RESAMPLE_BRAINMASK,'inputVolume')
+MasterDWIWorkflow.connect(GetFileNamesNode, 'FixMaskImage', RESAMPLE_BRAINMASK, 'inputVolume')
+MasterDWIWorkflow.connect(DWIRIP_lowRes, 'outputResampledB0', RESAMPLE_BRAINMASK, 'referenceVolume')
+
+DTIEstim = pe.Node(interface=dtiestim(), name='DTIEstim_Process')
+DTIEstim.inputs.method = 'wls'
+DTIEstim.inputs.tensor_output = 'DTI_Output.nrrd'
+MasterDWIWorkflow.connect(DWIRIP_lowRes, 'outputVolume', DTIEstim, 'dwi_image')
+MasterDWIWorkflow.connect(RESAMPLE_BRAINMASK, 'outputVolume', DTIEstim, 'brain_mask')
+
+DTIProcess = pe.Node(interface=dtiprocess(), name='DTIProcess')
+DTIProcess.inputs.fa_output = 'FA.nrrd'
+DTIProcess.inputs.md_output = 'MD.nrrd'
+DTIProcess.inputs.RD_output = 'RD.nrrd'
+DTIProcess.inputs.frobenius_norm_output = 'frobenius_norm_output.nrrd'
+DTIProcess.inputs.lambda1_output = 'lambda1_output.nrrd'
+DTIProcess.inputs.lambda2_output = 'lambda2_output.nrrd'
+DTIProcess.inputs.lambda3_output = 'lambda3_output.nrrd'
+DTIProcess.inputs.scalar_float = True
+
+MasterDWIWorkflow.connect(DTIEstim, 'tensor_output', DTIProcess, 'dti_image')
+MasterDWIWorkflow.connect(DTIEstim, 'tensor_output', outputsSpec, 'tensor_image')
+MasterDWIWorkflow.connect(DTIProcess, 'fa_output', outputsSpec, 'FAImage')
+MasterDWIWorkflow.connect(DTIProcess, 'md_output', outputsSpec, 'MDImage')
+MasterDWIWorkflow.connect(DTIProcess, 'RD_output', outputsSpec, 'RDImage')
+MasterDWIWorkflow.connect(DTIProcess, 'frobenius_norm_output', outputsSpec, 'FrobeniusNormImage')
+MasterDWIWorkflow.connect(DTIProcess, 'lambda1_output', outputsSpec, 'Lambda1Image')
+MasterDWIWorkflow.connect(DTIProcess, 'lambda2_output', outputsSpec, 'Lambda2Image')
+MasterDWIWorkflow.connect(DTIProcess, 'lambda3_output', outputsSpec, 'Lambda3Image')
+
+## UKF Processing
+from SEMTools import UKFTractography
+UKFNode = pe.Node(interface=UKFTractography(), name= "UKFRunRecordStates")
+UKFNode.inputs.tracts = "ukfTrackts.vtk"
+UKFNode.inputs.tractsWithSecondTensor = "ukfSecondTensorTracks.vtk"
+UKFNode.inputs.numTensor = '2'  ## default True
+UKFNode.inputs.freeWater = True ## default False
+UKFNode.inputs.recordFA = True ## default False
+UKFNode.inputs.recordTensors = True ## default False
+#UKFNode.inputs.recordCovariance = True ## default False
+#UKFNode.inputs.recordState = True ## default False
+#UKFNode.inputs.recordFreeWater = True ## default False
+#UKFNode.inputs.recordTrace = True ## default False
+#UKFNode.inputs.recordNMSE = True ## default False
+
+
+MasterDWIWorkflow.connect(DWIRIP_lowRes, 'outputVolume', UKFNode, 'dwiFile')
+MasterDWIWorkflow.connect(RESAMPLE_BRAINMASK, 'outputVolume', UKFNode, 'maskFile')
+
+DWIDataSink = pe.Node(interface=nio.DataSink(), name='DWIDataSink')
+DWIDataSink.inputs.base_directory = '/scratch/20130214_DWIPROCESSING_NIPYPE/DWIPrototype_Results'
+# DWIDataSink.inputs.regex_substitutions = [('/Output/*/','/')]
+
+def sinkContainer(_tuple):
+    import os.path
+    return os.path.join(*_tuple)
+
+MasterDWIWorkflow.connect([(inputsSpec, DWIDataSink, [(('SESSION_TUPLE', sinkContainer), 'container')])])
+
+MasterDWIWorkflow.connect(outputsSpec, 'FAImage', DWIDataSink, 'Output.@FAImage')
+MasterDWIWorkflow.connect(outputsSpec, 'MDImage', DWIDataSink, 'Output.@MDImage')
+MasterDWIWorkflow.connect(outputsSpec, 'RDImage', DWIDataSink, 'Output.@RDImage')
+MasterDWIWorkflow.connect(outputsSpec, 'FrobeniusNormImage', DWIDataSink, 'Output.@FrobeniusNormImage')
+MasterDWIWorkflow.connect(outputsSpec, 'Lambda1Image', DWIDataSink, 'Output.@Lambda1Image')
+MasterDWIWorkflow.connect(outputsSpec, 'Lambda2Image', DWIDataSink, 'Output.@Lambda2Image')
+MasterDWIWorkflow.connect(outputsSpec, 'Lambda3Image', DWIDataSink, 'Output.@Lambda3Image')
+MasterDWIWorkflow.connect(outputsSpec, 'tensor_image', DWIDataSink, 'Output.@tensor_image')
+
+
 
 if True:
     MasterDWIWorkflow.write_graph()

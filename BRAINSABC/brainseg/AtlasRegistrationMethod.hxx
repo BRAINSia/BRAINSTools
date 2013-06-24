@@ -132,12 +132,29 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
 
   muLogMacro(<< "Register Intra subject images" << std::endl);
   int i = 0;
+  bool first_image(true);
   for(MapOfFloatImageVectors::iterator mapIt = this->m_IntraSubjectOriginalImageList.begin();
-      mapIt != this->m_IntraSubjectOriginalImageList.end(); ++mapIt)
+      mapIt != this->m_IntraSubjectOriginalImageList.end(); ++mapIt,++i)
     {
     FloatImageVector::iterator imIt = mapIt->second.begin();
     FloatImageVector::iterator intraImIt = this->m_IntraSubjectOriginalImageList[mapIt->first].begin();
     StringVector::iterator isNamesIt = this->m_IntraSubjectTransformFileNames[mapIt->first].begin();
+    // following the original BRAINSABC code with a simple list of
+    // input images, this registers every image to the first. But
+    // there neeeds to be a first registration, even if it is never used
+    if(first_image)
+      {
+      first_image = false;
+      this->m_IntraSubjectTransforms[mapIt->first].push_back(MakeRigidIdentity());
+      //
+      // if the first image is the only image of that modality, go to
+      // the next modality.
+      if(mapIt->second.size() == 1)
+        {
+        continue;
+        }
+      ++imIt; ++intraImIt; ++isNamesIt;
+      }
 
     for(;imIt != mapIt->second.end(); ++imIt, ++isNamesIt, ++intraImIt, ++i)
       {

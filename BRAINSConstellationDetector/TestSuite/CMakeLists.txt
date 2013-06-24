@@ -206,6 +206,85 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetecto
 ############################
 ############################
 ############################
+set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_ForceRPPoint)
+  ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
+    COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
+    BRAINSConstellationDetectorTest
+    --forceRPPoint 0.44,7.27,1.97
+    --inputVolume DATA{${TestData_DIR}/T1.nii.gz}
+    --LLSModel DATA{${TestData_DIR}/Transforms_h5/LLSModel-2ndVersion.${XFRM_EXT}}
+    --inputTemplateModel DATA{${TestData_DIR}/T1-2ndVersion.mdl}
+    --outputLandmarksInInputSpace ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_InputSpace.fcsv
+    )
+
+  set(BRAINSConstellationDetectorTestName forceRPCompareTest)
+  ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
+    COMMAND ${LAUNCH_EXE} $<TARGET_FILE:LandmarksCompare>
+    --inputLandmarkFile1 ${CMAKE_CURRENT_BINARY_DIR}/BRAINSConstellationDetectorTest_ForceRPPoint_InputSpace.fcsv # output of the ForceRPPoint Test
+    --inputLandmarkFile2 DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.fcsv} # Baseline file
+    --tolerance 0.00001
+    )
+  set_property(TEST ${BRAINSConstellationDetectorTestName} APPEND PROPERTY DEPENDS BRAINSConstellationDetectorTest_ForceRPPoint)
+
+set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_ForceACPoint)
+  ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
+    COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
+    BRAINSConstellationDetectorTest
+    --forceACPoint 0.72,30.01,18.95
+    --inputVolume DATA{${TestData_DIR}/T1.nii.gz}
+    --LLSModel DATA{${TestData_DIR}/Transforms_h5/LLSModel-2ndVersion.${XFRM_EXT}}
+    --inputTemplateModel DATA{${TestData_DIR}/T1-2ndVersion.mdl}
+    --outputLandmarksInInputSpace ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_InputSpace.fcsv
+    )
+
+  set(BRAINSConstellationDetectorTestName forceACCompareTest)
+  ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
+    COMMAND ${LAUNCH_EXE} $<TARGET_FILE:LandmarksCompare>
+    --inputLandmarkFile1 ${CMAKE_CURRENT_BINARY_DIR}/BRAINSConstellationDetectorTest_ForceACPoint_InputSpace.fcsv # output of the ForceACPoint Test
+    --inputLandmarkFile2 DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.fcsv} # Baseline file
+    --tolerance 0.00001
+    )
+  set_property(TEST ${BRAINSConstellationDetectorTestName} APPEND PROPERTY DEPENDS BRAINSConstellationDetectorTest_ForceACPoint)
+
+set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_ForcePCPoint)
+  ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
+    COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
+    BRAINSConstellationDetectorTest
+    --forcePCPoint 1.54,1.64,14.32
+    --inputVolume DATA{${TestData_DIR}/T1.nii.gz}
+    --LLSModel DATA{${TestData_DIR}/Transforms_h5/LLSModel-2ndVersion.${XFRM_EXT}}
+    --inputTemplateModel DATA{${TestData_DIR}/T1-2ndVersion.mdl}
+    --outputLandmarksInInputSpace ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_InputSpace.fcsv
+    )
+
+  set(BRAINSConstellationDetectorTestName forcePCCompareTest)
+  ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
+    COMMAND ${LAUNCH_EXE} $<TARGET_FILE:LandmarksCompare>
+    --inputLandmarkFile1 ${CMAKE_CURRENT_BINARY_DIR}/BRAINSConstellationDetectorTest_ForcePCPoint_InputSpace.fcsv # output of the ForcePCPoint Test
+    --inputLandmarkFile2 DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.fcsv} # Baseline file
+    --tolerance 0.00001
+    )
+  set_property(TEST ${BRAINSConstellationDetectorTestName} APPEND PROPERTY DEPENDS BRAINSConstellationDetectorTest_ForcePCPoint)
+
+set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_ForceVN4Point)
+  ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
+    COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
+    BRAINSConstellationDetectorTest
+    --forceVN4Point 0,-20.60,-12.81
+    --inputVolume DATA{${TestData_DIR}/T1.nii.gz}
+    --LLSModel DATA{${TestData_DIR}/Transforms_h5/LLSModel-2ndVersion.${XFRM_EXT}}
+    --inputTemplateModel DATA{${TestData_DIR}/T1-2ndVersion.mdl}
+    --outputLandmarksInInputSpace ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSConstellationDetectorTestName}_InputSpace.fcsv
+    )
+
+  set(BRAINSConstellationDetectorTestName forceVN4CompareTest)
+  ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}
+    COMMAND ${LAUNCH_EXE} $<TARGET_FILE:LandmarksCompare>
+    --inputLandmarkFile1 ${CMAKE_CURRENT_BINARY_DIR}/BRAINSConstellationDetectorTest_ForceVN4Point_InputSpace.fcsv # output of the ForceVN4Point Test
+    --inputLandmarkFile2 DATA{${TestData_DIR}/${BRAINSConstellationDetectorTestName}_standard.fcsv} # Baseline file
+    --tolerance 0.00001
+    )
+  set_property(TEST ${BRAINSConstellationDetectorTestName} APPEND PROPERTY DEPENDS BRAINSConstellationDetectorTest_ForceVN4Point)
 
   set(BRAINSConstellationDetectorTestName BRAINSConstellationDetectorTest_acLowerBound)
   ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSConstellationDetectorTestName}

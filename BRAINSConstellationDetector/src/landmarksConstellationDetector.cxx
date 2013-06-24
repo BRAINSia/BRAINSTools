@@ -174,11 +174,35 @@ void landmarksConstellationDetector::Compute( void )
   // save the result that whether we are going to process all the landmarks
   // in light of user-specified eye center info.
   bool hasUserSpecEyeCenterInfo = true;
+  bool hasUserForcedRPPoint = true;
+  bool hasUserForcedACPoint = true;
+  bool hasUserForcedPCPoint = true;
+  bool hasUserForcedVN4Point = true;
 
   if( ( this->m_NamedPointEMSP.find( "LE" ) == this->m_NamedPointEMSP.end() )
       || ( this->m_NamedPointEMSP.find( "RE" ) == this->m_NamedPointEMSP.end() ) )
     {
     hasUserSpecEyeCenterInfo = false;
+    }
+
+  if( this->m_NamedPoint.find("RP") == this->m_NamedPoint.end() )
+    {
+    hasUserForcedRPPoint = false;
+    }
+
+  if( this->m_NamedPoint.find("AC") == this->m_NamedPoint.end() )
+    {
+    hasUserForcedACPoint = false;
+    }
+
+  if( this->m_NamedPoint.find("PC") == this->m_NamedPoint.end() )
+    {
+    hasUserForcedPCPoint = false;
+    }
+
+  if( this->m_NamedPoint.find("VN4") == this->m_NamedPoint.end() )
+    {
+    hasUserForcedVN4Point = false;
     }
 
   // Compute the estimated MSP transform, and aligned image
@@ -379,6 +403,14 @@ void landmarksConstellationDetector::Compute( void )
         CandidateRPPoint = this->m_NamedPointEMSP["RP"];
         std::cout << "Skip estimation, directly load from file." << std::endl;
         }
+      else if( hasUserForcedRPPoint )
+        {
+        std::cout << "Skip estimation, directly forced by command line." << std::endl;
+        // Points chosen by Slicer should be converted to proper ITK representation
+        this->m_NamedPoint["RP"][0] = -(this->m_NamedPoint["RP"][0]);
+        this->m_NamedPoint["RP"][1] = -(this->m_NamedPoint["RP"][1]);
+        CandidateRPPoint = InvFinalTmsp->TransformPoint( InvHoughEyeTransform->TransformPoint( this->m_NamedPoint["RP"] ) );
+        }
       else
         {
         // The search radius of RP is set to 5 times larger than its template
@@ -449,6 +481,14 @@ void landmarksConstellationDetector::Compute( void )
         CandidateVN4Point = this->m_NamedPointEMSP["VN4"];
         std::cout << "Skip estimation, directly load from file." << std::endl;
         }
+      else if( hasUserForcedVN4Point )
+        {
+        std::cout << "Skip estimation, directly forced by command line." << std::endl;
+        // Points chosen by Slicer should be converted to proper ITK representation
+        this->m_NamedPoint["VN4"][0] = -(this->m_NamedPoint["VN4"][0]);
+        this->m_NamedPoint["VN4"][1] = -(this->m_NamedPoint["VN4"][1]);
+        CandidateVN4Point = InvFinalTmsp->TransformPoint( InvHoughEyeTransform->TransformPoint( this->m_NamedPoint["VN4"] ) );
+        }
       else
         {
         CandidateVN4Point =
@@ -482,6 +522,14 @@ void landmarksConstellationDetector::Compute( void )
         CandidateACPoint = this->m_NamedPointEMSP["AC"];
         std::cout << "Skip estimation, directly load from file." << std::endl;
         }
+      else if( hasUserForcedACPoint )
+        {
+        std::cout << "Skip estimation, directly forced by command line." << std::endl;
+        // Points chosen by Slicer should be converted to proper ITK representation
+        this->m_NamedPoint["AC"][0] = -(this->m_NamedPoint["AC"][0]);
+        this->m_NamedPoint["AC"][1] = -(this->m_NamedPoint["AC"][1]);
+        CandidateACPoint = InvFinalTmsp->TransformPoint( InvHoughEyeTransform->TransformPoint( this->m_NamedPoint["AC"] ) );
+        }
       else
         {
         CandidateACPoint =
@@ -514,6 +562,14 @@ void landmarksConstellationDetector::Compute( void )
         {
         CandidatePCPoint = this->m_NamedPointEMSP["PC"];
         std::cout << "Skip estimation, directly load from file." << std::endl;
+        }
+      else if( hasUserForcedPCPoint )
+        {
+        std::cout << "Skip estimation, directly forced by command line." << std::endl;
+        // Points chosen by Slicer should be converted to proper ITK representation
+        this->m_NamedPoint["PC"][0] = -(this->m_NamedPoint["PC"][0]);
+        this->m_NamedPoint["PC"][1] = -(this->m_NamedPoint["PC"][1]);
+        CandidatePCPoint = InvFinalTmsp->TransformPoint( InvHoughEyeTransform->TransformPoint( this->m_NamedPoint["PC"] ) );
         }
       else
         {
@@ -565,27 +621,55 @@ void landmarksConstellationDetector::Compute( void )
       // registration
       // Also in this stage, we store some results for later use
       // Save named points in original space
-      this->m_NamedPoint["RP"] =
-        this->m_finalTmsp->TransformPoint( CandidateRPPoint );
-      this->m_NamedPoint["AC"] =
-        this->m_finalTmsp->TransformPoint( CandidateACPoint );
-      this->m_NamedPoint["PC"] =
-        this->m_finalTmsp->TransformPoint( CandidatePCPoint );
-      this->m_NamedPoint["VN4"] =
-        this->m_finalTmsp->TransformPoint( CandidateVN4Point );
+      if( !hasUserForcedRPPoint )
+        {
+        this->m_NamedPoint["RP"] =
+          this->m_finalTmsp->TransformPoint( CandidateRPPoint );
+        }
+
+      if( !hasUserForcedVN4Point )
+        {
+        this->m_NamedPoint["VN4"] =
+          this->m_finalTmsp->TransformPoint( CandidateVN4Point );
+        }
+
+      if( !hasUserForcedACPoint )
+        {
+        this->m_NamedPoint["AC"] =
+          this->m_finalTmsp->TransformPoint( CandidateACPoint );
+        }
+
+      if( !hasUserForcedPCPoint )
+        {
+        this->m_NamedPoint["PC"] =
+          this->m_finalTmsp->TransformPoint( CandidatePCPoint );
+        }
+
       this->m_NamedPoint["CM"] =
         this->m_finalTmsp->TransformPoint( this->m_CenterOfHeadMassEMSP );
 
       if( !hasUserSpecEyeCenterInfo )
         {
-        this->m_NamedPoint["RP"] =
-          this->m_HoughEyeTransform->TransformPoint( this->m_NamedPoint["RP"] );
-        this->m_NamedPoint["AC"] =
-          this->m_HoughEyeTransform->TransformPoint( this->m_NamedPoint["AC"] );
-        this->m_NamedPoint["PC"] =
-          this->m_HoughEyeTransform->TransformPoint( this->m_NamedPoint["PC"] );
-        this->m_NamedPoint["VN4"] =
+        if( !hasUserForcedRPPoint )
+          {
+          this->m_NamedPoint["RP"] =
+            this->m_HoughEyeTransform->TransformPoint( this->m_NamedPoint["RP"] );
+          }
+        if( !hasUserForcedVN4Point )
+          {
+          this->m_NamedPoint["VN4"] =
           this->m_HoughEyeTransform->TransformPoint( this->m_NamedPoint["VN4"] );
+          }
+        if( !hasUserForcedACPoint )
+          {
+          this->m_NamedPoint["AC"] =
+            this->m_HoughEyeTransform->TransformPoint( this->m_NamedPoint["AC"] );
+          }
+        if( !hasUserForcedPCPoint )
+          {
+          this->m_NamedPoint["PC"] =
+            this->m_HoughEyeTransform->TransformPoint( this->m_NamedPoint["PC"] );
+          }
         this->m_NamedPoint["CM"] =
           this->m_HoughEyeTransform->TransformPoint( this->m_NamedPoint["CM"] );
         this->m_NamedPoint["LE"] = this->m_LEPoint;

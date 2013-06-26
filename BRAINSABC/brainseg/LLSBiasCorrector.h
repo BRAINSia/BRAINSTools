@@ -32,6 +32,8 @@
 #include "vnl/algo/vnl_svd.h"
 
 #include <vector>
+#include <list>
+#include <map>
 /** \class LLSBiasCorrector
  */
 template <class TInputImage, class TProbabilityImage>
@@ -59,6 +61,10 @@ public:
   typedef typename TInputImage::RegionType  InputImageRegionType;
   typedef typename TInputImage::SizeType    InputImageSizeType;
   typedef typename TInputImage::SpacingType InputImageSpacingType;
+
+  typedef std::vector<InputImagePointer> InputImageVector;
+  typedef std::map<std::string,InputImageVector> MapOfInputImageVectors;
+
 
   typedef itk::Image<unsigned char, itkGetStaticConstMacro(ImageDimension)> ByteImageType;
   typedef typename ByteImageType::Pointer                                   ByteImagePointer;
@@ -117,7 +123,7 @@ public:
 
   void SetForegroundBrainMask(ByteImageType *mask);
 
-  void SetInputImages(const std::vector<InputImagePointer> & inputs)
+  void SetInputImages(MapOfInputImageVectors inputs)
   {
     this->m_InputImages = inputs;
     this->Modified();
@@ -138,7 +144,7 @@ public:
   // Correct input images and write it to the designated output
   // fullRes flag selects whether to correct whole image or just grid points
   // defined by WorkingSpacing
-  std::vector<InputImagePointer> CorrectImages(const unsigned int CurrentIterationID);
+  MapOfInputImageVectors CorrectImages(const unsigned int CurrentIterationID);
 
 protected:
 
@@ -150,8 +156,11 @@ protected:
   void ComputeDistributions();
 
 private:
-
-  std::vector<InputImagePointer>         m_InputImages;
+  InputImagePointer GetFirstInputImage()
+    {
+      return GetMapVectorFirstElement(this->m_InputImages);
+    }
+  MapOfInputImageVectors                   m_InputImages;
   std::vector<ProbabilityImageIndexType> m_ValidIndicies;
   ByteImagePointer                       m_ForegroundBrainMask;
   ByteImagePointer                       m_AllTissueMask;

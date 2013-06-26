@@ -65,20 +65,19 @@ class RegionStats
 public:
   typedef vnl_matrix<FloatingPrecision>         MatrixType;
   typedef vnl_matrix_inverse<FloatingPrecision> MatrixInverseType;
-  typedef vnl_vector<FloatingPrecision>         VectorType;
-
+  typedef std::map<std::string,double>          MeanMapType;;
   RegionStats() : m_Means(), m_Covariance(), m_Weighting(0.0)
   {
   }
 
-  void resize(const unsigned int numChannels)
+  void resize(const unsigned int numModalities)
   {
-    this->m_Covariance = MatrixType(numChannels, numChannels);
-    this->m_Means.set_size(numChannels);
+    this->m_Covariance = MatrixType(numModalities, numModalities);
+    this->m_Means.clear();
   }
 
-  VectorType m_Means;             // One measure per image channel type;
-  MatrixType m_Covariance;        // Matrix of covariances of class by image
+  MeanMapType m_Means;             // One measure per image channel type;
+  MatrixType  m_Covariance;        // Matrix of covariances of class by image
                                   // channel
   FloatingPrecision m_Weighting;  // The strength of this class.
 };
@@ -86,10 +85,17 @@ public:
 #include "BRAINSABCUtilities.hxx"
 
 // External Templates to improve compilation times.
-extern std::vector<CorrectIntensityImageType::Pointer> CorrectBias(const unsigned int degree,
-                                                                   const unsigned int CurrentEMIteration,
-                                                                   const std::vector<ByteImageType::Pointer> & CandidateRegions, const std::vector<CorrectIntensityImageType::Pointer> & inputImages, const ByteImageType::Pointer currentBrainMask, const ByteImageType::Pointer currentForegroundMask, const std::vector<FloatImageType::Pointer> & probImages, const std::vector<bool> & probUseForBias, const FloatingPrecision sampleSpacing, const int DebugLevel,
-                                                                   const std::string& OutputDebugDir);
+extern std::vector<CorrectIntensityImageType::Pointer>
+CorrectBias(const unsigned int degree,
+            const unsigned int CurrentEMIteration,
+            const std::vector<ByteImageType::Pointer> & CandidateRegions,
+            const std::vector<CorrectIntensityImageType::Pointer> & inputImages,
+            const ByteImageType::Pointer currentBrainMask,
+            const ByteImageType::Pointer currentForegroundMask,
+            const std::vector<FloatImageType::Pointer> & probImages,
+            const std::vector<bool> & probUseForBias,
+            const FloatingPrecision sampleSpacing, const int DebugLevel,
+            const std::string& OutputDebugDir);
 
 extern template std::vector<FloatImagePointerType> DuplicateImageList<FloatImageType>(
   const std::vector<FloatImagePointerType> & );
@@ -108,5 +114,47 @@ extern template void ComputeLabels<FloatImageType,
 extern template void NormalizeProbListInPlace<FloatImageType>(std::vector<FloatImageType::Pointer> & );
 
 extern template void ZeroNegativeValuesInPlace<FloatImageType>(  std::vector<FloatImageType::Pointer> & );
+
+template <class TMap>
+unsigned int TotalMapSize(const TMap &map)
+{
+  unsigned int rval = 0;
+  for(typename TMap::const_iterator mapIt = map.begin();
+      mapIt != map.end(); ++mapIt)
+    {
+    for(typename TMap::mapped_type::const_iterator listIt =
+          mapIt->second.begin(); listIt != mapIt->second.end(); ++listIt)
+      {
+      ++rval;
+      }
+    }
+  return rval;
+}
+
+template <class TMap>
+typename TMap::mapped_type::value_type &
+GetMapVectorFirstElement(TMap &map)
+{
+  return *(map.begin()->second.begin());
+}
+
+template <class TMap>
+const typename TMap::mapped_type::value_type &
+GetMapVectorFirstElement(const TMap &map)
+{
+  return *(map.begin()->second.begin());
+}
+
+template <class ImageType>
+typename ImageType::Pointer
+CopyImage(const typename ImageType::Pointer & input )
+{
+  typedef itk::ImageDuplicator<ImageType> ImageDupeType;
+  typename ImageDupeType::Pointer MyDuplicator = ImageDupeType::New();
+  MyDuplicator->SetInputImage(input);
+  MyDuplicator->Update();
+  return MyDuplicator->GetOutput();
+}
+
 
 #endif // __BRAINSABCUtilities__h__

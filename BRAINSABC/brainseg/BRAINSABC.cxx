@@ -133,7 +133,7 @@ ResampleImageList(const std::string & resamplerInterpolatorType,
 
   // first image is the paradigm
   AtlasRegType::InternalImagePointer firstImage =
-    GetMapVectorFirstElement(inputImageList);;
+    GetMapVectorFirstElement(inputImageList);
 
   const FloatImageType::PixelType outsideFOVCode
     = vnl_huge_val( static_cast<FloatImageType::PixelType>( 1.0f ) );

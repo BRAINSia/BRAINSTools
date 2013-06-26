@@ -29,7 +29,7 @@
 
 #include "itkAffineTransform.h"
 #include "BRAINSFitHelper.h"
-
+#include "BRAINSABCUtilities.h"
 #include <string>
 
 /** \class AtlasRegistrationMethod
@@ -85,20 +85,38 @@ public:
 
   typedef itk::Array<unsigned char> FlagArrayType;
 
+  typedef std::vector<std::string> StringVector;
+  typedef std::map<std::string,StringVector > MapOfStringVectors;
+
+  typedef std::vector<InternalImagePointer> FloatImageVector;
+  typedef std::map<std::string, FloatImageVector> MapOfFloatImageVectors;
+
+  typedef std::vector<GenericTransformType::Pointer> TransformList;
+  typedef std::map<std::string,TransformList>        MapOfTransformLists;
+
   void SetSuffix(std::string suffix);
 
   itkGetConstMacro(OutputDebugDir, std::string);
   itkSetMacro(OutputDebugDir, std::string);
 
-  void SetAtlasOriginalImageList(std::vector<InternalImagePointer> & NewAtlasList);
+  InternalImagePointer GetFirstIntraSubjectOriginalImage()
+    {
+      return GetMapVectorFirstElement(this->m_IntraSubjectOriginalImageList);
+    }
+  InternalImagePointer GetFirstAtlasOriginalImage()
+    {
+      return GetMapVectorFirstElement(this->m_AtlasOriginalImageList);
+    }
 
-  void SetIntraSubjectOriginalImageList(std::vector<InternalImagePointer> & NewImageList);
+  void SetAtlasOriginalImageList(MapOfFloatImageVectors & NewAtlasList);
+
+  void SetIntraSubjectOriginalImageList(MapOfFloatImageVectors & NewImageList);
 
   // itkSetMacro( IntraSubjectTransformFileNames, std::vector<std::string> );
   itkSetMacro( AtlasToSubjectTransformFileName, std::string );
 
   // TODO: KENT:  Move all code from class definition to the .hxx file outside the class definition
-  void SetIntraSubjectTransformFileNames(std::vector<std::string> userlist)
+  void SetIntraSubjectTransformFileNames(MapOfStringVectors userlist)
   {
     m_IntraSubjectTransformFileNames = userlist;
     m_RegistrationUpdateNeeded = true;
@@ -111,7 +129,7 @@ public:
     return m_AtlasToSubjectTransform;
   }
 
-  std::vector<GenericTransformType::Pointer> GetIntraSubjectTransforms()
+  MapOfTransformLists  GetIntraSubjectTransforms()
   {
     return m_IntraSubjectTransforms;
   }
@@ -141,13 +159,6 @@ public:
     m_RegistrationUpdateNeeded = true;
   }
 
-  // Get and set the input volume image types.  i.e. T1 or T2 or PD
-  void SetInputVolumeTypes(const std::vector<std::string> & newInputVolumeTypes)
-  {
-    this->m_InputVolumeTypes = newInputVolumeTypes;
-    m_RegistrationUpdateNeeded = true;
-  }
-
   void SetAtlasToSubjectInitialTransform( const GenericTransformType::Pointer atlasToSubjectInitialTransform)
   {
     if( this->m_AtlasToSubjectInitialTransform != atlasToSubjectInitialTransform )
@@ -155,11 +166,6 @@ public:
       this->m_AtlasToSubjectInitialTransform = atlasToSubjectInitialTransform;
       m_RegistrationUpdateNeeded = true;
       }
-  }
-
-  std::vector<std::string> GetInputVolumeTypes(void) const
-  {
-    return this->m_InputVolumeTypes;
   }
 
   void Update();
@@ -182,20 +188,18 @@ private:
   std::string m_OutputDebugDir;
 
   //  ByteImagePointer                  m_AtlasOriginalMask;
-  std::vector<InternalImagePointer> m_AtlasOriginalImageList;
-  std::vector<InternalImagePointer> m_IntraSubjectOriginalImageList;
-  ByteImagePointer                  m_InputImageTissueRegion;
-  ImageMaskPointer                  m_InputSpatialObjectTissueRegion;
+  MapOfFloatImageVectors m_AtlasOriginalImageList;
+  MapOfFloatImageVectors m_IntraSubjectOriginalImageList;
+  ByteImagePointer m_InputImageTissueRegion;
+  ImageMaskPointer m_InputSpatialObjectTissueRegion;
 
   std::vector<unsigned int> m_WarpGrid;
-  std::vector<std::string>  m_IntraSubjectTransformFileNames;
+  MapOfStringVectors          m_IntraSubjectTransformFileNames;
   std::string               m_AtlasToSubjectTransformFileName;
 
-  std::vector<std::string> m_InputVolumeTypes;
-
-  GenericTransformType::Pointer              m_AtlasToSubjectTransform;
-  GenericTransformType::Pointer              m_AtlasToSubjectInitialTransform;
-  std::vector<GenericTransformType::Pointer> m_IntraSubjectTransforms;
+  GenericTransformType::Pointer m_AtlasToSubjectTransform;
+  GenericTransformType::Pointer m_AtlasToSubjectInitialTransform;
+  MapOfTransformLists           m_IntraSubjectTransforms;
 
   bool m_UseNonLinearInterpolation;
   bool m_DoneRegistration;

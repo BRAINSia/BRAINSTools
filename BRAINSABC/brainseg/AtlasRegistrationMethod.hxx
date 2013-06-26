@@ -67,7 +67,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
 template <class TOutputPixel, class TProbabilityPixel>
 void
 AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
-::SetAtlasOriginalImageList(std::vector<InternalImagePointer> & NewAtlasList)
+::SetAtlasOriginalImageList(MapOfFloatImageVectors & NewAtlasList)
 {
   m_AtlasOriginalImageList = NewAtlasList;
   m_AtlasToSubjectTransform = MakeRigidIdentity();
@@ -78,7 +78,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
 template <class TOutputPixel, class TProbabilityPixel>
 void
 AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
-::SetIntraSubjectOriginalImageList(std::vector<InternalImagePointer> & NewIntraSubjectOriginalImageList)
+::SetIntraSubjectOriginalImageList(MapOfFloatImageVectors &NewIntraSubjectOriginalImageList)
 {
   muLogMacro(<< "Set Intrasubject original image list" << std::endl);
 
@@ -92,11 +92,15 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
   m_AtlasToSubjectTransform = MakeRigidIdentity();
   // Clear previous transforms
   m_IntraSubjectTransforms.clear();
-  m_IntraSubjectTransforms.resize(numIntraSubjectOriginalImages);
-  for( unsigned int i = 0; i < numIntraSubjectOriginalImages; i++ )
-    { // Also append identity matrix for each image
-    GenericTransformType::Pointer transform = MakeRigidIdentity();
-    m_IntraSubjectTransforms[i] = transform;
+  for(MapOfFloatImageVectors::iterator mapIt = this->m_IntraSubjectOriginalImageList.begin();
+      mapIt != this->m_IntraSubjectOriginalImageList.end(); ++mapIt)
+    {
+    for(FloatImageVector::iterator imIt = mapIt->second.begin();
+        imIt != mapIt->second.end(); ++imIt)
+      { // Also append identity matrix for each image
+      GenericTransformType::Pointer transform = MakeRigidIdentity();
+      m_IntraSubjectTransforms[mapIt->first].push_back(transform);
+      }
     }
   m_DoneRegistration = false;
   m_RegistrationUpdateNeeded = true;
@@ -125,55 +129,79 @@ void
 AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
 ::RegisterIntraSubjectImages()
 {
+
   muLogMacro(<< "Register Intra subject images" << std::endl);
-  for( unsigned int i = 1; i < m_IntraSubjectOriginalImageList.size(); i++ )
+  int i = 0;
+  bool first_image(true);
+  for(MapOfFloatImageVectors::iterator mapIt = this->m_IntraSubjectOriginalImageList.begin();
+      mapIt != this->m_IntraSubjectOriginalImageList.end(); ++mapIt,++i)
     {
-    if( itksys::SystemTools::FileExists( this->m_IntraSubjectTransformFileNames[i].c_str() ) )
+    FloatImageVector::iterator imIt = mapIt->second.begin();
+    FloatImageVector::iterator intraImIt = this->m_IntraSubjectOriginalImageList[mapIt->first].begin();
+    StringVector::iterator isNamesIt = this->m_IntraSubjectTransformFileNames[mapIt->first].begin();
+    // following the original BRAINSABC code with a simple list of
+    // input images, this registers every image to the first. But
+    // there neeeds to be a first registration, even if it is never used
+    if(first_image)
       {
-      try
+      first_image = false;
+      this->m_IntraSubjectTransforms[mapIt->first].push_back(MakeRigidIdentity());
+      //
+      // if the first image is the only image of that modality, go to
+      // the next modality.
+      if(mapIt->second.size() == 1)
         {
-        muLogMacro(<< "Reading transform from file: "
-                   << this->m_IntraSubjectTransformFileNames[i] << "." << std::endl);
-        m_IntraSubjectTransforms[i] = itk::ReadTransformFromDisk(this->m_IntraSubjectTransformFileNames[i]);
+        continue;
         }
-      catch( ... )
+      ++imIt; ++intraImIt; ++isNamesIt;
+      }
+
+    for(;imIt != mapIt->second.end(); ++imIt, ++isNamesIt, ++intraImIt, ++i)
+      {
+      if( itksys::SystemTools::FileExists( (*isNamesIt).c_str() ) )
         {
-        muLogMacro(<< "Failed to read transform file caused exception." << this->m_IntraSubjectTransformFileNames[i]
-                   <<  std::endl );
-        itkExceptionMacro(<< "Failed to read transform file " <<  this->m_IntraSubjectTransformFileNames[i]);
+        try
+          {
+          muLogMacro(<< "Reading transform from file: "
+                     << (*isNamesIt).c_str() << "." << std::endl);
+          m_IntraSubjectTransforms[mapIt->first].push_back(itk::ReadTransformFromDisk((*isNamesIt).c_str()));
+          }
+        catch( ... )
+          {
+          muLogMacro(<< "Failed to read transform file caused exception." << (*isNamesIt) <<  std::endl );
+          itkExceptionMacro(<< "Failed to read transform file " <<  (*isNamesIt));
+          }
         }
-      }
-    else if( m_ImageLinearTransformChoice == "Identity" )
-      {
-      muLogMacro(<< "Registering (Identity) image " << i + 1 << " to first image." << std::endl);
-      m_IntraSubjectTransforms[i] = MakeRigidIdentity();
-      }
-    else
-      {
-      typedef itk::BRAINSFitHelper HelperType;
-      HelperType::Pointer intraSubjectRegistrationHelper = HelperType::New();
-      intraSubjectRegistrationHelper->SetNumberOfSamples(500000);
-      intraSubjectRegistrationHelper->SetNumberOfHistogramBins(50);
-      std::vector<int> numberOfIterations(1);
-      numberOfIterations[0] = 1500;
-      intraSubjectRegistrationHelper->SetNumberOfIterations(numberOfIterations);
-      //
-      //
-      //
-      // intraSubjectRegistrationHelper->SetMaximumStepLength(maximumStepSize);
-      intraSubjectRegistrationHelper->SetTranslationScale(1000);
-      intraSubjectRegistrationHelper->SetReproportionScale(1.0);
-      intraSubjectRegistrationHelper->SetSkewScale(1.0);
-      // Register each intrasubject image mode to first image
-      intraSubjectRegistrationHelper->SetFixedVolume(m_IntraSubjectOriginalImageList[0]);
-      // TODO: Find way to turn on histogram equalization for same mode images
-      const int dilateSize = 15;
-      intraSubjectRegistrationHelper->SetMovingVolume(m_IntraSubjectOriginalImageList[i]);
+      else if( m_ImageLinearTransformChoice == "Identity" )
         {
+        muLogMacro(<< "Registering (Identity) image " << i + 1 << " to first image." << std::endl);
+        m_IntraSubjectTransforms[mapIt->first].push_back(MakeRigidIdentity());
+        }
+      else
+        {
+        typedef itk::BRAINSFitHelper HelperType;
+        HelperType::Pointer intraSubjectRegistrationHelper = HelperType::New();
+        intraSubjectRegistrationHelper->SetNumberOfSamples(500000);
+        intraSubjectRegistrationHelper->SetNumberOfHistogramBins(50);
+        std::vector<int> numberOfIterations(1);
+        numberOfIterations[0] = 1500;
+        intraSubjectRegistrationHelper->SetNumberOfIterations(numberOfIterations);
+        //
+        //
+        //
+        // intraSubjectRegistrationHelper->SetMaximumStepLength(maximumStepSize);
+        intraSubjectRegistrationHelper->SetTranslationScale(1000);
+        intraSubjectRegistrationHelper->SetReproportionScale(1.0);
+        intraSubjectRegistrationHelper->SetSkewScale(1.0);
+        // Register each intrasubject image mode to first image
+        intraSubjectRegistrationHelper->SetFixedVolume(this->GetFirstIntraSubjectOriginalImage());
+        // TODO: Find way to turn on histogram equalization for same mode images
+        const int dilateSize = 15;
+        intraSubjectRegistrationHelper->SetMovingVolume((*intraImIt));
         muLogMacro( << "Generating MovingImage Mask (Intrasubject  " << i << ")" <<  std::endl );
         typedef itk::BRAINSROIAutoImageFilter<InternalImageType, itk::Image<unsigned char, 3> > ROIAutoType;
         typename ROIAutoType::Pointer  ROIFilter = ROIAutoType::New();
-        ROIFilter->SetInput(m_IntraSubjectOriginalImageList[i]);
+        ROIFilter->SetInput((*intraImIt));
         ROIFilter->SetDilateSize(dilateSize); // Only use a very small non-tissue
         // region outside of head during initial
         // runnings
@@ -195,15 +223,14 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
           writer->Update();
           muLogMacro( << __FILE__ << " " << __LINE__ << " "  <<  std::endl );
           }
-        }
-        {
+
         // Delayed until first use, but only create it once.
         if( m_InputImageTissueRegion.IsNull() || m_InputSpatialObjectTissueRegion.IsNull() )
           {
           muLogMacro( << "Generating FixedImage Mask (Intrasubject)" <<  std::endl );
           typedef itk::BRAINSROIAutoImageFilter<InternalImageType, itk::Image<unsigned char, 3> > ROIAutoType;
-          typename ROIAutoType::Pointer  ROIFilter = ROIAutoType::New();
-          ROIFilter->SetInput(m_IntraSubjectOriginalImageList[0]);
+          ROIFilter = ROIAutoType::New();
+          ROIFilter->SetInput(this->GetFirstIntraSubjectOriginalImage());
           ROIFilter->SetDilateSize(dilateSize); // Only use a very small non-tissue
           // region outside of head during
           // initial runnings
@@ -227,108 +254,107 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
             }
           }
         intraSubjectRegistrationHelper->SetFixedBinaryVolume(m_InputSpatialObjectTissueRegion);
-        }
-      if( m_ImageLinearTransformChoice == "Rigid" )
-        {
-        muLogMacro(<< "Registering (Rigid) image " << i << " to first image." << std::endl);
-        std::vector<double> minimumStepSize(1);
-        minimumStepSize[0] = 0.00005;
-        intraSubjectRegistrationHelper->SetMinimumStepLength(minimumStepSize);
-        std::vector<std::string> transformType(1);
-        transformType[0] = "Rigid";
-        intraSubjectRegistrationHelper->SetTransformType(transformType);
-        }
-      else if( m_ImageLinearTransformChoice == "Affine" )
-        {
-        muLogMacro(<< "Registering (Affine) image " << i << " to first image." << std::endl);
-        std::vector<double> minimumStepSize(4);
-        minimumStepSize[0] = 0.00005;
-        minimumStepSize[1] = 0.005;
-        minimumStepSize[2] = 0.005;
-        minimumStepSize[3] = 0.005;
-        intraSubjectRegistrationHelper->SetMinimumStepLength(minimumStepSize);
-        std::vector<std::string> transformType(4);
-        transformType[0] = "Rigid";
-        transformType[1] = "ScaleVersor3D";
-        transformType[2] = "ScaleSkewVersor3D";
-        transformType[3] = "Affine";
-        intraSubjectRegistrationHelper->SetTransformType(transformType);
-        }
-      else if( m_ImageLinearTransformChoice == "BSpline" )
-        {
-        muLogMacro(<< "Registering (BSpline) image " << i << " to first subject image." << std::endl);
-        std::vector<double> minimumStepSize(5);
-        minimumStepSize[0] = 0.00005;
-        minimumStepSize[1] = 0.005;
-        minimumStepSize[2] = 0.005;
-        minimumStepSize[3] = 0.005;
-        minimumStepSize[4] = 0.005;
-        intraSubjectRegistrationHelper->SetMinimumStepLength(minimumStepSize);
-        std::vector<std::string> transformType(5);
-        transformType[0] = "Rigid";
-        transformType[1] = "ScaleVersor3D";
-        transformType[2] = "ScaleSkewVersor3D";
-        transformType[3] = "Affine";
-        transformType[4] = "BSpline";
-        intraSubjectRegistrationHelper->SetTransformType(transformType);
-        std::vector<int> splineGridSize(3);
-        splineGridSize[0] = this->m_WarpGrid[0];
-        splineGridSize[1] = this->m_WarpGrid[1];
-        splineGridSize[2] = this->m_WarpGrid[2];
-        intraSubjectRegistrationHelper->SetSplineGridSize(splineGridSize);
-        // Setting max displace
-        intraSubjectRegistrationHelper->SetMaxBSplineDisplacement(6.0);
-        // intraSubjectRegistrationHelper->SetUseExplicitPDFDerivativesMode(useExplicitPDFDerivativesMode);
-        // intraSubjectRegistrationHelper->SetUseCachingOfBSplineWeightsMode(useCachingOfBSplineWeightsMode);
-        }
-      else if( m_ImageLinearTransformChoice == "SyN" )
-        {
-        muLogMacro(<< "Registering (SyN) image " << i << " to first subject image." << std::endl);
-        std::vector<double> minimumStepSize(5);
-        minimumStepSize[0] = 0.00005;
-        minimumStepSize[1] = 0.005;
-        minimumStepSize[2] = 0.005;
-        minimumStepSize[3] = 0.005;
-        minimumStepSize[4] = 0.000005;
-        intraSubjectRegistrationHelper->SetMinimumStepLength(minimumStepSize);
-        std::vector<std::string> transformType(5);
-        transformType[0] = "Rigid";
-        transformType[1] = "ScaleVersor3D";
-        transformType[2] = "ScaleSkewVersor3D";
-        transformType[3] = "Affine";
-        transformType[4] = "SyN";
-        intraSubjectRegistrationHelper->SetTransformType(transformType);
-        }
-      //
-      // intraSubjectRegistrationHelper->SetBackgroundFillValue(backgroundFillValue);
-      // NOT VALID When using initializeTransformMode
-      //
-      // intraSubjectRegistrationHelper->SetCurrentGenericTransform(currentGenericTransform);
-      //  intraSubjectRegistrationHelper->SetUseWindowedSinc(useWindowedSinc);
-      const std::string initializeTransformMode("useCenterOfHeadAlign");
-      intraSubjectRegistrationHelper->SetInitializeTransformMode(initializeTransformMode);
-      intraSubjectRegistrationHelper->SetMaskInferiorCutOffFromCenter(65.0); //
-      //
-      // maskInferiorCutOffFromCenter);
-      m_IntraSubjectTransforms[i] = NULL;
-      intraSubjectRegistrationHelper->SetCurrentGenericTransform(m_IntraSubjectTransforms[i]);
-      if( this->m_DebugLevel > 9 )
-        {
-        static unsigned int IntraSubjectRegistration = 0;
-        std::stringstream   ss;
-        ss << std::setw(3) << std::setfill('0') << IntraSubjectRegistration;
-        intraSubjectRegistrationHelper->PrintCommandLine(true, std::string("IntraSubjectRegistration") + ss.str() );
-        muLogMacro( << __FILE__ << " " << __LINE__ << " "  <<  std::endl );
-        IntraSubjectRegistration++;
-        }
-      intraSubjectRegistrationHelper->Update();
-      const unsigned int actualIterations = intraSubjectRegistrationHelper->GetActualNumberOfIterations();
-      muLogMacro( << "Registration tool " << actualIterations << " iterations." << std::endl );
-      m_IntraSubjectTransforms[i] = intraSubjectRegistrationHelper->GetCurrentGenericTransform();
-      // Write out intermodal matricies
-        {
-        muLogMacro(<< "Writing " << this->m_IntraSubjectTransformFileNames[i] << "." << std::endl);
-        WriteTransformToDisk(m_IntraSubjectTransforms[i], this->m_IntraSubjectTransformFileNames[i]);
+        if( m_ImageLinearTransformChoice == "Rigid" )
+          {
+          muLogMacro(<< "Registering (Rigid) image " << i << " to first image." << std::endl);
+          std::vector<double> minimumStepSize(1);
+          minimumStepSize[0] = 0.00005;
+          intraSubjectRegistrationHelper->SetMinimumStepLength(minimumStepSize);
+          std::vector<std::string> transformType(1);
+          transformType[0] = "Rigid";
+          intraSubjectRegistrationHelper->SetTransformType(transformType);
+          }
+        else if( m_ImageLinearTransformChoice == "Affine" )
+          {
+          muLogMacro(<< "Registering (Affine) image " << i << " to first image." << std::endl);
+          std::vector<double> minimumStepSize(4);
+          minimumStepSize[0] = 0.00005;
+          minimumStepSize[1] = 0.005;
+          minimumStepSize[2] = 0.005;
+          minimumStepSize[3] = 0.005;
+          intraSubjectRegistrationHelper->SetMinimumStepLength(minimumStepSize);
+          std::vector<std::string> transformType(4);
+          transformType[0] = "Rigid";
+          transformType[1] = "ScaleVersor3D";
+          transformType[2] = "ScaleSkewVersor3D";
+          transformType[3] = "Affine";
+          intraSubjectRegistrationHelper->SetTransformType(transformType);
+          }
+        else if( m_ImageLinearTransformChoice == "BSpline" )
+          {
+          muLogMacro(<< "Registering (BSpline) image " << i << " to first subject image." << std::endl);
+          std::vector<double> minimumStepSize(5);
+          minimumStepSize[0] = 0.00005;
+          minimumStepSize[1] = 0.005;
+          minimumStepSize[2] = 0.005;
+          minimumStepSize[3] = 0.005;
+          minimumStepSize[4] = 0.005;
+          intraSubjectRegistrationHelper->SetMinimumStepLength(minimumStepSize);
+          std::vector<std::string> transformType(5);
+          transformType[0] = "Rigid";
+          transformType[1] = "ScaleVersor3D";
+          transformType[2] = "ScaleSkewVersor3D";
+          transformType[3] = "Affine";
+          transformType[4] = "BSpline";
+          intraSubjectRegistrationHelper->SetTransformType(transformType);
+          std::vector<int> splineGridSize(3);
+          splineGridSize[0] = this->m_WarpGrid[0];
+          splineGridSize[1] = this->m_WarpGrid[1];
+          splineGridSize[2] = this->m_WarpGrid[2];
+          intraSubjectRegistrationHelper->SetSplineGridSize(splineGridSize);
+          // Setting max displace
+          intraSubjectRegistrationHelper->SetMaxBSplineDisplacement(6.0);
+          // intraSubjectRegistrationHelper->SetUseExplicitPDFDerivativesMode(useExplicitPDFDerivativesMode);
+          // intraSubjectRegistrationHelper->SetUseCachingOfBSplineWeightsMode(useCachingOfBSplineWeightsMode);
+          }
+        else if( m_ImageLinearTransformChoice == "SyN" )
+          {
+          muLogMacro(<< "Registering (SyN) image " << i << " to first subject image." << std::endl);
+          std::vector<double> minimumStepSize(5);
+          minimumStepSize[0] = 0.00005;
+          minimumStepSize[1] = 0.005;
+          minimumStepSize[2] = 0.005;
+          minimumStepSize[3] = 0.005;
+          minimumStepSize[4] = 0.000005;
+          intraSubjectRegistrationHelper->SetMinimumStepLength(minimumStepSize);
+          std::vector<std::string> transformType(5);
+          transformType[0] = "Rigid";
+          transformType[1] = "ScaleVersor3D";
+          transformType[2] = "ScaleSkewVersor3D";
+          transformType[3] = "Affine";
+          transformType[4] = "SyN";
+          intraSubjectRegistrationHelper->SetTransformType(transformType);
+          }
+        //
+        // intraSubjectRegistrationHelper->SetBackgroundFillValue(backgroundFillValue);
+        // NOT VALID When using initializeTransformMode
+        //
+        // intraSubjectRegistrationHelper->SetCurrentGenericTransform(currentGenericTransform);
+        //  intraSubjectRegistrationHelper->SetUseWindowedSinc(useWindowedSinc);
+        const std::string initializeTransformMode("useCenterOfHeadAlign");
+        intraSubjectRegistrationHelper->SetInitializeTransformMode(initializeTransformMode);
+        intraSubjectRegistrationHelper->SetMaskInferiorCutOffFromCenter(65.0); //
+        //
+        // maskInferiorCutOffFromCenter);
+        intraSubjectRegistrationHelper->SetCurrentGenericTransform(0);
+        if( this->m_DebugLevel > 9 )
+          {
+          static unsigned int IntraSubjectRegistration = 0;
+          std::stringstream   ss;
+          ss << std::setw(3) << std::setfill('0') << IntraSubjectRegistration;
+          intraSubjectRegistrationHelper->PrintCommandLine(true, std::string("IntraSubjectRegistration") + ss.str() );
+          muLogMacro( << __FILE__ << " " << __LINE__ << " "  <<  std::endl );
+          IntraSubjectRegistration++;
+          }
+        intraSubjectRegistrationHelper->Update();
+        const unsigned int actualIterations = intraSubjectRegistrationHelper->GetActualNumberOfIterations();
+        muLogMacro( << "Registration tool " << actualIterations << " iterations." << std::endl );
+        GenericTransformType::Pointer p =
+          intraSubjectRegistrationHelper->GetCurrentGenericTransform();
+        this->m_IntraSubjectTransforms[mapIt->first].push_back(p);
+        // Write out intermodal matricies
+        muLogMacro(<< "Writing " << (*isNamesIt) << "." << std::endl);
+        WriteTransformToDisk(p, (*isNamesIt));
         }
       }
     }
@@ -431,184 +457,170 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
     // Initialize the outputTransform with the initializer before starting the loop.
     this->m_AtlasToSubjectTransform = this->m_AtlasToSubjectInitialTransform;
     atlasToSubjectRegistrationHelper->SetCurrentGenericTransform(m_AtlasToSubjectTransform);
-    const unsigned int atlasReferenceImageIndex = 0;
-      {   // Register all atlas images to first image
-        { // Set the fixed and moving image
-        atlasToSubjectRegistrationHelper->SetFixedVolume(m_IntraSubjectOriginalImageList[atlasReferenceImageIndex]);
-        atlasToSubjectRegistrationHelper->SetMovingVolume(m_AtlasOriginalImageList[atlasReferenceImageIndex]);
-        }
-        {
-        muLogMacro( << "Generating MovingImage Mask (Atlas " << atlasReferenceImageIndex << ")" <<   std::endl );
-        typedef itk::BRAINSROIAutoImageFilter<InternalImageType, itk::Image<unsigned char, 3> > ROIAutoType;
-        typename ROIAutoType::Pointer  ROIFilter = ROIAutoType::New();
-        ROIFilter->SetInput(m_AtlasOriginalImageList[atlasReferenceImageIndex]);
-        ROIFilter->SetDilateSize(1);   // Only use a very small non-tissue
-        // region outside of head during
-        // initial runnings
-        ROIFilter->Update();
-        atlasToSubjectRegistrationHelper->SetMovingBinaryVolume(ROIFilter->GetSpatialObjectROI() );
-        if( this->m_DebugLevel > 7 )
-          {
-          ByteImageType::Pointer movingMaskImage = ROIFilter->GetOutput();
-          typedef itk::ImageFileWriter<ByteImageType> ByteWriterType;
-          ByteWriterType::Pointer writer = ByteWriterType::New();
-          writer->UseCompressionOn();
-
-          std::ostringstream oss;
-          oss << this->m_OutputDebugDir << "Atlas_MovingMask_"
-              << atlasReferenceImageIndex <<  ".nii.gz" << std::ends;
-          std::string fn = oss.str();
-
-          writer->SetInput( movingMaskImage );
-          writer->SetFileName(fn.c_str() );
-          writer->Update();
-          muLogMacro( << __FILE__ << " " << __LINE__ << " "  <<   std::endl );
-          }
-        }
-        {
-        muLogMacro( << "Generating FixedImage Mask (Atlas)" <<   std::endl );
-        typedef itk::BRAINSROIAutoImageFilter<InternalImageType, itk::Image<unsigned char, 3> > ROIAutoType;
-        typename ROIAutoType::Pointer  ROIFilter = ROIAutoType::New();
-        ROIFilter->SetInput(m_IntraSubjectOriginalImageList[atlasReferenceImageIndex]);
-        ROIFilter->SetDilateSize(1);   // Only use a very small non-tissue
-        // region outside of head during
-        // initial runnings
-        ROIFilter->Update();
-        atlasToSubjectRegistrationHelper->SetFixedBinaryVolume(ROIFilter->GetSpatialObjectROI() );
-        if( this->m_DebugLevel > 7 )
-          {
-          ByteImageType::Pointer fixedMaskImage = ROIFilter->GetOutput();
-          typedef itk::ImageFileWriter<ByteImageType> ByteWriterType;
-          ByteWriterType::Pointer writer = ByteWriterType::New();
-          writer->UseCompressionOn();
-
-          std::ostringstream oss;
-          oss << this->m_OutputDebugDir << "SubjectForAtlas_FixedMask_"
-              << atlasReferenceImageIndex <<  ".nii.gz";
-          std::string fn = oss.str();
-
-          writer->SetInput( fixedMaskImage );
-          writer->SetFileName(fn.c_str() );
-          writer->Update();
-          muLogMacro( << __FILE__ << " " << __LINE__ << " "  <<   std::endl );
-          }
-        }
-      // ##########################################
-      // ##########################################
-      // Set up registration schedule
-      // ##########################################
-      // ##########################################
-        {   // Now do optimal registration based on requested transform choice.
-        if( m_AtlasLinearTransformChoice == "Affine" )
-          {
-          muLogMacro(
-            << "Registering (Affine) " <<  "atlas(" << atlasReferenceImageIndex
-            << ") to template("
-            << atlasReferenceImageIndex << ") image." << std::endl);
-          std::vector<double>      minimumStepSize;
-          std::vector<std::string> transformType;
-          // Do full registration at first iteration level if InitialTransform not given
-          if( atlasToSubjectInitialTransformName == "" )   // If no initial transform, then do full multi-step
-                                                           // registration.
-            {
-            minimumStepSize.push_back(0.0025);
-            transformType.push_back("Rigid");
-            minimumStepSize.push_back(0.0025);
-            transformType.push_back("ScaleVersor3D");
-            minimumStepSize.push_back(0.0025);
-            transformType.push_back("ScaleSkewVersor3D");
-            }
-          else if( atlasToSubjectInitialTransformName != "AffineTransform" )
-            {
-            itkExceptionMacro( << "ERROR: Invalid atlasToSubjectInitialTransformName"
-                               << " type for m_AtlasLinearTransformChoice of type Affine" );
-            }
-          minimumStepSize.push_back(0.0025);
-          transformType.push_back("Affine");
-          atlasToSubjectRegistrationHelper->SetMinimumStepLength(minimumStepSize);
-          atlasToSubjectRegistrationHelper->SetTransformType(transformType);
-          }
-        else if( m_AtlasLinearTransformChoice == "SyN" )
-          {
-          muLogMacro(
-            << "Registering (SyN) " << "atlas(" << atlasReferenceImageIndex
-            << ") to template("
-            << atlasReferenceImageIndex << ") image." << std::endl);
-          std::vector<double>      minimumStepSize;
-          std::vector<std::string> transformType;
-          if( atlasToSubjectInitialTransformName == "" )   // If no initial transform, then do full multi-step
-                                                           // registration.
-            {
-            minimumStepSize.push_back(0.0025);
-            transformType.push_back("Rigid");
-            minimumStepSize.push_back(0.0025);
-            transformType.push_back("ScaleVersor3D");
-            minimumStepSize.push_back(0.0025);
-            transformType.push_back("ScaleSkewVersor3D");
-            minimumStepSize.push_back(0.0025);
-            transformType.push_back("Affine");
-            }
-          else if( atlasToSubjectInitialTransformName == "AffineTransform" )   // If initial Transform is Affine, then
-                                                                               // update the affine stage
-            {
-            minimumStepSize.push_back(0.0025);
-            transformType.push_back("Affine");
-            }
-          else if( atlasToSubjectInitialTransformName != "SyN" )
-            {
-            itkExceptionMacro( << "ERROR: Invalid atlasToSubjectInitialTransformName"
-                               << " type for m_AtlasLinearTransformChoice of type SyN" );
-            }
-          minimumStepSize.push_back(0.0025);
-          transformType.push_back("SyN");
-          atlasToSubjectRegistrationHelper->SetMinimumStepLength(minimumStepSize);
-          atlasToSubjectRegistrationHelper->SetTransformType(transformType);
-          }
-        else
-          {
-          itkExceptionMacro(<< "ERROR: Invalid atlasToSubjectInitialTransformName"
-                            << " type for m_AtlasLinearTransformChoice of type "
-                            << m_AtlasLinearTransformChoice);
-          }
-        }
-
-      if( this->m_DebugLevel > 9 && m_AtlasToSubjectTransform.IsNotNull() )
-        {
-        muLogMacro( << "PRE_ASSIGNMENT" <<  atlasReferenceImageIndex << "  " );
-        // << transformType[0] << " first of " << transformType.size() << std::endl );
-        muLogMacro(<< __FILE__ << " " << __LINE__ << " "
-                   << m_AtlasToSubjectTransform->GetFixedParameters() <<   std::endl );
-        muLogMacro(<< __FILE__ << " " << __LINE__ << " "
-                   << m_AtlasToSubjectTransform->GetParameters() <<   std::endl );
-        }
-      if( this->m_DebugLevel > 9 )
-        {
-        static unsigned int originalAtlasToSubject = 0;
-        std::stringstream   ss;
-        ss << std::setw(3) << std::setfill('0') << originalAtlasToSubject;
-        atlasToSubjectRegistrationHelper->PrintCommandLine(true, std::string("AtlasToSubject") + ss.str() );
-        muLogMacro( << __FILE__ << " " << __LINE__ << " "  <<   std::endl );
-        originalAtlasToSubject++;
-        }
-      atlasToSubjectRegistrationHelper->Update();
-      const unsigned int actualIterations = atlasToSubjectRegistrationHelper->GetActualNumberOfIterations();
-      muLogMacro( << "Registration tool " << actualIterations << " iterations." << std::endl );
-      m_AtlasToSubjectTransform = atlasToSubjectRegistrationHelper->GetCurrentGenericTransform();
-      if( this->m_DebugLevel > 9 )
-        {
-        muLogMacro( << "POST_ASSIGNMENT" <<  atlasReferenceImageIndex << "  " );
-        // << transformType[0] << " first of " << transformType.size() << std::endl );
-        muLogMacro(<< __FILE__ << " " << __LINE__
-                   << " " << m_AtlasToSubjectTransform->GetFixedParameters() <<   std::endl );
-        muLogMacro(<< __FILE__ << " " << __LINE__
-                   << " " << m_AtlasToSubjectTransform->GetParameters() <<   std::endl );
-        }
-      }
-      // End generating the best initial transform for atlas T1 to subject T1
+    // Register all atlas images to first image
+    // Set the fixed and moving image
+    atlasToSubjectRegistrationHelper->SetFixedVolume(this->GetFirstIntraSubjectOriginalImage());
+    atlasToSubjectRegistrationHelper->SetMovingVolume(this->GetFirstAtlasOriginalImage());
+    muLogMacro( << "Generating MovingImage Mask (Atlas 0)" <<   std::endl );
+    typedef itk::BRAINSROIAutoImageFilter<InternalImageType, itk::Image<unsigned char, 3> > ROIAutoType;
+    typename ROIAutoType::Pointer  ROIFilter = ROIAutoType::New();
+    ROIFilter->SetInput(this->GetFirstAtlasOriginalImage());
+    ROIFilter->SetDilateSize(1);   // Only use a very small non-tissue
+    // region outside of head during
+    // initial runnings
+    ROIFilter->Update();
+    atlasToSubjectRegistrationHelper->SetMovingBinaryVolume(ROIFilter->GetSpatialObjectROI() );
+    if( this->m_DebugLevel > 7 )
       {
-      muLogMacro(<< "Writing " << this->m_AtlasToSubjectTransformFileName << "." << std::endl);
-      WriteTransformToDisk(m_AtlasToSubjectTransform, this->m_AtlasToSubjectTransformFileName);
+      ByteImageType::Pointer movingMaskImage = ROIFilter->GetOutput();
+      typedef itk::ImageFileWriter<ByteImageType> ByteWriterType;
+      ByteWriterType::Pointer writer = ByteWriterType::New();
+      writer->UseCompressionOn();
+
+      std::ostringstream oss;
+      oss << this->m_OutputDebugDir << "Atlas_MovingMask_0.nii.gz" << std::ends;
+      std::string fn = oss.str();
+
+      writer->SetInput( movingMaskImage );
+      writer->SetFileName(fn.c_str() );
+      writer->Update();
+      muLogMacro( << __FILE__ << " " << __LINE__ << " "  <<   std::endl );
       }
+
+    muLogMacro( << "Generating FixedImage Mask (Atlas)" <<   std::endl );
+    typedef itk::BRAINSROIAutoImageFilter<InternalImageType, itk::Image<unsigned char, 3> > ROIAutoType;
+    ROIFilter = ROIAutoType::New();
+    ROIFilter->SetInput(this->GetFirstIntraSubjectOriginalImage());
+    ROIFilter->SetDilateSize(1);   // Only use a very small non-tissue
+    // region outside of head during
+    // initial runnings
+    ROIFilter->Update();
+    atlasToSubjectRegistrationHelper->SetFixedBinaryVolume(ROIFilter->GetSpatialObjectROI() );
+    if( this->m_DebugLevel > 7 )
+      {
+      ByteImageType::Pointer fixedMaskImage = ROIFilter->GetOutput();
+      typedef itk::ImageFileWriter<ByteImageType> ByteWriterType;
+      ByteWriterType::Pointer writer = ByteWriterType::New();
+      writer->UseCompressionOn();
+
+      std::ostringstream oss;
+      oss << this->m_OutputDebugDir << "SubjectForAtlas_FixedMask_0.nii.gz";
+      std::string fn = oss.str();
+
+      writer->SetInput( fixedMaskImage );
+      writer->SetFileName(fn.c_str() );
+      writer->Update();
+      muLogMacro( << __FILE__ << " " << __LINE__ << " "  <<   std::endl );
+      }
+    // ##########################################
+    // ##########################################
+    // Set up registration schedule
+    // ##########################################
+    // ##########################################
+    {   // Now do optimal registration based on requested transform choice.
+    if( m_AtlasLinearTransformChoice == "Affine" )
+      {
+      muLogMacro(
+        << "Registering (Affine) " <<  "atlas(0) to template(0) image." << std::endl);
+      std::vector<double>      minimumStepSize;
+      std::vector<std::string> transformType;
+      // Do full registration at first iteration level if InitialTransform not given
+      if( atlasToSubjectInitialTransformName == "" )   // If no initial transform, then do full multi-step
+        // registration.
+        {
+        minimumStepSize.push_back(0.0025);
+        transformType.push_back("Rigid");
+        minimumStepSize.push_back(0.0025);
+        transformType.push_back("ScaleVersor3D");
+        minimumStepSize.push_back(0.0025);
+        transformType.push_back("ScaleSkewVersor3D");
+        }
+      else if( atlasToSubjectInitialTransformName != "AffineTransform" )
+        {
+        itkExceptionMacro( << "ERROR: Invalid atlasToSubjectInitialTransformName"
+                           << " type for m_AtlasLinearTransformChoice of type Affine" );
+        }
+      minimumStepSize.push_back(0.0025);
+      transformType.push_back("Affine");
+      atlasToSubjectRegistrationHelper->SetMinimumStepLength(minimumStepSize);
+      atlasToSubjectRegistrationHelper->SetTransformType(transformType);
+      }
+    else if( m_AtlasLinearTransformChoice == "SyN" )
+      {
+      muLogMacro(
+        << "Registering (SyN) " << "atlas(0) to template(0) image." << std::endl);
+      std::vector<double>      minimumStepSize;
+      std::vector<std::string> transformType;
+      if( atlasToSubjectInitialTransformName == "" )   // If no initial transform, then do full multi-step
+        // registration.
+        {
+        minimumStepSize.push_back(0.0025);
+        transformType.push_back("Rigid");
+        minimumStepSize.push_back(0.0025);
+        transformType.push_back("ScaleVersor3D");
+        minimumStepSize.push_back(0.0025);
+        transformType.push_back("ScaleSkewVersor3D");
+        minimumStepSize.push_back(0.0025);
+        transformType.push_back("Affine");
+        }
+      else if( atlasToSubjectInitialTransformName == "AffineTransform" )   // If initial Transform is Affine, then
+        // update the affine stage
+        {
+        minimumStepSize.push_back(0.0025);
+        transformType.push_back("Affine");
+        }
+      else if( atlasToSubjectInitialTransformName != "SyN" )
+        {
+        itkExceptionMacro( << "ERROR: Invalid atlasToSubjectInitialTransformName"
+                           << " type for m_AtlasLinearTransformChoice of type SyN" );
+        }
+      minimumStepSize.push_back(0.0025);
+      transformType.push_back("SyN");
+      atlasToSubjectRegistrationHelper->SetMinimumStepLength(minimumStepSize);
+      atlasToSubjectRegistrationHelper->SetTransformType(transformType);
+      }
+    else
+      {
+      itkExceptionMacro(<< "ERROR: Invalid atlasToSubjectInitialTransformName"
+                        << " type for m_AtlasLinearTransformChoice of type "
+                        << m_AtlasLinearTransformChoice);
+      }
+    }
+
+    if( this->m_DebugLevel > 9 && m_AtlasToSubjectTransform.IsNotNull() )
+      {
+      muLogMacro( << "PRE_ASSIGNMENT 0 " );
+      // << transformType[0] << " first of " << transformType.size() << std::endl );
+      muLogMacro(<< __FILE__ << " " << __LINE__ << " "
+                 << m_AtlasToSubjectTransform->GetFixedParameters() <<   std::endl );
+      muLogMacro(<< __FILE__ << " " << __LINE__ << " "
+                 << m_AtlasToSubjectTransform->GetParameters() <<   std::endl );
+      }
+    if( this->m_DebugLevel > 9 )
+      {
+      static unsigned int originalAtlasToSubject = 0;
+      std::stringstream   ss;
+      ss << std::setw(3) << std::setfill('0') << originalAtlasToSubject;
+      atlasToSubjectRegistrationHelper->PrintCommandLine(true, std::string("AtlasToSubject") + ss.str() );
+      muLogMacro( << __FILE__ << " " << __LINE__ << " "  <<   std::endl );
+      originalAtlasToSubject++;
+      }
+    atlasToSubjectRegistrationHelper->Update();
+    const unsigned int actualIterations = atlasToSubjectRegistrationHelper->GetActualNumberOfIterations();
+    muLogMacro( << "Registration tool " << actualIterations << " iterations." << std::endl );
+    m_AtlasToSubjectTransform = atlasToSubjectRegistrationHelper->GetCurrentGenericTransform();
+    if( this->m_DebugLevel > 9 )
+      {
+      muLogMacro( << "POST_ASSIGNMENT0  " );
+      // << transformType[0] << " first of " << transformType.size() << std::endl );
+      muLogMacro(<< __FILE__ << " " << __LINE__
+                 << " " << m_AtlasToSubjectTransform->GetFixedParameters() <<   std::endl );
+      muLogMacro(<< __FILE__ << " " << __LINE__
+                 << " " << m_AtlasToSubjectTransform->GetParameters() <<   std::endl );
+      }
+    // End generating the best initial transform for atlas T1 to subject T1
+    muLogMacro(<< "Writing " << this->m_AtlasToSubjectTransformFileName << "." << std::endl);
+    WriteTransformToDisk(m_AtlasToSubjectTransform, this->m_AtlasToSubjectTransformFileName);
     }
 }
 

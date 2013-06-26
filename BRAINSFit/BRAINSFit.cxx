@@ -618,7 +618,7 @@ int main(int argc, char *argv[])
       }
     else
       {
-      itk::ants::WriteTransform<3>( tempSyNFinalTransform, localOutputTransform );
+      itk::ants::WriteTransform<double,3>( tempSyNFinalTransform, localOutputTransform );
       std::cout << "SyN warped transform is written to the disk." << std::endl;
       }
     }

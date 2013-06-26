@@ -4,7 +4,7 @@
 #include "antsUtilities.h"
 #include "itkantsRegistrationHelper.h"
 
-typedef  ants::RegistrationHelper<3>                       SyNRegistrationHelperType;
+typedef  ants::RegistrationHelper<double,3>                SyNRegistrationHelperType;
 typedef  SyNRegistrationHelperType::ImageType              ImageType;
 typedef  SyNRegistrationHelperType::CompositeTransformType CompositeTransformType;
 

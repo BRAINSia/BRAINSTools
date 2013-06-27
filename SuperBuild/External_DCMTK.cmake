@@ -106,7 +106,7 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
   set(${extProjName}_DIR ${CMAKE_BINARY_DIR}/${proj}-install/lib/cmake/dcmtk)
 else()
   if(${USE_SYSTEM_${extProjName}})
-    find_package(${extProjName} REQUIRED)
+    find_package(${extProjName} REQUIRED NO_MODULE)
     if(NOT ${extProjName}_DIR)
       message(FATAL_ERROR "To use the system ${extProjName}, set ${extProjName}_DIR")
     endif()

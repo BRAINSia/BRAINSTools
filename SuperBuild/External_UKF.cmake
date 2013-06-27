@@ -7,7 +7,7 @@ set(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED 1)
 
 set(proj UKF)
 set(${proj}_GIT_REPOSITORY "git://github.com/BRAINSia/ukftractography.git")
-set(${proj}_GIT_TAG "219f3323dd16be07dd29e5e9c257780ac7b3a52f")
+set(${proj}_GIT_TAG "876192a81da8780ad0d3948997461d42fac3cfcf")
 
 set(${proj}_DEPENDENCIES ITKv4 teem Boost SlicerExecutionModel )
 

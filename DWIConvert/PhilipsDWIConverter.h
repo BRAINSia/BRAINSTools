@@ -92,7 +92,17 @@ public:
               {
               double doubleArray[3];
               // Use alternate method to get value out of a sequence header (Some Phillips Data).
-              if( this->m_Headers[k]->GetElementFD(0x0018, 0x9089, 3, doubleArray, false) != EXIT_SUCCESS )
+              bool preferredExtrationSucceeded = EXIT_FAILURE;
+              try
+                {
+                preferredExtrationSucceeded = this->m_Headers[k]->GetElementFD(0x0018, 0x9089, 3, doubleArray, false);
+                }
+              catch(...)
+                {
+                preferredExtrationSucceeded = EXIT_FAILURE;
+                }
+              //Try alternate method.
+              if( preferredExtrationSucceeded == EXIT_FAILURE )
                 {
                 // std::cout << "Looking for  0018|9089 in sequence 0018,9076" << std::endl;
                 // gdcm::SeqEntry *
@@ -210,16 +220,40 @@ public:
             }
           else
             {
-            if( mrDiffusionSeq.GetElementDSorOB(0x0018, 0x9087, dwbValue, false) != EXIT_SUCCESS )
               {
-              mrDiffusionSeq.GetElementFD(0x0018, 0x9087, dwbValue);
+              bool preferredExtrationSucceeded = EXIT_FAILURE;
+              try
+                {
+                preferredExtrationSucceeded = mrDiffusionSeq.GetElementDSorOB(0x0018, 0x9087, dwbValue, false);
+                }
+              catch(...)
+                {
+                preferredExtrationSucceeded = EXIT_FAILURE;
+                }
+              //Try alternate method.
+              if( preferredExtrationSucceeded == EXIT_FAILURE )
+                {
+                mrDiffusionSeq.GetElementFD(0x0018, 0x9087, dwbValue);
+                }
               }
             itk::DCMTKSequence volSeq;
             mrDiffusionSeq.GetElementSQ(0x0018, 0x9076, volSeq);
             double dwgVal[3];
-            if( volSeq.GetElementDSorOB<double>(0x0018, 0x9089, 3, dwgVal, false) != EXIT_SUCCESS )
               {
-              volSeq.GetElementFD(0x0018, 0x9089, 3, dwgVal);
+              bool preferredExtrationSucceeded = EXIT_FAILURE;
+              try
+                {
+                preferredExtrationSucceeded = volSeq.GetElementDSorOB<double>(0x0018, 0x9089, 3, dwgVal, false);
+                }
+              catch(...)
+                {
+                preferredExtrationSucceeded = EXIT_FAILURE;
+                }
+              //Try alternate method.
+              if( preferredExtrationSucceeded == EXIT_FAILURE )
+                {
+                volSeq.GetElementFD(0x0018, 0x9089, 3, dwgVal);
+                }
               }
             std::vector<double> v(3);
             v[0] = dwgVal[0];

@@ -71,7 +71,17 @@ public:
           }
         else
           {
-          if( this->m_Headers[k]->GetElementIS(0x0043, 0x1039, intb, false) != EXIT_SUCCESS )
+          bool preferredExtrationSucceeded=EXIT_FAILURE;
+          try
+            {
+                preferredExtrationSucceeded=this->m_Headers[k]->GetElementIS(0x0043, 0x1039, intb, false);
+            }
+          catch(...)
+            {
+                preferredExtrationSucceeded=EXIT_FAILURE;
+            }
+          //Try alternate method.
+          if( preferredExtrationSucceeded == EXIT_FAILURE )
             {
             std::string val;
             this->m_Headers[k]->GetElementOB(0x0043, 0x1039, val);
@@ -91,7 +101,17 @@ public:
             }
           else
             {
-            if( this->m_Headers[k]->GetElementDS(0x0019, elementNum, 1, &vect3d[vecI], false) != EXIT_SUCCESS )
+            bool preferredExtrationSucceeded = EXIT_FAILURE;
+            try
+              {
+              preferredExtrationSucceeded = this->m_Headers[k]->GetElementDS(0x0019, elementNum, 1, &vect3d[vecI], false);
+              }
+            catch(...)
+              {
+              preferredExtrationSucceeded = EXIT_FAILURE;
+              }
+            //Try alternate method.
+            if( preferredExtrationSucceeded == EXIT_FAILURE )
               {
               std::string val;
               this->m_Headers[k]->GetElementOB(0x0019, elementNum, val);

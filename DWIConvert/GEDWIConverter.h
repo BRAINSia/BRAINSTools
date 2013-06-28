@@ -91,7 +91,11 @@ public:
             }
           else
             {
-            if( this->m_Headers[k]->GetElementDS(0x0019, elementNum, 1, &vect3d[vecI], false) != EXIT_SUCCESS )
+            try
+              {
+              this->m_Headers[k]->GetElementDS(0x0019, elementNum, 1, &vect3d[vecI], false);
+              }
+            catch (...)
               {
               std::string val;
               this->m_Headers[k]->GetElementOB(0x0019, elementNum, val);

@@ -10,10 +10,10 @@
 # cd ~/src/BRAINSTools/AutoWorkup/SEMTools/; rm -rf ~/src/BRAINSTools/AutoWorkup/SEMTools/* ; python ../local_generate_classes.py
 # for i in $(find ~/src/BRAINSTools/AutoWorkup/SEMTools  -name "*.py"); do  autopep8 --max-line-length=300 -i ${i}; done
 
-from nipype.interfaces.slicer.generate_classes import generate_all_classes
 
-modules_list = [
+all_known_modules_list = [
     #'ResampleDTILogEuclidean',
+    'DTIPrep'
     'UKFTractography',
     'dtiprocess',
     'dtiestim',
@@ -128,4 +128,49 @@ modules_list = [
 ]
 
 launcher = ['']
-generate_all_classes(modules_list=modules_list, launcher=[])
+import sys
+import os
+import shutil
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--python_paths", dest='python_paths', type=str, help="usually just the path the nipype")
+parser.add_argument("--program_paths",dest='program_paths',type=str, help="where to find the sem programs")
+parser.add_argument("--output_path",  dest='output_path',  type=str, help="the location where the SEMTools directory will be generated")
+
+args = parser.parse_args()
+
+# Platform specific information
+#     Prepend the python search paths
+PYTHON_AUX_PATHS = args.python_paths
+PYTHON_AUX_PATHS = PYTHON_AUX_PATHS.split(':')
+PYTHON_AUX_PATHS.extend(sys.path)
+sys.path = PYTHON_AUX_PATHS
+from nipype.interfaces.slicer.generate_classes import generate_all_classes
+
+SEARCH_PATHS=args.program_paths.split(':')
+
+OUTPUT_PATH = os.path.join(args.output_path,'SEMTools')
+if os.path.exists(OUTPUT_PATH):
+    shutil.rmtree(OUTPUT_PATH)
+os.mkdir(OUTPUT_PATH)
+os.chdir(OUTPUT_PATH)
+
+found_modules_list = list()
+
+for  test_module in all_known_modules_list:
+        for currPath in SEARCH_PATHS:
+                currProgPath = os.path.join(currPath,test_module)
+                if os.path.exists(currProgPath):
+                    found_modules_list.append(currProgPath)
+                    break
+
+print found_modules_list
+
+generate_all_classes(modules_list=found_modules_list, launcher=[])
+
+help_file = open(os.path.join(OUTPUT_PATH,'generated.sh'),'w')
+help_file.write(' '.join(sys.argv)+"\n")
+help_file.close()
+
+print "Ran: ",' '.join(sys.argv)

@@ -1,0 +1,1 @@
+/Users/johnsonhj/src/BRAINSTools/AutoWorkup/local_generate_classes.py --python_paths /Users/johnsonhj/src/BT-build/bin/../NIPYPE --program_paths /Users/johnsonhj/src/BT-build/bin --output_path /Users/johnsonhj/src/BRAINSTools/AutoWorkup

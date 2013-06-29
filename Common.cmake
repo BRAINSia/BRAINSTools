@@ -90,8 +90,8 @@ option(USE_DebugImageViewer "Build DebugImageViewer" OFF)
 option(BRAINS_DEBUG_IMAGE_WRITE "Enable writing out intermediate image results" OFF)
 
 if( USE_AutoWorkup )
-  find_package ( PythonLibs 2.6 REQUIRED )
-  find_package ( PythonInterp 2.6 REQUIRED )
+  find_package ( PythonLibs 2.7 REQUIRED )
+  find_package ( PythonInterp 2.7 REQUIRED )
   set(PYTHON_INSTALL_CMAKE_ARGS
         PYTHON_EXECUTABLE:PATH
         PYTHON_LIBRARY:PATH

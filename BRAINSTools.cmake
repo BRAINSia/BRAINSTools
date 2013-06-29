@@ -97,7 +97,6 @@ include_directories(
 # Define list of module names
 #-----------------------------------------------------------------------------
 set(brains_modulenames
-  AutoWorkup
   BRAINSFit
   BRAINSResample
   BRAINSROIAuto
@@ -124,6 +123,7 @@ set(brains_modulenames
   DWIConvert
   BRAINSCreateLabelMapFromProbabilityMaps
   BRAINSMultiSTAPLE
+  AutoWorkup
   )
 
 if(USE_DebugImageViewer)
@@ -138,11 +138,13 @@ include_directories(${ITK_INSTALL_PREFIX}/install)
 #-----------------------------------------------------------------------------
 # Add module sub-directory if USE_<MODULENAME> is both defined and true
 #-----------------------------------------------------------------------------
+set(BRAINSToolsModules "")
 foreach(modulename ${brains_modulenames})
   # message("DEFINED USE_${modulename} AND ${USE_${modulename}}")
   if(DEFINED USE_${modulename} AND USE_${modulename})
   #  message("Adding ${modulename}")
     add_subdirectory(${modulename})
+    list(APPEND BRAINSToolsModules ${modulename})
   #else()
   #  message("USE_${modulename} = ${USE_${modulename}}")
   endif()

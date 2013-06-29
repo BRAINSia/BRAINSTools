@@ -39,7 +39,7 @@ if(USE_ANTS)
   include_directories(${ANTS_SOURCE_DIR}/Utilities)
   include_directories(${ANTS_SOURCE_DIR}/Examples)
   include_directories(${ANTS_SOURCE_DIR}/ImageRegistration)
-  link_directories(${BRAINSTools_LIBRARY_PATH})
+  link_directories(${BRAINSTools_LIBRARY_PATH} ${BRAINSTools_CLI_ARCHIVE_OUTPUT_DIRECTORY})
   set(ANTS_LIBS ${ANTS_LIBS} antsUtilities)
 endif()
 

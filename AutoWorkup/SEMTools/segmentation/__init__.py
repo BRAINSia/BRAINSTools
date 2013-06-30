@@ -1,1 +1,1 @@
-from specialized import BRAINSCut, BRAINSROIAuto, BRAINSConstellationDetector, BRAINSCreateLabelMapFromProbabilityMaps, BinaryMaskEditorBasedOnLandmarks, BRAINSMultiSTAPLE, BRAINSABC, ESLR
+from specialized import BRAINSCut, BRAINSROIAuto, BRAINSConstellationDetector, BinaryMaskEditorBasedOnLandmarks, BRAINSABC, ESLR

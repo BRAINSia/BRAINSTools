@@ -9,7 +9,7 @@ message(STATUS "TEST:  Building ${OUTPUT_SENTINAL_FILE}")
 add_custom_command(
    OUTPUT ${OUTPUT_SENTINAL_FILE}
    COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/local_generate_classes.py
-           --python_paths ${BRAINSTools_CLI_RUNTIME_OUTPUT_DIRECTORY}/../NIPYPE
+           --python_paths ${BRAINSTools_BINARY_DIR}/../NIPYPE
            --program_paths ${BRAINSTools_CLI_RUNTIME_OUTPUT_DIRECTORY}
            --output_path ${OUTPUT_PATH}
    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/local_generate_classes.py

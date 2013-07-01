@@ -1320,7 +1320,7 @@ int main(int argc, char * *argv)
         muLogMacro(<< "Writing final atlas to subject template... " << postSegmentationTransformFileName << std::endl );
         GenericTransformType::Pointer atlasToSubjectPostSegmentationTransform =
           segfilter->GetTemplateGenericTransform();
-        WriteTransformToDisk(atlasToSubjectPostSegmentationTransform, postSegmentationTransformFileName);
+        itk::WriteTransformToDisk<double>(atlasToSubjectPostSegmentationTransform, postSegmentationTransformFileName);
         // TODO:  Need to write a short circuit so that if this final transform
         // filename exists, it will just read it in and use it directly
         // without doing all the iterations.

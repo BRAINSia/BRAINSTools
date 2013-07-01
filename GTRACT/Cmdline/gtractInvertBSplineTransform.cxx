@@ -99,6 +99,6 @@ int main(int argc, char *argv[])
   invertTransformFilter->Update();
   std::cout << "TPS Inversion Complete" << std::endl;
 
-  itk::WriteTransformToDisk(invertTransformFilter->GetOutput(), outputTransform);
+  itk::WriteTransformToDisk<double>(invertTransformFilter->GetOutput(), outputTransform);
   return EXIT_SUCCESS;
 }

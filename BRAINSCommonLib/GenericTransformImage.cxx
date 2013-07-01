@@ -143,28 +143,28 @@ int WriteBothTransformsToDisk(const GenericTransformType::ConstPointer genericTr
       {
       if( outputTransform.size() > 0 )  // Write out the transform
         {
-        itk::WriteTransformToDisk(genericTransformToWrite, outputTransform);
+        itk::WriteTransformToDisk<double>(genericTransformToWrite, outputTransform);
         }
       }
     else if( transformFileType == "ScaleVersor3DTransform" )
       {
       if( outputTransform.size() > 0 )  // Write out the transform
         {
-        itk::WriteTransformToDisk(genericTransformToWrite, outputTransform);
+        itk::WriteTransformToDisk<double>(genericTransformToWrite, outputTransform);
         }
       }
     else if( transformFileType == "ScaleSkewVersor3DTransform" )
       {
       if( outputTransform.size() > 0 )  // Write out the transform
         {
-        itk::WriteTransformToDisk(genericTransformToWrite, outputTransform);
+        itk::WriteTransformToDisk<double>(genericTransformToWrite, outputTransform);
         }
       }
     else if( transformFileType == "AffineTransform" )
       {
       if( outputTransform.size() > 0 )  // Write out the transform
         {
-        itk::WriteTransformToDisk(genericTransformToWrite, outputTransform);
+        itk::WriteTransformToDisk<double>(genericTransformToWrite, outputTransform);
         }
       }
     else if( transformFileType == "BSplineDeformableTransform" )
@@ -181,7 +181,7 @@ int WriteBothTransformsToDisk(const GenericTransformType::ConstPointer genericTr
         }
       if( outputTransform.size() > 0 )
         {
-        itk::WriteTransformToDisk(genericTransformToWrite, outputTransform);
+        itk::WriteTransformToDisk<double>(genericTransformToWrite, outputTransform);
         }
       }
     else      //  NO SUCH CASE!!
@@ -200,7 +200,7 @@ int WriteBothTransformsToDisk(const GenericTransformType::ConstPointer genericTr
       VersorRigidTransformType::Pointer versorRigid = itk::ComputeRigidTransformFromGeneric(genericTransformToWrite);
       if( versorRigid.IsNotNull() )
         {
-        itk::WriteTransformToDisk(versorRigid.GetPointer(), strippedOutputTransform);
+        itk::WriteTransformToDisk<double>(versorRigid.GetPointer(), strippedOutputTransform);
         }
       }
     }
@@ -445,29 +445,34 @@ GenericTransformType::Pointer ReadTransformFromDisk(const std::string & initialT
   return genericTransform;
 }
 
-void WriteTransformToDisk(GenericTransformType const *const MyTransform, const std::string & TransformFilename)
+template<class TScalarType>
+void WriteTransformToDisk( itk::Transform<TScalarType, 3, 3> const *const MyTransform, const std::string & TransformFilename )
 {
   /*
     *  Convert the transform to the appropriate assumptions and write it out as
     *requested.
     */
     {
-    typedef itk::TransformFileWriter TransformWriterType;
-    TransformWriterType::Pointer transformWriter =  TransformWriterType::New();
+    typedef itk::TransformFileWriterTemplate<TScalarType> TransformWriterType;
+    typename TransformWriterType::Pointer transformWriter =  TransformWriterType::New();
     transformWriter->SetFileName( TransformFilename.c_str() );
 
     const std::string extension = itksys::SystemTools::GetFilenameLastExtension(TransformFilename);
     std::string       inverseTransformFileName(TransformFilename);
     inverseTransformFileName.replace(inverseTransformFileName.end() - extension.size(),
                                      inverseTransformFileName.end(), "_Inverse.h5");
-    TransformWriterType::Pointer inverseTransformWriter =  TransformWriterType::New();
+    typename TransformWriterType::Pointer inverseTransformWriter =  TransformWriterType::New();
     inverseTransformWriter->SetFileName( inverseTransformFileName.c_str() );
     const std::string transformFileType = MyTransform->GetNameOfClass();
     bool              inverseTransformExists = true;
     if( transformFileType == "BSplineDeformableTransform" )
       {
-      const BSplineTransformType::ConstPointer tempInitializerITKTransform =
-        dynamic_cast<BSplineTransformType const *>( MyTransform );
+      typedef itk::BSplineDeformableTransform< TScalarType,
+                                               GenericTransformImageNS::SpaceDimension,
+                                               GenericTransformImageNS::SplineOrder> BSplineTransformType;
+
+      const typename BSplineTransformType::ConstPointer tempInitializerITKTransform = dynamic_cast<BSplineTransformType const *>( MyTransform );
+
       if( tempInitializerITKTransform.IsNull() )
         {
         itkGenericExceptionMacro(<< "Error in type conversion");
@@ -541,5 +546,8 @@ void WriteTransformToDisk(GenericTransformType const *const MyTransform, const s
       }
     }
 }
+
+template void WriteTransformToDisk<double>( itk::Transform<double, 3, 3> const *const MyTransform, const std::string & TransformFilename );
+template void WriteTransformToDisk<float>( itk::Transform<float, 3, 3> const *const MyTransform, const std::string & TransformFilename );
 
 } // end namespace itk

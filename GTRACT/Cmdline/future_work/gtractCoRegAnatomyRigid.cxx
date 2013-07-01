@@ -175,5 +175,5 @@ int main(int argc, char * *argv)
     }
   GenericTransformType::Pointer versor3DTransform = registerImageFilter->GetCurrentGenericTransform();
 
-  WriteTransformToDisk(versor3DTransform, outputRigidTransform);
+  itk::WriteTransformToDisk<double>(versor3DTransform, outputRigidTransform);
 }

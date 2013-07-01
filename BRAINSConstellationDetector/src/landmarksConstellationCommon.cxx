@@ -793,9 +793,10 @@ SImageType::Pointer MakeIsoTropicReferenceImage(void)
   return isotropicReferenceVolume;
 }
 
-void WriteTransformToDisk( GenericTransformType * myTransform , const std::string & filename  )
+template<class TScalarType>
+void WriteTransformToDisk( itk::Transform<TScalarType, 3, 3> * myTransform , const std::string & filename  )
 {
-  itk::TransformFileWriter::Pointer writer = itk::TransformFileWriter::New();
+  typename itk::TransformFileWriterTemplate<TScalarType>::Pointer writer = itk::TransformFileWriterTemplate<TScalarType>::New();
   writer->SetInput( myTransform );
   writer->SetFileName( filename );
   try
@@ -809,3 +810,5 @@ void WriteTransformToDisk( GenericTransformType * myTransform , const std::strin
     }
   std::cout << "The output rigid transform file is written." << std::endl;
 }
+
+template void WriteTransformToDisk<double>( itk::Transform<double, 3, 3> * myTransform , const std::string & filename );

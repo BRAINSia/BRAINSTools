@@ -287,7 +287,7 @@ BRAINSCutGenerateRegistrations
               << " :: " << OutputRegName
               << std::endl;
     }
-  WriteTransformToDisk( BSplineRegistrationHelper->GetCurrentGenericTransform(),
+  itk::WriteTransformToDisk<double>( BSplineRegistrationHelper->GetCurrentGenericTransform(),
                         OutputRegName );
   // Write out Transformed Output As Well
   // - EX. from GenericTransformImage.hxx

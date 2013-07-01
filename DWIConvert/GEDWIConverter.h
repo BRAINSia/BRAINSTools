@@ -67,28 +67,29 @@ public:
         ::itk::int32_t intb;
         if( !isSignaHDxt )
           {
-          this->m_Headers[k]->GetElementISorOB(0x0043, 0x1039, intb);
+          if(this->m_Headers[k]->GetElementISorOB(0x0043, 0x1039, intb) != EXIT_SUCCESS)
+            {
+            std::cerr << "WARNING: Missing B Value" << std::endl;
+            intb = 1;
+            }
           }
         else
           {
-          bool preferredExtrationSucceeded=EXIT_FAILURE;
-          try
-            {
-                preferredExtrationSucceeded=this->m_Headers[k]->GetElementIS(0x0043, 0x1039, intb, false);
-            }
-          catch(...)
-            {
-                preferredExtrationSucceeded=EXIT_FAILURE;
-            }
-          //Try alternate method.
-          if( preferredExtrationSucceeded == EXIT_FAILURE )
+          if( this->m_Headers[k]->GetElementIS(0x0043, 0x1039, intb, false) != EXIT_SUCCESS )
             {
             std::string val;
-            this->m_Headers[k]->GetElementOB(0x0043, 0x1039, val);
-            size_t slashpos = val.find('\\');
-            val = val.substr(0, slashpos);
-            std::stringstream s(val);
-            s >> intb;
+            if(this->m_Headers[k]->GetElementOB(0x0043, 0x1039, val) == EXIT_SUCCESS)
+              {
+              size_t slashpos = val.find('\\');
+              val = val.substr(0, slashpos);
+              std::stringstream s(val);
+              s >> intb;
+              }
+            else
+              {
+              intb = 1;
+              std::cerr << "WARNING: Missing B Value" << std::endl;
+              }
             }
           }
         float b = static_cast<float>(intb);
@@ -101,22 +102,14 @@ public:
             }
           else
             {
-            bool preferredExtrationSucceeded = EXIT_FAILURE;
-            try
-              {
-              preferredExtrationSucceeded = this->m_Headers[k]->GetElementDS(0x0019, elementNum, 1, &vect3d[vecI], false);
-              }
-            catch(...)
-              {
-              preferredExtrationSucceeded = EXIT_FAILURE;
-              }
-            //Try alternate method.
-            if( preferredExtrationSucceeded == EXIT_FAILURE )
+            if( this->m_Headers[k]->GetElementDS(0x0019, elementNum, 1, &vect3d[vecI], false) != EXIT_SUCCESS )
               {
               std::string val;
-              this->m_Headers[k]->GetElementOB(0x0019, elementNum, val);
-              std::stringstream s(val);
-              s >> vect3d[vecI];
+              if(this->m_Headers[k]->GetElementOB(0x0019, elementNum, val,false) == EXIT_SUCCESS)
+                {
+                std::stringstream s(val);
+                s >> vect3d[vecI];
+                }
               }
             }
           }

@@ -94,7 +94,7 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
 
   ### --- End Project specific additions
   set(${proj}_REPOSITORY "${git_protocol}://github.com/BRAINSia/opencv.git") # USE THIS FOR UPDATED VERSION
-  set(${proj}_GIT_TAG "20121015_UpdateForTesting") # USE THIS FOR UPDATED VERSION
+  set(${proj}_GIT_TAG "20130601_Upstream") # USE THIS FOR UPDATED VERSION
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${${proj}_REPOSITORY}
     GIT_TAG ${${proj}_GIT_TAG}

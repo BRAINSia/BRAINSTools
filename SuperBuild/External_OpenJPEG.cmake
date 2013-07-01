@@ -77,7 +77,11 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
     DEPENDS
     ${${proj}_DEPENDENCIES}
   )
-  set(${extProjName}_DIR ${CMAKE_BINARY_DIR}/${proj}-install/lib/openjpeg-2.0/)
+  set(${extProjName}_DIR ${CMAKE_BINARY_DIR}/${proj}-install/openjpeg-2.0)
+  set(${extProjName}_INCLUDE_DIR ${CMAKE_BINARY_DIR}/${proj}-install/include/openjpeg-2.0)
+  set(${extProjName}_LIB_DIR ${CMAKE_BINARY_DIR}/${proj}-install/lib)
+  set(${extProjName}_LIBRARY ${${extProjName}_LIB_DIR}/libopenjp2.a)
+
 else()
   if(${USE_SYSTEM_${extProjName}})
     find_package(${extProjName} ${${extProjName}_REQUIRED_VERSION} REQUIRED)

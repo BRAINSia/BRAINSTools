@@ -1,4 +1,3 @@
-
 # Make sure this file is included only once by creating globally unique varibles
 # based on the name of this included file.
 get_filename_component(CMAKE_CURRENT_LIST_FILENAME ${CMAKE_CURRENT_LIST_FILE} NAME_WE)
@@ -30,13 +29,13 @@ if(DEFINED ${extProjName}_DIR AND NOT EXISTS ${${extProjName}_DIR})
   message(FATAL_ERROR "${extProjName}_DIR variable is defined but corresponds to non-existing directory (${${extProjName}_DIR})")
 endif()
 
-set( TARGET_SWIG_VERSION 2.0.8 )
+set( TARGET_SWIG_VERSION 2.0.9 )
 if(NOT SWIG_DIR)
   if(WIN32)
     # swig.exe available as pre-built binary on Windows:
     ExternalProject_Add(${proj}
       URL http://prdownloads.sourceforge.net/swig/swigwin-${TARGET_SWIG_VERSION}.zip
-      URL_MD5 4ab8064b1a8894c8577ef9d0fb2523c8
+      URL_MD5 a1dc34766cf599f49e2092f7973c85f4
       SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/swigwin-${TARGET_SWIG_VERSION}
       ${cmakeversion_external_update} "${cmakeversion_external_update_value}"
       CONFIGURE_COMMAND ""
@@ -65,7 +64,7 @@ if(NOT SWIG_DIR)
     # follow the standard EP_PREFIX locations
     set(swig_binary_dir ${CMAKE_CURRENT_BINARY_DIR}/Swig-prefix/src/Swig-build)
     set(swig_source_dir ${CMAKE_CURRENT_BINARY_DIR}/Swig-prefix/src/Swig)
-    set(swig_install_dir ${CMAKE_CURRENT_BINARY_DIR}/Swig)
+    set(swig_install_dir ${CMAKE_CURRENT_BINARY_DIR}/Swig/install)
 
     configure_file(
       ${CMAKE_CURRENT_SOURCE_DIR}/SuperBuild/External_Swig_configure_step.cmake.in
@@ -75,11 +74,11 @@ if(NOT SWIG_DIR)
 
     ExternalProject_Add(${proj}
       URL http://prdownloads.sourceforge.net/swig/swig-${TARGET_SWIG_VERSION}.tar.gz
-      URL_MD5  69f917e870efc0712c06ab53217b28d1
-    LOG_CONFIGURE 0  # Wrap configure in script to ignore log output from dashboards
-    LOG_BUILD     0  # Wrap build in script to to ignore log output from dashboards
-    LOG_TEST      0  # Wrap test in script to to ignore log output from dashboards
-    LOG_INSTALL   0  # Wrap install in script to to ignore log output from dashboards
+      URL_MD5  54d534b14a70badc226129159412ea85
+      LOG_CONFIGURE 0  # Wrap configure in script to ignore log output from dashboards
+      LOG_BUILD     0  # Wrap build in script to to ignore log output from dashboards
+      LOG_TEST      0  # Wrap test in script to to ignore log output from dashboards
+      LOG_INSTALL   0  # Wrap install in script to to ignore log output from dashboards
       ${cmakeversion_external_update} "${cmakeversion_external_update_value}"
       CONFIGURE_COMMAND ${swig_CONFIGURE_COMMAND}
       DEPENDS PCRE

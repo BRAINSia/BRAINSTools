@@ -97,8 +97,8 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
   )
 
   ### --- End Project specific additions
-  set(${proj}_REPOSITORY ${git_protocol}://itk.org/SimpleITK.git)
-  set(${proj}_GIT_TAG 32f32ce22bce6721c93a528a16e53dd61e75a511)
+  set(${proj}_REPOSITORY https://github.com/SimpleITK/SimpleITK.git)
+  set(${proj}_GIT_TAG FixForITKWithSinglePrecisionTemplate)
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${${proj}_REPOSITORY}
     GIT_TAG ${${proj}_GIT_TAG}
@@ -121,7 +121,7 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
   set(${extProjName}_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
 else()
   if(${USE_SYSTEM_${extProjName}})
-    find_package(${extProjName} ${${extProjName}_REQUIRED_VERSION} REQUIRED)
+    find_package(${extProjName} ${ITK_VERSION_MAJOR} REQUIRED)
     if(NOT ${extProjName}_DIR)
       message(FATAL_ERROR "To use the system ${extProjName}, set ${extProjName}_DIR")
     endif()

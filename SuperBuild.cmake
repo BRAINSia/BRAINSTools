@@ -128,13 +128,13 @@ set(${PRIMARY_PROJECT_NAME}_DEPENDENCIES
   )
 
 if(BUILD_STYLE_UTILS)
-  list(APPEND ${PRIMARY_PROJECT_NAME}_DEPENDENCIES Cppcheck KWStyle Uncrustify)
+  list(APPEND ${PRIMARY_PROJECT_NAME}_DEPENDENCIES Cppcheck KWStyle ) #Uncrustify)
 endif()
 
 list(APPEND ${PRIMARY_PROJECT_NAME}_DEPENDENCIES SimpleITK)
 list(APPEND SimpleITK_DEPENDENCIES PCRE Swig)
 list(APPEND ${PRIMARY_PROJECT_NAME}_DEPENDENCIES NIPYPE)
-list(APPEND ${PRIMARY_PROJECT_NAME}_DEPENDENCIES Ipopt)
+#list(APPEND ${PRIMARY_PROJECT_NAME}_DEPENDENCIES Ipopt)
 #-----------------------------------------------------------------------------
 # Define Superbuild global variables
 #-----------------------------------------------------------------------------

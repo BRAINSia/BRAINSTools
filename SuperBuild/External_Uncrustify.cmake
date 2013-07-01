@@ -54,7 +54,7 @@ if(NOT ( DEFINED "${extProjName}_EXE" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
 
   ### --- End Project specific additions
   set(${proj}_REPOSITORY "${git_protocol}://github.com/bengardner/uncrustify.git")
-  set(${proj}_GIT_TAG "84dde5e2f8722dcfb511a1d264b0834b95f6f294")
+  set(${proj}_GIT_TAG "60f3681da60462eda539b78e0c6c3eea823481e5")
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${${proj}_REPOSITORY}
     GIT_TAG ${${proj}_GIT_TAG}
@@ -65,6 +65,8 @@ if(NOT ( DEFINED "${extProjName}_EXE" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
     LOG_TEST      0  # Wrap test in script to to ignore log output from dashboards
     LOG_INSTALL   0  # Wrap install in script to to ignore log output from dashboards
     ${cmakeversion_external_update} "${cmakeversion_external_update_value}"
+    SOURCE_DIR ${proj}
+    BINARY_DIR ${proj}-build
     CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=${CMAKE_BINARY_DIR}/Utils
     DEPENDS
       ${${proj}_DEPENDENCIES}

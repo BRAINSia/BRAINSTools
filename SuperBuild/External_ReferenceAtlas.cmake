@@ -64,6 +64,14 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
       -DATLAS_VERSION:STRING=${ATLAS_VERSION}
       )
   ### --- End Project specific additions
+  ## Midas version of Atlas:  Atlas_${ATLAS_VERSION}.tar.gz
+                                                                    #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                                                    #  This is ignored by midas, but allows the filename for download
+                                                                    #  to be generated.
+                                                                    #  It is a hack that seems to work.
+                                                                    #  If the atlas needs to be changed, then the items=#### will
+                                                                    #  need to be determined from the slicer.kitware.com
+                                                                    #  web page and filled in appropriately.
   ExternalProject_Add(${proj}
     SVN_REPOSITORY ${ATLAS_SVN_REPOSITORY}
     SVN_REVISION -r ${ATLAS_SVN_REVISION}

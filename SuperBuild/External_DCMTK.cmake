@@ -20,6 +20,7 @@ ProjectDependancyPush(CACHED_proj ${proj})
 # SlicerMacroCheckExternalProjectDependency
 set(extProjName DCMTK) #The find_package known name
 set(proj        DCMTK) #This local name
+set(${extProjName}_REQUIRED_VERSION "")  #If a required version is necessary, then set this, else leave blank
 
 #if(${USE_SYSTEM_${extProjName}})
 #  unset(${extProjName}_DIR CACHE)
@@ -56,6 +57,11 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
 
   ### --- Project specific additions here
   set(${proj}_CMAKE_OPTIONS
+      -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/${proj}-install
+      #-DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
+      ${CMAKE_PROJECT_INCLUDE_EXTERNAL_PROJECT_ARG}
+      -DBUILD_EXAMPLES:BOOL=OFF
+      -DBUILD_TESTING:BOOL=OFF
       -DDCMTK_WITH_DOXYGEN:BOOL=OFF
       -DDCMTK_WITH_ZLIB:BOOL=ON # see CTK github issue #25
       -DDCMTK_WITH_OPENSSL:BOOL=OFF # see CTK github issue #25
@@ -75,7 +81,6 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
   ### --- End Project specific additions
   set(${proj}_REPOSITORY ${git_protocol}://github.com/commontk/DCMTK.git)
   set(${proj}_GIT_TAG "f461865d1759854db56e4c840991c81c77e45bb9")
-
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${${proj}_REPOSITORY}
     GIT_TAG ${${proj}_GIT_TAG}
@@ -91,13 +96,8 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
     CMAKE_ARGS
       -Wno-dev
       --no-warn-unused-cli
-      ${COMMON_EXTERNAL_PROJECT_ARGS}
-      -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/${proj}-install
-      #-DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
       ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
-      ${CMAKE_PROJECT_INCLUDE_EXTERNAL_PROJECT_ARG}
-      -DBUILD_EXAMPLES:BOOL=OFF
-      -DBUILD_TESTING:BOOL=OFF
+      ${COMMON_EXTERNAL_PROJECT_ARGS}
       ${${proj}_CMAKE_OPTIONS}
 ## We really do want to install in order to limit # of include paths INSTALL_COMMAND ""
     DEPENDS

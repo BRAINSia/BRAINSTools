@@ -1,17 +1,25 @@
-#
-# ReferenceAtlas is a reference set of prior-probabilities and atlas images.
-#
-
-# Make sure this file is included only once
+# Make sure this file is included only once by creating globally unique varibles
+# based on the name of this included file.
 get_filename_component(CMAKE_CURRENT_LIST_FILENAME ${CMAKE_CURRENT_LIST_FILE} NAME_WE)
 if(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED)
   return()
 endif()
 set(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED 1)
 
-# Include dependent projects if any
+## External_${extProjName}.cmake files can be recurisvely included,
+## and cmake variables are global, so when including sub projects it
+## is important make the extProjName and proj variables
+## appear to stay constant in one of these files.
+## Store global variables before overwriting (then restore at end of this file.)
+ProjectDependancyPush(CACHED_extProjName ${extProjName})
+ProjectDependancyPush(CACHED_proj ${proj})
+
+# Make sure that the ExtProjName/IntProjName variables are unique globally
+# even if other External_${ExtProjName}.cmake files are sourced by
+# SlicerMacroCheckExternalProjectDependency
 set(extProjName ReferenceAtlas) #The find_package known name
-set(proj ${extProjName})              #This local name
+set(proj        ReferenceAtlas) #This local name
+set(${extProjName}_REQUIRED_VERSION "")  #If a required version is necessary, then set this, else leave blank
 
 #if(${USE_SYSTEM_${extProjName}})
 #  unset(${extProjName}_DIR CACHE)
@@ -29,9 +37,11 @@ endif()
 # Set dependency list
 set(${proj}_DEPENDENCIES "")
 
+# Include dependent projects if any
 SlicerMacroCheckExternalProjectDependency(${proj})
 
-if(NOT DEFINED ${extProjName}_DIR OR NOT DEFINED ATLAS_NAME)
+if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}" AND NOT "${USE_SYSTEM_${extProjName}}" ) ) )
+  #message(STATUS "${__indent}Adding project ${proj}")
 
   # Set CMake OSX variable to pass down the external project
   set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
@@ -44,6 +54,7 @@ if(NOT DEFINED ${extProjName}_DIR OR NOT DEFINED ATLAS_NAME)
 
   ### --- Project specific additions here
   set(ATLAS_VERSION 20130106)
+  set(ATLAS_NAME Atlas/Atlas_${ATLAS_VERSION})
   # REMOVE set(ATLAS_MIDAS_CODE http://slicer.kitware.com/midas3/download?items=12780)
   # REMOVE set(ATLAS_MD5 ed9e635ef8681f2b0c666aa72e77021c)
   set(ATLAS_SVN_REPOSITORY http://www.nitrc.org/svn/brainstestdata/BRAINSAtlas)
@@ -51,12 +62,13 @@ if(NOT DEFINED ${extProjName}_DIR OR NOT DEFINED ATLAS_NAME)
 
 
   set(${proj}_CMAKE_OPTIONS
+      -DBUILD_EXAMPLES:BOOL=OFF
+      -DBUILD_TESTING:BOOL=OFF
       -DReferenceAtlas_XML_DIR:PATH=<BINARY_DIR>
       -DATLAS_VERSION:STRING=${ATLAS_VERSION}
       )
   ### --- End Project specific additions
   ## Midas version of Atlas:  Atlas_${ATLAS_VERSION}.tar.gz
-  # REMOVE set(ATLAS_URL "${ATLAS_MIDAS_CODE}?Atlas_${ATLAS_VERSION}.tar.gz")
                                                                     #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
                                                                     #  This is ignored by midas, but allows the filename for download
                                                                     #  to be generated.
@@ -64,10 +76,7 @@ if(NOT DEFINED ${extProjName}_DIR OR NOT DEFINED ATLAS_NAME)
                                                                     #  If the atlas needs to be changed, then the items=#### will
                                                                     #  need to be determined from the slicer.kitware.com
                                                                     #  web page and filled in appropriately.
-  set(ATLAS_NAME Atlas/Atlas_${ATLAS_VERSION})
-  ExternalProject_add(${proj}
-    # REMOVE URL ${ATLAS_URL}
-    # REMOVE URL_MD5 ${ATLAS_MD5}
+  ExternalProject_Add(${proj}
     SVN_REPOSITORY ${ATLAS_SVN_REPOSITORY}
     SVN_REVISION -r ${ATLAS_SVN_REVISION}
     SVN_USERNAME slicerbot
@@ -75,6 +84,7 @@ if(NOT DEFINED ${extProjName}_DIR OR NOT DEFINED ATLAS_NAME)
     SVN_TRUST_CERT
     SOURCE_DIR ${proj}
     BINARY_DIR ${proj}-build
+    BUILD_COMMAND ""
     LOG_CONFIGURE 0  # Wrap configure in script to ignore log output from dashboards
     LOG_BUILD     0  # Wrap build in script to to ignore log output from dashboards
     LOG_TEST      0  # Wrap test in script to to ignore log output from dashboards
@@ -86,18 +96,15 @@ if(NOT DEFINED ${extProjName}_DIR OR NOT DEFINED ATLAS_NAME)
       --no-warn-unused-cli
       ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
       ${COMMON_EXTERNAL_PROJECT_ARGS}
-      -DBUILD_EXAMPLES:BOOL=OFF
-      -DBUILD_TESTING:BOOL=OFF
       ${${proj}_CMAKE_OPTIONS}
     INSTALL_COMMAND ""
     DEPENDS
       ${${proj}_DEPENDENCIES}
-    BUILD_COMMAND ""
-    )
+  )
   set(${extProjName}_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
 else()
   if(${USE_SYSTEM_${extProjName}})
-    find_package(${extProjName} REQUIRED)
+    find_package(${extProjName} ${${extProjName}_REQUIRED_VERSION} REQUIRED)
     if(NOT ${extProjName}_DIR)
       message(FATAL_ERROR "To use the system ${extProjName}, set ${extProjName}_DIR")
     endif()
@@ -111,3 +118,5 @@ endif()
 list(APPEND ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS ${extProjName}_DIR:PATH)
 list(APPEND ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS ATLAS_NAME:STRING)
 
+ProjectDependancyPop(CACHED_extProjName extProjName)
+ProjectDependancyPop(CACHED_proj proj)

@@ -24,12 +24,9 @@ string(REPLACE " -fpascal-strings" "" code "${code}")
 
 file(WRITE ${ftglCMakeLists_txt} "${code}")
 
-#set(vtkVRMLImporter
-#  ${VTKSource}/IO/Import/vtkVRMLImporter.cxx)
 find_file(vtkVRMLImporter vtkVRMLImporter.cxx
   HINTS ${VTKSource}/Hybrid ${VTKSource}/IO/IMPORT
 )
-message("vtkVRMLImporter=${vtkVRMLImporter}")
 
 file(READ ${vtkVRMLImporter}
   code)

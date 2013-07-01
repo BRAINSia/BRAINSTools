@@ -1,4 +1,3 @@
-
 # Make sure this file is included only once by creating globally unique varibles
 # based on the name of this included file.
 get_filename_component(CMAKE_CURRENT_LIST_FILENAME ${CMAKE_CURRENT_LIST_FILE} NAME_WE)
@@ -20,6 +19,7 @@ ProjectDependancyPush(CACHED_proj ${proj})
 # SlicerMacroCheckExternalProjectDependency
 set(extProjName ITK) #The find_package known name
 set(proj      ITKv4) #This local name
+set(${extProjName}_REQUIRED_VERSION ${${extProjName}_VERSION_MAJOR})  #If a required version is necessary, then set this, else leave blank
 
 #if(${USE_SYSTEM_${extProjName}})
 #  unset(${extProjName}_DIR CACHE)
@@ -101,10 +101,6 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
   string(REPLACE "-fopenmp" "" ITK_CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
   string(REPLACE "-fopenmp" "" ITK_CMAKE_CXX_FLAGS "${CMAKE_CX_FLAGS}")
 
-  if(NOT DEFINED git_protocol)
-      set(git_protocol "git")
-  endif()
-
   find_package(ZLIB REQUIRED)
 
   set(${proj}_CMAKE_OPTIONS
@@ -150,10 +146,10 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
     GIT_TAG ${${proj}_GIT_TAG}
     SOURCE_DIR ${proj}
     BINARY_DIR ${proj}-build
-#LOG_CONFIGURE 0  # Wrap configure in script to ignore log output from dashboards
-#LOG_BUILD     0  # Wrap build in script to to ignore log output from dashboards
-#LOG_TEST      0  # Wrap test in script to to ignore log output from dashboards
-#LOG_INSTALL   0  # Wrap install in script to to ignore log output from dashboards
+    LOG_CONFIGURE 0  # Wrap configure in script to ignore log output from dashboards
+    LOG_BUILD     0  # Wrap build in script to to ignore log output from dashboards
+    LOG_TEST      0  # Wrap test in script to to ignore log output from dashboards
+    LOG_INSTALL   0  # Wrap install in script to to ignore log output from dashboards
     ${cmakeversion_external_update} "${cmakeversion_external_update_value}"
     CMAKE_GENERATOR ${gen}
     CMAKE_ARGS

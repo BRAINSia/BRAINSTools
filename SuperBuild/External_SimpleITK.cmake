@@ -20,6 +20,7 @@ ProjectDependancyPush(CACHED_proj ${proj})
 # SlicerMacroCheckExternalProjectDependency
 set(extProjName SimpleITK) #The find_package known name
 set(proj        SimpleITK) #This local name
+set(${extProjName}_REQUIRED_VERSION "")  #If a required version is necessary, then set this, else leave blank
 
 #if(${USE_SYSTEM_${extProjName}})
 #  unset(${extProjName}_DIR CACHE)
@@ -66,14 +67,18 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
     set(PYTHON_INCLUDE_PATH ${PYTHON_INCLUDE_DIRS})
   #  message("PYTHON_INCLUDE_DIRS=${PYTHON_INCLUDE_DIRS}")
   endif()
-  configure_file(SuperBuild/SimpleITK_install_step.cmake.in
-    ${CMAKE_CURRENT_BINARY_DIR}/SimpleITK_install_step.cmake
+  configure_file(SuperBuild/External_SimpleITK_install_step.cmake.in
+    ${CMAKE_CURRENT_BINARY_DIR}/External_SimpleITK_install_step.cmake
     @ONLY)
 
-  set(SimpleITK_INSTALL_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/SimpleITK_install_step.cmake)
+  set(SimpleITK_INSTALL_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/External_SimpleITK_install_step.cmake)
 
   set(${proj}_CMAKE_OPTIONS
     -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+    -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}
+    -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
+    -DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}
+    -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags}
     # SimpleITK does not work with shared libs turned on
     -DBUILD_SHARED_LIBS:BOOL=OFF
     -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}
@@ -111,12 +116,9 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
     CMAKE_GENERATOR ${gen}
     CMAKE_ARGS
       -Wno-dev
-  #    --no-warn-unused-cli
-      -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}
-      -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
-      -DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}
-      -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags}
+     --no-warn-unused-cli
       ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
+      ${COMMON_EXTERNAL_PROJECT_ARGS}
       ${${proj}_CMAKE_OPTIONS}
     INSTALL_COMMAND ${SimpleITK_INSTALL_COMMAND}
     DEPENDS

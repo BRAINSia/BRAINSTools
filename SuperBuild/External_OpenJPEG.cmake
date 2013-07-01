@@ -56,10 +56,6 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
     )
 
   ### --- End Project specific additions
-  if(NOT DEFINED git_protocol)
-      set(git_protocol "git")
-  endif()
-
   set(${proj}_REPOSITORY "http://openjpeg.googlecode.com/svn/trunk")
   set(${proj}_SVN_REVISION 2292) #2013-01-30 New Repository.
   ExternalProject_Add(${proj}
@@ -83,14 +79,10 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
     DEPENDS
     ${${proj}_DEPENDENCIES}
   )
-  set(${extProjName}_DIR
-    ${CMAKE_BINARY_DIR}/${proj}-install/openjpeg-2.0)
-  set(${extProjName}_INCLUDE_DIR
-    ${CMAKE_BINARY_DIR}/${proj}-install/include/openjpeg-2.0)
-  set(${extProjName}_LIB_DIR
-    ${CMAKE_BINARY_DIR}/${proj}-install/lib)
-  set(${extProjName}_LIBRARY
-    ${${extProjName}_LIB_DIR}/libopenjp2.a)
+  set(${extProjName}_DIR ${CMAKE_BINARY_DIR}/${proj}-install/openjpeg-2.0)
+  set(${extProjName}_INCLUDE_DIR ${CMAKE_BINARY_DIR}/${proj}-install/include/openjpeg-2.0)
+  set(${extProjName}_LIB_DIR ${CMAKE_BINARY_DIR}/${proj}-install/lib)
+  set(${extProjName}_LIBRARY ${${extProjName}_LIB_DIR}/libopenjp2.a)
 
 else()
   if(${USE_SYSTEM_${extProjName}})

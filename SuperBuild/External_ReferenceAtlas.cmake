@@ -30,6 +30,10 @@ if(DEFINED ${extProjName}_DIR AND NOT EXISTS ${${extProjName}_DIR})
   message(FATAL_ERROR "${extProjName}_DIR variable is defined but corresponds to non-existing directory (${${extProjName}_DIR})")
 endif()
 
+if(DEFINED ATLAS_NAME AND NOT EXISTS ${${extProjName}_DIR}/${ATLAS_NAME})
+  message(FATAL_ERROR "ATLAS_NAME variable is defined but <${extProjName}_DIR>/<ATLAS_NAME> corresponds to non-existing directory (${${extProjName}_DIR}/${ATLAS_NAME})")
+endif()
+
 # Set dependency list
 set(${proj}_DEPENDENCIES "")
 

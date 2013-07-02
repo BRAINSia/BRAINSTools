@@ -1,4 +1,3 @@
-
 # Make sure this file is included only once by creating globally unique varibles
 # based on the name of this included file.
 get_filename_component(CMAKE_CURRENT_LIST_FILENAME ${CMAKE_CURRENT_LIST_FILE} NAME_WE)
@@ -6,6 +5,8 @@ if(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED)
   return()
 endif()
 set(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED 1)
+
+include(${CMAKE_CURRENT_LIST_DIR}/EP_Autoconf_Utils.cmake)
 
 ## External_${extProjName}.cmake files can be recurisvely included,
 ## and cmake variables are global, so when including sub projects it
@@ -18,9 +19,8 @@ ProjectDependancyPush(CACHED_proj ${proj})
 # Make sure that the ExtProjName/IntProjName variables are unique globally
 # even if other External_${ExtProjName}.cmake files are sourced by
 # SlicerMacroCheckExternalProjectDependency
-set(extProjName SimpleITK) #The find_package known name
-set(proj        SimpleITK) #This local name
-set(${extProjName}_REQUIRED_VERSION "")  #If a required version is necessary, then set this, else leave blank
+set(extProjName TIFF) #The find_package known name
+set(proj        TIFF) #This local name
 
 #if(${USE_SYSTEM_${extProjName}})
 #  unset(${extProjName}_DIR CACHE)
@@ -32,7 +32,7 @@ if(DEFINED ${extProjName}_DIR AND NOT EXISTS ${${extProjName}_DIR})
 endif()
 
 # Set dependency list
-set(${proj}_DEPENDENCIES ITKv4 Swig)
+set(${proj}_DEPENDENCIES OpenJPEG)
 
 # Include dependent projects if any
 SlicerMacroCheckExternalProjectDependency(${proj})
@@ -47,85 +47,52 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
       -DCMAKE_OSX_ARCHITECTURES=${CMAKE_OSX_ARCHITECTURES}
       -DCMAKE_OSX_SYSROOT=${CMAKE_OSX_SYSROOT}
       -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET})
+    set(APPLE_CFLAGS " -DHAVE_APPLE_OPENGL_FRAMEWORK")
   endif()
 
   ### --- Project specific additions here
 
-  find_package( PythonInterp REQUIRED )
-  find_package ( PythonLibs REQUIRED )
-
-  #
-  # On the Helium machine I ran into trouble with
-  # SimpleITK not being able to find Python.h.
-  # After sleuthing around I determined that
-  # PYTHON_INCLUDE_DIRS pointed to the parent of the
-  # directory containing Python.h, So if that's
-  # the case I search for it and amend the patch.
-  if(NOT EXISTS "${PYTHON_INCLUDE_DIRS}/Python.h")
-    file(GLOB_RECURSE PYTHON_H "${PYTHON_INCLUDE_DIRS}/Python.h")
-    get_filename_component(PYTHON_INCLUDE_DIRS ${PYTHON_H} PATH )
-    set(PYTHON_INCLUDE_PATH ${PYTHON_INCLUDE_DIRS})
-  #  message("PYTHON_INCLUDE_DIRS=${PYTHON_INCLUDE_DIRS}")
-  endif()
-  configure_file(SuperBuild/External_SimpleITK_install_step.cmake.in
-    ${CMAKE_CURRENT_BINARY_DIR}/External_SimpleITK_install_step.cmake
-    @ONLY)
-
-  set(SimpleITK_INSTALL_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/External_SimpleITK_install_step.cmake)
-
-  set(${proj}_CMAKE_OPTIONS
-    -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-    -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}
-    -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
-    -DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}
-    -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags}
-    # SimpleITK does not work with shared libs turned on
-    -DBUILD_SHARED_LIBS:BOOL=OFF
-    -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}
-    -DITK_DIR:PATH=${ITK_DIR}
-    -DBUILD_TESTING:BOOL=OFF
-    -DBUILD_DOXYGEN:BOOL=OFF
-    -DWRAP_PYTHON:BOOL=ON
-    -DWRAP_TCL:BOOL=OFF
-    -DWRAP_JAVA:BOOL=OFF
-    -DWRAP_RUBY:BOOL=OFF
-    -DWRAP_LUA:BOOL=OFF
-    -DWRAP_CSHARP:BOOL=OFF
-    -DWRAP_R:BOOL=OFF
-    -DPYTHON_EXECUTABLE:PATH=${PYTHON_EXECUTABLE}
-    -DPYTHON_LIBRARY:STRING=${PYTHON_LIBRARY}
-    -DPYTHON_INCLUDE_DIR:PATH=${PYTHON_INCLUDE_DIR}
-    -DPYTHON_DEBUG_LIBRARIES:STRING=${PYTHON_DEBUG_LIBRARIES}
-    -DSWIG_EXECUTABLE:PATH=${SWIG_EXECUTABLE}
-    #
-  )
+  AutoConf_FLAGS(${proj}_CFLAGS C "${APPLE_CFLAGS}")
+  AutoConf_FLAGS(${proj}_CXXFLAGS CXX "${APPLE_CFLAGS}")
 
   ### --- End Project specific additions
-  set(${proj}_REPOSITORY https://github.com/SimpleITK/SimpleITK.git)
-  set(${proj}_GIT_TAG FixForITKWithSinglePrecisionTemplate)
+  set(${proj}_URL "http://download.osgeo.org/libtiff/tiff-4.0.3.tar.gz")
+  set(${proj}_MD5 "051c1068e6a0627f461948c365290410")
   ExternalProject_Add(${proj}
-    GIT_REPOSITORY ${${proj}_REPOSITORY}
-    GIT_TAG ${${proj}_GIT_TAG}
+    URL ${${proj}_URL}
+    ${URL_HASH_CLAUSE}
+    URL_MD5 ${${proj}_MD5}
     SOURCE_DIR ${proj}
     BINARY_DIR ${proj}-build
+    INSTALL_DIR ${proj}-install
     LOG_CONFIGURE 0  # Wrap configure in script to ignore log output from dashboards
     LOG_BUILD     0  # Wrap build in script to to ignore log output from dashboards
     LOG_TEST      0  # Wrap test in script to to ignore log output from dashboards
     LOG_INSTALL   0  # Wrap install in script to to ignore log output from dashboards
     ${cmakeversion_external_update} "${cmakeversion_external_update_value}"
     CMAKE_GENERATOR ${gen}
-    CMAKE_ARGS
-      ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
-      ${COMMON_EXTERNAL_PROJECT_ARGS}
-      ${${proj}_CMAKE_OPTIONS}
-    INSTALL_COMMAND ${SimpleITK_INSTALL_COMMAND}
+    CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=<INSTALL_DIR>
+    --enable-shared=No
+    --enable-static=Yes
+    --disable-lzma
+    --with-jpeg-lib-dir=${JPEG_LIB_DIR}
+    --with-jpeg-include-dir=${JPEG_INCLUDE_DIR}
+    CC=${CMAKE_C_COMPILER}
+    CXX=${CMAKE_CXX_COMPILER}
+    "CFLAGS=${${proj}_CFLAGS}"
+    "CXXFLAGS=${${proj}_CXXFLAGS}"
     DEPENDS
       ${${proj}_DEPENDENCIES}
   )
-  set(${extProjName}_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
+
+  set(${extProjName}_DIR ${CMAKE_BINARY_DIR}/${proj}-install)
+  set(${extProjName}_INCLUDE_DIR
+    ${CMAKE_BINARY_DIR}/${proj}-install/include)
+  set(${extProjName}_LIBRARY
+    ${CMAKE_BINARY_DIR}/${proj}-install/lib/libtiff.a)
 else()
   if(${USE_SYSTEM_${extProjName}})
-    find_package(${extProjName} ${ITK_VERSION_MAJOR} REQUIRED)
+    find_package(${extProjName} REQUIRED)
     if(NOT ${extProjName}_DIR)
       message(FATAL_ERROR "To use the system ${extProjName}, set ${extProjName}_DIR")
     endif()

@@ -1,4 +1,3 @@
-
 # Make sure this file is included only once by creating globally unique varibles
 # based on the name of this included file.
 get_filename_component(CMAKE_CURRENT_LIST_FILENAME ${CMAKE_CURRENT_LIST_FILE} NAME_WE)
@@ -18,8 +17,8 @@ ProjectDependancyPush(CACHED_proj ${proj})
 # Make sure that the ExtProjName/IntProjName variables are unique globally
 # even if other External_${ExtProjName}.cmake files are sourced by
 # SlicerMacroCheckExternalProjectDependency
-set(extProjName SimpleITK) #The find_package known name
-set(proj        SimpleITK) #This local name
+set(extProjName zlib) #The find_package known name
+set(proj        zlib) #This local name
 set(${extProjName}_REQUIRED_VERSION "")  #If a required version is necessary, then set this, else leave blank
 
 #if(${USE_SYSTEM_${extProjName}})
@@ -32,7 +31,10 @@ if(DEFINED ${extProjName}_DIR AND NOT EXISTS ${${extProjName}_DIR})
 endif()
 
 # Set dependency list
-set(${proj}_DEPENDENCIES ITKv4 Swig)
+set(${proj}_DEPENDENCIES "")
+#if(${PROJECT_NAME}_BUILD_DICOM_SUPPORT)
+#  list(APPEND ${proj}_DEPENDENCIES DCMTK)
+#endif()
 
 # Include dependent projects if any
 SlicerMacroCheckExternalProjectDependency(${proj})
@@ -49,60 +51,23 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
       -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET})
   endif()
 
-  ### --- Project specific additions here
-
-  find_package( PythonInterp REQUIRED )
-  find_package ( PythonLibs REQUIRED )
-
-  #
-  # On the Helium machine I ran into trouble with
-  # SimpleITK not being able to find Python.h.
-  # After sleuthing around I determined that
-  # PYTHON_INCLUDE_DIRS pointed to the parent of the
-  # directory containing Python.h, So if that's
-  # the case I search for it and amend the patch.
-  if(NOT EXISTS "${PYTHON_INCLUDE_DIRS}/Python.h")
-    file(GLOB_RECURSE PYTHON_H "${PYTHON_INCLUDE_DIRS}/Python.h")
-    get_filename_component(PYTHON_INCLUDE_DIRS ${PYTHON_H} PATH )
-    set(PYTHON_INCLUDE_PATH ${PYTHON_INCLUDE_DIRS})
-  #  message("PYTHON_INCLUDE_DIRS=${PYTHON_INCLUDE_DIRS}")
+  if(NOT CMAKE_CONFIGURATION_TYPES)
+    list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS
+      -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE})
   endif()
-  configure_file(SuperBuild/External_SimpleITK_install_step.cmake.in
-    ${CMAKE_CURRENT_BINARY_DIR}/External_SimpleITK_install_step.cmake
-    @ONLY)
-
-  set(SimpleITK_INSTALL_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/External_SimpleITK_install_step.cmake)
 
   set(${proj}_CMAKE_OPTIONS
-    -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-    -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}
-    -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
-    -DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}
-    -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags}
-    # SimpleITK does not work with shared libs turned on
-    -DBUILD_SHARED_LIBS:BOOL=OFF
-    -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}
-    -DITK_DIR:PATH=${ITK_DIR}
-    -DBUILD_TESTING:BOOL=OFF
-    -DBUILD_DOXYGEN:BOOL=OFF
-    -DWRAP_PYTHON:BOOL=ON
-    -DWRAP_TCL:BOOL=OFF
-    -DWRAP_JAVA:BOOL=OFF
-    -DWRAP_RUBY:BOOL=OFF
-    -DWRAP_LUA:BOOL=OFF
-    -DWRAP_CSHARP:BOOL=OFF
-    -DWRAP_R:BOOL=OFF
-    -DPYTHON_EXECUTABLE:PATH=${PYTHON_EXECUTABLE}
-    -DPYTHON_LIBRARY:STRING=${PYTHON_LIBRARY}
-    -DPYTHON_INCLUDE_DIR:PATH=${PYTHON_INCLUDE_DIR}
-    -DPYTHON_DEBUG_LIBRARIES:STRING=${PYTHON_DEBUG_LIBRARIES}
-    -DSWIG_EXECUTABLE:PATH=${SWIG_EXECUTABLE}
-    #
-  )
-
+      -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/${proj}-install
+      ## CXX should not be needed, but it a cmake default test
+      -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}
+      -DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}
+      -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags}
+      -DZLIB_MANGLE_PREFIX:STRING=slicer_zlib_
+      -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
+    )
   ### --- End Project specific additions
-  set(${proj}_REPOSITORY https://github.com/SimpleITK/SimpleITK.git)
-  set(${proj}_GIT_TAG FixForITKWithSinglePrecisionTemplate)
+  set(${proj}_REPOSITORY "${git_protocol}://github.com/commontk/zlib.git")
+  set(${proj}_GIT_TAG "66a753054b356da85e1838a081aa94287226823e")
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${${proj}_REPOSITORY}
     GIT_TAG ${${proj}_GIT_TAG}
@@ -118,14 +83,21 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
       ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
       ${COMMON_EXTERNAL_PROJECT_ARGS}
       ${${proj}_CMAKE_OPTIONS}
-    INSTALL_COMMAND ${SimpleITK_INSTALL_COMMAND}
+## We really do want to install in order to limit # of include paths INSTALL_COMMAND ""
     DEPENDS
       ${${proj}_DEPENDENCIES}
-  )
-  set(${extProjName}_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
+    )
+  set(${extProjName}_DIR ${CMAKE_BINARY_DIR}/${proj}-install)
+  set(SLICER_ZLIB_ROOT ${${extProjName}_DIR})
+  set(SLICER_ZLIB_INCLUDE_DIR ${${extProjName}_DIR}/include )
+  if(WIN32)
+    set(SLICER_ZLIB_LIBRARY     ${${extProjName}_DIR}/lib/zlib.lib )
+  else()
+    set(SLICER_ZLIB_LIBRARY     ${${extProjName}_DIR}/lib/libzlib.a )
+  endif()
 else()
   if(${USE_SYSTEM_${extProjName}})
-    find_package(${extProjName} ${ITK_VERSION_MAJOR} REQUIRED)
+    find_package(${extProjName} ${${extProjName}_REQUIRED_VERSION} REQUIRED)
     if(NOT ${extProjName}_DIR)
       message(FATAL_ERROR "To use the system ${extProjName}, set ${extProjName}_DIR")
     endif()

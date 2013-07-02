@@ -32,7 +32,7 @@ if(DEFINED ${extProjName}_DIR AND NOT EXISTS ${${extProjName}_DIR})
 endif()
 
 # Set dependency list
-set(${proj}_DEPENDENCIES "")
+set(${proj}_DEPENDENCIES TIFF)
 
 # Include dependent projects if any
 SlicerMacroCheckExternalProjectDependency(${proj})
@@ -63,15 +63,20 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
       -DBUILD_EXAMPLES:BOOL=OFF
       -DBUILD_TESTING:BOOL=OFF
       -DDCMTK_WITH_DOXYGEN:BOOL=OFF
-      -DDCMTK_WITH_ZLIB:BOOL=OFF # see CTK github issue #25
+      -DDCMTK_WITH_ZLIB:BOOL=ON # see CTK github issue #25
       -DDCMTK_WITH_OPENSSL:BOOL=OFF # see CTK github issue #25
       -DDCMTK_WITH_PNG:BOOL=OFF # see CTK github issue #25
-      -DDCMTK_WITH_TIFF:BOOL=OFF  # see CTK github issue #25
+      -DDCMTK_WITH_TIFF:BOOL=ON  # see CTK github issue #25
       -DDCMTK_WITH_XML:BOOL=OFF  # see CTK github issue #25
       -DDCMTK_WITH_ICONV:BOOL=OFF  # see CTK github issue #178
       -DDCMTK_FORCE_FPIC_ON_UNIX:BOOL=ON
       -DDCMTK_OVERWRITE_WIN32_COMPILER_FLAGS:BOOL=OFF
       -DDCMTK_WITH_WRAP:BOOL=OFF   # CTK does not build on Mac with this option turned ON due to library dependencies missing
+#      -DTIFF_DIR:PATH=${TIFF_DIR}
+      -DTIFF_LIBRARY:FILEPATH=${TIFF_LIBRARY}
+      -DTIFF_INCLUDE_DIR:PATH=${TIFF_INCLUDE_DIR}
+      -DJPEG_LIBRARY:FILEPATH=${JPEG_LIBRARY}
+      -DJPEG_INCLUDE_DIR:PATH=${JPEG_INCLUDE_DIR}
   )
   ### --- End Project specific additions
   set(${proj}_REPOSITORY ${git_protocol}://github.com/commontk/DCMTK.git)

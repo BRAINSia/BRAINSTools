@@ -54,7 +54,7 @@ all_known_modules_list = [
 'dtiestim',
 'DTIPrep',
 'dtiprocess',
-'DTI-Reg',
+#  ERROR:  invalid name 'DTI-Reg',
 'DumpBinaryTrainingVectors',
 #'dwiAtlas',
 'DWICompare',
@@ -118,7 +118,8 @@ all_known_modules_list = [
 'STAPLEAnalysis',
 'TextureFromNoiseImageFilter',
 'TextureMeasureFilter',
-'VBRAINSDemonWarp'
+'VBRAINSDemonWarp',
+'UKFTractography'
 ]
 
 launcher = ['']

@@ -1,4 +1,4 @@
-from diffusion import DTI-Reg, DWIConvert
+from diffusion import DWIConvert
 from niralpipeline import *
 from tractography import FiberViewerLight
 from gtract import gtractTransformToDisplacementField, gtractInvertBSplineTransform, gtractConcatDwi, gtractAverageBvalues, gtractCoregBvalues, gtractResampleAnisotropy, gtractResampleCodeImage, gtractCopyImageOrientation, gtractCreateGuideFiber, gtractAnisotropyMap, gtractClipAnisotropy, gtractResampleB0, gtractInvertRigidTransform, gtractImageConformity, compareTractInclusion, gtractFastMarchingTracking, gtractInvertDisplacementField, gtractCoRegAnatomy, gtractResampleDWIInPlace, gtractCostFastMarching, gtractFiberTracking, extractNrrdVectorIndex, gtractResampleFibers, gtractTensor

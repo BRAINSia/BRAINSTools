@@ -90,11 +90,29 @@ option(USE_DebugImageViewer "Build DebugImageViewer" OFF)
 option(BRAINS_DEBUG_IMAGE_WRITE "Enable writing out intermediate image results" OFF)
 
 if( USE_AutoWorkup )
-  find_package ( PythonInterp 2.6 REQUIRED )
+  ## NIPYPE is not stable under python 2.6, so require 2.7 when using autoworkup
+  ## Enthought Canopy or anaconda are convenient ways to install python 2.7 on linux
+  ## or the other option is the free version of Anaconda from https://store.continuum.io/
+  set(REQUIRED_PYTHON_VERSION 2.7)
+  if(APPLE)
+   set(PYTHON_EXECUTABLE
+         /System/Library/Frameworks/Python.framework/Versions/${REQUIRED_PYTHON_VERSION}/bin/python2.7
+         CACHE FILEPATH "The apple specified python version" )
+   set(PYTHON_LIBRARY
+         /System/Library/Frameworks/Python.framework/Versions/${REQUIRED_PYTHON_VERSION}/lib/libpython2.7.dylib
+         CACHE FILEPATH "The apple specified python shared library" )
+   set(PYTHON_INCLUDE_DIR
+         /System/Library/Frameworks/Python.framework/Versions/${REQUIRED_PYTHON_VERSION}/include
+         CACHE PATH "The apple specified python headers" )
+  else()
+    find_package ( PythonInterp ${REQUIRED_PYTHON_VERSION} REQUIRED )
+  endif()
+
+  message(STATUS "Found PythonInterp version ${PYTHON_VERSION_STRING}")
   find_package ( PythonLibs ${PYTHON_VERSION_STRING} EXACT REQUIRED )
   set(PYTHON_INSTALL_CMAKE_ARGS
-        PYTHON_EXECUTABLE:PATH
-        PYTHON_LIBRARY:PATH
+        PYTHON_EXECUTABLE:FILEPATH
+        PYTHON_LIBRARY:FILEPATH
         PYTHON_INCLUDE_DIR:PATH
      )
 endif()

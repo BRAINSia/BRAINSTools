@@ -78,6 +78,7 @@ option(USE_BRAINSCreateLabelMapFromProbabilityMaps "Build BRAINSCreateLabelMapFr
 
 option(USE_UKF                            "Build UKF"                   ON)
 option(USE_UnbiasedNonLocalMeans          "Build UnbiasedNonLocalMeans" ON)
+option(USE_SlicerJointRicianAnisotropicLMMSEFilter          "Build SlicerJointRicianAnisotropicLMMSEFilter" ON)
 
 if( NOT USE_ANTS )
 option(USE_ANTS                           "Build ANTS"                           ON)

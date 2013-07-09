@@ -103,6 +103,9 @@ option(${PROJECT_NAME}_BUILD_DICOM_SUPPORT "Build Dicom Support" ON)
 
 set(${LOCAL_PROJECT_NAME}_DEPENDENCIES DCMTK ITKv4 SlicerExecutionModel)
 
+list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES teem)
+list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES Boost)
+
 if(BUILD_STYLE_UTILS)
   list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES Cppcheck KWStyle Uncrustify)
 endif()
@@ -134,6 +137,9 @@ endif()
 if(USE_UnbiasedNonLocalMeans)
   list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES UnbiasedNonLocalMeans)
 endif()
+if(USE_SlicerJointRicianAnisotropicLMMSEFilter)
+  list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES SlicerJointRicianAnisotropicLMMSEFilter)
+endif()
 
 if(USE_AutoWorkup)
   list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES PCRE)
@@ -142,8 +148,6 @@ if(USE_AutoWorkup)
   list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES NIPYPE)
 
 endif()
-list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES teem)
-list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES Boost)
 
 #-----------------------------------------------------------------------------
 # Define Superbuild global variables

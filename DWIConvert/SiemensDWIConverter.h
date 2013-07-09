@@ -291,7 +291,7 @@ public:
       if(nonZ == this->m_DiffusionVectors.end())
         {
         std::cerr << this->m_InputFileNames[0] << " has no non-zero diffusion vectors" << std::endl;
-        itkGenericExceptionMacro(<< "" );
+        // itkGenericExceptionMacro(<< "" );
         }
     }
 private:

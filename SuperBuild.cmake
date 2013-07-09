@@ -128,6 +128,13 @@ else()
   set(BOOST_INCLUDE_DIR "" ) # CACHE STRING "Default Invalid BOOST_INCLUDE_DIR" FORCE)
 endif()
 
+if(USE_UKF)
+  list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES UKF)
+endif()
+if(USE_UnbiasedNonLocalMeans)
+  list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES UnbiasedNonLocalMeans)
+endif()
+
 if(USE_AutoWorkup)
   list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES PCRE)
   list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES Swig)
@@ -137,7 +144,6 @@ if(USE_AutoWorkup)
 endif()
 list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES teem)
 list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES Boost)
-list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES UKF)
 
 #-----------------------------------------------------------------------------
 # Define Superbuild global variables

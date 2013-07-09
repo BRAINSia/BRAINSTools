@@ -101,36 +101,80 @@ public:
 
         // parse B_value from 0029,1010 tag
         std::vector<double> valueArray(0);
-
-        int nItems = ExtractSiemensDiffusionInformation(diffusionInfoString, "B_value", valueArray);
-        if( nItems != 1 )
-          {
-          vnl_vector_fixed<double, 3> vect3d;
-          // B_Value is missing -- the punt position is to count this
-          // volume as having a B_value & Gradient Direction of zero
-          std::cout << "Warning: Cannot find complete information on B_value in 0029|1010" << std::endl;
-          this->m_BValues.push_back( 0.0 );
-          vect3d.fill( 0.0 );
-          this->m_DiffusionVectors.push_back(vect3d);
-          continue;
-          }
-
         // we got a 'valid' B-value
         // If we're trusting the gradient directions in the header,
         // then all we need to do here is save the bValue.
         if( !this->m_UseBMatrixGradientDirections )
           {
           valueArray.resize(0);
-          ExtractSiemensDiffusionInformation(diffusionInfoString, "B_value", valueArray);
+          int nItems = ExtractSiemensDiffusionInformation(diffusionInfoString, "B_value", valueArray);
 
+          vnl_vector_fixed<double, 3> vect3d;
+
+          if( nItems != 1 )
+            {
+            // B_Value is missing -- the punt position is to count this
+            // volume as having a B_value & Gradient Direction of zero
+            std::cout << "Warning: Cannot find complete information on B_value in 0029|1010" << std::endl;
+            this->m_BValues.push_back( 0.0 );
+            vect3d.fill( 0.0 );
+            this->m_DiffusionVectors.push_back(vect3d);
+            continue;
+            }
           this->m_BValues.push_back( valueArray[0] );
+
+          // parse DiffusionGradientDirection from 0029,1010 tag
+          valueArray.resize(0);
+          nItems = ExtractSiemensDiffusionInformation(diffusionInfoString, "DiffusionGradientDirection", valueArray);
+          if( nItems != 3 )  // did not find enough information
+            {
+            std::cout << "Warning: Cannot find complete information on DiffusionGradientDirection in 0029|1010"
+                      << std::endl;
+            vect3d.fill( 0 );
+            this->m_DiffusionVectors.push_back(vect3d);
+            }
+          else
+            {
+            std::cout << "Number of Directions : " << nItems << std::endl;
+            std::cout << "   Directions 0: " << valueArray[0] << std::endl;
+            std::cout << "   Directions 1: " << valueArray[1] << std::endl;
+            std::cout << "   Directions 2: " << valueArray[2] << std::endl;
+            double DiffusionVector_magnitude;
+            vect3d[0] = valueArray[0];
+            vect3d[1] = valueArray[1];
+            vect3d[2] = valueArray[2];
+
+            DiffusionVector_magnitude = sqrt((vect3d[0] * vect3d[0]) +
+                                             (vect3d[1] * vect3d[1]) +
+                                             (vect3d[2] * vect3d[2]) );
+
+            std::cout << "DiffusionVector_magnitude " << DiffusionVector_magnitude << std::endl;
+            if( DiffusionVector_magnitude <= this->m_SmallGradientThreshold )
+              {
+              std::cout << "ERROR: Gradient vector with unreasonably small magnitude exists." << std::endl;
+              std::cout << "Gradient #" << k << " with magnitude " << DiffusionVector_magnitude << std::endl;
+              std::cout << "Please set useBMatrixGradientDirections to calculate gradient directions "
+                        << "from the scanner B Matrix to alleviate this problem." << std::endl;
+              throw;
+              }
+
+            // vect3d.normalize();
+            this->m_DiffusionVectors.push_back(vect3d);
+            int p = this->m_BValues.size();
+            std::cout << "Image#: " << k
+                      << " BV: " << this->m_BValues[p - 1] << " GD: "
+                      << this->m_DoubleConvert(this->m_DiffusionVectors[k / this->m_Stride][0]) << ","
+                      << this->m_DoubleConvert(this->m_DiffusionVectors[k / this->m_Stride][1]) << ","
+                      << this->m_DoubleConvert(this->m_DiffusionVectors[k / this->m_Stride][2])
+                      << std::endl;
+            }
           }
         else
           {
           // JTM - Patch from UNC: fill the nhdr header with the gradient directions and
           // bvalues computed out of the BMatrix
           valueArray.resize(0);
-          nItems = ExtractSiemensDiffusionInformation(diffusionInfoString, "B_matrix", valueArray);
+          int nItems = ExtractSiemensDiffusionInformation(diffusionInfoString, "B_matrix", valueArray);
           vnl_matrix_fixed<double, 3, 3> bMatrix;
 
           if( nItems == 6 )
@@ -208,7 +252,7 @@ public:
           else
             {
             // silently returning zero gradient vectors is a problem,
-            // but it is also necessary for some fiels.
+            // but it is also necessary for some files.
             valueArray.resize(0);
             ExtractSiemensDiffusionInformation(diffusionInfoString, "B_value", valueArray);
             vnl_vector_fixed<double, 3> vect3d;
@@ -221,65 +265,6 @@ public:
           }
         }
 
-      if( this->m_UseBMatrixGradientDirections == false )
-        {
-        for( unsigned int k = 0; k < this->m_NSlice; k += this->m_Stride )
-          {
-          std::cout << "=======================================" << std::endl << std::endl;
-          std::string diffusionInfoString;
-          this->m_Headers[k]->GetElementOB(0x0029, 0x1010, diffusionInfoString );
-
-          std::vector<double>         valueArray;
-          vnl_vector_fixed<double, 3> vect3d;
-
-          // parse DiffusionGradientDirection from 0029,1010 tag
-          valueArray.resize(0);
-          int nItems =
-            ExtractSiemensDiffusionInformation(diffusionInfoString, "DiffusionGradientDirection", valueArray);
-          if( nItems != 3 )  // did not find enough information
-            {
-            std::cout << "Warning: Cannot find complete information on DiffusionGradientDirection in 0029|1010"
-                      << std::endl;
-            vect3d.fill( 0 );
-            this->m_DiffusionVectors.push_back(vect3d);
-            }
-          else
-            {
-            std::cout << "Number of Directions : " << nItems << std::endl;
-            std::cout << "   Directions 0: " << valueArray[0] << std::endl;
-            std::cout << "   Directions 1: " << valueArray[1] << std::endl;
-            std::cout << "   Directions 2: " << valueArray[2] << std::endl;
-            double DiffusionVector_magnitude;
-            vect3d[0] = valueArray[0];
-            vect3d[1] = valueArray[1];
-            vect3d[2] = valueArray[2];
-
-            DiffusionVector_magnitude = sqrt((vect3d[0] * vect3d[0]) +
-                                             (vect3d[1] * vect3d[1]) +
-                                             (vect3d[2] * vect3d[2]) );
-
-            std::cout << "DiffusionVector_magnitude " << DiffusionVector_magnitude << std::endl;
-            if( DiffusionVector_magnitude <= this->m_SmallGradientThreshold )
-              {
-              std::cout << "ERROR: Gradient vector with unreasonably small magnitude exists." << std::endl;
-              std::cout << "Gradient #" << k << " with magnitude " << DiffusionVector_magnitude << std::endl;
-              std::cout << "Please set useBMatrixGradientDirections to calculate gradient directions "
-                        << "from the scanner B Matrix to alleviate this problem." << std::endl;
-              throw;
-              }
-
-            // vect3d.normalize();
-            this->m_DiffusionVectors.push_back(vect3d);
-            int p = this->m_BValues.size();
-            std::cout << "Image#: " << k
-                      << " BV: " << this->m_BValues[p - 1] << " GD: "
-                      << this->m_DoubleConvert(this->m_DiffusionVectors[k / this->m_Stride][0]) << ","
-                      << this->m_DoubleConvert(this->m_DiffusionVectors[k / this->m_Stride][1]) << ","
-                      << this->m_DoubleConvert(this->m_DiffusionVectors[k / this->m_Stride][2])
-                      << std::endl;
-            }
-          }
-        }
       //
       // test gradients. It is OK for one or more guide images to have
       // zero gradients, but all gradients == 0 is an error. It means

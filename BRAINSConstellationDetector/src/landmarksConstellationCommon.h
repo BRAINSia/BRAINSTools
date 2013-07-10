@@ -463,6 +463,7 @@ template <class DType>
 DType dot(const std::vector<DType> & a, const std::vector<DType> & b)
 {
   assert( a.size() == b.size() );
+#if 0
   DType dot = 0.0;
   typename std::vector<DType>::const_iterator ait = a.begin();
   typename std::vector<DType>::const_iterator bit = b.begin();

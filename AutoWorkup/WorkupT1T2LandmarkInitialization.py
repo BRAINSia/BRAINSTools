@@ -34,6 +34,7 @@ def CreateLandmarkInitializeWorkflow(WFname, BCD_model_path, InterpolationMode, 
     outputsSpec = pe.Node(interface=IdentityInterface(fields=['outputLandmarksInACPCAlignedSpace',
                                                               'outputResampledVolume', 'outputResampledCroppedVolume',
                                                               'outputLandmarksInInputSpace',
+                                                              'writeBranded2DImage',
                                                               'outputTransform', 'outputMRML', 'atlasToSubjectTransform'
                                                               ]),
                           run_without_submitting=True,
@@ -49,6 +50,7 @@ def CreateLandmarkInitializeWorkflow(WFname, BCD_model_path, InterpolationMode, 
     BCD.inputs.outputResampledVolume = "BCD" + "_ACPC.nii.gz"
     BCD.inputs.outputLandmarksInInputSpace = "BCD" + "_Original.fcsv"
     BCD.inputs.outputLandmarksInACPCAlignedSpace = "BCD" + "_ACPC_Landmarks.fcsv"
+    BCD.inputs.writeBranded2DImage = "BCD"+"_Branded2DQCimage.png"
     # BCD.inputs.outputMRML = "BCD" + "_Scene.mrml"
     BCD.inputs.interpolationMode = InterpolationMode
     BCD.inputs.houghEyeDetectorMode = 1  # Look for dark eyes like on a T1 image, 0=Look for bright eyes like in a T2 image
@@ -111,6 +113,7 @@ def CreateLandmarkInitializeWorkflow(WFname, BCD_model_path, InterpolationMode, 
     landmarkInitializeWF.connect(BCD, 'outputLandmarksInInputSpace', outputsSpec, 'outputLandmarksInInputSpace')
     landmarkInitializeWF.connect(BCD, 'outputTransform', outputsSpec, 'outputTransform')
     landmarkInitializeWF.connect(BCD, 'outputMRML', outputsSpec, 'outputMRML')
+    landmarkInitializeWF.connect(BCD, 'writeBranded2DImage', outputsSpec, 'writeBranded2DImage')
     landmarkInitializeWF.connect(BLI, 'outputTransformFilename', outputsSpec, 'atlasToSubjectTransform')
 
     return landmarkInitializeWF

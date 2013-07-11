@@ -623,6 +623,7 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
                 BASIC_DataSink[sessionid].inputs.regexp_substitutions = GenerateOutputPattern(projectid, subjectid, sessionid, 'ACPCAlign')
 
                 baw200.connect(PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.outputLandmarksInACPCAlignedSpace', BASIC_DataSink[sessionid], 'ACPCAlign.@outputLandmarksInACPCAlignedSpace')
+                baw200.connect(PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.writeBranded2DImage', BASIC_DataSink[sessionid], 'ACPCAlign.@writeBranded2DImage')
                 # baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'outputspec.BCD_ACPC_T1',BASIC_DataSink[sessionid],'ACPCAlign.@BCD_ACPC_T1')
                 baw200.connect(PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.BCD_ACPC_T1_CROPPED', BASIC_DataSink[sessionid], 'ACPCAlign.@BCD_ACPC_T1_CROPPED')
                 baw200.connect(PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.outputLandmarksInInputSpace', BASIC_DataSink[sessionid], 'ACPCAlign.@outputLandmarksInInputSpace')

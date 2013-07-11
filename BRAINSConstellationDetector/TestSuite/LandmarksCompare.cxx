@@ -40,17 +40,21 @@ int main( int argc, char * argv[] )
       }
     else
       {
+      bool thisLmkOK = true;
       for( unsigned int i = 0 ; i < 3 ; ++i )
         {
         const double error_term = vcl_abs(lmk1iter->second[i] - lmk2iter->second[i]);
         if ( error_term > tolerance )
           {
-          std::cout << "lmk" << lmk1iter->first << "[" << i << "] differ by greater than tolerance" << std::endl;
-          std::cout << "| "<< lmk1iter->second[i]
-                    << " - " << lmk2iter->second[i]
-                    << " | = " << error_term << " is greater than " << tolerance << std::endl;
+          std::cout << "\nFAIL: lmk" << lmk1iter->first << "[" << i << "] differ by greater than tolerance" << std::endl;
+          std::cout << "FAIL: | "<< lmk1iter->second[i] << " - " << lmk2iter->second[i] << " | = " << error_term << " is greater than " << tolerance << std::endl;
           allSame = false;
+          thisLmkOK = false;
           }
+        }
+      if (thisLmkOK)
+        {
+        std::cout << "PASS:  lmk" << lmk1iter->first << std::endl;
         }
       }
     ++lmk1iter;

@@ -303,41 +303,37 @@ MakeBranded2DImage(SImageType::ConstPointer in,
     {
     SImageType::PointType pt;
     double                radius = 0.0;
-    double                height = 0.0;
+    double                thickness = 2.0;
 
     switch( which )
       {
       case 0:
         {
-        height = 1;
+        thickness = 1;
         radius = 1;
         pt = CM;
         }
         break;
       case 1:
         {
-        height = myDetector.GetModelHeight("AC");
         radius = myDetector.GetModelRadius("AC");
         pt = AC;
         }
         break;
       case 2:
         {
-        height = myDetector.GetModelHeight("PC");
         radius = myDetector.GetModelRadius("PC");
         pt = PC;
         }
         break;
       case 3:
         {
-        height = myDetector.GetModelHeight("RP");
         radius = myDetector.GetModelRadius("RP");
         pt = RP;
         }
         break;
       case 4:
         {
-        height = myDetector.GetModelHeight("VN4");
         radius = myDetector.GetModelRadius("VN4");
         pt = VN4;
         }
@@ -351,7 +347,7 @@ MakeBranded2DImage(SImageType::ConstPointer in,
       SImageType::IndexType index = rgbIt.GetIndex();
       SImageType::PointType p;
       orientedImage->TransformIndexToPhysicalPoint(index, p);
-      if( IsOnCylinder(p, pt, pt, radius, height) )
+      if( IsOnCylinder(p, pt, pt, radius, thickness) )
         {
         RGBPixelType pixel = rgbIt.Value();
 

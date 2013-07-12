@@ -57,7 +57,7 @@ git config hooks.KWStyle false
 
 # Set up cppcheck hook.
 echo "Setting up the cppcheck hook..."
-git config hooks.cppcheck true
+git config hooks.cppcheck false
 
 # Set up hook chaining.
 echo "Setting up hook chaining: prepare-commit-msg, commit-msg, pre-commit"

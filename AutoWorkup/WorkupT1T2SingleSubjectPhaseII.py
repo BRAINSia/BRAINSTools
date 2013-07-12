@@ -140,7 +140,7 @@ def MakeOneSubWorkFlow(projectid, subjectid, sessionid, BAtlas, WORKFLOW_COMPONE
                          name='inputspec')
 
     outputsSpec = pe.Node(interface=IdentityInterface(fields=['BCD_ACPC_T1',
-                                                              't1_average', 't2_average'
+                                                              't1_average', 't2_average','writeBranded2DImage',
                                                               ]),
                           run_without_submitting=True,
                           name='outputspec')
@@ -170,6 +170,7 @@ def MakeOneSubWorkFlow(projectid, subjectid, sessionid, BAtlas, WORKFLOW_COMPONE
         T1T2WorkupSingle.connect(myLocalLMIWF, 'outputspec.atlasToSubjectTransform', BASIC_DataSink, 'ACPCAlign.@atlasToSubjectTransform')
         ### Now connect outputspec
         T1T2WorkupSingle.connect(myLocalLMIWF, 'outputspec.outputResampledVolume', outputsSpec, 'BCD_ACPC_T1')
+        T1T2WorkupSingle.connect(myLocalLMIWF, 'outputspec.writeBranded2DImage', outputsSpec, 'writeBranded2DImage')
 
     if 'TISSUE_CLASSIFY' in WORKFLOW_COMPONENTS:
         from WorkupT1T2TissueClassify import CreateTissueClassifyWorkflow

@@ -145,7 +145,8 @@ def MakeOneSubWorkFlow(projectid, subjectid, sessionid, processing_phase, WORKFL
                                                       'BCD_ACPC_T1_CROPPED',
                                                       'outputLandmarksInACPCAlignedSpace',
                                                       'outputLandmarksInInputSpace',
-                                                      'outputTransform', 'LMIatlasToSubjectTransform'
+                                                      'outputTransform', 'LMIatlasToSubjectTransform',
+                                                      'writeBranded2DImage'
                                                       ]),
                           run_without_submitting=True,
                           name='outputspec')
@@ -169,6 +170,7 @@ def MakeOneSubWorkFlow(projectid, subjectid, sessionid, processing_phase, WORKFL
         T1T2WorkupSingle.connect(myLocalLMIWF, 'outputspec.outputLandmarksInInputSpace', outputsSpec, 'outputLandmarksInInputSpace')
         T1T2WorkupSingle.connect(myLocalLMIWF, 'outputspec.outputTransform', outputsSpec, 'outputTransform')
         T1T2WorkupSingle.connect(myLocalLMIWF, 'outputspec.atlasToSubjectTransform', outputsSpec, 'LMIatlasToSubjectTransform')
+        T1T2WorkupSingle.connect(myLocalLMIWF, 'outputspec.writeBranded2DImage', outputsSpec, 'writeBranded2DImage')
 
     if 'TISSUE_CLASSIFY' in WORKFLOW_COMPONENTS:
         from WorkupT1T2TissueClassify import CreateTissueClassifyWorkflow

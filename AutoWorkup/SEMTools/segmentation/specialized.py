@@ -171,6 +171,37 @@ documentation-url: http://www.nitrc.org/projects/brainscdetector/
     _outputs_filenames = {'outputVolume':'outputVolume.nii.gz','outputMRML':'outputMRML.mrml','resultsDir':'resultsDir','outputResampledVolume':'outputResampledVolume.nii.gz','outputTransform':'outputTransform.h5','writeBranded2DImage':'writeBranded2DImage.png','outputLandmarksInACPCAlignedSpace':'outputLandmarksInACPCAlignedSpace.fcsv','outputLandmarksInInputSpace':'outputLandmarksInInputSpace.fcsv','outputUntransformedClippedVolume':'outputUntransformedClippedVolume.nii.gz','outputVerificationScript':'outputVerificationScript.sh'}
 
 
+class BRAINSCreateLabelMapFromProbabilityMapsInputSpec(CommandLineInputSpec):
+    inputProbabilityVolume = InputMultiPath(File(exists=True), desc="The list of proobabilityimages.", argstr="--inputProbabilityVolume %s...")
+    priorLabelCodes = InputMultiPath(traits.Int, desc="A list of PriorLabelCode values used for coding the output label images", sep=",", argstr="--priorLabelCodes %s")
+    foregroundPriors = InputMultiPath(traits.Int, desc="A list: For each Prior Label, 1 if foreground, 0 if background", sep=",", argstr="--foregroundPriors %s")
+    nonAirRegionMask = File(desc="a mask representing the \'NonAirRegion\' -- Just force pixels in this region to zero", exists=True, argstr="--nonAirRegionMask %s")
+    inclusionThreshold = traits.Float(desc="tolerance for inclusion", argstr="--inclusionThreshold %f")
+    dirtyLabelVolume = traits.Either(traits.Bool, File(), hash_files=False, desc="the labels prior to cleaning", argstr="--dirtyLabelVolume %s")
+    cleanLabelVolume = traits.Either(traits.Bool, File(), hash_files=False, desc="the foreground labels volume", argstr="--cleanLabelVolume %s")
+
+
+class BRAINSCreateLabelMapFromProbabilityMapsOutputSpec(TraitedSpec):
+    dirtyLabelVolume = File(desc="the labels prior to cleaning", exists=True)
+    cleanLabelVolume = File(desc="the foreground labels volume", exists=True)
+
+
+class BRAINSCreateLabelMapFromProbabilityMaps(SEMLikeCommandLine):
+    """title: Create Label Map From Probability Maps (BRAINS)
+
+category: Segmentation.Specialized
+
+description: Given A list of Probability Maps, generate a LabelMap.
+  
+
+"""
+
+    input_spec = BRAINSCreateLabelMapFromProbabilityMapsInputSpec
+    output_spec = BRAINSCreateLabelMapFromProbabilityMapsOutputSpec
+    _cmd = " BRAINSCreateLabelMapFromProbabilityMaps "
+    _outputs_filenames = {'dirtyLabelVolume':'dirtyLabelVolume.nii','cleanLabelVolume':'cleanLabelVolume.nii'}
+
+
 class BinaryMaskEditorBasedOnLandmarksInputSpec(CommandLineInputSpec):
     inputBinaryVolume = File(desc="Input binary image in which to be edited", exists=True, argstr="--inputBinaryVolume %s")
     outputBinaryVolume = traits.Either(traits.Bool, File(), hash_files=False, desc="Output binary image in which to be edited", argstr="--outputBinaryVolume %s")
@@ -203,6 +234,38 @@ documentation-url: http://www.nitrc.org/projects/brainscdetector/
     output_spec = BinaryMaskEditorBasedOnLandmarksOutputSpec
     _cmd = " BinaryMaskEditorBasedOnLandmarks "
     _outputs_filenames = {'outputBinaryVolume':'outputBinaryVolume.nii'}
+
+
+class BRAINSMultiSTAPLEInputSpec(CommandLineInputSpec):
+    inputCompositeT1Volume = File(desc="Composite T1, all label maps transofrmed into the space for this image.", exists=True, argstr="--inputCompositeT1Volume %s")
+    inputLabelVolume = InputMultiPath(File(exists=True), desc="The list of proobabilityimages.", argstr="--inputLabelVolume %s...")
+    inputTransform = InputMultiPath(File(exists=True), desc="transforms to apply to label volumes", argstr="--inputTransform %s...")
+    labelForUndecidedPixels = traits.Int(desc="Label for undecided pixels", argstr="--labelForUndecidedPixels %d")
+    resampledVolumePrefix = traits.Str(desc="if given, write out resampled volumes with this prefix", argstr="--resampledVolumePrefix %s")
+    skipResampling = traits.Bool(desc="Omit resampling images into reference space", argstr="--skipResampling ")
+    outputMultiSTAPLE = traits.Either(traits.Bool, File(), hash_files=False, desc="the MultiSTAPLE average of input label volumes", argstr="--outputMultiSTAPLE %s")
+    outputConfusionMatrix = traits.Either(traits.Bool, File(), hash_files=False, desc="Confusion Matrix", argstr="--outputConfusionMatrix %s")
+
+
+class BRAINSMultiSTAPLEOutputSpec(TraitedSpec):
+    outputMultiSTAPLE = File(desc="the MultiSTAPLE average of input label volumes", exists=True)
+    outputConfusionMatrix = File(desc="Confusion Matrix", exists=True)
+
+
+class BRAINSMultiSTAPLE(SEMLikeCommandLine):
+    """title: Create best representative label map)
+
+category: Segmentation.Specialized
+
+description: given a list of label map images, create a representative/average label map.
+  
+
+"""
+
+    input_spec = BRAINSMultiSTAPLEInputSpec
+    output_spec = BRAINSMultiSTAPLEOutputSpec
+    _cmd = " BRAINSMultiSTAPLE "
+    _outputs_filenames = {'outputMultiSTAPLE':'outputMultiSTAPLE.nii','outputConfusionMatrix':'outputConfusionMatrixh5|mat|txt'}
 
 
 class BRAINSABCInputSpec(CommandLineInputSpec):

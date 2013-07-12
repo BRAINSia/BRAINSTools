@@ -13,24 +13,26 @@
 // Use linear interpolation to keep the processing quick.
 #define __QUICK_RUNS_APPROXIMATION__
 
-#include <cstdio>      // This include file should be removed, prefer constructs
+#include <cstdio>      // TODO: This include file should be removed, prefer constructs
                        // from the std library
-#include <cstdlib>     // This include file should be removed, prefer constructs
+#include <cstdlib>     // TODO: This include file should be removed, prefer constructs
                        // from the std library
-#include <cmath>       // This include file should be removed, use vcl_math
+#include <cmath>       // TODO: This include file should be removed, use vcl_math
                        // instead
-#include <sys/types.h> // This include file should be removed, unix only
+#include <sys/types.h> // TODO: This include file should be removed, unix only
                        // non-portable
-#include <sys/stat.h>  // This include file should be removed, unix only
+#include <sys/stat.h>  // TODO: This include file should be removed, unix only
                        // non-portable
-#include <unistd.h>    // This include file should be removed, unix only
+#include <unistd.h>    // TODO: This include file should be removed, unix only
                        // non-portable
-#include <ctime>       // This include file should be removed, unix only
+#include <ctime>       // TODO: This include file should be removed, unix only
                        // non-portable
-#include <cctype>      // This include file should be removed, use vcl_math
+#include <cctype>      // TODO: This include file should be removed, use vcl_math
                        // instead
                        // #include <volume.h> //This include file should be
                        // removed
+
+#include <numeric>
 #include <itksys/SystemTools.hxx>
 #include <string>
 #include "itkImage.h"
@@ -260,15 +262,8 @@ void normalizeVector(std::vector<ValuesType> & x)
 template <class ValuesType>
 ValuesType removeVectorMean(std::vector<ValuesType> & x)
 {
-  ValuesType mean = 0.0;
-
-  for( typename std::vector<ValuesType>::const_iterator it = x.begin();
-       it != x.end(); ++it )
-    {
-    mean += *it;
-    }
   const ValuesType n = x.size();
-  mean /= n;
+  const ValuesType mean = std::accumulate(x.begin(),x.end(),static_cast<ValuesType>(0.0) ) / n;
   for( typename std::vector<ValuesType>::iterator it = x.begin();
        it != x.end(); ++it )
     {
@@ -398,6 +393,7 @@ setLowHigh(typename SImageType::Pointer & image,
   return static_cast<typename SImageType::PixelType>( otsuThresholds[0] );
 }
 
+#if 0 //TODO: Remove old code
 // ------------------------------
 // The following should be cleaned up and moved elsewhere
 template <class DType>
@@ -424,19 +420,6 @@ removeVectorMean(DType *x, DType *y, int n)
 
 extern void removeVectorMean(double *y, int n, int p);
 
-// ///////////////////////////////////////////////////////
-template <class DType>
-DType dot(DType *a, DType *b, int n)
-{
-  float dot = 0.0;
-
-  for( int i = 0; i < n; ++i )
-    {
-    dot += a[i] * b[i];
-    }
-  return dot;
-}
-
 template <class DType>
 double removeVectorMean(DType *y, int n)
 {
@@ -456,28 +439,6 @@ double removeVectorMean(DType *y, int n)
     y[i] = y[i] - mean;
     }
   return mean;
-}
-
-#include <numeric>
-// ///////////////////////////////////////////////////////
-template <class DType>
-DType dot(const std::vector<DType> & a, const std::vector<DType> & b)
-{
-  assert( a.size() == b.size() );
-#if 0
-  DType dot = 0.0;
-  typename std::vector<DType>::const_iterator ait = a.begin();
-  typename std::vector<DType>::const_iterator bit = b.begin();
-  while( ait != a.end() && bit != b.end() )
-    {
-    dot += ( *ait ) * ( *bit );
-    ++ait;
-    ++bit;
-    }
-  return dot;
-#else
-  return std::inner_product(a.begin(),a.end(),b.begin(),static_cast<DType>(0.0) );
-#endif
 }
 
 // ///////////////////////////////////////////////////////
@@ -680,6 +641,8 @@ paired_samples_t(DType *x1, DType *x2, int n, int *df, double *meandiff)
   t = mean / sd;
   return t;
 }
+#endif
+
 
 extern void WriteTransformToDisk( GenericTransformType * myTransform , const std::string & filename  );
 #endif

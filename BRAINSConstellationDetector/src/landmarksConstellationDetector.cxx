@@ -364,9 +364,10 @@ landmarksConstellationDetector::FindCandidatePoints
             for( unsigned int curr_rotationAngle = 0;
                  curr_rotationAngle < TemplateMean.size(); curr_rotationAngle++ )
               {
-              //TODO:  Look at using std::inner_product
-              const double cc =
-                dot( CurrentPoint_test_vec, TemplateMean[curr_rotationAngle] );
+              const double cc = std::inner_product(
+                CurrentPoint_test_vec.begin(), CurrentPoint_test_vec.end(),
+                TemplateMean[curr_rotationAngle].begin(),
+                static_cast<float>(0.0f) );
               cc_rotation_max = ( cc > cc_rotation_max ) ? cc : cc_rotation_max;
               if( ( inclusionDistance < SI_restrictions )
                   && ( vcl_abs( temp[1] ) < PA_restrictions ) )

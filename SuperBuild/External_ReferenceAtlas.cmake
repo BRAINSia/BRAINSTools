@@ -53,12 +53,12 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
   endif()
 
   ### --- Project specific additions here
-  set(ATLAS_VERSION 20130106)
+  set(ATLAS_VERSION 20130711)
   set(ATLAS_NAME Atlas/Atlas_${ATLAS_VERSION})
   # REMOVE set(ATLAS_MIDAS_CODE http://slicer.kitware.com/midas3/download?items=12780)
   # REMOVE set(ATLAS_MD5 ed9e635ef8681f2b0c666aa72e77021c)
   set(ATLAS_SVN_REPOSITORY http://www.nitrc.org/svn/brainstestdata/BRAINSAtlas)
-  set(ATLAS_SVN_REVISION 55)
+  set(ATLAS_SVN_REVISION 60)
 
 
   set(${proj}_CMAKE_OPTIONS

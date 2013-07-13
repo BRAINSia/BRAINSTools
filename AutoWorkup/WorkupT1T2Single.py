@@ -161,8 +161,10 @@ def MakeOneSubWorkFlow(projectid, subjectid, sessionid, processing_phase, WORKFL
         T1T2WorkupSingle.connect([(inputsSpec, myLocalLMIWF, [(('allT1s', get_list_element, 0), 'inputspec.inputVolume')]), ])
         T1T2WorkupSingle.connect(inputsSpec, 'template_landmarks_31_fcsv', myLocalLMIWF, 'inputspec.atlasLandmarkFilename')
         T1T2WorkupSingle.connect(inputsSpec, 'template_landmark_weights_31_csv', myLocalLMIWF, 'inputspec.atlasWeightFilename')
-        if 'AUXLMK' in WORKFLOW_COMPONENTS:
-            T1T2WorkupSingle.connect(inputsSpec, 'template_t1', myLocalLMIWF, 'inputspec.atlasVolume')
+        T1T2WorkupSingle.connect(inputsSpec, 'template_t1', myLocalLMIWF, 'inputspec.atlasVolume')
+
+    if 'AUXLMK' in WORKFLOW_COMPONENTS:
+
         ### Now connect outputspec
 #        T1T2WorkupSingle.connect(myLocalLMIWF,'outputspec.outputResampledVolume', outputsSpec, 'BCD_ACPC_T1' )
         T1T2WorkupSingle.connect(myLocalLMIWF, 'outputspec.outputResampledCroppedVolume', outputsSpec, 'BCD_ACPC_T1_CROPPED')

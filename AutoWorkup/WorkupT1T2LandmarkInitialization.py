@@ -60,6 +60,9 @@ def CreateLandmarkInitializeWorkflow(WFname, BCD_model_path, InterpolationMode, 
 
     # Entries below are of the form:
     landmarkInitializeWF.connect(inputsSpec, 'inputVolume', BCD, 'inputVolume')
+    landmarkInitializeWF.connect(inputsSpec, 'atlasWeightFilename',  BCD, 'atlasLandmarkWeights')
+    landmarkInitializeWF.connect(inputsSpec, 'atlasLandmarkFilename',BCD, 'atlasLandmarks')
+    landmarkInitializeWF.connect(inputsSpec, 'atlasVolume',          BCD, 'atlasVolume')
 
     ########################################################
     # Run BLI atlas_to_subject

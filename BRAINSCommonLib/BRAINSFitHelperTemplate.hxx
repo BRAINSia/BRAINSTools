@@ -605,7 +605,10 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::FitCommonCode(
     {
     appMutualRegistration->Update();
     finalTransform = appMutualRegistration->GetTransform();
-    this->m_FinalMetricValue = appMutualRegistration->GetFinalMetricValue();
+
+    // Find the metric value (It is needed when logFileReport flag is ON).
+    //this->m_FinalMetricValue = appMutualRegistration->GetFinalMetricValue();
+
     this->m_ActualNumberOfIterations = appMutualRegistration->GetActualNumberOfIterations();
     this->m_PermittedNumberOfIterations = numberOfIterations;
     // this->m_AccumulatedNumberOfIterationsForAllLevels +=
@@ -1381,24 +1384,23 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
           }
         }
 
+      // Special optimizations only for the MMI metric
+      // that need adjusting based on both the type of metric, and
+      // the "dimensionality" of the transform being adjusted.
+      typename MattesMutualInformationMetricType::Pointer test_MMICostMetric =
+        dynamic_cast<MattesMutualInformationMetricType *>(this->m_CostMetricObject.GetPointer() );
+      if( test_MMICostMetric.IsNotNull() )
         {
-        // Special optimizations only for the MMI metric
-        // that need adjusting based on both the type of metric, and
-        // the "dimensionality" of the transform being adjusted.
-        typename MattesMutualInformationMetricType::Pointer test_MMICostMetric =
-          dynamic_cast<MattesMutualInformationMetricType *>(this->m_CostMetricObject.GetPointer() );
-        if( test_MMICostMetric.IsNotNull() )
-          {
-          // As recommended in documentation in
-          // itkMattesMutualInformationImageToImageMetric
-          // "UseExplicitPDFDerivatives = False ... This method is well suited
-          // for Transforms with a large number of parameters, such as,
-          // BSplineDeformableTransforms."
-          const bool UseExplicitPDFDerivatives =
-            ( m_UseExplicitPDFDerivativesMode != "ON" || m_UseExplicitPDFDerivativesMode == "AUTO" ) ? false : true;
-          test_MMICostMetric->SetUseExplicitPDFDerivatives(UseExplicitPDFDerivatives);
-          }
+        // As recommended in documentation in
+        // itkMattesMutualInformationImageToImageMetric
+        // "UseExplicitPDFDerivatives = False ... This method is well suited
+        // for Transforms with a large number of parameters, such as,
+        // BSplineDeformableTransforms."
+        const bool UseExplicitPDFDerivatives =
+          ( m_UseExplicitPDFDerivativesMode != "ON" || m_UseExplicitPDFDerivativesMode == "AUTO" ) ? false : true;
+        test_MMICostMetric->SetUseExplicitPDFDerivatives(UseExplicitPDFDerivatives);
         }
+
       outputBSplineTransform =
         DoBSpline<RegisterImageType, SpatialObjectType,
                   BSplineTransformType>(

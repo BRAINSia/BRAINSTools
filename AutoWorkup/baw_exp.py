@@ -107,7 +107,130 @@ def setDataSinkRewriteValue(cli, cfg):
     return GLOBAL_DATA_SINK_REWRITE
 
 
-def main(argv=None):
+def OpenSubjectDatabase(ExperimentBaseDirectoryCache, input_arguments, mountPrefix, subject_data_file):
+    import SessionDB
+
+    subjectDatabaseFile = os.path.join(ExperimentBaseDirectoryCache, 'InternalWorkflowSubjectDB.db')
+    subject_list = input_arguments.subject.split(',')
+    ## TODO:  Only make DB if db is older than subject_data_file.
+    if (not os.path.exists(subjectDatabaseFile)) or (
+            os.path.getmtime(subjectDatabaseFile) < os.path.getmtime(subject_data_file)):
+        ExperimentDatabase = SessionDB.SessionDB(subjectDatabaseFile, subject_list)
+        ExperimentDatabase.MakeNewDB(subject_data_file, mountPrefix)
+        ExperimentDatabase = None
+        ExperimentDatabase = SessionDB.SessionDB(subjectDatabaseFile, subject_list)
+    else:
+        print("Using cached database, {0}".format(subjectDatabaseFile))
+        ExperimentDatabase = SessionDB.SessionDB(subjectDatabaseFile, subject_list)
+    print "ENTIRE DB for {_subjid}: ".format(_subjid=ExperimentDatabase.getSubjectFilter())
+    print "^^^^^^^^^^^^^"
+    for row in ExperimentDatabase.getEverything():
+        print row
+    print "^^^^^^^^^^^^^"
+    return ExperimentDatabase
+
+def DoSingleSubjectProcessing(sp_args):
+
+    CACHE_ATLASPATH, CACHE_BCDMODELPATH, CLUSTER_QUEUE, CLUSTER_QUEUE_LONG, \
+         ExperimentBaseDirectoryCache, ExperimentBaseDirectoryResults, subject_data_file, \
+          GLOBAL_DATA_SINK_REWRITE, JOB_SCRIPT, WORKFLOW_COMPONENTS, \
+          input_arguments, mountPrefix,subjectid = sp_args
+
+    ExperimentDatabase = OpenSubjectDatabase(ExperimentBaseDirectoryCache, input_arguments, mountPrefix,
+                                             subject_data_file)
+
+    if input_arguments.doshort:
+        import ShortWorkupT1T2
+        baw200 = ShortWorkupT1T2.ShortWorkupT1T2(subjectid, mountPrefix,
+                                                 os.path.join(ExperimentBaseDirectoryCache, str(subjectid)),
+                                                 ExperimentBaseDirectoryResults,
+                                                 ExperimentDatabase,
+                                                 CACHE_ATLASPATH,
+                                                 CACHE_BCDMODELPATH,
+                                                 GLOBAL_DATA_SINK_REWRITE,
+                                                 WORKFLOW_COMPONENTS=WORKFLOW_COMPONENTS, CLUSTER_QUEUE=CLUSTER_QUEUE,
+                                                 CLUSTER_QUEUE_LONG=CLUSTER_QUEUE_LONG)
+    else:
+        import WorkupT1T2  # NOTE:  This needs to occur AFTER the PYTHON_AUX_PATHS has been modified
+        baw200 = WorkupT1T2.WorkupT1T2(subjectid, mountPrefix,
+                                       os.path.join(ExperimentBaseDirectoryCache, str(subjectid)),
+                                       ExperimentBaseDirectoryResults,
+                                       ExperimentDatabase,
+                                       CACHE_ATLASPATH,
+                                       CACHE_BCDMODELPATH,
+                                       GLOBAL_DATA_SINK_REWRITE,
+                                       WORKFLOW_COMPONENTS=WORKFLOW_COMPONENTS, CLUSTER_QUEUE=CLUSTER_QUEUE,
+                                       CLUSTER_QUEUE_LONG=CLUSTER_QUEUE_LONG, SGE_JOB_SCRIPT=JOB_SCRIPT)
+    print "Start Processing"
+    SGEFlavor = 'SGE'
+    try:
+        if input_arguments.wfrun == 'helium_all.q':
+            try:
+                baw200.write_graph()
+            except:
+                pass
+            baw200.run(plugin=SGEFlavor,
+                       plugin_args=dict(template=JOB_SCRIPT,
+                                        qsub_args="-S /bin/bash -cwd -pe smp1 1-12 -l h_vmem=19G,mem_free=9G -o /dev/null -e /dev/null " + CLUSTER_QUEUE))
+        elif input_arguments.wfrun == 'helium_all.q_graph':
+            try:
+                baw200.write_graph()
+            except:
+                pass
+            SGEFlavor = 'SGEGraph'  # Use the SGEGraph processing
+            baw200.run(plugin=SGEFlavor,
+                       plugin_args=dict(template=JOB_SCRIPT,
+                                        qsub_args="-S /bin/bash -cwd -pe smp1 1-12 -l h_vmem=19G,mem_free=9G -o /dev/null -e /dev/null " + CLUSTER_QUEUE))
+        elif input_arguments.wfrun == 'ipl_OSX':
+            try:
+                baw200.write_graph()
+            except:
+                pass
+            print "Running On ipl_OSX"
+            baw200.run(plugin=SGEFlavor,
+                       plugin_args=dict(template=JOB_SCRIPT,
+                                        qsub_args="-S /bin/bash -cwd -pe smp1 1-12 -l h_vmem=19G,mem_free=9G -o /dev/null -e /dev/null " + CLUSTER_QUEUE))
+        elif input_arguments.wfrun == 'local_4':
+            try:
+                baw200.write_graph()
+            except:
+                pass
+            print "Running with 4 parallel processes on local machine"
+            baw200.run(plugin='MultiProc', plugin_args={'n_procs': 4})
+        elif input_arguments.wfrun == 'local_12':
+            try:
+                baw200.write_graph()
+            except:
+                pass
+            print "Running with 12 parallel processes on local machine"
+            baw200.run(plugin='MultiProc', plugin_args={'n_procs': 12})
+        elif input_arguments.wfrun == 'ds_runner':
+            class ds_runner(object):
+                def run(self, graph, **kwargs):
+                    for node in graph.nodes():
+                        if '_ds' in node.name.lower():
+                            node.run()
+
+            baw200.run(plugin=ds_runner())
+        elif input_arguments.wfrun == 'local':
+            try:
+                baw200.write_graph()
+            except:
+                pass
+            print "Running sequentially on local machine"
+            # baw200.run(updatehash=True)
+            baw200.run()
+        else:
+            print "You must specify the run environment type. [helium_all.q,helium_all.q_graph,ipl_OSX,local_4,local_12,local]"
+            print input_arguments.wfrun
+            sys.exit(-1)
+    except Exception, err:
+        print("ERROR: EXCEPTION CAUGHT IN RUNNING SUBJECT {0}".format(subjectid))
+        raise err
+
+
+
+def MasterProcessingController(argv=None):
     import argparse
     import ConfigParser
     import csv
@@ -281,117 +404,32 @@ def main(argv=None):
         sys.exit(-1)
 
     print "Configuring Pipeline"
-    import SessionDB
-    subjectDatabaseFile = os.path.join(ExperimentBaseDirectoryCache, 'InternalWorkflowSubjectDB.db')
-    subject_list = input_arguments.subject.split(',')
-    ## TODO:  Only make DB if db is older than subject_data_file.
-    if (not os.path.exists(subjectDatabaseFile)) or (os.path.getmtime(subjectDatabaseFile) < os.path.getmtime(subject_data_file)):
-        ExperimentDatabase = SessionDB.SessionDB(subjectDatabaseFile, subject_list)
-        ExperimentDatabase.MakeNewDB(subject_data_file, mountPrefix)
-        ExperimentDatabase = None
-        ExperimentDatabase = SessionDB.SessionDB(subjectDatabaseFile, subject_list)
-    else:
-        print("Using cached database, {0}".format(subjectDatabaseFile))
-        ExperimentDatabase = SessionDB.SessionDB(subjectDatabaseFile, subject_list)
-    print "ENTIRE DB for {_subjid}: ".format(_subjid=ExperimentDatabase.getSubjectFilter())
-    print "^^^^^^^^^^^^^"
-    for row in ExperimentDatabase.getEverything():
-        print row
-    print "^^^^^^^^^^^^^"
+    ExperimentDatabase = OpenSubjectDatabase(ExperimentBaseDirectoryCache, input_arguments, mountPrefix,
+                                             subject_data_file)
 
     ## Create the shell wrapper script for ensuring that all jobs running on remote hosts from SGE
     #  have the same environment as the job submission host.
     JOB_SCRIPT = get_global_sge_script(sys.path, PROGRAM_PATHS, CUSTOM_ENVIRONMENT)
     print JOB_SCRIPT
 
-    import WorkupT1T2  # NOTE:  This needs to occur AFTER the PYTHON_AUX_PATHS has been modified
-    print "TESTER"
-    import ShortWorkupT1T2
+    ## Make a list of all the arguments to be processed
+    sp_args_list = list()
     for subjectid in ExperimentDatabase.getAllSubjects():
-        if input_arguments.doshort:
-            baw200 = ShortWorkupT1T2.ShortWorkupT1T2(subjectid, mountPrefix,
-                                                     os.path.join(ExperimentBaseDirectoryCache, str(subjectid)),
-                                                     ExperimentBaseDirectoryResults,
-                                                     ExperimentDatabase,
-                                                     CACHE_ATLASPATH,
-                                                     CACHE_BCDMODELPATH,
-                                                     GLOBAL_DATA_SINK_REWRITE,
-                                                     WORKFLOW_COMPONENTS=WORKFLOW_COMPONENTS, CLUSTER_QUEUE=CLUSTER_QUEUE, CLUSTER_QUEUE_LONG=CLUSTER_QUEUE_LONG)
-        else:
-            baw200 = WorkupT1T2.WorkupT1T2(subjectid, mountPrefix,
-                                           os.path.join(ExperimentBaseDirectoryCache, str(subjectid)),
-                                           ExperimentBaseDirectoryResults,
-                                           ExperimentDatabase,
-                                           CACHE_ATLASPATH,
-                                           CACHE_BCDMODELPATH,
-                                           GLOBAL_DATA_SINK_REWRITE,
-                                           WORKFLOW_COMPONENTS=WORKFLOW_COMPONENTS, CLUSTER_QUEUE=CLUSTER_QUEUE, CLUSTER_QUEUE_LONG=CLUSTER_QUEUE_LONG, SGE_JOB_SCRIPT=JOB_SCRIPT)
-        print "Start Processing"
 
-        SGEFlavor = 'SGE'
-        try:
-            if input_arguments.wfrun == 'helium_all.q':
-                try:
-                    baw200.write_graph()
-                except:
-                    pass
-                baw200.run(plugin=SGEFlavor,
-                           plugin_args=dict(template=JOB_SCRIPT, qsub_args="-S /bin/bash -cwd -pe smp1 1-12 -l h_vmem=19G,mem_free=9G -o /dev/null -e /dev/null " + CLUSTER_QUEUE))
-            elif input_arguments.wfrun == 'helium_all.q_graph':
-                try:
-                    baw200.write_graph()
-                except:
-                    pass
-                SGEFlavor = 'SGEGraph'  # Use the SGEGraph processing
-                baw200.run(plugin=SGEFlavor,
-                           plugin_args=dict(template=JOB_SCRIPT, qsub_args="-S /bin/bash -cwd -pe smp1 1-12 -l h_vmem=19G,mem_free=9G -o /dev/null -e /dev/null " + CLUSTER_QUEUE))
-            elif input_arguments.wfrun == 'ipl_OSX':
-                try:
-                    baw200.write_graph()
-                except:
-                    pass
-                print "Running On ipl_OSX"
-                baw200.run(plugin=SGEFlavor,
-                           plugin_args=dict(template=JOB_SCRIPT, qsub_args="-S /bin/bash -cwd -pe smp1 1-12 -l h_vmem=19G,mem_free=9G -o /dev/null -e /dev/null " + CLUSTER_QUEUE))
-            elif input_arguments.wfrun == 'local_4':
-                try:
-                    baw200.write_graph()
-                except:
-                    pass
-                print "Running with 4 parallel processes on local machine"
-                baw200.run(plugin='MultiProc', plugin_args={'n_procs': 4})
-            elif input_arguments.wfrun == 'local_12':
-                try:
-                    baw200.write_graph()
-                except:
-                    pass
-                print "Running with 12 parallel processes on local machine"
-                baw200.run(plugin='MultiProc', plugin_args={'n_procs': 12})
-            elif input_arguments.wfrun == 'ds_runner':
-                class ds_runner(object):
-                    def run(self, graph, **kwargs):
-                        for node in graph.nodes():
-                            if '_ds' in node.name.lower():
-                                node.run()
-                baw200.run(plugin=ds_runner())
-            elif input_arguments.wfrun == 'local':
-                try:
-                    baw200.write_graph()
-                except:
-                    pass
-                print "Running sequentially on local machine"
-                # baw200.run(updatehash=True)
-                baw200.run()
-            else:
-                print "You must specify the run environment type. [helium_all.q,helium_all.q_graph,ipl_OSX,local_4,local_12,local]"
-                print input_arguments.wfrun
-                sys.exit(-1)
-        except Exception, err:
-            print("ERROR: EXCEPTION CAUGHT IN RUNNING SUBJECT {0}".format(subjectid))
-            raise err
+        sp_args=(CACHE_ATLASPATH, CACHE_BCDMODELPATH, CLUSTER_QUEUE, CLUSTER_QUEUE_LONG,
+                                  ExperimentBaseDirectoryCache, ExperimentBaseDirectoryResults, subject_data_file,
+                                  GLOBAL_DATA_SINK_REWRITE, JOB_SCRIPT, WORKFLOW_COMPONENTS, input_arguments,
+                                  mountPrefix, subjectid)
+        sp_args_list.append(sp_args)
+
+    ## Make a pool of workers to submit simultaneously
+    from multiprocessing import Pool
+    myPool = Pool(processes=30)
+    all_results=myPool.map(DoSingleSubjectProcessing,sp_args_list)
 
     print("THIS RUN OF BAW FOR SUBJS {0} HAS COMPLETED".format(ExperimentDatabase.getAllSubjects()))
     return 0
 
 if __name__ == "__main__":
-    sys.exit(main())
+    main_status = MasterProcessingController()
+    sys.exit(main_status)

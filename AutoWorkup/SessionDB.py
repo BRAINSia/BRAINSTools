@@ -9,6 +9,7 @@ class SessionDB():
     def __init__(self, defaultDBName='TempFileForDB.db', subject_list=[]):
         self.MasterTableName = "MasterDB"
         self.dbName = defaultDBName
+        self.subjectList = subject_list
         self._local_openDB()
         subject_filter = "( "
         for curr_subject in subject_list:

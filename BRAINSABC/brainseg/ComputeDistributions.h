@@ -206,7 +206,7 @@ CombinedComputeDistributions( const std::vector<typename ByteImageType::Pointer>
             ListOfClassStatistics[iclass].m_Means[mapIt2->first];
           for (; j < mapIt2->second.size(); ++j)
             {
-            typename TInputImage::Pointer im2 = mapIt2->second[i];
+            typename TInputImage::Pointer im2 = mapIt2->second[j];
             double var = 0.0;
 #if defined(LOCAL_USE_OPEN_MP)
 #pragma omp parallel for default(shared) reduction(+:var)

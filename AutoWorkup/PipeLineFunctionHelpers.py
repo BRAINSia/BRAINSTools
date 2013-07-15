@@ -13,10 +13,13 @@ import os
 import errno
 
 # Globals
-POSTERIORS = ['WM', 'SURFGM', 'ACCUMBEN', 'CAUDATE', 'PUTAMEN', 'GLOBUS', 'THALAMUS',
+#POSTERIORS = ['WM', 'SURFGM', 'ACCUMBEN', 'CAUDATE', 'PUTAMEN', 'GLOBUS', 'THALAMUS',
+#              'HIPPOCAMPUS', 'CRBLGM', 'CRBLWM', 'CSF', 'VB', 'NOTCSF', 'NOTGM', 'NOTWM',
+#              'NOTVB', 'AIR']
+
+POSTERIORS = ['WM', 'SURFGM', 'BASAL', 'GLOBUS', 'THALAMUS',
               'HIPPOCAMPUS', 'CRBLGM', 'CRBLWM', 'CSF', 'VB', 'NOTCSF', 'NOTGM', 'NOTWM',
               'NOTVB', 'AIR']
-
 
 def convertToList(element):
     return [element]

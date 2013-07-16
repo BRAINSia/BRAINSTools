@@ -11,8 +11,7 @@ import os
 # Generate by running a file system list "ls -1 $AtlasDir *.nii.gz *.xml *.fcsv *.wgts"
 # atlas_file_names=atlas_file_list.split(' ')
 ## HACK
-atlas_file_names = ["AtlasPVDefinition.xml",
-                    "ExtendedAtlasDefinition.xml", "ExtendedAtlasDefinition.xml.in",
+atlas_file_names = ["ExtendedAtlasDefinition.xml", "ExtendedAtlasDefinition.xml.in",
                     "avg_t1.nii.gz", "avg_t2.nii.gz", "tempNOTVBBOX.nii.gz",
                     "template_ABC_labels.nii.gz", "template_WMPM2_labels.nii.gz",
                     "template_WMPM2_labels.txt", "template_brain.nii.gz",

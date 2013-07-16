@@ -209,6 +209,6 @@ int main(int argc, char *argv[])
     }
 
   GenericTransformType::Pointer bsplineTransform = registerImageFilter->GetCurrentGenericTransform();
-  WriteTransformToDisk(bsplineTransform.GetPointer(), outputBsplineTransform);
+  itk::WriteTransformToDisk<double>(bsplineTransform.GetPointer(), outputBsplineTransform);
   return EXIT_SUCCESS;
 }

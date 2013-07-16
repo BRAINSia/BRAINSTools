@@ -51,7 +51,7 @@ int main(int argc, char * *argv)
 
   std::string versorRigidName(argv[1]);
   versorRigidName += "/VersorRigidTransform.txt";
-  itk::WriteTransformToDisk(versorRigidTransform.GetPointer(), versorRigidName);
+  itk::WriteTransformToDisk<double>(versorRigidTransform.GetPointer(), versorRigidName);
 
   ScaleVersor3DTransformType::Pointer scaleVersorTransform =
     CreateTransform<ScaleVersor3DTransformType>();
@@ -72,7 +72,7 @@ int main(int argc, char * *argv)
 
   std::string scaleVersorName(argv[1]);
   scaleVersorName += "/ScaleVersorTransform.txt";
-  itk::WriteTransformToDisk(scaleVersorTransform, scaleVersorName);
+  itk::WriteTransformToDisk<double>(scaleVersorTransform, scaleVersorName);
 
   ScaleSkewVersor3DTransformType::Pointer scaleSkewVersorTransform =
     CreateTransform<ScaleSkewVersor3DTransformType>();
@@ -90,7 +90,7 @@ int main(int argc, char * *argv)
 
   std::string scaleSkewVersorName(argv[1]);
   scaleSkewVersorName += "/ScaleSkewVersorTransform.txt";
-  itk::WriteTransformToDisk(scaleSkewVersorTransform, scaleSkewVersorName);
+  itk::WriteTransformToDisk<double>(scaleSkewVersorTransform, scaleSkewVersorName);
 
   AffineTransformType::Pointer affineTransform =
     CreateTransform<AffineTransformType>();
@@ -113,7 +113,7 @@ int main(int argc, char * *argv)
 
   std::string affineName(argv[1]);
   affineName += "/AffineTransform.txt";
-  itk::WriteTransformToDisk(affineTransform, affineName);
+  itk::WriteTransformToDisk<double>(affineTransform, affineName);
 
   typedef itk::Image<signed short, 3> ImageType;
   ImageType::RegionType            region;
@@ -184,7 +184,7 @@ int main(int argc, char * *argv)
 
   std::string bsplineName(argv[1]);
   bsplineName += "/BSplineDeformableTransform.txt";
-  itk::WriteTransformToDisk(bsplineTransform, bsplineName);
+  itk::WriteTransformToDisk<double>(bsplineTransform, bsplineName);
 
   return EXIT_SUCCESS;
 }

@@ -266,7 +266,6 @@ int main(int argc, char *argv[])
     }
 
   GenericTransformType::Pointer outputTransform = registerImageFilter->GetCurrentGenericTransform();
-  // WriteTransformToDisk(outputTransform.GetPointer(), outputTransformName);
-  WriteTransformToDisk(outputTransform, outputTransformName);
+  itk::WriteTransformToDisk<double>(outputTransform, outputTransformName);
   return EXIT_SUCCESS;
 }

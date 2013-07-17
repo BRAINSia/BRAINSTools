@@ -16,7 +16,12 @@
     <string-enumeration>
       <name>conversionMode</name>
       <longflag>--conversionMode</longflag>
-      <description>Determine which conversion to performn</description>
+      <description><![CDATA[Determine which conversion to perform.
+DicomToNrrd (default): Convert DICOM series to NRRD
+DicomToFSL: Convert DICOM series to NIfTI File + gradient/bvalue text files
+NrrdToFSL: Convert DWI NRRD file to NIfTI File + gradient/bvalue text files
+FSLToNrrd: Convert NIfTI File + gradient/bvalue text files to NRRD file.
+      ]]></description>
       <default>DicomToNrrd</default>
       <element>DicomToNrrd</element>
       <element>DicomToFSL</element>
@@ -28,7 +33,7 @@
       <longflag>--inputVolume</longflag>
       <label>Input DWI volume file</label>
       <channel>input</channel>
-      <description><![CDATA[Input DWI volume -- not used for DicomToNrrd.]]>
+      <description><![CDATA[Input DWI volume -- not used for DicomToNrrd mode.]]>
       </description>
     </image>
     <image type="diffusion-weighted">
@@ -43,7 +48,7 @@
       <name>fMRIOutput</name>
       <longflag>--fMRI</longflag>
       <label>Output fMRI file</label>
-      <description>Output a NRRD file, but no Gradients</description>
+      <description>Output a NRRD file, but without gradients</description>
       <!-- booleans default to false -->
     </boolean>
   </parameters>
@@ -64,7 +69,7 @@
       <longflag>--outputDirectory</longflag>
       <label>Output Directory</label>
       <channel>output</channel>
-      <description><![CDATA[Directory holding the output NRRD format]]></description>
+      <description><![CDATA[Directory holding the output NRRD file]]></description>
       <default>.</default>
     </directory>
     <file>

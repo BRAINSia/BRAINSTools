@@ -139,6 +139,7 @@ public:
         // directory
         converter = new GenericDWIConverter(m_Headers,m_InputFileNames,
                                             m_UseBMatrixGradientDirections);
+        this->m_Vendor = "GENERIC";
         }
       return converter;
     }

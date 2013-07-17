@@ -16,12 +16,7 @@
     <string-enumeration>
       <name>conversionMode</name>
       <longflag>--conversionMode</longflag>
-      <description><![CDATA[Determine which conversion to perform.
-DicomToNrrd (default): Convert DICOM series to NRRD
-DicomToFSL: Convert DICOM series to NIfTI File + gradient/bvalue text files
-NrrdToFSL: Convert DWI NRRD file to NIfTI File + gradient/bvalue text files
-FSLToNrrd: Convert NIfTI File + gradient/bvalue text files to NRRD file.
-      ]]></description>
+      <description><![CDATA[Determine which conversion to perform. DicomToNrrd (default): Convert DICOM series to NRRD DicomToFSL: Convert DICOM series to NIfTI File + gradient/bvalue text files NrrdToFSL: Convert DWI NRRD file to NIfTI File + gradient/bvalue text files FSLToNrrd: Convert NIfTI File + gradient/bvalue text files to NRRD file.]]></description>
       <default>DicomToNrrd</default>
       <element>DicomToNrrd</element>
       <element>DicomToFSL</element>

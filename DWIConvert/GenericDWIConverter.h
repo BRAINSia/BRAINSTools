@@ -16,11 +16,11 @@ public:
 protected:
   virtual void ExtractDWIData()
     {
-      throw; // don't call
+      // throw; // don't call
     }
   virtual void AddFlagsToDictionary()
     {
-      throw; // don't call
+      // throw; // don't call
     }
 };
 

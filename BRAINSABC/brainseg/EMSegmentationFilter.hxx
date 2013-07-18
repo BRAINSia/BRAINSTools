@@ -1606,9 +1606,10 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
   for(typename MapOfInputImageVectors::const_iterator mapIt = this->m_InputImages.begin();
       mapIt != this->m_InputImages.end(); ++mapIt)
     for(typename InputImageVector::const_iterator imIt = mapIt->second.begin();
-        imIt != mapIt->second.end(); ++imIt,++ichan)
+        imIt != mapIt->second.end(); ++imIt)
       {
       EMIterationTable.add(0, ichan + 2, mapIt->first);
+      ++ichan;
       }
   }
   for( unsigned int iclass = 0; iclass < numPriors; iclass++ )
@@ -1622,6 +1623,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
         ++classIt)
       {
       EMIterationTable.add(iclass + 1, ichan + 2, classIt->second);
+      ++ichan;
       }
     }
 

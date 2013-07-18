@@ -13,10 +13,6 @@ import os
 import errno
 
 # Globals
-#POSTERIORS = ['WM', 'SURFGM', 'ACCUMBEN', 'CAUDATE', 'PUTAMEN', 'GLOBUS', 'THALAMUS',
-#              'HIPPOCAMPUS', 'CRBLGM', 'CRBLWM', 'CSF', 'VB', 'NOTCSF', 'NOTGM', 'NOTWM',
-#              'NOTVB', 'AIR']
-
 POSTERIORS = ['WM', 'SURFGM', 'BASAL', 'GLOBUS', 'THALAMUS',
               'HIPPOCAMPUS', 'CRBLGM', 'CRBLWM', 'CSF', 'VB', 'NOTCSF', 'NOTGM', 'NOTWM',
               'NOTVB', 'AIR']
@@ -161,23 +157,21 @@ def FixWMPartitioning(brainMask, PosteriorsList):
     sitk.WriteImage(nonAirMask, nonAirRegionMask)
 
     POSTERIOR_LABELS = dict()  # (FG,Label)
-    POSTERIOR_LABELS["POSTERIOR_ACCUMBEN.nii.gz"] = (1, 20)
-    POSTERIOR_LABELS["POSTERIOR_AIR.nii.gz"] = (0, 0)
-    POSTERIOR_LABELS["POSTERIOR_CAUDATE.nii.gz"] = (1, 21)
+    POSTERIOR_LABELS["POSTERIOR_WM.nii.gz"] = (1, 1)
+    POSTERIOR_LABELS["POSTERIOR_SURFGM.nii.gz"] = (1, 2)
+    POSTERIOR_LABELS["POSTERIOR_BASAL.nii.gz"] = (1, 21)
+    POSTERIOR_LABELS["POSTERIOR_GLOBUS.nii.gz"] = (1, 23)
+    POSTERIOR_LABELS["POSTERIOR_THALAMUS.nii.gz"] = (1, 24)
+    POSTERIOR_LABELS["POSTERIOR_HIPPOCAMPUS.nii.gz"] = (1, 25)
     POSTERIOR_LABELS["POSTERIOR_CRBLGM.nii.gz"] = (1, 11)
     POSTERIOR_LABELS["POSTERIOR_CRBLWM.nii.gz"] = (1, 12)
     POSTERIOR_LABELS["POSTERIOR_CSF.nii.gz"] = (1, 4)
-    POSTERIOR_LABELS["POSTERIOR_GLOBUS.nii.gz"] = (1, 23)
-    POSTERIOR_LABELS["POSTERIOR_HIPPOCAMPUS.nii.gz"] = (1, 25)
+    POSTERIOR_LABELS["POSTERIOR_VB.nii.gz"] = (1, 5)
     POSTERIOR_LABELS["POSTERIOR_NOTCSF.nii.gz"] = (0, 6)
     POSTERIOR_LABELS["POSTERIOR_NOTGM.nii.gz"] = (0, 7)
-    POSTERIOR_LABELS["POSTERIOR_NOTVB.nii.gz"] = (0, 9)
     POSTERIOR_LABELS["POSTERIOR_NOTWM.nii.gz"] = (0, 8)
-    POSTERIOR_LABELS["POSTERIOR_PUTAMEN.nii.gz"] = (1, 22)
-    POSTERIOR_LABELS["POSTERIOR_SURFGM.nii.gz"] = (1, 2)
-    POSTERIOR_LABELS["POSTERIOR_THALAMUS.nii.gz"] = (1, 24)
-    POSTERIOR_LABELS["POSTERIOR_VB.nii.gz"] = (1, 5)
-    POSTERIOR_LABELS["POSTERIOR_WM.nii.gz"] = (1, 1)
+    POSTERIOR_LABELS["POSTERIOR_NOTVB.nii.gz"] = (0, 9)
+    POSTERIOR_LABELS["POSTERIOR_AIR.nii.gz"] = (0, 0)
 
     MatchingFGCodeList = list()
     MatchingLabelList = list()
@@ -202,13 +196,11 @@ def AccumulateLikeTissuePosteriors(posteriorImages):
         base_name = os.path.basename(full_pathname)
         load_images_list[base_name] = sitk.ReadImage(full_pathname)
     GM_ACCUM = [
-        'POSTERIOR_ACCUMBEN.nii.gz',
-        'POSTERIOR_CAUDATE.nii.gz',
-        'POSTERIOR_CRBLGM.nii.gz',
-        'POSTERIOR_HIPPOCAMPUS.nii.gz',
-        'POSTERIOR_PUTAMEN.nii.gz',
-        'POSTERIOR_THALAMUS.nii.gz',
         'POSTERIOR_SURFGM.nii.gz',
+        'POSTERIOR_BASAL.nii.gz',
+        'POSTERIOR_THALAMUS.nii.gz',
+        'POSTERIOR_HIPPOCAMPUS.nii.gz',
+        'POSTERIOR_CRBLGM.nii.gz',
     ]
     WM_ACCUM = [
         'POSTERIOR_CRBLWM.nii.gz',

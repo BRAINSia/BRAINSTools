@@ -217,23 +217,31 @@ def MakeNewAtlasTemplate(t1_image, deformed_list,
             print("MISSING FILE FROM patternDict: {0}".format(base_name))
     ## Make binary dilated mask
     binmask = sitk.BinaryThreshold(load_images_list['AVG_BRAINMASK.nii.gz'], 1, 1000000)
-    dilated5 = sitk.DilateObjectMorphology(binmask, 5)
-    dilated5 = sitk.Cast(dilated5, sitk.sitkFloat32)  # Convert to Float32 for multiply
-    ## Now clip the interior brain mask with dilated5
+    brainmask_dilatedBy5 = sitk.DilateObjectMorphology(binmask, 5)
+    brainmask_dilatedBy5 = sitk.Cast(brainmask_dilatedBy5, sitk.sitkFloat32)  # Convert to Float32 for multiply
+
+    brainmask_erodedBy5 = sitk.ErodeObjectMorphology(binmask, 5)
+    brainmask_erodedBy5 = sitk.Cast(brainmask_erodedBy5, sitk.sitkFloat32)  # Convert to Float32 for multiply
+    ## Now clip the interior brain mask with brainmask_dilatedBy5
+    ## Now clip the interior brain mask with brainmask_dilatedBy5
     interiorPriors = [
-        'AVG_BGMWARP_AVG_BGM.nii.gz',
-        'AVG_CRBLGMWARP_AVG_CRBLGM.nii.gz',
-        'AVG_CRBLWMWARP_AVG_CRBLWM.nii.gz',
-        'AVG_CSFWARP_AVG_CSF.nii.gz',
-        'AVG_SURFGMWARP_AVG_SURFGM.nii.gz',
-        'AVG_VBWARP_AVG_VB.nii.gz',
-        'AVG_WMWARP_AVG_WM.nii.gz',
-        'AVG_ACCUMBENWARP_AVG_ACCUMBEN.nii.gz',
-        'AVG_CAUDATEWARP_AVG_CAUDATE.nii.gz',
-        'AVG_PUTAMENWARP_AVG_PUTAMEN.nii.gz',
-        'AVG_GLOBUSWARP_AVG_GLOBUS.nii.gz',
-        'AVG_THALAMUSWARP_AVG_THALAMUS.nii.gz',
-        'AVG_HIPPOCAMPUSWARP_AVG_HIPPOCAMPUS.nii.gz',
+        'AVG_WM.nii.gz',
+        'AVG_SURFGM.nii.gz',
+        'AVG_BASAL.nii.gz',
+        'AVG_CRBLGM.nii.gz',
+        'AVG_CRBLWM.nii.gz',
+        'AVG_CSF.nii.gz',
+        'AVG_VB.nii.gz',
+        'AVG_GLOBUS.nii.gz',
+        'AVG_THALAMUS.nii.gz',
+        'AVG_HIPPOCAMPUS.nii.gz',
+    ]
+    exteriorPriors = [
+        'AVG_NOTWM.nii.gz',
+        'AVG_NOTGM.nii.gz',
+        'AVG_NOTCSF.nii.gz',
+        'AVG_NOTVB.nii.gz',
+        'AVG_AIR.nii.gz'
     ]
     clean_deformed_list = deformed_list
     T2File = None
@@ -247,22 +255,38 @@ def MakeNewAtlasTemplate(t1_image, deformed_list,
             patternDict[clipped_name] = patternDict[base_name]
             sitk.WriteImage(binmask, clipped_name)
             clean_deformed_list[index] = os.path.realpath(clipped_name)
-        if base_name == 'AVG_T2WARP_AVG_T2.nii.gz':
+        elif base_name == 'AVG_T2.nii.gz':
             T2File = full_pathname
-        if base_name == 'AVG_PDWARP_AVG_PD.nii.gz':
+        elif base_name == 'AVG_PD.nii.gz':
             PDFile = full_pathname
-        if base_name in interiorPriors:
+        elif base_name in interiorPriors:
             ### Make clipped posteriors for brain regions
             curr = sitk.Cast(sitk.ReadImage(full_pathname), sitk.sitkFloat32)
-            curr = curr * dilated5
+            curr = curr * brainmask_dilatedBy5
             clipped_name = 'CLIPPED_' + base_name
             patternDict[clipped_name] = patternDict[base_name]
             sitk.WriteImage(curr, clipped_name)
             clean_deformed_list[index] = os.path.realpath(clipped_name)
             print "HACK: ", clean_deformed_list[index]
             curr = None
+        elif base_name in exteriorPriors:
+            ### Make clipped posteriors for brain regions
+            curr = sitk.Cast(sitk.ReadImage(full_pathname), sitk.sitkFloat32)
+            curr = curr * brainmask_erodedBy5
+            clipped_name = 'CLIPPED_' + base_name
+            patternDict[clipped_name] = patternDict[base_name]
+            sitk.WriteImage(curr, clipped_name)
+            clean_deformed_list[index] = os.path.realpath(clipped_name)
+            print "HACK: ", clean_deformed_list[index]
+            curr = None
+        else:
+            import sys
+            print "ERROR: basename {0} not in list!! \n{1}".format(base_name,['AVG_BRAINMASK.nii.gz','AVG_T2.nii.gz','AVG_PD.nii.gz',interiorPriors,exteriorPriors])
+            sys.exit(-1)
+
     binmask = None
-    dilated5 = None
+    brainmask_dilatedBy5 = None
+    brainmask_erodedBy5 = None
 
     for full_pathname in clean_deformed_list:
         base_name = os.path.basename(full_pathname)

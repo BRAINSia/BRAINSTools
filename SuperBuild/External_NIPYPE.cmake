@@ -56,7 +56,7 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
 
   ### --- End Project specific additions
   set(${proj}_REPOSITORY "${git_protocol}://github.com/BRAINSia/nipype.git")
-  set(${proj}_GIT_TAG "3bf6539061392c80cfbdc08370298ce7cf19a3ae")
+  set(${proj}_GIT_TAG "EnhanceQSubProcessing")
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${${proj}_REPOSITORY}
     GIT_TAG ${${proj}_GIT_TAG}

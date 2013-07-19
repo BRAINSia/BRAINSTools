@@ -379,7 +379,7 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
         m_Registration->Update();
         successful = true;
         }
-      catch( itk::ExceptionObject & err )
+      catch( itk::ExceptionObject & /* err */ )
         {
         // Attempt to auto-recover if too many samples were requested.
         // std::cerr << "ExceptionObject caught !" << std::endl;

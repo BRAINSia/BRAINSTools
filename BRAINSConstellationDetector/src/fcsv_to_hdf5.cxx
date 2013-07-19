@@ -51,7 +51,6 @@ benefits more from readability than speed.
 
 // D E F I N E S //////////////////////////////////////////////////////////////
 
-const bool FAIL_ON_ERROR = false;    // If set to true, the program
 // will exit on the first error.
 // If false, the program will
 // continue and use "* * *" as the missing data.

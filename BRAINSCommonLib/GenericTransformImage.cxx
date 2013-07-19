@@ -206,7 +206,7 @@ int WriteBothTransformsToDisk(const GenericTransformType::ConstPointer genericTr
     }
   catch( itk::ExceptionObject & excp )
     {
-    throw; // rethrow exception, handle in some other scope.
+    throw excp; // reohrow exception, handle in some other scope.
     }
   return 0;
 }
@@ -514,7 +514,7 @@ void WriteTransformToDisk(GenericTransformType const *const MyTransform, const s
       }
     catch( itk::ExceptionObject & excp )
       {
-      throw;
+      throw excp;
       }
     if( inverseTransformExists )
       {
@@ -524,6 +524,7 @@ void WriteTransformToDisk(GenericTransformType const *const MyTransform, const s
         }
       catch( itk::ExceptionObject & excp )
         {
+        throw excp;
         // Writing the inverseTransform is optional,  throw excp;
         }
       }

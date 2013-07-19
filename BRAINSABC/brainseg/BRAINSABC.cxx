@@ -898,10 +898,11 @@ int main(int argc, char * *argv)
       atlasToSubjectCurrentGenericTransform =
         itk::ReadTransformFromDisk(atlasToSubjectInitialTransform);
       }
-    catch( itk::ExceptionObject & excp )
+    catch( itk::ExceptionObject & /* excp */ )
       {
       muLogMacro("ERROR:  Invalid atlasToSubjectInitialTransform specified"
                  << atlasToSubjectInitialTransform << std::endl);
+      //muLogMacro( excp << std::endl);
       return EXIT_FAILURE;
       }
 

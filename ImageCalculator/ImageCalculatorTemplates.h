@@ -305,7 +305,7 @@ Ofilters( typename ImageType::Pointer input, MetaCommand command )
     EffectiveOutputFilters << "-ofsqrt ";
     FunctorProcess2(squareroot);
     }
-  // return typename itk::Image< PixelType, dims >::Pointer();
+  // return typename itk::Image< PixelType, ImageType::ImageDimension >::Pointer();
   std::cout << "--Storage type effective output filter options:  " <<  EffectiveOutputFilters.str() <<  std::endl;
   return IntermediateImage;
 }
@@ -314,8 +314,6 @@ Ofilters( typename ImageType::Pointer input, MetaCommand command )
 template <class ImageType>
 void statfilters( const typename ImageType::Pointer AccImage, MetaCommand command)
 {
-  const unsigned int dims(ImageType::ImageDimension);
-
   std::map<std::string, std::string> StatDescription;
   std::map<std::string, float>       StatValues;
 
@@ -505,7 +503,7 @@ void statfilters( const typename ImageType::Pointer AccImage, MetaCommand comman
       typename ImageType::SizeType  size;
       size = reader->GetOutput()->GetLargestPossibleRegion().GetSize();
       float NumberOfPixels = size[0] * size[1];
-      if( dims == 3 )
+      if( ImageType::ImageDimension == 3 )
         {
         NumberOfPixels = NumberOfPixels * size[2];
         }
@@ -516,7 +514,7 @@ void statfilters( const typename ImageType::Pointer AccImage, MetaCommand comman
       typename ImageType::SizeType  size;
       size = AccImage->GetLargestPossibleRegion().GetSize();
       float NumberOfPixels = size[0] * size[1];
-      if( dims == 3 )
+      if( ImageType::ImageDimension == 3 )
         {
         NumberOfPixels = NumberOfPixels * size[2];
         }
@@ -558,12 +556,12 @@ void statfilters( const typename ImageType::Pointer AccImage, MetaCommand comman
 
 /*This function is called when the user wants to write the ouput image to a file. The output image is typecasted to the
   user specified data type. */
-template <class InPixelType, class PixelType, int dims>
-void ProcessOutputStage( const typename itk::Image<InPixelType, dims>::Pointer AccImage,
+template <class InPixelType, class PixelType, unsigned int ImageDims>
+void ProcessOutputStage( const typename itk::Image<InPixelType, ImageDims>::Pointer AccImage,
                          const std::string & outputImageFilename, MetaCommand command)
 {
-  typedef itk::Image<InPixelType, dims>                         InputImageType;
-  typedef itk::Image<PixelType, dims>                           OutputImageType;
+  typedef itk::Image<InPixelType, ImageDims>                    InputImageType;
+  typedef itk::Image<PixelType, ImageDims>                      OutputImageType;
   typedef itk::CastImageFilter<InputImageType, OutputImageType> CastToOutputFilterType;
   typename CastToOutputFilterType::Pointer ToOutputTypeFilter = CastToOutputFilterType::New();
 
@@ -638,9 +636,6 @@ void ImageCalculatorReadWrite( MetaCommand & command )
     ReplaceSubWithSub(InputList[i], "BACKSLASH_BLANK", " ");
     }
 
-  const unsigned int dims(ImageType::ImageDimension);
-
-  //  typedef itk::Image<PixelType,dims> ImageType;
   typedef itk::ImageFileReader<ImageType> ReaderType;
   typedef typename ImageType::PixelType   PixelType;
   // Read the first Image
@@ -655,7 +650,7 @@ void ImageCalculatorReadWrite( MetaCommand & command )
     }
   catch( itk::ExceptionObject & excp )
     {
-    std::cerr << "Error reading the series " << std::endl;
+    std::cerr << "Error reading the series " << excp << std::endl;
     throw;
     }
 
@@ -681,7 +676,7 @@ void ImageCalculatorReadWrite( MetaCommand & command )
       }
     catch( itk::ExceptionObject & excp )
       {
-      std::cerr << "Error reading the series " << std::endl;
+      std::cerr << "Error reading the series " << excp << std::endl;
       throw;
       }
     typename ImageType::Pointer SubSequentImage = reader2->GetOutput();
@@ -794,31 +789,31 @@ void ImageCalculatorReadWrite( MetaCommand & command )
       // process the string for the data type
       if( CompareNoCase( OutType, std::string("UCHAR") ) == 0 )
         {
-        ProcessOutputStage<PixelType, unsigned char, dims>(AccImage, outputFilename, command);
+        ProcessOutputStage<PixelType, unsigned char, ImageType::ImageDimension>(AccImage, outputFilename, command);
         }
       else if( CompareNoCase( OutType, std::string("SHORT") ) == 0 )
         {
-        ProcessOutputStage<PixelType, short, dims>(AccImage, outputFilename, command);
+        ProcessOutputStage<PixelType, short, ImageType::ImageDimension>(AccImage, outputFilename, command);
         }
       else if( CompareNoCase( OutType, std::string("USHORT") ) == 0 )
         {
-        ProcessOutputStage<PixelType, unsigned short, dims>(AccImage, outputFilename, command);
+        ProcessOutputStage<PixelType, unsigned short, ImageType::ImageDimension>(AccImage, outputFilename, command);
         }
       else if( CompareNoCase( OutType, std::string("INT") ) == 0 )
         {
-        ProcessOutputStage<PixelType, int, dims>(AccImage, outputFilename, command);
+        ProcessOutputStage<PixelType, int, ImageType::ImageDimension>(AccImage, outputFilename, command);
         }
       else if( CompareNoCase( OutType, std::string("UINT") ) == 0 )
         {
-        ProcessOutputStage<PixelType, unsigned int, dims>(AccImage, outputFilename, command);
+        ProcessOutputStage<PixelType, unsigned int, ImageType::ImageDimension>(AccImage, outputFilename, command);
         }
       else if( CompareNoCase( OutType, std::string("FLOAT") ) == 0 )
         {
-        ProcessOutputStage<PixelType, float, dims>(AccImage, outputFilename, command);
+        ProcessOutputStage<PixelType, float, ImageType::ImageDimension>(AccImage, outputFilename, command);
         }
       else if( CompareNoCase( OutType, std::string("DOUBLE") ) == 0 )
         {
-        ProcessOutputStage<PixelType, double, dims>(AccImage, outputFilename, command);
+        ProcessOutputStage<PixelType, double, ImageType::ImageDimension>(AccImage, outputFilename, command);
         }
       else
         {
@@ -830,7 +825,7 @@ void ImageCalculatorReadWrite( MetaCommand & command )
     else
       {
       // Default is the Input Pixel Type.
-      ProcessOutputStage<PixelType, PixelType, dims>(AccImage, outputFilename, command);
+      ProcessOutputStage<PixelType, PixelType, ImageType::ImageDimension>(AccImage, outputFilename, command);
       }
     }
 }

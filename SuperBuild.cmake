@@ -126,6 +126,7 @@ set(${PRIMARY_PROJECT_NAME}_DEPENDENCIES
   ReferenceAtlas
   DTI_Tract_Stat
   DTIReg
+  DTIProcess
   BRAINSTools
 #python
   )

@@ -112,7 +112,8 @@ set(${PRIMARY_PROJECT_NAME}_DEPENDENCIES
   VTK
   OpenCV
   JPEG
-
+  BatchMake
+  DTIReg
   GDCM
   SimpleITK
   PCRE
@@ -125,6 +126,7 @@ set(${PRIMARY_PROJECT_NAME}_DEPENDENCIES
   qhull
   NIPYPE
   ReferenceAtlas
+  BRAINSTools
 #python
   )
 

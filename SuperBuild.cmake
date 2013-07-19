@@ -127,6 +127,7 @@ set(${PRIMARY_PROJECT_NAME}_DEPENDENCIES
   DTI_Tract_Stat
   DTIReg
   DTIProcess
+  niral_utilities
   BRAINSTools
 #python
   )

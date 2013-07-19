@@ -113,12 +113,10 @@ set(${PRIMARY_PROJECT_NAME}_DEPENDENCIES
   OpenCV
   JPEG
   BatchMake
-  DTIReg
   GDCM
   SimpleITK
   PCRE
   Swig
-
 #  -- This si itself a superbuild, and we are not ready to tackle that yet.  ANTs
 
   Boost
@@ -126,6 +124,8 @@ set(${PRIMARY_PROJECT_NAME}_DEPENDENCIES
   qhull
   NIPYPE
   ReferenceAtlas
+  DTI_Tract_Stat
+  DTIReg
   BRAINSTools
 #python
   )

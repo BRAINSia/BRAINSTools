@@ -1,0 +1,50 @@
+cmake_minimum_required(VERSION 2.8)
+project(QWT)
+
+find_package(Qt4 REQUIRED QtCore QtGui QtSvg)
+include(${QT_USE_FILE})
+
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
+
+set(QWT_UI_HDRS
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/qwt_abstract_slider.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/qwt_analog_clock.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/qwt_compass.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/qwt_counter.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/qwt_dial.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/qwt_dyngrid_layout.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/qwt_knob.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/qwt_legend.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/qwt_legend_item.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/qwt_magnifier.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/qwt_panner.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/qwt_picker.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/qwt_plot.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/qwt_plot_canvas.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/qwt_plot_magnifier.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/qwt_plot_panner.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/qwt_plot_picker.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/qwt_plot_renderer.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/qwt_plot_zoomer.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/qwt_sampling_thread.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/qwt_scale_widget.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/qwt_slider.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/qwt_text_label.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/qwt_thermo.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/qwt_wheel.h
+  )
+
+QT4_WRAP_CPP( UIHeaders ${QWT_UI_HDRS} )
+
+file(GLOB QWT_SOURCE src/*.cpp)
+file(GLOB QWT_HDR src/*.h)
+
+add_library(qwt STATIC ${QWT_SOURCE} ${UIHeaders} )
+target_link_libraries(qwt ${QT_LIBRARIES})
+
+install(TARGETS qwt
+                RUNTIME DESTINATION lib
+                LIBRARY DESTINATION lib
+                ARCHIVE DESTINATION lib)
+
+install(FILES ${QWT_HDR} DESTINATION include)

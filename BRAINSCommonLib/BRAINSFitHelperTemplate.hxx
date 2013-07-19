@@ -1453,7 +1453,6 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
       bulkAffineTransform->SetIdentity();
 
       CompositeTransformType::Pointer initialSyNTransform = CompositeTransformType::New();
-      CompositeTransformType::Pointer outputSyNTransform = CompositeTransformType::New();
 
       if( m_CurrentGenericTransform.IsNotNull() )
         {
@@ -1541,29 +1540,31 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
       if( initialSyNTransform.IsNull() )
         {
         std::cout << "\n**********" << std::endl;
-        std::cout << "ERORR: Udefined intial transform for SyN registration:" << std::endl;
+        std::cout << "ERORR: Undefined intial transform for SyN registration:" << std::endl;
         std::cout << "SyN registration process cannot be done!" << std::endl;
         std::cout << "************" << std::endl;
+        itkGenericExceptionMacro( << "******* Error: Undefined intial transform for SyN registration." << std::endl );
         }
       else
         {
-        outputSyNTransform =
+        CompositeTransformType::Pointer outputSyNTransform =
           simpleSynReg<FixedImageType, MovingImageType>( m_FixedVolume,
-                                                         m_MovingVolume,
-                                                         initialSyNTransform );
-        }
+            m_MovingVolume,
+            initialSyNTransform );
 
-      if( outputSyNTransform.IsNull() )
-        {
-        std::cout << "\n*******Error: the SyN registration has failed.********\n" << std::endl;
-        }
-      else
-        {
-        // CompositeTransformType has derived from itk::Transform, so we can directly assigne that to the
-        // m_CurrentGenericTransform that is a GenericTransformType.
-        m_CurrentGenericTransform = outputSyNTransform;
-        // Now turn of the initiallize code to off
-        localInitializeTransformMode = "Off";
+        if( outputSyNTransform.IsNull() )
+          {
+          std::cout << "\n*******Error: the SyN registration has failed.********\n" << std::endl;
+          itkGenericExceptionMacro( << "******* Error: the SyN registration has failed." << std::endl );
+          }
+        else
+          {
+          // CompositeTransformType has derived from itk::Transform, so we can directly assigne that to the
+          // m_CurrentGenericTransform that is a GenericTransformType.
+          m_CurrentGenericTransform = outputSyNTransform.GetPointer();
+          // Now turn of the initiallize code to off
+          localInitializeTransformMode = "Off";
+          }
         }
 #else
       std::cout << "******* Error: BRAINSFit cannot do the SyN registration ***"

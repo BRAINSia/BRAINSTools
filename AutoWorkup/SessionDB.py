@@ -16,9 +16,13 @@ class SessionDB():
             subject_filter += "'" + curr_subject + "',"
         subject_filter = subject_filter.rstrip(',')  # Remove last ,
         subject_filter += " )"
-        self.MasterQueryFilter = "SELECT * FROM {_tablename} WHERE subj IN {_subjid}".format(
-            _tablename=self.MasterTableName,
-            _subjid=subject_filter)
+        if  subject_list[0] == 'all':
+            self.MasterQueryFilter = "SELECT * FROM {_tablename}".format(
+                _tablename=self.MasterTableName)
+        else:
+            self.MasterQueryFilter = "SELECT * FROM {_tablename} WHERE subj IN {_subjid}".format(
+                _tablename=self.MasterTableName,
+                _subjid=subject_filter)
 
     def _local_openDB(self):
         self.connection = lite.connect(self.dbName)

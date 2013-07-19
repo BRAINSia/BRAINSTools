@@ -411,11 +411,20 @@ BRAINSFitHelper::RunRegistration()
   std::copy(myHelper->GetGenericTransformListPtr()->begin(),
             myHelper->GetGenericTransformListPtr()->end(), this->m_GenericTransformList.begin() );
 
+#if 0 // TODO: ALI this is causing failures in BABC crashing with comments like:
+  0x00002aaaab6e4d29 in itk::CompositeTransform<itk::ImageRegistrationMethodv4<ants::RegistrationHelper<double, 3u>::ImageType, ants::RegistrationHelper<double, 3u>::ImageType, ants::RegistrationHelper<double, 3u>::AffineTransformType>::RealType, 3u>::SetFixedParameters (this=0x2aaad52df090,
+    inputParameters=..., $?5=<value optimized out>, $?6=<value optimized out>)
+    at /Shared/sinapse/sharedopt/20130601/RHEL5/DTIPrep/BRAINSTools-build/ITKv4-install/include/ITK-4.5/itkCompositeTransform.hxx:943
+943         itkExceptionMacro(<< "Input parameter list size is not expected size. "
+
   // Find the final metric value based on the used metric type and returned output transform
   typename TLocalCostMetric::Pointer finalMetric = this->GetCostMetric<TLocalCostMetric>();
   finalMetric->SetTransform(this->m_CurrentGenericTransform);
   finalMetric->Initialize();
   this->m_FinalMetricValue = finalMetric->GetValue( this->m_CurrentGenericTransform->GetParameters() );
+#else
+  this->m_FinalMetricValue = -123.456789;
+#endif
 }
 
 template <class TLocalCostMetric>

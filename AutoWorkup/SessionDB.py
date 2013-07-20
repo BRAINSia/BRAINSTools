@@ -101,6 +101,7 @@ class SessionDB():
             if os.path.exists(self.dbName):
                 os.remove(self.dbName)
             missingFiles.close()
+            print("ABORTING: At least 1 missing file\n"*20)
             sys.exit(-1)
         else:
             missingFiles.write("NO_MISSING_FILES")

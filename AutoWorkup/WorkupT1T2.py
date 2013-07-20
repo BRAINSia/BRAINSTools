@@ -83,7 +83,7 @@ pe.sub(subs,test)
     replace_pat = os.path.join('SUBJECT_TEMPLATES', subjectid, r'AVG_\g<structure>')
     patternList.append((find_pat, replace_pat))
 
-    print "HACK: ", patternList
+    #print "HACK: ", patternList
     return patternList
 
 
@@ -94,7 +94,7 @@ def GenerateOutputPattern(projectid, subjectid, sessionid, DefaultNodeName):
     find_pat = os.path.join(DefaultNodeName)
     replace_pat = os.path.join(projectid, subjectid, sessionid, DefaultNodeName)
     patternList.append((find_pat, replace_pat))
-    print "HACK: ", patternList
+    #print "HACK: ", patternList
     return patternList
 
 
@@ -105,7 +105,7 @@ def GenerateAccumulatorImagesOutputPattern(projectid, subjectid, sessionid):
     find_pat = "POSTERIOR_"
     replace_pat = os.path.join(projectid, subjectid, sessionid) + "/POSTERIOR_"
     patternList.append((find_pat, replace_pat))
-    print "HACK: ", patternList
+    #print "HACK: ", patternList
     return patternList
 
 ## This takes several lists and merges them, but it also removes all empty values from the lists
@@ -128,14 +128,14 @@ t1_averageList = ['t1_average_BRAINSABC.nii.gz', 't1_average_BRAINSABC.nii.gz']
 t2_averageList = ['t2_average_BRAINSABC.nii.gz', 't2_average_BRAINSABC.nii.gz']
 
 """
-    print "t1_averageList", t1_averageList
-    print "t2_averageList", t2_averageList
-    print "pd_averageList", pd_averageList
-    print "fl_averageList", fl_averageList
-    print "outputLabels_averageList", outputLabels_averageList
-    print "$$$$$$$$$$$$$$$$$$$$$$$"
-    print "ListOfPosteriorImagesDictionary", ListOfPosteriorImagesDictionary
-
+    #print "t1_averageList", t1_averageList
+    #print "t2_averageList", t2_averageList
+    #print "pd_averageList", pd_averageList
+    #print "fl_averageList", fl_averageList
+    #print "outputLabels_averageList", outputLabels_averageList
+    #print "$$$$$$$$$$$$$$$$$$$$$$$"
+    #print "ListOfPosteriorImagesDictionary", ListOfPosteriorImagesDictionary
+    #
     ## Initial list with empty dictionaries
     ListOfImagesDictionaries = [dict() for i in range(0, len(t1_averageList))]
 
@@ -163,13 +163,13 @@ t2_averageList = ['t2_average_BRAINSABC.nii.gz', 't2_average_BRAINSABC.nii.gz']
             ListOfImagesDictionaries[list_index]['BRAINMASK'] = outputLabels_averageList[list_index]
         this_subj_posteriors = ListOfPosteriorImagesDictionary[list_index]
         for post_items in this_subj_posteriors.items():
-            print "post_items", post_items
+            #print "post_items", post_items
             ListOfImagesDictionaries[list_index][post_items[0]] = post_items[1]
 
-    print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
-    print "ListOfImagesDictionaries", ListOfImagesDictionaries
-    print "registrationImageTypes", registrationImageTypes
-    print "interpolationMapping", interpolationMapping
+    #print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
+    #print "ListOfImagesDictionaries", ListOfImagesDictionaries
+    #print "registrationImageTypes", registrationImageTypes
+    #print "interpolationMapping", interpolationMapping
     return ListOfImagesDictionaries, registrationImageTypes, interpolationMapping
 
 
@@ -207,7 +207,7 @@ def MakeNewAtlasTemplate(t1_image, deformed_list,
     ## Now clean up the posteriors based on anatomical knowlege.
     ## sometimes the posteriors are not relevant for priors
     ## due to anomolies around the edges.
-    print("\n\n\nALL_FILES: {0}\n\n\n".format(deformed_list))
+    #print("\n\n\nALL_FILES: {0}\n\n\n".format(deformed_list))
     load_images_list = dict()
     for full_pathname in deformed_list:
         base_name = os.path.basename(full_pathname)
@@ -267,7 +267,7 @@ def MakeNewAtlasTemplate(t1_image, deformed_list,
             patternDict[clipped_name] = patternDict[base_name]
             sitk.WriteImage(curr, clipped_name)
             clean_deformed_list[index] = os.path.realpath(clipped_name)
-            print "HACK: ", clean_deformed_list[index]
+            #print "HACK: ", clean_deformed_list[index]
             curr = None
         elif base_name in exteriorPriors:
             ### Make clipped posteriors for brain regions
@@ -277,7 +277,7 @@ def MakeNewAtlasTemplate(t1_image, deformed_list,
             patternDict[clipped_name] = patternDict[base_name]
             sitk.WriteImage(curr, clipped_name)
             clean_deformed_list[index] = os.path.realpath(clipped_name)
-            print "HACK: ", clean_deformed_list[index]
+            #print "HACK: ", clean_deformed_list[index]
             curr = None
         else:
             import sys
@@ -386,14 +386,14 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
             global_AllPDs[sessionid] = ExperimentDatabase.getFilenamesByScantype(sessionid, ['PD-30', 'PD-15'])
             global_AllFLs[sessionid] = ExperimentDatabase.getFilenamesByScantype(sessionid, ['FL-30', 'FL-15'])
             global_AllOthers[sessionid] = ExperimentDatabase.getFilenamesByScantype(sessionid, ['OTHER-30', 'OTHER-15'])
-            print("HACK:  all T1s: {0} {1}".format(global_AllT1s[sessionid], len(global_AllT1s[sessionid])))
-            print("HACK:  all T2s: {0} {1}".format(global_AllT2s[sessionid], len(global_AllT2s[sessionid])))
-            print("HACK:  all PDs: {0} {1}".format(global_AllPDs[sessionid], len(global_AllPDs[sessionid])))
-            print("HACK:  all FLs: {0} {1}".format(global_AllFLs[sessionid], len(global_AllFLs[sessionid])))
-            print("HACK:  all Others: {0} {1}".format(global_AllOthers[sessionid], len(global_AllOthers[sessionid])))
+            #print("HACK:  all T1s: {0} {1}".format(global_AllT1s[sessionid], len(global_AllT1s[sessionid])))
+            #print("HACK:  all T2s: {0} {1}".format(global_AllT2s[sessionid], len(global_AllT2s[sessionid])))
+            #print("HACK:  all PDs: {0} {1}".format(global_AllPDs[sessionid], len(global_AllPDs[sessionid])))
+            #print("HACK:  all FLs: {0} {1}".format(global_AllFLs[sessionid], len(global_AllFLs[sessionid])))
+            #print("HACK:  all Others: {0} {1}".format(global_AllOthers[sessionid], len(global_AllOthers[sessionid])))
 
             projectid = ExperimentDatabase.getProjFromSession(sessionid)
-            print("PROJECT: {0} SUBJECT: {1} SESSION: {2}".format(projectid, subjectid, sessionid))
+            #print("PROJECT: {0} SUBJECT: {1} SESSION: {2}".format(projectid, subjectid, sessionid))
             PHASE_1_subjInfoNode[sessionid] = pe.Node(interface=IdentityInterface(fields=
                                                                                   ['sessionid', 'subjectid', 'projectid',
                                                                                    'allT1s',
@@ -599,7 +599,7 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
             #{
             for sessionid in allSessions:
                 projectid = ExperimentDatabase.getProjFromSession(sessionid)
-                print("PHASE II PROJECT: {0} SUBJECT: {1} SESSION: {2}".format(projectid, subjectid, sessionid))
+                #print("PHASE II PROJECT: {0} SUBJECT: {1} SESSION: {2}".format(projectid, subjectid, sessionid))
                 PHASE_2_subjInfoNode[sessionid] = pe.Node(interface=IdentityInterface(fields=
                                                                                       ['sessionid', 'subjectid', 'projectid',
                                                                                        'allT1s',
@@ -689,7 +689,7 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
                 if len(global_AllT1s[sessionid]) > 0:
                     baw200.connect([(PHASE_2_oneSubjWorkflow[sessionid], TC_DataSink[sessionid], [(('outputspec.t1_average', makeListOfValidImages), 'TissueClassify.@t1_average')])])
                 if len(global_AllT2s[sessionid]) > 0:
-                    print "XXXXYYYY  {0}".format(global_AllT2s[sessionid])
+                    #print "XXXXYYYY  {0}".format(global_AllT2s[sessionid])
                     baw200.connect([(PHASE_2_oneSubjWorkflow[sessionid], TC_DataSink[sessionid], [(('outputspec.t2_average', makeListOfValidImages), 'TissueClassify.@t2_average')])])
                 if len(global_AllPDs[sessionid]) > 0:
                     baw200.connect([(PHASE_2_oneSubjWorkflow[sessionid], TC_DataSink[sessionid], [(('outputspec.pd_average', makeListOfValidImages), 'TissueClassify.@pd_average')])])
@@ -792,16 +792,15 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
                 global_AllPDs[sessionid] = ExperimentDatabase.getFilenamesByScantype(sessionid, ['PD-30', 'PD-15'])
                 global_AllFLs[sessionid] = ExperimentDatabase.getFilenamesByScantype(sessionid, ['FL-30', 'FL-15'])
                 global_AllOthers[sessionid] = ExperimentDatabase.getFilenamesByScantype(sessionid, ['OTHER-30', 'OTHER-15'])
-                print("HACK2:  all T1s: {0} {1}".format(global_AllT1s[sessionid], len(global_AllT1s[sessionid])))
-                print("HACK2:  all T2s: {0} {1}".format(global_AllT2s[sessionid], len(global_AllT2s[sessionid])))
-                print("HACK2:  all PDs: {0} {1}".format(global_AllPDs[sessionid], len(global_AllPDs[sessionid])))
-                print("HACK2:  all FLs: {0} {1}".format(global_AllFLs[sessionid], len(global_AllFLs[sessionid])))
-                print("HACK2:  all Others: {0} {1}".format(global_AllOthers[sessionid], len(global_AllOthers[sessionid])))
+                #print("HACK2:  all T1s: {0} {1}".format(global_AllT1s[sessionid], len(global_AllT1s[sessionid])))
+                #print("HACK2:  all T2s: {0} {1}".format(global_AllT2s[sessionid], len(global_AllT2s[sessionid])))
+                #print("HACK2:  all PDs: {0} {1}".format(global_AllPDs[sessionid], len(global_AllPDs[sessionid])))
+                #print("HACK2:  all FLs: {0} {1}".format(global_AllFLs[sessionid], len(global_AllFLs[sessionid])))
+                #print("HACK2:  all Others: {0} {1}".format(global_AllOthers[sessionid], len(global_AllOthers[sessionid])))
                 if ('SEGMENTATION' in WORKFLOW_COMPONENTS):  # Currently only works with multi-modal_data
                     print("HACK SEGMENTATION IN  WORKFLOW_COMPONENTS {0}".format(WORKFLOW_COMPONENTS))
                 if (len(global_AllT2s[sessionid]) > 0):  # Currently only works with multi-modal_data
                     print("HACK len(global_AllT2s[sessionid]) > 0 : {0}".format(len(global_AllT2s[sessionid])))
-                print("HACK")
                 if ('SEGMENTATION' in WORKFLOW_COMPONENTS):
                     from WorkupT1T2BRAINSCut import CreateBRAINSCutWorkflow
                     t1Only = not(len(global_AllT2s[sessionid]) > 0)
@@ -1021,8 +1020,6 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
                     baw200.connect(AtlasToSubjectantsRegistration[sessionid], 'inverse_composite_transform', Subj2AtlasTransforms_DS[sessionid], 'SubjectToAtlasWarped.@inverse_composite_transform')
                     # baw200.connect(MultiLabelSubjectToAtlasANTsApplyTransforms[sessionid],'output_image',Subj2Atlas_DS[sessionid],'SubjectToAtlasWarped.@multilabel_output_images')
 
-                    print("HACK:  DEBUGGING HERE")
-
                     ### STAPLE continued...
                     ### merge transforms and lables for STAPLE
                     mergeSTAPLEInputNo = 'in' + str(allSessions.index(sessionid) + 1)
@@ -1083,7 +1080,8 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
                     assert isinstance(RunMultiMode, bool)
                     if RunMultiMode:
                         # If multi-modal, then create synthesized image before running
-                        print("HACK  FREESURFER len(global_All3T_T2s) > 0 ")
+                        #print("HACK  FREESURFER len(global_All3T_T2s) > 0 ")
+                        pass;
                     FSCROSS_WF[sessionid] = CreateFreeSurferWorkflow_custom(projectid, subjectid, sessionid,
                                                                             "FSCROSS", CLUSTER_QUEUE,
                                                                             CLUSTER_QUEUE_LONG,

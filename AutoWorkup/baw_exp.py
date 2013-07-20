@@ -14,6 +14,8 @@ import os
 import re
 import sys
 
+import multiprocessing
+import time
 ##############################################################################
 
 
@@ -107,26 +109,25 @@ def setDataSinkRewriteValue(cli, cfg):
     return GLOBAL_DATA_SINK_REWRITE
 
 
-def OpenSubjectDatabase(ExperimentBaseDirectoryCache, input_arguments, mountPrefix, subject_data_file):
+def OpenSubjectDatabase(ExperimentBaseDirectoryCache, single_subject, mountPrefix, subject_data_file):
     import SessionDB
 
     subjectDatabaseFile = os.path.join(ExperimentBaseDirectoryCache, 'InternalWorkflowSubjectDB.db')
-    subject_list = input_arguments.subject.split(',')
     ## TODO:  Only make DB if db is older than subject_data_file.
     if (not os.path.exists(subjectDatabaseFile)) or (
             os.path.getmtime(subjectDatabaseFile) < os.path.getmtime(subject_data_file)):
-        ExperimentDatabase = SessionDB.SessionDB(subjectDatabaseFile, subject_list)
+        ExperimentDatabase = SessionDB.SessionDB(subjectDatabaseFile, single_subject)
         ExperimentDatabase.MakeNewDB(subject_data_file, mountPrefix)
         ExperimentDatabase = None
-        ExperimentDatabase = SessionDB.SessionDB(subjectDatabaseFile, subject_list)
+        ExperimentDatabase = SessionDB.SessionDB(subjectDatabaseFile, single_subject)
     else:
-        print("Using cached database, {0}".format(subjectDatabaseFile))
-        ExperimentDatabase = SessionDB.SessionDB(subjectDatabaseFile, subject_list)
-    print "ENTIRE DB for {_subjid}: ".format(_subjid=ExperimentDatabase.getSubjectFilter())
-    print "^^^^^^^^^^^^^"
-    for row in ExperimentDatabase.getEverything():
-        print row
-    print "^^^^^^^^^^^^^"
+        print("Single_subject {0}: Using cached database, {1}".format(single_subject,subjectDatabaseFile))
+        ExperimentDatabase = SessionDB.SessionDB(subjectDatabaseFile, single_subject)
+    #print "ENTIRE DB for {_subjid}: ".format(_subjid=ExperimentDatabase.getSubjectFilter())
+    #print "^^^^^^^^^^^^^"
+    #for row in ExperimentDatabase.getEverything():
+    #    print row
+    #print "^^^^^^^^^^^^^"
     return ExperimentDatabase
 
 def DoSingleSubjectProcessing(sp_args):
@@ -134,9 +135,14 @@ def DoSingleSubjectProcessing(sp_args):
     CACHE_ATLASPATH, CACHE_BCDMODELPATH, CLUSTER_QUEUE, CLUSTER_QUEUE_LONG, \
          ExperimentBaseDirectoryCache, ExperimentBaseDirectoryResults, subject_data_file, \
           GLOBAL_DATA_SINK_REWRITE, JOB_SCRIPT, WORKFLOW_COMPONENTS, \
-          input_arguments, mountPrefix,subjectid = sp_args
+          input_arguments, mountPrefix,start_time,subjectid = sp_args
 
-    ExperimentDatabase = OpenSubjectDatabase(ExperimentBaseDirectoryCache, input_arguments, mountPrefix,
+    while time.time() < start_time :
+        time.sleep(3)
+        print "Delaying start for {0}".format(subjectid)
+
+    list_with_one_subject = [ subjectid ]
+    ExperimentDatabase = OpenSubjectDatabase(ExperimentBaseDirectoryCache, list_with_one_subject, mountPrefix,
                                              subject_data_file)
 
     if input_arguments.doshort:
@@ -226,7 +232,10 @@ def DoSingleSubjectProcessing(sp_args):
             sys.exit(-1)
     except Exception, err:
         print("ERROR: EXCEPTION CAUGHT IN RUNNING SUBJECT {0}".format(subjectid))
-        raise err
+        print(err.strerror)
+        print(err.value)
+        return False
+    return True
 
 
 
@@ -382,7 +391,6 @@ def MasterProcessingController(argv=None):
     CLUSTER_QUEUE_LONG = expConfig.get(input_arguments.processingEnvironment, 'CLUSTER_QUEUE_LONG')
 
     ## Setup environment for CPU load balancing of ITK based programs.
-    import multiprocessing
     total_CPUS = multiprocessing.cpu_count()
     if input_arguments.wfrun == 'helium_all.q':
         pass
@@ -404,8 +412,12 @@ def MasterProcessingController(argv=None):
         sys.exit(-1)
 
     print "Configuring Pipeline"
-    ExperimentDatabase = OpenSubjectDatabase(ExperimentBaseDirectoryCache, input_arguments, mountPrefix,
-                                             subject_data_file)
+    ## Ensure that entire db is built and cached before parallel section starts.
+    _ignoreme = OpenSubjectDatabase(ExperimentBaseDirectoryCache, [ "all" ], mountPrefix, subject_data_file)
+    to_do_subjects = input_arguments.subject.split(',')
+    if to_do_subjects[0] == "all":
+        to_do_subjects=_ignoreme.getAllSubjects()
+    _ignoreme = None
 
     ## Create the shell wrapper script for ensuring that all jobs running on remote hosts from SGE
     #  have the same environment as the job submission host.
@@ -414,18 +426,23 @@ def MasterProcessingController(argv=None):
 
     ## Make a list of all the arguments to be processed
     sp_args_list = list()
-    for subjectid in ExperimentDatabase.getAllSubjects():
-
+    start_time=time.time()
+    delay=0
+    for subjectid in to_do_subjects:
+        delay = delay+5
         sp_args=(CACHE_ATLASPATH, CACHE_BCDMODELPATH, CLUSTER_QUEUE, CLUSTER_QUEUE_LONG,
                                   ExperimentBaseDirectoryCache, ExperimentBaseDirectoryResults, subject_data_file,
                                   GLOBAL_DATA_SINK_REWRITE, JOB_SCRIPT, WORKFLOW_COMPONENTS, input_arguments,
-                                  mountPrefix, subjectid)
+                                  mountPrefix, start_time+delay, subjectid)
         sp_args_list.append(sp_args)
-
     ## Make a pool of workers to submit simultaneously
     from multiprocessing import Pool
-    myPool = Pool(processes=30)
-    all_results=myPool.map(DoSingleSubjectProcessing,sp_args_list)
+    myPool = Pool(processes=127,maxtasksperchild=10)
+    all_results=myPool.map_async(DoSingleSubjectProcessing,sp_args_list).get(1e100)
+
+    for indx in range(0,len(sp_args_list)):
+        if all_results[indx] == False:
+                print "FAILED for {0}".format(ap_args_list[indx][-1])
 
     print("THIS RUN OF BAW FOR SUBJS {0} HAS COMPLETED".format(ExperimentDatabase.getAllSubjects()))
     return 0

@@ -138,7 +138,7 @@ def DoSingleSubjectProcessing(sp_args):
           input_arguments, mountPrefix,start_time,subjectid = sp_args
 
     while time.time() < start_time :
-        time.sleep(3)
+        time.sleep(start_time-time.time()+1)
         print "Delaying start for {0}".format(subjectid)
 
     list_with_one_subject = [ subjectid ]
@@ -232,8 +232,7 @@ def DoSingleSubjectProcessing(sp_args):
             sys.exit(-1)
     except Exception, err:
         print("ERROR: EXCEPTION CAUGHT IN RUNNING SUBJECT {0}".format(subjectid))
-        print(err.strerror)
-        print(err.value)
+        print(err)
         return False
     return True
 
@@ -442,9 +441,9 @@ def MasterProcessingController(argv=None):
 
     for indx in range(0,len(sp_args_list)):
         if all_results[indx] == False:
-                print "FAILED for {0}".format(ap_args_list[indx][-1])
+                print "FAILED for {0}".format(sp_args_list[indx][-1])
 
-    print("THIS RUN OF BAW FOR SUBJS {0} HAS COMPLETED".format(ExperimentDatabase.getAllSubjects()))
+    print("THIS RUN OF BAW FOR SUBJS {0} HAS COMPLETED".format(to_do_subjects))
     return 0
 
 if __name__ == "__main__":

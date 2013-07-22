@@ -428,7 +428,7 @@ def MasterProcessingController(argv=None):
     start_time=time.time()
     delay=0
     for subjectid in to_do_subjects:
-        delay = delay+5
+        delay = delay+10
         sp_args=(CACHE_ATLASPATH, CACHE_BCDMODELPATH, CLUSTER_QUEUE, CLUSTER_QUEUE_LONG,
                                   ExperimentBaseDirectoryCache, ExperimentBaseDirectoryResults, subject_data_file,
                                   GLOBAL_DATA_SINK_REWRITE, JOB_SCRIPT, WORKFLOW_COMPONENTS, input_arguments,
@@ -436,7 +436,7 @@ def MasterProcessingController(argv=None):
         sp_args_list.append(sp_args)
     ## Make a pool of workers to submit simultaneously
     from multiprocessing import Pool
-    myPool = Pool(processes=127,maxtasksperchild=10)
+    myPool = Pool(processes=64,maxtasksperchild=10)
     all_results=myPool.map_async(DoSingleSubjectProcessing,sp_args_list).get(1e100)
 
     for indx in range(0,len(sp_args_list)):

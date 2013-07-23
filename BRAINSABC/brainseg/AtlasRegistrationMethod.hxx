@@ -131,32 +131,16 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
 {
 
   muLogMacro(<< "Register Intra subject images" << std::endl);
-  int i = 0;
-  bool first_image(true);
-  for(MapOfFloatImageVectors::iterator mapIt = this->m_IntraSubjectOriginalImageList.begin();
-      mapIt != this->m_IntraSubjectOriginalImageList.end(); ++mapIt,++i)
-    {
-    FloatImageVector::iterator imIt = mapIt->second.begin();
-    FloatImageVector::iterator intraImIt = this->m_IntraSubjectOriginalImageList[mapIt->first].begin();
-    StringVector::iterator isNamesIt = this->m_IntraSubjectTransformFileNames[mapIt->first].begin();
-    // following the original BRAINSABC code with a simple list of
-    // input images, this registers every image to the first. But
-    // there neeeds to be a first registration, even if it is never used
-    if(first_image)
-      {
-      first_image = false;
-      this->m_IntraSubjectTransforms[mapIt->first].push_back(MakeRigidIdentity());
-      //
-      // if the first image is the only image of that modality, go to
-      // the next modality.
-      if(mapIt->second.size() == 1)
-        {
-        continue;
-        }
-      ++imIt; ++intraImIt; ++isNamesIt;
-      }
 
-    for(;imIt != mapIt->second.end(); ++imIt, ++isNamesIt, ++intraImIt, ++i)
+  int i = 0;
+  for(MapOfFloatImageVectors::iterator mapOfModalImageListsIt = this->m_IntraSubjectOriginalImageList.begin();
+      mapOfModalImageListsIt != this->m_IntraSubjectOriginalImageList.end();
+      ++mapOfModalImageListsIt)
+    {
+    FloatImageVector::iterator currModeImageListIt = mapOfModalImageListsIt->second.begin();
+    FloatImageVector::iterator intraImIt = this->m_IntraSubjectOriginalImageList[mapOfModalImageListsIt->first].begin();
+    StringVector::iterator isNamesIt = this->m_IntraSubjectTransformFileNames[mapOfModalImageListsIt->first].begin();
+    while(currModeImageListIt != mapOfModalImageListsIt->second.end() )
       {
       if( itksys::SystemTools::FileExists( (*isNamesIt).c_str() ) )
         {
@@ -164,7 +148,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
           {
           muLogMacro(<< "Reading transform from file: "
                      << (*isNamesIt).c_str() << "." << std::endl);
-          m_IntraSubjectTransforms[mapIt->first].push_back(itk::ReadTransformFromDisk((*isNamesIt).c_str()));
+          m_IntraSubjectTransforms[mapOfModalImageListsIt->first].push_back(itk::ReadTransformFromDisk((*isNamesIt).c_str()));
           }
         catch( ... )
           {
@@ -174,8 +158,13 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
         }
       else if( m_ImageLinearTransformChoice == "Identity" )
         {
-        muLogMacro(<< "Registering (Identity) image " << i + 1 << " to first image." << std::endl);
-        m_IntraSubjectTransforms[mapIt->first].push_back(MakeRigidIdentity());
+        muLogMacro(<< "Registering (Identity) image to key image." << std::endl);
+        m_IntraSubjectTransforms[mapOfModalImageListsIt->first].push_back(MakeRigidIdentity());
+        }
+      else if ( (*intraImIt).GetPointer() == this->m_KeySubjectImage.GetPointer() )
+        {
+        muLogMacro(<< "Key image registered to itself with Identity transform." << std::endl);
+        m_IntraSubjectTransforms[mapOfModalImageListsIt->first].push_back(MakeRigidIdentity());
         }
       else
         {
@@ -194,10 +183,10 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
         intraSubjectRegistrationHelper->SetReproportionScale(1.0);
         intraSubjectRegistrationHelper->SetSkewScale(1.0);
         // Register each intrasubject image mode to first image
-        intraSubjectRegistrationHelper->SetFixedVolume(this->GetFirstIntraSubjectOriginalImage());
+        intraSubjectRegistrationHelper->SetFixedVolume(this->GetModifiableKeySubjectImage() );
         // TODO: Find way to turn on histogram equalization for same mode images
         const int dilateSize = 15;
-        intraSubjectRegistrationHelper->SetMovingVolume((*intraImIt));
+        intraSubjectRegistrationHelper->SetMovingVolume((*intraImIt).GetPointer());
         muLogMacro( << "Generating MovingImage Mask (Intrasubject  " << i << ")" <<  std::endl );
         typedef itk::BRAINSROIAutoImageFilter<InternalImageType, itk::Image<unsigned char, 3> > ROIAutoType;
         typename ROIAutoType::Pointer  ROIFilter = ROIAutoType::New();
@@ -230,7 +219,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
           muLogMacro( << "Generating FixedImage Mask (Intrasubject)" <<  std::endl );
           typedef itk::BRAINSROIAutoImageFilter<InternalImageType, itk::Image<unsigned char, 3> > ROIAutoType;
           ROIFilter = ROIAutoType::New();
-          ROIFilter->SetInput(this->GetFirstIntraSubjectOriginalImage());
+          ROIFilter->SetInput(this->GetModifiableKeySubjectImage());
           ROIFilter->SetDilateSize(dilateSize); // Only use a very small non-tissue
           // region outside of head during
           // initial runnings
@@ -351,12 +340,16 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
         muLogMacro( << "Registration tool " << actualIterations << " iterations." << std::endl );
         GenericTransformType::Pointer p =
           intraSubjectRegistrationHelper->GetCurrentGenericTransform();
-        this->m_IntraSubjectTransforms[mapIt->first].push_back(p);
+        this->m_IntraSubjectTransforms[mapOfModalImageListsIt->first].push_back(p);
         // Write out intermodal matricies
         muLogMacro(<< "Writing " << (*isNamesIt) << "." << std::endl);
         WriteTransformToDisk(p, (*isNamesIt));
         }
+      ++currModeImageListIt;
+      ++isNamesIt;
+      ++intraImIt;
       }
+    i++;
     }
 }
 
@@ -459,7 +452,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
     atlasToSubjectRegistrationHelper->SetCurrentGenericTransform(m_AtlasToSubjectTransform);
     // Register all atlas images to first image
     // Set the fixed and moving image
-    atlasToSubjectRegistrationHelper->SetFixedVolume(this->GetFirstIntraSubjectOriginalImage());
+    atlasToSubjectRegistrationHelper->SetFixedVolume(this->GetModifiableKeySubjectImage());
     atlasToSubjectRegistrationHelper->SetMovingVolume(this->GetFirstAtlasOriginalImage());
     muLogMacro( << "Generating MovingImage Mask (Atlas 0)" <<   std::endl );
     typedef itk::BRAINSROIAutoImageFilter<InternalImageType, itk::Image<unsigned char, 3> > ROIAutoType;
@@ -490,7 +483,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
     muLogMacro( << "Generating FixedImage Mask (Atlas)" <<   std::endl );
     typedef itk::BRAINSROIAutoImageFilter<InternalImageType, itk::Image<unsigned char, 3> > ROIAutoType;
     ROIFilter = ROIAutoType::New();
-    ROIFilter->SetInput(this->GetFirstIntraSubjectOriginalImage());
+    ROIFilter->SetInput(this->GetModifiableKeySubjectImage());
     ROIFilter->SetDilateSize(1);   // Only use a very small non-tissue
     // region outside of head during
     // initial runnings

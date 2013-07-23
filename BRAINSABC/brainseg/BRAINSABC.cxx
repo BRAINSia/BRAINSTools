@@ -702,6 +702,7 @@ int main(int argc, char * *argv)
 
   typedef itk::ImageFileReader<FloatImageType> ReaderType;
   typedef ReaderType::Pointer                  ReaderPointer;
+  FloatImageType::Pointer KeyImageFirstRead=NULL;
 
   AtlasRegType::MapOfStringVectors intraSubjectTransformFileNames;
   unsigned int i = 0;
@@ -757,9 +758,12 @@ int main(int argc, char * *argv)
         }
       FloatImagePointer denoisedImage =
         DenoiseFiltering<FloatImageType>(curImage, filterMethod, filterIteration,
-                                         localFilterTimeStep,
-                                         unused_gridSize);
+                                         localFilterTimeStep, unused_gridSize);
       intraSubjectNoiseRemovedImageList[typeIt->first].push_back(denoisedImage);
+      if ( KeyImageFirstRead.IsNull() ) //The very first image nees to be the key image.
+        {
+        KeyImageFirstRead=denoisedImage;
+        }
       if( debuglevel > 1 )
         {
         // DEBUG:  This code is for debugging purposes only;
@@ -783,6 +787,7 @@ int main(int argc, char * *argv)
       intraSubjectTransformFileNames[typeIt->first].push_back(intraSubjectTransformFileName);
       }
     }
+  atlasreg->SetKeySubjectImage(KeyImageFirstRead);
   atlasreg->SetIntraSubjectOriginalImageList(intraSubjectNoiseRemovedImageList);
   atlasreg->SetIntraSubjectTransformFileNames(intraSubjectTransformFileNames);
   }

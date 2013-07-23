@@ -1605,8 +1605,6 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
   unsigned int ichan = 0;
   for(typename MapOfInputImageVectors::const_iterator mapIt = this->m_InputImages.begin();
       mapIt != this->m_InputImages.end(); ++mapIt)
-    for(typename InputImageVector::const_iterator imIt = mapIt->second.begin();
-        imIt != mapIt->second.end(); ++imIt)
       {
       EMIterationTable.add(0, ichan + 2, mapIt->first);
       ++ichan;

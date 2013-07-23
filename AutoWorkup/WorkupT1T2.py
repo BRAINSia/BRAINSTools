@@ -220,8 +220,8 @@ def MakeNewAtlasTemplate(t1_image, deformed_list,
     brainmask_dilatedBy5 = sitk.DilateObjectMorphology(binmask, 5)
     brainmask_dilatedBy5 = sitk.Cast(brainmask_dilatedBy5, sitk.sitkFloat32)  # Convert to Float32 for multiply
 
-    brainmask_erodedBy5 = sitk.ErodeObjectMorphology(binmask, 5)
-    brainmask_erodedBy5 = sitk.Cast(brainmask_erodedBy5, sitk.sitkFloat32)  # Convert to Float32 for multiply
+    inv_brainmask_erodedBy5 = 1 - sitk.ErodeObjectMorphology(binmask, 5)
+    inv_brainmask_erodedBy5 = sitk.Cast(inv_brainmask_erodedBy5, sitk.sitkFloat32)  # Convert to Float32 for multiply
     ## Now clip the interior brain mask with brainmask_dilatedBy5
     ## Now clip the interior brain mask with brainmask_dilatedBy5
     interiorPriors = [
@@ -272,7 +272,7 @@ def MakeNewAtlasTemplate(t1_image, deformed_list,
         elif base_name in exteriorPriors:
             ### Make clipped posteriors for brain regions
             curr = sitk.Cast(sitk.ReadImage(full_pathname), sitk.sitkFloat32)
-            curr = curr * brainmask_erodedBy5
+            curr = curr * inv_brainmask_erodedBy5
             clipped_name = 'CLIPPED_' + base_name
             patternDict[clipped_name] = patternDict[base_name]
             sitk.WriteImage(curr, clipped_name)
@@ -286,7 +286,7 @@ def MakeNewAtlasTemplate(t1_image, deformed_list,
 
     binmask = None
     brainmask_dilatedBy5 = None
-    brainmask_erodedBy5 = None
+    inv_brainmask_erodedBy5 = None
 
     for full_pathname in clean_deformed_list:
         base_name = os.path.basename(full_pathname)

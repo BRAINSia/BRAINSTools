@@ -131,7 +131,9 @@ set(${PRIMARY_PROJECT_NAME}_DEPENDENCIES
   BRAINSTools
   DTIPrep
   teem
-#python
+  SlicerJointRicianAnisotropicLMMSEFilter
+  UKF
+  #python
   )
 
 if(BUILD_STYLE_UTILS)

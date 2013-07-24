@@ -90,7 +90,6 @@ if(NOT DEFINED ${extProjName}_SOURCE_DIR)
       -DUSE_BRAINSCut:BOOL=OFF
       -DUSE_BRAINSDemonWarp:BOOL=OFF
       -DUSE_BRAINSFit:BOOL=ON
-      -DUSE_BRAINSFitEZ:BOOL=OFF
       -DUSE_BRAINSImageConvert:BOOL=OFF
       -DUSE_BRAINSInitializedControlPoints:BOOL=OFF
       -DUSE_BRAINSLandmarkInitializer:BOOL=OFF

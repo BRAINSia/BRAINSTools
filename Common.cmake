@@ -23,7 +23,6 @@ endif()
 # Build option(s)
 #-----------------------------------------------------------------------------
 option(USE_BRAINSFit                      "Build BRAINSFit"                      ON)
-option(USE_BRAINSFitEZ                    "Build BRAINSFitEZ"                    ON)
 option(USE_BRAINSSnapShotWriter           "Build BRAINSSnapShotWriter"           ON)
 if( NOT USE_ANTs )
 option(USE_ANTs                           "Build ANTs"                           ON)

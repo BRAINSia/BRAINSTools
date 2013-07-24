@@ -92,16 +92,6 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
   m_AtlasToSubjectTransform = MakeRigidIdentity();
   // Clear previous transforms
   m_IntraSubjectTransforms.clear();
-  for(MapOfFloatImageVectors::iterator mapIt = this->m_IntraSubjectOriginalImageList.begin();
-      mapIt != this->m_IntraSubjectOriginalImageList.end(); ++mapIt)
-    {
-    for(FloatImageVector::iterator imIt = mapIt->second.begin();
-        imIt != mapIt->second.end(); ++imIt)
-      { // Also append identity matrix for each image
-      GenericTransformType::Pointer transform = MakeRigidIdentity();
-      m_IntraSubjectTransforms[mapIt->first].push_back(transform);
-      }
-    }
   m_DoneRegistration = false;
   m_RegistrationUpdateNeeded = true;
 }
@@ -140,6 +130,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
     FloatImageVector::iterator currModeImageListIt = mapOfModalImageListsIt->second.begin();
     FloatImageVector::iterator intraImIt = this->m_IntraSubjectOriginalImageList[mapOfModalImageListsIt->first].begin();
     StringVector::iterator isNamesIt = this->m_IntraSubjectTransformFileNames[mapOfModalImageListsIt->first].begin();
+    this->m_IntraSubjectTransforms[mapOfModalImageListsIt->first].clear(); //Ensure that pushing onto clean list
     while(currModeImageListIt != mapOfModalImageListsIt->second.end() )
       {
       if( itksys::SystemTools::FileExists( (*isNamesIt).c_str() ) )

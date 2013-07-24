@@ -125,7 +125,7 @@ public:
     return m_AtlasToSubjectTransform;
   }
 
-  MapOfTransformLists  GetIntraSubjectTransforms()
+  const MapOfTransformLists & GetIntraSubjectTransforms() const
   {
     return m_IntraSubjectTransforms;
   }

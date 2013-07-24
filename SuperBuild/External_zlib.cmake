@@ -95,6 +95,8 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
   else()
     set(SLICER_ZLIB_LIBRARY     ${${extProjName}_DIR}/lib/libzlib.a )
   endif()
+  set(ZLIB_INCLUDE_DIR "${SLICER_ZLIB_INCLUDE_DIR}")
+  set(ZLIB_LIBRARY "${SLICER_ZLIB_LIBRARY}")
 else()
   if(${USE_SYSTEM_${extProjName}})
     find_package(${extProjName} ${${extProjName}_REQUIRED_VERSION} REQUIRED)

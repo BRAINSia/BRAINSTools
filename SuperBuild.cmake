@@ -130,6 +130,7 @@ set(${PRIMARY_PROJECT_NAME}_DEPENDENCIES
   niral_utilities
   BRAINSTools
   DTIPrep
+  teem
 #python
   )
 

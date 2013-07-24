@@ -220,8 +220,8 @@ def MakeNewAtlasTemplate(t1_image, deformed_list,
     brainmask_dilatedBy5 = sitk.DilateObjectMorphology(binmask, 5)
     brainmask_dilatedBy5 = sitk.Cast(brainmask_dilatedBy5, sitk.sitkFloat32)  # Convert to Float32 for multiply
 
-    brainmask_erodedBy5 = sitk.ErodeObjectMorphology(binmask, 5)
-    brainmask_erodedBy5 = sitk.Cast(brainmask_erodedBy5, sitk.sitkFloat32)  # Convert to Float32 for multiply
+    inv_brainmask_erodedBy5 = 1 - sitk.ErodeObjectMorphology(binmask, 5)
+    inv_brainmask_erodedBy5 = sitk.Cast(inv_brainmask_erodedBy5, sitk.sitkFloat32)  # Convert to Float32 for multiply
     ## Now clip the interior brain mask with brainmask_dilatedBy5
     ## Now clip the interior brain mask with brainmask_dilatedBy5
     interiorPriors = [
@@ -272,7 +272,7 @@ def MakeNewAtlasTemplate(t1_image, deformed_list,
         elif base_name in exteriorPriors:
             ### Make clipped posteriors for brain regions
             curr = sitk.Cast(sitk.ReadImage(full_pathname), sitk.sitkFloat32)
-            curr = curr * brainmask_erodedBy5
+            curr = curr * inv_brainmask_erodedBy5
             clipped_name = 'CLIPPED_' + base_name
             patternDict[clipped_name] = patternDict[base_name]
             sitk.WriteImage(curr, clipped_name)
@@ -286,7 +286,7 @@ def MakeNewAtlasTemplate(t1_image, deformed_list,
 
     binmask = None
     brainmask_dilatedBy5 = None
-    brainmask_erodedBy5 = None
+    inv_brainmask_erodedBy5 = None
 
     for full_pathname in clean_deformed_list:
         base_name = os.path.basename(full_pathname)
@@ -501,7 +501,7 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
             buildTemplateIteration1 = BAWantsRegistrationTemplateBuildSingleIterationWF('iteration01')
             ## TODO:  Change these parameters
             BeginANTS_iter1 = buildTemplateIteration1.get_node("BeginANTS")
-            BeginANTS_iter1.plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp1 4-8 -l mem_free=9000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE_LONG), 'overwrite': True}
+            BeginANTS_iter1.plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp1 4-64 -l mem_free=9000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE_LONG), 'overwrite': True}
             wimtdeformed_iter1 = buildTemplateIteration1.get_node("wimtdeformed")
             wimtdeformed_iter1.plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp1 1-2 -l mem_free=2000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE), 'overwrite': True}
             AvgAffineTransform_iter1 = buildTemplateIteration1.get_node("AvgAffineTransform")
@@ -518,7 +518,7 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
             buildTemplateIteration2 = BAWantsRegistrationTemplateBuildSingleIterationWF('Iteration02')
             ## TODO:  Change these parameters
             BeginANTS_iter2 = buildTemplateIteration2.get_node("BeginANTS")
-            BeginANTS_iter2.plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp1 4-8 -l mem_free=9000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE_LONG), 'overwrite': True}
+            BeginANTS_iter2.plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp1 4-64 -l mem_free=9000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE_LONG), 'overwrite': True}
             wimtdeformed_iter2 = buildTemplateIteration2.get_node("wimtdeformed")
             wimtdeformed_iter2.plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp1 1-2 -l mem_free=2000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE), 'overwrite': True}
             AvgAffineTransform_iter2 = buildTemplateIteration2.get_node("AvgAffineTransform")
@@ -779,7 +779,7 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
                     AtlasToSubjectantsRegistration[sessionid].inputs.collapse_linear_transforms_to_fixed_image_header = False
                     AtlasToSubjectantsRegistration[sessionid].inputs.output_warped_image = 'atlas2subject.nii.gz'
                     AtlasToSubjectantsRegistration[sessionid].inputs.output_inverse_warped_image = 'subject2atlas.nii.gz'
-                    AtlasToSubjectantsRegistration[sessionid].plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp1 4-8 -l mem_free=9000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE_LONG), 'overwrite': True}
+                    AtlasToSubjectantsRegistration[sessionid].plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp1 4-64 -l mem_free=9000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE_LONG), 'overwrite': True}
 
                     baw200.connect(PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.t1_average', AtlasToSubjectantsRegistration[sessionid], 'fixed_image')
                     baw200.connect(BAtlas[subjectid], 'template_t1', AtlasToSubjectantsRegistration[sessionid], 'moving_image')

@@ -99,10 +99,6 @@ public:
   itkGetConstMacro(OutputDebugDir, std::string);
   itkSetMacro(OutputDebugDir, std::string);
 
-  InternalImagePointer GetFirstIntraSubjectOriginalImage()
-    {
-      return GetMapVectorFirstElement(this->m_IntraSubjectOriginalImageList);
-    }
   InternalImagePointer GetFirstAtlasOriginalImage()
     {
       return GetMapVectorFirstElement(this->m_AtlasOriginalImageList);
@@ -129,7 +125,7 @@ public:
     return m_AtlasToSubjectTransform;
   }
 
-  MapOfTransformLists  GetIntraSubjectTransforms()
+  const MapOfTransformLists & GetIntraSubjectTransforms() const
   {
     return m_IntraSubjectTransforms;
   }
@@ -140,6 +136,10 @@ public:
 
   itkGetMacro(UseNonLinearInterpolation, bool);
   itkSetMacro(UseNonLinearInterpolation, bool);
+
+  itkSetObjectMacro(KeySubjectImage,InternalImageType);
+  //itkGetConstObjectMacro(KeySubjectImage,InternalImageType);
+  itkGetModifiableObjectMacro(KeySubjectImage,InternalImageType);
 
   void SetAtlasLinearTransformChoice(const std::string & c)
   {
@@ -194,12 +194,13 @@ private:
   ImageMaskPointer m_InputSpatialObjectTissueRegion;
 
   std::vector<unsigned int> m_WarpGrid;
-  MapOfStringVectors          m_IntraSubjectTransformFileNames;
+  MapOfStringVectors        m_IntraSubjectTransformFileNames;
   std::string               m_AtlasToSubjectTransformFileName;
 
   GenericTransformType::Pointer m_AtlasToSubjectTransform;
   GenericTransformType::Pointer m_AtlasToSubjectInitialTransform;
   MapOfTransformLists           m_IntraSubjectTransforms;
+  InternalImagePointer          m_KeySubjectImage;//The image to be used for intra-subject registration
 
   bool m_UseNonLinearInterpolation;
   bool m_DoneRegistration;

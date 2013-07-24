@@ -125,41 +125,29 @@ PrintMapOfImageVectors(const TMap &map)
 //
 AtlasRegType::MapOfFloatImageVectors
 ResampleImageList(const std::string & resamplerInterpolatorType,
-                  AtlasRegType::MapOfFloatImageVectors inputImageList,
-                  AtlasRegType::MapOfTransformLists & intraSubjectTransforms)
+                  AtlasRegType::MapOfFloatImageVectors inputImageMap,
+                  AtlasRegType::MapOfTransformLists & intraSubjectTransforms,
+                  FloatImageType::ConstPointer KeyImageFirstRead)
 {
   // Clear image list
-  AtlasRegType::MapOfFloatImageVectors outputImageList;
+  AtlasRegType::MapOfFloatImageVectors outputImageMap;
 
-  // first image is the paradigm
-  AtlasRegType::InternalImagePointer firstImage =
-    GetMapVectorFirstElement(inputImageList);
-
-  const FloatImageType::PixelType outsideFOVCode
-    = vnl_huge_val( static_cast<FloatImageType::PixelType>( 1.0f ) );
-  PrintMapOfImageVectors(inputImageList);
+  const FloatImageType::PixelType outsideFOVCode = vnl_huge_val( static_cast<FloatImageType::PixelType>( 1.0f ) );
+  PrintMapOfImageVectors(inputImageMap);
   // Resample the other images
-  for(AtlasRegType::MapOfFloatImageVectors::iterator mapIt = inputImageList.begin();
-      mapIt != inputImageList.end(); ++mapIt)
+  for(AtlasRegType::MapOfFloatImageVectors::iterator inputImageMapIter = inputImageMap.begin();
+      inputImageMapIter != inputImageMap.end(); ++inputImageMapIter)
     {
-    AtlasRegType::TransformList::iterator xfrmIt = intraSubjectTransforms[mapIt->first].begin();
-    AtlasRegType::FloatImageVector::iterator imIt = mapIt->second.begin();
+    AtlasRegType::FloatImageVector::iterator currImageIter = inputImageMapIter->second.begin();
     unsigned int i(0);
-    if(mapIt == inputImageList.begin())
+    AtlasRegType::TransformList::iterator xfrmIt = intraSubjectTransforms[inputImageMapIter->first].begin();
+    while( currImageIter != inputImageMapIter->second.end() )
       {
-      outputImageList[mapIt->first].push_back(*imIt);
-      // skip first image
-      ++imIt;
-      ++xfrmIt;
-      ++i;
-      }
-    for(; imIt != mapIt->second.end(); ++imIt, ++i)
-      {
-      muLogMacro(<< "Resampling input image " << mapIt->first << i << "." << std::endl);
+      muLogMacro(<< "Resampling input image " << inputImageMapIter->first << " #" << i << "." << std::endl);
       typedef itk::ResampleImageFilter<FloatImageType, FloatImageType> ResampleType;
       typedef ResampleType::Pointer                                    ResamplePointer;
       ResamplePointer resampler = ResampleType::New();
-      resampler->SetInput((*imIt));
+      resampler->SetInput((*currImageIter));
       resampler->SetTransform((*xfrmIt));
 
       if( resamplerInterpolatorType == "BSpline" )
@@ -201,7 +189,7 @@ ResampleImageList(const std::string & resamplerInterpolatorType,
         }
 
       resampler->SetDefaultPixelValue(outsideFOVCode);
-      resampler->SetOutputParametersFromImage(firstImage);
+      resampler->SetOutputParametersFromImage(KeyImageFirstRead);
       resampler->Update();
 
       // Zero the mask region outside FOV and also the intensities with
@@ -212,17 +200,19 @@ ResampleImageList(const std::string & resamplerInterpolatorType,
       FloatImageType::Pointer tmp = resampler->GetOutput();
       InternalIteratorType    tmpIt( tmp, tmp->GetLargestPossibleRegion() );
 
+      //TODO:  This code below with masking does not make sense.
+      //        intraSubjectFOVIntersectionMask does not seem to do anything.
       // HACK:  We can probably remove the mask generation from here.
       // The FOV mask, regions where intensities in all channels do not
       // match FOV code
       ByteImageType::Pointer intraSubjectFOVIntersectionMask = ByteImageType::New();
-      intraSubjectFOVIntersectionMask->CopyInformation(firstImage);
-      intraSubjectFOVIntersectionMask->SetRegions( firstImage->GetLargestPossibleRegion() );
+      intraSubjectFOVIntersectionMask->CopyInformation(KeyImageFirstRead);
+      intraSubjectFOVIntersectionMask->SetRegions( KeyImageFirstRead->GetLargestPossibleRegion() );
       intraSubjectFOVIntersectionMask->Allocate();
       intraSubjectFOVIntersectionMask->FillBuffer(1);
       typedef itk::ImageRegionIterator<ByteImageType> MaskIteratorType;
       MaskIteratorType maskIt( intraSubjectFOVIntersectionMask,
-                               intraSubjectFOVIntersectionMask->GetLargestPossibleRegion() );
+        intraSubjectFOVIntersectionMask->GetLargestPossibleRegion() );
       maskIt.GoToBegin();
       tmpIt.GoToBegin();
       while( !maskIt.IsAtEnd() )
@@ -241,10 +231,13 @@ ResampleImageList(const std::string & resamplerInterpolatorType,
         }
 
       // Add the image
-      outputImageList[mapIt->first].push_back(tmp);
+      outputImageMap[inputImageMapIter->first].push_back(tmp);
+      ++currImageIter;
+      ++xfrmIt;
+      ++i;
       }
     }
-  return outputImageList;
+  return outputImageMap;
 }
 
 static AtlasRegType::MapOfFloatImageVectors
@@ -639,8 +632,8 @@ int main(int argc, char * *argv)
   atlasBrainMask = imgreader->GetOutput();
   }
 
-  AtlasRegType::MapOfFloatImageVectors intraSubjectRegisteredImageList;
-  AtlasRegType::MapOfFloatImageVectors intraSubjectRegisteredRawImageList;
+  AtlasRegType::MapOfFloatImageVectors intraSubjectRegisteredImageMap;
+  AtlasRegType::MapOfFloatImageVectors intraSubjectRegisteredRawImageMap;
   std::vector<std::string>       priorfnlist;
 
   AtlasRegType::MapOfStringVectors templateVolumes;
@@ -686,8 +679,8 @@ int main(int argc, char * *argv)
     }
 
   {
-  AtlasRegType::MapOfFloatImageVectors intraSubjectRawImageList;
-  AtlasRegType::MapOfFloatImageVectors intraSubjectNoiseRemovedImageList;
+  AtlasRegType::MapOfFloatImageVectors intraSubjectRawImageMap;
+  AtlasRegType::MapOfFloatImageVectors intraSubjectNoiseRemovedImageMap;
 
 
   { // StartOriginalImagesList
@@ -702,6 +695,7 @@ int main(int argc, char * *argv)
 
   typedef itk::ImageFileReader<FloatImageType> ReaderType;
   typedef ReaderType::Pointer                  ReaderPointer;
+  FloatImageType::Pointer KeyImageFirstRead=NULL;
 
   AtlasRegType::MapOfStringVectors intraSubjectTransformFileNames;
   unsigned int i = 0;
@@ -736,7 +730,7 @@ int main(int argc, char * *argv)
                                                                 0.0005, 1.0 - 0.0005,
                                                                 1, 0.95 * MAX_IMAGE_OUTPUT_VALUE,
                                                                 0, MAX_IMAGE_OUTPUT_VALUE);
-      intraSubjectRawImageList[typeIt->first].push_back(curImage);
+      intraSubjectRawImageMap[typeIt->first].push_back(curImage);
       muLogMacro( << "done.\n" );
       {
       std::vector<unsigned int> unused_gridSize;
@@ -757,9 +751,12 @@ int main(int argc, char * *argv)
         }
       FloatImagePointer denoisedImage =
         DenoiseFiltering<FloatImageType>(curImage, filterMethod, filterIteration,
-                                         localFilterTimeStep,
-                                         unused_gridSize);
-      intraSubjectNoiseRemovedImageList[typeIt->first].push_back(denoisedImage);
+                                         localFilterTimeStep, unused_gridSize);
+      intraSubjectNoiseRemovedImageMap[typeIt->first].push_back(denoisedImage);
+      if ( KeyImageFirstRead.IsNull() ) //The very first image nees to be the key image.
+        {
+        KeyImageFirstRead=denoisedImage;
+        }
       if( debuglevel > 1 )
         {
         // DEBUG:  This code is for debugging purposes only;
@@ -783,7 +780,8 @@ int main(int argc, char * *argv)
       intraSubjectTransformFileNames[typeIt->first].push_back(intraSubjectTransformFileName);
       }
     }
-  atlasreg->SetIntraSubjectOriginalImageList(intraSubjectNoiseRemovedImageList);
+  atlasreg->SetKeySubjectImage(KeyImageFirstRead);
+  atlasreg->SetIntraSubjectOriginalImageList(intraSubjectNoiseRemovedImageMap);
   atlasreg->SetIntraSubjectTransformFileNames(intraSubjectTransformFileNames);
   }
 
@@ -996,16 +994,18 @@ int main(int argc, char * *argv)
   typedef itk::ResampleImageFilter<FloatImageType, FloatImageType> ResampleType;
   typedef ResampleType::Pointer                                    ResamplePointer;
 
-  intraSubjectRegisteredImageList =
-    ResampleImageList(resamplerInterpolatorType, intraSubjectNoiseRemovedImageList,
-                      intraSubjectTransforms);
-  intraSubjectRegisteredRawImageList =
-    ResampleImageList(resamplerInterpolatorType, intraSubjectRawImageList,
-                      intraSubjectTransforms);
-  assert( intraSubjectRegisteredImageList.size() == intraSubjectNoiseRemovedImageList.size() );
-  assert( intraSubjectRegisteredImageList.size() == intraSubjectRawImageList.size() );
-  intraSubjectNoiseRemovedImageList.clear();
-  intraSubjectRawImageList.clear();
+  intraSubjectRegisteredImageMap =
+    ResampleImageList(resamplerInterpolatorType, intraSubjectNoiseRemovedImageMap,
+                      intraSubjectTransforms,atlasreg->GetKeySubjectImage());
+
+  intraSubjectRegisteredRawImageMap =
+    ResampleImageList(resamplerInterpolatorType, intraSubjectRawImageMap,
+                      intraSubjectTransforms,atlasreg->GetKeySubjectImage());
+  //TODO: The maps size needs to be the same, but so do the lists within the maps.
+  assert( intraSubjectRegisteredImageMap.size() == intraSubjectNoiseRemovedImageMap.size() );
+  assert( intraSubjectRegisteredImageMap.size() == intraSubjectRawImageMap.size() );
+  intraSubjectNoiseRemovedImageMap.clear();
+  intraSubjectRawImageMap.clear();
   } // End registering data
 
   } // EndOriginalImagesList
@@ -1034,7 +1034,7 @@ int main(int argc, char * *argv)
       resampler->SetTransform(atlasToSubjectPreSegmentationTransform);
 
       resampler->SetOutputParametersFromImage
-        (*(intraSubjectRegisteredRawImageList[atlasOriginalImageList.begin()->first].begin()));
+        (*(intraSubjectRegisteredRawImageMap[atlasOriginalImageList.begin()->first].begin()));
       resampler->SetDefaultPixelValue(0);
       resampler->Update();
       typedef itk::CastImageFilter<FloatImageType, ShortImageType>
@@ -1055,8 +1055,8 @@ int main(int argc, char * *argv)
       writer->Update();
       }
     for(AtlasRegType::MapOfFloatImageVectors::iterator mapIt
-          = intraSubjectRegisteredRawImageList.begin();
-        mapIt != intraSubjectRegisteredRawImageList.end(); ++mapIt)
+          = intraSubjectRegisteredRawImageMap.begin();
+        mapIt != intraSubjectRegisteredRawImageMap.end(); ++mapIt)
       {
 
       for(unsigned i = 0; i < mapIt->second.size(); ++i)
@@ -1088,11 +1088,11 @@ int main(int argc, char * *argv)
   } // end atlas reg block
 
   std::cerr<< "Before RescaleFunctionLocal" << std::endl;
-  PrintMapOfImageVectors(intraSubjectRegisteredImageList);
+  PrintMapOfImageVectors(intraSubjectRegisteredImageMap);
   muLogMacro(<< "Rescale intensity of filtered images...\n");
   {
-  intraSubjectRegisteredImageList = RescaleFunctionLocal(intraSubjectRegisteredImageList);
-  intraSubjectRegisteredRawImageList = RescaleFunctionLocal(intraSubjectRegisteredRawImageList);
+  intraSubjectRegisteredImageMap = RescaleFunctionLocal(intraSubjectRegisteredImageMap);
+  intraSubjectRegisteredRawImageMap = RescaleFunctionLocal(intraSubjectRegisteredRawImageMap);
   }
   // Start the segmentation process.
   for( unsigned int segmentationLevel = 0; segmentationLevel < 1; segmentationLevel++ )
@@ -1144,9 +1144,9 @@ int main(int argc, char * *argv)
       segfilter->SetDebugLevel(debuglevel);
       }
 
-    PrintMapOfImageVectors(intraSubjectRegisteredImageList);
-    segfilter->SetInputImages(intraSubjectRegisteredImageList);
-    segfilter->SetRawInputImages(intraSubjectRegisteredRawImageList);
+    PrintMapOfImageVectors(intraSubjectRegisteredImageMap);
+    segfilter->SetInputImages(intraSubjectRegisteredImageMap);
+    segfilter->SetRawInputImages(intraSubjectRegisteredRawImageMap);
 
     segfilter->SetMaximumIterations( maxIterations );
     segfilter->SetOriginalAtlasImages(atlasOriginalImageList);

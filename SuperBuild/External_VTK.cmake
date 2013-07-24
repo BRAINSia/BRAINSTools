@@ -19,7 +19,7 @@ ProjectDependancyPush(CACHED_proj ${proj})
 # SlicerMacroCheckExternalProjectDependency
 set(extProjName VTK) #The find_package known name
 set(proj        VTK) #This local name
-set(${extProjName}_REQUIRED_VERSION "5")  #If a required version is necessary, then set this, else leave blank
+set(${extProjName}_REQUIRED_VERSION "5.10")  #If a required version is necessary, then set this, else leave blank
 
 #if(${USE_SYSTEM_${extProjName}})
 #  unset(${extProjName}_DIR CACHE)
@@ -71,6 +71,7 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
   endif()
 
   set(VTK_QT_ARGS)
+  message("${PRIMARY_PROJECT_NAME}_USE_QT=${${PRIMARY_PROJECT_NAME}_USE_QT}")
   if(${PRIMARY_PROJECT_NAME}_USE_QT)
     if(NOT APPLE)
       set(VTK_QT_ARGS

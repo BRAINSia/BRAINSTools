@@ -129,6 +129,7 @@ set(${PRIMARY_PROJECT_NAME}_DEPENDENCIES
   DTIProcess
   niral_utilities
   BRAINSTools
+  DTIPrep
 #python
   )
 

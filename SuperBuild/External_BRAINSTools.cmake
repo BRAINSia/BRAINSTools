@@ -31,7 +31,7 @@ if(DEFINED ${extProjName}_DIR AND NOT EXISTS ${${extProjName}_DIR})
 endif()
 
 # Set dependency list
-set(${extProjName}_DEPENDENCIES ITKv4 SlicerExecutionModel VTK DCMTK)
+set(${extProjName}_DEPENDENCIES ITKv4 SlicerExecutionModel VTK DCMTK JPEG TIFF Boost)
 #if(${PROJECT_NAME}_BUILD_DICOM_SUPPORT)
 #  list(APPEND ${proj}_DEPENDENCIES DCMTK)
 #endif()
@@ -52,9 +52,9 @@ if(NOT DEFINED ${extProjName}_SOURCE_DIR)
   endif()
 
   ### --- Project specific additions here
-  #message("VTK_DIR: ${VTK_DIR}")
-  #message("ITK_DIR: ${ITK_DIR}")
-  #message("SlicerExecutionModel_DIR: ${SlicerExecutionModel_DIR}")
+  message("VTK_DIR: ${VTK_DIR}")
+  message("ITK_DIR: ${ITK_DIR}")
+  message("SlicerExecutionModel_DIR: ${SlicerExecutionModel_DIR}")
 
   set(${proj}_CMAKE_OPTIONS
       -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/${proj}-install
@@ -65,15 +65,22 @@ if(NOT DEFINED ${extProjName}_SOURCE_DIR)
       -DUSE_SYSTEM_DCMTK:BOOL=ON
       -DDCMTK_DIR:PATH=${DCMTK_DIR}
       -DDCMTK_config_INCLUDE_DIR:PATH=${DCMTK_DIR}/include
-      #-DDCMTK_ofstd_INCLUDE_DIR:PATH=${DCMTK_ofstd_INCLUDE_DIR}
-      #-DDCMTK_dcmdata_INCLUDE_DIR:PATH=${DCMTK_dcmdata_INCLUDE_DIR}
-      #-DDCMTK_dcmimgle_INCLUDE_DIR:PATH=${DCMTK_dcmimgle_INCLUDE_DIR}
+      -DBOOST_ROOT:PATH=${BOOST_ROOT}
+      -DBOOST_INCLUDE_DIR:PATH=${BOOST_INCLUDE_DIR}
+      -DJPEG_DIR:PATH=${JPEG_DIR}
+      -DJPEG_INCLUDE_DIR:PATH=${JPEG_INCLUDE_DIR}
+      -DJPEG_LIB_DIR:PATH=${JPEG_LIB_DIR}
+      -DJPEG_LIBRARY:PATH=${JPEG_LIBRARY}
+      -DJPEG_DIR:PATH=${JPEG_DIR}
+      -DJPEG_INCLUDE_DIR:PATH=${JPEG_INCLUDE_DIR}
+      -DJPEG_LIBRARY:PATH=${JPEG_LIBRARY}
       -DUSE_SYSTEM_SlicerExecutionModel:BOOL=ON
       -DSlicerExecutionModel_DIR:PATH=${SlicerExecutionModel_DIR}
       -DSuperBuild_BRAINSTools_USE_GIT_PROTOCOL=${${CMAKE_PROJECT_NAME}_USE_GIT_PROTOCOL}
       -DITK_DIR:PATH=${ITK_DIR}
       -DVTK_DIR:PATH=${VTK_DIR}
       -DUSE_ANTS:BOOL=OFF
+      -D${proj}_USE_QT:BOOL=${LOCAL_PROJECT_NAME}_USE_QT
       -DUSE_AutoWorkup:BOOL=OFF
       -DUSE_BRAINSABC:BOOL=OFF
       -DUSE_BRAINSConstellationDetector:BOOL=OFF
@@ -100,7 +107,7 @@ if(NOT DEFINED ${extProjName}_SOURCE_DIR)
 
   ### --- End Project specific additions
   set(${proj}_REPOSITORY "${git_protocol}://github.com/BRAINSia/BRAINSTools.git")
-  set(${proj}_GIT_TAG "b315af2d1b2b0f11232c08778189ca4c0c8a04eb")  ## Update for Hitachi DWIConvert testing.
+  set(${proj}_GIT_TAG "c09053540b16995e28ec2e832b24e769dceb3027")
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${${proj}_REPOSITORY}
     GIT_TAG ${${proj}_GIT_TAG}

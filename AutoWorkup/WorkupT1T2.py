@@ -333,7 +333,7 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
 
     print "Building Pipeline"
     ########### PIPELINE INITIALIZATION #############
-    baw200 = pe.Workflow(name="BAW_20120813")  # HACK: This needs to be specified in the config file.
+    baw200 = pe.Workflow(name="BAW_StandardWorkup")  # HACK: This needs to be specified in the config file.
     baw200.config['execution'] = {
         'plugin': 'Linear',
         #'stop_on_first_crash':'true',

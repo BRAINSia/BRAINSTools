@@ -55,7 +55,7 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
   set(${proj}_CMAKE_OPTIONS
       -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/${proj}-install
       -DUSE_SYSTEM_ITK:BOOL=ON
-      -DUSE_SYSTEM_Boost:BOOL=ON
+      -DUSE_SYSTEM_BOOST:BOOL=ON
       -DUSE_SYSTEM_SlicerExecutionModel:BOOL=ON
       -DSlicerExecutionModel_DIR:PATH=${SlicerExecutionModel_DIR}
       -DITK_DIR:PATH=${ITK_DIR}
@@ -68,11 +68,7 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
 
   ### --- End Project specific additions
   set(${proj}_REPOSITORY "git://github.com/stnava/ANTs.git")
-  set(${proj}_GIT_TAG "67d2a26d67226b920ef6c575093eda0d7fa008fa")
-
-  # Kent Williams' fork
-  #set(${proj}_REPOSITORY "git@github.com:Chaircrusher/ANTs.git")
-  #set(${proj}_GIT_TAG "67d2a26d67226b920ef6c575093eda0d7fa008fa")
+  set(${proj}_GIT_TAG "aed25fa00f653e75fac5c9ffb5055d87a7623504")
 
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${${proj}_REPOSITORY}

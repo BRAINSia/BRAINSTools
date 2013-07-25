@@ -45,7 +45,7 @@ endif()
 # With CMake 2.8.9 or later, the UPDATE_COMMAND is required for updates to occur.
 # For earlier versions, we nullify the update state to prevent updates and
 # undesirable rebuild.
-option(FORCE_EXTERNAL_BUILDS "Force rebuilding of external project (if they are updated)" OFF)
+option(FORCE_EXTERNAL_BUILDS "Force rebuilding of external project (if they are updated)" ON)
 if(CMAKE_VERSION VERSION_LESS 2.8.9 OR NOT FORCE_EXTERNAL_BUILDS)
   set(cmakeversion_external_update UPDATE_COMMAND)
   set(cmakeversion_external_update_value "" )
@@ -135,6 +135,9 @@ set(${PRIMARY_PROJECT_NAME}_DEPENDENCIES
   ANTs
   #python
   )
+
+## DTI_Tract_Stat requires QT to build
+set(${PRIMARY_PROJECT_NAME}_USE_QT ON)
 
 if(BUILD_STYLE_UTILS)
   list(APPEND ${PRIMARY_PROJECT_NAME}_DEPENDENCIES Cppcheck KWStyle ) #Uncrustify)

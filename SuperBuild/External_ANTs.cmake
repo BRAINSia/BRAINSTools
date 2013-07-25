@@ -68,7 +68,7 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
 
   ### --- End Project specific additions
   set(${proj}_REPOSITORY "git://github.com/stnava/ANTs.git")
-  set(${proj}_GIT_TAG "2e98f6ad5a3bc6d41bcdead7cabc3d8447a533b3")
+  set(${proj}_GIT_TAG "67d2a26d67226b920ef6c575093eda0d7fa008fa")
 
   # Kent Williams' fork
   #set(${proj}_REPOSITORY "git@github.com:Chaircrusher/ANTs.git")

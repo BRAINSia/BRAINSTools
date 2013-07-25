@@ -55,16 +55,24 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
   set(${proj}_CMAKE_OPTIONS
       -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/${proj}-install
       -DUSE_SYSTEM_ITK:BOOL=ON
-      -DUSE_SYSTEM_SLICER_EXECUTION_MODEL:BOOL=ON
+      -DUSE_SYSTEM_Boost:BOOL=ON
+      -DUSE_SYSTEM_SlicerExecutionModel:BOOL=ON
+      -DSlicerExecutionModel_DIR:PATH=${SlicerExecutionModel_DIR}
       -DITK_DIR:PATH=${ITK_DIR}
       -DBUILD_EXAMPLES:BOOL=OFF
       -DBUILD_TESTING:BOOL=OFF
       -DANTs_SUPERBUILD:BOOL=OFF
+      -DBOOST_DIR:PATH=${BOOST_ROOT}
+      -DBOOST_ROOT:PATH=${BOOST_ROOT}
     )
 
   ### --- End Project specific additions
   set(${proj}_REPOSITORY "git://github.com/stnava/ANTs.git")
   set(${proj}_GIT_TAG "2e98f6ad5a3bc6d41bcdead7cabc3d8447a533b3")
+
+  # Kent Williams' fork
+  #set(${proj}_REPOSITORY "git@github.com:Chaircrusher/ANTs.git")
+  #set(${proj}_GIT_TAG "67d2a26d67226b920ef6c575093eda0d7fa008fa")
 
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${${proj}_REPOSITORY}
@@ -85,7 +93,8 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
     DEPENDS
     ${${proj}_DEPENDENCIES}
   )
-  set(${extProjName}_DIR ${CMAKE_BINARY_DIR}/${proj}-install/lib/cmake/ITK-4.4)
+  set(${extProjName}_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
+
 else()
   if(${USE_SYSTEM_${extProjName}})
     find_package(${extProjName} ${${extProjName}_REQUIRED_VERSION} REQUIRED)

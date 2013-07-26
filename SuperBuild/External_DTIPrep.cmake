@@ -31,7 +31,7 @@ if(DEFINED ${extProjName}_DIR AND NOT EXISTS ${${extProjName}_DIR})
 endif()
 
 # Set dependency list
-set(${proj}_DEPENDENCIES DCMTK ITKv4 SlicerExecutionModel VTK BRAINSTools)
+set(${proj}_DEPENDENCIES DCMTK ITKv4 SlicerExecutionModel VTK BRAINSTools ANTs)
 #if(${PROJECT_NAME}_BUILD_DICOM_SUPPORT)
 #  list(APPEND ${proj}_DEPENDENCIES DCMTK)
 #endif()
@@ -51,6 +51,25 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
       -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET})
   endif()
 
+  set(BRAINSCommonLibWithANTs ON)
+  if(BRAINSCommonLibWithANTs)
+    set(BRAINSCommonLibWithANTs_OPTIONS
+      -DBRAINSTools_SOURCE_DIR:PATH=${BRAINSTools_SOURCE_DIR}
+      -DUSE_ANTS:BOOL=ON
+      -DUSE_SYSTEM_ANTs:BOOL=ON
+      -DANTs_SOURCE_DIR:PATH=${ANTs_SOURCE_DIR}
+      -DANTs_LIBRARY_DIR:PATH=${ANTs_LIBRARY_DIR}
+      -DUSE_SYSTEM_BOOST:BOOL=ON
+      -DBOOST_DIR:PATH=${BOOST_ROOT}
+      -DBOOST_ROOT:PATH=${BOOST_ROOT}
+      -DBOOST_INCLUDE_DIR:PATH=${BOOST_INCLUDE_DIR}
+      -DDTIPrepTools_SUPERBUILD:STRING=OFF
+      )
+  else()
+    set(BRAINSCommonLibWithANTs_OPTIONS
+      -DUSE_ANTS:BOOL=OFF)
+  endif()
+
   ### --- Project specific additions here
   set(${proj}_CMAKE_OPTIONS
       -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/${proj}-install
@@ -68,14 +87,14 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
       -DBRAINSCommonLib_DIR:PATH=${BRAINSCommonLib_DIR}
       -D${proj}_USE_QT:BOOL=${LOCAL_PROJECT_NAME}_USE_QT
       -D${proj}_SUPERBUILD:BOOL=OFF
+      ${BRAINSCommonLibWithANTs_OPTIONS}
     )
 
   ### --- End Project specific additions
   set(${proj}_REPOSITORY https://www.nitrc.org/svn/dtiprep/trunk)
-  set(${proj}_GIT_TAG XXXX 3c03e162c7e287b81115e2175898482998b50a34)
   ExternalProject_Add(${proj}
     SVN_REPOSITORY ${${proj}_REPOSITORY}
-    SVN_REVISION -r "254"
+    SVN_REVISION -r "255"
     SVN_USERNAME slicerbot
     SVN_PASSWORD slicer
     SOURCE_DIR ${proj}

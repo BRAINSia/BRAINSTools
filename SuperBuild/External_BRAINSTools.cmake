@@ -31,7 +31,7 @@ if(DEFINED ${extProjName}_DIR AND NOT EXISTS ${${extProjName}_DIR})
 endif()
 
 # Set dependency list
-set(${extProjName}_DEPENDENCIES ITKv4 SlicerExecutionModel VTK DCMTK JPEG TIFF Boost teem)
+set(${extProjName}_DEPENDENCIES ITKv4 SlicerExecutionModel ANTs VTK DCMTK JPEG TIFF Boost teem)
 #if(${PROJECT_NAME}_BUILD_DICOM_SUPPORT)
 #  list(APPEND ${proj}_DEPENDENCIES DCMTK)
 #endif()
@@ -52,9 +52,10 @@ if(NOT DEFINED ${extProjName}_SOURCE_DIR)
   endif()
 
   ### --- Project specific additions here
-  message("VTK_DIR: ${VTK_DIR}")
-  message("ITK_DIR: ${ITK_DIR}")
-  message("SlicerExecutionModel_DIR: ${SlicerExecutionModel_DIR}")
+  # message("VTK_DIR: ${VTK_DIR}")
+  # message("ITK_DIR: ${ITK_DIR}")
+  # message("SlicerExecutionModel_DIR: ${SlicerExecutionModel_DIR}")
+  # message("BOOST_INCLUDE_DIR:PATH=${BOOST_INCLUDE_DIR}")
 
   set(${proj}_CMAKE_OPTIONS
       -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/${proj}-install
@@ -64,6 +65,12 @@ if(NOT DEFINED ${extProjName}_SOURCE_DIR)
       -DUSE_SYSTEM_VTK:BOOL=ON
       -DUSE_SYSTEM_DCMTK:BOOL=ON
       -DUSE_SYSTEM_TEEM:BOOL=ON
+      -DUSE_SYSTEM_ANTs:BOOL=ON
+      -DANTs_SOURCE_DIR:PATH=${ANTs_SOURCE_DIR}
+      -DANTs_LIBRARY_DIR:PATH=${ANTs_LIBRARY_DIR}
+      -DUSE_SYSTEM_BOOST:BOOL=ON
+      -DBOOST_DIR:PATH=${BOOST_ROOT}
+      -DBOOST_ROOT:PATH=${BOOST_ROOT}
       -DDCMTK_DIR:PATH=${DCMTK_DIR}
       -DDCMTK_config_INCLUDE_DIR:PATH=${DCMTK_DIR}/include
       -DBOOST_ROOT:PATH=${BOOST_ROOT}
@@ -108,7 +115,7 @@ if(NOT DEFINED ${extProjName}_SOURCE_DIR)
 
   ### --- End Project specific additions
   set(${proj}_REPOSITORY "${git_protocol}://github.com/BRAINSia/BRAINSTools.git")
-  set(${proj}_GIT_TAG "569298a35eaa7c4cc46e51aec2be648f7d2aa957")
+  set(${proj}_GIT_TAG "4b23b18a1653ced1616439d99d0d7082893230d8")
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${${proj}_REPOSITORY}
     GIT_TAG ${${proj}_GIT_TAG}

@@ -529,6 +529,33 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
       atlasToSubjectRegistrationHelper->SetMinimumStepLength(minimumStepSize);
       atlasToSubjectRegistrationHelper->SetTransformType(transformType);
       }
+    else if( m_AtlasLinearTransformChoice == "BSpline" )
+      {
+      muLogMacro(<< "Registering (BSpline) atlas to subject "<< std::endl);
+      std::vector<double> minimumStepSize(5);
+      minimumStepSize[0] = 0.00005;
+      minimumStepSize[1] = 0.005;
+      minimumStepSize[2] = 0.005;
+      minimumStepSize[3] = 0.005;
+      minimumStepSize[4] = 0.005;
+      atlasToSubjectRegistrationHelper->SetMinimumStepLength(minimumStepSize);
+      std::vector<std::string> transformType(5);
+      transformType[0] = "Rigid";
+      transformType[1] = "ScaleVersor3D";
+      transformType[2] = "ScaleSkewVersor3D";
+      transformType[3] = "Affine";
+      transformType[4] = "BSpline";
+      atlasToSubjectRegistrationHelper->SetTransformType(transformType);
+      std::vector<int> splineGridSize(3);
+      splineGridSize[0] = this->m_WarpGrid[0];
+      splineGridSize[1] = this->m_WarpGrid[1];
+      splineGridSize[2] = this->m_WarpGrid[2];
+      atlasToSubjectRegistrationHelper->SetSplineGridSize(splineGridSize);
+      // Setting max displace
+      atlasToSubjectRegistrationHelper->SetMaxBSplineDisplacement(6.0);
+      // atlasToSubjectRegistrationHelper->SetUseExplicitPDFDerivativesMode(useExplicitPDFDerivativesMode);
+      // atlasToSubjectRegistrationHelper->SetUseCachingOfBSplineWeightsMode(useCachingOfBSplineWeightsMode);
+      }
     else if( m_AtlasLinearTransformChoice == "SyN" )
       {
       muLogMacro(

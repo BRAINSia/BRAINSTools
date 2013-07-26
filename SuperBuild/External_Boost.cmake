@@ -17,7 +17,7 @@ ProjectDependancyPush(CACHED_proj ${proj})
 # Make sure that the ExtProjName/IntProjName variables are unique globally
 # even if other External_${ExtProjName}.cmake files are sourced by
 # SlicerMacroCheckExternalProjectDependency
-set(extProjName Boost) #The find_package known name
+set(extProjName BOOST) #The find_package known name
 set(proj        Boost) #This local name
 set(${extProjName}_REQUIRED_VERSION "")  #If a required version is necessary, then set this, else leave blank
 
@@ -77,7 +77,7 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
     -DBOOST_INSTALL_DIR:PATH=${Boost_Install_Dir} -P ${Boost_Build_Script}
   )
   set(BOOST_ROOT ${CMAKE_CURRENT_BINARY_DIR}/boost-install)
-  set(BOOST_INCLUDE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/boost-install/include)
+  set(BOOST_INCLUDE_DIR ${CMAKE_CURRENT_BINARY_DIR}/boost-install/include)
 else()
   if(${USE_SYSTEM_${extProjName}})
     find_package(${extProjName} ${${extProjName}_REQUIRED_VERSION} REQUIRED)
@@ -95,4 +95,3 @@ list(APPEND ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS ${extProjName}_DIR:PATH)
 
 ProjectDependancyPop(CACHED_extProjName extProjName)
 ProjectDependancyPop(CACHED_proj proj)
-set(BOOST_INCLUDE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/boost-install/include)

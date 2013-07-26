@@ -25,9 +25,12 @@ set(${extProjName}_REQUIRED_VERSION "")  #If a required version is necessary, th
 #  unset(${extProjName}_DIR CACHE)
 #endif()
 
-# Sanity checks
-if(DEFINED ${extProjName}_DIR AND NOT EXISTS ${${extProjName}_DIR})
-  message(FATAL_ERROR "${extProjName}_DIR variable is defined but corresponds to non-existing directory (${${extProjName}_DIR})")
+if(DEFINED ${extProjName}_SOURCE_DIR AND NOT EXISTS ${${extProjName}_SOURCE_DIR})
+  message(FATAL_ERROR "${extProjName}_SOURCE_DIR variable is defined but corresponds to non-existing directory (${${extProjName}_SOURCE_DIR})")
+endif()
+
+if(DEFINED ${extProjName}_LIBRARY_DIR AND NOT EXISTS ${${extProjName}_LIBRARY_DIR})
+  message(FATAL_ERROR "${extProjName}_LIBRARY_DIR variable is defined but corresponds to non-existing directory (${${extProjName}_LIBRARY_DIR})")
 endif()
 
 # Set dependency list
@@ -55,11 +58,15 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
   set(${proj}_CMAKE_OPTIONS
       -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/${proj}-install
       -DUSE_SYSTEM_ITK:BOOL=ON
-      -DUSE_SYSTEM_SLICER_EXECUTION_MODEL:BOOL=ON
+      -DUSE_SYSTEM_BOOST:BOOL=ON
+      -DUSE_SYSTEM_SlicerExecutionModel:BOOL=ON
+      -DSlicerExecutionModel_DIR:PATH=${SlicerExecutionModel_DIR}
       -DITK_DIR:PATH=${ITK_DIR}
       -DBUILD_EXAMPLES:BOOL=OFF
       -DBUILD_TESTING:BOOL=OFF
       -DANTs_SUPERBUILD:BOOL=OFF
+      -DBOOST_DIR:PATH=${BOOST_ROOT}
+      -DBOOST_ROOT:PATH=${BOOST_ROOT}
     )
 
   ### --- End Project specific additions
@@ -78,8 +85,6 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
     ${cmakeversion_external_update} "${cmakeversion_external_update_value}"
     CMAKE_GENERATOR ${gen}
     CMAKE_ARGS
-     -Wno-dev
-     --no-warn-unused-cli
       ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
       ${COMMON_EXTERNAL_PROJECT_ARGS}
       ${${proj}_CMAKE_OPTIONS}
@@ -87,14 +92,20 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
     DEPENDS
     ${${proj}_DEPENDENCIES}
   )
-  set(${extProjName}_DIR ${CMAKE_BINARY_DIR}/${proj}-install/lib/cmake/ITK-4.4)
+  set(${extProjName}_SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/${proj})
+  set(${extProjName}_LIBRARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/lib)
 else()
   if(${USE_SYSTEM_${extProjName}})
-    find_package(${extProjName} ${${extProjName}_REQUIRED_VERSION} REQUIRED)
-    if(NOT ${extProjName}_DIR)
-      message(FATAL_ERROR "To use the system ${extProjName}, set ${extProjName}_DIR")
+    if(NOT DEFINED ${extProjName}_SOURCE_DIR OR NOT DEFINED ${extProjName}_LIBRARY_DIR)
+      message(FATAL_ERROR "To use system ${extProjName}, set ${extProjName}_SOURCE_DIR and ${extProjName}_LIBRARY_DIR")
+    elseif(NOT EXISTS "${${extProjName}_SOURCE_DIR}")
+      message(FATAL_ERROR "${extProjName}_SOURCE_DIR (${${extProjName}_SOURCE_DIR}) does not exist")
+    elseif(NOT EXISTS "${${extProjName}_LIBRARY_DIR}")
+      message(FATAL_ERROR "${extProjName}_LIBRARY_DIR (${${extProjName}_LIBRARY_DIR}) does not exist")
+    else()
+      message("using ${extProjName}_SOURCE_DIR=${${extProjName}_SOURCE_DIR} and
+${extProjName}_LIBRARY_DIR=${${extProjName}_LIBRARY_DIR}")
     endif()
-    message("USING the system ${extProjName}, set ${extProjName}_DIR=${${extProjName}_DIR}")
   endif()
   # The project is provided using ${extProjName}_DIR, nevertheless since other
   # project may depend on ${extProjName}, let's add an 'empty' one

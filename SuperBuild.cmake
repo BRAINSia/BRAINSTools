@@ -131,10 +131,6 @@ else()
   set(BOOST_INCLUDE_DIR "" ) # CACHE STRING "Default Invalid BOOST_INCLUDE_DIR" FORCE)
 endif()
 
-if(USE_UnbiasedNonLocalMeans)
-  list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES UnbiasedNonLocalMeans)
-endif()
-
 if(USE_AutoWorkup)
   list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES PCRE)
   list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES Swig)

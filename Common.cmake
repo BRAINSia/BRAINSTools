@@ -76,8 +76,6 @@ option(USE_BRAINSMultiSTAPLE              "Build BRAINSMultiSTAPLE"             
 option(USE_DWIConvert                     "Build DWIConvert"                     ON)
 option(USE_BRAINSCreateLabelMapFromProbabilityMaps "Build BRAINSCreateLabelMapFromProbabilityMaps" OFF)
 
-option(USE_UnbiasedNonLocalMeans          "Build UnbiasedNonLocalMeans" ON)
-
 if( NOT USE_ANTS )
 option(USE_ANTS                           "Build ANTS"                           ON)
 endif()

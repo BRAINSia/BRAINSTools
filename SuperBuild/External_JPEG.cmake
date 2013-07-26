@@ -34,25 +34,39 @@ endif()
 
 # Set dependency list
 set(${proj}_DEPENDENCIES "")
+#if(${PROJECT_NAME}_BUILD_DICOM_SUPPORT)
+#  list(APPEND ${proj}_DEPENDENCIES DCMTK)
+#endif()
 
 # Include dependent projects if any
 SlicerMacroCheckExternalProjectDependency(${proj})
 
 if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}" AND NOT "${USE_SYSTEM_${extProjName}}" ) ) )
+  #message(STATUS "${__indent}Adding project ${proj}")
+
+  # Set CMake OSX variable to pass down the external project
+  set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
+  if(APPLE)
+    list(APPEND CMAKE_OSX_EXTERNAL_PROJECT_ARGS
+      -DCMAKE_OSX_ARCHITECTURES=${CMAKE_OSX_ARCHITECTURES}
+      -DCMAKE_OSX_SYSROOT=${CMAKE_OSX_SYSROOT}
+      -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET})
+  endif()
 
 
-  set(${proj}_REPOSITORY ${git_protocol}://github.com/BRAINSia/JPeg9A.git)
-  set(${proj}_GIT_TAG BRAINSTools_CompilerCleanup)
+
 
   AutoConf_FLAGS(${proj}_CFLAGS C "")
   AutoConf_FLAGS(${proj}_CXXFLAGS CXX "")
 
+  ### --- End Project specific additions
+  set(${proj}_REPOSITORY ${git_protocol}://github.com/BRAINSia/JPeg9A.git)
+  set(${proj}_GIT_TAG BRAINSTools_CompilerCleanup)
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${${proj}_REPOSITORY}
     GIT_TAG ${${proj}_GIT_TAG}
     SOURCE_DIR ${proj}
     BINARY_DIR ${proj}-build
-    INSTALL_DIR ${proj}-install
     LOG_CONFIGURE 0  # Wrap configure in script to ignore log output from dashboards
     LOG_BUILD     0  # Wrap build in script to to ignore log output from dashboards
     LOG_TEST      0  # Wrap test in script to to ignore log output from dashboards
@@ -66,17 +80,15 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
     CXX=${CMAKE_CXX_COMPILER}
     "CFLAGS=${${proj}_CFLAGS}"
     "CXXFLAGS=${${proj}_CXXFLAGS}"
+## We really do want to install in order to limit # of include paths INSTALL_COMMAND ""
+    INSTALL_DIR ${proj}-install
     DEPENDS
-    ${${proj}_DEPENDENCIES}
+      ${${proj}_DEPENDENCIES}
   )
-  set(${extProjName}_DIR
-    ${CMAKE_BINARY_DIR}/${proj}-install)
-  set(${extProjName}_INCLUDE_DIR
-    ${CMAKE_BINARY_DIR}/${proj}-install/include)
-  set(${extProjName}_LIB_DIR
-    ${CMAKE_BINARY_DIR}/${proj}-install/lib)
-  set(${extProjName}_LIBRARY
-    ${${extProjName}_LIB_DIR}/libjpeg.a)
+  set(${extProjName}_DIR ${CMAKE_BINARY_DIR}/${proj}-install)
+  set(${extProjName}_INCLUDE_DIR ${CMAKE_BINARY_DIR}/${proj}-install/include)
+  set(${extProjName}_LIB_DIR ${CMAKE_BINARY_DIR}/${proj}-install/lib)
+  set(${extProjName}_LIBRARY ${${extProjName}_LIB_DIR}/libjpeg.a)
 
 else()
   if(${USE_SYSTEM_${extProjName}})

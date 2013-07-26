@@ -68,6 +68,7 @@ if(NOT DEFINED ${extProjName}_SOURCE_DIR)
       -DUSE_SYSTEM_TIFF:BOOL=ON
       -DUSE_SYSTEM_ANTs:BOOL=ON
       -DUSE_SYSTEM_JPEG:BOOL=ON
+      -DUSE_SYSTEM_SimpleITK:BOOL=ON
       -DANTs_SOURCE_DIR:PATH=${ANTs_SOURCE_DIR}
       -DANTs_LIBRARY_DIR:PATH=${ANTs_LIBRARY_DIR}
       -DUSE_SYSTEM_BOOST:BOOL=ON
@@ -120,7 +121,7 @@ if(NOT DEFINED ${extProjName}_SOURCE_DIR)
 
   ### --- End Project specific additions
   set(${proj}_REPOSITORY "${git_protocol}://github.com/BRAINSia/BRAINSTools.git")
-  set(${proj}_GIT_TAG "4b23b18a1653ced1616439d99d0d7082893230d8")
+  set(${proj}_GIT_TAG "44a8bc828e97383b7c0616fc31ab0ad4e6e85668")
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${${proj}_REPOSITORY}
     GIT_TAG ${${proj}_GIT_TAG}

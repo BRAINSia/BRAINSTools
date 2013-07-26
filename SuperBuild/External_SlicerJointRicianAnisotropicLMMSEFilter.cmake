@@ -59,7 +59,7 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
       ${COMMON_EXTERNAL_PROJECT_ARGS}
       -DBUILD_EXAMPLES:BOOL=OFF
       -DBUILD_TESTING:BOOL=OFF
-      -DUKF_SUPERBUILD:BOOL=OFF
+      -DSlicerJointRicianAnisotropicLMMSEFilter_SUPERBUILD:BOOL=OFF
       -DTeem_DIR:PATH=${Teem_DIR}
       -DSlicerExecutionModel_DIR:PATH=${SlicerExecutionModel_DIR}
       -DSlicer_SOURCE_DIR:BOOL=ON ## THIS is a hack to prevent looking for slicer

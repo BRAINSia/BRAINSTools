@@ -132,6 +132,7 @@ set(${PRIMARY_PROJECT_NAME}_DEPENDENCIES
   teem
   SlicerJointRicianAnisotropicLMMSEFilter
   UKF
+  UnbiasedNonLocalMeans
   ANTs
   #python
   )

@@ -81,36 +81,34 @@ if(NOT DEFINED ${extProjName}_SOURCE_DIR)
       -DITK_DIR:PATH=${ITK_DIR}
       -DVTK_DIR:PATH=${VTK_DIR}
       -DTeem_DIR:PATH=${Teem_DIR}
-      -DUSE_ANTS:BOOL=OFF
+      -DUSE_ANTS:BOOL=ON
       -D${proj}_USE_QT:BOOL=${LOCAL_PROJECT_NAME}_USE_QT
-      -DUSE_AutoWorkup:BOOL=OFF
-      -DUSE_BRAINSABC:BOOL=OFF
-      -DUSE_BRAINSConstellationDetector:BOOL=OFF
-      -DUSE_BRAINSContinuousClass:BOOL=OFF
-      -DUSE_BRAINSCut:BOOL=OFF
-      -DUSE_BRAINSDemonWarp:BOOL=OFF
+      -DUSE_AutoWorkup:BOOL=ON
+      -DUSE_BRAINSABC:BOOL=ON
+      -DUSE_BRAINSConstellationDetector:BOOL=ON
+      -DUSE_BRAINSContinuousClass:BOOL=ON
+      -DUSE_BRAINSCut:BOOL=ON
+      -DUSE_BRAINSDemonWarp:BOOL=ON
       -DUSE_BRAINSFit:BOOL=ON
-      -DUSE_BRAINSImageConvert:BOOL=OFF
-      -DUSE_BRAINSInitializedControlPoints:BOOL=OFF
-      -DUSE_BRAINSLandmarkInitializer:BOOL=OFF
-      -DUSE_BRAINSMultiModeSegment:BOOL=OFF
-      -DUSE_BRAINSMush:BOOL=OFF
+      -DUSE_BRAINSImageConvert:BOOL=ON
+      -DUSE_BRAINSInitializedControlPoints:BOOL=ON
+      -DUSE_BRAINSLandmarkInitializer:BOOL=ON
+      -DUSE_BRAINSMultiModeSegment:BOOL=ON
+      -DUSE_BRAINSMush:BOOL=ON
       -DUSE_BRAINSROIAuto:BOOL=ON
       -DUSE_BRAINSResample:BOOL=ON
-      -DUSE_BRAINSSnapShotWriter:BOOL=OFF
-      -DUSE_BRAINSSurfaceTools:BOOL=OFF
-      -DUSE_BRAINSTransformConvert:BOOL=OFF
+      -DUSE_BRAINSSnapShotWriter:BOOL=ON
+      -DUSE_BRAINSSurfaceTools:BOOL=ON
+      -DUSE_BRAINSTransformConvert:BOOL=ON
       -DUSE_DebugImageViewer:BOOL=OFF
       -DUSE_GTRACT:BOOL=ON
       -DUSE_ICCDEF:BOOL=OFF
       -DUSE_ImageCalculator:BOOL=ON
-      -DUSE_SlicerJointRicianAnisotropicLMMSEFilter:BOOL=OFF
-      -DUSE_UKF:BOOL=OFF
     )
 
   ### --- End Project specific additions
   set(${proj}_REPOSITORY "${git_protocol}://github.com/BRAINSia/BRAINSTools.git")
-  set(${proj}_GIT_TAG "a90483208faff86bf81725e337b23199e0344f16")
+  set(${proj}_GIT_TAG "e929bca2a4362abe0252cb102797ea43af00837e")
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${${proj}_REPOSITORY}
     GIT_TAG ${${proj}_GIT_TAG}

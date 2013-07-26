@@ -77,7 +77,6 @@ option(USE_DWIConvert                     "Build DWIConvert"                    
 option(USE_BRAINSCreateLabelMapFromProbabilityMaps "Build BRAINSCreateLabelMapFromProbabilityMaps" OFF)
 
 option(USE_UnbiasedNonLocalMeans          "Build UnbiasedNonLocalMeans" ON)
-option(USE_SlicerJointRicianAnisotropicLMMSEFilter          "Build SlicerJointRicianAnisotropicLMMSEFilter" ON)
 
 if( NOT USE_ANTS )
 option(USE_ANTS                           "Build ANTS"                           ON)

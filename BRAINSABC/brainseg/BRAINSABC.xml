@@ -51,7 +51,7 @@
     <label>Atlas to Subject Transform Type</label>
     <longflag>atlasToSubjectTransformType</longflag>
     <description> What type of linear transform type do you want to use to register the atlas to the reference subject image.</description>
-    <element>ID</element>
+    <element>Identity</element>
     <element>Rigid</element>
     <element>Affine</element>
     <element>BSpline</element>
@@ -77,7 +77,7 @@
     <label>Atlas to Subject Transform Type</label>
     <longflag>subjectIntermodeTransformType</longflag>
     <description> What type of linear transform type do you want to use to register the atlas to the reference subject image.</description>
-    <element>ID</element>
+    <element>Identity</element>
     <element>Rigid</element>
     <element>Affine</element>
     <element>BSpline</element>

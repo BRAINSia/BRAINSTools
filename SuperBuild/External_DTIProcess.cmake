@@ -70,6 +70,8 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
   ExternalProject_Add(${proj}
     SVN_REPOSITORY ${${proj}_REPOSITORY}
     SVN_REVISION ${${proj}_GIT_TAG}
+    SVN_USERNAME slicerbot
+    SVN_PASSWORD slicer
     SOURCE_DIR ${proj}
     BINARY_DIR ${proj}-build
     INSTALL_COMMAND ""

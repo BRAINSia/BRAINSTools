@@ -400,10 +400,9 @@ void QLabelList::writeLandmarks()
       if( ( it->first ).compare("") != 0 )
         {
         myfile << it->first << ","
-               << doubleConvert(-( it->second )[0]) << ","
-               << doubleConvert(-( it->second )[1]) << ","
-               << doubleConvert( ( it->second )[2]) << ",1,1"
-               << std::endl;
+               << doubleConvert(-( it->second )[0]).c_str() << ","
+               << doubleConvert(-( it->second )[1]).c_str() << ","
+               << doubleConvert( ( it->second )[2]).c_str() << ",1,1\n";
         }
       }
 
@@ -434,9 +433,9 @@ void QLabelList::writeLandmarks()
     for( it = m_landmarks.begin(); it != m_landmarks.end(); ++it )
       {
       myfile << "id " << it->first << " labeltext " << it->first << " xyz "
-             << doubleConvert( ( it->second )[0]) << " "
-             << doubleConvert( ( it->second )[1]) << " "
-             << doubleConvert ( ( ( it->second )[2]);
+             << doubleConvert( ( it->second )[0]).c_str() << " "
+             << doubleConvert( ( it->second )[1]).c_str() << " "
+             << doubleConvert( ( it->second )[2]).c_str();
                          if( ++index < m_landmarks.size() )
                            {
                            myfile << " orientationwxyz 0 0 0 1 selected 1 visibility 1\n";

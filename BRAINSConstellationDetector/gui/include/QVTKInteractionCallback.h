@@ -163,7 +163,7 @@ public slots:
 
   void createListAddButtonSlot(); // receive the request from add button
 
-  void deleteListButtonSlot(); // receive the request from remove button
+  // void deleteListButtonSlot(); // receive the request from remove button
 
 signals:
 

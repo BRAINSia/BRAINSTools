@@ -1044,3 +1044,7 @@ void QVTKInteractionCallback::createListAddButtonSlot()
     + initPos.number( ( physicalExtent[4] + physicalExtent[5] ) / 2.0 );
   emit createListItem(initPos);
 }
+
+// void QVTKInteractionCallback::deleteListButtonSlot()
+// {
+// }

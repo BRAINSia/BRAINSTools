@@ -32,11 +32,11 @@ ExternalProject_Add(${proj}
   ${COMMON_EXTERNAL_PROJECT_ARGS}
   -DBUILD_EXAMPLES:BOOL=OFF
   -DBUILD_TESTING:BOOL=OFF
-  -DUKF_SUPERBUILD:BOOL=OFF
+  -DUnbiasedNonLocalMeans_SUPERBUILD:BOOL=OFF
   -DTeem_DIR:PATH=${Teem_DIR}
   -DSlicerExecutionModel_DIR:PATH=${SlicerExecutionModel_DIR}
   -DSlicer_SOURCE_DIR:BOOL=ON ## THIS is a hack to prevent looking for slicer
-  -DUKFTractography_SuperBuild:BOOL=ON ## THIS should be the single flag
+  -DUnbiasedNonLocalMeansTractography_SuperBuild:BOOL=ON ## THIS should be the single flag
   ${${proj}_CMAKE_OPTIONS}
   INSTALL_COMMAND ""
   DEPENDS

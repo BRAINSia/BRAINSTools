@@ -76,7 +76,6 @@ option(USE_BRAINSMultiSTAPLE              "Build BRAINSMultiSTAPLE"             
 option(USE_DWIConvert                     "Build DWIConvert"                     ON)
 option(USE_BRAINSCreateLabelMapFromProbabilityMaps "Build BRAINSCreateLabelMapFromProbabilityMaps" OFF)
 
-option(USE_UKF                            "Build UKF"                   ON)
 option(USE_UnbiasedNonLocalMeans          "Build UnbiasedNonLocalMeans" ON)
 option(USE_SlicerJointRicianAnisotropicLMMSEFilter          "Build SlicerJointRicianAnisotropicLMMSEFilter" ON)
 

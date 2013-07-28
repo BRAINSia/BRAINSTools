@@ -61,6 +61,8 @@ int main(int argc, char *argv[])
 
   if( useTransform && useDisplacementField )
     {
+    std::cout << "ERROR: warpTransform and deformationVolume are mutually exclusive, only use one of them."
+              << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -138,7 +140,16 @@ int main(int argc, char *argv[])
     {
     try
       {
-      genericTransform = itk::ReadTransformFromDisk( warpTransform );
+      if ( warpTransform == "Identity" )
+        {
+        itk::VersorRigid3DTransform<double>::Pointer rigidIdentity = itk::VersorRigid3DTransform<double>::New();
+        rigidIdentity->SetIdentity();
+        genericTransform = rigidIdentity.GetPointer();
+        }
+      else
+        {
+        genericTransform = itk::ReadTransformFromDisk( warpTransform );
+        }
       }
     catch( itk::ExceptionObject & excp )
       {

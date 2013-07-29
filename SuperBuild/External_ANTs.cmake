@@ -25,6 +25,7 @@ set(${extProjName}_REQUIRED_VERSION "")  #If a required version is necessary, th
 #  unset(${extProjName}_DIR CACHE)
 #endif()
 
+# Sanity checks
 if(DEFINED ${extProjName}_SOURCE_DIR AND NOT EXISTS ${${extProjName}_SOURCE_DIR})
   message(FATAL_ERROR "${extProjName}_SOURCE_DIR variable is defined but corresponds to non-existing directory (${${extProjName}_SOURCE_DIR})")
 endif()
@@ -42,7 +43,7 @@ endif()
 # Include dependent projects if any
 SlicerMacroCheckExternalProjectDependency(${proj})
 
-if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}" AND NOT "${USE_SYSTEM_${extProjName}}" ) ) )
+if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" ) )
   #message(STATUS "${__indent}Adding project ${proj}")
 
   # Set CMake OSX variable to pass down the external project
@@ -71,12 +72,12 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
 
   ### --- End Project specific additions
   set(${proj}_REPOSITORY "git://github.com/stnava/ANTs.git")
-  set(${proj}_GIT_TAG "aed25fa00f653e75fac5c9ffb5055d87a7623504")
+  set(${proj}_GIT_TAG "d3998be547f311a21c8454d1cd42d22c75850845")
 
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${${proj}_REPOSITORY}
     GIT_TAG ${${proj}_GIT_TAG}
-    SOURCE_DIR ${proj}
+    SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/ExternalSources/${proj}
     BINARY_DIR ${proj}-build
     LOG_CONFIGURE 0  # Wrap configure in script to ignore log output from dashboards
     LOG_BUILD     0  # Wrap build in script to to ignore log output from dashboards
@@ -92,7 +93,7 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
     DEPENDS
     ${${proj}_DEPENDENCIES}
   )
-  set(${extProjName}_SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/${proj})
+  set(${extProjName}_SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/ExternalSources/${proj})
   set(${extProjName}_LIBRARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/lib)
 else()
   if(${USE_SYSTEM_${extProjName}})
@@ -106,6 +107,7 @@ else()
       message("using ${extProjName}_SOURCE_DIR=${${extProjName}_SOURCE_DIR} and
 ${extProjName}_LIBRARY_DIR=${${extProjName}_LIBRARY_DIR}")
     endif()
+    message("USING the system ${extProjName}, set ${extProjName}_SOURCE_DIR=${${extProjName}_SOURCE_DIR}")
   endif()
   # The project is provided using ${extProjName}_DIR, nevertheless since other
   # project may depend on ${extProjName}, let's add an 'empty' one

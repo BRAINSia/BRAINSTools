@@ -67,7 +67,7 @@ if(NOT SWIG_DIR)
     set(swig_install_dir ${CMAKE_CURRENT_BINARY_DIR}/Swig/install)
 
     configure_file(
-      ${CMAKE_CURRENT_SOURCE_DIR}/SuperBuild/External_Swig_configure_step.cmake.in
+      ${CMAKE_CURRENT_LIST_DIR}/External_Swig_configure_step.cmake.in
       ${CMAKE_CURRENT_BINARY_DIR}/External_Swig_configure_step.cmake
       @ONLY)
     set ( swig_CONFIGURE_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/External_Swig_configure_step.cmake )

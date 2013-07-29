@@ -40,7 +40,7 @@ set(${proj}_DEPENDENCIES "")
 # Include dependent projects if any
 SlicerMacroCheckExternalProjectDependency(${proj})
 
-if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}" AND NOT "${USE_SYSTEM_${extProjName}}" ) ) )
+if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" ) )
   #message(STATUS "${__indent}Adding project ${proj}")
 
   # Set CMake OSX variable to pass down the external project
@@ -82,7 +82,7 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
     SVN_USERNAME slicerbot
     SVN_PASSWORD slicer
     SVN_TRUST_CERT
-    SOURCE_DIR ${proj}
+    SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/ExternalSources/${proj}
     BINARY_DIR ${proj}-build
     BUILD_COMMAND ""
     LOG_CONFIGURE 0  # Wrap configure in script to ignore log output from dashboards

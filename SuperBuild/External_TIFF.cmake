@@ -1,4 +1,3 @@
-
 # Make sure this file is included only once by creating globally unique varibles
 # based on the name of this included file.
 get_filename_component(CMAKE_CURRENT_LIST_FILENAME ${CMAKE_CURRENT_LIST_FILE} NAME_WE)
@@ -38,26 +37,32 @@ set(${proj}_DEPENDENCIES JPEG)
 # Include dependent projects if any
 SlicerMacroCheckExternalProjectDependency(${proj})
 
-if(NOT ( DEFINED "${extProjName}_DIR"
-      OR ( DEFINED "${USE_SYSTEM_${extProjName}}"
-        AND NOT "${USE_SYSTEM_${extProjName}}" ) ) )
+if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" ) )
   #message(STATUS "${__indent}Adding project ${proj}")
 
-  set(TIFF_URL "http://download.osgeo.org/libtiff/tiff-4.0.3.tar.gz")
-  set(TIFF_MD5 "051c1068e6a0627f461948c365290410")
+  # Set CMake OSX variable to pass down the external project
+  set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
   if(APPLE)
+    list(APPEND CMAKE_OSX_EXTERNAL_PROJECT_ARGS
+      -DCMAKE_OSX_ARCHITECTURES=${CMAKE_OSX_ARCHITECTURES}
+      -DCMAKE_OSX_SYSROOT=${CMAKE_OSX_SYSROOT}
+      -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET})
     set(APPLE_CFLAGS " -DHAVE_APPLE_OPENGL_FRAMEWORK")
   endif()
+
+  ### --- Project specific additions here
 
   AutoConf_FLAGS(${proj}_CFLAGS C "${APPLE_CFLAGS}")
   AutoConf_FLAGS(${proj}_CXXFLAGS CXX "${APPLE_CFLAGS}")
 
   ### --- End Project specific additions
+  set(${proj}_URL "http://download.osgeo.org/libtiff/tiff-4.0.3.tar.gz")
+  set(${proj}_MD5 "051c1068e6a0627f461948c365290410")
   ExternalProject_Add(${proj}
-    URL ${TIFF_URL}
+    URL ${${proj}_URL}
     ${URL_HASH_CLAUSE}
-    URL_MD5 ${TIFF_MD5}
-    SOURCE_DIR ${proj}
+    URL_MD5 ${${proj}_MD5}
+    SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/ExternalSources/${proj}
     BINARY_DIR ${proj}-build
     INSTALL_DIR ${proj}-install
     LOG_CONFIGURE 0  # Wrap configure in script to ignore log output from dashboards

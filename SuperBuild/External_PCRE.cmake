@@ -46,7 +46,7 @@ set(pcre_source_dir ${CMAKE_CURRENT_BINARY_DIR}/PCRE-prefix/src/PCRE)
 set(pcre_install_dir ${CMAKE_CURRENT_BINARY_DIR}/PCRE)
 
 configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/SuperBuild/External_PCRE_configure_step.cmake.in
+  ${CMAKE_CURRENT_LIST_DIR}/External_PCRE_configure_step.cmake.in
   ${CMAKE_CURRENT_BINARY_DIR}/External_PCRE_configure_step.cmake
   @ONLY)
 set(pcre_CONFIGURE_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/External_PCRE_configure_step.cmake)

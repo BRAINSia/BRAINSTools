@@ -61,22 +61,26 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
 # SVN is too slow SVN_REVISION -r "82586"
   set(${proj}_URL http://sourceforge.net/projects/boost/files/boost/1.54.0/boost_1_54_0.tar.gz )
   set(${proj}_MD5 efbfbff5a85a9330951f243d0a46e4b9 )
+  if(CMAKE_COMPILER_IS_CLANGXX)
+    set(CLANG_ARG -DCMAKE_COMPILER_IS_CLANGXX:BOOL=ON)
+  endif()
   ExternalProject_Add(${proj}
     URL ${${proj}_URL}
     URL_MD5 ${${proj}_MD5}
-    SOURCE_DIR Boost
+    SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/${proj}
     ${cmakeversion_external_update} "${cmakeversion_external_update_value}"
     CONFIGURE_COMMAND ${CMAKE_COMMAND}
-    -DBUILD_DIR:PATH=${CMAKE_CURRENT_BINARY_DIR}/Boost
+    -DBUILD_DIR:PATH=${CMAKE_CURRENT_BINARY_DIR}/${proj}
     -DBOOST_INSTALL_DIR:PATH=${Boost_Install_Dir}
     -P ${Boost_Configure_Script}
     INSTALL_COMMAND ""
     BUILD_IN_SOURCE 1
     BUILD_COMMAND ${CMAKE_COMMAND}
+    ${CLANG_ARG}
     -DBUILD_DIR:PATH=${CMAKE_CURRENT_BINARY_DIR}/Boost
     -DBOOST_INSTALL_DIR:PATH=${Boost_Install_Dir} -P ${Boost_Build_Script}
   )
-  set(BOOST_ROOT ${CMAKE_CURRENT_BINARY_DIR}/boost-install)
+  set(BOOST_ROOT        ${CMAKE_CURRENT_BINARY_DIR}/boost-install)
   set(BOOST_INCLUDE_DIR ${CMAKE_CURRENT_BINARY_DIR}/boost-install/include)
 else()
   if(${USE_SYSTEM_${extProjName}})

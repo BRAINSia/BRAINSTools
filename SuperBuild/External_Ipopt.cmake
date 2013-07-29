@@ -36,7 +36,7 @@ set(${proj}_DEPENDENCIES "")
 # Include dependent projects if any
 SlicerMacroCheckExternalProjectDependency(${proj})
 
-if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}" AND NOT "${USE_SYSTEM_${extProjName}}" ) ) )
+if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" ) )
   #message(STATUS "${__indent}Adding project ${proj}")
 
   # Set CMake OSX variable to pass down the external project
@@ -62,7 +62,7 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
   set(${proj}_install_dir ${CMAKE_CURRENT_BINARY_DIR}/${proj}-install)
   set(${proj}_configure_script
     ${CMAKE_CURRENT_BINARY_DIR}/External_Ipopt_configure_step.cmake)
-  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/SuperBuild/External_Ipopt_configure_step.cmake.in
+  configure_file(${CMAKE_CURRENT_LIST_DIR}/External_Ipopt_configure_step.cmake.in
     ${${proj}_configure_script}
     @ONLY)
 
@@ -76,7 +76,7 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
     SVN_REPOSITORY ${${proj}_REPOSITORY}
     SVN_REVISION -r ${${proj}_GIT_TAG}
     SVN_TRUST_CERT 1
-    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/SuperBuild/ExternalSources/${proj}
+    SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/ExternalSources/${proj}
     BINARY_DIR ${proj}-build
     LOG_CONFIGURE 0  # Wrap configure in script to ignore log output from dashboards
     LOG_BUILD     0  # Wrap build in script to to ignore log output from dashboards

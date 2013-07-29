@@ -35,6 +35,35 @@ if(${PRIMARY_PROJECT_NAME}_USE_QT)
   endif()
 endif()
 
+if( USE_BRAINSFit ) ## This is to force configuration of python early.
+  ## NIPYPE is not stable under python 2.6, so require 2.7 when using autoworkup
+  ## Enthought Canopy or anaconda are convenient ways to install python 2.7 on linux
+  ## or the other option is the free version of Anaconda from https://store.continuum.io/
+  set(REQUIRED_PYTHON_VERSION 2.7)
+  if(APPLE)
+   set(PYTHON_EXECUTABLE
+         /System/Library/Frameworks/Python.framework/Versions/${REQUIRED_PYTHON_VERSION}/bin/python2.7
+         CACHE FILEPATH "The apple specified python version" )
+   set(PYTHON_LIBRARY
+         /System/Library/Frameworks/Python.framework/Versions/${REQUIRED_PYTHON_VERSION}/lib/libpython2.7.dylib
+         CACHE FILEPATH "The apple specified python shared library" )
+   set(PYTHON_INCLUDE_DIR
+         /System/Library/Frameworks/Python.framework/Versions/${REQUIRED_PYTHON_VERSION}/include/python2.7
+         CACHE PATH "The apple specified python headers" )
+  else()
+    find_package ( PythonInterp ${REQUIRED_PYTHON_VERSION} REQUIRED )
+
+    message(STATUS "Found PythonInterp version ${PYTHON_VERSION_STRING}")
+    find_package ( PythonLibs ${PYTHON_VERSION_STRING} EXACT REQUIRED )
+  endif()
+
+  set(PYTHON_INSTALL_CMAKE_ARGS
+        PYTHON_EXECUTABLE:FILEPATH
+        PYTHON_LIBRARY:FILEPATH
+        PYTHON_INCLUDE_DIR:PATH
+     )
+endif()
+
 #-----------------------------------------------------------------------------
 # Update CMake module path
 #------------------------------------------------------------------------------

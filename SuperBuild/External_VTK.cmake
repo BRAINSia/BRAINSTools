@@ -39,7 +39,7 @@ endif()
 # Include dependent projects if any
 SlicerMacroCheckExternalProjectDependency(${proj})
 
-if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}" AND NOT "${USE_SYSTEM_${extProjName}}" ) ) )
+if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" ) )
   #message(STATUS "${__indent}Adding project ${proj}")
 
   # Set CMake OSX variable to pass down the external project
@@ -71,7 +71,6 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
   endif()
 
   set(VTK_QT_ARGS)
-  message("${PRIMARY_PROJECT_NAME}_USE_QT=${${PRIMARY_PROJECT_NAME}_USE_QT}")
   if(${PRIMARY_PROJECT_NAME}_USE_QT)
     if(NOT APPLE)
       set(VTK_QT_ARGS
@@ -165,7 +164,7 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${${proj}_REPOSITORY}
     GIT_TAG ${${proj}_GIT_TAG}
-    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/SuperBuild/ExternalSources/${proj}
+    SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/ExternalSources/${proj}
     BINARY_DIR ${proj}-build
     BUILD_COMMAND ${VTK_BUILD_STEP}
     LOG_CONFIGURE 0  # Wrap configure in script to ignore log output from dashboards

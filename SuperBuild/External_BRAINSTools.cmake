@@ -39,7 +39,7 @@ set(${extProjName}_DEPENDENCIES ITKv4 SlicerExecutionModel ANTs VTK DCMTK JPEG T
 # Include dependent projects if any
 SlicerMacroCheckExternalProjectDependency(${proj})
 
-if(NOT DEFINED ${extProjName}_SOURCE_DIR)
+if(NOT ( DEFINED "${extProjName}_SOURCE_DIR" OR ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" ) ) )
   #message(STATUS "${__indent}Adding project ${proj}")
 
   # Set CMake OSX variable to pass down the external project
@@ -68,6 +68,9 @@ if(NOT DEFINED ${extProjName}_SOURCE_DIR)
       -DUSE_SYSTEM_TIFF:BOOL=ON
       -DUSE_SYSTEM_ANTs:BOOL=ON
       -DUSE_SYSTEM_JPEG:BOOL=ON
+      -DPYTHON_EXECUTABLE:FILEPATH=${PYTHON_EXECUTABLE}
+      -DPYTHON_LIBRARY:FILEPATH=${PYTHON_LIBRARY}
+      -DPYTHON_INCLUDE_DIR:PATH=${PYTHON_INCLUDE_DIR}
       -DUSE_SYSTEM_SimpleITK:BOOL=ON
       -DANTs_SOURCE_DIR:PATH=${ANTs_SOURCE_DIR}
       -DANTs_LIBRARY_DIR:PATH=${ANTs_LIBRARY_DIR}
@@ -94,7 +97,7 @@ if(NOT DEFINED ${extProjName}_SOURCE_DIR)
       -DITK_DIR:PATH=${ITK_DIR}
       -DVTK_DIR:PATH=${VTK_DIR}
       -DTeem_DIR:PATH=${Teem_DIR}
-      -DUSE_ANTS:BOOL=ON
+      -DUSE_ANTs:BOOL=ON
       -D${proj}_USE_QT:BOOL=${LOCAL_PROJECT_NAME}_USE_QT
       -DUSE_AutoWorkup:BOOL=ON
       -DUSE_BRAINSABC:BOOL=ON
@@ -125,7 +128,7 @@ if(NOT DEFINED ${extProjName}_SOURCE_DIR)
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${${proj}_REPOSITORY}
     GIT_TAG ${${proj}_GIT_TAG}
-    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/SuperBuild/ExternalSources/${proj}
+    SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/ExternalSources/${proj}
     BINARY_DIR ${proj}-build
     LOG_CONFIGURE 0  # Wrap configure in script to ignore log output from dashboards
     LOG_BUILD     0  # Wrap build in script to to ignore log output from dashboards

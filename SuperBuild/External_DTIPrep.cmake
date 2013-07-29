@@ -39,7 +39,7 @@ set(${proj}_DEPENDENCIES DCMTK ITKv4 SlicerExecutionModel VTK BRAINSTools ANTs)
 # Include dependent projects if any
 SlicerMacroCheckExternalProjectDependency(${proj})
 
-if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}" AND NOT "${USE_SYSTEM_${extProjName}}" ) ) )
+if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" ) )
   #message(STATUS "${__indent}Adding project ${proj}")
 
   # Set CMake OSX variable to pass down the external project
@@ -55,7 +55,7 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
   if(BRAINSCommonLibWithANTs)
     set(BRAINSCommonLibWithANTs_OPTIONS
       -DBRAINSTools_SOURCE_DIR:PATH=${BRAINSTools_SOURCE_DIR}
-      -DUSE_ANTS:BOOL=ON
+      -DUSE_ANTs:BOOL=ON
       -DUSE_SYSTEM_ANTs:BOOL=ON
       -DANTs_SOURCE_DIR:PATH=${ANTs_SOURCE_DIR}
       -DANTs_LIBRARY_DIR:PATH=${ANTs_LIBRARY_DIR}
@@ -67,7 +67,7 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
       )
   else()
     set(BRAINSCommonLibWithANTs_OPTIONS
-      -DUSE_ANTS:BOOL=OFF)
+      -DUSE_ANTs:BOOL=OFF)
   endif()
 
   ### --- Project specific additions here
@@ -97,7 +97,7 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
     SVN_REVISION -r "255"
     SVN_USERNAME slicerbot
     SVN_PASSWORD slicer
-    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/SuperBuild/ExternalSources/${proj}
+    SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/ExternalSources/${proj}
     BINARY_DIR ${proj}-build
     INSTALL_COMMAND ""
     LOG_CONFIGURE 0  # Wrap configure in script to ignore log output from dashboards

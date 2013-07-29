@@ -1,4 +1,5 @@
-# Make sure this file is included only once
+# Make sure this file is included only once by creating globally unique varibles
+# based on the name of this included file.
 get_filename_component(CMAKE_CURRENT_LIST_FILENAME ${CMAKE_CURRENT_LIST_FILE} NAME_WE)
 if(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED)
   return()
@@ -14,7 +15,7 @@ set(${proj}_DEPENDENCIES ITKv4 SlicerExecutionModel )
 ExternalProject_Add(${proj}
   GIT_REPOSITORY ${${proj}_GIT_REPOSITORY}
   GIT_TAG ${${proj}_GIT_TAG}
-  SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/SuperBuild/ExternalSources/${proj}
+  SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/ExternalSources/${proj}
   BINARY_DIR ${proj}-build
   LOG_CONFIGURE 0  # Wrap configure in script to ignore log output from dashboards
   LOG_BUILD     0  # Wrap build in script to to ignore log output from dashboards

@@ -71,7 +71,7 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
 
   ### --- End Project specific additions
   set(${proj}_REPOSITORY "git://github.com/stnava/ANTs.git")
-  set(${proj}_GIT_TAG "d419b471597827de3fa975eef2a13c671f151acb")
+  set(${proj}_GIT_TAG "d3998be547f311a21c8454d1cd42d22c75850845")
 
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${${proj}_REPOSITORY}

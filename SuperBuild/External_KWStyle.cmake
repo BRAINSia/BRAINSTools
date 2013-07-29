@@ -56,7 +56,7 @@ if(NOT DEFINED ${extProjName}_EXE AND NOT ${USE_SYSTEM_${extProjName}})
   ExternalProject_Add(${proj}
     CVS_REPOSITORY :pserver:anoncvs@public.kitware.com:/cvsroot/KWStyle
     CVS_MODULE KWStyle
-    SOURCE_DIR ${proj}
+    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/SuperBuild/ExternalSources/${proj}
     BINARY_DIR ${proj}-build
     LOG_CONFIGURE 0  # Wrap configure in script to ignore log output from dashboards
     LOG_BUILD     0  # Wrap build in script to to ignore log output from dashboards

@@ -71,12 +71,12 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
 
   ### --- End Project specific additions
   set(${proj}_REPOSITORY "git://github.com/stnava/ANTs.git")
-  set(${proj}_GIT_TAG "aed25fa00f653e75fac5c9ffb5055d87a7623504")
+  set(${proj}_GIT_TAG "d419b471597827de3fa975eef2a13c671f151acb")
 
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${${proj}_REPOSITORY}
     GIT_TAG ${${proj}_GIT_TAG}
-    SOURCE_DIR ${proj}
+    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/SuperBuild/ExternalSources/${proj}
     BINARY_DIR ${proj}-build
     LOG_CONFIGURE 0  # Wrap configure in script to ignore log output from dashboards
     LOG_BUILD     0  # Wrap build in script to to ignore log output from dashboards
@@ -92,7 +92,7 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
     DEPENDS
     ${${proj}_DEPENDENCIES}
   )
-  set(${extProjName}_SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/${proj})
+  set(${extProjName}_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/SuperBuild/ExternalSources/${proj})
   set(${extProjName}_LIBRARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/lib)
 else()
   if(${USE_SYSTEM_${extProjName}})

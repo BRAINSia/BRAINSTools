@@ -14,7 +14,7 @@ set(${proj}_DEPENDENCIES ITKv4 SlicerExecutionModel )
 ExternalProject_Add(${proj}
   GIT_REPOSITORY ${${proj}_GIT_REPOSITORY}
   GIT_TAG ${${proj}_GIT_TAG}
-  SOURCE_DIR ${proj}
+  SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/SuperBuild/ExternalSources/${proj}
   BINARY_DIR ${proj}-build
   LOG_CONFIGURE 0  # Wrap configure in script to ignore log output from dashboards
   LOG_BUILD     0  # Wrap build in script to to ignore log output from dashboards

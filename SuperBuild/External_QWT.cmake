@@ -59,7 +59,7 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
   set(${proj}_REPOSITORY SVN_REPOSITORY http://svn.code.sf.net/p/qwt/code/branches/qwt-6.0)
   ExternalProject_Add(${proj}
     SVN_REPOSITORY ${${proj}_REPOSITORY}
-    SOURCE_DIR ${proj}
+    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/SuperBuild/ExternalSources/${proj}
     BINARY_DIR ${proj}-build
     LOG_CONFIGURE 0  # Wrap configure in script to ignore log output from dashboards
     LOG_BUILD     0  # Wrap build in script to to ignore log output from dashboards

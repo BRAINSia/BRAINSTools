@@ -82,7 +82,7 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
     SVN_USERNAME slicerbot
     SVN_PASSWORD slicer
     SVN_TRUST_CERT
-    SOURCE_DIR ${proj}
+    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/SuperBuild/ExternalSources/${proj}
     BINARY_DIR ${proj}-build
     BUILD_COMMAND ""
     LOG_CONFIGURE 0  # Wrap configure in script to ignore log output from dashboards

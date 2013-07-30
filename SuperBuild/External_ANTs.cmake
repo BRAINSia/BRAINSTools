@@ -68,7 +68,8 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
       -DANTs_SUPERBUILD:BOOL=OFF
       -DBOOST_DIR:PATH=${BOOST_ROOT}
       -DBOOST_ROOT:PATH=${BOOST_ROOT}
-    )
+      -DBOOST_INCLUDE_DIR:PATH=${BOOST_INCLUDE_DIR}
+   )
 
   ### --- End Project specific additions
   set(${proj}_REPOSITORY "git://github.com/stnava/ANTs.git")

@@ -74,6 +74,7 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
     -DBUILD_DIR:PATH=${CMAKE_CURRENT_BINARY_DIR}/${proj}
     -DBOOST_INSTALL_DIR:PATH=${Boost_Install_Dir}
     -P ${Boost_Configure_Script}
+    INSTALL_COMMAND ""
     BUILD_IN_SOURCE 1
     BUILD_COMMAND ${CMAKE_COMMAND}
     -DBUILD_DIR:PATH=${CMAKE_CURRENT_BINARY_DIR}/Boost

@@ -35,7 +35,7 @@ if(DEFINED ${extProjName}_LIBRARY_DIR AND NOT EXISTS ${${extProjName}_LIBRARY_DI
 endif()
 
 # Set dependency list
-set(${proj}_DEPENDENCIES ITKv4 SlicerExecutionModel)
+set(${proj}_DEPENDENCIES ITKv4 SlicerExecutionModel Boost)
 if(${PROJECT_NAME}_BUILD_DICOM_SUPPORT)
   list(APPEND ${proj}_DEPENDENCIES DCMTK)
 endif()
@@ -68,12 +68,12 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
       -DANTs_SUPERBUILD:BOOL=OFF
       -DBOOST_DIR:PATH=${BOOST_ROOT}
       -DBOOST_ROOT:PATH=${BOOST_ROOT}
-    )
+      -DBOOST_INCLUDE_DIR:PATH=${BOOST_INCLUDE_DIR}
+   )
 
   ### --- End Project specific additions
   set(${proj}_REPOSITORY "git://github.com/stnava/ANTs.git")
-  set(${proj}_GIT_TAG "d3998be547f311a21c8454d1cd42d22c75850845")
-
+  set(${proj}_GIT_TAG "c4b49157453ac2ef7c161e41d84b9042b6141d2a")
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${${proj}_REPOSITORY}
     GIT_TAG ${${proj}_GIT_TAG}

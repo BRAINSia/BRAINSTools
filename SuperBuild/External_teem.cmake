@@ -19,7 +19,7 @@ ProjectDependancyPush(CACHED_proj ${proj})
 # SlicerMacroCheckExternalProjectDependency
 set(extProjName Teem) #The find_package known name
 set(proj        teem) #This local name
-set(${extProjName}_REQUIRED_VERSION zlib VTK)  #If a required version is necessary, then set this, else leave blank
+set(${extProjName}_REQUIRED_VERSION)  #If a required version is necessary, then set this, else leave blank
 
 #if(${USE_SYSTEM_${extProjName}})
 #  unset(${extProjName}_DIR CACHE)

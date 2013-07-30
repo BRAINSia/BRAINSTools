@@ -66,12 +66,13 @@ if(NOT ( DEFINED "${extProjName}_SOURCE_DIR" OR ( DEFINED "USE_SYSTEM_${extProjN
       -DUSE_SYSTEM_DCMTK:BOOL=ON
       -DUSE_SYSTEM_TEEM:BOOL=ON
       -DUSE_SYSTEM_TIFF:BOOL=ON
-      -DUSE_SYSTEM_ANTs:BOOL=ON
       -DUSE_SYSTEM_JPEG:BOOL=ON
       -DPYTHON_EXECUTABLE:FILEPATH=${PYTHON_EXECUTABLE}
       -DPYTHON_LIBRARY:FILEPATH=${PYTHON_LIBRARY}
       -DPYTHON_INCLUDE_DIR:PATH=${PYTHON_INCLUDE_DIR}
       -DUSE_SYSTEM_SimpleITK:BOOL=ON
+      -DSimpleITK_DIR:BOOL=${SimpleITK_DIR}
+      -DUSE_SYSTEM_ANTs:BOOL=ON
       -DANTs_SOURCE_DIR:PATH=${ANTs_SOURCE_DIR}
       -DANTs_LIBRARY_DIR:PATH=${ANTs_LIBRARY_DIR}
       -DUSE_SYSTEM_BOOST:BOOL=ON
@@ -99,6 +100,11 @@ if(NOT ( DEFINED "${extProjName}_SOURCE_DIR" OR ( DEFINED "USE_SYSTEM_${extProjN
       -DTeem_DIR:PATH=${Teem_DIR}
       -DUSE_ANTs:BOOL=ON
       -D${proj}_USE_QT:BOOL=${LOCAL_PROJECT_NAME}_USE_QT
+      -DUSE_SYSTEM_ZLIB:BOOL=ON
+      -Dzlib_DIR:PATH=${zlib_DIR}
+      -DZLIB_ROOT:PATH=${zlib_DIR}
+      -DZLIB_INCLUDE_DIR:PATH=${zlib}_DIR}/include
+      -DZLIB_LIBRARY:FILEPATH=${ZLIB_LIBRARY}
       -DUSE_AutoWorkup:BOOL=ON
       -DUSE_BRAINSABC:BOOL=ON
       -DUSE_BRAINSConstellationDetector:BOOL=ON
@@ -124,7 +130,7 @@ if(NOT ( DEFINED "${extProjName}_SOURCE_DIR" OR ( DEFINED "USE_SYSTEM_${extProjN
 
   ### --- End Project specific additions
   set(${proj}_REPOSITORY "${git_protocol}://github.com/BRAINSia/BRAINSTools.git")
-  set(${proj}_GIT_TAG "7cfb5b30e35c1419dfc61970e93dd572788f191c")
+  set(${proj}_GIT_TAG "dea98eaac11911e77d4cebf262683f48eb700f49")
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${${proj}_REPOSITORY}
     GIT_TAG ${${proj}_GIT_TAG}

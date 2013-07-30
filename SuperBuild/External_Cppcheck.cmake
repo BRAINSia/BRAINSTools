@@ -73,9 +73,6 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
 else()
   if(${USE_SYSTEM_${extProjName}})
     find_program(${proj}_EXE cppcheck DOC "Path of Cppcheck program")
-    if(NOT ${proj}_EXE)
-      message(FATAL_ERROR "To use the system ${extProjName}, set ${extProjName}_EXE")
-    endif()
     message("USING the system ${extProjName}, set ${extProjName}_EXE=${${extProjName}_EXE}")
   endif()
   # The project is provided using ${extProjName}_EXE, nevertheless since other

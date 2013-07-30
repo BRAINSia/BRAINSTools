@@ -51,10 +51,14 @@ if( USE_BRAINSFit ) ## This is to force configuration of python early.
          /System/Library/Frameworks/Python.framework/Versions/${REQUIRED_PYTHON_VERSION}/include/python2.7
          CACHE PATH "The apple specified python headers" )
   else()
-    find_package ( PythonInterp ${REQUIRED_PYTHON_VERSION} REQUIRED )
+    if (NOT EXISTS ${PYTHON_EXECUTABLE} )
+      find_package ( PythonInterp ${REQUIRED_PYTHON_VERSION} REQUIRED )
+    endif()
 
-    message(STATUS "Found PythonInterp version ${PYTHON_VERSION_STRING}")
-    find_package ( PythonLibs ${PYTHON_VERSION_STRING} EXACT REQUIRED )
+    if (NOT EXISTS ${PYTHON_LIBRARY} )
+      message(STATUS "Found PythonInterp version ${PYTHON_VERSION_STRING}")
+      find_package ( PythonLibs ${PYTHON_VERSION_STRING} EXACT REQUIRED )
+    endif()
   endif()
 
   set(PYTHON_INSTALL_CMAKE_ARGS

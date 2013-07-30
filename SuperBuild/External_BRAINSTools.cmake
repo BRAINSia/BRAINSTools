@@ -31,7 +31,7 @@ if(DEFINED ${extProjName}_DIR AND NOT EXISTS ${${extProjName}_DIR})
 endif()
 
 # Set dependency list
-set(${extProjName}_DEPENDENCIES ITKv4 SlicerExecutionModel ANTs VTK DCMTK JPEG TIFF Boost teem SimpleITK)
+set(${extProjName}_DEPENDENCIES ITKv4 SlicerExecutionModel ANTs VTK DCMTK JPEG TIFF Boost teem)
 #if(${PROJECT_NAME}_BUILD_DICOM_SUPPORT)
 #  list(APPEND ${proj}_DEPENDENCIES DCMTK)
 #endif()
@@ -70,8 +70,6 @@ if(NOT ( DEFINED "${extProjName}_SOURCE_DIR" OR ( DEFINED "USE_SYSTEM_${extProjN
       -DPYTHON_EXECUTABLE:FILEPATH=${PYTHON_EXECUTABLE}
       -DPYTHON_LIBRARY:FILEPATH=${PYTHON_LIBRARY}
       -DPYTHON_INCLUDE_DIR:PATH=${PYTHON_INCLUDE_DIR}
-      -DUSE_SYSTEM_SimpleITK:BOOL=ON
-      -DSimpleITK_DIR:BOOL=${SimpleITK_DIR}
       -DUSE_SYSTEM_ANTs:BOOL=ON
       -DANTs_SOURCE_DIR:PATH=${ANTs_SOURCE_DIR}
       -DANTs_LIBRARY_DIR:PATH=${ANTs_LIBRARY_DIR}
@@ -105,7 +103,6 @@ if(NOT ( DEFINED "${extProjName}_SOURCE_DIR" OR ( DEFINED "USE_SYSTEM_${extProjN
       -DZLIB_ROOT:PATH=${zlib_DIR}
       -DZLIB_INCLUDE_DIR:PATH=${zlib}_DIR}/include
       -DZLIB_LIBRARY:FILEPATH=${ZLIB_LIBRARY}
-      -DUSE_AutoWorkup:BOOL=ON
       -DUSE_BRAINSABC:BOOL=ON
       -DUSE_BRAINSConstellationDetector:BOOL=ON
       -DUSE_BRAINSContinuousClass:BOOL=ON
@@ -126,11 +123,12 @@ if(NOT ( DEFINED "${extProjName}_SOURCE_DIR" OR ( DEFINED "USE_SYSTEM_${extProjN
       -DUSE_GTRACT:BOOL=ON
       -DUSE_ICCDEF:BOOL=OFF
       -DUSE_ImageCalculator:BOOL=ON
+      -DUSE_AutoWorkup:BOOL=OFF
     )
 
   ### --- End Project specific additions
   set(${proj}_REPOSITORY "${git_protocol}://github.com/BRAINSia/BRAINSTools.git")
-  set(${proj}_GIT_TAG "dea98eaac11911e77d4cebf262683f48eb700f49")
+  set(${proj}_GIT_TAG "145710fdd14efa7e1cb43cdfeec97e4f1da2c99a")
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${${proj}_REPOSITORY}
     GIT_TAG ${${proj}_GIT_TAG}

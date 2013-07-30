@@ -128,7 +128,7 @@ set(${PRIMARY_PROJECT_NAME}_DEPENDENCIES
   DTIProcess
   niral_utilities
   BRAINSTools
-  DTIPrep
+  #  HACK  FAILS currently DTIPrep
   teem
   SlicerJointRicianAnisotropicLMMSEFilter
   UKF
@@ -137,7 +137,6 @@ set(${PRIMARY_PROJECT_NAME}_DEPENDENCIES
   #python
   )
 
-## DTI_Tract_Stat requires QT to build
 set(${PRIMARY_PROJECT_NAME}_USE_QT ON)
 
 if(BUILD_STYLE_UTILS)

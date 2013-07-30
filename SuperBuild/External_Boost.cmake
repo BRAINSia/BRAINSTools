@@ -17,7 +17,7 @@ ProjectDependancyPush(CACHED_proj ${proj})
 # Make sure that the ExtProjName/IntProjName variables are unique globally
 # even if other External_${ExtProjName}.cmake files are sourced by
 # SlicerMacroCheckExternalProjectDependency
-set(extProjName Boost) #The find_package known name
+set(extProjName BOOST) #The find_package known name
 set(proj        Boost) #This local name
 set(${extProjName}_REQUIRED_VERSION "")  #If a required version is necessary, then set this, else leave blank
 
@@ -39,7 +39,7 @@ set(${proj}_DEPENDENCIES "")
 # Include dependent projects if any
 SlicerMacroCheckExternalProjectDependency(${proj})
 
-if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}" AND NOT "${USE_SYSTEM_${extProjName}}" ) ) )
+if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" ) )
   #message(STATUS "${__indent}Adding project ${proj}")
 
   # Set CMake OSX variable to pass down the external project
@@ -52,7 +52,7 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
   endif()
 
   ### --- Project specific additions here
-  set(Boost_Install_Dir ${CMAKE_CURRENT_BINARY_DIR}/boost-install)
+  set(Boost_Install_Dir ${CMAKE_CURRENT_BINARY_DIR}/${proj}-install)
   set(Boost_Configure_Script ${CMAKE_CURRENT_LIST_DIR}/External_Boost_configureboost.cmake)
   set(Boost_Build_Script ${CMAKE_CURRENT_LIST_DIR}/External_Boost_buildboost.cmake)
 
@@ -70,13 +70,12 @@ if(NOT ( DEFINED "${extProjName}_DIR" OR ( DEFINED "${USE_SYSTEM_${extProjName}}
     SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/${proj}
     ${cmakeversion_external_update} "${cmakeversion_external_update_value}"
     CONFIGURE_COMMAND ${CMAKE_COMMAND}
+    ${CLANG_ARG}
     -DBUILD_DIR:PATH=${CMAKE_CURRENT_BINARY_DIR}/${proj}
     -DBOOST_INSTALL_DIR:PATH=${Boost_Install_Dir}
     -P ${Boost_Configure_Script}
-    INSTALL_COMMAND ""
     BUILD_IN_SOURCE 1
     BUILD_COMMAND ${CMAKE_COMMAND}
-    ${CLANG_ARG}
     -DBUILD_DIR:PATH=${CMAKE_CURRENT_BINARY_DIR}/Boost
     -DBOOST_INSTALL_DIR:PATH=${Boost_Install_Dir} -P ${Boost_Build_Script}
   )

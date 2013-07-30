@@ -70,12 +70,12 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
     SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/${proj}
     ${cmakeversion_external_update} "${cmakeversion_external_update_value}"
     CONFIGURE_COMMAND ${CMAKE_COMMAND}
+    ${CLANG_ARG}
     -DBUILD_DIR:PATH=${CMAKE_CURRENT_BINARY_DIR}/${proj}
     -DBOOST_INSTALL_DIR:PATH=${Boost_Install_Dir}
     -P ${Boost_Configure_Script}
     BUILD_IN_SOURCE 1
     BUILD_COMMAND ${CMAKE_COMMAND}
-    ${CLANG_ARG}
     -DBUILD_DIR:PATH=${CMAKE_CURRENT_BINARY_DIR}/Boost
     -DBOOST_INSTALL_DIR:PATH=${Boost_Install_Dir} -P ${Boost_Build_Script}
   )

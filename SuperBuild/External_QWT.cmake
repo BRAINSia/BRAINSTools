@@ -82,9 +82,6 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
 else()
   if(${USE_SYSTEM_${extProjName}})
     find_package(${extProjName} ${${extProjName}_REQUIRED_VERSION} REQUIRED)
-    if(NOT ${extProjName}_DIR)
-      message(FATAL_ERROR "To use the system ${extProjName}, set ${extProjName}_DIR")
-    endif()
     message("USING the system ${extProjName}, set ${extProjName}_DIR=${${extProjName}_DIR}")
   endif()
   # The project is provided using ${extProjName}_DIR, nevertheless since other

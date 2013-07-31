@@ -75,9 +75,6 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
 else()
   if(${USE_SYSTEM_${extProjName}})
     find_package(${extProjName} ${${extProjName}_REQUIRED_VERSION} REQUIRED)
-    if(NOT ${extProjName}_EXE)
-      message(FATAL_ERROR "To use the system ${extProjName}, set ${extProjName}_EXE")
-    endif()
     message("USING the system ${extProjName}, set ${extProjName}_EXE=${${extProjName}_EXE}")
   endif()
   # The project is provided using ${extProjName}_EXE, nevertheless since other

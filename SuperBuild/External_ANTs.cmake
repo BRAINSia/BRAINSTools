@@ -59,7 +59,7 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
   set(${proj}_CMAKE_OPTIONS
       -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/${proj}-install
       -DUSE_SYSTEM_ITK:BOOL=ON
-      -DUSE_SYSTEM_BOOST:BOOL=ON
+      -DUSE_SYSTEM_Boost:BOOL=ON
       -DUSE_SYSTEM_SlicerExecutionModel:BOOL=ON
       -DSlicerExecutionModel_DIR:PATH=${SlicerExecutionModel_DIR}
       -DITK_DIR:PATH=${ITK_DIR}

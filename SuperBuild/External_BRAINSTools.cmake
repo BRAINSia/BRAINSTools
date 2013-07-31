@@ -73,14 +73,14 @@ if(NOT ( DEFINED "${extProjName}_SOURCE_DIR" OR ( DEFINED "USE_SYSTEM_${extProjN
       -DUSE_SYSTEM_ANTs:BOOL=ON
       -DANTs_SOURCE_DIR:PATH=${ANTs_SOURCE_DIR}
       -DANTs_LIBRARY_DIR:PATH=${ANTs_LIBRARY_DIR}
-      -DUSE_SYSTEM_BOOST:BOOL=ON
       -DUSE_SYSTEM_SlicerExecutionModel:BOOL=ON
-      -DBOOST_DIR:PATH=${BOOST_ROOT}
-      -DBOOST_ROOT:PATH=${BOOST_ROOT}
-      -DDCMTK_DIR:PATH=${DCMTK_DIR}
-      -DDCMTK_config_INCLUDE_DIR:PATH=${DCMTK_DIR}/include
+      -DUSE_SYSTEM_Boost:BOOL=ON
+      -DBoost_NO_BOOST_CMAKE:BOOL=ON #Set Boost_NO_BOOST_CMAKE to ON to disable the search for boost-cmake
+      -DBoost_DIR:PATH=${BOOST_ROOT}
       -DBOOST_ROOT:PATH=${BOOST_ROOT}
       -DBOOST_INCLUDE_DIR:PATH=${BOOST_INCLUDE_DIR}
+      -DDCMTK_DIR:PATH=${DCMTK_DIR}
+      -DDCMTK_config_INCLUDE_DIR:PATH=${DCMTK_DIR}/include
       -DJPEG_DIR:PATH=${JPEG_DIR}
       -DJPEG_INCLUDE_DIR:PATH=${JPEG_INCLUDE_DIR}
       -DJPEG_LIB_DIR:PATH=${JPEG_LIB_DIR}
@@ -128,7 +128,7 @@ if(NOT ( DEFINED "${extProjName}_SOURCE_DIR" OR ( DEFINED "USE_SYSTEM_${extProjN
 
   ### --- End Project specific additions
   set(${proj}_REPOSITORY "${git_protocol}://github.com/BRAINSia/BRAINSTools.git")
-  set(${proj}_GIT_TAG "a3245847ec714f41ed110252a580b7c112ddc080")
+  set(${proj}_GIT_TAG "ae2c5fb48bd09d462215632f5405e47d63eb1abe")
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${${proj}_REPOSITORY}
     GIT_TAG ${${proj}_GIT_TAG}

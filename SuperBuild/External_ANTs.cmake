@@ -59,14 +59,15 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
   set(${proj}_CMAKE_OPTIONS
       -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/${proj}-install
       -DUSE_SYSTEM_ITK:BOOL=ON
-      -DUSE_SYSTEM_BOOST:BOOL=ON
       -DUSE_SYSTEM_SlicerExecutionModel:BOOL=ON
       -DSlicerExecutionModel_DIR:PATH=${SlicerExecutionModel_DIR}
       -DITK_DIR:PATH=${ITK_DIR}
       -DBUILD_EXAMPLES:BOOL=OFF
       -DBUILD_TESTING:BOOL=OFF
       -DANTs_SUPERBUILD:BOOL=OFF
-      -DBOOST_DIR:PATH=${BOOST_ROOT}
+      -DUSE_SYSTEM_Boost:BOOL=ON
+      -DBoost_NO_BOOST_CMAKE:BOOL=ON #Set Boost_NO_BOOST_CMAKE to ON to disable the search for boost-cmake
+      -DBoost_DIR:PATH=${BOOST_ROOT}
       -DBOOST_ROOT:PATH=${BOOST_ROOT}
       -DBOOST_INCLUDE_DIR:PATH=${BOOST_INCLUDE_DIR}
    )

@@ -116,7 +116,11 @@ if(USE_BRAINSABC OR USE_BRAINSCut)
 endif()
 
 #if(USE_BRAINSABC OR BRAINS_DEBUG_IMAGE_WRITE)
-if(BRAINS_DEBUG_IMAGE_WRITE OR USE_GTRACT OR USE_BRAINSTalairach)
+if(BRAINS_DEBUG_IMAGE_WRITE
+    OR USE_GTRACT
+    OR USE_BRAINSTalairach
+    OR USE_ConvertBetweenFileFormats
+    )
   list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES VTK)
 endif()
 
@@ -277,6 +281,7 @@ list(APPEND ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS
   USE_BRAINSMultiModeSegment:BOOL
   USE_BRAINSInitializedControlPoints:BOOL
   USE_BRAINSTransformConvert:BOOL
+  USE_ConvertBetweenFileFormats:BOOL
   USE_ImageCalculator:BOOL
   USE_BRAINSSnapShotWriter:BOOL
   USE_DebugImageViewer:BOOL

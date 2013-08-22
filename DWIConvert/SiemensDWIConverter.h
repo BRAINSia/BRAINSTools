@@ -289,19 +289,19 @@ protected:
   void DeMosaic()
     {
       // de-mosaic
-      this->m_Rows /= this->m_MMosaic;
-      this->m_Cols /= this->m_NMosaic;
+      this->m_Cols /= this->m_MMosaic;
+      this->m_Rows /= this->m_NMosaic;
 
       // center the volume since the image position patient given in the
       // dicom header was useless
-      this->m_Origin[0] = -(this->m_Rows * (this->m_NRRDSpaceDirection[0][0])
-                         + this->m_Cols * (this->m_NRRDSpaceDirection[0][1])
+      this->m_Origin[0] = -(this->m_Cols * (this->m_NRRDSpaceDirection[0][0])
+                         + this->m_Rows * (this->m_NRRDSpaceDirection[0][1])
                          + this->m_SlicesPerVolume * (this->m_NRRDSpaceDirection[0][2]) ) / 2.0;
-      this->m_Origin[1] = -(this->m_Rows * (this->m_NRRDSpaceDirection[1][0])
-                         + this->m_Cols * (this->m_NRRDSpaceDirection[1][1])
+      this->m_Origin[1] = -(this->m_Cols * (this->m_NRRDSpaceDirection[1][0])
+                         + this->m_Rows * (this->m_NRRDSpaceDirection[1][1])
                          + this->m_SlicesPerVolume * (this->m_NRRDSpaceDirection[1][2]) ) / 2.0;
-      this->m_Origin[2] = -(this->m_Rows * (this->m_NRRDSpaceDirection[2][0])
-                         + this->m_Cols * (this->m_NRRDSpaceDirection[2][1])
+      this->m_Origin[2] = -(this->m_Cols * (this->m_NRRDSpaceDirection[2][0])
+                         + this->m_Rows * (this->m_NRRDSpaceDirection[2][1])
                          + this->m_SlicesPerVolume * (this->m_NRRDSpaceDirection[2][2]) ) / 2.0;
 
       VolumeType::Pointer img = this->m_Volume;

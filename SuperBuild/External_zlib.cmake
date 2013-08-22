@@ -26,8 +26,15 @@ set(${extProjName}_REQUIRED_VERSION "")  #If a required version is necessary, th
 #endif()
 
 # Sanity checks
-if(DEFINED ${extProjName}_DIR AND NOT EXISTS ${${extProjName}_DIR})
-  message(FATAL_ERROR "${extProjName}_DIR variable is defined but corresponds to non-existing directory (${${extProjName}_DIR})")
+if(DEFINED ${extProjName}_DIR)
+  # sometimes on subsequent configure runs, zlib_DIR will be zlib_DIR-NOTFOUND, but
+  # the zlib vars will be set properly
+  if( NOT (IS_DIRECTORY "${ZLIB_INCLUDE_DIR}" AND EXISTS "${ZLIB_LIBRARY}" ) )
+    if(NOT EXISTS ${${extProjName}_DIR})
+      message(FATAL_ERROR
+        "${extProjName}_DIR variable is defined but corresponds to non-existing directory (${${extProjName}_DIR})")
+    endif()
+  endif()
 endif()
 
 # Set dependency list
@@ -73,6 +80,7 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
     GIT_TAG ${${proj}_GIT_TAG}
     SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/ExternalSources/${proj}
     BINARY_DIR ${proj}-build
+    INSTALL_DIR ${proj}-install
     LOG_CONFIGURE 0  # Wrap configure in script to ignore log output from dashboards
     LOG_BUILD     0  # Wrap build in script to to ignore log output from dashboards
     LOG_TEST      0  # Wrap test in script to to ignore log output from dashboards

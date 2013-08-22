@@ -87,7 +87,7 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}")
     -DBUILD_DOXYGEN:BOOL=OFF
     -DPYTHON_EXECUTABLE:FILEPATH=${PYTHON_EXECUTABLE}
     -DPYTHON_LIBRARY:FILEPATH=${PYTHON_LIBRARY}
-    -DPYTHON_INCLUDE_DIR:PATH=${PYTHON_INCLUDE_DIR}
+    -DPYTHON_INCLUDE_DIR:PATH=${PYTHON_INCLUDE_DIRS}
     -DWRAP_PYTHON:BOOL=ON
     -DWRAP_TCL:BOOL=OFF
     -DWRAP_JAVA:BOOL=OFF
@@ -97,7 +97,7 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}")
     -DWRAP_R:BOOL=OFF
     -DPYTHON_EXECUTABLE:PATH=${PYTHON_EXECUTABLE}
     -DPYTHON_LIBRARY:STRING=${PYTHON_LIBRARY}
-    -DPYTHON_INCLUDE_DIR:PATH=${PYTHON_INCLUDE_DIR}
+    -DPYTHON_INCLUDE_DIR:PATH=${PYTHON_INCLUDE_DIRS}
     -DPYTHON_DEBUG_LIBRARIES:STRING=${PYTHON_DEBUG_LIBRARIES}
     -DSWIG_EXECUTABLE:PATH=${SWIG_EXECUTABLE}
     #
@@ -128,7 +128,7 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}")
   set(${extProjName}_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
 else()
   if(${USE_SYSTEM_${extProjName}})
-    find_package(${extProjName} REQUIRED)
+    find_package(${extProjName} ${${extProjName}_REQUIRED_VERSION} REQUIRED)
     message("USING the system ${extProjName}, set ${extProjName}_DIR=${${extProjName}_DIR}")
   endif()
   # The project is provided using ${extProjName}_DIR, nevertheless since other

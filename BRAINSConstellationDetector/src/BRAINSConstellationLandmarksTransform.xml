@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>Utilities.BRAINS</category>
+  <title>Landmarks Transformation</title>
+  <description>
+  This program converts the original landmark file to the target landmark file using the input transform.
+  </description>
+  <version>1.0</version>
+  <documentation-url> </documentation-url>
+  <license> </license>
+  <contributor>Ali Ghayoor</contributor>
+<acknowledgements>
+</acknowledgements>
+
+  <parameters>
+    <label>IO</label>
+    <description>Input/output parameters</description>
+
+    <file fileExtensions=".fcsv">
+      <name>inputLandmarksFile</name>
+      <flag>i</flag>
+      <longflag>inputLandmarksFile</longflag>
+      <label>Input landmarks file</label>
+      <channel>input</channel>
+      <description>Input landmarks file (.fcsv)</description>
+    </file>
+
+    <transform fileExtensions=".h5,.hdf5">
+      <name>inputTransformFile</name>
+      <flag>t</flag>
+      <longflag>inputTransformFile</longflag>
+      <label>Input transform file</label>
+      <channel>input</channel>
+      <description>input composite transform file (.h5,.hdf5)</description>
+    </transform>
+
+    <file fileExtensions=".fcsv">
+      <name>outputLandmarksFile</name>
+      <flag>o</flag>
+      <longflag>outputLandmarksFile</longflag>
+      <label>Output landmarks file</label>
+      <channel>output</channel>
+      <description>Output landmarks file (.fcsv)</description>
+    </file>
+
+  </parameters>
+
+</executable>

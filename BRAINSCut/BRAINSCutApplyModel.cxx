@@ -233,7 +233,7 @@ BRAINSCutApplyModel
         PredictROI( roiInputVector, predictedOutputVector,
                     roiIDsOrderNumber, inputVectorGenerator.GetInputVectorSize() );
         roiInputVector.clear();
-        const std::string ANNContinuousOutputFilename = GetContinuousPredictionFilename( subject, currentROIName );
+        const std::string & ANNContinuousOutputFilename = GetContinuousPredictionFilename( subject, currentROIName );
 
         /* post processing
          * may include hole-filling(closing), thresholding, and more adjustment
@@ -467,7 +467,7 @@ BRAINSCutApplyModel
 
 LabelImagePointerType
 BRAINSCutApplyModel
-::PostProcessingANN( std::string continuousFilename,
+::PostProcessingANN( const std::string & continuousFilename,
                      scalarType threshold )
 {
   WorkingImagePointer continuousImage = ReadImageByFilename( continuousFilename );
@@ -481,7 +481,7 @@ BRAINSCutApplyModel
 
     /* Get One label */
     maskVolume = Opening( maskVolume, 1 );
-    maskVolume = GetOneConnectedRegion( maskVolume, 1 );
+    maskVolume = GetOneConnectedRegion( maskVolume );
 
     /* opening and closing to get rid of island and holes */
     maskVolume = Closing( maskVolume, 1 );
@@ -496,7 +496,7 @@ BRAINSCutApplyModel
 
 LabelImagePointerType
 BRAINSCutApplyModel
-::PostProcessingRF( std::string labelImageFilename,
+::PostProcessingRF( const std::string & labelImageFilename,
                     const unsigned char labelValue )
 {
   LabelImagePointerType labelImage =
@@ -506,7 +506,7 @@ BRAINSCutApplyModel
 
   resultBinaryImage = FillHole(  labelImage, labelValue  );
   resultBinaryImage = Closing( resultBinaryImage, labelValue  );
-  resultBinaryImage = GetOneConnectedRegion( resultBinaryImage, labelValue );
+  resultBinaryImage = GetOneConnectedRegion( resultBinaryImage );
 
   return resultBinaryImage;
 }
@@ -625,7 +625,7 @@ BRAINSCutApplyModel
 
 LabelImagePointerType
 BRAINSCutApplyModel
-::GetOneConnectedRegion( LabelImagePointerType& image, const unsigned char labelValue)
+::GetOneConnectedRegion( LabelImagePointerType& image)
 {
   LabelImagePointerType resultMask;
 
@@ -638,7 +638,7 @@ BRAINSCutApplyModel
 
     relabler->SetInput( image );
 
-    /* relable images from the largest to smallset one */
+    /* relable images from the largest to smallest size */
     typedef itk::RelabelComponentImageFilter<LabelImageType, LabelImageType> RelabelInOrderFilterType;
     RelabelInOrderFilterType::Pointer relabelInOrder = RelabelInOrderFilterType::New();
 
@@ -647,7 +647,8 @@ BRAINSCutApplyModel
 
     LabelImagePointerType multipleLabelVolume = relabelInOrder->GetOutput();
     /* get the label one */
-    resultMask = ExtractLabel( multipleLabelVolume, labelValue ); //NOTE: This used to be hard-coded to 1, and labelValue was not used in the function at all
+    const unsigned char LargestLabelIndex = 1; //NOTE:  After RelabelInOrder 1 is always the largest remaining region.
+    resultMask = ExtractLabel( multipleLabelVolume, LargestLabelIndex );
     }
   catch( itk::ExceptionObject& ex )
     {
@@ -906,8 +907,8 @@ BRAINSCutApplyModel
 {
   const std::string subjectID(subject.GetAttribute<StringValue>("Name") );
 
-  std::string outputDir =  GetSubjectOutputDirectory( subject );
-  std::string returnFilename = outputDir + "/" + subjectID + "_ANNLabel_seg.nii.gz";
+  const std::string & outputDir =  GetSubjectOutputDirectory( subject );
+  const std::string & returnFilename = outputDir + "/" + subjectID + "_ANNLabel_seg.nii.gz";
 
   return returnFilename;
 }

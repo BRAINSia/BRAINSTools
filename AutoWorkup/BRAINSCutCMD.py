@@ -1,8 +1,14 @@
+#!/Shared/sinapse/sharedopt/20130601/RHEL5/Anaconda/bin/python
 #!/usr/bin/env python
 #
 # TODO
 # :: copy model file into md5 repository
 # :: connect input/output in the BAW
+
+import sys
+print sys.argv
+print sys.version
+print sys.executable
 
 import argparse
 import subprocess
@@ -55,9 +61,7 @@ def xmlGenerator(args, roi=""):
     outputStream.write("   <NeuralNetParams MaskSmoothingValue     = \"0.0\"\n")
     outputStream.write("          GradientProfileSize    = \"1\"\n")
     outputStream.write("          TrainingVectorFilename = \"" + args.trainingVectorFilename + "\"\n")
-    # outputStream.write( "          TrainingModelFilename  = \""+args.modelFileBasename+"\"\n")
     outputStream.write("          TrainingModelFilename  = \"na\"\n")
-    # outputStream.write( "          TrainingModelFilename  = \"/nfsscratch/PREDICT/TEST_BRAINSCut/20120828ANNModel_Model_RF100.txt\"\n")
     outputStream.write("          TestVectorFilename     = \"na\"\n")
     if roi == "caudate":
         outputStream.write("          Normalization          = \"" + 'Linear' + "\"\n")

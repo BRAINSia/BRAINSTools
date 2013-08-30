@@ -11,11 +11,8 @@
 ##
 #################################################################################
 
-import os
-import csv
 import sys
 import string
-import argparse
 #"""Import necessary modules from nipype."""
 # from nipype.utils.config import config
 # config.set('logging', 'log_to_file', 'false')
@@ -24,12 +21,10 @@ import argparse
 #--config.set('logging', 'interface_level', 'DEBUG')
 #--config.set('execution','remove_unnecessary_outputs','false')
 
-from nipype.interfaces.base import CommandLine, CommandLineInputSpec, TraitedSpec, File, Directory
+from nipype.interfaces.base import CommandLine, CommandLineInputSpec, TraitedSpec, Directory
 from nipype.interfaces.base import traits, isdefined, BaseInterface
-from nipype.interfaces.utility import Merge, Split, Function, Rename, IdentityInterface
-import nipype.interfaces.io as nio   # Data i/o
+from nipype.interfaces.utility import Split, Rename, IdentityInterface
 import nipype.pipeline.engine as pe  # pypeline engine
-from nipype.interfaces.freesurfer import ReconAll
 
 from nipype.utils.misc import package_check
 # package_check('nipype', '5.4', 'tutorial1') ## HACK: Check nipype version
@@ -69,22 +64,14 @@ def GetExtensionlessBaseName(filename):
         currExt = os.path.splitext(currBaseName)[1]
     return currBaseName
 
-
 def get_list_element(nestedList, index):
     return nestedList[index]
-
 
 def getAllT1sLength(allT1s):
     return len(allT1s)
 
-
-def get_list_element(nestedList, index):
-    return nestedList[index]
-
-
 def MakeList(firstElement, secondElement):
     return [firstElement, secondElement]
-
 
 def GenerateWFName(projectid, subjectid, sessionid, processing_phase):
     return 'WF_' + str(subjectid) + "_" + str(sessionid) + "_" + str(projectid) + "_" + processing_phase

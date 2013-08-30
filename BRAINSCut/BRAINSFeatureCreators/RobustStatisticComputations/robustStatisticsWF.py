@@ -155,7 +155,7 @@ def main(argv=None):
     # workflow
     #
     # outputBaseDir = "/scratch/eunyokim/LabelStatistics/RobustStats/TrackOn_Analysis/"
-    # outputBaseDir = "/nfsscratch/PREDICT/regina/LabelStatistics/RobustStats/TrackOn_Analysis/"
+    # outputBaseDir = "/Shared/sinapse/PREDICT/regina/LabelStatistics/RobustStats/TrackOn_Analysis/"
 
     myWF = pe.Workflow(name="Analysis")
     myWF.base_dir = inputArg.outputBaseDir + "/_Cache"
@@ -217,8 +217,8 @@ def main(argv=None):
     findRestInputsFromT1.inputs.BRAINSAtlasDir = inputArg.BRAINSAtlasDir
 
     # if cluster
-    # BAWSrcDir="/nfsscratch/PREDICT/regina/src/BRAINSToolsSrc//BRAINSTools/"
-    # BAWBuildDir="/nfsscratch/PREDICT/regina/src/BRAINSToolsSrc/build_20121016/"
+    # BAWSrcDir="/Shared/sinapse/PREDICT/regina/src/BRAINSToolsSrc//BRAINSTools/"
+    # BAWBuildDir="/Shared/sinapse/PREDICT/regina/src/BRAINSToolsSrc/build_20121016/"
 
     pythonPath = inputArg.BRAINSToolsSrcDir + "/BRAINSCut/BRAINSFeatureCreators/RobustStatisticComputations:" + inputArg.BRAINSToolsSrcDir + "/AutoWorkup/:" + inputArg.BRAINSToolsSrcDir + "/AutoWorkup/BRAINSTools/:" + inputArg.BRAINSToolsBuildDir + \
         "/SimpleITK-build/bin/" + inputArg.BRAINSToolsBuildDir + "/SimpleITK-build/lib:" + inputArg.PythonBinDir
@@ -263,18 +263,18 @@ if __name__ == "__main__":
 
 # Python Path ex. from Hans
 
-#/nfsscratch/PREDICT/opt/epd-7.2-1-rh5-x86_64/lib/python2.7/site-packages/nibabel-1.2.0-py2.7.egg:
-#/nfsscratch/PREDICT/opt/epd-7.2-1-rh5-x86_64/lib/python2.7/site-packages/pydicom-0.9.7-py2.7.egg:
-#/nfsscratch/PREDICT/opt/epd-7.2-1-rh5-x86_64/lib/python2.7/site-packages/pudb-2012.2-py2.7.egg:
-#/nfsscratch/PREDICT/opt/epd-7.2-1-rh5-x86_64/lib/python2.7/site-packages/urwid-1.0.1-py2.7-linux-x86_64.egg:
-#/nfsscratch/PREDICT/opt/epd-7.2-1-rh5-x86_64/lib/python2.7/site-packages/SimpleITK-0.5.0-py2.7.egg:
+#/Shared/sinapse/PREDICT/opt/epd-7.2-1-rh5-x86_64/lib/python2.7/site-packages/nibabel-1.2.0-py2.7.egg:
+#/Shared/sinapse/PREDICT/opt/epd-7.2-1-rh5-x86_64/lib/python2.7/site-packages/pydicom-0.9.7-py2.7.egg:
+#/Shared/sinapse/PREDICT/opt/epd-7.2-1-rh5-x86_64/lib/python2.7/site-packages/pudb-2012.2-py2.7.egg:
+#/Shared/sinapse/PREDICT/opt/epd-7.2-1-rh5-x86_64/lib/python2.7/site-packages/urwid-1.0.1-py2.7-linux-x86_64.egg:
+#/Shared/sinapse/PREDICT/opt/epd-7.2-1-rh5-x86_64/lib/python2.7/site-packages/SimpleITK-0.5.0-py2.7.egg:
 #/opt/ortheus/src/python:
-#/nfsscratch/PREDICT/opt/epd-7.2-1-rh5-x86_64/lib/python27.zip:
-#/nfsscratch/PREDICT/opt/epd-7.2-1-rh5-x86_64/lib/python2.7:
-#/nfsscratch/PREDICT/opt/epd-7.2-1-rh5-x86_64/lib/python2.7/plat-linux2:
-#/nfsscratch/PREDICT/opt/epd-7.2-1-rh5-x86_64/lib/python2.7/lib-tk:
-#/nfsscratch/PREDICT/opt/epd-7.2-1-rh5-x86_64/lib/python2.7/lib-old:
-#/nfsscratch/PREDICT/opt/epd-7.2-1-rh5-x86_64/lib/python2.7/lib-dynload:
-#/nfsscratch/PREDICT/opt/epd-7.2-1-rh5-x86_64/lib/python2.7/site-packages:
-#/nfsscratch/PREDICT/opt/epd-7.2-1-rh5-x86_64/lib/python2.7/site-packages/PIL:
-#/nfsscratch/PREDICT/opt/epd-7.2-1-rh5-x86_64/lib/python2.7/site-packages/IPython/extensions
+#/Shared/sinapse/PREDICT/opt/epd-7.2-1-rh5-x86_64/lib/python27.zip:
+#/Shared/sinapse/PREDICT/opt/epd-7.2-1-rh5-x86_64/lib/python2.7:
+#/Shared/sinapse/PREDICT/opt/epd-7.2-1-rh5-x86_64/lib/python2.7/plat-linux2:
+#/Shared/sinapse/PREDICT/opt/epd-7.2-1-rh5-x86_64/lib/python2.7/lib-tk:
+#/Shared/sinapse/PREDICT/opt/epd-7.2-1-rh5-x86_64/lib/python2.7/lib-old:
+#/Shared/sinapse/PREDICT/opt/epd-7.2-1-rh5-x86_64/lib/python2.7/lib-dynload:
+#/Shared/sinapse/PREDICT/opt/epd-7.2-1-rh5-x86_64/lib/python2.7/site-packages:
+#/Shared/sinapse/PREDICT/opt/epd-7.2-1-rh5-x86_64/lib/python2.7/site-packages/PIL:
+#/Shared/sinapse/PREDICT/opt/epd-7.2-1-rh5-x86_64/lib/python2.7/site-packages/IPython/extensions

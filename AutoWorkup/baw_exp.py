@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 #################################################################################
 ## Program:   BRAINS (Brain Research: Analysis of Images, Networks, and Systems)
 ## Language:  Python
@@ -13,6 +13,7 @@
 import os
 import re
 import sys
+import traceback
 
 import multiprocessing
 import time
@@ -172,7 +173,8 @@ def DoSingleSubjectProcessing(sp_args):
     try:
         if input_arguments.wfrun == 'helium_all.q':
             try:
-                baw200.write_graph()
+                #baw200.write_graph()
+                pass
             except:
                 pass
             baw200.run(plugin=SGEFlavor,
@@ -180,7 +182,8 @@ def DoSingleSubjectProcessing(sp_args):
                                         qsub_args="-S /bin/bash -cwd -pe smp1 1-12 -l h_vmem=19G,mem_free=9G -o /dev/null -e /dev/null " + CLUSTER_QUEUE))
         elif input_arguments.wfrun == 'helium_all.q_graph':
             try:
-                baw200.write_graph()
+                #baw200.write_graph()
+                pass
             except:
                 pass
             SGEFlavor = 'SGEGraph'  # Use the SGEGraph processing
@@ -230,12 +233,11 @@ def DoSingleSubjectProcessing(sp_args):
             print "You must specify the run environment type. [helium_all.q,helium_all.q_graph,ipl_OSX,local_4,local_12,local]"
             print input_arguments.wfrun
             sys.exit(-1)
-    except Exception, err:
+    except:
         print("ERROR: EXCEPTION CAUGHT IN RUNNING SUBJECT {0}".format(subjectid))
-        print(err)
+        traceback.print_exc(file=sys.stdout)
         return False
     return True
-
 
 
 def MasterProcessingController(argv=None):
@@ -423,25 +425,37 @@ def MasterProcessingController(argv=None):
     JOB_SCRIPT = get_global_sge_script(sys.path, PROGRAM_PATHS, CUSTOM_ENVIRONMENT)
     print JOB_SCRIPT
 
+    # Randomly shuffle to_do_subjects to get max
+    import random
+    random.shuffle(to_do_subjects)
+
     ## Make a list of all the arguments to be processed
     sp_args_list = list()
     start_time=time.time()
-    delay=0
+    subj_index = 1
     for subjectid in to_do_subjects:
-        delay = delay+10
+        delay = 15*subj_index
+        subj_index += 1
+        print("START DELAY: {0}",delay)
         sp_args=(CACHE_ATLASPATH, CACHE_BCDMODELPATH, CLUSTER_QUEUE, CLUSTER_QUEUE_LONG,
                                   ExperimentBaseDirectoryCache, ExperimentBaseDirectoryResults, subject_data_file,
                                   GLOBAL_DATA_SINK_REWRITE, JOB_SCRIPT, WORKFLOW_COMPONENTS, input_arguments,
                                   mountPrefix, start_time+delay, subjectid)
         sp_args_list.append(sp_args)
-    ## Make a pool of workers to submit simultaneously
-    from multiprocessing import Pool
-    myPool = Pool(processes=64,maxtasksperchild=10)
-    all_results=myPool.map_async(DoSingleSubjectProcessing,sp_args_list).get(1e100)
 
-    for indx in range(0,len(sp_args_list)):
-        if all_results[indx] == False:
-                print "FAILED for {0}".format(sp_args_list[indx][-1])
+    if 'local' in input_arguments.wfrun:
+        print("RUNNING WITHOUT POOL BUILDING")
+        for sp_args in sp_args_list:
+            DoSingleSubjectProcessing(sp_args)
+    else:
+        ## Make a pool of workers to submit simultaneously
+        from multiprocessing import Pool
+        myPool = Pool(processes=32,maxtasksperchild=10)
+        all_results=myPool.map_async(DoSingleSubjectProcessing,sp_args_list).get(1e100)
+
+        for indx in range(0,len(sp_args_list)):
+            if all_results[indx] == False:
+                    print "FAILED for {0}".format(sp_args_list[indx][-1])
 
     print("THIS RUN OF BAW FOR SUBJS {0} HAS COMPLETED".format(to_do_subjects))
     return 0

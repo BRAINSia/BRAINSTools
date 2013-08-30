@@ -43,9 +43,9 @@ def CreateLabelMap(listOfImages, LabelImageName, CSVFileName, posteriorDictionar
     def CleanUpGMSegmentationWithWMCSF(initial_seg_fn, posteriorDictionary, WMThreshold, CSFThreshold):
         initial_seg = sitk.Cast(sitk.ReadImage(initial_seg_fn), sitk.sitkUInt8)
 
-        WM_FN = posteriorDictionary['WM']
-        WM_PROB = sitk.ReadImage(WM_FN)
-        WM_removed = CleanUpSegmentationsWithExclusionProbabilityMaps(initial_seg, WM_PROB, WMThreshold)
+        #WM_FN = posteriorDictionary['WM']
+        #WM_PROB = sitk.ReadImage(WM_FN)
+        #WM_removed = CleanUpSegmentationsWithExclusionProbabilityMaps(initial_seg, WM_PROB, WMThreshold)
 
         CSF_FN = posteriorDictionary['CSF']
         CSF_PROB = sitk.ReadImage(CSF_FN)
@@ -157,17 +157,6 @@ def CreateLabelMap(listOfImages, LabelImageName, CSVFileName, posteriorDictionar
 #==============================================
 #==============================================
 
-"""
-    from WorkupT1T2BRAINSCutSegmentation import CreateBRAINSCutSegmentationWorkflow
-    myLocalcutWF= CreateBRAINSCutSegmentationWorkflow("999999_PersistanceCheckingWorkflow")
-    cutWF.connect(SplitAvgBABC,'avgBABCT1',myLocalcutWF,'fixedVolume')
-    cutWF.connect(BABC,'outputLabels',myLocalcutWF,'fixedBinaryVolume')
-    cutWF.connect(BAtlas,'template_t1',myLocalcutWF,'movingVolume')
-    cutWF.connect(BAtlas,'template_brain',myLocalcutWF,'movingBinaryVolume')
-    cutWF.connect(BLI,'outputTransformFilename',myLocalcutWF,'initialTransform')
-"""
-
-
 def CreateBRAINSCutWorkflow(projectid,
                             subjectid,
                             sessionid,
@@ -182,9 +171,7 @@ def CreateBRAINSCutWorkflow(projectid,
                                                              'posteriorDictionary', 'RegistrationROI',
                                                              'atlasToSubjectTransform']), name='inputspec')
 
-    """
-    Denoised T1 input for BRAINSCut
-    """
+    #Denoised T1 input for BRAINSCut
     denosingTimeStep = 0.0625
     denosingConductance = 0.4
     denosingIteration = 5
@@ -197,9 +184,7 @@ def CreateBRAINSCutWorkflow(projectid,
 
     cutWF.connect(inputsSpec, 'T1Volume', DenoisedT1, 'inputVolume')
 
-    """
-    Gradient Anistropic Diffusion T1 images for BRAINSCut
-    """
+    #Gradient Anistropic Diffusion T1 images for BRAINSCut
     GADT1 = pe.Node(interface=GradientAnisotropicDiffusionImageFilter(), name="GADT1")
     GADT1.inputs.timeStep = 0.025
     GADT1.inputs.conductance = 1
@@ -209,9 +194,7 @@ def CreateBRAINSCutWorkflow(projectid,
     cutWF.connect(inputsSpec, 'T1Volume', GADT1, 'inputVolume')
 
     if not t1Only:
-        """
-        Denoised T1 input for BRAINSCut
-        """
+        #Denoised T1 input for BRAINSCut
         DenoisedT2 = pe.Node(interface=GradientAnisotropicDiffusionImageFilter(), name="DenoisedT2")
         DenoisedT2.inputs.timeStep = denosingTimeStep
         DenoisedT2.inputs.conductance = denosingConductance
@@ -220,9 +203,7 @@ def CreateBRAINSCutWorkflow(projectid,
 
         cutWF.connect(inputsSpec, 'T2Volume', DenoisedT2, 'inputVolume')
 
-        """
-        Gradient Anistropic Diffusion T1 images for BRAINSCut
-        """
+        #Gradient Anistropic Diffusion T1 images for BRAINSCut
         GADT2 = pe.Node(interface=GradientAnisotropicDiffusionImageFilter(), name="GADT2")
         GADT2.inputs.timeStep = 0.025
         GADT2.inputs.conductance = 1
@@ -230,18 +211,14 @@ def CreateBRAINSCutWorkflow(projectid,
         GADT2.inputs.outputVolume = "GADT2.nii.gz"
         cutWF.connect(inputsSpec, 'T2Volume', GADT2, 'inputVolume')
 
-        """
-        Sum the gradient images for BRAINSCut
-        """
+        #Sum the gradient images for BRAINSCut
         SGI = pe.Node(interface=GenerateSummedGradientImage(), name="SGI")
         SGI.inputs.outputFileName = "SummedGradImage.nii.gz"
 
         cutWF.connect(GADT1, 'outputVolume', SGI, 'inputVolume1')
         cutWF.connect(GADT2, 'outputVolume', SGI, 'inputVolume2')
 
-    """
-    BRAINSCut
-    """
+    #BRAINSCut
     RF12BC = pe.Node(interface=RF12BRAINSCutWrapper(), name="IQR_NORM_SEP_RF12_BRAINSCut")
     many_cpu_RF12BC_options_dictionary = {'qsub_args': '-S /bin/bash -pe smp1 2-2 -l h_vmem=8G,mem_free=4G -o /dev/null -e /dev/null ' + CLUSTER_QUEUE, 'overwrite': True}
 # many_cpu_RF12BC_options_dictionary={'qsub_args': '-S /bin/bash -pe smp1 2-8 -l big_mem=true,h_vmem=60G,mem_free=30G -o /dev/null -e /dev/null '+CLUSTER_QUEUE, 'overwrite': True}
@@ -250,17 +227,6 @@ def CreateBRAINSCutWorkflow(projectid,
     RF12BC.inputs.trainingVectorFilename = "trainingVectorFilename.txt"
     RF12BC.inputs.xmlFilename = "BRAINSCutSegmentationDefinition.xml"
     RF12BC.inputs.vectorNormalization = "IQR"
-
-    """ HACK These should be l_caudate_seg.nii.gz
-    subjectANNLabel_l_caudate.nii.gz
-    subjectANNLabel_l_hippocampus.nii.gz
-    subjectANNLabel_l_putamen.nii.gz
-    subjectANNLabel_l_thalamus.nii.gz
-    subjectANNLabel_r_caudate.nii.gz
-    subjectANNLabel_r_hippocampus.nii.gz
-    subjectANNLabel_r_putamen.nii.gz
-    subjectANNLabel_r_thalamus.nii.gz
-    """
 
     RF12BC.inputs.outputBinaryLeftCaudate = 'subjectANNLabel_l_caudate.nii.gz'
     RF12BC.inputs.outputBinaryRightCaudate = 'subjectANNLabel_r_caudate.nii.gz'
@@ -274,21 +240,6 @@ def CreateBRAINSCutWorkflow(projectid,
     RF12BC.inputs.outputBinaryRightAccumben = 'subjectANNLabel_r_accumben.nii.gz'
     RF12BC.inputs.outputBinaryLeftGlobus = 'subjectANNLabel_l_globus.nii.gz'
     RF12BC.inputs.outputBinaryRightGlobus = 'subjectANNLabel_r_globus.nii.gz'
-    """
-    "ANNContinuousPredictionl_accumbensubject.nii.gz"
-    RF12BC.inputs.outputBinaryLeftCaudate = 'ANNContinuousPredictionl_caudatesubject.nii.gz'
-    RF12BC.inputs.outputBinaryRightCaudate = 'ANNContinuousPredictionr_caudatesubject.nii.gz'
-    RF12BC.inputs.outputBinaryLeftHippocampus = 'ANNContinuousPredictionl_hippocampussubject.nii.gz'
-    RF12BC.inputs.outputBinaryRightHippocampus = 'ANNContinuousPredictionr_hippocampussubject.nii.gz'
-    RF12BC.inputs.outputBinaryLeftPutamen = 'ANNContinuousPredictionl_putamensubject.nii.gz'
-    RF12BC.inputs.outputBinaryRightPutamen = 'ANNContinuousPredictionr_putamensubject.nii.gz'
-    RF12BC.inputs.outputBinaryLeftThalamus = 'ANNContinuousPredictionl_thalamussubject.nii.gz'
-    RF12BC.inputs.outputBinaryRightThalamus = 'ANNContinuousPredictionr_thalamussubject.nii.gz'
-    RF12BC.inputs.outputBinaryLeftAccumben = 'ANNContinuousPredictionl_accumbensubject.nii.gz'
-    RF12BC.inputs.outputBinaryRightAccumben = 'ANNContinuousPredictionr_accumbensubject.nii.gz'
-    RF12BC.inputs.outputBinaryLeftGlobus = 'ANNContinuousPredictionl_globussubject.nii.gz'
-    RF12BC.inputs.outputBinaryRightGlobus = 'ANNContinuousPredictionr_globussubject.nii.gz'
-    """
 
     cutWF.connect(DenoisedT1, 'outputVolume', RF12BC, 'inputSubjectT1Filename')
 
@@ -332,7 +283,7 @@ def CreateBRAINSCutWorkflow(projectid,
         ### TODO:  Replace with proper atlasObject name in the future!!! This is a HACK
         ### to avoid changing the hash keys of the input files from the atlas.
         def ChangeModelPathDirectory(multiModalFileName):
-                return multiModalFileName.replace('modelFiles', 'T1OnlyModels')
+            return multiModalFileName.replace('modelFiles', 'T1OnlyModels')
         cutWF.connect([(atlasObject, RF12BC,
                         [(('trainModelFile_txtD0060NT0060_gz', ChangeModelPathDirectory), 'modelFilename')])])
 
@@ -405,20 +356,7 @@ def CreateBRAINSCutWorkflow(projectid,
     cutWF.connect(computeOneLabelMap, 'CleanedRightAccumben', outputsSpec, 'outputBinaryRightAccumben')
     cutWF.connect(computeOneLabelMap, 'CleanedLeftGlobus', outputsSpec, 'outputBinaryLeftGlobus')
     cutWF.connect(computeOneLabelMap, 'CleanedRightGlobus', outputsSpec, 'outputBinaryRightGlobus')
-    """
-    cutWF.connect(RF12BC, 'outputBinaryLeftCaudate', outputsSpec, 'outputBinaryLeftCaudate')
-    cutWF.connect(RF12BC, 'outputBinaryRightCaudate', outputsSpec, 'outputBinaryRightCaudate')
-    cutWF.connect(RF12BC, 'outputBinaryLeftHippocampus', outputsSpec, 'outputBinaryLeftHippocampus')
-    cutWF.connect(RF12BC, 'outputBinaryRightHippocampus', outputsSpec, 'outputBinaryRightHippocampus')
-    cutWF.connect(RF12BC, 'outputBinaryLeftPutamen', outputsSpec, 'outputBinaryLeftPutamen')
-    cutWF.connect(RF12BC, 'outputBinaryRightPutamen', outputsSpec, 'outputBinaryRightPutamen')
-    cutWF.connect(RF12BC, 'outputBinaryLeftThalamus', outputsSpec, 'outputBinaryLeftThalamus')
-    cutWF.connect(RF12BC, 'outputBinaryRightThalamus', outputsSpec, 'outputBinaryRightThalamus')
-    cutWF.connect(RF12BC, 'outputBinaryLeftAccumben', outputsSpec, 'outputBinaryLeftAccumben')
-    cutWF.connect(RF12BC, 'outputBinaryRightAccumben', outputsSpec, 'outputBinaryRightAccumben')
-    cutWF.connect(RF12BC, 'outputBinaryLeftGlobus', outputsSpec, 'outputBinaryLeftGlobus')
-    cutWF.connect(RF12BC, 'outputBinaryRightGlobus', outputsSpec, 'outputBinaryRightGlobus')
-    """
+
     cutWF.connect(RF12BC, 'xmlFilename', outputsSpec, 'xmlFilename')
 
     return cutWF

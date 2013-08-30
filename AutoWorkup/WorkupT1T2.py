@@ -48,7 +48,7 @@ from WorkupT1T2FreeSurfer_custom import (CreateFreeSurferWorkflow_custom,
 
 
 def GenerateSubjectOutputPattern(subjectid):
-    """ This function generates output path substitutions for workflows and nodes that conform to a common standard.
+    r""" This function generates output path substitutions for workflows and nodes that conform to a common standard.
 HACK:  [('ANTSTemplate/Iteration02_Reshaped.nii.gz', 'SUBJECT_TEMPLATES/0668/T1_RESHAPED.nii.gz'),
 ('ANTSTemplate/_ReshapeAveragePassiveImageWithShapeUpdate[0-9]*', 'SUBJECT_TEMPLATES/0668')]
 subs=r'test/\g<project>/\g<subject>/\g<session>'
@@ -544,7 +544,7 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
                                                # This is a lot of work, so submit it run_without_submitting=True,
                                                run_without_submitting=True,  # HACK:  THIS NODE REALLY SHOULD RUN ON THE CLUSTER!
                                                name='99_MakeNewAtlasTemplate')
-            MakeNewAtlasTemplateNode.plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp1 1-1 -l mem_free=1000M -o /nfsscratch/PREDICT/hjohnson/TrackOn/scripts/MNA_out.out -e /nfsscratch/PREDICT/hjohnson/TrackOn/scripts/MNA_err.err {QUEUE_OPTIONS}'.format(
+            MakeNewAtlasTemplateNode.plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp1 1-1 -l mem_free=1000M {QUEUE_OPTIONS}'.format(
                 QUEUE_OPTIONS=CLUSTER_QUEUE), 'overwrite': True}
             MakeNewAtlasTemplateNode.inputs.outDefinition = 'AtlasDefinition_' + subjectid + '.xml'
             baw200.connect(BAtlas[subjectid], 'ExtendedAtlasDefinition_xml_in', MakeNewAtlasTemplateNode, 'AtlasTemplate')
@@ -689,7 +689,6 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
                 if len(global_AllT1s[sessionid]) > 0:
                     baw200.connect([(PHASE_2_oneSubjWorkflow[sessionid], TC_DataSink[sessionid], [(('outputspec.t1_average', makeListOfValidImages), 'TissueClassify.@t1_average')])])
                 if len(global_AllT2s[sessionid]) > 0:
-                    #print "XXXXYYYY  {0}".format(global_AllT2s[sessionid])
                     baw200.connect([(PHASE_2_oneSubjWorkflow[sessionid], TC_DataSink[sessionid], [(('outputspec.t2_average', makeListOfValidImages), 'TissueClassify.@t2_average')])])
                 if len(global_AllPDs[sessionid]) > 0:
                     baw200.connect([(PHASE_2_oneSubjWorkflow[sessionid], TC_DataSink[sessionid], [(('outputspec.pd_average', makeListOfValidImages), 'TissueClassify.@pd_average')])])
@@ -831,7 +830,9 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
                                                                              ('subjectANNLabel_', ''),
                                                                              ('ANNContinuousPrediction', ''),
                                                                              ('subject.nii.gz', '.nii.gz'),
-                                                                             ('.nii.gz', '_seg.nii.gz')
+                                                                             ('_seg.nii.gz', '_seg.nii.gz'),
+                                                                             ('.nii.gz', '_seg.nii.gz'),
+                                                                             ('_seg_seg', '_seg')
                                                                              ]
                     baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryLeftCaudate', SEGMENTATION_DataSink[sessionid], 'Segmentations.@outputBinaryLeftCaudate')
                     baw200.connect(myLocalSegWF[sessionid], 'outputspec.outputBinaryRightCaudate', SEGMENTATION_DataSink[sessionid], 'Segmentations.@outputBinaryRightCaudate')
@@ -1081,7 +1082,7 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
                     if RunMultiMode:
                         # If multi-modal, then create synthesized image before running
                         #print("HACK  FREESURFER len(global_All3T_T2s) > 0 ")
-                        pass;
+                        pass
                     FSCROSS_WF[sessionid] = CreateFreeSurferWorkflow_custom(projectid, subjectid, sessionid,
                                                                             "FSCROSS", CLUSTER_QUEUE,
                                                                             CLUSTER_QUEUE_LONG,

@@ -1,23 +1,11 @@
-#!/usr/bin/env python
-
-from nipype.interfaces.base import CommandLine, CommandLineInputSpec, TraitedSpec, File, Directory
-from nipype.interfaces.base import traits, isdefined, BaseInterface
-from nipype.interfaces.utility import Merge, Split, Function, Rename, IdentityInterface
-import nipype.interfaces.io as nio   # Data i/o
+from nipype.interfaces.utility import Merge, IdentityInterface
 import nipype.pipeline.engine as pe  # pypeline engine
+from nipype.interfaces.freesurfer.model import MS_LDA
+
 # from nipype.interfaces.freesurfer import ReconAll
 import fswrap
 
-from nipype.interfaces.freesurfer.model import MS_LDA
 import os
-
-"""
-    from WorkupT1T2FreeSurfer import CreateFreeSurferWorkflow
-    myLocalFSWF= CreateFreeSurferWorkflow("HansFSTest")
-    baw200.connect(uidSource,'uid',myLocalFSWF,'inputspec.subj_session_id')
-    baw200.connect(SplitAvgBABC,'avgBABCT1',myLocalFSWF,'inputspec.T1_files')
-"""
-
 
 def GenerateWFName(projectid, subjectid, sessionid, WFName):
     return WFName + '_' + str(subjectid) + "_" + str(sessionid) + "_" + str(projectid)

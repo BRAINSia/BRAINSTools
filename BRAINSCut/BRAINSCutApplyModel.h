@@ -30,9 +30,9 @@ public:
 
   void ReadRandomForestModelFile();
 
-  LabelImagePointerType PostProcessingANN( std::string continuousFilename, scalarType threshold );
+  LabelImagePointerType PostProcessingANN( const std::string & continuousFilename, scalarType threshold );
 
-  LabelImagePointerType PostProcessingRF( std::string labelImageFIlename, const unsigned char );
+  LabelImagePointerType PostProcessingRF( const std::string & labelImageFIlename, const unsigned char );
 
   LabelImagePointerType CombineLabel( LabelImagePointerType& resultLabel, LabelImagePointerType& currentLabel,
                                       const unsigned char binaryToLabelValue = 0 );
@@ -46,7 +46,7 @@ public:
 
   LabelImagePointerType ExtractLabel( const LabelImagePointerType& image, unsigned char thresholdValue );
 
-  LabelImagePointerType GetOneConnectedRegion( LabelImagePointerType& image, const unsigned char );
+  LabelImagePointerType GetOneConnectedRegion( LabelImagePointerType& image );
 
   LabelImagePointerType FillHole( LabelImagePointerType& mask, const unsigned char );
 

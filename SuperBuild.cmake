@@ -120,6 +120,7 @@ if(BRAINS_DEBUG_IMAGE_WRITE
     OR USE_GTRACT
     OR USE_BRAINSTalairach
     OR USE_ConvertBetweenFileFormats
+    OR USE_DWIConvert
     )
   list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES VTK)
 endif()

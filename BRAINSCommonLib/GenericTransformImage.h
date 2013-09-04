@@ -18,6 +18,7 @@
 #include "itkScaleVersor3DTransform.h"
 #include "itkScaleSkewVersor3DTransform.h"
 #include "itkAffineTransform.h"
+#include "itkEuler3DTransform.h"
 #include <itkBSplineDeformableTransform.h>
 #include <itkThinPlateR2LogRSplineKernelTransform.h>
 #include "itkVersorRigid3DTransform.h"
@@ -55,6 +56,7 @@ typedef itk::BSplineDeformableTransform<
 
 typedef itk::AffineTransform<double, 3>                      AffineTransformType;
 typedef itk::VersorRigid3DTransform<double>                  VersorRigid3DTransformType;
+typedef itk::Euler3DTransform<double>                        Euler3DTransformType;
 typedef itk::ScaleVersor3DTransform<double>                  ScaleVersor3DTransformType;
 typedef itk::ScaleSkewVersor3DTransform<double>              ScaleSkewVersor3DTransformType;
 typedef itk::ThinPlateR2LogRSplineKernelTransform<double, 3> ThinPlateSpline3DTransformType;
@@ -138,7 +140,8 @@ extern GenericTransformType::Pointer ReadTransformFromDisk(const std::string & i
   * WriteTransformToDisk<TScalarType>(myAffine.GetPointer(), "myAffineFile.mat");
   * \endcode
   */
-extern VersorRigid3DTransformType::Pointer ComputeRigidTransformFromGeneric(
+//extern VersorRigid3DTransformType::Pointer ComputeRigidTransformFromGeneric(
+extern Euler3DTransformType::Pointer ComputeRigidTransformFromGeneric(
   const GenericTransformType::ConstPointer genericTransformToWrite);
 
 /**

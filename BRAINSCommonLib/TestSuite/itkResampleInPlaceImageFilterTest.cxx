@@ -25,7 +25,8 @@
 #include "itkImage.h"
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
-#include "itkVersorRigid3DTransform.h"
+//#include "itkVersorRigid3DTransform.h"
+#include "itkEuler3DTransform.h"
 #include "itkImageRegionConstIterator.h"
 
 #include <iostream>
@@ -61,7 +62,8 @@ int main( int argc, char * argv[] )
 
   typedef itk::ImageRegionConstIterator<ImageType> ImageConstIterator;
   typedef itk::ImageFileReader<ImageType>          ReaderType;
-  typedef itk::VersorRigid3DTransform<double>      TransformType;
+  //typedef itk::VersorRigid3DTransform<double>      TransformType;
+  typedef itk::Euler3DTransform<double>      TransformType;
 
   typedef itk::ResampleInPlaceImageFilter<ImageType, ImageType> FilterType;
 
@@ -83,16 +85,19 @@ int main( int argc, char * argv[] )
     }
 
   // Set up transforms
+  /*
   itk::Vector<double, 3> rotationAxis;
   rotationAxis.Fill( 0. );
   rotationAxis[0] = 1.;
+  */
   double                 rotationAngle = .5; // in rad
   itk::Vector<double, 3> translation;
   translation.Fill( 0. );
   translation[1] = 300.; // in mm along P-axis
   TransformType::Pointer transform = TransformType::New();
   transform->SetIdentity();
-  transform->SetRotation( rotationAxis, rotationAngle );
+  // transform->SetRotation( rotationAxis, rotationAngle ); // Old set up for versorRigid3D
+  transform->SetRotation( rotationAngle, 0, 0 ); // New set up for Euler3D
   transform->Translate( translation, true );
 
   // Set up the resample filter

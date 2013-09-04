@@ -52,22 +52,32 @@ public:
   typedef SmartPointer<const Self> ConstPointer;
 
   typedef float                         PixelType;
-  typedef itk::Image<PixelType, 3>      FixedVolumeType;
-  typedef FixedVolumeType::ConstPointer FixedImageConstPointer;
-  typedef FixedVolumeType::Pointer      FixedImagePointer;
+  typedef itk::Image<PixelType, 3>      FixedImageType;
+  typedef FixedImageType::ConstPointer  FixedImageConstPointer;
+  typedef FixedImageType::Pointer       FixedImagePointer;
 
-  typedef itk::Image<PixelType, 3>       MovingVolumeType;
-  typedef MovingVolumeType::ConstPointer MovingImageConstPointer;
-  typedef MovingVolumeType::Pointer      MovingImagePointer;
+  typedef itk::Image<PixelType, 3>      MovingImageType;
+  typedef MovingImageType::ConstPointer MovingImageConstPointer;
+  typedef MovingImageType::Pointer      MovingImagePointer;
 
   /** Constants for the image dimensions */
-  itkStaticConstMacro(FixedImageDimension, unsigned int, FixedVolumeType::ImageDimension);
-  itkStaticConstMacro(MovingImageDimension, unsigned int, MovingVolumeType::ImageDimension);
+  itkStaticConstMacro(FixedImageDimension, unsigned int, FixedImageType::ImageDimension);
+  itkStaticConstMacro(MovingImageDimension, unsigned int, MovingImageType::ImageDimension);
+
+  typedef itk::CompositeTransform<double, MovingImageDimension>       CompositeTransformType;
 
   typedef SpatialObject<itkGetStaticConstMacro(FixedImageDimension)>  FixedBinaryVolumeType;
   typedef SpatialObject<itkGetStaticConstMacro(MovingImageDimension)> MovingBinaryVolumeType;
   typedef FixedBinaryVolumeType::Pointer                              FixedBinaryVolumePointer;
   typedef MovingBinaryVolumeType::Pointer                             MovingBinaryVolumePointer;
+
+  typedef itk::BRAINSFitHelperTemplate<FixedImageType, MovingImageType> HelperType;
+
+  typedef HelperType::MetricType                             GenericMetricType;
+
+  typedef itk::AffineTransform<double, 3>                                                         AffineTransformType;
+  typedef itk::ImageRegistrationMethodv4<FixedImageType, MovingImageType, AffineTransformType>  AffineRegistrationType;
+  typedef AffineRegistrationType::MetricSamplingStrategyType                                      SamplingStrategyType;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -76,16 +86,16 @@ public:
   itkTypeMacro(BRAINSFitHelper, ProcessObject);
 
   /** Set/Get the Fixed image. */
-  itkSetObjectMacro(FixedVolume, FixedVolumeType);
-  itkGetConstObjectMacro(FixedVolume, FixedVolumeType);
+  itkSetObjectMacro(FixedVolume, FixedImageType);
+  itkGetConstObjectMacro(FixedVolume, FixedImageType);
 
   /** Set/Get the Moving image. */
-  itkSetObjectMacro(MovingVolume, MovingVolumeType)
-  itkGetConstObjectMacro(MovingVolume, MovingVolumeType);
+  itkSetObjectMacro(MovingVolume, MovingImageType)
+  itkGetConstObjectMacro(MovingVolume, MovingImageType);
 
   /** The preprocessedMoving volume SHOULD NOT BE SET, you can get it out of the
     *  algorithm.*/
-  itkGetConstObjectMacro(PreprocessedMovingVolume, MovingVolumeType);
+  itkGetConstObjectMacro(PreprocessedMovingVolume, MovingImageType);
 
   itkSetObjectMacro(FixedBinaryVolume, FixedBinaryVolumeType);
   itkGetModifiableObjectMacro(FixedBinaryVolume, FixedBinaryVolumeType);
@@ -107,12 +117,13 @@ public:
 
   itkSetMacro(NumberOfSamples,                   unsigned int);
   itkGetConstMacro(NumberOfSamples,              unsigned int);
+  itkSetMacro(SamplingPercentage,                double);
+  itkGetConstMacro(SamplingPercentage,           double);
   itkSetMacro(NumberOfHistogramBins,             unsigned int);
   itkGetConstMacro(NumberOfHistogramBins,        unsigned int);
   itkSetMacro(NumberOfMatchPoints,               unsigned int);
   itkGetConstMacro(NumberOfMatchPoints,          unsigned int);
   VECTORitkSetMacro(NumberOfIterations,   std::vector<int> /**/);
-  VECTORitkSetMacro(MinimumStepLength,    std::vector<double> );
   itkSetMacro(MaximumStepLength,             double);
   itkGetConstMacro(MaximumStepLength,             double);
   itkSetMacro(RelaxationFactor,              double);
@@ -140,8 +151,8 @@ public:
   itkGetConstMacro(InitializeTransformMode, std::string);
   itkSetMacro(MaskInferiorCutOffFromCenter, double);
   itkGetConstMacro(MaskInferiorCutOffFromCenter, double);
-  itkSetMacro(CurrentGenericTransform,  GenericTransformType::Pointer);
-  itkGetConstMacro(CurrentGenericTransform,  GenericTransformType::Pointer);
+  itkSetMacro(CurrentGenericTransform,  CompositeTransformType::Pointer);
+  itkGetConstMacro(CurrentGenericTransform,  CompositeTransformType::Pointer);
   VECTORitkSetMacro(SplineGridSize, std::vector<int>       );
 
   itkGetConstMacro(ActualNumberOfIterations,      unsigned int);
@@ -162,10 +173,31 @@ public:
   itkSetMacro(MetricSeed, int);
   itkGetConstMacro(MetricSeed, int);
 
-  const std::vector<GenericTransformType::Pointer> * GetGenericTransformListPtr()
+  void SetSamplingStrategy(std::string strategy)
   {
-    return &m_GenericTransformList;
+  if( strategy == "Random" )
+    {
+    m_SamplingStrategy = AffineRegistrationType::RANDOM;
+    }
+  else if( strategy == "Regular" )
+    {
+    m_SamplingStrategy = AffineRegistrationType::REGULAR;
+    }
+  else if( (strategy == "None") || (strategy == "") )
+    {
+    m_SamplingStrategy = AffineRegistrationType::NONE;
+    }
+  else
+    {
+    std::cout << "ERROR: samplingStrategy is incorrectly specified" << std::endl;
+    exit( -1 );
+    }
   }
+
+//  const std::vector<GenericTransformType::Pointer> * GetGenericTransformListPtr()
+//  {
+//    return &m_GenericTransformList;
+//  }
 
   /** Method to set the Permission to vary by level  */
   void SetPermitParameterVariation(std::vector<int> perms)
@@ -188,6 +220,8 @@ public:
 
   itkSetMacro(ForceMINumberOfThreads, int);
   itkGetConstMacro(ForceMINumberOfThreads, int);
+
+  itkSetMacro(NormalizeInputImages, bool);
 
   /** Method that initiates the registration. */
   void Update(void);
@@ -212,13 +246,10 @@ private:
   void operator=(const Self &);  // purposely not implemented
 
   template <class TLocalCostMetric>
-  void SetupRegistration();
+  void SetupRegistration(GenericMetricType *localCostMetric);
 
   template <class TLocalCostMetric>
   void RunRegistration();
-
-  template <class TLocalCostMetric>
-  typename TLocalCostMetric::Pointer GetCostMetric();
 
   FixedImagePointer  m_FixedVolume;
   MovingImagePointer m_MovingVolume;
@@ -231,6 +262,7 @@ private:
   std::vector<int>          m_PermitParameterVariation;
 
   unsigned int m_NumberOfSamples;
+  double       m_SamplingPercentage;
   unsigned int m_NumberOfHistogramBins;
   bool         m_HistogramMatch;
   float        m_RemoveIntensityOutliers;
@@ -238,7 +270,6 @@ private:
   // TODO:  Would be better to have unsigned int
   std::vector<int>         m_NumberOfIterations;
   double                   m_MaximumStepLength;
-  std::vector<double>      m_MinimumStepLength;
   double                   m_RelaxationFactor;
   double                   m_TranslationScale;
   double                   m_ReproportionScale;
@@ -255,10 +286,9 @@ private:
   double                   m_MaxBSplineDisplacement;
   unsigned int             m_ActualNumberOfIterations;
   unsigned int             m_PermittedNumberOfIterations;
-  // unsigned int             m_AccumulatedNumberOfIterationsForAllLevels;
   unsigned int                               m_DebugLevel;
-  GenericTransformType::Pointer              m_CurrentGenericTransform;
-  std::vector<GenericTransformType::Pointer> m_GenericTransformList;
+  CompositeTransformType::Pointer            m_CurrentGenericTransform;
+  //std::vector<GenericTransformType::Pointer> m_GenericTransformList;
   bool                                       m_DisplayDeformedImage;
   bool                                       m_PromptUserAfterDisplay;
   double                                     m_FinalMetricValue;
@@ -267,39 +297,40 @@ private:
   bool                                       m_UseROIBSpline;
   int                                        m_MetricSeed;
   itk::Object::Pointer                       m_Helper;
+  SamplingStrategyType                       m_SamplingStrategy;
+  bool                                       m_NormalizeInputImages;
   // DEBUG OPTION:
   int m_ForceMINumberOfThreads;
 };  // end BRAINSFitHelper class
 
 template <class TLocalCostMetric>
 void
-BRAINSFitHelper::SetupRegistration()
+BRAINSFitHelper::SetupRegistration(GenericMetricType *localCostMetric)
 {
-  typedef typename TLocalCostMetric::FixedImageType                              FixedImageType;
-  typedef typename TLocalCostMetric::MovingImageType                             MovingImageType;
-  typedef typename itk::BRAINSFitHelperTemplate<FixedImageType, MovingImageType> HelperType;
+  typedef typename TLocalCostMetric::FixedSampledPointSetType                    MetricSamplePointSetType;
 
-  typedef typename itk::LinearInterpolateImageFunction<MovingVolumeType, double> InterpolatorType;
-  typename InterpolatorType::Pointer localLinearInterpolator = InterpolatorType::New();
-  //
-  // set up cost metric
-  typename TLocalCostMetric::Pointer localCostMetric = TLocalCostMetric::New();
-  // From ITK documentation: calling the method ReinitializeSeed() without
-  // arguments will use the clock from your machine in order to have a very
-  // random initialization of the seed. This will indeed increase the
-  // non-deterministic behavior of the metric.
-  if(this->m_MetricSeed != 0)
-    {
-    localCostMetric->ReinitializeSeed(this->m_MetricSeed);
-    }
-  else
-    {
-    localCostMetric->ReinitializeSeed();
-    }
-  localCostMetric->SetInterpolator(localLinearInterpolator);
+  localCostMetric->SetVirtualDomainFromImage(this->m_FixedVolume);
+
   localCostMetric->SetFixedImage(this->m_FixedVolume);
-  localCostMetric->SetFixedImageRegion( this->m_FixedVolume->GetBufferedRegion() );
   localCostMetric->SetMovingImage(this->m_PreprocessedMovingVolume);
+
+  // The preference is just set SamplingPercentage and pass that to the registrationMethodv4 directly.
+  // However, the NumberOfSamples option is kept for backward compatibility,
+  // and if it is set, it overwrites the SamplingPercentage option.
+  if(this->m_NumberOfSamples == 0 || this->m_SamplingPercentage == 0)
+    {
+    this->m_SamplingPercentage = 1;
+    }
+
+  if(this->m_NumberOfSamples > 0)
+    {
+    const unsigned long numberOfAllSamples = this->m_FixedVolume->GetBufferedRegion().GetNumberOfPixels();
+    this->m_SamplingPercentage = static_cast<double>( this->m_NumberOfSamples )/numberOfAllSamples;
+    if( this->m_SamplingStrategy == AffineRegistrationType::NONE )
+      {
+      this->m_SamplingStrategy = AffineRegistrationType::REGULAR;
+      }
+    }
 
   if( this->m_MovingBinaryVolume.IsNotNull() )
     {
@@ -307,55 +338,57 @@ BRAINSFitHelper::SetupRegistration()
     }
   if( this->m_FixedBinaryVolume.IsNotNull() )
     {
-    localCostMetric->SetUseAllPixels(false);
-    // Convert to using list of samples that are desired.
-    // Do not set this if using explicit samples
-    // localCostMetric->SetFixedImageMask(this->m_FixedBinaryVolume);
-    typename TLocalCostMetric::FixedImageIndexContainer myListOfIndexLocations;
-    myListOfIndexLocations.reserve(this->m_NumberOfSamples);
-    itk::ImageRandomNonRepeatingConstIteratorWithIndex<FixedImageType> NRit( this->m_FixedVolume,
-                                                                             this->m_FixedVolume->GetBufferedRegion() );
-    NRit.SetNumberOfSamples(this->m_FixedVolume->GetBufferedRegion().GetNumberOfPixels() );
-    NRit.GoToBegin();
+    if( this->m_SamplingPercentage != 1 )
+      {
+      // In this case the registration framework does not do sampling inside the mask area.
+      // It picks samples from the whole image, and those samples that are inside the mask are selected by metric.
+      // However, we want to pick all of our intented samples from the mask area, so we do sampling here.
 
-    if( this->m_NumberOfSamples == 0 )
-      {
-      this->m_NumberOfSamples = this->m_FixedVolume->GetBufferedRegion().GetNumberOfPixels();
-      }
-    size_t currentCount = 0;
-    while( ( !NRit.IsAtEnd() ) && ( currentCount < this->m_NumberOfSamples ) )
-      {
-      typename FixedImageType::PointType testPoint;
-      this->m_FixedVolume->TransformIndexToPhysicalPoint(NRit.GetIndex(), testPoint);
-      if( this->m_FixedBinaryVolume->IsInside(testPoint) )
+      // First overwrite the sampling strategy to be none
+      this->m_SamplingStrategy = AffineRegistrationType::NONE;
+
+      // then pick the samples inside the mask and pass them to metric
+      typename MetricSamplePointSetType::Pointer samplePointSet = MetricSamplePointSetType::New();
+      samplePointSet->Initialize();
+
+      typedef typename MetricSamplePointSetType::PointType SamplePointType;
+
+      itk::ImageRandomNonRepeatingConstIteratorWithIndex<FixedImageType> NRit( this->m_FixedVolume,
+                                                                              this->m_FixedVolume->GetBufferedRegion() );
+      const unsigned long numberOfAllSamples = this->m_FixedVolume->GetBufferedRegion().GetNumberOfPixels();
+      NRit.SetNumberOfSamples( numberOfAllSamples );
+      NRit.GoToBegin();
+
+      const unsigned long sampleCount = static_cast<unsigned long>(vcl_ceil( numberOfAllSamples * this->m_SamplingPercentage ) );
+      unsigned long index = 0;
+      size_t currentCount = 0;
+
+      while( ( !NRit.IsAtEnd() ) && ( currentCount < sampleCount ) )
         {
-        myListOfIndexLocations.push_back(NRit.GetIndex() );
-        ++currentCount;
+        SamplePointType testPoint;
+        this->m_FixedVolume->TransformIndexToPhysicalPoint(NRit.GetIndex(), testPoint);
+        if( this->m_FixedBinaryVolume->IsInside(testPoint) )
+          {
+          samplePointSet->SetPoint( index, testPoint );
+          ++index;
+          ++currentCount;
+          }
+        ++NRit;
         }
-      ++NRit;
-      }
 
-    //    BUG: I don't know why this assert is here but it GUARANTEES
-    //    Test failures; without it, tests seem to complete correctly
-    //    assert(currentCount != 0 );
-    this->m_NumberOfSamples = myListOfIndexLocations.size();
-    // Redundant with SetFixedImageIndexes
-    // localCostMetric->SetUseFixedImageIndexes(true);
-    // Redundant with SetFixedImageIndexes
-    // localCostMetric->SetNumberOfFixedImageSamples(this->m_NumberOfSamples);
-    // Redundant with SetNumberOfFixedImageSamples
-    // localCostMetric->SetNumberOfSpatialSamples(this->m_NumberOfSamples);
-    localCostMetric->SetFixedImageIndexes(myListOfIndexLocations);
-    }
-  else
-    {
-    if( this->m_NumberOfSamples > 0 )
-      {
-      localCostMetric->SetNumberOfSpatialSamples(this->m_NumberOfSamples);
+      if( samplePointSet.IsNull() )
+        {
+        itkGenericExceptionMacro("samplePointSet is empty.");
+        }
+
+      localCostMetric->SetUseFixedSampledPointSet( true );
+      localCostMetric->SetFixedSampledPointSet( samplePointSet );
       }
     else
       {
-      localCostMetric->SetUseAllPixels(true);
+      // The samplingPercentage will be passed to registration filter as it is (i.e. 1),
+      // No sampling happens, but metric just accepts the points that are inside the mask area.
+      localCostMetric->SetFixedImageMask(this->m_FixedBinaryVolume);
       }
     }
 
@@ -372,11 +405,10 @@ BRAINSFitHelper::SetupRegistration()
   myHelper->SetOutputFixedVolumeROI(this->m_OutputFixedVolumeROI);
   myHelper->SetOutputMovingVolumeROI(this->m_OutputMovingVolumeROI);
   myHelper->SetPermitParameterVariation(this->m_PermitParameterVariation);
-  myHelper->SetNumberOfSamples(this->m_NumberOfSamples);
+  myHelper->SetSamplingPercentage(this->m_SamplingPercentage);
   myHelper->SetNumberOfHistogramBins(this->m_NumberOfHistogramBins);
   myHelper->SetNumberOfIterations(this->m_NumberOfIterations);
   myHelper->SetMaximumStepLength(this->m_MaximumStepLength);
-  myHelper->SetMinimumStepLength(this->m_MinimumStepLength);
   myHelper->SetRelaxationFactor(this->m_RelaxationFactor);
   myHelper->SetTranslationScale(this->m_TranslationScale);
   myHelper->SetReproportionScale(this->m_ReproportionScale);
@@ -396,6 +428,7 @@ BRAINSFitHelper::SetupRegistration()
   myHelper->SetCostMetricObject(localCostMetric);
   myHelper->SetForceMINumberOfThreads(this->m_ForceMINumberOfThreads);
   myHelper->SetUseROIBSpline(this->m_UseROIBSpline);
+  myHelper->SetSamplingStrategy(this->m_SamplingStrategy);
   if( this->m_DebugLevel > 7 )
     {
     this->PrintCommandLine(true, "BF");
@@ -407,11 +440,6 @@ template <class TLocalCostMetric>
 void
 BRAINSFitHelper::RunRegistration()
 {
-  typedef typename TLocalCostMetric::FixedImageType  FixedImageType;
-  typedef typename TLocalCostMetric::MovingImageType MovingImageType;
-  typedef typename itk::BRAINSFitHelperTemplate<FixedImageType, MovingImageType>
-    HelperType;
-
   const typename HelperType::Pointer myHelper( dynamic_cast<HelperType *>(this->m_Helper.GetPointer() ) );
   if( myHelper.IsNull() )
     {
@@ -421,48 +449,24 @@ BRAINSFitHelper::RunRegistration()
   this->m_CurrentGenericTransform = myHelper->GetCurrentGenericTransform();
   this->m_ActualNumberOfIterations = myHelper->GetActualNumberOfIterations();
   this->m_PermittedNumberOfIterations = myHelper->GetPermittedNumberOfIterations();
-  this->m_GenericTransformList.resize(myHelper->GetGenericTransformListPtr()->size() );
-  std::copy(myHelper->GetGenericTransformListPtr()->begin(),
-            myHelper->GetGenericTransformListPtr()->end(), this->m_GenericTransformList.begin() );
+  //this->m_GenericTransformList.resize(myHelper->GetGenericTransformListPtr()->size() );
+  //std::copy(myHelper->GetGenericTransformListPtr()->begin(),
+  //          myHelper->GetGenericTransformListPtr()->end(), this->m_GenericTransformList.begin() );
 
-#if 0 // TODO: ALI this is causing failures in BABC crashing with comments like:
-  0x00002aaaab6e4d29 in itk::CompositeTransform<itk::ImageRegistrationMethodv4<ants::RegistrationHelper<double, 3u>::ImageType, ants::RegistrationHelper<double, 3u>::ImageType, ants::RegistrationHelper<double, 3u>::AffineTransformType>::RealType, 3u>::SetFixedParameters (this=0x2aaad52df090,
-    inputParameters=..., $?5=<value optimized out>, $?6=<value optimized out>)
-    at /Shared/sinapse/sharedopt/20130601/RHEL5/DTIPrep/BRAINSTools-build/ITKv4-install/include/ITK-4.5/itkCompositeTransform.hxx:943
-943         itkExceptionMacro(<< "Input parameter list size is not expected size. "
-
+/*
   // Find the final metric value based on the used metric type and returned output transform
-  typename TLocalCostMetric::Pointer finalMetric = this->GetCostMetric<TLocalCostMetric>();
-  finalMetric->SetTransform(this->m_CurrentGenericTransform);
-  finalMetric->Initialize();
-  this->m_FinalMetricValue = finalMetric->GetValue( this->m_CurrentGenericTransform->GetParameters() );
-#else
-  this->m_FinalMetricValue = -123.456789;
-#endif
-}
-
-template <class TLocalCostMetric>
-typename TLocalCostMetric::Pointer
-BRAINSFitHelper::GetCostMetric()
-{
-  typedef typename TLocalCostMetric::FixedImageType                              FixedImageType;
-  typedef typename TLocalCostMetric::MovingImageType                             MovingImageType;
-  typedef typename itk::BRAINSFitHelperTemplate<FixedImageType, MovingImageType> HelperType;
-  typedef typename HelperType::MetricType                                        GenericMetricType;
-
-  const typename HelperType::Pointer myHelper( dynamic_cast<HelperType *>(this->m_Helper.GetPointer() ) );
-  if( myHelper.IsNull() )
-    {
-    std::cout << "ERROR:  Invalid BRAINSFitHelper conversion" << __FILE__ << " " << __LINE__ << std::endl;
-    }
-
-  const typename GenericMetricType::Pointer metric = myHelper->GetModifiableCostMetricObject();
-  typename TLocalCostMetric::Pointer rval = dynamic_cast<TLocalCostMetric *>(metric.GetPointer() );
-  if( rval.IsNull() )
+  // typedef typename HelperType::MetricType    GenericMetricType;
+  const typename GenericMetricType::Pointer returnMetric = myHelper->GetModifiableCostMetricObject();
+  typename TLocalCostMetric::Pointer finalMetric = dynamic_cast<TLocalCostMetric *>(returnMetric.GetPointer() );
+  if( finalMetric.IsNull() )
     {
     std::cout << "ERROR:  Invalid CostMetric conversion" << __FILE__ << " " << __LINE__ << std::endl;
     }
-  return rval;
+  finalMetric->SetTransform(this->m_CurrentGenericTransform);
+  finalMetric->Initialize();
+  this->m_FinalMetricValue = finalMetric->GetValue();
+*/
+  this->m_FinalMetricValue = -123.456789;
 }
 }   // end namespace itk
 

@@ -28,10 +28,13 @@
 #include "itkStatisticsImageFilter.h"
 #include "itkImageDuplicator.h"
 
+#include "itkTransformFileWriter.h"
+
 extern void debug_catch(void);
 
 namespace itk
 {
+
 /*
   * Constructor
   */
@@ -42,29 +45,29 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
 ::MultiModal3DMutualRegistrationHelper() :
   m_FixedImage(0),                         // has to be provided by the user.
   m_MovingImage(0),                        // has to be provided by the user.
-  m_InitialTransform(0),                   // has to be provided by the user.
+  m_CompositeTransform(NULL),              /* It is set by initial moving transform and
+                                              integrates that with registration output transform.*/
   m_Transform(0),                          // has to be provided by
                                            // this->Initialize().
   m_Registration(0),                       // has to be provided by
                                            // this->Initialize().
   m_PermitParameterVariation(0),
   m_CostMetricObject(NULL),
-  m_NumberOfSamples(100000),
+  m_SamplingPercentage(1),
   m_NumberOfHistogramBins(200),
   m_NumberOfIterations(0),
   m_RelaxationFactor(0.5),
   m_MaximumStepLength(0.2000),
-  m_MinimumStepLength(0.0001),
   m_TranslationScale(1000.0),
   m_ReproportionScale(25.0),
   m_SkewScale(25.0),
-  m_InitialTransformPassThruFlag(false),
   m_BackgroundFillValue(0.0),
   m_ActualNumberOfIterations(0),
   m_DisplayDeformedImage(false),
   m_PromptUserAfterDisplay(false),
   m_FinalMetricValue(0),
   m_ObserveIterations(true),
+  m_SamplingStrategy(AffineRegistrationType::NONE),
   m_ForceMINumberOfThreads(-1),
   m_InternalTransformTime(0)
 {
@@ -79,8 +82,8 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
 }
 
 /*
-  * Initialize by setting the interconnects between components.
-  */
+ * Initialize by setting the interconnects between components.
+ */
 template <typename TTransformType, typename TOptimizer, typename TFixedImage,
           typename TMovingImage, typename MetricType>
 void
@@ -101,220 +104,125 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
   //
   // Connect the transform to the Decorator.
   //
-  TransformOutputType *transformOutput =
-    static_cast<TransformOutputType *>( this->ProcessObject::GetOutput(0) );
+  //TransformOutputType *transformOutput = static_cast<TransformOutputType *>( this->ProcessObject::GetOutput(0) );
 
-  transformOutput->Set( m_Transform.GetPointer() );
+  //transformOutput->Set( m_Transform.GetPointer() );
 
-  typename OptimizerType::Pointer optimizer      = OptimizerType::New();
-  typename InterpolatorType::Pointer interpolator   = InterpolatorType::New();
+  if( this->m_CompositeTransform.IsNull() )
+    {
+    this->m_CompositeTransform = CompositeTransformType::New();
+    }
 
-  optimizer->SetMaximize(false);   // Mutual Information metrics are to be
-                                   // minimized.
+  typedef itk::RegistrationParameterScalesFromPhysicalShift<MetricType> ScalesEstimatorType;
+  typename ScalesEstimatorType::Pointer scalesEstimator = ScalesEstimatorType::New();
+  scalesEstimator->SetMetric( this->m_CostMetricObject );
+  scalesEstimator->SetTransformForward( true );
+  //scalesEstimator->DebugOn();
+
+  //HACK: optimizer is hardcoded.
+  //typename OptimizerType::Pointer optimizer = OptimizerType::New();
+  typedef itk::ConjugateGradientLineSearchOptimizerv4Template<double> ConjugateGradientDescentOptimizerType;
+  ConjugateGradientDescentOptimizerType::Pointer optimizer = ConjugateGradientDescentOptimizerType::New();//////?????
+
+  // Added for v4 optimizer
+  optimizer->SetLowerLimit( 0 );
+  optimizer->SetUpperLimit( 2 );
+  optimizer->SetEpsilon( 0.2 );
+  optimizer->SetLearningRate( m_MaximumStepLength );
+  optimizer->SetMaximumStepSizeInPhysicalUnits(m_MaximumStepLength);
+  optimizer->SetNumberOfIterations(m_NumberOfIterations);
+  optimizer->SetScalesEstimator( scalesEstimator );
+
+  const double convergenceThreshold = 1e-6;
+  const int convergenceWindowSize = 10;
+  optimizer->SetMinimumConvergenceValue( convergenceThreshold );
+  optimizer->SetConvergenceWindowSize( convergenceWindowSize );
+
+  optimizer->SetDoEstimateLearningRateAtEachIteration( true );
+  optimizer->SetDoEstimateLearningRateOnce( false );
+
+  //optimizer->DebugOn();
 
   m_Registration = RegistrationType::New();
 
-    {
-    // Special BUG work around for MMI metric
-    // that does not work in multi-threaded mode
-    typedef COMMON_MMI_METRIC_TYPE<FixedImageType, MovingImageType> MattesMutualInformationMetricType;
-    typename MattesMutualInformationMetricType::Pointer test_MMICostMetric =
-      dynamic_cast<MattesMutualInformationMetricType *>(this->m_CostMetricObject.GetPointer() );
-    if( test_MMICostMetric.IsNotNull() )
-      {
-      if( this->m_ForceMINumberOfThreads != 1 )
-        {
-        std::cout << "WARNING USING MAX MMI NUMBER OF THREADS:   " << this->m_ForceMINumberOfThreads << std::endl;
-        }
-      if( this->m_ForceMINumberOfThreads > 0 )
-        {
-        this->m_CostMetricObject->SetNumberOfThreads(this->m_ForceMINumberOfThreads);
-        this->m_Registration->SetNumberOfThreads(this->m_ForceMINumberOfThreads);
-        }
-      else
-        {
-        this->m_CostMetricObject->SetNumberOfThreads(itk::MultiThreader::GetGlobalDefaultNumberOfThreads() );
-        this->m_Registration->SetNumberOfThreads(itk::MultiThreader::GetGlobalDefaultNumberOfThreads() );
-        }
-      }
-    else
-      {
-      this->m_CostMetricObject->SetNumberOfThreads(itk::MultiThreader::GetGlobalDefaultNumberOfThreads() );
-      this->m_Registration->SetNumberOfThreads(itk::MultiThreader::GetGlobalDefaultNumberOfThreads() );
-      }
-    }
+  /*
+  // writing fixed and moving images right before passing to the registration filter
+  typedef typename  itk::ImageFileWriter< TFixedImage  > WriterType;
+  typename WriterType::Pointer writer = WriterType::New();
+  writer->SetFileName("fixedImageRightBeforeRegistrationStarts_DEBUG.nii.gz");
+  writer->SetInput(m_FixedImage);
+  writer->Update();
+
+  typename WriterType::Pointer writer2 = WriterType::New();
+  writer2->SetFileName("movingImageRightBeforeRegistrationStarts_DEBUG.nii.gz");
+  writer2->SetInput(m_MovingImage);
+  writer2->Update();
+  *//////////////////////////////////////////////////////////////
+
+  //m_CostMetricObject->DebugOn();
+
+  m_Registration->SetFixedImage(0, m_FixedImage);
+  m_Registration->SetMovingImage(0, m_MovingImage);
   m_Registration->SetMetric(this->m_CostMetricObject);
+
+////////////////////////HARD CODED PART//////////////////////
+  const unsigned int numberOfLevels = 2;
+
+  m_Registration->SetNumberOfLevels( numberOfLevels );
+
+  typename RegistrationType::ShrinkFactorsPerDimensionContainerType shrinkFactorsList;
+//  shrinkFactorsList[0]=1;
+//  shrinkFactorsList[1]=1;
+//  shrinkFactorsList[2]=1;
+//  m_Registration->SetShrinkFactorsPerDimension( 0, shrinkFactorsList );
+
+  shrinkFactorsList[0]=3;
+  shrinkFactorsList[1]=1;
+
+  for( unsigned int level = 0; level < numberOfLevels; ++level )
+    {
+    m_Registration->SetShrinkFactorsPerDimension( level, shrinkFactorsList[level] );
+    }
+
+  typename RegistrationType::SmoothingSigmasArrayType smoothingSigma;
+  smoothingSigma.SetSize(2);
+  smoothingSigma[0]=2;
+  smoothingSigma[1]=0;
+
+  m_Registration->SetSmoothingSigmasPerLevel(smoothingSigma);
+  m_Registration->SetSmoothingSigmasAreSpecifiedInPhysicalUnits(false);
+////////////////////////////////////////////////////////////
+
+  m_Registration->SetMetricSamplingStrategy(
+                static_cast<typename RegistrationType::MetricSamplingStrategyType>( m_SamplingStrategy ));
+  m_Registration->SetMetricSamplingPercentage(this->m_SamplingPercentage);
+
   m_Registration->SetOptimizer(optimizer);
-  m_Registration->SetInterpolator(interpolator);
 
-  m_Registration->SetTransform(m_Transform);
-  m_Registration->SetFixedImage(m_FixedImage);
-  m_Registration->SetMovingImage(m_MovingImage);
-
-  m_Registration->SetFixedImageRegion( m_FixedImage->GetLargestPossibleRegion() );
-
-  std::vector<int> localPermissionToVary( m_Transform->GetNumberOfParameters() );
-
+  if( this->m_CompositeTransform->GetNumberOfTransforms() > 0 )
     {
-    unsigned int i = 0;
-    while( i < m_Transform->GetNumberOfParameters() )
-      {
-      if( i < m_PermitParameterVariation.size() )
-        {
-        localPermissionToVary[i] = m_PermitParameterVariation[i];
-        }
-      else
-        {
-        localPermissionToVary[i] = 1;
-        }
-      ++i;
-      }
-    }
-  // Decode localPermissionToVary from its initial segment,
-  // PermitParameterVariation.
-  if( ( m_PermitParameterVariation.size() != m_Transform->GetNumberOfParameters() )
-      && ( m_PermitParameterVariation.size() != 0 ) )
-    {
-    std::cout << "WARNING:  The permit parameters SHOULD match the number of"
-              << " parameters used for this registration type."
-              << std::endl;
-    std::cout << "WARNING:  Padding with 1's for the unspecified parameters" << std::endl;
-    std::cout << "m_PermitParameterVariation " << m_PermitParameterVariation.size() << " != "
-              << m_Transform->GetNumberOfParameters() << std::endl;
-    std::cout << "\nUSING: [ ";
-    for( unsigned int i = 0; i < localPermissionToVary.size(); ++i )
-      {
-      std::cout << localPermissionToVary[i] << " ";
-      }
-    std::cout << " ]" << std::endl;
-    }
+    //this->m_CompositeTransform->SetOnlyMostRecentTransformToOptimizeOn();
 
-  if( m_InitialTransform )
-    {
-    // TODO: There should be no need to convert here, just assign m_Transform
-    // from m_InitialTransform.
-    //      They should be the same type!
+    /*
+    ////////
+    if(this->m_CompositeTransform->GetNumberOfTransforms() == 1)
       {
-      const typename TTransformType::ConstPointer tempInitializerITKTransform = m_InitialTransform.GetPointer();
-      // NOTE By calling AssignConvertedTransform, it also copies the values
-      AssignRigid::AssignConvertedTransform(m_Transform, tempInitializerITKTransform);
+      std::cout << "write the initial transform to the disk right before registration starts." << std::endl;
+      this->m_CompositeTransform->Print(std::cout);
+      itk::TransformFileWriter::Pointer dwriter1 = itk::TransformFileWriter::New();
+      dwriter1->SetInput( this->m_CompositeTransform->GetFrontTransform() );
+      dwriter1->SetFileName("initialTransformRightBeforeRegistrationStarts_DEBUG.mat");
+      dwriter1->Update();
       }
+    *//////
 
-    // No need to step on parameters that may not vary; they will remain
-    // identical with
-    // values from InitialTransform which defaults correctly to SetIdentity().
+    m_Registration->SetMovingInitialTransform( this->m_CompositeTransform );
     }
-  else      // Won't happen under BRAINSFitPrimary.
-    {
-    itkGenericExceptionMacro(<< "FAILURE:  InitialTransform must be set in"
-                             << " MultiModal3DMutualRegistrationHelper before Initialize is called.");
-    //  m_Transform would be SetIdentity() if this case continued.
-    }
-
-  //  We now pass the parameters of the current transform as the initial
-  //  parameters to be used when the registration process starts.
-  m_Registration->SetInitialTransformParameters( m_Transform->GetParameters() );
-
-  const double translationScale  = 1.0 / m_TranslationScale;
-  const double reproportionScale = 1.0 / m_ReproportionScale;
-  const double skewScale         = 1.0 / m_SkewScale;
-
-  OptimizerScalesType optimizerScales( m_Transform->GetNumberOfParameters() );
-
-  if( m_Transform->GetNumberOfParameters() == 15 )     //  ScaleSkew
-    {
-    for( unsigned int i = 0; i < m_Transform->GetNumberOfParameters(); ++i )
-      {
-      optimizerScales[i] = 1.0;
-      }
-    for( unsigned int i = 3; i < 6; ++i )
-      {
-      optimizerScales[i] = translationScale;
-      }
-    for( unsigned int i = 6; i < 9; ++i )
-      {
-      optimizerScales[i] = reproportionScale;
-      }
-    for( unsigned int i = 9; i < 15; ++i )
-      {
-      optimizerScales[i] = skewScale;
-      }
-    }
-  else if( m_Transform->GetNumberOfParameters() == 12 )     //  Affine
-    {
-    for( unsigned int i = 0; i < 9; ++i )
-      {
-      optimizerScales[i] = 1.0;
-      }
-    for( unsigned int i = 9; i < 12; ++i )
-      {
-      optimizerScales[i] = translationScale;
-      }
-    }
-  else if( m_Transform->GetNumberOfParameters() == 9 )    // ScaleVersorRigid3D
-    {
-    for( unsigned int i = 0; i < 3; ++i )
-      {
-      optimizerScales[i] = 1.0;
-      }
-    for( unsigned int i = 3; i < 6; ++i )
-      {
-      optimizerScales[i] = translationScale;
-      }
-    for( unsigned int i = 6; i < 9; ++i )
-      {
-      optimizerScales[i] = reproportionScale;
-      }
-    }
-  else if( m_Transform->GetNumberOfParameters() == 6 )     //  VersorRigid3D
-    {
-    for( unsigned int i = 0; i < 3; ++i )
-      {
-      optimizerScales[i] = 1.0;
-      }
-    for( unsigned int i = 3; i < 6; ++i )
-      {
-      optimizerScales[i] = translationScale;
-      }
-    }
-  else     // most likely (m_Transform->GetNumberOfParameters() == 3): uniform
-           // parameter scaling, whether
-           // just rotating OR just translating.
-    {
-    for( unsigned int i = 0; i < m_Transform->GetNumberOfParameters(); ++i )
-      {
-      optimizerScales[i] = 1.0;
-      }
-    }
-  // Step on parameters that may not vary; they also must be identical with
-  // SetIdentity().
-  for( unsigned int i = 0; i < m_Transform->GetNumberOfParameters(); ++i )
-    {
-    if( localPermissionToVary[i] == 0 )
-      {
-      // Make huge to greatly penilize any motion
-      optimizerScales[i] = 0.5 * vcl_numeric_limits<float>::max();
-      }
-    }
-
-  std::cout << "Initializer, optimizerScales: " << optimizerScales << "."
-            << std::endl;
-  optimizer->SetScales(optimizerScales);
-
-  optimizer->SetRelaxationFactor(m_RelaxationFactor);
-  optimizer->SetMaximumStepLength(m_MaximumStepLength);
-  optimizer->SetMinimumStepLength(m_MinimumStepLength);
-  optimizer->SetNumberOfIterations(m_NumberOfIterations);
-
-  // std::cout << "OPTIMIZER    THREADS USED: " << optimizer->GetNumberOfThreads()                << std::endl;
-  std::cout << "METRIC       THREADS USED: " << this->m_CostMetricObject->GetNumberOfThreads()
-            << " of " << itk::MultiThreader::GetGlobalDefaultNumberOfThreads() <<  std::endl;
-  std::cout << "REGISTRATION THREADS USED: " << this->m_Registration->GetNumberOfThreads()
-            << " of " << itk::MultiThreader::GetGlobalDefaultNumberOfThreads() <<  std::endl;
 
   // Create the Command observer and register it with the optimizer.
   // TODO:  make this output optional.
   //
+
   if( this->m_ObserveIterations == true )
     {
     typedef BRAINSFit::CommandIterationUpdate<TOptimizer, TTransformType, TMovingImage>
@@ -346,8 +254,8 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
 }
 
 /*
-  * Starts the Registration Process
-  */
+ * Starts the Registration Process
+ */
 template <typename TTransformType, typename TOptimizer, typename TFixedImage,
           typename TMovingImage, typename MetricType>
 void
@@ -368,47 +276,25 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
     this->m_InternalTransformTime = t;
     }
 
-  if( !m_InitialTransformPassThruFlag )
+  //m_Registration->DebugOn();
+
+  try
     {
-    bool               successful = false;
-    const unsigned int diff = this->m_NumberOfSamples / 10;
-    while( !successful )
-      {
-      try
-        {
-        m_Registration->Update();
-        successful = true;
-        }
-      catch( itk::ExceptionObject & /* err */ )
-        {
-        // Attempt to auto-recover if too many samples were requested.
-        // std::cerr << "ExceptionObject caught !" << std::endl;
-        // std::cerr << err << std::endl;
-        // Pass exception to caller
-        //        throw err;
-        //
-        // lower the number of samples you request
-        typename MetricType::Pointer autoResetNumberOfSamplesMetric =
-          dynamic_cast<MetricType *>( this->m_Registration->GetModifiableMetric() );
-        if( autoResetNumberOfSamplesMetric.IsNull() )
-          {
-          std::cout << "ERROR::" << __FILE__ << " " << __LINE__ << std::endl;
-          throw;
-          }
-        unsigned int localNumberOfSamples = autoResetNumberOfSamplesMetric->GetNumberOfSpatialSamples();
-        if( diff > localNumberOfSamples )
-          {
-          // we are done.  This can not be recovered from.
-          throw;
-          }
-        localNumberOfSamples -= diff;
-        autoResetNumberOfSamplesMetric->SetNumberOfSpatialSamples(localNumberOfSamples);
-        }
-      }
+    m_Registration->Update();
+    }
+  catch( itk::ExceptionObject & err )
+    {
+    // Attempt to auto-recover if too many samples were requested.
+    std::cerr << "ExceptionObject caught !" << std::endl;
+    std::cerr << err << std::endl;
+    // Pass exception to caller
+    throw err;
+    }
 
-    OptimizerParametersType finalParameters( m_Transform->GetNumberOfParameters() );
-
-    finalParameters = m_Registration->GetLastTransformParameters();
+  std::cout << "METRIC       THREADS USED: " << this->m_CostMetricObject->GetNumberOfThreadsUsed()
+  << " of " << itk::MultiThreader::GetGlobalDefaultNumberOfThreads() <<  std::endl;
+  std::cout << "REGISTRATION THREADS USED: " << this->m_Registration->GetNumberOfThreads()
+  << " of " << itk::MultiThreader::GetGlobalDefaultNumberOfThreads() <<  std::endl;
 
     OptimizerPointer optimizer =
       dynamic_cast<OptimizerPointer>( m_Registration->GetOptimizer() );
@@ -419,20 +305,36 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
     std::cout << "Stop condition from optimizer." << optimizer->GetStopConditionDescription() << std::endl;
     m_FinalMetricValue = optimizer->GetValue();
     m_ActualNumberOfIterations = optimizer->GetCurrentIteration();
-    m_Transform->SetParametersByValue(finalParameters);
+
+    m_Transform->SetFixedParameters( m_Registration->GetOutput()->Get()->GetFixedParameters() );
+    m_Transform->SetParameters( m_Registration->GetOutput()->Get()->GetParameters() );
+    /*
+    /////////
+    std::cout << "\n----------------\n";
+    std::cout << "Registration output transform:" << std::endl;
+    m_Transform->Print(std::cout);
+    /////////
+    */
       {
       this->m_InternalTransformTime = this->m_Transform->GetMTime();
       }
-    }
+
+  this->m_CompositeTransform->AddTransform( this->m_Transform ); // The registration output transform is added to the
+                                                                 // initial transform, and the result composite transform
+                                                                 // is returned as the final transform of this class.
+
+  std::cout << "\n---After registration:---";
   typename TransformType::MatrixType matrix = m_Transform->GetMatrix();
   typename TransformType::OffsetType offset = m_Transform->GetOffset();
   std::cout << std::endl << "Matrix = " << std::endl << matrix << std::endl;
-  std::cout << "Offset = " << offset << std::endl << std::endl;
+  std::cout << "Offset = " << offset << std::endl;
+  std::cout << "--------------" << std::endl << std::endl;
+
 }
 
-/**
-  *
-  */
+/*
+ *
+ */
 template <typename TTransformType, typename TOptimizer, typename TFixedImage,
           typename TMovingImage, typename MetricType>
 unsigned long
@@ -458,9 +360,9 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
     mtime = ( m > mtime ? m : mtime );
     }
 
-  if( m_InitialTransform )
+  if( m_CompositeTransform )
     {
-    m = m_InitialTransform->GetMTime();
+    m = m_CompositeTransform->GetMTime();
     mtime = ( m > mtime ? m : mtime );
     }
 
@@ -531,36 +433,57 @@ template <typename TTransformType, typename TOptimizer, typename TFixedImage,
 void
 MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
                                      TMovingImage, MetricType>
-::SetInitialTransform(typename TransformType::Pointer initialTransform)
+::SetInitialTransform(typename CompositeTransformType::Pointer initialTransform)
 {
   itkDebugMacro("setting Initial Transform to " << initialTransform);
-  if( this->m_InitialTransform.GetPointer() != initialTransform )
+  if( initialTransform.IsNull() )
     {
-    this->m_InitialTransform = initialTransform;
-    this->Modified();
+    itkGenericExceptionMacro("initial transform is null");
     }
+  typename CompositeTransformType::Pointer compToAdd;
+  compToAdd = initialTransform->Clone();
+  this->m_CompositeTransform = compToAdd;
+/*
+  typename CompositeTransformType::Pointer compToAdd;
+  typename CompositeTransformType::ConstPointer compXfrm =
+    dynamic_cast<const CompositeTransformType *>( initialTransform.GetPointer() );
+  if( compXfrm.IsNotNull() )
+    {
+    compToAdd = compXfrm->Clone();
+    this->m_CompositeTransform = compToAdd;
+    }
+  else
+    {
+    compToAdd = CompositeTransformType::New();
+    typename TransformType::Pointer xfrm = initialTransform->Clone();
+    compToAdd->AddTransform( xfrm );
+    this->m_CompositeTransform = compToAdd;
+    }
+*/
 }
 
 template <typename TTransformType, typename TOptimizer, typename TFixedImage,
           typename TMovingImage, typename MetricType>
 typename MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer,
-                                              TFixedImage, TMovingImage, MetricType>::TransformType::Pointer
+                                              TFixedImage, TMovingImage, MetricType>::CompositeTransformType::Pointer
 MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
                                      TMovingImage, MetricType>
 ::GetTransform(void)
 {
-  this->Update();
-  return m_Transform;
+  //this->Update();
+  return this->m_CompositeTransform;
+  //return this->m_Transform;
 }
 
 /*
-  *  Get Output
-  */
+ *  Get Output
+ */
+
 template <typename TTransformType, typename TOptimizer, typename TFixedImage,
           typename TMovingImage, typename MetricType>
 const typename MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer,
-                                                    TFixedImage, TMovingImage, MetricType>::TransformOutputType
-* MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
+                                                    TFixedImage, TMovingImage, MetricType>::TransformOutputType *
+MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
                                        TMovingImage, MetricType>
 ::GetOutput() const
   {
@@ -590,8 +513,8 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
 }
 
 /*
-  * PrintSelf
-  */
+ * PrintSelf
+ */
 template <typename TTransformType, typename TOptimizer, typename TFixedImage,
           typename TMovingImage, typename MetricType>
 void

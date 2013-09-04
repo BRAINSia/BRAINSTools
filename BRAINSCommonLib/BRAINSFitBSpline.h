@@ -12,7 +12,7 @@
 #if (ITK_VERSION_MAJOR < 4)
 #include "itkOptImageToImageMetric.h"
 #else
-#include "itkImageToImageMetric.h"
+#include "itkImageToImageMetricv4.h"
 #endif
 #include "genericRegistrationHelper.h"
 
@@ -28,7 +28,7 @@ typename BSplineTransformType::Pointer
 DoBSpline(typename BSplineTransformType::Pointer InitializerBsplineTransform,
           typename RegisterImageType::Pointer m_FixedVolume,
           typename RegisterImageType::Pointer m_MovingVolume,
-          typename itk::ImageToImageMetric<
+          typename itk::ImageToImageMetricv4<
             RegisterImageType, RegisterImageType>::Pointer CostMetricObject,
           const double m_MaxBSplineDisplacement,
           const float m_CostFunctionConvergenceFactor,

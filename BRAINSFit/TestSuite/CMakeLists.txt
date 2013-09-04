@@ -245,34 +245,6 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
 )
 ## NOTE: 7.3 above was computed explicitly through testing.
 
-set(BRAINSFitTestName BRAINSFitTest_BSplineBSplineRescaleHeadMasks)
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
-  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
-  --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
-            ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
-  --compareIntensityTolerance 9
-  --compareRadiusTolerance 0
-  --compareNumberOfPixelsTolerance 1000
-  BRAINSFitTest
-  --costMetric MMI
-  --failureExitCode -1 --writeTransformOnFailure
-  --numberOfIterations 1500
-  --numberOfHistogramBins 200
-  --splineGridSize 7,5,6
-  --numberOfSamples 288000
-  --translationScale 250
-  --minimumStepLength 0.005
-  --outputVolumePixelType short
-  --maskProcessingMode ROIAUTO
-  --initialTransform DATA{${TestData_DIR}/Transforms_h5/Initializer_BRAINSFitTest_BSplineOnlyRescaleHeadMasks.${XFRM_EXT}}
-  --transformType BSpline
-  --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
-  --movingVolume DATA{${TestData_DIR}/rotation.rescale.rigid.nii.gz}
-  --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
-  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
-  --maxBSplineDisplacement 7.3
-)
-
 set(BRAINSFitTestName BRAINSFitTest_BSplineScaleRotationRescaleHeadMasks)
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>

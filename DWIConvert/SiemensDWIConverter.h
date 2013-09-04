@@ -20,6 +20,172 @@ public:
     }
   virtual ~SiemensDWIConverter() {}
 
+  template <typename T>
+  T CSAExtractFromString(const char *ptr)
+    {
+      T rval = *(reinterpret_cast<const T *>(ptr));
+      itk::ByteSwapper<T>::SwapFromSystemToLittleEndian(&rval);
+      return rval;
+    }
+
+  class CSAItem : public std::vector<std::string >
+  {
+  public:
+    typedef std::vector<std::string> SuperClass;
+
+    itk::uint32_t vm;
+    std::string vr;
+
+    CSAItem(unsigned int length) : SuperClass(length),
+                                   vm(0)
+      {
+      }
+    CSAItem() : SuperClass()
+      {
+      }
+    CSAItem( const CSAItem & other ) : SuperClass(other.size())
+      {
+        *this = other;
+      }
+    CSAItem & operator=(const CSAItem &other)
+      {
+        this->resize(0);
+        for(CSAItem::const_iterator it = other.begin();
+            it != other.end();
+            ++it)
+          {
+          this->push_back(*it);
+          }
+        this->vm = other.vm;
+        this->vr = other.vr;
+        return *this;
+      }
+
+    template <typename T>
+    std::vector<T> AsVector() const
+      {
+        std::vector<T> rval;
+        for(unsigned i = 0; i < this->size(); ++i)
+          {
+          if(! (*this)[i].empty())
+            {
+            T val = 0;
+            std::stringstream convert((*this)[i]);
+            convert >> val;
+            rval.push_back(val);
+            }
+          }
+        return rval;
+      }
+    void DebugPrint() const
+      {
+        std::cerr << "  VM = " << this->vm << " VR = " << this->vr << std::endl
+                  << "    ";
+        bool firstTime(false);
+        for(CSAItem::const_iterator it = this->begin();
+            it != this->end(); ++it)
+          {
+          if(firstTime)
+            {
+            firstTime = false;
+            }
+          else
+            {
+            std::cerr << " ";
+            }
+          std::cerr << *it;
+          }
+        std::cerr << std::endl;
+      }
+  };
+
+  class CSAHeader : public std::map<std::string,CSAItem>
+  {
+  public:
+    void DebugPrint() const
+      {
+        for(CSAHeader::const_iterator it = this->begin();
+            it != this->end(); ++it)
+          {
+          std::cerr << it->first << std::endl;
+          it->second.DebugPrint();
+          }
+      }
+  };
+
+  void  DecodeCSAHeader(CSAHeader &header, const std::string &infoString)
+    {
+      //
+      // the reference used to write this code is here:
+      // http://nipy.sourceforge.net/nibabel/dicom/siemens_csa.html
+      const char *info = infoString.c_str();
+
+      const bool isCSA2 = info[0] == 'S' && info[1] == 'V'
+        && info[2] == '1' && info[3] == '0';
+      unsigned int offset;
+
+      if(isCSA2)
+        {
+        offset = 8; // past SV10 + unused 4 bytes
+        }
+      else
+        {
+        offset = 0;
+        }
+      const itk::uint32_t numberOfTags =
+        this->CSAExtractFromString<itk::uint32_t>(info+offset);
+      offset += sizeof(itk::uint32_t); // skip numberOfTags;
+      offset += sizeof(itk::uint32_t); // skip unused2
+
+      for(unsigned i = 0; i < numberOfTags; ++i)
+        {
+        // tag name is 64 bytes null terminated.
+        std::string tagName = info + offset;
+        offset += 64;                        // skip tag name
+        itk::uint32_t vm = this->CSAExtractFromString<itk::uint32_t>(info+offset);
+        offset += sizeof(itk::uint32_t);
+
+        CSAItem current(vm);
+        current.vm = vm;
+
+        // vr = 3 bytes of string + 1 for pad
+        char vr[4];
+        for(unsigned j = 0; j < 3; ++j)
+          {
+          vr[j] = info[offset + j];
+          }
+        vr[3] = '\0';
+        current.vr = vr;
+        offset += 4; // after VR
+        offset += 4; // skip syngodt
+
+        const itk::int32_t nItems =
+          this->CSAExtractFromString<itk::int32_t>(info + offset);
+        offset += 4;
+        offset += 4; // skip xx
+
+        for(int j = 0; j < nItems; ++j)
+          {
+          // 4 items in XX, first being item length
+          const itk::int32_t  itemLength =
+            this->CSAExtractFromString<itk::int32_t>(info + offset);
+          offset += 16;
+          std::string valueString;
+          valueString = info + offset;
+          offset += itemLength;
+          while((offset % 4) != 0)
+            {
+            ++offset;
+            }
+          if(j < static_cast<int>(vm))
+            {
+            current[j] = valueString;
+            }
+          }
+        header[tagName] = current;
+        }
+    }
+
   /** Siemens datasets are either in the
    *  normal sequential volume arrangement or
    *  in mosaic datasets, where each slice contains
@@ -99,16 +265,28 @@ public:
         std::string diffusionInfoString;;
         this->m_Headers[k]->GetElementOB( 0x0029, 0x1010, diffusionInfoString );
 
+        CSAHeader csaHeader;
+        this->DecodeCSAHeader(csaHeader,diffusionInfoString);
+        // csaHeader.DebugPrint();
+
         // parse B_value from 0029,1010 tag
         std::vector<double> valueArray(0);
-        // we got a 'valid' B-value
-        // If we're trusting the gradient directions in the header,
-        // then all we need to do here is save the bValue.
+        CSAHeader::const_iterator csaIt;
         if( !this->m_UseBMatrixGradientDirections )
           {
-          valueArray.resize(0);
-          int nItems = ExtractSiemensDiffusionInformation(diffusionInfoString, "B_value", valueArray);
-
+          int nItems(0);
+          if((csaIt = csaHeader.find("B_value")) == csaHeader.end())
+            {
+            nItems = 0;
+            }
+          else
+            {
+            // we got a 'valid' B-value
+            // If we're trusting the gradient directions in the header,
+            // then all we need to do here is save the bValue.
+            valueArray = csaIt->second.AsVector<double>();
+            nItems = valueArray.size();
+            }
           vnl_vector_fixed<double, 3> vect3d;
 
           if( nItems != 1 )
@@ -122,6 +300,15 @@ public:
             continue;
             }
           this->m_BValues.push_back( valueArray[0] );
+          if((csaIt = csaHeader.find("DiffusionGradientDirection")) == csaHeader.end())
+            {
+            nItems = 0;
+            }
+          else
+            {
+            valueArray = csaIt->second.AsVector<double>();
+            nItems = valueArray.size();
+            }
 
           // parse DiffusionGradientDirection from 0029,1010 tag
           valueArray.resize(0);
@@ -171,29 +358,48 @@ public:
           }
         else
           {
+          int nItems;
+          // UNC comments: We get the value of the b-value tag in the header.
+          // We won't use it as is, but just to locate the B0 images.
+          // This check must be added, otherwise the bmatrix of the B0 is not
+          // read properly (it's not an actual field in the DICOM header of the B0).
+          std::vector<double> bval_tmp(0);
+          bool                b0_image = false;
+          // UNC comments: Get the bvalue
+          if((csaIt = csaHeader.find("B_value")) == csaHeader.end())
+            {
+            nItems = 0;
+            }
+          else
+            {
+            // we got a 'valid' B-value
+            // If we're trusting the gradient directions in the header,
+            // then all we need to do here is save the bValue.
+            bval_tmp  = csaIt->second.AsVector<double>();
+            }
+
+          if( bval_tmp[0] == 0 )
+            {
+            b0_image = true;
+            }
+
           // JTM - Patch from UNC: fill the nhdr header with the gradient directions and
           // bvalues computed out of the BMatrix
-          valueArray.resize(0);
-          int nItems = ExtractSiemensDiffusionInformation(diffusionInfoString, "B_matrix", valueArray);
+          if((csaIt = csaHeader.find("B_matrix")) == csaHeader.end())
+            {
+            nItems = 0;
+            }
+          else
+            {
+            valueArray = csaIt->second.AsVector<double>();
+            nItems = valueArray.size();
+            }
           vnl_matrix_fixed<double, 3, 3> bMatrix;
 
-          if( nItems == 6 )
+          if( nItems == 6 && !b0_image)
             {
             std::cout << "=============================================" << std::endl;
             std::cout << "BMatrix calculations..." << std::endl;
-            // UNC comments: We get the value of the b-value tag in the header.
-            // We won't use it as is, but just to locate the B0 images.
-            // This check must be added, otherwise the bmatrix of the B0 is not
-            // read properly (it's not an actual field in the DICOM header of the B0).
-            std::vector<double> bval_tmp(0);
-            bool                b0_image = false;
-
-            // UNC comments: Get the bvalue
-            nItems = ExtractSiemensDiffusionInformation(diffusionInfoString, "B_value", bval_tmp);
-            if( bval_tmp[0] == 0 )
-              {
-              b0_image = true;
-              }
 
             // UNC comments: The principal eigenvector of the bmatrix is to be extracted as
             // it's the gradient direction and trace of the matrix is the b-value
@@ -251,10 +457,7 @@ public:
             }
           else
             {
-            // silently returning zero gradient vectors is a problem,
-            // but it is also necessary for some files.
-            valueArray.resize(0);
-            ExtractSiemensDiffusionInformation(diffusionInfoString, "B_value", valueArray);
+            this->m_BValues.push_back( bval_tmp[0] );
             vnl_vector_fixed<double, 3> vect3d;
             this->m_BValues.push_back( valueArray[0] );
             vect3d[0] = 0;

@@ -20,6 +20,175 @@ public:
     }
   virtual ~SiemensDWIConverter() {}
 
+<<<<<<< HEAD
+=======
+  template <typename T>
+  T CSAExtractFromString(const char *ptr)
+    {
+      T rval = *(reinterpret_cast<const T *>(ptr));
+      itk::ByteSwapper<T>::SwapFromSystemToLittleEndian(&rval);
+      return rval;
+    }
+
+  class CSAItem : public std::vector<std::string >
+  {
+  public:
+    typedef std::vector<std::string> SuperClass;
+
+    itk::uint32_t vm;
+    std::string vr;
+
+    CSAItem(unsigned int length) : SuperClass(length),
+                                   vm(0)
+      {
+      }
+    CSAItem() : SuperClass()
+      {
+      }
+    CSAItem( const CSAItem & other ) : SuperClass(other.size())
+      {
+        *this = other;
+      }
+    CSAItem & operator=(const CSAItem &other)
+      {
+        this->resize(0);
+        for(CSAItem::const_iterator it = other.begin();
+            it != other.end();
+            ++it)
+          {
+          this->push_back(*it);
+          }
+        this->vm = other.vm;
+        this->vr = other.vr;
+        return *this;
+      }
+
+    template <typename T>
+    std::vector<T> AsVector() const
+      {
+        std::vector<T> rval;
+        for(unsigned i = 0; i < this->size(); ++i)
+          {
+          if(! (*this)[i].empty())
+            {
+            T val = 0;
+            std::stringstream convert((*this)[i]);
+            convert >> val;
+            rval.push_back(val);
+            }
+          }
+        return rval;
+      }
+    void DebugPrint() const
+      {
+        std::cerr << "  VM = " << this->vm << " VR = " << this->vr << std::endl
+                  << "    ";
+        bool firstTime(false);
+        for(CSAItem::const_iterator it = this->begin();
+            it != this->end(); ++it)
+          {
+          if(firstTime)
+            {
+            firstTime = false;
+            }
+          else
+            {
+            std::cerr << " ";
+            }
+          std::cerr << *it;
+          }
+        std::cerr << std::endl;
+      }
+  };
+
+  class CSAHeader : public std::map<std::string,CSAItem>
+  {
+  public:
+    void DebugPrint() const
+      {
+        for(CSAHeader::const_iterator it = this->begin();
+            it != this->end(); ++it)
+          {
+          std::cerr << it->first << std::endl;
+          it->second.DebugPrint();
+          }
+      }
+  };
+
+  void  DecodeCSAHeader(CSAHeader &header, const std::string &infoString)
+    {
+      //
+      // the reference used to write this code is here:
+      // http://nipy.sourceforge.net/nibabel/dicom/siemens_csa.html
+      const char *info = infoString.c_str();
+
+      const bool isCSA2 = info[0] == 'S' && info[1] == 'V'
+        && info[2] == '1' && info[3] == '0';
+      unsigned int offset;
+
+      if(isCSA2)
+        {
+        offset = 8; // past SV10 + unused 4 bytes
+        }
+      else
+        {
+        offset = 0;
+        }
+      const itk::uint32_t numberOfTags =
+        this->CSAExtractFromString<itk::uint32_t>(info+offset);
+      offset += sizeof(itk::uint32_t); // skip numberOfTags;
+      offset += sizeof(itk::uint32_t); // skip unused2
+
+      for(unsigned i = 0; i < numberOfTags; ++i)
+        {
+        // tag name is 64 bytes null terminated.
+        std::string tagName = info + offset;
+        offset += 64;                        // skip tag name
+        itk::uint32_t vm = this->CSAExtractFromString<itk::uint32_t>(info+offset);
+        offset += sizeof(itk::uint32_t);
+
+        CSAItem current(vm);
+        current.vm = vm;
+
+        // vr = 3 bytes of string + 1 for pad
+        char vr[4];
+        for(unsigned j = 0; j < 3; ++j)
+          {
+          vr[j] = info[offset + j];
+          }
+        vr[3] = '\0';
+        current.vr = vr;
+        offset += 4; // after VR
+        offset += 4; // skip syngodt
+
+        const itk::int32_t nItems =
+          this->CSAExtractFromString<itk::int32_t>(info + offset);
+        offset += 4;
+        offset += 4; // skip xx
+
+        for(int j = 0; j < nItems; ++j)
+          {
+          // 4 items in XX, first being item length
+          const itk::int32_t  itemLength =
+            this->CSAExtractFromString<itk::int32_t>(info + offset);
+          offset += 16;
+          std::string valueString;
+          valueString = info + offset;
+          offset += itemLength;
+          while((offset % 4) != 0)
+            {
+            ++offset;
+            }
+          if(j < static_cast<int>(vm))
+            {
+            current[j] = valueString;
+            }
+          }
+        header[tagName] = current;
+        }
+    }
+
+>>>>>>> BUG: fix generation of vectors from CSA data
   /** Siemens datasets are either in the
    *  normal sequential volume arrangement or
    *  in mosaic datasets, where each slice contains

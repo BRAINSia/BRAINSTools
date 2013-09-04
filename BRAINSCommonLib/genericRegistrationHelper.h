@@ -35,16 +35,15 @@
 
 #include "BRAINSCommonLib.h"
 
-#if (ITK_VERSION_MAJOR < 4)
-#include "itkOptImageToImageMetric.h"
-#include "itkOptMattesMutualInformationImageToImageMetric.h"
-#else
-#include "itkImageToImageMetric.h"
-#include "itkMattesMutualInformationImageToImageMetric.h"
-#endif
-#define COMMON_MMI_METRIC_TYPE itk::MattesMutualInformationImageToImageMetric
+#include "itkImageToImageMetricv4.h"
+#include "itkMattesMutualInformationImageToImageMetricv4.h"
+#include "itkConjugateGradientLineSearchOptimizerv4.h"
+#include "itkGradientDescentOptimizerv4.h"
+#include "itkVersorTransformOptimizerv4.h"
 
-#include "itkImageRegistrationMethod.h"
+#define COMMON_MMI_METRIC_TYPE itk::MattesMutualInformationImageToImageMetricv4
+
+#include "itkImageRegistrationMethodv4.h"
 #include "itkLinearInterpolateImageFunction.h"
 #include "itkImage.h"
 #include "itkDataObjectDecorator.h"
@@ -60,6 +59,8 @@
 
 #include "itkMultiThreader.h"
 #include "itkResampleImageFilter.h"
+
+#include "itkIntensityWindowingImageFilter.h"
 
 #ifdef USE_DebugImageViewer
 #include "DebugImageViewerClient.h"
@@ -157,8 +158,11 @@ public:
   typedef  itk::Command           Superclass;
   typedef itk::SmartPointer<Self> Pointer;
   itkNewMacro(Self);
+
   typedef          TOptimizer  OptimizerType;
   typedef const OptimizerType *OptimizerPointer;
+
+  typedef const typename OptimizerType::ParametersType OptimizerParametersType;
 
   typedef typename COMMON_MMI_METRIC_TYPE<TImage, TImage> MattesMutualInformationMetricType;
   void SetDisplayDeformedImage(bool x)
@@ -204,8 +208,6 @@ public:
 
   typename TImage::Pointer Transform(typename TTransform::Pointer & xfrm)
   {
-    //      std::cerr << "Moving Volume (in observer): " << this->m_MovingImage
-    // << std::endl;
     typedef typename itk::LinearInterpolateImageFunction<TImage, double> InterpolatorType;
     typename InterpolatorType::Pointer interp = InterpolatorType::New();
     typedef typename itk::ResampleImageFilter<TImage, TImage> ResampleImageFilter;
@@ -218,7 +220,6 @@ public:
     resample->SetDefaultPixelValue(0);
     resample->Update();
     typename TImage::Pointer rval = resample->GetOutput();
-    // rval->DisconnectPipeline();
     return rval;
   }
 
@@ -235,7 +236,7 @@ public:
       return;
       }
 
-    typename OptimizerType::ParametersType parms =
+    OptimizerParametersType parms =
       optimizer->GetCurrentPosition();
     int  psize = parms.GetNumberOfElements();
     bool parmsNonEmpty = false;
@@ -312,8 +313,6 @@ public:
       // use it.
       typename TImage::Pointer transformResult =
         this->Transform(m_Transform);
-      //      std::cerr << "Moving Volume (after transform): " <<
-      // transformResult << std::endl;
       m_DebugImageDisplaySender.SendImage<TImage>(transformResult, 1);
       typename TImage::Pointer diff = Isub<TImage>(m_FixedImage, transformResult);
 
@@ -396,22 +395,34 @@ public:
   typedef typename TransformOutputType::ConstPointer
     TransformOutputConstPointer;
 
+  itkStaticConstMacro(MovingImageDimension, unsigned int, MovingImageType::ImageDimension);
+
+  typedef itk::CompositeTransform<double, MovingImageDimension>     CompositeTransformType;
+
   typedef          TOptimizer                    OptimizerType;
   typedef const OptimizerType *                  OptimizerPointer;
   typedef typename OptimizerType::ScalesType     OptimizerScalesType;
   typedef typename OptimizerType::ParametersType OptimizerParametersType;
+
+  typedef itk::GradientDescentOptimizerv4Template< double > GenericOptimizerType;
 
   typedef typename MetricType::FixedImageMaskType  FixedBinaryVolumeType;
   typedef typename FixedBinaryVolumeType::Pointer  FixedBinaryVolumePointer;
   typedef typename MetricType::MovingImageMaskType MovingBinaryVolumeType;
   typedef typename MovingBinaryVolumeType::Pointer MovingBinaryVolumePointer;
 
-  typedef LinearInterpolateImageFunction<
+  typedef ImageRegistrationMethodv4<
+      FixedImageType,
       MovingImageType,
-      double>    InterpolatorType;
+      TransformType>                                            RegistrationType;
+  typedef typename RegistrationType::Pointer                    RegistrationPointer;
 
-  typedef ImageRegistrationMethod<FixedImageType, MovingImageType> RegistrationType;
-  typedef typename RegistrationType::Pointer                       RegistrationPointer;
+  typedef itk::AffineTransform<double, 3>                             AffineTransformType;
+  typedef itk::ImageRegistrationMethodv4<
+      FixedImageType,
+      MovingImageType,
+      AffineTransformType>                                            AffineRegistrationType;
+  typedef typename AffineRegistrationType::MetricSamplingStrategyType SamplingStrategyType;
 
   typedef itk::CenteredTransformInitializer<
       TransformType,
@@ -439,28 +450,25 @@ public:
   itkGetConstObjectMacro(MovingImage, MovingImageType);
 
   /** Set/Get the InitialTransfrom. */
-  void SetInitialTransform(typename TransformType::Pointer initialTransform);
-  itkGetConstObjectMacro(InitialTransform, TransformType);
+  void SetInitialTransform(typename CompositeTransformType::Pointer initialTransform);
 
   /** Set/Get the Transfrom. */
   itkSetObjectMacro(Transform, TransformType);
-  typename TransformType::Pointer GetTransform(void);
+  typename CompositeTransformType::Pointer GetTransform(void);
 
   // itkSetMacro( PermitParameterVariation, std::vector<int>      );
 
   itkSetObjectMacro(CostMetricObject, MetricType);
   itkGetConstObjectMacro(CostMetricObject, MetricType);
 
-  itkSetMacro(NumberOfSamples,               unsigned int);
+  itkSetMacro(SamplingPercentage,            double);
   itkSetMacro(NumberOfHistogramBins,         unsigned int);
   itkSetMacro(NumberOfIterations,            unsigned int);
   itkSetMacro(RelaxationFactor,              double);
   itkSetMacro(MaximumStepLength,             double);
-  itkSetMacro(MinimumStepLength,             double);
   itkSetMacro(TranslationScale,              double);
   itkSetMacro(ReproportionScale,             double);
   itkSetMacro(SkewScale,                     double);
-  itkSetMacro(InitialTransformPassThruFlag,  bool);
   itkSetMacro(BackgroundFillValue,           double);
   itkSetMacro(DisplayDeformedImage,          bool);
   itkSetMacro(PromptUserAfterDisplay,        bool);
@@ -471,6 +479,9 @@ public:
   // Debug option for MI metric
   itkSetMacro(ForceMINumberOfThreads, int);
   itkGetConstMacro(ForceMINumberOfThreads, int);
+
+  itkSetMacro(SamplingStrategy,SamplingStrategyType);
+  itkGetConstMacro(SamplingStrategy,SamplingStrategyType);
 
   /** Returns the transform resulting from the registration process  */
   const TransformOutputType * GetOutput() const;
@@ -511,22 +522,14 @@ protected:
   void  GenerateData();
 
 private:
-  MultiModal3DMutualRegistrationHelper(const Self &);             // purposely
-                                                                  // not
-  // implemented
-  void operator=(const Self &);                                   // purposely
-
-  // not
-
-  // implemented
-
-  // FixedImageConstPointer           m_FixedImage;
-  // MovingImageConstPointer          m_MovingImage;
+  MultiModal3DMutualRegistrationHelper(const Self &);             // purposely not implemented
+  void operator=(const Self &);                                   // purposely not implemented
 
   FixedImagePointer  m_FixedImage;
   MovingImagePointer m_MovingImage;
-  TransformPointer   m_InitialTransform;
-  TransformPointer   m_Transform;
+
+  typename CompositeTransformType::Pointer m_CompositeTransform;
+  TransformPointer                         m_Transform;
   //
   // make sure parameters persist until after they're used by the transform
 
@@ -535,22 +538,22 @@ private:
   std::vector<int> m_PermitParameterVariation;
   typename MetricType::Pointer  m_CostMetricObject;
 
-  unsigned int m_NumberOfSamples;
+  double       m_SamplingPercentage;
   unsigned int m_NumberOfHistogramBins;
   unsigned int m_NumberOfIterations;
   double       m_RelaxationFactor;
   double       m_MaximumStepLength;
-  double       m_MinimumStepLength;
   double       m_TranslationScale;
   double       m_ReproportionScale;
   double       m_SkewScale;
-  bool         m_InitialTransformPassThruFlag;
   double       m_BackgroundFillValue;
   unsigned int m_ActualNumberOfIterations;
   bool         m_DisplayDeformedImage;
   bool         m_PromptUserAfterDisplay;
   double       m_FinalMetricValue;
   bool         m_ObserveIterations;
+
+  SamplingStrategyType m_SamplingStrategy;
   // DEBUG OPTION:
   int m_ForceMINumberOfThreads;
 

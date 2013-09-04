@@ -137,9 +137,11 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
       ${${proj}_FFTWD_ARGS}
     )
   ### --- End Project specific additions
-  set(${proj}_REPOSITORY ${git_protocol}://itk.org/ITK.git)
-  set(${proj}_GIT_TAG 9cfd006c13cfec907428bee7b27cbcf5a5005320)
-  set(ITK_VERSION_ID ITK-4.5)
+  #set(${proj}_REPOSITORY ${git_protocol}://itk.org/ITK.git)
+  #set(${proj}_GIT_TAG 9cfd006c13cfec907428bee7b27cbcf5a5005320)
+  set(${proj}_REPOSITORY https://github.com/aghayoor/ITK.git)
+  set(${proj}_GIT_TAG 1f2baeb5f901e871fbc5721db259a2fe2f68ece1)
+  set(ITK_VERSION_ID ITK-4.6)
 
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${${proj}_REPOSITORY}
@@ -156,11 +158,13 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
       ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
       ${COMMON_EXTERNAL_PROJECT_ARGS}
       ${${proj}_CMAKE_OPTIONS}
-## We really do want to install in order to limit # of include paths INSTALL_COMMAND ""
+## We really do want to install in order to limit # of include paths
+    INSTALL_COMMAND ""
     DEPENDS
       ${${proj}_DEPENDENCIES}
   )
-  set(${extProjName}_DIR ${CMAKE_BINARY_DIR}/${proj}-install/lib/cmake/${ITK_VERSION_ID})
+  #set(${extProjName}_DIR ${CMAKE_BINARY_DIR}/${proj}-install/lib/cmake/${ITK_VERSION_ID})
+  set(${extProjName}_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
 else()
   if(${USE_SYSTEM_${extProjName}})
     find_package(${extProjName} ${ITK_VERSION_MAJOR} REQUIRED)

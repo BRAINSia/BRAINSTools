@@ -37,6 +37,7 @@ int main(int, char * *)
   typedef EllipseSOType::TransformType                              TransformType;
   typedef itk::ImageMaskSpatialObject<3>                            ImageMaskSOType;
   typedef itk::CastImageFilter<ImageType, LocalMaskImageType>       CastType;
+  typedef itk::CompositeTransform<double, 3>                        CompositeTransformType;
 
   // create two empty images
   ImageType::Pointer image1 = ImageType::New(),
@@ -134,10 +135,21 @@ int main(int, char * *)
   myHelper->SetTransformType(transformTypeVector);
   myHelper->Update();
 
-  GenericTransformType::Pointer currentGenericTransform = myHelper->GetCurrentGenericTransform();
+  GenericTransformType::Pointer currentGenericTransform = myHelper->GetCurrentGenericTransform().GetPointer();
+
+  const CompositeTransformType::ConstPointer genericCompositeTransform =
+    dynamic_cast<const CompositeTransformType *>( currentGenericTransform.GetPointer() );
+  if( genericCompositeTransform.IsNull() )
+    {
+    itkGenericExceptionMacro(<<"Error in transform type conversion");
+    }
 
   VersorRigid3DTransformType::ConstPointer versor3D =
-    dynamic_cast<const VersorRigid3DTransformType *>(currentGenericTransform.GetPointer() );
+    dynamic_cast<const VersorRigid3DTransformType *>(genericCompositeTransform->GetNthTransform(0).GetPointer() );
+  if( versor3D.IsNull() )
+    {
+    itkGenericExceptionMacro(<<"Error in transform type conversion");
+    }
 
   // check translation vector -- should match the difference in the ellipse translation vectors
   TransformType::OutputVectorType recoveredTransVector = versor3D->GetTranslation();

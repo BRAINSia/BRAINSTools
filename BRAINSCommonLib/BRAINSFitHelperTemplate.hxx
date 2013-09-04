@@ -29,6 +29,9 @@
 #include "itkOtsuHistogramMatchingImageFilter.h"
 #include <fstream>
 #include "BRAINSFitHelperTemplate.h"
+#include "itkConjugateGradientLineSearchOptimizerv4.h"
+#include "itkLBFGSBOptimizerv4.h"
+#include "itkVersorTransformOptimizerv4.h"
 
 #include "itkLabelObject.h"
 #include "itkStatisticsLabelObject.h"
@@ -220,10 +223,6 @@ DoCenteredInitialization( typename FixedImageType::Pointer & orientedFixedVolume
     typename MovingImageType::PointType movingCenter;
     typename FixedImageType::PointType fixedCenter;
 
-    //     typename MovingImageType::PointType movingCenter =
-    // GetCenterOfBrain<MovingImageType>(orientedMovingVolume);
-    //     typename FixedImageType::PointType fixedCenter
-    // GetCenterOfBrain<FixedImageType>(orientedFixedVolume);
     typedef typename itk::FindCenterOfBrainFilter<MovingImageType>
       MovingFindCenterFilter;
     typename MovingFindCenterFilter::Pointer movingFindCenter =
@@ -243,9 +242,6 @@ DoCenteredInitialization( typename FixedImageType::Pointer & orientedFixedVolume
       // convert mask image to mask
       typename ImageMaskSpatialObjectType::Pointer mask = ImageMaskSpatialObjectType::New();
       mask->SetImage( movingFindCenter->GetClippedImageMask() );
-
-      // typename CHMMaskImageType::ConstPointer ClippedMask = movingFindCenter->GetClippedImageMask();
-      // itkUtil::WriteImage<CHMMaskImageType>( ClippedMask , std::string("MOVING_MASK.nii.gz"));
 
       mask->ComputeObjectToWorldTransform();
       typename SpatialObjectType::Pointer p = dynamic_cast<SpatialObjectType *>( mask.GetPointer() );
@@ -276,8 +272,6 @@ DoCenteredInitialization( typename FixedImageType::Pointer & orientedFixedVolume
       // convert mask image to mask
       typename ImageMaskSpatialObjectType::Pointer mask = ImageMaskSpatialObjectType::New();
       mask->SetImage( fixedFindCenter->GetClippedImageMask() );
-
-      // typename CHMMaskImageType::ConstPointer ClippedMask = fixedFindCenter->GetClippedImageMask();
 
       mask->ComputeObjectToWorldTransform();
       typename SpatialObjectType::Pointer p = dynamic_cast<SpatialObjectType *>( mask.GetPointer() );
@@ -313,13 +307,14 @@ DoCenteredInitialization( typename FixedImageType::Pointer & orientedFixedVolume
     currentEulerAngles3D->SetCenter(rotationCenter);
     currentEulerAngles3D->SetTranslation(translationVector);
 
-    CostMetricObject->SetTransform(currentEulerAngles3D);
+    CostMetricObject->SetMovingTransform(currentEulerAngles3D);
     CostMetricObject->Initialize();
-    // void QuickSampleParameterSpace(void)
       {
       currentEulerAngles3D->SetRotation(0, 0, 0);
       // Initialize with current guess;
-      double max_cc = CostMetricObject->GetValue( currentEulerAngles3D->GetParameters() );
+      //double max_cc = CostMetricObject->GetValue( currentEulerAngles3D->GetParameters() );
+      double max_cc = CostMetricObject->GetValue();
+
       // rough search in neighborhood.
       const double one_degree = 1.0F * vnl_math::pi / 180.0F;
       const double HAStepSize = 3.0 * one_degree;
@@ -333,7 +328,8 @@ DoCenteredInitialization( typename FixedImageType::Pointer & orientedFixedVolume
           for( double PA = -PARange * one_degree; PA <= PARange * one_degree; PA += PAStepSize )
             {
             currentEulerAngles3D->SetRotation(PA, 0, HA);
-            const double current_cc = CostMetricObject->GetValue( currentEulerAngles3D->GetParameters() );
+            //const double current_cc = CostMetricObject->GetValue( currentEulerAngles3D->GetParameters() );
+            const double current_cc = CostMetricObject->GetValue();
             if( current_cc < max_cc )
               {
               max_cc = current_cc;
@@ -464,7 +460,6 @@ DoCenteredInitialization( typename FixedImageType::Pointer & orientedFixedVolume
         typename WriterType::Pointer writer = WriterType::New();
         wirter->UseCompressionOn();
         writer->SetFileName(filename);
-        // writer->SetInput(checker->GetOutput());
         writer->SetInput(ResampledImage);
         try
           {
@@ -484,23 +479,18 @@ DoCenteredInitialization( typename FixedImageType::Pointer & orientedFixedVolume
   else if( initializeTransformMode == "useMomentsAlign" )
     {
     // useMomentsAlign assumes that the structures being registered have same
-    // amount
-    // of mass approximately uniformly distributed.
+    // amount of mass approximately uniformly distributed.
     typename SpecificInitializerType::Pointer CenteredInitializer =
       SpecificInitializerType::New();
 
     CenteredInitializer->SetFixedImage(orientedFixedVolume);
     CenteredInitializer->SetMovingImage(orientedMovingVolume);
     CenteredInitializer->SetTransform(initialITKTransform);
-    CenteredInitializer->MomentsOn();                    // Use intensity center
-                                                         // of
-    // mass
+    CenteredInitializer->MomentsOn();                    // Use intensity center of mass
 
     CenteredInitializer->InitializeTransform();
     }
-  else                     // can't happen unless an unimplemented CLP option
-                           // was
-  // added:
+  else                     // can't happen unless an unimplemented CLP option was added:
     {
     itkGenericExceptionMacro(<< "FAILURE:  Improper mode for initializeTransformMode: "
                              << initializeTransformMode);
@@ -520,14 +510,13 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::BRAINSFitHelperTemplat
   m_MovingBinaryVolume(NULL),
   m_OutputFixedVolumeROI(""),
   m_OutputMovingVolumeROI(""),
-  m_NumberOfSamples(500000),
+  m_SamplingPercentage(1),
   m_NumberOfHistogramBins(50),
   m_HistogramMatch(false),
   m_RemoveIntensityOutliers(0.00),
   m_NumberOfMatchPoints(10),
   m_NumberOfIterations(1, 1500),
   m_MaximumStepLength(0.2),
-  m_MinimumStepLength(1, 0.005),
   m_RelaxationFactor(0.5),
   m_TranslationScale(1000.0),
   m_ReproportionScale(1.0),
@@ -543,10 +532,8 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::BRAINSFitHelperTemplat
   m_MaxBSplineDisplacement(0.0),
   m_ActualNumberOfIterations(0),
   m_PermittedNumberOfIterations(0),
-  // m_AccumulatedNumberOfIterationsForAllLevels(0),
   m_DebugLevel(0),
   m_CurrentGenericTransform(NULL),
-  m_GenericTransformList(0),
   m_DisplayDeformedImage(false),
   m_PromptUserAfterDisplay(false),
   m_FinalMetricValue(0.0),
@@ -554,6 +541,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::BRAINSFitHelperTemplat
   m_CostMetricObject(NULL),
   m_UseROIBSpline(0),
   m_PermitParameterVariation(0),
+  m_SamplingStrategy(AffineRegistrationType::NONE),
   m_ForceMINumberOfThreads(-1)
 {
   m_SplineGridSize[0] = 14;
@@ -562,13 +550,82 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::BRAINSFitHelperTemplat
 }
 
 template <class FixedImageType, class MovingImageType>
+template<class TransformType>
+typename TransformType::Pointer
+BRAINSFitHelperTemplate<FixedImageType, MovingImageType>
+::CollapseLinearTransforms(const CompositeTransformType * compositeTransform)
+{
+  // Note that after each stage of registration, output composite transform includes two transforms
+  // of the same type:
+  // 1) Inital transform that is the output of the previous stage, and it is preprocessed in initializing
+  //    step to have the same type as the current stage transform.
+  // 2) Output transform of the current stage.
+  //
+  // To collapse the above transforms to just one, first, each transform should be converted to an affine helper transform.
+  // Then, two affine transforms can be composed using the "compose" function.
+  // Finally, the result composed transform should be converted to the desired output type.
+  //
+  typename AffineTransformType::Pointer affineComposer = AffineTransformType::New();
+
+  // output tranform type
+  std::string transformTypeName = compositeTransform->GetBackTransform()->GetNameOfClass();
+
+  typename TransformType::Pointer totalTransform = TransformType::New();
+
+  for( unsigned int n = 0; n < compositeTransform->GetNumberOfTransforms(); n++ )
+    {
+    const GenericTransformType::Pointer currGenericInput = compositeTransform->GetNthTransform(n);
+    typename MatrixOffsetTransformBaseType::ConstPointer matrixOffsetTransform =
+                                    dynamic_cast<MatrixOffsetTransformBaseType * const>( currGenericInput.GetPointer() );
+    typename AffineTransformType::Pointer affineHelper = AffineTransformType::New();
+    affineHelper->SetMatrix( matrixOffsetTransform->GetMatrix() );
+    affineHelper->SetOffset( matrixOffsetTransform->GetOffset() );
+    affineComposer->Compose( affineHelper, true );
+    }
+
+  if( affineComposer.IsNotNull() )
+    {
+    if ( transformTypeName == "VersorRigid3DTransform" )
+      {
+      typename VersorRigid3DTransformType::Pointer outTransform = VersorRigid3DTransformType::New();
+      AssignRigid::ExtractVersorRigid3DTransform( outTransform, affineComposer.GetPointer() );
+      if ( outTransform.IsNotNull() && ( outTransform->GetNameOfClass() == totalTransform->GetNameOfClass() ) )
+        {
+        totalTransform->SetFixedParameters( outTransform->GetFixedParameters() );
+        totalTransform->SetParameters( outTransform->GetParameters() );
+        }
+      }
+    else
+      {
+      typename AffineTransformType::Pointer outTransform = dynamic_cast<AffineTransformType *>( affineComposer.GetPointer() );
+      if ( outTransform.IsNotNull() && ( outTransform->GetNameOfClass() == totalTransform->GetNameOfClass() ) )
+        {
+        totalTransform->SetFixedParameters( outTransform->GetFixedParameters() );
+        totalTransform->SetParameters( outTransform->GetParameters() );
+        }
+      }
+    if ( totalTransform.IsNull() )
+      {
+      itkGenericExceptionMacro(<<"Failed to collapse linear transforms. Conversion to final transform failed.");
+      }
+    }
+  else
+    {
+    itkGenericExceptionMacro(<<"Failed to collapse linear transforms. Affine composer is Null.");
+    }
+  typename TransformType::MatrixType matrix = totalTransform->GetMatrix();
+  typename TransformType::OffsetType offset = totalTransform->GetOffset();
+  std::cout << std::endl << "Matrix = " << std::endl << matrix << std::endl;
+  std::cout << "Offset = " << offset << std::endl << std::endl;
+  return totalTransform;
+}
+
+template <class FixedImageType, class MovingImageType>
 template <class TransformType, class OptimizerType, class MetricType>
 void
 BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::FitCommonCode(
   int numberOfIterations,
-  double minimumStepLength,
-  typename TransformType::Pointer &
-  initialITKTransform)
+  typename CompositeTransformType::Pointer & initialITKTransform)
 {
   // FitCommonCode
   typedef typename itk::MultiModal3DMutualRegistrationHelper
@@ -582,18 +639,11 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::FitCommonCode(
   appMutualRegistration = MultiModal3DMutualRegistrationHelperType::New();
 
   appMutualRegistration->SetNumberOfHistogramBins(m_NumberOfHistogramBins);
-
   appMutualRegistration->SetNumberOfIterations( numberOfIterations);
-
-  // TODO:  What do the following two lines really accomplish
-  // debug parameter, suppressed from command line
-  const bool initialTransformPassThru(false);
-  appMutualRegistration->SetInitialTransformPassThruFlag( initialTransformPassThru );
   appMutualRegistration->SetPermitParameterVariation( m_PermitParameterVariation );
-  appMutualRegistration->SetNumberOfSamples( m_NumberOfSamples );
+  appMutualRegistration->SetSamplingPercentage(m_SamplingPercentage);
   appMutualRegistration->SetRelaxationFactor( m_RelaxationFactor );
   appMutualRegistration->SetMaximumStepLength( m_MaximumStepLength );
-  appMutualRegistration->SetMinimumStepLength( minimumStepLength );
   appMutualRegistration->SetTranslationScale( m_TranslationScale );
   appMutualRegistration->SetReproportionScale( m_ReproportionScale );
   appMutualRegistration->SetSkewScale( m_SkewScale );
@@ -606,10 +656,11 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::FitCommonCode(
 
   appMutualRegistration->SetBackgroundFillValue(   m_BackgroundFillValue   );
 
-  appMutualRegistration->SetInitialTransform( initialITKTransform );
+  appMutualRegistration->SetInitialTransform( initialITKTransform.GetPointer() );
   appMutualRegistration->SetDisplayDeformedImage(m_DisplayDeformedImage);
   appMutualRegistration->SetPromptUserAfterDisplay(m_PromptUserAfterDisplay);
   appMutualRegistration->SetObserveIterations(m_ObserveIterations);
+  appMutualRegistration->SetSamplingStrategy(m_SamplingStrategy);
   /*
    *  At this point appMutualRegistration should be all set to make
    *  an itk pipeline class templated in TransformType etc.
@@ -618,19 +669,18 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::FitCommonCode(
   // initialize the interconnects between components
   appMutualRegistration->Initialize();
 
-  typename TransformType::Pointer finalTransform;
+  typename CompositeTransformType::Pointer finalTransform;
+  //typename TransformType::Pointer finalTransform;
   try
     {
     appMutualRegistration->Update();
-    finalTransform = appMutualRegistration->GetTransform();
+    finalTransform = appMutualRegistration->GetTransform(); // finalTransform is a composite transform
 
     // Find the metric value (It is needed when logFileReport flag is ON).
     //this->m_FinalMetricValue = appMutualRegistration->GetFinalMetricValue();
 
     this->m_ActualNumberOfIterations = appMutualRegistration->GetActualNumberOfIterations();
     this->m_PermittedNumberOfIterations = numberOfIterations;
-    // this->m_AccumulatedNumberOfIterationsForAllLevels +=
-    // appMutualRegistration->GetActualNumberOfIterations();
     }
   catch( itk::ExceptionObject& err )
     {
@@ -638,49 +688,60 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::FitCommonCode(
     itkGenericExceptionMacro(<< "Exception caught during registration: " << err);
     }
 
-  // Put the transform on the CurrentTransformList
-  // Initialize next level of transformations with previous transform
-  // result
-  this->m_CurrentGenericTransform = finalTransform;
+  // Put the result transform in the CurrentGenericTransform.
+  // This composite transform will be used for initailization of the next step.
+  //
+  // Note1: The "finalTransform" is a composite transform that includes two transforms:
+  //        0) initial transform, 1) result of the current registratin step.
+  //
+  // Note2: Since the "finalTransform" already has the initial transform,
+  //        we can clean the queue of the CurrentGenericTransform.
+  //
+  this->m_CurrentGenericTransform->ClearTransformQueue();
+  if( finalTransform->IsLinear() )
+    {
+    std::cout << "Collapse linear transforms togheter to have just one linear transform ..." << std::endl;
+    std::string backTransformType = finalTransform->GetBackTransform()->GetNameOfClass();
+
+    // ScaleSkewVersor3DTransform and ScaleVersor3DTransform transforms cannot be updated, so they are not collapsable.
+    // Therefore, we have to write them to the disk as an Affine transform type.
+    // TODO: we should be able to write these transforms as they are.
+    //
+    if( backTransformType == "ScaleSkewVersor3DTransform" || backTransformType == "ScaleVersor3DTransform" )
+      {
+      this->m_CurrentGenericTransform->AddTransform( CollapseLinearTransforms<AffineTransformType>( finalTransform ) );
+      }
+    else
+      {
+      this->m_CurrentGenericTransform->AddTransform( CollapseLinearTransforms<TransformType>( finalTransform ) );
+      }
+    }
+  else // This condition won't happen for current linear transforms.
+    {
+    typename CompositeTransformType::Pointer compToAdd;
+    typename CompositeTransformType::ConstPointer compXfrm =
+                              dynamic_cast<const CompositeTransformType *>( finalTransform.GetPointer() );
+    if( compXfrm.IsNotNull() )
+      {
+      compToAdd = compXfrm->Clone();
+      this->m_CurrentGenericTransform = compToAdd;
+      }
+    else
+      {
+      itkExceptionMacro(<< "The registration output composite transform is a NULL transform.");
+      }
+    }
 }
 
 template <class FixedImageType, class MovingImageType>
 void
 BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
 {
-  typedef COMMON_MMI_METRIC_TYPE<FixedImageType, MovingImageType> MattesMutualInformationMetricType;
-  unsigned currentTransformId = 0;
-
-  if( std::string(this->m_InitializeTransformMode) != "Off" )
-    {
-    m_GenericTransformList.resize(m_TransformType.size() + 1);
-    }
-  else
-    {
-    m_GenericTransformList.resize( m_TransformType.size() );
-    }
-
   if( this->m_DebugLevel > 3 )
     {
     this->PrintSelf(std::cout, 3);
     }
-  std::vector<double> localMinimumStepLength( m_TransformType.size() );
-  if( m_MinimumStepLength.size() != m_TransformType.size() )
-    {
-    if( m_MinimumStepLength.size() != 1 )
-      {
-      itkGenericExceptionMacro(<< "ERROR:  Wrong number of parameters for MinimumStepLength."
-                               << "It either needs to be 1 or the same size as TransformType.");
-      }
-    for( unsigned int q = 0; q < m_TransformType.size(); ++q )
-      {
-      localMinimumStepLength[q] = m_MinimumStepLength[0];
-      }
-    }
-  else
-    {
-    localMinimumStepLength = m_MinimumStepLength;
-    }
+
   std::vector<int> localNumberOfIterations( m_TransformType.size() );
   if( m_NumberOfIterations.size() != m_TransformType.size() )
     {
@@ -711,60 +772,60 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
     }
 
   // Initialize Transforms
-  if( localInitializeTransformMode != "Off" )
-  // Use CenteredVersorTranformInitializer
-    {
-    typedef VersorRigid3DTransformType TransformType;
-    std::cout << "Initializing transform with " << localInitializeTransformMode << std::endl;
-    typedef itk::CenteredVersorTransformInitializer<FixedImageType,
-                                                    MovingImageType> InitializerType;
+  // Note that we don't want to estimate initialization if initial moving transform is provided already.
+  if( m_CurrentGenericTransform.IsNull() && localInitializeTransformMode != "Off" )
+      // Use CenteredVersorTranformInitializer
+  {
+  typedef VersorRigid3DTransformType TransformType;
+  std::cout << "Initializing transform with " << localInitializeTransformMode << std::endl;
+  typedef itk::CenteredVersorTransformInitializer<FixedImageType,
+  MovingImageType> InitializerType;
 
-    TransformType::Pointer initialITKTransform =
-      DoCenteredInitialization<FixedImageType, MovingImageType,
-                               TransformType, InitializerType, MetricType>(
-        m_FixedVolume,
-        m_MovingVolume,
-        m_FixedBinaryVolume,
-        m_MovingBinaryVolume,
-        localInitializeTransformMode, this->m_CostMetricObject);
-    m_CurrentGenericTransform = initialITKTransform.GetPointer();
-    localInitializeTransformMode = "Off";        // Now reset to Off once
-    // initialization is done.
+  TransformType::Pointer initialITKTransform =
+  DoCenteredInitialization<FixedImageType, MovingImageType,
+  TransformType, InitializerType, MetricType>(
+                                              m_FixedVolume,
+                                              m_MovingVolume,
+                                              m_FixedBinaryVolume,
+                                              m_MovingBinaryVolume,
+                                              localInitializeTransformMode, this->m_CostMetricObject);
 
-    // Now if necessary clip the images based on m_MaskInferiorCutOffFromCenter
-    DoCenteredTransformMaskClipping<TransformType,
-                                    FixedImageType::ImageDimension>(
-      m_FixedBinaryVolume,
-      m_MovingBinaryVolume,
-      initialITKTransform,
-      m_MaskInferiorCutOffFromCenter);
+  // The currentGenericTransform will be initialized by estimated initial transform.
+  this->m_CurrentGenericTransform = CompositeTransformType::New();
+  this->m_CurrentGenericTransform->AddTransform( initialITKTransform.GetPointer() );
 
-      {   // Write out some debugging information if requested
-      if( ( !this->m_FixedBinaryVolume.IsNull() ) && ( m_OutputFixedVolumeROI != "" ) )
-        {
-        const MaskImageType::ConstPointer tempOutputFixedVolumeROI =
-          ExtractConstPointerToImageMaskFromImageSpatialObject(this->m_FixedBinaryVolume.GetPointer() );
-        itkUtil::WriteConstImage<MaskImageType>(tempOutputFixedVolumeROI, m_OutputFixedVolumeROI);
-        }
-      if( ( !this->m_MovingBinaryVolume.IsNull() ) && ( m_OutputMovingVolumeROI != "" ) )
-        {
-        const MaskImageType::ConstPointer tempOutputMovingVolumeROI =
-          ExtractConstPointerToImageMaskFromImageSpatialObject(this->m_MovingBinaryVolume.GetPointer() );
-        itkUtil::WriteConstImage<MaskImageType>(tempOutputMovingVolumeROI, m_OutputMovingVolumeROI);
-        }
+  localInitializeTransformMode = "Off";  // Now reset to Off once initialization is done.
+
+  // Now if necessary clip the images based on m_MaskInferiorCutOffFromCenter
+  DoCenteredTransformMaskClipping<TransformType, FixedImageType::ImageDimension>(
+                                                                                 m_FixedBinaryVolume,
+                                                                                 m_MovingBinaryVolume,
+                                                                                 initialITKTransform,
+                                                                                 m_MaskInferiorCutOffFromCenter);
+
+    {   // Write out some debugging information if requested
+    if( ( !this->m_FixedBinaryVolume.IsNull() ) && ( m_OutputFixedVolumeROI != "" ) )
+      {
+      const MaskImageType::ConstPointer tempOutputFixedVolumeROI =
+      ExtractConstPointerToImageMaskFromImageSpatialObject(this->m_FixedBinaryVolume.GetPointer() );
+      itkUtil::WriteConstImage<MaskImageType>(tempOutputFixedVolumeROI, m_OutputFixedVolumeROI);
       }
-
-    m_GenericTransformList[currentTransformId++] = initialITKTransform;
+    if( ( !this->m_MovingBinaryVolume.IsNull() ) && ( m_OutputMovingVolumeROI != "" ) )
+      {
+      const MaskImageType::ConstPointer tempOutputMovingVolumeROI =
+      ExtractConstPointerToImageMaskFromImageSpatialObject(this->m_MovingBinaryVolume.GetPointer() );
+      itkUtil::WriteConstImage<MaskImageType>(tempOutputMovingVolumeROI, m_OutputMovingVolumeROI);
+      }
     }
+  }
+
   for( unsigned int currentTransformIndex = 0;
        currentTransformIndex < m_TransformType.size();
        currentTransformIndex++ )
     {
-    // m_AccumulatedNumberOfIterationsForAllLevels +=
-    // localNumberOfIterations[currentTransformIndex];
     const std::string currentTransformType(m_TransformType[currentTransformIndex]);
     std::cout << "\n\n\n=============================== "
-              << "Starting Transform Estimations for "
+              << "ITKv4 Registration: Starting Transform Estimations for "
               << currentTransformType << "(" << currentTransformIndex + 1
               << " of " << m_TransformType.size() << ")."
               << "==============================="
@@ -777,23 +838,39 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
       {
       //  Choose TransformType for the itk registration class template:
       typedef VersorRigid3DTransformType           TransformType;
-      typedef itk::VersorRigid3DTransformOptimizer OptimizerType;
-      // const int NumberOfEstimatedParameter = 6;
-
+      typedef itk::VersorTransformOptimizerv4      OptimizerType;
       //
       // Process the initialITKTransform as VersorRigid3DTransform:
       //
       TransformType::Pointer initialITKTransform = TransformType::New();
       initialITKTransform->SetIdentity();
-      if( m_CurrentGenericTransform.IsNotNull() )
+
+      if( m_CurrentGenericTransform.IsNotNull() ) //When null, m_CurrentGenericTransform will be initialized by identity.
         {
+        /* NOTE1: m_CurrentGenericTransform is a composite transform. When not null, it is initialized by:
+                 {Intial Moving Transform
+                        OR
+                  Estimated initial transform indicated by initialTransformMode
+                        OR
+                  Output of previous level}
+
+         * NOTE2: If the transform Type of the current level is linear,
+                  the m_CurrentGenericTransform should contain only one transform as we collapse all linear transforms together.
+         */
+        if( m_CurrentGenericTransform->GetNumberOfTransforms() != 1 )
+          {
+          itkGenericExceptionMacro("Linear initial composite transform should have only one component \
+                                   as all linaear transforms are collapsed together.");
+          }
+        const GenericTransformType::ConstPointer currInitTransformFormGenericComposite =
+                                                  m_CurrentGenericTransform->GetFrontTransform();
         try
           {
-          const std::string transformFileType = m_CurrentGenericTransform->GetNameOfClass();
+          const std::string transformFileType = currInitTransformFormGenericComposite->GetNameOfClass();
           if( transformFileType == "VersorRigid3DTransform" )
             {
             const VersorRigid3DTransformType::ConstPointer tempInitializerITKTransform =
-              dynamic_cast<VersorRigid3DTransformType const *>( m_CurrentGenericTransform.GetPointer() );
+            dynamic_cast<VersorRigid3DTransformType const *>( currInitTransformFormGenericComposite.GetPointer() );
             if( tempInitializerITKTransform.IsNull() )
               {
               std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
@@ -802,23 +879,24 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
                                                   tempInitializerITKTransform);
             }
           else if( ( transformFileType == "ScaleVersor3DTransform" )
-                   || ( transformFileType == "ScaleSkewVersor3DTransform" )
-                   || ( transformFileType == "AffineTransform" ) )
+                  || ( transformFileType == "ScaleSkewVersor3DTransform" )
+                  || ( transformFileType == "AffineTransform" ) )
             {
             // CONVERTING TO RIGID TRANSFORM TYPE from other type:
             std::cout << "WARNING:  Extracting Rigid component type from transform." << std::endl;
-            VersorRigid3DTransformType::Pointer tempInitializerITKTransform = ComputeRigidTransformFromGeneric(
-                m_CurrentGenericTransform.GetPointer() );
+            VersorRigid3DTransformType::Pointer tempInitializerITKTransform =
+                                                ComputeRigidTransformFromGeneric(currInitTransformFormGenericComposite.GetPointer() );
+
             AssignRigid::AssignConvertedTransform( initialITKTransform, tempInitializerITKTransform.GetPointer() );
             }
           else
             {
             std::cout
-              <<
-              "Unsupported initial transform file -- TransformBase first transform typestring, "
-              << transformFileType
-              << " not equal to required type VersorRigid3DTransform"
-              << std::endl;
+            <<
+            "Unsupported initial transform file -- TransformBase first transform typestring, "
+            << transformFileType
+            << " not equal to required type VersorRigid3DTransform"
+            << std::endl;
             return;
             }
           }
@@ -826,39 +904,30 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
           {
           std::cout << "[FAILED]" << std::endl;
           std::cerr
-            << "Error while reading the m_CurrentGenericTransform" << std::endl;
+          << "Error while reading the m_CurrentGenericTransform" << std::endl;
           std::cerr << excp << std::endl;
           throw;
           }
         }
+      else
         {
-        // Special optimizations only for the MMI metric
-        // that need adjusting based on both the type of metric, and
-        // the "dimensionality" of the transform being adjusted.
-        typename MattesMutualInformationMetricType::Pointer test_MMICostMetric =
-          dynamic_cast<MattesMutualInformationMetricType *>(this->m_CostMetricObject.GetPointer() );
-        if( test_MMICostMetric.IsNotNull() )
-          {
-          const bool UseExplicitPDFDerivatives =
-            ( m_UseExplicitPDFDerivativesMode == "ON" || m_UseExplicitPDFDerivativesMode == "AUTO" ) ? true : false;
-          test_MMICostMetric->SetUseExplicitPDFDerivatives(UseExplicitPDFDerivatives);
-          }
+        m_CurrentGenericTransform = CompositeTransformType::New();
         }
+      // replace the original initial transform with the extracted version.
+      m_CurrentGenericTransform->ClearTransformQueue();
+      m_CurrentGenericTransform->AddTransform( initialITKTransform );
 
       this->FitCommonCode<TransformType, OptimizerType, MetricType>
         (localNumberOfIterations[currentTransformIndex],
-        localMinimumStepLength[currentTransformIndex],
-        initialITKTransform);
-      localInitializeTransformMode = "Off";   // Now turn of the initiallize
-                                              // code to off
+        this->m_CurrentGenericTransform);
+      // NOW, after running the above function, the m_CurrentGenericTransform contains the integration of initial transform and rigid registration results.
+      ///////////////////////
       }
     else if( currentTransformType == "ScaleVersor3D" )
       {
       //  Choose TransformType for the itk registration class template:
-      typedef ScaleVersor3DTransformType    TransformType;
-      typedef itk::VersorTransformOptimizer OptimizerType;
-      // const int NumberOfEstimatedParameter = 9;
-
+      typedef ScaleVersor3DTransformType      TransformType; // NumberOfEstimatedParameter = 9;
+      typedef itk::VersorTransformOptimizerv4 OptimizerType;
       //
       // Process the initialITKTransform as ScaleVersor3DTransform:
       //
@@ -866,13 +935,30 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
       initialITKTransform->SetIdentity();
       if( m_CurrentGenericTransform.IsNotNull() )
         {
+        /* NOTE1: m_CurrentGenericTransform is a composite transform. When not null, it is initialized by:
+         {Intial Moving Transform
+         OR
+         Estimated initial transform indicated by initialTransformMode
+         OR
+         Output of previous level}
+
+         * NOTE2: If the transform Type of the current level is linear,
+         the m_CurrentGenericTransform should contain only one transform as we collapse all linear transforms together.
+         */
+        if( m_CurrentGenericTransform->GetNumberOfTransforms() != 1 )
+          {
+          itkGenericExceptionMacro("Linear initial composite transform should have only one component \
+                                   as all linaear transforms are collapsed together.");
+          }
+        const GenericTransformType::ConstPointer currInitTransformFormGenericComposite =
+                                                  m_CurrentGenericTransform->GetFrontTransform();
         try
           {
-          const std::string transformFileType = m_CurrentGenericTransform->GetNameOfClass();
+          const std::string transformFileType = currInitTransformFormGenericComposite->GetNameOfClass();
           if( transformFileType == "VersorRigid3DTransform" )
             {
             const VersorRigid3DTransformType::ConstPointer tempInitializerITKTransform =
-              dynamic_cast<VersorRigid3DTransformType const *>( m_CurrentGenericTransform.GetPointer() );
+              dynamic_cast<VersorRigid3DTransformType const *>( currInitTransformFormGenericComposite.GetPointer() );
             if( tempInitializerITKTransform.IsNull() )
               {
               std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
@@ -883,7 +969,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
           else if( transformFileType == "ScaleVersor3DTransform" )
             {
             const ScaleVersor3DTransformType::ConstPointer tempInitializerITKTransform =
-              dynamic_cast<ScaleVersor3DTransformType const *>( m_CurrentGenericTransform.GetPointer() );
+              dynamic_cast<ScaleVersor3DTransformType const *>( currInitTransformFormGenericComposite.GetPointer() );
             if( tempInitializerITKTransform.IsNull() )
               {
               std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
@@ -898,13 +984,10 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
             // TODO: we should preserve the Scale components
             std::cout << "WARNING:  Extracting Rigid component type from transform." << std::endl;
             VersorRigid3DTransformType::Pointer tempInitializerITKTransform = ComputeRigidTransformFromGeneric(
-                m_CurrentGenericTransform.GetPointer() );
+                currInitTransformFormGenericComposite.GetPointer() );
             AssignRigid::AssignConvertedTransform( initialITKTransform, tempInitializerITKTransform.GetPointer() );
             }
-          else              // || transformFileType ==
-                            // "ScaleSkewVersor3DTransform"
-          // ||
-          // transformFileType == "AffineTransform"
+          else
             {
             std::cout
               <<
@@ -926,34 +1009,26 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
           throw;
           }
         }
+      else
         {
-        // Special optimizations only for the MMI metric
-        // that need adjusting based on both the type of metric, and
-        // the "dimensionality" of the transform being adjusted.
-        typename MattesMutualInformationMetricType::Pointer test_MMICostMetric =
-          dynamic_cast<MattesMutualInformationMetricType *>(this->m_CostMetricObject.GetPointer() );
-        if( test_MMICostMetric.IsNotNull() )
-          {
-          const bool UseExplicitPDFDerivatives =
-            ( m_UseExplicitPDFDerivativesMode == "ON" || m_UseExplicitPDFDerivativesMode == "AUTO" ) ? true : false;
-          test_MMICostMetric->SetUseExplicitPDFDerivatives(UseExplicitPDFDerivatives);
-          }
+        m_CurrentGenericTransform = CompositeTransformType::New();
         }
-      // #include "FitCommonCode.tmpl"
+
+      // replace the original initial transform with the above converted version.
+      m_CurrentGenericTransform->ClearTransformQueue();
+      m_CurrentGenericTransform->AddTransform( initialITKTransform );
+
       this->FitCommonCode<TransformType, OptimizerType, MetricType>
-        (localNumberOfIterations[currentTransformIndex],
-        localMinimumStepLength[currentTransformIndex],
-        initialITKTransform);
-      localInitializeTransformMode = "Off";   // Now turn of the initiallize
-                                              // code to off
+      (localNumberOfIterations[currentTransformIndex],
+       this->m_CurrentGenericTransform);
+      // NOW, after running the above function, the m_CurrentGenericTransform contains the integration of initial transform and ScaleVersor registration results.
+      /////////////////////
       }
     else if( currentTransformType == "ScaleSkewVersor3D" )
       {
       //  Choose TransformType for the itk registration class template:
-      typedef ScaleSkewVersor3DTransformType TransformType;
-      typedef itk::VersorTransformOptimizer  OptimizerType;
-      // const int NumberOfEstimatedParameter = 15;
-
+      typedef ScaleSkewVersor3DTransformType    TransformType;  // NumberOfEstimatedParameter = 15;
+      typedef itk::VersorTransformOptimizerv4   OptimizerType;
       //
       // Process the initialITKTransform as ScaleSkewVersor3D:
       //
@@ -961,13 +1036,30 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
       initialITKTransform->SetIdentity();
       if( m_CurrentGenericTransform.IsNotNull() )
         {
+        /* NOTE1: m_CurrentGenericTransform is a composite transform. When not null, it is initialized by:
+         {Intial Moving Transform
+         OR
+         Estimated initial transform indicated by initialTransformMode
+         OR
+         Output of previous level}
+
+         * NOTE2: If the transform Type of the current level is linear,
+         the m_CurrentGenericTransform should contain only one transform as we collapse all linear transforms together.
+         */
+        if( m_CurrentGenericTransform->GetNumberOfTransforms() != 1 )
+          {
+          itkGenericExceptionMacro("Linear initial composite transform should have only one component \
+                                   as all linaear transforms are collapsed together.");
+          }
+        const GenericTransformType::ConstPointer currInitTransformFormGenericComposite =
+                                                  m_CurrentGenericTransform->GetFrontTransform();
         try
           {
-          const std::string transformFileType = m_CurrentGenericTransform->GetNameOfClass();
+          const std::string transformFileType = currInitTransformFormGenericComposite->GetNameOfClass();
           if( transformFileType == "VersorRigid3DTransform" )
             {
             const VersorRigid3DTransformType::ConstPointer tempInitializerITKTransform =
-              dynamic_cast<VersorRigid3DTransformType const *>( m_CurrentGenericTransform.GetPointer() );
+              dynamic_cast<VersorRigid3DTransformType const *>( currInitTransformFormGenericComposite.GetPointer() );
             if( tempInitializerITKTransform.IsNull() )
               {
               std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
@@ -978,7 +1070,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
           else if( transformFileType == "ScaleVersor3DTransform" )
             {
             const ScaleVersor3DTransformType::ConstPointer tempInitializerITKTransform =
-              dynamic_cast<ScaleVersor3DTransformType const *>( m_CurrentGenericTransform.GetPointer() );
+              dynamic_cast<ScaleVersor3DTransformType const *>( currInitTransformFormGenericComposite.GetPointer() );
             if( tempInitializerITKTransform.IsNull() )
               {
               std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
@@ -989,7 +1081,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
           else if( transformFileType == "ScaleSkewVersor3DTransform" )
             {
             const ScaleSkewVersor3DTransformType::ConstPointer tempInitializerITKTransform =
-              dynamic_cast<ScaleSkewVersor3DTransformType const *>( m_CurrentGenericTransform.GetPointer() );
+              dynamic_cast<ScaleSkewVersor3DTransformType const *>( currInitTransformFormGenericComposite.GetPointer() );
             if( tempInitializerITKTransform.IsNull() )
               {
               std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
@@ -1003,12 +1095,10 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
             // TODO:  We should really preserve the Scale and Skew components
             std::cout << "WARNING:  Extracting Rigid component type from transform." << std::endl;
             VersorRigid3DTransformType::Pointer tempInitializerITKTransform = ComputeRigidTransformFromGeneric(
-                m_CurrentGenericTransform.GetPointer() );
+                currInitTransformFormGenericComposite.GetPointer() );
             AssignRigid::AssignConvertedTransform( initialITKTransform, tempInitializerITKTransform.GetPointer() );
             }
-          else              // || transformFileType == "AffineTransform" ||
-          // transformFileType
-          // == "ScaleVersor3DTransform"
+          else
             {
             std::cout << "Unsupported initial transform file -- TransformBase first transform typestring, "
                       << transformFileType
@@ -1027,34 +1117,25 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
           throw;
           }
         }
+      else
         {
-        // Special optimizations only for the MMI metric
-        // that need adjusting based on both the type of metric, and
-        // the "dimensionality" of the transform being adjusted.
-        typename MattesMutualInformationMetricType::Pointer test_MMICostMetric =
-          dynamic_cast<MattesMutualInformationMetricType *>(this->m_CostMetricObject.GetPointer() );
-        if( test_MMICostMetric.IsNotNull() )
-          {
-          const bool UseExplicitPDFDerivatives =
-            ( m_UseExplicitPDFDerivativesMode == "ON" || m_UseExplicitPDFDerivativesMode == "AUTO" ) ? true : false;
-          test_MMICostMetric->SetUseExplicitPDFDerivatives(UseExplicitPDFDerivatives);
-          }
+        m_CurrentGenericTransform = CompositeTransformType::New();
         }
-      // #include "FitCommonCode.tmpl"
+      // replace the original initial transform with the above converted version.
+      m_CurrentGenericTransform->ClearTransformQueue();
+      m_CurrentGenericTransform->AddTransform( initialITKTransform );
+
       this->FitCommonCode<TransformType, OptimizerType, MetricType>
-        (localNumberOfIterations[currentTransformIndex],
-        localMinimumStepLength[currentTransformIndex],
-        initialITKTransform);
-      localInitializeTransformMode = "Off";   // Now turn of the initiallize
-                                              // code to off
+      (localNumberOfIterations[currentTransformIndex],
+       this->m_CurrentGenericTransform);
+      // NOW, after running the above function, the m_CurrentGenericTransform contains the integration of initial transform and ScaleSkew registration results that is an "Affine" transform.
+      /////////////////////
       }
     else if( currentTransformType == "Affine" )
       {
       //  Choose TransformType for the itk registration class template:
-      typedef itk::AffineTransform<double, Dimension>  TransformType;
-      typedef itk::RegularStepGradientDescentOptimizer OptimizerType;
-      // const int NumberOfEstimatedParameter = 12;
-
+      typedef itk::AffineTransform<double, Dimension>                      TransformType;
+      typedef itk::ConjugateGradientLineSearchOptimizerv4Template<double>  OptimizerType;
       //
       // Process the initialITKTransform
       //
@@ -1062,13 +1143,30 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
       initialITKTransform->SetIdentity();
       if( m_CurrentGenericTransform.IsNotNull() )
         {
+        /* NOTE1: m_CurrentGenericTransform is a composite transform. When not null, it is initialized by:
+         {Intial Moving Transform
+         OR
+         Estimated initial transform indicated by initialTransformMode
+         OR
+         Output of previous level}
+
+         * NOTE2: If the transform Type of the current level is linear,
+         the m_CurrentGenericTransform should contain only one transform as we collapse all linear transforms together.
+         */
+        if( m_CurrentGenericTransform->GetNumberOfTransforms() != 1 )
+          {
+          itkGenericExceptionMacro("Linear initial composite transform should have only one component \
+                                   as all linaear transforms are collapsed together.");
+          }
+        const GenericTransformType::ConstPointer currInitTransformFormGenericComposite =
+                                                  m_CurrentGenericTransform->GetFrontTransform();
         try
           {
-          const std::string transformFileType = m_CurrentGenericTransform->GetNameOfClass();
+          const std::string transformFileType = currInitTransformFormGenericComposite->GetNameOfClass();
           if( transformFileType == "VersorRigid3DTransform" )
             {
             const VersorRigid3DTransformType::ConstPointer tempInitializerITKTransform =
-              dynamic_cast<VersorRigid3DTransformType const *>( m_CurrentGenericTransform.GetPointer() );
+              dynamic_cast<VersorRigid3DTransformType const *>( currInitTransformFormGenericComposite.GetPointer() );
             if( tempInitializerITKTransform.IsNull() )
               {
               std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
@@ -1079,7 +1177,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
           else if( transformFileType == "ScaleVersor3DTransform" )
             {
             const ScaleVersor3DTransformType::ConstPointer tempInitializerITKTransform =
-              dynamic_cast<ScaleVersor3DTransformType const *>( m_CurrentGenericTransform.GetPointer() );
+              dynamic_cast<ScaleVersor3DTransformType const *>( currInitTransformFormGenericComposite.GetPointer() );
             if( tempInitializerITKTransform.IsNull() )
               {
               std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
@@ -1090,7 +1188,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
           else if( transformFileType == "ScaleSkewVersor3DTransform" )
             {
             const ScaleSkewVersor3DTransformType::ConstPointer tempInitializerITKTransform =
-              dynamic_cast<ScaleSkewVersor3DTransformType const *>( m_CurrentGenericTransform.GetPointer() );
+              dynamic_cast<ScaleSkewVersor3DTransformType const *>( currInitTransformFormGenericComposite.GetPointer() );
             if( tempInitializerITKTransform.IsNull() )
               {
               std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
@@ -1100,8 +1198,8 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
             }
           else if( transformFileType == "AffineTransform" )
             {
-            const AffineTransformType::ConstPointer tempInitializerITKTransform =
-              dynamic_cast<AffineTransformType const *>( m_CurrentGenericTransform.GetPointer() );
+            const typename AffineTransformType::ConstPointer tempInitializerITKTransform =
+              dynamic_cast<AffineTransformType const *>( currInitTransformFormGenericComposite.GetPointer() );
             if( tempInitializerITKTransform.IsNull() )
               {
               std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
@@ -1128,461 +1226,248 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
           throw;
           }
         }
-
+      else
         {
-        // Special optimizations only for the MMI metric
-        // that need adjusting based on both the type of metric, and
-        // the "dimensionality" of the transform being adjusted.
-        typename MattesMutualInformationMetricType::Pointer test_MMICostMetric =
-          dynamic_cast<MattesMutualInformationMetricType *>(this->m_CostMetricObject.GetPointer() );
-        if( test_MMICostMetric.IsNotNull() )
-          {
-          const bool UseExplicitPDFDerivatives =
-            ( m_UseExplicitPDFDerivativesMode == "ON" || m_UseExplicitPDFDerivativesMode == "AUTO" ) ? true : false;
-          test_MMICostMetric->SetUseExplicitPDFDerivatives(UseExplicitPDFDerivatives);
-          }
+        m_CurrentGenericTransform = CompositeTransformType::New();
         }
-      // #include "FitCommonCode.tmpl"
+
+      // replace the original initial transform with the above converted version.
+      m_CurrentGenericTransform->ClearTransformQueue();
+      m_CurrentGenericTransform->AddTransform( initialITKTransform );
+
       this->FitCommonCode<TransformType, OptimizerType, MetricType>
-        (localNumberOfIterations[currentTransformIndex],
-        localMinimumStepLength[currentTransformIndex],
-        initialITKTransform);
-      localInitializeTransformMode = "Off";   // Now turn of the initiallize
-                                              // code to off
+      (localNumberOfIterations[currentTransformIndex],
+       this->m_CurrentGenericTransform);
+      // NOW, after running the above function, the m_CurrentGenericTransform contains the integration of initial transform and Affine registration results.
+      /////////////////////
       }
     else if( currentTransformType == "BSpline" )
       {
-      //
-      // Process the bulkAffineTransform for BSpline's BULK
-      //
-      AffineTransformType::Pointer bulkAffineTransform =
-        AffineTransformType::New();
-      bulkAffineTransform->SetIdentity();
+      const unsigned int SpaceDimension = 3;
+      const unsigned int SplineOrder = 3;
+      typedef itk::BSplineTransform<double, SpaceDimension, SplineOrder> BSplineTransformType;
 
-      typedef itk::Image<float, 3> RegisterImageType;
+      typedef itk::ImageRegistrationMethodv4<FixedImageType, MovingImageType, BSplineTransformType> BSplineRegistrationType;
+      typename BSplineRegistrationType::Pointer bsplineRegistration = BSplineRegistrationType::New();
 
-      BSplineTransformType::Pointer outputBSplineTransform =
-        BSplineTransformType::New();
-      outputBSplineTransform->SetIdentity();
+      typename BSplineTransformType::Pointer outputBSplineTransform =
+                                                const_cast<BSplineTransformType *>( bsplineRegistration->GetOutput()->Get() );
+      // Initialize the BSpline transform
+      BSplineTransformType::PhysicalDimensionsType   fixedPhysicalDimensions;
+      BSplineTransformType::MeshSizeType             meshSize;
+      BSplineTransformType::OriginType               fixedOrigin;
 
-      BSplineTransformType::Pointer initialBSplineTransform =
-        BSplineTransformType::New();
-      initialBSplineTransform->SetIdentity();
-
+      for( unsigned int i=0; i< SpaceDimension; i++ )
         {
-        typedef BSplineTransformType::RegionType
-          TransformRegionType;
-        typedef TransformRegionType::SizeType
-          TransformSizeType;
-        typedef itk::BSplineDeformableTransformInitializer<BSplineTransformType,
-                                                                 RegisterImageType> InitializerType;
-        InitializerType::Pointer transformInitializer = InitializerType::New();
-        transformInitializer->SetTransform(initialBSplineTransform);
-
-        if( m_UseROIBSpline )
-          {
-          ImageMaskSpatialObjectType::Pointer roiMask = ImageMaskSpatialObjectType::New();
-          if( m_MovingBinaryVolume.GetPointer() != NULL )
-            {
-            ImageMaskSpatialObjectType::Pointer movingImageMask =
-              dynamic_cast<ImageMaskSpatialObjectType *>(m_MovingBinaryVolume.GetPointer() );
-
-            typedef itk::ResampleImageFilter<MaskImageType, MaskImageType, double> ResampleFilterType;
-            ResampleFilterType::Pointer resampler = ResampleFilterType::New();
-
-            if( m_CurrentGenericTransform.IsNotNull() )
-              {
-              // resample the moving mask, if available
-              resampler->SetTransform(m_CurrentGenericTransform);
-              resampler->SetInput( movingImageMask->GetImage() );
-              resampler->SetOutputParametersFromImage( m_FixedVolume );
-              resampler->Update();
-              }
-            if( m_FixedBinaryVolume.GetPointer() != NULL )
-              {
-              typedef itk::AddImageFilter<MaskImageType, MaskImageType> AddFilterType;
-              ImageMaskSpatialObjectType::Pointer fixedImageMask =
-                dynamic_cast<ImageMaskSpatialObjectType *>(m_FixedBinaryVolume.GetPointer() );
-              AddFilterType::Pointer adder = AddFilterType::New();
-              adder->SetInput1(fixedImageMask->GetImage() );
-              adder->SetInput2(resampler->GetOutput() );
-              adder->Update();
-              roiMask->SetImage(adder->GetOutput() );
-              }
-            else
-              {
-              roiMask->SetImage(resampler->GetOutput() );
-              }
-            }
-          else if( m_FixedBinaryVolume.GetPointer() != NULL )
-            {
-            ImageMaskSpatialObjectType::Pointer fixedImageMask =
-              dynamic_cast<ImageMaskSpatialObjectType *>(m_FixedBinaryVolume.GetPointer() );
-            roiMask->SetImage(fixedImageMask->GetImage() );
-            }
-
-          else
-            {
-            itkGenericExceptionMacro( << "ERROR: ROIBSpline mode can only be used with ROI(s) specified!");
-            return;
-            }
-
-          typename FixedImageType::PointType roiOriginPt;
-          typename FixedImageType::IndexType roiOriginIdx;
-          typename FixedImageType::Pointer    roiImage = FixedImageType::New();
-          typename FixedImageType::RegionType roiRegion =
-            roiMask->GetAxisAlignedBoundingBoxRegion();
-          typename FixedImageType::SpacingType roiSpacing =
-            m_FixedVolume->GetSpacing();
-
-          roiOriginIdx.Fill(0);
-          m_FixedVolume->TransformIndexToPhysicalPoint(roiRegion.GetIndex(), roiOriginPt);
-          roiRegion.SetIndex(roiOriginIdx);
-          roiImage->SetRegions(roiRegion);
-          roiImage->Allocate();
-          roiImage->FillBuffer(1.);
-          roiImage->SetSpacing(roiSpacing);
-          roiImage->SetOrigin(roiOriginPt);
-          roiImage->SetDirection( m_FixedVolume->GetDirection() );
-
-          transformInitializer->SetImage(roiImage);
-          }
-        else
-          {
-          transformInitializer->SetImage(m_FixedVolume);
-          }
-
-        TransformSizeType tempGridSize;
-        tempGridSize[0] = m_SplineGridSize[0];
-        tempGridSize[1] = m_SplineGridSize[1];
-        tempGridSize[2] = m_SplineGridSize[2];
-        transformInitializer->SetGridSizeInsideTheImage(tempGridSize);
-        transformInitializer->InitializeTransform();
-
-        std::cout << "BSpline initialized: " << initialBSplineTransform << std::endl;
+        fixedOrigin[i] = m_FixedVolume->GetOrigin()[i];
+        fixedPhysicalDimensions[i] = m_FixedVolume->GetSpacing()[i]
+        * static_cast<double>( m_FixedVolume->GetLargestPossibleRegion().GetSize()[i] - 1 );
+        meshSize[i] = m_SplineGridSize[i];
         }
 
-      if( m_CurrentGenericTransform.IsNotNull() )
+      outputBSplineTransform->SetTransformDomainOrigin( fixedOrigin );
+      outputBSplineTransform->SetTransformDomainPhysicalDimensions( fixedPhysicalDimensions );
+      outputBSplineTransform->SetTransformDomainMeshSize( meshSize );
+      outputBSplineTransform->SetTransformDomainDirection( m_FixedVolume->GetDirection() );
+      //outputBSplineTransform->SetIdentity();
+
+      typedef BSplineTransformType::ParametersType     ParametersType;
+      const unsigned int numberOfParameters =  outputBSplineTransform->GetNumberOfParameters();
+      ParametersType parameters( numberOfParameters );
+      parameters.Fill( 0.0 );
+
+      outputBSplineTransform->SetParameters( parameters );
+      std::cout << "Intial Parameters = " << std::endl
+                << outputBSplineTransform->GetParameters() << std::endl;
+
+      // TODO:  Expose these to the command line for consistancy.
+      const int m_MaximumNumberOfIterations = 1500;
+      const int m_MaximumNumberOfEvaluations = 900;
+      const int m_MaximumNumberOfCorrections = 12;
+
+      //typedef itk::LBFGSBOptimizerv4       OptimizerType;
+      typedef typename itk::LBFGSBOptimizerv4                  LBFGSBOptimizerType;
+      typedef typename LBFGSBOptimizerType::Pointer            LBFGSBOptimizerTypePointer;
+      typedef typename LBFGSBOptimizerType::ParametersType     OptimizerParameterType;
+      typedef typename LBFGSBOptimizerType::ScalesType         OptimizerScalesType;
+      typedef typename LBFGSBOptimizerType::BoundSelectionType OptimizerBoundSelectionType;
+      typedef typename LBFGSBOptimizerType::BoundValueType     OptimizerBoundValueType;
+
+      LBFGSBOptimizerTypePointer      LBFGSBoptimizer     = LBFGSBOptimizerType::New();
+
+      /**
+       *
+       * Set the boundary condition for each variable, where
+       * select[i] = 0 if x[i] is unbounded,
+       *           = 1 if x[i] has only a lower bound,
+       *           = 2 if x[i] has both lower and upper bounds, and
+       *           = 3 if x[1] has only an upper bound
+       */
+        // TODO:  For control points outside the fixed image mask, it might be good to
+        // constrian
+        // the parameters to something different than those control points inside the
+        // fixed image mask.
+      OptimizerBoundSelectionType boundSelect( outputBSplineTransform->GetNumberOfParameters() );
+      if( vcl_abs(m_MaxBSplineDisplacement) < 1e-12 )
         {
-        try
-          {
-          const std::string transformFileType = m_CurrentGenericTransform->GetNameOfClass();
-          if( transformFileType == "VersorRigid3DTransform" )
-            {
-            const VersorRigid3DTransformType::ConstPointer tempInitializerITKTransform =
-              dynamic_cast<VersorRigid3DTransformType const *>( m_CurrentGenericTransform.GetPointer() );
-            if( tempInitializerITKTransform.IsNull() )
-              {
-              std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
-              }
-            AssignRigid::AssignConvertedTransform(bulkAffineTransform,
-                                                  tempInitializerITKTransform);
-            initialBSplineTransform->SetBulkTransform(bulkAffineTransform);
-            }
-          else if( transformFileType == "ScaleVersor3DTransform" )
-            {
-            const ScaleVersor3DTransformType::ConstPointer tempInitializerITKTransform =
-              dynamic_cast<ScaleVersor3DTransformType const *>( m_CurrentGenericTransform.GetPointer() );
-            if( tempInitializerITKTransform.IsNull() )
-              {
-              std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
-              }
-            AssignRigid::AssignConvertedTransform(bulkAffineTransform,
-                                                  tempInitializerITKTransform);
-            initialBSplineTransform->SetBulkTransform(bulkAffineTransform);
-            }
-          else if( transformFileType == "ScaleSkewVersor3DTransform" )
-            {
-            const ScaleSkewVersor3DTransformType::ConstPointer tempInitializerITKTransform =
-              dynamic_cast<ScaleSkewVersor3DTransformType const *>( m_CurrentGenericTransform.GetPointer() );
-            if( tempInitializerITKTransform.IsNull() )
-              {
-              std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
-              }
-            AssignRigid::AssignConvertedTransform(bulkAffineTransform,
-                                                  tempInitializerITKTransform);
-            initialBSplineTransform->SetBulkTransform(bulkAffineTransform);
-            }
-          else if( transformFileType == "AffineTransform" )
-            {
-            const AffineTransformType::ConstPointer tempInitializerITKTransform =
-              dynamic_cast<AffineTransformType const *>( m_CurrentGenericTransform.GetPointer() );
-            if( tempInitializerITKTransform.IsNull() )
-              {
-              std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
-              }
-            AssignRigid::AssignConvertedTransform(bulkAffineTransform,
-                                                  tempInitializerITKTransform);
-            initialBSplineTransform->SetBulkTransform(bulkAffineTransform);
-            }
-          else if( transformFileType == "BSplineDeformableTransform" )
-            {
-            const BSplineTransformType::ConstPointer tempInitializerITKTransform =
-              dynamic_cast<BSplineTransformType const *>( m_CurrentGenericTransform.GetPointer() );
-            if( tempInitializerITKTransform.IsNull() )
-              {
-              std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
-              }
-
-            initialBSplineTransform->SetBulkTransform(
-              tempInitializerITKTransform->GetBulkTransform() );
-            BSplineTransformType::ParametersType tempFixedInitialParameters =
-              tempInitializerITKTransform->GetFixedParameters();
-            BSplineTransformType::ParametersType initialFixedParameters =
-              initialBSplineTransform->GetFixedParameters();
-
-            bool checkMatch = true;         // Assume true;
-            if( initialFixedParameters.GetSize() != tempFixedInitialParameters.GetSize() )
-              {
-              checkMatch = false;
-              std::cerr << "ERROR INITILIZATION FIXED PARAMETERS DO NOT MATCH: " << initialFixedParameters.GetSize()
-                        << " != " << tempFixedInitialParameters.GetSize() << std::endl;
-              }
-            if( checkMatch ) //  This ramus covers the hypothesis that the FixedParameters
-                             //  represent the grid locations of the spline nodes.
-              {
-              for( unsigned int i = 0; i < initialFixedParameters.GetSize(); ++i )
-                {
-                if( initialFixedParameters.GetElement(i) != tempFixedInitialParameters.GetElement(i) )
-                  {
-                  checkMatch = false;
-                  std::cerr << "ERROR FIXED PARAMETERS DO NOT MATCH: " << initialFixedParameters.GetElement(i)
-                            << " != " << tempFixedInitialParameters.GetElement(i) << std::endl;
-                  }
-                }
-              BSplineTransformType::ParametersType tempInitialParameters =
-                tempInitializerITKTransform->GetParameters();
-              if( initialBSplineTransform->GetNumberOfParameters() ==
-                  tempInitialParameters.Size() )
-                {
-                initialBSplineTransform->SetFixedParameters(
-                  tempFixedInitialParameters);
-                initialBSplineTransform->SetParametersByValue(tempInitialParameters);
-                }
-              else
-                {
-                // Error, initializing from wrong size transform parameters;
-                //  Use its bulk transform only?
-                itkGenericExceptionMacro(
-                  << "Trouble using the m_CurrentGenericTransform"
-                  << "for initializing a BSPlineDeformableTransform:"
-                  << std::endl
-                  << "The initializing BSplineDeformableTransform has a different"
-                  << " number of Parameters, than what is required for the requested grid."
-                  << std::endl
-                  << "BRAINSFit was only able to use the bulk transform that was before it.");
-                }
-              }
-            else
-              {
-              itkGenericExceptionMacro(
-                << "ERROR:  initialization BSpline transform does not have the same "
-                << "parameter dimensions as the one currently specified.");
-              }
-            }
-          else if( transformFileType == "CompositeTransform" )
-            {
-            itkGenericExceptionMacro( << "Composite transform initializer type found:  "
-                                      << transformFileType )
-            }
-          else
-            {
-            itkGenericExceptionMacro( << "ERROR:  Invalid transform initializer type found:  "
-                                      << transformFileType )
-            }
-          }
-        catch( itk::ExceptionObject & excp )
-          {
-          std::cout << "[FAILED]" << std::endl;
-          std::cerr
-            << "Error while reading the m_CurrentGenericTransform"
-            << std::endl;
-          std::cerr << excp << std::endl;
-          throw;
-          }
-        }
-
-      // Special optimizations only for the MMI metric
-      // that need adjusting based on both the type of metric, and
-      // the "dimensionality" of the transform being adjusted.
-      typename MattesMutualInformationMetricType::Pointer test_MMICostMetric =
-        dynamic_cast<MattesMutualInformationMetricType *>(this->m_CostMetricObject.GetPointer() );
-      if( test_MMICostMetric.IsNotNull() )
-        {
-        // As recommended in documentation in
-        // itkMattesMutualInformationImageToImageMetric
-        // "UseExplicitPDFDerivatives = False ... This method is well suited
-        // for Transforms with a large number of parameters, such as,
-        // BSplineDeformableTransforms."
-        const bool UseExplicitPDFDerivatives =
-          ( m_UseExplicitPDFDerivativesMode != "ON" || m_UseExplicitPDFDerivativesMode == "AUTO" ) ? false : true;
-        test_MMICostMetric->SetUseExplicitPDFDerivatives(UseExplicitPDFDerivatives);
-        }
-
-      outputBSplineTransform =
-        DoBSpline<RegisterImageType, SpatialObjectType,
-                  BSplineTransformType>(
-          initialBSplineTransform,
-          m_FixedVolume, m_MovingVolume,
-          this->m_CostMetricObject.GetPointer(),
-          this->m_MaxBSplineDisplacement,
-          this->m_CostFunctionConvergenceFactor,
-          this->m_ProjectedGradientTolerance,
-          this->m_DisplayDeformedImage,
-          this->m_PromptUserAfterDisplay);
-      if( outputBSplineTransform.IsNull() )
-        {
-        std::cout
-          << "Error -- the BSpline fit has failed." << std::endl;
-        std::cout
-          << "Error -- the BSpline fit has failed." << std::endl;
-
-        m_ActualNumberOfIterations = 1;
-        m_PermittedNumberOfIterations = 1;
+        boundSelect.Fill(0);
         }
       else
         {
-        // Initialize next level of transformations with previous transform
-        // result
-        // TransformList.clear();
-        // TransformList.push_back(finalTransform);
-        m_CurrentGenericTransform = outputBSplineTransform;
-        // Now turn of the initiallize code to off
-        localInitializeTransformMode = "Off";
-          {
-          // HACK:  The BSpline optimizer does not return the correct iteration
-          // values.
-          m_ActualNumberOfIterations = 1;
-          m_PermittedNumberOfIterations = 3;
-          }
+        boundSelect.Fill(2);
         }
-      }
-    else if( currentTransformType == "Composite3D" )
+      OptimizerBoundValueType upperBound( outputBSplineTransform->GetNumberOfParameters() );
+      upperBound.Fill(m_MaxBSplineDisplacement);
+      OptimizerBoundValueType lowerBound( outputBSplineTransform->GetNumberOfParameters() );
+      lowerBound.Fill(-m_MaxBSplineDisplacement);
+
+      LBFGSBoptimizer->SetBoundSelection(boundSelect);
+      std::cout << "PRE : " << LBFGSBoptimizer->GetUpperBound().size() << " " << upperBound.size() << std::endl;
+      LBFGSBoptimizer->SetUpperBound(upperBound);
+      std::cout << "POST: " << LBFGSBoptimizer->GetUpperBound().size() << " " << upperBound.size() << std::endl;
+
+      std::cout << "PRE : " << LBFGSBoptimizer->GetLowerBound().size() << " " << lowerBound.size() << std::endl;
+      LBFGSBoptimizer->SetLowerBound(lowerBound);
+      std::cout << "POST: " << LBFGSBoptimizer->GetLowerBound().size() << " " << lowerBound.size() << std::endl;
+
+      LBFGSBoptimizer->SetCostFunctionConvergenceFactor(m_CostFunctionConvergenceFactor);
+      LBFGSBoptimizer->SetGradientConvergenceTolerance(m_ProjectedGradientTolerance);
+      LBFGSBoptimizer->SetMaximumNumberOfIterations(m_MaximumNumberOfIterations);
+      LBFGSBoptimizer->SetMaximumNumberOfFunctionEvaluations(m_MaximumNumberOfEvaluations);
+      LBFGSBoptimizer->SetMaximumNumberOfCorrections(m_MaximumNumberOfCorrections);
+/*
+      // Estimate Scales
+      typedef itk::RegistrationParameterScalesFromPhysicalShift<MetricType> ScalesEstimatorType;
+      typename ScalesEstimatorType::Pointer scalesEstimator = ScalesEstimatorType::New();
+      scalesEstimator->SetMetric( this->m_CostMetricObject );
+      scalesEstimator->SetTransformForward( true );
+      scalesEstimator->SetSmallParameterVariation( 1.0 );
+
+      LBFGSBoptimizer->SetScalesEstimator( scalesEstimator );
+*/
+      // we have a 1 level BSpline registration.
+      const unsigned int numberOfLevels = 1;
+
+      typename BSplineRegistrationType::ShrinkFactorsArrayType shrinkFactorsPerLevel;
+      shrinkFactorsPerLevel.SetSize( 1 );
+      shrinkFactorsPerLevel[0] = 1;
+
+      typename BSplineRegistrationType::SmoothingSigmasArrayType smoothingSigmasPerLevel;
+      smoothingSigmasPerLevel.SetSize( 1 );
+      smoothingSigmasPerLevel[0] = 0;
+
+      bsplineRegistration->SetFixedImage( 0, m_FixedVolume );
+      bsplineRegistration->SetMovingImage( 0, m_MovingVolume );
+      bsplineRegistration->SetNumberOfLevels( numberOfLevels );
+      bsplineRegistration->SetSmoothingSigmasPerLevel( smoothingSigmasPerLevel );
+      bsplineRegistration->SetShrinkFactorsPerLevel( shrinkFactorsPerLevel );
+      bsplineRegistration->SetSmoothingSigmasAreSpecifiedInPhysicalUnits( true );
+      bsplineRegistration->SetMetricSamplingStrategy(
+                                                     static_cast<typename BSplineRegistrationType::MetricSamplingStrategyType>( m_SamplingStrategy ) );
+      bsplineRegistration->SetMetricSamplingPercentage( m_SamplingPercentage );
+      bsplineRegistration->SetMetric( this->m_CostMetricObject );
+      bsplineRegistration->SetOptimizer( LBFGSBoptimizer );
+
+      if( this->m_CurrentGenericTransform.IsNull() )
+        {
+        // Initialize the registeration process with an Identity transform
+        typename AffineTransformType::Pointer initialITKTransform = AffineTransformType::New();
+        initialITKTransform->SetIdentity();
+        m_CurrentGenericTransform = CompositeTransformType::New();
+        m_CurrentGenericTransform->ClearTransformQueue();
+        m_CurrentGenericTransform->AddTransform( initialITKTransform );
+        }
+      else
+        {
+        bsplineRegistration->SetMovingInitialTransform( this->m_CurrentGenericTransform );
+        }
       {
-      itkGenericExceptionMacro(<< "Composite Transform is not yet Implemented");
+        std::cout << "write the initial transform to the disk right before registration starts." << std::endl;
+        this->m_CurrentGenericTransform->Print(std::cout);
+        //itk::TransformFileWriter::Pointer dwriter1 = itk::TransformFileWriter::New();
+        //dwriter1->SetInput( this->m_CurrentGenericTransform->GetNthTransform(0) );
+        //dwriter1->SetFileName("initial_composite_bspline_DEBUG.mat");
+        //dwriter1->Update();
+      }
+
+      try
+        {
+        std::cout << "*** Running bspline registration (meshSizeAtBaseLevel = " << meshSize << ") ***"
+        << std::endl << std::endl;
+        bsplineRegistration->Update();
+        }
+      catch( itk::ExceptionObject & e )
+        {
+        itkGenericExceptionMacro( << "Exception caught: " << e << std::endl );
+        }
+
+      if( outputBSplineTransform.IsNotNull() )
+        {
+        this->m_CurrentGenericTransform->AddTransform( outputBSplineTransform );
+        }
+      else
+        {
+        itkGenericExceptionMacro( << "******* Error: the BSpline output transform is null." << std::endl );
+        }
+      const LBFGSBOptimizerType::ConstPointer  outputOptimizer =
+                                                  dynamic_cast<const LBFGSBOptimizerType *>( bsplineRegistration->GetOptimizer() );
+      std::cout << "Stop condition from LBFGSBoptimizer." << outputOptimizer->GetStopConditionDescription() << std::endl;
+      std::cout << "Final Parameters = " << std::endl;
+      std::cout << outputBSplineTransform->GetParameters() << std::endl;
       }
     else if( currentTransformType == "SyN" )
       {
 #ifdef USE_ANTS
       //
-      // Process the bulkAffineTransform for SyN's transform initializer
+      // Process SyN transform initializer
       //
-      AffineTransformType::Pointer bulkAffineTransform = AffineTransformType::New();
-      bulkAffineTransform->SetIdentity();
-
-      BRAINSCompositeTransformType::Pointer initialSyNTransform = BRAINSCompositeTransformType::New();
-
+      // current m_CurrentGenericTransform will be used as an initializer for SyN registration.
       if( m_CurrentGenericTransform.IsNotNull() )
         {
-        try
+        // Notice that we use only one SyN stage, and the outputs of all the previous linear levels
+        // are composed in "one" transform.
+        //
+        if( m_CurrentGenericTransform->GetNumberOfTransforms() != 1 )
           {
-          const std::string transformFileType = m_CurrentGenericTransform->GetNameOfClass();
-          if( transformFileType == "VersorRigid3DTransform" )
-            {
-            const VersorRigid3DTransformType::ConstPointer tempInitializerITKTransform =
-              dynamic_cast<VersorRigid3DTransformType const *>( m_CurrentGenericTransform.GetPointer() );
-            if( tempInitializerITKTransform.IsNull() )
-              {
-              std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
-              }
-            AssignRigid::AssignConvertedTransform(bulkAffineTransform, tempInitializerITKTransform);
-            initialSyNTransform->AddTransform(bulkAffineTransform);
-            }
-          else if( transformFileType == "ScaleVersor3DTransform" )
-            {
-            const ScaleVersor3DTransformType::ConstPointer tempInitializerITKTransform =
-              dynamic_cast<ScaleVersor3DTransformType const *>( m_CurrentGenericTransform.GetPointer() );
-            if( tempInitializerITKTransform.IsNull() )
-              {
-              std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
-              }
-            AssignRigid::AssignConvertedTransform(bulkAffineTransform, tempInitializerITKTransform);
-            initialSyNTransform->AddTransform(bulkAffineTransform);
-            }
-          else if( transformFileType == "ScaleSkewVersor3DTransform" )
-            {
-            const ScaleSkewVersor3DTransformType::ConstPointer tempInitializerITKTransform =
-              dynamic_cast<ScaleSkewVersor3DTransformType const *>( m_CurrentGenericTransform.GetPointer() );
-            if( tempInitializerITKTransform.IsNull() )
-              {
-              std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
-              }
-            AssignRigid::AssignConvertedTransform(bulkAffineTransform, tempInitializerITKTransform);
-            initialSyNTransform->AddTransform(bulkAffineTransform);
-            }
-          else if( transformFileType == "AffineTransform" )
-            {
-            const AffineTransformType::ConstPointer tempInitializerITKTransform =
-              dynamic_cast<AffineTransformType const *>( m_CurrentGenericTransform.GetPointer() );
-            if( tempInitializerITKTransform.IsNull() )
-              {
-              std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
-              }
-            AssignRigid::AssignConvertedTransform(bulkAffineTransform, tempInitializerITKTransform);
-            initialSyNTransform->AddTransform(bulkAffineTransform);
-            }
-          else if( transformFileType == "BSplineDeformableTransform" )
-            {
-            itkGenericExceptionMacro( << "ERROR: Improper transform initializer for SyN registration: "
-                                      << "BSpline Transform cannot be used as a transform initializer for SyN registration"
-                                      << std::endl);
-            }
-          else if( transformFileType == "CompositeTransform" )
-            {
-            itkGenericExceptionMacro( << "ERROR:  Can not initialize SyN with CompositeTranform yet."
-                                      << transformFileType );
-            const BRAINSCompositeTransformType::ConstPointer tempInitializerITKTransform =
-              dynamic_cast<BRAINSCompositeTransformType const *>( m_CurrentGenericTransform.GetPointer() );
-            if( tempInitializerITKTransform.IsNull() )
-              {
-              std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
-              }
-            // AssignRigid::AssignConvertedTransform(bulkAffineTransform, tempInitializerITKTransform);
-            initialSyNTransform->AddTransform(bulkAffineTransform);
-            }
-          else
-            {
-            itkGenericExceptionMacro( << "ERROR:  Invalid transform initializer type found:  "
-                                      << transformFileType );
-            }
+          itkGenericExceptionMacro("Linear initial composite transform should have only one component \
+                                   as all linaear transforms are collapsed together.");
           }
-        catch( itk::ExceptionObject & excp )
-          {
-          std::cout << "[FAILED]" << std::endl;
-          std::cerr << "Error while reading the m_CurrentGenericTransform"
-                    << std::endl << excp << std::endl;
-          throw;
-          }
-        }
+        const GenericTransformType::ConstPointer currInitTransformFormGenericComposite =
+                                                  m_CurrentGenericTransform->GetFrontTransform();
+        const std::string transformFileType = currInitTransformFormGenericComposite->GetNameOfClass();
 
-      if( initialSyNTransform.IsNull() )
-        {
-        std::cout << "\n**********" << std::endl;
-        std::cout << "ERORR: Undefined intial transform for SyN registration:" << std::endl;
-        std::cout << "SyN registration process cannot be done!" << std::endl;
-        std::cout << "************" << std::endl;
-        itkGenericExceptionMacro( << "******* Error: Undefined intial transform for SyN registration." << std::endl );
+        // Bspline transform cannot be used as an initializer for SyN registration.
+        if( transformFileType == "BSplineDeformableTransform" )
+          {
+          itkGenericExceptionMacro( << "ERROR: Improper transform initializer for SyN registration: "
+                                    << "BSpline Transform cannot be used as a transform initializer for SyN registration"
+                                    << std::endl);
+          }
         }
       else
         {
-        BRAINSCompositeTransformType::Pointer outputSyNTransform =
-          simpleSynReg<FixedImageType, MovingImageType>( m_FixedVolume,
-            m_MovingVolume,
-            initialSyNTransform );
+        // Initialize the registeration process with an Identity transform
+        typename AffineTransformType::Pointer initialITKTransform = AffineTransformType::New();
+        initialITKTransform->SetIdentity();
 
-        if( outputSyNTransform.IsNull() )
-          {
-          std::cout << "\n*******Error: the SyN registration has failed.********\n" << std::endl;
-          itkGenericExceptionMacro( << "******* Error: the SyN registration has failed." << std::endl );
-          }
-        else
-          {
-          // BRAINSCompositeTransformType has derived from itk::Transform, so we can directly assigne that to the
-          // m_CurrentGenericTransform that is a GenericTransformType.
-          m_CurrentGenericTransform = outputSyNTransform.GetPointer();
-          // Now turn of the initiallize code to off
-          localInitializeTransformMode = "Off";
-          }
+        m_CurrentGenericTransform = CompositeTransformType::New();
+        m_CurrentGenericTransform->AddTransform( initialITKTransform );
+        }
+
+        typename CompositeTransformType::Pointer outputSyNTransform =
+          simpleSynReg<FixedImageType, MovingImageType>( m_FixedVolume,
+                                                        m_MovingVolume,
+                                                        m_CurrentGenericTransform );
+
+      if( outputSyNTransform.IsNull() )
+        {
+        std::cout << "\n*******Error: the SyN registration has failed.********\n" << std::endl;
+        itkGenericExceptionMacro( << "******* Error: the SyN registration has failed." << std::endl );
+        }
+      else
+        {
+        // Update m_CurrentGenericTransform after SyN registration.
+        m_CurrentGenericTransform = outputSyNTransform.GetPointer();
         }
 #else
       std::cout << "******* Error: BRAINSFit cannot do the SyN registration ***"
@@ -1596,15 +1481,6 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
         << "Error choosing what kind of transform to fit \""
         << currentTransformType << "(" << currentTransformIndex + 1 << " of " << m_TransformType.size() << "). ");
       }
-
-    if( currentTransformId > m_GenericTransformList.size() - 1 )
-      {
-      itkGenericExceptionMacro(
-        << "Out of bounds access for transform vector!" << std::endl);
-      }
-
-    m_GenericTransformList[currentTransformId] = m_CurrentGenericTransform;
-    currentTransformId++;
     }
   return;
 }
@@ -1632,7 +1508,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::PrintSelf(std::ostream
     {
     os << indent << "MovingBinaryVolume: IS NULL" << std::endl;
     }
-  os << indent << "NumberOfSamples:      " << this->m_NumberOfSamples << std::endl;
+  os << indent << "SamplingPercentage:      " << this->m_SamplingPercentage << std::endl;
 
   os << indent << "NumberOfIterations:    [";
   for( unsigned int q = 0; q < this->m_NumberOfIterations.size(); ++q )
@@ -1642,12 +1518,6 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::PrintSelf(std::ostream
   os << "]" << std::endl;
   os << indent << "NumberOfHistogramBins:" << this->m_NumberOfHistogramBins << std::endl;
   os << indent << "MaximumStepLength:    " << this->m_MaximumStepLength << std::endl;
-  os << indent << "MinimumStepLength:     [";
-  for( unsigned int q = 0; q < this->m_MinimumStepLength.size(); ++q )
-    {
-    os << this->m_MinimumStepLength[q] << " ";
-    }
-  os << "]" << std::endl;
   os << indent << "TransformType:     [";
   for( unsigned int q = 0; q < this->m_TransformType.size(); ++q )
     {
@@ -1664,8 +1534,6 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::PrintSelf(std::ostream
   os << indent << "MaskInferiorCutOffFromCenter:   " << this->m_MaskInferiorCutOffFromCenter << std::endl;
   os << indent << "ActualNumberOfIterations:       " << this->m_ActualNumberOfIterations << std::endl;
   os << indent << "PermittedNumberOfIterations:       " << this->m_PermittedNumberOfIterations << std::endl;
-  // os << indent << "AccumulatedNumberOfIterationsForAllLevels: " <<
-  // this->m_AccumulatedNumberOfIterationsForAllLevels << std::endl;
 
   os << indent << "SplineGridSize:     [";
   for( unsigned int q = 0; q < this->m_SplineGridSize.size(); ++q )

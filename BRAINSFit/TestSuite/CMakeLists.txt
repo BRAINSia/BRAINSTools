@@ -245,34 +245,6 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
 )
 ## NOTE: 7.3 above was computed explicitly through testing.
 
-set(BRAINSFitTestName BRAINSFitTest_BSplineBSplineRescaleHeadMasks)
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
-  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
-  --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
-            ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
-  --compareIntensityTolerance 9
-  --compareRadiusTolerance 0
-  --compareNumberOfPixelsTolerance 1000
-  BRAINSFitTest
-  --costMetric MMI
-  --failureExitCode -1 --writeTransformOnFailure
-  --numberOfIterations 1500
-  --numberOfHistogramBins 200
-  --splineGridSize 7,5,6
-  --numberOfSamples 288000
-  --translationScale 250
-  --minimumStepLength 0.005
-  --outputVolumePixelType short
-  --maskProcessingMode ROIAUTO
-  --initialTransform DATA{${TestData_DIR}/Transforms_h5/Initializer_BRAINSFitTest_BSplineOnlyRescaleHeadMasks.${XFRM_EXT}}
-  --transformType BSpline
-  --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
-  --movingVolume DATA{${TestData_DIR}/rotation.rescale.rigid.nii.gz}
-  --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
-  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
-  --maxBSplineDisplacement 7.3
-)
-
 set(BRAINSFitTestName BRAINSFitTest_BSplineScaleRotationRescaleHeadMasks)
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
@@ -1073,57 +1045,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
 )
 
-set(BRAINSFitTestName BRAINSFitTest_MCMetricBrainToItself)
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
-  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
-  --compare DATA{${TestData_DIR}/test.nii.gz}
-            ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
-  --compareIntensityTolerance 9
-  --compareRadiusTolerance 0
-  --compareNumberOfPixelsTolerance 1000
-  BRAINSFitTest
-  --costMetric MC
-  --failureExitCode -1 --writeTransformOnFailure
-  --numberOfIterations 25
-  --numberOfHistogramBins 200
-  --numberOfSamples 72000
-  --translationScale 250
-  --minimumStepLength 0.001
-  --outputVolumePixelType uchar
-  --transformType Rigid
-  --initializeTransformMode useMomentsAlign
-  --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
-  --movingVolume DATA{${TestData_DIR}/test.nii.gz}
-  --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
-  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
-)
-
-set(BRAINSFitTestName BRAINSFitTest_MCMetricMaskBrainToItself)
-ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
-  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
-  --compare DATA{${TestData_DIR}/testMask.nii.gz}
-            ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.testMask.nii.gz
-  --compareIntensityTolerance 9
-  --compareRadiusTolerance 0
-  --compareNumberOfPixelsTolerance 1000
-  BRAINSFitTest
-  --costMetric MC
-  --failureExitCode -1 --writeTransformOnFailure
-  --numberOfIterations 25
-  --numberOfHistogramBins 200
-  --numberOfSamples 72000
-  --translationScale 250
-  --minimumStepLength 0.001
-  --outputVolumePixelType uchar
-  --transformType Rigid
-  --initializeTransformMode useMomentsAlign
-  --fixedVolume DATA{${TestData_DIR}/testMask.nii.gz}
-  --movingVolume DATA{${TestData_DIR}/testMask.nii.gz}
-  --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.testMask.nii.gz
-  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
-)
-
-set(BRAINSFitTestName BRAINSFitTest_MCAffineRotationMasks)
+set(BRAINSFitTestName BRAINSFitTest_MIHAffineRotationMasks)
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
   --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
@@ -1132,7 +1054,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --compareRadiusTolerance 0
   --compareNumberOfPixelsTolerance 777
   BRAINSFitTest
-  --costMetric MC
+  --costMetric MIH
   --failureExitCode -1 --writeTransformOnFailure
   --numberOfIterations 2500
   --numberOfHistogramBins 200
@@ -1152,7 +1074,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --debugLevel 50
 )
 
-set(BRAINSFitTestName BRAINSFitTest_MCScaleSkewVersorRotationMasks)
+set(BRAINSFitTestName BRAINSFitTest_MIHScaleSkewVersorRotationMasks)
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
   --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nii.gz}
@@ -1161,13 +1083,14 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --compareRadiusTolerance 0
   --compareNumberOfPixelsTolerance 1000
   BRAINSFitTest
-  --costMetric MC
+  --costMetric MIH
   --failureExitCode -1 --writeTransformOnFailure
   --numberOfIterations 2500
   --numberOfHistogramBins 200
   --numberOfSamples 131072
   --translationScale 250
   --minimumStepLength 0.001
+  --maximumStepLength 0.006
   --outputVolumePixelType uchar
   --transformType ScaleSkewVersor3D
   --initialTransform DATA{${TestData_DIR}/Transforms_h5/BRAINSFitTest_Initializer_RigidRotationNoMasks.${XFRM_EXT}}

@@ -179,7 +179,7 @@ BRAINSCutGenerateRegistrations
   minimumStepLength[3] = 0.005;
   // minimumStepLength[4]=0.005;
 
-  BSplineRegistrationHelper->SetMinimumStepLength( minimumStepLength );
+  //BSplineRegistrationHelper->SetMinimumStepLength( minimumStepLength );
 
   // Set Histogram Matching Options
   // BSplineRegistrationHelper->SetNumberOfHistogramBins(250);

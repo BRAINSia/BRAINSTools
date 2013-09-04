@@ -23,6 +23,7 @@
 #include "GenericTransformImage.h"
 #include "itkResampleInPlaceImageFilter.h"
 #include "itkConstantBoundaryCondition.h"
+#include "itkIO.h"
 
 template <class InputImageType, class OutputImageType>
 typename OutputImageType::Pointer
@@ -52,6 +53,7 @@ TransformResample(
   resample->SetDefaultPixelValue(defaultValue);
   resample->Update();
   typename OutputImageType::Pointer returnval = resample->GetOutput();
+
   // returnval->DisconnectPipeline();
   return returnval;
 }
@@ -322,11 +324,24 @@ typename OutputImageType::Pointer GenericTransformImage(
       typedef itk::ResampleInPlaceImageFilter<InputImageType, OutputImageType> ResampleIPFilterType;
       typedef typename ResampleIPFilterType::Pointer                           ResampleIPFilterPointer;
 
+      const CompositeTransformType::ConstPointer genericCompositeTransform =
+        dynamic_cast<const CompositeTransformType *>( genericTransform.GetPointer() );
+      if( genericCompositeTransform.IsNull() )
+        {
+        itkGenericExceptionMacro(<<"Error in type conversion");
+        }
+      if( genericCompositeTransform->GetNumberOfTransforms() > 1 )
+        {
+        std::cout << "Error in type conversion. " << __FILE__ << __LINE__ << std::endl;
+        std::cout << "ResampleInPlace is only allowed with rigid transform type,"
+                  << "but the input composite transform consists of more than one transfrom." << std::endl;
+        }
+      // extract the included linear rigid transform from the input composite
       const VersorRigid3DTransformType::ConstPointer tempInitializerITKTransform =
-        dynamic_cast<VersorRigid3DTransformType const *>( genericTransform.GetPointer() );
+        dynamic_cast<VersorRigid3DTransformType const *>( genericCompositeTransform->GetNthTransform(0).GetPointer() );
       if( tempInitializerITKTransform.IsNull() )
         {
-        std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
+        std::cout << "Error in type conversion. " << __FILE__ << __LINE__ << std::endl;
         std::cout << "ResampleInPlace is only allowed with rigid transform type." << std::endl;
         }
 

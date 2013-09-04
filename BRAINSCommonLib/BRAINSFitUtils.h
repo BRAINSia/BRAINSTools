@@ -26,7 +26,7 @@
 #include "itkScaleSkewVersor3DTransform.h"
 #include "itkAffineTransform.h"
 #include "itkVersorRigid3DTransform.h"
-#include "itkBSplineDeformableTransform.h"
+#include "itkBSplineTransform.h"
 #include "itkBRAINSROIAutoImageFilter.h"
 
 #include "vcl_algorithm.h"
@@ -39,7 +39,7 @@
 static const unsigned int BFNSSpaceDimension = 3;
 static const unsigned int BFNSplineOrder = 3;
 typedef double CoordinateRepType;
-typedef itk::BSplineDeformableTransform<
+typedef itk::BSplineTransform<
     CoordinateRepType,
     BFNSSpaceDimension,
     BFNSplineOrder>                                        BSplineTransformType;

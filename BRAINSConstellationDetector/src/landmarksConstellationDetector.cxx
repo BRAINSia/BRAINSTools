@@ -188,12 +188,19 @@ landmarksConstellationDetector::ComputeFinalRefinedACPCAlignedTransform(void)
     }
 
   const std::vector<double> minimumStepSize(1,0.0005);
-  brainsFitHelper->SetMinimumStepLength(minimumStepSize);
+  //brainsFitHelper->SetMinimumStepLength(minimumStepSize);
   std::vector<std::string> transformType(1);
   transformType[0] = "Affine";
   brainsFitHelper->SetTransformType(transformType);
 
-  brainsFitHelper->SetCurrentGenericTransform( initToAtlasAffineTransform.GetPointer() );
+  CompositeTransformType::Pointer initToAtlasAffineCompositeTransform = dynamic_cast<CompositeTransformType *>( initToAtlasAffineTransform.GetPointer() );
+  if( initToAtlasAffineCompositeTransform.IsNull() )
+    {
+    initToAtlasAffineCompositeTransform = CompositeTransformType::New();
+    initToAtlasAffineCompositeTransform->AddTransform( initToAtlasAffineTransform );
+    }
+  brainsFitHelper->SetCurrentGenericTransform( initToAtlasAffineCompositeTransform );
+
   // Provide better masking of images
     {
     //if( fixedBinaryVolume != "" || movingBinaryVolume != "" )

@@ -232,7 +232,7 @@ int main(int argc, char *argv[])
 
     registerImageFilter->SetTranslationScale( spatialScale );
     registerImageFilter->SetMaximumStepLength( maximumStepSize );
-    registerImageFilter->SetMinimumStepLength( minStepLength );
+    //registerImageFilter->SetMinimumStepLength( minStepLength );
     registerImageFilter->SetRelaxationFactor( relaxationFactor );
     registerImageFilter->SetNumberOfIterations( iterations );
     registerImageFilter->SetNumberOfSamples( numberOfSpatialSamples );
@@ -255,7 +255,7 @@ int main(int argc, char *argv[])
     if( outputTransform.size() != 0 )
       {
       GenericTransformType::Pointer transform =
-        registerImageFilter->GetCurrentGenericTransform();
+        registerImageFilter->GetCurrentGenericTransform()->GetNthTransform(0);
       itk::TransformFileWriter::Pointer xfrmWriter =
         itk::TransformFileWriter::New();
       xfrmWriter->SetFileName(outputTransform);

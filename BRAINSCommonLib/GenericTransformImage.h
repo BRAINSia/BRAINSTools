@@ -18,7 +18,6 @@
 #include "itkScaleVersor3DTransform.h"
 #include "itkScaleSkewVersor3DTransform.h"
 #include "itkAffineTransform.h"
-#include <itkBSplineDeformableTransform.h>
 #include <itkThinPlateR2LogRSplineKernelTransform.h>
 #include "itkVersorRigid3DTransform.h"
 #if (ITK_VERSION_MAJOR > 3)
@@ -37,7 +36,6 @@
 typedef itk::TransformFileReader                    TransformReaderType;
 typedef itk::TransformFileReader::TransformListType TransformListType;
 
-// TODO:  This should really be taken as a typedef from the BSpline class.
 // TODO:  These should be hidden in the BRAINSFit namespace.
 typedef itk::Transform<double, 3, 3> GenericTransformType;
 
@@ -48,10 +46,6 @@ static const unsigned int SplineOrder = 3;
 }
 
 typedef double CoordinateRepType;
-typedef itk::BSplineDeformableTransform<
-    CoordinateRepType,
-    GenericTransformImageNS::SpaceDimension,
-    GenericTransformImageNS::SplineOrder> BSplineTransformType;
 
 typedef itk::AffineTransform<double, 3>                      AffineTransformType;
 typedef itk::VersorRigid3DTransform<double>                  VersorRigid3DTransformType;

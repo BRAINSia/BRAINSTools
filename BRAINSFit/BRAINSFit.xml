@@ -54,7 +54,6 @@
       <label>Output Image Volume</label>
       <description>(optional) Output image for registration. NOTE: You must select either the outputTransform or the outputVolume option.</description>
       <channel>output</channel>
-      <default></default>
     </image>
 
  </parameters>
@@ -196,7 +195,6 @@
       <longflag>fixedBinaryVolume</longflag>
       <label>(ROI)Masking input fixed</label>
       <description>Fixed Image binary mask volume, ONLY FOR MANUAL ROI mode. (Values are zero and non-zero.)</description>
-      <default></default>
       <channel>input</channel>
     </image>
 
@@ -205,7 +203,6 @@
       <longflag>movingBinaryVolume</longflag>
       <label>(ROI)Masking input moving</label>
       <description>Moving Image binary mask volume, ONLY FOR MANUAL ROI mode. (Values are zero and non-zero.)</description>
-      <default></default>
       <channel>input</channel>
     </image>
 
@@ -566,7 +563,6 @@
       <longflag>logFileReport</longflag>
       <label>Log File Report</label>
       <description>A file to write out final information report in CSV file: MetricName,MetricValue,FixedImageName,FixedMaskName,MovingImageName,MovingMaskName</description>
-      <default></default>
       <channel>output</channel>
     </file>
   </parameters>

@@ -6,7 +6,7 @@ import shutil
 import SimpleITK as sitk
 import subprocess
 
-from PipeLineFunctionHelpers import mkdir_p, make_dummy_file
+from PipeLineFunctionHelpers import mkdir_p, make_dummy_file, recursive_dir_rm
 
 
 def normalizeWM(t1, wm_prob):
@@ -193,6 +193,7 @@ exit $status
 
 
 def runSubjectTemplate(args, FREESURFER_HOME, FS_SCRIPT):
+    import sys
     """ Create the within-subject template """
     base_template_id = args.base_template_id
     list_all_subj_session_ids = args.list_all_subj_session_ids
@@ -206,8 +207,37 @@ def runSubjectTemplate(args, FREESURFER_HOME, FS_SCRIPT):
     StageToRun = "Within-SubjectTemplate"
     FS_SCRIPT_FN = os.path.join(FREESURFER_HOME, FS_SCRIPT)
     allTimePointFlags = ""
+
+    ## Determine if previous run had same sessions as current run
+    base_tempate_list = os.path.join(subjects_dir,base_template_id,'base-tps')
+    #print "XXX Setting file to look for ", base_tempate_list
+    prev_sessions = list()
+    if os.path.exists(base_tempate_list):
+        #print "XXX Opening ", base_tempate_list
+        ff = open ( base_tempate_list, 'r' )
+        #print "XXX Reading lines"
+        prev_sessions = ff.readlines()
+        #print prev_sessions
+        prev_sessions = [ x.rstrip() for x in prev_sessions ]
+        #print prev_sessions
+
+
+    reset_template_directory = False
+
+
     for subj_session_id in list_all_subj_session_ids:
         allTimePointFlags += " -tp {timepoint}".format(timepoint=subj_session_id)
+        if subj_session_id not in prev_sessions:
+                reset_template_directory = True
+
+    #print("XXXXXXXXXXX {0}  =? {1}".format(prev_sessions,list_all_subj_session_ids))
+    #print("XXXX {0}".format(reset_template_directory))
+
+    if reset_template_directory:
+        recursive_dir_rm(os.path.join(subjects_dir,base_template_id))
+        ## Now remove subsequent directories
+        for subj_session_id in list_all_subj_session_ids:
+           recursive_dir_rm(os.path.join(subjects_dir,subj_session_id+'.long.'+base_template_id))
     allTimePointFlags += " -all"
     auto_recon_script = """#!/bin/bash
 #$ -o {FSSUBJDIR}/{TEMPLATEID}/scripts/base_{TEMPLATEID}_qsub.out

@@ -754,6 +754,7 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
                     from nipype.interfaces.ants import (Registration, ApplyTransforms)
                     currentAtlasToSubjectantsRegistration = 'AtlasToSubjectantsRegistration_' + str(subjectid) + "_" + str(sessionid)
                     AtlasToSubjectantsRegistration[sessionid] = pe.Node(interface=Registration(), name=currentAtlasToSubjectantsRegistration)
+                    AtlasToSubjectantsRegistration[sessionid].plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp1 4-6 -l mem_free=9000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE_LONG), 'overwrite': True}
                     AtlasToSubjectantsRegistration[sessionid].inputs.dimension = 3
                     AtlasToSubjectantsRegistration[sessionid].inputs.transforms = ["Affine", "SyN"]
                     AtlasToSubjectantsRegistration[sessionid].inputs.transform_parameters = [[0.1], [0.15, 3.0, 0.0]]
@@ -778,7 +779,6 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
                     AtlasToSubjectantsRegistration[sessionid].inputs.collapse_linear_transforms_to_fixed_image_header = False
                     AtlasToSubjectantsRegistration[sessionid].inputs.output_warped_image = 'atlas2subject.nii.gz'
                     AtlasToSubjectantsRegistration[sessionid].inputs.output_inverse_warped_image = 'subject2atlas.nii.gz'
-                    AtlasToSubjectantsRegistration[sessionid].plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp1 4-12 -l mem_free=9000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE_LONG), 'overwrite': True}
 
                     baw200.connect(PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.t1_average', AtlasToSubjectantsRegistration[sessionid], 'fixed_image')
                     baw200.connect(BAtlas[subjectid], 'template_t1', AtlasToSubjectantsRegistration[sessionid], 'moving_image')

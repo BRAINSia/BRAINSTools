@@ -102,7 +102,7 @@ def CreateFreeSurferSubjectTemplate(projectid, subjectid, WFname, CLUSTER_QUEUE,
     return subjectTemplate_freesurferWF
 
 
-def CreateFreeSurferLongitudinalWorkflow(projectid, subjectid, sessionid, WFname, CLUSTER_QUEUE, CLUSTER_QUEUE_LONG, RunAllFSComponents=True, RunMultiMode=True, constructed_FS_SUBJECTS_DIR='/never_use_this', subcommand='template'):
+def CreateFreeSurferLongitudinalWorkflow(projectid, subjectid, sessionid, WFname, CLUSTER_QUEUE, CLUSTER_QUEUE_LONG, RunAllFSComponents=True, RunMultiMode=True, constructed_FS_SUBJECTS_DIR='/never_use_this', subcommand='longitudinal'):
     """ Construct the longitudinal workflow
     Step 2: Construct the longitudinal subject results (for each session individually)
     """

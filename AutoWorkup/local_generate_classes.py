@@ -164,6 +164,7 @@ os.mkdir(OUTPUT_PATH)
 os.chdir(OUTPUT_PATH)
 
 found_modules_list = list()
+missing_modules_list = list()
 
 for  test_module in all_known_modules_list:
         for currPath in SEARCH_PATHS:
@@ -171,8 +172,9 @@ for  test_module in all_known_modules_list:
                 if os.path.exists(currProgPath):
                     found_modules_list.append(test_module)
                     break
+                else:
+                    missing_modules_list.append(test_module)
 
-print "FOUND: ", found_modules_list
 
 generate_all_classes(modules_list=found_modules_list, launcher=[])
 
@@ -181,3 +183,7 @@ help_file.write(' '.join(sys.argv)+"\n")
 help_file.close()
 
 print "\n\nRan: ",' '.join(sys.argv),"\n\n"
+
+print "FOUND: ", found_modules_list
+for test_module in missing_modules_list:
+  print("Missing Candidate Program: {prog_name}".format(prog_name=test_module))

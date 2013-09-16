@@ -7,12 +7,12 @@ import os
 
 
 class DWIConvertInputSpec(CommandLineInputSpec):
-    conversionMode = traits.Enum("DicomToNrrd", "DicomToFSL", "NrrdToFSL", "FSLToNrrd", desc="Determine which conversion to performn", argstr="--conversionMode %s")
-    inputVolume = File(desc="Input DWI volume -- not used for DicomToNrrd.", exists=True, argstr="--inputVolume %s")
+    conversionMode = traits.Enum("DicomToNrrd", "DicomToFSL", "NrrdToFSL", "FSLToNrrd", desc="Determine which conversion to perform. DicomToNrrd (default): Convert DICOM series to NRRD DicomToFSL: Convert DICOM series to NIfTI File + gradient/bvalue text files NrrdToFSL: Convert DWI NRRD file to NIfTI File + gradient/bvalue text files FSLToNrrd: Convert NIfTI File + gradient/bvalue text files to NRRD file.", argstr="--conversionMode %s")
+    inputVolume = File(desc="Input DWI volume -- not used for DicomToNrrd mode.", exists=True, argstr="--inputVolume %s")
     outputVolume = traits.Either(traits.Bool, File(), hash_files=False, desc="Output filename (.nhdr or .nrrd)", argstr="--outputVolume %s")
-    fMRI = traits.Bool(desc="Output a NRRD file, but no Gradients", argstr="--fMRI ")
+    fMRI = traits.Bool(desc="Output a NRRD file, but without gradients", argstr="--fMRI ")
     inputDicomDirectory = Directory(desc="Directory holding Dicom series", exists=True, argstr="--inputDicomDirectory %s")
-    outputDirectory = traits.Either(traits.Bool, Directory(), hash_files=False, desc="Directory holding the output NRRD format", argstr="--outputDirectory %s")
+    outputDirectory = traits.Either(traits.Bool, Directory(), hash_files=False, desc="Directory holding the output NRRD file", argstr="--outputDirectory %s")
     gradientVectorFile = traits.Either(traits.Bool, File(), hash_files=False, desc="Text file giving gradient vectors", argstr="--gradientVectorFile %s")
     smallGradientThreshold = traits.Float(desc="If a gradient magnitude is greater than 0 and less than smallGradientThreshold, then DWIConvert will display an error message and quit, unless the useBMatrixGradientDirections option is set.", argstr="--smallGradientThreshold %f")
     writeProtocolGradientsFile = traits.Bool(desc="Write the protocol gradients to a file suffixed by \'.txt\' as they were specified in the procol by multiplying each diffusion gradient direction by the measurement frame.  This file is for debugging purposes only, the format is not fixed, and will likely change as debugging of new dicom formats is necessary.", argstr="--writeProtocolGradientsFile ")
@@ -26,7 +26,7 @@ class DWIConvertInputSpec(CommandLineInputSpec):
 
 class DWIConvertOutputSpec(TraitedSpec):
     outputVolume = File(desc="Output filename (.nhdr or .nrrd)", exists=True)
-    outputDirectory = Directory(desc="Directory holding the output NRRD format", exists=True)
+    outputDirectory = Directory(desc="Directory holding the output NRRD file", exists=True)
     gradientVectorFile = File(desc="Text file giving gradient vectors", exists=True)
     outputBValues = File(desc="B Values text file", exists=True)
     outputBVectors = File(desc="B Vector text file", exists=True)

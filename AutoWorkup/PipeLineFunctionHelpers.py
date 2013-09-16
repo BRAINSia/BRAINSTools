@@ -10,6 +10,7 @@
 ## nipype and that require re-running the function.
 
 import os
+import shutil ## needed for removing directory tree
 import errno
 
 # Globals
@@ -250,6 +251,12 @@ def mkdir_p(path):
             pass
         else:
             raise
+
+def recursive_dir_rm(path):
+    """ Force recursive remove of directory """
+    if os.path.exists(path):
+        shutil.rmtree(path)
+    return
 
 
 def make_dummy_file(fn):

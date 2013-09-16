@@ -67,6 +67,7 @@ class BRAINSFitInputSpec(CommandLineInputSpec):
     promptUser = traits.Bool(desc="Prompt the user to hit enter each time an image is sent to the DebugImageViewer", argstr="--promptUser ")
     permitParameterVariation = InputMultiPath(traits.Int, desc="A bit vector to permit linear transform parameters to vary under optimization.  The vector order corresponds with transform parameters, and beyond the end ones fill in as a default.  For instance, you can choose to rotate only in x (pitch) with 1,0,0;  this is mostly for expert use in turning on and off individual degrees of freedom in rotation, translation or scaling without multiplying the number of transform representations; this trick is probably meaningless when tried with the general affine transform.", sep=",", argstr="--permitParameterVariation %s")
     costMetric = traits.Enum("MMI", "MSE", "NC", "MC", desc="The cost metric to be used during fitting. Defaults to MMI. Options are MMI (Mattes Mutual Information), MSE (Mean Square Error), NC (Normalized Correlation), MC (Match Cardinality for binary images)", argstr="--costMetric %s")
+    logFileReport = traits.Either(traits.Bool, File(), hash_files=False, desc="A file to write out final information report in CSV file: MetricName,MetricValue,FixedImageName,FixedMaskName,MovingImageName,MovingMaskName", argstr="--logFileReport %s")
 
 
 class BRAINSFitOutputSpec(TraitedSpec):
@@ -77,6 +78,7 @@ class BRAINSFitOutputSpec(TraitedSpec):
     outputMovingVolumeROI = File(desc="The ROI automatically found in moving image, ONLY FOR ROIAUTO mode. (Values are zero and non-zero.)", exists=True)
     strippedOutputTransform = File(desc="File name for the rigid component of the estimated affine transform. Can be used to rigidly register the moving image to the fixed image. NOTE:  This value is overwritten if either bsplineTransform or linearTransform is set.", exists=True)
     outputTransform = File(desc="(optional) Filename to which save the (optional) estimated transform. NOTE: You must select either the outputTransform or the outputVolume option.", exists=True)
+    logFileReport = File(desc="A file to write out final information report in CSV file: MetricName,MetricValue,FixedImageName,FixedMaskName,MovingImageName,MovingMaskName", exists=True)
 
 
 class BRAINSFit(SEMLikeCommandLine):
@@ -101,4 +103,4 @@ acknowledgements: Hans Johnson(1,3,4); Kent Williams(1); Gregory Harris(1), Vinc
     input_spec = BRAINSFitInputSpec
     output_spec = BRAINSFitOutputSpec
     _cmd = " BRAINSFit "
-    _outputs_filenames = {'outputVolume':'outputVolume.nii','bsplineTransform':'bsplineTransform.h5','outputTransform':'outputTransform.h5','outputFixedVolumeROI':'outputFixedVolumeROI.nii','strippedOutputTransform':'strippedOutputTransform.h5','outputMovingVolumeROI':'outputMovingVolumeROI.nii','linearTransform':'linearTransform.h5'}
+    _outputs_filenames = {'outputVolume':'outputVolume.nii','bsplineTransform':'bsplineTransform.h5','outputTransform':'outputTransform.h5','outputFixedVolumeROI':'outputFixedVolumeROI.nii','strippedOutputTransform':'strippedOutputTransform.h5','outputMovingVolumeROI':'outputMovingVolumeROI.nii','linearTransform':'linearTransform.h5','logFileReport':'logFileReport'}

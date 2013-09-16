@@ -13,6 +13,7 @@ class UKFTractographyInputSpec(CommandLineInputSpec):
     maskFile = File(desc="Mask for diffusion tractography", exists=True, argstr="--maskFile %s")
     tracts = traits.Either(traits.Bool, File(), hash_files=False, desc="Tracts generated, with first tensor output", argstr="--tracts %s")
     tractsWithSecondTensor = traits.Either(traits.Bool, File(), hash_files=False, desc="Tracts generated, with second tensor output (if there is one)", argstr="--tractsWithSecondTensor %s")
+    writeBinaryTracts = traits.Bool(desc="Write tract file as a VTK binary data file", argstr="--writeBinaryTracts ")
     seedsPerVoxel = traits.Int(desc="Number of seeds per voxel", argstr="--seedsPerVoxel %d")
     numTensor = traits.Enum("1", "2", "3", desc="Number of tensors used", argstr="--numTensor %s")
     simpleTensorModel = traits.Bool(desc="Whether to use the simple tensor model. If unchecked, use the full tensor model", argstr="--simpleTensorModel ")
@@ -74,35 +75,3 @@ contributor: Yogesh Rathi, Stefan Lienhard, Yinpeng Li, Martin Styner, Ipek Oguz
     output_spec = UKFTractographyOutputSpec
     _cmd = " UKFTractography "
     _outputs_filenames = {'tracts':'tracts.vtk','tractsWithSecondTensor':'tractsWithSecondTensor.vtk'}
-
-
-class FiberViewerLightInputSpec(CommandLineInputSpec):
-    input = File(desc="VTK Input File", exists=True, argstr="--input %s")
-    output = traits.Str(desc="Output Folder", argstr="--output %s")
-    nogui = traits.Bool(desc="If this option is used, you will use the command line, DEFAULT=false", argstr="--nogui ")
-    use_danielsson_transform = traits.Bool(desc="If this option is used, computation will use Danielsson Transformation to calculate distances", argstr="--use_danielsson_transform ")
-    process_list = InputMultiPath(traits.Str, desc="List of comma separated methods that will be computed and which distance tables will be saved (Gravity,Mean,Hausdorff,NormCut)", sep=",", argstr="--process_list %s")
-    x_voxels = traits.Int(desc="Number of voxels on the x axis for the Danielsson Transform. Nb of voxels for others axis will be calculate to keep the original ratio. By default it will use a spacing of 1", argstr="--x_voxels %d")
-
-
-class FiberViewerLightOutputSpec(TraitedSpec):
-    pass
-
-
-class FiberViewerLight(SEMLikeCommandLine):
-    """title: FiberViewer Light
-
-category: Diffusion.Tractography
-
-description: 
-		Light Version of FiberViewer. Used for Fiber Clustering thanks to methods such as Length, Gravity, Hausdorff, or Mean Distribution and Normalized Cut.
-	
-
-contributor: Jean-Baptiste Berger, Clement Vachet, Martin Styner
-
-"""
-
-    input_spec = FiberViewerLightInputSpec
-    output_spec = FiberViewerLightOutputSpec
-    _cmd = " FiberViewerLight "
-    _outputs_filenames = {}

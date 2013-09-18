@@ -643,6 +643,6 @@ paired_samples_t(DType *x1, DType *x2, int n, int *df, double *meandiff)
 }
 #endif
 
-
-extern void WriteTransformToDisk( GenericTransformType * myTransform , const std::string & filename  );
+template<class TScalarType>
+extern void WriteTransformToDisk( itk::Transform<TScalarType, 3, 3> * myTransform , const std::string & filename  );
 #endif

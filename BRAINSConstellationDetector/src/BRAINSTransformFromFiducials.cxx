@@ -263,7 +263,7 @@ int main(int argc, char* argv[])
     return EXIT_FAILURE;
     }
 
-  WriteTransformToDisk(genericTransform.GetPointer(), saveTransform);
+  itk::WriteTransformToDisk<double>(genericTransform.GetPointer(), saveTransform);
 
   return EXIT_SUCCESS;
 }

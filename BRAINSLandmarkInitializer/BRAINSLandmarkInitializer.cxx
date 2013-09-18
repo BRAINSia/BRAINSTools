@@ -135,7 +135,7 @@ main(int argc, char *argv[])
   landmarkBasedInitializer->SetTransform( affineTransform );
   landmarkBasedInitializer->InitializeTransform();
 
-  WriteTransformToDisk( affineTransform, outputTransformFilename);
+  itk::WriteTransformToDisk<double>( affineTransform, outputTransformFilename);
 
   return EXIT_SUCCESS;
 }

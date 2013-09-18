@@ -79,10 +79,11 @@ namespace itk
   *ConstPointer up the class tree, use the GetPointer
   * AffineTransformType::Pointer myAffine=AffineTransformType::New(); //NOTE:
   * This is not a const smart pointer
-  * WriteTransformToDisk(myAffine.GetPointer(), "myAffineFile.mat");
+  * WriteTransformToDisk<TScalarType>(myAffine.GetPointer(), "myAffineFile.mat");
   * \endcode
   */
-extern void WriteTransformToDisk(GenericTransformType const *const genericTransformToWrite,
+template<class TScalarType>
+extern void WriteTransformToDisk( itk::Transform<TScalarType, 3, 3> const *const genericTransformToWrite,
                                  const std::string & outputTransform);
 
 /**
@@ -134,7 +135,7 @@ extern GenericTransformType::Pointer ReadTransformFromDisk(const std::string & i
   *ConstPointer up the class tree, use the GetPointer
   * AffineTransformType::Pointer myAffine=AffineTransformType::New(); //NOTE:
   * This is not a const smart pointer
-  * WriteTransformToDisk(myAffine.GetPointer(), "myAffineFile.mat");
+  * WriteTransformToDisk<TScalarType>(myAffine.GetPointer(), "myAffineFile.mat");
   * \endcode
   */
 extern VersorRigid3DTransformType::Pointer ComputeRigidTransformFromGeneric(

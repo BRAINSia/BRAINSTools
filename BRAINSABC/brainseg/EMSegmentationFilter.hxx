@@ -36,7 +36,9 @@
 #include "itkBRAINSROIAutoImageFilter.h"
 #include "BRAINSFitBSpline.h"
 #include "BRAINSFitUtils.h"
+#ifdef USE_ANTS
 #include "BRAINSFitSyN.h"
+#endif
 #include "BRAINSABCUtilities.h"
 #include "LLSBiasCorrector.h"
 

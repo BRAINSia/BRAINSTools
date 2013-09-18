@@ -203,7 +203,7 @@ ExtractTransform(BSplineTransformType::Pointer & result,
 }
 
 void
-TransformConvertError(GenericTransformType *inputXfrm,
+TransformConvertError(const GenericTransformType *inputXfrm,
                       const std::string & targetClassName)
 {
   std::cerr << "Can't convert transform of type "
@@ -211,6 +211,81 @@ TransformConvertError(GenericTransformType *inputXfrm,
             << " to "
             << targetClassName
             << std::endl;
+}
+
+// converts double precision type parameters to single precision type
+itk::OptimizerParameters< float >
+ParametersTypeConvertor(const itk::OptimizerParameters< double >  &sourceParams)
+{
+  itk::OptimizerParameters< float > outputParams;
+  outputParams.SetSize( sourceParams.GetSize() );
+  outputParams.Fill(0);
+  for( itk::SizeValueType i = 0; i < sourceParams.GetSize(); ++i )
+     {
+     outputParams[i] = (float)( sourceParams[i] );
+     }
+  return outputParams;
+}
+
+// converts a double precision transform to another transform with the same type but in single precision
+bool
+PrecisionConvertor( itk::Transform<float, 3, 3>::Pointer &outXfrm,
+                    const GenericTransformType *source )
+{
+  if( IsClass(source, "TranslationTransform") )
+    {
+    typedef itk::TranslationTransform<float, 3> TransTransformType;
+    TransTransformType::Pointer transXfrm = TransTransformType::New();
+    transXfrm->SetParameters( ParametersTypeConvertor( source->GetParameters() ) );
+    transXfrm->SetFixedParameters( ParametersTypeConvertor( source->GetFixedParameters() ) );
+    outXfrm = transXfrm.GetPointer();
+    }
+  else if( IsClass(source, "AffineTransform") )
+    {
+    typedef itk::AffineTransform<float, 3>  AffineTransformType;
+    AffineTransformType::Pointer affineXfrm = AffineTransformType::New();
+    affineXfrm->SetParameters( ParametersTypeConvertor( source->GetParameters() ) );
+    affineXfrm->SetFixedParameters( ParametersTypeConvertor( source->GetFixedParameters() ) );
+    outXfrm = affineXfrm.GetPointer();
+    }
+  else if( IsClass(source, "VersorTransform") )
+    {
+    typedef itk::VersorTransform<float> VersorTransformType;
+    VersorTransformType::Pointer versorXfrm = VersorTransformType::New();
+    versorXfrm->SetParameters( ParametersTypeConvertor( source->GetParameters() ) );
+    versorXfrm->SetFixedParameters( ParametersTypeConvertor( source->GetFixedParameters() ) );
+    outXfrm = versorXfrm.GetPointer();
+    }
+  else if( IsClass(source, "VersorRigid3DTransform") )
+    {
+    typedef itk::VersorRigid3DTransform<float>  VersorRigid3DTransformType;
+    VersorRigid3DTransformType::Pointer versorRigid3DXfrm = VersorRigid3DTransformType::New();
+    versorRigid3DXfrm->SetParameters( ParametersTypeConvertor( source->GetParameters() ) );
+    versorRigid3DXfrm->SetFixedParameters( ParametersTypeConvertor( source->GetFixedParameters() ) );
+    outXfrm = versorRigid3DXfrm.GetPointer();
+    }
+  else if( IsClass(source, "ScaleVersor3DTransform") )
+    {
+    typedef itk::ScaleVersor3DTransform<float>  ScaleVersor3DTransformType;
+    ScaleVersor3DTransformType::Pointer scaleVersor3DXfrm = ScaleVersor3DTransformType::New();
+    scaleVersor3DXfrm->SetParameters( ParametersTypeConvertor( source->GetParameters() ) );
+    scaleVersor3DXfrm->SetFixedParameters( ParametersTypeConvertor( source->GetFixedParameters() ) );
+    outXfrm = scaleVersor3DXfrm.GetPointer();
+    }
+  else if( IsClass(source, "ScaleSkewVersor3DTransform") )
+    {
+    typedef itk::ScaleSkewVersor3DTransform<float> ScaleVersor3DTransformType;
+    ScaleVersor3DTransformType::Pointer scaleSkewVersor3DXfrm = ScaleVersor3DTransformType::New();
+    scaleSkewVersor3DXfrm->SetParameters( ParametersTypeConvertor( source->GetParameters() ) );
+    scaleSkewVersor3DXfrm->SetFixedParameters( ParametersTypeConvertor( source->GetFixedParameters() ) );
+    outXfrm = scaleSkewVersor3DXfrm.GetPointer();
+    }
+  else
+    {
+    TransformConvertError( source, "Float Type");
+    return false;
+    }
+  return true;
 }
 
 #define CHECK_PARAMETER_IS_SET(parameter, message) \
@@ -372,6 +447,40 @@ int main(int argc, char *argv[])
       return EXIT_FAILURE;
       }
     }
+  else if( outputTransformType == "Float" )
+    {
+    typedef itk::TransformFileWriterTemplate<float> TransformWriterType;
+    typedef itk::Transform< float, 3, 3 >           OutputGenericTransformType;
+    TransformWriterType::Pointer transformWriter = TransformWriterType::New();
+    transformWriter->SetFileName(outputTransform);
+    for( itk::TransformFileReader::TransformListType::iterator it = transformList->begin();
+        it != transformList->end(); ++it )
+      {
+      GenericTransformType::Pointer inXfrm = dynamic_cast<GenericTransformType *>( (*it).GetPointer() );
+      OutputGenericTransformType::Pointer outXfrm;
+      if( PrecisionConvertor(outXfrm, inXfrm) )
+        {
+        transformWriter->AddTransform( outXfrm );
+        std::cout << "Input Transform Type: " << inXfrm->GetTransformTypeAsString() << std::endl;
+        std::cout << "Output Transform Type: " << outXfrm->GetTransformTypeAsString() << std::endl;
+        }
+      else
+        {
+        std::cerr << "Can't convert the input transform to its single precision version." << std::endl;
+        return EXIT_FAILURE;
+        }
+      }
+
+      try
+        {
+        transformWriter->Update();
+        }
+      catch( itk::ExceptionObject & excp )
+        {
+        std::cerr << "Can't write " << outputTransform << excp.GetDescription() << std::endl;
+        return EXIT_FAILURE;
+        }
+      }
   else
     {
     // write the resulting transform.

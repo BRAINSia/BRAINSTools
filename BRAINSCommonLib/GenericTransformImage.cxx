@@ -206,6 +206,7 @@ int WriteBothTransformsToDisk(const GenericTransformType::ConstPointer genericTr
     }
   catch( itk::ExceptionObject & excp )
     {
+    std::cout << "Exception: " << excp << std::endl;
     throw excp; // reohrow exception, handle in some other scope.
     }
   return 0;

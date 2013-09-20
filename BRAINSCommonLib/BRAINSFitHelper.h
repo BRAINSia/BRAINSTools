@@ -159,6 +159,8 @@ public:
   itkGetConstMacro(ObserveIterations,        bool);
   itkSetMacro(UseROIBSpline, bool);
   itkGetConstMacro(UseROIBSpline, bool);
+  itkSetMacro(MetricSeed, int);
+  itkGetConstMacro(MetricSeed, int);
 
   const std::vector<GenericTransformType::Pointer> * GetGenericTransformListPtr()
   {
@@ -263,6 +265,7 @@ private:
   bool                                       m_ObserveIterations;
   std::string                                m_CostMetric;
   bool                                       m_UseROIBSpline;
+  int                                        m_MetricSeed;
   itk::Object::Pointer                       m_Helper;
   // DEBUG OPTION:
   int m_ForceMINumberOfThreads;
@@ -281,7 +284,18 @@ BRAINSFitHelper::SetupRegistration()
   //
   // set up cost metric
   typename TLocalCostMetric::Pointer localCostMetric = TLocalCostMetric::New();
-  localCostMetric->ReinitializeSeed(76926294);
+  // From ITK documentation: calling the method ReinitializeSeed() without
+  // arguments will use the clock from your machine in order to have a very
+  // random initialization of the seed. This will indeed increase the
+  // non-deterministic behavior of the metric.
+  if(this->m_MetricSeed != 0)
+    {
+    localCostMetric->ReinitializeSeed(this->m_MetricSeed);
+    }
+  else
+    {
+    localCostMetric->ReinitializeSeed();
+    }
   localCostMetric->SetInterpolator(localLinearInterpolator);
   localCostMetric->SetFixedImage(this->m_FixedVolume);
   localCostMetric->SetFixedImageRegion( this->m_FixedVolume->GetBufferedRegion() );

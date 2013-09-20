@@ -473,6 +473,7 @@ int main(int argc, char *argv[])
     myHelper->SetDebugLevel(debugLevel);
     myHelper->SetCostMetric(costMetric);
     myHelper->SetUseROIBSpline(useROIBSpline);
+    myHelper->SetMetricSeed(metricSeed);
     if( debugLevel > 7 )
       {
       myHelper->PrintCommandLine(true, "BF");

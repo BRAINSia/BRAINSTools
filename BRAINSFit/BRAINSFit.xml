@@ -565,6 +565,15 @@
       <description>A file to write out final information report in CSV file: MetricName,MetricValue,FixedImageName,FixedMaskName,MovingImageName,MovingMaskName</description>
       <channel>output</channel>
     </file>
+
+    <integer>
+      <name>metricSeed</name>
+      <longflag>metricSeed</longflag>
+      <label>Image similarity metric seed</label>
+      <description>Seed value will be used to reinitialize the metric. To ensure consistent results, the same seed value should be used across runs. If the seed value is set to 0, the sampler will use the clock of your machine to initialize the metric, which will lead to a random initialization of the seed.</description>
+      <default>76926294</default>
+    </integer>
+
   </parameters>
 
 </executable>

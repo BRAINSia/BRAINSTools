@@ -458,9 +458,9 @@ void ThirionFunction(const struct BRAINSDemonWarpAppParameters & command)
     app->SetCheckerBoardFilename( command.outputCheckerboardVolume.c_str() );
     unsigned int array[3] =
       {
-      command.checkerboardPatternSubdivisions[0],
-      command.checkerboardPatternSubdivisions[1],
-      command.checkerboardPatternSubdivisions[2]
+        static_cast<unsigned int>(command.checkerboardPatternSubdivisions[0]),
+        static_cast<unsigned int>(command.checkerboardPatternSubdivisions[1]),
+        static_cast<unsigned int>(command.checkerboardPatternSubdivisions[2])
       };
     app->SetCheckerBoardPattern(array);
     }
@@ -892,9 +892,9 @@ void VectorThirionFunction(const struct BRAINSDemonWarpAppParameters & command)
     app->SetCheckerBoardFilename( command.outputCheckerboardVolume.c_str() );
     unsigned int array[3] =
       {
-      command.checkerboardPatternSubdivisions[0],
-      command.checkerboardPatternSubdivisions[1],
-      command.checkerboardPatternSubdivisions[2]
+        static_cast<unsigned int>(command.checkerboardPatternSubdivisions[0]),
+        static_cast<unsigned int>(command.checkerboardPatternSubdivisions[1]),
+        static_cast<unsigned int>(command.checkerboardPatternSubdivisions[2])
       };
     app->SetCheckerBoardPattern(array);
     }

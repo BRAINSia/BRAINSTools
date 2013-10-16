@@ -266,8 +266,13 @@ LargestForegroundFilledMaskImageFilter<TInputImage, TOutputImage>
     ErodeFilter->Update();
     }
 
-  const typename IntegerImageType::SizeType ImageSize =
-    ErodeFilter->GetOutput()->GetLargestPossibleRegion().GetSize();
+  // silence warnings by converting the size to index
+  typename IntegerImageType::IndexType IndImageSize;
+  for(unsigned int _i = 0; _i < IntegerImageType::ImageDimension; ++_i)
+    {
+    IndImageSize[0] = static_cast<typename IntegerImageType::IndexValueType>
+      (ErodeFilter->GetOutput()->GetLargestPossibleRegion().GetSize()[_i]);
+    }
   // NOTE:  The most robust way to do this would be to find the largest
   // background labeled image, and then choose one of those locations as the
   // seed.
@@ -283,53 +288,32 @@ LargestForegroundFilledMaskImageFilter<TInputImage, TOutputImage>
     seededConnectedThresholdFilter->SetSeed(SeedLocation);
     }
     {
-    const typename IntegerImageType::IndexType SeedLocation = { { ImageSize[0] - 1, 0, 0 } };
+    const typename IntegerImageType::IndexType SeedLocation = { { IndImageSize[0] - 1, 0, 0 } };
     seededConnectedThresholdFilter->SetSeed(SeedLocation);
     }
     {
-    const typename IntegerImageType::IndexType SeedLocation = { { 0, ImageSize[1] - 1, 0 } };
+    const typename IntegerImageType::IndexType SeedLocation = { { 0, IndImageSize[1] - 1, 0 } };
     seededConnectedThresholdFilter->SetSeed(SeedLocation);
     }
     {
-    const typename IntegerImageType::IndexType SeedLocation = { { ImageSize[0] - 1, ImageSize[1] - 1, 0 } };
+    const typename IntegerImageType::IndexType SeedLocation = { { IndImageSize[0] - 1, IndImageSize[1] - 1, 0 } };
     seededConnectedThresholdFilter->SetSeed(SeedLocation);
     }
     {
-    const typename IntegerImageType::IndexType SeedLocation = { { 0, 0, ImageSize[2] - 1 } };
+    const typename IntegerImageType::IndexType SeedLocation = { { 0, 0, IndImageSize[2] - 1 } };
     seededConnectedThresholdFilter->SetSeed(SeedLocation);
     }
     {
-    const typename IntegerImageType::IndexType SeedLocation = { { ImageSize[0] - 1, 0, ImageSize[2] - 1 } };
+    const typename IntegerImageType::IndexType SeedLocation = { { IndImageSize[0] - 1, 0, IndImageSize[2] - 1 } };
     seededConnectedThresholdFilter->SetSeed(SeedLocation);
     }
     {
-    const typename IntegerImageType::IndexType SeedLocation = { { 0, ImageSize[1] - 1, ImageSize[2] - 1 } };
+    const typename IntegerImageType::IndexType SeedLocation = { { 0, IndImageSize[1] - 1, IndImageSize[2] - 1 } };
     seededConnectedThresholdFilter->SetSeed(SeedLocation);
     }
     {
     const typename IntegerImageType::IndexType SeedLocation =
-      {
-        {
-        ImageSize
-        [
-          0
-        ]
-        -
-        1,
-        ImageSize
-        [
-          1
-        ]
-        -
-        1,
-        ImageSize
-        [
-          2
-        ]
-        -
-        1
-        }
-      };
+      { { IndImageSize[0] - 1, IndImageSize[1] - 1, IndImageSize[2] - 1 } };
     seededConnectedThresholdFilter->SetSeed(SeedLocation);
     }
 

@@ -95,7 +95,9 @@ ValidationInputParser<TImage>
       }
     catch( itk::ExceptionObject & err )
       {
-      std::cerr << "Caught an ITK exception: " << std::endl;
+      std::cerr << "Caught an ITK exception: "
+                << err.GetDescription()
+                << std::endl;
       throw;
       }
     if( this->GetOutDebug() )

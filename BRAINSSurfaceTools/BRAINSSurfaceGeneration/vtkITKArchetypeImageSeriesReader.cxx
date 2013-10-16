@@ -225,16 +225,22 @@ void vtkITKArchetypeImageSeriesReader::PrintSelf(ostream& os, vtkIndent indent)
   int idx;
 
   this->Superclass::PrintSelf(os, indent);
-
-  os << indent << "Archetype: "
-     << (this->Archetype ? this->Archetype : "(none)") << "\n";
+  os << indent << "Archetype: ";
+  if(this->Archetype != 0)
+    {
+    os << this->Archetype << std::endl;
+    }
+  else
+    {
+    os << "(none)" << std::end;
+    }
 
   os << indent << "FileNameSliceOffset: "
-     << this->FileNameSliceOffset << "\n";
+     << this->FileNameSliceOffset << std::endl;
   os << indent << "FileNameSliceSpacing: "
-     << this->FileNameSliceSpacing << "\n";
+     << this->FileNameSliceSpacing << std::endl;
   os << indent << "FileNameSliceCount: "
-     << this->FileNameSliceCount << "\n";
+     << this->FileNameSliceCount << std::endl;
 
   os << indent << "OutputScalarType: "
      << vtkImageScalarTypeNameMacro(this->OutputScalarType)

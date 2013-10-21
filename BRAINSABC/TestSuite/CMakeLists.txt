@@ -8,6 +8,7 @@ include_directories(
 
 MakeTestDriverFromSEMTool(BRAINSABC BRAINSABCTest.cxx)
 
+if(false)
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME BRAINSABCSmallTest
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSABCTestDriver>
   --compare DATA{${TestData_DIR}/BRAINSABCSmallLabels.nii.gz}
@@ -42,6 +43,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME BRAINSABCSmallTest
    --outputVolumes ${CMAKE_CURRENT_BINARY_DIR}/BRAINSABCSmallT2_2.nii.gz
    --posteriorTemplate ${CMAKE_CURRENT_BINARY_DIR}/BRAINSABCSmallPOST_%s.nii.gz
 )
+endif()
 
 if( ${BRAINSTools_MAX_TEST_LEVEL} GREATER 5) #These test takes way to long to run all the time
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME BRAINSABCLongTest

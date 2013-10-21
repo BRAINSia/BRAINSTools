@@ -492,7 +492,6 @@ QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TFixedMesh, TMovingMesh, TOutputM
   double pre_Metric = 0.0; // to save the metric value of previous iteration
 
   unsigned int count = 0;
-  bool         timeOn = false;
 
   for( unsigned int i = 0; i < this->m_MaximumNumberOfIterations; i++ )
     {
@@ -521,11 +520,9 @@ QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TFixedMesh, TMovingMesh, TOutputM
         if( m_MetricChange < m_MetricSignificance )
           {
           count += 1;
-          timeOn = true;
           }
         else
           {
-          timeOn = false;
           count = 0;
           }
         if( count == 5 )

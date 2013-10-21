@@ -232,7 +232,7 @@ void vtkITKArchetypeImageSeriesReader::PrintSelf(ostream& os, vtkIndent indent)
     }
   else
     {
-    os << "(none)" << std::end;
+    os << "(none)" << std::endl;
     }
 
   os << indent << "FileNameSliceOffset: "

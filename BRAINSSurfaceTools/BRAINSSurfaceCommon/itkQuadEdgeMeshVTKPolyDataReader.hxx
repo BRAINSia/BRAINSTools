@@ -174,14 +174,13 @@ QuadEdgeMeshVTKPolyDataReader<TOutputMesh>
       }
 
     int got;
-    if( (got = sscanf( line.c_str(), "%ld %ld %ld %ld", &numberOfCellPoints,
+    if( (got = sscanf( line.c_str(), "%lu %ld %ld %ld", &numberOfCellPoints,
                        &ids[0], &ids[1], &ids[2] ) ) != 4 )
       {
       itkExceptionMacro("Error parsing POLYGON cell. Expected 4 items but got "
                         << got << std::endl
                         << "Line is: " << line);
       }
-
     if( numberOfCellPoints != 3 )
       {
       itkExceptionMacro("ERROR: numberOfCellPoints != 3\n"

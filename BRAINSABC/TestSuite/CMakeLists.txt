@@ -8,7 +8,7 @@ include_directories(
 
 MakeTestDriverFromSEMTool(BRAINSABC BRAINSABCTest.cxx)
 
-if(false)
+if(${BRAINSTools_MAX_TEST_LEVEL} GREATER 8)
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME BRAINSABCSmallTest
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSABCTestDriver>
   --compare DATA{${TestData_DIR}/BRAINSABCSmallLabels.nii.gz}

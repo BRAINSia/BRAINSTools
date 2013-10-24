@@ -459,7 +459,6 @@ public:
             {
             this->m_BValues.push_back( bval_tmp[0] );
             vnl_vector_fixed<double, 3> vect3d;
-            this->m_BValues.push_back( valueArray[0] );
             vect3d[0] = 0;
             vect3d[1] = 0;
             vect3d[2] = 0;

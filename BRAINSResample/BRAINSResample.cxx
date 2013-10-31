@@ -59,6 +59,18 @@ int main(int argc, char *argv[])
   const bool useTransform = ( warpTransform.size() > 0 );
   const bool useDisplacementField = ( deformationVolume.size() > 0 );
 
+  if(inputVolume.empty())
+    {
+    std::cout << "ERROR: missing input volume name"
+              << std::endl;
+    return EXIT_FAILURE;
+    }
+  if(outputVolume.empty())
+    {
+    std::cout << "ERROR: missing output volume name"
+              << std::endl;
+    return EXIT_FAILURE;
+    }
   if( useTransform && useDisplacementField )
     {
     std::cout << "ERROR: warpTransform and deformationVolume are mutually exclusive, only use one of them."

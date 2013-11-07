@@ -13,7 +13,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateBRAINSContinuousCla
   BRAINSContinuousClassTest
   --inputT1Volume ${ReferenceAtlas_DIR}/${ATLAS_NAME}/template_t1.nii.gz
   --inputT2Volume ${ReferenceAtlas_DIR}/${ATLAS_NAME}/template_t2.nii.gz
-  --inputDiscreteVolume ${ReferenceAtlas_DIR}/${ATLAS_NAME}/template_ABC_lables.nii.gz
+  --inputDiscreteVolume ${ReferenceAtlas_DIR}/${ATLAS_NAME}/template_ABC_labels.nii.gz
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/BRAINSContinuousClassTest_test.nii.gz
   )
 

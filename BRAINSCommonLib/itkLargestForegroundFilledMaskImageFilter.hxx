@@ -270,7 +270,7 @@ LargestForegroundFilledMaskImageFilter<TInputImage, TOutputImage>
   typename IntegerImageType::IndexType IndImageSize;
   for(unsigned int _i = 0; _i < IntegerImageType::ImageDimension; ++_i)
     {
-    IndImageSize[0] = static_cast<typename IntegerImageType::IndexValueType>
+    IndImageSize[_i] = static_cast<typename IntegerImageType::IndexValueType>
       (ErodeFilter->GetOutput()->GetLargestPossibleRegion().GetSize()[_i]);
     }
   // NOTE:  The most robust way to do this would be to find the largest

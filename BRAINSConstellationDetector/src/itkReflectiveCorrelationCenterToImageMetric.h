@@ -254,25 +254,20 @@ public:
   /* -- */
   double CenterImageReflection_crossCorrelation(vnl_vector<double> const & params)
   {
-    // TODO WEI: the following block of code only need to be computed once for
-    // one image.
-    // Tried to move them to the Initialize function but it then went into a
-    // infinite loop at level 0.
-    // Very strange but has no priority
       {
       // Define the output image direction identical
       m_OutputImageDirection.SetIdentity();
 
       // Get output spacing
-      SImageType::DirectionType inputImageDirection = m_OriginalImage->GetDirection();
-      SImageType::SpacingType   inputImageSpacing = m_OriginalImage->GetSpacing();
-      m_OutputImageSpacing = inputImageDirection * inputImageSpacing;
+      const SImageType::SpacingType &inputImageSpacing = m_OriginalImage->GetSpacing();
+      SImageType::SpacingType::ValueType minSpacing=inputImageSpacing[0];
+      for( unsigned int i = 1; i < 3; ++i )
+        {
+          minSpacing = std::min(minSpacing,inputImageSpacing[i]);
+        }
       for( unsigned int i = 0; i < 3; ++i )
         {
-        if( m_OutputImageSpacing[i] < 0 )
-          {
-          m_OutputImageSpacing[i] *= -1;
-          }
+          m_OutputImageSpacing[i]=minSpacing;
         }
 
       // Define start index
@@ -290,17 +285,9 @@ public:
       m_OutputImageOrigin[2] = m_CenterOfHeadMass[2] - .5 * ( m_OutputImageSize[2] - 1 ) * m_OutputImageSpacing[2];
       }
     /*
-        std::cout << "CenterImageReflection_crossCorrelation:" << std::endl;
-        std::cout << "m_OutputImageOrigin = " << m_OutputImageOrigin << std::endl;
-        std::cout << "m_OutputImageSize = " << m_OutputImageSize << std::endl;
-        std::cout << "m_OutputImageStartIndex = " << m_OutputImageStartIndex << std::endl;
-        std::cout << "m_OutputImageSpacing = " << m_OutputImageSpacing << std::endl;
-        std::cout << "m_OutputImageDirection = " << m_OutputImageDirection << std::endl;
-    */
-    /*
      * Resample the image
      */
-    m_ResampleFilter = FilterType::New();
+    m_ResampleFilter = ResampleFilterType::New();
     LinearInterpolatorType::Pointer interpolator = LinearInterpolatorType::New();
     m_ResampleFilter->SetInterpolator(interpolator);
     m_ResampleFilter->SetDefaultPixelValue(0);
@@ -323,8 +310,7 @@ public:
     double               sumVoxelValuesReflected = 0.0F;
     double               sumSquaredVoxelValuesReflected = 0.0F;
     int                  N = 0;
-    SImageType::SizeType rasterResampleSize =
-      m_InternalResampledForReflectiveComputationImage->GetLargestPossibleRegion().GetSize();
+    SImageType::SizeType rasterResampleSize = m_InternalResampledForReflectiveComputationImage->GetLargestPossibleRegion().GetSize();
     const SImageType::SizeType::SizeValueType xMaxIndexResampleSize = rasterResampleSize[0] - 1;
     rasterResampleSize[0] /= 2; // Only need to do 1/2 in the x direction;
     SImageType::RegionType rasterRegion;
@@ -425,10 +411,12 @@ public:
   }
 
 private:
+  typedef vnl_powell                                       OptimizerType;
+  typedef itk::ResampleImageFilter<SImageType, SImageType> ResampleFilterType;
 
   SImageType::Pointer SimpleResampleImage(SImageType::Pointer image, RigidTransformType::Pointer EulerAngles3DT)
   {
-    m_ResampleFilter = FilterType::New();
+    m_ResampleFilter = ResampleFilterType::New();
     LinearInterpolatorType::Pointer interpolator = LinearInterpolatorType::New();
     m_ResampleFilter->SetInterpolator(interpolator);
     m_ResampleFilter->SetDefaultPixelValue(0);
@@ -452,9 +440,6 @@ private:
     return returnImage;
   }
 
-  typedef vnl_powell                                       OptimizerType;
-  typedef itk::ResampleImageFilter<SImageType, SImageType> FilterType;
-
   vnl_vector<double>                m_params;
   SImageType::Pointer               m_OriginalImage;
   SImageType::SpacingType           m_OutputImageSpacing;
@@ -464,7 +449,7 @@ private:
   SImageType::PointType             m_OutputImageOrigin;
   SImageType::PointType             m_CenterOfHeadMass;
   SImageType::Pointer               m_InternalResampledForReflectiveComputationImage;
-  FilterType::Pointer               m_ResampleFilter;
+  ResampleFilterType::Pointer       m_ResampleFilter;
   SImageType::PixelType             m_BackgroundValue;
   SImageType::PointType             m_CenterOfImagePoint;
   SImageType::PointType::VectorType m_Translation;

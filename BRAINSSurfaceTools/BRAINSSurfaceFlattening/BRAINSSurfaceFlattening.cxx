@@ -29,6 +29,7 @@
 #include "itkVector.h"
 
 #include "BRAINSSurfaceFlatteningCLP.h"
+#include <BRAINSCommonLib.h>
 
 int main( int argc, char* * argv )
 {
@@ -42,6 +43,7 @@ int main( int argc, char* * argv )
   //   }
 
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
   // check input file name
   if( inputSurfaceFile == "" )
     {

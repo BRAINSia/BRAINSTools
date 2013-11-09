@@ -44,6 +44,8 @@ typedef float vtkFloatingPointType;
 
 #include "compareTractInclusionCLP.h"
 #include "BRAINSThreadControl.h"
+#include <BRAINSCommonLib.h>
+
 double PairOffFibers(vtkPolyData *resampledTestFibers, vtkPolyData *resampledStandardFibers, int numberOfPoints)
 {
   double maxDistances = 0.0;
@@ -103,6 +105,7 @@ double PairOffFibers(vtkPolyData *resampledTestFibers, vtkPolyData *resampledSta
 int main(int argc, char * argv[])
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
 
   const bool debug = true;

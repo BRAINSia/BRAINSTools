@@ -6,10 +6,12 @@
 
 #include "itkImageFileWriter.h"
 #include "itkImageFileReader.h"
+#include <BRAINSCommonLib.h>
 
 int main(int argc, char *argv[])
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
 
   typedef itk::Image<unsigned char, 3>        ByteImageType;

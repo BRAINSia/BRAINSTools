@@ -41,6 +41,7 @@
 #include "itkDtiFastMarchingCostFilter.h"
 #include "gtractCostFastMarchingCLP.h"
 #include "BRAINSThreadControl.h"
+#include <BRAINSCommonLib.h>
 namespace
 {
 // The following class is used to support callbacks
@@ -65,6 +66,7 @@ public:
 int main(int argc, char *argv[])
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
 
   const bool debug = true;

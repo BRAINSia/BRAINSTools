@@ -35,6 +35,7 @@
 int main( int argc, char * argv[] )
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
 
   typedef  double        InputPixelType;
   typedef  unsigned char OutputPixelType;

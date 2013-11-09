@@ -30,9 +30,12 @@
 #include <iomanip>  // format manipulation
 
 #include "QuadEdgeMeshSimilarityCLP.h"
+#include <BRAINSCommonLib.h>
+
 int main( int argc, char * argv [] )
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
   std::cout << "--------------------------------------------" << std::endl;
   std::cout << "Caculate the Dice and Jaccard indices between " << std::endl;
   std::cout << labelName1 << " of surface: " << inputSurfaceFile1 << std::endl;

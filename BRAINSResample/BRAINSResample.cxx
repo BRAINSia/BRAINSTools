@@ -50,6 +50,7 @@ void PrintImageMinAndMax(TImage *inputImage)
 int main(int argc, char *argv[])
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
   itk::Object::SetGlobalWarningDisplay(false); // itk warnings aren't thread safe and in
   // this program cause intermittent crashes.
 

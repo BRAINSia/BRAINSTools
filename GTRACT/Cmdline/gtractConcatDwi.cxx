@@ -39,9 +39,12 @@
 
 #include "gtractConcatDwiCLP.h"
 #include "BRAINSThreadControl.h"
+#include <BRAINSCommonLib.h>
+
 int main(int argc, char *argv[])
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
   itk::NumberToString<double>                                        doubleConvert;
   const int                                             numberOfImages = inputVolume.size();

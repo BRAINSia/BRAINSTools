@@ -26,10 +26,12 @@
 #include "vtkFloatArray.h"
 
 #include "ProbabilityLabelsCLP.h"
+#include <BRAINSCommonLib.h>
 
 int main( int argc, char * argv[] )
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
   std::cout << "------------------------------------------" << std::endl;
   std::cout << "Input Meshes are: " << std::endl;
   for( unsigned int i = 0; i < inputMeshList.size(); i++ )

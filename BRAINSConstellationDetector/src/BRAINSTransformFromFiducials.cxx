@@ -150,6 +150,7 @@ static VersorRigidTransformType::Pointer DoIt_Rigid(PointList fixedPoints, Point
 int main(int argc, char* argv[])
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
   if( saveTransform == "" )
     {

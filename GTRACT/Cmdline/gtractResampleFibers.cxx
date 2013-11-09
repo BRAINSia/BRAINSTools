@@ -63,6 +63,8 @@ typedef float vtkFloatingPointType;
 
 #include "gtractResampleFibersCLP.h"
 #include "BRAINSThreadControl.h"
+#include <BRAINSCommonLib.h>
+
 template <class TImageType>
 void AdaptOriginAndDirection( typename TImageType::Pointer image )
 {
@@ -112,6 +114,7 @@ void AdaptOriginAndDirection( typename TImageType::Pointer image )
 int main( int argc, char *argv[] )
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
 
   const unsigned int Dimension = 3;

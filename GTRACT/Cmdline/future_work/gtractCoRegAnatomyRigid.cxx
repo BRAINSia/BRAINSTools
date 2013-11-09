@@ -31,6 +31,7 @@
 int main(int argc, char * *argv)
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
 
   bool debug = true;
   if( debug )

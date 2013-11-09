@@ -34,6 +34,8 @@
 
 #include "gtractAverageBvaluesCLP.h"
 #include "BRAINSThreadControl.h"
+#include <BRAINSCommonLib.h>
+
 int buildDirectionLut(itk::Array<int> & lut, itk::Array<int> & count, itk::MetaDataDictionary meta, int numImages,
                       double directionsTolerance, bool averageB0only);
 
@@ -42,6 +44,7 @@ bool areDirectionsEqual(std::string direction1, std::string direction2, double d
 int main(int argc, char *argv[])
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
 
   bool debug = true;

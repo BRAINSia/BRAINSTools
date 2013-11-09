@@ -29,9 +29,12 @@
 #include "vtkMath.h"
 #include <vtkSmartPointer.h>
 
+#include <BRAINSCommonLib.h>
+
 int main( int argc, char *argv[] )
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
 
   if( (inputSurfaceFile == "") || (refSurfaceFile == "") )
     {

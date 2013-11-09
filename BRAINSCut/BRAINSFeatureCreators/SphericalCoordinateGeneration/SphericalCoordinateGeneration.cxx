@@ -92,6 +92,7 @@ void XYZToSpherical(const itk::Point<float, 3> & LocationWithOriginAtCenterOfIma
 int main(int argc, const char * argv[])
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
 
   // read the atlas image from input
   WorkingImageType::Pointer atlasImage = itkUtil::ReadImage<WorkingImageType>(inputAtlasImage);

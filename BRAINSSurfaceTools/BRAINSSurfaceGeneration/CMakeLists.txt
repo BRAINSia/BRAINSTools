@@ -8,7 +8,7 @@ configure_file(
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
-StandardBRAINSBuildMacro(NAME BRAINSApplySurfaceLabels TARGET_LIBRARIES ${ITK_LIBRARIES} ${VTK_LIBRARIES})
+StandardBRAINSBuildMacro(NAME BRAINSApplySurfaceLabels TARGET_LIBRARIES BRAINSCommonLib ${VTK_LIBRARIES})
 
 StandardBRAINSBuildMacro(NAME BRAINSMeasureSurface TARGET_LIBRARIES BRAINSCommonLib ${VTK_LIBRARIES} )
 

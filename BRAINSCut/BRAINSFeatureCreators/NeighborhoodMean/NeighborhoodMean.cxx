@@ -8,10 +8,12 @@
 #include "itkMaskImageFilter.h"
 #include "itkMeanImageFilter.h"
 #include "NeighborhoodMeanCLP.h"
+#include <BRAINSCommonLib.h>
 
 int main(int argc, char *argv[])
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
 
   bool violated = false;
   if( inputVolume.size() == 0 )

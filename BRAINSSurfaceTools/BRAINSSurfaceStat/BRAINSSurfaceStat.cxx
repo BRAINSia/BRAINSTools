@@ -35,6 +35,7 @@
 int main(int argc, char *argv[])
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
 
   unsigned int          numberOfPoints;
   vtkDenseArray<float>* vertexData = vtkDenseArray<float>::New();

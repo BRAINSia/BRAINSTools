@@ -204,6 +204,7 @@ int
 DoConversion( int argc, char *argv[] )
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
 
   typedef itk::Transform< TScalarType, 3, 3 >                                 GenericTransformType;
   typedef itk::BSplineDeformableTransform< TScalarType,
@@ -380,6 +381,7 @@ DoConversion( int argc, char *argv[] )
 int main(int argc, char *argv[])
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
 
   CHECK_PARAMETER_IS_SET(inputTransform,
                          "Missing inputTransform parameter");

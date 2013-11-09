@@ -20,6 +20,7 @@
 #include <map>
 
 #include <fstream>
+#include <BRAINSCommonLib.h>
 
 #define MAXIMUMLABELNUMBER 20
 #define MAXIMUM_NUMBER_OF_INTENSITY 5000
@@ -173,6 +174,7 @@ int
 main(int argc, char *argv[])
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
   // define image with type of voxel
   typedef double PixelType;
   const int Dimension = 3;

@@ -23,10 +23,12 @@
 #include "vtkPointData.h"
 #include "AssignArrayCLP.h"
 #include "vtkSmartPointer.h"
+#include <BRAINSCommonLib.h>
 
 int main( int argc, char * argv[] )
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
   if( sourceSurfaceFile == "" )
     {
     std::cerr << "No source file specified" << std::endl;

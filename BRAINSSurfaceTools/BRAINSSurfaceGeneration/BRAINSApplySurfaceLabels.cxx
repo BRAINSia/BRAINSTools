@@ -41,18 +41,19 @@
 #include "vtkCellData.h"
 #include "vtkFieldData.h"
 #include "vtkShortArray.h"
+#include "vtkTransform.h"
+#include "vtkTransformPolyDataFilter.h"
+#include "vtkDataSetWriter.h"
+
 #include <vtksys/SystemTools.hxx>
 
 #include "BRAINSApplySurfaceLabelsCLP.h"
-
-#include "vtkDataSetWriter.h"
-
-#include "vtkTransform.h"
-#include "vtkTransformPolyDataFilter.h"
+#include <BRAINSCommonLib.h>
 
 int main( int argc, char * *argv )
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
 
   std::cout << "Surface Label Map Generation Parameters: \n";
   std::cout << "-----------------------------------------------\n";

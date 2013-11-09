@@ -3,10 +3,12 @@
 #include "LandmarksCompareCLP.h"
 #include "Slicer3LandmarkIO.h"
 #include <stdlib.h>
+#include <BRAINSCommonLib.h>
 
 int main( int argc, char * argv[] )
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
 
   // load corresponding landmarks in EMSP aligned space from file if possible
   const LandmarksMapType landmarks1 = ReadSlicer3toITKLmk( inputLandmarkFile1 );

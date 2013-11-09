@@ -54,6 +54,7 @@ DICOM Data Dictionary: http://medical.nema.org/Dicom/2011/11_06pu.pdf
  * there is one for each manufacturer we encounter.
  */
 #include "DWIConverterFactory.h"
+#include <BRAINSCommonLib.h>
 
 /** the DICOM datasets are read as 3D volumes, but they need to be
  *  written as 4D volumes for image types other than NRRD.
@@ -140,6 +141,7 @@ Write4DVolume( DWIConverter::VolumeType::Pointer & img, int nVolumes, const std:
 int main(int argc, char *argv[])
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
 
   // just need one instance to do double to string conversions
   itk::NumberToString<double> DoubleConvert;

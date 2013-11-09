@@ -13,10 +13,12 @@
 #include "BRAINSThreadControl.h"
 
 #include "GenerateSummedGradientImageCLP.h"
+#include <BRAINSCommonLib.h>
 int
 main(int argc, char * *argv)
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
   typedef float PixelType;
   const unsigned int Dim = 3;

@@ -3,6 +3,7 @@
 #include <sstream>
 
 #include "itkIO.h"
+#include <BRAINSCommonLib.h>
 
 #include "DumpBinaryTrainingVectorsCLP.h"
 
@@ -50,6 +51,7 @@ int
 main(int argc, char * *argv)
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
 
   unsigned int InputVectorSize;
   unsigned int OutputVectorSize;

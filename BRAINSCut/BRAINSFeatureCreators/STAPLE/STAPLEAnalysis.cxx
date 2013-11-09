@@ -4,11 +4,14 @@
 #include "itkMultiLabelSTAPLEImageFilter.h"
 #include "itkTimeProbe.h"
 #include "STAPLEAnalysisCLP.h"
+#include <BRAINSCommonLib.h>
+
 
 template <unsigned int ImageDimension>
 int STAPLE(unsigned int argc, char *argv[] )
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
 
   itk::TimeProbe timer;
   timer.Start();
@@ -84,6 +87,7 @@ int STAPLE(unsigned int argc, char *argv[] )
 int main( int argc, char *argv[] )
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
   if( argc < 3 )
     {
     std::cout << "Usage: " << argv[0] << " imageDimension outputImage "

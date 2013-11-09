@@ -56,6 +56,7 @@ double get_min_value(LandmarksValueMapType const & m)  // returns the min value 
 int main( int argc, char *argv[] )
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
 
   unsigned int             numNamedLandmarks = 0;
   double                   d0, d1, d2, dist;

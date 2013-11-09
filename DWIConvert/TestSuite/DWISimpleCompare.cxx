@@ -17,6 +17,7 @@
 #include <vcl_algorithm.h>
 #include "DWIConvertUtils.h"
 #include "DWISimpleCompareCLP.h"
+#include <BRAINSCommonLib.h>
 
 namespace
 {
@@ -238,6 +239,7 @@ void GetImageType(std::string fileName,
 int main( int argc, char * argv[] )
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
 
   itk::ImageIOBase::IOPixelType     pixelType;
   itk::ImageIOBase::IOComponentType componentType;

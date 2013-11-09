@@ -43,6 +43,7 @@ Minimal Input Example:
 #include <fstream>
 #include <cmath>
 #include <string>
+#include <BRAINSCommonLib.h>
 
 #define PR(x) std::cout << #x " = " << x << "\n"; // a simple print macro for
                                                    // use when debugging
@@ -50,6 +51,7 @@ Minimal Input Example:
 int main(int argc, char * *argv)
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
 
   bool debug = true;

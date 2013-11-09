@@ -7,6 +7,7 @@
 int main(int argc, char *argv[])
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
 
   bool violated = false;
   if( inputVolume.size() == 0 )

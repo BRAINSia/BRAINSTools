@@ -6,10 +6,12 @@
 #include "BRAINSLinearModelerEPCA.h"
 #include "BRAINSLinearModelerEPCACLP.h"
 #include "BRAINSThreadControl.h"
+#include <BRAINSCommonLib.h>
 
 int main( int argc, char * argv[] )
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
   LmkDBType                                             baseLmkDB; // in the format of [landmarkID][datasetID]
   LmkDBType                                             EPCALmkDB;

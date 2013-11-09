@@ -11,8 +11,7 @@ target_link_libraries( itkResampleInPlaceImageFilterTest ${ITK_LIBRARIES})
 add_executable(BRAINSCleanMask BRAINSCleanMask.cxx)
 target_link_libraries(BRAINSCleanMask ${ITK_LIBRARIES})
 
-StandardBRAINSBuildMacro(NAME FindCenterOfBrain
-  TARGET_LIBRARIES BRAINSCommonLib)
+StandardBRAINSBuildMacro(NAME FindCenterOfBrain TARGET_LIBRARIES BRAINSCommonLib)
 
 ExternalData_add_test(FindCenterOfBrainFetchData
   NAME PrettyPrintTableTest

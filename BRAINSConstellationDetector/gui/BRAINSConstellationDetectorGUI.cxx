@@ -69,6 +69,7 @@ typedef itk::ImageToVTKImageFilter<ImageType> ConnectorType;
 int main(int argc, char *argv[])
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
 
   if( inputVolume.compare("") == 0 )
     {

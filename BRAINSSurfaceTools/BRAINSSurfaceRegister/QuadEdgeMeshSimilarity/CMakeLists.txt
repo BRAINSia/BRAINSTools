@@ -1,1 +1,1 @@
-StandardBRAINSBuildMacro(NAME QuadEdgeMeshSimilarity TARGET_LIBRARIES ${ITK_LIBRARIES} ${VTK_LIBRARIES})
+StandardBRAINSBuildMacro(NAME QuadEdgeMeshSimilarity TARGET_LIBRARIES BRAINSCommonLib ${VTK_LIBRARIES})

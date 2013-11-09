@@ -18,6 +18,7 @@
 #include <map>
 
 #include <fstream>
+#include <BRAINSCommonLib.h>
 
 #define HISTOGRAMSIZE 255
 
@@ -33,6 +34,7 @@ int
 main(int argc, char *argv[])
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
   // define image with type of voxel
   typedef double PixelType;
   const  unsigned long int Dimension = 3;

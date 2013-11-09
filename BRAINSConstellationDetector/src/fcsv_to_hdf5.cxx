@@ -48,6 +48,7 @@ benefits more from readability than speed.
 #include "hdf5.h"
 #include "H5Cpp.h"
 #endif
+#include <BRAINSCommonLib.h>
 
 // D E F I N E S //////////////////////////////////////////////////////////////
 
@@ -290,6 +291,7 @@ WriteHDFStringList(H5::H5File & file,
 int main(int argc, char* argv[])
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
 
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
 

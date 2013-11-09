@@ -24,6 +24,7 @@ Zhao,Yongqiang
 int AverageBrainGenerator(int argc, char *argv[])
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
 
   const bool debug = true;
 

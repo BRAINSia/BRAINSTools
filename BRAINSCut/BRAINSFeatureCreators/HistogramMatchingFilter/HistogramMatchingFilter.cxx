@@ -11,6 +11,7 @@
 #include "itkImageMaskSpatialObject.h"
 
 #include <fstream>
+#include <BRAINSCommonLib.h>
 
 /*
  * Author : Eun Young (Regina) Kim modified by Hans J. Johnson
@@ -28,6 +29,7 @@ int
 main(int argc, char *argv[])
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
 
   if( verbose )
     {

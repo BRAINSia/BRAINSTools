@@ -34,11 +34,13 @@
 #include "itkBinaryThresholdImageFilter.h"
 #include "itkImageDuplicator.h"
 
+#include <BRAINSCommonLib.h>
 #include "CleanUpOverlapLabelsCLP.h"
 
 int main( int argc, char * argv[] )
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
 
   // check inputs
   if( inputBinaryVolumes.size() != outputBinaryVolumes.size() )

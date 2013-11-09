@@ -9,6 +9,7 @@
 #include "vcl_algorithm.h"
 #include "BinaryMaskEditorBasedOnLandmarksCLP.h"
 #include "itkNumberToString.h"
+#include <BRAINSCommonLib.h>
 
 class ThreeLandmarksForPlane
 {
@@ -236,6 +237,7 @@ CutBinaryVolumeByPointWithDirection( typename TImageType::Pointer * _imageVolume
 int main( int argc, char * argv[] )
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
 
   // check input
   if( inputBinaryVolume.empty() ||

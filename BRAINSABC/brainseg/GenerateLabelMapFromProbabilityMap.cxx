@@ -10,6 +10,7 @@
 
 #include "GenerateLabelMapFromProbabilityMapCLP.h"
 #include "BRAINSThreadControl.h"
+#include <BRAINSCommonLib.h>
 
 /*
  * main function
@@ -19,6 +20,7 @@ int
 main(int argc, char *argv[])
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
   if( inputVolumes.size() < 1 )
     {

@@ -5,6 +5,7 @@
 #include <itkLinearInterpolateImageFunction.h>
 #include <itkExceptionObject.h>
 #include "BRAINSResizeCLP.h"
+#include <BRAINSCommonLib.h>
 
 template <typename ImageType>
 int Resample(const std::string & inputVolume, const std::string & outputVolume, const double scaleFactor)
@@ -60,6 +61,7 @@ int
 main(int argc, char * *argv)
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
   try
     {
     if( pixelType == "short" )

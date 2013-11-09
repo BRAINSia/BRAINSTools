@@ -80,6 +80,7 @@ void AdaptOriginAndDirection( typename TImageType::Pointer image )
 int main(int argc, char * *argv)
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
 
   const bool debug = true;
   if( debug )

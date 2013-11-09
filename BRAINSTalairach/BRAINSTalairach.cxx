@@ -27,10 +27,12 @@
 #include "itkImageFileWriter.h"
 #include "itkPoint.h"
 #include "itkImageIteratorWithIndex.h"
+#include <BRAINSCommonLib.h>
 
 int main(int argc, char *argv[])
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
 
   if( ( AC.size() != 3 ) || ( PC.size() != 3 ) || ( IRP.size() != 3 ) || ( SLA.size() != 3 ) )
     {

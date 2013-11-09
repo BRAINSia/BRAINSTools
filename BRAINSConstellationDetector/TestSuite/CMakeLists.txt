@@ -29,7 +29,7 @@ set(ALL_PROGS_LIST
 
 ## Simple CLP programs without TestDriver wrappers
 foreach(prog ${ALL_PROGS_LIST})
-  StandardBRAINSBuildMacro(NAME ${prog} TARGET_LIBRARIES landmarksConstellationCOMMONLIB )
+  StandardBRAINSBuildMacro(NAME ${prog} TARGET_LIBRARIES landmarksConstellationCOMMONLIB BRAINSCommonLib )
 endforeach()
 
 if( ${BRAINSTools_MAX_TEST_LEVEL} GREATER 8) # This should be restored after fixing.

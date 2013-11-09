@@ -27,6 +27,7 @@
 #include "vtkPoints.h"
 #include "vtkCurvatures.h"
 
+#include <BRAINSCommonLib.h>
 #include "BRAINSAssignSurfaceFeaturesCLP.h"
 
 #include <vtkSmartPointer.h>
@@ -35,6 +36,7 @@
 int main( int argc, char * *argv )
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
   if( inputSurfaceFile == "" )
     {
     std::cerr << "No input file specified" << std::endl;

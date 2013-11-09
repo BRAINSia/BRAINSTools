@@ -10,6 +10,7 @@
 int CreateMask(int argc, char *argv[])
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
 
   const bool debug = true;
 

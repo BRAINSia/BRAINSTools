@@ -1,4 +1,4 @@
-StandardBRAINSBuildMacro(NAME WarpQuadEdgeMesh TARGET_LIBRARIES ${ITK_LIBRARIES})
+StandardBRAINSBuildMacro(NAME WarpQuadEdgeMesh TARGET_LIBRARIES BRAINSCommonLib)
 
 if (BUILD_TESTING)
 

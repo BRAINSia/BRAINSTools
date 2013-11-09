@@ -18,6 +18,7 @@
 #include "linear.h"
 #include "LogisticRegression.h"
 #include "BRAINSContinuousClassCLP.h"
+#include <BRAINSCommonLib.h>
 
 template <class PixelType>
 int ContinuousClassification(std::string t1VolumeName, std::string T2VolumeName,
@@ -322,6 +323,7 @@ int ContinuousClassification(std::string t1VolumeName, std::string T2VolumeName,
 int main(int argc, char * argv [])
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
 
   bool violated = false;
   if( inputT1Volume.size() == 0 )

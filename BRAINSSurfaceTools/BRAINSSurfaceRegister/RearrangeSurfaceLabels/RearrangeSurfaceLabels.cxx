@@ -30,10 +30,12 @@
 #include <iomanip>  // format manipulation
 
 #include "RearrangeSurfaceLabelsCLP.h"
+#include <BRAINSCommonLib.h>
 
 int main( int argc, char * argv[] )
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
 
   // read a surface with labels
   vtkSmartPointer<vtkPolyDataReader> reader = vtkSmartPointer<vtkPolyDataReader>::New();

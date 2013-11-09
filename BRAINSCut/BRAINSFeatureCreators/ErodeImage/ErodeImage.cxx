@@ -13,10 +13,12 @@
 #include "itkMaskImageFilter.h"
 #include "itkMeanImageFilter.h"
 #include "ErodeImageCLP.h"
+#include <BRAINSCommonLib.h>
 
 int main(int argc, char *argv[])
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
 
   bool violated = false;
   if( inputVolume.size() == 0 )

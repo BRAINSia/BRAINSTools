@@ -29,6 +29,7 @@
 #include "itkMultiModeHistogramThresholdBinaryImageFilter.h"
 #include "itkImageRegionIteratorWithIndex.h"
 #include "itkBRAINSROIAutoImageFilter.h"
+#include <BRAINSCommonLib.h>
 
 typedef itk::Image<signed short, 3>  ImageType;
 typedef itk::Image<unsigned char, 3> MaskImageType;
@@ -36,6 +37,7 @@ typedef itk::Image<unsigned char, 3> MaskImageType;
 int main(int argc, char *argv[])
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
   if( inputVolumes.size() < 1 )
     {

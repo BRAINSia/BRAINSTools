@@ -16,6 +16,11 @@
 
 =========================================================================*/
 
+#include <cstdlib>
+#include <sys/stat.h>
+#include <ctime>
+#include <algorithm>
+
 #include "vtkPolyDataReader.h"
 #include "vtkXMLPolyDataReader.h"
 #include "vtkPolyData.h"
@@ -30,13 +35,10 @@
 #include "vtkIdList.h"
 #include "itksys/SystemTools.hxx"
 
+#include "itkNumberToString.h"
+#include <BRAINSCommonLib.h>
 #include "BRAINSMeasureSurfaceCLP.h"
 
-#include <cstdlib>
-#include <sys/stat.h>
-#include <ctime>
-#include <algorithm>
-#include "itkNumberToString.h"
 template <class T>
 const T & min( const T & a, const T & b )
 {
@@ -47,6 +49,7 @@ const T & min( const T & a, const T & b )
 int main( int argc, char * *argv )
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
 
   std::cout << "Surface Measurement Parameters" << std::endl;
   std::cout << "------------------------------------------------------" << std::endl;

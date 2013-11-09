@@ -37,10 +37,12 @@ See License.txt or http://www.slicer.org/copyright/copyright.txt for details.
 #include "BRAINSThreadControl.h"
 
 #include "itkPermuteAxesImageFilter.h"
+#include <BRAINSCommonLib.h>
 
 int main(int argc, char* argv[])
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
 
   bool violated = false;

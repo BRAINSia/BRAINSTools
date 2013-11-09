@@ -51,6 +51,7 @@ PURPOSE.  See the above copyright notices for more information.
 int main(int argc, char *argv[])
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
 
   std::cout << "Input Transform: " <<  inputTransform << std::endl;

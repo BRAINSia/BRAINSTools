@@ -28,10 +28,12 @@
 #include "itkAssignScalarValuesQuadEdgeMeshFilter.h"
 
 #include "WarpQuadEdgeMeshCLP.h"
+#include <BRAINSCommonLib.h>
 
 int main( int argc, char * argv [] )
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
 
   std::cout << "-----------------------------------------------" << std::endl;
   std::cout << "Input Fixed Mesh: " << std::endl;

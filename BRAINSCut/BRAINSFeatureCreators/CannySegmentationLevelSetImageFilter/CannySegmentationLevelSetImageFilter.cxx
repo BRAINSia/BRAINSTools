@@ -96,6 +96,7 @@
 #include "itkZeroCrossingImageFilter.h"
 
 #include "CannySegmentationLevelSetImageFilterCLP.h"
+#include <BRAINSCommonLib.h>
 
 int main( int argc, char *argv[] )
 {
@@ -113,6 +114,7 @@ int main( int argc, char *argv[] )
     return 1;
     }*/
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
 
   //  Software Guide : BeginLatex
   //  We define the image type using a particular pixel type and

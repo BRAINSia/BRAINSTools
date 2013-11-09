@@ -35,6 +35,8 @@
 
 #include "gtractFiberTrackingCLP.h"
 #include "BRAINSThreadControl.h"
+#include <BRAINSCommonLib.h>
+
 template <class TImageType>
 void AdaptOriginAndDirection( typename TImageType::Pointer image )
 {
@@ -96,6 +98,7 @@ vtkMatrix4x4 * CreateIjkToRasMatrix( typename TImageType::Pointer image )
 int main(int argc, char *argv[])
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
 
   const bool debug = true;

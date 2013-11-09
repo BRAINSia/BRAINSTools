@@ -34,6 +34,7 @@
 int main(int argc, char *argv[])
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
 
   typedef float CharPixelType;            //  IO
   typedef float RealPixelType;            //  Operations

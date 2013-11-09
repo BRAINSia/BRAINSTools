@@ -29,6 +29,7 @@
 #include <itkExtractImageFilter.h>
 #include <vcl_algorithm.h>
 
+#include <BRAINSCommonLib.h>
 #include "itkIO.h"
 #include "itkLargestForegroundFilledMaskImageFilter.h"
 #include "itkBRAINSROIAutoImageFilter.h"
@@ -122,6 +123,7 @@ BRAINSROIAUTOWriteOutputVolume(VolumeImageType::Pointer image,
 int main(int argc, char *argv[])
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
   if( inputVolume == "" )
     {

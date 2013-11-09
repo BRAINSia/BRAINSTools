@@ -17,10 +17,12 @@
 #include <cmath>
 #include "Slicer3LandmarkIO.h"
 #include "insertMidACPCpointCLP.h"
+#include <BRAINSCommonLib.h>
 
 int main( int argc, char * argv[] )
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
 
   std::map<std::string, PointType> lmksMap;
   PointType                        ACpoint;

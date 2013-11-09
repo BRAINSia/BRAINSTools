@@ -19,10 +19,12 @@
 #include "BRAINSTalairachMaskCLP.h"
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
+#include <BRAINSCommonLib.h>
 
 int main(int argc, char *argv[])
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
 
   const int dimension = 3;
   typedef itk::Image<unsigned char, dimension> ImageType;

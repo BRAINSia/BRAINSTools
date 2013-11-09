@@ -36,10 +36,12 @@
 #include "itkGradientAnisotropicDiffusionImageFilter.h"
 
 #include "GradientAnisotropicDiffusionImageFilterCLP.h"
+#include <BRAINSCommonLib.h>
 
 int main( int argc, char * argv[] )
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
 
   // PARSE_ARG brings following:
   //  input/outputVolume, timeStep, conductance, numberOfIterations

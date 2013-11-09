@@ -17,6 +17,7 @@
 #include <vcl_algorithm.h>
 
 #include "DWICompareCLP.h"
+#include <BRAINSCommonLib.h>
 
 namespace
 {
@@ -26,6 +27,7 @@ template <class PixelType>
 int DoIt( int argc, char * argv[], PixelType )
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
 
   typedef itk::VectorImage<PixelType, DIMENSION>       DiffusionImageType;
   typedef itk::Image<PixelType, DIMENSION>             ScalarImageType;
@@ -214,6 +216,7 @@ void GetImageType(std::string fileName,
 int main( int argc, char * argv[] )
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
 
   itk::ImageIOBase::IOPixelType     pixelType;
   itk::ImageIOBase::IOComponentType componentType;

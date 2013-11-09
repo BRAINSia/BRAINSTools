@@ -22,6 +22,7 @@ PURPOSE.  See the above copyright notices for more information.
 #include "BRAINSFitHelper.h"
 #include "BRAINSFitCLP.h"
 
+
 // This program was modified from
 // Insight/Examples/Registration/ImageRegistration8.cxx
 // and is an improved replacement for the old (and defective)
@@ -106,6 +107,7 @@ DebugImageViewerClient DebugImageDisplaySender;
 int main(int argc, char *argv[])
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
 
 #ifdef USE_DebugImageViewer
   if( UseDebugImageViewer )

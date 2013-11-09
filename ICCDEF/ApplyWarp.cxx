@@ -42,6 +42,7 @@ void PrintImageMinAndMax(TImage * inputImage)
 int ApplyWarp(int argc, char *argv[])
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
 
   const bool useTransform = (warpTransform.size() > 0);
     {

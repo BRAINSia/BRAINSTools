@@ -17,6 +17,7 @@
 // Use modified itkKernelTransform to get affine transform
 #include "itkKernelTransform.h"
 #include "itkThinPlateSplineKernelTransform.h"
+#include <BRAINSCommonLib.h>
 
 template <class TScalarType,
           unsigned int NDimension>
@@ -72,6 +73,7 @@ LandmarksVectorType LoadLandmarks( std::string filename );
 int main( int argc, char * argv[] )
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
 
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
   if( ( inputMovingLandmarks.compare( "" ) == 0 )

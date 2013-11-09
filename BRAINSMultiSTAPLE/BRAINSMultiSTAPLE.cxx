@@ -30,6 +30,7 @@ printImageStats(const TImage *image)
 int main(int argc, char *argv[])
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
 
   if( inputCompositeT1Volume == "" )
     {

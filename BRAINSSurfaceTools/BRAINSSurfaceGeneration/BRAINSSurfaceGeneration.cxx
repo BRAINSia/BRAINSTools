@@ -30,6 +30,8 @@
 #include "vtkPolyDataReader.h"
 #include "vtkTransformPolyDataFilter.h"
 #include "vtkExtractEdges.h"
+#include <vtksys/SystemTools.hxx>
+#include <vtkSmartPointer.h>
 
 #include "itkConvertVTKToQuadEdgeMeshFilter.h"
 #include "itkQuadEdgeMesh.h"
@@ -41,13 +43,12 @@
 #include "itkVTKPolyDataWriter.h"
 
 #include "BRAINSSurfaceGenerationCLP.h"
-
-#include <vtksys/SystemTools.hxx>
-#include <vtkSmartPointer.h>
+#include <BRAINSCommonLib.h>
 
 int main( int argc, char * *argv )
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
   if( (inputImageFile == "") && (inputSurfaceFile == "") )
     {
     std::cerr << "No input file specified" << std::endl;

@@ -6,10 +6,12 @@
 #include "itkNoiseImageFilter.h"
 
 #include "TextureFromNoiseImageFilterCLP.h"
+#include <BRAINSCommonLib.h>
 
 int main(int argc, char *argv[])
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
 
   typedef float PixelType;
   const unsigned int Dimension = 3;

@@ -14,12 +14,14 @@
 #include "itkImageFileWriter.h"
 
 #include <iostream>
+#include <BRAINSCommonLib.h>
 
 int main(int argc, char *argv[])
 {
   // HACK:  NOTE THIS PROGRAM STILL USES ARGV ARGC, and ignores the PARSE_ARGS.
   // It needs to be fixed.
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
   // Image, filter typedef
   const unsigned int LocalImageDimension = 3;
 

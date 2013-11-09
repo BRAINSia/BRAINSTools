@@ -26,10 +26,12 @@
 
 #include "vtkMaskLabel.h"
 #include "RemoveTinyLabelsCLP.h"
+#include <BRAINSCommonLib.h>
 
 int main( int argc, char * argv[] )
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
 
   std::cout << "-----------------------------------------------" << std::endl;
   std::cout << "Input Surface: " << std::endl;

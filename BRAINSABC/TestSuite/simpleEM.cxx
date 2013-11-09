@@ -45,7 +45,6 @@ int simpleRunEMS( std::string t1Volume,
                   double likelihoodTolerance)
 {
   const int status = -1;
-  // PARSE_ARGS;
   /** read parameters            **/
   /** - read target input images **/
   std::string T1FileName(t1Volume);
@@ -297,6 +296,7 @@ int simpleRunEMS( std::string t1Volume,
 int main(int argc, char *argv[])
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
   const int status
     = simpleRunEMS<float, float>(t1Volume,
                                  t2Volume,

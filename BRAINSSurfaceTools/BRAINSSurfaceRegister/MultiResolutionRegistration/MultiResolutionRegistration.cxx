@@ -30,10 +30,12 @@
 #include "itkQuadEdgeMeshGenerateDeformationFieldFilter.h"
 #include "itkResampleDestinationPointsQuadEdgeMeshFilter.h"
 #include "MultiResolutionRegistrationCLP.h"
+#include <BRAINSCommonLib.h>
 
 int main( int argc, char * argv [] )
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
   // check the input fixed mesh list
   if( fixedMeshFileList.size() != 4 )
     {

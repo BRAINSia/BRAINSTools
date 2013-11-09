@@ -334,6 +334,7 @@ CreateTypedMap(const AtlasRegType::StringVector &keys, const AtlasRegType::Strin
 int main(int argc, char * *argv)
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
 
   // TODO:  Need to figure out how to conserve memory better during the running

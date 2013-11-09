@@ -36,10 +36,12 @@
 
 #include <iostream>
 #include <fstream>
+#include <BRAINSCommonLib.h>
 
 int main( int argc, char *argv[] )
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
 
   if( inputVolume == "na"  || inputMaskVolume == "na" )
     {

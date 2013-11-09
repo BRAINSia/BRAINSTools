@@ -484,6 +484,7 @@ int main(int argc, char *argv[])
 
     {
     PARSE_ARGS;
+    BRAINSRegisterAlternateIO();
     std::cout << "Viewer:" << UseDebugImageViewer << std::endl;
 #ifdef USE_DEBUG_IMAGE_VIEWER
     DebugImageDisplaySender.SetEnabled(UseDebugImageViewer);

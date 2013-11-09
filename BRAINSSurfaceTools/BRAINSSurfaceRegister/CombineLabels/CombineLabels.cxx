@@ -24,10 +24,12 @@
 #include "vtkDataArray.h"
 
 #include "CombineLabelsCLP.h"
+#include <BRAINSCommonLib.h>
 
 int main( int argc, char * argv[] )
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
 
   // paramters:
   std::cout << "-----------------------------------------" << std::endl;

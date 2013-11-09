@@ -25,6 +25,7 @@
 #endif
 
 #include "HammerAttributeCreatorCLP.h"
+#include <BRAINSCommonLib.h>
 
 typedef itk::Image<float, 3>               ImageType;
 typedef itk::HammerTissueAttributeVector   AttributeVectorType;
@@ -62,6 +63,7 @@ static void WriteAttributeComponent(const std::string& filename, AttributeImageT
 int main(int argc, char *argv[])
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
   /*** Load in fixed image and compute the attribute vectors ***/
   itk::ImageFileReader<ImageType>::Pointer gmReader
     = itk::ImageFileReader<ImageType>::New();

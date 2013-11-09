@@ -90,19 +90,19 @@ foreach(CLP DWICompare DWISimpleCompare)
   set ( ${CLP}_SOURCE ${CLP}.cxx)
   generateclp(${CLP}_SOURCE ${CLP}.xml)
   add_executable(${CLP} ${${CLP}_SOURCE})
-  target_link_libraries (${CLP} DWIConvertSupportLib )
+  target_link_libraries (${CLP} DWIConvertSupportLib BRAINSCommonLib )
 endforeach()
 
 #
 # build FSL test program
 add_executable(FSLTextFileCompare FSLTextFileCompare.cxx)
-target_link_libraries (FSLTextFileCompare DWIConvertSupportLib )
+target_link_libraries (FSLTextFileCompare DWIConvertSupportLib BRAINSCommonLib )
 
 #
 # This program not currently used but hey, might come in
 # handy.
 add_executable(NrrdToNIfTI NrrdToNIfTI.cxx)
-target_link_libraries(NrrdToNIfTI DWIConvertSupportLib)
+target_link_libraries(NrrdToNIfTI DWIConvertSupportLib BRAINSCommonLib )
 
 #
 # This isn't used; we use a CMake Script to handle running the

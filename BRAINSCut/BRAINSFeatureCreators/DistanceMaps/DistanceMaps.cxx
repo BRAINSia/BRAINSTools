@@ -7,10 +7,12 @@
 #include <itkBinaryThresholdImageFilter.h>
 #include "itkMaskImageFilter.h"
 #include "DistanceMapsCLP.h"
+#include <BRAINSCommonLib.h>
 
 int main(int argc, char *argv[])
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
 
   bool violated = false;
   if( inputLabelVolume.size() == 0 )

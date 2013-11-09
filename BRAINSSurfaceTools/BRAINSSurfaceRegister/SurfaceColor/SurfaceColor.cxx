@@ -33,10 +33,12 @@ PURPOSE.  See the above copyright notices for more information.
 #include "vtkSmartPointer.h"
 
 #include "SurfaceColorCLP.h"
+#include <BRAINSCommonLib.h>
 
 int main( int argc, char * argv[] )
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
 
   std::cout << "---------------------------------------------------" << std::endl;
   std::cout << "Apply " << numOfLabels << " labels from: " << std::endl;

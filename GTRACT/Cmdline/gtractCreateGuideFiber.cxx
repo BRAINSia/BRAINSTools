@@ -32,6 +32,7 @@
 #include <vtkXMLPolyDataReader.h>
 #include <vtkAppendPolyData.h>
 #include <vtkSplineFilter.h>
+#include <BRAINSCommonLib.h>
 
 // ///////////// VTK Version Compatibility   //////////////////////////////
 #ifndef vtkFloatingPointType
@@ -45,6 +46,7 @@ typedef float vtkFloatingPointType;
 int main(int argc, char *argv[])
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
 
   const bool debug = true;

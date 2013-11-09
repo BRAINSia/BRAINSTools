@@ -22,10 +22,12 @@
 
 #include "itkNaryRelabelImageFilter.h"
 #include "LabelMapsCLP.h"
+#include <BRAINSCommonLib.h>
 
 int main( int argc, char * argv[] )
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
 
   std::cout << "---------------------------------------------------" << std::endl;
   std::cout << "Generate a labelmap out of label files:" << std::endl;

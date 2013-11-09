@@ -8,10 +8,12 @@
 #include "itkCastImageFilter.h"
 
 #include "GenerateTestImageCLP.h"
+#include <BRAINSCommonLib.h>
 
 int main(int argc, char *argv[])
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
   const unsigned int dimension = 3;
   typedef itk::Image<double, dimension>        InputImageType;
   typedef itk::Image<unsigned char, dimension> OutputImageType;

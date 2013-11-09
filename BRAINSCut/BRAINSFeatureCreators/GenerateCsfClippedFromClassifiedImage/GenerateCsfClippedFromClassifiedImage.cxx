@@ -7,12 +7,14 @@
 #include <itkImageFileWriter.h>
 #include <itkRescaleIntensityImageFilter.h>
 
+#include <BRAINSCommonLib.h>
 #include "GenerateCsfClippedFromClassifiedImageCLP.h"
 
 int
 main(int argc, char * *argv)
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
 
   typedef float PixelType;
   const unsigned int Dim = 3;

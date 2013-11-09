@@ -1,4 +1,4 @@
-StandardBRAINSBuildMacro(NAME ProbabilityLabels TARGET_LIBRARIES ${ITK_LIBRARIES} ${VTK_LIBRARIES})
+StandardBRAINSBuildMacro(NAME ProbabilityLabels TARGET_LIBRARIES BRAINSCommonLib ${VTK_LIBRARIES})
 
 if (BUILD_TESTING)
 

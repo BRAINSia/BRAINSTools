@@ -14,6 +14,7 @@ include_directories(
   )
 
 set(BRAINSCommonLib_SRCS
+  BRAINSCommonLib.cxx
   GenericTransformImage.cxx
   BRAINSFitHelper.cxx
   Slicer3LandmarkWeightIO.cxx

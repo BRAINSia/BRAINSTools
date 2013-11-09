@@ -22,10 +22,12 @@
 #include "itkQuadEdgeMesh.h"
 
 #include "SmoothingMeshScalarsCLP.h"
+#include <BRAINSCommonLib.h>
 
 int main( int argc, char *argv[] )
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
 
   if( inputSurfaceFile == "" )
     {

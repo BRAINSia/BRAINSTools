@@ -10,10 +10,12 @@
 #include "itkSaltAndPepperNoiseImageFilter.h"
 #include "itkShotNoiseImageFilter.h"
 #include "NoiseGeneratorCLP.h"
+#include <BRAINSCommonLib.h>
 
 int main(int argc, char * argv[])
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
 
   bool violated = false;
   if( inputVolume == "" )

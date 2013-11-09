@@ -27,10 +27,12 @@
 #include "itkAssignScalarValuesQuadEdgeMeshFilter.h"
 
 #include "AverageScalarsByResamplingCLP.h"
+#include <BRAINSCommonLib.h>
 
 int main( int argc, char * argv [] )
 {
   PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
   // check the deformed template files
   if( int(deformedTemplateMeshList.size() ) != numSubs )
     {

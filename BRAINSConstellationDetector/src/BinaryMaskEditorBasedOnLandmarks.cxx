@@ -137,7 +137,7 @@ CutBinaryVolumeByPointWithDirection( typename TImageType::Pointer * _imageVolume
   // set directional constant for convenient programming
   enum DIRECTION
     {
-    ANTERIOR, POSTERIOR, LEFT, RIGHT, SUPERIOR, INFERIOR
+    ANTERIOR, POSTERIOR, LEFT, RIGHT, SUPERIOR, INFERIOR, UNKOWN_DIRECTION
     } myDirection;
 
   if( _direction == "ANTERIOR" )
@@ -164,6 +164,10 @@ CutBinaryVolumeByPointWithDirection( typename TImageType::Pointer * _imageVolume
     {
     myDirection = INFERIOR;
     }
+  else
+    {
+    myDirection = UNKOWN_DIRECTION;
+    }
 
   typedef itk::ImageRegionIterator<TImageType> ImageRegionIteratorType;
   ImageRegionIteratorType it(  *_imageVolume,
@@ -182,7 +186,6 @@ CutBinaryVolumeByPointWithDirection( typename TImageType::Pointer * _imageVolume
           {
           it.Set( 0.0F );
           }
-        ;                                                                     // RIGHT
         }
         break;
       case LEFT:
@@ -191,7 +194,6 @@ CutBinaryVolumeByPointWithDirection( typename TImageType::Pointer * _imageVolume
           {
           it.Set( 0.0F );
           }
-        ;                                                                     // LEFT
         }
         break;
       case ANTERIOR:
@@ -200,7 +202,6 @@ CutBinaryVolumeByPointWithDirection( typename TImageType::Pointer * _imageVolume
           {
           it.Set( 0.0F );
           }
-        ;                                                                     // ANTERIOR
         }
         break;
       case POSTERIOR:
@@ -209,7 +210,6 @@ CutBinaryVolumeByPointWithDirection( typename TImageType::Pointer * _imageVolume
           {
           it.Set( 0.0F );
           }
-        ;                                                                     // POSTERIOR
         }
         break;
       case INFERIOR:
@@ -218,7 +218,6 @@ CutBinaryVolumeByPointWithDirection( typename TImageType::Pointer * _imageVolume
           {
           it.Set( 0.0F );
           }
-        ;                                                                     // INFERIOR
         }
         break;
       case SUPERIOR:
@@ -227,9 +226,13 @@ CutBinaryVolumeByPointWithDirection( typename TImageType::Pointer * _imageVolume
           {
           it.Set( 0.0F );
           }
-        ;                                                                     // SUPERIOR
         }
         break;
+      case UNKOWN_DIRECTION:
+        {
+        assert(0 == 1 );
+        break;
+        }
       }
     }
 }

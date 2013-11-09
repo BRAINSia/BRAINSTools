@@ -12,12 +12,6 @@ set(CMAKE_MODULE_PATH
   )
 
 #-----------------------------------------------------------------------------
-find_package(VTK REQUIRED)
-if(VTK_FOUND)
-  include(${VTK_USE_FILE})
-endif()
-
-#-----------------------------------------------------------------------------
 find_package(ITK REQUIRED)
 if(Slicer_BUILD_BRAINSTOOLS)
   set(ITK_NO_IO_FACTORY_REGISTER_MANAGER 1)
@@ -29,6 +23,14 @@ find_package(SlicerExecutionModel REQUIRED GenerateCLP)
 include(${GenerateCLP_USE_FILE})
 include(${SlicerExecutionModel_USE_FILE})
 include(${SlicerExecutionModel_CMAKE_DIR}/SEMMacroBuildCLI.cmake)
+
+#-----------------------------------------------------------------------------
+if(USE_AutoWorkup OR USE_GTRACT OR USE_BRAINSTalairach OR USE_BRAINSSurfaceTools)
+  find_package(VTK REQUIRED)
+  if(VTK_FOUND)
+    include(${VTK_USE_FILE})
+  endif()
+endif()
 
 if(USE_ANTS)
   # find ANTS includes

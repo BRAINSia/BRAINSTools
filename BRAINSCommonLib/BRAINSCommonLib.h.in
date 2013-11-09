@@ -23,6 +23,7 @@
 
 #cmakedefine USE_ANTS
 
-#define USE_MGHIO
+#cmakedefine ITK_HAS_MGHIO
 extern void BRAINSRegisterAlternateIO(void);
+
 #endif // __BRAINSCommonLib_h

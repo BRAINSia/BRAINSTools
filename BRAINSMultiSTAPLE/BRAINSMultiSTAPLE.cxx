@@ -10,6 +10,8 @@
 #include <sstream>
 #include <vector>
 
+#include "BRAINSCommonLib.h"
+
 template <typename TImage>
 void
 printImageStats(const TImage *image)

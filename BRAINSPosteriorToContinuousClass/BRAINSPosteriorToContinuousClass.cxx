@@ -5,6 +5,7 @@
 #include "itkImageRegionConstIterator.h"
 #include "itkImageRegionIterator.h"
 #include "BRAINSPosteriorToContinuousClassCLP.h"
+#include "BRAINSCommonLib.h"
 
 int main(int argc, char * *argv)
 {

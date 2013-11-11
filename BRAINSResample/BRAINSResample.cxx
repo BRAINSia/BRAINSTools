@@ -31,6 +31,8 @@
 
 #include "itkGridImageSource.h"
 
+#include "BRAINSCommonLib.h"
+
 typedef float                                                                  InternalPixelType;
 typedef itk::Image<InternalPixelType, GenericTransformImageNS::SpaceDimension> TBRAINSResampleInternalImageType;
 typedef TBRAINSResampleInternalImageType                                       TBRAINSResampleReferenceImageType;
@@ -98,133 +100,131 @@ int main(int argc, char *argv[])
       }
     std::cout << "=====================================================" << std::endl;
     }
-
-  TBRAINSResampleInternalImageType::Pointer PrincipalOperandImage;  // image to be warped
+  try
     {
+    TBRAINSResampleInternalImageType::Pointer PrincipalOperandImage;  // image to be warped
     typedef itk::ImageFileReader<TBRAINSResampleInternalImageType> ReaderType;
     ReaderType::Pointer imageReader = ReaderType::New();
     imageReader->SetFileName(inputVolume);
     imageReader->Update();
     PrincipalOperandImage = imageReader->GetOutput();
-    }
 
-  // Read ReferenceVolume and DeformationVolume
-  typedef double                                                                    VectorComponentType;
-  typedef itk::Vector<VectorComponentType, GenericTransformImageNS::SpaceDimension> VectorPixelType;
-  typedef itk::Image<VectorPixelType,  GenericTransformImageNS::SpaceDimension>     DisplacementFieldType;
-  typedef itk::DisplacementFieldTransform<VectorComponentType,GenericTransformImageNS::SpaceDimension>
-    DisplacementFieldTransformType;
-  // An empty SmartPointer constructor sets up someImage.IsNull() to represent a not-supplied state:
-  TBRAINSResampleReferenceImageType::Pointer ReferenceImage;
+    // Read ReferenceVolume and DeformationVolume
+    typedef double                                                                    VectorComponentType;
+    typedef itk::Vector<VectorComponentType, GenericTransformImageNS::SpaceDimension> VectorPixelType;
+    typedef itk::Image<VectorPixelType,  GenericTransformImageNS::SpaceDimension>     DisplacementFieldType;
+    typedef itk::DisplacementFieldTransform<VectorComponentType,GenericTransformImageNS::SpaceDimension>
+      DisplacementFieldTransformType;
+    // An empty SmartPointer constructor sets up someImage.IsNull() to represent a not-supplied state:
+    TBRAINSResampleReferenceImageType::Pointer ReferenceImage;
 
-  typedef itk::ImageFileReader<TBRAINSResampleReferenceImageType> ReaderType;
-  ReaderType::Pointer refImageReader = ReaderType::New();
-  if( referenceVolume.size() > 0 )
-    {
-    refImageReader->SetFileName(referenceVolume);
-    }
-  else
-    {
-    std::cout << "Warning:  missing Reference Volume defaulted to inputVolume" << std::endl;
-    refImageReader->SetFileName(inputVolume);
-    }
-  refImageReader->Update();
-  ReferenceImage = refImageReader->GetOutput();
-
-  // An empty SmartPointer constructor sets up someTransform.IsNull() to
-  // represent a not-supplied state:
-  GenericTransformType::Pointer genericTransform;
-
-  if( useDisplacementField )  // it's a warp deformation field
-    {
-    DisplacementFieldType::Pointer DisplacementField;
-
-    typedef itk::ImageFileReader<DisplacementFieldType> DefFieldReaderType;
-    DefFieldReaderType::Pointer fieldImageReader = DefFieldReaderType::New();
-    fieldImageReader->SetFileName( deformationVolume );
-    fieldImageReader->Update();
-    DisplacementField = fieldImageReader->GetOutput();
-    DisplacementFieldTransformType::Pointer dispTransform =
-      DisplacementFieldTransformType::New();
-    dispTransform->SetDisplacementField(DisplacementField.GetPointer());
-    genericTransform = dispTransform.GetPointer();
-    }
-  else if( useTransform )
-    {
-    try
+    typedef itk::ImageFileReader<TBRAINSResampleReferenceImageType> ReaderType;
+    ReaderType::Pointer refImageReader = ReaderType::New();
+    if( referenceVolume.size() > 0 )
       {
-      if ( warpTransform == "Identity" )
-        {
-        itk::VersorRigid3DTransform<double>::Pointer rigidIdentity = itk::VersorRigid3DTransform<double>::New();
-        rigidIdentity->SetIdentity();
-        genericTransform = rigidIdentity.GetPointer();
-        }
-      else
-        {
-        genericTransform = itk::ReadTransformFromDisk( warpTransform );
-        }
+      refImageReader->SetFileName(referenceVolume);
       }
-    catch( itk::ExceptionObject & excp )
+    else
       {
-      std::cout << "******* HERE *******" << __FILE__ << " " << __LINE__ << excp << std::endl;
-      throw excp;
+      std::cout << "Warning:  missing Reference Volume defaulted to inputVolume" << std::endl;
+      refImageReader->SetFileName(inputVolume);
       }
-    if( inverseTransform )
+    refImageReader->Update();
+    ReferenceImage = refImageReader->GetOutput();
+
+    // An empty SmartPointer constructor sets up someTransform.IsNull() to
+    // represent a not-supplied state:
+    GenericTransformType::Pointer genericTransform;
+
+    if( useDisplacementField )  // it's a warp deformation field
       {
-      std::string transformFileType = genericTransform->GetNameOfClass();
-      std::cout << "Transform File Type:: " << transformFileType << std::endl;
-      if( transformFileType == "AffineTransform" )
+      DisplacementFieldType::Pointer DisplacementField;
+
+      typedef itk::ImageFileReader<DisplacementFieldType> DefFieldReaderType;
+      DefFieldReaderType::Pointer fieldImageReader = DefFieldReaderType::New();
+      fieldImageReader->SetFileName( deformationVolume );
+      fieldImageReader->Update();
+      DisplacementField = fieldImageReader->GetOutput();
+      DisplacementFieldTransformType::Pointer dispTransform =
+        DisplacementFieldTransformType::New();
+      dispTransform->SetDisplacementField(DisplacementField.GetPointer());
+      genericTransform = dispTransform.GetPointer();
+      }
+    else if( useTransform )
+      {
+      try
         {
-        typedef itk::AffineTransform<double, 3>
-          AffineTransformType;
-        const AffineTransformType::ConstPointer affineTransform =
-          dynamic_cast<AffineTransformType const *>(
-            genericTransform.GetPointer() );
-
-        AffineTransformType::Pointer Local_inverseTransform = AffineTransformType::New();
-        affineTransform->GetInverse( Local_inverseTransform );
-
-        genericTransform = Local_inverseTransform;
-        if( genericTransform.IsNull() )
+        if ( warpTransform == "Identity" )
           {
-          std::cout << "Error in type conversion " << __FILE__ << __LINE__ << std::endl;
-          return EXIT_FAILURE;
+          itk::VersorRigid3DTransform<double>::Pointer rigidIdentity = itk::VersorRigid3DTransform<double>::New();
+          rigidIdentity->SetIdentity();
+          genericTransform = rigidIdentity.GetPointer();
+          }
+        else
+          {
+          genericTransform = itk::ReadTransformFromDisk( warpTransform );
           }
         }
-      else if( transformFileType == "VersorRigid3DTransform" )
+      catch( itk::ExceptionObject & excp )
         {
-        typedef itk::VersorRigid3DTransform<double>
-          RigidTransformType;
-        const RigidTransformType::ConstPointer rigidTransform =
-          dynamic_cast<RigidTransformType const *>(
-            genericTransform.GetPointer() );
-        if( rigidTransform.IsNull() )
-          {
-          std::cout << "Error in type conversion " << __FILE__ << __LINE__ << std::endl;
-          return EXIT_FAILURE;
-          }
-
-        RigidTransformType::Pointer Local_inverseTransform = RigidTransformType::New();
-        rigidTransform->GetInverse( Local_inverseTransform );
-
-        genericTransform = Local_inverseTransform;
-
-        if( genericTransform.IsNull() )
-          {
-          std::cout << "Error in type conversion " << __FILE__ << __LINE__ << std::endl;
-          return EXIT_FAILURE;
-          }
+        std::cout << "******* HERE *******" << __FILE__ << " " << __LINE__ << excp << std::endl;
+        throw excp;
         }
-      else
+      if( inverseTransform )
         {
-        std::cout << "*** ERROR ***" << std::endl
-                  << " The transform type of " << transformFileType
-                  << " does NOT support inverse transformation" << std::endl;
+        std::string transformFileType = genericTransform->GetNameOfClass();
+        std::cout << "Transform File Type:: " << transformFileType << std::endl;
+        if( transformFileType == "AffineTransform" )
+          {
+          typedef itk::AffineTransform<double, 3>
+            AffineTransformType;
+          const AffineTransformType::ConstPointer affineTransform =
+            dynamic_cast<AffineTransformType const *>(
+              genericTransform.GetPointer() );
+
+          AffineTransformType::Pointer Local_inverseTransform = AffineTransformType::New();
+          affineTransform->GetInverse( Local_inverseTransform );
+
+          genericTransform = Local_inverseTransform;
+          if( genericTransform.IsNull() )
+            {
+            std::cout << "Error in type conversion " << __FILE__ << __LINE__ << std::endl;
+            return EXIT_FAILURE;
+            }
+          }
+        else if( transformFileType == "VersorRigid3DTransform" )
+          {
+          typedef itk::VersorRigid3DTransform<double>
+            RigidTransformType;
+          const RigidTransformType::ConstPointer rigidTransform =
+            dynamic_cast<RigidTransformType const *>(
+              genericTransform.GetPointer() );
+          if( rigidTransform.IsNull() )
+            {
+            std::cout << "Error in type conversion " << __FILE__ << __LINE__ << std::endl;
+            return EXIT_FAILURE;
+            }
+
+          RigidTransformType::Pointer Local_inverseTransform = RigidTransformType::New();
+          rigidTransform->GetInverse( Local_inverseTransform );
+
+          genericTransform = Local_inverseTransform;
+
+          if( genericTransform.IsNull() )
+            {
+            std::cout << "Error in type conversion " << __FILE__ << __LINE__ << std::endl;
+            return EXIT_FAILURE;
+            }
+          }
+        else
+          {
+          std::cout << "*** ERROR ***" << std::endl
+            << " The transform type of " << transformFileType
+            << " does NOT support inverse transformation" << std::endl;
+          }
         }
       }
-    }
-  try
-    {
+
     TBRAINSResampleInternalImageType::Pointer TransformedImage =
       GenericTransformImage<TBRAINSResampleInternalImageType, TBRAINSResampleInternalImageType, DisplacementFieldType>(
         PrincipalOperandImage,

@@ -8,11 +8,10 @@ include_directories(
 
 MakeTestDriverFromSEMTool(BRAINSABC BRAINSABCTest.cxx)
 
-if(${BRAINSTools_MAX_TEST_LEVEL} GREATER 8)
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME BRAINSABCSmallTest
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSABCTestDriver>
   --compare DATA{${TestData_DIR}/BRAINSABCSmallLabels.nii.gz}
-  ${CMAKE_CURRENT_BINARY_DIR}/BRAINSABCSmallLabels.nii.gz
+  ${CMAKE_CURRENT_BINARY_DIR}/BRAINSABCSmallLabels.test.nii.gz
   --compareIntensityTolerance 1
   --compareRadiusTolerance 1
   --compareNumberOfPixelsTolerance 10000
@@ -25,25 +24,22 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME BRAINSABCSmallTest
    --filterIteration 0
    --filterMethod GradientAnisotropicDiffusion
    --gridSize 10,10,10
-   --inputVolumeTypes T1,T1,T2,T2
+   --inputVolumeTypes T1,T1,T2
    --inputVolumes DATA{${TestData_DIR}/BRAINSABCSmall_T1.nii.gz}
    --inputVolumes DATA{${TestData_DIR}/BRAINSABCSmall_T1_offset.nii.gz}
    --inputVolumes DATA{${TestData_DIR}/BRAINSABCSmall_T2.nii.gz}
-   --inputVolumes DATA{${TestData_DIR}/BRAINSABCSmall_T2_offset.nii.gz}
    --interpolationMode Linear
    --maxBiasDegree 4
    --maxIterations 3
    --outputDir ./
    --outputDirtyLabels ${CMAKE_CURRENT_BINARY_DIR}/BRAINSABCSmallvolume_label_seg.nii.gz
    --outputFormat NIFTI
-   --outputLabels ${CMAKE_CURRENT_BINARY_DIR}/BRAINSABCSmallLabels.nii.gz
+   --outputLabels ${CMAKE_CURRENT_BINARY_DIR}/BRAINSABCSmallLabels.test.nii.gz
    --outputVolumes ${CMAKE_CURRENT_BINARY_DIR}/BRAINSABCSmallT1_1.nii.gz
    --outputVolumes ${CMAKE_CURRENT_BINARY_DIR}/BRAINSABCSmallT1_2.nii.gz
    --outputVolumes ${CMAKE_CURRENT_BINARY_DIR}/BRAINSABCSmallT2_1.nii.gz
-   --outputVolumes ${CMAKE_CURRENT_BINARY_DIR}/BRAINSABCSmallT2_2.nii.gz
    --posteriorTemplate ${CMAKE_CURRENT_BINARY_DIR}/BRAINSABCSmallPOST_%s.nii.gz
 )
-endif()
 
 if( ${BRAINSTools_MAX_TEST_LEVEL} GREATER 5) #These test takes way to long to run all the time
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME BRAINSABCLongTest

@@ -48,6 +48,8 @@
 #include <map>
 #include <vector>
 
+#include "BRAINSCommonLib.h"
+
 // Image, filter typedef
 const unsigned int LocalImageDimension = 3;
 typedef short PixelType;

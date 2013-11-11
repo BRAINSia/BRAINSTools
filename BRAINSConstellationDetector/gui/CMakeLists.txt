@@ -53,7 +53,7 @@ add_library( BRAINSConstellationDetectorGUICOMMONLIB STATIC
   QVTK
   ${QT_LIBRARIES}
  # BRAINSConstellationDetectorCOMMONLIB
- ${ITK_LIBRARIES}
+ BRAINSCommonLib
  ${VTK_LIBRARIES}
   )
 

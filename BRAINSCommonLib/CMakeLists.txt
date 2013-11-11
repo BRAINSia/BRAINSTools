@@ -1,8 +1,23 @@
 project(BRAINSCommonLib)
+
 #-----------------------------------------------------------------------------
 # Output directories.
 #
 
+## Determine if ITK has MGHIO
+macro(LIST_CONTAINS var value)
+  set(${var})
+  foreach (value2 ${ARGN})
+    if (${value} STREQUAL ${value2})
+      set(${var} TRUE)
+    endif (${value} STREQUAL ${value2})
+  endforeach (value2)
+endmacro(LIST_CONTAINS)
+
+LIST_CONTAINS(ITK_HAS_MGHIO MGHIO ${ITK_MODULES_ENABLED})
+if (NOT ITK_HAS_MGHIO)
+  message(STATUS "WARNING: ITK_MODULES_ENABLED does not contain MGHIO, so programs will not be able to process .mgz formatted files")
+endif()
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/BRAINSCommonLib.h.in
   ${CMAKE_CURRENT_BINARY_DIR}/BRAINSCommonLib.h
@@ -34,20 +49,6 @@ install(TARGETS BRAINSCommonLib
   ARCHIVE DESTINATION ${BRAINSTools_CLI_INSTALL_ARCHIVE_DESTINATION} COMPONENT Development
     )
 
-## Determine if ITK has MGHIO
-macro(LIST_CONTAINS var value)
-  set(${var})
-  foreach (value2 ${ARGN})
-    if (${value} STREQUAL ${value2})
-      set(${var} TRUE)
-    endif (${value} STREQUAL ${value2})
-  endforeach (value2)
-endmacro(LIST_CONTAINS)
-
-LIST_CONTAINS(ITK_HAS_MGHIO MGHIO ${ITK_MODULES_ENABLED})
-if (NOT ITK_HAS_MGHIO)
-  message(STATUS "WARNING: ITK_MODULES_ENABLED does not contain MGHIO, so programs will not be able to process .mgz formatted files")
-endif()
 
 file(GLOB __files1 "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
 file(GLOB __files2 "${CMAKE_CURRENT_SOURCE_DIR}/*.hxx")

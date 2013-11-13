@@ -129,9 +129,24 @@ public:
               {
               float tmp[3];
               /*const bool b0exist =*/
-              this->m_Headers[k]->GetElementFLorOB( 0x2005, 0x10b0, tmp[0] );
-              this->m_Headers[k]->GetElementFLorOB( 0x2005, 0x10b1, tmp[1] );
-              this->m_Headers[k]->GetElementFLorOB( 0x2005, 0x10b2, tmp[2] );
+              bool useNewPhillipsTags=false;
+              try
+                {
+                this->m_Headers[k]->GetElementFLorOB( 0x2005, 0x10b0, tmp[0] );
+                this->m_Headers[k]->GetElementFLorOB( 0x2005, 0x10b1, tmp[1] );
+                this->m_Headers[k]->GetElementFLorOB( 0x2005, 0x10b2, tmp[2] );
+                useNewPhillipsTags = false;
+                }
+              catch(...)
+                {
+                useNewPhillipsTags = true;
+                }
+              if ( useNewPhillipsTags == true )
+                {
+                this->m_Headers[k]->GetElementFLorOB( 0x2005, 0x12b0, tmp[0] );
+                this->m_Headers[k]->GetElementFLorOB( 0x2005, 0x12b1, tmp[1] );
+                this->m_Headers[k]->GetElementFLorOB( 0x2005, 0x12b2, tmp[2] );
+                }
               vect3d[0] = static_cast<double>(tmp[0]);
               vect3d[1] = static_cast<double>(tmp[1]);
               vect3d[2] = static_cast<double>(tmp[2]);
@@ -338,25 +353,40 @@ protected:
       DcmDictEntry *PhilipsDictBValue  = new DcmDictEntry(0x2001, 0x1003, DcmVR(EVR_FL),
                                                           "B Value of diffusion weighting", 1, 1, 0, true,
                                                           "dicomtonrrd");
+      itk::DCMTKFileReader::AddDictEntry(PhilipsDictBValue);
       DcmDictEntry *PhilipsDictDiffusionDirection   = new DcmDictEntry(0x2001, 0x1004, DcmVR(EVR_CS),
                                                                        "Diffusion Gradient Direction", 1, 1, 0, true,
                                                                        "dicomtonrrd");
+      itk::DCMTKFileReader::AddDictEntry(PhilipsDictDiffusionDirection);
+
       DcmDictEntry *PhilipsDictDiffusionDirectionRL = new DcmDictEntry(0x2005, 0x10b0, DcmVR(EVR_FL),
                                                                        "Diffusion Direction R/L", 4, 4, 0, true,
                                                                        "dicomtonrrd");
+      itk::DCMTKFileReader::AddDictEntry(PhilipsDictDiffusionDirectionRL);
       DcmDictEntry *PhilipsDictDiffusionDirectionAP = new DcmDictEntry(0x2005, 0x10b1, DcmVR(EVR_FL),
                                                                        "Diffusion Direction A/P", 4, 4, 0, true,
                                                                        "dicomtonrrd");
+      itk::DCMTKFileReader::AddDictEntry(PhilipsDictDiffusionDirectionAP);
       DcmDictEntry *PhilipsDictDiffusionDirectionFH = new DcmDictEntry(0x2005, 0x10b2, DcmVR(EVR_FL),
                                                                        "Diffusion Direction F/H", 4, 4, 0, true,
                                                                        "dicomtonrrd");
+      itk::DCMTKFileReader::AddDictEntry(PhilipsDictDiffusionDirectionFH);
+
+      // New data new uses new tags!
+      DcmDictEntry *PhilipsDictDiffusionDirectionRLnew = new DcmDictEntry(0x2005, 0x12b0, DcmVR(EVR_FL),
+                                                                       "Diffusion Direction R/L", 4, 4, 0, true,
+                                                                       "dicomtonrrd");
+      itk::DCMTKFileReader::AddDictEntry(PhilipsDictDiffusionDirectionRLnew);
+      DcmDictEntry *PhilipsDictDiffusionDirectionAPnew = new DcmDictEntry(0x2005, 0x12b1, DcmVR(EVR_FL),
+                                                                       "Diffusion Direction A/P", 4, 4, 0, true,
+                                                                       "dicomtonrrd");
+      itk::DCMTKFileReader::AddDictEntry(PhilipsDictDiffusionDirectionAPnew);
+      DcmDictEntry *PhilipsDictDiffusionDirectionFHnew = new DcmDictEntry(0x2005, 0x12b2, DcmVR(EVR_FL),
+                                                                       "Diffusion Direction F/H", 4, 4, 0, true,
+                                                                       "dicomtonrrd");
+      itk::DCMTKFileReader::AddDictEntry(PhilipsDictDiffusionDirectionFHnew);
 
       // relevant Philips private tags
-      itk::DCMTKFileReader::AddDictEntry(PhilipsDictBValue);
-      itk::DCMTKFileReader::AddDictEntry(PhilipsDictDiffusionDirection);
-      itk::DCMTKFileReader::AddDictEntry(PhilipsDictDiffusionDirectionRL);
-      itk::DCMTKFileReader::AddDictEntry(PhilipsDictDiffusionDirectionAP);
-      itk::DCMTKFileReader::AddDictEntry(PhilipsDictDiffusionDirectionFH);
     }
 
 };

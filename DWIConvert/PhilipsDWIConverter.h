@@ -50,60 +50,42 @@ public:
 
           bool   B0FieldFound = false;
           double b = 0.0;
-          if( useSupplement49Definitions == true )
-            {
-            B0FieldFound = this->m_Headers[k]->GetElementFD(0x0018, 0x9087, b, false) == EXIT_SUCCESS;
-            }
-          else
-            {
-            float floatB;
-            if( this->m_Headers[k]->GetElementFLorOB(0x2001, 0x1003, floatB, false) == EXIT_SUCCESS )
+          const double zeroBValueTolerance = 0.1;  // Implausibly small value assumed to be b0 images
+            {// Fill out the B-Values
+            if( useSupplement49Definitions == true )
               {
-              B0FieldFound = true;
+              B0FieldFound = this->m_Headers[k]->GetElementFD(0x0018, 0x9087, b, false) == EXIT_SUCCESS;
               }
-            if( B0FieldFound )
+            else
               {
-              b = static_cast<double>(floatB);
-              }
-            std::string tag;
-            this->m_Headers[k]->GetElementCSorOB(0x2001, 0x1004, tag, false );
-            if( StringContains(tag, "I") && b != 0 )
-              {
-              DiffusionDirectionality = "ISOTROPIC";
+              float floatB;
+              if( this->m_Headers[k]->GetElementFLorOB(0x2001, 0x1003, floatB, false) == EXIT_SUCCESS )
+                {
+                B0FieldFound = true;
+                }
+              if( B0FieldFound )
+                {
+                b = static_cast<double>(floatB);
+                }
+              std::string tag;
+              this->m_Headers[k]->GetElementCSorOB(0x2001, 0x1004, tag, false );
+              if( StringContains(tag, "I") && ( b > zeroBValueTolerance ) )
+                {
+                DiffusionDirectionality = "ISOTROPIC";
+                }
               }
             }
 
           vnl_vector_fixed<double, 3> vect3d;
-          vect3d.fill( 0 );
-          if( StringContains(DiffusionDirectionality, "ISOTROPIC") )
-            {
-            continue;
-            }
-          else if( ( !B0FieldFound || b == 0 ) || StringContains(DiffusionDirectionality, "NONE") )
-            { // Deal with b0 images
-            this->m_BValues.push_back(b);
-            this->m_DiffusionVectors.push_back(vect3d);
-            continue;
-            }
-          else if( StringContains(DiffusionDirectionality, "DIRECTIONAL") || ( DiffusionDirectionality == "" ) )
-            { // Deal with gradient direction images
-            this->m_BValues.push_back(b);
+          vect3d.fill( 0.0 );
+            {// Try to fill in the vect3d gradient directions
             if( useSupplement49Definitions == true )
               {
               double doubleArray[3];
               // Use alternate method to get value out of a sequence header (Some Phillips Data).
-              bool preferredExtrationSucceeded = EXIT_FAILURE;
-              try
+              if(this->m_Headers[k]->GetElementFD(0x0018, 0x9089, 3, doubleArray, false) == EXIT_FAILURE)
                 {
-                preferredExtrationSucceeded = this->m_Headers[k]->GetElementFD(0x0018, 0x9089, 3, doubleArray, false);
-                }
-              catch(...)
-                {
-                preferredExtrationSucceeded = EXIT_FAILURE;
-                }
-              //Try alternate method.
-              if( preferredExtrationSucceeded == EXIT_FAILURE )
-                {
+                //Try alternate method.
                 // std::cout << "Looking for  0018|9089 in sequence 0018,9076" << std::endl;
                 // gdcm::SeqEntry *
                 // DiffusionSeqEntry=this->m_Headers[k]->GetSeqEntry(0x0018,0x9076);
@@ -123,21 +105,44 @@ public:
               vect3d[1] = doubleArray[1];
               vect3d[2] = doubleArray[2];
               std::cout << "===== gradient orientations:" << k << " "
-                        << this->m_InputFileNames[k] << " (0018,9089) " << " " << vect3d << std::endl;
+                << this->m_InputFileNames[k] << " (0018,9089) " << " " << vect3d << std::endl;
               }
             else
               {
               float tmp[3];
-              /*const bool b0exist =*/
-              this->m_Headers[k]->GetElementFLorOB( 0x2005, 0x10b0, tmp[0] );
-              this->m_Headers[k]->GetElementFLorOB( 0x2005, 0x10b1, tmp[1] );
-              this->m_Headers[k]->GetElementFLorOB( 0x2005, 0x10b2, tmp[2] );
+              try
+                {
+                this->m_Headers[k]->GetElementFLorOB( 0x2005, 0x10b0, tmp[0]);
+                this->m_Headers[k]->GetElementFLorOB( 0x2005, 0x10b1, tmp[1]);
+                this->m_Headers[k]->GetElementFLorOB( 0x2005, 0x10b2, tmp[2]);
+                }
+              catch(...)
+                {
+                // try with new philips tags.
+                this->m_Headers[k]->GetElementFLorOB( 0x2005, 0x12b0, tmp[0] );
+                this->m_Headers[k]->GetElementFLorOB( 0x2005, 0x12b1, tmp[1] );
+                this->m_Headers[k]->GetElementFLorOB( 0x2005, 0x12b2, tmp[2] );
+                }
               vect3d[0] = static_cast<double>(tmp[0]);
               vect3d[1] = static_cast<double>(tmp[1]);
               vect3d[2] = static_cast<double>(tmp[2]);
               }
+            }
 
-            // vect3d.normalize();
+          if( StringContains(DiffusionDirectionality, "ISOTROPIC") )
+            {
+            continue;
+            }
+          else if( !B0FieldFound || b < zeroBValueTolerance )
+            { // Deal with b0 images
+            this->m_BValues.push_back(b);
+            this->m_DiffusionVectors.push_back(vect3d);
+            }
+          else if( StringContains(DiffusionDirectionality, "DIRECTIONAL")
+            || ( DiffusionDirectionality == "NONE" ) // Some new Philips data does not specify "DIRECTIONAL"
+            || ( DiffusionDirectionality == "" ) )
+            { // Deal with gradient direction images
+            this->m_BValues.push_back(b);
             this->m_DiffusionVectors.push_back(vect3d);
             }
           else // Have no idea why we'd be here so error out
@@ -338,25 +343,40 @@ protected:
       DcmDictEntry *PhilipsDictBValue  = new DcmDictEntry(0x2001, 0x1003, DcmVR(EVR_FL),
                                                           "B Value of diffusion weighting", 1, 1, 0, true,
                                                           "dicomtonrrd");
+      itk::DCMTKFileReader::AddDictEntry(PhilipsDictBValue);
       DcmDictEntry *PhilipsDictDiffusionDirection   = new DcmDictEntry(0x2001, 0x1004, DcmVR(EVR_CS),
                                                                        "Diffusion Gradient Direction", 1, 1, 0, true,
                                                                        "dicomtonrrd");
+      itk::DCMTKFileReader::AddDictEntry(PhilipsDictDiffusionDirection);
+
       DcmDictEntry *PhilipsDictDiffusionDirectionRL = new DcmDictEntry(0x2005, 0x10b0, DcmVR(EVR_FL),
                                                                        "Diffusion Direction R/L", 4, 4, 0, true,
                                                                        "dicomtonrrd");
+      itk::DCMTKFileReader::AddDictEntry(PhilipsDictDiffusionDirectionRL);
       DcmDictEntry *PhilipsDictDiffusionDirectionAP = new DcmDictEntry(0x2005, 0x10b1, DcmVR(EVR_FL),
                                                                        "Diffusion Direction A/P", 4, 4, 0, true,
                                                                        "dicomtonrrd");
+      itk::DCMTKFileReader::AddDictEntry(PhilipsDictDiffusionDirectionAP);
       DcmDictEntry *PhilipsDictDiffusionDirectionFH = new DcmDictEntry(0x2005, 0x10b2, DcmVR(EVR_FL),
                                                                        "Diffusion Direction F/H", 4, 4, 0, true,
                                                                        "dicomtonrrd");
+      itk::DCMTKFileReader::AddDictEntry(PhilipsDictDiffusionDirectionFH);
+
+      // New data new uses new tags!
+      DcmDictEntry *PhilipsDictDiffusionDirectionRLnew = new DcmDictEntry(0x2005, 0x12b0, DcmVR(EVR_FL),
+                                                                       "Diffusion Direction R/L", 4, 4, 0, true,
+                                                                       "dicomtonrrd");
+      itk::DCMTKFileReader::AddDictEntry(PhilipsDictDiffusionDirectionRLnew);
+      DcmDictEntry *PhilipsDictDiffusionDirectionAPnew = new DcmDictEntry(0x2005, 0x12b1, DcmVR(EVR_FL),
+                                                                       "Diffusion Direction A/P", 4, 4, 0, true,
+                                                                       "dicomtonrrd");
+      itk::DCMTKFileReader::AddDictEntry(PhilipsDictDiffusionDirectionAPnew);
+      DcmDictEntry *PhilipsDictDiffusionDirectionFHnew = new DcmDictEntry(0x2005, 0x12b2, DcmVR(EVR_FL),
+                                                                       "Diffusion Direction F/H", 4, 4, 0, true,
+                                                                       "dicomtonrrd");
+      itk::DCMTKFileReader::AddDictEntry(PhilipsDictDiffusionDirectionFHnew);
 
       // relevant Philips private tags
-      itk::DCMTKFileReader::AddDictEntry(PhilipsDictBValue);
-      itk::DCMTKFileReader::AddDictEntry(PhilipsDictDiffusionDirection);
-      itk::DCMTKFileReader::AddDictEntry(PhilipsDictDiffusionDirectionRL);
-      itk::DCMTKFileReader::AddDictEntry(PhilipsDictDiffusionDirectionAP);
-      itk::DCMTKFileReader::AddDictEntry(PhilipsDictDiffusionDirectionFH);
     }
 
 };

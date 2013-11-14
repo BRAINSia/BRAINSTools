@@ -50,44 +50,35 @@ public:
 
           bool   B0FieldFound = false;
           double b = 0.0;
-          if( useSupplement49Definitions == true )
-            {
-            B0FieldFound = this->m_Headers[k]->GetElementFD(0x0018, 0x9087, b, false) == EXIT_SUCCESS;
-            }
-          else
-            {
-            float floatB;
-            if( this->m_Headers[k]->GetElementFLorOB(0x2001, 0x1003, floatB, false) == EXIT_SUCCESS )
+          const double zeroBValueTolerance = 0.1;  // Implausibly small value assumed to be b0 images
+            {// Fill out the B-Values
+            if( useSupplement49Definitions == true )
               {
-              B0FieldFound = true;
+              B0FieldFound = this->m_Headers[k]->GetElementFD(0x0018, 0x9087, b, false) == EXIT_SUCCESS;
               }
-            if( B0FieldFound )
+            else
               {
-              b = static_cast<double>(floatB);
-              }
-            std::string tag;
-            this->m_Headers[k]->GetElementCSorOB(0x2001, 0x1004, tag, false );
-            if( StringContains(tag, "I") && b != 0 )
-              {
-              DiffusionDirectionality = "ISOTROPIC";
+              float floatB;
+              if( this->m_Headers[k]->GetElementFLorOB(0x2001, 0x1003, floatB, false) == EXIT_SUCCESS )
+                {
+                B0FieldFound = true;
+                }
+              if( B0FieldFound )
+                {
+                b = static_cast<double>(floatB);
+                }
+              std::string tag;
+              this->m_Headers[k]->GetElementCSorOB(0x2001, 0x1004, tag, false );
+              if( StringContains(tag, "I") && ( b > zeroBValueTolerance ) )
+                {
+                DiffusionDirectionality = "ISOTROPIC";
+                }
               }
             }
 
           vnl_vector_fixed<double, 3> vect3d;
-          vect3d.fill( 0 );
-          if( StringContains(DiffusionDirectionality, "ISOTROPIC") )
-            {
-            continue;
-            }
-          else if( ( !B0FieldFound || b == 0 ) || StringContains(DiffusionDirectionality, "NONE") )
-            { // Deal with b0 images
-            this->m_BValues.push_back(b);
-            this->m_DiffusionVectors.push_back(vect3d);
-            continue;
-            }
-          else if( StringContains(DiffusionDirectionality, "DIRECTIONAL") || ( DiffusionDirectionality == "" ) )
-            { // Deal with gradient direction images
-            this->m_BValues.push_back(b);
+          vect3d.fill( 0.0 );
+            {// Try to fill in the vect3d gradient directions
             if( useSupplement49Definitions == true )
               {
               double doubleArray[3];
@@ -123,7 +114,7 @@ public:
               vect3d[1] = doubleArray[1];
               vect3d[2] = doubleArray[2];
               std::cout << "===== gradient orientations:" << k << " "
-                        << this->m_InputFileNames[k] << " (0018,9089) " << " " << vect3d << std::endl;
+                << this->m_InputFileNames[k] << " (0018,9089) " << " " << vect3d << std::endl;
               }
             else
               {
@@ -151,8 +142,22 @@ public:
               vect3d[1] = static_cast<double>(tmp[1]);
               vect3d[2] = static_cast<double>(tmp[2]);
               }
+            }
 
-            // vect3d.normalize();
+          if( StringContains(DiffusionDirectionality, "ISOTROPIC") )
+            {
+            continue;
+            }
+          else if( !B0FieldFound || b < zeroBValueTolerance )
+            { // Deal with b0 images
+            this->m_BValues.push_back(b);
+            this->m_DiffusionVectors.push_back(vect3d);
+            }
+          else if( StringContains(DiffusionDirectionality, "DIRECTIONAL")
+            || ( DiffusionDirectionality == "NONE" ) // Some new Philips data does not specify "DIRECTIONAL"
+            || ( DiffusionDirectionality == "" ) )
+            { // Deal with gradient direction images
+            this->m_BValues.push_back(b);
             this->m_DiffusionVectors.push_back(vect3d);
             }
           else // Have no idea why we'd be here so error out

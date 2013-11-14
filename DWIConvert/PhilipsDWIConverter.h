@@ -83,18 +83,9 @@ public:
               {
               double doubleArray[3];
               // Use alternate method to get value out of a sequence header (Some Phillips Data).
-              bool preferredExtrationSucceeded = EXIT_FAILURE;
-              try
+              if(this->m_Headers[k]->GetElementFD(0x0018, 0x9089, 3, doubleArray, false) == EXIT_FAILURE)
                 {
-                preferredExtrationSucceeded = this->m_Headers[k]->GetElementFD(0x0018, 0x9089, 3, doubleArray, false);
-                }
-              catch(...)
-                {
-                preferredExtrationSucceeded = EXIT_FAILURE;
-                }
-              //Try alternate method.
-              if( preferredExtrationSucceeded == EXIT_FAILURE )
-                {
+                //Try alternate method.
                 // std::cout << "Looking for  0018|9089 in sequence 0018,9076" << std::endl;
                 // gdcm::SeqEntry *
                 // DiffusionSeqEntry=this->m_Headers[k]->GetSeqEntry(0x0018,0x9076);
@@ -119,21 +110,15 @@ public:
             else
               {
               float tmp[3];
-              /*const bool b0exist =*/
-              bool useNewPhillipsTags=false;
               try
                 {
-                this->m_Headers[k]->GetElementFLorOB( 0x2005, 0x10b0, tmp[0] );
-                this->m_Headers[k]->GetElementFLorOB( 0x2005, 0x10b1, tmp[1] );
-                this->m_Headers[k]->GetElementFLorOB( 0x2005, 0x10b2, tmp[2] );
-                useNewPhillipsTags = false;
+                this->m_Headers[k]->GetElementFLorOB( 0x2005, 0x10b0, tmp[0]);
+                this->m_Headers[k]->GetElementFLorOB( 0x2005, 0x10b1, tmp[1]);
+                this->m_Headers[k]->GetElementFLorOB( 0x2005, 0x10b2, tmp[2]);
                 }
               catch(...)
                 {
-                useNewPhillipsTags = true;
-                }
-              if ( useNewPhillipsTags == true )
-                {
+                // try with new philips tags.
                 this->m_Headers[k]->GetElementFLorOB( 0x2005, 0x12b0, tmp[0] );
                 this->m_Headers[k]->GetElementFLorOB( 0x2005, 0x12b1, tmp[1] );
                 this->m_Headers[k]->GetElementFLorOB( 0x2005, 0x12b2, tmp[2] );

@@ -102,7 +102,7 @@ do
       echo "#$ -j yes"         >>$QSUBFile
       echo "#$ -o $QSUBFile.log ">>$QSUBFile
       echo "#$ -l mf=2G "      >>$QSUBFile
-      echo "#$ -pe smp1 1-2"  >>$QSUBFile
+      echo "#$ -pe smp 1-2"  >>$QSUBFile
       echo "PLATFORM=\$(uname)">>$QSUBFile
       echo "hostname"          >>$QSUBFile
       echo "uname -a"          >>$QSUBFile

@@ -251,7 +251,7 @@ def main(argv=None):
                                                )
         myWF.run(plugin='SGE',
                  plugin_args=dict(template=Cluster_Script,
-                                  qsub_args="-S /bin/bash -pe smp1 4-8 -o /dev/null -q OSX "))
+                                  qsub_args="-S /bin/bash -pe smp 4-8 -o /dev/null -q OSX "))
     else:
         myWF.run()
 #--------------------------------------------------------------------------------------- }#

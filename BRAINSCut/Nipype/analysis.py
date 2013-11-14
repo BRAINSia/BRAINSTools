@@ -621,7 +621,7 @@ def similarityComputeWorkflow(ResultDir,
                                                )
         workflow.run(plugin='SGE',
                      plugin_args=dict(template=Cluster_Script,
-                                      qsub_args="-S /bin/bash -pe smp1 4-8 -o /dev/null "))
+                                      qsub_args="-S /bin/bash -pe smp 4-8 -o /dev/null "))
     else:
         workflow.run()
 

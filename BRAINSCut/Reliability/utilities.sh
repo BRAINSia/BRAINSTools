@@ -26,7 +26,7 @@ function qsubHeader( ){
    echoOutTo "#$ -j yes"                               $outputFilename
    echoOutTo "#$ -o $outputFilename.log"               $outputFilename
    echoOutTo "#$ -l mf=2G "                            $outputFilename
-   echoOutTo "#$ -pe smp1 1-12"                        $outputFilename
+   echoOutTo "#$ -pe smp 1-12"                        $outputFilename
    echoOutTo "PLATFORM=\$(uname)"                      $outputFilename
    echoOutTo "hostname"                                $outputFilename
    echoOutTo "uname -a"                                $outputFilename

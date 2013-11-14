@@ -501,13 +501,13 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
             buildTemplateIteration1 = BAWantsRegistrationTemplateBuildSingleIterationWF('iteration01')
             ## TODO:  Change these parameters
             BeginANTS_iter1 = buildTemplateIteration1.get_node("BeginANTS")
-            BeginANTS_iter1.plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp1 4-12 -l mem_free=9000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE_LONG), 'overwrite': True}
+            BeginANTS_iter1.plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp 4-12 -l mem_free=9000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE_LONG), 'overwrite': True}
             wimtdeformed_iter1 = buildTemplateIteration1.get_node("wimtdeformed")
-            wimtdeformed_iter1.plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp1 1-2 -l mem_free=2000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE), 'overwrite': True}
+            wimtdeformed_iter1.plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp 1-2 -l mem_free=2000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE), 'overwrite': True}
             AvgAffineTransform_iter1 = buildTemplateIteration1.get_node("AvgAffineTransform")
-            AvgAffineTransform_iter1.plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp1 1 -l mem_free=2000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE), 'overwrite': True}
+            AvgAffineTransform_iter1.plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp 1 -l mem_free=2000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE), 'overwrite': True}
             wimtPassivedeformed_iter1 = buildTemplateIteration1.get_node("wimtPassivedeformed")
-            wimtPassivedeformed_iter1.plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp1 1-2 -l mem_free=2000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE), 'overwrite': True}
+            wimtPassivedeformed_iter1.plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp 1-2 -l mem_free=2000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE), 'overwrite': True}
 
             baw200.connect(myInitAvgWF, 'output_average_image', buildTemplateIteration1, 'inputspec.fixed_image')
             baw200.connect(MergeByExtendListElementsNode, 'ListOfImagesDictionaries', buildTemplateIteration1, 'inputspec.ListOfImagesDictionaries')
@@ -518,13 +518,13 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
             buildTemplateIteration2 = BAWantsRegistrationTemplateBuildSingleIterationWF('Iteration02')
             ## TODO:  Change these parameters
             BeginANTS_iter2 = buildTemplateIteration2.get_node("BeginANTS")
-            BeginANTS_iter2.plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp1 4-12 -l mem_free=9000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE_LONG), 'overwrite': True}
+            BeginANTS_iter2.plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp 4-12 -l mem_free=9000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE_LONG), 'overwrite': True}
             wimtdeformed_iter2 = buildTemplateIteration2.get_node("wimtdeformed")
-            wimtdeformed_iter2.plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp1 1-2 -l mem_free=2000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE), 'overwrite': True}
+            wimtdeformed_iter2.plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp 1-2 -l mem_free=2000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE), 'overwrite': True}
             AvgAffineTransform_iter2 = buildTemplateIteration2.get_node("AvgAffineTransform")
-            AvgAffineTransform_iter2.plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp1 1 -l mem_free=2000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE), 'overwrite': True}
+            AvgAffineTransform_iter2.plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp 1 -l mem_free=2000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE), 'overwrite': True}
             wimtPassivedeformed_iter2 = buildTemplateIteration2.get_node("wimtPassivedeformed")
-            wimtPassivedeformed_iter2.plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp1 1-2 -l mem_free=2000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE), 'overwrite': True}
+            wimtPassivedeformed_iter2.plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp 1-2 -l mem_free=2000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE), 'overwrite': True}
 
             baw200.connect(buildTemplateIteration1, 'outputspec.template', buildTemplateIteration2, 'inputspec.fixed_image')
             baw200.connect(MergeByExtendListElementsNode, 'ListOfImagesDictionaries', buildTemplateIteration2, 'inputspec.ListOfImagesDictionaries')
@@ -544,7 +544,7 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
                                                # This is a lot of work, so submit it run_without_submitting=True,
                                                run_without_submitting=True,  # HACK:  THIS NODE REALLY SHOULD RUN ON THE CLUSTER!
                                                name='99_MakeNewAtlasTemplate')
-            MakeNewAtlasTemplateNode.plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp1 1-1 -l mem_free=1000M {QUEUE_OPTIONS}'.format(
+            MakeNewAtlasTemplateNode.plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp 1-1 -l mem_free=1000M {QUEUE_OPTIONS}'.format(
                 QUEUE_OPTIONS=CLUSTER_QUEUE), 'overwrite': True}
             MakeNewAtlasTemplateNode.inputs.outDefinition = 'AtlasDefinition_' + subjectid + '.xml'
             baw200.connect(BAtlas[subjectid], 'ExtendedAtlasDefinition_xml_in', MakeNewAtlasTemplateNode, 'AtlasTemplate')
@@ -754,7 +754,7 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
                     from nipype.interfaces.ants import (Registration, ApplyTransforms)
                     currentAtlasToSubjectantsRegistration = 'AtlasToSubjectantsRegistration_' + str(subjectid) + "_" + str(sessionid)
                     AtlasToSubjectantsRegistration[sessionid] = pe.Node(interface=Registration(), name=currentAtlasToSubjectantsRegistration)
-                    AtlasToSubjectantsRegistration[sessionid].plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp1 4-6 -l mem_free=9000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE_LONG), 'overwrite': True}
+                    AtlasToSubjectantsRegistration[sessionid].plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp 4-6 -l mem_free=9000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE_LONG), 'overwrite': True}
                     AtlasToSubjectantsRegistration[sessionid].inputs.dimension = 3
                     AtlasToSubjectantsRegistration[sessionid].inputs.transforms = ["Affine", "SyN"]
                     AtlasToSubjectantsRegistration[sessionid].inputs.transform_parameters = [[0.1], [0.15, 3.0, 0.0]]
@@ -879,7 +879,7 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
                     ## SnapShotWriter[sessionid] for Segmented result checking:
                     SnapShotWriterNodeName = "SnapShotWriter_" + str(sessionid)
                     SnapShotWriter[sessionid] = pe.Node(interface=BRAINSSnapShotWriter(), name=SnapShotWriterNodeName)
-                    SnapShotWriter[sessionid].plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp1 1-1 -l mem_free=1000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE_LONG), 'overwrite': True}
+                    SnapShotWriter[sessionid].plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp 1-1 -l mem_free=1000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE_LONG), 'overwrite': True}
 
                     ## output specification
                     SnapShotWriter[sessionid].inputs.outputFilename = 'snapShot' + str(sessionid) + '.png'
@@ -970,7 +970,7 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
 
                     LinearSubjectToAtlasANTsApplyTransformsName = 'LinearSubjectToAtlasANTsApplyTransforms_' + str(sessionid)
                     LinearSubjectToAtlasANTsApplyTransforms[sessionid] = pe.MapNode(interface=ApplyTransforms(), iterfield=['input_image'], name=LinearSubjectToAtlasANTsApplyTransformsName)
-                    LinearSubjectToAtlasANTsApplyTransforms[sessionid].plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp1 1 -l mem_free=1000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE), 'overwrite': True}
+                    LinearSubjectToAtlasANTsApplyTransforms[sessionid].plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp 1 -l mem_free=1000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE), 'overwrite': True}
                     LinearSubjectToAtlasANTsApplyTransforms[sessionid].inputs.interpolation = 'Linear'
                     baw200.connect(AtlasToSubjectantsRegistration[sessionid], 'inverse_composite_transform', LinearSubjectToAtlasANTsApplyTransforms[sessionid], 'transforms')
                     baw200.connect(BAtlas[subjectid], 'template_t1', LinearSubjectToAtlasANTsApplyTransforms[sessionid], 'reference_image')
@@ -988,7 +988,7 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
                     #{
                     MultiLabelSubjectToAtlasANTsApplyTransformsName = 'MultiLabelSubjectToAtlasANTsApplyTransforms_' + str(sessionid)
                     MultiLabelSubjectToAtlasANTsApplyTransforms[sessionid] = pe.MapNode(interface=ApplyTransforms(), iterfield=['input_image'], name=MultiLabelSubjectToAtlasANTsApplyTransformsName)
-                    MultiLabelSubjectToAtlasANTsApplyTransforms[sessionid].plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp1 1 -l mem_free=1000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE), 'overwrite': True}
+                    MultiLabelSubjectToAtlasANTsApplyTransforms[sessionid].plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp 1 -l mem_free=1000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE), 'overwrite': True}
                     MultiLabelSubjectToAtlasANTsApplyTransforms[sessionid].inputs.interpolation = 'MultiLabel'
                     baw200.connect(AtlasToSubjectantsRegistration[sessionid], 'inverse_composite_transform', MultiLabelSubjectToAtlasANTsApplyTransforms[sessionid], 'transforms')
                     baw200.connect(BAtlas[subjectid], 'template_t1', MultiLabelSubjectToAtlasANTsApplyTransforms[sessionid], 'reference_image')
@@ -1034,7 +1034,7 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
                     ANTSLabelWarpFromSubjectAtlasToSession[sessionid] = pe.Node(interface=ApplyTransforms(),
                                                                                 name=ANTSLabelWarpFromSubjectAtlasToSessionName)
                     ANTSLabelWarpFromSubjectAtlasToSession[sessionid].plugin_args = {'template': SGE_JOB_SCRIPT,
-                                                                                     'qsub_args': '-S /bin/bash -cwd -pe smp1 1 -l mem_free=1000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE),
+                                                                                     'qsub_args': '-S /bin/bash -cwd -pe smp 1 -l mem_free=1000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE),
                                                                                      'overwrite': True}
                     ANTSLabelWarpFromSubjectAtlasToSession[sessionid].inputs.interpolation = 'MultiLabel'
                     ANTSLabelWarpFromSubjectAtlasToSession[sessionid].inputs.output_image = 'RFWarpedLabel.nii.gz'

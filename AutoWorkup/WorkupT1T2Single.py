@@ -90,7 +90,7 @@ def GenerateWFName(projectid, subjectid, sessionid, processing_phase):
 ###########################################################################
 
 
-def MakeOneSubWorkFlow(projectid, subjectid, sessionid, processing_phase, WORKFLOW_COMPONENTS, BCD_model_path, InterpolationMode, CLUSTER_QUEUE, CLUSTER_QUEUE_LONG):
+def MakeOneSubWorkFlow(projectid, subjectid, sessionid, processing_phase, WORKFLOW_COMPONENTS, InterpolationMode, CLUSTER_QUEUE, CLUSTER_QUEUE_LONG):
     """
     Run autoworkup on a single Subject
 
@@ -111,8 +111,12 @@ def MakeOneSubWorkFlow(projectid, subjectid, sessionid, processing_phase, WORKFL
                          'allPDs',
                          'allFLs',
                          'allOthers',
-                         'template_landmarks_31_fcsv',
-                         'template_landmark_weights_31_csv',
+
+                         'atlasLandmarkFilename',
+                         'atlasWeightFilename',
+                         'LLSModel',
+                         'inputTemplateModel',
+
                          'template_t1',
                          'atlasDefinition'
                                                       ]),
@@ -127,7 +131,6 @@ def MakeOneSubWorkFlow(projectid, subjectid, sessionid, processing_phase, WORKFL
         #'TissueClassifyOutputDir',
         'TissueClassifyatlasToSubjectTransform',
         'TissueClassifyatlasToSubjectInverseTransform',
-
                                                       #            'BCD_ACPC_T1',
                                                       'BCD_ACPC_T1_CROPPED',
                                                       'outputLandmarksInACPCAlignedSpace',
@@ -143,11 +146,15 @@ def MakeOneSubWorkFlow(projectid, subjectid, sessionid, processing_phase, WORKFL
         DoReverseMapping = False   # Set to true for debugging outputs
         if 'AUXLMK' in WORKFLOW_COMPONENTS:
             DoReverseMapping = True
-        myLocalLMIWF = CreateLandmarkInitializeWorkflow("LandmarkInitialize", BCD_model_path, InterpolationMode, DoReverseMapping)
+        myLocalLMIWF = CreateLandmarkInitializeWorkflow("LandmarkInitialize", InterpolationMode, DoReverseMapping)
 
         T1T2WorkupSingle.connect([(inputsSpec, myLocalLMIWF, [(('allT1s', get_list_element, 0), 'inputspec.inputVolume')]), ])
-        T1T2WorkupSingle.connect(inputsSpec, 'template_landmarks_31_fcsv', myLocalLMIWF, 'inputspec.atlasLandmarkFilename')
-        T1T2WorkupSingle.connect(inputsSpec, 'template_landmark_weights_31_csv', myLocalLMIWF, 'inputspec.atlasWeightFilename')
+
+        T1T2WorkupSingle.connect(inputsSpec, 'atlasLandmarkFilename', myLocalLMIWF, 'inputspec.atlasLandmarkFilename')
+        T1T2WorkupSingle.connect(inputsSpec, 'atlasWeightFilename',   myLocalLMIWF, 'inputspec.atlasWeightFilename')
+        T1T2WorkupSingle.connect(inputsSpec, 'LLSModel',              myLocalLMIWF, 'inputspec.LLSModel')
+        T1T2WorkupSingle.connect(inputsSpec, 'inputTemplateModel',    myLocalLMIWF, 'inputspec.inputTemplateModel')
+
         T1T2WorkupSingle.connect(inputsSpec, 'template_t1', myLocalLMIWF, 'inputspec.atlasVolume')
 
     if 'AUXLMK' in WORKFLOW_COMPONENTS:

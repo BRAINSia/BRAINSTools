@@ -14,19 +14,27 @@ from SEMTools import *
     from WorkupT1T2LandmarkInitialization import CreateLandmarkInitializeWorkflow
     myLocalLMIWF= CreateLandmarkInitializeWorkflow("LandmarkInitialize")
     landmarkInitializeWF.connect( [ (uidSource, myLocalLMIWF, [(('uid', getFirstT1, subjectDatabaseFile ), 'inputsSpec.inputVolume')] ), ])
-    landmarkInitializeWF.connect( BAtlas, 'template_landmarks_31_fcsv', myLocalLMIWF,'inputsSpec.atlasLandmarkFilename')
-    landmarkInitializeWF.connect( BAtlas, 'template_landmark_weights_31_csv', myLocalLMIWF,'inputsSpec.atlasWeightFilename')
+
+    landmarkInitializeWF.connect( BAtlas, 'template_landmarks_50Lmks_fcsv', myLocalLMIWF,'inputsSpec.atlasLandmarkFilename')
+    landmarkInitializeWF.connect( BAtlas, 'template_weights_50Lmks_fcsv', myLocalLMIWF,'inputsSpec.atlasWeightFilename')
+    landmarkInitializeWF.connect( BAtlas, 'LLSModel_50Lmks_hdf5', myLocalLMIWF, 'inputspec.LLSModel')
+    landmarkInitializeWF.connect( BAtlas, 'T1_50Lmks_mdl', myLocalLMIWF, 'inputspec.inputTemplateModel')
+
     landmarkInitializeWF.connect(BAtlas,'template_t1',myLocalLMIWF,'inputsSpec.atlasVolume')
 
 """
 
 
-def CreateLandmarkInitializeWorkflow(WFname, BCD_model_path, InterpolationMode, DoReverseInit=False):
+def CreateLandmarkInitializeWorkflow(WFname, InterpolationMode, DoReverseInit=False):
     landmarkInitializeWF = pe.Workflow(name=WFname)
 
     #############
     inputsSpec = pe.Node(interface=IdentityInterface(fields=['inputVolume',
-                                                             'atlasLandmarkFilename', 'atlasWeightFilename', 'atlasVolume']),
+                                                             'atlasLandmarkFilename',
+                                                             'atlasWeightFilename',
+                                                             'LLSModel',
+                                                             'inputTemplateModel',
+                                                             'atlasVolume']),
                          run_without_submitting=True,
                          name='inputspec')
 
@@ -55,13 +63,16 @@ def CreateLandmarkInitializeWorkflow(WFname, BCD_model_path, InterpolationMode, 
     BCD.inputs.interpolationMode = InterpolationMode
     BCD.inputs.houghEyeDetectorMode = 1  # Look for dark eyes like on a T1 image, 0=Look for bright eyes like in a T2 image
     BCD.inputs.acLowerBound = 80.0  # Chop the data set 80mm below the AC PC point.
-    BCD.inputs.LLSModel = os.path.join(BCD_model_path, 'LLSModel-2ndVersion.h5')
-    BCD.inputs.inputTemplateModel = os.path.join(BCD_model_path, 'T1-2ndVersion.mdl')
 
     # Entries below are of the form:
     landmarkInitializeWF.connect(inputsSpec, 'inputVolume', BCD, 'inputVolume')
     landmarkInitializeWF.connect(inputsSpec, 'atlasWeightFilename',  BCD, 'atlasLandmarkWeights')
     landmarkInitializeWF.connect(inputsSpec, 'atlasLandmarkFilename',BCD, 'atlasLandmarks')
+
+    landmarkInitializeWF.connect(inputsSpec, 'LLSModel',             BCD, 'LLSModel')
+    landmarkInitializeWF.connect(inputsSpec, 'inputTemplateModel',   BCD, 'inputTemplateModel')
+
+
     landmarkInitializeWF.connect(inputsSpec, 'atlasVolume',          BCD, 'atlasVolume')
 
     ########################################################

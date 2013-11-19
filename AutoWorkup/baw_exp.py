@@ -131,7 +131,7 @@ def OpenSubjectDatabase(ExperimentBaseDirectoryCache, single_subject, mountPrefi
 
 def DoSingleSubjectProcessing(sp_args):
 
-    CACHE_ATLASPATH, CACHE_BCDMODELPATH, CLUSTER_QUEUE, CLUSTER_QUEUE_LONG,QSTAT_IMMEDIATE_EXE,QSTAT_CACHED_EXE, \
+    CACHE_ATLASPATH, CLUSTER_QUEUE, CLUSTER_QUEUE_LONG,QSTAT_IMMEDIATE_EXE,QSTAT_CACHED_EXE, \
           ExperimentBaseDirectoryCache, ExperimentBaseDirectoryResults, subject_data_file, \
           GLOBAL_DATA_SINK_REWRITE, JOB_SCRIPT, WORKFLOW_COMPONENTS, \
           input_arguments, mountPrefix,start_time,subjectid = sp_args
@@ -144,28 +144,15 @@ def DoSingleSubjectProcessing(sp_args):
     ExperimentDatabase = OpenSubjectDatabase(ExperimentBaseDirectoryCache, list_with_one_subject, mountPrefix,
                                              subject_data_file)
 
-    if input_arguments.doshort:
-        import ShortWorkupT1T2
-        baw200 = ShortWorkupT1T2.ShortWorkupT1T2(subjectid, mountPrefix,
-                                                 os.path.join(ExperimentBaseDirectoryCache, str(subjectid)),
-                                                 ExperimentBaseDirectoryResults,
-                                                 ExperimentDatabase,
-                                                 CACHE_ATLASPATH,
-                                                 CACHE_BCDMODELPATH,
-                                                 GLOBAL_DATA_SINK_REWRITE,
-                                                 WORKFLOW_COMPONENTS=WORKFLOW_COMPONENTS, CLUSTER_QUEUE=CLUSTER_QUEUE,
-                                                 CLUSTER_QUEUE_LONG=CLUSTER_QUEUE_LONG)
-    else:
-        import WorkupT1T2  # NOTE:  This needs to occur AFTER the PYTHON_AUX_PATHS has been modified
-        baw200 = WorkupT1T2.WorkupT1T2(subjectid, mountPrefix,
-                                       os.path.join(ExperimentBaseDirectoryCache, str(subjectid)),
-                                       ExperimentBaseDirectoryResults,
-                                       ExperimentDatabase,
-                                       CACHE_ATLASPATH,
-                                       CACHE_BCDMODELPATH,
-                                       GLOBAL_DATA_SINK_REWRITE,
-                                       WORKFLOW_COMPONENTS=WORKFLOW_COMPONENTS, CLUSTER_QUEUE=CLUSTER_QUEUE,
-                                       CLUSTER_QUEUE_LONG=CLUSTER_QUEUE_LONG, SGE_JOB_SCRIPT=JOB_SCRIPT)
+    import WorkupT1T2  # NOTE:  This needs to occur AFTER the PYTHON_AUX_PATHS has been modified
+    baw200 = WorkupT1T2.WorkupT1T2(subjectid, mountPrefix,
+                                   os.path.join(ExperimentBaseDirectoryCache, str(subjectid)),
+                                   ExperimentBaseDirectoryResults,
+                                   ExperimentDatabase,
+                                   CACHE_ATLASPATH,
+                                   GLOBAL_DATA_SINK_REWRITE,
+                                   WORKFLOW_COMPONENTS=WORKFLOW_COMPONENTS, CLUSTER_QUEUE=CLUSTER_QUEUE,
+                                   CLUSTER_QUEUE_LONG=CLUSTER_QUEUE_LONG, SGE_JOB_SCRIPT=JOB_SCRIPT)
     print "Start Processing"
     SGEFlavor = 'SGE'
     try:
@@ -264,7 +251,6 @@ def MasterProcessingController(argv=None):
                        help='The name of the subject to process')
     group.add_argument('-ExperimentConfig', action="store", dest='ExperimentConfig', required=True,
                        help='The path to the file that describes the entire experiment')
-    parser.add_argument('-doshort', action='store', dest='doshort', default=False, help='If not present, do long')
     parser.add_argument('-rewrite_datasinks', action='store_true', default=False,
                         help='Use if the datasinks should be forced rerun.\nDefault: value in configuration file')
     parser.add_argument('--version', action='version', version='%(prog)s 1.0')
@@ -359,23 +345,6 @@ def MasterProcessingController(argv=None):
         file_replace(os.path.join(ATLASPATH, 'ExtendedAtlasDefinition.xml.in'), os.path.join(CACHE_ATLASPATH, 'ExtendedAtlasDefinition.xml'), "@ATLAS_DIRECTORY@", CACHE_ATLASPATH)
     else:
         print("Atlas already exists in experiment cache directory: {0}".format(CACHE_ATLASPATH))
-    #  Just to be safe, copy the model file as well
-    BCDMODELPATH = expConfig.get(input_arguments.processingEnvironment, 'BCDMODELPATH')
-    CACHE_BCDMODELPATH = os.path.join(ExperimentBaseDirectoryCache, os.path.basename(BCDMODELPATH))
-    from distutils.file_util import copy_file
-    for BCDModelFile in ['LLSModel-2ndVersion.h5', 'T1-2ndVersion.mdl']:
-        if BCDModelFile[-2:] == 'h5':
-            BCDModelFile = os.path.join('Transforms_h5', BCDModelFile)
-        orig = os.path.join(BCDMODELPATH, BCDModelFile)
-        new = os.path.join(CACHE_BCDMODELPATH, BCDModelFile)
-        new = new.replace('Transforms_h5/', '')  # Flatten back out, even if you needed to get files from subdirectory.
-        if not os.path.exists(CACHE_BCDMODELPATH):
-            os.mkdir(CACHE_BCDMODELPATH)
-        if not os.path.exists(new):
-            print("Copying BCD Model file to cache directory: {0}".format(new))
-            copy_file(orig, new, preserve_mode=1, preserve_times=1)
-        else:
-            print("BCD Model exists in cache directory: {0}".format(new))
 
     CUSTOM_ENVIRONMENT = expConfig.get(input_arguments.processingEnvironment, 'CUSTOM_ENVIRONMENT')
     CUSTOM_ENVIRONMENT = eval(CUSTOM_ENVIRONMENT)
@@ -443,7 +412,7 @@ def MasterProcessingController(argv=None):
         delay = 5*subj_index
         subj_index += 1
         print("START DELAY: {0}".format(delay))
-        sp_args=(CACHE_ATLASPATH, CACHE_BCDMODELPATH, CLUSTER_QUEUE, CLUSTER_QUEUE_LONG,QSTAT_IMMEDIATE_EXE,QSTAT_CACHED_EXE,
+        sp_args=(CACHE_ATLASPATH, CLUSTER_QUEUE, CLUSTER_QUEUE_LONG,QSTAT_IMMEDIATE_EXE,QSTAT_CACHED_EXE,
                                   ExperimentBaseDirectoryCache, ExperimentBaseDirectoryResults, subject_data_file,
                                   GLOBAL_DATA_SINK_REWRITE, JOB_SCRIPT, WORKFLOW_COMPONENTS, input_arguments,
                                   mountPrefix, start_time+delay, subjectid)

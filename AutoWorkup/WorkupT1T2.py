@@ -320,7 +320,7 @@ def MakeNewAtlasTemplate(t1_image, deformed_list,
 ###########################################################################
 ###########################################################################
 ###########################################################################
-def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentBaseDirectoryResults, ExperimentDatabase, atlas_fname_wpath, BCD_model_path,
+def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentBaseDirectoryResults, ExperimentDatabase, atlas_fname_wpath,
                GLOBAL_DATA_SINK_REWRITE, InterpolationMode="Linear", Mode=10, DwiList=[], WORKFLOW_COMPONENTS=[], CLUSTER_QUEUE='', CLUSTER_QUEUE_LONG='', SGE_JOB_SCRIPT='#!/bin/bash'):
     """
     Run autoworkup on all subjects data defined in the ExperimentDatabase
@@ -417,7 +417,7 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
             PHASE_1_oneSubjWorkflow[sessionid] = WorkupT1T2Single.MakeOneSubWorkFlow(
                 projectid, subjectid, sessionid, PROCESSING_PHASE,
                 PHASE_1_WORKFLOW_COMPONENTS,
-                BCD_model_path, InterpolationMode, CLUSTER_QUEUE, CLUSTER_QUEUE_LONG)
+                InterpolationMode, CLUSTER_QUEUE, CLUSTER_QUEUE_LONG)
             baw200.connect(PHASE_1_subjInfoNode[sessionid], 'projectid', PHASE_1_oneSubjWorkflow[sessionid], 'inputspec.projectid')
             baw200.connect(PHASE_1_subjInfoNode[sessionid], 'subjectid', PHASE_1_oneSubjWorkflow[sessionid], 'inputspec.subjectid')
             baw200.connect(PHASE_1_subjInfoNode[sessionid], 'sessionid', PHASE_1_oneSubjWorkflow[sessionid], 'inputspec.sessionid')
@@ -427,8 +427,11 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
             baw200.connect(PHASE_1_subjInfoNode[sessionid], 'allFLs', PHASE_1_oneSubjWorkflow[sessionid], 'inputspec.allFLs')
             baw200.connect(PHASE_1_subjInfoNode[sessionid], 'allOthers', PHASE_1_oneSubjWorkflow[sessionid], 'inputspec.allOthers')
 
-            baw200.connect(BAtlas[subjectid], 'template_landmarks_31_fcsv', PHASE_1_oneSubjWorkflow[sessionid], 'inputspec.template_landmarks_31_fcsv')
-            baw200.connect(BAtlas[subjectid], 'template_landmark_weights_31_csv', PHASE_1_oneSubjWorkflow[sessionid], 'inputspec.template_landmark_weights_31_csv')
+            baw200.connect(BAtlas[subjectid], 'template_landmarks_50Lmks_fcsv', PHASE_1_oneSubjWorkflow[sessionid], 'inputspec.atlasLandmarkFilename')
+            baw200.connect(BAtlas[subjectid], 'template_weights_50Lmks_fcsv', PHASE_1_oneSubjWorkflow[sessionid], 'inputspec.atlasWeightFilename')
+            baw200.connect(BAtlas[subjectid], 'LLSModel_50Lmks_hdf5', PHASE_1_oneSubjWorkflow[sessionid], 'inputspec.LLSModel')
+            baw200.connect(BAtlas[subjectid], 'T1_50Lmks_mdl', PHASE_1_oneSubjWorkflow[sessionid], 'inputspec.inputTemplateModel')
+
             baw200.connect(BAtlas[subjectid], 'template_t1', PHASE_1_oneSubjWorkflow[sessionid], 'inputspec.template_t1')
             baw200.connect(BAtlas[subjectid], 'ExtendedAtlasDefinition_xml', PHASE_1_oneSubjWorkflow[sessionid], 'inputspec.atlasDefinition')
 
@@ -622,7 +625,7 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
                 PHASE_2_oneSubjWorkflow[sessionid] = WorkupT1T2Single.MakeOneSubWorkFlow(
                     projectid, subjectid, sessionid, PROCESSING_PHASE,
                     WORKFLOW_COMPONENTS,
-                    BCD_model_path, InterpolationMode, CLUSTER_QUEUE, CLUSTER_QUEUE_LONG)
+                    InterpolationMode, CLUSTER_QUEUE, CLUSTER_QUEUE_LONG)
                 baw200.connect(PHASE_2_subjInfoNode[sessionid], 'projectid', PHASE_2_oneSubjWorkflow[sessionid], 'inputspec.projectid')
                 baw200.connect(PHASE_2_subjInfoNode[sessionid], 'subjectid', PHASE_2_oneSubjWorkflow[sessionid], 'inputspec.subjectid')
                 baw200.connect(PHASE_2_subjInfoNode[sessionid], 'sessionid', PHASE_2_oneSubjWorkflow[sessionid], 'inputspec.sessionid')
@@ -632,8 +635,11 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
                 baw200.connect(PHASE_2_subjInfoNode[sessionid], 'allFLs', PHASE_2_oneSubjWorkflow[sessionid], 'inputspec.allFLs')
                 baw200.connect(PHASE_2_subjInfoNode[sessionid], 'allOthers', PHASE_2_oneSubjWorkflow[sessionid], 'inputspec.allOthers')
 
-                baw200.connect(BAtlas[subjectid], 'template_landmarks_31_fcsv', PHASE_2_oneSubjWorkflow[sessionid], 'inputspec.template_landmarks_31_fcsv')
-                baw200.connect(BAtlas[subjectid], 'template_landmark_weights_31_csv', PHASE_2_oneSubjWorkflow[sessionid], 'inputspec.template_landmark_weights_31_csv')
+                baw200.connect(BAtlas[subjectid], 'template_landmarks_50Lmks_fcsv', PHASE_2_oneSubjWorkflow[sessionid], 'inputspec.atlasLandmarkFilename')
+                baw200.connect(BAtlas[subjectid], 'template_weights_50Lmks_fcsv', PHASE_2_oneSubjWorkflow[sessionid], 'inputspec.atlasWeightFilename')
+                baw200.connect(BAtlas[subjectid], 'LLSModel_50Lmks_hdf5', PHASE_2_oneSubjWorkflow[sessionid], 'inputspec.LLSModel')
+                baw200.connect(BAtlas[subjectid], 'T1_50Lmks_mdl', PHASE_2_oneSubjWorkflow[sessionid], 'inputspec.inputTemplateModel')
+
                 baw200.connect(buildTemplateIteration2, 'outputspec.template', PHASE_2_oneSubjWorkflow[sessionid], 'inputspec.template_t1')
                 baw200.connect(MakeNewAtlasTemplateNode, 'outAtlasFullPath', PHASE_2_oneSubjWorkflow[sessionid], 'inputspec.atlasDefinition')
 

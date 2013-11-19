@@ -22,8 +22,6 @@ atlas_file_names = ["ExtendedAtlasDefinition.xml", "ExtendedAtlasDefinition.xml.
                     "template_rightHemisphere.nii.gz", "template_t1.nii.gz",
                     "template_t1_clipped.nii.gz", "template_t2.nii.gz",
                     "template_t2_clipped.nii.gz", "template_ventricles.nii.gz",
-                    "template_landmarks.fcsv", "template_landmark_weights.csv",
-                    "template_landmarks_31.fcsv", "template_landmark_weights_31.csv",
 
                     "probabilityMaps/l_accumben_ProbabilityMap.nii.gz",
                     "probabilityMaps/r_accumben_ProbabilityMap.nii.gz",
@@ -42,8 +40,11 @@ atlas_file_names = ["ExtendedAtlasDefinition.xml", "ExtendedAtlasDefinition.xml.
                     "spatialImages/rho.nii.gz",
                     "spatialImages/theta.nii.gz",
 
-                    "modelFiles/trainModelFile.txtD0060NT0060.gz"
-
+                    "modelFiles/trainModelFile.txtD0060NT0060.gz",
+                    "20111119_BCD/LLSModel_50Lmks.hdf5",
+                    "20111119_BCD/T1_50Lmks.mdl",
+                    "20111119_BCD/template_landmarks_50Lmks.fcsv",
+                    "20111119_BCD/template_weights_50Lmks.fcsv"
                     ]
 ## Remove filename extensions for images, but replace . with _ for other file types
 atlas_file_keys = [os.path.basename(fn).replace('.nii.gz', '').replace('.', '_') for fn in atlas_file_names]

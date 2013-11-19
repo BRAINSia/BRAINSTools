@@ -55,14 +55,12 @@ def file_replace(fname, out_fname, pat, s_after):
     if fname == out_fname:
         print "ERROR: input and output file names can not match"
         sys.exit(-1)
-        return  # input and output files can not match
 
     # first, see if the pattern is even in the file.
     with open(fname) as f:
         if not any(re.search(pat, line) for line in f):
             print "ERROR:  substitution pattern not found in reference file"
             sys.exit(-1)
-            return  # pattern does not occur in file so we are done.
 
     # pattern is in the file, so perform replace operation.
     with open(fname) as f:
@@ -133,8 +131,8 @@ def OpenSubjectDatabase(ExperimentBaseDirectoryCache, single_subject, mountPrefi
 
 def DoSingleSubjectProcessing(sp_args):
 
-    CACHE_ATLASPATH, CACHE_BCDMODELPATH, CLUSTER_QUEUE, CLUSTER_QUEUE_LONG, \
-         ExperimentBaseDirectoryCache, ExperimentBaseDirectoryResults, subject_data_file, \
+    CACHE_ATLASPATH, CACHE_BCDMODELPATH, CLUSTER_QUEUE, CLUSTER_QUEUE_LONG,QSTAT_IMMEDIATE_EXE,QSTAT_CACHED_EXE, \
+          ExperimentBaseDirectoryCache, ExperimentBaseDirectoryResults, subject_data_file, \
           GLOBAL_DATA_SINK_REWRITE, JOB_SCRIPT, WORKFLOW_COMPONENTS, \
           input_arguments, mountPrefix,start_time,subjectid = sp_args
 
@@ -179,7 +177,9 @@ def DoSingleSubjectProcessing(sp_args):
                 pass
             baw200.run(plugin=SGEFlavor,
                        plugin_args=dict(template=JOB_SCRIPT,
-                                        qsub_args="-S /bin/bash -cwd -pe smp 1-12 -l h_vmem=19G,mem_free=9G -o /dev/null -e /dev/null " + CLUSTER_QUEUE))
+                                        qsub_args="-S /bin/bash -cwd -pe smp 1-12 -l h_vmem=19G,mem_free=9G -o /dev/null -e /dev/null " + CLUSTER_QUEUE,
+                                        qstatProgramPath=QSTAT_IMMEDIATE_EXE,
+                                        qstatCachedProgramPath=QSTAT_CACHED_EXE))
         elif input_arguments.wfrun == 'helium_all.q_graph':
             try:
                 #baw200.write_graph()
@@ -189,7 +189,9 @@ def DoSingleSubjectProcessing(sp_args):
             SGEFlavor = 'SGEGraph'  # Use the SGEGraph processing
             baw200.run(plugin=SGEFlavor,
                        plugin_args=dict(template=JOB_SCRIPT,
-                                        qsub_args="-S /bin/bash -cwd -pe smp 1-12 -l h_vmem=19G,mem_free=9G -o /dev/null -e /dev/null " + CLUSTER_QUEUE))
+                                        qsub_args="-S /bin/bash -cwd -pe smp 1-12 -l h_vmem=19G,mem_free=9G -o /dev/null -e /dev/null " + CLUSTER_QUEUE,
+                                        qstatProgramPath=QSTAT_IMMEDIATE_EXE,
+                                        qstatCachedProgramPath=QSTAT_CACHED_EXE))
         elif input_arguments.wfrun == 'ipl_OSX':
             try:
                 baw200.write_graph()
@@ -198,7 +200,9 @@ def DoSingleSubjectProcessing(sp_args):
             print "Running On ipl_OSX"
             baw200.run(plugin=SGEFlavor,
                        plugin_args=dict(template=JOB_SCRIPT,
-                                        qsub_args="-S /bin/bash -cwd -pe smp 1-12 -l h_vmem=19G,mem_free=9G -o /dev/null -e /dev/null " + CLUSTER_QUEUE))
+                                        qsub_args="-S /bin/bash -cwd -pe smp 1-12 -l h_vmem=19G,mem_free=9G -o /dev/null -e /dev/null " + CLUSTER_QUEUE,
+                                        qstatProgramPath=QSTAT_IMMEDIATE_EXE,
+                                        qstatCachedProgramPath=QSTAT_CACHED_EXE))
         elif input_arguments.wfrun == 'local_4':
             try:
                 baw200.write_graph()
@@ -390,6 +394,8 @@ def MasterProcessingController(argv=None):
 
     CLUSTER_QUEUE = expConfig.get(input_arguments.processingEnvironment, 'CLUSTER_QUEUE')
     CLUSTER_QUEUE_LONG = expConfig.get(input_arguments.processingEnvironment, 'CLUSTER_QUEUE_LONG')
+    QSTAT_IMMEDIATE_EXE = expConfig.get(input_arguments.processingEnvironment, 'QSTAT_IMMEDIATE_EXE')
+    QSTAT_CACHED_EXE = expConfig.get(input_arguments.processingEnvironment, 'QSTAT_CACHED_EXE')
 
     ## Setup environment for CPU load balancing of ITK based programs.
     total_CPUS = multiprocessing.cpu_count()
@@ -434,10 +440,10 @@ def MasterProcessingController(argv=None):
     start_time=time.time()
     subj_index = 1
     for subjectid in to_do_subjects:
-        delay = 15*subj_index
+        delay = 5*subj_index
         subj_index += 1
-        print("START DELAY: {0}",delay)
-        sp_args=(CACHE_ATLASPATH, CACHE_BCDMODELPATH, CLUSTER_QUEUE, CLUSTER_QUEUE_LONG,
+        print("START DELAY: {0}".format(delay))
+        sp_args=(CACHE_ATLASPATH, CACHE_BCDMODELPATH, CLUSTER_QUEUE, CLUSTER_QUEUE_LONG,QSTAT_IMMEDIATE_EXE,QSTAT_CACHED_EXE,
                                   ExperimentBaseDirectoryCache, ExperimentBaseDirectoryResults, subject_data_file,
                                   GLOBAL_DATA_SINK_REWRITE, JOB_SCRIPT, WORKFLOW_COMPONENTS, input_arguments,
                                   mountPrefix, start_time+delay, subjectid)
@@ -450,7 +456,7 @@ def MasterProcessingController(argv=None):
     else:
         ## Make a pool of workers to submit simultaneously
         from multiprocessing import Pool
-        myPool = Pool(processes=32,maxtasksperchild=10)
+        myPool = Pool(processes=64,maxtasksperchild=2)
         all_results=myPool.map_async(DoSingleSubjectProcessing,sp_args_list).get(1e100)
 
         for indx in range(0,len(sp_args_list)):

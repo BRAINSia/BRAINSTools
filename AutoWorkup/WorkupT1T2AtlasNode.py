@@ -44,7 +44,7 @@ atlas_file_names = ["ExtendedAtlasDefinition.xml", "ExtendedAtlasDefinition.xml.
                     "20111119_BCD/LLSModel_50Lmks.hdf5",
                     "20111119_BCD/T1_50Lmks.mdl",
                     "20111119_BCD/template_landmarks_50Lmks.fcsv",
-                    "20111119_BCD/template_weights_50Lmks.fcsv"
+                    "20111119_BCD/template_weights_50Lmks.wts"
                     ]
 ## Remove filename extensions for images, but replace . with _ for other file types
 atlas_file_keys = [os.path.basename(fn).replace('.nii.gz', '').replace('.', '_') for fn in atlas_file_names]

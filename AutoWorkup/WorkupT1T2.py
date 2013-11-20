@@ -428,7 +428,7 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
             baw200.connect(PHASE_1_subjInfoNode[sessionid], 'allOthers', PHASE_1_oneSubjWorkflow[sessionid], 'inputspec.allOthers')
 
             baw200.connect(BAtlas[subjectid], 'template_landmarks_50Lmks_fcsv', PHASE_1_oneSubjWorkflow[sessionid], 'inputspec.atlasLandmarkFilename')
-            baw200.connect(BAtlas[subjectid], 'template_weights_50Lmks_fcsv', PHASE_1_oneSubjWorkflow[sessionid], 'inputspec.atlasWeightFilename')
+            baw200.connect(BAtlas[subjectid], 'template_weights_50Lmks_wts', PHASE_1_oneSubjWorkflow[sessionid], 'inputspec.atlasWeightFilename')
             baw200.connect(BAtlas[subjectid], 'LLSModel_50Lmks_hdf5', PHASE_1_oneSubjWorkflow[sessionid], 'inputspec.LLSModel')
             baw200.connect(BAtlas[subjectid], 'T1_50Lmks_mdl', PHASE_1_oneSubjWorkflow[sessionid], 'inputspec.inputTemplateModel')
 
@@ -636,7 +636,7 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
                 baw200.connect(PHASE_2_subjInfoNode[sessionid], 'allOthers', PHASE_2_oneSubjWorkflow[sessionid], 'inputspec.allOthers')
 
                 baw200.connect(BAtlas[subjectid], 'template_landmarks_50Lmks_fcsv', PHASE_2_oneSubjWorkflow[sessionid], 'inputspec.atlasLandmarkFilename')
-                baw200.connect(BAtlas[subjectid], 'template_weights_50Lmks_fcsv', PHASE_2_oneSubjWorkflow[sessionid], 'inputspec.atlasWeightFilename')
+                baw200.connect(BAtlas[subjectid], 'template_weights_50Lmks_wts', PHASE_2_oneSubjWorkflow[sessionid], 'inputspec.atlasWeightFilename')
                 baw200.connect(BAtlas[subjectid], 'LLSModel_50Lmks_hdf5', PHASE_2_oneSubjWorkflow[sessionid], 'inputspec.LLSModel')
                 baw200.connect(BAtlas[subjectid], 'T1_50Lmks_mdl', PHASE_2_oneSubjWorkflow[sessionid], 'inputspec.inputTemplateModel')
 

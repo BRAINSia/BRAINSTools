@@ -1,5 +1,6 @@
 #include "BRAINSCreateLabelMapFromProbabilityMapsCLP.h"
 #include "BRAINSComputeLabels.h"
+#include "BRAINSCommonLib.h"
 #include "itkIO.h"
 #include "itkImage.h"
 #include "itkImageFileReader.h"

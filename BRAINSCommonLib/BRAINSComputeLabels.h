@@ -34,7 +34,7 @@ template <class TProbabilityImage, class TByteImage,
 void ComputeLabels(
   std::vector<typename TProbabilityImage::Pointer> & Posteriors,
   std::vector<bool> & PriorIsForegroundPriorVector,
-  vnl_vector<unsigned int> & PriorLabelCodeVector,
+  const vnl_vector<unsigned int> & PriorLabelCodeVector,
   typename TByteImage::Pointer & NonAirRegion,
   typename TByteImage::Pointer & DirtyLabels,
   typename TByteImage::Pointer & CleanedLabels,

@@ -732,7 +732,6 @@ int main(int argc, char * *argv)
   typedef itk::ImageFileReader<FloatImageType> LocalReaderType;
   typedef LocalReaderType::Pointer             LocalReaderPointer;
   FloatImageType::Pointer KeyImageFirstRead=NULL;
-  FloatImageType::Pointer SecondKeyImageFirstRead=NULL;
 
   AtlasRegType::MapOfStringVectors intraSubjectTransformFileNames;
   unsigned int i = 0;
@@ -794,12 +793,6 @@ int main(int argc, char * *argv)
         {
         KeyImageFirstRead=denoisedImage;
         }
-      else if ( SecondKeyImageFirstRead.IsNull() && // Second modality to be used in
-                typeIt != inputVolumeMap.begin() )  // the atlas to subject registration
-        {
-        muLogMacro( << "Set Second Key Image: ...\n" );
-        SecondKeyImageFirstRead=denoisedImage;
-        }
       if( debuglevel > 1 )
         {
         // DEBUG:  This code is for debugging purposes only;
@@ -824,7 +817,6 @@ int main(int argc, char * *argv)
       }
     }
   atlasreg->SetKeySubjectImage(KeyImageFirstRead);
-  atlasreg->SetSecondKeySubjectImage(SecondKeyImageFirstRead);
   atlasreg->SetIntraSubjectOriginalImageList(intraSubjectNoiseRemovedImageMap);
   atlasreg->SetIntraSubjectTransformFileNames(intraSubjectTransformFileNames);
   }
@@ -1056,6 +1048,7 @@ int main(int argc, char * *argv)
 
   atlasToSubjectPreSegmentationTransform =
     atlasreg->GetAtlasToSubjectTransform();
+  /*
   if( debuglevel > 9 )
     { // NOTE THIS IS REALLY ANNOYING FOR LARGE BSPLINE REGISTRATIONS!
     muLogMacro( << __FILE__ << " " << __LINE__ << " "
@@ -1063,6 +1056,7 @@ int main(int argc, char * *argv)
     muLogMacro( << __FILE__ << " " << __LINE__ << " "
                 << atlasToSubjectPreSegmentationTransform->GetParameters() << std::endl );
     }
+  */
   if( debuglevel > 4 )
     {
     // Write the registered template and images

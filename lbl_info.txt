@@ -1,0 +1,9 @@
+Prior Names         : [ AIR BASAL CRBLGM CRBLWM CSF GLOBUS HIPPOCAMPUS NOTCSF NOTGM NOTVB NOTWM SURFGM THALAMUS VB   WM   ]
+Prior weight scales : [ 1   1     1      1      1   1      1           1      1     1     1     1      1        1    1    ]
+Prior Label Codes   : [ 0   19    11     12     4   23     25          6      7     9     8     2      24       5    1    ]
+Prior IsForeground  : [ 0   1     1      1      1   1      1           0      0     0     0     1      1        1    1    ]
+Prior Clusters      : [ 1   1     1      1      1   1      1           1      1     1     1     1      1        1    1    ]
+Prior For Bias      : [ 0   0     1      1      1   0      0           0      0     0     0     1      0        0    1    ]
+T1 Lower            : [ 0   0.05  0.03   0.1    0   0.05   0.05        0      0.15  0.15  0.4   0.04   0.05     0.04 0.5  ]
+T1 Upper            : [ 0.1 0.95  0.9    1      0.6 0.95   0.95        0.6    0.9   0.9   1     0.75   0.95     0.75 1    ]
+

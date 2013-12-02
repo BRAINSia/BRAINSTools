@@ -124,7 +124,7 @@ extern template std::vector<ShortImageType::Pointer> DuplicateImageList<ShortIma
 extern template void ComputeLabels<FloatImageType,
                                    ByteImageType,
                                    double>( std::vector<FloatImageType::Pointer> &, std::vector<bool> &,
-                                            vnl_vector<unsigned int> &, ByteImageType::Pointer &,
+                                            const vnl_vector<unsigned int> &, ByteImageType::Pointer &,
                                             ByteImageType::Pointer &,
                                             ByteImageType::Pointer &,
                                             FloatingPrecision );
@@ -147,31 +147,6 @@ unsigned int TotalMapSize(const TMap &map)
       }
     }
   return rval;
-}
-
-template <class TMap>
-typename TMap::mapped_type::value_type &
-GetMapVectorNthElement(TMap &map, int n)
-{
-  typename TMap::mapped_type::value_type returnElement;
-  if( map.size() < n )
-  {
-    returnElement = NULL;
-  }
-  else
-  {
-    typename TMap::iterator it = map.begin();
-    for( int i = 0;
-         i < n, it != map.end();
-         i++, ++ it)
-    {
-      if( i == n-1)
-      {
-        returnElement = *(map.begin()->second.begin());
-      }
-    }
-  }
-  return returnElement;
 }
 
 template <class TMap>

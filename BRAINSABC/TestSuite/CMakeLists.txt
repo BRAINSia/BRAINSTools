@@ -27,19 +27,17 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME BRAINSABCSmallTest
    --filterIteration 0
    --filterMethod GradientAnisotropicDiffusion
    --gridSize 10,10,10
-   --inputVolumeTypes T1,T1,T2
+   --inputVolumeTypes T1,T2
    --inputVolumes DATA{${TestData_DIR}/BRAINSABCSmall_T1.nii.gz}
-   --inputVolumes DATA{${TestData_DIR}/BRAINSABCSmall_T1_offset.nii.gz}
    --inputVolumes DATA{${TestData_DIR}/BRAINSABCSmall_T2.nii.gz}
    --interpolationMode Linear
    --maxBiasDegree 4
-   --maxIterations 3
+   --maxIterations 1
    --outputDir ./
    --outputDirtyLabels ${CMAKE_CURRENT_BINARY_DIR}/BRAINSABCSmallvolume_label_seg.nii.gz
    --outputFormat NIFTI
    --outputLabels ${CMAKE_CURRENT_BINARY_DIR}/BRAINSABCSmallLabels.test.nii.gz
    --outputVolumes ${CMAKE_CURRENT_BINARY_DIR}/BRAINSABCSmallT1_1.nii.gz
-   --outputVolumes ${CMAKE_CURRENT_BINARY_DIR}/BRAINSABCSmallT1_2.nii.gz
    --outputVolumes ${CMAKE_CURRENT_BINARY_DIR}/BRAINSABCSmallT2_1.nii.gz
    --posteriorTemplate ${CMAKE_CURRENT_BINARY_DIR}/BRAINSABCSmallPOST_%s.nii.gz
 )

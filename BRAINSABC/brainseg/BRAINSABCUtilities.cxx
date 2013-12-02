@@ -32,7 +32,7 @@ template std::vector<ShortImageType::Pointer> DuplicateImageList<ShortImageType>
 template void ComputeLabels<FloatImageType,
                             ByteImageType,
                             double>( std::vector<FloatImageType::Pointer> &, std::vector<bool> &,
-                                     vnl_vector<unsigned int> &, ByteImageType::Pointer &,
+                                     const vnl_vector<unsigned int> &, ByteImageType::Pointer &,
                                      ByteImageType::Pointer &,
                                      ByteImageType::Pointer &,
                                      FloatingPrecision );

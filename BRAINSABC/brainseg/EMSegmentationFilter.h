@@ -113,6 +113,9 @@ public:
 
   typedef itk::Transform<double, 3, 3>  GenericTransformType;
 
+  typedef std::vector< FloatingPrecision >                      MeasurementVectorType;
+  typedef itk::Statistics::ListSample< MeasurementVectorType >  SampleType;
+
   // Set/Get the maximum polynomial degree of the bias field estimate
   itkSetMacro(MaxBiasDegree, unsigned int);
   itkGetMacro(MaxBiasDegree, unsigned int);
@@ -284,6 +287,26 @@ private:
 
   void InitializePosteriors(void);
 
+  typename TInputImage::Pointer
+  NormalizeInputIntensityImage(const typename TInputImage::Pointer inputImage);
+
+  void
+  kNNCore( SampleType * trainMatrix,
+           const vnl_vector<FloatingPrecision> & labelVector,
+           const vnl_matrix<FloatingPrecision> & testMatrix,
+           vnl_matrix<FloatingPrecision> & liklihoodMatrix,
+           unsigned int K );
+
+  typename TProbabilityImage::Pointer
+  assignVectorToImage(const typename TProbabilityImage::Pointer prior,
+                      const vnl_vector<FloatingPrecision> & vector);
+
+  std::vector<typename TProbabilityImage::Pointer>
+  ComputekNNPosteriors(const ProbabilityImageVectorType & Priors,
+                        const MapOfInputImageVectors & IntensityImages,
+                        ByteImagePointer & CleanedLabels,
+                        const IntVectorType & labelClasses);
+
   typename TProbabilityImage::Pointer
   ComputeOnePosterior(const FloatingPrecision priorScale,
                       const typename TProbabilityImage::Pointer prior,
@@ -292,10 +315,19 @@ private:
                       const MapOfInputImageVectors & intensityImages);
 
   std::vector<typename TProbabilityImage::Pointer>
+  ComputeEMPosteriors(const std::vector<typename TProbabilityImage::Pointer> & Priors,
+                      const vnl_vector<FloatingPrecision> & PriorWeights,
+                      const MapOfInputImageVectors & IntensityImages,
+                      std::vector<RegionStats> & ListOfClassStatistics);
+
+  std::vector<typename TProbabilityImage::Pointer>
   ComputePosteriors(const std::vector<typename TProbabilityImage::Pointer> & Priors,
                     const vnl_vector<FloatingPrecision> & PriorWeights,
                     const MapOfInputImageVectors & IntensityImages,
-                    std::vector<RegionStats> & ListOfClassStatistics);
+                    std::vector<RegionStats> & ListOfClassStatistics,
+                    const IntVectorType & priorLabelCodeVector,
+                    std::vector<bool> & priorIsForegroundPriorVector,
+                    typename ByteImageType::Pointer & nonAirRegion);
 
   std::vector<RegionStats> ComputeDistributions(const ByteImageVectorType &SubjectCandidateRegions,
                                                 const ProbabilityImageVectorType &probAllDistributions);

@@ -101,7 +101,7 @@
   <GaussianClusterCount>1</GaussianClusterCount>
   <UseForBias>0</UseForBias>
   <IsForegroundPrior>1</IsForegroundPrior>
-  <LabelCode>20</LabelCode>
+  <LabelCode>19</LabelCode>
   <bounds>
    <type>T1</type>
    <lower>0.05</lower>

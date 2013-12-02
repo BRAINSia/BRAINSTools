@@ -66,6 +66,426 @@
 #include "PrettyPrintTable.h"
 #include "ComputeDistributions.h"
 
+#include "vnl_index_sort.h"
+#include "itkVector.h"
+#include "itkListSample.h"
+#include "itkKdTree.h"
+#include "itkKdTreeGenerator.h"
+#include "itkImageRandomNonRepeatingConstIteratorWithIndex.h"
+
+static const bool m_USEKNN = true;
+static const FloatingPrecision KNN_InclusionThreshold = 0.66F;
+  // We will choose "KNN_SamplesPerLabel" from each posterior class.
+static const size_t KNN_SamplesPerLabel = 75;
+
+///////////////////////////////////////////////// Posterior computation by kNN //////////////////////////////////////////////
+template <class TInputImage, class TProbabilityImage>
+typename TInputImage::Pointer
+EMSegmentationFilter<TInputImage, TProbabilityImage>
+::NormalizeInputIntensityImage(typename TInputImage::Pointer inputImage)
+{
+  muLogMacro(<< "\nNormalize input intensity images..." << std::endl);
+
+  typedef typename itk::Statistics::ImageToHistogramFilter<TInputImage>   HistogramFilterType;
+  typedef typename HistogramFilterType::InputBooleanObjectType            InputBooleanObjectType;
+  typedef typename HistogramFilterType::HistogramSizeType                 HistogramSizeType;
+  typedef typename HistogramFilterType::HistogramType                     HistogramType;
+
+  HistogramSizeType histogramSize( 1 );
+  histogramSize[0] = 256;
+
+  typename InputBooleanObjectType::Pointer autoMinMaxInputObject = InputBooleanObjectType::New();
+  autoMinMaxInputObject->Set( true );
+
+  typename HistogramFilterType::Pointer histogramFilter = HistogramFilterType::New();
+  histogramFilter->SetInput( inputImage );
+  histogramFilter->SetAutoMinimumMaximumInput( autoMinMaxInputObject );
+  histogramFilter->SetHistogramSize( histogramSize );
+  histogramFilter->SetMarginalScale( 10.0 );
+  histogramFilter->Update();
+
+  float lowerValue = histogramFilter->GetOutput()->Quantile( 0, 0 );
+  float upperValue = histogramFilter->GetOutput()->Quantile( 0, 1 );
+
+  typedef typename itk::IntensityWindowingImageFilter<TInputImage, TInputImage> IntensityWindowingImageFilterType;
+  typename IntensityWindowingImageFilterType::Pointer windowingFilter = IntensityWindowingImageFilterType::New();
+  windowingFilter->SetInput( inputImage );
+  windowingFilter->SetWindowMinimum( lowerValue );
+  windowingFilter->SetWindowMaximum( upperValue );
+  windowingFilter->SetOutputMinimum( 0 );
+  windowingFilter->SetOutputMaximum( 1 );
+  windowingFilter->Update();
+
+  typename TInputImage::Pointer outputImage = NULL;
+  outputImage = windowingFilter->GetOutput();
+  outputImage->Update();
+  outputImage->DisconnectPipeline();
+
+  return outputImage;
+}
+
+template <class TInputImage, class TProbabilityImage>
+void
+EMSegmentationFilter<TInputImage, TProbabilityImage>
+::kNNCore( SampleType * trainSampleSet,
+          const vnl_vector<FloatingPrecision> & labelVector,
+          const vnl_matrix<FloatingPrecision> & testMatrix,
+          vnl_matrix<FloatingPrecision> & liklihoodMatrix,
+          unsigned int K )
+{
+  unsigned int numClasses = labelVector.max_value() + 1; // index starts from zero
+  unsigned int numTraining = trainSampleSet->Size(); // number of training data
+  unsigned int numTest = testMatrix.rows(); // number of test data
+  unsigned int numFeatures = testMatrix.columns(); // number of features
+
+    // represent each class label as an array
+  vnl_matrix<FloatingPrecision> localLabels(numTraining, numClasses, 0);
+  for( unsigned int iTrain = 0; iTrain < numTraining; ++iTrain )
+    {
+    localLabels( iTrain, labelVector(iTrain) ) = 1;
+    }
+
+  // Create KdTree for train samples
+  typedef itk::Statistics::KdTreeGenerator< SampleType > TreeGeneratorType;
+  typedef TreeGeneratorType::KdTreeType                  TreeType;
+  TreeGeneratorType::Pointer treeGenerator = TreeGeneratorType::New();
+  treeGenerator->SetSample( trainSampleSet );
+  treeGenerator->SetBucketSize( 16 );
+  treeGenerator->Update();
+
+  TreeType::Pointer tree = treeGenerator->GetOutput();
+
+  // Compute Likelihood matrix
+  for( unsigned int iTest = 0; iTest < numTest; ++iTest ) ///////
+    {
+    // each test case is a query point
+    MeasurementVectorType queryPoint;
+    for(unsigned int i=0; i<numFeatures; ++i)
+       {
+       queryPoint.push_back( testMatrix(iTest,i) );
+       }
+
+    // compute the distances
+    typename TreeType::InstanceIdentifierVectorType neighbors;
+    std::vector<double> distances;
+    tree->Search( queryPoint, K, neighbors, distances );
+
+    // Now we should find K labels correspondence to K neighbors
+    vnl_matrix<FloatingPrecision> neighborLabels( K, numClasses);
+    // Weight vector
+    vnl_matrix<FloatingPrecision> weights(1,K,0);
+    FloatingPrecision sumOfWeights = 0;
+
+    for( unsigned int n = 0; n < K; ++n )
+      {
+      // Labels of the K neighbors
+      neighborLabels.set_row( n, localLabels.get_row( neighbors[n] ) );
+      //  Compute Weights and sum of weights
+      FloatingPrecision distSqr = pow( distances[n], 2);
+      if( distSqr == 0 )
+        {
+        weights(0,n) = 1; // avoids inf weights
+        }
+      else
+        {
+        weights(0,n) = 1/distSqr;
+        }
+      sumOfWeights += weights(0,n);
+      }
+    weights = weights / sumOfWeights;
+
+    vnl_matrix<FloatingPrecision> likelihoodRow = weights * neighborLabels; // a 1xC vector
+    liklihoodMatrix.set_row(iTest, likelihoodRow.get_row(0) );
+    } // end of main loop
+  muLogMacro(<< "\n--------------------------------" << std::endl);
+  muLogMacro(<< "LiklihoodMatrix is calculated: [ " << liklihoodMatrix.rows() << " x " << liklihoodMatrix.cols() << " ]" << std::endl);
+  muLogMacro(<< "--------------------------------" << std::endl);
+}
+
+template <class TInputImage, class TProbabilityImage>
+typename TProbabilityImage::Pointer
+EMSegmentationFilter<TInputImage, TProbabilityImage>
+::assignVectorToImage(const typename TProbabilityImage::Pointer prior,
+                      const vnl_vector<FloatingPrecision> & vector)
+{
+  typename TProbabilityImage::Pointer post = TProbabilityImage::New();
+  post->CopyInformation(prior);
+  post->SetRegions(prior->GetLargestPossibleRegion() );
+  post->Allocate();
+
+  const typename TProbabilityImage::SizeType size = post->GetLargestPossibleRegion().GetSize();
+
+  unsigned int vindex = 0;
+  for( LOOPITERTYPE kk = 0; kk < (LOOPITERTYPE)size[2]; kk++ )
+    {
+    for( LOOPITERTYPE jj = 0; jj < (LOOPITERTYPE)size[1]; jj++ )
+      {
+      for( LOOPITERTYPE ii = 0; ii < (LOOPITERTYPE)size[0]; ii++ )
+        {
+        const typename TProbabilityImage::IndexType currIndex = {{ii, jj, kk}};
+        post->SetPixel(currIndex, vector(vindex) );
+        ++vindex;
+        }
+      }
+    }
+  return post;
+}
+
+template <class TInputImage, class TProbabilityImage>
+typename EMSegmentationFilter<TInputImage, TProbabilityImage>::ProbabilityImageVectorType
+EMSegmentationFilter<TInputImage, TProbabilityImage>
+::ComputekNNPosteriors(const ProbabilityImageVectorType & Priors,
+                       const MapOfInputImageVectors & intensityImages, // input corrected images
+                       ByteImagePointer & labelsImage,
+                       const IntVectorType & labelClasses)
+
+{
+  // Phase 1: create train sample set, label vector, and the test matrix
+  // Phase 2: pass the above vectors to the "dokNNClassification" function
+
+  const unsigned int numClasses = Priors.size();
+  muLogMacro(<< "Number of posteriors classes (label codes): " << numClasses << "(" << labelClasses.size() << ")" << std::endl);
+
+  // change the map of input image vectors to a probability image vector type
+  typedef std::vector<InputImagePointer>       InputImageVectorType;
+  InputImageVectorType                         inputImagesVector;
+
+  for(typename MapOfInputImageVectors::const_iterator mapIt = intensityImages.begin();
+      mapIt != intensityImages.end();
+      ++mapIt)
+    {
+    const double numCurModality = static_cast<double>(mapIt->second.size());
+    for(unsigned m = 0; m < numCurModality; ++m)
+      {
+      // Normalize the input images since the priors are normalized already
+      inputImagesVector.push_back( NormalizeInputIntensityImage( mapIt->second[m] ) );
+      }
+    }
+
+  const unsigned int numOfInputImages = inputImagesVector.size();
+  muLogMacro(<< "Number of input images: " << numOfInputImages << std::endl);
+
+  // set train sample set and the label vector by picking samples from label image.
+  //
+  const size_t numberOfSamples = numClasses * KNN_SamplesPerLabel;
+
+  typedef std::vector<ByteImageType::IndexType> IndexVectorType;
+  typedef std::map<typename ByteImageType::PixelType, IndexVectorType >  LabelMapSamplesType;
+  LabelMapSamplesType SampledLabelsMap;
+  std::map<typename ByteImageType::PixelType, size_t> reverseLabelToIndex;
+
+  for( size_t i = 0; i < labelClasses.size(); ++i )
+    {
+    SampledLabelsMap[ labelClasses[i] ].reserve(KNN_SamplesPerLabel);
+    reverseLabelToIndex[ labelClasses[i] ] = i;
+    }
+
+  // randomly iterate through the label image
+  //
+  itk::ImageRandomNonRepeatingConstIteratorWithIndex<ByteImageType> NRit( labelsImage,
+                                                                          labelsImage->GetBufferedRegion() );
+  NRit.SetNumberOfSamples( labelsImage->GetBufferedRegion().GetNumberOfPixels() );
+  NRit.GoToBegin();
+
+  size_t sampleCount = 0;
+  while( !NRit.IsAtEnd() && sampleCount < numberOfSamples )
+    {
+    unsigned int currLabelCode = NRit.Get();
+    // 99 is the label code of the voxels that their value is less than threshold
+    // so they are not used in our computations.
+    if( currLabelCode != 99   && SampledLabelsMap[ currLabelCode ].size() < KNN_SamplesPerLabel )
+      {
+      const typename ByteImageType::IndexType currentIndex = NRit.GetIndex();
+      SampledLabelsMap[ currLabelCode ].push_back( currentIndex );
+      ++sampleCount;
+      }
+    ++NRit;
+    }
+
+  if(1) // Now check that enough samples are chosen for each label code
+    {
+    for( size_t i = 0; i < labelClasses.size(); ++i )
+      {
+      if( SampledLabelsMap[ labelClasses[i] ].size() < KNN_SamplesPerLabel )
+        {
+        muLogMacro(<<"WARNING: There is not enough samples for all label codes." << std::endl );
+        }
+      }
+    }
+
+  vnl_vector<FloatingPrecision> labelVector(numberOfSamples);
+  muLogMacro(<< "\n* Computing the label vector with " << numberOfSamples << " samples..." << std::endl);
+
+  // set kNN train sample set. it has #numberOfSamples training cases with (#numOfInputImages + #numClasses) features
+  muLogMacro(<< "\n* Computing train matrix as a list of samples" << std::endl);
+  SampleType::Pointer trainSampleSet = SampleType::New();
+  trainSampleSet->SetMeasurementVectorSize( numOfInputImages + labelClasses.size() ); // Feature space has 2+15 elements
+
+   // NOW PROCESS ALL ELEMENTS OF THE std::Map SampledLabelsMap
+   unsigned int rowIndx = 0;
+   for( typename LabelMapSamplesType::const_iterator it = SampledLabelsMap.begin(); it != SampledLabelsMap.end(); ++it )
+     {
+     for( typename IndexVectorType::const_iterator vit = it->second.begin(); vit != it->second.end(); ++vit )
+       {
+       // Fill label vector with the (index corresponding to) label code of the sampled voxel
+       const unsigned int currLabelIndex = reverseLabelToIndex[it->first];
+       labelVector(rowIndx) = currLabelIndex;
+       ++rowIndx;
+       if( rowIndx > numberOfSamples )
+         {
+         itkGenericExceptionMacro( << "Error: label vector size cannot be bigger than the number of samples: "
+                                   << numberOfSamples << std::endl );
+         }
+
+       // Fill the corresponding row of the train matrix with the values of feature space in the sampled voxel
+       MeasurementVectorType mv;
+       for( typename InputImageVectorType::const_iterator inIt = inputImagesVector.begin();
+            inIt != inputImagesVector.end();
+            ++inIt ) // First features are from input images (usually two T1 and T2 images)
+         {
+         mv.push_back( inIt->GetPointer()->GetPixel( *vit ) );
+         }
+       for( unsigned int c_indx = 0; c_indx<labelClasses.size() ; ++c_indx) // Add 15 more features from posteriors
+         {
+         //mv.push_back( Priors[c_indx]->GetPixel( *vit ) );
+         mv.push_back( (  Priors[c_indx]->GetPixel( *vit ) > 0.01 ) ? 1 : 0 );
+         }
+       trainSampleSet->PushBack( mv );
+       }
+     }
+
+  if( rowIndx != numberOfSamples )
+    {
+    muLogMacro(<<"\nNumber of valid samples found: " << rowIndx << std::endl);
+    muLogMacro(<<"\nResize the labeling vector:" << std::endl);
+
+    labelVector = labelVector.extract(rowIndx,0);
+    muLogMacro(<<"New size of label vector: " << labelVector.size() << std::endl);
+    }
+  else
+    {
+    muLogMacro(<<"Size of created label vector: " << labelVector.size() << std::endl);
+    }
+  muLogMacro(<< "\nTrain matrix is created using " << trainSampleSet->Size() << " samples, ");
+  muLogMacro(<< "having feature space size of: " << trainSampleSet->GetMeasurementVectorSize() << std::endl);
+
+  // DEBUGGING: Write csv file
+  {
+  const bool generateLogScript = true; //HACK:  SHOULD BE FALSE EVENTUALLY
+  if( generateLogScript )
+    {
+    muLogMacro(<< "\nWrite training labels csv file ..." << std::endl);
+    std::stringstream csvFileOfSampleLabels;
+    csvFileOfSampleLabels << "#T1_value, T2_value, ";
+    for (unsigned int cln_i = 0; cln_i < labelClasses.size(); ++cln_i)
+      {
+      csvFileOfSampleLabels << this->m_PriorNames[ cln_i ] << "_value, ";
+      }
+    csvFileOfSampleLabels << "LableCode, ClassName" << std::endl;
+    for( SampleType::InstanceIdentifier i = 0; i < rowIndx; ++i )
+      {
+      SampleType::MeasurementVectorType smv = trainSampleSet->GetMeasurementVector(i);
+      copy( smv.begin(), smv.end(), std::ostream_iterator<double>(csvFileOfSampleLabels, ",") );
+      csvFileOfSampleLabels << labelClasses( labelVector(i) ) << ",";
+      csvFileOfSampleLabels << this->m_PriorNames[ labelVector(i) ] << std::endl;
+      }
+    std::ofstream csvFile;
+    csvFile.open( "trainingLabels.csv" );
+    if( !csvFile.is_open() )
+      {
+      itkGenericExceptionMacro( << "Error: Can't write label csv file!" << std::endl );
+      }
+    csvFile << csvFileOfSampleLabels.str();
+    csvFile.close();
+    }
+  }
+  //////
+
+  // set kNN input test matrix of size : #OfVoxels x #OfInputImages
+  const typename InputImageType::SizeType size = inputImagesVector[0]->GetLargestPossibleRegion().GetSize();
+  unsigned int numOfVoxels = inputImagesVector[0]->GetLargestPossibleRegion().GetNumberOfPixels();
+
+  muLogMacro(<< "\n* Computing test matrix ( " << numOfVoxels << " x " << numOfInputImages + labelClasses.size() << " )" << std::endl);
+  vnl_matrix<FloatingPrecision> testMatrix( numOfVoxels, numOfInputImages+labelClasses.size() );
+
+  unsigned int rowIndex = 0;
+  for( LOOPITERTYPE kk = 0; kk < (LOOPITERTYPE)size[2]; kk++ )
+    {
+    for( LOOPITERTYPE jj = 0; jj < (LOOPITERTYPE)size[1]; jj++ )
+      {
+      for( LOOPITERTYPE ii = 0; ii < (LOOPITERTYPE)size[0]; ii++ )
+        {
+        const typename InputImageType::IndexType currIndex = {{ii, jj, kk}};
+        unsigned int colIndex = 0;
+        typename ProbabilityImageVectorType::const_iterator inIt = inputImagesVector.begin();
+        while( ( inIt != inputImagesVector.end() ) && ( colIndex < numOfInputImages ) )
+          {
+          testMatrix(rowIndex,colIndex) = inIt->GetPointer()->GetPixel( currIndex ); // set first two cols from T1 and T2
+          ++colIndex;
+          ++inIt;
+          }
+        while( colIndex-numOfInputImages < labelClasses.size() ) // Add 15 more features from posteriors
+          {
+          testMatrix(rowIndex,colIndex) = ( Priors[colIndex-numOfInputImages]->GetPixel( currIndex ) > 0.01 ) ? 1 : 0 ;
+          ++colIndex;
+          }
+        ++rowIndex;
+        }
+      }
+    }
+
+  const unsigned int K = KNN_SamplesPerLabel * 0.80; // HACK: NEEDS MORE CONSIDERATION // Number of neighbours
+  // each column of the memberShip matrix contains the voxel values of a posterior image.
+  vnl_matrix<FloatingPrecision> liklihoodMatrix(numOfVoxels, numClasses, 1000);
+
+  muLogMacro(<< "\n* Computing Liklihood Matrix ( " << numOfVoxels << " x " << numClasses << " )" << std::endl);
+  muLogMacro(<< "Run k-NN algorithm on test data...with the value of \"k\" as: " << K << std::endl);
+
+  this->kNNCore( trainSampleSet, labelVector, testMatrix, liklihoodMatrix, K );
+
+  // For validation
+  if( liklihoodMatrix.max_value() == 1000 )
+    {
+    itkGenericExceptionMacro( << "The liklihood matrix is not valid." << std::endl );
+    }
+
+  // create posteriors
+  muLogMacro(<< "Create posteriors from likelihood matrix..." << std::endl);
+  ProbabilityImageVectorType Posteriors;
+  Posteriors.resize(numClasses);
+
+  typedef itk::DiscreteGaussianImageFilter<TInputImage, TInputImage> SmoothingFilterType;
+
+  for( unsigned int iclass = 0; iclass < numClasses; iclass++ )
+    {
+    Posteriors[iclass] = this->assignVectorToImage( Priors[iclass],
+                                                    liklihoodMatrix.get_column(iclass) );
+    /*
+    // Smoothing filter
+    typename SmoothingFilterType::Pointer smoothingFilter = SmoothingFilterType::New();
+    smoothingFilter->SetUseImageSpacingOn();
+    smoothingFilter->SetVariance( vnl_math_sqr( 1 ) );
+    smoothingFilter->SetMaximumError( 0.01 );
+    smoothingFilter->SetInput( Posteriors[iclass] );
+    smoothingFilter->Update();
+
+    Posteriors[iclass] = smoothingFilter->GetOutput();
+    */
+    }
+
+  const typename InputImageType::SizeType finalPosteriorSize = Posteriors[0]->GetLargestPossibleRegion().GetSize();
+  muLogMacro(<< "Size of return posteriors: " << finalPosteriorSize  << std::endl);
+
+  typedef itk::ImageFileWriter<TProbabilityImage> PostImageWriterType;
+  typename PostImageWriterType::Pointer posetriorwriter = PostImageWriterType::New();
+  posetriorwriter->SetInput(Posteriors[14]);
+  posetriorwriter->SetFileName("DEBUG_WHITE_MATTER.nii.gz");
+  posetriorwriter->Update();
+
+  return Posteriors;
+}
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 template <class TInputImage, class TProbabilityImage>
 EMSegmentationFilter<TInputImage, TProbabilityImage>
 ::EMSegmentationFilter()
@@ -744,18 +1164,18 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
 template <class TInputImage, class TProbabilityImage>
 typename EMSegmentationFilter<TInputImage, TProbabilityImage>::ProbabilityImageVectorType
 EMSegmentationFilter<TInputImage, TProbabilityImage>
-::ComputePosteriors(const ProbabilityImageVectorType & Priors,
+::ComputeEMPosteriors(const ProbabilityImageVectorType & Priors,
                     const vnl_vector<FloatingPrecision> & PriorWeights,
                     const MapOfInputImageVectors & IntensityImages,
                     std::vector<RegionStats> & ListOfClassStatistics)
 {
   // Compute initial distribution parameters
-  muLogMacro(<< "ComputePosteriors" << std::endl );
-  itk::TimeProbe ComputePosteriorsTimer;
-  ComputePosteriorsTimer.Start();
+  muLogMacro(<< "ComputeEMPosteriors" << std::endl );
+  itk::TimeProbe ComputeEMPosteriorsTimer;
+  ComputeEMPosteriorsTimer.Start();
 
   const unsigned int numClasses = Priors.size();
-  muLogMacro(<< "Computing posteriors at full resolution" << std::endl);
+  muLogMacro(<< "Computing EM posteriors at full resolution" << std::endl);
 
   ProbabilityImageVectorType Posteriors;
   Posteriors.resize(numClasses);
@@ -771,10 +1191,72 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
                                              IntensityImages);
     } // end class loop
 
-  ComputePosteriorsTimer.Stop();
-  itk::RealTimeClock::TimeStampType elapsedTime =
-    ComputePosteriorsTimer.GetTotal();
-  muLogMacro(<< "Computing Posteriors took " << elapsedTime << " " << ComputePosteriorsTimer.GetUnit() << std::endl);
+  ComputeEMPosteriorsTimer.Stop();
+  itk::RealTimeClock::TimeStampType emElapsedTime =
+    ComputeEMPosteriorsTimer.GetTotal();
+  muLogMacro(<< "Computing EM posteriors took " << emElapsedTime << " " << ComputeEMPosteriorsTimer.GetUnit() << std::endl);
+  return Posteriors;
+}
+
+template <class TInputImage, class TProbabilityImage>
+typename EMSegmentationFilter<TInputImage, TProbabilityImage>::ProbabilityImageVectorType
+EMSegmentationFilter<TInputImage, TProbabilityImage>
+::ComputePosteriors(const ProbabilityImageVectorType & Priors,
+                    const vnl_vector<FloatingPrecision> & PriorWeights,
+                    const MapOfInputImageVectors & IntensityImages,
+                    std::vector<RegionStats> & ListOfClassStatistics,
+                    const IntVectorType & priorLabelCodeVector,
+                    std::vector<bool> & priorIsForegroundPriorVector,
+                    typename ByteImageType::Pointer & nonAirRegion)
+{
+  muLogMacro(<< "Computing posteriors..." << std::endl);
+  const unsigned int numClasses = Priors.size();
+  ProbabilityImageVectorType Posteriors;
+  Posteriors.resize(numClasses);
+
+  // Compute EM posteriors
+  Posteriors = ComputeEMPosteriors(Priors,
+                                   PriorWeights,
+                                   IntensityImages,
+                                   ListOfClassStatistics);
+
+  // Run KNN on posteriors
+  if( m_USEKNN )
+    {
+    NormalizeProbListInPlace<TProbabilityImage>( Posteriors );
+
+    ByteImagePointer thresholdedLabels = NULL;
+    ByteImagePointer dirtyThresholdedLabels = NULL; // It is the label image that is used in ComputeKNNPosteriors,
+                                                    // since it has all labels (not only foreground region).
+    ComputeLabels<TProbabilityImage, ByteImageType, double>(Posteriors, priorIsForegroundPriorVector,
+                                                            priorLabelCodeVector, nonAirRegion,
+                                                            dirtyThresholdedLabels,
+                                                            thresholdedLabels, KNN_InclusionThreshold);
+
+    const bool writeKNNLabelImage = true; // DEBUG: Write label image to the disk.
+    if( writeKNNLabelImage )
+      {
+      muLogMacro(<< "\nWrite ThresholdedLabels for debugging." << std::endl);
+      typedef itk::ImageFileWriter<ByteImageType> LabelImageWriterType;
+      typename LabelImageWriterType::Pointer cleanLabelWriter = LabelImageWriterType::New();
+      cleanLabelWriter->SetInput( dirtyThresholdedLabels );
+      cleanLabelWriter->SetFileName("DEBUG_KNNDirtyThresholdedLabels.nii.gz");
+      cleanLabelWriter->Update();
+      }
+
+    itk::TimeProbe ComputeKNNPosteriorsTimer;
+    ComputeKNNPosteriorsTimer.Start();
+
+    this->m_Posteriors = this->ComputekNNPosteriors(Posteriors,
+                                                    IntensityImages,
+                                                    dirtyThresholdedLabels,
+                                                    priorLabelCodeVector);
+
+    ComputeKNNPosteriorsTimer.Stop();
+    itk::RealTimeClock::TimeStampType knnElapsedTime = ComputeKNNPosteriorsTimer.GetTotal();
+    muLogMacro(<< "Computing KNN posteriors took " << knnElapsedTime << " " << ComputeKNNPosteriorsTimer.GetUnit() << std::endl);
+    }
+  ////
   return Posteriors;
 }
 
@@ -1827,7 +2309,10 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
     this->m_Posteriors =
       this->ComputePosteriors(this->m_WarpedPriors, this->m_PriorWeights,
                               this->m_CorrectedImages,
-                              this->m_ListOfClassStatistics);
+                              this->m_ListOfClassStatistics,
+                              this->m_PriorLabelCodeVector,
+                              this->m_PriorIsForegroundPriorVector, this->m_NonAirRegion);
+
     NormalizeProbListInPlace<TProbabilityImage>(this->m_Posteriors);
     this->WriteDebugPosteriors(CurrentEMIteration);
     ComputeLabels<TProbabilityImage, ByteImageType, double>(this->m_Posteriors, this->m_PriorIsForegroundPriorVector,
@@ -1927,18 +2412,21 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
 
   this->m_Posteriors = this->ComputePosteriors(this->m_WarpedPriors, this->m_PriorWeights,
                                                this->m_CorrectedImages,
-                                               this->m_ListOfClassStatistics);
+                                               this->m_ListOfClassStatistics,
+                                               this->m_PriorLabelCodeVector,
+                                               this->m_PriorIsForegroundPriorVector, this->m_NonAirRegion);
   NormalizeProbListInPlace<TProbabilityImage>(this->m_Posteriors);
+
   this->WriteDebugPosteriors(CurrentEMIteration + 100);
   ComputeLabels<TProbabilityImage, ByteImageType, double>(this->m_Posteriors, this->m_PriorIsForegroundPriorVector,
                                                           this->m_PriorLabelCodeVector, this->m_NonAirRegion,
                                                           this->m_DirtyLabels,
                                                           this->m_CleanedLabels);
-  FloatingPrecision inclusionThreshold = 0.75F;
+
   ComputeLabels<TProbabilityImage, ByteImageType, double>(this->m_Posteriors, this->m_PriorIsForegroundPriorVector,
                                                           this->m_PriorLabelCodeVector, this->m_NonAirRegion,
                                                           this->m_DirtyThresholdedLabels,
-                                                          this->m_ThresholdedLabels, inclusionThreshold);
+                                                          this->m_ThresholdedLabels, KNN_InclusionThreshold);
   this->WriteDebugLabels(CurrentEMIteration + 100);
 
   // Bias correction at full resolution, still using downsampled images

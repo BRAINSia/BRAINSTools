@@ -760,7 +760,7 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
                     from nipype.interfaces.ants import (Registration, ApplyTransforms)
                     currentAtlasToSubjectantsRegistration = 'AtlasToSubjectantsRegistration_' + str(subjectid) + "_" + str(sessionid)
                     AtlasToSubjectantsRegistration[sessionid] = pe.Node(interface=Registration(), name=currentAtlasToSubjectantsRegistration)
-                    AtlasToSubjectantsRegistration[sessionid].plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp 4-6 -l mem_free=9000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE_LONG), 'overwrite': True}
+                    AtlasToSubjectantsRegistration[sessionid].plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp 4- -l mem_free=9000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE_LONG), 'overwrite': True}
                     AtlasToSubjectantsRegistration[sessionid].inputs.dimension = 3
                     AtlasToSubjectantsRegistration[sessionid].inputs.transforms = ["Affine", "SyN"]
                     AtlasToSubjectantsRegistration[sessionid].inputs.transform_parameters = [[0.1], [0.15, 3.0, 0.0]]

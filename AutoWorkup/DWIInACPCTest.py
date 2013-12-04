@@ -277,7 +277,7 @@ outputsSpec = pe.Node(interface=IdentityInterface(fields=['FAImage', 'MDImage', 
                       name='outputspec')
 
 BFitB0_T2 = pe.Node(interface=BRAINSFit(), name='B0ToT2_Rigid')
-# BF_cpu_sge_options_dictionary = {'qsub_args': '-S /bin/bash -pe smp 2-12 -l h_vmem=14G,mem_free=4G -o /dev/null -e /dev/null ' + CLUSTER_QUEUE, 'overwrite': True}
+# BF_cpu_sge_options_dictionary = {'qsub_args': '-S /bin/bash -pe smp 2- -l h_vmem=14G,mem_free=4G -o /dev/null -e /dev/null ' + CLUSTER_QUEUE, 'overwrite': True}
 
 # BFitB0_T2.plugin_args = BF_cpu_sge_options_dictionary
 BFitB0_T2.inputs.costMetric = 'MMI'
@@ -439,7 +439,7 @@ if True:
 else:
     MasterDWIWorkflow.run(plugin=SGEFlavor,
                           plugin_args=dict(template=JOB_SCRIPT,
-                                           qsub_args='-S /bin/bash -cwd -pe smp 1-12 -l h_vmem=19G,mem_free=2G -o /dev/null -e /dev/null ' + '-q OSX'))
+                                           qsub_args='-S /bin/bash -cwd -pe smp 1- -l h_vmem=19G,mem_free=2G -o /dev/null -e /dev/null ' + '-q OSX'))
 
 
 print sys.argv

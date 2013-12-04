@@ -164,7 +164,7 @@ def DoSingleSubjectProcessing(sp_args):
                 pass
             baw200.run(plugin=SGEFlavor,
                        plugin_args=dict(template=JOB_SCRIPT,
-                                        qsub_args="-S /bin/bash -cwd -pe smp 1-12 -l h_vmem=19G,mem_free=9G -o /dev/null -e /dev/null " + CLUSTER_QUEUE,
+                                        qsub_args="-S /bin/bash -cwd -pe smp 1- -l h_vmem=19G,mem_free=9G -o /dev/null -e /dev/null " + CLUSTER_QUEUE,
                                         qstatProgramPath=QSTAT_IMMEDIATE_EXE,
                                         qstatCachedProgramPath=QSTAT_CACHED_EXE))
         elif input_arguments.wfrun == 'helium_all.q_graph':
@@ -176,7 +176,7 @@ def DoSingleSubjectProcessing(sp_args):
             SGEFlavor = 'SGEGraph'  # Use the SGEGraph processing
             baw200.run(plugin=SGEFlavor,
                        plugin_args=dict(template=JOB_SCRIPT,
-                                        qsub_args="-S /bin/bash -cwd -pe smp 1-12 -l h_vmem=19G,mem_free=9G -o /dev/null -e /dev/null " + CLUSTER_QUEUE,
+                                        qsub_args="-S /bin/bash -cwd -pe smp 1- -l h_vmem=19G,mem_free=9G -o /dev/null -e /dev/null " + CLUSTER_QUEUE,
                                         qstatProgramPath=QSTAT_IMMEDIATE_EXE,
                                         qstatCachedProgramPath=QSTAT_CACHED_EXE))
         elif input_arguments.wfrun == 'ipl_OSX':
@@ -187,7 +187,7 @@ def DoSingleSubjectProcessing(sp_args):
             print "Running On ipl_OSX"
             baw200.run(plugin=SGEFlavor,
                        plugin_args=dict(template=JOB_SCRIPT,
-                                        qsub_args="-S /bin/bash -cwd -pe smp 1-12 -l h_vmem=19G,mem_free=9G -o /dev/null -e /dev/null " + CLUSTER_QUEUE,
+                                        qsub_args="-S /bin/bash -cwd -pe smp 1- -l h_vmem=19G,mem_free=9G -o /dev/null -e /dev/null " + CLUSTER_QUEUE,
                                         qstatProgramPath=QSTAT_IMMEDIATE_EXE,
                                         qstatCachedProgramPath=QSTAT_CACHED_EXE))
         elif input_arguments.wfrun == 'local_4':

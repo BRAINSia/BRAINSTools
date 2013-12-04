@@ -504,7 +504,7 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
             buildTemplateIteration1 = BAWantsRegistrationTemplateBuildSingleIterationWF('iteration01')
             ## TODO:  Change these parameters
             BeginANTS_iter1 = buildTemplateIteration1.get_node("BeginANTS")
-            BeginANTS_iter1.plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp 4-12 -l mem_free=9000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE_LONG), 'overwrite': True}
+            BeginANTS_iter1.plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp 4- -l mem_free=9000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE_LONG), 'overwrite': True}
             wimtdeformed_iter1 = buildTemplateIteration1.get_node("wimtdeformed")
             wimtdeformed_iter1.plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp 1-2 -l mem_free=2000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE), 'overwrite': True}
             AvgAffineTransform_iter1 = buildTemplateIteration1.get_node("AvgAffineTransform")
@@ -521,7 +521,7 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
             buildTemplateIteration2 = BAWantsRegistrationTemplateBuildSingleIterationWF('Iteration02')
             ## TODO:  Change these parameters
             BeginANTS_iter2 = buildTemplateIteration2.get_node("BeginANTS")
-            BeginANTS_iter2.plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp 4-12 -l mem_free=9000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE_LONG), 'overwrite': True}
+            BeginANTS_iter2.plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp 4- -l mem_free=9000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE_LONG), 'overwrite': True}
             wimtdeformed_iter2 = buildTemplateIteration2.get_node("wimtdeformed")
             wimtdeformed_iter2.plugin_args = {'template': SGE_JOB_SCRIPT, 'qsub_args': '-S /bin/bash -cwd -pe smp 1-2 -l mem_free=2000M -o /dev/null -e /dev/null {QUEUE_OPTIONS}'.format(QUEUE_OPTIONS=CLUSTER_QUEUE), 'overwrite': True}
             AvgAffineTransform_iter2 = buildTemplateIteration2.get_node("AvgAffineTransform")

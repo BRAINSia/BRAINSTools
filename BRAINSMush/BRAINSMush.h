@@ -51,6 +51,8 @@ namespace BRAINSMush
 const int Dimension = 3;
 }
 
+namespace
+{
 typedef unsigned char                InputPixelType;
 typedef float                        PixelType;
 typedef itk::Image<PixelType, 3>     ImageType;
@@ -69,6 +71,7 @@ typedef itk::ImageRegionConstIterator<MaskImageType> ConstMaskIteratorType;
 
 typedef itk::BinaryBallStructuringElement<InputPixelType,
                                           BRAINSMush::Dimension> StructuringElementType;
+}
 
 ImageType::Pointer LoadImage(std::string);
 

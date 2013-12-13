@@ -180,7 +180,7 @@ BRAINSCutGenerateRegistrations
 
   BSplineRegistrationHelper->SetMovingVolume( movingVolume );
 
-  typedef itk::Image<unsigned char, 3> BinaryImageType;
+  typedef itk::Image<unsigned char, 3> LocalBinaryImageType;
 
   // - Fixed Image Binary Mask
 
@@ -189,7 +189,7 @@ BRAINSCutGenerateRegistrations
       FixedBinaryImageFilename == "" )
     {
     typedef itk::BRAINSROIAutoImageFilter<WorkingImageType,
-                                          BinaryImageType> ROIAutoFilterType;
+                                          LocalBinaryImageType> ROIAutoFilterType;
 
     ROIAutoFilterType::Pointer fixedVolumeROIFilter = ROIAutoFilterType::New();
 
@@ -203,7 +203,7 @@ BRAINSCutGenerateRegistrations
     }
   else
     {
-    typedef itk::ImageFileReader<BinaryImageType> BinaryImageReaderType;
+    typedef itk::ImageFileReader<LocalBinaryImageType> BinaryImageReaderType;
     BinaryImageReaderType::Pointer binaryFixedImageReader = BinaryImageReaderType::New();
     binaryFixedImageReader->SetFileName( FixedBinaryImageFilename );
     binaryFixedImageReader->Update();
@@ -223,7 +223,7 @@ BRAINSCutGenerateRegistrations
       MovingBinaryImageFilename == "" )
     {
     typedef itk::BRAINSROIAutoImageFilter<WorkingImageType,
-                                          BinaryImageType> ROIAutoFilterType;
+                                          LocalBinaryImageType> ROIAutoFilterType;
 
     ROIAutoFilterType::Pointer movingVolumeROIFilter = ROIAutoFilterType::New();
 
@@ -236,7 +236,7 @@ BRAINSCutGenerateRegistrations
     }
   else
     {
-    typedef itk::ImageFileReader<BinaryImageType> BinaryImageReaderType;
+    typedef itk::ImageFileReader<LocalBinaryImageType> BinaryImageReaderType;
     BinaryImageReaderType::Pointer binaryMovingImageReader =
       BinaryImageReaderType::New();
     binaryMovingImageReader->SetFileName( MovingBinaryImageFilename );

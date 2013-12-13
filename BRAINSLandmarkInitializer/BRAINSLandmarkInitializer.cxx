@@ -82,10 +82,10 @@ main(int argc, char *argv[])
   const unsigned int Dimension = 3;
 
   typedef itk::Image<PixelType, Dimension>           ImageType;
-  typedef itk::AffineTransform<PixelType, Dimension> AffineTransformType;
-  AffineTransformType::Pointer affineTransform = AffineTransformType::New();
+  typedef itk::AffineTransform<PixelType, Dimension> LocalAffineTransformType;
+  LocalAffineTransformType::Pointer affineTransform = LocalAffineTransformType::New();
 
-  typedef itk::LandmarkBasedTransformInitializer<AffineTransformType,
+  typedef itk::LandmarkBasedTransformInitializer<LocalAffineTransformType,
                                                  ImageType,
                                                  ImageType> LandmarkBasedInitializerType;
 

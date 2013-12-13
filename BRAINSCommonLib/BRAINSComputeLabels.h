@@ -42,9 +42,9 @@ void ComputeLabels(
   foregroundMask->Allocate();
   foregroundMask->FillBuffer(0);
 #if defined(LOCAL_USE_OPEN_MP) && (_OPENMP < 200805)
-  typedef int LOOPITERTYPE;
+  typedef int LocalLOOPITERTYPE;
 #else
-  typedef unsigned int LOOPITERTYPE;
+  typedef unsigned int LocalLOOPITERTYPE;
 #endif
 
   const typename TByteImage::SizeType size = DirtyLabels->GetLargestPossibleRegion().GetSize();
@@ -52,11 +52,11 @@ void ComputeLabels(
 #if defined(LOCAL_USE_OPEN_MP)
 #pragma omp parallel for
 #endif
-    for( LOOPITERTYPE kk = 0; kk < (LOOPITERTYPE)size[2]; kk++ )
+    for( LocalLOOPITERTYPE kk = 0; kk < (LocalLOOPITERTYPE)size[2]; kk++ )
       {
-      for( LOOPITERTYPE jj = 0; jj < (LOOPITERTYPE)size[1]; jj++ )
+      for( LocalLOOPITERTYPE jj = 0; jj < (LocalLOOPITERTYPE)size[1]; jj++ )
         {
-        for( LOOPITERTYPE ii = 0; ii < (LOOPITERTYPE)size[0]; ii++ )
+        for( LocalLOOPITERTYPE ii = 0; ii < (LocalLOOPITERTYPE)size[0]; ii++ )
           {
           const typename TProbabilityImage::IndexType currIndex = {{ii, jj, kk}};
           if( NonAirRegion->GetPixel(currIndex) == 0 ) // If outside the tissue

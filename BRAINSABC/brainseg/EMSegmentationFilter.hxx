@@ -548,7 +548,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
   IterType     maskIter(loopImg, loopImg->GetLargestPossibleRegion() );
   IterType     dilIter(filterImg, filterImg->GetLargestPossibleRegion() );
   unsigned int count = 0;
-  for( maskIter.Begin(), dilIter.Begin();
+  for( maskIter.GoToBegin(), dilIter.GoToBegin();
        !maskIter.IsAtEnd() && !dilIter.IsAtEnd(); ++maskIter, ++dilIter )
     {
     if( maskIter.Value() != dilIter.Value() )

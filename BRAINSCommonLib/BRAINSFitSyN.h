@@ -4,9 +4,12 @@
 #include "antsUtilities.h"
 #include "itkantsRegistrationHelper.h"
 
+namespace // put in anon namespace to suppress shadow declaration warnings.
+{
 typedef  ants::RegistrationHelper<double,3>                SyNRegistrationHelperType;
 typedef  SyNRegistrationHelperType::ImageType              ImageType;
 typedef  SyNRegistrationHelperType::CompositeTransformType CompositeTransformType;
+}
 
 template <class FixedImageType, class MovingimageType>
 typename CompositeTransformType::Pointer

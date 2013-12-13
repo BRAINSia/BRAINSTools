@@ -469,9 +469,10 @@ void WriteTransformToDisk( itk::Transform<TScalarType, 3, 3> const *const MyTran
       {
       typedef itk::BSplineDeformableTransform< TScalarType,
                                                GenericTransformImageNS::SpaceDimension,
-                                               GenericTransformImageNS::SplineOrder> BSplineTransformType;
+                                               GenericTransformImageNS::SplineOrder> LocalBSplineTransformType;
 
-      const typename BSplineTransformType::ConstPointer tempInitializerITKTransform = dynamic_cast<BSplineTransformType const *>( MyTransform );
+      const typename LocalBSplineTransformType::ConstPointer tempInitializerITKTransform
+        = dynamic_cast<LocalBSplineTransformType const *>( MyTransform );
 
       if( tempInitializerITKTransform.IsNull() )
         {

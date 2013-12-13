@@ -62,6 +62,7 @@ public:
   vtkImageData *  GetOutput() const;
 
   /** Set the input in the form of an itk::Image */
+  using ProcessObject::SetInput; // get rid of shadow warning
   void SetInput( const InputImageType * );
 
   /** Return the internal VTK image importer filter.

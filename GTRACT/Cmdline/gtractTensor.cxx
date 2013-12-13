@@ -115,9 +115,9 @@ int main(int argc, char *argv[])
 
   if( maskProcessingMode == "ROIAUTO" )
     {
-    typedef itk::Image<PixelType, 3> IndexImageType;
+    typedef itk::Image<PixelType, 3> LocalIndexImageType;
     typedef itk::VectorIndexSelectionCastImageFilter
-      <VectorImageType, IndexImageType> VectorSelectFilterType;
+      <VectorImageType, LocalIndexImageType> VectorSelectFilterType;
     VectorSelectFilterType::Pointer SelectIndexImageFilter =
       VectorSelectFilterType::New();
     SelectIndexImageFilter->SetIndex(b0Index);
@@ -132,8 +132,8 @@ int main(int argc, char *argv[])
       return EXIT_FAILURE;
       }
     ;
-    IndexImageType::Pointer b0Image(SelectIndexImageFilter->GetOutput() );
-    typedef itk::BRAINSROIAutoImageFilter<IndexImageType, MaskImageType>
+    LocalIndexImageType::Pointer b0Image(SelectIndexImageFilter->GetOutput() );
+    typedef itk::BRAINSROIAutoImageFilter<LocalIndexImageType, MaskImageType>
       ROIAutoType;
     ROIAutoType::Pointer ROIFilter = ROIAutoType::New();
     ROIFilter->SetInput(b0Image);

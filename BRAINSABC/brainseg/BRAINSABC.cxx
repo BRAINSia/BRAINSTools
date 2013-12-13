@@ -694,8 +694,8 @@ int main(int argc, char * *argv)
     return EXIT_FAILURE;
     }
 
-  typedef itk::ImageFileReader<FloatImageType> ReaderType;
-  typedef ReaderType::Pointer                  ReaderPointer;
+  typedef itk::ImageFileReader<FloatImageType> LocalReaderType;
+  typedef LocalReaderType::Pointer                  LocalReaderPointer;
   FloatImageType::Pointer KeyImageFirstRead=NULL;
 
   AtlasRegType::MapOfStringVectors intraSubjectTransformFileNames;
@@ -708,7 +708,7 @@ int main(int argc, char * *argv)
       {
       muLogMacro(<< "Reading image " << ": " << (*imIt) << "...\n");
 
-      ReaderPointer imgreader = ReaderType::New();
+      LocalReaderPointer imgreader = LocalReaderType::New();
       imgreader->SetFileName( (*imIt).c_str() );
 
       try
@@ -794,8 +794,8 @@ int main(int argc, char * *argv)
     return EXIT_FAILURE;
     }
 
-  typedef itk::ImageFileReader<FloatImageType> ReaderType;
-  typedef ReaderType::Pointer                  ReaderPointer;
+  typedef itk::ImageFileReader<FloatImageType> LocalReaderType;
+  typedef LocalReaderType::Pointer                  LocalReaderPointer;
 
   for(AtlasRegType::MapOfStringVectors::iterator mapIt = templateVolumes.begin();
       mapIt != templateVolumes.end(); ++mapIt)
@@ -803,7 +803,7 @@ int main(int argc, char * *argv)
     std::string curAtlasName = *(mapIt->second.begin());
     muLogMacro(<< "Reading image " << mapIt->first
                << ": " << curAtlasName << "...\n");
-    ReaderPointer imgreader = ReaderType::New();
+    LocalReaderPointer imgreader = LocalReaderType::New();
     imgreader->SetFileName(curAtlasName.c_str());
     try
       {
@@ -1105,9 +1105,9 @@ int main(int argc, char * *argv)
     unsigned int                   AirIndex = 10000;
     for( unsigned int i = 0; i < PriorNames.size(); i++ )
       {
-      typedef itk::ImageFileReader<FloatImageType> ReaderType;
-      typedef ReaderType::Pointer                  ReaderPointer;
-      ReaderPointer priorReader = ReaderType::New();
+      typedef itk::ImageFileReader<FloatImageType> LocalReaderType;
+      typedef LocalReaderType::Pointer             LocalReaderPointer;
+      LocalReaderPointer priorReader = LocalReaderType::New();
       priorReader->SetFileName( atlasDefinitionParser.GetPriorFilename(PriorNames[i]) );
       priorReader->Update();
       FloatImageType::Pointer temp = priorReader->GetOutput();

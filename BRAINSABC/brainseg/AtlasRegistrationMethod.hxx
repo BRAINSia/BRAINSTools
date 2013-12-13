@@ -208,8 +208,8 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
         if( m_InputImageTissueRegion.IsNull() || m_InputSpatialObjectTissueRegion.IsNull() )
           {
           muLogMacro( << "Generating FixedImage Mask (Intrasubject)" <<  std::endl );
-          typedef itk::BRAINSROIAutoImageFilter<InternalImageType, itk::Image<unsigned char, 3> > ROIAutoType;
-          ROIFilter = ROIAutoType::New();
+          typedef itk::BRAINSROIAutoImageFilter<InternalImageType, itk::Image<unsigned char, 3> > LocalROIAutoType;
+          ROIFilter = LocalROIAutoType::New();
           ROIFilter->SetInput(this->GetModifiableKeySubjectImage());
           ROIFilter->SetDilateSize(dilateSize); // Only use a very small non-tissue
           // region outside of head during
@@ -446,8 +446,8 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
     atlasToSubjectRegistrationHelper->SetFixedVolume(this->GetModifiableKeySubjectImage());
     atlasToSubjectRegistrationHelper->SetMovingVolume(this->GetFirstAtlasOriginalImage());
     muLogMacro( << "Generating MovingImage Mask (Atlas 0)" <<   std::endl );
-    typedef itk::BRAINSROIAutoImageFilter<InternalImageType, itk::Image<unsigned char, 3> > ROIAutoType;
-    typename ROIAutoType::Pointer  ROIFilter = ROIAutoType::New();
+    typedef itk::BRAINSROIAutoImageFilter<InternalImageType, itk::Image<unsigned char, 3> > LocalROIAutoType;
+    typename LocalROIAutoType::Pointer  ROIFilter = LocalROIAutoType::New();
     ROIFilter->SetInput(this->GetFirstAtlasOriginalImage());
     ROIFilter->SetDilateSize(1);   // Only use a very small non-tissue
     // region outside of head during
@@ -472,8 +472,8 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
       }
 
     muLogMacro( << "Generating FixedImage Mask (Atlas)" <<   std::endl );
-    typedef itk::BRAINSROIAutoImageFilter<InternalImageType, itk::Image<unsigned char, 3> > ROIAutoType;
-    ROIFilter = ROIAutoType::New();
+    typedef itk::BRAINSROIAutoImageFilter<InternalImageType, itk::Image<unsigned char, 3> > LocalROIAutoType;
+    ROIFilter = LocalROIAutoType::New();
     ROIFilter->SetInput(this->GetModifiableKeySubjectImage());
     ROIFilter->SetDilateSize(1);   // Only use a very small non-tissue
     // region outside of head during

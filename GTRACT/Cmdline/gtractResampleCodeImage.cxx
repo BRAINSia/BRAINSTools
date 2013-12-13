@@ -40,8 +40,6 @@ int main(int argc, char *argv[])
 
   typedef double                              BSplineCoordinateRepType;
   typedef itk::VersorRigid3DTransform<double> RigidTransformType;
-  typedef itk::BSplineDeformableTransform<BSplineCoordinateRepType, 3, 3>
-    BSplineTransformType;
 
   typedef itk::ThinPlateR2LogRSplineKernelTransform<BSplineCoordinateRepType, 3>
     ThinPlateSplineTransformType;

@@ -51,10 +51,13 @@
 #include "BRAINSCommonLib.h"
 
 // Image, filter typedef
+namespace
+{ // put in anon namespace so they don't collide with other files.
 const unsigned int LocalImageDimension = 3;
-typedef short PixelType;
+typedef short LocalPixelType;
+}
 
-typedef itk::Image<PixelType, LocalImageDimension> ImageType;
+typedef itk::Image<LocalPixelType, LocalImageDimension> ImageType;
 typedef ImageType::Pointer                         ImagePointerType;
 typedef ImageType::PointType                       ImagePointType;
 typedef ImageType::SpacingType                     ImageSpacingType;
@@ -470,8 +473,8 @@ int main(int argc, char *argv[])
   StatisticsFilterType::Pointer statisticsFilter = StatisticsFilterType::New();
   statisticsFilter->SetInput( reader->GetOutput() );
   statisticsFilter->Update();
-  PixelType minPixelValue = statisticsFilter->GetMinimum();
-  PixelType maxPixelValue = statisticsFilter->GetMaximum();
+  LocalPixelType minPixelValue = statisticsFilter->GetMinimum();
+  LocalPixelType maxPixelValue = statisticsFilter->GetMaximum();
 
   vtkLookupTable *table = vtkLookupTable::New();
   table->SetRange(minPixelValue, maxPixelValue);   // image intensity range

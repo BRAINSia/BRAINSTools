@@ -177,12 +177,12 @@ int main(int argc, char *argv[])
         if( transformFileType == "AffineTransform" )
           {
           typedef itk::AffineTransform<double, 3>
-            AffineTransformType;
-          const AffineTransformType::ConstPointer affineTransform =
-            dynamic_cast<AffineTransformType const *>(
+            LocalAffineTransformType;
+          const LocalAffineTransformType::ConstPointer affineTransform =
+            dynamic_cast<LocalAffineTransformType const *>(
               genericTransform.GetPointer() );
 
-          AffineTransformType::Pointer Local_inverseTransform = AffineTransformType::New();
+          LocalAffineTransformType::Pointer Local_inverseTransform = LocalAffineTransformType::New();
           affineTransform->GetInverse( Local_inverseTransform );
 
           genericTransform = Local_inverseTransform;

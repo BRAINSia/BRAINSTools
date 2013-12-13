@@ -65,7 +65,7 @@ DoBSpline(typename BSplineTransformType::Pointer InitializerBsplineTransform,
 
   typedef typename itk::ImageRegistrationMethod<
       RegisterImageType,
-      RegisterImageType>          RegistrationType;
+      RegisterImageType>          LocalRegistrationType;
 
   typedef typename BSplineTransformType::Pointer           TransformTypePointer;
   typedef typename itk::LBFGSBOptimizer                    LBFGSBOptimizerType;
@@ -76,7 +76,7 @@ DoBSpline(typename BSplineTransformType::Pointer InitializerBsplineTransform,
   typedef typename LBFGSBOptimizerType::BoundValueType     OptimizerBoundValueType;
 
   typedef typename InterpolatorType::Pointer InterpolatorTypePointer;
-  typedef typename RegistrationType::Pointer RegistrationTypePointer;
+  typedef typename LocalRegistrationType::Pointer LocalRegistrationTypePointer;
 
   typedef typename itk::ResampleImageFilter< RegisterImageType,
       RegisterImageType>     ResampleFilterType;
@@ -95,7 +95,7 @@ DoBSpline(typename BSplineTransformType::Pointer InitializerBsplineTransform,
   m_OutputBSplineTransform->SetParametersByValue( InitializerBsplineTransform->GetParameters() );
 
   /** Set up the Registration */
-  RegistrationTypePointer registration = RegistrationType::New();
+  LocalRegistrationTypePointer registration = LocalRegistrationType::New();
   registration->SetMetric(CostMetricObject);
   LBFGSBOptimizerTypePointer LBFGSBoptimizer = LBFGSBOptimizerType::New();
   registration->SetOptimizer(LBFGSBoptimizer);

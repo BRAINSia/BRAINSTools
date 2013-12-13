@@ -54,12 +54,12 @@ private:
 
     typedef double                                        VectorComponentType;
     typedef typename itk::Vector<VectorComponentType, 3> VectorPixelType;
-    typedef typename itk::Image<VectorPixelType,  3>     DisplacementFieldType;
+    typedef typename itk::Image<VectorPixelType,  3>     LocalDisplacementFieldType;
 
     // An empty SmartPointer constructor sets up someImage.IsNull() to represent
     // a
     // not-supplied state:
-    typename DisplacementFieldType::Pointer DisplacementField;
+    typename LocalDisplacementFieldType::Pointer DisplacementField;
     // An empty SmartPointer constructor sets up someTransform.IsNull() to
     // represent a not-supplied state:
     typename GenericTransformType::Pointer genericTransform;
@@ -75,7 +75,7 @@ private:
     // call
     if( !useTransform )  // that is, it's a warp by deformation field:
       {
-      typedef typename itk::ImageFileReader<DisplacementFieldType> DefFieldReaderType;
+      typedef typename itk::ImageFileReader<LocalDisplacementFieldType> DefFieldReaderType;
       typename DefFieldReaderType::Pointer fieldImageReader = DefFieldReaderType::New();
       fieldImageReader->SetFileName(RegistrationFilename);
       fieldImageReader->Update();
@@ -86,7 +86,7 @@ private:
       // field and reference image have same dimensions.
 
       // and---  ReferenceImage.IsNull() represents the delayed default
-      typedef itk::DisplacementFieldTransform<DeformationScalarType,DisplacementFieldType::ImageDimension>
+      typedef itk::DisplacementFieldTransform<DeformationScalarType,LocalDisplacementFieldType::ImageDimension>
         DisplacementFieldTransformType;
       typename DisplacementFieldTransformType::Pointer dispXfrm =
         DisplacementFieldTransformType::New();
@@ -105,7 +105,7 @@ private:
     const typename std::string pixelType = "short";
 
     typename WarperImageType::Pointer TransformedImage =
-      GenericTransformImage<WarperImageType, WarperImageType, DisplacementFieldType>(
+      GenericTransformImage<WarperImageType, WarperImageType, LocalDisplacementFieldType>(
         PrincipalOperandImage,
         ReferenceImage,
         genericTransform,

@@ -103,8 +103,6 @@ int main(int argc, char *argv[])
 
   std::cout << "Image read in\n";
 
-  typedef itk::HammerTissueAttributeVectorFromPartialVolumeImageFilter<ImageType,
-                                                                       AttributeImageType> AttributeFilterType;
   AttributeFilterType::Pointer modleAttributeFilter = AttributeFilterType::New();
   modleAttributeFilter->SetCSFVolume( wmReader->GetOutput() );
   modleAttributeFilter->SetGMVolume( gmReader->GetOutput() );

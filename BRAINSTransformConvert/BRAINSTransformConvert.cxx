@@ -65,8 +65,8 @@ ExtractTransform(typename itk::AffineTransform< TScalarType, 3 >::Pointer &resul
     return true;
     }
 
-  typedef itk::AffineTransform< TScalarType, 3 > AffineTransformType;
-  typedef typename AffineTransformType::Superclass MatrixOffsetTransformType;
+  typedef itk::AffineTransform< TScalarType, 3 > LocalAffineTransformType;
+  typedef typename LocalAffineTransformType::Superclass MatrixOffsetTransformType;
   const MatrixOffsetTransformType *matBasePtr = dynamic_cast<const MatrixOffsetTransformType *>(source);
   if( matBasePtr == 0 )
     {
@@ -134,18 +134,18 @@ ExtractTransform(typename itk::ScaleVersor3DTransform<TScalarType>::Pointer & re
     return true;
     }
 
-  typedef itk::VersorRigid3DTransform<TScalarType> VersorRigid3DTransformType;
+  typedef itk::VersorRigid3DTransform<TScalarType> LocalVersorRigid3DTransformType;
   if( IsClass(source, "VersorRigid3DTransform") )
     {
-    const VersorRigid3DTransformType *versorRigidXfrm =
-    dynamic_cast<const VersorRigid3DTransformType *>(source);
+    const LocalVersorRigid3DTransformType *versorRigidXfrm =
+      dynamic_cast<const LocalVersorRigid3DTransformType *>(source);
     result->SetRotation(versorRigidXfrm->GetVersor() );
     result->SetTranslation(versorRigidXfrm->GetTranslation() );
     result->SetCenter(versorRigidXfrm->GetCenter() );
     return true;
     }
   // otherwise try VersorRigidTransform
-  typename VersorRigid3DTransformType::Pointer vrx = VersorRigid3DTransformType::New();
+  typename LocalVersorRigid3DTransformType::Pointer vrx = LocalVersorRigid3DTransformType::New();
   if( ExtractTransform<TScalarType>(vrx, source) ) // of VersorRigid3D conversion
                                       // works
     {
@@ -171,10 +171,11 @@ ExtractTransform(typename itk::ScaleSkewVersor3DTransform< TScalarType >::Pointe
     }
 
   // is it the parent?
-  typedef itk::ScaleVersor3DTransform<TScalarType> ScaleVersor3DTransformType;
+  typedef itk::ScaleVersor3DTransform<TScalarType> LocalScaleVersor3DTransformType;
   if( IsClass(source, "ScaleVersor3DTransform") )
     {
-    const ScaleVersor3DTransformType *scaleVersorXfrm = dynamic_cast<const ScaleVersor3DTransformType *>(source);
+    const LocalScaleVersor3DTransformType *scaleVersorXfrm =
+      dynamic_cast<const LocalScaleVersor3DTransformType *>(source);
     result->SetRotation(scaleVersorXfrm->GetVersor() );
     result->SetTranslation(scaleVersorXfrm->GetTranslation() );
     result->SetCenter(scaleVersorXfrm->GetCenter() );
@@ -182,7 +183,7 @@ ExtractTransform(typename itk::ScaleSkewVersor3DTransform< TScalarType >::Pointe
     return true;
     }
   // otherwise try ScaleVersor conversion
-  typename ScaleVersor3DTransformType::Pointer svx = ScaleVersor3DTransformType::New();
+  typename LocalScaleVersor3DTransformType::Pointer svx = LocalScaleVersor3DTransformType::New();
   if( ExtractTransform<TScalarType>(svx, source) ) // of VersorRigid3D conversion
                                                                                // works
     {
@@ -206,15 +207,15 @@ DoConversion( int argc, char *argv[] )
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
 
-  typedef itk::Transform< TScalarType, 3, 3 >                                 GenericTransformType;
-  typedef itk::BSplineDeformableTransform< TScalarType,
-                                           GenericTransformImageNS::SpaceDimension,
-                                           GenericTransformImageNS::SplineOrder>    BSplineTransformType;
+  typedef itk::Transform< TScalarType, 3, 3 > LocalGenericTransformType;
+  typedef itk::BSplineDeformableTransform
+    < TScalarType, GenericTransformImageNS::SpaceDimension,
+    GenericTransformImageNS::SplineOrder>     LocalBSplineTransformType;
 
-  typedef itk::AffineTransform< TScalarType, 3 >            AffineTransformType;
-  typedef itk::VersorRigid3DTransform< TScalarType >        VersorRigid3DTransformType;
-  typedef itk::ScaleVersor3DTransform< TScalarType >        ScaleVersor3DTransformType;
-  typedef itk::ScaleSkewVersor3DTransform< TScalarType >    ScaleSkewVersor3DTransformType;
+  typedef itk::AffineTransform< TScalarType, 3 >            LocalAffineTransformTYpe;
+  typedef itk::VersorRigid3DTransform< TScalarType >        LocalVersorRigid3DTransformType;
+  typedef itk::ScaleVersor3DTransform< TScalarType >        LocalScaleVersor3DTransformType;
+  typedef itk::ScaleSkewVersor3DTransform< TScalarType >    LocalScaleSkewVersor3DTransformType;
 
   // read the input transform
   typedef itk::TransformFileReaderTemplate<TScalarType>  TransformFileReaderType;
@@ -222,7 +223,7 @@ DoConversion( int argc, char *argv[] )
   reader->SetFileName(inputTransform.c_str() );
   reader->Update();
   typename TransformFileReaderType::TransformListType *transformList = reader->GetTransformList();
-  typename GenericTransformType::Pointer inputXfrm = dynamic_cast<GenericTransformType *>( transformList->front().GetPointer() );
+  typename LocalGenericTransformType::Pointer inputXfrm = dynamic_cast<LocalGenericTransformType *>( transformList->front().GetPointer() );
 
   std::cout << "------------------------ " << std::endl;
   std::cout << "Input Transform Type Saved on Memory ==> " << inputXfrm->GetTransformTypeAsString() << std::endl;
@@ -231,7 +232,7 @@ DoConversion( int argc, char *argv[] )
   std::cout << "------------------------ " << std::endl;
 
   // Handle BSpline type
-  typename BSplineTransformType::Pointer bsplineInputXfrm = dynamic_cast<BSplineTransformType *>( inputXfrm.GetPointer() );
+  typename LocalBSplineTransformType::Pointer bsplineInputXfrm = dynamic_cast<LocalBSplineTransformType *>( inputXfrm.GetPointer() );
   if( bsplineInputXfrm.IsNotNull() )
     {
     transformList->pop_front();
@@ -240,8 +241,8 @@ DoConversion( int argc, char *argv[] )
       std::cerr << "Error, the second transform needed for BSplineDeformableTransform is missing." << std::endl;
       return EXIT_FAILURE;
       }
-    typename BSplineTransformType::BulkTransformType::Pointer bulkXfrm =
-      dynamic_cast<typename BSplineTransformType::BulkTransformType *>(transformList->front().GetPointer() );
+    typename LocalBSplineTransformType::BulkTransformType::Pointer bulkXfrm =
+      dynamic_cast<typename LocalBSplineTransformType::BulkTransformType *>(transformList->front().GetPointer() );
     if( bulkXfrm.IsNull() )
       {
       std::cerr << "Error, the second transform is not a bulk transform" << std::endl;
@@ -295,11 +296,11 @@ DoConversion( int argc, char *argv[] )
     }
 
   //output transform processing
-  typename GenericTransformType::Pointer outputXfrm;
+  typename LocalGenericTransformType::Pointer outputXfrm;
 
   if( outputTransformType == "Affine" )
     {
-    typename AffineTransformType::Pointer affineXfrm = AffineTransformType::New();
+    typename LocalAffineTransformTYpe::Pointer affineXfrm = LocalAffineTransformTYpe::New();
     if( ExtractTransform<TScalarType>(affineXfrm, inputXfrm.GetPointer() ) == false )
       {
       TransformConvertError<TScalarType>(inputXfrm, "Affine Transform");
@@ -309,7 +310,7 @@ DoConversion( int argc, char *argv[] )
     }
   else if( outputTransformType == "VersorRigid" )
     {
-    typename VersorRigid3DTransformType::Pointer versorRigidXfrm = VersorRigid3DTransformType::New();
+    typename LocalVersorRigid3DTransformType::Pointer versorRigidXfrm = LocalVersorRigid3DTransformType::New();
     if( ExtractTransform<TScalarType>(versorRigidXfrm, inputXfrm.GetPointer() ) == false )
       {
       TransformConvertError<TScalarType>(inputXfrm, "VersorRigid3D Transform");
@@ -319,7 +320,7 @@ DoConversion( int argc, char *argv[] )
     }
   else if( outputTransformType == "ScaleVersor" )
     {
-    typename ScaleVersor3DTransformType::Pointer scaleVersorXfrm = ScaleVersor3DTransformType::New();
+    typename LocalScaleVersor3DTransformType::Pointer scaleVersorXfrm = LocalScaleVersor3DTransformType::New();
     if( ExtractTransform<TScalarType>( scaleVersorXfrm, inputXfrm.GetPointer() ) == false )
       {
       TransformConvertError<TScalarType>(inputXfrm, "ScaleVersor Transform");
@@ -329,7 +330,7 @@ DoConversion( int argc, char *argv[] )
     }
   else if( outputTransformType == "ScaleSkewVersor" )
     {
-    typename ScaleSkewVersor3DTransformType::Pointer scaleSkewVersorXfrm = ScaleSkewVersor3DTransformType::New();
+    typename LocalScaleSkewVersor3DTransformType::Pointer scaleSkewVersorXfrm = LocalScaleSkewVersor3DTransformType::New();
     if( ExtractTransform<TScalarType>( scaleSkewVersorXfrm, inputXfrm.GetPointer() ) == false )
       {
       TransformConvertError<TScalarType>(inputXfrm, "ScaleSkewVersor Transform");
@@ -346,7 +347,7 @@ DoConversion( int argc, char *argv[] )
     for( typename itk::TransformFileReaderTemplate<TScalarType>::TransformListType::iterator it = transformList->begin();
          it != transformList->end(); ++it )
       {
-      typename GenericTransformType::Pointer outXfrm = dynamic_cast<GenericTransformType *>( (*it).GetPointer() );
+      typename LocalGenericTransformType::Pointer outXfrm = dynamic_cast<LocalGenericTransformType *>( (*it).GetPointer() );
       transformWriter->AddTransform( outXfrm );
       //
       std::cout << "Output Transform Type Written to the Disk ==> " << outXfrm->GetTransformTypeAsString() << std::endl;

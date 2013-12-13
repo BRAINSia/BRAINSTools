@@ -17,6 +17,8 @@
 #include <map>
 #include <vector>
 
+namespace
+{
 typedef std::map<std::string, SImageType::PointType> LandmarksMapType;
 typedef vnl_matrix<double>                           MatrixType;
 typedef vnl_vector<double>                           VectorType;
@@ -24,6 +26,7 @@ typedef itk::VersorRigid3DTransform<double>          VersorTransformType;
 typedef VersorTransformType::Pointer                 VersorTransformPointer;
 typedef VersorTransformType::MatrixType              VersorTransformMatrixType;
 typedef itk::ImageDuplicator<SImageType>             DuplicatorType;
+}
 
 extern void MakeBrandeddebugImage(SImageType::ConstPointer in, const landmarksConstellationModelIO & mDef,
                                   const SImageType::PointType & RP, const SImageType::PointType & AC,

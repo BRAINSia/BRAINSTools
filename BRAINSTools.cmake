@@ -125,6 +125,7 @@ set(brains_modulenames
   DWIConvert
   BRAINSCreateLabelMapFromProbabilityMaps
   BRAINSMultiSTAPLE
+  BRAINSStripRotation
   AutoWorkup
   )
 

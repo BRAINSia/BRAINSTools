@@ -120,14 +120,14 @@ simpleSynReg( typename FixedImageType::Pointer & infixedImage,
   regHelper->SetLogStream(std::cout);
   if( regHelper->DoRegistration() != EXIT_SUCCESS )
     {
-    ants::antscout << "FATAL ERROR: REGISTRATION PROCESS WAS UNSUCCESSFUL" << std::endl;
-    ants::antscout << "FATAL ERROR: REGISTRATION PROCESS WAS UNSUCCESSFUL" << std::endl;
-    ants::antscout << "FATAL ERROR: REGISTRATION PROCESS WAS UNSUCCESSFUL" << std::endl;
-    ants::antscout << "FATAL ERROR: REGISTRATION PROCESS WAS UNSUCCESSFUL" << std::endl;
+    std::cerr << "FATAL ERROR: REGISTRATION PROCESS WAS UNSUCCESSFUL" << std::endl;
+    std::cerr << "FATAL ERROR: REGISTRATION PROCESS WAS UNSUCCESSFUL" << std::endl;
+    std::cerr << "FATAL ERROR: REGISTRATION PROCESS WAS UNSUCCESSFUL" << std::endl;
+    std::cerr << "FATAL ERROR: REGISTRATION PROCESS WAS UNSUCCESSFUL" << std::endl;
     }
   else
     {
-    ants::antscout << "Finshed SyN stage" << std::endl;
+    std::cerr << "Finshed SyN stage" << std::endl;
     }
   // Get the output transform
   typename CompositeTransformType::Pointer outputCompositeTransform = regHelper->GetModifiableCompositeTransform();

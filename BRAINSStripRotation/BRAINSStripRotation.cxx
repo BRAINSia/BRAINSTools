@@ -12,6 +12,9 @@ NewTransform(const typename itk::Image<char,3>::DirectionType &dir)
   typedef itk::Rigid3DTransform<TPrecision> TransformType;
   typename TransformType::Pointer rval = TransformType::New();
   rval->SetMatrix(dir);
+  std::cerr << rval
+            << rval->GetMatrix()
+            << std::endl;
   return rval;
 }
 
@@ -22,6 +25,9 @@ NewTransform(const typename itk::Image<char,2>::DirectionType &dir)
   typedef itk::Rigid2DTransform<TPrecision> TransformType;
   typename TransformType::Pointer rval = TransformType::New();
   rval->SetMatrix(dir);
+  std::cerr << rval
+            << rval->GetMatrix()
+            << std::endl;
   return rval;
 }
 
@@ -70,6 +76,9 @@ ReadAndSplitImage(const std::string &inputVolume,
     return 1;
     }
   typedef typename ImageType::DirectionType::ValueType XFRMPrecisionType;
+
+  std::cerr << "sizeof(XFRMPrecisionType = " << sizeof(XFRMPrecisionType) << std::endl;
+
   typedef itk::TransformFileWriterTemplate<XFRMPrecisionType> TransformFileWriterType;
 
   typedef typename TransformFileWriterType::TransformType TransformType;

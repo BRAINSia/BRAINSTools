@@ -91,6 +91,7 @@ int main(int argc, char *argv[])
     std::cout << "=====================================================" << std::endl;
     std::cout << "DWI Image: " <<  inputVolume << std::endl;
     std::cout << "Input Transform: " <<  inputTransform << std::endl;
+    std::cout << "warpDWI Transform: " <<  warpDWITransform << std::endl;
     std::cout << "Output Image: " <<  outputVolume << std::endl;
     std::cout << "Debug Level: " << debugLevel << std::endl;
     std::cout << "Image Output Size: "
@@ -138,7 +139,7 @@ int main(int argc, char *argv[])
   NrrdImageType::Pointer        resampleImage = imageReader->GetOutput();
   NrrdImageType::DirectionType  myDirection = resampleImage->GetDirection();
   itk::MetaDataDictionary       inputMetaDataDictionary = resampleImage->GetMetaDataDictionary();
-  GenericTransformType::Pointer baseTransform = NULL;
+  GenericTransformType::Pointer baseTransform = 0;
   if( inputTransform == "ID" )
     {
     RigidTransformType::Pointer LocalRigidTransform = RigidTransformType::New();
@@ -150,6 +151,7 @@ int main(int argc, char *argv[])
     baseTransform = itk::ReadTransformFromDisk(inputTransform);
     }
   RigidTransformType::Pointer rigidTransform = dynamic_cast<RigidTransformType *>( baseTransform.GetPointer() );
+
   if( rigidTransform.IsNull() )
     {
     std::cerr << "Transform "
@@ -159,6 +161,11 @@ int main(int argc, char *argv[])
     return EXIT_FAILURE;
     }
 
+  GenericTransformType::Pointer     warpDWIXFRM = 0;
+  if(warpDWITransform.size() > 0)
+    {
+    warpDWIXFRM = itk::ReadTransformFromDisk(warpDWITransform);
+    }
   // Get measurement frame and its inverse from DWI scan
   std::vector<std::vector<double> > msrFrame;
   itk::ExposeMetaData<std::vector<std::vector<double> > >( inputMetaDataDictionary,
@@ -368,8 +375,13 @@ int main(int argc, char *argv[])
       ComponentResamplerType::Pointer componentResampler = ComponentResamplerType::New();
       componentResampler->SetOutputParametersFromImage(referenceImageReader->GetOutput());
       componentResampler->SetInput(vectorImageToImageSelector->GetOutput());
+      if(warpDWIXFRM.IsNotNull())
+        {
+        componentResampler->SetTransform(warpDWIXFRM);
+        }
       //default to linear
       //default to IdentityTransform
+      // TODO feed it composite transform.
       //default background value of 0.
       componentResampler->Update();
       //Add to list for Compose

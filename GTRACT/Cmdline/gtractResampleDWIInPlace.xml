@@ -47,6 +47,14 @@
       <channel>input</channel>
     </transform>
 
+    <transform fileExtensions=".h5,.hdf5,.mat,.txt">
+      <name>warpDWITransform</name>
+      <longflag>warpDWITransform</longflag>
+      <description>Optional: transform file to warp gradient volumes.</description>
+      <label>general Transform</label>
+      <channel>input</channel>
+    </transform>
+
     <integer>
       <name>debugLevel</name>
       <label>Debug option</label>

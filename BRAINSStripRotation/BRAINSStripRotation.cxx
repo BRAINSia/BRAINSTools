@@ -15,7 +15,8 @@ NewTransform(const typename itk::Image<char,3>::DirectionType &dir)
   std::cerr << rval
             << rval->GetMatrix()
             << std::endl;
-  return rval;
+  rval.GetPointer()->Register();
+  return rval.GetPointer();
 }
 
 template<typename TPrecision>

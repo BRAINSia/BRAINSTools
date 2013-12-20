@@ -2,7 +2,6 @@
 #include "GenericTransformImage.h"
 
 #include "itkAffineTransform.h"
-#include "itkBSplineDeformableTransform.h"
 #include "itkCenteredAffineTransform.h"
 #include "itkCenteredEuler3DTransform.h"
 #include "itkCenteredRigid2DTransform.h"
@@ -25,6 +24,8 @@
 #include "itkVersorTransform.h"
 #include "itkThinPlateR2LogRSplineKernelTransform.h"
 #include "itkThinPlateSplineKernelTransform.h"
+#include "itkDisplacementFieldTransform.h"
+#include "itkBSplineTransform.h"
 #include "itkTransformFactory.h"
 #include <itksys/SystemTools.hxx>
 
@@ -35,7 +36,7 @@ namespace itk
 VersorRigid3DTransformType::Pointer ComputeRigidTransformFromGeneric(
   const GenericTransformType::ConstPointer genericTransformToWrite)
 {
-  typedef VersorRigid3DTransformType VersorRigidTransformType;
+  typedef VersorRigid3DTransformType          VersorRigidTransformType;
   VersorRigidTransformType::Pointer versorRigid = VersorRigidTransformType::New();
   versorRigid->SetIdentity();
   // //////////////////////////////////////////////////////////////////////////
@@ -85,23 +86,6 @@ VersorRigid3DTransformType::Pointer ComputeRigidTransformFromGeneric(
           }
         AssignRigid::ExtractVersorRigid3DTransform(versorRigid, tempInitializerITKTransform);
         }
-      /*
-        * else if(transformFileType == "BSplineDeformableTransform")
-        * {
-        * BSplineTransformType::Pointer tempInitializerITKTransform
-        * = dynamic_cast<BSplineTransformType *>(
-        *    genericTransformToWrite.GetPointer() );
-                if ( tempInitializerITKTransform.IsNull() )
-                  {
-itkGenericExceptionMacro(<< "Error in type conversion");
-                  }
-        * //AssignRigid::ExtractVersorRigid3DTransform(versorRigid,
-        *    tempInitializerITKTransform->GetBulkTransform());
-        * versorRigid=NULL; //NOT: Perhaps it makes sense to extract the rigid
-        *    part of the bulk transform.  But that is pretty obscure case.
-        * return NULL;
-        * }
-        */
       else      //  NO SUCH CASE!!
         {
         std::cout
@@ -131,82 +115,98 @@ int WriteBothTransformsToDisk(const GenericTransformType::ConstPointer genericTr
                               const std::string & strippedOutputTransform)
 {
   // //////////////////////////////////////////////////////////////////////////
-  // Write out tranfoms.
+  // Write out tranfoms for BRAINSFit.
+  /*
+   * the input of genericTransformToWrite from the BRIANSFit is a composite transform.
+   * If this composite transform has just one component, we write the included transform.
+   * If the composite transform has more than one component i.e {a linear transform; a BSpline or SyN transform},
+   * we write the composite transform itself.
+   */
+  typedef itk::BSplineTransform<double, 3, 3> BSplineTransformType;
+
   if( genericTransformToWrite.IsNull() )
     {
     return 0;
     }
-  try
+  const CompositeTransformType::ConstPointer genericCompositeTransform =
+                                              dynamic_cast<const CompositeTransformType *>( genericTransformToWrite.GetPointer() );
+  if( genericCompositeTransform.IsNull() )
     {
-    const std::string transformFileType = genericTransformToWrite->GetNameOfClass();
-    if( transformFileType == "VersorRigid3DTransform" )
-      {
-      if( outputTransform.size() > 0 )  // Write out the transform
-        {
-        itk::WriteTransformToDisk<double>(genericTransformToWrite, outputTransform);
-        }
-      }
-    else if( transformFileType == "ScaleVersor3DTransform" )
-      {
-      if( outputTransform.size() > 0 )  // Write out the transform
-        {
-        itk::WriteTransformToDisk<double>(genericTransformToWrite, outputTransform);
-        }
-      }
-    else if( transformFileType == "ScaleSkewVersor3DTransform" )
-      {
-      if( outputTransform.size() > 0 )  // Write out the transform
-        {
-        itk::WriteTransformToDisk<double>(genericTransformToWrite, outputTransform);
-        }
-      }
-    else if( transformFileType == "AffineTransform" )
-      {
-      if( outputTransform.size() > 0 )  // Write out the transform
-        {
-        itk::WriteTransformToDisk<double>(genericTransformToWrite, outputTransform);
-        }
-      }
-    else if( transformFileType == "BSplineDeformableTransform" )
-      {
-      const BSplineTransformType::ConstPointer tempInitializerITKTransform =
-        dynamic_cast<BSplineTransformType  const *>( genericTransformToWrite.GetPointer() );
-      if( tempInitializerITKTransform.IsNull() )
-        {
-        itkGenericExceptionMacro(<< "Error in type conversion");
-        }
-      if( strippedOutputTransform.size() > 0 )
-        {
-        std::cout << "ERROR:  The rigid component of a BSpline transform is not supported." << std::endl;
-        }
-      if( outputTransform.size() > 0 )
-        {
-        itk::WriteTransformToDisk<double>(genericTransformToWrite, outputTransform);
-        }
-      }
-    else      //  NO SUCH CASE!!
-      {
-      std::cout << "Unsupported initial transform file -- TransformBase first transform typestring, "
-                << transformFileType
-                << " not equal to any recognized type VersorRigid3DTransform OR"
-                << " ScaleVersor3DTransform OR ScaleSkewVersor3DTransform OR AffineTransform"
-                << std::endl;
-      return -1;
-      }
-    // Should just write out the rigid transform here.
-    if( strippedOutputTransform.size() > 0  )
-      {
-      typedef VersorRigid3DTransformType VersorRigidTransformType;
-      VersorRigidTransformType::Pointer versorRigid = itk::ComputeRigidTransformFromGeneric(genericTransformToWrite);
-      if( versorRigid.IsNotNull() )
-        {
-        itk::WriteTransformToDisk<double>(versorRigid.GetPointer(), strippedOutputTransform);
-        }
-      }
+    itkGenericExceptionMacro(<<"Error in type conversion");
     }
-  catch( itk::ExceptionObject & excp )
+
+  if( genericCompositeTransform->GetNumberOfTransforms() > 1 )
     {
-    throw excp; // reohrow exception, handle in some other scope.
+    std::cout << "Write the output composite transform to the disk ..." << std::endl;
+    const std::string extension = itksys::SystemTools::GetFilenameLastExtension( outputTransform );
+    std::string prefixTransformName( outputTransform );
+    prefixTransformName.replace( prefixTransformName.end() - extension.size(),
+                                 prefixTransformName.end(),
+                                 "");
+    std::string compositeTransformName = prefixTransformName + std::string("Composite.h5");
+    itk::WriteTransformToDisk<double>( genericCompositeTransform.GetPointer(), compositeTransformName.c_str() );
+    }
+  else
+    {
+    CompositeTransformType::TransformTypePointer genericComponent = genericCompositeTransform->GetNthTransform(0);
+    try
+      {
+      const std::string transformFileType = genericComponent->GetNameOfClass();
+      if( transformFileType == "VersorRigid3DTransform" || transformFileType == "ScaleVersor3DTransform" || transformFileType == "ScaleSkewVersor3DTransform" || transformFileType == "AffineTransform" )
+        {
+        if( outputTransform.size() > 0 )  // Write out the transform
+          {
+          itk::WriteTransformToDisk<double>(genericComponent, outputTransform);
+          }
+        }
+      else if( transformFileType == "BSplineTransform" )
+        {
+        const BSplineTransformType::ConstPointer tempInitializerITKTransform =
+                                                  dynamic_cast<BSplineTransformType  const *>( genericComponent.GetPointer() );
+        if( tempInitializerITKTransform.IsNull() )
+          {
+          itkGenericExceptionMacro(<< "Error in type conversion");
+          }
+        if( strippedOutputTransform.size() > 0 )
+          {
+          std::cout << "ERROR:  The rigid component of a BSpline transform is not supported." << std::endl;
+          }
+        if( outputTransform.size() > 0 )
+          {
+          itk::WriteTransformToDisk<double>(genericComponent, outputTransform);
+          }
+        }
+      else if( transformFileType == "displacementFieldTransform" )
+        {
+        if( outputTransform.size() > 0 )  // Write out the transform
+          {
+          itk::WriteTransformToDisk<double>(genericComponent, outputTransform);
+          }
+        }
+      else      //  NO SUCH CASE!!
+        {
+        std::cout << "Unsupported transform file -- "
+        << transformFileType
+        << " not equal to any recognized type VersorRigid3DTransform OR"
+        << " ScaleVersor3DTransform OR ScaleSkewVersor3DTransform OR AffineTransform OR BSplineTransform."
+        << std::endl;
+        return -1;
+        }
+        // Should just write out the rigid transform here.
+      if( strippedOutputTransform.size() > 0  )
+        {
+        typedef VersorRigid3DTransformType VersorRigidTransformType;
+        VersorRigidTransformType::Pointer versorRigid = itk::ComputeRigidTransformFromGeneric(genericTransformToWrite);
+        if( versorRigid.IsNotNull() )
+          {
+          itk::WriteTransformToDisk<double>(versorRigid.GetPointer(), strippedOutputTransform);
+          }
+        }
+      }
+    catch( itk::ExceptionObject & excp )
+      {
+      throw excp; // reohrow exception, handle in some other scope.
+      }
     }
   return 0;
 }
@@ -362,83 +362,13 @@ GenericTransformType::Pointer ReadTransformFromDisk(const std::string & initialT
       std::cerr << "ERROR:  Invalid type (" << transformFileType << ") " << __FILE__ << " " << __LINE__ << std::endl;
       }
     }
-  else if( currentTransformList.size() == 2 )  // A special case for
-                                               // BSplineTransforms
-  // To recombine the bulk and the bSpline transforms.
-    {
-    // transformListReader->GetTransformList();
-    TransformListType::const_iterator initializeTransformsListIterator =
-      currentTransformList.begin();
-
-    const GenericTransformType::ConstPointer FirstTransform = dynamic_cast<GenericTransformType const *>
-      ( ( *( initializeTransformsListIterator ) ).GetPointer() );
-    if( FirstTransform.IsNull() )
-      {
-      itkGenericExceptionMacro(<< "Error in type conversion");
-      }
-    const std::string FirstTransformFileType = FirstTransform->GetNameOfClass();
-
-    ++initializeTransformsListIterator; // Increment to next iterator
-
-    const GenericTransformType::ConstPointer SecondTransform = dynamic_cast<GenericTransformType const *>
-      ( ( *( initializeTransformsListIterator ) ).GetPointer() );
-    if( SecondTransform.IsNull() )
-      {
-      itkGenericExceptionMacro(<< "Error in type conversion");
-      }
-    const std::string SecondTransformFileType = SecondTransform->GetNameOfClass();
-
-    BSplineTransformType::Pointer outputBSplineTransform =
-      BSplineTransformType::New();
-    outputBSplineTransform->SetIdentity();
-
-    // Now get the BSpline information
-    if( FirstTransformFileType == "BSplineDeformableTransform" )
-      {
-      const BSplineTransformType::ConstPointer tempInitializerITKTransform =
-        dynamic_cast<BSplineTransformType const *>
-        ( FirstTransform.GetPointer() );
-      if( tempInitializerITKTransform.IsNull() )
-        {
-        itkGenericExceptionMacro(<< "Error in type conversion");
-        }
-      outputBSplineTransform->SetFixedParameters( tempInitializerITKTransform->GetFixedParameters() );
-      outputBSplineTransform->SetParametersByValue( tempInitializerITKTransform->GetParameters() );
-      outputBSplineTransform->SetBulkTransform(SecondTransform);
-      }
-    else if( SecondTransformFileType == "BSplineDeformableTransform" )
-      {
-      const BSplineTransformType::ConstPointer tempInitializerITKTransform =
-        dynamic_cast<BSplineTransformType const *>
-        ( SecondTransform.GetPointer() );
-      if( tempInitializerITKTransform.IsNull() )
-        {
-        itkGenericExceptionMacro(<< "Error in type conversion");
-        }
-      outputBSplineTransform->SetFixedParameters( tempInitializerITKTransform->GetFixedParameters() );
-      outputBSplineTransform->SetParametersByValue( tempInitializerITKTransform->GetParameters() );
-      outputBSplineTransform->SetBulkTransform(FirstTransform);
-      }
-    else
-      {
-      std::cout << "[FAILED]" << std::endl;
-      std::cerr << "Error using the currentTransformList has two elements, but"
-                << " neither of them are a BSplineDeformableTransform/"
-                << std::endl
-                << "There should not be more than two transforms in the transform list."
-                << std::endl;
-      return NULL;
-      }
-    genericTransform = outputBSplineTransform.GetPointer();
-    }
-  else if( currentTransformList.size() > 2 )
+  else if( currentTransformList.size() > 1 )
     {
     // Error, too many transforms on transform list.
     std::cout << "[FAILED]" << std::endl;
-    std::cerr << "Error using the currentTransformList for initializing a"
-              << " BSPlineDeformableTransform:"
+    std::cerr << "Error using the currentTransformList for initializing:"
               << std::endl
-              << "There should not be more than two transforms in the transform list."
+              << "There should not be more than one transforms in the transform list."
               << std::endl;
     return NULL;
     }
@@ -449,9 +379,32 @@ template<class TScalarType>
 void WriteTransformToDisk( itk::Transform<TScalarType, 3, 3> const *const MyTransform, const std::string & TransformFilename )
 {
   /*
-    *  Convert the transform to the appropriate assumptions and write it out as
-    *requested.
-    */
+   *  Convert the transform to the appropriate assumptions and write it out as requested.
+   */
+
+  // First we check the displacementField type transforms
+  typedef itk::DisplacementFieldTransform<TScalarType, 3>                   DisplacementFieldTransformType;
+  typedef typename DisplacementFieldTransformType::DisplacementFieldType    DisplacementFieldType;
+  typedef itk::ImageFileWriter<DisplacementFieldType>                       DisplacementFieldWriter;
+  const DisplacementFieldTransformType *dispXfrm = dynamic_cast<const DisplacementFieldTransformType *>(MyTransform );
+  if( dispXfrm != 0 ) // if it's a displacement field transform
+    {
+    typename DisplacementFieldType::ConstPointer dispField = dispXfrm->GetDisplacementField();
+    typename DisplacementFieldWriter::Pointer dispWriter = DisplacementFieldWriter::New();
+    dispWriter->SetInput(dispField);
+    dispWriter->SetFileName(TransformFilename.c_str() );
+    try
+      {
+      dispWriter->Update();
+      }
+    catch( itk::ExceptionObject & err )
+      {
+      std::cerr << "Can't write the displacement field transform file " << TransformFilename << std::endl;
+      std::cerr << "Exception Object caught: " << std::endl;
+      std::cerr << err << std::endl;
+      }
+    }
+  else // regular transforms (linear transforms)
     {
     typedef itk::TransformFileWriterTemplate<TScalarType> TransformWriterType;
     typename TransformWriterType::Pointer transformWriter =  TransformWriterType::New();
@@ -465,43 +418,8 @@ void WriteTransformToDisk( itk::Transform<TScalarType, 3, 3> const *const MyTran
     inverseTransformWriter->SetFileName( inverseTransformFileName.c_str() );
     const std::string transformFileType = MyTransform->GetNameOfClass();
     bool              inverseTransformExists = true;
-    if( transformFileType == "BSplineDeformableTransform" )
-      {
-      typedef itk::BSplineDeformableTransform< TScalarType,
-                                               GenericTransformImageNS::SpaceDimension,
-                                               GenericTransformImageNS::SplineOrder> LocalBSplineTransformType;
 
-      const typename LocalBSplineTransformType::ConstPointer tempInitializerITKTransform
-        = dynamic_cast<LocalBSplineTransformType const *>( MyTransform );
-
-      if( tempInitializerITKTransform.IsNull() )
-        {
-        itkGenericExceptionMacro(<< "Error in type conversion");
-        }
-      // NOTE: Order was reversed to get BSpline first, then Bulk
-      // transform in an attempt to appease Slicer3.
-      // Bulk transform is assumed to be second in Slicer3.
-      transformWriter->AddTransform(tempInitializerITKTransform);
-      transformWriter->AddTransform( tempInitializerITKTransform->GetBulkTransform() );
-
-      if( tempInitializerITKTransform->GetInverseTransform().IsNull() )
-        {
-        inverseTransformExists = false;
-        }
-      else
-        {
-        inverseTransformWriter->AddTransform(tempInitializerITKTransform->GetInverseTransform() );
-        }
-      if( tempInitializerITKTransform->GetBulkTransform()->GetInverseTransform().IsNull() )
-        {
-        inverseTransformExists = false;
-        }
-      else
-        {
-        inverseTransformWriter->AddTransform( tempInitializerITKTransform->GetBulkTransform()->GetInverseTransform() );
-        }
-      }
-    else
+    // if the transform to write is not displacementField transform.
       {
       transformWriter->AddTransform(MyTransform);
       if( MyTransform->GetInverseTransform().IsNull() )
@@ -513,7 +431,6 @@ void WriteTransformToDisk( itk::Transform<TScalarType, 3, 3> const *const MyTran
         inverseTransformWriter->AddTransform(MyTransform->GetInverseTransform() );
         }
       }
-
     try
       {
       transformWriter->Update();
@@ -534,17 +451,17 @@ void WriteTransformToDisk( itk::Transform<TScalarType, 3, 3> const *const MyTran
         // Writing the inverseTransform is optional,  throw excp;
         }
       }
-    // Test if the forward file exists.
-    if( !itksys::SystemTools::FileExists( TransformFilename.c_str() ) )
-      {
-      itk::ExceptionObject e(__FILE__, __LINE__, "Failed to write file", "WriteTransformToDisk");
-      std::ostringstream   msg;
-      msg << "The file was not successfully created. "
-          << std::endl << "Filename = " << TransformFilename
-          << std::endl;
-      e.SetDescription( msg.str().c_str() );
-      throw e;
-      }
+    }
+  // Test if the forward file exists.
+  if( !itksys::SystemTools::FileExists( TransformFilename.c_str() ) )
+    {
+    itk::ExceptionObject e(__FILE__, __LINE__, "Failed to write file", "WriteTransformToDisk");
+    std::ostringstream   msg;
+    msg << "The file was not successfully created. "
+    << std::endl << "Filename = " << TransformFilename
+    << std::endl;
+    e.SetDescription( msg.str().c_str() );
+    throw e;
     }
 }
 

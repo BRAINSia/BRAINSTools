@@ -4,13 +4,13 @@
 #include "BRAINSFitHelperTemplate.h"
 
 #include "genericRegistrationHelper.h"
-#include "itkNormalizedCorrelationImageToImageMetric.h"
-#include "itkMeanSquaresImageToImageMetric.h"
+#include "itkCorrelationImageToImageMetricv4.h"
+#include "itkMeanSquaresImageToImageMetricv4.h"
 #include "itkKullbackLeiblerCompareHistogramImageToImageMetric.h"
 #include "itkHistogramImageToImageMetric.h"
 #include "itkKappaStatisticImageToImageMetric.h"
 #include "itkMeanReciprocalSquareDifferenceImageToImageMetric.h"
-#include "itkMutualInformationHistogramImageToImageMetric.h"
+#include "itkJointHistogramMutualInformationImageToImageMetricv4.h"
 #include "itkGradientDifferenceImageToImageMetric.h"
 #include "itkCompareHistogramImageToImageMetric.h"
 #include "itkCorrelationCoefficientHistogramImageToImageMetric.h"
@@ -53,14 +53,14 @@ BRAINSFitHelper::BRAINSFitHelper() :
   m_OutputFixedVolumeROI(""),
   m_OutputMovingVolumeROI(""),
   m_PermitParameterVariation(0),
-  m_NumberOfSamples(500000),
+  m_NumberOfSamples(0), // normally this variable should NOT be used; however, it is kept for backward compatiblity.
+  m_SamplingPercentage(1), // instead or number of samples, sampling% should be used that is a number between 0 and 1.
   m_NumberOfHistogramBins(50),
   m_HistogramMatch(false),
   m_RemoveIntensityOutliers(0.00),
   m_NumberOfMatchPoints(10),
   m_NumberOfIterations(1, 1500),
   m_MaximumStepLength(0.2),
-  m_MinimumStepLength(1, 0.005),
   m_RelaxationFactor(0.5),
   m_TranslationScale(1000.0),
   m_ReproportionScale(1.0),
@@ -80,7 +80,7 @@ BRAINSFitHelper::BRAINSFitHelper() :
   // m_AccumulatedNumberOfIterationsForAllLevels(0),
   m_DebugLevel(0),
   m_CurrentGenericTransform(NULL),
-  m_GenericTransformList(0),
+  //m_GenericTransformList(0),
   m_DisplayDeformedImage(false),
   m_PromptUserAfterDisplay(false),
   m_FinalMetricValue(0.0),
@@ -88,11 +88,59 @@ BRAINSFitHelper::BRAINSFitHelper() :
   m_CostMetric("MMI"), // Default to Mattes Mutual Information Metric
   m_UseROIBSpline(false),
   m_Helper(NULL),
+  m_SamplingStrategy(AffineRegistrationType::NONE),
+  m_NormalizeInputImages(false),
   m_ForceMINumberOfThreads(-1)
 {
   m_SplineGridSize[0] = 14;
   m_SplineGridSize[1] = 10;
   m_SplineGridSize[2] = 12;
+}
+
+/*
+This function returns a normalized image with values between 0 and 1.
+HACK: parameters are hard coded but some of them should be passed by flags.
+*/
+template <typename ImageType>
+typename ImageType::Pointer
+NormalizeImage(typename ImageType::Pointer inputImage)
+{
+  typedef itk::Statistics::ImageToHistogramFilter<ImageType>   HistogramFilterType;
+  typedef typename HistogramFilterType::InputBooleanObjectType InputBooleanObjectType;
+  typedef typename HistogramFilterType::HistogramSizeType      HistogramSizeType;
+  typedef typename HistogramFilterType::HistogramType          HistogramType;
+
+  HistogramSizeType histogramSize( 1 );
+  histogramSize[0] = 256;
+
+  typename InputBooleanObjectType::Pointer autoMinMaxInputObject = InputBooleanObjectType::New();
+  autoMinMaxInputObject->Set( true );
+
+  typename HistogramFilterType::Pointer histogramFilter = HistogramFilterType::New();
+  histogramFilter->SetInput( inputImage );
+  histogramFilter->SetAutoMinimumMaximumInput( autoMinMaxInputObject );
+  histogramFilter->SetHistogramSize( histogramSize );
+  histogramFilter->SetMarginalScale( 10.0 );
+  histogramFilter->Update();
+
+  float lowerValue = histogramFilter->GetOutput()->Quantile( 0, 0 );
+  float upperValue = histogramFilter->GetOutput()->Quantile( 0, 1 );
+
+  typedef itk::IntensityWindowingImageFilter<ImageType, ImageType> IntensityWindowingImageFilterType;
+  typename IntensityWindowingImageFilterType::Pointer windowingFilter = IntensityWindowingImageFilterType::New();
+  windowingFilter->SetInput( inputImage );
+  windowingFilter->SetWindowMinimum( lowerValue );
+  windowingFilter->SetWindowMaximum( upperValue );
+  windowingFilter->SetOutputMinimum( 0 );
+  windowingFilter->SetOutputMaximum( 1 );
+  windowingFilter->Update();
+
+  typename ImageType::Pointer outputImage = NULL;
+  outputImage = windowingFilter->GetOutput();
+  outputImage->Update();
+  outputImage->DisconnectPipeline();
+
+  return outputImage;
 }
 
 void
@@ -101,15 +149,15 @@ BRAINSFitHelper::Update(void)
   // Do remove intensity outliers if requested
   if(  m_RemoveIntensityOutliers > vcl_numeric_limits<float>::epsilon() )
     {
-    this->m_FixedVolume = ClampNoisyTailsOfImage<FixedVolumeType, FixedBinaryVolumeType>(
+    this->m_FixedVolume = ClampNoisyTailsOfImage<FixedImageType, FixedBinaryVolumeType>(
         m_RemoveIntensityOutliers, this->m_FixedVolume.GetPointer(), this->m_FixedBinaryVolume.GetPointer() );
-    this->m_PreprocessedMovingVolume = ClampNoisyTailsOfImage<MovingVolumeType, MovingBinaryVolumeType>(
+    this->m_PreprocessedMovingVolume = ClampNoisyTailsOfImage<MovingImageType, MovingBinaryVolumeType>(
         m_RemoveIntensityOutliers, this->m_MovingVolume.GetPointer(), this->m_MovingBinaryVolume.GetPointer() );
       {
       if( this->m_DebugLevel > 9 )
         {
           {
-          typedef itk::ImageFileWriter<FixedVolumeType> WriterType;
+          typedef itk::ImageFileWriter<FixedImageType> WriterType;
           WriterType::Pointer writer = WriterType::New();
           writer->UseCompressionOn();
           writer->SetFileName("DEBUGNormalizedFixedVolume.nii.gz");
@@ -126,7 +174,7 @@ BRAINSFitHelper::Update(void)
             }
           }
           {
-          typedef itk::ImageFileWriter<MovingVolumeType> WriterType;
+          typedef itk::ImageFileWriter<MovingImageType> WriterType;
           WriterType::Pointer writer = WriterType::New();
           writer->UseCompressionOn();
           writer->SetFileName("DEBUGNormalizedMovingVolume.nii.gz");
@@ -153,7 +201,7 @@ BRAINSFitHelper::Update(void)
   // Do Histogram equalization on moving image if requested.
   if( m_HistogramMatch )
     {
-    typedef itk::OtsuHistogramMatchingImageFilter<FixedVolumeType, MovingVolumeType> HistogramMatchingFilterType;
+    typedef itk::OtsuHistogramMatchingImageFilter<FixedImageType, MovingImageType> HistogramMatchingFilterType;
     HistogramMatchingFilterType::Pointer histogramfilter = HistogramMatchingFilterType::New();
 
     // TODO:  Regina:  Write various histogram matching specializations and
@@ -186,7 +234,7 @@ BRAINSFitHelper::Update(void)
     this->m_PreprocessedMovingVolume = histogramfilter->GetOutput();
     if( this->m_DebugLevel > 5 )
       {
-      typedef itk::ImageFileWriter<MovingVolumeType> WriterType;
+      typedef itk::ImageFileWriter<MovingImageType> WriterType;
       WriterType::Pointer writer = WriterType::New();
       writer->UseCompressionOn();
       writer->SetFileName("DEBUGHISTOGRAMMATCHEDMOVING.nii.gz");
@@ -208,114 +256,66 @@ BRAINSFitHelper::Update(void)
     this->m_PreprocessedMovingVolume = this->m_MovingVolume;
     }
 
+  if( m_NormalizeInputImages )
+    {
+    this->m_FixedVolume = NormalizeImage< FixedImageType >( this->m_FixedVolume );
+    this->m_PreprocessedMovingVolume = NormalizeImage< MovingImageType >( this->m_PreprocessedMovingVolume );
+    }
+
+  const bool     gradientfilter = false;
+
+  GenericMetricType::Pointer metric;
   if( this->m_CostMetric == "MMI" )
     {
-    typedef COMMON_MMI_METRIC_TYPE<FixedVolumeType, MovingVolumeType> MetricType;
-    this->SetupRegistration<MetricType>();
+    typedef COMMON_MMI_METRIC_TYPE<FixedImageType, MovingImageType, FixedImageType, double> MIMetricType;
+    MIMetricType::Pointer mutualInformationMetric = MIMetricType::New();
+    mutualInformationMetric = mutualInformationMetric;
+    mutualInformationMetric->SetNumberOfHistogramBins( this->m_NumberOfHistogramBins );
+    mutualInformationMetric->SetUseMovingImageGradientFilter( gradientfilter );
+    mutualInformationMetric->SetUseFixedImageGradientFilter( gradientfilter );
+    mutualInformationMetric->SetUseFixedSampledPointSet( false );
+    metric = mutualInformationMetric;
 
-    MetricType::Pointer localCostMetric = this->GetCostMetric<MetricType>();
-    localCostMetric->SetNumberOfHistogramBins(this->m_NumberOfHistogramBins);
-    const bool UseCachingOfBSplineWeights = ( m_UseCachingOfBSplineWeightsMode == "ON" ) ? true : false;
-    localCostMetric->SetUseCachingOfBSplineWeights(UseCachingOfBSplineWeights);
-
-    this->RunRegistration<MetricType>();
+    this->SetupRegistration< MIMetricType >(metric);
+    this->RunRegistration< MIMetricType >();
     }
   else if( this->m_CostMetric == "MSE" )
     {
-    typedef itk::MeanSquaresImageToImageMetric<FixedVolumeType, MovingVolumeType> MetricType;
-    this->SetupRegistration<MetricType>();
-    this->RunRegistration<MetricType>();
+    typedef itk::MeanSquaresImageToImageMetricv4<FixedImageType, MovingImageType, FixedImageType, double> MSEMetricType;
+    MSEMetricType::Pointer meanSquareMetric = MSEMetricType::New();
+    meanSquareMetric = meanSquareMetric;
+    metric = meanSquareMetric;
+
+    this->SetupRegistration< MSEMetricType >(metric);
+    this->RunRegistration< MSEMetricType >();
     }
   else if( this->m_CostMetric == "NC" )
     {
-    typedef itk::NormalizedCorrelationImageToImageMetric<FixedVolumeType, MovingVolumeType> MetricType;
-    this->SetupRegistration<MetricType>();
-    this->RunRegistration<MetricType>();
-    }
-  // This requires additional machinery (training transform, etc) and hence
-  // isn't as easy to incorporate
-  // into the BRAINSFit framework.
-  /*else if(this->m_CostMetric == "KL")
-    {
-    typedef itk::KullbackLeiblerCompareHistogramImageToImageMetric<FixedVolumeType,MovingVolumeType> MetricType;
-    this->SetupRegistration<MetricType>();
-this->RunRegistration<MetricType>();
-    }*/
-  else if( this->m_CostMetric == "KS" )
-    {
-    if( this->m_HistogramMatch )
-      {
-      itkExceptionMacro(<< "The KS cost metric is not compatible with histogram matching.");
-      }
-    // This metric only works with binary images that it knows the value of.
-    // It defaults to 255, so we threshold the inputs to 255.
-    typedef itk::BinaryThresholdImageFilter<FixedVolumeType, FixedVolumeType> BinaryThresholdFixedVolumeType;
-    BinaryThresholdFixedVolumeType::Pointer binaryThresholdFixedVolume = BinaryThresholdFixedVolumeType::New();
-    binaryThresholdFixedVolume->SetInput(this->m_FixedVolume);
-    binaryThresholdFixedVolume->SetOutsideValue(0);
-    binaryThresholdFixedVolume->SetInsideValue(255);
-    binaryThresholdFixedVolume->SetLowerThreshold(1);
-    binaryThresholdFixedVolume->Update();
-    this->m_FixedVolume = binaryThresholdFixedVolume->GetOutput();
+    typedef itk::CorrelationImageToImageMetricv4<FixedImageType, MovingImageType, FixedImageType, double> corrMetricType;
+    corrMetricType::Pointer corrMetric = corrMetricType::New();
+    metric = corrMetric;
 
-    typedef itk::BinaryThresholdImageFilter<MovingVolumeType, MovingVolumeType> BinaryThresholdMovingVolumeType;
-    BinaryThresholdMovingVolumeType::Pointer binaryThresholdMovingVolume = BinaryThresholdMovingVolumeType::New();
-    binaryThresholdMovingVolume->SetInput(this->m_MovingVolume);
-    binaryThresholdMovingVolume->SetOutsideValue(0);
-    binaryThresholdMovingVolume->SetInsideValue(255);
-    binaryThresholdMovingVolume->SetLowerThreshold(1);
-    binaryThresholdMovingVolume->Update();
-    this->m_PreprocessedMovingVolume = binaryThresholdMovingVolume->GetOutput();
-
-    typedef itk::KappaStatisticImageToImageMetric<FixedVolumeType, MovingVolumeType> MetricType;
-    this->SetupRegistration<MetricType>();
-    this->RunRegistration<MetricType>();
-    }
-  else if( this->m_CostMetric == "MRSD" )
-    {
-    typedef itk::MeanReciprocalSquareDifferenceImageToImageMetric<FixedVolumeType, MovingVolumeType> MetricType;
-    this->SetupRegistration<MetricType>();
-    this->RunRegistration<MetricType>();
-    }
-  else if( this->m_CostMetric == "MIH" )
-    {
-    typedef itk::MutualInformationHistogramImageToImageMetric<FixedVolumeType, MovingVolumeType> MetricType;
-    this->SetupRegistration<MetricType>();
-    this->RunRegistration<MetricType>();
-    }
-  else if( this->m_CostMetric == "GD" )
-    {
-    typedef itk::GradientDifferenceImageToImageMetric<FixedVolumeType, MovingVolumeType> MetricType;
-    this->SetupRegistration<MetricType>();
-    this->RunRegistration<MetricType>();
-    }
-  else if( this->m_CostMetric == "CCH" )
-    {
-    typedef itk::CorrelationCoefficientHistogramImageToImageMetric<FixedVolumeType, MovingVolumeType> MetricType;
-    this->SetupRegistration<MetricType>();
-    this->RunRegistration<MetricType>();
+    this->SetupRegistration< corrMetricType >(metric);
+    this->RunRegistration< corrMetricType >();
     }
   else if( this->m_CostMetric == "MC" )
     {
-    typedef itk::MatchCardinalityImageToImageMetric<FixedVolumeType, MovingVolumeType> MetricType;
-    this->SetupRegistration<MetricType>();
-    this->RunRegistration<MetricType>();
-    }
-  else if( this->m_CostMetric == "MSEH" )
-    {
-    typedef itk::MeanSquaresHistogramImageToImageMetric<FixedVolumeType, MovingVolumeType> MetricType;
-    this->SetupRegistration<MetricType>();
-    this->RunRegistration<MetricType>();
-    }
-  else if( this->m_CostMetric == "NMIH" )
-    {
-    typedef itk::NormalizedMutualInformationHistogramImageToImageMetric<FixedVolumeType, MovingVolumeType> MetricType;
-    this->SetupRegistration<MetricType>();
-    this->RunRegistration<MetricType>();
+    typedef itk::JointHistogramMutualInformationImageToImageMetricv4<FixedImageType, MovingImageType, FixedImageType, double> MutualInformationMetricType;
+    MutualInformationMetricType::Pointer mutualInformationMetric = MutualInformationMetricType::New();
+    mutualInformationMetric = mutualInformationMetric;
+    mutualInformationMetric->SetNumberOfHistogramBins( this->m_NumberOfHistogramBins );
+    mutualInformationMetric->SetUseMovingImageGradientFilter( gradientfilter );
+    mutualInformationMetric->SetUseFixedImageGradientFilter( gradientfilter );
+    mutualInformationMetric->SetUseFixedSampledPointSet( false );
+    mutualInformationMetric->SetVarianceForJointPDFSmoothing( 1.0 );
+    metric = mutualInformationMetric;
+
+    this->SetupRegistration< MutualInformationMetricType >(metric);
+    this->RunRegistration< MutualInformationMetricType >();
     }
   else
     {
-    std::cout << "Metric \"" << this->m_CostMetric << "\" not valid." << std::endl;
+    std::cout << "Metric \"" << this->m_CostMetric << "\" not valid!" << std::endl;
     }
 }
 
@@ -342,7 +342,7 @@ BRAINSFitHelper::PrintSelf(std::ostream & os, Indent indent) const
     {
     os << indent << "MovingBinaryVolume: IS NULL" << std::endl;
     }
-  os << indent << "NumberOfSamples:      " << this->m_NumberOfSamples << std::endl;
+  os << indent << "SamplingPercentage:      " << this->m_SamplingPercentage << std::endl;
 
   os << indent << "NumberOfIterations:    [";
   for( unsigned int q = 0; q < this->m_NumberOfIterations.size(); ++q )
@@ -352,12 +352,6 @@ BRAINSFitHelper::PrintSelf(std::ostream & os, Indent indent) const
   os << "]" << std::endl;
   os << indent << "NumberOfHistogramBins:" << this->m_NumberOfHistogramBins << std::endl;
   os << indent << "MaximumStepLength:    " << this->m_MaximumStepLength << std::endl;
-  os << indent << "MinimumStepLength:     [";
-  for( unsigned int q = 0; q < this->m_MinimumStepLength.size(); ++q )
-    {
-    os << this->m_MinimumStepLength[q] << " ";
-    }
-  os << "]" << std::endl;
   os << indent << "TransformType:     [";
   for( unsigned int q = 0; q < this->m_TransformType.size(); ++q )
     {
@@ -376,8 +370,6 @@ BRAINSFitHelper::PrintSelf(std::ostream & os, Indent indent) const
   os << indent << "MaskInferiorCutOffFromCenter:   " << this->m_MaskInferiorCutOffFromCenter << std::endl;
   os << indent << "ActualNumberOfIterations:       " << this->m_ActualNumberOfIterations << std::endl;
   os << indent << "PermittedNumberOfIterations:       " << this->m_PermittedNumberOfIterations << std::endl;
-  // os << indent << "AccumulatedNumberOfIterationsForAllLevels: " <<
-  // this->m_AccumulatedNumberOfIterationsForAllLevels << std::endl;
 
   os << indent << "SplineGridSize:     [";
   for( unsigned int q = 0; q < this->m_SplineGridSize.size(); ++q )
@@ -420,7 +412,7 @@ BRAINSFitHelper::PrintCommandLine(const bool dumpTempVolumes, const std::string 
   if( dumpTempVolumes == true )
     {
       {
-      typedef itk::ImageFileWriter<FixedVolumeType> WriterType;
+      typedef itk::ImageFileWriter<FixedImageType> WriterType;
       WriterType::Pointer writer = WriterType::New();
       writer->UseCompressionOn();
       writer->SetFileName(fixedVolumeString);
@@ -437,7 +429,7 @@ BRAINSFitHelper::PrintCommandLine(const bool dumpTempVolumes, const std::string 
         }
       }
       {
-      typedef itk::ImageFileWriter<MovingVolumeType> WriterType;
+      typedef itk::ImageFileWriter<MovingImageType> WriterType;
       WriterType::Pointer writer = WriterType::New();
       writer->UseCompressionOn();
       writer->SetFileName(movingVolumeString);
@@ -490,7 +482,7 @@ BRAINSFitHelper::PrintCommandLine(const bool dumpTempVolumes, const std::string 
       oss << "--maskProcessingMode ROI "   << "  \\" << std::endl;
       }
     }
-  oss << "--numberOfSamples " << this->m_NumberOfSamples  << "  \\" << std::endl;
+  oss << "--samplingPercentage " << this->m_SamplingPercentage  << "  \\" << std::endl;
 
   oss << "--numberOfIterations ";
   for( unsigned int q = 0; q < this->m_NumberOfIterations.size(); ++q )
@@ -504,15 +496,6 @@ BRAINSFitHelper::PrintCommandLine(const bool dumpTempVolumes, const std::string 
   oss << " \\" << std::endl;
   oss << "--numberOfHistogramBins " << this->m_NumberOfHistogramBins  << "  \\" << std::endl;
   oss << "--maximumStepLength " << this->m_MaximumStepLength  << "  \\" << std::endl;
-  oss << "--minimumStepLength ";
-  for( unsigned int q = 0; q < this->m_MinimumStepLength.size(); ++q )
-    {
-    oss << this->m_MinimumStepLength[q];
-    if( q < this->m_MinimumStepLength.size() - 1 )
-      {
-      oss << ",";
-      }
-    }
   oss << " \\" << std::endl;
   oss << "--transformType ";
   for( unsigned int q = 0; q < this->m_TransformType.size(); ++q )

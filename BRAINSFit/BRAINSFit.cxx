@@ -35,7 +35,6 @@ typedef itk::Image<BRAINSFitPixelType, MaxInputDimension> InputImageType;
 typedef itk::ImageFileReader<InputImageType>              FixedVolumeReaderType;
 typedef itk::ImageFileReader<InputImageType>              MovingVolumeReaderType;
 typedef AffineTransformType::Pointer                      AffineTransformPointer;
-// typedef itk::Vector<double, Dimension>           BRAINSFitVectorType;
 
 template <class ImageType>
 typename ImageType::Pointer ExtractImage(
@@ -75,8 +74,7 @@ typename ImageType::Pointer ExtractImage(
     }
 
   typename ImageType::Pointer extractImage = extractImageFilter->GetOutput();
-  //  std::cerr << "Extract fixed image origin" << extractImage->GetOrigin() <<
-  // std::endl;
+  //  std::cerr << "Extract fixed image origin" << extractImage->GetOrigin() << std::endl;
 
   return extractImage;
 }
@@ -255,22 +253,9 @@ int main(int argc, char *argv[])
         }
       }
     }
-  if( minimumStepLength.size() != localTransformType.size() )
+  if( minimumStepLength.size() != 0 )
     {
-    if( minimumStepLength.size() != 1 )
-      {
-      std::cerr << "The minimumStepLength array must match the localTransformType length" << std::endl;
-      return EXIT_FAILURE;
-      }
-    else
-      {
-      // replicate throughout
-      const double stepSize = minimumStepLength[0];
-      for( unsigned int i = 1; i < localTransformType.size(); i++ )
-        {
-        minimumStepLength.push_back(stepSize);
-        }
-      }
+    std::cout << "WARNING: The minimumStepLength array is not needed by ITKv4 registration framework. It can be removed from command line." << std::endl;
     }
 
   // Need to ensure that the order of transforms is from smallest to largest.
@@ -420,10 +405,12 @@ int main(int argc, char *argv[])
       movingMask = NULL;
       }
     }
-  GenericTransformType::Pointer currentGenericTransform;
+  CompositeTransformType::Pointer currentGenericTransform = NULL;
   if( initialTransform != "" )
     {
-    currentGenericTransform = itk::ReadTransformFromDisk(initialTransform);
+    currentGenericTransform = CompositeTransformType::New();
+    GenericTransformType::Pointer movingInitialTransform = itk::ReadTransformFromDisk(initialTransform);
+    currentGenericTransform->AddTransform( movingInitialTransform );
     }
 
   FixedVolumeType::Pointer resampledImage;
@@ -432,17 +419,14 @@ int main(int argc, char *argv[])
    *  Start Processing
    *
    */
-//  int actualIterations = 0;
-//  int permittedIterations = 0;
-//  int allLevelsIterations = 0;
 
     {
     typedef itk::BRAINSFitHelper HelperType;
     HelperType::Pointer myHelper = HelperType::New();
     myHelper->SetTransformType(localTransformType);
-    myHelper->SetFixedVolume(extractFixedVolume);
+    myHelper->SetFixedVolume( extractFixedVolume );
     myHelper->SetForceMINumberOfThreads(forceMINumberOfThreads);
-    myHelper->SetMovingVolume(extractMovingVolume);
+    myHelper->SetMovingVolume( extractMovingVolume );
     myHelper->SetHistogramMatch(histogramMatch);
     myHelper->SetRemoveIntensityOutliers(removeIntensityOutliers);
     myHelper->SetNumberOfMatchPoints(numberOfMatchPoints);
@@ -452,10 +436,10 @@ int main(int argc, char *argv[])
     myHelper->SetOutputMovingVolumeROI(outputMovingVolumeROI);
     myHelper->SetPermitParameterVariation(permitParameterVariation);
     myHelper->SetNumberOfSamples(numberOfSamples);
+    myHelper->SetSamplingPercentage(samplingPercentage);
     myHelper->SetNumberOfHistogramBins(numberOfHistogramBins);
     myHelper->SetNumberOfIterations(numberOfIterations);
     myHelper->SetMaximumStepLength(maximumStepLength);
-    myHelper->SetMinimumStepLength(minimumStepLength);
     myHelper->SetRelaxationFactor(relaxationFactor);
     myHelper->SetTranslationScale(translationScale);
     myHelper->SetReproportionScale(reproportionScale);
@@ -475,32 +459,45 @@ int main(int argc, char *argv[])
     myHelper->SetDebugLevel(debugLevel);
     myHelper->SetCostMetric(costMetric);
     myHelper->SetUseROIBSpline(useROIBSpline);
-    myHelper->SetMetricSeed(metricSeed);
+    myHelper->SetSamplingStrategy(metricSamplingStrategy);
+
+    //HACK: create a flag for normalization
+    bool NormalizeInputImages = false;
+    myHelper->SetNormalizeInputImages(NormalizeInputImages);
+
     if( debugLevel > 7 )
       {
       myHelper->PrintCommandLine(true, "BF");
       }
     myHelper->Update();
     currentGenericTransform = myHelper->GetCurrentGenericTransform();
+
+    CompositeTransformType::Pointer outputComposite = dynamic_cast<CompositeTransformType *>( currentGenericTransform.GetPointer() );
+    if( outputComposite.IsNull() )
+      {
+      itkGenericExceptionMacro(<<"ERROR: Output transform is null.");
+      }
+
     MovingVolumeType::ConstPointer preprocessedMovingVolume = myHelper->GetPreprocessedMovingVolume();
+    if( NormalizeInputImages )
+      {
+      preprocessedMovingVolume = extractMovingVolume; // The resampled image should not be normalized
+                                                      // because it my be casted to zero later.
+      }
+
       {
       typedef float                                                                     VectorComponentType;
       typedef itk::Vector<VectorComponentType, GenericTransformImageNS::SpaceDimension> VectorPixelType;
       typedef itk::Image<VectorPixelType,  GenericTransformImageNS::SpaceDimension>     DisplacementFieldType;
+
       resampledImage = GenericTransformImage<MovingVolumeType, FixedVolumeType, DisplacementFieldType>(
           preprocessedMovingVolume,
           extractFixedVolume,
-          // NULL,
-          currentGenericTransform,
+          currentGenericTransform.GetPointer(),
           backgroundFillValue,
           interpolationMode,
           false);
       }
-//    actualIterations = myHelper->GetActualNumberOfIterations();
-//    permittedIterations = myHelper->GetPermittedNumberOfIterations();
-      /*
-      allLevelsIterations=myHelper->GetAccumulatedNumberOfIterationsForAllLevels();
-      */
 
       //If --logFileReport myReport.csv is specified on the command line, then write out this simple CSV file.
     if( logFileReport != "" )
@@ -630,35 +627,8 @@ int main(int argc, char *argv[])
       itkUtil::WriteImage<WriteOutImageType>(CastImage, outputVolume);
       }
     }
-
-#ifdef USE_ANTS
-  if( localTransformType[localTransformType.size() - 1] == "SyN" )
-    {
-    CompositeTransformType::Pointer tempSyNCompositeTransform =
-      dynamic_cast<CompositeTransformType *>( currentGenericTransform.GetPointer() );
-    // write out transform actually computed, so skip the initial transform
-    CompositeTransformType::TransformTypePointer tempSyNFinalTransform =
-      tempSyNCompositeTransform.GetPointer();
-// tempSyNCompositeTransform->GetNthTransform( 1 );
-
-    if( tempSyNFinalTransform.IsNull() )
-      {
-      std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
-      return EXIT_FAILURE;
-      }
-    else
-      {
-      itk::ants::WriteTransform<double,3>( tempSyNFinalTransform, localOutputTransform );
-      std::cout << "SyN warped transform is written to the disk." << std::endl;
-      }
-    }
-  else
-#endif
-    {
-    /*const int write_status=*/
     itk::WriteBothTransformsToDisk(currentGenericTransform.GetPointer(),
                                    localOutputTransform, strippedOutputTransform);
-    }
 
   return 0;
 }

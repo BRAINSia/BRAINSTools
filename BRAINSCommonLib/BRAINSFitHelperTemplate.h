@@ -33,9 +33,9 @@
 
 #include "itkFindCenterOfBrainFilter.h"
 
-// TODO:  This needs to be moved to the top, and header files moved to this
-// header where needed.
-#include "BRAINSFitBSpline.h"
+#include "itkBSplineTransform.h"
+#include "itkBSplineTransformParametersAdaptor.h"
+
 #ifdef USE_ANTS
 #include "BRAINSFitSyN.h"
 #endif
@@ -76,16 +76,32 @@ public:
   typedef typename MovingImageType::ConstPointer MovingImageConstPointer;
   typedef typename MovingImageType::Pointer      MovingImagePointer;
 
-  typedef typename itk::ImageToImageMetric<FixedImageType, MovingImageType> MetricType;
+  typedef typename itk::ImageToImageMetricv4
+                      <FixedImageType,
+                      MovingImageType,
+                      FixedImageType,
+                      double> MetricType;
 
   /** Constants for the image dimensions */
   itkStaticConstMacro(FixedImageDimension, unsigned int, FixedImageType::ImageDimension);
   itkStaticConstMacro(MovingImageDimension, unsigned int, MovingImageType::ImageDimension);
 
+  typedef typename CompositeTransformType::Pointer                  CompositeTransformPointer;
+  typedef IdentityTransform<double, MovingImageDimension>           IdentityTransformType;
+
   typedef SpatialObject<itkGetStaticConstMacro(FixedImageDimension)>  FixedBinaryVolumeType;
   typedef SpatialObject<itkGetStaticConstMacro(MovingImageDimension)> MovingBinaryVolumeType;
   typedef typename FixedBinaryVolumeType::Pointer                     FixedBinaryVolumePointer;
   typedef typename MovingBinaryVolumeType::Pointer                    MovingBinaryVolumePointer;
+
+  typedef itk::TranslationTransform<double, MovingImageDimension>                               TranslationTransformType;
+  typedef itk::AffineTransform<double, MovingImageDimension>                                    AffineTransformType;
+  typedef itk::ScalableAffineTransform<double, MovingImageDimension>                            ScalableAffineTransformType;
+  typedef itk::ImageRegistrationMethodv4<FixedImageType, MovingImageType, AffineTransformType>  AffineRegistrationType;
+  typedef typename AffineRegistrationType::MetricSamplingStrategyType                           SamplingStrategyType;
+
+  typedef typename AffineTransformType::Superclass                                   MatrixOffsetTransformBaseType;
+  typedef typename MatrixOffsetTransformBaseType::Pointer                            MatrixOffsetTransformBasePointer;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -122,14 +138,13 @@ public:
     WINDOWSINC_INTERP = 1
     } InterpolationType;
 
-  itkSetMacro(NumberOfSamples,        unsigned int);
-  itkGetConstMacro(NumberOfSamples,        unsigned int);
+  itkSetMacro(SamplingPercentage,            double);
+  itkGetConstMacro(SamplingPercentage,       double);
   itkSetMacro(NumberOfHistogramBins,         unsigned int);
-  itkGetConstMacro(NumberOfHistogramBins,         unsigned int);
+  itkGetConstMacro(NumberOfHistogramBins,    unsigned int);
   itkSetMacro(NumberOfMatchPoints,           unsigned int);
   itkGetConstMacro(NumberOfMatchPoints,           unsigned int);
   VECTORitkSetMacro(NumberOfIterations,   std::vector<int> /**/);
-  VECTORitkSetMacro(MinimumStepLength, std::vector<double> );
   itkSetMacro(MaximumStepLength,             double);
   itkGetConstMacro(MaximumStepLength,             double);
   itkSetMacro(RelaxationFactor,              double);
@@ -154,8 +169,8 @@ public:
   itkGetConstMacro(UseExplicitPDFDerivativesMode, std::string);
   itkSetMacro(MaskInferiorCutOffFromCenter, double);
   itkGetConstMacro(MaskInferiorCutOffFromCenter, double);
-  itkSetMacro(CurrentGenericTransform,  GenericTransformType::Pointer);
-  itkGetConstMacro(CurrentGenericTransform,  GenericTransformType::Pointer);
+  itkSetMacro(CurrentGenericTransform,  CompositeTransformPointer);
+  itkGetConstMacro(CurrentGenericTransform,  CompositeTransformPointer);
 
   // cppcheck-suppress unusedFunction
   VECTORitkSetMacro(TransformType, std::vector<std::string> );
@@ -178,11 +193,6 @@ public:
   itkSetMacro(UseROIBSpline, bool);
   itkGetConstMacro(UseROIBSpline, bool);
 
-  const std::vector<GenericTransformType::Pointer> * GetGenericTransformListPtr()
-  {
-    return &m_GenericTransformList;
-  }
-
   /** Method to set the Permission to vary by level  */
   void SetPermitParameterVariation(std::vector<int> perms)
   {
@@ -203,6 +213,9 @@ public:
 
   itkSetMacro(ForceMINumberOfThreads, int);
   itkGetConstMacro(ForceMINumberOfThreads, int);
+
+  itkSetMacro(SamplingStrategy,SamplingStrategyType);
+  itkGetConstMacro(SamplingStrategy,SamplingStrategyType);
 protected:
   BRAINSFitHelperTemplate();
   virtual ~BRAINSFitHelperTemplate()
@@ -215,13 +228,16 @@ protected:
     * the registration. */
   void  GenerateData();
 
+  template<class TransformType>
+  typename TransformType::Pointer
+  CollapseLinearTransforms(const CompositeTransformType * compositeTransform);
+
   /** instantiate and call the Registration Helper */
   template <class TransformType,
             class OptimizerType,
             class MetricType>
   void FitCommonCode(int numberOfIterations,
-                     double minimumStepLength,
-                     typename TransformType::Pointer & initialITKTransform);
+                     typename CompositeTransformType::Pointer & initialITKTransform);
 private:
 
   BRAINSFitHelperTemplate(const Self &); // purposely not implemented
@@ -235,7 +251,7 @@ private:
   std::string               m_OutputFixedVolumeROI;
   std::string               m_OutputMovingVolumeROI;
 
-  unsigned int m_NumberOfSamples;
+  double       m_SamplingPercentage;
   unsigned int m_NumberOfHistogramBins;
   bool         m_HistogramMatch;
   float        m_RemoveIntensityOutliers;
@@ -244,7 +260,6 @@ private:
   // TODO:  Would be better to have unsigned int
   std::vector<int>         m_NumberOfIterations;
   double                   m_MaximumStepLength;
-  std::vector<double>      m_MinimumStepLength;
   double                   m_RelaxationFactor;
   double                   m_TranslationScale;
   double                   m_ReproportionScale;
@@ -260,17 +275,16 @@ private:
   double                   m_MaxBSplineDisplacement;
   unsigned int             m_ActualNumberOfIterations;
   unsigned int             m_PermittedNumberOfIterations;
-  // unsigned int             m_AccumulatedNumberOfIterationsForAllLevels;
   unsigned int                               m_DebugLevel;
-  GenericTransformType::Pointer              m_CurrentGenericTransform;
-  std::vector<GenericTransformType::Pointer> m_GenericTransformList;
+  CompositeTransformPointer                  m_CurrentGenericTransform;
   bool                                       m_DisplayDeformedImage;
   bool                                       m_PromptUserAfterDisplay;
   double                                     m_FinalMetricValue;
   bool                                       m_ObserveIterations;
   typename MetricType::Pointer               m_CostMetricObject;
-  bool             m_UseROIBSpline;
-  std::vector<int> m_PermitParameterVariation;
+  bool                                       m_UseROIBSpline;
+  std::vector<int>                           m_PermitParameterVariation;
+  SamplingStrategyType                       m_SamplingStrategy;
   // DEBUG OPTION:
   int m_ForceMINumberOfThreads;
 };  // end BRAINSFitHelperTemplate class

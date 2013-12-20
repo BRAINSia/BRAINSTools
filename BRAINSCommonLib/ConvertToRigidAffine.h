@@ -5,6 +5,7 @@
 #include <itkAffineTransform.h>
 #include <itkVersorRigid3DTransform.h>
 #include "itkScaleVersor3DTransform.h"
+#include "itkEuler3DTransform.h"
 #include "itkScaleSkewVersor3DTransform.h"
 #include "itkMacro.h"
 #include <vnl/vnl_matrix.h>
@@ -29,12 +30,13 @@ typedef AffineTransformType::MatrixType       MatrixType;
 typedef AffineTransformType::InputPointType   PointType;
 typedef AffineTransformType::OutputVectorType VectorType;
 
-typedef itk::VersorRigid3DTransform<double>
-  VersorRigid3DTransformType;
-typedef VersorRigid3DTransformType::Pointer
-  VersorRigid3DTransformPointer;
-typedef VersorRigid3DTransformType::ParametersType
-  VersorRigid3DParametersType;
+typedef itk::VersorRigid3DTransform<double>         VersorRigid3DTransformType;
+typedef VersorRigid3DTransformType::Pointer         VersorRigid3DTransformPointer;
+typedef VersorRigid3DTransformType::ParametersType  VersorRigid3DParametersType;
+
+typedef itk::Euler3DTransform<double>         Euler3DTransformType;
+typedef Euler3DTransformType::Pointer         Euler3DTransformPointer;
+typedef Euler3DTransformType::ParametersType  Euler3DParametersType;
 
 typedef itk::ScaleVersor3DTransform<double>
   ScaleVersor3DTransformType;
@@ -53,8 +55,8 @@ typedef ScaleSkewVersor3DTransformType::ParametersType
   * AffineTransformPointer  :=  AffineTransformPointer
   */
 inline void
-AssignConvertedTransform(AffineTransformPointer & result,
-                         const AffineTransformType::ConstPointer affine)
+AssignConvertedTransform( AffineTransformPointer & result,
+                          const AffineTransformType::ConstPointer affine )
 {
   if( result.IsNotNull() )
     {
@@ -74,8 +76,8 @@ AssignConvertedTransform(AffineTransformPointer & result,
   * AffineTransformPointer  :=  VnlTransformMatrixType44
   */
 inline void
-AssignConvertedTransform(AffineTransformPointer & result,
-                         const VnlTransformMatrixType44 & matrix)
+AssignConvertedTransform( AffineTransformPointer & result,
+                          const VnlTransformMatrixType44 & matrix )
 {
   if( result.IsNotNull() )
     {
@@ -227,6 +229,10 @@ AssignConvertedTransform(ScaleVersor3DTransformPointer & result,
     }
 }
 
+/*
+ * For rigid transformation we use either VersorRigid3DTransform or Euler3DTransform.
+ */
+
 /**
   * AffineTransformPointer  :=  VersorRigid3DTransformPointer
   */
@@ -255,12 +261,38 @@ AssignConvertedTransform(AffineTransformPointer & result,
 }
 
 /**
+ * AffineTransformPointer  :=  Euler3DTransformPointer
+ */
+inline void
+AssignConvertedTransform(AffineTransformPointer & result,
+                         const Euler3DTransformType::ConstPointer EulerTransform)
+{
+if( result.IsNotNull() && EulerTransform.IsNotNull() )
+  {
+  result->SetIdentity();
+  result->SetCenter( EulerTransform->GetCenter() );
+  result->SetMatrix( EulerTransform->GetMatrix() );        // We MUST
+    // SetMatrix
+    // before the
+    // SetOffset -- not
+    // after!
+  result->SetTranslation( EulerTransform->GetTranslation() );
+  }
+else
+  {
+  std::cout << "Error missing Pointer data, assigning AffineTransformPointer"
+  << " := Euler3DTransformPointer."
+  << std::endl;
+  throw;
+  }
+}
+
+/**
   * *VersorRigid3DTransformPointer  :=  VersorRigid3DTransformPointer
   */
 
-inline void AssignConvertedTransform(
-  VersorRigid3DTransformPointer & result,
-  const VersorRigid3DTransformType::ConstPointer versorRigid)
+inline void AssignConvertedTransform( VersorRigid3DTransformPointer & result,
+                                      const VersorRigid3DTransformType::ConstPointer versorRigid )
 {
   if( result.IsNotNull() && versorRigid.IsNotNull() )
     {
@@ -277,11 +309,54 @@ inline void AssignConvertedTransform(
 }
 
 /**
+ * *Euler3DTransformPointer  :=  Euler3DTransformPointer
+ */
+
+inline void AssignConvertedTransform( Euler3DTransformPointer & result,
+                                      const Euler3DTransformType::ConstPointer eulerRigid )
+{
+if( result.IsNotNull() && eulerRigid.IsNotNull() )
+  {
+  result->SetParameters( eulerRigid->GetParameters() );
+  result->SetFixedParameters( eulerRigid->GetFixedParameters() );
+  }
+else
+  {
+  std::cout << "Error missing Pointer data, assigning"
+  << " Euler3DTransformPointer := Euler3DTTransformPointer."
+  << std::endl;
+  throw;
+  }
+}
+
+/**
+ * *Euler3DTransformPointer  :=  VersorRigid3DTransformPointer
+ */
+
+inline void AssignConvertedTransform( Euler3DTransformPointer & result,
+                                     const VersorRigid3DTransformType::ConstPointer versorRigid )
+{
+  if( result.IsNotNull() && versorRigid.IsNotNull() )
+    {
+    result->SetIdentity();
+    result->SetCenter( versorRigid->GetCenter() );
+    result->SetMatrix( versorRigid->GetMatrix() );
+    result->SetTranslation( versorRigid->GetTranslation() );
+    }
+  else
+    {
+    std::cout << "Error missing Pointer data, assigning"
+    << " Euler3DTransformPointer := VersorRigid3DTransformPointer."
+    << std::endl;
+    throw;
+    }
+}
+
+/**
   * ScaleSkewVersor3DTransformPointer  :=  ScaleVersor3DTransformPointer
   */
-inline void AssignConvertedTransform(
-  ScaleSkewVersor3DTransformPointer & result,
-  const ScaleVersor3DTransformType::ConstPointer scale)
+inline void AssignConvertedTransform( ScaleSkewVersor3DTransformPointer & result,
+                                      const ScaleVersor3DTransformType::ConstPointer scale )
 {
   if( result.IsNotNull() && scale.IsNotNull() )
     {
@@ -303,9 +378,8 @@ inline void AssignConvertedTransform(
 /**
   * ScaleSkewVersor3DTransformPointer  :=  VersorRigid3DTransformPointer
   */
-inline void AssignConvertedTransform(
-  ScaleSkewVersor3DTransformPointer & result,
-  const VersorRigid3DTransformType::ConstPointer versorRigid)
+inline void AssignConvertedTransform( ScaleSkewVersor3DTransformPointer & result,
+                                      const VersorRigid3DTransformType::ConstPointer versorRigid )
 {
   if( result.IsNotNull() && versorRigid.IsNotNull() )
     {
@@ -324,11 +398,102 @@ inline void AssignConvertedTransform(
 }
 
 /**
+ * Utility function in which we claim the singular-value decomposition (svd)
+ * gives the orthogonalization of a matrix in its U component.  However we
+ * must clip out the null subspace, if any.
+ */
+inline Matrix3D
+orthogonalize(const Matrix3D rotator)
+{
+  vnl_svd<double> decomposition( rotator.GetVnlMatrix(),
+                                -1E-6 );
+  vnl_diag_matrix<vnl_svd<double>::singval_t> Winverse( decomposition.Winverse() );
+
+  vnl_matrix<double> W(3, 3);
+  W.fill( double(0) );
+  for( unsigned int i = 0; i < 3; ++i )
+    {
+    if( decomposition.Winverse() (i, i) != 0.0 )
+      {
+      W(i, i) = 1.0;
+      }
+    }
+
+  vnl_matrix<double> result( decomposition.U() * W * decomposition.V().conjugate_transpose() );
+
+    //    std::cout << " svd Orthonormalized Rotation: " << std::endl
+    //      << result << std::endl;
+  Matrix3D Orthog;
+  Orthog.operator=(result);
+
+  return Orthog;
+}
+
+/**
+ * VersorRigid3DTransformPointer  :=  Euler3DTransformPointer
+ */
+inline void AssignConvertedTransform( VersorRigid3DTransformPointer & result,
+                                     const Euler3DTransformType::ConstPointer eulerRigid )
+{
+  if( result.IsNotNull() && eulerRigid.IsNotNull() )
+    {
+    Matrix3D   NonOrthog = eulerRigid->GetMatrix();
+    Matrix3D   Orthog( orthogonalize(NonOrthog) );
+    MatrixType rotator;
+    rotator.operator=(Orthog);
+
+    VersorType versor;
+    versor.Set(rotator);
+
+    result->SetIdentity();
+    result->SetCenter( eulerRigid->GetCenter() );
+    result->SetRotation(versor);
+    result->SetTranslation( eulerRigid->GetTranslation() );
+    }
+  else
+    {
+    std::cout << "Error missing Pointer data, assigning "
+    << "VersorRigid3DTransformPointer := Euler3DTransformPointer."
+    << std::endl;
+    throw;
+    }
+}
+
+/**
+ * ScaleSkewVersor3DTransformPointer  :=  Euler3DTransformPointer
+ */
+inline void AssignConvertedTransform( ScaleSkewVersor3DTransformPointer & result,
+                                      const Euler3DTransformType::ConstPointer eulerRigid )
+{
+  if( result.IsNotNull() && eulerRigid.IsNotNull() )
+    {
+    Matrix3D   NonOrthog = eulerRigid->GetMatrix();
+    Matrix3D   Orthog( orthogonalize(NonOrthog) );
+    MatrixType rotator;
+    rotator.operator=(Orthog);
+
+    VersorType versor;
+    versor.Set(rotator);
+
+    result->SetIdentity();
+    result->SetCenter( eulerRigid->GetCenter() );
+    result->SetRotation(versor);
+    result->SetTranslation( eulerRigid->GetTranslation() );
+    }
+  else
+    {
+    std::cout << "Error missing Pointer data, assigning "
+    << "ScaleSkewVersor3DTransformPointer := Euler3DTransformPointer."
+    << std::endl;
+    throw;
+    }
+}
+
+/**
   * ScaleVersor3DTransformPointer  :=  VersorRigid3DTransformPointer
   */
-inline void AssignConvertedTransform(
-  ScaleVersor3DTransformPointer & result,
-  const VersorRigid3DTransformType::ConstPointer versorRigid)
+inline void AssignConvertedTransform( ScaleVersor3DTransformPointer & result,
+                                      const VersorRigid3DTransformType::ConstPointer versorRigid )
 {
   if( result.IsNotNull() && versorRigid.IsNotNull() )
     {
@@ -346,9 +511,38 @@ inline void AssignConvertedTransform(
     }
 }
 
-inline void ExtractVersorRigid3DTransform(
-  VersorRigid3DTransformPointer & result,
-  const ScaleVersor3DTransformType::ConstPointer scaleVersorRigid)
+/**
+ * ScaleVersor3DTransformPointer  :=  Euler3DTransformPointer
+ */
+inline void AssignConvertedTransform( ScaleVersor3DTransformPointer & result,
+                                      const Euler3DTransformType::ConstPointer eulerRigid )
+{
+  if( result.IsNotNull() && eulerRigid.IsNotNull() )
+    {
+    Matrix3D   NonOrthog = eulerRigid->GetMatrix();
+    Matrix3D   Orthog( orthogonalize(NonOrthog) );
+    MatrixType rotator;
+    rotator.operator=(Orthog);
+
+    VersorType versor;
+    versor.Set(rotator);
+
+    result->SetIdentity();
+    result->SetCenter( eulerRigid->GetCenter() );
+    result->SetRotation(versor);
+    result->SetTranslation( eulerRigid->GetTranslation() );
+    }
+  else
+    {
+    std::cout << "Error missing Pointer data, assigning "
+    << "ScaleVersor3DTransformPointer := Euler3DTransformPointer."
+    << std::endl;
+    throw;
+    }
+}
+
+inline void ExtractRigid3DTransform( VersorRigid3DTransformPointer & result,
+                                     const ScaleVersor3DTransformType::ConstPointer scaleVersorRigid )
 {
   if( result.IsNotNull() && scaleVersorRigid.IsNotNull() )
     {
@@ -366,9 +560,8 @@ inline void ExtractVersorRigid3DTransform(
     }
 }
 
-inline void ExtractVersorRigid3DTransform(
-  VersorRigid3DTransformPointer & result,
-  const ScaleSkewVersor3DTransformType::ConstPointer scaleSkewVersorRigid)
+inline void ExtractRigid3DTransform( VersorRigid3DTransformPointer & result,
+                                     const ScaleSkewVersor3DTransformType::ConstPointer scaleSkewVersorRigid )
 {
   if( result.IsNotNull() && scaleSkewVersorRigid.IsNotNull() )
     {
@@ -386,9 +579,8 @@ inline void ExtractVersorRigid3DTransform(
     }
 }
 
-inline void ExtractVersorRigid3DTransform(
-  VersorRigid3DTransformPointer & result,
-  const VersorRigid3DTransformType::ConstPointer versorRigid)
+inline void ExtractRigid3DTransform( VersorRigid3DTransformPointer & result,
+                                     const VersorRigid3DTransformType::ConstPointer versorRigid )
 {
   if( result.IsNotNull() && versorRigid.IsNotNull() )
     {
@@ -404,47 +596,68 @@ inline void ExtractVersorRigid3DTransform(
     }
 }
 
+inline void ExtractRigid3DTransform( Euler3DTransformPointer & result,
+                                     const ScaleVersor3DTransformType::ConstPointer scaleVersorRigid )
+{
+if( result.IsNotNull() && scaleVersorRigid.IsNotNull() )
+  {
+  result->SetIdentity();
+  result->SetCenter( scaleVersorRigid->GetCenter() );
+  result->SetMatrix( scaleVersorRigid->GetMatrix() );
+  result->SetTranslation( scaleVersorRigid->GetTranslation() );
+  }
+else
+  {
+  std::cout << "Error missing Pointer data, assigning"
+  << " Euler3DTransformPointer := ScaleVersor3DTransformPointer."
+  << std::endl;
+  throw;
+  }
+}
+
+inline void ExtractRigid3DTransform(Euler3DTransformPointer & result,
+                                    const ScaleSkewVersor3DTransformType::ConstPointer scaleSkewVersorRigid)
+{
+if( result.IsNotNull() && scaleSkewVersorRigid.IsNotNull() )
+  {
+  result->SetIdentity();
+  result->SetCenter( scaleSkewVersorRigid->GetCenter() );
+  result->SetMatrix( scaleSkewVersorRigid->GetMatrix() );
+  result->SetTranslation( scaleSkewVersorRigid->GetTranslation() );
+  }
+else
+  {
+  std::cout << "Error missing Pointer data, assigning"
+  << " Euler3DTransformPointer := ScaleSkewVersor3DTransformPointer."
+  << std::endl;
+  throw;
+  }
+}
+
+inline void ExtractRigid3DTransform(Euler3DTransformPointer & result,
+                                    const Euler3DTransformType::ConstPointer versorRigid)
+{
+if( result.IsNotNull() && versorRigid.IsNotNull() )
+  {
+  result->SetParameters( versorRigid->GetParameters() );
+  result->SetFixedParameters( versorRigid->GetFixedParameters() );
+  }
+else
+  {
+  std::cout << "Error missing Pointer data, assigning"
+  << " Euler3DTransformPointer := ScaleVersor3DTransformPointer."
+  << std::endl;
+  throw;
+  }
+}
+
 /**
   * VersorRigid3DTransformPointer  :=  AffineTransformPointer
   */
 
-/**
-  * Utility function in which we claim the singular-value decomposition (svd)
-  * gives the orthogonalization of a matrix in its U component.  However we
-  * must clip out the null subspace, if any.
-  */
-inline Matrix3D
-orthogonalize(const Matrix3D rotator)
-{
-  vnl_svd<double> decomposition(
-    rotator.GetVnlMatrix(),
-    -1E-6);
-  vnl_diag_matrix<vnl_svd<double>::singval_t> Winverse( decomposition.Winverse() );
-
-  vnl_matrix<double> W(3, 3);
-  W.fill( double(0) );
-  for( unsigned int i = 0; i < 3; ++i )
-    {
-    if( decomposition.Winverse() (i, i) != 0.0 )
-      {
-      W(i, i) = 1.0;
-      }
-    }
-
-  vnl_matrix<double> result(
-    decomposition.U() * W * decomposition.V().conjugate_transpose() );
-
-  //    std::cout << " svd Orthonormalized Rotation: " << std::endl
-  //      << result << std::endl;
-  Matrix3D Orthog;
-  Orthog.operator=(result);
-
-  return Orthog;
-}
-
 inline void
-ExtractVersorRigid3DTransform(VersorRigid3DTransformPointer & result,
-                              const AffineTransformType::ConstPointer affine)
+ExtractRigid3DTransform( VersorRigid3DTransformPointer & result,
+                         const AffineTransformType::ConstPointer affine )
 {
   if( result.IsNotNull() && affine.IsNotNull() )
     {
@@ -472,5 +685,30 @@ ExtractVersorRigid3DTransform(VersorRigid3DTransformPointer & result,
     throw;
     }
 }
+
+/**
+ * Euler3DTransformPointer  :=  AffineTransformPointer
+ */
+
+inline void
+ExtractRigid3DTransform( Euler3DTransformPointer & result,
+                         const AffineTransformType::ConstPointer affine )
+{
+  if( result.IsNotNull() && affine.IsNotNull() )
+    {
+    result->SetIdentity();
+    result->SetCenter( affine->GetCenter() );
+    result->SetMatrix( affine->GetMatrix() );
+    result->SetTranslation( affine->GetTranslation() );
+    }
+  else
+    {
+    std::cout << "Error missing Pointer data, assigning "
+    << "Euler3DTransformPointer := AffineTransformPointer."
+    << std::endl;
+    throw;
+    }
+}
+
 }
 #endif  // __RigidAffine_h

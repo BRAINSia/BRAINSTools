@@ -10,7 +10,8 @@
 #define __itkResampleInPlaceImageFilter_h
 
 #include "itkImageToImageFilter.h"
-#include "itkVersorRigid3DTransform.h"
+//#include "itkVersorRigid3DTransform.h"
+#include "itkEuler3DTransform.h"
 
 namespace itk
 {
@@ -33,7 +34,7 @@ namespace itk
  * of the image and there is no need to maintain the final transform any longer. ITK
  * image class has innate support for doing this.
  *
- * \param RigidTransform -- Currently must be a VersorRigid3D
+ * \param RigidTransform -- Currently must be a EulerRigid3D (x-- previously it was "versorRigid3D" --x)
  * \param InputImage -- The image to be duplicated and modified to incorporate the
  * rigid transform
  * \return -- An image with the same voxels values as the input, but with differnt
@@ -84,7 +85,8 @@ public:
 #endif
 
   /** Transform typedef */
-  typedef VersorRigid3DTransform<double>            RigidTransformType;
+  //typedef VersorRigid3DTransform<double>            RigidTransformType;
+  typedef Euler3DTransform<double>            RigidTransformType;
   typedef typename RigidTransformType::ConstPointer RigidTransformConstPointer;
 
   /** Set/Get rigid transform. The default is an identity transform */

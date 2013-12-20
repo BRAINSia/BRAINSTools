@@ -31,6 +31,8 @@ typedef float                                     BRAINSFitPixelType;
 typedef itk::Image<BRAINSFitPixelType, Dimension> FixedVolumeType;
 typedef itk::Image<BRAINSFitPixelType, Dimension> MovingVolumeType;
 
+//typedef itk::CompositeTransform< double, Dimension > CompositeTransformType;
+
 typedef itk::Image<BRAINSFitPixelType, MaxInputDimension> InputImageType;
 typedef itk::ImageFileReader<InputImageType>              FixedVolumeReaderType;
 typedef itk::ImageFileReader<InputImageType>              MovingVolumeReaderType;
@@ -255,22 +257,9 @@ int main(int argc, char *argv[])
         }
       }
     }
-  if( minimumStepLength.size() != localTransformType.size() )
+  if( minimumStepLength.size() != 0 )
     {
-    if( minimumStepLength.size() != 1 )
-      {
-      std::cerr << "The minimumStepLength array must match the localTransformType length" << std::endl;
-      return EXIT_FAILURE;
-      }
-    else
-      {
-      // replicate throughout
-      const double stepSize = minimumStepLength[0];
-      for( unsigned int i = 1; i < localTransformType.size(); i++ )
-        {
-        minimumStepLength.push_back(stepSize);
-        }
-      }
+    std::cout << "WARNING: The minimumStepLength array is not needed by ITKv4 registration framework. It can be removed from command line." << std::endl;
     }
 
   // Need to ensure that the order of transforms is from smallest to largest.
@@ -420,10 +409,12 @@ int main(int argc, char *argv[])
       movingMask = NULL;
       }
     }
-  GenericTransformType::Pointer currentGenericTransform;
+  CompositeTransformType::Pointer currentGenericTransform = NULL;
   if( initialTransform != "" )
     {
-    currentGenericTransform = itk::ReadTransformFromDisk(initialTransform);
+    currentGenericTransform = CompositeTransformType::New();
+    GenericTransformType::Pointer movingInitialTransform = itk::ReadTransformFromDisk(initialTransform);
+    currentGenericTransform->AddTransform( movingInitialTransform );
     }
 
   FixedVolumeType::Pointer resampledImage;
@@ -440,9 +431,9 @@ int main(int argc, char *argv[])
     typedef itk::BRAINSFitHelper HelperType;
     HelperType::Pointer myHelper = HelperType::New();
     myHelper->SetTransformType(localTransformType);
-    myHelper->SetFixedVolume(extractFixedVolume);
+    myHelper->SetFixedVolume( extractFixedVolume );
     myHelper->SetForceMINumberOfThreads(forceMINumberOfThreads);
-    myHelper->SetMovingVolume(extractMovingVolume);
+    myHelper->SetMovingVolume( extractMovingVolume );
     myHelper->SetHistogramMatch(histogramMatch);
     myHelper->SetRemoveIntensityOutliers(removeIntensityOutliers);
     myHelper->SetNumberOfMatchPoints(numberOfMatchPoints);
@@ -452,10 +443,10 @@ int main(int argc, char *argv[])
     myHelper->SetOutputMovingVolumeROI(outputMovingVolumeROI);
     myHelper->SetPermitParameterVariation(permitParameterVariation);
     myHelper->SetNumberOfSamples(numberOfSamples);
+    myHelper->SetSamplingPercentage(samplingPercentage);
     myHelper->SetNumberOfHistogramBins(numberOfHistogramBins);
     myHelper->SetNumberOfIterations(numberOfIterations);
     myHelper->SetMaximumStepLength(maximumStepLength);
-    myHelper->SetMinimumStepLength(minimumStepLength);
     myHelper->SetRelaxationFactor(relaxationFactor);
     myHelper->SetTranslationScale(translationScale);
     myHelper->SetReproportionScale(reproportionScale);
@@ -475,27 +466,66 @@ int main(int argc, char *argv[])
     myHelper->SetDebugLevel(debugLevel);
     myHelper->SetCostMetric(costMetric);
     myHelper->SetUseROIBSpline(useROIBSpline);
-    myHelper->SetMetricSeed(metricSeed);
+    myHelper->SetSamplingStrategy(metricSamplingStrategy);
+
+    //HACK: create a flag for normalization
+    bool NormalizeInputImages = false;
+    myHelper->SetNormalizeInputImages(NormalizeInputImages);
+
     if( debugLevel > 7 )
       {
       myHelper->PrintCommandLine(true, "BF");
       }
     myHelper->Update();
     currentGenericTransform = myHelper->GetCurrentGenericTransform();
+
+    CompositeTransformType::Pointer outputComposite = dynamic_cast<CompositeTransformType *>( currentGenericTransform.GetPointer() );
+    if( outputComposite.IsNull() )
+      {
+      itkGenericExceptionMacro(<<"ERROR: Output transform is null.");
+      }
+//    else
+//      {
+//      std::cout << "Number of transforms in queue = " << outputComposite->GetNumberOfTransforms() << std::cout;
+//      for( unsigned int i = 0; i< outputComposite->GetNumberOfTransforms(); i++ )
+//         {
+//         std::cout << "\n" << i+1 << "- " << outputComposite->GetNthTransform(i)->GetNameOfClass() << std::endl;
+//         }
+//      }
+
     MovingVolumeType::ConstPointer preprocessedMovingVolume = myHelper->GetPreprocessedMovingVolume();
+    if( NormalizeInputImages )
+      {
+      preprocessedMovingVolume = extractMovingVolume; // The resampled image should not be normalized
+                                                      // because it my be casted to zero later.
+      }
+
       {
       typedef float                                                                     VectorComponentType;
       typedef itk::Vector<VectorComponentType, GenericTransformImageNS::SpaceDimension> VectorPixelType;
       typedef itk::Image<VectorPixelType,  GenericTransformImageNS::SpaceDimension>     DisplacementFieldType;
+
+      ///////// DEBUG ///////////////////////
+      //std::cout << "\n----------------\n";
+      //std::cout << "Registration generic transform right before passing to resampler:" << std::endl;
+      //currentGenericTransform->Print(std::cout);
+      //currentGenericTransform->GetNthTransform(0)->Print(std::cout);
+
+      //itkUtil::WriteImage<FixedVolumeType>(extractFixedVolume, "bfit_fixedim_before_resampler.nii.nrrd");
+      //itkUtil::WriteConstImage< MovingVolumeType >(preprocessedMovingVolume, "bfit_movingim_before_resampler.nii.nrrd");
+      /////////
+
       resampledImage = GenericTransformImage<MovingVolumeType, FixedVolumeType, DisplacementFieldType>(
           preprocessedMovingVolume,
           extractFixedVolume,
-          // NULL,
-          currentGenericTransform,
+          currentGenericTransform.GetPointer(),
           backgroundFillValue,
           interpolationMode,
           false);
       }
+
+      //itkUtil::WriteImage<FixedVolumeType>(resampledImage, "bfit_resampled_moving.nii.nrrd");
+
 //    actualIterations = myHelper->GetActualNumberOfIterations();
 //    permittedIterations = myHelper->GetPermittedNumberOfIterations();
       /*
@@ -630,7 +660,7 @@ int main(int argc, char *argv[])
       itkUtil::WriteImage<WriteOutImageType>(CastImage, outputVolume);
       }
     }
-
+/*
 #ifdef USE_ANTS
   if( localTransformType[localTransformType.size() - 1] == "SyN" )
     {
@@ -654,9 +684,13 @@ int main(int argc, char *argv[])
     }
   else
 #endif
+*/
     {
+    //std::cout << "***Before write*********************\n";
+    //currentGenericTransform->GetNthTransform(0)->Print(std::cout);
     /*const int write_status=*/
     itk::WriteBothTransformsToDisk(currentGenericTransform.GetPointer(),
+                                   /*currentGenericTransform->GetFrontTransform(),*/
                                    localOutputTransform, strippedOutputTransform);
     }
 

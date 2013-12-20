@@ -77,10 +77,10 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
    list(APPEND ${proj}_CMAKE_OPTIONS -DANTS_USE_QT:BOOL=ON)
  endif()
   ### --- End Project specific additions
-#  set(${proj}_REPOSITORY "https://github.com/stnava/ANTs.git")
-#  set(${proj}_GIT_TAG "9698e1460c50b5fb703e2dbcd382671cbd9902f1")
   set(${proj}_REPOSITORY "https://github.com/BRAINSia/ANTs.git")
   set(${proj}_GIT_TAG "ForceConsistentTypePresicion")
+  #set(${proj}_REPOSITORY "https://github.com/aghayoor/ANTs-1.git")
+  #set(${proj}_GIT_TAG "0c39e1adff5d6c8ffc0bb9ca222f96edbe32a8ca")
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${${proj}_REPOSITORY}
     GIT_TAG ${${proj}_GIT_TAG}

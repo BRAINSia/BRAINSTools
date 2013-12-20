@@ -2,7 +2,8 @@
 #include <BRAINSFitHelper.h>
 #include <itkEllipseSpatialObject.h>
 #include <itkSpatialObjectToImageFilter.h>
-#include <itkVersorRigid3DTransform.h>
+//#include <itkVersorRigid3DTransform.h>
+#include <itkEuler3DTransform.h>
 #include <itkImageMaskSpatialObject.h>
 #include <itkCastImageFilter.h>
 #include <itkIO.h>
@@ -19,6 +20,8 @@ int main(int, char * *)
   typedef EllipseSOType::TransformType                              TransformType;
   typedef itk::ImageMaskSpatialObject<3>                            ImageMaskSOType;
   typedef itk::CastImageFilter<ImageType, MaskImageType>            CastType;
+  typedef itk::CompositeTransform<double, 3>                        CompositeTransformType;
+  typedef itk::Euler3DTransform<double>                             Euler3DTransformType;
 
   // create two empty images
   ImageType::Pointer image1 = ImageType::New(),
@@ -85,8 +88,6 @@ int main(int, char * *)
 
   ImageType::Pointer eTfmImage = etfm2image->GetOutput();
 
-  VersorRigid3DTransformType::Pointer tempCopy = VersorRigid3DTransformType::New();
-
   // images and masks passed to helper are identical, but only masks will be used
   CastType::Pointer fixedImageCast = CastType::New();
   CastType::Pointer movingImageCast = CastType::New();
@@ -116,13 +117,27 @@ int main(int, char * *)
   myHelper->SetTransformType(transformTypeVector);
   myHelper->Update();
 
-  GenericTransformType::Pointer currentGenericTransform = myHelper->GetCurrentGenericTransform();
+  GenericTransformType::Pointer currentGenericTransform = myHelper->GetCurrentGenericTransform().GetPointer();
 
+  const CompositeTransformType::ConstPointer genericCompositeTransform =
+    dynamic_cast<const CompositeTransformType *>( currentGenericTransform.GetPointer() );
+  if( genericCompositeTransform.IsNull() )
+    {
+    itkGenericExceptionMacro(<<"Error in transform type conversion");
+    }
+/*
   VersorRigid3DTransformType::ConstPointer versor3D =
-    dynamic_cast<const VersorRigid3DTransformType *>(currentGenericTransform.GetPointer() );
+    dynamic_cast<const VersorRigid3DTransformType *>(genericCompositeTransform->GetNthTransform(0).GetPointer() );
+*/
+  Euler3DTransformType::ConstPointer euler3D =
+    dynamic_cast<const Euler3DTransformType *>(genericCompositeTransform->GetNthTransform(0).GetPointer() );
+  if( euler3D.IsNull() )
+    {
+    itkGenericExceptionMacro(<<"Error in transform type conversion");
+    }
 
   // check translation vector -- should match the difference in the ellipse translation vectors
-  TransformType::OutputVectorType recoveredTransVector = versor3D->GetTranslation();
+  TransformType::OutputVectorType recoveredTransVector = euler3D->GetTranslation();
 
   if( transVector != recoveredTransVector )
     {

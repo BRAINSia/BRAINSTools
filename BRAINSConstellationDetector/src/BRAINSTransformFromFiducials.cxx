@@ -193,15 +193,15 @@ int main(int argc, char* argv[])
         std::cerr << "Must supply both fixed and moving landmark files" << std::endl;
         return EXIT_FAILURE;
         }
-      typedef std::map<std::string, ImagePointType> LandmarksMapType;
+      typedef std::map<std::string, ImagePointType> LocalLandmarksMapType;
 
       // NOTE: ReadSlicer3toITKLmk returns points in LPS system
-      LandmarksMapType fixedLandmarkMap = ReadSlicer3toITKLmk( fixedLandmarksFile );
-      LandmarksMapType movingLandmarkMap = ReadSlicer3toITKLmk( movingLandmarksFile );
-      for( LandmarksMapType::const_iterator fmapit = fixedLandmarkMap.begin();
+      LocalLandmarksMapType fixedLandmarkMap = ReadSlicer3toITKLmk( fixedLandmarksFile );
+      LocalLandmarksMapType movingLandmarkMap = ReadSlicer3toITKLmk( movingLandmarksFile );
+      for( LocalLandmarksMapType::const_iterator fmapit = fixedLandmarkMap.begin();
            fmapit != fixedLandmarkMap.end(); ++fmapit )
         {
-        LandmarksMapType::const_iterator mmapit = movingLandmarkMap.find(fmapit->first);
+        LocalLandmarksMapType::const_iterator mmapit = movingLandmarkMap.find(fmapit->first);
         if( mmapit != movingLandmarkMap.end() )
           {
           fixedPoints.push_back(fmapit->second);

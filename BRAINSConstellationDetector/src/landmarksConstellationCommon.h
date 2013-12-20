@@ -79,6 +79,8 @@ extern bool globalverboseFlag;
 //
 // ////////////////////////////////////////////////////////////////////////////////////////////////
 
+namespace // avoid 'shadows declaration' warnings.
+{
 typedef float                 vertexType[4][3];
 typedef itk::Image<short, 3>  SImageType;
 typedef itk::Image<double, 3> DImageType3D;
@@ -99,6 +101,7 @@ typedef itk::VersorRigid3DTransform<double> VersorTransformType;
 
 typedef itk::MultiResolutionPyramidImageFilter<SImageType, SImageType> PyramidFilterType;
 typedef itk::LinearInterpolateImageFunction<SImageType, double>        LinearInterpolatorType;
+}
 
 #include "landmarksConstellationModelIO.h"
 

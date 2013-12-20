@@ -12,13 +12,13 @@ int main(int, char * *)
   typedef unsigned char                                             MaskPixelType;
   typedef float                                                     PixelType;
   typedef itk::Image<PixelType, 3>                                  ImageType;
-  typedef itk::Image<MaskPixelType, 3>                              MaskImageType;
+  typedef itk::Image<MaskPixelType, 3>                              LocalMaskImageType;
   typedef itk::EllipseSpatialObject<3>                              EllipseSOType;
   typedef itk::SpatialObjectToImageFilter<EllipseSOType, ImageType> SOToImageFilter;
   typedef itk::BRAINSFitHelper                                      HelperType;
   typedef EllipseSOType::TransformType                              TransformType;
   typedef itk::ImageMaskSpatialObject<3>                            ImageMaskSOType;
-  typedef itk::CastImageFilter<ImageType, MaskImageType>            CastType;
+  typedef itk::CastImageFilter<ImageType, LocalMaskImageType>       CastType;
 
   // create two empty images
   ImageType::Pointer image1 = ImageType::New(),

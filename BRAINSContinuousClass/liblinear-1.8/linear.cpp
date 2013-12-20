@@ -268,7 +268,7 @@ void l2r_lr_fun::Hv(double *s, double *Hs)
   delete[] wa;
 }
 
-void l2r_lr_fun::Xv(double *v, double *Xv)
+void l2r_lr_fun::Xv(double *v, double *_Xv)
 {
   int             i;
   int             l = prob->l;
@@ -277,16 +277,16 @@ void l2r_lr_fun::Xv(double *v, double *Xv)
   for( i = 0; i < l; i++ )
     {
     feature_node *s = x[i];
-    Xv[i] = 0;
+    _Xv[i] = 0;
     while( s->index != -1 )
       {
-      Xv[i] += v[s->index - 1] * s->value;
+      _Xv[i] += v[s->index - 1] * s->value;
       s++;
       }
     }
 }
 
-void l2r_lr_fun::XTv(double *v, double *XTv)
+void l2r_lr_fun::XTv(double *v, double *_XTv)
 {
   int             i;
   int             l = prob->l;
@@ -295,14 +295,14 @@ void l2r_lr_fun::XTv(double *v, double *XTv)
 
   for( i = 0; i < w_size; i++ )
     {
-    XTv[i] = 0;
+    _XTv[i] = 0;
     }
   for( i = 0; i < l; i++ )
     {
     feature_node *s = x[i];
     while( s->index != -1 )
       {
-      XTv[s->index - 1] += v[i] * s->value;
+      _XTv[s->index - 1] += v[i] * s->value;
       s++;
       }
     }
@@ -448,7 +448,7 @@ void l2r_l2_svc_fun::Hv(double *s, double *Hs)
   delete[] wa;
 }
 
-void l2r_l2_svc_fun::Xv(double *v, double *Xv)
+void l2r_l2_svc_fun::Xv(double *v, double *_Xv)
 {
   int             i;
   int             l = prob->l;
@@ -457,16 +457,16 @@ void l2r_l2_svc_fun::Xv(double *v, double *Xv)
   for( i = 0; i < l; i++ )
     {
     feature_node *s = x[i];
-    Xv[i] = 0;
+    _Xv[i] = 0;
     while( s->index != -1 )
       {
-      Xv[i] += v[s->index - 1] * s->value;
+      _Xv[i] += v[s->index - 1] * s->value;
       s++;
       }
     }
 }
 
-void l2r_l2_svc_fun::subXv(double *v, double *Xv)
+void l2r_l2_svc_fun::subXv(double *v, double *_Xv)
 {
   int             i;
   feature_node * *x = prob->x;
@@ -474,10 +474,10 @@ void l2r_l2_svc_fun::subXv(double *v, double *Xv)
   for( i = 0; i < sizeI; i++ )
     {
     feature_node *s = x[I[i]];
-    Xv[i] = 0;
+    _Xv[i] = 0;
     while( s->index != -1 )
       {
-      Xv[i] += v[s->index - 1] * s->value;
+      _Xv[i] += v[s->index - 1] * s->value;
       s++;
       }
     }

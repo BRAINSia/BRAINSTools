@@ -95,7 +95,7 @@ int main(int argc, char *argv[])
   typedef itk::VectorImage<OutputPixelType, 3> OutputImageType;
   typedef itk::Image<PixelType, 3>             InputIndexImageType;
   typedef itk::Image<OutputPixelType, 3>       OutputIndexImageType;
-  typedef itk::AffineTransform<double, 3>      AffineTransformType;
+  typedef itk::AffineTransform<double, 3>      LocalAffineTransformType;
   typedef itk::VersorRigid3DTransform<double>  RigidTransformType;
 
   typedef itk::ImageFileReader<NrrdImageType,
@@ -262,9 +262,9 @@ int main(int argc, char *argv[])
       }
     else
       {
-      AffineTransformType::Pointer affineTransform;
+      LocalAffineTransformType::Pointer affineTransform;
       affineTransform =
-        dynamic_cast<AffineTransformType *>(registerImageFilter->GetCurrentGenericTransform().GetPointer() );
+        dynamic_cast<LocalAffineTransformType *>(registerImageFilter->GetCurrentGenericTransform().GetPointer() );
       itk::Matrix<double, 3, 3> NonOrthog = affineTransform->GetMatrix();
       itk::Matrix<double, 3, 3> Orthog( itk::Orthogonalize3DRotationMatrix(NonOrthog) );
       curGradientDirection = Orthog.GetVnlMatrix() * curGradientDirection;

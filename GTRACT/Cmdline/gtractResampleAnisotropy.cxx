@@ -36,10 +36,6 @@ int main(int argc, char *argv[])
   BRAINSRegisterAlternateIO();
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
 
-  typedef double                                                          BSplineCoordinateRepType;
-  typedef itk::VersorRigid3DTransform<double>                             RigidTransformType;
-  typedef itk::BSplineDeformableTransform<BSplineCoordinateRepType, 3, 3> BSplineTransformType;
-
   bool debug = true;
   if( debug )
     {

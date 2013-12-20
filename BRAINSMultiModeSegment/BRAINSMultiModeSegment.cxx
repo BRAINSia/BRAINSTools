@@ -31,12 +31,12 @@
 #include "itkBRAINSROIAutoImageFilter.h"
 #include <BRAINSCommonLib.h>
 
-typedef itk::Image<signed short, 3>  ImageType;
-typedef itk::Image<unsigned char, 3> MaskImageType;
-
 int main(int argc, char *argv[])
 {
   PARSE_ARGS;
+  typedef itk::Image<signed short, 3>  ImageType;
+  typedef itk::Image<unsigned char, 3> MaskImageType;
+
   BRAINSRegisterAlternateIO();
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
   if( inputVolumes.size() < 1 )

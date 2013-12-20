@@ -39,11 +39,11 @@ int main( int argc, char *argv[] )
 
   const unsigned int Dimension = 3;
 
-  typedef itk::Point<double,Dimension> PointType;
-  typedef std::map< std::string, PointType > LandmarksMapType;
+  typedef itk::Point<double,Dimension> LocalPointType;
+  typedef std::map< std::string, LocalPointType > LocalLandmarksMapType;
 
-  LandmarksMapType origLandmarks = ReadSlicer3toITKLmk( inputLandmarksFile );
-  LandmarksMapType transformedLandmarks;
+  LocalLandmarksMapType origLandmarks = ReadSlicer3toITKLmk( inputLandmarksFile );
+  LocalLandmarksMapType transformedLandmarks;
 
   typedef itk::TransformFileReader ReaderType;
   ReaderType::Pointer reader = ReaderType::New();
@@ -62,7 +62,7 @@ int main( int argc, char *argv[] )
     return EXIT_FAILURE;
     }
 
-  LandmarksMapType::const_iterator it = origLandmarks.begin();
+  LocalLandmarksMapType::const_iterator it = origLandmarks.begin();
   for(; it!=origLandmarks.end(); it++)
     {
     transformedLandmarks[it->first] = inputCompTrans->TransformPoint( it->second );

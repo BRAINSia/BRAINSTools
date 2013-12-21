@@ -31,6 +31,8 @@ so that all the python modules and commands are pathed properly"""
     PYTHONPATH = ":".join(pythonPathsList)
     BASE_BUILDS = ":".join(binPathsList)
     GLOBAL_SGE_SCRIPT = """#!/bin/bash
+source ~/.bash_profile
+
 echo "STARTED at: $(date +'%F-%T')"
 echo "Ran on: $(hostname)"
 export PATH={BINPATH}
@@ -409,7 +411,7 @@ def MasterProcessingController(argv=None):
     start_time=time.time()
     subj_index = 1
     for subjectid in to_do_subjects:
-        delay = 5*subj_index
+        delay = 2.5*subj_index
         subj_index += 1
         print("START DELAY: {0}".format(delay))
         sp_args=(CACHE_ATLASPATH, CLUSTER_QUEUE, CLUSTER_QUEUE_LONG,QSTAT_IMMEDIATE_EXE,QSTAT_CACHED_EXE,
@@ -425,7 +427,7 @@ def MasterProcessingController(argv=None):
     else:
         ## Make a pool of workers to submit simultaneously
         from multiprocessing import Pool
-        myPool = Pool(processes=64,maxtasksperchild=2)
+        myPool = Pool(processes=64,maxtasksperchild=1)
         all_results=myPool.map_async(DoSingleSubjectProcessing,sp_args_list).get(1e100)
 
         for indx in range(0,len(sp_args_list)):

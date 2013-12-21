@@ -346,7 +346,7 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
         'use_relative_paths': 'false',  # relative paths should be on, require hash update when changed.
         'remove_node_directories': 'false',  # Experimental
         'local_hash_check': 'true',
-        'job_finished_timeout': 45
+        'job_finished_timeout': 25
     }
     baw200.config['logging'] = {
         'workflow_level': 'DEBUG',

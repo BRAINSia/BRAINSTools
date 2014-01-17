@@ -12,7 +12,7 @@ add_custom_command(
            --python_paths ${BRAINSTools_BINARY_DIR}/../NIPYPE
            --program_paths ${BRAINSTools_CLI_RUNTIME_OUTPUT_DIRECTORY}
            --output_path ${OUTPUT_PATH}
-   DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/local_generate_classes.py
+   DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/local_generate_classes.py BRAINSFit
    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
    COMMENT "Generate the SEMTools python code for nipype")
 

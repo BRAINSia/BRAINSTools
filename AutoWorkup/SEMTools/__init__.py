@@ -6,4 +6,5 @@ from brains import *
 from testing import *
 from utilities import *
 from registration import *
+from converters import DWISimpleCompare, DWICompare
 from utility import *

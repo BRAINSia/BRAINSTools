@@ -1,1 +1,2 @@
 from featuredetection import SphericalCoordinateGeneration
+from landmarkscompare import LandmarksCompare

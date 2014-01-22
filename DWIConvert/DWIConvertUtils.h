@@ -192,6 +192,27 @@ WriteBValues(const std::vector<TScalar> & bValues, const std::string & filename)
 }
 
 template <typename TScalar>
+inline void
+normalize(const std::vector<TScalar> &vec,double *normedVec)
+{
+  double norm = 0.0;
+  for(unsigned j = 0; j < 3; ++j)
+    {
+    normedVec[j] = vec[j];
+    norm += vec[j] * vec[j];
+    }
+  norm = sqrt(norm);
+  if(norm < 0.00001)
+    {
+    norm = 0.00001;
+    }
+  for(unsigned j = 0; j < 3; ++j)
+    {
+    normedVec[j] /= norm;
+    }
+}
+
+template <typename TScalar>
 inline int
 WriteBVectors(const std::vector<std::vector<TScalar> > & bVectors,
               const std::string & filename)
@@ -211,9 +232,12 @@ WriteBVectors(const std::vector<std::vector<TScalar> > & bVectors,
       {
       return EXIT_FAILURE;
       }
-    bVecFile << DoubleConvert(bVectors[k][0]) << " "
-             << DoubleConvert(bVectors[k][1]) << " "
-             << DoubleConvert(bVectors[k][2])
+
+    double normedVec[3];
+    normalize(bVectors[k],normedVec);
+    bVecFile << DoubleConvert(normedVec[0]) << " "
+             << DoubleConvert(normedVec[1]) << " "
+             << DoubleConvert(normedVec[2])
              << std::endl;
     }
   bVecFile.close();

@@ -102,15 +102,18 @@ int main(int argc, char *argv[])
   bool violated = false;
   if( inputVolume.size() == 0 )
     {
-    violated = true; std::cout << "  --inputVolume Required! "  << std::endl;
+    violated = true;
+    std::cout << "  --inputVolume Required! "  << std::endl;
     }
-  if( inputTransform.size() == 0 )
+  if( inputTransform.size() == 0  && warpDWITransform.size() == 0 )
     {
-    violated = true; std::cout << "  --inputTransform Required! "  << std::endl;
+    violated = true;
+    std::cout << "  --inputTransform or --warpDWITransform Required! "  << std::endl;
     }
   if( outputVolume.size() == 0 )
     {
-    violated = true; std::cout << "  --outputVolume Required! "  << std::endl;
+    violated = true;
+    std::cout << "  --outputVolume Required! "  << std::endl;
     }
   if( violated )
     {
@@ -140,7 +143,7 @@ int main(int argc, char *argv[])
   NrrdImageType::DirectionType  myDirection = resampleImage->GetDirection();
   itk::MetaDataDictionary       inputMetaDataDictionary = resampleImage->GetMetaDataDictionary();
   GenericTransformType::Pointer baseTransform = 0;
-  if( inputTransform == "ID" )
+  if( inputTransform == "ID" || inputTransform.size() == 0 )
     {
     RigidTransformType::Pointer LocalRigidTransform = RigidTransformType::New();
     LocalRigidTransform->SetIdentity();

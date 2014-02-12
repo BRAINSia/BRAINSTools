@@ -133,13 +133,13 @@ int main(int argc, char *argv[])
       ( labelVolume.length() == 0 ) )
     {
     std::cout << "Error: Both the image and label must be specified" << std::endl;
-    return 1;
+    return EXIT_FAILURE;
     }
 
   if( outputPrefixColumnNames.size() != outputPrefixColumnValues.size() )
     {
     std::cout << "Error: Number of column names must match number of values" << std::endl;
-    return 1;
+    return EXIT_FAILURE;
     }
 
   int mode = 0;
@@ -163,13 +163,13 @@ int main(int argc, char *argv[])
     std::cout << "Label Map: " <<   labelVolume << std::endl;
     std::cout << "Label Name File: " <<   labelNameFile << std::endl;
     std::cout << "Column Prefix Names: ";
-    for( int i = 0; i < outputPrefixColumnNames.size(); i++ )
+    for( size_t i = 0; i < outputPrefixColumnNames.size(); ++i )
       {
       std::cout << outputPrefixColumnNames[i] << ", ";
       }
     std::cout << std::endl;
     std::cout << "Column Prefix Values: ";
-    for( int i = 0; i < outputPrefixColumnValues.size(); i++ )
+    for( size_t i = 0; i < outputPrefixColumnValues.size(); ++i )
       {
       std::cout << outputPrefixColumnValues[i] << ", ";
       }
@@ -212,28 +212,28 @@ int main(int argc, char *argv[])
   labelSpacing = labelReader->GetOutput()->GetSpacing();
   labelOrigin = labelReader->GetOutput()->GetOrigin();
   // Check the Image and Label Map to Make sure they define the same space
-  for( int i = 0; i < 3; i++ )
+  for( size_t i = 0; i < 3; ++i )
     {
     if( imageSize[i] != labelSize[i] )
       {
       std::cout << "Error: Image and label size do not match" << std::endl;
       std::cout << "Image: " << imageSize << std::endl;
       std::cout << "Label: " << labelSize << std::endl;
-      return 1;
+      return EXIT_FAILURE;
       }
     if( fabs(labelSpacing[i] - imageSpacing[i]) > 0.01 )
       {
       std::cout << "Error: Image and label spacing do not match" << std::endl;
       std::cout << "Image: " << imageSpacing << std::endl;
       std::cout << "Label: " << labelSpacing << std::endl;
-      return 1;
+      return EXIT_FAILURE;
       }
     if( fabs(labelOrigin[i] - imageOrigin[i]) > 0.01 )
       {
       std::cout << "Error: Image and label origin do not match" << std::endl;
       std::cout << "Image: " << imageOrigin << std::endl;
       std::cout << "Label: " << labelOrigin << std::endl;
-      return 1;
+      return EXIT_FAILURE;
       }
     }
 
@@ -271,7 +271,7 @@ int main(int argc, char *argv[])
 
   typedef StatsFilterType::ValidLabelValuesContainerType ValidLabelValuesType;
   typedef StatsFilterType::LabelPixelType                LabelPixelType;
-  for( int i = 0; i < outputPrefixColumnNames.size(); i++ )
+  for( size_t i = 0; i < outputPrefixColumnNames.size(); ++i )
     {
     std::cout << outputPrefixColumnNames[i] << ", ";
     }
@@ -285,7 +285,7 @@ int main(int argc, char *argv[])
       LabelPixelType labelValue = *vIt;
 
       std::string labelName = GetLabelName(mode, labelNameFile, labelValue);
-      for( int i = 0; i < outputPrefixColumnValues.size(); i++ )
+      for( size_t i = 0; i < outputPrefixColumnValues.size(); ++i )
         {
         std::cout << outputPrefixColumnValues[i] << ", ";
         }
@@ -319,5 +319,5 @@ int main(int argc, char *argv[])
       std::cout << statsFilter->GetCount( labelValue ) << std::endl;
       }
     }
-
+  return EXIT_SUCCESS;
 }

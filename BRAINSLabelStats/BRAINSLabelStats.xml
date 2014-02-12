@@ -8,10 +8,10 @@
   <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
   <contributor>Vincent A. Magnotta</contributor>
   <acknowledgements>Funding for this work was provided by the Dana Foundation</acknowledgements>
-  
+
   <parameters>
     <label>Input Data</label>
-    
+
     <image>
       <name>imageVolume</name>
       <longflag>--imageVolume</longflag>
@@ -20,7 +20,7 @@
       <channel>input</channel>
       <default></default>
     </image>
-    
+
     <image>
       <name>labelVolume</name>
       <longflag>--labelVolume</longflag>
@@ -29,7 +29,7 @@
       <default></default>
       <channel>input</channel>
     </image>
-    
+
     <file>
       <name>labelNameFile</name>
       <longflag>--labelNameFile</longflag>
@@ -39,11 +39,11 @@
       <channel>input</channel>
     </file>
   </parameters>
-  
-  
+
+
   <parameters>
     <label>Label Parameters</label>
-    
+
     <string-vector>
       <name>outputPrefixColumnNames</name>
       <longflag>--outputPrefixColumnNames</longflag>
@@ -51,7 +51,7 @@
       <label>Prefix Column Name(s)</label>
       <default></default>
     </string-vector>
-    
+
     <string-vector>
       <name>outputPrefixColumnValues</name>
       <longflag>--outputPrefixColumnValues</longflag>
@@ -59,7 +59,7 @@
       <label>Prefix Column Value(s)</label>
       <default></default>
     </string-vector>
-    
+
     <string-enumeration>
       <name>labelFileType</name>
       <longflag>--labelFileType</longflag>
@@ -75,7 +75,7 @@
 
   <parameters>
     <label>Median Parameters</label>
-    
+
     <integer>
       <name>numberOfHistogramBins</name>
       <longflag>--numberOfHistogramBins</longflag>
@@ -83,7 +83,7 @@
       <label>Number Of Bins</label>
       <default>100000</default>
     </integer>
-    
+
     <string-enumeration>
       <name>minMaxType</name>
       <longflag>--minMaxType</longflag>
@@ -102,7 +102,7 @@
       <label>Minimum Value</label>
       <default>0.0</default>
     </float>
-    
+
     <float>
       <name>userDefineMaximum</name>
       <longflag>--userDefineMaximum</longflag>

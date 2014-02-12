@@ -100,6 +100,7 @@ include_directories(
 #-----------------------------------------------------------------------------
 set(brains_modulenames
   BRAINSFit
+  BRAINSLabelStats
   BRAINSResample
   BRAINSROIAuto
   GTRACT

@@ -1256,16 +1256,16 @@ ImageType::Pointer MixtureOptimizer(ImageType::Pointer & firstImage,
   // write a text file named outputWeightsFile
 
   std::ofstream to( outputWeightsFile.c_str() );
-  if( to == NULL )
-    {
-    std::cout << "Can't open file for writing! --- " << outputWeightsFile
-              << std::endl;
-    }
-  else
+  if( to.is_open() )
     {
     to << firstWeight << "  " << secondWeight << std::endl;
     to << optimalMeasures[0] << "  " << optimalMeasures[1] << std::endl;
     to.close();
+    }
+  else
+    {
+    std::cout << "Can't open file for writing! --- " << outputWeightsFile
+              << std::endl;
     }
 
   /* ------------------------------------------------------------------------------------

@@ -3,19 +3,19 @@
 
 #include "antsUtilities.h"
 #include "itkantsRegistrationHelper.h"
+#include "GenericTransformImage.h"
 
 namespace // put in anon namespace to suppress shadow declaration warnings.
 {
 typedef  ants::RegistrationHelper<double,3>                SyNRegistrationHelperType;
 typedef  SyNRegistrationHelperType::ImageType              ImageType;
-typedef  SyNRegistrationHelperType::CompositeTransformType CompositeTransformType;
 }
 
 template <class FixedImageType, class MovingimageType>
-typename CompositeTransformType::Pointer
+typename BRAINSCompositeTransformType::Pointer
 simpleSynReg( typename FixedImageType::Pointer & infixedImage,
               typename MovingimageType::Pointer & inmovingImage,
-              typename CompositeTransformType::Pointer compositeInitialTransform )
+              typename BRAINSCompositeTransformType::Pointer compositeInitialTransform )
 {
   typename SyNRegistrationHelperType::Pointer regHelper = SyNRegistrationHelperType::New();
     {
@@ -130,7 +130,7 @@ simpleSynReg( typename FixedImageType::Pointer & infixedImage,
     std::cerr << "Finshed SyN stage" << std::endl;
     }
   // Get the output transform
-  typename CompositeTransformType::Pointer outputCompositeTransform = regHelper->GetModifiableCompositeTransform();
+  typename BRAINSCompositeTransformType::Pointer outputCompositeTransform = regHelper->GetModifiableCompositeTransform();
   // return composite result Transform;
   return outputCompositeTransform;
 }

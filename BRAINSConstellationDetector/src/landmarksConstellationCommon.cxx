@@ -369,10 +369,6 @@ itk::Matrix<double, 3, 3> GetMatrixInverse(const itk::Matrix<double, 3, 3> & inp
   return output;
 }
 
-// Need to use a Pyramid filter here instead of just downsampling to a 32x32
-// image
-typedef itk::MultiResolutionPyramidImageFilter<SImageType, SImageType> PyramidFilterType;
-
 PyramidFilterType::Pointer MakeThreeLevelPyramid(SImageType::Pointer refImage)
 {
   PyramidFilterType::ScheduleType pyramidSchedule;

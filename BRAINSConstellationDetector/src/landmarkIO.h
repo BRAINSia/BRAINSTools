@@ -19,7 +19,6 @@
 
 namespace
 {
-typedef std::map<std::string, SImageType::PointType> LandmarksMapType;
 typedef vnl_matrix<double>                           MatrixType;
 typedef vnl_vector<double>                           VectorType;
 typedef itk::VersorRigid3DTransform<double>          VersorTransformType;

@@ -6,6 +6,7 @@
 #include "itksys/SystemTools.hxx"
 #include "BRAINSThreadControl.h"
 
+#include "landmarksConstellationCommon.h"
 #include "itkFindCenterOfBrainFilter.h"
 #include "BRAINSHoughEyeDetector.h"
 #include "BRAINSConstellationDetector2.h"
@@ -39,8 +40,6 @@ public:
   typedef ImageType::SizeType                   ImageSizeType;
   typedef ImageType::DirectionType              ImageDirectionType;
   typedef ImageType::IndexType                  ImageIndexType;
-  typedef std::map<std::string, ImagePointType> LandmarksMapType;
-  typedef std::map<std::string, double>         LandmarksWeightMapType;        // SHOULD BE DELETED
 
   typedef itk::ImageFileReader<ImageType>                         ReaderType;
   typedef itk::ImageFileWriter<ImageType>                         WriterType;

@@ -13,8 +13,6 @@
 #include "itkCommand.h"
 #include "itkImage.h"
 #include "itkOrthogonalize3DRotationMatrix.h"
-#include "itkVersorRigid3DTransform.h"
-#include "itkEuler3DTransform.h"
 
 #include "PrepareOutputImages.h"
 
@@ -30,13 +28,8 @@
 // D E F I N E S //////////////////////////////////////////////////////////////
 
 const unsigned int LocalImageDimension = 3;
-typedef short PixelType;
 
-typedef itk::Image<PixelType, LocalImageDimension> SImageType;
 typedef SImageType::PointType                      ImagePointType;
-typedef std::map<std::string, ImagePointType>      LandmarksMapType;
-typedef itk::VersorRigid3DTransform<double>        VersorTransformType;
-typedef itk::Euler3DTransform<double>              RigidTransformType;
 
 // F U N C T I O N S //////////////////////////////////////////////////////////
 //////////////////

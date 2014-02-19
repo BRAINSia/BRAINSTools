@@ -1452,7 +1452,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
       AffineTransformType::Pointer bulkAffineTransform = AffineTransformType::New();
       bulkAffineTransform->SetIdentity();
 
-      CompositeTransformType::Pointer initialSyNTransform = CompositeTransformType::New();
+      BRAINSCompositeTransformType::Pointer initialSyNTransform = BRAINSCompositeTransformType::New();
 
       if( m_CurrentGenericTransform.IsNotNull() )
         {
@@ -1513,8 +1513,8 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
             {
             itkGenericExceptionMacro( << "ERROR:  Can not initialize SyN with CompositeTranform yet."
                                       << transformFileType );
-            const CompositeTransformType::ConstPointer tempInitializerITKTransform =
-              dynamic_cast<CompositeTransformType const *>( m_CurrentGenericTransform.GetPointer() );
+            const BRAINSCompositeTransformType::ConstPointer tempInitializerITKTransform =
+              dynamic_cast<BRAINSCompositeTransformType const *>( m_CurrentGenericTransform.GetPointer() );
             if( tempInitializerITKTransform.IsNull() )
               {
               std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
@@ -1547,7 +1547,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
         }
       else
         {
-        CompositeTransformType::Pointer outputSyNTransform =
+        BRAINSCompositeTransformType::Pointer outputSyNTransform =
           simpleSynReg<FixedImageType, MovingImageType>( m_FixedVolume,
             m_MovingVolume,
             initialSyNTransform );
@@ -1559,7 +1559,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
           }
         else
           {
-          // CompositeTransformType has derived from itk::Transform, so we can directly assigne that to the
+          // BRAINSCompositeTransformType has derived from itk::Transform, so we can directly assigne that to the
           // m_CurrentGenericTransform that is a GenericTransformType.
           m_CurrentGenericTransform = outputSyNTransform.GetPointer();
           // Now turn of the initiallize code to off

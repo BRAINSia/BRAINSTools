@@ -334,14 +334,14 @@ GenericTransformType::Pointer ReadTransformFromDisk(const std::string & initialT
       {
       try
         {
-        const CompositeTransformType::ConstPointer tempInitializerITKTransform =
-          dynamic_cast<const CompositeTransformType *>( ( *( currentTransformList.begin() ) ).GetPointer() );
+        const BRAINSCompositeTransformType::ConstPointer tempInitializerITKTransform =
+          dynamic_cast<const BRAINSCompositeTransformType *>( ( *( currentTransformList.begin() ) ).GetPointer() );
         if( tempInitializerITKTransform.IsNull() )
           {
           itkGenericExceptionMacro(<< "Error in type conversion");
           }
-        CompositeTransformType::Pointer                    tempCopy = CompositeTransformType::New();
-        const CompositeTransformType::TransformQueueType & transformQueue =
+        BRAINSCompositeTransformType::Pointer                    tempCopy = BRAINSCompositeTransformType::New();
+        const BRAINSCompositeTransformType::TransformQueueType & transformQueue =
           tempInitializerITKTransform->GetTransformQueue();
         for( unsigned int i = 0; i < transformQueue.size(); ++i )
           {

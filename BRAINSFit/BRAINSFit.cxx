@@ -634,10 +634,10 @@ int main(int argc, char *argv[])
 #ifdef USE_ANTS
   if( localTransformType[localTransformType.size() - 1] == "SyN" )
     {
-    CompositeTransformType::Pointer tempSyNCompositeTransform =
-      dynamic_cast<CompositeTransformType *>( currentGenericTransform.GetPointer() );
+    BRAINSCompositeTransformType::Pointer tempSyNCompositeTransform =
+      dynamic_cast<BRAINSCompositeTransformType *>( currentGenericTransform.GetPointer() );
     // write out transform actually computed, so skip the initial transform
-    CompositeTransformType::TransformTypePointer tempSyNFinalTransform =
+    BRAINSCompositeTransformType::TransformTypePointer tempSyNFinalTransform =
       tempSyNCompositeTransform.GetPointer();
 // tempSyNCompositeTransform->GetNthTransform( 1 );
 

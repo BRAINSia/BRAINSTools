@@ -19,9 +19,10 @@
  * system) to Slicer3 landmarks (in RAS coordinate system).
  */
 
-typedef itk::Point<double, 3>            PointType;
-typedef std::map<std::string, PointType> LandmarksMapType;
-typedef std::map<std::string, float> LandmarkWeightMapType;
+typedef itk::Point<double, 3>             PointType;
+typedef std::map<std::string, PointType>  LandmarksMapType;
+typedef std::map<std::string, float>      LandmarkWeightMapType;
+typedef std::map<std::string, double>     LandmarksWeightMapType;
 
 /*
  * Read lmk weights

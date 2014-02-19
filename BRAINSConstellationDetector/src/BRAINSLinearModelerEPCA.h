@@ -18,7 +18,6 @@
 // typedef
 const unsigned int PointDim = 3;
 typedef itk::Point<double, PointDim>          PointType;
-typedef std::map<std::string, PointType>      LandmarksMapType;
 typedef std::map<std::string, PointType>      DatasetMapType;
 typedef std::map<std::string, DatasetMapType> LmkDBType;
 typedef vnl_matrix<double>                    MatrixType;

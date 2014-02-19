@@ -14,6 +14,7 @@
 #include "itkCompositeTransform.h"
 #include "Slicer3LandmarkIO.h"
 
+#include "GenericTransformImage.h"
 #include "BRAINSConstellationLandmarksTransformCLP.h"
 #include <BRAINSCommonLib.h>
 
@@ -40,10 +41,9 @@ int main( int argc, char *argv[] )
   const unsigned int Dimension = 3;
 
   typedef itk::Point<double,Dimension> LocalPointType;
-  typedef std::map< std::string, LocalPointType > LocalLandmarksMapType;
 
-  LocalLandmarksMapType origLandmarks = ReadSlicer3toITKLmk( inputLandmarksFile );
-  LocalLandmarksMapType transformedLandmarks;
+  LandmarksMapType origLandmarks = ReadSlicer3toITKLmk( inputLandmarksFile );
+  LandmarksMapType transformedLandmarks;
 
   typedef itk::TransformFileReader ReaderType;
   ReaderType::Pointer reader = ReaderType::New();
@@ -52,17 +52,15 @@ int main( int argc, char *argv[] )
 
   ReaderType::TransformListType *transformList = reader->GetTransformList();
 
-  typedef itk::CompositeTransform<double, Dimension> CompositeTransformType;
-
-  CompositeTransformType::Pointer inputCompTrans =
-  dynamic_cast<CompositeTransformType *>( transformList->front().GetPointer() );
+  BRAINSCompositeTransformType::Pointer inputCompTrans =
+  dynamic_cast<BRAINSCompositeTransformType *>( transformList->front().GetPointer() );
   if( inputCompTrans.IsNull() )
     {
     std::cerr << "The input transform should be a composite transform." << std::endl;
     return EXIT_FAILURE;
     }
 
-  LocalLandmarksMapType::const_iterator it = origLandmarks.begin();
+  LandmarksMapType::const_iterator it = origLandmarks.begin();
   for(; it!=origLandmarks.end(); it++)
     {
     transformedLandmarks[it->first] = inputCompTrans->TransformPoint( it->second );

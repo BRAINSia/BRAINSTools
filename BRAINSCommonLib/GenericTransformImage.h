@@ -60,7 +60,7 @@ typedef itk::ScaleSkewVersor3DTransform<double>              ScaleSkewVersor3DTr
 typedef itk::ThinPlateR2LogRSplineKernelTransform<double, 3> ThinPlateSpline3DTransformType;
 
 #if (ITK_VERSION_MAJOR > 3)
-typedef itk::CompositeTransform<double, 3> CompositeTransformType;
+typedef itk::CompositeTransform<double, 3> BRAINSCompositeTransformType;
 #endif
 
 namespace itk

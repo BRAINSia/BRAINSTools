@@ -20,7 +20,6 @@ class landmarksConstellationDetector
 {
   typedef vnl_matrix<double>                           MatrixType;
   typedef vnl_vector<double>                           VectorType;
-  typedef std::map<std::string, SImageType::PointType> LandmarksMapType;
   typedef std::map<std::string, float>                 ValMapType;
 public:
   landmarksConstellationDetector() :

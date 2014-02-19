@@ -63,6 +63,8 @@
 
 #include "GenericTransformImage.h"
 
+#include "Slicer3LandmarkIO.h"
+
 extern const unsigned int MAX_ROTATIONS_TESTED;
 extern const unsigned int MAXITER;
 extern const unsigned int DEL;
@@ -89,8 +91,7 @@ typedef itk::Image<float, 3>  FImageType3D;
 typedef itk::Image<double, 2> DImageType2D;
 typedef itk::Image<float, 2>  FImageType2D;
 
-typedef SImageType::PointType                              SImagePointType;
-typedef std::map<std::string, SImagePointType>             LandmarksMapType;
+typedef SImageType::PointType                   SImagePointType;
 
 typedef itk::RGBPixel<unsigned char> RGBPixelType;
 typedef itk::Image<RGBPixelType, 3>  RGBImageType;

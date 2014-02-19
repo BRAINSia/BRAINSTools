@@ -4,6 +4,7 @@
  * University of Iowa Health Care 2010
  */
 
+#include <utility>
 #include "QLabelList.h"
 #include "itkNumberToString.h"
 
@@ -284,7 +285,7 @@ void QLabelList::readLandmarks()
     labelPos.push_back( textLabel.section(' ', 2, 2).toDouble() );
     labelPos.push_back( textLabel.section(' ', 3, 3).toDouble() );
     labelPos.push_back( textLabel.section(' ', 4, 4).toDouble() );
-    m_landmarks.insert( std::make_pair<QString, std::vector<double> >(name, labelPos) );
+    m_landmarks.insert( std::make_pair(name, labelPos) );
     this->setCurrentRow(this->currentRow() + 1);
     }
 
@@ -315,7 +316,7 @@ void QLabelList::loadLandmarks()
           labelPos.push_back( -line.section(',', 1, 1).toDouble() );
           labelPos.push_back( -line.section(',', 2, 2).toDouble() );
           labelPos.push_back( line.section(',', 3, 3).toDouble() );
-          m_landmarks.insert( std::make_pair<QString, std::vector<double> >(name, labelPos) );
+          m_landmarks.insert( std::make_pair(name, labelPos) );
           }
         }
       line = myfile.readLine();

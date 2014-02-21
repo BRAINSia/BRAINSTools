@@ -74,7 +74,7 @@ option(USE_BRAINSLandmarkInitializer      "Build BRAINSLandmarkInitializer"     
 option(USE_ImageCalculator                "Build ImageCalculator"                ON)
 option(USE_BRAINSSnapShotWriter           "Build BRAINSSnapShotWriter"           ON)
 option(USE_ConvertBetweenFileFormats      "Build ConvertBetweenFileFormats"      OFF)
-option(USE_BRAINSMultiSTAPLE              "Build BRAINSMultiSTAPLE"              OFF)
+option(USE_BRAINSMultiSTAPLE              "Build BRAINSMultiSTAPLE"              ON)
 option(USE_DWIConvert                     "Build DWIConvert"                     ON)
 option(USE_BRAINSCreateLabelMapFromProbabilityMaps "Build BRAINSCreateLabelMapFromProbabilityMaps" OFF)
 
@@ -95,6 +95,7 @@ if( USE_AutoWorkup )
   ## NIPYPE is not stable under python 2.6, so require 2.7 when using autoworkup
   ## Enthought Canopy or anaconda are convenient ways to install python 2.7 on linux
   ## or the other option is the free version of Anaconda from https://store.continuum.io/
+  set(USE_BRAINSMultiSTAPLE ON)
   set(REQUIRED_PYTHON_VERSION 2.7)
   if(APPLE)
    set(PYTHON_EXECUTABLE

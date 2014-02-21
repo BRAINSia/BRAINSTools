@@ -4,10 +4,9 @@
 ##
 
 ## NOTES ON HOW TO RUN THIS.
-# build wiht all options turned on (even the non-default options)
-# export PATH=~/src/BT-build/bin:${PATH}
-# export PYTHONPATH=~/src/BT-build/NIPYPE
-# cd ~/src/BRAINSTools/AutoWorkup/SEMTools/; rm -rf ~/src/BRAINSTools/AutoWorkup/SEMTools/* ; python ../local_generate_classes.py
+# build with all options turned on (even the non-default options)
+# cd ~/src/BRAINSTools/AutoWorkup; rm -rf ~/src/BRAINSTools/AutoWorkup/SEMTools;
+# python local_generate_classes.py --python_paths=~/src/BT-build/NIPYPE --program_paths=~/src/BT-build/bin:${PATH} --output_path=${PWD}
 # for i in $(find ~/src/BRAINSTools/AutoWorkup/SEMTools  -name "*.py"); do  autopep8 --max-line-length=300 -i ${i}; done
 
 

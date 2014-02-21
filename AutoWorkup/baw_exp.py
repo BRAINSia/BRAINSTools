@@ -419,7 +419,6 @@ def MasterProcessingController(argv=None):
                                   GLOBAL_DATA_SINK_REWRITE, JOB_SCRIPT, WORKFLOW_COMPONENTS, input_arguments,
                                   mountPrefix, start_time+delay, subjectid)
         sp_args_list.append(sp_args)
-
     if 'local' in input_arguments.wfrun:
         print("RUNNING WITHOUT POOL BUILDING")
         for sp_args in sp_args_list:

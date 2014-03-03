@@ -76,6 +76,7 @@ option(USE_BRAINSSnapShotWriter           "Build BRAINSSnapShotWriter"          
 option(USE_ConvertBetweenFileFormats      "Build ConvertBetweenFileFormats"      OFF)
 option(USE_BRAINSMultiSTAPLE              "Build BRAINSMultiSTAPLE"              OFF)
 option(USE_DWIConvert                     "Build DWIConvert"                     ON)
+option(USE_BRAINSDWICleanup               "Build BRAINSDWICleanup"               ON)
 option(USE_BRAINSCreateLabelMapFromProbabilityMaps "Build BRAINSCreateLabelMapFromProbabilityMaps" OFF)
 
 if( NOT USE_ANTS )

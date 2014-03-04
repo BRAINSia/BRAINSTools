@@ -19,8 +19,9 @@ POSTERIORS = ['WM', 'SURFGM', 'BASAL', 'GLOBUS', 'THALAMUS',
               'NOTVB', 'AIR']
 
 def convertToList(element):
+    if element is None:
+        return ''
     return [element]
-
 
 def MakeInclusionMaskForGMStructures(posteriorDictionary, candidateRegionFileName):
     import SimpleITK as sitk
@@ -55,6 +56,11 @@ def makeListOfValidImages(imageFile):
     else:
         return imageFile
 
+# def makeStringForMissingImages(imageFile):
+#     if imageFile is None:
+#         return ''  # DataSinks fail for empty lists
+#     else:
+#         return imageFile
 
 def getListIndex(imageList, index):
     return imageList[index]

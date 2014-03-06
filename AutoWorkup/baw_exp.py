@@ -136,7 +136,7 @@ def DoSingleSubjectProcessing(sp_args):
     CACHE_ATLASPATH, CLUSTER_QUEUE, CLUSTER_QUEUE_LONG,QSTAT_IMMEDIATE_EXE,QSTAT_CACHED_EXE, \
           ExperimentBaseDirectoryCache, ExperimentBaseDirectoryResults, subject_data_file, \
           GLOBAL_DATA_SINK_REWRITE, JOB_SCRIPT, WORKFLOW_COMPONENTS, \
-          input_arguments, mountPrefix,start_time,subjectid = sp_args
+          input_arguments, mountPrefix,start_time,subjectid, PreviousExperimentName = sp_args
 
     while time.time() < start_time :
         time.sleep(start_time-time.time()+1)
@@ -147,14 +147,26 @@ def DoSingleSubjectProcessing(sp_args):
                                              subject_data_file)
 
     import WorkupT1T2  # NOTE:  This needs to occur AFTER the PYTHON_AUX_PATHS has been modified
-    baw200 = WorkupT1T2.WorkupT1T2(subjectid, mountPrefix,
-                                   os.path.join(ExperimentBaseDirectoryCache, str(subjectid)),
-                                   ExperimentBaseDirectoryResults,
-                                   ExperimentDatabase,
-                                   CACHE_ATLASPATH,
-                                   GLOBAL_DATA_SINK_REWRITE,
-                                   WORKFLOW_COMPONENTS=WORKFLOW_COMPONENTS, CLUSTER_QUEUE=CLUSTER_QUEUE,
-                                   CLUSTER_QUEUE_LONG=CLUSTER_QUEUE_LONG, SGE_JOB_SCRIPT=JOB_SCRIPT)
+    if not PreviousExperimentName is None:
+        print "Running based on previous experiment results..."
+        baw200 = WorkupT1T2.WorkupT1T2(subjectid, mountPrefix,
+                                       os.path.join(ExperimentBaseDirectoryCache, str(subjectid)),
+                                       ExperimentBaseDirectoryResults,
+                                       ExperimentDatabase,
+                                       CACHE_ATLASPATH,
+                                       GLOBAL_DATA_SINK_REWRITE,
+                                       WORKFLOW_COMPONENTS=WORKFLOW_COMPONENTS, CLUSTER_QUEUE=CLUSTER_QUEUE,
+                                       CLUSTER_QUEUE_LONG=CLUSTER_QUEUE_LONG, SGE_JOB_SCRIPT=JOB_SCRIPT,
+                                       PreviousBaseDirectoryResults=PreviousExperimentName)
+    else:
+        baw200 = WorkupT1T2.WorkupT1T2(subjectid, mountPrefix,
+                                       os.path.join(ExperimentBaseDirectoryCache, str(subjectid)),
+                                       ExperimentBaseDirectoryResults,
+                                       ExperimentDatabase,
+                                       CACHE_ATLASPATH,
+                                       GLOBAL_DATA_SINK_REWRITE,
+                                       WORKFLOW_COMPONENTS=WORKFLOW_COMPONENTS, CLUSTER_QUEUE=CLUSTER_QUEUE,
+                                       CLUSTER_QUEUE_LONG=CLUSTER_QUEUE_LONG, SGE_JOB_SCRIPT=JOB_SCRIPT)
     print "Start Processing"
     SGEFlavor = 'SGE'
     try:
@@ -268,6 +280,10 @@ def MasterProcessingController(argv=None):
     # Experiment specific information
     subject_data_file = expConfig.get('EXPERIMENT_DATA', 'SESSION_DB')
     ExperimentName = expConfig.get('EXPERIMENT_DATA', 'EXPERIMENTNAME')
+    if expConfig.has_option('EXPERIMENT_DATA', 'PREVIOUSEXPERIMENTNAME'):
+        PreviousExperimentName = expConfig.get('EXPERIMENT_DATA', 'PREVIOUSEXPERIMENTNAME')
+    else:
+         PreviousExperimentName = None
     WORKFLOW_COMPONENTS_STRING = expConfig.get('EXPERIMENT_DATA', 'WORKFLOW_COMPONENTS')
     WORKFLOW_COMPONENTS = eval(WORKFLOW_COMPONENTS_STRING)
 
@@ -320,6 +336,8 @@ def MasterProcessingController(argv=None):
     PROGRAM_PATHS = expConfig.get(input_arguments.processingEnvironment, 'PROGRAM_PATHS')
     PROGRAM_PATHS = PROGRAM_PATHS.split(':')
     PROGRAM_PATHS.extend(os.environ['PATH'].split(':'))
+    PROGRAM_PATHS = [os.path.dirname(__file__)] + PROGRAM_PATHS
+    print "Adding directory {0} to PATH...".format(os.path.dirname(__file__))
     os.environ['PATH'] = ':'.join(PROGRAM_PATHS)
     #    Define platform specific output write paths
     mountPrefix = expConfig.get(input_arguments.processingEnvironment, 'MOUNTPREFIX')
@@ -331,6 +349,12 @@ def MasterProcessingController(argv=None):
         os.makedirs(ExperimentBaseDirectoryCache)
     if not os.path.exists(ExperimentBaseDirectoryResults):
         os.makedirs(ExperimentBaseDirectoryResults)
+    if not PreviousExperimentName is None:
+        PreviousBaseDirectoryPrefix = os.path.realpath(os.path.join(BASEOUTPUTDIR, PreviousExperimentName))
+        PreviousBaseDirectoryResults = PreviousBaseDirectoryPrefix + "_Results"
+        assert os.path.exists(PreviousBaseDirectoryResults), "The previous experiment directory does not exist: {0}".format(PreviousBaseDirectoryResults)
+    else:
+        PreviousBaseDirectoryResults = None
     #    Define workup common reference data sets
     #    The ATLAS needs to be copied to the ExperimentBaseDirectoryPrefix
     #    The ATLAS pathing must stay constant
@@ -417,7 +441,7 @@ def MasterProcessingController(argv=None):
         sp_args=(CACHE_ATLASPATH, CLUSTER_QUEUE, CLUSTER_QUEUE_LONG,QSTAT_IMMEDIATE_EXE,QSTAT_CACHED_EXE,
                                   ExperimentBaseDirectoryCache, ExperimentBaseDirectoryResults, subject_data_file,
                                   GLOBAL_DATA_SINK_REWRITE, JOB_SCRIPT, WORKFLOW_COMPONENTS, input_arguments,
-                                  mountPrefix, start_time+delay, subjectid)
+                                  mountPrefix, start_time+delay, subjectid, PreviousBaseDirectoryResults)
         sp_args_list.append(sp_args)
     if 'local' in input_arguments.wfrun:
         print("RUNNING WITHOUT POOL BUILDING")

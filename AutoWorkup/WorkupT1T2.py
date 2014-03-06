@@ -161,6 +161,7 @@ t2_averageList = ['t2_average_BRAINSABC.nii.gz', 't2_average_BRAINSABC.nii.gz']
             ListOfImagesDictionaries[list_index]['FL'] = fl_averageList[list_index]
         if outputLabels_averageList[list_index] is not None:
             ListOfImagesDictionaries[list_index]['BRAINMASK'] = outputLabels_averageList[list_index]
+
         this_subj_posteriors = ListOfPosteriorImagesDictionary[list_index]
         for post_items in this_subj_posteriors.items():
             #print "post_items", post_items
@@ -357,12 +358,6 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
     baw200.base_dir = ExperimentBaseDirectoryCache
 
     import WorkupT1T2Single
-    MergeT1s = dict()
-    MergeT2s = dict()
-    MergePDs = dict()
-    MergeFLs = dict()
-    MergeOutputLabels = dict()
-    MergePosteriors = dict()
     BAtlas = dict()
     FREESURFER_ID = dict()
     FixWMPartitioningNode = dict()
@@ -404,7 +399,10 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
         PreviousExperimentDirectoryResults = kwds[ 'PreviousBaseDirectoryResults' ]
         SKIP_PHASE1 = True
         PHASE_1_DataGrabber = dict()
+        index = 1
         for sessionid in allSessions:
+            index_name = 'in' + str(index)
+            index += 1
             PHASE_1_DataGrabber[sessionid] = pe.Node(nio.DataGrabber(infields=['projectid', 'subjectid', 'sessionid'],
                                                                      outfields=['t1_average',
                                                                                 't2_average',
@@ -412,45 +410,30 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
                                                                                 'fl_average',
                                                                                 'outputLabels',
                                                                                 'posteriorImages']),
-                                                     name='Phase1_DG')
+                                                     name='PHASE_1_DG_' + index_name)
             PHASE_1_DataGrabber[sessionid].inputs.base_directory = PreviousExperimentDirectoryResults
-            PHASE_1_DataGrabber[sessionid].inputs.template = 'PHASE_1/%s/%s/%s/%s.nii.gz'
+            PHASE_1_DataGrabber[sessionid].inputs.template = '%s/%s/%s/Phase_1/%s.nii.gz'
             PHASE_1_DataGrabber[sessionid].inputs.projectid = projectid
             PHASE_1_DataGrabber[sessionid].inputs.subjectid = subjectid
             PHASE_1_DataGrabber[sessionid].inputs.sessionid = sessionid
+            PHASE_1_DataGrabber[sessionid].inputs.sort_filelist = True
+            PHASE_1_DataGrabber[sessionid].inputs.raise_on_empty = False
+
             PHASE_1_DataGrabber[sessionid].inputs.template_args['t1_average'] = [['projectid', 'subjectid', 'sessionid', 't1_average_BRAINSABC']]
             PHASE_1_DataGrabber[sessionid].inputs.template_args['t2_average'] = [['projectid', 'subjectid', 'sessionid', 't2_average_BRAINSABC']]
             PHASE_1_DataGrabber[sessionid].inputs.template_args['pd_average'] = [['projectid', 'subjectid', 'sessionid', 'pd_average_BRAINSABC']]
             PHASE_1_DataGrabber[sessionid].inputs.template_args['fl_average'] = [['projectid', 'subjectid', 'sessionid', 'fl_average_BRAINSABC']]
             PHASE_1_DataGrabber[sessionid].inputs.template_args['outputLabels'] = [['projectid', 'subjectid', 'sessionid', 'brain_label_seg']]
-            PHASE_1_DataGrabber[sessionid].inputs.field_template = {'posteriorImages':'PHASE_1/%s/%s/%s/POSTERIOR_%s.nii.gz'}
+            PHASE_1_DataGrabber[sessionid].inputs.field_template = {'posteriorImages':'%s/%s/%s/Phase_1/TissueClassify/POSTERIOR_%s.nii.gz'}
             PHASE_1_DataGrabber[sessionid].inputs.template_args['posteriorImages'] = [['projectid', 'subjectid', 'sessionid', ['AIR', 'BASAL', 'CRBLGM', 'CRBLWM', 'CSF', 'GLOBUS', 'HIPPOCAMPUS', 'NOTCSF', 'NOTGM', 'NOTVB', 'NOTWM', 'SURFGM', 'THALAMUS', 'VB', 'WM']]]
-    else:  ### Run PHASE_1
+    else:
         print("===================== SUBJECT: {0} ===========================".format(subjectid))
         PHASE_1_oneSubjWorkflow = dict()
         PHASE_1_subjInfoNode = dict()
-        allSessions = ExperimentDatabase.getSessionsFromSubject(subjectid)
-        print("Running sessions: {ses} for subject {sub}".format(ses=allSessions, sub=subjectid))
-        BAtlas[subjectid] = MakeAtlasNode(atlas_fname_wpath, "BAtlas_" + str(subjectid))  # Call function to create node
+        PHASE_1_DataSink = dict()
+        from PipeLineFunctionHelpers import makeListOfValidImages, UnwrapPosteriorImagesFromDictionaryFunction, convertToList
 
-        global_AllT1s = dict()
-        global_AllT2s = dict()
-        global_AllPDs = dict()
-        global_AllFLs = dict()
-        global_AllOthers = dict()
         for sessionid in allSessions:
-            global_AllT1s[sessionid] = ExperimentDatabase.getFilenamesByScantype(sessionid, ['T1-30', 'T1-15'])
-            global_AllT2s[sessionid] = ExperimentDatabase.getFilenamesByScantype(sessionid, ['T2-30', 'T2-15'])
-            global_AllPDs[sessionid] = ExperimentDatabase.getFilenamesByScantype(sessionid, ['PD-30', 'PD-15'])
-            global_AllFLs[sessionid] = ExperimentDatabase.getFilenamesByScantype(sessionid, ['FL-30', 'FL-15'])
-            global_AllOthers[sessionid] = ExperimentDatabase.getFilenamesByScantype(sessionid, ['OTHER-30', 'OTHER-15'])
-            #print("HACK:  all T1s: {0} {1}".format(global_AllT1s[sessionid], len(global_AllT1s[sessionid])))
-            #print("HACK:  all T2s: {0} {1}".format(global_AllT2s[sessionid], len(global_AllT2s[sessionid])))
-            #print("HACK:  all PDs: {0} {1}".format(global_AllPDs[sessionid], len(global_AllPDs[sessionid])))
-            #print("HACK:  all FLs: {0} {1}".format(global_AllFLs[sessionid], len(global_AllFLs[sessionid])))
-            #print("HACK:  all Others: {0} {1}".format(global_AllOthers[sessionid], len(global_AllOthers[sessionid])))
-
-            projectid = ExperimentDatabase.getProjFromSession(sessionid)
             #print("PROJECT: {0} SUBJECT: {1} SESSION: {2}".format(projectid, subjectid, sessionid))
             PHASE_1_subjInfoNode[sessionid] = pe.Node(interface=IdentityInterface(fields=
                                                                                   ['sessionid', 'subjectid', 'projectid',
@@ -493,73 +476,75 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
             baw200.connect(BAtlas[subjectid], 'template_t1', PHASE_1_oneSubjWorkflow[sessionid], 'inputspec.template_t1')
             baw200.connect(BAtlas[subjectid], 'ExtendedAtlasDefinition_xml', PHASE_1_oneSubjWorkflow[sessionid], 'inputspec.atlasDefinition')
 
-        numSessions = len(allSessions)
-        if True or numSessions > 1:  # Merge all BCD_Results into a global average
-            mergeSubjectSessionNamesT1 = "99_MergeAllSessions_T1_" + str(subjectid)
-            MergeT1s[subjectid] = pe.Node(interface=Merge(numSessions),
-                                          run_without_submitting=True,
-                                          name=mergeSubjectSessionNamesT1)
-            mergeSubjectSessionNamesT2 = "99_MergeAllSessions_T2_" + str(subjectid)
-            MergeT2s[subjectid] = pe.Node(interface=Merge(numSessions),
-                                          run_without_submitting=True,
-                                          name=mergeSubjectSessionNamesT2)
-            mergeSubjectSessionNamesPD = "99_MergeAllSessions_PD_" + str(subjectid)
-            MergePDs[subjectid] = pe.Node(interface=Merge(numSessions),
-                                          run_without_submitting=True,
-                                          name=mergeSubjectSessionNamesPD)
-            mergeSubjectSessionNamesFL = "99_MergeAllSessions_FL_" + str(subjectid)
-            MergeFLs[subjectid] = pe.Node(interface=Merge(numSessions),
-                                          run_without_submitting=True,
-                                          name=mergeSubjectSessionNamesFL)
-            mergeSubjectSessionNamesoutputLabels = "99_MergeAllSessions_outputLabels_" + str(subjectid)
-            MergeOutputLabels[subjectid] = pe.Node(interface=Merge(numSessions),
-                                                   run_without_submitting=True,
-                                                   name=mergeSubjectSessionNamesoutputLabels)
-            mergeSubjectSessionNamesPosteriors = "99_MergeAllSessions_Posteriors_" + str(subjectid)
-            MergePosteriors[subjectid] = pe.Node(interface=Merge(numSessions),
-                                                 run_without_submitting=True,
-                                                 name=mergeSubjectSessionNamesPosteriors)
-            mergeSubjectSessionNamesFSLong = "99_MergeAllSessions_FSLong_" + str(subjectid)
-            index = 1
-            # print("HACK: HACK: HACK:  {0}".format(allSessions))
-            PHASE_1_DataSink = dict()
-            from PipeLineFunctionHelpers import makeListOfValidImages, UnwrapPosteriorImagesFromDictionaryFunction, convertToList
-            for sessionid in allSessions:
-                index_name = 'in' + str(index)
-                index += 1
-                PHASE_1_DataSink[sessionid] = pe.Node(nio.DataSink(), name="PHASE_1_DS_" + str(sessionid))
-                PHASE_1_DataSink[sessionid].overwrite = GLOBAL_DATA_SINK_REWRITE
-                PHASE_1_DataSink[sessionid].inputs.base_directory = ExperimentBaseDirectoryResults
-                # PHASE_1_DataSink[sessionid].inputs.regexp_substitutions = GenerateOutputPattern(projectid, subjectid, sessionid, 'Phase_1')
-                PHASE_1_DataSink[sessionid].inputs.container = '{0}/{1}/{2}'.format(projectid, subjectid, sessionid)
+            PHASE_1_DataSink[sessionid] = pe.Node(nio.DataSink(), name="PHASE_1_DS_" + str(sessionid))
+            PHASE_1_DataSink[sessionid].overwrite = GLOBAL_DATA_SINK_REWRITE
+            PHASE_1_DataSink[sessionid].inputs.base_directory = ExperimentBaseDirectoryResults
+            PHASE_1_DataSink[sessionid].inputs.container = '{0}/{1}/{2}'.format(projectid, subjectid, sessionid)
 
-                baw200.connect([(PHASE_1_oneSubjWorkflow[sessionid], PHASE_1_DataSink[sessionid], [(('outputspec.t1_average', convertToList), 'Phase_1.@t1_average')])])
-                baw200.connect([(PHASE_1_oneSubjWorkflow[sessionid], PHASE_1_DataSink[sessionid], [(('outputspec.t2_average', convertToList), 'Phase_1.@t2_average')])])
-                baw200.connect([(PHASE_1_oneSubjWorkflow[sessionid], PHASE_1_DataSink[sessionid], [(('outputspec.pd_average', convertToList), 'Phase_1.@pd_average')])])
-                baw200.connect([(PHASE_1_oneSubjWorkflow[sessionid], PHASE_1_DataSink[sessionid], [(('outputspec.fl_average', convertToList), 'Phase_1.@fl_average')])])
-                baw200.connect([(PHASE_1_oneSubjWorkflow[sessionid], PHASE_1_DataSink[sessionid], [(('outputspec.outputLabels', convertToList), 'Phase_1.@labels')])])
-                baw200.connect([(PHASE_1_oneSubjWorkflow[sessionid], PHASE_1_DataSink[sessionid], [(('outputspec.posteriorImages', UnwrapPosteriorImagesFromDictionaryFunction), 'Phase_1.TissueClassify')])])
-                # baw200.connect(PHASE_1_oneSubjWorkflow[sessionid], 'outputspec.t1_average', PHASE_1_DataSink[sessionid], 'Phase_1.@t1')
-                # baw200.connect(PHASE_1_oneSubjWorkflow[sessionid], 'outputspec.t2_average', PHASE_1_DataSink[sessionid], 'Phase_1.@t2')
-                # baw200.connect(PHASE_1_oneSubjWorkflow[sessionid], 'outputspec.pd_average', PHASE_1_DataSink[sessionid], 'Phase_1.@pd')
-                # baw200.connect(PHASE_1_oneSubjWorkflow[sessionid], 'outputspec.fl_average', PHASE_1_DataSink[sessionid], 'Phase_1.@fl')
-                # baw200.connect(PHASE_1_oneSubjWorkflow[sessionid], 'outputspec.outputLabels', PHASE_1_DataSink[sessionid], 'Phase_1.@labels')
-                # baw200.connect(PHASE_1_oneSubjWorkflow[sessionid], 'outputspec.posteriorImages', PHASE_1_DataSink[sessionid], 'Phase_1.@posterior')
+            baw200.connect([(PHASE_1_oneSubjWorkflow[sessionid], PHASE_1_DataSink[sessionid], [(('outputspec.t1_average', convertToList), 'Phase_1.@t1_average')])])
+            baw200.connect([(PHASE_1_oneSubjWorkflow[sessionid], PHASE_1_DataSink[sessionid], [(('outputspec.t2_average', convertToList), 'Phase_1.@t2_average')])])
+            baw200.connect([(PHASE_1_oneSubjWorkflow[sessionid], PHASE_1_DataSink[sessionid], [(('outputspec.pd_average', convertToList), 'Phase_1.@pd_average')])])
+            baw200.connect([(PHASE_1_oneSubjWorkflow[sessionid], PHASE_1_DataSink[sessionid], [(('outputspec.fl_average', convertToList), 'Phase_1.@fl_average')])])
+            baw200.connect([(PHASE_1_oneSubjWorkflow[sessionid], PHASE_1_DataSink[sessionid], [(('outputspec.outputLabels', convertToList), 'Phase_1.@labels')])])
+            baw200.connect([(PHASE_1_oneSubjWorkflow[sessionid], PHASE_1_DataSink[sessionid], [(('outputspec.posteriorImages', UnwrapPosteriorImagesFromDictionaryFunction), 'Phase_1.TissueClassify')])])
 
-                if False:  #HACK: BASELINE SKIP_PHASE1:
-                    baw200.connect(PHASE_1_DataGrabber[sessionid], 't1_average', MergeT1s[subjectid], index_name)
-                    baw200.connect(PHASE_1_DataGrabber[sessionid], 't2_average', MergeT2s[subjectid], index_name)
-                    baw200.connect(PHASE_1_DataGrabber[sessionid], 'pd_average', MergePDs[subjectid], index_name)
-                    baw200.connect(PHASE_1_DataGrabber[sessionid], 'fl_average', MergeFLs[subjectid], index_name)
-                    baw200.connect(PHASE_1_DataGrabber[sessionid], 'outputLabels', MergeOutputLabels[subjectid], index_name)
-                    baw200.connect(PHASE_1_DataGrabber[sessionid], 'posteriorImages', MergePosteriors[subjectid], index_name)
-                else:
-                    baw200.connect(PHASE_1_oneSubjWorkflow[sessionid], 'outputspec.t1_average', MergeT1s[subjectid], index_name)
-                    baw200.connect(PHASE_1_oneSubjWorkflow[sessionid], 'outputspec.t2_average', MergeT2s[subjectid], index_name)
-                    baw200.connect(PHASE_1_oneSubjWorkflow[sessionid], 'outputspec.pd_average', MergePDs[subjectid], index_name)
-                    baw200.connect(PHASE_1_oneSubjWorkflow[sessionid], 'outputspec.fl_average', MergeFLs[subjectid], index_name)
-                    baw200.connect(PHASE_1_oneSubjWorkflow[sessionid], 'outputspec.outputLabels', MergeOutputLabels[subjectid], index_name)
-                    baw200.connect(PHASE_1_oneSubjWorkflow[sessionid], 'outputspec.posteriorImages', MergePosteriors[subjectid], index_name)
+    MergeT1s = dict()
+    MergeT2s = dict()
+    MergePDs = dict()
+    MergeFLs = dict()
+    MergeOutputLabels = dict()
+    MergePosteriors = dict()
+    numSessions = len(allSessions)
+    if True or numSessions > 1:  # Merge all BCD_Results into a global average
+        mergeSubjectSessionNamesT1 = "99_MergeAllSessions_T1_" + str(subjectid)
+        MergeT1s[subjectid] = pe.Node(interface=Merge(numSessions),
+                                      run_without_submitting=True,
+                                      name=mergeSubjectSessionNamesT1)
+        mergeSubjectSessionNamesT2 = "99_MergeAllSessions_T2_" + str(subjectid)
+        MergeT2s[subjectid] = pe.Node(interface=Merge(numSessions),
+                                      run_without_submitting=True,
+                                      name=mergeSubjectSessionNamesT2)
+        mergeSubjectSessionNamesPD = "99_MergeAllSessions_PD_" + str(subjectid)
+        MergePDs[subjectid] = pe.Node(interface=Merge(numSessions),
+                                      run_without_submitting=True,
+                                      name=mergeSubjectSessionNamesPD)
+        mergeSubjectSessionNamesFL = "99_MergeAllSessions_FL_" + str(subjectid)
+        MergeFLs[subjectid] = pe.Node(interface=Merge(numSessions),
+                                      run_without_submitting=True,
+                                      name=mergeSubjectSessionNamesFL)
+        mergeSubjectSessionNamesoutputLabels = "99_MergeAllSessions_outputLabels_" + str(subjectid)
+        MergeOutputLabels[subjectid] = pe.Node(interface=Merge(numSessions),
+                                               run_without_submitting=True,
+                                               name=mergeSubjectSessionNamesoutputLabels)
+        mergeSubjectSessionNamesPosteriors = "99_MergeAllSessions_Posteriors_" + str(subjectid)
+        MergePosteriors[subjectid] = pe.Node(interface=Merge(numSessions),
+                                             run_without_submitting=True,
+                                             name=mergeSubjectSessionNamesPosteriors)
+        mergeSubjectSessionNamesFSLong = "99_MergeAllSessions_FSLong_" + str(subjectid)
+        # print("HACK: HACK: HACK:  {0}".format(allSessions))
+
+    # Connect the PHASE 1 results with the Merge nodes
+    index = 1
+    for sessionid in allSessions:
+        index_name = 'in' + str(index)
+        index += 1
+        if SKIP_PHASE1:  # Connect DataGrabber -> Merge
+            from PipeLineFunctionHelpers import WrapPosteriorImagesFromDictionaryFunction
+            baw200.connect(PHASE_1_DataGrabber[sessionid], 't1_average', MergeT1s[subjectid], index_name)
+            baw200.connect(PHASE_1_DataGrabber[sessionid], 't2_average', MergeT2s[subjectid], index_name)
+            baw200.connect(PHASE_1_DataGrabber[sessionid], 'pd_average', MergePDs[subjectid], index_name)
+            baw200.connect(PHASE_1_DataGrabber[sessionid], 'fl_average', MergeFLs[subjectid], index_name)
+            baw200.connect(PHASE_1_DataGrabber[sessionid], 'outputLabels', MergeOutputLabels[subjectid], index_name)
+            baw200.connect([(PHASE_1_DataGrabber[sessionid], MergePosteriors[subjectid],
+                             [(('posteriorImages', WrapPosteriorImagesFromDictionaryFunction), index_name)])])
+        else:  # Connect PHASE1 pipeline -> Merge
+            baw200.connect(PHASE_1_oneSubjWorkflow[sessionid], 'outputspec.t1_average', MergeT1s[subjectid], index_name)
+            baw200.connect(PHASE_1_oneSubjWorkflow[sessionid], 'outputspec.t2_average', MergeT2s[subjectid], index_name)
+            baw200.connect(PHASE_1_oneSubjWorkflow[sessionid], 'outputspec.pd_average', MergePDs[subjectid], index_name)
+            baw200.connect(PHASE_1_oneSubjWorkflow[sessionid], 'outputspec.fl_average', MergeFLs[subjectid], index_name)
+            baw200.connect(PHASE_1_oneSubjWorkflow[sessionid], 'outputspec.outputLabels', MergeOutputLabels[subjectid], index_name)
+            baw200.connect(PHASE_1_oneSubjWorkflow[sessionid], 'outputspec.posteriorImages', MergePosteriors[subjectid], index_name)
+
     if False:  # HACK: BASELINE 'PreviousBaseDirectoryResults' in kwds.keys() and 'SKIP_ATLAS' in WORKFLOW_COMPONENTS:
         from WorkupT1T2AtlasNode import atlas_file_names
         print "Running new experiment based on Atlas from {0}".format(kwds[ 'PreviousBaseDirectoryResults' ])
@@ -802,6 +787,7 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
         baw200.connect(PHASE_2_oneSubjWorkflow[sessionid], 'outputspec.LMIatlasToSubjectTransform', BASIC_DataSink[sessionid], 'ACPCAlign.@LMIatlasToSubjectTransform')
         # baw200.connect(PHASE_2_oneSubjWorkflow[sessionid],'outputspec.TissueClassifyatlasToSubjectTransform',BASIC_DataSink[sessionid],'ACPCAlign.@TissueClassifyatlasToSubjectTransform')
 
+        from PipeLineFunctionHelpers import UnwrapPosteriorImagesFromDictionaryFunction
         currentFixWMPartitioningName = 'FixWMPartitioning_' + str(subjectid) + "_" + str(sessionid)
         FixWMPartitioningNode[sessionid] = pe.Node(interface=Function(function=FixWMPartitioning,
                                                                       input_names=['brainMask', 'PosteriorsList'],

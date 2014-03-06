@@ -86,6 +86,18 @@ def UnwrapPosteriorImagesFromDictionaryFunction(postDict):
     return postDict.values()
 
 
+def WrapPosteriorImagesFromDictionaryFunction(postList):
+    from os.path import basename
+    retval = {}
+    start = len('POSTERIOR_')
+    end = len('.nii.gz')
+    for fname in postList:
+        key = basename(fname)[start:-end]
+        value = fname
+        retval[key] = value
+    return retval
+
+
 def GetOnePosteriorImageFromDictionaryFunction(postDict, key):
     return postDict[key]
 

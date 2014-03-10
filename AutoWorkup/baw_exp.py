@@ -52,7 +52,7 @@ source ~/.bash_profile
 echo "STARTED at: $(date +'%F-%T')"
 echo "Ran on: $(hostname)"
 export PATH={BINPATH}
-export PYTHONPATH=${PYPATH}
+export PYTHONPATH={PYPATH}
 
 echo "========= CUSTOM ENVIRONMENT SETTINGS =========="
 echo "export PATH=${{PATH}}"
@@ -423,6 +423,9 @@ def MasterProcessingController(argv=None):
     elif input_arguments.wfrun == 'local_12':
         os.environ['NSLOTS'] = "{0}".format(total_CPUS / 12)
     elif input_arguments.wfrun == 'local':
+        # HACK
+        CLUSTER_QUEUE, CLUSTER_QUEUE_LONG, QSTAT_IMMEDIATE_EXE, QSTAT_CACHED_EXE, MODULES = get_cluster_settings(expConfig)
+        # END HACK
         os.environ['NSLOTS'] = "{0}".format(total_CPUS / 1)
     elif input_arguments.wfrun == 'ds_runner':
         os.environ['NSLOTS'] = "{0}".format(total_CPUS / 1)
@@ -441,6 +444,7 @@ def MasterProcessingController(argv=None):
 
     ## Create the shell wrapper script for ensuring that all jobs running on remote hosts from SGE
     #  have the same environment as the job submission host.
+
     JOB_SCRIPT = get_global_sge_script(sys.path, os.environ['PATH'], CUSTOM_ENVIRONMENT, MODULES)
     print JOB_SCRIPT
 

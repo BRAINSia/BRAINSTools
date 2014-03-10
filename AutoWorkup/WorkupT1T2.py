@@ -364,8 +364,16 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
     BRAINSCreateLabelMapFromProbabilityMapsNode = dict()
     SKIP_PHASE1 = False
     SKIP_ATLAS_GEN = False
-
-    BAtlas[subjectid] = MakeAtlasNode(atlas_fname_wpath, "BAtlas_" + str(subjectid))  # Call function to create node
+    if 'SKIP_ATLAS' in WORKFLOW_COMPONENTS:
+        print "="*30, " TEMP_HACK ", "="*30
+        print "SKIPPIN ATLAS GENERATION..."
+        SKIP_ATLAS_GEN = True
+        # HACK_TEMP - if dataGrabber for Atlas hasn't been run for previous experiment, this needs to point to the CACHE dir
+        old_atlas_fname_wpath = os.path.join(kwds['PreviousBaseDirectoryResults'].replace('_Results', '_CACHE'), 'Atlas')
+        # END HACK
+        BAtlas[subjectid] = MakeAtlasNode(old_atlas_fname_wpath, "BAtlas_" + str(subjectid))  # Call function to create node
+    else:
+        BAtlas[subjectid] = MakeAtlasNode(atlas_fname_wpath, "BAtlas_" + str(subjectid))  # Call function to create node
 
     ### Define where the final organized outputs should go.
     SubjectTemplate_DataSink = pe.Node(nio.DataSink(), name="SubjectTemplate_DS")
@@ -399,10 +407,8 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
         PreviousExperimentDirectoryResults = kwds[ 'PreviousBaseDirectoryResults' ]
         SKIP_PHASE1 = True
         PHASE_1_DataGrabber = dict()
-        index = 1
         for sessionid in allSessions:
-            index_name = 'in' + str(index)
-            index += 1
+            index_name = 'in_' + str(sessionid)
             PHASE_1_DataGrabber[sessionid] = pe.Node(nio.DataGrabber(infields=['projectid', 'subjectid', 'sessionid'],
                                                                      outfields=['t1_average',
                                                                                 't2_average',
@@ -545,7 +551,10 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
             baw200.connect(PHASE_1_oneSubjWorkflow[sessionid], 'outputspec.outputLabels', MergeOutputLabels[subjectid], index_name)
             baw200.connect(PHASE_1_oneSubjWorkflow[sessionid], 'outputspec.posteriorImages', MergePosteriors[subjectid], index_name)
 
-    if False:  # HACK: BASELINE 'PreviousBaseDirectoryResults' in kwds.keys() and 'SKIP_ATLAS' in WORKFLOW_COMPONENTS:
+    # TEMP_HACK
+    SKIP_ATLAS_GEN = True
+    if False: # TEMP_HACK = 'PreviousBaseDirectoryResults' in kwds.keys() and 'SKIP_ATLAS' in WORKFLOW_COMPONENTS:
+        # END HACK
         from WorkupT1T2AtlasNode import atlas_file_names
         print "Running new experiment based on Atlas from {0}".format(kwds[ 'PreviousBaseDirectoryResults' ])
         SKIP_ATLAS_GEN = True
@@ -603,7 +612,6 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
         if numSessions == 1:
             TEMPLATE_BUILD_RUN_MODE = 'SINGLE_IMAGE'
 
-
         ### USE ANTS REGISTRATION
         # from nipype.workflows.smri.ants import antsRegistrationTemplateBuildSingleIterationWF
         from BAWantsRegistrationBuildTemplate import BAWantsRegistrationTemplateBuildSingleIterationWF
@@ -656,12 +664,11 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
         baw200.connect(buildTemplateIteration2, 'outputspec.passive_deformed_templates', MakeNewAtlasTemplateNode, 'deformed_list')
         baw200.connect(MakeNewAtlasTemplateNode, 'clean_deformed_list', SubjectTemplate_DataSink, 'ANTSTemplate.@passive_deformed_templates')
 
-    if False:  #HACK: BASELINE
         # Create DataSink for Atlas generation
         Atlas_DataSink = pe.Node(nio.DataSink(), name="Atlas_DS")
         Atlas_DataSink.overwrite = GLOBAL_DATA_SINK_REWRITE
         Atlas_DataSink.inputs.base_directory = ExperimentBaseDirectoryResults
-        Atlas_DataSink.inputs.subjectid = subjectid
+        Atlas_DataSink.inputs.container = '{0}'.format(subjectid)
         baw200.connect(buildTemplateIteration1, 'outputspec.template', Atlas_DataSink, 'Atlas.iteration1')
         baw200.connect(buildTemplateIteration2, 'outputspec.template', Atlas_DataSink, 'Atlas.iteration2')   # Already done in ANTStemplate/
         baw200.connect(MakeNewAtlasTemplateNode, 'outAtlasFullPath', Atlas_DataSink, 'Atlas.definitions')
@@ -689,7 +696,7 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
     STAPLE[subjectid].inputs.outputMultiSTAPLE = 'outputMultiStaple.nii.gz'
     STAPLE[subjectid].inputs.outputConfusionMatrix = 'outputConfusionMatrix.mat'
 
-    if SKIP_ATLAS_GEN:
+    if False: # TEMP_HACK = SKIP_ATLAS_GEN:
         print "Skipping Atlas generation..."
         Atlas_DataGrabber.inputs.subjectid = subjectid
         baw200.connect(Atlas_DataGrabber, 'iteration2', STAPLE[subjectid], 'inputCompositeT1Volume')
@@ -756,7 +763,7 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
         baw200.connect(PHASE_2_subjInfoNode[sessionid], 'allPDs', PHASE_2_oneSubjWorkflow[sessionid], 'inputspec.allPDs')
         baw200.connect(PHASE_2_subjInfoNode[sessionid], 'allFLs', PHASE_2_oneSubjWorkflow[sessionid], 'inputspec.allFLs')
         baw200.connect(PHASE_2_subjInfoNode[sessionid], 'allOthers', PHASE_2_oneSubjWorkflow[sessionid], 'inputspec.allOthers')
-        if SKIP_ATLAS_GEN:
+        if False: # TEMPHACK SKIP_ATLAS_GEN:
             baw200.connect(Atlas_DataGrabber, 'template_landmarks_50Lmks_fcsv', PHASE_2_oneSubjWorkflow[sessionid], 'inputspec.atlasLandmarkFilename')
             baw200.connect(Atlas_DataGrabber, 'template_weights_50Lmks_wts', PHASE_2_oneSubjWorkflow[sessionid], 'inputspec.atlasWeightFilename')
             baw200.connect(Atlas_DataGrabber, 'LLSModel_50Lmks_hdf5', PHASE_2_oneSubjWorkflow[sessionid], 'inputspec.LLSModel')

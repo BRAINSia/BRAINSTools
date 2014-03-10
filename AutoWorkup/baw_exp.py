@@ -19,8 +19,17 @@ import multiprocessing
 import time
 ##############################################################################
 
+def get_cluster_settings(expConfig):
+    CLUSTER_QUEUE = expConfig.get('CLUSTER', 'CLUSTER_QUEUE')
+    CLUSTER_QUEUE_LONG = expConfig.get('CLUSTER', 'CLUSTER_QUEUE_LONG')
+    QSTAT_IMMEDIATE_EXE = expConfig.get('CLUSTER', 'QSTAT_IMMEDIATE_EXE')
+    QSTAT_CACHED_EXE = expConfig.get('CLUSTER', 'QSTAT_CACHED_EXE')
+    MODULES_STRING = expConfig.get('CLUSTER', 'MODULES')
+    MODULES = eval(MODULES_STRING)
+    return CLUSTER_QUEUE, CLUSTER_QUEUE_LONG, QSTAT_IMMEDIATE_EXE, QSTAT_CACHED_EXE, MODULES
 
-def get_global_sge_script(pythonPathsList, binPathsList, customEnvironment={}):
+
+def get_global_sge_script(pythonPathsList, binPathsList, customEnvironment={}, modules=[]):
     """This is a wrapper script for running commands on an SGE cluster
 so that all the python modules and commands are pathed properly"""
 
@@ -29,25 +38,33 @@ so that all the python modules and commands are pathed properly"""
         custEnvString += "export " + key + "=" + value + "\n"
 
     PYTHONPATH = ":".join(pythonPathsList)
-    BASE_BUILDS = ":".join(binPathsList)
+    BASE_BUILDS = binPathsList  #":".join(binPathsList)
+    LOAD_MODULES = []
+    if len(modules) > 0:
+        for module in modules:
+            LOAD_MODULES.append("module load {0}".format(module))
+    assert len(modules) == len(LOAD_MODULES)
+    modules_string = '\n'.join(LOAD_MODULES)
     GLOBAL_SGE_SCRIPT = """#!/bin/bash
 source ~/.bash_profile
+{MODULES_STRING}
 
 echo "STARTED at: $(date +'%F-%T')"
 echo "Ran on: $(hostname)"
 export PATH={BINPATH}
-export PYTHONPATH={PYTHONPATH}
+export PYTHONPATH=${PYPATH}
 
-echo "========= CUSTOM ENVIORNMENT SETTINGS =========="
-echo "export PYTHONPATH={PYTHONPATH}"
-echo "export PATH={BINPATH}"
+echo "========= CUSTOM ENVIRONMENT SETTINGS =========="
+echo "export PATH=${{PATH}}"
+echo ""
+echo "export PYTHONPATH=${{PYTHONPATH}}"
 echo "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
 
 echo "With custom environment:"
 echo {CUSTENV}
 {CUSTENV}
 ## NOTE:  nipype inserts the actual commands that need running below this section.
-""".format(PYTHONPATH=PYTHONPATH, BINPATH=BASE_BUILDS, CUSTENV=custEnvString)
+""".format(PYPATH=PYTHONPATH, BINPATH=BASE_BUILDS, CUSTENV=custEnvString, MODULES_STRING=modules_string)
     return GLOBAL_SGE_SCRIPT
 
 # From http://stackoverflow.com/questions/1597649/replace-strings-in-files-by-python
@@ -284,8 +301,6 @@ def MasterProcessingController(argv=None):
         PreviousExperimentName = expConfig.get('EXPERIMENT_DATA', 'PREVIOUSEXPERIMENTNAME')
     else:
          PreviousExperimentName = None
-    WORKFLOW_COMPONENTS_STRING = expConfig.get('EXPERIMENT_DATA', 'WORKFLOW_COMPONENTS')
-    WORKFLOW_COMPONENTS = eval(WORKFLOW_COMPONENTS_STRING)
 
     # Platform specific information
     #     Prepend the python search paths
@@ -293,7 +308,21 @@ def MasterProcessingController(argv=None):
     PYTHON_AUX_PATHS = PYTHON_AUX_PATHS.split(':')
     PYTHON_AUX_PATHS.extend(sys.path)
     sys.path = PYTHON_AUX_PATHS
+    #####################################################################################
+    #     Prepend the shell environment search paths
+    PROGRAM_PATHS = expConfig.get(input_arguments.processingEnvironment, 'PROGRAM_PATHS')
+    PROGRAM_PATHS = PROGRAM_PATHS.split(':')
+    PROGRAM_PATHS.extend(os.environ['PATH'].split(':'))
+    PROGRAM_PATHS = [os.path.dirname(__file__)] + PROGRAM_PATHS
+    print "Adding directory {0} to PATH...".format(os.path.dirname(__file__))
+    os.environ['PATH'] = ':'.join(PROGRAM_PATHS)
     ######################################################################################
+    # Get virtualenv source file
+    if expConfig.has_option(input_arguments.processingEnvironment, 'VIRTUALENV'):
+        print "Loading virtualenv..."
+        VIRTUALENV = expConfig.get(input_arguments.processingEnvironment, 'VIRTUALENV')
+        activate_this = os.path.join(VIRTUALENV, 'bin', 'activate_this.py')
+        execfile(activate_this, dict(__file__=activate_this))
     ###### Now ensure that all the required packages can be read in from this custom path
     #\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
     # print sys.path
@@ -331,14 +360,6 @@ def MasterProcessingController(argv=None):
         sys.exit(-1)
 
     #\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
-    #####################################################################################
-    #     Prepend the shell environment search paths
-    PROGRAM_PATHS = expConfig.get(input_arguments.processingEnvironment, 'PROGRAM_PATHS')
-    PROGRAM_PATHS = PROGRAM_PATHS.split(':')
-    PROGRAM_PATHS.extend(os.environ['PATH'].split(':'))
-    PROGRAM_PATHS = [os.path.dirname(__file__)] + PROGRAM_PATHS
-    print "Adding directory {0} to PATH...".format(os.path.dirname(__file__))
-    os.environ['PATH'] = ':'.join(PROGRAM_PATHS)
     #    Define platform specific output write paths
     mountPrefix = expConfig.get(input_arguments.processingEnvironment, 'MOUNTPREFIX')
     BASEOUTPUTDIR = expConfig.get(input_arguments.processingEnvironment, 'BASEOUTPUTDIR')
@@ -383,23 +404,20 @@ def MasterProcessingController(argv=None):
     # print os.environ
     # sys.exit(-1)
 
+    WORKFLOW_COMPONENTS_STRING = expConfig.get('EXPERIMENT_DATA', 'WORKFLOW_COMPONENTS')
+    WORKFLOW_COMPONENTS = eval(WORKFLOW_COMPONENTS_STRING)
+
     ## If freesurfer is requested, then ensure that a sane environment is available
     if 'FREESURFER' in WORKFLOW_COMPONENTS:
         print "FREESURFER NEEDS TO CHECK FOR SANE ENVIRONMENT HERE."
 
-    CLUSTER_QUEUE = expConfig.get(input_arguments.processingEnvironment, 'CLUSTER_QUEUE')
-    CLUSTER_QUEUE_LONG = expConfig.get(input_arguments.processingEnvironment, 'CLUSTER_QUEUE_LONG')
-    QSTAT_IMMEDIATE_EXE = expConfig.get(input_arguments.processingEnvironment, 'QSTAT_IMMEDIATE_EXE')
-    QSTAT_CACHED_EXE = expConfig.get(input_arguments.processingEnvironment, 'QSTAT_CACHED_EXE')
-
     ## Setup environment for CPU load balancing of ITK based programs.
     total_CPUS = multiprocessing.cpu_count()
-    if input_arguments.wfrun == 'helium_all.q':
-        pass
-    elif input_arguments.wfrun == 'helium_all.q_graph':
-        pass
-    elif input_arguments.wfrun == 'ipl_OSX':
-        pass
+    if input_arguments.wfrun == 'helium_all.q' or \
+      input_arguments.wfrun == 'helium_all.q_graph' or \
+      input_arguments.wfrun == 'ipl_OSX':
+        assert expConfig.getboolean(input_arguments.processingEnvironment, 'CLUSTER'), "CLUSTER section not set to true!"
+        CLUSTER_QUEUE, CLUSTER_QUEUE_LONG, QSTAT_IMMEDIATE_EXE, QSTAT_CACHED_EXE, MODULES = get_cluster_settings(expConfig)
     elif input_arguments.wfrun == 'local_4':
         os.environ['NSLOTS'] = "{0}".format(total_CPUS / 4)
     elif input_arguments.wfrun == 'local_12':
@@ -423,7 +441,7 @@ def MasterProcessingController(argv=None):
 
     ## Create the shell wrapper script for ensuring that all jobs running on remote hosts from SGE
     #  have the same environment as the job submission host.
-    JOB_SCRIPT = get_global_sge_script(sys.path, PROGRAM_PATHS, CUSTOM_ENVIRONMENT)
+    JOB_SCRIPT = get_global_sge_script(sys.path, os.environ['PATH'], CUSTOM_ENVIRONMENT, MODULES)
     print JOB_SCRIPT
 
     # Randomly shuffle to_do_subjects to get max

@@ -1,4 +1,3 @@
-#!/Shared/sinapse/sharedopt/20130601/RHEL5/Anaconda/bin/python
 #!/usr/bin/env python
 #
 # TODO
@@ -6,12 +5,40 @@
 # :: connect input/output in the BAW
 
 import sys
-print sys.argv
-print sys.version
-print sys.executable
+
+print "^" * 100
+print "PYTHON EXEC: ", sys.executable
+print "VERSION: ", sys.version
+print "ARGV: [\n"
+print sys.argv[0]
+for __argv in sys.argv[1:]:
+    if __argv.startswith('-'):
+        print "    ", __argv, "=",
+    else:
+        print __argv
+print "]"
+del __argv
+print "^" * 100
+
+if True:
+    import os
+    print "PATH: ["
+    __PATH = os.environ['PATH']
+    for p in __PATH.split(':'):
+        print p, ","
+    print ']'
+    print "PYTHONPATH: ["
+    __PPATH = os.environ['PYTHONPATH']
+    for p in __PPATH.split(':'):
+        print p, ","
+    print ']'
+    del __PATH, __PPATH
+    print "^" * 100
+    sys.exit(-1)
 
 import argparse
 import subprocess
+
 
 
 def addProbabilityMapElement(probabilityMap, maskName, outputStream):

@@ -363,11 +363,16 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
     FixWMPartitioningNode = dict()
     BRAINSCreateLabelMapFromProbabilityMapsNode = dict()
     SKIP_PHASE1 = False
-    SKIP_ATLAS_GEN = False
+    SKIP_ATLAS = False
+    if 'SKIP_PHASE1'in WORKFLOW_COMPONENTS:
+        SKIP_PHASE1 = True
+        assert 'PreviousBaseDirectoryResults' in kwds.keys(), "Error: PREVIOUSEXPERIMENTNAME must be defined in configuration file!"
+
     if 'SKIP_ATLAS' in WORKFLOW_COMPONENTS:
         print "="*30, " TEMP_HACK ", "="*30
         print "SKIPPIN ATLAS GENERATION..."
-        SKIP_ATLAS_GEN = True
+        SKIP_ATLAS = True
+        assert 'PreviousBaseDirectoryResults' in kwds.keys(), "Error: PREVIOUSEXPERIMENTNAME must be defined in configuration file!"
         # HACK_TEMP - if dataGrabber for Atlas hasn't been run for previous experiment, this needs to point to the CACHE dir
         old_atlas_fname_wpath = os.path.join(kwds['PreviousBaseDirectoryResults'].replace('_Results', '_CACHE'), 'Atlas')
         # END HACK
@@ -551,13 +556,9 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
             baw200.connect(PHASE_1_oneSubjWorkflow[sessionid], 'outputspec.outputLabels', MergeOutputLabels[subjectid], index_name)
             baw200.connect(PHASE_1_oneSubjWorkflow[sessionid], 'outputspec.posteriorImages', MergePosteriors[subjectid], index_name)
 
-    # TEMP_HACK
-    SKIP_ATLAS_GEN = True
-    if False: # TEMP_HACK = 'PreviousBaseDirectoryResults' in kwds.keys() and 'SKIP_ATLAS' in WORKFLOW_COMPONENTS:
-        # END HACK
+    if SKIP_ATLAS:
         from WorkupT1T2AtlasNode import atlas_file_names
         print "Running new experiment based on Atlas from {0}".format(kwds[ 'PreviousBaseDirectoryResults' ])
-        SKIP_ATLAS_GEN = True
         # Create a list of the cleaned segmentations, but only look for T2's if there are any for the subject
         clean_deform_fnames = ['air', 'basal', 'brainmask', 'crblgm', 'crblwm', 'csf', 'globus', 'hippocampus', 'notcsf',
                                'notgm', 'notvb', 'notwm', 'surfgm', 'T1', 'thalamus', 'vb', 'wm']
@@ -696,7 +697,7 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
     STAPLE[subjectid].inputs.outputMultiSTAPLE = 'outputMultiStaple.nii.gz'
     STAPLE[subjectid].inputs.outputConfusionMatrix = 'outputConfusionMatrix.mat'
 
-    if False: # TEMP_HACK = SKIP_ATLAS_GEN:
+    if SKIP_ATLAS:
         print "Skipping Atlas generation..."
         Atlas_DataGrabber.inputs.subjectid = subjectid
         baw200.connect(Atlas_DataGrabber, 'iteration2', STAPLE[subjectid], 'inputCompositeT1Volume')
@@ -763,7 +764,8 @@ def WorkupT1T2(subjectid, mountPrefix, ExperimentBaseDirectoryCache, ExperimentB
         baw200.connect(PHASE_2_subjInfoNode[sessionid], 'allPDs', PHASE_2_oneSubjWorkflow[sessionid], 'inputspec.allPDs')
         baw200.connect(PHASE_2_subjInfoNode[sessionid], 'allFLs', PHASE_2_oneSubjWorkflow[sessionid], 'inputspec.allFLs')
         baw200.connect(PHASE_2_subjInfoNode[sessionid], 'allOthers', PHASE_2_oneSubjWorkflow[sessionid], 'inputspec.allOthers')
-        if False: # TEMPHACK SKIP_ATLAS_GEN:
+
+        if SKIP_ATLAS:
             baw200.connect(Atlas_DataGrabber, 'template_landmarks_50Lmks_fcsv', PHASE_2_oneSubjWorkflow[sessionid], 'inputspec.atlasLandmarkFilename')
             baw200.connect(Atlas_DataGrabber, 'template_weights_50Lmks_wts', PHASE_2_oneSubjWorkflow[sessionid], 'inputspec.atlasWeightFilename')
             baw200.connect(Atlas_DataGrabber, 'LLSModel_50Lmks_hdf5', PHASE_2_oneSubjWorkflow[sessionid], 'inputspec.LLSModel')

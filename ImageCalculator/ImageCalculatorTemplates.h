@@ -16,7 +16,132 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-typename FilterType::Pointer filter = FilterType::New();
+#if !defined(__ImageCalculatorTemplates_h____)
+#define __ImageCalculatorTemplates_h____
+
+#define ITK_CONCEPT_NO_CHECKING
+#include "itkImageFileReader.h"
+#include "itkImageFileWriter.h"
+#include "itkImage.h"
+#include "Imgmath.h"
+#include "itkAbsImageFilter.h"
+#include "itkStatisticsImageFilter.h"
+#include "itkCastImageFilter.h"
+#include "itkOrientImageFilter.h"
+#include "itkSpatialOrientation.h"
+#include "itkMetaDataObject.h"
+#include "itkLabelStatisticsImageFilter.h"
+#include <itkSmartPointer.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <sstream>
+#include <vcl_cmath.h>
+#include "ImageCalculatorUtils.h"
+#include <metaCommand.h>
+
+#define FunctorClassDeclare(name, op)                    \
+  template <class PixelType> \
+  class name                 \
+  {                                                     \
+public:                                               \
+    name(const PixelType &p) : m_Val(p) {};               \
+    name() {};                                         \
+    ~name() {};                                         \
+    PixelType operator()(const PixelType & a) const      \
+    {                                                   \
+      return static_cast<PixelType>(a op m_Val);        \
+    }                                                   \
+    bool operator ==(const name & other ) const         \
+    { return this == &other; }                          \
+    bool operator !=(const name & other ) const         \
+    { return !(*this == other); }                       \
+protected:                                            \
+private:                                              \
+    name(const name & ) {};                                \
+    PixelType         m_Val;                                    \
+  };
+
+#define FunctorClassDeclare2(name, op)                   \
+  template <class PixelType> \
+  class name                 \
+  {                                                     \
+public:                                               \
+    name(const PixelType &p) : m_Val(p) {};               \
+    name() {};                                         \
+    ~name() {};                                         \
+    PixelType operator()(const PixelType & a) const      \
+    {                                                   \
+      return static_cast<PixelType>(op);                \
+    }                                                   \
+    bool operator ==(const name & other ) const         \
+    { return this == &other; }                          \
+    bool operator !=(const name & other ) const         \
+    { return !(*this == other); }                       \
+protected:                                            \
+private:                                              \
+    name(const name & ) {};                                \
+    PixelType         m_Val;                                    \
+  };
+
+namespace Functor
+{
+FunctorClassDeclare(mult, *);
+FunctorClassDeclare(divide, /);
+FunctorClassDeclare(add, +);
+FunctorClassDeclare(subtract, -);
+FunctorClassDeclare2(square, a * a);
+FunctorClassDeclare2(binarydecimate, a > 0 ? 255 : 0);
+FunctorClassDeclare2(squareroot, sqrt( (double)a) );
+}
+
+#define FunctorProcess(op, constvalue)                           \
+    {                                                             \
+    Functor::op<PixelType> op##functor(constvalue);             \
+    typedef                                                     \
+      itk::UnaryFunctorImageFilter<ImageType, ImageType,        \
+                                   Functor::op<PixelType> > FilterType;                        \
+    typename FilterType::Pointer filter = FilterType::New();    \
+    filter->SetFunctor(op##functor);                            \
+    filter->SetInput(IntermediateImage);                                    \
+    filter->Update();                                           \
+    IntermediateImage = filter->GetOutput();                                 \
+    }
+#define FunctorProcess2(op)                                     \
+    {                                                             \
+    typedef                                                     \
+      itk::UnaryFunctorImageFilter<ImageType,                   \
+                                   ImageType,                                                  \
+                                   Functor::op<PixelType> >                                    \
+      FilterType;                                               \
+    typename FilterType::Pointer filter = FilterType::New();    \
+    filter->SetInput(IntermediateImage);                                    \
+    filter->Update();                                           \
+    IntermediateImage = filter->GetOutput();                                 \
+    }
+
+#include "itkDiscreteGaussianImageFilter.h"
+#include "itkHistogramMatchingImageFilter.h"
+
+static std::stringstream EffectiveInputFilters;
+
+/*This function if called performs arithmetic operation with a constant value
+ * to all the pixels in an input image.*/
+template <class ImageType>
+typename ImageType::Pointer
+DoGaussian( typename ImageType::Pointer input,  const double sigma )
+{
+  typedef itk::Image<float, ImageType::ImageDimension> InternalImageType;
+  // Cast to float
+  typedef itk::CastImageFilter<ImageType, InternalImageType> ToFloatCasterType;
+  typename ToFloatCasterType::Pointer toFloatCaster = ToFloatCasterType::New();
+  toFloatCaster->SetInput(input);
+
+  typedef itk::DiscreteGaussianImageFilter<InternalImageType, InternalImageType> FilterType;
+  /*============Filter the inputVolume using DiscreteGaussianImageFilter
+   *   Include setting the x and y directions of the input images and setting order
+   *     to be zero, and including normalizing Gaussian filter==================*/
+  typename FilterType::Pointer filter = FilterType::New();
   filter->SetVariance( sigma );
   filter->SetMaximumError( 0.01 );
   filter->SetInput(toFloatCaster->GetOutput() );

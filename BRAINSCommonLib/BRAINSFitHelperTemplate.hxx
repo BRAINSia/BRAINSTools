@@ -550,77 +550,6 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::BRAINSFitHelperTemplat
 }
 
 template <class FixedImageType, class MovingImageType>
-template<class TransformType>
-typename TransformType::Pointer
-BRAINSFitHelperTemplate<FixedImageType, MovingImageType>
-::CollapseLinearTransforms(const CompositeTransformType * compositeTransform)
-{
-  // Note that after each stage of registration, output composite transform includes two transforms
-  // of the same type:
-  // 1) Inital transform that is the output of the previous stage, and it is preprocessed in initializing
-  //    step to have the same type as the current stage transform.
-  // 2) Output transform of the current stage.
-  //
-  // To collapse the above transforms to just one, first, each transform should be converted to an affine helper transform.
-  // Then, two affine transforms can be composed using the "compose" function.
-  // Finally, the result composed transform should be converted to the desired output type.
-  //
-  typename AffineTransformType::Pointer affineComposer = AffineTransformType::New();
-
-  // output tranform type
-  std::string transformTypeName = compositeTransform->GetBackTransform()->GetNameOfClass();
-
-  typename TransformType::Pointer totalTransform = TransformType::New();
-
-  for( unsigned int n = 0; n < compositeTransform->GetNumberOfTransforms(); n++ )
-    {
-    const GenericTransformType::Pointer currGenericInput = compositeTransform->GetNthTransform(n);
-    typename MatrixOffsetTransformBaseType::ConstPointer matrixOffsetTransform =
-                                    dynamic_cast<MatrixOffsetTransformBaseType * const>( currGenericInput.GetPointer() );
-    typename AffineTransformType::Pointer affineHelper = AffineTransformType::New();
-    affineHelper->SetMatrix( matrixOffsetTransform->GetMatrix() );
-    affineHelper->SetOffset( matrixOffsetTransform->GetOffset() );
-    affineComposer->Compose( affineHelper, true );
-    }
-
-  if( affineComposer.IsNotNull() )
-    {
-    if ( transformTypeName == "VersorRigid3DTransform" )
-      {
-      typename VersorRigid3DTransformType::Pointer outTransform = VersorRigid3DTransformType::New();
-      AssignRigid::ExtractVersorRigid3DTransform( outTransform, affineComposer.GetPointer() );
-      if ( outTransform.IsNotNull() && ( outTransform->GetNameOfClass() == totalTransform->GetNameOfClass() ) )
-        {
-        totalTransform->SetFixedParameters( outTransform->GetFixedParameters() );
-        totalTransform->SetParameters( outTransform->GetParameters() );
-        }
-      }
-    else
-      {
-      typename AffineTransformType::Pointer outTransform = dynamic_cast<AffineTransformType *>( affineComposer.GetPointer() );
-      if ( outTransform.IsNotNull() && ( outTransform->GetNameOfClass() == totalTransform->GetNameOfClass() ) )
-        {
-        totalTransform->SetFixedParameters( outTransform->GetFixedParameters() );
-        totalTransform->SetParameters( outTransform->GetParameters() );
-        }
-      }
-    if ( totalTransform.IsNull() )
-      {
-      itkGenericExceptionMacro(<<"Failed to collapse linear transforms. Conversion to final transform failed.");
-      }
-    }
-  else
-    {
-    itkGenericExceptionMacro(<<"Failed to collapse linear transforms. Affine composer is Null.");
-    }
-  typename TransformType::MatrixType matrix = totalTransform->GetMatrix();
-  typename TransformType::OffsetType offset = totalTransform->GetOffset();
-  std::cout << std::endl << "Matrix = " << std::endl << matrix << std::endl;
-  std::cout << "Offset = " << offset << std::endl << std::endl;
-  return totalTransform;
-}
-
-template <class FixedImageType, class MovingImageType>
 template <class TransformType, class OptimizerType, class MetricType>
 void
 BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::FitCommonCode(
@@ -670,7 +599,6 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::FitCommonCode(
   appMutualRegistration->Initialize();
 
   typename CompositeTransformType::Pointer finalTransform;
-  //typename TransformType::Pointer finalTransform;
   try
     {
     appMutualRegistration->Update();
@@ -689,47 +617,26 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::FitCommonCode(
     }
 
   // Put the result transform in the CurrentGenericTransform.
-  // This composite transform will be used for initailization of the next step.
+  // This composite transform will be used for initailization of the next stage.
   //
-  // Note1: The "finalTransform" is a composite transform that includes two transforms:
-  //        0) initial transform, 1) result of the current registratin step.
+  // Note1: The "finalTransform" is a composite transform that includes the result of the current registratin stage.
   //
-  // Note2: Since the "finalTransform" already has the initial transform,
-  //        we can clean the queue of the CurrentGenericTransform.
+  // Note2: Since the "finalTransform" has already been affected by the previous initial transform,
+  //        we can remove the old initial transform from the queue of the CurrentGenericTransform.
   //
   this->m_CurrentGenericTransform->ClearTransformQueue();
-  if( finalTransform->IsLinear() )
-    {
-    std::cout << "Collapse linear transforms togheter to have just one linear transform ..." << std::endl;
-    std::string backTransformType = finalTransform->GetBackTransform()->GetNameOfClass();
 
-    // ScaleSkewVersor3DTransform and ScaleVersor3DTransform transforms cannot be updated, so they are not collapsable.
-    // Therefore, we have to write them to the disk as an Affine transform type.
-    // TODO: we should be able to write these transforms as they are.
-    //
-    if( backTransformType == "ScaleSkewVersor3DTransform" || backTransformType == "ScaleVersor3DTransform" )
-      {
-      this->m_CurrentGenericTransform->AddTransform( CollapseLinearTransforms<AffineTransformType>( finalTransform ) );
-      }
-    else
-      {
-      this->m_CurrentGenericTransform->AddTransform( CollapseLinearTransforms<TransformType>( finalTransform ) );
-      }
-    }
-  else // This condition won't happen for current linear transforms.
+  typename CompositeTransformType::Pointer compToAdd;
+  typename CompositeTransformType::ConstPointer compXfrm =
+                            dynamic_cast<const CompositeTransformType *>( finalTransform.GetPointer() );
+  if( compXfrm.IsNotNull() )
     {
-    typename CompositeTransformType::Pointer compToAdd;
-    typename CompositeTransformType::ConstPointer compXfrm =
-                              dynamic_cast<const CompositeTransformType *>( finalTransform.GetPointer() );
-    if( compXfrm.IsNotNull() )
-      {
-      compToAdd = compXfrm->Clone();
-      this->m_CurrentGenericTransform = compToAdd;
-      }
-    else
-      {
-      itkExceptionMacro(<< "The registration output composite transform is a NULL transform.");
-      }
+    compToAdd = compXfrm->Clone();
+    this->m_CurrentGenericTransform = compToAdd;
+    }
+  else
+    {
+    itkExceptionMacro(<< "The registration output composite transform is a NULL transform.");
     }
 }
 

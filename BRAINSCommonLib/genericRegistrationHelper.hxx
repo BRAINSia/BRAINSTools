@@ -36,6 +36,7 @@
 #define __genericRegistrationHelper_hxx
 
 #include "genericRegistrationHelper.h"
+#include "GenericTransformImage.h"
 
 #include "itkVersor.h"
 #include "itkMatrix.h"
@@ -123,12 +124,33 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
 
   if( this->m_CompositeTransform.IsNull() )
     {
-    this->m_CompositeTransform = CompositeTransformType::New();
+    itkExceptionMacro(<< "Input composite transform should include at least one Identity initial transform.");
     }
 
   m_Registration = RegistrationType::New();
 
+  // In BRAINSFit, we aim to optimize the initial transform directly.
+  // Therefore, m_Transform is pointed directly to the internal registration transform;
+  // then, it is initialized by the input initial transform.
+  // In above case, there is no more need to set the "MovingInitalTransform".
+  //
   m_Transform = const_cast<TransformType *>( m_Registration->GetOutput()->Get() );
+
+  if( this->m_CompositeTransform->GetNumberOfTransforms() == 1 )
+    {
+    const GenericTransformType::ConstPointer genericInit = this->m_CompositeTransform->GetFrontTransform();
+    const typename TransformType::ConstPointer tempInitializerITKTransform =
+                                      dynamic_cast<TransformType const *>( genericInit.GetPointer() );
+    if( tempInitializerITKTransform.IsNull() )
+      {
+      std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
+      }
+    AssignRigid::AssignConvertedTransform(m_Transform, tempInitializerITKTransform);
+    }
+  else
+    {
+    itkExceptionMacro(<< "We should have just one initial transform in the input composite transform.");
+    }
 
   //================================= SET SCALES AND OPTIMIZERS =============================================
   GenericOptimizerType::Pointer optimizer;
@@ -308,36 +330,9 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
                 static_cast<typename RegistrationType::MetricSamplingStrategyType>( m_SamplingStrategy ));
   m_Registration->SetMetricSamplingPercentage(this->m_SamplingPercentage);
 
-  if( this->m_CompositeTransform->GetNumberOfTransforms() > 0 )
-    {
-    std::cout << "--------------Set Initial Transform----------------" << std::endl;
-    m_Registration->SetMovingInitialTransform( this->m_CompositeTransform );
-    this->m_CompositeTransform->Print(std::cout);
-
-    if ( true ) // add DebugLevel here.
-      {
-      std::cout << "Write the initial transform right before registration starts..." << std::endl;
-      itk::TransformFileWriter::Pointer dwriter1 = itk::TransformFileWriter::New();
-      dwriter1->SetInput( this->m_CompositeTransform->GetNthTransform(0) );
-      dwriter1->SetFileName("DEBUGInitialTransform_BF.mat");
-      dwriter1->Update();
-      try
-        {
-        dwriter1->Update();
-        }
-      catch( itk::ExceptionObject & err )
-        {
-        std::cerr << "Exception Object caught: " << std::endl;
-        std::cerr << err << std::endl;
-        throw;
-        }
-      }
-    }
-
   // Create the Command observer and register it with the optimizer.
   // TODO:  make this output optional.
   //
-
   if( this->m_ObserveIterations == true )
     {
     typedef BRAINSFit::CommandIterationUpdate<TOptimizer, TTransformType, TMovingImage>
@@ -414,16 +409,16 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
     std::cout << "Stop condition from optimizer." << optimizer->GetStopConditionDescription() << std::endl;
     m_FinalMetricValue = optimizer->GetValue();
     m_ActualNumberOfIterations = optimizer->GetCurrentIteration();
-
-    //m_Transform->SetFixedParameters( m_Registration->GetOutput()->Get()->GetFixedParameters() );
-    //m_Transform->SetParameters( m_Registration->GetOutput()->Get()->GetParameters() );
-      {
+    {
       this->m_InternalTransformTime = this->m_Transform->GetMTime();
-      }
+    }
 
-  this->m_CompositeTransform->AddTransform( this->m_Transform ); // The registration output transform is added to the
-                                                                 // initial transform, and the result composite transform
-                                                                 // is returned as the final transform of this class.
+  // The initial transform has already affected the registration result,
+  // so it should be removed from the output transform queue here.
+  // Now, the final composite transform should only include the registration results.
+  this->m_CompositeTransform->ClearTransformQueue();
+  this->m_CompositeTransform->AddTransform( this->m_Transform );
+
   if ( true ) // add DebugLevel here.
     {
     std::cout << "Write the output transform of the registration filter ..." << std::endl;

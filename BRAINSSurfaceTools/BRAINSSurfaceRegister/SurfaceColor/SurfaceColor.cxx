@@ -88,7 +88,11 @@ int main( int argc, char * argv[] )
   rasOrientation->SetMatrix( orientationMatrix );
 
   vtkSmartPointer<vtkTransformPolyDataFilter> resampleSurface = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
+#if (VTK_MAJOR_VERSION < 6)
   resampleSurface->SetInput( surfacereader->GetOutput() );
+#else
+  resampleSurface->SetInputData( surfacereader->GetOutput() );
+#endif
   resampleSurface->SetTransform( rasOrientation );
   resampleSurface->Update();
 
@@ -244,12 +248,20 @@ int main( int argc, char * argv[] )
 
   // Put the surface back into its original orientation
   vtkSmartPointer<vtkTransformPolyDataFilter> revertedSurface = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
+#if (VTK_MAJOR_VERSION < 6)
   revertedSurface->SetInput( surface );
+#else
+  revertedSurface->SetInputData( surface );
+#endif
   revertedSurface->SetTransform( rasOrientation->GetInverse() );
   revertedSurface->Update();
 
   vtkSmartPointer<vtkPolyDataWriter> writer = vtkSmartPointer<vtkPolyDataWriter>::New();
+#if (VTK_MAJOR_VERSION < 6)
   writer->SetInput(revertedSurface->GetOutput() );
+#else
+  writer->SetInputData(revertedSurface->GetOutput() );
+#endif
   writer->SetFileName(outputSurfaceFile.c_str() );
   writer->SetFileTypeToASCII();
   writer->Update();

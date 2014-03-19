@@ -129,7 +129,11 @@ int main( int argc, char * *argv )
 
     vtkSmartPointer<vtkImageChangeInformation> ici =
       vtkSmartPointer<vtkImageChangeInformation>::New();
+#if (VTK_MAJOR_VERSION < 6)
     ici->SetInput(reader->GetOutput() );
+#else
+    ici->SetInputData(reader->GetOutput() );
+#endif
     ici->SetOutputSpacing( 1, 1, 1 );
     ici->SetOutputOrigin( 0, 0, 0 );
     ici->Update();
@@ -140,7 +144,11 @@ int main( int argc, char * *argv )
 
     vtkSmartPointer<vtkImageMarchingCubes> marchingcubes =
       vtkSmartPointer<vtkImageMarchingCubes>::New();
+#if (VTK_MAJOR_VERSION < 6)
     marchingcubes->SetInput(ici->GetOutput() );
+#else
+    marchingcubes->SetInputData(ici->GetOutput() );
+#endif
     marchingcubes->SetValue(0, surfaceValue);
     marchingcubes->ComputeScalarsOff();
     marchingcubes->ComputeNormalsOff();
@@ -150,19 +158,31 @@ int main( int argc, char * *argv )
     // largest connected region
     vtkSmartPointer<vtkPolyDataConnectivityFilter> largest =
       vtkSmartPointer<vtkPolyDataConnectivityFilter>::New();
+#if (VTK_MAJOR_VERSION < 6)
     largest->SetInput(marchingcubes->GetOutput() );
+#else
+    largest->SetInputData(marchingcubes->GetOutput() );
+#endif
     largest->SetExtractionModeToLargestRegion();
     largest->Update();
 
     vtkSmartPointer<vtkCleanPolyData> clean = vtkSmartPointer<vtkCleanPolyData>::New();
+#if (VTK_MAJOR_VERSION < 6)
     clean->SetInput(largest->GetOutput() );
+#else
+    clean->SetInputData(largest->GetOutput() );
+#endif
     clean->ConvertPolysToLinesOff();
     clean->ConvertLinesToPointsOff();
     clean->Update();
 
     vtkSmartPointer<vtkTransformPolyDataFilter> transformer =
       vtkSmartPointer<vtkTransformPolyDataFilter>::New();
+#if (VTK_MAJOR_VERSION < 6)
     transformer->SetInput(clean->GetOutput() );
+#else
+    transformer->SetInputData(clean->GetOutput() );
+#endif
     transformer->SetTransform(transformIJKtoRAS);
     transformer->Update();
 
@@ -187,7 +207,11 @@ int main( int argc, char * *argv )
     int iNumberOfCells =  surface->GetNumberOfCells();
 
     vtkExtractEdges *extractEdges = vtkExtractEdges::New();
+#if (VTK_MAJOR_VERSION < 6)
     extractEdges->SetInput( surface );
+#else
+    extractEdges->SetInputData( surface );
+#endif
     extractEdges->Update();
 
     int iNumberOfEdges = extractEdges->GetOutput()->GetNumberOfLines();

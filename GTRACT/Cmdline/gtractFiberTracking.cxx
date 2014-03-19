@@ -308,7 +308,11 @@ int main(int argc, char *argv[])
 
     vtkTransformPolyDataFilter *transformGuideFiber = vtkTransformPolyDataFilter::New();
     transformGuideFiber->SetTransform(rasToijkTransform);
+#if (VTK_MAJOR_VERSION < 6)
     transformGuideFiber->SetInput( guideFiber );
+#else
+    transformGuideFiber->SetInputData( guideFiber );
+#endif
     transformGuideFiber->Update();
 
     typedef itk::DtiGuidedTrackingFilter<TensorImageType, AnisotropyImageType, MaskImageType> GuideTrackingFilterType;
@@ -423,21 +427,33 @@ int main(int argc, char *argv[])
 
   vtkTransformPolyDataFilter *transformPolyData = vtkTransformPolyDataFilter::New();
   transformPolyData->SetTransform(ijkToRasTransform);
+#if (VTK_MAJOR_VERSION < 6)
   transformPolyData->SetInput( fibers );
+#else
+  transformPolyData->SetInputData( fibers );
+#endif
   transformPolyData->Update();
 
   if( writeXMLPolyDataFile )
     {
     vtkXMLPolyDataWriter *fiberWriter = vtkXMLPolyDataWriter::New();
     fiberWriter->SetFileName( outputTract.c_str() );
+#if (VTK_MAJOR_VERSION < 6)
     fiberWriter->SetInput( transformPolyData->GetOutput() );
+#else
+    fiberWriter->SetInputData( transformPolyData->GetOutput() );
+#endif
     fiberWriter->Update();
     }
   else
     {
     vtkPolyDataWriter *fiberWriter = vtkPolyDataWriter::New();
     fiberWriter->SetFileName( outputTract.c_str() );
+#if (VTK_MAJOR_VERSION < 6)
     fiberWriter->SetInput( transformPolyData->GetOutput() );
+#else
+    fiberWriter->SetInputData( transformPolyData->GetOutput() );
+#endif
     fiberWriter->Update();
     }
   return EXIT_SUCCESS;

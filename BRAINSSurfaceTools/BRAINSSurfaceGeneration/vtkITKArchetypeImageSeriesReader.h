@@ -45,7 +45,9 @@ Version:   $Revision$
 #ifndef __vtkITKArchetypeImageSeriesReader_h
 #define __vtkITKArchetypeImageSeriesReader_h
 
-#include "vtkImageSource.h"
+#include "vtkImageAlgorithm.h"
+typedef vtkImageAlgorithm ReaderSuperclass;
+
 #include "vtkMatrix4x4.h"
 #include "itkSpatialOrientation.h"
 #include <vector>
@@ -61,12 +63,12 @@ Version:   $Revision$
 
 #include "vtkITK.h"
 
-class VTK_ITK_EXPORT vtkITKArchetypeImageSeriesReader : public vtkImageSource
+class VTK_ITK_EXPORT vtkITKArchetypeImageSeriesReader : public ReaderSuperclass
 {
 public:
   static vtkITKArchetypeImageSeriesReader * New();
 
-  vtkTypeRevisionMacro(vtkITKArchetypeImageSeriesReader, vtkImageSource);
+  vtkTypeRevisionMacro(vtkITKArchetypeImageSeriesReader, ReaderSuperclass);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   typedef itk::SpatialOrientation::ValidCoordinateOrientationFlags CoordinateOrientationCode;

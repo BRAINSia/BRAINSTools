@@ -31,7 +31,7 @@
 ==========================================================================*/
 
 #include "vtkITKArchetypeImageSeriesScalarReader.h"
-
+#include "vtkDataArray.h"
 #include "vtkImageData.h"
 #include "vtkObjectFactory.h"
 #include "vtkPointData.h"
@@ -75,9 +75,20 @@ void vtkITKArchetypeImageSeriesScalarReader::ExecuteData(vtkDataObject *output)
 // removed UpdateInformation: generates an error message
 //   from VTK and doesn't appear to be needed...
 // data->UpdateInformation();
+#if (VTK_MAJOR_VERSION < 6)
   data->SetExtent(0, 0, 0, 0, 0, 0);
   data->AllocateScalars();
   data->SetExtent(data->GetWholeExtent() );
+#else
+  {
+  int *extent = data->GetExtent();
+  data->SetExtent(0, 0, 0, 0, 0, 0);
+  vtkInformation *info = data->GetInformation();
+  data->AllocateScalars(vtkImageData::GetScalarType(info),
+                        vtkImageData::GetNumberOfScalarComponents(info));
+  data->SetExtent(extent);
+  }
+#endif
 
   /// SCALAR MACRO
 #define vtkITKExecuteDataFromSeries(typeN, type) \

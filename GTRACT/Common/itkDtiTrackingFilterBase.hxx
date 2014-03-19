@@ -253,8 +253,13 @@ DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType>
   data->GetPointData()->SetTensors(fiberTensors);
 
   vtkAppendPolyData *append = vtkAppendPolyData::New();
+#if (VTK_MAJOR_VERSION < 6)
   append->AddInput( this->m_Output );
   append->AddInput( data );
+#else
+  append->AddInputData( this->m_Output );
+  append->AddInputData( data );
+#endif
   append->Update();
   // need to erase the old m_Output
   //  vtkPolyData *former = this->m_Output;

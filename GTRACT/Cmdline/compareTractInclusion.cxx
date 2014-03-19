@@ -185,7 +185,11 @@ int main(int argc, char * argv[])
     }
 
   vtkSplineFilter *testSpline = vtkSplineFilter::New();
+#if (VTK_MAJOR_VERSION < 6)
   testSpline->SetInput( testFiberTract );
+#else
+  testSpline->SetInputData( testFiberTract );
+#endif
   testSpline->SetSubdivideToSpecified();
   testSpline->SetNumberOfSubdivisions( numberOfPoints );
   testSpline->Update();
@@ -193,7 +197,11 @@ int main(int argc, char * argv[])
   vtkPolyData *resampledTestFibers = testSpline->GetOutput();
 
   vtkSplineFilter *standardSpline = vtkSplineFilter::New();
+#if (VTK_MAJOR_VERSION < 6)
   standardSpline->SetInput( standardFiberTract );
+#else
+  standardSpline->SetInputData( standardFiberTract );
+#endif
   standardSpline->SetSubdivideToSpecified();
   standardSpline->SetNumberOfSubdivisions( numberOfPoints );
   standardSpline->Update();

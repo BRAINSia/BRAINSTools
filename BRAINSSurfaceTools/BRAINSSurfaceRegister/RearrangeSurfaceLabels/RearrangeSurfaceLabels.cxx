@@ -142,7 +142,11 @@ int main( int argc, char * argv[] )
   // write out the surface
   vtkSmartPointer<vtkPolyDataWriter> writer = vtkSmartPointer<vtkPolyDataWriter>::New();
 
+#if (VTK_MAJOR_VERSION < 6)
   writer->SetInput(surface_in);
+#else
+  writer->SetInputData(surface_in);
+#endif
   writer->SetFileName(outputSurfaceFile.c_str() );
   writer->Update();
   delete [] frequency;

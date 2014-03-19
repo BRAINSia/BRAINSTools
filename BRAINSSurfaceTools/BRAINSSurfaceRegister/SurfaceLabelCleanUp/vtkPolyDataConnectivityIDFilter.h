@@ -62,6 +62,11 @@
 #define __vtkPolyDataConnectivityIDFilter_h
 
 #include "vtkPolyDataAlgorithm.h"
+#include "vtkVersionMacros.h"
+
+#if (VTK_MAJOR_VERSION >= 6)
+#define VTK_GRAPHICS_EXPORT /* */
+#endif
 
 #define VTK_EXTRACT_POINT_SEEDED_REGIONS 1
 #define VTK_EXTRACT_CELL_SEEDED_REGIONS 2

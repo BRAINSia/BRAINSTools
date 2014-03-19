@@ -516,13 +516,25 @@ int main(int argc, char *argv[])
 
   // set up the actor
   vtkImageActor *actor1 = vtkImageActor::New();
+#if (VTK_MAJOR_VERSION < 6)
   actor1->SetInput( color1->GetOutput() );
+#else
+  actor1->SetInputData( color1->GetOutput() );
+#endif
 
   vtkImageActor *actor2 = vtkImageActor::New();
+#if (VTK_MAJOR_VERSION < 6)
   actor2->SetInput( color2->GetOutput() );
+#else
+  actor2->SetInputData( color2->GetOutput() );
+#endif
 
   vtkImageActor *actor3 = vtkImageActor::New();
+#if (VTK_MAJOR_VERSION < 6)
   actor3->SetInput( color3->GetOutput() );
+#else
+  actor3->SetInputData( color3->GetOutput() );
+#endif
 
   // set up the renderer
   vtkRenderer *renderer1 = vtkRenderer::New();

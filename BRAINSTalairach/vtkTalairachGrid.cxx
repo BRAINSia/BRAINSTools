@@ -669,7 +669,11 @@ void vtkTalairachGrid::WriteTalairachGrid(std::string filename)
   vtkStructuredGridWriter *gridWriter = vtkStructuredGridWriter::New();
 
   gridWriter->SetFileName( filename.c_str() );
+#if (VTK_MAJOR_VERSION < 6)
   gridWriter->SetInput(talairachGrid);
+#else
+  gridWriter->SetInputData(talairachGrid);
+#endif
   gridWriter->Write();
 }
 
@@ -678,7 +682,11 @@ void vtkTalairachGrid::WriteBoundingBoxGrid(std::string filename)
   vtkStructuredGridWriter *gridWriter = vtkStructuredGridWriter::New();
 
   gridWriter->SetFileName( filename.c_str() );
+#if (VTK_MAJOR_VERSION < 6)
   gridWriter->SetInput(boundingBoxGrid);
+#else
+  gridWriter->SetInputData(boundingBoxGrid);
+#endif
   gridWriter->Write();
 }
 

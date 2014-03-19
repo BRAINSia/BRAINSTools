@@ -246,14 +246,22 @@ int main(int argc, char *argv[])
     {
     vtkXMLPolyDataWriter *fiberWriter = vtkXMLPolyDataWriter::New();
     fiberWriter->SetFileName( outputTract.c_str() );
+#if (VTK_MAJOR_VERSION < 6)
     fiberWriter->SetInput( fibers );
+#else
+    fiberWriter->SetInputData( fibers );
+#endif
     fiberWriter->Update();
     }
   else
     {
     vtkPolyDataWriter *fiberWriter = vtkPolyDataWriter::New();
     fiberWriter->SetFileName( outputTract.c_str() );
+#if (VTK_MAJOR_VERSION < 6)
     fiberWriter->SetInput( fibers );
+#else
+    fiberWriter->SetInputData( fibers );
+#endif
     fiberWriter->Update();
     }
   return EXIT_SUCCESS;

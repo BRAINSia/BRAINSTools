@@ -126,7 +126,11 @@ void QVTKInteractionCallback::Execute(vtkObject *, unsigned long myEvent, void *
 
   // move the center point that we are slicing through
   vtkImageReslice *reslice = m_imageReslice;
+#if (VTK_MAJOR_VERSION < 6)
   reslice->GetOutput()->UpdateInformation();
+#else
+  reslice->UpdateInformation();
+#endif
   vtkMatrix4x4 *matrix = reslice->GetResliceAxes();
   double        zPhysicalLocation; // pyhysical position along normal vector
   double        center[4] = { ( *matrix )[0][3], ( *matrix )[1][3], ( *matrix )[2][3], 1.0 };
@@ -565,7 +569,11 @@ void QVTKInteractionCallback::setValueZLocation(const int zLocation)
   m_valueReceiveZ = zLocation * spacing[ (m_type + 1)  % 3 ];
   */
 
+#if (VTK_MAJOR_VERSION < 6)
   m_imageReslice->GetOutput()->UpdateInformation();
+#else
+  m_imageReslice->UpdateInformation();
+#endif
   vtkMatrix4x4 *matrix = m_imageReslice->GetResliceAxes();
 
   // center mapping due to image direction compensation for the reslice axes
@@ -702,7 +710,11 @@ void QVTKInteractionCallback::setValueXLocation(const double xLocation)
   m_valueReceiveX = xLocation * spacing[1-m_type%2];
   */
 
+#if (VTK_MAJOR_VERSION < 6)
   m_imageReslice->GetOutput()->UpdateInformation();
+#else
+  m_imageReslice->UpdateInformation();
+#endif
   vtkMatrix4x4 *matrix = m_imageReslice->GetResliceAxes();
 
   // center mapping due to image direction compensation for the reslice axes
@@ -835,7 +847,11 @@ void QVTKInteractionCallback::setValueYLocation(const double yLocation)
   m_valueReceiveY = yLocation * spacing[ m_type / 2 + 1 ];
   */
 
+#if (VTK_MAJOR_VERSION < 6)
   m_imageReslice->GetOutput()->UpdateInformation();
+#else
+  m_imageReslice->UpdateInformation();
+#endif
   vtkMatrix4x4 *matrix = m_imageReslice->GetResliceAxes();
 
   // center mapping due to image direction compensation for the reslice axes
@@ -944,7 +960,11 @@ void QVTKInteractionCallback::setValueYLocation(const double yLocation)
 
 void QVTKInteractionCallback::receiveLabelPos(double *pos)
 {
+#if (VTK_MAJOR_VERSION < 6)
   m_imageReslice->GetOutput()->UpdateInformation();
+#else
+  m_imageReslice->UpdateInformation();
+#endif
   vtkMatrix4x4 *matrix = m_imageReslice->GetResliceAxes();
 
   // center mapping due to image direction compensation for the reslice axes

@@ -187,12 +187,20 @@ int main( int argc, char * *argv )
     {
     // generate a convex hull
     vtkSmartPointer<vtkDelaunay3D> del = vtkSmartPointer<vtkDelaunay3D>::New();
+#if (VTK_MAJOR_VERSION < 6)
     del->SetInput( surface );
+#else
+    del->SetInputData( surface );
+#endif
 
     vtkUnstructuredGrid *CurrentMesh = del->GetOutput();
 
     vtkSmartPointer<vtkGeometryFilter> extractSurface = vtkSmartPointer<vtkGeometryFilter>::New();
+#if (VTK_MAJOR_VERSION < 6)
     extractSurface->SetInput( CurrentMesh );
+#else
+    extractSurface->SetInputData( CurrentMesh );
+#endif
     extractSurface->Update();
 
     vtkSmartPointer<vtkPolyData> hull = extractSurface->GetOutput();
@@ -278,7 +286,11 @@ int main( int argc, char * *argv )
   if( curvature )
     {
     vtkSmartPointer<vtkCurvatures> curve = vtkSmartPointer<vtkCurvatures>::New();
+#if (VTK_MAJOR_VERSION < 6)
     curve->SetInput(surface);
+#else
+    curve->SetInputData(surface);
+#endif
     curve->SetCurvatureTypeToMean();
     if( curvatureType == "Gauss" )
       {
@@ -310,7 +322,11 @@ int main( int argc, char * *argv )
 
   // write the output surface
   vtkSmartPointer<vtkPolyDataWriter> surfaceWriter = vtkSmartPointer<vtkPolyDataWriter>::New();
+#if (VTK_MAJOR_VERSION < 6)
   surfaceWriter->SetInput( surface );
+#else
+  surfaceWriter->SetInputData( surface );
+#endif
   surfaceWriter->SetFileName( outputSurfaceFile.c_str() );
   surfaceWriter->Update();
 

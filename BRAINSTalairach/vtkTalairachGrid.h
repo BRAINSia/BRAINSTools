@@ -37,6 +37,12 @@
 #include "vtkStructuredGrid.h"
 #include <vector>
 
+#include "vtkVersionMacros.h"
+
+#if (VTK_MAJOR_VERSION >= 6)
+#define VTK_FILTERING_EXPORT /* */
+#endif
+
 class VTK_FILTERING_EXPORT vtkTalairachGrid : public vtkStructuredGrid
 {
 public:

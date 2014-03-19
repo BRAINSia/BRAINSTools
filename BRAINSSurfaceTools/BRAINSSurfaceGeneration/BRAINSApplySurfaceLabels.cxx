@@ -141,7 +141,11 @@ int main( int argc, char * *argv )
   rasOrientation->SetMatrix( orientationMatrix );
 
   vtkTransformPolyDataFilter *resampleSurface = vtkTransformPolyDataFilter::New();
+#if (VTK_MAJOR_VERSION < 6)
   resampleSurface->SetInput( surface );
+#else
+  resampleSurface->SetInputData( surface );
+#endif
   resampleSurface->SetTransform( rasOrientation );
   resampleSurface->Update();
 
@@ -222,7 +226,11 @@ int main( int argc, char * *argv )
   // Put the surface back into its original orientation
 
   vtkTransformPolyDataFilter *revertedSurface = vtkTransformPolyDataFilter::New();
+#if (VTK_MAJOR_VERSION < 6)
   revertedSurface->SetInput( resampleSurface->GetOutput() );
+#else
+  revertedSurface->SetInputData( resampleSurface->GetOutput() );
+#endif
   revertedSurface->SetTransform( rasOrientation->GetInverse() );
   revertedSurface->Update();
 
@@ -234,7 +242,11 @@ int main( int argc, char * *argv )
   if( extension == ".vtk" )
     {
     vtkPolyDataWriter *surfaceWriter = vtkPolyDataWriter::New();
+#if (VTK_MAJOR_VERSION < 6)
     surfaceWriter->SetInput( surface );
+#else
+    surfaceWriter->SetInputData( surface );
+#endif
     surfaceWriter->SetFileName( outputSurface.c_str() );
     surfaceWriter->Update();
     surfaceWriter->Delete();
@@ -242,7 +254,11 @@ int main( int argc, char * *argv )
   else
     {
     vtkXMLPolyDataWriter *surfaceWriter = vtkXMLPolyDataWriter::New();
+#if (VTK_MAJOR_VERSION < 6)
     surfaceWriter->SetInput( surface );
+#else
+    surfaceWriter->SetInputData( surface );
+#endif
     surfaceWriter->SetFileName( outputSurface.c_str() );
     surfaceWriter->SetDataModeToAscii();
     surfaceWriter->Update();

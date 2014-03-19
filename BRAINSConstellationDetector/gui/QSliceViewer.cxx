@@ -254,7 +254,11 @@ void QSliceViewer::GenSphere()
 
   // map to graphics library
   vtkPolyDataMapper2D *map = vtkPolyDataMapper2D::New();
+#if (VTK_MAJOR_VERSION < 6)
   map->SetInput( sphere->GetOutput() );
+#else
+  map->SetInputData( sphere->GetOutput() );
+#endif
 
   // actor coordinates geometry, properties, transformation
   vtkActor2D *actor = vtkActor2D::New();
@@ -293,9 +297,17 @@ void QSliceViewer::Highlight()
 
     // map to graphics library
     vtkPolyDataMapper2D *map1 = vtkPolyDataMapper2D::New();
+#if (VTK_MAJOR_VERSION < 6)
     map1->SetInput( sphere1->GetOutput() );
+#else
+    map1->SetInputData( sphere1->GetOutput() );
+#endif
     vtkPolyDataMapper2D *map2 = vtkPolyDataMapper2D::New();
+#if (VTK_MAJOR_VERSION < 6)
     map2->SetInput( sphere2->GetOutput() );
+#else
+    map2->SetInputData( sphere2->GetOutput() );
+#endif
 
     m_actors->InitTraversal();
     vtkActor2D *actor = m_actors->GetNextActor2D();

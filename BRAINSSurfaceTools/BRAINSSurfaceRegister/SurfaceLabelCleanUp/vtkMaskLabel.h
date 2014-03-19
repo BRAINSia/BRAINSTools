@@ -52,6 +52,12 @@
 #define __vtkMaskLabel_h
 
 #include "vtkPolyDataAlgorithm.h"
+#include "vtkVersionMacros.h"
+
+#if (VTK_MAJOR_VERSION >= 6)
+#define VTK_GRAPHICS_EXPORT /* */
+#endif
+
 
 class VTK_GRAPHICS_EXPORT vtkMaskLabel : public vtkPolyDataAlgorithm
 {

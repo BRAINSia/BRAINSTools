@@ -214,7 +214,11 @@ int main( int argc, char * argv[] )
     }
   // write outSurface
   vtkSmartPointer<vtkPolyDataWriter> writer = vtkSmartPointer<vtkPolyDataWriter>::New();
+#if (VTK_MAJOR_VERSION < 6)
   writer->SetInput(templateMesh);
+#else
+  writer->SetInputData(templateMesh);
+#endif
   writer->SetFileName(outputMeshFile.c_str() );
   writer->Update();
 

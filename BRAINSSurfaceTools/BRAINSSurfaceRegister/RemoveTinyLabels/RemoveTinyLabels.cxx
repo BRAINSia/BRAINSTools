@@ -111,14 +111,22 @@ int main( int argc, char * argv[] )
     // std::cout<<"remove label: "<<label<<std::endl;
 
     // analyze each label in the list
+#if (VTK_MAJOR_VERSION < 6)
     mask->SetInput(reader->GetOutput() );
+#else
+    mask->SetInputData(reader->GetOutput() );
+#endif
     mask->SetLabel(label);
     mask->Update();
 
     // replace the labels on mask->output if it is not null
     if( mask->GetOutput()->GetNumberOfCells() )
       {
+#if (VTK_MAJOR_VERSION < 6)
       connect->SetInput(mask->GetOutput() );
+#else
+      connect->SetInputData(mask->GetOutput() );
+#endif
       connect->SetExtractionModeToAllRegions();
       connect->Update();
 
@@ -188,7 +196,11 @@ int main( int argc, char * argv[] )
       }
     }
 
+#if (VTK_MAJOR_VERSION < 6)
   writer->SetInput(surface_in);
+#else
+  writer->SetInputData(surface_in);
+#endif
   writer->SetFileName(outputSurfaceFile.c_str() );
   writer->Update();
 

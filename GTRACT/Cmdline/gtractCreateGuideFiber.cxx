@@ -95,7 +95,11 @@ int main(int argc, char *argv[])
     }
 
   vtkSplineFilter *spline = vtkSplineFilter::New();
+#if (VTK_MAJOR_VERSION < 6)
   spline->SetInput( fiberTract );
+#else
+  spline->SetInputData( fiberTract );
+#endif
   spline->SetSubdivideToSpecified();
   spline->SetNumberOfSubdivisions( numberOfPoints );
   spline->Update();
@@ -139,14 +143,22 @@ int main(int argc, char *argv[])
     {
     vtkXMLPolyDataWriter *tractWriter = vtkXMLPolyDataWriter::New();
     tractWriter->SetFileName( outputFiber.c_str() );
+#if (VTK_MAJOR_VERSION < 6)
     tractWriter->SetInput( guideFiber );
+#else
+    tractWriter->SetInputData( guideFiber );
+#endif
     tractWriter->Update();
     }
   else
     {
     vtkPolyDataWriter *tractWriter = vtkPolyDataWriter::New();
     tractWriter->SetFileName( outputFiber.c_str() );
+#if (VTK_MAJOR_VERSION < 6)
     tractWriter->SetInput( guideFiber );
+#else
+    tractWriter->SetInputData( guideFiber );
+#endif
     tractWriter->Update();
     }
   return EXIT_SUCCESS;

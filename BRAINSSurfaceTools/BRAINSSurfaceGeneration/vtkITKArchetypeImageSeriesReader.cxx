@@ -30,7 +30,7 @@
 
 ==========================================================================*/
 #include "vtkITKArchetypeImageSeriesReader.h"
-
+#include "vtkVersionMacros.h"
 #include "vtkImageData.h"
 #include "vtkObjectFactory.h"
 #include "vtkMath.h"
@@ -96,6 +96,7 @@ vtkStandardNewMacro(vtkITKArchetypeImageSeriesReader);
 // ----------------------------------------------------------------------------
 vtkITKArchetypeImageSeriesReader::vtkITKArchetypeImageSeriesReader()
 {
+  this->SetNumberOfInputPorts(0);
   this->Archetype  = NULL;
   this->IndexArchetype = 0;
   this->SingleFile = 1;
@@ -691,8 +692,11 @@ void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
       RasToIjkMatrix->SetElement(j, j, 1.0 / spacing[j]);
       }
     }
-
+#if (VTK_MAJOR_VERSION < 6)
   output->SetWholeExtent(extent);
+#else
+  output->SetExtent(extent);
+#endif
   if( this->UseNativeScalarType )
     {
     if( imageIO.GetPointer() == NULL )
@@ -750,8 +754,14 @@ void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
     this->SetNumberOfComponents(imageIO->GetNumberOfComponents() );
     }
 
+#if (VTK_MAJOR_VERSION < 6)
   output->SetScalarType(this->OutputScalarType);
   output->SetNumberOfScalarComponents(this->GetNumberOfComponents() );
+#else
+  vtkImageData::SetScalarType(this->OutputScalarType,output->GetInformation());
+  vtkImageData::SetNumberOfScalarComponents(this->GetNumberOfComponents(),output->GetInformation());
+#endif
+
 
   // Copy the MetaDataDictionary from the ITK layer to the VTK layer
   if( imageIO.GetPointer() != NULL )

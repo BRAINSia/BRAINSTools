@@ -85,7 +85,11 @@ int main( int argc, char * argv[] )
 
   // write output Surface
   vtkSmartPointer<vtkPolyDataWriter> writer = vtkSmartPointer<vtkPolyDataWriter>::New();
+#if (VTK_MAJOR_VERSION < 6)
   writer->SetInput(inputSurface);
+#else
+  writer->SetInputData(inputSurface);
+#endif
   writer->SetFileName(outputSurfaceFile.c_str() );
   writer->Update();
 

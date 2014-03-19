@@ -198,14 +198,22 @@ int main(int argc, char *argv[])
     if( extension == ".vtk" )
       {
       vtkStructuredGridWriter *writer = vtkStructuredGridWriter::New();
+#if (VTK_MAJOR_VERSION < 6)
       writer->SetInput( talairach );
+#else
+      writer->SetInputData( talairach );
+#endif
       writer->SetFileName( outputGrid.c_str() );
       writer->Update();
       }
     else
       {
       vtkXMLStructuredGridWriter *writer = vtkXMLStructuredGridWriter::New();
+#if (VTK_MAJOR_VERSION < 6)
       writer->SetInput( talairach );
+#else
+      writer->SetInputData( talairach );
+#endif
       writer->SetFileName( outputGrid.c_str() );
       writer->Update();
       }
@@ -221,14 +229,22 @@ int main(int argc, char *argv[])
     if( extension == ".vtk" )
       {
       vtkStructuredGridWriter *writer = vtkStructuredGridWriter::New();
+#if (VTK_MAJOR_VERSION < 6)
       writer->SetInput( talairach );
+#else
+      writer->SetInputData( talairach );
+#endif
       writer->SetFileName( outputBox.c_str() );
       writer->Update();
       }
     else
       {
       vtkXMLStructuredGridWriter *writer = vtkXMLStructuredGridWriter::New();
+#if (VTK_MAJOR_VERSION < 6)
       writer->SetInput( talairach );
+#else
+      writer->SetInputData( talairach );
+#endif
       writer->SetFileName( outputBox.c_str() );
       writer->Update();
       }

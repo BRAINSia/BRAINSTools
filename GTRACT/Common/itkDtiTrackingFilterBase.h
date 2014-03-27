@@ -36,7 +36,7 @@
 
 #ifndef __itkDtiTrackingFilterBase_h
 #define __itkDtiTrackingFilterBase_h
-
+#include <vtkVersionMacros.h>
 #include <vtkPoints.h>
 #include <vtkFloatArray.h>
 #include <vtkPointData.h>
@@ -79,11 +79,6 @@
 #include <map>
 #include <string>
 
-// ///////////// VTK Version Compatibility   //////////////////////////////
-#ifndef vtkFloatingPointType
-#define vtkFloatingPointType vtkFloatingPointType
-typedef float vtkFloatingPointType;
-#endif
 // ////////////////////////////////////////////////////////////////////////
 
 /*
@@ -161,8 +156,8 @@ public:
   typedef std::list<BranchPointType>     BranchListType;
   typedef std::list<TVector>             DirectionListType;
 
-  typedef itk::PointSet<vtkFloatingPointType, 3> PointSetType;
-  typedef vtkPolyData *                          DtiFiberType;
+  typedef itk::PointSet<double, 3>       PointSetType;
+  typedef vtkPolyData *                  DtiFiberType;
 
   /** ImageDimension constants * /
   itkStaticConstMacro(InputImageDimension, unsigned int,
@@ -222,7 +217,7 @@ protected:
 
   void MMToContinuousIndex(PointType & p, ContinuousIndexType & index);
 
-  void MMToContinuousIndex(vtkFloatingPointType *p, ContinuousIndexType & index);
+  void MMToContinuousIndex(double *p, ContinuousIndexType & index);
 
   void StepIndexInPointSpace(ContinuousIndexType & newIndex, ContinuousIndexType & oldIndex, TVector & vec);
 

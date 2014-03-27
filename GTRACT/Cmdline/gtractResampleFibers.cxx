@@ -45,6 +45,7 @@
 #include <vtkXMLPolyDataWriter.h>
 #include <vtkXMLPolyDataReader.h>
 #include <vtkAppendPolyData.h>
+#include <vtkVersionMacros.h>
 
 #include <itkOrientImageFilter.h>
 #include "itkDiffusionTensor3DReconstructionImageFilter.h"
@@ -72,11 +73,6 @@
 #include "algo.h"
 #include "GtractTypes.h"
 
-// ///////////// VTK Version Compatibility   //////////////////////////////
-#ifndef vtkFloatingPointType
-#define vtkFloatingPointType vtkFloatingPointType
-typedef float vtkFloatingPointType;
-#endif
 // ////////////////////////////////////////////////////////////////////////
 
 #include "gtractResampleFibersCLP.h"
@@ -238,7 +234,7 @@ int main( int argc, char *argv[] )
   vnlMatrixType J;
   for( int i = 0; i < inputFiber->GetNumberOfPoints(); i++ )
     {
-    vtkFloatingPointType fiberPoint[3];
+    double fiberPoint[3];
     fiberPoints->GetPoint(i, fiberPoint);
 
     /* Map Point */

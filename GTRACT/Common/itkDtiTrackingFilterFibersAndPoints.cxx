@@ -97,7 +97,7 @@ PointSetType::Pointer PolyDataToPointSet(vtkPolyData *fiber)
 {
   const int               npts = fiber->GetNumberOfPoints();
   PointSetType::Pointer   pSet = PointSetType::New();
-  vtkFloatingPointType    p[3];
+  double p[3];
   PointSetType::PointType point;
 
   for( int i = 0; i < npts; ++i )

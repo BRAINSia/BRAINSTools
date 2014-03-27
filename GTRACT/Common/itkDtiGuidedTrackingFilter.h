@@ -57,11 +57,6 @@
 
 // #include "vtkPoints.h"
 
-// ///////////// VTK Version Compatibility   //////////////////////////////
-#ifndef vtkFloatingPointType
-#define vtkFloatingPointType vtkFloatingPointType
-typedef float vtkFloatingPointType;
-#endif
 // ////////////////////////////////////////////////////////////////////////
 
 namespace itk

@@ -40,6 +40,7 @@
 #include "vtkAppendPolyData.h"
 #include "vtkCellArray.h"
 #include "vtkFloatArray.h"
+#include "vtkVersionMacros.h"
 
 #include "itkImageRegionIterator.h"
 #include "itkImageRegionConstIterator.h"
@@ -52,6 +53,7 @@
 
 #include "itkDtiTrackingFilterBase.h"
 // #include "algo.h"
+
 
 #include <iostream>
 
@@ -96,7 +98,7 @@ DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType>
 template <class TTensorImageType, class TAnisotropyImageType, class TMaskImageType>
 void
 DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType>
-::MMToContinuousIndex(vtkFloatingPointType *pt, typename Self::ContinuousIndexType & index)
+::MMToContinuousIndex(double *pt, typename Self::ContinuousIndexType & index)
 {
   PointType p; p[0] = pt[0]; p[1] = pt[1]; p[2] = pt[2];
 
@@ -165,7 +167,7 @@ bool
 DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType>
 ::IsLoop(vtkPoints *fiber, double tolerance)
 {
-  vtkFloatingPointType p1[3], p2[3];
+  double p1[3], p2[3];
 
   const double tol2 = tolerance * tolerance;
   const int    numPts = fiber->GetNumberOfPoints();

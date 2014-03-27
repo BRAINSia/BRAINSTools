@@ -51,13 +51,10 @@
 // #include <vtkXMLImageDataWriter.h>
 #include <vtkAppendPolyData.h>
 #include <vtkSplineFilter.h>
+#include "vtkVersionMacros.h"
 #include "vnl/vnl_math.h"
 
-// ///////////// VTK Version Compatibility   //////////////////////////////
-#ifndef vtkFloatingPointType
-#define vtkFloatingPointType vtkFloatingPointType
-typedef float vtkFloatingPointType;
-#endif
+
 // ////////////////////////////////////////////////////////////////////////
 
 #include "compareTractInclusionCLP.h"
@@ -85,10 +82,10 @@ double PairOffFibers(vtkPolyData *resampledTestFibers, vtkPolyData *resampledSta
           double sumDist = 0.0;
           for( int i = 0; i < numberOfPoints; i++ )
             {
-            vtkFloatingPointType testPoint[3];
+            double testPoint[3];
             resampledTestFibers->GetPoint(testPointList->GetId(i), testPoint);
 
-            vtkFloatingPointType standardPoint[3];
+            double standardPoint[3];
             resampledStandardFibers->GetPoint(standardPointList->GetId(i), standardPoint);
 
             double sumSquares = 0.0;

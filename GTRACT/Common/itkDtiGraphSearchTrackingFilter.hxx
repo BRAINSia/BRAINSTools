@@ -170,7 +170,7 @@ void DtiGraphSearchTrackingFilter<
   // Get the Center Of Mass for the Ending Region
   // ///////////////////////////////////////////////////////////////////////
   typename itk::Point<double, 3> midPoint = this->InitializeCenterOfMask();
-  vtkFloatingPointType tmpPoint[3];
+  double tmpPoint[3];
   tmpPoint[0] = midPoint[0];
   tmpPoint[1] = midPoint[1];
   tmpPoint[2] = midPoint[2];
@@ -282,7 +282,7 @@ void DtiGraphSearchTrackingFilter<
           fiber = newfiber;
 
           vout = bp.m_Direction;
-          vtkFloatingPointType *p = fiber->GetPoint(currentPointId - 1);
+          double *p = fiber->GetPoint(currentPointId - 1);
           this->MMToContinuousIndex(p, index);
           }
         else
@@ -507,7 +507,7 @@ void DtiGraphSearchTrackingFilter<
           fiber = newfiber;
 
           vout = bp.m_Direction;
-          vtkFloatingPointType *p
+          double *p
             = fiber->GetPoint(currentPointId - 1);
           typename Self::ContinuousIndexType prevIndex;
           this->MMToContinuousIndex(p, prevIndex);

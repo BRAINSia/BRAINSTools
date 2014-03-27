@@ -51,12 +51,8 @@
 #include <vtkAppendPolyData.h>
 #include <vtkSplineFilter.h>
 #include <BRAINSCommonLib.h>
+#include <vtkVersionMacros.h>
 
-// ///////////// VTK Version Compatibility   //////////////////////////////
-#ifndef vtkFloatingPointType
-#define vtkFloatingPointType vtkFloatingPointType
-typedef float vtkFloatingPointType;
-#endif
 // ////////////////////////////////////////////////////////////////////////
 
 #include "gtractCreateGuideFiberCLP.h"
@@ -109,7 +105,7 @@ int main(int argc, char *argv[])
   vtkPoints *guidePoints = vtkPoints::New();
   for( int i = 0; i < numberOfPoints; i++ )
     {
-    vtkFloatingPointType avgPoint[3];
+    double avgPoint[3];
     avgPoint[0] = 0; avgPoint[1] = 0; avgPoint[2] = 0;
     int N = 0;
     for( int j = 0; j < resampledFibers->GetNumberOfCells(); j++ )
@@ -119,7 +115,7 @@ int main(int argc, char *argv[])
         N++;
         vtkIdList *cellPointList = vtkIdList::New();
         resampledFibers->GetCellPoints(j, cellPointList);
-        vtkFloatingPointType currentPoint[3];
+        double currentPoint[3];
         resampledFibers->GetPoint(cellPointList->GetId(i), currentPoint);
         avgPoint[0] += currentPoint[0]; avgPoint[1] += currentPoint[1]; avgPoint[2] += currentPoint[2];
         }

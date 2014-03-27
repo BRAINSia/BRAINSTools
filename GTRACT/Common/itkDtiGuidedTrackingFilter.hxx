@@ -129,7 +129,7 @@ DtiGuidedTrackingFilter<TTensorImageType, TAnisotropyImageType, TMaskImageType>
     float pathLength = 0.0;
 
     typename Self::PointType p2;
-    vtkFloatingPointType p1[3];
+    double p1[3];
     this->m_GuideFiber->GetPoint(0, p1);
     this->ContinuousIndexToMM( index, p2 );
     typename Self::ContinuousIndexType index1;
@@ -339,7 +339,7 @@ DtiGuidedTrackingFilter<TTensorImageType, TAnisotropyImageType, TMaskImageType>
   // std::cout << "Current Point " << index << std::endl;
   for( int i = 0; i < centerFiber->GetNumberOfPoints(); i++ )
     {
-    vtkFloatingPointType currentPoint[3];
+    double currentPoint[3];
     centerFiber->GetPoint(i, currentPoint);
     p1[0] = currentPoint[0]; p1[1] = currentPoint[1]; p1[2] = currentPoint[2];
     typename Self::ContinuousIndexType index1;

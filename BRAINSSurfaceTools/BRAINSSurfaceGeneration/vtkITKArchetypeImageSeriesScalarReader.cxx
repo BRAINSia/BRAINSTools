@@ -29,7 +29,7 @@
   Version:   $Revision$
 
 ==========================================================================*/
-
+#include "vtkVersionMacros.h"
 #include "vtkITKArchetypeImageSeriesScalarReader.h"
 #include "vtkDataArray.h"
 #include "vtkImageData.h"
@@ -40,7 +40,6 @@
 #include "itkOrientImageFilter.h"
 #include "itkImageSeriesReader.h"
 
-vtkCxxRevisionMacro(vtkITKArchetypeImageSeriesScalarReader, "$Revision$");
 vtkStandardNewMacro(vtkITKArchetypeImageSeriesScalarReader);
 
 // ----------------------------------------------------------------------------

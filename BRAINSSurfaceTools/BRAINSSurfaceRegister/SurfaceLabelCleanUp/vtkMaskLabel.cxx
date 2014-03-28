@@ -39,7 +39,6 @@
 #include "vtkPointData.h"
 #include "vtkPolyData.h"
 
-vtkCxxRevisionMacro(vtkMaskLabel, "$Revision: 0.0 $");
 vtkStandardNewMacro(vtkMaskLabel);
 
 vtkMaskLabel::vtkMaskLabel()

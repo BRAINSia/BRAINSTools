@@ -40,6 +40,7 @@
 #include "vtkPointData.h"
 #include "vtkSmartPointer.h"
 #include "vtkDataArray.h"
+#include "vtkVersionMacros.h"
 
 #include "CombineLabelsCLP.h"
 #include <BRAINSCommonLib.h>

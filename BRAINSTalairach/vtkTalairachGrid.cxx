@@ -39,7 +39,6 @@
 #define PR(x) std::cout << #x " = " << x << "\n"; // a simple print macro for
                                                    // use when debugging
 
-vtkCxxRevisionMacro(vtkTalairachGrid, "$Revision: 1.8 $");
 vtkStandardNewMacro(vtkTalairachGrid);
 
 void vtkTalairachGrid::Initialize()

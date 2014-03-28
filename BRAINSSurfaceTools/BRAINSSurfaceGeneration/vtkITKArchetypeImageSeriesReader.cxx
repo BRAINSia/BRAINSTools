@@ -90,7 +90,6 @@
 #include "itkAnalyzeImageIO.h"
 #endif
 
-vtkCxxRevisionMacro(vtkITKArchetypeImageSeriesReader, "$Revision$");
 vtkStandardNewMacro(vtkITKArchetypeImageSeriesReader);
 
 // ----------------------------------------------------------------------------

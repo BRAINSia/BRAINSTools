@@ -42,6 +42,7 @@
 #include "vtkDenseArray.h"
 #include "vtkIntArray.h"
 #include "vtkFloatArray.h"
+#include "vtkVersionMacros.h"
 
 #include "ProbabilityLabelsCLP.h"
 #include <BRAINSCommonLib.h>

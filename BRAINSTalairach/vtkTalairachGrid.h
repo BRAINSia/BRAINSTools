@@ -48,7 +48,7 @@ class VTK_FILTERING_EXPORT vtkTalairachGrid : public vtkStructuredGrid
 public:
   static vtkTalairachGrid * New();
 
-  vtkTypeRevisionMacro(vtkTalairachGrid, vtkDataSet);
+  vtkTypeMacro(vtkTalairachGrid, vtkDataSet);
 
   /* Description:
    * Clear out the memory associated with both the box and grid */

@@ -47,7 +47,7 @@
 
 #include <BRAINSCommonLib.h>
 #include "BRAINSAssignSurfaceFeaturesCLP.h"
-
+#include <vtkVersionMacros.h>
 #include <vtkSmartPointer.h>
 #include "vtkMath.h"
 

@@ -63,7 +63,7 @@ class VTK_GRAPHICS_EXPORT vtkMaskLabel : public vtkPolyDataAlgorithm
 public:
   static vtkMaskLabel * New();
 
-  vtkTypeRevisionMacro(vtkMaskLabel, vtkPolyDataAlgorithm);
+  vtkTypeMacro(vtkMaskLabel, vtkPolyDataAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // Description:

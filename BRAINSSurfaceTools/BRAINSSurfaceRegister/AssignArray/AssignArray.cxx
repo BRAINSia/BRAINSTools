@@ -33,7 +33,7 @@
  PURPOSE.  See the above copyright notices for more information.
 
  =========================================================================*/
-#include "vtkVersionMacros.h"
+#include "vtkVersion.h"
 #include "vtkPolyDataReader.h"
 #include "vtkPolyDataWriter.h"
 #include "vtkPolyData.h"

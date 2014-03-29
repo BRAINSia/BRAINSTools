@@ -36,7 +36,7 @@
 
 #include "vtkITKArchetypeImageSeriesReader.h"
 #include "vtkITKArchetypeImageSeriesScalarReader.h"
-#include "vtkVersionMacros.h"
+#include "vtkVersion.h"
 #include "vtkImageChangeInformation.h"
 #include "vtkTransform.h"
 #include <vtkImageData.h>

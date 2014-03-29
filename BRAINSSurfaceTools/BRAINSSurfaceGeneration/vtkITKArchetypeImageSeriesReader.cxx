@@ -30,7 +30,7 @@
 
 ==========================================================================*/
 #include "vtkITKArchetypeImageSeriesReader.h"
-#include "vtkVersionMacros.h"
+#include "vtkVersion.h"
 #include "vtkImageData.h"
 #include "vtkObjectFactory.h"
 #include "vtkMath.h"

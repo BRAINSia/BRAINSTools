@@ -45,7 +45,7 @@
 #include <vtkXMLPolyDataWriter.h>
 #include <vtkXMLPolyDataReader.h>
 #include <vtkAppendPolyData.h>
-#include <vtkVersionMacros.h>
+#include <vtkVersion.h>
 
 #include <itkOrientImageFilter.h>
 #include "itkDiffusionTensor3DReconstructionImageFilter.h"

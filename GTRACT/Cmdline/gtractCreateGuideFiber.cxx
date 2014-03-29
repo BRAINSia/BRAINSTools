@@ -51,7 +51,7 @@
 #include <vtkAppendPolyData.h>
 #include <vtkSplineFilter.h>
 #include <BRAINSCommonLib.h>
-#include <vtkVersionMacros.h>
+#include <vtkVersion.h>
 
 // ////////////////////////////////////////////////////////////////////////
 

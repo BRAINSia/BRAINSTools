@@ -43,7 +43,7 @@
 #include "vtkIdList.h"
 #include "vtkDataArray.h"
 #include "vtkMaskLabel.h"
-#include "vtkVersionMacros.h"
+#include "vtkVersion.h"
 #include "SurfaceLabelCleanUpCLP.h"
 
 int SurfaceConnectivityCells(vtkSmartPointer<vtkPolyData> mesh);

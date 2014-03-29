@@ -42,7 +42,7 @@
 #include "vtkDataArray.h"
 #include "vtkStringArray.h"
 #include "vtkFieldData.h"
-#include "vtkVersionMacros.h"
+#include "vtkVersion.h"
 
 #include <iostream> // I/O
 #include <fstream>  // file I/O

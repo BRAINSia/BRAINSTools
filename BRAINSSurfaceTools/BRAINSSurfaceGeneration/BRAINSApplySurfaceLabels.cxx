@@ -45,7 +45,7 @@
 #include "itkImage.h"
 #include "itkImageFileReader.h"
 #include "itkPoint.h"
-#include "vtkVersionMacros.h"
+#include "vtkVersion.h"
 #include "vtkPolyDataReader.h"
 #include "vtkPolyDataWriter.h"
 #include "vtkXMLPolyDataReader.h"

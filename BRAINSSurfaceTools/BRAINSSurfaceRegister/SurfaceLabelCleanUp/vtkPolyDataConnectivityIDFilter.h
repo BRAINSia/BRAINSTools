@@ -62,7 +62,7 @@
 #define __vtkPolyDataConnectivityIDFilter_h
 
 #include "vtkPolyDataAlgorithm.h"
-#include "vtkVersionMacros.h"
+#include "vtkVersion.h"
 
 #if (VTK_MAJOR_VERSION >= 6)
 #define VTK_GRAPHICS_EXPORT /* */

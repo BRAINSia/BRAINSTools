@@ -37,7 +37,7 @@
 #include "vtkStructuredGrid.h"
 #include <vector>
 
-#include "vtkVersionMacros.h"
+#include "vtkVersion.h"
 
 #if (VTK_MAJOR_VERSION >= 6)
 #define VTK_FILTERING_EXPORT /* */

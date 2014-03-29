@@ -51,7 +51,7 @@
 // #include <vtkXMLImageDataWriter.h>
 #include <vtkAppendPolyData.h>
 #include <vtkSplineFilter.h>
-#include "vtkVersionMacros.h"
+#include "vtkVersion.h"
 #include "vnl/vnl_math.h"
 
 

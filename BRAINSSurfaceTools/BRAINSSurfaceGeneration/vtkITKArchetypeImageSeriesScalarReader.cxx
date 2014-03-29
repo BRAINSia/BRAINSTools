@@ -29,7 +29,7 @@
   Version:   $Revision$
 
 ==========================================================================*/
-#include "vtkVersionMacros.h"
+#include "vtkVersion.h"
 #include "vtkITKArchetypeImageSeriesScalarReader.h"
 #include "vtkDataArray.h"
 #include "vtkImageData.h"

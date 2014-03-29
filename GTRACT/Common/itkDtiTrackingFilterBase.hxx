@@ -40,7 +40,7 @@
 #include "vtkAppendPolyData.h"
 #include "vtkCellArray.h"
 #include "vtkFloatArray.h"
-#include "vtkVersionMacros.h"
+#include "vtkVersion.h"
 
 #include "itkImageRegionIterator.h"
 #include "itkImageRegionConstIterator.h"

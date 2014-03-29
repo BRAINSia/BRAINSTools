@@ -42,7 +42,7 @@
 #include "vtkDataArray.h"
 #include "vtkPolyDataConnectivityFilter.h"
 
-#include "vtkVersionMacros.h"
+#include "vtkVersion.h"
 #include "vtkMaskLabel.h"
 #include "RemoveTinyLabelsCLP.h"
 #include <BRAINSCommonLib.h>

@@ -36,7 +36,7 @@
 
 #ifndef __itkDtiTrackingFilterBase_h
 #define __itkDtiTrackingFilterBase_h
-#include <vtkVersionMacros.h>
+#include <vtkVersion.h>
 #include <vtkPoints.h>
 #include <vtkFloatArray.h>
 #include <vtkPointData.h>

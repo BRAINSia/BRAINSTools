@@ -49,8 +49,13 @@ add_library( BRAINSConstellationDetectorGUICOMMONLIB STATIC
   ${BRAINSConstellationDetectorGUI_SRC}
   ${HEADERS_MOC}
   )
+
+if(VTK_USE_QVTK)
+  set(LOCAL_VTK_QVTK_LIB QVTK)
+endif()
   target_link_libraries( BRAINSConstellationDetectorGUICOMMONLIB
  BRAINSCommonLib
+ ${LOCAL_VTK_QVTK_LIB}
   ${QT_LIBRARIES}
  # BRAINSConstellationDetectorCOMMONLIB
  ${VTK_LIBRARIES}

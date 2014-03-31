@@ -21,7 +21,7 @@
  * at Psychiatry Imaging Lab,
  * University of Iowa Health Care 2010
  */
-
+#include "vtkVersionMacros.h"
 #include "QSliceViewer.h"
 
 #include <iostream>

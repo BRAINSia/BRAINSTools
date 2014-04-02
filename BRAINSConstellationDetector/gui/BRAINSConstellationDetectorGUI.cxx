@@ -23,7 +23,7 @@
  */
 
 #include "BRAINSConstellationDetectorGUICLP.h"
-#include "vtkVersionMacros.h"
+#include "vtkVersion.h"
 #include "QVTKInteractionCallback.h"
 #include "QSliceViewer.h"
 #include "QLabelList.h"

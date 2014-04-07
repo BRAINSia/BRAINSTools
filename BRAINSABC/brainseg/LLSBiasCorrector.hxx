@@ -28,7 +28,7 @@
 #include "StandardizeMaskIntensity.h"
 #include "LLSBiasCorrector.h"
 #include "vnl/vnl_math.h"
-
+#include "itkTimeProbe.h"
 #include "ComputeDistributions.h"
 
 #define USE_HALF_RESOLUTION 1

@@ -137,10 +137,8 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
       ${${proj}_FFTWD_ARGS}
     )
   ### --- End Project specific additions
-  #set(${proj}_REPOSITORY ${git_protocol}://itk.org/ITK.git)
-  #set(${proj}_GIT_TAG 9cfd006c13cfec907428bee7b27cbcf5a5005320)
-  set(${proj}_REPOSITORY https://github.com/aghayoor/ITK.git)
-  set(${proj}_GIT_TAG 1f2baeb5f901e871fbc5721db259a2fe2f68ece1)
+  set(${proj}_REPOSITORY ${git_protocol}://itk.org/ITK.git)
+  set(${proj}_GIT_TAG 5638131dd40121c7d306a1a173228dee3e06f189) # March 24, 2014
   set(ITK_VERSION_ID ITK-4.6)
 
   ExternalProject_Add(${proj}

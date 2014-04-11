@@ -1,3 +1,21 @@
+/*=========================================================================
+ *
+ *  Copyright SINAPSE: Scalable Informatics for Neuroscience, Processing and Software Engineering
+ *            The University of Iowa
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0.txt
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ *=========================================================================*/
 #ifndef __EMSegmentationFilter_hxx
 #define __EMSegmentationFilter_hxx
 
@@ -34,7 +52,7 @@
 #include "vnl/vnl_math.h"
 
 #include "itkBRAINSROIAutoImageFilter.h"
-#include "BRAINSFitBSpline.h"
+//#include "BRAINSFitBSpline.h"
 #include "BRAINSFitUtils.h"
 #ifdef USE_ANTS
 #include "BRAINSFitSyN.h"
@@ -1529,7 +1547,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
           minimumStepSize[0] = 0.005; // NOTE: 0.005 for between subject
           // registration is probably about the
           // limit.
-          atlasToSubjectRegistrationHelper->SetMinimumStepLength(minimumStepSize);
+          //atlasToSubjectRegistrationHelper->SetMinimumStepLength(minimumStepSize);
           std::vector<std::string> transformType(1);
           transformType[0] = "Rigid";
           atlasToSubjectRegistrationHelper->SetTransformType(transformType);
@@ -1544,7 +1562,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
             << ") image." << std::endl);
           std::vector<double> minimumStepSize(1);
           minimumStepSize[0] = 0.0025;
-          atlasToSubjectRegistrationHelper->SetMinimumStepLength(minimumStepSize);
+          //atlasToSubjectRegistrationHelper->SetMinimumStepLength(minimumStepSize);
           std::vector<std::string> transformType(1);
           transformType[0] = "Affine";
           atlasToSubjectRegistrationHelper->SetTransformType(transformType);
@@ -1558,7 +1576,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
                      << ") image." << std::endl);
           std::vector<double> minimumStepSize(1);
           minimumStepSize[0] = 0.0025;
-          atlasToSubjectRegistrationHelper->SetMinimumStepLength(minimumStepSize);
+          //atlasToSubjectRegistrationHelper->SetMinimumStepLength(minimumStepSize);
           std::vector<std::string> transformType(1);
           transformType[0] = "BSpline";
           atlasToSubjectRegistrationHelper->SetTransformType(transformType);
@@ -1574,7 +1592,15 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
           {
           std::cerr << "ERROR:  NOT PROPERLY IMPLEMENTED YET HACK:" << std::endl;
           }
-        atlasToSubjectRegistrationHelper->SetCurrentGenericTransform(m_TemplateGenericTransform);
+
+        CompositeTransformType::Pointer templateGenericCompositeTransform = dynamic_cast<CompositeTransformType *>( m_TemplateGenericTransform.GetPointer() );
+        if( templateGenericCompositeTransform.IsNull() )
+          {
+          templateGenericCompositeTransform = CompositeTransformType::New();
+          templateGenericCompositeTransform->AddTransform( m_TemplateGenericTransform );
+          }
+        atlasToSubjectRegistrationHelper->SetCurrentGenericTransform( templateGenericCompositeTransform );
+
         if( this->m_DebugLevel > 9 )
           {
           static unsigned int atlasToSubjectCounter = 0;
@@ -1587,7 +1613,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
         atlasToSubjectRegistrationHelper->Update();
         unsigned int actualIterations = atlasToSubjectRegistrationHelper->GetActualNumberOfIterations();
         muLogMacro( << "Registration tool " << actualIterations << " iterations." << std::endl );
-        m_TemplateGenericTransform = atlasToSubjectRegistrationHelper->GetCurrentGenericTransform();
+        m_TemplateGenericTransform = atlasToSubjectRegistrationHelper->GetCurrentGenericTransform()->GetNthTransform(0);
         }
       }
     }

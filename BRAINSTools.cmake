@@ -128,6 +128,7 @@ set(brains_modulenames
   BRAINSMultiSTAPLE
   BRAINSStripRotation
   AutoWorkup
+  BRAINSDWICleanup
   )
 
 if(USE_DebugImageViewer)

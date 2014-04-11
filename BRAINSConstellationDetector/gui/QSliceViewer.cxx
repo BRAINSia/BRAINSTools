@@ -1,9 +1,27 @@
+/*=========================================================================
+ *
+ *  Copyright SINAPSE: Scalable Informatics for Neuroscience, Processing and Software Engineering
+ *            The University of Iowa
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0.txt
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ *=========================================================================*/
 /*
  * Author: Wei Lu
  * at Psychiatry Imaging Lab,
  * University of Iowa Health Care 2010
  */
-
+#include "vtkVersion.h"
 #include "QSliceViewer.h"
 
 #include <iostream>
@@ -236,7 +254,11 @@ void QSliceViewer::GenSphere()
 
   // map to graphics library
   vtkPolyDataMapper2D *map = vtkPolyDataMapper2D::New();
+#if (VTK_MAJOR_VERSION < 6)
   map->SetInput( sphere->GetOutput() );
+#else
+  map->SetInputData( sphere->GetOutput() );
+#endif
 
   // actor coordinates geometry, properties, transformation
   vtkActor2D *actor = vtkActor2D::New();
@@ -275,9 +297,17 @@ void QSliceViewer::Highlight()
 
     // map to graphics library
     vtkPolyDataMapper2D *map1 = vtkPolyDataMapper2D::New();
+#if (VTK_MAJOR_VERSION < 6)
     map1->SetInput( sphere1->GetOutput() );
+#else
+    map1->SetInputData( sphere1->GetOutput() );
+#endif
     vtkPolyDataMapper2D *map2 = vtkPolyDataMapper2D::New();
+#if (VTK_MAJOR_VERSION < 6)
     map2->SetInput( sphere2->GetOutput() );
+#else
+    map2->SetInputData( sphere2->GetOutput() );
+#endif
 
     m_actors->InitTraversal();
     vtkActor2D *actor = m_actors->GetNextActor2D();

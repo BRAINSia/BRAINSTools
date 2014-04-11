@@ -2,6 +2,7 @@
 # BRAINSCut Testing
 # --------------------------------------------------------- #
 
+set(Reference_BINARY_DIR ${BRAINSTools_BINARY_DIR}/../ReferenceAtlas-build/Atlas/Atlas_20131115/)
 
 ##
 ## BRAINSCut NetConfiguration(XML) file for testing
@@ -84,6 +85,40 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME RandomForestApplyModelTestF
   --applyModel --method RandomForest --randomTreeDepth 6 --numberOfTrees 6
   --netConfiguration ${OutputNetConfigurationForTesting})
 
+## machine-learning model stability test
+# - for a identical target image, a given deformation, and a given model,
+#   the segmentation results should be identical.
+
+# caudate
+set( InputNetConfigurationForOpenCVTesting_caudate
+  ${BRAINSTools_SOURCE_DIR}/BRAINSCut/TestSuite/NetConfigurations/OpenCVStabilityTest_caudate.xml.in)
+set( OutputNetConfigurationForOpenCVTesting_caudate
+  ${CMAKE_CURRENT_BINARY_DIR}/OpenCVStabilityTest_caudate.xml )
+
+configure_file( ${InputNetConfigurationForOpenCVTesting_caudate} ${OutputNetConfigurationForOpenCVTesting_caudate}  IMMEDIATE @ONLY)
+
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME OpenCVConsistencyTest_caudate
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSCut>
+  --applyModel --method RandomForest
+  --modelFilename ${Reference_BINARY_DIR}/modelFiles/trainModelFile.txtD0060NT0060_caudate_LinearWithMask.gz
+  --netConfiguration ${OutputNetConfigurationForOpenCVTesting_caudate})
+# putamen
+set( InputNetConfigurationForOpenCVTesting_putamen
+  ${BRAINSTools_SOURCE_DIR}/BRAINSCut/TestSuite/NetConfigurations/OpenCVStabilityTest_putamen.xml.in)
+set( OutputNetConfigurationForOpenCVTesting_putamen
+  ${CMAKE_CURRENT_BINARY_DIR}/OpenCVStabilityTest_putamen.xml )
+
+configure_file( ${InputNetConfigurationForOpenCVTesting_putamen} ${OutputNetConfigurationForOpenCVTesting_putamen}  IMMEDIATE @ONLY)
+
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME OpenCVConsistencyTest_putamen
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSCut>
+  --applyModel --method RandomForest
+  --modelFilename ${Reference_BINARY_DIR}/modelFiles/trainModelFile.txtD0060NT0060_putamen.gz
+  --netConfiguration ${OutputNetConfigurationForOpenCVTesting_putamen})
+
+# - As a number of trees increases, the training error should be decreased
+#   approximately same rate to the previously trained one.
+# TODO
 
 
 ##

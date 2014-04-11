@@ -1,4 +1,22 @@
 /*=========================================================================
+ *
+ *  Copyright SINAPSE: Scalable Informatics for Neuroscience, Processing and Software Engineering
+ *            The University of Iowa
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0.txt
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ *=========================================================================*/
+/*=========================================================================
 
  Program:   BRAINS (Brain Research: Analysis of Images, Networks, and Systems)
  Module:    $RCSfile: $
@@ -18,7 +36,7 @@
 
 #include "vtkITKArchetypeImageSeriesReader.h"
 #include "vtkITKArchetypeImageSeriesScalarReader.h"
-
+#include "vtkVersion.h"
 #include "vtkImageChangeInformation.h"
 #include "vtkTransform.h"
 #include <vtkImageData.h>
@@ -111,7 +129,11 @@ int main( int argc, char * *argv )
 
     vtkSmartPointer<vtkImageChangeInformation> ici =
       vtkSmartPointer<vtkImageChangeInformation>::New();
+#if (VTK_MAJOR_VERSION < 6)
     ici->SetInput(reader->GetOutput() );
+#else
+    ici->SetInputData(reader->GetOutput() );
+#endif
     ici->SetOutputSpacing( 1, 1, 1 );
     ici->SetOutputOrigin( 0, 0, 0 );
     ici->Update();
@@ -122,7 +144,11 @@ int main( int argc, char * *argv )
 
     vtkSmartPointer<vtkImageMarchingCubes> marchingcubes =
       vtkSmartPointer<vtkImageMarchingCubes>::New();
+#if (VTK_MAJOR_VERSION < 6)
     marchingcubes->SetInput(ici->GetOutput() );
+#else
+    marchingcubes->SetInputData(ici->GetOutput() );
+#endif
     marchingcubes->SetValue(0, surfaceValue);
     marchingcubes->ComputeScalarsOff();
     marchingcubes->ComputeNormalsOff();
@@ -132,19 +158,31 @@ int main( int argc, char * *argv )
     // largest connected region
     vtkSmartPointer<vtkPolyDataConnectivityFilter> largest =
       vtkSmartPointer<vtkPolyDataConnectivityFilter>::New();
+#if (VTK_MAJOR_VERSION < 6)
     largest->SetInput(marchingcubes->GetOutput() );
+#else
+    largest->SetInputData(marchingcubes->GetOutput() );
+#endif
     largest->SetExtractionModeToLargestRegion();
     largest->Update();
 
     vtkSmartPointer<vtkCleanPolyData> clean = vtkSmartPointer<vtkCleanPolyData>::New();
+#if (VTK_MAJOR_VERSION < 6)
     clean->SetInput(largest->GetOutput() );
+#else
+    clean->SetInputData(largest->GetOutput() );
+#endif
     clean->ConvertPolysToLinesOff();
     clean->ConvertLinesToPointsOff();
     clean->Update();
 
     vtkSmartPointer<vtkTransformPolyDataFilter> transformer =
       vtkSmartPointer<vtkTransformPolyDataFilter>::New();
+#if (VTK_MAJOR_VERSION < 6)
     transformer->SetInput(clean->GetOutput() );
+#else
+    transformer->SetInputData(clean->GetOutput() );
+#endif
     transformer->SetTransform(transformIJKtoRAS);
     transformer->Update();
 
@@ -169,7 +207,11 @@ int main( int argc, char * *argv )
     int iNumberOfCells =  surface->GetNumberOfCells();
 
     vtkExtractEdges *extractEdges = vtkExtractEdges::New();
+#if (VTK_MAJOR_VERSION < 6)
     extractEdges->SetInput( surface );
+#else
+    extractEdges->SetInputData( surface );
+#endif
     extractEdges->Update();
 
     int iNumberOfEdges = extractEdges->GetOutput()->GetNumberOfLines();

@@ -1,4 +1,22 @@
 /*=========================================================================
+ *
+ *  Copyright SINAPSE: Scalable Informatics for Neuroscience, Processing and Software Engineering
+ *            The University of Iowa
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0.txt
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ *=========================================================================*/
+/*=========================================================================
 
  Program:   GTRACT (Guided Tensor Restore Anatomical Connectivity Tractography)
  Module:    $RCSfile: $
@@ -23,6 +41,9 @@
 #include <itkVectorIndexSelectionCastImageFilter.h>
 #include <itkThresholdImageFilter.h>
 #include <itkOrientImageFilter.h>
+
+#include <itkCompositeTransform.h>
+#include <itkTransform.h>
 
 #include "itkGtractImageIO.h"
 #include "BRAINSFitHelper.h"
@@ -224,6 +245,9 @@ int main(int argc, char *argv[])
   std::vector<int>         iterations;
   iterations.push_back(numberOfIterations);
 
+  typedef itk::Transform<double, 3, 3>       TransformType;
+  typedef itk::CompositeTransform<double, 3> CompositeTransformType;
+
   if( transformType == "Bspline" )
     {
     transformTypes.push_back("BSpline");
@@ -237,7 +261,14 @@ int main(int argc, char *argv[])
     registerImageFilter->SetInitializeTransformMode(localInitializeTransformMode);
     if( inputRigidTransform.size() > 0 )
       {
-      registerImageFilter->SetCurrentGenericTransform(itk::ReadTransformFromDisk(inputRigidTransform) );
+      TransformType::Pointer inputTransform = itk::ReadTransformFromDisk(inputRigidTransform);
+      CompositeTransformType::Pointer inputCompositeTransform = dynamic_cast<CompositeTransformType *>( inputTransform.GetPointer() );
+      if( inputCompositeTransform.IsNull() )
+        {
+        inputCompositeTransform = CompositeTransformType::New();
+        inputCompositeTransform->AddTransform( inputTransform );
+        }
+      registerImageFilter->SetCurrentGenericTransform( inputCompositeTransform );
       }
     }
 
@@ -248,7 +279,7 @@ int main(int argc, char *argv[])
     minStepLength.push_back( (double)minimumStepSize);
     registerImageFilter->SetTranslationScale( translationScale );
     registerImageFilter->SetMaximumStepLength( maximumStepSize );
-    registerImageFilter->SetMinimumStepLength(minStepLength  );
+    //registerImageFilter->SetMinimumStepLength(minStepLength  );
     registerImageFilter->SetRelaxationFactor( relaxationFactor );
     registerImageFilter->SetNumberOfSamples( numberOfSamples );
     registerImageFilter->SetInitializeTransformMode(localInitializeTransformMode);
@@ -266,7 +297,7 @@ int main(int argc, char *argv[])
     throw;
     }
 
-  GenericTransformType::Pointer outputTransform = registerImageFilter->GetCurrentGenericTransform();
+  GenericTransformType::Pointer outputTransform = registerImageFilter->GetCurrentGenericTransform()->GetNthTransform(0);
   itk::WriteTransformToDisk<double>(outputTransform, outputTransformName);
   return EXIT_SUCCESS;
 }

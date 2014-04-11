@@ -1,4 +1,22 @@
 /*=========================================================================
+ *
+ *  Copyright SINAPSE: Scalable Informatics for Neuroscience, Processing and Software Engineering
+ *            The University of Iowa
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0.txt
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ *=========================================================================*/
+/*=========================================================================
 
   Copyright Brigham and Women's Hospital (BWH) All Rights Reserved.
 
@@ -12,7 +30,7 @@
 
 ==========================================================================*/
 #include "vtkITKArchetypeImageSeriesReader.h"
-
+#include "vtkVersion.h"
 #include "vtkImageData.h"
 #include "vtkObjectFactory.h"
 #include "vtkMath.h"
@@ -72,12 +90,12 @@
 #include "itkAnalyzeImageIO.h"
 #endif
 
-vtkCxxRevisionMacro(vtkITKArchetypeImageSeriesReader, "$Revision$");
 vtkStandardNewMacro(vtkITKArchetypeImageSeriesReader);
 
 // ----------------------------------------------------------------------------
 vtkITKArchetypeImageSeriesReader::vtkITKArchetypeImageSeriesReader()
 {
+  this->SetNumberOfInputPorts(0);
   this->Archetype  = NULL;
   this->IndexArchetype = 0;
   this->SingleFile = 1;
@@ -673,8 +691,11 @@ void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
       RasToIjkMatrix->SetElement(j, j, 1.0 / spacing[j]);
       }
     }
-
+#if (VTK_MAJOR_VERSION < 6)
   output->SetWholeExtent(extent);
+#else
+  output->SetExtent(extent);
+#endif
   if( this->UseNativeScalarType )
     {
     if( imageIO.GetPointer() == NULL )
@@ -732,8 +753,14 @@ void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
     this->SetNumberOfComponents(imageIO->GetNumberOfComponents() );
     }
 
+#if (VTK_MAJOR_VERSION < 6)
   output->SetScalarType(this->OutputScalarType);
   output->SetNumberOfScalarComponents(this->GetNumberOfComponents() );
+#else
+  vtkImageData::SetScalarType(this->OutputScalarType,output->GetInformation());
+  vtkImageData::SetNumberOfScalarComponents(this->GetNumberOfComponents(),output->GetInformation());
+#endif
+
 
   // Copy the MetaDataDictionary from the ITK layer to the VTK layer
   if( imageIO.GetPointer() != NULL )

@@ -1,4 +1,22 @@
 /*=========================================================================
+ *
+ *  Copyright SINAPSE: Scalable Informatics for Neuroscience, Processing and Software Engineering
+ *            The University of Iowa
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0.txt
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ *=========================================================================*/
+/*=========================================================================
 
  Program:   GTRACT (Guided Tensor Restore Anatomical Connectivity Tractography)
  Module:    $RCSfile: $
@@ -143,7 +161,7 @@ int main(int argc, char *argv[])
   NrrdImageType::DirectionType  myDirection = resampleImage->GetDirection();
   itk::MetaDataDictionary       inputMetaDataDictionary = resampleImage->GetMetaDataDictionary();
   GenericTransformType::Pointer baseTransform = 0;
-  if( inputTransform == "ID" || inputTransform.size() == 0 )
+  if( inputTransform == "ID"  || inputTransform == "Identity" || inputTransform.size() == 0 )
     {
     RigidTransformType::Pointer LocalRigidTransform = RigidTransformType::New();
     LocalRigidTransform->SetIdentity();
@@ -167,7 +185,30 @@ int main(int argc, char *argv[])
   GenericTransformType::Pointer     warpDWIXFRM = 0;
   if(warpDWITransform.size() > 0)
     {
-    warpDWIXFRM = itk::ReadTransformFromDisk(warpDWITransform);
+    if ( warpDWITransform.find(".nii") != std::string::npos )
+      {
+      // Read ReferenceVolume and DeformationVolume
+      typedef double                                                VectorComponentType;
+      typedef itk::Vector<VectorComponentType, 3> VectorPixelType;
+      typedef itk::Image<VectorPixelType,  3>     DisplacementFieldType;
+      typedef itk::DisplacementFieldTransform<VectorComponentType,3> DisplacementFieldTransformType;
+
+      typedef itk::ImageFileReader<DisplacementFieldType> DefFieldReaderType;
+      DefFieldReaderType::Pointer fieldImageReader = DefFieldReaderType::New();
+      fieldImageReader->SetFileName( warpDWITransform );
+      fieldImageReader->Update();
+
+      DisplacementFieldType::Pointer DisplacementField = fieldImageReader->GetOutput();
+
+      DisplacementFieldTransformType::Pointer dispTransform =
+        DisplacementFieldTransformType::New();
+      dispTransform->SetDisplacementField(DisplacementField.GetPointer());
+      warpDWIXFRM = dispTransform.GetPointer();
+      }
+    else
+      {
+      warpDWIXFRM = itk::ReadTransformFromDisk(warpDWITransform);
+      }
     }
   // Get measurement frame and its inverse from DWI scan
   std::vector<std::vector<double> > msrFrame;

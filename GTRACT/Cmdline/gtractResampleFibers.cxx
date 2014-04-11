@@ -1,4 +1,22 @@
 /*=========================================================================
+ *
+ *  Copyright SINAPSE: Scalable Informatics for Neuroscience, Processing and Software Engineering
+ *            The University of Iowa
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0.txt
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ *=========================================================================*/
+/*=========================================================================
 
   Program:   GTRACT (Guided Tensor Restore Anatomical Connectivity Tractography)
   Module:    $RCSfile: $
@@ -27,6 +45,7 @@
 #include <vtkXMLPolyDataWriter.h>
 #include <vtkXMLPolyDataReader.h>
 #include <vtkAppendPolyData.h>
+#include <vtkVersion.h>
 
 #include <itkOrientImageFilter.h>
 #include "itkDiffusionTensor3DReconstructionImageFilter.h"
@@ -54,11 +73,6 @@
 #include "algo.h"
 #include "GtractTypes.h"
 
-// ///////////// VTK Version Compatibility   //////////////////////////////
-#ifndef vtkFloatingPointType
-#define vtkFloatingPointType vtkFloatingPointType
-typedef float vtkFloatingPointType;
-#endif
 // ////////////////////////////////////////////////////////////////////////
 
 #include "gtractResampleFibersCLP.h"
@@ -220,7 +234,7 @@ int main( int argc, char *argv[] )
   vnlMatrixType J;
   for( int i = 0; i < inputFiber->GetNumberOfPoints(); i++ )
     {
-    vtkFloatingPointType fiberPoint[3];
+    double fiberPoint[3];
     fiberPoints->GetPoint(i, fiberPoint);
 
     /* Map Point */
@@ -277,14 +291,22 @@ int main( int argc, char *argv[] )
     {
     vtkXMLPolyDataWriter *fiberWriter = vtkXMLPolyDataWriter::New();
     fiberWriter->SetFileName( outputTract.c_str() );
+#if (VTK_MAJOR_VERSION < 6)
     fiberWriter->SetInput( inputFiber );
+#else
+    fiberWriter->SetInputData( inputFiber );
+#endif
     fiberWriter->Update();
     }
   else
     {
     vtkPolyDataWriter *fiberWriter = vtkPolyDataWriter::New();
     fiberWriter->SetFileName( outputTract.c_str() );
+#if (VTK_MAJOR_VERSION < 6)
     fiberWriter->SetInput( inputFiber );
+#else
+    fiberWriter->SetInputData( inputFiber );
+#endif
     fiberWriter->Update();
     }
   return EXIT_SUCCESS;

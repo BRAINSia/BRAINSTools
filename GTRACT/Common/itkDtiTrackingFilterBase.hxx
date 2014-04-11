@@ -1,4 +1,22 @@
 /*=========================================================================
+ *
+ *  Copyright SINAPSE: Scalable Informatics for Neuroscience, Processing and Software Engineering
+ *            The University of Iowa
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0.txt
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ *=========================================================================*/
+/*=========================================================================
 
  Program:   GTRACT (Guided Tensor Restore Anatomical Connectivity Tractography)
  Module:    $RCSfile: $
@@ -22,6 +40,7 @@
 #include "vtkAppendPolyData.h"
 #include "vtkCellArray.h"
 #include "vtkFloatArray.h"
+#include "vtkVersion.h"
 
 #include "itkImageRegionIterator.h"
 #include "itkImageRegionConstIterator.h"
@@ -34,6 +53,7 @@
 
 #include "itkDtiTrackingFilterBase.h"
 // #include "algo.h"
+
 
 #include <iostream>
 
@@ -78,7 +98,7 @@ DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType>
 template <class TTensorImageType, class TAnisotropyImageType, class TMaskImageType>
 void
 DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType>
-::MMToContinuousIndex(vtkFloatingPointType *pt, typename Self::ContinuousIndexType & index)
+::MMToContinuousIndex(double *pt, typename Self::ContinuousIndexType & index)
 {
   PointType p; p[0] = pt[0]; p[1] = pt[1]; p[2] = pt[2];
 
@@ -147,7 +167,7 @@ bool
 DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType>
 ::IsLoop(vtkPoints *fiber, double tolerance)
 {
-  vtkFloatingPointType p1[3], p2[3];
+  double p1[3], p2[3];
 
   const double tol2 = tolerance * tolerance;
   const int    numPts = fiber->GetNumberOfPoints();
@@ -235,8 +255,13 @@ DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType>
   data->GetPointData()->SetTensors(fiberTensors);
 
   vtkAppendPolyData *append = vtkAppendPolyData::New();
+#if (VTK_MAJOR_VERSION < 6)
   append->AddInput( this->m_Output );
   append->AddInput( data );
+#else
+  append->AddInputData( this->m_Output );
+  append->AddInputData( data );
+#endif
   append->Update();
   // need to erase the old m_Output
   //  vtkPolyData *former = this->m_Output;

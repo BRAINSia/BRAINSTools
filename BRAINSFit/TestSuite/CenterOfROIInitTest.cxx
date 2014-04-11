@@ -1,3 +1,21 @@
+/*=========================================================================
+ *
+ *  Copyright SINAPSE: Scalable Informatics for Neuroscience, Processing and Software Engineering
+ *            The University of Iowa
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0.txt
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ *=========================================================================*/
 #include <iostream>
 #include <BRAINSFitHelper.h>
 #include <itkEllipseSpatialObject.h>
@@ -19,6 +37,7 @@ int main(int, char * *)
   typedef EllipseSOType::TransformType                              TransformType;
   typedef itk::ImageMaskSpatialObject<3>                            ImageMaskSOType;
   typedef itk::CastImageFilter<ImageType, LocalMaskImageType>       CastType;
+  typedef itk::CompositeTransform<double, 3>                        CompositeTransformType;
 
   // create two empty images
   ImageType::Pointer image1 = ImageType::New(),
@@ -116,10 +135,21 @@ int main(int, char * *)
   myHelper->SetTransformType(transformTypeVector);
   myHelper->Update();
 
-  GenericTransformType::Pointer currentGenericTransform = myHelper->GetCurrentGenericTransform();
+  GenericTransformType::Pointer currentGenericTransform = myHelper->GetCurrentGenericTransform().GetPointer();
+
+  const CompositeTransformType::ConstPointer genericCompositeTransform =
+    dynamic_cast<const CompositeTransformType *>( currentGenericTransform.GetPointer() );
+  if( genericCompositeTransform.IsNull() )
+    {
+    itkGenericExceptionMacro(<<"Error in transform type conversion");
+    }
 
   VersorRigid3DTransformType::ConstPointer versor3D =
-    dynamic_cast<const VersorRigid3DTransformType *>(currentGenericTransform.GetPointer() );
+    dynamic_cast<const VersorRigid3DTransformType *>(genericCompositeTransform->GetNthTransform(0).GetPointer() );
+  if( versor3D.IsNull() )
+    {
+    itkGenericExceptionMacro(<<"Error in transform type conversion");
+    }
 
   // check translation vector -- should match the difference in the ellipse translation vectors
   TransformType::OutputVectorType recoveredTransVector = versor3D->GetTranslation();

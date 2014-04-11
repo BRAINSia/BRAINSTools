@@ -1,4 +1,22 @@
 /*=========================================================================
+ *
+ *  Copyright SINAPSE: Scalable Informatics for Neuroscience, Processing and Software Engineering
+ *            The University of Iowa
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0.txt
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ *=========================================================================*/
+/*=========================================================================
 
  Program:   BRAINS (Brain Research: Analysis of Images, Networks, and Systems)
  Module:    $RCSfile: $
@@ -27,7 +45,7 @@
 #include "itkImage.h"
 #include "itkImageFileReader.h"
 #include "itkPoint.h"
-
+#include "vtkVersion.h"
 #include "vtkPolyDataReader.h"
 #include "vtkPolyDataWriter.h"
 #include "vtkXMLPolyDataReader.h"
@@ -123,7 +141,11 @@ int main( int argc, char * *argv )
   rasOrientation->SetMatrix( orientationMatrix );
 
   vtkTransformPolyDataFilter *resampleSurface = vtkTransformPolyDataFilter::New();
+#if (VTK_MAJOR_VERSION < 6)
   resampleSurface->SetInput( surface );
+#else
+  resampleSurface->SetInputData( surface );
+#endif
   resampleSurface->SetTransform( rasOrientation );
   resampleSurface->Update();
 
@@ -204,7 +226,11 @@ int main( int argc, char * *argv )
   // Put the surface back into its original orientation
 
   vtkTransformPolyDataFilter *revertedSurface = vtkTransformPolyDataFilter::New();
+#if (VTK_MAJOR_VERSION < 6)
   revertedSurface->SetInput( resampleSurface->GetOutput() );
+#else
+  revertedSurface->SetInputData( resampleSurface->GetOutput() );
+#endif
   revertedSurface->SetTransform( rasOrientation->GetInverse() );
   revertedSurface->Update();
 
@@ -216,7 +242,11 @@ int main( int argc, char * *argv )
   if( extension == ".vtk" )
     {
     vtkPolyDataWriter *surfaceWriter = vtkPolyDataWriter::New();
+#if (VTK_MAJOR_VERSION < 6)
     surfaceWriter->SetInput( surface );
+#else
+    surfaceWriter->SetInputData( surface );
+#endif
     surfaceWriter->SetFileName( outputSurface.c_str() );
     surfaceWriter->Update();
     surfaceWriter->Delete();
@@ -224,7 +254,11 @@ int main( int argc, char * *argv )
   else
     {
     vtkXMLPolyDataWriter *surfaceWriter = vtkXMLPolyDataWriter::New();
+#if (VTK_MAJOR_VERSION < 6)
     surfaceWriter->SetInput( surface );
+#else
+    surfaceWriter->SetInputData( surface );
+#endif
     surfaceWriter->SetFileName( outputSurface.c_str() );
     surfaceWriter->SetDataModeToAscii();
     surfaceWriter->Update();

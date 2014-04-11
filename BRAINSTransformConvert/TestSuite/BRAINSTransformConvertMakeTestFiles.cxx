@@ -1,3 +1,21 @@
+/*=========================================================================
+ *
+ *  Copyright SINAPSE: Scalable Informatics for Neuroscience, Processing and Software Engineering
+ *            The University of Iowa
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0.txt
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ *=========================================================================*/
 #include "itkIO.h"
 #include "GenericTransformImage.h"
 #include "itkVersorRigid3DTransform.h"
@@ -38,6 +56,9 @@ int main(int argc, char * *argv)
     std::cerr << "Missing working directory argument" << std::endl;
     return EXIT_FAILURE;
     }
+
+  typedef itk::BSplineDeformableTransform<double, 3, 3> BSplineDeformableTransformType;
+
   VersorRigid3DTransformType::Pointer versorRigidTransform
     = CreateTransform<VersorRigid3DTransformType>();
   VersorRigid3DTransformType::InputPointType center;
@@ -145,8 +166,8 @@ int main(int argc, char * *argv)
   testImageName += "/TransformConvertTestImage.nii.gz";
   itkUtil::WriteImage<ImageType>(testImage, testImageName);
 
-  BSplineTransformType::Pointer bsplineTransform =
-    CreateTransform<BSplineTransformType>();
+  BSplineDeformableTransformType::Pointer bsplineTransform =
+    CreateTransform<BSplineDeformableTransformType>();
 
   translation[0] = -1.0; translation[1] = 0.6; translation[2] = -0.5;
   affineTransform->Translate(translation);
@@ -166,19 +187,19 @@ int main(int argc, char * *argv)
 
   bsplineTransform->SetBulkTransform(affineTransform.GetPointer() );
 
-  BSplineTransformType::PhysicalDimensionsType fixedPhysicalDimensions;
-  BSplineTransformType::MeshSizeType           meshSize;
+  BSplineDeformableTransformType::PhysicalDimensionsType fixedPhysicalDimensions;
+  BSplineDeformableTransformType::MeshSizeType           meshSize;
   for( unsigned int i = 0; i < 3; i++ )
     {
     fixedPhysicalDimensions[i] = spacing[i]
       * static_cast<double>(region.GetSize()[i] - 1);
     }
-  meshSize.Fill( 5 - BSplineTransformType::SplineOrder );
+  meshSize.Fill( 5 - BSplineDeformableTransformType::SplineOrder );
   bsplineTransform->SetGridOrigin(origin);
   bsplineTransform->SetGridRegion(region);
   bsplineTransform->SetGridSpacing(spacing);
 
-  BSplineTransformType::ParametersType parameters(bsplineTransform->GetNumberOfParameters() );
+  BSplineDeformableTransformType::ParametersType parameters(bsplineTransform->GetNumberOfParameters() );
   parameters.Fill(0.0);
   bsplineTransform->SetParameters(parameters);
 

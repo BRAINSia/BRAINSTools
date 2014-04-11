@@ -1,4 +1,22 @@
 /*=========================================================================
+ *
+ *  Copyright SINAPSE: Scalable Informatics for Neuroscience, Processing and Software Engineering
+ *            The University of Iowa
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0.txt
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ *=========================================================================*/
+/*=========================================================================
 
  Program:   GTRACT (Guided Tensor Restore Anatomical Connectivity Tractography)
  Module:    $RCSfile: $
@@ -18,7 +36,7 @@
 
 #ifndef __itkDtiTrackingFilterBase_h
 #define __itkDtiTrackingFilterBase_h
-
+#include <vtkVersion.h>
 #include <vtkPoints.h>
 #include <vtkFloatArray.h>
 #include <vtkPointData.h>
@@ -61,11 +79,6 @@
 #include <map>
 #include <string>
 
-// ///////////// VTK Version Compatibility   //////////////////////////////
-#ifndef vtkFloatingPointType
-#define vtkFloatingPointType vtkFloatingPointType
-typedef float vtkFloatingPointType;
-#endif
 // ////////////////////////////////////////////////////////////////////////
 
 /*
@@ -143,8 +156,8 @@ public:
   typedef std::list<BranchPointType>     BranchListType;
   typedef std::list<TVector>             DirectionListType;
 
-  typedef itk::PointSet<vtkFloatingPointType, 3> PointSetType;
-  typedef vtkPolyData *                          DtiFiberType;
+  typedef itk::PointSet<double, 3>       PointSetType;
+  typedef vtkPolyData *                  DtiFiberType;
 
   /** ImageDimension constants * /
   itkStaticConstMacro(InputImageDimension, unsigned int,
@@ -204,7 +217,7 @@ protected:
 
   void MMToContinuousIndex(PointType & p, ContinuousIndexType & index);
 
-  void MMToContinuousIndex(vtkFloatingPointType *p, ContinuousIndexType & index);
+  void MMToContinuousIndex(double *p, ContinuousIndexType & index);
 
   void StepIndexInPointSpace(ContinuousIndexType & newIndex, ContinuousIndexType & oldIndex, TVector & vec);
 

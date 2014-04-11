@@ -1,4 +1,22 @@
 /*=========================================================================
+ *
+ *  Copyright SINAPSE: Scalable Informatics for Neuroscience, Processing and Software Engineering
+ *            The University of Iowa
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0.txt
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ *=========================================================================*/
+/*=========================================================================
 
  Program:   GTRACT (Guided Tensor Restore Anatomical Connectivity Tractography)
  Module:    $RCSfile: $
@@ -111,7 +129,7 @@ DtiGuidedTrackingFilter<TTensorImageType, TAnisotropyImageType, TMaskImageType>
     float pathLength = 0.0;
 
     typename Self::PointType p2;
-    vtkFloatingPointType p1[3];
+    double p1[3];
     this->m_GuideFiber->GetPoint(0, p1);
     this->ContinuousIndexToMM( index, p2 );
     typename Self::ContinuousIndexType index1;
@@ -321,7 +339,7 @@ DtiGuidedTrackingFilter<TTensorImageType, TAnisotropyImageType, TMaskImageType>
   // std::cout << "Current Point " << index << std::endl;
   for( int i = 0; i < centerFiber->GetNumberOfPoints(); i++ )
     {
-    vtkFloatingPointType currentPoint[3];
+    double currentPoint[3];
     centerFiber->GetPoint(i, currentPoint);
     p1[0] = currentPoint[0]; p1[1] = currentPoint[1]; p1[2] = currentPoint[2];
     typename Self::ContinuousIndexType index1;

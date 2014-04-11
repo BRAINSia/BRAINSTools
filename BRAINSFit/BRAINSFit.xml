@@ -82,6 +82,17 @@
       <element>useGeometryAlign</element>
       <element>useCenterOfROIAlign</element>
     </string-enumeration>
+
+    <string-enumeration>
+      <name>metricSamplingStrategy</name>
+      <longflag>metricSamplingStrategy</longflag>
+      <label>Set Sampling Strategy</label>
+      <description>It defines the method that registration filter uses to sample the input fixed image={None,Regular,Random}</description>
+      <default>None</default>
+      <element>None</element>
+      <element>Random</element>
+      <element>Regular</element>
+    </string-enumeration>
   </parameters>
 
   <parameters>
@@ -146,9 +157,17 @@
       <name>numberOfSamples</name>
       <longflag>numberOfSamples</longflag>
       <label>Number Of Samples</label>
-      <description>The number of voxels sampled for mutual information computation.  Increase this for a slower, more careful fit.  You can also limit the sampling focus with ROI masks and ROIAUTO mask generation.</description>
-      <default>100000</default>
+      <description>The number of voxels sampled for mutual information computation.  Increase this for a slower, more careful fit. NOTE that it is suggested to use samplingPercentage instead of this option. However, if set, it overwrites the samplingPercentage option.  </description>
+      <default>0</default>
     </integer>
+
+    <double>
+      <name>samplingPercentage</name>
+      <longflag>samplingPercentage</longflag>
+      <label>Percentage Of Samples</label>
+      <description>This is a number in [0,1] interval that shows the percentage of the input fixed image voxels that are sampled for mutual information computation.  Increase this for a slower, more careful fit. You can also limit the sampling focus with ROI masks and ROIAUTO mask generation.</description>
+      <default>1</default>
+    </double>
 
     <integer-vector>
       <name>splineGridSize</name>
@@ -288,7 +307,7 @@
       <longflag deprecatedalias="minimumStepSize">minimumStepLength</longflag>
       <label>Minimum Step Length</label>
       <description>Each step in the optimization takes steps at least this big.  When none are possible, registration is complete.</description>
-      <default>0.005</default>
+      <default>0</default>
     </double-vector>
 
     <double>
@@ -466,7 +485,7 @@
       <longflag deprecatedalias="maximumStepSize">maximumStepLength</longflag>
       <label>Maximum Step Length</label>
       <description>Internal debugging parameter, and should probably never be used from the command line.  This will be removed in the future.</description>
-      <default>0.2</default>
+      <default>0.05</default>
     </double>
 
     <integer>
@@ -556,7 +575,7 @@
         <element>MMI</element>
         <element>MSE</element>
         <element>NC</element>
-        <element>MC</element>
+        <element>MIH</element>
     </string-enumeration>
     <file>
       <name>logFileReport</name>

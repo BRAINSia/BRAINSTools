@@ -1,4 +1,22 @@
 /*=========================================================================
+ *
+ *  Copyright SINAPSE: Scalable Informatics for Neuroscience, Processing and Software Engineering
+ *            The University of Iowa
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0.txt
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ *=========================================================================*/
+/*=========================================================================
 
   Program:   Visualization Toolkit
   Module:    $RCSfile: vtkStructuredGrid.cxx,v $
@@ -21,7 +39,6 @@
 #define PR(x) std::cout << #x " = " << x << "\n"; // a simple print macro for
                                                    // use when debugging
 
-vtkCxxRevisionMacro(vtkTalairachGrid, "$Revision: 1.8 $");
 vtkStandardNewMacro(vtkTalairachGrid);
 
 void vtkTalairachGrid::Initialize()
@@ -651,7 +668,11 @@ void vtkTalairachGrid::WriteTalairachGrid(std::string filename)
   vtkStructuredGridWriter *gridWriter = vtkStructuredGridWriter::New();
 
   gridWriter->SetFileName( filename.c_str() );
+#if (VTK_MAJOR_VERSION < 6)
   gridWriter->SetInput(talairachGrid);
+#else
+  gridWriter->SetInputData(talairachGrid);
+#endif
   gridWriter->Write();
 }
 
@@ -660,7 +681,11 @@ void vtkTalairachGrid::WriteBoundingBoxGrid(std::string filename)
   vtkStructuredGridWriter *gridWriter = vtkStructuredGridWriter::New();
 
   gridWriter->SetFileName( filename.c_str() );
+#if (VTK_MAJOR_VERSION < 6)
   gridWriter->SetInput(boundingBoxGrid);
+#else
+  gridWriter->SetInputData(boundingBoxGrid);
+#endif
   gridWriter->Write();
 }
 

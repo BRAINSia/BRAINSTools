@@ -1,4 +1,22 @@
 /*=========================================================================
+ *
+ *  Copyright SINAPSE: Scalable Informatics for Neuroscience, Processing and Software Engineering
+ *            The University of Iowa
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0.txt
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ *=========================================================================*/
+/*=========================================================================
 
  Program:   BRAINS (Brain Research: Analysis of Images, Networks, and Systems)
  Module:    $RCSfile: $
@@ -25,6 +43,7 @@
 #include "vtkIdList.h"
 #include "vtkDataArray.h"
 #include "vtkMaskLabel.h"
+#include "vtkVersion.h"
 #include "SurfaceLabelCleanUpCLP.h"
 
 int SurfaceConnectivityCells(vtkSmartPointer<vtkPolyData> mesh);
@@ -82,7 +101,11 @@ int main( int argc, char * argv[] )
     }
 
   vtkSmartPointer<vtkPolyDataWriter> writer = vtkSmartPointer<vtkPolyDataWriter>::New();
+#if (VTK_MAJOR_VERSION < 6)
   writer->SetInput(surface_in);
+#else
+  writer->SetInputData(surface_in);
+#endif
   writer->SetFileName(outputSurfaceFile.c_str() );
   writer->Update();
 
@@ -120,13 +143,21 @@ int SurfaceConnectivityCells(vtkSmartPointer<vtkPolyData> mesh)
 
     // mask out the label regions first
     // mask filter keeps the number of points
+#if (VTK_MAJOR_VERSION < 6)
     mask->SetInput(mesh);
+#else
+    mask->SetInputData(mesh);
+#endif
     mask->LabelOnlyOn();
     mask->SetLabel(label_i);
     mask->Update();
 
     // extract connected regions for the masked regions
+#if (VTK_MAJOR_VERSION < 6)
     connect->SetInput(mask->GetOutput() );
+#else
+    connect->SetInputData(mask->GetOutput() );
+#endif
     connect->ColorRegionsOn();
     connect->SetExtractionModeToAllRegions();
     connect->Update();
@@ -144,7 +175,9 @@ int SurfaceConnectivityCells(vtkSmartPointer<vtkPolyData> mesh)
         connect->SetExtractionModeToSpecifiedRegions();
 
         island = connect->GetOutput();
+#if (VTK_MAJOR_VERSION < 6)
         island->Update();
+#endif
         island->BuildLinks();
 
         int ncells = island->GetNumberOfCells();
@@ -305,12 +338,20 @@ int SurfaceConnectivityPoints(vtkSmartPointer<vtkPolyData> mesh)
 
     // mask out the label regions first
     // mask filter keeps the number of points
+#if (VTK_MAJOR_VERSION < 6)
     mask->SetInput(mesh);
+#else
+    mask->SetInputData(mesh);
+#endif
     mask->SetLabel(label_i);
     mask->Update();
 
     // extract connected regions for the masked regions
+#if (VTK_MAJOR_VERSION < 6)
     connect->SetInput(mask->GetOutput() );
+#else
+    connect->SetInputData(mask->GetOutput() );
+#endif
     connect->ColorRegionsOn();
     connect->SetExtractionModeToAllRegions();
     connect->Update();
@@ -328,7 +369,9 @@ int SurfaceConnectivityPoints(vtkSmartPointer<vtkPolyData> mesh)
         connect->SetExtractionModeToSpecifiedRegions();
 
         island = connect->GetOutput();
+#if (VTK_MAJOR_VERSION < 6)
         island->Update();
+#endif
         island->BuildLinks();
 
         int ncells = island->GetNumberOfCells();
@@ -432,7 +475,11 @@ int RemoveIsolatedPoints(vtkSmartPointer<vtkPolyData> mesh)
 
     // mask out the label regions first
     // mask filter keeps the number of points
+#if (VTK_MAJOR_VERSION < 6)
     mask->SetInput(mesh);
+#else
+    mask->SetInputData(mesh);
+#endif
     mask->SetLabel(label_i);
     mask->Update();
 
@@ -562,7 +609,11 @@ void FlipSharpTriangles(vtkSmartPointer<vtkPolyData> mesh)
 
       // mask out the label regions first
       // mask filter keeps the number of points
+#if (VTK_MAJOR_VERSION < 6)
       mask->SetInput(mesh);
+#else
+      mask->SetInputData(mesh);
+#endif
       mask->SetLabel(label_i);
       mask->LabelOnlyOn();
       mask->Update();

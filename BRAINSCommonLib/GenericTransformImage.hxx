@@ -1,3 +1,21 @@
+/*=========================================================================
+ *
+ *  Copyright SINAPSE: Scalable Informatics for Neuroscience, Processing and Software Engineering
+ *            The University of Iowa
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0.txt
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ *=========================================================================*/
 #ifndef _GenericTransformImage_hxx_
 #define _GenericTransformImage_hxx_
 
@@ -5,6 +23,7 @@
 #include "GenericTransformImage.h"
 #include "itkResampleInPlaceImageFilter.h"
 #include "itkConstantBoundaryCondition.h"
+#include "itkIO.h"
 
 template <class InputImageType, class OutputImageType>
 typename OutputImageType::Pointer
@@ -34,6 +53,7 @@ TransformResample(
   resample->SetDefaultPixelValue(defaultValue);
   resample->Update();
   typename OutputImageType::Pointer returnval = resample->GetOutput();
+
   // returnval->DisconnectPipeline();
   return returnval;
 }
@@ -304,11 +324,24 @@ typename OutputImageType::Pointer GenericTransformImage(
       typedef itk::ResampleInPlaceImageFilter<InputImageType, OutputImageType> ResampleIPFilterType;
       typedef typename ResampleIPFilterType::Pointer                           ResampleIPFilterPointer;
 
+      const CompositeTransformType::ConstPointer genericCompositeTransform =
+        dynamic_cast<const CompositeTransformType *>( genericTransform.GetPointer() );
+      if( genericCompositeTransform.IsNull() )
+        {
+        itkGenericExceptionMacro(<<"Error in type conversion");
+        }
+      if( genericCompositeTransform->GetNumberOfTransforms() > 1 )
+        {
+        std::cout << "Error in type conversion. " << __FILE__ << __LINE__ << std::endl;
+        std::cout << "ResampleInPlace is only allowed with rigid transform type,"
+                  << "but the input composite transform consists of more than one transfrom." << std::endl;
+        }
+      // extract the included linear rigid transform from the input composite
       const VersorRigid3DTransformType::ConstPointer tempInitializerITKTransform =
-        dynamic_cast<VersorRigid3DTransformType const *>( genericTransform.GetPointer() );
+        dynamic_cast<VersorRigid3DTransformType const *>( genericCompositeTransform->GetNthTransform(0).GetPointer() );
       if( tempInitializerITKTransform.IsNull() )
         {
-        std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
+        std::cout << "Error in type conversion. " << __FILE__ << __LINE__ << std::endl;
         std::cout << "ResampleInPlace is only allowed with rigid transform type." << std::endl;
         }
 

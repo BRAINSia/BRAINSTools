@@ -1,3 +1,21 @@
+/*=========================================================================
+ *
+ *  Copyright SINAPSE: Scalable Informatics for Neuroscience, Processing and Software Engineering
+ *            The University of Iowa
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0.txt
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ *=========================================================================*/
 /*
  * Author: Wei Lu
  * at Psychiatry Imaging Lab,
@@ -5,7 +23,7 @@
  */
 
 #include "BRAINSConstellationDetectorGUICLP.h"
-
+#include "vtkVersion.h"
 #include "QVTKInteractionCallback.h"
 #include "QSliceViewer.h"
 #include "QLabelList.h"
@@ -498,13 +516,25 @@ int main(int argc, char *argv[])
 
   // set up the actor
   vtkImageActor *actor1 = vtkImageActor::New();
+#if (VTK_MAJOR_VERSION < 6)
   actor1->SetInput( color1->GetOutput() );
+#else
+  actor1->SetInputData( color1->GetOutput() );
+#endif
 
   vtkImageActor *actor2 = vtkImageActor::New();
+#if (VTK_MAJOR_VERSION < 6)
   actor2->SetInput( color2->GetOutput() );
+#else
+  actor2->SetInputData( color2->GetOutput() );
+#endif
 
   vtkImageActor *actor3 = vtkImageActor::New();
+#if (VTK_MAJOR_VERSION < 6)
   actor3->SetInput( color3->GetOutput() );
+#else
+  actor3->SetInputData( color3->GetOutput() );
+#endif
 
   // set up the renderer
   vtkRenderer *renderer1 = vtkRenderer::New();

@@ -1,4 +1,22 @@
 /*=========================================================================
+ *
+ *  Copyright SINAPSE: Scalable Informatics for Neuroscience, Processing and Software Engineering
+ *            The University of Iowa
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0.txt
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ *=========================================================================*/
+/*=========================================================================
 
  Program:   GTRACT (Guided Tensor Restore Anatomical Connectivity Tractography)
  Module:    $RCSfile: $
@@ -33,12 +51,8 @@
 #include <vtkAppendPolyData.h>
 #include <vtkSplineFilter.h>
 #include <BRAINSCommonLib.h>
+#include <vtkVersion.h>
 
-// ///////////// VTK Version Compatibility   //////////////////////////////
-#ifndef vtkFloatingPointType
-#define vtkFloatingPointType vtkFloatingPointType
-typedef float vtkFloatingPointType;
-#endif
 // ////////////////////////////////////////////////////////////////////////
 
 #include "gtractCreateGuideFiberCLP.h"
@@ -77,7 +91,11 @@ int main(int argc, char *argv[])
     }
 
   vtkSplineFilter *spline = vtkSplineFilter::New();
+#if (VTK_MAJOR_VERSION < 6)
   spline->SetInput( fiberTract );
+#else
+  spline->SetInputData( fiberTract );
+#endif
   spline->SetSubdivideToSpecified();
   spline->SetNumberOfSubdivisions( numberOfPoints );
   spline->Update();
@@ -87,7 +105,7 @@ int main(int argc, char *argv[])
   vtkPoints *guidePoints = vtkPoints::New();
   for( int i = 0; i < numberOfPoints; i++ )
     {
-    vtkFloatingPointType avgPoint[3];
+    double avgPoint[3];
     avgPoint[0] = 0; avgPoint[1] = 0; avgPoint[2] = 0;
     int N = 0;
     for( int j = 0; j < resampledFibers->GetNumberOfCells(); j++ )
@@ -97,7 +115,7 @@ int main(int argc, char *argv[])
         N++;
         vtkIdList *cellPointList = vtkIdList::New();
         resampledFibers->GetCellPoints(j, cellPointList);
-        vtkFloatingPointType currentPoint[3];
+        double currentPoint[3];
         resampledFibers->GetPoint(cellPointList->GetId(i), currentPoint);
         avgPoint[0] += currentPoint[0]; avgPoint[1] += currentPoint[1]; avgPoint[2] += currentPoint[2];
         }
@@ -121,14 +139,22 @@ int main(int argc, char *argv[])
     {
     vtkXMLPolyDataWriter *tractWriter = vtkXMLPolyDataWriter::New();
     tractWriter->SetFileName( outputFiber.c_str() );
+#if (VTK_MAJOR_VERSION < 6)
     tractWriter->SetInput( guideFiber );
+#else
+    tractWriter->SetInputData( guideFiber );
+#endif
     tractWriter->Update();
     }
   else
     {
     vtkPolyDataWriter *tractWriter = vtkPolyDataWriter::New();
     tractWriter->SetFileName( outputFiber.c_str() );
+#if (VTK_MAJOR_VERSION < 6)
     tractWriter->SetInput( guideFiber );
+#else
+    tractWriter->SetInputData( guideFiber );
+#endif
     tractWriter->Update();
     }
   return EXIT_SUCCESS;

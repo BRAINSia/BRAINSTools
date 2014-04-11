@@ -28,7 +28,6 @@ add_subdirectory(TextureFromNoiseImageFilter)
 
 add_subdirectory(STAPLE)
 
-add_subdirectory(NoiseGenerator)
 add_subdirectory(DumpBinaryTrainingVectors)
 
 add_subdirectory(SphericalCoordinateGeneration)

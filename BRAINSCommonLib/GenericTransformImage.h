@@ -1,3 +1,21 @@
+/*=========================================================================
+ *
+ *  Copyright SINAPSE: Scalable Informatics for Neuroscience, Processing and Software Engineering
+ *            The University of Iowa
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0.txt
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ *=========================================================================*/
 #ifndef _GenericTransformImage_H_
 #define _GenericTransformImage_H_
 
@@ -18,9 +36,9 @@
 #include "itkScaleVersor3DTransform.h"
 #include "itkScaleSkewVersor3DTransform.h"
 #include "itkAffineTransform.h"
-#include <itkBSplineDeformableTransform.h>
 #include <itkThinPlateR2LogRSplineKernelTransform.h>
 #include "itkVersorRigid3DTransform.h"
+#include <itkBSplineTransform.h>
 #if (ITK_VERSION_MAJOR > 3)
 #include "itkCompositeTransform.h"
 #endif
@@ -37,7 +55,6 @@
 typedef itk::TransformFileReader                    TransformReaderType;
 typedef itk::TransformFileReader::TransformListType TransformListType;
 
-// TODO:  This should really be taken as a typedef from the BSpline class.
 // TODO:  These should be hidden in the BRAINSFit namespace.
 typedef itk::Transform<double, 3, 3> GenericTransformType;
 
@@ -48,11 +65,12 @@ static const unsigned int SplineOrder = 3;
 }
 
 typedef double CoordinateRepType;
-typedef itk::BSplineDeformableTransform<
-    CoordinateRepType,
-    GenericTransformImageNS::SpaceDimension,
-    GenericTransformImageNS::SplineOrder> BSplineTransformType;
 
+typedef itk::BSplineTransform<CoordinateRepType,
+                                        GenericTransformImageNS::SpaceDimension,
+                                        GenericTransformImageNS::SplineOrder>       BSplineTransformType;
+
+typedef itk::CompositeTransform<double, 3>                   CompositeTransformType;
 typedef itk::AffineTransform<double, 3>                      AffineTransformType;
 typedef itk::VersorRigid3DTransform<double>                  VersorRigid3DTransformType;
 typedef itk::ScaleVersor3DTransform<double>                  ScaleVersor3DTransformType;

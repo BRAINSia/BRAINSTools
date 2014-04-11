@@ -1,4 +1,22 @@
 /*=========================================================================
+ *
+ *  Copyright SINAPSE: Scalable Informatics for Neuroscience, Processing and Software Engineering
+ *            The University of Iowa
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0.txt
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ *=========================================================================*/
+/*=========================================================================
 
  Program:   GTRACT (Guided Tensor Restore Anatomical Connectivity Tractography)
  Module:    $RCSfile: $
@@ -33,13 +51,10 @@
 // #include <vtkXMLImageDataWriter.h>
 #include <vtkAppendPolyData.h>
 #include <vtkSplineFilter.h>
+#include "vtkVersion.h"
 #include "vnl/vnl_math.h"
 
-// ///////////// VTK Version Compatibility   //////////////////////////////
-#ifndef vtkFloatingPointType
-#define vtkFloatingPointType vtkFloatingPointType
-typedef float vtkFloatingPointType;
-#endif
+
 // ////////////////////////////////////////////////////////////////////////
 
 #include "compareTractInclusionCLP.h"
@@ -67,10 +82,10 @@ double PairOffFibers(vtkPolyData *resampledTestFibers, vtkPolyData *resampledSta
           double sumDist = 0.0;
           for( int i = 0; i < numberOfPoints; i++ )
             {
-            vtkFloatingPointType testPoint[3];
+            double testPoint[3];
             resampledTestFibers->GetPoint(testPointList->GetId(i), testPoint);
 
-            vtkFloatingPointType standardPoint[3];
+            double standardPoint[3];
             resampledStandardFibers->GetPoint(standardPointList->GetId(i), standardPoint);
 
             double sumSquares = 0.0;
@@ -167,7 +182,11 @@ int main(int argc, char * argv[])
     }
 
   vtkSplineFilter *testSpline = vtkSplineFilter::New();
+#if (VTK_MAJOR_VERSION < 6)
   testSpline->SetInput( testFiberTract );
+#else
+  testSpline->SetInputData( testFiberTract );
+#endif
   testSpline->SetSubdivideToSpecified();
   testSpline->SetNumberOfSubdivisions( numberOfPoints );
   testSpline->Update();
@@ -175,7 +194,11 @@ int main(int argc, char * argv[])
   vtkPolyData *resampledTestFibers = testSpline->GetOutput();
 
   vtkSplineFilter *standardSpline = vtkSplineFilter::New();
+#if (VTK_MAJOR_VERSION < 6)
   standardSpline->SetInput( standardFiberTract );
+#else
+  standardSpline->SetInputData( standardFiberTract );
+#endif
   standardSpline->SetSubdivideToSpecified();
   standardSpline->SetNumberOfSubdivisions( numberOfPoints );
   standardSpline->Update();

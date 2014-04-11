@@ -1,3 +1,21 @@
+/*=========================================================================
+ *
+ *  Copyright SINAPSE: Scalable Informatics for Neuroscience, Processing and Software Engineering
+ *            The University of Iowa
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0.txt
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ *=========================================================================*/
 /*
  * Author: Wei Lu
  * at Psychiatry Imaging Lab,
@@ -13,6 +31,7 @@
 #include "vtkRendererCollection.h"
 #include "vtkRenderWindow.h"
 #include "vtkInteractorStyleImage.h"
+#include "vtkVersion.h"
 #include <cmath>
 
 // The mouse motion callback, to turn "Slicing" on and off
@@ -108,7 +127,11 @@ void QVTKInteractionCallback::Execute(vtkObject *, unsigned long myEvent, void *
 
   // move the center point that we are slicing through
   vtkImageReslice *reslice = m_imageReslice;
+#if (VTK_MAJOR_VERSION < 6)
   reslice->GetOutput()->UpdateInformation();
+#else
+  reslice->UpdateInformation();
+#endif
   vtkMatrix4x4 *matrix = reslice->GetResliceAxes();
   double        zPhysicalLocation; // pyhysical position along normal vector
   double        center[4] = { ( *matrix )[0][3], ( *matrix )[1][3], ( *matrix )[2][3], 1.0 };
@@ -547,7 +570,11 @@ void QVTKInteractionCallback::setValueZLocation(const int zLocation)
   m_valueReceiveZ = zLocation * spacing[ (m_type + 1)  % 3 ];
   */
 
+#if (VTK_MAJOR_VERSION < 6)
   m_imageReslice->GetOutput()->UpdateInformation();
+#else
+  m_imageReslice->UpdateInformation();
+#endif
   vtkMatrix4x4 *matrix = m_imageReslice->GetResliceAxes();
 
   // center mapping due to image direction compensation for the reslice axes
@@ -684,7 +711,11 @@ void QVTKInteractionCallback::setValueXLocation(const double xLocation)
   m_valueReceiveX = xLocation * spacing[1-m_type%2];
   */
 
+#if (VTK_MAJOR_VERSION < 6)
   m_imageReslice->GetOutput()->UpdateInformation();
+#else
+  m_imageReslice->UpdateInformation();
+#endif
   vtkMatrix4x4 *matrix = m_imageReslice->GetResliceAxes();
 
   // center mapping due to image direction compensation for the reslice axes
@@ -817,7 +848,11 @@ void QVTKInteractionCallback::setValueYLocation(const double yLocation)
   m_valueReceiveY = yLocation * spacing[ m_type / 2 + 1 ];
   */
 
+#if (VTK_MAJOR_VERSION < 6)
   m_imageReslice->GetOutput()->UpdateInformation();
+#else
+  m_imageReslice->UpdateInformation();
+#endif
   vtkMatrix4x4 *matrix = m_imageReslice->GetResliceAxes();
 
   // center mapping due to image direction compensation for the reslice axes
@@ -926,7 +961,11 @@ void QVTKInteractionCallback::setValueYLocation(const double yLocation)
 
 void QVTKInteractionCallback::receiveLabelPos(double *pos)
 {
+#if (VTK_MAJOR_VERSION < 6)
   m_imageReslice->GetOutput()->UpdateInformation();
+#else
+  m_imageReslice->UpdateInformation();
+#endif
   vtkMatrix4x4 *matrix = m_imageReslice->GetResliceAxes();
 
   // center mapping due to image direction compensation for the reslice axes

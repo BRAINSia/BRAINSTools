@@ -1,4 +1,22 @@
 /*=========================================================================
+ *
+ *  Copyright SINAPSE: Scalable Informatics for Neuroscience, Processing and Software Engineering
+ *            The University of Iowa
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0.txt
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ *=========================================================================*/
+/*=========================================================================
 
  Program:   BRAINS (Brain Research: Analysis of Images, Networks, and Systems)
  Module:    $RCSfile: $
@@ -24,6 +42,7 @@
 #include "vtkDataArray.h"
 #include "vtkPolyDataConnectivityFilter.h"
 
+#include "vtkVersion.h"
 #include "vtkMaskLabel.h"
 #include "RemoveTinyLabelsCLP.h"
 #include <BRAINSCommonLib.h>
@@ -93,14 +112,22 @@ int main( int argc, char * argv[] )
     // std::cout<<"remove label: "<<label<<std::endl;
 
     // analyze each label in the list
+#if (VTK_MAJOR_VERSION < 6)
     mask->SetInput(reader->GetOutput() );
+#else
+    mask->SetInputData(reader->GetOutput() );
+#endif
     mask->SetLabel(label);
     mask->Update();
 
     // replace the labels on mask->output if it is not null
     if( mask->GetOutput()->GetNumberOfCells() )
       {
+#if (VTK_MAJOR_VERSION < 6)
       connect->SetInput(mask->GetOutput() );
+#else
+      connect->SetInputData(mask->GetOutput() );
+#endif
       connect->SetExtractionModeToAllRegions();
       connect->Update();
 
@@ -170,7 +197,11 @@ int main( int argc, char * argv[] )
       }
     }
 
+#if (VTK_MAJOR_VERSION < 6)
   writer->SetInput(surface_in);
+#else
+  writer->SetInputData(surface_in);
+#endif
   writer->SetFileName(outputSurfaceFile.c_str() );
   writer->Update();
 

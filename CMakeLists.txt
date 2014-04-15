@@ -2,6 +2,11 @@ cmake_minimum_required(VERSION 2.8.7)
 cmake_policy(VERSION 2.8.7)
 
 set(LOCAL_PROJECT_NAME BRAINSTools)
+set(PRIMARY_PROJECT_NAME ${LOCAL_PROJECT_NAME})
+#-----------------------------------------------------------------------------
+# Common build features for both the superbuild and the main build
+#-----------------------------------------------------------------------------
+include(${CMAKE_CURRENT_SOURCE_DIR}/Common.cmake)
 
 ## NOTE THERE SHOULD BE NO PROJECT STATEMENT HERE!
 ## This file acts as a simple switch to initiate

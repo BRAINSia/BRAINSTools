@@ -1,24 +1,38 @@
-.idea
-*.sample
-*~
 *.[oa]
-.DS_Store
-._*
+# Compiled Static libraries
+*.a
+*.config
+*.dylib
+*.la
+*.lai
+*.lo
+*.nhdr
 *.nii.gz
 *.nrrd
-*.nhdr
+# Compiled Object files
+*.o
+*.obj
+*.orig
+*.pyc
 *.raw
+*.sample
+*.slo
+# Compiled Dynamic libraries
+*.so
+*.swp
+*ExternalSources*
+# emacs backups
+*~
+.DS_Store
+.ExternalData_MD5*
+.RData
+.RDataTmp
+.Rhistory
+._*
+.clang_complete
+.emacs.desktop
+.idea
 .svn
 CMakeCache.txt
 CMakeFiles/*
-.RData
-.Rhistory
-.RDataTmp
-.ExternalData_MD5*
-*.pyc
 crash*
-*.swp
-.clang_complete
-*.orig
-.emacs.desktop
-*.config

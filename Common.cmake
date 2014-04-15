@@ -1,12 +1,10 @@
-
 #-----------------------------------------------------------------------------
 # Update CMake module path
 #------------------------------------------------------------------------------
-set(CMAKE_MODULE_PATH
-  ${${PROJECT_NAME}_SOURCE_DIR}/CMake
-  ${${PROJECT_NAME}_BINARY_DIR}/CMake
-  ${CMAKE_MODULE_PATH}
-  )
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/CMake)
+
+
+include(Artichoke)
 
 #-----------------------------------------------------------------------------
 # Sanity checks

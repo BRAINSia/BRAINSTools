@@ -31,11 +31,28 @@ mark_as_advanced(${LOCAL_PROJECT_NAME}_SUPERBUILD)
 # Superbuild script
 #-----------------------------------------------------------------------------
 if(${LOCAL_PROJECT_NAME}_SUPERBUILD)
-  project(SuperBuild_${LOCAL_PROJECT_NAME})
+  project(SuperBuild_${LOCAL_PROJECT_NAME} C CXX)
+  enable_language(C)
+  enable_language(CXX)
+  #-----------------------------------------------------------------------------
+  # Sanity checks
+  #------------------------------------------------------------------------------
+  include(PreventInSourceBuilds)
+  include(PreventInBuildInstalls)
+  include(itkCheckSourceTree)
+
   include("${CMAKE_CURRENT_SOURCE_DIR}/SuperBuild.cmake")
   return()
 else()
-  project(${LOCAL_PROJECT_NAME})
+  project(${LOCAL_PROJECT_NAME} C CXX)
+  enable_language(C)
+  enable_language(CXX)
+  #-----------------------------------------------------------------------------
+  # Sanity checks
+  #------------------------------------------------------------------------------
+  include(PreventInSourceBuilds)
+  include(PreventInBuildInstalls)
+  include(itkCheckSourceTree)
   include("${CMAKE_CURRENT_SOURCE_DIR}/${LOCAL_PROJECT_NAME}.cmake")
   return()
 endif()

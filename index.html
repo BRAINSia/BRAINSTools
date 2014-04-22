@@ -33,11 +33,12 @@
       <section id="main_content" class="inner">
         <p>The BRAINSTools project is a harness to assist in building the many BRAINSTools under development.</p>
 
-<h2>Building</h2>
+<h2>
+<a name="building" class="anchor" href="#building"><span class="octicon octicon-link"></span></a>Building</h2>
 
 <p>Example session for a clean build on Linux using gcc-4.2:</p>
 
-<div class="highlight"><pre><span class="nv">DIRECTORY</span><span class="o">=</span>~/src/mytester
+<div class="highlight highlight-bash"><pre><span class="nv">DIRECTORY</span><span class="o">=</span>~/src/mytester
 mkdir <span class="k">${</span><span class="nv">DIRECTORY</span><span class="k">}</span>
 <span class="nb">cd</span> <span class="k">${</span><span class="nv">DIRECTORY</span><span class="k">}</span>
 git clone git://github.com/BRAINSia/BRAINSTools.git
@@ -45,13 +46,13 @@ git clone git://github.com/BRAINSia/BRAINSTools.git
 
 <p><strong>For developers:</strong></p>
 
-<div class="highlight"><pre><span class="nb">cd</span> <span class="k">${</span><span class="nv">DIRECTORY</span><span class="k">}</span>/BRAINSTools/
+<div class="highlight highlight-bash"><pre><span class="nb">cd</span> <span class="k">${</span><span class="nv">DIRECTORY</span><span class="k">}</span>/BRAINSTools/
 bash ./Utilities/SetupForDevelopment.sh
 </pre></div>
 
 <p>Finally:</p>
 
-<div class="highlight"><pre>mkdir -p <span class="k">${</span><span class="nv">DIRECTORY</span><span class="k">}</span>/BRAINSTools-build
+<div class="highlight highlight-bash"><pre>mkdir -p <span class="k">${</span><span class="nv">DIRECTORY</span><span class="k">}</span>/BRAINSTools-build
 <span class="nb">cd</span> <span class="k">${</span><span class="nv">DIRECTORY</span><span class="k">}</span>/BRAINSTools-build/
 <span class="nv">CC</span><span class="o">=</span>/usr/bin/gcc-4.2 <span class="se">\</span>
 <span class="nv">CXX</span><span class="o">=</span>/usr/bin/g++-4.2 <span class="se">\</span>
@@ -67,15 +68,17 @@ make
 make
 </pre></div>
 
-<h1>Development</h1>
+<h1>
+<a name="development" class="anchor" href="#development"><span class="octicon octicon-link"></span></a>Development</h1>
 
 <p>Developers should run the "./Utilities/SetupForDevelopment.sh" script to get started.</p>
 
-<h2>Testing</h2>
+<h2>
+<a name="testing" class="anchor" href="#testing"><span class="octicon octicon-link"></span></a>Testing</h2>
 
 <p><code>BRAINSTools_MAX_TEST_LEVEL</code> adjusts how agressive the test suite is so that long running tests or incomplete tests can easily be silenced</p>
 
-<div class="highlight"><pre><span class="nb">set</span><span class="p">(</span><span class="s">BRAINSTools_MAX_TEST_LEVEL</span> <span class="s">3</span> 
+<div class="highlight highlight-cmake"><pre><span class="nb">set</span><span class="p">(</span><span class="s">BRAINSTools_MAX_TEST_LEVEL</span> <span class="s">3</span> 
       <span class="s">CACHE</span> <span class="s">STRING</span> <span class="s2">"Testing level for managing test burden"</span><span class="p">)</span>
 </pre></div>
 
@@ -101,11 +104,12 @@ make
 <li>These are good ideas for test that we don't have time to make robust.</li>
 </ul><p><strong>9</strong> - Run tests that don't have much utility currently.</p>
 
-<hr><h6>Example</h6>
+<hr><h6>
+<a name="example" class="anchor" href="#example"><span class="octicon octicon-link"></span></a>Example</h6>
 
 <p>setting a test's max level in TestSuite/CMakeLists.txt</p>
 
-<div class="highlight"><pre><span class="nb">if</span><span class="p">(</span> <span class="o">${</span><span class="nv">BRAINSTools_MAX_TEST_LEVEL</span><span class="o">}</span> <span class="s">GREATER</span> <span class="s">8</span><span class="p">)</span>
+<div class="highlight highlight-cmake"><pre><span class="nb">if</span><span class="p">(</span> <span class="o">${</span><span class="nv">BRAINSTools_MAX_TEST_LEVEL</span><span class="o">}</span> <span class="s">GREATER</span> <span class="s">8</span><span class="p">)</span>
   <span class="nb">ExternalData_add_test</span><span class="p">(</span><span class="s">FindCenterOfBrainFetchData</span>
     <span class="s">NAME</span> <span class="s">itkResampleInPlaceImageFilterTest</span>
     <span class="s">COMMAND</span> <span class="err">$</span><span class="s">&lt;TARGET_FILE:itkResampleInPlaceImageFilterTest&gt;</span>

@@ -2,6 +2,9 @@ The BRAINSTools is a harness to assist in building the many of the BRAINSTools u
 
 Developers should run the "./Utilities/SetupForDevelopment.sh" script to get started.
 
+For more information on the individual BRAINSTools, please see the following link:  
+https://github.com/BRAINSia/BRAINSTools/wiki
+
 ## Building ##
 Example session for a clean build:
 mkdir ~/src/mytester

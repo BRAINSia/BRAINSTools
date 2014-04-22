@@ -295,7 +295,7 @@ list(APPEND ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS
   BUILD_TESTING:BOOL
   ITK_VERSION_MAJOR:STRING
   ITK_DIR:PATH
-
+  SlicerExecutionModel_DIR:PATH
   ${LOCAL_PROJECT_NAME}_CLI_LIBRARY_OUTPUT_DIRECTORY:PATH
   ${LOCAL_PROJECT_NAME}_CLI_ARCHIVE_OUTPUT_DIRECTORY:PATH
   ${LOCAL_PROJECT_NAME}_CLI_RUNTIME_OUTPUT_DIRECTORY:PATH
@@ -406,7 +406,7 @@ endif()
 ## 8 - Run tests that fail due to incomplete test building, these are good ideas for test that we don't have time to make robust)
 ## 9 - Run silly tests that don't have much untility
 set(BRAINSTools_MAX_TEST_LEVEL 3 CACHE STRING "Testing level for managing test burden")
-
+#message("BRAINSTOOLS_EXTERNAL_PROJECT_ARGS:${BRAINSTOOLS_EXTERNAL_PROJECT_ARGS}")
 set(proj ${LOCAL_PROJECT_NAME})
 ExternalProject_Add(${proj}
   DEPENDS ${${LOCAL_PROJECT_NAME}_DEPENDENCIES}

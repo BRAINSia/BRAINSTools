@@ -74,6 +74,9 @@ DICOM Data Dictionary: http://medical.nema.org/Dicom/2011/11_06pu.pdf
 #include "DWIConverterFactory.h"
 #include <BRAINSCommonLib.h>
 
+#include "helpers/loglog.h"
+#include "helpers/lloguser.h"
+
 /** the DICOM datasets are read as 3D volumes, but they need to be
  *  written as 4D volumes for image types other than NRRD.
  */
@@ -160,7 +163,7 @@ int main(int argc, char *argv[])
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
-
+  dcmtk::log4cplus::helpers::LogLog::getLogLog()->setQuietMode(true);
   // just need one instance to do double to string conversions
   itk::NumberToString<double> DoubleConvert;
 

@@ -128,18 +128,23 @@ public:
             else
               {
               float tmp[3];
-              try
-                {
-                this->m_Headers[k]->GetElementFLorOB( 0x2005, 0x10b0, tmp[0]);
-                this->m_Headers[k]->GetElementFLorOB( 0x2005, 0x10b1, tmp[1]);
-                this->m_Headers[k]->GetElementFLorOB( 0x2005, 0x10b2, tmp[2]);
-                }
-              catch(...)
+              itk::DCMTKFileReader *hdr = this->m_Headers[k];
+              if(hdr->GetElementFLorOB( 0x2005, 0x10b0, tmp[0],false) == EXIT_FAILURE ||
+                 hdr->GetElementFLorOB( 0x2005, 0x10b1, tmp[1],false) == EXIT_FAILURE ||
+                 hdr->GetElementFLorOB( 0x2005, 0x10b2, tmp[2],false) == EXIT_FAILURE)
                 {
                 // try with new philips tags.
-                this->m_Headers[k]->GetElementFLorOB( 0x2005, 0x12b0, tmp[0] );
-                this->m_Headers[k]->GetElementFLorOB( 0x2005, 0x12b1, tmp[1] );
-                this->m_Headers[k]->GetElementFLorOB( 0x2005, 0x12b2, tmp[2] );
+                if(hdr->GetElementFLorOB( 0x2005, 0x12b0, tmp[0],false) == EXIT_FAILURE ||
+                   hdr->GetElementFLorOB( 0x2005, 0x12b1, tmp[1],false) == EXIT_FAILURE ||
+                   hdr->GetElementFLorOB( 0x2005, 0x12b2, tmp[2],false) == EXIT_FAILURE)
+                  {
+                  // last chance. GetELementFD throws exception on failure
+                  double tmpD[3];
+                  hdr->GetElementFD(0x0018,0x9089,3,tmpD);
+                  tmp[0] = static_cast<float>(tmpD[0]);
+                  tmp[1] = static_cast<float>(tmpD[1]);
+                  tmp[2] = static_cast<float>(tmpD[2]);
+                  }
                 }
               vect3d[0] = static_cast<double>(tmp[0]);
               vect3d[1] = static_cast<double>(tmp[1]);

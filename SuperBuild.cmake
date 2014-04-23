@@ -1,14 +1,36 @@
+#-----------------------------------------------------------------------------
+# Sanity checks
+#------------------------------------------------------------------------------
+include(PreventInSourceBuilds)
+include(PreventInBuildInstalls)
 
 #-----------------------------------------------------------------------------
-enable_language(C)
-enable_language(CXX)
+include(SlicerMacroGetOperatingSystemArchitectureBitness)
+
+#-----------------------------------------------------------------------------
+# Where should the superbuild source files be downloaded to?
+# By keeping this outside of the build tree, you can share one
+# set of external source trees for multiple build trees
+#-----------------------------------------------------------------------------
+set( SOURCE_DOWNLOAD_CACHE ${CMAKE_CURRENT_LIST_DIR}/ExternalSources )
 
 #-----------------------------------------------------------------------------
 enable_testing()
 include(CTest)
 
 #-----------------------------------------------------------------------------
-include(${CMAKE_CURRENT_SOURCE_DIR}/Common.cmake)
+# Add needed flag for gnu on linux like enviroments to build static common libs
+# suitable for linking with shared object libs.
+message("CMAKE_SYSTEM_PROCESSOR:${CMAKE_SYSTEM_PROCESSOR}")
+if(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
+  message("Adding fPIC")
+  if(NOT "${CMAKE_CXX_FLAGS}" MATCHES "-fPIC")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+  endif()
+  if(NOT "${CMAKE_C_FLAGS}" MATCHES "-fPIC")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
+  endif()
+endif()
 
 #-----------------------------------------------------------------------------
 # Git protocole option
@@ -18,6 +40,9 @@ set(git_protocol "git")
 if(NOT ${CMAKE_PROJECT_NAME}_USE_GIT_PROTOCOL)
   set(git_protocol "http")
 endif()
+
+CMAKE_DEPENDENT_OPTION(${CMAKE_PROJECT_NAME}_USE_CTKAPPLAUNCHER "CTKAppLauncher used with python" ON
+  "NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_python" OFF)
 
 find_package(Git REQUIRED)
 
@@ -243,7 +268,7 @@ _expand_external_project_vars()
 set(COMMON_EXTERNAL_PROJECT_ARGS ${${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_ARGS})
 set(extProjName ${LOCAL_PROJECT_NAME})
 set(proj        ${LOCAL_PROJECT_NAME})
-SlicerMacroCheckExternalProjectDependency(${proj})
+ExternalProject_Include_Dependencies(${proj} DEPENDS_VAR ${PRIMARY_PROJECT_NAME}_DEPENDENCIES)
 
 #-----------------------------------------------------------------------------
 # Set CMake OSX variable to pass down the external project
@@ -270,7 +295,8 @@ list(APPEND ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS
   BUILD_TESTING:BOOL
   ITK_VERSION_MAJOR:STRING
   ITK_DIR:PATH
-
+  VTK_DIR:PATH
+  SlicerExecutionModel_DIR:PATH
   ${LOCAL_PROJECT_NAME}_CLI_LIBRARY_OUTPUT_DIRECTORY:PATH
   ${LOCAL_PROJECT_NAME}_CLI_ARCHIVE_OUTPUT_DIRECTORY:PATH
   ${LOCAL_PROJECT_NAME}_CLI_RUNTIME_OUTPUT_DIRECTORY:PATH
@@ -381,7 +407,7 @@ endif()
 ## 8 - Run tests that fail due to incomplete test building, these are good ideas for test that we don't have time to make robust)
 ## 9 - Run silly tests that don't have much untility
 set(BRAINSTools_MAX_TEST_LEVEL 3 CACHE STRING "Testing level for managing test burden")
-
+#message("BRAINSTOOLS_EXTERNAL_PROJECT_ARGS:${BRAINSTOOLS_EXTERNAL_PROJECT_ARGS}")
 set(proj ${LOCAL_PROJECT_NAME})
 ExternalProject_Add(${proj}
   DEPENDS ${${LOCAL_PROJECT_NAME}_DEPENDENCIES}

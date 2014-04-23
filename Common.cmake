@@ -1,19 +1,10 @@
-
 #-----------------------------------------------------------------------------
 # Update CMake module path
 #------------------------------------------------------------------------------
-set(CMAKE_MODULE_PATH
-  ${${PROJECT_NAME}_SOURCE_DIR}/CMake
-  ${${PROJECT_NAME}_BINARY_DIR}/CMake
-  ${CMAKE_MODULE_PATH}
-  )
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/CMake)
 
-#-----------------------------------------------------------------------------
-# Sanity checks
-#------------------------------------------------------------------------------
-include(PreventInSourceBuilds)
-include(PreventInBuildInstalls)
-include(itkCheckSourceTree)
+
+include(Artichoke)
 
 include(CMakeDependentOption)
 
@@ -109,10 +100,9 @@ if( USE_AutoWorkup )
          /System/Library/Frameworks/Python.framework/Versions/${REQUIRED_PYTHON_VERSION}/include/python2.7
          CACHE PATH "The apple specified python headers" )
   else()
-    find_package ( PythonInterp ${REQUIRED_PYTHON_VERSION} REQUIRED )
-
+    find_package ( PythonInterp REQUIRED )
     message(STATUS "Found PythonInterp version ${PYTHON_VERSION_STRING}")
-    find_package ( PythonLibs ${PYTHON_VERSION_STRING} EXACT REQUIRED )
+    find_package ( PythonLibs REQUIRED )
   endif()
 
   set(PYTHON_INSTALL_CMAKE_ARGS
@@ -201,18 +191,6 @@ if(ITK_LEGACY_REMOVE)
   else() # Release, or anything else
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${C_RELEASE_DESIRED_FLAGS} " )
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX_RELEASE_DESIRED_FLAGS} " )
-  endif()
-endif()
-
-#-----------------------------------------------------------------------------
-# Add needed flag for gnu on linux like enviroments to build static common libs
-# suitable for linking with shared object libs.
-if(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
-  if(NOT "${CMAKE_CXX_FLAGS}" MATCHES "-fPIC")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
-  endif()
-  if(NOT "${CMAKE_C_FLAGS}" MATCHES "-fPIC")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
   endif()
 endif()
 

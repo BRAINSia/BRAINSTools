@@ -1,5 +1,3 @@
-include(${CMAKE_CURRENT_LIST_DIR}/Common.cmake)
-
 #-----------------------------------------------------------------------------
 # Update CMake module path
 #------------------------------------------------------------------------------
@@ -26,10 +24,14 @@ include(${SlicerExecutionModel_CMAKE_DIR}/SEMMacroBuildCLI.cmake)
 
 #-----------------------------------------------------------------------------
 if(USE_AutoWorkup OR USE_GTRACT OR USE_BRAINSTalairach OR USE_BRAINSSurfaceTools)
+  message("VTK_DIR:${VTK_DIR}")
   find_package(VTK REQUIRED)
   if(VTK_FOUND)
     include(${VTK_USE_FILE})
   endif()
+  message("VTK_USE_FILE:${VTK_USE_FILE}")
+  message("VTK_INCLUDE_DIRS:${VTK_INCLUDE_DIRS}")
+  include_directories(${VTK_INCLUDE_DIRS})
 endif()
 
 if(USE_ANTS)

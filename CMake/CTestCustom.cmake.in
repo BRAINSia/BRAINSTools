@@ -71,46 +71,31 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
   "VC.include."
 
   # Ignore 'detached HEAD' warnings
-  ".*Note: checking out.*"
+  "Note.*checking out"
+  #
+  "Note: checking out.*"
   ".*detached.*HEAD.*"
-  "HEAD is now"
-  ".*warning generated..*"
 
   # NIPYPE warnings:
   ".*NIPYPE-prefix.*warning.*"
 
   # PCRE warnings:
-  ".*pcre.*warning.*"
   ".*PCRE-prefix.*warning.*"
-  ".*PCRE.*warning.*"
-  ".*pcre.*has no symbols.*"
-  "cast from.*char.*to.*pcre_.*"
-
-  ".*checking for C compiler warning.*"
-  ".*gmake.*: warning.*"
-
-  # JPEG warnings:
-  ".*JPEG.*"
-  ".*tif_.*warning"
-  ".*templ.c.*warning"
-  ".*TIFF.*"
-  ".*NIPYPE.*"
-  ".*DCMTK.*"
-  ".*warning: unused parameter .*cinfo.*"
+  "PCRE.*warning"
+  "pcre.*has no symbols"
+  "pcre.*warning"
 
   # Swig warnings:
-  ".*Swig-prefix.*warning.*"
-  ".*Note.*SWIG.*"
-  ".*CParse.*warning.*"
+  ".*Swig-prefix.*warning"
+  "Note.*SWIG"
+  "CParse.*warning"
   ".*parser.y.*"
-  ".*maximum warning verbosity.*"
-  ".*Swig.*note.*"
-  ".*Swig/Source.*"
-  ".*warning.*argument unused during compilation.*"
+  "maximum warning verbosity"
+  "Swig.*note.*"
+  "warning.*argument unused during compilation"
 
   # Open-CV warnings:
   ".*OpenCV-build.*warning.*"
-  ".*OpenCV-install.*warning.*"
   ".*OpenCV.*"
 
   # FFTW warnings:
@@ -131,22 +116,6 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
   # warning: ‘...’ may be used uninitialized in this function
   "numpy.(core).*warning.*(assignment|defined but not used|uninitialized)"
   "NUMPY.*Warning"
-  "NUMPY._configtest.*undefined reference"
-  "_configtest.*error"
-  "collect2: ld returned 1 exit status"
-
-  #Superbuild
-  "Note.*SWIG"
-  ".*parser.y.*"
-  "maximum warning verbosity"
-  ".*OpenCV.*"
-  ".*VTK.*"
-  ".*has no symbols."
-  "ITKv4"
-  "SlicerExecutionModel"
-  "SimpleITK"
-  ".*Warning while building.*"
-
   # Mac
   "numpy.core.src.multiarray.descriptor.*was declared here"
 
@@ -232,11 +201,10 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
   "ld.*has different visibility.*libLog4Qt.a"
 
   # CTK - dcmtk
-  ".*dcmdata/dcovlay.h:93: warning: use of old-style cast.*"
-  ".*/usr/bin/ranlib: .*lib(dcmtls|oflog).a.*has no symbols.*"
-  ".*ld.*has different visibility.*(libdcmdata|libdcmnet|libdcmimgle|liboflog|libofstd).a.*"
-  ".*DCMTK.(ofstd|dcmdata|dcmjpls|dcmnet|dcmimage|dcmimgle|dcmpstat|dcmqrdb).(lib|include|apps).*conversion from '(size_t|SOCKET)' to '.*', possible loss of data.*"
-  ".*DCMTK.*warning.*"
+  "dcmdata/dcovlay.h:93: warning: use of old-style cast"
+  "/usr/bin/ranlib: .*lib(dcmtls|oflog).a.*has no symbols"
+  "ld.*has different visibility.*(libdcmdata|libdcmnet|libdcmimgle|liboflog|libofstd).a"
+  "DCMTK.(ofstd|dcmdata|dcmjpls|dcmnet|dcmimage|dcmimgle|dcmpstat|dcmqrdb).(lib|include|apps).*conversion from '(size_t|SOCKET)' to '.*', possible loss of data"
 
   # Libs/OpenIGTLink
   "(OpenIGTLink|openigtlink).[Ss]ource.igtl"
@@ -316,8 +284,8 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
 
   "ModuleFactory.*warning.*SymbolPointer"
 
-  ## HACK: THIS SHOULD NOT BE SUPPRESSED, NEED TO FIX IN ANTS
-  "ANTS.*warning"
+  ## HACK: THIS SHOULD NOT BE SUPPRESSED, NEED TO FIX IN ANTs
+  "ANTs.*warning"
   ## External Packages
   "Note.*SWIG"
   ".*parser.y.*"
@@ -329,13 +297,10 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
   "SlicerExecutionModel"
   "SimpleITK"
 
-  ".*has no symbols"
-  "CMake Warning:"
-  "note: expanded from macro"
-  ": note:"
-  "vrscanl.c.* warning: unused parameter"
-  "boost/archive/iterators/transform_width.hpp"
-  "/usr/bin/libtool: warning same member name"
+  ".*has no symbols",
+  "CMake Warning:",
+  "note: expanded from macro",
+  ": note:",
   )
 
 set(CTEST_CUSTOM_WARNING_MATCH
@@ -362,7 +327,6 @@ set(CTEST_CUSTOM_ERROR_MATCH
 
 set(CTEST_CUSTOM_ERROR_EXCEPTION
   ${CTEST_CUSTOM_ERROR_EXCEPTION}
-  ${CTEST_CUSTOM_WARNING_EXCEPTION}
   # Numpy errors
   "NUMPY.*Warning"
   "NUMPY._configtest.*undefined reference"
@@ -380,6 +344,4 @@ set(CTEST_CUSTOM_ERROR_EXCEPTION
   "SlicerExecutionModel"
   "SimpleITK"
 
-  #Superbuild
-  ".*Warning while building.*"
   )

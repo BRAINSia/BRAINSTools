@@ -64,7 +64,7 @@ int main(int argc, char* argv[])
 
   if( argc > 3 )
     {
-    std::cout << "Read transform file from the disk ..." << std::cout;
+    std::cout << "Read transform file from the disk ..." << std::endl;
     itk::TransformFileReader::Pointer transReader = itk::TransformFileReader::New();
     transReader->SetFileName( argv[3] );
     try

@@ -46,19 +46,7 @@ PURPOSE.  See the above copyright notices for more information.
 #include <cstdio>
 #include <cstdlib>
 #include <cerrno>
-
-#include <itkImageFileWriter.h>
-#include <itkImageFileReader.h>
-#include <itkImage.h>
-#include <itkAffineTransform.h>
-#include <itkTransformFileReader.h>
-#include <itkTransformFactory.h>
-#include <itkExceptionObject.h>
-#include <itkBSplineDeformableTransform.h>
-#include <itkThinPlateR2LogRSplineKernelTransform.h>
-#include <itkIdentityTransform.h>
-#include <itkVersorRigid3DTransform.h>
-// #include <itkInverseDisplacementFieldImageFilter.h>
+#include "itkIO.h"
 
 #include "TransformToDisplacementField.h"
 
@@ -81,24 +69,11 @@ int main(int argc, char *argv[])
   typedef DisplacementFieldType                    ImageType;
   typedef itk::ImageFileWriter<ImageType>          WriterType;
   typedef itk::Image<signed short, 3>              ReferenceImageType;
-  typedef itk::ImageFileReader<ReferenceImageType> ReferenceReaderType;
 
-  typedef itk::ThinPlateR2LogRSplineKernelTransform<double, 3> ThinPlateSplineTransformType;
-
-#if (ITK_VERSION_MAJOR < 4)
-  typedef itk::TransformToDeformationFieldSource<DisplacementFieldType, double> DisplacementFieldGeneratorType;
-#else
-  typedef itk::TransformToDisplacementFieldSource<DisplacementFieldType, double> DisplacementFieldGeneratorType;
-#endif
-  typedef DisplacementFieldGeneratorType::TransformType TransformType;
-
-  // Read the Reference file
-  ReferenceReaderType::Pointer referenceReader = ReferenceReaderType::New();
-  referenceReader->SetFileName(inputReferenceVolume);
-
+  ReferenceImageType::Pointer image;
   try
     {
-    referenceReader->Update();
+    image = itkUtil::ReadImage<ReferenceImageType>(inputReferenceVolume);
     }
   catch( ... )
     {
@@ -106,31 +81,18 @@ int main(int argc, char *argv[])
     throw;
     }
 
-  ReferenceImageType::Pointer image = referenceReader->GetOutput();
-
   // Read the transform
   GenericTransformType::Pointer baseTransform = itk::ReadTransformFromDisk(inputTransform);
 
-  DisplacementFieldGeneratorType::Pointer defGenerator = DisplacementFieldGeneratorType::New();
-  defGenerator->SetOutputParametersFromImage( image );
-  defGenerator->SetTransform(baseTransform);
-  try
-    {
-    defGenerator->Update();
-    }
-  catch( itk::ExceptionObject & err )
-    {
-    std::cerr << "ExceptionObject caught !" << std::endl;
-    std::cerr << err << std::endl;
-    return EXIT_FAILURE;
-    }
+  DisplacementFieldType::Pointer displacementField =
+    TransformToDisplacementField<ImageType::Pointer,GenericTransformType::Pointer>(image,baseTransform);
 
   // Write out Displacement field
 
   WriterType::Pointer writer = WriterType::New();
   writer->UseCompressionOn();
   writer->SetFileName( outputDeformationFieldVolume );
-  writer->SetInput(defGenerator->GetOutput() );
+  writer->SetInput(displacementField);
   try
     {
     writer->Update();

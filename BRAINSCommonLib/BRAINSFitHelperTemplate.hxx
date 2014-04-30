@@ -1157,8 +1157,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
       typedef itk::ImageRegistrationMethodv4<FixedImageType, MovingImageType, BSplineTransformType> BSplineRegistrationType;
       typename BSplineRegistrationType::Pointer bsplineRegistration = BSplineRegistrationType::New();
 
-      typename BSplineTransformType::Pointer outputBSplineTransform =
-                                                const_cast<BSplineTransformType *>( bsplineRegistration->GetOutput()->Get() );
+      typename BSplineTransformType::Pointer initialBSplineTransform = BSplineTransformType::New();
       // Initialize the BSpline transform
       BSplineTransformType::PhysicalDimensionsType   fixedPhysicalDimensions;
       BSplineTransformType::MeshSizeType             meshSize;
@@ -1172,20 +1171,21 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
         meshSize[i] = m_SplineGridSize[i];
         }
 
-      outputBSplineTransform->SetTransformDomainOrigin( fixedOrigin );
-      outputBSplineTransform->SetTransformDomainPhysicalDimensions( fixedPhysicalDimensions );
-      outputBSplineTransform->SetTransformDomainMeshSize( meshSize );
-      outputBSplineTransform->SetTransformDomainDirection( m_FixedVolume->GetDirection() );
-      //outputBSplineTransform->SetIdentity();
+      initialBSplineTransform->SetTransformDomainOrigin( fixedOrigin );
+      initialBSplineTransform->SetTransformDomainPhysicalDimensions( fixedPhysicalDimensions );
+      initialBSplineTransform->SetTransformDomainMeshSize( meshSize );
+      initialBSplineTransform->SetTransformDomainDirection( m_FixedVolume->GetDirection() );
 
       typedef BSplineTransformType::ParametersType     ParametersType;
-      const unsigned int numberOfParameters =  outputBSplineTransform->GetNumberOfParameters();
+      const unsigned int numberOfParameters =  initialBSplineTransform->GetNumberOfParameters();
       ParametersType parameters( numberOfParameters );
       parameters.Fill( 0.0 );
 
-      outputBSplineTransform->SetParameters( parameters );
-      std::cout << "Intial Parameters = " << std::endl
-                << outputBSplineTransform->GetParameters() << std::endl;
+      initialBSplineTransform->SetParameters( parameters );
+      // std::cout << "Intial Parameters = " << std::endl
+      //           << initialBSplineTransform->GetParameters() << std::endl;
+
+      bsplineRegistration->InitializeOutputTransformFromReference( initialBSplineTransform );
 
       // TODO:  Expose these to the command line for consistancy.
       const int m_MaximumNumberOfIterations = 1500;
@@ -1214,7 +1214,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
         // constrian
         // the parameters to something different than those control points inside the
         // fixed image mask.
-      OptimizerBoundSelectionType boundSelect( outputBSplineTransform->GetNumberOfParameters() );
+      OptimizerBoundSelectionType boundSelect( initialBSplineTransform->GetNumberOfParameters() );
       if( vcl_abs(m_MaxBSplineDisplacement) < 1e-12 )
         {
         boundSelect.Fill(0);
@@ -1223,9 +1223,9 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
         {
         boundSelect.Fill(2);
         }
-      OptimizerBoundValueType upperBound( outputBSplineTransform->GetNumberOfParameters() );
+      OptimizerBoundValueType upperBound( initialBSplineTransform->GetNumberOfParameters() );
       upperBound.Fill(m_MaxBSplineDisplacement);
-      OptimizerBoundValueType lowerBound( outputBSplineTransform->GetNumberOfParameters() );
+      OptimizerBoundValueType lowerBound( initialBSplineTransform->GetNumberOfParameters() );
       lowerBound.Fill(-m_MaxBSplineDisplacement);
 
       LBFGSBoptimizer->SetBoundSelection(boundSelect);
@@ -1242,16 +1242,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
       LBFGSBoptimizer->SetMaximumNumberOfIterations(m_MaximumNumberOfIterations);
       LBFGSBoptimizer->SetMaximumNumberOfFunctionEvaluations(m_MaximumNumberOfEvaluations);
       LBFGSBoptimizer->SetMaximumNumberOfCorrections(m_MaximumNumberOfCorrections);
-/*
-      // Estimate Scales
-      typedef itk::RegistrationParameterScalesFromPhysicalShift<MetricType> ScalesEstimatorType;
-      typename ScalesEstimatorType::Pointer scalesEstimator = ScalesEstimatorType::New();
-      scalesEstimator->SetMetric( this->m_CostMetricObject );
-      scalesEstimator->SetTransformForward( true );
-      scalesEstimator->SetSmallParameterVariation( 1.0 );
 
-      LBFGSBoptimizer->SetScalesEstimator( scalesEstimator );
-*/
       // we have a 1 level BSpline registration.
       const unsigned int numberOfLevels = 1;
 
@@ -1263,8 +1254,6 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
       smoothingSigmasPerLevel.SetSize( 1 );
       smoothingSigmasPerLevel[0] = 0;
 
-      bsplineRegistration->SetFixedImage( 0, m_FixedVolume );
-      bsplineRegistration->SetMovingImage( 0, m_MovingVolume );
       bsplineRegistration->SetNumberOfLevels( numberOfLevels );
       bsplineRegistration->SetSmoothingSigmasPerLevel( smoothingSigmasPerLevel );
       bsplineRegistration->SetShrinkFactorsPerLevel( shrinkFactorsPerLevel );
@@ -1274,6 +1263,50 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
       bsplineRegistration->SetMetricSamplingPercentage( m_SamplingPercentage );
       bsplineRegistration->SetMetric( this->m_CostMetricObject );
       bsplineRegistration->SetOptimizer( LBFGSBoptimizer );
+
+      bsplineRegistration->SetFixedImage( 0, m_FixedVolume );
+/*
+      if( this->m_CurrentGenericTransform.IsNotNull() )
+        {
+        std::cout << "Moving image is warped by initial transform, before it is passed to the BSpline registration." << std::endl;
+        typedef float                                                                     VectorComponentType;
+        typedef itk::Vector<VectorComponentType, GenericTransformImageNS::SpaceDimension> VectorPixelType;
+        typedef itk::Image<VectorPixelType,  GenericTransformImageNS::SpaceDimension>     DisplacementFieldType;
+
+        if( this->m_DebugLevel > 4 )
+          {
+          itkUtil::WriteImage<FixedImageType>(m_FixedVolume, "DEBUG_BSplineFixedImage.nii.gz");
+          itkUtil::WriteImage<MovingImageType>(m_MovingVolume, "DEBUG_BSplineMovingImageBEFOREResampling.nii.gz");
+          }
+
+        typename MovingImageType::Pointer bspline_moving = GenericTransformImage<
+                                                              MovingImageType,
+                                                              MovingImageType,
+                                                              DisplacementFieldType>( this->m_MovingVolume,
+                                                                                      this->m_FixedVolume,
+                                                                                      this->m_CurrentGenericTransform.GetPointer(),
+                                                                                      m_BackgroundFillValue,
+                                                                                      "Linear",
+                                                                                      false );
+        if( this->m_DebugLevel > 4 )
+          {
+          itkUtil::WriteImage<MovingImageType>(bspline_moving, "DEBUG_BSplineMovingImageAFTERResampling.nii.gz");
+          }
+
+        bsplineRegistration->SetMovingImage( 0, bspline_moving );
+        }
+      else
+        {
+        bsplineRegistration->SetMovingImage( 0, m_MovingVolume );
+        m_CurrentGenericTransform = CompositeTransformType::New();
+        m_CurrentGenericTransform->ClearTransformQueue();
+        }
+
+      itkUtil::WriteImage<MovingImageType>(
+                                          const_cast<MovingImageType *>( bsplineRegistration->GetMovingImage() ), "DEBUG_GetMovingFromRegFilter.nii.gz");
+*/
+//
+      bsplineRegistration->SetMovingImage( 0, m_MovingVolume );////////
 
       if( this->m_CurrentGenericTransform.IsNull() )
         {
@@ -1288,14 +1321,17 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
         {
         bsplineRegistration->SetMovingInitialTransform( this->m_CurrentGenericTransform );
         }
-      {
+//
+
+      if( this->m_DebugLevel > 4 )
+        {
         std::cout << "write the initial transform to the disk right before registration starts." << std::endl;
         this->m_CurrentGenericTransform->Print(std::cout);
-        //itk::TransformFileWriter::Pointer dwriter1 = itk::TransformFileWriter::New();
-        //dwriter1->SetInput( this->m_CurrentGenericTransform->GetNthTransform(0) );
-        //dwriter1->SetFileName("initial_composite_bspline_DEBUG.mat");
-        //dwriter1->Update();
-      }
+        itk::TransformFileWriter::Pointer dwriter1 = itk::TransformFileWriter::New();
+        dwriter1->SetInput( this->m_CurrentGenericTransform->GetNthTransform(0) );
+        dwriter1->SetFileName("DEBUG_initial_transform_for_bspline.mat");
+        dwriter1->Update();
+        }
 
       try
         {
@@ -1307,6 +1343,10 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
         {
         itkGenericExceptionMacro( << "Exception caught: " << e << std::endl );
         }
+
+      typename BSplineTransformType::Pointer outputBSplineTransform = BSplineTransformType::New();
+      outputBSplineTransform->SetFixedParameters( bsplineRegistration->GetOutput()->Get()->GetFixedParameters() );
+      outputBSplineTransform->SetParameters( bsplineRegistration->GetOutput()->Get()->GetParameters() );
 
       if( outputBSplineTransform.IsNotNull() )
         {

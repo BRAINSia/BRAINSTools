@@ -25,7 +25,7 @@ BRAINSConstellationDetectorPrimary::BRAINSConstellationDetectorPrimary()
   this->m_houghEyeDetectorMode = 1;
   this->m_mspQualityLevel = 2;
   this->m_writedebuggingImagesLevel = 0;
-  this->m_numberOfThreads = 1;
+  this->m_numberOfThreads = -1;
   this->m_otsuPercentileThreshold = 0.01;
   this->m_acLowerBound = 1000.0;
   this->m_trimRescaledIntensities = 4.4172;

@@ -79,7 +79,7 @@ int main(int argc, char *argv[])
     return EXIT_FAILURE;
     }
 
-  if( !CloseEnough(bvecs1, bvecs2) )
+  if( !CloseEnough(bvecs1, bvecs2, 1000.0) )
     {
     PrintVec(bvecs1);
     PrintVec(bvecs2);

@@ -204,7 +204,7 @@ int main(int argc, char *argv[])
   typedef itk::ImageFileReader<ImageType> ImageReaderType;
   ImageReaderType::Pointer imageReader = ImageReaderType::New();
   imageReader->SetFileName( imageVolume );
-  imageReader->Update();
+  imageReader->UpdateLargestPossibleRegion();
 
   ImageType::RegionType  imageRegion;
   ImageType::SizeType    imageSize;
@@ -219,7 +219,7 @@ int main(int argc, char *argv[])
   typedef itk::ImageFileReader<LabelType> LabelReaderType;
   LabelReaderType::Pointer labelReader = LabelReaderType::New();
   labelReader->SetFileName( labelVolume );
-  labelReader->Update();
+  labelReader->UpdateLargestPossibleRegion();
 
   LabelType::RegionType  labelRegion;
   LabelType::SizeType    labelSize;
@@ -270,10 +270,20 @@ int main(int argc, char *argv[])
     typedef itk::MinimumMaximumImageFilter<ImageType> MinMaxFilterType;
     MinMaxFilterType::Pointer minMaxFilter = MinMaxFilterType::New();
     minMaxFilter->SetInput( imageReader->GetOutput() );
-    minMaxFilter->Update();
+    minMaxFilter->UpdateLargestPossibleRegion();
     minValue = minMaxFilter->GetMinimum();
     maxValue = minMaxFilter->GetMaximum();
     computeGlobalHistogram = true;
+    }
+  else if( minMaxType == "label" )
+    {
+    std::cerr << "ERROR:  label method not yet implemented." << std::endl;
+    return EXIT_FAILURE;
+    }
+  else
+    {
+    std::cerr << "Invalid minMaxType provided" << std::endl;
+    return EXIT_FAILURE;
     }
 
   typedef itk::LabelStatisticsImageFilter<ImageType, LabelType> StatsFilterType;
@@ -285,7 +295,7 @@ int main(int argc, char *argv[])
     statsFilter->UseHistogramsOn();
     statsFilter->SetHistogramParameters(numberOfHistogramBins, minValue, maxValue);
     }
-  statsFilter->Update();
+  statsFilter->UpdateLargestPossibleRegion();
 
   typedef StatsFilterType::ValidLabelValuesContainerType ValidLabelValuesType;
   typedef StatsFilterType::LabelPixelType                LabelPixelType;
@@ -322,7 +332,7 @@ int main(int argc, char *argv[])
         labelStatsFilter->SetLabelInput( labelReader->GetOutput() );
         labelStatsFilter->UseHistogramsOn();
         labelStatsFilter->SetHistogramParameters(numberOfHistogramBins, minValue, maxValue);
-        labelStatsFilter->Update();
+        labelStatsFilter->UpdateLargestPossibleRegion();
         medianValue = labelStatsFilter->GetMedian( labelValue );
         }
       else

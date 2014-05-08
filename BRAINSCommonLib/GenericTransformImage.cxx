@@ -257,8 +257,13 @@ GenericTransformType::Pointer ReadTransformFromDisk(const std::string & initialT
         itkGenericExceptionMacro( << "Number of currentTransformList = " << currentTransformList.size()
                                   << "FATAL ERROR: Failed to read transform" << initialTransform);
         }
-      std::cout << "HACK: " << currentTransformList.size() << "  "
-                << ( *( currentTransformList.begin() ) )->GetNameOfClass() << std::endl;
+      unsigned i = 0;
+      for(TransformListType::const_iterator it = currentTransformList.begin();
+          it != currentTransformList.end(); ++it,++i)
+        {
+        std::cout << "HACK: " << i << "  "
+                  << ( *( it ) )->GetNameOfClass() << std::endl;
+        }
       }
     }
   catch( itk::ExceptionObject & excp )

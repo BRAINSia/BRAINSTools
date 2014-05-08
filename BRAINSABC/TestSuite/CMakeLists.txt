@@ -4,6 +4,9 @@ include_directories(
   ${BRAINSTools_BINARY_DIR}/BRAINSABC/brainseg
   )
 
+configure_file( BRAINSABCSmallExtendedAtlasDefinition.xml.in
+                ${CMAKE_CURRENT_BINARY_DIR}/BRAINSABCSmallExtendedAtlasDefinition.xml
+                @ONLY IMMEDIATE)
 
 
 MakeTestDriverFromSEMTool(BRAINSABC BRAINSABCTest.cxx)
@@ -16,7 +19,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME BRAINSABCSmallTest
   --compareRadiusTolerance 1
   --compareNumberOfPixelsTolerance 10000
   BRAINSABCTest
-   --atlasDefinition DATA{${TestData_DIR}/BRAINSABCSmallExtendedAtlasDefinition.xml}
+   --atlasDefinition ${CMAKE_CURRENT_BINARY_DIR}/BRAINSABCSmallExtendedAtlasDefinition.xml
    --atlasToSubjectInitialTransform DATA{${TestData_DIR}/BRAINSABCSmall_atlas_to_subject_transform.h5}
    --atlasToSubjectTransform BRAINSABCSmall_atlas_to_subject_transform.h5
    --atlasToSubjectTransformType Affine

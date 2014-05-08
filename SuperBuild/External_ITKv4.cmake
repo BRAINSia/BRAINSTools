@@ -27,7 +27,7 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   endif()
 
   set(${proj}_REPOSITORY ${git_protocol}://itk.org/ITK.git)
-  set(${proj}_GIT_TAG 4da71fa8ee0279256e9753ea696b176c554039fd)
+  set(${proj}_GIT_TAG cfad6759b8afb3e627a258270bc85d8b774563c5 )
   message("COMMON_EXTERNAL_PROJECT_ARGS:
 ${COMMON_EXTERNAL_PROJECT_ARGS}")
   ExternalProject_Add(${proj}

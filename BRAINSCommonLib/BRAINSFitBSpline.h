@@ -19,8 +19,6 @@
 #ifndef __BRAINSFitBSpline_h
 #define __BRAINSFitBSpline_h
 
-#include <itkBSplineDeformableTransform.h>
-#include <itkBSplineDeformableTransformInitializer.h>
 #include <itkLBFGSBOptimizer.h>
 #include <itkTimeProbesCollectorBase.h>
 #include <itkImageRegistrationMethod.h>

@@ -39,7 +39,7 @@
 #define __itkGtractTransformIO_h
 
 #include "itkObject.h"
-#include "itkBSplineDeformableTransform.h"
+#include "itkBSplineTransform.h"
 #include "itkIdentityTransform.h"
 #include "itkVersorRigid3DTransform.h"
 #include "itkAffineTransform.h"
@@ -68,7 +68,7 @@ public:
   itkNewMacro(Self);
 
   typedef double BSplineCoordinateRepType;
-  typedef itk::BSplineDeformableTransform<
+  typedef itk::BSplineTransform<
       BSplineCoordinateRepType, 3, 3>     BSplineTransformType;
 
   typedef itk::VersorRigid3DTransform<double>                                    RigidTransformType;

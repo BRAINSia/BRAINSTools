@@ -25,7 +25,7 @@
 
 #include "itkVersorRigid3DTransform.h"
 #include "itkScaleSkewVersor3DTransform.h"
-#include "itkBSplineDeformableTransform.h"
+#include "itkBSplineTransform.h"
 
 namespace itk
 {
@@ -142,7 +142,7 @@ public:
   itkStaticConstMacro(SplineOrder, unsigned int, 3);
 
   typedef double CoordinateRepType;
-  typedef typename itk::BSplineDeformableTransform<
+  typedef typename itk::BSplineTransform<
       CoordinateRepType,
       itkGetStaticConstMacro(ImageDimension),
       itkGetStaticConstMacro(SplineOrder)> BSplineTransformType;

@@ -36,7 +36,6 @@
 #include "itkStatisticsLabelObject.h"
 #include "itkLabelImageToStatisticsLabelMapFilter.h"
 #include "itkMacro.h"
-#include "itkBSplineDeformableTransformInitializer.h"
 
 namespace itk
 {
@@ -1382,7 +1381,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
         const std::string transformFileType = currInitTransformFormGenericComposite->GetNameOfClass();
 
         // Bspline transform cannot be used as an initializer for SyN registration.
-        if( transformFileType == "BSplineDeformableTransform" )
+        if( transformFileType == "BSplineTransform" )
           {
           itkGenericExceptionMacro( << "ERROR: Improper transform initializer for SyN registration: "
                                     << "BSpline Transform cannot be used as a transform initializer for SyN registration"

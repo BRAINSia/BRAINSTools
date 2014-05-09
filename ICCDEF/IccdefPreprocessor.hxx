@@ -211,7 +211,7 @@ IccdefPreprocessor<TInputImage, TOutputImage>
       std::cout << "SECOND NameOfClass = " << secondNameOfClass << std::endl;
       baseTransform = ( *it ).GetPointer();
       trsf = dynamic_cast<TransformType *>(baseTransform);
-      if( secondNameOfClass == "BSplineDeformableTransform" )
+      if( secondNameOfClass == "BSplineTransform" )
         {
         typename BSplineTransformType::Pointer
         ITKTransform = static_cast<BSplineTransformType *>(baseTransform);
@@ -221,7 +221,7 @@ IccdefPreprocessor<TInputImage, TOutputImage>
         {
         std::cout << "Number of transforms in transform file " << m_InitialTransformFilename
                   <<
-          " > 1, but ValidationInputParser (for BRAINSDemonWarp) only handles a transform list when the second transform is in fact a BSplineDeformableTransform, not this "
+          " > 1, but ValidationInputParser (for BRAINSDemonWarp) only handles a transform list when the second transform is in fact a BSplineTransform, not this "
                   << secondNameOfClass << "." << std::endl;
         exit(-1);
         }

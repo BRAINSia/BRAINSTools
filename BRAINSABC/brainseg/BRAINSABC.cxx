@@ -956,13 +956,13 @@ int main(int argc, char * *argv)
         return EXIT_FAILURE;
         }
       }
-    else if( initialTransformFileType == "BSplineDeformableTransform" )
+    else if( initialTransformFileType == "BSplineTransform" )
       {
       if( !( ( atlasToSubjectTransformType.compare("BSpline") == 0 ) )
         )
         {
         muLogMacro(<< "Error: initialAtlasToSubjectTransform "
-                   << "is a BSplineDeformableTransform but "
+                   << "is a BSplineTransform but "
                    << "atlasToSubjectTransfromType is not BSpline."
                    << std::endl);
         return EXIT_FAILURE;

@@ -1,0 +1,11 @@
+#!/bin/bash
+source ~/.bash_profile
+
+$VIRTUALENV
+$EXPORT_ENV
+echo "STARTED at: $(date +'%F-%T')"
+echo "Ran on: $(hostname)"
+echo "========= CUSTOM ENVIRONMENT SETTINGS =========="
+echo "$EXPORT_ENV"
+echo "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+## NOTE:  nipype inserts the actual commands that need running below this section.

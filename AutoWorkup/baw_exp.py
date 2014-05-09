@@ -19,121 +19,14 @@ import multiprocessing
 import time
 ##############################################################################
 
-def get_cluster_settings(expConfig):
-    CLUSTER_QUEUE = expConfig.get('CLUSTER', 'CLUSTER_QUEUE')
-    CLUSTER_QUEUE_LONG = expConfig.get('CLUSTER', 'CLUSTER_QUEUE_LONG')
-    QSTAT_IMMEDIATE_EXE = expConfig.get('CLUSTER', 'QSTAT_IMMEDIATE_EXE')
-    QSTAT_CACHED_EXE = expConfig.get('CLUSTER', 'QSTAT_CACHED_EXE')
-    MODULES_STRING = expConfig.get('CLUSTER', 'MODULES')
-    MODULES = eval(MODULES_STRING)
-    return CLUSTER_QUEUE, CLUSTER_QUEUE_LONG, QSTAT_IMMEDIATE_EXE, QSTAT_CACHED_EXE, MODULES
-
-
-def get_global_sge_script(pythonPathsList, binPathsList, customEnvironment={}, modules=[]):
-    """This is a wrapper script for running commands on an SGE cluster
-so that all the python modules and commands are pathed properly"""
-
-    custEnvString = ""
-    for key, value in customEnvironment.items():
-        custEnvString += "export " + key + "=" + value + "\n"
-
-    PYTHONPATH = ":".join(pythonPathsList)
-    BASE_BUILDS = binPathsList  #":".join(binPathsList)
-    LOAD_MODULES = []
-    if len(modules) > 0:
-        for module in modules:
-            LOAD_MODULES.append("module load {0}".format(module))
-    assert len(modules) == len(LOAD_MODULES)
-    modules_string = '\n'.join(LOAD_MODULES)
-    GLOBAL_SGE_SCRIPT = """#!/bin/bash
-source ~/.bash_profile
-{MODULES_STRING}
-
-echo "STARTED at: $(date +'%F-%T')"
-echo "Ran on: $(hostname)"
-export PATH={BINPATH}
-export PYTHONPATH={PYPATH}
-
-echo "========= CUSTOM ENVIRONMENT SETTINGS =========="
-echo "export PATH=${{PATH}}"
-echo ""
-echo "export PYTHONPATH=${{PYTHONPATH}}"
-echo "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
-
-echo "With custom environment:"
-echo {CUSTENV}
-{CUSTENV}
-## NOTE:  nipype inserts the actual commands that need running below this section.
-""".format(PYPATH=PYTHONPATH, BINPATH=BASE_BUILDS, CUSTENV=custEnvString, MODULES_STRING=modules_string)
-    return GLOBAL_SGE_SCRIPT
-
-# From http://stackoverflow.com/questions/1597649/replace-strings-in-files-by-python
-
-
-def file_replace(fname, out_fname, pat, s_after):
-    if fname == out_fname:
-        print "ERROR: input and output file names can not match"
-        sys.exit(-1)
-
-    # first, see if the pattern is even in the file.
-    with open(fname) as f:
-        if not any(re.search(pat, line) for line in f):
-            print "ERROR:  substitution pattern not found in reference file"
-            sys.exit(-1)
-
-    # pattern is in the file, so perform replace operation.
-    with open(fname) as f:
-        out = open(out_fname, "w")
-        for line in f:
-            out.write(re.sub(pat, s_after, line))
-        out.close()
-
-
-def setDataSinkRewriteValue(cli, cfg):
-    """
-    Return the behavior for boolean GLOBAL_DATA_SINK_REWRITE
-
-    If the flag '--rewrite_datasinks' is set on the command line, pipeline will force rerun of the
-    pipeline datasinks.  If not, then the configuration file entry 'GLOBAL_DATA_SINK_REWRITE' under the
-    'PIPELINE' heading will control this behavior
-
-    >>> import baw_exp as baw
-    >>> baw.setDataSinkRewriteValue(True, True); baw.GLOBAL_DATA_SINK_REWRITE
-    *** Ignoring datasinks for pipeline rewriting ***
-    False
-    >>> baw.setDataSinkRewriteValue(False, True); baw.GLOBAL_DATA_SINK_REWRITE
-    *** Ignoring datasinks for pipeline rewriting ***
-    False
-    >>> baw.setDataSinkRewriteValue(True, False); baw.GLOBAL_DATA_SINK_REWRITE
-    *** Ignoring datasinks for pipeline rewriting ***
-    False
-    >>> baw.setDataSinkRewriteValue(False, False); baw.GLOBAL_DATA_SINK_REWRITE
-    True
-
-    :param cli: command line value
-    :type cli: bool
-    :param cfg: configuration file value
-    :type cfg: bool
-
-    Sets the variable `GLOBAL_DATA_SINK_REWRITE` constant flag used in :mod:`WorkupT1T2()`
-    """
-    assert isinstance(cli, bool) and isinstance(cfg, bool), "Inputs are not boolean: {0}, {1}".format(cli, cfg)
-    if cli or cfg:
-        print "*** Force datasinks rewriting for pipeline rewriting ***, commandline= {0}, configfile= {1}".format(cli, cfg)  # TODO: Use logging
-        GLOBAL_DATA_SINK_REWRITE = True
-    else:
-        print "*** Default datasink behavior for pipeline ***, commandline= {0}, configfile= {1}".format(cli, cfg)  # TODO: Use logging
-        GLOBAL_DATA_SINK_REWRITE = False
-    return GLOBAL_DATA_SINK_REWRITE
-
 
 def OpenSubjectDatabase(ExperimentBaseDirectoryCache, single_subject, mountPrefix, subject_data_file):
+    import os.path
     import SessionDB
-
     subjectDatabaseFile = os.path.join(ExperimentBaseDirectoryCache, 'InternalWorkflowSubjectDB.db')
     ## TODO:  Only make DB if db is older than subject_data_file.
-    if (not os.path.exists(subjectDatabaseFile)) or (
-            os.path.getmtime(subjectDatabaseFile) < os.path.getmtime(subject_data_file)):
+    if (not os.path.exists(subjectDatabaseFile)) or \
+      (os.path.getmtime(subjectDatabaseFile) < os.path.getmtime(subject_data_file)):
         ExperimentDatabase = SessionDB.SessionDB(subjectDatabaseFile, single_subject)
         ExperimentDatabase.MakeNewDB(subject_data_file, mountPrefix)
         ExperimentDatabase = None
@@ -285,47 +178,29 @@ def MasterProcessingController(argv=None):
     parser.add_argument('-rewrite_datasinks', action='store_true', default=False,
                         help='Use if the datasinks should be forced rerun.\nDefault: value in configuration file')
     parser.add_argument('--version', action='version', version='%(prog)s 1.0')
-    input_arguments = parser.parse_args()
+    args = parser.parse_args()
 
-    expConfig = ConfigParser.ConfigParser()
-    expConfig.read(input_arguments.ExperimentConfig)
+    config = ConfigParser.ConfigParser(allow_no_value=True)
+    config.read(args.ExperimentConfig)
 
     # Pipeline-specific information
-    GLOBAL_DATA_SINK_REWRITE_FROM_CONFIG = expConfig.getboolean('PIPELINE', 'GLOBAL_DATA_SINK_REWRITE')
-    GLOBAL_DATA_SINK_REWRITE = setDataSinkRewriteValue(input_arguments.rewrite_datasinks, GLOBAL_DATA_SINK_REWRITE_FROM_CONFIG)
-
-    # Experiment specific information
-    subject_data_file = expConfig.get('EXPERIMENT_DATA', 'SESSION_DB')
-    ExperimentName = expConfig.get('EXPERIMENT_DATA', 'EXPERIMENTNAME')
-    if expConfig.has_option('EXPERIMENT_DATA', 'PREVIOUSEXPERIMENTNAME'):
-        PreviousExperimentName = expConfig.get('EXPERIMENT_DATA', 'PREVIOUSEXPERIMENTNAME')
-    else:
-         PreviousExperimentName = None
-
+    GLOBAL_DATA_SINK_REWRITE = setDataSinkRewriteValue(args.rewrite_datasinks, config.getboolean('PIPELINE', 'GLOBAL_DATA_SINK_REWRITE'))
+    experiment = get_experiment_settings(config)
     # Platform specific information
-    #     Prepend the python search paths
-    PYTHON_AUX_PATHS = expConfig.get(input_arguments.processingEnvironment, 'PYTHON_AUX_PATHS')
-    PYTHON_AUX_PATHS = PYTHON_AUX_PATHS.split(':')
-    PYTHON_AUX_PATHS.extend(sys.path)
-    sys.path = PYTHON_AUX_PATHS
-    #####################################################################################
-    #     Prepend the shell environment search paths
-    PROGRAM_PATHS = expConfig.get(input_arguments.processingEnvironment, 'PROGRAM_PATHS')
-    PROGRAM_PATHS = PROGRAM_PATHS.split(':')
-    PROGRAM_PATHS.extend(os.environ['PATH'].split(':'))
-    PROGRAM_PATHS = [os.path.dirname(__file__)] + PROGRAM_PATHS
-    print "Adding directory {0} to PATH...".format(os.path.dirname(__file__))
-    os.environ['PATH'] = ':'.join(PROGRAM_PATHS)
-    ######################################################################################
-    # Get virtualenv source file
-    if expConfig.has_option(input_arguments.processingEnvironment, 'VIRTUALENV'):
+    environment = get_environment_settings(config)
+    if environment['cluster']:
+        cluster = get_cluster_settings(config)
+    sys.path = environment('PYTHONPATH')
+    os.environ['PATH'] = ':'.join(environment['PATH'])
+    # Virtualenv
+    if not environment['virtualenv'] is None:
         print "Loading virtualenv..."
-        VIRTUALENV = expConfig.get(input_arguments.processingEnvironment, 'VIRTUALENV')
-        activate_this = os.path.join(VIRTUALENV, 'bin', 'activate_this.py')
-        execfile(activate_this, dict(__file__=activate_this))
+        execfile(environment['virtualenv'], dict(__file__=environment['virtualenv']))
     ###### Now ensure that all the required packages can be read in from this custom path
     #\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
     # print sys.path
+    ## Check to ensure that SimpleITK can be found
+    import SimpleITK as sitk
     from nipype import config  # NOTE:  This needs to occur AFTER the PYTHON_AUX_PATHS has been modified
     config.enable_debug_mode()  # NOTE:  This needs to occur AFTER the PYTHON_AUX_PATHS has been modified
     ##############################################################################
@@ -343,21 +218,18 @@ def MasterProcessingController(argv=None):
     package_check('networkx', '1.0', 'tutorial1')
     package_check('IPython', '0.10', 'tutorial1')
 
-    ## Check to ensure that SimpleITK can be found
-    import SimpleITK as sitk
-    #\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
-    #####################################################################################
-    #  FreeSurfer is extraordinarly finicky and is easily confused and incorrect.
-    #  Force that all the FREESURFER env vars are set in subsequent scripts by
-    #  ensuring that rough versions of these environmental variables are not
-    #  set internal to this script.
-    prohibited_env_var_exists = False
-    for ENVVAR_TO_CHECK in ['FREESURFER_HOME', 'FSFAST_HOME', 'FSF_OUTPUT_FORMAT', 'SUBJECTS_DIR', 'MNI_DIR', 'FSL_DIR']:
-        if ENVVAR_TO_CHECK in os.environ:
-            prohibited_env_var_exists = True
-            print("ERROR: Environmental Variable {0}={1} exists.  Please unset before continuing.".format(ENVVAR_TO_CHECK, os.environ[ENVVAR_TO_CHECK]))
-    if prohibited_env_var_exists:
-        sys.exit(-1)
+    try:
+        verify_empty_freesurfer_env()
+    except EnvironmentError:
+        raise
+
+    # Define platform specific output write paths
+    if not os.path.exists(experiment['output_cache']):
+        os.makedirs(experiment['output_cache'])
+    if not os.path.exists(experiment['output_results']):
+        os.makedirs(experiment['output_results'])
+    if 'input_results' in experiment.keys():
+        assert os.path.exists(experiment['input_results']), "The previous experiment directory does not exist: {0}".format(experiment['input_results'])
 
     #\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
     #    Define platform specific output write paths
@@ -393,9 +265,8 @@ def MasterProcessingController(argv=None):
     else:
         print("Atlas already exists in experiment cache directory: {0}".format(CACHE_ATLASPATH))
 
-    CUSTOM_ENVIRONMENT = expConfig.get(input_arguments.processingEnvironment, 'CUSTOM_ENVIRONMENT')
-    CUSTOM_ENVIRONMENT = eval(CUSTOM_ENVIRONMENT)
     ## Set custom environmental variables so that subproceses work properly (i.e. for FreeSurfer)
+    CUSTOM_ENVIRONMENT = eval(environment['misc'])
     # print CUSTOM_ENVIRONMENT
     for key, value in CUSTOM_ENVIRONMENT.items():
         # print "SETTING: ", key, value
@@ -404,40 +275,16 @@ def MasterProcessingController(argv=None):
     # print os.environ
     # sys.exit(-1)
 
-    WORKFLOW_COMPONENTS_STRING = expConfig.get('EXPERIMENT_DATA', 'WORKFLOW_COMPONENTS')
-    WORKFLOW_COMPONENTS = eval(WORKFLOW_COMPONENTS_STRING)
-
-    ## If freesurfer is requested, then ensure that a sane environment is available
+    WORKFLOW_COMPONENTS = experiment['components']
     if 'FREESURFER' in WORKFLOW_COMPONENTS:
-        print "FREESURFER NEEDS TO CHECK FOR SANE ENVIRONMENT HERE."
+        check_freesurfer_environment()
 
-    ## Setup environment for CPU load balancing of ITK based programs.
-    total_CPUS = multiprocessing.cpu_count()
-    if input_arguments.wfrun == 'helium_all.q' or \
-      input_arguments.wfrun == 'helium_all.q_graph' or \
-      input_arguments.wfrun == 'ipl_OSX':
-        assert expConfig.getboolean(input_arguments.processingEnvironment, 'CLUSTER'), "CLUSTER section not set to true!"
-        CLUSTER_QUEUE, CLUSTER_QUEUE_LONG, QSTAT_IMMEDIATE_EXE, QSTAT_CACHED_EXE, MODULES = get_cluster_settings(expConfig)
-    elif input_arguments.wfrun == 'local_4':
-        os.environ['NSLOTS'] = "{0}".format(total_CPUS / 4)
-    elif input_arguments.wfrun == 'local_12':
-        os.environ['NSLOTS'] = "{0}".format(total_CPUS / 12)
-    elif input_arguments.wfrun == 'local':
-        # HACK
-        CLUSTER_QUEUE, CLUSTER_QUEUE_LONG, QSTAT_IMMEDIATE_EXE, QSTAT_CACHED_EXE, MODULES = get_cluster_settings(expConfig)
-        # END HACK
-        os.environ['NSLOTS'] = "{0}".format(total_CPUS / 1)
-    elif input_arguments.wfrun == 'ds_runner':
-        os.environ['NSLOTS'] = "{0}".format(total_CPUS / 1)
-    else:
-        print "FAILED RUN: You must specify the run environment type. [helium_all.q,helium_all.q_graph,ipl_OSX,local_4,local_12,local,ds_runner]"
-        print input_arguments.wfrun
-        sys.exit(-1)
+    cluster = setup_cpu(args.wfrun, config)  # None unless wfrun is 'helium*' or 'ipl_OSX', then dict()
 
     print "Configuring Pipeline"
     ## Ensure that entire db is built and cached before parallel section starts.
-    _ignoreme = OpenSubjectDatabase(ExperimentBaseDirectoryCache, [ "all" ], mountPrefix, subject_data_file)
-    to_do_subjects = input_arguments.subject.split(',')
+    _ignoreme = OpenSubjectDatabase(experiment['output_cache'], [ "all" ], environment['prefix'], environment['subject_data_file'])
+    to_do_subjects = args.subject.split(',')
     if to_do_subjects[0] == "all":
         to_do_subjects=_ignoreme.getAllSubjects()
     _ignoreme = None
@@ -461,11 +308,11 @@ def MasterProcessingController(argv=None):
         subj_index += 1
         print("START DELAY: {0}".format(delay))
         sp_args=(CACHE_ATLASPATH, CLUSTER_QUEUE, CLUSTER_QUEUE_LONG,QSTAT_IMMEDIATE_EXE,QSTAT_CACHED_EXE,
-                                  ExperimentBaseDirectoryCache, ExperimentBaseDirectoryResults, subject_data_file,
-                                  GLOBAL_DATA_SINK_REWRITE, JOB_SCRIPT, WORKFLOW_COMPONENTS, input_arguments,
-                                  mountPrefix, start_time+delay, subjectid, PreviousBaseDirectoryResults)
+                                  experiment['output_cache'], experiment['output_results'], environment['subject_data_file'],
+                                  GLOBAL_DATA_SINK_REWRITE, JOB_SCRIPT, WORKFLOW_COMPONENTS, args,
+                                  mountPrefix, start_time+delay, subjectid, PreviousBaseDirectoryResult)
         sp_args_list.append(sp_args)
-    if 'local' in input_arguments.wfrun:
+    if 'local' in args.wfrun:
         print("RUNNING WITHOUT POOL BUILDING")
         for sp_args in sp_args_list:
             DoSingleSubjectProcessing(sp_args)
@@ -483,5 +330,6 @@ def MasterProcessingController(argv=None):
     return 0
 
 if __name__ == "__main__":
-    main_status = MasterProcessingController()
+    import sys
+    main_status = MasterProcessingController(None)
     sys.exit(main_status)

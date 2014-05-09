@@ -91,10 +91,32 @@ def WrapPosteriorImagesFromDictionaryFunction(postList):
     retval = {}
     start = len('POSTERIOR_')
     end = len('.nii.gz')
+    assert not postList is None, "Input must be a list, not None"
+    assert isinstance(postList, list), "Input must be a list, not {0}".format(type(postList))
     for fname in postList:
-        key = basename(fname)[start:-end]
-        value = fname
-        retval[key] = value
+        if isinstance(fname, list):
+            key = basename(fname[0])[start:-end]
+        else:
+            key = basename(fname)[start:-end]
+        retval[key] = fname
+    return retval
+
+
+def mapPosteriorList(postList):
+    """ Assumes files in ../project/subject/session/Phase_1/TissueClassify/POSTERIOR_*.nii.gz """
+    from os.path import dirname, basename, split
+    from PipeLineFunctionHelpers import WrapPosteriorImagesFromDictionaryFunction as wrapfunc
+    retval = []
+    # print postList
+    unwrapped = [item for sublist in postList for item in sublist]  # http://stackoverflow.com/a/952952/973781
+    sessions = set([basename(dirname(dirname(dirname(pfile)))) for pfile in unwrapped])
+    for session in sessions:
+        slist = list()
+        for pfile in unwrapped:
+            if basename(dirname(dirname(dirname(pfile)))) == str(session):
+                slist.append(pfile)
+        retval.append(wrapfunc(slist))
+    print retval
     return retval
 
 

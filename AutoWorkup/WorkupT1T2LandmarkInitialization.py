@@ -25,7 +25,7 @@ from SEMTools import *
 """
 
 
-def CreateLandmarkInitializeWorkflow(WFname, InterpolationMode, DoReverseInit=False):
+def CreateLandmarkInitializeWorkflow(WFname, InterpolationMode, DoReverseInit=False, debug=False):
     landmarkInitializeWF = pe.Workflow(name=WFname)
 
     #############
@@ -105,8 +105,7 @@ def CreateLandmarkInitializeWorkflow(WFname, InterpolationMode, DoReverseInit=Fa
         landmarkInitializeWF.connect(BLI2Atlas, 'outputTransformFilename', Resample2Atlas, 'warpTransform')
         landmarkInitializeWF.connect(inputsSpec, 'atlasVolume', Resample2Atlas, 'referenceVolume')
 
-    DO_DEBUG = True
-    if (DoReverseInit == True) and (DO_DEBUG == True):
+    if (DoReverseInit == True) and (debug == True):
         ResampleFromAtlas = pe.Node(interface=BRAINSResample(), name="ResampleFromAtlas")
         ResampleFromAtlas.inputs.interpolationMode = "Linear"
         ResampleFromAtlas.inputs.outputVolume = "atlas2subject.nii.gz"

@@ -40,7 +40,6 @@
 #include <itkImage.h>
 #include <itkResampleImageFilter.h>
 #include <itkExtractImageFilter.h>
-#include <itkBSplineDeformableTransform.h>
 #include <itkVectorIndexSelectionCastImageFilter.h>
 #include <itkTransformFactory.h>
 #include <itkVersorRigid3DTransform.h>

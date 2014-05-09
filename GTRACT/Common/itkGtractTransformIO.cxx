@@ -100,7 +100,7 @@ void GtractTransformIO::LoadTransform()
     // (*transformReader->GetTransformList()->begin())->GetFixedParameters() <<
     // std::endl;
     }
-  else if( strcmp(readTransformType.c_str(), "BSplineDeformableTransform_double_3_3") == 0 )
+  else if( strcmp(readTransformType.c_str(), "BSplineTransform_double_3_3") == 0 )
     {
     // std::cerr << "Transform with type string '" << readTransformType << "'
     // was recognized." << std::endl;

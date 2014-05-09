@@ -47,7 +47,7 @@
 #include <itkImageRegistrationMethod.h>
 #include <itkMattesMutualInformationImageToImageMetric.h>
 #include <itkLinearInterpolateImageFunction.h>
-#include <itkBSplineDeformableTransform.h>
+#include <itkBSplineTransform.h>
 #include <itkThinPlateR2LogRSplineKernelTransform.h>
 #include <itkLBFGSBOptimizer.h>
 #include <itkCenteredTransformInitializer.h>
@@ -99,7 +99,7 @@ public:
 
   /** B-Spline Transform typedefs */
   static const unsigned int SplineOrder = 3;
-  typedef itk::BSplineDeformableTransform<
+  typedef itk::BSplineTransform<
       CoordinateRepresentationType,
       transformDimension,
       SplineOrder>     BsplineTransformType;

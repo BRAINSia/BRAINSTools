@@ -39,7 +39,6 @@
 
 #include <itkImage.h>
 #include <itkResampleImageFilter.h>
-#include <itkBSplineDeformableTransform.h>
 #include <itkTransformFactory.h>
 #include <itkVersorRigid3DTransform.h>
 #include <itkOrientImageFilter.h>

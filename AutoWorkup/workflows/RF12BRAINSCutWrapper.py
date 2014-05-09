@@ -14,6 +14,7 @@ import sys
 import os
 import warnings
 
+
 ### CommandLine
 
 
@@ -102,6 +103,14 @@ class RF12BRAINSCutWrapper(CommandLine):
     A script to wrap the complexity of BRAINSCut into a single script.
     """
     _cmd = 'BRAINSCutCMD.py'
+    # HACK
+    print "^" * 100
+    print "PYTHON EXEC: ", sys.executable
+    print "VERSION: ", sys.version
+    if sys.version[:2] != '2.7':
+        raise NotImplementedError
+    # END HACK
+
     input_spec = RF12BRAINSCutWrapperCLInputSpec
     output_spec = RF12BRAINSCutWrapperCLOutputSpec
 

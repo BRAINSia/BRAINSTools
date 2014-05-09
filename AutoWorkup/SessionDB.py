@@ -3,9 +3,7 @@ import sys
 import sqlite3 as lite
 import csv
 
-
 class SessionDB():
-
     def __init__(self, defaultDBName='TempFileForDB.db', subject_list=[]):
         self.MasterTableName = "MasterDB"
         self.dbName = defaultDBName

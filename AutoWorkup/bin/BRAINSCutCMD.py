@@ -5,40 +5,51 @@
 # :: connect input/output in the BAW
 
 import sys
-
-print "^" * 100
-print "PYTHON EXEC: ", sys.executable
-print "VERSION: ", sys.version
-print "ARGV: [\n"
-print sys.argv[0]
-for __argv in sys.argv[1:]:
-    if __argv.startswith('-'):
-        print "    ", __argv, "=",
-    else:
-        print __argv
-print "]"
-del __argv
-print "^" * 100
-
-if True:
-    import os
-    print "PATH: ["
-    __PATH = os.environ['PATH']
-    for p in __PATH.split(':'):
-        print p, ","
-    print ']'
-    print "PYTHONPATH: ["
-    __PPATH = os.environ['PYTHONPATH']
-    for p in __PPATH.split(':'):
-        print p, ","
-    print ']'
-    del __PATH, __PPATH
-    print "^" * 100
-    sys.exit(-1)
-
 import argparse
 import subprocess
 
+if False:
+    print "^" * 100
+    print "PYTHON EXEC: ", sys.executable
+    print "VERSION: ", sys.version
+    # HACK
+    dummy = False
+    if sys.version[:3] != '2.7':
+        print __file__
+        dummy = True
+    # END HACK
+    print "ARGV: [\n"
+    print sys.argv[0]
+    for __argv in sys.argv[1:]:
+        if __argv.startswith('-'):
+            print "    ", __argv, "=",
+        else:
+            print __argv
+    print "]"
+    del __argv
+    print "^" * 100
+
+    if dummy:  # debugging
+        import os
+        print "PATH: ["
+        __PATH = os.environ['PATH']
+        for p in __PATH.split(':'):
+            print p, ","
+        print ']'
+        __PPATH = ''
+        try:
+            print "PYTHONPATH: ["
+            __PPATH = os.environ['PYTHONPATH']
+            for p in __PPATH.split(':'):
+                print p, ","
+            print ']'
+        except KeyError:
+            pass
+        del __PATH, __PPATH
+        print "^" * 100
+        raise NotImplementedError
+        sys.exit(-1)
+    # END HACK
 
 
 def addProbabilityMapElement(probabilityMap, maskName, outputStream):
@@ -194,98 +205,96 @@ def xmlGenerator(args, roi=""):
 
     return xmlFilename
 
-##
-## main
-##
 
-brainscutParser = argparse.ArgumentParser(description='BRAINSCut command line argument parser')
+if __name__ == '__main__':
+    brainscutParser = argparse.ArgumentParser(description='BRAINSCut command line argument parser')
 
-# HACK:  This is to allow special treatment of caudates with masking
-brainscutParser.add_argument('--candidateRegion', help='Specify the valid candidate region for caudate', required=True)
+    # HACK:  This is to allow special treatment of caudates with masking
+    brainscutParser.add_argument('--candidateRegion', help='Specify the valid candidate region for caudate', required=True)
 
-#
-# input arguments
-#
-brainscutParser.add_argument('--inputSubjectT1Filename', help='T1 subject filename', required=True)
-brainscutParser.add_argument('--inputSubjectT2Filename', help='T2 subject filename', required=False)
-# brainscutParser.add_argument('--inputSubjectTotalGMFilename', help='TotalGM filename', required=True )
-brainscutParser.add_argument('--inputSubjectGadSGFilename', help='GadSG subject filename', required=False)
-# brainscutParser.add_argument('--inputSubjectBrainMaskFilename', help='BrainMask subject filename' )
-# brainscutParser.add_argument('--inputSubjectRegistrationROIFilename', help='template brain mask filename' )
+    #
+    # input arguments
+    #
+    brainscutParser.add_argument('--inputSubjectT1Filename', help='T1 subject filename', required=True)
+    brainscutParser.add_argument('--inputSubjectT2Filename', help='T2 subject filename', required=False)
+    # brainscutParser.add_argument('--inputSubjectTotalGMFilename', help='TotalGM filename', required=True )
+    brainscutParser.add_argument('--inputSubjectGadSGFilename', help='GadSG subject filename', required=False)
+    # brainscutParser.add_argument('--inputSubjectBrainMaskFilename', help='BrainMask subject filename' )
+    # brainscutParser.add_argument('--inputSubjectRegistrationROIFilename', help='template brain mask filename' )
 
-brainscutParser.add_argument('--inputTemplateT1', help='template T1-weighted filename', required=True)
-# brainscutParser.add_argument('--inputTemplateRegistrationROIFilename', help='template brain region filename', required=True )
+    brainscutParser.add_argument('--inputTemplateT1', help='template T1-weighted filename', required=True)
+    # brainscutParser.add_argument('--inputTemplateRegistrationROIFilename', help='template brain region filename', required=True )
 
-brainscutParser.add_argument('--inputTemplateRhoFilename', help='template rho filename', required=True)
-brainscutParser.add_argument('--inputTemplatePhiFilename', help='template phi filename', required=True)
-brainscutParser.add_argument('--inputTemplateThetaFilename', help='template theta filename', required=True)
+    brainscutParser.add_argument('--inputTemplateRhoFilename', help='template rho filename', required=True)
+    brainscutParser.add_argument('--inputTemplatePhiFilename', help='template phi filename', required=True)
+    brainscutParser.add_argument('--inputTemplateThetaFilename', help='template theta filename', required=True)
 
-brainscutParser.add_argument('--trainingVectorFilename', help='training vector filename', default="NA")
-# brainscutParser.add_argument('--modelFileBasename', help='model filei base name for net configuration file (xml).', default="NA" )
-brainscutParser.add_argument('--modelFilename', help='model filename', default="NA", required=True)
-brainscutParser.add_argument('--vectorNormalization', help='feature vector normalization (IQR,Linear,Sigmoid_Q01,Sigmoid_Q05,ZScore,NONE)', required=True)
+    brainscutParser.add_argument('--trainingVectorFilename', help='training vector filename', default="NA")
+    # brainscutParser.add_argument('--modelFileBasename', help='model filei base name for net configuration file (xml).', default="NA" )
+    brainscutParser.add_argument('--modelFilename', help='model filename', default="NA", required=True)
+    brainscutParser.add_argument('--vectorNormalization', help='feature vector normalization (IQR,Linear,Sigmoid_Q01,Sigmoid_Q05,ZScore,NONE)', required=True)
 
-# probability maps
-brainscutParser.add_argument('--probabilityMapsLeftCaudate', help='model probability maps for left caudate', required=True)
-brainscutParser.add_argument('--probabilityMapsRightCaudate', help='model probability maps for right caudate', required=True)
-brainscutParser.add_argument('--probabilityMapsLeftPutamen', help='model probability maps for left putamen', required=True)
-brainscutParser.add_argument('--probabilityMapsRightPutamen', help='model probability maps for right putamen', required=True)
-brainscutParser.add_argument('--probabilityMapsLeftThalamus', help='model probability maps for left thalamus', required=True)
-brainscutParser.add_argument('--probabilityMapsRightThalamus', help='model probability maps for right thalamus', required=True)
-brainscutParser.add_argument('--probabilityMapsLeftHippocampus', help='model probability maps for left hippocampus', required=True)
-brainscutParser.add_argument('--probabilityMapsRightHippocampus', help='model probability maps for right hippocampus', required=True)
-brainscutParser.add_argument('--probabilityMapsLeftAccumben', help='model probability maps for left accumben', required=True)
-brainscutParser.add_argument('--probabilityMapsRightAccumben', help='model probability maps for right accumben', required=True)
-brainscutParser.add_argument('--probabilityMapsLeftGlobus', help='model probability maps for left globus', required=True)
-brainscutParser.add_argument('--probabilityMapsRightGlobus', help='model probability maps for right globus', required=True)
+    # probability maps
+    brainscutParser.add_argument('--probabilityMapsLeftCaudate', help='model probability maps for left caudate', required=True)
+    brainscutParser.add_argument('--probabilityMapsRightCaudate', help='model probability maps for right caudate', required=True)
+    brainscutParser.add_argument('--probabilityMapsLeftPutamen', help='model probability maps for left putamen', required=True)
+    brainscutParser.add_argument('--probabilityMapsRightPutamen', help='model probability maps for right putamen', required=True)
+    brainscutParser.add_argument('--probabilityMapsLeftThalamus', help='model probability maps for left thalamus', required=True)
+    brainscutParser.add_argument('--probabilityMapsRightThalamus', help='model probability maps for right thalamus', required=True)
+    brainscutParser.add_argument('--probabilityMapsLeftHippocampus', help='model probability maps for left hippocampus', required=True)
+    brainscutParser.add_argument('--probabilityMapsRightHippocampus', help='model probability maps for right hippocampus', required=True)
+    brainscutParser.add_argument('--probabilityMapsLeftAccumben', help='model probability maps for left accumben', required=True)
+    brainscutParser.add_argument('--probabilityMapsRightAccumben', help='model probability maps for right accumben', required=True)
+    brainscutParser.add_argument('--probabilityMapsLeftGlobus', help='model probability maps for left globus', required=True)
+    brainscutParser.add_argument('--probabilityMapsRightGlobus', help='model probability maps for right globus', required=True)
 
-brainscutParser.add_argument('--deformationFromTemplateToSubject', help="deformationFromTemplateToSubject")
-brainscutParser.add_argument('--deformationFromSubjectToTemplate', help="deformationFromSubjectToTemplate")
+    brainscutParser.add_argument('--deformationFromTemplateToSubject', help="deformationFromTemplateToSubject")
+    brainscutParser.add_argument('--deformationFromSubjectToTemplate', help="deformationFromSubjectToTemplate")
 
-#
-# output arguments
-#
-brainscutParser.add_argument('--outputBinaryLeftCaudate', help='output binary file name for left caudate')
-brainscutParser.add_argument('--outputBinaryRightCaudate', help='output binary file name for right caudate')
-brainscutParser.add_argument('--outputBinaryLeftPutamen', help='output binary file name for left putamen')
-brainscutParser.add_argument('--outputBinaryRightPutamen', help='output binary file name for right putamen')
-brainscutParser.add_argument('--outputBinaryLeftThalamus', help='output binary file name for left thalamus')
-brainscutParser.add_argument('--outputBinaryRightThalamus', help='output binary file name for right thalamus')
-brainscutParser.add_argument('--outputBinaryLeftHippocampus', help='output binary file name for left hippocampus')
-brainscutParser.add_argument('--outputBinaryRightHippocampus', help='output binary file name for right hippocampus')
-brainscutParser.add_argument('--outputBinaryLeftAccumben', help='output binary file name for left accumben')
-brainscutParser.add_argument('--outputBinaryRightAccumben', help='output binary file name for right accumben')
-brainscutParser.add_argument('--outputBinaryLeftGlobus', help='output binary file name for left globus')
-brainscutParser.add_argument('--outputBinaryRightGlobus', help='output binary file name for right globus')
+    #
+    # output arguments
+    #
+    brainscutParser.add_argument('--outputBinaryLeftCaudate', help='output binary file name for left caudate')
+    brainscutParser.add_argument('--outputBinaryRightCaudate', help='output binary file name for right caudate')
+    brainscutParser.add_argument('--outputBinaryLeftPutamen', help='output binary file name for left putamen')
+    brainscutParser.add_argument('--outputBinaryRightPutamen', help='output binary file name for right putamen')
+    brainscutParser.add_argument('--outputBinaryLeftThalamus', help='output binary file name for left thalamus')
+    brainscutParser.add_argument('--outputBinaryRightThalamus', help='output binary file name for right thalamus')
+    brainscutParser.add_argument('--outputBinaryLeftHippocampus', help='output binary file name for left hippocampus')
+    brainscutParser.add_argument('--outputBinaryRightHippocampus', help='output binary file name for right hippocampus')
+    brainscutParser.add_argument('--outputBinaryLeftAccumben', help='output binary file name for left accumben')
+    brainscutParser.add_argument('--outputBinaryRightAccumben', help='output binary file name for right accumben')
+    brainscutParser.add_argument('--outputBinaryLeftGlobus', help='output binary file name for left globus')
+    brainscutParser.add_argument('--outputBinaryRightGlobus', help='output binary file name for right globus')
 
-brainscutParser.add_argument('--xmlFilename', help='BRAINSCut xml configuration filename', default="output.xml")
+    brainscutParser.add_argument('--xmlFilename', help='BRAINSCut xml configuration filename', default="output.xml")
 
-args = brainscutParser.parse_args()
-## HACK:  DOUBLE CHECK THAT IQR IS USED
-if args.vectorNormalization != "IQR":
-    print "ERROR:   ONLY IQR SUPPORTED AT THE MOMENT"
-    exit - 1
+    args = brainscutParser.parse_args()
+    ## HACK:  DOUBLE CHECK THAT IQR IS USED
+    if args.vectorNormalization != "IQR":
+        print "ERROR:   ONLY IQR SUPPORTED AT THE MOMENT"
+        exit - 1
 
 
-print(args)
-roiList = ['accumben', 'caudate', 'putamen', 'globus', 'thalamus', 'hippocampus']
+    print(args)
+    roiList = ['accumben', 'caudate', 'putamen', 'globus', 'thalamus', 'hippocampus']
 
-for roi in roiList:
-    currentXmlFilename = xmlGenerator(args, roi)
-    if roi == "caudate":
-        currentModelFilename = args.modelFilename[:-3] + '_' + roi + '_LinearWithMask.gz'  # trainModelFile.txtD0060NT0060_caudate_LinearWithMask.gz
-    else:
-        currentModelFilename = args.modelFilename[:-3] + '_' + roi + '.gz'  # trainModelFile.txtD0060NT0060_accumben.gz
+    for roi in roiList:
+        currentXmlFilename = xmlGenerator(args, roi)
+        if roi == "caudate":
+            currentModelFilename = args.modelFilename[:-3] + '_' + roi + '_LinearWithMask.gz'  # trainModelFile.txtD0060NT0060_caudate_LinearWithMask.gz
+        else:
+            currentModelFilename = args.modelFilename[:-3] + '_' + roi + '.gz'  # trainModelFile.txtD0060NT0060_accumben.gz
 
-    BRAINSCutCommand = ["BRAINSCut" + " --applyModel " +
-                        " --netConfiguration " + currentXmlFilename +
-                        " --modelFilename " + currentModelFilename +
-                        " --method RandomForest" +
-                        " --numberOfTrees 60  --randomTreeDepth 60"
-                        ]
-    print("HACK:  BRAINCUT COMMAND: {0}".format(BRAINSCutCommand))
-    subprocess.call(BRAINSCutCommand, shell=True)
-"""
-script to be run
-  BRAINSCut  --applyModel --netConfiguration BRAINSTools-build/BRAINSCut/TestSuite/TestSuite/NetConfigurations/output.xml --modelFilename TrainedModels/20110919ANNModel_allSubcorticals.txtD0050NT0050   --method RandomForest
-"""
+        BRAINSCutCommand = ["BRAINSCut" + " --applyModel " +
+                            " --netConfiguration " + currentXmlFilename +
+                            " --modelFilename " + currentModelFilename +
+                            " --method RandomForest" +
+                            " --numberOfTrees 60  --randomTreeDepth 60"
+                            ]
+        print("HACK:  BRAINCUT COMMAND: {0}".format(BRAINSCutCommand))
+        subprocess.check_call(BRAINSCutCommand, shell=True)
+    """
+    script to be run
+      BRAINSCut  --applyModel --netConfiguration BRAINSTools-build/BRAINSCut/TestSuite/TestSuite/NetConfigurations/output.xml --modelFilename TrainedModels/20110919ANNModel_allSubcorticals.txtD0050NT0050   --method RandomForest
+    """

@@ -522,7 +522,6 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::BRAINSFitHelperTemplat
   m_BackgroundFillValue(0.0),
   m_TransformType(1, "Rigid"),
   m_InitializeTransformMode("Off"),
-  m_UseExplicitPDFDerivativesMode("Off"),
   m_MaskInferiorCutOffFromCenter(1000),
   m_SplineGridSize(3, 10),
   m_CostFunctionConvergenceFactor(1e+9),

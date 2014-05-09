@@ -446,7 +446,6 @@ int main(int argc, char *argv[])
     myHelper->SetTranslationScale(translationScale);
     myHelper->SetReproportionScale(reproportionScale);
     myHelper->SetSkewScale(skewScale);
-    myHelper->SetUseExplicitPDFDerivativesMode(useExplicitPDFDerivativesMode);
     myHelper->SetUseCachingOfBSplineWeightsMode(useCachingOfBSplineWeightsMode);
     myHelper->SetBackgroundFillValue(backgroundFillValue);
     myHelper->SetInitializeTransformMode(localInitializeTransformMode);

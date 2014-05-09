@@ -83,7 +83,6 @@ BRAINSFitHelper::BRAINSFitHelper() :
   m_TranslationScale(1000.0),
   m_ReproportionScale(1.0),
   m_SkewScale(1.0),
-  m_UseExplicitPDFDerivativesMode("AUTO"),
   m_UseCachingOfBSplineWeightsMode("ON"),
   m_BackgroundFillValue(0.0),
   m_TransformType(1, "Rigid"),
@@ -381,7 +380,6 @@ BRAINSFitHelper::PrintSelf(std::ostream & os, Indent indent) const
   os << indent << "TranslationScale:    " << this->m_TranslationScale << std::endl;
   os << indent << "ReproportionScale:   " << this->m_ReproportionScale << std::endl;
   os << indent << "SkewScale:           " << this->m_SkewScale << std::endl;
-  os << indent << "UseExplicitPDFDerivativesMode:  " << this->m_UseExplicitPDFDerivativesMode << std::endl;
   os << indent << "UseCachingOfBSplineWeightsMode: " << this->m_UseCachingOfBSplineWeightsMode << std::endl;
   os << indent << "BackgroundFillValue:            " << this->m_BackgroundFillValue << std::endl;
   os << indent << "InitializeTransformMode:        " << this->m_InitializeTransformMode << std::endl;
@@ -530,7 +528,6 @@ BRAINSFitHelper::PrintCommandLine(const bool dumpTempVolumes, const std::string 
   oss << "--translationScale " << this->m_TranslationScale  << "  \\" << std::endl;
   oss << "--reproportionScale " << this->m_ReproportionScale  << "  \\" << std::endl;
   oss << "--skewScale " << this->m_SkewScale  << "  \\" << std::endl;
-  oss << "--useExplicitPDFDerivativesMode " << this->m_UseExplicitPDFDerivativesMode  << "  \\" << std::endl;
   oss << "--useCachingOfBSplineWeightsMode " << this->m_UseCachingOfBSplineWeightsMode  << "  \\" << std::endl;
   oss << "--maxBSplineDisplacement " << this->m_MaxBSplineDisplacement << " \\" << std::endl;
   oss << "--projectedGradientTolerance " << this->m_ProjectedGradientTolerance << " \\" << std::endl;

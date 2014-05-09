@@ -448,7 +448,7 @@
     <string-enumeration>
       <name>useExplicitPDFDerivativesMode</name>
       <longflag>useExplicitPDFDerivativesMode</longflag>
-      <description>Using mode AUTO means OFF for BSplineTransforms and ON for the linear transforms.  The ON alternative uses more memory to sometimes do a better job.</description>
+      <description>This option is not used in ITKv4 optimizers. There is no need to set that; however, this flag is not removed to keep backward compatibility.</description>
       <label>Explicit PDF Derivatives Mode</label>
       <default>AUTO</default>
       <element>AUTO</element>

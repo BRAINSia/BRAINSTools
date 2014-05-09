@@ -153,8 +153,6 @@ public:
   itkGetConstMacro(ReproportionScale,             double);
   itkSetMacro(SkewScale,                     double);
   itkGetConstMacro(SkewScale,                     double);
-  itkSetMacro(UseExplicitPDFDerivativesMode, std::string);
-  itkGetConstMacro(UseExplicitPDFDerivativesMode, std::string);
   itkSetMacro(UseCachingOfBSplineWeightsMode, std::string);
   itkGetConstMacro(UseCachingOfBSplineWeightsMode, std::string);
   itkSetMacro(CostFunctionConvergenceFactor, double);
@@ -289,7 +287,6 @@ private:
   double                   m_TranslationScale;
   double                   m_ReproportionScale;
   double                   m_SkewScale;
-  std::string              m_UseExplicitPDFDerivativesMode;
   std::string              m_UseCachingOfBSplineWeightsMode;
   double                   m_BackgroundFillValue;
   std::vector<std::string> m_TransformType;
@@ -429,7 +426,6 @@ BRAINSFitHelper::SetupRegistration(GenericMetricType *localCostMetric)
   myHelper->SetSkewScale(this->m_SkewScale);
   myHelper->SetBackgroundFillValue(this->m_BackgroundFillValue);
   myHelper->SetInitializeTransformMode(this->m_InitializeTransformMode);
-  myHelper->SetUseExplicitPDFDerivativesMode(this->m_UseExplicitPDFDerivativesMode);
   myHelper->SetMaskInferiorCutOffFromCenter(this->m_MaskInferiorCutOffFromCenter);
   myHelper->SetCurrentGenericTransform(this->m_CurrentGenericTransform);
   myHelper->SetSplineGridSize(this->m_SplineGridSize);

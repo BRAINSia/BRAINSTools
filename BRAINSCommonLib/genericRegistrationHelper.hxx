@@ -262,15 +262,15 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
       // end of versor scaling
     std::cout << "Initializer, optimizerScales: " << optimizerScales << "." << std::endl;
 
-    typedef itk::VersorTransformOptimizerv4Template<double> VersorOptimizerType;
+    typedef itk::RegularStepGradientDescentOptimizerv4<double> VersorOptimizerType;
     typename VersorOptimizerType::Pointer versorOptimizer = VersorOptimizerType::New();
 
     versorOptimizer->SetScales( optimizerScales );
-    versorOptimizer->SetMaximumStepSizeInPhysicalUnits( m_MaximumStepLength  );
     versorOptimizer->SetNumberOfIterations( m_NumberOfIterations );
     versorOptimizer->SetLearningRate( m_MaximumStepLength );
-    versorOptimizer->SetConvergenceWindowSize( 10 );
-    versorOptimizer->SetMinimumConvergenceValue( 1e-6 );
+    versorOptimizer->SetRelaxationFactor( m_RelaxationFactor );
+    versorOptimizer->SetMinimumStepLength( 1e-6 );
+    versorOptimizer->SetGradientMagnitudeTolerance( 1e-4 );
     versorOptimizer->SetReturnBestParametersAndValue(true);
 
     optimizer = versorOptimizer;

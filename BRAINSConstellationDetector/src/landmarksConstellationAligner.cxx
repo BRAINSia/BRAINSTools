@@ -44,15 +44,9 @@
 #include "landmarksConstellationAlignerCLP.h"
 
 // D E F I N E S //////////////////////////////////////////////////////////////
-
-const unsigned int LocalImageDimension = 3;
-
 typedef SImageType::PointType                      ImagePointType;
 
 // F U N C T I O N S //////////////////////////////////////////////////////////
-//////////////////
-
-//////////////////
 RigidTransformType::Pointer GetACPCAlignedZeroCenteredTransform(const LandmarksMapType & landmarks)
 {
   SImageType::PointType ZeroCenter;
@@ -67,7 +61,6 @@ RigidTransformType::Pointer GetACPCAlignedZeroCenteredTransform(const LandmarksM
 }
 
 // M A I N ////////////////////////////////////////////////////////////////////
-
 int main( int argc, char *argv[] )
 {
   PARSE_ARGS;

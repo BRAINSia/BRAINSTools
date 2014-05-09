@@ -39,7 +39,7 @@
 #include "itkMattesMutualInformationImageToImageMetricv4.h"
 #include "itkConjugateGradientLineSearchOptimizerv4.h"
 #include "itkGradientDescentOptimizerv4.h"
-#include "itkVersorTransformOptimizerv4.h"
+#include "itkRegularStepGradientDescentOptimizerv4.h"
 
 #define COMMON_MMI_METRIC_TYPE itk::MattesMutualInformationImageToImageMetricv4
 
@@ -404,7 +404,7 @@ public:
   typedef typename OptimizerType::ScalesType     OptimizerScalesType;
   typedef typename OptimizerType::ParametersType OptimizerParametersType;
 
-  typedef itk::GradientDescentOptimizerv4Template< double > GenericOptimizerType;
+  typedef itk::GradientDescentOptimizerBasev4Template< double > GenericOptimizerType;
 
   typedef typename MetricType::FixedImageMaskType  FixedBinaryVolumeType;
   typedef typename FixedBinaryVolumeType::Pointer  FixedBinaryVolumePointer;

@@ -31,7 +31,6 @@
 #include "BRAINSFitHelperTemplate.h"
 #include "itkConjugateGradientLineSearchOptimizerv4.h"
 #include "itkLBFGSBOptimizerv4.h"
-#include "itkVersorTransformOptimizerv4.h"
 
 #include "itkLabelObject.h"
 #include "itkStatisticsLabelObject.h"
@@ -744,8 +743,8 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
     if( currentTransformType == "Rigid" )
       {
       //  Choose TransformType for the itk registration class template:
-      typedef VersorRigid3DTransformType           TransformType;
-      typedef itk::VersorTransformOptimizerv4      OptimizerType;
+      typedef VersorRigid3DTransformType                          TransformType;
+      typedef itk::RegularStepGradientDescentOptimizerv4<double>  OptimizerType;
       //
       // Process the initialITKTransform as VersorRigid3DTransform:
       //
@@ -833,8 +832,8 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
     else if( currentTransformType == "ScaleVersor3D" )
       {
       //  Choose TransformType for the itk registration class template:
-      typedef ScaleVersor3DTransformType      TransformType; // NumberOfEstimatedParameter = 9;
-      typedef itk::VersorTransformOptimizerv4 OptimizerType;
+      typedef ScaleVersor3DTransformType                          TransformType; // NumberOfEstimatedParameter = 9;
+      typedef itk::RegularStepGradientDescentOptimizerv4<double>  OptimizerType;
       //
       // Process the initialITKTransform as ScaleVersor3DTransform:
       //
@@ -934,8 +933,8 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
     else if( currentTransformType == "ScaleSkewVersor3D" )
       {
       //  Choose TransformType for the itk registration class template:
-      typedef ScaleSkewVersor3DTransformType    TransformType;  // NumberOfEstimatedParameter = 15;
-      typedef itk::VersorTransformOptimizerv4   OptimizerType;
+      typedef ScaleSkewVersor3DTransformType                       TransformType;  // NumberOfEstimatedParameter = 15;
+      typedef itk::RegularStepGradientDescentOptimizerv4<double>   OptimizerType;
       //
       // Process the initialITKTransform as ScaleSkewVersor3D:
       //
@@ -1192,7 +1191,6 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
       const int m_MaximumNumberOfEvaluations = 900;
       const int m_MaximumNumberOfCorrections = 12;
 
-      //typedef itk::LBFGSBOptimizerv4       OptimizerType;
       typedef typename itk::LBFGSBOptimizerv4                  LBFGSBOptimizerType;
       typedef typename LBFGSBOptimizerType::Pointer            LBFGSBOptimizerTypePointer;
       typedef typename LBFGSBOptimizerType::ParametersType     OptimizerParameterType;

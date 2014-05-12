@@ -234,6 +234,7 @@ public:
   itkGetConstMacro(ForceMINumberOfThreads, int);
 
   itkSetMacro(NormalizeInputImages, bool);
+  itkSetMacro(DoBSplineRegByWarpedMovingImage, bool);
 
   /** Method that initiates the registration. */
   void Update(void);
@@ -310,6 +311,7 @@ private:
   itk::Object::Pointer                       m_Helper;
   SamplingStrategyType                       m_SamplingStrategy;
   bool                                       m_NormalizeInputImages;
+  bool                                       m_DoBSplineRegByWarpedMovingImage;
   // DEBUG OPTION:
   int m_ForceMINumberOfThreads;
 };  // end BRAINSFitHelper class
@@ -439,6 +441,7 @@ BRAINSFitHelper::SetupRegistration(GenericMetricType *localCostMetric)
   myHelper->SetForceMINumberOfThreads(this->m_ForceMINumberOfThreads);
   myHelper->SetUseROIBSpline(this->m_UseROIBSpline);
   myHelper->SetSamplingStrategy(this->m_SamplingStrategy);
+  myHelper->SetDoBSplineRegByWarpedMovingImage(this->m_DoBSplineRegByWarpedMovingImage);
   if( this->m_DebugLevel > 7 )
     {
     this->PrintCommandLine(true, "BF");

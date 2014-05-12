@@ -231,6 +231,8 @@ public:
 
   itkSetMacro(SamplingStrategy,SamplingStrategyType);
   itkGetConstMacro(SamplingStrategy,SamplingStrategyType);
+
+  itkSetMacro(DoBSplineRegByWarpedMovingImage, bool);
 protected:
   BRAINSFitHelperTemplate();
   virtual ~BRAINSFitHelperTemplate()
@@ -299,6 +301,7 @@ private:
   bool                                       m_UseROIBSpline;
   std::vector<int>                           m_PermitParameterVariation;
   SamplingStrategyType                       m_SamplingStrategy;
+  bool                                       m_DoBSplineRegByWarpedMovingImage;
   // DEBUG OPTION:
   int m_ForceMINumberOfThreads;
 };  // end BRAINSFitHelperTemplate class

@@ -461,6 +461,7 @@ int main(int argc, char *argv[])
     myHelper->SetCostMetric(costMetric);
     myHelper->SetUseROIBSpline(useROIBSpline);
     myHelper->SetSamplingStrategy(metricSamplingStrategy);
+    myHelper->SetDoBSplineRegByWarpedMovingImage(DoBSplineRegByWarpedMovingImage);
 
     //HACK: create a flag for normalization
     bool NormalizeInputImages = false;

@@ -45,8 +45,9 @@ void debug_catch(void)
   return;
 }
 
-MaskImageType::ConstPointer ExtractConstPointerToImageMaskFromImageSpatialObject(
-  SpatialObjectType::ConstPointer inputSpatialObject)
+// convert spatial object to image
+MaskImageType::ConstPointer
+ExtractConstPointerToImageMaskFromImageSpatialObject( SpatialObjectType::ConstPointer inputSpatialObject )
 {
   ImageMaskSpatialObjectType const * const temp =
     dynamic_cast<ImageMaskSpatialObjectType const *>( inputSpatialObject.GetPointer() );
@@ -58,6 +59,24 @@ MaskImageType::ConstPointer ExtractConstPointerToImageMaskFromImageSpatialObject
   ImageMaskSpatialObjectType::ConstPointer ImageMask( temp );
   const MaskImageType::ConstPointer        tempOutputVolumeROI = ImageMask->GetImage();
   return tempOutputVolumeROI;
+}
+
+// convert image to mask (spatial object)
+SpatialObjectType::ConstPointer
+ConvertMaskImageToSpatialMask( MaskImageType::ConstPointer inputImage )
+{
+  ImageMaskSpatialObjectType::Pointer mask = ImageMaskSpatialObjectType::New();
+  mask->SetImage(inputImage);
+  mask->ComputeObjectToWorldTransform();
+  // return pointer to mask
+  SpatialObjectType::Pointer p = dynamic_cast<SpatialObjectType *>( mask.GetPointer() );
+  if( p.IsNull() )
+    {
+    itkGenericExceptionMacro(<< "Failed conversion to Mask");
+    }
+
+  SpatialObjectType::ConstPointer objectMask(p);
+  return objectMask;
 }
 
 namespace itk
@@ -83,7 +102,6 @@ BRAINSFitHelper::BRAINSFitHelper() :
   m_TranslationScale(1000.0),
   m_ReproportionScale(1.0),
   m_SkewScale(1.0),
-  m_UseExplicitPDFDerivativesMode("AUTO"),
   m_UseCachingOfBSplineWeightsMode("ON"),
   m_BackgroundFillValue(0.0),
   m_TransformType(1, "Rigid"),
@@ -108,6 +126,7 @@ BRAINSFitHelper::BRAINSFitHelper() :
   m_Helper(NULL),
   m_SamplingStrategy(AffineRegistrationType::NONE),
   m_NormalizeInputImages(false),
+  m_DoBSplineRegByWarpedMovingImage(true),
   m_ForceMINumberOfThreads(-1)
 {
   m_SplineGridSize[0] = 14;
@@ -381,7 +400,6 @@ BRAINSFitHelper::PrintSelf(std::ostream & os, Indent indent) const
   os << indent << "TranslationScale:    " << this->m_TranslationScale << std::endl;
   os << indent << "ReproportionScale:   " << this->m_ReproportionScale << std::endl;
   os << indent << "SkewScale:           " << this->m_SkewScale << std::endl;
-  os << indent << "UseExplicitPDFDerivativesMode:  " << this->m_UseExplicitPDFDerivativesMode << std::endl;
   os << indent << "UseCachingOfBSplineWeightsMode: " << this->m_UseCachingOfBSplineWeightsMode << std::endl;
   os << indent << "BackgroundFillValue:            " << this->m_BackgroundFillValue << std::endl;
   os << indent << "InitializeTransformMode:        " << this->m_InitializeTransformMode << std::endl;
@@ -530,7 +548,6 @@ BRAINSFitHelper::PrintCommandLine(const bool dumpTempVolumes, const std::string 
   oss << "--translationScale " << this->m_TranslationScale  << "  \\" << std::endl;
   oss << "--reproportionScale " << this->m_ReproportionScale  << "  \\" << std::endl;
   oss << "--skewScale " << this->m_SkewScale  << "  \\" << std::endl;
-  oss << "--useExplicitPDFDerivativesMode " << this->m_UseExplicitPDFDerivativesMode  << "  \\" << std::endl;
   oss << "--useCachingOfBSplineWeightsMode " << this->m_UseCachingOfBSplineWeightsMode  << "  \\" << std::endl;
   oss << "--maxBSplineDisplacement " << this->m_MaxBSplineDisplacement << " \\" << std::endl;
   oss << "--projectedGradientTolerance " << this->m_ProjectedGradientTolerance << " \\" << std::endl;

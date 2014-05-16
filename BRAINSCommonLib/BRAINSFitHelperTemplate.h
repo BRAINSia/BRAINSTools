@@ -182,8 +182,6 @@ public:
   itkGetConstMacro(BackgroundFillValue,           double);
   itkSetMacro(InitializeTransformMode, std::string);
   itkGetConstMacro(InitializeTransformMode, std::string);
-  itkSetMacro(UseExplicitPDFDerivativesMode, std::string);
-  itkGetConstMacro(UseExplicitPDFDerivativesMode, std::string);
   itkSetMacro(MaskInferiorCutOffFromCenter, double);
   itkGetConstMacro(MaskInferiorCutOffFromCenter, double);
   itkSetMacro(CurrentGenericTransform,  CompositeTransformPointer);
@@ -233,6 +231,8 @@ public:
 
   itkSetMacro(SamplingStrategy,SamplingStrategyType);
   itkGetConstMacro(SamplingStrategy,SamplingStrategyType);
+
+  itkSetMacro(DoBSplineRegByWarpedMovingImage, bool);
 protected:
   BRAINSFitHelperTemplate();
   virtual ~BRAINSFitHelperTemplate()
@@ -284,7 +284,6 @@ private:
   double                   m_BackgroundFillValue;
   std::vector<std::string> m_TransformType;
   std::string              m_InitializeTransformMode;
-  std::string              m_UseExplicitPDFDerivativesMode;
   double                   m_MaskInferiorCutOffFromCenter;
   std::vector<int>         m_SplineGridSize;
   double                   m_CostFunctionConvergenceFactor;
@@ -302,6 +301,7 @@ private:
   bool                                       m_UseROIBSpline;
   std::vector<int>                           m_PermitParameterVariation;
   SamplingStrategyType                       m_SamplingStrategy;
+  bool                                       m_DoBSplineRegByWarpedMovingImage;
   // DEBUG OPTION:
   int m_ForceMINumberOfThreads;
 };  // end BRAINSFitHelperTemplate class

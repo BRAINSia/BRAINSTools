@@ -153,8 +153,6 @@ public:
   itkGetConstMacro(ReproportionScale,             double);
   itkSetMacro(SkewScale,                     double);
   itkGetConstMacro(SkewScale,                     double);
-  itkSetMacro(UseExplicitPDFDerivativesMode, std::string);
-  itkGetConstMacro(UseExplicitPDFDerivativesMode, std::string);
   itkSetMacro(UseCachingOfBSplineWeightsMode, std::string);
   itkGetConstMacro(UseCachingOfBSplineWeightsMode, std::string);
   itkSetMacro(CostFunctionConvergenceFactor, double);
@@ -236,6 +234,7 @@ public:
   itkGetConstMacro(ForceMINumberOfThreads, int);
 
   itkSetMacro(NormalizeInputImages, bool);
+  itkSetMacro(DoBSplineRegByWarpedMovingImage, bool);
 
   /** Method that initiates the registration. */
   void Update(void);
@@ -289,7 +288,6 @@ private:
   double                   m_TranslationScale;
   double                   m_ReproportionScale;
   double                   m_SkewScale;
-  std::string              m_UseExplicitPDFDerivativesMode;
   std::string              m_UseCachingOfBSplineWeightsMode;
   double                   m_BackgroundFillValue;
   std::vector<std::string> m_TransformType;
@@ -313,6 +311,7 @@ private:
   itk::Object::Pointer                       m_Helper;
   SamplingStrategyType                       m_SamplingStrategy;
   bool                                       m_NormalizeInputImages;
+  bool                                       m_DoBSplineRegByWarpedMovingImage;
   // DEBUG OPTION:
   int m_ForceMINumberOfThreads;
 };  // end BRAINSFitHelper class
@@ -429,7 +428,6 @@ BRAINSFitHelper::SetupRegistration(GenericMetricType *localCostMetric)
   myHelper->SetSkewScale(this->m_SkewScale);
   myHelper->SetBackgroundFillValue(this->m_BackgroundFillValue);
   myHelper->SetInitializeTransformMode(this->m_InitializeTransformMode);
-  myHelper->SetUseExplicitPDFDerivativesMode(this->m_UseExplicitPDFDerivativesMode);
   myHelper->SetMaskInferiorCutOffFromCenter(this->m_MaskInferiorCutOffFromCenter);
   myHelper->SetCurrentGenericTransform(this->m_CurrentGenericTransform);
   myHelper->SetSplineGridSize(this->m_SplineGridSize);
@@ -443,6 +441,7 @@ BRAINSFitHelper::SetupRegistration(GenericMetricType *localCostMetric)
   myHelper->SetForceMINumberOfThreads(this->m_ForceMINumberOfThreads);
   myHelper->SetUseROIBSpline(this->m_UseROIBSpline);
   myHelper->SetSamplingStrategy(this->m_SamplingStrategy);
+  myHelper->SetDoBSplineRegByWarpedMovingImage(this->m_DoBSplineRegByWarpedMovingImage);
   if( this->m_DebugLevel > 7 )
     {
     this->PrintCommandLine(true, "BF");

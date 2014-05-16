@@ -446,7 +446,6 @@ int main(int argc, char *argv[])
     myHelper->SetTranslationScale(translationScale);
     myHelper->SetReproportionScale(reproportionScale);
     myHelper->SetSkewScale(skewScale);
-    myHelper->SetUseExplicitPDFDerivativesMode(useExplicitPDFDerivativesMode);
     myHelper->SetUseCachingOfBSplineWeightsMode(useCachingOfBSplineWeightsMode);
     myHelper->SetBackgroundFillValue(backgroundFillValue);
     myHelper->SetInitializeTransformMode(localInitializeTransformMode);
@@ -462,6 +461,7 @@ int main(int argc, char *argv[])
     myHelper->SetCostMetric(costMetric);
     myHelper->SetUseROIBSpline(useROIBSpline);
     myHelper->SetSamplingStrategy(metricSamplingStrategy);
+    myHelper->SetDoBSplineRegByWarpedMovingImage(DoBSplineRegByWarpedMovingImage);
 
     //HACK: create a flag for normalization
     bool NormalizeInputImages = false;

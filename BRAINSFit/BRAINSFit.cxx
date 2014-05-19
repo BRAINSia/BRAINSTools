@@ -442,6 +442,7 @@ int main(int argc, char *argv[])
     myHelper->SetNumberOfHistogramBins(numberOfHistogramBins);
     myHelper->SetNumberOfIterations(numberOfIterations);
     myHelper->SetMaximumStepLength(maximumStepLength);
+    myHelper->SetMinimumStepLength(minimumStepLength);
     myHelper->SetRelaxationFactor(relaxationFactor);
     myHelper->SetTranslationScale(translationScale);
     myHelper->SetReproportionScale(reproportionScale);
@@ -461,7 +462,7 @@ int main(int argc, char *argv[])
     myHelper->SetCostMetric(costMetric);
     myHelper->SetUseROIBSpline(useROIBSpline);
     myHelper->SetSamplingStrategy(metricSamplingStrategy);
-    myHelper->SetDoBSplineRegByWarpedMovingImage(DoBSplineRegByWarpedMovingImage);
+    myHelper->SetInitializeRegistrationByCurrentGenericTransform(initializeRegistrationByCurrentGenericTransform);
 
     //HACK: create a flag for normalization
     bool NormalizeInputImages = false;

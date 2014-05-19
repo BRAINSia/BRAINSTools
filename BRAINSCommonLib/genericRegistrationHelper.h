@@ -466,6 +466,7 @@ public:
   itkSetMacro(NumberOfIterations,            unsigned int);
   itkSetMacro(RelaxationFactor,              double);
   itkSetMacro(MaximumStepLength,             double);
+  itkSetMacro(MinimumStepLength,             double);
   itkSetMacro(TranslationScale,              double);
   itkSetMacro(ReproportionScale,             double);
   itkSetMacro(SkewScale,                     double);
@@ -543,6 +544,7 @@ private:
   unsigned int m_NumberOfIterations;
   double       m_RelaxationFactor;
   double       m_MaximumStepLength;
+  double       m_MinimumStepLength;
   double       m_TranslationScale;
   double       m_ReproportionScale;
   double       m_SkewScale;

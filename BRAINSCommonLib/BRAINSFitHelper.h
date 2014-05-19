@@ -142,7 +142,7 @@ public:
   itkSetMacro(NumberOfMatchPoints,               unsigned int);
   itkGetConstMacro(NumberOfMatchPoints,          unsigned int);
   VECTORitkSetMacro(NumberOfIterations,   std::vector<int> /**/);
-  VECTORitkSetMacro(MinimumStepLength,    std::vector<double> ); // It will not be used by ITKv4 registration, but it is kept for backward compatibility.
+  VECTORitkSetMacro(MinimumStepLength,    std::vector<double> );
   itkSetMacro(MaximumStepLength,             double);
   itkGetConstMacro(MaximumStepLength,             double);
   itkSetMacro(RelaxationFactor,              double);
@@ -234,7 +234,7 @@ public:
   itkGetConstMacro(ForceMINumberOfThreads, int);
 
   itkSetMacro(NormalizeInputImages, bool);
-  itkSetMacro(DoBSplineRegByWarpedMovingImage, bool);
+  itkSetMacro(InitializeRegistrationByCurrentGenericTransform, bool);
 
   /** Method that initiates the registration. */
   void Update(void);
@@ -311,7 +311,7 @@ private:
   itk::Object::Pointer                       m_Helper;
   SamplingStrategyType                       m_SamplingStrategy;
   bool                                       m_NormalizeInputImages;
-  bool                                       m_DoBSplineRegByWarpedMovingImage;
+  bool                                       m_InitializeRegistrationByCurrentGenericTransform;
   // DEBUG OPTION:
   int m_ForceMINumberOfThreads;
 };  // end BRAINSFitHelper class
@@ -422,6 +422,7 @@ BRAINSFitHelper::SetupRegistration(GenericMetricType *localCostMetric)
   myHelper->SetNumberOfHistogramBins(this->m_NumberOfHistogramBins);
   myHelper->SetNumberOfIterations(this->m_NumberOfIterations);
   myHelper->SetMaximumStepLength(this->m_MaximumStepLength);
+  myHelper->SetMinimumStepLength(this->m_MinimumStepLength);
   myHelper->SetRelaxationFactor(this->m_RelaxationFactor);
   myHelper->SetTranslationScale(this->m_TranslationScale);
   myHelper->SetReproportionScale(this->m_ReproportionScale);
@@ -441,7 +442,7 @@ BRAINSFitHelper::SetupRegistration(GenericMetricType *localCostMetric)
   myHelper->SetForceMINumberOfThreads(this->m_ForceMINumberOfThreads);
   myHelper->SetUseROIBSpline(this->m_UseROIBSpline);
   myHelper->SetSamplingStrategy(this->m_SamplingStrategy);
-  myHelper->SetDoBSplineRegByWarpedMovingImage(this->m_DoBSplineRegByWarpedMovingImage);
+  myHelper->SetInitializeRegistrationByCurrentGenericTransform(this->m_InitializeRegistrationByCurrentGenericTransform);
   if( this->m_DebugLevel > 7 )
     {
     this->PrintCommandLine(true, "BF");

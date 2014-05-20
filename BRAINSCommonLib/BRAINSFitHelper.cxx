@@ -98,6 +98,7 @@ BRAINSFitHelper::BRAINSFitHelper() :
   m_NumberOfMatchPoints(10),
   m_NumberOfIterations(1, 1500),
   m_MaximumStepLength(0.2),
+  m_MinimumStepLength(1, 0.005),
   m_RelaxationFactor(0.5),
   m_TranslationScale(1000.0),
   m_ReproportionScale(1.0),
@@ -126,7 +127,7 @@ BRAINSFitHelper::BRAINSFitHelper() :
   m_Helper(NULL),
   m_SamplingStrategy(AffineRegistrationType::NONE),
   m_NormalizeInputImages(false),
-  m_DoBSplineRegByWarpedMovingImage(true),
+  m_InitializeRegistrationByCurrentGenericTransform(true),
   m_ForceMINumberOfThreads(-1)
 {
   m_SplineGridSize[0] = 14;
@@ -389,6 +390,12 @@ BRAINSFitHelper::PrintSelf(std::ostream & os, Indent indent) const
   os << "]" << std::endl;
   os << indent << "NumberOfHistogramBins:" << this->m_NumberOfHistogramBins << std::endl;
   os << indent << "MaximumStepLength:    " << this->m_MaximumStepLength << std::endl;
+  os << indent << "MinimumStepLength:     [";
+  for( unsigned int q = 0; q < this->m_MinimumStepLength.size(); ++q )
+  {
+      os << this->m_MinimumStepLength[q] << " ";
+  }
+  os << "]" << std::endl;
   os << indent << "TransformType:     [";
   for( unsigned int q = 0; q < this->m_TransformType.size(); ++q )
     {
@@ -532,6 +539,15 @@ BRAINSFitHelper::PrintCommandLine(const bool dumpTempVolumes, const std::string 
   oss << " \\" << std::endl;
   oss << "--numberOfHistogramBins " << this->m_NumberOfHistogramBins  << "  \\" << std::endl;
   oss << "--maximumStepLength " << this->m_MaximumStepLength  << "  \\" << std::endl;
+  oss << "--minimumStepLength ";
+  for( unsigned int q = 0; q < this->m_MinimumStepLength.size(); ++q )
+  {
+    oss << this->m_MinimumStepLength[q];
+    if( q < this->m_MinimumStepLength.size() - 1 )
+    {
+      oss << ",";
+    }
+  }
   oss << " \\" << std::endl;
   oss << "--transformType ";
   for( unsigned int q = 0; q < this->m_TransformType.size(); ++q )

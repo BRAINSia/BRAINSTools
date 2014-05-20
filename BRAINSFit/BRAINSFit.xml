@@ -429,11 +429,11 @@
     </double>
 
     <boolean>
-      <name>DoBSplineRegByWarpedMovingImage</name>
-      <longflag>DoBSplineRegByWarpedMovingImage</longflag>
+      <name>initializeRegistrationByCurrentGenericTransform</name>
+      <longflag>initializeRegistrationByCurrentGenericTransform</longflag>
       <label>Pass warped moving image to BSpline registration filter</label>
-      <description>Flag to speed up the BSpline registration by warping the moving image based on the current transform before it is passed to BSpline registration filter. In this case, we would run only BSpline at the final stage. </description>
-      <default>1</default>
+      <description>If this flag is ON, the current generic composite transform, resulted from the linear registration stages, is set to initialize the follow nonlinear registration process. However, by the default behaviour, the moving image is first warped based on the existant transform before it is passed to the BSpline registration filter. It is done to speed up the BSpline registration by reducing the computations of composite transform jacobian.</description>
+      <default>0</default>
     </boolean>
 
   </parameters>

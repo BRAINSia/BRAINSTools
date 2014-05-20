@@ -515,6 +515,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::BRAINSFitHelperTemplat
   m_NumberOfMatchPoints(10),
   m_NumberOfIterations(1, 1500),
   m_MaximumStepLength(0.2),
+  m_MinimumStepLength(1, 0.005),
   m_RelaxationFactor(0.5),
   m_TranslationScale(1000.0),
   m_ReproportionScale(1.0),
@@ -539,7 +540,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::BRAINSFitHelperTemplat
   m_UseROIBSpline(0),
   m_PermitParameterVariation(0),
   m_SamplingStrategy(AffineRegistrationType::NONE),
-  m_DoBSplineRegByWarpedMovingImage(true),
+  m_InitializeRegistrationByCurrentGenericTransform(true),
   m_ForceMINumberOfThreads(-1)
 {
   m_SplineGridSize[0] = 14;
@@ -552,6 +553,7 @@ template <class TransformType, class OptimizerType, class MetricType>
 void
 BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::FitCommonCode(
   int numberOfIterations,
+  double minimumStepLength,
   typename CompositeTransformType::Pointer & initialITKTransform)
 {
   // FitCommonCode
@@ -571,6 +573,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::FitCommonCode(
   appMutualRegistration->SetSamplingPercentage(m_SamplingPercentage);
   appMutualRegistration->SetRelaxationFactor( m_RelaxationFactor );
   appMutualRegistration->SetMaximumStepLength( m_MaximumStepLength );
+  appMutualRegistration->SetMinimumStepLength( minimumStepLength );
   appMutualRegistration->SetTranslationScale( m_TranslationScale );
   appMutualRegistration->SetReproportionScale( m_ReproportionScale );
   appMutualRegistration->SetSkewScale( m_SkewScale );
@@ -646,7 +649,23 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
     {
     this->PrintSelf(std::cout, 3);
     }
-
+  std::vector<double> localMinimumStepLength( m_TransformType.size() );
+  if( m_MinimumStepLength.size() != m_TransformType.size() )
+    {
+    if( m_MinimumStepLength.size() != 1 )
+      {
+      itkGenericExceptionMacro(<< "ERROR:  Wrong number of parameters for MinimumStepLength."
+                               << "It either needs to be 1 or the same size as TransformType.");
+      }
+    for( unsigned int q = 0; q < m_TransformType.size(); ++q )
+      {
+      localMinimumStepLength[q] = m_MinimumStepLength[0];
+      }
+    }
+  else
+    {
+    localMinimumStepLength = m_MinimumStepLength;
+    }
   std::vector<int> localNumberOfIterations( m_TransformType.size() );
   if( m_NumberOfIterations.size() != m_TransformType.size() )
     {
@@ -824,6 +843,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
 
       this->FitCommonCode<TransformType, OptimizerType, MetricType>
         (localNumberOfIterations[currentTransformIndex],
+         localMinimumStepLength[currentTransformIndex],
         this->m_CurrentGenericTransform);
       // NOW, after running the above function, the m_CurrentGenericTransform contains the integration of initial transform and rigid registration results.
       ///////////////////////
@@ -925,6 +945,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
 
       this->FitCommonCode<TransformType, OptimizerType, MetricType>
       (localNumberOfIterations[currentTransformIndex],
+       localMinimumStepLength[currentTransformIndex],
        this->m_CurrentGenericTransform);
       // NOW, after running the above function, the m_CurrentGenericTransform contains the integration of initial transform and ScaleVersor registration results.
       /////////////////////
@@ -1032,6 +1053,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
 
       this->FitCommonCode<TransformType, OptimizerType, MetricType>
       (localNumberOfIterations[currentTransformIndex],
+       localMinimumStepLength[currentTransformIndex],
        this->m_CurrentGenericTransform);
       // NOW, after running the above function, the m_CurrentGenericTransform contains the integration of initial transform and ScaleSkew registration results that is an "Affine" transform.
       /////////////////////
@@ -1142,6 +1164,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
 
       this->FitCommonCode<TransformType, OptimizerType, MetricType>
       (localNumberOfIterations[currentTransformIndex],
+       localMinimumStepLength[currentTransformIndex],
        this->m_CurrentGenericTransform);
       // NOW, after running the above function, the m_CurrentGenericTransform contains the integration of initial transform and Affine registration results.
       /////////////////////
@@ -1242,7 +1265,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
 
       bsplineRegistration->SetFixedImage( 0, m_FixedVolume );
 
-      if( this->m_DoBSplineRegByWarpedMovingImage )
+      if( !this->m_InitializeRegistrationByCurrentGenericTransform )
         {
         if( this->m_CurrentGenericTransform.IsNotNull() )
           {
@@ -1478,6 +1501,12 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::PrintSelf(std::ostream
   os << "]" << std::endl;
   os << indent << "NumberOfHistogramBins:" << this->m_NumberOfHistogramBins << std::endl;
   os << indent << "MaximumStepLength:    " << this->m_MaximumStepLength << std::endl;
+  os << indent << "MinimumStepLength:     [";
+  for( unsigned int q = 0; q < this->m_MinimumStepLength.size(); ++q )
+    {
+    os << this->m_MinimumStepLength[q] << " ";
+    }
+  os << "]" << std::endl;
   os << indent << "TransformType:     [";
   for( unsigned int q = 0; q < this->m_TransformType.size(); ++q )
     {

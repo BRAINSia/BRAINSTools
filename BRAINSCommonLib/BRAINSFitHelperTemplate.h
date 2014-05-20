@@ -162,6 +162,7 @@ public:
   itkSetMacro(NumberOfMatchPoints,           unsigned int);
   itkGetConstMacro(NumberOfMatchPoints,           unsigned int);
   VECTORitkSetMacro(NumberOfIterations,   std::vector<int> /**/);
+  VECTORitkSetMacro(MinimumStepLength, std::vector<double> );
   itkSetMacro(MaximumStepLength,             double);
   itkGetConstMacro(MaximumStepLength,             double);
   itkSetMacro(RelaxationFactor,              double);
@@ -232,7 +233,7 @@ public:
   itkSetMacro(SamplingStrategy,SamplingStrategyType);
   itkGetConstMacro(SamplingStrategy,SamplingStrategyType);
 
-  itkSetMacro(DoBSplineRegByWarpedMovingImage, bool);
+  itkSetMacro(InitializeRegistrationByCurrentGenericTransform, bool);
 protected:
   BRAINSFitHelperTemplate();
   virtual ~BRAINSFitHelperTemplate()
@@ -254,6 +255,7 @@ protected:
             class OptimizerType,
             class MetricType>
   void FitCommonCode(int numberOfIterations,
+                     double minimumStepLength,
                      typename CompositeTransformType::Pointer & initialITKTransform);
 private:
 
@@ -277,6 +279,7 @@ private:
   // TODO:  Would be better to have unsigned int
   std::vector<int>         m_NumberOfIterations;
   double                   m_MaximumStepLength;
+  std::vector<double>      m_MinimumStepLength;
   double                   m_RelaxationFactor;
   double                   m_TranslationScale;
   double                   m_ReproportionScale;
@@ -301,7 +304,7 @@ private:
   bool                                       m_UseROIBSpline;
   std::vector<int>                           m_PermitParameterVariation;
   SamplingStrategyType                       m_SamplingStrategy;
-  bool                                       m_DoBSplineRegByWarpedMovingImage;
+  bool                                       m_InitializeRegistrationByCurrentGenericTransform;
   // DEBUG OPTION:
   int m_ForceMINumberOfThreads;
 };  // end BRAINSFitHelperTemplate class

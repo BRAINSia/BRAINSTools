@@ -343,7 +343,7 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
     observer->SetFixedImage(m_FixedImage);
     observer->SetTransform(m_Transform);
 
-    typedef COMMON_MMI_METRIC_TYPE<FixedImageType, MovingImageType> MattesMutualInformationMetricType;
+    typedef itk::MattesMutualInformationImageToImageMetricv4<FixedImageType, MovingImageType> MattesMutualInformationMetricType;
     typename MattesMutualInformationMetricType::Pointer test_MMICostMetric =
       dynamic_cast<MattesMutualInformationMetricType *>(this->m_CostMetricObject.GetPointer() );
     if( test_MMICostMetric.IsNotNull() )

@@ -305,8 +305,9 @@ BRAINSFitHelper::Update(void)
   GenericMetricType::Pointer metric;
   if( this->m_CostMetric == "MMI" )
     {
-    typedef COMMON_MMI_METRIC_TYPE<FixedImageType, MovingImageType, FixedImageType, double> MIMetricType;
+    typedef itk::MattesMutualInformationImageToImageMetricv4<FixedImageType, MovingImageType, FixedImageType, double> MIMetricType;
     MIMetricType::Pointer mutualInformationMetric = MIMetricType::New();
+    mutualInformationMetric->SetMaximumNumberOfThreads(3);
     mutualInformationMetric = mutualInformationMetric;
     mutualInformationMetric->SetNumberOfHistogramBins( this->m_NumberOfHistogramBins );
     mutualInformationMetric->SetUseMovingImageGradientFilter( gradientfilter );

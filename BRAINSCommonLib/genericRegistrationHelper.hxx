@@ -129,13 +129,9 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
     }
 
   m_Registration = RegistrationType::New();
+  m_Registration->InPlaceOn();
 
-  // In BRAINSFit, we aim to optimize the initial transform directly.
-  // Therefore, m_Transform is pointed directly to the internal registration transform;
-  // then, it is initialized by the input initial transform.
-  // In above case, there is no more need to set the "MovingInitalTransform".
-  //
-  m_Transform = const_cast<TransformType *>( m_Registration->GetOutput()->Get() );
+  m_Transform = TransformType::New();
 
   if( this->m_CompositeTransform->GetNumberOfTransforms() == 1 )
     {
@@ -276,8 +272,8 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
 
     optimizer = versorOptimizer;
     }
-  //==============================================================================
 
+  m_Registration->SetInitialTransform(m_Transform);
   m_Registration->SetFixedImage(0, m_FixedImage);
   m_Registration->SetMovingImage(0, m_MovingImage);
   m_Registration->SetMetric(this->m_CostMetricObject);

@@ -93,9 +93,9 @@ public:
 
   typedef HelperType::MetricType                             GenericMetricType;
 
-  typedef itk::AffineTransform<double, 3>                                                         AffineTransformType;
-  typedef itk::ImageRegistrationMethodv4<FixedImageType, MovingImageType, AffineTransformType>  AffineRegistrationType;
-  typedef AffineRegistrationType::MetricSamplingStrategyType                                      SamplingStrategyType;
+  typedef itk::ImageRegistrationMethodv4<FixedImageType, MovingImageType>  AffineRegistrationType;
+  typedef itk::AffineTransform<double, 3>                                  AffineTransformType;
+  typedef AffineRegistrationType::MetricSamplingStrategyType               SamplingStrategyType;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);

@@ -404,23 +404,17 @@ public:
 
   typedef itk::GradientDescentOptimizerBasev4Template< double > GenericOptimizerType;
 
+  typedef ImageRegistrationMethodv4< FixedImageType, MovingImageType > RegistrationType;
   typedef typename MetricType::FixedImageMaskType  FixedBinaryVolumeType;
   typedef typename FixedBinaryVolumeType::Pointer  FixedBinaryVolumePointer;
   typedef typename MetricType::MovingImageMaskType MovingBinaryVolumeType;
   typedef typename MovingBinaryVolumeType::Pointer MovingBinaryVolumePointer;
 
-  typedef ImageRegistrationMethodv4<
-      FixedImageType,
-      MovingImageType,
-      TransformType>                                            RegistrationType;
   typedef typename RegistrationType::Pointer                    RegistrationPointer;
 
-  typedef itk::AffineTransform<double, 3>                             AffineTransformType;
-  typedef itk::ImageRegistrationMethodv4<
-      FixedImageType,
-      MovingImageType,
-      AffineTransformType>                                            AffineRegistrationType;
-  typedef typename AffineRegistrationType::MetricSamplingStrategyType SamplingStrategyType;
+  typedef itk::AffineTransform<double, 3>                                  AffineTransformType;
+  typedef itk::ImageRegistrationMethodv4< FixedImageType, MovingImageType> AffineRegistrationType;
+  typedef typename AffineRegistrationType::MetricSamplingStrategyType      SamplingStrategyType;
 
   typedef itk::CenteredTransformInitializer<
       TransformType,

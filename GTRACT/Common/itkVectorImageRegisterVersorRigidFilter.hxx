@@ -83,6 +83,7 @@ void VectorImageRegisterVersorRigidFilter<TInputImage, TOutputImage>
   OptimizerTypePointer    optimizer     = OptimizerType::New();
   InterpolatorTypePointer interpolator  = InterpolatorType::New();
   RegistrationTypePointer registration  = RegistrationType::New();
+  registration->InPlaceOn();
 
   /* Allocate Output Image*/
   m_Output = OutputImageType::New();

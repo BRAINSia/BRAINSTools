@@ -111,14 +111,14 @@ public:
   typedef typename FixedBinaryVolumeType::Pointer                     FixedBinaryVolumePointer;
   typedef typename MovingBinaryVolumeType::Pointer                    MovingBinaryVolumePointer;
 
-  typedef itk::TranslationTransform<double, MovingImageDimension>                               TranslationTransformType;
-  typedef itk::AffineTransform<double, MovingImageDimension>                                    AffineTransformType;
-  typedef itk::ScalableAffineTransform<double, MovingImageDimension>                            ScalableAffineTransformType;
-  typedef itk::ImageRegistrationMethodv4<FixedImageType, MovingImageType, AffineTransformType>  AffineRegistrationType;
-  typedef typename AffineRegistrationType::MetricSamplingStrategyType                           SamplingStrategyType;
+  typedef itk::ImageRegistrationMethodv4<FixedImageType, MovingImageType>  AffineRegistrationType;
+  typedef itk::TranslationTransform<double, MovingImageDimension>          TranslationTransformType;
+  typedef itk::AffineTransform<double, MovingImageDimension>               AffineTransformType;
+  typedef itk::ScalableAffineTransform<double, MovingImageDimension>       ScalableAffineTransformType;
+  typedef typename AffineRegistrationType::MetricSamplingStrategyType      SamplingStrategyType;
 
-  typedef typename AffineTransformType::Superclass                                   MatrixOffsetTransformBaseType;
-  typedef typename MatrixOffsetTransformBaseType::Pointer                            MatrixOffsetTransformBasePointer;
+  typedef typename AffineTransformType::Superclass                         MatrixOffsetTransformBaseType;
+  typedef typename MatrixOffsetTransformBaseType::Pointer                  MatrixOffsetTransformBasePointer;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);

@@ -46,10 +46,9 @@ VectorMultiResolutionPDEDeformableRegistration<TFixedImage, TMovingImage,
 {
   this->SetNumberOfRequiredInputs(2);
 
-  typename DefaultRegistrationType::Pointer registrator =
-    DefaultRegistrationType::New();
-  m_RegistrationFilter = static_cast<RegistrationType *>(
-      registrator.GetPointer() );
+  typename DefaultRegistrationType::Pointer registrator = DefaultRegistrationType::New();
+  registrator->InPlaceOn();
+  m_RegistrationFilter = static_cast<RegistrationType *>( registrator.GetPointer() );
   m_FixedVectorImagePyramid.reserve(10);
   m_MovingVectorImagePyramid.reserve(10);
 

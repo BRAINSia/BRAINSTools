@@ -70,6 +70,7 @@ void TimeSeriesVersorRigidFilter::Update()
   OptimizerTypePointer    optimizer     = OptimizerType::New();
   InterpolatorTypePointer interpolator  = InterpolatorType::New();
   RegistrationTypePointer registration  = RegistrationType::New();
+  registration->SetInPLaceOn();
 
   ExtractFilterTypePointer extractBaseImageFilter = ExtractFilterType::New();
   ExtractFilterTypePointer extractImageFilter     = ExtractFilterType::New();

@@ -117,7 +117,8 @@ DoBSpline(typename BSplineTransformType::Pointer InitializerBsplineTransform,
   registration->SetOptimizer(LBFGSBoptimizer);
   InterpolatorTypePointer interpolator = InterpolatorType::New();
   registration->SetInterpolator(interpolator);
-  registration->SetTransform(m_OutputBSplineTransform);
+  registration->SetIntialTransform(m_OutputBSplineTransform);
+  registration->InPlaceOn();
 
   /** Setup the Registration */
   registration->SetFixedImage(m_FixedVolume);

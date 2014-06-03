@@ -327,6 +327,7 @@ MultiResolutionQuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TMesh>
   typedef MeanSquaresMeshToMeshMetric<MeshType, MeshType> MetricType;
 
   typename RegistrationType::Pointer   registration  = RegistrationType::New();
+  registration->InPlaceOn();
 
   typename MetricType::Pointer  metric = MetricType::New();
 

@@ -113,7 +113,7 @@ set(brains_modulenames
   BRAINSDemonWarp ## NOTE: This is off by default, but is valid for both ITKv3/4
                   ##       This builds just fine with ITKv3/4, but test cases need
                   ##       further review before trusting it.
-  BRAINSSurfaceTools
+  ##TODO: KENT:  This is broken with latest builds,  I think something in ITKv4 changed slightly, or VTK6 compatibility -->BRAINSSurfaceTools
   ICCDEF
   BRAINSContinuousClass
   BRAINSPosteriorToContinuousClass

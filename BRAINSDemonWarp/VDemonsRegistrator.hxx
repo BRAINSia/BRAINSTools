@@ -118,9 +118,9 @@ VDemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::VDemonsRegistrator()
   m_MovingImagePyramid = MovingImagePyramidType::New();
   m_MovingImagePyramid->UseShrinkImageFilterOff();
   m_Registration = RegistrationType::New();
-  m_Registration->InPlaceOn();
+  //TODO: Needed for ITKv4 registration registration->InPlaceOn();
   m_VectorRegistration = VectorRegistrationType::New();
-  m_VectorRegistration->InPlaceOn();
+  //TODO: Needed for ITKv4 registration m_VectorRegistration->InPlaceOn();
 
   m_Registration->SetFixedImagePyramid(m_FixedImagePyramid);
   m_Registration->SetMovingImagePyramid(m_MovingImagePyramid);

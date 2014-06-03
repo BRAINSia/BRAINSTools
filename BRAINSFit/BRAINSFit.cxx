@@ -255,10 +255,6 @@ int main(int argc, char *argv[])
         }
       }
     }
-  if( minimumStepLength.size() != 0 )
-    {
-    std::cout << "WARNING: The minimumStepLength array is not needed by ITKv4 registration framework. It can be removed from command line." << std::endl;
-    }
 
   // Need to ensure that the order of transforms is from smallest to largest.
   try

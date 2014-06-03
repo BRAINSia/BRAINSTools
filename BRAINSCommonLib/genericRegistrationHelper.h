@@ -41,8 +41,6 @@
 #include "itkGradientDescentOptimizerv4.h"
 #include "itkRegularStepGradientDescentOptimizerv4.h"
 
-#define COMMON_MMI_METRIC_TYPE itk::MattesMutualInformationImageToImageMetricv4
-
 #include "itkImageRegistrationMethodv4.h"
 #include "itkLinearInterpolateImageFunction.h"
 #include "itkImage.h"
@@ -164,7 +162,7 @@ public:
 
   typedef const typename OptimizerType::ParametersType OptimizerParametersType;
 
-  typedef typename COMMON_MMI_METRIC_TYPE<TImage, TImage> MattesMutualInformationMetricType;
+  typedef typename itk::MattesMutualInformationImageToImageMetricv4<TImage, TImage> MattesMutualInformationMetricType;
   void SetDisplayDeformedImage(bool x)
   {
     m_DisplayDeformedImage = x;
@@ -281,7 +279,7 @@ public:
       {
       // Special BUG work around for MMI metric
       // that does not work in multi-threaded mode
-      // typedef COMMON_MMI_METRIC_TYPE<TImage,TImage> MattesMutualInformationMetricType;
+      // typedef itk::MattesMutualInformationImageToImageMetricv4<TImage,TImage> MattesMutualInformationMetricType;
       static int TransformIterationCounter = 0;
       typename MattesMutualInformationMetricType::Pointer test_MMICostMetric =
         dynamic_cast<MattesMutualInformationMetricType *>(this->m_CostMetricObject.GetPointer() );
@@ -466,6 +464,7 @@ public:
   itkSetMacro(NumberOfIterations,            unsigned int);
   itkSetMacro(RelaxationFactor,              double);
   itkSetMacro(MaximumStepLength,             double);
+  itkSetMacro(MinimumStepLength,             double);
   itkSetMacro(TranslationScale,              double);
   itkSetMacro(ReproportionScale,             double);
   itkSetMacro(SkewScale,                     double);
@@ -543,6 +542,7 @@ private:
   unsigned int m_NumberOfIterations;
   double       m_RelaxationFactor;
   double       m_MaximumStepLength;
+  double       m_MinimumStepLength;
   double       m_TranslationScale;
   double       m_ReproportionScale;
   double       m_SkewScale;

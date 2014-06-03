@@ -142,7 +142,7 @@ public:
   itkSetMacro(NumberOfMatchPoints,               unsigned int);
   itkGetConstMacro(NumberOfMatchPoints,          unsigned int);
   VECTORitkSetMacro(NumberOfIterations,   std::vector<int> /**/);
-  VECTORitkSetMacro(MinimumStepLength,    std::vector<double> ); // It will not be used by ITKv4 registration, but it is kept for backward compatibility.
+  VECTORitkSetMacro(MinimumStepLength,    std::vector<double> );
   itkSetMacro(MaximumStepLength,             double);
   itkGetConstMacro(MaximumStepLength,             double);
   itkSetMacro(RelaxationFactor,              double);
@@ -153,8 +153,6 @@ public:
   itkGetConstMacro(ReproportionScale,             double);
   itkSetMacro(SkewScale,                     double);
   itkGetConstMacro(SkewScale,                     double);
-  itkSetMacro(UseExplicitPDFDerivativesMode, std::string);
-  itkGetConstMacro(UseExplicitPDFDerivativesMode, std::string);
   itkSetMacro(UseCachingOfBSplineWeightsMode, std::string);
   itkGetConstMacro(UseCachingOfBSplineWeightsMode, std::string);
   itkSetMacro(CostFunctionConvergenceFactor, double);
@@ -236,6 +234,7 @@ public:
   itkGetConstMacro(ForceMINumberOfThreads, int);
 
   itkSetMacro(NormalizeInputImages, bool);
+  itkSetMacro(InitializeRegistrationByCurrentGenericTransform, bool);
 
   /** Method that initiates the registration. */
   void Update(void);
@@ -289,7 +288,6 @@ private:
   double                   m_TranslationScale;
   double                   m_ReproportionScale;
   double                   m_SkewScale;
-  std::string              m_UseExplicitPDFDerivativesMode;
   std::string              m_UseCachingOfBSplineWeightsMode;
   double                   m_BackgroundFillValue;
   std::vector<std::string> m_TransformType;
@@ -313,6 +311,7 @@ private:
   itk::Object::Pointer                       m_Helper;
   SamplingStrategyType                       m_SamplingStrategy;
   bool                                       m_NormalizeInputImages;
+  bool                                       m_InitializeRegistrationByCurrentGenericTransform;
   // DEBUG OPTION:
   int m_ForceMINumberOfThreads;
 };  // end BRAINSFitHelper class
@@ -423,13 +422,13 @@ BRAINSFitHelper::SetupRegistration(GenericMetricType *localCostMetric)
   myHelper->SetNumberOfHistogramBins(this->m_NumberOfHistogramBins);
   myHelper->SetNumberOfIterations(this->m_NumberOfIterations);
   myHelper->SetMaximumStepLength(this->m_MaximumStepLength);
+  myHelper->SetMinimumStepLength(this->m_MinimumStepLength);
   myHelper->SetRelaxationFactor(this->m_RelaxationFactor);
   myHelper->SetTranslationScale(this->m_TranslationScale);
   myHelper->SetReproportionScale(this->m_ReproportionScale);
   myHelper->SetSkewScale(this->m_SkewScale);
   myHelper->SetBackgroundFillValue(this->m_BackgroundFillValue);
   myHelper->SetInitializeTransformMode(this->m_InitializeTransformMode);
-  myHelper->SetUseExplicitPDFDerivativesMode(this->m_UseExplicitPDFDerivativesMode);
   myHelper->SetMaskInferiorCutOffFromCenter(this->m_MaskInferiorCutOffFromCenter);
   myHelper->SetCurrentGenericTransform(this->m_CurrentGenericTransform);
   myHelper->SetSplineGridSize(this->m_SplineGridSize);
@@ -443,6 +442,7 @@ BRAINSFitHelper::SetupRegistration(GenericMetricType *localCostMetric)
   myHelper->SetForceMINumberOfThreads(this->m_ForceMINumberOfThreads);
   myHelper->SetUseROIBSpline(this->m_UseROIBSpline);
   myHelper->SetSamplingStrategy(this->m_SamplingStrategy);
+  myHelper->SetInitializeRegistrationByCurrentGenericTransform(this->m_InitializeRegistrationByCurrentGenericTransform);
   if( this->m_DebugLevel > 7 )
     {
     this->PrintCommandLine(true, "BF");

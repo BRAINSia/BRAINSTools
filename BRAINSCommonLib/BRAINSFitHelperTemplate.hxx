@@ -515,6 +515,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::BRAINSFitHelperTemplat
   m_NumberOfMatchPoints(10),
   m_NumberOfIterations(1, 1500),
   m_MaximumStepLength(0.2),
+  m_MinimumStepLength(1, 0.005),
   m_RelaxationFactor(0.5),
   m_TranslationScale(1000.0),
   m_ReproportionScale(1.0),
@@ -522,7 +523,6 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::BRAINSFitHelperTemplat
   m_BackgroundFillValue(0.0),
   m_TransformType(1, "Rigid"),
   m_InitializeTransformMode("Off"),
-  m_UseExplicitPDFDerivativesMode("Off"),
   m_MaskInferiorCutOffFromCenter(1000),
   m_SplineGridSize(3, 10),
   m_CostFunctionConvergenceFactor(1e+9),
@@ -540,6 +540,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::BRAINSFitHelperTemplat
   m_UseROIBSpline(0),
   m_PermitParameterVariation(0),
   m_SamplingStrategy(AffineRegistrationType::NONE),
+  m_InitializeRegistrationByCurrentGenericTransform(true),
   m_ForceMINumberOfThreads(-1)
 {
   m_SplineGridSize[0] = 14;
@@ -552,6 +553,7 @@ template <class TransformType, class OptimizerType, class MetricType>
 void
 BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::FitCommonCode(
   int numberOfIterations,
+  double minimumStepLength,
   typename CompositeTransformType::Pointer & initialITKTransform)
 {
   // FitCommonCode
@@ -571,6 +573,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::FitCommonCode(
   appMutualRegistration->SetSamplingPercentage(m_SamplingPercentage);
   appMutualRegistration->SetRelaxationFactor( m_RelaxationFactor );
   appMutualRegistration->SetMaximumStepLength( m_MaximumStepLength );
+  appMutualRegistration->SetMinimumStepLength( minimumStepLength );
   appMutualRegistration->SetTranslationScale( m_TranslationScale );
   appMutualRegistration->SetReproportionScale( m_ReproportionScale );
   appMutualRegistration->SetSkewScale( m_SkewScale );
@@ -646,7 +649,23 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
     {
     this->PrintSelf(std::cout, 3);
     }
-
+  std::vector<double> localMinimumStepLength( m_TransformType.size() );
+  if( m_MinimumStepLength.size() != m_TransformType.size() )
+    {
+    if( m_MinimumStepLength.size() != 1 )
+      {
+      itkGenericExceptionMacro(<< "ERROR:  Wrong number of parameters for MinimumStepLength."
+                               << "It either needs to be 1 or the same size as TransformType.");
+      }
+    for( unsigned int q = 0; q < m_TransformType.size(); ++q )
+      {
+      localMinimumStepLength[q] = m_MinimumStepLength[0];
+      }
+    }
+  else
+    {
+    localMinimumStepLength = m_MinimumStepLength;
+    }
   std::vector<int> localNumberOfIterations( m_TransformType.size() );
   if( m_NumberOfIterations.size() != m_TransformType.size() )
     {
@@ -824,6 +843,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
 
       this->FitCommonCode<TransformType, OptimizerType, MetricType>
         (localNumberOfIterations[currentTransformIndex],
+         localMinimumStepLength[currentTransformIndex],
         this->m_CurrentGenericTransform);
       // NOW, after running the above function, the m_CurrentGenericTransform contains the integration of initial transform and rigid registration results.
       ///////////////////////
@@ -925,6 +945,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
 
       this->FitCommonCode<TransformType, OptimizerType, MetricType>
       (localNumberOfIterations[currentTransformIndex],
+       localMinimumStepLength[currentTransformIndex],
        this->m_CurrentGenericTransform);
       // NOW, after running the above function, the m_CurrentGenericTransform contains the integration of initial transform and ScaleVersor registration results.
       /////////////////////
@@ -1032,6 +1053,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
 
       this->FitCommonCode<TransformType, OptimizerType, MetricType>
       (localNumberOfIterations[currentTransformIndex],
+       localMinimumStepLength[currentTransformIndex],
        this->m_CurrentGenericTransform);
       // NOW, after running the above function, the m_CurrentGenericTransform contains the integration of initial transform and ScaleSkew registration results that is an "Affine" transform.
       /////////////////////
@@ -1142,6 +1164,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
 
       this->FitCommonCode<TransformType, OptimizerType, MetricType>
       (localNumberOfIterations[currentTransformIndex],
+       localMinimumStepLength[currentTransformIndex],
        this->m_CurrentGenericTransform);
       // NOW, after running the above function, the m_CurrentGenericTransform contains the integration of initial transform and Affine registration results.
       /////////////////////
@@ -1240,6 +1263,91 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
       LBFGSBoptimizer->SetMaximumNumberOfFunctionEvaluations(m_MaximumNumberOfEvaluations);
       LBFGSBoptimizer->SetMaximumNumberOfCorrections(m_MaximumNumberOfCorrections);
 
+      bsplineRegistration->SetFixedImage( 0, m_FixedVolume );
+
+      if( !this->m_InitializeRegistrationByCurrentGenericTransform )
+        {
+        if( this->m_CurrentGenericTransform.IsNotNull() )
+          {
+          std::cout << "Moving image is warped by initial transform, before it is passed to the BSpline registration." << std::endl;
+          typedef float                                                                     VectorComponentType;
+          typedef itk::Vector<VectorComponentType, GenericTransformImageNS::SpaceDimension> VectorPixelType;
+          typedef itk::Image<VectorPixelType,  GenericTransformImageNS::SpaceDimension>     DisplacementFieldType;
+          typename MovingImageType::Pointer warpedMoving = GenericTransformImage<
+                                                                  MovingImageType,
+                                                                  MovingImageType,
+                                                                  DisplacementFieldType>( this->m_MovingVolume,
+                                                                                         this->m_FixedVolume,
+                                                                                         this->m_CurrentGenericTransform.GetPointer(),
+                                                                                         m_BackgroundFillValue,
+                                                                                         "Linear",
+                                                                                         false );
+
+          bsplineRegistration->SetMovingImage( 0, warpedMoving );
+
+          // Then warp the moving image mask as well if it is not null.
+          typedef typename MetricType::MovingImageMaskType     MovingImageMaskType;
+          typename MovingImageMaskType::ConstPointer movingMask =
+          dynamic_cast<MovingImageMaskType const *>( this->m_CostMetricObject->GetMovingImageMask() );
+          if( movingMask.IsNotNull() )
+            {
+            typename MaskImageType::Pointer warpedMovingMaskImage = GenericTransformImage<
+                                                                      MaskImageType,
+                                                                      MaskImageType,
+                                                                      DisplacementFieldType>(
+                                                                                             ExtractConstPointerToImageMaskFromImageSpatialObject(movingMask).GetPointer(),
+                                                                                             this->m_FixedVolume,
+                                                                                             this->m_CurrentGenericTransform.GetPointer(),
+                                                                                             m_BackgroundFillValue,
+                                                                                             "Linear",
+                                                                                             false );
+
+
+            typename MovingImageMaskType::ConstPointer warpedMask = ConvertMaskImageToSpatialMask( warpedMovingMaskImage.GetPointer() );
+            m_CostMetricObject->SetMovingImageMask( warpedMask );
+            }
+          }
+        else
+          {
+          bsplineRegistration->SetMovingImage( 0, m_MovingVolume );
+          m_CurrentGenericTransform = CompositeTransformType::New();
+          m_CurrentGenericTransform->ClearTransformQueue();
+          if( this->m_DebugLevel > 4 )
+            {
+            this->m_CurrentGenericTransform->Print(std::cout);
+            }
+          }
+        }
+      else
+        {
+        bsplineRegistration->SetMovingImage( 0, m_MovingVolume );
+
+        if( this->m_CurrentGenericTransform.IsNull() )
+          {
+          m_CurrentGenericTransform = CompositeTransformType::New();
+          m_CurrentGenericTransform->ClearTransformQueue();
+
+          if( this->m_DebugLevel > 4 )
+            {
+            this->m_CurrentGenericTransform->Print(std::cout);
+            }
+          }
+        else
+          {
+          bsplineRegistration->SetMovingInitialTransform( this->m_CurrentGenericTransform );
+
+          if( this->m_DebugLevel > 4 )
+            {
+            std::cout << "write the initial transform to the disk right before registration starts." << std::endl;
+            this->m_CurrentGenericTransform->Print(std::cout);
+            itk::TransformFileWriter::Pointer dwriter1 = itk::TransformFileWriter::New();
+            dwriter1->SetInput( this->m_CurrentGenericTransform->GetNthTransform(0) );
+            dwriter1->SetFileName("DEBUG_initial_transform_for_bspline.mat");
+            dwriter1->Update();
+            }
+          }
+        }
+
       // we have a 1 level BSpline registration.
       const unsigned int numberOfLevels = 1;
 
@@ -1260,75 +1368,6 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
       bsplineRegistration->SetMetricSamplingPercentage( m_SamplingPercentage );
       bsplineRegistration->SetMetric( this->m_CostMetricObject );
       bsplineRegistration->SetOptimizer( LBFGSBoptimizer );
-
-      bsplineRegistration->SetFixedImage( 0, m_FixedVolume );
-/*
-      if( this->m_CurrentGenericTransform.IsNotNull() )
-        {
-        std::cout << "Moving image is warped by initial transform, before it is passed to the BSpline registration." << std::endl;
-        typedef float                                                                     VectorComponentType;
-        typedef itk::Vector<VectorComponentType, GenericTransformImageNS::SpaceDimension> VectorPixelType;
-        typedef itk::Image<VectorPixelType,  GenericTransformImageNS::SpaceDimension>     DisplacementFieldType;
-
-        if( this->m_DebugLevel > 4 )
-          {
-          itkUtil::WriteImage<FixedImageType>(m_FixedVolume, "DEBUG_BSplineFixedImage.nii.gz");
-          itkUtil::WriteImage<MovingImageType>(m_MovingVolume, "DEBUG_BSplineMovingImageBEFOREResampling.nii.gz");
-          }
-
-        typename MovingImageType::Pointer bspline_moving = GenericTransformImage<
-                                                              MovingImageType,
-                                                              MovingImageType,
-                                                              DisplacementFieldType>( this->m_MovingVolume,
-                                                                                      this->m_FixedVolume,
-                                                                                      this->m_CurrentGenericTransform.GetPointer(),
-                                                                                      m_BackgroundFillValue,
-                                                                                      "Linear",
-                                                                                      false );
-        if( this->m_DebugLevel > 4 )
-          {
-          itkUtil::WriteImage<MovingImageType>(bspline_moving, "DEBUG_BSplineMovingImageAFTERResampling.nii.gz");
-          }
-
-        bsplineRegistration->SetMovingImage( 0, bspline_moving );
-        }
-      else
-        {
-        bsplineRegistration->SetMovingImage( 0, m_MovingVolume );
-        m_CurrentGenericTransform = CompositeTransformType::New();
-        m_CurrentGenericTransform->ClearTransformQueue();
-        }
-
-      itkUtil::WriteImage<MovingImageType>(
-                                          const_cast<MovingImageType *>( bsplineRegistration->GetMovingImage() ), "DEBUG_GetMovingFromRegFilter.nii.gz");
-*/
-//
-      bsplineRegistration->SetMovingImage( 0, m_MovingVolume );////////
-
-      if( this->m_CurrentGenericTransform.IsNull() )
-        {
-        // Initialize the registeration process with an Identity transform
-        typename AffineTransformType::Pointer initialITKTransform = AffineTransformType::New();
-        initialITKTransform->SetIdentity();
-        m_CurrentGenericTransform = CompositeTransformType::New();
-        m_CurrentGenericTransform->ClearTransformQueue();
-        m_CurrentGenericTransform->AddTransform( initialITKTransform );
-        }
-      else
-        {
-        bsplineRegistration->SetMovingInitialTransform( this->m_CurrentGenericTransform );
-        }
-//
-
-      if( this->m_DebugLevel > 4 )
-        {
-        std::cout << "write the initial transform to the disk right before registration starts." << std::endl;
-        this->m_CurrentGenericTransform->Print(std::cout);
-        itk::TransformFileWriter::Pointer dwriter1 = itk::TransformFileWriter::New();
-        dwriter1->SetInput( this->m_CurrentGenericTransform->GetNthTransform(0) );
-        dwriter1->SetFileName("DEBUG_initial_transform_for_bspline.mat");
-        dwriter1->Update();
-        }
 
       try
         {
@@ -1462,6 +1501,12 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::PrintSelf(std::ostream
   os << "]" << std::endl;
   os << indent << "NumberOfHistogramBins:" << this->m_NumberOfHistogramBins << std::endl;
   os << indent << "MaximumStepLength:    " << this->m_MaximumStepLength << std::endl;
+  os << indent << "MinimumStepLength:     [";
+  for( unsigned int q = 0; q < this->m_MinimumStepLength.size(); ++q )
+    {
+    os << this->m_MinimumStepLength[q] << " ";
+    }
+  os << "]" << std::endl;
   os << indent << "TransformType:     [";
   for( unsigned int q = 0; q < this->m_TransformType.size(); ++q )
     {

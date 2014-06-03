@@ -396,8 +396,6 @@
       <channel>output</channel>
     </transform>
 
-
-
     <integer>
       <name>fixedVolumeTimeIndex</name>
       <longflag>fixedVolumeTimeIndex</longflag>
@@ -429,6 +427,15 @@
       <description>The half percentage to decide outliers of image intensities. The default value is zero, which means no outlier removal. If the value of 0.005 is given, the moduel will throw away 0.005 % of both tails, so 0.01% of intensities in total would be ignored in its statistic calculation. </description>
       <default>0.0</default>
     </double>
+
+    <boolean>
+      <name>initializeRegistrationByCurrentGenericTransform</name>
+      <longflag>initializeRegistrationByCurrentGenericTransform</longflag>
+      <label>Pass warped moving image to BSpline registration filter</label>
+      <description>If this flag is ON, the current generic composite transform, resulted from the linear registration stages, is set to initialize the follow nonlinear registration process. However, by the default behaviour, the moving image is first warped based on the existant transform before it is passed to the BSpline registration filter. It is done to speed up the BSpline registration by reducing the computations of composite transform jacobian.</description>
+      <default>0</default>
+    </boolean>
+
   </parameters>
   <!-- -->
   <!-- -->
@@ -448,7 +455,7 @@
     <string-enumeration>
       <name>useExplicitPDFDerivativesMode</name>
       <longflag>useExplicitPDFDerivativesMode</longflag>
-      <description>Using mode AUTO means OFF for BSplineTransforms and ON for the linear transforms.  The ON alternative uses more memory to sometimes do a better job.</description>
+      <description>This option is not used in ITKv4 optimizers. There is no need to set that; however, this flag is not removed to keep backward compatibility.</description>
       <label>Explicit PDF Derivatives Mode</label>
       <default>AUTO</default>
       <element>AUTO</element>

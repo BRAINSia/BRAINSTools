@@ -51,7 +51,6 @@ def WFPerSubjectDef(inputListOfSubjectVolumes,
     BFitAtlasToSubject.inputs.translationScale = 1000
     BFitAtlasToSubject.inputs.reproportionScale = 1
     BFitAtlasToSubject.inputs.skewScale = 1
-    BFitAtlasToSubject.inputs.useExplicitPDFDerivativesMode = "AUTO"
     BFitAtlasToSubject.inputs.useCachingOfBSplineWeightsMode = "ON"
     BFitAtlasToSubject.inputs.maxBSplineDisplacement = 7
     BFitAtlasToSubject.inputs.projectedGradientTolerance = 1e-05

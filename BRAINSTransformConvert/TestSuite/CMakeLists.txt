@@ -50,7 +50,9 @@ set(BSplineDeformableTargets DisplacementField)
 
 set(TransformTestImage "${CMAKE_CURRENT_BINARY_DIR}/TransformConvertTestImage.nii.gz")
 
-foreach(SourceTransform VersorRigid ScaleVersor ScaleSkewVersor Affine BSplineDeformable)
+#
+# TODO: Make tests for BSplineTransform to replace BSplineDeformable
+foreach(SourceTransform VersorRigid ScaleVersor ScaleSkewVersor Affine) # BSplineDeformable)
   foreach(TargetPrecisionType float double)
     foreach(TargetTransform IN LISTS ${SourceTransform}Targets)
 

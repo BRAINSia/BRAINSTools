@@ -61,6 +61,9 @@ typedef itk::ImageMaskSpatialObject<MaskImageType::ImageDimension> ImageMaskSpat
 extern MaskImageType::ConstPointer ExtractConstPointerToImageMaskFromImageSpatialObject(
   SpatialObjectType::ConstPointer inputSpatialObject);
 
+extern SpatialObjectType::ConstPointer ConvertMaskImageToSpatialMask(
+  MaskImageType::ConstPointer inputImage );
+
 template <class TransformType, unsigned int VImageDimension>
 void DoCenteredTransformMaskClipping(
   ImageMaskPointer & fixedMask,

@@ -79,6 +79,7 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
   m_NumberOfIterations(0),
   m_RelaxationFactor(0.5),
   m_MaximumStepLength(0.2000),
+  m_MinimumStepLength(0.0001),
   m_TranslationScale(1000.0),
   m_ReproportionScale(25.0),
   m_SkewScale(25.0),
@@ -269,7 +270,7 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
     versorOptimizer->SetNumberOfIterations( m_NumberOfIterations );
     versorOptimizer->SetLearningRate( m_MaximumStepLength );
     versorOptimizer->SetRelaxationFactor( m_RelaxationFactor );
-    versorOptimizer->SetMinimumStepLength( 1e-6 );
+    versorOptimizer->SetMinimumStepLength( m_MinimumStepLength );
     versorOptimizer->SetGradientMagnitudeTolerance( 1e-4 );
     versorOptimizer->SetReturnBestParametersAndValue(true);
 
@@ -283,14 +284,12 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
   m_Registration->SetOptimizer(optimizer);
 
 ////////////////////////HARD CODED PART//////////////////////
-  const unsigned int numberOfLevels = 3;
+  const unsigned int numberOfLevels = 1;
 
   m_Registration->SetNumberOfLevels( numberOfLevels );
 
   std::vector<unsigned int>  factors( numberOfLevels );
-  factors[0] = 3;
-  factors[1] = 2;
-  factors[2] = 1;
+  factors[0] = 1;
   typedef typename RegistrationType::ShrinkFactorsPerDimensionContainerType ShrinkFactorsPerDimensionContainerType;
   std::vector<ShrinkFactorsPerDimensionContainerType> shrinkFactorsPerDimensionForAllLevels;
   for( unsigned int n = 0; n < numberOfLevels; n++ )
@@ -307,9 +306,7 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
 
    // Get smoothing sigmas
   std::vector<float> sigmas( numberOfLevels );
-  sigmas[0] = 2;
-  sigmas[1] = 1;
-  sigmas[2] = 0;
+  sigmas[0] = 0;
   typename RegistrationType::SmoothingSigmasArrayType smoothingSigmasPerLevel;
   smoothingSigmasPerLevel.SetSize( sigmas.size() );
   for( unsigned int n = 0; n < smoothingSigmasPerLevel.Size(); n++ )
@@ -346,7 +343,7 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
     observer->SetFixedImage(m_FixedImage);
     observer->SetTransform(m_Transform);
 
-    typedef COMMON_MMI_METRIC_TYPE<FixedImageType, MovingImageType> MattesMutualInformationMetricType;
+    typedef itk::MattesMutualInformationImageToImageMetricv4<FixedImageType, MovingImageType> MattesMutualInformationMetricType;
     typename MattesMutualInformationMetricType::Pointer test_MMICostMetric =
       dynamic_cast<MattesMutualInformationMetricType *>(this->m_CostMetricObject.GetPointer() );
     if( test_MMICostMetric.IsNotNull() )

@@ -1175,7 +1175,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
       const unsigned int SplineOrder = 3;
       typedef itk::BSplineTransform<double, SpaceDimension, SplineOrder> BSplineTransformType;
 
-      typedef itk::ImageRegistrationMethodv4<FixedImageType, MovingImageType, BSplineTransformType> BSplineRegistrationType;
+      typedef itk::ImageRegistrationMethodv4<FixedImageType, MovingImageType> BSplineRegistrationType;
       typename BSplineRegistrationType::Pointer bsplineRegistration = BSplineRegistrationType::New();
 
       typename BSplineTransformType::Pointer initialBSplineTransform = BSplineTransformType::New();
@@ -1206,7 +1206,8 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
       // std::cout << "Intial Parameters = " << std::endl
       //           << initialBSplineTransform->GetParameters() << std::endl;
 
-      bsplineRegistration->InitializeOutputTransformFromReference( initialBSplineTransform );
+      bsplineRegistration->SetInitialTransform( initialBSplineTransform );
+      bsplineRegistration->InPlaceOn();
 
       // TODO:  Expose these to the command line for consistancy.
       const int m_MaximumNumberOfIterations = 1500;
@@ -1259,7 +1260,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
 
       LBFGSBoptimizer->SetCostFunctionConvergenceFactor(m_CostFunctionConvergenceFactor);
       LBFGSBoptimizer->SetGradientConvergenceTolerance(m_ProjectedGradientTolerance);
-      LBFGSBoptimizer->SetMaximumNumberOfIterations(m_MaximumNumberOfIterations);
+      LBFGSBoptimizer->SetNumberOfIterations(m_MaximumNumberOfIterations);
       LBFGSBoptimizer->SetMaximumNumberOfFunctionEvaluations(m_MaximumNumberOfEvaluations);
       LBFGSBoptimizer->SetMaximumNumberOfCorrections(m_MaximumNumberOfCorrections);
 

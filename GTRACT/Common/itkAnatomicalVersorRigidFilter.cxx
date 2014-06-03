@@ -69,6 +69,8 @@ void AnatomicalVersorRigidFilter::Update()
   OptimizerTypePointer    optimizer     = OptimizerType::New();
   InterpolatorTypePointer interpolator  = InterpolatorType::New();
   RegistrationTypePointer registration  = RegistrationType::New();
+  //TODO: Needed for ITKv4 registration registration->InPlaceOn();
+
   TransformType::Pointer  transform     = TransformType::New();
 
   /*** Set up the Registration ***/

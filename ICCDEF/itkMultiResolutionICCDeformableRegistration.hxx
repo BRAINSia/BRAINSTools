@@ -50,6 +50,7 @@ MultiResolutionICCDeformableRegistration<TFixedImage, TMovingImage, TDisplacemen
   this->RemoveRequiredInputName( "Primary" );
 
   typename RegistrationType::Pointer registrator = RegistrationType::New();
+  registrator->InPlaceOn();
   m_RegistrationFilter = dynamic_cast<RegistrationType *>( registrator.GetPointer() );
 
   m_MovingImagePyramid  = MovingImagePyramidType::New();

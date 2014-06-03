@@ -72,6 +72,7 @@ void TimeSeriesVersorScaleSkewFilter::Update()
   OptimizerTypePointer    optimizer     = OptimizerType::New();
   InterpolatorTypePointer interpolator  = InterpolatorType::New();
   RegistrationTypePointer registration  = RegistrationType::New();
+  //TODO: Needed for ITKv4 registration registration->InPlaceOn();
 
   ExtractFilterTypePointer extractBaseImageFilter = ExtractFilterType::New();
   ExtractFilterTypePointer extractImageFilter     = ExtractFilterType::New();

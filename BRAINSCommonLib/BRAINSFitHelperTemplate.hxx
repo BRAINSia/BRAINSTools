@@ -1184,18 +1184,92 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
       BSplineTransformType::MeshSizeType             meshSize;
       BSplineTransformType::OriginType               fixedOrigin;
 
+      typename FixedImageType::Pointer initializationImage = FixedImageType::New();
+      if ( m_UseROIBSpline  )
+        {
+        ImageMaskSpatialObjectType::Pointer roiMask = ImageMaskSpatialObjectType::New();
+        if( m_MovingBinaryVolume.GetPointer() != NULL )
+          {
+          ImageMaskSpatialObjectType::Pointer movingImageMask =
+          dynamic_cast<ImageMaskSpatialObjectType *>(m_MovingBinaryVolume.GetPointer() );
+
+          typedef itk::ResampleImageFilter<MaskImageType, MaskImageType, double> ResampleFilterType;
+          ResampleFilterType::Pointer resampler = ResampleFilterType::New();
+
+          if( m_CurrentGenericTransform.IsNotNull() )
+            {
+              // resample the moving mask, if available
+            resampler->SetTransform(m_CurrentGenericTransform);
+            resampler->SetInput( movingImageMask->GetImage() );
+            resampler->SetOutputParametersFromImage( m_FixedVolume );
+            resampler->Update();
+            }
+          if( m_FixedBinaryVolume.GetPointer() != NULL )
+            {
+            typedef itk::AddImageFilter<MaskImageType, MaskImageType> AddFilterType;
+            ImageMaskSpatialObjectType::Pointer fixedImageMask =
+            dynamic_cast<ImageMaskSpatialObjectType *>(m_FixedBinaryVolume.GetPointer() );
+            AddFilterType::Pointer adder = AddFilterType::New();
+            adder->SetInput1(fixedImageMask->GetImage() );
+            adder->SetInput2(resampler->GetOutput() );
+            adder->Update();
+            roiMask->SetImage(adder->GetOutput() );
+            }
+          else
+            {
+            roiMask->SetImage(resampler->GetOutput() );
+            }
+          }
+        else if( m_FixedBinaryVolume.GetPointer() != NULL )
+          {
+          ImageMaskSpatialObjectType::Pointer fixedImageMask =
+          dynamic_cast<ImageMaskSpatialObjectType *>(m_FixedBinaryVolume.GetPointer() );
+          roiMask->SetImage(fixedImageMask->GetImage() );
+          }
+
+        else
+          {
+          itkGenericExceptionMacro( << "ERROR: ROIBSpline mode can only be used with ROI(s) specified!");
+          return;
+          }
+
+        typename FixedImageType::PointType roiOriginPt;
+        typename FixedImageType::IndexType roiOriginIdx;
+        typename FixedImageType::Pointer    roiImage = FixedImageType::New();
+        typename FixedImageType::RegionType roiRegion =
+        roiMask->GetAxisAlignedBoundingBoxRegion();
+        typename FixedImageType::SpacingType roiSpacing =
+        m_FixedVolume->GetSpacing();
+
+        roiOriginIdx.Fill(0);
+        m_FixedVolume->TransformIndexToPhysicalPoint(roiRegion.GetIndex(), roiOriginPt);
+        roiRegion.SetIndex(roiOriginIdx);
+        roiImage->SetRegions(roiRegion);
+        roiImage->Allocate();
+        roiImage->FillBuffer(1.);
+        roiImage->SetSpacing(roiSpacing);
+        roiImage->SetOrigin(roiOriginPt);
+        roiImage->SetDirection( m_FixedVolume->GetDirection() );
+
+        initializationImage = roiImage;
+        }
+      else
+        {
+        initializationImage = this->m_FixedVolume;
+        }
+
       for( unsigned int i=0; i< SpaceDimension; i++ )
         {
-        fixedOrigin[i] = m_FixedVolume->GetOrigin()[i];
-        fixedPhysicalDimensions[i] = m_FixedVolume->GetSpacing()[i]
-        * static_cast<double>( m_FixedVolume->GetLargestPossibleRegion().GetSize()[i] - 1 );
+        fixedOrigin[i] = initializationImage->GetOrigin()[i];
+        fixedPhysicalDimensions[i] = initializationImage->GetSpacing()[i]
+        * static_cast<double>( initializationImage->GetLargestPossibleRegion().GetSize()[i] - 1 );
         meshSize[i] = m_SplineGridSize[i];
         }
 
       initialBSplineTransform->SetTransformDomainOrigin( fixedOrigin );
       initialBSplineTransform->SetTransformDomainPhysicalDimensions( fixedPhysicalDimensions );
       initialBSplineTransform->SetTransformDomainMeshSize( meshSize );
-      initialBSplineTransform->SetTransformDomainDirection( m_FixedVolume->GetDirection() );
+      initialBSplineTransform->SetTransformDomainDirection( initializationImage->GetDirection() );
 
       typedef BSplineTransformType::ParametersType     ParametersType;
       const unsigned int numberOfParameters =  initialBSplineTransform->GetNumberOfParameters();
@@ -1396,8 +1470,12 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
       const LBFGSBOptimizerType::ConstPointer  outputOptimizer =
                                                   dynamic_cast<const LBFGSBOptimizerType *>( bsplineRegistration->GetOptimizer() );
       std::cout << "Stop condition from LBFGSBoptimizer." << outputOptimizer->GetStopConditionDescription() << std::endl;
-      std::cout << "Final Parameters = " << std::endl;
-      std::cout << outputBSplineTransform->GetParameters() << std::endl;
+
+      if( this->m_DebugLevel > 4 )
+        {
+        std::cout << "Final Parameters = " << std::endl;
+        std::cout << outputBSplineTransform->GetParameters() << std::endl;
+        }
       }
     else if( currentTransformType == "SyN" )
       {

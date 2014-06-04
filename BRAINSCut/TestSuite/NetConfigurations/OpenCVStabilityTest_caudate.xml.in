@@ -67,8 +67,8 @@
        ========================================================================== -->
    <NeuralNetParams MaskSmoothingValue     = "0.0"
                     GradientProfileSize    = "1"
-                    TrainingVectorFilename = "/scratch/eunyokim/src/NamicExternal201404/build_release/BRAINSTools-build/BRAINSCut/TestSuite/trainVectorHE.txt"
-                    TrainingModelFilename  = "/scratch/eunyokim/src/NamicExternal201404/build_release/BRAINSTools-build/BRAINSCut/TestSuite/trainModel.txt"
+                    TrainingVectorFilename = "@CMAKE_CURRENT_BINARY_DIR@/BRAINSCut/TestSuite/trainVectorHE.txt"
+                    TrainingModelFilename  = "@CMAKE_CURRENT_BINARY_DIR@/BRAINSCut/TestSuite/trainModel.txt"
                     TestVectorFilename     = "na"
                     Normalization          = "Linear"
    />
@@ -97,26 +97,15 @@
       OutputDir="@CMAKE_CURRENT_BINARY_DIR@/">
     <Image Type="T1" Filename="@scan3T1@"/>
     <Image Type="T2" Filename="@scan3T2@"/>
-    <Image Type="SG" Filename="/raid0/homes/eunyokim/Desktop/TEMP/scan3SG.nii.gz"/>
+    <Image Type="SG" Filename="@scan3SG@"/>
     <Mask Type="RegistrationROI" Filename="@scan3T1@" />
     <Mask Type="l_caudate"  Filename="@CMAKE_CURRENT_BINARY_DIR@/l_caudate_scan3.nii.gz"/>
     <Mask Type="r_caudate"  Filename="@CMAKE_CURRENT_BINARY_DIR@/r_caudate_scan3.nii.gz"/>
     <Registration
-      SubjToAtlasRegistrationFilename="@CMAKE_CURRENT_BINARY_DIR@/Scan3ToTemplate.h5"
-      AtlasToSubjRegistrationFilename="@CMAKE_CURRENT_BINARY_DIR@/TemplateToScan3.h5"
+      SubjToAtlasRegistrationFilename="/NOT_USED"
+      AtlasToSubjRegistrationFilename="@BRAINSCutTemplateToScan3@"
       ID="BSpline"
       />
   </DataSet>
-  <!--DataSet Name="Scan4"  Type="Apply"
-    OutputDir="/scratch/eunyokim/src/NamicExternal201404/build_release/BRAINSTools-build/BRAINSCut/TestSuite/MaskOutputDir/Scan4/">
-    <Image Type="T1" Filename="@TestData_DIR@/scan4T1.nii.gz"/>
-    <Image Type="T2" Filename="@TestData_DIR@/scan4T2.nii.gz"/>
-    <Mask Type="RegistrationROI" Filename="@TestData_DIR@/scan4T1.nii.gz" />
-    <Registration
-      SubjToAtlasRegistrationFilename=""
-      AtlasToSubjRegistrationFilename="@TestData_DIR@/Transforms_h5/AtlasToSubjectScan4.h5"
-      ID="BSpline"
-      />
-  </DataSet-->
 
 </AutoSegProcessDescription>

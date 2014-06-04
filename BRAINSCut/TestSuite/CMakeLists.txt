@@ -35,6 +35,8 @@ ExternalData_expand_arguments( ${PROJECT_NAME}FetchData SubjectToAtlasScan2 DATA
 ExternalData_expand_arguments( ${PROJECT_NAME}FetchData scan3Mask1  DATA{${TestData_DIR}/scan3Mask1.nii.gz} )
 ExternalData_expand_arguments( ${PROJECT_NAME}FetchData scan1Mask1  DATA{${TestData_DIR}/scan1Mask1.nii.gz} )
 ExternalData_expand_arguments( ${PROJECT_NAME}FetchData scan3T1     DATA{${TestData_DIR}/scan3T1.nii.gz} )
+ExternalData_expand_arguments( ${PROJECT_NAME}FetchData scan3SG     DATA{${TestData_DIR}/scan3SG.nii.gz} )
+ExternalData_expand_arguments( ${PROJECT_NAME}FetchData BRAINSCutTemplateToScan3     DATA{${TestData_DIR}/BRAINSCutTemplateToScan3.h5} )
 
 ##
 set( InputNetConfigurationForTesting ${BRAINSTools_SOURCE_DIR}/BRAINSCut/TestSuite/NetConfigurations/BRAINSCutTest.xml.in)

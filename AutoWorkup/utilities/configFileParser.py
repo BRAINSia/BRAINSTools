@@ -86,7 +86,7 @@ def parseExperiment(parser):
 def parsePipeline(parser):
     """ Parse the pipeline section and return a dictionary """
     retval = dict()
-    retval['ds_overwrite'] = parser.getboolean('PIPELINE', 'GLOBAL_DATA_SINK_REWRITE')
+    retval['ds_overwrite'] = parser.getboolean('NIPYPE', 'GLOBAL_DATA_SINK_REWRITE')
     return retval
 
 

@@ -184,7 +184,7 @@ def MasterProcessingController(argv=None):
     config.read(args.ExperimentConfig)
 
     # Pipeline-specific information
-    GLOBAL_DATA_SINK_REWRITE = setDataSinkRewriteValue(args.rewrite_datasinks, config.getboolean('PIPELINE', 'GLOBAL_DATA_SINK_REWRITE'))
+    GLOBAL_DATA_SINK_REWRITE = setDataSinkRewriteValue(args.rewrite_datasinks, config.getboolean('NIPYPE', 'GLOBAL_DATA_SINK_REWRITE'))
     experiment = get_experiment_settings(config)
     # Platform specific information
     environment = get_environment_settings(config)

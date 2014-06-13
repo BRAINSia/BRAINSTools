@@ -48,8 +48,11 @@ def baseline_workflow(projectid, subjectid, sessionid, master_config, phase='bas
     are the lists of images to be used in the auto-workup. atlas_fname_wpath is
     the path and filename of the atlas to use.
     """
-    assert 'auxlmk' in master_config['components'] or 'tissue_classify' in master_config['components'], \
-      "DataSink requires 'AUXLMK' or 'TISSUE_CLASSIFY'"
+
+    if not 'auxlmk' in master_config['components'] or not 'tissue_classify' in master_config['components']:
+        print "Baseline DataSink requires at least 'AUXLMK' or 'TISSUE_CLASSIFY'"
+        master_config['components'].append('auxlmk')
+        master_config['components'].append('tissue_classify')
     assert phase in ['baseline', 'longitudinal'], "Unknown phase! Valid entries: 'baseline', 'longitudinal'"
 
     from nipype.interfaces.base import CommandLine, CommandLineInputSpec, TraitedSpec, Directory

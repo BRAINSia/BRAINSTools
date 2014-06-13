@@ -62,10 +62,10 @@ def RunSubjectWorkflow(args):
     # print "These are the sessions: ", sessions
     if 'baseline' in master_config['components']:
         current_phase = 'baseline'
-        from baseline import create_baseline as create_wkfl
+        from baseline import baseline_workflow as create_wkfl
     elif 'longitudinal' in master_config['components']:
         current_phase = 'longitudinal'
-        from longitudinal import create_longitudial as create_wkfl
+        from longitudinal import create_longitudinal as create_wkfl
 
     for session in sessions:  # TODO (future): Replace with iterable inputSpec node and add Function node for getAllFiles()
         project = database.getProjFromSession(session)
@@ -106,5 +106,5 @@ def RunSubjectWorkflow(args):
 
     from utils import run_workflow, print_workflow
     if False:
-        print_workflow(template, plugin=master_config['execution']['plugin'], dotfilename='template')
-    return run_workflow(template, plugin=master_config['execution']['plugin'], plugin_args=master_config['plugin_args'])
+        print_workflow(subjectWorkflow, plugin=master_config['execution']['plugin'], dotfilename='subjectWorkflow')
+    return run_workflow(subjectWorkflow, plugin=master_config['execution']['plugin'], plugin_args=master_config['plugin_args'])

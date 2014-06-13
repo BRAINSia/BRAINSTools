@@ -27,6 +27,7 @@ Examples:
   $ longitudinal.py --rewrite-datasinks --subject 1058 --pe OSX --ExperimentConfig my_baw.config
 
 """
+
 def create_longitudinal(project, subject, session, master_config, interpMode='Linear',
                           pipeline_name=''):
     """
@@ -37,7 +38,14 @@ def create_longitudinal(project, subject, session, master_config, interpMode='Li
     are the lists of images to be used in the auto-workup. atlas_fname_wpath is
     the path and filename of the atlas to use.
     """
-    from baseline import create_baseline
+    from nipype.interfaces.base import CommandLine, CommandLineInputSpec, TraitedSpec, Directory
+    from nipype.interfaces.base import traits, isdefined, BaseInterface
+    from nipype.interfaces.utility import Split, Rename, IdentityInterface, Function
+    import nipype.pipeline.engine as pe
+    import nipype.interfaces.io as nio
+
+    from atlasNode import MakeAtlasNode
+    from baseline import baseline_workflow as create_baseline
 
     baw201 = create_baseline(project, subject, session, master_config,
                                phase='longitudinal',
@@ -63,6 +71,7 @@ def create_longitudinal(project, subject, session, master_config, interpMode='Li
         sname = 'segmentation'
         # sname = GenerateWFName(project, subject, session, 'segmentation')
         onlyT1 = not(len(inputsSpec.inputs.T2s) > 0)
+        atlasNode = MakeAtlasNode(master_config['atlascache'], 'BAtlas')
         segWF = segmentation(project, subject, session, master_config, atlasNode, onlyT1, pipeline_name=sname)
         outputSpec = baw201.get_node('outputspec')
         baw201.connect([(outputSpec, segWF, [('t1_average', 'inputspec.t1_average'),

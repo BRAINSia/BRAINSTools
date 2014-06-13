@@ -236,7 +236,7 @@ landmarksConstellationDetector::ComputeFinalRefinedACPCAlignedTransform(void)
   brainsFitHelper->SetDebugLevel(10);
   brainsFitHelper->Update();
 
-  this->m_ImageOrigToACPCVersorTransform = itk::ComputeRigidTransformFromGeneric( brainsFitHelper->GetCurrentGenericTransform().GetPointer() );
+  this->m_ImageOrigToACPCVersorTransform = itk::ComputeRigidTransformFromGeneric( brainsFitHelper->GetCurrentGenericTransform()->GetNthTransform(0).GetPointer() );
   if( this->m_ImageOrigToACPCVersorTransform.IsNull() )
     {
     // Fail if something weird happens.  TODO: This should throw an exception.

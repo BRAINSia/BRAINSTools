@@ -107,7 +107,8 @@ VersorRigid3DTransformType::Pointer ComputeRigidTransformFromGeneric(
       else      //  NO SUCH CASE!!
         {
         std::cout
-          << "Unsupported initial transform file -- TransformBase first transform typestring, "
+          << "Compute Rigid transform from generic: "
+          << "Unsupported input transform file -- first transform typestring, "
           << transformFileType
           << " not equal to any recognized type VersorRigid3DTransform OR "
           << " ScaleVersor3DTransform OR ScaleSkewVersor3DTransform OR AffineTransform"

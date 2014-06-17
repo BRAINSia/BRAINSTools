@@ -232,7 +232,7 @@ int main(int argc, char *argv[])
 
     registerImageFilter->SetTranslationScale( spatialScale );
     registerImageFilter->SetMaximumStepLength( maximumStepSize );
-    //registerImageFilter->SetMinimumStepLength( minStepLength );
+    registerImageFilter->SetMinimumStepLength( minStepLength );
     registerImageFilter->SetRelaxationFactor( relaxationFactor );
     registerImageFilter->SetNumberOfIterations( iterations );
     registerImageFilter->SetNumberOfSamples( numberOfSpatialSamples );

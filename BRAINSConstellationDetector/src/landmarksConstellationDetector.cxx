@@ -433,6 +433,45 @@ landmarksConstellationDetector::FindCandidatePoints
   return GuessPoint;
 }
 
+void
+landmarksConstellationDetector::EulerToVersorRigid( VersorTransformType::Pointer & result,
+                                                    const RigidTransformType::ConstPointer eulerRigid )
+{
+  if( result.IsNotNull() && eulerRigid.IsNotNull() )
+    {
+    result->SetFixedParameters( eulerRigid->GetFixedParameters() );
+    itk::Versor<double>               versorRotation;
+    const itk::Matrix<double, 3, 3> & CleanedOrthogonalized = itk::Orthogonalize3DRotationMatrix( eulerRigid->GetMatrix() );
+    versorRotation.Set( CleanedOrthogonalized );
+    result->SetRotation(versorRotation);
+    result->SetTranslation( eulerRigid->GetTranslation() );
+    }
+  else
+    {
+    std::cout << "Error missing Pointer data, assigning "
+    << "Euler3DTransformPointer to VersorRigid3DTransformPointer."
+    << std::endl;
+    throw;
+    }
+}
+
+void landmarksConstellationDetector::DoResampleInPlace( const SImageType::ConstPointer inputImg,
+                                                        const RigidTransformType::ConstPointer rigidTx,
+                                                        SImageType::Pointer & inPlaceResampledImg )
+{
+  VersorTransformType::Pointer versorRigidTx = VersorTransformType::New();
+  EulerToVersorRigid( versorRigidTx, rigidTx.GetPointer() );
+
+  typedef itk::ResampleInPlaceImageFilter<SImageType, SImageType> ResampleIPFilterType;
+  typedef ResampleIPFilterType::Pointer                           ResampleIPFilterPointer;
+  ResampleIPFilterPointer InPlaceResampler = ResampleIPFilterType::New();
+  InPlaceResampler->SetInputImage( inputImg );
+  InPlaceResampler->SetRigidTransform( versorRigidTx.GetPointer() );
+  InPlaceResampler->Update();
+
+  inPlaceResampledImg = InPlaceResampler->GetOutput();
+}
+
 void landmarksConstellationDetector::Compute( void )
 {
   std::cout << "\nEstimating MSP..." << std::endl;
@@ -471,104 +510,95 @@ void landmarksConstellationDetector::Compute( void )
     hasUserForcedVN4Point = false;
     }
 
+  if( globalImagedebugLevel > 2 )
+    {
+    LandmarksMapType roughlyAlignedCHM;
+    roughlyAlignedCHM["CM"] = this->m_CenterOfHeadMass;
+    const std::string roughlyAlignedCHMName( this->m_ResultsDir + "/roughlyAlignedCHM.fcsv" );
+    WriteITKtoSlicer3Lmk( roughlyAlignedCHMName, roughlyAlignedCHM );
+
+    const std::string roughlyAlignedVolumeName( this->m_ResultsDir + "/VolumeRoughAlignedWithHoughEye.nrrd" );
+    itkUtil::WriteImage<SImageType>( this->m_VolumeRoughAlignedWithHoughEye, roughlyAlignedVolumeName );
+    }
+
   // Compute the estimated MSP transform, and aligned image
   double c_c = 0;
   ComputeMSP( this->m_VolumeRoughAlignedWithHoughEye, this->m_finalTmsp,
               this->m_VolumeMSP, this->m_CenterOfHeadMass, this->m_mspQualityLevel, c_c );
-
-  // Try to compute a better estimation for MSP plane when Reflective correlation is not good enough.
-  // 0.64 is choosed as the treshold by some statistical calculation on 23 successfully passed data.
+  /*
+   * If the MSP estimation is not good enough (i.e. c_c < -0.64), we try to compute the MSP again
+   * using the previous m_finalTmsp as an initial transform.
+   * Threshold is set to 0.64 based on the statistical calculations on 23 successfully passed data.
+   */
   if( c_c > -0.64 && !this->m_HoughEyeFailure )
     {
-    std::cout << "\n============================================================="
-              << "\nBad Estimation for MSP Plane. Repeat the Procedure to Find a Better Estimation..." << std::endl;
+      unsigned int maxNumberOfIterations = 5;
+      std::cout << "\n============================================================="
+                << "\nBad Estimation for MSP Plane.\n"
+                << "Repeat the Estimation Process up to " << maxNumberOfIterations
+                << " More Times to Find a Better Estimation..." << std::endl;
 
-    // The current "m_CenterOfHeadMass" has been modified by the hough eye transform,
-    // So CM is computed again from the original input image
-    std::cout << "\nNeed to Find the center of head mass again..." << std::endl;
-    itk::FindCenterOfBrainFilter<SImageType>::Pointer findCenterFilter =
-      itk::FindCenterOfBrainFilter<SImageType>::New();
-    findCenterFilter->SetInput( this->m_OriginalInputImage );
-    findCenterFilter->SetAxis( 2 );
-    findCenterFilter->SetOtsuPercentileThreshold( 0.01 );
-    findCenterFilter->SetClosingSize( 7 );
-    findCenterFilter->SetHeadSizeLimit( 700 );
-    findCenterFilter->SetBackgroundValue( 0 );
-    findCenterFilter->Update();
-    SImageType::PointType centerOfHeadMass = findCenterFilter->GetCenterOfBrain();
+      for (unsigned int i = 1; i<maxNumberOfIterations; i++)
+        {
+        std::cout << "\nTry " << i << "..." << std::endl;
 
-    // The current "this->m_VolumeRoughAlignedWithHoughEye" is the output of the hough eye detector.
-    // First, MSP is computed again based on the original input
-    std::cout << "\nEstimating MSP Based on the original input..." << std::endl;
-    ComputeMSP( this->m_OriginalInputImage, this->m_finalTmsp,
-                this->m_VolumeMSP, centerOfHeadMass, this->m_mspQualityLevel, c_c );
+        // Rotate VolumeRoughAlignedWithHoughEye by finalTmsp again.
+        SImageType::Pointer localRoughAlignedInput;
+        DoResampleInPlace( this->m_VolumeRoughAlignedWithHoughEye.GetPointer(), // input
+                           this->m_finalTmsp.GetPointer(), // input
+                           localRoughAlignedInput ); // output
 
-    // At this level, the MSP has not calculated properly by the ComputeMSP.
-    // The output of ComputeMSP is considered as a new input for the function to estimate a better reflective
-    // correlation.
-    SImageType::Pointer new_input = this->m_VolumeMSP;
+        // Transform the centerOfHeadMass by finlaTmsp transform.
+        VersorTransformType::Pointer localInvFinalTmsp = VersorTransformType::New();
+        this->m_finalTmsp->GetInverse( localInvFinalTmsp );
+        SImageType::PointType localAlignedCOHM = localInvFinalTmsp->TransformPoint( this->m_CenterOfHeadMass );
 
-    DuplicatorType::Pointer duplicator = DuplicatorType::New();
-    duplicator->SetInputImage( new_input );
-    duplicator->Update();
-    this->m_OriginalInputImage = duplicator->GetModifiableOutput();
+        if( globalImagedebugLevel > 2 )
+          {
+          LandmarksMapType locallyRotatedCHM;
+          locallyRotatedCHM["CM"] = localAlignedCOHM;
+          const std::string localRotatedCenterOfHeadMassNAME
+                            ( this->m_ResultsDir + "/localRotatedCHM_" + std::to_string(i) + "_.fcsv" );
+          WriteITKtoSlicer3Lmk( localRotatedCenterOfHeadMassNAME, locallyRotatedCHM );
 
-    // Before passing the new_input to the ComputeMSP function, we need to find its center of head mass,
-    // and run Hough eye detector on that.
-    std::cout << "\nFinding center of head mass for the MSP estimation output..." << std::endl;
-    itk::FindCenterOfBrainFilter<SImageType>::Pointer findCenterFilter2 =
-      itk::FindCenterOfBrainFilter<SImageType>::New();
-    findCenterFilter2->SetInput( new_input );
-    findCenterFilter2->SetAxis( 2 );
-    findCenterFilter2->SetOtsuPercentileThreshold( 0.01 );
-    findCenterFilter2->SetClosingSize( 7 );
-    findCenterFilter2->SetHeadSizeLimit( 700 );
-    findCenterFilter2->SetBackgroundValue( 0 );
-    findCenterFilter2->Update();
-    SImageType::PointType centerOfHeadMass_new = findCenterFilter2->GetCenterOfBrain();
+          const std::string localRotatedRoughAligedVolumeNAME
+                            ( this->m_ResultsDir + "/localRotatedRoughAlignedVolume_" + std::to_string(i) + "_.nrrd" );
+          itkUtil::WriteImage<SImageType> ( localRoughAlignedInput, localRotatedRoughAligedVolumeNAME );
+          }
 
-    std::cout << "\nFinding eye centers of the MSP estimation output with BRAINS Hough Eye Detector..." << std::endl;
-    itk::BRAINSHoughEyeDetector<SImageType, SImageType>::Pointer houghEyeDetector =
-      itk::BRAINSHoughEyeDetector<SImageType, SImageType>::New();
-    houghEyeDetector->SetInput( new_input );
-    houghEyeDetector->SetHoughEyeDetectorMode( 1 );
-    houghEyeDetector->SetWritedebuggingImagesLevel( 0 );
-    houghEyeDetector->SetCenterOfHeadMass( centerOfHeadMass_new );
-    try
-      {
-      houghEyeDetector->Update();
-      }
-    catch( itk::ExceptionObject & excep )
-      {
-      std::cerr << "Cannot find eye centers" << std::endl;
-      std::cerr << excep << std::endl;
-      }
-    catch( ... )
-      {
-      std::cout << "Failed to find eye centers exception occured" << std::endl;
-      }
+        // Compute MSP again
+        RigidTransformType::Pointer localTmsp;
+        c_c = 0;
+        ComputeMSP( localRoughAlignedInput, localTmsp,
+                   this->m_VolumeMSP, localAlignedCOHM, this->m_mspQualityLevel, c_c );
 
-    this->m_HoughEyeTransform = houghEyeDetector->GetModifiableVersorTransform();
-    this->m_LEPoint = houghEyeDetector->GetLE();
-    this->m_REPoint = houghEyeDetector->GetRE();
+        // Compose the Tmsp transforms
+        this->m_finalTmsp->Compose(localTmsp);
 
-    // Transform the new center of head mass by the new hough eye transform.
-    SImageType::PointType houghTransformedCOHM_new =
-      houghEyeDetector->GetInvVersorTransform()->TransformPoint( centerOfHeadMass_new );
+        if ( c_c < -0.64 )
+          {
+          break;
+          }
+        }
 
-    this->m_CenterOfHeadMass = houghTransformedCOHM_new;
+      typedef itk::StatisticsImageFilter<SImageType> StatisticsFilterType;
+      StatisticsFilterType::Pointer statisticsFilter = StatisticsFilterType::New();
+      statisticsFilter->SetInput(this->m_VolumeRoughAlignedWithHoughEye);
+      statisticsFilter->Update();
+      SImageType::PixelType minPixelValue = statisticsFilter->GetMinimum();
 
-    // Final estimation of MSP plane
-    std::cout << "\nNew Estimation of MSP..." << std::endl;
-    ComputeMSP( houghEyeDetector->GetOutput(), this->m_finalTmsp,
-                this->m_VolumeMSP, houghTransformedCOHM_new, this->m_mspQualityLevel, c_c );
-    std::cout << "\n=============================================================" << std::endl;
+      this->m_VolumeMSP = TransformResample<SImageType, SImageType>( this->m_VolumeRoughAlignedWithHoughEye.GetPointer(),
+                                                                    MakeIsoTropicReferenceImage().GetPointer(),
+                                                                    minPixelValue,
+                                                                    GetInterpolatorFromString<SImageType>("Linear").GetPointer(),
+                                                                    this->GetTransformToMSP().GetPointer() );
 
-    if( c_c > -0.7 )
-      {
-      std::cout << "too large MSP estimation error at the final try!\n"
-                << "The estimation result is probably not reliable.\n" << std::endl;
-      }
+        std::cout << "\n=============================================================" << std::endl;
+        if( c_c > -0.7 )
+          {
+          std::cout << "Too large MSP estimation error at the final try!\n"
+          << "The estimation result is probably not reliable.\n" << std::endl;
+          }
     }
 
   // In case hough eye detector failed

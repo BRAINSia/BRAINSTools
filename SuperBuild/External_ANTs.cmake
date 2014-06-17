@@ -34,7 +34,7 @@ endif()
 ### --- End Project specific additions
 #set(${proj}_REPOSITORY "https://github.com/BRAINSia/ANTs.git")
 set(${proj}_REPOSITORY "https://github.com/stnava/ANTs.git")
-set(${proj}_GIT_TAG "37d9331c7e2641a6d49bc4aa66b64037980a3878")
+set(${proj}_GIT_TAG "41a3f1f604f858658cae1e087832741dd41a7b25")
 ExternalProject_Add(${proj}
   GIT_REPOSITORY ${${proj}_REPOSITORY}
   GIT_TAG ${${proj}_GIT_TAG}
@@ -57,9 +57,8 @@ ExternalProject_Add(${proj}
   )
 
 set(${proj}_SOURCE_DIR ${SOURCE_DOWNLOAD_CACHE}/${proj})
-set(${proj}_LIBRARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/${proj}-build/lib)
 
 mark_as_superbuild(
-  VARS ${proj}_SOURCE_DIR:PATH   ${proj}_LIBRARY_DIR:PATH
+  VARS ${proj}_SOURCE_DIR:PATH
   LABELS "FIND_PACKAGE"
   )

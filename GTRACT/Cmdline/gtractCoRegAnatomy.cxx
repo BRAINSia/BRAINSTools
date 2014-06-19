@@ -279,7 +279,7 @@ int main(int argc, char *argv[])
     minStepLength.push_back( (double)minimumStepSize);
     registerImageFilter->SetTranslationScale( translationScale );
     registerImageFilter->SetMaximumStepLength( maximumStepSize );
-    //registerImageFilter->SetMinimumStepLength(minStepLength  );
+    registerImageFilter->SetMinimumStepLength(minStepLength  );
     registerImageFilter->SetRelaxationFactor( relaxationFactor );
     registerImageFilter->SetNumberOfSamples( numberOfSamples );
     registerImageFilter->SetInitializeTransformMode(localInitializeTransformMode);

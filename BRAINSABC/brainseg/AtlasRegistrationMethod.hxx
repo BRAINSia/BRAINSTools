@@ -255,7 +255,9 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
         if( m_ImageLinearTransformChoice == "Rigid" )
           {
           muLogMacro(<< "Registering (Rigid) image " << i << " to first image." << std::endl);
-
+          std::vector<double> minimumStepSize(1);
+          minimumStepSize[0] = 0.00005;
+          intraSubjectRegistrationHelper->SetMinimumStepLength(minimumStepSize);
           std::vector<std::string> transformType(1);
           transformType[0] = "Rigid";
           intraSubjectRegistrationHelper->SetTransformType(transformType);
@@ -263,6 +265,12 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
         else if( m_ImageLinearTransformChoice == "Affine" )
           {
           muLogMacro(<< "Registering (Affine) image " << i << " to first image." << std::endl);
+          std::vector<double> minimumStepSize(4);
+          minimumStepSize[0] = 0.00005;
+          minimumStepSize[1] = 0.005;
+          minimumStepSize[2] = 0.005;
+          minimumStepSize[3] = 0.005;
+          intraSubjectRegistrationHelper->SetMinimumStepLength(minimumStepSize);
           std::vector<std::string> transformType(4);
           transformType[0] = "Rigid";
           transformType[1] = "ScaleVersor3D";
@@ -273,6 +281,13 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
         else if( m_ImageLinearTransformChoice == "BSpline" )
           {
           muLogMacro(<< "Registering (BSpline) image " << i << " to first subject image." << std::endl);
+          std::vector<double> minimumStepSize(5);
+          minimumStepSize[0] = 0.00005;
+          minimumStepSize[1] = 0.005;
+          minimumStepSize[2] = 0.005;
+          minimumStepSize[3] = 0.005;
+          minimumStepSize[4] = 0.005;
+          intraSubjectRegistrationHelper->SetMinimumStepLength(minimumStepSize);
           std::vector<std::string> transformType(5);
           transformType[0] = "Rigid";
           transformType[1] = "ScaleVersor3D";
@@ -287,11 +302,17 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
           intraSubjectRegistrationHelper->SetSplineGridSize(splineGridSize);
           // Setting max displace
           intraSubjectRegistrationHelper->SetMaxBSplineDisplacement(6.0);
-          // intraSubjectRegistrationHelper->SetUseCachingOfBSplineWeightsMode(useCachingOfBSplineWeightsMode);
           }
         else if( m_ImageLinearTransformChoice == "SyN" )
           {
           muLogMacro(<< "Registering (SyN) image " << i << " to first subject image." << std::endl);
+          std::vector<double> minimumStepSize(5);
+          minimumStepSize[0] = 0.00005;
+          minimumStepSize[1] = 0.005;
+          minimumStepSize[2] = 0.005;
+          minimumStepSize[3] = 0.005;
+          minimumStepSize[4] = 0.000005;
+          intraSubjectRegistrationHelper->SetMinimumStepLength(minimumStepSize);
           std::vector<std::string> transformType(5);
           transformType[0] = "Rigid";
           transformType[1] = "ScaleVersor3D";
@@ -304,8 +325,6 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
         // intraSubjectRegistrationHelper->SetBackgroundFillValue(backgroundFillValue);
         // NOT VALID When using initializeTransformMode
         //
-        // intraSubjectRegistrationHelper->SetCurrentGenericTransform(currentGenericTransform);
-        //  intraSubjectRegistrationHelper->SetUseWindowedSinc(useWindowedSinc);
         const std::string initializeTransformMode("useCenterOfHeadAlign");
         intraSubjectRegistrationHelper->SetInitializeTransformMode(initializeTransformMode);
         intraSubjectRegistrationHelper->SetMaskInferiorCutOffFromCenter(65.0); //
@@ -508,13 +527,17 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
       {
       muLogMacro(
         << "Registering (Affine) " <<  "atlas(0) to template(0) image." << std::endl);
+      std::vector<double>      minimumStepSize;
       std::vector<std::string> transformType;
       // Do full registration at first iteration level if InitialTransform not given
       if( atlasToSubjectInitialTransformName == "" )   // If no initial transform, then do full multi-step
         // registration.
         {
+        minimumStepSize.push_back(0.0025);
         transformType.push_back("Rigid");
+        minimumStepSize.push_back(0.0025);
         transformType.push_back("ScaleVersor3D");
+        minimumStepSize.push_back(0.0025);
         transformType.push_back("ScaleSkewVersor3D");
         }
       else if( atlasToSubjectInitialTransformName != "AffineTransform" )
@@ -522,12 +545,21 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
         itkExceptionMacro( << "ERROR: Invalid atlasToSubjectInitialTransformName"
                            << " type for m_AtlasLinearTransformChoice of type Affine" );
         }
+      minimumStepSize.push_back(0.0025);
       transformType.push_back("Affine");
+      atlasToSubjectRegistrationHelper->SetMinimumStepLength(minimumStepSize);
       atlasToSubjectRegistrationHelper->SetTransformType(transformType);
       }
     else if( m_AtlasLinearTransformChoice == "BSpline" )
       {
       muLogMacro(<< "Registering (BSpline) atlas to subject "<< std::endl);
+      std::vector<double> minimumStepSize(5);
+      minimumStepSize[0] = 0.00005;
+      minimumStepSize[1] = 0.005;
+      minimumStepSize[2] = 0.005;
+      minimumStepSize[3] = 0.005;
+      minimumStepSize[4] = 0.005;
+      atlasToSubjectRegistrationHelper->SetMinimumStepLength(minimumStepSize);
       std::vector<std::string> transformType(5);
       transformType[0] = "Rigid";
       transformType[1] = "ScaleVersor3D";
@@ -542,24 +574,31 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
       atlasToSubjectRegistrationHelper->SetSplineGridSize(splineGridSize);
       // Setting max displace
       atlasToSubjectRegistrationHelper->SetMaxBSplineDisplacement(6.0);
+      // atlasToSubjectRegistrationHelper->SetUseExplicitPDFDerivativesMode(useExplicitPDFDerivativesMode);
       // atlasToSubjectRegistrationHelper->SetUseCachingOfBSplineWeightsMode(useCachingOfBSplineWeightsMode);
       }
     else if( m_AtlasLinearTransformChoice == "SyN" )
       {
       muLogMacro(
         << "Registering (SyN) " << "atlas(0) to template(0) image." << std::endl);
+      std::vector<double>      minimumStepSize;
       std::vector<std::string> transformType;
       if( atlasToSubjectInitialTransformName == "" )   // If no initial transform, then do full multi-step
         // registration.
         {
+        minimumStepSize.push_back(0.0025);
         transformType.push_back("Rigid");
+        minimumStepSize.push_back(0.0025);
         transformType.push_back("ScaleVersor3D");
+        minimumStepSize.push_back(0.0025);
         transformType.push_back("ScaleSkewVersor3D");
+        minimumStepSize.push_back(0.0025);
         transformType.push_back("Affine");
         }
       else if( atlasToSubjectInitialTransformName == "AffineTransform" )   // If initial Transform is Affine, then
         // update the affine stage
         {
+        minimumStepSize.push_back(0.0025);
         transformType.push_back("Affine");
         }
       else if( atlasToSubjectInitialTransformName != "SyN" )
@@ -567,7 +606,9 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
         itkExceptionMacro( << "ERROR: Invalid atlasToSubjectInitialTransformName"
                            << " type for m_AtlasLinearTransformChoice of type SyN" );
         }
+      minimumStepSize.push_back(0.0025);
       transformType.push_back("SyN");
+      atlasToSubjectRegistrationHelper->SetMinimumStepLength(minimumStepSize);
       atlasToSubjectRegistrationHelper->SetTransformType(transformType);
       }
     else

@@ -22,7 +22,7 @@
 #include "itkScaleVersor3DTransform.h"
 #include "itkScaleSkewVersor3DTransform.h"
 #include "itkAffineTransform.h"
-#include "itkBSplineDeformableTransform.h"
+#include "itkBSplineTransform.h"
 #include "itkTransformFileWriter.h"
 #include "itkTransformFileReader.h"
 #include "itkImageRegionIterator.h"
@@ -57,7 +57,7 @@ int main(int argc, char * *argv)
     return EXIT_FAILURE;
     }
 
-  typedef itk::BSplineDeformableTransform<double, 3, 3> BSplineDeformableTransformType;
+  typedef itk::BSplineTransform<double, 3, 3> BSplineTransformType;
 
   VersorRigid3DTransformType::Pointer versorRigidTransform
     = CreateTransform<VersorRigid3DTransformType>();
@@ -166,8 +166,8 @@ int main(int argc, char * *argv)
   testImageName += "/TransformConvertTestImage.nii.gz";
   itkUtil::WriteImage<ImageType>(testImage, testImageName);
 
-  BSplineDeformableTransformType::Pointer bsplineTransform =
-    CreateTransform<BSplineDeformableTransformType>();
+  BSplineTransformType::Pointer bsplineTransform =
+    CreateTransform<BSplineTransformType>();
 
   translation[0] = -1.0; translation[1] = 0.6; translation[2] = -0.5;
   affineTransform->Translate(translation);
@@ -187,19 +187,19 @@ int main(int argc, char * *argv)
 
   bsplineTransform->SetBulkTransform(affineTransform.GetPointer() );
 
-  BSplineDeformableTransformType::PhysicalDimensionsType fixedPhysicalDimensions;
-  BSplineDeformableTransformType::MeshSizeType           meshSize;
+  BSplineTransformType::PhysicalDimensionsType fixedPhysicalDimensions;
+  BSplineTransformType::MeshSizeType           meshSize;
   for( unsigned int i = 0; i < 3; i++ )
     {
     fixedPhysicalDimensions[i] = spacing[i]
       * static_cast<double>(region.GetSize()[i] - 1);
     }
-  meshSize.Fill( 5 - BSplineDeformableTransformType::SplineOrder );
+  meshSize.Fill( 5 - BSplineTransformType::SplineOrder );
   bsplineTransform->SetGridOrigin(origin);
   bsplineTransform->SetGridRegion(region);
   bsplineTransform->SetGridSpacing(spacing);
 
-  BSplineDeformableTransformType::ParametersType parameters(bsplineTransform->GetNumberOfParameters() );
+  BSplineTransformType::ParametersType parameters(bsplineTransform->GetNumberOfParameters() );
   parameters.Fill(0.0);
   bsplineTransform->SetParameters(parameters);
 

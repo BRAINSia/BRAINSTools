@@ -52,7 +52,6 @@
 #include "vnl/vnl_math.h"
 
 #include "itkBRAINSROIAutoImageFilter.h"
-//#include "BRAINSFitBSpline.h"
 #include "BRAINSFitUtils.h"
 #ifdef USE_ANTS
 #include "BRAINSFitSyN.h"
@@ -1547,7 +1546,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
           minimumStepSize[0] = 0.005; // NOTE: 0.005 for between subject
           // registration is probably about the
           // limit.
-          //atlasToSubjectRegistrationHelper->SetMinimumStepLength(minimumStepSize);
+          atlasToSubjectRegistrationHelper->SetMinimumStepLength(minimumStepSize);
           std::vector<std::string> transformType(1);
           transformType[0] = "Rigid";
           atlasToSubjectRegistrationHelper->SetTransformType(transformType);
@@ -1562,7 +1561,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
             << ") image." << std::endl);
           std::vector<double> minimumStepSize(1);
           minimumStepSize[0] = 0.0025;
-          //atlasToSubjectRegistrationHelper->SetMinimumStepLength(minimumStepSize);
+          atlasToSubjectRegistrationHelper->SetMinimumStepLength(minimumStepSize);
           std::vector<std::string> transformType(1);
           transformType[0] = "Affine";
           atlasToSubjectRegistrationHelper->SetTransformType(transformType);
@@ -1576,7 +1575,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
                      << ") image." << std::endl);
           std::vector<double> minimumStepSize(1);
           minimumStepSize[0] = 0.0025;
-          //atlasToSubjectRegistrationHelper->SetMinimumStepLength(minimumStepSize);
+          atlasToSubjectRegistrationHelper->SetMinimumStepLength(minimumStepSize);
           std::vector<std::string> transformType(1);
           transformType[0] = "BSpline";
           atlasToSubjectRegistrationHelper->SetTransformType(transformType);
@@ -1593,7 +1592,8 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
           std::cerr << "ERROR:  NOT PROPERLY IMPLEMENTED YET HACK:" << std::endl;
           }
 
-        CompositeTransformType::Pointer templateGenericCompositeTransform = dynamic_cast<CompositeTransformType *>( m_TemplateGenericTransform.GetPointer() );
+        CompositeTransformType::Pointer templateGenericCompositeTransform =
+                                  dynamic_cast<CompositeTransformType *>( m_TemplateGenericTransform.GetPointer() );
         if( templateGenericCompositeTransform.IsNull() )
           {
           templateGenericCompositeTransform = CompositeTransformType::New();

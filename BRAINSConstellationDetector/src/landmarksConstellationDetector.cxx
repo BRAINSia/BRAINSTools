@@ -188,7 +188,7 @@ landmarksConstellationDetector::ComputeFinalRefinedACPCAlignedTransform(void)
     }
 
   const std::vector<double> minimumStepSize(1,0.0005);
-  //brainsFitHelper->SetMinimumStepLength(minimumStepSize);
+  brainsFitHelper->SetMinimumStepLength(minimumStepSize);
   std::vector<std::string> transformType(1);
   transformType[0] = "Affine";
   brainsFitHelper->SetTransformType(transformType);

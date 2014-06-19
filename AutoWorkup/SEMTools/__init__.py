@@ -1,12 +1,10 @@
-# import BRAINSConstellationDetector
-from segmentation import *
-from brains import *
 from diffusion import *
-from filtering import *
-from registration import *
+from featurecreator import GenerateCsfClippedFromClassifiedImage
 from segmentation import *
+from filtering import *
+from brains import *
 from testing import *
 from utilities import *
+from registration import *
+from converters import DWISimpleCompare, DWICompare
 from utility import *
-import featurecreator
-import converters

@@ -13,6 +13,7 @@ class DTIPrepInputSpec(CommandLineInputSpec):
     outputFolder = traits.Either(traits.Bool, Directory(), hash_files=False, desc="DTIPrep creates the output folder via using both absolute path (starts with \'/\') and relative path. The realtive path does not start with \'/\'. If the relative path ends with \'/\' means that the output folder will be created in current location, otherwise the output folder will be created in the same folder as dwi image.", argstr="--outputFolder %s")
     default = traits.Bool(desc="create default protocol xml file", argstr="--default ")
     check = traits.Bool(desc="check by protocol xml file. Default operation", argstr="--check ")
+    numberOfThreads = traits.Int(desc="Sets the number of threads used by multithreaded ITK filters", argstr="--numberOfThreads %d")
 
 
 class DTIPrepOutputSpec(TraitedSpec):
@@ -28,7 +29,7 @@ description:
     The DWI/DTI Quality Control Processes from dicom data to qualified dwi image.
   
 
-version: 1.2.2
+version: 1.2.4
 
 contributor: Mahshid Farzinfar (1), Zhexing Liu (1), Martin Styner(1),Hans Johnson(2,3,4), Joy Matsui(2), Kent Williams(2); (1=Department of Psychiatry, University of North Carolina at Chapel Hill, 2=University of Iowa Department of Psychiatry, 3=University of Iowa Department of Biomedical Engineering, 4=University of Iowa Department of Electrical and Computer Engineering)
 

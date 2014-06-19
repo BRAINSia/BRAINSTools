@@ -6,6 +6,57 @@ from nipype.interfaces.base import CommandLine, CommandLineInputSpec, SEMLikeCom
 import os
 
 
+class SlicerJointRicianAnisotropicLMMSEFilterInputSpec(CommandLineInputSpec):
+    rf = InputMultiPath(traits.Int, desc="Filtering radius. The algorithm searchs for similar voxels inside a 3-D neighborhood with this radius, and uses this sample to estimate the noise-free value. Since only similar voxels are used, larger radii do not necessarily produce over-blurring, but computations will take longer.", sep=",", argstr="--rf %s")
+    h = traits.Float(desc="This parameter should be in the range 1-5 for optimum performance: larger values produce a more agressive denoising. Smaller values better preserve the details. When h is infinity (i.e. a very large number), we have the old isotropic jLMMSE, and a smaller filtering radius should be chosen to avoid over-blurring.", argstr="--h %f")
+    ng = traits.Int(desc="The number of the closest gradients that are used to jointly filter a given gradient direction (0 to use all). Using all the gradients is faster (and typically provides better results) than taking a subset.", argstr="--ng %d")
+    rfeat = InputMultiPath(traits.Int, desc="To assess the similarity between two pixels in the filtering neighborhood, we average the similarities in three channels RGB corresponding to projections of the data set in the corresponding axes 'x', 'y', and 'z'. For each channel, we compute the local mean value and local directional derivatives inside a neighborhood with this 'Features Radius'. The similarity is finally computed as the distance in this features space (mean value and derivatives).", sep=",", argstr="--rfeat %s")
+    compressOutput = traits.Bool(desc="Compress the data in the output file using gzip", argstr="--compressOutput ")
+    setZeroBck = traits.Bool(desc="Useful only when a mask is used. When set, background voxels (those outside of the mask) are set to 0 instead of preserving their original value", argstr="--setZeroBck ")
+    filterOutliers = traits.Bool(desc="When the variability inside the shaped neighborhood is very large, it is very likely that we are in a background/CSF region. The default behavior is jkeeping the original value at these locations. If this flag is set, the default is replaced by the local raw UNLM average.", argstr="--filterOutliers ")
+    onlyUNLM = traits.Bool(desc="If this flag is set, the filter turns out into an Unbiased Non-Local Means: the output pixel is set as the square root of the second order moment (<A^2>=<M^2>-2*sigma^2) estimated from the anisotropic neighborhood. This is faster than the original LMMSE, but the performance is also worse in terms of both noise removal and details preservattion.", argstr="--onlyUNLM ")
+    re = InputMultiPath(traits.Int, desc="The standard deviation of noise in the complex domain, sigma, is computed as the mode of the distribution of local variances of the image in those zones where the signal is actually present. These local variances are computed in a neighborhood with this 'Estimation Radius'.", sep=",", argstr="--re %s")
+    overrideNoise = traits.Bool(desc="When this flag is selected, the noise parameter is manually introduced instead of automatically estimated. Use this flag in case you suspect the noise is not correctly estimated for your data set.", argstr="--overrideNoise ")
+    noiseLevel = traits.Float(desc="This value applies only when 'Override noise estimation' is selected. It represents the standard deviation of noise, sigma, in the complex domain.", argstr="--noiseLevel %f")
+    inputVolume = File(position=-2, desc="Input DWI volume.", exists=True, argstr="%s")
+    outputVolume = traits.Either(traits.Bool, File(), position=-1, hash_files=False, desc="Output DWI volume.", argstr="%s")
+    maskImage = File(desc="This is an optional binary mask to apply to the DWI. The values inside the mask are filtered, while those outside the mask either remain unaltered or are set to zero (see 'Advanced parameters of the algorithm') to save computations. The mask will not effect noise estimation", exists=True, argstr="--maskImage %s")
+
+
+class SlicerJointRicianAnisotropicLMMSEFilterOutputSpec(TraitedSpec):
+    outputVolume = File(position=-1, desc="Output DWI volume.", exists=True)
+
+
+class SlicerJointRicianAnisotropicLMMSEFilter(SEMLikeCommandLine):
+    """title: Joint anisotropic LMMSE for DWI denoising
+
+category: Diffusion.Diffusion Weighted Images
+
+description: This module is a reimplementation of the older 'DWI Joint Rician LMMSE Filter'. There are two main differences with this former approach:
+   1) Instead of computing sample moments inside isotropic neighborhoods, we use a non-local means-like scheme to average only those voxels silmilar enough to the central voxel. This similarity is based on three RGB channels corresponding to the projections of the DWI data set in three mutually orthogonal spatial directions.
+   2) The standard deviation of noise in the complex domain, sigma, is estimated here as the mode of the histogram of the (corrected) local variances in the signal area, which is a more robust estimation procedure.
+ This module reduces Rician noise on a set of diffusion weighted images. For this, it filters the image in the mean squared error sense using a Rician noise model. The N closest gradient directions to the direction being processed are filtered together to improve the results: the noise-free signal is seen as an n-dimensional vector which has to be estimated with the LMMSE method from a set of corrupted measurements. To that end, the covariance matrix of the noise-free vector and the cross covariance between this signal and the noise have to be estimated, which is done taking into account the image formation process. All the estimations are performed as sample estimates in a 'shaped neighborhood' defined by the weights extracted from the structural similarity of the voxels.
+A complete description of the isotropic algorithm may be found in:
+Antonio Tristan-Vega and Santiago Aja-Fernandez, 'DWI filtering using joint information for DTI and HARDI', Medical Image Analysis, Volume 14, Issue 2, Pages 205-218. 2010.
+The anisotropic method is further described in:
+Antonio Tristan-Vega, Veronique Brion, Gonzalo Vegas-Sanchez-Ferrero, and Santiago Aja-Fernandez, 'Merging squared-magnitude approaches to DWI denoising: An adaptive Wiener filter tuned to the anatomical contents of the image', In Proceedings of IEEE EMBC 2013.
+
+version: 0.1.1.$Revision: 1 $(alpha)
+
+documentation-url: http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.1/Modules/JointRicianLMMSEImageFilter
+
+contributor: Antonio Tristan Vega (University of Valladolid, Spain)
+
+acknowledgements: Work partially funded by grant numbers TEC2010-17982 from the Ministerio de Ciencia y Educacion (Spain) and VA376A11-2, SAN103/VA40/1 from the Junta de Castilla y Leon (Spain).
+
+"""
+
+    input_spec = SlicerJointRicianAnisotropicLMMSEFilterInputSpec
+    output_spec = SlicerJointRicianAnisotropicLMMSEFilterOutputSpec
+    _cmd = " SlicerJointRicianAnisotropicLMMSEFilter "
+    _outputs_filenames = {'outputVolume':'outputVolume.nii'}
+
+
 class DWIConvertInputSpec(CommandLineInputSpec):
     conversionMode = traits.Enum("DicomToNrrd", "DicomToFSL", "NrrdToFSL", "FSLToNrrd", desc="Determine which conversion to perform. DicomToNrrd (default): Convert DICOM series to NRRD DicomToFSL: Convert DICOM series to NIfTI File + gradient/bvalue text files NrrdToFSL: Convert DWI NRRD file to NIfTI File + gradient/bvalue text files FSLToNrrd: Convert NIfTI File + gradient/bvalue text files to NRRD file.", argstr="--conversionMode %s")
     inputVolume = File(desc="Input DWI volume -- not used for DicomToNrrd mode.", exists=True, argstr="--inputVolume %s")

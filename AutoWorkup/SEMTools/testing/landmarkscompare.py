@@ -21,19 +21,19 @@ class LandmarksCompare(SEMLikeCommandLine):
 
 category: Testing
 
-description:
+description: 
     Compares two .fcsv or .wts text files and verifies that they are identicle.  Used for testing landmarks files.
+  
 
+version:  
 
-version:
+documentation-url:  
 
-documentation-url:
-
-license:
+license:  
 
 contributor: Ali Ghayoor
 
-acknowledgements:
+acknowledgements: 
 
 
 """

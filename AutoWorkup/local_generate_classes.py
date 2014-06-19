@@ -120,7 +120,8 @@ all_known_modules_list = [
 'TextureFromNoiseImageFilter',
 'TextureMeasureFilter',
 'VBRAINSDemonWarp',
-'UKFTractography'
+'UKFTractography',
+'SlicerJointRicianAnisotropicLMMSEFilter'
 ]
 
 launcher = ['']

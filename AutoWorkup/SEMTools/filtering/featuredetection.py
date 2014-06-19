@@ -182,41 +182,6 @@ contributor: This tool was developed by Mark Scully and Jeremy Bockholt.
     _outputs_filenames = {'outputVolume':'outputVolume.nii'}
 
 
-class CannyEdgeInputSpec(CommandLineInputSpec):
-    inputVolume = File(desc="Required: input tissue label image", exists=True, argstr="--inputVolume %s")
-    variance = traits.Float(desc="Variance and Maximum error are used in the Gaussian smoothing of the input image.  See  itkDiscreteGaussianImageFilter for information on these parameters.", argstr="--variance %f")
-    upperThreshold = traits.Float(desc="Threshold is the lowest allowed value in the output image.  Its data type is the same as the data type of the output image. Any values below the Threshold level will be replaced with the OutsideValue parameter value, whose default is zero.  ", argstr="--upperThreshold %f")
-    lowerThreshold = traits.Float(desc="Threshold is the lowest allowed value in the output image.  Its data type is the same as the data type of the output image. Any values below the Threshold level will be replaced with the OutsideValue parameter value, whose default is zero.  ", argstr="--lowerThreshold %f")
-    outputVolume = traits.Either(traits.Bool, File(), hash_files=False, desc="Required: output image", argstr="--outputVolume %s")
-
-
-class CannyEdgeOutputSpec(TraitedSpec):
-    outputVolume = File(desc="Required: output image", exists=True)
-
-
-class CannyEdge(SEMLikeCommandLine):
-    """title: Canny Edge Detection
-
-category: Filtering.FeatureDetection
-
-description: Get the distance from a voxel to the nearest voxel of a given tissue type.
-
-version: 0.1.0.(alpha)
-
-documentation-url: http:://www.na-mic.org/
-
-license: https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt
-
-contributor: This tool was written by Hans J. Johnson.
-
-"""
-
-    input_spec = CannyEdgeInputSpec
-    output_spec = CannyEdgeOutputSpec
-    _cmd = " CannyEdge "
-    _outputs_filenames = {'outputVolume':'outputVolume.nii'}
-
-
 class ErodeImageInputSpec(CommandLineInputSpec):
     inputVolume = File(desc="Required: input image", exists=True, argstr="--inputVolume %s")
     inputMaskVolume = File(desc="Required: input brain mask image", exists=True, argstr="--inputMaskVolume %s")
@@ -621,38 +586,36 @@ contributor:  This tool was developed by Eun Young Kim by modifying ITK Example
     _outputs_filenames = {'outputVolume':'outputVolume.nii'}
 
 
-class NoiseGeneratorInputSpec(CommandLineInputSpec):
-    inputVolume = File(desc="Required: input image", exists=True, argstr="--inputVolume %s")
-    inputGaussianStandardDeviation = traits.Float(desc="Optional: standard deviation for Gaussian Noise", argstr="--inputGaussianStandardDeviation %f")
-    inputGaussianMean = traits.Float(desc="Optional: mean for Gaussian Noise", argstr="--inputGaussianMean %f")
-    inputShotNoiseScale = traits.Float(desc="Optional: scale for Shot Noise", argstr="--inputShotNoiseScale %f")
-    inputSpeckleNoiseStandardDeviation = traits.Float(desc="Optional: standard deviation for Speckle Noise", argstr="--inputSpeckleNoiseStandardDeviation %f")
-    inputSaltAndPepperProbability = traits.Float(desc="Optional: probability for Salt and Pepper Noise", argstr="--inputSaltAndPepperProbability %f")
+class CannyEdgeInputSpec(CommandLineInputSpec):
+    inputVolume = File(desc="Required: input tissue label image", exists=True, argstr="--inputVolume %s")
+    variance = traits.Float(desc="Variance and Maximum error are used in the Gaussian smoothing of the input image.  See  itkDiscreteGaussianImageFilter for information on these parameters.", argstr="--variance %f")
+    upperThreshold = traits.Float(desc="Threshold is the lowest allowed value in the output image.  Its data type is the same as the data type of the output image. Any values below the Threshold level will be replaced with the OutsideValue parameter value, whose default is zero.  ", argstr="--upperThreshold %f")
+    lowerThreshold = traits.Float(desc="Threshold is the lowest allowed value in the output image.  Its data type is the same as the data type of the output image. Any values below the Threshold level will be replaced with the OutsideValue parameter value, whose default is zero.  ", argstr="--lowerThreshold %f")
     outputVolume = traits.Either(traits.Bool, File(), hash_files=False, desc="Required: output image", argstr="--outputVolume %s")
 
 
-class NoiseGeneratorOutputSpec(TraitedSpec):
+class CannyEdgeOutputSpec(TraitedSpec):
     outputVolume = File(desc="Required: output image", exists=True)
 
 
-class NoiseGenerator(SEMLikeCommandLine):
-    """title: Add Noise
+class CannyEdge(SEMLikeCommandLine):
+    """title: Canny Edge Detection
 
 category: Filtering.FeatureDetection
 
-description: Uses mathematical morphology to erode the input images.
+description: Get the distance from a voxel to the nearest voxel of a given tissue type.
 
-version: 0.1.0.$Revision: 1 $(alpha)
+version: 0.1.0.(alpha)
 
 documentation-url: http:://www.na-mic.org/
 
 license: https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt
 
-contributor: This tool was developed by Eun Young Kim.
+contributor: This tool was written by Hans J. Johnson.
 
 """
 
-    input_spec = NoiseGeneratorInputSpec
-    output_spec = NoiseGeneratorOutputSpec
-    _cmd = " NoiseGenerator "
+    input_spec = CannyEdgeInputSpec
+    output_spec = CannyEdgeOutputSpec
+    _cmd = " CannyEdge "
     _outputs_filenames = {'outputVolume':'outputVolume.nii'}

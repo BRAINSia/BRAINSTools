@@ -46,7 +46,7 @@ def setup(argv):
     from utilities.configFileParser import resolveDataSinkOption, parseFile
     from utilities.pathHandling import validatePath
     from utilities import misc
-    environment, experiment, pipeline, cluster = parseFile(argv["--ExperimentConfig"], argv["--pe"], argv['--wfrun'])
+    environment, experiment, pipeline, cluster = parseFile(argv["--ExperimentConfig"], argv["--pe"])
     pipeline['ds_overwrite'] = resolveDataSinkOption(argv, pipeline)
 
     if cluster is None:
@@ -56,11 +56,13 @@ def setup(argv):
     else:
         load_modules(cluster['modules'])  # Load modules if not already done  ## MODS PATH
         # print os.environ['LOADEDMODULES']
-    if environment['virtualenv']:  ## MODS PATH
-        activate_this = validatePath(os.path.join(environment['virtualenv'], 'bin', 'activate_this.py'))
+    if environment['virtualenv_dir']:  ## MODS PATH
+        activate_this = validatePath(os.path.join(environment['virtualenv_dir'], 'bin', 'activate_this.py'), False, False)
         execfile(activate_this, dict(__file__=activate_this))
     utilities_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'utilities')
-    configure_env = validatePath(os.path.join(utilities_path, 'configure_env.py'))
+    configure_env = validatePath(os.path.join(utilities_path, 'configure_env.py'), False, False)
+    # Add the AutoWorkup directory to the PYTHONPATH every time - REQUIRED FOR CLUSTER DISPATCHING
+    environment['env']['PYTHONPATH'] =  environment['env']['PYTHONPATH'] + ":" + os.path.dirname(__file__)
     execfile(configure_env, dict(__file__=__file__,
                                  append_os_path=environment['env']['PATH'],
                                  append_sys_path=environment['env']['PYTHONPATH'])
@@ -70,7 +72,7 @@ def setup(argv):
     from utilities.package_check import verify_packages
     verify_packages()
     if 'FREESURFER' in experiment['components']:  ## FREESURFER MODS
-        configure_FS = validatePath(os.path.join(utilities_path, 'utilities', 'configure_FS.py'))
+        configure_FS = validatePath(os.path.join(utilities_path, 'utilities', 'configure_FS.py'), False, False)
         execfile(configure_FS, dict(FS_VARS=misc.FS_VARS, env=environment['env']))
         print "FREESURFER needs to check for sane environment here!"  # TODO: raise warning, write method, what???
     for key, value in environment['env'].items():
@@ -106,10 +108,8 @@ def dispatcher(master_config, subjects):
     for subject in subjects:
         index += 1
         print ("START DELAY: {0}".format(delay))
-        database = OpenSubjectDatabase(master_config['cachedir'], [subject], master_config['prefix'], master_config['dbfile'])  # Get DB object before parallel section
-        # print database.getAllSessions()
         start_time = current_time + (index * delay)
-        sp_args = (database, start_time, subject, master_config)
+        sp_args = (start_time, subject, master_config)
         sp_args_list.append(sp_args)
 
     print "Running workflow(s) now..."
@@ -124,22 +124,26 @@ def dispatcher(master_config, subjects):
             for args in sp_args_list:
                 ss.RunSubjectWorkflow(args)
     else:
-        # HACK
-        print master_config['execution']['plugin']
-        raise Exception
-        # END HACK
         myPool = Pool(processes=64, maxtasksperchild=1)
         try:
             if 'baseline' in master_config['components']:
+                # myPool.join() ## HACK
                 all_results = myPool.map_async(ss.RunSubjectWorkflow, sp_args_list).get(1e100)
                 master_config['components'].remove('baseline')
-            if 'template' in master_config['components']:
-                all_results = myPool.map_async(template.main, ((subjects, master_config),)).get(1e100)
-            if 'longitudinal' in master_config['components']:
-                all_results = myPool.map_async(ss.RunSubjectWorkflow, sp_args_list).get(1e100)
+                # myPool.close()  ##HACK
+            # if 'template' in master_config['components']:
+            #     myPool.join() ## HACK
+            #     all_results = myPool.map_async(template.main, ((subjects, master_config),)).get(1e100)
+            #     myPool.close()  ##HACK
+            # if 'longitudinal' in master_config['components']:
+            #     myPool.join() ## HACK
+            #     all_results = myPool.map_async(ss.RunSubjectWorkflow, sp_args_list).get(1e100)
+             #    myPool.close()  ##HACK
         except ValueError, err:
             err.msg += "\nArgs to map_async: {0}".format(sp_args_list)
             raise err
+        except:
+            raise
         for index in range(len(sp_args_list)):
             if all_results[index] == False:
                 print "FAILED for {0}".format(sp_args_list[index][-1])
@@ -155,6 +159,7 @@ def run(argv, environment, experiment, pipeline, cluster):
     subjects = get_subjects(argv, experiment['cachedir'], environment['prefix'], experiment['dbfile']) # Build database before parallel section
     if environment['cluster']:
         print "Creating SGE template string..."
+        print environment
         node_template = create_global_sge_script(cluster, environment)
     else:
         node_template = None

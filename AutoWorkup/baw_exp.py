@@ -29,8 +29,6 @@ def OpenSubjectDatabase(ExperimentBaseDirectoryCache, single_subject, mountPrefi
       (os.path.getmtime(subjectDatabaseFile) < os.path.getmtime(subject_data_file)):
         ExperimentDatabase = SessionDB.SessionDB(subjectDatabaseFile, single_subject)
         ExperimentDatabase.MakeNewDB(subject_data_file, mountPrefix)
-        ExperimentDatabase = None
-        ExperimentDatabase = SessionDB.SessionDB(subjectDatabaseFile, single_subject)
     else:
         print("Single_subject {0}: Using cached database, {1}".format(single_subject,subjectDatabaseFile))
         ExperimentDatabase = SessionDB.SessionDB(subjectDatabaseFile, single_subject)
@@ -193,9 +191,9 @@ def MasterProcessingController(argv=None):
     sys.path = environment('PYTHONPATH')
     os.environ['PATH'] = ':'.join(environment['PATH'])
     # Virtualenv
-    if not environment['virtualenv'] is None:
-        print "Loading virtualenv..."
-        execfile(environment['virtualenv'], dict(__file__=environment['virtualenv']))
+    if not environment['virtualenv_dir'] is None:
+        print "Loading virtualenv_dir..."
+        execfile(environment['virtualenv_dir'], dict(__file__=environment['virtualenv_dir']))
     ###### Now ensure that all the required packages can be read in from this custom path
     #\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
     # print sys.path

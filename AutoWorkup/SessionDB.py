@@ -8,7 +8,8 @@ class SessionDB():
         self.MasterTableName = "MasterDB"
         self.dbName = defaultDBName
         self.subjectList = subject_list
-        self._local_openDB()
+        self.cursor = None
+        self.connection = None
         subject_filter = "( "
         for curr_subject in subject_list:
             subject_filter += "'" + curr_subject + "',"
@@ -22,27 +23,29 @@ class SessionDB():
                 _tablename=self.MasterTableName,
                 _subjid=subject_filter)
 
-    def _local_openDB(self):
+    def open_connection(self):
         self.connection = lite.connect(self.dbName)
         self.cursor = self.connection.cursor()
+
+    def close_connection(self):
+        if not self.cursor is None:
+            self.cursor.close()
+        if not self.connection is None:
+            self.connection.close()
 
     def _local_fillDB_AndClose(self, sqlCommandList):
         print "Filling SQLite database SessionDB.py"
         for sqlCommand in sqlCommandList:
             self.cursor.execute(sqlCommand)
         self.connection.commit()
-        # self.cursor.close()
-        # self.connection.close()
         print "Finished filling SQLite database SessionDB.py"
 
     def MakeNewDB(self, subject_data_file, mountPrefix):
         ## First close so that we can delete.
-        self.cursor.close()
-        self.connection.close()
+        self.close_connection()
         if os.path.exists(self.dbName):
             os.remove(self.dbName)
-        self._local_openDB()
-
+        self.open_connection()
         dbColTypes = "project TEXT, subj TEXT, session TEXT, type TEXT, Qpos INT, filename TEXT"
         self.cursor.execute("CREATE TABLE {tablename}({coltypes});".format(tablename=self.MasterTableName, coltypes=dbColTypes))
         self.connection.commit()
@@ -104,6 +107,7 @@ class SessionDB():
         else:
             missingFiles.write("NO_MISSING_FILES")
         missingFiles.close()
+        self.close_connection()
 
     def getSubjectFilter(self):
         return self.MasterQueryFilter

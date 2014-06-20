@@ -15,7 +15,7 @@ def verify_packages(application='AutoWorkup'):
         ('numpy', '1.8'),
         ('scipy', '0.13'),
         ('networkx', '1.8'),
-        ('IPython', '1.2'),
+        # ('IPython', '1.2'),
         # ('SimpleITK', '0.7')
         ]
     for item in package_version:

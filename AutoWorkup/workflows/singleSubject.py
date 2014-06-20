@@ -11,14 +11,8 @@ def RunSubjectWorkflow(args):
                            *-----------*
     **** Replaces WorkflowT1T2.py ****
     """
-    database, start_time, subject, master_config = args
+    start_time, subject, master_config = args
     assert 'baseline' in master_config['components'] or 'longitudinal' in master_config['components'], "Baseline or Longitudinal is not in WORKFLOW_COMPONENTS!"
-    # HACK:
-    #    To avoid a "sqlite3.ProgrammingError: Base Cursor.__init__ not called" error
-    #    using multiprocessing.map_async(), re-instantiate database
-    # database.__init__(defaultDBName=database.dbName, subject_list=database.subjectList)
-    #
-    # END HACK
     import time
 
     from nipype import config, logging
@@ -58,6 +52,12 @@ def RunSubjectWorkflow(args):
 
     sessionWorkflow = dict()
     inputsSpec = dict()
+    # To avoid a "sqlite3.ProgrammingError: Base Cursor.__init__ not called" error
+    #    using multiprocessing.map_async(), instantiate database here
+    database = OpenSubjectDatabase(master_config['cachedir'], [subject], master_config['prefix'], master_config['dbfile'])
+    # print database.getAllSessions()
+    database.open_connection()
+
     sessions = database.getSessionsFromSubject(subject)
     # print "These are the sessions: ", sessions
     if 'baseline' in master_config['components']:

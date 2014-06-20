@@ -31,7 +31,10 @@ def parseEnvironment(parser, section):
 
     """
     retval = dict()
-    retval['env'] = eval(parser.get(section, 'ENVAR_DICT'))
+    if parser.has_option(section, 'ENVAR_DICT'):
+        retval['env'] = eval(parser.get(section, 'ENVAR_DICT'))
+    else:
+        retval['env'] = dict()
     if 'PYTHONPATH' in retval['env'].keys():
         pythonpath = appendPathList(parser.get(section, 'APPEND_PYTHONPATH'), retval['env']['PYTHONPATH'])
         retval['env']['PYTHONPATH'] = pythonpath  # Create append to PYTHONPATH
@@ -43,10 +46,10 @@ def parseEnvironment(parser, section):
     else:
         retval['env']['PATH'] = parser.get(section, 'APPEND_PATH')
     retval['cluster'] = parser.getboolean(section, 'CLUSTER')
-    retval['prefix'] = validatePath(parser.get(section, 'MOUNT_PREFIX'))
+    retval['prefix'] = validatePath(parser.get(section, 'MOUNT_PREFIX'), True, True)
     if retval['prefix'] is None:
         retval['prefix'] = ''
-    retval['virtualenv'] = validatePath(parser.get(section, 'VIRTUALENV'))
+    retval['virtualenv_dir'] = validatePath(parser.get(section, 'VIRTUALENV_DIR'), False, True)
     return retval
 
 
@@ -55,19 +58,23 @@ def create_experiment_dir(dirname, name, suffix, verify=False):
     basename = name + '_' + suffix
     fullpath = os.path.join(dirname, basename)
     if verify:
-        return validatePath(fullpath)
+        return validatePath(fullpath, False, True)
     else:
+        if os.path.isdir(fullpath):
+            print "WARNING: Experiment directory already exists.  Continuing will overwrite the previous results..."
+            print "   Path: {0}".format(fullpath)
+            return fullpath
         try:
             os.makedirs(fullpath)
         except OSError:
-            print "Experiment directory already exists.  Continuing may overwrite the previous results..."
+            raise
     return fullpath
 
 
 def parseExperiment(parser):
     """ Parse the experiment section and return a dictionary """
     retval = dict()
-    dirname = validatePath(parser.get('EXPERIMENT', 'BASE_OUTPUT_DIR'))
+    dirname = validatePath(parser.get('EXPERIMENT', 'BASE_OUTPUT_DIR'), False, True)
     current = parser.get('EXPERIMENT', 'EXPERIMENT')
     retval['cachedir'] = create_experiment_dir(dirname, current, 'CACHE')
     retval['resultdir'] = create_experiment_dir(dirname, current, 'Results')
@@ -76,9 +83,9 @@ def parseExperiment(parser):
         previous = parser.get('EXPERIMENT', 'PREVIOUS_EXPERIMENT')
         retval['previouscache'] = create_experiment_dir(dirname, previous, 'CACHE', verify=True)
         retval['previousresult'] = create_experiment_dir(dirname, previous, 'Results', verify=True)
-    atlas = validatePath(parser.get('EXPERIMENT', 'ATLAS_PATH'))
+    atlas = validatePath(parser.get('EXPERIMENT', 'ATLAS_PATH'), False, True)
     retval['atlascache'] = clone_atlas_dir(retval['cachedir'], atlas)
-    retval['dbfile'] = validatePath(parser.get('EXPERIMENT', 'SESSION_DB'), allow_empty=False)
+    retval['dbfile'] = validatePath(parser.get('EXPERIMENT', 'SESSION_DB'), False, False)
     retval['components'] = [x.lower() for x in eval(parser.get('EXPERIMENT', 'WORKFLOW_COMPONENTS'))]
     return retval
 
@@ -101,12 +108,12 @@ def parseCluster(parser):
     return retval
 
 
-def parseFile(configFile, env, wfrun):
+def parseFile(configFile, env):
     configFile = os.path.realpath(configFile)
     assert os.path.exists(configFile), "Configuration file could not be found: {0}".format(configFile)
     parser = ConfigParser(allow_no_value=True)  # Parse configuration file parser = ConfigParser()
     parser.read(configFile)
-    assert parser.has_option(env, 'BUILD_DIR'), "BUILD_DIR option not in {0}".format(env)
+    assert (parser.has_option(env, '_BUILD_DIR') or parser.has_option('DEFAULT', '_BUILD_DIR')), "BUILD_DIR option not in {0}".format(env)
     environment = parseEnvironment(parser, env)
     experiment = parseExperiment(parser)
     pipeline = parsePipeline(parser)

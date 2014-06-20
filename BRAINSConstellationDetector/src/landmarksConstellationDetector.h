@@ -239,6 +239,10 @@ public:
 protected:
 
 private:
+  void EulerToVersorRigid( VersorTransformType::Pointer &, const RigidTransformType::ConstPointer );
+
+  void DoResampleInPlace( const SImageType::ConstPointer, const RigidTransformType::ConstPointer, SImageType::Pointer & );
+
   VersorTransformType::Pointer ComputeACPCAlignedZeroCenteredTransform(void);
 
   // Linear model estimation using EPCA

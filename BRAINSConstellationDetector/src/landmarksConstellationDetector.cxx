@@ -33,6 +33,15 @@
 #include <BRAINSFitHelper.h>
 #include "itkLandmarkBasedTransformInitializer.h"
 
+#include <sstream>
+
+std::string local_to_string(unsigned int i)
+{
+  std::stringstream localStream;
+  localStream << i;
+  return localStream.str();
+}
+
 //NOTE: LandmarkTransforms are inverse of ImageTransforms, (You pull images, you push landmarks)
 static VersorTransformType::Pointer GetLandmarkTransformFromImageTransform( VersorTransformType::ConstPointer ImageTransform )
 {
@@ -558,11 +567,11 @@ void landmarksConstellationDetector::Compute( void )
           LandmarksMapType locallyRotatedCHM;
           locallyRotatedCHM["CM"] = localAlignedCOHM;
           const std::string localRotatedCenterOfHeadMassNAME
-                            ( this->m_ResultsDir + "/localRotatedCHM_" + std::to_string(i) + "_.fcsv" );
+                            ( this->m_ResultsDir + "/localRotatedCHM_" + local_to_string(i) + "_.fcsv" );
           WriteITKtoSlicer3Lmk( localRotatedCenterOfHeadMassNAME, locallyRotatedCHM );
 
           const std::string localRotatedRoughAligedVolumeNAME
-                            ( this->m_ResultsDir + "/localRotatedRoughAlignedVolume_" + std::to_string(i) + "_.nrrd" );
+                            ( this->m_ResultsDir + "/localRotatedRoughAlignedVolume_" + local_to_string(i) + "_.nrrd" );
           itkUtil::WriteImage<SImageType> ( localRoughAlignedInput, localRotatedRoughAligedVolumeNAME );
           }
 

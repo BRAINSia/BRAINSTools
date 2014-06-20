@@ -121,15 +121,22 @@ def main(args):
     template = pe.Workflow(name='SubjectAtlas_Template')
     template.base_dir = master_config['logging']['log_directory']
 
-    BAtlas = GetAtlasNode(master_config['previouscache'], 'BAtlas')
-
+    if 'previouscache' in master_config:
+        # Running off previous baseline experiment
+        BAtlas = GetAtlasNode(master_config['previouscache'], 'BAtlas')
+    else:
+        # Running after previous baseline experiment
+        BAtlas = GetAtlasNode(os.path.dirname(master_config['atlascache']), 'BAtlas')
     inputspec = pe.Node(interface=IdentityInterface(fields=['subject']), name='inputspec')
     inputspec.iterables = ('subject', subjects)
 
     baselineDG = pe.Node(nio.DataGrabber(infields=['subject'], outfields=['t1_average', 't2_average', 'pd_average',
                                                                             'fl_average', 'outputLabels', 'posteriorImages']),
                          name='Baseline_DG')
-    baselineDG.inputs.base_directory = master_config['previousresult']
+    if 'previousresult' in master_config:
+        baselineDG.inputs.base_directory = master_config['previousresult']
+    else:
+        baselineDG.inputs.base_directory = master_config['resultdir']
     baselineDG.inputs.sort_filelist = True
     baselineDG.inputs.raise_on_empty = False
     baselineDG.inputs.template = '*/%s/*/Baseline/%s.nii.gz'

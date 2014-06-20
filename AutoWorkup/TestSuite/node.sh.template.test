@@ -1,7 +1,7 @@
 #!/bin/bash
 source ~/.bash_profile
 $LOAD_MODULES
-$VIRTUALENV
+$VIRTUALENV_DIR
 $EXPORT_ENV
 echo "STARTED at: $$(date +'%F-%T')"
 echo "Ran on: $$(hostname)"

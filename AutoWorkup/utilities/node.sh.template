@@ -1,11 +1,16 @@
 #!/bin/bash
 source ~/.bash_profile
 $LOAD_MODULES
-$VIRTUALENV
+$VIRTUALENV_DIR/bin/activate
 $EXPORT_ENV
 echo "STARTED at: $$(date +'%F-%T')"
 echo "Ran on: $$(hostname)"
 echo "========= CUSTOM ENVIRONMENT SETTINGS =========="
 echo "$EXPORT_ENV"
 echo "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+TEMP=$$(pwd)
+cd /Shared/sinapse
+cd /Shared/johnsonhj
+cd /Shared/paulsen
+cd $${TEMP}
 ## NOTE:  nipype inserts the actual commands that need running below this section.

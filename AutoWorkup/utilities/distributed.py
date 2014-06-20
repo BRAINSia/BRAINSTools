@@ -8,11 +8,11 @@ def load_cluster(modules=[]):
     return ''
 
 
-def source_virtualenv(virtualenv=''):
-    if virtualenv is None:
+def source_virtualenv(virtualenv_dir=''):
+    if virtualenv_dir is None:
         return ''
-    assert virtualenv != ''
-    return "source {0}".format(virtualenv)
+    assert virtualenv_dir != ''
+    return "source {0}".format(virtualenv_dir)
 
 
 def prepend_env(environment={}):
@@ -30,9 +30,9 @@ def create_global_sge_script(cluster, environment):
 
     >>> import os
     >>> nomodules = open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'TestSuite', 'node.sh.template.nomodules'), 'r')
-    >>> create_global_sge_script({'modules':[]}, {'virtualenv':'/path/to/virtualenv', 'env': os.environ}).split('\n')[0]
+    >>> create_global_sge_script({'modules':[]}, {'virtualenv_dir':'/path/to/virtualenv_dir', 'env': os.environ}).split('\n')[0]
     True
-    >>> create_global_sge_script({'modules':[]}, {'virtualenv':'/path/to/virtualenv', 'env': os.environ}).split('\n')[0] == '#!/bin/bash FAIL'
+    >>> create_global_sge_script({'modules':[]}, {'virtualenv_dir':'/path/to/virtualenv_dir', 'env': os.environ}).split('\n')[0] == '#!/bin/bash FAIL'
 
     """
     import os
@@ -40,7 +40,7 @@ def create_global_sge_script(cluster, environment):
     import sys
 
     sub_dict = dict(LOAD_MODULES=load_cluster(cluster['modules']),
-                    VIRTUALENV=source_virtualenv(environment['virtualenv']),
+                    VIRTUALENV_DIR=source_virtualenv(environment['virtualenv_dir']),
                     EXPORT_ENV=prepend_env(environment['env']))
     with open(os.path.join(os.path.dirname(__file__), 'node.sh.template')) as fid:
         tpl = fid.read()

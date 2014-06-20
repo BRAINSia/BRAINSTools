@@ -3,7 +3,7 @@
 import os.path
 import re
 
-def validatePath(path, msg="Path could not be found! {0}", allow_empty=True):
+def validatePath(path, allow_empty, isDirectory):
     """ Check if a path exists and return the path with all variables expanded or raise AssertionError
 
     >>> validatePath('/usr/bin')
@@ -16,10 +16,13 @@ def validatePath(path, msg="Path could not be found! {0}", allow_empty=True):
         ...
     AssertionError: Path could not be found! /dev/null
     """
+    msg="Path could not be found! {0}"
     if (path is None or path == '') and allow_empty:
         return None
     full = os.path.realpath(os.path.abspath(path))
     assert os.path.exists(full), msg.format(full)
+    if isDirectory:
+        assert os.path.isdir(full), msg.format(full)
     return full
 
 
@@ -33,7 +36,7 @@ def validatePaths(pathString):
         ...
     AssertionError: Path could not be found! /dev/null
     """
-    return ':'.join([validatePath(path) for path in ':'.split(pathString)])
+    return ':'.join([validatePath(path, False, True) for path in ':'.split(pathString)])
 
 
 def appendPathList(new, old=None):
@@ -52,10 +55,10 @@ def appendPathList(new, old=None):
         ...
     AssertionError: Path could not be found! /dev/null
     """
-    new = validatePaths(new)
+    new = validatePaths(new, False, True)
     if old is None or old == '':
         return new
-    old = validatePaths(old)
+    old = validatePaths(old, False, True)
     return ':'.join([new, old])
 
 
@@ -82,7 +85,7 @@ def create_atlas_xml(old_dir, new_dir, xml_file='ExtendedAtlasDefinition.xml'):
 def clone_atlas_dir(cachedir, atlasdir):
     from distutils.dir_util import copy_tree, remove_tree
 
-    old_dir = validatePath(atlasdir, allow_empty=False)
+    old_dir = validatePath(atlasdir, False, True)
     new_dir = os.path.join(cachedir, 'Atlas')
     if os.path.exists(new_dir):
         remove_tree(new_dir, verbose=True)

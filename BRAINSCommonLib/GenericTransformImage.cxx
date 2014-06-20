@@ -328,6 +328,19 @@ GenericTransformType::Pointer ReadTransformFromDisk(const std::string & initialT
       tempCopy->ComputeWMatrix();
       genericTransform = tempCopy.GetPointer();
       }
+      else if( transformFileType == "BSplineDeformableTransform" )
+      {
+      const BSplineTransformType::ConstPointer tempInitializerITKTransform =
+        dynamic_cast<BSplineTransformType const *>( ( *( currentTransformList.begin() ) ).GetPointer() );
+      if( tempInitializerITKTransform.IsNull() )
+        {
+        itkGenericExceptionMacro(<< "Error in type conversion");
+        }
+      BSplineTransformType::Pointer tempCopy = BSplineTransformType::New();
+      tempCopy->SetFixedParameters( tempInitializerITKTransform->GetFixedParameters() );
+      tempCopy->SetParametersByValue( tempInitializerITKTransform->GetParameters() );
+      genericTransform = tempCopy.GetPointer();
+      }
 #if (ITK_VERSION_MAJOR > 3)
     else if( transformFileType == "CompositeTransform" )
       {

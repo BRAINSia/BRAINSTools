@@ -70,6 +70,7 @@ option(USE_BRAINSMultiSTAPLE              "Build BRAINSMultiSTAPLE"             
 option(USE_DWIConvert                     "Build DWIConvert"                     ON)
 option(USE_BRAINSDWICleanup               "Build BRAINSDWICleanup"               ON)
 option(USE_BRAINSCreateLabelMapFromProbabilityMaps "Build BRAINSCreateLabelMapFromProbabilityMaps" OFF)
+option(USE_BRAINSMultiSTAPLE              "Build BRAINSMultiSTAPLE" ON)
 
 if( NOT USE_ANTS )
 option(USE_ANTS                           "Build ANTS"                           ON)
@@ -84,34 +85,31 @@ option(USE_BRAINSPosteriorToContinuousClass             "Build BRAINSPosteriorTo
 option(USE_DebugImageViewer "Build DebugImageViewer" OFF)
 option(BRAINS_DEBUG_IMAGE_WRITE "Enable writing out intermediate image results" OFF)
 
-if( USE_AutoWorkup )
-  ## NIPYPE is not stable under python 2.6, so require 2.7 when using autoworkup
-  ## Enthought Canopy or anaconda are convenient ways to install python 2.7 on linux
-  ## or the other option is the free version of Anaconda from https://store.continuum.io/
-  set(USE_BRAINSMultiSTAPLE ON)
-  set(REQUIRED_PYTHON_VERSION 2.7)
-  if(APPLE)
-   set(PYTHON_EXECUTABLE
-         /System/Library/Frameworks/Python.framework/Versions/${REQUIRED_PYTHON_VERSION}/bin/python2.7
-         CACHE FILEPATH "The apple specified python version" )
-   set(PYTHON_LIBRARY
-         /System/Library/Frameworks/Python.framework/Versions/${REQUIRED_PYTHON_VERSION}/lib/libpython2.7.dylib
-         CACHE FILEPATH "The apple specified python shared library" )
-   set(PYTHON_INCLUDE_DIR
-         /System/Library/Frameworks/Python.framework/Versions/${REQUIRED_PYTHON_VERSION}/include/python2.7
-         CACHE PATH "The apple specified python headers" )
-  else()
-    find_package ( PythonInterp REQUIRED )
-    message(STATUS "Found PythonInterp version ${PYTHON_VERSION_STRING}")
-    find_package ( PythonLibs REQUIRED )
-  endif()
-
-  set(PYTHON_INSTALL_CMAKE_ARGS
-        PYTHON_EXECUTABLE:FILEPATH
-        PYTHON_LIBRARY:FILEPATH
-        PYTHON_INCLUDE_DIR:PATH
-     )
+## NIPYPE is not stable under python 2.6, so require 2.7 when using autoworkup
+## Enthought Canopy or anaconda are convenient ways to install python 2.7 on linux
+## or the other option is the free version of Anaconda from https://store.continuum.io/
+set(REQUIRED_PYTHON_VERSION 2.7)
+if(APPLE)
+ set(PYTHON_EXECUTABLE
+       /System/Library/Frameworks/Python.framework/Versions/${REQUIRED_PYTHON_VERSION}/bin/python2.7
+       CACHE FILEPATH "The apple specified python version" )
+ set(PYTHON_LIBRARY
+       /System/Library/Frameworks/Python.framework/Versions/${REQUIRED_PYTHON_VERSION}/lib/libpython2.7.dylib
+       CACHE FILEPATH "The apple specified python shared library" )
+ set(PYTHON_INCLUDE_DIR
+       /System/Library/Frameworks/Python.framework/Versions/${REQUIRED_PYTHON_VERSION}/include/python2.7
+       CACHE PATH "The apple specified python headers" )
+else()
+  find_package ( PythonInterp REQUIRED )
+  message(STATUS "Found PythonInterp version ${PYTHON_VERSION_STRING}")
+  find_package ( PythonLibs REQUIRED )
 endif()
+
+set(PYTHON_INSTALL_CMAKE_ARGS
+      PYTHON_EXECUTABLE:FILEPATH
+      PYTHON_LIBRARY:FILEPATH
+      PYTHON_INCLUDE_DIR:PATH
+   )
 
 if(USE_ICCDEF OR ITK_USE_FFTWD OR ITK_USE_FFTWF)
   set(${PROJECT_NAME}_BUILD_FFTWF_SUPPORT ON)

@@ -157,14 +157,6 @@ if(USE_ANTS)
   list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES ANTs)
 endif()
 
-if(USE_AutoWorkup)
-  list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES PCRE)
-  list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES Swig)
-  list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES SimpleITK)
-  list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES NIPYPE)
-
-endif()
-
 #-----------------------------------------------------------------------------
 # Define Superbuild global variables
 #-----------------------------------------------------------------------------
@@ -305,7 +297,6 @@ list(APPEND ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS
 
   ${PYTHON_INSTALL_CMAKE_ARGS}
 
-  USE_AutoWorkup:BOOL
   USE_GTRACT:BOOL
   USE_BRAINSFit:BOOL
   USE_BRAINSTalairach:BOOL

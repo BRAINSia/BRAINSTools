@@ -53,8 +53,6 @@
     </directory>
   </parameters>
 
-
-
   <parameters>
     <label>NiftiFSL To Nrrd Conversion Parameters</label>
     <description><![CDATA[NiftiFSL To Nrrd Conversion Parameters]]></description>
@@ -75,6 +73,28 @@
   </parameters>
 
   <parameters advanced="true">
+    <label>Nrrd To NiftiFSL Conversion Parameters</label>
+    <description><![CDATA[Nrrd To NiftiFSL Conversion Parameters]]></description>
+    <file fileExtensions=".bval">
+      <name>outputBValues</name>
+      <longflag>--outputBValues</longflag>
+      <label>Output bval file</label>
+      <channel>output</channel>
+      <default></default>
+      <description><![CDATA[The B Values are stored in FSL .bval text file format (defaults to <outputVolume>.bval)]]></description>
+    </file>
+    <file fileExtensions=".bvec">
+      <name>outputBVectors</name>
+      <longflag>--outputBVectors</longflag>
+      <label>Output bvec file</label>
+      <channel>output</channel>
+      <default></default>
+      <description><![CDATA[The Gradient Vectors are stored in FSL .bvec text file format (defaults to <outputVolume>.bvec)]]></description>
+    </file>
+  </parameters>
+
+  <parameters advanced="true">
+    <label>Advanced Conversion Parameters</label>
     <boolean>
       <name>fMRIOutput</name>
       <longflag>--fMRI</longflag>
@@ -82,7 +102,6 @@
       <description>Output a NRRD file, but without gradients</description>
       <!-- booleans default to false -->
     </boolean>
-    <label>Output Options</label>
     <description><![CDATA[Options to control the output.]]></description>
     <boolean>
       <name>writeProtocolGradientsFile</name>
@@ -127,26 +146,6 @@
       <description><![CDATA[If a gradient magnitude is greater than 0 and less than smallGradientThreshold, then DWIConvert will display an error message and quit, unless the useBMatrixGradientDirections option is set.]]></description>
       <default>0.2</default>
     </double>
-    <label>Nrrd To NiftiFSL Conversion Parameters</label>
-    <description><![CDATA[Nrrd To NiftiFSL Conversion Parameters]]></description>
-    <file fileExtensions=".bval">
-      <name>outputBValues</name>
-      <longflag>--outputBValues</longflag>
-      <label>Output bval file</label>
-      <channel>output</channel>
-      <default></default>
-      <description><![CDATA[The B Values are stored in FSL .bval text file format (defaults to <outputVolume>.bval)]]></description>
-    </file>
-    <file fileExtensions=".bvec">
-      <name>outputBVectors</name>
-      <longflag>--outputBVectors</longflag>
-      <label>Output bvec file</label>
-      <channel>output</channel>
-      <default></default>
-      <description><![CDATA[The Gradient Vectors are stored in FSL .bvec text file format (defaults to <outputVolume>.bvec)]]></description>
-    </file>
-
   </parameters>
-
 
 </executable>

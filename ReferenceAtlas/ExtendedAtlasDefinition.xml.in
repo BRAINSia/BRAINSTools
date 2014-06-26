@@ -1,33 +1,33 @@
 <Atlas>
  <AtlasImage>
   <type>T1</type>
-  <filename>@ATLAS_DIRECTORY@/template_t1.nii.gz</filename>
+  <filename>@ATLAS_INSTALL_DIRECTORY@/template_t1.nii.gz</filename>
  </AtlasImage>
  <AtlasImage>
   <type>T2</type>
-  <filename>@ATLAS_DIRECTORY@/template_t2.nii.gz</filename>
+  <filename>@ATLAS_INSTALL_DIRECTORY@/template_t2.nii.gz</filename>
  </AtlasImage>
  <AtlasImage>
   <type>PD</type>
-  <filename>@ATLAS_DIRECTORY@/template_t2.nii.gz</filename>
+  <filename>@ATLAS_INSTALL_DIRECTORY@/template_t2.nii.gz</filename>
  </AtlasImage>
  <AtlasImage>
   <type>FLAIR</type>
-  <filename>@ATLAS_DIRECTORY@/template_t2.nii.gz</filename>
+  <filename>@ATLAS_INSTALL_DIRECTORY@/template_t2.nii.gz</filename>
  </AtlasImage>
  <AtlasImage>
   <type>OTHER</type>
-  <filename>@ATLAS_DIRECTORY@/template_t1.nii.gz</filename>
+  <filename>@ATLAS_INSTALL_DIRECTORY@/template_t1.nii.gz</filename>
  </AtlasImage>
  <BrainMask>
-  <filename>@ATLAS_DIRECTORY@/template_brain.nii.gz</filename>
+  <filename>@ATLAS_INSTALL_DIRECTORY@/template_brain.nii.gz</filename>
  </BrainMask>
  <HeadRegion>
-  <filename>@ATLAS_DIRECTORY@/template_headregion.nii.gz</filename>
+  <filename>@ATLAS_INSTALL_DIRECTORY@/template_headregion.nii.gz</filename>
  </HeadRegion>
  <Prior>
   <type>WM</type>
-  <filename>@ATLAS_DIRECTORY@/GENERATED_WM.nii.gz</filename>
+  <filename>@ATLAS_INSTALL_DIRECTORY@/GENERATED_WM.nii.gz</filename>
   <Weight>1</Weight>
   <GaussianClusterCount>1</GaussianClusterCount>
   <UseForBias>1</UseForBias>
@@ -61,7 +61,7 @@
  </Prior>
  <Prior>
   <type>SURFGM</type>
-  <filename>@ATLAS_DIRECTORY@/GENERATED_SURFGM.nii.gz</filename>
+  <filename>@ATLAS_INSTALL_DIRECTORY@/GENERATED_SURFGM.nii.gz</filename>
   <Weight>1</Weight>
   <GaussianClusterCount>1</GaussianClusterCount>
   <UseForBias>1</UseForBias>
@@ -96,7 +96,7 @@
 <!-- subcortical prior definitions -->
  <Prior>
   <type>BASAL</type>
-  <filename>@ATLAS_DIRECTORY@/GENERATED_BASAL.nii.gz</filename>
+  <filename>@ATLAS_INSTALL_DIRECTORY@/GENERATED_BASAL.nii.gz</filename>
   <Weight>1</Weight>
   <GaussianClusterCount>1</GaussianClusterCount>
   <UseForBias>0</UseForBias>
@@ -130,7 +130,7 @@
  </Prior>
  <Prior>
   <type>GLOBUS</type>
-  <filename>@ATLAS_DIRECTORY@/GENERATED_GLOBUS.nii.gz</filename>
+  <filename>@ATLAS_INSTALL_DIRECTORY@/GENERATED_GLOBUS.nii.gz</filename>
   <Weight>1</Weight>
   <GaussianClusterCount>1</GaussianClusterCount>
   <UseForBias>0</UseForBias>
@@ -164,7 +164,7 @@
  </Prior>
  <Prior>
   <type>THALAMUS</type>
-  <filename>@ATLAS_DIRECTORY@/GENERATED_THALAMUS.nii.gz</filename>
+  <filename>@ATLAS_INSTALL_DIRECTORY@/GENERATED_THALAMUS.nii.gz</filename>
   <Weight>1</Weight>
   <GaussianClusterCount>1</GaussianClusterCount>
   <UseForBias>0</UseForBias>
@@ -198,7 +198,7 @@
  </Prior>
  <Prior>
   <type>HIPPOCAMPUS</type>
-  <filename>@ATLAS_DIRECTORY@/GENERATED_HIPPOCAMPUS.nii.gz</filename>
+  <filename>@ATLAS_INSTALL_DIRECTORY@/GENERATED_HIPPOCAMPUS.nii.gz</filename>
   <Weight>1</Weight>
   <GaussianClusterCount>1</GaussianClusterCount>
   <UseForBias>0</UseForBias>
@@ -233,7 +233,7 @@
 <!-- END OF subcortical prior definitions -->
  <Prior>
   <type>CRBLGM</type>
-  <filename>@ATLAS_DIRECTORY@/GENERATED_CRBLGM.nii.gz</filename>
+  <filename>@ATLAS_INSTALL_DIRECTORY@/GENERATED_CRBLGM.nii.gz</filename>
   <Weight>1</Weight>
   <GaussianClusterCount>1</GaussianClusterCount>
   <UseForBias>1</UseForBias>
@@ -267,7 +267,7 @@
  </Prior>
  <Prior>
   <type>CRBLWM</type>
-  <filename>@ATLAS_DIRECTORY@/GENERATED_CRBLWM.nii.gz</filename>
+  <filename>@ATLAS_INSTALL_DIRECTORY@/GENERATED_CRBLWM.nii.gz</filename>
   <Weight>1</Weight>
   <GaussianClusterCount>1</GaussianClusterCount>
   <UseForBias>1</UseForBias>
@@ -301,7 +301,7 @@
  </Prior>
  <Prior>
   <type>CSF</type>
-  <filename>@ATLAS_DIRECTORY@/GENERATED_CSF.nii.gz</filename>
+  <filename>@ATLAS_INSTALL_DIRECTORY@/GENERATED_CSF.nii.gz</filename>
   <Weight>1</Weight>
   <GaussianClusterCount>1</GaussianClusterCount>
   <UseForBias>1</UseForBias>
@@ -335,7 +335,7 @@
  </Prior>
  <Prior>
   <type>VB</type>
-  <filename>@ATLAS_DIRECTORY@/GENERATED_VB.nii.gz</filename>
+  <filename>@ATLAS_INSTALL_DIRECTORY@/GENERATED_VB.nii.gz</filename>
   <Weight>1</Weight>
   <GaussianClusterCount>1</GaussianClusterCount>
   <UseForBias>0</UseForBias>
@@ -369,7 +369,7 @@
  </Prior>
  <Prior>
   <type>NOTCSF</type>
-  <filename>@ATLAS_DIRECTORY@/GENERATED_NOTCSF.nii.gz</filename>
+  <filename>@ATLAS_INSTALL_DIRECTORY@/GENERATED_NOTCSF.nii.gz</filename>
   <Weight>1</Weight>
   <GaussianClusterCount>1</GaussianClusterCount>
   <UseForBias>0</UseForBias>
@@ -403,7 +403,7 @@
  </Prior>
  <Prior>
   <type>NOTGM</type>
-  <filename>@ATLAS_DIRECTORY@/GENERATED_NOTGM.nii.gz</filename>
+  <filename>@ATLAS_INSTALL_DIRECTORY@/GENERATED_NOTGM.nii.gz</filename>
   <Weight>1</Weight>
   <GaussianClusterCount>1</GaussianClusterCount>
   <UseForBias>0</UseForBias>
@@ -437,7 +437,7 @@
  </Prior>
  <Prior>
   <type>NOTWM</type>
-  <filename>@ATLAS_DIRECTORY@/GENERATED_NOTWM.nii.gz</filename>
+  <filename>@ATLAS_INSTALL_DIRECTORY@/GENERATED_NOTWM.nii.gz</filename>
   <Weight>1</Weight>
   <GaussianClusterCount>1</GaussianClusterCount>
   <UseForBias>0</UseForBias>
@@ -471,7 +471,7 @@
  </Prior>
  <Prior>
   <type>NOTVB</type>
-  <filename>@ATLAS_DIRECTORY@/GENERATED_NOTVB.nii.gz</filename>
+  <filename>@ATLAS_INSTALL_DIRECTORY@/GENERATED_NOTVB.nii.gz</filename>
   <Weight>1</Weight>
   <GaussianClusterCount>1</GaussianClusterCount>
   <UseForBias>0</UseForBias>
@@ -505,7 +505,7 @@
  </Prior>
  <Prior>
   <type>AIR</type>
-  <filename>@ATLAS_DIRECTORY@/GENERATED_AIR.nii.gz</filename>
+  <filename>@ATLAS_INSTALL_DIRECTORY@/GENERATED_AIR.nii.gz</filename>
   <Weight>1</Weight>
   <GaussianClusterCount>1</GaussianClusterCount>
   <UseForBias>0</UseForBias>

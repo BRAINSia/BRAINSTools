@@ -214,7 +214,6 @@ VectorESMDemonsRegistrationFunction<TFixedImage, TMovingImage,
     }
 
   typedef itk::ImageRegionConstIterator<TFixedImage> ConstIteratorType;
-  typedef itk::ImageRegionIterator<FixedImageType>   IteratorType;
 
   ConstIteratorType in_Fix( this->GetFixedImage(),
                             this->GetFixedImage()->GetRequestedRegion() );

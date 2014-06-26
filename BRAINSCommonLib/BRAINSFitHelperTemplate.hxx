@@ -1290,8 +1290,6 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
 
       typedef typename itk::LBFGSBOptimizerv4                  LBFGSBOptimizerType;
       typedef typename LBFGSBOptimizerType::Pointer            LBFGSBOptimizerTypePointer;
-      typedef typename LBFGSBOptimizerType::ParametersType     OptimizerParameterType;
-      typedef typename LBFGSBOptimizerType::ScalesType         OptimizerScalesType;
       typedef typename LBFGSBOptimizerType::BoundSelectionType OptimizerBoundSelectionType;
       typedef typename LBFGSBOptimizerType::BoundValueType     OptimizerBoundValueType;
 

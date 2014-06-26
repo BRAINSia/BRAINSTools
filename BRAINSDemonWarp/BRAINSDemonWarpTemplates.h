@@ -174,7 +174,6 @@ void ThirionFunction(const struct BRAINSDemonWarpAppParameters & command)
   typedef itk::Image<float, dims>                    TRealImage;
   typedef itk::Image<OutPixelType, dims>             OutputImageType;
   typedef itk::Image<itk::Vector<float, dims>, dims> TDisplacementField;
-  typedef itk::Image<itk::Vector<float, dims>, dims> TVelocityField;
 
   typedef unsigned char                                   MaskPixelType;
   typedef itk::Image<MaskPixelType, dims>                 MaskImageType;

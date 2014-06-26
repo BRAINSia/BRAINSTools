@@ -34,6 +34,18 @@ DebugImageViewerLibAdditions(BRAINSDemonWarpTemplatesLIBLibraries)
 
 target_link_libraries(BRAINSDemonWarpTemplatesLIB ${BRAINSDemonWarpTemplatesLIBLibraries})
 
+#
+# To fix compilation problem: relocation R_X86_64_32 against `a local symbol' can not be
+# used when making a shared object; recompile with -fPIC
+# See http://www.cmake.org/pipermail/cmake/2007-May/014350.html
+#
+# XXX When minimum CMake version will be changed to version >=2.8.9, the following code
+# could be used instead:
+# set_target_properties(BRAINSDemonWarpTemplatesLIB PROPERTIES POSITION_INDEPENDENT_CODE ON)
+if(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
+  set_target_properties(BRAINSDemonWarpTemplatesLIB PROPERTIES COMPILE_FLAGS "-fPIC")
+endif()
+
 set(ALL_PROGS_LIST
   BRAINSDemonWarp
   VBRAINSDemonWarp

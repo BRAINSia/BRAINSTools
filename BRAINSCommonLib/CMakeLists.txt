@@ -43,6 +43,18 @@ set(BRAINSCommonLib_SRCS
 add_library(BRAINSCommonLib STATIC ${BRAINSCommonLib_SRCS})
 target_link_libraries(BRAINSCommonLib ${ITK_LIBRARIES} ${ANTS_LIBS} ${double-conversion_LIBRARIES})
 
+#
+# To fix compilation problem: relocation R_X86_64_32 against `a local symbol' can not be
+# used when making a shared object; recompile with -fPIC
+# See http://www.cmake.org/pipermail/cmake/2007-May/014350.html
+#
+# XXX When minimum CMake version will be changed to version >=2.8.9, the following code
+# could be used instead:
+# set_target_properties(BRAINSCommonLib PROPERTIES POSITION_INDEPENDENT_CODE ON)
+if(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
+  set_target_properties(BRAINSCommonLib PROPERTIES COMPILE_FLAGS "-fPIC")
+endif()
+
 install(TARGETS BRAINSCommonLib
   RUNTIME DESTINATION ${BRAINSTools_CLI_INSTALL_RUNTIME_DESTINATION} COMPONENT RuntimeLibraries
   LIBRARY DESTINATION ${BRAINSTools_CLI_INSTALL_LIBRARY_DESTINATION} COMPONENT RuntimeLibraries

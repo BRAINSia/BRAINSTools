@@ -74,9 +74,6 @@ void
 VDemonsPreprocessor<TInputImage, TOutputImage>
 ::Execute()
 {
-  typedef itk::MultiplyByConstantImageFilter<TOutputImage, float,
-                                             TOutputImage> MultiplyByConstantImageType;
-
   if( m_MedianFilterSize[0] > 0  ||  m_MedianFilterSize[1] > 0
       ||  m_MedianFilterSize[2] > 0 )
     {

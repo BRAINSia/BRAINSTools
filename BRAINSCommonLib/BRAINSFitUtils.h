@@ -81,8 +81,6 @@ void DoCenteredTransformMaskClipping(
     }
   std::cerr << "maskInferiorCutOffFromCenter is " << maskInferiorCutOffFromCenter << std::endl;
 
-  typedef unsigned char PixelType;
-
   typename TransformType::InputPointType rotationCenter = transform->GetCenter();
   typename TransformType::OutputVectorType translationVector = transform->GetTranslation();
 

@@ -144,6 +144,7 @@ BRAINSDemonWarp<TImage, TRealImage, TOutputImage>
   this->m_Registrator->SetUnNormalizedMovingImage( this->m_Preprocessor->GetModifiableUnNormalizedMovingImage() );
   this->m_Registrator->SetUnNormalizedFixedImage( this->m_Preprocessor->GetModifiableUnNormalizedFixedImage() );
 
+#if defined(BRAINS_DEBUG_IMAGE_WRITE)
   typedef typename Superclass::PreprocessorType::OutputImageType PPOutputImageType;
   DebugOutputWName(PPOutputImageType, this->m_Preprocessor->GetOutputFixedImage(), PreprocessorFixedImage);
   DebugOutputWName(PPOutputImageType, this->m_Preprocessor->GetOutputMovingImage(), PreprocessorMovingImage);
@@ -151,6 +152,7 @@ BRAINSDemonWarp<TImage, TRealImage, TOutputImage>
                    this->m_Preprocessor->GetUnNormalizedFixedImage(), PreprocessorUnNormalizedFixedImage);
   DebugOutputWName(PPOutputImageType,
                    this->m_Preprocessor->GetUnNormalizedMovingImage(), PreprocessorUnNormalizedMovingImage);
+#endif
 
   this->m_Registrator->SetInitialDisplacementField( this->m_Parser->GetModifiableInitialDisplacementField() );
   this->m_Registrator->SetDefaultPixelValue( this->m_Preprocessor->GetDefaultPixelValue() );

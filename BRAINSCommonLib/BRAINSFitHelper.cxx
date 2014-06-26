@@ -146,7 +146,6 @@ NormalizeImage(typename ImageType::Pointer inputImage)
   typedef itk::Statistics::ImageToHistogramFilter<ImageType>   HistogramFilterType;
   typedef typename HistogramFilterType::InputBooleanObjectType InputBooleanObjectType;
   typedef typename HistogramFilterType::HistogramSizeType      HistogramSizeType;
-  typedef typename HistogramFilterType::HistogramType          HistogramType;
 
   HistogramSizeType histogramSize( 1 );
   histogramSize[0] = 256;

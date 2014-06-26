@@ -68,3 +68,4 @@ macro(SlicerMacroGetOperatingSystemArchitectureBitness)
   endif()
 
 endmacro()
+

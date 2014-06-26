@@ -21,7 +21,7 @@ include(CTest)
 #-----------------------------------------------------------------------------
 # Add needed flag for gnu on linux like enviroments to build static common libs
 # suitable for linking with shared object libs.
-message("CMAKE_SYSTEM_PROCESSOR:${CMAKE_SYSTEM_PROCESSOR}")
+#message("CMAKE_SYSTEM_PROCESSOR:${CMAKE_SYSTEM_PROCESSOR}")
 if(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
   message("Adding fPIC")
   if(NOT "${CMAKE_CXX_FLAGS}" MATCHES "-fPIC")

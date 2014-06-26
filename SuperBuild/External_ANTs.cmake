@@ -34,7 +34,7 @@ endif()
 ### --- End Project specific additions
 #set(${proj}_REPOSITORY "https://github.com/BRAINSia/ANTs.git")
 set(${proj}_REPOSITORY "https://github.com/stnava/ANTs.git")
-set(${proj}_GIT_TAG "41a3f1f604f858658cae1e087832741dd41a7b25")
+set(${proj}_GIT_TAG "f364de47d5e5ec54c14529405016b9b49f48099c")
 ExternalProject_Add(${proj}
   GIT_REPOSITORY ${${proj}_REPOSITORY}
   GIT_TAG ${${proj}_GIT_TAG}

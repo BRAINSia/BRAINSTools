@@ -130,7 +130,7 @@ endif()
 
 # Define the atlas subdirectory in one place
 if(USE_ReferenceAtlas)
-  set(ReferenceAtlas_XML_DIR ${BRAINSTools_CLI_INSTALL_RUNTIME_DESTINATION})
+  set(ReferenceAtlas_XML_DIR ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
   set(ATLAS_VERSION 20131115)
   set(ATLAS_NAME Atlas/Atlas_${ATLAS_VERSION})
   set(ATLAS_INSTALL_DIRECTORY ${ReferenceAtlas_XML_DIR}/${ATLAS_NAME})

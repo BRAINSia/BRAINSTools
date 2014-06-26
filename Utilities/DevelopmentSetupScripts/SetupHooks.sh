@@ -41,7 +41,7 @@ for file in ../../Utilities/Hooks/* ../../Utilities/Hooks/.*; do
   if [ x"$base" == x"." -o x"$base" == x".." ]; then
     continue
   fi
-  rm "$base"
+  rm -f "$base"
   ln -s "$file"
 done
 

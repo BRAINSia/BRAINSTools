@@ -10,6 +10,28 @@ set(CMAKE_MODULE_PATH
   )
 
 #-----------------------------------------------------------------------------
+if(Slicer_BUILD_BRAINSTOOLS OR USE_AutoWorkup OR USE_GTRACT OR USE_BRAINSTalairach OR USE_BRAINSSurfaceTools)
+  set(BRAINSTools_REQUIRES_VTK ON)
+endif()
+if(BRAINSTools_REQUIRES_VTK)
+#  message("VTK_DIR:${VTK_DIR}")
+  find_package(VTK REQUIRED)
+  if(VTK_FOUND)
+    include(${VTK_USE_FILE})
+  endif()
+#  message("VTK_USE_FILE:${VTK_USE_FILE}")
+#  message("VTK_INCLUDE_DIRS:${VTK_INCLUDE_DIRS}")
+  include_directories(${VTK_INCLUDE_DIRS})
+  if(Slicer_BUILD_BRAINSTOOLS)
+    set(ITK_VTK_COMPONENTS
+      ITKIOVTK
+      ITKVTK
+      ITKVtkGlue
+    )
+  endif()
+endif()
+
+#-----------------------------------------------------------------------------
 set(ITK_IO_MODULES_USED "")
 find_package(ITK COMPONENTS
   ITKAnisotropicSmoothing
@@ -42,7 +64,6 @@ find_package(ITK COMPONENTS
   ITKIOStimulate
   ITKIOTIFF
   ITKIOTransformBase
-  ITKIOVTK
   ITKIOXML
   ITKImageAdaptors
   ITKImageCompare
@@ -78,8 +99,7 @@ find_package(ITK COMPONENTS
   ITKThresholding
   ITKTransform
   ITKV3Compatibility
-  ITKVTK
-  ITKVtkGlue
+  ${ITK_VTK_COMPONENTS}
   ${ITK_IO_MODULES_USED}
   REQUIRED
 )
@@ -88,23 +108,12 @@ if(Slicer_BUILD_BRAINSTOOLS)
 endif()
 include(${ITK_USE_FILE})
 
+
 #-----------------------------------------------------------------------------
 find_package(SlicerExecutionModel REQUIRED GenerateCLP)
 include(${GenerateCLP_USE_FILE})
 include(${SlicerExecutionModel_USE_FILE})
 include(${SlicerExecutionModel_CMAKE_DIR}/SEMMacroBuildCLI.cmake)
-
-#-----------------------------------------------------------------------------
-if(USE_AutoWorkup OR USE_GTRACT OR USE_BRAINSTalairach OR USE_BRAINSSurfaceTools)
-#  message("VTK_DIR:${VTK_DIR}")
-  find_package(VTK REQUIRED)
-  if(VTK_FOUND)
-    include(${VTK_USE_FILE})
-  endif()
-#  message("VTK_USE_FILE:${VTK_USE_FILE}")
-#  message("VTK_INCLUDE_DIRS:${VTK_INCLUDE_DIRS}")
-  include_directories(${VTK_INCLUDE_DIRS})
-endif()
 
 if(USE_ANTS)
   # find ANTS includes

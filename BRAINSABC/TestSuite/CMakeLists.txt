@@ -67,7 +67,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME BRAINSABCLongTest
   --outputFormat NIFTI
   --outputDir ${CMAKE_CURRENT_BINARY_DIR}
   --gridSize  5,3,4
-  --atlasDefinition ${ReferenceAtlas_DIR}/${ATLAS_NAME}/AtlasPVDefinition.xml
+  --atlasDefinition ${ATLAS_INSTALL_DIRECTORY}/ExtendedAtlasDefinition.xml
   )
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME BRAINSABCLongTest2
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSABCTestDriver>
@@ -93,7 +93,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME BRAINSABCLongTest2
   --outputFormat NIFTI
   --outputDir ${CMAKE_CURRENT_BINARY_DIR}
   --gridSize  5,3,4
-  --atlasDefinition ${ReferenceAtlas_DIR}/${ATLAS_NAME}/AtlasPVDefinition.xml
+  --atlasDefinition ${ATLAS_INSTALL_DIRECTORY}/ExtendedAtlasDefinition.xml
   )
 set_tests_properties(BRAINSABCLongTest PROPERTIES TIMEOUT 6500)
 endif()

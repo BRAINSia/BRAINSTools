@@ -46,6 +46,7 @@ endif()
 # Build option(s)
 #-----------------------------------------------------------------------------
 option(USE_AutoWorkup                     "Build AutoWorkup"                     ON)
+option(USE_ReferenceAtlas                 "Build the Reference Atlas"            ON)
 option(USE_BRAINSFit                      "Build BRAINSFit"                      ON)
 option(USE_BRAINSLabelStats               "Build BRAINSLabelStats"               ON)
 option(USE_BRAINSStripRotation            "Build BRAINSStripRotation"            ON)

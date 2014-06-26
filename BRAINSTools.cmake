@@ -128,6 +128,14 @@ if(USE_ANTS)
   set(ANTS_LIBS antsUtilities)
 endif()
 
+# Define the atlas subdirectory in one place
+if(USE_ReferenceAtlas)
+  set(ReferenceAtlas_XML_DIR ${BRAINSTools_CLI_INSTALL_RUNTIME_DESTINATION})
+  set(ATLAS_VERSION 20131115)
+  set(ATLAS_NAME Atlas/Atlas_${ATLAS_VERSION})
+  set(ATLAS_INSTALL_DIRECTORY ${ReferenceAtlas_XML_DIR}/${ATLAS_NAME})
+endif()
+
 #-----------------------------------------------------------------------------
 enable_testing()
 include(CTest)
@@ -212,6 +220,7 @@ set(brains_modulenames
   BRAINSStripRotation
   AutoWorkup
   BRAINSDWICleanup
+  ReferenceAtlas
   )
 
 if(USE_DebugImageViewer)

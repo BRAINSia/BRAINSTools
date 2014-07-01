@@ -2,7 +2,8 @@
 # BRAINSCut Testing
 # --------------------------------------------------------- #
 
-set(Reference_BINARY_DIR ${ATLAS_INSTALL_DIRECTORY})
+##//Testing directory uses the ExternalData directory
+set(Reference_BINARY_DIR ${BRAINSTools_BINARY_DIR}/ExternalData)
 
 ##
 ## BRAINSCut NetConfiguration(XML) file for testing

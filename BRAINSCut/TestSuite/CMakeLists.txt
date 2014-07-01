@@ -2,7 +2,7 @@
 # BRAINSCut Testing
 # --------------------------------------------------------- #
 
-set(Reference_BINARY_DIR ${BRAINSTools_BINARY_DIR}/../ReferenceAtlas-build/Atlas/Atlas_20131115/)
+set(Reference_BINARY_DIR ${ATLAS_INSTALL_DIRECTORY})
 
 ##
 ## BRAINSCut NetConfiguration(XML) file for testing

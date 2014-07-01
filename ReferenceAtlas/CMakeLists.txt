@@ -48,7 +48,7 @@ DownloadAndInstallRules("${CMAKE_CURRENT_SOURCE_DIR}/*.csv.md5" ${ATLAS_INSTALL_
 
 DownloadAndInstallRules("${CMAKE_CURRENT_SOURCE_DIR}/modelFiles/*.gz.md5" ${ATLAS_INSTALL_DIRECTORY}/modelFiles)
 DownloadAndInstallRules("${CMAKE_CURRENT_SOURCE_DIR}/probabilityMaps/*.nii.gz.md5" ${ATLAS_INSTALL_DIRECTORY}/probabilityMaps)
-DownloadAndInstallRules("${CMAKE_CURRENT_SOURCE_DIR}/spatialImages/*.nii.gz.md5" ${ATLAS_INSTALL_DIRECTORY}/spatialImagesodelFiles)
+DownloadAndInstallRules("${CMAKE_CURRENT_SOURCE_DIR}/spatialImages/*.nii.gz.md5" ${ATLAS_INSTALL_DIRECTORY}/spatialImages)
 DownloadAndInstallRules("${CMAKE_CURRENT_SOURCE_DIR}/SurfaceAtlas/*.vtk.md5" ${ATLAS_INSTALL_DIRECTORY}/SurfaceAtlas)
 DownloadAndInstallRules("${CMAKE_CURRENT_SOURCE_DIR}/20111119_BCD/*_50Lmks.*.md5" ${ATLAS_INSTALL_DIRECTORY}/20111119_BCD)
 DownloadAndInstallRules("${CMAKE_CURRENT_SOURCE_DIR}/T1OnlyModels/*.gz.md5" ${ATLAS_INSTALL_DIRECTORY}/T1OnlyModels)

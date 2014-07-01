@@ -36,11 +36,12 @@ set(BRAINSCutCOMMONLIB_SRCS
 ## Build BRAINSCutCOMMONLIB library
 ##
 add_library(BRAINSCutCOMMONLIB STATIC ${BRAINSCutCOMMONLIB_SRCS})
-#message(FATAL_ERROR "${OpenCV_LIBS}")
+#message(STATUS "${OpenCV_LIBS}")      ## Recent versions of OpenCV changed CMake variable name.
+#message(STATUS "${OpenCV_LIBRARIES}")
 target_link_libraries(BRAINSCutCOMMONLIB
   NetConfigurationCOMMONLIB
   ${ITK_LIBRARIES}
-  ${OpenCV_LIBRARIES}
+  ${OpenCV_LIBS}
   )
 
 #

@@ -64,6 +64,7 @@ def baseline_workflow(projectid, subjectid, sessionid, master_config, phase='bas
     from utilities.misc import GenerateWFName
     from PipeLineFunctionHelpers import convertToList, FixWMPartitioning
     from PipeLineFunctionHelpers import UnwrapPosteriorImagesFromDictionaryFunction as flattenDict
+    from WorkupT1T2BRAINSCut import CreateBRAINSCutWorkflow
 
     baw201 = pe.Workflow(name=pipeline_name)
 
@@ -114,6 +115,9 @@ def baseline_workflow(projectid, subjectid, sessionid, master_config, phase='bas
         from WorkupT1T2TissueClassify import CreateTissueClassifyWorkflow
         myLocalTCWF = CreateTissueClassifyWorkflow("TissueClassify", master_config['queue'], master_config['long_q'], interpMode)
 
+        myLocalSegWF = CreateBRAINSCutWorkflow(projectid, subjectid, sessionid, 'Segmentation',
+                                               master_config['queue'], master_config['long_q'], BAtlas, onlyT1)
+
         baw201.connect([(inputsSpec, myLocalTCWF, [('atlasDefinition', 'inputspec.atlasDefinition'),
                                                    ('T1s', 'inputspec.T1List'),
                                                    (('T1s', getAllT1sLength), 'inputspec.T1_count'),
@@ -133,7 +137,12 @@ def baseline_workflow(projectid, subjectid, sessionid, master_config, phase='bas
                                                     ('outputspec.outputHeadLabels', 'outputHeadLabels'),
                                                     ('outputspec.atlasToSubjectTransform', 'tc_atlas2session_tx'),
                                                     ('outputspec.atlasToSubjectInverseTransform',
-                                                     'tc_atlas2sessionInverse_tx')])
+                                                     'tc_atlas2sessionInverse_tx')]),
+                        (myLocalTCWF, myLocalSegWF, [('outputspec.t1_average', 'inputspec.T1Volume'),
+                                                     ('outputspec.t2_average', 'inputspec.T2Volume'),
+                                                     ('outputspec.posteriorImages', 'inputspec.posteriorDictionary'),
+                                                     ('outputspec.outputLabels', 'inputspec.RegistrationROI'),
+                                                     ('outputspec.atlasToSubjectTransform', 'inputspec.atlasToSubjectTransform')]),
                        ])
 
     dsName = "{0}_ds_{1}".format(phase, sessionid)
@@ -141,6 +150,37 @@ def baseline_workflow(projectid, subjectid, sessionid, master_config, phase='bas
     DataSink.overwrite = master_config['ds_overwrite']
     DataSink.inputs.container = '{0}/{1}/{2}'.format(projectid, subjectid, sessionid)
     DataSink.inputs.base_directory = master_config['resultdir']
+
+    SegDataSink = pe.Node(nio.DataSink(), name="CleanedDenoisedSegmentation_DS_" + str(subjectid) + "_" + str(sessionid))
+    SegDataSink.overwrite = master_config['ds_overwrite']
+    SegDataSink.inputs.base_directory = master_config['resultdir']
+    # SegDataSink.inputs.regexp_substitutions = GenerateOutputPattern(projectid, subjectid, sessionid,'BRAINSCut')
+    # SegDataSink.inputs.regexp_substitutions = GenerateBRAINSCutImagesOutputPattern(projectid, subjectid, sessionid)
+    SegDataSink.inputs.substitutions = [('Segmentations', os.path.join(projectid, subjectid, sessionid, 'CleanedDenoisedRFSegmentations')),
+                                        ('subjectANNLabel_', ''),
+                                        ('ANNContinuousPrediction', ''),
+                                        ('subject.nii.gz', '.nii.gz'),
+                                        ('_seg.nii.gz', '_seg.nii.gz'),
+                                        ('.nii.gz', '_seg.nii.gz'),
+                                        ('_seg_seg', '_seg')]
+
+    baw200.connect([(myLocalSegWF, SegDataSink, [('outputspec.outputBinaryLeftCaudate', 'Segmentations.@LeftCaudate'),
+                                                 ('outputspec.outputBinaryRightCaudate', 'Segmentations.@RightCaudate'),
+                                                 ('outputspec.outputBinaryLeftHippocampus', 'Segmentations.@LeftHippocampus'),
+                                                 ('outputspec.outputBinaryRightHippocampus', 'Segmentations.@RightHippocampus'),
+                                                 ('outputspec.outputBinaryLeftPutamen', 'Segmentations.@LeftPutamen'),
+                                                 ('outputspec.outputBinaryRightPutamen', 'Segmentations.@RightPutamen'),
+                                                 ('outputspec.outputBinaryLeftThalamus', 'Segmentations.@LeftThalamus'),
+                                                 ('outputspec.outputBinaryRightThalamus', 'Segmentations.@RightThalamus'),
+                                                 ('outputspec.outputBinaryLeftAccumben', 'Segmentations.@LeftAccumben'),
+                                                 ('outputspec.outputBinaryRightAccumben', 'Segmentations.@RightAccumben'),
+                                                 ('outputspec.outputBinaryLeftGlobus', 'Segmentations.@LeftGlobus'),
+                                                 ('outputspec.outputBinaryRightGlobus', 'Segmentations.@RightGlobus'),
+                                                 ('outputspec.outputLabelImageName', 'Segmentations.@LabelImageName'),
+                                                 ('outputspec.outputCSVFileName', 'Segmentations.@CSVFileName')]),
+                    # (myLocalSegWF, SegDataSink, [('outputspec.cleaned_labels', 'Segmentations.@cleaned_labels')])
+                   ])
+
     if phase == 'baseline':
         baw201.connect([(outputsSpec, DataSink,  # TODO: change to myLocalTCWF -> DataSink
                                    [(('t1_average', convertToList), 'Baseline.@t1_average'),
@@ -212,6 +252,7 @@ def baseline_workflow(projectid, subjectid, sessionid, master_config, phase='bas
         baw201.connect([(FixWMNode, AccumulateLikeTissuePosteriorsNode, [('UpdatedPosteriorsList', 'posteriorImages')]),
                         (AccumulateLikeTissuePosteriorsNode, DataSink, [('AccumulatePriorsList',
                                                                          'ACCUMULATED_POSTERIORS.@AccumulateLikeTissuePosteriorsOutputDir')])])
+
 
     else:
         raise NotImplementedError

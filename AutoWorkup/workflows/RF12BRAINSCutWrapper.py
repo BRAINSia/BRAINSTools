@@ -107,8 +107,8 @@ class RF12BRAINSCutWrapper(CommandLine):
     print "^" * 100
     print "PYTHON EXEC: ", sys.executable
     print "VERSION: ", sys.version
-    if sys.version[:2] != '2.7':
-        raise NotImplementedError
+    # if sys.version[:2] != '2.7':
+    #     raise NotImplementedError
     # END HACK
 
     input_spec = RF12BRAINSCutWrapperCLInputSpec

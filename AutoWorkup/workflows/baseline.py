@@ -114,9 +114,30 @@ def baseline_workflow(projectid, subjectid, sessionid, master_config, phase='bas
     if 'tissue_classify' in master_config['components']:
         from WorkupT1T2TissueClassify import CreateTissueClassifyWorkflow
         myLocalTCWF = CreateTissueClassifyWorkflow("TissueClassify", master_config['queue'], master_config['long_q'], interpMode)
+        from atlasNode import MakeAtlasNode
+        import os
+
+	    # if 'segmentation' in master_config['components']:
+        #    from workflows.segmentation import segmentation
+        #    sname = 'segmentation'
+        #    # sname = GenerateWFName(project, subject, session, 'segmentation')
+        onlyT1 = not(len(inputsSpec.inputs.T2s) > 0)
+        atlasNode = MakeAtlasNode(master_config['atlascache'], 'BAtlas')
+        #    segWF = segmentation(project, subject, session, master_config, atlasNode, onlyT1, pipeline_name=sname)
+        #    outputSpec = baw201.get_node('outputspec')
+        #    baw201.connect([(outputSpec, segWF, [('t1_average', 'inputspec.t1_average'),
+        #                                         ('LMIatlasToSubject_tx', 'inputspec.LMIatlasToSubject_tx'),
+        #                                         ('outputLabels', 'inputspec.inputLabels'),
+        #                                         ('posteriorImages', 'inputspec.posteriorImages'),
+        #                                         ('tc_atlas2sessionInverse_tx', 'inputspec.TissueClassifyatlasToSubjectInverseTransform'),
+        #                                         ('UpdatedPosteriorsList', 'inputspec.UpdatedPosteriorsList'),
+        #                                         ('outputHeadLabels', 'inputspec.inputHeadLabels')])
+        #                                        ])
+        #    if not onlyT1:
+        #        baw201.connect([(outputSpec, segWF, [('t1_average', 'inputspec.t2_average')])])
 
         myLocalSegWF = CreateBRAINSCutWorkflow(projectid, subjectid, sessionid, 'Segmentation',
-                                               master_config['queue'], master_config['long_q'], BAtlas, onlyT1)
+                                               master_config['queue'], master_config['long_q'], atlasNode, onlyT1)
 
         baw201.connect([(inputsSpec, myLocalTCWF, [('atlasDefinition', 'inputspec.atlasDefinition'),
                                                    ('T1s', 'inputspec.T1List'),
@@ -164,7 +185,7 @@ def baseline_workflow(projectid, subjectid, sessionid, master_config, phase='bas
                                         ('.nii.gz', '_seg.nii.gz'),
                                         ('_seg_seg', '_seg')]
 
-    baw200.connect([(myLocalSegWF, SegDataSink, [('outputspec.outputBinaryLeftCaudate', 'Segmentations.@LeftCaudate'),
+    baw201.connect([(myLocalSegWF, SegDataSink, [('outputspec.outputBinaryLeftCaudate', 'Segmentations.@LeftCaudate'),
                                                  ('outputspec.outputBinaryRightCaudate', 'Segmentations.@RightCaudate'),
                                                  ('outputspec.outputBinaryLeftHippocampus', 'Segmentations.@LeftHippocampus'),
                                                  ('outputspec.outputBinaryRightHippocampus', 'Segmentations.@RightHippocampus'),
@@ -255,6 +276,6 @@ def baseline_workflow(projectid, subjectid, sessionid, master_config, phase='bas
 
 
     else:
-        raise NotImplementedError
+        raise NotImplementedError("Missing valid pipeline stage! Options: 'baseline', 'longitudinal'")
 
     return baw201

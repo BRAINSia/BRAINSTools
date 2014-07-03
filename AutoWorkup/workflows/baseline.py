@@ -64,7 +64,7 @@ def baseline_workflow(projectid, subjectid, sessionid, master_config, phase='bas
     from utilities.misc import GenerateWFName
     from PipeLineFunctionHelpers import convertToList, FixWMPartitioning
     from PipeLineFunctionHelpers import UnwrapPosteriorImagesFromDictionaryFunction as flattenDict
-    from WorkupT1T2BRAINSCut import CreateBRAINSCutWorkflow
+
 
     baw201 = pe.Workflow(name=pipeline_name)
 
@@ -116,29 +116,6 @@ def baseline_workflow(projectid, subjectid, sessionid, master_config, phase='bas
         myLocalTCWF = CreateTissueClassifyWorkflow("TissueClassify", master_config['queue'], master_config['long_q'], interpMode)
         from atlasNode import MakeAtlasNode
         import os
-
-	    # if 'segmentation' in master_config['components']:
-        #    from workflows.segmentation import segmentation
-        #    sname = 'segmentation'
-        #    # sname = GenerateWFName(project, subject, session, 'segmentation')
-        onlyT1 = not(len(inputsSpec.inputs.T2s) > 0)
-        atlasNode = MakeAtlasNode(master_config['atlascache'], 'BAtlas')
-        #    segWF = segmentation(project, subject, session, master_config, atlasNode, onlyT1, pipeline_name=sname)
-        #    outputSpec = baw201.get_node('outputspec')
-        #    baw201.connect([(outputSpec, segWF, [('t1_average', 'inputspec.t1_average'),
-        #                                         ('LMIatlasToSubject_tx', 'inputspec.LMIatlasToSubject_tx'),
-        #                                         ('outputLabels', 'inputspec.inputLabels'),
-        #                                         ('posteriorImages', 'inputspec.posteriorImages'),
-        #                                         ('tc_atlas2sessionInverse_tx', 'inputspec.TissueClassifyatlasToSubjectInverseTransform'),
-        #                                         ('UpdatedPosteriorsList', 'inputspec.UpdatedPosteriorsList'),
-        #                                         ('outputHeadLabels', 'inputspec.inputHeadLabels')])
-        #                                        ])
-        #    if not onlyT1:
-        #        baw201.connect([(outputSpec, segWF, [('t1_average', 'inputspec.t2_average')])])
-
-        myLocalSegWF = CreateBRAINSCutWorkflow(projectid, subjectid, sessionid, 'Segmentation',
-                                               master_config['queue'], master_config['long_q'], atlasNode, onlyT1)
-
         baw201.connect([(inputsSpec, myLocalTCWF, [('atlasDefinition', 'inputspec.atlasDefinition'),
                                                    ('T1s', 'inputspec.T1List'),
                                                    (('T1s', getAllT1sLength), 'inputspec.T1_count'),
@@ -159,11 +136,6 @@ def baseline_workflow(projectid, subjectid, sessionid, master_config, phase='bas
                                                     ('outputspec.atlasToSubjectTransform', 'tc_atlas2session_tx'),
                                                     ('outputspec.atlasToSubjectInverseTransform',
                                                      'tc_atlas2sessionInverse_tx')]),
-                        (myLocalTCWF, myLocalSegWF, [('outputspec.t1_average', 'inputspec.T1Volume'),
-                                                     ('outputspec.t2_average', 'inputspec.T2Volume'),
-                                                     ('outputspec.posteriorImages', 'inputspec.posteriorDictionary'),
-                                                     ('outputspec.outputLabels', 'inputspec.RegistrationROI'),
-                                                     ('outputspec.atlasToSubjectTransform', 'inputspec.atlasToSubjectTransform')]),
                        ])
 
     dsName = "{0}_ds_{1}".format(phase, sessionid)
@@ -171,36 +143,6 @@ def baseline_workflow(projectid, subjectid, sessionid, master_config, phase='bas
     DataSink.overwrite = master_config['ds_overwrite']
     DataSink.inputs.container = '{0}/{1}/{2}'.format(projectid, subjectid, sessionid)
     DataSink.inputs.base_directory = master_config['resultdir']
-
-    SegDataSink = pe.Node(nio.DataSink(), name="CleanedDenoisedSegmentation_DS_" + str(subjectid) + "_" + str(sessionid))
-    SegDataSink.overwrite = master_config['ds_overwrite']
-    SegDataSink.inputs.base_directory = master_config['resultdir']
-    # SegDataSink.inputs.regexp_substitutions = GenerateOutputPattern(projectid, subjectid, sessionid,'BRAINSCut')
-    # SegDataSink.inputs.regexp_substitutions = GenerateBRAINSCutImagesOutputPattern(projectid, subjectid, sessionid)
-    SegDataSink.inputs.substitutions = [('Segmentations', os.path.join(projectid, subjectid, sessionid, 'CleanedDenoisedRFSegmentations')),
-                                        ('subjectANNLabel_', ''),
-                                        ('ANNContinuousPrediction', ''),
-                                        ('subject.nii.gz', '.nii.gz'),
-                                        ('_seg.nii.gz', '_seg.nii.gz'),
-                                        ('.nii.gz', '_seg.nii.gz'),
-                                        ('_seg_seg', '_seg')]
-
-    baw201.connect([(myLocalSegWF, SegDataSink, [('outputspec.outputBinaryLeftCaudate', 'Segmentations.@LeftCaudate'),
-                                                 ('outputspec.outputBinaryRightCaudate', 'Segmentations.@RightCaudate'),
-                                                 ('outputspec.outputBinaryLeftHippocampus', 'Segmentations.@LeftHippocampus'),
-                                                 ('outputspec.outputBinaryRightHippocampus', 'Segmentations.@RightHippocampus'),
-                                                 ('outputspec.outputBinaryLeftPutamen', 'Segmentations.@LeftPutamen'),
-                                                 ('outputspec.outputBinaryRightPutamen', 'Segmentations.@RightPutamen'),
-                                                 ('outputspec.outputBinaryLeftThalamus', 'Segmentations.@LeftThalamus'),
-                                                 ('outputspec.outputBinaryRightThalamus', 'Segmentations.@RightThalamus'),
-                                                 ('outputspec.outputBinaryLeftAccumben', 'Segmentations.@LeftAccumben'),
-                                                 ('outputspec.outputBinaryRightAccumben', 'Segmentations.@RightAccumben'),
-                                                 ('outputspec.outputBinaryLeftGlobus', 'Segmentations.@LeftGlobus'),
-                                                 ('outputspec.outputBinaryRightGlobus', 'Segmentations.@RightGlobus'),
-                                                 ('outputspec.outputLabelImageName', 'Segmentations.@LabelImageName'),
-                                                 ('outputspec.outputCSVFileName', 'Segmentations.@CSVFileName')]),
-                    # (myLocalSegWF, SegDataSink, [('outputspec.cleaned_labels', 'Segmentations.@cleaned_labels')])
-                   ])
 
     if phase == 'baseline':
         baw201.connect([(outputsSpec, DataSink,  # TODO: change to myLocalTCWF -> DataSink
@@ -219,63 +161,61 @@ def baseline_workflow(projectid, subjectid, sessionid, master_config, phase='bas
                                     (('pd_average', convertToList), 'Longitudinal.@pd_average'),
                                     (('fl_average', convertToList), 'Longitudinal.@fl_average'),
                                     (('outputLabels', convertToList), 'Longitudinal.@labels'),
-                                    (('posteriorImages', flattenDict),'TissueClassify'),
-                                    # TODO: change to myLocalLMIWF -> DataSink
-                                    ('outputLandmarksInACPCAlignedSpace', 'ACPCAlign.@outputLandmarks_ACPC'),
-                                    ('writeBranded2DImage', 'ACPCAlign.@writeBranded2DImage'),
-                                    ('BCD_ACPC_T1_CROPPED', 'ACPCAlign.@BCD_ACPC_T1_CROPPED'),
-                                    ('outputLandmarksInInputSpace', 'ACPCAlign.@outputLandmarks_Input'),
-                                    ('output_tx', 'ACPCAlign.@output_tx'),
-                                    ('LMIatlasToSubject_tx', 'ACPCAlign.@LMIatlasToSubject_tx'),
-                                    ]),
-                                 ])
-
-        currentFixWMPartitioningName = "_".join(['FixWMPartitioning', str(subjectid), str(sessionid)])
-        FixWMNode = pe.Node(interface=Function(function=FixWMPartitioning,
-                                               input_names=['brainMask', 'PosteriorsList'],
-                                               output_names=['UpdatedPosteriorsList', 'MatchingFGCodeList',
-                                                             'MatchingLabelList', 'nonAirRegionMask']),
-                            name=currentFixWMPartitioningName)
-
-        baw201.connect([(myLocalTCWF, FixWMNode, [('outputspec.outputLabels', 'brainMask'),
-                                                  (('outputspec.posteriorImages', flattenDict), 'PosteriorsList')]),
-                        (FixWMNode, outputsSpec, [('UpdatedPosteriorsList', 'UpdatedPosteriorsList')]),
-                       ])
-
-        currentBRAINSCreateLabelMapName = 'BRAINSCreateLabelMapFromProbabilityMaps_' + str(subjectid) + "_" + str(sessionid)
-        BRAINSCreateLabelMapNode = pe.Node(interface=BRAINSCreateLabelMapFromProbabilityMaps(),
-                                           name=currentBRAINSCreateLabelMapName)
-        ## TODO:  Fix the file names
-        BRAINSCreateLabelMapNode.inputs.dirtyLabelVolume = 'fixed_headlabels_seg.nii.gz'
-        BRAINSCreateLabelMapNode.inputs.cleanLabelVolume = 'fixed_brainlabels_seg.nii.gz'
-
-        baw201.connect([(FixWMNode, BRAINSCreateLabelMapNode, [('UpdatedPosteriorsList','inputProbabilityVolume'),
-                                                               ('MatchingFGCodeList', 'foregroundPriors'),
-                                                               ('MatchingLabelList', 'priorLabelCodes'),
-                                                               ('nonAirRegionMask', 'nonAirRegionMask')]),
-                        (BRAINSCreateLabelMapNode, DataSink, [('cleanLabelVolume', 'TissueClassify.@outputLabels'),
-                                                              ('dirtyLabelVolume',
-                                                               'TissueClassify.@outputHeadLabels')]),
-                        (myLocalTCWF, DataSink, [('outputspec.atlasToSubjectTransform',
-                                                  'TissueClassify.@atlas2session_tx'),
-                                                 ('outputspec.atlasToSubjectInverseTransform',
-                                                  'TissueClassify.@atlas2sessionInverse_tx')]),
-                        (FixWMNode, DataSink, [('UpdatedPosteriorsList', 'TissueClassify.@posteriors')]),
-                       ])
-
-        currentAccumulateLikeTissuePosteriorsName = 'AccumulateLikeTissuePosteriors_' + str(subjectid) + "_" + str(sessionid)
-        AccumulateLikeTissuePosteriorsNode = pe.Node(interface=Function(function=AccumulateLikeTissuePosteriors,
-                                                                        input_names=['posteriorImages'],
-                                                                        output_names=['AccumulatePriorsList',
-                                                                                      'AccumulatePriorsNames']),
-                                                     name=currentAccumulateLikeTissuePosteriorsName)
-
-        baw201.connect([(FixWMNode, AccumulateLikeTissuePosteriorsNode, [('UpdatedPosteriorsList', 'posteriorImages')]),
-                        (AccumulateLikeTissuePosteriorsNode, DataSink, [('AccumulatePriorsList',
-                                                                         'ACCUMULATED_POSTERIORS.@AccumulateLikeTissuePosteriorsOutputDir')])])
-
-
+                                    (('posteriorImages', flattenDict),'TissueClassify')
+                                   ])
     else:
         raise NotImplementedError("Missing valid pipeline stage! Options: 'baseline', 'longitudinal'")
+    baw201.connect([(outputsSpec, DataSink, # TODO: change to myLocalLMIWF -> DataSink
+                                ('outputLandmarksInACPCAlignedSpace', 'ACPCAlign.@outputLandmarks_ACPC'),
+                                ('writeBranded2DImage', 'ACPCAlign.@writeBranded2DImage'),
+                                ('BCD_ACPC_T1_CROPPED', 'ACPCAlign.@BCD_ACPC_T1_CROPPED'),
+                                ('outputLandmarksInInputSpace', 'ACPCAlign.@outputLandmarks_Input'),
+                                ('output_tx', 'ACPCAlign.@output_tx'),
+                                ('LMIatlasToSubject_tx', 'ACPCAlign.@LMIatlasToSubject_tx'),
+                                ]),
+                             ])
 
+    currentFixWMPartitioningName = "_".join(['FixWMPartitioning', str(subjectid), str(sessionid)])
+    FixWMNode = pe.Node(interface=Function(function=FixWMPartitioning,
+                                           input_names=['brainMask', 'PosteriorsList'],
+                                           output_names=['UpdatedPosteriorsList', 'MatchingFGCodeList',
+                                                         'MatchingLabelList', 'nonAirRegionMask']),
+                        name=currentFixWMPartitioningName)
+
+    baw201.connect([(myLocalTCWF, FixWMNode, [('outputspec.outputLabels', 'brainMask'),
+                                              (('outputspec.posteriorImages', flattenDict), 'PosteriorsList')]),
+                    (FixWMNode, outputsSpec, [('UpdatedPosteriorsList', 'UpdatedPosteriorsList')]),
+                   ])
+
+    currentBRAINSCreateLabelMapName = 'BRAINSCreateLabelMapFromProbabilityMaps_' + str(subjectid) + "_" + str(sessionid)
+    BRAINSCreateLabelMapNode = pe.Node(interface=BRAINSCreateLabelMapFromProbabilityMaps(),
+                                       name=currentBRAINSCreateLabelMapName)
+    ## TODO:  Fix the file names
+    BRAINSCreateLabelMapNode.inputs.dirtyLabelVolume = 'fixed_headlabels_seg.nii.gz'
+    BRAINSCreateLabelMapNode.inputs.cleanLabelVolume = 'fixed_brainlabels_seg.nii.gz'
+
+    baw201.connect([(FixWMNode, BRAINSCreateLabelMapNode, [('UpdatedPosteriorsList','inputProbabilityVolume'),
+                                                           ('MatchingFGCodeList', 'foregroundPriors'),
+                                                           ('MatchingLabelList', 'priorLabelCodes'),
+                                                           ('nonAirRegionMask', 'nonAirRegionMask')]),
+                    (BRAINSCreateLabelMapNode, DataSink, [('cleanLabelVolume', 'TissueClassify.@outputLabels'),
+                                                          ('dirtyLabelVolume',
+                                                           'TissueClassify.@outputHeadLabels')]),
+                    (myLocalTCWF, DataSink, [('outputspec.atlasToSubjectTransform',
+                                              'TissueClassify.@atlas2session_tx'),
+                                             ('outputspec.atlasToSubjectInverseTransform',
+                                              'TissueClassify.@atlas2sessionInverse_tx')]),
+                    (FixWMNode, DataSink, [('UpdatedPosteriorsList', 'TissueClassify.@posteriors')]),
+                   ])
+
+    currentAccumulateLikeTissuePosteriorsName = 'AccumulateLikeTissuePosteriors_' + str(subjectid) + "_" + str(sessionid)
+    AccumulateLikeTissuePosteriorsNode = pe.Node(interface=Function(function=AccumulateLikeTissuePosteriors,
+                                                                    input_names=['posteriorImages'],
+                                                                    output_names=['AccumulatePriorsList',
+                                                                                  'AccumulatePriorsNames']),
+                                                 name=currentAccumulateLikeTissuePosteriorsName)
+
+    baw201.connect([(FixWMNode, AccumulateLikeTissuePosteriorsNode, [('UpdatedPosteriorsList', 'posteriorImages')]),
+                    (AccumulateLikeTissuePosteriorsNode, DataSink, [('AccumulatePriorsList',
+                                                                     'ACCUMULATED_POSTERIORS.@AccumulateLikeTissuePosteriorsOutputDir')])])
     return baw201

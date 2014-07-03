@@ -62,10 +62,9 @@ def RunSubjectWorkflow(args):
     # print "These are the sessions: ", sessions
     if 'baseline' in master_config['components']:
         current_phase = 'baseline'
-        from baseline import baseline_workflow as create_wkfl
     elif 'longitudinal' in master_config['components']:
         current_phase = 'longitudinal'
-        from longitudinal import create_longitudinal as create_wkfl
+    from longitudinal import create_longitudinal as create_wkfl
 
     for session in sessions:  # TODO (future): Replace with iterable inputSpec node and add Function node for getAllFiles()
         project = database.getProjFromSession(session)
@@ -102,6 +101,21 @@ def RunSubjectWorkflow(args):
                                                                              'inputspec.atlasDefinition')]),
                                  ])
         else:
+            template_DG = pe.Node(interface=nio.DataGrabber(infields=['subject'],
+                                  outfields=['template_t1', 'outAtlasFullPath']),
+                                  name='Template_DG')
+            template_DG.inputs.base_directory = master_config['previousresult']
+            template_DG.inputs.subject = subject
+            template_DG.inputs.template = 'SUBJECT_TEMPLATES/%s/AVG_%s.nii.gz'
+            template_DG.inputs.template_args['template_t1'] = [['subject', 'T1']]
+            template_DG.inputs.field_template = {'outAtlasFullPath': 'Atlas/definitions/AtlasDefinition_%s.xml'}
+            template_DG.inputs.template_args['outAtlasFullPath'] = [['subject']]
+            template_DG.inputs.sort_filelist = True
+            template_DG.inputs.raise_on_empty = True
+
+            baw201.connect([(template_DG, sessionWorkflow[session], [('outAtlasFullPath', 'inputspec.atlasDefinition'),
+                                                                     ('template_t1', 'inputspec.template_t1')]),
+                           ])
             assert current_phase == 'longitudinal', "Phase value is unknown: {0}".format(current_phase)
 
     from utils import run_workflow, print_workflow

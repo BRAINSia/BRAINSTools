@@ -162,18 +162,22 @@ def baseline_workflow(projectid, subjectid, sessionid, master_config, phase='bas
                                     (('fl_average', convertToList), 'Longitudinal.@fl_average'),
                                     (('outputLabels', convertToList), 'Longitudinal.@labels'),
                                     (('posteriorImages', flattenDict),'TissueClassify')
-                                   ])
+                                   ]
+                        ),
+                       ]
+                      )
     else:
         raise NotImplementedError("Missing valid pipeline stage! Options: 'baseline', 'longitudinal'")
     baw201.connect([(outputsSpec, DataSink, # TODO: change to myLocalLMIWF -> DataSink
-                                ('outputLandmarksInACPCAlignedSpace', 'ACPCAlign.@outputLandmarks_ACPC'),
-                                ('writeBranded2DImage', 'ACPCAlign.@writeBranded2DImage'),
-                                ('BCD_ACPC_T1_CROPPED', 'ACPCAlign.@BCD_ACPC_T1_CROPPED'),
-                                ('outputLandmarksInInputSpace', 'ACPCAlign.@outputLandmarks_Input'),
-                                ('output_tx', 'ACPCAlign.@output_tx'),
-                                ('LMIatlasToSubject_tx', 'ACPCAlign.@LMIatlasToSubject_tx'),
-                                ]),
-                             ])
+                                [('outputLandmarksInACPCAlignedSpace', 'ACPCAlign.@outputLandmarks_ACPC'),
+                                 ('writeBranded2DImage', 'ACPCAlign.@writeBranded2DImage'),
+                                 ('BCD_ACPC_T1_CROPPED', 'ACPCAlign.@BCD_ACPC_T1_CROPPED'),
+                                 ('outputLandmarksInInputSpace', 'ACPCAlign.@outputLandmarks_Input'),
+                                 ('output_tx', 'ACPCAlign.@output_tx'),
+                                 ('LMIatlasToSubject_tx', 'ACPCAlign.@LMIatlasToSubject_tx'),]
+                    )
+                   ]
+                  )
 
     currentFixWMPartitioningName = "_".join(['FixWMPartitioning', str(subjectid), str(sessionid)])
     FixWMNode = pe.Node(interface=Function(function=FixWMPartitioning,

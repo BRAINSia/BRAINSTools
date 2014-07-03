@@ -51,21 +51,8 @@ def create_longitudinal(project, subject, session, master_config, interpMode='Li
                                phase='longitudinal',
                                interpMode=interpMode,
                                pipeline_name=pipeline_name)
-    template_DG = pe.Node(interface=nio.DataGrabber(infields=['subject'],
-                                                    outfields=['template_t1', 'outAtlasFullPath']),
-                                  name='Template_DG')
-    template_DG.inputs.base_directory = master_config['previousresult']
-    template_DG.inputs.subject = subject
-    template_DG.inputs.template = 'SUBJECT_TEMPLATES/%s/AVG_%s.nii.gz'
-    template_DG.inputs.template_args['template_t1'] = [['subject', 'T1']]
-    template_DG.inputs.field_template = {'outAtlasFullPath': 'Atlas/definitions/AtlasDefinition_%s.xml'}
-    template_DG.inputs.template_args['outAtlasFullPath'] = [['subject']]
-    template_DG.inputs.sort_filelist = True
-    template_DG.inputs.raise_on_empty = True
     inputsSpec = baw201.get_node('inputspec')
-    baw201.connect([(template_DG, inputsSpec, [('outAtlasFullPath', 'atlasDefinition'),
-                                              ('template_t1', 'template_t1')]),
-                   ])
+
     if 'segmentation' in master_config['components']:
         from workflows.segmentation import segmentation
         sname = 'segmentation'

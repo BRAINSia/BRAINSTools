@@ -5,7 +5,7 @@ AutoWorkup.py
 This program is used to generate the subject- and session-specific workflows for BRAINSTool processing
 
 Usage:
-  AutoWorkup.py [--rewrite-datasinks] [--wfrun PLUGIN] --subject ID... --pe ENV --ExperimentConfig FILE
+  AutoWorkup.py [--rewrite-datasinks] [--wfrun PLUGIN] --subject ID --pe ENV --ExperimentConfig FILE
   AutoWorkup.py -v | --version
   AutoWorkup.py -h | --help
 
@@ -86,7 +86,7 @@ def setup(argv):
 def get_subjects(argv, cache, prefix, dbfile, shuffle=True):
     import random
     _temp = OpenSubjectDatabase(cache, ['all'], prefix, dbfile)
-    subjects = argv["--subject"]  #.split(',')
+    subjects = argv["--subject"].split(',')
     if "all" in subjects:
         subjects = _temp.getAllSubjects()
     if shuffle:

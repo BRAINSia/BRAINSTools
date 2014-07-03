@@ -1590,7 +1590,7 @@ endif()
 set(BRAINSFitTestName BRAINSFitTest_ROIBSpline)
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
-  --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nrrd}
+  --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nrrd,:}
             ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nrrd
   --compareIntensityTolerance 7
   --compareRadiusTolerance 0

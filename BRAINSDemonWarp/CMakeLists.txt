@@ -8,6 +8,21 @@
 #
 # ITK
 #
+set(ITK_IO_MODULES_USED
+  ITKIOBMP
+  ITKIOBioRad
+  ITKIOGDCM
+  ITKIOGIPL
+  ITKIOJPEG
+  ITKIOLSM
+  ITKIONIFTI
+  ITKIONRRD
+  ITKIOPNG
+  ITKIOStimulate
+  ITKIOTIFF
+  ITKIOTransformInsightLegacy
+  ITKIOVTK
+  )
 find_package(ITK COMPONENTS
   ITKCommon
   ITKDisplacementField

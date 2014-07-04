@@ -8,13 +8,7 @@ project(BRAINSCommonLib)
 #
 # ITK
 #
-find_package(ITK COMPONENTS
-  ITKBinaryMathematicalMorphology
-  ITKCommon
-  ITKConnectedComponents
-  ITKDeprecated
-  ITKDisplacementField
-  ITKDistanceMap
+set(ITK_IO_MODULES_USED
   ITKIOBMP
   ITKIOBioRad
   ITKIOGDCM
@@ -28,8 +22,17 @@ find_package(ITK COMPONENTS
   ITKIOPNG
   ITKIOStimulate
   ITKIOTIFF
-  ITKIOTransformBase
+  ITKIOTransformInsightLegacy
   ITKIOVTK
+  )
+find_package(ITK COMPONENTS
+  ITKBinaryMathematicalMorphology
+  ITKCommon
+  ITKConnectedComponents
+  ITKDeprecated
+  ITKDisplacementField
+  ITKDistanceMap
+  ITKIOTransformBase
   ITKImageCompare
   ITKImageFilterBase
   ITKImageFunction
@@ -53,6 +56,7 @@ find_package(ITK COMPONENTS
   ITKThresholding
   ITKTransform
   ITKV3Compatibility
+  ${ITK_IO_MODULES_USED}
   REQUIRED
 )
 if(Slicer_BUILD_BRAINSTOOLS)

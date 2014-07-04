@@ -1,47 +1,4 @@
-
 project( GTRACT )
-
-#-----------------------------------------------------------------------------
-# Dependencies.
-#
-
-#
-# ITK
-#
-find_package(ITK COMPONENTS
-  ITKCommon
-  ITKDeprecated
-  ITKDiffusionTensorImage
-  ITKFastMarching
-  ITKIOGDCM
-  ITKIOImageBase
-  ITKIOMeta
-  ITKIONRRD
-  ITKIOSpatialObjects
-  ITKIOTransformBase
-  ITKImageAdaptors
-  ITKImageCompose
-  ITKImageFilterBase
-  ITKImageFunction
-  ITKImageGrid
-  ITKImageIntensity
-  ITKImageStatistics
-  ITKOptimizers
-  ITKRegistrationCommon
-  ITKSmoothing
-  ITKSpatialObjects
-  ITKStatistics
-  ITKThresholding
-  ITKTransform
-  ITKV3Compatibility
-  ITKVTK
-  REQUIRED
-)
-if(Slicer_BUILD_BRAINSTOOLS)
-  set(ITK_NO_IO_FACTORY_REGISTER_MANAGER 1)
-endif()
-include(${ITK_USE_FILE})
-
 #-----------------------------------------------------------------------------
 # Output directories.
 #

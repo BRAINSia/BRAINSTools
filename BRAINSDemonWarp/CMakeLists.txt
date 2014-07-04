@@ -1,40 +1,4 @@
-
 ##- project(BRAINSDemonWarp)
-
-#-----------------------------------------------------------------------------
-# Dependencies.
-#
-
-#
-# ITK
-#
-find_package(ITK COMPONENTS
-  ITKCommon
-  ITKDisplacementField
-  ITKIOImageBase
-  ITKIOMeta
-  ITKImageAdaptors
-  ITKImageCompare
-  ITKImageCompose
-  ITKImageFunction
-  ITKImageGrid
-  ITKImageIntensity
-  ITKImageStatistics
-  ITKPDEDeformableRegistration
-  ITKRegistrationCommon
-  ITKReview
-  ITKSmoothing
-  ITKSpatialObjects
-  ITKTransform
-  ITKV3Compatibility
-  ${ITK_IO_MODULES_USED}
-  REQUIRED
-)
-if(Slicer_BUILD_BRAINSTOOLS)
-  set(ITK_NO_IO_FACTORY_REGISTER_MANAGER 1)
-endif()
-include(${ITK_USE_FILE})
-
 #-----------------------------------------------------------------------------
 # Output directories.
 #

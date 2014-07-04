@@ -1,14 +1,3 @@
-#-- #NOTES from http: // www.cmake.org/Wiki/CMake_Testing_With_CTest
-#set(CTEST_CUSTOM_MEMCHECK_IGNORE
-#    $ {CTEST_CUSTOM_MEMCHECK_IGNORE}
-#    DummyExcludeMemcheckIgnoreTestSetGet
-#    )
-
-#-- #set(CTEST_CUSTOM_WARNING_MATCH
-#-- #${CTEST_CUSTOM_WARNING_MATCH}
-#-- #"{standard input}:[0-9][0-9]*: Warning: "
-#-- #)
-
 #
 # For further details regarding this file,
 # see http://www.cmake.org/Wiki/CMake_Testing_With_CTest#Customizing_CTest
@@ -18,14 +7,6 @@
 #
 #----------------------------------------------------------------------
 
-#-- #Reset maximum number of warnings so that they all show up.
-set(CTEST_CUSTOM_MAXIMUM_NUMBER_OF_WARNINGS 1000)
-set(CTEST_CUSTOM_MAXIMUM_NUMBER_OF_ERRORS   1000)
-
-# The following tests should not be run under valgrind
-set(CTEST_CUSTOM_MEMCHECK_IGNORE
-  @CTEST_CUSTOM_MEMCHECK_IGNORE@
-  )
 
 set(CTEST_EXTRA_COVERAGE_GLOB
   Source/.*/*.h
@@ -61,8 +42,24 @@ set(CTEST_CUSTOM_COVERAGE_EXCLUDE
 
   # Exclude generated cpp files
   ".*/generated_cpp/.*"
+
   )
 
+# The following tests should not be run under valgrind
+set(CTEST_CUSTOM_MEMCHECK_IGNORE
+  @CTEST_CUSTOM_MEMCHECK_IGNORE@
+  )
+
+#-- #NOTES from http: // www.cmake.org/Wiki/CMake_Testing_With_CTest
+#-- #set(CTEST_CUSTOM_WARNING_MATCH
+#-- #${CTEST_CUSTOM_WARNING_MATCH}
+#-- #"{standard input}:[0-9][0-9]*: Warning: "
+#-- #)
+
+
+#-- #Reset maximum number of warnings so that they all show up.
+set(CTEST_CUSTOM_MAXIMUM_NUMBER_OF_ERRORS   1000)
+set(CTEST_CUSTOM_MAXIMUM_NUMBER_OF_WARNINGS 1000)
 
 set(CTEST_CUSTOM_WARNING_EXCEPTION
   ${CTEST_CUSTOM_WARNING_EXCEPTION}
@@ -157,6 +154,11 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
   # Make
   "warning: jobserver unavailable"
 
+  # Suppressing warnings about duplicate libraries in Darwin
+  # At some point this may be addressed by CMake feature request:
+  # http://public.kitware.com/Bug/view.php?id=10179
+  "ld: warning: duplicate dylib"
+
   # Suppressing warnings about GL_GLEXT_LEGACY, the link reported below
   # report a similar problem with GL_GLEXT_PROTOTYPE.
   # http://lists.apple.com/archives/mac-opengl/2009/Dec/msg00081.html
@@ -205,6 +207,7 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
   "/usr/bin/ranlib: .*lib(dcmtls|oflog).a.*has no symbols"
   "ld.*has different visibility.*(libdcmdata|libdcmnet|libdcmimgle|liboflog|libofstd).a"
   "DCMTK.(ofstd|dcmdata|dcmjpls|dcmnet|dcmimage|dcmimgle|dcmpstat|dcmqrdb).(lib|include|apps).*conversion from '(size_t|SOCKET)' to '.*', possible loss of data"
+  "DCMTK"
 
   # Libs/OpenIGTLink
   "(OpenIGTLink|openigtlink).[Ss]ource.igtl"
@@ -228,11 +231,11 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
   # Python - Linux
   "dist.py.*UserWarning.*licence.*distribution option is deprecated"
   "Objects.unicodeobject.c.*warning:.*differ in signedness"
-  "[Ii]nclude.(string|unicodeobject).h.*note: expected .const char *. but argument is of type .unsigned char *."
+  "[Ii]nclude.(string|unicodeobject).h.*note: expected ‘const char *’ but argument is of type ‘unsigned char *’"
   "Modules.(getpath|signalmodule).c.*warning: ignoring return value of.*declared with attribute warn_unused_result"
   "Modules.expat.xmlparse.*warning.*discards qualifiers from pointer target type"
   # Python - Mac
-  "ranlib: file:.*libpython2.6.a.*has no symbols"
+  "ranlib: file:.*libpython2.7.a.*has no symbols"
   "python.Modules._cursesmodule.c.*warning.*may be used uninitialized in this function"
   "python.Mac.Modules.(cf|Nav).*warning: (cast|unused)"
   "python.Modules._ctypes.*warning: function declaration isn't a prototype"

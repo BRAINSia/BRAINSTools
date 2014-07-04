@@ -8,19 +8,6 @@ project( GTRACT )
 #
 # ITK
 #
-set(ITK_IO_MODULES_USED
-  ITKIOBMP
-  ITKIOBioRad
-  ITKIOGIPL
-  ITKIOJPEG
-  ITKIOLSM
-  ITKIONIFTI
-  ITKIOPNG
-  ITKIOStimulate
-  ITKIOTIFF
-  ITKIOTransformInsightLegacy
-  ITKIOVTK
-  )
 find_package(ITK COMPONENTS
   ITKCommon
   ITKDeprecated
@@ -48,7 +35,6 @@ find_package(ITK COMPONENTS
   ITKTransform
   ITKV3Compatibility
   ITKVTK
-  ${ITK_IO_MODULES_USED}
   REQUIRED
 )
 if(Slicer_BUILD_BRAINSTOOLS)

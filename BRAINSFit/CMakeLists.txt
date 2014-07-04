@@ -8,6 +8,22 @@
 #
 # ITK
 #
+set(ITK_IO_MODULES_USED
+  ITKIOBMP
+  ITKIOBioRad
+  ITKIOGDCM
+  ITKIOGIPL
+  ITKIOJPEG
+  ITKIOLSM
+  ITKIOMeta
+  ITKIONIFTI
+  ITKIONRRD
+  ITKIOPNG
+  ITKIOStimulate
+  ITKIOTIFF
+  ITKIOTransformInsightLegacy
+  ITKIOVTK
+  )
 find_package(ITK COMPONENTS
   ITKCommon
   ITKIOImageBase
@@ -20,6 +36,7 @@ find_package(ITK COMPONENTS
   ITKSmoothing
   ITKSpatialObjects
   ITKTransform
+  ${ITK_IO_MODULES_USED}
   REQUIRED
 )
 if(Slicer_BUILD_BRAINSTOOLS)

@@ -1,5 +1,4 @@
 cmake_minimum_required(VERSION 2.8.7)
-cmake_policy(VERSION 2.8.7)
 
 set(LOCAL_PROJECT_NAME BRAINSTools)
 set(PRIMARY_PROJECT_NAME ${LOCAL_PROJECT_NAME})

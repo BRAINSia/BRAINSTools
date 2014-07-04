@@ -22,7 +22,92 @@ if(BRAINSTools_REQUIRES_VTK)
 #  message("VTK_USE_FILE:${VTK_USE_FILE}")
 #  message("VTK_INCLUDE_DIRS:${VTK_INCLUDE_DIRS}")
   include_directories(${VTK_INCLUDE_DIRS})
+  if(Slicer_BUILD_BRAINSTOOLS)
+    set(ITK_VTK_COMPONENTS
+      ITKIOVTK
+      ITKVTK
+      ITKVtkGlue
+    )
+  endif()
 endif()
+
+#-----------------------------------------------------------------------------
+set(ITK_IO_MODULES_USED "")
+find_package(ITK COMPONENTS
+  ITKAnisotropicSmoothing
+  ITKBinaryMathematicalMorphology
+  ITKCommon
+  ITKConnectedComponents
+  ITKCurvatureFlow
+  ITKDeprecated
+  ITKDiffusionTensorImage
+  ITKDisplacementField
+  ITKDistanceMap
+  ITKFFT
+  ITKFastMarching
+  ITKHDF5
+  ITKIOBMP
+  ITKIOBioRad
+  ITKIODCMTK
+  ITKIOGDCM
+  ITKIOGE
+  ITKIOGIPL
+  ITKIOImageBase
+  ITKIOJPEG
+  ITKIOLSM
+  ITKIOMeta
+  ITKIONIFTI
+  ITKIONRRD
+  ITKIOPNG
+  ITKIORAW
+  ITKIOSpatialObjects
+  ITKIOStimulate
+  ITKIOTIFF
+  ITKIOTransformBase
+  ITKIOXML
+  ITKImageAdaptors
+  ITKImageCompare
+  ITKImageCompose
+  ITKImageFeature
+  ITKImageFilterBase
+  ITKImageFunction
+  ITKImageFusion
+  ITKImageGradient
+  ITKImageGrid
+  ITKImageIntensity
+  ITKImageSources
+  ITKImageStatistics
+  ITKLabelMap
+  ITKLabelVoting
+  ITKLevelSets
+  ITKMathematicalMorphology
+  ITKMesh
+  ITKMetricsv4
+  ITKOptimizers
+  ITKOptimizersv4
+  ITKPDEDeformableRegistration
+  ITKQuadEdgeMesh
+  ITKQuadEdgeMeshFiltering
+  ITKRegionGrowing
+  ITKRegistrationCommon
+  ITKRegistrationMethodsv4
+  ITKReview
+  ITKSmoothing
+  ITKSpatialObjects
+  ITKStatistics
+  ITKTestKernel
+  ITKThresholding
+  ITKTransform
+  ITKV3Compatibility
+  ${ITK_VTK_COMPONENTS}
+  ${ITK_IO_MODULES_USED}
+  REQUIRED
+)
+if(Slicer_BUILD_BRAINSTOOLS)
+  set(ITK_NO_IO_FACTORY_REGISTER_MANAGER 1)
+endif()
+include(${ITK_USE_FILE})
+
 
 #-----------------------------------------------------------------------------
 find_package(SlicerExecutionModel REQUIRED GenerateCLP)

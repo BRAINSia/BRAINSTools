@@ -1,4 +1,44 @@
+
 ##- project(iccdefRegistrationNew)
+
+#-----------------------------------------------------------------------------
+# Dependencies.
+#
+
+#
+# ITK
+#
+find_package(ITK COMPONENTS
+  ITKCommon
+  ITKDeprecated
+  ITKDisplacementField
+  ITKDistanceMap
+  ITKFFT
+  ITKIOImageBase
+  ITKIOMeta
+  ITKIOSpatialObjects
+  ITKIOTransformBase
+  ITKImageCompare
+  ITKImageFeature
+  ITKImageFilterBase
+  ITKImageFunction
+  ITKImageGrid
+  ITKImageIntensity
+  ITKImageStatistics
+  ITKPDEDeformableRegistration
+  ITKRegistrationCommon
+  ITKReview
+  ITKSmoothing
+  ITKSpatialObjects
+  ITKThresholding
+  ITKTransform
+  ITKV3Compatibility
+  REQUIRED
+)
+if(Slicer_BUILD_BRAINSTOOLS)
+  set(ITK_NO_IO_FACTORY_REGISTER_MANAGER 1)
+endif()
+include(${ITK_USE_FILE})
 
 #-------------------------------------------------------------------------------
 # OUTPUT DIRECTORIES

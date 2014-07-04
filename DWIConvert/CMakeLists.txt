@@ -1,4 +1,28 @@
-project (DWIConvert)
+
+project(DWIConvert)
+
+#-----------------------------------------------------------------------------
+# Dependencies.
+#
+
+#
+# ITK
+#
+find_package(ITK COMPONENTS
+  ITKCommon
+  ITKIODCMTK
+  ITKIOImageBase
+  ITKIONRRD
+  ITKIORAW
+  ITKImageIntensity
+  ITKImageStatistics
+  ITKTestKernel
+  REQUIRED
+)
+if(Slicer_BUILD_BRAINSTOOLS)
+  set(ITK_NO_IO_FACTORY_REGISTER_MANAGER 1)
+endif()
+include(${ITK_USE_FILE})
 
 #-----------------------------------------------------------------------------
 enable_testing()

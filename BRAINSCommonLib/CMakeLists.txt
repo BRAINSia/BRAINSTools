@@ -1,4 +1,64 @@
+
 project(BRAINSCommonLib)
+
+#-----------------------------------------------------------------------------
+# Dependencies.
+#
+
+#
+# ITK
+#
+find_package(ITK COMPONENTS
+  ITKBinaryMathematicalMorphology
+  ITKCommon
+  ITKConnectedComponents
+  ITKDeprecated
+  ITKDisplacementField
+  ITKDistanceMap
+  ITKIOBMP
+  ITKIOBioRad
+  ITKIOGDCM
+  ITKIOGIPL
+  ITKIOImageBase
+  ITKIOJPEG
+  ITKIOLSM
+  ITKIOMeta
+  ITKIONIFTI
+  ITKIONRRD
+  ITKIOPNG
+  ITKIOStimulate
+  ITKIOTIFF
+  ITKIOTransformBase
+  ITKIOVTK
+  ITKImageCompare
+  ITKImageFilterBase
+  ITKImageFunction
+  ITKImageGrid
+  ITKImageIntensity
+  ITKImageStatistics
+  ITKLabelMap
+  ITKLabelVoting
+  ITKLevelSets
+  ITKMathematicalMorphology
+  ITKMetricsv4
+  ITKOptimizersv4
+  ITKPDEDeformableRegistration
+  ITKRegionGrowing
+  ITKRegistrationCommon
+  ITKRegistrationMethodsv4
+  ITKSmoothing
+  ITKSpatialObjects
+  ITKStatistics
+  ITKTestKernel
+  ITKThresholding
+  ITKTransform
+  ITKV3Compatibility
+  REQUIRED
+)
+if(Slicer_BUILD_BRAINSTOOLS)
+  set(ITK_NO_IO_FACTORY_REGISTER_MANAGER 1)
+endif()
+include(${ITK_USE_FILE})
 
 #-----------------------------------------------------------------------------
 # Output directories.

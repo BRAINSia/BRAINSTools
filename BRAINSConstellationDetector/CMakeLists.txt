@@ -1,4 +1,39 @@
+
 ##- project(BRAINSConstellationDetector)
+
+#-----------------------------------------------------------------------------
+# Dependencies.
+#
+
+#
+# ITK
+#
+find_package(ITK COMPONENTS
+  ITKCommon
+  ITKHDF5
+  ITKIOImageBase
+  ITKIOTransformBase
+  ITKImageFilterBase
+  ITKImageFunction
+  ITKImageFusion
+  ITKImageGrid
+  ITKImageIntensity
+  ITKImageStatistics
+  ITKRegistrationCommon
+  ITKSmoothing
+  ITKSpatialObjects
+  ITKStatistics
+  ITKThresholding
+  ITKTransform
+  ITKVTK
+  ITKVtkGlue
+  REQUIRED
+)
+if(Slicer_BUILD_BRAINSTOOLS)
+  set(ITK_NO_IO_FACTORY_REGISTER_MANAGER 1)
+endif()
+include(${ITK_USE_FILE})
+
 #-----------------------------------------------------------------------------
 # Output directories.
 #

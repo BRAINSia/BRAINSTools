@@ -1,8 +1,22 @@
+#-----------------------------------------------------------------------------
+# Dependencies.
+#
 
-if(NOT ITK_FOUND) #See if it has already been found because this is a nested project
-  find_package(ITK REQUIRED)
-  include(${ITK_USE_FILE})
+#
+# ITK
+#
+find_package(ITK COMPONENTS
+  ITKCommon
+  ITKIOImageBase
+  ITKImageGrid
+  ITKImageIntensity
+  ITKVTK
+  REQUIRED
+)
+if(Slicer_BUILD_BRAINSTOOLS)
+  set(ITK_NO_IO_FACTORY_REGISTER_MANAGER 1)
 endif()
+include(${ITK_USE_FILE}))
 
 set(VTK_LIBRARIES QVTK vtkCommon vtkRendering)
 

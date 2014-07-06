@@ -139,6 +139,15 @@ endif()
 #-----------------------------------------------------------------------------
 enable_testing()
 include(CTest)
+#-----------------------------------------------------------------------------
+# CTestCustom
+#-----------------------------------------------------------------------------
+if(BUILD_TESTING AND NOT Slicer_BUILD_BRAINSTOOLS)
+  configure_file(
+    CMake/CTestCustom.cmake.in
+    ${CMAKE_CURRENT_BINARY_DIR}/CTestCustom.cmake
+    @ONLY)
+endif()
 
 # Some test are failing due to inadequate test construction, but
 # the code seems to do the correct thing on real data.

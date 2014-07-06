@@ -17,6 +17,15 @@ set( SOURCE_DOWNLOAD_CACHE ${CMAKE_CURRENT_LIST_DIR}/ExternalSources )
 #-----------------------------------------------------------------------------
 enable_testing()
 include(CTest)
+#-----------------------------------------------------------------------------
+# CTestCustom
+#-----------------------------------------------------------------------------
+if(BUILD_TESTING AND NOT Slicer_BUILD_BRAINSTOOLS)
+  configure_file(
+    CMake/CTestCustom.cmake.in
+    ${CMAKE_CURRENT_BINARY_DIR}/CTestCustom.cmake
+    @ONLY)
+endif()
 
 #-----------------------------------------------------------------------------
 # Add needed flag for gnu on linux like enviroments to build static common libs
@@ -374,15 +383,6 @@ if(verbose)
   endforeach()
 endif()
 
-#-----------------------------------------------------------------------------
-# CTestCustom
-#-----------------------------------------------------------------------------
-if(BUILD_TESTING AND NOT Slicer_BUILD_BRAINSTOOLS)
-  configure_file(
-    CMake/CTestCustom.cmake.in
-    ${CMAKE_CURRENT_BINARY_DIR}/CTestCustom.cmake
-    @ONLY)
-endif()
 
 #------------------------------------------------------------------------------
 # Configure and build

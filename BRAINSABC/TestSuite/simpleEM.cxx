@@ -268,7 +268,7 @@ int simpleRunEMS( std::string t1Volume,
     }
 
   // Write the secondary outputs
-  if( true )
+  // if( true )
     {
     std::cerr << "Writing filtered and bias corrected images...\n";
     std::vector<InputImagePointer> imgset = segfilter->GetCorrected();

@@ -152,7 +152,9 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
   //================================= SET SCALES AND OPTIMIZERS =============================================
   GenericOptimizerType::Pointer optimizer;
 
+#if 0
   std::cout << "Transform Number of Parameters = " << m_Transform->GetNumberOfParameters() << std::endl;
+#endif
   if( m_Transform->GetNumberOfParameters() == 12 )     //  Affine -> estimate scales automatically
     {
     typedef itk::RegistrationParameterScalesFromPhysicalShift<MetricType> ScalesEstimatorType;
@@ -185,7 +187,9 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
     // For versor transforms we need to initialize the center of rotation. It can be done by setting
     // Fixed parameters that are derived from the center of mass of the fixed image.
     //
+#if 0
     std::cout << "Versor transform fixed parameters are set from fixed image's center of mass ... " << std::endl;
+#endif
     typedef typename itk::ImageMomentsCalculator< FixedImageType >  FixedImageCalculatorType;
     typename FixedImageCalculatorType::Pointer fixedCalculator = FixedImageCalculatorType::New();
     fixedCalculator->SetImage( m_FixedImage );
@@ -199,7 +203,9 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
       fixedParameters[i] = fixedCenter[i];
       }
     m_Transform->SetFixedParameters( fixedParameters );
+#if 0
     std::cout << "Versor Transform Fixed Parameters: " << fixedParameters << "." << std::endl;
+#endif
 
     const double translationScale  = 1.0 / m_TranslationScale;
     const double reproportionScale = 1.0 / m_ReproportionScale;
@@ -257,7 +263,9 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
       itkGenericExceptionMacro(<< "ERROR: The optimization transform does not have sufficient number of parameters.");
       }
       // end of versor scaling
+#if 0
     std::cout << "Initializer, optimizerScales: " << optimizerScales << "." << std::endl;
+#endif
 
     typedef itk::RegularStepGradientDescentOptimizerv4<double> VersorOptimizerType;
     typename VersorOptimizerType::Pointer versorOptimizer = VersorOptimizerType::New();
@@ -297,7 +305,9 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
       shrinkFactorsPerDimension[d] = factors[n];
       }
     shrinkFactorsPerDimensionForAllLevels.push_back( shrinkFactorsPerDimension );
+#if 0
     std::cout << "  Shrink factors (level " << n+1 << " out of " << numberOfLevels << "): " << shrinkFactorsPerDimension << std::endl;
+#endif
     }
 
    // Get smoothing sigmas
@@ -412,6 +422,7 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
   this->m_CompositeTransform->ClearTransformQueue();
   this->m_CompositeTransform->AddTransform( this->m_Transform );
 
+#if 0
   if ( true ) // add DebugLevel here.
     {
     std::cout << "Write the output transform of the registration filter ..." << std::endl;
@@ -430,11 +441,14 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
       }
     }
   std::cout << "\n---After registration:---";
+#endif
+#if 0
   typename TransformType::MatrixType matrix = m_Transform->GetMatrix();
   typename TransformType::OffsetType offset = m_Transform->GetOffset();
   std::cout << std::endl << "Matrix = " << std::endl << matrix << std::endl;
   std::cout << "Offset = " << offset << std::endl;
   std::cout << "--------------" << std::endl << std::endl;
+#endif
 }
 
 /*

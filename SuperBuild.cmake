@@ -306,6 +306,7 @@ list(APPEND ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS
 
   ${PYTHON_INSTALL_CMAKE_ARGS}
 
+  USE_AutoWorkup:BOOL
   USE_GTRACT:BOOL
   USE_BRAINSFit:BOOL
   USE_BRAINSTalairach:BOOL
@@ -397,7 +398,7 @@ endif()
 ## 8 - Run tests that fail due to incomplete test building, these are good ideas for test that we don't have time to make robust)
 ## 9 - Run silly tests that don't have much untility
 set(BRAINSTools_MAX_TEST_LEVEL 3 CACHE STRING "Testing level for managing test burden")
-#message("BRAINSTOOLS_EXTERNAL_PROJECT_ARGS:${BRAINSTOOLS_EXTERNAL_PROJECT_ARGS}")
+#message("ZZZ ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_ARGS:${${${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_ARGS}}")
 set(proj ${LOCAL_PROJECT_NAME})
 ExternalProject_Add(${proj}
   DEPENDS ${${LOCAL_PROJECT_NAME}_DEPENDENCIES}
@@ -408,7 +409,7 @@ ExternalProject_Add(${proj}
   CMAKE_ARGS
     --no-warn-unused-cli # HACK Only expected variables should be passed down.
     ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
-    ${BRAINSTOOLS_EXTERNAL_PROJECT_ARGS}
+    ${${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_ARGS}
     -DBRAINSTools_MAX_TEST_LEVEL:STRING=${BRAINSTools_MAX_TEST_LEVEL}
     -D${LOCAL_PROJECT_NAME}_SUPERBUILD:BOOL=OFF
     -DANTs_SOURCE_DIR:PATH=${ANTs_SOURCE_DIR}

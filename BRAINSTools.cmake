@@ -24,9 +24,13 @@ if(BRAINSTools_REQUIRES_VTK)
   include_directories(${VTK_INCLUDE_DIRS})
   if(Slicer_BUILD_BRAINSTOOLS)
     set(ITK_VTK_COMPONENTS
-      ITKIOVTK
-      ITKVTK
-      ITKVtkGlue
+        ITKIOVTK
+        ITKVTK
+        ITKVtkGlue
+    )
+  else()
+    set(ITK_VTK_COMPONENTS
+        ITKVtkGlue
     )
   endif()
 endif()

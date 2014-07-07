@@ -7,6 +7,14 @@ set(${proj}_DEPENDENCIES "zlib")
   list(APPEND ${proj}_DEPENDENCIES DCMTK)
 #endif()
 
+if(${LOCAL_PROJECT_NAME}_USE_QT) ## QT requires VTK support in ITK
+  list(APPEND ${proj}_DEPENDENCIES VTK)
+  set( ITK_VTK_OPTIONS
+    -DVTK_DIR:PATH=${VTK_DIR}
+    -DModule_ITKVtkGlue:BOOL=${${LOCAL_PROJECT_NAME}_USE_QT}  ## If building with GUI, then need ITKVtkGlue
+  )
+endif()
+
 # Include dependent projects if any
 ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj}_DEPENDENCIES)
 
@@ -45,7 +53,7 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       -DITKV3_COMPATIBILITY:BOOL=ON
       -DITK_BUILD_DEFAULT_MODULES:BOOL=ON
       -DModule_ITKReview:BOOL=ON
-      -DModule_ITKVtkGlue:BOOL=${${LOCAL_PROJECT_NAME}_USE_QT}  ## If building with GUI, then need ITKVtkGlue
+      ${ITK_VTK_OPTIONS}
       -DModule_MGHIO:BOOL=ON        #To provide FreeSurfer Compatibility
       -DBUILD_SHARED_LIBS:BOOL=OFF
       -DITK_INSTALL_NO_DEVELOPMENT:BOOL=ON

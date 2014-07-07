@@ -45,6 +45,8 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       -DITKV3_COMPATIBILITY:BOOL=ON
       -DITK_BUILD_DEFAULT_MODULES:BOOL=ON
       -DModule_ITKReview:BOOL=ON
+      -DModule_ITKVtkGlue:BOOL=${${LOCAL_PROJECT_NAME}_USE_QT}  ## If building with GUI, then need ITKVtkGlue
+      -DModule_MGHIO:BOOL=ON        #To provide FreeSurfer Compatibility
       -DBUILD_SHARED_LIBS:BOOL=OFF
       -DITK_INSTALL_NO_DEVELOPMENT:BOOL=ON
       -DKWSYS_USE_MD5:BOOL=ON # Required by SlicerExecutionModel

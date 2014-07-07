@@ -60,6 +60,7 @@ find_package(ITK COMPONENTS
   ITKIONRRD
   ITKIOPNG
   ITKIORAW
+  MGHIO
   ITKIOSpatialObjects
   ITKIOStimulate
   ITKIOTIFF

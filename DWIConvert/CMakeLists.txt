@@ -5,22 +5,9 @@ enable_testing()
 
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR} ${CMAKE_MODULE_PATH})
 
-#
-# TEMPORARY FIX -- added itkDCMTKFileReader.cxx locally until
-# the next ITK blockpoint release.
-if("${ITK_VERSION_MAJOR}" VERSION_GREATER "3"
-    AND "${ITK_VERSION_MINOR}" VERSION_GREATER "5"
-    AND "${ITK_VERSION_PATCH}" VERSION_GREATER "0")
-message("ITK Version 4.6.1 and greater no longer require fix for itk::DCMTKFileReader
-itkDCMTKFileReader.cxx & itkDCMTKFileReader.h can be removed from the repository,
-and itkDCMTKFileReader.cxx can be removed from DWIConvertSupportLib_SRCS variable
-in DWIConvert/CMakeLists.txt")
-endif()
-
 set(DWIConvertSupportLib_SRCS
   FSLToNrrd.cxx
   NrrdToFSL.cxx
-  itkDCMTKFileReader.cxx
   )
 
 set(DWIConvertTest_SRC)

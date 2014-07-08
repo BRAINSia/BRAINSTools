@@ -7,12 +7,8 @@ set(${proj}_DEPENDENCIES "zlib")
   list(APPEND ${proj}_DEPENDENCIES DCMTK)
 #endif()
 
-if(${LOCAL_PROJECT_NAME}_USE_QT) ## QT requires VTK support in ITK
+if(BRAINSTools_REQUIRES_VTK) ## QT requires VTK support in ITK
   list(APPEND ${proj}_DEPENDENCIES VTK)
-  set( ITK_VTK_OPTIONS
-    -DVTK_DIR:PATH=${VTK_DIR}
-    -DModule_ITKVtkGlue:BOOL=${${LOCAL_PROJECT_NAME}_USE_QT}  ## If building with GUI, then need ITKVtkGlue
-  )
 endif()
 
 # Include dependent projects if any
@@ -29,6 +25,13 @@ if(DEFINED ITK_DIR AND NOT EXISTS ${ITK_DIR})
 endif()
 
 if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
+
+  if(BRAINSTools_REQUIRES_VTK) ## QT requires VTK support in ITK
+    set( ITK_VTK_OPTIONS
+      -DVTK_DIR:PATH=${VTK_DIR}
+      -DModule_ITKVtkGlue:BOOL=ON  ## If building with GUI, then need ITKVtkGlue
+    )
+  endif()
 
   if(NOT DEFINED git_protocol)
       set(git_protocol "git")

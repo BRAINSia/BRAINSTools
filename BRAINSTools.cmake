@@ -10,9 +10,6 @@ set(CMAKE_MODULE_PATH
   )
 
 #-----------------------------------------------------------------------------
-if(Slicer_BUILD_BRAINSTOOLS OR USE_AutoWorkup OR USE_GTRACT OR USE_BRAINSTalairach OR USE_BRAINSSurfaceTools)
-  set(BRAINSTools_REQUIRES_VTK ON)
-endif()
 if(BRAINSTools_REQUIRES_VTK)
 #  message("VTK_DIR:${VTK_DIR}")
   find_package(VTK REQUIRED)
@@ -28,11 +25,12 @@ if(BRAINSTools_REQUIRES_VTK)
         ITKVTK
         ITKVtkGlue
     )
-  else()
+  else()  ## Not Slicer build
     set(ITK_VTK_COMPONENTS
         ITKVtkGlue
     )
   endif()
+  message(STATUS "Using ITKVtkGlue: ${ITK_VTK_COMPONENTS}")
 endif()
 
 #-----------------------------------------------------------------------------

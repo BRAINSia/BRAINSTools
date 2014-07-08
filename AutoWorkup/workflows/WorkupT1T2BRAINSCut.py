@@ -33,11 +33,11 @@ def CreateLabelMap(listOfImages, LabelImageName, CSVFileName, posteriorDictionar
     """
         seg = sitk.Cast(initial_seg, sitk.sitkUInt8)
         print "AA", initial_seg
-        print "BB", dict(sitk.Statistics(seg))
+        # print "BB", dict(sitk.Statistics(seg))
         exclude_Mask = sitk.Cast(sitk.BinaryThreshold(probMapOfExclusion, percentageThreshold, 1.0, 0, 1), sitk.sitkUInt8)
-        print "CC", dict(sitk.Statistics(exclude_Mask))
+        # print "CC", dict(sitk.Statistics(exclude_Mask))
         cleanedUpSeg = seg * exclude_Mask
-        print "DD", dict(sitk.Statistics(cleanedUpSeg))
+        # print "DD", dict(sitk.Statistics(cleanedUpSeg))
         return cleanedUpSeg
 
     def CleanUpGMSegmentationWithWMCSF(initial_seg_fn, posteriorDictionary, WMThreshold, CSFThreshold):
@@ -122,11 +122,11 @@ def CreateLabelMap(listOfImages, LabelImageName, CSVFileName, posteriorDictionar
         value = valueDict[name]
         if ls.HasLabel(value):
             # print "Displaying: ", name, value
-            myMeasurementMap = ls.GetMeasurementMap(value)
-            dictKeys = myMeasurementMap.GetVectorOfMeasurementNames()
-            dictValues = myMeasurementMap.GetVectorOfMeasurementValues()
-            measurementDict = dict(zip(dictKeys, dictValues))
-            structVolume = ImageSpacing[0] * ImageSpacing[1] * ImageSpacing[2] * measurementDict['Count']
+            # myMeasurementMap = ls.GetMeasurementMap(value)
+            # dictKeys = myMeasurementMap.GetVectorOfMeasurementNames()
+            # dictValues = myMeasurementMap.GetVectorOfMeasurementValues()
+            # measurementDict = dict(zip(dictKeys, dictValues))
+            structVolume = ImageSpacing[0] * ImageSpacing[1] * ImageSpacing[2] * ls.GetCount(value) # measurementDict['Count']
             writeDictionary['Volume_mm3'] = structVolume
             writeDictionary['Structure'] = name
             writeDictionary['LabelCode'] = value

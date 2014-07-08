@@ -4,7 +4,7 @@ def MakeAtlasNode(atlasDirectory, name):
 
     from utilities import atlas_file_names, atlas_file_keys, atlas_outputs_filename_match
 
-    node = pe.Node(interface=nio.DataGrabber(outfields=atlas_file_keys),
+    node = pe.Node(interface=nio.DataGrabber(force_output=False, outfields=atlas_file_keys),
                      run_without_submitting=True,
                      name=name)
     node.inputs.base_directory = atlasDirectory

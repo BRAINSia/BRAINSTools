@@ -595,7 +595,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
   const ProbabilityImageVectorType & probabilityMaps = probAllDistributions;
 
   std::vector<RegionStats> outputStats;
-  typedef vnl_matrix<FloatingPrecision> MatrixType;
+
   // IPEK CombinedComputeDistributions is also used by
   // LLSBiasCorrector which unfortunately does NOT keep track of the
   // types of input images.  So there may need to be a custom version
@@ -637,9 +637,6 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
   typename RegionStats::MeanMapType &currMeans,
   const MapOfInputImageVectors & intensityImages)
 {
-  typedef vnl_matrix<FloatingPrecision>         MatrixType;
-  typedef vnl_matrix_inverse<FloatingPrecision> MatrixInverseType;
-
   // FOR IPEK & GARY -- this is a stopgap -- even though we use a map
   // of image lists instead of an image list, we're still computing
   // ImageList.size() * ImageList.size() covariance.

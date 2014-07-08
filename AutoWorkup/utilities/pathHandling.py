@@ -76,21 +76,24 @@ def file_replace(in_file, out_file, pattern, repl):
     return True
 
 
-def create_atlas_xml(old_dir, new_dir, xml_file='ExtendedAtlasDefinition.xml'):
-    in_file = os.path.join(old_dir, xml_file + '.in')
-    out_file = os.path.join(new_dir, xml_file)
-    return file_replace(in_file, out_file, "@ATLAS_DIRECTORY@", new_dir)
-
-
 def clone_atlas_dir(cachedir, atlasdir):
     from distutils.dir_util import copy_tree, remove_tree
+    import stat
 
-    old_dir = validatePath(atlasdir, False, True)
     new_dir = os.path.join(cachedir, 'Atlas')
-    if os.path.exists(new_dir):
-        remove_tree(new_dir, verbose=True)
-    newfiles = copy_tree(old_dir, new_dir, preserve_mode=1, preserve_times=1, verbose=True)
-    for fname in newfiles:
-        assert os.path.isfile(fname)
-    assert create_atlas_xml(old_dir, new_dir)
+    print "Searching for atlas directory in cache..."
+    if not os.path.exists(new_dir):
+        print "Copying new atlas to cache directory..."
+        old_dir = validatePath(atlasdir, False, True)
+        newfiles = copy_tree(old_dir, new_dir, preserve_mode=1, preserve_times=1, verbose=True)
+        xml_file='ExtendedAtlasDefinition.xml'
+        old_xml = os.path.join(old_dir, xml_file + '.in')
+        new_xml = os.path.join(new_dir, xml_file)
+        assert file_replace(old_xml, new_xml, "@ATLAS_DIRECTORY@", new_dir)
+        newfiles.append(new_xml)
+        for fname in newfiles:
+            os.chmod(fname, stat.S_IRUSR | stat.S_IRGRP | stat.S_IROTH)
+            assert os.path.isfile(fname)
+    else:
+        print "Atlas directory found at {0}".format(new_dir)
     return new_dir

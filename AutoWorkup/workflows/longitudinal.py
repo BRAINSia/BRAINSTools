@@ -28,8 +28,7 @@ Examples:
 
 """
 
-def create_longitudinal(project, subject, session, master_config, interpMode='Linear',
-                          pipeline_name=''):
+def create_longitudinal(project, subject, session, master_config, interpMode='Linear', pipeline_name=''):
     """
     create longitudinal workflow on a single session
 
@@ -44,7 +43,6 @@ def create_longitudinal(project, subject, session, master_config, interpMode='Li
     import nipype.pipeline.engine as pe
     import nipype.interfaces.io as nio
 
-    from atlasNode import MakeAtlasNode
     from baseline import baseline_workflow as create_baseline
 
     baw201 = create_baseline(project, subject, session, master_config,
@@ -58,14 +56,14 @@ def create_longitudinal(project, subject, session, master_config, interpMode='Li
         sname = 'segmentation'
         # sname = GenerateWFName(project, subject, session, 'segmentation')
         onlyT1 = not(len(inputsSpec.inputs.T2s) > 0)
-        atlasNode = MakeAtlasNode(master_config['atlascache'], 'BAtlas')
-        segWF = segmentation(project, subject, session, master_config, atlasNode, onlyT1, pipeline_name=sname)
+        segWF = segmentation(project, subject, session, master_config, onlyT1, pipeline_name=sname)
         outputSpec = baw201.get_node('outputspec')
         baw201.connect([(outputSpec, segWF, [('t1_average', 'inputspec.t1_average'),
                                              ('LMIatlasToSubject_tx', 'inputspec.LMIatlasToSubject_tx'),
                                              ('outputLabels', 'inputspec.inputLabels'),
                                              ('posteriorImages', 'inputspec.posteriorImages'),
-                                             ('tc_atlas2sessionInverse_tx', 'inputspec.TissueClassifyatlasToSubjectInverseTransform'),
+                                             ('tc_atlas2sessionInverse_tx',
+                                              'inputspec.TissueClassifyatlasToSubjectInverseTransform'),
                                              ('UpdatedPosteriorsList', 'inputspec.UpdatedPosteriorsList'),
                                              ('outputHeadLabels', 'inputspec.inputHeadLabels')])
                                 ])
@@ -75,6 +73,10 @@ def create_longitudinal(project, subject, session, master_config, interpMode='Li
     return baw201
 
 def main():
+    # from atlasNode import MakeAtlasNode
+    # atlasNode = MakeAtlasNode(master_config['atlascache'], 'BAtlas')
+    # workflow = create_longitudial(...)
+    # workflow.connect([(atlas -> baseline), (atlas -> segmentation)]) # See singleSubject for more details...
     pass
 
 

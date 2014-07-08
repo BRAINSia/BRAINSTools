@@ -50,7 +50,6 @@ def RunSubjectWorkflow(args):
     # DEBUG
     # subjectWorkflow.config['execution']['stop_on_first_rerun'] = 'true'
     # END DEBUG
-    atlasNode = MakeAtlasNode(master_config['atlascache'], 'BAtlas')
 
     sessionWorkflow = dict()
     inputsSpec = dict()
@@ -65,19 +64,21 @@ def RunSubjectWorkflow(args):
     # print "These are the sessions: ", sessions
     if 'baseline' in master_config['components']:
         current_phase = 'baseline'
+        atlasNode = MakeAtlasNode(master_config['atlascache'], 'BAtlas')
     elif 'longitudinal' in master_config['components']:
         current_phase = 'longitudinal'
+        atlasNode = GetAtlasNode(master_config['previouscache'], 'BAtlas')
     from longitudinal import create_longitudinal as create_wkfl
 
     # TODO (future): Replace with iterable inputSpec node and add Function node for getAllFiles()
     for session in sessions:
-        project = database.getProjFromSession(session)
+        pname = "{0}_{1}".format(session, current_phase)  # Long node names make graphs a pain to read/print
         # Long node names make graphs a pain to read/print
         pname = "{0}_{1}".format(session, current_phase)
-        # pname = GenerateWFName(project, subject, session, current_phase)
         print "Building session pipeline for {0}".format(session)
         inputsSpec[session] = pe.Node(name='inputspec_{0}'.format(session),
                                       interface=IdentityInterface(fields=['T1s', 'T2s', 'PDs', 'FLs', 'OTs']))
+        inputsSpec[session].inputs.T1s = database.getFilenamesByScantype(session, ['T1-15', 'T1-30'])
         inputsSpec[session].inputs.T1s = database.getFilenamesByScantype(
             session, ['T1-15', 'T1-30'])
         inputsSpec[session].inputs.T2s = database.getFilenamesByScantype(
@@ -88,10 +89,10 @@ def RunSubjectWorkflow(args):
             session, ['FL-15', 'FL-30'])
         inputsSpec[session].inputs.OTs = database.getFilenamesByScantype(
             session, ['OTHER-15', 'OTHER-30'])
-
         sessionWorkflow[session] = create_wkfl(project, subject, session, master_config,
                                                interpMode='Linear', pipeline_name=pname)
 
+        subjectWorkflow.connect([(inputsSpec[session], sessionWorkflow[session], [('T1s', 'inputspec.T1s'),
         subjectWorkflow.connect(
             [(inputsSpec[session], sessionWorkflow[session], [('T1s', 'inputspec.T1s'),
                                                               ('T2s',
@@ -112,21 +113,20 @@ def RunSubjectWorkflow(args):
                              'inputspec.LLSModel'),
                             ('T1_50Lmks_mdl', 'inputspec.inputTemplateModel')]),
              ])
-        if 'segmentation' in master_config['components']:
             from WorkupT1T2BRAINSCut import GenerateWFName
             try:
+                bCutInputName = ".".join(['segmentation', GenerateWFName(project, subject, session, 'Segmentation'), 'inputspec'])
                 bCutInputName = ".".join(
                     ['segmentation', GenerateWFName(project, subject, session, 'Segmentation'), 'inputspec'])
-            except:
                 print project, subject, session
                 raise
             subjectWorkflow.connect([(atlasNode, sessionWorkflow[session],
                                       [('hncma-atlas', 'segmentation.inputspec.hncma-atlas'),
-                                       ('template_t1', 'segmentation.inputspec.template_t1'),
                                        ('template_t1', bCutInputName + '.template_t1'),
                                        ('rho', bCutInputName + '.rho'),
                                        ('phi', bCutInputName + '.phi'),
                                        ('theta', bCutInputName + '.theta'),
+                                       ('l_caudate_ProbabilityMap', bCutInputName + '.l_caudate_ProbabilityMap'),
                                        ('l_caudate_ProbabilityMap',
                                         bCutInputName + '.l_caudate_ProbabilityMap'),
                                        ('r_caudate_ProbabilityMap',
@@ -151,10 +151,36 @@ def RunSubjectWorkflow(args):
                                         bCutInputName + '.l_globus_ProbabilityMap'),
                                        ('r_globus_ProbabilityMap',
                                         bCutInputName + '.r_globus_ProbabilityMap'),
-                                       ('trainModelFile_txtD0060NT0060_gz',
                                         bCutInputName + '.trainModelFile_txtD0060NT0060_gz')])])
+        if current_phase == 'baseline':
+            subjectWorkflow.connect([(atlasNode, sessionWorkflow[session], [('template_t1', 'inputspec.template_t1'),
             subjectWorkflow.connect(
                 [(atlasNode, sessionWorkflow[session], [('template_t1', 'inputspec.template_t1'),
                                                         ('ExtendedAtlasDefinition_xml',
                                                          'inputspec.atlasDefinition')]),
                  ])
+            template_DG = pe.Node(interface=nio.DataGrabber(infields=['subject'],
+                                  outfields=['template_t1', 'outAtlasFullPath']),
+                                  name='Template_DG')
+            template_DG.inputs.base_directory = master_config['previousresult']
+            template_DG.inputs.subject = subject
+            template_DG.inputs.template = 'SUBJECT_TEMPLATES/%s/AVG_%s.nii.gz'
+            template_DG.inputs.template_args['template_t1'] = [['subject', 'T1']]
+            template_DG.inputs.field_template = {'outAtlasFullPath': 'Atlas/definitions/AtlasDefinition_%s.xml'}
+            template_DG.inputs.field_template = {
+                'outAtlasFullPath': 'Atlas/definitions/AtlasDefinition_%s.xml'}
+            template_DG.inputs.sort_filelist = True
+            template_DG.inputs.raise_on_empty = True
+
+            baw201.connect([(template_DG, sessionWorkflow[session], [('outAtlasFullPath', 'inputspec.atlasDefinition'),
+            baw201.connect(
+                [(template_DG, sessionWorkflow[session], [('outAtlasFullPath', 'inputspec.atlasDefinition'),
+                                                          ('template_t1', 'inputspec.template_t1')]),
+                 ])
+            assert current_phase == 'longitudinal', "Phase value is unknown: {0}".format(
+                current_phase)
+    from utils import run_workflow, print_workflow
+    if False:
+        print_workflow(subjectWorkflow, plugin=master_config['execution']['plugin'], dotfilename='subjectWorkflow_exec')
+        print_workflow(subjectWorkflow, plugin=master_config['execution'][
+                       'plugin'], dotfilename='subjectWorkflow_exec')

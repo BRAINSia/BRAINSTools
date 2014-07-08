@@ -1,13 +1,26 @@
 #
 # first, construct FSL files from NRRD
-set(command_line
-  ${NRRD_TO_FSL}
-  --conversionMode NrrdToFSL
-  --inputVolume ${NRRD_FILE}
-  --outputVolume ${NII_FILE}
-  --outputBVectors ${VEC_FILE}
-  --outputBValues ${VAL_FILE}
-)
+if(VEC_FILE AND VAL_FILE)
+  set(command_line
+    ${NRRD_TO_FSL}
+    --conversionMode NrrdToFSL
+    --inputVolume ${NRRD_FILE}
+    --outputVolume ${NII_FILE}
+    --outputBVectors ${VEC_FILE}
+    --outputBValues ${VAL_FILE}
+    )
+else()
+  # testing the case where the BVec/BVal filenames should
+  # follow the output volume name
+  set(command_line
+    ${NRRD_TO_FSL}
+    --conversionMode NrrdToFSL
+    --inputVolume ${NRRD_FILE}
+    --outputVolume ${NII_FILE}
+    )
+  string(REGEX REPLACE ".nii.gz$" ".bval" VAL_FILE "${NII_FILE}")
+  string(REGEX REPLACE ".nii.gz$" ".bvec" VEC_FILE "${NII_FILE}")
+endif()
 
 message("Running ${command_line}")
 

@@ -85,7 +85,7 @@ public:
         ::itk::int32_t intb;
         if( !isSignaHDxt )
           {
-          if(this->m_Headers[k]->GetElementISorOB(0x0043, 0x1039, intb) != EXIT_SUCCESS)
+          if(this->m_Headers[k]->GetElementISorOB(0x0043, 0x1039, intb, false) != EXIT_SUCCESS)
             {
             std::cerr << "WARNING: Missing B Value" << std::endl;
             intb = 1;
@@ -96,7 +96,7 @@ public:
           if( this->m_Headers[k]->GetElementIS(0x0043, 0x1039, intb, false) != EXIT_SUCCESS )
             {
             std::string val;
-            if(this->m_Headers[k]->GetElementOB(0x0043, 0x1039, val) == EXIT_SUCCESS)
+            if(this->m_Headers[k]->GetElementOB(0x0043, 0x1039, val, false) == EXIT_SUCCESS)
               {
               size_t slashpos = val.find('\\');
               val = val.substr(0, slashpos);

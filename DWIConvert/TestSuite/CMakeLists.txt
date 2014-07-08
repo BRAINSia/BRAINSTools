@@ -185,6 +185,21 @@ add_test(NAME NrrdToFSLTest
   -P ${CMAKE_CURRENT_LIST_DIR}/NrrdToFSLTest.cmake
   )
 
+# this tests the case where DWIConvert should generate the bval/bvec
+# names based on the Output NIfTI volume
+add_test(NAME NrrdToFSLTest2
+  COMMAND ${CMAKE_COMMAND}
+  -DNRRD_FILE=${TstOutput}/FSLToNrrdTest.nrrd
+  -DVEC_COMPARE_FILE=${TstOutput}/GeSignaHDxTest.bvec
+  -DVAL_COMPARE_FILE=${TstOutput}/GeSignaHDxTest.bval
+  -DNII_COMPARE_FILE=${TstOutput}/GeSignaHDxTest.nii.gz
+  -DNII_FILE=${TstOutput}/NrrdToFSLTest.nii.gz
+  -DNRRD_TO_FSL=$<TARGET_FILE:DWIConvert>
+  -DTEST_COMPARE_PROGRAM=$<TARGET_FILE:DWISimpleCompare>
+  -DTEXT_COMPARE_PROGRAM=$<TARGET_FILE:FSLTextFileCompare>
+  -P ${CMAKE_CURRENT_LIST_DIR}/NrrdToFSLTest.cmake
+  )
+
 set_property(TEST NrrdToFSLTest
   APPEND PROPERTY DEPENDS FSLToNrrdTest)
 

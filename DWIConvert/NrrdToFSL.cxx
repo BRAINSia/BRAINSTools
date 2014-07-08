@@ -62,18 +62,58 @@ VolumeType::Pointer CreateVolume(VectorVolumeType::Pointer & inputVol)
   return niftiVolume;
 }
 
+
+//
+// strip the NIfTI suffix from a filename.
+static std::string
+StripNIfTIName(const std::string &niftiName)
+{
+  const std::string niigz(".nii.gz");
+  if(niftiName.size() > niigz.size() &&
+     niftiName.substr(niftiName.size() - 7) == niigz)
+    {
+    return niftiName.substr(0,niftiName.size() - 7);
+    }
+  const std::string nii(".nii");
+  if(niftiName.size() > nii.size() &&
+     niftiName.substr(niftiName.size() - 4) == nii)
+    {
+    return niftiName.substr(0,niftiName.size() - 4);
+    }
+  // if it isn't one of the standard suffixes, all you can do is
+  // return the whole name.
+  return niftiName;
+}
+
 int NrrdToFSL(const std::string & inputVolume,
               const std::string & outputVolume,
               const std::string & outputBValues,
               const std::string & outputBVectors)
 {
   if( CheckArg<std::string>("Input Volume", inputVolume, "") == EXIT_FAILURE ||
-      CheckArg<std::string>("Output Volume", outputVolume, "") == EXIT_FAILURE ||
-      CheckArg<std::string>("B Values", outputBValues, "") == EXIT_FAILURE ||
-      CheckArg<std::string>("B Vectors", outputBVectors, "") )
+      CheckArg<std::string>("Output Volume", outputVolume, "") == EXIT_FAILURE)
     {
     return EXIT_FAILURE;
     }
+
+  std::string _outputBValues, _outputBVectors;
+  if(CheckArg<std::string>("B Values", outputBValues, "") == EXIT_FAILURE)
+    {
+    _outputBValues = StripNIfTIName(outputVolume) + ".bval";
+    }
+  else
+    {
+    _outputBValues = outputBValues;
+    }
+  if(CheckArg<std::string>("B Vectors", outputBVectors, "") == EXIT_FAILURE)
+    {
+    _outputBVectors = StripNIfTIName(outputVolume) + ".bvec";
+    }
+  else
+    {
+    _outputBVectors = outputBVectors;
+    }
+
   VectorVolumeType::Pointer inputVol;
   if( ReadVolume<VectorVolumeType>( inputVol, inputVolume ) != EXIT_SUCCESS )
     {
@@ -117,18 +157,18 @@ int NrrdToFSL(const std::string & inputVolume,
     return EXIT_FAILURE;
     }
 
-  if( WriteBVectors(bVectors, outputBVectors) != EXIT_SUCCESS )
+  if( WriteBVectors(bVectors, _outputBVectors) != EXIT_SUCCESS )
     {
-    std::cerr << "Failed to write " << outputBVectors << std::endl;
+    std::cerr << "Failed to write " << _outputBVectors << std::endl;
     return EXIT_FAILURE;
     }
 
   std::vector<double> bValues;
   RecoverBValues<VectorVolumeType>(inputVol, bVectors, bValues);
 
-  if( WriteBValues(bValues, outputBValues) != EXIT_SUCCESS )
+  if( WriteBValues(bValues, _outputBValues) != EXIT_SUCCESS )
     {
-    std::cerr << "Failed to write " << outputBValues << std::endl;
+    std::cerr << "Failed to write " << _outputBValues << std::endl;
     return EXIT_FAILURE;
     }
 

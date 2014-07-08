@@ -82,6 +82,7 @@
       <channel>output</channel>
       <default></default>
       <description><![CDATA[The B Values are stored in FSL .bval text file format (defaults to <outputVolume>.bval)]]></description>
+      <default></default>
     </file>
     <file fileExtensions=".bvec">
       <name>outputBVectors</name>
@@ -90,6 +91,7 @@
       <channel>output</channel>
       <default></default>
       <description><![CDATA[The Gradient Vectors are stored in FSL .bvec text file format (defaults to <outputVolume>.bvec)]]></description>
+      <default></default>
     </file>
   </parameters>
 

@@ -48,7 +48,7 @@ def RunSubjectWorkflow(args):
     # DEBUG
     # subjectWorkflow.config['execution']['stop_on_first_rerun'] = 'true'
     # END DEBUG
-    atlasNode = MakeAtlasNode(master_config['atlascache'], 'BAtlas')
+
 
     sessionWorkflow = dict()
     inputsSpec = dict()
@@ -62,8 +62,10 @@ def RunSubjectWorkflow(args):
     # print "These are the sessions: ", sessions
     if 'baseline' in master_config['components']:
         current_phase = 'baseline'
+        atlasNode = MakeAtlasNode(master_config['atlascache'], 'BAtlas')
     elif 'longitudinal' in master_config['components']:
         current_phase = 'longitudinal'
+        atlasNode = GetAtlasNode(master_config['previouscache'], 'BAtlas')
     from longitudinal import create_longitudinal as create_wkfl
 
     for session in sessions:  # TODO (future): Replace with iterable inputSpec node and add Function node for getAllFiles()
@@ -95,6 +97,33 @@ def RunSubjectWorkflow(args):
                                                                         ('LLSModel_50Lmks_hdf5', 'inputspec.LLSModel'),
                                                                         ('T1_50Lmks_mdl', 'inputspec.inputTemplateModel')]),
                                 ])
+        if 'segmentation' in master_config['components']:
+            from WorkupT1T2BRAINSCut import GenerateWFName
+            try:
+                bCutInputName = ".".join(['segmentation', GenerateWFName(project, subject, session, 'Segmentation'), 'inputspec'])
+            except:
+                print project, subject, session
+                raise
+            subjectWorkflow.connect([(atlasNode, sessionWorkflow[session],
+                                      [('hncma-atlas', 'segmentation.inputspec.hncma-atlas'),
+                                       ('template_t1', bCutInputName + '.template_t1'),
+                                       ('rho', bCutInputName + '.rho'),
+                                       ('phi', bCutInputName + '.phi'),
+                                       ('theta', bCutInputName + '.theta'),
+                                       ('l_caudate_ProbabilityMap', bCutInputName + '.l_caudate_ProbabilityMap'),
+                                       ('r_caudate_ProbabilityMap', bCutInputName + '.r_caudate_ProbabilityMap'),
+                                       ('l_hippocampus_ProbabilityMap', bCutInputName + '.l_hippocampus_ProbabilityMap'),
+                                       ('r_hippocampus_ProbabilityMap', bCutInputName + '.r_hippocampus_ProbabilityMap'),
+                                       ('l_putamen_ProbabilityMap', bCutInputName + '.l_putamen_ProbabilityMap'),
+                                       ('r_putamen_ProbabilityMap', bCutInputName + '.r_putamen_ProbabilityMap'),
+                                       ('l_thalamus_ProbabilityMap', bCutInputName + '.l_thalamus_ProbabilityMap'),
+                                       ('r_thalamus_ProbabilityMap', bCutInputName + '.r_thalamus_ProbabilityMap'),
+                                       ('l_accumben_ProbabilityMap', bCutInputName + '.l_accumben_ProbabilityMap'),
+                                       ('r_accumben_ProbabilityMap', bCutInputName + '.r_accumben_ProbabilityMap'),
+                                       ('l_globus_ProbabilityMap', bCutInputName + '.l_globus_ProbabilityMap'),
+                                       ('r_globus_ProbabilityMap', bCutInputName + '.r_globus_ProbabilityMap'),
+                                       ('trainModelFile_txtD0060NT0060_gz',
+                                        bCutInputName + '.trainModelFile_txtD0060NT0060_gz')])])
         if current_phase == 'baseline':
             subjectWorkflow.connect([(atlasNode, sessionWorkflow[session], [('template_t1', 'inputspec.template_t1'),
                                                                             ('ExtendedAtlasDefinition_xml',
@@ -120,5 +149,5 @@ def RunSubjectWorkflow(args):
 
     from utils import run_workflow, print_workflow
     if False:
-        print_workflow(subjectWorkflow, plugin=master_config['execution']['plugin'], dotfilename='subjectWorkflow')
+        print_workflow(subjectWorkflow, plugin=master_config['execution']['plugin'], dotfilename='subjectWorkflow_exec')
     return run_workflow(subjectWorkflow, plugin=master_config['execution']['plugin'], plugin_args=master_config['plugin_args'])

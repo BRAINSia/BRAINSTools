@@ -32,6 +32,11 @@ if(BRAINSTools_REQUIRES_VTK)
   endif()
   message(STATUS "Using ITKVtkGlue: ${ITK_VTK_COMPONENTS}")
 endif()
+if(Slicer_BUILD_BRAINSTOOLS) ## Slicer has it's own internal MGHIO that conflicts with ITK
+  set(ITK_MGHIO "")
+else()
+  set(ITK_MGHIO MGHIO )
+endif()
 
 #-----------------------------------------------------------------------------
 set(ITK_IO_MODULES_USED "")
@@ -62,7 +67,7 @@ find_package(ITK COMPONENTS
   ITKIONRRD
   ITKIOPNG
   ITKIORAW
-  MGHIO
+  ${ITK_MGHIO}
   ITKIOSpatialObjects
   ITKIOStimulate
   ITKIOTIFF

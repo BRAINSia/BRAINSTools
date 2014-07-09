@@ -262,12 +262,12 @@ def segmentation(projectid, subjectid, sessionid, master_config, BAtlas, onlyT1=
                                                    name=MergeMultiLabelSessionSubjectToAtlasName)
 
     baw200.connect([(inputsSpec, MergeMultiLabelSessionSubjectToAtlas, [('inputLabels', 'in1'),
-                                                                      ('inputHeadLabels', 'in2')])
+                                                                        ('inputHeadLabels', 'in2')])
                    ])
 
     ### This is taking this sessions RF label map back into NAC atlas space.
     #{
-    MultiLabelSubjectToAtlasANTsApplyTransformsName = 'MultiLabelSubjectToAtlasANTsApplyTransforms_' + str(sessionid)
+    MultiLabelSubjectToAtlasANTsApplyTransformsName = 'MultiLabelSubjectToAtlasANTsApplyTransforms_' + str(sessionid) + '_map'
     MultiLabelSubjectToAtlasANTsApplyTransforms = pe.MapNode(interface=ants.ApplyTransforms(), iterfield=['input_image'],
                                                              name=MultiLabelSubjectToAtlasANTsApplyTransformsName)
     MultiLabelSubjectToAtlasANTsApplyTransforms.inputs.interpolation = 'MultiLabel'

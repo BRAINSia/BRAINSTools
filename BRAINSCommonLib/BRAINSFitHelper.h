@@ -351,7 +351,7 @@ BRAINSFitHelper::SetupRegistration(GenericMetricType *localCostMetric)
     }
   if( this->m_FixedBinaryVolume.IsNotNull() )
     {
-    if( this->m_SamplingPercentage != 1 )
+    if( this->m_SamplingPercentage < 1 )
       {
       // In this case the registration framework does not do sampling inside the mask area.
       // It picks samples from the whole image, and those samples that are inside the mask are selected by metric.
@@ -365,18 +365,16 @@ BRAINSFitHelper::SetupRegistration(GenericMetricType *localCostMetric)
       samplePointSet->Initialize();
 
       typedef typename MetricSamplePointSetType::PointType SamplePointType;
-
-      itk::ImageRandomNonRepeatingConstIteratorWithIndex<FixedImageType> NRit( this->m_FixedVolume,
-                                                                              this->m_FixedVolume->GetBufferedRegion() );
       const unsigned long numberOfAllSamples = this->m_FixedVolume->GetBufferedRegion().GetNumberOfPixels();
-      NRit.SetNumberOfSamples( numberOfAllSamples );
-      NRit.GoToBegin();
 
       const unsigned long sampleCount = static_cast<unsigned long>(vcl_ceil( numberOfAllSamples * this->m_SamplingPercentage ) );
       unsigned long index = 0;
-      size_t currentCount = 0;
 
-      while( ( !NRit.IsAtEnd() ) && ( currentCount < sampleCount ) )
+      itk::ImageRandomNonRepeatingConstIteratorWithIndex<FixedImageType> NRit( this->m_FixedVolume,
+                                                                              this->m_FixedVolume->GetBufferedRegion() );
+      NRit.SetNumberOfSamples( sampleCount );
+      NRit.GoToBegin();
+      while( !NRit.IsAtEnd() )
         {
         SamplePointType testPoint;
         this->m_FixedVolume->TransformIndexToPhysicalPoint(NRit.GetIndex(), testPoint);
@@ -384,7 +382,6 @@ BRAINSFitHelper::SetupRegistration(GenericMetricType *localCostMetric)
           {
           samplePointSet->SetPoint( index, testPoint );
           ++index;
-          ++currentCount;
           }
         ++NRit;
         }

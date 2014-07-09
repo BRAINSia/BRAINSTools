@@ -165,8 +165,8 @@
       <name>samplingPercentage</name>
       <longflag>samplingPercentage</longflag>
       <label>Percentage Of Samples</label>
-      <description>This is a number in [0,1] interval that shows the percentage of the input fixed image voxels that are sampled for mutual information computation.  Increase this for a slower, more careful fit. You can also limit the sampling focus with ROI masks and ROIAUTO mask generation.</description>
-      <default>1</default>
+      <description>This is a number in (0.0,1.0] interval that shows the percentage of the input fixed image voxels that are sampled for mutual information computation.  Increase this for a slower, more careful fit. You can also limit the sampling focus with ROI masks and ROIAUTO mask generation. The default is to use approximately 1/3 of voxels</description>
+      <default>0.33</default>
     </double>
 
     <integer-vector>

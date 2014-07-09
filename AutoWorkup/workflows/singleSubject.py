@@ -36,6 +36,7 @@ def RunSubjectWorkflow(args):
     from atlasNode import MakeAtlasNode
     from utilities.misc import GenerateSubjectOutputPattern as outputPattern
     from utilities.misc import GenerateWFName
+    from utils import run_workflow, print_workflow
 
     while time.time() < start_time:
         time.sleep(start_time - time.time() + 1)
@@ -106,6 +107,7 @@ def RunSubjectWorkflow(args):
                 raise
             subjectWorkflow.connect([(atlasNode, sessionWorkflow[session],
                                       [('hncma-atlas', 'segmentation.inputspec.hncma-atlas'),
+                                       ('template_t1', 'segmentation.inputspec.template_t1'),
                                        ('template_t1', bCutInputName + '.template_t1'),
                                        ('rho', bCutInputName + '.rho'),
                                        ('phi', bCutInputName + '.phi'),
@@ -146,8 +148,7 @@ def RunSubjectWorkflow(args):
                                                                      ('template_t1', 'inputspec.template_t1')]),
                            ])
             assert current_phase == 'longitudinal', "Phase value is unknown: {0}".format(current_phase)
-
-    from utils import run_workflow, print_workflow
-    if False:
-        print_workflow(subjectWorkflow, plugin=master_config['execution']['plugin'], dotfilename='subjectWorkflow_exec')
+        if not True:
+            return print_workflow(subjectWorkflow,
+                                  plugin=master_config['execution']['plugin'], dotfilename='subjectWorkflow') #, graph2use='flat')
     return run_workflow(subjectWorkflow, plugin=master_config['execution']['plugin'], plugin_args=master_config['plugin_args'])

@@ -17,6 +17,7 @@ class DWISimpleCompareOutputSpec(TraitedSpec):
 
 
 class DWISimpleCompare(SEMLikeCommandLine):
+
     """title: Nrrd DWI comparison
 
 category: Converters
@@ -51,6 +52,7 @@ class DWICompareOutputSpec(TraitedSpec):
 
 
 class DWICompare(SEMLikeCommandLine):
+
     """title: Nrrd DWI comparison
 
 category: Converters

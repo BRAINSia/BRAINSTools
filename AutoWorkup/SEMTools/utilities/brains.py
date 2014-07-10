@@ -10,13 +10,17 @@ class BRAINSConstellationModelerInputSpec(CommandLineInputSpec):
     verbose = traits.Bool(desc=",               Show more verbose output,             ", argstr="--verbose ")
     inputTrainingList = File(desc=",               Setup file, giving all parameters for training up a template model for each landmark.,             ", exists=True, argstr="--inputTrainingList %s")
     outputModel = traits.Either(traits.Bool, File(), hash_files=False, desc=",               The full filename of the output model file.,             ", argstr="--outputModel %s")
-    saveOptimizedLandmarks = traits.Bool(desc=",               Flag to make a new subject-specific landmark definition file in the same format produced by Slicer3 with the optimized landmark (the detected RP, AC, and PC) in it.  Useful to tighten the variances in the ConstellationModeler.,             ", argstr="--saveOptimizedLandmarks ")
-    optimizedLandmarksFilenameExtender = traits.Str(desc=",                If the trainingList is (indexFullPathName) and contains landmark data filenames [path]/[filename].fcsv ,  make the optimized landmarks filenames out of [path]/[filename](thisExtender) and the optimized version of the input trainingList out of (indexFullPathName)(thisExtender) , when you rewrite all the landmarks according to the saveOptimizedLandmarks flag.,             ", argstr="--optimizedLandmarksFilenameExtender %s")
+    saveOptimizedLandmarks = traits.Bool(
+        desc=",               Flag to make a new subject-specific landmark definition file in the same format produced by Slicer3 with the optimized landmark (the detected RP, AC, and PC) in it.  Useful to tighten the variances in the ConstellationModeler.,             ", argstr="--saveOptimizedLandmarks ")
+    optimizedLandmarksFilenameExtender = traits.Str(
+        desc=",                If the trainingList is (indexFullPathName) and contains landmark data filenames [path]/[filename].fcsv ,  make the optimized landmarks filenames out of [path]/[filename](thisExtender) and the optimized version of the input trainingList out of (indexFullPathName)(thisExtender) , when you rewrite all the landmarks according to the saveOptimizedLandmarks flag.,             ", argstr="--optimizedLandmarksFilenameExtender %s")
     resultsDir = traits.Either(traits.Bool, Directory(), hash_files=False, desc=",               The directory for the results to be written.,             ", argstr="--resultsDir %s")
     mspQualityLevel = traits.Int(desc=",                 Flag cotrols how agressive the MSP is estimated.  0=quick estimate (9 seconds), 1=normal estimate (11 seconds), 2=great estimate (22 seconds), 3=best estimate (58 seconds).,             ", argstr="--mspQualityLevel %d")
     rescaleIntensities = traits.Bool(desc=",                 Flag to turn on rescaling image intensities on input.,             ", argstr="--rescaleIntensities ")
-    trimRescaledIntensities = traits.Float(desc=",                 Turn on clipping the rescaled image one-tailed on input.  Units of standard deviations above the mean.  Very large values are very permissive.  Non-positive value turns clipping off.  Defaults to removing 0.00001 of a normal tail above the mean.,             ", argstr="--trimRescaledIntensities %f")
-    rescaleIntensitiesOutputRange = InputMultiPath(traits.Int, desc=",                 This pair of integers gives the lower and upper bounds on the signal portion of the output image.  Out-of-field voxels are taken from BackgroundFillValue.,             ", sep=",", argstr="--rescaleIntensitiesOutputRange %s")
+    trimRescaledIntensities = traits.Float(
+        desc=",                 Turn on clipping the rescaled image one-tailed on input.  Units of standard deviations above the mean.  Very large values are very permissive.  Non-positive value turns clipping off.  Defaults to removing 0.00001 of a normal tail above the mean.,             ", argstr="--trimRescaledIntensities %f")
+    rescaleIntensitiesOutputRange = InputMultiPath(
+        traits.Int, desc=",                 This pair of integers gives the lower and upper bounds on the signal portion of the output image.  Out-of-field voxels are taken from BackgroundFillValue.,             ", sep=",", argstr="--rescaleIntensitiesOutputRange %s")
     BackgroundFillValue = traits.Str(desc="Fill the background of image with specified short int value. Enter number or use BIGNEG for a large negative number.", argstr="--BackgroundFillValue %s")
     writedebuggingImagesLevel = traits.Int(desc=",                 This flag controls if debugging images are produced.  By default value of 0 is no images.  Anything greater than zero will be increasing level of debugging images.,             ", argstr="--writedebuggingImagesLevel %d")
     numberOfThreads = traits.Int(desc="Explicitly specify the maximum number of threads to use.", argstr="--numberOfThreads %d")
@@ -28,6 +32,7 @@ class BRAINSConstellationModelerOutputSpec(TraitedSpec):
 
 
 class BRAINSConstellationModeler(SEMLikeCommandLine):
+
     """title: Generate Landmarks Model (BRAINS)
 
 category: Utilities.BRAINS
@@ -39,7 +44,7 @@ description: Train up a model for BRAINSConstellationDetector
     input_spec = BRAINSConstellationModelerInputSpec
     output_spec = BRAINSConstellationModelerOutputSpec
     _cmd = " BRAINSConstellationModeler "
-    _outputs_filenames = {'outputModel':'outputModel.mdl','resultsDir':'resultsDir'}
+    _outputs_filenames = {'outputModel': 'outputModel.mdl', 'resultsDir': 'resultsDir'}
 
 
 class landmarksConstellationWeightsInputSpec(CommandLineInputSpec):
@@ -54,6 +59,7 @@ class landmarksConstellationWeightsOutputSpec(TraitedSpec):
 
 
 class landmarksConstellationWeights(SEMLikeCommandLine):
+
     """title: Generate Landmarks Weights (BRAINS)
 
 category: Utilities.BRAINS
@@ -65,7 +71,7 @@ description: Train up a list of Weights for the Landmarks in BRAINSConstellation
     input_spec = landmarksConstellationWeightsInputSpec
     output_spec = landmarksConstellationWeightsOutputSpec
     _cmd = " landmarksConstellationWeights "
-    _outputs_filenames = {'outputWeightsList':'outputWeightsList.wts'}
+    _outputs_filenames = {'outputWeightsList': 'outputWeightsList.wts'}
 
 
 class BRAINSTrimForegroundInDirectionInputSpec(CommandLineInputSpec):
@@ -84,6 +90,7 @@ class BRAINSTrimForegroundInDirectionOutputSpec(TraitedSpec):
 
 
 class BRAINSTrimForegroundInDirection(SEMLikeCommandLine):
+
     """title: Trim Foreground In Direction (BRAINS)
 
 category: Utilities.BRAINS
@@ -99,7 +106,7 @@ documentation-url: http://www.nitrc.org/projects/art/
     input_spec = BRAINSTrimForegroundInDirectionInputSpec
     output_spec = BRAINSTrimForegroundInDirectionOutputSpec
     _cmd = " BRAINSTrimForegroundInDirection "
-    _outputs_filenames = {'outputVolume':'outputVolume.nii'}
+    _outputs_filenames = {'outputVolume': 'outputVolume.nii'}
 
 
 class BRAINSLmkTransformInputSpec(CommandLineInputSpec):
@@ -118,13 +125,14 @@ class BRAINSLmkTransformOutputSpec(TraitedSpec):
 
 
 class BRAINSLmkTransform(SEMLikeCommandLine):
+
     """title: Landmark Transform (BRAINS)
 
 category: Utilities.BRAINS
 
 description: 
       This utility program estimates the affine transform to align the fixed landmarks to the moving landmarks, and then generate the resampled moving image to the same physical space as that of the reference image.
-    
+
 
 version: 1.0
 
@@ -135,7 +143,7 @@ documentation-url: http://www.nitrc.org/projects/brainscdetector/
     input_spec = BRAINSLmkTransformInputSpec
     output_spec = BRAINSLmkTransformOutputSpec
     _cmd = " BRAINSLmkTransform "
-    _outputs_filenames = {'outputResampledVolume':'outputResampledVolume.nii','outputAffineTransform':'outputAffineTransform.h5'}
+    _outputs_filenames = {'outputResampledVolume': 'outputResampledVolume.nii', 'outputAffineTransform': 'outputAffineTransform.h5'}
 
 
 class BRAINSMushInputSpec(CommandLineInputSpec):
@@ -164,13 +172,14 @@ class BRAINSMushOutputSpec(TraitedSpec):
 
 
 class BRAINSMush(SEMLikeCommandLine):
+
     """title:  Brain Extraction from T1/T2 image (BRAINS) 
 
 category: Utilities.BRAINS
 
 description: 
   This program: 1) generates a weighted mixture image optimizing the mean and variance and 2) produces a mask of the brain volume
-  
+
 
 version: 0.1.0.$Revision: 1.4 $(alpha)
 
@@ -180,18 +189,18 @@ license: https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt
 
 contributor: 
   This tool is a modification by Steven Dunn of a program developed by Greg Harris and Ron Pierson.
-  
+
 
 acknowledgements: 
   This work was developed by the University of Iowa Departments of Radiology and Psychiatry. This software was supported in part of NIH/NINDS award NS050568.
-  
+
 
 """
 
     input_spec = BRAINSMushInputSpec
     output_spec = BRAINSMushOutputSpec
     _cmd = " BRAINSMush "
-    _outputs_filenames = {'outputMask':'outputMask.nii.gz','outputWeightsFile':'outputWeightsFile.txt','outputVolume':'outputVolume.nii.gz'}
+    _outputs_filenames = {'outputMask': 'outputMask.nii.gz', 'outputWeightsFile': 'outputWeightsFile.txt', 'outputVolume': 'outputVolume.nii.gz'}
 
 
 class BRAINSTransformConvertInputSpec(CommandLineInputSpec):
@@ -209,6 +218,7 @@ class BRAINSTransformConvertOutputSpec(TraitedSpec):
 
 
 class BRAINSTransformConvert(SEMLikeCommandLine):
+
     """title: BRAINS Transform Convert
 
 category: Utilities.BRAINS
@@ -224,14 +234,14 @@ license: https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt
 contributor: Hans J. Johnson,Kent Williams, Ali Ghayoor
 
 acknowledgements: 
-  
+
 
 """
 
     input_spec = BRAINSTransformConvertInputSpec
     output_spec = BRAINSTransformConvertOutputSpec
     _cmd = " BRAINSTransformConvert "
-    _outputs_filenames = {'displacementVolume':'displacementVolume.nii','outputTransform':'outputTransform.mat'}
+    _outputs_filenames = {'displacementVolume': 'displacementVolume.nii', 'outputTransform': 'outputTransform.mat'}
 
 
 class landmarksConstellationAlignerInputSpec(CommandLineInputSpec):
@@ -244,13 +254,14 @@ class landmarksConstellationAlignerOutputSpec(TraitedSpec):
 
 
 class landmarksConstellationAligner(SEMLikeCommandLine):
+
     """title: MidACPC Landmark Insertion
 
 category: Utilities.BRAINS
 
 description: 
   This program converts the original landmark files to the acpc-aligned landmark files
-  
+
 
 version:  
 
@@ -268,7 +279,7 @@ acknowledgements:
     input_spec = landmarksConstellationAlignerInputSpec
     output_spec = landmarksConstellationAlignerOutputSpec
     _cmd = " landmarksConstellationAligner "
-    _outputs_filenames = {'outputLandmarksPaired':'outputLandmarksPaired'}
+    _outputs_filenames = {'outputLandmarksPaired': 'outputLandmarksPaired'}
 
 
 class BRAINSEyeDetectorInputSpec(CommandLineInputSpec):
@@ -283,12 +294,13 @@ class BRAINSEyeDetectorOutputSpec(TraitedSpec):
 
 
 class BRAINSEyeDetector(SEMLikeCommandLine):
+
     """title: Eye Detector (BRAINS)
 
 category: Utilities.BRAINS
 
 description: 
-  
+
 
 version: 1.0
 
@@ -299,7 +311,7 @@ documentation-url: http://www.nitrc.org/projects/brainscdetector/
     input_spec = BRAINSEyeDetectorInputSpec
     output_spec = BRAINSEyeDetectorOutputSpec
     _cmd = " BRAINSEyeDetector "
-    _outputs_filenames = {'outputVolume':'outputVolume.nii'}
+    _outputs_filenames = {'outputVolume': 'outputVolume.nii'}
 
 
 class BRAINSLinearModelerEPCAInputSpec(CommandLineInputSpec):
@@ -312,6 +324,7 @@ class BRAINSLinearModelerEPCAOutputSpec(TraitedSpec):
 
 
 class BRAINSLinearModelerEPCA(SEMLikeCommandLine):
+
     """title: Landmark Linear Modeler (BRAINS)
 
 category: Utilities.BRAINS
@@ -319,7 +332,7 @@ category: Utilities.BRAINS
 description: 
       Training linear model using EPCA. Implementation based on my MS thesis, "A METHOD FOR AUTOMATED LANDMARK CONSTELLATION DETECTION USING EVOLUTIONARY PRINCIPAL COMPONENTS AND STATISTICAL SHAPE MODELS"
 
-    
+
 
 version: 1.0
 
@@ -347,13 +360,14 @@ class BRAINSInitializedControlPointsOutputSpec(TraitedSpec):
 
 
 class BRAINSInitializedControlPoints(SEMLikeCommandLine):
+
     """title: Initialized Control Points (BRAINS)
 
 category:  Utilities.BRAINS
 
 description: 
   Outputs bspline control points as landmarks
-  
+
 
 version: 0.1.0.$Revision: 916 $(alpha)
 
@@ -370,7 +384,7 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
     input_spec = BRAINSInitializedControlPointsInputSpec
     output_spec = BRAINSInitializedControlPointsOutputSpec
     _cmd = " BRAINSInitializedControlPoints "
-    _outputs_filenames = {'outputVolume':'outputVolume.nii'}
+    _outputs_filenames = {'outputVolume': 'outputVolume.nii'}
 
 
 class CleanUpOverlapLabelsInputSpec(CommandLineInputSpec):
@@ -383,6 +397,7 @@ class CleanUpOverlapLabelsOutputSpec(TraitedSpec):
 
 
 class CleanUpOverlapLabels(SEMLikeCommandLine):
+
     """title:  Clean Up Overla Labels
 
 category: Utilities.BRAINS
@@ -398,13 +413,14 @@ contributor: Eun Young Kim
     input_spec = CleanUpOverlapLabelsInputSpec
     output_spec = CleanUpOverlapLabelsOutputSpec
     _cmd = " CleanUpOverlapLabels "
-    _outputs_filenames = {'outputBinaryVolumes':'outputBinaryVolumes.nii'}
+    _outputs_filenames = {'outputBinaryVolumes': 'outputBinaryVolumes.nii'}
 
 
 class BRAINSClipInferiorInputSpec(CommandLineInputSpec):
     inputVolume = File(desc="Input image to make a clipped short int copy from.", exists=True, argstr="--inputVolume %s")
     outputVolume = traits.Either(traits.Bool, File(), hash_files=False, desc="Output image, a short int copy of the upper portion of the input image, filled with BackgroundFillValue.", argstr="--outputVolume %s")
-    acLowerBound = traits.Float(desc=",                 When the input image to the output image, replace the image with the BackgroundFillValue everywhere below the plane This Far in physical units (millimeters) below (inferior to) the AC point (assumed to be the voxel field middle.)  The oversize default was chosen to have no effect.  Based on visualizing a thousand masks in the IPIG study, we recommend a limit no smaller than 80.0 mm.,             ", argstr="--acLowerBound %f")
+    acLowerBound = traits.Float(
+        desc=",                 When the input image to the output image, replace the image with the BackgroundFillValue everywhere below the plane This Far in physical units (millimeters) below (inferior to) the AC point (assumed to be the voxel field middle.)  The oversize default was chosen to have no effect.  Based on visualizing a thousand masks in the IPIG study, we recommend a limit no smaller than 80.0 mm.,             ", argstr="--acLowerBound %f")
     BackgroundFillValue = traits.Str(desc="Fill the background of image with specified short int value. Enter number or use BIGNEG for a large negative number.", argstr="--BackgroundFillValue %s")
     numberOfThreads = traits.Int(desc="Explicitly specify the maximum number of threads to use.", argstr="--numberOfThreads %d")
 
@@ -414,12 +430,13 @@ class BRAINSClipInferiorOutputSpec(TraitedSpec):
 
 
 class BRAINSClipInferior(SEMLikeCommandLine):
+
     """title: Clip Inferior of Center of Brain (BRAINS)
 
 category: Utilities.BRAINS
 
 description: This program will read the inputVolume as a short int image, write the BackgroundFillValue everywhere inferior to the lower bound, and write the resulting clipped short int image in the outputVolume.
-    
+
 
 version: 1.0
 
@@ -428,7 +445,7 @@ version: 1.0
     input_spec = BRAINSClipInferiorInputSpec
     output_spec = BRAINSClipInferiorOutputSpec
     _cmd = " BRAINSClipInferior "
-    _outputs_filenames = {'outputVolume':'outputVolume.nii'}
+    _outputs_filenames = {'outputVolume': 'outputVolume.nii'}
 
 
 class GenerateLabelMapFromProbabilityMapInputSpec(CommandLineInputSpec):
@@ -442,25 +459,26 @@ class GenerateLabelMapFromProbabilityMapOutputSpec(TraitedSpec):
 
 
 class GenerateLabelMapFromProbabilityMap(SEMLikeCommandLine):
+
     """title: Label Map from Probability Images
 
 category: Utilities.BRAINS
 
 description: 
     Given a list of probability maps for labels, create a discrete label map where only the highest probability region is used for the labeling.
-  
+
 
 version: 0.1
 
 contributor: University of Iowa Department of Psychiatry, http:://www.psychiatry.uiowa.edu
-  
+
 
 """
 
     input_spec = GenerateLabelMapFromProbabilityMapInputSpec
     output_spec = GenerateLabelMapFromProbabilityMapOutputSpec
     _cmd = " GenerateLabelMapFromProbabilityMap "
-    _outputs_filenames = {'outputLabelVolume':'outputLabelVolume.nii.gz'}
+    _outputs_filenames = {'outputLabelVolume': 'outputLabelVolume.nii.gz'}
 
 
 class BRAINSAlignMSPInputSpec(CommandLineInputSpec):
@@ -471,10 +489,12 @@ class BRAINSAlignMSPInputSpec(CommandLineInputSpec):
     writedebuggingImagesLevel = traits.Int(desc=",           This flag controls if debugging images are produced.  By default value of 0 is no images.  Anything greater than zero will be increasing level of debugging images.,       ", argstr="--writedebuggingImagesLevel %d")
     mspQualityLevel = traits.Int(desc=",           Flag cotrols how agressive the MSP is estimated.  0=quick estimate (9 seconds), 1=normal estimate (11 seconds), 2=great estimate (22 seconds), 3=best estimate (58 seconds).,       ", argstr="--mspQualityLevel %d")
     rescaleIntensities = traits.Bool(desc=",           Flag to turn on rescaling image intensities on input.,       ", argstr="--rescaleIntensities ")
-    trimRescaledIntensities = traits.Float(desc=",           Turn on clipping the rescaled image one-tailed on input.  Units of standard deviations above the mean.  Very large values are very permissive.  Non-positive value turns clipping off.  Defaults to removing 0.00001 of a normal tail above the mean.,       ", argstr="--trimRescaledIntensities %f")
+    trimRescaledIntensities = traits.Float(
+        desc=",           Turn on clipping the rescaled image one-tailed on input.  Units of standard deviations above the mean.  Very large values are very permissive.  Non-positive value turns clipping off.  Defaults to removing 0.00001 of a normal tail above the mean.,       ", argstr="--trimRescaledIntensities %f")
     rescaleIntensitiesOutputRange = InputMultiPath(traits.Int, desc=",           This pair of integers gives the lower and upper bounds on the signal portion of the output image.  Out-of-field voxels are taken from BackgroundFillValue.,       ", sep=",", argstr="--rescaleIntensitiesOutputRange %s")
     BackgroundFillValue = traits.Str(desc="Fill the background of image with specified short int value. Enter number or use BIGNEG for a large negative number.", argstr="--BackgroundFillValue %s")
-    interpolationMode = traits.Enum("NearestNeighbor", "Linear", "ResampleInPlace", "BSpline", "WindowedSinc", "Hamming", "Cosine", "Welch", "Lanczos", "Blackman", desc="Type of interpolation to be used when applying transform to moving volume.  Options are Linear, ResampleInPlace, NearestNeighbor, BSpline, or WindowedSinc", argstr="--interpolationMode %s")
+    interpolationMode = traits.Enum("NearestNeighbor", "Linear", "ResampleInPlace", "BSpline", "WindowedSinc", "Hamming", "Cosine", "Welch", "Lanczos", "Blackman",
+                                    desc="Type of interpolation to be used when applying transform to moving volume.  Options are Linear, ResampleInPlace, NearestNeighbor, BSpline, or WindowedSinc", argstr="--interpolationMode %s")
     numberOfThreads = traits.Int(desc="Explicitly specify the maximum number of threads to use.", argstr="--numberOfThreads %d")
 
 
@@ -484,6 +504,7 @@ class BRAINSAlignMSPOutputSpec(TraitedSpec):
 
 
 class BRAINSAlignMSP(SEMLikeCommandLine):
+
     """title: Align Mid Saggital Brain (BRAINS)
 
 category: Utilities.BRAINS
@@ -495,7 +516,7 @@ description: Resample an image into ACPC alignement ACPCDetect
     input_spec = BRAINSAlignMSPInputSpec
     output_spec = BRAINSAlignMSPOutputSpec
     _cmd = " BRAINSAlignMSP "
-    _outputs_filenames = {'OutputresampleMSP':'OutputresampleMSP.nii','resultsDir':'resultsDir'}
+    _outputs_filenames = {'OutputresampleMSP': 'OutputresampleMSP.nii', 'resultsDir': 'resultsDir'}
 
 
 class BRAINSLandmarkInitializerInputSpec(CommandLineInputSpec):
@@ -510,6 +531,7 @@ class BRAINSLandmarkInitializerOutputSpec(TraitedSpec):
 
 
 class BRAINSLandmarkInitializer(SEMLikeCommandLine):
+
     """title: BRAINSLandmarkInitializer
 
 category: Utilities.BRAINS
@@ -527,7 +549,7 @@ contributor: Eunyoung Regina Kim
     input_spec = BRAINSLandmarkInitializerInputSpec
     output_spec = BRAINSLandmarkInitializerOutputSpec
     _cmd = " BRAINSLandmarkInitializer "
-    _outputs_filenames = {'outputTransformFilename':'outputTransformFilename'}
+    _outputs_filenames = {'outputTransformFilename': 'outputTransformFilename'}
 
 
 class insertMidACPCpointInputSpec(CommandLineInputSpec):
@@ -540,13 +562,14 @@ class insertMidACPCpointOutputSpec(TraitedSpec):
 
 
 class insertMidACPCpoint(SEMLikeCommandLine):
+
     """title: MidACPC Landmark Insertion
 
 category: Utilities.BRAINS
 
 description: 
   This program gets a landmark fcsv file and adds a new landmark as the midpoint between AC and PC points to the output landmark fcsv file
-  
+
 
 version:  
 
@@ -564,7 +587,7 @@ acknowledgements:
     input_spec = insertMidACPCpointInputSpec
     output_spec = insertMidACPCpointOutputSpec
     _cmd = " insertMidACPCpoint "
-    _outputs_filenames = {'outputLandmarkFile':'outputLandmarkFile'}
+    _outputs_filenames = {'outputLandmarkFile': 'outputLandmarkFile'}
 
 
 class BRAINSSnapShotWriterInputSpec(CommandLineInputSpec):
@@ -582,6 +605,7 @@ class BRAINSSnapShotWriterOutputSpec(TraitedSpec):
 
 
 class BRAINSSnapShotWriter(SEMLikeCommandLine):
+
     """title: BRAINSSnapShotWriter
 
 category: Utilities.BRAINS
@@ -599,7 +623,7 @@ contributor: Eunyoung Regina Kim
     input_spec = BRAINSSnapShotWriterInputSpec
     output_spec = BRAINSSnapShotWriterOutputSpec
     _cmd = " BRAINSSnapShotWriter "
-    _outputs_filenames = {'outputFilename':'outputFilename'}
+    _outputs_filenames = {'outputFilename': 'outputFilename'}
 
 
 class JointHistogramInputSpec(CommandLineInputSpec):
@@ -616,19 +640,20 @@ class JointHistogramOutputSpec(TraitedSpec):
 
 
 class JointHistogram(SEMLikeCommandLine):
+
     """title: Write Out Image Intensities
-  
+
 
 category: Utilities.BRAINS
 
 description: 
     For Analysis
-  
+
 
 version: 0.1
 
 contributor: University of Iowa Department of Psychiatry, http:://www.psychiatry.uiowa.edu
-  
+
 
 """
 
@@ -649,6 +674,7 @@ class ShuffleVectorsModuleOutputSpec(TraitedSpec):
 
 
 class ShuffleVectorsModule(SEMLikeCommandLine):
+
     """title: ShuffleVectors
 
 category: Utilities.BRAINS
@@ -666,7 +692,7 @@ contributor: Hans Johnson
     input_spec = ShuffleVectorsModuleInputSpec
     output_spec = ShuffleVectorsModuleOutputSpec
     _cmd = " ShuffleVectorsModule "
-    _outputs_filenames = {'outputVectorFileBaseName':'outputVectorFileBaseName'}
+    _outputs_filenames = {'outputVectorFileBaseName': 'outputVectorFileBaseName'}
 
 
 class ImageRegionPlotterInputSpec(CommandLineInputSpec):
@@ -686,8 +712,9 @@ class ImageRegionPlotterOutputSpec(TraitedSpec):
 
 
 class ImageRegionPlotter(SEMLikeCommandLine):
+
     """title: Write Out Image Intensities
-  
+
 
 category: Utilities.BRAINS
 
@@ -696,7 +723,7 @@ description:  For Analysis
 version: 0.1
 
 contributor: University of Iowa Department of Psychiatry, http:://www.psychiatry.uiowa.edu
-  
+
 
 """
 

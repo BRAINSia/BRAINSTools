@@ -22,6 +22,7 @@ class scalartransformOutputSpec(TraitedSpec):
 
 
 class scalartransform(SEMLikeCommandLine):
+
     """title: ScalarTransform
 
 category: Diffusion.NIRALPipeline.Deprecated
@@ -38,7 +39,7 @@ license:
      This software is distributed WITHOUT ANY WARRANTY; without even
      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
-  
+
 
 contributor: Casey Goodlett
 
@@ -47,4 +48,4 @@ contributor: Casey Goodlett
     input_spec = scalartransformInputSpec
     output_spec = scalartransformOutputSpec
     _cmd = " scalartransform "
-    _outputs_filenames = {'output_image':'output_image.nii','transformation':'transformation'}
+    _outputs_filenames = {'output_image': 'output_image.nii', 'transformation': 'transformation'}

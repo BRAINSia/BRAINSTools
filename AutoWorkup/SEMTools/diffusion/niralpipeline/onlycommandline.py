@@ -18,6 +18,7 @@ class dtiaverageOutputSpec(TraitedSpec):
 
 
 class dtiaverage(SEMLikeCommandLine):
+
     """title: DTIAverage
 
 category: Diffusion.NIRALPipeline.OnlyCommandLine
@@ -36,7 +37,7 @@ license:
     This software is distributed WITHOUT ANY WARRANTY; without even
     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
     PURPOSE.  See the above copyright notices for more information.
-  
+
 
 contributor: Casey Goodlett
 
@@ -45,7 +46,7 @@ contributor: Casey Goodlett
     input_spec = dtiaverageInputSpec
     output_spec = dtiaverageOutputSpec
     _cmd = " dtiaverage "
-    _outputs_filenames = {'tensor_output':'tensor_output.nii'}
+    _outputs_filenames = {'tensor_output': 'tensor_output.nii'}
 
 
 class fiberstatsInputSpec(CommandLineInputSpec):
@@ -58,6 +59,7 @@ class fiberstatsOutputSpec(TraitedSpec):
 
 
 class fiberstats(SEMLikeCommandLine):
+
     """title: FiberStats
 
 category: Diffusion.NIRALPipeline.OnlyCommandLine
@@ -74,7 +76,7 @@ license:
      This software is distributed WITHOUT ANY WARRANTY; without even
      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
-  
+
 
 contributor: Casey Goodlett
 

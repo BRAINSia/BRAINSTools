@@ -17,13 +17,14 @@ class LandmarksCompareOutputSpec(TraitedSpec):
 
 
 class LandmarksCompare(SEMLikeCommandLine):
+
     """title: Compare Fiducials
 
 category: Testing
 
 description: 
     Compares two .fcsv or .wts text files and verifies that they are identicle.  Used for testing landmarks files.
-  
+
 
 version:  
 

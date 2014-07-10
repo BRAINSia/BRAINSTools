@@ -18,6 +18,7 @@ class maxcurvatureOutputSpec(TraitedSpec):
 
 
 class maxcurvature(SEMLikeCommandLine):
+
     """title: MaxCurvature-Hessian
 
 category: Diffusion.NIRALPipeline
@@ -34,7 +35,7 @@ license:
      This software is distributed WITHOUT ANY WARRANTY; without even
      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
-  
+
 
 contributor: Casey Goodlett
 
@@ -45,4 +46,4 @@ acknowledgements: Hans Johnson(1,3,4); Kent Williams(1); (1=University of Iowa D
     input_spec = maxcurvatureInputSpec
     output_spec = maxcurvatureOutputSpec
     _cmd = " maxcurvature "
-    _outputs_filenames = {'output':'output.nii'}
+    _outputs_filenames = {'output': 'output.nii'}

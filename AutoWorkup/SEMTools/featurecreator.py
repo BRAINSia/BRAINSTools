@@ -16,6 +16,7 @@ class GenerateCsfClippedFromClassifiedImageOutputSpec(TraitedSpec):
 
 
 class GenerateCsfClippedFromClassifiedImage(SEMLikeCommandLine):
+
     """title: GenerateCsfClippedFromClassifiedImage
 
 category: FeatureCreator
@@ -35,4 +36,4 @@ contributor: This tool was written by Hans J. Johnson.
     input_spec = GenerateCsfClippedFromClassifiedImageInputSpec
     output_spec = GenerateCsfClippedFromClassifiedImageOutputSpec
     _cmd = " GenerateCsfClippedFromClassifiedImage "
-    _outputs_filenames = {'outputVolume':'outputVolume.nii'}
+    _outputs_filenames = {'outputVolume': 'outputVolume.nii'}

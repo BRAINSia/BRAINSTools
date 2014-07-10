@@ -13,7 +13,8 @@ class VBRAINSDemonWarpInputSpec(CommandLineInputSpec):
     outputVolume = traits.Either(traits.Bool, File(), hash_files=False, desc="Required: output resampled moving image (will have the same physical space as the fixedVolume).", argstr="--outputVolume %s")
     outputDisplacementFieldVolume = traits.Either(traits.Bool, File(), hash_files=False, desc="Output deformation field vector image (will have the same physical space as the fixedVolume).", argstr="--outputDisplacementFieldVolume %s")
     outputPixelType = traits.Enum("float", "short", "ushort", "int", "uchar", desc="outputVolume will be typecast to this format: float|short|ushort|int|uchar", argstr="--outputPixelType %s")
-    interpolationMode = traits.Enum("NearestNeighbor", "Linear", "ResampleInPlace", "BSpline", "WindowedSinc", "Hamming", "Cosine", "Welch", "Lanczos", "Blackman", desc="Type of interpolation to be used when applying transform to moving volume.  Options are Linear, ResampleInPlace, NearestNeighbor, BSpline, or WindowedSinc", argstr="--interpolationMode %s")
+    interpolationMode = traits.Enum("NearestNeighbor", "Linear", "ResampleInPlace", "BSpline", "WindowedSinc", "Hamming", "Cosine", "Welch", "Lanczos", "Blackman",
+                                    desc="Type of interpolation to be used when applying transform to moving volume.  Options are Linear, ResampleInPlace, NearestNeighbor, BSpline, or WindowedSinc", argstr="--interpolationMode %s")
     registrationFilterType = traits.Enum("Demons", "FastSymmetricForces", "Diffeomorphic", "LogDemons", "SymmetricLogDemons", desc="Registration Filter Type: Demons|FastSymmetricForces|Diffeomorphic|LogDemons|SymmetricLogDemons", argstr="--registrationFilterType %s")
     smoothDisplacementFieldSigma = traits.Float(desc="A gaussian smoothing value to be applied to the deformation feild at each iteration.", argstr="--smoothDisplacementFieldSigma %f")
     numberOfPyramidLevels = traits.Int(desc="Number of image pyramid levels to use in the multi-resolution registration.", argstr="--numberOfPyramidLevels %d")
@@ -57,6 +58,7 @@ class VBRAINSDemonWarpOutputSpec(TraitedSpec):
 
 
 class VBRAINSDemonWarp(SEMLikeCommandLine):
+
     """title: Vector Demon Registration (BRAINS)
 
 category: Registration.Specialized
@@ -64,7 +66,7 @@ category: Registration.Specialized
 description: 
     This program finds a deformation field to warp a moving image onto a fixed image.  The images must be of the same signal kind, and contain an image of the same kind of object.  This program uses the Thirion Demons warp software in ITK, the Insight Toolkit.  Additional information is available at: http://www.nitrc.org/projects/brainsdemonwarp.
 
-  
+
 
 version: 3.0.0
 
@@ -81,7 +83,7 @@ acknowledgements: The development of this tool was supported by funding from gra
     input_spec = VBRAINSDemonWarpInputSpec
     output_spec = VBRAINSDemonWarpOutputSpec
     _cmd = " VBRAINSDemonWarp "
-    _outputs_filenames = {'outputVolume':'outputVolume.nii','outputCheckerboardVolume':'outputCheckerboardVolume.nii','outputDisplacementFieldVolume':'outputDisplacementFieldVolume.nrrd'}
+    _outputs_filenames = {'outputVolume': 'outputVolume.nii', 'outputCheckerboardVolume': 'outputCheckerboardVolume.nii', 'outputDisplacementFieldVolume': 'outputDisplacementFieldVolume.nrrd'}
 
 
 class BRAINSDemonWarpInputSpec(CommandLineInputSpec):
@@ -91,7 +93,8 @@ class BRAINSDemonWarpInputSpec(CommandLineInputSpec):
     outputVolume = traits.Either(traits.Bool, File(), hash_files=False, desc="Required: output resampled moving image (will have the same physical space as the fixedVolume).", argstr="--outputVolume %s")
     outputDisplacementFieldVolume = traits.Either(traits.Bool, File(), hash_files=False, desc="Output deformation field vector image (will have the same physical space as the fixedVolume).", argstr="--outputDisplacementFieldVolume %s")
     outputPixelType = traits.Enum("float", "short", "ushort", "int", "uchar", desc="outputVolume will be typecast to this format: float|short|ushort|int|uchar", argstr="--outputPixelType %s")
-    interpolationMode = traits.Enum("NearestNeighbor", "Linear", "ResampleInPlace", "BSpline", "WindowedSinc", "Hamming", "Cosine", "Welch", "Lanczos", "Blackman", desc="Type of interpolation to be used when applying transform to moving volume.  Options are Linear, ResampleInPlace, NearestNeighbor, BSpline, or WindowedSinc", argstr="--interpolationMode %s")
+    interpolationMode = traits.Enum("NearestNeighbor", "Linear", "ResampleInPlace", "BSpline", "WindowedSinc", "Hamming", "Cosine", "Welch", "Lanczos", "Blackman",
+                                    desc="Type of interpolation to be used when applying transform to moving volume.  Options are Linear, ResampleInPlace, NearestNeighbor, BSpline, or WindowedSinc", argstr="--interpolationMode %s")
     registrationFilterType = traits.Enum("Demons", "FastSymmetricForces", "Diffeomorphic", desc="Registration Filter Type: Demons|FastSymmetricForces|Diffeomorphic", argstr="--registrationFilterType %s")
     smoothDisplacementFieldSigma = traits.Float(desc="A gaussian smoothing value to be applied to the deformation feild at each iteration.", argstr="--smoothDisplacementFieldSigma %f")
     numberOfPyramidLevels = traits.Int(desc="Number of image pyramid levels to use in the multi-resolution registration.", argstr="--numberOfPyramidLevels %d")
@@ -104,7 +107,8 @@ class BRAINSDemonWarpInputSpec(CommandLineInputSpec):
     medianFilterSize = InputMultiPath(traits.Int, desc="Median filter radius in all 3 directions.  When images have a lot of salt and pepper noise, this step can improve the registration.", sep=",", argstr="--medianFilterSize %s")
     initializeWithDisplacementField = File(desc="Initial deformation field vector image file name", exists=True, argstr="--initializeWithDisplacementField %s")
     initializeWithTransform = File(desc="Initial Transform filename", exists=True, argstr="--initializeWithTransform %s")
-    maskProcessingMode = traits.Enum("NOMASK", "ROIAUTO", "ROI", "BOBF", desc="What mode to use for using the masks: NOMASK|ROIAUTO|ROI|BOBF.  If ROIAUTO is choosen, then the mask is implicitly defined using a otsu forground and hole filling algorithm. Where the Region Of Interest mode uses the masks to define what parts of the image should be used for computing the deformation field.  Brain Only Background Fill uses the masks to pre-process the input images by clipping and filling in the background with a predefined value.", argstr="--maskProcessingMode %s")
+    maskProcessingMode = traits.Enum(
+        "NOMASK", "ROIAUTO", "ROI", "BOBF", desc="What mode to use for using the masks: NOMASK|ROIAUTO|ROI|BOBF.  If ROIAUTO is choosen, then the mask is implicitly defined using a otsu forground and hole filling algorithm. Where the Region Of Interest mode uses the masks to define what parts of the image should be used for computing the deformation field.  Brain Only Background Fill uses the masks to pre-process the input images by clipping and filling in the background with a predefined value.", argstr="--maskProcessingMode %s")
     fixedBinaryVolume = File(desc="Mask filename for desired region of interest in the Fixed image.", exists=True, argstr="--fixedBinaryVolume %s")
     movingBinaryVolume = File(desc="Mask filename for desired region of interest in the Moving image.", exists=True, argstr="--movingBinaryVolume %s")
     lowerThresholdForBOBF = traits.Int(desc="Lower threshold for performing BOBF", argstr="--lowerThresholdForBOBF %d")
@@ -134,6 +138,7 @@ class BRAINSDemonWarpOutputSpec(TraitedSpec):
 
 
 class BRAINSDemonWarp(SEMLikeCommandLine):
+
     """title: Demon Registration (BRAINS)
 
 category: Registration.Specialized
@@ -141,7 +146,7 @@ category: Registration.Specialized
 description: 
     This program finds a deformation field to warp a moving image onto a fixed image.  The images must be of the same signal kind, and contain an image of the same kind of object.  This program uses the Thirion Demons warp software in ITK, the Insight Toolkit.  Additional information is available at: http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.1/Modules/BRAINSDemonWarp.
 
-  
+
 
 version: 3.0.0
 
@@ -158,7 +163,7 @@ acknowledgements: The development of this tool was supported by funding from gra
     input_spec = BRAINSDemonWarpInputSpec
     output_spec = BRAINSDemonWarpOutputSpec
     _cmd = " BRAINSDemonWarp "
-    _outputs_filenames = {'outputVolume':'outputVolume.nii','outputCheckerboardVolume':'outputCheckerboardVolume.nii','outputDisplacementFieldVolume':'outputDisplacementFieldVolume.nrrd'}
+    _outputs_filenames = {'outputVolume': 'outputVolume.nii', 'outputCheckerboardVolume': 'outputCheckerboardVolume.nii', 'outputDisplacementFieldVolume': 'outputDisplacementFieldVolume.nrrd'}
 
 
 class BRAINSTransformFromFiducialsInputSpec(CommandLineInputSpec):
@@ -176,6 +181,7 @@ class BRAINSTransformFromFiducialsOutputSpec(TraitedSpec):
 
 
 class BRAINSTransformFromFiducials(SEMLikeCommandLine):
+
     """title: Fiducial Registration (BRAINS)
 
 category: Registration.Specialized
@@ -190,11 +196,11 @@ contributor: Casey B Goodlett
 
 acknowledgements: 
     This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.
-  
+
 
 """
 
     input_spec = BRAINSTransformFromFiducialsInputSpec
     output_spec = BRAINSTransformFromFiducialsOutputSpec
     _cmd = " BRAINSTransformFromFiducials "
-    _outputs_filenames = {'saveTransform':'saveTransform.h5'}
+    _outputs_filenames = {'saveTransform': 'saveTransform.h5'}

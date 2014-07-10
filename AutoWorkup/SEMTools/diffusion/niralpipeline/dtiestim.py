@@ -12,7 +12,8 @@ class dtiestimInputSpec(CommandLineInputSpec):
     B0 = traits.Either(traits.Bool, File(), hash_files=False, desc="Baseline image, average of all baseline images", argstr="--B0 %s")
     idwi = traits.Either(traits.Bool, File(), hash_files=False, desc="idwi output image. Image with isotropic diffusion-weighted information = geometric mean of diffusion images", argstr="--idwi %s")
     B0_mask_output = traits.Either(traits.Bool, File(), hash_files=False, desc="B0 mask used for the estimation. B0 thresholded either with the -t option value or the automatic OTSU value", argstr="--B0_mask_output %s")
-    brain_mask = File(desc="Brain mask.  Image where for every voxel == 0 the tensors are not estimated. Be aware that in addition a threshold based masking will be performed by default. If such an additional threshold masking is NOT desired, then use option -t 0.", exists=True, argstr="--brain_mask %s")
+    brain_mask = File(desc="Brain mask.  Image where for every voxel == 0 the tensors are not estimated. Be aware that in addition a threshold based masking will be performed by default. If such an additional threshold masking is NOT desired, then use option -t 0.",
+                      exists=True, argstr="--brain_mask %s")
     bad_region_mask = File(desc="Bad region mask.  Image where for every voxel > 0 the tensors are not estimated", exists=True, argstr="--bad_region_mask %s")
     method = traits.Enum("lls", "wls", "nls", "ml", desc="Esitmation method (lls:linear least squares, wls:weighted least squares, nls:non-linear least squares, ml:maximum likelihood)", argstr="--method %s")
     threshold = traits.Int(desc="Baseline threshold for estimation. If not specified calculated using an OTSU threshold on the baseline image.", argstr="--threshold %d")
@@ -31,6 +32,7 @@ class dtiestimOutputSpec(TraitedSpec):
 
 
 class dtiestim(SEMLikeCommandLine):
+
     """title: DTIEstim
 
 category: Diffusion.NIRALPipeline
@@ -38,14 +40,14 @@ category: Diffusion.NIRALPipeline
 description:  
 dtiestim is a tool that takes in a set of DWIs (with --dwi_image option) in nrrd format and estimates a tensor field out of it. The output tensor file name is specified with the --tensor_output option 
 There are several methods to estimate the tensors which you can specify with the option --method lls|wls|nls|ml . Here is a short description of the different methods: 
-	lls Linear least squares. Standard estimation technique that recovers the tensor parameters by multiplying the log of the normalized signal intensities by the pseudo-inverse of the gradient matrix. Default option.
-	wls Weighted least squares. This method is similar to the linear least squares method except that the gradient matrix is weighted by the original lls estimate. (See Salvador, R., Pena, A., Menon, D. K., Carpenter, T. A., Pickard, J. D., and Bullmore, E. T. Formal characterization and extension of the linearized diffusion tensor model. Human Brain Mapping 24, 2 (Feb. 2005), 144-155. for more information on this method). This method is recommended for most applications. The weight for each iteration can be specified with the --weight_iterations.  It is not currently the default due to occasional matrix singularities.
-	nls Non-linear least squares. This method does not take the log of the signal and requires an optimization based on levenberg-marquadt to optimize the parameters of the signal. The lls estimate is used as an initialization. For this method the step size can be specified with the --step option. 
-	ml Maximum likelihood estimation. This method is experimental and is not currently recommended. For this ml method the sigma can be specified with the option --sigma and the step size can be specified with the --step option.
+        lls Linear least squares. Standard estimation technique that recovers the tensor parameters by multiplying the log of the normalized signal intensities by the pseudo-inverse of the gradient matrix. Default option.
+        wls Weighted least squares. This method is similar to the linear least squares method except that the gradient matrix is weighted by the original lls estimate. (See Salvador, R., Pena, A., Menon, D. K., Carpenter, T. A., Pickard, J. D., and Bullmore, E. T. Formal characterization and extension of the linearized diffusion tensor model. Human Brain Mapping 24, 2 (Feb. 2005), 144-155. for more information on this method). This method is recommended for most applications. The weight for each iteration can be specified with the --weight_iterations.  It is not currently the default due to occasional matrix singularities.
+        nls Non-linear least squares. This method does not take the log of the signal and requires an optimization based on levenberg-marquadt to optimize the parameters of the signal. The lls estimate is used as an initialization. For this method the step size can be specified with the --step option. 
+        ml Maximum likelihood estimation. This method is experimental and is not currently recommended. For this ml method the sigma can be specified with the option --sigma and the step size can be specified with the --step option.
 You can set a threshold (--threshold) to have the tensor estimated to only a subset of voxels. All the baseline voxel value higher than the threshold define the voxels where the tensors are computed. If not specified the threshold is calculated using an OTSU threshold on the baseline image.The masked generated by the -t option or by the otsu value can be saved with the --B0_mask_output option.
 dtiestim also can extract a few scalar images out of the DWI set of images: 
-	the average baseline image (--B0) which is the average of all the B0s.
-	the IDWI (--idwi)which is the geometric mean of the diffusion images.
+        the average baseline image (--B0) which is the average of all the B0s.
+        the IDWI (--idwi)which is the geometric mean of the diffusion images.
 You can also load a mask if you want to compute the tensors only where the voxels are non-zero (--brain_mask) or a negative mask and the tensors will be estimated where the negative mask has zero values (--bad_region_mask)
 
 version: 1.1.2
@@ -58,7 +60,7 @@ license:
      This software is distributed WITHOUT ANY WARRANTY; without even
      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
-  
+
 
 contributor: Casey Goodlett
 
@@ -69,4 +71,4 @@ acknowledgements: Hans Johnson(1,3,4); Kent Williams(1); (1=University of Iowa D
     input_spec = dtiestimInputSpec
     output_spec = dtiestimOutputSpec
     _cmd = " dtiestim "
-    _outputs_filenames = {'B0':'B0.nii','idwi':'idwi.nii','tensor_output':'tensor_output.nii','B0_mask_output':'B0_mask_output.nii'}
+    _outputs_filenames = {'B0': 'B0.nii', 'idwi': 'idwi.nii', 'tensor_output': 'tensor_output.nii', 'B0_mask_output': 'B0_mask_output.nii'}

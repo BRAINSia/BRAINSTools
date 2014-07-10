@@ -22,6 +22,7 @@ class BRAINSPosteriorToContinuousClassOutputSpec(TraitedSpec):
 
 
 class BRAINSPosteriorToContinuousClass(SEMLikeCommandLine):
+
     """title: Tissue Classification
 
 category: BRAINS.Classify
@@ -43,4 +44,4 @@ acknowledgements: Funding for this work was provided by NIH/NINDS award NS050568
     input_spec = BRAINSPosteriorToContinuousClassInputSpec
     output_spec = BRAINSPosteriorToContinuousClassOutputSpec
     _cmd = " BRAINSPosteriorToContinuousClass "
-    _outputs_filenames = {'outputVolume':'outputVolume'}
+    _outputs_filenames = {'outputVolume': 'outputVolume'}

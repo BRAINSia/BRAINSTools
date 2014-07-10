@@ -12,6 +12,7 @@
 
 all_known_modules_list = [
 'ResampleDTILogEuclidean',
+'UnbiasedNonLocalMeans',
 #'BatchMake',
 'BinaryMaskEditorBasedOnLandmarks',
 'BRAINSCreateLabelMapFromProbabilityMaps',

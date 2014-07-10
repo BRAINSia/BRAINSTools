@@ -19,6 +19,7 @@ class GenerateSummedGradientImageOutputSpec(TraitedSpec):
 
 
 class GenerateSummedGradientImage(SEMLikeCommandLine):
+
     """title: GenerateSummedGradient
 
 category: Filtering.FeatureDetection
@@ -36,7 +37,7 @@ contributor: Greg Harris, Eun Young Kim
     input_spec = GenerateSummedGradientImageInputSpec
     output_spec = GenerateSummedGradientImageOutputSpec
     _cmd = " GenerateSummedGradientImage "
-    _outputs_filenames = {'outputFileName':'outputFileName'}
+    _outputs_filenames = {'outputFileName': 'outputFileName'}
 
 
 class CannySegmentationLevelSetImageFilterInputSpec(CommandLineInputSpec):
@@ -57,13 +58,14 @@ class CannySegmentationLevelSetImageFilterOutputSpec(TraitedSpec):
 
 
 class CannySegmentationLevelSetImageFilter(SEMLikeCommandLine):
+
     """title:  Canny Level Set Image Filter
 
 category: Filtering.FeatureDetection
 
 description: 
 The CannySegmentationLevelSet is commonly used to refine a manually generated manual mask.
-  
+
 
 version: 0.3.0
 
@@ -72,14 +74,14 @@ license: CC
 contributor: Regina Kim
 
 acknowledgements: This command module was derived from Insight/Examples/Segmentation/CannySegmentationLevelSetImageFilter.cxx (copyright) Insight Software Consortium.  See http://wiki.na-mic.org/Wiki/index.php/Slicer3:Execution_Model_Documentation for more detailed descriptions.
-  
+
 
 """
 
     input_spec = CannySegmentationLevelSetImageFilterInputSpec
     output_spec = CannySegmentationLevelSetImageFilterOutputSpec
     _cmd = " CannySegmentationLevelSetImageFilter "
-    _outputs_filenames = {'outputVolume':'outputVolume.nii','outputSpeedVolume':'outputSpeedVolume.nii'}
+    _outputs_filenames = {'outputVolume': 'outputVolume.nii', 'outputSpeedVolume': 'outputSpeedVolume.nii'}
 
 
 class DilateImageInputSpec(CommandLineInputSpec):
@@ -94,6 +96,7 @@ class DilateImageOutputSpec(TraitedSpec):
 
 
 class DilateImage(SEMLikeCommandLine):
+
     """title: Dilate Image
 
 category: Filtering.FeatureDetection
@@ -113,7 +116,7 @@ contributor: This tool was developed by Mark Scully and Jeremy Bockholt.
     input_spec = DilateImageInputSpec
     output_spec = DilateImageOutputSpec
     _cmd = " DilateImage "
-    _outputs_filenames = {'outputVolume':'outputVolume.nii'}
+    _outputs_filenames = {'outputVolume': 'outputVolume.nii'}
 
 
 class TextureFromNoiseImageFilterInputSpec(CommandLineInputSpec):
@@ -127,6 +130,7 @@ class TextureFromNoiseImageFilterOutputSpec(TraitedSpec):
 
 
 class TextureFromNoiseImageFilter(SEMLikeCommandLine):
+
     """title: TextureFromNoiseImageFilter
 
 category: Filtering.FeatureDetection
@@ -146,7 +150,7 @@ contributor: This tool was developed by Eunyoung Regina Kim
     input_spec = TextureFromNoiseImageFilterInputSpec
     output_spec = TextureFromNoiseImageFilterOutputSpec
     _cmd = " TextureFromNoiseImageFilter "
-    _outputs_filenames = {'outputVolume':'outputVolume.nii'}
+    _outputs_filenames = {'outputVolume': 'outputVolume.nii'}
 
 
 class FlippedDifferenceInputSpec(CommandLineInputSpec):
@@ -160,6 +164,7 @@ class FlippedDifferenceOutputSpec(TraitedSpec):
 
 
 class FlippedDifference(SEMLikeCommandLine):
+
     """title: Flip Image
 
 category: Filtering.FeatureDetection
@@ -179,7 +184,7 @@ contributor: This tool was developed by Mark Scully and Jeremy Bockholt.
     input_spec = FlippedDifferenceInputSpec
     output_spec = FlippedDifferenceOutputSpec
     _cmd = " FlippedDifference "
-    _outputs_filenames = {'outputVolume':'outputVolume.nii'}
+    _outputs_filenames = {'outputVolume': 'outputVolume.nii'}
 
 
 class ErodeImageInputSpec(CommandLineInputSpec):
@@ -194,6 +199,7 @@ class ErodeImageOutputSpec(TraitedSpec):
 
 
 class ErodeImage(SEMLikeCommandLine):
+
     """title: Erode Image
 
 category: Filtering.FeatureDetection
@@ -213,7 +219,7 @@ contributor: This tool was developed by Mark Scully and Jeremy Bockholt.
     input_spec = ErodeImageInputSpec
     output_spec = ErodeImageOutputSpec
     _cmd = " ErodeImage "
-    _outputs_filenames = {'outputVolume':'outputVolume.nii'}
+    _outputs_filenames = {'outputVolume': 'outputVolume.nii'}
 
 
 class GenerateBrainClippedImageInputSpec(CommandLineInputSpec):
@@ -228,6 +234,7 @@ class GenerateBrainClippedImageOutputSpec(TraitedSpec):
 
 
 class GenerateBrainClippedImage(SEMLikeCommandLine):
+
     """title: GenerateBrainClippedImage
 
 category: Filtering.FeatureDetection
@@ -245,7 +252,7 @@ contributor:  Eun Young Kim
     input_spec = GenerateBrainClippedImageInputSpec
     output_spec = GenerateBrainClippedImageOutputSpec
     _cmd = " GenerateBrainClippedImage "
-    _outputs_filenames = {'outputFileName':'outputFileName'}
+    _outputs_filenames = {'outputFileName': 'outputFileName'}
 
 
 class NeighborhoodMedianInputSpec(CommandLineInputSpec):
@@ -260,6 +267,7 @@ class NeighborhoodMedianOutputSpec(TraitedSpec):
 
 
 class NeighborhoodMedian(SEMLikeCommandLine):
+
     """title: Neighborhood Median
 
 category: Filtering.FeatureDetection
@@ -279,7 +287,7 @@ contributor: This tool was developed by Mark Scully and Jeremy Bockholt.
     input_spec = NeighborhoodMedianInputSpec
     output_spec = NeighborhoodMedianOutputSpec
     _cmd = " NeighborhoodMedian "
-    _outputs_filenames = {'outputVolume':'outputVolume.nii'}
+    _outputs_filenames = {'outputVolume': 'outputVolume.nii'}
 
 
 class GenerateTestImageInputSpec(CommandLineInputSpec):
@@ -295,6 +303,7 @@ class GenerateTestImageOutputSpec(TraitedSpec):
 
 
 class GenerateTestImage(SEMLikeCommandLine):
+
     """title: DownSampleImage
 
 category: Filtering.FeatureDetection
@@ -312,7 +321,7 @@ contributor: Eun Young Kim
     input_spec = GenerateTestImageInputSpec
     output_spec = GenerateTestImageOutputSpec
     _cmd = " GenerateTestImage "
-    _outputs_filenames = {'outputVolume':'outputVolume'}
+    _outputs_filenames = {'outputVolume': 'outputVolume'}
 
 
 class NeighborhoodMeanInputSpec(CommandLineInputSpec):
@@ -327,6 +336,7 @@ class NeighborhoodMeanOutputSpec(TraitedSpec):
 
 
 class NeighborhoodMean(SEMLikeCommandLine):
+
     """title: Neighborhood Mean
 
 category: Filtering.FeatureDetection
@@ -346,7 +356,7 @@ contributor: This tool was developed by Mark Scully and Jeremy Bockholt.
     input_spec = NeighborhoodMeanInputSpec
     output_spec = NeighborhoodMeanOutputSpec
     _cmd = " NeighborhoodMean "
-    _outputs_filenames = {'outputVolume':'outputVolume.nii'}
+    _outputs_filenames = {'outputVolume': 'outputVolume.nii'}
 
 
 class HammerAttributeCreatorInputSpec(CommandLineInputSpec):
@@ -363,6 +373,7 @@ class HammerAttributeCreatorOutputSpec(TraitedSpec):
 
 
 class HammerAttributeCreator(SEMLikeCommandLine):
+
     """title: HAMMER Feature Vectors
 
 category: Filtering.FeatureDetection
@@ -398,13 +409,14 @@ class TextureMeasureFilterOutputSpec(TraitedSpec):
 
 
 class TextureMeasureFilter(SEMLikeCommandLine):
+
     """title:  Canny Level Set Image Filter
 
 category: Filtering.FeatureDetection
 
 description: 
 The CannySegmentationLevelSet is commonly used to refine a manually generated manual mask.
-  
+
 
 version: 0.3.0
 
@@ -413,14 +425,14 @@ license: CC
 contributor: Regina Kim
 
 acknowledgements: This command module was derived from Insight/Examples/Segmentation/CannySegmentationLevelSetImageFilter.cxx (copyright) Insight Software Consortium.  See http://wiki.na-mic.org/Wiki/index.php/Slicer3:Execution_Model_Documentation for more detailed descriptions.
-  
+
 
 """
 
     input_spec = TextureMeasureFilterInputSpec
     output_spec = TextureMeasureFilterOutputSpec
     _cmd = " TextureMeasureFilter "
-    _outputs_filenames = {'outputFilename':'outputFilename'}
+    _outputs_filenames = {'outputFilename': 'outputFilename'}
 
 
 class DilateMaskInputSpec(CommandLineInputSpec):
@@ -436,6 +448,7 @@ class DilateMaskOutputSpec(TraitedSpec):
 
 
 class DilateMask(SEMLikeCommandLine):
+
     """title: Dilate Image
 
 category: Filtering.FeatureDetection
@@ -455,7 +468,7 @@ contributor: This tool was developed by Mark Scully and Jeremy Bockholt.
     input_spec = DilateMaskInputSpec
     output_spec = DilateMaskOutputSpec
     _cmd = " DilateMask "
-    _outputs_filenames = {'outputVolume':'outputVolume.nii'}
+    _outputs_filenames = {'outputVolume': 'outputVolume.nii'}
 
 
 class DumpBinaryTrainingVectorsInputSpec(CommandLineInputSpec):
@@ -468,6 +481,7 @@ class DumpBinaryTrainingVectorsOutputSpec(TraitedSpec):
 
 
 class DumpBinaryTrainingVectors(SEMLikeCommandLine):
+
     """title: Erode Image
 
 category: Filtering.FeatureDetection
@@ -502,6 +516,7 @@ class DistanceMapsOutputSpec(TraitedSpec):
 
 
 class DistanceMaps(SEMLikeCommandLine):
+
     """title: Mauerer Distance
 
 category: Filtering.FeatureDetection
@@ -521,7 +536,7 @@ contributor: This tool was developed by Mark Scully and Jeremy Bockholt.
     input_spec = DistanceMapsInputSpec
     output_spec = DistanceMapsOutputSpec
     _cmd = " DistanceMaps "
-    _outputs_filenames = {'outputVolume':'outputVolume.nii'}
+    _outputs_filenames = {'outputVolume': 'outputVolume.nii'}
 
 
 class STAPLEAnalysisInputSpec(CommandLineInputSpec):
@@ -535,6 +550,7 @@ class STAPLEAnalysisOutputSpec(TraitedSpec):
 
 
 class STAPLEAnalysis(SEMLikeCommandLine):
+
     """title: Dilate Image
 
 category: Filtering.FeatureDetection
@@ -554,7 +570,7 @@ contributor: This tool was developed by Mark Scully and Jeremy Bockholt.
     input_spec = STAPLEAnalysisInputSpec
     output_spec = STAPLEAnalysisOutputSpec
     _cmd = " STAPLEAnalysis "
-    _outputs_filenames = {'outputVolume':'outputVolume.nii'}
+    _outputs_filenames = {'outputVolume': 'outputVolume.nii'}
 
 
 class GradientAnisotropicDiffusionImageFilterInputSpec(CommandLineInputSpec):
@@ -570,6 +586,7 @@ class GradientAnisotropicDiffusionImageFilterOutputSpec(TraitedSpec):
 
 
 class GradientAnisotropicDiffusionImageFilter(SEMLikeCommandLine):
+
     """title: GradientAnisopropicDiffusionFilter
 
 category: Filtering.FeatureDetection
@@ -583,14 +600,16 @@ contributor:  This tool was developed by Eun Young Kim by modifying ITK Example
     input_spec = GradientAnisotropicDiffusionImageFilterInputSpec
     output_spec = GradientAnisotropicDiffusionImageFilterOutputSpec
     _cmd = " GradientAnisotropicDiffusionImageFilter "
-    _outputs_filenames = {'outputVolume':'outputVolume.nii'}
+    _outputs_filenames = {'outputVolume': 'outputVolume.nii'}
 
 
 class CannyEdgeInputSpec(CommandLineInputSpec):
     inputVolume = File(desc="Required: input tissue label image", exists=True, argstr="--inputVolume %s")
     variance = traits.Float(desc="Variance and Maximum error are used in the Gaussian smoothing of the input image.  See  itkDiscreteGaussianImageFilter for information on these parameters.", argstr="--variance %f")
-    upperThreshold = traits.Float(desc="Threshold is the lowest allowed value in the output image.  Its data type is the same as the data type of the output image. Any values below the Threshold level will be replaced with the OutsideValue parameter value, whose default is zero.  ", argstr="--upperThreshold %f")
-    lowerThreshold = traits.Float(desc="Threshold is the lowest allowed value in the output image.  Its data type is the same as the data type of the output image. Any values below the Threshold level will be replaced with the OutsideValue parameter value, whose default is zero.  ", argstr="--lowerThreshold %f")
+    upperThreshold = traits.Float(
+        desc="Threshold is the lowest allowed value in the output image.  Its data type is the same as the data type of the output image. Any values below the Threshold level will be replaced with the OutsideValue parameter value, whose default is zero.  ", argstr="--upperThreshold %f")
+    lowerThreshold = traits.Float(
+        desc="Threshold is the lowest allowed value in the output image.  Its data type is the same as the data type of the output image. Any values below the Threshold level will be replaced with the OutsideValue parameter value, whose default is zero.  ", argstr="--lowerThreshold %f")
     outputVolume = traits.Either(traits.Bool, File(), hash_files=False, desc="Required: output image", argstr="--outputVolume %s")
 
 
@@ -599,6 +618,7 @@ class CannyEdgeOutputSpec(TraitedSpec):
 
 
 class CannyEdge(SEMLikeCommandLine):
+
     """title: Canny Edge Detection
 
 category: Filtering.FeatureDetection
@@ -618,4 +638,4 @@ contributor: This tool was written by Hans J. Johnson.
     input_spec = CannyEdgeInputSpec
     output_spec = CannyEdgeOutputSpec
     _cmd = " CannyEdge "
-    _outputs_filenames = {'outputVolume':'outputVolume.nii'}
+    _outputs_filenames = {'outputVolume': 'outputVolume.nii'}

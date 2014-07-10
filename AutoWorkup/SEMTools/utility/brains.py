@@ -21,6 +21,7 @@ class fcsv_to_hdf5OutputSpec(TraitedSpec):
 
 
 class fcsv_to_hdf5(SEMLikeCommandLine):
+
     """title: fcsv_to_matlab (BRAINS)
 
 category: Utility.BRAINS
@@ -32,7 +33,7 @@ description: Convert a collection of fcsv files to a HDF5 format file
     input_spec = fcsv_to_hdf5InputSpec
     output_spec = fcsv_to_hdf5OutputSpec
     _cmd = " fcsv_to_hdf5 "
-    _outputs_filenames = {'modelFile':'modelFile','landmarkTypesFile':'landmarkTypesFile.txt','outputMatlabFile':'outputMatlabFile.h5'}
+    _outputs_filenames = {'modelFile': 'modelFile', 'landmarkTypesFile': 'landmarkTypesFile.txt', 'outputMatlabFile': 'outputMatlabFile.h5'}
 
 
 class FindCenterOfBrainInputSpec(CommandLineInputSpec):
@@ -64,6 +65,7 @@ class FindCenterOfBrainOutputSpec(TraitedSpec):
 
 
 class FindCenterOfBrain(SEMLikeCommandLine):
+
     """title: Center Of Brain (BRAINS)
 
 category: Utility.BRAINS
@@ -83,4 +85,5 @@ acknowledgements: Hans Johnson(1,3,4); Kent Williams(1);  (1=University of Iowa 
     input_spec = FindCenterOfBrainInputSpec
     output_spec = FindCenterOfBrainOutputSpec
     _cmd = " FindCenterOfBrain "
-    _outputs_filenames = {'debugClippedImageMask':'debugClippedImageMask.nii','debugTrimmedImage':'debugTrimmedImage.nii','debugDistanceImage':'debugDistanceImage.nii','debugGridImage':'debugGridImage.nii','clippedImageMask':'clippedImageMask.nii','debugAfterGridComputationsForegroundImage':'debugAfterGridComputationsForegroundImage.nii'}
+    _outputs_filenames = {'debugClippedImageMask': 'debugClippedImageMask.nii', 'debugTrimmedImage': 'debugTrimmedImage.nii', 'debugDistanceImage': 'debugDistanceImage.nii',
+                          'debugGridImage': 'debugGridImage.nii', 'clippedImageMask': 'clippedImageMask.nii', 'debugAfterGridComputationsForegroundImage': 'debugAfterGridComputationsForegroundImage.nii'}

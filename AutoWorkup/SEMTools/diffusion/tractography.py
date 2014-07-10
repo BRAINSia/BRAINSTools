@@ -35,7 +35,8 @@ class UKFTractographyInputSpec(CommandLineInputSpec):
     Ql = traits.Float(desc="Process noise for eigenvalues", argstr="--Ql %f")
     Qw = traits.Float(desc="Process noise for free water weights, ignored if no free water estimation", argstr="--Qw %f")
     Rs = traits.Float(desc="Measurement noise", argstr="--Rs %f")
-    maxBranchingAngle = traits.Float(desc="Maximum branching angle, in degrees. When using multiple tensors, a new branch will be created when the tensors' major directions form an angle between (minBranchingAngle, maxBranchingAngle). Branching is supressed when this maxBranchingAngle is set to 0.0", argstr="--maxBranchingAngle %f")
+    maxBranchingAngle = traits.Float(
+        desc="Maximum branching angle, in degrees. When using multiple tensors, a new branch will be created when the tensors' major directions form an angle between (minBranchingAngle, maxBranchingAngle). Branching is supressed when this maxBranchingAngle is set to 0.0", argstr="--maxBranchingAngle %f")
     minBranchingAngle = traits.Float(desc="Minimum branching angle, in degrees. When using multiple tensors, a new branch will be created when the tensors' major directions form an angle between (minBranchingAngle, maxBranchingAngle)", argstr="--minBranchingAngle %f")
     tractsWithSecondTensor = traits.Either(traits.Bool, File(), hash_files=False, desc="Tracts generated, with second tensor output (if there is one)", argstr="--tractsWithSecondTensor %s")
     storeGlyphs = traits.Bool(desc="Store tensors' main directions as two-point lines in a separate file named glyphs_{tracts}. When using multiple tensors, only the major tensors' main directions are stored", argstr="--storeGlyphs ")
@@ -47,17 +48,18 @@ class UKFTractographyOutputSpec(TraitedSpec):
 
 
 class UKFTractography(SEMLikeCommandLine):
+
     """title: 
     UKF Tractography
-  
+
 
 category: 
     Diffusion.Tractography
-  
+
 
 description: 
     This module traces fibers in a DWI Volume using the multiple tensor unscented Kalman Filter methology. For more informations check the documentation.
-  
+
 
 version: 1.0
 
@@ -70,4 +72,4 @@ contributor: Yogesh Rathi, Stefan Lienhard, Yinpeng Li, Martin Styner, Ipek Oguz
     input_spec = UKFTractographyInputSpec
     output_spec = UKFTractographyOutputSpec
     _cmd = " UKFTractography "
-    _outputs_filenames = {'tracts':'tracts.vtp','tractsWithSecondTensor':'tractsWithSecondTensor.vtp'}
+    _outputs_filenames = {'tracts': 'tracts.vtp', 'tractsWithSecondTensor': 'tractsWithSecondTensor.vtp'}

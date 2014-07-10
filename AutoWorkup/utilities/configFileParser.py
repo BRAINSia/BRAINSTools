@@ -139,7 +139,7 @@ def nipype_options(args, pipeline, cluster, template, experiment):
     #     retval['execution'][key] = value
     print pipeline
     retval['ds_overwrite'] = pipeline['ds_overwrite']  # resolveDataSinkOption(args, pipeline)
-    retval['execution'] = misc.nipype_execution(plugin=args['--wfrun'], stop_on_first_crash=False, stop_on_first_rerun=True)
+    retval['execution'] = misc.nipype_execution(plugin=args['--wfrun'], stop_on_first_crash=False, stop_on_first_rerun=False)
     retval['plugin_args'] = misc.nipype_plugin_args(args['--wfrun'], cluster, template)
     retval['logging'] = misc.nipype_logging(experiment['cachedir'])
     return retval

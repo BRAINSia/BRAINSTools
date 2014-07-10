@@ -87,11 +87,9 @@
       <name>metricSamplingStrategy</name>
       <longflag>metricSamplingStrategy</longflag>
       <label>Set Sampling Strategy</label>
-      <description>It defines the method that registration filter uses to sample the input fixed image={None,Regular,Random}</description>
-      <default>None</default>
-      <element>None</element>
+      <description>ONLY Random SUPPORTED NOW It defines the method that registration filter uses to sample the input fixed image={Random}</description>
+      <default>Random</default>
       <element>Random</element>
-      <element>Regular</element>
     </string-enumeration>
   </parameters>
 
@@ -307,7 +305,7 @@
       <longflag deprecatedalias="minimumStepSize">minimumStepLength</longflag>
       <label>Minimum Step Length</label>
       <description>Each step in the optimization takes steps at least this big.  When none are possible, registration is complete.</description>
-      <default>0</default>
+      <default>0.001</default>
     </double-vector>
 
     <double>

@@ -19,7 +19,6 @@
 
 #include "BRAINSFitUtils.h"
 #include "BRAINSFitHelper.h"
-#include "BRAINSFitHelperTemplate.h"
 
 #include "genericRegistrationHelper.h"
 #include "itkCorrelationImageToImageMetricv4.h"
@@ -36,6 +35,8 @@
 #include "itkMeanSquaresHistogramImageToImageMetric.h"
 #include "itkBinaryThresholdImageFilter.h"
 #include "itkNormalizedMutualInformationHistogramImageToImageMetric.h"
+
+#include  <algorithm>
 
 // A little dummy function to make it easy to stop the debugger.
 void debug_catch(void)
@@ -90,8 +91,7 @@ BRAINSFitHelper::BRAINSFitHelper() :
   m_OutputFixedVolumeROI(""),
   m_OutputMovingVolumeROI(""),
   m_PermitParameterVariation(0),
-  m_NumberOfSamples(0), // normally this variable should NOT be used; however, it is kept for backward compatiblity.
-  m_SamplingPercentage(1), // instead or number of samples, sampling% should be used that is a number between 0 and 1.
+  m_SamplingPercentage(1.0), // instead or number of samples, sampling% should be used that is a number between 0 and 1.
   m_NumberOfHistogramBins(50),
   m_HistogramMatch(false),
   m_RemoveIntensityOutliers(0.00),
@@ -306,7 +306,7 @@ BRAINSFitHelper::Update(void)
     {
     typedef itk::MattesMutualInformationImageToImageMetricv4<FixedImageType, MovingImageType, FixedImageType, double> MIMetricType;
     MIMetricType::Pointer mutualInformationMetric = MIMetricType::New();
-    mutualInformationMetric->SetMaximumNumberOfThreads(3);
+    mutualInformationMetric->SetMaximumNumberOfThreads(std::min( 3U,itk::MultiThreader::GetGlobalDefaultNumberOfThreads() ) );
     mutualInformationMetric = mutualInformationMetric;
     mutualInformationMetric->SetNumberOfHistogramBins( this->m_NumberOfHistogramBins );
     mutualInformationMetric->SetUseMovingImageGradientFilter( gradientfilter );

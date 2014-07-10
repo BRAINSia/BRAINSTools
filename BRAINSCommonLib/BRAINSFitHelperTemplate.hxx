@@ -570,7 +570,9 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::FitCommonCode(
   appMutualRegistration->SetNumberOfHistogramBins(m_NumberOfHistogramBins);
   appMutualRegistration->SetNumberOfIterations( numberOfIterations);
   appMutualRegistration->SetPermitParameterVariation( m_PermitParameterVariation );
+  appMutualRegistration->SetSamplingStrategy(m_SamplingStrategy);
   appMutualRegistration->SetSamplingPercentage(m_SamplingPercentage);
+
   appMutualRegistration->SetRelaxationFactor( m_RelaxationFactor );
   appMutualRegistration->SetMaximumStepLength( m_MaximumStepLength );
   appMutualRegistration->SetMinimumStepLength( minimumStepLength );
@@ -590,7 +592,6 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::FitCommonCode(
   appMutualRegistration->SetDisplayDeformedImage(m_DisplayDeformedImage);
   appMutualRegistration->SetPromptUserAfterDisplay(m_PromptUserAfterDisplay);
   appMutualRegistration->SetObserveIterations(m_ObserveIterations);
-  appMutualRegistration->SetSamplingStrategy(m_SamplingStrategy);
   /*
    *  At this point appMutualRegistration should be all set to make
    *  an itk pipeline class templated in TransformType etc.

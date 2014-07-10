@@ -117,6 +117,8 @@ int main(int argc, char *argv[])
 #endif
 
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
+  std::cout << "HACK: NumberOf Threads " << numberOfThreads << std::endl;
+  std::cout << " " << itk::MultiThreader::GetGlobalDefaultNumberOfThreads()  << std::endl;
 
   std::string localInitializeTransformMode = initializeTransformMode;
 
@@ -433,7 +435,13 @@ int main(int argc, char *argv[])
     myHelper->SetOutputFixedVolumeROI(outputFixedVolumeROI);
     myHelper->SetOutputMovingVolumeROI(outputMovingVolumeROI);
     myHelper->SetPermitParameterVariation(permitParameterVariation);
-    myHelper->SetNumberOfSamples(numberOfSamples);
+    if(numberOfSamples > 0)
+      {
+        const unsigned long numberOfAllSamples = extractFixedVolume->GetBufferedRegion().GetNumberOfPixels();
+        samplingPercentage = static_cast<double>( numberOfSamples )/numberOfAllSamples;
+        std::cout << "WARNING --numberOfSamples is deprecated, please use --samplingPercentage instead " << std::endl;
+        std::cout << "WARNING: Replacing command line --samplingPercentage " << samplingPercentage << std::endl;
+      }
     myHelper->SetSamplingPercentage(samplingPercentage);
     myHelper->SetNumberOfHistogramBins(numberOfHistogramBins);
     myHelper->SetNumberOfIterations(numberOfIterations);

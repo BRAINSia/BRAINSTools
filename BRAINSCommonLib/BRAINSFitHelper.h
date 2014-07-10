@@ -50,6 +50,7 @@
 #include "itkIO.h"
 #include "itkFindCenterOfBrainFilter.h"
 #include "itkImageRandomNonRepeatingConstIteratorWithIndex.h"
+#include "itkMersenneTwisterRandomVariateGenerator.h"
 
 namespace itk
 {
@@ -133,8 +134,6 @@ public:
     WINDOWSINC_INTERP = 1
     } InterpolationType;
 
-  itkSetMacro(NumberOfSamples,                   unsigned int);
-  itkGetConstMacro(NumberOfSamples,              unsigned int);
   itkSetMacro(SamplingPercentage,                double);
   itkGetConstMacro(SamplingPercentage,           double);
   itkSetMacro(NumberOfHistogramBins,             unsigned int);
@@ -196,17 +195,9 @@ public:
     {
     m_SamplingStrategy = AffineRegistrationType::RANDOM;
     }
-  else if( strategy == "Regular" )
-    {
-    m_SamplingStrategy = AffineRegistrationType::REGULAR;
-    }
-  else if( (strategy == "None") || (strategy == "") )
-    {
-    m_SamplingStrategy = AffineRegistrationType::NONE;
-    }
   else
     {
-    std::cout << "ERROR: samplingStrategy is incorrectly specified" << std::endl;
+    std::cout << "ERROR: samplingStrategy is incorrectly specified, only Random supported" << std::endl;
     exit( -1 );
     }
   }
@@ -274,7 +265,6 @@ private:
   std::string               m_OutputMovingVolumeROI;
   std::vector<int>          m_PermitParameterVariation;
 
-  unsigned int m_NumberOfSamples;
   double       m_SamplingPercentage;
   unsigned int m_NumberOfHistogramBins;
   bool         m_HistogramMatch;
@@ -327,22 +317,9 @@ BRAINSFitHelper::SetupRegistration(GenericMetricType *localCostMetric)
   localCostMetric->SetFixedImage(this->m_FixedVolume);
   localCostMetric->SetMovingImage(this->m_PreprocessedMovingVolume);
 
-  // The preference is just set SamplingPercentage and pass that to the registrationMethodv4 directly.
-  // However, the NumberOfSamples option is kept for backward compatibility,
-  // and if it is set, it overwrites the SamplingPercentage option.
-  if(this->m_NumberOfSamples == 0 || this->m_SamplingPercentage == 0)
+  if(this->m_SamplingPercentage <= 0.0)
     {
-    this->m_SamplingPercentage = 1;
-    }
-
-  if(this->m_NumberOfSamples > 0)
-    {
-    const unsigned long numberOfAllSamples = this->m_FixedVolume->GetBufferedRegion().GetNumberOfPixels();
-    this->m_SamplingPercentage = static_cast<double>( this->m_NumberOfSamples )/numberOfAllSamples;
-    if( this->m_SamplingStrategy == AffineRegistrationType::NONE )
-      {
-      this->m_SamplingStrategy = AffineRegistrationType::REGULAR;
-      }
+    itkGenericExceptionMacro("ERROR: SamplingPercentage can not be less than or equal to zero");
     }
 
   if( this->m_MovingBinaryVolume.IsNotNull() )
@@ -351,55 +328,57 @@ BRAINSFitHelper::SetupRegistration(GenericMetricType *localCostMetric)
     }
   if( this->m_FixedBinaryVolume.IsNotNull() )
     {
-    if( this->m_SamplingPercentage < 1 )
+    // In this case the registration framework does not do sampling inside the mask area.
+    // It picks samples from the whole image, and those samples that are inside the mask are selected by metric.
+    // However, we want to pick all of our intented samples from the mask area, so we do sampling here.
+
+    // First overwrite the sampling strategy to be none
+    this->m_SamplingStrategy = AffineRegistrationType::NONE;
+
+    // then pick the samples inside the mask and pass them to metric
+    typename MetricSamplePointSetType::Pointer samplePointSet = MetricSamplePointSetType::New();
+    samplePointSet->Initialize();
+
+    typedef typename MetricSamplePointSetType::PointType SamplePointType;
+    const unsigned long numberOfAllSamples = this->m_FixedVolume->GetBufferedRegion().GetNumberOfPixels();
+
+    const unsigned long sampleCount = static_cast<unsigned long>(vcl_ceil( numberOfAllSamples * this->m_SamplingPercentage ) );
+
+    typedef typename Statistics::MersenneTwisterRandomVariateGenerator RandomizerType;
+    typename RandomizerType::Pointer randomizer = RandomizerType::New();
+    randomizer->SetSeed( 1234 );
+
+    itk::ImageRandomNonRepeatingConstIteratorWithIndex<FixedImageType> NRit( this->m_FixedVolume,
+      this->m_FixedVolume->GetBufferedRegion() );
+
+    const typename FixedImageType::SpacingType oneThirdVirtualSpacing = this->m_FixedVolume->GetSpacing() / 3.0;
+    NRit.SetNumberOfSamples( numberOfAllSamples ); //Take random samples from entire image.
+    NRit.GoToBegin();
+    unsigned long samplesInsideMask = 0;
+    while( !NRit.IsAtEnd()  && ( samplesInsideMask < sampleCount ) )
       {
-      // In this case the registration framework does not do sampling inside the mask area.
-      // It picks samples from the whole image, and those samples that are inside the mask are selected by metric.
-      // However, we want to pick all of our intented samples from the mask area, so we do sampling here.
-
-      // First overwrite the sampling strategy to be none
-      this->m_SamplingStrategy = AffineRegistrationType::NONE;
-
-      // then pick the samples inside the mask and pass them to metric
-      typename MetricSamplePointSetType::Pointer samplePointSet = MetricSamplePointSetType::New();
-      samplePointSet->Initialize();
-
-      typedef typename MetricSamplePointSetType::PointType SamplePointType;
-      const unsigned long numberOfAllSamples = this->m_FixedVolume->GetBufferedRegion().GetNumberOfPixels();
-
-      const unsigned long sampleCount = static_cast<unsigned long>(vcl_ceil( numberOfAllSamples * this->m_SamplingPercentage ) );
-      unsigned long index = 0;
-
-      itk::ImageRandomNonRepeatingConstIteratorWithIndex<FixedImageType> NRit( this->m_FixedVolume,
-                                                                              this->m_FixedVolume->GetBufferedRegion() );
-      NRit.SetNumberOfSamples( sampleCount );
-      NRit.GoToBegin();
-      while( !NRit.IsAtEnd() )
+      SamplePointType testPoint;
+      this->m_FixedVolume->TransformIndexToPhysicalPoint(NRit.GetIndex(), testPoint);
+      if( this->m_FixedBinaryVolume->IsInside(testPoint) )
         {
-        SamplePointType testPoint;
-        this->m_FixedVolume->TransformIndexToPhysicalPoint(NRit.GetIndex(), testPoint);
-        if( this->m_FixedBinaryVolume->IsInside(testPoint) )
+        // randomly perturb the point within a voxel (approximately)
+        for ( unsigned int d = 0; d < FixedImageDimension; d++ )
           {
-          samplePointSet->SetPoint( index, testPoint );
-          ++index;
+          testPoint[d] += randomizer->GetNormalVariate() * oneThirdVirtualSpacing[d];
           }
-        ++NRit;
+        samplePointSet->SetPoint( samplesInsideMask, testPoint );
+        ++samplesInsideMask;
         }
-
-      if( samplePointSet.IsNull() )
-        {
-        itkGenericExceptionMacro("samplePointSet is empty.");
-        }
-
-      localCostMetric->SetUseFixedSampledPointSet( true );
-      localCostMetric->SetFixedSampledPointSet( samplePointSet );
+      ++NRit;
       }
-    else
+
+    if( samplePointSet.IsNull() )
       {
-      // The samplingPercentage will be passed to registration filter as it is (i.e. 1),
-      // No sampling happens, but metric just accepts the points that are inside the mask area.
-      localCostMetric->SetFixedImageMask(this->m_FixedBinaryVolume);
+      itkGenericExceptionMacro("samplePointSet is empty.");
       }
+
+    localCostMetric->SetUseFixedSampledPointSet( true );
+    localCostMetric->SetFixedSampledPointSet( samplePointSet );
     }
 
   typename HelperType::Pointer
@@ -416,6 +395,7 @@ BRAINSFitHelper::SetupRegistration(GenericMetricType *localCostMetric)
   myHelper->SetOutputMovingVolumeROI(this->m_OutputMovingVolumeROI);
   myHelper->SetPermitParameterVariation(this->m_PermitParameterVariation);
   myHelper->SetSamplingPercentage(this->m_SamplingPercentage);
+  myHelper->SetSamplingStrategy(this->m_SamplingStrategy);
   myHelper->SetNumberOfHistogramBins(this->m_NumberOfHistogramBins);
   myHelper->SetNumberOfIterations(this->m_NumberOfIterations);
   myHelper->SetMaximumStepLength(this->m_MaximumStepLength);
@@ -438,7 +418,6 @@ BRAINSFitHelper::SetupRegistration(GenericMetricType *localCostMetric)
   myHelper->SetCostMetricObject(localCostMetric);
   myHelper->SetForceMINumberOfThreads(this->m_ForceMINumberOfThreads);
   myHelper->SetUseROIBSpline(this->m_UseROIBSpline);
-  myHelper->SetSamplingStrategy(this->m_SamplingStrategy);
   myHelper->SetInitializeRegistrationByCurrentGenericTransform(this->m_InitializeRegistrationByCurrentGenericTransform);
   if( this->m_DebugLevel > 7 )
     {

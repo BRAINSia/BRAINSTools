@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
   <category>BRAINS.LabelStatistics</category>
-  <title>Label Statistics</title>
+  <title>Label Statistics (BRAINS)</title>
   <description>Compute image statistics within each label of a label map. </description>
   <version>3.0</version>
   <documentation-url>http://www.nitrc.org/plugins/mwiki/index.php/brains:BRAINSClassify</documentation-url>

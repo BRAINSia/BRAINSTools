@@ -28,7 +28,7 @@ package_check('scipy', '0.7', 'tutorial1')
 package_check('networkx', '1.0', 'tutorial1')
 package_check('IPython', '0.10', 'tutorial1')
 
-def segmentation(projectid, subjectid, sessionid, master_config, BAtlas, onlyT1=True, pipeline_name=''):
+def segmentation(projectid, subjectid, sessionid, master_config, onlyT1=True, pipeline_name=''):
     import os.path
     import nipype.pipeline.engine as pe
     import nipype.interfaces.io as nio
@@ -55,6 +55,8 @@ def segmentation(projectid, subjectid, sessionid, master_config, BAtlas, onlyT1=
 
     inputsSpec = pe.Node(interface=IdentityInterface(fields=['t1_average',
                                                              't2_average',
+                                                             'template_t1',
+                                                             'hncma-atlas',
                                                              'LMIatlasToSubject_tx',
                                                              'inputLabels',
                                                              'inputHeadLabels',
@@ -106,13 +108,16 @@ def segmentation(projectid, subjectid, sessionid, master_config, BAtlas, onlyT1=
     AtlasToSubjectantsRegistration.inputs.output_inverse_warped_image = 'subject2atlas.nii.gz'
 
     baw200.connect([(inputsSpec, AtlasToSubjectantsRegistration, [('LMIatlasToSubject_tx', 'initial_moving_transform'),
-                                                                  ('t1_average', 'fixed_image')]),
-                    (BAtlas, AtlasToSubjectantsRegistration, [('template_t1', 'moving_image')])
+                                                                  ('t1_average', 'fixed_image'),
+                                                                  ('template_t1', 'moving_image')])
                    ])
 
-    myLocalSegWF = CreateBRAINSCutWorkflow(projectid, subjectid, sessionid, 'Segmentation',
-                                           master_config['queue'], master_config['long_q'], BAtlas, onlyT1)
-
+    myLocalSegWF = CreateBRAINSCutWorkflow(projectid,
+                                           subjectid,
+                                           sessionid,
+                                           master_config['queue'],
+                                           master_config['long_q'],
+                                           t1Only=onlyT1)
     MergeStage2AverageImagesName = "99_mergeAvergeStage2Images_" + str(sessionid)
     MergeStage2AverageImages = pe.Node(interface=Merge(2), run_without_submitting=True,
                                        name=MergeStage2AverageImagesName)
@@ -121,7 +126,8 @@ def segmentation(projectid, subjectid, sessionid, master_config, BAtlas, onlyT1=
                                                 ('posteriorImages', "inputspec.posteriorDictionary"),
                                                 ('inputLabels', 'inputspec.RegistrationROI'),]),
                     (inputsSpec, MergeStage2AverageImages, [('t1_average', 'in1')]),
-                    (AtlasToSubjectantsRegistration, myLocalSegWF, [('composite_transform', 'inputspec.atlasToSubjectTransform')])
+                    (AtlasToSubjectantsRegistration, myLocalSegWF, [('composite_transform',
+                                                                     'inputspec.atlasToSubjectTransform')])
                    ])
 
     if not onlyT1:
@@ -208,8 +214,8 @@ def segmentation(projectid, subjectid, sessionid, master_config, BAtlas, onlyT1=
     AntsLabelWarpToSubject.inputs.interpolation = "MultiLabel"
 
     baw200.connect([(AtlasToSubjectantsRegistration, AntsLabelWarpToSubject, [('composite_transform', 'transforms')]),
-                    (inputsSpec, AntsLabelWarpToSubject, [('t1_average', 'reference_image')]),
-                    (BAtlas, AntsLabelWarpToSubject, [('hncma-atlas', 'input_image')])
+                    (inputsSpec, AntsLabelWarpToSubject, [('t1_average', 'reference_image'),
+                                                          ('hncma-atlas', 'input_image')])
                     ])
     #####
     ### Now define where the final organized outputs should go.
@@ -253,7 +259,7 @@ def segmentation(projectid, subjectid, sessionid, master_config, BAtlas, onlyT1=
 
     baw200.connect([(AtlasToSubjectantsRegistration, LinearSubjectToAtlasANTsApplyTransforms, [('inverse_composite_transform',
                                                                                               'transforms')]),
-                    (BAtlas, LinearSubjectToAtlasANTsApplyTransforms, [('template_t1', 'reference_image')]),
+                    (inputsSpec, LinearSubjectToAtlasANTsApplyTransforms, [('template_t1', 'reference_image')]),
                     (MergeSessionSubjectToAtlas, LinearSubjectToAtlasANTsApplyTransforms, [('out', 'input_image')])
                     ])
 
@@ -262,19 +268,19 @@ def segmentation(projectid, subjectid, sessionid, master_config, BAtlas, onlyT1=
                                                    name=MergeMultiLabelSessionSubjectToAtlasName)
 
     baw200.connect([(inputsSpec, MergeMultiLabelSessionSubjectToAtlas, [('inputLabels', 'in1'),
-                                                                      ('inputHeadLabels', 'in2')])
+                                                                        ('inputHeadLabels', 'in2')])
                    ])
 
     ### This is taking this sessions RF label map back into NAC atlas space.
     #{
-    MultiLabelSubjectToAtlasANTsApplyTransformsName = 'MultiLabelSubjectToAtlasANTsApplyTransforms_' + str(sessionid)
+    MultiLabelSubjectToAtlasANTsApplyTransformsName = 'MultiLabelSubjectToAtlasANTsApplyTransforms_' + str(sessionid) + '_map'
     MultiLabelSubjectToAtlasANTsApplyTransforms = pe.MapNode(interface=ants.ApplyTransforms(), iterfield=['input_image'],
                                                              name=MultiLabelSubjectToAtlasANTsApplyTransformsName)
     MultiLabelSubjectToAtlasANTsApplyTransforms.inputs.interpolation = 'MultiLabel'
 
     baw200.connect([(AtlasToSubjectantsRegistration, MultiLabelSubjectToAtlasANTsApplyTransforms,
                      [('inverse_composite_transform', 'transforms')]),
-                      (BAtlas, MultiLabelSubjectToAtlasANTsApplyTransforms, [('template_t1', 'reference_image')]),
+                      (inputsSpec, MultiLabelSubjectToAtlasANTsApplyTransforms, [('template_t1', 'reference_image')]),
                       (MergeMultiLabelSessionSubjectToAtlas, MultiLabelSubjectToAtlasANTsApplyTransforms,
                        [('out', 'input_image')])
                    ])

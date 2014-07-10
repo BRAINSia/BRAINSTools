@@ -114,7 +114,6 @@ def baseline_workflow(projectid, subjectid, sessionid, master_config, phase='bas
     if 'tissue_classify' in master_config['components']:
         from WorkupT1T2TissueClassify import CreateTissueClassifyWorkflow
         myLocalTCWF = CreateTissueClassifyWorkflow("TissueClassify", master_config['queue'], master_config['long_q'], interpMode)
-        from atlasNode import MakeAtlasNode
         import os
         baw201.connect([(inputsSpec, myLocalTCWF, [('atlasDefinition', 'inputspec.atlasDefinition'),
                                                    ('T1s', 'inputspec.T1List'),

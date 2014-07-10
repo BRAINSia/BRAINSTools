@@ -33,11 +33,11 @@ def CreateLabelMap(listOfImages, LabelImageName, CSVFileName, posteriorDictionar
     """
         seg = sitk.Cast(initial_seg, sitk.sitkUInt8)
         print "AA", initial_seg
-        print "BB", dict(sitk.Statistics(seg))
+        # print "BB", dict(sitk.Statistics(seg))
         exclude_Mask = sitk.Cast(sitk.BinaryThreshold(probMapOfExclusion, percentageThreshold, 1.0, 0, 1), sitk.sitkUInt8)
-        print "CC", dict(sitk.Statistics(exclude_Mask))
+        # print "CC", dict(sitk.Statistics(exclude_Mask))
         cleanedUpSeg = seg * exclude_Mask
-        print "DD", dict(sitk.Statistics(cleanedUpSeg))
+        # print "DD", dict(sitk.Statistics(cleanedUpSeg))
         return cleanedUpSeg
 
     def CleanUpGMSegmentationWithWMCSF(initial_seg_fn, posteriorDictionary, WMThreshold, CSFThreshold):
@@ -122,11 +122,11 @@ def CreateLabelMap(listOfImages, LabelImageName, CSVFileName, posteriorDictionar
         value = valueDict[name]
         if ls.HasLabel(value):
             # print "Displaying: ", name, value
-            myMeasurementMap = ls.GetMeasurementMap(value)
-            dictKeys = myMeasurementMap.GetVectorOfMeasurementNames()
-            dictValues = myMeasurementMap.GetVectorOfMeasurementValues()
-            measurementDict = dict(zip(dictKeys, dictValues))
-            structVolume = ImageSpacing[0] * ImageSpacing[1] * ImageSpacing[2] * measurementDict['Count']
+            # myMeasurementMap = ls.GetMeasurementMap(value)
+            # dictKeys = myMeasurementMap.GetVectorOfMeasurementNames()
+            # dictValues = myMeasurementMap.GetVectorOfMeasurementValues()
+            # measurementDict = dict(zip(dictKeys, dictValues))
+            structVolume = ImageSpacing[0] * ImageSpacing[1] * ImageSpacing[2] * ls.GetCount(value) # measurementDict['Count']
             writeDictionary['Volume_mm3'] = structVolume
             writeDictionary['Structure'] = name
             writeDictionary['LabelCode'] = value
@@ -160,16 +160,24 @@ def CreateLabelMap(listOfImages, LabelImageName, CSVFileName, posteriorDictionar
 def CreateBRAINSCutWorkflow(projectid,
                             subjectid,
                             sessionid,
-                            WFName,
                             CLUSTER_QUEUE,
                             CLUSTER_QUEUE_LONG,
-                            atlasObject,
+                            WFName='Segmentation',
                             t1Only=False):
     cutWF = pe.Workflow(name=GenerateWFName(projectid, subjectid, sessionid, WFName))
 
     inputsSpec = pe.Node(interface=IdentityInterface(fields=['T1Volume', 'T2Volume',
                                                              'posteriorDictionary', 'RegistrationROI',
-                                                             'atlasToSubjectTransform']), name='inputspec')
+                                                             'atlasToSubjectTransform', 'template_t1',
+                                                             'rho', 'phi', 'theta',
+                                                             'l_caudate_ProbabilityMap', 'r_caudate_ProbabilityMap',
+                                                             'l_hippocampus_ProbabilityMap', 'r_hippocampus_ProbabilityMap',
+                                                             'l_putamen_ProbabilityMap', 'r_putamen_ProbabilityMap',
+                                                             'l_thalamus_ProbabilityMap', 'r_thalamus_ProbabilityMap',
+                                                             'l_accumben_ProbabilityMap', 'r_accumben_ProbabilityMap',
+                                                             'l_globus_ProbabilityMap', 'r_globus_ProbabilityMap',
+                                                             'trainModelFile_txtD0060NT0060_gz']),
+                                                              name='inputspec')
 
     #Denoised T1 input for BRAINSCut
     denosingTimeStep = 0.0625
@@ -261,34 +269,33 @@ def CreateBRAINSCutWorkflow(projectid,
         # cutWF.connect(inputsSpec,'RegistrationROI',RF12BC,'inputSubjectRegistrationROIFilename')
         # Error cutWF.connect(SGI,'outputVolume',RF12BC,'inputSubjectGadSGFilename')
         cutWF.connect(SGI, 'outputFileName', RF12BC, 'inputSubjectGadSGFilename')
-    cutWF.connect(atlasObject, 'template_t1', RF12BC, 'inputTemplateT1')
-    # cutWF.connect(atlasObject,'template_brain',RF12BC,'inputTemplateRegistrationROIFilename')
-
-    cutWF.connect(atlasObject, 'rho', RF12BC, 'inputTemplateRhoFilename')
-    cutWF.connect(atlasObject, 'phi', RF12BC, 'inputTemplatePhiFilename')
-    cutWF.connect(atlasObject, 'theta', RF12BC, 'inputTemplateThetaFilename')
-
-    cutWF.connect(atlasObject, 'l_caudate_ProbabilityMap', RF12BC, 'probabilityMapsLeftCaudate')
-    cutWF.connect(atlasObject, 'r_caudate_ProbabilityMap', RF12BC, 'probabilityMapsRightCaudate')
-    cutWF.connect(atlasObject, 'l_hippocampus_ProbabilityMap', RF12BC, 'probabilityMapsLeftHippocampus')
-    cutWF.connect(atlasObject, 'r_hippocampus_ProbabilityMap', RF12BC, 'probabilityMapsRightHippocampus')
-    cutWF.connect(atlasObject, 'l_putamen_ProbabilityMap', RF12BC, 'probabilityMapsLeftPutamen')
-    cutWF.connect(atlasObject, 'r_putamen_ProbabilityMap', RF12BC, 'probabilityMapsRightPutamen')
-    cutWF.connect(atlasObject, 'l_thalamus_ProbabilityMap', RF12BC, 'probabilityMapsLeftThalamus')
-    cutWF.connect(atlasObject, 'r_thalamus_ProbabilityMap', RF12BC, 'probabilityMapsRightThalamus')
-    cutWF.connect(atlasObject, 'l_accumben_ProbabilityMap', RF12BC, 'probabilityMapsLeftAccumben')
-    cutWF.connect(atlasObject, 'r_accumben_ProbabilityMap', RF12BC, 'probabilityMapsRightAccumben')
-    cutWF.connect(atlasObject, 'l_globus_ProbabilityMap', RF12BC, 'probabilityMapsLeftGlobus')
-    cutWF.connect(atlasObject, 'r_globus_ProbabilityMap', RF12BC, 'probabilityMapsRightGlobus')
+    cutWF.connect([(inputsSpec, RF12BC, [('template_t1', 'inputTemplateT1'),
+                                         # ('template_brain', 'inputTemplateRegistrationROIFilename'),
+                                         ('rho', 'inputTemplateRhoFilename'),
+                                         ('phi', 'inputTemplatePhiFilename'),
+                                         ('theta', 'inputTemplateThetaFilename'),
+                                         ('l_caudate_ProbabilityMap', 'probabilityMapsLeftCaudate'),
+                                         ('r_caudate_ProbabilityMap', 'probabilityMapsRightCaudate'),
+                                         ('l_hippocampus_ProbabilityMap', 'probabilityMapsLeftHippocampus'),
+                                         ('r_hippocampus_ProbabilityMap', 'probabilityMapsRightHippocampus'),
+                                         ('l_putamen_ProbabilityMap', 'probabilityMapsLeftPutamen'),
+                                         ('r_putamen_ProbabilityMap', 'probabilityMapsRightPutamen'),
+                                         ('l_thalamus_ProbabilityMap', 'probabilityMapsLeftThalamus'),
+                                         ('r_thalamus_ProbabilityMap', 'probabilityMapsRightThalamus'),
+                                         ('l_accumben_ProbabilityMap', 'probabilityMapsLeftAccumben'),
+                                         ('r_accumben_ProbabilityMap', 'probabilityMapsRightAccumben'),
+                                         ('l_globus_ProbabilityMap', 'probabilityMapsLeftGlobus'),
+                                         ('r_globus_ProbabilityMap', 'probabilityMapsRightGlobus'),
+                 ])])
     # TODO:
     if not t1Only:
-        cutWF.connect(atlasObject, 'trainModelFile_txtD0060NT0060_gz', RF12BC, 'modelFilename')
+        cutWF.connect(inputsSpec, 'trainModelFile_txtD0060NT0060_gz', RF12BC, 'modelFilename')
     else:
-        ### TODO:  Replace with proper atlasObject name in the future!!! This is a HACK
+        ### TODO:  Replace with proper atlas file name in the future!!! This is a HACK
         ### to avoid changing the hash keys of the input files from the atlas.
         def ChangeModelPathDirectory(multiModalFileName):
             return multiModalFileName.replace('modelFiles', 'T1OnlyModels')
-        cutWF.connect([(atlasObject, RF12BC,
+        cutWF.connect([(inputsSpec, RF12BC,
                         [(('trainModelFile_txtD0060NT0060_gz', ChangeModelPathDirectory), 'modelFilename')])])
 
     ## Need to index from next line cutWF.connect(inputsSpec,'atlasToSubjectTransform',RF12BC,'deformationFromTemplateToSubject')

@@ -61,12 +61,13 @@ def baseline_workflow(projectid, subjectid, sessionid, master_config, phase='bas
     import nipype.pipeline.engine as pe
     import nipype.interfaces.io as nio
     from baseline import get_list_element, getAllT1sLength  # Can we replace with len()?
-    from utilities.misc import GenerateWFName
+    from utilities.misc import *
     from PipeLineFunctionHelpers import convertToList, FixWMPartitioning
     from PipeLineFunctionHelpers import UnwrapPosteriorImagesFromDictionaryFunction as flattenDict
 
 
     baw201 = pe.Workflow(name=pipeline_name)
+
 
     inputsSpec = pe.Node(interface=IdentityInterface(fields=['atlasLandmarkFilename', 'atlasWeightFilename',
                                                              'LLSModel', 'inputTemplateModel', 'template_t1',
@@ -85,6 +86,45 @@ def baseline_workflow(projectid, subjectid, sessionid, master_config, phase='bas
                                                               'UpdatedPosteriorsList'  # Longitudinal
                                                               ]),
                           run_without_submitting=True, name='outputspec')
+    print    """
+    denoise image filter
+    """
+    print  """
+    Merge all T1 and T2 List
+    """
+    makeDenoiseInImageList = pe.Node(Function(function=MakeOutFileList,
+                                        input_names=['T1List', 'T2List', 'PDList', 'FLList',
+                                                     'OtherList','postfix','PrimaryT1'],
+                                        output_names=['inImageList','outImageList','imageTypeList']),
+                                        run_without_submitting=True, name="99_makeDenoiseInImageList")
+    baw201.connect(inputsSpec, 'T1s', makeDenoiseInImageList, 'T1List')
+    baw201.connect(inputsSpec, 'T2s', makeDenoiseInImageList, 'T2List')
+    baw201.connect(inputsSpec, 'PDs', makeDenoiseInImageList, 'PDList')
+    makeDenoiseInImageList.inputs.FLList= []# an emptyList HACK
+    makeDenoiseInImageList.inputs.PrimaryT1= None  # an emptyList HACK
+    makeDenoiseInImageList.inputs.postfix = "_UNM_denoised.nii.gz"
+    # HACK tissueClassifyWF.connect( inputsSpec, 'FLList', makeDenoiseInImageList, 'FLList' )
+    baw201.connect(inputsSpec, 'OTHERs', makeDenoiseInImageList, 'OtherList')
+
+    print """
+    Denoise:
+    """
+    DenoiseInputImgs = pe.MapNode( interface=UnbiasedNonLocalMeans(),
+                               name='denoiseInputImgs',
+                               iterfield=['inputVolume',
+                                          'outputVolume'])
+    DenoiseInputImgs.inputs.rc= [1,1,1]
+    DenoiseInputImgs.inputs.rs= [4,4,4]
+    baw201.connect([ (makeDenoiseInImageList, DenoiseInputImgs, [('inImageList', 'inputVolume')]),
+                     (makeDenoiseInImageList, DenoiseInputImgs, [('outImageList','outputVolume')])
+                  ])
+
+    makeDenoiseOutImageList = pe.Node(Function(function=GenerateSeparateImageTypeList,
+                                        input_names=['inFileList','inTypeList'],
+                                        output_names=['T1List', 'T2List', 'PDList', 'FLList', 'OtherList']),
+                                        run_without_submitting=True, name="99_makeDenoiseOutImageList")
+    baw201.connect(DenoiseInputImgs, 'outputVolume', makeDenoiseOutImageList, 'inFileList')
+    baw201.connect(makeDenoiseInImageList, 'imageTypeList', makeDenoiseOutImageList, 'inTypeList')
 
     from WorkupT1T2LandmarkInitialization import CreateLandmarkInitializeWorkflow
     DoReverseMapping = False   # Set to true for debugging outputs
@@ -92,33 +132,33 @@ def baseline_workflow(projectid, subjectid, sessionid, master_config, phase='bas
         DoReverseMapping = True
     myLocalLMIWF = CreateLandmarkInitializeWorkflow("LandmarkInitialize", interpMode, DoReverseMapping)
 
-    baw201.connect([(inputsSpec, myLocalLMIWF,
-                               [(('T1s', get_list_element, 0), 'inputspec.inputVolume'),
-                                ('atlasLandmarkFilename', 'inputspec.atlasLandmarkFilename'),
-                                ('atlasWeightFilename', 'inputspec.atlasWeightFilename'),
-                                ('LLSModel', 'inputspec.LLSModel'),
-                                ('inputTemplateModel', 'inputspec.inputTemplateModel'),
-                                ('template_t1', 'inputspec.atlasVolume')]),
-                    (myLocalLMIWF, outputsSpec, [('outputspec.outputResampledCroppedVolume',
-                                                  'BCD_ACPC_T1_CROPPED'),
-                                                 ('outputspec.outputLandmarksInACPCAlignedSpace',
-                                                  'outputLandmarksInACPCAlignedSpace'),
-                                                 ('outputspec.outputLandmarksInInputSpace',
-                                                  'outputLandmarksInInputSpace'),
-                                                 ('outputspec.outputTransform', 'output_tx'),
-                                                 ('outputspec.atlasToSubjectTransform',
-                                                  'LMIatlasToSubject_tx'),
-                                                 ('outputspec.writeBranded2DImage', 'writeBranded2DImage')])
-                        ])
+    baw201.connect([(makeDenoiseOutImageList, myLocalLMIWF,
+                     [(('T1List', get_list_element,0),  'inputspec.inputVolume' )]),
+                    (inputsSpec, myLocalLMIWF,
+                     [('atlasLandmarkFilename', 'inputspec.atlasLandmarkFilename'),
+                      ('atlasWeightFilename', 'inputspec.atlasWeightFilename'),
+                      ('LLSModel', 'inputspec.LLSModel'),
+                      ('inputTemplateModel', 'inputspec.inputTemplateModel'),
+                      ('template_t1', 'inputspec.atlasVolume')]),
+                    (myLocalLMIWF, outputsSpec,
+                     [('outputspec.outputResampledCroppedVolume','BCD_ACPC_T1_CROPPED'),
+                      ('outputspec.outputLandmarksInACPCAlignedSpace',
+                          'outputLandmarksInACPCAlignedSpace'),
+                      ('outputspec.outputLandmarksInInputSpace',
+                          'outputLandmarksInInputSpace'),
+                      ('outputspec.outputTransform', 'output_tx'),
+                      ('outputspec.atlasToSubjectTransform','LMIatlasToSubject_tx'),
+                      ('outputspec.writeBranded2DImage', 'writeBranded2DImage')])
+                  ])
 
     if 'tissue_classify' in master_config['components']:
         from WorkupT1T2TissueClassify import CreateTissueClassifyWorkflow
         myLocalTCWF = CreateTissueClassifyWorkflow("TissueClassify", master_config['queue'], master_config['long_q'], interpMode)
         import os
-        baw201.connect([(inputsSpec, myLocalTCWF, [('atlasDefinition', 'inputspec.atlasDefinition'),
-                                                   ('T1s', 'inputspec.T1List'),
+        baw201.connect([(makeDenoiseOutImageList,myLocalTCWF, [('T1List','inputspec.T1List')]),
+                        (makeDenoiseOutImageList,myLocalTCWF, [('T2List','inputspec.T2List')]),
+                        (inputsSpec, myLocalTCWF, [('atlasDefinition', 'inputspec.atlasDefinition'),
                                                    (('T1s', getAllT1sLength), 'inputspec.T1_count'),
-                                                   ('T2s', 'inputspec.T2List'),
                                                    ('PDs', 'inputspec.PDList'),
                                                    ('FLs', 'inputspec.FLList'),
                                                    ('OTHERs', 'inputspec.OtherList')]),

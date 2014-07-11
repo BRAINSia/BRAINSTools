@@ -7,6 +7,7 @@ import nipype.interfaces.io as nio   # Data i/o
 import nipype.pipeline.engine as pe  # pypeline engine
 
 from BRAINSABCext import *
+from utilities.misc import *
 
 """
     from WorkupT1T2TissueClassify import CreateTissueClassifyWorkflow
@@ -19,56 +20,6 @@ from BRAINSABCext import *
     tissueClassifyWF.connect(BLI,'outputTransformFilename',myLocalTCWF,'atlasToSubjectInitialTransform')
 """
 
-
-def MakeOneFileList(T1List, T2List, PDList, FLList, OtherList, PrimaryT1):
-    """ This funciton uses PrimaryT1 for the first T1, and the append the rest of the T1's and T2's """
-    imagePathList = list()
-    imagePathList.append(PrimaryT1)  # Force replacement of the first element
-    for i in T1List[1:]:
-        imagePathList.append(i)  # The reset of the elements
-    for i in T2List[0:]:
-        imagePathList.append(i)
-    for i in PDList[0:]:
-        imagePathList.append(i)
-    for i in FLList[0:]:
-        imagePathList.append(i)
-    for i in OtherList[0:]:
-        imagePathList.append(i)
-    return imagePathList
-
-
-def MakeOneFileTypeList(T1List, T2List, PDList, FLList, OtherList):
-    input_types = ["T1"] * len(T1List)
-    input_types.extend(["T2"] * len(T2List))
-    input_types.extend(["PD"] * len(PDList))
-    input_types.extend(["FL"] * len(FLList))
-    input_types.extend(["OTHER"] * len(OtherList))
-    return input_types
-
-
-def MakeOutFileList(T1List, T2List, PDList, FLList, OtherList):
-    def GetExtBaseName(filename):
-        '''
-        Get the filename without the extension.  Works for .ext and .ext.gz
-        '''
-        import os
-        currBaseName = os.path.basename(filename)
-        currExt = os.path.splitext(currBaseName)[1]
-        currBaseName = os.path.splitext(currBaseName)[0]
-        if currExt == ".gz":
-            currBaseName = os.path.splitext(currBaseName)[0]
-            currExt = os.path.splitext(currBaseName)[1]
-        return currBaseName
-    all_files = T1List
-    all_files.extend(T2List)
-    all_files.extend(PDList)
-    all_files.extend(FLList)
-    all_files.extend(OtherList)
-    out_corrected_names = []
-    for i in all_files:
-        out_name = GetExtBaseName(i) + "_corrected.nii.gz"
-        out_corrected_names.append(out_name)
-    return out_corrected_names
 
 
 def getListIndexOrNoneIfOutOfRange(imageList, index):
@@ -113,41 +64,26 @@ def CreateTissueClassifyWorkflow(WFname, CLUSTER_QUEUE, CLUSTER_QUEUE_LONG, Inte
     ########################################################
     # Run BABCext on Multi-modal images
     ########################################################
-    makeImagePathList = pe.Node(Function(function=MakeOneFileList,
-                                         input_names=['T1List', 'T2List', 'PDList', 'FLList', 'OtherList', 'PrimaryT1'],
-                                         output_names=['imagePathList']), run_without_submitting=True, name="99_makeImagePathList")
-    tissueClassifyWF.connect(inputsSpec, 'T1List', makeImagePathList, 'T1List')
-    tissueClassifyWF.connect(inputsSpec, 'T2List', makeImagePathList, 'T2List')
-    tissueClassifyWF.connect(inputsSpec, 'PDList', makeImagePathList, 'PDList')
-    tissueClassifyWF.connect(inputsSpec, 'FLList', makeImagePathList, 'FLList')
-    tissueClassifyWF.connect(inputsSpec, 'OtherList', makeImagePathList, 'OtherList')
-    # -- Standard mode to make 256^3 images
-    tissueClassifyWF.connect(inputsSpec, 'PrimaryT1', makeImagePathList, 'PrimaryT1')
-
-    makeImageTypeList = pe.Node(Function(function=MakeOneFileTypeList,
-                                         input_names=['T1List', 'T2List', 'PDList', 'FLList', 'OtherList'],
-                                         output_names=['imageTypeList']), run_without_submitting=True, name="99_makeImageTypeList")
-    tissueClassifyWF.connect(inputsSpec, 'T1List', makeImageTypeList, 'T1List')
-    tissueClassifyWF.connect(inputsSpec, 'T2List', makeImageTypeList, 'T2List')
-    tissueClassifyWF.connect(inputsSpec, 'PDList', makeImageTypeList, 'PDList')
-    tissueClassifyWF.connect(inputsSpec, 'FLList', makeImageTypeList, 'FLList')
-    tissueClassifyWF.connect(inputsSpec, 'OtherList', makeImageTypeList, 'OtherList')
-
     makeOutImageList = pe.Node(Function(function=MakeOutFileList,
-                                        input_names=['T1List', 'T2List', 'PDList', 'FLList', 'OtherList'],
-                                        output_names=['outImageList']), run_without_submitting=True, name="99_makeOutImageList")
+                                        input_names=['T1List', 'T2List', 'PDList', 'FLList',
+                                                     'OtherList','postfix','PrimaryT1'],
+                                        output_names=['inImageList','outImageList','imageTypeList']),
+                                        run_without_submitting=True, name="99_makeOutImageList")
     tissueClassifyWF.connect(inputsSpec, 'T1List', makeOutImageList, 'T1List')
     tissueClassifyWF.connect(inputsSpec, 'T2List', makeOutImageList, 'T2List')
     tissueClassifyWF.connect(inputsSpec, 'PDList', makeOutImageList, 'PDList')
+    tissueClassifyWF.connect(inputsSpec, 'PrimaryT1', makeOutImageList, 'PrimaryT1')
     makeOutImageList.inputs.FLList = []  # an emptyList HACK
+    makeOutImageList.inputs.postfix = "_corrected.nii.gz"
     # HACK tissueClassifyWF.connect( inputsSpec, 'FLList', makeOutImageList, 'FLList' )
     tissueClassifyWF.connect(inputsSpec, 'OtherList', makeOutImageList, 'OtherList')
+
 
     BABCext = pe.Node(interface=BRAINSABCext(), name="BABC")
     many_cpu_BABC_options_dictionary = {'qsub_args': '-S /bin/bash -pe smp 4- -l h_vmem=23G,mem_free=8G -o /dev/null -e /dev/null ' + CLUSTER_QUEUE, 'overwrite': True}
     BABCext.plugin_args = many_cpu_BABC_options_dictionary
-    tissueClassifyWF.connect(makeImagePathList, 'imagePathList', BABCext, 'inputVolumes')
-    tissueClassifyWF.connect(makeImageTypeList, 'imageTypeList', BABCext, 'inputVolumeTypes')
+    tissueClassifyWF.connect(makeOutImageList, 'inImageList', BABCext, 'inputVolumes')
+    tissueClassifyWF.connect(makeOutImageList, 'imageTypeList', BABCext, 'inputVolumeTypes')
     tissueClassifyWF.connect(makeOutImageList, 'outImageList', BABCext, 'outputVolumes')
     BABCext.inputs.debuglevel = 0
     BABCext.inputs.maxIterations = 3

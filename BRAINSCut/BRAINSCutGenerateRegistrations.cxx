@@ -271,14 +271,13 @@ BRAINSCutGenerateRegistrations
   // Set Other Options
 
   // TODO :: Following has to be user input
-  const unsigned int numberOfSamples = 100000;
   const unsigned int maxBSplineDisplacement = 7;
   const double       maskInferiorCutOffFromCenter = 65.0;
   const double       translationScale = 1000.0;
   const double       reproportionalScale = 1.0;
   const double       skewScale = 1.0;
 
-  BSplineRegistrationHelper->SetNumberOfSamples( numberOfSamples );
+  BSplineRegistrationHelper->SetSamplingPercentage( 0.05 ); // Use 5% of image
   BSplineRegistrationHelper->SetMaxBSplineDisplacement( maxBSplineDisplacement );
   BSplineRegistrationHelper->SetInitializeTransformMode( "useCenterOfHeadAlign" );
   BSplineRegistrationHelper->SetMaskInferiorCutOffFromCenter(

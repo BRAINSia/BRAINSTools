@@ -235,7 +235,14 @@ int main(int argc, char *argv[])
     registerImageFilter->SetMinimumStepLength( minStepLength );
     registerImageFilter->SetRelaxationFactor( relaxationFactor );
     registerImageFilter->SetNumberOfIterations( iterations );
-    registerImageFilter->SetNumberOfSamples( numberOfSpatialSamples );
+    if(numberOfSpatialSamples > 0)
+      {
+        const unsigned long numberOfAllSamples = fixedImageExtractionFilter->GetOutput()->GetBufferedRegion().GetNumberOfPixels();
+        samplingPercentage = static_cast<double>( numberOfSpatialSamples )/numberOfAllSamples;
+        std::cout << "WARNING --numberOfSpatialSamples is deprecated, please use --samplingPercentage instead " << std::endl;
+        std::cout << "WARNING: Replacing command line --samplingPercentage " << samplingPercentage << std::endl;
+      }
+    registerImageFilter->SetSamplingPercentage( samplingPercentage );
     registerImageFilter->SetMovingVolume( movingImageExtractionFilter->GetOutput() );
     registerImageFilter->SetFixedVolume( fixedImageExtractionFilter->GetOutput() );
     registerImageFilter->SetDebugLevel(debugLevel);

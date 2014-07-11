@@ -12,7 +12,8 @@ include(SlicerMacroGetOperatingSystemArchitectureBitness)
 # By keeping this outside of the build tree, you can share one
 # set of external source trees for multiple build trees
 #-----------------------------------------------------------------------------
-set( SOURCE_DOWNLOAD_CACHE ${CMAKE_CURRENT_LIST_DIR}/ExternalSources )
+# set( SOURCE_DOWNLOAD_CACHE ${CMAKE_CURRENT_LIST_DIR}/ExternalSources )
+set( SOURCE_DOWNLOAD_CACHE ${CMAKE_CURRENT_BINARY_DIR} )
 
 #-----------------------------------------------------------------------------
 enable_testing()

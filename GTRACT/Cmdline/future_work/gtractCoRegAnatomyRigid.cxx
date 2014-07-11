@@ -176,7 +176,14 @@ int main(int argc, char * *argv)
   registerImageFilter->SetMinimumStepLength(minStepLength  );
   registerImageFilter->SetRelaxationFactor( relaxationFactor );
   registerImageFilter->SetNumberOfIterations( iterations);
-  registerImageFilter->SetNumberOfSamples( numberOfSamples );
+  if(numberOfSamples > 0)
+    {
+    const unsigned long numberOfAllSamples = extractFixedVolume->GetBufferedRegion().GetNumberOfPixels();
+    samplingPercentage = static_cast<double>( numberOfSamples )/numberOfAllSamples;
+    std::cout << "WARNING --numberOfSamples is deprecated, please use --samplingPercentage instead " << std::endl;
+    std::cout << "WARNING: Replacing command line --samplingPercentage " << samplingPercentage << std::endl;
+    }
+  registerImageFilter->SetSamplePercentage( samplingPercentage );
   registerImageFilter->SetFixedVolume( anatomicalReader->GetOutput() );
   registerImageFilter->SetMovingVolume( brainOnlyFilter->GetOutput() );
   registerImageFilter->SetTransformType(transformTypes);

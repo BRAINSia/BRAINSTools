@@ -1466,7 +1466,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
       {
       typedef itk::BRAINSFitHelper HelperType;
       HelperType::Pointer atlasToSubjectRegistrationHelper = HelperType::New();
-      atlasToSubjectRegistrationHelper->SetNumberOfSamples(500000);
+      atlasToSubjectRegistrationHelper->SetSamplingPercentage(0.05); //Use 5% of samples
       atlasToSubjectRegistrationHelper->SetNumberOfHistogramBins(50);
       std::vector<int> numberOfIterations(1);
       numberOfIterations[0] = 1500;

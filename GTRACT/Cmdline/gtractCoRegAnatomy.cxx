@@ -251,8 +251,8 @@ int main(int argc, char *argv[])
   if( transformType == "Bspline" )
     {
     transformTypes.push_back("BSpline");
-    registerImageFilter->SetNumberOfSamples(
-      anatomicalReader->GetOutput()->GetBufferedRegion().GetNumberOfPixels() / spatialScale);
+
+    registerImageFilter->SetSamplingPercentage(1.0/spatialScale);
     registerImageFilter->SetNumberOfHistogramBins(numberOfHistogramBins);
     registerImageFilter->SetSplineGridSize( gridSize );
     registerImageFilter->SetCostFunctionConvergenceFactor( convergence );
@@ -281,7 +281,14 @@ int main(int argc, char *argv[])
     registerImageFilter->SetMaximumStepLength( maximumStepSize );
     registerImageFilter->SetMinimumStepLength(minStepLength  );
     registerImageFilter->SetRelaxationFactor( relaxationFactor );
-    registerImageFilter->SetNumberOfSamples( numberOfSamples );
+    if(numberOfSamples > 0)
+      {
+        const unsigned long numberOfAllSamples = anatomicalReader->GetOutput()->GetBufferedRegion().GetNumberOfPixels();
+        samplingPercentage = static_cast<double>( numberOfSamples )/numberOfAllSamples;
+        std::cout << "WARNING --numberOfSamples is deprecated, please use --samplingPercentage instead " << std::endl;
+        std::cout << "WARNING: Replacing command line --samplingPercentage " << samplingPercentage << std::endl;
+      }
+    registerImageFilter->SetSamplingPercentage(samplingPercentage);
     registerImageFilter->SetInitializeTransformMode(localInitializeTransformMode);
     }
   registerImageFilter->SetFixedVolume( anatomicalReader->GetOutput() );

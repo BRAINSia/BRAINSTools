@@ -179,7 +179,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
         {
         typedef itk::BRAINSFitHelper HelperType;
         HelperType::Pointer intraSubjectRegistrationHelper = HelperType::New();
-        intraSubjectRegistrationHelper->SetNumberOfSamples(500000);
+        intraSubjectRegistrationHelper->SetSamplingPercentage(0.05); //Sample 5% of image
         intraSubjectRegistrationHelper->SetNumberOfHistogramBins(50);
         std::vector<int> numberOfIterations(1);
         numberOfIterations[0] = 1500;
@@ -412,7 +412,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
     typedef itk::BRAINSFitHelper HelperType;
     HelperType::Pointer atlasToSubjectRegistrationHelper = HelperType::New();
       { // Set common parameters
-      atlasToSubjectRegistrationHelper->SetNumberOfSamples(500000);
+      atlasToSubjectRegistrationHelper->SetSamplingPercentage(0.05); //Sample 5% of image
       atlasToSubjectRegistrationHelper->SetNumberOfHistogramBins(50);
       std::vector<int> numberOfIterations(1);
       numberOfIterations[0] = 1500;

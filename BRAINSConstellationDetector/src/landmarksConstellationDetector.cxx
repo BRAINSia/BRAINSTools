@@ -172,7 +172,7 @@ landmarksConstellationDetector::ComputeFinalRefinedACPCAlignedTransform(void)
 
   // Now Run BRAINSFitHelper class initialized with initToAtlasAffineTransform, original image, and atlas image
   // adapted from BRAINSABC/brainseg/AtlasRegistrationMethod.hxx - do I need to change any of these parameters?
-  brainsFitHelper->SetNumberOfSamples(500000);
+  brainsFitHelper->SetSamplingPercentage(0.05); // Use 5% of voxels for samples
   brainsFitHelper->SetNumberOfHistogramBins(50);
   const std::vector<int> numberOfIterations(1,1500);
   brainsFitHelper->SetNumberOfIterations(numberOfIterations);

@@ -89,11 +89,19 @@
     <integer>
       <name>numberOfSpatialSamples</name>
       <longflag>numberOfSpatialSamples</longflag>
-      <description>Number of voxels sampled for mutual information computation in each 3D fit step</description>
+      <description>The number of voxels sampled for mutual information computation.  Increase this for a slower, more careful fit. NOTE that it is suggested to use samplingPercentage instead of this option. However, if set, it overwrites the samplingPercentage option.  </description>
       <label>Number Of Samples</label>
       <default>100000</default>
       <channel>input</channel>
     </integer>
+    <double>
+      <name>samplingPercentage</name>
+      <longflag>samplingPercentage</longflag>
+      <label>Percentage Of Samples</label>
+      <description>This is a number in (0.0,1.0] interval that shows the percentage of the input fixed image voxels that are sampled for mutual information computation.  Increase this for a slower, more careful fit. You can also limit the sampling focus with ROI masks and ROIAUTO mask generation. The default is to use approximately 5% of voxels (for backwards compatibility 5% ~= 500000/(256*256*256)). Typical values range from 1% for low detail images to 20% for high detail images.</description>
+      <default>0.05</default>
+    </double>
+
 
     <float>
       <name>relaxationFactor</name>

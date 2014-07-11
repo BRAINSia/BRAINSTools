@@ -197,8 +197,7 @@ int main(int argc, char *argv[])
   // RegisterFilterType::New();
 
   // registerImageFilter->SetSpatialSampleScale( spatialScale );
-  registerImageFilter->SetNumberOfSamples(
-    anatomicalReader->GetOutput()->GetBufferedRegion().GetNumberOfPixels() / spatialScale);
+  registerImageFilter->SetSamplingPercentage( 1.0 / spatialScale); //NOTE: This seems really high
   // registerImageFilter->SetMaximumNumberOfIterations( numberOfIterations );
   registerImageFilter->SetNumberOfIterations(iterations);
   // registerImageFilter->SetMaximumNumberOfEvaluations( numberOfEvaluations );

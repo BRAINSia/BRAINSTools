@@ -61,7 +61,7 @@ def baseline_workflow(projectid, subjectid, sessionid, master_config, phase='bas
     import nipype.pipeline.engine as pe
     import nipype.interfaces.io as nio
     from baseline import get_list_element, getAllT1sLength  # Can we replace with len()?
-    from utilities.misc import GenerateWFName
+    from utilities.misc import *
     from PipeLineFunctionHelpers import convertToList, FixWMPartitioning
     from PipeLineFunctionHelpers import UnwrapPosteriorImagesFromDictionaryFunction as flattenDict
 
@@ -89,32 +89,42 @@ def baseline_workflow(projectid, subjectid, sessionid, master_config, phase='bas
     print    """
     denoise image filter
     """
-    print """
-    Denoise: T1
+    print  """
+    Merge all T1 and T2 List
     """
-    DenoiseT1sND = pe.MapNode( interface=UnbiasedNonLocalMeans(),
-                               name='denoise_T1s',
-                               iterfield=['inputVolume'])
-    DenoiseT1sND.inputs.rc= [1,1,1]
-    DenoiseT1sND.inputs.rs= [4,4,4]
-    DenoiseT1sND.inputs.outputVolume="denoised_T1.nii.gz"
-    try:
-        baw201.connect([ (inputsSpec, DenoiseT1sND, [('T1s', 'inputVolume')]) ])
-    except:
-        print "connection error"
-        raise
+    makeDenoiseInImageList = pe.Node(Function(function=MakeOutFileList,
+                                        input_names=['T1List', 'T2List', 'PDList', 'FLList',
+                                                     'OtherList','postfix','PrimaryT1'],
+                                        output_names=['inImageList','outImageList','imageTypeList']),
+                                        run_without_submitting=True, name="99_makeDenoiseInImageList")
+    baw201.connect(inputsSpec, 'T1s', makeDenoiseInImageList, 'T1List')
+    baw201.connect(inputsSpec, 'T2s', makeDenoiseInImageList, 'T2List')
+    baw201.connect(inputsSpec, 'PDs', makeDenoiseInImageList, 'PDList')
+    makeDenoiseInImageList.inputs.FLList= []# an emptyList HACK
+    makeDenoiseInImageList.inputs.PrimaryT1= None  # an emptyList HACK
+    makeDenoiseInImageList.inputs.postfix = "_UNM_denoised.nii.gz"
+    # HACK tissueClassifyWF.connect( inputsSpec, 'FLList', makeDenoiseInImageList, 'FLList' )
+    baw201.connect(inputsSpec, 'OTHERs', makeDenoiseInImageList, 'OtherList')
 
     print """
-    Denoise: T2
+    Denoise:
     """
-    DenoiseT2sND = pe.MapNode( interface=UnbiasedNonLocalMeans(),
-                               name='denoise_T2s',
-                               iterfield=['inputVolume'])
-    DenoiseT2sND.inputs.rc= [1,1,1]
-    DenoiseT2sND.inputs.rs= [4,4,4]
-    DenoiseT2sND.inputs.outputVolume="denoised_T2.nii.gz"
-    baw201.connect([ (inputsSpec, DenoiseT2sND, [('T2s', 'inputVolume')]) ])
+    DenoiseInputImgs = pe.MapNode( interface=UnbiasedNonLocalMeans(),
+                               name='denoiseInputImgs',
+                               iterfield=['inputVolume',
+                                          'outputVolume'])
+    DenoiseInputImgs.inputs.rc= [1,1,1]
+    DenoiseInputImgs.inputs.rs= [4,4,4]
+    baw201.connect([ (makeDenoiseInImageList, DenoiseInputImgs, [('inImageList', 'inputVolume')]),
+                     (makeDenoiseInImageList, DenoiseInputImgs, [('outImageList','outputVolume')])
+                  ])
 
+    makeDenoiseOutImageList = pe.Node(Function(function=GenerateSeparateImageTypeList,
+                                        input_names=['inFileList','inTypeList'],
+                                        output_names=['T1List', 'T2List', 'PDList', 'FLList', 'OtherList']),
+                                        run_without_submitting=True, name="99_makeDenoiseOutImageList")
+    baw201.connect(DenoiseInputImgs, 'outputVolume', makeDenoiseOutImageList, 'inFileList')
+    baw201.connect(makeDenoiseInImageList, 'imageTypeList', makeDenoiseOutImageList, 'inTypeList')
 
     from WorkupT1T2LandmarkInitialization import CreateLandmarkInitializeWorkflow
     DoReverseMapping = False   # Set to true for debugging outputs
@@ -122,8 +132,8 @@ def baseline_workflow(projectid, subjectid, sessionid, master_config, phase='bas
         DoReverseMapping = True
     myLocalLMIWF = CreateLandmarkInitializeWorkflow("LandmarkInitialize", interpMode, DoReverseMapping)
 
-    baw201.connect([(DenoiseT1sND, myLocalLMIWF,
-                     [(('outputVolume', get_list_element,0),  'inputspec.inputVolume' )]),
+    baw201.connect([(makeDenoiseOutImageList, myLocalLMIWF,
+                     [(('T1List', get_list_element,0),  'inputspec.inputVolume' )]),
                     (inputsSpec, myLocalLMIWF,
                      [('atlasLandmarkFilename', 'inputspec.atlasLandmarkFilename'),
                       ('atlasWeightFilename', 'inputspec.atlasWeightFilename'),
@@ -145,8 +155,8 @@ def baseline_workflow(projectid, subjectid, sessionid, master_config, phase='bas
         from WorkupT1T2TissueClassify import CreateTissueClassifyWorkflow
         myLocalTCWF = CreateTissueClassifyWorkflow("TissueClassify", master_config['queue'], master_config['long_q'], interpMode)
         import os
-        baw201.connect([(DenoiseT1sND,myLocalTCWF, [('outputVolume','inputspec.T1List')]),
-                        (DenoiseT2sND,myLocalTCWF, [('outputVolume','inputspec.T2List')]),
+        baw201.connect([(makeDenoiseOutImageList,myLocalTCWF, [('T1List','inputspec.T1List')]),
+                        (makeDenoiseOutImageList,myLocalTCWF, [('T2List','inputspec.T2List')]),
                         (inputsSpec, myLocalTCWF, [('atlasDefinition', 'inputspec.atlasDefinition'),
                                                    (('T1s', getAllT1sLength), 'inputspec.T1_count'),
                                                    ('PDs', 'inputspec.PDList'),

@@ -302,7 +302,7 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
 
   ".*has no symbols"
   "CMake Warning:"
-  "note: expanded from macro
+  "note: expanded from macro"
   ": note:"
   )
 

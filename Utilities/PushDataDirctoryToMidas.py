@@ -48,7 +48,7 @@ def MakeLocalKeyFile(fullpath,LocalMD5Dir):
     f.close()
     baseFileName = os.path.basename(fullpath)
     localKeyFileFullPath = os.path.join(LocalMD5Dir,baseFileName+".md5")
-    f = open(md5FileName, 'w')
+    f = open(localKeyFileFullPath, 'w')
     f.write(md5HashValue)
     f.close()
 

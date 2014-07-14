@@ -41,7 +41,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --failureExitCode -1 --writeTransformOnFailure
   --numberOfIterations 2500
   --numberOfHistogramBins 200
-  --numberOfSamples 131072
+  --samplingPercentage 0.5
   --translationScale 250
   --minimumStepLength 0.001
   --outputVolumePixelType uchar
@@ -70,7 +70,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --failureExitCode -1 --writeTransformOnFailure
   --numberOfIterations 2500
   --numberOfHistogramBins 200
-  --numberOfSamples 131072
+  --samplingPercentage 0.5
   --translationScale 250
   --minimumStepLength 0.001
   --outputVolumePixelType uchar
@@ -95,7 +95,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --failureExitCode -1 --writeTransformOnFailure
   --numberOfIterations 2500
   --numberOfHistogramBins 200
-  --numberOfSamples 72000
+  --samplingPercentage 0.3
   --translationScale 250
   --minimumStepLength 0.001
   --outputVolumePixelType uchar
@@ -123,7 +123,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --failureExitCode -1 --writeTransformOnFailure
   --numberOfIterations 2500
   --numberOfHistogramBins 200
-  --numberOfSamples 72000
+  --samplingPercentage 0.3
   --translationScale 250
   --minimumStepLength 0.001
   --outputVolumePixelType uchar
@@ -148,7 +148,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --failureExitCode -1 --writeTransformOnFailure
   --numberOfIterations 2500
   --numberOfHistogramBins 200
-  --numberOfSamples 72000
+  --samplingPercentage 0.3
   --translationScale 250
   --minimumStepLength 0.001
   --outputVolumePixelType uchar
@@ -176,7 +176,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --failureExitCode -1 --writeTransformOnFailure
   --numberOfIterations 2500
   --numberOfHistogramBins 200
-  --numberOfSamples 72000
+  --samplingPercentage 0.3
   --translationScale 250
   --minimumStepLength 0.001
   --outputVolumePixelType uchar
@@ -203,7 +203,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --numberOfIterations 2500,2500,2500,500
   --numberOfHistogramBins 200
   --splineGridSize 7,5,6
-  --numberOfSamples 144000
+  --samplingPercentage 0.5
   --translationScale 250
   --minimumStepLength 0.01,0.003,0.001,0.001
   --outputVolumePixelType short
@@ -231,7 +231,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --numberOfIterations 1500
   --numberOfHistogramBins 200
   --splineGridSize 7,5,6
-  --numberOfSamples 144000
+  --samplingPercentage 0.5
   --translationScale 250
   --minimumStepLength 0.01
   --outputVolumePixelType short
@@ -263,7 +263,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --numberOfIterations 2500,2500,500
   --numberOfHistogramBins 200
   --splineGridSize 7,5,6
-  --numberOfSamples 144000
+  --samplingPercentage 0.5
   --translationScale 250
   --minimumStepLength 0.01,0.003,0.01
   --outputVolumePixelType short
@@ -294,7 +294,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --numberOfMatchPoints 10
   --histogramMatch
   --splineGridSize 7,5,6
-  --numberOfSamples 144000
+  --samplingPercentage 0.5
   --translationScale 250
   --minimumStepLength 0.01,0.003,0.01
   --outputVolumePixelType short
@@ -323,7 +323,7 @@ ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
   --fixedVolume DATA{${TestData_DIR}/ANON0006_20_T1_dbg_splayed.nii.gz}
   --movingVolume DATA{${TestData_DIR}/ANON0006_20_T1_sag_twisted.nii.gz}
   --fixedVolumeTimeIndex 0 --movingVolumeTimeIndex 0
-  --minimumStepLength 0.001 --numberOfSamples 100000 --numberOfIterations 1500
+  --minimumStepLength 0.001 --samplingPercentage 0.075 --numberOfIterations 1500
   --numberOfHistogramBins 200
   --transformType Rigid --initializeTransformMode useMomentsAlign --translationScale 1000
   --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
@@ -343,7 +343,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --failureExitCode -1 --writeTransformOnFailure
   --numberOfIterations 2500
   --numberOfHistogramBins 200
-  --numberOfSamples 72000
+  --samplingPercentage 0.5
   --translationScale 250
   --minimumStepLength 0.001
   --outputVolumePixelType uchar
@@ -369,7 +369,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --failureExitCode -1 --writeTransformOnFailure
   --numberOfIterations 2500
   --numberOfHistogramBins 200
-  --numberOfSamples 144000
+  --samplingPercentage 1.0
   --translationScale 500
   --minimumStepLength 0.05,0.0050
   --outputVolumePixelType short
@@ -394,7 +394,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --failureExitCode -1 --writeTransformOnFailure
   --numberOfIterations 2500
   --numberOfHistogramBins 200
-  --numberOfSamples 72000
+  --samplingPercentage 0.3
   --translationScale 250
   --minimumStepLength 0.05,0.001,0.00075
   --outputVolumePixelType uchar
@@ -419,7 +419,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --failureExitCode -1 --writeTransformOnFailure
   --numberOfIterations 2500
   --numberOfHistogramBins 200
-  --numberOfSamples 72000
+  --samplingPercentage 0.3
   --translationScale 250
   --minimumStepLength 0.001
   --outputVolumePixelType uchar
@@ -445,7 +445,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --failureExitCode -1 --writeTransformOnFailure
   --numberOfIterations 2500
   --numberOfHistogramBins 200
-  --numberOfSamples 72000
+  --samplingPercentage 0.3
   --translationScale 250
   --minimumStepLength 0.001
   --outputVolumePixelType uchar
@@ -473,7 +473,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --failureExitCode -1 --writeTransformOnFailure
   --numberOfIterations 2500
   --numberOfHistogramBins 200
-  --numberOfSamples 72000
+  --samplingPercentage 0.3
   --translationScale 250
   --minimumStepLength 0.001
   --outputVolumePixelType uchar
@@ -498,7 +498,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --failureExitCode -1 --writeTransformOnFailure
   --numberOfIterations 2500
   --numberOfHistogramBins 200
-  --numberOfSamples 72000
+  --samplingPercentage 0.3
   --translationScale 250
   --minimumStepLength 0.001
   --outputVolumePixelType uchar
@@ -525,7 +525,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --failureExitCode -1 --writeTransformOnFailure
   --numberOfIterations 2500,2500
   --numberOfHistogramBins 200
-  --numberOfSamples 72000
+  --samplingPercentage 0.3
   --translationScale 250
   --minimumStepLength 0.01,0.003
   --outputVolumePixelType uchar
@@ -551,7 +551,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --failureExitCode -1 --writeTransformOnFailure
   --numberOfIterations 2500
   --numberOfHistogramBins 200
-  --numberOfSamples 131072
+  --samplingPercentage 0.5
   --translationScale 250
   --minimumStepLength 0.001
   --outputVolumePixelType uchar
@@ -579,7 +579,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --failureExitCode -1 --writeTransformOnFailure
   --numberOfIterations 2500
   --numberOfHistogramBins 200
-  --numberOfSamples 131072
+  --samplingPercentage 0.5
   --translationScale 250
   --minimumStepLength 0.001
   --outputVolumePixelType uchar
@@ -604,7 +604,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --failureExitCode -1 --writeTransformOnFailure
   --numberOfIterations 2500
   --numberOfHistogramBins 200
-  --numberOfSamples 72000
+  --samplingPercentage 0.3
   --translationScale 250
   --minimumStepLength 0.001
   --outputVolumePixelType uchar
@@ -632,7 +632,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --failureExitCode -1 --writeTransformOnFailure
   --numberOfIterations 2500
   --numberOfHistogramBins 200
-  --numberOfSamples 72000
+  --samplingPercentage 0.3
   --translationScale 250
   --minimumStepLength 0.001
   --outputVolumePixelType uchar
@@ -657,7 +657,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --failureExitCode -1 --writeTransformOnFailure
   --numberOfIterations 2500
   --numberOfHistogramBins 200
-  --numberOfSamples 72000
+  --samplingPercentage 0.3
   --translationScale 250
   --minimumStepLength 0.001,0.0001
   --outputVolumePixelType uchar
@@ -684,7 +684,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --failureExitCode -1 --writeTransformOnFailure
   --numberOfIterations 2500
   --numberOfHistogramBins 200
-  --numberOfSamples 72000
+  --samplingPercentage 0.3
   --translationScale 250
   --minimumStepLength 0.001
   --outputVolumePixelType uchar
@@ -711,7 +711,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --failureExitCode -1 --writeTransformOnFailure
   --numberOfIterations 2500
   --numberOfHistogramBins 200
-  --numberOfSamples 131072
+  --samplingPercentage 0.5
   --translationScale 250
   --minimumStepLength 0.001
   --outputVolumePixelType uchar
@@ -739,7 +739,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --failureExitCode -1 --writeTransformOnFailure
   --numberOfIterations 2500
   --numberOfHistogramBins 200
-  --numberOfSamples 131072
+  --samplingPercentage 0.5
   --translationScale 250
   --minimumStepLength 0.001
   --outputVolumePixelType uchar
@@ -764,7 +764,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --failureExitCode -1 --writeTransformOnFailure
   --numberOfIterations 2500
   --numberOfHistogramBins 200
-  --numberOfSamples 72000
+  --samplingPercentage 0.3
   --translationScale 250
   --minimumStepLength 0.001
   --outputVolumePixelType uchar
@@ -792,7 +792,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --failureExitCode -1 --writeTransformOnFailure
   --numberOfIterations 2500
   --numberOfHistogramBins 200
-  --numberOfSamples 72000
+  --samplingPercentage 0.3
   --translationScale 250
   --minimumStepLength 0.001
   --outputVolumePixelType uchar
@@ -816,7 +816,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME BRAINSFitTest_SignedDistanc
   --fixedVolumeTimeIndex 0
   --movingVolumeTimeIndex 0
   --minimumStepLength 0.001
-  --numberOfSamples 75000
+  --samplingPercentage 0.3
   --numberOfIterations 1500
   --numberOfHistogramBins 200
   --transformType Rigid
@@ -842,7 +842,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --failureExitCode -1 --writeTransformOnFailure
   --numberOfIterations 2500,2500,500
   --splineGridSize 7,5,6
-  --numberOfSamples 144000
+  --samplingPercentage 0.5
   --translationScale 250
   --minimumStepLength 0.01,0.003,0.01
   --outputVolumePixelType ushort
@@ -872,7 +872,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --numberOfMatchPoints 10
   --histogramMatch
   --splineGridSize 7,5,6
-  --numberOfSamples 144000
+  --samplingPercentage 0.5
   --translationScale 250
   --minimumStepLength 0.01,0.003,0.01
   --outputVolumePixelType short
@@ -899,7 +899,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --failureExitCode -1 --writeTransformOnFailure
   --numberOfIterations 25
   --numberOfHistogramBins 200
-  --numberOfSamples 72000
+  --samplingPercentage 0.3
   --translationScale 250
   --minimumStepLength 0.001
   --outputVolumePixelType uchar
@@ -923,7 +923,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --failureExitCode -1 --writeTransformOnFailure
   --numberOfIterations 2500
   --numberOfHistogramBins 200
-  --numberOfSamples 131072
+  --samplingPercentage 0.5
   --translationScale 250
   --minimumStepLength 0.001
   --outputVolumePixelType uchar
@@ -952,7 +952,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --failureExitCode -1 --writeTransformOnFailure
   --numberOfIterations 2500
   --numberOfHistogramBins 200
-  --numberOfSamples 131072
+  --samplingPercentage 0.5
   --translationScale 250
   --minimumStepLength 0.001
   --outputVolumePixelType uchar
@@ -981,7 +981,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --failureExitCode -1 --writeTransformOnFailure
   --numberOfIterations 25
   --numberOfHistogramBins 200
-  --numberOfSamples 72000
+  --samplingPercentage 0.3
   --translationScale 250
   --minimumStepLength 0.001
   --outputVolumePixelType uchar
@@ -1005,7 +1005,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --failureExitCode -1 --writeTransformOnFailure
   --numberOfIterations 2500
   --numberOfHistogramBins 200
-  --numberOfSamples 131072
+  --samplingPercentage 0.5
   --translationScale 250
   --minimumStepLength 0.001
   --outputVolumePixelType uchar
@@ -1034,7 +1034,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --failureExitCode -1 --writeTransformOnFailure
   --numberOfIterations 2500
   --numberOfHistogramBins 200
-  --numberOfSamples 131072
+  --samplingPercentage 0.5
   --translationScale 250
   --minimumStepLength 0.001
   --outputVolumePixelType uchar
@@ -1062,7 +1062,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --failureExitCode -1 --writeTransformOnFailure
   --numberOfIterations 2500
   --numberOfHistogramBins 200
-  --numberOfSamples 131072
+  --samplingPercentage 0.5
   --translationScale 250
   --minimumStepLength 0.001
   --outputVolumePixelType uchar
@@ -1091,7 +1091,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --failureExitCode -1 --writeTransformOnFailure
   --numberOfIterations 2500
   --numberOfHistogramBins 200
-  --numberOfSamples 131072
+  --samplingPercentage 0.5
   --translationScale 250
   --minimumStepLength 0.001
   --maximumStepLength 0.006
@@ -1127,7 +1127,7 @@ if( ${BRAINSTools_MAX_TEST_LEVEL} GREATER 5) #These test takes way to long to ru
     --writeTransformOnFailure
     --numberOfIterations 2500
     --numberOfHistogramBins 200
-    --numberOfSamples 131072
+    --samplingPercentage 0.5
     --translationScale 250
     --minimumStepLength 0.001
     --outputVolumePixelType uchar
@@ -1158,7 +1158,7 @@ if( ${BRAINSTools_MAX_TEST_LEVEL} GREATER 5) #These test takes way to long to ru
     --writeTransformOnFailure
     --numberOfIterations 2500
     --numberOfHistogramBins 200
-    --numberOfSamples 131072
+    --samplingPercentage 0.5
     --translationScale 250
     --minimumStepLength 0.001
     --outputVolumePixelType uchar
@@ -1188,7 +1188,7 @@ if( ${BRAINSTools_MAX_TEST_LEVEL} GREATER 5) #These test takes way to long to ru
     --writeTransformOnFailure
     --numberOfIterations 2500
     --numberOfHistogramBins 200
-    --numberOfSamples 131072
+    --samplingPercentage 0.5
     --translationScale 250
     --minimumStepLength 0.001
     --outputVolumePixelType uchar
@@ -1218,7 +1218,7 @@ if( ${BRAINSTools_MAX_TEST_LEVEL} GREATER 5) #These test takes way to long to ru
     --writeTransformOnFailure
     --numberOfIterations 2500
     --numberOfHistogramBins 200
-    --numberOfSamples 131072
+    --samplingPercentage 0.5
     --translationScale 250
     --minimumStepLength 0.001
     --outputVolumePixelType uchar
@@ -1248,7 +1248,7 @@ if( ${BRAINSTools_MAX_TEST_LEVEL} GREATER 5) #These test takes way to long to ru
     --writeTransformOnFailure
     --numberOfIterations 2500
     --numberOfHistogramBins 200
-    --numberOfSamples 131072
+    --samplingPercentage 0.5
     --translationScale 250
     --minimumStepLength 0.001
     --outputVolumePixelType uchar
@@ -1278,7 +1278,7 @@ if( ${BRAINSTools_MAX_TEST_LEVEL} GREATER 5) #These test takes way to long to ru
     --writeTransformOnFailure
     --numberOfIterations 2500
     --numberOfHistogramBins 200
-    --numberOfSamples 131072
+    --samplingPercentage 0.5
     --translationScale 250
     --minimumStepLength 0.001
     --outputVolumePixelType uchar
@@ -1311,7 +1311,7 @@ if(RUN_EXTRA_METRIC_TESTS)
   #  --failureExitCode -1 --writeTransformOnFailure
   #  --numberOfIterations 25
   #  --numberOfHistogramBins 200
-  #  --numberOfSamples 72000
+  #  --samplingPercentage 0.3
   #  --translationScale 250
   #  --minimumStepLength 0.001
   #  --outputVolumePixelType uchar
@@ -1341,7 +1341,7 @@ if(RUN_EXTRA_METRIC_TESTS)
     --failureExitCode -1 --writeTransformOnFailure
     --numberOfIterations 25
     --numberOfHistogramBins 200
-    --numberOfSamples 72000
+    --samplingPercentage 0.3
     --translationScale 250
     --minimumStepLength 0.001
     --outputVolumePixelType uchar
@@ -1365,7 +1365,7 @@ if(RUN_EXTRA_METRIC_TESTS)
     --failureExitCode -1 --writeTransformOnFailure
     --numberOfIterations 25
     --numberOfHistogramBins 200
-    --numberOfSamples 72000
+    --samplingPercentage 0.3
     --translationScale 250
     --minimumStepLength 0.001
     --outputVolumePixelType uchar
@@ -1391,7 +1391,7 @@ if(RUN_EXTRA_METRIC_TESTS)
     --failureExitCode -1 --writeTransformOnFailure
     --numberOfIterations 2500
     --numberOfHistogramBins 200
-    --numberOfSamples 131072
+    --samplingPercentage 0.5
     --translationScale 250
     --minimumStepLength 0.001
     --outputVolumePixelType uchar
@@ -1420,7 +1420,7 @@ if(RUN_EXTRA_METRIC_TESTS)
     --failureExitCode -1 --writeTransformOnFailure
     --numberOfIterations 2500
     --numberOfHistogramBins 200
-    --numberOfSamples 131072
+    --samplingPercentage 0.5
     --translationScale 250
     --minimumStepLength 0.001
     --outputVolumePixelType uchar
@@ -1449,7 +1449,7 @@ if(RUN_EXTRA_METRIC_TESTS)
     --failureExitCode -1 --writeTransformOnFailure
     --numberOfIterations 25
     --numberOfHistogramBins 200
-    --numberOfSamples 72000
+    --samplingPercentage 0.3
     --translationScale 250
     --minimumStepLength 0.001
     --outputVolumePixelType uchar
@@ -1474,7 +1474,7 @@ if(RUN_EXTRA_METRIC_TESTS)
     --failureExitCode -1 --writeTransformOnFailure
     --numberOfIterations 25
     --numberOfHistogramBins 200
-    --numberOfSamples 72000
+    --samplingPercentage 0.3
     --translationScale 250
     --minimumStepLength 0.001
     --outputVolumePixelType uchar
@@ -1499,7 +1499,7 @@ if(RUN_EXTRA_METRIC_TESTS)
     --failureExitCode -1 --writeTransformOnFailure
     --numberOfIterations 25
     --numberOfHistogramBins 200
-    --numberOfSamples 72000
+    --samplingPercentage 0.3
     --translationScale 250
     --minimumStepLength 0.001
     --outputVolumePixelType uchar
@@ -1524,7 +1524,7 @@ if(RUN_EXTRA_METRIC_TESTS)
     --failureExitCode -1 --writeTransformOnFailure
     --numberOfIterations 25
     --numberOfHistogramBins 200
-    --numberOfSamples 72000
+    --samplingPercentage 0.3
     --translationScale 250
     --minimumStepLength 0.001
     --outputVolumePixelType uchar
@@ -1549,7 +1549,7 @@ if(RUN_EXTRA_METRIC_TESTS)
     --failureExitCode -1 --writeTransformOnFailure
     --numberOfIterations 25
     --numberOfHistogramBins 200
-    --numberOfSamples 72000
+    --samplingPercentage 0.3
     --translationScale 250
     --minimumStepLength 0.001
     --outputVolumePixelType uchar
@@ -1574,7 +1574,7 @@ if(RUN_EXTRA_METRIC_TESTS)
     --failureExitCode -1 --writeTransformOnFailure
     --numberOfIterations 25
     --numberOfHistogramBins 200
-    --numberOfSamples 72000
+    --samplingPercentage 0.3
     --translationScale 250
     --minimumStepLength 0.001
     --outputVolumePixelType uchar
@@ -1600,7 +1600,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --failureExitCode -1 --writeTransformOnFailure
   --numberOfIterations 2500
   --numberOfHistogramBins 50
-  --numberOfSamples 100000
+  --samplingPercentage 0.03
   --translationScale 1000
   --minimumStepLength 0.005
   --outputVolumePixelType ushort

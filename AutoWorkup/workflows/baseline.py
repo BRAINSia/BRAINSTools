@@ -183,28 +183,13 @@ def baseline_workflow(projectid, subjectid, sessionid, master_config, phase='bas
     DataSink.inputs.container = '{0}/{1}/{2}'.format(projectid, subjectid, sessionid)
     DataSink.inputs.base_directory = master_config['resultdir']
 
-    if phase == 'baseline':
+    if phase == 'baseline' or phase == 'longitudinal':
         baw201.connect([(outputsSpec, DataSink,  # TODO: change to myLocalTCWF -> DataSink
-                                   [(('t1_average', convertToList), 'Baseline.@t1_average'),
-                                    (('t2_average', convertToList), 'Baseline.@t2_average'),
-                                    (('pd_average', convertToList), 'Baseline.@pd_average'),
-                                    (('fl_average', convertToList), 'Baseline.@fl_average'),
-                                    (('outputLabels', convertToList), 'Baseline.@labels'),
-                                    (('posteriorImages', flattenDict),'TissueClassify')]),
+                                   [(('t1_average', convertToList), 'TissueClassify.@t1'),
+                                    (('t2_average', convertToList), 'TissueClassify.@t2'),
+                                    (('pd_average', convertToList), 'TissueClassify.@pd'),
+                                    (('fl_average', convertToList), 'TissueClassify.@fl')]),
                                  ])
-    elif phase == 'longitudinal':
-        from PipeLineFunctionHelpers import AccumulateLikeTissuePosteriors
-        baw201.connect([(outputsSpec, DataSink, # TODO: change to myLocalTCWF -> DataSink
-                                   [(('t1_average', convertToList), 'Longitudinal.@t1_average'),
-                                    (('t2_average', convertToList), 'Longitudinal.@t2_average'),
-                                    (('pd_average', convertToList), 'Longitudinal.@pd_average'),
-                                    (('fl_average', convertToList), 'Longitudinal.@fl_average'),
-                                    (('outputLabels', convertToList), 'Longitudinal.@labels'),
-                                    (('posteriorImages', flattenDict),'TissueClassify')
-                                   ]
-                        ),
-                       ]
-                      )
     else:
         raise NotImplementedError("Missing valid pipeline stage! Options: 'baseline', 'longitudinal'")
     baw201.connect([(outputsSpec, DataSink, # TODO: change to myLocalLMIWF -> DataSink

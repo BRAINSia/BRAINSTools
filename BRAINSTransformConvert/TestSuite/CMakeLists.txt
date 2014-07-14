@@ -58,7 +58,7 @@ foreach(SourceTransform VersorRigid ScaleVersor ScaleSkewVersor Affine) # BSplin
 
       set(TransformConvertTestName Convert${SourceTransform}To${TargetTransform}In${TargetPrecisionType})
       set(SourceTransformName "${CMAKE_CURRENT_BINARY_DIR}/${SourceTransform}Transform.txt")
-      set(TargetTransformName "${CMAKE_CURRENT_BINARY_DIR}/${SourceTransform}To${TargetTransform}.txt")
+      set(TargetTransformName "${CMAKE_CURRENT_BINARY_DIR}/${SourceTransform}To${TargetTransform}In${TargetPrecisionType}.txt")
       set(DisplacementVolumeImage "${CMAKE_CURRENT_BINARY_DIR}/${SourceTransform}Displacement.nii.gz")
       #
       # do the conversion

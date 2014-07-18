@@ -112,15 +112,12 @@ def dispatcher(master_config, subjects):
         sp_args_list.append(sp_args)
 
     print "Running workflow(s) now..."
-    if 'baseline' in master_config['components']:
-        for args in sp_args_list:
-            ss.RunSubjectWorkflow(args)
-        master_config['components'].remove('baseline')
-    if 'template' in master_config['components']:
-        template.main((subjects, master_config))
-    if 'longitudinal' in master_config['components']:
-        for args in sp_args_list:
-            ss.RunSubjectWorkflow(args)
+    for args in sp_args_list:
+        print "Creating workflow for {0}".format(args[1])
+        ss.RunSubjectWorkflow(args)
+    # TODO:  Seperate commandline for template
+    # if 'template' in master_config['components']:
+    #     template.main((subjects, master_config))
     return True
 
 

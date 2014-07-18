@@ -39,7 +39,7 @@ def get_list_element(nestedList, index):
 def getAllT1sLength(allT1s):
     return len(allT1s)
 
-def baseline_workflow(projectid, subjectid, sessionid, master_config, phase='baseline', interpMode='Linear', pipeline_name=''):
+def baseline_workflow(projectid, subjectid, sessionid, master_config, phase, interpMode, pipeline_name):
     """
     Run autoworkup on a single session
 
@@ -50,10 +50,11 @@ def baseline_workflow(projectid, subjectid, sessionid, master_config, phase='bas
     """
 
     if not 'auxlmk' in master_config['components'] or not 'tissue_classify' in master_config['components']:
-        print "Baseline DataSink requires at least 'AUXLMK' or 'TISSUE_CLASSIFY'"
-        master_config['components'].append('auxlmk')
-        master_config['components'].append('tissue_classify')
-    assert phase in ['baseline', 'longitudinal'], "Unknown phase! Valid entries: 'baseline', 'longitudinal'"
+        print "Baseline DataSink requires 'AUXLMK' and/or 'TISSUE_CLASSIFY'!!!"
+        raise NotImplementedError
+        # master_config['components'].append('auxlmk')
+        # master_config['components'].append('tissue_classify')
+    assert phase in ['atlas-based-reference', 'subject-based-reference'], "Unknown phase! Valid entries: 'atlas-based-reference', 'subject-based-reference'"
 
     from nipype.interfaces.base import CommandLine, CommandLineInputSpec, TraitedSpec, Directory
     from nipype.interfaces.base import traits, isdefined, BaseInterface
@@ -62,7 +63,7 @@ def baseline_workflow(projectid, subjectid, sessionid, master_config, phase='bas
     import nipype.interfaces.io as nio
     from baseline import get_list_element, getAllT1sLength  # Can we replace with len()?
     from utilities.misc import *
-    from PipeLineFunctionHelpers import convertToList, FixWMPartitioning
+    from PipeLineFunctionHelpers import convertToList, FixWMPartitioning, AccumulateLikeTissuePosteriors
     from PipeLineFunctionHelpers import UnwrapPosteriorImagesFromDictionaryFunction as flattenDict
 
 
@@ -183,15 +184,12 @@ def baseline_workflow(projectid, subjectid, sessionid, master_config, phase='bas
     DataSink.inputs.container = '{0}/{1}/{2}'.format(projectid, subjectid, sessionid)
     DataSink.inputs.base_directory = master_config['resultdir']
 
-    if phase == 'baseline' or phase == 'longitudinal':
-        baw201.connect([(outputsSpec, DataSink,  # TODO: change to myLocalTCWF -> DataSink
-                                   [(('t1_average', convertToList), 'TissueClassify.@t1'),
-                                    (('t2_average', convertToList), 'TissueClassify.@t2'),
-                                    (('pd_average', convertToList), 'TissueClassify.@pd'),
-                                    (('fl_average', convertToList), 'TissueClassify.@fl')]),
-                                 ])
-    else:
-        raise NotImplementedError("Missing valid pipeline stage! Options: 'baseline', 'longitudinal'")
+    baw201.connect([(outputsSpec, DataSink,  # TODO: change to myLocalTCWF -> DataSink
+                               [(('t1_average', convertToList), 'TissueClassify.@t1'),
+                                (('t2_average', convertToList), 'TissueClassify.@t2'),
+                                (('pd_average', convertToList), 'TissueClassify.@pd'),
+                                (('fl_average', convertToList), 'TissueClassify.@fl')]),
+                             ])
     baw201.connect([(outputsSpec, DataSink, # TODO: change to myLocalLMIWF -> DataSink
                                 [('outputLandmarksInACPCAlignedSpace', 'ACPCAlign.@outputLandmarks_ACPC'),
                                  ('writeBranded2DImage', 'ACPCAlign.@writeBranded2DImage'),

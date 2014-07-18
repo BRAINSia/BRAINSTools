@@ -1,13 +1,13 @@
 #! /usr/bin/env python
 """
-longitudinal.py
+singleSession.py
 =========
 This program is used to generate the subject- and session-specific workflows for BRAINSTool processing
 
 Usage:
-  longitudinal.py [--rewrite-datasinks] [--wfrun PLUGIN] --subject ID... --pe ENV --ExperimentConfig FILE
-  longitudinal.py -v | --version
-  longitudinal.py -h | --help
+  singleSession.py [--rewrite-datasinks] [--wfrun PLUGIN] --subject ID... --pe ENV --ExperimentConfig FILE
+  singleSession.py -v | --version
+  singleSession.py -h | --help
 
 Arguments:
 
@@ -22,15 +22,15 @@ Options:
   --ExperimentConfig FILE   The configuration file
 
 Examples:
-  $ longitudinal.py --subject 1058 --pe OSX --ExperimentConfig my_baw.config
-  $ longitudinal.py --wfrun helium_all.q --subject 1058 --pe OSX --ExperimentConfig my_baw.config
-  $ longitudinal.py --rewrite-datasinks --subject 1058 --pe OSX --ExperimentConfig my_baw.config
+  $ singleSession.py --subject 1058 --pe OSX --ExperimentConfig my_baw.config
+  $ singleSession.py --wfrun helium_all.q --subject 1058 --pe OSX --ExperimentConfig my_baw.config
+  $ singleSession.py --rewrite-datasinks --subject 1058 --pe OSX --ExperimentConfig my_baw.config
 
 """
 
-def create_longitudinal(project, subject, session, master_config, interpMode='Linear', pipeline_name=''):
+def create_singleSession(project, subject, session, master_config, interpMode, pipeline_name):
     """
-    create longitudinal workflow on a single session
+    create singleSession workflow on a single session
 
     This is the main function to call when processing a data set with T1 & T2
     data.  ExperimentBaseDirectoryPrefix is the base of the directory to place results, T1Images & T2Images
@@ -46,7 +46,7 @@ def create_longitudinal(project, subject, session, master_config, interpMode='Li
     from baseline import baseline_workflow as create_baseline
 
     baw201 = create_baseline(project, subject, session, master_config,
-                               phase='longitudinal',
+                               phase='subject-based-reference',
                                interpMode=interpMode,
                                pipeline_name=pipeline_name)
     inputsSpec = baw201.get_node('inputspec')

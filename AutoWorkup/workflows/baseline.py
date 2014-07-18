@@ -116,6 +116,8 @@ def baseline_workflow(projectid, subjectid, sessionid, master_config, phase, int
                                           'outputVolume'])
     DenoiseInputImgs.inputs.rc= [1,1,1]
     DenoiseInputImgs.inputs.rs= [4,4,4]
+    from utilities.distributed import modify_qsub_args
+    DenoiseInputImgs.plugin_args = modify_qsub_args(master_config['queue'], '200M', 1, 2, hard=False)
     baw201.connect([ (makeDenoiseInImageList, DenoiseInputImgs, [('inImageList', 'inputVolume')]),
                      (makeDenoiseInImageList, DenoiseInputImgs, [('outImageList','outputVolume')])
                   ])

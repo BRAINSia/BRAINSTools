@@ -124,17 +124,10 @@ def dispatcher(master_config, subjects):
 def run(argv, environment, experiment, pipeline, cluster):
     from utilities.configFileParser import nipype_options
     from utilities.misc import add_dict
-    from utilities.distributed import create_global_sge_script
     print "Getting subjects from database..."
     subjects = get_subjects(argv, experiment['cachedir'], environment['prefix'], experiment['dbfile']) # Build database before parallel section
-    if environment['cluster']:
-        print "Creating SGE template string..."
-        print environment
-        node_template = create_global_sge_script(cluster, environment)
-    else:
-        node_template = None
     print "Copying Atlas directory and determining appropriate Nipype options..."
-    pipeline = nipype_options(argv, pipeline, cluster, node_template, experiment)  # Generate Nipype options
+    pipeline = nipype_options(argv, pipeline, cluster, experiment)  # Generate Nipype options
     master_config = {}
     for configDict in [environment, experiment, pipeline, cluster]:
         master_config = add_dict(master_config, configDict)

@@ -95,14 +95,13 @@ def get_subjects(argv, cache, prefix, dbfile, shuffle=True):
 
 
 def dispatcher(master_config, subjects):
-    from multiprocessing import Pool
     import time
 
     from workflows import singleSubject as ss
     from workflows import template
 
     sp_args_list = []
-    current_time = time.time()
+    current_time = time.time()  #FIXME: REMOVE time later
     index = 0
     delay = 2.5
     for subject in subjects:
@@ -113,41 +112,15 @@ def dispatcher(master_config, subjects):
         sp_args_list.append(sp_args)
 
     print "Running workflow(s) now..."
-    if master_config['execution']['plugin'] in ['Linear', 'MultiProc']:  # TODO: DS_runner?
-        if 'baseline' in master_config['components']:
-            for args in sp_args_list:
-                ss.RunSubjectWorkflow(args)
-            master_config['components'].remove('baseline')
-        if 'template' in master_config['components']:
-            template.main((subjects, master_config))
-        if 'longitudinal' in master_config['components']:
-            for args in sp_args_list:
-                ss.RunSubjectWorkflow(args)
-    else:
-        myPool = Pool(processes=64, maxtasksperchild=1)
-        try:
-            if 'baseline' in master_config['components']:
-                # myPool.join() ## HACK
-                all_results = myPool.map_async(ss.RunSubjectWorkflow, sp_args_list).get(1e100)
-                master_config['components'].remove('baseline')
-                # myPool.close()  ##HACK
-            # if 'template' in master_config['components']:
-            #     myPool.join() ## HACK
-            #     all_results = myPool.map_async(template.main, ((subjects, master_config),)).get(1e100)
-            #     myPool.close()  ##HACK
-            # if 'longitudinal' in master_config['components']:
-            #     myPool.join() ## HACK
-            #     all_results = myPool.map_async(ss.RunSubjectWorkflow, sp_args_list).get(1e100)
-             #    myPool.close()  ##HACK
-        except ValueError, err:
-            err.msg += "\nArgs to map_async: {0}".format(sp_args_list)
-            raise err
-        except:
-            raise
-        for index in range(len(sp_args_list)):
-            if all_results[index] == False:
-                print "FAILED for {0}".format(sp_args_list[index][-1])
-                return False
+    if 'baseline' in master_config['components']:
+        for args in sp_args_list:
+            ss.RunSubjectWorkflow(args)
+        master_config['components'].remove('baseline')
+    if 'template' in master_config['components']:
+        template.main((subjects, master_config))
+    if 'longitudinal' in master_config['components']:
+        for args in sp_args_list:
+            ss.RunSubjectWorkflow(args)
     return True
 
 

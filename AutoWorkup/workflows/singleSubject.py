@@ -38,10 +38,10 @@ def RunSubjectWorkflow(args):
     from utilities.misc import GenerateWFName
     from utils import run_workflow, print_workflow
 
-    while time.time() < start_time:
-        time.sleep(start_time - time.time() + 1)
-        print "Delaying start for {subject}".format(subject=subject)
-    print("===================== SUBJECT: {0} ===========================".format(subject))
+    # while time.time() < start_time:
+        # time.sleep(start_time - time.time() + 1)
+        # print "Delaying start for {subject}".format(subject=subject)
+    # print("===================== SUBJECT: {0} ===========================".format(subject))
 
     subjectWorkflow = pe.Workflow(name="BAW_StandardWorkup_subject_{0}".format(subject))
     subjectWorkflow.base_dir = config.get('logging', 'log_directory')
@@ -148,6 +148,9 @@ def RunSubjectWorkflow(args):
                                                                      ('template_t1', 'inputspec.template_t1')]),
                            ])
             assert current_phase == 'longitudinal', "Phase value is unknown: {0}".format(current_phase)
+        # HACK: only run first subject
+        break
+        # END HACK
         if not True:
             return print_workflow(subjectWorkflow,
                                   plugin=master_config['execution']['plugin'], dotfilename='subjectWorkflow') #, graph2use='flat')

@@ -23,7 +23,6 @@ if(BRAINSTools_REQUIRES_VTK)
     set(ITK_VTK_COMPONENTS
         ITKIOVTK
         ITKVTK
-        ITKVtkGlue
     )
   else()  ## Not Slicer build
     set(ITK_VTK_COMPONENTS

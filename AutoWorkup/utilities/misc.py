@@ -104,7 +104,7 @@ def get_cpus(option):
 
 def nipype_plugin(wfrun):
     assert wfrun in WFRUN, "Unknown workflow run environment: {0}".format(wfrun)
-    sge_flavor = 'SGE'
+    sge_flavor = 'SGEGraph'  # NOT 'SGE' per Satra 2014/07/18
     if wfrun in ['helium_all.q', 'helium_all.q_graph', 'ipl_OSX']:
         return sge_flavor
     elif wfrun in ['local_4', 'local_12']:

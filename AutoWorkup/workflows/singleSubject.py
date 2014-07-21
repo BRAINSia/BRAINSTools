@@ -12,7 +12,7 @@ def RunSubjectWorkflow(args):
     **** Replaces WorkflowT1T2.py ****
     """
     start_time, subject, master_config = args
-    assert 'baseline' in master_config['components'] or 'longitudinal' in master_config['components'], "Baseline or Longitudinal is not in WORKFLOW_COMPONENTS!"
+    assert 'tissue_classify' in master_config['components'] or 'auxlmk' in master_config['components'] or 'segmentation' in master_config['components'], "Baseline or Longitudinal is not in WORKFLOW_COMPONENTS!"
     import time
 
     from nipype import config, logging
@@ -38,10 +38,10 @@ def RunSubjectWorkflow(args):
     from utilities.misc import GenerateWFName
     from utils import run_workflow, print_workflow
 
-    while time.time() < start_time:
-        time.sleep(start_time - time.time() + 1)
-        print "Delaying start for {subject}".format(subject=subject)
-    print("===================== SUBJECT: {0} ===========================".format(subject))
+    # while time.time() < start_time:
+        # time.sleep(start_time - time.time() + 1)
+        # print "Delaying start for {subject}".format(subject=subject)
+    # print("===================== SUBJECT: {0} ===========================".format(subject))
 
     subjectWorkflow = pe.Workflow(name="BAW_StandardWorkup_subject_{0}".format(subject))
     subjectWorkflow.base_dir = config.get('logging', 'log_directory')
@@ -60,19 +60,16 @@ def RunSubjectWorkflow(args):
     database.open_connection()
 
     sessions = database.getSessionsFromSubject(subject)
-    # print "These are the sessions: ", sessions
-    if 'baseline' in master_config['components']:
-        current_phase = 'baseline'
-        atlasNode = MakeAtlasNode(master_config['atlascache'], 'BAtlas')
-    elif 'longitudinal' in master_config['components']:
-        current_phase = 'longitudinal'
-        atlasNode = GetAtlasNode(master_config['previouscache'], 'BAtlas')
-    from longitudinal import create_longitudinal as create_wkfl
+    print "These are the sessions: ", sessions
+    # TODO: atlas input csv read
+    atlasNode = MakeAtlasNode(master_config['atlascache'], 'BAtlas')
+    # atlasNode = GetAtlasNode(master_config['previouscache'], 'BAtlas')
+    from singleSession import create_singleSession as create_wkfl
 
     for session in sessions:  # TODO (future): Replace with iterable inputSpec node and add Function node for getAllFiles()
         project = database.getProjFromSession(session)
-        pname = "{0}_{1}".format(session, current_phase)  # Long node names make graphs a pain to read/print
-        # pname = GenerateWFName(project, subject, session, current_phase)
+        pname = "{0}_singleSession".format(session)  # Long node names make graphs a pain to read/print
+        # pname = GenerateWFName(project, subject, session, 'singleSession')
         print "Building session pipeline for {0}".format(session)
         inputsSpec[session] = pe.Node(name='inputspec_{0}'.format(session),
                                       interface=IdentityInterface(fields=['T1s', 'T2s', 'PDs', 'FLs', 'OTs']))
@@ -126,7 +123,7 @@ def RunSubjectWorkflow(args):
                                        ('r_globus_ProbabilityMap', bCutInputName + '.r_globus_ProbabilityMap'),
                                        ('trainModelFile_txtD0060NT0060_gz',
                                         bCutInputName + '.trainModelFile_txtD0060NT0060_gz')])])
-        if current_phase == 'baseline':
+        if True:  # FIXME: current_phase == 'baseline':
             subjectWorkflow.connect([(atlasNode, sessionWorkflow[session], [('template_t1', 'inputspec.template_t1'),
                                                                             ('ExtendedAtlasDefinition_xml',
                                                                              'inputspec.atlasDefinition')]),
@@ -147,8 +144,14 @@ def RunSubjectWorkflow(args):
             baw201.connect([(template_DG, sessionWorkflow[session], [('outAtlasFullPath', 'inputspec.atlasDefinition'),
                                                                      ('template_t1', 'inputspec.template_t1')]),
                            ])
-            assert current_phase == 'longitudinal', "Phase value is unknown: {0}".format(current_phase)
+        # HACK: only run first subject
+        break
+        # END HACK
         if not True:
             return print_workflow(subjectWorkflow,
                                   plugin=master_config['execution']['plugin'], dotfilename='subjectWorkflow') #, graph2use='flat')
-    return run_workflow(subjectWorkflow, plugin=master_config['execution']['plugin'], plugin_args=master_config['plugin_args'])
+    try:
+        return subjectWorkflow.run(plugin='SGEGraph', plugin_args=master_config['plugin_args'])
+    except:
+        return 1
+    #return run_workflow(subjectWorkflow, plugin=master_config['execution']['plugin'], plugin_args=master_config['plugin_args'])

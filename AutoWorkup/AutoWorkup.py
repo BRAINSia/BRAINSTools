@@ -95,14 +95,13 @@ def get_subjects(argv, cache, prefix, dbfile, shuffle=True):
 
 
 def dispatcher(master_config, subjects):
-    from multiprocessing import Pool
     import time
 
     from workflows import singleSubject as ss
     from workflows import template
 
     sp_args_list = []
-    current_time = time.time()
+    current_time = time.time()  #FIXME: REMOVE time later
     index = 0
     delay = 2.5
     for subject in subjects:
@@ -113,58 +112,22 @@ def dispatcher(master_config, subjects):
         sp_args_list.append(sp_args)
 
     print "Running workflow(s) now..."
-    if master_config['execution']['plugin'] in ['Linear', 'MultiProc']:  # TODO: DS_runner?
-        if 'baseline' in master_config['components']:
-            for args in sp_args_list:
-                ss.RunSubjectWorkflow(args)
-            master_config['components'].remove('baseline')
-        if 'template' in master_config['components']:
-            template.main((subjects, master_config))
-        if 'longitudinal' in master_config['components']:
-            for args in sp_args_list:
-                ss.RunSubjectWorkflow(args)
-    else:
-        myPool = Pool(processes=64, maxtasksperchild=1)
-        try:
-            if 'baseline' in master_config['components']:
-                # myPool.join() ## HACK
-                all_results = myPool.map_async(ss.RunSubjectWorkflow, sp_args_list).get(1e100)
-                master_config['components'].remove('baseline')
-                # myPool.close()  ##HACK
-            # if 'template' in master_config['components']:
-            #     myPool.join() ## HACK
-            #     all_results = myPool.map_async(template.main, ((subjects, master_config),)).get(1e100)
-            #     myPool.close()  ##HACK
-            # if 'longitudinal' in master_config['components']:
-            #     myPool.join() ## HACK
-            #     all_results = myPool.map_async(ss.RunSubjectWorkflow, sp_args_list).get(1e100)
-             #    myPool.close()  ##HACK
-        except ValueError, err:
-            err.msg += "\nArgs to map_async: {0}".format(sp_args_list)
-            raise err
-        except:
-            raise
-        for index in range(len(sp_args_list)):
-            if all_results[index] == False:
-                print "FAILED for {0}".format(sp_args_list[index][-1])
-                return False
+    for args in sp_args_list:
+        print "Creating workflow for {0}".format(args[1])
+        ss.RunSubjectWorkflow(args)
+    # TODO:  Seperate commandline for template
+    # if 'template' in master_config['components']:
+    #     template.main((subjects, master_config))
     return True
 
 
 def run(argv, environment, experiment, pipeline, cluster):
     from utilities.configFileParser import nipype_options
     from utilities.misc import add_dict
-    from utilities.distributed import create_global_sge_script
     print "Getting subjects from database..."
     subjects = get_subjects(argv, experiment['cachedir'], environment['prefix'], experiment['dbfile']) # Build database before parallel section
-    if environment['cluster']:
-        print "Creating SGE template string..."
-        print environment
-        node_template = create_global_sge_script(cluster, environment)
-    else:
-        node_template = None
     print "Copying Atlas directory and determining appropriate Nipype options..."
-    pipeline = nipype_options(argv, pipeline, cluster, node_template, experiment)  # Generate Nipype options
+    pipeline = nipype_options(argv, pipeline, cluster, experiment)  # Generate Nipype options
     master_config = {}
     for configDict in [environment, experiment, pipeline, cluster]:
         master_config = add_dict(master_config, configDict)

@@ -87,6 +87,7 @@ def parseExperiment(parser):
     retval['atlascache'] = clone_atlas_dir(retval['cachedir'], atlas)
     retval['dbfile'] = validatePath(parser.get('EXPERIMENT', 'SESSION_DB'), False, False)
     retval['components'] = [x.lower() for x in eval(parser.get('EXPERIMENT', 'WORKFLOW_COMPONENTS'))]
+    retval['workflow_type'] = parser.get('EXPERIMENT', 'WORKFLOW_TYPE')
     return retval
 
 
@@ -129,18 +130,24 @@ def resolveDataSinkOption(args, pipeline):
     return False
 
 
-def nipype_options(args, pipeline, cluster, template, experiment):
-    retval = {}
-    ## Chicken-egg problem: cannot create pipeline dictionary with Nipype defaults until Nipype is found by environment
+def nipype_options(args, pipeline, cluster, experiment, environment):
+    """
+    Chicken-egg problem: cannot create pipeline dictionary with Nipype defaults until Nipype is found by environment
     # from nipype.utils.config import homedir, default_cfg
 
     # retval = eval(default_cfg)
     # for key, value in kwds.items():
     #     retval['execution'][key] = value
-    print pipeline
+    """
+    retval = {}
+    from distributed import create_global_sge_script
+    if environment['cluster']:
+        template = create_global_sge_script(cluster, environment)
+    else:
+        template = None
+    retval['plugin_args'] = misc.nipype_plugin_args(args['--wfrun'], cluster, template)
     retval['ds_overwrite'] = pipeline['ds_overwrite']  # resolveDataSinkOption(args, pipeline)
     retval['execution'] = misc.nipype_execution(plugin=args['--wfrun'], stop_on_first_crash=False, stop_on_first_rerun=False)
-    retval['plugin_args'] = misc.nipype_plugin_args(args['--wfrun'], cluster, template)
     retval['logging'] = misc.nipype_logging(experiment['cachedir'])
     return retval
 

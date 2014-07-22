@@ -51,12 +51,12 @@ def create_singleSession(dataDict, master_config, interpMode, pipeline_name):
     from nipype.interfaces.base import CommandLine, CommandLineInputSpec, TraitedSpec, Directory, traits, isdefined, BaseInterface
     from nipype.interfaces.utility import Split, Rename, IdentityInterface, Function
 
-    from baseline import baseline_workflow as create_baseline
+    from workflows.baseline import baseline_workflow as create_baseline
     from PipeLineFunctionHelpers import convertToList
     from utilities.misc import GenerateSubjectOutputPattern as outputPattern
     from utilities.misc import GenerateWFName
-    from utils import run_workflow, print_workflow
-    from atlasNode import MakeAtlasNode
+    from workflows.utils import run_workflow, print_workflow
+    from workflows.atlasNode import MakeAtlasNode
 
     project = dataDict['project']
     subject = dataDict['subject']
@@ -107,7 +107,7 @@ def create_singleSession(dataDict, master_config, interpMode, pipeline_name):
 
     if 'segmentation' in master_config['components']:
         from workflows.segmentation import segmentation
-        from WorkupT1T2BRAINSCut import GenerateWFName
+        from workflows.WorkupT1T2BRAINSCut import GenerateWFName
         try:
             bCutInputName = ".".join([GenerateWFName(project, subject, session, 'Segmentation'), 'inputspec'])
         except:
@@ -188,7 +188,6 @@ def createAndRun(sessions, environment, experiment, pipeline, cluster):
             database.close_connection()
         except:
             pass
-    return retval
 
 def _main(environment, experiment, pipeline, cluster, **kwds):
     from utilities.configFileParser import nipype_options

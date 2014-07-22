@@ -152,9 +152,11 @@ def create_singleSession(dataDict, master_config, interpMode, pipeline_name):
 
     return sessionWorkflow
 
-def createAndRun(sessions, environment, experiment, pipeline, cluster):
+def createAndRun(sessionsCommaSeparatedString, environment, experiment, pipeline, cluster):
     from baw_exp import OpenSubjectDatabase
     from utilities.misc import add_dict
+    # Make list of sessions
+    sessions = sessionsCommaSeparatedString.split(",")
     master_config = {}
     for configDict in [environment, experiment, pipeline, cluster]:
         master_config = add_dict(master_config, configDict)
@@ -166,7 +168,7 @@ def createAndRun(sessions, environment, experiment, pipeline, cluster):
         if not 'all' in sessions:
             sessions = tuple(set(sessions) & set(all_sessions))
             new_length = len(sessions)
-            assert old_length == new_length, "Some requested sessions were not found in the database!"
+            assert old_length == new_length, "Some requested sessions were not found in the database! {0}".format(sessions)
         else:
             sessions = tuple(all_sessions)
         for session in sessions:

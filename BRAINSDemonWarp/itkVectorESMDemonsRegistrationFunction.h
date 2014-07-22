@@ -127,11 +127,7 @@ public:
   typedef typename FixedImageType::DirectionType DirectionType;
 
   /** Displacement field type. */
-#if (ITK_VERSION_MAJOR < 4)
-  typedef typename Superclass::DeformationFieldType DisplacementFieldType;
-#else
   typedef typename Superclass::DisplacementFieldType DisplacementFieldType;
-#endif
   typedef typename DisplacementFieldType::Pointer DisplacementFieldPointer;
 
   /** Inherit some enums from the superclass. */

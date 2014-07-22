@@ -129,9 +129,7 @@ BRAINSROIAUTOWriteOutputVolume(VolumeImageType::Pointer image,
     typename ExtractorType::Pointer myExtractor = ExtractorType::New();
     myExtractor->SetExtractionRegion(desiredRegion);
     myExtractor->SetInput(finalOutput);
-#if ITK_VERSION_MAJOR >= 4
     myExtractor->SetDirectionCollapseToIdentity(); // This is required.
-#endif
     myExtractor->Update();
     finalOutput = myExtractor->GetOutput();
     }

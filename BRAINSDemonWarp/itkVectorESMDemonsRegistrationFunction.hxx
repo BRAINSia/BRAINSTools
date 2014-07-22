@@ -252,13 +252,8 @@ VectorESMDemonsRegistrationFunction<TFixedImage, TMovingImage,
     m_MovingImageWarperVector[i]->SetOutputDirection(m_FixedImageDirection);
     //  m_MovingImageWarperVector[i]->SetInput( movingimage );
     m_MovingImageWarperVector[i]->SetInput(vectorMovingImageToImageAdaptor);
-#if (ITK_VERSION_MAJOR < 4)
-    m_MovingImageWarperVector[i]->SetDeformationField( this->GetDeformationField() );
-    m_MovingImageWarperVector[i]->GetOutput()->SetRequestedRegion( this->GetDeformationField()->GetRequestedRegion() );
-#else
     m_MovingImageWarperVector[i]->SetDisplacementField( this->GetDisplacementField() );
     m_MovingImageWarperVector[i]->GetOutput()->SetRequestedRegion( this->GetDisplacementField()->GetRequestedRegion() );
-#endif
     m_MovingImageWarperVector[i]->Update();
 
     // setup moving image interpolator for further access

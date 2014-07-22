@@ -25,13 +25,8 @@
 #include "vnl/vnl_matrix.h"
 #include "itkMacro.h"
 
-#if  ITK_VERSION_MAJOR >= 4
 #include "itk_hdf5.h"
 #include "itk_H5Cpp.h"
-#else
-#include "hdf5.h"
-#include "H5Cpp.h"
-#endif
 
 class LLSModel
 {

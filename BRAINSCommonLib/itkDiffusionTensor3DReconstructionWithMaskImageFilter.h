@@ -30,11 +30,6 @@
 
 namespace itk
 {
-#if ITK_VERSION_MAJOR < 4 && !defined(ITKv3_THREAD_ID_TYPE_DEFINED)
-#define ITKv3_THREAD_ID_TYPE_DEFINED 1
-typedef int ThreadIdType;
-#endif
-
 /** \class DiffusionTensor3DReconstructionWithMaskImageFilter
  * \brief This class takes as input one or more reference image (acquired in the
  * absence of diffusion sensitizing gradients) and 'n' diffusion

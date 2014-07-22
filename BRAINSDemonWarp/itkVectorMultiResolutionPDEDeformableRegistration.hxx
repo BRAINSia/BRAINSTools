@@ -25,11 +25,7 @@
 
 #include "itkVectorLinearInterpolateNearestNeighborExtrapolateImageFunction.h"
 
-#if (ITK_VERSION_MAJOR < 4)
-#include "itkImageToVectorImageFilter.h"
-#else
 #include "itkComposeImageFilter.h"
-#endif
 
 #include "itkVectorIndexSelectionCastImageFilter.h"
 
@@ -400,11 +396,7 @@ VectorMultiResolutionPDEDeformableRegistration<TFixedImage, TMovingImage,
     {
     if( tempField.IsNull() )
       {
-#if (ITK_VERSION_MAJOR < 4)
-      m_RegistrationFilter->SetInitialDeformationField(NULL);
-#else
       m_RegistrationFilter->SetInitialDisplacementField(NULL);
-#endif
       }
     else
       {
@@ -428,36 +420,20 @@ VectorMultiResolutionPDEDeformableRegistration<TFixedImage, TMovingImage,
       tempField = m_FieldExpander->GetOutput();
       tempField->DisconnectPipeline();
 
-#if (ITK_VERSION_MAJOR < 4)
-      m_RegistrationFilter->SetInitialDeformationField(tempField);
-#else
       m_RegistrationFilter->SetInitialDisplacementField(tempField);
-#endif
       }
 
-#if (ITK_VERSION_MAJOR < 4)
-    typedef itk::ImageToVectorImageFilter<FloatImageType>
-      ImageToVectorImageType;
-#else
     typedef itk::ComposeImageFilter<FloatImageType> ImageToVectorImageType;
-#endif
     typename ImageToVectorImageType::Pointer vectorFixedImage =
       ImageToVectorImageType::New();
     typename ImageToVectorImageType::Pointer vectorMovingImage =
       ImageToVectorImageType::New();
     for( unsigned int i = 0; i < this->GetFixedImage()->GetVectorLength(); ++i )
       {
-#if (ITK_VERSION_MAJOR < 4)
-      vectorFixedImage->SetNthInput( i,
-                                     m_FixedVectorImagePyramid[i]->GetOutput(fixedLevel) );
-      vectorMovingImage->SetNthInput( i,
-                                      m_MovingVectorImagePyramid[i]->GetOutput(movingLevel) );
-#else
       vectorFixedImage->SetInput( i,
                                   m_FixedVectorImagePyramid[i]->GetOutput(fixedLevel) );
       vectorMovingImage->SetInput( i,
                                    m_MovingVectorImagePyramid[i]->GetOutput(movingLevel) );
-#endif
       }
     try
       {

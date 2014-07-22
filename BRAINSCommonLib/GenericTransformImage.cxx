@@ -364,7 +364,6 @@ GenericTransformType::Pointer ReadTransformFromDisk(const std::string & initialT
       tempCopy->SetParametersByValue( tempInitializerITKTransform->GetParameters() );
       genericTransform = tempCopy.GetPointer();
       }
-#if (ITK_VERSION_MAJOR > 3)
     else if( transformFileType == "CompositeTransform" )
       {
       try
@@ -392,7 +391,6 @@ GenericTransformType::Pointer ReadTransformFromDisk(const std::string & initialT
         throw excp;
         }
       }
-#endif
     else
       {
       std::cerr << "ERROR:  Invalid type (" << transformFileType << ") " << __FILE__ << " " << __LINE__ << std::endl;

@@ -434,11 +434,7 @@ OtsuHistogramMatchingImageFilter<TInputImage, TOutputImage, THistogramMeasuremen
         {
         // add sample to histogram
         measurement[0] = value;
-#if  ITK_VERSION_MAJOR >= 4
         histogram->IncreaseFrequencyOfMeasurement(measurement, 1.0F);
-#else
-        histogram->IncreaseFrequency(measurement, 1.0F);
-#endif
         }
       ++iter;
       }

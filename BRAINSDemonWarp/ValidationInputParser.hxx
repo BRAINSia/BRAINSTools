@@ -128,17 +128,8 @@ ValidationInputParser<TImage>
     }
   else if( m_InitialTransformFilename != "" )
     {
-#if 1
-    // TODO: Zhao,  please implement the following, and test that it works
-    // within
-    //      the regression test suite.
-
     //  #######Now use TransformToDisplacementFieldSource
-#if (ITK_VERSION_MAJOR < 4)
-    typedef itk::TransformToDeformationFieldSource<TDisplacementField, double> DisplacementFieldGeneratorType;
-#else
     typedef itk::TransformToDisplacementFieldSource<TDisplacementField, double> DisplacementFieldGeneratorType;
-#endif
     typedef typename DisplacementFieldGeneratorType::TransformType TransformType;
     // Only a templated base class.
 
@@ -155,7 +146,6 @@ ValidationInputParser<TImage>
     m_InitialDisplacementField = defGenerator->GetOutput();
     // itkUtil::WriteImage<TDisplacementField>(m_InitialDisplacementField,
     // "initialDeformationfield.nii.gz");
-#endif
     }
   else if( m_InitialCoefficientFilename != "" )
     {

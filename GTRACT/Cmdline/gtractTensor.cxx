@@ -44,11 +44,7 @@
 #include <itkLinearInterpolateImageFunction.h>
 #include <itkImageFileWriter.h>
 #include <itkImageFileReader.h>
-#if (ITK_VERSION_MAJOR < 4)
-#include <itkImageToVectorImageFilter.h>
-#else
 #include <itkComposeImageFilter.h>
-#endif
 
 #include <itkExtractImageFilter.h>
 #include <itkImageMaskSpatialObject.h>
@@ -204,11 +200,7 @@ int main(int argc, char *argv[])
     DirectionContainerType;
   DirectionContainerType::Pointer gradientDirectionContainer = DirectionContainerType::New();
 
-#if (ITK_VERSION_MAJOR < 4)
-  typedef itk::ImageToVectorImageFilter<IndexImageType> VectorImageFilterType;
-#else
   typedef itk::ComposeImageFilter<IndexImageType> VectorImageFilterType;
-#endif
   VectorImageFilterType::Pointer indexImageToVectorImageFilter = VectorImageFilterType::New();
   int                            vectorIndex = 0;
   for( unsigned int i = 0; i < vectorImageReader->GetOutput()->GetVectorLength(); i++ )

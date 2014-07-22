@@ -386,20 +386,12 @@ void ThirionFunction(const struct BRAINSDemonWarpAppParameters & command)
         {
         std::cout << " Smoothing is on ....." << std::endl;
         }
-#if (ITK_VERSION_MAJOR < 4)
-      filter->SmoothDeformationFieldOn();
-#else
       filter->SmoothDisplacementFieldOn();
-#endif
       filter->SetStandardDeviations(command.smoothDisplacementFieldSigma);
       }
     else
       {
-#if (ITK_VERSION_MAJOR < 4)
-      filter->SmoothDeformationFieldOff();
-#else
       filter->SmoothDisplacementFieldOff();
-#endif
       }
     if( command.smoothingUp > 0.1 )
       {
@@ -739,20 +731,12 @@ void VectorThirionFunction(const struct BRAINSDemonWarpAppParameters & command)
           {
           std::cout << " Smoothing is on ....." << std::endl;
           }
-#if (ITK_VERSION_MAJOR < 4)
-        VDDfilter->SmoothDeformationFieldOn();
-#else
         VDDfilter->SmoothDisplacementFieldOn();
-#endif
         VDDfilter->SetStandardDeviations(command.smoothDisplacementFieldSigma);
         }
       else
         {
-#if (ITK_VERSION_MAJOR < 4)
-        VDDfilter->SmoothDeformationFieldOff();
-#else
         VDDfilter->SmoothDisplacementFieldOff();
-#endif
         }
       if( command.smoothingUp > 0.1 )
         {
@@ -820,20 +804,12 @@ void VectorThirionFunction(const struct BRAINSDemonWarpAppParameters & command)
         {
         std::cout << " Smoothing is on ....." << std::endl;
         }
-#if (ITK_VERSION_MAJOR < 4)
-      filter->SmoothDeformationFieldOn();
-#else
       filter->SmoothDisplacementFieldOn();
-#endif
       filter->SetStandardDeviations(command.smoothDisplacementFieldSigma);
       }
     else
       {
-#if (ITK_VERSION_MAJOR < 4)
-      filter->SmoothDeformationFieldOff();
-#else
       filter->SmoothDisplacementFieldOff();
-#endif
       }
     if( command.smoothingUp > 0.1 )
       {

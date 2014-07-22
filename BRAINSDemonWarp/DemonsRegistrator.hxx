@@ -203,11 +203,7 @@ void DemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute()
     if( this->m_InitialDisplacementField.IsNotNull() )
       {
       DebugOutput(TDisplacementField, this->m_InitialDisplacementField);
-#if (ITK_VERSION_MAJOR < 4)
-      m_Registration->SetInitialDeformationField(this->m_InitialDisplacementField);
-#else
       m_Registration->SetInitialDisplacementField(this->m_InitialDisplacementField);
-#endif
       }
     // Perform the registration.
     try

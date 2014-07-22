@@ -117,17 +117,7 @@ int main(int argc, char *argv[])
   itk::MetaDataDictionary       meta;
   IndexImageType::Pointer       indexImage = SelectIndexImageFilter->GetOutput();
   IndexImageType::DirectionType fixImageDir = indexImage->GetDirection();
-#if ( ITK_VERSION_MAJOR < 4  )
-#define EncapsulateMD(image, flag)                                       \
-    {                                                                   \
-    itk::EncapsulateMetaData                                            \
-    <itk::SpatialOrientation::ValidCoordinateOrientationFlags>      \
-      (meta, itk::ITK_CoordinateOrientation, flag);                   \
-    image->SetMetaDataDictionary(meta);                                 \
-    }
-#else
 #define EncapsulateMD(image, flag) {}
-#endif
   if( setImageOrientation == "Axial"  ||  setImageOrientation == "AXIAL"  ||  setImageOrientation == "axial" )
     {
     fixImageDir.Fill(0);

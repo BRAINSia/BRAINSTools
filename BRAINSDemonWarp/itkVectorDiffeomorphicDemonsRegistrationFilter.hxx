@@ -115,11 +115,7 @@ VectorDiffeomorphicDemonsRegistrationFilter<TFixedImage, TMovingImage, TDisplace
 
   // update variables in the equation object
   DemonsRegistrationFunctionType *f = this->DownCastDifferenceFunctionType();
-#if (ITK_VERSION_MAJOR < 4)
-  f->SetDeformationField( this->GetDeformationField() );
-#else
   f->SetDisplacementField( this->GetDisplacementField() );
-#endif
 
   f->SetFixedImage(fixedPtr);
   f->SetMovingImage(movingPtr);
@@ -261,12 +257,7 @@ VectorDiffeomorphicDemonsRegistrationFilter<TFixedImage, TMovingImage, TDisplace
 template <class TFixedImage, class TMovingImage, class TDisplacementField>
 void
 VectorDiffeomorphicDemonsRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>
-#if (ITK_VERSION_MAJOR < 4)
-// This is for meeting the virutal function signature for ITKv3 polymorphic heirarchy
-::ApplyUpdate(TimeStepType dt)
-#else
 ::ApplyUpdate(const TimeStepType &dt)
-#endif
   {
   // If we smooth the update buffer before applying it, then the are
   // approximating a viscuous problem as opposed to an elastic problem
@@ -280,11 +271,7 @@ VectorDiffeomorphicDemonsRegistrationFilter<TFixedImage, TMovingImage, TDisplace
   if( vcl_fabs(dt - 1.0) > 1.0e-4 )
     {
     itkDebugMacro("Using timestep: " << dt);
-#if (ITK_VERSION_MAJOR < 4)
-    m_Multiplier->SetConstant(dt);
-#else
     m_Multiplier->SetInput2(dt);
-#endif
     m_Multiplier->SetInput( this->GetUpdateBuffer() );
     m_Multiplier->GraftOutput( this->GetUpdateBuffer() );
     // in place update
@@ -302,11 +289,7 @@ VectorDiffeomorphicDemonsRegistrationFilter<TFixedImage, TMovingImage, TDisplace
     m_Warper->SetOutputSpacing( this->GetUpdateBuffer()->GetSpacing() );
     m_Warper->SetOutputDirection( this->GetUpdateBuffer()->GetDirection() );
     m_Warper->SetInput( this->GetOutput() );
-#if (ITK_VERSION_MAJOR < 4)
-    m_Warper->SetDeformationField( this->GetUpdateBuffer() );
-#else
     m_Warper->SetDisplacementField( this->GetUpdateBuffer() );
-#endif
 
     m_Adder->SetInput1( m_Warper->GetOutput() );
     m_Adder->SetInput2( this->GetUpdateBuffer() );
@@ -353,11 +336,7 @@ VectorDiffeomorphicDemonsRegistrationFilter<TFixedImage, TMovingImage, TDisplace
     m_Warper->SetOutputSpacing( this->GetUpdateBuffer()->GetSpacing() );
     m_Warper->SetOutputDirection( this->GetUpdateBuffer()->GetDirection() );
     m_Warper->SetInput( this->GetOutput() );
-#if (ITK_VERSION_MAJOR < 4)
-    m_Warper->SetDeformationField( m_Exponentiator->GetOutput() );
-#else
     m_Warper->SetDisplacementField( m_Exponentiator->GetOutput() );
-#endif
 
     m_Warper->Update();
 
@@ -382,17 +361,10 @@ VectorDiffeomorphicDemonsRegistrationFilter<TFixedImage, TMovingImage, TDisplace
   /**
    * Smooth the deformation field
    */
-#if (ITK_VERSION_MAJOR < 4)
-  if( this->GetSmoothDeformationField() )
-    {
-    this->SmoothDeformationField();
-    }
-#else
   if( this->GetSmoothDisplacementField() )
     {
     this->SmoothDisplacementField();
     }
-#endif
   }
 
 template <class TFixedImage, class TMovingImage, class TDisplacementField>

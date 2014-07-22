@@ -22,11 +22,7 @@
 #include "itkIO.h"
 #include "CrossOverAffineSystem.h"
 
-#if (ITK_VERSION_MAJOR < 4)
-#include <itkTransformToDeformationFieldSource.h>
-#else
 #include <itkTransformToDisplacementFieldSource.h>
-#endif
 
 /**
   * Go from any subclass of Transform, to the corresponding deformation field
@@ -37,11 +33,7 @@ TransformToDisplacementField(itk::ImageBase<DisplacementFieldPointerType::Object
                              TransformPointerType xfrm)
 {
   typedef typename DisplacementFieldPointerType::ObjectType OutputType;
-#if (ITK_VERSION_MAJOR < 4)
-  typedef typename itk::TransformToDeformationFieldSource<OutputType, double> TodefType;
-#else
   typedef typename itk::TransformToDisplacementFieldSource<OutputType, double> TodefType;
-#endif
   typename TodefType::Pointer todef( TodefType::New() );
   todef->SetOutputParametersFromImage(templateImage);
   todef->SetTransform(xfrm);

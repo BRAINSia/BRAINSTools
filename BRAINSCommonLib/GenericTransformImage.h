@@ -39,9 +39,7 @@
 #include <itkThinPlateR2LogRSplineKernelTransform.h>
 #include "itkVersorRigid3DTransform.h"
 #include <itkBSplineTransform.h>
-#if (ITK_VERSION_MAJOR > 3)
 #include "itkCompositeTransform.h"
-#endif
 #include "ConvertToRigidAffine.h"
 #include "itkResampleImageFilter.h"
 #include "itkImageDuplicator.h"
@@ -77,9 +75,7 @@ typedef itk::ScaleVersor3DTransform<double>                  ScaleVersor3DTransf
 typedef itk::ScaleSkewVersor3DTransform<double>              ScaleSkewVersor3DTransformType;
 typedef itk::ThinPlateR2LogRSplineKernelTransform<double, 3> ThinPlateSpline3DTransformType;
 
-#if (ITK_VERSION_MAJOR > 3)
 typedef itk::CompositeTransform<double, 3> BRAINSCompositeTransformType;
-#endif
 
 namespace itk
 {

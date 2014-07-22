@@ -54,9 +54,6 @@ typedef vtkImageAlgorithm ReaderSuperclass;
 #include <string>
 
 #include "itkMetaDataDictionary.h"
-#if ITK_VERSION_MAJOR < 4
-#include "gdcmDictSet.h"        /// access to dictionary
-#endif
 #include "gdcmDict.h"           /// access to dictionary
 #include "gdcmDictEntry.h"      /// access to dictionary
 #include "gdcmGlobal.h"         /// access to dictionary

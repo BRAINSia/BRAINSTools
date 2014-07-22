@@ -180,11 +180,7 @@ public:
       {
       iter = DDfilter->GetElapsedIterations() - 1;
       metricbefore = DDfilter->GetMetric();
-#if (ITK_VERSION_MAJOR < 4)
-      deffield = const_cast<DiffeomorphicDemonsRegistrationFilterType *>( DDfilter )->GetDeformationField();
-#else
       deffield = const_cast<DiffeomorphicDemonsRegistrationFilterType *>( DDfilter )->GetDisplacementField();
-#endif
       }
     else if( const FastSymmetricForcesDemonsRegistrationFilterType * FSDfilter =
                dynamic_cast<const
@@ -193,22 +189,14 @@ public:
       {
       iter = FSDfilter->GetElapsedIterations() - 1;
       metricbefore = FSDfilter->GetMetric();
-#if (ITK_VERSION_MAJOR < 4)
-      deffield = const_cast<FastSymmetricForcesDemonsRegistrationFilterType *>( FSDfilter )->GetDeformationField();
-#else
       deffield = const_cast<FastSymmetricForcesDemonsRegistrationFilterType *>( FSDfilter )->GetDisplacementField();
-#endif
       }
     else if( const DemonsRegistrationFilterType * Dfilter =
                dynamic_cast<const DemonsRegistrationFilterType *>( object ) )
       {
       iter = Dfilter->GetElapsedIterations() - 1;
       metricbefore = Dfilter->GetMetric();
-#if (ITK_VERSION_MAJOR < 4)
-      deffield = const_cast<DemonsRegistrationFilterType *>( Dfilter )->GetDeformationField();
-#else
       deffield = const_cast<DemonsRegistrationFilterType *>( Dfilter )->GetDisplacementField();
-#endif
       }
     else if( const VectorDiffeomorphicDemonsRegistrationFilterType * VDDfilter =
                dynamic_cast<const
@@ -217,11 +205,7 @@ public:
       {
       iter = VDDfilter->GetElapsedIterations() - 1;
       metricbefore = VDDfilter->GetMetric();
-#if (ITK_VERSION_MAJOR < 4)
-      deffield = const_cast<VectorDiffeomorphicDemonsRegistrationFilterType *>( VDDfilter )->GetDeformationField();
-#else
       deffield = const_cast<VectorDiffeomorphicDemonsRegistrationFilterType *>( VDDfilter )->GetDisplacementField();
-#endif
       }
     else if( const MultiResRegistrationFilterType * multiresfilter =
                dynamic_cast<const MultiResRegistrationFilterType *>( object ) )

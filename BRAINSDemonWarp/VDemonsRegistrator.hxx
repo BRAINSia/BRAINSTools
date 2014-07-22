@@ -40,11 +40,7 @@
 #include "itkDiffeomorphicDemonsRegistrationFilter.h"
 #include "GenericTransformImage.h"
 #include "itkVectorLinearInterpolateNearestNeighborExtrapolateImageFunction.h"
-#if (ITK_VERSION_MAJOR < 4)
-#include "itkImageToVectorImageFilter.h"
-#else
 #include "itkComposeImageFilter.h"
-#endif
 
 #include "itkMultiplyByConstantImageFilter.h"
 
@@ -194,11 +190,7 @@ void VDemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute()
 
   if( m_FixedImage.size() > 1 )
     {
-#if (ITK_VERSION_MAJOR < 4)
-    typedef itk::ImageToVectorImageFilter<RealImageType> ImageToVectorImageType;
-#else
     typedef itk::ComposeImageFilter<RealImageType> ImageToVectorImageType;
-#endif
     typename ImageToVectorImageType::Pointer fixedVectorImage =
       ImageToVectorImageType::New();
     typename ImageToVectorImageType::Pointer movingVectorImage =
@@ -216,13 +208,8 @@ void VDemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute()
       multi_MovingImageConstant->SetInput(m_MovingImage[i]);
       multi_MovingImageConstant->SetConstant(m_WeightFactors[i]);
       multi_MovingImageConstant->Update();
-#if (ITK_VERSION_MAJOR < 4)
-      fixedVectorImage->SetNthInput( i, multi_FixedImageConstant->GetOutput() );
-      movingVectorImage->SetNthInput( i, multi_MovingImageConstant->GetOutput() );
-#else
       fixedVectorImage->SetInput( i, multi_FixedImageConstant->GetOutput() );
       movingVectorImage->SetInput( i, multi_MovingImageConstant->GetOutput() );
-#endif
       }
 
     try
@@ -333,11 +320,7 @@ void VDemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute()
     // Setup the initial deformation field
     if( this->m_InitialDisplacementField.IsNotNull() )
       {
-#if (ITK_VERSION_MAJOR < 4)
-      m_Registration->SetInitialDeformationField( this->m_InitialDisplacementField);
-#else
       m_Registration->SetInitialDisplacementField( this->m_InitialDisplacementField);
-#endif
       }
     if( this->m_FixedLandmarkFilename != ""
         && this->m_MovingLandmarkFilename != "" )

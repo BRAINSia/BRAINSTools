@@ -269,11 +269,7 @@ int main(int argc, char *argv[])
       if( useTransform )
         { // HACK:  Need to make handeling of transforms more elegant as is done
           // in BRAINSFitHelper.
-#if (ITK_VERSION_MAJOR < 4)
-        typedef itk::TransformToDeformationFieldSource<DisplacementFieldType, double> ConverterType;
-#else
         typedef itk::TransformToDisplacementFieldSource<DisplacementFieldType, double> ConverterType;
-#endif
         ConverterType::Pointer myConverter = ConverterType::New();
         myConverter->SetTransform(genericTransform);
         myConverter->SetOutputParametersFromImage(TransformedImage);

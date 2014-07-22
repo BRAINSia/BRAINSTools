@@ -393,12 +393,8 @@ setLowHigh(typename SImageType::Pointer & image,
   histogramGenerator->SetInput(image);
   histogramGenerator->SetNumberOfBins(imageMax - imageMin + 1);
   histogramGenerator->SetMarginalScale(1.0);
-#if (ITK_VERSION_MAJOR < 4)
-  // NOTHING TO DO IN ITKV3
-#else
   histogramGenerator->SetHistogramMin(imageMin);
   histogramGenerator->SetHistogramMax(imageMax);
-#endif
   histogramGenerator->Compute();
   typedef typename HistogramGeneratorType::HistogramType HistogramType;
   const HistogramType *histogram = histogramGenerator->GetOutput();

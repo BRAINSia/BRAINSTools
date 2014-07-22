@@ -83,12 +83,8 @@ main(int argc, char * *argv)
                                                   // an unsigned char image.
   t1_HistogramGenerator->SetMarginalScale(10);
 
-#if (ITK_VERSION_MAJOR < 4)
-  // NOTHING TO DO IN ITKV3
-#else
   t1_HistogramGenerator->SetHistogramMin( t1_myMinMax->GetMinimum() );
   t1_HistogramGenerator->SetHistogramMax( t1_myMinMax->GetMaximum() );
-#endif
   t1_HistogramGenerator->Compute();
   HistogramType::ConstPointer t1_histogram = t1_HistogramGenerator->GetOutput();
 
@@ -98,12 +94,8 @@ main(int argc, char * *argv)
   t2_HistogramGenerator->SetNumberOfBins(1024);   // 4x oversampling to put into
                                                   // an unsigned char image.
   t2_HistogramGenerator->SetMarginalScale(10);
-#if (ITK_VERSION_MAJOR < 4)
-  // NOTHING TO DO IN ITKV3
-#else
   t2_HistogramGenerator->SetHistogramMin( t2_myMinMax->GetMinimum() );
   t2_HistogramGenerator->SetHistogramMax( t2_myMinMax->GetMaximum() );
-#endif
   t2_HistogramGenerator->Compute();
   HistogramType::ConstPointer t2_histogram = t2_HistogramGenerator->GetOutput();
 

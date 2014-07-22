@@ -22,13 +22,8 @@
 #include "itkESMDemonsRegistrationWithMaskFunction.h"
 
 #include "itkMultiplyByConstantImageFilter.h"
-#if (ITK_VERSION_MAJOR < 4)
-#include "itkMultiplyByConstantImageFilter.h"
-#include "itkExponentialDeformationFieldImageFilter.h"
-#else
 #include "itkMultiplyImageFilter.h"
 #include "itkExponentialDisplacementFieldImageFilter.h"
-#endif
 
 namespace itk
 {
@@ -107,13 +102,8 @@ public:
   typedef typename Superclass::MovingImagePointer MovingImagePointer;
 
   /** Displacement field type. */
-#if (ITK_VERSION_MAJOR < 4)
-  typedef typename Superclass::DeformationFieldType    DisplacementFieldType;
-  typedef typename Superclass::DeformationFieldPointer DisplacementFieldPointer;
-#else
   typedef typename Superclass::DisplacementFieldType    DisplacementFieldType;
   typedef typename Superclass::DisplacementFieldPointer DisplacementFieldPointer;
-#endif
 #ifdef ITKV3_COMPATIBILITY
   typedef typename Superclass::DeformationFieldType    DeformationFieldType;
   typedef typename Superclass::DeformationFieldPointer DeformationFieldPointer;
@@ -193,14 +183,8 @@ protected:
   virtual void AllocateUpdateBuffer();
 
   /** Apply update. */
-#if (ITK_VERSION_MAJOR < 4)
-  // This is for meeting the virutal function signature for ITKv3 polymorphic heirarchy
-  virtual void ApplyUpdate(TimeStepType dt);
-
-#else
   virtual void ApplyUpdate(const TimeStepType& dt);
 
-#endif
 
   /** override to do nothing since by definition input image spaces
    *  won't match
@@ -225,13 +209,8 @@ private:
                                         TimeStepType,
                                         DisplacementFieldType>                              MultiplyByConstantType;
 
-#if (ITK_VERSION_MAJOR < 4)
-  typedef ExponentialDeformationFieldImageFilter<
-      DisplacementFieldType, DisplacementFieldType>        FieldExponentiatorType;
-#else
   typedef ExponentialDisplacementFieldImageFilter<
       DisplacementFieldType, DisplacementFieldType>        FieldExponentiatorType;
-#endif
 
   typedef WarpVectorImageFilter<
       DisplacementFieldType,

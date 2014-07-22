@@ -45,9 +45,7 @@ typename ImageType::Pointer ExtractImage(
 {
   typedef typename itk::ExtractImageFilter<InputImageType, ImageType> ExtractImageFilterType;
   typename ExtractImageFilterType::Pointer extractImageFilter = ExtractImageFilterType::New();
-#if  ITK_VERSION_MAJOR >= 4
   extractImageFilter->SetDirectionCollapseToSubmatrix();
-#endif
 
   // fixedVolumeReader->GetOutput();
   InputImageType::RegionType inputRegion = inputImage->GetLargestPossibleRegion();

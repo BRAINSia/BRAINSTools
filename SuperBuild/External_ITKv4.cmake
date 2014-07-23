@@ -7,7 +7,7 @@ set(${proj}_DEPENDENCIES "zlib")
   list(APPEND ${proj}_DEPENDENCIES DCMTK)
 #endif()
 
-if(BRAINSTools_REQUIRES_VTK) ## QT requires VTK support in ITK
+if(${PRIMARY_PROJECT_NAME}_USE_QT) ## QT requires VTK support in ITK
   list(APPEND ${proj}_DEPENDENCIES VTK)
 endif()
 

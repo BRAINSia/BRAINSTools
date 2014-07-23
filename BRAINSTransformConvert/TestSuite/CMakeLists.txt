@@ -134,18 +134,15 @@ foreach(SourceTransform VersorRigid ScaleVersor ScaleSkewVersor Affine) # BSplin
           --deformationVolume ${DisplacementVolumeImage})
       endif()
 
-      #
       # depend on previous test, and BRAINSResample
-      set_property(TEST ${ResampleWTargetTestName} APPEND PROPERTY DEPENDS ${TransformConvertTestName})
-      set_property(TEST ${ResampleWTargetTestName} APPEND PROPERTY DEPENDS BRAINSResample)
+      set_property(TEST ${ResampleWTargetTestName} APPEND PROPERTY DEPENDS ${TransformConvertTestName} BRAINSResample)
 
       set(ImageCompareTestName ImageCompare${SourceTransform}${TargetTransform}${TargetPrecisionType})
       add_test(NAME ${ImageCompareTestName} COMMAND ${LAUNCH_EXE} ${ImageCompare}
         ${ResampleWSourceOutputImage} ${ResampleWTargetOutputImage})
 
-      set_property(TEST ${ImageCompareTestName} APPEND PROPERTY DEPENDS ImageCompare)
-      set_property(TEST ${ImageCompareTestName} APPEND PROPERTY DEPENDS ${ResampleWSourceTestName})
-      set_property(TEST ${ImageCompareTestName} APPEND PROPERTY DEPENDS ${ResampleWTargetTestName})
+      set_property(TEST ${ImageCompareTestName} APPEND PROPERTY
+                   DEPENDS ImageCompare ${ResampleWSourceTestName} ${ResampleWTargetTestName})
 
     endforeach()
   endforeach()

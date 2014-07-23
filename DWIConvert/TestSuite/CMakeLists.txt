@@ -168,7 +168,8 @@ add_test(NAME FSLToNrrdTest
   )
 
 set_property(TEST FSLToNrrdTest
-  APPEND PROPERTY DEPENDS DWIConvertGeSignaHdxFSLTest)
+  APPEND PROPERTY DEPENDS DWIConvertGeSignaHdxFSLTest
+                          DWIConvertGeSignaHdxTest)
 
 add_test(NAME NrrdToFSLTest
   COMMAND ${CMAKE_COMMAND}

@@ -5,7 +5,7 @@ template.py
 This program is used to generate the subject- and session-specific workflows for BRAINSTool processing
 
 Usage:
-  template.py [--rewrite-datasinks] [--wfrun PLUGIN] --subjects ID --pe ENV --ExperimentConfig FILE
+  template.py [--rewrite-datasinks] [--wfrun PLUGIN] [--dotfilename PFILE] --subjects ID --pe ENV --ExperimentConfig FILE
   template.py -v | --version
   template.py -h | --help
 
@@ -15,6 +15,7 @@ Arguments:
 Options:
   -h, --help            Show this help and exit
   -v, --version         Print the version and exit
+  --dotfilename PFILE   Turn on printing pipeline to file PFILE
   --rewrite-datasinks   Turn on the Nipype option to overwrite all files in the 'results' directory
   --pe ENV              The processing environment to use from configuration file
   --subjects ID1,ID2    The comma separated list of subject IDs to process
@@ -27,6 +28,21 @@ Examples:
   $ template.py --rewrite-datasinks --subjects 1058 --pe OSX --ExperimentConfig my_baw.config
 
 """
+import os
+import sys
+import traceback
+
+import nipype.config
+import nipype.pipeline.engine as pe
+import nipype.interfaces.io as nio
+from nipype.interfaces.utility import IdentityInterface, Function
+import nipype.interfaces.ants as ants
+
+from template import MergeByExtendListElements, xml_filename
+from PipeLineFunctionHelpers import mapPosteriorList
+from workflows.atlasNode import GetAtlasNode, MakeNewAtlasTemplate
+from utilities.misc import GenerateSubjectOutputPattern as outputPattern
+from utilities.distributed import modify_qsub_args
 
 def MergeByExtendListElements(t1s, t2s, pds, fls, labels, posteriors):
     """
@@ -95,49 +111,32 @@ def xml_filename(subject):
     return 'AtlasDefinition_{0}.xml'.format(subject)
 
 
-def main(args):
-    subjects, master_config = args
-
-    import os
-    import sys
-    import traceback
-
+def main(*args, dotfilename=None):
+    subjects, environment, experiment, pipeline, cluster = args
     # Set universal pipeline options
-    from nipype import config
-    config.update_config(master_config)
-    assert config.get('execution', 'plugin') == master_config['execution']['plugin']
-
-    import nipype.pipeline.engine as pe
-    import nipype.interfaces.io as nio
-    from nipype.interfaces.utility import IdentityInterface, Function
-    import nipype.interfaces.ants as ants
-
-    from template import MergeByExtendListElements, xml_filename
-    from PipeLineFunctionHelpers import mapPosteriorList
-    from workflows.atlasNode import GetAtlasNode, MakeNewAtlasTemplate
-    from utilities.misc import GenerateSubjectOutputPattern as outputPattern
-    from utilities.distributed import modify_qsub_args
+    nipype.config.update_config(pipeline)
+    assert nipype.config.get('execution', 'plugin') == pipeline['execution']['plugin']
 
     template = pe.Workflow(name='SubjectAtlas_Template')
-    template.base_dir = master_config['logging']['log_directory']
+    template.base_dir = pipeline['logging']['log_directory']
 
-    if 'previouscache' in master_config:
+    if 'previouscache' in experiment:
         # Running off previous baseline experiment
-        BAtlas = GetAtlasNode(master_config['previouscache'], 'BAtlas')
+        BAtlas = GetAtlasNode(experiment['previouscache'], 'BAtlas')
     else:
         # Running after previous baseline experiment
         raise "ERROR, Never use the NAC atlas for template building"
-        BAtlas = GetAtlasNode(os.path.dirname(master_config['atlascache']), 'BAtlas')
+        BAtlas = GetAtlasNode(os.path.dirname(experiment['atlascache']), 'BAtlas')
     inputspec = pe.Node(interface=IdentityInterface(fields=['subject']), name='inputspec')
     inputspec.iterables = ('subject', subjects)
 
     baselineDG = pe.Node(nio.DataGrabber(infields=['subject'], outfields=['t1_average', 't2_average', 'pd_average',
                                                                             'fl_average', 'outputLabels', 'posteriorImages']),
                          name='Baseline_DG')
-    if 'previousresult' in master_config:
-        baselineDG.inputs.base_directory = master_config['previousresult']
+    if 'previousresult' in experiment:
+        baselineDG.inputs.base_directory = experiment['previousresult']
     else:
-        baselineDG.inputs.base_directory = master_config['resultdir']
+        baselineDG.inputs.base_directory = experiment['resultdir']
     baselineDG.inputs.sort_filelist = True
     baselineDG.inputs.raise_on_empty = False
     baselineDG.inputs.template = '*/%s/*/Baseline/%s.nii.gz'
@@ -189,10 +188,10 @@ def main(args):
                                        run_without_submitting=True,  # HACK:  THIS NODE REALLY SHOULD RUN ON THE CLUSTER!
                                        name='99_MakeNewAtlasTemplate')
 
-    if master_config['execution']['plugin'] == 'SGE':  # for some nodes, the qsub call needs to be modified on the cluster
+    if pipeline['execution']['plugin'].startswith('SGE'):  # for some nodes, the qsub call needs to be modified on the cluster
 
-        MakeNewAtlasTemplateNode.plugin_args = {'template': master_config['plugin_args']['template'],
-                                                'qsub_args': modify_qsub_args(master_config['queue'], '1000M', 1, 1),
+        MakeNewAtlasTemplateNode.plugin_args = {'template': pipeline['plugin_args']['template'],
+                                                'qsub_args': modify_qsub_args(cluster['queue'], '1000M', 1, 1),
                                                 'overwrite': True}
         for bt in [buildTemplateIteration1, buildTemplateIteration2]:
             ##################################################
@@ -200,17 +199,17 @@ def main(args):
             # ---->  # TODO:  Change these parameters  <---- #
             ##################################################
             BeginANTS = bt.get_node("BeginANTS")
-            BeginANTS.plugin_args = {'template': master_config['plugin_args']['template'], 'overwrite': True,
-                                     'qsub_args': modify_qsub_args(master_config['queue'], '9000M', 4, hard=False)}
+            BeginANTS.plugin_args = {'template': pipeline['plugin_args']['template'], 'overwrite': True,
+                                     'qsub_args': modify_qsub_args(cluster['queue'], '9000M', 4, hard=False)}
             wimtdeformed = bt.get_node("wimtdeformed")
-            wimtdeformed.plugin_args = {'template': master_config['plugin_args']['template'], 'overwrite': True,
-                                        'qsub_args': modify_qsub_args(master_config['queue'], '2000M', 1, 2)}
+            wimtdeformed.plugin_args = {'template': pipeline['plugin_args']['template'], 'overwrite': True,
+                                        'qsub_args': modify_qsub_args(cluster['queue'], '2000M', 1, 2)}
             AvgAffineTransform = bt.get_node("AvgAffineTransform")
-            AvgAffineTransform.plugin_args = {'template': master_config['plugin_args']['template'], 'overwrite': True,
-                                              'qsub_args': modify_qsub_args(master_config['queue'], '2000M', 1)}
+            AvgAffineTransform.plugin_args = {'template': pipeline['plugin_args']['template'], 'overwrite': True,
+                                              'qsub_args': modify_qsub_args(cluster['queue'], '2000M', 1)}
             wimtPassivedeformed = bt.get_node("wimtPassivedeformed")
-            wimtPassivedeformed.plugin_args = {'template': master_config['plugin_args']['template'], 'overwrite': True,
-                                                'qsub_args': modify_qsub_args(master_config['queue'], '2000M', 1, 2)}
+            wimtPassivedeformed.plugin_args = {'template': pipeline['plugin_args']['template'], 'overwrite': True,
+                                                'qsub_args': modify_qsub_args(cluster['queue'], '2000M', 1, 2)}
 
     template.connect([(myInitAvgWF, buildTemplateIteration1, [('output_average_image', 'inputspec.fixed_image')]),
                       (MergeByExtendListElementsNode, buildTemplateIteration1, [('ListOfImagesDictionaries', 'inputspec.ListOfImagesDictionaries'),
@@ -228,12 +227,12 @@ def main(args):
 
     # Create DataSinks
     Atlas_DataSink = pe.Node(nio.DataSink(), name="Atlas_DS")
-    Atlas_DataSink.overwrite = master_config['ds_overwrite']
-    Atlas_DataSink.inputs.base_directory = master_config['resultdir']
+    Atlas_DataSink.overwrite = pipeline['ds_overwrite']
+    Atlas_DataSink.inputs.base_directory = experiment['resultdir']
 
     Subject_DataSink = pe.Node(nio.DataSink(), name="Subject_DS")
-    Subject_DataSink.overwrite = master_config['ds_overwrite']
-    Subject_DataSink.inputs.base_directory = master_config['resultdir']
+    Subject_DataSink.overwrite = pipeline['ds_overwrite']
+    Subject_DataSink.inputs.base_directory = experiment['resultdir']
 
     template.connect([(inputspec, Atlas_DataSink, [('subject', 'container')]),
                       (buildTemplateIteration1, Atlas_DataSink, [('outputspec.template', 'Atlas.iteration1')]),  # Unnecessary
@@ -248,9 +247,9 @@ def main(args):
                      ])
 
     from workflows.utils import run_workflow, print_workflow
-    if False:
-        print_workflow(template, plugin=master_config['execution']['plugin'], dotfilename='template')
-    return run_workflow(template, plugin=master_config['execution']['plugin'], plugin_args=master_config['plugin_args'])
+    if dotfilename is not None:
+        return print_workflow(template, plugin=pipeline['execution']['plugin'], dotfilename=dotfilename)
+    return run_workflow(template, plugin=pipeline['execution']['plugin'], plugin_args=pipeline['plugin_args'])
 
 def _template_runner(argv, environment, experiment, pipeline, cluster):
     from utilities.configFileParser import nipype_options
@@ -260,12 +259,9 @@ def _template_runner(argv, environment, experiment, pipeline, cluster):
     print "Getting subjects from database..."
     subjects = get_subjects(argv, experiment['cachedir'], environment['prefix'], experiment['dbfile']) # Build database before parallel section
     print "Copying Atlas directory and determining appropriate Nipype options..."
-    pipeline = nipype_options(argv, pipeline, cluster, experiment,environment)  # Generate Nipype options
-    master_config = {}
-    for configDict in [environment, experiment, pipeline, cluster]:
-        master_config = add_dict(master_config, configDict)
+    pipeline = nipype_options(argv, pipeline, cluster, experiment, environment)  # Generate Nipype options
     print "Dispatching jobs to the system..."
-    return main((subjects, master_config))
+    return main(subjects, environment, experiment, pipeline, cluster, argv['--dotfilename'])
 
 if __name__ == '__main__':
     import sys

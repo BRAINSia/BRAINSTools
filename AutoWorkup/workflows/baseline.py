@@ -11,6 +11,7 @@
 ##
 #################################################################################
 
+import os
 import sys
 import string
 #"""Import necessary modules from nipype."""
@@ -21,6 +22,13 @@ import string
 #--config.set('logging', 'interface_level', 'DEBUG')
 #--config.set('execution','remove_unnecessary_outputs','false')
 
+import nipype.pipeline.engine as pe
+import nipype.interfaces.io as nio
+
+from nipype.interfaces.base import CommandLine, CommandLineInputSpec, TraitedSpec, Directory
+from nipype.interfaces.base import traits, isdefined, BaseInterface
+from nipype.interfaces.utility import Split, Rename, IdentityInterface, Function
+
 from nipype.utils.misc import package_check
 # package_check('nipype', '5.4', 'tutorial1') ## HACK: Check nipype version
 package_check('numpy', '1.3', 'tutorial1')
@@ -28,6 +36,14 @@ package_check('scipy', '0.7', 'tutorial1')
 package_check('networkx', '1.0', 'tutorial1')
 package_check('IPython', '0.10', 'tutorial1')
 
+from utilities.distributed import modify_qsub_args
+from PipeLineFunctionHelpers import convertToList, FixWMPartitioning, AccumulateLikeTissuePosteriors
+from PipeLineFunctionHelpers import UnwrapPosteriorImagesFromDictionaryFunction as flattenDict
+
+from WorkupT1T2LandmarkInitialization import CreateLandmarkInitializeWorkflow
+from WorkupT1T2TissueClassify import CreateTissueClassifyWorkflow
+
+from utilities.misc import *
 try:
     from SEMTools import *
 except ImportError:
@@ -55,17 +71,6 @@ def baseline_workflow(projectid, subjectid, sessionid, master_config, phase, int
         # master_config['components'].append('auxlmk')
         # master_config['components'].append('tissue_classify')
     assert phase in ['atlas-based-reference', 'subject-based-reference'], "Unknown phase! Valid entries: 'atlas-based-reference', 'subject-based-reference'"
-
-    from nipype.interfaces.base import CommandLine, CommandLineInputSpec, TraitedSpec, Directory
-    from nipype.interfaces.base import traits, isdefined, BaseInterface
-    from nipype.interfaces.utility import Split, Rename, IdentityInterface, Function
-    import nipype.pipeline.engine as pe
-    import nipype.interfaces.io as nio
-    from baseline import get_list_element, getAllT1sLength  # Can we replace with len()?
-    from utilities.misc import *
-    from PipeLineFunctionHelpers import convertToList, FixWMPartitioning, AccumulateLikeTissuePosteriors
-    from PipeLineFunctionHelpers import UnwrapPosteriorImagesFromDictionaryFunction as flattenDict
-
 
     baw201 = pe.Workflow(name=pipeline_name)
 
@@ -116,7 +121,6 @@ def baseline_workflow(projectid, subjectid, sessionid, master_config, phase, int
                                           'outputVolume'])
     DenoiseInputImgs.inputs.rc= [1,1,1]
     DenoiseInputImgs.inputs.rs= [4,4,4]
-    from utilities.distributed import modify_qsub_args
     DenoiseInputImgs.plugin_args = modify_qsub_args(master_config['queue'], '200M', 1, 2, hard=False)
     baw201.connect([ (makeDenoiseInImageList, DenoiseInputImgs, [('inImageList', 'inputVolume')]),
                      (makeDenoiseInImageList, DenoiseInputImgs, [('outImageList','outputVolume')])
@@ -129,7 +133,6 @@ def baseline_workflow(projectid, subjectid, sessionid, master_config, phase, int
     baw201.connect(DenoiseInputImgs, 'outputVolume', makeDenoiseOutImageList, 'inFileList')
     baw201.connect(makeDenoiseInImageList, 'imageTypeList', makeDenoiseOutImageList, 'inTypeList')
 
-    from WorkupT1T2LandmarkInitialization import CreateLandmarkInitializeWorkflow
     DoReverseMapping = False   # Set to true for debugging outputs
     if 'auxlmk' in master_config['components']:
         DoReverseMapping = True
@@ -155,9 +158,7 @@ def baseline_workflow(projectid, subjectid, sessionid, master_config, phase, int
                   ])
 
     if 'tissue_classify' in master_config['components']:
-        from WorkupT1T2TissueClassify import CreateTissueClassifyWorkflow
         myLocalTCWF = CreateTissueClassifyWorkflow("TissueClassify", master_config['queue'], master_config['long_q'], interpMode)
-        import os
         baw201.connect([(makeDenoiseOutImageList,myLocalTCWF, [('T1List','inputspec.T1List')]),
                         (makeDenoiseOutImageList,myLocalTCWF, [('T2List','inputspec.T2List')]),
                         (inputsSpec, myLocalTCWF, [('atlasDefinition', 'inputspec.atlasDefinition'),

@@ -1,32 +1,4 @@
 #! /usr/bin/env python
-"""
-AutoWorkup.py
-====================
-This program is used to generate the subject- and session-specific workflows for BRAINSTool processing
-
-Usage:
-  AutoWorkup.py [--rewrite-datasinks] [--wfrun PLUGIN] --subject ID --pe ENV --ExperimentConfig FILE
-  AutoWorkup.py -v | --version
-  AutoWorkup.py -h | --help
-
-Arguments:
-
-
-Options:
-  -h, --help            Show this help and exit
-  -v, --version         Print the version and exit
-  --rewrite-datasinks   Turn on the Nipype option to overwrite all files in the 'results' directory
-  --pe ENV              The processing environment to use from configuration file
-  --subject ID          The subject ID to process
-  --wfrun PLUGIN        The name of the workflow plugin option (default: 'local')
-  --ExperimentConfig FILE   The configuration file
-
-Examples:
-  $ AutoWorkup.py --subject 1058 --pe OSX --ExperimentConfig my_baw.config
-  $ AutoWorkup.py --wfrun helium_all.q --subject 1058 --pe OSX --ExperimentConfig my_baw.config
-  $ AutoWorkup.py --rewrite-datasinks --subject 1058 --pe OSX --ExperimentConfig my_baw.config
-
-"""
 from baw_exp import OpenSubjectDatabase
 
 def load_modules(modules):
@@ -34,7 +6,7 @@ def load_modules(modules):
 
     module=() {eval `/opt/modules/Modules/$MODULE_VERSION/bin/modulecmd bash $* }`
 
-    So running os.execvp() on it doesn't work without the correct file path to the module executable """
+    So _template_runnerning os.execvp() on it doesn't work without the correct file path to the module executable """
     import os
     for module in modules:
         os.system(" ".join(['module load', module]))  # os.execv(module_exe, 'bash', 'load', module])
@@ -50,9 +22,9 @@ def setup(argv):
     pipeline['ds_overwrite'] = resolveDataSinkOption(argv, pipeline)
 
     if cluster is None:
-        assert argv["--wfrun"] in misc.WFRUN, \
-          "wfrun options for clusters can only be given when the configuration file's CLUSTER option == True"
-        os.environ['NSLOTS'] = str(misc.get_cpus(argv["--wfrun"]))
+        assert argv["--wf_template_runner"] in misc.WFRUN, \
+          "wf_template_runner options for clusters can only be given when the configuration file's CLUSTER option == True"
+        os.environ['NSLOTS'] = str(misc.get_cpus(argv["--wf_template_runner"]))
     else:
         load_modules(cluster['modules'])  # Load modules if not already done  ## MODS PATH
         # print os.environ['LOADEDMODULES']
@@ -86,59 +58,9 @@ def setup(argv):
 def get_subjects(argv, cache, prefix, dbfile, shuffle=True):
     import random
     _temp = OpenSubjectDatabase(cache, ['all'], prefix, dbfile)
-    subjects = argv["--subject"].split(',')
+    subjects = argv["--subjects"].split(',')
     if "all" in subjects:
         subjects = _temp.getAllSubjects()
     if shuffle:
         random.shuffle(subjects)  # randomly shuffle to get max
     return subjects
-
-
-def dispatcher(master_config, subjects):
-    import time
-
-    from workflows import singleSubject as ss
-    from workflows import template
-
-    sp_args_list = []
-    current_time = time.time()  #FIXME: REMOVE time later
-    index = 0
-    delay = 2.5
-    for subject in subjects:
-        index += 1
-        print ("START DELAY: {0}".format(delay))
-        start_time = current_time + (index * delay)
-        sp_args = (start_time, subject, master_config)
-        sp_args_list.append(sp_args)
-
-    print "Running workflow(s) now..."
-    for args in sp_args_list:
-        print "Creating workflow for {0}".format(args[1])
-        ss.RunSubjectWorkflow(args)
-    # TODO:  Seperate commandline for template
-    # if 'template' in master_config['components']:
-    #     template.main((subjects, master_config))
-    return True
-
-
-def run(argv, environment, experiment, pipeline, cluster):
-    from utilities.configFileParser import nipype_options
-    from utilities.misc import add_dict
-    print "Getting subjects from database..."
-    subjects = get_subjects(argv, experiment['cachedir'], environment['prefix'], experiment['dbfile']) # Build database before parallel section
-    print "Copying Atlas directory and determining appropriate Nipype options..."
-    pipeline = nipype_options(argv, pipeline, cluster, experiment)  # Generate Nipype options
-    master_config = {}
-    for configDict in [environment, experiment, pipeline, cluster]:
-        master_config = add_dict(master_config, configDict)
-    print "Dispatching jobs to the system..."
-    return dispatcher(master_config, subjects)
-
-if __name__ == "__main__":
-    import sys
-    from docopt import docopt
-
-    argv = docopt(__doc__, version='1.1')
-    configs = setup(argv)
-    exit = run(argv, *configs)
-    sys.exit(exit)

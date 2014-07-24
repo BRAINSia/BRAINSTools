@@ -83,8 +83,8 @@ def clone_atlas_dir(cachedir, atlasdir):
     new_dir = os.path.join(cachedir, 'Atlas')
     print "Searching for atlas directory in cache..."
     if not os.path.exists(new_dir):
-        print "Copying new atlas to cache directory..."
         old_dir = validatePath(atlasdir, False, True)
+        print "Copying new atlas {0} to cache directory...".format(old_dir)
         newfiles = copy_tree(old_dir, new_dir, preserve_mode=1, preserve_times=1, verbose=True)
         xml_file='ExtendedAtlasDefinition.xml'
         old_xml = os.path.join(old_dir, xml_file + '.in')

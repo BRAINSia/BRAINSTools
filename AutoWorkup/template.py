@@ -5,7 +5,7 @@ template.py
 This program is used to generate the subject- and session-specific workflows for BRAINSTool processing
 
 Usage:
-  template.py [--rewrite-datasinks] [--wfrun PLUGIN] --subject ID... --pe ENV --ExperimentConfig FILE
+  template.py [--rewrite-datasinks] [--wfrun PLUGIN] --subjects ID --pe ENV --ExperimentConfig FILE
   template.py -v | --version
   template.py -h | --help
 
@@ -17,14 +17,14 @@ Options:
   -v, --version         Print the version and exit
   --rewrite-datasinks   Turn on the Nipype option to overwrite all files in the 'results' directory
   --pe ENV              The processing environment to use from configuration file
-  --subject ID          The subject ID to process
+  --subjects ID1,ID2    The comma separated list of subject IDs to process
   --wfrun PLUGIN        The name of the workflow plugin option (default: 'local')
   --ExperimentConfig FILE   The configuration file
 
 Examples:
-  $ template.py --subject 1058 --pe OSX --ExperimentConfig my_baw.config
-  $ template.py --wfrun helium_all.q --subject 1058 --pe OSX --ExperimentConfig my_baw.config
-  $ template.py --rewrite-datasinks --subject 1058 --pe OSX --ExperimentConfig my_baw.config
+  $ template.py --subjects 1058,1059 --pe OSX --ExperimentConfig my_baw.config
+  $ template.py --wfrun helium_all.q --subjects 1058 --pe OSX --ExperimentConfig my_baw.config
+  $ template.py --rewrite-datasinks --subjects 1058 --pe OSX --ExperimentConfig my_baw.config
 
 """
 
@@ -114,7 +114,7 @@ def main(args):
 
     from template import MergeByExtendListElements, xml_filename
     from PipeLineFunctionHelpers import mapPosteriorList
-    from atlasNode import GetAtlasNode, MakeNewAtlasTemplate
+    from workflows.atlasNode import GetAtlasNode, MakeNewAtlasTemplate
     from utilities.misc import GenerateSubjectOutputPattern as outputPattern
     from utilities.distributed import modify_qsub_args
 
@@ -126,6 +126,7 @@ def main(args):
         BAtlas = GetAtlasNode(master_config['previouscache'], 'BAtlas')
     else:
         # Running after previous baseline experiment
+        raise "ERROR, Never use the NAC atlas for template building"
         BAtlas = GetAtlasNode(os.path.dirname(master_config['atlascache']), 'BAtlas')
     inputspec = pe.Node(interface=IdentityInterface(fields=['subject']), name='inputspec')
     inputspec.iterables = ('subject', subjects)
@@ -246,15 +247,29 @@ def main(args):
                       (MakeNewAtlasTemplateNode, Subject_DataSink, [('clean_deformed_list', 'ANTSTemplate.@passive_deformed_templates')]),
                      ])
 
-    from utils import run_workflow, print_workflow
+    from workflows.utils import run_workflow, print_workflow
     if False:
         print_workflow(template, plugin=master_config['execution']['plugin'], dotfilename='template')
     return run_workflow(template, plugin=master_config['execution']['plugin'], plugin_args=master_config['plugin_args'])
 
+def _template_runner(argv, environment, experiment, pipeline, cluster):
+    from utilities.configFileParser import nipype_options
+    from utilities.misc import add_dict
+    from AutoWorkup import get_subjects
+
+    print "Getting subjects from database..."
+    subjects = get_subjects(argv, experiment['cachedir'], environment['prefix'], experiment['dbfile']) # Build database before parallel section
+    print "Copying Atlas directory and determining appropriate Nipype options..."
+    pipeline = nipype_options(argv, pipeline, cluster, experiment,environment)  # Generate Nipype options
+    master_config = {}
+    for configDict in [environment, experiment, pipeline, cluster]:
+        master_config = add_dict(master_config, configDict)
+    print "Dispatching jobs to the system..."
+    return main((subjects, master_config))
 
 if __name__ == '__main__':
     import sys
-    from AutoWorkup import setup, run
+    from AutoWorkup import setup
 
     from docopt import docopt
 
@@ -262,5 +277,5 @@ if __name__ == '__main__':
     print argv
     print '=' * 100
     configs = setup(argv)
-    exit = run(argv, *configs)
+    exit = _template_runner(argv, *configs)
     sys.exit(exit)

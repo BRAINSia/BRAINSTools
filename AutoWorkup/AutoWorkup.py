@@ -55,10 +55,9 @@ def setup(argv):
     return environment, experiment, pipeline, cluster
 
 
-def get_subjects(argv, cache, prefix, dbfile, shuffle=True):
+def get_subjects(subjects, cache, prefix, dbfile, shuffle=True):
     import random
     _temp = OpenSubjectDatabase(cache, ['all'], prefix, dbfile)
-    subjects = argv["--subjects"].split(',')
     if "all" in subjects:
         subjects = _temp.getAllSubjects()
     if shuffle:

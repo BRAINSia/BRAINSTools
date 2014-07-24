@@ -5,26 +5,26 @@ singleSession.py
 This program is used to generate the subject- and session-specific workflows for BRAINSTool processing
 
 Usage:
-  singleSession.py [--rewrite-datasinks] [--wfrun PLUGIN] --session ID --pe ENV --ExperimentConfig FILE
+  singleSession.py [--rewrite-datasinks] [--wfrun PLUGIN] --pe ENV --ExperimentConfig FILE SESSIONS...
   singleSession.py -v | --version
   singleSession.py -h | --help
 
 Arguments:
-
+  SESSIONS              List of sessions to process. Specifying 'all' processes every session in
+                        the database (specified in the --ExperimentConfig FILE)
 
 Options:
   -h, --help            Show this help and exit
   -v, --version         Print the version and exit
   --rewrite-datasinks   Turn on the Nipype option to overwrite all files in the 'results' directory
   --pe ENV              The processing environment to use from configuration file
-  --session ID          The session ID to process
   --wfrun PLUGIN        The name of the workflow plugin option (default: 'local')
   --ExperimentConfig FILE   The configuration file
 
 Examples:
-  $ singleSession.py --session 10580 --pe OSX --ExperimentConfig my_baw.config
-  $ singleSession.py --wfrun helium_all.q --session 10580 --pe OSX --ExperimentConfig my_baw.config
-  $ singleSession.py --rewrite-datasinks --session 10580 --pe OSX --ExperimentConfig my_baw.config
+  $ singleSession.py --pe OSX --ExperimentConfig my_baw.config all
+  $ singleSession.py --wfrun helium_all.q --pe OSX --ExperimentConfig my_baw.config 00001 00002
+  $ singleSession.py --rewrite-datasinks --pe OSX --ExperimentConfig my_baw.config 00003
 
 """
 
@@ -152,11 +152,9 @@ def create_singleSession(dataDict, master_config, interpMode, pipeline_name):
 
     return sessionWorkflow
 
-def createAndRun(sessionsCommaSeparatedString, environment, experiment, pipeline, cluster):
+def createAndRun(sessions, environment, experiment, pipeline, cluster):
     from baw_exp import OpenSubjectDatabase
     from utilities.misc import add_dict
-    # Make list of sessions
-    sessions = sessionsCommaSeparatedString.split(",")
     master_config = {}
     for configDict in [environment, experiment, pipeline, cluster]:
         master_config = add_dict(master_config, configDict)
@@ -198,7 +196,7 @@ def _main(environment, experiment, pipeline, cluster, **kwds):
     print "Copying Atlas directory and determining appropriate Nipype options..."
     pipeline = nipype_options(argv, pipeline, cluster, experiment, environment)  # Generate Nipype options
     print "Getting session(s) from database..."
-    createAndRun(argv['--session'], environment, experiment, pipeline, cluster)
+    createAndRun(argv['SESSIONS'], environment, experiment, pipeline, cluster)
     return 0
 
 if __name__ == '__main__':

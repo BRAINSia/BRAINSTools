@@ -5,44 +5,31 @@ template.py
 This program is used to generate the subject- and session-specific workflows for BRAINSTool processing
 
 Usage:
-  template.py [--rewrite-datasinks] [--wfrun PLUGIN] [--dotfilename PFILE] --subjects ID --pe ENV --ExperimentConfig FILE
+  template.py [--rewrite-datasinks] [--wfrun PLUGIN] [--dotfilename PFILE] --pe ENV --ExperimentConfig FILE SUBJECTS...
   template.py -v | --version
   template.py -h | --help
 
 Arguments:
-
+  SUBJECTS              List of subject IDs to process
 
 Options:
   -h, --help            Show this help and exit
   -v, --version         Print the version and exit
-  --dotfilename PFILE   Turn on printing pipeline to file PFILE
+  --dotfilename=PFILE   Turn on printing pipeline to file PFILE
   --rewrite-datasinks   Turn on the Nipype option to overwrite all files in the 'results' directory
-  --pe ENV              The processing environment to use from configuration file
-  --subjects ID1,ID2    The comma separated list of subject IDs to process
-  --wfrun PLUGIN        The name of the workflow plugin option (default: 'local')
-  --ExperimentConfig FILE   The configuration file
+  --pe=ENV              The processing environment to use from configuration file
+  --wfrun=PLUGIN        The name of the workflow plugin option (default: 'local')
+  --ExperimentConfig=FILE   The configuration file
 
 Examples:
-  $ template.py --subjects 1058,1059 --pe OSX --ExperimentConfig my_baw.config
-  $ template.py --wfrun helium_all.q --subjects 1058 --pe OSX --ExperimentConfig my_baw.config
-  $ template.py --rewrite-datasinks --subjects 1058 --pe OSX --ExperimentConfig my_baw.config
+  $ template.py --pe OSX --ExperimentConfig my_baw.config all
+  $ template.py --wfrun helium_all.q --pe OSX --ExperimentConfig my_baw.config 1058 1059
+  $ template.py --rewrite-datasinks --pe OSX --ExperimentConfig my_baw.config 2001
 
 """
 import os
 import sys
 import traceback
-
-import nipype.config
-import nipype.pipeline.engine as pe
-import nipype.interfaces.io as nio
-from nipype.interfaces.utility import IdentityInterface, Function
-import nipype.interfaces.ants as ants
-
-from template import MergeByExtendListElements, xml_filename
-from PipeLineFunctionHelpers import mapPosteriorList
-from workflows.atlasNode import GetAtlasNode, MakeNewAtlasTemplate
-from utilities.misc import GenerateSubjectOutputPattern as outputPattern
-from utilities.distributed import modify_qsub_args
 
 def MergeByExtendListElements(t1s, t2s, pds, fls, labels, posteriors):
     """
@@ -111,11 +98,11 @@ def xml_filename(subject):
     return 'AtlasDefinition_{0}.xml'.format(subject)
 
 
-def main(*args, dotfilename=None):
-    subjects, environment, experiment, pipeline, cluster = args
+def main(*args):
+    subjects, environment, experiment, pipeline, cluster, dotfilename = args
     # Set universal pipeline options
-    nipype.config.update_config(pipeline)
-    assert nipype.config.get('execution', 'plugin') == pipeline['execution']['plugin']
+    nipype_config.update_config(pipeline)
+    assert nipype_config.get('execution', 'plugin') == pipeline['execution']['plugin']
 
     template = pe.Workflow(name='SubjectAtlas_Template')
     template.base_dir = pipeline['logging']['log_directory']
@@ -131,7 +118,7 @@ def main(*args, dotfilename=None):
     inputspec.iterables = ('subject', subjects)
 
     baselineDG = pe.Node(nio.DataGrabber(infields=['subject'], outfields=['t1_average', 't2_average', 'pd_average',
-                                                                            'fl_average', 'outputLabels', 'posteriorImages']),
+                                                                          'fl_average', 'outputLabels', 'posteriorImages']),
                          name='Baseline_DG')
     if 'previousresult' in experiment:
         baselineDG.inputs.base_directory = experiment['previousresult']
@@ -139,17 +126,17 @@ def main(*args, dotfilename=None):
         baselineDG.inputs.base_directory = experiment['resultdir']
     baselineDG.inputs.sort_filelist = True
     baselineDG.inputs.raise_on_empty = False
-    baselineDG.inputs.template = '*/%s/*/Baseline/%s.nii.gz'
+    baselineDG.inputs.template = '*/%s/*/TissueClassify/%s.nii.gz'
     baselineDG.inputs.template_args['t1_average'] = [['subject', 't1_average_BRAINSABC']]
     baselineDG.inputs.template_args['t2_average'] = [['subject', 't2_average_BRAINSABC']]
     baselineDG.inputs.template_args['pd_average'] = [['subject', 'pd_average_BRAINSABC']]
     baselineDG.inputs.template_args['fl_average'] = [['subject', 'fl_average_BRAINSABC']]
-    baselineDG.inputs.template_args['outputLabels'] = [['subject', 'brain_label_seg']]
-    baselineDG.inputs.field_template = {'posteriorImages':'*/%s/*/TissueClassify/POSTERIOR_%s.nii.gz'}
-    posterior_files = ['AIR', 'BASAL', 'CRBLGM', 'CRBLWM', 'CSF', 'GLOBUS', 'HIPPOCAMPUS', 'NOTCSF', 'NOTGM', 'NOTVB', 'NOTWM',
-                       'SURFGM', 'THALAMUS', 'VB', 'WM']
+    posterior_files = ['AIR', 'BASAL', 'CRBLGM', 'CRBLWM', 'CSF', 'GLOBUS', 'HIPPOCAMPUS',
+                       'NOTCSF', 'NOTGM', 'NOTVB', 'NOTWM', 'SURFGM', 'THALAMUS', 'VB', 'WM']
+    baselineDG.inputs.field_template = {'posteriorImages':'*/%s/*/TissueClassify/POSTERIOR_%s.nii.gz',
+                                        'outputLabels': '*/%s/*/CleanedDenoisedRFSegmentations/allLabels_seg.nii.gz'}
     baselineDG.inputs.template_args['posteriorImages'] = [['subject', posterior_files]]
-
+    baselineDG.inputs.template_args['outputLabels'] = [['subject']]
     MergeByExtendListElementsNode = pe.Node(Function(function=MergeByExtendListElements,
                                                      input_names=['t1s', 't2s',
                                                                   'pds', 'fls',
@@ -157,7 +144,6 @@ def main(*args, dotfilename=None):
                                                      output_names=['ListOfImagesDictionaries', 'registrationImageTypes',
                                                                    'interpolationMapping']),
                                             run_without_submitting=True, name="99_MergeByExtendListElements")
-    from PipeLineFunctionHelpers import WrapPosteriorImagesFromDictionaryFunction as wrapfunc
     template.connect([(inputspec, baselineDG, [('subject', 'subject')]),
                       (baselineDG, MergeByExtendListElementsNode, [('t1_average', 't1s'),
                                                                    ('t2_average', 't2s'),
@@ -176,7 +162,6 @@ def main(*args, dotfilename=None):
     # if numSessions == 1:
     #     TEMPLATE_BUILD_RUN_MODE = 'SINGLE_IMAGE'
     ####################################################################################################
-    from BAWantsRegistrationBuildTemplate import BAWantsRegistrationTemplateBuildSingleIterationWF as registrationWF
     buildTemplateIteration1 = registrationWF('iteration01')
     # buildTemplateIteration2 = buildTemplateIteration1.clone(name='buildTemplateIteration2')
     buildTemplateIteration2 = registrationWF('Iteration02')
@@ -246,18 +231,14 @@ def main(*args, dotfilename=None):
                       (MakeNewAtlasTemplateNode, Subject_DataSink, [('clean_deformed_list', 'ANTSTemplate.@passive_deformed_templates')]),
                      ])
 
-    from workflows.utils import run_workflow, print_workflow
     if dotfilename is not None:
         return print_workflow(template, plugin=pipeline['execution']['plugin'], dotfilename=dotfilename)
     return run_workflow(template, plugin=pipeline['execution']['plugin'], plugin_args=pipeline['plugin_args'])
 
 def _template_runner(argv, environment, experiment, pipeline, cluster):
-    from utilities.configFileParser import nipype_options
-    from utilities.misc import add_dict
-    from AutoWorkup import get_subjects
-
     print "Getting subjects from database..."
-    subjects = get_subjects(argv, experiment['cachedir'], environment['prefix'], experiment['dbfile']) # Build database before parallel section
+    # subjects = argv["--subjects"].split(',')
+    subjects = get_subjects(argv['SUBJECTS'], experiment['cachedir'], environment['prefix'], experiment['dbfile']) # Build database before parallel section
     print "Copying Atlas directory and determining appropriate Nipype options..."
     pipeline = nipype_options(argv, pipeline, cluster, experiment, environment)  # Generate Nipype options
     print "Dispatching jobs to the system..."
@@ -273,5 +254,21 @@ if __name__ == '__main__':
     print argv
     print '=' * 100
     configs = setup(argv)
+    from nipype import config as nipype_config
+    import nipype.pipeline.engine as pe
+    import nipype.interfaces.io as nio
+    from nipype.interfaces.utility import IdentityInterface, Function
+    import nipype.interfaces.ants as ants
+
+    from PipeLineFunctionHelpers import mapPosteriorList
+    from PipeLineFunctionHelpers import WrapPosteriorImagesFromDictionaryFunction as wrapfunc
+    from workflows.atlasNode import GetAtlasNode, MakeNewAtlasTemplate
+    from utilities.misc import GenerateSubjectOutputPattern as outputPattern
+    from utilities.distributed import modify_qsub_args
+    from workflows.utils import run_workflow, print_workflow
+    from BAWantsRegistrationBuildTemplate import BAWantsRegistrationTemplateBuildSingleIterationWF as registrationWF
+    from utilities.configFileParser import nipype_options
+    from AutoWorkup import get_subjects
+
     exit = _template_runner(argv, *configs)
     sys.exit(exit)

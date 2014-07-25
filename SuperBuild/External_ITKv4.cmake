@@ -2,7 +2,7 @@
 set(proj ITKv4)
 set(ITK_EXTERNAL_NAME ${proj})
 # Set dependency list
-set(${proj}_DEPENDENCIES "zlib")
+set(${proj}_DEPENDENCIES "zlib" VTK)
 #if(${CMAKE_PROJECT_NAME}_BUILD_DICOM_SUPPORT)
   list(APPEND ${proj}_DEPENDENCIES DCMTK)
 #endif()
@@ -74,6 +74,7 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       -DZLIB_LIBRARY:FILEPATH=${ZLIB_LIBRARY}
       -DITK_USE_FFTWD:BOOL=ON
       -DITK_USE_FFTWF:BOOL=ON
+      -DVTK_DIR:PATH=${VTK_DIR}
     INSTALL_COMMAND ""
     DEPENDS
       ${${proj}_DEPENDENCIES}

@@ -162,13 +162,13 @@ def createAndRun(sessions, environment, experiment, pipeline, cluster):
     database.open_connection()
     try:
         all_sessions = database.getAllSessions()
-        old_length = len(sessions)
-        if not 'all' in sessions:
-            sessions = tuple(set(sessions) & set(all_sessions))
-            new_length = len(sessions)
-            assert old_length == new_length, "Some requested sessions were not found in the database! {0}".format(sessions)
+        if not set(sessions) <= set(all_sessions) and 'all' not in sessions:
+            missing = set(sessions) - set(all_sessions)
+            assert len(missing) == 0, "Requested sessions are missing from the database: {0}".format(missing)
+        elif 'all' in sessions:
+            sessions = set(all_sessions)
         else:
-            sessions = tuple(all_sessions)
+            sessions = set(sessions)
         for session in sessions:
             _dict = {}
             _dict['session'] = session
@@ -194,20 +194,20 @@ def _main(environment, experiment, pipeline, cluster, **kwds):
     from utilities.misc import add_dict
 
     print "Copying Atlas directory and determining appropriate Nipype options..."
-    pipeline = nipype_options(argv, pipeline, cluster, experiment, environment)  # Generate Nipype options
+    pipeline = nipype_options(kwds, pipeline, cluster, experiment, environment)  # Generate Nipype options
     print "Getting session(s) from database..."
-    createAndRun(argv['SESSIONS'], environment, experiment, pipeline, cluster)
+    createAndRun(kwds['SESSIONS'], environment, experiment, pipeline, cluster)
     return 0
 
 if __name__ == '__main__':
     import sys
     from docopt import docopt
-    from AutoWorkup import setup, run
+    from AutoWorkup import setup
 
     argv = docopt(__doc__, version='1.1')
-    # print argv
+    print argv
     # sys.exit(0)
-    # print '=' * 100
+    print '=' * 100
     configs = setup(argv)
     exit = _main(*configs, **argv)
     sys.exit(exit)

@@ -157,11 +157,15 @@ int WriteBothTransformsToDisk(const GenericTransformType::ConstPointer genericTr
     {
     std::cout << "Write the output composite transform to the disk ..." << std::endl;
     const std::string extension = itksys::SystemTools::GetFilenameLastExtension( outputTransform );
-    std::string prefixTransformName( outputTransform );
-    prefixTransformName.replace( prefixTransformName.end() - extension.size(),
-                                 prefixTransformName.end(),
-                                 "");
-    std::string compositeTransformName = prefixTransformName + std::string("Composite.h5");
+    std::string compositeTransformName(outputTransform);
+    if(extension != ".h5" && extension != ".hd5")
+      {
+      compositeTransformName = itksys::SystemTools::GetFilenameWithoutExtension(outputTransform) +
+        "Composite.h5";
+      std::cerr << "Warning: Composite transforms should always be HDF files" << std::endl
+                << "Changing filename from " << outputTransform << " to "
+                << compositeTransformName << std::endl;
+      }
     itk::WriteTransformToDisk<double>( genericCompositeTransform.GetPointer(), compositeTransformName.c_str() );
     }
   else

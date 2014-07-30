@@ -11,8 +11,8 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateBRAINSResampleTest4
   --compare
   DATA{${TestData_DIR}/BRAINSFitTest_AffineRotationMasks.result.nii.gz}
   ${CMAKE_CURRENT_BINARY_DIR}/applyWarp_test4.nii.gz
-  --compareIntensityTolerance 13
-  --compareRadiusTolerance 1
+  --compareIntensityTolerance 30
+  --compareRadiusTolerance 5
   --compareNumberOfPixelsTolerance 1
   BRAINSResampleTest
   --inputVolume DATA{${TestData_DIR}/rotation.test.nii.gz}

@@ -43,7 +43,7 @@ else()
 endif()
 
 set(${proj}_REPOSITORY "${git_protocol}://github.com/BRAINSia/teem.git")
-set(${proj}_TAG "bcf5abb8edf862566aabd6b0fb8f8f78155c8d8f")
+set(${proj}_TAG "3c906b5484740f734e2a75f69cd69e0b4d6896f6")
 
 ExternalProject_Add(${proj}
   ${${proj}_EP_ARGS}
@@ -97,7 +97,7 @@ ExternalProject_Add(${proj}
 #     DEPENDERS configure
 #     )
 
-set(Teem_DIR ${CMAKE_BINARY_DIR}/teem-build)
+set(Teem_DIR ${CMAKE_BINARY_DIR}/lib)
 
 mark_as_superbuild(
   VARS Teem_DIR:PATH

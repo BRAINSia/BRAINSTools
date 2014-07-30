@@ -86,6 +86,21 @@ typedef ShortImageType::Pointer ShortImagePointer;
 
 #undef MU_MANUAL_INSTANTIATION
 
+/**
+ * \def FindPathFromAtlasXML
+ * \param The encoded file name, if abosolute, then use it, else prepend atlasDefinitionPath
+ * \param atlasDefinitionPath the directory path for the XML file
+ * \return either the absolute path, or the prepended path
+ */
+  static std::string
+FindPathFromAtlasXML( const std::string xmlCodedPath, std::string atlasDefinitionPath)
+{
+  if( xmlCodedPath[0] != '/' ) // If not an absolute path, assume relative path
+    {
+    return atlasDefinitionPath+"/"+xmlCodedPath;
+    }
+  return xmlCodedPath;
+}
 
 //
 // Get a version of the filename that does not include the preceeding path, or
@@ -410,6 +425,7 @@ int main(int argc, char * *argv)
     GENERATE_ECHOARGS;
     return EXIT_FAILURE;
     }
+  const std::string atlasDefinitionPath = itksys::SystemTools::GetParentDirectory( atlasDefinition.c_str() );
   AtlasDefinition atlasDefinitionParser;
   try
     {
@@ -713,7 +729,7 @@ int main(int argc, char * *argv)
     }
 
   typedef itk::ImageFileReader<FloatImageType> LocalReaderType;
-  typedef LocalReaderType::Pointer                  LocalReaderPointer;
+  typedef LocalReaderType::Pointer             LocalReaderPointer;
   FloatImageType::Pointer KeyImageFirstRead=NULL;
 
   AtlasRegType::MapOfStringVectors intraSubjectTransformFileNames;
@@ -815,12 +831,12 @@ int main(int argc, char * *argv)
   typedef itk::ImageFileReader<FloatImageType> LocalReaderType;
   typedef LocalReaderType::Pointer                  LocalReaderPointer;
 
+
   for(AtlasRegType::MapOfStringVectors::iterator mapIt = templateVolumes.begin();
       mapIt != templateVolumes.end(); ++mapIt)
     {
-    std::string curAtlasName = *(mapIt->second.begin());
-    muLogMacro(<< "Reading image " << mapIt->first
-               << ": " << curAtlasName << "...\n");
+    const std::string curAtlasName = FindPathFromAtlasXML(*(mapIt->second.begin()),atlasDefinitionPath);
+    muLogMacro(<< "Reading atlas image " << mapIt->first << ": " << curAtlasName << "...\n");
     LocalReaderPointer imgreader = LocalReaderType::New();
     imgreader->SetFileName(curAtlasName.c_str());
     try
@@ -1126,7 +1142,10 @@ int main(int argc, char * *argv)
       typedef itk::ImageFileReader<FloatImageType> LocalReaderType;
       typedef LocalReaderType::Pointer             LocalReaderPointer;
       LocalReaderPointer priorReader = LocalReaderType::New();
-      priorReader->SetFileName( atlasDefinitionParser.GetPriorFilename(PriorNames[i]) );
+      const std::string curPriorAtlasName = FindPathFromAtlasXML(
+        atlasDefinitionParser.GetPriorFilename(PriorNames[i]),
+        atlasDefinitionPath);
+      priorReader->SetFileName( curPriorAtlasName );
       priorReader->Update();
       FloatImageType::Pointer temp = priorReader->GetOutput();
       atlasOriginalPriors[i] = temp;

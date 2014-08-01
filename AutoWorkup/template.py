@@ -128,7 +128,7 @@ def _template_runner(argv, environment, experiment, pipeline, cluster):
     ######
     # Set universal pipeline options
     nipype_config.update_config(pipeline)
-    assert nipype_config.get('execution', 'plugin') == pipeline['execution']['plugin']
+    assert nipype_config.get('execution', 'plugin') == pipeline['plugin_name']
 
     template = pe.Workflow(name='SubjectAtlas_Template')
     template.base_dir = pipeline['logging']['log_directory']
@@ -208,7 +208,7 @@ def _template_runner(argv, environment, experiment, pipeline, cluster):
                                        run_without_submitting=True,  # HACK:  THIS NODE REALLY SHOULD RUN ON THE CLUSTER!
                                        name='99_CreateAtlasXMLAndCleanedDeformedAverages')
 
-    if pipeline['execution']['plugin'].startswith('SGE'):  # for some nodes, the qsub call needs to be modified on the cluster
+    if pipeline['plugin_name'].startswith('SGE'):  # for some nodes, the qsub call needs to be modified on the cluster
 
         CreateAtlasXMLAndCleanedDeformedAveragesNode.plugin_args = {'template': pipeline['plugin_args']['template'],
                                                 'qsub_args': modify_qsub_args(cluster['queue'], '1000M', 1, 1),
@@ -263,8 +263,9 @@ def _template_runner(argv, environment, experiment, pipeline, cluster):
     dotfilename = argv['--dotfilename']
     if dotfilename is not None:
         print("WARNING: Printing workflow, but not running pipeline")
-        return print_workflow(template, plugin=pipeline['execution']['plugin'], dotfilename=dotfilename)
-    return run_workflow(template, plugin=pipeline['execution']['plugin'], plugin_args=pipeline['plugin_args'])
+        return print_workflow(template, plugin=pipeline['plugin_name'], dotfilename=dotfilename)
+    else:
+        return run_workflow(template, plugin=pipeline['plugin_name'], plugin_args=pipeline['plugin_args'])
 
 if __name__ == '__main__':
     import sys

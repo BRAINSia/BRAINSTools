@@ -43,7 +43,7 @@ def create_singleSession(dataDict, master_config, interpMode, pipeline_name):
 
     from nipype import config, logging
     config.update_config(master_config)  # Set universal pipeline options
-    assert config.get('execution', 'plugin') == master_config['execution']['plugin']
+    assert config.get('execution', 'plugin') == master_config['plugin_name']
     logging.update_logging(config)
 
     import nipype.pipeline.engine as pe
@@ -51,7 +51,7 @@ def create_singleSession(dataDict, master_config, interpMode, pipeline_name):
     from nipype.interfaces.base import CommandLine, CommandLineInputSpec, TraitedSpec, Directory, traits, isdefined, BaseInterface
     from nipype.interfaces.utility import Split, Rename, IdentityInterface, Function
 
-    from workflows.baseline import baseline_workflow as create_baseline
+    from workflows.baseline import generate_single_session_template_WF
     from PipeLineFunctionHelpers import convertToList
     from utilities.misc import GenerateSubjectOutputPattern as outputPattern
     from utilities.misc import GenerateWFName
@@ -63,32 +63,34 @@ def create_singleSession(dataDict, master_config, interpMode, pipeline_name):
     session = dataDict['session']
 
     pname = "{0}_{1}_{2}".format(master_config['workflow_type'], subject, session)
-    sessionWorkflow = create_baseline(project, subject, session, master_config,
+    sessionWorkflow = generate_single_session_template_WF(project, subject, session, master_config,
                              phase=master_config['workflow_type'],
                              interpMode=interpMode,
                              pipeline_name=pipeline_name)
     sessionWorkflow.base_dir = master_config['cachedir']
 
-    inputsSpec = sessionWorkflow.get_node('inputspec')
-    inputsSpec.inputs.T1s = dataDict['T1s']
-    inputsSpec.inputs.T2s = dataDict['T2s']
-    inputsSpec.inputs.PDs = dataDict['PDs']
-    inputsSpec.inputs.FLs = dataDict['FLs']
-    inputsSpec.inputs.OTHERs = dataDict['OTs']
-    atlasNode = MakeAtlasNode(master_config['atlascache'], 'BAtlas_{0}'.format(session))  # TODO: input atlas csv
-    sessionWorkflow.connect([(atlasNode, inputsSpec, [('template_landmarks_50Lmks_fcsv',
-                                                                         'atlasLandmarkFilename'),
-                                                                        ('template_weights_50Lmks_wts',
-                                                                         'atlasWeightFilename'),
-                                                                        ('LLSModel_50Lmks_hdf5', 'LLSModel'),
-                                                                        ('T1_50Lmks_mdl', 'inputTemplateModel')]),
-                                ])
+    SSinputsSpecPtr = sessionWorkflow.get_node('inputspec')
+    SSinputsSpecPtr.inputs.T1s = dataDict['T1s']
+    SSinputsSpecPtr.inputs.T2s = dataDict['T2s']
+    SSinputsSpecPtr.inputs.PDs = dataDict['PDs']
+    SSinputsSpecPtr.inputs.FLs = dataDict['FLs']
+    SSinputsSpecPtr.inputs.OTHERs = dataDict['OTs']
+    atlasBCDNode = MakeAtlasNode(master_config['atlascache'], 'BBCDAtlas_{0}'.format(session),['BCDSupport'])
+    sessionWorkflow.connect([(atlasBCDNode, SSinputsSpecPtr, [('template_t1', 'template_t1'),
+                                                      ('template_landmarks_50Lmks_fcsv', 'atlasLandmarkFilename'),
+                                                      ('template_weights_50Lmks_wts', 'atlasWeightFilename'),
+                                                      ('LLSModel_50Lmks_hdf5', 'LLSModel'),
+                                                      ('T1_50Lmks_mdl', 'inputTemplateModel')]),
+                            ])
     if True:  # FIXME: current_phase == 'baseline':
-        sessionWorkflow.connect([(atlasNode, inputsSpec, [('template_t1', 'template_t1'),
-                                                          ('ExtendedAtlasDefinition_xml',
-                                                           'atlasDefinition')]),
-                                 ])
+        atlasABCNode = MakeAtlasNode(master_config['atlascache'], 'BABCAtlas_{0}'.format(session),['BRAINSABCSupport'])  # TODO: input atlas csv
+
+        sessionWorkflow.connect([(atlasABCNode, SSinputsSpecPtr,
+                                    [ ('ExtendedAtlasDefinition_xml', 'atlasDefinition') ]
+                                 ),
+                               ])
     else:
+        assert 0 == 1, "This code is not correct yet!"
         template_DG = pe.Node(interface=nio.DataGrabber(infields=['subject'],
                                                         outfields=['template_t1', 'outAtlasFullPath']),
                               name='Template_DG')
@@ -101,7 +103,7 @@ def create_singleSession(dataDict, master_config, interpMode, pipeline_name):
         template_DG.inputs.sort_filelist = True
         template_DG.inputs.raise_on_empty = True
 
-        sessionWorkflow.connect([(template_DG, inputsSpec, [('outAtlasFullPath', 'atlasDefinition'),
+        sessionWorkflow.connect([(template_DG, SSinputsSpecPtr, [('outAtlasFullPath', 'atlasDefinition'),
                                                             ('template_t1', 'template_t1')]),
                                  ])
 
@@ -115,8 +117,9 @@ def create_singleSession(dataDict, master_config, interpMode, pipeline_name):
             raise
         sname = 'segmentation'
         onlyT1 = not(len(dataDict['T2s']) > 0)
+        atlasBCUTNode = MakeAtlasNode(master_config['atlascache'], 'BBCUTAtlas_{0}'.format(session),['BRAINSCutSupport'])
         segWF = segmentation(project, subject, session, master_config, onlyT1, pipeline_name=sname)
-        sessionWorkflow.connect([(atlasNode, segWF,
+        sessionWorkflow.connect([(atlasBCUTNode, segWF,
                                 [('hncma-atlas', 'inputspec.hncma-atlas'),
                                  ('template_t1', 'inputspec.template_t1'),
                                  ('template_t1', bCutInputName + '.template_t1'),
@@ -135,8 +138,7 @@ def create_singleSession(dataDict, master_config, interpMode, pipeline_name):
                                  ('r_accumben_ProbabilityMap', bCutInputName + '.r_accumben_ProbabilityMap'),
                                  ('l_globus_ProbabilityMap', bCutInputName + '.l_globus_ProbabilityMap'),
                                  ('r_globus_ProbabilityMap', bCutInputName + '.r_globus_ProbabilityMap'),
-                                 ('trainModelFile_txtD0060NT0060_gz',
-                                  bCutInputName + '.trainModelFile_txtD0060NT0060_gz')])])
+                                 ('trainModelFile_txtD0060NT0060_gz', bCutInputName + '.trainModelFile_txtD0060NT0060_gz')])])
         outputSpec = sessionWorkflow.get_node('outputspec')
         sessionWorkflow.connect([(outputSpec, segWF, [('t1_average', 'inputspec.t1_average'),
                                              ('LMIatlasToSubject_tx', 'inputspec.LMIatlasToSubject_tx'),
@@ -155,6 +157,7 @@ def create_singleSession(dataDict, master_config, interpMode, pipeline_name):
 def createAndRun(sessions, environment, experiment, pipeline, cluster):
     from baw_exp import OpenSubjectDatabase
     from utilities.misc import add_dict
+    from workflows.utils import run_workflow, print_workflow
     master_config = {}
     for configDict in [environment, experiment, pipeline, cluster]:
         master_config = add_dict(master_config, configDict)
@@ -180,7 +183,9 @@ def createAndRun(sessions, environment, experiment, pipeline, cluster):
             _dict['FLs'] = database.getFilenamesByScantype(session, ['FL-15', 'FL-30'])
             _dict['OTs'] = database.getFilenamesByScantype(session, ['OTHER-15', 'OTHER-30'])
             workflow = create_singleSession(_dict, master_config, 'Linear', 'singleSession_{0}_{1}'.format(_dict['subject'], _dict['session']))
-            workflow.run(plugin='SGEGraph', plugin_args=master_config['plugin_args'])
+            print("Starting session {0}".format(session))
+            # HACK Hard-coded to SGEGraph, but --wfrun is ignored completely
+            return run_workflow(workflow,plugin=master_config['plugin_name'], plugin_args=master_config['plugin_args'])
     except:
         raise
     finally:
@@ -206,7 +211,6 @@ if __name__ == '__main__':
 
     argv = docopt(__doc__, version='1.1')
     print argv
-    # sys.exit(0)
     print '=' * 100
     configs = setup(argv)
     exit = _main(*configs, **argv)

@@ -17,7 +17,7 @@ def RunSubjectWorkflow(args):
 
     from nipype import config, logging
     config.update_config(master_config)  # Set universal pipeline options
-    assert config.get('execution', 'plugin') == master_config['execution']['plugin']
+    assert config.get('execution', 'plugin') == master_config['plugin_name']
     # DEBUG
     # config.enable_debug_mode()
     # config.set('execution', 'stop_on_first_rerun', 'true')
@@ -45,7 +45,7 @@ def RunSubjectWorkflow(args):
 
     subjectWorkflow = pe.Workflow(name="BAW_StandardWorkup_subject_{0}".format(subject))
     subjectWorkflow.base_dir = config.get('logging', 'log_directory')
-    # subjectWorkflow.config['execution']['plugin'] = 'Linear'  # Hardcodeded in WorkupT1T2.py - why?
+    # subjectWorkflow.config['plugin_name'] = 'Linear'  # Hardcodeded in WorkupT1T2.py - why?
     # DEBUG
     # subjectWorkflow.config['execution']['stop_on_first_rerun'] = 'true'
     # END DEBUG
@@ -148,9 +148,9 @@ def RunSubjectWorkflow(args):
         # END HACK
         if not True:
             return print_workflow(subjectWorkflow,
-                                  plugin=master_config['execution']['plugin'], dotfilename='subjectWorkflow') #, graph2use='flat')
+                                  plugin=master_config['plugin_name'], dotfilename='subjectWorkflow') #, graph2use='flat')
     try:
         return subjectWorkflow.run(plugin='SGEGraph', plugin_args=master_config['plugin_args'])
     except:
         return 1
-    #return run_workflow(subjectWorkflow, plugin=master_config['execution']['plugin'], plugin_args=master_config['plugin_args'])
+    #return run_workflow(subjectWorkflow, plugin=master_config['plugin_name'], plugin_args=master_config['plugin_args'])

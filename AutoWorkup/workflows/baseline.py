@@ -55,7 +55,7 @@ def get_list_element(nestedList, index):
 def getAllT1sLength(allT1s):
     return len(allT1s)
 
-def baseline_workflow(projectid, subjectid, sessionid, master_config, phase, interpMode, pipeline_name):
+def generate_single_session_template_WF(projectid, subjectid, sessionid, master_config, phase, interpMode, pipeline_name):
     """
     Run autoworkup on a single session
 

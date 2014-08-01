@@ -20,8 +20,8 @@ def MakeAtlasNode(atlasDirectory, name, atlasParts=['BRAINSABCSupport','BRAINSCu
                           ] )
     if 'BRAINSCutSupport' in atlasParts:
         atlas_file_names.extend( [
-                        "template_t1_clipped.nii.gz",
-                        "template_t2_clipped.nii.gz",
+                        "hncma-atlas.nii.gz",
+                        "template_t1.nii.gz",
                         "probabilityMaps/l_accumben_ProbabilityMap.nii.gz",
                         "probabilityMaps/r_accumben_ProbabilityMap.nii.gz",
                         "probabilityMaps/l_caudate_ProbabilityMap.nii.gz",
@@ -41,6 +41,7 @@ def MakeAtlasNode(atlasDirectory, name, atlasParts=['BRAINSABCSupport','BRAINSCu
                         ] )
     if 'BCDSupport' in atlasParts:
         atlas_file_names.extend( [
+                        "template_t1.nii.gz",
                         "20111119_BCD/LLSModel_50Lmks.hdf5",
                         "20111119_BCD/T1_50Lmks.mdl",
                         "20111119_BCD/template_landmarks_50Lmks.fcsv",

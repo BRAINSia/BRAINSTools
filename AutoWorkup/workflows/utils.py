@@ -7,7 +7,7 @@ def run_workflow(workflow, plugin='Linear', plugin_args={}):
 
     print "Running workflow..."
     try:
-        workflow.run(plugin_args=plugin_args)
+        workflow.run(plugin=plugin,plugin_args=plugin_args)
     except:
         print "=+-+" * 25
         print "Error: Exception while running subjects"

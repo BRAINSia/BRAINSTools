@@ -130,6 +130,89 @@ def resolveDataSinkOption(args, pipeline):
     return False
 
 
+class _create_DS_runner(object):
+    def run(self, graph, **kwargs):
+        for node in graph.nodes():
+            if '_ds' in node.name.lower():
+                node.run()
+
+
+_WFRUN_VALID_TYPES = ['SGE',
+         'SGEGraph',
+         'local_4',
+         'local_12',
+         'local',
+         'ds_runner']
+
+
+def get_cpus(option):
+    assert option in _WFRUN_VALID_TYPES, "Unknown wfrun option"
+    from multiprocessing import cpu_count
+    import os
+    total_cpus = cpu_count()
+    suffix = option.rsplit('local', 1)[1]
+    if suffix == '':
+        assert option in ['local', 'ds_runner'], "wfrun parse error!  Current option: {0}".format(option)
+        threads = 1
+        if option == 'local':
+            print "RUNNING WITHOUT POOL BUILDING"
+    else:
+        threads = int(suffix.strip('_'))
+    return int(total_cpus / threads)
+
+
+def _nipype_plugin_config(wfrun, cluster, template=''):
+    assert wfrun in _WFRUN_VALID_TYPES, "Unknown workflow run environment: {0}".format(wfrun)
+    if wfrun in ['SGEGraph']:
+        qsub_args = "-S /bin/bash -cwd -pe smp 1- -l h_vmem=19G,mem_free=9G -o /dev/null -e /dev/null {0}"
+        plugin_name = 'SGEGraph'
+        plugin_args = {'template': template,
+                'qsub_args': qsub_args.format(cluster['queue']),
+                'qstatProgramPath': cluster['qstat'],
+                'qstatCachedProgramPath': cluster['qstat_cached']}
+    elif wfrun in ['local_4', 'local_12']:
+        plugin_name = 'MultiProc'
+        proc_count = int(wfrun.split('local_')[1])
+        print "Running with {0} parallel processes on local machine".format(proc_count)
+        return {'n_procs': proc_count}
+    elif wfrun == 'ds_runner':
+        plugin_name = _create_DS_runner()
+        plugin_args = {}
+    else:
+        assert wfrun in [ 'local', 'ds_runner' ], "You must specify a valid run environment type.  Invalid: {0}".format(wfrun)
+        plugin_name = 'Linear'
+        plugin_args = {}
+
+    return plugin_name, plugin_args
+
+
+def _nipype_execution_config(stop_on_first_crash=False, stop_on_first_rerun=False):
+    stop_crash = 'false'
+    stop_rerun = 'false'
+    if stop_on_first_crash:
+        stop_crash = 'true'
+    if stop_on_first_rerun:
+        # This stops at first attempt to rerun, before running, and before deleting previous results
+        stop_rerun = 'true'
+    return {
+            'stop_on_first_crash': stop_crash,
+            'stop_on_first_rerun': stop_rerun,
+            'hash_method': 'timestamp',          # default
+            'single_thread_matlab': 'true',      # default # Multi-core 2011a  multi-core for matrix multiplication.
+            'use_relative_paths': 'false',       # default # relative paths should be on, require hash update when changed.
+            'remove_node_directories': 'false',  # default
+            'remove_unnecessary_outputs': 'false',
+            'local_hash_check': 'true',          # default
+            'job_finished_timeout': 25}
+
+
+def _nipype_logging_config(cachedir):
+    return {'workflow_level': 'INFO', # possible options:
+            'filemanip_level': 'INFO',#   INFO (default) | DEBUG
+            'interface_level': 'INFO',
+            'log_directory': cachedir}
+
+
 def nipype_options(args, pipeline, cluster, experiment, environment):
     """
     Chicken-egg problem: cannot create pipeline dictionary with Nipype defaults until Nipype is found by environment
@@ -145,10 +228,12 @@ def nipype_options(args, pipeline, cluster, experiment, environment):
         template = create_global_sge_script(cluster, environment)
     else:
         template = None
-    retval['plugin_args'] = misc.nipype_plugin_args(args['--wfrun'], cluster, template)
+    plugin_name, plugin_args = _nipype_plugin_config(args['--wfrun'], cluster, template)
+    retval['plugin_name'] = plugin_name
+    retval['plugin_args'] = plugin_args
     retval['ds_overwrite'] = pipeline['ds_overwrite']  # resolveDataSinkOption(args, pipeline)
-    retval['execution'] = misc.nipype_execution(plugin=args['--wfrun'], stop_on_first_crash=False, stop_on_first_rerun=False)
-    retval['logging'] = misc.nipype_logging(experiment['cachedir'])
+    retval['execution'] = _nipype_execution_config(stop_on_first_crash=False, stop_on_first_rerun=False)
+    retval['logging'] = _nipype_logging_config(experiment['cachedir'])
     return retval
 
 

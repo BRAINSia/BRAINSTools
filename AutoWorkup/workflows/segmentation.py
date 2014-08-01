@@ -37,7 +37,7 @@ def segmentation(projectid, subjectid, sessionid, master_config, onlyT1=True, pi
     # Set universal pipeline options
     from nipype import config
     config.update_config(master_config)
-    assert config.get('execution', 'plugin') == master_config['execution']['plugin']
+    assert config.get('execution', 'plugin') == master_config['plugin_name']
 
     from PipeLineFunctionHelpers import ClipT1ImageWithBrainMask
     from WorkupT1T2BRAINSCut import CreateBRAINSCutWorkflow
@@ -312,7 +312,7 @@ def segmentation(projectid, subjectid, sessionid, master_config, onlyT1=True, pi
                       ('inverse_composite_transform', 'SubjectToAtlasWarped.@inverse_composite_transform')])])
     # baw200.connect([(MultiLabelSubjectToAtlasANTsApplyTransforms, Subj2Atlas_DS, [('output_image', 'SubjectToAtlasWarped.@multilabel_output_images')])])
 
-    if master_config['execution']['plugin'] == 'SGE':  # for some nodes, the qsub call needs to be modified on the cluster
+    if master_config['plugin_name'].startswith('SGE'):  # for some nodes, the qsub call needs to be modified on the cluster
         AtlasToSubjectantsRegistration.plugin_args = {'template': master_config['plugin_args']['template'], 'overwrite': True,
                                                       'qsub_args': modify_qsub_args(master_config['queue'], '9000M', 4,
                                                                                     hard=False)}

@@ -644,7 +644,7 @@ int main(int argc, char * *argv)
   ByteImagePointer               atlasBrainMask;
   { // Read template images needed for atlas registration
   // muLogMacro(<< "Read template mask");
-  const std::string templateMask = atlasDefinitionParser.GetTemplateBrainMask();
+  const std::string templateMask = FindPathFromAtlasXML(atlasDefinitionParser.GetTemplateBrainMask(),atlasDefinitionPath);
   if( templateMask.size() < 1 )
     {
     muLogMacro( <<  "No template mask specified" << std::endl );

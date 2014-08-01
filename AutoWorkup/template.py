@@ -127,25 +127,34 @@ def _template_runner(argv, environment, experiment, pipeline, cluster):
     inputspec.iterables = ('subject', subjects)
 
     baselineDG = pe.Node(nio.DataGrabber(infields=['subject'], outfields=['t1_average', 't2_average', 'pd_average',
-                                                                          'fl_average', 'outputLabels', 'posteriorImages']),
+                                                                          'fl_average', 'brainMaskLabels',
+#                                                                          'outputLabels',
+                                                                           'posteriorImages']),
                          name='Baseline_DG')
     if 'previousresult' in experiment:
         baselineDG.inputs.base_directory = experiment['previousresult']
     else:
+        # Running after previous baseline experiment
+        raise "ERROR, This should be an impossible setting."
         baselineDG.inputs.base_directory = experiment['resultdir']
     baselineDG.inputs.sort_filelist = True
     baselineDG.inputs.raise_on_empty = False
-    baselineDG.inputs.template = '*/%s/*/TissueClassify/%s.nii.gz'
-    baselineDG.inputs.template_args['t1_average'] = [['subject', 't1_average_BRAINSABC']]
-    baselineDG.inputs.template_args['t2_average'] = [['subject', 't2_average_BRAINSABC']]
-    baselineDG.inputs.template_args['pd_average'] = [['subject', 'pd_average_BRAINSABC']]
-    baselineDG.inputs.template_args['fl_average'] = [['subject', 'fl_average_BRAINSABC']]
+    baselineDG.inputs.template = '*/%s/*/TissueClassify/%s'
+    baselineDG.inputs.template_args['t1_average'] = [['subject', 't1_average_BRAINSABC.nii.gz']]
+    baselineDG.inputs.template_args['t2_average'] = [['subject', 't2_average_BRAINSABC.nii.gz']]
+    baselineDG.inputs.template_args['pd_average'] = [['subject', 'pd_average_BRAINSABC.nii.gz']]
+    baselineDG.inputs.template_args['fl_average'] = [['subject', 'fl_average_BRAINSABC.nii.gz']]
     posterior_files = ['AIR', 'BASAL', 'CRBLGM', 'CRBLWM', 'CSF', 'GLOBUS', 'HIPPOCAMPUS',
                        'NOTCSF', 'NOTGM', 'NOTVB', 'NOTWM', 'SURFGM', 'THALAMUS', 'VB', 'WM']
     baselineDG.inputs.field_template = {'posteriorImages':'*/%s/*/TissueClassify/POSTERIOR_%s.nii.gz',
-                                        'outputLabels': '*/%s/*/CleanedDenoisedRFSegmentations/allLabels_seg.nii.gz'}
+#                                        'outputLabels': '*/%s/*/CleanedDenoisedRFSegmentations/allLabels_seg.nii.gz',
+                                        'brainMaskLabels': '*/%s/*/TissueClassify/fixed_brainlabels_seg.nii.gz'}
     baselineDG.inputs.template_args['posteriorImages'] = [['subject', posterior_files]]
-    baselineDG.inputs.template_args['outputLabels'] = [['subject']]
+#    baselineDG.inputs.template_args['outputLabels'] = [['subject']]
+    baselineDG.inputs.template_args['brainMaskLabels'] = [['subject']]
+
+
+
     MergeByExtendListElementsNode = pe.Node(Function(function=MergeByExtendListElements,
                                                      input_names=['t1s', 't2s',
                                                                   'pds', 'fls',
@@ -158,7 +167,7 @@ def _template_runner(argv, environment, experiment, pipeline, cluster):
                                                                    ('t2_average', 't2s'),
                                                                    ('pd_average', 'pds'),
                                                                    ('fl_average', 'fls'),
-                                                                   ('outputLabels', 'labels'),
+                                                                   ('brainMaskLabels', 'labels'),
                                                                    (('posteriorImages', wrapfunc), 'posteriors')])
                     ])
 

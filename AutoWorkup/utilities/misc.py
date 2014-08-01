@@ -203,9 +203,9 @@ def GenerateSubjectOutputPattern(subjectid):
     replace_pat = r'AVG_\g<structure>'
     patternList.append((find_pat, replace_pat))
 
-    find_pat = r'CLIPPED_AVG_(?P<structure>.*.nii.gz)'
-    replace_pat = r'AVG_\g<structure>'
-    patternList.append((find_pat, replace_pat))
+    #find_pat = r'CLIPPED_AVG_(?P<structure>.*.nii.gz)'
+    #replace_pat = r'AVG_\g<structure>'
+    #patternList.append((find_pat, replace_pat))
 
     #print "HACK: ", patternList
     return patternList

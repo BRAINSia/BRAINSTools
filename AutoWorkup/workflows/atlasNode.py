@@ -60,7 +60,7 @@ def CreateAtlasXMLAndCleanedDeformedAverages(t1_image, deformed_list, AtlasTempl
         'AVG_FL.nii.gz': '@ATLAS_INSTALL_DIRECTORY@/template_t2.nii.gz'
     }
     templateFile = open(AtlasTemplate, 'r')
-    content = templateFile.read()              # read entire file into memory
+    xmlAtlasFileContents = templateFile.read()              # read entire file into memory
     templateFile.close()
 
     ## Now clean up the posteriors based on anatomical knowlege.
@@ -150,18 +150,18 @@ def CreateAtlasXMLAndCleanedDeformedAverages(t1_image, deformed_list, AtlasTempl
     for full_pathname in clean_deformed_list:
         base_name = os.path.basename(full_pathname)
         if base_name in patternDict.keys():
-            content = content.replace(patternDict[base_name], full_pathname)
+            xmlAtlasFileContents = xmlAtlasFileContents.replace(patternDict[base_name], base_name)
     ## If there is no T2, then use the PD image
     if T2File is not None:
-        content = content.replace('@ATLAS_INSTALL_DIRECTORY@/template_t2.nii.gz', T2File)
+        xmlAtlasFileContents = xmlAtlasFileContents.replace('@ATLAS_INSTALL_DIRECTORY@/template_t2.nii.gz', os.path.basename(T2File))
     elif PDFile is not None:
-        content = content.replace('@ATLAS_INSTALL_DIRECTORY@/template_t2.nii.gz', PDFile)
-    content = content.replace('@ATLAS_INSTALL_DIRECTORY@/template_t1.nii.gz', t1_image)
+        xmlAtlasFileContents = xmlAtlasFileContents.replace('@ATLAS_INSTALL_DIRECTORY@/template_t2.nii.gz', os.path.basename(PDFile))
+    xmlAtlasFileContents = xmlAtlasFileContents.replace('@ATLAS_INSTALL_DIRECTORY@/template_t1.nii.gz', 'AVG_T1.nii.gz')
     ## NOTE:  HEAD REGION CAN JUST BE T1 image.
-    content = content.replace('@ATLAS_INSTALL_DIRECTORY@/template_headregion.nii.gz', t1_image)
+    xmlAtlasFileContents = xmlAtlasFileContents.replace('@ATLAS_INSTALL_DIRECTORY@/template_headregion.nii.gz', os.path.basename(t1_image) )
     ## NOTE:  BRAIN REGION CAN JUST BE the label images.
     outAtlasFullPath = os.path.realpath(outDefinition)
     newFile = open(outAtlasFullPath, 'w')
-    newFile.write(content)  # write the file with the text substitution
+    newFile.write(xmlAtlasFileContents)  # write the file with the text substitution
     newFile.close()
     return outAtlasFullPath, clean_deformed_list

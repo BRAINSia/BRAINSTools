@@ -171,21 +171,12 @@ int main(int argc, char *argv[])
   // for gradients and b values plus a NIfTI file for the gradient volumes.
   if( conversionMode == "FSLToNrrd" )
     {
-    extern int FSLToNrrd(const std::string & inputVolume,
-                         const std::string & outputVolume,
-                         const std::string & inputBValues,
-                         const std::string & inputBVectors);
-
     return FSLToNrrd(inputVolume, outputVolume,
                      inputBValues, inputBVectors);
     }
   // make FSL file set from a NRRD file.
   if( conversionMode == "NrrdToFSL" )
     {
-    extern int NrrdToFSL(const std::string & inputVolume,
-                         const std::string & outputVolume,
-                         const std::string & outputBValues,
-                         const std::string & outputBVectors);
     return NrrdToFSL(inputVolume, outputVolume,
                      outputBValues, outputBVectors);
     }

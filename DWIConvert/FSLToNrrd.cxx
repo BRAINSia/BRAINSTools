@@ -22,7 +22,7 @@
 #include <fstream>
 #include <sstream>
 #include "DWIConvertUtils.h"
-
+#include "itksys/SystemTools.hxx"
 typedef short                               PixelValueType;
 typedef itk::Image<PixelValueType, 4>       VolumeType;
 typedef itk::VectorImage<PixelValueType, 3> VectorVolumeType;
@@ -40,11 +40,21 @@ FSLToNrrd(const std::string & inputVolume,
           const std::string & inputBVectors)
 {
   if( CheckArg<std::string>("Input Volume", inputVolume, "") == EXIT_FAILURE ||
-      CheckArg<std::string>("Output Volume", outputVolume, "") == EXIT_FAILURE ||
-      CheckArg<std::string>("B Values", inputBValues, "") == EXIT_FAILURE ||
-      CheckArg<std::string>("B Vectors", inputBVectors, "") )
+      CheckArg<std::string>("Output Volume", outputVolume, "") == EXIT_FAILURE)
     {
     return EXIT_FAILURE;
+    }
+  std::string _inputBValues = inputBValues;
+  if( CheckArg<std::string>("B Values", inputBValues, "") == EXIT_FAILURE )
+    {
+    _inputBValues = itksys::SystemTools::GetFilenameWithoutExtension(inputVolume) +
+      ".bval";
+    }
+  std::string _inputBVectors = inputBVectors;
+  if( CheckArg<std::string>("B Vectors", inputBVectors, "") == EXIT_FAILURE )
+    {
+    _inputBVectors = itksys::SystemTools::GetFilenameWithoutExtension(inputVolume) +
+      ".bvec";
     }
 
   VolumeType::Pointer inputVol;
@@ -57,11 +67,11 @@ FSLToNrrd(const std::string & inputVolume,
   unsigned int                      bValCount = 0;
   unsigned int                      bVecCount = 0;
   double                            maxBValue(0.0);
-  if( ReadBVals(BVals, bValCount, inputBValues, maxBValue) != EXIT_SUCCESS )
+  if( ReadBVals(BVals, bValCount, _inputBValues, maxBValue) != EXIT_SUCCESS )
     {
     return EXIT_FAILURE;
     }
-  if( ReadBVecs(BVecs, bVecCount, inputBVectors) != EXIT_SUCCESS )
+  if( ReadBVecs(BVecs, bVecCount, _inputBVectors) != EXIT_SUCCESS )
     {
     return EXIT_FAILURE;
     }

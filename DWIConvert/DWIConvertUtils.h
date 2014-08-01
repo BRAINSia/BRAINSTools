@@ -421,4 +421,13 @@ void PrintVec(const std::vector<TVal> & vec)
   std::cerr << "]" << std::endl;
 }
 
+extern int FSLToNrrd(const std::string & inputVolume,
+                     const std::string & outputVolume,
+                     const std::string & inputBValues,
+                     const std::string & inputBVectors);
+
+    extern int NrrdToFSL(const std::string & inputVolume,
+                         const std::string & outputVolume,
+                         const std::string & outputBValues,
+                         const std::string & outputBVectors);
 #endif // DWIConvertUtils_h

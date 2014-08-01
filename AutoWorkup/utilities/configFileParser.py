@@ -71,23 +71,30 @@ def create_experiment_dir(dirname, name, suffix, verify=False):
     return fullpath
 
 
-def parseExperiment(parser):
+def parseExperiment(parser,workflow_phase):
     """ Parse the experiment section and return a dictionary """
     retval = dict()
     dirname = validatePath(parser.get('EXPERIMENT', 'BASE_OUTPUT_DIR'), False, True)
-    current = parser.get('EXPERIMENT', 'EXPERIMENT')
+    if workflow_phase == 'atlas-based-reference':
+        current_suffix='_BASE'
+    elif workflow_phase == 'subject-template-generation':
+        current_suffix='_TEMP'
+    elif workflow_phase == 'subject-based-reference':
+        current_suffix='_LONG'
+    else:
+        assert 0 == 1, "ERROR INVALID workflow_phase"
+    current = parser.get('EXPERIMENT', 'EXPERIMENT'+current_suffix)
     retval['cachedir'] = create_experiment_dir(dirname, current, 'CACHE')
     retval['resultdir'] = create_experiment_dir(dirname, current, 'Results')
-    if parser.has_option('EXPERIMENT', 'PREVIOUS_EXPERIMENT'):
+    if parser.has_option('EXPERIMENT', 'EXPERIMENT'+current_suffix+'_INPUT'):
         # If this is the initial run, there will be no previous experiment
-        previous = parser.get('EXPERIMENT', 'PREVIOUS_EXPERIMENT')
-        retval['previouscache'] = create_experiment_dir(dirname, previous, 'CACHE', verify=True)
+        previous = parser.get('EXPERIMENT', 'EXPERIMENT'+current_suffix+'_INPUT')
         retval['previousresult'] = create_experiment_dir(dirname, previous, 'Results', verify=True)
     atlas = validatePath(parser.get('EXPERIMENT', 'ATLAS_PATH'), False, True)
     retval['atlascache'] = clone_atlas_dir(retval['cachedir'], atlas)
-    retval['dbfile'] = validatePath(parser.get('EXPERIMENT', 'SESSION_DB'), False, False)
-    retval['components'] = [x.lower() for x in eval(parser.get('EXPERIMENT', 'WORKFLOW_COMPONENTS'))]
-    retval['workflow_type'] = parser.get('EXPERIMENT', 'WORKFLOW_TYPE')
+    retval['dbfile'] = validatePath(parser.get('EXPERIMENT', 'SESSION_DB'+current_suffix), False, False)
+    retval['components'] = [x.lower() for x in eval(parser.get('EXPERIMENT', 'WORKFLOW_COMPONENTS'+current_suffix))]
+    retval['workflow_phase'] = workflow_phase
     return retval
 
 
@@ -109,14 +116,14 @@ def parseCluster(parser):
     return retval
 
 
-def parseFile(configFile, env):
+def parseFile(configFile, env, workphase):
     configFile = os.path.realpath(configFile)
     assert os.path.exists(configFile), "Configuration file could not be found: {0}".format(configFile)
     parser = ConfigParser(allow_no_value=True)  # Parse configuration file parser = ConfigParser()
     parser.read(configFile)
     assert (parser.has_option(env, '_BUILD_DIR') or parser.has_option('DEFAULT', '_BUILD_DIR')), "BUILD_DIR option not in {0}".format(env)
     environment = parseEnvironment(parser, env)
-    experiment = parseExperiment(parser)
+    experiment = parseExperiment(parser,workphase)
     pipeline = parsePipeline(parser)
     if environment['cluster']:
         cluster = parseCluster(parser)

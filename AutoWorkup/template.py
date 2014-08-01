@@ -5,7 +5,7 @@ template.py
 This program is used to generate the subject- and session-specific workflows for BRAINSTool processing
 
 Usage:
-  template.py [--rewrite-datasinks] [--wfrun PLUGIN] [--dotfilename PFILE] --pe ENV --ExperimentConfig FILE SUBJECTS...
+  template.py [--rewrite-datasinks] [--wfrun PLUGIN] [--dotfilename PFILE] --workphase WORKPHASE --pe ENV --ExperimentConfig FILE SUBJECTS...
   template.py -v | --version
   template.py -h | --help
 
@@ -19,6 +19,7 @@ Options:
   --rewrite-datasinks   Turn on the Nipype option to overwrite all files in the 'results' directory
   --pe=ENV              The processing environment to use from configuration file
   --wfrun=PLUGIN        The name of the workflow plugin option (default: 'local')
+  --workphase WORKPHASE The type of processing to be done only VALID is ['subject-template-generation']
   --ExperimentConfig=FILE   The configuration file
 
 Examples:

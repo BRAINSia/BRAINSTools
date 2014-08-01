@@ -17,7 +17,7 @@ def setup(argv):
     from utilities.configFileParser import resolveDataSinkOption, parseFile
     from utilities.pathHandling import validatePath
     from utilities import misc
-    environment, experiment, pipeline, cluster = parseFile(argv["--ExperimentConfig"], argv["--pe"])
+    environment, experiment, pipeline, cluster = parseFile(argv["--ExperimentConfig"], argv["--pe"], argv["--workphase"])
     pipeline['ds_overwrite'] = resolveDataSinkOption(argv, pipeline)
 
     if cluster is None:

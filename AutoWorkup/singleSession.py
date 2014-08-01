@@ -5,7 +5,7 @@ singleSession.py
 This program is used to generate the subject- and session-specific workflows for BRAINSTool processing
 
 Usage:
-  singleSession.py [--rewrite-datasinks] [--wfrun PLUGIN] --pe ENV --ExperimentConfig FILE SESSIONS...
+  singleSession.py [--rewrite-datasinks] [--wfrun PLUGIN] --workphase WORKPHASE --pe ENV --ExperimentConfig FILE SESSIONS...
   singleSession.py -v | --version
   singleSession.py -h | --help
 
@@ -19,7 +19,9 @@ Options:
   --rewrite-datasinks   Turn on the Nipype option to overwrite all files in the 'results' directory
   --pe ENV              The processing environment to use from configuration file
   --wfrun PLUGIN        The name of the workflow plugin option (default: 'local')
+  --workphase WORKPHASE The type of processing to be done [atlas-based-reference|subject-based-reference]
   --ExperimentConfig FILE   The configuration file
+
 
 Examples:
   $ singleSession.py --pe OSX --ExperimentConfig my_baw.config all
@@ -61,9 +63,9 @@ def create_singleSession(dataDict, master_config, interpMode, pipeline_name):
     subject = dataDict['subject']
     session = dataDict['session']
 
-    pname = "{0}_{1}_{2}".format(master_config['workflow_type'], subject, session)
+    pname = "{0}_{1}_{2}".format(master_config['workflow_phase'], subject, session)
     sessionWorkflow = generate_single_session_template_WF(project, subject, session, master_config,
-                             phase=master_config['workflow_type'],
+                             phase=master_config['workflow_phase'],
                              interpMode=interpMode,
                              pipeline_name=pipeline_name)
     sessionWorkflow.base_dir = master_config['cachedir']
@@ -81,14 +83,14 @@ def create_singleSession(dataDict, master_config, interpMode, pipeline_name):
                                                       ('LLSModel_50Lmks_hdf5', 'LLSModel'),
                                                       ('T1_50Lmks_mdl', 'inputTemplateModel')]),
                             ])
-    if  master_config['workflow_type'] == 'atlas-based-reference':
+    if  master_config['workflow_phase'] == 'atlas-based-reference':
         atlasABCNode = MakeAtlasNode(master_config['atlascache'], 'BABCAtlas_{0}'.format(session),['BRAINSABCSupport'])  # TODO: input atlas csv
 
         sessionWorkflow.connect([(atlasABCNode, SSinputsSpecPtr,
                                     [ ('ExtendedAtlasDefinition_xml', 'atlasDefinition') ]
                                  ),
                                ])
-    elif master_config['workflow_type'] == 'subject-based-reference':
+    elif master_config['workflow_phase'] == 'subject-based-reference':
         print master_config['previousresult']
         template_DG = pe.Node(interface=nio.DataGrabber(infields=['subject'],
                                                         outfields=['outAtlasXMLFullPath']),

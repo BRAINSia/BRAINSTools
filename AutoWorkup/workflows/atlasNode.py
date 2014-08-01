@@ -32,32 +32,32 @@ def GetAtlasNode(previousresult, name):
     return MakeAtlasNode(previousAtlasDir, name)
 
 
-def MakeNewAtlasTemplate(t1_image, deformed_list, AtlasTemplate, outDefinition):
+def CreateAtlasXMLAndCleanedDeformedAverages(t1_image, deformed_list, AtlasTemplate, outDefinition):
     import os
     import sys
     import SimpleITK as sitk
 
     patternDict = {
-        'AVG_WM.nii.gz': '@ATLAS_DIRECTORY@/GENERATED_WM.nii.gz',
-        'AVG_SURFGM.nii.gz': '@ATLAS_DIRECTORY@/GENERATED_SURFGM.nii.gz',
-        'AVG_BASAL.nii.gz': '@ATLAS_DIRECTORY@/GENERATED_BASAL.nii.gz',
-        'AVG_GLOBUS.nii.gz': '@ATLAS_DIRECTORY@/GENERATED_GLOBUS.nii.gz',
-        'AVG_THALAMUS.nii.gz': '@ATLAS_DIRECTORY@/GENERATED_THALAMUS.nii.gz',
-        'AVG_HIPPOCAMPUS.nii.gz': '@ATLAS_DIRECTORY@/GENERATED_HIPPOCAMPUS.nii.gz',
-        'AVG_CRBLGM.nii.gz': '@ATLAS_DIRECTORY@/GENERATED_CRBLGM.nii.gz',
-        'AVG_CRBLWM.nii.gz': '@ATLAS_DIRECTORY@/GENERATED_CRBLWM.nii.gz',
-        'AVG_CSF.nii.gz': '@ATLAS_DIRECTORY@/GENERATED_CSF.nii.gz',
-        'AVG_VB.nii.gz': '@ATLAS_DIRECTORY@/GENERATED_VB.nii.gz',
-        'AVG_NOTCSF.nii.gz': '@ATLAS_DIRECTORY@/GENERATED_NOTCSF.nii.gz',
-        'AVG_NOTGM.nii.gz': '@ATLAS_DIRECTORY@/GENERATED_NOTGM.nii.gz',
-        'AVG_NOTWM.nii.gz': '@ATLAS_DIRECTORY@/GENERATED_NOTWM.nii.gz',
-        'AVG_NOTVB.nii.gz': '@ATLAS_DIRECTORY@/GENERATED_NOTVB.nii.gz',
-        'AVG_AIR.nii.gz': '@ATLAS_DIRECTORY@/GENERATED_AIR.nii.gz',
-        'AVG_BRAINMASK.nii.gz': '@ATLAS_DIRECTORY@/template_brain.nii.gz',
-        'T1_RESHAPED.nii.gz': '@ATLAS_DIRECTORY@/template_t1.nii.gz',
-        'AVG_T2.nii.gz': '@ATLAS_DIRECTORY@/template_t2.nii.gz',
-        'AVG_PD.nii.gz': '@ATLAS_DIRECTORY@/template_t2.nii.gz',
-        'AVG_FL.nii.gz': '@ATLAS_DIRECTORY@/template_t2.nii.gz'
+        'AVG_WM.nii.gz': '@ATLAS_INSTALL_DIRECTORY@/GENERATED_WM.nii.gz',
+        'AVG_SURFGM.nii.gz': '@ATLAS_INSTALL_DIRECTORY@/GENERATED_SURFGM.nii.gz',
+        'AVG_BASAL.nii.gz': '@ATLAS_INSTALL_DIRECTORY@/GENERATED_BASAL.nii.gz',
+        'AVG_GLOBUS.nii.gz': '@ATLAS_INSTALL_DIRECTORY@/GENERATED_GLOBUS.nii.gz',
+        'AVG_THALAMUS.nii.gz': '@ATLAS_INSTALL_DIRECTORY@/GENERATED_THALAMUS.nii.gz',
+        'AVG_HIPPOCAMPUS.nii.gz': '@ATLAS_INSTALL_DIRECTORY@/GENERATED_HIPPOCAMPUS.nii.gz',
+        'AVG_CRBLGM.nii.gz': '@ATLAS_INSTALL_DIRECTORY@/GENERATED_CRBLGM.nii.gz',
+        'AVG_CRBLWM.nii.gz': '@ATLAS_INSTALL_DIRECTORY@/GENERATED_CRBLWM.nii.gz',
+        'AVG_CSF.nii.gz': '@ATLAS_INSTALL_DIRECTORY@/GENERATED_CSF.nii.gz',
+        'AVG_VB.nii.gz': '@ATLAS_INSTALL_DIRECTORY@/GENERATED_VB.nii.gz',
+        'AVG_NOTCSF.nii.gz': '@ATLAS_INSTALL_DIRECTORY@/GENERATED_NOTCSF.nii.gz',
+        'AVG_NOTGM.nii.gz': '@ATLAS_INSTALL_DIRECTORY@/GENERATED_NOTGM.nii.gz',
+        'AVG_NOTWM.nii.gz': '@ATLAS_INSTALL_DIRECTORY@/GENERATED_NOTWM.nii.gz',
+        'AVG_NOTVB.nii.gz': '@ATLAS_INSTALL_DIRECTORY@/GENERATED_NOTVB.nii.gz',
+        'AVG_AIR.nii.gz': '@ATLAS_INSTALL_DIRECTORY@/GENERATED_AIR.nii.gz',
+        'AVG_BRAINMASK.nii.gz': '@ATLAS_INSTALL_DIRECTORY@/template_brain.nii.gz',
+        'T1_RESHAPED.nii.gz': '@ATLAS_INSTALL_DIRECTORY@/template_t1.nii.gz',
+        'AVG_T2.nii.gz': '@ATLAS_INSTALL_DIRECTORY@/template_t2.nii.gz',
+        'AVG_PD.nii.gz': '@ATLAS_INSTALL_DIRECTORY@/template_t2.nii.gz',
+        'AVG_FL.nii.gz': '@ATLAS_INSTALL_DIRECTORY@/template_t2.nii.gz'
     }
     templateFile = open(AtlasTemplate, 'r')
     content = templateFile.read()              # read entire file into memory
@@ -153,12 +153,12 @@ def MakeNewAtlasTemplate(t1_image, deformed_list, AtlasTemplate, outDefinition):
             content = content.replace(patternDict[base_name], full_pathname)
     ## If there is no T2, then use the PD image
     if T2File is not None:
-        content = content.replace('@ATLAS_DIRECTORY@/template_t2.nii.gz', T2File)
+        content = content.replace('@ATLAS_INSTALL_DIRECTORY@/template_t2.nii.gz', T2File)
     elif PDFile is not None:
-        content = content.replace('@ATLAS_DIRECTORY@/template_t2.nii.gz', PDFile)
-    content = content.replace('@ATLAS_DIRECTORY@/template_t1.nii.gz', t1_image)
+        content = content.replace('@ATLAS_INSTALL_DIRECTORY@/template_t2.nii.gz', PDFile)
+    content = content.replace('@ATLAS_INSTALL_DIRECTORY@/template_t1.nii.gz', t1_image)
     ## NOTE:  HEAD REGION CAN JUST BE T1 image.
-    content = content.replace('@ATLAS_DIRECTORY@/template_headregion.nii.gz', t1_image)
+    content = content.replace('@ATLAS_INSTALL_DIRECTORY@/template_headregion.nii.gz', t1_image)
     ## NOTE:  BRAIN REGION CAN JUST BE the label images.
     outAtlasFullPath = os.path.realpath(outDefinition)
     newFile = open(outAtlasFullPath, 'w')

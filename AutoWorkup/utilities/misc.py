@@ -189,18 +189,22 @@ def GenerateSubjectOutputPattern(subjectid):
     import os.path
 
     patternList = []
-    find_pat = os.path.join('ANTSTemplate', 'ReshapeAverageImageWithShapeUpdate.nii.gz')
-    replace_pat = os.path.join('SUBJECT_TEMPLATES', subjectid, r'AVG_T1.nii.gz')
+    find_pat = "_subject_" + subjectid + "/"
+    replace_pat = ""
+    patternList.append((find_pat,replace_pat))
+
+    find_pat = 'ReshapeAverageImageWithShapeUpdate.nii.gz'
+    replace_pat = r'AVG_T1.nii.gz'
     patternList.append((find_pat, replace_pat))
 
-    # find_pat = os.path.join('ANTSTemplate',
+    # find_pat = os.path.join('Atlas',
     #                         r'_ReshapeAveragePassiveImageWithShapeUpdate[0-9]*/AVG_[A-Z0-9]*WARP_(?P<structure>AVG_[A-Z0-9]*.nii.gz)')
-    find_pat = os.path.join('ANTSTemplate', r'_ReshapeAveragePassiveImageWithShapeUpdate[0-9]*/AVG_(?P<structure>.*.nii.gz)')
-    replace_pat = os.path.join('SUBJECT_TEMPLATES', subjectid, r'AVG_\g<structure>')
+    find_pat = r'_ReshapeAveragePassiveImageWithShapeUpdate[0-9]*/AVG_(?P<structure>.*.nii.gz)'
+    replace_pat = r'AVG_\g<structure>'
     patternList.append((find_pat, replace_pat))
 
-    find_pat = os.path.join('ANTSTemplate', r'CLIPPED_AVG_(?P<structure>.*.nii.gz)')
-    replace_pat = os.path.join('SUBJECT_TEMPLATES', subjectid, r'AVG_\g<structure>')
+    find_pat = r'CLIPPED_AVG_(?P<structure>.*.nii.gz)'
+    replace_pat = r'AVG_\g<structure>'
     patternList.append((find_pat, replace_pat))
 
     #print "HACK: ", patternList

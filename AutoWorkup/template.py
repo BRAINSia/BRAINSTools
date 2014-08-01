@@ -33,21 +33,21 @@ import traceback
 
 def MergeByExtendListElements(t1s, t2s, pds, fls, labels, posteriors):
     """
-    *** NOTE:  ALl input lists MUST have the same number of elements (even if they are null) ***
+    *** NOTE:  All input lists MUST have the same number of elements (even if they are null) ***
 
     output = [{'T1': os.path.join(mydatadir, '01_T1_half.nii.gz'),
-                               'INV_T1': os.path.join(mydatadir, '01_T1_inv_half.nii.gz'),
-                               'LABEL_MAP': os.path.join(mydatadir, '01_T1_inv_half.nii.gz')
-                              },
-                              {'T1': os.path.join(mydatadir, '02_T1_half.nii.gz'),
-                               'INV_T1': os.path.join(mydatadir, '02_T1_inv_half.nii.gz'),
-                               'LABEL_MAP': os.path.join(mydatadir, '02_T1_inv_half.nii.gz')
-                              },
-                              {'T1': os.path.join(mydatadir, '03_T1_half.nii.gz'),
-                               'INV_T1': os.path.join(mydatadir, '03_T1_inv_half.nii.gz'),
-                               'LABEL_MAP': os.path.join(mydatadir, '03_T1_inv_half.nii.gz')
-                              }
-                             ]
+               'INV_T1': os.path.join(mydatadir, '01_T1_inv_half.nii.gz'),
+               'LABEL_MAP': os.path.join(mydatadir, '01_T1_inv_half.nii.gz')
+              },
+              {'T1': os.path.join(mydatadir, '02_T1_half.nii.gz'),
+               'INV_T1': os.path.join(mydatadir, '02_T1_inv_half.nii.gz'),
+               'LABEL_MAP': os.path.join(mydatadir, '02_T1_inv_half.nii.gz')
+              },
+              {'T1': os.path.join(mydatadir, '03_T1_half.nii.gz'),
+               'INV_T1': os.path.join(mydatadir, '03_T1_inv_half.nii.gz'),
+               'LABEL_MAP': os.path.join(mydatadir, '03_T1_inv_half.nii.gz')
+              }
+             ]
     labels = ['brain_label_seg.nii.gz', 'brain_label_seg.nii.gz']
     pds = [None, None]
     t1s = ['t1_average_BRAINSABC.nii.gz', 't1_average_BRAINSABC.nii.gz']
@@ -98,8 +98,17 @@ def xml_filename(subject):
     return 'AtlasDefinition_{0}.xml'.format(subject)
 
 
-def main(*args):
-    subjects, environment, experiment, pipeline, cluster, dotfilename = args
+def _template_runner(argv, environment, experiment, pipeline, cluster):
+    print "Getting subjects from database..."
+    # subjects = argv["--subjects"].split(',')
+    subjects = get_subjects(argv['SUBJECTS'], experiment['cachedir'], environment['prefix'], experiment['dbfile']) # Build database before parallel section
+    print "Copying Atlas directory and determining appropriate Nipype options..."
+    pipeline = nipype_options(argv, pipeline, cluster, experiment, environment)  # Generate Nipype options
+    print "Dispatching jobs to the system..."
+
+    ######
+    ###### Now start workflow construction
+    ######
     # Set universal pipeline options
     nipype_config.update_config(pipeline)
     assert nipype_config.get('execution', 'plugin') == pipeline['execution']['plugin']
@@ -166,16 +175,16 @@ def main(*args):
     # buildTemplateIteration2 = buildTemplateIteration1.clone(name='buildTemplateIteration2')
     buildTemplateIteration2 = registrationWF('Iteration02')
 
-    MakeNewAtlasTemplateNode = pe.Node(interface=Function(function=MakeNewAtlasTemplate,
+    CreateAtlasXMLAndCleanedDeformedAveragesNode = pe.Node(interface=Function(function=CreateAtlasXMLAndCleanedDeformedAverages,
                                                           input_names=['t1_image', 'deformed_list', 'AtlasTemplate', 'outDefinition'],
                                                           output_names=['outAtlasFullPath', 'clean_deformed_list']),
                                        # This is a lot of work, so submit it run_without_submitting=True,
                                        run_without_submitting=True,  # HACK:  THIS NODE REALLY SHOULD RUN ON THE CLUSTER!
-                                       name='99_MakeNewAtlasTemplate')
+                                       name='99_CreateAtlasXMLAndCleanedDeformedAverages')
 
     if pipeline['execution']['plugin'].startswith('SGE'):  # for some nodes, the qsub call needs to be modified on the cluster
 
-        MakeNewAtlasTemplateNode.plugin_args = {'template': pipeline['plugin_args']['template'],
+        CreateAtlasXMLAndCleanedDeformedAveragesNode.plugin_args = {'template': pipeline['plugin_args']['template'],
                                                 'qsub_args': modify_qsub_args(cluster['queue'], '1000M', 1, 1),
                                                 'overwrite': True}
         for bt in [buildTemplateIteration1, buildTemplateIteration2]:
@@ -204,45 +213,41 @@ def main(*args):
                       (MergeByExtendListElementsNode, buildTemplateIteration2, [('ListOfImagesDictionaries', 'inputspec.ListOfImagesDictionaries'),
                                                                                 ('registrationImageTypes','inputspec.registrationImageTypes'),
                                                                                 ('interpolationMapping', 'inputspec.interpolationMapping')]),
-                      (inputspec, MakeNewAtlasTemplateNode, [(('subject', xml_filename), 'outDefinition')]),
-                      (BAtlas, MakeNewAtlasTemplateNode, [('ExtendedAtlasDefinition_xml_in', 'AtlasTemplate')]),
-                      (buildTemplateIteration2, MakeNewAtlasTemplateNode, [('outputspec.template', 't1_image'),
+                      (inputspec, CreateAtlasXMLAndCleanedDeformedAveragesNode, [(('subject', xml_filename), 'outDefinition')]),
+                      (BAtlas, CreateAtlasXMLAndCleanedDeformedAveragesNode, [('ExtendedAtlasDefinition_xml_in', 'AtlasTemplate')]),
+                      (buildTemplateIteration2, CreateAtlasXMLAndCleanedDeformedAveragesNode, [('outputspec.template', 't1_image'),
                                                                            ('outputspec.passive_deformed_templates', 'deformed_list')]),
                       ])
 
     # Create DataSinks
-    Atlas_DataSink = pe.Node(nio.DataSink(), name="Atlas_DS")
-    Atlas_DataSink.overwrite = pipeline['ds_overwrite']
-    Atlas_DataSink.inputs.base_directory = experiment['resultdir']
+#    Atlas_DataSink = pe.Node(nio.DataSink(), name="Atlas_DS")
+#    Atlas_DataSink.overwrite = pipeline['ds_overwrite']
+#    Atlas_DataSink.inputs.base_directory = experiment['resultdir']
 
-    Subject_DataSink = pe.Node(nio.DataSink(), name="Subject_DS")
-    Subject_DataSink.overwrite = pipeline['ds_overwrite']
-    Subject_DataSink.inputs.base_directory = experiment['resultdir']
+    SubjectAtlas_DataSink = pe.Node(nio.DataSink(), name="Subject_DS")
+    SubjectAtlas_DataSink.overwrite = pipeline['ds_overwrite']
+    SubjectAtlas_DataSink.inputs.base_directory = experiment['resultdir']
 
-    template.connect([(inputspec, Atlas_DataSink, [('subject', 'container')]),
-                      (buildTemplateIteration1, Atlas_DataSink, [('outputspec.template', 'Atlas.iteration1')]),  # Unnecessary
-                      (MakeNewAtlasTemplateNode, Atlas_DataSink, [('outAtlasFullPath', 'Atlas.definitions')]),
-                      (BAtlas, Atlas_DataSink, [('template_landmarks_50Lmks_fcsv', 'Atlas.20111119_BCD.@fcsv'),
-                                                ('template_weights_50Lmks_wts', 'Atlas.20111119_BCD.@wts'),
-                                                ('LLSModel_50Lmks_hdf5', 'Atlas.20111119_BCD.@hdf5'),
-                                                ('T1_50Lmks_mdl', 'Atlas.20111119_BCD.@mdl')]),
-                      (inputspec, Subject_DataSink, [(('subject', outputPattern), 'regexp_substitutions')]),
-                      (buildTemplateIteration2, Subject_DataSink, [('outputspec.template', 'ANTSTemplate.@template')]),
-                      (MakeNewAtlasTemplateNode, Subject_DataSink, [('clean_deformed_list', 'ANTSTemplate.@passive_deformed_templates')]),
+#                     (BAtlas, Atlas_DataSink, [## THESE ARE WRONG
+#                                               ## it should be a deformed atlas estimated version of the this subjects
+#                                               ## landmarks
+#                                               ('template_landmarks_50Lmks_fcsv', 'Atlas.20111119_BCD.@fcsv'),
+#                                               ('template_weights_50Lmks_wts', 'Atlas.20111119_BCD.@wts'),
+#                                               ('LLSModel_50Lmks_hdf5', 'Atlas.20111119_BCD.@hdf5'),
+#                                               ('T1_50Lmks_mdl', 'Atlas.20111119_BCD.@mdl')]),
+    template.connect([(inputspec, SubjectAtlas_DataSink, [('subject', 'container')]),
+                      (CreateAtlasXMLAndCleanedDeformedAveragesNode, SubjectAtlas_DataSink, [('outAtlasFullPath', 'Atlas.@definitions')]),
+                      (CreateAtlasXMLAndCleanedDeformedAveragesNode, SubjectAtlas_DataSink, [('clean_deformed_list', 'Atlas.@passive_deformed_templates')]),
+
+                      (inputspec, SubjectAtlas_DataSink, [(('subject', outputPattern), 'regexp_substitutions')]),
+                      (buildTemplateIteration2, SubjectAtlas_DataSink, [('outputspec.template', 'Atlas.@template')]),
                      ])
 
+    dotfilename = argv['--dotfilename']
     if dotfilename is not None:
+        print("WARNING: Printing workflow, but not running pipeline")
         return print_workflow(template, plugin=pipeline['execution']['plugin'], dotfilename=dotfilename)
     return run_workflow(template, plugin=pipeline['execution']['plugin'], plugin_args=pipeline['plugin_args'])
-
-def _template_runner(argv, environment, experiment, pipeline, cluster):
-    print "Getting subjects from database..."
-    # subjects = argv["--subjects"].split(',')
-    subjects = get_subjects(argv['SUBJECTS'], experiment['cachedir'], environment['prefix'], experiment['dbfile']) # Build database before parallel section
-    print "Copying Atlas directory and determining appropriate Nipype options..."
-    pipeline = nipype_options(argv, pipeline, cluster, experiment, environment)  # Generate Nipype options
-    print "Dispatching jobs to the system..."
-    return main(subjects, environment, experiment, pipeline, cluster, argv['--dotfilename'])
 
 if __name__ == '__main__':
     import sys
@@ -262,7 +267,7 @@ if __name__ == '__main__':
 
     from PipeLineFunctionHelpers import mapPosteriorList
     from PipeLineFunctionHelpers import WrapPosteriorImagesFromDictionaryFunction as wrapfunc
-    from workflows.atlasNode import GetAtlasNode, MakeNewAtlasTemplate
+    from workflows.atlasNode import GetAtlasNode, CreateAtlasXMLAndCleanedDeformedAverages
     from utilities.misc import GenerateSubjectOutputPattern as outputPattern
     from utilities.distributed import modify_qsub_args
     from workflows.utils import run_workflow, print_workflow

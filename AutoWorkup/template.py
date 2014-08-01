@@ -116,27 +116,16 @@ def _template_runner(argv, environment, experiment, pipeline, cluster):
     template = pe.Workflow(name='SubjectAtlas_Template')
     template.base_dir = pipeline['logging']['log_directory']
 
-    if 'previouscache' in experiment:
-        # Running off previous baseline experiment
-        BAtlas = GetAtlasNode(experiment['previouscache'], 'BAtlas')
-    else:
-        # Running after previous baseline experiment
-        raise "ERROR, Never use the NAC atlas for template building"
-        BAtlas = GetAtlasNode(os.path.dirname(experiment['atlascache']), 'BAtlas')
+    # Running off previous baseline experiment
+    BAtlas = GetAtlasNode(experiment['previouscache'], 'BAtlas')
     inputspec = pe.Node(interface=IdentityInterface(fields=['subject']), name='inputspec')
     inputspec.iterables = ('subject', subjects)
 
     baselineDG = pe.Node(nio.DataGrabber(infields=['subject'], outfields=['t1_average', 't2_average', 'pd_average',
                                                                           'fl_average', 'brainMaskLabels',
-#                                                                          'outputLabels',
                                                                            'posteriorImages']),
                          name='Baseline_DG')
-    if 'previousresult' in experiment:
-        baselineDG.inputs.base_directory = experiment['previousresult']
-    else:
-        # Running after previous baseline experiment
-        raise "ERROR, This should be an impossible setting."
-        baselineDG.inputs.base_directory = experiment['resultdir']
+    baselineDG.inputs.base_directory = experiment['previousresult']
     baselineDG.inputs.sort_filelist = True
     baselineDG.inputs.raise_on_empty = False
     baselineDG.inputs.template = '*/%s/*/TissueClassify/%s'
@@ -147,10 +136,8 @@ def _template_runner(argv, environment, experiment, pipeline, cluster):
     posterior_files = ['AIR', 'BASAL', 'CRBLGM', 'CRBLWM', 'CSF', 'GLOBUS', 'HIPPOCAMPUS',
                        'NOTCSF', 'NOTGM', 'NOTVB', 'NOTWM', 'SURFGM', 'THALAMUS', 'VB', 'WM']
     baselineDG.inputs.field_template = {'posteriorImages':'*/%s/*/TissueClassify/POSTERIOR_%s.nii.gz',
-#                                        'outputLabels': '*/%s/*/CleanedDenoisedRFSegmentations/allLabels_seg.nii.gz',
                                         'brainMaskLabels': '*/%s/*/TissueClassify/fixed_brainlabels_seg.nii.gz'}
     baselineDG.inputs.template_args['posteriorImages'] = [['subject', posterior_files]]
-#    baselineDG.inputs.template_args['outputLabels'] = [['subject']]
     baselineDG.inputs.template_args['brainMaskLabels'] = [['subject']]
 
 
@@ -229,21 +216,10 @@ def _template_runner(argv, environment, experiment, pipeline, cluster):
                       ])
 
     # Create DataSinks
-#    Atlas_DataSink = pe.Node(nio.DataSink(), name="Atlas_DS")
-#    Atlas_DataSink.overwrite = pipeline['ds_overwrite']
-#    Atlas_DataSink.inputs.base_directory = experiment['resultdir']
-
     SubjectAtlas_DataSink = pe.Node(nio.DataSink(), name="Subject_DS")
     SubjectAtlas_DataSink.overwrite = pipeline['ds_overwrite']
     SubjectAtlas_DataSink.inputs.base_directory = experiment['resultdir']
 
-#                     (BAtlas, Atlas_DataSink, [## THESE ARE WRONG
-#                                               ## it should be a deformed atlas estimated version of the this subjects
-#                                               ## landmarks
-#                                               ('template_landmarks_50Lmks_fcsv', 'Atlas.20111119_BCD.@fcsv'),
-#                                               ('template_weights_50Lmks_wts', 'Atlas.20111119_BCD.@wts'),
-#                                               ('LLSModel_50Lmks_hdf5', 'Atlas.20111119_BCD.@hdf5'),
-#                                               ('T1_50Lmks_mdl', 'Atlas.20111119_BCD.@mdl')]),
     template.connect([(inputspec, SubjectAtlas_DataSink, [('subject', 'container')]),
                       (CreateAtlasXMLAndCleanedDeformedAveragesNode, SubjectAtlas_DataSink, [('outAtlasFullPath', 'Atlas.@definitions')]),
                       (CreateAtlasXMLAndCleanedDeformedAveragesNode, SubjectAtlas_DataSink, [('clean_deformed_list', 'Atlas.@passive_deformed_templates')]),

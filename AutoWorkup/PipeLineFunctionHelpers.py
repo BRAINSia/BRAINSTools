@@ -86,39 +86,33 @@ def UnwrapPosteriorImagesFromDictionaryFunction(postDict):
     return postDict.values()
 
 
-def WrapPosteriorImagesFromDictionaryFunction(postList):
+def ConvertSessionsListOfPosteriorListToDictionaryOfSessionLists(dg_list_list):
+    """ The input is a list of sessions with a list of posteriors per session.
+        The output is a dicitionary of posterior types, with a list of that
+        posterior type for each session.
+
+        dg_list_list=[['Y1/POSTERIOR_AIR.nii.gz','Y1/POSTERIOR_CAUDATE.nii.gz'],['Y2/POSTERIOR_AIR.nii.gz','Y2/POSTERIOR_CAUDATE.nii.gz']]
+        dictionary_of_session_list={'AIR':['Y1/POSTERIOR_AIR.nii.gz','Y2/POSTERIOR_AIR.nii.gz'], 'CAUDATE':['Y1/POSTERIOR_CAUDATE.nii.gz','Y2/POSTERIOR_CAUDATE.nii.gz']}
+    """
     from os.path import basename
-    retval = {}
-    start = len('POSTERIOR_')
-    end = len('.nii.gz')
-    assert not postList is None, "Input must be a list, not None"
-    assert isinstance(postList, list), "Input must be a list, not {0}".format(type(postList))
-    for fname in postList:
-        if isinstance(fname, list):
-            key = basename(fname[0])[start:-end]
-        else:
-            key = basename(fname)[start:-end]
-        retval[key] = fname
-    return retval
+    dictionary_of_session_list = {}
+    assert not dg_list_list is None, "Input must be a list, not None"
+    assert isinstance(dg_list_list, list), "Input must be a list, not {0}".format(type(postList))
 
+    # Do the firt session for initialization
+    first_session = dg_list_list[0]
+    for postFileName in first_session:
+        key = basename(postFileName).replace('POSTERIOR_','').replace('.nii.gz','')
+        dictionary_of_session_list[key]=[postFileName]
 
-def mapPosteriorList(postList):
-    """ Assumes files in ../project/subject/session/Phase_1/TissueClassify/POSTERIOR_*.nii.gz """
-    from os.path import dirname, basename, split
-    from PipeLineFunctionHelpers import WrapPosteriorImagesFromDictionaryFunction as wrapfunc
-    retval = []
-    # print postList
-    unwrapped = [item for sublist in postList for item in sublist]  # http://stackoverflow.com/a/952952/973781
-    sessions = set([basename(dirname(dirname(dirname(pfile)))) for pfile in unwrapped])
-    for session in sessions:
-        slist = list()
-        for pfile in unwrapped:
-            if basename(dirname(dirname(dirname(pfile)))) == str(session):
-                slist.append(pfile)
-        retval.append(wrapfunc(slist))
-    print retval
-    return retval
-
+    ## Now do the rest!
+    for one_session_list in dg_list_list[1:]:
+        for postFileName in one_session_list:
+            key = basename(postFileName).replace('POSTERIOR_','').replace('.nii.gz','')
+            assert key in dictionary_of_session_list.keys(), "All session list must have the same key values"
+            dictionary_of_session_list[key].append(postFileName)
+    print dictionary_of_session_list
+    return dictionary_of_session_list
 
 def GetOnePosteriorImageFromDictionaryFunction(postDict, key):
     return postDict[key]

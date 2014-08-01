@@ -1,5 +1,4 @@
 #! /usr/bin/env python
-from baw_exp import OpenSubjectDatabase
 
 def load_modules(modules):
     """ The command 'module' is actually a script call in bash:
@@ -53,13 +52,3 @@ def setup(argv):
         else:
             os.environ[key] = value  # Do not use os.putenv (see Python documentation)
     return environment, experiment, pipeline, cluster
-
-
-def get_subjects(subjects, cache, prefix, dbfile, shuffle=True):
-    import random
-    _temp = OpenSubjectDatabase(cache, ['all'], prefix, dbfile)
-    if "all" in subjects:
-        subjects = _temp.getAllSubjects()
-    if shuffle:
-        random.shuffle(subjects)  # randomly shuffle to get max
-    return subjects

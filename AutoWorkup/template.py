@@ -31,20 +31,34 @@ import os
 import sys
 import traceback
 
+from baw_exp import OpenSubjectDatabase
+
+def get_subjects_sessions_dictionary(subjects, cache, prefix, dbfile, shuffle=False):
+    import random
+    _temp = OpenSubjectDatabase(cache, ['all'], prefix, dbfile)
+    if "all" in subjects:
+        subjects = _temp.getAllSubjects()
+    if shuffle:
+        random.shuffle(subjects)  # randomly shuffle to get max
+    subject_sessions_dictionary = dict()
+    for subject in subjects:
+        subject_sessions_dictionary[subject]=_temp.getSessionsFromSubject(subject)
+    return subjects,subject_sessions_dictionary
+
 def MergeByExtendListElements(t1s, t2s, pds, fls, labels, posteriors):
     """
     *** NOTE:  All input lists MUST have the same number of elements (even if they are null) ***
 
-    output = [{'T1': os.path.join(mydatadir, '01_T1_half.nii.gz'),
-               'INV_T1': os.path.join(mydatadir, '01_T1_inv_half.nii.gz'),
+    output = [{'T1':        os.path.join(mydatadir, '01_T1_half.nii.gz'),
+               'INV_T1':    os.path.join(mydatadir, '01_T1_inv_half.nii.gz'),
                'LABEL_MAP': os.path.join(mydatadir, '01_T1_inv_half.nii.gz')
               },
-              {'T1': os.path.join(mydatadir, '02_T1_half.nii.gz'),
-               'INV_T1': os.path.join(mydatadir, '02_T1_inv_half.nii.gz'),
+              {'T1':        os.path.join(mydatadir, '02_T1_half.nii.gz'),
+               'INV_T1':    os.path.join(mydatadir, '02_T1_inv_half.nii.gz'),
                'LABEL_MAP': os.path.join(mydatadir, '02_T1_inv_half.nii.gz')
               },
-              {'T1': os.path.join(mydatadir, '03_T1_half.nii.gz'),
-               'INV_T1': os.path.join(mydatadir, '03_T1_inv_half.nii.gz'),
+              {'T1':        os.path.join(mydatadir, '03_T1_half.nii.gz'),
+               'INV_T1':    os.path.join(mydatadir, '03_T1_inv_half.nii.gz'),
                'LABEL_MAP': os.path.join(mydatadir, '03_T1_inv_half.nii.gz')
               }
              ]
@@ -97,11 +111,14 @@ def MergeByExtendListElements(t1s, t2s, pds, fls, labels, posteriors):
 def xml_filename(subject):
     return 'AtlasDefinition_{0}.xml'.format(subject)
 
+def getSessionsFromSubjectDictionary(subject_session_dictionary,subject):
+    return subject_session_dictionary[subject]
+
 
 def _template_runner(argv, environment, experiment, pipeline, cluster):
     print "Getting subjects from database..."
     # subjects = argv["--subjects"].split(',')
-    subjects = get_subjects(argv['SUBJECTS'], experiment['cachedir'], environment['prefix'], experiment['dbfile']) # Build database before parallel section
+    subjects, subjects_sessions_dictionary = get_subjects_sessions_dictionary(argv['SUBJECTS'], experiment['cachedir'], environment['prefix'], experiment['dbfile']) # Build database before parallel section
     print "Copying Atlas directory and determining appropriate Nipype options..."
     pipeline = nipype_options(argv, pipeline, cluster, experiment, environment)  # Generate Nipype options
     print "Dispatching jobs to the system..."
@@ -116,31 +133,41 @@ def _template_runner(argv, environment, experiment, pipeline, cluster):
     template = pe.Workflow(name='SubjectAtlas_Template')
     template.base_dir = pipeline['logging']['log_directory']
 
-    # Running off previous baseline experiment
-    BAtlas = GetAtlasNode(experiment['previouscache'], 'BAtlas')
-    inputspec = pe.Node(interface=IdentityInterface(fields=['subject']), name='inputspec')
-    inputspec.iterables = ('subject', subjects)
+    subjectIterator = pe.Node(interface=IdentityInterface(fields=['subject']), run_without_submitting=True, name='99_subjectIterator')
+    subjectIterator.iterables = ('subject', subjects)
 
-    baselineDG = pe.Node(nio.DataGrabber(infields=['subject'], outfields=['t1_average', 't2_average', 'pd_average',
-                                                                          'fl_average', 'brainMaskLabels',
-                                                                           'posteriorImages']),
-                         name='Baseline_DG')
+    sessionsExtractorNode = pe.Node(Function(function=getSessionsFromSubjectDictionary,
+                                                      input_names=['subject_session_dictionary','subject'],
+                                                      output_names=['sessions']),
+                                   run_without_submitting=True, name="99_sessionsExtractor")
+    sessionsExtractorNode.inputs.subject_session_dictionary = subjects_sessions_dictionary
+
+    baselineDG = pe.MapNode(nio.DataGrabber(infields=['subject','session'],
+                                            outfields=['t1_average', 't2_average', 'pd_average',
+                                                       'fl_average', 'brainMaskLabels',
+                                                       'posteriorImages']),
+                            iterfield=['session'], name='Baseline_DG')
+
     baselineDG.inputs.base_directory = experiment['previousresult']
     baselineDG.inputs.sort_filelist = True
     baselineDG.inputs.raise_on_empty = False
-    baselineDG.inputs.template = '*/%s/*/TissueClassify/%s'
-    baselineDG.inputs.template_args['t1_average'] = [['subject', 't1_average_BRAINSABC.nii.gz']]
-    baselineDG.inputs.template_args['t2_average'] = [['subject', 't2_average_BRAINSABC.nii.gz']]
-    baselineDG.inputs.template_args['pd_average'] = [['subject', 'pd_average_BRAINSABC.nii.gz']]
-    baselineDG.inputs.template_args['fl_average'] = [['subject', 'fl_average_BRAINSABC.nii.gz']]
+    baselineDG.inputs.template = '*'
     posterior_files = ['AIR', 'BASAL', 'CRBLGM', 'CRBLWM', 'CSF', 'GLOBUS', 'HIPPOCAMPUS',
                        'NOTCSF', 'NOTGM', 'NOTVB', 'NOTWM', 'SURFGM', 'THALAMUS', 'VB', 'WM']
-    baselineDG.inputs.field_template = {'posteriorImages':'*/%s/*/TissueClassify/POSTERIOR_%s.nii.gz',
-                                        'brainMaskLabels': '*/%s/*/TissueClassify/fixed_brainlabels_seg.nii.gz'}
-    baselineDG.inputs.template_args['posteriorImages'] = [['subject', posterior_files]]
-    baselineDG.inputs.template_args['brainMaskLabels'] = [['subject']]
-
-
+    baselineDG.inputs.field_template = {'t1_average':'*/%s/%s/TissueClassify/t1_average_BRAINSABC.nii.gz',
+                                        't2_average':'*/%s/%s/TissueClassify/t2_average_BRAINSABC.nii.gz',
+                                        'pd_average':'*/%s/%s/TissueClassify/pd_average_BRAINSABC.nii.gz',
+                                        'fl_average':'*/%s/%s/TissueClassify/fl_average_BRAINSABC.nii.gz',
+                                   'brainMaskLabels':'*/%s/%s/TissueClassify/fixed_brainlabels_seg.nii.gz',
+                                   'posteriorImages':'*/%s/%s/TissueClassify/POSTERIOR_%s.nii.gz'
+                                   }
+    baselineDG.inputs.template_args  = {'t1_average':[['subject','session']],
+                                        't2_average':[['subject','session']],
+                                        'pd_average':[['subject','session']],
+                                        'fl_average':[['subject','session']],
+                                   'brainMaskLabels':[['subject','session']],
+                                   'posteriorImages':[['subject','session', posterior_files]]
+                                   }
 
     MergeByExtendListElementsNode = pe.Node(Function(function=MergeByExtendListElements,
                                                      input_names=['t1s', 't2s',
@@ -149,13 +176,16 @@ def _template_runner(argv, environment, experiment, pipeline, cluster):
                                                      output_names=['ListOfImagesDictionaries', 'registrationImageTypes',
                                                                    'interpolationMapping']),
                                             run_without_submitting=True, name="99_MergeByExtendListElements")
-    template.connect([(inputspec, baselineDG, [('subject', 'subject')]),
+
+    template.connect([(subjectIterator, baselineDG, [('subject', 'subject')]),
+                      (subjectIterator, sessionsExtractorNode, [('subject','subject')]),
+                      (sessionsExtractorNode, baselineDG, [('sessions', 'session')]),
                       (baselineDG, MergeByExtendListElementsNode, [('t1_average', 't1s'),
                                                                    ('t2_average', 't2s'),
                                                                    ('pd_average', 'pds'),
                                                                    ('fl_average', 'fls'),
                                                                    ('brainMaskLabels', 'labels'),
-                                                                   (('posteriorImages', wrapfunc), 'posteriors')])
+                                                                   (('posteriorImages', ConvertSessionsListOfPosteriorListToDictionaryOfSessionLists), 'posteriors')])
                     ])
 
     myInitAvgWF = pe.Node(interface=ants.AverageImages(), name='Atlas_antsSimpleAverage')  # was 'Phase1_antsSimpleAverage'
@@ -201,6 +231,10 @@ def _template_runner(argv, environment, experiment, pipeline, cluster):
             wimtPassivedeformed.plugin_args = {'template': pipeline['plugin_args']['template'], 'overwrite': True,
                                                 'qsub_args': modify_qsub_args(cluster['queue'], '2000M', 1, 2)}
 
+    # Running off previous baseline experiment
+    # HACK  ERROR:  There should be NO dependance on a previous cache.  Get the original atlas
+    # HACK MAY BE ABLE re-write and remove dependance on ExtendedAtlasDefinition_xml_in all together!
+    BAtlas = GetAtlasNode(experiment['previouscache'], 'BAtlas')
     template.connect([(myInitAvgWF, buildTemplateIteration1, [('output_average_image', 'inputspec.fixed_image')]),
                       (MergeByExtendListElementsNode, buildTemplateIteration1, [('ListOfImagesDictionaries', 'inputspec.ListOfImagesDictionaries'),
                                                                                 ('registrationImageTypes', 'inputspec.registrationImageTypes'),
@@ -209,7 +243,7 @@ def _template_runner(argv, environment, experiment, pipeline, cluster):
                       (MergeByExtendListElementsNode, buildTemplateIteration2, [('ListOfImagesDictionaries', 'inputspec.ListOfImagesDictionaries'),
                                                                                 ('registrationImageTypes','inputspec.registrationImageTypes'),
                                                                                 ('interpolationMapping', 'inputspec.interpolationMapping')]),
-                      (inputspec, CreateAtlasXMLAndCleanedDeformedAveragesNode, [(('subject', xml_filename), 'outDefinition')]),
+                      (subjectIterator, CreateAtlasXMLAndCleanedDeformedAveragesNode, [(('subject', xml_filename), 'outDefinition')]),
                       (BAtlas, CreateAtlasXMLAndCleanedDeformedAveragesNode, [('ExtendedAtlasDefinition_xml_in', 'AtlasTemplate')]),
                       (buildTemplateIteration2, CreateAtlasXMLAndCleanedDeformedAveragesNode, [('outputspec.template', 't1_image'),
                                                                            ('outputspec.passive_deformed_templates', 'deformed_list')]),
@@ -220,11 +254,11 @@ def _template_runner(argv, environment, experiment, pipeline, cluster):
     SubjectAtlas_DataSink.overwrite = pipeline['ds_overwrite']
     SubjectAtlas_DataSink.inputs.base_directory = experiment['resultdir']
 
-    template.connect([(inputspec, SubjectAtlas_DataSink, [('subject', 'container')]),
+    template.connect([(subjectIterator, SubjectAtlas_DataSink, [('subject', 'container')]),
                       (CreateAtlasXMLAndCleanedDeformedAveragesNode, SubjectAtlas_DataSink, [('outAtlasFullPath', 'Atlas.@definitions')]),
                       (CreateAtlasXMLAndCleanedDeformedAveragesNode, SubjectAtlas_DataSink, [('clean_deformed_list', 'Atlas.@passive_deformed_templates')]),
 
-                      (inputspec, SubjectAtlas_DataSink, [(('subject', outputPattern), 'regexp_substitutions')]),
+                      (subjectIterator, SubjectAtlas_DataSink, [(('subject', outputPattern), 'regexp_substitutions')]),
                       (buildTemplateIteration2, SubjectAtlas_DataSink, [('outputspec.template', 'Atlas.@template')]),
                      ])
 
@@ -250,15 +284,13 @@ if __name__ == '__main__':
     from nipype.interfaces.utility import IdentityInterface, Function
     import nipype.interfaces.ants as ants
 
-    from PipeLineFunctionHelpers import mapPosteriorList
-    from PipeLineFunctionHelpers import WrapPosteriorImagesFromDictionaryFunction as wrapfunc
+    from PipeLineFunctionHelpers import ConvertSessionsListOfPosteriorListToDictionaryOfSessionLists
     from workflows.atlasNode import GetAtlasNode, CreateAtlasXMLAndCleanedDeformedAverages
     from utilities.misc import GenerateSubjectOutputPattern as outputPattern
     from utilities.distributed import modify_qsub_args
     from workflows.utils import run_workflow, print_workflow
     from BAWantsRegistrationBuildTemplate import BAWantsRegistrationTemplateBuildSingleIterationWF as registrationWF
     from utilities.configFileParser import nipype_options
-    from AutoWorkup import get_subjects
 
     exit = _template_runner(argv, *configs)
     sys.exit(exit)

@@ -95,6 +95,7 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
   ".*OpenCV-build.*warning.*"
   ".*OpenCV-install.*warning.*"
   ".*OpenCV.*"
+  "opencv"
   "opencv2"
 
   # FFTW warnings:

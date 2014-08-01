@@ -43,7 +43,6 @@ def create_singleSession(dataDict, master_config, interpMode, pipeline_name):
 
     from nipype import config, logging
     config.update_config(master_config)  # Set universal pipeline options
-    assert config.get('execution', 'plugin') == master_config['plugin_name']
     logging.update_logging(config)
 
     import nipype.pipeline.engine as pe

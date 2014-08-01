@@ -128,7 +128,6 @@ def _template_runner(argv, environment, experiment, pipeline, cluster):
     ######
     # Set universal pipeline options
     nipype_config.update_config(pipeline)
-    assert nipype_config.get('execution', 'plugin') == pipeline['plugin_name']
 
     template = pe.Workflow(name='SubjectAtlas_Template')
     template.base_dir = pipeline['logging']['log_directory']

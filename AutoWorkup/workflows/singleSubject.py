@@ -17,7 +17,6 @@ def RunSubjectWorkflow(args):
 
     from nipype import config, logging
     config.update_config(master_config)  # Set universal pipeline options
-    assert config.get('execution', 'plugin') == master_config['plugin_name']
     # DEBUG
     # config.enable_debug_mode()
     # config.set('execution', 'stop_on_first_rerun', 'true')

@@ -37,7 +37,6 @@ def segmentation(projectid, subjectid, sessionid, master_config, onlyT1=True, pi
     # Set universal pipeline options
     from nipype import config
     config.update_config(master_config)
-    assert config.get('execution', 'plugin') == master_config['plugin_name']
 
     from PipeLineFunctionHelpers import ClipT1ImageWithBrainMask
     from WorkupT1T2BRAINSCut import CreateBRAINSCutWorkflow

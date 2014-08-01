@@ -232,9 +232,7 @@ def _template_runner(argv, environment, experiment, pipeline, cluster):
                                                 'qsub_args': modify_qsub_args(cluster['queue'], '2000M', 1, 2)}
 
     # Running off previous baseline experiment
-    # HACK  ERROR:  There should be NO dependance on a previous cache.  Get the original atlas
-    # HACK MAY BE ABLE re-write and remove dependance on ExtendedAtlasDefinition_xml_in all together!
-    BAtlas = GetAtlasNode(experiment['previouscache'], 'BAtlas')
+    NACCommonAtlas = MakeAtlasNode(experiment['atlascache'], 'NACCommonAtlas_{0}'.format('subject'))  # TODO: input atlas csv
     template.connect([(myInitAvgWF, buildTemplateIteration1, [('output_average_image', 'inputspec.fixed_image')]),
                       (MergeByExtendListElementsNode, buildTemplateIteration1, [('ListOfImagesDictionaries', 'inputspec.ListOfImagesDictionaries'),
                                                                                 ('registrationImageTypes', 'inputspec.registrationImageTypes'),
@@ -244,7 +242,7 @@ def _template_runner(argv, environment, experiment, pipeline, cluster):
                                                                                 ('registrationImageTypes','inputspec.registrationImageTypes'),
                                                                                 ('interpolationMapping', 'inputspec.interpolationMapping')]),
                       (subjectIterator, CreateAtlasXMLAndCleanedDeformedAveragesNode, [(('subject', xml_filename), 'outDefinition')]),
-                      (BAtlas, CreateAtlasXMLAndCleanedDeformedAveragesNode, [('ExtendedAtlasDefinition_xml_in', 'AtlasTemplate')]),
+                      (NACCommonAtlas, CreateAtlasXMLAndCleanedDeformedAveragesNode, [('ExtendedAtlasDefinition_xml_in', 'AtlasTemplate')]),
                       (buildTemplateIteration2, CreateAtlasXMLAndCleanedDeformedAveragesNode, [('outputspec.template', 't1_image'),
                                                                            ('outputspec.passive_deformed_templates', 'deformed_list')]),
                       ])
@@ -285,7 +283,7 @@ if __name__ == '__main__':
     import nipype.interfaces.ants as ants
 
     from PipeLineFunctionHelpers import ConvertSessionsListOfPosteriorListToDictionaryOfSessionLists
-    from workflows.atlasNode import GetAtlasNode, CreateAtlasXMLAndCleanedDeformedAverages
+    from workflows.atlasNode import MakeAtlasNode, CreateAtlasXMLAndCleanedDeformedAverages
     from utilities.misc import GenerateSubjectOutputPattern as outputPattern
     from utilities.distributed import modify_qsub_args
     from workflows.utils import run_workflow, print_workflow

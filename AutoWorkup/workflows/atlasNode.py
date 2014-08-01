@@ -21,17 +21,6 @@ def MakeAtlasNode(atlasDirectory, name):
     # print "-" * 100
     return node
 
-
-def GetAtlasNode(previousresult, name):
-    """ Guarantee that template experiment Atlas matches baseline experiment Atlas """
-    import os.path
-    from atlasNode import MakeAtlasNode
-
-    previousAtlasDir = os.path.abspath(os.path.join(previousresult, 'Atlas'))
-    assert os.path.exists(previousAtlasDir), "Previous experiment's Atlas directory cannot be found! {0}".format(previousAtlasDir)
-    return MakeAtlasNode(previousAtlasDir, name)
-
-
 def CreateAtlasXMLAndCleanedDeformedAverages(t1_image, deformed_list, AtlasTemplate, outDefinition):
     import os
     import sys

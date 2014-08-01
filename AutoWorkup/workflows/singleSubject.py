@@ -63,7 +63,6 @@ def RunSubjectWorkflow(args):
     print "These are the sessions: ", sessions
     # TODO: atlas input csv read
     atlasNode = MakeAtlasNode(master_config['atlascache'], 'BAtlas')
-    # atlasNode = GetAtlasNode(master_config['previouscache'], 'BAtlas')
     from singleSession import create_singleSession as create_wkfl
 
     for session in sessions:  # TODO (future): Replace with iterable inputSpec node and add Function node for getAllFiles()

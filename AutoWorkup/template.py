@@ -232,7 +232,7 @@ def _template_runner(argv, environment, experiment, pipeline, cluster):
                                                 'qsub_args': modify_qsub_args(cluster['queue'], '2000M', 1, 2)}
 
     # Running off previous baseline experiment
-    NACCommonAtlas = MakeAtlasNode(experiment['atlascache'], 'NACCommonAtlas_{0}'.format('subject'))  # TODO: input atlas csv
+    NACCommonAtlas = MakeAtlasNode(experiment['atlascache'], 'NACCommonAtlas_{0}'.format('subject'), 'TemplateBuildSupport') ## HACK : replace 'subject' with subject id once this is a loop rather than an iterable.
     template.connect([(myInitAvgWF, buildTemplateIteration1, [('output_average_image', 'inputspec.fixed_image')]),
                       (MergeByExtendListElementsNode, buildTemplateIteration1, [('ListOfImagesDictionaries', 'inputspec.ListOfImagesDictionaries'),
                                                                                 ('registrationImageTypes', 'inputspec.registrationImageTypes'),

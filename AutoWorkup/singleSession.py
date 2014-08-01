@@ -25,7 +25,7 @@ Options:
 
 Examples:
   $ singleSession.py --pe OSX --ExperimentConfig my_baw.config all
-  $ singleSession.py --wfrun helium_all.q --pe OSX --ExperimentConfig my_baw.config 00001 00002
+  $ singleSession.py --wfrun SGEGraph --pe OSX --ExperimentConfig my_baw.config 00001 00002
   $ singleSession.py --rewrite-datasinks --pe OSX --ExperimentConfig my_baw.config 00003
 
 """
@@ -174,6 +174,9 @@ def createAndRun(sessions, environment, experiment, pipeline, cluster):
             sessions = set(all_sessions)
         else:
             sessions = set(sessions)
+        print "!="*40
+        print("Doing sessions {0}".format(sessions))
+        print "!="*40
         for session in sessions:
             _dict = {}
             _dict['session'] = session
@@ -187,7 +190,7 @@ def createAndRun(sessions, environment, experiment, pipeline, cluster):
             workflow = create_singleSession(_dict, master_config, 'Linear', 'singleSession_{0}_{1}'.format(_dict['subject'], _dict['session']))
             print("Starting session {0}".format(session))
             # HACK Hard-coded to SGEGraph, but --wfrun is ignored completely
-            return run_workflow(workflow,plugin=master_config['plugin_name'], plugin_args=master_config['plugin_args'])
+            run_workflow(workflow,plugin=master_config['plugin_name'], plugin_args=master_config['plugin_args'])
     except:
         raise
     finally:

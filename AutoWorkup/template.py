@@ -263,9 +263,9 @@ def _template_runner(argv, environment, experiment, pipeline, cluster):
     dotfilename = argv['--dotfilename']
     if dotfilename is not None:
         print("WARNING: Printing workflow, but not running pipeline")
-        return print_workflow(template, plugin=pipeline['plugin_name'], dotfilename=dotfilename)
+        print_workflow(template, plugin=pipeline['plugin_name'], dotfilename=dotfilename)
     else:
-        return run_workflow(template, plugin=pipeline['plugin_name'], plugin_args=pipeline['plugin_args'])
+        run_workflow(template, plugin=pipeline['plugin_name'], plugin_args=pipeline['plugin_args'])
 
 if __name__ == '__main__':
     import sys

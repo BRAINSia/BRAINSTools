@@ -9,6 +9,7 @@ set(CMAKE_MODULE_PATH
   ${CMAKE_MODULE_PATH}
   )
 
+include(FindITKUtil)
 #-----------------------------------------------------------------------------
 if(BRAINSTools_REQUIRES_VTK)
 #  message("VTK_DIR:${VTK_DIR}")

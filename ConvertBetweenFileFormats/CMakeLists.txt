@@ -1,36 +1,9 @@
 #
 # ITK
 #
-set(ITK_IO_MODULES_USED
-  ITKIOBMP
-  ITKIOBioRad
-  ITKIOGIPL
-  ITKIOJPEG
-  ITKIOLSM
-  ITKIOMeta
-  ITKIONIFTI
-  ITKIONRRD
-  ITKIOPNG
-  ITKIOStimulate
-  ITKIOTIFF
-  ITKIOTransformInsightLegacy
-  ITKIOVTK
-  )
-find_package(ITK COMPONENTS
-  ITKCommon
-  ITKIOGDCM
-  ITKIOGE
-  ITKIOImageBase
-  ITKImageIntensity
+FindITKUtil(ITKImageIntensity
   ITKTestKernel
-  ITKVtkGlue
-  ${ITK_IO_MODULES_USED}
-  REQUIRED
-)
-if(Slicer_BUILD_BRAINSTOOLS)
-  set(ITK_NO_IO_FACTORY_REGISTER_MANAGER 1)
-endif()
-include(${ITK_USE_FILE})
+  ITKVtkGlue)
 
 # This project is intended to be built outside the Insight source tree
 project(ConvertBetweenFileFormats)

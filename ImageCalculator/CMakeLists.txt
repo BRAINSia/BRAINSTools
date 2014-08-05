@@ -8,26 +8,7 @@
 #
 # ITK
 #
-set(ITK_IO_MODULES_USED
-  ITKIOBMP
-  ITKIOBioRad
-  ITKIOGDCM
-  ITKIOGIPL
-  ITKIOJPEG
-  ITKIOLSM
-  ITKIOMeta
-  ITKIONIFTI
-  ITKIONRRD
-  ITKIOPNG
-  ITKIOStimulate
-  ITKIOTIFF
-  ITKIOTransformInsightLegacy
-  ITKIOVTK
-  )
-find_package(ITK COMPONENTS
-  ITKCommon
-  ITKDeprecated
-  ITKIOImageBase
+FindITKUtil(ITKDeprecated
   ITKImageCompare
   ITKImageFilterBase
   ITKImageGrid
@@ -35,14 +16,7 @@ find_package(ITK COMPONENTS
   ITKImageStatistics
   ITKSmoothing
   ITKTestKernel
-  ${ITK_IO_MODULES_USED}
-  REQUIRED
 )
-if(Slicer_BUILD_BRAINSTOOLS)
-  set(ITK_NO_IO_FACTORY_REGISTER_MANAGER 1)
-endif()
-include(${ITK_USE_FILE})
-
 add_executable(ImageCalculator
   ImageCalculator.cxx
   ImageCalculatorProcess2D.cxx

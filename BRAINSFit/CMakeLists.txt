@@ -8,26 +8,7 @@
 #
 # ITK
 #
-set(ITK_IO_MODULES_USED
-  ITKIOBMP
-  ITKIOBioRad
-  ITKIOGDCM
-  ITKIOGIPL
-  ITKIOJPEG
-  ITKIOLSM
-  ITKIOMeta
-  ITKIONIFTI
-  ITKIONRRD
-  ITKIOPNG
-  ITKIOStimulate
-  ITKIOTIFF
-  ITKIOTransformInsightLegacy
-  ITKIOVTK
-  )
-find_package(ITK COMPONENTS
-  ITKCommon
-  ITKIOImageBase
-  ITKIOTransformBase
+FindITKUtil(ITKIOImageBase
   ITKImageFilterBase
   ITKImageFunction
   ITKImageGrid
@@ -36,13 +17,16 @@ find_package(ITK COMPONENTS
   ITKSmoothing
   ITKSpatialObjects
   ITKTransform
-  ${ITK_IO_MODULES_USED}
-  REQUIRED
-)
-if(Slicer_BUILD_BRAINSTOOLS)
-  set(ITK_NO_IO_FACTORY_REGISTER_MANAGER 1)
-endif()
-include(${ITK_USE_FILE})
+  ITKSmoothing
+  ITKVNL
+  ITKKWSys
+  ITKImageCompare
+  ITKMathematicalMorphology
+  ITKImageLabel
+  ITKRegistrationMethodsv4
+  ITKDistanceMap
+  ITKRegionGrowing
+  ITKTestKernel)
 
 #-----------------------------------------------------------------------------
 # Output directories.

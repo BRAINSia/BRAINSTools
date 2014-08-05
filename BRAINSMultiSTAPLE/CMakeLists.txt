@@ -1,3 +1,7 @@
+FindITKUtil(ITKImageCompare
+  ITKLabelVoting
+  ITKTestKernel
+  )
 StandardBRAINSBuildMacro( NAME BRAINSMultiSTAPLE
   TARGET_LIBRARIES BRAINSCommonLib ${ITK_LIBRARIES} )
 

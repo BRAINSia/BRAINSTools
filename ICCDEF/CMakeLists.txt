@@ -8,24 +8,7 @@
 #
 # ITK
 #
-set(ITK_IO_MODULES_USED
-  ITKIOBMP
-  ITKIOBioRad
-  ITKIOGDCM
-  ITKIOGIPL
-  ITKIOJPEG
-  ITKIOLSM
-  ITKIONIFTI
-  ITKIONRRD
-  ITKIOPNG
-  ITKIOStimulate
-  ITKIOTIFF
-  ITKIOTransformInsightLegacy
-  ITKIOVTK
-  )
-find_package(ITK COMPONENTS
-  ITKCommon
-  ITKDeprecated
+FindITKUtil(ITKDeprecated
   ITKDisplacementField
   ITKDistanceMap
   ITKFFT
@@ -47,14 +30,7 @@ find_package(ITK COMPONENTS
   ITKSpatialObjects
   ITKThresholding
   ITKTransform
-  ITKV3Compatibility
-  ${ITK_IO_MODULES_USED}
-  REQUIRED
-)
-if(Slicer_BUILD_BRAINSTOOLS)
-  set(ITK_NO_IO_FACTORY_REGISTER_MANAGER 1)
-endif()
-include(${ITK_USE_FILE})
+  ITKV3Compatibility)
 
 #-------------------------------------------------------------------------------
 # OUTPUT DIRECTORIES

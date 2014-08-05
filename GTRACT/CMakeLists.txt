@@ -8,30 +8,12 @@ project( GTRACT )
 #
 # ITK
 #
-set(ITK_IO_MODULES_USED
-  ITKIOBMP
-  ITKIOBioRad
-  ITKIOGIPL
-  ITKIOJPEG
-  ITKIOLSM
-  ITKIONIFTI
-  ITKIOPNG
-  ITKIOStimulate
-  ITKIOTIFF
-  ITKIOTransformInsightLegacy
-  ITKIOVTK
-  )
-find_package(ITK COMPONENTS
-  ITKCommon
-  ITKDeprecated
+FindITKUtil(ITKDeprecated
+  ITKOptimizersv4
+  ITKMetricsv4
+  ITKRegistrationMethodsv4
   ITKDiffusionTensorImage
   ITKFastMarching
-  ITKIOGDCM
-  ITKIOImageBase
-  ITKIOMeta
-  ITKIONRRD
-  ITKIOSpatialObjects
-  ITKIOTransformBase
   ITKImageAdaptors
   ITKImageCompose
   ITKImageFilterBase
@@ -46,15 +28,8 @@ find_package(ITK COMPONENTS
   ITKStatistics
   ITKThresholding
   ITKTransform
-  ITKV3Compatibility
-  ITKVTK
-  ${ITK_IO_MODULES_USED}
-  REQUIRED
-)
-if(Slicer_BUILD_BRAINSTOOLS)
-  set(ITK_NO_IO_FACTORY_REGISTER_MANAGER 1)
-endif()
-include(${ITK_USE_FILE})
+  ITKV3Compatibility)
+
 
 #-----------------------------------------------------------------------------
 # Output directories.

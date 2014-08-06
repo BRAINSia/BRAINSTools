@@ -219,6 +219,7 @@ set(brains_modulenames
                   ##       This builds just fine with ITKv3/4, but test cases need
                   ##       further review before trusting it.
   ##TODO: KENT:  This is broken with latest builds,  I think something in ITKv4 changed slightly, or VTK6 compatibility -->BRAINSSurfaceTools
+  BRAINSSurfaceTools
   ICCDEF
   BRAINSContinuousClass
   BRAINSPosteriorToContinuousClass

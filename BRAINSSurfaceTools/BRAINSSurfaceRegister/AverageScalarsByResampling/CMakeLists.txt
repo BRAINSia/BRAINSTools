@@ -1,4 +1,5 @@
-StandardBRAINSBuildMacro(NAME AverageScalarsByResampling TARGET_LIBRARIES BRAINSCommonLib ${VTK_LIBRARIES})
+StandardBRAINSBuildMacro(NAME AverageScalarsByResampling TARGET_LIBRARIES BRAINSCommonLib ${VTK_LIBRARIES}
+  ${ITK_LIBRARIES})
 
 if (BUILD_TESTING)
 

@@ -1,2 +1,3 @@
-StandardBRAINSBuildMacro(NAME CompareSurfaces TARGET_LIBRARIES BRAINSCommonLib ${VTK_LIBRARIES})
+StandardBRAINSBuildMacro(NAME CompareSurfaces TARGET_LIBRARIES BRAINSCommonLib ${VTK_LIBRARIES}
+  ${ITK_LIBRARIES})
 

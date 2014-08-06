@@ -1,4 +1,5 @@
-StandardBRAINSBuildMacro(NAME QuadEdgeMeshPiecewiseRescale TARGET_LIBRARIES BRAINSCommonLib ${VTK_LIBRARIES})
+StandardBRAINSBuildMacro(NAME QuadEdgeMeshPiecewiseRescale TARGET_LIBRARIES BRAINSCommonLib ${VTK_LIBRARIES}
+  ${ITK_LIBRARIES})
 
 if (BUILD_TESTING)
 

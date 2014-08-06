@@ -6,16 +6,10 @@
 # ITK
 #
 FindITKUtil(
-  # ITKDeprecated
-  # ITKIOGDCM
-  # ITKIOGE
-  # ITKIOImageBase
-  # ITKImageGrid
-  # ITKImageIntensity
-  # ITKMesh
-  # ITKOptimizers
-  # ITKQuadEdgeMesh
-  # ITKQuadEdgeMeshFiltering
+  ITKDeprecated
+  ITKQuadEdgeMesh
+  ITKOptimizers
+  ITKQuadEdgeMeshFiltering
   # ITKSpatialObjects
   # ITKStatistics
   # ITKTransform

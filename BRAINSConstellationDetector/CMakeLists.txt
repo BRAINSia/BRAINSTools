@@ -8,27 +8,23 @@
 #
 # ITK
 #
-FindITKUtil(ITKHDF5
-  ITKRegistrationMethodsv4
-  ITKDistanceMap
-  ITKImageFilterBase
-  ITKImageFunction
-  ITKImageFusion
-  ITKImageGrid
-  ITKImageIntensity
-  ITKImageStatistics
-  ITKRegistrationCommon
-  ITKSmoothing
-  ITKSpatialObjects
-  ITKStatistics
+FindITKUtil(
   ITKThresholding
   ITKImageCompare
-  ITKTransform
-  ITKOptimizersv4
-  ITKMetricsv4
+  ITKRegistrationCommon
+  ITKSmoothing
+  ITKConnectedComponents
+  ITKMathematicalMorphology
+  ITKBinaryMathematicalMorphology
+  ITKDistanceMap
   ITKRegionGrowing
+  ITKImageCompare
+  ITKOptimizersv4
+  ITKRegistrationMethodsv4
+  ITKVTK
+  ITKVtkGlue
   ITKTestKernel
-  ITKVtkGlue)
+)
 
 #-----------------------------------------------------------------------------
 # Output directories.

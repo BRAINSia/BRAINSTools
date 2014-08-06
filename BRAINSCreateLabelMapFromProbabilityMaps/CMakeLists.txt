@@ -6,7 +6,7 @@
 #
 # ITK
 #
-FindITKUtil(ITKIOImageBase)
+FindITKUtil(ITKImageCompare ITKTestKernel)
 
 StandardBRAINSBuildMacro( NAME BRAINSCreateLabelMapFromProbabilityMaps TARGET_LIBRARIES BRAINSCommonLib ${ITK_LIBRARIES})
 

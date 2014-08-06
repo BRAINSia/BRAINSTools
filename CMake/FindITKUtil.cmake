@@ -38,6 +38,9 @@ macro(FindITKUtil)
     ITKIOVTK
     ITKIOSpatialObjects
     ITKIOTransformBase
+    ITKIOHDF5
+    ITKIOTransformMatlab
+    ITKIOTransformHDF5
     ITKIOGE
     ${FindITK_MGHIO}
     # other modules specific to the current directory

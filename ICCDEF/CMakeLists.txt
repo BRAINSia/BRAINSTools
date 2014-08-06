@@ -8,29 +8,44 @@
 #
 # ITK
 #
-FindITKUtil(ITKDeprecated
-  ITKDisplacementField
-  ITKDistanceMap
-  ITKFFT
-  ITKIOImageBase
-  ITKIOMeta
-  ITKIOSpatialObjects
-  ITKIOTransformBase
+FindITKUtil(
   ITKImageCompare
-  ITKImageFeature
-  ITKImageFilterBase
-  ITKImageFunction
-  ITKImageGrid
-  ITKImageIntensity
-  ITKImageStatistics
+  ITKFFT
+  ITKConnectedComponents
+  ITKMathematicalMorphology
+  ITKBinaryMathematicalMorphology
+  ITKRegionGrowing
   ITKPDEDeformableRegistration
-  ITKRegistrationCommon
-  ITKReview
+  ITKRegionGrowing
   ITKSmoothing
-  ITKSpatialObjects
+  ITKDeprecated
+  ITKRegistrationCommon
   ITKThresholding
-  ITKTransform
-  ITKV3Compatibility)
+  ITKImageFeature
+  ITKV3Compatibility
+  ITKSmoothing
+  ITKLevelSets
+  ITKReview
+  # ITKDeprecated
+  # ITKDisplacementField
+  # ITKDistanceMap
+  # ITKFFT
+  # ITKIOImageBase
+  # ITKIOMeta
+  # ITKIOSpatialObjects
+  # ITKIOTransformBase
+  # ITKImageFeature
+  # ITKImageFilterBase
+  # ITKImageFunction
+  # ITKImageGrid
+  # ITKImageIntensity
+  # ITKImageStatistics
+  # ITKPDEDeformableRegistration
+  # ITKRegistrationCommon
+  # ITKReview
+  # ITKSpatialObjects
+  # ITKTransform
+)
 
 #-------------------------------------------------------------------------------
 # OUTPUT DIRECTORIES

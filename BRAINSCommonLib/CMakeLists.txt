@@ -8,34 +8,22 @@ project(BRAINSCommonLib)
 #
 # ITK
 #
-FindITKUtil(ITKBinaryMathematicalMorphology
-  ITKConnectedComponents
-  ITKDeprecated
-  ITKDisplacementField
+FindITKUtil(
+  ITKImageLabel
   ITKDistanceMap
-  ITKImageCompare
-  ITKImageFilterBase
-  ITKImageFunction
-  ITKImageGrid
-  ITKImageIntensity
-  ITKImageStatistics
-  ITKLabelMap
   ITKLabelVoting
-  ITKLevelSets
+  ITKConnectedComponents
   ITKMathematicalMorphology
-  ITKMetricsv4
-  ITKOptimizersv4
-  ITKPDEDeformableRegistration
-  ITKRegionGrowing
+  ITKBinaryMathematicalMorphology
+  ITKThresholding
+  ITKImageCompare
+  ITKSmoothing
   ITKRegistrationCommon
   ITKRegistrationMethodsv4
-  ITKSmoothing
-  ITKSpatialObjects
-  ITKStatistics
-  ITKTestKernel
-  ITKThresholding
-  ITKTransform
-  ITKV3Compatibility)
+  ITKMetricsv4
+  ITKOptimizersv4
+  ITKRegionGrowing
+)
 
 #-----------------------------------------------------------------------------
 # Output directories.

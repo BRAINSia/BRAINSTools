@@ -31,7 +31,7 @@
 #include "itkLabelStatisticsImageFilter.h"
 #include "itkPDEDeformableRegistrationFilter.h"
 #include "itkSpatialObjectReader.h"
-
+#include "BRAINSCommonLib.h"
 // #include "itkBrains2MaskImageIOFactory.h"
 #ifdef USE_DEBUG_IMAGE_VIEWER
 #include "DebugImageViewerClient.h"

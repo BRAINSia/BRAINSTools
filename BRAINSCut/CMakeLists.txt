@@ -8,31 +8,27 @@
 #
 # ITK
 #
-FindITKUtil(ITKConnectedComponents
+FindITKUtil(
+  ITKConnectedComponents
+  ITKDistanceMap
+  ITKImageGradient
+  ITKMathematicalMorphology
+  ITKBinaryMathematicalMorphology
+  ITKThresholding
+  ITKRegionGrowing
+  ITKImageFeature
+  ITKLevelSets
+  ITKAnisotropicSmoothing
+  ITKFastMarching
+  ITKSmoothing
+  ITKLabelVoting
+  ITKImageCompare
+  ITKRegistrationCommon
   ITKOptimizersv4
   ITKMetricsv4
   ITKRegistrationMethodsv4
-  ITKDisplacementField
-  ITKDistanceMap
-  ITKFastMarching
-  ITKImageCompare
-  ITKImageFeature
-  ITKImageFilterBase
-  ITKImageFunction
-  ITKImageGradient
-  ITKImageGrid
-  ITKImageIntensity
-  ITKImageStatistics
-  ITKLabelMap
-  ITKLabelVoting
-  ITKLevelSets
-  ITKMathematicalMorphology
   ITKReview
-  ITKSmoothing
-  ITKSpatialObjects
-  ITKStatistics
-  ITKThresholding
-  ITKTransform)
+)
 
 #
 # OpenCV

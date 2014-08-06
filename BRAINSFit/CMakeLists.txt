@@ -8,25 +8,22 @@
 #
 # ITK
 #
-FindITKUtil(ITKIOImageBase
-  ITKImageFilterBase
-  ITKImageFunction
-  ITKImageGrid
+FindITKUtil(
   ITKMetricsv4
-  ITKOptimizers
+  ITKOptimizersv4
   ITKSmoothing
-  ITKSpatialObjects
-  ITKTransform
-  ITKSmoothing
-  ITKVNL
-  ITKKWSys
+  ITKConnectedComponents
+  ITKThresholding
   ITKImageCompare
   ITKMathematicalMorphology
+  ITKBinaryMathematicalMorphology
   ITKImageLabel
   ITKRegistrationMethodsv4
   ITKDistanceMap
   ITKRegionGrowing
-  ITKTestKernel)
+  ITKRegistrationCommon
+  ITKTestKernel
+)
 
 #-----------------------------------------------------------------------------
 # Output directories.

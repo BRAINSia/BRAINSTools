@@ -102,6 +102,10 @@ public:
     {
     }
 
+    Item(int x) : m_Face( 0 ), m_Value( -1. ), m_Cluster( x )
+    {
+    }
+
     ~Item()
     {
     }

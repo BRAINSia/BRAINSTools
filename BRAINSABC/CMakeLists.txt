@@ -8,6 +8,11 @@
 # ITK
 #
 FindITKUtil(ITKAnisotropicSmoothing
+  ITKDistanceMap
+  ITKOptimizersv4
+  ITKMetricsv4
+  ITKRegistrationMethodsv4
+  ITKRegionGrowing
   ITKBinaryMathematicalMorphology
   ITKConnectedComponents
   ITKCurvatureFlow
@@ -22,7 +27,8 @@ FindITKUtil(ITKAnisotropicSmoothing
   ITKStatistics
   ITKTestKernel
   ITKThresholding
-  ITKTransform)
+  ITKTransform
+  ITKImageCompare)
 
 #-----------------------------------------------------------------------------
 # Output directories.

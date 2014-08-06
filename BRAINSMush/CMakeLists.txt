@@ -1,4 +1,23 @@
+
 ##- project(BRAINSMush)
+
+#-----------------------------------------------------------------------------
+# Dependencies.
+#
+
+#
+# ITK
+#
+FindITKUtil(ITKBinaryMathematicalMorphology
+  ITKCommon
+  ITKConnectedComponents
+  ITKIOImageBase
+  ITKImageStatistics
+  ITKMathematicalMorphology
+  ITKOptimizers
+  ITKRegionGrowing
+  ITKThresholding)
+
 #-----------------------------------------------------------------------------
 # Output directories.
 #

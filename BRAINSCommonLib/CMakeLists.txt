@@ -1,4 +1,29 @@
+
 project(BRAINSCommonLib)
+
+#-----------------------------------------------------------------------------
+# Dependencies.
+#
+
+#
+# ITK
+#
+FindITKUtil(
+  ITKImageLabel
+  ITKDistanceMap
+  ITKLabelVoting
+  ITKConnectedComponents
+  ITKMathematicalMorphology
+  ITKBinaryMathematicalMorphology
+  ITKThresholding
+  ITKImageCompare
+  ITKSmoothing
+  ITKRegistrationCommon
+  ITKRegistrationMethodsv4
+  ITKMetricsv4
+  ITKOptimizersv4
+  ITKRegionGrowing
+)
 
 #-----------------------------------------------------------------------------
 # Output directories.

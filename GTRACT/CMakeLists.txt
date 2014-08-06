@@ -1,4 +1,36 @@
+
 project( GTRACT )
+
+#-----------------------------------------------------------------------------
+# Dependencies.
+#
+
+#
+# ITK
+#
+FindITKUtil(ITKDeprecated
+  ITKOptimizersv4
+  ITKMetricsv4
+  ITKRegistrationMethodsv4
+  ITKDiffusionTensorImage
+  ITKFastMarching
+  ITKImageAdaptors
+  ITKImageCompose
+  ITKImageFilterBase
+  ITKImageFunction
+  ITKImageGrid
+  ITKImageIntensity
+  ITKImageStatistics
+  ITKOptimizers
+  ITKRegistrationCommon
+  ITKSmoothing
+  ITKSpatialObjects
+  ITKStatistics
+  ITKThresholding
+  ITKTransform
+  ITKV3Compatibility)
+
+
 #-----------------------------------------------------------------------------
 # Output directories.
 #

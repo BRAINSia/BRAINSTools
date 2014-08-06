@@ -1,5 +1,38 @@
+
 ##- project(BRAINSCut)
 
+#-----------------------------------------------------------------------------
+# Dependencies.
+#
+
+#
+# ITK
+#
+FindITKUtil(
+  ITKConnectedComponents
+  ITKDistanceMap
+  ITKImageGradient
+  ITKMathematicalMorphology
+  ITKBinaryMathematicalMorphology
+  ITKThresholding
+  ITKRegionGrowing
+  ITKImageFeature
+  ITKLevelSets
+  ITKAnisotropicSmoothing
+  ITKFastMarching
+  ITKSmoothing
+  ITKLabelVoting
+  ITKImageCompare
+  ITKRegistrationCommon
+  ITKOptimizersv4
+  ITKMetricsv4
+  ITKRegistrationMethodsv4
+  ITKReview
+)
+
+#
+# OpenCV
+#
 message(STATUS "BRAINSCut OpenCV_DIR = ${OpenCV_DIR}")
 find_package( OpenCV REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})

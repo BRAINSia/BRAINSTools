@@ -1,6 +1,7 @@
 StandardBRAINSBuildMacro(NAME SurfaceLabelCleanUp
   ADDITIONAL_SRCS vtkMaskLabel.cxx vtkPolyDataConnectivityIDFilter.cxx
-  TARGET_LIBRARIES BRAINSCommonLib ${VTK_LIBRARIES})
+  TARGET_LIBRARIES BRAINSCommonLib ${VTK_LIBRARIES}
+  ${ITK_LIBRARIES})
 
 if (BUILD_TESTING)
 

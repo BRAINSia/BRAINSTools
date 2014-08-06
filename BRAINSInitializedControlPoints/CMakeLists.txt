@@ -1,7 +1,20 @@
+
 ##- project(BRAINSInitializedControlPoints)
+
+#-----------------------------------------------------------------------------
+# Dependencies.
+#
+
+#
+# ITK
+#
+FindITKUtil(ITKImageGrid
+  ITKTransform)
+
 #-----------------------------------------------------------------------------
 # Output directories.
 #
+
 ###
 set(ALL_PROGS_LIST
   BRAINSInitializedControlPoints

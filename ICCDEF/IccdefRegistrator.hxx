@@ -120,7 +120,7 @@ IccdefRegistrator<TRealImage, TOutputImage, TFieldValue>::IccdefRegistrator()
   this->m_MovingImagePyramid = MovingImagePyramidType::New();
   this->m_MovingImagePyramid->UseShrinkImageFilterOff();
   this->m_Registration = RegistrationType::New();
-  registration->InPlaceOn();
+  m_Registration->InPlaceOn();
 
 //  this->m_Registration->SetFixedImagePyramid (this->m_FixedImagePyramid);
 //  this->m_Registration->SetMovingImagePyramid (this->m_MovingImagePyramid);

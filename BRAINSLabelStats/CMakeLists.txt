@@ -1,4 +1,15 @@
+
 ##- project(BRAINSLabelStats)
+
+#-----------------------------------------------------------------------------
+# Dependencies.
+#
+
+#
+# ITK
+#
+FindITKUtil(ITKImageStatistics ITKIOXML)
+
 #-----------------------------------------------------------------------------
 # Output directories.
 #

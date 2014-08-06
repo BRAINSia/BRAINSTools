@@ -1,4 +1,20 @@
-project (DWIConvert)
+
+project(DWIConvert)
+
+#-----------------------------------------------------------------------------
+# Dependencies.
+#
+
+#
+# ITK
+#
+FindITKUtil(ITKImageIntensity
+  ITKImageStatistics
+  ITKTestKernel
+  ITKIODCMTK
+  ITKIORAW
+  ITKDCMTK
+)
 
 #-----------------------------------------------------------------------------
 enable_testing()

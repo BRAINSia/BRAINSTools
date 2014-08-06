@@ -1,3 +1,10 @@
+#
+# ITK
+#
+FindITKUtil(ITKImageIntensity
+  ITKTestKernel
+  ITKVtkGlue)
+
 # This project is intended to be built outside the Insight source tree
 project(ConvertBetweenFileFormats)
 

@@ -1,4 +1,31 @@
+
 ##- project(BRAINSConstellationDetector)
+
+#-----------------------------------------------------------------------------
+# Dependencies.
+#
+
+#
+# ITK
+#
+FindITKUtil(
+  ITKThresholding
+  ITKImageCompare
+  ITKRegistrationCommon
+  ITKSmoothing
+  ITKConnectedComponents
+  ITKMathematicalMorphology
+  ITKBinaryMathematicalMorphology
+  ITKDistanceMap
+  ITKRegionGrowing
+  ITKImageCompare
+  ITKOptimizersv4
+  ITKRegistrationMethodsv4
+  ITKVTK
+  ITKVtkGlue
+  ITKTestKernel
+)
+
 #-----------------------------------------------------------------------------
 # Output directories.
 #

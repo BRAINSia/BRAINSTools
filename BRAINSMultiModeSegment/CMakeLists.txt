@@ -1,7 +1,25 @@
+
 ##- project(BRAINSMultiModeSegment)
+
+#-----------------------------------------------------------------------------
+# Dependencies.
+#
+
+#
+# ITK
+#
+FindITKUtil(ITKImageIntensity
+  ITKBinaryMathematicalMorphology
+  ITKConnectedComponents
+  ITKMathematicalMorphology
+  ITKRegionGrowing
+  ITKImageCompare
+  ITKThresholding)
+
 #-----------------------------------------------------------------------------
 # Output directories.
 #
+
 ###
 set(ALL_PROGS_LIST
   BRAINSMultiModeSegment

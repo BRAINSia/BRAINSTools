@@ -1,4 +1,26 @@
+
 ##- project(BRAINSResample)
+
+#-----------------------------------------------------------------------------
+# Dependencies.
+#
+
+#
+# ITK
+#
+FindITKUtil(ITKDisplacementField
+  ITKDeprecated
+  ITKDistanceMap
+  ITKImageFunction
+  ITKImageGrid
+  ITKImageIntensity
+  ITKImageSources
+  ITKImageStatistics
+  ITKThresholding
+  ITKTransform
+  ITKImageCompare
+)
+
 #-----------------------------------------------------------------------------
 # Output directories.
 #

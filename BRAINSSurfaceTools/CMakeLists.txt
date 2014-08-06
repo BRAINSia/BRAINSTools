@@ -1,3 +1,20 @@
+#-----------------------------------------------------------------------------
+# Dependencies.
+#
+
+#
+# ITK
+#
+FindITKUtil(
+  ITKDeprecated
+  ITKQuadEdgeMesh
+  ITKOptimizers
+  ITKQuadEdgeMeshFiltering
+  # ITKSpatialObjects
+  # ITKStatistics
+  # ITKTransform
+)
+
 include_directories(${CMAKE_CURRENT_LIST_DIR}/BRAINSSurfaceCommon)
 
 add_subdirectory(BRAINSAssignSurfaceFeatures)

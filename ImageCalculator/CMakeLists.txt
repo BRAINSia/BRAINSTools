@@ -1,5 +1,22 @@
+
 ##- project(ImageCalculator)
 
+#-----------------------------------------------------------------------------
+# Dependencies.
+#
+
+#
+# ITK
+#
+FindITKUtil(ITKDeprecated
+  ITKImageCompare
+  ITKImageFilterBase
+  ITKImageGrid
+  ITKImageIntensity
+  ITKImageStatistics
+  ITKSmoothing
+  ITKTestKernel
+)
 add_executable(ImageCalculator
   ImageCalculator.cxx
   ImageCalculatorProcess2D.cxx

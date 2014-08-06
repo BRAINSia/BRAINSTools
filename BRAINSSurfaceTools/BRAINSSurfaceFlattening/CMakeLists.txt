@@ -1,5 +1,6 @@
 
-StandardBRAINSBuildMacro(NAME BRAINSSurfaceFlattening TARGET_LIBRARIES BRAINSCommonLib)
+StandardBRAINSBuildMacro(NAME BRAINSSurfaceFlattening TARGET_LIBRARIES BRAINSCommonLib
+  ${ITK_LIBRARIES})
 
 if (BUILD_TESTING)
 

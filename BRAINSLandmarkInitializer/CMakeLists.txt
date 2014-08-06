@@ -1,8 +1,22 @@
+
 ##- project(BRAINSLandmarkInitializer)
+
+#-----------------------------------------------------------------------------
+# Dependencies.
+#
+
+#
+# ITK
+#
+FindITKUtil(ITKThresholding
+  ITKDistanceMap
+  ITKImageCompare
+  ITKTransform)
+
 #-----------------------------------------------------------------------------
 # Output directories.
 #
-###
+#
 set(ALL_PROGS_LIST
   BRAINSLandmarkInitializer
   )

@@ -1,4 +1,18 @@
+
 ##- project(BRAINSTransformConvert)
+
+#-----------------------------------------------------------------------------
+# Dependencies.
+#
+
+#
+# ITK
+#
+FindITKUtil(ITKTransform
+  ITKImageCompare
+  ITKThresholding
+  ITKDistanceMap)
+
 #-----------------------------------------------------------------------------
 # Output directories.
 #

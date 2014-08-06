@@ -1,7 +1,26 @@
+
 ##- project(BRAINSSnapShotWriter)
+
+#-----------------------------------------------------------------------------
+# Dependencies.
+#
+
+#
+# ITK
+#
+FindITKUtil(ITKIOImageBase
+  ITKImageCompose
+  ITKImageFilterBase
+  ITKImageFusion
+  ITKImageGrid
+  ITKImageIntensity
+  ITKTestKernel
+)
+
 #-----------------------------------------------------------------------------
 # Output directories.
 #
+
 ###
 set(ALL_PROGS_LIST
   BRAINSSnapShotWriter

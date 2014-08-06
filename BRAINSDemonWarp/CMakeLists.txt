@@ -1,4 +1,32 @@
+
 ##- project(BRAINSDemonWarp)
+
+#-----------------------------------------------------------------------------
+# Dependencies.
+#
+
+#
+# ITK
+#
+findITKUtil(ITKDisplacementField
+  ITKIOImageBase
+  ITKIOMeta
+  ITKImageAdaptors
+  ITKImageCompare
+  ITKImageCompose
+  ITKImageFunction
+  ITKImageGrid
+  ITKImageIntensity
+  ITKImageStatistics
+  ITKPDEDeformableRegistration
+  ITKRegistrationCommon
+  ITKReview
+  ITKSmoothing
+  ITKSpatialObjects
+  ITKTransform
+  ITKDeprecated
+  ITKV3Compatibility)
+
 #-----------------------------------------------------------------------------
 # Output directories.
 #

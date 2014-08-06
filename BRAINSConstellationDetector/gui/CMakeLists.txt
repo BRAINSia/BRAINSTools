@@ -68,7 +68,8 @@ endif()
   target_link_libraries( BRAINSConstellationDetectorGUICOMMONLIB
  BRAINSCommonLib
  ${LOCAL_VTK_QVTK_LIB}
-  ${QT_LIBRARIES}
+ ${QT_LIBRARIES}
+ ${ITK_LIBRARIES}
  # BRAINSConstellationDetectorCOMMONLIB
  ${VTK_LIBRARIES}
   )

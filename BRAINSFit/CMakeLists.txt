@@ -1,4 +1,30 @@
+
 ##- project(BRAINSFit)
+
+#-----------------------------------------------------------------------------
+# Dependencies.
+#
+
+#
+# ITK
+#
+FindITKUtil(
+  ITKMetricsv4
+  ITKOptimizersv4
+  ITKSmoothing
+  ITKConnectedComponents
+  ITKThresholding
+  ITKImageCompare
+  ITKMathematicalMorphology
+  ITKBinaryMathematicalMorphology
+  ITKImageLabel
+  ITKRegistrationMethodsv4
+  ITKDistanceMap
+  ITKRegionGrowing
+  ITKRegistrationCommon
+  ITKTestKernel
+)
+
 #-----------------------------------------------------------------------------
 # Output directories.
 #

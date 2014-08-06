@@ -1,4 +1,23 @@
+
 ##- project(BRAINSROIAuto)
+
+#-----------------------------------------------------------------------------
+# Dependencies.
+#
+
+#
+# ITK
+#
+FindITKUtil(ITKImageIntensity
+  ITKMathematicalMorphology
+  ITKBinaryMathematicalMorphology
+  ITKConnectedComponents
+  ITKRegionGrowing
+  ITKThresholding
+  ITKSpatialObjects
+  ITKImageCompare
+  ITKTestKernel)
+
 #-----------------------------------------------------------------------------
 # Output directories.
 #

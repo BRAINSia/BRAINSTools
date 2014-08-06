@@ -1,4 +1,7 @@
-StandardBRAINSBuildMacro(NAME BRAINSAssignSurfaceFeatures TARGET_LIBRARIES BRAINSCommonLib ${VTK_LIBRARIES})
+StandardBRAINSBuildMacro(NAME BRAINSAssignSurfaceFeatures
+  TARGET_LIBRARIES BRAINSCommonLib
+  ${ITK_LIBRARIES}
+  ${VTK_LIBRARIES})
 
 if (BUILD_TESTING)
 

@@ -1,4 +1,51 @@
+
 ##- project(iccdefRegistrationNew)
+
+#-----------------------------------------------------------------------------
+# Dependencies.
+#
+
+#
+# ITK
+#
+FindITKUtil(
+  ITKImageCompare
+  ITKFFT
+  ITKConnectedComponents
+  ITKMathematicalMorphology
+  ITKBinaryMathematicalMorphology
+  ITKRegionGrowing
+  ITKPDEDeformableRegistration
+  ITKRegionGrowing
+  ITKSmoothing
+  ITKDeprecated
+  ITKRegistrationCommon
+  ITKThresholding
+  ITKImageFeature
+  ITKV3Compatibility
+  ITKSmoothing
+  ITKLevelSets
+  ITKReview
+  # ITKDeprecated
+  # ITKDisplacementField
+  # ITKDistanceMap
+  # ITKFFT
+  # ITKIOImageBase
+  # ITKIOMeta
+  # ITKIOSpatialObjects
+  # ITKIOTransformBase
+  # ITKImageFeature
+  # ITKImageFilterBase
+  # ITKImageFunction
+  # ITKImageGrid
+  # ITKImageIntensity
+  # ITKImageStatistics
+  # ITKPDEDeformableRegistration
+  # ITKRegistrationCommon
+  # ITKReview
+  # ITKSpatialObjects
+  # ITKTransform
+)
 
 #-------------------------------------------------------------------------------
 # OUTPUT DIRECTORIES

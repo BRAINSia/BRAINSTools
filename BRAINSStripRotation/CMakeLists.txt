@@ -1,4 +1,15 @@
+
 project(BRAINSStripRotation)
+
+#-----------------------------------------------------------------------------
+# Dependencies.
+#
+
+#
+# ITK
+#
+FindITKUtil(ITKTransform
+  ITKImageCompare)
 
 set(prog BRAINSStripRotation)
 

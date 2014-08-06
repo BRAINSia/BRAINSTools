@@ -1,3 +1,11 @@
+#-----------------------------------------------------------------------------
+# Dependencies.
+#
+
+#
+# ITK
+#
+FindITKUtil(ITKTestKernel)
 
 set(ALL_PROGS_LIST
   BRAINSPosteriorToContinuousClass

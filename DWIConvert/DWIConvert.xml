@@ -56,6 +56,13 @@
   <parameters>
     <label>NiftiFSL To Nrrd Conversion Parameters</label>
     <description><![CDATA[NiftiFSL To Nrrd Conversion Parameters]]></description>
+    <file>
+      <name>fslNIFTIFile</name>
+      <longflag>--fslNIFTIFile</longflag>
+      <label>FSL NIfTI File</label>
+      <channel>input</channel>
+      <description><![CDATA[4D NIfTI file containing gradient volumes]]></description>
+    </file>
     <file fileExtensions=".bval">
       <name>inputBValues</name>
       <longflag>--inputBValues</longflag>

@@ -423,6 +423,7 @@ void PrintVec(const std::vector<TVal> & vec)
 
 extern int FSLToNrrd(const std::string & inputVolume,
                      const std::string & outputVolume,
+                     const std::string & fslNIFTIFile,
                      const std::string & inputBValues,
                      const std::string & inputBVectors);
 

@@ -36,10 +36,12 @@ typedef itk::VectorImage<PixelValueType, 3> VectorVolumeType;
 int
 FSLToNrrd(const std::string & inputVolume,
           const std::string & outputVolume,
+          const std::string & fslNIFTIFile,
           const std::string & inputBValues,
           const std::string & inputBVectors)
 {
-  if( CheckArg<std::string>("Input Volume", inputVolume, "") == EXIT_FAILURE ||
+  if( (CheckArg<std::string>("Input Volume", inputVolume, "") == EXIT_FAILURE &&
+       CheckArg<std::string>("Input Volume", fslNIFTIFile, "") == EXIT_FAILURE) ||
       CheckArg<std::string>("Output Volume", outputVolume, "") == EXIT_FAILURE)
     {
     return EXIT_FAILURE;
@@ -58,7 +60,14 @@ FSLToNrrd(const std::string & inputVolume,
     }
 
   VolumeType::Pointer inputVol;
-  if( ReadVolume<VolumeType>(inputVol, inputVolume) != EXIT_SUCCESS )
+  if(fslNIFTIFile.size() > 0)
+    {
+    if( ReadVolume<VolumeType>(inputVol, fslNIFTIFile) != EXIT_SUCCESS )
+      {
+      return EXIT_FAILURE;
+      }
+    }
+  else if( inputVolume.size() == 0 || ReadVolume<VolumeType>(inputVol, inputVolume) != EXIT_SUCCESS )
     {
     return EXIT_FAILURE;
     }

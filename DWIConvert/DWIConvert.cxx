@@ -171,7 +171,7 @@ int main(int argc, char *argv[])
   // for gradients and b values plus a NIfTI file for the gradient volumes.
   if( conversionMode == "FSLToNrrd" )
     {
-    return FSLToNrrd(inputVolume, outputVolume,
+    return FSLToNrrd(inputVolume, outputVolume,fslNIFTIFile,
                      inputBValues, inputBVectors);
     }
   // make FSL file set from a NRRD file.

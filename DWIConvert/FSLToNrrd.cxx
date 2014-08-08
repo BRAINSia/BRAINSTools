@@ -46,31 +46,37 @@ FSLToNrrd(const std::string & inputVolume,
     {
     return EXIT_FAILURE;
     }
-  std::string _inputBValues = inputBValues;
-  if( CheckArg<std::string>("B Values", inputBValues, "") == EXIT_FAILURE )
-    {
-    _inputBValues = itksys::SystemTools::GetFilenameWithoutExtension(inputVolume) +
-      ".bval";
-    }
-  std::string _inputBVectors = inputBVectors;
-  if( CheckArg<std::string>("B Vectors", inputBVectors, "") == EXIT_FAILURE )
-    {
-    _inputBVectors = itksys::SystemTools::GetFilenameWithoutExtension(inputVolume) +
-      ".bvec";
-    }
 
   VolumeType::Pointer inputVol;
+
+  // string to use as template if no bval or bvec filename is given.
+  std::string inputVolumeNameTemplate = inputVolume;
   if(fslNIFTIFile.size() > 0)
     {
     if( ReadVolume<VolumeType>(inputVol, fslNIFTIFile) != EXIT_SUCCESS )
       {
       return EXIT_FAILURE;
       }
+    inputVolumeNameTemplate = fslNIFTIFile;
     }
   else if( inputVolume.size() == 0 || ReadVolume<VolumeType>(inputVol, inputVolume) != EXIT_SUCCESS )
     {
     return EXIT_FAILURE;
     }
+
+  std::string _inputBValues = inputBValues;
+  if( CheckArg<std::string>("B Values", inputBValues, "") == EXIT_FAILURE )
+    {
+    _inputBValues = itksys::SystemTools::GetFilenameWithoutExtension(inputVolumeNameTemplate) +
+      ".bval";
+    }
+  std::string _inputBVectors = inputBVectors;
+  if( CheckArg<std::string>("B Vectors", inputBVectors, "") == EXIT_FAILURE )
+    {
+    _inputBVectors = itksys::SystemTools::GetFilenameWithoutExtension(inputVolumeNameTemplate) +
+      ".bvec";
+    }
+
   std::vector<double>               BVals;
   std::vector<std::vector<double> > BVecs;
   unsigned int                      bValCount = 0;

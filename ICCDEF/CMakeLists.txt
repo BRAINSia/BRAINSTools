@@ -64,7 +64,7 @@ set(ALL_PROGS_LIST
   iccdefRegistration_New
   )
 
-set(ICCDEFLibraries BRAINSCommonLib )
+set(ICCDEFLibraries BRAINSCommonLib ${ITK_LIBRARIES})
 DebugImageViewerLibAdditions(ICCDEFLibraries)
 
 foreach(prog ${ALL_PROGS_LIST})

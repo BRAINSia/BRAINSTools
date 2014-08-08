@@ -24,6 +24,7 @@
 #include "itkImageFileWriter.h"
 #include "CreateMaskCLP.h"
 #include "itkIO.h"
+#include "BRAINSCommonLib.h"
 
 int CreateMask(int argc, char *argv[])
 {

@@ -38,6 +38,7 @@ Zhao,Yongqiang
 #include "itkIO.h"
 #include "itkICCIterativeInverseDisplacementFieldImageFilter.h"
 #include "itkVectorIndexSelectionCastImageFilter.h"
+#include "BRAINSCommonLib.h"
 
 int AverageBrainGenerator(int argc, char *argv[])
 {

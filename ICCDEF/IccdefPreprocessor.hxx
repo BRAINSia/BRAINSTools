@@ -200,6 +200,8 @@ IccdefPreprocessor<TInputImage, TOutputImage>
       const std::string firstNameOfClass = ( *it )->GetNameOfClass();
       std::cout << "FIRST (and only) NameOfClass = " << firstNameOfClass << std::endl;
       }
+#if 0 // HACK TODO -- BSplineTransform doesn't have a bulk transform
+      // in ITKV4
     else // Pick up what we presume was the bulk transform followed by a BSpline.
       {
       typename AffineTransformType::Pointer
@@ -226,7 +228,13 @@ IccdefPreprocessor<TInputImage, TOutputImage>
         exit(-1);
         }
       }
-
+#else
+    else
+      {
+      std::cout << "ICCDef can't handle transform files containing more than one transform" << std::endl;
+      exit(1);
+      }
+#endif
     typename DisplacementFieldGeneratorType::Pointer defGenerator = DisplacementFieldGeneratorType::New();
     defGenerator->SetOutputSize( m_InputFixedImage->GetLargestPossibleRegion().GetSize() );
     defGenerator->SetOutputSpacing( m_InputFixedImage->GetSpacing() );

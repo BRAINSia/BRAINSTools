@@ -8,5 +8,5 @@ set(ALL_PROGS_LIST
   )
 foreach(prog ${ALL_PROGS_LIST})
   add_executable(${prog} ${prog}.cxx)
-  target_link_libraries(${prog} BRAINSCommonLib ${ITK_LIBRARIES})
+  target_link_libraries(${prog} BRAINSCommonLib ${ITK_LIBRARIES} ${VTK_LIBRARIES})
 endforeach()

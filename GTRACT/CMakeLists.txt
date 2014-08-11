@@ -30,7 +30,6 @@ FindITKUtil(ITKDeprecated
   ITKTransform
   ITKV3Compatibility)
 
-
 #-----------------------------------------------------------------------------
 # Output directories.
 #

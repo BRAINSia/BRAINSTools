@@ -10,6 +10,14 @@
 #
 FindITKUtil()
 
+#
+# VTK
+#
+FindVTKUtil(
+  vtkCommonExecutionModel
+  vtkIOLegacy
+  vtkIOXML
+  )
 #-----------------------------------------------------------------------------
 # Output directories.
 #

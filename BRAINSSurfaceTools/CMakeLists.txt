@@ -10,10 +10,16 @@ FindITKUtil(
   ITKQuadEdgeMesh
   ITKOptimizers
   ITKQuadEdgeMeshFiltering
-  # ITKSpatialObjects
-  # ITKStatistics
-  # ITKTransform
 )
+FindVTKUtil(vtkIOLegacy
+  vtkIOXML
+  vtkCommonDataModel
+  vtkFiltersCore
+  vtkFiltersGeneral
+  vtkFiltersGeometry
+  vtkImagingCore
+  vtkFiltersExtraction
+  )
 
 include_directories(${CMAKE_CURRENT_LIST_DIR}/BRAINSSurfaceCommon)
 

@@ -123,7 +123,7 @@ class SessionDB():
         return sqlCommand
 
     def getInfoFromDB(self, sqlCommand):
-        print("getInfoFromDB({0})".format(sqlCommand))
+        #print("getInfoFromDB({0})".format(sqlCommand))
         self.open_connection()
         self.cursor.execute(sqlCommand)
         dbInfo = self.cursor.fetchall()

@@ -30,6 +30,8 @@ Examples:
 
 """
 
+import os
+
 def create_singleSession(dataDict, master_config, interpMode, pipeline_name):
     """
     create singleSession workflow on a single session
@@ -187,10 +189,22 @@ def createAndRun(sessions, environment, experiment, pipeline, cluster):
             _dict['PDs'] = database.getFilenamesByScantype(session, ['PD-15', 'PD-30'])
             _dict['FLs'] = database.getFilenamesByScantype(session, ['FL-15', 'FL-30'])
             _dict['OTs'] = database.getFilenamesByScantype(session, ['OTHER-15', 'OTHER-30'])
-            workflow = create_singleSession(_dict, master_config, 'Linear', 'singleSession_{0}_{1}'.format(_dict['subject'], _dict['session']))
-            print("Starting session {0}".format(session))
-            # HACK Hard-coded to SGEGraph, but --wfrun is ignored completely
-            run_workflow(workflow,plugin=master_config['plugin_name'], plugin_args=master_config['plugin_args'])
+            sentinal_file = os.path.join(
+                                        master_config['resultdir'],
+                                        _dict['project'],
+                                        _dict['subject'],
+                                        _dict['session'],
+                                        "TissueClassify",
+                                        "t1_average_BRAINSABC.nii.gz"
+                                        )
+
+            if os.path.exists( sentinal_file ):
+                print("SKIPPING: {0} exists".format( sentinal_file) )
+            else:
+                workflow = create_singleSession(_dict, master_config, 'Linear', 'singleSession_{0}_{1}'.format(_dict['subject'], _dict['session']))
+                print("Starting session {0}".format(session))
+                # HACK Hard-coded to SGEGraph, but --wfrun is ignored completely
+                run_workflow(workflow,plugin=master_config['plugin_name'], plugin_args=master_config['plugin_args'])
     except:
         raise
     finally:

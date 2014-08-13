@@ -398,11 +398,6 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
     throw err;
     }
 
-  std::cout << "METRIC       THREADS USED: " << this->m_CostMetricObject->GetNumberOfThreadsUsed()
-  << " of " << itk::MultiThreader::GetGlobalDefaultNumberOfThreads() <<  std::endl;
-  std::cout << "REGISTRATION THREADS USED: " << this->m_Registration->GetNumberOfThreads()
-  << " of " << itk::MultiThreader::GetGlobalDefaultNumberOfThreads() <<  std::endl;
-
     OptimizerPointer optimizer =
       dynamic_cast<OptimizerPointer>( m_Registration->GetOptimizer() );
     if( optimizer == NULL )

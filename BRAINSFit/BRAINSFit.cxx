@@ -115,8 +115,11 @@ int main(int argc, char *argv[])
 #endif
 
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
-  std::cout << "HACK: NumberOf Threads " << numberOfThreads << std::endl;
-  std::cout << " " << itk::MultiThreader::GetGlobalDefaultNumberOfThreads()  << std::endl;
+  if( debugLevel > 1 )
+    {
+    std::cout << "Number Of Threads used: " << numberOfThreads << std::endl;
+    std::cout << " " << itk::MultiThreader::GetGlobalDefaultNumberOfThreads()  << std::endl;
+    }
 
   std::string localInitializeTransformMode = initializeTransformMode;
 

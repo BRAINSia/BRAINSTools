@@ -43,7 +43,7 @@ else()
 endif()
 
 set(${proj}_REPOSITORY "${git_protocol}://github.com/BRAINSia/teem.git")
-set(${proj}_TAG "3c906b5484740f734e2a75f69cd69e0b4d6896f6")
+set(${proj}_TAG "c5e12c86337c61f5595d62c3ececad719a34787f")
 
 ExternalProject_Add(${proj}
   ${${proj}_EP_ARGS}

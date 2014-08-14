@@ -120,7 +120,9 @@ public:
 
   /* Description:
    * Update the image */
-  void Update();
+  using vtkAlgorithm::Update;   // silence warning about this Update
+                                // hiding the one in vtkAlgorithm
+  virtual void Update();
 
 protected:
 

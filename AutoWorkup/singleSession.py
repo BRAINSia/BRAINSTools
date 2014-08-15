@@ -5,7 +5,7 @@ singleSession.py
 This program is used to generate the subject- and session-specific workflows for BRAINSTool processing
 
 Usage:
-  singleSession.py [--rewrite-datasinks] [--wfrun PLUGIN] --workphase WORKPHASE --pe ENV --ExperimentConfig FILE SESSIONS...
+  singleSession.py [--rewrite-datasinks] [--wfrun PLUGIN] [--use-sentinal] --workphase WORKPHASE --pe ENV --ExperimentConfig FILE SESSIONS...
   singleSession.py -v | --version
   singleSession.py -h | --help
 
@@ -17,6 +17,7 @@ Options:
   -h, --help            Show this help and exit
   -v, --version         Print the version and exit
   --rewrite-datasinks   Turn on the Nipype option to overwrite all files in the 'results' directory
+  --use-sentinal        Use the t1_average file as a marker to determine if session needs to be run
   --pe ENV              The processing environment to use from configuration file
   --wfrun PLUGIN        The name of the workflow plugin option (default: 'local')
   --workphase WORKPHASE The type of processing to be done [atlas-based-reference|subject-based-reference]
@@ -25,7 +26,7 @@ Options:
 
 Examples:
   $ singleSession.py --pe OSX --ExperimentConfig my_baw.config all
-  $ singleSession.py --wfrun SGEGraph --pe OSX --ExperimentConfig my_baw.config 00001 00002
+  $ singleSession.py --use-sentinal --wfrun SGEGraph --pe OSX --ExperimentConfig my_baw.config 00001 00002
   $ singleSession.py --rewrite-datasinks --pe OSX --ExperimentConfig my_baw.config 00003
 
 """
@@ -163,7 +164,7 @@ def create_singleSession(dataDict, master_config, interpMode, pipeline_name):
     return sessionWorkflow
 
 
-def createAndRun(sessions, environment, experiment, pipeline, cluster):
+def createAndRun(sessions, environment, experiment, pipeline, cluster, useSentinal=False):
     from baw_exp import OpenSubjectDatabase
     from utilities.misc import add_dict
     from workflows.utils import run_workflow, print_workflow
@@ -203,7 +204,7 @@ def createAndRun(sessions, environment, experiment, pipeline, cluster):
                 "t1_average_BRAINSABC.nii.gz"
             )
 
-            if os.path.exists(sentinal_file):
+            if useSentinal and os.path.exists(sentinal_file):
                 print("SKIPPING: {0} exists".format(sentinal_file))
             else:
                 workflow = create_singleSession(_dict, master_config, 'Linear',
@@ -227,7 +228,7 @@ def _main(environment, experiment, pipeline, cluster, **kwds):
     print "Copying Atlas directory and determining appropriate Nipype options..."
     pipeline = nipype_options(kwds, pipeline, cluster, experiment, environment)  # Generate Nipype options
     print "Getting session(s) from database..."
-    createAndRun(kwds['SESSIONS'], environment, experiment, pipeline, cluster)
+    createAndRun(kwds['SESSIONS'], environment, experiment, pipeline, cluster, useSentinal=kwds['--use-sentinal'])
     return 0
 
 if __name__ == '__main__':

@@ -49,7 +49,10 @@ def parseEnvironment(parser, section):
     retval['prefix'] = validatePath(parser.get(section, 'MOUNT_PREFIX'), True, True)
     if retval['prefix'] is None:
         retval['prefix'] = ''
-    retval['virtualenv_dir'] = validatePath(parser.get(section, 'VIRTUALENV_DIR'), False, True)
+    if parser.has_option(section, 'VIRTUALENV'):
+        retval['virtualenv_dir'] = validatePath(parser.get(section, 'VIRTUALENV_DIR'), False, True)
+    else:
+        retval['virtualenv_dir'] = None
     return retval
 
 
@@ -71,29 +74,29 @@ def create_experiment_dir(dirname, name, suffix, verify=False):
     return fullpath
 
 
-def parseExperiment(parser,workflow_phase):
+def parseExperiment(parser, workflow_phase):
     """ Parse the experiment section and return a dictionary """
     retval = dict()
     dirname = validatePath(parser.get('EXPERIMENT', 'BASE_OUTPUT_DIR'), False, True)
     if workflow_phase == 'atlas-based-reference':
-        current_suffix='_BASE'
+        current_suffix = '_BASE'
     elif workflow_phase == 'subject-template-generation':
-        current_suffix='_TEMP'
+        current_suffix = '_TEMP'
     elif workflow_phase == 'subject-based-reference':
-        current_suffix='_LONG'
+        current_suffix = '_LONG'
     else:
         assert 0 == 1, "ERROR INVALID workflow_phase"
-    current = parser.get('EXPERIMENT', 'EXPERIMENT'+current_suffix)
+    current = parser.get('EXPERIMENT', 'EXPERIMENT' + current_suffix)
     retval['cachedir'] = create_experiment_dir(dirname, current, 'CACHE')
     retval['resultdir'] = create_experiment_dir(dirname, current, 'Results')
-    if parser.has_option('EXPERIMENT', 'EXPERIMENT'+current_suffix+'_INPUT'):
+    if parser.has_option('EXPERIMENT', 'EXPERIMENT' + current_suffix + '_INPUT'):
         # If this is the initial run, there will be no previous experiment
-        previous = parser.get('EXPERIMENT', 'EXPERIMENT'+current_suffix+'_INPUT')
+        previous = parser.get('EXPERIMENT', 'EXPERIMENT' + current_suffix + '_INPUT')
         retval['previousresult'] = create_experiment_dir(dirname, previous, 'Results', verify=True)
     atlas = validatePath(parser.get('EXPERIMENT', 'ATLAS_PATH'), False, True)
     retval['atlascache'] = clone_atlas_dir(retval['cachedir'], atlas)
-    retval['dbfile'] = validatePath(parser.get('EXPERIMENT', 'SESSION_DB'+current_suffix), False, False)
-    retval['components'] = [x.lower() for x in eval(parser.get('EXPERIMENT', 'WORKFLOW_COMPONENTS'+current_suffix))]
+    retval['dbfile'] = validatePath(parser.get('EXPERIMENT', 'SESSION_DB' + current_suffix), False, False)
+    retval['components'] = [x.lower() for x in eval(parser.get('EXPERIMENT', 'WORKFLOW_COMPONENTS' + current_suffix))]
     retval['workflow_phase'] = workflow_phase
     return retval
 
@@ -121,9 +124,10 @@ def parseFile(configFile, env, workphase):
     assert os.path.exists(configFile), "Configuration file could not be found: {0}".format(configFile)
     parser = ConfigParser(allow_no_value=True)  # Parse configuration file parser = ConfigParser()
     parser.read(configFile)
-    assert (parser.has_option(env, '_BUILD_DIR') or parser.has_option('DEFAULT', '_BUILD_DIR')), "BUILD_DIR option not in {0}".format(env)
+    assert (parser.has_option(env, '_BUILD_DIR') or parser.has_option('DEFAULT', '_BUILD_DIR')
+            ), "BUILD_DIR option not in {0}".format(env)
     environment = parseEnvironment(parser, env)
-    experiment = parseExperiment(parser,workphase)
+    experiment = parseExperiment(parser, workphase)
     pipeline = parsePipeline(parser)
     if environment['cluster']:
         cluster = parseCluster(parser)
@@ -138,6 +142,7 @@ def resolveDataSinkOption(args, pipeline):
 
 
 class _create_DS_runner(object):
+
     def run(self, graph, **kwargs):
         for node in graph.nodes():
             if '_ds' in node.name.lower():
@@ -145,11 +150,11 @@ class _create_DS_runner(object):
 
 
 _WFRUN_VALID_TYPES = ['SGE',
-         'SGEGraph',
-         'local_4',
-         'local_12',
-         'local',
-         'ds_runner']
+                      'SGEGraph',
+                      'local_4',
+                      'local_12',
+                      'local',
+                      'ds_runner']
 
 
 def get_cpus(option):
@@ -174,9 +179,9 @@ def _nipype_plugin_config(wfrun, cluster, template=''):
         qsub_args = "-S /bin/bash -cwd -pe smp 1- -l h_vmem=19G,mem_free=9G -o /dev/null -e /dev/null {0}"
         plugin_name = 'SGEGraph'
         plugin_args = {'template': template,
-                'qsub_args': qsub_args.format(cluster['queue']),
-                'qstatProgramPath': cluster['qstat'],
-                'qstatCachedProgramPath': cluster['qstat_cached']}
+                       'qsub_args': qsub_args.format(cluster['queue']),
+                       'qstatProgramPath': cluster['qstat'],
+                       'qstatCachedProgramPath': cluster['qstat_cached']}
     elif wfrun in ['local_4', 'local_12']:
         plugin_name = 'MultiProc'
         proc_count = int(wfrun.split('local_')[1])
@@ -186,7 +191,8 @@ def _nipype_plugin_config(wfrun, cluster, template=''):
         plugin_name = _create_DS_runner()
         plugin_args = {}
     else:
-        assert wfrun in [ 'local', 'ds_runner' ], "You must specify a valid run environment type.  Invalid: {0}".format(wfrun)
+        assert wfrun in ['local',
+                         'ds_runner'], "You must specify a valid run environment type.  Invalid: {0}".format(wfrun)
         plugin_name = 'Linear'
         plugin_args = {}
 
@@ -202,20 +208,21 @@ def _nipype_execution_config(stop_on_first_crash=False, stop_on_first_rerun=Fals
         # This stops at first attempt to rerun, before running, and before deleting previous results
         stop_rerun = 'true'
     return {
-            'stop_on_first_crash': stop_crash,
-            'stop_on_first_rerun': stop_rerun,
-            'hash_method': 'timestamp',          # default
-            'single_thread_matlab': 'true',      # default # Multi-core 2011a  multi-core for matrix multiplication.
-            'use_relative_paths': 'false',       # default # relative paths should be on, require hash update when changed.
-            'remove_node_directories': 'false',  # default
-            'remove_unnecessary_outputs': 'false',
-            'local_hash_check': 'true',          # default
-            'job_finished_timeout': 25}
+        'stop_on_first_crash': stop_crash,
+        'stop_on_first_rerun': stop_rerun,
+        'hash_method': 'timestamp',          # default
+        'single_thread_matlab': 'true',      # default # Multi-core 2011a  multi-core for matrix multiplication.
+        # default # relative paths should be on, require hash update when changed.
+        'use_relative_paths': 'false',
+        'remove_node_directories': 'false',  # default
+        'remove_unnecessary_outputs': 'false',
+        'local_hash_check': 'true',          # default
+        'job_finished_timeout': 25}
 
 
 def _nipype_logging_config(cachedir):
-    return {'workflow_level': 'INFO', # possible options:
-            'filemanip_level': 'INFO',#   INFO (default) | DEBUG
+    return {'workflow_level': 'INFO',  # possible options:
+            'filemanip_level': 'INFO',  # INFO (default) | DEBUG
             'interface_level': 'INFO',
             'log_directory': cachedir}
 

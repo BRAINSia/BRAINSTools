@@ -195,14 +195,26 @@ def createAndRun(sessions, environment, experiment, pipeline, cluster, useSentin
             _dict['PDs'] = database.getFilenamesByScantype(session, ['PD-15', 'PD-30'])
             _dict['FLs'] = database.getFilenamesByScantype(session, ['FL-15', 'FL-30'])
             _dict['OTs'] = database.getFilenamesByScantype(session, ['OTHER-15', 'OTHER-30'])
-            sentinal_file = os.path.join(
-                master_config['resultdir'],
-                _dict['project'],
-                _dict['subject'],
-                _dict['session'],
-                "TissueClassify",
-                "t1_average_BRAINSABC.nii.gz"
+            sentinal_file_basedir = os.path.join(
+                    master_config['resultdir'],
+                    _dict['project'],
+                    _dict['subject'],
+                    _dict['session']
             )
+            ## Use t1 average sentinal file if  specified.
+            if 'tissue_classify' in master_config['components']:
+                sentinal_file = os.path.join(
+                    sentinal_file_basedir,
+                    "TissueClassify",
+                    "t1_average_BRAINSABC.nii.gz"
+                )
+            ## Use different sentinal file if segmentation specified.
+            if 'segmentation' in master_config['components']:
+                sentinal_file = os.path.join(
+                    sentinal_file_basedir,
+                    "CleanedDenoisedRFSegmentations",
+                    "allLabels_seg.nii.gz"
+                )
 
             if useSentinal and os.path.exists(sentinal_file):
                 print("SKIPPING: {0} exists".format(sentinal_file))

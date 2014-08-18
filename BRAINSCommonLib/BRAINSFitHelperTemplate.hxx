@@ -1179,11 +1179,6 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
       typedef itk::ImageRegistrationMethodv4<FixedImageType, MovingImageType> BSplineRegistrationType;
       typename BSplineRegistrationType::Pointer bsplineRegistration = BSplineRegistrationType::New();
 
-      typename BSplineTransformType::Pointer initialBSplineTransform = BSplineTransformType::New();
-      // Initialize the BSpline transform
-      BSplineTransformType::PhysicalDimensionsType   fixedPhysicalDimensions;
-      BSplineTransformType::MeshSizeType             meshSize;
-      BSplineTransformType::OriginType               fixedOrigin;
 
       typename FixedImageType::Pointer initializationImage = FixedImageType::New();
       if ( m_UseROIBSpline  )
@@ -1259,30 +1254,37 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
         initializationImage = this->m_FixedVolume;
         }
 
+      typename BSplineTransformType::Pointer bsplineTx =
+                                                BSplineTransformType::New();
+      // Initialize the BSpline transform
+      // Using BSplineTransformInitializer
+      //
+      BSplineTransformType::MeshSizeType    meshSize;
       for( unsigned int i=0; i< SpaceDimension; i++ )
         {
-        fixedOrigin[i] = initializationImage->GetOrigin()[i];
-        fixedPhysicalDimensions[i] = initializationImage->GetSpacing()[i]
-        * static_cast<double>( initializationImage->GetLargestPossibleRegion().GetSize()[i] - 1 );
         meshSize[i] = m_SplineGridSize[i];
         }
 
-      initialBSplineTransform->SetTransformDomainOrigin( fixedOrigin );
-      initialBSplineTransform->SetTransformDomainPhysicalDimensions( fixedPhysicalDimensions );
-      initialBSplineTransform->SetTransformDomainMeshSize( meshSize );
-      initialBSplineTransform->SetTransformDomainDirection( initializationImage->GetDirection() );
+      typedef itk::BSplineTransformInitializer< BSplineTransformType,
+                                                FixedImageType>         InitializerType;
+      typename InitializerType::Pointer transformInitializer = InitializerType::New();
 
-      typedef BSplineTransformType::ParametersType     ParametersType;
-      const unsigned int numberOfParameters =  initialBSplineTransform->GetNumberOfParameters();
-      ParametersType parameters( numberOfParameters );
-      parameters.Fill( 0.0 );
+      transformInitializer->SetTransform( bsplineTx );
+      transformInitializer->SetImage( initializationImage );
+      transformInitializer->SetTransformDomainMeshSize( meshSize );
+      transformInitializer->InitializeTransform();
 
-      initialBSplineTransform->SetParameters( parameters );
-      // std::cout << "Intial Parameters = " << std::endl
-      //           << initialBSplineTransform->GetParameters() << std::endl;
+      bsplineTx->SetIdentity();
 
-      bsplineRegistration->SetInitialTransform( initialBSplineTransform );
-      bsplineRegistration->InPlaceOn();
+      std::cout << "Initialized BSpline transform is set to identity." << std::endl;
+      std::cout << "  - Number of parameters = "
+                << bsplineTx->GetNumberOfParameters() << std::endl << std::endl;
+      //std::cout << "Intial Parameters = " << std::endl
+      //          << bsplineTx->GetParameters() << std::endl;
+
+      bsplineRegistration->SetInitialTransform( bsplineTx );
+      bsplineRegistration->InPlaceOn(); // So bsplineTx is also the output transform
+                                        //  of the registration filter.
 
       // TODO:  Expose these to the command line for consistancy.
       const int m_MaximumNumberOfIterations = 1500;
@@ -1296,30 +1298,23 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
 
       LBFGSBOptimizerTypePointer      LBFGSBoptimizer     = LBFGSBOptimizerType::New();
 
-      /**
-       *
-       * Set the boundary condition for each variable, where
-       * select[i] = 0 if x[i] is unbounded,
-       *           = 1 if x[i] has only a lower bound,
-       *           = 2 if x[i] has both lower and upper bounds, and
-       *           = 3 if x[1] has only an upper bound
-       */
-        // TODO:  For control points outside the fixed image mask, it might be good to
-        // constrian
-        // the parameters to something different than those control points inside the
-        // fixed image mask.
-      OptimizerBoundSelectionType boundSelect( initialBSplineTransform->GetNumberOfParameters() );
+      // TODO:  For control points outside the fixed image mask, it might be good to
+      // constrian
+      // the parameters to something different than those control points inside the
+      // fixed image mask.
+
+      OptimizerBoundSelectionType boundSelect( bsplineTx->GetNumberOfParameters() );
       if( vcl_abs(m_MaxBSplineDisplacement) < 1e-12 )
         {
-        boundSelect.Fill(0);
+        boundSelect.Fill( LBFGSBOptimizerType::UNBOUNDED );
         }
       else
         {
-        boundSelect.Fill(2);
+        boundSelect.Fill( LBFGSBOptimizerType::BOTHBOUNDED );
         }
-      OptimizerBoundValueType upperBound( initialBSplineTransform->GetNumberOfParameters() );
+      OptimizerBoundValueType upperBound( bsplineTx->GetNumberOfParameters() );
       upperBound.Fill(m_MaxBSplineDisplacement);
-      OptimizerBoundValueType lowerBound( initialBSplineTransform->GetNumberOfParameters() );
+      OptimizerBoundValueType lowerBound( bsplineTx->GetNumberOfParameters() );
       lowerBound.Fill(-m_MaxBSplineDisplacement);
 
       LBFGSBoptimizer->SetBoundSelection(boundSelect);
@@ -1343,19 +1338,21 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
         {
         if( this->m_CurrentGenericTransform.IsNotNull() )
           {
-          std::cout << "Moving image is warped by initial transform, before it is passed to the BSpline registration." << std::endl;
+          std::cout << "\nMoving image is warped by initial transform, "
+                    << "before it is passed to the BSpline registration.\n" << std::endl;
           typedef float                                                                     VectorComponentType;
           typedef itk::Vector<VectorComponentType, GenericTransformImageNS::SpaceDimension> VectorPixelType;
           typedef itk::Image<VectorPixelType,  GenericTransformImageNS::SpaceDimension>     DisplacementFieldType;
-          typename MovingImageType::Pointer warpedMoving = GenericTransformImage<
-                                                                  MovingImageType,
-                                                                  MovingImageType,
-                                                                  DisplacementFieldType>( this->m_MovingVolume,
-                                                                                         this->m_FixedVolume,
-                                                                                         this->m_CurrentGenericTransform.GetPointer(),
-                                                                                         m_BackgroundFillValue,
-                                                                                         "Linear",
-                                                                                         false );
+          typename MovingImageType::Pointer warpedMoving =
+                                              GenericTransformImage<
+                                                     MovingImageType,
+                                                     MovingImageType,
+                                                     DisplacementFieldType>( this->m_MovingVolume,
+                                                                             this->m_FixedVolume,
+                                                                             this->m_CurrentGenericTransform.GetPointer(),
+                                                                             m_BackgroundFillValue,
+                                                                             "Linear",
+                                                                             false );
 
           bsplineRegistration->SetMovingImage( 0, warpedMoving );
 
@@ -1365,16 +1362,17 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
           dynamic_cast<MovingImageMaskType const *>( this->m_CostMetricObject->GetMovingImageMask() );
           if( movingMask.IsNotNull() )
             {
-            typename MaskImageType::Pointer warpedMovingMaskImage = GenericTransformImage<
-                                                                      MaskImageType,
-                                                                      MaskImageType,
-                                                                      DisplacementFieldType>(
-                                                                                             ExtractConstPointerToImageMaskFromImageSpatialObject(movingMask).GetPointer(),
-                                                                                             this->m_FixedVolume,
-                                                                                             this->m_CurrentGenericTransform.GetPointer(),
-                                                                                             m_BackgroundFillValue,
-                                                                                             "Linear",
-                                                                                             false );
+            typename MaskImageType::Pointer warpedMovingMaskImage =
+                                                GenericTransformImage<
+                                                         MaskImageType,
+                                                         MaskImageType,
+                                                         DisplacementFieldType>(
+                                                                                 ExtractConstPointerToImageMaskFromImageSpatialObject(movingMask).GetPointer(),
+                                                                                 this->m_FixedVolume,
+                                                                                 this->m_CurrentGenericTransform.GetPointer(),
+                                                                                 m_BackgroundFillValue,
+                                                                                 "Linear",
+                                                                                 false );
 
 
             typename MovingImageMaskType::ConstPointer warpedMask = ConvertMaskImageToSpatialMask( warpedMovingMaskImage.GetPointer() );
@@ -1438,7 +1436,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
       bsplineRegistration->SetShrinkFactorsPerLevel( shrinkFactorsPerLevel );
       bsplineRegistration->SetSmoothingSigmasAreSpecifiedInPhysicalUnits( true );
       bsplineRegistration->SetMetricSamplingStrategy(
-                                                     static_cast<typename BSplineRegistrationType::MetricSamplingStrategyType>( m_SamplingStrategy ) );
+                          static_cast<typename BSplineRegistrationType::MetricSamplingStrategyType>( m_SamplingStrategy ) );
       bsplineRegistration->SetMetricSamplingPercentage( m_SamplingPercentage );
       bsplineRegistration->SetMetric( this->m_CostMetricObject );
       bsplineRegistration->SetOptimizer( LBFGSBoptimizer );
@@ -1446,34 +1444,25 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
       try
         {
         std::cout << "*** Running bspline registration (meshSizeAtBaseLevel = " << meshSize << ") ***"
-        << std::endl << std::endl;
+                  << std::endl << std::endl;
         bsplineRegistration->Update();
+
+        std::cout << "Stop condition from LBFGSBoptimizer."
+                  << bsplineRegistration->GetOptimizer()->GetStopConditionDescription() << std::endl;
         }
       catch( itk::ExceptionObject & e )
         {
         itkGenericExceptionMacro( << "Exception caught: " << e << std::endl );
         }
 
-      typename BSplineTransformType::Pointer outputBSplineTransform = BSplineTransformType::New();
-      outputBSplineTransform->SetFixedParameters( bsplineRegistration->GetOutput()->Get()->GetFixedParameters() );
-      outputBSplineTransform->SetParameters( bsplineRegistration->GetOutput()->Get()->GetParameters() );
-
-      if( outputBSplineTransform.IsNotNull() )
-        {
-        this->m_CurrentGenericTransform->AddTransform( outputBSplineTransform );
-        }
-      else
-        {
-        itkGenericExceptionMacro( << "******* Error: the BSpline output transform is null." << std::endl );
-        }
-      const LBFGSBOptimizerType::ConstPointer  outputOptimizer =
-                                                  dynamic_cast<const LBFGSBOptimizerType *>( bsplineRegistration->GetOptimizer() );
-      std::cout << "Stop condition from LBFGSBoptimizer." << outputOptimizer->GetStopConditionDescription() << std::endl;
+      // Add the optimized bspline tranform to the current generic transform
+      //
+      this->m_CurrentGenericTransform->AddTransform( bsplineTx );
 
       if( this->m_DebugLevel > 4 )
         {
         std::cout << "Final Parameters = " << std::endl;
-        std::cout << outputBSplineTransform->GetParameters() << std::endl;
+        std::cout << bsplineTx->GetParameters() << std::endl;
         }
       }
     else if( currentTransformType == "SyN" )

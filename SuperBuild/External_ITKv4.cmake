@@ -39,7 +39,7 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   #set(${proj}_REPOSITORY ${git_protocol}://itk.org/ITK.git)
   set(${proj}_REPOSITORY ${git_protocol}://github.com/BRAINSia/ITK.git)
-  set(${proj}_GIT_TAG ImproveMemoryUseOfMattesReimplement )
+  set(${proj}_GIT_TAG a5b46a2c2ed76985ab5cbf55d12185e29e328aa4 )
 #  message("COMMON_EXTERNAL_PROJECT_ARGS:
 #${COMMON_EXTERNAL_PROJECT_ARGS}")
   ExternalProject_Add(${proj}

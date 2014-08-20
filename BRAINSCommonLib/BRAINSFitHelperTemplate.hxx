@@ -1276,7 +1276,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
 
       bsplineTx->SetIdentity();
 
-      std::cout << "Initialized BSpline transform is set to identity." << std::endl;
+      std::cout << "Initialized BSpline transform is set to be an identity transform." << std::endl;
       std::cout << "  - Number of parameters = "
                 << bsplineTx->GetNumberOfParameters() << std::endl << std::endl;
       //std::cout << "Intial Parameters = " << std::endl

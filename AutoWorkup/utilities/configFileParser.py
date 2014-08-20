@@ -5,17 +5,18 @@ configFileParser.py
 ===================
 
 Usage:
-  configFileParser.py [--debug] ENV FILE
+  configFileParser.py [--debug] ENV PHASE FILE
   configFileParser.py (-h | --help | -v | --version)
 
 Arguments:
   ENV            Environment name in configuration file
+  PHASE          Workflow phase to use: atlas-based-reference, subject-template-generation or subject-based-reference
   FILE           Configuration file
 
 Options:
   -h, --help     Print this and exit
   -v, --version  Print file version and exit
-  --debug        Run doctests for file
+  --debug        Run doctests for file  # TODO
 """
 from ConfigParser import ConfigParser
 import os
@@ -49,7 +50,7 @@ def parseEnvironment(parser, section):
     retval['prefix'] = validatePath(parser.get(section, 'MOUNT_PREFIX'), True, True)
     if retval['prefix'] is None:
         retval['prefix'] = ''
-    if parser.has_option(section, 'VIRTUALENV'):
+    if parser.has_option(section, 'VIRTUALENV_DIR'):
         retval['virtualenv_dir'] = validatePath(parser.get(section, 'VIRTUALENV_DIR'), False, True)
     else:
         retval['virtualenv_dir'] = None
@@ -253,7 +254,17 @@ def nipype_options(args, pipeline, cluster, experiment, environment):
 
 if __name__ == "__main__":
     from docopt import docopt
-
+    SILENT = True
     args = docopt(__doc__, version='0.1')  # Get argv as dictionary
-    # TODO: Add and run doctests!
-    print parseFile(args["FILE"], args["ENV"])
+    assert args["PHASE"] in ['atlas-based-reference',
+                             'subject-template-generation', 'subject-based-reference'], "Unknown phase!"
+    if args['--debug']:
+        # TODO: Add and run doctests!
+        pass
+    output = parseFile(args["FILE"], args["ENV"], args["PHASE"])
+    from pprint import pprint
+    print ""
+    print "**** OUTPUT ****"
+    for d in output:
+        pprint(d)
+        print ""

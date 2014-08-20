@@ -1174,86 +1174,121 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
       {
       const unsigned int SpaceDimension = 3;
       const unsigned int SplineOrder = 3;
-      typedef itk::BSplineTransform<double, SpaceDimension, SplineOrder> BSplineTransformType;
+      typedef itk::BSplineDeformableTransform<double, SpaceDimension, SplineOrder> BSplineTransformType;
 
       typedef itk::ImageRegistrationMethodv4<FixedImageType, MovingImageType> BSplineRegistrationType;
       typename BSplineRegistrationType::Pointer bsplineRegistration = BSplineRegistrationType::New();
 
+      typedef itk::AffineTransform<double, Dimension>                      AffineTransformType;
+      AffineTransformType::Pointer bulkAffineTransform = AffineTransformType::New();
+      bulkAffineTransform->SetIdentity();
 
-      typename FixedImageType::Pointer initializationImage = FixedImageType::New();
-      if ( m_UseROIBSpline  )
+      typedef itk::Image<float, 3> RegisterImageType;
+
+      // Initial fixed parameters of the bsplineTx
+      //
+      BSplineTransformType::Pointer bsplineTx = BSplineTransformType::New();
+      bsplineTx->SetIdentity();
+
         {
-        ImageMaskSpatialObjectType::Pointer roiMask = ImageMaskSpatialObjectType::New();
-        if( m_MovingBinaryVolume.GetPointer() != NULL )
+        typedef BSplineTransformType::RegionType
+        TransformRegionType;
+        typedef TransformRegionType::SizeType
+        TransformSizeType;
+        typedef itk::BSplineDeformableTransformInitializer<BSplineTransformType,
+                                                           RegisterImageType>         InitializerType;
+        InitializerType::Pointer transformInitializer = InitializerType::New();
+        transformInitializer->SetTransform(bsplineTx);
+
+        typename FixedImageType::Pointer initializationImage = FixedImageType::New();
+        if ( m_UseROIBSpline  )
           {
-          ImageMaskSpatialObjectType::Pointer movingImageMask =
-          dynamic_cast<ImageMaskSpatialObjectType *>(m_MovingBinaryVolume.GetPointer() );
-
-          typedef itk::ResampleImageFilter<MaskImageType, MaskImageType, double> ResampleFilterType;
-          ResampleFilterType::Pointer resampler = ResampleFilterType::New();
-
-          if( m_CurrentGenericTransform.IsNotNull() )
+          ImageMaskSpatialObjectType::Pointer roiMask = ImageMaskSpatialObjectType::New();
+          if( m_MovingBinaryVolume.GetPointer() != NULL )
             {
-              // resample the moving mask, if available
-            resampler->SetTransform(m_CurrentGenericTransform);
-            resampler->SetInput( movingImageMask->GetImage() );
-            resampler->SetOutputParametersFromImage( m_FixedVolume );
-            resampler->Update();
+            ImageMaskSpatialObjectType::Pointer movingImageMask =
+            dynamic_cast<ImageMaskSpatialObjectType *>(m_MovingBinaryVolume.GetPointer() );
+
+            typedef itk::ResampleImageFilter<MaskImageType, MaskImageType, double> ResampleFilterType;
+            ResampleFilterType::Pointer resampler = ResampleFilterType::New();
+
+            if( m_CurrentGenericTransform.IsNotNull() )
+              {
+                // resample the moving mask, if available
+              resampler->SetTransform(m_CurrentGenericTransform);
+              resampler->SetInput( movingImageMask->GetImage() );
+              resampler->SetOutputParametersFromImage( m_FixedVolume );
+              resampler->Update();
+              }
+            if( m_FixedBinaryVolume.GetPointer() != NULL )
+              {
+              typedef itk::AddImageFilter<MaskImageType, MaskImageType> AddFilterType;
+              ImageMaskSpatialObjectType::Pointer fixedImageMask =
+              dynamic_cast<ImageMaskSpatialObjectType *>(m_FixedBinaryVolume.GetPointer() );
+              AddFilterType::Pointer adder = AddFilterType::New();
+              adder->SetInput1(fixedImageMask->GetImage() );
+              adder->SetInput2(resampler->GetOutput() );
+              adder->Update();
+              roiMask->SetImage(adder->GetOutput() );
+              }
+            else
+              {
+              roiMask->SetImage(resampler->GetOutput() );
+              }
             }
-          if( m_FixedBinaryVolume.GetPointer() != NULL )
+          else if( m_FixedBinaryVolume.GetPointer() != NULL )
             {
-            typedef itk::AddImageFilter<MaskImageType, MaskImageType> AddFilterType;
             ImageMaskSpatialObjectType::Pointer fixedImageMask =
             dynamic_cast<ImageMaskSpatialObjectType *>(m_FixedBinaryVolume.GetPointer() );
-            AddFilterType::Pointer adder = AddFilterType::New();
-            adder->SetInput1(fixedImageMask->GetImage() );
-            adder->SetInput2(resampler->GetOutput() );
-            adder->Update();
-            roiMask->SetImage(adder->GetOutput() );
+            roiMask->SetImage(fixedImageMask->GetImage() );
             }
+
           else
             {
-            roiMask->SetImage(resampler->GetOutput() );
+            itkGenericExceptionMacro( << "ERROR: ROIBSpline mode can only be used with ROI(s) specified!");
+            return;
             }
-          }
-        else if( m_FixedBinaryVolume.GetPointer() != NULL )
-          {
-          ImageMaskSpatialObjectType::Pointer fixedImageMask =
-          dynamic_cast<ImageMaskSpatialObjectType *>(m_FixedBinaryVolume.GetPointer() );
-          roiMask->SetImage(fixedImageMask->GetImage() );
-          }
 
+          typename FixedImageType::PointType roiOriginPt;
+          typename FixedImageType::IndexType roiOriginIdx;
+          typename FixedImageType::Pointer    roiImage = FixedImageType::New();
+          typename FixedImageType::RegionType roiRegion =
+          roiMask->GetAxisAlignedBoundingBoxRegion();
+          typename FixedImageType::SpacingType roiSpacing =
+          m_FixedVolume->GetSpacing();
+
+          roiOriginIdx.Fill(0);
+          m_FixedVolume->TransformIndexToPhysicalPoint(roiRegion.GetIndex(), roiOriginPt);
+          roiRegion.SetIndex(roiOriginIdx);
+          roiImage->SetRegions(roiRegion);
+          roiImage->Allocate();
+          roiImage->FillBuffer(1.);
+          roiImage->SetSpacing(roiSpacing);
+          roiImage->SetOrigin(roiOriginPt);
+          roiImage->SetDirection( m_FixedVolume->GetDirection() );
+
+          initializationImage = roiImage;
+          }
         else
           {
-          itkGenericExceptionMacro( << "ERROR: ROIBSpline mode can only be used with ROI(s) specified!");
-          return;
+          initializationImage = this->m_FixedVolume;
           }
 
-        typename FixedImageType::PointType roiOriginPt;
-        typename FixedImageType::IndexType roiOriginIdx;
-        typename FixedImageType::Pointer    roiImage = FixedImageType::New();
-        typename FixedImageType::RegionType roiRegion =
-        roiMask->GetAxisAlignedBoundingBoxRegion();
-        typename FixedImageType::SpacingType roiSpacing =
-        m_FixedVolume->GetSpacing();
+        transformInitializer->SetImage( initializationImage );
 
-        roiOriginIdx.Fill(0);
-        m_FixedVolume->TransformIndexToPhysicalPoint(roiRegion.GetIndex(), roiOriginPt);
-        roiRegion.SetIndex(roiOriginIdx);
-        roiImage->SetRegions(roiRegion);
-        roiImage->Allocate();
-        roiImage->FillBuffer(1.);
-        roiImage->SetSpacing(roiSpacing);
-        roiImage->SetOrigin(roiOriginPt);
-        roiImage->SetDirection( m_FixedVolume->GetDirection() );
+        TransformSizeType tempGridSize;
+        tempGridSize[0] = m_SplineGridSize[0];
+        tempGridSize[1] = m_SplineGridSize[1];
+        tempGridSize[2] = m_SplineGridSize[2];
+        transformInitializer->SetGridSizeInsideTheImage(tempGridSize);
+        transformInitializer->InitializeTransform();
 
-        initializationImage = roiImage;
+        bsplineTx->SetBulkTransform( bulkAffineTransform );
+        std::cout << "BSpline initialized: " << bsplineTx << std::endl;
         }
-      else
-        {
-        initializationImage = this->m_FixedVolume;
-        }
+      //////////////////
 
+/*
       typename BSplineTransformType::Pointer bsplineTx =
                                                 BSplineTransformType::New();
       // Initialize the BSpline transform
@@ -1275,7 +1310,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
       transformInitializer->InitializeTransform();
 
       bsplineTx->SetIdentity();
-
+*/
       std::cout << "Initialized BSpline transform is set to be an identity transform." << std::endl;
       std::cout << "  - Number of parameters = "
                 << bsplineTx->GetNumberOfParameters() << std::endl << std::endl;
@@ -1443,7 +1478,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
 
       try
         {
-        std::cout << "*** Running bspline registration (meshSizeAtBaseLevel = " << meshSize << ") ***"
+        std::cout << "*** Running bspline registration ) ***"
                   << std::endl << std::endl;
         bsplineRegistration->Update();
 

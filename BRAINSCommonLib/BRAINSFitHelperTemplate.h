@@ -54,6 +54,9 @@
 #include "itkBSplineTransformParametersAdaptor.h"
 #include "itkBSplineTransformInitializer.h"
 
+#include "itkBSplineDeformableTransform.h"
+#include "itkBSplineDeformableTransformInitializer.h"
+
 #ifdef USE_ANTS
 #include "BRAINSFitSyN.h"
 #endif

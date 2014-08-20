@@ -251,7 +251,7 @@ public:
       {
       std::cout << std::setw(  4 ) << std::setfill( ' ' ) << optimizer->GetCurrentIteration() << "   ";
       std::cout << std::setw( 10 ) << std::setfill( ' ' ) << optimizer->GetValue() << "   ";
-      if( parmsNonEmpty )
+      if( parmsNonEmpty && psize < 15 ) // Exclude BSpline transform from parameters printing.
         {
         std::cout << parms;
         }

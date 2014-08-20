@@ -1332,6 +1332,24 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
       LBFGSBoptimizer->SetMaximumNumberOfFunctionEvaluations(m_MaximumNumberOfEvaluations);
       LBFGSBoptimizer->SetMaximumNumberOfCorrections(m_MaximumNumberOfCorrections);
 
+      typedef itk::Image<float, 3> RegisterImageType;
+
+      const bool ObserveIterations = true;
+      if( ObserveIterations == true )
+        {
+        typedef BRAINSFit::CommandIterationUpdate<LBFGSBOptimizerType, BSplineTransformType, RegisterImageType>
+        CommandIterationUpdateType;
+        typename CommandIterationUpdateType::Pointer observer =
+        CommandIterationUpdateType::New();
+        observer->SetDisplayDeformedImage(m_DisplayDeformedImage);
+        observer->SetPromptUserAfterDisplay(m_PromptUserAfterDisplay);
+        observer->SetPrintParameters(true);
+        observer->SetMovingImage(m_MovingVolume);
+        observer->SetFixedImage(m_FixedVolume);
+        observer->SetTransform(bsplineTx);
+        LBFGSBoptimizer->AddObserver(itk::IterationEvent(), observer);
+        }
+
       bsplineRegistration->SetFixedImage( 0, m_FixedVolume );
 
       if( !this->m_InitializeRegistrationByCurrentGenericTransform )

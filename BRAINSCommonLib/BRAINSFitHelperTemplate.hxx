@@ -1288,34 +1288,160 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
         }
       //////////////////
 
-/*
-      typename BSplineTransformType::Pointer bsplineTx =
-                                                BSplineTransformType::New();
-      // Initialize the BSpline transform
-      // Using BSplineTransformInitializer
-      //
-      BSplineTransformType::MeshSizeType    meshSize;
-      for( unsigned int i=0; i< SpaceDimension; i++ )
+      m_CurrentGenericTransform->Print(std::cout);
+
+      if( m_CurrentGenericTransform.IsNotNull() )
         {
-        meshSize[i] = m_SplineGridSize[i];
+        try
+          {
+          const GenericTransformType::ConstPointer currInitTransformFormGenericComposite =
+                                                              m_CurrentGenericTransform->GetFrontTransform();
+          const std::string transformFileType = currInitTransformFormGenericComposite->GetNameOfClass();
+          std::cout << "transform type: " << transformFileType << std::endl;
+          if( transformFileType == "VersorRigid3DTransform" )
+            {
+            const VersorRigid3DTransformType::ConstPointer tempInitializerITKTransform =
+            dynamic_cast<VersorRigid3DTransformType const *>( currInitTransformFormGenericComposite.GetPointer() );
+            if( tempInitializerITKTransform.IsNull() )
+              {
+              std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
+              }
+            AssignRigid::AssignConvertedTransform(bulkAffineTransform,
+                                                  tempInitializerITKTransform);
+            bsplineTx->SetBulkTransform(bulkAffineTransform);
+            }
+          else if( transformFileType == "ScaleVersor3DTransform" )
+            {
+            const ScaleVersor3DTransformType::ConstPointer tempInitializerITKTransform =
+            dynamic_cast<ScaleVersor3DTransformType const *>( currInitTransformFormGenericComposite.GetPointer() );
+            if( tempInitializerITKTransform.IsNull() )
+              {
+              std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
+              }
+            AssignRigid::AssignConvertedTransform(bulkAffineTransform,
+                                                  tempInitializerITKTransform);
+            bsplineTx->SetBulkTransform(bulkAffineTransform);
+            }
+          else if( transformFileType == "ScaleSkewVersor3DTransform" )
+            {
+            const ScaleSkewVersor3DTransformType::ConstPointer tempInitializerITKTransform =
+            dynamic_cast<ScaleSkewVersor3DTransformType const *>( currInitTransformFormGenericComposite.GetPointer() );
+            if( tempInitializerITKTransform.IsNull() )
+              {
+              std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
+              }
+            AssignRigid::AssignConvertedTransform(bulkAffineTransform,
+                                                  tempInitializerITKTransform);
+            bsplineTx->SetBulkTransform(bulkAffineTransform);
+            }
+          else if( transformFileType == "AffineTransform" )
+            {
+            const AffineTransformType::ConstPointer tempInitializerITKTransform =
+            dynamic_cast<AffineTransformType const *>( currInitTransformFormGenericComposite.GetPointer() );
+            if( tempInitializerITKTransform.IsNull() )
+              {
+              std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
+              }
+            AssignRigid::AssignConvertedTransform(bulkAffineTransform,
+                                                  tempInitializerITKTransform);
+            bsplineTx->SetBulkTransform(bulkAffineTransform);
+            }
+          else if( transformFileType == "BSplineDeformableTransform" )
+            {
+            const BSplineTransformType::ConstPointer tempInitializerITKTransform =
+            dynamic_cast<BSplineTransformType const *>( currInitTransformFormGenericComposite.GetPointer() );
+            if( tempInitializerITKTransform.IsNull() )
+              {
+              std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
+              }
+
+            bsplineTx->SetBulkTransform( tempInitializerITKTransform->GetBulkTransform() );
+            BSplineTransformType::ParametersType tempFixedInitialParameters =
+                                                            tempInitializerITKTransform->GetFixedParameters();
+            BSplineTransformType::ParametersType initialFixedParameters =
+                                                            bsplineTx->GetFixedParameters();
+
+            bool checkMatch = true;         // Assume true;
+            if( initialFixedParameters.GetSize() != tempFixedInitialParameters.GetSize() )
+              {
+              checkMatch = false;
+              std::cerr << "ERROR INITILIZATION FIXED PARAMETERS DO NOT MATCH: " << initialFixedParameters.GetSize()
+              << " != " << tempFixedInitialParameters.GetSize() << std::endl;
+              }
+            if( checkMatch ) //  This ramus covers the hypothesis that the FixedParameters
+                //  represent the grid locations of the spline nodes.
+              {
+              for( unsigned int i = 0; i < initialFixedParameters.GetSize(); ++i )
+                {
+                if( initialFixedParameters.GetElement(i) != tempFixedInitialParameters.GetElement(i) )
+                  {
+                  checkMatch = false;
+                  std::cerr << "ERROR FIXED PARAMETERS DO NOT MATCH: " << initialFixedParameters.GetElement(i)
+                  << " != " << tempFixedInitialParameters.GetElement(i) << std::endl;
+                  }
+                }
+              BSplineTransformType::ParametersType tempInitialParameters =
+              tempInitializerITKTransform->GetParameters();
+              if( bsplineTx->GetNumberOfParameters() ==
+                 tempInitialParameters.Size() )
+                {
+                bsplineTx->SetFixedParameters(
+                                                            tempFixedInitialParameters);
+                bsplineTx->SetParametersByValue(tempInitialParameters);
+                }
+              else
+                {
+                  // Error, initializing from wrong size transform parameters;
+                  //  Use its bulk transform only?
+                itkGenericExceptionMacro(
+                                         << "Trouble using the m_CurrentGenericTransform"
+                                         << "for initializing a BSPlineDeformableTransform:"
+                                         << std::endl
+                                         << "The initializing BSplineDeformableTransform has a different"
+                                         << " number of Parameters, than what is required for the requested grid."
+                                         << std::endl
+                                         << "BRAINSFit was only able to use the bulk transform that was before it.");
+                }
+              }
+            else
+              {
+              itkGenericExceptionMacro(
+                                       << "ERROR:  initialization BSpline transform does not have the same "
+                                       << "parameter dimensions as the one currently specified.");
+              }
+            }
+          else if( transformFileType == "CompositeTransform" )
+            {
+            itkGenericExceptionMacro( << "Composite transform initializer type found:  "
+                                     << transformFileType )
+            }
+          else
+            {
+            itkGenericExceptionMacro( << "ERROR:  Invalid transform initializer type found:  "
+                                     << transformFileType )
+            }
+          }
+        catch( itk::ExceptionObject & excp )
+          {
+          std::cout << "[FAILED]" << std::endl;
+          std::cerr
+          << "Error while reading the m_CurrentGenericTransform"
+          << std::endl;
+          std::cerr << excp << std::endl;
+          throw;
+          }
         }
+/////
+      std::cout << "bulk affine tx: " << std::endl;
+      bulkAffineTransform->Print(std::cout);
 
-      typedef itk::BSplineTransformInitializer< BSplineTransformType,
-                                                FixedImageType>         InitializerType;
-      typename InitializerType::Pointer transformInitializer = InitializerType::New();
+      std::cout << "BSpline initialized by the bulk transform: " << bsplineTx << std::endl;
 
-      transformInitializer->SetTransform( bsplineTx );
-      transformInitializer->SetImage( initializationImage );
-      transformInitializer->SetTransformDomainMeshSize( meshSize );
-      transformInitializer->InitializeTransform();
-
-      bsplineTx->SetIdentity();
-*/
       std::cout << "Initialized BSpline transform is set to be an identity transform." << std::endl;
       std::cout << "  - Number of parameters = "
                 << bsplineTx->GetNumberOfParameters() << std::endl << std::endl;
-      //std::cout << "Intial Parameters = " << std::endl
-      //          << bsplineTx->GetParameters() << std::endl;
+      std::cout << "Intial Parameters = " << std::endl
+                << bsplineTx->GetParameters() << std::endl;
 
       bsplineRegistration->SetInitialTransform( bsplineTx );
       bsplineRegistration->InPlaceOn(); // So bsplineTx is also the output transform
@@ -1369,7 +1495,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
 
       bsplineRegistration->SetFixedImage( 0, m_FixedVolume );
 
-      if( !this->m_InitializeRegistrationByCurrentGenericTransform )
+      if( 0 ) //!this->m_InitializeRegistrationByCurrentGenericTransform )
         {
         if( this->m_CurrentGenericTransform.IsNotNull() )
           {
@@ -1441,7 +1567,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
           }
         else
           {
-          bsplineRegistration->SetMovingInitialTransform( this->m_CurrentGenericTransform );
+          //bsplineRegistration->SetMovingInitialTransform( this->m_CurrentGenericTransform );
 
           if( this->m_DebugLevel > 4 )
             {

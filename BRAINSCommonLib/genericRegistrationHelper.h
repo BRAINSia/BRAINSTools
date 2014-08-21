@@ -251,11 +251,17 @@ public:
       {
       std::cout << std::setw(  4 ) << std::setfill( ' ' ) << optimizer->GetCurrentIteration() << "   ";
       std::cout << std::setw( 10 ) << std::setfill( ' ' ) << optimizer->GetValue() << "   ";
-      if( parmsNonEmpty && psize < 15 ) // Exclude BSpline transform from parameters printing.
+      if( parmsNonEmpty ) // For BSpline tranform with large parameters space (>15), every (psize/15)th parameter is printed.
         {
-        std::cout << parms;
+        std::cout << "[ ";
+        int i = 0;
+        while( i<psize )
+          {
+          std::cout << parms[i] << " ";
+          i += std::max(1,(psize/15));
+          }
+        std::cout << "]" << std::endl;
         }
-      std::cout << std::endl;
       }
     //
     // GenerateHistogram

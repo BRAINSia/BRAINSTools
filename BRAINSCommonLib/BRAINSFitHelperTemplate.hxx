@@ -1276,9 +1276,13 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
 
       bsplineTx->SetIdentity();
 
+      const int psize = bsplineTx->GetNumberOfParameters();
       std::cout << "Initialized BSpline transform is set to be an identity transform." << std::endl;
-      std::cout << "  - Number of parameters = "
-                << bsplineTx->GetNumberOfParameters() << std::endl << std::endl;
+      std::cout << "  - Number of parameters = " << psize << std::endl;
+      if( psize/15 > 1 )
+        {
+        std::cout << "-- WARNING: Only one in every " << (psize/15) << " parameters is printed on screen.\n" << std::endl;
+        }
       //std::cout << "Intial Parameters = " << std::endl
       //          << bsplineTx->GetParameters() << std::endl;
 
@@ -1334,6 +1338,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
 
       typedef itk::Image<float, 3> RegisterImageType;
 
+      // TODO: pass this option by commandline
       const bool ObserveIterations = true;
       if( ObserveIterations == true )
         {

@@ -109,14 +109,14 @@ def parsePipeline(parser):
     return retval
 
 
-def parseCluster(parser):
+def parseCluster(parser, env):
     """ Parse the cluster section and return a dictionary """
     retval = dict()
-    retval['modules'] = eval(parser.get('CLUSTER', 'MODULES'))
-    retval['queue'] = parser.get('CLUSTER', 'QUEUE')
-    retval['long_q'] = parser.get('CLUSTER', 'QUEUE_LONG')
-    retval['qstat'] = parser.get('CLUSTER', 'QSTAT_IMMEDIATE')
-    retval['qstat_cached'] = parser.get('CLUSTER', 'QSTAT_CACHED')
+    retval['modules'] = eval(parser.get(env, 'MODULES'))
+    retval['queue'] = parser.get(env, 'QUEUE')
+    retval['long_q'] = parser.get(env, 'QUEUE_LONG')
+    retval['qstat'] = parser.get(env, 'QSTAT_IMMEDIATE')
+    retval['qstat_cached'] = parser.get(env, 'QSTAT_CACHED')
     return retval
 
 
@@ -131,7 +131,7 @@ def parseFile(configFile, env, workphase):
     experiment = parseExperiment(parser, workphase)
     pipeline = parsePipeline(parser)
     if environment['cluster']:
-        cluster = parseCluster(parser)
+        cluster = parseCluster(parser, env)
         return environment, experiment, pipeline, cluster
     return environment, experiment, pipeline, None
 

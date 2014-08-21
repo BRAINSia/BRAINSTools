@@ -1,6 +1,5 @@
 #! /usr/bin/env python
 
-
 def load_modules(modules):
     """ The command 'module' is actually a script call in bash:
 
@@ -23,8 +22,9 @@ def setup(argv):
         argv["--ExperimentConfig"], argv["--pe"], argv["--workphase"])
     pipeline['ds_overwrite'] = resolveDataSinkOption(argv, pipeline)
     if cluster is None:
-        assert argv["--wf_template_runner"] in misc.WFRUN, \
-            "wf_template_runner options for clusters can only be given when the configuration file's CLUSTER option == True"
+        raise NotImplementedError("Running local has old code and has not been tested!")
+        assert argv["--wfrun"] in misc.WFRUN, \
+            "wfrun  options for clusters can only be given when the configuration file's CLUSTER option == True"
         os.environ['NSLOTS'] = str(misc.get_cpus(argv["--wf_template_runner"]))
     else:
         load_modules(cluster['modules'])  # Load modules if not already done  ## MODS PATH

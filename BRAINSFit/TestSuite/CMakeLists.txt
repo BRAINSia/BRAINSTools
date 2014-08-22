@@ -23,11 +23,6 @@ set_target_properties(CenterOfROIInitTest PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${
 ExternalData_add_test(${PROJECT_NAME}FetchData NAME CenterOfROIInitTest
   COMMAND ${LAUNCH_EXE}  $<TARGET_FILE:CenterOfROIInitTest>)
 
-add_executable(PerformTestMMI PerformTestMMI.cxx )
-set(PerformTestMMILibraries BRAINSCommonLib ${ITK_LIBRARIES} ${OPTIONAL_DEBUG_LINK_LIBRARIES} )
-target_link_libraries(PerformTestMMI ${PerformTestMMILibraries} )
-set_target_properties(PerformTestMMI PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${BRAINSTools_BINARY_DIR})
-
 set(BRAINSFitTestName BRAINSFitTest_AffineRotationMasks)
 ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>

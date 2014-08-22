@@ -17,10 +17,12 @@
  *
  *=========================================================================*/
 //
-// This is a simple program for mattes mutual information metric
-// evaluation over two input images and a BSpline transform.
+// This is a simple program for [mattes mutual information/ means square error]
+// metric evaluation over two input images and a BSpline transform.
 //
 //
+#include "PerformMetricTestCLP.h"
+#include "itkMeanSquaresImageToImageMetricv4.h"
 #include "itkMattesMutualInformationImageToImageMetricv4.h"
 #include "itkBSplineTransform.h"
 #include "itkImageRegionConstIteratorWithIndex.h"
@@ -29,44 +31,56 @@
 #include "itkImageFileReader.h"
 #include "itkTransformFileReader.h"
 
+#define CHECK_PARAMETER_IS_SET(parameter, message) \
+  if( parameter == "" )                            \
+    {                                              \
+    std::cerr << message << std::endl;             \
+    return EXIT_FAILURE;                           \
+    }
+
 int main(int argc, char* argv[])
 {
-  if( argc < 3 )
-    {
-    std::cerr << "Missing Parameters " << std::endl;
-    std::cerr << "Usage: " << argv[0];
-    std::cerr << " fixedImageFile  movingImageFile ";
-    std::cerr << "[transformFile]" << std::endl;
-    std::cerr << "[NumberOfHistogramBins]" << std::endl;
-    std::cerr << "[NumberOfSamples]" << std::endl;
-    return EXIT_FAILURE;
-    }
+  PARSE_ARGS;
+
+  CHECK_PARAMETER_IS_SET(inputFixedImage,
+                         "Missing inputFixedImage parameter");
+  CHECK_PARAMETER_IS_SET(inputMovingImage,
+                         "Missing inputMovingImage parameter");
 
   const    unsigned int    Dimension = 3;
   typedef  float           PixelType;
+
   typedef itk::Image< PixelType, Dimension > FixedImageType;
   typedef itk::Image< PixelType, Dimension > MovingImageType;
 
   typedef itk::ImageFileReader< FixedImageType  >  FixedImageReaderType;
+  typedef itk::ImageFileReader< MovingImageType >  MovingImageReaderType;
+
+  typedef itk::BSplineTransform< double, Dimension > TransformType;
+
+  typedef itk::MattesMutualInformationImageToImageMetricv4<FixedImageType, MovingImageType>   MIMetricType;
+  typedef itk::MeanSquaresImageToImageMetricv4<FixedImageType, MovingImageType>               MSEMetricType;
+  typedef itk::ImageToImageMetricv4<FixedImageType, MovingImageType>                          GenericMetricType;
+  typedef GenericMetricType::FixedSampledPointSetType                                         MetricSamplePointSetType;
+
+  // Read input images
   FixedImageReaderType::Pointer fixedReader = FixedImageReaderType::New();
-  fixedReader->SetFileName( argv[1] );
+  fixedReader->SetFileName( inputFixedImage );
   FixedImageType::Pointer fixedImage = fixedReader->GetOutput();
   fixedReader->Update();
 
-  typedef itk::ImageFileReader< MovingImageType  >  MovingImageReaderType;
   MovingImageReaderType::Pointer movingReader = MovingImageReaderType::New();
-  movingReader->SetFileName( argv[2] );
+  movingReader->SetFileName( inputMovingImage );
   MovingImageType::Pointer movingImage = movingReader->GetOutput();
   movingReader->Update();
 
-  typedef itk::BSplineTransform< double, Dimension > TransformType;
+  // Set input transform
   TransformType::Pointer transform = TransformType::New();
-
-  if( argc > 3 )
+  if( inputBSplineTransform != "" )
     {
     std::cout << "Read transform file from the disk ..." << std::endl;
     itk::TransformFileReader::Pointer transReader = itk::TransformFileReader::New();
-    transReader->SetFileName( argv[3] );
+    transReader->SetFileName( inputBSplineTransform );
     try
       {
       transReader->Update();
@@ -78,6 +92,11 @@ int main(int argc, char* argv[])
       return EXIT_FAILURE;
       }
     transform = dynamic_cast<TransformType *>( transReader->GetTransformList()->begin()->GetPointer() );
+    if( transform.IsNull() )
+      {
+      std::cerr << "ERROR: Needed a BSpline tranform as the input transform file." << std::endl;
+      return EXIT_FAILURE;
+      }
     }
   else
     {
@@ -85,46 +104,54 @@ int main(int argc, char* argv[])
     transform->SetIdentity();
     }
 
-  typedef itk::MattesMutualInformationImageToImageMetricv4<FixedImageType, MovingImageType>     MIMetricType;
-  MIMetricType::Pointer metric = MIMetricType::New();
+  // Set metric
+  GenericMetricType::Pointer metric;
+  if( metricType == "MMI" )
+    {
+    MIMetricType::Pointer mattesMetric = MIMetricType::New();
+    mattesMetric->SetNumberOfHistogramBins( numberOfHistogramBins );
+    mattesMetric->SetUseFixedImageGradientFilter( false );
+    mattesMetric->SetUseMovingImageGradientFilter( false );
+    metric = mattesMetric;
+    }
+  else if( metricType == "MSE" )
+    {
+    MSEMetricType::Pointer msqMetric = MSEMetricType::New();
+    metric = msqMetric;
+    }
+  else
+    {
+    std::cerr << "Error: Invalid parameter for metric type!" << std::endl;
+    return EXIT_FAILURE;
+    }
 
   metric->SetVirtualDomainFromImage( fixedImage );
   metric->SetFixedImage( fixedImage );
   metric->SetMovingImage( movingImage );
   metric->SetMovingTransform( transform );
 
-  unsigned int NoHistBins = 50;
-  if ( argc > 4)
-    {
-    NoHistBins = atoi( argv[4] );
-    }
-
-  metric->SetNumberOfHistogramBins( NoHistBins );
-
-  metric->SetUseFixedImageGradientFilter( false );
-  metric->SetUseMovingImageGradientFilter( false );
-
   //  REGULAR sampling
   std::cout << "Use regular sampling ..." << std::endl;
-  unsigned long NoOfSamples = 14000;
-  if ( argc > 5)
+
+  if( numberOfSamples == 0 )
     {
-    NoOfSamples = atoi( argv[5] );
+    std::cerr << "Error: Valid number of samples needed!" << std::endl;
+    return EXIT_FAILURE;
     }
 
   const unsigned long numberOfAllSamples = fixedImage->GetBufferedRegion().GetNumberOfPixels();
-  const double samplingPercentage = static_cast<double>(NoOfSamples)/numberOfAllSamples;
-  std::cout << "numberOfAllSamples: " << numberOfAllSamples << std::endl;
-  std::cout << "Sampling percentage: " << samplingPercentage << std::endl;
+  const double samplingPercentage = static_cast<double>(numberOfSamples)/numberOfAllSamples;
+  std::cout << "Number of Requesete Samples: " << numberOfSamples << std::endl;
+  std::cout << "Number of All Samples: " << numberOfAllSamples << std::endl;
+  std::cout << "Sampling Percentage: " << samplingPercentage << std::endl;
 
-  typedef MIMetricType::FixedSampledPointSetType          MetricSamplePointSetType;
   MetricSamplePointSetType::Pointer samplePointSet = MetricSamplePointSetType::New();
   samplePointSet->Initialize();
   typedef MetricSamplePointSetType::PointType SamplePointType;
   unsigned long index = 0;
 
   const unsigned long sampleCount = static_cast<unsigned long>( std::ceil( 1.0 / samplingPercentage ) );
-  std::cout << "sample count: " << sampleCount << std::endl;
+  // std::cout << "sample count: " << sampleCount << std::endl;
   unsigned long count = sampleCount;
   itk::ImageRegionConstIteratorWithIndex<FixedImageType> It( fixedImage, fixedImage->GetBufferedRegion() );
   for( It.GoToBegin(); !It.IsAtEnd(); ++It )
@@ -142,12 +169,11 @@ int main(int argc, char* argv[])
 
   metric->SetFixedSampledPointSet( samplePointSet );
   metric->SetUseFixedSampledPointSet( true );
-  ////////////////////////
 
   metric->Initialize();
 
-  MIMetricType::MeasureType measure;
-  MIMetricType::DerivativeType derivative( metric->GetTransform()->GetNumberOfParameters() );
+  GenericMetricType::MeasureType measure;
+  GenericMetricType::DerivativeType derivative( metric->GetTransform()->GetNumberOfParameters() );
   try
     {
     metric->GetValueAndDerivative( measure, derivative );
@@ -158,11 +184,10 @@ int main(int argc, char* argv[])
     std::cerr << err << std::endl;
     return EXIT_FAILURE;
     }
-  std::cout << "NumberOfValidPoints: " << metric->GetNumberOfValidPoints() << " of "
-            << metric->GetVirtualRegion().GetNumberOfPixels() << std::endl;
+  std::cout << "Number of Valid Points: " << metric->GetNumberOfValidPoints() << " of "
+                                          << metric->GetVirtualRegion().GetNumberOfPixels() << std::endl;
   std::cout << "measure: " << measure << std::endl;
-//  std::cout << "Derivatives: " << derivative << std::endl;
-//  std::cout << "JointPDF image info: " << metric->GetJointPDF() << std::endl;
+  //  std::cout << "Derivatives: " << derivative << std::endl;
 
   return EXIT_SUCCESS;
 }

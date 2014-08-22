@@ -36,6 +36,7 @@ configure_file(
 
 set(ALL_PROGS_LIST
   BRAINSFit
+  PerformMetricTest
   )
 
 set(BRAINSFitLibraries BRAINSCommonLib ${ANTS_LIBS})

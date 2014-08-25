@@ -545,6 +545,18 @@
       </description>
       <default>1e-5</default>
     </double>
+    <integer>
+      <name>maximumNumberOfEvaluations</name>
+      <longflag>maximumNumberOfEvaluations</longflag>
+      <description>Maximum number of evaluations for line search in lbfgsb optimizer.</description>
+      <default>900</default>
+    </integer>
+    <integer>
+      <name>maximumNumberOfCorrections</name>
+      <longflag>maximumNumberOfCorrections</longflag>
+      <description>Maximum number of corrections in lbfgsb optimizer.</description>
+      <default>12</default>
+    </integer>
 
     <boolean>
       <name>UseDebugImageViewer</name>

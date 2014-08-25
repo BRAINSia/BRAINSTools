@@ -541,6 +541,8 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::BRAINSFitHelperTemplat
   m_PermitParameterVariation(0),
   m_SamplingStrategy(AffineRegistrationType::NONE),
   m_InitializeRegistrationByCurrentGenericTransform(true),
+  m_MaximumNumberOfEvaluations(900),
+  m_MaximumNumberOfCorrections(12),
   m_ForceMINumberOfThreads(-1)
 {
   m_SplineGridSize[0] = 14;
@@ -1290,11 +1292,6 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
       bsplineRegistration->InPlaceOn(); // So bsplineTx is also the output transform
                                         //  of the registration filter.
 
-      // TODO:  Expose these to the command line for consistancy.
-      const int m_MaximumNumberOfIterations = 1500;
-      const int m_MaximumNumberOfEvaluations = 900;
-      const int m_MaximumNumberOfCorrections = 12;
-
       typedef typename itk::LBFGSBOptimizerv4                  LBFGSBOptimizerType;
       typedef typename LBFGSBOptimizerType::Pointer            LBFGSBOptimizerTypePointer;
       typedef typename LBFGSBOptimizerType::BoundSelectionType OptimizerBoundSelectionType;
@@ -1330,11 +1327,11 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
       LBFGSBoptimizer->SetLowerBound(lowerBound);
       std::cout << "POST: " << LBFGSBoptimizer->GetLowerBound().size() << " " << lowerBound.size() << std::endl;
 
-      LBFGSBoptimizer->SetCostFunctionConvergenceFactor(m_CostFunctionConvergenceFactor);
-      LBFGSBoptimizer->SetGradientConvergenceTolerance(m_ProjectedGradientTolerance);
-      LBFGSBoptimizer->SetNumberOfIterations(m_MaximumNumberOfIterations);
-      LBFGSBoptimizer->SetMaximumNumberOfFunctionEvaluations(m_MaximumNumberOfEvaluations);
-      LBFGSBoptimizer->SetMaximumNumberOfCorrections(m_MaximumNumberOfCorrections);
+      LBFGSBoptimizer->SetCostFunctionConvergenceFactor( m_CostFunctionConvergenceFactor );
+      LBFGSBoptimizer->SetGradientConvergenceTolerance( m_ProjectedGradientTolerance );
+      LBFGSBoptimizer->SetNumberOfIterations( localNumberOfIterations[currentTransformIndex] );
+      LBFGSBoptimizer->SetMaximumNumberOfFunctionEvaluations( m_MaximumNumberOfEvaluations );
+      LBFGSBoptimizer->SetMaximumNumberOfCorrections( m_MaximumNumberOfCorrections );
 
       typedef itk::Image<float, 3> RegisterImageType;
 

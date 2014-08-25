@@ -128,6 +128,8 @@ BRAINSFitHelper::BRAINSFitHelper() :
   m_SamplingStrategy(AffineRegistrationType::NONE),
   m_NormalizeInputImages(false),
   m_InitializeRegistrationByCurrentGenericTransform(true),
+  m_MaximumNumberOfEvaluations(900),
+  m_MaximumNumberOfCorrections(12),
   m_ForceMINumberOfThreads(-1)
 {
   m_SplineGridSize[0] = 14;
@@ -569,6 +571,8 @@ BRAINSFitHelper::PrintCommandLine(const bool dumpTempVolumes, const std::string 
   oss << "--useCachingOfBSplineWeightsMode " << this->m_UseCachingOfBSplineWeightsMode  << "  \\" << std::endl;
   oss << "--maxBSplineDisplacement " << this->m_MaxBSplineDisplacement << " \\" << std::endl;
   oss << "--projectedGradientTolerance " << this->m_ProjectedGradientTolerance << " \\" << std::endl;
+  oss << "--MaximumNumberOfEvaluations " << this->m_MaximumNumberOfEvaluations << " \\" << std::endl;
+  oss << "--MaximumNumberOfCorrections " << this->m_MaximumNumberOfCorrections << " \\" << std::endl;
   oss << "--costFunctionConvergenceFactor " << this->m_CostFunctionConvergenceFactor << " \\" << std::endl;
   oss << "--backgroundFillValue " << this->m_BackgroundFillValue  << "  \\" << std::endl;
   oss << "--initializeTransformMode " << this->m_InitializeTransformMode  << "  \\" << std::endl;

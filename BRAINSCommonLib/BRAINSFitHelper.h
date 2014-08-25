@@ -167,6 +167,10 @@ public:
   itkGetConstMacro(InitializeTransformMode, std::string);
   itkSetMacro(MaskInferiorCutOffFromCenter, double);
   itkGetConstMacro(MaskInferiorCutOffFromCenter, double);
+  itkSetMacro(MaximumNumberOfEvaluations, int);
+  itkGetConstMacro(MaximumNumberOfEvaluations, int);
+  itkSetMacro(MaximumNumberOfCorrections, int);
+  itkGetConstMacro(MaximumNumberOfCorrections, int);
   itkSetMacro(CurrentGenericTransform,  CompositeTransformType::Pointer);
   itkGetConstMacro(CurrentGenericTransform,  CompositeTransformType::Pointer);
   VECTORitkSetMacro(SplineGridSize, std::vector<int>       );
@@ -302,6 +306,8 @@ private:
   SamplingStrategyType                       m_SamplingStrategy;
   bool                                       m_NormalizeInputImages;
   bool                                       m_InitializeRegistrationByCurrentGenericTransform;
+  int                                        m_MaximumNumberOfEvaluations;
+  int                                        m_MaximumNumberOfCorrections;
   // DEBUG OPTION:
   int m_ForceMINumberOfThreads;
 };  // end BRAINSFitHelper class
@@ -419,6 +425,8 @@ BRAINSFitHelper::SetupRegistration(GenericMetricType *localCostMetric)
   myHelper->SetForceMINumberOfThreads(this->m_ForceMINumberOfThreads);
   myHelper->SetUseROIBSpline(this->m_UseROIBSpline);
   myHelper->SetInitializeRegistrationByCurrentGenericTransform(this->m_InitializeRegistrationByCurrentGenericTransform);
+  myHelper->SetMaximumNumberOfEvaluations(this->m_MaximumNumberOfEvaluations);
+  myHelper->SetMaximumNumberOfCorrections(this->m_MaximumNumberOfCorrections);
   if( this->m_DebugLevel > 7 )
     {
     this->PrintCommandLine(true, "BF");

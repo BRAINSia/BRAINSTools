@@ -468,6 +468,8 @@ int main(int argc, char *argv[])
     myHelper->SetUseROIBSpline(useROIBSpline);
     myHelper->SetSamplingStrategy(metricSamplingStrategy);
     myHelper->SetInitializeRegistrationByCurrentGenericTransform(initializeRegistrationByCurrentGenericTransform);
+    myHelper->SetMaximumNumberOfEvaluations(maximumNumberOfEvaluations);
+    myHelper->SetMaximumNumberOfCorrections(maximumNumberOfCorrections);
 
     //HACK: create a flag for normalization
     bool NormalizeInputImages = false;

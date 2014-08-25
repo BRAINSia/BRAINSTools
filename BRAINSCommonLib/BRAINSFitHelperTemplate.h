@@ -188,6 +188,10 @@ public:
   itkGetConstMacro(MaskInferiorCutOffFromCenter, double);
   itkSetMacro(CurrentGenericTransform,  CompositeTransformPointer);
   itkGetConstMacro(CurrentGenericTransform,  CompositeTransformPointer);
+  itkSetMacro(MaximumNumberOfEvaluations, int);
+  itkGetConstMacro(MaximumNumberOfEvaluations, int);
+  itkSetMacro(MaximumNumberOfCorrections, int);
+  itkGetConstMacro(MaximumNumberOfCorrections, int);
 
   // cppcheck-suppress unusedFunction
   VECTORitkSetMacro(TransformType, std::vector<std::string> );
@@ -306,6 +310,8 @@ private:
   std::vector<int>                           m_PermitParameterVariation;
   SamplingStrategyType                       m_SamplingStrategy;
   bool                                       m_InitializeRegistrationByCurrentGenericTransform;
+  int                                        m_MaximumNumberOfEvaluations;
+  int                                        m_MaximumNumberOfCorrections;
   // DEBUG OPTION:
   int m_ForceMINumberOfThreads;
 };  // end BRAINSFitHelperTemplate class

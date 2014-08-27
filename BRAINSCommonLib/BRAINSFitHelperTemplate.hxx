@@ -1319,19 +1319,30 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
       lowerBound.Fill(-m_MaxBSplineDisplacement);
 
       LBFGSBoptimizer->SetBoundSelection(boundSelect);
-      std::cout << "PRE : " << LBFGSBoptimizer->GetUpperBound().size() << " " << upperBound.size() << std::endl;
+      //std::cout << "PRE : " << LBFGSBoptimizer->GetUpperBound().size() << " " << upperBound.size() << std::endl;
       LBFGSBoptimizer->SetUpperBound(upperBound);
-      std::cout << "POST: " << LBFGSBoptimizer->GetUpperBound().size() << " " << upperBound.size() << std::endl;
+      //std::cout << "POST: " << LBFGSBoptimizer->GetUpperBound().size() << " " << upperBound.size() << std::endl;
 
-      std::cout << "PRE : " << LBFGSBoptimizer->GetLowerBound().size() << " " << lowerBound.size() << std::endl;
+      //std::cout << "PRE : " << LBFGSBoptimizer->GetLowerBound().size() << " " << lowerBound.size() << std::endl;
       LBFGSBoptimizer->SetLowerBound(lowerBound);
-      std::cout << "POST: " << LBFGSBoptimizer->GetLowerBound().size() << " " << lowerBound.size() << std::endl;
+      //std::cout << "POST: " << LBFGSBoptimizer->GetLowerBound().size() << " " << lowerBound.size() << std::endl;
 
       LBFGSBoptimizer->SetCostFunctionConvergenceFactor( m_CostFunctionConvergenceFactor );
       LBFGSBoptimizer->SetGradientConvergenceTolerance( m_ProjectedGradientTolerance );
       LBFGSBoptimizer->SetNumberOfIterations( localNumberOfIterations[currentTransformIndex] );
       LBFGSBoptimizer->SetMaximumNumberOfFunctionEvaluations( m_MaximumNumberOfEvaluations );
       LBFGSBoptimizer->SetMaximumNumberOfCorrections( m_MaximumNumberOfCorrections );
+
+      std::cout << "LBFGSB optimizer is used for BSpline registration using following parameters set:" << std::endl;
+      std::cout << "-----------------------------------------------------------------------------------" << std::endl;
+      std::cout << "NOTICE: You can use commandline options to adjust these parameters to find a\n "
+                << "        probable better compromise between running time and registration precision." << std::endl;
+      std::cout << "-----------------------------------------------------------------------------------" << std::endl;
+      std::cout << " - Cost Function Convergence Factor : " << m_CostFunctionConvergenceFactor << std::endl;
+      std::cout << " - Projected Gradient Tolerance     : " << m_ProjectedGradientTolerance << std::endl;
+      std::cout << " - Maximum Number of Corrections    : " << m_MaximumNumberOfCorrections << std::endl;
+      std::cout << " - Maximum Number of Evaluations    : " << m_MaximumNumberOfEvaluations << std::endl;
+      std::cout << " - Maximum Number of Iterations     : " << localNumberOfIterations[currentTransformIndex] << std::endl << std::endl;
 
       typedef itk::Image<float, 3> RegisterImageType;
 

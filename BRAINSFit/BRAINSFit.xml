@@ -536,7 +536,7 @@
       <longflag>costFunctionConvergenceFactor</longflag>
       <description> From itkLBFGSBOptimizer.h: Set/Get the CostFunctionConvergenceFactor. Algorithm terminates when the reduction in cost function is less than (factor * epsmcj) where epsmch is the machine precision. Typical values for factor: 1e+12 for low accuracy; 1e+7 for moderate accuracy and 1e+1 for extremely high accuracy.  1e+9 seems to work well.
       </description>
-      <default>1e+9</default>
+      <default>2e+13</default>
     </double>
     <double>
       <name>projectedGradientTolerance</name>
@@ -555,7 +555,7 @@
       <name>maximumNumberOfCorrections</name>
       <longflag>maximumNumberOfCorrections</longflag>
       <description>Maximum number of corrections in lbfgsb optimizer.</description>
-      <default>12</default>
+      <default>25</default>
     </integer>
 
     <boolean>

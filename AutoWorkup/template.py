@@ -34,10 +34,23 @@ import traceback
 
 from baw_exp import OpenSubjectDatabase
 
-def get_subjects_sessions_dictionary(subjects, cache, prefix, dbfile, shuffle=False):
+def get_processed_subjects( resultdir ):
+    import glob
+    # resultdir/subject_dir/Atlas/AVG_T1.nii.gz
+    sential_file_pattern = "*/Atlas/AVG_T1.nii.gz"
+    processedSubjects = glob.glob( os.path.join(resultdir, sential_file_pattern) )
+    for replaceStr in [resultdir, sential_file_pattern, "/"]:
+        processedSubjects = [ s.replace( replaceStr, "" ) for s in processedSubjects ]
+    return processedSubjects
+
+def get_subjects_sessions_dictionary(subjects, cache, resultdir, prefix, dbfile, shuffle=False):
     import random
     _temp = OpenSubjectDatabase(cache, ['all'], prefix, dbfile)
-    if "all" in subjects:
+    if "new" in subjects:
+        _all_subjects = set( _temp.getAllSubjects() )
+        _processed_subjects = set( get_processed_subjects( resultdir ) )
+        subjects = list( _all_subjects not in _processed_subjects )
+    elif "all" in subjects:
         subjects = _temp.getAllSubjects()
     if shuffle:
         random.shuffle(subjects)  # randomly shuffle to get max
@@ -119,7 +132,11 @@ def getSessionsFromSubjectDictionary(subject_session_dictionary,subject):
 def _template_runner(argv, environment, experiment, pipeline, cluster):
     print "Getting subjects from database..."
     # subjects = argv["--subjects"].split(',')
-    subjects, subjects_sessions_dictionary = get_subjects_sessions_dictionary(argv['SUBJECTS'], experiment['cachedir'], environment['prefix'], experiment['dbfile']) # Build database before parallel section
+    subjects, subjects_sessions_dictionary = get_subjects_sessions_dictionary(argv['SUBJECTS'],
+            experiment['cachedir'],
+            experiment['resultdir'],
+            environment['prefix'],
+            experiment['dbfile']) # Build database before parallel section
     print "Copying Atlas directory and determining appropriate Nipype options..."
     pipeline = nipype_options(argv, pipeline, cluster, experiment, environment)  # Generate Nipype options
     print "Dispatching jobs to the system..."

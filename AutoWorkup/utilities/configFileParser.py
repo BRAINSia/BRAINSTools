@@ -47,7 +47,6 @@ def parseEnvironment(parser, section):
         retval['env']['PATH'] = envpath  # Create append to PATH
     else:
         retval['env']['PATH'] = parser.get(section, 'APPEND_PATH')
-    retval['cluster'] = parser.getboolean(section, 'CLUSTER')
     retval['prefix'] = validatePath(parser.get(section, 'MOUNT_PREFIX'), True, True)
     if retval['prefix'] is None:
         retval['prefix'] = ''
@@ -110,14 +109,17 @@ def parsePipeline(parser):
     return retval
 
 
-def parseCluster(parser, env):
-    """ Parse the cluster section and return a dictionary """
+def parseCluster(parser, section):
+    """ Parse the section and return a dictionary """
     retval = dict()
-    retval['modules'] = eval(parser.get(env, 'MODULES'))
-    retval['queue'] = parser.get(env, 'QUEUE')
-    retval['long_q'] = parser.get(env, 'QUEUE_LONG')
-    retval['qstat'] = parser.get(env, 'QSTAT_IMMEDIATE')
-    retval['qstat_cached'] = parser.get(env, 'QSTAT_CACHED')
+    if parser.get(section, 'MODULES'):
+        retval['modules'] = eval(parser.get(section, 'MODULES'))
+    else:
+        retval['modules'] = parser.get(section, 'MODULES')
+    retval['queue'] = parser.get(section, 'QUEUE')
+    retval['long_q'] = parser.get(section, 'QUEUE_LONG')
+    retval['qstat'] = parser.get(section, 'QSTAT_IMMEDIATE')
+    retval['qstat_cached'] = parser.get(section, 'QSTAT_CACHED')
     return retval
 
 
@@ -131,10 +133,8 @@ def parseFile(configFile, env, workphase):
     environment = parseEnvironment(parser, env)
     experiment = parseExperiment(parser, workphase)
     pipeline = parsePipeline(parser)
-    if environment['cluster']:
-        cluster = parseCluster(parser, env)
-        return environment, experiment, pipeline, cluster
-    return environment, experiment, pipeline, None
+    cluster = parseCluster(parser, env)
+    return environment, experiment, pipeline, cluster
 
 
 def resolveDataSinkOption(args, pipeline):
@@ -239,10 +239,9 @@ def nipype_options(args, pipeline, cluster, experiment, environment):
     """
     retval = {}
     from distributed import create_global_sge_script
-    if environment['cluster']:
-        template = create_global_sge_script(cluster, environment)
-    else:
-        template = None
+    template = create_global_sge_script(cluster, environment)
+    #else:
+    #    template = None
     plugin_name, plugin_args = _nipype_plugin_config(args['--wfrun'], cluster, template)
     retval['plugin_name'] = plugin_name
     retval['plugin_args'] = plugin_args

@@ -42,6 +42,7 @@ from PipeLineFunctionHelpers import UnwrapPosteriorImagesFromDictionaryFunction 
 
 from WorkupT1T2LandmarkInitialization import CreateLandmarkInitializeWorkflow
 from WorkupT1T2TissueClassify import CreateTissueClassifyWorkflow
+from WorkupAddsonBrainStem import CreateBrainstemWorkflow
 
 from utilities.misc import *
 try:
@@ -180,6 +181,23 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, master_
                                                     ('outputspec.atlasToSubjectInverseTransform',
                                                      'tc_atlas2sessionInverse_tx')]),
                        ])
+        """
+        brain stem adds on feature
+        inputs:
+            - landmark (fcsv) file
+            - fixed brainlabels seg.nii.gz
+        output:
+            - brainStem Segmentation
+        """
+        myLocalBrainStemWF = CreateBrainstemWorkflow("BrainStem",
+                                                     master_config['queue'],
+                                                     "brainStem.nii.gz")
+
+        baw201.connect([(myLocalLMIWF,myLocalBrainStemWF, [('outputspec.outputLandmarksInInputSpace',
+                                                            'inputspec.inputLandmarkFilename')]),
+                        (myLocalTCWF,myLocalBrainStemWF, [('outputspec.outputLabels',
+                                                           'inputspec.inputTissueLabelFilename')])
+                      ])
 
     dsName = "{0}_ds_{1}".format(phase, sessionid)
     DataSink = pe.Node(name=dsName, interface=nio.DataSink())

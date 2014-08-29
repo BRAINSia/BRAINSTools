@@ -34,6 +34,13 @@
 
 #include <map>
 
+#include "itkMaskedFFTNormalizedCorrelationImageFilter.h"
+#include "itkMinimumMaximumImageCalculator.h"
+#include "itkBinaryImageToLabelMapFilter.h"
+#include "itkLabelMapToLabelImageFilter.h"
+#include "itkLabelStatisticsImageFilter.h"
+#include "itkMultiplyImageFilter.h"
+
 class landmarksConstellationDetector
 {
   typedef vnl_matrix<double>                           MatrixType;
@@ -274,7 +281,7 @@ private:
                                             const SImageType::PointType::VectorType & CenterOfSearchArea,
                                             const std::vector<std::vector<float> > & TemplateMean,
                                             const landmarksConstellationModelIO::IndexLocationVectorType & model,
-                                            const bool ComputeOutsideSearchRadius, double & cc_Max,
+                                            double & cc_Max,
                                             const std::string & mapID);
 
   RigidTransformType::Pointer   m_TmspBasedOnReflectionCrossCorrelation;

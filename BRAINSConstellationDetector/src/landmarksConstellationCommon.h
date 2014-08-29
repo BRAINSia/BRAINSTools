@@ -320,13 +320,6 @@ void extractArray(
   const landmarksConstellationModelIO::IndexLocationVectorType & model,
   std::vector<float> & result_array);
 
-extern
-void extractArrayRemoveVectorMeanNormalize(
-  LinearInterpolatorType::Pointer imInterp,
-  const SImageType::PointType & CenterPoint,
-  const landmarksConstellationModelIO::IndexLocationVectorType & model,
-  std::vector<float> & result_array);
-
 inline
 static std::string
 PrefixName(const char *prefix, const std::string & name)

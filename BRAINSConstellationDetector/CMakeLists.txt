@@ -24,6 +24,7 @@ FindITKUtil(
   ITKVTK
   ITKVtkGlue
   ITKTestKernel
+  ITKConvolution
 )
 
 #-----------------------------------------------------------------------------

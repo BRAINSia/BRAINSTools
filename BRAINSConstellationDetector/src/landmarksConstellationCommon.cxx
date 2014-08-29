@@ -630,69 +630,6 @@ extractArray(LinearInterpolatorType::Pointer imInterp,
     }
 }
 
-void
-extractArrayRemoveVectorMeanNormalize(
-  LinearInterpolatorType::Pointer imInterp,
-  const SImageType::PointType & CenterPoint,
-  const landmarksConstellationModelIO::IndexLocationVectorType & model,
-  std::vector<float> & result_array)
-{
-  typedef double AccumulatorType;
-  // interpolate, accumulating mean as you go
-  AccumulatorType mean(0.0);
-  {
-  const landmarksConstellationModelIO::IndexLocationVectorType::const_iterator theEnd= model.end();
-  std::vector<float>::iterator resultIt = result_array.begin();
-  for(
-    landmarksConstellationModelIO::IndexLocationVectorType::const_iterator it = model.begin();
-    it != theEnd; ++it, ++resultIt )
-    {
-    const SImageType::PointType & point = CenterPoint + *it;
-    if( imInterp->IsInsideBuffer(point) )
-      {
-      ( *resultIt ) = imInterp->Evaluate(point);
-      }
-    else
-      {
-      ( *resultIt ) = 0.0;
-      }
-    mean += ( *resultIt );
-    }
-  }
-
-  // remove mean, accumulating norm as you go.
-  mean /= result_array.size();
-  AccumulatorType norm = 0.0;
-    {
-    const std::vector<float>::const_iterator theEnd = result_array.end();
-    for(
-      std::vector<float>::iterator resultIt = result_array.begin();
-      resultIt != theEnd; ++resultIt )
-      {
-      const AccumulatorType v( ( *resultIt ) - mean );
-      *resultIt = v;
-      norm += v * v;
-      }
-    norm = vcl_sqrt(norm);
-    if( norm < vcl_numeric_limits<AccumulatorType>::epsilon() )
-      {
-      std::cout << "WARNING:  ZERO NORM VECTOR." << __FILE__ << __LINE__ << std::endl;
-      return;
-      }
-    // normalize array
-    //TODO:  Try std::transform<> here.
-    const AccumulatorType norm_inverse = 1.0/norm;
-      {
-      for(
-        std::vector<float>::iterator resultIt = result_array.begin();
-        resultIt != theEnd; ++resultIt )
-        {
-        *resultIt *= norm_inverse;
-        }
-      }
-    }
-}
-
 unsigned char
 ShortToUChar(short in, short min, short max)
 {

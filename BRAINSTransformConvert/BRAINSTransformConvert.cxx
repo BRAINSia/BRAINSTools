@@ -228,7 +228,7 @@ DoConversion( int argc, char *argv[] )
   typedef itk::Transform< TScalarType, 3, 3 > LocalGenericTransformType;
   typedef itk::BSplineDeformableTransform
     < TScalarType, GenericTransformImageNS::SpaceDimension,
-    GenericTransformImageNS::SplineOrder>     LocalBSplineTransformType;
+      GenericTransformImageNS::SplineOrder>     LocalBSplineTransformType;
 
   typedef itk::AffineTransform< TScalarType, 3 >            LocalAffineTransformTYpe;
   typedef itk::VersorRigid3DTransform< TScalarType >        LocalVersorRigid3DTransformType;
@@ -310,6 +310,13 @@ DoConversion( int argc, char *argv[] )
       std::cerr << "Error writing displacement field " << displacementVolume << std::endl;
       return EXIT_FAILURE;
       }
+    return EXIT_SUCCESS;
+    }
+
+  //
+  // if no transform name given, don't write transform
+  if(outputTransform.size() == 0)
+    {
     return EXIT_SUCCESS;
     }
 
@@ -404,8 +411,6 @@ int main(int argc, char *argv[])
 
   CHECK_PARAMETER_IS_SET(inputTransform,
                          "Missing inputTransform parameter");
-  CHECK_PARAMETER_IS_SET(outputTransform,
-                         "Missing outputTransform parameter");
   CHECK_PARAMETER_IS_SET(outputTransformType,
                          "Missing outpuTransformType");
   CHECK_PARAMETER_IS_SET(outputPrecisionType,
@@ -424,6 +429,5 @@ int main(int argc, char *argv[])
     std::cerr << "Error: Invalid parameter for output precision type." << std::endl;
     return EXIT_FAILURE;
     }
-
   return EXIT_SUCCESS;
 }

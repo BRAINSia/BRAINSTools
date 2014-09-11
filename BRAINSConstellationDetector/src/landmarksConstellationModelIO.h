@@ -48,7 +48,7 @@ defineTemplateIndexLocations
   typedef SImageType::PointType::VectorType::ComponentType CoordType;
 
   // Reserve space that will be needed
-  indexLocations.reserve( static_cast<unsigned int>( ( r + 1.0 ) * ( h + 1.0 ) ) );
+  indexLocations.reserve( static_cast<unsigned int>( 4 * r * r * h ) );
 
   const CoordType h_2 = h / 2;
   const CoordType r2 = r * r;
@@ -58,7 +58,7 @@ defineTemplateIndexLocations
       {
       for( CoordType LR = -h_2; LR <= h_2; LR += 1.0F )
         {
-        if( ( LR * LR + PA * PA )  <= r2 )  // a suspicious place
+        if( ( SI * SI + PA * PA )  <= r2 )  // a suspicious place
           {
           SImageType::PointType::VectorType temp;
           temp[0] = LR;

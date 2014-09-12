@@ -303,7 +303,7 @@ int main(int argc, char *argv[])
     std::cout << ex << std::endl;
     throw;
     }
-
+  typedef itk::Transform<double, 3, 3> GenericTransformType;
   GenericTransformType::Pointer outputTransform = registerImageFilter->GetCurrentGenericTransform()->GetNthTransform(0);
   itk::WriteTransformToDisk<double>(outputTransform, outputTransformName);
   return EXIT_SUCCESS;

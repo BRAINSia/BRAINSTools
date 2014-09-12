@@ -70,6 +70,8 @@ int main( int argc, char *argv[] )
 
   ReaderType::TransformListType *transformList = reader->GetTransformList();
 
+  typedef itk::CompositeTransform<double, 3> BRAINSCompositeTransformType;
+
   BRAINSCompositeTransformType::Pointer inputCompTrans =
   dynamic_cast<BRAINSCompositeTransformType *>( transformList->front().GetPointer() );
   if( inputCompTrans.IsNull() )

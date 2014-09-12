@@ -135,7 +135,7 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
 
   if( this->m_CompositeTransform->GetNumberOfTransforms() == 1 )
     {
-    const GenericTransformType::ConstPointer genericInit = this->m_CompositeTransform->GetFrontTransform();
+    const itk::Transform<double, 3, 3>::ConstPointer genericInit = this->m_CompositeTransform->GetFrontTransform();
     const typename TransformType::ConstPointer tempInitializerITKTransform =
                                       dynamic_cast<TransformType const *>( genericInit.GetPointer() );
     if( tempInitializerITKTransform.IsNull() )

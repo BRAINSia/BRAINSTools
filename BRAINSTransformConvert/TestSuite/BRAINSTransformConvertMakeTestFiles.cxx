@@ -58,7 +58,9 @@ int main(int argc, char * *argv)
     }
 
   typedef itk::BSplineDeformableTransform<double, 3, 3> BSplineDeformableTransformType;
-
+  typedef itk::VersorRigid3DTransform<double>           VersorRigid3DTransformType;
+  typedef itk::ScaleVersor3DTransform<double>           ScaleVersor3DTransformType;
+  typedef itk::ScaleSkewVersor3DTransform<double>       ScaleSkewVersor3DTransformType;
   VersorRigid3DTransformType::Pointer versorRigidTransform
     = CreateTransform<VersorRigid3DTransformType>();
   VersorRigid3DTransformType::InputPointType center;
@@ -113,6 +115,7 @@ int main(int argc, char * *argv)
   scaleSkewVersorName += "/ScaleSkewVersorTransform.txt";
   itk::WriteTransformToDisk<double>(scaleSkewVersorTransform, scaleSkewVersorName);
 
+  typedef itk::AffineTransform<double, 3>                      AffineTransformType;
   AffineTransformType::Pointer affineTransform =
     CreateTransform<AffineTransformType>();
 

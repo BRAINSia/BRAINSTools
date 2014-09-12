@@ -80,6 +80,7 @@ private:
     typename LocalDisplacementFieldType::Pointer DisplacementField;
     // An empty SmartPointer constructor sets up someTransform.IsNull() to
     // represent a not-supplied state:
+    typedef  itk::Transform<double, 3, 3> GenericTransformType;
     typename GenericTransformType::Pointer genericTransform;
     // typename WarperImageType::Pointer ReferenceImage;
     // if there is no *mat file.

@@ -202,7 +202,9 @@ landmarksConstellationDetector::ComputeFinalRefinedACPCAlignedTransform(void)
   transformType[0] = "Affine";
   brainsFitHelper->SetTransformType(transformType);
 
-  CompositeTransformType::Pointer initToAtlasAffineCompositeTransform = dynamic_cast<CompositeTransformType *>( initToAtlasAffineTransform.GetPointer() );
+  typedef itk::CompositeTransform<double, 3> CompositeTransformType;
+  CompositeTransformType::Pointer initToAtlasAffineCompositeTransform =
+    dynamic_cast<CompositeTransformType *>( initToAtlasAffineTransform.GetPointer() );
   if( initToAtlasAffineCompositeTransform.IsNull() )
     {
     initToAtlasAffineCompositeTransform = CompositeTransformType::New();

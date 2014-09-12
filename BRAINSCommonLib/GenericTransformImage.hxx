@@ -33,7 +33,7 @@ TransformResample(
   const typename InputImageType::PixelType defaultValue,
   typename itk::InterpolateImageFunction<InputImageType,
            typename itk::NumericTraits<typename InputImageType::PixelType>::RealType>::Pointer interp,
-  typename GenericTransformType::ConstPointer transform)
+  typename itk::Transform<double, 3, 3>::ConstPointer transform)
 {
   typedef typename itk::ResampleImageFilter<InputImageType, OutputImageType> ResampleImageFilter;
   typename ResampleImageFilter::Pointer resample = ResampleImageFilter::New();
@@ -220,7 +220,7 @@ typename OutputImageType::Pointer GenericTransformImage(
   InputImageType const *const OperandImage,
   const itk::ImageBase<InputImageType::ImageDimension> *ReferenceImage,
   // typename DisplacementImageType::Pointer DisplacementField,
-  typename GenericTransformType::Pointer genericTransform,
+  typename itk::Transform<double, 3, 3>::Pointer genericTransform,
   typename InputImageType::PixelType suggestedDefaultValue, // NOTE:  This is
                                                             // ignored in the
                                                             // case of binary
@@ -324,6 +324,9 @@ typename OutputImageType::Pointer GenericTransformImage(
       typedef itk::ResampleInPlaceImageFilter<InputImageType, OutputImageType> ResampleIPFilterType;
       typedef typename ResampleIPFilterType::Pointer                           ResampleIPFilterPointer;
 
+
+      typedef itk::CompositeTransform<double, 3> CompositeTransformType;
+
       const CompositeTransformType::ConstPointer genericCompositeTransform =
         dynamic_cast<const CompositeTransformType *>( genericTransform.GetPointer() );
       if( genericCompositeTransform.IsNull() )
@@ -337,6 +340,7 @@ typename OutputImageType::Pointer GenericTransformImage(
                   << "but the input composite transform consists of more than one transfrom." << std::endl;
         }
       // extract the included linear rigid transform from the input composite
+      typedef itk::VersorRigid3DTransform<double>    VersorRigid3DTransformType;
       const VersorRigid3DTransformType::ConstPointer tempInitializerITKTransform =
         dynamic_cast<VersorRigid3DTransformType const *>( genericCompositeTransform->GetNthTransform(0).GetPointer() );
       if( tempInitializerITKTransform.IsNull() )
@@ -372,8 +376,8 @@ typename OutputImageType::Pointer GenericTransformImage(
     {
     // A special case for dealing with binary images
     // where signed distance maps are warped and thresholds created
-    typedef short int                                                                    MaskPixelType;
-    typedef typename itk::Image<MaskPixelType,  GenericTransformImageNS::SpaceDimension> BinFlagOnMaskImageType;
+    typedef short int                             MaskPixelType;
+    typedef typename itk::Image<MaskPixelType, 3> BinFlagOnMaskImageType;
 
     // Now Threshold and write out image
     typedef typename itk::BinaryThresholdImageFilter<InputImageType,

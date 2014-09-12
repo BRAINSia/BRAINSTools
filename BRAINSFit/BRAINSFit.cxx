@@ -113,6 +113,7 @@ int main(int argc, char *argv[])
     DebugImageDisplaySender.SetEnabled(UseDebugImageViewer);
     }
 #endif
+  typedef itk::Transform<double, 3, 3> GenericTransformType;
 
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
   if( debugLevel > 1 )
@@ -406,7 +407,9 @@ int main(int argc, char *argv[])
       movingMask = NULL;
       }
     }
-  CompositeTransformType::Pointer currentGenericTransform = NULL;
+
+  typedef itk::CompositeTransform<double, 3> CompositeTransformType;
+  CompositeTransformType::Pointer            currentGenericTransform;
   if( initialTransform != "" )
     {
     currentGenericTransform = CompositeTransformType::New();
@@ -497,8 +500,8 @@ int main(int argc, char *argv[])
 
       {
       typedef float                                                                     VectorComponentType;
-      typedef itk::Vector<VectorComponentType, GenericTransformImageNS::SpaceDimension> VectorPixelType;
-      typedef itk::Image<VectorPixelType,  GenericTransformImageNS::SpaceDimension>     DisplacementFieldType;
+      typedef itk::Vector<VectorComponentType, 3> VectorPixelType;
+      typedef itk::Image<VectorPixelType,  3>     DisplacementFieldType;
 
       resampledImage = GenericTransformImage<MovingVolumeType, FixedVolumeType, DisplacementFieldType>(
           preprocessedMovingVolume,

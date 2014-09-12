@@ -108,6 +108,6 @@ WorkingImagePointer ReadImageByFilename( const std::string  & filename );
 
 DisplacementFieldType::Pointer GetDeformationField( std::string filename);
 
-GenericTransformType::Pointer GetGenericTransform( std::string filename);
+itk::Transform<double, 3, 3>::Pointer GetGenericTransform( std::string filename);
 
 #endif

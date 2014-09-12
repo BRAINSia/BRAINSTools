@@ -98,6 +98,7 @@ public:
   typedef typename ByteImageType::RegionType ByteImageRegionType;
   typedef typename ByteImageType::SizeType   ByteImageSizeType;
 
+  typedef itk::Transform<double, 3, 3>         GenericTransformType;
   typedef std::vector<ProbabilityImagePointer> ProbabilityImageList;
   typedef std::vector<OutputImagePointer>      OutputImageList;
 

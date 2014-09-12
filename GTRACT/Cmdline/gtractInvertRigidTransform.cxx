@@ -65,6 +65,8 @@ int main(int argc, char *argv[])
 
   typedef itk::VersorRigid3DTransform<double> RigidTransformType;
   // Read the transform
+  typedef itk::Transform<double, 3, 3> GenericTransformType;
+
   GenericTransformType::Pointer forwardTransform = itk::ReadTransformFromDisk(inputTransform);
   RigidTransformType::Pointer   reverseTransform = RigidTransformType::New();
   forwardTransform->GetInverse(reverseTransform);

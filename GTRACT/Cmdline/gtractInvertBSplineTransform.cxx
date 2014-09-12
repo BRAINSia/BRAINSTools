@@ -98,6 +98,7 @@ int main(int argc, char *argv[])
   std::cout << "Using Image: " << ExampleImage << std::endl;
 
   // Read the transform
+  typedef itk::Transform<double, 3, 3> GenericTransformType;
   GenericTransformType::Pointer baseTransform = itk::ReadTransformFromDisk(inputTransform);
 
   typedef itk::InvertBSplineFilter InvertFilterType;

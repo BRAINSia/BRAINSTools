@@ -125,8 +125,8 @@ int ApplyWarp(int argc, char *argv[])
   // Read ReferenceVolume and DeformationVolume
 
   typedef float                                                                     VectorComponentType;
-  typedef itk::Vector<VectorComponentType, GenericTransformImageNS::SpaceDimension> VectorPixelType;
-  typedef itk::Image<VectorPixelType,  GenericTransformImageNS::SpaceDimension>     DisplacementFieldType;
+  typedef itk::Vector<VectorComponentType, 3> VectorPixelType;
+  typedef itk::Image<VectorPixelType,  3>     DisplacementFieldType;
 
   // An empty SmartPointer constructor sets up someImage.IsNull() to represent a not-supplied state:
   DisplacementFieldType::Pointer DisplacementField;
@@ -221,7 +221,7 @@ int ApplyWarp(int argc, char *argv[])
     // A special case for dealing with binary images
     // where signed distance maps are warped and thresholds created
     typedef short int                                                           MaskPixelType;
-    typedef itk::Image<MaskPixelType,  GenericTransformImageNS::SpaceDimension> MaskImageType;
+    typedef itk::Image<MaskPixelType,  3> MaskImageType;
     typedef itk::CastImageFilter<ImageType, MaskImageType>                      CastImageFilter;
     CastImageFilter::Pointer castFilter = CastImageFilter::New();
     castFilter->SetInput( TransformedImage );
@@ -237,7 +237,7 @@ int ApplyWarp(int argc, char *argv[])
   else if( pixelType == "uchar" )
     {
     typedef unsigned char                                                     NewPixelType;
-    typedef itk::Image<NewPixelType, GenericTransformImageNS::SpaceDimension> NewImageType;
+    typedef itk::Image<NewPixelType, 3> NewImageType;
     typedef itk::CastImageFilter<ImageType, NewImageType>                     CastImageFilter;
     CastImageFilter::Pointer castFilter = CastImageFilter::New();
     castFilter->SetInput( TransformedImage );
@@ -252,7 +252,7 @@ int ApplyWarp(int argc, char *argv[])
   else if( pixelType == "short" )
     {
     typedef signed short                                                      NewPixelType;
-    typedef itk::Image<NewPixelType, GenericTransformImageNS::SpaceDimension> NewImageType;
+    typedef itk::Image<NewPixelType, 3> NewImageType;
     typedef itk::CastImageFilter<ImageType, NewImageType>                     CastImageFilter;
     CastImageFilter::Pointer castFilter = CastImageFilter::New();
     castFilter->SetInput( TransformedImage );
@@ -267,7 +267,7 @@ int ApplyWarp(int argc, char *argv[])
   else if( pixelType == "ushort" )
     {
     typedef unsigned short                                                    NewPixelType;
-    typedef itk::Image<NewPixelType, GenericTransformImageNS::SpaceDimension> NewImageType;
+    typedef itk::Image<NewPixelType, 3> NewImageType;
     typedef itk::CastImageFilter<ImageType, NewImageType>                     CastImageFilter;
     CastImageFilter::Pointer castFilter = CastImageFilter::New();
     castFilter->SetInput( TransformedImage );
@@ -282,7 +282,7 @@ int ApplyWarp(int argc, char *argv[])
   else if( pixelType == "int" )
     {
     typedef int                                                               NewPixelType;
-    typedef itk::Image<NewPixelType, GenericTransformImageNS::SpaceDimension> NewImageType;
+    typedef itk::Image<NewPixelType, 3> NewImageType;
     typedef itk::CastImageFilter<ImageType, NewImageType>                     CastImageFilter;
     CastImageFilter::Pointer castFilter = CastImageFilter::New();
     castFilter->SetInput( TransformedImage );
@@ -297,7 +297,7 @@ int ApplyWarp(int argc, char *argv[])
   else if( pixelType == "uint" )
     {
     typedef unsigned int                                                      NewPixelType;
-    typedef itk::Image<NewPixelType, GenericTransformImageNS::SpaceDimension> NewImageType;
+    typedef itk::Image<NewPixelType, 3> NewImageType;
     typedef itk::CastImageFilter<ImageType, NewImageType>                     CastImageFilter;
     CastImageFilter::Pointer castFilter = CastImageFilter::New();
     castFilter->SetInput( TransformedImage );

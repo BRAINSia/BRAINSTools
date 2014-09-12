@@ -180,7 +180,7 @@ void ThirionFunction(const struct BRAINSDemonWarpAppParameters & command)
   typedef itk::CastImageFilter<TRealImage, MaskImageType> CastImageFilter;
 
   typedef itk::ImageMaskSpatialObject<dims>                           ImageMaskSpatialObjectType;
-  typedef itk::SpatialObject<GenericTransformImageNS::SpaceDimension> SpatialObjectType;
+  typedef itk::SpatialObject<3> SpatialObjectType;
 
   //
   // If optional landmark files given, will use landmark registration to

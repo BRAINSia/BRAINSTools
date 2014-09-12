@@ -104,6 +104,8 @@ public:
   itkStaticConstMacro(FixedImageDimension, unsigned int, FixedImageType::ImageDimension);
   itkStaticConstMacro(MovingImageDimension, unsigned int, MovingImageType::ImageDimension);
 
+
+  typedef typename itk::CompositeTransform<double, 3>               CompositeTransformType;
   typedef typename CompositeTransformType::Pointer                  CompositeTransformPointer;
   typedef IdentityTransform<double, MovingImageDimension>           IdentityTransformType;
 

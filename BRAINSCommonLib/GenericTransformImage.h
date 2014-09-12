@@ -48,34 +48,6 @@
 #include "itkTransformFactory.h"
 #include "itkTransformFileReader.h"
 #include "itkTransformFileWriter.h"
-//
-// TODO:  The next two should be hidden in the cxx files again.
-typedef itk::TransformFileReader                    TransformReaderType;
-typedef itk::TransformFileReader::TransformListType TransformListType;
-
-// TODO:  These should be hidden in the BRAINSFit namespace.
-typedef itk::Transform<double, 3, 3> GenericTransformType;
-
-namespace GenericTransformImageNS
-{
-static const unsigned int SpaceDimension = 3;
-static const unsigned int SplineOrder = 3;
-}
-
-typedef double CoordinateRepType;
-
-typedef itk::BSplineTransform<CoordinateRepType,
-                                        GenericTransformImageNS::SpaceDimension,
-                                        GenericTransformImageNS::SplineOrder>       BSplineTransformType;
-
-typedef itk::CompositeTransform<double, 3>                   CompositeTransformType;
-typedef itk::AffineTransform<double, 3>                      AffineTransformType;
-typedef itk::VersorRigid3DTransform<double>                  VersorRigid3DTransformType;
-typedef itk::ScaleVersor3DTransform<double>                  ScaleVersor3DTransformType;
-typedef itk::ScaleSkewVersor3DTransform<double>              ScaleSkewVersor3DTransformType;
-typedef itk::ThinPlateR2LogRSplineKernelTransform<double, 3> ThinPlateSpline3DTransformType;
-
-typedef itk::CompositeTransform<double, 3> BRAINSCompositeTransformType;
 
 namespace itk
 {
@@ -133,7 +105,8 @@ extern void WriteTransformToDisk( itk::Transform<TScalarType, 3, 3> const *const
   * }
   * \endcode
   */
-extern GenericTransformType::Pointer ReadTransformFromDisk(const std::string & initialTransform);
+
+extern itk::Transform<double, 3, 3>::Pointer ReadTransformFromDisk(const std::string & initialTransform);
 
 /**
   * \author Hans J. Johnson
@@ -152,15 +125,15 @@ extern GenericTransformType::Pointer ReadTransformFromDisk(const std::string & i
   * WriteTransformToDisk<TScalarType>(myAffine.GetPointer(), "myAffineFile.mat");
   * \endcode
   */
-extern VersorRigid3DTransformType::Pointer ComputeRigidTransformFromGeneric(
-  const GenericTransformType::ConstPointer genericTransformToWrite);
+extern itk::VersorRigid3DTransform<double>::Pointer
+ComputeRigidTransformFromGeneric(const itk::Transform<double, 3, 3>::ConstPointer genericTransformToWrite);
 
 /**
   * \author Hans J. Johnson
   * \brief Special purpose convenience function -- should not have a public
   *interface.
   */
-extern int WriteBothTransformsToDisk(const GenericTransformType::ConstPointer genericTransformToWrite,
+extern int WriteBothTransformsToDisk(const itk::Transform<double, 3, 3>::ConstPointer genericTransformToWrite,
                                      const std::string & outputTransform, const std::string & strippedOutputTransform);
 
 /**
@@ -168,7 +141,7 @@ extern int WriteBothTransformsToDisk(const GenericTransformType::ConstPointer ge
   * \brief Special purpose convenience function -- should not have a public
   *interface.
   */
-extern int WriteStrippedRigidTransformToDisk(const GenericTransformType::ConstPointer genericTransformToWrite,
+extern int WriteStrippedRigidTransformToDisk(const itk::Transform<double, 3, 3>::ConstPointer genericTransformToWrite,
                                              const std::string & strippedOutputTransform);
 }
 
@@ -184,7 +157,7 @@ TransformResample(
   const typename InputImageType::PixelType defaultValue,
   typename itk::InterpolateImageFunction<InputImageType,
   typename itk::NumericTraits<typename InputImageType::PixelType>::RealType>::Pointer interp,
-  typename GenericTransformType::ConstPointer transform);
+  typename itk::Transform<double, 3, 3>::ConstPointer transform);
 
 /**
   * \author Hans J. Johnson
@@ -211,7 +184,7 @@ typename OutputImageType::Pointer GenericTransformImage(
   InputImageType const *const OperandImage,
   const itk::ImageBase<InputImageType::ImageDimension> *ReferenceImage,
   // typename DisplacementImageType::Pointer DisplacementField,
-  typename GenericTransformType::Pointer genericTransform,
+  typename itk::Transform<double, 3, 3>::Pointer genericTransform,
   typename InputImageType::PixelType suggestedDefaultValue, // NOTE:  This is
                                                             // ignored in the
                                                             // case of binary

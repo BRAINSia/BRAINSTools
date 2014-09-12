@@ -42,8 +42,9 @@
 
 #include "itkBRAINSROIAutoImageFilter.h"
 
-GenericTransformType::Pointer MakeRigidIdentity(void)
+itk::Transform<double, 3, 3>::Pointer MakeRigidIdentity(void)
 {
+  typedef itk::Transform<double, 3, 3> GenericTransformType;
   // Also append identity matrix for each image
   VersorRigid3DTransformType::Pointer rigidIdentity = VersorRigid3DTransformType::New();
 
@@ -454,7 +455,9 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
     muLogMacro(<< "Registering first atlas images to first subject image." << std::endl);
     // Initialize the outputTransform with the initializer before starting the loop.
     this->m_AtlasToSubjectTransform = this->m_AtlasToSubjectInitialTransform;
-    CompositeTransformType::Pointer atlasToSubjectCompositeTransform = dynamic_cast<CompositeTransformType *>( m_AtlasToSubjectTransform.GetPointer() );
+    typedef itk::CompositeTransform<double, 3>                   CompositeTransformType;
+    CompositeTransformType::Pointer atlasToSubjectCompositeTransform =
+      dynamic_cast<CompositeTransformType *>( m_AtlasToSubjectTransform.GetPointer() );
     if( atlasToSubjectCompositeTransform.IsNull() )
       {
       atlasToSubjectCompositeTransform = CompositeTransformType::New();

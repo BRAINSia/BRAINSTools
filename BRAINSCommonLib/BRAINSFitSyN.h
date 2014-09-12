@@ -30,10 +30,10 @@ typedef  SyNRegistrationHelperType::ImageType              ImageType;
 }
 
 template <class FixedImageType, class MovingimageType>
-typename BRAINSCompositeTransformType::Pointer
+typename itk::CompositeTransform<double,3>::Pointer
 simpleSynReg( typename FixedImageType::Pointer & infixedImage,
               typename MovingimageType::Pointer & inmovingImage,
-              typename BRAINSCompositeTransformType::Pointer compositeInitialTransform )
+              typename itk::CompositeTransform<double,3>::Pointer compositeInitialTransform )
 {
   typename SyNRegistrationHelperType::Pointer regHelper = SyNRegistrationHelperType::New();
     {
@@ -148,7 +148,8 @@ simpleSynReg( typename FixedImageType::Pointer & infixedImage,
     std::cerr << "Finshed SyN stage" << std::endl;
     }
   // Get the output transform
-  typename BRAINSCompositeTransformType::Pointer outputCompositeTransform = regHelper->GetModifiableCompositeTransform();
+  typename itk::CompositeTransform<double,3>::Pointer outputCompositeTransform =
+    regHelper->GetModifiableCompositeTransform();
   // return composite result Transform;
   return outputCompositeTransform;
 }

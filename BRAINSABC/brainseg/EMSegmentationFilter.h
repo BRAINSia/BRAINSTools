@@ -106,7 +106,10 @@ public:
   typedef vnl_matrix<FloatingPrecision>         MatrixType;
   typedef vnl_matrix_inverse<FloatingPrecision> MatrixInverseType;
 
-  typedef BSplineTransformType::Pointer BSplineTransformPointer;
+  typedef itk::BSplineTransform<CoordinateRepType, 3, 3 > BSplineTransformType;
+  typedef BSplineTransformType::Pointer                   BSplineTransformPointer;
+
+  typedef itk::Transform<double, 3, 3>  GenericTransformType;
 
   // Set/Get the maximum polynomial degree of the bias field estimate
   itkSetMacro(MaxBiasDegree, unsigned int);

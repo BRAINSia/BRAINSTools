@@ -1589,6 +1589,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
           std::cerr << "ERROR:  NOT PROPERLY IMPLEMENTED YET HACK:" << std::endl;
           }
 
+        typedef itk::CompositeTransform<double, 3>                   CompositeTransformType;
         CompositeTransformType::Pointer templateGenericCompositeTransform =
                                   dynamic_cast<CompositeTransformType *>( m_TemplateGenericTransform.GetPointer() );
         if( templateGenericCompositeTransform.IsNull() )

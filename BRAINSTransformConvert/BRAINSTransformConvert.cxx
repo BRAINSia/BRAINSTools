@@ -225,10 +225,8 @@ DoConversion( int argc, char *argv[] )
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
 
-  typedef itk::Transform< TScalarType, 3, 3 > LocalGenericTransformType;
-  typedef itk::BSplineDeformableTransform
-    < TScalarType, GenericTransformImageNS::SpaceDimension,
-      GenericTransformImageNS::SplineOrder>     LocalBSplineTransformType;
+  typedef itk::Transform< TScalarType, 3, 3 >                       GenericTransformType;
+  typedef itk::BSplineDeformableTransform < TScalarType, 3, 3>      BSplineTransformType;
 
   typedef itk::AffineTransform< TScalarType, 3 >            LocalAffineTransformTYpe;
   typedef itk::VersorRigid3DTransform< TScalarType >        LocalVersorRigid3DTransformType;
@@ -241,7 +239,7 @@ DoConversion( int argc, char *argv[] )
   reader->SetFileName(inputTransform.c_str() );
   reader->Update();
   typename TransformFileReaderType::TransformListType *transformList = reader->GetTransformList();
-  typename LocalGenericTransformType::Pointer inputXfrm = dynamic_cast<LocalGenericTransformType *>( transformList->front().GetPointer() );
+  typename GenericTransformType::Pointer inputXfrm = dynamic_cast<GenericTransformType *>( transformList->front().GetPointer() );
 
   std::cout << "------------------------ " << std::endl;
   std::cout << "Input Transform Type Saved on Memory ==> " << inputXfrm->GetTransformTypeAsString() << std::endl;
@@ -250,7 +248,8 @@ DoConversion( int argc, char *argv[] )
   std::cout << "------------------------ " << std::endl;
 
   // Handle BSpline type
-  typename LocalBSplineTransformType::Pointer bsplineInputXfrm = dynamic_cast<LocalBSplineTransformType *>( inputXfrm.GetPointer() );
+  typename BSplineTransformType::Pointer bsplineInputXfrm =
+    dynamic_cast<BSplineTransformType *>( inputXfrm.GetPointer() );
   if( bsplineInputXfrm.IsNotNull() )
     {
     transformList->pop_front();
@@ -259,8 +258,8 @@ DoConversion( int argc, char *argv[] )
       std::cerr << "Error, the second transform needed for BSplineDeformableTransform is missing." << std::endl;
       return EXIT_FAILURE;
       }
-    typename LocalBSplineTransformType::BulkTransformType::Pointer bulkXfrm =
-      dynamic_cast<typename LocalBSplineTransformType::BulkTransformType *>(transformList->front().GetPointer() );
+    typename BSplineTransformType::BulkTransformType::Pointer bulkXfrm =
+      dynamic_cast<typename BSplineTransformType::BulkTransformType *>(transformList->front().GetPointer() );
     if( bulkXfrm.IsNull() )
       {
       std::cerr << "Error, the second transform is not a bulk transform" << std::endl;
@@ -321,7 +320,7 @@ DoConversion( int argc, char *argv[] )
     }
 
   //output transform processing
-  typename LocalGenericTransformType::Pointer outputXfrm;
+  typename GenericTransformType::Pointer outputXfrm;
 
   if( outputTransformType == "Affine" )
     {
@@ -372,7 +371,7 @@ DoConversion( int argc, char *argv[] )
     for( typename itk::TransformFileReaderTemplate<TScalarType>::TransformListType::iterator it = transformList->begin();
          it != transformList->end(); ++it )
       {
-      typename LocalGenericTransformType::Pointer outXfrm = dynamic_cast<LocalGenericTransformType *>( (*it).GetPointer() );
+      typename GenericTransformType::Pointer outXfrm = dynamic_cast<GenericTransformType *>( (*it).GetPointer() );
       transformWriter->AddTransform( outXfrm );
       //
       std::cout << "Output Transform Type Written to the Disk ==> " << outXfrm->GetTransformTypeAsString() << std::endl;

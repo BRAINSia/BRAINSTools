@@ -244,6 +244,7 @@ int main(int argc, char* argv[])
     return EXIT_FAILURE;
     }
 
+  typedef itk::Transform<double, 3, 3> GenericTransformType;
   GenericTransformType::Pointer genericTransform = NULL;
 
   if( transformType == "Rigid" )

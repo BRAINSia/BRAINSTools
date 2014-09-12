@@ -82,7 +82,7 @@ DisplacementFieldType::Pointer GetDeformationField( std::string filename)
   return deformationReader->GetOutput();
 }
 
-GenericTransformType::Pointer GetGenericTransform( std::string filename)
+itk::Transform<double, 3, 3>::Pointer GetGenericTransform( std::string filename)
 {
   const bool useDeformation( filename.find(".mat") != std::string::npos &&
                              filename.find(".h5") != std::string::npos &&

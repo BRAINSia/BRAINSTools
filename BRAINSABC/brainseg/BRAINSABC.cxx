@@ -638,6 +638,7 @@ int main(int argc, char * *argv)
   muLogMacro(<< "=== Start ===\n");
   muLogMacro(<< "Registering images using affine transform...\n");
 
+  typedef itk::Transform<double, 3, 3> GenericTransformType;
   GenericTransformType::Pointer atlasToSubjectPreSegmentationTransform = NULL;
 
   AtlasRegType::MapOfFloatImageVectors atlasOriginalImageList;

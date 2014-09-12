@@ -102,6 +102,7 @@ int main(int argc, char *argv[])
   BRAINSRegisterAlternateIO();
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
   itk::NumberToString<double>                                        doubleConvert;
+  typedef itk::Transform<double, 3, 3> GenericTransformType;
 
   bool debug = true;
   if( debug )

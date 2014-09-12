@@ -258,6 +258,7 @@ int main(int argc, char *argv[])
       std::cout << ex << std::endl;
       throw;
       }
+    typedef itk::Transform<double, 3, 3> GenericTransformType;
     // restore writing out transform if specified on command line.
     if( outputTransform.size() != 0 )
       {

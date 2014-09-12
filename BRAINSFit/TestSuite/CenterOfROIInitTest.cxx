@@ -135,6 +135,7 @@ int main(int, char * *)
   myHelper->SetTransformType(transformTypeVector);
   myHelper->Update();
 
+  typedef itk::Transform<double, 3, 3> GenericTransformType;
   GenericTransformType::Pointer currentGenericTransform = myHelper->GetCurrentGenericTransform().GetPointer();
 
   const CompositeTransformType::ConstPointer genericCompositeTransform =

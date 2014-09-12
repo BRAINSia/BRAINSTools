@@ -124,6 +124,7 @@ int main(int argc, char *argv[])
     }
 
   // Read the transform
+  typedef itk::Transform<double, 3, 3> GenericTransformType;
   GenericTransformType::Pointer baseTransform = itk::ReadTransformFromDisk(inputTransform);
 
   typedef itk::Image<float, 3>                                               AnisotropyImageType;

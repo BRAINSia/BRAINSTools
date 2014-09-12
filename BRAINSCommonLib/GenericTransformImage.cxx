@@ -51,11 +51,14 @@
 
 namespace itk
 {
-VersorRigid3DTransformType::Pointer ComputeRigidTransformFromGeneric(
-  const GenericTransformType::ConstPointer genericTransformToWrite)
+itk::VersorRigid3DTransform<double>::Pointer
+ComputeRigidTransformFromGeneric(const itk::Transform<double, 3, 3>::ConstPointer genericTransformToWrite)
 {
-  typedef VersorRigid3DTransformType          VersorRigidTransformType;
-  VersorRigidTransformType::Pointer versorRigid = VersorRigidTransformType::New();
+  typedef itk::VersorRigid3DTransform<double>     VersorRigid3DTransformType;
+  typedef itk::ScaleVersor3DTransform<double>     ScaleVersor3DTransformType;
+  typedef itk::ScaleSkewVersor3DTransform<double> ScaleSkewVersor3DTransformType;
+
+  VersorRigid3DTransformType::Pointer versorRigid = VersorRigid3DTransformType::New();
   versorRigid->SetIdentity();
   // //////////////////////////////////////////////////////////////////////////
   // ConvertTransforms
@@ -96,6 +99,7 @@ VersorRigid3DTransformType::Pointer ComputeRigidTransformFromGeneric(
         }
       else if( transformFileType == "AffineTransform" )
         {
+        typedef itk::AffineTransform<double, 3> AffineTransformType;
         const AffineTransformType::ConstPointer tempInitializerITKTransform =
           dynamic_cast<AffineTransformType const *>( genericTransformToWrite.GetPointer() );
         if( tempInitializerITKTransform.IsNull() )
@@ -129,10 +133,12 @@ VersorRigid3DTransformType::Pointer ComputeRigidTransformFromGeneric(
   return versorRigid;
 }
 
-int WriteBothTransformsToDisk(const GenericTransformType::ConstPointer genericTransformToWrite,
+int WriteBothTransformsToDisk(const itk::Transform<double, 3, 3>::ConstPointer genericTransformToWrite,
                               const std::string & outputTransform,
                               const std::string & strippedOutputTransform)
 {
+  typedef itk::VersorRigid3DTransform<double>  VersorRigid3DTransformType;
+  typedef itk::CompositeTransform<double, 3> CompositeTransformType;
   // //////////////////////////////////////////////////////////////////////////
   // Write out tranfoms for BRAINSFit.
   /*
@@ -183,6 +189,10 @@ int WriteBothTransformsToDisk(const GenericTransformType::ConstPointer genericTr
         }
       else if( transformFileType == "BSplineTransform" )
         {
+        typedef itk::BSplineTransform<double,
+                                      3,
+                                      3> BSplineTransformType;
+
         const BSplineTransformType::ConstPointer tempInitializerITKTransform =
                                                   dynamic_cast<BSplineTransformType  const *>( genericComponent.GetPointer() );
         if( tempInitializerITKTransform.IsNull() )
@@ -217,8 +227,8 @@ int WriteBothTransformsToDisk(const GenericTransformType::ConstPointer genericTr
         // Should just write out the rigid transform here.
       if( strippedOutputTransform.size() > 0  )
         {
-        typedef VersorRigid3DTransformType VersorRigidTransformType;
-        VersorRigidTransformType::Pointer versorRigid = itk::ComputeRigidTransformFromGeneric( genericComponent.GetPointer() );
+        VersorRigid3DTransformType::Pointer versorRigid =
+          itk::ComputeRigidTransformFromGeneric( genericComponent.GetPointer() );
         if( versorRigid.IsNotNull() )
           {
           itk::WriteTransformToDisk<double>(versorRigid.GetPointer(), strippedOutputTransform);
@@ -233,19 +243,31 @@ int WriteBothTransformsToDisk(const GenericTransformType::ConstPointer genericTr
   return 0;
 }
 
-int WriteStrippedRigidTransformToDisk(const GenericTransformType::ConstPointer genericTransformToWrite,
+int WriteStrippedRigidTransformToDisk(const itk::Transform<double, 3, 3>::ConstPointer genericTransformToWrite,
                                       const std::string & strippedOutputTransform)
 {
   return WriteBothTransformsToDisk(genericTransformToWrite, std::string(""), strippedOutputTransform);
 }
 
-GenericTransformType::Pointer ReadTransformFromDisk(const std::string & initialTransform)
+itk::Transform<double, 3, 3>::Pointer ReadTransformFromDisk(const std::string & initialTransform)
 {
-  GenericTransformType::Pointer genericTransform = NULL;
-  // read in the initial ITKTransform
-  TransformReaderType::Pointer      transformListReader =  TransformReaderType::New();
-  TransformListType                 currentTransformList;
-  TransformListType::const_iterator currentTransformListIterator;
+  itk::Transform<double, 3, 3>::Pointer genericTransform = NULL;
+
+  typedef itk::ThinPlateR2LogRSplineKernelTransform<double, 3> ThinPlateSpline3DTransformType;
+  typedef itk::ScaleVersor3DTransform<double>                  ScaleVersor3DTransformType;
+  typedef itk::ScaleSkewVersor3DTransform<double>              ScaleSkewVersor3DTransformType;
+  typedef itk::VersorRigid3DTransform<double>                  VersorRigid3DTransformType;
+  typedef itk::AffineTransform<double, 3>                      AffineTransformType;
+  typedef itk::BSplineTransform<double, 3, 3>                  BSplineTransformType;
+  typedef itk::CompositeTransform<double, 3>                   BRAINSCompositeTransformType;
+
+  TransformFileReader::Pointer transformListReader = TransformFileReader::New();
+
+  typedef TransformFileReader::TransformListType TransformListType;
+
+  TransformListType currentTransformList;
+
+  TransformFileReader::TransformListType::const_iterator currentTransformListIterator;
 
   try
     {

@@ -264,6 +264,7 @@ BRAINSCutDataHandler
 ::GetDeformedSpatialLocationImages( std::map<std::string, WorkingImagePointer>& warpedSpatialLocationImages,
                                     DataSet& subject)
 {
+  typedef itk::Transform<double, 3, 3> GenericTransformType;
   std::string atlasSubjectRegistrationFilename = GetAtlasToSubjectRegistrationFilename( subject );
 
   DisplacementFieldType::Pointer deformation = GetDeformationField( atlasSubjectRegistrationFilename );
@@ -362,6 +363,7 @@ BRAINSCutDataHandler
 ::GetDeformedROIs( std::map<std::string, WorkingImagePointer>& warpedROIs,
                    DataSet& subject)
 {
+  typedef itk::Transform<double, 3, 3> GenericTransformType;
   std::string atlasSubjectRegistrationFilename = GetAtlasToSubjectRegistrationFilename( subject );
 
   /** Get the transformation file

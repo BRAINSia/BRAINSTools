@@ -789,7 +789,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
           itkGenericExceptionMacro("Linear initial composite transform should have only one component \
                                    as all linaear transforms are collapsed together.");
           }
-        const GenericTransformType::ConstPointer currInitTransformFormGenericComposite =
+        const itk::Transform<double, 3, 3>::ConstPointer currInitTransformFormGenericComposite =
                                                   m_CurrentGenericTransform->GetFrontTransform();
         try
           {
@@ -878,7 +878,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
           itkGenericExceptionMacro("Linear initial composite transform should have only one component \
                                    as all linaear transforms are collapsed together.");
           }
-        const GenericTransformType::ConstPointer currInitTransformFormGenericComposite =
+        const itk::Transform<double, 3, 3>::ConstPointer currInitTransformFormGenericComposite =
                                                   m_CurrentGenericTransform->GetFrontTransform();
         try
           {
@@ -980,7 +980,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
           itkGenericExceptionMacro("Linear initial composite transform should have only one component \
                                    as all linaear transforms are collapsed together.");
           }
-        const GenericTransformType::ConstPointer currInitTransformFormGenericComposite =
+        const itk::Transform<double, 3, 3>::ConstPointer currInitTransformFormGenericComposite =
                                                   m_CurrentGenericTransform->GetFrontTransform();
         try
           {
@@ -1088,7 +1088,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
           itkGenericExceptionMacro("Linear initial composite transform should have only one component \
                                    as all linaear transforms are collapsed together.");
           }
-        const GenericTransformType::ConstPointer currInitTransformFormGenericComposite =
+        const itk::Transform<double, 3, 3>::ConstPointer currInitTransformFormGenericComposite =
                                                   m_CurrentGenericTransform->GetFrontTransform();
         try
           {
@@ -1372,8 +1372,8 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
           std::cout << "\nMoving image is warped by initial transform, "
                     << "before it is passed to the BSpline registration.\n" << std::endl;
           typedef float                                                                     VectorComponentType;
-          typedef itk::Vector<VectorComponentType, GenericTransformImageNS::SpaceDimension> VectorPixelType;
-          typedef itk::Image<VectorPixelType,  GenericTransformImageNS::SpaceDimension>     DisplacementFieldType;
+          typedef itk::Vector<VectorComponentType, 3> VectorPixelType;
+          typedef itk::Image<VectorPixelType,  3>     DisplacementFieldType;
           typename MovingImageType::Pointer warpedMoving =
                                               GenericTransformImage<
                                                      MovingImageType,
@@ -1513,7 +1513,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
           itkGenericExceptionMacro("Linear initial composite transform should have only one component \
                                    as all linaear transforms are collapsed together.");
           }
-        const GenericTransformType::ConstPointer currInitTransformFormGenericComposite =
+        const itk::Transform<double, 3, 3>::ConstPointer currInitTransformFormGenericComposite =
                                                   m_CurrentGenericTransform->GetFrontTransform();
         const std::string transformFileType = currInitTransformFormGenericComposite->GetNameOfClass();
 

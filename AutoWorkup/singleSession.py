@@ -215,7 +215,9 @@ def createAndRun(sessions, environment, experiment, pipeline, cluster, useSentin
                     "CleanedDenoisedRFSegmentations",
                     "allLabels_seg.nii.gz"
                 )
-
+            print "#" * 50
+            print sentinal_file + " exists? " + str(os.path.exists(sentinal_file))
+            print "-" * 50
             if useSentinal and os.path.exists(sentinal_file):
                 print("SKIPPING: {0} exists".format(sentinal_file))
             else:

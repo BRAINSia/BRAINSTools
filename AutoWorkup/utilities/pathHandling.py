@@ -89,7 +89,7 @@ def clone_atlas_dir(cachedir, atlasdir):
         xml_file='ExtendedAtlasDefinition.xml'
         old_xml = os.path.join(old_dir, xml_file + '.in')
         new_xml = os.path.join(new_dir, xml_file)
-        assert file_replace(old_xml, new_xml, "@ATLAS_DIRECTORY@", new_dir)
+        assert file_replace(old_xml, new_xml, "@ATLAS_INSTALL_DIRECTORY@", new_dir)
         newfiles.append(new_xml)
         for fname in newfiles:
             os.chmod(fname, stat.S_IRUSR | stat.S_IRGRP | stat.S_IROTH)

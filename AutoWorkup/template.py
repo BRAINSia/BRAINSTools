@@ -38,9 +38,8 @@ def get_processed_subjects( resultdir ):
     import glob
     # resultdir/subject_dir/Atlas/AVG_T1.nii.gz
     sential_file_pattern = "*/Atlas/AVG_T1.nii.gz"
-    processedSubjects = glob.glob( os.path.join(resultdir, sential_file_pattern) )
-    for replaceStr in [resultdir, sential_file_pattern, "/"]:
-        processedSubjects = [ s.replace( replaceStr, "" ) for s in processedSubjects ]
+    processedSubjectsPaths = glob.glob( os.path.join(resultdir, sential_file_pattern) )
+    processedSubjects = [ os.path.basename(os.path.dirname(os.path.dirname(s))) for s in processedSubjectsPaths ]
     return processedSubjects
 
 def get_subjects_sessions_dictionary(subjects, cache, resultdir, prefix, dbfile, shuffle=False):
@@ -49,7 +48,7 @@ def get_subjects_sessions_dictionary(subjects, cache, resultdir, prefix, dbfile,
     if "new" in subjects:
         _all_subjects = set( _temp.getAllSubjects() )
         _processed_subjects = set( get_processed_subjects( resultdir ) )
-        subjects = list( _all_subjects not in _processed_subjects )
+        subjects = list( _all_subjects - _processed_subjects ) #NOTE - in set operation notation removes values
     elif "all" in subjects:
         subjects = _temp.getAllSubjects()
     if shuffle:

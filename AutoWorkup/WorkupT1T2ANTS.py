@@ -29,7 +29,7 @@ def CreateANTSRegistrationWorkflow(WFname, CLUSTER_QUEUE, CLUSTER_QUEUE_LONG, Nu
     print("""Run ANTS Registration""")
 
     BFitAtlasToSubject = pe.Node(interface=BRAINSFit(), name="bfA2S")
-    BF_cpu_sge_options_dictionary = {'qsub_args': '-S /bin/bash -pe smp 2- -l h_vmem=14G,mem_free=4G -o /dev/null -e /dev/null ' + CLUSTER_QUEUE, 'overwrite': True}
+    BF_cpu_sge_options_dictionary = {'qsub_args': modify_qsub_args(CLUSTER_QUEUE,2,1,24), 'overwrite': True}
     BFitAtlasToSubject.plugin_args = BF_cpu_sge_options_dictionary
     BFitAtlasToSubject.inputs.costMetric = "MMI"
     BFitAtlasToSubject.inputs.numberOfSamples = 1000000
@@ -53,7 +53,7 @@ def CreateANTSRegistrationWorkflow(WFname, CLUSTER_QUEUE, CLUSTER_QUEUE_LONG, Nu
     ANTSWF.connect(inputsSpec, 'initial_moving_transform', BFitAtlasToSubject, 'initialTransform')
 
     ComputeAtlasToSubjectTransform = pe.Node(interface=antsRegistration(), name="antsA2S")
-    many_cpu_sge_options_dictionary = {'qsub_args': '-S /bin/bash -pe smp 5- -l h_vmem=17G,mem_free=9G -o /dev/null -e /dev/null ' + CLUSTER_QUEUE, 'overwrite': True}
+    many_cpu_sge_options_dictionary = {'qsub_args': modify_qsub_args(CLUSTER_QUEUE,4,4,24), 'overwrite': True}
     ComputeAtlasToSubjectTransform.plugin_args = many_cpu_sge_options_dictionary
 
     ComputeAtlasToSubjectTransform.inputs.dimension = 3

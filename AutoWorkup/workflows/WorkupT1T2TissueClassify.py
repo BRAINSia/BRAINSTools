@@ -8,6 +8,7 @@ import nipype.pipeline.engine as pe  # pypeline engine
 
 from BRAINSABCext import *
 from utilities.misc import *
+from utilities.distributed import modify_qsub_args
 
 """
     from WorkupT1T2TissueClassify import CreateTissueClassifyWorkflow
@@ -80,7 +81,7 @@ def CreateTissueClassifyWorkflow(WFname, CLUSTER_QUEUE, CLUSTER_QUEUE_LONG, Inte
 
 
     BABCext = pe.Node(interface=BRAINSABCext(), name="BABC")
-    many_cpu_BABC_options_dictionary = {'qsub_args': '-S /bin/bash -pe smp 4- -l h_vmem=23G,mem_free=8G -o /dev/null -e /dev/null ' + CLUSTER_QUEUE, 'overwrite': True}
+    many_cpu_BABC_options_dictionary = {'qsub_args': modify_qsub_args(CLUSTER_QUEUE,8,4,-1), 'overwrite': True}
     BABCext.plugin_args = many_cpu_BABC_options_dictionary
     tissueClassifyWF.connect(makeOutImageList, 'inImageList', BABCext, 'inputVolumes')
     tissueClassifyWF.connect(makeOutImageList, 'imageTypeList', BABCext, 'inputVolumeTypes')

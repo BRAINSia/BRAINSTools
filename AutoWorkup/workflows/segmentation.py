@@ -313,17 +313,14 @@ def segmentation(projectid, subjectid, sessionid, master_config, onlyT1=True, pi
 
     if master_config['plugin_name'].startswith('SGE'):  # for some nodes, the qsub call needs to be modified on the cluster
         AtlasToSubjectantsRegistration.plugin_args = {'template': master_config['plugin_args']['template'], 'overwrite': True,
-                                                      'qsub_args': modify_qsub_args(master_config['queue'], '9000M', 4,
-                                                                                    hard=False)}
+                                                      'qsub_args': modify_qsub_args(master_config['queue'], 4, 4, -1)}
         SnapShotWriter.plugin_args = {'template': master_config['plugin_args']['template'], 'overwrite': True,
-                                      'qsub_args': modify_qsub_args(master_config['queue'], '1000M', 1, 1, hard=False)}
+                                      'qsub_args': modify_qsub_args(master_config['queue'], 1, 1, 1 )}
         LinearSubjectToAtlasANTsApplyTransforms.plugin_args = {'template': master_config['plugin_args']['template'],
                                                                'overwrite': True,
-                                                               'qsub_args': modify_qsub_args(master_config['queue'], '1000M',
-                                                                                             1, hard=True)}
+                                                               'qsub_args': modify_qsub_args(master_config['queue'], 1, 1, 2 )}
         MultiLabelSubjectToAtlasANTsApplyTransforms.plugin_args = {'template': master_config['plugin_args']['template'],
                                                                    'overwrite': True,
-                                                                   'qsub_args': modify_qsub_args(master_config['queue'], '1000M',
-                                                                                                 1, hard=True)}
+                                                                   'qsub_args': modify_qsub_args(master_config['queue'], 1, 1, 2 )}
 
     return baw200

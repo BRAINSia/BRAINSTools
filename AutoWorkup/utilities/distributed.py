@@ -48,28 +48,44 @@ def create_global_sge_script(cluster, environment):
     return retval
 
 
-def modify_qsub_args(queue, memory, minThreads=1, maxThreads=None, stdout='/dev/null', stderr='/dev/null', hard=True):
+def modify_qsub_args(queue, memoryGB, minThreads, maxThreads, stdout='/dev/null', stderr='/dev/null'):
     """
     Outputs qsub_args string for Nipype nodes
+    queue is the string to specify the queue "-q all.q | -q HJ,ICTS,UI"
+    memoryGB is a numeric in gigabytes to be given (ie 2.1 will result in "-l mem_free=2.1G")
+          if memoryGB = 0, then it is automatically computed.
+    minThreads The fewest number of threads to use (if an algorithm has benifits from more than 1 thread)
+    maxThreads The max number of threads to use (if an algorithm is not multi-threaded, then just use 1)
+    stdout Where to put stdout logs
+    stderr Where to put stderr logs
 
-    >>> modify_qsub_args('test', 200, 5)
-    -S /bin/bash -cwd -pe smp 5 -l mem_free=200 -o /dev/null -e /dev/null test FAIL
-    >>> modify_qsub_args('test', 200, 5, hard=False)
-    -S /bin/bash -cwd -pe smp 5- -l mem_free=200 -o /dev/null -e /dev/null test FAIL
-    >>> modify_qsub_args('test', 800, 5, 7)
-    -S /bin/bash -cwd -pe smp 5-7 -l mem_free=800 -o /dev/null -e /dev/null test FAIL
-    >>> modify_qsub_args('test', 800, 5, 7, hard=False)
-    -S /bin/bash -cwd -pe smp 5-7 -l mem_free=800 -o /dev/null -e /dev/null test FAIL
-    >>> modify_qsub_args('test', 1000, 5, 7, stdout='/my/path', stderr='/my/error')
-    -S /bin/bash -cwd -pe smp 5-7 -l mem_free=1000 -o /my/path -e /my/error test FAIL
+    >>> modify_qsub_args('test', 2, 5, None)
+    -S /bin/bash -cwd -pe smp 5 -l mem_free=2G -o /dev/null -e /dev/null test FAIL
+    >>> modify_qsub_args('test', 2, 5, -1 )
+    -S /bin/bash -cwd -pe smp 5- -l mem_free=2G -o /dev/null -e /dev/null test FAIL
+    >>> modify_qsub_args('test', 8, 5, 7)
+    -S /bin/bash -cwd -pe smp 5-7 -l mem_free=8G -o /dev/null -e /dev/null test FAIL
+    >>> modify_qsub_args('test', 8, 5, 7, -1)
+    -S /bin/bash -cwd -pe smp 5-7 -l mem_free=8G -o /dev/null -e /dev/null test FAIL
+    >>> modify_qsub_args('test', 1, 5, 7, stdout='/my/path', stderr='/my/error')
+    -S /bin/bash -cwd -pe smp 5-7 -l mem_free=1G -o /my/path -e /my/error test FAIL
 
     """
+    assert memoryGB <= 24 , "Memory must be supplied in GB, so anything more than 24 seems not-useful now."
+    ## First, assume that the max number of threads requested is at least (ceil(memoryGB)/2)
+
     if maxThreads is None:
-        if hard:
-            format_str = '-S /bin/bash -cwd -pe smp {mint} -l mem_free={mem} -o {stdout} -e {stderr} {queue}'
-        else:
-            format_str = '-S /bin/bash -cwd -pe smp {mint}- -l mem_free={mem} -o {stdout} -e {stderr} {queue}'
-        return format_str.format(mint=minThreads, mem=memory, stdout=stdout, stderr=stderr, queue=queue)
+       maxThreadsPostfix = ""
+       maxThreads = minThreads
+    elif maxThreads == -1:
+       maxThreadsPostfix= "-"
+       maxThreads = 12345 #HUGE NUMBER!
     else:
-        format_str = '-S /bin/bash -cwd -pe smp {mint}-{maxt} -l mem_free={mem} -o {stdout} -e {stderr} {queue}'
-        return format_str.format(mint=minThreads, maxt=maxThreads, mem=memory, stdout=stdout, stderr=stderr, queue=queue)
+       maxThreadsPostfix= "-{0}".format(maxThreads)
+
+    if maxThreads < minThreads:
+       assert  maxThreads > minThreads
+
+    ##  -l mem_free={mem}
+    format_str = '-S /bin/bash -cwd -pe smp {mint}{maxt} -o {stdout} -e {stderr} {queue}'
+    return format_str.format(mint=minThreads, maxt=maxThreadsPostfix, mem=memoryGB, stdout=stdout, stderr=stderr, queue=queue)

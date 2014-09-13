@@ -23,6 +23,7 @@ import os
 import sys
 
 from pathHandling import *
+from distributed import modify_qsub_args
 import misc
 
 
@@ -176,11 +177,10 @@ def get_cpus(option):
 
 def _nipype_plugin_config(wfrun, cluster, template=''):
     assert wfrun in _WFRUN_VALID_TYPES, "Unknown workflow run environment: {0}".format(wfrun)
-    if wfrun in ['SGEGraph']:
-        qsub_args = "-S /bin/bash -cwd -pe smp 1- -l h_vmem=19G,mem_free=9G -o /dev/null -e /dev/null {0}"
-        plugin_name = 'SGEGraph'
+    if wfrun in ['SGEGraph', 'SGE']:
+        plugin_name = wfrun
         plugin_args = {'template': template,
-                       'qsub_args': qsub_args.format(cluster['queue']),
+                       'qsub_args': modify_qsub_args(cluster['queue'],8,4,24),
                        'qstatProgramPath': cluster['qstat'],
                        'qstatCachedProgramPath': cluster['qstat_cached']}
     elif wfrun in ['local_4', 'local_12']:

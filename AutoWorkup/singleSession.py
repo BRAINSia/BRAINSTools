@@ -30,8 +30,11 @@ Examples:
   $ singleSession.py --rewrite-datasinks --pe OSX --ExperimentConfig my_baw.config 00003
 
 """
-
 import os
+
+from workflows.atlasNode import MakeAtlasNode
+from workflows.utils import run_workflow, print_workflow
+
 
 
 def create_singleSession(dataDict, master_config, interpMode, pipeline_name):
@@ -60,7 +63,6 @@ def create_singleSession(dataDict, master_config, interpMode, pipeline_name):
     from PipeLineFunctionHelpers import convertToList
     from utilities.misc import GenerateSubjectOutputPattern as outputPattern
     from utilities.misc import GenerateWFName
-    from workflows.utils import run_workflow, print_workflow
     from workflows.atlasNode import MakeAtlasNode
 
     project = dataDict['project']
@@ -167,6 +169,7 @@ def create_singleSession(dataDict, master_config, interpMode, pipeline_name):
 def createAndRun(sessions, environment, experiment, pipeline, cluster, useSentinal=False):
     from baw_exp import OpenSubjectDatabase
     from utilities.misc import add_dict
+    from workflows.atlasNode import MakeAtlasNode
     from workflows.utils import run_workflow, print_workflow
     master_config = {}
     for configDict in [environment, experiment, pipeline, cluster]:

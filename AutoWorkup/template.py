@@ -5,7 +5,7 @@ template.py
 This program is used to generate the subject- and session-specific workflows for BRAINSTool processing
 
 Usage:
-  template.py [--rewrite-datasinks] [--wfrun PLUGIN] [--dotfilename PFILE] --workphase WORKPHASE --pe ENV --ExperimentConfig FILE SUBJECTS...
+  template.py [--rewrite-datasinks] [--wfrun PLUGIN] [--use-sentinal] [--dotfilename PFILE] --workphase WORKPHASE --pe ENV --ExperimentConfig FILE SUBJECTS...
   template.py -v | --version
   template.py -h | --help
 
@@ -17,6 +17,7 @@ Options:
   -v, --version         Print the version and exit
   --dotfilename=PFILE   Turn on printing pipeline to file PFILE
   --rewrite-datasinks   Turn on the Nipype option to overwrite all files in the 'results' directory
+  --use-sentinal        Use the t1_average file as a marker to determine if session needs to be run
   --pe=ENV              The processing environment to use from configuration file
   --wfrun=PLUGIN        The name of the workflow plugin option (default: 'local')
   --workphase WORKPHASE The type of processing to be done only VALID is ['subject-template-generation']
@@ -42,10 +43,12 @@ def get_processed_subjects( resultdir ):
     processedSubjects = [ os.path.basename(os.path.dirname(os.path.dirname(s))) for s in processedSubjectsPaths ]
     return processedSubjects
 
-def get_subjects_sessions_dictionary(subjects, cache, resultdir, prefix, dbfile, shuffle=False):
+def get_subjects_sessions_dictionary(subjects, cache, resultdir, prefix, dbfile, useSentinal, shuffle=False):
     import random
     _temp = OpenSubjectDatabase(cache, ['all'], prefix, dbfile)
-    if "new" in subjects:
+    if useSentinal:
+        print("="*80)
+        print("Using Sentinal Files to Limit Jobs Run")
         _all_subjects = set( _temp.getAllSubjects() )
         _processed_subjects = set( get_processed_subjects( resultdir ) )
         subjects = list( _all_subjects - _processed_subjects ) #NOTE - in set operation notation removes values
@@ -135,7 +138,12 @@ def _template_runner(argv, environment, experiment, pipeline, cluster):
             experiment['cachedir'],
             experiment['resultdir'],
             environment['prefix'],
-            experiment['dbfile']) # Build database before parallel section
+            experiment['dbfile'],
+            argv['--use-sentinal']
+            ) # Build database before parallel section
+    print("Processing atlas generation for these subjects")
+    print(subjects)
+    print("="*80)
     print "Copying Atlas directory and determining appropriate Nipype options..."
     pipeline = nipype_options(argv, pipeline, cluster, experiment, environment)  # Generate Nipype options
     print "Dispatching jobs to the system..."

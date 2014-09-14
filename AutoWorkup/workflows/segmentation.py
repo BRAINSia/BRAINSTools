@@ -313,14 +313,14 @@ def segmentation(projectid, subjectid, sessionid, master_config, onlyT1=True, pi
 
     if master_config['plugin_name'].startswith('SGE'):  # for some nodes, the qsub call needs to be modified on the cluster
         AtlasToSubjectantsRegistration.plugin_args = {'template': master_config['plugin_args']['template'], 'overwrite': True,
-                                                      'qsub_args': modify_qsub_args(master_config['queue'], 4, 4, -1)}
+                                                      'qsub_args': modify_qsub_args(master_config['queue'], 8, 8, 24)}
         SnapShotWriter.plugin_args = {'template': master_config['plugin_args']['template'], 'overwrite': True,
                                       'qsub_args': modify_qsub_args(master_config['queue'], 1, 1, 1 )}
         LinearSubjectToAtlasANTsApplyTransforms.plugin_args = {'template': master_config['plugin_args']['template'],
                                                                'overwrite': True,
-                                                               'qsub_args': modify_qsub_args(master_config['queue'], 1, 1, 2 )}
+                                                               'qsub_args': modify_qsub_args(master_config['queue'], 1, 1, 1 )}
         MultiLabelSubjectToAtlasANTsApplyTransforms.plugin_args = {'template': master_config['plugin_args']['template'],
                                                                    'overwrite': True,
-                                                                   'qsub_args': modify_qsub_args(master_config['queue'], 1, 1, 2 )}
+                                                                   'qsub_args': modify_qsub_args(master_config['queue'], 1, 1, 1 )}
 
     return baw200

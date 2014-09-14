@@ -180,7 +180,7 @@ def _nipype_plugin_config(wfrun, cluster, template=''):
     if wfrun in ['SGEGraph', 'SGE']:
         plugin_name = wfrun
         plugin_args = {'template': template,
-                       'qsub_args': modify_qsub_args(cluster['queue'],8,4,24),
+                       'qsub_args': modify_qsub_args(cluster['queue'],2,1,1),
                        'qstatProgramPath': cluster['qstat'],
                        'qstatCachedProgramPath': cluster['qstat_cached']}
     elif wfrun in ['local_4', 'local_12']:

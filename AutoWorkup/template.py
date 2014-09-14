@@ -236,16 +236,16 @@ def _template_runner(argv, environment, experiment, pipeline, cluster):
             ##################################################
             BeginANTS = bt.get_node("BeginANTS")
             BeginANTS.plugin_args = {'template': pipeline['plugin_args']['template'], 'overwrite': True,
-                                     'qsub_args': modify_qsub_args(cluster['queue'], 0.9, 4, -1)}
+                                     'qsub_args': modify_qsub_args(cluster['queue'], 8, 8, 24)}
             wimtdeformed = bt.get_node("wimtdeformed")
             wimtdeformed.plugin_args = {'template': pipeline['plugin_args']['template'], 'overwrite': True,
-                                        'qsub_args': modify_qsub_args(cluster['queue'], 2, 1, 2)}
+                                        'qsub_args': modify_qsub_args(cluster['queue'], 2, 2, 2)}
             AvgAffineTransform = bt.get_node("AvgAffineTransform")
             AvgAffineTransform.plugin_args = {'template': pipeline['plugin_args']['template'], 'overwrite': True,
-                                              'qsub_args': modify_qsub_args(cluster['queue'], 2, 1, -1)}
+                                              'qsub_args': modify_qsub_args(cluster['queue'], 2, 1, 1)}
             wimtPassivedeformed = bt.get_node("wimtPassivedeformed")
             wimtPassivedeformed.plugin_args = {'template': pipeline['plugin_args']['template'], 'overwrite': True,
-                                                'qsub_args': modify_qsub_args(cluster['queue'], 2, 1, 2)}
+                                                'qsub_args': modify_qsub_args(cluster['queue'], 2, 2, 2)}
 
     # Running off previous baseline experiment
     NACCommonAtlas = MakeAtlasNode(experiment['atlascache'], 'NACCommonAtlas_{0}'.format('subject'), 'TemplateBuildSupport') ## HACK : replace 'subject' with subject id once this is a loop rather than an iterable.

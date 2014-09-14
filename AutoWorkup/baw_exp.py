@@ -86,7 +86,7 @@ def DoSingleSubjectProcessing(sp_args):
                 pass
             baw200.run(plugin=SGEFlavor,
                        plugin_args=dict(template=JOB_SCRIPT,
-                                        qsub_args=modify_qsub_args(CLUSTER_QUEUE,1,1,24),
+                                        qsub_args=modify_qsub_args(CLUSTER_QUEUE,2,1,1),
                                         qstatProgramPath=QSTAT_IMMEDIATE_EXE,
                                         qstatCachedProgramPath=QSTAT_CACHED_EXE))
         elif input_arguments.wfrun == 'helium_all.q_graph':
@@ -98,7 +98,7 @@ def DoSingleSubjectProcessing(sp_args):
             SGEFlavor = 'SGEGraph'  # Use the SGEGraph processing
             baw200.run(plugin=SGEFlavor,
                        plugin_args=dict(template=JOB_SCRIPT,
-                                        qsub_args=modify_qsub_args(CLUSTER_QUEUE,1,1,24),
+                                        qsub_args=modify_qsub_args(CLUSTER_QUEUE,2,1,1),
                                         qstatProgramPath=QSTAT_IMMEDIATE_EXE,
                                         qstatCachedProgramPath=QSTAT_CACHED_EXE))
         elif input_arguments.wfrun == 'ipl_OSX':
@@ -109,7 +109,7 @@ def DoSingleSubjectProcessing(sp_args):
             print "Running On ipl_OSX"
             baw200.run(plugin=SGEFlavor,
                        plugin_args=dict(template=JOB_SCRIPT,
-                                        qsub_args=modify_qsub_args(CLUSTER_QUEUE,1,1,24),
+                                        qsub_args=modify_qsub_args(CLUSTER_QUEUE,2,1,1),
                                         qstatProgramPath=QSTAT_IMMEDIATE_EXE,
                                         qstatCachedProgramPath=QSTAT_CACHED_EXE))
         elif input_arguments.wfrun == 'local_4':

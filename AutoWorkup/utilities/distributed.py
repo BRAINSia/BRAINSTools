@@ -1,3 +1,5 @@
+import math
+
 def load_cluster(modules=[]):
     if len(modules) > 0:
         module_list = []
@@ -71,21 +73,34 @@ def modify_qsub_args(queue, memoryGB, minThreads, maxThreads, stdout='/dev/null'
     -S /bin/bash -cwd -pe smp 5-7 -l mem_free=1G -o /my/path -e /my/error test FAIL
 
     """
-    assert memoryGB <= 24 , "Memory must be supplied in GB, so anything more than 24 seems not-useful now."
-    ## First, assume that the max number of threads requested is at least (ceil(memoryGB)/2)
+    assert memoryGB <= 48 , "Memory must be supplied in GB, so anything more than 24 seems not-useful now."
 
-    if maxThreads is None:
-       maxThreadsPostfix = ""
+    ## NOTE: At least 1 thread needs to be requested per 2GB needed
+    memoryThreads = math.ceil((math.ceil(memoryGB)/2))
+    minThreads = max(minThreads, memoryThreads)
+    maxThreads = max(maxThreads, memoryThreads)
+
+    if maxThreads is None or minThreads == maxThreads:
+       threadsRangeString =  '{0}'.format(minThreads)
        maxThreads = minThreads
     elif maxThreads == -1:
-       maxThreadsPostfix= "-"
+       threadsRangeString= '{0}-'.format(minThreasds)
        maxThreads = 12345 #HUGE NUMBER!
     else:
-       maxThreadsPostfix= "-{0}".format(maxThreads)
+       threadsRangeString= "{0}-{1}".format(minThreads,maxThreads)
 
     if maxThreads < minThreads:
-       assert  maxThreads > minThreads
+       assert  maxThreads > minThreads, "Must specify maxThreads({0}) > minThreads({1})".format(minThreads,maxThreads)
 
+    ## TODO:  May need to figure out how to set memory and threads for cluster.
+    ## for now just let the number of threads requested take care of this because
+    ## the job manager on helium is really slow with lots of constraints
     ##  -l mem_free={mem}
-    format_str = '-S /bin/bash -cwd -pe smp {mint}{maxt} -o {stdout} -e {stderr} {queue}'
-    return format_str.format(mint=minThreads, maxt=maxThreadsPostfix, mem=memoryGB, stdout=stdout, stderr=stderr, queue=queue)
+
+    ## format_str = '-S /bin/bash -cwd -pe smp {mint}{maxt} -o {stdout} -e {stderr} {queue}'
+    format_str = '-S /bin/bash -cwd -pe smp {totalThreads} -o {stdout} -e {stderr} {queue}'.format(
+                 mint=minThreads, maxt=threadsRangeString,
+                 totalThreads=threadsRangeString,
+                 mem=memoryGB,
+                 stdout=stdout, stderr=stderr, queue=queue)
+    return format_str

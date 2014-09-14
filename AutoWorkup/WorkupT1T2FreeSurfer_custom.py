@@ -51,7 +51,7 @@ def CreateFreeSurferWorkflow_custom(projectid, subjectid, sessionid, WFname, CLU
     if RunAllFSComponents == True:
         print("""Run FreeSurfer ReconAll at""")
         fs_reconall = pe.Node(interface=fswrap.FSScript(), name="FS52_cross_" + str(sessionid))
-        freesurfer_sge_options_dictionary = {'qsub_args': modify_qsub_args(CLUSTER_QUEUE,8,1,4), 'overwrite': True}
+        freesurfer_sge_options_dictionary = {'qsub_args': modify_qsub_args(CLUSTER_QUEUE,8,4,4), 'overwrite': True}
         fs_reconall.plugin_args = freesurfer_sge_options_dictionary
         fs_reconall.inputs.subcommand = 'autorecon'
         # fs_reconall.inputs.directive = 'all'
@@ -88,7 +88,7 @@ def CreateFreeSurferSubjectTemplate(projectid, subjectid, WFname, CLUSTER_QUEUE,
     inputsSpec.inputs.subjects_dir = constructed_FS_SUBJECTS_DIR  # HACK
     print("""Run FreeSurfer Within Subject Template at""")
     fs_template = pe.Node(interface=fswrap.FSScript(), name="FS52_base_" + str(subjectid))
-    freesurfer_sge_options_dictionary = {'qsub_args': modify_qsub_args(CLUSTER_QUEUE,8,1,4), 'overwrite': True}
+    freesurfer_sge_options_dictionary = {'qsub_args': modify_qsub_args(CLUSTER_QUEUE,8,4,4), 'overwrite': True}
     fs_template.plugin_args = freesurfer_sge_options_dictionary
     fs_template.inputs.subcommand = 'template'
     subjectTemplate_freesurferWF.connect(inputsSpec, 'subjects_dir', fs_template, 'subjects_dir')
@@ -114,7 +114,7 @@ def CreateFreeSurferLongitudinalWorkflow(projectid, subjectid, sessionid, WFname
     inputsSpec.inputs.subjects_dir = constructed_FS_SUBJECTS_DIR  # HACK
 
     fs_longitudinal = pe.Node(interface=fswrap.FSScript(), name="FS52_long_" + str(sessionid))
-    freesurfer_sge_options_dictionary = {'qsub_args': modify_qsub_args(CLUSTER_QUEUE,8,1,4), 'overwrite': True}
+    freesurfer_sge_options_dictionary = {'qsub_args': modify_qsub_args(CLUSTER_QUEUE,8,4,4), 'overwrite': True}
     fs_longitudinal.plugin_args = freesurfer_sge_options_dictionary
     fs_longitudinal.inputs.subcommand = 'longitudinal'
     long_freesurferWF.connect(inputsSpec, 'subjects_dir', fs_longitudinal, 'subjects_dir')

@@ -231,7 +231,7 @@ def CreateBRAINSCutWorkflow(projectid,
     # HACK
     # import os
     # RF12BC.inputs.environ = dict(os.environ)
-    # many_cpu_RF12BC_options_dictionary = {'qsub_args': modify_qsub_args(CLUSTER_QUEUE,4,1,2), 'overwrite': True}
+    # many_cpu_RF12BC_options_dictionary = {'qsub_args': modify_qsub_args(CLUSTER_QUEUE,4,2,2), 'overwrite': True}
     # RF12BC.plugin_args = many_cpu_RF12BC_options_dictionary
     # END HACK
     RF12BC.inputs.trainingVectorFilename = "trainingVectorFilename.txt"

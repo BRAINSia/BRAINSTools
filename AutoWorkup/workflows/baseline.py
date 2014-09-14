@@ -122,7 +122,7 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, master_
                                           'outputVolume'])
     DenoiseInputImgs.inputs.rc= [1,1,1]
     DenoiseInputImgs.inputs.rs= [4,4,4]
-    DenoiseInputImgs.plugin_args = modify_qsub_args(master_config['queue'], .2, 1, 4)
+    DenoiseInputImgs.plugin_args = modify_qsub_args(master_config['queue'], .2, 1, 1)
     baw201.connect([ (makeDenoiseInImageList, DenoiseInputImgs, [('inImageList', 'inputVolume')]),
                      (makeDenoiseInImageList, DenoiseInputImgs, [('outImageList','outputVolume')])
                   ])

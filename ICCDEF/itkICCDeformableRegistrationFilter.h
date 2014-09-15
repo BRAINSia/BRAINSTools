@@ -31,7 +31,7 @@
 #include "itkPDEDeformableRegistrationFilter.h"
 #include "itkICCDeformableFunction.h"
 
-#include "itkMultiplyByConstantImageFilter.h"
+#include "itkMultiplyImageFilter.h"
 #include "itkExponentialDisplacementFieldImageFilter.h"
 #include "itkWarpVectorImageFilter.h"
 #include "itkVectorLinearInterpolateNearestNeighborExtrapolateImageFunction.h"
@@ -327,9 +327,9 @@ private:
   virtual unsigned int SplitRequestedRegion(unsigned int i, unsigned int num, OutputImageRegionType& splitRegion);
 
   /** Exp and composition typedefs */
-  typedef MultiplyByConstantImageFilter<
-      DisplacementFieldType,
-      TimeStepType, DisplacementFieldType>                MultiplyByConstantType;
+  typedef MultiplyImageFilter<DisplacementFieldType,
+                              Image<TimeStepType, DisplacementFieldType::ImageDimension> ,
+                              DisplacementFieldType> MultiplyByConstantType;
 
   typedef ExponentialDisplacementFieldImageFilter<
       DisplacementFieldType, DisplacementFieldType>        FieldExponentiatorType;

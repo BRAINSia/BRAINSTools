@@ -236,11 +236,7 @@ IccdefPreprocessor<TInputImage, TOutputImage>
       }
 #endif
     typename DisplacementFieldGeneratorType::Pointer defGenerator = DisplacementFieldGeneratorType::New();
-    defGenerator->SetOutputSize( m_InputFixedImage->GetLargestPossibleRegion().GetSize() );
-    defGenerator->SetOutputSpacing( m_InputFixedImage->GetSpacing() );
-    defGenerator->SetOutputOrigin( m_InputFixedImage->GetOrigin() );
-    defGenerator->SetOutputIndex( m_InputFixedImage->GetLargestPossibleRegion().GetIndex() );
-    defGenerator->SetOutputDirection( m_InputFixedImage->GetDirection() );
+    defGenerator->SetReferenceImage(m_InputFixedImage);
     defGenerator->SetTransform(trsf);
     try
       {

@@ -35,7 +35,6 @@
 #include "itkSpatialOrientation.h"
 #include "itkNearestNeighborInterpolateImageFunction.h"
 #include "itkBSplineInterpolateImageFunction.h"
-#include "itkMultiplyByConstantImageFilter.h"
 #include <itkIO.h>
 #include <metaCommand.h>
 #include "itkImageRegionIterator.h"
@@ -43,8 +42,6 @@
 #include "TransformToDisplacementField.h"
 #endif
 #include <itkDisplacementFieldJacobianDeterminantFilter.h>
-// #include <itkMultiplyImageFilter.h>
-// #include "Jacobian.h"
 #include <fstream>
 
 #ifdef __USE_BRAINS2_INTEGRATION

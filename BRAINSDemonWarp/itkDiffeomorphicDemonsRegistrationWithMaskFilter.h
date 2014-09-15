@@ -21,7 +21,7 @@
 #include "itkPDEDeformableRegistrationFilter.h"
 #include "itkESMDemonsRegistrationWithMaskFunction.h"
 
-#include "itkMultiplyByConstantImageFilter.h"
+#include "itkMultiplyImageFilter.h"
 #include "itkMultiplyImageFilter.h"
 #include "itkExponentialDisplacementFieldImageFilter.h"
 
@@ -205,9 +205,9 @@ private:
   const DemonsRegistrationFunctionType *  DownCastDifferenceFunctionType() const;
 
   /** Exp and composition typedefs */
-  typedef MultiplyByConstantImageFilter<DisplacementFieldType,
-                                        TimeStepType,
-                                        DisplacementFieldType>                              MultiplyByConstantType;
+  typedef MultiplyImageFilter<DisplacementFieldType,
+                              Image<TimeStepType,DisplacementFieldType::ImageDimension>,
+                              DisplacementFieldType> MultiplyByConstantType;
 
   typedef ExponentialDisplacementFieldImageFilter<
       DisplacementFieldType, DisplacementFieldType>        FieldExponentiatorType;

@@ -195,8 +195,8 @@ private:
   const DemonsRegistrationFunctionType *  DownCastDifferenceFunctionType() const;
 
   /** Exp and composition typedefs */
-  typedef MultiplyByConstantImageFilter<DisplacementFieldType,
-                                        TimeStepType,
+  typedef MultiplyImageFilter<DisplacementFieldType,
+                                        Image<TimeStepType,DisplacementFieldType::ImageDimension> ,
                                         DisplacementFieldType>                              MultiplyByConstantType;
 
   typedef ExponentialDisplacementFieldImageFilter<

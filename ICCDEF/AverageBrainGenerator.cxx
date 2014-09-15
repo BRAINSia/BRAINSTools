@@ -31,7 +31,7 @@ Zhao,Yongqiang
 #include "AverageBrainGeneratorCLP.h"
 #include "itksys/Directory.hxx"
 #include "itkAddImageFilter.h"
-#include "itkMultiplyByConstantImageFilter.h"
+#include "itkMultiplyImageFilter.h"
 #include "itkWarpImageFilter.h"
 #include "itkImageFileWriter.h"
 #include "itkImageRegionIterator.h"
@@ -171,7 +171,7 @@ int AverageBrainGenerator(int argc, char *argv[])
     std::cout << "NEED at least 3 data sets to make an average!" << std::endl;
     }
 
-  typedef itk::MultiplyByConstantImageFilter<DisplacementFieldType, float, DisplacementFieldType> MultiplyImageType;
+  typedef itk::MultiplyImageFilter<DisplacementFieldType, itk::Image<float,Dimension> , DisplacementFieldType> MultiplyImageType;
   MultiplyImageType::Pointer multi = MultiplyImageType::New();
   multi->SetInput(DisplacementField);
   multi->SetConstant(1.0 / static_cast<float>(numberOfFields + 1) );

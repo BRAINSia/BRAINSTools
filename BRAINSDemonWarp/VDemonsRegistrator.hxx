@@ -42,7 +42,7 @@
 #include "itkVectorLinearInterpolateNearestNeighborExtrapolateImageFunction.h"
 #include "itkComposeImageFilter.h"
 
-#include "itkMultiplyByConstantImageFilter.h"
+#include "itkMultiplyImageFilter.h"
 
 namespace itk
 {
@@ -185,8 +185,8 @@ void VDemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute()
 {
   // Setup the registrator
 
-  typedef itk::MultiplyByConstantImageFilter<RealImageType, float,
-                                             RealImageType> MultiplyByConstantImageType;
+  typedef itk::MultiplyImageFilter<RealImageType, itk::Image<float,RealImageType::ImageDimension>,
+    RealImageType> MultiplyByConstantImageType;
 
   if( m_FixedImage.size() > 1 )
     {

@@ -83,14 +83,14 @@
       <element>useCenterOfROIAlign</element>
     </string-enumeration>
 
-    <string-enumeration>
-      <name>metricSamplingStrategy</name>
-      <longflag>metricSamplingStrategy</longflag>
-      <label>Set Sampling Strategy</label>
-      <description>ONLY Random SUPPORTED NOW It defines the method that registration filter uses to sample the input fixed image={Random}</description>
-      <default>Random</default>
-      <element>Random</element>
-    </string-enumeration>
+    <double>
+        <name>samplingPercentage</name>
+        <longflag>samplingPercentage</longflag>
+        <label>Percentage Of Samples</label>
+        <description>This is a number in (0.0,1.0] interval that shows the percentage of the input fixed image voxels that are sampled for mutual information computation.  Increase this for a slower, more careful fit. You can also limit the sampling focus with ROI masks and ROIAUTO mask generation. The default is to use approximately 0.2% of voxels to provide a very fast registration in most cases 0.2% ~= 100000/(512*512*192). Typical values range from 1% for low detail images to 20% for high detail images.</description>
+        <default>0.002</default>
+    </double>
+
   </parameters>
 
   <parameters>
@@ -150,22 +150,6 @@
   <!-- -->
   <parameters advanced="true">
     <label>Main Parameters</label>
-
-    <integer>
-      <name>numberOfSamples</name>
-      <longflag>numberOfSamples</longflag>
-      <label>Number Of Samples</label>
-      <description>The number of voxels sampled for mutual information computation.  Increase this for a slower, more careful fit. NOTE that it is suggested to use samplingPercentage instead of this option. However, if set, it overwrites the samplingPercentage option.  </description>
-      <default>0</default>
-    </integer>
-
-    <double>
-      <name>samplingPercentage</name>
-      <longflag>samplingPercentage</longflag>
-      <label>Percentage Of Samples</label>
-      <description>This is a number in (0.0,1.0] interval that shows the percentage of the input fixed image voxels that are sampled for mutual information computation.  Increase this for a slower, more careful fit. You can also limit the sampling focus with ROI masks and ROIAUTO mask generation. The default is to use approximately 5% of voxels (for backwards compatibility 5% ~= 500000/(256*256*256)). Typical values range from 1% for low detail images to 20% for high detail images.</description>
-      <default>0.05</default>
-    </double>
 
     <integer-vector>
       <name>splineGridSize</name>
@@ -363,6 +347,14 @@
       <description>the number of match points</description>
       <label>     Histogram match point count</label>
       <default>10</default>
+    </integer>
+
+    <integer>
+        <name>numberOfSamples</name>
+        <longflag>numberOfSamples</longflag>
+        <label>Number Of Samples</label>
+        <description>The number of voxels sampled for mutual information computation.  Increase this for a slower, more careful fit.\nNOTE that it is suggested to use samplingPercentage instead of this option. However, if set to non-zero, numberOfSamples overwrites the samplingPercentage option.  </description>
+        <default>0</default>
     </integer>
 
   </parameters>
@@ -572,6 +564,16 @@
       <description>Prompt the user to hit enter each time an image is sent to the DebugImageViewer</description>
       <default>false</default>
     </boolean>
+
+    <string-enumeration>
+        <name>metricSamplingStrategy</name>
+        <longflag>metricSamplingStrategy</longflag>
+        <label>Set Sampling Strategy</label>
+        <description>ONLY Random SUPPORTED NOW It defines the method that registration filter uses to sample the input fixed image={Random}</description>
+        <default>Random</default>
+        <element>Random</element>
+    </string-enumeration>
+
   </parameters>
   <parameters advanced="true">
     <label>Risky Expert-only Parameters</label>

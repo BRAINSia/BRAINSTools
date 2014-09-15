@@ -104,6 +104,7 @@ int main(int, char * *)
 
   ImageType::Pointer eTfmImage = etfm2image->GetOutput();
 
+  typedef itk::VersorRigid3DTransform<double> VersorRigid3DTransformType;
   VersorRigid3DTransformType::Pointer tempCopy = VersorRigid3DTransformType::New();
 
   // images and masks passed to helper are identical, but only masks will be used

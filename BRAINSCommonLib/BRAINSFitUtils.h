@@ -36,33 +36,17 @@
   *BRAINSFit Programs.
   */
 
-static const unsigned int BFNSSpaceDimension = 3;
-static const unsigned int BFNSplineOrder = 3;
-typedef double CoordinateRepType;
-typedef itk::BSplineTransform<
-    CoordinateRepType,
-    BFNSSpaceDimension,
-    BFNSplineOrder>                                        BSplineTransformType;
-
-typedef itk::VersorRigid3DTransform<double>              VersorRigid3DTransformType;
-typedef itk::ScaleVersor3DTransform<double>              ScaleVersor3DTransformType;
-typedef itk::ScaleSkewVersor3DTransform<double>          ScaleSkewVersor3DTransformType;
-typedef itk::AffineTransform<double, BFNSSpaceDimension> AffineTransformType;
-
-typedef itk::SpatialObject<3>                                      SpatialObjectType;
-typedef SpatialObjectType::Pointer                                 ImageMaskPointer;
-typedef itk::Image<unsigned char, 3>                               MaskImageType;
-typedef itk::ImageMaskSpatialObject<MaskImageType::ImageDimension> ImageMaskSpatialObjectType;
-
 /**
  * Boilerplate conversion to get a safe reference to the internal Image stored in a
  * ImageMaskSpatialObjectType
  */
-extern MaskImageType::ConstPointer ExtractConstPointerToImageMaskFromImageSpatialObject(
-  SpatialObjectType::ConstPointer inputSpatialObject);
+extern
+itk::Image<unsigned char,3>::ConstPointer
+ExtractConstPointerToImageMaskFromImageSpatialObject(SpatialObjectType::ConstPointer inputSpatialObject);
 
-extern SpatialObjectType::ConstPointer ConvertMaskImageToSpatialMask(
-  MaskImageType::ConstPointer inputImage );
+extern
+itk::ImageMaskSpatialObject<3>::ConstPointer
+ConvertMaskImageToSpatialMask(itk::Image<unsigned char,3>::ConstPointer inputImage );
 
 template <class TransformType, unsigned int VImageDimension>
 void DoCenteredTransformMaskClipping(
@@ -83,6 +67,8 @@ void DoCenteredTransformMaskClipping(
 
   typename TransformType::InputPointType rotationCenter = transform->GetCenter();
   typename TransformType::OutputVectorType translationVector = transform->GetTranslation();
+
+  typedef itk::Image<unsigned char, 3> MaskImageType;
 
   typename MaskImageType::PointType fixedCenter;
   typename MaskImageType::PointType movingCenter;
@@ -150,6 +136,8 @@ void DoCenteredTransformMaskClipping(
       }
     ++movingIter;
     }
+
+  typedef itk::ImageMaskSpatialObject<MaskImageType::ImageDimension> ImageMaskSpatialObjectType;
 
   typename ImageMaskSpatialObjectType::Pointer  fixedMaskSpatialObject = ImageMaskSpatialObjectType::New();
   fixedMaskSpatialObject->SetImage(fixedMaskImage);

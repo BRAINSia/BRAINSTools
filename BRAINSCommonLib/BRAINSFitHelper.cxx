@@ -47,9 +47,11 @@ void debug_catch(void)
 }
 
 // convert spatial object to image
-MaskImageType::ConstPointer
+itk::Image<unsigned char,3>::ConstPointer
 ExtractConstPointerToImageMaskFromImageSpatialObject( SpatialObjectType::ConstPointer inputSpatialObject )
 {
+  typedef itk::Image<unsigned char, 3>                               MaskImageType;
+  typedef itk::ImageMaskSpatialObject<MaskImageType::ImageDimension> ImageMaskSpatialObjectType;
   ImageMaskSpatialObjectType const * const temp =
     dynamic_cast<ImageMaskSpatialObjectType const *>( inputSpatialObject.GetPointer() );
 
@@ -63,9 +65,10 @@ ExtractConstPointerToImageMaskFromImageSpatialObject( SpatialObjectType::ConstPo
 }
 
 // convert image to mask (spatial object)
-SpatialObjectType::ConstPointer
-ConvertMaskImageToSpatialMask( MaskImageType::ConstPointer inputImage )
+itk::ImageMaskSpatialObject<3>::ConstPointer
+ConvertMaskImageToSpatialMask( itk::Image<unsigned char,3>::ConstPointer inputImage )
 {
+  typedef itk::ImageMaskSpatialObject<3> ImageMaskSpatialObjectType;
   ImageMaskSpatialObjectType::Pointer mask = ImageMaskSpatialObjectType::New();
   mask->SetImage(inputImage);
   mask->ComputeObjectToWorldTransform();
@@ -75,9 +78,7 @@ ConvertMaskImageToSpatialMask( MaskImageType::ConstPointer inputImage )
     {
     itkGenericExceptionMacro(<< "Failed conversion to Mask");
     }
-
-  SpatialObjectType::ConstPointer objectMask(p);
-  return objectMask;
+  return dynamic_cast<ImageMaskSpatialObjectType *>(p.GetPointer());
 }
 
 namespace itk
@@ -446,6 +447,7 @@ BRAINSFitHelper::PrintSelf(std::ostream & os, Indent indent) const
 void
 BRAINSFitHelper::PrintCommandLine(const bool dumpTempVolumes, const std::string & suffix) const
 {
+  typedef itk::Image<unsigned char,3> MaskImageType;
   std::cout << "The equivalent command line to the current run would be:" << std::endl;
 
   const std::string fixedVolumeString("DEBUGFixedVolume_" + suffix + ".nii.gz");

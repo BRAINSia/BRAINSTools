@@ -43,7 +43,9 @@ std::string local_to_string(unsigned int i)
 }
 
 //NOTE: LandmarkTransforms are inverse of ImageTransforms, (You pull images, you push landmarks)
-static VersorTransformType::Pointer GetLandmarkTransformFromImageTransform( VersorTransformType::ConstPointer ImageTransform )
+static
+VersorTransformType::Pointer
+GetLandmarkTransformFromImageTransform( VersorTransformType::ConstPointer ImageTransform )
 {
   VersorTransformType::Pointer LandmarkOrigToACPCTransform = VersorTransformType::New();
   SImageType::PointType        centerPoint = ImageTransform->GetCenter();
@@ -259,6 +261,7 @@ landmarksConstellationDetector::ComputeFinalRefinedACPCAlignedTransform(void)
 
     {
     //NOTE: LandmarkTransforms are inverse of ImageTransforms, (You pull images, you push landmarks)
+    typedef itk::VersorRigid3DTransform<double>              VersorRigid3DTransformType;
     VersorTransformType::Pointer LandmarkOrigToACPCTransform = GetLandmarkTransformFromImageTransform( this->m_ImageOrigToACPCVersorTransform.GetPointer()  );
 
     const VersorRigid3DTransformType::OutputPointType acPointInACPCSpace = LandmarkOrigToACPCTransform->TransformPoint(GetNamedPointFromLandmarkList(this->m_OriginalSpaceNamedPoints,"AC"));

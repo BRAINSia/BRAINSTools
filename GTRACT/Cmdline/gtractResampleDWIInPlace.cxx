@@ -70,10 +70,12 @@
  * \return an image with the same voxels values as the input, but with differnt physical space representation.
  */
 template <class IOImageType>
-typename IOImageType::Pointer SetVectorImageRigidTransformInPlace(
-  typename VersorRigid3DTransformType::ConstPointer RigidTransform,
-  const IOImageType *InputImage)
+typename IOImageType::Pointer
+SetVectorImageRigidTransformInPlace(typename itk::VersorRigid3DTransform<double>::ConstPointer RigidTransform,
+                                    const IOImageType *InputImage)
 {
+  typedef itk::VersorRigid3DTransform<double>              VersorRigid3DTransformType;
+
   typename VersorRigid3DTransformType::Pointer InvOfRigidTransform = VersorRigid3DTransformType::New();
   const typename IOImageType::PointType centerPoint = RigidTransform->GetCenter();
   InvOfRigidTransform->SetCenter( centerPoint );

@@ -152,6 +152,9 @@ DoCenteredInitialization( typename FixedImageType::Pointer & orientedFixedVolume
                           std::string & initializeTransformMode,
                           typename MetricType::Pointer & CostMetricObject )
 {
+  typedef itk::Image<unsigned char, 3>                               MaskImageType;
+  typedef itk::ImageMaskSpatialObject<MaskImageType::ImageDimension> ImageMaskSpatialObjectType;
+
   typename TransformType::Pointer initialITKTransform = TransformType::New();
   initialITKTransform->SetIdentity();
 
@@ -307,110 +310,111 @@ DoCenteredInitialization( typename FixedImageType::Pointer & orientedFixedVolume
 
     CostMetricObject->SetMovingTransform(currentEulerAngles3D);
     CostMetricObject->Initialize();
+    {
+    currentEulerAngles3D->SetRotation(0, 0, 0);
+    // Initialize with current guess;
+    //double max_cc = CostMetricObject->GetValue( currentEulerAngles3D->GetParameters() );
+    double max_cc = CostMetricObject->GetValue();
+
+    // rough search in neighborhood.
+    const double one_degree = 1.0F * vnl_math::pi / 180.0F;
+    const double HAStepSize = 3.0 * one_degree;
+    const double PAStepSize = 3.0 * one_degree;
+    // Quick search just needs to get an approximate angle correct.
+    {
+    const double HARange = 12.0;
+    for( double HA = -HARange * one_degree; HA <= HARange * one_degree; HA += HAStepSize )
       {
-      currentEulerAngles3D->SetRotation(0, 0, 0);
-      // Initialize with current guess;
-      //double max_cc = CostMetricObject->GetValue( currentEulerAngles3D->GetParameters() );
-      double max_cc = CostMetricObject->GetValue();
-
-      // rough search in neighborhood.
-      const double one_degree = 1.0F * vnl_math::pi / 180.0F;
-      const double HAStepSize = 3.0 * one_degree;
-      const double PAStepSize = 3.0 * one_degree;
-      // Quick search just needs to get an approximate angle correct.
+      const double PARange = 12.0;
+      for( double PA = -PARange * one_degree; PA <= PARange * one_degree; PA += PAStepSize )
         {
-        const double HARange = 12.0;
-        for( double HA = -HARange * one_degree; HA <= HARange * one_degree; HA += HAStepSize )
+        currentEulerAngles3D->SetRotation(PA, 0, HA);
+        //const double current_cc = CostMetricObject->GetValue( currentEulerAngles3D->GetParameters() );
+        const double current_cc = CostMetricObject->GetValue();
+        if( current_cc < max_cc )
           {
-          const double PARange = 12.0;
-          for( double PA = -PARange * one_degree; PA <= PARange * one_degree; PA += PAStepSize )
-            {
-            currentEulerAngles3D->SetRotation(PA, 0, HA);
-            //const double current_cc = CostMetricObject->GetValue( currentEulerAngles3D->GetParameters() );
-            const double current_cc = CostMetricObject->GetValue();
-            if( current_cc < max_cc )
-              {
-              max_cc = current_cc;
-              bestEulerAngles3D->SetFixedParameters( currentEulerAngles3D->GetFixedParameters() );
-              bestEulerAngles3D->SetParameters( currentEulerAngles3D->GetParameters() );
-              }
-            // #define DEBUGGING_PRINT_IMAGES
-#ifdef DEBUGGING_PRINT_IMAGES
-              {
-              std::cout << "quick search "
-                        << " HA= " << ( currentEulerAngles3D->GetParameters()[2] ) * 180.0 / vnl_math::pi
-                        << " PA= " << ( currentEulerAngles3D->GetParameters()[0] ) * 180.0 / vnl_math::pi
-                        << " cc="  <<  current_cc
-                        << std::endl;
-              }
-            if( 0 )
-              {
-              typedef itk::ResampleImageFilter<FixedImageType, MovingImageType, double> ResampleFilterType;
-              typename ResampleFilterType::Pointer resampler = ResampleFilterType::New();
-
-              resampler->SetTransform(currentEulerAngles3D);
-              resampler->SetInput(orientedMovingVolume);
-              // Remember:  the Data is Moving's, the shape is Fixed's.
-              resampler->SetOutputParametersFromImage(orientedFixedVolume);
-              resampler->Update();            //  Explicit Update() required
-              // here.
-              typename FixedImageType::Pointer ResampledImage = resampler->GetOutput();
-
-              typedef itk::CheckerBoardImageFilter<FixedImageType> Checkerfilter;
-              typename Checkerfilter::Pointer checker = Checkerfilter::New();
-              unsigned int array[3] = { 36, 36, 36 };
-
-              checker->SetInput1(orientedFixedVolume);
-              checker->SetInput2(ResampledImage);
-              checker->SetCheckerPattern(array);
-              try
-                {
-                checker->Update();
-                }
-              catch( itk::ExceptionObject & err )
-                {
-                std::cout << "Caught an ITK exception: " << std::endl;
-                std::cout << err << " " << __FILE__ << " " << __LINE__ << std::endl;
-                throw;
-                }
-              char filename[300];
-              sprintf(filename, "%05.2f_%05.2f_%05.2f.nii.gz",
-                      ( currentEulerAngles3D->GetParameters()[2] ) * 180 / vnl_math::pi,
-                      ( currentEulerAngles3D->GetParameters()[0] ) * 180 / vnl_math::pi, current_cc);
-
-                {
-                typedef typename itk::ImageFileWriter<FixedImageType> WriterType;
-                typename WriterType::Pointer writer = WriterType::New();
-                writer->UseCompressionOn();
-                writer->SetFileName(filename);
-                writer->SetInput( checker->GetOutput() );
-                try
-                  {
-                  writer->Update();
-                  }
-                catch( itk::ExceptionObject & err )
-                  {
-                  std::cout << "Exception Object caught: " << std::endl;
-                  std::cout << err << std::endl;
-                  throw;
-                  }
-                }
-              }
-#endif
-            }
+          max_cc = current_cc;
+          bestEulerAngles3D->SetFixedParameters( currentEulerAngles3D->GetFixedParameters() );
+          bestEulerAngles3D->SetParameters( currentEulerAngles3D->GetParameters() );
           }
-        }
-      // DEBUGGING_PRINT_IMAGES INFORMATION
+        // #define DEBUGGING_PRINT_IMAGES
 #ifdef DEBUGGING_PRINT_IMAGES
         {
-        std::cout << "FINAL: quick search "
-                  << " HA= " << ( bestEulerAngles3D->GetParameters()[2] ) * 180.0 / vnl_math::pi
-                  << " PA= " << ( bestEulerAngles3D->GetParameters()[0] ) * 180.0 / vnl_math::pi
-                  << " cc="  <<  max_cc
+        std::cout << "quick search "
+                  << " HA= " << ( currentEulerAngles3D->GetParameters()[2] ) * 180.0 / vnl_math::pi
+                  << " PA= " << ( currentEulerAngles3D->GetParameters()[0] ) * 180.0 / vnl_math::pi
+                  << " cc="  <<  current_cc
                   << std::endl;
         }
+        if( 0 )
+          {
+          typedef itk::ResampleImageFilter<FixedImageType, MovingImageType, double> ResampleFilterType;
+          typename ResampleFilterType::Pointer resampler = ResampleFilterType::New();
+
+          resampler->SetTransform(currentEulerAngles3D);
+          resampler->SetInput(orientedMovingVolume);
+          // Remember:  the Data is Moving's, the shape is Fixed's.
+          resampler->SetOutputParametersFromImage(orientedFixedVolume);
+          resampler->Update();            //  Explicit Update() required
+          // here.
+          typename FixedImageType::Pointer ResampledImage = resampler->GetOutput();
+
+          typedef itk::CheckerBoardImageFilter<FixedImageType> Checkerfilter;
+          typename Checkerfilter::Pointer checker = Checkerfilter::New();
+          unsigned int array[3] = { 36, 36, 36 };
+
+          checker->SetInput1(orientedFixedVolume);
+          checker->SetInput2(ResampledImage);
+          checker->SetCheckerPattern(array);
+          try
+            {
+            checker->Update();
+            }
+          catch( itk::ExceptionObject & err )
+            {
+            std::cout << "Caught an ITK exception: " << std::endl;
+            std::cout << err << " " << __FILE__ << " " << __LINE__ << std::endl;
+            throw;
+            }
+          char filename[300];
+          sprintf(filename, "%05.2f_%05.2f_%05.2f.nii.gz",
+                  ( currentEulerAngles3D->GetParameters()[2] ) * 180 / vnl_math::pi,
+                  ( currentEulerAngles3D->GetParameters()[0] ) * 180 / vnl_math::pi, current_cc);
+
+          {
+          typedef typename itk::ImageFileWriter<FixedImageType> WriterType;
+          typename WriterType::Pointer writer = WriterType::New();
+          writer->UseCompressionOn();
+          writer->SetFileName(filename);
+          writer->SetInput( checker->GetOutput() );
+          try
+            {
+            writer->Update();
+            }
+          catch( itk::ExceptionObject & err )
+            {
+            std::cout << "Exception Object caught: " << std::endl;
+            std::cout << err << std::endl;
+            throw;
+            }
+          }
+          }
 #endif
+        }
       }
+    }
+    // DEBUGGING_PRINT_IMAGES INFORMATION
+#ifdef DEBUGGING_PRINT_IMAGES
+    {
+    std::cout << "FINAL: quick search "
+              << " HA= " << ( bestEulerAngles3D->GetParameters()[2] ) * 180.0 / vnl_math::pi
+              << " PA= " << ( bestEulerAngles3D->GetParameters()[0] ) * 180.0 / vnl_math::pi
+              << " cc="  <<  max_cc
+              << std::endl;
+    }
+#endif
+    }
+    typedef itk::VersorRigid3DTransform<double>              VersorRigid3DTransformType;
     typename VersorRigid3DTransformType::Pointer quickSetVersor = VersorRigid3DTransformType::New();
     quickSetVersor->SetCenter( bestEulerAngles3D->GetCenter() );
     quickSetVersor->SetTranslation( bestEulerAngles3D->GetTranslation() );
@@ -648,6 +652,11 @@ template <class FixedImageType, class MovingImageType>
 void
 BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
 {
+  typedef itk::Image<unsigned char, 3>                               MaskImageType;
+  typedef itk::ImageMaskSpatialObject<MaskImageType::ImageDimension> ImageMaskSpatialObjectType;
+  typedef itk::VersorRigid3DTransform<double>                        VersorRigid3DTransformType;
+
+
   if( this->m_DebugLevel > 3 )
     {
     this->PrintSelf(std::cout, 3);
@@ -703,7 +712,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
   if( m_CurrentGenericTransform.IsNull() && localInitializeTransformMode != "Off" )
       // Use CenteredVersorTranformInitializer
   {
-  typedef VersorRigid3DTransformType TransformType;
+  typedef itk::VersorRigid3DTransform<double> TransformType;
   std::cout << "Initializing transform with " << localInitializeTransformMode << std::endl;
   typedef itk::CenteredVersorTransformInitializer<FixedImageType,
   MovingImageType> InitializerType;
@@ -764,11 +773,11 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
     if( currentTransformType == "Rigid" )
       {
       //  Choose TransformType for the itk registration class template:
-      typedef VersorRigid3DTransformType                          TransformType;
-      typedef itk::RegularStepGradientDescentOptimizerv4<double>  OptimizerType;
+      typedef itk::RegularStepGradientDescentOptimizerv4<double> OptimizerType;
       //
       // Process the initialITKTransform as VersorRigid3DTransform:
       //
+      typedef VersorRigid3DTransformType TransformType;
       TransformType::Pointer initialITKTransform = TransformType::New();
       initialITKTransform->SetIdentity();
 
@@ -796,7 +805,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
           const std::string transformFileType = currInitTransformFormGenericComposite->GetNameOfClass();
           if( transformFileType == "VersorRigid3DTransform" )
             {
-            const VersorRigid3DTransformType::ConstPointer tempInitializerITKTransform =
+            const itk::VersorRigid3DTransform<double>::ConstPointer tempInitializerITKTransform =
             dynamic_cast<VersorRigid3DTransformType const *>( currInitTransformFormGenericComposite.GetPointer() );
             if( tempInitializerITKTransform.IsNull() )
               {
@@ -854,7 +863,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
     else if( currentTransformType == "ScaleVersor3D" )
       {
       //  Choose TransformType for the itk registration class template:
-      typedef ScaleVersor3DTransformType                          TransformType; // NumberOfEstimatedParameter = 9;
+      typedef itk::ScaleVersor3DTransform<double>                          TransformType; // NumberOfEstimatedParameter = 9;
       typedef itk::RegularStepGradientDescentOptimizerv4<double>  OptimizerType;
       //
       // Process the initialITKTransform as ScaleVersor3DTransform:
@@ -896,8 +905,8 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
             }
           else if( transformFileType == "ScaleVersor3DTransform" )
             {
-            const ScaleVersor3DTransformType::ConstPointer tempInitializerITKTransform =
-              dynamic_cast<ScaleVersor3DTransformType const *>( currInitTransformFormGenericComposite.GetPointer() );
+            const itk::ScaleVersor3DTransform<double>::ConstPointer tempInitializerITKTransform =
+              dynamic_cast<itk::ScaleVersor3DTransform<double> const *>( currInitTransformFormGenericComposite.GetPointer() );
             if( tempInitializerITKTransform.IsNull() )
               {
               std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
@@ -956,7 +965,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
     else if( currentTransformType == "ScaleSkewVersor3D" )
       {
       //  Choose TransformType for the itk registration class template:
-      typedef ScaleSkewVersor3DTransformType                       TransformType;  // NumberOfEstimatedParameter = 15;
+      typedef itk::ScaleSkewVersor3DTransform<double>                       TransformType;  // NumberOfEstimatedParameter = 15;
       typedef itk::RegularStepGradientDescentOptimizerv4<double>   OptimizerType;
       //
       // Process the initialITKTransform as ScaleSkewVersor3D:
@@ -998,8 +1007,8 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
             }
           else if( transformFileType == "ScaleVersor3DTransform" )
             {
-            const ScaleVersor3DTransformType::ConstPointer tempInitializerITKTransform =
-              dynamic_cast<ScaleVersor3DTransformType const *>( currInitTransformFormGenericComposite.GetPointer() );
+            const itk::ScaleVersor3DTransform<double>::ConstPointer tempInitializerITKTransform =
+              dynamic_cast<itk::ScaleVersor3DTransform<double> const *>( currInitTransformFormGenericComposite.GetPointer() );
             if( tempInitializerITKTransform.IsNull() )
               {
               std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
@@ -1009,8 +1018,8 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
             }
           else if( transformFileType == "ScaleSkewVersor3DTransform" )
             {
-            const ScaleSkewVersor3DTransformType::ConstPointer tempInitializerITKTransform =
-              dynamic_cast<ScaleSkewVersor3DTransformType const *>( currInitTransformFormGenericComposite.GetPointer() );
+            const itk::ScaleSkewVersor3DTransform<double>::ConstPointer tempInitializerITKTransform =
+              dynamic_cast<itk::ScaleSkewVersor3DTransform<double> const *>( currInitTransformFormGenericComposite.GetPointer() );
             if( tempInitializerITKTransform.IsNull() )
               {
               std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
@@ -1106,8 +1115,8 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
             }
           else if( transformFileType == "ScaleVersor3DTransform" )
             {
-            const ScaleVersor3DTransformType::ConstPointer tempInitializerITKTransform =
-              dynamic_cast<ScaleVersor3DTransformType const *>( currInitTransformFormGenericComposite.GetPointer() );
+            const itk::ScaleVersor3DTransform<double>::ConstPointer tempInitializerITKTransform =
+              dynamic_cast<itk::ScaleVersor3DTransform<double> const *>( currInitTransformFormGenericComposite.GetPointer() );
             if( tempInitializerITKTransform.IsNull() )
               {
               std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
@@ -1117,8 +1126,8 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
             }
           else if( transformFileType == "ScaleSkewVersor3DTransform" )
             {
-            const ScaleSkewVersor3DTransformType::ConstPointer tempInitializerITKTransform =
-              dynamic_cast<ScaleSkewVersor3DTransformType const *>( currInitTransformFormGenericComposite.GetPointer() );
+            const itk::ScaleSkewVersor3DTransform<double>::ConstPointer tempInitializerITKTransform =
+              dynamic_cast<itk::ScaleSkewVersor3DTransform<double> const *>( currInitTransformFormGenericComposite.GetPointer() );
             if( tempInitializerITKTransform.IsNull() )
               {
               std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
@@ -1406,7 +1415,8 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
                                                                                  false );
 
 
-            typename MovingImageMaskType::ConstPointer warpedMask = ConvertMaskImageToSpatialMask( warpedMovingMaskImage.GetPointer() );
+            const MovingImageMaskType *warpedMask =
+              ConvertMaskImageToSpatialMask( warpedMovingMaskImage.GetPointer() ).GetPointer();
             m_CostMetricObject->SetMovingImageMask( warpedMask );
             }
           }

@@ -58,6 +58,8 @@ public:
   itkStaticConstMacro(ImageDimension, unsigned int,
                       TInputImage::ImageDimension);
 
+  typedef double CoordinateRepType;
+
   typedef typename std::map<std::string,  std::map<std::string, AtlasDefinition::BoundsType> > RangeDBType;
   // Image types
   typedef TInputImage                       InputImageType;

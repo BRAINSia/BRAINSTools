@@ -28,6 +28,7 @@
 #include "itkNearestNeighborInterpolateImageFunction.h"
 #include "itkResampleImageFilter.h"
 #include "itkRescaleIntensityImageFilter.h"
+#include "itkVersorRigid3DTransform.h"
 
 // MI registration module
 #include "AtlasRegistrationMethod.h"
@@ -46,7 +47,7 @@ itk::Transform<double, 3, 3>::Pointer MakeRigidIdentity(void)
 {
   typedef itk::Transform<double, 3, 3> GenericTransformType;
   // Also append identity matrix for each image
-  VersorRigid3DTransformType::Pointer rigidIdentity = VersorRigid3DTransformType::New();
+  itk::VersorRigid3DTransform<double>::Pointer rigidIdentity = itk::VersorRigid3DTransform<double>::New();
 
   rigidIdentity->SetIdentity();
   GenericTransformType::Pointer genericTransform = rigidIdentity.GetPointer();

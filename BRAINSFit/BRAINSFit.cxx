@@ -36,7 +36,7 @@ typedef itk::Image<BRAINSFitPixelType, Dimension> MovingVolumeType;
 typedef itk::Image<BRAINSFitPixelType, MaxInputDimension> InputImageType;
 typedef itk::ImageFileReader<InputImageType>              FixedVolumeReaderType;
 typedef itk::ImageFileReader<InputImageType>              MovingVolumeReaderType;
-typedef AffineTransformType::Pointer                      AffineTransformPointer;
+typedef itk::AffineTransform<double,3>::Pointer           AffineTransformPointer;
 
 template <class ImageType>
 typename ImageType::Pointer ExtractImage(

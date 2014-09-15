@@ -60,7 +60,8 @@ ExtractConstPointerToImageMaskFromImageSpatialObject( SpatialObjectType::ConstPo
     itkGenericExceptionMacro(<< "Invalid mask converstion attempted.");
     }
   ImageMaskSpatialObjectType::ConstPointer ImageMask( temp );
-  const MaskImageType::ConstPointer        tempOutputVolumeROI = ImageMask->GetImage();
+  const MaskImageType *tempOutputVolumeROI = ImageMask->GetImage();
+  tempOutputVolumeROI->Register();
   return tempOutputVolumeROI;
 }
 
@@ -78,7 +79,9 @@ ConvertMaskImageToSpatialMask( itk::Image<unsigned char,3>::ConstPointer inputIm
     {
     itkGenericExceptionMacro(<< "Failed conversion to Mask");
     }
-  return dynamic_cast<ImageMaskSpatialObjectType *>(p.GetPointer());
+  ImageMaskSpatialObjectType *so = dynamic_cast<ImageMaskSpatialObjectType *>(p.GetPointer());
+  so->Register();
+  return so;
 }
 
 namespace itk

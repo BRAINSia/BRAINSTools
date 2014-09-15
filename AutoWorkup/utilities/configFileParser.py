@@ -27,34 +27,44 @@ from distributed import modify_qsub_args
 import misc
 
 
-def parseEnvironment(parser, section):
-    """ Parse the environment section given by 'section' and return a dictionary
+def parseEnvironment(parser, environment):
+    """ Parse the environment environment given by 'section' and return a dictionary
         Values are shell-centric, i.e. PYTHONPATH is a colon-seperated string
 
     """
     retval = dict()
-    if parser.has_option(section, 'ENVAR_DICT'):
-        retval['env'] = eval(parser.get(section, 'ENVAR_DICT'))
+    if parser.has_option(environment, 'ENVAR_DICT'):
+        retval['env'] = eval(parser.get(environment, 'ENVAR_DICT'))
     else:
         retval['env'] = dict()
     if 'PYTHONPATH' in retval['env'].keys():
-        pythonpath = appendPathList(parser.get(section, 'APPEND_PYTHONPATH'), retval['env']['PYTHONPATH'])
+        pythonpath = appendPathList(parser.get(environment, 'APPEND_PYTHONPATH'), retval['env']['PYTHONPATH'])
         retval['env']['PYTHONPATH'] = pythonpath  # Create append to PYTHONPATH
     else:
-        retval['env']['PYTHONPATH'] = parser.get(section, 'APPEND_PYTHONPATH')
+        retval['env']['PYTHONPATH'] = parser.get(environment, 'APPEND_PYTHONPATH')
     if 'PATH' in retval['env'].keys():
-        envpath = appendPathList(parser.get(section, 'APPEND_PATH'), retval['env']['PATH'])
+        envpath = appendPathList(parser.get(environment, 'APPEND_PATH'), retval['env']['PATH'])
         retval['env']['PATH'] = envpath  # Create append to PATH
     else:
-        retval['env']['PATH'] = parser.get(section, 'APPEND_PATH')
-    retval['prefix'] = validatePath(parser.get(section, 'MOUNT_PREFIX'), True, True)
+        retval['env']['PATH'] = parser.get(environment, 'APPEND_PATH')
+
+    retval['prefix'] = validatePath(parser.get(environment, 'MOUNT_PREFIX'), True, True)
     if retval['prefix'] is None:
         retval['prefix'] = ''
-    if parser.has_option(section, 'VIRTUALENV_DIR'):
-        retval['virtualenv_dir'] = validatePath(parser.get(section, 'VIRTUALENV_DIR'), False, True)
+    if parser.has_option(environment, 'VIRTUALENV_DIR'):
+        retval['virtualenv_dir'] = validatePath(parser.get(environment, 'VIRTUALENV_DIR'), False, True)
     else:
         retval['virtualenv_dir'] = None
-    return retval
+    # cluster specifi environment
+    retval['cluster'] = parser.getboolean(environment, 'CLUSTER')
+    retval_cluster = dict()
+    retval_cluster['modules'] = eval(parser.get(environment, 'MODULES'))
+    retval_cluster['queue'] = parser.get(environment, 'QUEUE')
+    retval_cluster['long_q'] = parser.get(environment, 'QUEUE_LONG')
+    retval_cluster['qstat'] = parser.get(environment, 'QSTAT_IMMEDIATE')
+    retval_cluster['qstat_cached'] = parser.get(environment, 'QSTAT_CACHED')
+
+    return retval, retval_cluster
 
 
 def create_experiment_dir(dirname, name, suffix, verify=False):
@@ -109,31 +119,28 @@ def parsePipeline(parser):
     return retval
 
 
-def parseCluster(parser, section):
-    """ Parse the section and return a dictionary """
-    retval = dict()
-    if parser.get(section, 'MODULES'):
-        retval['modules'] = eval(parser.get(section, 'MODULES'))
-    else:
-        retval['modules'] = parser.get(section, 'MODULES')
-    retval['queue'] = parser.get(section, 'QUEUE')
-    retval['long_q'] = parser.get(section, 'QUEUE_LONG')
-    retval['qstat'] = parser.get(section, 'QSTAT_IMMEDIATE')
-    retval['qstat_cached'] = parser.get(section, 'QSTAT_CACHED')
-    return retval
+#def parseCluster(parser, env):
+#    """ Parse the cluster section and return a dictionary """
+#    retval = dict()
+#    retval['modules'] = eval(parser.get(env, 'MODULES'))
+#    retval['queue'] = parser.get(env, 'QUEUE')
+#    retval['long_q'] = parser.get(env, 'QUEUE_LONG')
+#    retval['qstat'] = parser.get(env, 'QSTAT_IMMEDIATE')
+#    retval['qstat_cached'] = parser.get(env, 'QSTAT_CACHED')
+#    return retval
 
 
 def parseFile(configFile, env, workphase):
+
     configFile = os.path.realpath(configFile)
     assert os.path.exists(configFile), "Configuration file could not be found: {0}".format(configFile)
     parser = ConfigParser(allow_no_value=True)  # Parse configuration file parser = ConfigParser()
     parser.read(configFile)
     assert (parser.has_option(env, '_BUILD_DIR') or parser.has_option('DEFAULT', '_BUILD_DIR')
             ), "BUILD_DIR option not in {0}".format(env)
-    environment = parseEnvironment(parser, env)
+    environment, cluster = parseEnvironment(parser, env)
     experiment = parseExperiment(parser, workphase)
     pipeline = parsePipeline(parser)
-    cluster = parseCluster(parser, env)
     return environment, experiment, pipeline, cluster
 
 

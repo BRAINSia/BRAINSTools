@@ -74,19 +74,24 @@ def GenerateSeparateImageTypeList(inFileList, inTypeList):
 def add_dict(d1, d2, force=False):
     from copy import deepcopy
     retval = deepcopy(d1)
-    if not force:
-        try:
-            assert set(d1.keys()).isdisjoint(set(d2.keys()))
-        except AssertionError:
-            raise ValueError("Dictionaries have one or more duplicate keys")
-    for key in d2.keys():
-        if key in retval.keys() and force:
+    if d2:
+        if not force:
             try:
-                retval[key] += d2[key]
-            except:
-                raise
-        else:
-            retval[key] = deepcopy(d2[key])
+                print "d1.keys():::"
+                print d1.keys()
+                print "d2.keys():::"
+                print d2.keys()
+                assert set(d1.keys()).isdisjoint(set(d2.keys()))
+            except AssertionError:
+                raise ValueError("Dictionaries have one or more duplicate keys")
+        for key in d2.keys():
+            if key in retval.keys() and force:
+                try:
+                    retval[key] += d2[key]
+                except:
+                    raise
+            else:
+                retval[key] = deepcopy(d2[key])
     return retval
 
 

@@ -129,19 +129,21 @@ ValidationInputParser<TImage>
   else if( m_InitialTransformFilename != "" )
     {
     //  #######Now use TransformToDisplacementFieldSource
-    typedef itk::TransformToDisplacementFieldSource<TDisplacementField, double> DisplacementFieldGeneratorType;
+    typedef itk::TransformToDisplacementFieldFilter<TDisplacementField, double> DisplacementFieldGeneratorType;
     typedef typename DisplacementFieldGeneratorType::TransformType TransformType;
     // Only a templated base class.
 
     typename TransformType::Pointer trsf = ReadTransformFromDisk(m_InitialTransformFilename);
+    typename DataObjectDecorator<TransformType>::Pointer dop = DataObjectDecorator<TransformType>::New();
+    dop->Set(trsf);
 
     typename DisplacementFieldGeneratorType::Pointer defGenerator = DisplacementFieldGeneratorType::New();
     defGenerator->SetOutputSpacing( this->GetTheFixedImage()->GetSpacing() );
     defGenerator->SetOutputOrigin( this->GetTheFixedImage()->GetOrigin() );
     defGenerator->SetOutputDirection( this->GetTheFixedImage()->GetDirection() );
-    defGenerator->SetOutputSize( this->GetTheFixedImage()->GetLargestPossibleRegion().GetSize() );
-    defGenerator->SetOutputIndex( this->GetTheFixedImage()->GetLargestPossibleRegion().GetIndex() );
-    defGenerator->SetTransform(trsf);
+    defGenerator->SetSize( this->GetTheFixedImage()->GetLargestPossibleRegion().GetSize() );
+    defGenerator->SetOutputStartIndex( this->GetTheFixedImage()->GetLargestPossibleRegion().GetIndex() );
+    defGenerator->SetInput(dop);
     defGenerator->Update();
     m_InitialDisplacementField = defGenerator->GetOutput();
     // itkUtil::WriteImage<TDisplacementField>(m_InitialDisplacementField,

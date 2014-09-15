@@ -92,7 +92,6 @@ namespace itk
  * you could do something like the following
  *
  * \code
- * #include "itkAnalyzeImageIO.h"
  * #include "itkMetaDataObject.h"
  * #include "itkImage.h"
  * #include "itkSpatialOrientation.h"

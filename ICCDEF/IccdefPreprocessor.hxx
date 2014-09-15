@@ -29,7 +29,7 @@
 #include "itkIO.h"
 #include "itkMedianImageFilter.h"
 
-#include "itkTransformToDisplacementFieldSource.h"
+#include "itkTransformToDisplacementFieldFilter.h"
 #include "itkTransformFactory.h"
 #include "itkTransformFileReader.h"
 #include "itkTransform.h"
@@ -181,7 +181,7 @@ IccdefPreprocessor<TInputImage, TOutputImage>
       }
 
     //  #######Now use TransformToDisplacementFieldSource
-    typedef itk::TransformToDisplacementFieldSource<TDisplacementField, double> DisplacementFieldGeneratorType;
+    typedef itk::TransformToDisplacementFieldFilter<TDisplacementField, double> DisplacementFieldGeneratorType;
     typedef typename DisplacementFieldGeneratorType::TransformType              TransformType; // Only a templated base
                                                                                                // class.
 

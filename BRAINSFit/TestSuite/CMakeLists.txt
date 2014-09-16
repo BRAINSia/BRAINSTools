@@ -1588,7 +1588,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --compare DATA{${TestData_DIR}/${BRAINSFitTestName}.result.nrrd,:}
             ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nrrd
   --compareIntensityTolerance 7
-  --compareRadiusTolerance 0
+  --compareRadiusTolerance 1
   --compareNumberOfPixelsTolerance 777
   BRAINSFitTest
   --costMetric MMI

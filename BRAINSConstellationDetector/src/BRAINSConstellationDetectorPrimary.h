@@ -70,6 +70,11 @@ public:
 
   BRAINSConstellationDetectorPrimary();
 
+  void SetVersion(std::string version)
+  {
+  this->m_Version = version;
+  }
+
   void SetHoughEyeDetectorMode(int houghEyeDetectorMode)
   {
     this->m_houghEyeDetectorMode = houghEyeDetectorMode;
@@ -283,6 +288,8 @@ public:
   bool Compute(void);
 
 private:
+
+  std::string  m_Version; // version number
 
   int          m_houghEyeDetectorMode;      // 1
   unsigned int m_mspQualityLevel;           // 2

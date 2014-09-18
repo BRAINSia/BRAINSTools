@@ -30,6 +30,7 @@ int main( int argc, char *argv[] )
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
 
+  std::cout << "Run BRAINSConstellationDetector Version: " << Version << std::endl;
   // ------------------------------------
   // Verify input parameters
   std::cout << "Verifying input parameters..." << std::endl;
@@ -99,7 +100,7 @@ int main( int argc, char *argv[] )
     }
 
   BRAINSConstellationDetectorPrimary BCD;
-
+  BCD.SetVersion( Version );
   BCD.SetNumberOfThreads( numberOfThreads );
   BCD.SetInputLandmarksEMSP( inputLandmarksEMSP );
   BCD.SetLLSModel( llsModel );

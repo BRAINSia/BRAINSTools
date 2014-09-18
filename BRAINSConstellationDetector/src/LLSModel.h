@@ -40,6 +40,8 @@ public:
 
   void SetFileName(const std::string & fileName);
 
+  void SetVersion(const std::string & versionID);
+  const std::string & GetVersion();
   //
   // read & write return zero on success -1 otherwise.
   int Read();
@@ -66,7 +68,11 @@ private:
 
   void WriteScalar(const std::string & path, const double & value);
 
+  void WriteString(const std::string & path, const std::string & strname);
+
   double ReadScalar(const std::string & DataSetName);
+
+  std::string ReadString(const std::string & DataSetName);
 
   std::vector<double> ReadVector(const std::string & DataSetName);
 
@@ -74,10 +80,12 @@ private:
 
 private:
   std::string               m_FileName;
+  std::string               m_Version;
   LLSMeansType              m_LLSMeans;
   LLSMatricesType           m_LLSMatrices;
   LLSSearchRadiiType        m_LLSSearchRadii;
   H5::H5File *              m_H5File;
+  static const char * const m_LLSVersionGroupName;
   static const char * const m_LLSMeansGroupName;
   static const char * const m_LLSMatricesGroupName;
   static const char * const m_LLSSearchRadiiGroupName;

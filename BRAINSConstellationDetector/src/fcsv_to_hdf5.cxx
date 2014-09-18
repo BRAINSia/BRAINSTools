@@ -17,19 +17,59 @@
  *
  *=========================================================================*/
 /*
- fcsv_to_matlab:
-A program to automatically generate the matlab matricies need to generate new model files.
+ %
+ % Objective:
+ % Train a linear model that can evolutionary estimate new landmarks from
+ % already known landmarks.
+ %
+ % Inputs of the algorithm:
+ % baselandmarks     - Base landmarks in training datasets
+ % newLandmarks      - EPCA landmarks in training datasets
+ % numBaseLandmarks  - Number of base landmarks
+ % numNewLandmarks   - Number of EPCA landmarks
+ % numDatasets       - Number of training datasets
+ % dim               - Dimension of the landmarks
+ %
+ % Outputs: (variables stored in an output LLSModel files)
+ % M (LLSMatrices)                  - Optimal linear combination of principal components
+ %                                    in each iteration
+ % s (LLSMeans)                     - The 3-by-1 mean of landmark vector space in each
+ %                                    iteration
+ % search_radius (LLSSearchRadii)   - Search radius of each EPCA landmark
+ %
+ */
+
+/*
+ fcsv_to_hdf5:
+A program to automatically generate a linear model estimation for the secondary landmark points.
 
 Arguments:
---landmarkFiles {arg}  : A glob of landmark files to include (default: "*.fcsv") (Be sure to use quotes!)
---outputMatlabFile {arg}  : The name of the output matlab file to save (default: load_landmarks.m)
---landmarkTypesList {arg}    : A list of the landmarks, grouped by landmarkTypes ("AC,base\nPC,base\n\n")
+--landmarkTypesList {arg}         : A list of the landmarks, grouped by landmarkTypes ("AC,base\nPC,base\n\n")
+                                    Landmarks should be ordered from the most prominent to the least prominent.
 
+--landmarkGlobPattern {arg}       : A glob of landmark files to include (default: "*.fcsv") (Be sure to use quotes!).
+
+--landmarksInformationFile {arg}  : The name of the output H5 file that saves all landmarks information.
+                                    (This output is not needed by BCD)
+
+--modelFile {arg}                 : MAIN OUTPUT OF THIS PROGRAM:
+                                    name of HDF5 file containing BRAINSConstellationDetector Model file
+                                    (LLSMatrices, LLSMeans and LLSSearchRadii).
+
+Example Usage:
+    ~/fcsv_to_hdf5 \
+    --landmarkTypesList inputLandmarksNames.list \
+    --landmarkGlobPattern ${DATA_PATH}/"\*_est.fcsv" \
+    --landmarksInformationFile landmarksInfo.h5 \
+    --modelFile outputLLSModel.h5
+
+*/
+
+/*
 Development notes: Yes, I do use returns of stl containers instead of
 passing the return containers by reference as arguments.  While this is slow
 in 03, in 0x it's fast due to move constructors, and anyway, this code
 benefits more from readability than speed.
-
 */
 
 // I N C L U D E S ////////////////////////////////////////////////////////////
@@ -348,6 +388,11 @@ int main(int argc, char* argv[])
 
   std::vector<std::string> landmarkNames;
 
+  // "byClassLandmarkMatrix" object contains information of each landmark:
+  // - landmark type
+  // - landmark name
+  // - landmark coordinates in each data set (a 3xN matrix)
+
   std::map<std::string, std::vector<std::pair<std::string, vnl_matrix<double> > > > byClassLandmarkMatrix;
   for( LandmarkClassMapsTypes::const_iterator cit = landmark_types.begin();
        cit != landmark_types.end();
@@ -376,29 +421,37 @@ int main(int argc, char* argv[])
     byClassLandmarkMatrix[cit->first] = perLandmarkMatrix;
     }
 
-  // KENT:  Write out all matricies to .hd5 format in addition to dumping to
-  // screen:
+  // ================================
+  // Write out all matricies to .hd5 format in addition to dumping to screen:
   H5::H5File output(outputFile.c_str(), H5F_ACC_TRUNC);
   WriteHDFStringList(output, "/SubjectIDs", subjectIDVec);
   WriteHDFStringList(output, "/LandmarkNames", landmarkNames);
+
   for( LandmarkClassMapsTypes::const_iterator cit = landmark_types.begin();
        cit != landmark_types.end();
        ++cit )
     {
     std::string groupName("/");
-    groupName += cit->first;
+    groupName += cit->first; // baseLandmarks or newLandmarks
     H5::Group group = output.createGroup(groupName);
+
     for( std::vector<std::pair<std::string, vnl_matrix<double> > >::const_iterator lit =
            byClassLandmarkMatrix[cit->first].begin();
          lit != byClassLandmarkMatrix[cit->first].end();
          ++lit )
       {
       vnl_matrix<double> CurrentLandmarkMatrix = lit->second;
-
       hsize_t dims[2];
-      dims[0] = CurrentLandmarkMatrix.columns();
-      dims[1] = CurrentLandmarkMatrix.rows();
+      dims[0] = CurrentLandmarkMatrix.rows();
+      dims[1] = CurrentLandmarkMatrix.columns();
 
+      // Print info on the screen
+      std::cout << "=========" << cit->first << " "  << lit->first << "========== "
+                << dims[0] << "x" << dims[1]
+                << std::endl;
+      vnl_matlab_print(std::cout, CurrentLandmarkMatrix, (lit->first).c_str() );
+
+      // Write info to a .hd5 file
       try
         {
         H5::DataSpace dataspace(2, dims);
@@ -409,7 +462,7 @@ int main(int argc, char* argv[])
         matName += lit->first;
 
         H5::DataSet dataset = output.createDataSet(matName, dataType, dataspace);
-        dataset.write(CurrentLandmarkMatrix.data_array(), H5::PredType::NATIVE_DOUBLE);
+        dataset.write(CurrentLandmarkMatrix.data_block(), H5::PredType::NATIVE_DOUBLE, dataspace);
         dataspace.close();
         dataType.close();
         dataset.close();
@@ -444,66 +497,6 @@ int main(int argc, char* argv[])
       }
     }
   output.close();
-  // ================================
-  // Now here is where the work for converting from the matlab code begings
-  // % cd  /hjohnson/HDNI/TanmayLandmarkModel/test-data
-  // % ~/src/BRAINS3-Darwin-SuperBuildTest/src/bin/brains3_setup.sh -x
-  // ~/src/BRAINS3-Darwin-SuperBuildTest/src/bin/fcsv_to_matlab
-  // --landmarkTypesFile lmks.list -o test.h5 --landmarkGlobPattern
-  // "\*_est\.fcsv"
-  /*
-  % This is matlab code for the the implementation of
-  % the two training phases for the proposed
-  % LME-EPCA algorithm (Section 3.3 in my MS thesis).
-  %
-  % Objective:
-  % Train a linear model that can evolutionary estimate new landmarks from
-  % already known landmarks.
-  %
-  % Input:
-  % baselandmarks     - Base landmarks in training datasets
-  % newLandmarks      - EPCA landmarks in training datasets
-  % numBaseLandmarks  - Number of base landmarks
-  % numNewLandmarks   - Number of EPCA landmarks
-  % numDatasets       - Number of training datasets
-  % dim               - Dimension of the landmarks
-  %
-  % Output: (variables stored in files)
-  % M                 - Optimal linear combination of principal components
-  %                     in each iteration
-  % s                 - The 3-by-1 mean of landmark vector space in each
-  %                     iteration
-  % search_radius     - Search radius of each EPCA landmark
-  % newLandmarksName  - A name list of all EPCA landmarks
-  */
-  /*
-
-  %% Dependencies
-###HANS -- NOTE
-load_landmarks % load all landmarks and other input parameters
-This information is now completely contained in the byClassLandmarkMatrix object.
-*/
-  // For each of the landmark_types
-  // For each of the landmark_names withing those types
-  // Do the computations necessary.
-  for( LandmarkClassMapsTypes::const_iterator cit = landmark_types.begin();
-       cit != landmark_types.end();
-       ++cit )
-    {
-    for( std::vector<std::pair<std::string, vnl_matrix<double> > >::const_iterator lit =
-           byClassLandmarkMatrix[cit->first].begin();
-         lit != byClassLandmarkMatrix[cit->first].end();
-         ++lit )
-      {
-      std::cout << "========="
-                << cit->first << " "  << lit->first << "========== "
-                << (lit->second).rows() << "x" << (lit->second).cols()
-                << std::endl;
-      vnl_matlab_print(std::cout, (lit->second), (lit->first).c_str() ); // ,
-                                                                         // vnl_matlab_print_format_short_e
-                                                                         // );
-      }
-    }
 
   const unsigned int numNewLandmarks = byClassLandmarkMatrix["newLandmarks"].size();
   const unsigned int numBaseLandmarks = byClassLandmarkMatrix["baseLandmarks"].size();
@@ -802,6 +795,7 @@ This information is now completely contained in the byClassLandmarkMatrix object
     }
   LLSModel theModel;
   theModel.SetFileName(modelFile);
+  theModel.SetVersion(Version);
 
   LLSModel::LLSMeansType       means;
   LLSModel::LLSMatricesType    matrices;

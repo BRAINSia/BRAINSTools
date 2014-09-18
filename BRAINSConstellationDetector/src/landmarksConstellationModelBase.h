@@ -26,7 +26,9 @@ protected:
   typedef ValMapType::const_iterator   ValMapConstIterator;
   typedef ValMapType::iterator         ValMapIterator;
 public:
-  landmarksConstellationModelBase() : m_NumDataSets(0),
+  landmarksConstellationModelBase() :
+    m_Version("v0.0"),
+    m_NumDataSets(0),
     m_SearchboxDims(0),
     m_ResolutionUnits(1.0),
     m_InitialRotationAngle(0.0),
@@ -37,6 +39,11 @@ public:
 
   virtual ~landmarksConstellationModelBase()
   {
+  }
+
+  virtual std::string GetVersion() const
+  {
+  return m_Version;
   }
 
   virtual unsigned int GetNumDataSets() const
@@ -106,6 +113,11 @@ public:
     return m_NumRotationSteps;
   }
 
+  virtual void SetVersion(const std::string & versionNumber)
+  {
+  m_Version = versionNumber;
+  }
+
   virtual void SetNumDataSets(unsigned int x)
   {
     m_NumDataSets = x;
@@ -137,6 +149,7 @@ public:
   }
 
 protected:
+  std::string  m_Version;
   unsigned int m_NumDataSets;
   unsigned int m_SearchboxDims;
   float        m_ResolutionUnits;

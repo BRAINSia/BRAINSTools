@@ -40,6 +40,7 @@ LLSModel
   m_FileName = fileName;
 }
 
+const char * const LLSModel::m_LLSVersionGroupName = "LLSVersion";
 const char * const LLSModel::m_LLSMeansGroupName = "LLSMeans";
 const char * const LLSModel::m_LLSMatricesGroupName = "LLSMatrices";
 const char * const LLSModel::m_LLSSearchRadiiGroupName = "LLSSearchRadii";
@@ -109,6 +110,25 @@ LLSModel
   scalarSet.close();
 }
 
+void
+LLSModel
+::WriteString(const std::string & path,
+              const std::string & strname)
+{
+  const H5std_string SET_NAME(path);
+  const H5std_string SET_DATA(strname);
+
+  hsize_t       numStrings(1);
+  H5::DataSpace strSpace(1, &numStrings);
+  H5::StrType   strType( H5::PredType::C_S1, H5T_VARIABLE );
+  H5::DataSet   strSet =
+    this->m_H5File->createDataSet(SET_NAME,
+                                  strType,
+                                  strSpace);
+  strSet.write(SET_DATA, strType);
+  strSet.close();
+}
+
 int
 LLSModel
 ::Write()
@@ -117,7 +137,8 @@ LLSModel
     {
     return -1;
     }
-  if( this->m_LLSMeans.empty() ||
+  if( this->m_Version.empty() ||
+      this->m_LLSMeans.empty() ||
       this->m_LLSMatrices.empty() ||
       this->m_LLSSearchRadii.empty() )
     {
@@ -126,6 +147,8 @@ LLSModel
   try
     {
     this->m_H5File = new H5::H5File(this->m_FileName.c_str(), H5F_ACC_TRUNC);
+
+    this->WriteString(LLSModel::m_LLSVersionGroupName, this->m_Version);
 
     this->m_H5File->createGroup(LLSModel::m_LLSMeansGroupName);
     for( LLSMeansType::iterator it = this->m_LLSMeans.begin();
@@ -266,6 +289,33 @@ LLSModel
   return scalar;
 }
 
+std::string
+LLSModel
+::ReadString(const std::string & DataSetName)
+{
+  hsize_t       dim;
+  H5::DataSet   strSet = this->m_H5File->openDataSet(DataSetName);
+
+  H5::DataSpace Space = strSet.getSpace();
+  if( Space.getSimpleExtentNdims() != 1 )
+    {
+    std::cerr << "Wrong #of dims for TransformType "
+    << "in HDF5 File" << std::endl;
+    }
+  Space.getSimpleExtentDims(&dim, 0);
+  if( dim != 1 )
+    {
+    std::cerr << "Elements > 1 for string type "
+    << "in HDF5 File" << std::endl;;
+    }
+  H5std_string versionID;
+  H5::StrType   strType( H5::PredType::C_S1, H5T_VARIABLE );
+  strSet.read(versionID, strType);
+  strSet.close();
+  std::cout << "LLSModel File Version: " << versionID << std::endl;
+  return versionID;
+}
+
 int
 LLSModel
 ::Read()
@@ -277,6 +327,9 @@ LLSModel
   try
     {
     this->m_H5File = new H5::H5File(this->m_FileName.c_str(), H5F_ACC_RDONLY);
+
+    // Read version ID
+    this->m_Version = this->ReadString(LLSModel::m_LLSVersionGroupName);
 
     H5::Group MeansGroup(this->m_H5File->openGroup(LLSModel::m_LLSMeansGroupName) );
 
@@ -386,4 +439,18 @@ LLSModel
 ::GetSearchRadii()
 {
   return m_LLSSearchRadii;
+}
+
+void
+LLSModel
+::SetVersion(const std::string & versionID)
+{
+  m_Version = versionID;
+}
+
+const std::string &
+LLSModel
+::GetVersion()
+{
+  return m_Version;
 }

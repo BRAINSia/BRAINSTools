@@ -1,14 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
   <category>Utility.BRAINS</category>
-  <title>fcsv_to_matlab (BRAINS)</title>
+  <title>fcsv_to_hdf5 (BRAINS)</title>
   <description>Convert a collection of fcsv files to a HDF5 format file</description>
   <parameters>
+    <string>
+      <name>Version</name>
+      <longflag>--versionID</longflag>
+      <description>
+        Current version ID. It should be match with the version of BCD that will be using the output model file
+      </description>
+      <default>v1.0</default>
+    </string>
     <file fileExtensions=".h5,.hdf5,.mat,.txt">
       <name>outputFile</name>
       <label>Output HDF5 File</label>
-      <flag>o</flag>
-      <longflag>--outputMatlabFile</longflag>
+      <longflag>--landmarksInformationFile</longflag>
       <default></default>
       <description>
         name of HDF5 file to write matrices into
@@ -18,20 +25,21 @@
     <file fileExtensions=".txt">
       <name>landmarkTypesFile</name>
       <label>Landmark Types File</label>
-      <longflag>--landmarkTypesFile</longflag>
+      <longflag>--landmarkTypesList</longflag>
       <default></default>
       <description>
         file containing list of landmark types
       </description>
-      <channel>output</channel>
+      <channel>input</channel>
     </file>
     <file>
       <name>modelFile</name>
       <label>BRAINSConstellationDetector Model File</label>
+      <flag>o</flag>
       <longflag>--modelFile</longflag>
       <default></default>
       <description>
-        file containing BRAINSConstellationDetector Model file
+        name of HDF5 file containing BRAINSConstellationDetector Model file (LLSMatrices, LLSMeans and LLSSearchRadii)
       </description>
       <channel>output</channel>
     </file>
@@ -40,7 +48,7 @@
       <longflag>landmarkGlobPattern</longflag>
       <description>Glob pattern to select fcsv files</description>
       <label>Landmark Glob Pattern</label>
-      <default>*_est.fcsv</default>
+      <default>*.fcsv</default>
     </string>
     <integer>
       <name>numberOfThreads</name>

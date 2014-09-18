@@ -39,6 +39,19 @@
 #include <cstring>
 #include <map>
 
+// Capture a SIGSEGV with a signal handler and still generate a core file
+#include <signal.h>
+
+inline void
+clean_exit_on_sig(int sig)
+{
+  std::cout << "SEGFAULT Received! Input Template Model File Is Probably Outdated!" << std::endl << std::endl;
+  signal(sig, SIG_DFL);
+  kill(getpid(), sig);
+
+}
+////
+
 inline void
 defineTemplateIndexLocations
   (const float r,
@@ -282,6 +295,7 @@ public:
         }
       output << "END" << std::endl;
 
+      this->Write<std::string>( output, this->GetVersion() );
       this->Write<unsigned int>( output, this->GetSearchboxDims() );
       this->Write<float>( output, this->GetResolutionUnits() );
       this->Write<unsigned int>( output, this->GetNumDataSets() );
@@ -339,6 +353,7 @@ public:
     //
     //
     // //////////////////////////////////////////////////////////////////////////
+    std::cout << "VersionNumber"    << ": " << this->GetVersion() << std::endl;
     std::cout << "SearchboxDims"    << ": " << this->GetSearchboxDims() << std::endl;
     std::cout << "ResolutionUnits"  << ": " << this->GetResolutionUnits() << std::endl;
     std::cout << "NumDataSets"      << ": " << this->GetNumDataSets() << std::endl;
@@ -409,10 +424,23 @@ public:
         this->Read<char>(input, tmp);
         }
 
+
+     this->Read<std::string>(input, this->m_Version);
+
+     // If input model file is too old and does not have m_Version variable,
+     // we should stop here and return a segfault with a proper message.
+      signal(SIGSEGV, clean_exit_on_sig);
+      std::cout << "Input Model File Version: " << this->m_Version << std::endl; // it may cause segfault
+                                                                                 // that is handled by clean_exit_on_sig
       this->Read<unsigned int>(input, this->m_SearchboxDims);
       this->Read<float>(input, this->m_ResolutionUnits);
       this->Read<unsigned int>(input, this->m_NumDataSets);
       this->Read<unsigned int>(input, this->m_NumRotationSteps);
+
+      std::cout << "NumberOfDataSets: " << this->m_NumDataSets << std::endl;
+      std::cout << "SearchBoxDims: " << this->m_SearchboxDims << std::endl;
+      std::cout << "ResolutionUnits: " << this->m_ResolutionUnits << std::endl;
+      std::cout << "NumberOfRotationSteps: " << this->m_NumRotationSteps << std::endl;
 
       // initalize the size of m_VectorIndexLocations and m_TemplateMeans
       InitializeModel(false);
@@ -590,6 +618,7 @@ public:
 
   void CopyFromModelDefinition(const landmarksConstellationTrainingDefinitionIO & mDef)
   {
+    this->SetVersion( mDef.GetVersion() );
     this->SetNumDataSets( mDef.GetNumDataSets() );
     this->SetSearchboxDims( mDef.GetSearchboxDims() );
     this->SetResolutionUnits( mDef.GetResolutionUnits() );
@@ -651,6 +680,11 @@ public:
 
   bool operator==(Self & other)
   {
+    if( this->m_Version.compare(other.m_Version) != 0 )
+      {
+      return false;
+      }
+
     if( ( NE(this->m_SearchboxDims, other.m_SearchboxDims) )
         || ( NE(this->m_ResolutionUnits, other.m_ResolutionUnits) )
         || ( NE(this->m_NumDataSets, other.m_NumDataSets) )

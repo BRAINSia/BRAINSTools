@@ -94,7 +94,6 @@ BRAINSFitHelper::BRAINSFitHelper() :
   m_MovingBinaryVolume(NULL),
   m_OutputFixedVolumeROI(""),
   m_OutputMovingVolumeROI(""),
-  m_PermitParameterVariation(0),
   m_SamplingPercentage(1.0), // instead or number of samples, sampling% should be used that is a number between 0 and 1.
   m_NumberOfHistogramBins(50),
   m_HistogramMatch(false),
@@ -107,7 +106,6 @@ BRAINSFitHelper::BRAINSFitHelper() :
   m_TranslationScale(1000.0),
   m_ReproportionScale(1.0),
   m_SkewScale(1.0),
-  m_UseCachingOfBSplineWeightsMode("ON"),
   m_BackgroundFillValue(0.0),
   m_TransformType(1, "Rigid"),
   m_InitializeTransformMode("Off"),
@@ -133,8 +131,7 @@ BRAINSFitHelper::BRAINSFitHelper() :
   m_NormalizeInputImages(false),
   m_InitializeRegistrationByCurrentGenericTransform(true),
   m_MaximumNumberOfEvaluations(900),
-  m_MaximumNumberOfCorrections(12),
-  m_ForceMINumberOfThreads(-1)
+  m_MaximumNumberOfCorrections(12)
 {
   m_SplineGridSize[0] = 14;
   m_SplineGridSize[1] = 10;
@@ -415,7 +412,6 @@ BRAINSFitHelper::PrintSelf(std::ostream & os, Indent indent) const
   os << indent << "TranslationScale:    " << this->m_TranslationScale << std::endl;
   os << indent << "ReproportionScale:   " << this->m_ReproportionScale << std::endl;
   os << indent << "SkewScale:           " << this->m_SkewScale << std::endl;
-  os << indent << "UseCachingOfBSplineWeightsMode: " << this->m_UseCachingOfBSplineWeightsMode << std::endl;
   os << indent << "BackgroundFillValue:            " << this->m_BackgroundFillValue << std::endl;
   os << indent << "InitializeTransformMode:        " << this->m_InitializeTransformMode << std::endl;
   os << indent << "MaskInferiorCutOffFromCenter:   " << this->m_MaskInferiorCutOffFromCenter << std::endl;
@@ -426,13 +422,6 @@ BRAINSFitHelper::PrintSelf(std::ostream & os, Indent indent) const
   for( unsigned int q = 0; q < this->m_SplineGridSize.size(); ++q )
     {
     os << this->m_SplineGridSize[q] << " ";
-    }
-  os << "]" << std::endl;
-
-  os << indent << "PermitParameterVariation:     [";
-  for( unsigned int q = 0; q < this->m_PermitParameterVariation.size(); ++q )
-    {
-    os << this->m_PermitParameterVariation[q] << " ";
     }
   os << "]" << std::endl;
 
@@ -573,7 +562,6 @@ BRAINSFitHelper::PrintCommandLine(const bool dumpTempVolumes, const std::string 
   oss << "--translationScale " << this->m_TranslationScale  << "  \\" << std::endl;
   oss << "--reproportionScale " << this->m_ReproportionScale  << "  \\" << std::endl;
   oss << "--skewScale " << this->m_SkewScale  << "  \\" << std::endl;
-  oss << "--useCachingOfBSplineWeightsMode " << this->m_UseCachingOfBSplineWeightsMode  << "  \\" << std::endl;
   oss << "--maxBSplineDisplacement " << this->m_MaxBSplineDisplacement << " \\" << std::endl;
   oss << "--projectedGradientTolerance " << this->m_ProjectedGradientTolerance << " \\" << std::endl;
   oss << "--MaximumNumberOfEvaluations " << this->m_MaximumNumberOfEvaluations << " \\" << std::endl;
@@ -593,19 +581,6 @@ BRAINSFitHelper::PrintCommandLine(const bool dumpTempVolumes, const std::string 
     }
   oss << " \\" << std::endl;
 
-  if( !this->m_PermitParameterVariation.empty() )
-    {
-    oss << "--permitParameterVariation ";
-    for( unsigned int q = 0; q < this->m_PermitParameterVariation.size(); ++q )
-      {
-      oss << this->m_PermitParameterVariation[q];
-      if( q < this->m_PermitParameterVariation.size() - 1 )
-        {
-        oss << ",";
-        }
-      }
-    oss << " \\" << std::endl;
-    }
   if( m_CurrentGenericTransform.IsNotNull() )
     {
     const std::string initialTransformString("DEBUGInitialTransform_" + suffix + ".h5");

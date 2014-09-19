@@ -152,8 +152,6 @@ public:
   itkGetConstMacro(ReproportionScale,             double);
   itkSetMacro(SkewScale,                     double);
   itkGetConstMacro(SkewScale,                     double);
-  itkSetMacro(UseCachingOfBSplineWeightsMode, std::string);
-  itkGetConstMacro(UseCachingOfBSplineWeightsMode, std::string);
   itkSetMacro(CostFunctionConvergenceFactor, double);
   itkGetConstMacro(CostFunctionConvergenceFactor, double);
   itkSetMacro(ProjectedGradientTolerance,    double);
@@ -190,8 +188,6 @@ public:
   itkGetConstMacro(ObserveIterations,        bool);
   itkSetMacro(UseROIBSpline, bool);
   itkGetConstMacro(UseROIBSpline, bool);
-  itkSetMacro(MetricSeed, int);
-  itkGetConstMacro(MetricSeed, int);
 
   void SetSamplingStrategy(std::string strategy)
   {
@@ -206,16 +202,6 @@ public:
     }
   }
 
-  /** Method to set the Permission to vary by level  */
-  void SetPermitParameterVariation(std::vector<int> perms)
-  {
-    m_PermitParameterVariation.resize( perms.size() );
-    for( unsigned int i = 0; i < perms.size(); ++i )
-      {
-      m_PermitParameterVariation[i] = perms[i];
-      }
-  }
-
   itkSetMacro(HistogramMatch, bool);
   itkGetConstMacro(HistogramMatch, bool);
 
@@ -224,9 +210,6 @@ public:
 
   itkSetMacro(CostMetric, std::string);
   itkGetConstMacro(CostMetric, std::string);
-
-  itkSetMacro(ForceMINumberOfThreads, int);
-  itkGetConstMacro(ForceMINumberOfThreads, int);
 
   itkSetMacro(NormalizeInputImages, bool);
   itkSetMacro(InitializeRegistrationByCurrentGenericTransform, bool);
@@ -267,7 +250,6 @@ private:
   MovingBinaryVolumePointer m_MovingBinaryVolume;
   std::string               m_OutputFixedVolumeROI;
   std::string               m_OutputMovingVolumeROI;
-  std::vector<int>          m_PermitParameterVariation;
 
   double       m_SamplingPercentage;
   unsigned int m_NumberOfHistogramBins;
@@ -282,7 +264,6 @@ private:
   double                   m_TranslationScale;
   double                   m_ReproportionScale;
   double                   m_SkewScale;
-  std::string              m_UseCachingOfBSplineWeightsMode;
   double                   m_BackgroundFillValue;
   std::vector<std::string> m_TransformType;
   std::string              m_InitializeTransformMode;
@@ -301,15 +282,12 @@ private:
   bool                                       m_ObserveIterations;
   std::string                                m_CostMetric;
   bool                                       m_UseROIBSpline;
-  int                                        m_MetricSeed;
   itk::Object::Pointer                       m_Helper;
   SamplingStrategyType                       m_SamplingStrategy;
   bool                                       m_NormalizeInputImages;
   bool                                       m_InitializeRegistrationByCurrentGenericTransform;
   int                                        m_MaximumNumberOfEvaluations;
   int                                        m_MaximumNumberOfCorrections;
-  // DEBUG OPTION:
-  int m_ForceMINumberOfThreads;
 };  // end BRAINSFitHelper class
 
 template <class TLocalCostMetric>
@@ -399,7 +377,6 @@ BRAINSFitHelper::SetupRegistration(GenericMetricType *localCostMetric)
   myHelper->SetMovingBinaryVolume(this->m_MovingBinaryVolume);
   myHelper->SetOutputFixedVolumeROI(this->m_OutputFixedVolumeROI);
   myHelper->SetOutputMovingVolumeROI(this->m_OutputMovingVolumeROI);
-  myHelper->SetPermitParameterVariation(this->m_PermitParameterVariation);
   myHelper->SetSamplingPercentage(this->m_SamplingPercentage);
   myHelper->SetSamplingStrategy(this->m_SamplingStrategy);
   myHelper->SetNumberOfHistogramBins(this->m_NumberOfHistogramBins);
@@ -422,7 +399,6 @@ BRAINSFitHelper::SetupRegistration(GenericMetricType *localCostMetric)
   myHelper->SetPromptUserAfterDisplay(this->m_PromptUserAfterDisplay);
   myHelper->SetDebugLevel(this->m_DebugLevel);
   myHelper->SetCostMetricObject(localCostMetric);
-  myHelper->SetForceMINumberOfThreads(this->m_ForceMINumberOfThreads);
   myHelper->SetUseROIBSpline(this->m_UseROIBSpline);
   myHelper->SetInitializeRegistrationByCurrentGenericTransform(this->m_InitializeRegistrationByCurrentGenericTransform);
   myHelper->SetMaximumNumberOfEvaluations(this->m_MaximumNumberOfEvaluations);

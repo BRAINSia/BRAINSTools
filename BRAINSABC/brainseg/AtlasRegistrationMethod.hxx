@@ -578,8 +578,6 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
       atlasToSubjectRegistrationHelper->SetSplineGridSize(splineGridSize);
       // Setting max displace
       atlasToSubjectRegistrationHelper->SetMaxBSplineDisplacement(6.0);
-      // atlasToSubjectRegistrationHelper->SetUseExplicitPDFDerivativesMode(useExplicitPDFDerivativesMode);
-      // atlasToSubjectRegistrationHelper->SetUseCachingOfBSplineWeightsMode(useCachingOfBSplineWeightsMode);
       }
     else if( m_AtlasLinearTransformChoice == "SyN" )
       {

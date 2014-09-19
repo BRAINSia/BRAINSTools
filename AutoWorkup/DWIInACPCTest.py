@@ -339,8 +339,6 @@ BSPLINE_T2_TO_RIPB0.inputs.useBSpline = True
 # BSPLINE_T2_TO_RIPB0.inputs.useROIBSpline = True
 
 ##  This needs to be debugged, it should work. BSPLINE_T2_TO_RIPB0.inputs.useROIBSpline = True
-BSPLINE_T2_TO_RIPB0.inputs.useExplicitPDFDerivativesMode = 'AUTO'
-BSPLINE_T2_TO_RIPB0.inputs.useCachingOfBSplineWeightsMode = 'ON'
 BSPLINE_T2_TO_RIPB0.inputs.maxBSplineDisplacement = 24
 BSPLINE_T2_TO_RIPB0.inputs.splineGridSize = [14, 10, 12]
 

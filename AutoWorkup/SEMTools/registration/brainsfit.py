@@ -66,8 +66,6 @@ class BRAINSFitInputSpec(CommandLineInputSpec):
         desc="The half percentage to decide outliers of image intensities. The default value is zero, which means no outlier removal. If the value of 0.005 is given, the moduel will throw away 0.005 % of both tails, so 0.01% of intensities in total would be ignored in its statistic calculation. ", argstr="--removeIntensityOutliers %f")
     initializeRegistrationByCurrentGenericTransform = traits.Bool(
         desc="If this flag is ON, the current generic composite transform, resulted from the linear registration stages, is set to initialize the follow nonlinear registration process. However, by the default behaviour, the moving image is first warped based on the existant transform before it is passed to the BSpline registration filter. It is done to speed up the BSpline registration by reducing the computations of composite transform jacobian.", argstr="--initializeRegistrationByCurrentGenericTransform ")
-    useCachingOfBSplineWeightsMode = traits.Enum("ON", "OFF", desc="This is a 5x speed advantage at the expense of requiring much more memory.  Only relevant when transformType is BSpline.", argstr="--useCachingOfBSplineWeightsMode %s")
-    useExplicitPDFDerivativesMode = traits.Enum("AUTO", "ON", "OFF", desc="This option is not used in ITKv4 optimizers. There is no need to set that; however, this flag is not removed to keep backward compatibility.", argstr="--useExplicitPDFDerivativesMode %s")
     ROIAutoDilateSize = traits.Float(
         desc="This flag is only relavent when using ROIAUTO mode for initializing masks.  It defines the final dilation size to capture a bit of background outside the tissue region.  A setting of 10mm has been shown to help regularize a BSpline registration type so that there is some background constraints to match the edges of the head better.", argstr="--ROIAutoDilateSize %f")
     ROIAutoClosingSize = traits.Float(
@@ -77,7 +75,6 @@ class BRAINSFitInputSpec(CommandLineInputSpec):
     failureExitCode = traits.Int(desc="If the fit fails, exit with this status code.  (It can be used to force a successfult exit status of (0) if the registration fails due to reaching the maximum number of iterations.", argstr="--failureExitCode %d")
     writeTransformOnFailure = traits.Bool(desc="Flag to save the final transform even if the numberOfIterations are reached without convergence. (Intended for use when --failureExitCode 0 )", argstr="--writeTransformOnFailure ")
     numberOfThreads = traits.Int(desc="Explicitly specify the maximum number of threads to use. (default is auto-detected)", argstr="--numberOfThreads %d")
-    forceMINumberOfThreads = traits.Int(desc="Force the the maximum number of threads to use for non thread safe MI metric.", argstr="--forceMINumberOfThreads %d")
     debugLevel = traits.Int(desc="Display debug messages, and produce debug intermediate results.  0=OFF, 1=Minimal, 10=Maximum debugging.", argstr="--debugLevel %d")
     costFunctionConvergenceFactor = traits.Float(
         desc=" From itkLBFGSBOptimizer.h: Set/Get the CostFunctionConvergenceFactor. Algorithm terminates when the reduction in cost function is less than (factor * epsmcj) where epsmch is the machine precision. Typical values for factor: 1e+12 for low accuracy; 1e+7 for moderate accuracy and 1e+1 for extremely high accuracy.  1e+9 seems to work well.,       ", argstr="--costFunctionConvergenceFactor %f")
@@ -85,12 +82,8 @@ class BRAINSFitInputSpec(CommandLineInputSpec):
         desc=" From itkLBFGSBOptimizer.h: Set/Get the ProjectedGradientTolerance. Algorithm terminates when the project gradient is below the tolerance. Default lbfgsb value is 1e-5, but 1e-4 seems to work well.,       ", argstr="--projectedGradientTolerance %f")
     gui = traits.Bool(desc="Display intermediate image volumes for debugging.  NOTE:  This is not part of the standard build sytem, and probably does nothing on your installation.", argstr="--gui ")
     promptUser = traits.Bool(desc="Prompt the user to hit enter each time an image is sent to the DebugImageViewer", argstr="--promptUser ")
-    permitParameterVariation = InputMultiPath(
-        traits.Int, desc="A bit vector to permit linear transform parameters to vary under optimization.  The vector order corresponds with transform parameters, and beyond the end ones fill in as a default.  For instance, you can choose to rotate only in x (pitch) with 1,0,0;  this is mostly for expert use in turning on and off individual degrees of freedom in rotation, translation or scaling without multiplying the number of transform representations; this trick is probably meaningless when tried with the general affine transform.", sep=",", argstr="--permitParameterVariation %s")
     costMetric = traits.Enum("MMI", "MSE", "NC", "MIH", desc="The cost metric to be used during fitting. Defaults to MMI. Options are MMI (Mattes Mutual Information), MSE (Mean Square Error), NC (Normalized Correlation), MC (Match Cardinality for binary images)", argstr="--costMetric %s")
     logFileReport = traits.Either(traits.Bool, File(), hash_files=False, desc="A file to write out final information report in CSV file: MetricName,MetricValue,FixedImageName,FixedMaskName,MovingImageName,MovingMaskName", argstr="--logFileReport %s")
-    metricSeed = traits.Int(
-        desc="Seed value will be used to reinitialize the metric. To ensure consistent results, the same seed value should be used across runs. If the seed value is set to 0, the sampler will use the clock of your machine to initialize the metric, which will lead to a random initialization of the seed.", argstr="--metricSeed %d")
 
 
 class BRAINSFitOutputSpec(TraitedSpec):

@@ -452,8 +452,6 @@ public:
   itkSetObjectMacro(Transform, TransformType);
   typename CompositeTransformType::Pointer GetTransform(void);
 
-  // itkSetMacro( PermitParameterVariation, std::vector<int>      );
-
   itkSetObjectMacro(CostMetricObject, MetricType);
   itkGetConstObjectMacro(CostMetricObject, MetricType);
 
@@ -473,9 +471,6 @@ public:
   itkGetConstMacro(ActualNumberOfIterations, unsigned int);
   itkSetMacro(ObserveIterations,        bool);
   itkGetConstMacro(ObserveIterations,        bool);
-  // Debug option for MI metric
-  itkSetMacro(ForceMINumberOfThreads, int);
-  itkGetConstMacro(ForceMINumberOfThreads, int);
 
   itkSetMacro(SamplingStrategy,SamplingStrategyType);
   itkGetConstMacro(SamplingStrategy,SamplingStrategyType);
@@ -491,16 +486,6 @@ public:
   /** Method to return the latest modified time of this object or
     * any of its cached ivars */
   unsigned long GetMTime() const;
-
-  /** Method to set the Permission to vary by level  */
-  void SetPermitParameterVariation(std::vector<int> perms)
-  {
-    m_PermitParameterVariation.resize( perms.size() );
-    for( unsigned int i = 0; i < perms.size(); ++i )
-      {
-      m_PermitParameterVariation[i] = perms[i];
-      }
-  }
 
 protected:
   MultiModal3DMutualRegistrationHelper();
@@ -528,7 +513,6 @@ private:
 
   RegistrationPointer m_Registration;
 
-  std::vector<int> m_PermitParameterVariation;
   typename MetricType::Pointer  m_CostMetricObject;
 
   double       m_SamplingPercentage;
@@ -548,8 +532,6 @@ private:
   bool         m_ObserveIterations;
 
   SamplingStrategyType m_SamplingStrategy;
-  // DEBUG OPTION:
-  int m_ForceMINumberOfThreads;
 
   ModifiedTimeType m_InternalTransformTime;
 };

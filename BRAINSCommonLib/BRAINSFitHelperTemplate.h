@@ -216,16 +216,6 @@ public:
   itkSetMacro(UseROIBSpline, bool);
   itkGetConstMacro(UseROIBSpline, bool);
 
-  /** Method to set the Permission to vary by level  */
-  void SetPermitParameterVariation(std::vector<int> perms)
-  {
-    m_PermitParameterVariation.resize( perms.size() );
-    for( unsigned int i = 0; i < perms.size(); ++i )
-      {
-      m_PermitParameterVariation[i] = perms[i];
-      }
-  }
-
   itkSetMacro(HistogramMatch, bool);
   itkGetConstMacro(HistogramMatch, bool);
 
@@ -233,9 +223,6 @@ public:
   itkGetConstMacro(RemoveIntensityOutliers, bool);
   /** Method that initiates the registration. */
   void Update(void);
-
-  itkSetMacro(ForceMINumberOfThreads, int);
-  itkGetConstMacro(ForceMINumberOfThreads, int);
 
   itkSetMacro(SamplingStrategy,SamplingStrategyType);
   itkGetConstMacro(SamplingStrategy,SamplingStrategyType);
@@ -309,13 +296,10 @@ private:
   bool                                       m_ObserveIterations;
   typename MetricType::Pointer               m_CostMetricObject;
   bool                                       m_UseROIBSpline;
-  std::vector<int>                           m_PermitParameterVariation;
   SamplingStrategyType                       m_SamplingStrategy;
   bool                                       m_InitializeRegistrationByCurrentGenericTransform;
   int                                        m_MaximumNumberOfEvaluations;
   int                                        m_MaximumNumberOfCorrections;
-  // DEBUG OPTION:
-  int m_ForceMINumberOfThreads;
 };  // end BRAINSFitHelperTemplate class
 }   // end namespace itk
 

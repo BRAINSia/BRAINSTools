@@ -659,7 +659,6 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --maskProcessingMode ROIAUTO
   --initializeTransformMode useCenterOfHeadAlign
   --transformType Rigid,ScaleVersor3D
-  --permitParameterVariation 0,0,0,1,1,1
   --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
   --movingVolume DATA{${TestData_DIR}/translation.rescale.test.nii.gz}
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
@@ -686,7 +685,6 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --maskProcessingMode ROIAUTO
   --initialTransform DATA{${TestData_DIR}/Transforms_h5/Initializer_BRAINSFitTest_TranslationRescaleHeadMasks.${XFRM_EXT}}
   --transformType ScaleVersor3D
-  --permitParameterVariation 0,0,0,1,1,1,1,1,1
   --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
   --movingVolume DATA{${TestData_DIR}/translation.rescale.test.nii.gz}
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
@@ -1604,7 +1602,6 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --splineGridSize 3,3,3
   --initializeTransformMode useCenterOfROIAlign
   --maskProcessingMode ROI
-  --forceMINumberOfThreads 1
   --numberOfThreads 1
   --fixedVolume DATA{${TestData_DIR}/ProstateIntraop.nrrd}
   --fixedBinaryVolume DATA{${TestData_DIR}/ProstateIntraopMask.nrrd}

@@ -429,7 +429,6 @@ int main(int argc, char *argv[])
     HelperType::Pointer myHelper = HelperType::New();
     myHelper->SetTransformType(localTransformType);
     myHelper->SetFixedVolume( extractFixedVolume );
-    myHelper->SetForceMINumberOfThreads(forceMINumberOfThreads);
     myHelper->SetMovingVolume( extractMovingVolume );
     myHelper->SetHistogramMatch(histogramMatch);
     myHelper->SetRemoveIntensityOutliers(removeIntensityOutliers);
@@ -438,7 +437,6 @@ int main(int argc, char *argv[])
     myHelper->SetMovingBinaryVolume(movingMask);
     myHelper->SetOutputFixedVolumeROI(outputFixedVolumeROI);
     myHelper->SetOutputMovingVolumeROI(outputMovingVolumeROI);
-    myHelper->SetPermitParameterVariation(permitParameterVariation);
     if(numberOfSamples > 0)
       {
         const unsigned long numberOfAllSamples = extractFixedVolume->GetBufferedRegion().GetNumberOfPixels();
@@ -455,7 +453,6 @@ int main(int argc, char *argv[])
     myHelper->SetTranslationScale(translationScale);
     myHelper->SetReproportionScale(reproportionScale);
     myHelper->SetSkewScale(skewScale);
-    myHelper->SetUseCachingOfBSplineWeightsMode(useCachingOfBSplineWeightsMode);
     myHelper->SetBackgroundFillValue(backgroundFillValue);
     myHelper->SetInitializeTransformMode(localInitializeTransformMode);
     myHelper->SetMaskInferiorCutOffFromCenter(maskInferiorCutOffFromCenter);

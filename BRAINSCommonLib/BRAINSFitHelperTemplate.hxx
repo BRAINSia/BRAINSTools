@@ -542,12 +542,10 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::BRAINSFitHelperTemplat
   m_ObserveIterations(true),
   m_CostMetricObject(NULL),
   m_UseROIBSpline(0),
-  m_PermitParameterVariation(0),
   m_SamplingStrategy(AffineRegistrationType::NONE),
   m_InitializeRegistrationByCurrentGenericTransform(true),
   m_MaximumNumberOfEvaluations(900),
-  m_MaximumNumberOfCorrections(12),
-  m_ForceMINumberOfThreads(-1)
+  m_MaximumNumberOfCorrections(12)
 {
   m_SplineGridSize[0] = 14;
   m_SplineGridSize[1] = 10;
@@ -575,7 +573,6 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::FitCommonCode(
 
   appMutualRegistration->SetNumberOfHistogramBins(m_NumberOfHistogramBins);
   appMutualRegistration->SetNumberOfIterations( numberOfIterations);
-  appMutualRegistration->SetPermitParameterVariation( m_PermitParameterVariation );
   appMutualRegistration->SetSamplingStrategy(m_SamplingStrategy);
   appMutualRegistration->SetSamplingPercentage(m_SamplingPercentage);
 
@@ -590,7 +587,6 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::FitCommonCode(
   appMutualRegistration->SetFixedImage(    m_FixedVolume    );
   appMutualRegistration->SetMovingImage(   m_MovingVolume   );
   appMutualRegistration->SetCostMetricObject( this->m_CostMetricObject );
-  appMutualRegistration->SetForceMINumberOfThreads( this->m_ForceMINumberOfThreads );
 
   appMutualRegistration->SetBackgroundFillValue(   m_BackgroundFillValue   );
 
@@ -1636,13 +1632,6 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::PrintSelf(std::ostream
   for( unsigned int q = 0; q < this->m_SplineGridSize.size(); ++q )
     {
     os << this->m_SplineGridSize[q] << " ";
-    }
-  os << "]" << std::endl;
-
-  os << indent << "PermitParameterVariation:     [";
-  for( unsigned int q = 0; q < this->m_PermitParameterVariation.size(); ++q )
-    {
-    os << this->m_PermitParameterVariation[q] << " ";
     }
   os << "]" << std::endl;
 

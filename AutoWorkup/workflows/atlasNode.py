@@ -42,10 +42,10 @@ def MakeAtlasNode(atlasDirectory, name, atlasParts=['BRAINSABCSupport','BRAINSCu
     if 'BCDSupport' in atlasParts:
         atlas_file_names.extend( [
                         "template_t1.nii.gz",
-                        "20111119_BCD/LLSModel_50Lmks.hdf5",
-                        "20111119_BCD/T1_50Lmks.mdl",
-                        "20111119_BCD/template_landmarks_50Lmks.fcsv",
-                        "20111119_BCD/template_weights_50Lmks.wts"
+                        "20140916_BCD/LLSModel_50Lmks.hdf5",
+                        "20140916_BCD/T1_50Lmks.mdl",
+                        "20140916_BCD/template_landmarks_50Lmks.fcsv",
+                        "20140916_BCD/template_weights_50Lmks.wts"
                         ] )
     if 'ExtraSupport' in atlasParts:
         atlas_file_names.extend( [

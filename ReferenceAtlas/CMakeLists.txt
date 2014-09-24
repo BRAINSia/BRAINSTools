@@ -64,7 +64,7 @@ DownloadAndInstallRules(AtlasModels  "${CMAKE_CURRENT_SOURCE_DIR}/modelFiles/*.g
 DownloadAndInstallRules(AtlasProb    "${CMAKE_CURRENT_SOURCE_DIR}/probabilityMaps/*.nii.gz.md5" ${ATLAS_INSTALL_DIRECTORY}/probabilityMaps)
 DownloadAndInstallRules(AtlasSpatial "${CMAKE_CURRENT_SOURCE_DIR}/spatialImages/*.nii.gz.md5" ${ATLAS_INSTALL_DIRECTORY}/spatialImages)
 DownloadAndInstallRules(AtlasSurface "${CMAKE_CURRENT_SOURCE_DIR}/SurfaceAtlas/*.vtk.md5" ${ATLAS_INSTALL_DIRECTORY}/SurfaceAtlas)
-DownloadAndInstallRules(AtlasBCD     "${CMAKE_CURRENT_SOURCE_DIR}/20111119_BCD/*_50Lmks.*.md5" ${ATLAS_INSTALL_DIRECTORY}/20111119_BCD)
+DownloadAndInstallRules(AtlasBCD     "${CMAKE_CURRENT_SOURCE_DIR}/20140916_BCD/*_50Lmks.*.md5" ${ATLAS_INSTALL_DIRECTORY}/20140916_BCD)
 DownloadAndInstallRules(AtlasT1Only  "${CMAKE_CURRENT_SOURCE_DIR}/T1OnlyModels/*.gz.md5" ${ATLAS_INSTALL_DIRECTORY}/T1OnlyModels)
 
 add_custom_target(InstallReferenceAtlas DEPENDS AtlasNIFTI AtlasNRRD AtlasTxt AtlasCtbl AtlasFcsv AtlasCsv AtlasModels AtlasProb AtlasSpatial AtlasSurface AtlasBCD AtlasT1Only)

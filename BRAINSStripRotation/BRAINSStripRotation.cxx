@@ -20,14 +20,14 @@
 #include "itkImageIOFactory.h"
 #include "itkIO.h"
 #include "itkTransformFileWriter.h"
-#include "itkRigid3DTransform.h"
-#include "itkRigid2DTransform.h"
+#include "itkVersorTransform.h"
+#include "itkCenteredRigid2DTransform.h"
 
 template<typename TPrecision>
 itk::TransformBaseTemplate<TPrecision> *
 NewTransform(const typename itk::Image<char,3>::DirectionType &dir)
 {
-  typedef itk::Rigid3DTransform<TPrecision> TransformType;
+  typedef itk::VersorTransform<TPrecision> TransformType;
   typename TransformType::Pointer rval = TransformType::New();
   rval->SetMatrix(dir);
   std::cerr << rval
@@ -41,7 +41,7 @@ template<typename TPrecision>
 itk::TransformBaseTemplate<TPrecision> *
 NewTransform(const typename itk::Image<char,2>::DirectionType &dir)
 {
-  typedef itk::Rigid2DTransform<TPrecision> TransformType;
+  typedef itk::CenteredRigid2DTransform<TPrecision> TransformType;
   typename TransformType::Pointer rval = TransformType::New();
   rval->SetMatrix(dir);
   std::cerr << rval

@@ -66,6 +66,9 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
 {
   m_InputImageTissueRegion = NULL;
   m_InputSpatialObjectTissueRegion = NULL;
+  // make init transform identity, so it won't cause a
+  // crash if one isn't given on the command line.
+  m_AtlasToSubjectInitialTransform = MakeRigidIdentity();
 }
 
 template <class TOutputPixel, class TProbabilityPixel>

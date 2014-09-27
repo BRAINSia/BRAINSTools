@@ -19,15 +19,15 @@ class maxcurvatureOutputSpec(TraitedSpec):
 
 class maxcurvature(SEMLikeCommandLine):
 
-    """title: MaxCurvature-Hessian
+    """title: MaxCurvature-Hessian (DTIProcess)
 
-category: Diffusion.NIRALPipeline
+category: Diffusion
 
 description:  This program computes the Hessian of the FA image (--image). We use this scalar image as a registration input when doing DTI atlas building. For most adult FA we use a sigma of 2 whereas for neonate or primate images and sigma of 1 or 1.5 is more appropriate. For really noisy images, 2.5 - 4 can be considered. The final image (--output) shows the main feature of the input image.
 
 version: 1.1.0
 
-documentation-url: http://www.google.com/
+documentation-url: http://www.slicer.org/slicerWiki/index.php/Documentation/Nightly/Extensions/DTIProcess
 
 license: 
   Copyright (c)  Casey Goodlett. All rights reserved.

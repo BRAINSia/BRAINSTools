@@ -28,9 +28,9 @@ class fibertrackOutputSpec(TraitedSpec):
 
 class fibertrack(SEMLikeCommandLine):
 
-    """title: FiberTrack
+    """title: FiberTrack (DTIProcess)
 
-category: Diffusion.NIRALPipeline
+category: Diffusion.Tractography
 
 description:  
 This program implements a simple streamline tractography method based on the principal eigenvector of the tensor field. A fourth order Runge-Kutta integration rule used to advance the streamlines.
@@ -41,7 +41,7 @@ During the tractography, the --fa_min parameter is used as the minimum value nee
 
 version: 1.1.0
 
-documentation-url: http://www.google.com/
+documentation-url: http://www.slicer.org/slicerWiki/index.php/Documentation/Nightly/Extensions/DTIProcess
 
 license: 
   Copyright (c)  Casey Goodlett. All rights reserved.

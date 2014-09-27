@@ -98,6 +98,7 @@ acknowledgements: Hans Johnson(1,3,4); Kent Williams(1); Gregory Harris(1), Vinc
 
 
 class BRAINSConstellationDetectorInputSpec(CommandLineInputSpec):
+    VersionID = traits.Str(desc="Current version ID.", argstr="--VersionID %s")
     houghEyeDetectorMode = traits.Int(desc=",                 This flag controls the mode of Hough eye detector.  By default, value of 1 is for T1W images, while the value of 0 is for T2W and PD images.,             ", argstr="--houghEyeDetectorMode %d")
     inputTemplateModel = File(desc="User-specified template model.,             ", exists=True, argstr="--inputTemplateModel %s")
     LLSModel = File(desc="Linear least squares model filename in HD5 format", exists=True, argstr="--LLSModel %s")

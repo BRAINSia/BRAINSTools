@@ -7,7 +7,7 @@ def configuration(parent_package='', top_path=None):
 
     config = Configuration('diffusion', parent_package, top_path)
 
-    config.add_data_dir('niralpipeline')
+    config.add_data_dir('tractography')
 
     return config
 

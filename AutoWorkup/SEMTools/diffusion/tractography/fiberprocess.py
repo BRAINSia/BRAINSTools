@@ -31,9 +31,9 @@ class fiberprocessOutputSpec(TraitedSpec):
 
 class fiberprocess(SEMLikeCommandLine):
 
-    """title: FiberProcess
+    """title: FiberProcess (DTIProcess)
 
-category: Diffusion.NIRALPipeline
+category: Diffusion.Tractography
 
 description: 
 fiberprocess is a tool that manage fiber files extracted from the fibertrack tool or any fiber tracking algorithm. It takes as an input .fib and .vtk files (--fiber_file) and saves the changed fibers (--fiber_output) into the 2 same formats. The main purpose of this tool is to deform the fiber file with a transformation field as an input (--displacement_field or --h_field depending if you deal with dfield or hfield). To use that option you need to specify the tensor field from which the fiber file was extracted with the option --tensor_volume. The transformation applied on the fiber file is the inverse of the one input. If the transformation is from one case to an atlas, fiberprocess assumes that the fiber file is in the atlas space and you want it in the original case space, so it's the inverse of the transformation which has been computed. 
@@ -42,7 +42,7 @@ With fiberprocess you can also binarize a fiber file. Using the --voxelize optio
 
 version: 1.0.0
 
-documentation-url: http://www.google.com/
+documentation-url: http://www.slicer.org/slicerWiki/index.php/Documentation/Nightly/Extensions/DTIProcess
 
 license: 
     Copyright (c)  Casey Goodlett. All rights reserved.

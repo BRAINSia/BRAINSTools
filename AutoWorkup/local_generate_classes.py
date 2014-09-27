@@ -5,9 +5,11 @@
 
 ## NOTES ON HOW TO RUN THIS.
 # build with all options turned on (even the non-default options)
-# cd ~/src/BRAINSTools/AutoWorkup; rm -rf ~/src/BRAINSTools/AutoWorkup/SEMTools;
-# python local_generate_classes.py --python_paths=~/src/BT-build/NIPYPE --program_paths=~/src/BT-build/bin:${PATH} --output_path=${PWD}
-# for i in $(find ~/src/BRAINSTools/AutoWorkup/SEMTools  -name "*.py"); do  autopep8 --max-line-length=300 -i ${i}; done
+# export BLD_DIR=/Users/johnsonhj/src/NEP-11
+# export BRAINS_SRC=${BLD_DIR}/BRAINSTools
+# cd ${BRAINS_SRC}/AutoWorkup; rm -rf ${BRAINS_SRC}/AutoWorkup/SEMTools;
+# python local_generate_classes.py --python_paths=${BLD_DIR}/NIPYPE --program_paths=${BLD_DIR}/bin:${PATH} --output_path=${PWD}
+# for i in $(find ${BRAINS_SRC}/AutoWorkup/SEMTools  -name "*.py"); do  autopep8 --max-line-length=300 -i ${i}; done
 
 
 all_known_modules_list = [
@@ -40,15 +42,15 @@ all_known_modules_list = [
 'BRAINSResize',
 'BRAINSROIAuto',
 'BRAINSSnapShotWriter',
-'BRAINSTalairach',
-'BRAINSTalairachMask',
+#'BRAINSTalairach',
+#'BRAINSTalairachMask',
 'BRAINSTransformConvert',
 'BRAINSTransformFromFiducials',
 'BRAINSTrimForegroundInDirection',
 'CannyEdge',
 'CannySegmentationLevelSetImageFilter',
 'CleanUpOverlapLabels',
-'compareTractInclusion',
+#'compareTractInclusion',
 'DilateImage',
 'DilateMask',
 'DistanceMaps',
@@ -86,9 +88,9 @@ all_known_modules_list = [
 'gtractCoRegAnatomy',
 'gtractCoregBvalues',
 'gtractCostFastMarching',
-'gtractCreateGuideFiber',
-'gtractFastMarchingTracking',
-'gtractFiberTracking',
+#'gtractCreateGuideFiber',
+#'gtractFastMarchingTracking',
+#'gtractFiberTracking',
 'gtractImageConformity',
 'gtractInvertBSplineTransform',
 'gtractInvertDisplacementField',
@@ -97,7 +99,7 @@ all_known_modules_list = [
 'gtractResampleB0',
 'gtractResampleCodeImage',
 'gtractResampleDWIInPlace',
-'gtractResampleFibers',
+#'gtractResampleFibers',
 'gtractTensor',
 'gtractTransformToDisplacementField',
 'HammerAttributeCreator',
@@ -121,7 +123,7 @@ all_known_modules_list = [
 'TextureFromNoiseImageFilter',
 'TextureMeasureFilter',
 'VBRAINSDemonWarp',
-'UKFTractography'
+#'UKFTractography'
 ]
 
 launcher = ['']

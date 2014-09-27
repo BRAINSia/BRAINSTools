@@ -23,15 +23,15 @@ class scalartransformOutputSpec(TraitedSpec):
 
 class scalartransform(SEMLikeCommandLine):
 
-    """title: ScalarTransform
+    """title: ScalarTransform (DTIProcess)
 
-category: Diffusion.NIRALPipeline.Deprecated
+category: Legacy.Registration
 
 description:  
 
 version: 1.0.0
 
-documentation-url: http://www.google.com/
+documentation-url: http://www.slicer.org/slicerWiki/index.php/Documentation/Nightly/Extensions/DTIProcess
 
 license: 
   Copyright (c)  Casey Goodlett. All rights reserved.

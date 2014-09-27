@@ -13,6 +13,7 @@ def configuration(parent_package='', top_path=None):
     config.add_data_dir('brains')
     config.add_data_dir('testing')
     config.add_data_dir('utilities')
+    config.add_data_dir('legacy')
     config.add_data_dir('registration')
     config.add_data_dir('utility')
 

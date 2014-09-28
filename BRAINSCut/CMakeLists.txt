@@ -9,25 +9,27 @@
 # ITK
 #
 FindITKUtil(
+  ITKAnisotropicSmoothing
+  ITKBinaryMathematicalMorphology
   ITKConnectedComponents
   ITKDistanceMap
-  ITKImageGradient
-  ITKMathematicalMorphology
-  ITKBinaryMathematicalMorphology
-  ITKThresholding
-  ITKRegionGrowing
-  ITKImageFeature
-  ITKLevelSets
-  ITKAnisotropicSmoothing
   ITKFastMarching
-  ITKSmoothing
-  ITKLabelVoting
   ITKImageCompare
-  ITKRegistrationCommon
-  ITKOptimizersv4
+  ITKImageFeature
+  ITKImageGradient
+  ITKImageLabel
+  ITKLabelVoting
+  ITKLevelSets
+  ITKMathematicalMorphology
   ITKMetricsv4
+  ITKOptimizersv4
+  ITKRegionGrowing
+  ITKRegistrationCommon
   ITKRegistrationMethodsv4
   ITKReview
+  ITKSmoothing
+  ITKTestKernel
+  ITKThresholding
 )
 
 #

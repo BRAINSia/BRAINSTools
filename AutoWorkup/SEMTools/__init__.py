@@ -1,11 +1,5 @@
 from diffusion import *
-from featurecreator import GenerateCsfClippedFromClassifiedImage
 from segmentation import *
 from filtering import *
-from brains import *
-from testing import *
-from utilities import *
-from legacy import *
-from registration import *
-from converters import DWISimpleCompare, DWICompare
 from utility import *
+from registration import BRAINSResample, BRAINSFit, BRAINSResize

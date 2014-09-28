@@ -6,30 +6,28 @@ from nipype.interfaces.base import CommandLine, CommandLineInputSpec, SEMLikeCom
 import os
 
 
-class gtractResampleDWIInPlaceInputSpec(CommandLineInputSpec):
-    inputVolume = File(desc="Required: input image is a 4D NRRD image.", exists=True, argstr="--inputVolume %s")
-    referenceVolume = File(desc="If provided, resample to the final space of the referenceVolume 3D data set.", exists=True, argstr="--referenceVolume %s")
-    outputResampledB0 = traits.Either(traits.Bool, File(), hash_files=False, desc="Convenience function for extracting the first index location (assumed to be the B0)", argstr="--outputResampledB0 %s")
-    inputTransform = File(desc="Required: transform file derived from rigid registration of b0 image to reference structural image.", exists=True, argstr="--inputTransform %s")
-    warpDWITransform = File(desc="Optional: transform file to warp gradient volumes.", exists=True, argstr="--warpDWITransform %s")
-    debugLevel = traits.Int(desc="Display debug messages, and produce debug intermediate results.  0=OFF, 1=Minimal, 10=Maximum debugging.", argstr="--debugLevel %d")
-    imageOutputSize = InputMultiPath(traits.Int, desc="The voxel lattice for the output image, padding is added if necessary. NOTE: if 0,0,0, then the inputVolume size is used.", sep=",", argstr="--imageOutputSize %s")
-    outputVolume = traits.Either(traits.Bool, File(), hash_files=False, desc="Required: output image (NRRD file) that has been rigidly transformed into the space of the structural image and padded if image padding was changed from 0,0,0 default.", argstr="--outputVolume %s")
+class compareTractInclusionInputSpec(CommandLineInputSpec):
+    testFiber = File(desc="Required: test fiber tract file name", exists=True, argstr="--testFiber %s")
+    standardFiber = File(desc="Required: standard fiber tract file name", exists=True, argstr="--standardFiber %s")
+    closeness = traits.Float(desc="Closeness of every test fiber to some fiber in the standard tract, computed as a sum of squares of spatial differences of standard points", argstr="--closeness %f")
+    numberOfPoints = traits.Int(desc="Number of points in comparison fiber pairs", argstr="--numberOfPoints %d")
+    testForBijection = traits.Bool(desc="Flag to apply the closeness criterion both ways", argstr="--testForBijection ")
+    testForFiberCardinality = traits.Bool(desc="Flag to require the same number of fibers in both tracts", argstr="--testForFiberCardinality ")
+    writeXMLPolyDataFile = traits.Bool(desc="Flag to make use of XML files when reading and writing vtkPolyData.", argstr="--writeXMLPolyDataFile ")
     numberOfThreads = traits.Int(desc="Explicitly specify the maximum number of threads to use.", argstr="--numberOfThreads %d")
 
 
-class gtractResampleDWIInPlaceOutputSpec(TraitedSpec):
-    outputResampledB0 = File(desc="Convenience function for extracting the first index location (assumed to be the B0)", exists=True)
-    outputVolume = File(desc="Required: output image (NRRD file) that has been rigidly transformed into the space of the structural image and padded if image padding was changed from 0,0,0 default.", exists=True)
+class compareTractInclusionOutputSpec(TraitedSpec):
+    pass
 
 
-class gtractResampleDWIInPlace(SEMLikeCommandLine):
+class compareTractInclusion(SEMLikeCommandLine):
 
-    """title: Resample DWI In Place
+    """title: Compare Tracts
 
 category: Diffusion.GTRACT
 
-description: Resamples DWI image to structural image.
+description:  This program will halt with a status code indicating whether a test tract is nearly enough included in a standard tract in the sense that every fiber in the test tract has a low enough sum of squares distance to some fiber in the standard tract modulo spline resampling of every fiber to a fixed number of points.  
 
 version: 4.0.0
 
@@ -37,16 +35,16 @@ documentation-url: http://wiki.slicer.org/slicerWiki/index.php/Modules:GTRACT
 
 license: http://mri.radiology.uiowa.edu/copyright/GTRACT-Copyright.txt
 
-contributor: This tool was developed by Vincent Magnotta, Greg Harris, Hans Johnson, and Joy Matsui.
+contributor: This tool was developed by Vincent Magnotta and Greg Harris.
 
 acknowledgements: Funding for this version of the GTRACT program was provided by NIH/NINDS R01NS050568-01A2S1
 
 """
 
-    input_spec = gtractResampleDWIInPlaceInputSpec
-    output_spec = gtractResampleDWIInPlaceOutputSpec
-    _cmd = " gtractResampleDWIInPlace "
-    _outputs_filenames = {'outputResampledB0': 'outputResampledB0.nii', 'outputVolume': 'outputVolume.nii'}
+    input_spec = compareTractInclusionInputSpec
+    output_spec = compareTractInclusionOutputSpec
+    _cmd = " compareTractInclusion "
+    _outputs_filenames = {}
 
 
 class gtractCopyImageOrientationInputSpec(CommandLineInputSpec):
@@ -130,24 +128,86 @@ acknowledgements: Funding for this version of the GTRACT program was provided by
     _outputs_filenames = {'outputCostVolume': 'outputCostVolume.nrrd', 'outputSpeedVolume': 'outputSpeedVolume.nrrd'}
 
 
-class gtractAnisotropyMapInputSpec(CommandLineInputSpec):
-    inputTensorVolume = File(desc="Required: input file containing the diffusion tensor image", exists=True, argstr="--inputTensorVolume %s")
-    anisotropyType = traits.Enum("ADC", "FA", "RA", "VR", "AD", "RD", "LI", desc="Anisotropy Mapping Type: ADC, FA, RA, VR, AD, RD, LI", argstr="--anisotropyType %s")
-    outputVolume = traits.Either(traits.Bool, File(), hash_files=False, desc="Required: name of output NRRD file containing the selected kind of anisotropy scalar.", argstr="--outputVolume %s")
+class gtractFiberTrackingInputSpec(CommandLineInputSpec):
+    inputTensorVolume = File(desc="Required (for Free, Streamline, GraphSearch, and Guided fiber tracking methods): input tensor image file name", exists=True, argstr="--inputTensorVolume %s")
+    inputAnisotropyVolume = File(desc="Required (for Free, Streamline, GraphSearch, and Guided fiber tracking methods): input anisotropy image file name", exists=True, argstr="--inputAnisotropyVolume %s")
+    inputStartingSeedsLabelMapVolume = File(desc="Required (for Free, Streamline, GraphSearch, and Guided fiber tracking methods): input starting seeds LabelMap image file name", exists=True, argstr="--inputStartingSeedsLabelMapVolume %s")
+    startingSeedsLabel = traits.Int(desc="Label value for Starting Seeds (required if Label number used to create seed point in Slicer was not 1)", argstr="--startingSeedsLabel %d")
+    inputEndingSeedsLabelMapVolume = File(desc="Required (for Streamline, GraphSearch, and Guided fiber tracking methods): input ending seeds LabelMap image file name", exists=True, argstr="--inputEndingSeedsLabelMapVolume %s")
+    endingSeedsLabel = traits.Int(desc="Label value for Ending Seeds (required if Label number used to create seed point in Slicer was not 1)", argstr="--endingSeedsLabel %d")
+    inputTract = File(desc="Required (for Guided fiber tracking method): guide fiber in vtkPolydata file containing one tract line.", exists=True, argstr="--inputTract %s")
+    outputTract = traits.Either(traits.Bool, File(), hash_files=False, desc="Required (for Free, Streamline, GraphSearch, and Guided fiber tracking methods): name of output vtkPolydata file containing tract lines and the point data collected along them.", argstr="--outputTract %s")
+    writeXMLPolyDataFile = traits.Bool(desc="Flag to make use of the XML format for vtkPolyData fiber tracts.", argstr="--writeXMLPolyDataFile ")
+    trackingMethod = traits.Enum("Guided", "Free", "Streamline", "GraphSearch", desc="Fiber tracking Filter Type: Guided|Free|Streamline|GraphSearch", argstr="--trackingMethod %s")
+    guidedCurvatureThreshold = traits.Float(desc="Guided Curvature Threshold (Degrees)", argstr="--guidedCurvatureThreshold %f")
+    maximumGuideDistance = traits.Float(desc="Maximum distance for using the guide fiber direction", argstr="--maximumGuideDistance %f")
+    seedThreshold = traits.Float(desc="Anisotropy threshold for seed selection (recommended for Free fiber tracking)", argstr="--seedThreshold %f")
+    trackingThreshold = traits.Float(desc="Anisotropy threshold for fiber tracking (anisotropy values of the next point along the path)", argstr="--trackingThreshold %f")
+    curvatureThreshold = traits.Float(desc="Curvature threshold in degrees (recommended for Free  fiber tracking)", argstr="--curvatureThreshold %f")
+    branchingThreshold = traits.Float(desc="Anisotropy Branching threshold (recommended for GraphSearch fiber tracking method)", argstr="--branchingThreshold %f")
+    maximumBranchPoints = traits.Int(desc="Maximum branch points (recommended for GraphSearch fiber tracking method)", argstr="--maximumBranchPoints %d")
+    useRandomWalk = traits.Bool(desc="Flag to use random walk.", argstr="--useRandomWalk ")
+    randomSeed = traits.Int(desc="Random number generator seed", argstr="--randomSeed %d")
+    branchingAngle = traits.Float(desc="Branching angle in degrees (recommended for GraphSearch fiber tracking method)", argstr="--branchingAngle %f")
+    minimumLength = traits.Float(desc="Minimum fiber length. Helpful for filtering invalid tracts.", argstr="--minimumLength %f")
+    maximumLength = traits.Float(desc="Maximum fiber length (voxels)", argstr="--maximumLength %f")
+    stepSize = traits.Float(desc="Fiber tracking step size", argstr="--stepSize %f")
+    useLoopDetection = traits.Bool(desc="Flag to make use of loop detection.", argstr="--useLoopDetection ")
+    useTend = traits.Bool(desc="Flag to make use of Tend F and Tend G parameters.", argstr="--useTend ")
+    tendF = traits.Float(desc="Tend F parameter", argstr="--tendF %f")
+    tendG = traits.Float(desc="Tend G parameter", argstr="--tendG %f")
     numberOfThreads = traits.Int(desc="Explicitly specify the maximum number of threads to use.", argstr="--numberOfThreads %d")
 
 
-class gtractAnisotropyMapOutputSpec(TraitedSpec):
-    outputVolume = File(desc="Required: name of output NRRD file containing the selected kind of anisotropy scalar.", exists=True)
+class gtractFiberTrackingOutputSpec(TraitedSpec):
+    outputTract = File(desc="Required (for Free, Streamline, GraphSearch, and Guided fiber tracking methods): name of output vtkPolydata file containing tract lines and the point data collected along them.", exists=True)
 
 
-class gtractAnisotropyMap(SEMLikeCommandLine):
+class gtractFiberTracking(SEMLikeCommandLine):
 
-    """title: Anisotropy Map
+    """title: Fiber Tracking
 
 category: Diffusion.GTRACT
 
-description: This program will generate a scalar map of anisotropy, given a tensor representation. Anisotropy images are used for fiber tracking, but the anisotropy scalars are not defined along the path. Instead, the tensor representation is included as point data allowing all of these metrics to be computed using only the fiber tract point data. The images can be saved in any ITK supported format, but it is suggested that you use an image format that supports the definition of the image origin. This includes NRRD, NifTI, and Meta formats. These images can also be used for scalar analysis including regional anisotropy measures or VBM style analysis.
+description: This program implements four fiber tracking methods (Free, Streamline, GraphSearch, Guided). The output of the fiber tracking is vtkPolyData (i.e. Polylines) that can be loaded into Slicer3 for visualization. The poly data can be saved in either old VTK format files (.vtk) or in the new VTK XML format (.xml). The polylines contain point data that defines ther Tensor at each point along the fiber tract. This can then be used to rendered as glyphs in Slicer3 and can be used to define severeal scalar measures without referencing back to the anisotropy images. (1) Free tracking is a basic streamlines algorithm. This is a direct implementation of the method original proposed by Basser et al. The tracking follows the primarty eigenvector. The tracking begins with seed points in the starting region. Only those voxels above the specified anisotropy threshold in the starting region are used as seed points. Tracking terminates either as a result of maximum fiber length, low ansiotropy, or large curvature. This is a great way to explore your data. (2) The streamlines algorithm is a direct implementation of the method originally proposed by Basser et al. The tracking follows the primary eigenvector. The tracking begins with seed points in the starting region. Only those voxels above the specified anisotropy threshold in the starting region are used as seed points. Tracking terminates either by reaching the ending region or reaching some stopping criteria. Stopping criteria are specified using the following parameters: tracking threshold, curvature threshold, and max length. Only paths terminating in the ending region are kept in this method. The TEND algorithm proposed by Lazar et al. (Human Brain Mapping 18:306-321, 2003) has been instrumented. This can be enabled using the --useTend option while performing Streamlines tracking. This utilizes the entire diffusion tensor to deflect the incoming vector instead of simply following the primary eigenvector. The TEND parameters are set using the --tendF and --tendG options. (3) Graph Search tracking is the first step in the full GTRACT algorithm developed by Cheng et al. (NeuroImage 31(3): 1075-1085, 2006) for finding the tracks in a tensor image. This method was developed to generate fibers in a Tensor representation where crossing fibers occur. The graph search algorithm follows the primary eigenvector in non-ambigous regions and utilizes branching and a graph search algorithm in ambigous regions. Ambiguous tracking regions are defined based on two criteria: Branching Al Threshold (anisotropy values below this value and above the traching threshold) and Curvature Major Eigen (angles of the primary eigenvector direction and the current tracking direction). In regions that meet this criteria, two or three tracking paths are considered. The first is the standard primary eigenvector direction. The second is the seconadary eigenvector direction. This is based on the assumption that these regions may be prolate regions. If the Random Walk option is selected then a third direction is also considered. This direction is defined by a cone pointing from the current position to the centroid of the ending region. The interior angle of the cone is specified by the user with the Branch/Guide Angle parameter. A vector contained inside of the cone is selected at random and used as the third direction. This method can also utilize the TEND option where the primary tracking direction is that specified by the TEND method instead of the primary eigenvector. The parameter '--maximumBranchPoints' allows the tracking to have this number of branches being considered at a time. If this number of branch points is exceeded at any time, then the algorithm will revert back to a streamline alogrithm until the number of branches is reduced. This allows the user to constrain the computational complexity of the algorithm. (4) The second phase of the GTRACT algorithm is Guided Tracking. This method incorporates anatomical information about the track orientation using an initial guess of the fiber track. In the originally proposed GTRACT method, this would be created from the fibers resulting from the Graph Search tracking. However, in practice this can be created using any method and could be defined manually. To create the guide fiber the program gtractCreateGuideFiber can be used. This program will load a fiber tract that has been generated and create a centerline representation of the fiber tract (i.e. a single fiber). In this method, the fiber tracking follows the primary eigenvector direction unless it deviates from the guide fiber track by a angle greater than that specified by the '--guidedCurvatureThreshold' parameter. The user must specify the guide fiber when running this program.
+
+version: 4.0.0
+
+documentation-url: http://wiki.slicer.org/slicerWiki/index.php/Modules:GTRACT
+
+license: http://mri.radiology.uiowa.edu/copyright/GTRACT-Copyright.txt
+
+contributor: This tool was developed by Vincent Magnotta, Greg Harris and Yongqiang Zhao.
+
+acknowledgements: Funding for this version of the GTRACT program was provided by NIH/NINDS R01NS050568-01A2S1
+
+"""
+
+    input_spec = gtractFiberTrackingInputSpec
+    output_spec = gtractFiberTrackingOutputSpec
+    _cmd = " gtractFiberTracking "
+    _outputs_filenames = {'outputTract': 'outputTract.vtk'}
+
+
+class extractNrrdVectorIndexInputSpec(CommandLineInputSpec):
+    inputVolume = File(desc="Required: input file containing the vector that will be extracted", exists=True, argstr="--inputVolume %s")
+    vectorIndex = traits.Int(desc="Index in the vector image to extract", argstr="--vectorIndex %d")
+    setImageOrientation = traits.Enum("AsAcquired", "Axial", "Coronal", "Sagittal", desc="Sets the image orientation of the extracted vector (Axial, Coronal, Sagittal)", argstr="--setImageOrientation %s")
+    outputVolume = traits.Either(traits.Bool, File(), hash_files=False, desc="Required: name of output NRRD file containing the vector image at the given index", argstr="--outputVolume %s")
+    numberOfThreads = traits.Int(desc="Explicitly specify the maximum number of threads to use.", argstr="--numberOfThreads %d")
+
+
+class extractNrrdVectorIndexOutputSpec(TraitedSpec):
+    outputVolume = File(desc="Required: name of output NRRD file containing the vector image at the given index", exists=True)
+
+
+class extractNrrdVectorIndex(SEMLikeCommandLine):
+
+    """title: Extract Nrrd Index
+
+category: Diffusion.GTRACT
+
+description: This program will extract a 3D image (single vector) from a vector 3D image at a given vector index.
 
 version: 4.0.0
 
@@ -161,10 +221,10 @@ acknowledgements: Funding for this version of the GTRACT program was provided by
 
 """
 
-    input_spec = gtractAnisotropyMapInputSpec
-    output_spec = gtractAnisotropyMapOutputSpec
-    _cmd = " gtractAnisotropyMap "
-    _outputs_filenames = {'outputVolume': 'outputVolume.nrrd'}
+    input_spec = extractNrrdVectorIndexInputSpec
+    output_spec = extractNrrdVectorIndexOutputSpec
+    _cmd = " extractNrrdVectorIndex "
+    _outputs_filenames = {'outputVolume': 'outputVolume.nii'}
 
 
 class gtractCoregBvaluesInputSpec(CommandLineInputSpec):
@@ -217,81 +277,6 @@ acknowledgements: Funding for this version of the GTRACT program was provided by
     output_spec = gtractCoregBvaluesOutputSpec
     _cmd = " gtractCoregBvalues "
     _outputs_filenames = {'outputVolume': 'outputVolume.nrrd', 'outputTransform': 'outputTransform.h5'}
-
-
-class extractNrrdVectorIndexInputSpec(CommandLineInputSpec):
-    inputVolume = File(desc="Required: input file containing the vector that will be extracted", exists=True, argstr="--inputVolume %s")
-    vectorIndex = traits.Int(desc="Index in the vector image to extract", argstr="--vectorIndex %d")
-    setImageOrientation = traits.Enum("AsAcquired", "Axial", "Coronal", "Sagittal", desc="Sets the image orientation of the extracted vector (Axial, Coronal, Sagittal)", argstr="--setImageOrientation %s")
-    outputVolume = traits.Either(traits.Bool, File(), hash_files=False, desc="Required: name of output NRRD file containing the vector image at the given index", argstr="--outputVolume %s")
-    numberOfThreads = traits.Int(desc="Explicitly specify the maximum number of threads to use.", argstr="--numberOfThreads %d")
-
-
-class extractNrrdVectorIndexOutputSpec(TraitedSpec):
-    outputVolume = File(desc="Required: name of output NRRD file containing the vector image at the given index", exists=True)
-
-
-class extractNrrdVectorIndex(SEMLikeCommandLine):
-
-    """title: Extract Nrrd Index
-
-category: Diffusion.GTRACT
-
-description: This program will extract a 3D image (single vector) from a vector 3D image at a given vector index.
-
-version: 4.0.0
-
-documentation-url: http://wiki.slicer.org/slicerWiki/index.php/Modules:GTRACT
-
-license: http://mri.radiology.uiowa.edu/copyright/GTRACT-Copyright.txt
-
-contributor: This tool was developed by Vincent Magnotta and Greg Harris.
-
-acknowledgements: Funding for this version of the GTRACT program was provided by NIH/NINDS R01NS050568-01A2S1
-
-"""
-
-    input_spec = extractNrrdVectorIndexInputSpec
-    output_spec = extractNrrdVectorIndexOutputSpec
-    _cmd = " extractNrrdVectorIndex "
-    _outputs_filenames = {'outputVolume': 'outputVolume.nii'}
-
-
-class gtractTransformToDisplacementFieldInputSpec(CommandLineInputSpec):
-    inputTransform = File(desc="Input Transform File Name", exists=True, argstr="--inputTransform %s")
-    inputReferenceVolume = File(desc="Required: input image file name to exemplify the anatomical space over which to vcl_express the transform as a displacement field.", exists=True, argstr="--inputReferenceVolume %s")
-    outputDeformationFieldVolume = traits.Either(traits.Bool, File(), hash_files=False, desc="Output deformation field", argstr="--outputDeformationFieldVolume %s")
-    numberOfThreads = traits.Int(desc="Explicitly specify the maximum number of threads to use.", argstr="--numberOfThreads %d")
-
-
-class gtractTransformToDisplacementFieldOutputSpec(TraitedSpec):
-    outputDeformationFieldVolume = File(desc="Output deformation field", exists=True)
-
-
-class gtractTransformToDisplacementField(SEMLikeCommandLine):
-
-    """title: Create Displacement Field
-
-category: Diffusion.GTRACT
-
-description: This program will compute forward deformation from the given Transform. The size of the DF is equal to MNI space
-
-version: 4.0.0
-
-documentation-url: http://wiki.slicer.org/slicerWiki/index.php/Modules:GTRACT
-
-license: http://mri.radiology.uiowa.edu/copyright/GTRACT-Copyright.txt
-
-contributor: This tool was developed by Vincent Magnotta, Madhura Ingalhalikar, and Greg Harris
-
-acknowledgements: Funding for this version of the GTRACT program was provided by NIH/NINDS R01NS050568-01A2S1
-
-"""
-
-    input_spec = gtractTransformToDisplacementFieldInputSpec
-    output_spec = gtractTransformToDisplacementFieldOutputSpec
-    _cmd = " gtractTransformToDisplacementField "
-    _outputs_filenames = {'outputDeformationFieldVolume': 'outputDeformationFieldVolume.nii'}
 
 
 class gtractInvertBSplineTransformInputSpec(CommandLineInputSpec):
@@ -395,65 +380,25 @@ acknowledgements: Funding for this version of the GTRACT program was provided by
     _outputs_filenames = {'outputTransformName': 'outputTransformName.h5'}
 
 
-class gtractInvertDisplacementFieldInputSpec(CommandLineInputSpec):
-    baseImage = File(desc="Required: base image used to define the size of the inverse field", exists=True, argstr="--baseImage %s")
-    deformationImage = File(desc="Required: Displacement field image", exists=True, argstr="--deformationImage %s")
-    outputVolume = traits.Either(traits.Bool, File(), hash_files=False, desc="Required: Output deformation field", argstr="--outputVolume %s")
-    subsamplingFactor = traits.Int(desc="Subsampling factor for the deformation field", argstr="--subsamplingFactor %d")
+class gtractCreateGuideFiberInputSpec(CommandLineInputSpec):
+    inputFiber = File(desc="Required: input fiber tract file name", exists=True, argstr="--inputFiber %s")
+    numberOfPoints = traits.Int(desc="Number of points in output guide fiber", argstr="--numberOfPoints %d")
+    outputFiber = traits.Either(traits.Bool, File(), hash_files=False, desc="Required: output guide fiber file name", argstr="--outputFiber %s")
+    writeXMLPolyDataFile = traits.Bool(desc="Flag to make use of XML files when reading and writing vtkPolyData.", argstr="--writeXMLPolyDataFile ")
     numberOfThreads = traits.Int(desc="Explicitly specify the maximum number of threads to use.", argstr="--numberOfThreads %d")
 
 
-class gtractInvertDisplacementFieldOutputSpec(TraitedSpec):
-    outputVolume = File(desc="Required: Output deformation field", exists=True)
+class gtractCreateGuideFiberOutputSpec(TraitedSpec):
+    outputFiber = File(desc="Required: output guide fiber file name", exists=True)
 
 
-class gtractInvertDisplacementField(SEMLikeCommandLine):
+class gtractCreateGuideFiber(SEMLikeCommandLine):
 
-    """title: Invert Displacement Field
-
-category: Diffusion.GTRACT
-
-description: This program will invert a deformatrion field. The size of the deformation field is defined by an example image provided by the user
-
-version: 4.0.0
-
-documentation-url: http://wiki.slicer.org/slicerWiki/index.php/Modules:GTRACT
-
-license: http://mri.radiology.uiowa.edu/copyright/GTRACT-Copyright.txt
-
-contributor: This tool was developed by Vincent Magnotta.
-
-acknowledgements: Funding for this version of the GTRACT program was provided by NIH/NINDS R01NS050568-01A2S1
-
-"""
-
-    input_spec = gtractInvertDisplacementFieldInputSpec
-    output_spec = gtractInvertDisplacementFieldOutputSpec
-    _cmd = " gtractInvertDisplacementField "
-    _outputs_filenames = {'outputVolume': 'outputVolume.nrrd'}
-
-
-class gtractResampleB0InputSpec(CommandLineInputSpec):
-    inputVolume = File(desc="Required: input file containing the 4D image", exists=True, argstr="--inputVolume %s")
-    inputAnatomicalVolume = File(desc="Required: input file containing the anatomical image defining the origin, spacing and size of the resampled image (template)", exists=True, argstr="--inputAnatomicalVolume %s")
-    inputTransform = File(desc="Required: input Rigid OR Bspline transform file name", exists=True, argstr="--inputTransform %s")
-    vectorIndex = traits.Int(desc="Index in the diffusion weighted image set for the B0 image", argstr="--vectorIndex %d")
-    transformType = traits.Enum("Rigid", "B-Spline", desc="Transform type: Rigid, B-Spline", argstr="--transformType %s")
-    outputVolume = traits.Either(traits.Bool, File(), hash_files=False, desc="Required: name of output NRRD file containing the resampled input image.", argstr="--outputVolume %s")
-    numberOfThreads = traits.Int(desc="Explicitly specify the maximum number of threads to use.", argstr="--numberOfThreads %d")
-
-
-class gtractResampleB0OutputSpec(TraitedSpec):
-    outputVolume = File(desc="Required: name of output NRRD file containing the resampled input image.", exists=True)
-
-
-class gtractResampleB0(SEMLikeCommandLine):
-
-    """title: Resample B0
+    """title: Create Guide Fiber
 
 category: Diffusion.GTRACT
 
-description: This program will resample a signed short image using either a Rigid or B-Spline transform. The user must specify a template image that will be used to define the origin, orientation, spacing, and size of the resampled image.
+description: This program will create a guide fiber by averaging fibers from a previously generated tract.
 
 version: 4.0.0
 
@@ -467,30 +412,40 @@ acknowledgements: Funding for this version of the GTRACT program was provided by
 
 """
 
-    input_spec = gtractResampleB0InputSpec
-    output_spec = gtractResampleB0OutputSpec
-    _cmd = " gtractResampleB0 "
-    _outputs_filenames = {'outputVolume': 'outputVolume.nrrd'}
+    input_spec = gtractCreateGuideFiberInputSpec
+    output_spec = gtractCreateGuideFiberOutputSpec
+    _cmd = " gtractCreateGuideFiber "
+    _outputs_filenames = {'outputFiber': 'outputFiber.vtk'}
 
 
-class gtractConcatDwiInputSpec(CommandLineInputSpec):
-    inputVolume = InputMultiPath(File(exists=True), desc="Required: input file containing the first diffusion weighted image", argstr="--inputVolume %s...")
-    ignoreOrigins = traits.Bool(desc="If image origins are different force all images to origin of first image", argstr="--ignoreOrigins ")
-    outputVolume = traits.Either(traits.Bool, File(), hash_files=False, desc="Required: name of output NRRD file containing the combined diffusion weighted images.", argstr="--outputVolume %s")
+class gtractFastMarchingTrackingInputSpec(CommandLineInputSpec):
+    inputTensorVolume = File(desc="Required: input tensor image file name", exists=True, argstr="--inputTensorVolume %s")
+    inputAnisotropyVolume = File(desc="Required: input anisotropy image file name", exists=True, argstr="--inputAnisotropyVolume %s")
+    inputCostVolume = File(desc="Required: input vcl_cost image file name", exists=True, argstr="--inputCostVolume %s")
+    inputStartingSeedsLabelMapVolume = File(desc="Required: input starting seeds LabelMap image file name", exists=True, argstr="--inputStartingSeedsLabelMapVolume %s")
+    startingSeedsLabel = traits.Int(desc="Label value for Starting Seeds", argstr="--startingSeedsLabel %d")
+    outputTract = traits.Either(traits.Bool, File(), hash_files=False, desc="Required: name of output vtkPolydata file containing tract lines and the point data collected along them.", argstr="--outputTract %s")
+    writeXMLPolyDataFile = traits.Bool(desc="Flag to make use of the XML format for vtkPolyData fiber tracts.", argstr="--writeXMLPolyDataFile ")
+    numberOfIterations = traits.Int(desc="Number of iterations used for the optimization", argstr="--numberOfIterations %d")
+    seedThreshold = traits.Float(desc="Anisotropy threshold used for seed selection", argstr="--seedThreshold %f")
+    trackingThreshold = traits.Float(desc="Anisotropy threshold used for fiber tracking", argstr="--trackingThreshold %f")
+    costStepSize = traits.Float(desc="Cost image sub-voxel sampling", argstr="--costStepSize %f")
+    maximumStepSize = traits.Float(desc="Maximum step size to move when tracking", argstr="--maximumStepSize %f")
+    minimumStepSize = traits.Float(desc="Minimum step size to move when tracking", argstr="--minimumStepSize %f")
     numberOfThreads = traits.Int(desc="Explicitly specify the maximum number of threads to use.", argstr="--numberOfThreads %d")
 
 
-class gtractConcatDwiOutputSpec(TraitedSpec):
-    outputVolume = File(desc="Required: name of output NRRD file containing the combined diffusion weighted images.", exists=True)
+class gtractFastMarchingTrackingOutputSpec(TraitedSpec):
+    outputTract = File(desc="Required: name of output vtkPolydata file containing tract lines and the point data collected along them.", exists=True)
 
 
-class gtractConcatDwi(SEMLikeCommandLine):
+class gtractFastMarchingTracking(SEMLikeCommandLine):
 
-    """title: Concat DWI Images
+    """title: Fast Marching Tracking
 
 category: Diffusion.GTRACT
 
-description: This program will concatenate two DTI runs together.
+description:  This program will use a fast marching fiber tracking algorithm to identify fiber tracts from a tensor image. This program is the second portion of the algorithm. The user must first run gtractCostFastMarching to generate the vcl_cost image. The second step of the algorithm implemented here is a gradient descent soplution from the defined ending region back to the seed points specified in gtractCostFastMarching. This algorithm is roughly based on the work by G. Parker et al. from IEEE Transactions On Medical Imaging, 21(5): 505-512, 2002. An additional feature of including anisotropy into the vcl_cost function calculation is included.  
 
 version: 4.0.0
 
@@ -498,55 +453,16 @@ documentation-url: http://wiki.slicer.org/slicerWiki/index.php/Modules:GTRACT
 
 license: http://mri.radiology.uiowa.edu/copyright/GTRACT-Copyright.txt
 
-contributor: This tool was developed by Vincent Magnotta and Greg Harris.
+contributor: This tool was developed by Vincent Magnotta and Greg Harris. The original code here was developed by Daisy Espino.
 
 acknowledgements: Funding for this version of the GTRACT program was provided by NIH/NINDS R01NS050568-01A2S1
 
 """
 
-    input_spec = gtractConcatDwiInputSpec
-    output_spec = gtractConcatDwiOutputSpec
-    _cmd = " gtractConcatDwi "
-    _outputs_filenames = {'outputVolume': 'outputVolume.nrrd'}
-
-
-class gtractResampleAnisotropyInputSpec(CommandLineInputSpec):
-    inputAnisotropyVolume = File(desc="Required: input file containing the anisotropy image", exists=True, argstr="--inputAnisotropyVolume %s")
-    inputAnatomicalVolume = File(desc="Required: input file containing the anatomical image whose characteristics will be cloned.", exists=True, argstr="--inputAnatomicalVolume %s")
-    inputTransform = File(desc="Required: input Rigid OR Bspline transform file name", exists=True, argstr="--inputTransform %s")
-    transformType = traits.Enum("Rigid", "B-Spline", desc="Transform type: Rigid, B-Spline", argstr="--transformType %s")
-    outputVolume = traits.Either(traits.Bool, File(), hash_files=False, desc="Required: name of output NRRD file containing the resampled transformed anisotropy image.", argstr="--outputVolume %s")
-    numberOfThreads = traits.Int(desc="Explicitly specify the maximum number of threads to use.", argstr="--numberOfThreads %d")
-
-
-class gtractResampleAnisotropyOutputSpec(TraitedSpec):
-    outputVolume = File(desc="Required: name of output NRRD file containing the resampled transformed anisotropy image.", exists=True)
-
-
-class gtractResampleAnisotropy(SEMLikeCommandLine):
-
-    """title: Resample Anisotropy
-
-category: Diffusion.GTRACT
-
-description: This program will resample a floating point image using either the Rigid or B-Spline transform. You may want to save the aligned B0 image after each of the anisotropy map co-registration steps with the anatomical image to check the registration quality with another tool.
-
-version: 4.0.0
-
-documentation-url: http://wiki.slicer.org/slicerWiki/index.php/Modules:GTRACT
-
-license: http://mri.radiology.uiowa.edu/copyright/GTRACT-Copyright.txt
-
-contributor: This tool was developed by Vincent Magnotta and Greg Harris.
-
-acknowledgements: Funding for this version of the GTRACT program was provided by NIH/NINDS R01NS050568-01A2S1
-
-"""
-
-    input_spec = gtractResampleAnisotropyInputSpec
-    output_spec = gtractResampleAnisotropyOutputSpec
-    _cmd = " gtractResampleAnisotropy "
-    _outputs_filenames = {'outputVolume': 'outputVolume.nrrd'}
+    input_spec = gtractFastMarchingTrackingInputSpec
+    output_spec = gtractFastMarchingTrackingOutputSpec
+    _cmd = " gtractFastMarchingTracking "
+    _outputs_filenames = {'outputTract': 'outputTract.vtk'}
 
 
 class gtractAverageBvaluesInputSpec(CommandLineInputSpec):
@@ -587,23 +503,24 @@ acknowledgements: Funding for this version of the GTRACT program was provided by
     _outputs_filenames = {'outputVolume': 'outputVolume.nrrd'}
 
 
-class gtractInvertRigidTransformInputSpec(CommandLineInputSpec):
-    inputTransform = File(desc="Required: input rigid transform file name", exists=True, argstr="--inputTransform %s")
-    outputTransform = traits.Either(traits.Bool, File(), hash_files=False, desc="Required: output transform file name", argstr="--outputTransform %s")
+class gtractConcatDwiInputSpec(CommandLineInputSpec):
+    inputVolume = InputMultiPath(File(exists=True), desc="Required: input file containing the first diffusion weighted image", argstr="--inputVolume %s...")
+    ignoreOrigins = traits.Bool(desc="If image origins are different force all images to origin of first image", argstr="--ignoreOrigins ")
+    outputVolume = traits.Either(traits.Bool, File(), hash_files=False, desc="Required: name of output NRRD file containing the combined diffusion weighted images.", argstr="--outputVolume %s")
     numberOfThreads = traits.Int(desc="Explicitly specify the maximum number of threads to use.", argstr="--numberOfThreads %d")
 
 
-class gtractInvertRigidTransformOutputSpec(TraitedSpec):
-    outputTransform = File(desc="Required: output transform file name", exists=True)
+class gtractConcatDwiOutputSpec(TraitedSpec):
+    outputVolume = File(desc="Required: name of output NRRD file containing the combined diffusion weighted images.", exists=True)
 
 
-class gtractInvertRigidTransform(SEMLikeCommandLine):
+class gtractConcatDwi(SEMLikeCommandLine):
 
-    """title: Rigid Transform Inversion
+    """title: Concat DWI Images
 
 category: Diffusion.GTRACT
 
-description: This program will invert a Rigid transform.
+description: This program will concatenate two DTI runs together.
 
 version: 4.0.0
 
@@ -617,80 +534,30 @@ acknowledgements: Funding for this version of the GTRACT program was provided by
 
 """
 
-    input_spec = gtractInvertRigidTransformInputSpec
-    output_spec = gtractInvertRigidTransformOutputSpec
-    _cmd = " gtractInvertRigidTransform "
-    _outputs_filenames = {'outputTransform': 'outputTransform.h5'}
-
-
-class gtractResampleCodeImageInputSpec(CommandLineInputSpec):
-    inputCodeVolume = File(desc="Required: input file containing the code image", exists=True, argstr="--inputCodeVolume %s")
-    inputReferenceVolume = File(desc="Required: input file containing the standard image to clone the characteristics of.", exists=True, argstr="--inputReferenceVolume %s")
-    inputTransform = File(desc="Required: input Rigid or Inverse-B-Spline transform file name", exists=True, argstr="--inputTransform %s")
-    transformType = traits.Enum("Rigid", "Affine", "B-Spline", "Inverse-B-Spline", "None", desc="Transform type: Rigid or Inverse-B-Spline", argstr="--transformType %s")
-    outputVolume = traits.Either(traits.Bool, File(), hash_files=False, desc="Required: name of output NRRD file containing the resampled code image in acquisition space.", argstr="--outputVolume %s")
-    numberOfThreads = traits.Int(desc="Explicitly specify the maximum number of threads to use.", argstr="--numberOfThreads %d")
-
-
-class gtractResampleCodeImageOutputSpec(TraitedSpec):
-    outputVolume = File(desc="Required: name of output NRRD file containing the resampled code image in acquisition space.", exists=True)
-
-
-class gtractResampleCodeImage(SEMLikeCommandLine):
-
-    """title: Resample Code Image
-
-category: Diffusion.GTRACT
-
-description: This program will resample a short integer code image using either the Rigid or Inverse-B-Spline transform.  The reference image is the DTI tensor anisotropy image space, and the input code image is in anatomical space.
-
-version: 4.0.0
-
-documentation-url: http://wiki.slicer.org/slicerWiki/index.php/Modules:GTRACT
-
-license: http://mri.radiology.uiowa.edu/copyright/GTRACT-Copyright.txt
-
-contributor: This tool was developed by Vincent Magnotta and Greg Harris.
-
-acknowledgements: Funding for this version of the GTRACT program was provided by NIH/NINDS R01NS050568-01A2S1
-
-"""
-
-    input_spec = gtractResampleCodeImageInputSpec
-    output_spec = gtractResampleCodeImageOutputSpec
-    _cmd = " gtractResampleCodeImage "
+    input_spec = gtractConcatDwiInputSpec
+    output_spec = gtractConcatDwiOutputSpec
+    _cmd = " gtractConcatDwi "
     _outputs_filenames = {'outputVolume': 'outputVolume.nrrd'}
 
 
-class gtractTensorInputSpec(CommandLineInputSpec):
-    inputVolume = File(desc="Required: input image 4D NRRD image. Must contain data based on at least 6 distinct diffusion directions. The inputVolume is allowed to have multiple b0 and gradient direction images. Averaging of the b0 image is done internally in this step. Prior averaging of the DWIs is not required.",
-                       exists=True, argstr="--inputVolume %s")
-    outputVolume = traits.Either(traits.Bool, File(), hash_files=False, desc="Required: name of output NRRD file containing the Tensor vector image", argstr="--outputVolume %s")
-    medianFilterSize = InputMultiPath(traits.Int, desc="Median filter radius in all 3 directions", sep=",", argstr="--medianFilterSize %s")
-    maskProcessingMode = traits.Enum(
-        "NOMASK", "ROIAUTO", "ROI", desc="ROIAUTO:  mask is implicitly defined using a otsu forground and hole filling algorithm. ROI: Uses the masks to define what parts of the image should be used for computing the transform. NOMASK: no mask used", argstr="--maskProcessingMode %s")
-    maskVolume = File(desc="Mask Image, if maskProcessingMode is ROI", exists=True, argstr="--maskVolume %s")
-    backgroundSuppressingThreshold = traits.Int(
-        desc="Image threshold to suppress background. This sets a threshold used on the b0 image to remove background voxels from processing. Typically, values of 100 and 500 work well for Siemens and GE DTI data, respectively. Check your data particularly in the globus pallidus to make sure the brain tissue is not being eliminated with this threshold.", argstr="--backgroundSuppressingThreshold %d")
-    resampleIsotropic = traits.Bool(desc="Flag to resample to isotropic voxels. Enabling this feature is recommended if fiber tracking will be performed.", argstr="--resampleIsotropic ")
-    size = traits.Float(desc="Isotropic voxel size to resample to", argstr="--size %f")
-    b0Index = traits.Int(desc="Index in input vector index to extract", argstr="--b0Index %d")
-    applyMeasurementFrame = traits.Bool(desc="Flag to apply the measurement frame to the gradient directions", argstr="--applyMeasurementFrame ")
-    ignoreIndex = InputMultiPath(traits.Int, desc="Ignore diffusion gradient index. Used to remove specific gradient directions with artifacts.", sep=",", argstr="--ignoreIndex %s")
+class gtractAnisotropyMapInputSpec(CommandLineInputSpec):
+    inputTensorVolume = File(desc="Required: input file containing the diffusion tensor image", exists=True, argstr="--inputTensorVolume %s")
+    anisotropyType = traits.Enum("ADC", "FA", "RA", "VR", "AD", "RD", "LI", desc="Anisotropy Mapping Type: ADC, FA, RA, VR, AD, RD, LI", argstr="--anisotropyType %s")
+    outputVolume = traits.Either(traits.Bool, File(), hash_files=False, desc="Required: name of output NRRD file containing the selected kind of anisotropy scalar.", argstr="--outputVolume %s")
     numberOfThreads = traits.Int(desc="Explicitly specify the maximum number of threads to use.", argstr="--numberOfThreads %d")
 
 
-class gtractTensorOutputSpec(TraitedSpec):
-    outputVolume = File(desc="Required: name of output NRRD file containing the Tensor vector image", exists=True)
+class gtractAnisotropyMapOutputSpec(TraitedSpec):
+    outputVolume = File(desc="Required: name of output NRRD file containing the selected kind of anisotropy scalar.", exists=True)
 
 
-class gtractTensor(SEMLikeCommandLine):
+class gtractAnisotropyMap(SEMLikeCommandLine):
 
-    """title: Tensor Estimation
+    """title: Anisotropy Map
 
 category: Diffusion.GTRACT
 
-description: This step will convert a b-value averaged diffusion tensor image to a 3x3 tensor voxel image. This step takes the diffusion tensor image data and generates a tensor representation of the data based on the signal intensity decay, b values applied, and the diffusion difrections. The apparent diffusion coefficient for a given orientation is computed on a pixel-by-pixel basis by fitting the image data (voxel intensities) to the Stejskal-Tanner equation. If at least 6 diffusion directions are used, then the diffusion tensor can be computed. This program uses itk::DiffusionTensor3DReconstructionImageFilter. The user can adjust background threshold, median filter, and isotropic resampling.
+description: This program will generate a scalar map of anisotropy, given a tensor representation. Anisotropy images are used for fiber tracking, but the anisotropy scalars are not defined along the path. Instead, the tensor representation is included as point data allowing all of these metrics to be computed using only the fiber tract point data. The images can be saved in any ITK supported format, but it is suggested that you use an image format that supports the definition of the image origin. This includes NRRD, NifTI, and Meta formats. These images can also be used for scalar analysis including regional anisotropy measures or VBM style analysis.
 
 version: 4.0.0
 
@@ -704,9 +571,47 @@ acknowledgements: Funding for this version of the GTRACT program was provided by
 
 """
 
-    input_spec = gtractTensorInputSpec
-    output_spec = gtractTensorOutputSpec
-    _cmd = " gtractTensor "
+    input_spec = gtractAnisotropyMapInputSpec
+    output_spec = gtractAnisotropyMapOutputSpec
+    _cmd = " gtractAnisotropyMap "
+    _outputs_filenames = {'outputVolume': 'outputVolume.nrrd'}
+
+
+class gtractInvertDisplacementFieldInputSpec(CommandLineInputSpec):
+    baseImage = File(desc="Required: base image used to define the size of the inverse field", exists=True, argstr="--baseImage %s")
+    deformationImage = File(desc="Required: Displacement field image", exists=True, argstr="--deformationImage %s")
+    outputVolume = traits.Either(traits.Bool, File(), hash_files=False, desc="Required: Output deformation field", argstr="--outputVolume %s")
+    subsamplingFactor = traits.Int(desc="Subsampling factor for the deformation field", argstr="--subsamplingFactor %d")
+    numberOfThreads = traits.Int(desc="Explicitly specify the maximum number of threads to use.", argstr="--numberOfThreads %d")
+
+
+class gtractInvertDisplacementFieldOutputSpec(TraitedSpec):
+    outputVolume = File(desc="Required: Output deformation field", exists=True)
+
+
+class gtractInvertDisplacementField(SEMLikeCommandLine):
+
+    """title: Invert Displacement Field
+
+category: Diffusion.GTRACT
+
+description: This program will invert a deformatrion field. The size of the deformation field is defined by an example image provided by the user
+
+version: 4.0.0
+
+documentation-url: http://wiki.slicer.org/slicerWiki/index.php/Modules:GTRACT
+
+license: http://mri.radiology.uiowa.edu/copyright/GTRACT-Copyright.txt
+
+contributor: This tool was developed by Vincent Magnotta.
+
+acknowledgements: Funding for this version of the GTRACT program was provided by NIH/NINDS R01NS050568-01A2S1
+
+"""
+
+    input_spec = gtractInvertDisplacementFieldInputSpec
+    output_spec = gtractInvertDisplacementFieldOutputSpec
+    _cmd = " gtractInvertDisplacementField "
     _outputs_filenames = {'outputVolume': 'outputVolume.nrrd'}
 
 

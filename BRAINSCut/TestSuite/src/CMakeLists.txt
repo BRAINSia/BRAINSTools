@@ -1,3 +1,10 @@
+#
+# ITK
+#
+FindITKUtil(
+  ITKImageCompare
+  ITKTestKernel
+)
 ## TESTING EX.
 ## [BRAINSTools_Build_Dir]/bin/testRandomForest [correct_dir]/optdigits.train [correct_dir]/optdigits.test [output_dir]/optdigitsTrainedModel.txt
 # Below Commented out by Regina
@@ -14,7 +21,7 @@
 #  ${CMAKE_CURRENT_BINARY_DIR}/optdigitTrainedModel.output )
 
 add_executable(compareBinaryTest compareBinaryTest.cxx)
-target_link_libraries(compareBinaryTest ${ITK_LIBRARIES})
+target_link_libraries(compareBinaryTest ${ITK_LIBRARIES} ${OPTIONAL_DEBUG_LINK_LIBRARIES})
 
 # compare caudate
 ExternalData_expand_arguments( ${PROJECT_NAME}FetchData BRAINSCutcaudate_left_scan3_baseline

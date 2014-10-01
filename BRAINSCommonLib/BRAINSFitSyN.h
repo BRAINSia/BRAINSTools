@@ -33,7 +33,11 @@ template <class FixedImageType, class MovingimageType>
 typename itk::CompositeTransform<double,3>::Pointer
 simpleSynReg( typename FixedImageType::Pointer & infixedImage,
               typename MovingimageType::Pointer & inmovingImage,
-              typename itk::CompositeTransform<double,3>::Pointer compositeInitialTransform )
+              typename itk::CompositeTransform<double,3>::Pointer compositeInitialTransform,
+              typename FixedImageType::Pointer & infixedImage2 = NULL,
+              typename MovingimageType::Pointer & inmovingImage2 = NULL,
+              double samplingPercentage = 1.0,
+              std::string whichMetric = "cc" )
 {
   typename SyNRegistrationHelperType::Pointer regHelper = SyNRegistrationHelperType::New();
     {
@@ -101,32 +105,77 @@ simpleSynReg( typename FixedImageType::Pointer & infixedImage,
     smoothingSigmasAreInPhysicalUnitsList.push_back(true);
     regHelper->SetSmoothingSigmasAreInPhysicalUnits( smoothingSigmasAreInPhysicalUnitsList );
     }
-
+    //
+    // Add metric to regHelper
+    //
     {
-    const std::string whichMetric = "cc";
-    typename SyNRegistrationHelperType::MetricEnumeration curMetric = regHelper->StringToMetricType(whichMetric);
-    const double weighting = 1.0;
-    typename SyNRegistrationHelperType::SamplingStrategy samplingStrategy = SyNRegistrationHelperType::none;
-    const int          bins = 32;
-    const unsigned int radius = 4;
-    const double       samplingPercentage = 1.0;
-
+    // Note that here we run only one stage of registration, so stageID does not change
     const unsigned int stageID = 0;
-    typename itk::CastImageFilter<FixedImageType,
-                                  ImageType>::Pointer fixedCaster =
-      itk::CastImageFilter<FixedImageType, ImageType>::New();
+    // However, this stage can have one or two metrics (for multi-modality registration).
+    // All the parameters of the second metric is the same as the first metric except for fixed and moving volumes.
+    // Common parameters are:
+    // - Metric type (MMI->mattes, MSE->meansquares, NC->cc, MIH->mi)
+    typename SyNRegistrationHelperType::MetricEnumeration curMetric = regHelper->StringToMetricType(whichMetric);
+    // - Metric weight
+    const double weighting = 1.0;
+    // - Sampling strategy (alway random)
+    typename SyNRegistrationHelperType::SamplingStrategy samplingStrategy = SyNRegistrationHelperType::random;
+    // - Sampling percentage (defined by input)
+    // - Number of bins
+    const int          bins = 32;
+    // - radius
+    const unsigned int radius = 4;
+    //
+    // Add the first metric with the first mandatory fixed and moving volumes
+    //
+    typedef itk::CastImageFilter<FixedImageType,ImageType> FixedCasterType;
+    typename FixedCasterType::Pointer fixedCaster = FixedCasterType::New();
     fixedCaster->SetInput( infixedImage );
     fixedCaster->Update();
     typename ImageType::Pointer dblFixedImage = fixedCaster->GetOutput();
-    typename itk::CastImageFilter<MovingimageType,
-                                  ImageType>::Pointer movingCaster =
-      itk::CastImageFilter<FixedImageType, ImageType>::New();
+
+    typedef itk::CastImageFilter<MovingimageType,ImageType> MovingCasterType;
+    typename MovingCasterType::Pointer movingCaster = MovingCasterType::New();
     movingCaster->SetInput( inmovingImage );
     movingCaster->Update();
     typename ImageType::Pointer dblMovingImage = movingCaster->GetOutput();
-    regHelper->AddMetric(curMetric, dblFixedImage, dblMovingImage, stageID, weighting, samplingStrategy, bins, radius,
+
+    regHelper->AddMetric(curMetric,
+                         dblFixedImage,
+                         dblMovingImage,
+                         stageID,
+                         weighting,
+                         samplingStrategy,
+                         bins,
+                         radius,
                          samplingPercentage);
+
+    // Now if fixedVolume2 and movingVolume2 are not NULL, we add the second metric
+    // to our only stage of registration. Second metric has the same parameters but different input images.
+    if( infixedImage2.IsNotNull() && inmovingImage2.IsNotNull() )
+      {
+      typename FixedCasterType::Pointer fixedCaster2 = FixedCasterType::New();
+      fixedCaster2->SetInput( infixedImage2 );
+      fixedCaster2->Update();
+      typename ImageType::Pointer dblFixedImage2 = fixedCaster2->GetOutput();
+
+      typename MovingCasterType::Pointer movingCaster2 = MovingCasterType::New();
+      movingCaster2->SetInput( inmovingImage2 );
+      movingCaster2->Update();
+      typename ImageType::Pointer dblMovingImage2 = movingCaster2->GetOutput();
+
+      regHelper->AddMetric(curMetric,
+                           dblFixedImage2,
+                           dblMovingImage2,
+                           stageID,
+                           weighting,
+                           samplingStrategy,
+                           bins,
+                           radius,
+                           samplingPercentage);
+      }
     }
+
     {
     // --transform "SyN[0.33,3.0,0.0]"
     const float learningRate = 0.15;

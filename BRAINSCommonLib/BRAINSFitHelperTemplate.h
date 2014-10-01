@@ -133,9 +133,17 @@ public:
   itkSetObjectMacro(FixedVolume, FixedImageType);
   itkGetConstObjectMacro(FixedVolume, FixedImageType);
 
+  /** Set/Get the second Fixed image for multi-modal SyN. */
+  itkSetObjectMacro(FixedVolume2, FixedImageType);
+  itkGetConstObjectMacro(FixedVolume2, FixedImageType);
+
   /** Set/Get the Moving image. */
   itkSetObjectMacro(MovingVolume, MovingImageType)
   itkGetConstObjectMacro(MovingVolume, MovingImageType);
+
+  /** Set/Get the second Moving image for multi-modal SyN. */
+  itkSetObjectMacro(MovingVolume2, MovingImageType)
+  itkGetConstObjectMacro(MovingVolume2, MovingImageType);
 
   itkSetObjectMacro(FixedBinaryVolume, FixedBinaryVolumeType);
   itkGetModifiableObjectMacro(FixedBinaryVolume, FixedBinaryVolumeType);
@@ -228,6 +236,9 @@ public:
   itkGetConstMacro(SamplingStrategy,SamplingStrategyType);
 
   itkSetMacro(InitializeRegistrationByCurrentGenericTransform, bool);
+
+  itkSetMacro(SyNMetricType, std::string);
+  itkGetConstMacro(SyNMetricType, std::string);
 protected:
   BRAINSFitHelperTemplate();
   virtual ~BRAINSFitHelperTemplate()
@@ -257,7 +268,10 @@ private:
   void operator=(const Self &);          // purposely not implemented
 
   FixedImagePointer  m_FixedVolume;
+  FixedImagePointer  m_FixedVolume2; // For multi-modal SyN
+
   MovingImagePointer m_MovingVolume;
+  MovingImagePointer m_MovingVolume2; // For multi-modal SyN
 
   FixedBinaryVolumePointer  m_FixedBinaryVolume;
   MovingBinaryVolumePointer m_MovingBinaryVolume;
@@ -300,6 +314,9 @@ private:
   bool                                       m_InitializeRegistrationByCurrentGenericTransform;
   int                                        m_MaximumNumberOfEvaluations;
   int                                        m_MaximumNumberOfCorrections;
+  std::string                                m_SyNMetricType;
+  // DEBUG OPTION:
+  int m_ForceMINumberOfThreads;
 };  // end BRAINSFitHelperTemplate class
 }   // end namespace itk
 

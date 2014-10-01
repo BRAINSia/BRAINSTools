@@ -88,10 +88,15 @@ namespace itk
 {
 BRAINSFitHelper::BRAINSFitHelper() :
   m_FixedVolume(NULL),
+  m_FixedVolume2(NULL), // For multi-modal SyN
   m_MovingVolume(NULL),
+  m_MovingVolume2(NULL), // For multi-modal SyN
   m_PreprocessedMovingVolume(NULL),
+  m_PreprocessedMovingVolume2(NULL), // For multi-modal SyN
   m_FixedBinaryVolume(NULL),
+  m_FixedBinaryVolume2(NULL), // For multi-modal SyN
   m_MovingBinaryVolume(NULL),
+  m_MovingBinaryVolume2(NULL), // For multi-modal SyN
   m_OutputFixedVolumeROI(""),
   m_OutputMovingVolumeROI(""),
   m_SamplingPercentage(1.0), // instead or number of samples, sampling% should be used that is a number between 0 and 1.
@@ -183,6 +188,56 @@ NormalizeImage(typename ImageType::Pointer inputImage)
   return outputImage;
 }
 
+template <typename FixedImageType, typename MovingImageType, typename FixedBinaryVolumeType, typename MovingBinaryVolumeType>
+void
+DoHistogramEqualization( typename FixedImageType::Pointer & inputFixedImage,
+                         typename MovingImageType::Pointer & inputMovingImage,
+                         typename FixedBinaryVolumeType::Pointer & fixedBinaryVolume,
+                         typename MovingBinaryVolumeType::Pointer & movingBinaryVolume,
+                         unsigned int numberOfHistogramBins,
+                         unsigned int numberOfMatchPoints,
+                         unsigned int debugLevel,
+                         std::string debugFileName
+                         )
+{
+  typedef itk::OtsuHistogramMatchingImageFilter<FixedImageType, MovingImageType> HistogramMatchingFilterType;
+  typename HistogramMatchingFilterType::Pointer histogramfilter = HistogramMatchingFilterType::New();
+  histogramfilter->SetReferenceImage( inputFixedImage );
+  if( fixedBinaryVolume.IsNull() )
+    {
+    itkGenericExceptionMacro(<< "ERROR:  Histogram matching requires a fixed mask.");
+    }
+  histogramfilter->SetReferenceMask( fixedBinaryVolume.GetPointer() );
+  histogramfilter->SetInput( inputMovingImage );
+  if( movingBinaryVolume.IsNull() )
+    {
+    itkGenericExceptionMacro(<< "ERROR:  Histogram matching requires a moving mask.");
+    }
+  histogramfilter->SetSourceMask( movingBinaryVolume.GetPointer() );
+  histogramfilter->SetNumberOfHistogramLevels( numberOfHistogramBins );
+  histogramfilter->SetNumberOfMatchPoints( numberOfMatchPoints );
+  histogramfilter->Update();
+  inputMovingImage = histogramfilter->GetOutput();
+  if( debugLevel > 5 )
+    {
+    typedef itk::ImageFileWriter<MovingImageType> WriterType;
+    typename WriterType::Pointer writer = WriterType::New();
+    writer->UseCompressionOn();
+    writer->SetFileName( debugFileName );
+    writer->SetInput( inputMovingImage );
+    try
+      {
+      writer->Update();
+      }
+    catch( itk::ExceptionObject & err )
+      {
+      std::cout << "Exception Object caught: " << std::endl;
+      std::cout << err << std::endl;
+      throw;
+      }
+    }
+}
+
 void
 BRAINSFitHelper::Update(void)
 {
@@ -190,94 +245,79 @@ BRAINSFitHelper::Update(void)
   if(  m_RemoveIntensityOutliers > vcl_numeric_limits<float>::epsilon() )
     {
     this->m_FixedVolume = ClampNoisyTailsOfImage<FixedImageType, FixedBinaryVolumeType>(
-        m_RemoveIntensityOutliers, this->m_FixedVolume.GetPointer(), this->m_FixedBinaryVolume.GetPointer() );
-    this->m_PreprocessedMovingVolume = ClampNoisyTailsOfImage<MovingImageType, MovingBinaryVolumeType>(
-        m_RemoveIntensityOutliers, this->m_MovingVolume.GetPointer(), this->m_MovingBinaryVolume.GetPointer() );
+                                                                                        m_RemoveIntensityOutliers,
+                                                                                        this->m_FixedVolume.GetPointer(),
+                                                                                        this->m_FixedBinaryVolume.GetPointer() );
+    if( this->m_FixedVolume2.IsNotNull() ) // For multi-modal SyN
       {
-      if( this->m_DebugLevel > 9 )
-        {
-          {
-          typedef itk::ImageFileWriter<FixedImageType> WriterType;
-          WriterType::Pointer writer = WriterType::New();
-          writer->UseCompressionOn();
-          writer->SetFileName("DEBUGNormalizedFixedVolume.nii.gz");
-          writer->SetInput(this->m_FixedVolume);
-          try
-            {
-            writer->Update();
-            }
-          catch( itk::ExceptionObject & err )
-            {
-            std::cout << "Exception Object caught: " << std::endl;
-            std::cout << err << std::endl;
-            throw;
-            }
-          }
-          {
-          typedef itk::ImageFileWriter<MovingImageType> WriterType;
-          WriterType::Pointer writer = WriterType::New();
-          writer->UseCompressionOn();
-          writer->SetFileName("DEBUGNormalizedMovingVolume.nii.gz");
-          writer->SetInput(this->m_PreprocessedMovingVolume);
-          try
-            {
-            writer->Update();
-            }
-          catch( itk::ExceptionObject & err )
-            {
-            std::cout << "Exception Object caught: " << std::endl;
-            std::cout << err << std::endl;
-            throw;
-            }
-          }
-        }
+      this->m_FixedVolume2 = ClampNoisyTailsOfImage<FixedImageType, FixedBinaryVolumeType>(
+                                                                                        m_RemoveIntensityOutliers,
+                                                                                        this->m_FixedVolume2.GetPointer(),
+                                                                                        this->m_FixedBinaryVolume2.GetPointer() );
+      }
+    this->m_PreprocessedMovingVolume = ClampNoisyTailsOfImage<MovingImageType, MovingBinaryVolumeType>(
+                                                                                            m_RemoveIntensityOutliers,
+                                                                                            this->m_MovingVolume.GetPointer(),
+                                                                                            this->m_MovingBinaryVolume.GetPointer() );
+    if( this->m_MovingVolume2.IsNotNull() ) // For multi-modal SyN
+      {
+      this->m_PreprocessedMovingVolume2 = ClampNoisyTailsOfImage<MovingImageType, MovingBinaryVolumeType>(
+                                                                                            m_RemoveIntensityOutliers,
+                                                                                            this->m_MovingVolume2.GetPointer(),
+                                                                                            this->m_MovingBinaryVolume2.GetPointer() );
       }
     }
   else
     {
     this->m_PreprocessedMovingVolume = this->m_MovingVolume;
+    this->m_PreprocessedMovingVolume2 = this->m_MovingVolume2; // For multi-modal SyN
     }
 
-  // Do Histogram equalization on moving image if requested.
-  if( m_HistogramMatch )
+  // Write debug images to the disk
+  {
+  if( this->m_DebugLevel > 9 )
     {
-    typedef itk::OtsuHistogramMatchingImageFilter<FixedImageType, MovingImageType> HistogramMatchingFilterType;
-    HistogramMatchingFilterType::Pointer histogramfilter = HistogramMatchingFilterType::New();
-
-    // TODO:  Regina:  Write various histogram matching specializations and
-    // compare them.
-    // histogramfilter->SetForegroundMode("Otsu"); // A simple Otsu threshold
-    // for each image .... BUT BE CAREFUL, need to do some quantile checking for
-    // degenerate images
-    // histogramfilter->SetForegroundMode("Simple"); // A simple average value
-    // of the image should be used
-    // histogramfilter->SetForegroundMode("Quantile"); // Only values between
-    // the 25th and 66th quantile should be used.
-    // histogramfilter->SetForegroundMode("Masks"); // Foreground is
-    // specifically defined by masks.
-
-    histogramfilter->SetReferenceImage(this->m_FixedVolume);
-    if( this->m_FixedBinaryVolume.IsNull() )
       {
-      itkGenericExceptionMacro(<< "ERROR:  Histogram matching requires a fixed mask.");
+      typedef itk::ImageFileWriter<FixedImageType> WriterType;
+      WriterType::Pointer writer = WriterType::New();
+      writer->UseCompressionOn();
+      writer->SetFileName("DEBUGNormalizedFixedVolume.nii.gz");
+      writer->SetInput(this->m_FixedVolume);
+      try
+        {
+        writer->Update();
+        }
+      catch( itk::ExceptionObject & err )
+        {
+        std::cout << "Exception Object caught: " << std::endl;
+        std::cout << err << std::endl;
+        throw;
+        }
+
+      if( this->m_FixedVolume2.IsNotNull() )
+        {
+        WriterType::Pointer writer2 = WriterType::New();
+        writer2->UseCompressionOn();
+        writer2->SetFileName("DEBUGNormalizedFixedVolume2.nii.gz");
+        writer2->SetInput(this->m_FixedVolume2);
+        try
+          {
+          writer2->Update();
+          }
+        catch( itk::ExceptionObject & err )
+          {
+          std::cout << "Exception Object caught: " << std::endl;
+          std::cout << err << std::endl;
+          throw;
+          }
+        }
       }
-    histogramfilter->SetReferenceMask( m_FixedBinaryVolume.GetPointer() );
-    histogramfilter->SetInput(this->m_PreprocessedMovingVolume);
-    if( this->m_MovingBinaryVolume.IsNull() )
-      {
-      itkGenericExceptionMacro(<< "ERROR:  Histogram matching requires a moving mask.");
-      }
-    histogramfilter->SetSourceMask( m_MovingBinaryVolume.GetPointer() );
-    histogramfilter->SetNumberOfHistogramLevels(this->m_NumberOfHistogramBins);
-    histogramfilter->SetNumberOfMatchPoints(this->m_NumberOfMatchPoints);
-    histogramfilter->Update();
-    this->m_PreprocessedMovingVolume = histogramfilter->GetOutput();
-    if( this->m_DebugLevel > 5 )
+
       {
       typedef itk::ImageFileWriter<MovingImageType> WriterType;
       WriterType::Pointer writer = WriterType::New();
       writer->UseCompressionOn();
-      writer->SetFileName("DEBUGHISTOGRAMMATCHEDMOVING.nii.gz");
+      writer->SetFileName("DEBUGNormalizedMovingVolume.nii.gz");
       writer->SetInput(this->m_PreprocessedMovingVolume);
       try
         {
@@ -289,17 +329,68 @@ BRAINSFitHelper::Update(void)
         std::cout << err << std::endl;
         throw;
         }
+
+      if( this->m_PreprocessedMovingVolume2.IsNotNull() )
+        {
+        WriterType::Pointer writer2 = WriterType::New();
+        writer2->UseCompressionOn();
+        writer2->SetFileName("DEBUGNormalizedMovingVolume2.nii.gz");
+        writer2->SetInput(this->m_PreprocessedMovingVolume2);
+        try
+          {
+          writer2->Update();
+          }
+        catch( itk::ExceptionObject & err )
+          {
+          std::cout << "Exception Object caught: " << std::endl;
+          std::cout << err << std::endl;
+          throw;
+          }
+        }
       }
     }
-  else
+  }
+
+  // Do Histogram equalization on moving image if requested.
+  if( m_HistogramMatch )
     {
-    this->m_PreprocessedMovingVolume = this->m_MovingVolume;
+    DoHistogramEqualization<FixedImageType, MovingImageType,
+                            FixedBinaryVolumeType, MovingBinaryVolumeType>(
+                                                                           this->m_FixedVolume,
+                                                                           this->m_PreprocessedMovingVolume,
+                                                                           this->m_FixedBinaryVolume,
+                                                                           this->m_MovingBinaryVolume,
+                                                                           this->m_NumberOfHistogramBins,
+                                                                           this->m_NumberOfMatchPoints,
+                                                                           this->m_DebugLevel,
+                                                                           "DEBUGHISTOGRAMMATCHEDMOVING.nii.gz" );
+    if ( this->m_FixedVolume2.IsNotNull() && this->m_PreprocessedMovingVolume2.IsNotNull() ) // For multi-modal SyN
+      {
+      DoHistogramEqualization<FixedImageType, MovingImageType,
+                              FixedBinaryVolumeType, MovingBinaryVolumeType>(
+                                                                             this->m_FixedVolume2,
+                                                                             this->m_PreprocessedMovingVolume2,
+                                                                             this->m_FixedBinaryVolume2,
+                                                                             this->m_MovingBinaryVolume2,
+                                                                             this->m_NumberOfHistogramBins,
+                                                                             this->m_NumberOfMatchPoints,
+                                                                             this->m_DebugLevel,
+                                                                             "DEBUGHISTOGRAMMATCHEDMOVING_2.nii.gz" );
+      }
     }
 
   if( m_NormalizeInputImages )
     {
     this->m_FixedVolume = NormalizeImage< FixedImageType >( this->m_FixedVolume );
+    if( this->m_FixedVolume2.IsNotNull() ) // For multi-modal SyN
+      {
+      this->m_FixedVolume2 = NormalizeImage< FixedImageType >( this->m_FixedVolume2 );
+      }
     this->m_PreprocessedMovingVolume = NormalizeImage< MovingImageType >( this->m_PreprocessedMovingVolume );
+    if( this->m_PreprocessedMovingVolume2.IsNotNull() ) // For multi-modal SyN
+      {
+      this->m_PreprocessedMovingVolume2 = NormalizeImage< MovingImageType >( this->m_PreprocessedMovingVolume2 );
+      }
     }
 
   const bool     gradientfilter = false;
@@ -367,8 +458,32 @@ BRAINSFitHelper::PrintSelf(std::ostream & os, Indent indent) const
 {
   // Superclass::PrintSelf(os,indent);
   os << indent << "FixedVolume:\n"  <<   this->m_FixedVolume << std::endl;
+  if( this->m_FixedVolume2.IsNotNull() )
+    {
+    os << indent << "FixedVolume2:\n" << this->m_FixedVolume2 << std::endl;
+    }
+  else
+    {
+    os << indent << "FixedVolume2: IS NULL" << std::endl;
+    }
   os << indent << "MovingVolume:\n" <<   this->m_MovingVolume << std::endl;
+  if( this->m_MovingVolume2.IsNotNull() )
+    {
+    os << indent << "MovingVolume2:\n" << this->m_MovingVolume2 << std::endl;
+    }
+  else
+    {
+    os << indent << "MovingVolume2: IS NULL" << std::endl;
+    }
   os << indent << "PreprocessedMovingVolume:\n" <<   this->m_PreprocessedMovingVolume << std::endl;
+  if( this->m_PreprocessedMovingVolume2.IsNotNull() )
+    {
+    os << indent << "PreprocessedMovingVolume2:\n" << this->m_PreprocessedMovingVolume2 << std::endl;
+    }
+  else
+    {
+    os << indent << "PreprocessedMovingVolume2: IS NULL" << std::endl;
+    }
   if( this->m_FixedBinaryVolume.IsNotNull() )
     {
     os << indent << "FixedBinaryVolume:\n" << this->m_FixedBinaryVolume << std::endl;
@@ -377,6 +492,14 @@ BRAINSFitHelper::PrintSelf(std::ostream & os, Indent indent) const
     {
     os << indent << "FixedBinaryVolume: IS NULL" << std::endl;
     }
+  if( this->m_FixedBinaryVolume2.IsNotNull() )
+    {
+    os << indent << "FixedBinaryVolume2:\n" << this->m_FixedBinaryVolume2 << std::endl;
+    }
+  else
+    {
+    os << indent << "FixedBinaryVolume2: IS NULL" << std::endl;
+    }
   if( this->m_MovingBinaryVolume.IsNotNull() )
     {
     os << indent << "MovingBinaryVolume:\n" << this->m_MovingBinaryVolume << std::endl;
@@ -384,6 +507,14 @@ BRAINSFitHelper::PrintSelf(std::ostream & os, Indent indent) const
   else
     {
     os << indent << "MovingBinaryVolume: IS NULL" << std::endl;
+    }
+  if( this->m_MovingBinaryVolume2.IsNotNull() )
+    {
+    os << indent << "MovingBinaryVolume2:\n" << this->m_MovingBinaryVolume2 << std::endl;
+    }
+  else
+    {
+    os << indent << "MovingBinaryVolume2: IS NULL" << std::endl;
     }
   os << indent << "SamplingPercentage:      " << this->m_SamplingPercentage << std::endl;
 

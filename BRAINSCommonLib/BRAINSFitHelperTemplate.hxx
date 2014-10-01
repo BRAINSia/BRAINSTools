@@ -545,7 +545,9 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::BRAINSFitHelperTemplat
   m_SamplingStrategy(AffineRegistrationType::NONE),
   m_InitializeRegistrationByCurrentGenericTransform(true),
   m_MaximumNumberOfEvaluations(900),
-  m_MaximumNumberOfCorrections(12)
+  m_MaximumNumberOfCorrections(12),
+  m_SyNMetricType(""),
+  m_ForceMINumberOfThreads(-1)
 {
   m_SplineGridSize[0] = 14;
   m_SplineGridSize[1] = 10;
@@ -1541,10 +1543,32 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
         m_CurrentGenericTransform->AddTransform( initialITKTransform );
         }
 
+        std::string whichmetric = "cc"; // default value
+        if( this->m_SyNMetricType == "MMI" )
+          {
+          whichmetric = "mattes";
+          }
+        else if( this->m_SyNMetricType == "MSE" )
+          {
+          whichmetric = "meansquares";
+          }
+        else if( this->m_SyNMetricType == "NC" )
+          {
+          whichmetric = "cc";
+          }
+        else if( this->m_SyNMetricType == "MIH" )
+          {
+          whichmetric = "mi";
+          }
+
         typename CompositeTransformType::Pointer outputSyNTransform =
           simpleSynReg<FixedImageType, MovingImageType>( m_FixedVolume,
-                                                        m_MovingVolume,
-                                                        m_CurrentGenericTransform );
+                                                         m_MovingVolume,
+                                                         m_CurrentGenericTransform,
+                                                         m_FixedVolume2,
+                                                         m_MovingVolume2,
+                                                         m_SamplingPercentage,
+                                                         whichmetric );
 
       if( outputSyNTransform.IsNull() )
         {

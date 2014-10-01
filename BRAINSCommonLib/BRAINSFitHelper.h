@@ -108,13 +108,25 @@ public:
   itkSetObjectMacro(FixedVolume, FixedImageType);
   itkGetConstObjectMacro(FixedVolume, FixedImageType);
 
+  /** Set/Get the Fixed image. */
+  itkSetObjectMacro(FixedVolume2, FixedImageType);
+  itkGetConstObjectMacro(FixedVolume2, FixedImageType);
+
   /** Set/Get the Moving image. */
   itkSetObjectMacro(MovingVolume, MovingImageType)
   itkGetConstObjectMacro(MovingVolume, MovingImageType);
 
+  /** Set/Get the Moving image. */
+  itkSetObjectMacro(MovingVolume2, MovingImageType)
+  itkGetConstObjectMacro(MovingVolume2, MovingImageType);
+
   /** The preprocessedMoving volume SHOULD NOT BE SET, you can get it out of the
     *  algorithm.*/
   itkGetConstObjectMacro(PreprocessedMovingVolume, MovingImageType);
+
+  /** The preprocessedMoving2 volume SHOULD NOT BE SET, you can get it out of the
+   *  algorithm.*/
+  itkGetConstObjectMacro(PreprocessedMovingVolume2, MovingImageType);
 
   itkSetObjectMacro(FixedBinaryVolume, FixedBinaryVolumeType);
   itkGetModifiableObjectMacro(FixedBinaryVolume, FixedBinaryVolumeType);
@@ -243,11 +255,16 @@ private:
   void RunRegistration();
 
   FixedImagePointer  m_FixedVolume;
+  FixedImagePointer  m_FixedVolume2; // For multi-modal SyN
   MovingImagePointer m_MovingVolume;
+  MovingImagePointer m_MovingVolume2; // For multi-modal SyN
   MovingImagePointer m_PreprocessedMovingVolume;
+  MovingImagePointer m_PreprocessedMovingVolume2; // For multi-modal SyN
 
   FixedBinaryVolumePointer  m_FixedBinaryVolume;
+  FixedBinaryVolumePointer  m_FixedBinaryVolume2; // For multi-modal SyN
   MovingBinaryVolumePointer m_MovingBinaryVolume;
+  MovingBinaryVolumePointer m_MovingBinaryVolume2; // For multi-modal SyN
   std::string               m_OutputFixedVolumeROI;
   std::string               m_OutputMovingVolumeROI;
 
@@ -369,7 +386,9 @@ BRAINSFitHelper::SetupRegistration(GenericMetricType *localCostMetric)
   myHelper = BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::New();
   myHelper->SetTransformType(this->m_TransformType);
   myHelper->SetFixedVolume(this->m_FixedVolume);
+  myHelper->SetFixedVolume2(this->m_FixedVolume2);
   myHelper->SetMovingVolume(this->m_PreprocessedMovingVolume);
+  myHelper->SetMovingVolume2(this->m_PreprocessedMovingVolume2);
   myHelper->SetHistogramMatch(this->m_HistogramMatch);
   myHelper->SetRemoveIntensityOutliers(this->m_RemoveIntensityOutliers);
   myHelper->SetNumberOfMatchPoints(this->m_NumberOfMatchPoints);
@@ -403,6 +422,7 @@ BRAINSFitHelper::SetupRegistration(GenericMetricType *localCostMetric)
   myHelper->SetInitializeRegistrationByCurrentGenericTransform(this->m_InitializeRegistrationByCurrentGenericTransform);
   myHelper->SetMaximumNumberOfEvaluations(this->m_MaximumNumberOfEvaluations);
   myHelper->SetMaximumNumberOfCorrections(this->m_MaximumNumberOfCorrections);
+  myHelper->SetSyNMetricType( this->m_CostMetric );
   if( this->m_DebugLevel > 7 )
     {
     this->PrintCommandLine(true, "BF");

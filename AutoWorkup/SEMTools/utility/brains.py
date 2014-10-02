@@ -6,6 +6,36 @@ from nipype.interfaces.base import CommandLine, CommandLineInputSpec, SEMLikeCom
 import os
 
 
+class fcsv_to_hdf5InputSpec(CommandLineInputSpec):
+    versionID = traits.Str(desc=",         Current version ID. It should be match with the version of BCD that will be using the output model file,       ", argstr="--versionID %s")
+    landmarksInformationFile = traits.Either(traits.Bool, File(), hash_files=False, desc=",         name of HDF5 file to write matrices into,       ", argstr="--landmarksInformationFile %s")
+    landmarkTypesList = File(desc=",         file containing list of landmark types,       ", exists=True, argstr="--landmarkTypesList %s")
+    modelFile = traits.Either(traits.Bool, File(), hash_files=False, desc=",         name of HDF5 file containing BRAINSConstellationDetector Model file (LLSMatrices, LLSMeans and LLSSearchRadii),       ", argstr="--modelFile %s")
+    landmarkGlobPattern = traits.Str(desc="Glob pattern to select fcsv files", argstr="--landmarkGlobPattern %s")
+    numberOfThreads = traits.Int(desc="Explicitly specify the maximum number of threads to use.", argstr="--numberOfThreads %d")
+
+
+class fcsv_to_hdf5OutputSpec(TraitedSpec):
+    landmarksInformationFile = File(desc=",         name of HDF5 file to write matrices into,       ", exists=True)
+    modelFile = File(desc=",         name of HDF5 file containing BRAINSConstellationDetector Model file (LLSMatrices, LLSMeans and LLSSearchRadii),       ", exists=True)
+
+
+class fcsv_to_hdf5(SEMLikeCommandLine):
+
+    """title: fcsv_to_hdf5 (BRAINS)
+
+category: Utility.BRAINS
+
+description: Convert a collection of fcsv files to a HDF5 format file
+
+"""
+
+    input_spec = fcsv_to_hdf5InputSpec
+    output_spec = fcsv_to_hdf5OutputSpec
+    _cmd = " fcsv_to_hdf5 "
+    _outputs_filenames = {'modelFile': 'modelFile', 'landmarksInformationFile': 'landmarksInformationFile.h5'}
+
+
 class FindCenterOfBrainInputSpec(CommandLineInputSpec):
     inputVolume = File(desc="The image in which to find the center.", exists=True, argstr="--inputVolume %s")
     imageMask = File(exists=True, argstr="--imageMask %s")

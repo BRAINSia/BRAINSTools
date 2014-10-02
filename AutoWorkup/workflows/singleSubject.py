@@ -90,7 +90,7 @@ def RunSubjectWorkflow(args):
                                                                          'inputspec.atlasLandmarkFilename'),
                                                                         ('template_weights_50Lmks_wts',
                                                                          'inputspec.atlasWeightFilename'),
-                                                                        ('LLSModel_50Lmks_hdf5', 'inputspec.LLSModel'),
+                                                                        ('LLSModel_50Lmks_h5', 'inputspec.LLSModel'),
                                                                         ('T1_50Lmks_mdl', 'inputspec.inputTemplateModel')]),
                                 ])
         if 'segmentation' in master_config['components']:

@@ -89,7 +89,7 @@ def create_singleSession(dataDict, master_config, interpMode, pipeline_name):
                                                               ('template_landmarks_50Lmks_fcsv',
                                                                'atlasLandmarkFilename'),
                                                               ('template_weights_50Lmks_wts', 'atlasWeightFilename'),
-                                                              ('LLSModel_50Lmks_hdf5', 'LLSModel'),
+                                                              ('LLSModel_50Lmks_h5', 'LLSModel'),
                                                               ('T1_50Lmks_mdl', 'inputTemplateModel')]),
                              ])
     if master_config['workflow_phase'] == 'atlas-based-reference':

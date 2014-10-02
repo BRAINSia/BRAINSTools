@@ -17,7 +17,7 @@ from SEMTools import *
 
     landmarkInitializeWF.connect( BAtlas, 'template_landmarks_50Lmks_fcsv', myLocalLMIWF,'inputsSpec.atlasLandmarkFilename')
     landmarkInitializeWF.connect( BAtlas, 'template_weights_50Lmks_wts', myLocalLMIWF,'inputsSpec.atlasWeightFilename')
-    landmarkInitializeWF.connect( BAtlas, 'LLSModel_50Lmks_hdf5', myLocalLMIWF, 'inputspec.LLSModel')
+    landmarkInitializeWF.connect( BAtlas, 'LLSModel_50Lmks_h5', myLocalLMIWF, 'inputspec.LLSModel')
     landmarkInitializeWF.connect( BAtlas, 'T1_50Lmks_mdl', myLocalLMIWF, 'inputspec.inputTemplateModel')
 
     landmarkInitializeWF.connect(BAtlas,'template_t1',myLocalLMIWF,'inputsSpec.atlasVolume')

@@ -123,6 +123,11 @@ public:
       return GetMapVectorFirstElement(this->m_AtlasOriginalImageList);
     }
 
+  InternalImagePointer GetSecondModalityAtlasOriginalImage(const std::string type)
+    {
+      return *(this->m_AtlasOriginalImageList.find( type )->second.begin());
+    }
+
   void SetAtlasOriginalImageList(MapOfFloatImageVectors & NewAtlasList);
 
   void SetIntraSubjectOriginalImageList(MapOfFloatImageVectors & NewImageList);
@@ -159,6 +164,9 @@ public:
   itkSetObjectMacro(KeySubjectImage,InternalImageType);
   //itkGetConstObjectMacro(KeySubjectImage,InternalImageType);
   itkGetModifiableObjectMacro(KeySubjectImage,InternalImageType);
+
+  itkSetObjectMacro(SecondKeySubjectImage,InternalImageType);
+  itkGetModifiableObjectMacro(SecondKeySubjectImage,InternalImageType);
 
   void SetAtlasLinearTransformChoice(const std::string & c)
   {
@@ -220,6 +228,9 @@ private:
   GenericTransformType::Pointer m_AtlasToSubjectInitialTransform;
   MapOfTransformLists           m_IntraSubjectTransforms;
   InternalImagePointer          m_KeySubjectImage;//The image to be used for intra-subject registration
+  InternalImagePointer          m_SecondKeySubjectImage;//The image to be used for atlas to subject
+                                                        //registration in the case of multimodal
+                                                        //method is supported, e.g., SyN
 
   bool m_UseNonLinearInterpolation;
   bool m_DoneRegistration;

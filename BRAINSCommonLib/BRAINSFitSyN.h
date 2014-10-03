@@ -154,6 +154,7 @@ simpleSynReg( typename FixedImageType::Pointer & infixedImage,
     // to our only stage of registration. Second metric has the same parameters but different input images.
     if( infixedImage2.IsNotNull() && inmovingImage2.IsNotNull() )
       {
+      std::cout<<"Do Multimodal Registration..."<<std::endl;
       typename FixedCasterType::Pointer fixedCaster2 = FixedCasterType::New();
       fixedCaster2->SetInput( infixedImage2 );
       fixedCaster2->Update();

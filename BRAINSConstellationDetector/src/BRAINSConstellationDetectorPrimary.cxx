@@ -22,7 +22,6 @@
 
 BRAINSConstellationDetectorPrimary::BRAINSConstellationDetectorPrimary()
 {
-  this->m_Version = "v0.0";
   this->m_houghEyeDetectorMode = 1;
   this->m_mspQualityLevel = 2;
   this->m_writedebuggingImagesLevel = 0;
@@ -94,13 +93,6 @@ bool BRAINSConstellationDetectorPrimary::Compute( void )
     std::cerr << "Error reading LLS Model" << std::endl;
     return EXIT_FAILURE;
     }
-  if( theModel.GetVersion().compare( this->m_Version ) != 0 )
-    {
-    itkGenericExceptionMacro(<<"Input LLSModel File Is Outdated!\n"
-                             << "-Requested version: " << this->m_Version
-                             << ", -Input LLSModelFile version: " << theModel.GetVersion() << std::endl);
-    }
-
   llsMeans = theModel.GetLLSMeans();
   llsMatrices = theModel.GetLLSMatrices();
   searchRadii = theModel.GetSearchRadii();
@@ -241,7 +233,6 @@ bool BRAINSConstellationDetectorPrimary::Compute( void )
     }
 
   // tell the constellation detector whehter Hough eye detector fails
-  constellation2->SetVersion( this->m_Version );
   constellation2->SetHoughEyeFailure( houghEyeDetector->GetFailure() );
   constellation2->SetInputTemplateModel( this->m_inputTemplateModel );
   constellation2->SetMspQualityLevel( this->m_mspQualityLevel );

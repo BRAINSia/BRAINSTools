@@ -33,6 +33,8 @@
 #include "landmarksDataSet.h"
 #include "landmarksConstellationModelBase.h"
 #include "itkNumberToString.h"
+
+
 // HACK:  Remove the multiple inheritance here.
 class landmarksConstellationTrainingDefinitionIO : public landmarksConstellationModelBase,
   public std::vector<landmarksDataSet>   // This should be a private member
@@ -79,11 +81,6 @@ public:
       }
     try
       {
-      this->Read<std::string>(input, this->m_Version);
-      if( m_Version.compare(0,1,"v") != 0 )
-        {
-        itkGenericExceptionMacro(<< "Invalid version number! Version ID must start with character \"v\"");
-        }
       this->Read<unsigned int>(input, this->m_NumDataSets);
       // Note, more than 2 datasets are needed in order to get valid sample
       // means and variances.
@@ -158,7 +155,6 @@ std::ostream & operator<<(std::ostream & os, const landmarksConstellationTrainin
 {
   itk::NumberToString<double> doubleToString;
 
-  os << def.GetVersion() << std::endl;
   os << def.GetNumDataSets() << std::endl;
   os << def.GetSearchboxDims() << " "
      << def.GetResolutionUnits() << std::endl;

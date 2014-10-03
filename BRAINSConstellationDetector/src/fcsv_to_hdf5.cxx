@@ -795,7 +795,6 @@ int main(int argc, char* argv[])
     }
   LLSModel theModel;
   theModel.SetFileName(modelFile);
-  theModel.SetVersion(Version);
 
   LLSModel::LLSMeansType       means;
   LLSModel::LLSMatricesType    matrices;

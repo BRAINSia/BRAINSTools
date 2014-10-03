@@ -43,7 +43,6 @@ BRAINSConstellationDetector2<TInputImage, TOutputImage>
   {
   /** Essential Parameters */
   // Inputs
-  this->m_Version = "v0.0";
   this->m_InputTemplateModel = "";
   this->m_MspQualityLevel = 2;
   this->m_OtsuPercentileThreshold = 0.01;
@@ -115,12 +114,6 @@ BRAINSConstellationDetector2<TInputImage, TOutputImage>
   landmarksConstellationModelIO myModel;
   myModel.ReadModelFile( this->m_InputTemplateModel );
 
-  if( myModel.GetVersion().compare( this->m_Version ) != 0 )
-    {
-    itkGenericExceptionMacro(<<"Input model file is outdated.\n"
-                             << "-Input model file version: " << myModel.GetVersion()
-                             << ", -Requested version: " << this->m_Version << std::endl);
-    }
 
   if( LMC::globalverboseFlag )
     {

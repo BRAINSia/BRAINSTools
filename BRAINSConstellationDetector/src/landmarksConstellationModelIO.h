@@ -39,19 +39,9 @@
 #include <cstring>
 #include <map>
 
-// Capture a SIGSEGV with a signal handler and still generate a core file
-#include <signal.h>
+#include "BRAINSConstellationDetectorVersion.h"
 
-inline void
-clean_exit_on_sig(int sig)
-{
-  std::cout << "SEGFAULT Received! Input Template Model File Is Probably Outdated!" << std::endl << std::endl;
-  signal(sig, SIG_DFL);
-  kill(getpid(), sig);
-
-}
 ////
-
 inline void
 defineTemplateIndexLocations
   (const float r,
@@ -275,7 +265,6 @@ public:
       {
       this->Write<unsigned int>(output, file_signature);   // Write out the
                                                            // signature first
-
       /*
        * WEI: As the new model deals with arbitrary landmarks, we need to
        * write the landmark names to the model file in order to
@@ -284,6 +273,8 @@ public:
        * landmark names with variable length.
        */
       this->Write<char>(output, '\n');
+
+      output << BCDVersionString << std::endl;
 
       std::map<std::string, bool>::const_iterator it2;
       for( it2 = this->m_TemplateMeansComputed.begin();
@@ -295,7 +286,6 @@ public:
         }
       output << "END" << std::endl;
 
-      this->Write<std::string>( output, this->GetVersion() );
       this->Write<unsigned int>( output, this->GetSearchboxDims() );
       this->Write<float>( output, this->GetResolutionUnits() );
       this->Write<unsigned int>( output, this->GetNumDataSets() );
@@ -353,7 +343,6 @@ public:
     //
     //
     // //////////////////////////////////////////////////////////////////////////
-    std::cout << "VersionNumber"    << ": " << this->GetVersion() << std::endl;
     std::cout << "SearchboxDims"    << ": " << this->GetSearchboxDims() << std::endl;
     std::cout << "ResolutionUnits"  << ": " << this->GetResolutionUnits() << std::endl;
     std::cout << "NumDataSets"      << ": " << this->GetNumDataSets() << std::endl;
@@ -402,6 +391,19 @@ public:
         this->m_Swapped = true;
         }
 
+        {
+        std::string Version("INVALID");
+
+        input >> Version;
+
+        std::cout << "Input model file version: " << Version << std::endl;
+        if( Version.compare( BCDVersionString ) != 0 )
+          {
+          itkGenericExceptionMacro(<<"Input model file is outdated.\n"
+            << "Input model file version: " << Version
+            << ", Required version: " << BCDVersionString << std::endl);
+          }
+         }
       /*
        * WEI: As the new model deals with arbitrary landmarks, we need to
        * write the landmark names to the model file in order to
@@ -425,13 +427,6 @@ public:
         }
 
 
-     this->Read<std::string>(input, this->m_Version);
-
-     // If input model file is too old and does not have m_Version variable,
-     // we should stop here and return a segfault with a proper message.
-      signal(SIGSEGV, clean_exit_on_sig);
-      std::cout << "Input Model File Version: " << this->m_Version << std::endl; // it may cause segfault
-                                                                                 // that is handled by clean_exit_on_sig
       this->Read<unsigned int>(input, this->m_SearchboxDims);
       this->Read<float>(input, this->m_ResolutionUnits);
       this->Read<unsigned int>(input, this->m_NumDataSets);
@@ -618,7 +613,6 @@ public:
 
   void CopyFromModelDefinition(const landmarksConstellationTrainingDefinitionIO & mDef)
   {
-    this->SetVersion( mDef.GetVersion() );
     this->SetNumDataSets( mDef.GetNumDataSets() );
     this->SetSearchboxDims( mDef.GetSearchboxDims() );
     this->SetResolutionUnits( mDef.GetResolutionUnits() );
@@ -680,11 +674,6 @@ public:
 
   bool operator==(Self & other)
   {
-    if( this->m_Version.compare(other.m_Version) != 0 )
-      {
-      return false;
-      }
-
     if( ( NE(this->m_SearchboxDims, other.m_SearchboxDims) )
         || ( NE(this->m_ResolutionUnits, other.m_ResolutionUnits) )
         || ( NE(this->m_NumDataSets, other.m_NumDataSets) )
@@ -745,6 +734,7 @@ private:
       {
       throw landmarksConstellationModelIO::readFail;
       }
+
     f.read( reinterpret_cast<char *>( &var ), sizeof( T ) );
     if( this->m_Swapped )
       {

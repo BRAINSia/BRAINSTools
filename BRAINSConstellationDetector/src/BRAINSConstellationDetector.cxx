@@ -25,11 +25,14 @@
 #include "BRAINSConstellationDetectorPrimary.h"
 #include "BRAINSConstellationDetectorCLP.h"
 
+#include "BRAINSConstellationDetectorVersion.h"
+
 int main( int argc, char *argv[] )
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
 
+  const std::string Version(BCDVersionString);
   std::cout << "Run BRAINSConstellationDetector Version: " << Version << std::endl;
   // ------------------------------------
   // Verify input parameters
@@ -100,7 +103,6 @@ int main( int argc, char *argv[] )
     }
 
   BRAINSConstellationDetectorPrimary BCD;
-  BCD.SetVersion( Version );
   BCD.SetNumberOfThreads( numberOfThreads );
   BCD.SetInputLandmarksEMSP( inputLandmarksEMSP );
   BCD.SetLLSModel( llsModel );

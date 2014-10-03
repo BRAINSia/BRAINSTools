@@ -40,8 +40,6 @@ public:
 
   void SetFileName(const std::string & fileName);
 
-  void SetVersion(const std::string & versionID);
-  const std::string & GetVersion();
   //
   // read & write return zero on success -1 otherwise.
   int Read();
@@ -80,7 +78,6 @@ private:
 
 private:
   std::string               m_FileName;
-  std::string               m_Version;
   LLSMeansType              m_LLSMeans;
   LLSMatricesType           m_LLSMatrices;
   LLSSearchRadiiType        m_LLSSearchRadii;

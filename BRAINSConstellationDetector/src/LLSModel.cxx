@@ -18,6 +18,9 @@
  *=========================================================================*/
 #include "LLSModel.h"
 #include <iostream>
+
+#include "BRAINSConstellationDetectorVersion.h"
+
 LLSModel
 ::LLSModel() : m_H5File(0)
 {
@@ -137,8 +140,7 @@ LLSModel
     {
     return -1;
     }
-  if( this->m_Version.empty() ||
-      this->m_LLSMeans.empty() ||
+  if( this->m_LLSMeans.empty() ||
       this->m_LLSMatrices.empty() ||
       this->m_LLSSearchRadii.empty() )
     {
@@ -148,7 +150,7 @@ LLSModel
     {
     this->m_H5File = new H5::H5File(this->m_FileName.c_str(), H5F_ACC_TRUNC);
 
-    this->WriteString(LLSModel::m_LLSVersionGroupName, this->m_Version);
+    this->WriteString(LLSModel::m_LLSVersionGroupName, BCDVersionString);
 
     this->m_H5File->createGroup(LLSModel::m_LLSMeansGroupName);
     for( LLSMeansType::iterator it = this->m_LLSMeans.begin();
@@ -329,7 +331,16 @@ LLSModel
     this->m_H5File = new H5::H5File(this->m_FileName.c_str(), H5F_ACC_RDONLY);
 
     // Read version ID
-    this->m_Version = this->ReadString(LLSModel::m_LLSVersionGroupName);
+      {
+      const std::string Version = this->ReadString(LLSModel::m_LLSVersionGroupName);
+      if( Version.compare( BCDVersionString ) != 0 )
+        {
+        itkGenericExceptionMacro(<<"Input LLSModel File Is Outdated!\n"
+          << "Input LLSModelFile version: " << Version
+          << ", Required version: " << BCDVersionString << std::endl);
+        }
+      }
+
 
     H5::Group MeansGroup(this->m_H5File->openGroup(LLSModel::m_LLSMeansGroupName) );
 
@@ -439,18 +450,4 @@ LLSModel
 ::GetSearchRadii()
 {
   return m_LLSSearchRadii;
-}
-
-void
-LLSModel
-::SetVersion(const std::string & versionID)
-{
-  m_Version = versionID;
-}
-
-const std::string &
-LLSModel
-::GetVersion()
-{
-  return m_Version;
 }

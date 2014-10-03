@@ -119,9 +119,6 @@ public:
   void PrintSelf(std::ostream & os, Indent indent) const;
 
   // Set Basic Inputs
-  /** Set version ID */
-  itkSetMacro(Version, std::string);
-
   /** Set the filename of the output transform */
   itkSetMacro(Transform, std::string);
 
@@ -311,7 +308,6 @@ protected:
 
   /** Essential Parameters */
   // Inputs
-  std::string      m_Version;
 
   std::string      m_Transform;
   std::string      m_InputTemplateModel;

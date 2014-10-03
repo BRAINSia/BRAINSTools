@@ -9,12 +9,6 @@
     <version>1.0</version>
     <documentation-url>http://www.nitrc.org/projects/brainscdetector/</documentation-url>
     <parameters>
-      <string>
-        <name>Version</name>
-        <longflag>VersionID</longflag>
-        <description>Current version ID.</description>
-        <default>v1.0</default>
-      </string>
         <integer>
             <name>houghEyeDetectorMode</name>
             <label>Hough Eye Detector Mode</label>
@@ -390,7 +384,7 @@
             </description>
             <channel>input</channel>
         </file>
-        
+
 	 <file fileExtensions=".fcsv">
             <name>atlasLandmarkWeights</name>
             <label>Atlas Landmarks Weights</label>

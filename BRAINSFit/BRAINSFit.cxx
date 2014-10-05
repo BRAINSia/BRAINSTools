@@ -299,6 +299,27 @@ int main(int argc, char *argv[])
    **********************/
   extractMovingVolume = ExtractImage<MovingVolumeType>(OriginalMovingVolume,
                                                        movingVolumeTimeIndex);
+  // Multimodal registration input setting
+  FixedVolumeType::Pointer  extractFixedVolume2=NULL;
+  MovingVolumeType::Pointer extractMovingVolume2=NULL;
+  if( fixedVolume2 != ""  && movingVolume2 != "" )
+    {
+    InputImageType::Pointer
+      OriginalFixedVolume2( itkUtil::ReadImage<InputImageType>(fixedVolume2) );
+    std::cout << "Original Fixed image origin"
+              << OriginalFixedVolume2->GetOrigin() << std::endl;
+    extractFixedVolume2= ExtractImage<FixedVolumeType>(OriginalFixedVolume2,
+                                                       fixedVolumeTimeIndex);
+
+    InputImageType::Pointer
+      OriginalMovingVolume2( itkUtil::ReadImage<InputImageType>(movingVolume2) );
+    std::cout << "Original Moving image origin"
+              << OriginalMovingVolume2->GetOrigin() << std::endl;
+    extractMovingVolume2= ExtractImage<MovingVolumeType>(OriginalMovingVolume2,
+                                                       movingVolumeTimeIndex);
+
+
+    }
 
 #ifdef USE_DebugImageViewer
   if( DebugImageDisplaySender.Enabled() )
@@ -430,6 +451,12 @@ int main(int argc, char *argv[])
     myHelper->SetTransformType(localTransformType);
     myHelper->SetFixedVolume( extractFixedVolume );
     myHelper->SetMovingVolume( extractMovingVolume );
+    if( extractFixedVolume2.IsNotNull() &&
+        extractMovingVolume2.IsNotNull() )
+      {
+      myHelper->SetFixedVolume2( extractFixedVolume2 );
+      myHelper->SetMovingVolume2( extractMovingVolume2 );
+      }
     myHelper->SetHistogramMatch(histogramMatch);
     myHelper->SetRemoveIntensityOutliers(removeIntensityOutliers);
     myHelper->SetNumberOfMatchPoints(numberOfMatchPoints);

@@ -578,6 +578,9 @@ BRAINSFitHelper::PrintCommandLine(const bool dumpTempVolumes, const std::string 
   const std::string fixedBinaryVolumeString("DEBUGFixedBinaryVolume_" + suffix + ".nii.gz");
   const std::string movingBinaryVolumeString("DEBUGMovingBinaryVolume_" + suffix + ".nii.gz");
 
+  const std::string fixedVolume2String("DEBUGFixedVolume2_" + suffix + ".nii.gz");
+  const std::string movingVolume2String("DEBUGMovingVolume2_" + suffix + ".nii.gz");
+
   std::ostringstream oss;
 
   oss << "BRAINSFit \\" << std::endl;
@@ -617,10 +620,48 @@ BRAINSFitHelper::PrintCommandLine(const bool dumpTempVolumes, const std::string 
         throw;
         }
       }
+      if(this->m_FixedVolume2.IsNotNull() )
+        {
+        typedef itk::ImageFileWriter<FixedImageType> WriterType;
+        WriterType::Pointer writer = WriterType::New();
+        writer->UseCompressionOn();
+        writer->SetFileName(fixedVolume2String);
+        writer->SetInput(this->m_FixedVolume2);
+        try
+          {
+          writer->Update();
+          }
+        catch( itk::ExceptionObject & err )
+          {
+          oss << "Exception Object caught: " << std::endl;
+          oss << err << std::endl;
+          throw;
+          }
+        }
+      if(this->m_MovingVolume2.IsNotNull() )
+        {
+        typedef itk::ImageFileWriter<MovingImageType> WriterType;
+        WriterType::Pointer writer = WriterType::New();
+        writer->UseCompressionOn();
+        writer->SetFileName(movingVolume2String);
+        writer->SetInput(this->m_MovingVolume2);
+        try
+          {
+          writer->Update();
+          }
+        catch( itk::ExceptionObject & err )
+          {
+          oss << "Exception Object caught: " << std::endl;
+          oss << err << std::endl;
+          throw;
+          }
+        }
     }
   oss << "--costMetric " << this->m_CostMetric << " \\" << std::endl;
   oss << "--fixedVolume "  <<  fixedVolumeString   << "  \\" << std::endl;
   oss << "--movingVolume " <<  movingVolumeString  << "  \\" << std::endl;
+  oss << "--fixedVolume2 "  <<  fixedVolume2String   << "  \\" << std::endl;
+  oss << "--movingVolume2 " <<  movingVolume2String  << "  \\" << std::endl;
   if( this->m_HistogramMatch )
     {
     oss << "--histogramMatch " <<  "  \\" << std::endl;

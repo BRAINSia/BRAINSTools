@@ -797,6 +797,7 @@ int main(int argc, char * *argv)
       else if ( SecondKeyImageFirstRead.IsNull() && // Second modality to be used in
                 typeIt != inputVolumeMap.begin() )  // the atlas to subject registration
         {
+        muLogMacro( << "Set Second Key Image: ...\n" );
         SecondKeyImageFirstRead=denoisedImage;
         }
       if( debuglevel > 1 )

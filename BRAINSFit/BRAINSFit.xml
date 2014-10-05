@@ -27,6 +27,7 @@
       <default></default>
       <channel>input</channel>
     </image>
+
     <double>
       <name>samplingPercentage</name>
       <longflag>samplingPercentage</longflag>
@@ -219,6 +220,22 @@
 
   <parameters advanced="true">
     <label>Advanced Output Settings</label>
+    <image>
+      <name>fixedVolume2</name>
+      <longflag>fixedVolume2</longflag>
+      <label>Fixed Image Volume 2</label>
+      <description>Input fixed image that will be used for multimodal registration. (the moving image will be transformed into this image space).</description>
+      <channel>input</channel>
+      <default></default>
+    </image>
+    <image>
+      <name>movingVolume2</name>
+      <longflag>movingVolume2</longflag>
+      <label>Moving Image Volume2</label>
+      <description>Input moving image that will be used for multimodal registration(this image will be transformed into the fixed image space).</description>
+      <default></default>
+      <channel>input</channel>
+    </image>
     <string-enumeration>
       <name>outputVolumePixelType</name>
       <longflag>outputVolumePixelType</longflag>

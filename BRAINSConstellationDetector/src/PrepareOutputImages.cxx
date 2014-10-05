@@ -52,7 +52,6 @@ namespace itk
     const double lOtsuPercentileThreshold
   )
     {
-    typedef ImageDuplicator<SImageType>                        DuplicatorType;
     typedef ResampleInPlaceImageFilter<SImageType, SImageType> ResampleIPFilterType;
     typedef ResampleIPFilterType::Pointer                      ResampleIPFilterPointer;
 

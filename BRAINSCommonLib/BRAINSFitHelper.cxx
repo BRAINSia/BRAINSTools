@@ -129,7 +129,7 @@ BRAINSFitHelper::BRAINSFitHelper() :
   m_PromptUserAfterDisplay(false),
   m_FinalMetricValue(0.0),
   m_ObserveIterations(true),
-  m_CostMetric("MMI"), // Default to Mattes Mutual Information Metric
+  m_CostMetricName("MMI"), // Default to Mattes Mutual Information Metric
   m_UseROIBSpline(false),
   m_Helper(NULL),
   m_SamplingStrategy(AffineRegistrationType::NONE),
@@ -396,7 +396,7 @@ BRAINSFitHelper::Update(void)
   const bool     gradientfilter = false;
 
   GenericMetricType::Pointer metric;
-  if( this->m_CostMetric == "MMI" )
+  if( this->m_CostMetricName == "MMI" )
     {
     typedef itk::MattesMutualInformationImageToImageMetricv4<FixedImageType, MovingImageType, FixedImageType, double> MIMetricType;
     MIMetricType::Pointer mutualInformationMetric = MIMetricType::New();
@@ -413,7 +413,7 @@ BRAINSFitHelper::Update(void)
     this->SetupRegistration< MIMetricType >(metric);
     this->RunRegistration< MIMetricType >();
     }
-  else if( this->m_CostMetric == "MSE" )
+  else if( this->m_CostMetricName == "MSE" )
     {
     typedef itk::MeanSquaresImageToImageMetricv4<FixedImageType, MovingImageType, FixedImageType, double> MSEMetricType;
     MSEMetricType::Pointer meanSquareMetric = MSEMetricType::New();
@@ -423,7 +423,7 @@ BRAINSFitHelper::Update(void)
     this->SetupRegistration< MSEMetricType >(metric);
     this->RunRegistration< MSEMetricType >();
     }
-  else if( this->m_CostMetric == "NC" )
+  else if( this->m_CostMetricName == "NC" )
     {
     typedef itk::CorrelationImageToImageMetricv4<FixedImageType, MovingImageType, FixedImageType, double> corrMetricType;
     corrMetricType::Pointer corrMetric = corrMetricType::New();
@@ -432,7 +432,7 @@ BRAINSFitHelper::Update(void)
     this->SetupRegistration< corrMetricType >(metric);
     this->RunRegistration< corrMetricType >();
     }
-  else if( this->m_CostMetric == "MIH" )
+  else if( this->m_CostMetricName == "MIH" )
     {
     typedef itk::JointHistogramMutualInformationImageToImageMetricv4<FixedImageType, MovingImageType, FixedImageType, double> MutualInformationMetricType;
     MutualInformationMetricType::Pointer mutualInformationMetric = MutualInformationMetricType::New();
@@ -449,7 +449,7 @@ BRAINSFitHelper::Update(void)
     }
   else
     {
-    std::cout << "Metric \"" << this->m_CostMetric << "\" not valid!" << std::endl;
+    std::cout << "Metric \"" << this->m_CostMetricName << "\" not valid!" << std::endl;
     }
 }
 
@@ -564,7 +564,7 @@ BRAINSFitHelper::PrintSelf(std::ostream & os, Indent indent) const
     {
     os << indent << "CurrentGenericTransform: IS NULL" << std::endl;
     }
-  os << indent << "CostMetric:       " << this->m_CostMetric << std::endl;
+  os << indent << "CostMetric:       " << this->m_CostMetricName << std::endl;
 }
 
 void
@@ -657,7 +657,7 @@ BRAINSFitHelper::PrintCommandLine(const bool dumpTempVolumes, const std::string 
           }
         }
     }
-  oss << "--costMetric " << this->m_CostMetric << " \\" << std::endl;
+  oss << "--costMetric " << this->m_CostMetricName << " \\" << std::endl;
   oss << "--fixedVolume "  <<  fixedVolumeString   << "  \\" << std::endl;
   oss << "--movingVolume " <<  movingVolumeString  << "  \\" << std::endl;
   oss << "--fixedVolume2 "  <<  fixedVolume2String   << "  \\" << std::endl;

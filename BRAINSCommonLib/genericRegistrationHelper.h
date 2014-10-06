@@ -287,7 +287,7 @@ public:
       // typedef itk::MattesMutualInformationImageToImageMetricv4<TImage,TImage> MattesMutualInformationMetricType;
       static int TransformIterationCounter = 0;
       typename MattesMutualInformationMetricType::Pointer test_MMICostMetric =
-        dynamic_cast<MattesMutualInformationMetricType *>(this->m_CostMetricObject.GetPointer() );
+        dynamic_cast<MattesMutualInformationMetricType *>(this->m_ObserverCostMetricObject.GetPointer() );
       if( test_MMICostMetric.IsNotNull() )
         {
         typedef typename MattesMutualInformationMetricType::PDFValueType PDFValueType;
@@ -326,7 +326,7 @@ public:
   void SetMetricObject(typename MattesMutualInformationMetricType::Pointer metric_Object)
   {
     // NOTE:  Returns NULL if not MattesMutualInformationImageToImageMetric
-    this->m_CostMetricObject = dynamic_cast<MattesMutualInformationMetricType *>(metric_Object.GetPointer() );
+    this->m_ObserverCostMetricObject = dynamic_cast<MattesMutualInformationMetricType *>(metric_Object.GetPointer() );
     // NO NEED FOR CHECKING IF DYNAMIC CAST WORKED, invalid cast is OK with a
     // NULL return
   }
@@ -338,7 +338,7 @@ protected:
     m_MovingImage(NULL),
     m_FixedImage(NULL),
     m_Transform(NULL),
-    m_CostMetricObject(NULL)
+    m_ObserverCostMetricObject(NULL)
   {
   }
 
@@ -351,7 +351,7 @@ private:
   typename TImage::Pointer m_FixedImage;
   typename TTransform::Pointer m_Transform;
 
-  typename MattesMutualInformationMetricType::Pointer m_CostMetricObject;
+  typename MattesMutualInformationMetricType::Pointer m_ObserverCostMetricObject;
 
 #ifdef USE_DebugImageViewer
   DebugImageViewerClient m_DebugImageDisplaySender;
@@ -397,7 +397,18 @@ public:
   typedef typename TransformOutputType::ConstPointer
     TransformOutputConstPointer;
 
+  /** Constants for the image dimensions */
+  itkStaticConstMacro(FixedImageDimension, unsigned int, FixedImageType::ImageDimension);
   itkStaticConstMacro(MovingImageDimension, unsigned int, MovingImageType::ImageDimension);
+
+  typedef typename itk::ObjectToObjectMultiMetricv4< FixedImageDimension,
+                                                     MovingImageDimension,
+                                                     FixedImageType,
+                                                     double>                  MultiMetricType;
+  typedef typename itk::ImageToImageMetricv4< FixedImageType,
+                                              MovingImageType,
+                                              FixedImageType,
+                                              double >                        ImageMetricType;
 
   typedef itk::CompositeTransform<double, MovingImageDimension>     CompositeTransformType;
 
@@ -408,13 +419,9 @@ public:
 
   typedef itk::GradientDescentOptimizerBasev4Template< double > GenericOptimizerType;
 
-  typedef ImageRegistrationMethodv4< FixedImageType, MovingImageType > RegistrationType;
-  typedef typename MetricType::FixedImageMaskType  FixedBinaryVolumeType;
-  typedef typename FixedBinaryVolumeType::Pointer  FixedBinaryVolumePointer;
-  typedef typename MetricType::MovingImageMaskType MovingBinaryVolumeType;
-  typedef typename MovingBinaryVolumeType::Pointer MovingBinaryVolumePointer;
-
-  typedef typename RegistrationType::Pointer                    RegistrationPointer;
+  typedef ImageRegistrationMethodv4< FixedImageType,
+                                     MovingImageType >       RegistrationType;
+  typedef typename RegistrationType::Pointer                 RegistrationPointer;
 
   typedef itk::AffineTransform<double, 3>                                  AffineTransformType;
   typedef itk::ImageRegistrationMethodv4< FixedImageType, MovingImageType> AffineRegistrationType;
@@ -440,10 +447,20 @@ public:
 
   itkGetConstObjectMacro(FixedImage, FixedImageType);
 
+  /** Set/Get the Fixed image2. */
+  void SetFixedImage2(FixedImagePointer fixedImage2);
+
+  itkGetConstObjectMacro(FixedImage2, FixedImageType);
+
   /** Set/Get the Moving image. */
   void SetMovingImage(MovingImagePointer movingImage);
 
   itkGetConstObjectMacro(MovingImage, MovingImageType);
+
+  /** Set/Get the Moving image2. */
+  void SetMovingImage2(MovingImagePointer movingImage2);
+
+  itkGetConstObjectMacro(MovingImage2, MovingImageType);
 
   /** Set/Get the InitialTransfrom. */
   void SetInitialTransform(typename CompositeTransformType::Pointer initialTransform);
@@ -505,6 +522,8 @@ private:
 
   FixedImagePointer  m_FixedImage;
   MovingImagePointer m_MovingImage;
+  FixedImagePointer  m_FixedImage2;
+  MovingImagePointer m_MovingImage2;
 
   typename CompositeTransformType::Pointer m_CompositeTransform;
   TransformPointer                         m_Transform;

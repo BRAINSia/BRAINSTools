@@ -94,18 +94,21 @@ public:
   typedef typename MovingImageType::ConstPointer MovingImageConstPointer;
   typedef typename MovingImageType::Pointer      MovingImagePointer;
 
-  typedef typename itk::ImageToImageMetricv4
-                      <FixedImageType,
-                      MovingImageType,
-                      FixedImageType,
-                      double> MetricType;
-
   /** Constants for the image dimensions */
   itkStaticConstMacro(FixedImageDimension, unsigned int, FixedImageType::ImageDimension);
   itkStaticConstMacro(MovingImageDimension, unsigned int, MovingImageType::ImageDimension);
 
+  typedef itk::ObjectToObjectMetricBaseTemplate<double>                       MetricType;
+  typedef typename itk::ObjectToObjectMultiMetricv4< FixedImageDimension,
+                                                     MovingImageDimension,
+                                                     FixedImageType,
+                                                     double>                  MultiMetricType;
+  typedef typename itk::ImageToImageMetricv4< FixedImageType,
+                                              MovingImageType,
+                                              FixedImageType,
+                                              double >                        ImageMetricType;
 
-  typedef typename itk::CompositeTransform<double, 3>               CompositeTransformType;
+  typedef itk::CompositeTransform<double, MovingImageDimension>     CompositeTransformType;
   typedef typename CompositeTransformType::Pointer                  CompositeTransformPointer;
   typedef IdentityTransform<double, MovingImageDimension>           IdentityTransformType;
 

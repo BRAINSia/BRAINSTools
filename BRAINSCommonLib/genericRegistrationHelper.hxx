@@ -66,6 +66,8 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
 ::MultiModal3DMutualRegistrationHelper() :
   m_FixedImage(0),                         // has to be provided by the user.
   m_MovingImage(0),                        // has to be provided by the user.
+  m_FixedImage2(0),                        // has to be provided by the user.
+  m_MovingImage2(0),                       // has to be provided by the user.
   m_CompositeTransform(NULL),              /* It is set by initial moving transform and
                                               integrates that with registration output transform.*/
   m_Transform(0),                          // has to be provided by
@@ -155,9 +157,14 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
 #endif
   if( m_Transform->GetNumberOfParameters() == 12 )     //  Affine -> estimate scales automatically
     {
-    typedef itk::RegistrationParameterScalesFromPhysicalShift<MetricType> ScalesEstimatorType;
+    typename MultiMetricType::Pointer multiMetric =
+                  dynamic_cast<MultiMetricType *>( this->m_CostMetricObject.GetPointer() );
+    typename ImageMetricType::Pointer firstMetricComponent =
+                  dynamic_cast<ImageMetricType *>( multiMetric->GetMetricQueue()[0].GetPointer() );
+
+    typedef itk::RegistrationParameterScalesFromPhysicalShift<ImageMetricType> ScalesEstimatorType;
     typename ScalesEstimatorType::Pointer scalesEstimator = ScalesEstimatorType::New();
-    scalesEstimator->SetMetric( this->m_CostMetricObject );
+    scalesEstimator->SetMetric( firstMetricComponent );
     scalesEstimator->SetTransformForward( true );
 
     typedef itk::ConjugateGradientLineSearchOptimizerv4Template<double> ConjugateGradientDescentOptimizerType;
@@ -279,9 +286,22 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
     optimizer = versorOptimizer;
     }
 
+  std::vector<FixedImagePointer>  preprocessedFixedImagesList;
+  std::vector<MovingImagePointer> preprocessedMovingImagesList;
+  preprocessedFixedImagesList.push_back( m_FixedImage );
+  preprocessedMovingImagesList.push_back( m_MovingImage );
+  if( m_FixedImage2 && m_MovingImage2 )
+    {
+    preprocessedFixedImagesList.push_back( m_FixedImage2 );
+    preprocessedMovingImagesList.push_back( m_MovingImage2 );
+    }
+  for (unsigned int n=0; n<preprocessedFixedImagesList.size(); n++)
+    {
+    m_Registration->SetFixedImage( n, preprocessedFixedImagesList[n] );
+    m_Registration->SetMovingImage( n, preprocessedMovingImagesList[n] );
+    }
+
   m_Registration->SetInitialTransform(m_Transform);
-  m_Registration->SetFixedImage(0, m_FixedImage);
-  m_Registration->SetMovingImage(0, m_MovingImage);
   m_Registration->SetMetric(this->m_CostMetricObject);
   m_Registration->SetOptimizer(optimizer);
 
@@ -395,11 +415,6 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
     // Pass exception to caller
     throw err;
     }
-
-  std::cout << "METRIC       THREADS USED: " << this->m_CostMetricObject->GetNumberOfThreadsUsed()
-  << " of " << itk::MultiThreader::GetGlobalDefaultNumberOfThreads() <<  std::endl;
-  std::cout << "REGISTRATION THREADS USED: " << this->m_Registration->GetNumberOfThreads()
-  << " of " << itk::MultiThreader::GetGlobalDefaultNumberOfThreads() <<  std::endl;
 
     OptimizerPointer optimizer =
       dynamic_cast<OptimizerPointer>( m_Registration->GetOptimizer() );
@@ -546,6 +561,40 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
 }
 
 template <typename TTransformType, typename TOptimizer, typename TFixedImage,
+typename TMovingImage, typename MetricType>
+void
+MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
+                                     TMovingImage, MetricType>
+::SetFixedImage2(FixedImagePointer fixedImage2)
+{
+itkDebugMacro("setting Fixed Image to " << fixedImage2);
+
+if( this->m_FixedImage2.GetPointer() != fixedImage2 )
+  {
+  this->m_FixedImage2 = fixedImage2;
+  this->ProcessObject::SetNthInput(2, this->m_FixedImage2);
+  this->Modified();
+  }
+}
+
+template <typename TTransformType, typename TOptimizer, typename TFixedImage,
+typename TMovingImage, typename MetricType>
+void
+MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
+                                     TMovingImage, MetricType>
+::SetMovingImage2(MovingImagePointer movingImage2)
+{
+itkDebugMacro("setting Moving Image to " << movingImage2);
+
+if( this->m_MovingImage2.GetPointer() != movingImage2 )
+  {
+  this->m_MovingImage2 = movingImage2;
+  this->ProcessObject::SetNthInput(3, this->m_MovingImage2);
+  this->Modified();
+  }
+}
+
+template <typename TTransformType, typename TOptimizer, typename TFixedImage,
           typename TMovingImage, typename MetricType>
 void
 MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
@@ -625,6 +674,16 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
   os << indent << "Transform: " << m_Transform.GetPointer() << std::endl;
   os << indent << "Fixed Image: " << m_FixedImage.GetPointer() << std::endl;
   os << indent << "Moving Image: " << m_MovingImage.GetPointer() << std::endl;
+  if( m_FixedImage2 && m_MovingImage2 )
+    {
+    os << indent << "Fixed Image2: " << m_FixedImage2.GetPointer() << std::endl;
+    os << indent << "Moving Image2: " << m_MovingImage2.GetPointer() << std::endl;
+    }
+  else
+    {
+    os << indent << "Fixed Image2: IS NULL" << std::endl;
+    os << indent << "Moving Image2: IS NULL" << std::endl;
+    }
 }
 } // end namespace itk
 

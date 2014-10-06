@@ -41,18 +41,22 @@ simpleSynReg( typename FixedImageType::Pointer & infixedImage,
 {
   typename SyNRegistrationHelperType::Pointer regHelper = SyNRegistrationHelperType::New();
     {
+    /*
     const float lowerQuantile = 0.025;
     const float upperQuantile = 0.975;
     const bool  doWinsorize(false);
-    //regHelper->SetWinsorizeImageIntensities(doWinsorize, lowerQuantile, upperQuantile);
+    regHelper->SetWinsorizeImageIntensities(doWinsorize, lowerQuantile, upperQuantile);
+    */
     }
     {
     const bool doHistogramMatch(true);
     regHelper->SetUseHistogramMatching(doHistogramMatch);
     }
     {
+    /*
     const bool doEstimateLearningRateAtEachIteration = true;
-    //regHelper->SetDoEstimateLearningRateAtEachIteration( doEstimateLearningRateAtEachIteration );
+    regHelper->SetDoEstimateLearningRateAtEachIteration( doEstimateLearningRateAtEachIteration );
+    */
     }
     {
     std::vector<std::vector<unsigned int> > iterationList;

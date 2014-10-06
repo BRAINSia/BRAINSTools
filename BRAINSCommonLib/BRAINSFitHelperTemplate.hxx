@@ -507,7 +507,9 @@ DoCenteredInitialization( typename FixedImageType::Pointer & orientedFixedVolume
 template <class FixedImageType, class MovingImageType>
 BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::BRAINSFitHelperTemplate() :
   m_FixedVolume(NULL),
+  m_FixedVolume2(NULL),
   m_MovingVolume(NULL),
+  m_MovingVolume2(NULL),
   m_FixedBinaryVolume(NULL),
   m_MovingBinaryVolume(NULL),
   m_OutputFixedVolumeROI(""),
@@ -654,6 +656,23 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
   typedef itk::ImageMaskSpatialObject<MaskImageType::ImageDimension> ImageMaskSpatialObjectType;
   typedef itk::VersorRigid3DTransform<double>                        VersorRigid3DTransformType;
 
+  // The m_CostMetricObject should be a multi metric type.
+  typename MultiMetricType::Pointer multiMetric =
+                                      dynamic_cast<MultiMetricType *>( this->m_CostMetricObject.GetPointer() );
+  if( multiMetric.IsNull() )
+    {
+    itkGenericExceptionMacro("Error in metric type conversion");
+    }
+
+  std::vector<FixedImagePointer> preprocessedFixedImagesList;
+  std::vector<MovingImagePointer> preprocessedMovingImagesList;
+  preprocessedFixedImagesList.push_back( m_FixedVolume );
+  preprocessedMovingImagesList.push_back( m_MovingVolume );
+  if( m_FixedVolume2.IsNotNull() && m_MovingVolume2.IsNotNull() )
+    {
+    preprocessedFixedImagesList.push_back( m_FixedVolume2 );
+    preprocessedMovingImagesList.push_back( m_MovingVolume2 );
+    }
 
   if( this->m_DebugLevel > 3 )
     {
@@ -716,13 +735,17 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
   MovingImageType> InitializerType;
 
   TransformType::Pointer initialITKTransform =
-  DoCenteredInitialization<FixedImageType, MovingImageType,
-  TransformType, InitializerType, MetricType>(
-                                              m_FixedVolume,
-                                              m_MovingVolume,
-                                              m_FixedBinaryVolume,
-                                              m_MovingBinaryVolume,
-                                              localInitializeTransformMode, this->m_CostMetricObject);
+  DoCenteredInitialization<FixedImageType,
+                           MovingImageType,
+                           TransformType,
+                           InitializerType,
+                           MultiMetricType>(
+                                            m_FixedVolume,
+                                            m_MovingVolume,
+                                            m_FixedBinaryVolume,
+                                            m_MovingBinaryVolume,
+                                            localInitializeTransformMode,
+                                            multiMetric );
 
   // The currentGenericTransform will be initialized by estimated initial transform.
   this->m_CurrentGenericTransform = CompositeTransformType::New();
@@ -1370,7 +1393,10 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
         LBFGSBoptimizer->AddObserver(itk::IterationEvent(), observer);
         }
 
-      bsplineRegistration->SetFixedImage( 0, m_FixedVolume );
+      for (unsigned int n=0; n<preprocessedFixedImagesList.size(); n++)
+         {
+         bsplineRegistration->SetFixedImage( n, preprocessedFixedImagesList[n] );
+         }
 
       if( !this->m_InitializeRegistrationByCurrentGenericTransform )
         {
@@ -1381,7 +1407,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
           typedef float                                                                     VectorComponentType;
           typedef itk::Vector<VectorComponentType, 3> VectorPixelType;
           typedef itk::Image<VectorPixelType,  3>     DisplacementFieldType;
-          typename MovingImageType::Pointer warpedMoving =
+          typename MovingImageType::Pointer warpedMoving1 =
                                               GenericTransformImage<
                                                      MovingImageType,
                                                      MovingImageType,
@@ -1391,36 +1417,78 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
                                                                              m_BackgroundFillValue,
                                                                              "Linear",
                                                                              false );
-
-          bsplineRegistration->SetMovingImage( 0, warpedMoving );
+          preprocessedMovingImagesList.clear();
+          preprocessedMovingImagesList.push_back(warpedMoving1);
+          if( m_MovingVolume2.IsNotNull() )
+            {
+            typename MovingImageType::Pointer warpedMoving2 =
+                                                GenericTransformImage<
+                                                MovingImageType,
+                                                MovingImageType,
+                                                DisplacementFieldType>( this->m_MovingVolume2,
+                                                                        this->m_FixedVolume2,
+                                                                        this->m_CurrentGenericTransform.GetPointer(),
+                                                                        m_BackgroundFillValue,
+                                                                        "Linear",
+                                                                        false );
+            preprocessedMovingImagesList.push_back(warpedMoving2);
+            }
+          for (unsigned int n=0; n<preprocessedMovingImagesList.size(); n++)
+            {
+            bsplineRegistration->SetMovingImage( n, preprocessedMovingImagesList[n] );
+            }
 
           // Then warp the moving image mask as well if it is not null.
-          typedef typename MetricType::MovingImageMaskType     MovingImageMaskType;
-          typename MovingImageMaskType::ConstPointer movingMask =
-          dynamic_cast<MovingImageMaskType const *>( this->m_CostMetricObject->GetMovingImageMask() );
+          // Note: m_CostMetricObject should be multi metric object, and masks are get from the first metric object.
+          //
+          typename ImageMetricType::Pointer firstMetricComponent =
+                                                  dynamic_cast<ImageMetricType *>( multiMetric->GetMetricQueue()[0].GetPointer() );
+          if( firstMetricComponent.IsNull() )
+            {
+            std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
+            }
+
+          // Moving mask is the same in both metrics.
+          typename SpatialObjectType::ConstPointer movingMask = dynamic_cast<SpatialObjectType const *>(
+                                                                              firstMetricComponent->GetMovingImageMask() );
           if( movingMask.IsNotNull() )
             {
-            typename MaskImageType::Pointer warpedMovingMaskImage =
-                                                GenericTransformImage<
-                                                         MaskImageType,
-                                                         MaskImageType,
-                                                         DisplacementFieldType>(
-                                                                                 ExtractConstPointerToImageMaskFromImageSpatialObject(movingMask).GetPointer(),
-                                                                                 this->m_FixedVolume,
-                                                                                 this->m_CurrentGenericTransform.GetPointer(),
-                                                                                 m_BackgroundFillValue,
-                                                                                 "Linear",
-                                                                                 false );
+            typename MaskImageType::Pointer
+            warpedMovingMaskImage =
+                  GenericTransformImage<
+                           MaskImageType,
+                           MaskImageType,
+                           DisplacementFieldType>(
+                                                   ExtractConstPointerToImageMaskFromImageSpatialObject(movingMask).GetPointer(),
+                                                   this->m_FixedVolume,
+                                                   this->m_CurrentGenericTransform.GetPointer(),
+                                                   m_BackgroundFillValue,
+                                                   "Linear",
+                                                   false );
 
 
-            const MovingImageMaskType *warpedMask =
+            const SpatialObjectType *warpedMask =
               ConvertMaskImageToSpatialMask( warpedMovingMaskImage.GetPointer() ).GetPointer();
-            m_CostMetricObject->SetMovingImageMask( warpedMask );
+            firstMetricComponent->SetMovingImageMask( warpedMask );
+            // The same for the second metric component in the case of multi modality
+            if( preprocessedFixedImagesList.size() > 1)
+              {
+              typename ImageMetricType::Pointer secondMetricComponent =
+                                                    dynamic_cast<ImageMetricType *>( multiMetric->GetMetricQueue()[0].GetPointer() );
+              if( secondMetricComponent.IsNull() )
+                {
+                std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;
+                }
+              secondMetricComponent->SetMovingImageMask( warpedMask );
+              }
             }
           }
         else
           {
-          bsplineRegistration->SetMovingImage( 0, m_MovingVolume );
+          for (unsigned int n=0; n<preprocessedMovingImagesList.size(); n++)
+            {
+            bsplineRegistration->SetMovingImage( n, preprocessedMovingImagesList[n] );
+            }
           m_CurrentGenericTransform = CompositeTransformType::New();
           m_CurrentGenericTransform->ClearTransformQueue();
           if( this->m_DebugLevel > 4 )
@@ -1431,7 +1499,10 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
         }
       else
         {
-        bsplineRegistration->SetMovingImage( 0, m_MovingVolume );
+        for (unsigned int n=0; n<preprocessedMovingImagesList.size(); n++)
+          {
+          bsplineRegistration->SetMovingImage( n, preprocessedMovingImagesList[n] );
+          }
 
         if( this->m_CurrentGenericTransform.IsNull() )
           {
@@ -1602,7 +1673,23 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::PrintSelf(std::ostream
 {
   // Superclass::PrintSelf(os,indent);
   os << indent << "FixedVolume:\n"  <<   this->m_FixedVolume << std::endl;
+  if( this->m_FixedVolume2.IsNotNull() )
+    {
+    os << indent << "FixedVolume2:\n" << this->m_FixedVolume2 << std::endl;
+    }
+  else
+    {
+    os << indent << "FixedVolume2: IS NULL" << std::endl;
+    }
   os << indent << "MovingVolume:\n" <<   this->m_MovingVolume << std::endl;
+  if( this->m_MovingVolume2.IsNotNull() )
+    {
+    os << indent << "MovingVolume2:\n" << this->m_MovingVolume2 << std::endl;
+    }
+  else
+    {
+    os << indent << "MovingVolume2: IS NULL" << std::endl;
+    }
   if( this->m_FixedBinaryVolume.IsNotNull() )
     {
     os << indent << "FixedBinaryVolume:\n" << this->m_FixedBinaryVolume << std::endl;

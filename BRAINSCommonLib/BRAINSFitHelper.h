@@ -93,6 +93,7 @@ public:
   typedef itk::BRAINSFitHelperTemplate<FixedImageType, MovingImageType> HelperType;
 
   typedef HelperType::MetricType                             GenericMetricType;
+  typedef HelperType::MultiMetricType                        MultiMetricType;
 
   typedef itk::ImageRegistrationMethodv4<FixedImageType, MovingImageType>  AffineRegistrationType;
   typedef itk::AffineTransform<double, 3>                                  AffineTransformType;
@@ -220,8 +221,8 @@ public:
   itkSetMacro(RemoveIntensityOutliers, float);
   itkGetConstMacro(RemoveIntensityOutliers, float);
 
-  itkSetMacro(CostMetric, std::string);
-  itkGetConstMacro(CostMetric, std::string);
+  itkSetMacro(CostMetricName, std::string);
+  itkGetConstMacro(CostMetricName, std::string);
 
   itkSetMacro(NormalizeInputImages, bool);
   itkSetMacro(InitializeRegistrationByCurrentGenericTransform, bool);
@@ -297,7 +298,7 @@ private:
   bool                                       m_PromptUserAfterDisplay;
   double                                     m_FinalMetricValue;
   bool                                       m_ObserveIterations;
-  std::string                                m_CostMetric;
+  std::string                                m_CostMetricName;
   bool                                       m_UseROIBSpline;
   itk::Object::Pointer                       m_Helper;
   SamplingStrategyType                       m_SamplingStrategy;
@@ -309,9 +310,15 @@ private:
 
 template <class TLocalCostMetric>
 void
-BRAINSFitHelper::SetupRegistration(GenericMetricType *localCostMetric)
+BRAINSFitHelper::SetupRegistration(GenericMetricType *costMetric)
 {
   typedef typename TLocalCostMetric::FixedSampledPointSetType                    MetricSamplePointSetType;
+
+  typename TLocalCostMetric::Pointer localCostMetric = dynamic_cast<TLocalCostMetric *>( costMetric );
+  if( localCostMetric.IsNull() )
+    {
+    itkGenericExceptionMacro("ERROR in metric type conversion");
+    }
 
   localCostMetric->SetVirtualDomainFromImage(this->m_FixedVolume);
 
@@ -382,6 +389,18 @@ BRAINSFitHelper::SetupRegistration(GenericMetricType *localCostMetric)
     localCostMetric->SetFixedSampledPointSet( samplePointSet );
     }
 
+  unsigned int numberOfinputImageSets = 1;
+  if( m_FixedVolume2.IsNotNull() && m_MovingVolume2.IsNotNull() )
+    {
+    numberOfinputImageSets = 2;
+    }
+  typename MultiMetricType::Pointer multiMetric = MultiMetricType::New();
+  for( unsigned int i=0; i<numberOfinputImageSets; i++)
+     {
+     multiMetric->AddMetric( localCostMetric ); // In the case of multi-modality,
+                                                // The same metric is used for both modalities.
+     }
+
   typename HelperType::Pointer
   myHelper = BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::New();
   myHelper->SetTransformType(this->m_TransformType);
@@ -417,12 +436,12 @@ BRAINSFitHelper::SetupRegistration(GenericMetricType *localCostMetric)
   myHelper->SetDisplayDeformedImage(this->m_DisplayDeformedImage);
   myHelper->SetPromptUserAfterDisplay(this->m_PromptUserAfterDisplay);
   myHelper->SetDebugLevel(this->m_DebugLevel);
-  myHelper->SetCostMetricObject(localCostMetric);
+  myHelper->SetCostMetricObject(multiMetric);
   myHelper->SetUseROIBSpline(this->m_UseROIBSpline);
   myHelper->SetInitializeRegistrationByCurrentGenericTransform(this->m_InitializeRegistrationByCurrentGenericTransform);
   myHelper->SetMaximumNumberOfEvaluations(this->m_MaximumNumberOfEvaluations);
   myHelper->SetMaximumNumberOfCorrections(this->m_MaximumNumberOfCorrections);
-  myHelper->SetSyNMetricType( this->m_CostMetric );
+  myHelper->SetSyNMetricType( this->m_CostMetricName );
   if( this->m_DebugLevel > 7 )
     {
     this->PrintCommandLine(true, "BF");
@@ -443,10 +462,6 @@ BRAINSFitHelper::RunRegistration()
   this->m_CurrentGenericTransform = myHelper->GetCurrentGenericTransform();
   this->m_ActualNumberOfIterations = myHelper->GetActualNumberOfIterations();
   this->m_PermittedNumberOfIterations = myHelper->GetPermittedNumberOfIterations();
-  //this->m_GenericTransformList.resize(myHelper->GetGenericTransformListPtr()->size() );
-  //std::copy(myHelper->GetGenericTransformListPtr()->begin(),
-  //          myHelper->GetGenericTransformListPtr()->end(), this->m_GenericTransformList.begin() );
-
 /*
   // Find the final metric value based on the used metric type and returned output transform
   // typedef typename HelperType::MetricType    GenericMetricType;

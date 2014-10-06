@@ -306,14 +306,14 @@ int main(int argc, char *argv[])
     {
     InputImageType::Pointer
       OriginalFixedVolume2( itkUtil::ReadImage<InputImageType>(fixedVolume2) );
-    std::cout << "Original Fixed image origin"
+    std::cout << "Second Fixed image original origin"
               << OriginalFixedVolume2->GetOrigin() << std::endl;
     extractFixedVolume2= ExtractImage<FixedVolumeType>(OriginalFixedVolume2,
                                                        fixedVolumeTimeIndex);
 
     InputImageType::Pointer
       OriginalMovingVolume2( itkUtil::ReadImage<InputImageType>(movingVolume2) );
-    std::cout << "Original Moving image origin"
+    std::cout << "Second Moving image original origin"
               << OriginalMovingVolume2->GetOrigin() << std::endl;
     extractMovingVolume2= ExtractImage<MovingVolumeType>(OriginalMovingVolume2,
                                                        movingVolumeTimeIndex);
@@ -491,7 +491,7 @@ int main(int argc, char *argv[])
     myHelper->SetDisplayDeformedImage(UseDebugImageViewer);
     myHelper->SetPromptUserAfterDisplay(PromptAfterImageSend);
     myHelper->SetDebugLevel(debugLevel);
-    myHelper->SetCostMetric(costMetric);
+    myHelper->SetCostMetricName(costMetric);
     myHelper->SetUseROIBSpline(useROIBSpline);
     myHelper->SetSamplingStrategy(metricSamplingStrategy);
     myHelper->SetInitializeRegistrationByCurrentGenericTransform(initializeRegistrationByCurrentGenericTransform);

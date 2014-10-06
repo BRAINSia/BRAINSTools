@@ -478,6 +478,15 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
       std::cout<< "Multimodal SyN Registration will be run." <<   std::endl ;
       muLogMacro( << "Multimodal SyN Registration will be run." <<   std::endl );
       std::cout<<this->GetModifiableSecondKeySubjectImage()<<std::endl;
+      std::cout<<this->GetSecondModalityAtlasOriginalImage("T2")<<std::endl;
+      atlasToSubjectRegistrationHelper->SetFixedVolume2(this->GetModifiableSecondKeySubjectImage());
+      atlasToSubjectRegistrationHelper->SetMovingVolume2(this->GetSecondModalityAtlasOriginalImage("T2"));
+      }
+    else
+      {
+      std::cout<< "Multimodal SyN Registration will NOT be run." <<   std::endl;
+      muLogMacro( << "Multimodal SyN Registration will NOT be run." <<   std::endl );
+      }
     muLogMacro( << "Generating MovingImage Mask (Atlas 0)" <<   std::endl );
     typedef itk::BRAINSROIAutoImageFilter<InternalImageType, itk::Image<unsigned char, 3> > LocalROIAutoType;
     typename LocalROIAutoType::Pointer  ROIFilter = LocalROIAutoType::New();

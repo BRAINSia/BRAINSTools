@@ -767,12 +767,14 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
 
 template <class TInputImage, class TProbabilityImage>
 void EMSegmentationFilter<TInputImage, TProbabilityImage>
-::WriteDebugPosteriors(const unsigned int ComputeIterationID) const
+::WriteDebugPosteriors(const unsigned int ComputeIterationID,
+                       const std::string ClassifierID,
+                       const ProbabilityImageVectorType & Posteriors) const
 {
   if( this->m_DebugLevel > 9 )
     {
     // write out posteriors
-    const unsigned int numPosteriors = this->m_Posteriors.size();
+    const unsigned int numPosteriors = Posteriors.size();
     const unsigned int write_posteriors_level = ComputeIterationID; // DEBUG:
                                                                     //  This
                                                                     // code is
@@ -789,11 +791,11 @@ void EMSegmentationFilter<TInputImage, TProbabilityImage>
 
       std::stringstream template_index_stream("");
       template_index_stream << iprob;
-      const std::string fn = this->m_OutputDebugDir + "/POSTERIOR_INDEX_" + template_index_stream.str() + "_"
+      const std::string fn = this->m_OutputDebugDir + "/POSTERIOR_" + ClassifierID + "_INDEX_" + template_index_stream.str() + "_"
         + this->m_PriorNames[iprob] + "_LEVEL_" + write_posteriors_level_stream.str() + ".nii.gz";
 
       muLogMacro(<< "Writing posterior images... " << fn <<  std::endl);
-      writer->SetInput(m_Posteriors[iprob]);
+      writer->SetInput(Posteriors[iprob]);
       writer->SetFileName(fn);
       writer->UseCompressionOn();
       writer->Update();
@@ -1207,7 +1209,8 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
                     std::vector<RegionStats> & ListOfClassStatistics,
                     const IntVectorType & priorLabelCodeVector,
                     std::vector<bool> & priorIsForegroundPriorVector,
-                    typename ByteImageType::Pointer & nonAirRegion)
+                    typename ByteImageType::Pointer & nonAirRegion,
+                    const unsigned int IterationID)
 {
   muLogMacro(<< "Computing posteriors..." << std::endl);
   const unsigned int numClasses = Priors.size();
@@ -1220,11 +1223,12 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
                                    IntensityImages,
                                    ListOfClassStatistics);
 
+  NormalizeProbListInPlace<TProbabilityImage>( Posteriors );
+  this->WriteDebugPosteriors(IterationID, "EM", Posteriors);
+
   // Run KNN on posteriors
   if( m_USEKNN )
     {
-    NormalizeProbListInPlace<TProbabilityImage>( Posteriors );
-
     ByteImagePointer thresholdedLabels = NULL;
     ByteImagePointer dirtyThresholdedLabels = NULL; // It is the label image that is used in ComputeKNNPosteriors,
                                                     // since it has all labels (not only foreground region).
@@ -1232,15 +1236,17 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
                                                             priorLabelCodeVector, nonAirRegion,
                                                             dirtyThresholdedLabels,
                                                             thresholdedLabels, KNN_InclusionThreshold);
-
-    const bool writeKNNLabelImage = true; // DEBUG: Write label image to the disk.
-    if( writeKNNLabelImage )
+    if( this->m_DebugLevel > 6 )  // DEBUG: Write label image to the disk.
       {
-      muLogMacro(<< "\nWrite ThresholdedLabels for debugging." << std::endl);
+      muLogMacro(<< "\nWrite ThresholdedLabels for debugging..." << std::endl);
+      std::stringstream write_label_image_level_stream;
+      write_label_image_level_stream << IterationID;
+      const std::string fn = this->m_OutputDebugDir + "/KNNLabelsImage_Level_"
+                             + write_label_image_level_stream.str() + ".nii.gz";
       typedef itk::ImageFileWriter<ByteImageType> LabelImageWriterType;
       typename LabelImageWriterType::Pointer cleanLabelWriter = LabelImageWriterType::New();
       cleanLabelWriter->SetInput( dirtyThresholdedLabels );
-      cleanLabelWriter->SetFileName("DEBUG_KNNDirtyThresholdedLabels.nii.gz");
+      cleanLabelWriter->SetFileName(fn);
       cleanLabelWriter->Update();
       }
 
@@ -1251,10 +1257,12 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
                                                     IntensityImages,
                                                     dirtyThresholdedLabels,
                                                     priorLabelCodeVector);
-
     ComputeKNNPosteriorsTimer.Stop();
     itk::RealTimeClock::TimeStampType knnElapsedTime = ComputeKNNPosteriorsTimer.GetTotal();
     muLogMacro(<< "Computing KNN posteriors took " << knnElapsedTime << " " << ComputeKNNPosteriorsTimer.GetUnit() << std::endl);
+
+    NormalizeProbListInPlace<TProbabilityImage>( Posteriors );
+    this->WriteDebugPosteriors(IterationID, "KNN", Posteriors);
     }
   ////
   return Posteriors;
@@ -2311,10 +2319,8 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
                               this->m_CorrectedImages,
                               this->m_ListOfClassStatistics,
                               this->m_PriorLabelCodeVector,
-                              this->m_PriorIsForegroundPriorVector, this->m_NonAirRegion);
+                              this->m_PriorIsForegroundPriorVector, this->m_NonAirRegion, CurrentEMIteration);
 
-    NormalizeProbListInPlace<TProbabilityImage>(this->m_Posteriors);
-    this->WriteDebugPosteriors(CurrentEMIteration);
     ComputeLabels<TProbabilityImage, ByteImageType, double>(this->m_Posteriors, this->m_PriorIsForegroundPriorVector,
                                                             this->m_PriorLabelCodeVector, this->m_NonAirRegion,
                                                             this->m_DirtyLabels,
@@ -2414,10 +2420,8 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
                                                this->m_CorrectedImages,
                                                this->m_ListOfClassStatistics,
                                                this->m_PriorLabelCodeVector,
-                                               this->m_PriorIsForegroundPriorVector, this->m_NonAirRegion);
-  NormalizeProbListInPlace<TProbabilityImage>(this->m_Posteriors);
+                                               this->m_PriorIsForegroundPriorVector, this->m_NonAirRegion, CurrentEMIteration + 100);
 
-  this->WriteDebugPosteriors(CurrentEMIteration + 100);
   ComputeLabels<TProbabilityImage, ByteImageType, double>(this->m_Posteriors, this->m_PriorIsForegroundPriorVector,
                                                           this->m_PriorLabelCodeVector, this->m_NonAirRegion,
                                                           this->m_DirtyLabels,

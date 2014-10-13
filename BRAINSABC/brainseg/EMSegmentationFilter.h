@@ -269,7 +269,9 @@ private:
 
   void WriteDebugHeadRegion(const unsigned int CurrentEMIteration) const;
 
-  void WriteDebugPosteriors(const unsigned int CurrentEMIteration) const;
+  void WriteDebugPosteriors(const unsigned int CurrentEMIteration,
+                            const std::string ClassifierID,
+                            const ProbabilityImageVectorType & Posteriors) const;
 
   void WriteDebugBlendClippedPriors(const unsigned int CurrentEMIteration) const;
 
@@ -327,7 +329,8 @@ private:
                     std::vector<RegionStats> & ListOfClassStatistics,
                     const IntVectorType & priorLabelCodeVector,
                     std::vector<bool> & priorIsForegroundPriorVector,
-                    typename ByteImageType::Pointer & nonAirRegion);
+                    typename ByteImageType::Pointer & nonAirRegion,
+                    const unsigned int IterationID);
 
   std::vector<RegionStats> ComputeDistributions(const ByteImageVectorType &SubjectCandidateRegions,
                                                 const ProbabilityImageVectorType &probAllDistributions);

@@ -223,6 +223,14 @@
     </integer>
 
     <boolean>
+      <name>useKNN</name>
+      <description>Use the KNN stage of estimating posteriors.</description>
+      <label>Use KNN stage</label>
+      <longflag>useKNN</longflag>
+      <default>false</default>
+    </boolean>
+
+    <boolean>
       <name>atlasWarpingOff</name>
       <default>false</default>
       <label>Turn off warping from atlas to subject space.</label>

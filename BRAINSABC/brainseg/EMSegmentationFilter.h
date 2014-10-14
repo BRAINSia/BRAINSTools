@@ -116,6 +116,9 @@ public:
   typedef std::vector< FloatingPrecision >                      MeasurementVectorType;
   typedef itk::Statistics::ListSample< MeasurementVectorType >  SampleType;
 
+  itkSetMacro(UseKNN, bool);
+  itkGetMacro(UseKNN, bool);
+
   // Set/Get the maximum polynomial degree of the bias field estimate
   itkSetMacro(MaxBiasDegree, unsigned int);
   itkGetMacro(MaxBiasDegree, unsigned int);
@@ -436,6 +439,8 @@ private:
   std::string m_OutputDebugDir;
 
   std::vector<RegionStats> m_ListOfClassStatistics;
+
+  bool         m_UseKNN;
 
   bool         m_UpdateTransformation;
   unsigned int m_DebugLevel;

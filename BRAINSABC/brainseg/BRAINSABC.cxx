@@ -1136,6 +1136,7 @@ int main(int argc, char * *argv)
   for( unsigned int segmentationLevel = 0; segmentationLevel < 1; segmentationLevel++ )
     {
     SegFilterType::Pointer segfilter = SegFilterType::New();
+    segfilter->SetUseKNN(useKNN);
     // __MAX__PROBS
 
     std::vector<FloatImagePointer> atlasOriginalPriors( PriorNames.size() );

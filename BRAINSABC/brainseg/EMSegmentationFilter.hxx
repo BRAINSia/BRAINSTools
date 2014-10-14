@@ -73,7 +73,6 @@
 #include "itkKdTreeGenerator.h"
 #include "itkImageRandomNonRepeatingConstIteratorWithIndex.h"
 
-static const bool m_USEKNN = true;
 static const FloatingPrecision KNN_InclusionThreshold = 0.66F;
   // We will choose "KNN_SamplesPerLabel" from each posterior class.
 static const size_t KNN_SamplesPerLabel = 75;
@@ -1227,7 +1226,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
   this->WriteDebugPosteriors(IterationID, "EM", Posteriors);
 
   // Run KNN on posteriors
-  if( m_USEKNN )
+  if( this->m_UseKNN )
     {
     ByteImagePointer thresholdedLabels = NULL;
     ByteImagePointer dirtyThresholdedLabels = NULL; // It is the label image that is used in ComputeKNNPosteriors,

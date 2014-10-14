@@ -543,6 +543,8 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
 
   m_AtlasTransformType = "SyN"; // "invalid_TransformationTypeNotSet";
 
+  m_UseKNN = false;
+
   m_UpdateTransformation = false;
 
   m_DebugLevel = 0;

@@ -151,6 +151,31 @@ unsigned int TotalMapSize(const TMap &map)
 
 template <class TMap>
 typename TMap::mapped_type::value_type &
+GetMapVectorNthElement(TMap &map, int n)
+{
+  typename TMap::mapped_type::value_type returnElement;
+  if( map.size() < n )
+  {
+  returnElement = NULL;
+  }
+  else
+  {
+  typename TMap::iterator it = map.begin();
+  for( int i = 0;
+       i < n, it != map.end();
+       i++, ++ it)
+    {
+    if( i == n-1)
+      {
+      returnElement = *(map.begin()->second.begin());
+      }
+    }
+  }
+  return returnElement;
+}
+
+template <class TMap>
+typename TMap::mapped_type::value_type &
 GetMapVectorFirstElement(TMap &map)
 {
   return *(map.begin()->second.begin());

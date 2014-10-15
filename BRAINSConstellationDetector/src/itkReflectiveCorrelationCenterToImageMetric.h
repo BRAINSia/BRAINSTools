@@ -34,12 +34,15 @@
 #include "GenericTransformImage.h"
 #include "itkStatisticsImageFilter.h"
 #include "itkNumberToString.h"
+#include "itkCompensatedSummation.h"
 
 // Optimize the A,B,C vector
 class Rigid3DCenterReflectorFunctor : public vnl_cost_function
 {
 public:
   static const int UNKNOWNS_TO_ESTIMATE = 3;
+
+  typedef itk::CompensatedSummation< double >   CompensatedSummationType;
 
   void SetCenterOfHeadMass(SImageType::PointType centerOfHeadMass)
   {
@@ -320,6 +323,13 @@ public:
     rasterRegion.SetIndex( m_InternalResampledForReflectiveComputationImage->GetLargestPossibleRegion().GetIndex() );
     itk::ImageRegionConstIteratorWithIndex<SImageType> halfIt(m_InternalResampledForReflectiveComputationImage,
                                                               rasterRegion);
+
+    CompensatedSummationType  CS_sumVoxelValuesQR;
+    CompensatedSummationType  CS_sumSquaredVoxelValuesReflected;
+    CompensatedSummationType  CS_sumVoxelValuesReflected;
+    CompensatedSummationType  CS_sumSquaredVoxelValues;
+    CompensatedSummationType  CS_sumVoxelValues;
+
     for( halfIt.GoToBegin(); !halfIt.IsAtEnd(); ++halfIt )
       {
       // NOTE:  Only need to compute left half of space because of reflection.
@@ -336,13 +346,18 @@ public:
         {
         continue;
         }
-      sumVoxelValuesQR += _f * g;
-      sumSquaredVoxelValuesReflected += g * g;
-      sumVoxelValuesReflected += g;
-      sumSquaredVoxelValues += _f * _f;
-      sumVoxelValues += _f;
+      CS_sumVoxelValuesQR += _f * g;
+      CS_sumSquaredVoxelValuesReflected += g * g;
+      CS_sumVoxelValuesReflected += g;
+      CS_sumSquaredVoxelValues += _f * _f;
+      CS_sumVoxelValues += _f;
       N++;
       }
+    sumVoxelValuesQR = CS_sumVoxelValuesQR.GetSum();
+    sumSquaredVoxelValuesReflected = CS_sumSquaredVoxelValuesReflected.GetSum();
+    sumVoxelValuesReflected = CS_sumVoxelValuesReflected.GetSum();
+    sumSquaredVoxelValues = CS_sumSquaredVoxelValues.GetSum();
+    sumVoxelValues = CS_sumVoxelValues.GetSum();
 
     // ///////////////////////////////////////////////
     if( N == 0

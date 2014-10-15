@@ -39,9 +39,7 @@
   * filters. */
 
 #include "itkImage.h"
-#include "itkSquaredDifferenceImageFilter.h"
 #include "itkImageRegionIterator.h"
-#include "itkSquaredDifferenceImageFilter.h"
 #include "itkAddImageFilter.h"
 #include "itkSubtractImageFilter.h"
 #include "itkDivideImageFilter.h"

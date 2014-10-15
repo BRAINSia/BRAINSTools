@@ -21,7 +21,6 @@ FindITKUtil(
   ITKRegistrationCommon
   ITKThresholding
   ITKImageFeature
-  ITKV3Compatibility
   ITKSmoothing
   ITKLevelSets
   ITKReview

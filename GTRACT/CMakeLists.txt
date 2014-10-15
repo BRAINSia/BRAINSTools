@@ -8,8 +8,11 @@ project( GTRACT )
 #
 # ITK
 #
-FindITKUtil(ITKDeprecated
-  ITKOptimizersv4
+FindITKUtil(ITKOptimizersv4
+  ITKDistanceMap
+  ITKMathematicalMorphology
+  ITKRegionGrowing
+  ITKImageCompare
   ITKMetricsv4
   ITKRegistrationMethodsv4
   ITKDiffusionTensorImage
@@ -28,7 +31,7 @@ FindITKUtil(ITKDeprecated
   ITKStatistics
   ITKThresholding
   ITKTransform
-  ITKV3Compatibility)
+  )
 
 #-----------------------------------------------------------------------------
 # Output directories.

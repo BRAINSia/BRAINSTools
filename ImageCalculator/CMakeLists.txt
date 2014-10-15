@@ -8,8 +8,7 @@
 #
 # ITK
 #
-FindITKUtil(ITKDeprecated
-  ITKImageCompare
+FindITKUtil(ITKImageCompare
   ITKImageFilterBase
   ITKImageGrid
   ITKImageIntensity

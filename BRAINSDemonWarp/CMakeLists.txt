@@ -24,8 +24,8 @@ findITKUtil(ITKDisplacementField
   ITKSmoothing
   ITKSpatialObjects
   ITKTransform
-  ITKDeprecated
-  ITKV3Compatibility)
+  ITKTestKernel
+)
 
 FindVTKUtil(vtkRenderingFreeType)
 

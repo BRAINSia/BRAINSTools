@@ -9,7 +9,6 @@
 # ITK
 #
 FindITKUtil(ITKDisplacementField
-  ITKDeprecated
   ITKDistanceMap
   ITKImageFunction
   ITKImageGrid
@@ -19,6 +18,7 @@ FindITKUtil(ITKDisplacementField
   ITKThresholding
   ITKTransform
   ITKImageCompare
+  ITKTestKernel
 )
 
 #-----------------------------------------------------------------------------

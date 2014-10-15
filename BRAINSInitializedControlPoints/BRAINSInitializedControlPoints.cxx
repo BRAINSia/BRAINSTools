@@ -47,8 +47,8 @@ See License.txt or http://www.slicer.org/copyright/copyright.txt for details.
 #include "itkImageRegionIteratorWithIndex.h"
 #include "itkVectorImage.h"
 
-#include "itkBSplineDeformableTransform.h"
-#include "itkBSplineDeformableTransformInitializer.h"
+#include "itkBSplineTransform.h"
+#include "itkBSplineTransformInitializer.h"
 #include "Slicer3LandmarkIO.h"
 
 #include "BRAINSInitializedControlPointsCLP.h"
@@ -127,20 +127,20 @@ int main(int argc, char* argv[])
     return EXIT_FAILURE;
     }
 
-  typedef itk::BSplineDeformableTransform<float, 3, 3> BSplineTransformType;
+  typedef itk::BSplineTransform<float, 3, 3> BSplineTransformType;
   BSplineTransformType::Pointer initialBSplineTransform = BSplineTransformType::New();
   initialBSplineTransform->SetIdentity();
 
   typedef BSplineTransformType::RegionType TransformRegionType;
   typedef TransformRegionType::SizeType    TransformSizeType;
 
-  typedef itk::BSplineDeformableTransformInitializer
+  typedef itk::BSplineTransformInitializer
     <BSplineTransformType, FixedVolumeType> InitializerType;
   InitializerType::Pointer transformInitializer = InitializerType::New();
 
   transformInitializer->SetTransform(initialBSplineTransform);
   transformInitializer->SetImage(fixedImage);
-  TransformSizeType tempGridSize;
+  BSplineTransformType::MeshSizeType  tempGridSize;
   tempGridSize[0] = splineGridSize[0];
   tempGridSize[1] = splineGridSize[1];
   tempGridSize[2] = splineGridSize[2];
@@ -148,7 +148,7 @@ int main(int argc, char* argv[])
   std::cout << "splineGridSize=" << splineGridSize[0] << "," << splineGridSize[1] << "," << splineGridSize[2]
             << std::endl;
 
-  transformInitializer->SetGridSizeInsideTheImage(tempGridSize);
+  transformInitializer->SetTransformDomainMeshSize(tempGridSize);
   try
     {
     transformInitializer->InitializeTransform();

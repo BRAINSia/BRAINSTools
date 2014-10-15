@@ -43,7 +43,6 @@
 #include <itkExtractImageFilter.h>
 #include "itkMetaDataObject.h"
 #include "itkProgressAccumulator.h"
-#include <itkBSplineDeformableTransformInitializer.h>
 #include <iostream>
 
 namespace itk
@@ -112,14 +111,6 @@ void AnatomicalBSplineFilter::Update()
   totalGridSize = gridSizeOnImage + gridBorderSize;
 
   // bsplineRegion.SetSize( totalGridSize );
-
-
-  typedef itk::BSplineDeformableTransformInitializer<TransformType, RegisterImageType> InitializerType;
-  InitializerType::Pointer transformInitializer = InitializerType::New();
-  transformInitializer->SetTransform( m_Output );
-  transformInitializer->SetImage( m_FixedImage );
-  transformInitializer->SetGridSizeInsideTheImage( totalGridSize );
-  transformInitializer->InitializeTransform();
 
   if( m_BulkTransform.IsNotNull() )
     {

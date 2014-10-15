@@ -1254,10 +1254,10 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
     itk::TimeProbe ComputeKNNPosteriorsTimer;
     ComputeKNNPosteriorsTimer.Start();
 
-    this->m_Posteriors = this->ComputekNNPosteriors(Posteriors,
-                                                    IntensityImages,
-                                                    dirtyThresholdedLabels,
-                                                    priorLabelCodeVector);
+    Posteriors = this->ComputekNNPosteriors(Posteriors,
+                                            IntensityImages,
+                                            dirtyThresholdedLabels,
+                                            priorLabelCodeVector);
     ComputeKNNPosteriorsTimer.Stop();
     itk::RealTimeClock::TimeStampType knnElapsedTime = ComputeKNNPosteriorsTimer.GetTotal();
     muLogMacro(<< "Computing KNN posteriors took " << knnElapsedTime << " " << ComputeKNNPosteriorsTimer.GetUnit() << std::endl);

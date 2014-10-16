@@ -549,6 +549,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::BRAINSFitHelperTemplat
   m_MaximumNumberOfEvaluations(900),
   m_MaximumNumberOfCorrections(12),
   m_SyNMetricType(""),
+  m_SyNFull(true),
   m_ForceMINumberOfThreads(-1)
 {
   m_SplineGridSize[0] = 14;
@@ -1579,67 +1580,35 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
       {
 #ifdef USE_ANTS
       //
-      // Process SyN transform initializer
+      // SyN registration metric
       //
+      std::string whichmetric = "cc"; // default value
+      if( this->m_SyNMetricType == "MMI" )
+        {
+        whichmetric = "mattes";
+        }
+      else if( this->m_SyNMetricType == "MSE" )
+        {
+        whichmetric = "meansquares";
+        }
+      else if( this->m_SyNMetricType == "NC" )
+        {
+        whichmetric = "cc";
+        }
+      else if( this->m_SyNMetricType == "MIH" )
+        {
+        whichmetric = "mi";
+        }
       // current m_CurrentGenericTransform will be used as an initializer for SyN registration.
-      if( m_CurrentGenericTransform.IsNotNull() )
-        {
-        // Notice that we use only one SyN stage, and the outputs of all the previous linear levels
-        // are composed in "one" transform.
-        //
-        if( m_CurrentGenericTransform->GetNumberOfTransforms() != 1 )
-          {
-          itkGenericExceptionMacro("Linear initial composite transform should have only one component \
-                                   as all linaear transforms are collapsed together.");
-          }
-        const itk::Transform<double, 3, 3>::ConstPointer currInitTransformFormGenericComposite =
-                                                  m_CurrentGenericTransform->GetFrontTransform();
-        const std::string transformFileType = currInitTransformFormGenericComposite->GetNameOfClass();
-
-        // Bspline transform cannot be used as an initializer for SyN registration.
-        if( transformFileType == "BSplineTransform" )
-          {
-          itkGenericExceptionMacro( << "ERROR: Improper transform initializer for SyN registration: "
-                                    << "BSpline Transform cannot be used as a transform initializer for SyN registration"
-                                    << std::endl);
-          }
-        }
-      else
-        {
-        // Initialize the registeration process with an Identity transform
-        typename AffineTransformType::Pointer initialITKTransform = AffineTransformType::New();
-        initialITKTransform->SetIdentity();
-
-        m_CurrentGenericTransform = CompositeTransformType::New();
-        m_CurrentGenericTransform->AddTransform( initialITKTransform );
-        }
-
-        std::string whichmetric = "cc"; // default value
-        if( this->m_SyNMetricType == "MMI" )
-          {
-          whichmetric = "mattes";
-          }
-        else if( this->m_SyNMetricType == "MSE" )
-          {
-          whichmetric = "meansquares";
-          }
-        else if( this->m_SyNMetricType == "NC" )
-          {
-          whichmetric = "cc";
-          }
-        else if( this->m_SyNMetricType == "MIH" )
-          {
-          whichmetric = "mi";
-          }
-
-        typename CompositeTransformType::Pointer outputSyNTransform =
-          simpleSynReg<FixedImageType, MovingImageType>( m_FixedVolume,
-                                                         m_MovingVolume,
-                                                         m_CurrentGenericTransform,
-                                                         m_FixedVolume2,
-                                                         m_MovingVolume2,
-                                                         m_SamplingPercentage,
-                                                         whichmetric );
+      typename CompositeTransformType::Pointer outputSyNTransform =
+        simpleSynReg<FixedImageType, MovingImageType>( m_FixedVolume,
+                                                       m_MovingVolume,
+                                                       m_CurrentGenericTransform,
+                                                       m_FixedVolume2,
+                                                       m_MovingVolume2,
+                                                       m_SamplingPercentage,
+                                                       whichmetric,
+                                                       m_SyNFull );
 
       if( outputSyNTransform.IsNull() )
         {
@@ -1648,6 +1617,10 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
         }
       else
         {
+        if( m_CurrentGenericTransform.IsNull() )
+          {
+          m_CurrentGenericTransform = CompositeTransformType::New();
+          }
         // Update m_CurrentGenericTransform after SyN registration.
         m_CurrentGenericTransform = outputSyNTransform.GetPointer();
         }

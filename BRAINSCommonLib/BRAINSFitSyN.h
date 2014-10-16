@@ -37,7 +37,8 @@ simpleSynReg( typename FixedImageType::Pointer & infixedImage,
               typename FixedImageType::Pointer & infixedImage2 = NULL,
               typename MovingimageType::Pointer & inmovingImage2 = NULL,
               double samplingPercentage = 1.0,
-              std::string whichMetric = "cc" )
+              std::string whichMetric = "cc",
+              const bool synFull = true )
 {
   typename SyNRegistrationHelperType::Pointer regHelper = SyNRegistrationHelperType::New();
     {
@@ -52,27 +53,40 @@ simpleSynReg( typename FixedImageType::Pointer & infixedImage,
     const bool doHistogramMatch(true);
     regHelper->SetUseHistogramMatching(doHistogramMatch);
     }
+
     {
     /*
     const bool doEstimateLearningRateAtEachIteration = true;
     regHelper->SetDoEstimateLearningRateAtEachIteration( doEstimateLearningRateAtEachIteration );
     */
     }
+
     {
     std::vector<std::vector<unsigned int> > iterationList;
-    std::vector<unsigned int>               iterations(3);
-    iterations[0] = 100;
-    iterations[1] = 100;
-    iterations[2] = 100;
-    iterationList.push_back(iterations);
+    if( synFull == true )
+      {
+      std::vector<unsigned int>  iterations(3);
+      iterations[0] = 100;
+      iterations[1] = 100;
+      iterations[2] = 100;
+      iterationList.push_back(iterations);
+      }
+    else
+      {
+      std::vector<unsigned int>  iterations(1);
+      iterations[0] = 100;
+      iterationList.push_back(iterations);
+      }
     regHelper->SetIterations( iterationList );
     }
+
     {
     std::vector<double> convergenceThresholdList;
     const double        convergenceThreshold = 5e-7;
     convergenceThresholdList.push_back(convergenceThreshold);
     regHelper->SetConvergenceThresholds( convergenceThresholdList );
     }
+
     {
     std::vector<unsigned int> convergenceWindowSizeList;
     const unsigned int        convergenceWindowSize = 10;
@@ -81,25 +95,47 @@ simpleSynReg( typename FixedImageType::Pointer & infixedImage,
     }
 
     {
-    // --shrink-factors 3x2x1
     std::vector<std::vector<unsigned int> > shrinkFactorsList;
-    std::vector<unsigned int>               factors(3);
-    factors[0] = 3;
-    factors[1] = 2;
-    factors[2] = 1;
-    shrinkFactorsList.push_back(factors);
+    if( synFull == true )
+      {
+      // --shrink-factors 3x2x1
+      std::vector<unsigned int>   factors(3);
+      factors[0] = 3;
+      factors[1] = 2;
+      factors[2] = 1;
+      shrinkFactorsList.push_back(factors);
+      }
+    else
+      {
+      // --shrink-factors 1
+      std::vector<unsigned int>   factors(1);
+      factors[0] = 1;
+      shrinkFactorsList.push_back(factors);
+      }
     regHelper->SetShrinkFactors( shrinkFactorsList );
     }
+
     {
-    // --smoothing-sigmas 3x2x0
     std::vector<std::vector<float> > smoothingSigmasList;
-    std::vector<float>               sigmas(3);
-    sigmas[0] = 2;
-    sigmas[1] = 1;
-    sigmas[2] = 0;
-    smoothingSigmasList.push_back(sigmas);
+    if( synFull == true )
+      {
+      // --smoothing-sigmas 3x2x0
+      std::vector<float>    sigmas(3);
+      sigmas[0] = 2;
+      sigmas[1] = 1;
+      sigmas[2] = 0;
+      smoothingSigmasList.push_back(sigmas);
+      }
+    else
+      {
+      // --smoothing-sigmas 0
+      std::vector<float>    sigmas(1);
+      sigmas[0] = 0;
+      smoothingSigmasList.push_back(sigmas);
+      }
     regHelper->SetSmoothingSigmas( smoothingSigmasList );
     }
+
     {
     // Force all units to be in physcial space
     std::vector<bool> smoothingSigmasAreInPhysicalUnitsList;
@@ -185,8 +221,14 @@ simpleSynReg( typename FixedImageType::Pointer & infixedImage,
     const float varianceForTotalField = 0.0;
     regHelper->AddSyNTransform(learningRate, varianceForUpdateField, varianceForTotalField);
     }
-  regHelper->SetMovingInitialTransform( compositeInitialTransform );
+
+  if( compositeInitialTransform.IsNotNull() )
+    {
+    regHelper->SetMovingInitialTransform( compositeInitialTransform );
+    }
+
   regHelper->SetLogStream(std::cout);
+
   if( regHelper->DoRegistration() != EXIT_SUCCESS )
     {
     std::cerr << "FATAL ERROR: REGISTRATION PROCESS WAS UNSUCCESSFUL" << std::endl;

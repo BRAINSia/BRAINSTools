@@ -136,7 +136,8 @@ BRAINSFitHelper::BRAINSFitHelper() :
   m_NormalizeInputImages(false),
   m_InitializeRegistrationByCurrentGenericTransform(true),
   m_MaximumNumberOfEvaluations(900),
-  m_MaximumNumberOfCorrections(12)
+  m_MaximumNumberOfCorrections(12),
+  m_SyNFull(true)
 {
   m_SplineGridSize[0] = 14;
   m_SplineGridSize[1] = 10;

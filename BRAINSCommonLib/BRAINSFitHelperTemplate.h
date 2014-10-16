@@ -232,6 +232,13 @@ public:
 
   itkSetMacro(RemoveIntensityOutliers, bool);
   itkGetConstMacro(RemoveIntensityOutliers, bool);
+
+  /** BRAINSFit uses ANTs to run only 3 levels of SyN registration unless SyNFull flag is false!
+    * In that case only a single level SyN registration is run.
+    */
+  itkSetMacro(SyNFull, bool);
+  itkGetConstMacro(SyNFull, bool);
+
   /** Method that initiates the registration. */
   void Update(void);
 
@@ -318,6 +325,7 @@ private:
   int                                        m_MaximumNumberOfEvaluations;
   int                                        m_MaximumNumberOfCorrections;
   std::string                                m_SyNMetricType;
+  bool                                       m_SyNFull;
   // DEBUG OPTION:
   int m_ForceMINumberOfThreads;
 };  // end BRAINSFitHelperTemplate class

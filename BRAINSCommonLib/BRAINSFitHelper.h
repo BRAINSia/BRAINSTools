@@ -227,6 +227,12 @@ public:
   itkSetMacro(NormalizeInputImages, bool);
   itkSetMacro(InitializeRegistrationByCurrentGenericTransform, bool);
 
+  /** BRAINSFit uses ANTs to run only 3 levels of SyN registration unless SyNFull flag is false!
+   * In that case only a single level SyN registration is run.
+   */
+  itkSetMacro(SyNFull, bool);
+  itkGetConstMacro(SyNFull, bool);
+
   /** Method that initiates the registration. */
   void Update(void);
 
@@ -306,6 +312,7 @@ private:
   bool                                       m_InitializeRegistrationByCurrentGenericTransform;
   int                                        m_MaximumNumberOfEvaluations;
   int                                        m_MaximumNumberOfCorrections;
+  bool                                       m_SyNFull;
 };  // end BRAINSFitHelper class
 
 template <class TLocalCostMetric>
@@ -442,6 +449,7 @@ BRAINSFitHelper::SetupRegistration(GenericMetricType *costMetric)
   myHelper->SetMaximumNumberOfEvaluations(this->m_MaximumNumberOfEvaluations);
   myHelper->SetMaximumNumberOfCorrections(this->m_MaximumNumberOfCorrections);
   myHelper->SetSyNMetricType( this->m_CostMetricName );
+  myHelper->SetSyNFull( this->m_SyNFull );
   if( this->m_DebugLevel > 7 )
     {
     this->PrintCommandLine(true, "BF");

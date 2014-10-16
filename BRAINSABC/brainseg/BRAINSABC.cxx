@@ -995,6 +995,17 @@ int main(int argc, char * *argv)
         return EXIT_FAILURE;
         }
       }
+    else if( initialTransformFileType == "CompositeTransform" )
+      {
+      if( !( atlasToSubjectTransformType.compare("SyN") == 0 ) )
+        {
+        muLogMacro(<< "Error: initialAtlasToSubjectTransform is "
+                   << "a CompositeTransform but atlasToSubjectTransfromType "
+                   << "is not SyN."
+                   << std::endl);
+        return EXIT_FAILURE;
+        }
+      }
     else
       {
       muLogMacro( << "ERROR:  Invalid transform initializer type found:  "

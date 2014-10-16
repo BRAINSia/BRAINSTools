@@ -620,7 +620,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
         minimumStepSize.push_back(0.0025);
         transformType.push_back("Affine");
         }
-      else if( atlasToSubjectInitialTransformName != "SyN" )
+      else if( atlasToSubjectInitialTransformName != "SyN"  && atlasToSubjectInitialTransformName != "CompositeTransform" )
         {
         itkExceptionMacro( << "ERROR: Invalid atlasToSubjectInitialTransformName"
                            << " type for m_AtlasLinearTransformChoice of type SyN" );
@@ -629,6 +629,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
       transformType.push_back("SyN");
       atlasToSubjectRegistrationHelper->SetMinimumStepLength(minimumStepSize);
       atlasToSubjectRegistrationHelper->SetTransformType(transformType);
+      atlasToSubjectRegistrationHelper->SetSyNFull(false);
       }
     else
       {
@@ -638,6 +639,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
       }
     }
 
+/*
     if( this->m_DebugLevel > 9 && m_AtlasToSubjectTransform.IsNotNull() )
       {
       muLogMacro( << "PRE_ASSIGNMENT 0 " );
@@ -647,6 +649,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
       muLogMacro(<< __FILE__ << " " << __LINE__ << " "
                  << m_AtlasToSubjectTransform->GetParameters() <<   std::endl );
       }
+*/
     if( this->m_DebugLevel > 9 )
       {
       static unsigned int originalAtlasToSubject = 0;
@@ -660,6 +663,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
     const unsigned int actualIterations = atlasToSubjectRegistrationHelper->GetActualNumberOfIterations();
     muLogMacro( << "Registration tool " << actualIterations << " iterations." << std::endl );
     m_AtlasToSubjectTransform = atlasToSubjectRegistrationHelper->GetCurrentGenericTransform();
+/*
     if( this->m_DebugLevel > 9 )
       {
       muLogMacro( << "POST_ASSIGNMENT0  " );
@@ -669,6 +673,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
       muLogMacro(<< __FILE__ << " " << __LINE__
                  << " " << m_AtlasToSubjectTransform->GetParameters() <<   std::endl );
       }
+*/
     // End generating the best initial transform for atlas T1 to subject T1
     muLogMacro(<< "Writing " << this->m_AtlasToSubjectTransformFileName << "." << std::endl);
     itk::WriteTransformToDisk<double>(m_AtlasToSubjectTransform, this->m_AtlasToSubjectTransformFileName);

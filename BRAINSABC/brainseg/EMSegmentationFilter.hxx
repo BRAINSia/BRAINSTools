@@ -27,7 +27,8 @@
 #include <cmath>
 #include <cstdlib>
 
-#include "itkAddImageFilter.h"
+#include "itkAverageImageFilter.h"
+#include "itkSqrtImageFilter.h"
 #include "itkBSplineDownsampleImageFilter.h"
 #include "itkBinaryBallStructuringElement.h"
 #include "itkBinaryDilateImageFilter.h"
@@ -73,7 +74,7 @@
 #include "itkKdTreeGenerator.h"
 #include "itkImageRandomNonRepeatingConstIteratorWithIndex.h"
 
-static const FloatingPrecision KNN_InclusionThreshold = 0.66F;
+static const FloatingPrecision KNN_InclusionThreshold = 0.85F;
   // We will choose "KNN_SamplesPerLabel" from each posterior class.
 static const size_t KNN_SamplesPerLabel = 75;
 
@@ -1215,25 +1216,27 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
 {
   muLogMacro(<< "Computing posteriors..." << std::endl);
   const unsigned int numClasses = Priors.size();
-  ProbabilityImageVectorType Posteriors;
-  Posteriors.resize(numClasses);
+  ProbabilityImageVectorType EMPosteriors;
+  EMPosteriors.resize(numClasses);
 
   // Compute EM posteriors
-  Posteriors = ComputeEMPosteriors(Priors,
+  EMPosteriors = ComputeEMPosteriors(Priors,
                                    PriorWeights,
                                    IntensityImages,
                                    ListOfClassStatistics);
 
-  NormalizeProbListInPlace<TProbabilityImage>( Posteriors );
-  this->WriteDebugPosteriors(IterationID, "EM", Posteriors);
+  NormalizeProbListInPlace<TProbabilityImage>( EMPosteriors );
+  this->WriteDebugPosteriors(IterationID, "EM", EMPosteriors);
 
   // Run KNN on posteriors
+  ProbabilityImageVectorType KNNPosteriors;
+  KNNPosteriors.resize(numClasses);
   if( this->m_UseKNN )
     {
     ByteImagePointer thresholdedLabels = NULL;
     ByteImagePointer dirtyThresholdedLabels = NULL; // It is the label image that is used in ComputeKNNPosteriors,
                                                     // since it has all labels (not only foreground region).
-    ComputeLabels<TProbabilityImage, ByteImageType, double>(Posteriors, priorIsForegroundPriorVector,
+    ComputeLabels<TProbabilityImage, ByteImageType, double>(EMPosteriors, priorIsForegroundPriorVector,
                                                             priorLabelCodeVector, nonAirRegion,
                                                             dirtyThresholdedLabels,
                                                             thresholdedLabels, KNN_InclusionThreshold);
@@ -1254,7 +1257,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
     itk::TimeProbe ComputeKNNPosteriorsTimer;
     ComputeKNNPosteriorsTimer.Start();
 
-    Posteriors = this->ComputekNNPosteriors(Posteriors,
+    KNNPosteriors = this->ComputekNNPosteriors(EMPosteriors,
                                             IntensityImages,
                                             dirtyThresholdedLabels,
                                             priorLabelCodeVector);
@@ -1262,12 +1265,37 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
     itk::RealTimeClock::TimeStampType knnElapsedTime = ComputeKNNPosteriorsTimer.GetTotal();
     muLogMacro(<< "Computing KNN posteriors took " << knnElapsedTime << " " << ComputeKNNPosteriorsTimer.GetUnit() << std::endl);
 
-    NormalizeProbListInPlace<TProbabilityImage>( Posteriors );
-    this->WriteDebugPosteriors(IterationID, "KNN", Posteriors);
+    NormalizeProbListInPlace<TProbabilityImage>( KNNPosteriors );
+    this->WriteDebugPosteriors(IterationID, "KNN", KNNPosteriors);
+
+    ProbabilityImageVectorType AveragePosteriors;
+    AveragePosteriors.resize(numClasses);
+    for(size_t pp = 0 ; pp < KNNPosteriors.size(); ++pp )
+      {
+      typedef itk::MultiplyImageFilter<TProbabilityImage,TProbabilityImage> MultiplyFilterType;
+      typename MultiplyFilterType::Pointer filter = MultiplyFilterType::New();
+      filter->SetInput(0,EMPosteriors[pp]);
+      filter->SetInput(1,KNNPosteriors[pp]);
+      filter->Update();
+
+      typedef itk::SqrtImageFilter<TProbabilityImage,TProbabilityImage> SqrtFilterType;
+      typename SqrtFilterType::Pointer sqrtFilter = SqrtFilterType::New();
+      sqrtFilter->SetInput( filter->GetOutput() );
+      sqrtFilter->Update();
+      AveragePosteriors[pp] = sqrtFilter->GetOutput();
+      }
+    NormalizeProbListInPlace<TProbabilityImage>( AveragePosteriors );
+    this->WriteDebugPosteriors(IterationID, "AVG_KNN_EM", AveragePosteriors);
+    return AveragePosteriors;
     }
+
   ////
-  return Posteriors;
+  //TODO: Merge KNN and EMPosteriors here by averaging.
+  ////
+  return (this->m_UseKNN) ? KNNPosteriors : EMPosteriors;
 }
+
+
 
 template <class TInputImage, class TProbabilityImage>
 void

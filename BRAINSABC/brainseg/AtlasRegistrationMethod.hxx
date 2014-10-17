@@ -379,6 +379,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
     TransformList::iterator intraTxIt = this->m_IntraSubjectTransforms[mapOfModalImageListsIt->first].begin(); // each intra registration transform
 
     this->m_RegisteredIntraSubjectImagesList[mapOfModalImageListsIt->first].clear(); //Ensure that pushing onto clean list
+    int i = 0;
     while(currModeImageListIt != mapOfModalImageListsIt->second.end() )
       {
       if( (*intraImIt).GetPointer() == this->m_KeySubjectImage.GetPointer() )
@@ -399,8 +400,26 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
                                                                                0,
                                                                                "Linear",
                                                                                false);
+        if( this->m_DebugLevel > 7 )
+          {
+          typedef itk::ImageFileWriter<InternalImageType> WriterType;
+          WriterType::Pointer writer = WriterType::New();
+          writer->UseCompressionOn();
+
+          std::ostringstream oss;
+          oss << this->m_OutputDebugDir << "Warped_" << mapOfModalImageListsIt->first
+                                        << "_IntraSubject_to_KeySubjectImage_" << i <<  ".nii.gz" << std::ends;
+          std::string fn = oss.str();
+
+          writer->SetInput( resampledImage );
+          writer->SetFileName(fn.c_str() );
+          writer->Update();
+          muLogMacro( << __FILE__ << " " << __LINE__ << " "  <<  std::endl );
+          }
+
         this->m_RegisteredIntraSubjectImagesList[mapOfModalImageListsIt->first].push_back( resampledImage );
         }
+      i++;
       ++currModeImageListIt;
       ++intraImIt;
       ++intraTxIt;
@@ -786,7 +805,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
   // and provides a map of registration transforms (m_IntraSubjectTransforms).
   this->RegisterIntraSubjectImages();
 
-  // This functions warps all of Intra subject images (m_IntraSubjectOrigImageList) to the
+  // This function warps all of intra subject images (m_IntraSubjectOrigImageList) to the
   // key subject image using the intra subject registration transforms (m_IntraSubjectTransforms).
   // Then, it averages all T1s together and T2s together to provide (m_KeyAveragedSubjectImage)
   //  and (m_SecondKeyAveragedSubjectImage)

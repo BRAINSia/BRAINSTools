@@ -42,10 +42,10 @@
 #include "itkArray.h"
 #include "itkImage.h"
 #include "itkObject.h"
+#include "itkNaryAddImageFilter.h"
 
 #include <vector>
 
-#include "itkAffineTransform.h"
 #include "BRAINSFitHelper.h"
 #include "BRAINSABCUtilities.h"
 #include <string>
@@ -161,10 +161,13 @@ public:
   itkSetMacro(UseNonLinearInterpolation, bool);
 
   itkSetObjectMacro(KeySubjectImage,InternalImageType);
-  //itkGetConstObjectMacro(KeySubjectImage,InternalImageType);
   itkGetModifiableObjectMacro(KeySubjectImage,InternalImageType);
-  itkSetObjectMacro(SecondKeySubjectImage,InternalImageType);
-  itkGetModifiableObjectMacro(SecondKeySubjectImage,InternalImageType);
+
+  itkSetObjectMacro(KeyAveragedSubjectImage,InternalImageType);
+  itkGetModifiableObjectMacro(KeyAveragedSubjectImage,InternalImageType);
+
+  itkSetObjectMacro(SecondKeyAveragedSubjectImage,InternalImageType);
+  itkGetModifiableObjectMacro(SecondKeyAveragedSubjectImage,InternalImageType);
 
   void SetAtlasLinearTransformChoice(const std::string & c)
   {
@@ -197,7 +200,7 @@ public:
 
 protected:
   void RegisterIntraSubjectImages(void);
-
+  void AverageIntraSubjectRegisteredImages(void);
   void RegisterAtlasToSubjectImages(void);
 
   AtlasRegistrationMethod();
@@ -215,6 +218,9 @@ private:
   //  ByteImagePointer                  m_AtlasOriginalMask;
   MapOfFloatImageVectors m_AtlasOriginalImageList;
   MapOfFloatImageVectors m_IntraSubjectOriginalImageList;
+  MapOfFloatImageVectors m_RegisteredIntraSubjectImagesList;
+  FloatImageVector       m_ModalityAveragedOfIntraSubjectImages;
+
   ByteImagePointer m_InputImageTissueRegion;
   ImageMaskPointer m_InputSpatialObjectTissueRegion;
 
@@ -226,9 +232,8 @@ private:
   GenericTransformType::Pointer m_AtlasToSubjectInitialTransform;
   MapOfTransformLists           m_IntraSubjectTransforms;
   InternalImagePointer          m_KeySubjectImage;//The image to be used for intra-subject registration
-  InternalImagePointer          m_SecondKeySubjectImage;//The image to be used for atlas to subject
-                                                        //registration in the case of multimodal
-                                                        //method is supported, e.g., SyN
+  InternalImagePointer          m_KeyAveragedSubjectImage;
+  InternalImagePointer          m_SecondKeyAveragedSubjectImage;
 
   bool m_UseNonLinearInterpolation;
   bool m_DoneRegistration;

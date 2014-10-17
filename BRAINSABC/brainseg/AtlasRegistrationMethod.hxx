@@ -366,6 +366,102 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
 template <class TOutputPixel, class TProbabilityPixel>
 void
 AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
+::AverageIntraSubjectRegisteredImages()
+{
+  muLogMacro(<< "Warp intra subject images to the first image" << std::endl);
+
+  for(MapOfFloatImageVectors::iterator mapOfModalImageListsIt = this->m_IntraSubjectOriginalImageList.begin();
+      mapOfModalImageListsIt != this->m_IntraSubjectOriginalImageList.end();
+      ++mapOfModalImageListsIt)
+    {
+    FloatImageVector::iterator currModeImageListIt = mapOfModalImageListsIt->second.begin();
+    FloatImageVector::iterator intraImIt = this->m_IntraSubjectOriginalImageList[mapOfModalImageListsIt->first].begin(); // each intra subject image
+    TransformList::iterator intraTxIt = this->m_IntraSubjectTransforms[mapOfModalImageListsIt->first].begin(); // each intra registration transform
+
+    this->m_RegisteredIntraSubjectImagesList[mapOfModalImageListsIt->first].clear(); //Ensure that pushing onto clean list
+    while(currModeImageListIt != mapOfModalImageListsIt->second.end() )
+      {
+      if( (*intraImIt).GetPointer() == this->m_KeySubjectImage.GetPointer() )
+        {
+        this->m_RegisteredIntraSubjectImagesList[mapOfModalImageListsIt->first].push_back( (*intraImIt).GetPointer() );
+        }
+      else
+        {
+        typedef float                               VectorComponentType;
+        typedef itk::Vector<VectorComponentType, 3> VectorPixelType;
+        typedef itk::Image<VectorPixelType,  3>     DisplacementFieldType;
+        InternalImagePointer resampledImage
+                                = GenericTransformImage<InternalImageType,
+                                                        InternalImageType,
+                                                        DisplacementFieldType>( (*intraImIt).GetPointer(),
+                                                                               this->GetModifiableKeySubjectImage(),
+                                                                               (*intraTxIt).GetPointer(),
+                                                                               0,
+                                                                               "Linear",
+                                                                               false);
+        this->m_RegisteredIntraSubjectImagesList[mapOfModalImageListsIt->first].push_back( resampledImage );
+        }
+      ++currModeImageListIt;
+      ++intraImIt;
+      ++intraTxIt;
+      }
+    }
+
+  muLogMacro(<< "Average co-registered Intra subject images" << std::endl);
+  this->m_ModalityAveragedOfIntraSubjectImages.clear(); //Ensure that pushing onto clean list
+
+  for(MapOfFloatImageVectors::iterator mapOfRegisteredModalImageListsIt = this->m_RegisteredIntraSubjectImagesList.begin();
+      mapOfRegisteredModalImageListsIt != this->m_RegisteredIntraSubjectImagesList.end();
+      ++mapOfRegisteredModalImageListsIt)
+    {
+    FloatImageVector::iterator intraImIt = this->m_RegisteredIntraSubjectImagesList[mapOfRegisteredModalImageListsIt->first].begin(); // each intra subject image
+
+    // If number of image of a modality (T1 or T2) is greater than one; then, the average image between them is computed
+    const int numbOfImagesPerModality = mapOfRegisteredModalImageListsIt->second.size();
+    if( numbOfImagesPerModality > 1 )
+      {
+      FloatImageVector::iterator currRegisteredModeImageListIt = mapOfRegisteredModalImageListsIt->second.begin();
+      int i = 0;
+      typedef itk::NaryAddImageFilter<InternalImageType, InternalImageType> AdderType;
+      typename AdderType::Pointer imageFilesAdder = AdderType::New();
+
+      while(currRegisteredModeImageListIt != mapOfRegisteredModalImageListsIt->second.end() )
+        {
+        imageFilesAdder->SetInput( i, (*intraImIt).GetPointer() );
+        i++;
+        ++currRegisteredModeImageListIt;
+        ++intraImIt;
+        }
+      imageFilesAdder->Update();
+      // compute average image
+      // divides each voxel location of the adder output by the number of images (i)
+      InternalImagePointer currAvgImage = InternalImageType::New();
+      currAvgImage->SetRegions( imageFilesAdder->GetOutput()->GetLargestPossibleRegion() );
+      currAvgImage->CopyInformation( imageFilesAdder->GetOutput() );
+      currAvgImage->Allocate();
+      typedef typename itk::ImageRegionIterator<InternalImageType> ConstIteratorType;
+      ConstIteratorType in(imageFilesAdder->GetOutput(), imageFilesAdder->GetOutput()->GetLargestPossibleRegion() );
+      ConstIteratorType out(currAvgImage, currAvgImage->GetLargestPossibleRegion() );
+      for( in.GoToBegin(), out.GoToBegin(); !in.IsAtEnd(); ++in, ++out )
+        {
+        out.Set(in.Get() / i);
+        }
+      //
+      this->m_ModalityAveragedOfIntraSubjectImages.push_back( currAvgImage );
+      }
+    else
+      {
+      this->m_ModalityAveragedOfIntraSubjectImages.push_back( (*intraImIt).GetPointer() );
+      }
+    }
+
+  m_KeyAveragedSubjectImage = this->m_ModalityAveragedOfIntraSubjectImages[0];
+  m_SecondKeyAveragedSubjectImage = this->m_ModalityAveragedOfIntraSubjectImages[1];
+}
+
+template <class TOutputPixel, class TProbabilityPixel>
+void
+AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
 ::RegisterAtlasToSubjectImages()
 {
   // Sanity Checks
@@ -471,15 +567,15 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
 
     // Register all atlas images to first image
     // Set the fixed and moving image
-    atlasToSubjectRegistrationHelper->SetFixedVolume(this->GetModifiableKeySubjectImage());
+    atlasToSubjectRegistrationHelper->SetFixedVolume(this->GetModifiableKeyAveragedSubjectImage()); // by AverageIntraSubjectRegisteredImages function
     atlasToSubjectRegistrationHelper->SetMovingVolume(this->GetFirstAtlasOriginalImage());
-    if( this->GetModifiableSecondKeySubjectImage() != NULL )
+    if( this->GetModifiableSecondKeyAveragedSubjectImage() != NULL )
         {
         std::cout<< "Multimodal SyN Registration will be run." <<   std::endl ;
         muLogMacro( << "Multimodal SyN Registration will be run." <<   std::endl );
-        std::cout<<this->GetModifiableSecondKeySubjectImage()<<std::endl;
+        std::cout<<this->GetModifiableSecondKeyAveragedSubjectImage()<<std::endl;
         std::cout<<this->GetSecondModalityAtlasOriginalImage("T2")<<std::endl;
-        atlasToSubjectRegistrationHelper->SetFixedVolume2(this->GetModifiableSecondKeySubjectImage());
+        atlasToSubjectRegistrationHelper->SetFixedVolume2(this->GetModifiableSecondKeyAveragedSubjectImage()); // by AverageIntraSubjectRegisteredImages function
         atlasToSubjectRegistrationHelper->SetMovingVolume2(this->GetSecondModalityAtlasOriginalImage("T2"));
         }
     else
@@ -686,9 +782,20 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
 ::RegisterImages()
 {
   // Intra subject MUST be done first
+  // This function registers all the input subjects to the First image (m_KeySubjectImage),
+  // and provides a map of registration transforms (m_IntraSubjectTransforms).
   this->RegisterIntraSubjectImages();
-  // Atlas to subject MUST be done second
+
+  // This functions warps all of Intra subject images (m_IntraSubjectOrigImageList) to the
+  // key subject image using the intra subject registration transforms (m_IntraSubjectTransforms).
+  // Then, it averages all T1s together and T2s together to provide (m_KeyAveragedSubjectImage)
+  //  and (m_SecondKeyAveragedSubjectImage)
+  this->AverageIntraSubjectRegisteredImages();
+
+  // Atlas to subject registration is done as a multi-modal registration using
+  // m_KeyAveragedSubjectImage and m_SecondKeyAveragedSubjectImage
   this->RegisterAtlasToSubjectImages();
+
   m_DoneRegistration = true;
 }
 

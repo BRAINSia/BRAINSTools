@@ -27,6 +27,7 @@
 #include <cmath>
 #include <cstdlib>
 
+#include "itkLabelStatisticsImageFilter.h"
 #include "itkAverageImageFilter.h"
 #include "itkSqrtImageFilter.h"
 #include "itkBSplineDownsampleImageFilter.h"
@@ -75,8 +76,6 @@
 #include "itkImageRandomNonRepeatingConstIteratorWithIndex.h"
 
 static const FloatingPrecision KNN_InclusionThreshold = 0.85F;
-  // We will choose "KNN_SamplesPerLabel" from each posterior class.
-static const size_t KNN_SamplesPerLabel = 75;
 
 ///////////////////////////////////////////////// Posterior computation by kNN //////////////////////////////////////////////
 template <class TInputImage, class TProbabilityImage>
@@ -265,6 +264,32 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
   const unsigned int numOfInputImages = inputImagesVector.size();
   muLogMacro(<< "Number of input images: " << numOfInputImages << std::endl);
 
+  // We will choose "KNN_SamplesPerLabel" from each posterior class.
+  typedef itk::LabelStatisticsImageFilter<ByteImageType,ByteImageType> LabelStatisticsImageFilterType;
+  LabelStatisticsImageFilterType::Pointer labelStatisticsImageFilter = LabelStatisticsImageFilterType::New();
+  labelStatisticsImageFilter->SetLabelInput(labelsImage);
+  labelStatisticsImageFilter->SetInput(labelsImage);
+  labelStatisticsImageFilter->Update();
+
+  typedef LabelStatisticsImageFilterType::ValidLabelValuesContainerType ValidLabelValuesType;
+  typedef LabelStatisticsImageFilterType::LabelPixelType                LabelPixelType;
+
+
+  size_t minLabelCount = labelsImage->GetBufferedRegion().GetNumberOfPixels();
+  for(ValidLabelValuesType::const_iterator vIt=labelStatisticsImageFilter->GetValidLabelValues().begin();
+      vIt != labelStatisticsImageFilter->GetValidLabelValues().end();
+      ++vIt)
+    {
+    if ( labelStatisticsImageFilter->HasLabel(*vIt) )
+      {
+      LabelPixelType labelValue = *vIt;
+      const size_t currentLabelCount = labelStatisticsImageFilter->GetCount( labelValue );
+      std::cout << "label: " << (size_t)labelValue << " count: " << labelStatisticsImageFilter->GetCount( labelValue ) << std::endl;
+      minLabelCount = std::min<size_t>(minLabelCount,currentLabelCount);
+      }
+    }
+  const size_t KNN_SamplesPerLabel = std::min<size_t>(minLabelCount,75);
+
   // set train sample set and the label vector by picking samples from label image.
   //
   const size_t numberOfSamples = numClasses * KNN_SamplesPerLabel;
@@ -434,7 +459,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
       }
     }
 
-  const unsigned int K = KNN_SamplesPerLabel * 0.80; // HACK: NEEDS MORE CONSIDERATION // Number of neighbours
+  const unsigned int K = std::min<size_t>(KNN_SamplesPerLabel*0.80, 100); // Number of neighbours
   // each column of the memberShip matrix contains the voxel values of a posterior image.
   vnl_matrix<FloatingPrecision> liklihoodMatrix(numOfVoxels, numClasses, 1000);
 

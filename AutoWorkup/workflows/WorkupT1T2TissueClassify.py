@@ -87,6 +87,7 @@ def CreateTissueClassifyWorkflow(WFname, CLUSTER_QUEUE, CLUSTER_QUEUE_LONG, Inte
     tissueClassifyWF.connect(makeOutImageList, 'imageTypeList', BABCext, 'inputVolumeTypes')
     tissueClassifyWF.connect(makeOutImageList, 'outImageList', BABCext, 'outputVolumes')
     BABCext.inputs.debuglevel = 0
+    BABCext.inputs.useKNN = True
     BABCext.inputs.maxIterations = 3
     BABCext.inputs.maxBiasDegree = 4
     BABCext.inputs.filterIteration = 3

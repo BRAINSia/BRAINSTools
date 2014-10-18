@@ -55,8 +55,6 @@ def parseEnvironment(parser, environment):
         retval['virtualenv_dir'] = validatePath(parser.get(environment, 'VIRTUALENV_DIR'), False, True)
     else:
         retval['virtualenv_dir'] = None
-    # cluster specifi environment
-    retval['cluster'] = parser.getboolean(environment, 'CLUSTER')
     retval_cluster = dict()
     retval_cluster['modules'] = eval(parser.get(environment, 'MODULES'))
     retval_cluster['queue'] = parser.get(environment, 'QUEUE')
@@ -194,7 +192,7 @@ def _nipype_plugin_config(wfrun, cluster, template=''):
         plugin_name = 'MultiProc'
         proc_count = int(wfrun.split('local_')[1])
         print "Running with {0} parallel processes on local machine".format(proc_count)
-        return {'n_procs': proc_count}
+        plugin_args = {'n_procs': proc_count}
     elif wfrun == 'ds_runner':
         plugin_name = _create_DS_runner()
         plugin_args = {}

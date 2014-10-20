@@ -83,8 +83,8 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, master_
 
     outputsSpec = pe.Node(interface=IdentityInterface(fields=['t1_average', 't2_average', 'pd_average', 'fl_average',
                                                               'posteriorImages', 'outputLabels', 'outputHeadLabels',
-                                                              'tc_atlas2session_tx',
-                                                              'tc_atlas2sessionInverse_tx',
+                                                              'atlasToSubjectTransform',
+                                                              'atlasToSubjectInverseTransform',
                                                               'BCD_ACPC_T1_CROPPED',
                                                               'outputLandmarksInACPCAlignedSpace',
                                                               'outputLandmarksInInputSpace',
@@ -163,6 +163,7 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, master_
         baw201.connect([(makeDenoiseOutImageList,myLocalTCWF, [('T1List','inputspec.T1List')]),
                         (makeDenoiseOutImageList,myLocalTCWF, [('T2List','inputspec.T2List')]),
                         (inputsSpec, myLocalTCWF, [('atlasDefinition', 'inputspec.atlasDefinition'),
+                                                   ('template_t1', 'inputspec.atlasVolume'),
                                                    (('T1s', getAllT1sLength), 'inputspec.T1_count'),
                                                    ('PDs', 'inputspec.PDList'),
                                                    ('FLs', 'inputspec.FLList'),
@@ -177,9 +178,9 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, master_
                                                     ('outputspec.posteriorImages', 'posteriorImages'),
                                                     ('outputspec.outputLabels', 'outputLabels'),
                                                     ('outputspec.outputHeadLabels', 'outputHeadLabels'),
-                                                    ('outputspec.atlasToSubjectTransform', 'tc_atlas2session_tx'),
+                                                    ('outputspec.atlasToSubjectTransform', 'atlasToSubjectTransform'),
                                                     ('outputspec.atlasToSubjectInverseTransform',
-                                                     'tc_atlas2sessionInverse_tx')]),
+                                                     'atlasToSubjectInverseTransform')]),
                        ])
         """
         brain stem adds on feature

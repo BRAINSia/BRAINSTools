@@ -38,10 +38,18 @@ def setup(argv):
     configure_env = validatePath(os.path.join(utilities_path, 'configure_env.py'), False, False)
     # Add the AutoWorkup directory to the PYTHONPATH every time - REQUIRED FOR CLUSTER DISPATCHING
     environment['env']['PYTHONPATH'] = environment['env']['PYTHONPATH'] + ":" + os.path.dirname(__file__)
+
     execfile(configure_env, dict(__file__=__file__,
                                  append_os_path=environment['env']['PATH'],
                                  append_sys_path=environment['env']['PYTHONPATH'])
              )  # MODS PATH
+
+    print("@"*80)
+    print environment['env']['PYTHONPATH']
+    print("@"*80)
+    print environment['env']['PATH']
+    print("@"*80)
+
     from nipype import config
     config.enable_debug_mode()
     from utilities.package_check import verify_packages

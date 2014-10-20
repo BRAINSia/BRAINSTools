@@ -85,12 +85,12 @@ def create_singleSession(dataDict, master_config, interpMode, pipeline_name):
     SSinputsSpecPtr.inputs.FLs = dataDict['FLs']
     SSinputsSpecPtr.inputs.OTHERs = dataDict['OTs']
     atlasBCDNode = MakeAtlasNode(master_config['atlascache'], 'BBCDAtlas_{0}'.format(session), ['BCDSupport'])
-    sessionWorkflow.connect([(atlasBCDNode, SSinputsSpecPtr, [('template_t1', 'template_t1'),
-                                                              ('template_landmarks_50Lmks_fcsv',
-                                                               'atlasLandmarkFilename'),
-                                                              ('template_weights_50Lmks_wts', 'atlasWeightFilename'),
-                                                              ('LLSModel_50Lmks_h5', 'LLSModel'),
-                                                              ('T1_50Lmks_mdl', 'inputTemplateModel')]),
+    sessionWorkflow.connect([(atlasBCDNode, SSinputsSpecPtr,
+                              [('template_t1', 'template_t1'),
+                               ('template_landmarks_50Lmks_fcsv','atlasLandmarkFilename'),
+                               ('template_weights_50Lmks_wts', 'atlasWeightFilename'),
+                               ('LLSModel_50Lmks_h5', 'LLSModel'),
+                               ('T1_50Lmks_mdl', 'inputTemplateModel')]),
                              ])
     if master_config['workflow_phase'] == 'atlas-based-reference':
         # TODO: input atlas csv
@@ -132,6 +132,7 @@ def create_singleSession(dataDict, master_config, interpMode, pipeline_name):
         atlasBCUTNode = MakeAtlasNode(master_config['atlascache'],
                                       'BBCUTAtlas_{0}'.format(session), ['BRAINSCutSupport'])
         segWF = segmentation(project, subject, session, master_config, onlyT1, pipeline_name=sname)
+        ##TODO: sessionWorkflow.connect(WsegWF)
         sessionWorkflow.connect([(atlasBCUTNode, segWF,
                                 [('hncma-atlas', 'inputspec.hncma-atlas'),
                                  ('template_t1', 'inputspec.template_t1'),
@@ -155,10 +156,10 @@ def create_singleSession(dataDict, master_config, interpMode, pipeline_name):
         outputSpec = sessionWorkflow.get_node('outputspec')
         sessionWorkflow.connect([(outputSpec, segWF, [('t1_average', 'inputspec.t1_average'),
                                                       ('LMIatlasToSubject_tx', 'inputspec.LMIatlasToSubject_tx'),
+                                                      ('atlasToSubjectTransform','inputspec.atlasToSubjectTransform'),
+                                                      ('atlasToSubjectInverseTransform','inputspec.atlasToSubjectInverseTransform'),
                                                       ('outputLabels', 'inputspec.inputLabels'),
                                                       ('posteriorImages', 'inputspec.posteriorImages'),
-                                                      ('tc_atlas2sessionInverse_tx',
-                                                       'inputspec.TissueClassifyatlasToSubjectInverseTransform'),
                                                       ('UpdatedPosteriorsList', 'inputspec.UpdatedPosteriorsList'),
                                                       ('outputHeadLabels', 'inputspec.inputHeadLabels')])
                                  ])

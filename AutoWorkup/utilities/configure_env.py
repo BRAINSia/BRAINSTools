@@ -31,9 +31,7 @@ for item in append_os_path:
     if item not in old_os_path:
         new_os_path.append(item)
 os.environ['PATH'] = os.pathsep.join(new_os_path + old_os_path)
-print "=" *100
-print os.environ['PATH']
-print "=" *100
+
 # PYTHONPATH
 append_sys_path = [os.path.abspath(os.path.expanduser(os.path.expandvars(item))) for item in append_sys_path.split(os.pathsep)]
 # Move the added items to the front of the path:
@@ -43,3 +41,13 @@ for item in list(old_sys_path):
     if item in append_sys_path:
         old_sys_path.remove(item)
 sys.path = [''] + append_sys_path + old_sys_path
+
+print "=" *100
+print "=" *100
+print "=" *100
+print "=" *100
+print "=" *100
+print "NEW PATH env " +os.environ['PATH']
+print "=" *100
+print "NEW PYTHONPATH env " + str(sys.path)
+print "=" * 100

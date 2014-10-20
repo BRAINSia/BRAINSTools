@@ -433,43 +433,18 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
       mapOfRegisteredModalImageListsIt != this->m_RegisteredIntraSubjectImagesList.end();
       ++mapOfRegisteredModalImageListsIt)
     {
-    FloatImageVector::iterator intraImIt = this->m_RegisteredIntraSubjectImagesList[mapOfRegisteredModalImageListsIt->first].begin(); // each intra subject image
-
     // If number of image of a modality (T1 or T2) is greater than one; then, the average image between them is computed
     const int numbOfImagesPerModality = mapOfRegisteredModalImageListsIt->second.size();
     if( numbOfImagesPerModality > 1 )
       {
-      FloatImageVector::iterator currRegisteredModeImageListIt = mapOfRegisteredModalImageListsIt->second.begin();
-      int i = 0;
-      typedef itk::NaryAddImageFilter<InternalImageType, InternalImageType> AdderType;
-      typename AdderType::Pointer imageFilesAdder = AdderType::New();
-
-      while(currRegisteredModeImageListIt != mapOfRegisteredModalImageListsIt->second.end() )
-        {
-        imageFilesAdder->SetInput( i, (*intraImIt).GetPointer() );
-        i++;
-        ++currRegisteredModeImageListIt;
-        ++intraImIt;
-        }
-      imageFilesAdder->Update();
-      // compute average image
-      // divides each voxel location of the adder output by the number of images (i)
-      InternalImagePointer currAvgImage = InternalImageType::New();
-      currAvgImage->SetRegions( imageFilesAdder->GetOutput()->GetLargestPossibleRegion() );
-      currAvgImage->CopyInformation( imageFilesAdder->GetOutput() );
-      currAvgImage->Allocate();
-      typedef typename itk::ImageRegionIterator<InternalImageType> ConstIteratorType;
-      ConstIteratorType in(imageFilesAdder->GetOutput(), imageFilesAdder->GetOutput()->GetLargestPossibleRegion() );
-      ConstIteratorType out(currAvgImage, currAvgImage->GetLargestPossibleRegion() );
-      for( in.GoToBegin(), out.GoToBegin(); !in.IsAtEnd(); ++in, ++out )
-        {
-        out.Set(in.Get() / i);
-        }
       //
-      this->m_ModalityAveragedOfIntraSubjectImages.push_back( currAvgImage );
+      this->m_ModalityAveragedOfIntraSubjectImages.push_back(
+        AverageImageList<InternalImageType>(mapOfRegisteredModalImageListsIt->second)
+      );
       }
     else
       {
+      FloatImageVector::iterator intraImIt = this->m_RegisteredIntraSubjectImagesList[mapOfRegisteredModalImageListsIt->first].begin(); // each intra subject image
       this->m_ModalityAveragedOfIntraSubjectImages.push_back( (*intraImIt).GetPointer() );
       }
     }

@@ -48,7 +48,83 @@
 
 #include "BRAINSFitHelper.h"
 #include "BRAINSABCUtilities.h"
+#include "itkAverageImageFilter.h"
+#include "itkBinaryThresholdImageFilter.h"
 #include <string>
+
+class EmptyVectorException
+{
+public:
+  EmptyVectorException(const char* pStr = "The list of input images was empty.  Nothing to averge.") :
+    pMessage(pStr)
+    {
+    }
+
+  const char * what() const
+    {
+      return pMessage;
+    }
+
+private:
+  const char * pMessage;
+};
+
+
+
+// Take a list of coregistered images, all of the same type (T1,T2) and return the average image.
+template <typename TImage>
+typename TImage::Pointer
+AverageImageList(const std::vector<typename TImage::Pointer> & inputImageList)
+{
+  if( inputImageList.empty() )
+    {
+    // No images, something went wrong.
+    throw EmptyVectorException();
+    }
+  if( inputImageList.size() == 1 )
+    {
+    // Only one image, nothing to average.
+    return inputImageList[0];
+    }
+
+  typedef itk::BinaryThresholdImageFilter<TImage,TImage> BinaryThreshImageFilterType;
+  typedef itk::MultiplyImageFilter<TImage,TImage> MultiplyFilterType;
+  typename BinaryThreshImageFilterType::Pointer firstBinary = BinaryThreshImageFilterType::New();
+  firstBinary->SetLowerThreshold( 0 );
+  firstBinary->SetUpperThreshold( 0 );
+  firstBinary->SetInsideValue(0.0);
+  firstBinary->SetOutsideValue(1.0);
+  firstBinary->SetInput(inputImageList[0]);
+  firstBinary->Update();
+  typename TImage::Pointer averageMask = firstBinary->GetOutput();
+  for(unsigned int i = 1; i < inputImageList.size(); ++i)
+  {
+  typename BinaryThreshImageFilterType::Pointer myThresholder = BinaryThreshImageFilterType::New();
+  myThresholder->SetInput(inputImageList[i]);
+  myThresholder->SetLowerThreshold( 0 ); // Only valuse exactly equal to zero are to be used.
+  myThresholder->SetUpperThreshold( 0 );
+  myThresholder->SetInsideValue(0.0);
+  myThresholder->SetOutsideValue(1.0);
+  typename MultiplyFilterType::Pointer multIF = MultiplyFilterType::New();
+  multIF->SetInput1(averageMask);
+  multIF->SetInput2(myThresholder->GetOutput());
+  multIF->Update();
+  averageMask = multIF->GetOutput();
+  }
+
+  typedef itk::AverageImageFilter<TImage,TImage> AvgFilterType;
+  typename AvgFilterType::Pointer filter = AvgFilterType::New();
+  for(unsigned int i = 0; i < inputImageList.size(); ++i)
+    {
+    filter->SetInput(i,inputImageList[i]);
+    }
+  filter->Update();
+  typename MultiplyFilterType::Pointer multIF = MultiplyFilterType::New();
+  multIF->SetInput1(averageMask);
+  multIF->SetInput2(filter->GetOutput());
+
+  return multIF->GetOutput();
+}
 
 /** \class AtlasRegistrationMethod
  */

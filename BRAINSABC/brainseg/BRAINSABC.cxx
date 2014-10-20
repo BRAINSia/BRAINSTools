@@ -40,7 +40,6 @@
 #include "itksys/SystemTools.hxx"
 #include "PrettyPrintTable.h"
 #include "DenoiseFiltering.h"
-#include "itkAverageImageFilter.h"
 #include "itkBRAINSROIAutoImageFilter.h"
 
 
@@ -305,48 +304,6 @@ RescaleFunctionLocal( AtlasRegType::MapOfFloatImageVectors& localList)
   return rval;
 }
 
-
-class EmptyVectorException
-{
-public:
-  EmptyVectorException(const char* pStr = "The list of input images was empty.  Nothing to averge.") :
-    pMessage(pStr)
-    {
-    }
-
-  const char * what() const
-    {
-      return pMessage;
-    }
-
-private:
-  const char * pMessage;
-};
-
-// Take a list of coregistered images, all of the same type (T1,T2) and return the average image.
-template <typename TImage>
-typename TImage::Pointer
-AverageImageList(const std::vector<typename TImage::Pointer> & inputImageList)
-{
-  if( inputImageList.empty() )
-    {
-    // No images, something went wrong.
-    throw EmptyVectorException();
-    }
-  if( inputImageList.size() == 1 )
-    {
-    // Only one image, nothing to average.
-    return inputImageList[0];
-    }
-  typedef itk::AverageImageFilter<TImage,TImage> AvgFilterType;
-  typename AvgFilterType::Pointer filter = AvgFilterType::New();
-  for(unsigned int i = 0; i < inputImageList.size(); ++i)
-    {
-    filter->SetInput(i,inputImageList[i]);
-    }
-  filter->Update();
-  return filter->GetOutput();
-}
 
 //
 // utility method for constructing map of vectors

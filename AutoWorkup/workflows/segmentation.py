@@ -127,39 +127,6 @@ def segmentation(projectid, subjectid, sessionid, master_config, onlyT1=True, pi
                                                                   ('template_t1', 'moving_image')])
                    ])
 
-    # ## Only run the SyN phase here
-    # AtlasToSubjectantsRegistration = pe.Node(interface=ants.Registration(), name=currentAtlasToSubjectantsRegistration)
-    #
-    # AtlasToSubjectantsRegistration.inputs.num_threads = -1
-    # AtlasToSubjectantsRegistration.inputs.dimension = 3
-    # AtlasToSubjectantsRegistration.inputs.transforms = ["SyN"]
-    # AtlasToSubjectantsRegistration.inputs.transform_parameters = [[0.15, 3.0, 0.0]]
-    # AtlasToSubjectantsRegistration.inputs.metric = ['CC']
-    # AtlasToSubjectantsRegistration.inputs.sampling_strategy = [None]
-    # AtlasToSubjectantsRegistration.inputs.sampling_percentage = [1.0]
-    # AtlasToSubjectantsRegistration.inputs.metric_weight = [1.0]
-    # AtlasToSubjectantsRegistration.inputs.radius_or_number_of_bins = [4]
-    # AtlasToSubjectantsRegistration.inputs.number_of_iterations = [[200]]
-    # AtlasToSubjectantsRegistration.inputs.convergence_threshold = [5e-7]
-    # AtlasToSubjectantsRegistration.inputs.convergence_window_size = [25]
-    # AtlasToSubjectantsRegistration.inputs.use_histogram_matching = [True]
-    # AtlasToSubjectantsRegistration.inputs.shrink_factors = [[1]]
-    # AtlasToSubjectantsRegistration.inputs.smoothing_sigmas = [[0]]
-    # AtlasToSubjectantsRegistration.inputs.sigma_units = ["vox"]
-    # AtlasToSubjectantsRegistration.inputs.use_estimate_learning_rate_once = [False]
-    # AtlasToSubjectantsRegistration.inputs.write_composite_transform = True
-    # AtlasToSubjectantsRegistration.inputs.collapse_output_transforms = True
-    # AtlasToSubjectantsRegistration.inputs.output_transform_prefix = 'AtlasToSubject_'
-    # AtlasToSubjectantsRegistration.inputs.winsorize_lower_quantile = 0.025
-    # AtlasToSubjectantsRegistration.inputs.winsorize_upper_quantile = 0.975
-    # AtlasToSubjectantsRegistration.inputs.collapse_linear_transforms_to_fixed_image_header = False
-    # AtlasToSubjectantsRegistration.inputs.output_warped_image = 'atlas2subject.nii.gz'
-    # AtlasToSubjectantsRegistration.inputs.output_inverse_warped_image = 'subject2atlas.nii.gz'
-    #
-    # baw200.connect([(inputsSpec, AtlasToSubjectantsRegistration, [('atlasToSubjectTransform', 'initial_moving_transform'),
-    #                                                               ('t1_average', 'fixed_image'),
-    #                                                               ('template_t1', 'moving_image')])
-    #                ])
 
     myLocalSegWF = CreateBRAINSCutWorkflow(projectid,
                                            subjectid,

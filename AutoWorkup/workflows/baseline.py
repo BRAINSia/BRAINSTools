@@ -66,15 +66,19 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, master_
     the path and filename of the atlas to use.
     """
 
-    if not 'auxlmk' in master_config['components'] or not 'tissue_classify' in master_config['components']:
-        print "Baseline DataSink requires 'AUXLMK' and/or 'TISSUE_CLASSIFY'!!!"
-        raise NotImplementedError
-        # master_config['components'].append('auxlmk')
-        # master_config['components'].append('tissue_classify')
+    #if  not 'landmark' in master_config['components'] or not 'auxlmk' in master_config['components'] or not 'tissue_classify' in master_config['components']:
+    #    print "Baseline DataSink requires 'AUXLMK' and/or 'TISSUE_CLASSIFY'!!!"
+    #    raise NotImplementedError
+    # master_config['components'].append('auxlmk')
+    # master_config['components'].append('tissue_classify')
     assert phase in ['atlas-based-reference', 'subject-based-reference'], "Unknown phase! Valid entries: 'atlas-based-reference', 'subject-based-reference'"
 
-    baw201 = pe.Workflow(name=pipeline_name)
+    if 'tissue_classify' in master_config['components']:
+        assert ('landmark' in master_config['components'] ), "tissue_classify Requires landmark step!"
+    if 'landmark' in master_config['components'] :
+        assert 'denoise' in master_config['components'], "landmark Requires denoise step!"
 
+    baw201 = pe.Workflow(name=pipeline_name)
 
     inputsSpec = pe.Node(interface=IdentityInterface(fields=['atlasLandmarkFilename', 'atlasWeightFilename',
                                                              'LLSModel', 'inputTemplateModel', 'template_t1',
@@ -93,70 +97,88 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, master_
                                                               'UpdatedPosteriorsList'  # Longitudinal
                                                               ]),
                           run_without_submitting=True, name='outputspec')
-    print    """
-    denoise image filter
-    """
-    print  """
-    Merge all T1 and T2 List
-    """
-    makeDenoiseInImageList = pe.Node(Function(function=MakeOutFileList,
-                                        input_names=['T1List', 'T2List', 'PDList', 'FLList',
-                                                     'OtherList','postfix','PrimaryT1'],
-                                        output_names=['inImageList','outImageList','imageTypeList']),
-                                        run_without_submitting=True, name="99_makeDenoiseInImageList")
-    baw201.connect(inputsSpec, 'T1s', makeDenoiseInImageList, 'T1List')
-    baw201.connect(inputsSpec, 'T2s', makeDenoiseInImageList, 'T2List')
-    baw201.connect(inputsSpec, 'PDs', makeDenoiseInImageList, 'PDList')
-    makeDenoiseInImageList.inputs.FLList= []# an emptyList HACK
-    makeDenoiseInImageList.inputs.PrimaryT1= None  # an emptyList HACK
-    makeDenoiseInImageList.inputs.postfix = "_UNM_denoised.nii.gz"
-    # HACK tissueClassifyWF.connect( inputsSpec, 'FLList', makeDenoiseInImageList, 'FLList' )
-    baw201.connect(inputsSpec, 'OTHERs', makeDenoiseInImageList, 'OtherList')
 
-    print """
-    Denoise:
-    """
-    DenoiseInputImgs = pe.MapNode( interface=UnbiasedNonLocalMeans(),
-                               name='denoiseInputImgs',
-                               iterfield=['inputVolume',
-                                          'outputVolume'])
-    DenoiseInputImgs.inputs.rc= [1,1,1]
-    DenoiseInputImgs.inputs.rs= [4,4,4]
-    DenoiseInputImgs.plugin_args = modify_qsub_args(master_config['queue'], .2, 1, 1)
-    baw201.connect([ (makeDenoiseInImageList, DenoiseInputImgs, [('inImageList', 'inputVolume')]),
-                     (makeDenoiseInImageList, DenoiseInputImgs, [('outImageList','outputVolume')])
-                  ])
+    dsName = "{0}_ds_{1}".format(phase, sessionid)
+    DataSink = pe.Node(name=dsName, interface=nio.DataSink())
+    DataSink.overwrite = master_config['ds_overwrite']
+    DataSink.inputs.container = '{0}/{1}/{2}'.format(projectid, subjectid, sessionid)
+    DataSink.inputs.base_directory = master_config['resultdir']
 
-    makeDenoiseOutImageList = pe.Node(Function(function=GenerateSeparateImageTypeList,
-                                        input_names=['inFileList','inTypeList'],
-                                        output_names=['T1List', 'T2List', 'PDList', 'FLList', 'OtherList']),
-                                        run_without_submitting=True, name="99_makeDenoiseOutImageList")
-    baw201.connect(DenoiseInputImgs, 'outputVolume', makeDenoiseOutImageList, 'inFileList')
-    baw201.connect(makeDenoiseInImageList, 'imageTypeList', makeDenoiseOutImageList, 'inTypeList')
+    if True:
+        print    """
+        denoise image filter
+        """
+        makeDenoiseInImageList = pe.Node(Function(function=MakeOutFileList,
+                                            input_names=['T1List', 'T2List', 'PDList', 'FLList',
+                                                         'OtherList','postfix','PrimaryT1'],
+                                            output_names=['inImageList','outImageList','imageTypeList']),
+                                            run_without_submitting=True, name="99_makeDenoiseInImageList")
+        baw201.connect(inputsSpec, 'T1s', makeDenoiseInImageList, 'T1List')
+        baw201.connect(inputsSpec, 'T2s', makeDenoiseInImageList, 'T2List')
+        baw201.connect(inputsSpec, 'PDs', makeDenoiseInImageList, 'PDList')
+        makeDenoiseInImageList.inputs.FLList= []# an emptyList HACK
+        makeDenoiseInImageList.inputs.PrimaryT1= None  # an emptyList HACK
+        makeDenoiseInImageList.inputs.postfix = "_UNM_denoised.nii.gz"
+        # HACK tissueClassifyWF.connect( inputsSpec, 'FLList', makeDenoiseInImageList, 'FLList' )
+        baw201.connect(inputsSpec, 'OTHERs', makeDenoiseInImageList, 'OtherList')
 
-    DoReverseMapping = False   # Set to true for debugging outputs
-    if 'auxlmk' in master_config['components']:
-        DoReverseMapping = True
-    myLocalLMIWF = CreateLandmarkInitializeWorkflow("LandmarkInitialize", interpMode, DoReverseMapping)
+        print """
+        Denoise:
+        """
+        DenoiseInputImgs = pe.MapNode( interface=UnbiasedNonLocalMeans(),
+                                   name='denoiseInputImgs',
+                                   iterfield=['inputVolume',
+                                              'outputVolume'])
+        DenoiseInputImgs.inputs.rc= [1,1,1]
+        DenoiseInputImgs.inputs.rs= [4,4,4]
+        DenoiseInputImgs.plugin_args = modify_qsub_args(master_config['queue'], .2, 1, 1)
+        baw201.connect([ (makeDenoiseInImageList, DenoiseInputImgs, [('inImageList', 'inputVolume')]),
+                         (makeDenoiseInImageList, DenoiseInputImgs, [('outImageList','outputVolume')])
+                      ])
+        print  """
+        Merge all T1 and T2 List
+        """
+        makeDenoiseOutImageList = pe.Node(Function(function=GenerateSeparateImageTypeList,
+                                            input_names=['inFileList','inTypeList'],
+                                            output_names=['T1List', 'T2List', 'PDList', 'FLList', 'OtherList']),
+                                            run_without_submitting=True, name="99_makeDenoiseOutImageList")
+        baw201.connect(DenoiseInputImgs, 'outputVolume', makeDenoiseOutImageList, 'inFileList')
+        baw201.connect(makeDenoiseInImageList, 'imageTypeList', makeDenoiseOutImageList, 'inTypeList')
 
-    baw201.connect([(makeDenoiseOutImageList, myLocalLMIWF,
-                     [(('T1List', get_list_element,0),  'inputspec.inputVolume' )]),
-                    (inputsSpec, myLocalLMIWF,
-                     [('atlasLandmarkFilename', 'inputspec.atlasLandmarkFilename'),
-                      ('atlasWeightFilename', 'inputspec.atlasWeightFilename'),
-                      ('LLSModel', 'inputspec.LLSModel'),
-                      ('inputTemplateModel', 'inputspec.inputTemplateModel'),
-                      ('template_t1', 'inputspec.atlasVolume')]),
-                    (myLocalLMIWF, outputsSpec,
-                     [('outputspec.outputResampledCroppedVolume','BCD_ACPC_T1_CROPPED'),
-                      ('outputspec.outputLandmarksInACPCAlignedSpace',
-                          'outputLandmarksInACPCAlignedSpace'),
-                      ('outputspec.outputLandmarksInInputSpace',
-                          'outputLandmarksInInputSpace'),
-                      ('outputspec.outputTransform', 'output_tx'),
-                      ('outputspec.atlasToSubjectTransform','LMIatlasToSubject_tx'),
-                      ('outputspec.writeBranded2DImage', 'writeBranded2DImage')])
-                  ])
+    if 'landmark' in master_config['components']:
+        DoReverseMapping = False   # Set to true for debugging outputs
+        if 'auxlmk' in master_config['components']:
+            DoReverseMapping = True
+        myLocalLMIWF = CreateLandmarkInitializeWorkflow("LandmarkInitialize", interpMode, DoReverseMapping)
+
+        baw201.connect([(makeDenoiseOutImageList, myLocalLMIWF,
+                         [(('T1List', get_list_element,0),  'inputspec.inputVolume' )]),
+                        (inputsSpec, myLocalLMIWF,
+                         [('atlasLandmarkFilename', 'inputspec.atlasLandmarkFilename'),
+                          ('atlasWeightFilename', 'inputspec.atlasWeightFilename'),
+                          ('LLSModel', 'inputspec.LLSModel'),
+                          ('inputTemplateModel', 'inputspec.inputTemplateModel'),
+                          ('template_t1', 'inputspec.atlasVolume')]),
+                        (myLocalLMIWF, outputsSpec,
+                         [('outputspec.outputResampledCroppedVolume','BCD_ACPC_T1_CROPPED'),
+                          ('outputspec.outputLandmarksInACPCAlignedSpace',
+                              'outputLandmarksInACPCAlignedSpace'),
+                          ('outputspec.outputLandmarksInInputSpace',
+                              'outputLandmarksInInputSpace'),
+                          ('outputspec.outputTransform', 'output_tx'),
+                          ('outputspec.atlasToSubjectTransform','LMIatlasToSubject_tx'),
+                          ('outputspec.writeBranded2DImage', 'writeBranded2DImage')])
+                      ])
+        baw201.connect([(outputsSpec, DataSink, # TODO: change to myLocalLMIWF -> DataSink
+                                [('outputLandmarksInACPCAlignedSpace', 'ACPCAlign.@outputLandmarks_ACPC'),
+                                 ('writeBranded2DImage', 'ACPCAlign.@writeBranded2DImage'),
+                                 ('BCD_ACPC_T1_CROPPED', 'ACPCAlign.@BCD_ACPC_T1_CROPPED'),
+                                 ('outputLandmarksInInputSpace', 'ACPCAlign.@outputLandmarks_Input'),
+                                 ('output_tx', 'ACPCAlign.@output_tx'),
+                                 ('LMIatlasToSubject_tx', 'ACPCAlign.@LMIatlasToSubject_tx'),]
+                    )
+                   ]
+                  )
 
     if 'tissue_classify' in master_config['components']:
         myLocalTCWF = CreateTissueClassifyWorkflow("TissueClassify", master_config['queue'], master_config['long_q'], interpMode)
@@ -200,70 +222,58 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, master_
                                                            'inputspec.inputTissueLabelFilename')])
                       ])
 
-    dsName = "{0}_ds_{1}".format(phase, sessionid)
-    DataSink = pe.Node(name=dsName, interface=nio.DataSink())
-    DataSink.overwrite = master_config['ds_overwrite']
-    DataSink.inputs.container = '{0}/{1}/{2}'.format(projectid, subjectid, sessionid)
-    DataSink.inputs.base_directory = master_config['resultdir']
 
-    baw201.connect([(outputsSpec, DataSink,  # TODO: change to myLocalTCWF -> DataSink
-                               [(('t1_average', convertToList), 'TissueClassify.@t1'),
-                                (('t2_average', convertToList), 'TissueClassify.@t2'),
-                                (('pd_average', convertToList), 'TissueClassify.@pd'),
-                                (('fl_average', convertToList), 'TissueClassify.@fl')]),
+        baw201.connect([(outputsSpec, DataSink,  # TODO: change to myLocalTCWF -> DataSink
+                                   [(('t1_average', convertToList), 'TissueClassify.@t1'),
+                                    (('t2_average', convertToList), 'TissueClassify.@t2'),
+                                    (('pd_average', convertToList), 'TissueClassify.@pd'),
+                                    (('fl_average', convertToList), 'TissueClassify.@fl')]),
                              ])
-    baw201.connect([(outputsSpec, DataSink, # TODO: change to myLocalLMIWF -> DataSink
-                                [('outputLandmarksInACPCAlignedSpace', 'ACPCAlign.@outputLandmarks_ACPC'),
-                                 ('writeBranded2DImage', 'ACPCAlign.@writeBranded2DImage'),
-                                 ('BCD_ACPC_T1_CROPPED', 'ACPCAlign.@BCD_ACPC_T1_CROPPED'),
-                                 ('outputLandmarksInInputSpace', 'ACPCAlign.@outputLandmarks_Input'),
-                                 ('output_tx', 'ACPCAlign.@output_tx'),
-                                 ('LMIatlasToSubject_tx', 'ACPCAlign.@LMIatlasToSubject_tx'),]
-                    )
-                   ]
-                  )
 
-    currentFixWMPartitioningName = "_".join(['FixWMPartitioning', str(subjectid), str(sessionid)])
-    FixWMNode = pe.Node(interface=Function(function=FixWMPartitioning,
-                                           input_names=['brainMask', 'PosteriorsList'],
-                                           output_names=['UpdatedPosteriorsList', 'MatchingFGCodeList',
-                                                         'MatchingLabelList', 'nonAirRegionMask']),
-                        name=currentFixWMPartitioningName)
 
-    baw201.connect([(myLocalTCWF, FixWMNode, [('outputspec.outputLabels', 'brainMask'),
-                                              (('outputspec.posteriorImages', flattenDict), 'PosteriorsList')]),
-                    (FixWMNode, outputsSpec, [('UpdatedPosteriorsList', 'UpdatedPosteriorsList')]),
-                   ])
 
-    currentBRAINSCreateLabelMapName = 'BRAINSCreateLabelMapFromProbabilityMaps_' + str(subjectid) + "_" + str(sessionid)
-    BRAINSCreateLabelMapNode = pe.Node(interface=BRAINSCreateLabelMapFromProbabilityMaps(),
-                                       name=currentBRAINSCreateLabelMapName)
-    ## TODO:  Fix the file names
-    BRAINSCreateLabelMapNode.inputs.dirtyLabelVolume = 'fixed_headlabels_seg.nii.gz'
-    BRAINSCreateLabelMapNode.inputs.cleanLabelVolume = 'fixed_brainlabels_seg.nii.gz'
+        currentFixWMPartitioningName = "_".join(['FixWMPartitioning', str(subjectid), str(sessionid)])
+        FixWMNode = pe.Node(interface=Function(function=FixWMPartitioning,
+                                               input_names=['brainMask', 'PosteriorsList'],
+                                               output_names=['UpdatedPosteriorsList', 'MatchingFGCodeList',
+                                                             'MatchingLabelList', 'nonAirRegionMask']),
+                            name=currentFixWMPartitioningName)
 
-    baw201.connect([(FixWMNode, BRAINSCreateLabelMapNode, [('UpdatedPosteriorsList','inputProbabilityVolume'),
-                                                           ('MatchingFGCodeList', 'foregroundPriors'),
-                                                           ('MatchingLabelList', 'priorLabelCodes'),
-                                                           ('nonAirRegionMask', 'nonAirRegionMask')]),
-                    (BRAINSCreateLabelMapNode, DataSink, [('cleanLabelVolume', 'TissueClassify.@outputLabels'),
-                                                          ('dirtyLabelVolume',
-                                                           'TissueClassify.@outputHeadLabels')]),
-                    (myLocalTCWF, DataSink, [('outputspec.atlasToSubjectTransform',
-                                              'TissueClassify.@atlas2session_tx'),
-                                             ('outputspec.atlasToSubjectInverseTransform',
-                                              'TissueClassify.@atlas2sessionInverse_tx')]),
-                    (FixWMNode, DataSink, [('UpdatedPosteriorsList', 'TissueClassify.@posteriors')]),
-                   ])
+        baw201.connect([(myLocalTCWF, FixWMNode, [('outputspec.outputLabels', 'brainMask'),
+                                                  (('outputspec.posteriorImages', flattenDict), 'PosteriorsList')]),
+                        (FixWMNode, outputsSpec, [('UpdatedPosteriorsList', 'UpdatedPosteriorsList')]),
+                       ])
 
-    currentAccumulateLikeTissuePosteriorsName = 'AccumulateLikeTissuePosteriors_' + str(subjectid) + "_" + str(sessionid)
-    AccumulateLikeTissuePosteriorsNode = pe.Node(interface=Function(function=AccumulateLikeTissuePosteriors,
-                                                                    input_names=['posteriorImages'],
-                                                                    output_names=['AccumulatePriorsList',
-                                                                                  'AccumulatePriorsNames']),
-                                                 name=currentAccumulateLikeTissuePosteriorsName)
+        currentBRAINSCreateLabelMapName = 'BRAINSCreateLabelMapFromProbabilityMaps_' + str(subjectid) + "_" + str(sessionid)
+        BRAINSCreateLabelMapNode = pe.Node(interface=BRAINSCreateLabelMapFromProbabilityMaps(),
+                                           name=currentBRAINSCreateLabelMapName)
 
-    baw201.connect([(FixWMNode, AccumulateLikeTissuePosteriorsNode, [('UpdatedPosteriorsList', 'posteriorImages')]),
-                    (AccumulateLikeTissuePosteriorsNode, DataSink, [('AccumulatePriorsList',
-                                                                     'ACCUMULATED_POSTERIORS.@AccumulateLikeTissuePosteriorsOutputDir')])])
+        ## TODO:  Fix the file names
+        BRAINSCreateLabelMapNode.inputs.dirtyLabelVolume = 'fixed_headlabels_seg.nii.gz'
+        BRAINSCreateLabelMapNode.inputs.cleanLabelVolume = 'fixed_brainlabels_seg.nii.gz'
+
+        baw201.connect([(FixWMNode, BRAINSCreateLabelMapNode, [('UpdatedPosteriorsList','inputProbabilityVolume'),
+                                                               ('MatchingFGCodeList', 'foregroundPriors'),
+                                                               ('MatchingLabelList', 'priorLabelCodes'),
+                                                               ('nonAirRegionMask', 'nonAirRegionMask')]),
+                        (BRAINSCreateLabelMapNode, DataSink, [('cleanLabelVolume', 'TissueClassify.@outputLabels'),
+                                                              ('dirtyLabelVolume',
+                                                               'TissueClassify.@outputHeadLabels')]),
+                        (myLocalTCWF, DataSink, [('outputspec.atlasToSubjectTransform',
+                                                  'TissueClassify.@atlas2session_tx'),
+                                                 ('outputspec.atlasToSubjectInverseTransform',
+                                                  'TissueClassify.@atlas2sessionInverse_tx')]),
+                        (FixWMNode, DataSink, [('UpdatedPosteriorsList', 'TissueClassify.@posteriors')]),
+                       ])
+
+        currentAccumulateLikeTissuePosteriorsName = 'AccumulateLikeTissuePosteriors_' + str(subjectid) + "_" + str(sessionid)
+        AccumulateLikeTissuePosteriorsNode = pe.Node(interface=Function(function=AccumulateLikeTissuePosteriors,
+                                                                        input_names=['posteriorImages'],
+                                                                        output_names=['AccumulatePriorsList',
+                                                                                      'AccumulatePriorsNames']),
+                                                     name=currentAccumulateLikeTissuePosteriorsName)
+
+        baw201.connect([(FixWMNode, AccumulateLikeTissuePosteriorsNode, [('UpdatedPosteriorsList', 'posteriorImages')]),
+                        (AccumulateLikeTissuePosteriorsNode, DataSink, [('AccumulatePriorsList',
+                                                                         'ACCUMULATED_POSTERIORS.@AccumulateLikeTissuePosteriorsOutputDir')])])
     return baw201

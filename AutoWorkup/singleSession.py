@@ -38,6 +38,21 @@ from workflows.atlasNode import MakeAtlasNode
 from workflows.utils import run_workflow, print_workflow
 
 
+def DetermineIfSegmentationShouldBeDone(master_config):
+    """ This function is in a trival state right now, but
+    more complicated rulesets may be necessary in the furture
+    to determine when segmentation should be run.
+    This is being left so that anticipated future
+    changes are easier to implement.
+    """
+    do_BRAINSCut_Segmentation = False
+    if master_config['workflow_phase'] == 'atlas-based-reference':
+        if 'segmentation' in master_config['components']:
+            do_BRAINSCut_Segmentation = True
+    elif master_config['workflow_phase'] == 'subject-based-reference':
+        if 'segmentation' in master_config['components']:
+            do_BRAINSCut_Segmentation = True
+    return  do_BRAINSCut_Segmentation
 
 def create_singleSession(dataDict, master_config, interpMode, pipeline_name):
     """
@@ -50,6 +65,8 @@ def create_singleSession(dataDict, master_config, interpMode, pipeline_name):
     """
     assert 'tissue_classify' in master_config['components'] or \
         'auxlmk' in master_config['components'] or \
+        'denoise' in master_config['components'] or \
+        'landmark' in master_config['components'] or \
         'segmentation' in master_config['components']
 
     from nipype import config, logging
@@ -92,6 +109,8 @@ def create_singleSession(dataDict, master_config, interpMode, pipeline_name):
                                ('LLSModel_50Lmks_h5', 'LLSModel'),
                                ('T1_50Lmks_mdl', 'inputTemplateModel')]),
                              ])
+
+
     if master_config['workflow_phase'] == 'atlas-based-reference':
         # TODO: input atlas csv
         atlasABCNode = MakeAtlasNode(master_config['atlascache'], 'BABCAtlas_{0}'.format(session), ['BRAINSABCSupport'])
@@ -119,7 +138,8 @@ def create_singleSession(dataDict, master_config, interpMode, pipeline_name):
     else:
         assert 0 == 1, "Invalid workflow type specified for singleSession"
 
-    if 'segmentation' in master_config['components']:
+    do_BRAINSCut_Segmentation = DetermineIfSegmentationShouldBeDone(master_config)
+    if do_BRAINSCut_Segmentation:
         from workflows.segmentation import segmentation
         from workflows.WorkupT1T2BRAINSCut import GenerateWFName
         try:
@@ -207,7 +227,19 @@ def createAndRun(sessions, environment, experiment, pipeline, cluster, useSentin
                     _dict['subject'],
                     _dict['session']
             )
+
+            sentinal_file = os.path.join( sentinal_file_basedir ) ## NO SENTINAL FILE
+            if 'denoise' in master_config['components']:
+                pass
+
             ## Use t1 average sentinal file if  specified.
+            if 'landmark' in master_config['components']:
+                sentinal_file = os.path.join(
+                    sentinal_file_basedir,
+                    "ACPCAlign",
+                    "landmarkInitializer_atlas_to_subject_transform.h5"
+                )
+
             if 'tissue_classify' in master_config['components']:
                 sentinal_file = os.path.join(
                     sentinal_file_basedir,
@@ -215,7 +247,8 @@ def createAndRun(sessions, environment, experiment, pipeline, cluster, useSentin
                     "t1_average_BRAINSABC.nii.gz"
                 )
             ## Use different sentinal file if segmentation specified.
-            if 'segmentation' in master_config['components']:
+            do_BRAINSCut_Segmentation = DetermineIfSegmentationShouldBeDone(master_config)
+            if do_BRAINSCut_Segmentation:
                 sentinal_file = os.path.join(
                     sentinal_file_basedir,
                     "CleanedDenoisedRFSegmentations",

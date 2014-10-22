@@ -80,15 +80,6 @@ def segmentation(projectid, subjectid, sessionid, master_config, onlyT1=True, pi
                                                                 ('inputLabels', 'brain_labels')])])
 
     currentAtlasToSubjectantsRegistration = 'AtlasToSubjectANTsRegistration_' + str(subjectid) + "_" + str(sessionid)
-    # fakeAdaptor = 'def fakeAntsRegistration(BABCA2S,BABCS2A): composite_transform=BABCA2S; inverse_composite_transform=BABCS2A; return composite_transform, inverse_composite_transform'
-    #
-    # AtlasToSubjectantsRegistration = pe.Node(interface=Function(input_names=['BABCA2S','BABCS2A'],
-    #                                                             output_names=['composite_transform','inverse_composite_transform']),
-    #                                          name=currentAtlasToSubjectantsRegistration)
-    # AtlasToSubjectantsRegistration.inputs.function_str = fakeAdaptor
-    # baw200.connect([(inputsSpec, AtlasToSubjectantsRegistration, [('atlasToSubjectTransform', 'BABCA2S')])])
-    # baw200.connect([(inputsSpec, AtlasToSubjectantsRegistration, [('atlasToSubjectInverseTransform', 'BABCS2A')])])
-
     ## TODO: It would be great to update the BRAINSABC atlasToSubjectTransform at this point, but
     ##       That requires more testing, and fixes to ANTS to properly collapse transforms.
     ##       For now we are simply creating a dummy node to pass through
@@ -115,6 +106,7 @@ def segmentation(projectid, subjectid, sessionid, master_config, onlyT1=True, pi
     AtlasToSubjectantsRegistration.inputs.use_estimate_learning_rate_once = [False, False]
     AtlasToSubjectantsRegistration.inputs.write_composite_transform = True
     AtlasToSubjectantsRegistration.inputs.collapse_output_transforms = True
+    AtlasToSubjectantsRegistration.inputs.initialize_linear_transforms_per_stage = True
     AtlasToSubjectantsRegistration.inputs.output_transform_prefix = 'AtlasToSubject_'
     AtlasToSubjectantsRegistration.inputs.winsorize_lower_quantile = 0.025
     AtlasToSubjectantsRegistration.inputs.winsorize_upper_quantile = 0.975

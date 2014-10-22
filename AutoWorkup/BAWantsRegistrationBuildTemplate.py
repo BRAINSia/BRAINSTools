@@ -214,6 +214,7 @@ def BAWantsRegistrationTemplateBuildSingleIterationWF(iterationPhasePrefix=''):
     BeginANTS.inputs.shrink_factors = [[4, 2], [5, 2], [4, 2, 1], [5, 4, 2, 1]]
     BeginANTS.inputs.use_estimate_learning_rate_once = [False, False, False, False]
     BeginANTS.inputs.write_composite_transform = True
+    BeginANTS.inputs.initialize_linear_transforms_per_stage = True
     BeginANTS.inputs.collapse_output_transforms = True
     BeginANTS.inputs.winsorize_lower_quantile = 0.025
     BeginANTS.inputs.winsorize_upper_quantile = 0.975

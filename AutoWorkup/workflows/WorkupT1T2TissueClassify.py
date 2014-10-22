@@ -109,6 +109,7 @@ def CreateTissueClassifyWorkflow(WFname, CLUSTER_QUEUE, CLUSTER_QUEUE_LONG, Inte
     AtlasToSubjectantsRegistrationPreABC.inputs.use_estimate_learning_rate_once = [False, False]
     AtlasToSubjectantsRegistrationPreABC.inputs.write_composite_transform = True
     AtlasToSubjectantsRegistrationPreABC.inputs.collapse_output_transforms = True
+    AtlasToSubjectantsRegistrationPreABC.inputs.initialize_linear_transforms_per_stage = True
     AtlasToSubjectantsRegistrationPreABC.inputs.output_transform_prefix = 'AtlasToSubjectPreBABC_'
     AtlasToSubjectantsRegistrationPreABC.inputs.winsorize_lower_quantile = 0.025
     AtlasToSubjectantsRegistrationPreABC.inputs.winsorize_upper_quantile = 0.975

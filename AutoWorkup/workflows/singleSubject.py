@@ -101,7 +101,7 @@ def RunSubjectWorkflow(args):
                 print project, subject, session
                 raise
             subjectWorkflow.connect([(atlasNode, sessionWorkflow[session],
-                                      [('hncma-atlas', 'segmentation.inputspec.hncma-atlas'),
+                                      [('hncma_atlas', 'segmentation.inputspec.hncma_atlas'),
                                        ('template_t1', 'segmentation.inputspec.template_t1'),
                                        ('template_t1', bCutInputName + '.template_t1'),
                                        ('rho', bCutInputName + '.rho'),

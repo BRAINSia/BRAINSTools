@@ -50,6 +50,10 @@ try:
 except ImportError:
     from AutoWorkup.SEMTools import *
 
+from SEMTools.registration.brainsresample import BRAINSResample
+
+from SEMTools.filtering.denoising import UnbiasedNonLocalMeans
+from SEMTools.segmentation.specialized  import BRAINSCreateLabelMapFromProbabilityMaps
 def get_list_element(nestedList, index):
     return nestedList[index]
 
@@ -82,7 +86,13 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, master_
 
     inputsSpec = pe.Node(interface=IdentityInterface(fields=['atlasLandmarkFilename', 'atlasWeightFilename',
                                                              'LLSModel', 'inputTemplateModel', 'template_t1',
-                                                             'atlasDefinition', 'T1s', 'T2s', 'PDs', 'FLs', 'OTHERs']),
+                                                             'atlasDefinition', 'T1s', 'T2s', 'PDs', 'FLs', 'OTHERs',
+                                                             'hncma_atlas',
+                                                             'template_rightHemisphere',
+                                                             'template_leftHemisphere',
+                                                             'template_WMPM2_labels',
+                                                             'template_nac_labels',
+                                                             'template_ventricles']),
                          run_without_submitting=True, name='inputspec')
 
     outputsSpec = pe.Node(interface=IdentityInterface(fields=['t1_average', 't2_average', 'pd_average', 'fl_average',
@@ -119,7 +129,7 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, master_
         makeDenoiseInImageList.inputs.FLList= []# an emptyList HACK
         makeDenoiseInImageList.inputs.PrimaryT1= None  # an emptyList HACK
         makeDenoiseInImageList.inputs.postfix = "_UNM_denoised.nii.gz"
-        # HACK tissueClassifyWF.connect( inputsSpec, 'FLList', makeDenoiseInImageList, 'FLList' )
+        # HACK baw201.connect( inputsSpec, 'FLList', makeDenoiseInImageList, 'FLList' )
         baw201.connect(inputsSpec, 'OTHERs', makeDenoiseInImageList, 'OtherList')
 
         print """
@@ -189,7 +199,8 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, master_
                                                    (('T1s', getAllT1sLength), 'inputspec.T1_count'),
                                                    ('PDs', 'inputspec.PDList'),
                                                    ('FLs', 'inputspec.FLList'),
-                                                   ('OTHERs', 'inputspec.OtherList')]),
+                                                   ('OTHERs', 'inputspec.OtherList')
+                        ]),
                         (myLocalLMIWF, myLocalTCWF, [('outputspec.outputResampledCroppedVolume', 'inputspec.PrimaryT1'),
                                                      ('outputspec.atlasToSubjectTransform',
                                                       'inputspec.atlasToSubjectInitialTransform')]),
@@ -276,4 +287,52 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, master_
         baw201.connect([(FixWMNode, AccumulateLikeTissuePosteriorsNode, [('UpdatedPosteriorsList', 'posteriorImages')]),
                         (AccumulateLikeTissuePosteriorsNode, DataSink, [('AccumulatePriorsList',
                                                                          'ACCUMULATED_POSTERIORS.@AccumulateLikeTissuePosteriorsOutputDir')])])
+
+    if 'warp_atlas_to_subject' in master_config['components']:
+        ##
+        ##~/src/NEP-build/bin/BRAINSResample
+        # --warpTransform AtlasToSubjectPreBABC_Composite.h5
+        #  --inputVolume  /Shared/sinapse/CACHE/x20141001_KIDTEST_base_CACHE/Atlas/hncma-atlas.nii.gz
+        #  --referenceVolume  /Shared/sinapse/CACHE/x20141001_KIDTEST_base_CACHE/singleSession_KID1_KT1/LandmarkInitialize/BROIAuto_cropped/Cropped_BCD_ACPC_Aligned.nii.gz
+        # !--outputVolume hncma.nii.gz
+        # !--interpolationMode NearestNeighbor
+        # !--pixelType short
+        ##
+        ##
+
+        BResample = dict()
+        AtlasLabelMapsToResample=[
+        'hncma_atlas',
+        'template_WMPM2_labels',
+        'template_nac_labels',
+        ]
+        for atlasImage in AtlasLabelMapsToResample:
+            BResample[atlasImage] = pe.Node(interface=BRAINSResample(), name="BRAINSResample_"+atlasImage)
+            BResample[atlasImage].inputs.pixelType='short'
+            BResample[atlasImage].inputs.interpolationMode='NearestNeighbor'
+            BResample[atlasImage].inputs.outputVolume=atlasImage+".nii.gz"
+
+            baw201.connect(myLocalTCWF,'outputspec.t1_average', BResample[atlasImage], 'referenceVolume')
+            baw201.connect(inputsSpec, atlasImage,         BResample[atlasImage], 'inputVolume')
+            baw201.connect(myLocalTCWF, 'outputspec.atlasToSubjectTransform',
+                                      BResample[atlasImage], 'warpTransform')
+            baw201.connect(BResample[atlasImage], 'outputVolume', DataSink, 'WarpedAtlas2Subject.@'+atlasImage)
+
+        AtlasBinaryMapsToResample =[
+        'template_rightHemisphere',
+        'template_leftHemisphere',
+        'template_ventricles'
+        ]
+        for atlasImage in AtlasBinaryMapsToResample:
+            BResample[atlasImage] = pe.Node(interface=BRAINSResample(), name="BRAINSResample_"+atlasImage)
+            BResample[atlasImage].inputs.pixelType='binary'
+            BResample[atlasImage].inputs.interpolationMode='Linear'  ## Conversion to distance map, so use linear to resample distance map
+            BResample[atlasImage].inputs.outputVolume=atlasImage+".nii.gz"
+
+            baw201.connect(myLocalTCWF,'outputspec.t1_average', BResample[atlasImage], 'referenceVolume')
+            baw201.connect(inputsSpec, atlasImage,         BResample[atlasImage], 'inputVolume')
+            baw201.connect(myLocalTCWF,'outputspec.atlasToSubjectTransform', BResample[atlasImage], 'warpTransform')
+            baw201.connect(BResample[atlasImage], 'outputVolume', DataSink, 'WarpedAtlas2Subject.@'+atlasImage)
+
+
     return baw201

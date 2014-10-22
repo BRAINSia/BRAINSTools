@@ -7,8 +7,10 @@ import nipype.interfaces.io as nio   # Data i/o
 import nipype.pipeline.engine as pe  # pypeline engine
 
 from BRAINSABCext import *
+
 from utilities.misc import *
 from utilities.distributed import modify_qsub_args
+
 
 """
     from WorkupT1T2TissueClassify import CreateTissueClassifyWorkflow
@@ -47,7 +49,8 @@ def CreateTissueClassifyWorkflow(WFname, CLUSTER_QUEUE, CLUSTER_QUEUE_LONG, Inte
     inputsSpec = pe.Node(interface=IdentityInterface(fields=['T1List', 'T2List', 'PDList', 'FLList',
                                                              'OtherList', 'T1_count', 'PrimaryT1',
                                                              'atlasDefinition',
-                                                             'atlasToSubjectInitialTransform','atlasVolume']),
+                                                             'atlasToSubjectInitialTransform','atlasVolume'
+                                                            ]),
                          run_without_submitting=True,
                          name='inputspec')
     outputsSpec = pe.Node(interface=IdentityInterface(fields=['atlasToSubjectTransform',
@@ -59,7 +62,8 @@ def CreateTissueClassifyWorkflow(WFname, CLUSTER_QUEUE, CLUSTER_QUEUE_LONG, Inte
                                                               't2_average',
                                                               'pd_average',
                                                               'fl_average',
-                                                              'posteriorImages']),
+                                                              'posteriorImages',
+                                                              ]),
                           run_without_submitting=True,
                           name='outputspec')
 
@@ -115,7 +119,6 @@ def CreateTissueClassifyWorkflow(WFname, CLUSTER_QUEUE, CLUSTER_QUEUE_LONG, Inte
     tissueClassifyWF.connect(inputsSpec, 'atlasToSubjectInitialTransform',AtlasToSubjectantsRegistrationPreABC,'initial_moving_transform')
     tissueClassifyWF.connect(inputsSpec, 'PrimaryT1',AtlasToSubjectantsRegistrationPreABC,'fixed_image')
     tissueClassifyWF.connect(inputsSpec, 'atlasVolume',AtlasToSubjectantsRegistrationPreABC,'moving_image')
-
 
 
     BABCext = pe.Node(interface=BRAINSABCext(), name="BABC")

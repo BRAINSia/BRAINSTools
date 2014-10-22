@@ -55,7 +55,7 @@ def segmentation(projectid, subjectid, sessionid, master_config, onlyT1=True, pi
     inputsSpec = pe.Node(interface=IdentityInterface(fields=['t1_average',
                                                              't2_average',
                                                              'template_t1',
-                                                             'hncma-atlas',
+                                                             'hncma_atlas',
                                                              'LMIatlasToSubject_tx',
                                                              'inputLabels',
                                                              'inputHeadLabels',
@@ -231,7 +231,7 @@ def segmentation(projectid, subjectid, sessionid, master_config, onlyT1=True, pi
 
     baw200.connect([(AtlasToSubjectantsRegistration, AntsLabelWarpToSubject, [('composite_transform', 'transforms')]),
                     (inputsSpec, AntsLabelWarpToSubject, [('t1_average', 'reference_image'),
-                                                          ('hncma-atlas', 'input_image')])
+                                                          ('hncma_atlas', 'input_image')])
                     ])
     #####
     ### Now define where the final organized outputs should go.

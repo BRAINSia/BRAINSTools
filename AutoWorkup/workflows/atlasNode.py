@@ -1,8 +1,9 @@
-def MakeAtlasNode(atlasDirectory, name, atlasParts=['BRAINSABCSupport','BRAINSCutSupport','BCDSupport','ExtraSupport']):
+def MakeAtlasNode(atlasDirectory, name, atlasParts=['BRAINSABCSupport','LabelMapsSupport','BRAINSCutSupport','BCDSupport','ExtraSupport']):
     """ Make an atlas node that contains the elements requested in the atlasParts section
         This will allow more fine grained data grabbers to be used, thereby allowing enhanced
         compartmentalization of algorithmic components.
     """
+
     import nipype.interfaces.io as nio   # Data i/o
     import nipype.pipeline.engine as pe  # pypeline engine
     import os
@@ -47,33 +48,36 @@ def MakeAtlasNode(atlasDirectory, name, atlasParts=['BRAINSABCSupport','BRAINSCu
                         "20141004_BCD/template_landmarks_50Lmks.fcsv",
                         "20141004_BCD/template_weights_50Lmks.wts"
                         ] )
+    if 'LabelMapsSupport' in atlasParts:
+        atlas_file_names.extend( [
+                        "hncma-atlas.nii.gz",
+                        "hncma-atlas-lut-mod2.ctbl",
+                        "template_rightHemisphere.nii.gz",
+                        "template_leftHemisphere.nii.gz",
+                        "template_WMPM2_labels.nii.gz",
+                        "template_WMPM2_labels.txt",
+                        "template_nac_labels.nii.gz",
+                        "template_nac_labels.txt",
+                        "template_ventricles.nii.gz"
+                        ] )
     if 'ExtraSupport' in atlasParts:
         atlas_file_names.extend( [
                         "tempNOTVBBOX.nii.gz",
                         "template_ABC_labels.nii.gz",
                         "avg_t1.nii.gz",
                         "avg_t2.nii.gz",
-                        "hncma-atlas.nii.gz",
-                        "hncma-atlas-lut-mod2.ctbl",
-                        "template_rightHemisphere.nii.gz",
-                        "template_WMPM2_labels.nii.gz",
-                        "template_WMPM2_labels.txt",
                         "template_brain.nii.gz",
                         "template_cerebellum.nii.gz",
                         "template_class.nii.gz",
                         "template_headregion.nii.gz",
-                        "template_leftHemisphere.nii.gz",
-                        "template_nac_labels.nii.gz",
-                        "template_nac_labels.txt",
                         "template_t1.nii.gz",
                         "template_t2.nii.gz",
                         "template_t1_clipped.nii.gz",
-                        "template_t2_clipped.nii.gz",
-                        "template_ventricles.nii.gz"
+                        "template_t2_clipped.nii.gz"
                         ] )
     atlas_file_names = list(set(atlas_file_names)) # Make a unique listing
     ## Remove filename extensions for images, but replace . with _ for other file types
-    atlas_file_keys = [os.path.basename(fn).replace('.nii.gz', '').replace('.', '_') for fn in atlas_file_names]
+    atlas_file_keys = [os.path.basename(fn).replace('.nii.gz', '').replace('.', '_').replace('-','_') for fn in atlas_file_names]
     atlas_outputs_filename_match = dict(zip(atlas_file_keys, atlas_file_names))
 
     node = pe.Node(interface=nio.DataGrabber(force_output=False, outfields=atlas_file_keys),

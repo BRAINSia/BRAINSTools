@@ -38,6 +38,11 @@ from workflows.atlasNode import MakeAtlasNode
 from workflows.utils import run_workflow, print_workflow
 
 
+def PrintValueToScreen2(inval):
+    print("XX\n"*30)
+    print inval
+    return inval
+
 def DetermineIfSegmentationShouldBeDone(master_config):
     """ This function is in a trival state right now, but
     more complicated rulesets may be necessary in the furture
@@ -95,30 +100,36 @@ def create_singleSession(dataDict, master_config, interpMode, pipeline_name):
                                                           pipeline_name=pipeline_name)
     sessionWorkflow.base_dir = master_config['cachedir']
 
-    SSinputsSpecPtr = sessionWorkflow.get_node('inputspec')
-    SSinputsSpecPtr.inputs.T1s = dataDict['T1s']
-    SSinputsSpecPtr.inputs.T2s = dataDict['T2s']
-    SSinputsSpecPtr.inputs.PDs = dataDict['PDs']
-    SSinputsSpecPtr.inputs.FLs = dataDict['FLs']
-    SSinputsSpecPtr.inputs.OTHERs = dataDict['OTs']
+    sessionWorkflow_inputsspec = sessionWorkflow.get_node('inputspec')
+    sessionWorkflow_inputsspec.inputs.T1s = dataDict['T1s']
+    sessionWorkflow_inputsspec.inputs.T2s = dataDict['T2s']
+    sessionWorkflow_inputsspec.inputs.PDs = dataDict['PDs']
+    sessionWorkflow_inputsspec.inputs.FLs = dataDict['FLs']
+    sessionWorkflow_inputsspec.inputs.OTHERs = dataDict['OTs']
     atlasBCDNode = MakeAtlasNode(master_config['atlascache'], 'BBCDAtlas_{0}'.format(session), ['BCDSupport'])
-    sessionWorkflow.connect([(atlasBCDNode, SSinputsSpecPtr,
+    sessionWorkflow.connect([(atlasBCDNode, sessionWorkflow_inputsspec,
                               [('template_t1', 'template_t1'),
                                ('template_landmarks_50Lmks_fcsv','atlasLandmarkFilename'),
                                ('template_weights_50Lmks_wts', 'atlasWeightFilename'),
                                ('LLSModel_50Lmks_h5', 'LLSModel'),
-                               ('T1_50Lmks_mdl', 'inputTemplateModel')]),
+                               ('T1_50Lmks_mdl', 'inputTemplateModel')
+                               ]),
                              ])
-
 
     if master_config['workflow_phase'] == 'atlas-based-reference':
         # TODO: input atlas csv
-        atlasABCNode = MakeAtlasNode(master_config['atlascache'], 'BABCAtlas_{0}'.format(session), ['BRAINSABCSupport'])
+        atlasABCNode = MakeAtlasNode(master_config['atlascache'], 'BABCAtlas_{0}'.format(session), ['BRAINSABCSupport','LabelMapsSupport'])
+        sessionWorkflow.connect(atlasABCNode,'ExtendedAtlasDefinition_xml',sessionWorkflow_inputsspec,'atlasDefinition')
+        sessionWorkflow.connect([( atlasABCNode,sessionWorkflow_inputsspec, [
+                                                ('hncma_atlas','hncma_atlas'),
+                                                ('template_leftHemisphere','template_leftHemisphere'),
+                                                ('template_rightHemisphere','template_rightHemisphere'),
+                                                ('template_WMPM2_labels','template_WMPM2_labels'),
+                                                ('template_nac_labels','template_nac_labels'),
+                                                ('template_ventricles','template_ventricles') ]
+                                 )]
+                                )
 
-        sessionWorkflow.connect([(atlasABCNode, SSinputsSpecPtr,
-                                  [('ExtendedAtlasDefinition_xml', 'atlasDefinition')]
-                                  ),
-                                 ])
     elif master_config['workflow_phase'] == 'subject-based-reference':
         print master_config['previousresult']
         template_DG = pe.Node(interface=nio.DataGrabber(infields=['subject'],
@@ -131,7 +142,7 @@ def create_singleSession(dataDict, master_config, interpMode, pipeline_name):
         template_DG.inputs.sort_filelist = True
         template_DG.inputs.raise_on_empty = True
 
-        sessionWorkflow.connect([(template_DG, SSinputsSpecPtr,
+        sessionWorkflow.connect([(template_DG, sessionWorkflow_inputsspec,
                                   [('outAtlasXMLFullPath', 'atlasDefinition')
                                    ]),
                                  ])
@@ -154,7 +165,7 @@ def create_singleSession(dataDict, master_config, interpMode, pipeline_name):
         segWF = segmentation(project, subject, session, master_config, onlyT1, pipeline_name=sname)
         ##TODO: sessionWorkflow.connect(WsegWF)
         sessionWorkflow.connect([(atlasBCUTNode, segWF,
-                                [('hncma-atlas', 'inputspec.hncma-atlas'),
+                                [
                                  ('template_t1', 'inputspec.template_t1'),
                                  ('template_t1', bCutInputName + '.template_t1'),
                                  ('rho', bCutInputName + '.rho'),
@@ -181,7 +192,9 @@ def create_singleSession(dataDict, master_config, interpMode, pipeline_name):
                                                       ('outputLabels', 'inputspec.inputLabels'),
                                                       ('posteriorImages', 'inputspec.posteriorImages'),
                                                       ('UpdatedPosteriorsList', 'inputspec.UpdatedPosteriorsList'),
-                                                      ('outputHeadLabels', 'inputspec.inputHeadLabels')])
+                                                      ('outputHeadLabels', 'inputspec.inputHeadLabels')
+
+                                 ])
                                  ])
         if not onlyT1:
             sessionWorkflow.connect([(outputSpec, segWF, [('t2_average', 'inputspec.t2_average')])])
@@ -246,6 +259,14 @@ def createAndRun(sessions, environment, experiment, pipeline, cluster, useSentin
                     "TissueClassify",
                     "t1_average_BRAINSABC.nii.gz"
                 )
+
+            if 'warp_atlas_to_subject' in master_config['components']:
+                sentinal_file = os.path.join(
+                    sentinal_file_basedir,
+                    "WarpedAtlas2Subject",
+                    "template_rightHemisphere.nii.gz"
+                )
+
             ## Use different sentinal file if segmentation specified.
             do_BRAINSCut_Segmentation = DetermineIfSegmentationShouldBeDone(master_config)
             if do_BRAINSCut_Segmentation:

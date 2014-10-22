@@ -1195,7 +1195,9 @@ int main(int argc, char * *argv)
         }
       }
 
+
     AtlasRegType::MapOfFloatImageVectors imgset = segfilter->GetRawCorrected();
+    FloatImagePointer intersectMask = IntersectIntraSubjectMasks<FloatImageType>(imgset);
     // Average together all the input images of a given type
     for(auto & elem : imgset)
       {
@@ -1207,7 +1209,8 @@ int main(int argc, char * *argv)
         continue;
         }
 
-      FloatImagePointer avgImage = AverageImageList<FloatImageType>(elem.second);
+      FloatImagePointer avgImage = AverageImageList<FloatImageType>(elem.second,
+                                                                    intersectMask);
       // Write out average image.
       typedef itk::RescaleIntensityImageFilter<FloatImageType, ShortImageType> RescaleType;
       RescaleType::Pointer rescaleInstensityFilter = RescaleType::New();

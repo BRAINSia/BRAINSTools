@@ -342,6 +342,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
   this->m_ModalityAveragedOfIntraSubjectImages.clear(); //Ensure that pushing onto clean list
   this->m_ModalityAveragedOfIntraSubjectImages.resize(0); //Ensure that pushing onto clean list
 
+  InternalImageType::Pointer intersectionMask = IntersectIntraSubjectMasks<InternalImageType>(this->m_RegisteredIntraSubjectImagesList);
   for(MapOfFloatImageVectors::iterator mapOfRegisteredModalImageListsIt = this->m_RegisteredIntraSubjectImagesList.begin();
       mapOfRegisteredModalImageListsIt != this->m_RegisteredIntraSubjectImagesList.end();
       ++mapOfRegisteredModalImageListsIt)
@@ -352,7 +353,8 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
       {
       //
       this->m_ModalityAveragedOfIntraSubjectImages.push_back(
-        AverageImageList<InternalImageType>(mapOfRegisteredModalImageListsIt->second)
+        AverageImageList<InternalImageType>(mapOfRegisteredModalImageListsIt->second,
+                                            intersectionMask)
       );
       }
     else if( numbOfImagesPerModality == 1 )

@@ -32,18 +32,9 @@ Examples:
   $ singleSession.py --rewrite-datasinks --pe OSX --ExperimentConfig my_baw.config 00003
 
 """
-import os
-
-from workflows.atlasNode import MakeAtlasNode
-from workflows.utils import run_workflow, print_workflow
 
 
-def PrintValueToScreen2(inval):
-    print("XX\n"*30)
-    print inval
-    return inval
-
-def DetermineIfSegmentationShouldBeDone(master_config):
+def _DetermineIfSegmentationShouldBeDone(master_config):
     """ This function is in a trival state right now, but
     more complicated rulesets may be necessary in the furture
     to determine when segmentation should be run.
@@ -149,7 +140,7 @@ def create_singleSession(dataDict, master_config, interpMode, pipeline_name):
     else:
         assert 0 == 1, "Invalid workflow type specified for singleSession"
 
-    do_BRAINSCut_Segmentation = DetermineIfSegmentationShouldBeDone(master_config)
+    do_BRAINSCut_Segmentation = _DetermineIfSegmentationShouldBeDone(master_config)
     if do_BRAINSCut_Segmentation:
         from workflows.segmentation import segmentation
         from workflows.WorkupT1T2BRAINSCut import GenerateWFName
@@ -203,9 +194,11 @@ def create_singleSession(dataDict, master_config, interpMode, pipeline_name):
 
 
 def createAndRun(sessions, environment, experiment, pipeline, cluster, useSentinal, dryRun):
+    from utilities.misc import add_dict
+    from workflows.utils import run_workflow, print_workflow
     from baw_exp import OpenSubjectDatabase
     from utilities.misc import add_dict
-    from workflows.atlasNode import MakeAtlasNode
+
     from workflows.utils import run_workflow, print_workflow
     master_config = {}
     for configDict in [environment, experiment, pipeline, cluster]:
@@ -268,7 +261,7 @@ def createAndRun(sessions, environment, experiment, pipeline, cluster, useSentin
                 )
 
             ## Use different sentinal file if segmentation specified.
-            do_BRAINSCut_Segmentation = DetermineIfSegmentationShouldBeDone(master_config)
+            do_BRAINSCut_Segmentation = _DetermineIfSegmentationShouldBeDone(master_config)
             if do_BRAINSCut_Segmentation:
                 sentinal_file = os.path.join(
                     sentinal_file_basedir,
@@ -297,9 +290,10 @@ def createAndRun(sessions, environment, experiment, pipeline, cluster, useSentin
             pass
 
 
-def _main(environment, experiment, pipeline, cluster, **kwds):
+def _SingleSession_main(environment, experiment, pipeline, cluster, **kwds):
+
     from utilities.configFileParser import nipype_options
-    from utilities.misc import add_dict
+
 
     print "Copying Atlas directory and determining appropriate Nipype options..."
     pipeline = nipype_options(kwds, pipeline, cluster, experiment, environment)  # Generate Nipype options
@@ -307,8 +301,14 @@ def _main(environment, experiment, pipeline, cluster, **kwds):
     createAndRun(kwds['SESSIONS'], environment, experiment, pipeline, cluster, useSentinal=kwds['--use-sentinal'],dryRun=kwds['--dry-run'])
     return 0
 
+
+######################################
+# Set up the environment, process command line options, and start processing
+#
 if __name__ == '__main__':
     import sys
+    import os
+
     from docopt import docopt
     from AutoWorkup import setup
 
@@ -316,5 +316,7 @@ if __name__ == '__main__':
     print argv
     print '=' * 100
     configs = setup(argv)
-    exit = _main(*configs, **argv)
+
+
+    exit = _SingleSession_main(*configs, **argv)
     sys.exit(exit)

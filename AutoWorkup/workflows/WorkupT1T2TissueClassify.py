@@ -99,8 +99,10 @@ def CreateTissueClassifyWorkflow(WFname, CLUSTER_QUEUE, CLUSTER_QUEUE_LONG, Inte
     AtlasToSubjectantsRegistrationPreABC.inputs.sampling_percentage = [1.0, 1.0]
     AtlasToSubjectantsRegistrationPreABC.inputs.metric_weight = [1.0, 1.0]
     AtlasToSubjectantsRegistrationPreABC.inputs.radius_or_number_of_bins = [32, 4]
-    AtlasToSubjectantsRegistrationPreABC.inputs.number_of_iterations = [[1000, 1000, 1000], [10000, 500, 500, 200]]
-    AtlasToSubjectantsRegistrationPreABC.inputs.convergence_threshold = [5e-7, 5e-7]
+ #   AtlasToSubjectantsRegistrationPreABC.inputs.number_of_iterations = [[1000, 1000, 1000], [10000, 500, 500, 200]]
+    AtlasToSubjectantsRegistrationPreABC.inputs.number_of_iterations = [[1, 1, 1], [1, 1, 1, 1]]
+
+    AtlasToSubjectantsRegistrationPreABC.inputs.convergence_threshold = [1e-6, 1e-6] #From ANTs/Scripts recomemndations
     AtlasToSubjectantsRegistrationPreABC.inputs.convergence_window_size = [25, 25]
     AtlasToSubjectantsRegistrationPreABC.inputs.use_histogram_matching = [True, True]
     AtlasToSubjectantsRegistrationPreABC.inputs.shrink_factors = [[4, 2, 1], [5, 4, 2, 1]]
@@ -146,15 +148,14 @@ def CreateTissueClassifyWorkflow(WFname, CLUSTER_QUEUE, CLUSTER_QUEUE_LONG, Inte
     # BABCext.inputs.implicitOutputs = ['t1_average_BRAINSABC.nii.gz', 't2_average_BRAINSABC.nii.gz']
     BABCext.inputs.interpolationMode = InterpolationMode
     BABCext.inputs.outputDir = './'
-    #BABCext.inputs.save_state = 'SavedBABCInternalSyNState.h5'
+    BABCext.inputs.saveState = 'SavedBABCInternalSyNState.h5'
 
     tissueClassifyWF.connect(inputsSpec, 'atlasDefinition', BABCext, 'atlasDefinition')
     tissueClassifyWF.connect(AtlasToSubjectantsRegistrationPreABC,
                                  ( 'composite_transform', getListIndexOrNoneIfOutOfRange, 0 ),
                               BABCext, 'atlasToSubjectInitialTransform')
-    #tissueClassifyWF.connect(AtlasToSubjectantsRegistrationPreABC,'save_state',
-    #                          BABCext, 'restore_state')
-
+    tissueClassifyWF.connect(AtlasToSubjectantsRegistrationPreABC,'save_state',
+                              BABCext, 'restoreState')
 
     """
     Get the first T1 and T2 corrected images from BABCext

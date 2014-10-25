@@ -146,16 +146,16 @@ def CreateTissueClassifyWorkflow(WFname, CLUSTER_QUEUE, CLUSTER_QUEUE_LONG, Inte
     # BABCext.inputs.implicitOutputs = ['t1_average_BRAINSABC.nii.gz', 't2_average_BRAINSABC.nii.gz']
     BABCext.inputs.interpolationMode = InterpolationMode
     BABCext.inputs.outputDir = './'
+    #BABCext.inputs.save_state = 'SavedBABCInternalSyNState.h5'
 
     tissueClassifyWF.connect(inputsSpec, 'atlasDefinition', BABCext, 'atlasDefinition')
     tissueClassifyWF.connect(AtlasToSubjectantsRegistrationPreABC,
                                  ( 'composite_transform', getListIndexOrNoneIfOutOfRange, 0 ),
-
-
-
-
                               BABCext, 'atlasToSubjectInitialTransform')
-    ##tissueClassifyWF.connect(inputsSpec, 'atlasToSubjectInitialTransform', BABCext, 'atlasToSubjectInitialTransform')
+    #tissueClassifyWF.connect(AtlasToSubjectantsRegistrationPreABC,'save_state',
+    #                          BABCext, 'restore_state')
+
+
     """
     Get the first T1 and T2 corrected images from BABCext
     """

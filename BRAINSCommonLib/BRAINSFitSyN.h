@@ -38,7 +38,8 @@ simpleSynReg( typename FixedImageType::Pointer & infixedImage,
               typename MovingimageType::Pointer & inmovingImage2 = NULL,
               double samplingPercentage = 1.0,
               std::string whichMetric = "cc",
-              const bool synFull = true )
+              const bool synFull = true,
+              typename itk::CompositeTransform<double,3>::Pointer restoreState = NULL)
 {
   typename SyNRegistrationHelperType::Pointer regHelper = SyNRegistrationHelperType::New();
     {
@@ -222,9 +223,16 @@ simpleSynReg( typename FixedImageType::Pointer & infixedImage,
     regHelper->AddSyNTransform(learningRate, varianceForUpdateField, varianceForTotalField);
     }
 
-  if( compositeInitialTransform.IsNotNull() )
+  if( restoreState.IsNotNull() )
     {
-    regHelper->SetMovingInitialTransform( compositeInitialTransform );
+    regHelper->SetRestoreStateTransform( restoreState );
+    }
+  else
+    {
+    if( compositeInitialTransform.IsNotNull() )
+      {
+      regHelper->SetMovingInitialTransform( compositeInitialTransform );
+      }
     }
 
   regHelper->SetLogStream(std::cout);

@@ -62,6 +62,8 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
   m_RegistrationUpdateNeeded(true),
   m_AtlasLinearTransformChoice("Affine"),
   m_ImageLinearTransformChoice("Rigid"),
+  m_SaveState(""),
+  m_RestoreState(NULL),
   m_DebugLevel(0)
 {
   m_InputImageTissueRegion = NULL;
@@ -558,7 +560,8 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
       atlasToSubjectCompositeTransform->AddTransform( m_AtlasToSubjectTransform );
       }
     atlasToSubjectRegistrationHelper->SetCurrentGenericTransform( atlasToSubjectCompositeTransform );
-
+    atlasToSubjectRegistrationHelper->SetRestoreState( m_RestoreState );
+    atlasToSubjectRegistrationHelper->SetSaveState( m_SaveState );
     // Register all atlas images to first image
     // Set the fixed and moving image
     atlasToSubjectRegistrationHelper->SetFixedVolume(this->GetModifiableKeyAveragedSubjectImage()); // by AverageIntraSubjectRegisteredImages function

@@ -538,6 +538,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::BRAINSFitHelperTemplat
   m_PermittedNumberOfIterations(0),
   m_DebugLevel(0),
   m_CurrentGenericTransform(NULL),
+  m_RestoreState(NULL),
   m_DisplayDeformedImage(false),
   m_PromptUserAfterDisplay(false),
   m_FinalMetricValue(0.0),
@@ -549,6 +550,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::BRAINSFitHelperTemplat
   m_MaximumNumberOfEvaluations(900),
   m_MaximumNumberOfCorrections(12),
   m_SyNMetricType(""),
+  m_SaveState(""),
   m_SyNFull(true),
   m_ForceMINumberOfThreads(-1)
 {
@@ -1608,7 +1610,8 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
                                                        m_MovingVolume2,
                                                        m_SamplingPercentage,
                                                        whichmetric,
-                                                       m_SyNFull );
+                                                       m_SyNFull,
+                                                       m_RestoreState);
 
       if( outputSyNTransform.IsNull() )
         {
@@ -1617,6 +1620,29 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
         }
       else
         {
+        if( this->m_SaveState != "" )
+          {
+          // Write the state to the disk
+          CompositeTransformPointer savedStateTx = dynamic_cast<CompositeTransformType *>( outputSyNTransform.GetPointer() );
+          if( savedStateTx.IsNotNull() )
+            {
+            unsigned int numTransforms = savedStateTx->GetNumberOfTransforms();
+            // If the last transform is SyN, we add the inverse displacement field to the saved state composite.
+            typedef itk::DisplacementFieldTransform<double, 3>                  DisplacementFieldTransformType;
+            DisplacementFieldTransformType::Pointer lastTransform =
+              dynamic_cast<DisplacementFieldTransformType *>( savedStateTx->GetNthTransform( numTransforms-1 ).GetPointer() );
+            if( lastTransform && lastTransform->GetInverseDisplacementField() )
+              {
+              savedStateTx->AddTransform( lastTransform->GetInverseTransform() );
+              }
+            itk::WriteTransformToDisk<double>( savedStateTx.GetPointer(), this->m_SaveState );
+            }
+          else
+            {
+            itkGenericExceptionMacro( << "******* Error: Could save the registration state to the disk." << std::endl );
+            }
+          }
+
         if( m_CurrentGenericTransform.IsNull() )
           {
           m_CurrentGenericTransform = CompositeTransformType::New();

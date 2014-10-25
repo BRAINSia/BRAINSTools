@@ -184,6 +184,8 @@ public:
   itkGetConstMacro(MaximumNumberOfCorrections, int);
   itkSetMacro(CurrentGenericTransform,  CompositeTransformType::Pointer);
   itkGetConstMacro(CurrentGenericTransform,  CompositeTransformType::Pointer);
+  itkSetMacro(RestoreState,  CompositeTransformType::Pointer);
+  itkGetConstMacro(RestoreState,  CompositeTransformType::Pointer);
   VECTORitkSetMacro(SplineGridSize, std::vector<int>       );
 
   itkGetConstMacro(ActualNumberOfIterations,      unsigned int);
@@ -223,6 +225,9 @@ public:
 
   itkSetMacro(CostMetricName, std::string);
   itkGetConstMacro(CostMetricName, std::string);
+
+  itkSetMacro(SaveState, std::string);
+  itkGetConstMacro(SaveState, std::string);
 
   itkSetMacro(NormalizeInputImages, bool);
   itkSetMacro(InitializeRegistrationByCurrentGenericTransform, bool);
@@ -300,11 +305,13 @@ private:
   unsigned int             m_PermittedNumberOfIterations;
   unsigned int                               m_DebugLevel;
   CompositeTransformType::Pointer            m_CurrentGenericTransform;
+  CompositeTransformType::Pointer            m_RestoreState;
   bool                                       m_DisplayDeformedImage;
   bool                                       m_PromptUserAfterDisplay;
   double                                     m_FinalMetricValue;
   bool                                       m_ObserveIterations;
   std::string                                m_CostMetricName;
+  std::string                                m_SaveState;
   bool                                       m_UseROIBSpline;
   itk::Object::Pointer                       m_Helper;
   SamplingStrategyType                       m_SamplingStrategy;
@@ -436,6 +443,7 @@ BRAINSFitHelper::SetupRegistration(GenericMetricType *costMetric)
   myHelper->SetInitializeTransformMode(this->m_InitializeTransformMode);
   myHelper->SetMaskInferiorCutOffFromCenter(this->m_MaskInferiorCutOffFromCenter);
   myHelper->SetCurrentGenericTransform(this->m_CurrentGenericTransform);
+  myHelper->SetRestoreState(this->m_RestoreState);
   myHelper->SetSplineGridSize(this->m_SplineGridSize);
   myHelper->SetCostFunctionConvergenceFactor(this->m_CostFunctionConvergenceFactor);
   myHelper->SetProjectedGradientTolerance(this->m_ProjectedGradientTolerance);
@@ -449,6 +457,7 @@ BRAINSFitHelper::SetupRegistration(GenericMetricType *costMetric)
   myHelper->SetMaximumNumberOfEvaluations(this->m_MaximumNumberOfEvaluations);
   myHelper->SetMaximumNumberOfCorrections(this->m_MaximumNumberOfCorrections);
   myHelper->SetSyNMetricType( this->m_CostMetricName );
+  myHelper->SetSaveState( this->m_SaveState );
   myHelper->SetSyNFull( this->m_SyNFull );
   if( this->m_DebugLevel > 7 )
     {

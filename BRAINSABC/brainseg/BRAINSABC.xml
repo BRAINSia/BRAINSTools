@@ -27,6 +27,20 @@
       <default></default>
       <description>Contains all parameters for Atlas</description>
     </file>
+   <transform fileExtensions=".h5,.hdf5">
+      <name>restoreState</name>
+      <longflag>restoreState</longflag>
+      <label>Initialization state</label>
+      <description>The initial state for the registration process</description>
+      <channel>input</channel>
+   </transform>
+   <transform fileExtensions=".h5,.hdf5">
+      <name>saveState</name>
+      <longflag>saveState</longflag>
+      <label>Saved State Filename</label>
+      <description>(optional) Filename to which save the final state of the registration</description>
+      <channel>output</channel>
+   </transform>
 
     <!-- TODO:  Would rather have a string-enumeration  muliple="true" -->
     <string-vector>

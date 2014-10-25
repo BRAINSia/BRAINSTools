@@ -46,6 +46,7 @@
 #include "itkMultiThreader.h"
 #include "itkResampleImageFilter.h"
 #include "itkAffineTransform.h"
+#include "itkDisplacementFieldTransform.h"
 #include "itkImageMaskSpatialObject.h"
 
 #include "itkFindCenterOfBrainFilter.h"
@@ -201,6 +202,8 @@ public:
   itkGetConstMacro(MaskInferiorCutOffFromCenter, double);
   itkSetMacro(CurrentGenericTransform,  CompositeTransformPointer);
   itkGetConstMacro(CurrentGenericTransform,  CompositeTransformPointer);
+  itkSetMacro(RestoreState,  CompositeTransformPointer);
+  itkGetConstMacro(RestoreState,  CompositeTransformPointer);
   itkSetMacro(MaximumNumberOfEvaluations, int);
   itkGetConstMacro(MaximumNumberOfEvaluations, int);
   itkSetMacro(MaximumNumberOfCorrections, int);
@@ -249,6 +252,9 @@ public:
 
   itkSetMacro(SyNMetricType, std::string);
   itkGetConstMacro(SyNMetricType, std::string);
+
+  itkSetMacro(SaveState, std::string);
+  itkGetConstMacro(SaveState, std::string);
 protected:
   BRAINSFitHelperTemplate();
   virtual ~BRAINSFitHelperTemplate()
@@ -314,6 +320,7 @@ private:
   unsigned int             m_PermittedNumberOfIterations;
   unsigned int                               m_DebugLevel;
   CompositeTransformPointer                  m_CurrentGenericTransform;
+  CompositeTransformPointer                  m_RestoreState;
   bool                                       m_DisplayDeformedImage;
   bool                                       m_PromptUserAfterDisplay;
   double                                     m_FinalMetricValue;
@@ -325,6 +332,7 @@ private:
   int                                        m_MaximumNumberOfEvaluations;
   int                                        m_MaximumNumberOfCorrections;
   std::string                                m_SyNMetricType;
+  std::string                                m_SaveState;
   bool                                       m_SyNFull;
   // DEBUG OPTION:
   int m_ForceMINumberOfThreads;

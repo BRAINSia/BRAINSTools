@@ -175,6 +175,8 @@ public:
   typedef typename ByteImageType::SizeType   ByteImageSizeType;
 
   typedef itk::Transform<double, 3, 3>         GenericTransformType;
+  typedef itk::CompositeTransform<double, 3>   CompositeTransformType;
+  typedef CompositeTransformType::Pointer      CompositeTransformPointer;
   typedef std::vector<ProbabilityImagePointer> ProbabilityImageList;
   typedef std::vector<OutputImagePointer>      OutputImageList;
 
@@ -193,6 +195,9 @@ public:
 
   itkGetConstMacro(OutputDebugDir, std::string);
   itkSetMacro(OutputDebugDir, std::string);
+
+  itkGetConstMacro(SaveState, std::string);
+  itkSetMacro(SaveState, std::string);
 
   InternalImagePointer GetFirstAtlasOriginalImage()
     {
@@ -235,6 +240,9 @@ public:
 
   itkGetMacro(UseNonLinearInterpolation, bool);
   itkSetMacro(UseNonLinearInterpolation, bool);
+
+  itkSetMacro(RestoreState,  CompositeTransformPointer);
+  itkGetConstMacro(RestoreState,  CompositeTransformPointer);
 
   itkSetObjectMacro(KeySubjectImage,InternalImageType);
   itkGetModifiableObjectMacro(KeySubjectImage,InternalImageType);
@@ -321,6 +329,9 @@ private:
 
   std::string m_AtlasLinearTransformChoice;
   std::string m_ImageLinearTransformChoice;
+
+  std::string                   m_SaveState;
+  CompositeTransformPointer     m_RestoreState;
 
   unsigned int m_DebugLevel;
 };

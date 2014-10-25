@@ -963,6 +963,42 @@ int main(int argc, char * *argv)
     atlasreg->SetAtlasToSubjectInitialTransform(atlasToSubjectCurrentGenericTransform);
     }
 
+  {
+  typedef AtlasRegType::CompositeTransformType  CompositeTransformType;
+  CompositeTransformType::Pointer restoreStateTransform;
+  try
+    {
+    restoreStateTransform = dynamic_cast<CompositeTransformType *>( itk::ReadTransformFromDisk(restoreState).GetPointer() );
+    if( restoreStateTransform.IsNull() )
+      {
+      muLogMacro("ERROR:  Could not restore transform type for file: "
+                 << restoreState << std::endl);
+      return EXIT_FAILURE;
+      }
+    }
+  catch( itk::ExceptionObject & /* excp */ )
+    {
+    muLogMacro("ERROR:  Invalid restore state specified"
+               << restoreState << std::endl);
+    return EXIT_FAILURE;
+    }
+  const std::string restoreStateFileType = restoreStateTransform->GetNameOfClass();
+  if( restoreStateFileType != "CompositeTransform" )
+    {
+    muLogMacro("ERROR:  Invalid restore state file type. It must be a composite transform"
+               << restoreState << std::endl);
+    return EXIT_FAILURE;
+    }
+  atlasreg->SetRestoreState(restoreStateTransform);
+  }
+
+  {
+  if( !saveState.empty() )
+    {
+    atlasreg->SetSaveState(saveState);
+    }
+  }
+
   atlasreg->SetAtlasLinearTransformChoice(atlasToSubjectTransformType);
   atlasreg->SetImageLinearTransformChoice(subjectIntermodeTransformType);
 

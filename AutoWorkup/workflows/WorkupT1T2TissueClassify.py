@@ -109,11 +109,11 @@ def CreateTissueClassifyWorkflow(WFname, CLUSTER_QUEUE, CLUSTER_QUEUE_LONG, Inte
     AtlasToSubjectantsRegistrationPreABC.inputs.use_estimate_learning_rate_once = [False, False]
     AtlasToSubjectantsRegistrationPreABC.inputs.write_composite_transform = True
     AtlasToSubjectantsRegistrationPreABC.inputs.collapse_output_transforms = True
-    AtlasToSubjectantsRegistrationPreABC.inputs.initialize_linear_transforms_per_stage = True
+    AtlasToSubjectantsRegistrationPreABC.inputs.initialize_transforms_per_stage = True
+    AtlasToSubjectantsRegistrationPreABC.inputs.save_state = 'SavedInternalSyNState.h5'
     AtlasToSubjectantsRegistrationPreABC.inputs.output_transform_prefix = 'AtlasToSubjectPreBABC_'
     AtlasToSubjectantsRegistrationPreABC.inputs.winsorize_lower_quantile = 0.025
     AtlasToSubjectantsRegistrationPreABC.inputs.winsorize_upper_quantile = 0.975
-    AtlasToSubjectantsRegistrationPreABC.inputs.collapse_linear_transforms_to_fixed_image_header = False
     AtlasToSubjectantsRegistrationPreABC.inputs.output_warped_image = 'atlas2subject.nii.gz'
     AtlasToSubjectantsRegistrationPreABC.inputs.output_inverse_warped_image = 'subject2atlas.nii.gz'
 

@@ -235,6 +235,8 @@ simpleSynReg( typename FixedImageType::Pointer & infixedImage,
       }
     }
 
+  regHelper->SetInitializeTransformsPerStage( true );
+
   regHelper->SetLogStream(std::cout);
 
   if( regHelper->DoRegistration() != EXIT_SUCCESS )

@@ -25,6 +25,9 @@
 #include "itkImageRegionIterator.h"
 #include "GenericTransformImage.h"
 #include "itkTranslationTransform.h"
+#include "itkCompositeTransform.h"
+#include "itkDisplacementFieldTransform.h"
+#include "itkComposeDisplacementFieldsImageFilter.h"
 
 //
 // transform ranking,
@@ -241,11 +244,15 @@ DoConversion( int argc, char *argv[] )
   typename TransformFileReaderType::TransformListType *transformList = reader->GetTransformList();
   typename GenericTransformType::Pointer inputXfrm = dynamic_cast<GenericTransformType *>( transformList->front().GetPointer() );
 
-  std::cout << "------------------------ " << std::endl;
-  std::cout << "Input Transform Type Saved on Memory ==> " << inputXfrm->GetTransformTypeAsString() << std::endl;
-  std::cout << "* Input transform parameters: " << inputXfrm->GetParameters() << std::endl;
-  std::cout << "* Input transform fixed parameters: " << inputXfrm->GetFixedParameters() << std::endl;
-  std::cout << "------------------------ " << std::endl;
+  const std::string inputTransformType = inputXfrm->GetTransformTypeAsString();
+  if( inputTransformType != "CompositeTransform" )
+    {
+    std::cout << "------------------------ " << std::endl;
+    std::cout << "Input Transform Type Saved on Memory ==> " << inputTransformType << std::endl;
+    std::cout << "* Input transform parameters: " << inputXfrm->GetParameters() << std::endl;
+    std::cout << "* Input transform fixed parameters: " << inputXfrm->GetFixedParameters() << std::endl;
+    std::cout << "------------------------ " << std::endl;
+    }
 
   // Handle BSpline type
   typename BSplineTransformType::Pointer bsplineInputXfrm =
@@ -310,6 +317,92 @@ DoConversion( int argc, char *argv[] )
       return EXIT_FAILURE;
       }
     return EXIT_SUCCESS;
+    }
+
+  if( inputTransformType == "CompositeTransform" )
+    {
+    if( outputTransformType == "Same" )
+      {
+      typedef itk::CompositeTransform<TScalarType,3>                                      CompositeTransformType;
+      typedef itk::DisplacementFieldTransform<TScalarType, 3>                             DisplacementFieldTransformType;
+      typedef typename DisplacementFieldTransformType::DisplacementFieldType              DisplacementFieldType;
+      typedef typename itk::ComposeDisplacementFieldsImageFilter<DisplacementFieldType,
+                                                                 DisplacementFieldType>   ComposerType;
+
+      typename CompositeTransformType::Pointer compToWrite;
+
+      typename CompositeTransformType::ConstPointer compXfrm =
+        dynamic_cast<const CompositeTransformType *>( inputXfrm.GetPointer() );
+      if( compXfrm.IsNotNull() )
+        {
+        compToWrite = compXfrm->Clone();
+
+        // If the last four transforms are displacementFieldType, we assume that they are
+        // forward and inverse displacement fields of SyN internal transforms (FixedToMiddle and MovingToMiddle transforms),
+        // so we compose them into one SyN displacementFieldTransformType.
+        //
+        unsigned int numOfTransforms = compToWrite->GetNumberOfTransforms();
+        if( (compToWrite->GetNthTransform( numOfTransforms-1 )->GetTransformCategory() == GenericTransformType::DisplacementField)
+           && (compToWrite->GetNthTransform( numOfTransforms-2 )->GetTransformCategory() == GenericTransformType::DisplacementField)
+           && (compToWrite->GetNthTransform( numOfTransforms-3 )->GetTransformCategory() == GenericTransformType::DisplacementField)
+           && (compToWrite->GetNthTransform( numOfTransforms-4 )->GetTransformCategory() == GenericTransformType::DisplacementField) )
+          {
+          typename DisplacementFieldTransformType::Pointer fixedToMiddleForwardTx =
+            dynamic_cast<DisplacementFieldTransformType *>( compToWrite->GetNthTransform( numOfTransforms-4 ).GetPointer() );
+          typename DisplacementFieldTransformType::Pointer fixedToMiddleInverseTx =
+            dynamic_cast<DisplacementFieldTransformType *>( compToWrite->GetNthTransform( numOfTransforms-3 ).GetPointer() );
+          typename DisplacementFieldTransformType::Pointer movingToMiddleForwardTx =
+            dynamic_cast<DisplacementFieldTransformType *>( compToWrite->GetNthTransform( numOfTransforms-2 ).GetPointer() );
+          typename DisplacementFieldTransformType::Pointer movingToMiddleInverseTx =
+            dynamic_cast<DisplacementFieldTransformType *>( compToWrite->GetNthTransform( numOfTransforms-1 ).GetPointer() );
+
+          typename DisplacementFieldTransformType::Pointer fixedToMiddleTransform = DisplacementFieldTransformType::New();
+          fixedToMiddleTransform->SetDisplacementField( fixedToMiddleForwardTx->GetDisplacementField() );
+          fixedToMiddleTransform->SetInverseDisplacementField( fixedToMiddleInverseTx->GetDisplacementField() );
+
+          typename DisplacementFieldTransformType::Pointer movingToMiddleTransform = DisplacementFieldTransformType::New();
+          movingToMiddleTransform->SetDisplacementField( movingToMiddleForwardTx->GetDisplacementField() );
+          movingToMiddleTransform->SetInverseDisplacementField( movingToMiddleInverseTx->GetDisplacementField() );
+
+          typename DisplacementFieldTransformType::Pointer resultSyNTransform = DisplacementFieldTransformType::New();
+
+          typename ComposerType::Pointer composer = ComposerType::New();
+          composer->SetDisplacementField( movingToMiddleTransform->GetInverseDisplacementField() );
+          composer->SetWarpingField( fixedToMiddleTransform->GetDisplacementField() );
+          composer->Update();
+
+          typename ComposerType::Pointer inverseComposer = ComposerType::New();
+          inverseComposer->SetDisplacementField( fixedToMiddleTransform->GetInverseDisplacementField() );
+          inverseComposer->SetWarpingField( movingToMiddleTransform->GetDisplacementField() );
+          inverseComposer->Update();
+
+          resultSyNTransform->SetDisplacementField( composer->GetOutput() );
+          resultSyNTransform->SetInverseDisplacementField( inverseComposer->GetOutput() );
+
+          // First remove the last four displacement field transform related to the internal states
+          compToWrite->RemoveTransform();
+          compToWrite->RemoveTransform();
+          compToWrite->RemoveTransform();
+          compToWrite->RemoveTransform();
+          // Then add the restored SyN transform
+          compToWrite->AddTransform( resultSyNTransform );
+
+          std::string transfromToWriteName = outputTransform + "Composite.h5";
+
+          // This function writes both forward and inverse composite transforms to the disk
+          itk::WriteTransformToDisk<TScalarType>( compToWrite.GetPointer(), transfromToWriteName );
+          }
+        }
+      else
+        {
+        return EXIT_FAILURE;
+        }
+      }
+    else
+      {
+      std::cerr << "Input transform is a CompositeTransform! Output transform must be the \"Same\" type!" << std::endl;
+      return EXIT_FAILURE;
+      }
     }
 
   //

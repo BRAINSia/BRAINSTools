@@ -66,10 +66,11 @@ simpleSynReg( typename FixedImageType::Pointer & infixedImage,
     std::vector<std::vector<unsigned int> > iterationList;
     if( synFull == true )
       {
-      std::vector<unsigned int>  iterations(3);
-      iterations[0] = 100;
-      iterations[1] = 100;
-      iterations[2] = 100;
+      std::vector<unsigned int>  iterations(4);
+      iterations[0] = 1000;
+      iterations[1] = 500;
+      iterations[2] = 250;
+      iterations[3] = 100;
       iterationList.push_back(iterations);
       }
     else
@@ -83,7 +84,7 @@ simpleSynReg( typename FixedImageType::Pointer & infixedImage,
 
     {
     std::vector<double> convergenceThresholdList;
-    const double        convergenceThreshold = 5e-7;
+    const double        convergenceThreshold = 1e-6;
     convergenceThresholdList.push_back(convergenceThreshold);
     regHelper->SetConvergenceThresholds( convergenceThresholdList );
     }
@@ -101,9 +102,10 @@ simpleSynReg( typename FixedImageType::Pointer & infixedImage,
       {
       // --shrink-factors 3x2x1
       std::vector<unsigned int>   factors(3);
-      factors[0] = 3;
-      factors[1] = 2;
-      factors[2] = 1;
+      factors[0] = 8;
+      factors[1] = 4;
+      factors[2] = 2;
+      factors[3] = 1;
       shrinkFactorsList.push_back(factors);
       }
     else
@@ -122,9 +124,10 @@ simpleSynReg( typename FixedImageType::Pointer & infixedImage,
       {
       // --smoothing-sigmas 3x2x0
       std::vector<float>    sigmas(3);
-      sigmas[0] = 2;
-      sigmas[1] = 1;
-      sigmas[2] = 0;
+      sigmas[0] = 3;
+      sigmas[1] = 2;
+      sigmas[2] = 1;
+      sigmas[3] = 0;
       smoothingSigmasList.push_back(sigmas);
       }
     else

@@ -92,36 +92,36 @@ def CreateTissueClassifyWorkflow(WFname, CLUSTER_QUEUE, CLUSTER_QUEUE_LONG, Inte
 
     AtlasToSubjectantsRegistrationPreABC.inputs.num_threads   = -1
     AtlasToSubjectantsRegistrationPreABC.inputs.dimension = 3
-    AtlasToSubjectantsRegistrationPreABC.inputs.transforms = ["Affine", "SyN"]
-    AtlasToSubjectantsRegistrationPreABC.inputs.transform_parameters = [[0.1], [0.15, 3.0, 0.0]]
-    AtlasToSubjectantsRegistrationPreABC.inputs.metric = ['Mattes', 'CC']
-    AtlasToSubjectantsRegistrationPreABC.inputs.sampling_strategy = ['Regular', None]
-    AtlasToSubjectantsRegistrationPreABC.inputs.sampling_percentage = [1.0, 1.0]
-    AtlasToSubjectantsRegistrationPreABC.inputs.metric_weight = [1.0, 1.0]
-    AtlasToSubjectantsRegistrationPreABC.inputs.radius_or_number_of_bins = [32, 4]
-    AtlasToSubjectantsRegistrationPreABC.inputs.number_of_iterations = [[1000, 1000, 1000], [10000, 500, 500, 200]]
+    AtlasToSubjectantsRegistrationPreABC.inputs.transforms = ["Affine", "SyN", "SyN"]
+    AtlasToSubjectantsRegistrationPreABC.inputs.transform_parameters = [[0.1], [0.1, 3.0, 0.0],[0.1, 3.0, 0.0]]
+    AtlasToSubjectantsRegistrationPreABC.inputs.metric = ['Mattes','CC','CC']
+    AtlasToSubjectantsRegistrationPreABC.inputs.sampling_strategy = ['Regular', None, None]
+    AtlasToSubjectantsRegistrationPreABC.inputs.sampling_percentage = [0.5, 1.0, 1.0]
+    AtlasToSubjectantsRegistrationPreABC.inputs.metric_weight = [1.0, 1.0, 1.0]
+    AtlasToSubjectantsRegistrationPreABC.inputs.radius_or_number_of_bins = [32, 4, 4]
+    AtlasToSubjectantsRegistrationPreABC.inputs.number_of_iterations = [[1000,1000, 1000, 1000], [500, 500, 500], [500, 50]]
 
-    AtlasToSubjectantsRegistrationPreABC.inputs.convergence_threshold = [1e-8, 1e-6] #From ANTs/Scripts recomemndations
-    AtlasToSubjectantsRegistrationPreABC.inputs.convergence_window_size = [25, 25]
-    AtlasToSubjectantsRegistrationPreABC.inputs.use_histogram_matching = [True, True]
-    AtlasToSubjectantsRegistrationPreABC.inputs.shrink_factors = [[4, 2, 1], [5, 4, 2, 1]]
-    AtlasToSubjectantsRegistrationPreABC.inputs.smoothing_sigmas = [[4, 2, 0], [5, 4, 2, 0]]
-    AtlasToSubjectantsRegistrationPreABC.inputs.sigma_units = ["vox","vox"]
-    AtlasToSubjectantsRegistrationPreABC.inputs.use_estimate_learning_rate_once = [False, False]
+    AtlasToSubjectantsRegistrationPreABC.inputs.convergence_threshold = [1e-9, 1e-7, 1e-6]
+
+    AtlasToSubjectantsRegistrationPreABC.inputs.convergence_window_size = [10, 10, 10]
+    AtlasToSubjectantsRegistrationPreABC.inputs.use_histogram_matching = [True, True, True]
+    AtlasToSubjectantsRegistrationPreABC.inputs.shrink_factors = [[8, 4, 2, 1], [10, 6, 4], [ 2, 1]]
+    AtlasToSubjectantsRegistrationPreABC.inputs.smoothing_sigmas = [[4, 3, 2, 1], [5, 3, 2], [1, 0]]
+    AtlasToSubjectantsRegistrationPreABC.inputs.sigma_units = ["vox","vox","vox"]
+    AtlasToSubjectantsRegistrationPreABC.inputs.use_estimate_learning_rate_once = [False, False, False]
     AtlasToSubjectantsRegistrationPreABC.inputs.write_composite_transform = True
     AtlasToSubjectantsRegistrationPreABC.inputs.collapse_output_transforms = True
     AtlasToSubjectantsRegistrationPreABC.inputs.initialize_transforms_per_stage = True
     AtlasToSubjectantsRegistrationPreABC.inputs.save_state = 'SavedInternalSyNState.h5'
     AtlasToSubjectantsRegistrationPreABC.inputs.output_transform_prefix = 'AtlasToSubjectPreBABC_'
-    AtlasToSubjectantsRegistrationPreABC.inputs.winsorize_lower_quantile = 0.025
-    AtlasToSubjectantsRegistrationPreABC.inputs.winsorize_upper_quantile = 0.975
+    AtlasToSubjectantsRegistrationPreABC.inputs.winsorize_lower_quantile = 0.01
+    AtlasToSubjectantsRegistrationPreABC.inputs.winsorize_upper_quantile = 0.99
     AtlasToSubjectantsRegistrationPreABC.inputs.output_warped_image = 'atlas2subject.nii.gz'
     AtlasToSubjectantsRegistrationPreABC.inputs.output_inverse_warped_image = 'subject2atlas.nii.gz'
 
     tissueClassifyWF.connect(inputsSpec, 'atlasToSubjectInitialTransform',AtlasToSubjectantsRegistrationPreABC,'initial_moving_transform')
     tissueClassifyWF.connect(inputsSpec, 'PrimaryT1',AtlasToSubjectantsRegistrationPreABC,'fixed_image')
     tissueClassifyWF.connect(inputsSpec, 'atlasVolume',AtlasToSubjectantsRegistrationPreABC,'moving_image')
-
 
     BABCext = pe.Node(interface=BRAINSABCext(), name="BABC")
     many_cpu_BABC_options_dictionary = {'qsub_args': modify_qsub_args(CLUSTER_QUEUE,8,8,24), 'overwrite': True}

@@ -1623,9 +1623,10 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
         if( this->m_SaveState != "" )
           {
           // Write the state to the disk
-          CompositeTransformPointer savedStateTx = dynamic_cast<CompositeTransformType *>( outputSyNTransform.GetPointer() );
-          if( savedStateTx.IsNotNull() )
+          CompositeTransformPointer resultSyNCompXfrm = dynamic_cast<CompositeTransformType *>( outputSyNTransform.GetPointer() );
+          if( resultSyNCompXfrm.IsNotNull() )
             {
+            CompositeTransformPointer savedStateTx = resultSyNCompXfrm->Clone();
             unsigned int numTransforms = savedStateTx->GetNumberOfTransforms();
             // If the last transform is SyN, we add the inverse displacement field to the saved state composite.
             typedef itk::DisplacementFieldTransform<double, 3>                  DisplacementFieldTransformType;

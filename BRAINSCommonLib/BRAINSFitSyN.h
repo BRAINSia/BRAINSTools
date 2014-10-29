@@ -27,6 +27,7 @@ namespace // put in anon namespace to suppress shadow declaration warnings.
 {
 typedef  ants::RegistrationHelper<double,3>                SyNRegistrationHelperType;
 typedef  SyNRegistrationHelperType::ImageType              ImageType;
+typedef  itk::CompositeTransform<double,3>                 CompositeTransformType;
 }
 
 template <class FixedImageType, class MovingimageType>
@@ -34,12 +35,13 @@ typename itk::CompositeTransform<double,3>::Pointer
 simpleSynReg( typename FixedImageType::Pointer & infixedImage,
               typename MovingimageType::Pointer & inmovingImage,
               typename itk::CompositeTransform<double,3>::Pointer compositeInitialTransform,
+              typename itk::CompositeTransform<double,3>::Pointer & internalSavedState,
               typename FixedImageType::Pointer & infixedImage2 = NULL,
               typename MovingimageType::Pointer & inmovingImage2 = NULL,
               double samplingPercentage = 1.0,
               std::string whichMetric = "cc",
               const bool synFull = true,
-              typename itk::CompositeTransform<double,3>::Pointer restoreState = NULL)
+              typename itk::CompositeTransform<double,3>::Pointer restoreState = NULL )
 {
   typename SyNRegistrationHelperType::Pointer regHelper = SyNRegistrationHelperType::New();
     {
@@ -254,8 +256,11 @@ simpleSynReg( typename FixedImageType::Pointer & infixedImage,
     std::cerr << "Finshed SyN stage" << std::endl;
     }
   // Get the output transform
-  typename itk::CompositeTransform<double,3>::Pointer outputCompositeTransform =
+  typename CompositeTransformType::Pointer outputCompositeTransform =
     regHelper->GetModifiableCompositeTransform();
+  // Get the registration state file
+  internalSavedState =
+    dynamic_cast<CompositeTransformType *>( regHelper->GetModifiableRegistrationState() );
   // return composite result Transform;
   return outputCompositeTransform;
 }

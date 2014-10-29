@@ -1601,11 +1601,15 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
         {
         whichmetric = "mi";
         }
-      // current m_CurrentGenericTransform will be used as an initializer for SyN registration.
+      // Either current m_CurrentGenericTransform or m_RestoreState
+      // are used to initialize the SyN registration.
+      typename CompositeTransformType::Pointer internalSyNSavedState = CompositeTransformType::New();
+
       typename CompositeTransformType::Pointer outputSyNTransform =
         simpleSynReg<FixedImageType, MovingImageType>( m_FixedVolume,
                                                        m_MovingVolume,
                                                        m_CurrentGenericTransform,
+                                                       internalSyNSavedState,
                                                        m_FixedVolume2,
                                                        m_MovingVolume2,
                                                        m_SamplingPercentage,
@@ -1623,20 +1627,25 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
         if( this->m_SaveState != "" )
           {
           // Write the state to the disk
-          CompositeTransformPointer resultSyNCompXfrm = dynamic_cast<CompositeTransformType *>( outputSyNTransform.GetPointer() );
-          if( resultSyNCompXfrm.IsNotNull() )
+          if( internalSyNSavedState.IsNotNull() )
             {
-            CompositeTransformPointer savedStateTx = resultSyNCompXfrm->Clone();
-            unsigned int numTransforms = savedStateTx->GetNumberOfTransforms();
-            // If the last transform is SyN, we add the inverse displacement field to the saved state composite.
+            unsigned int numTransforms = internalSyNSavedState->GetNumberOfTransforms();
+            // If the last two transforms are displacement field transforms,
+            // we add their inverse displacement field to the saved state composite.
             typedef itk::DisplacementFieldTransform<double, 3>                  DisplacementFieldTransformType;
-            DisplacementFieldTransformType::Pointer lastTransform =
-              dynamic_cast<DisplacementFieldTransformType *>( savedStateTx->GetNthTransform( numTransforms-1 ).GetPointer() );
-            if( lastTransform && lastTransform->GetInverseDisplacementField() )
+            DisplacementFieldTransformType::Pointer oneToEndTransform =
+              dynamic_cast<DisplacementFieldTransformType *>( internalSyNSavedState->GetNthTransform( numTransforms-2 ).GetPointer() );
+            DisplacementFieldTransformType::Pointer endTransform =
+              dynamic_cast<DisplacementFieldTransformType *>( internalSyNSavedState->GetNthTransform( numTransforms-1 ).GetPointer() );
+            if( oneToEndTransform && oneToEndTransform->GetInverseDisplacementField()
+               && endTransform && endTransform->GetInverseDisplacementField() )
               {
-              savedStateTx->AddTransform( lastTransform->GetInverseTransform() );
+              internalSyNSavedState->RemoveTransform();
+              internalSyNSavedState->AddTransform( oneToEndTransform->GetInverseTransform() );
+              internalSyNSavedState->AddTransform( endTransform );
+              internalSyNSavedState->AddTransform( endTransform->GetInverseTransform() );
               }
-            itk::WriteTransformToDisk<double>( savedStateTx.GetPointer(), this->m_SaveState );
+            itk::WriteTransformToDisk<double>( internalSyNSavedState.GetPointer(), this->m_SaveState );
             }
           else
             {

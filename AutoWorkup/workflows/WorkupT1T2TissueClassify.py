@@ -42,8 +42,12 @@ def MakePosteriorDictionaryFunc(posteriorImages):
     return temp_dictionary
 
 
-def CreateTissueClassifyWorkflow(WFname, CLUSTER_QUEUE, CLUSTER_QUEUE_LONG, InterpolationMode):
+def CreateTissueClassifyWorkflow(WFname, master_config, InterpolationMode):
     from nipype.interfaces import ants
+
+    CLUSTER_QUEUE=master_config['queue']
+    CLUSTER_QUEUE_LONG=master_config['long_q']
+
     tissueClassifyWF = pe.Workflow(name=WFname)
 
     inputsSpec = pe.Node(interface=IdentityInterface(fields=['T1List', 'T2List', 'PDList', 'FLList',
@@ -168,7 +172,7 @@ def CreateTissueClassifyWorkflow(WFname, CLUSTER_QUEUE, CLUSTER_QUEUE_LONG, Inte
     tissueClassifyWF.connect(inputsSpec, 'atlasVolume',A2SantsRegistrationPreABCSyN,'moving_image')
 
     BABCext = pe.Node(interface=BRAINSABCext(), name="BABC")
-    many_cpu_BABC_options_dictionary = {'qsub_args': modify_qsub_args(CLUSTER_QUEUE,8,4,8), 'overwrite': True}
+    many_cpu_BABC_options_dictionary = {'qsub_args': modify_qsub_args(CLUSTER_QUEUE,8,2,4), 'overwrite': True}
     BABCext.plugin_args = many_cpu_BABC_options_dictionary
     tissueClassifyWF.connect(makeOutImageList, 'inImageList', BABCext, 'inputVolumes')
     tissueClassifyWF.connect(makeOutImageList, 'imageTypeList', BABCext, 'inputVolumeTypes')

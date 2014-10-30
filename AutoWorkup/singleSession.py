@@ -178,8 +178,7 @@ def create_singleSession(dataDict, master_config, interpMode, pipeline_name):
         outputSpec = sessionWorkflow.get_node('outputspec')
         sessionWorkflow.connect([(outputSpec, segWF, [('t1_average', 'inputspec.t1_average'),
                                                       ('LMIatlasToSubject_tx', 'inputspec.LMIatlasToSubject_tx'),
-                                                      ('atlasToSubjectTransform','inputspec.atlasToSubjectTransform'),
-                                                      ('atlasToSubjectInverseTransform','inputspec.atlasToSubjectInverseTransform'),
+                                                      ('atlasToSubjectRegistrationState','inputspec.atlasToSubjectRegistrationState'),
                                                       ('outputLabels', 'inputspec.inputLabels'),
                                                       ('posteriorImages', 'inputspec.posteriorImages'),
                                                       ('UpdatedPosteriorsList', 'inputspec.UpdatedPosteriorsList'),

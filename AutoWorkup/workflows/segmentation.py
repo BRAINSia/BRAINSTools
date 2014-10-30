@@ -43,6 +43,8 @@ def segmentation(projectid, subjectid, sessionid, master_config, onlyT1=True, pi
     from utilities.distributed import modify_qsub_args
     from SEMTools import BRAINSSnapShotWriter
 
+    #CLUSTER_QUEUE=master_config['queue']
+    CLUSTER_QUEUE_LONG=master_config['long_q']
     baw200 = pe.Workflow(name=pipeline_name)
 
     # HACK: print for debugging
@@ -61,8 +63,7 @@ def segmentation(projectid, subjectid, sessionid, master_config, onlyT1=True, pi
                                                              'inputHeadLabels',
                                                              'posteriorImages',
                                                              'UpdatedPosteriorsList',
-                                                             'atlasToSubjectTransform',
-                                                             'atlasToSubjectInverseTransform']),
+                                                             'atlasToSubjectRegistrationState']),
                          run_without_submitting=True, name='inputspec')
 
     # outputsSpec = pe.Node(interface=IdentityInterface(fields=[...]),
@@ -79,42 +80,48 @@ def segmentation(projectid, subjectid, sessionid, master_config, onlyT1=True, pi
     baw200.connect([(inputsSpec, ClipT1ImageWithBrainMaskNode, [('t1_average', 't1_image'),
                                                                 ('inputLabels', 'brain_labels')])])
 
-    currentAtlasToSubjectantsRegistration = 'AtlasToSubjectANTsRegistration_' + str(subjectid) + "_" + str(sessionid)
+    currentA2SantsRegistrationPostABCSyN = 'A2SantsRegistrationPostABCSyN_' + str(subjectid) + "_" + str(sessionid)
     ## TODO: It would be great to update the BRAINSABC atlasToSubjectTransform at this point, but
     ##       That requires more testing, and fixes to ANTS to properly collapse transforms.
     ##       For now we are simply creating a dummy node to pass through
 
 
-    AtlasToSubjectantsRegistration = pe.Node(interface=ants.Registration(), name=currentAtlasToSubjectantsRegistration)
+    A2SantsRegistrationPostABCSyN = pe.Node(interface=ants.Registration(), name=currentA2SantsRegistrationPostABCSyN)
 
-    AtlasToSubjectantsRegistration.inputs.num_threads = -1
-    AtlasToSubjectantsRegistration.inputs.dimension = 3
-    AtlasToSubjectantsRegistration.inputs.transforms = ["Affine", "SyN"]
-    AtlasToSubjectantsRegistration.inputs.transform_parameters = [[0.1], [0.15, 3.0, 0.0]]
-    AtlasToSubjectantsRegistration.inputs.metric = ['Mattes', 'CC']
-    AtlasToSubjectantsRegistration.inputs.sampling_strategy = ['Regular', None]
-    AtlasToSubjectantsRegistration.inputs.sampling_percentage = [1.0, 1.0]
-    AtlasToSubjectantsRegistration.inputs.metric_weight = [1.0, 1.0]
-    AtlasToSubjectantsRegistration.inputs.radius_or_number_of_bins = [32, 4]
-    AtlasToSubjectantsRegistration.inputs.number_of_iterations = [[1000, 1000, 1000], [10000, 500, 500, 200]]
-    AtlasToSubjectantsRegistration.inputs.convergence_threshold = [5e-7, 5e-7]
-    AtlasToSubjectantsRegistration.inputs.convergence_window_size = [25, 25]
-    AtlasToSubjectantsRegistration.inputs.use_histogram_matching = [True, True]
-    AtlasToSubjectantsRegistration.inputs.shrink_factors = [[4, 2, 1], [5, 4, 2, 1]]
-    AtlasToSubjectantsRegistration.inputs.smoothing_sigmas = [[4, 2, 0], [5, 4, 2, 0]]
-    AtlasToSubjectantsRegistration.inputs.sigma_units = ["vox","vox"]
-    AtlasToSubjectantsRegistration.inputs.use_estimate_learning_rate_once = [False, False]
-    AtlasToSubjectantsRegistration.inputs.write_composite_transform = True
-    AtlasToSubjectantsRegistration.inputs.collapse_output_transforms = True
-    AtlasToSubjectantsRegistration.inputs.initialize_linear_transforms_per_stage = True
-    AtlasToSubjectantsRegistration.inputs.output_transform_prefix = 'AtlasToSubject_'
-    AtlasToSubjectantsRegistration.inputs.winsorize_lower_quantile = 0.025
-    AtlasToSubjectantsRegistration.inputs.winsorize_upper_quantile = 0.975
-    AtlasToSubjectantsRegistration.inputs.collapse_linear_transforms_to_fixed_image_header = False
-    AtlasToSubjectantsRegistration.inputs.output_warped_image = 'atlas2subject.nii.gz'
-    AtlasToSubjectantsRegistration.inputs.output_inverse_warped_image = 'subject2atlas.nii.gz'
+    many_cpu_ANTsSyN_options_dictionary = {'qsub_args': modify_qsub_args(CLUSTER_QUEUE_LONG,8,8,12), 'overwrite': True}
+    A2SantsRegistrationPostABCSyN.plugin_args = many_cpu_ANTsSyN_options_dictionary
 
-    baw200.connect([(inputsSpec, AtlasToSubjectantsRegistration, [('LMIatlasToSubject_tx', 'initial_moving_transform'),
+    A2SantsRegistrationPostABCSyN.inputs.num_threads   = -1
+    A2SantsRegistrationPostABCSyN.inputs.dimension = 3
+    A2SantsRegistrationPostABCSyN.inputs.transforms = ["SyN"]
+    A2SantsRegistrationPostABCSyN.inputs.transform_parameters = [[0.1, 3, 0]]
+    A2SantsRegistrationPostABCSyN.inputs.metric = ['CC']
+    A2SantsRegistrationPostABCSyN.inputs.sampling_strategy = [None]
+    A2SantsRegistrationPostABCSyN.inputs.sampling_percentage = [1.0]
+    A2SantsRegistrationPostABCSyN.inputs.metric_weight = [1.0]
+    A2SantsRegistrationPostABCSyN.inputs.radius_or_number_of_bins = [4]
+    A2SantsRegistrationPostABCSyN.inputs.number_of_iterations = [[70]]
+
+    A2SantsRegistrationPostABCSyN.inputs.convergence_threshold = [1e-6]
+
+    A2SantsRegistrationPostABCSyN.inputs.convergence_window_size = [12]
+    A2SantsRegistrationPostABCSyN.inputs.use_histogram_matching = [True]
+    A2SantsRegistrationPostABCSyN.inputs.shrink_factors = [[1]]
+    A2SantsRegistrationPostABCSyN.inputs.smoothing_sigmas = [[0]]
+    A2SantsRegistrationPostABCSyN.inputs.sigma_units = ["vox"]
+    A2SantsRegistrationPostABCSyN.inputs.use_estimate_learning_rate_once = [False]
+    A2SantsRegistrationPostABCSyN.inputs.write_composite_transform = True # Required for initialize_transforms_per_stage
+    A2SantsRegistrationPostABCSyN.inputs.collapse_output_transforms = False # Mutually Exclusive with initialize_transforms_per_stage
+    A2SantsRegistrationPostABCSyN.inputs.initialize_transforms_per_stage = True
+    A2SantsRegistrationPostABCSyN.inputs.save_state = 'SavedInternalSyNStatePostBABC.h5'
+    A2SantsRegistrationPostABCSyN.inputs.output_transform_prefix = 'AtlasToSubjectPostBABC_SyN'
+    A2SantsRegistrationPostABCSyN.inputs.winsorize_lower_quantile = 0.01
+    A2SantsRegistrationPostABCSyN.inputs.winsorize_upper_quantile = 0.99
+    A2SantsRegistrationPostABCSyN.inputs.output_warped_image = 'atlas2subjectPostBABC.nii.gz'
+    A2SantsRegistrationPostABCSyN.inputs.output_inverse_warped_image = 'subject2atlasPostBABC.nii.gz'
+
+    ## TODO: Try multi-modal registration here
+    baw200.connect([(inputsSpec, A2SantsRegistrationPostABCSyN, [('atlasToSubjectRegistrationState', 'restore_state'),
                                                                   ('t1_average', 'fixed_image'),
                                                                   ('template_t1', 'moving_image')])
                    ])
@@ -134,7 +141,7 @@ def segmentation(projectid, subjectid, sessionid, master_config, onlyT1=True, pi
                                                 ('posteriorImages', "inputspec.posteriorDictionary"),
                                                 ('inputLabels', 'inputspec.RegistrationROI'),]),
                     (inputsSpec, MergeStage2AverageImages, [('t1_average', 'in1')]),
-                    (AtlasToSubjectantsRegistration, myLocalSegWF, [('composite_transform',
+                    (A2SantsRegistrationPostABCSyN, myLocalSegWF, [('composite_transform',
                                                                      'inputspec.atlasToSubjectTransform')])
                    ])
 
@@ -214,26 +221,26 @@ def segmentation(projectid, subjectid, sessionid, master_config, onlyT1=True, pi
                     (SnapShotWriter, DataSink, [('outputFilename', 'Segmentations.@outputSnapShot')])
                     ])
 
-    currentAntsLabelWarpToSubject = 'AntsLabelWarpToSubject' + str(subjectid) + "_" + str(sessionid)
-    AntsLabelWarpToSubject = pe.Node(interface=ants.ApplyTransforms(), name=currentAntsLabelWarpToSubject)
-
-    AntsLabelWarpToSubject.inputs.dimension = 3
-    AntsLabelWarpToSubject.inputs.output_image = 'warped_hncma_atlas_seg.nii.gz'
-    AntsLabelWarpToSubject.inputs.interpolation = "MultiLabel"
-
-    baw200.connect([(AtlasToSubjectantsRegistration, AntsLabelWarpToSubject, [('composite_transform', 'transforms')]),
-                    (inputsSpec, AntsLabelWarpToSubject, [('t1_average', 'reference_image'),
-                                                          ('hncma_atlas', 'input_image')])
-                    ])
-    #####
-    ### Now define where the final organized outputs should go.
-    AntsLabelWarpedToSubject_DSName = "AntsLabelWarpedToSubject_DS_" + str(sessionid)
-    AntsLabelWarpedToSubject_DS = pe.Node(nio.DataSink(), name=AntsLabelWarpedToSubject_DSName)
-    AntsLabelWarpedToSubject_DS.overwrite = master_config['ds_overwrite']
-    AntsLabelWarpedToSubject_DS.inputs.base_directory = master_config['resultdir']
-    AntsLabelWarpedToSubject_DS.inputs.substitutions = [('AntsLabelWarpedToSubject', os.path.join(projectid, subjectid, sessionid, 'AntsLabelWarpedToSubject'))]
-
-    baw200.connect([(AntsLabelWarpToSubject, AntsLabelWarpedToSubject_DS, [('output_image', 'AntsLabelWarpedToSubject')])])
+    # currentAntsLabelWarpToSubject = 'AntsLabelWarpToSubject' + str(subjectid) + "_" + str(sessionid)
+    # AntsLabelWarpToSubject = pe.Node(interface=ants.ApplyTransforms(), name=currentAntsLabelWarpToSubject)
+    #
+    # AntsLabelWarpToSubject.inputs.dimension = 3
+    # AntsLabelWarpToSubject.inputs.output_image = 'warped_hncma_atlas_seg.nii.gz'
+    # AntsLabelWarpToSubject.inputs.interpolation = "MultiLabel"
+    #
+    # baw200.connect([(A2SantsRegistrationPostABCSyN, AntsLabelWarpToSubject, [('composite_transform', 'transforms')]),
+    #                 (inputsSpec, AntsLabelWarpToSubject, [('t1_average', 'reference_image'),
+    #                                                       ('hncma_atlas', 'input_image')])
+    #                 ])
+    # #####
+    # ### Now define where the final organized outputs should go.
+    # AntsLabelWarpedToSubject_DSName = "AntsLabelWarpedToSubject_DS_" + str(sessionid)
+    # AntsLabelWarpedToSubject_DS = pe.Node(nio.DataSink(), name=AntsLabelWarpedToSubject_DSName)
+    # AntsLabelWarpedToSubject_DS.overwrite = master_config['ds_overwrite']
+    # AntsLabelWarpedToSubject_DS.inputs.base_directory = master_config['resultdir']
+    # AntsLabelWarpedToSubject_DS.inputs.substitutions = [('AntsLabelWarpedToSubject', os.path.join(projectid, subjectid, sessionid, 'AntsLabelWarpedToSubject'))]
+    #
+    # baw200.connect([(AntsLabelWarpToSubject, AntsLabelWarpedToSubject_DS, [('output_image', 'AntsLabelWarpedToSubject')])])
 
     MergeSessionSubjectToAtlasName = "99_MergeSessionSubjectToAtlas_" + str(sessionid)
     MergeSessionSubjectToAtlas = pe.Node(interface=Merge(file_count), run_without_submitting=True,
@@ -265,7 +272,7 @@ def segmentation(projectid, subjectid, sessionid, master_config, onlyT1=True, pi
                                                          name=LinearSubjectToAtlasANTsApplyTransformsName)
     LinearSubjectToAtlasANTsApplyTransforms.inputs.interpolation = 'Linear'
 
-    baw200.connect([(AtlasToSubjectantsRegistration, LinearSubjectToAtlasANTsApplyTransforms, [('inverse_composite_transform',
+    baw200.connect([(A2SantsRegistrationPostABCSyN, LinearSubjectToAtlasANTsApplyTransforms, [('inverse_composite_transform',
                                                                                               'transforms')]),
                     (inputsSpec, LinearSubjectToAtlasANTsApplyTransforms, [('template_t1', 'reference_image')]),
                     (MergeSessionSubjectToAtlas, LinearSubjectToAtlasANTsApplyTransforms, [('out', 'input_image')])
@@ -286,7 +293,7 @@ def segmentation(projectid, subjectid, sessionid, master_config, onlyT1=True, pi
                                                              name=MultiLabelSubjectToAtlasANTsApplyTransformsName)
     MultiLabelSubjectToAtlasANTsApplyTransforms.inputs.interpolation = 'MultiLabel'
 
-    baw200.connect([(AtlasToSubjectantsRegistration, MultiLabelSubjectToAtlasANTsApplyTransforms,
+    baw200.connect([(A2SantsRegistrationPostABCSyN, MultiLabelSubjectToAtlasANTsApplyTransforms,
                      [('inverse_composite_transform', 'transforms')]),
                       (inputsSpec, MultiLabelSubjectToAtlasANTsApplyTransforms, [('template_t1', 'reference_image')]),
                       (MergeMultiLabelSessionSubjectToAtlas, MultiLabelSubjectToAtlasANTsApplyTransforms,
@@ -315,13 +322,13 @@ def segmentation(projectid, subjectid, sessionid, master_config, onlyT1=True, pi
     Subj2AtlasTransforms_DS.inputs.regexp_substitutions = [(r'SubjectToAtlasWarped',
                                                             r'SubjectToAtlasWarped/' + sessionid + '/')]
 
-    baw200.connect([(AtlasToSubjectantsRegistration, Subj2AtlasTransforms_DS,
+    baw200.connect([(A2SantsRegistrationPostABCSyN, Subj2AtlasTransforms_DS,
                      [('composite_transform', 'SubjectToAtlasWarped.@composite_transform'),
                       ('inverse_composite_transform', 'SubjectToAtlasWarped.@inverse_composite_transform')])])
     # baw200.connect([(MultiLabelSubjectToAtlasANTsApplyTransforms, Subj2Atlas_DS, [('output_image', 'SubjectToAtlasWarped.@multilabel_output_images')])])
 
     if master_config['plugin_name'].startswith('SGE'):  # for some nodes, the qsub call needs to be modified on the cluster
-        AtlasToSubjectantsRegistration.plugin_args = {'template': master_config['plugin_args']['template'], 'overwrite': True,
+        A2SantsRegistrationPostABCSyN.plugin_args = {'template': master_config['plugin_args']['template'], 'overwrite': True,
                                                       'qsub_args': modify_qsub_args(master_config['queue'], 8, 8, 24)}
         SnapShotWriter.plugin_args = {'template': master_config['plugin_args']['template'], 'overwrite': True,
                                       'qsub_args': modify_qsub_args(master_config['queue'], 1, 1, 1 )}

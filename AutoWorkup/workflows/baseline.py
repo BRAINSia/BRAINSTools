@@ -99,6 +99,7 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, master_
                                                               'posteriorImages', 'outputLabels', 'outputHeadLabels',
                                                               'atlasToSubjectTransform',
                                                               'atlasToSubjectInverseTransform',
+                                                              'atlasToSubjectRegistrationState',
                                                               'BCD_ACPC_T1_CROPPED',
                                                               'outputLandmarksInACPCAlignedSpace',
                                                               'outputLandmarksInInputSpace',
@@ -191,7 +192,7 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, master_
                   )
 
     if 'tissue_classify' in master_config['components']:
-        myLocalTCWF = CreateTissueClassifyWorkflow("TissueClassify", master_config['queue'], master_config['long_q'], interpMode)
+        myLocalTCWF = CreateTissueClassifyWorkflow("TissueClassify", master_config, interpMode)
         baw201.connect([(makeDenoiseOutImageList,myLocalTCWF, [('T1List','inputspec.T1List')]),
                         (makeDenoiseOutImageList,myLocalTCWF, [('T2List','inputspec.T2List')]),
                         (inputsSpec, myLocalTCWF, [('atlasDefinition', 'inputspec.atlasDefinition'),
@@ -213,7 +214,10 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, master_
                                                     ('outputspec.outputHeadLabels', 'outputHeadLabels'),
                                                     ('outputspec.atlasToSubjectTransform', 'atlasToSubjectTransform'),
                                                     ('outputspec.atlasToSubjectInverseTransform',
-                                                     'atlasToSubjectInverseTransform')]),
+                                                                                     'atlasToSubjectInverseTransform'),
+                                                    ('outputspec.atlasToSubjectRegistrationState',
+                                                                                    'atlasToSubjectRegistrationState')
+                        ]),
                        ])
         """
         brain stem adds on feature

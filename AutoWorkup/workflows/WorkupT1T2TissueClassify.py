@@ -55,6 +55,7 @@ def CreateTissueClassifyWorkflow(WFname, CLUSTER_QUEUE, CLUSTER_QUEUE_LONG, Inte
                          name='inputspec')
     outputsSpec = pe.Node(interface=IdentityInterface(fields=['atlasToSubjectTransform',
                                                               'atlasToSubjectInverseTransform',
+                                                              'atlasToSubjectRegistrationState',
                                                               'outputLabels',
                                                               'outputHeadLabels',  # ???
                                                               #'t1_corrected', 't2_corrected',
@@ -89,6 +90,8 @@ def CreateTissueClassifyWorkflow(WFname, CLUSTER_QUEUE, CLUSTER_QUEUE_LONG, Inte
     ##### Initialize with ANTS Transform For AffineComponentBABC
     currentAtlasToSubjectantsRigidRegistration = 'AtlasToSubjectANTsPreABC_Rigid'
     A2SantsRegistrationPreABCRigid = pe.Node(interface=ants.Registration(), name=currentAtlasToSubjectantsRigidRegistration)
+    many_cpu_ANTsRigid_options_dictionary = {'qsub_args': modify_qsub_args(CLUSTER_QUEUE,4,2,8), 'overwrite': True}
+    A2SantsRegistrationPreABCRigid.plugin_args = many_cpu_ANTsRigid_options_dictionary
 
     A2SantsRegistrationPreABCRigid.inputs.num_threads   = -1
     A2SantsRegistrationPreABCRigid.inputs.dimension = 3
@@ -126,6 +129,8 @@ def CreateTissueClassifyWorkflow(WFname, CLUSTER_QUEUE, CLUSTER_QUEUE_LONG, Inte
     ##### Initialize with ANTS Transform For SyN component BABC
     currentAtlasToSubjectantsRegistration = 'AtlasToSubjectANTsPreABC_SyN'
     A2SantsRegistrationPreABCSyN = pe.Node(interface=ants.Registration(), name=currentAtlasToSubjectantsRegistration)
+    many_cpu_ANTsSyN_options_dictionary = {'qsub_args': modify_qsub_args(CLUSTER_QUEUE_LONG,8,8,12), 'overwrite': True}
+    A2SantsRegistrationPreABCSyN.plugin_args = many_cpu_ANTsSyN_options_dictionary
 
     A2SantsRegistrationPreABCSyN.inputs.num_threads   = -1
     A2SantsRegistrationPreABCSyN.inputs.dimension = 3
@@ -163,12 +168,12 @@ def CreateTissueClassifyWorkflow(WFname, CLUSTER_QUEUE, CLUSTER_QUEUE_LONG, Inte
     tissueClassifyWF.connect(inputsSpec, 'atlasVolume',A2SantsRegistrationPreABCSyN,'moving_image')
 
     BABCext = pe.Node(interface=BRAINSABCext(), name="BABC")
-    many_cpu_BABC_options_dictionary = {'qsub_args': modify_qsub_args(CLUSTER_QUEUE,8,8,24), 'overwrite': True}
+    many_cpu_BABC_options_dictionary = {'qsub_args': modify_qsub_args(CLUSTER_QUEUE,8,4,8), 'overwrite': True}
     BABCext.plugin_args = many_cpu_BABC_options_dictionary
     tissueClassifyWF.connect(makeOutImageList, 'inImageList', BABCext, 'inputVolumes')
     tissueClassifyWF.connect(makeOutImageList, 'imageTypeList', BABCext, 'inputVolumeTypes')
     tissueClassifyWF.connect(makeOutImageList, 'outImageList', BABCext, 'outputVolumes')
-    BABCext.inputs.debuglevel = 10
+    BABCext.inputs.debuglevel = 0
     BABCext.inputs.useKNN = True
     BABCext.inputs.maxIterations = 3
     BABCext.inputs.maxBiasDegree = 4
@@ -219,7 +224,10 @@ def CreateTissueClassifyWorkflow(WFname, CLUSTER_QUEUE, CLUSTER_QUEUE_LONG, Inte
     """
 
     #############
+    tissueClassifyWF.connect(BABCext, 'saveState', outputsSpec, 'atlasToSubjectRegistrationState')
+
     tissueClassifyWF.connect(BABCext, 'atlasToSubjectTransform', outputsSpec, 'atlasToSubjectTransform')
+
 
     def MakeInverseTransformFileName(TransformFileName):
         """### HACK:  This function is to work around a deficiency in BRAINSABCext where the inverse transform name is not being computed properly

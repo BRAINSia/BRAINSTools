@@ -450,7 +450,11 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
     }
 
   m_KeyAveragedSubjectImage = this->m_ModalityAveragedOfIntraSubjectImages[0];
-  m_SecondKeyAveragedSubjectImage = this->m_ModalityAveragedOfIntraSubjectImages[1];
+  // If we have more than one modality i.e. T1 and T2 images are both defined.
+  if( this->m_ModalityAveragedOfIntraSubjectImages.size() > 1 )
+    {
+    m_SecondKeyAveragedSubjectImage = this->m_ModalityAveragedOfIntraSubjectImages[1];
+    }
 }
 
 template <class TOutputPixel, class TProbabilityPixel>

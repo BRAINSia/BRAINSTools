@@ -1646,7 +1646,18 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
               internalSyNSavedState->AddTransform( endTransform->GetInverseTransform() );
               }
             std::cout << "Writing the registration state: " << this->m_SaveState << std::endl;
-            itk::WriteTransformToDisk<double>( internalSyNSavedState.GetPointer(), this->m_SaveState );
+            typedef itk::TransformFileWriterTemplate<double>                TransformWriterType;
+            typename TransformWriterType::Pointer transformWriter =  TransformWriterType::New();
+            transformWriter->SetFileName( this->m_SaveState );
+            transformWriter->AddTransform( internalSyNSavedState.GetPointer() );
+            try
+              {
+              transformWriter->Update();
+              }
+            catch( itk::ExceptionObject & excp )
+              {
+              itkGenericExceptionMacro( << "Exception caught: Cannot write state file: " << excp << std::endl );
+              }
             }
           else
             {

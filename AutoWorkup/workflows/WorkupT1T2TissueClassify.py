@@ -109,8 +109,8 @@ def CreateTissueClassifyWorkflow(WFname, CLUSTER_QUEUE, CLUSTER_QUEUE_LONG, Inte
     A2SantsRegistrationPreABCRigid.inputs.smoothing_sigmas = [[3, 2, 1, 0]]
     A2SantsRegistrationPreABCRigid.inputs.sigma_units = ["vox"]
     A2SantsRegistrationPreABCRigid.inputs.use_estimate_learning_rate_once = [False]
-    A2SantsRegistrationPreABCRigid.inputs.write_composite_transform = True
-    A2SantsRegistrationPreABCRigid.inputs.collapse_output_transforms = True
+    A2SantsRegistrationPreABCRigid.inputs.write_composite_transform = True  # Required for initialize_transforms_per_stage
+    A2SantsRegistrationPreABCRigid.inputs.collapse_output_transforms = False # Mutually Exclusive with initialize_transforms_per_stage
     A2SantsRegistrationPreABCRigid.inputs.initialize_transforms_per_stage = True
     A2SantsRegistrationPreABCRigid.inputs.output_transform_prefix = 'AtlasToSubjectPreBABC_Rigid'
     A2SantsRegistrationPreABCRigid.inputs.winsorize_lower_quantile = 0.01
@@ -129,25 +129,25 @@ def CreateTissueClassifyWorkflow(WFname, CLUSTER_QUEUE, CLUSTER_QUEUE_LONG, Inte
 
     A2SantsRegistrationPreABCSyN.inputs.num_threads   = -1
     A2SantsRegistrationPreABCSyN.inputs.dimension = 3
-    A2SantsRegistrationPreABCSyN.inputs.transforms = ["SyN"]
-    A2SantsRegistrationPreABCSyN.inputs.transform_parameters = [[0.1, 3, 0]]
-    A2SantsRegistrationPreABCSyN.inputs.metric = ['CC']
-    A2SantsRegistrationPreABCSyN.inputs.sampling_strategy = [None]
-    A2SantsRegistrationPreABCSyN.inputs.sampling_percentage = [1.0]
-    A2SantsRegistrationPreABCSyN.inputs.metric_weight = [1.0]
-    A2SantsRegistrationPreABCSyN.inputs.radius_or_number_of_bins = [4]
-    A2SantsRegistrationPreABCSyN.inputs.number_of_iterations = [[500, 500, 500, 70]]
+    A2SantsRegistrationPreABCSyN.inputs.transforms = ["SyN","SyN"]
+    A2SantsRegistrationPreABCSyN.inputs.transform_parameters = [[0.1, 3, 0],[0.1, 3, 0]]
+    A2SantsRegistrationPreABCSyN.inputs.metric = ['CC','CC']
+    A2SantsRegistrationPreABCSyN.inputs.sampling_strategy = [None,None]
+    A2SantsRegistrationPreABCSyN.inputs.sampling_percentage = [1.0,1.0]
+    A2SantsRegistrationPreABCSyN.inputs.metric_weight = [1.0,1.0]
+    A2SantsRegistrationPreABCSyN.inputs.radius_or_number_of_bins = [4,4]
+    A2SantsRegistrationPreABCSyN.inputs.number_of_iterations = [[500, 500], [500, 70]]
 
-    A2SantsRegistrationPreABCSyN.inputs.convergence_threshold = [1e-6]
+    A2SantsRegistrationPreABCSyN.inputs.convergence_threshold = [1e-8,1e-6]
 
-    A2SantsRegistrationPreABCSyN.inputs.convergence_window_size = [10]
-    A2SantsRegistrationPreABCSyN.inputs.use_histogram_matching = [True]
-    A2SantsRegistrationPreABCSyN.inputs.shrink_factors = [[8, 4, 2, 1]]
-    A2SantsRegistrationPreABCSyN.inputs.smoothing_sigmas = [[3, 2, 1, 0]]
-    A2SantsRegistrationPreABCSyN.inputs.sigma_units = ["vox"]
-    A2SantsRegistrationPreABCSyN.inputs.use_estimate_learning_rate_once = [False]
-    A2SantsRegistrationPreABCSyN.inputs.write_composite_transform = True
-    A2SantsRegistrationPreABCSyN.inputs.collapse_output_transforms = True
+    A2SantsRegistrationPreABCSyN.inputs.convergence_window_size = [12]
+    A2SantsRegistrationPreABCSyN.inputs.use_histogram_matching = [True,True]
+    A2SantsRegistrationPreABCSyN.inputs.shrink_factors = [[8, 4], [2, 1]]
+    A2SantsRegistrationPreABCSyN.inputs.smoothing_sigmas = [[3, 2], [1, 0]]
+    A2SantsRegistrationPreABCSyN.inputs.sigma_units = ["vox","vox"]
+    A2SantsRegistrationPreABCSyN.inputs.use_estimate_learning_rate_once = [False,False]
+    A2SantsRegistrationPreABCSyN.inputs.write_composite_transform = True # Required for initialize_transforms_per_stage
+    A2SantsRegistrationPreABCSyN.inputs.collapse_output_transforms = False # Mutually Exclusive with initialize_transforms_per_stage
     A2SantsRegistrationPreABCSyN.inputs.initialize_transforms_per_stage = True
     A2SantsRegistrationPreABCSyN.inputs.save_state = 'SavedInternalSyNState.h5'
     A2SantsRegistrationPreABCSyN.inputs.output_transform_prefix = 'AtlasToSubjectPreBABC_SyN'
@@ -168,7 +168,7 @@ def CreateTissueClassifyWorkflow(WFname, CLUSTER_QUEUE, CLUSTER_QUEUE_LONG, Inte
     tissueClassifyWF.connect(makeOutImageList, 'inImageList', BABCext, 'inputVolumes')
     tissueClassifyWF.connect(makeOutImageList, 'imageTypeList', BABCext, 'inputVolumeTypes')
     tissueClassifyWF.connect(makeOutImageList, 'outImageList', BABCext, 'outputVolumes')
-    BABCext.inputs.debuglevel = 0
+    BABCext.inputs.debuglevel = 10
     BABCext.inputs.useKNN = True
     BABCext.inputs.maxIterations = 3
     BABCext.inputs.maxBiasDegree = 4
@@ -187,6 +187,7 @@ def CreateTissueClassifyWorkflow(WFname, CLUSTER_QUEUE, CLUSTER_QUEUE_LONG, Inte
     BABCext.inputs.saveState = 'SavedBABCInternalSyNState.h5'
 
     tissueClassifyWF.connect(inputsSpec, 'atlasDefinition', BABCext, 'atlasDefinition')
+    # NOTE: MUTUALLY EXCLUSIVE with restoreState
     #tissueClassifyWF.connect(A2SantsRegistrationPreABCSyN,
     #                         ( 'composite_transform', getListIndexOrNoneIfOutOfRange, 0 ),
     #                         BABCext, 'atlasToSubjectInitialTransform')

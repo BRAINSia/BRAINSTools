@@ -244,15 +244,15 @@ DoConversion( int argc, char *argv[] )
   typename TransformFileReaderType::TransformListType *transformList = reader->GetTransformList();
   typename GenericTransformType::Pointer inputXfrm = dynamic_cast<GenericTransformType *>( transformList->front().GetPointer() );
 
-  const std::string inputTransformType = inputXfrm->GetTransformTypeAsString();
-  if( inputTransformType != "CompositeTransform" )
+  const std::string inputTransformTypeName = inputXfrm->GetTransformTypeAsString();
+  std::cout << "------------------------ " << std::endl;
+  std::cout << "Input Transform Type Saved in Memory ==> " << inputTransformTypeName << std::endl;
+  if( inputTransformTypeName.find("CompositeTransform") == std::string::npos )
     {
-    std::cout << "------------------------ " << std::endl;
-    std::cout << "Input Transform Type Saved on Memory ==> " << inputTransformType << std::endl;
     std::cout << "* Input transform parameters: " << inputXfrm->GetParameters() << std::endl;
     std::cout << "* Input transform fixed parameters: " << inputXfrm->GetFixedParameters() << std::endl;
-    std::cout << "------------------------ " << std::endl;
     }
+  std::cout << "------------------------ " << std::endl;
 
   // Handle BSpline type
   typename BSplineTransformType::Pointer bsplineInputXfrm =
@@ -319,7 +319,7 @@ DoConversion( int argc, char *argv[] )
     return EXIT_SUCCESS;
     }
 
-  if( inputTransformType == "CompositeTransform" )
+  if( inputTransformTypeName.find("CompositeTransform") != std::string::npos )
     {
     if( outputTransformType == "Same" )
       {
@@ -390,6 +390,7 @@ DoConversion( int argc, char *argv[] )
           std::string transfromToWriteName = outputTransform + "Composite.h5";
 
           // This function writes both forward and inverse composite transforms to the disk
+          std::cout << "Converted Transforms are Written to the Disk ==> " << compToWrite->GetTransformTypeAsString() << std::endl;
           itk::WriteTransformToDisk<TScalarType>( compToWrite.GetPointer(), transfromToWriteName );
           }
         }
@@ -456,42 +457,47 @@ DoConversion( int argc, char *argv[] )
     outputXfrm = scaleSkewVersorXfrm.GetPointer();
     }
 
-  if( outputTransformType == "Same" )
+  if( inputTransformTypeName.find("CompositeTransform") == std::string::npos ) // Input composite is assumed to be a state file
+                                                                               // not a transform, so it is converted differently
+                                                                               // and is already written to the disk.
     {
-    typedef typename itk::TransformFileWriterTemplate<TScalarType> TransformWriterType;
-    typename TransformWriterType::Pointer transformWriter = TransformWriterType::New();
-    transformWriter->SetFileName(outputTransform);
-    for( typename itk::TransformFileReaderTemplate<TScalarType>::TransformListType::iterator it = transformList->begin();
-         it != transformList->end(); ++it )
+    if( outputTransformType == "Same" )
       {
-      typename GenericTransformType::Pointer outXfrm = dynamic_cast<GenericTransformType *>( (*it).GetPointer() );
-      transformWriter->AddTransform( outXfrm );
+      typedef typename itk::TransformFileWriterTemplate<TScalarType> TransformWriterType;
+      typename TransformWriterType::Pointer transformWriter = TransformWriterType::New();
+      transformWriter->SetFileName(outputTransform);
+      for( typename itk::TransformFileReaderTemplate<TScalarType>::TransformListType::iterator it = transformList->begin();
+          it != transformList->end(); ++it )
+        {
+        typename GenericTransformType::Pointer outXfrm = dynamic_cast<GenericTransformType *>( (*it).GetPointer() );
+        transformWriter->AddTransform( outXfrm );
+        //
+        std::cout << "Output Transform Type Written to the Disk ==> " << outXfrm->GetTransformTypeAsString() << std::endl;
+        std::cout << "* Output transform parameters: " << outXfrm->GetParameters() << std::endl;
+        std::cout << "* Output transform fixed parameters: " << outXfrm->GetFixedParameters() << std::endl;
+        std::cout << "------------------------ " << std::endl;
+        }
+      try
+        {
+        transformWriter->Update();
+        }
+      catch( itk::ExceptionObject & excp )
+        {
+        std::cerr << "Can't write " << outputTransform << excp.GetDescription() << std::endl;
+        return EXIT_FAILURE;
+        }
+      }
+    else
+      {
+      // write the resulting transform.
+      std::cout << "Output Transform Type Written to the Disk ==> " << outputXfrm->GetTransformTypeAsString() << std::endl;
+      std::cout << "* Output transform parameters: " << outputXfrm->GetParameters() << std::endl;
+      std::cout << "* Output transform fixed parameters: " << outputXfrm->GetFixedParameters() << std::endl;
       //
-      std::cout << "Output Transform Type Written to the Disk ==> " << outXfrm->GetTransformTypeAsString() << std::endl;
-      std::cout << "* Output transform parameters: " << outXfrm->GetParameters() << std::endl;
-      std::cout << "* Output transform fixed parameters: " << outXfrm->GetFixedParameters() << std::endl;
-      std::cout << "------------------------ " << std::endl;
-      }
-    try
-      {
-      transformWriter->Update();
-      }
-    catch( itk::ExceptionObject & excp )
-      {
-      std::cerr << "Can't write " << outputTransform << excp.GetDescription() << std::endl;
-      return EXIT_FAILURE;
+      itk::WriteTransformToDisk<TScalarType>(outputXfrm.GetPointer(), outputTransform);
       }
     }
-  else
-    {
-    // write the resulting transform.
-    std::cout << "Output Transform Type Written to the Disk ==> " << outputXfrm->GetTransformTypeAsString() << std::endl;
-    std::cout << "* Output transform parameters: " << outputXfrm->GetParameters() << std::endl;
-    std::cout << "* Output transform fixed parameters: " << outputXfrm->GetFixedParameters() << std::endl;
-    std::cout << "------------------------ " << std::endl;
-    //
-    itk::WriteTransformToDisk<TScalarType>(outputXfrm.GetPointer(), outputTransform);
-    }
+
   return EXIT_SUCCESS;
 }
 

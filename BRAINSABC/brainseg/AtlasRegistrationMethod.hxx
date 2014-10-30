@@ -68,9 +68,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
 {
   m_InputImageTissueRegion = NULL;
   m_InputSpatialObjectTissueRegion = NULL;
-  // make init transform identity, so it won't cause a
-  // crash if one isn't given on the command line.
-  m_AtlasToSubjectInitialTransform = MakeRigidIdentity();
+  m_AtlasToSubjectInitialTransform = NULL;
 }
 
 template <class TOutputPixel, class TProbabilityPixel>
@@ -523,7 +521,13 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
     std::string atlasToSubjectInitialTransformName = "";
       {
       std::cout << "****************************************" << std::endl;
-      if( this->m_AtlasToSubjectInitialTransform.IsNotNull() )
+      if( m_AtlasLinearTransformChoice == "SyN" && this->m_RestoreState.IsNotNull() )
+        {
+        std::cout << "SyN registration is resotred from state, and no atlasToSubjectInitialTransform is needed."
+                  << std::endl;
+        this->m_AtlasToSubjectInitialTransform = NULL;
+        }
+      else if( this->m_AtlasToSubjectInitialTransform.IsNotNull() )
         {
         atlasToSubjectInitialTransformName = this->m_AtlasToSubjectInitialTransform->GetNameOfClass();
         std::cout << "atlasToSubjectInitialTransformName = " << atlasToSubjectInitialTransformName << std::endl;
@@ -551,17 +555,18 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
     muLogMacro(<< "Registering first atlas images to first subject image." << std::endl);
     // Initialize the outputTransform with the initializer before starting the loop.
     this->m_AtlasToSubjectTransform = this->m_AtlasToSubjectInitialTransform;
-    typedef itk::CompositeTransform<double, 3>                   CompositeTransformType;
-    CompositeTransformType::Pointer atlasToSubjectCompositeTransform =
-      dynamic_cast<CompositeTransformType *>( m_AtlasToSubjectTransform.GetPointer() );
-    if( atlasToSubjectCompositeTransform.IsNull() )
+    if( this->m_AtlasToSubjectTransform.IsNotNull() )
       {
-      atlasToSubjectCompositeTransform = CompositeTransformType::New();
-      atlasToSubjectCompositeTransform->AddTransform( m_AtlasToSubjectTransform );
+      typedef itk::CompositeTransform<double, 3>                   CompositeTransformType;
+      CompositeTransformType::Pointer atlasToSubjectCompositeTransform =
+         dynamic_cast<CompositeTransformType *>( m_AtlasToSubjectTransform.GetPointer() );
+      if( atlasToSubjectCompositeTransform.IsNull() )
+        {
+        atlasToSubjectCompositeTransform = CompositeTransformType::New();
+        atlasToSubjectCompositeTransform->AddTransform( m_AtlasToSubjectTransform );
+        }
+      atlasToSubjectRegistrationHelper->SetCurrentGenericTransform( atlasToSubjectCompositeTransform );
       }
-    atlasToSubjectRegistrationHelper->SetCurrentGenericTransform( atlasToSubjectCompositeTransform );
-    atlasToSubjectRegistrationHelper->SetRestoreState( m_RestoreState );
-    atlasToSubjectRegistrationHelper->SetSaveState( m_SaveState );
     // Register all atlas images to first image
     // Set the fixed and moving image
     atlasToSubjectRegistrationHelper->SetFixedVolume(this->GetModifiableKeyAveragedSubjectImage()); // by AverageIntraSubjectRegisteredImages function
@@ -695,7 +700,14 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
         << "Registering (SyN) " << "atlas(0) to template(0) image." << std::endl);
       std::vector<double>      minimumStepSize;
       std::vector<std::string> transformType;
-      if( atlasToSubjectInitialTransformName == "" )   // If no initial transform, then do full multi-step
+
+      atlasToSubjectRegistrationHelper->SetSaveState( m_SaveState );
+
+      if( m_RestoreState.IsNotNull() ) // If RestoreState is defined only one stage of SyN is needed
+        {
+        atlasToSubjectRegistrationHelper->SetRestoreState( m_RestoreState );
+        }
+      else if( atlasToSubjectInitialTransformName == "" )   // If no initial transform, then do full multi-step
         // registration.
         {
         minimumStepSize.push_back(0.0025);

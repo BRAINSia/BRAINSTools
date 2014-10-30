@@ -1645,6 +1645,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
               internalSyNSavedState->AddTransform( endTransform );
               internalSyNSavedState->AddTransform( endTransform->GetInverseTransform() );
               }
+            std::cout << "Writing the registration state: " << this->m_SaveState << std::endl;
             itk::WriteTransformToDisk<double>( internalSyNSavedState.GetPointer(), this->m_SaveState );
             }
           else

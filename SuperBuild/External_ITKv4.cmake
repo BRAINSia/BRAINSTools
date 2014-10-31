@@ -37,9 +37,10 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       set(git_protocol "git")
   endif()
 
-  set(${proj}_REPOSITORY ${git_protocol}://itk.org/ITK.git)
-  set(${proj}_GIT_TAG 310f21e0216a304e503e7bca57a254515e8e3fee) # 2014-10-28 Fixes for FixedParameters
-  #set(${proj}_REPOSITORY https://github.com/BRAINSia/ITK.git)
+#  set(${proj}_REPOSITORY ${git_protocol}://itk.org/ITK.git)
+#  set(${proj}_GIT_TAG 310f21e0216a304e503e7bca57a254515e8e3fee) # 2014-10-28 Fixes for FixedParameters
+  set(${proj}_REPOSITORY https://github.com/BRAINSia/ITK.git)
+  set(${proj}_GIT_TAG "SpatialObjectInternalInverse")
   #set(${proj}_GIT_TAG f7ca03e63e1e1b12604458846510f772d318470d )
 #  message("COMMON_EXTERNAL_PROJECT_ARGS:
 #${COMMON_EXTERNAL_PROJECT_ARGS}")

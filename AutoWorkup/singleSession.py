@@ -280,6 +280,8 @@ def createAndRun(sessions, environment, experiment, pipeline, cluster, useSentin
                     print("Starting session {0}".format(session))
                     # HACK Hard-coded to SGEGraph, but --wfrun is ignored completely
                     run_workflow(workflow, plugin=master_config['plugin_name'], plugin_args=master_config['plugin_args'])
+                else:
+                    print("EXITING WITHOUT WORK DUE TO dryRun flag")
     except:
         raise
     finally:

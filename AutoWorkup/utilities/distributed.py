@@ -76,9 +76,11 @@ def modify_qsub_args(queue, memoryGB, minThreads, maxThreads, stdout='/dev/null'
     assert memoryGB <= 48 , "Memory must be supplied in GB, so anything more than 24 seems not-useful now."
 
     ## NOTE: At least 1 thread needs to be requested per 2GB needed
-    memoryThreads = math.ceil((math.ceil(memoryGB)/2))
+    memoryThreads = int(math.ceil((math.ceil(memoryGB)/2))) #Ensure that threads are integers
     minThreads = max(minThreads, memoryThreads)
     maxThreads = max(maxThreads, memoryThreads)
+    maxThreads=int(maxThreads) # Ensure that threads are integers
+    minThreads=int(minThreads) # Ensure that threads are integers
 
     if maxThreads is None or minThreads == maxThreads:
        threadsRangeString =  '{0}'.format(minThreads)

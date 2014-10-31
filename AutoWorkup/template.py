@@ -221,9 +221,9 @@ def _template_runner(argv, environment, experiment, pipeline, cluster):
     # if numSessions == 1:
     #     TEMPLATE_BUILD_RUN_MODE = 'SINGLE_IMAGE'
     ####################################################################################################
-    buildTemplateIteration1 = registrationWF('iteration01')
+    buildTemplateIteration1 = BAWantsRegistrationTemplateBuildSingleIterationWF('iteration01')
     # buildTemplateIteration2 = buildTemplateIteration1.clone(name='buildTemplateIteration2')
-    buildTemplateIteration2 = registrationWF('Iteration02')
+    buildTemplateIteration2 = BAWantsRegistrationTemplateBuildSingleIterationWF('Iteration02')
 
     CreateAtlasXMLAndCleanedDeformedAveragesNode = pe.Node(interface=Function(function=CreateAtlasXMLAndCleanedDeformedAverages,
                                                           input_names=['t1_image', 'deformed_list', 'AtlasTemplate', 'outDefinition'],
@@ -312,7 +312,7 @@ if __name__ == '__main__':
     from utilities.misc import GenerateSubjectOutputPattern as outputPattern
     from utilities.distributed import modify_qsub_args
     from workflows.utils import run_workflow, print_workflow
-    from BAWantsRegistrationBuildTemplate import BAWantsRegistrationTemplateBuildSingleIterationWF as registrationWF
+    from BAWantsRegistrationBuildTemplate import BAWantsRegistrationTemplateBuildSingleIterationWF
     from utilities.configFileParser import nipype_options
 
     exit = _template_runner(argv, *configs)

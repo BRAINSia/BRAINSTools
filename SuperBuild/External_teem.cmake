@@ -43,7 +43,7 @@ else()
 endif()
 
 set(${proj}_REPOSITORY "${git_protocol}://github.com/BRAINSia/teem.git")
-set(${proj}_TAG "c5e12c86337c61f5595d62c3ececad719a34787f")
+set(${proj}_TAG "3c906b5484740f734e2a75f69cd69e0b4d6896f6")
 
 ExternalProject_Add(${proj}
   ${${proj}_EP_ARGS}
@@ -55,6 +55,15 @@ ExternalProject_Add(${proj}
   BINARY_DIR teem-build
   CMAKE_ARGS -Wno-dev --no-warn-unused-cli
   CMAKE_CACHE_ARGS
+  #
+  # TeemConfig.cmake isn't configured properly unless
+  # the LIBRARY_OUTPUT_PATH and EXECUTABLE_OUTPUT_PATH variables
+  # match where the libraries actually end up; in our case we
+  # pass in CMAKE_LIBRARY_OUTPUT_DIRECTORY, etc which changes the
+  # output paths without telling the Teem CMake system about it, so
+  # the TeemConfig.cmake file ends up being wrong.
+  -DLIBRARY_OUTPUT_PATH:PATH=${CMAKE_ARCHIVE_OUTPUT_PATH}
+  -DEXECUTABLE_OUTPUT_PATH:PATH=${CMAKE_RUNTIME_OUTPUT_PATH}
   ${COMMON_EXTERNAL_PROJECT_ARGS}
   -DBUILD_TESTING:BOOL=OFF
   -DBUILD_SHARED_LIBS:BOOL=OFF

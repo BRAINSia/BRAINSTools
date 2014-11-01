@@ -105,6 +105,7 @@ AverageImageList(const std::vector<typename TImage::Pointer> & inputImageList)
   myThresholder->SetUpperThreshold( 0 );
   myThresholder->SetInsideValue(0.0);
   myThresholder->SetOutsideValue(1.0);
+  myThresholder->Update();
   typename MultiplyFilterType::Pointer multIF = MultiplyFilterType::New();
   multIF->SetInput1(averageMask);
   multIF->SetInput2(myThresholder->GetOutput());
@@ -122,6 +123,7 @@ AverageImageList(const std::vector<typename TImage::Pointer> & inputImageList)
   typename MultiplyFilterType::Pointer multIF = MultiplyFilterType::New();
   multIF->SetInput1(averageMask);
   multIF->SetInput2(filter->GetOutput());
+  multIF->Update();
 
   return multIF->GetOutput();
 }
@@ -247,12 +249,6 @@ public:
   itkSetObjectMacro(KeySubjectImage,InternalImageType);
   itkGetModifiableObjectMacro(KeySubjectImage,InternalImageType);
 
-  itkSetObjectMacro(KeyAveragedSubjectImage,InternalImageType);
-  itkGetModifiableObjectMacro(KeyAveragedSubjectImage,InternalImageType);
-
-  itkSetObjectMacro(SecondKeyAveragedSubjectImage,InternalImageType);
-  itkGetModifiableObjectMacro(SecondKeyAveragedSubjectImage,InternalImageType);
-
   void SetAtlasLinearTransformChoice(const std::string & c)
   {
     m_AtlasLinearTransformChoice = c;
@@ -316,8 +312,6 @@ private:
   GenericTransformType::Pointer m_AtlasToSubjectInitialTransform;
   MapOfTransformLists           m_IntraSubjectTransforms;
   InternalImagePointer          m_KeySubjectImage;//The image to be used for intra-subject registration
-  InternalImagePointer          m_KeyAveragedSubjectImage;
-  InternalImagePointer          m_SecondKeyAveragedSubjectImage;
 
   bool m_UseNonLinearInterpolation;
   bool m_DoneRegistration;

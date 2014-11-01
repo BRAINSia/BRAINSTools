@@ -441,19 +441,13 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
       this->m_ModalityAveragedOfIntraSubjectImages.push_back(
         AverageImageList<InternalImageType>(mapOfRegisteredModalImageListsIt->second)
       );
+
       }
     else
       {
       FloatImageVector::iterator intraImIt = this->m_RegisteredIntraSubjectImagesList[mapOfRegisteredModalImageListsIt->first].begin(); // each intra subject image
       this->m_ModalityAveragedOfIntraSubjectImages.push_back( (*intraImIt).GetPointer() );
       }
-    }
-
-  m_KeyAveragedSubjectImage = this->m_ModalityAveragedOfIntraSubjectImages[0];
-  // If we have more than one modality i.e. T1 and T2 images are both defined.
-  if( this->m_ModalityAveragedOfIntraSubjectImages.size() > 1 )
-    {
-    m_SecondKeyAveragedSubjectImage = this->m_ModalityAveragedOfIntraSubjectImages[1];
     }
 }
 
@@ -573,15 +567,14 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
       }
     // Register all atlas images to first image
     // Set the fixed and moving image
-    atlasToSubjectRegistrationHelper->SetFixedVolume(this->GetModifiableKeyAveragedSubjectImage()); // by AverageIntraSubjectRegisteredImages function
+    atlasToSubjectRegistrationHelper->SetFixedVolume(this->m_ModalityAveragedOfIntraSubjectImages[0]); // by AverageIntraSubjectRegisteredImages function
     atlasToSubjectRegistrationHelper->SetMovingVolume(this->GetFirstAtlasOriginalImage());
-    if( this->GetModifiableSecondKeyAveragedSubjectImage() != NULL )
+    if( this->m_ModalityAveragedOfIntraSubjectImages.size() > 1 )
         {
         std::cout<< "Multimodal SyN Registration will be run." <<   std::endl ;
         muLogMacro( << "Multimodal SyN Registration will be run." <<   std::endl );
-        std::cout<<this->GetModifiableSecondKeyAveragedSubjectImage()<<std::endl;
         std::cout<<this->GetSecondModalityAtlasOriginalImage("T2")<<std::endl;
-        atlasToSubjectRegistrationHelper->SetFixedVolume2(this->GetModifiableSecondKeyAveragedSubjectImage()); // by AverageIntraSubjectRegisteredImages function
+        atlasToSubjectRegistrationHelper->SetFixedVolume2(this->m_ModalityAveragedOfIntraSubjectImages[1]); // by AverageIntraSubjectRegisteredImages function
         atlasToSubjectRegistrationHelper->SetMovingVolume2(this->GetSecondModalityAtlasOriginalImage("T2"));
         }
     else
@@ -801,12 +794,22 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
 
   // This function warps all of intra subject images (m_IntraSubjectOrigImageList) to the
   // key subject image using the intra subject registration transforms (m_IntraSubjectTransforms).
-  // Then, it averages all T1s together and T2s together to provide (m_KeyAveragedSubjectImage)
-  //  and (m_SecondKeyAveragedSubjectImage)
+  // Then, it averages all T1s together and T2s together to provide (this->m_ModalityAveragedOfIntraSubjectImages[0])
+  //  and (this->m_ModalityAveragedOfIntraSubjectImages[1])
   this->AverageIntraSubjectRegisteredImages();
 
   // Atlas to subject registration is done as a multi-modal registration using
-  // m_KeyAveragedSubjectImage and m_SecondKeyAveragedSubjectImage
+  // this->m_ModalityAveragedOfIntraSubjectImages[0] and this->m_ModalityAveragedOfIntraSubjectImages[1]
+
+  std::cout << "FirstKeyAveragedImage \n" <<  this->m_ModalityAveragedOfIntraSubjectImages[0] << std::endl;
+  if( this->m_ModalityAveragedOfIntraSubjectImages.size() > 1 )
+    {
+    std::cout << "SecondKeyAveragedImage \n" <<  this->m_ModalityAveragedOfIntraSubjectImages[1] << std::endl;
+    }
+  else
+    {
+    std::cout << "NO SECOND KEY IMAGE" << std::endl;
+    }
   this->RegisterAtlasToSubjectImages();
 
   m_DoneRegistration = true;

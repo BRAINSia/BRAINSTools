@@ -250,7 +250,7 @@ NodeVectorJacobianCalculator<TInputMesh, TScalar>
   typedef typename DerivativeType::ValueType DerivativeValueType;
 
   JacobianType nullJacobian;
-  nullJacobian.Fill( NumericTraits<DerivativeValueType>::Zero );
+  nullJacobian.Fill( NumericTraits<DerivativeValueType>::ZeroValue() );
 
   JacobianListIterator jacobianItr = this->m_PointJacobianAccumulatorList->Begin();
   JacobianListIterator jacobianEnd = this->m_PointJacobianAccumulatorList->End();
@@ -259,7 +259,7 @@ NodeVectorJacobianCalculator<TInputMesh, TScalar>
   while( jacobianItr != jacobianEnd )
     {
     jacobianItr.Value() = nullJacobian;
-    areaItr.Value() = NumericTraits<AreaType>::Zero;
+    areaItr.Value() = NumericTraits<AreaType>::ZeroValue();
     ++jacobianItr;
     ++areaItr;
     }

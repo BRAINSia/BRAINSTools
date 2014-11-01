@@ -54,7 +54,7 @@ template <
 void VDemonsRegistrator<TRealImage, TOutputImage,
                         TFieldValue>::WriteDisplacementComponents()
 {
-  m_DefaultPixelValue = NumericTraits<PixelType>::One;
+  m_DefaultPixelValue = NumericTraits<PixelType>::OneValue();
 
   // we use the vector index selection filter to break the deformation field
   // into x,y,z components.
@@ -124,7 +124,7 @@ VDemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::VDemonsRegistrator()
   m_VectorRegistration->SetFixedImagePyramid(m_FixedImagePyramid);
   m_VectorRegistration->SetMovingImagePyramid(m_MovingImagePyramid);
 
-  m_DefaultPixelValue =  NumericTraits<typename RealImageType::PixelType>::Zero;
+  m_DefaultPixelValue =  NumericTraits<typename RealImageType::PixelType>::ZeroValue();
   // Setup an registration observer
   typedef SimpleMemberCommand<Self> CommandType;
   typename CommandType::Pointer command = CommandType::New();

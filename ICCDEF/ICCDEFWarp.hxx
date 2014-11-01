@@ -46,7 +46,7 @@ ICCDEFWarp<TImage, TRealImage, TOutputImage>
   m_OutputJacobianImage = false;
   m_OutputDisplacementField = false;
 
-  m_DefaultPixelValue = NumericTraits<PixelType>::Zero;
+  m_DefaultPixelValue = NumericTraits<PixelType>::ZeroValue();
 
   m_UseHistogramMatching = false;
   //    m_OutDebug = false;

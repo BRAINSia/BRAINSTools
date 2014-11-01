@@ -47,7 +47,7 @@ template <class TRealImage, class TOutputImage, class TFieldValue>
 void DemonsRegistrator<TRealImage, TOutputImage,
                        TFieldValue>::WriteDisplacementComponents()
 {
-  m_DefaultPixelValue = NumericTraits<PixelType>::One;
+  m_DefaultPixelValue = NumericTraits<PixelType>::OneValue();
 
   // we use the vector index selection filter to break the deformation field
   // into x,y,z components.

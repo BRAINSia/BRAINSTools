@@ -56,7 +56,7 @@ void IccdefRegistrator<TRealImage, TOutputImage,
                        TFieldValue>::WriteDisplacementComponents(TDisplacementField * df, std::string prefix)
 {
 //  typedef itk::Image<float, 3> OutputImageType;
-  this->m_DefaultPixelValue = NumericTraits<PixelType>::One;
+  this->m_DefaultPixelValue = NumericTraits<PixelType>::OneValue();
 
   // we use the vector index selection filter to break the deformation field
   // into x,y,z components.
@@ -125,7 +125,7 @@ IccdefRegistrator<TRealImage, TOutputImage, TFieldValue>::IccdefRegistrator()
 //  this->m_Registration->SetFixedImagePyramid (this->m_FixedImagePyramid);
 //  this->m_Registration->SetMovingImagePyramid (this->m_MovingImagePyramid);
 
-  this->m_DefaultPixelValue =  NumericTraits<typename RealImageType::PixelType>::Zero;
+  this->m_DefaultPixelValue =  NumericTraits<typename RealImageType::PixelType>::ZeroValue();
   // Setup an registration observer
   typedef SimpleMemberCommand<Self> CommandType;
   typename CommandType::Pointer command = CommandType::New();

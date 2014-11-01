@@ -38,14 +38,14 @@ ComparisonImageFilter<TInputImage, TOutputImage>
   this->SetNumberOfRequiredInputs(2);
 
   // Set the default DifferenceThreshold.
-  m_DifferenceThreshold = NumericTraits<OutputPixelType>::Zero;
+  m_DifferenceThreshold = NumericTraits<OutputPixelType>::ZeroValue();
 
   // Set the default ToleranceRadius.
   m_ToleranceRadius = 0;
 
   // Initialize statistics about difference image.
-  m_MeanDifference = NumericTraits<RealType>::Zero;
-  m_TotalDifference = NumericTraits<AccumulateType>::Zero;
+  m_MeanDifference = NumericTraits<RealType>::ZeroValue();
+  m_TotalDifference = NumericTraits<AccumulateType>::ZeroValue();
   m_NumberOfPixelsWithDifferences = 0;
   m_IgnoreBoundaryPixels = false;
 }
@@ -96,8 +96,8 @@ ComparisonImageFilter<TInputImage, TOutputImage>
   ThreadIdType numberOfThreads = this->GetNumberOfThreads();
 
   // Initialize statistics about difference image.
-  m_MeanDifference = NumericTraits<RealType>::Zero;
-  m_TotalDifference = NumericTraits<AccumulateType>::Zero;
+  m_MeanDifference = NumericTraits<RealType>::ZeroValue();
+  m_TotalDifference = NumericTraits<AccumulateType>::ZeroValue();
   m_NumberOfPixelsWithDifferences = 0;
 
   // Resize the thread temporaries
@@ -105,7 +105,7 @@ ComparisonImageFilter<TInputImage, TOutputImage>
   m_ThreadNumberOfPixels.SetSize(numberOfThreads);
 
   // Initialize the temporaries
-  m_ThreadDifferenceSum.Fill(NumericTraits<AccumulateType>::Zero);
+  m_ThreadDifferenceSum.Fill(NumericTraits<AccumulateType>::ZeroValue());
   m_ThreadNumberOfPixels.Fill(0);
 }
 
@@ -223,7 +223,7 @@ ComparisonImageFilter<TInputImage, TOutputImage>
         else
           {
           // Difference is below threshold.
-          out.Set(NumericTraits<OutputPixelType>::Zero);
+          out.Set(NumericTraits<OutputPixelType>::ZeroValue());
           }
 
         // Update progress.
@@ -234,7 +234,7 @@ ComparisonImageFilter<TInputImage, TOutputImage>
       {
       for( out.GoToBegin(); !out.IsAtEnd(); ++out )
         {
-        out.Set(NumericTraits<OutputPixelType>::Zero);
+        out.Set(NumericTraits<OutputPixelType>::ZeroValue());
         progress.CompletedPixel();
         }
       }

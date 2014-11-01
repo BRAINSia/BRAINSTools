@@ -32,7 +32,7 @@ template <class TInputImage, class TOutputImage>
 NaryRelabelImageFilter<TInputImage, TOutputImage>
 ::NaryRelabelImageFilter()
 {
-  m_BackgroundValue = NumericTraits<InputImagePixelType>::Zero;
+  m_BackgroundValue = NumericTraits<InputImagePixelType>::ZeroValue();
   m_IgnoreCollision = true;
 }
 
@@ -70,7 +70,7 @@ NaryRelabelImageFilter<TInputImage, TOutputImage>
   TranslatorType translator;
   translator.resize( inputIterators.size() );
 
-  OutputImagePixelType label = NumericTraits<OutputImagePixelType>::Zero;
+  OutputImagePixelType label = NumericTraits<OutputImagePixelType>::ZeroValue();
   for( unsigned int i = 0; i < inputIterators.size(); ++i )
     {
     ImageRegionConstIteratorType * inputIt = inputIterators[i];

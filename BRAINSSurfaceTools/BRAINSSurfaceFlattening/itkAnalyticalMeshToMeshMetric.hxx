@@ -60,7 +60,7 @@ AnalyticalMeshToMeshMetric<TFixedMesh, TMovingMesh>
   PointDataIterator pointDataItr = fixedMesh->GetPointData()->Begin();
   PointDataIterator pointDataEnd = fixedMesh->GetPointData()->End();
 
-  MeasureType measure = NumericTraits<MeasureType>::Zero;
+  MeasureType measure = NumericTraits<MeasureType>::ZeroValue();
 
   this->m_NumberOfPixelsCounted = 0;
 
@@ -138,7 +138,7 @@ AnalyticalMeshToMeshMetric<TFixedMesh, TMovingMesh>
 
   const unsigned int ParametersDimension = this->GetNumberOfParameters();
   derivative = DerivativeType( ParametersDimension );
-  derivative.Fill( NumericTraits<ITK_TYPENAME DerivativeType::ValueType>::Zero );
+  derivative.Fill( NumericTraits<ITK_TYPENAME DerivativeType::ValueType>::ZeroValue() );
 
   ti.GoToBegin();
 
@@ -191,7 +191,7 @@ AnalyticalMeshToMeshMetric<TFixedMesh, TMovingMesh>
       this->m_Interpolator->EvaluateDerivative( transformedPoint, gradient );
       for( unsigned int par = 0; par < ParametersDimension; par++ )
         {
-        RealDataType sum = NumericTraits<RealDataType>::Zero;
+        RealDataType sum = NumericTraits<RealDataType>::ZeroValue();
         for( unsigned int dim = 0; dim < MeshDimension; dim++ )
           {
           sum += 2.0 * diff * jacobian( dim, par ) * gradient[dim];
@@ -242,7 +242,7 @@ AnalyticalMeshToMeshMetric<TFixedMesh, TMovingMesh>
   PointDataIterator pointDataItr = fixedMesh->GetPointData()->Begin();
   PointDataIterator pointDataEnd = fixedMesh->GetPointData()->End();
 
-  MeasureType measure = NumericTraits<MeasureType>::Zero;
+  MeasureType measure = NumericTraits<MeasureType>::ZeroValue();
 
   this->m_NumberOfPixelsCounted = 0;
 
@@ -250,7 +250,7 @@ AnalyticalMeshToMeshMetric<TFixedMesh, TMovingMesh>
 
   const unsigned int ParametersDimension = this->GetNumberOfParameters();
   derivative = DerivativeType( ParametersDimension );
-  derivative.Fill( NumericTraits<ITK_TYPENAME DerivativeType::ValueType>::Zero );
+  derivative.Fill( NumericTraits<ITK_TYPENAME DerivativeType::ValueType>::ZeroValue() );
 
   while( pointItr != pointEnd && pointDataItr != pointDataEnd )
     {
@@ -292,7 +292,7 @@ AnalyticalMeshToMeshMetric<TFixedMesh, TMovingMesh>
       this->m_Interpolator->EvaluateDerivative( transformedPoint, gradient );
       for( unsigned int par = 0; par < ParametersDimension; par++ )
         {
-        RealDataType sum = NumericTraits<RealDataType>::Zero;
+        RealDataType sum = NumericTraits<RealDataType>::ZeroValue();
         for( unsigned int dim = 0; dim < MovingMeshDimension; dim++ )
           {
           sum += 2.0 * diff * jacobian( dim, par ) * gradient[dim];

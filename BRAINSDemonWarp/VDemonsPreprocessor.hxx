@@ -55,7 +55,7 @@ VDemonsPreprocessor<TInputImage, TOutputImage>
 
   m_FixedBinaryVolume = "none";
   m_MovingBinaryVolume = "none";
-  //    m_Seed =  NumericTraits<IndexType>::Zero;
+  //    m_Seed =  NumericTraits<IndexType>::ZeroValue();
   for( unsigned i = 0; i < TInputImage::ImageDimension; i++ )
     {
     m_Seed[i] = 0;
@@ -64,7 +64,7 @@ VDemonsPreprocessor<TInputImage, TOutputImage>
   m_Lower = NumericTraits<PixelType>::NonpositiveMin();
   m_Upper = NumericTraits<PixelType>::max();
 
-  m_DefaultPixelValue = NumericTraits<PixelType>::One;
+  m_DefaultPixelValue = NumericTraits<PixelType>::OneValue();
   m_Radius.Fill(1);
   m_OutDebug = false;
 }

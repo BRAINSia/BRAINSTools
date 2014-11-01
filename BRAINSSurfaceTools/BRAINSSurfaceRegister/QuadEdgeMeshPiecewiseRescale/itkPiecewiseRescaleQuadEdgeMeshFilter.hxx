@@ -38,7 +38,7 @@ PiecewiseRescaleQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
   this->m_OutputMaximum = NumericTraits<OutputPixelType>::max();
   this->m_OutputMinimum = NumericTraits<OutputPixelType>::NonpositiveMin();
 
-  this->m_cValue = NumericTraits<InputPixelType>::Zero;
+  this->m_cValue = NumericTraits<InputPixelType>::ZeroValue();
   this->m_InputMaximum = NumericTraits<InputPixelType>::min();
   this->m_InputMinimum = NumericTraits<InputPixelType>::max();
 }
@@ -141,7 +141,7 @@ PiecewiseRescaleQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
          - static_cast<double>( this->m_InputMinimum ) );
     this->m_Scale_b = this->m_Scale_a;
     }
-  else if( this->m_InputMaximum != NumericTraits<InputPixelType>::Zero )
+  else if( this->m_InputMaximum != NumericTraits<InputPixelType>::ZeroValue() )
     {
     this->m_Scale_a =
       (static_cast<double>( this->m_OutputMaximum )

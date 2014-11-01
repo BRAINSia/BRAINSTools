@@ -57,7 +57,7 @@ IccdefPreprocessor<TInputImage, TOutputImage>
     m_MedianFilterSize[i] = 0;
     }
 
-  m_DefaultPixelValue = NumericTraits<PixelType>::One;
+  m_DefaultPixelValue = NumericTraits<PixelType>::OneValue();
   m_OutDebug = false;
 }
 

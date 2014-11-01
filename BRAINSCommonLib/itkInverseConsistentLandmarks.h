@@ -135,7 +135,7 @@ public:
 
     PointSetTypePointer pointSet = PointSetType::New();
     PointIdentifierType PointID =
-      itk::NumericTraits<PointIdentifierType>::Zero;
+      itk::NumericTraits<PointIdentifierType>::ZeroValue();
 
     LocalConstIterator it = this->begin();
     LocalConstIterator itend = this->end();

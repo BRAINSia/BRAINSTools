@@ -76,7 +76,7 @@ NearestNeighborInterpolateMeshFunction<TInputMesh>
 
   this->Search( point, numberOfNeighbors, result );
 
-  PixelType pixelValue = itk::NumericTraits<PixelType>::Zero;
+  PixelType pixelValue = itk::NumericTraits<PixelType>::ZeroValue();
 
   const PointIdentifier pointId = result[0];
 

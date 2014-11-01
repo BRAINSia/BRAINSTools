@@ -400,7 +400,7 @@ OtsuHistogramMatchingImageFilter<TInputImage, TOutputImage, THistogramMeasuremen
   measurement.SetSize(1);
 
   typedef typename HistogramType::MeasurementType MeasurementType;
-  measurement[0] = NumericTraits<MeasurementType>::Zero;
+  measurement[0] = NumericTraits<MeasurementType>::ZeroValue();
 
     {
     // put each image pixel into the histogram

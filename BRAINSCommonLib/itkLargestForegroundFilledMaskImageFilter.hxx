@@ -52,13 +52,13 @@ LargestForegroundFilledMaskImageFilter<TInputImage, TOutputImage>
   m_ThresholdCorrectionFactor(1.0),
   m_ClosingSize(9.0),
   m_DilateSize(0.0),
-  m_InsideValue(NumericTraits<typename IntegerImageType::PixelType>::One),
-  m_OutsideValue(NumericTraits<typename IntegerImageType::PixelType>::Zero)
+  m_InsideValue(NumericTraits<typename IntegerImageType::PixelType>::OneValue()),
+  m_OutsideValue(NumericTraits<typename IntegerImageType::PixelType>::ZeroValue())
 {
   //   this->m_InsideValue =
-  //     NumericTraits<typename IntegerImageType::PixelType>::One;
+  //     NumericTraits<typename IntegerImageType::PixelType>::OneValue();
   //   this->m_OutsideValue =
-  //     NumericTraits<typename IntegerImageType::PixelType>::Zero;
+  //     NumericTraits<typename IntegerImageType::PixelType>::ZeroValue();
 }
 
 template <class TInputImage, class TOutputImage>

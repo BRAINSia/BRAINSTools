@@ -126,7 +126,7 @@ public:
 
   /**
    * Set/Get the value used as "background" in the images.
-   * Defaults to NumericTraits<PixelType>::Zero.
+   * Defaults to NumericTraits<PixelType>::ZeroValue().
    */
   itkSetMacro(BackgroundValue, InputImagePixelType);
   itkGetConstMacro(BackgroundValue, InputImagePixelType);
@@ -140,8 +140,8 @@ public:
 protected:
   NaryLabelImageFilter()
   {
-    m_BackgroundValue = NumericTraits<InputImagePixelType>::Zero;
-    m_Shift = NumericTraits<OutputImagePixelType>::Zero;
+    m_BackgroundValue = NumericTraits<InputImagePixelType>::ZeroValue();
+    m_Shift = NumericTraits<OutputImagePixelType>::ZeroValue();
     m_IgnoreCollision = true;
   }
 

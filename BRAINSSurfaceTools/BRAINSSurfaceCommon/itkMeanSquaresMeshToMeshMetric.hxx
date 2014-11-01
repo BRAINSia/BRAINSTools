@@ -59,7 +59,7 @@ MeanSquaresMeshToMeshMetric<TFixedMesh, TMovingMesh>
   PointDataIterator pointDataItr = fixedMesh->GetPointData()->Begin();
   PointDataIterator pointDataEnd = fixedMesh->GetPointData()->End();
 
-  MeasureType sumOfSquaresDifferences = NumericTraits<MeasureType>::Zero;
+  MeasureType sumOfSquaresDifferences = NumericTraits<MeasureType>::ZeroValue();
 
   this->m_NumberOfPixelsCounted = 0;
 
@@ -143,7 +143,7 @@ MeanSquaresMeshToMeshMetric<TFixedMesh, TMovingMesh>
 
   const unsigned int ParametersDimension = this->GetNumberOfParameters();
   derivative = DerivativeType( ParametersDimension );
-  derivative.Fill( NumericTraits<typename DerivativeType::ValueType>::Zero );
+  derivative.Fill( NumericTraits<typename DerivativeType::ValueType>::ZeroValue() );
 
   typedef typename InterpolatorType::PointType InterpolationPointType;
   InterpolationPointType pointToEvaluate;
@@ -186,7 +186,7 @@ MeanSquaresMeshToMeshMetric<TFixedMesh, TMovingMesh>
       this->m_Interpolator->EvaluateDerivative( pointToEvaluate, gradient );
       for( unsigned int par = 0; par < ParametersDimension; par++ )
         {
-        RealDataType sum = NumericTraits<RealDataType>::Zero;
+        RealDataType sum = NumericTraits<RealDataType>::ZeroValue();
         for( unsigned int dim = 0; dim < MovingMeshDimension; dim++ )
           {
           sum += 2.0 * diff * jacobian( dim, par ) * gradient[dim];
@@ -236,7 +236,7 @@ MeanSquaresMeshToMeshMetric<TFixedMesh, TMovingMesh>
   PointDataIterator pointDataItr = fixedMesh->GetPointData()->Begin();
   PointDataIterator pointDataEnd = fixedMesh->GetPointData()->End();
 
-  MeasureType sumOfSquaresDifferences = NumericTraits<MeasureType>::Zero;
+  MeasureType sumOfSquaresDifferences = NumericTraits<MeasureType>::ZeroValue();
 
   this->m_NumberOfPixelsCounted = 0;
 
@@ -244,7 +244,7 @@ MeanSquaresMeshToMeshMetric<TFixedMesh, TMovingMesh>
 
   const unsigned int ParametersDimension = this->GetNumberOfParameters();
   derivative = DerivativeType( ParametersDimension );
-  derivative.Fill( NumericTraits<typename DerivativeType::ValueType>::Zero );
+  derivative.Fill( NumericTraits<typename DerivativeType::ValueType>::ZeroValue() );
 
   typedef typename InterpolatorType::PointType InterpolationPointType;
   InterpolationPointType pointToEvaluate;
@@ -290,7 +290,7 @@ MeanSquaresMeshToMeshMetric<TFixedMesh, TMovingMesh>
       this->m_Interpolator->EvaluateDerivative( pointToEvaluate, gradient );
       for( unsigned int par = 0; par < ParametersDimension; par++ )
         {
-        RealDataType sum = NumericTraits<RealDataType>::Zero;
+        RealDataType sum = NumericTraits<RealDataType>::ZeroValue();
         for( unsigned int dim = 0; dim < MovingMeshDimension; dim++ )
           {
           sum += 2.0 * diff * jacobian( dim, par ) * gradient[dim];

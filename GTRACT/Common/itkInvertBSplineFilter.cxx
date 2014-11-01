@@ -72,7 +72,7 @@ void InvertBSplineFilter::Update()
   float yinr = (float)( imageSize[1] ) / (float)m_YgridSize;
   float zinr = (float)( imageSize[2] ) / (float)m_ZgridSize;
 
-  PointIdType id = itk::NumericTraits<PointIdType>::Zero;
+  PointIdType id = itk::NumericTraits<PointIdType>::ZeroValue();
   std::cout << "Xsize " << imageSize[0] << " Ysize " << imageSize[1] << " Zsize " << imageSize[2] << std::endl;
   std::cout << "Xinc " << xinr << " Yinc " << yinr << " Zinc " << zinr << std::endl;
 

@@ -38,7 +38,7 @@ RescaleScalarsQuadEdgeMeshFilter<TMesh>
   this->m_OutputMaximum = NumericTraits<OutputPixelType>::max();
   this->m_OutputMinimum = NumericTraits<OutputPixelType>::NonpositiveMin();
 
-  this->m_InputMaximum = NumericTraits<InputPixelType>::Zero;
+  this->m_InputMaximum = NumericTraits<InputPixelType>::ZeroValue();
   this->m_InputMinimum = NumericTraits<InputPixelType>::max();
 }
 
@@ -118,7 +118,7 @@ RescaleScalarsQuadEdgeMeshFilter<TMesh>
       / (static_cast<double>( this->m_InputMaximum )
          - static_cast<double>( this->m_InputMinimum ) );
     }
-  else if( this->m_InputMaximum != NumericTraits<InputPixelType>::Zero )
+  else if( this->m_InputMaximum != NumericTraits<InputPixelType>::ZeroValue() )
     {
     this->m_Scale =
       (static_cast<double>( this->m_OutputMaximum )

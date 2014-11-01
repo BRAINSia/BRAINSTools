@@ -70,9 +70,9 @@ LinearInterpolateMeshFunction<TInputMesh>
 
   if( this->FindTriangle( point, pointIds ) )
     {
-    PixelType pixelValue1 = itk::NumericTraits<PixelType>::Zero;
-    PixelType pixelValue2 = itk::NumericTraits<PixelType>::Zero;
-    PixelType pixelValue3 = itk::NumericTraits<PixelType>::Zero;
+    PixelType pixelValue1 = itk::NumericTraits<PixelType>::ZeroValue();
+    PixelType pixelValue2 = itk::NumericTraits<PixelType>::ZeroValue();
+    PixelType pixelValue3 = itk::NumericTraits<PixelType>::ZeroValue();
 
     this->GetPointData( pointIds[0], &pixelValue1 );
     this->GetPointData( pointIds[1], &pixelValue2 );
@@ -87,9 +87,9 @@ LinearInterpolateMeshFunction<TInputMesh>
       {
       this->FindTriangleOfClosestPoint( point, pointIds );
 
-      PixelType pixelValue1 = itk::NumericTraits<PixelType>::Zero;
-      PixelType pixelValue2 = itk::NumericTraits<PixelType>::Zero;
-      PixelType pixelValue3 = itk::NumericTraits<PixelType>::Zero;
+      PixelType pixelValue1 = itk::NumericTraits<PixelType>::ZeroValue();
+      PixelType pixelValue2 = itk::NumericTraits<PixelType>::ZeroValue();
+      PixelType pixelValue3 = itk::NumericTraits<PixelType>::ZeroValue();
 
       this->GetPointData( pointIds[0], &pixelValue1 );
       this->GetPointData( pointIds[1], &pixelValue2 );
@@ -100,7 +100,7 @@ LinearInterpolateMeshFunction<TInputMesh>
       }
     else
       {
-      derivative.Fill( NumericTraits<RealType>::Zero );
+      derivative.Fill( NumericTraits<RealType>::ZeroValue() );
       }
     }
 }
@@ -170,7 +170,7 @@ LinearInterpolateMeshFunction<TInputMesh>
 
       this->Search( point, numberOfNeighbors, closestPointIds );
 
-      PixelType pixelValue0 = itk::NumericTraits<PixelType>::Zero;
+      PixelType pixelValue0 = itk::NumericTraits<PixelType>::ZeroValue();
 
       this->GetPointData( pointIds[0], &pixelValue0 );
 
@@ -185,9 +185,9 @@ LinearInterpolateMeshFunction<TInputMesh>
       }
     }
 
-  PixelType pixelValue1 = itk::NumericTraits<PixelType>::Zero;
-  PixelType pixelValue2 = itk::NumericTraits<PixelType>::Zero;
-  PixelType pixelValue3 = itk::NumericTraits<PixelType>::Zero;
+  PixelType pixelValue1 = itk::NumericTraits<PixelType>::ZeroValue();
+  PixelType pixelValue2 = itk::NumericTraits<PixelType>::ZeroValue();
+  PixelType pixelValue3 = itk::NumericTraits<PixelType>::ZeroValue();
 
   this->GetPointData( pointIds[0], &pixelValue1 );
   this->GetPointData( pointIds[1], &pixelValue2 );

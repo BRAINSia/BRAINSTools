@@ -40,7 +40,7 @@ VBRAINSDemonWarp<TImage, TRealImage, TOutputImage>
   m_CheckerBoardPattern.Fill(4);
   m_Lower = NumericTraits<PixelType>::NonpositiveMin();
   m_Upper = NumericTraits<PixelType>::max();
-  m_DefaultPixelValue = NumericTraits<PixelType>::Zero;
+  m_DefaultPixelValue = NumericTraits<PixelType>::ZeroValue();
   m_Radius.Fill(1);
   m_FixedBinaryVolume = "none";
   m_MovingBinaryVolume = "none";

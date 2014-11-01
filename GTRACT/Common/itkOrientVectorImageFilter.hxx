@@ -350,7 +350,7 @@ OrientVectorImageFilter<TInputImage, TOutputImage>
     p.Fill(0);
   }
   else{
-    p=0;//NumericTraits<InputPixelType>::Zero;
+    p=0;//NumericTraits<InputPixelType>::ZeroValue();
   }
   */
   to_cube_padded->SetConstant( p );

@@ -891,7 +891,7 @@ double
 QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TFixedMesh, TMovingMesh,
                                                TOutputMesh>::ComputeLargestVelocityMagnitude() const
 {
-  double largestVelocityMagnitude = NumericTraits<double>::Zero;
+  double largestVelocityMagnitude = NumericTraits<double>::ZeroValue();
 
   VelocityVectorConstIterator velocityItr = this->m_VelocityField->Begin();
   VelocityVectorConstIterator velocityEnd = this->m_VelocityField->End();
@@ -1410,7 +1410,7 @@ void
 QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TFixedMesh, TMovingMesh, TOutputMesh>
 ::ComputeLargestVelocityMagnitudeToShortestEdgeLengthRatio()
 {
-  double largestRatio = NumericTraits<double>::Zero;
+  double largestRatio = NumericTraits<double>::ZeroValue();
 
   VelocityVectorConstIterator velocityItr = this->m_VelocityField->Begin();
   VelocityVectorConstIterator velocityEnd = this->m_VelocityField->End();

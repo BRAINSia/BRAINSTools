@@ -131,7 +131,7 @@ int main( int argc, char * argv[] )
       sourceLandmarks->GetPoints();
     PointSetType::PointsContainer::Pointer targetLandmarkContainer =
       targetLandmarks->GetPoints();
-    PointIdType         id = itk::NumericTraits<PointIdType>::Zero;
+    PointIdType         id = itk::NumericTraits<PointIdType>::ZeroValue();
     LandmarksVectorType targetLandmarksVec = LoadLandmarks( inputMovingLandmarks );
     LandmarksVectorType sourceLandmarksVec = LoadLandmarks( inputFixedLandmarks );
 

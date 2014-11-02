@@ -428,6 +428,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
 
   muLogMacro(<< "Average co-registered Intra subject images" << std::endl);
   this->m_ModalityAveragedOfIntraSubjectImages.clear(); //Ensure that pushing onto clean list
+  this->m_ModalityAveragedOfIntraSubjectImages.resize(0); //Ensure that pushing onto clean list
 
   for(MapOfFloatImageVectors::iterator mapOfRegisteredModalImageListsIt = this->m_RegisteredIntraSubjectImagesList.begin();
       mapOfRegisteredModalImageListsIt != this->m_RegisteredIntraSubjectImagesList.end();
@@ -441,12 +442,15 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
       this->m_ModalityAveragedOfIntraSubjectImages.push_back(
         AverageImageList<InternalImageType>(mapOfRegisteredModalImageListsIt->second)
       );
-
       }
-    else
+    else if( numbOfImagesPerModality == 1 )
       {
       FloatImageVector::iterator intraImIt = this->m_RegisteredIntraSubjectImagesList[mapOfRegisteredModalImageListsIt->first].begin(); // each intra subject image
       this->m_ModalityAveragedOfIntraSubjectImages.push_back( (*intraImIt).GetPointer() );
+      }
+    else
+      {
+      std::cout << "NO images for modality: " << mapOfRegisteredModalImageListsIt->first << std::endl;
       }
     }
 }
@@ -571,8 +575,8 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
     atlasToSubjectRegistrationHelper->SetMovingVolume(this->GetFirstAtlasOriginalImage());
     if( this->m_ModalityAveragedOfIntraSubjectImages.size() > 1 )
         {
-        std::cout<< "Multimodal SyN Registration will be run." <<   std::endl ;
         muLogMacro( << "Multimodal SyN Registration will be run." <<   std::endl );
+        muLogMacro( << "because number of modalities is." << this->m_ModalityAveragedOfIntraSubjectImages.size() <<  std::endl );
         std::cout<<this->GetSecondModalityAtlasOriginalImage("T2")<<std::endl;
         atlasToSubjectRegistrationHelper->SetFixedVolume2(this->m_ModalityAveragedOfIntraSubjectImages[1]); // by AverageIntraSubjectRegisteredImages function
         atlasToSubjectRegistrationHelper->SetMovingVolume2(this->GetSecondModalityAtlasOriginalImage("T2"));

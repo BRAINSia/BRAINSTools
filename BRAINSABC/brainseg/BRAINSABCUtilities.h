@@ -127,7 +127,7 @@ extern template void ComputeLabels<FloatImageType,
                                             const vnl_vector<unsigned int> &, ByteImageType::Pointer &,
                                             ByteImageType::Pointer &,
                                             ByteImageType::Pointer &,
-                                            FloatingPrecision );
+                                            FloatingPrecision, const size_t );
 
 extern template void NormalizeProbListInPlace<FloatImageType>(std::vector<FloatImageType::Pointer> & );
 

@@ -57,6 +57,7 @@ set(BRAINSCommonLib_SRCS
   BRAINSCommonLib.cxx
   GenericTransformImage.cxx
   BRAINSFitHelper.cxx
+  BRAINSComputeLabels.cxx
   Slicer3LandmarkWeightIO.cxx
   Slicer3LandmarkIO.cxx
   itkOrthogonalize3DRotationMatrix.cxx

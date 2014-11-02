@@ -127,7 +127,7 @@ int main(int argc, char *argv[])
       nonAirVolume,
       dirtyLabels,
       cleanLabels,
-      inclusionThreshold);
+      inclusionThreshold, 0);
     }
   catch( itk::ExceptionObject & err )
     {

@@ -22,11 +22,15 @@
 #include <iostream>
 #include <vector>
 #include <itkImage.h>
-#include "ExtractSingleLargestRegion.h"
-// #include <itkTimeProbe.h>
-// #include <itkRealTimeClock.h>
 #include <vnl/vnl_vector.h>
+#include "ExtractSingleLargestRegion.h"
+#include "itkMultiplyImageFilter.h"
 
+#include "itkLabelStatisticsImageFilter.h"
+
+typedef std::map<size_t,size_t> LabelCountMapType;
+typedef itk::Image<unsigned char, 3>       ByteImageType;
+extern LabelCountMapType GetMinLabelCount(ByteImageType::Pointer & labelsImage);
 // Labeling using maximum a posteriori, also do brain stripping using
 // mathematical morphology and connected component
 template <class TProbabilityImage, class TByteImage,
@@ -38,96 +42,118 @@ void ComputeLabels(
   typename TByteImage::Pointer & NonAirRegion,
   typename TByteImage::Pointer & DirtyLabels,
   typename TByteImage::Pointer & CleanedLabels,
-  TFloatingPrecision InclusionThreshold = 0.0F)
+  TFloatingPrecision InclusionThreshold,  //No thresholding = 0.0F
+  const size_t minLabelSizeAllowed) //Allow zero sized labels = 0
 {
-//  muLogMacro(<< "ComputeLabels" << std::endl );
-//  itk::TimeProbe ComputeLabelsTimer;
-//  ComputeLabelsTimer.Start();
+  std::map<size_t,size_t> reverseLabelMap;
+  for( size_t i=0; i < PriorLabelCodeVector.size(); ++i)
+    {
+    reverseLabelMap[PriorLabelCodeVector[i] ] = i;
+    }
 
   const unsigned int numClasses = Posteriors.size();
-
   const typename TProbabilityImage::RegionType region = Posteriors[0]->GetLargestPossibleRegion();
-
   DirtyLabels = TByteImage::New();
   DirtyLabels->CopyInformation(Posteriors[0]);
   DirtyLabels->SetRegions(region);
   DirtyLabels->Allocate();
-  DirtyLabels->FillBuffer(0);
-
   typename TByteImage::Pointer foregroundMask = TByteImage::New();
   foregroundMask->CopyInformation(Posteriors[0]);
   foregroundMask->SetRegions(region);
   foregroundMask->Allocate();
-  foregroundMask->FillBuffer(0);
+
+  size_t currentMinLabelSize = 0;
+  do
+    {
+    DirtyLabels->FillBuffer(0);
+    foregroundMask->FillBuffer(0);
 #if defined(LOCAL_USE_OPEN_MP) && (_OPENMP < 200805)
-  typedef int LocalLOOPITERTYPE;
+    typedef int LocalLOOPITERTYPE;
 #else
-  typedef unsigned int LocalLOOPITERTYPE;
+    typedef unsigned int LocalLOOPITERTYPE;
 #endif
 
-  const typename TByteImage::SizeType size = DirtyLabels->GetLargestPossibleRegion().GetSize();
-    {
+    const typename TByteImage::SizeType size = DirtyLabels->GetLargestPossibleRegion().GetSize();
+      {
 #if defined(LOCAL_USE_OPEN_MP)
 #pragma omp parallel for
 #endif
-    for( LocalLOOPITERTYPE kk = 0; kk < (LocalLOOPITERTYPE)size[2]; kk++ )
-      {
-      for( LocalLOOPITERTYPE jj = 0; jj < (LocalLOOPITERTYPE)size[1]; jj++ )
+      for( LocalLOOPITERTYPE kk = 0; kk < (LocalLOOPITERTYPE)size[2]; kk++ )
         {
-        for( LocalLOOPITERTYPE ii = 0; ii < (LocalLOOPITERTYPE)size[0]; ii++ )
+        for( LocalLOOPITERTYPE jj = 0; jj < (LocalLOOPITERTYPE)size[1]; jj++ )
           {
-          const typename TProbabilityImage::IndexType currIndex = {{ii, jj, kk}};
-          if( NonAirRegion->GetPixel(currIndex) == 0 ) // If outside the tissue
-                                                       // region, then set to
-                                                       // zero vIndex!
+          for( LocalLOOPITERTYPE ii = 0; ii < (LocalLOOPITERTYPE)size[0]; ii++ )
             {
-            // TODO:  May want to specify this explicitly in the XML file for
-            // the proper background value
-            DirtyLabels->SetPixel(currIndex, 0); // This is implied by the
-                                                 // FillBuffer(0) above;
-            continue;
-            }
-
-          TFloatingPrecision maxPosteriorClassValue = Posteriors[0]->GetPixel(currIndex);
-          unsigned int       indexMaxPosteriorClassValue = 0;
-          for( unsigned int iclass = 1; iclass < numClasses; iclass++ )
-            {
-            const TFloatingPrecision currentPosteriorClassValue = Posteriors[iclass]->GetPixel(currIndex);
-            if( currentPosteriorClassValue > maxPosteriorClassValue )
+            const typename TProbabilityImage::IndexType currIndex = {{ii, jj, kk}};
+            if( NonAirRegion->GetPixel(currIndex) == 0 ) // If outside the tissue
+              // region, then set to
+              // zero vIndex!
               {
-              maxPosteriorClassValue = currentPosteriorClassValue;
-              indexMaxPosteriorClassValue = iclass;
-              }
-            }
-
-            {
-            bool         fgflag = PriorIsForegroundPriorVector[indexMaxPosteriorClassValue];
-            unsigned int label = 99;
-            if( maxPosteriorClassValue > InclusionThreshold )
-              {
-              label = PriorLabelCodeVector[indexMaxPosteriorClassValue];
+              // TODO:  May want to specify this explicitly in the XML file for
+              // the proper background value
+              DirtyLabels->SetPixel(currIndex, 0); // This is implied by the
+              // FillBuffer(0) above;
+              continue;
               }
 
-            // Only use non-zero probabilities and foreground classes
-            if( !fgflag || ( maxPosteriorClassValue < 0.001 ) )
+            TFloatingPrecision maxPosteriorClassValue = Posteriors[0]->GetPixel(currIndex);
+            unsigned int       indexMaxPosteriorClassValue = 0;
+            for( unsigned int iclass = 1; iclass < numClasses; iclass++ )
               {
-              fgflag = false; // If priors are zero or negative, then set the
-                              // fgflag back to false
+              const TFloatingPrecision currentPosteriorClassValue = Posteriors[iclass]->GetPixel(currIndex);
+              if( currentPosteriorClassValue > maxPosteriorClassValue )
+                {
+                maxPosteriorClassValue = currentPosteriorClassValue;
+                indexMaxPosteriorClassValue = iclass;
+                }
               }
-            DirtyLabels->SetPixel(currIndex, label);
-            foregroundMask->SetPixel(currIndex, fgflag);
+
+              {
+              bool         fgflag = PriorIsForegroundPriorVector[indexMaxPosteriorClassValue];
+              unsigned int label = 99;
+              if( maxPosteriorClassValue > InclusionThreshold )
+                {
+                label = PriorLabelCodeVector[indexMaxPosteriorClassValue];
+                }
+
+              // Only use non-zero probabilities and foreground classes
+              if( !fgflag || ( maxPosteriorClassValue < 0.001 ) )
+                {
+                fgflag = false; // If priors are zero or negative, then set the
+                // fgflag back to false
+                }
+              DirtyLabels->SetPixel(currIndex, label);
+              foregroundMask->SetPixel(currIndex, fgflag);
+              }
             }
           }
         }
       }
-    }
-  //
-  // CleanedLabels=ExtractSingleLargestRegionFromMask(foregroundMask,2,2,1,DirtyLabels);
-  CleanedLabels = ExtractSingleLargestRegionFromMask(foregroundMask, 0, 0, 0, DirtyLabels);
-//  ComputeLabelsTimer.Stop();
-//  itk::RealTimeClock::TimeStampType elapsedTime =
-//    ComputeLabelsTimer.GetTotal();
-//  muLogMacro(<< "Computing Labels took " << elapsedTime << " " << ComputeLabelsTimer.GetUnit() << std::endl);
+    //
+    LabelCountMapType currentLabelsMapCounts = GetMinLabelCount( DirtyLabels );
+    currentMinLabelSize = currentLabelsMapCounts.begin()->second;
+    for( typename LabelCountMapType::const_iterator it = currentLabelsMapCounts.begin();
+          it != currentLabelsMapCounts.end(); ++it)
+      {
+        const size_t currentLabelCount = it->second;
+        currentMinLabelSize = std::min<size_t>( currentMinLabelSize, currentLabelCount );
+        if (currentLabelCount < minLabelSizeAllowed )
+          {
+          std::cout << "\n\nWARNING:  Increaseing importance of label "<< it->first
+                    << "\n            because too few samples found.\n\n" << std::endl;
+          //Multiply this prior by 1.1 to increase it's importance.
+          typedef itk::MultiplyImageFilter<TProbabilityImage,TProbabilityImage> MultiplyFilterType;
+          typename MultiplyFilterType::Pointer filter = MultiplyFilterType::New();
+          filter->SetInput1( Posteriors[reverseLabelMap[it->first]] );
+          filter->SetInput2(1.1); //Multiply by 1.1 to increase it's importance
+          filter->Update();
+          Posteriors[reverseLabelMap[it->first]] = filter->GetOutput();
+
+          }
+      }
+    }while (currentMinLabelSize < minLabelSizeAllowed);
+    // CleanedLabels=ExtractSingleLargestRegionFromMask(foregroundMask,2,2,1,DirtyLabels);
+    CleanedLabels = ExtractSingleLargestRegionFromMask(foregroundMask, 0, 0, 0, DirtyLabels);
 }
 
 #endif // BRAINSComputeLabels_h

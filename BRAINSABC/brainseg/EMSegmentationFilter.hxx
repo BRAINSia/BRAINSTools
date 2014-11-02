@@ -27,7 +27,6 @@
 #include <cmath>
 #include <cstdlib>
 
-#include "itkLabelStatisticsImageFilter.h"
 #include "itkAverageImageFilter.h"
 #include "itkSqrtImageFilter.h"
 #include "itkBSplineDownsampleImageFilter.h"
@@ -76,6 +75,7 @@
 #include "itkImageRandomNonRepeatingConstIteratorWithIndex.h"
 
 static const FloatingPrecision KNN_InclusionThreshold = 0.85F;
+
 
 ///////////////////////////////////////////////// Posterior computation by kNN //////////////////////////////////////////////
 template <class TInputImage, class TProbabilityImage>
@@ -264,31 +264,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
   const unsigned int numOfInputImages = inputImagesVector.size();
   muLogMacro(<< "Number of input images: " << numOfInputImages << std::endl);
 
-  // We will choose "KNN_SamplesPerLabel" from each posterior class.
-  typedef itk::LabelStatisticsImageFilter<ByteImageType,ByteImageType> LabelStatisticsImageFilterType;
-  LabelStatisticsImageFilterType::Pointer labelStatisticsImageFilter = LabelStatisticsImageFilterType::New();
-  labelStatisticsImageFilter->SetLabelInput(labelsImage);
-  labelStatisticsImageFilter->SetInput(labelsImage);
-  labelStatisticsImageFilter->Update();
-
-  typedef LabelStatisticsImageFilterType::ValidLabelValuesContainerType ValidLabelValuesType;
-  typedef LabelStatisticsImageFilterType::LabelPixelType                LabelPixelType;
-
-
-  size_t minLabelCount = labelsImage->GetBufferedRegion().GetNumberOfPixels();
-  for(ValidLabelValuesType::const_iterator vIt=labelStatisticsImageFilter->GetValidLabelValues().begin();
-      vIt != labelStatisticsImageFilter->GetValidLabelValues().end();
-      ++vIt)
-    {
-    if ( labelStatisticsImageFilter->HasLabel(*vIt) )
-      {
-      LabelPixelType labelValue = *vIt;
-      const size_t currentLabelCount = labelStatisticsImageFilter->GetCount( labelValue );
-      std::cout << "label: " << (size_t)labelValue << " count: " << labelStatisticsImageFilter->GetCount( labelValue ) << std::endl;
-      minLabelCount = std::min<size_t>(minLabelCount,currentLabelCount);
-      }
-    }
-  const size_t KNN_SamplesPerLabel = std::min<size_t>(minLabelCount,75);
+  const size_t KNN_SamplesPerLabel = 75;//std::min<size_t>(minLabelCount,75);
 
   // set train sample set and the label vector by picking samples from label image.
   //
@@ -1264,7 +1240,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
     ComputeLabels<TProbabilityImage, ByteImageType, double>(EMPosteriors, priorIsForegroundPriorVector,
                                                             priorLabelCodeVector, nonAirRegion,
                                                             dirtyThresholdedLabels,
-                                                            thresholdedLabels, KNN_InclusionThreshold);
+                                                            thresholdedLabels, KNN_InclusionThreshold, 100);
     if( this->m_DebugLevel > 6 )  // DEBUG: Write label image to the disk.
       {
       muLogMacro(<< "\nWrite ThresholdedLabels for debugging..." << std::endl);
@@ -2308,7 +2284,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
   ComputeLabels<TProbabilityImage, ByteImageType, double>(this->m_WarpedPriors, this->m_PriorIsForegroundPriorVector,
                                                           this->m_PriorLabelCodeVector, this->m_NonAirRegion,
                                                           this->m_DirtyLabels,
-                                                          this->m_CleanedLabels);
+                                                          this->m_CleanedLabels, 0.0, 100);
   this->WriteDebugLabels(0);
   this->m_ListOfClassStatistics.resize(0); // Reset this to empty for debugging
                                            // purposes to induce failures when
@@ -2378,7 +2354,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
     ComputeLabels<TProbabilityImage, ByteImageType, double>(this->m_Posteriors, this->m_PriorIsForegroundPriorVector,
                                                             this->m_PriorLabelCodeVector, this->m_NonAirRegion,
                                                             this->m_DirtyLabels,
-                                                            this->m_CleanedLabels);
+                                                            this->m_CleanedLabels, 0.0, 100);
     this->WriteDebugLabels(CurrentEMIteration);
     this->m_CorrectedImages =
       CorrectBias(this->m_MaxBiasDegree, CurrentEMIteration, SubjectCandidateRegions, this->m_InputImages,
@@ -2479,12 +2455,12 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
   ComputeLabels<TProbabilityImage, ByteImageType, double>(this->m_Posteriors, this->m_PriorIsForegroundPriorVector,
                                                           this->m_PriorLabelCodeVector, this->m_NonAirRegion,
                                                           this->m_DirtyLabels,
-                                                          this->m_CleanedLabels);
+                                                          this->m_CleanedLabels, 0.0, 100);
 
   ComputeLabels<TProbabilityImage, ByteImageType, double>(this->m_Posteriors, this->m_PriorIsForegroundPriorVector,
                                                           this->m_PriorLabelCodeVector, this->m_NonAirRegion,
                                                           this->m_DirtyThresholdedLabels,
-                                                          this->m_ThresholdedLabels, KNN_InclusionThreshold);
+                                                          this->m_ThresholdedLabels, KNN_InclusionThreshold, 100);
   this->WriteDebugLabels(CurrentEMIteration + 100);
 
   // Bias correction at full resolution, still using downsampled images

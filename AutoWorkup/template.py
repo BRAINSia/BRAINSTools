@@ -88,13 +88,13 @@ def MergeByExtendListElements(t1s, t2s, pds, fls, labels, posteriors):
     t2s = ['t2_average_BRAINSABC.nii.gz', 't2_average_BRAINSABC.nii.gz']
 
     """
-    print "t1s", t1s
-    print "t2s", t2s
-    print "pds", pds
-    print "fls", fls
-    print "labels", labels
-    print "$$$$$$$$$$$$$$$$$$$$$$$"
-    print "posteriors", posteriors
+    # print "t1s", t1s
+    # print "t2s", t2s
+    # print "pds", pds
+    # print "fls", fls
+    # print "labels", labels
+    # print "$$$$$$$$$$$$$$$$$$$$$$$"
+    # print "posteriors", posteriors
     ListOfImagesDictionaries = [dict() for i in t1s]  # Initial list with empty dictionaries
     ## HACK:  Need to make it so that AVG_AIR.nii.gz has a background value of 1
     registrationImageTypes = ['T1']  # ['T1','T2'] someday.

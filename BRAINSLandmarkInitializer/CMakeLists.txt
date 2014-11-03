@@ -11,7 +11,8 @@
 FindITKUtil(ITKThresholding
   ITKDistanceMap
   ITKImageCompare
-  ITKTransform)
+  ITKTransform
+  ITKRegistrationCommon)
 
 #-----------------------------------------------------------------------------
 # Output directories.

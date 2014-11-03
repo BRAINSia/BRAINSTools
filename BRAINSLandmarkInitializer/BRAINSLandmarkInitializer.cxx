@@ -17,8 +17,11 @@
  *
  *=========================================================================*/
 #include "itkLandmarkBasedTransformInitializer.h"
+#include "itkVersorRigid3DTransform.h"
 #include "itkAffineTransform.h"
+#include "itkBSplineTransform.h"
 #include "itkImage.h"
+#include "itkImageFileReader.h"
 
 #include <map>
 
@@ -64,23 +67,12 @@ static void CheckLandmarks( const LandmarksMapType & ldmk, const LandmarkWeightM
     }
 }
 
-
+template<class TTransformType>
 int
-main(int argc, char *argv[])
+InitializeTransform( int argc, char *argv[] )
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
-
-  if( inputFixedLandmarkFilename.empty() ||
-      inputMovingLandmarkFilename.empty() ||
-      outputTransformFilename.empty() )
-    {
-    std::cout << "Input Landmarks ( inputFixedLandmarkFilename ,"
-              << "inputMovingLandmarkFilename ) and "
-              << "outputTransformationFilename are necessary"
-              << std::endl;
-    exit(EXIT_FAILURE);
-    }
 
   /** Landmark Weights */
   LandmarkWeightMapType landmarkWeightMap = ReadLandmarkWeights( inputWeightFilename );
@@ -100,20 +92,41 @@ main(int argc, char *argv[])
   const unsigned int Dimension = 3;
 
   typedef itk::Image<PixelType, Dimension>           ImageType;
-  typedef itk::AffineTransform<PixelType, Dimension> LocalAffineTransformType;
-  LocalAffineTransformType::Pointer affineTransform = LocalAffineTransformType::New();
 
-  typedef itk::LandmarkBasedTransformInitializer<LocalAffineTransformType,
+  ImageType::Pointer referenceImage = NULL;
+  if( !inputReferenceImageFilename.empty() )
+    {
+    typedef itk::ImageFileReader<ImageType> ReaderType;
+    ReaderType::Pointer reader = ReaderType::New();
+    reader->SetFileName( inputReferenceImageFilename );
+    try
+      {
+      reader->Update();
+      referenceImage = reader->GetOutput();
+      }
+    catch( itk::ExceptionObject & err )
+      {
+      std::cout << "Exception Object caught: " << std::endl;
+      std::cout << err << std::endl;
+      throw;
+      }
+    }
+
+  typedef TTransformType                             LocalTransformType;
+  typename LocalTransformType::Pointer transform =
+    LocalTransformType::New();
+
+  typedef itk::LandmarkBasedTransformInitializer<LocalTransformType,
                                                  ImageType,
                                                  ImageType> LandmarkBasedInitializerType;
 
-  LandmarkBasedInitializerType::Pointer landmarkBasedInitializer =
+  typename LandmarkBasedInitializerType::Pointer landmarkBasedInitializer =
     LandmarkBasedInitializerType::New();
 
-  typedef LandmarkBasedInitializerType::LandmarkWeightType LandmarkWeightContainerType;
+  typedef typename LandmarkBasedInitializerType::LandmarkWeightType LandmarkWeightContainerType;
   LandmarkWeightContainerType landmarkWgts;
 
-  typedef LandmarkBasedInitializerType::LandmarkPointContainer LandmarkContainerType;
+  typedef typename LandmarkBasedInitializerType::LandmarkPointContainer LandmarkContainerType;
   LandmarkContainerType fixedLmks;
   LandmarkContainerType movingLmks;
   typedef LandmarksMapType::const_iterator LandmarkConstIterator;
@@ -149,12 +162,74 @@ main(int argc, char *argv[])
     landmarkBasedInitializer->SetLandmarkWeight( landmarkWgts );
     }
 
+  if( referenceImage.IsNotNull() )
+    {
+    landmarkBasedInitializer->SetReferenceImage( referenceImage );
+    }
+  landmarkBasedInitializer->SetBSplineNumberOfControlPoints( bsplineNumberOfControlPoints );
+
   landmarkBasedInitializer->SetFixedLandmarks( fixedLmks );
   landmarkBasedInitializer->SetMovingLandmarks( movingLmks);
-  landmarkBasedInitializer->SetTransform( affineTransform );
-  landmarkBasedInitializer->InitializeTransform();
+  landmarkBasedInitializer->SetTransform( transform );
+  try
+    {
+    landmarkBasedInitializer->InitializeTransform();
+    }
+  catch( itk::ExceptionObject & err )
+    {
+    std::cout << "Exception Object caught: " << std::endl;
+    std::cout << err << std::endl;
+    throw;
+    }
 
-  itk::WriteTransformToDisk<double>( affineTransform, outputTransformFilename);
+  itk::WriteTransformToDisk<double>( transform, outputTransformFilename);
 
+  return EXIT_SUCCESS;
+}
+
+//////////////////// M A I N /////////////////////////////////////////////////
+int
+main(int argc, char *argv[])
+{
+  PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
+
+  if( inputFixedLandmarkFilename.empty() ||
+      inputMovingLandmarkFilename.empty() ||
+      outputTransformFilename.empty() )
+    {
+    std::cout << "Input Landmarks ( inputFixedLandmarkFilename ,"
+              << "inputMovingLandmarkFilename ) and "
+              << "outputTransformationFilename are necessary"
+              << std::endl;
+    exit(EXIT_FAILURE);
+    }
+
+  typedef double ParameterValueType;
+  const unsigned int Dimension = 3;
+
+  if( outputTransformType == "AffineTransform" )
+    {
+    typedef itk::AffineTransform<ParameterValueType, Dimension> AffineTransformType;
+    return InitializeTransform<AffineTransformType>( argc, argv );
+    }
+  else if( outputTransformType == "BSplineTransform" )
+    {
+    const static unsigned int SplineOrder = 3;
+    typedef itk::BSplineTransform< ParameterValueType,
+                                   Dimension,
+                                   SplineOrder>                  BSplineTransformType;
+    return InitializeTransform<BSplineTransformType>( argc, argv );
+    }
+  else if( outputTransformType == "VersorRigid3DTransform" )
+    {
+    typedef itk::VersorRigid3DTransform< ParameterValueType >    VersorRigid3DTransformType;
+    return InitializeTransform<VersorRigid3DTransformType>( argc, argv );
+    }
+  else
+    {
+    std::cerr << "Error: Invalid parameter for output transform type." << std::endl;
+    return EXIT_FAILURE;
+    }
   return EXIT_SUCCESS;
 }

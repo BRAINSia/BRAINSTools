@@ -44,19 +44,22 @@ def get_processed_subjects( resultdir ):
     processedSubjects = [ os.path.basename(os.path.dirname(os.path.dirname(s))) for s in processedSubjectsPaths ]
     return processedSubjects
 
-def get_subjects_sessions_dictionary(subjects, cache, resultdir, prefix, dbfile, useSentinal, shuffle=False):
+def get_subjects_sessions_dictionary(input_subjects, cache, resultdir, prefix, dbfile, useSentinal, shuffle=False):
     import random
     _temp = OpenSubjectDatabase(cache, ['all'], prefix, dbfile)
+    if "all" in input_subjects:
+        input_subjects =  _temp.getAllSubjects();
     if useSentinal:
         print("="*80)
         print("Using Sentinal Files to Limit Jobs Run")
-        _all_subjects = set( _temp.getAllSubjects() )
+        _all_subjects = set(input_subjects )
         _processed_subjects = set( get_processed_subjects( resultdir ) )
         subjects = list( _all_subjects - _processed_subjects ) #NOTE - in set operation notation removes values
-    elif "all" in subjects:
-        subjects = _temp.getAllSubjects()
+    else:
+        subjects = input_subjects
+
     if shuffle:
-        random.shuffle(subjects)  # randomly shuffle to get max
+        random.shuffle(subjects)  # randomly shuffle to get max cluster efficiency
     subject_sessions_dictionary = dict()
     for subject in subjects:
         subject_sessions_dictionary[subject]=_temp.getSessionsFromSubject(subject)

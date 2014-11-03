@@ -198,30 +198,29 @@ def BAWantsRegistrationTemplateBuildSingleIterationWF(iterationPhasePrefix=''):
     BeginANTS.inputs.dimension = 3
     """ This is the recommended set of parameters from the ANTS developers """
     BeginANTS.inputs.output_transform_prefix = str(iterationPhasePrefix) + '_tfm'
-    BeginANTS.inputs.transforms = ["Rigid", "Similarity", "Affine", "SyN","SyN"]
-    BeginANTS.inputs.transform_parameters = [[0.1], [0.1], [0.1], [0.15, 3.0, 0.0],[0.1, 3.0, 0.0]]
-    BeginANTS.inputs.metric = ['MI', 'MI', 'MI', 'CC','CC']
-    BeginANTS.inputs.sampling_strategy = ['Regular', 'Regular', 'Regular', None,None]
-    BeginANTS.inputs.sampling_percentage = [1.0, 1.0, 1.0, 1.0,1.0]
-    BeginANTS.inputs.metric_weight = [1.0, 1.0, 1.0, 1.0,1.0]
-    BeginANTS.inputs.radius_or_number_of_bins = [32, 32, 32, 4, 4]
-    BeginANTS.inputs.number_of_iterations = [[2000, 2000], [2000, 2000], [1000, 1000, 100], [1000, 1000] [ 500, 70 ] ]
-    BeginANTS.inputs.convergence_threshold = [1e-9, 1e-9, 1e-9, 1e-7, 1e-6]
-    BeginANTS.inputs.convergence_window_size = [12, 12, 12, 12, 12]
-    BeginANTS.inputs.use_histogram_matching = [True, True, True, True, True]
-    BeginANTS.inputs.shrink_factors = [[4, 2], [5, 2], [4, 2, 1], [8, 4], [2, 1]]
-    BeginANTS.inputs.smoothing_sigmas = [[4, 2], [5, 2], [4, 2, 1], [3, 2], [1, 0]]
-    BeginANTS.inputs.sigma_units = ["vox","vox","vox","vox","vox"]
-    BeginANTS.inputs.use_estimate_learning_rate_once = [False, False, False, False, False]
+    BeginANTS.inputs.transforms = ["Similarity","Affine","SyN","SyN"]
+    BeginANTS.inputs.transform_parameters = [[0.1],[0.1],[0.1,3.0,0.0],[0.1,3.0,0.0]]
+    BeginANTS.inputs.metric = ['MI','MI','CC','CC']
+    BeginANTS.inputs.sampling_strategy = ['Regular','Regular',None,None]
+    BeginANTS.inputs.sampling_percentage = [1.0,1.0,1.0,1.0]
+    BeginANTS.inputs.metric_weight = [1.0,1.0,1.0,1.0]
+    BeginANTS.inputs.radius_or_number_of_bins = [32,32,4,4]
+    BeginANTS.inputs.number_of_iterations = [[2000,2000,1000,500],[1000,1000,1000],[1000,1000],[500,70]]
+    BeginANTS.inputs.convergence_threshold = [1e-7,1e-7,1e-7,1e-6]
+    BeginANTS.inputs.convergence_window_size = [12,12,12,12]
+    BeginANTS.inputs.use_histogram_matching = [True,True,True,True,True]
+    BeginANTS.inputs.shrink_factors =   [[8,4,3,2],[4,2,1],[8,4],[2,1]]
+    BeginANTS.inputs.smoothing_sigmas = [[5,4,3,2],[4,2,1],[5,3],[1,0]]
+    BeginANTS.inputs.sigma_units = ["vox","vox","vox","vox"]
+    BeginANTS.inputs.use_estimate_learning_rate_once = [False,False,False,False]
     BeginANTS.inputs.write_composite_transform = True
     BeginANTS.inputs.collapse_output_transforms = False
-    BeginANTS.inputs.initialize_linear_transforms_per_stage = True
+    BeginANTS.inputs.initialize_transforms_per_stage = True
     BeginANTS.inputs.winsorize_lower_quantile = 0.01
     BeginANTS.inputs.winsorize_upper_quantile = 0.99
     BeginANTS.inputs.output_warped_image = 'atlas2subject.nii.gz'
     BeginANTS.inputs.output_inverse_warped_image = 'subject2atlas.nii.gz'
 
-    #BeginANTS.inputs.invert_initial_moving_transform = False
 
     GetMovingImagesNode = pe.Node(interface=util.Function(function=GetMovingImages,
                                                           input_names=['ListOfImagesDictionaries', 'registrationImageTypes', 'interpolationMapping'],

@@ -722,7 +722,9 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
         minimumStepSize.push_back(0.0025);
         transformType.push_back("Affine");
         }
-      else if( atlasToSubjectInitialTransformName != "SyN"  && atlasToSubjectInitialTransformName != "CompositeTransform" )
+      else if( atlasToSubjectInitialTransformName != "SyN"
+              && atlasToSubjectInitialTransformName != "BSplineTransform"
+              && atlasToSubjectInitialTransformName != "CompositeTransform")
         {
         itkExceptionMacro( << "ERROR: Invalid atlasToSubjectInitialTransformName"
                            << " type for m_AtlasLinearTransformChoice of type SyN" );

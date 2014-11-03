@@ -901,7 +901,8 @@ int main(int argc, char * *argv)
     const std::string initialTransformFileType = atlasToSubjectCurrentGenericTransform->GetNameOfClass();
     if( initialTransformFileType == "VersorRigid3DTransform"
         || initialTransformFileType == "ScaleVersor3DTransform"
-        || initialTransformFileType == "ScaleSkewVersor3DTransform")
+        || initialTransformFileType == "ScaleSkewVersor3DTransform"
+        || initialTransformFileType == "CompositeTransform")
       {
       if( !( (atlasToSubjectTransformType.compare("Rigid") == 0 )
              || ( atlasToSubjectTransformType.compare("Affine") == 0 )
@@ -939,17 +940,6 @@ int main(int argc, char * *argv)
         muLogMacro(<< "Error: initialAtlasToSubjectTransform "
                    << "is a BSplineTransform but "
                    << "atlasToSubjectTransfromType is not BSpline."
-                   << std::endl);
-        return EXIT_FAILURE;
-        }
-      }
-    else if( initialTransformFileType == "CompositeTransform" )
-      {
-      if( !( atlasToSubjectTransformType.compare("SyN") == 0 ) )
-        {
-        muLogMacro(<< "Error: initialAtlasToSubjectTransform is "
-                   << "a CompositeTransform but atlasToSubjectTransfromType "
-                   << "is not SyN."
                    << std::endl);
         return EXIT_FAILURE;
         }

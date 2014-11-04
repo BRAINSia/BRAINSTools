@@ -84,11 +84,15 @@ def create_singleSession(dataDict, master_config, interpMode, pipeline_name):
     subject = dataDict['subject']
     session = dataDict['session']
 
+    blackListFileName = dataDict['T1s'][0] + '_noDenoise'
+    isBlackList=os.path.isfile( blackListFileName )
+
     pname = "{0}_{1}_{2}".format(master_config['workflow_phase'], subject, session)
     sessionWorkflow = generate_single_session_template_WF(project, subject, session, master_config,
                                                           phase=master_config['workflow_phase'],
                                                           interpMode=interpMode,
-                                                          pipeline_name=pipeline_name)
+                                                          pipeline_name=pipeline_name,
+                                                          doDenoise=(not isBlackList))
     sessionWorkflow.base_dir = master_config['cachedir']
 
     sessionWorkflow_inputsspec = sessionWorkflow.get_node('inputspec')

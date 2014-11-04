@@ -61,7 +61,7 @@ def get_list_element(nestedList, index):
 def getAllT1sLength(allT1s):
     return len(allT1s)
 
-def generate_single_session_template_WF(projectid, subjectid, sessionid, master_config, phase, interpMode, pipeline_name):
+def generate_single_session_template_WF(projectid, subjectid, sessionid, master_config, phase, interpMode, pipeline_name, doDenoise=True):
     """
     Run autoworkup on a single session
 
@@ -116,7 +116,7 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, master_
     DataSink.inputs.container = '{0}/{1}/{2}'.format(projectid, subjectid, sessionid)
     DataSink.inputs.base_directory = master_config['resultdir']
 
-    if True:
+    if doDenoise:
         print    """
         denoise image filter
         """
@@ -150,12 +150,15 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, master_
         print  """
         Merge all T1 and T2 List
         """
-        makeDenoiseOutImageList = pe.Node(Function(function=GenerateSeparateImageTypeList,
+        makePreprocessingOutList = pe.Node(Function(function=GenerateSeparateImageTypeList,
                                             input_names=['inFileList','inTypeList'],
-                                            output_names=['T1List', 'T2List', 'PDList', 'FLList', 'OtherList']),
-                                            run_without_submitting=True, name="99_makeDenoiseOutImageList")
-        baw201.connect(DenoiseInputImgs, 'outputVolume', makeDenoiseOutImageList, 'inFileList')
-        baw201.connect(makeDenoiseInImageList, 'imageTypeList', makeDenoiseOutImageList, 'inTypeList')
+                                            output_names=['T1s', 'T2s', 'PDs', 'FLs', 'OtherList']),
+                                            run_without_submitting=True, name="99_makePreprocessingOutList")
+        baw201.connect(DenoiseInputImgs, 'outputVolume', makePreprocessingOutList, 'inFileList')
+        baw201.connect(makeDenoiseInImageList, 'imageTypeList', makePreprocessingOutList, 'inTypeList')
+
+    else:
+        makePreprocessingOutList = inputsSpec
 
     if 'landmark' in master_config['components']:
         DoReverseMapping = False   # Set to true for debugging outputs
@@ -163,8 +166,8 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, master_
             DoReverseMapping = True
         myLocalLMIWF = CreateLandmarkInitializeWorkflow("LandmarkInitialize", interpMode, DoReverseMapping)
 
-        baw201.connect([(makeDenoiseOutImageList, myLocalLMIWF,
-                         [(('T1List', get_list_element,0),  'inputspec.inputVolume' )]),
+        baw201.connect([(makePreprocessingOutList, myLocalLMIWF,
+                         [(('T1s', get_list_element,0),  'inputspec.inputVolume' )]),
                         (inputsSpec, myLocalLMIWF,
                          [('atlasLandmarkFilename', 'inputspec.atlasLandmarkFilename'),
                           ('atlasWeightFilename', 'inputspec.atlasWeightFilename'),
@@ -194,8 +197,8 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, master_
 
     if 'tissue_classify' in master_config['components']:
         myLocalTCWF = CreateTissueClassifyWorkflow("TissueClassify", master_config, interpMode)
-        baw201.connect([(makeDenoiseOutImageList,myLocalTCWF, [('T1List','inputspec.T1List')]),
-                        (makeDenoiseOutImageList,myLocalTCWF, [('T2List','inputspec.T2List')]),
+        baw201.connect([(makePreprocessingOutList,myLocalTCWF, [('T1s','inputspec.T1List')]),
+                        (makePreprocessingOutList,myLocalTCWF, [('T2s','inputspec.T2List')]),
                         (inputsSpec, myLocalTCWF, [('atlasDefinition', 'inputspec.atlasDefinition'),
                                                    ('template_t1', 'inputspec.atlasVolume'),
                                                    (('T1s', getAllT1sLength), 'inputspec.T1_count'),

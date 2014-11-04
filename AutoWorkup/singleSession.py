@@ -311,13 +311,13 @@ if __name__ == '__main__':
     import os
 
     from docopt import docopt
-    from AutoWorkup import setup
+    from AutoWorkup import setup_environment
 
     argv = docopt(__doc__, version='1.1')
     print argv
     print '=' * 100
-    configs = setup(argv)
+    environment, experiment, pipeline, cluster = setup_environment(argv)
 
 
-    exit = _SingleSession_main(*configs, **argv)
+    exit = _SingleSession_main(environment, experiment, pipeline, cluster, **argv)
     sys.exit(exit)

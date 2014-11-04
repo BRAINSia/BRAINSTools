@@ -11,7 +11,7 @@ def load_modules(modules):
         os.system(" ".join(['module load', module]))  # os.execv(module_exe, 'bash', 'load', module])
 
 
-def setup(argv):
+def setup_environment(argv):
     print "Configuring environment..."
     import os
     import os.path

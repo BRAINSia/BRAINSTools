@@ -33,7 +33,7 @@ from nipype.utils.misc import package_check
 # package_check('nipype', '5.4', 'tutorial1') ## HACK: Check nipype version
 package_check('numpy', '1.3', 'tutorial1')
 package_check('scipy', '0.7', 'tutorial1')
-package_check('matplotlib','1.4','turorial1')
+# THIS IS NOT REQUIRED package_check('matplotlib','1.4','turorial1')
 package_check('networkx', '1.0', 'tutorial1')
 package_check('IPython', '0.10', 'tutorial1')
 

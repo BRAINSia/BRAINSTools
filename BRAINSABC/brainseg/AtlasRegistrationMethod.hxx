@@ -575,16 +575,16 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
     atlasToSubjectRegistrationHelper->SetMovingVolume(this->GetFirstAtlasOriginalImage());
     if( this->m_ModalityAveragedOfIntraSubjectImages.size() > 1 )
         {
-        muLogMacro( << "Multimodal SyN Registration will be run." <<   std::endl );
+        muLogMacro( << "Multimodal Registration will be run." <<   std::endl );
         muLogMacro( << "because number of modalities is." << this->m_ModalityAveragedOfIntraSubjectImages.size() <<  std::endl );
-        std::cout<<this->GetSecondModalityAtlasOriginalImage("T2")<<std::endl;
+        //std::cout<<this->GetSecondModalityAtlasOriginalImage("T2")<<std::endl;
         atlasToSubjectRegistrationHelper->SetFixedVolume2(this->m_ModalityAveragedOfIntraSubjectImages[1]); // by AverageIntraSubjectRegisteredImages function
         atlasToSubjectRegistrationHelper->SetMovingVolume2(this->GetSecondModalityAtlasOriginalImage("T2"));
         }
     else
         {
-        std::cout<< "Multimodal SyN Registration will NOT be run." <<   std::endl;
-        muLogMacro( << "Multimodal SyN Registration will NOT be run." <<   std::endl );
+        std::cout<< "Multimodal Registration will NOT be run." <<   std::endl;
+        muLogMacro( << "Multimodal Registration will NOT be run." <<   std::endl );
         }
     muLogMacro( << "Generating MovingImage Mask (Atlas 0)" <<   std::endl );
     typedef itk::BRAINSROIAutoImageFilter<InternalImageType, itk::Image<unsigned char, 3> > LocalROIAutoType;
@@ -697,8 +697,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
       }
     else if( m_AtlasLinearTransformChoice == "SyN" )
       {
-      muLogMacro(
-        << "Registering (SyN) " << "atlas(0) to template(0) image." << std::endl);
+      muLogMacro(<< "Registering (SyN) atlas to template image." << std::endl);
       std::vector<double>      minimumStepSize;
       std::vector<std::string> transformType;
 

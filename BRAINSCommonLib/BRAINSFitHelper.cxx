@@ -268,6 +268,10 @@ BRAINSFitHelper::Update(void)
                                                                                             m_RemoveIntensityOutliers,
                                                                                             this->m_MovingVolume2.GetPointer(),
                                                                                             this->m_MovingBinaryVolume2.GetPointer() );
+      if( this->m_PreprocessedMovingVolume2.IsNull() )
+        {
+        itkGenericExceptionMacro("ERROR: Preprocessed MovingVolume2 is null");
+        }
       }
     }
   else

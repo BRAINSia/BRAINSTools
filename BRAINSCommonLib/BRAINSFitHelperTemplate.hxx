@@ -593,6 +593,11 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::FitCommonCode(
   // NOTE: binary masks are set for the cost metric object!!!
   appMutualRegistration->SetFixedImage(    m_FixedVolume    );
   appMutualRegistration->SetMovingImage(   m_MovingVolume   );
+  if( m_FixedVolume2.IsNotNull() && m_MovingVolume2.IsNotNull() )
+    {
+    appMutualRegistration->SetFixedImage2(    m_FixedVolume2    );
+    appMutualRegistration->SetMovingImage2(   m_MovingVolume2   );
+    }
   appMutualRegistration->SetCostMetricObject( this->m_CostMetricObject );
 
   appMutualRegistration->SetBackgroundFillValue(   m_BackgroundFillValue   );

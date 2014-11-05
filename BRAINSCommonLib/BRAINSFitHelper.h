@@ -407,6 +407,8 @@ BRAINSFitHelper::SetupRegistration(GenericMetricType *costMetric)
   if( m_FixedVolume2.IsNotNull() && m_MovingVolume2.IsNotNull() )
     {
     numberOfinputImageSets = 2;
+    std::cout << "Multi-modal registration is run! Number of image pairs: " << numberOfinputImageSets << std::endl;
+    std::cout << "In BRAINSFit the same metric is used for both modalities: " << this->m_CostMetricName << std::endl;
     }
   typename MultiMetricType::Pointer multiMetric = MultiMetricType::New();
   for( unsigned int i=0; i<numberOfinputImageSets; i++)

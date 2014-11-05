@@ -70,21 +70,55 @@ def RenestDeformedPassiveImages(deformedPassiveImages, flattened_image_nametypes
     return nested_imagetype_list, outputAverageImageName_list, image_type_list, nested_interpolation_type
 
 
-def SplitAffineAndWarpComponents(list_of_transforms_lists):
+def SplitCompositeToComponentTransforms(composite_transform_as_list):
     ### Nota bene: The outputs will include the initial_moving_transform from Registration (which depends on what
     ###            the invert_initial_moving_transform is set to)
-    affine_component_list = []
-    warp_component_list = []
-    for transform in list_of_transforms_lists:
-        affine_component_list.append(transform[0])
-        warp_component_list.append(transform[1])
-    print "HACK ", affine_component_list, " ", warp_component_list
+    import os
+    import subprocess
+    import sys
+
+    if len( composite_transform_as_list ) != 1:
+        print("ERROR: Only 1 element allowed in the composite transform list")
+        sys.exit(-1)
+
+    transformFilename = composite_transform_as_list[0]
+    if transformFilename.endswith('.h5'):
+        decomposedOutputPrefix = "decomposedTransform"
+        commandLine = "CompositeTransformUtil  --disassemble " + transformFilename + " " + decomposedOutputPrefix
+
+        affineTransformName='00_'+decomposedOutputPrefix+'_AffineTransform.mat'
+        warpTransformName  ='01_'+decomposedOutputPrefix+'_DisplacementFieldTransform.nii.gz'
+
+        script_name = "decomposedTransform" + '_script.sh'
+        print( script_name )
+        script = open(script_name, 'w')
+        script.write(commandLine)
+        script.close()
+        os.chmod(script_name, 0777)
+        script_name = os.path.abspath( script_name )
+        print "Starting CompositeTransformUtil"
+        scriptStatus = subprocess.check_call([script_name], shell=True)
+        if scriptStatus != 0:
+            sys.exit(scriptStatus)
+        print "Ending CompositeTransformUtil"
+        if os.path.exists( affineTransformName ) and os.path.exists( warpTransformName ):
+            affine_component_list = os.path.abspath( affineTransformName )
+            warp_component_list = os.path.abspath( warpTransformName )
+        else:
+            print("There is no decomposed trasforms generated")
+            print(affineTransformName)
+            print(warpTransformName)
+            sys.exit(-1)
+    else:
+        print("There is no composite transform to split")
+        print(transformFilename)
+        sys.exit(-1)
     return affine_component_list, warp_component_list
 
 ## Flatten and return equal length transform and images lists.
 
 
-def FlattenTransformAndImagesList(ListOfPassiveImagesDictionaries, transforms, invert_transform_flags, interpolationMapping):
+def FlattenTransformAndImagesList(ListOfPassiveImagesDictionaries, transforms, interpolationMapping, invert_transform_flags=None):
     import sys
     print("HACK:  DEBUG: ListOfPassiveImagesDictionaries\n{lpi}\n".format(lpi=ListOfPassiveImagesDictionaries))
     subjCount = len(ListOfPassiveImagesDictionaries)
@@ -92,6 +126,8 @@ def FlattenTransformAndImagesList(ListOfPassiveImagesDictionaries, transforms, i
     if subjCount != tranCount:
         print "ERROR:  subjCount must equal tranCount {0} != {1}".format(subjCount, tranCount)
         sys.exit(-1)
+    if invert_transform_flags is None:
+        invert_transform_flags = [False] * subjCount
     invertTfmsFlagsCount = len(invert_transform_flags)
     if subjCount != invertTfmsFlagsCount:
         print "ERROR:  subjCount must equal invertTfmsFlags {0} != {1}".format(subjCount, invertTfmsFlagsCount)
@@ -236,13 +272,17 @@ def BAWantsRegistrationTemplateBuildSingleIterationWF(iterationPhasePrefix=''):
 
     ## Now warp all the input_images images
     wimtdeformed = pe.MapNode(interface=ApplyTransforms(),
-                              iterfield=['transforms', 'invert_transform_flags', 'input_image'],
+                              iterfield=['transforms', 'input_image'],
+                              #iterfield=['transforms', 'invert_transform_flags', 'input_image'],
                               name='wimtdeformed')
     wimtdeformed.inputs.interpolation = 'Linear'
     wimtdeformed.default_value = 0
     # HACK: Should try using forward_composite_transform
-    TemplateBuildSingleIterationWF.connect(BeginANTS, 'forward_transforms', wimtdeformed, 'transforms')
-    TemplateBuildSingleIterationWF.connect(BeginANTS, 'forward_invert_flags', wimtdeformed, 'invert_transform_flags')
+    ##PREVIOUS TemplateBuildSingleIterationWF.connect(BeginANTS, 'forward_transform', wimtdeformed, 'transforms')
+    TemplateBuildSingleIterationWF.connect(BeginANTS, 'composite_transform', wimtdeformed, 'transforms')
+    ##PREVIOUS TemplateBuildSingleIterationWF.connect(BeginANTS, 'forward_invert_flags', wimtdeformed, 'invert_transform_flags')
+    ## NOTE: forward_invert_flags:: List of flags corresponding to the forward transforms
+    #wimtdeformed.inputs.invert_transform_flags = [False,False,False,False,False]
     TemplateBuildSingleIterationWF.connect(GetMovingImagesNode, 'moving_images', wimtdeformed, 'input_image')
     TemplateBuildSingleIterationWF.connect(inputSpec, 'fixed_image', wimtdeformed, 'reference_image')
 
@@ -259,20 +299,22 @@ def BAWantsRegistrationTemplateBuildSingleIterationWF(iterationPhasePrefix=''):
     AvgAffineTransform.inputs.dimension = 3
     AvgAffineTransform.inputs.output_affine_transform = 'Avererage_' + str(iterationPhasePrefix) + '_Affine.h5'
 
-    SplitAffineAndWarpsNode = pe.Node(interface=util.Function(function=SplitAffineAndWarpComponents,
-                                      input_names=['list_of_transforms_lists'],
+    SplitCompositeTransform = pe.MapNode(interface=util.Function(function=SplitCompositeToComponentTransforms,
+                                      input_names=['composite_transform_as_list'],
                                       output_names=['affine_component_list', 'warp_component_list']),
+                                      iterfield=['composite_transform_as_list'],
                                       run_without_submitting=True,
-                                      name='99_SplitAffineAndWarpsNode')
-    TemplateBuildSingleIterationWF.connect(BeginANTS, 'forward_transforms', SplitAffineAndWarpsNode, 'list_of_transforms_lists')
-    TemplateBuildSingleIterationWF.connect(SplitAffineAndWarpsNode, 'affine_component_list', AvgAffineTransform, 'transforms')
+                                      name='99_SplitCompositeTransform')
+    TemplateBuildSingleIterationWF.connect(BeginANTS, 'composite_transform', SplitCompositeTransform, 'composite_transform_as_list')
+    ## PREVIOUS TemplateBuildSingleIterationWF.connect(BeginANTS, 'forward_transforms', SplitCompositeTransform, 'composite_transform_as_list')
+    TemplateBuildSingleIterationWF.connect(SplitCompositeTransform, 'affine_component_list', AvgAffineTransform, 'transforms')
 
     ## Now average the warp fields togther
     AvgWarpImages = pe.Node(interface=AverageImages(), name='AvgWarpImages')
     AvgWarpImages.inputs.dimension = 3
     AvgWarpImages.inputs.output_average_image = str(iterationPhasePrefix) + 'warp.nii.gz'
     AvgWarpImages.inputs.normalize = True
-    TemplateBuildSingleIterationWF.connect(SplitAffineAndWarpsNode, 'warp_component_list', AvgWarpImages, 'images')
+    TemplateBuildSingleIterationWF.connect(SplitCompositeTransform, 'warp_component_list', AvgWarpImages, 'images')
 
     ## Now average the images together
     ## TODO:  For now GradientStep is set to 0.25 as a hard coded default value.
@@ -323,7 +365,7 @@ def BAWantsRegistrationTemplateBuildSingleIterationWF(iterationPhasePrefix=''):
     ## Now warp all the ListOfPassiveImagesDictionaries images
     FlattenTransformAndImagesListNode = pe.Node(Function(function=FlattenTransformAndImagesList,
                                                          input_names=['ListOfPassiveImagesDictionaries', 'transforms',
-                                                                      'invert_transform_flags', 'interpolationMapping'],
+                                                                      'interpolationMapping', 'invert_transform_flags'],
                                                          output_names=['flattened_images', 'flattened_transforms', 'flattened_invert_transform_flags',
                                                                        'flattened_image_nametypes', 'flattened_interpolation_type']),
                                                 run_without_submitting=True, name="99_FlattenTransformAndImagesList")
@@ -338,8 +380,10 @@ def BAWantsRegistrationTemplateBuildSingleIterationWF(iterationPhasePrefix=''):
 
     TemplateBuildSingleIterationWF.connect(GetPassiveImagesNode, 'ListOfPassiveImagesDictionaries', FlattenTransformAndImagesListNode, 'ListOfPassiveImagesDictionaries')
     TemplateBuildSingleIterationWF.connect(inputSpec, 'interpolationMapping', FlattenTransformAndImagesListNode, 'interpolationMapping')
-    TemplateBuildSingleIterationWF.connect(BeginANTS, 'forward_transforms', FlattenTransformAndImagesListNode, 'transforms')
-    TemplateBuildSingleIterationWF.connect(BeginANTS, 'forward_invert_flags', FlattenTransformAndImagesListNode, 'invert_transform_flags')
+    TemplateBuildSingleIterationWF.connect(BeginANTS, 'composite_transform', FlattenTransformAndImagesListNode, 'transforms')
+    ## FlattenTransformAndImagesListNode.inputs.invert_transform_flags = [False,False,False,False,False,False]
+    ## TODO: Please check of invert_transform_flags has a fixed number.
+    ## PREVIOUS TemplateBuildSingleIterationWF.connect(BeginANTS, 'forward_invert_flags', FlattenTransformAndImagesListNode, 'invert_transform_flags')
     wimtPassivedeformed = pe.MapNode(interface=ApplyTransforms(),
                                      iterfield=['transforms', 'invert_transform_flags', 'input_image', 'interpolation'],
                                      name='wimtPassivedeformed')

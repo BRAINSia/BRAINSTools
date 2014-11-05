@@ -255,19 +255,17 @@ def _template_runner(argv, environment, experiment, pipeline_options, cluster):
                                                     'qsub_args': modify_qsub_args(cluster['queue'], 1, 1, 1),
                                                     'overwrite': True}
             for bt in [buildTemplateIteration1, buildTemplateIteration2]:
-                ##################################################
-                # *** Hans, is this TODO already addressed? ***  #
-                # ---->  # TODO:  Change these parameters  <---- #
-                ##################################################
                 BeginANTS = bt.get_node("BeginANTS")
                 BeginANTS.plugin_args = {'template': pipeline_options['plugin_args']['template'], 'overwrite': True,
                                          'qsub_args': modify_qsub_args(cluster['queue'], 4, 2, 4)}
                 wimtdeformed = bt.get_node("wimtdeformed")
                 wimtdeformed.plugin_args = {'template': pipeline_options['plugin_args']['template'], 'overwrite': True,
                                             'qsub_args': modify_qsub_args(cluster['queue'], 2, 2, 2)}
-                AvgAffineTransform = bt.get_node("AvgAffineTransform")
-                AvgAffineTransform.plugin_args = {'template': pipeline_options['plugin_args']['template'], 'overwrite': True,
-                                                  'qsub_args': modify_qsub_args(cluster['queue'], 2, 1, 1)}
+
+                #AvgAffineTransform = bt.get_node("AvgAffineTransform")
+                #AvgAffineTransform.plugin_args = {'template': pipeline_options['plugin_args']['template'], 'overwrite': True,
+                #                                  'qsub_args': modify_qsub_args(cluster['queue'], 2, 1, 1)}
+
                 wimtPassivedeformed = bt.get_node("wimtPassivedeformed")
                 wimtPassivedeformed.plugin_args = {'template': pipeline_options['plugin_args']['template'], 'overwrite': True,
                                                     'qsub_args': modify_qsub_args(cluster['queue'], 2, 2, 4)}

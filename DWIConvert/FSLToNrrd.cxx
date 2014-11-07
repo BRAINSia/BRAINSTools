@@ -23,6 +23,7 @@
 #include <sstream>
 #include "DWIConvertUtils.h"
 #include "itksys/SystemTools.hxx"
+#include "vnl/vnl_math.h"
 typedef short                               PixelValueType;
 typedef itk::Image<PixelValueType, 4>       VolumeType;
 typedef itk::VectorImage<PixelValueType, 3> VectorVolumeType;
@@ -96,6 +97,44 @@ FSLToNrrd(const std::string & inputVolume,
               << bVecCount << ") and B Values ("
               << bValCount << ")" << std::endl;
     return EXIT_FAILURE;
+    }
+
+  // As suggested by Martin Styner:
+  // The implicit normalization is implementing by dividing
+  // all the gradients (or B-matrices) by the maximal
+  // gradient (or B-matrix) magnitude. The magnitude of a
+  // gradient direction vector is determined by the usual
+  // L^2 norm, and the magnitude of a B-matrix is via the
+  // [Frobenius Norm]. It is after this magnitude rescaling
+  // that the nominal b-value (given via
+  // "DWMRI_b-value:=b") applies... If the nominal b-value
+  // is 1000 (via DWMRI_b-value:=1000), then to represent a
+  // DWI with b=500, use a gradient vector (or B-matrix) who's norm is sqrt(1/2) the norm for the b=1000 DWI. "
+  //
+  // So, since all the b-vecs from FSL have norm 1, all the
+  // gradients with maximal b-value (which is your Nrrd
+  // DWMRI_b-value) should have norm 1 (i.e. for those you
+  // can simply copy over the b-vec info). For all other
+  // gradients (i.e. those with b-values below the maximal
+  // b-value), you need to scale the coordinates of the
+  // b-vector by sqrt(this-b-value/max-b-value).
+  std::vector<double>::const_iterator bValIt = BVals.begin(),
+    bValsEnd = BVals.end();
+  std::vector<std::vector<double> >::iterator bVecIt = BVecs.begin(),
+    bVecsEnd = BVecs.end();
+
+  for(; bVecIt != bVecsEnd && bValIt != bValsEnd; ++bVecIt, ++bValIt)
+    {
+    if((*bValIt) == maxBValue)
+      {
+      continue;
+      }
+    double scale = vcl_sqrt((*bValIt) / maxBValue);
+    std::vector<double> &cur = *bVecIt;
+    for(unsigned int i = 0; i < 3; ++i)
+      {
+      cur[i] *= scale;
+      }
     }
 
   VolumeType::SizeType inputSize =

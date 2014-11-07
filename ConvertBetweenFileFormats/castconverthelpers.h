@@ -122,10 +122,7 @@ void ReadDicomSeriesCastWriteImage( std::string inputDirectoryName, std::string 
 {
   /** Typedef the correct reader, caster and writer. */
   typedef typename itk::ImageSeriesReader<InputImageType> SeriesReaderType;
-  typedef typename itk::RescaleIntensityImageFilter<
-      InputImageType, OutputImageType>                           RescaleFilterType;
-  typedef typename itk::ShiftScaleImageFilter<
-      InputImageType, OutputImageType>                           ShiftScaleFilterType;
+  typedef typename itk::ShiftScaleImageFilter<InputImageType, OutputImageType> ShiftScaleFilterType;
   typedef typename itk::ImageFileWriter<OutputImageType> ImageWriterType;
 
   /** Typedef dicom stuff. */
@@ -199,10 +196,7 @@ void ReadCastWriteImage( std::string inputFileName, std::string outputFileName )
 {
   /**  Typedef the correct reader, caster and writer. */
   typedef typename itk::ImageFileReader<InputImageType> ImageReaderType;
-  typedef typename itk::RescaleIntensityImageFilter<
-      InputImageType, OutputImageType>                         RescaleFilterType;
-  typedef typename itk::ShiftScaleImageFilter<
-      InputImageType, OutputImageType>                         ShiftScaleFilterType;
+  typedef typename itk::ShiftScaleImageFilter<InputImageType, OutputImageType> ShiftScaleFilterType;
   typedef typename itk::ImageFileWriter<OutputImageType> ImageWriterType;
 #ifdef VTK_FOUND
   typedef itk::VTKImageToImageFilter<InputImageType> VTKToITKFilterType;

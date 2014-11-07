@@ -11,7 +11,6 @@ LabelCountMapType GetMinLabelCount(ByteImageType::Pointer & labelsImage)
   labelStatisticsImageFilter->Update();
 
   typedef LabelStatisticsImageFilterType::ValidLabelValuesContainerType ValidLabelValuesType;
-  typedef LabelStatisticsImageFilterType::LabelPixelType                LabelPixelType;
 
   LabelCountMapType labelCountMap;
 

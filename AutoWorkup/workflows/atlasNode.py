@@ -1,101 +1,138 @@
-def MakeAtlasNode(atlasDirectory, name, atlasParts=['BRAINSABCSupport','LabelMapsSupport','BRAINSCutSupport','BCDSupport','ExtraSupport']):
+def MakeAtlasNode(atlasDirectory, name, atlasParts):
     """ Make an atlas node that contains the elements requested in the atlasParts section
         This will allow more fine grained data grabbers to be used, thereby allowing enhanced
         compartmentalization of algorithmic components.
+
+        (S_) Static files that are relevant for any atlas
+        (W_) Files that require warping to subjecgt specific atlas
+
+        KEY:
+          [S|W]_BRAINSABCSupport
+          [S|W]_BRAINSABCSupport
+          [S|W]_BRAINSCutSupport
+          [S|W]_BCDSupport
+          [S|W]_LabelMapsSupport
+          [S|W]_ExtraSupport
     """
 
-    import nipype.interfaces.io as nio   # Data i/o
+    import nipype.interfaces.io as nio  # Data i/o
     import nipype.pipeline.engine as pe  # pypeline engine
     import os
+
+    valid_choices = [
+        'S_BRAINSABCSupport',
+        'S_BRAINSABCSupport',
+        'S_BRAINSCutSupport',
+        'S_BCDSupport',
+        'S_LabelMapsSupport',
+        'S_ExtraSupport',
+        'W_BRAINSABCSupport',
+        'W_BRAINSABCSupport',
+        'W_BRAINSCutSupport',
+        'W_BCDSupport',
+        'W_LabelMapsSupport',
+        'W_ExtraSupport'
+    ]
+    for ap in atlasParts:
+        assert ap in valid_choices, "ERROR: Invalid choice: {0} not in {1}".format(ap, valid_choices)
 
     # Generate by running a file system list "ls -1 $AtlasDir *.nii.gz *.xml *.fcsv *.wgts"
     # atlas_file_names=atlas_file_list.split(' ')
     atlas_file_names = list()
-    if 'BRAINSABCSupport' in atlasParts:
-        atlas_file_names.extend( [
-                        "ExtendedAtlasDefinition.xml"
-                          ] )
-    if 'TemplateBuildSupport' in atlasParts:
-        atlas_file_names.extend( [
-                        "ExtendedAtlasDefinition.xml.in"
-                          ] )
-    if 'BRAINSCutSupport' in atlasParts:
-        atlas_file_names.extend( [
-                        "hncma-atlas.nii.gz",
-                        "template_t1.nii.gz",
-                        "probabilityMaps/l_accumben_ProbabilityMap.nii.gz",
-                        "probabilityMaps/r_accumben_ProbabilityMap.nii.gz",
-                        "probabilityMaps/l_caudate_ProbabilityMap.nii.gz",
-                        "probabilityMaps/r_caudate_ProbabilityMap.nii.gz",
-                        "probabilityMaps/l_globus_ProbabilityMap.nii.gz",
-                        "probabilityMaps/r_globus_ProbabilityMap.nii.gz",
-                        "probabilityMaps/l_hippocampus_ProbabilityMap.nii.gz",
-                        "probabilityMaps/r_hippocampus_ProbabilityMap.nii.gz",
-                        "probabilityMaps/l_putamen_ProbabilityMap.nii.gz",
-                        "probabilityMaps/r_putamen_ProbabilityMap.nii.gz",
-                        "probabilityMaps/l_thalamus_ProbabilityMap.nii.gz",
-                        "probabilityMaps/r_thalamus_ProbabilityMap.nii.gz",
-                        "spatialImages/phi.nii.gz",
-                        "spatialImages/rho.nii.gz",
-                        "spatialImages/theta.nii.gz",
-                        "modelFiles/trainModelFile.txtD0060NT0060.gz"
-                        ] )
-    if 'BCDSupport' in atlasParts:
-        atlas_file_names.extend( [
-                        "template_t1.nii.gz",
-                        "20141004_BCD/LLSModel_50Lmks.h5",
-                        "20141004_BCD/T1_50Lmks.mdl",
-                        "20141004_BCD/template_landmarks_50Lmks.fcsv",
-                        "20141004_BCD/template_weights_50Lmks.wts"
-                        ] )
-    if 'LabelMapsSupport' in atlasParts:
-        atlas_file_names.extend( [
-                        "hncma-atlas.nii.gz",
-                        "hncma-atlas-lut-mod2.ctbl",
-                        "template_rightHemisphere.nii.gz",
-                        "template_leftHemisphere.nii.gz",
-                        "template_WMPM2_labels.nii.gz",
-                        "template_WMPM2_labels.txt",
-                        "template_nac_labels.nii.gz",
-                        "template_nac_labels.txt",
-                        "template_ventricles.nii.gz"
-                        ] )
-    if 'ExtraSupport' in atlasParts:
-        atlas_file_names.extend( [
-                        "tempNOTVBBOX.nii.gz",
-                        "template_ABC_labels.nii.gz",
-                        "avg_t1.nii.gz",
-                        "avg_t2.nii.gz",
-                        "template_brain.nii.gz",
-                        "template_cerebellum.nii.gz",
-                        "template_class.nii.gz",
-                        "template_headregion.nii.gz",
-                        "template_t1.nii.gz",
-                        "template_t2.nii.gz",
-                        "template_t1_clipped.nii.gz",
-                        "template_t2_clipped.nii.gz"
-                        ] )
-    atlas_file_names = list(set(atlas_file_names)) # Make a unique listing
-    ## Remove filename extensions for images, but replace . with _ for other file types
-    atlas_file_keys = [os.path.basename(fn).replace('.nii.gz', '').replace('.', '_').replace('-','_') for fn in atlas_file_names]
+    if 'S_BRAINSABCSupport' in atlasParts:
+        atlas_file_names.extend([
+            "ExtendedAtlasDefinition.xml.in"
+        ])
+    if 'W_BRAINSABCSupport' in atlasParts:
+        atlas_file_names.extend([
+            "ExtendedAtlasDefinition.xml"
+        ])
+    if 'S_BRAINSCutSupport' in atlasParts:
+        atlas_file_names.extend([
+            "modelFiles/trainModelFile.txtD0060NT0060.gz"
+        ])
+    if 'W_BRAINSCutSupport' in atlasParts:
+        atlas_file_names.extend([
+            "hncma-atlas.nii.gz",
+            "template_t1.nii.gz",
+            "probabilityMaps/l_accumben_ProbabilityMap.nii.gz",
+            "probabilityMaps/r_accumben_ProbabilityMap.nii.gz",
+            "probabilityMaps/l_caudate_ProbabilityMap.nii.gz",
+            "probabilityMaps/r_caudate_ProbabilityMap.nii.gz",
+            "probabilityMaps/l_globus_ProbabilityMap.nii.gz",
+            "probabilityMaps/r_globus_ProbabilityMap.nii.gz",
+            "probabilityMaps/l_hippocampus_ProbabilityMap.nii.gz",
+            "probabilityMaps/r_hippocampus_ProbabilityMap.nii.gz",
+            "probabilityMaps/l_putamen_ProbabilityMap.nii.gz",
+            "probabilityMaps/r_putamen_ProbabilityMap.nii.gz",
+            "probabilityMaps/l_thalamus_ProbabilityMap.nii.gz",
+            "probabilityMaps/r_thalamus_ProbabilityMap.nii.gz",
+            "spatialImages/phi.nii.gz",
+            "spatialImages/rho.nii.gz",
+            "spatialImages/theta.nii.gz",
+        ])
+    if 'S_BCDSupport' in atlasParts:
+        atlas_file_names.extend([
+            "20141004_BCD/LLSModel_50Lmks.h5",
+            "20141004_BCD/T1_50Lmks.mdl",
+            "20141004_BCD/template_weights_50Lmks.wts"
+        ])
+    if 'W_BCDSupport' in atlasParts:
+        atlas_file_names.extend([
+            "template_t1.nii.gz",
+            "20141004_BCD/template_landmarks_50Lmks.fcsv",
+        ])
+    if 'W_LabelMapsSupport' in atlasParts:
+        atlas_file_names.extend([
+            "hncma-atlas.nii.gz",
+            "hncma-atlas-lut-mod2.ctbl",
+            "template_rightHemisphere.nii.gz",
+            "template_leftHemisphere.nii.gz",
+            "template_WMPM2_labels.nii.gz",
+            "template_WMPM2_labels.txt",
+            "template_nac_labels.nii.gz",
+            "template_nac_labels.txt",
+            "template_ventricles.nii.gz"
+        ])
+    if 'W_ExtraSupport' in atlasParts:
+        atlas_file_names.extend([
+            "tempNOTVBBOX.nii.gz",
+            "template_ABC_labels.nii.gz",
+            "avg_t1.nii.gz",
+            "avg_t2.nii.gz",
+            "template_brain.nii.gz",
+            "template_cerebellum.nii.gz",
+            "template_class.nii.gz",
+            "template_headregion.nii.gz",
+            "template_t1.nii.gz",
+            "template_t2.nii.gz",
+            "template_t1_clipped.nii.gz",
+            "template_t2_clipped.nii.gz"
+        ])
+    atlas_file_names = list(set(atlas_file_names))  # Make a unique listing
+    # # Remove filename extensions for images, but replace . with _ for other file types
+    atlas_file_keys = [os.path.basename(fn).replace('.nii.gz', '').replace('.', '_').replace('-', '_') for fn in
+                       atlas_file_names]
     atlas_outputs_filename_match = dict(zip(atlas_file_keys, atlas_file_names))
 
     node = pe.Node(interface=nio.DataGrabber(force_output=False, outfields=atlas_file_keys),
-                     run_without_submitting=True,
-                     name=name)
+                   run_without_submitting=True,
+                   name=name)
     node.inputs.base_directory = atlasDirectory
     node.inputs.sort_filelist = False
+    # node.inputs.raise_on_empty = True
     node.inputs.template = '*'
     ## Prefix every filename with atlasDirectory
     atlas_search_paths = ['{0}'.format(fn) for fn in atlas_file_names]
     node.inputs.field_template = dict(zip(atlas_file_keys, atlas_search_paths))
     ## Give 'atlasDirectory' as the substitution argument
-    atlas_template_args_match = [ [[]] for i in atlas_file_keys]  # build a list of proper length with repeated entries
+    atlas_template_args_match = [[[]] for i in atlas_file_keys]  # build a list of proper length with repeated entries
     node.inputs.template_args = dict(zip(atlas_file_keys, atlas_template_args_match))
     # print "+" * 100
     # print node.inputs
     # print "-" * 100
     return node
+
 
 def CreateAtlasXMLAndCleanedDeformedAverages(t1_image, deformed_list, AtlasTemplate, outDefinition):
     import os
@@ -122,13 +159,34 @@ def CreateAtlasXMLAndCleanedDeformedAverages(t1_image, deformed_list, AtlasTempl
         'T1_RESHAPED.nii.gz': '@ATLAS_INSTALL_DIRECTORY@/template_t1.nii.gz',
         'AVG_T2.nii.gz': '@ATLAS_INSTALL_DIRECTORY@/template_t2.nii.gz',
         'AVG_PD.nii.gz': '@ATLAS_INSTALL_DIRECTORY@/template_t2.nii.gz',
-        'AVG_FL.nii.gz': '@ATLAS_INSTALL_DIRECTORY@/template_t2.nii.gz'
+        'AVG_FL.nii.gz': '@ATLAS_INSTALL_DIRECTORY@/template_t2.nii.gz',
+        'AVG_hncma_atlas.nii.gz': 'IGNORED',
+        'AVG_r_caudate_ProbabilityMap.nii.gz': 'IGNORED',
+        'AVG_r_putamen_ProbabilityMap.nii.gz': 'IGNORED',
+        'AVG_r_accumben_ProbabilityMap.nii.gz': 'IGNORED',
+        'AVG_template_nac_labels.nii.gz': 'IGNORED',
+        'AVG_l_hippocampus_ProbabilityMap.nii.gz': 'IGNORED',
+        'AVG_theta.nii.gz': 'IGNORED',
+        'AVG_l_accumben_ProbabilityMap.nii.gz': 'IGNORED',
+        'AVG_phi.nii.gz': 'IGNORED',
+        'AVG_l_thalamus_ProbabilityMap.nii.gz': 'IGNORED',
+        'AVG_l_globus_ProbabilityMap.nii.gz': 'IGNORED',
+        'AVG_template_ventricles.nii.gz': 'IGNORED',
+        'AVG_r_thalamus_ProbabilityMap.nii.gz': 'IGNORED',
+        'AVG_l_putamen_ProbabilityMap.nii.gz': 'IGNORED',
+        'AVG_rho.nii.gz': 'IGNORED',
+        'AVG_r_hippocampus_ProbabilityMap.nii.gz': 'IGNORED',
+        'AVG_r_globus_ProbabilityMap.nii.gz': 'IGNORED',
+        'AVG_l_caudate_ProbabilityMap.nii.gz': 'IGNORED',
+        'AVG_template_leftHemisphere.nii.gz': 'IGNORED',
+        'AVG_template_WMPM2_labels.nii.gz': 'IGNORED',
+        'AVG_template_rightHemisphere.nii.gz': 'IGNORED'
     }
     templateFile = open(AtlasTemplate, 'r')
-    xmlAtlasFileContents = templateFile.read()              # read entire file into memory
+    xmlAtlasFileContents = templateFile.read()  # read entire file into memory
     templateFile.close()
 
-    ## Now clean up the posteriors based on anatomical knowlege.
+    # # Now clean up the posteriors based on anatomical knowlege.
     ## sometimes the posteriors are not relevant for priors
     ## due to anomolies around the edges.
     #print("\n\n\nALL_FILES: {0}\n\n\n".format(deformed_list))
@@ -167,6 +225,29 @@ def CreateAtlasXMLAndCleanedDeformedAverages(t1_image, deformed_list, AtlasTempl
         'AVG_NOTVB.nii.gz',
         'AVG_AIR.nii.gz'
     ]
+    extraFiles = [
+        'AVG_hncma_atlas.nii.gz',
+        'AVG_r_caudate_ProbabilityMap.nii.gz',
+        'AVG_r_putamen_ProbabilityMap.nii.gz',
+        'AVG_r_accumben_ProbabilityMap.nii.gz',
+        'AVG_template_nac_labels.nii.gz',
+        'AVG_l_hippocampus_ProbabilityMap.nii.gz',
+        'AVG_theta.nii.gz',
+        'AVG_l_accumben_ProbabilityMap.nii.gz',
+        'AVG_phi.nii.gz',
+        'AVG_l_thalamus_ProbabilityMap.nii.gz',
+        'AVG_l_globus_ProbabilityMap.nii.gz',
+        'AVG_template_ventricles.nii.gz',
+        'AVG_r_thalamus_ProbabilityMap.nii.gz',
+        'AVG_l_putamen_ProbabilityMap.nii.gz',
+        'AVG_rho.nii.gz',
+        'AVG_r_hippocampus_ProbabilityMap.nii.gz',
+        'AVG_r_globus_ProbabilityMap.nii.gz',
+        'AVG_l_caudate_ProbabilityMap.nii.gz',
+        'AVG_template_leftHemisphere.nii.gz',
+        'AVG_template_WMPM2_labels.nii.gz',
+        'AVG_template_rightHemisphere.nii.gz',
+    ]
     clean_deformed_list = deformed_list
     T2File = None
     PDFile = None
@@ -203,9 +284,14 @@ def CreateAtlasXMLAndCleanedDeformedAverages(t1_image, deformed_list, AtlasTempl
             clean_deformed_list[index] = os.path.realpath(clipped_name)
             #print "HACK: ", clean_deformed_list[index]
             curr = None
+        elif base_name in extraFiles:
+            pass
         else:
             import sys
-            print "ERROR: basename {0} not in list!! \n{1}".format(base_name,['AVG_BRAINMASK.nii.gz','AVG_T2.nii.gz','AVG_PD.nii.gz',interiorPriors,exteriorPriors])
+
+            print "ERROR: basename {0} not in list!! \n{1}".format(base_name, ['AVG_BRAINMASK.nii.gz', 'AVG_T2.nii.gz',
+                                                                               'AVG_PD.nii.gz', interiorPriors,
+                                                                               exteriorPriors])
             sys.exit(-1)
 
     binmask = None
@@ -218,12 +304,15 @@ def CreateAtlasXMLAndCleanedDeformedAverages(t1_image, deformed_list, AtlasTempl
             xmlAtlasFileContents = xmlAtlasFileContents.replace(patternDict[base_name], base_name)
     ## If there is no T2, then use the PD image
     if T2File is not None:
-        xmlAtlasFileContents = xmlAtlasFileContents.replace('@ATLAS_INSTALL_DIRECTORY@/template_t2.nii.gz', os.path.basename(T2File))
+        xmlAtlasFileContents = xmlAtlasFileContents.replace('@ATLAS_INSTALL_DIRECTORY@/template_t2.nii.gz',
+                                                            os.path.basename(T2File))
     elif PDFile is not None:
-        xmlAtlasFileContents = xmlAtlasFileContents.replace('@ATLAS_INSTALL_DIRECTORY@/template_t2.nii.gz', os.path.basename(PDFile))
+        xmlAtlasFileContents = xmlAtlasFileContents.replace('@ATLAS_INSTALL_DIRECTORY@/template_t2.nii.gz',
+                                                            os.path.basename(PDFile))
     xmlAtlasFileContents = xmlAtlasFileContents.replace('@ATLAS_INSTALL_DIRECTORY@/template_t1.nii.gz', 'AVG_T1.nii.gz')
     ## NOTE:  HEAD REGION CAN JUST BE T1 image.
-    xmlAtlasFileContents = xmlAtlasFileContents.replace('@ATLAS_INSTALL_DIRECTORY@/template_headregion.nii.gz', os.path.basename(t1_image) )
+    xmlAtlasFileContents = xmlAtlasFileContents.replace('@ATLAS_INSTALL_DIRECTORY@/template_headregion.nii.gz',
+                                                        os.path.basename(t1_image))
     ## NOTE:  BRAIN REGION CAN JUST BE the label images.
     outAtlasFullPath = os.path.realpath(outDefinition)
     newFile = open(outAtlasFullPath, 'w')

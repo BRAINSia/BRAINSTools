@@ -34,23 +34,7 @@ Examples:
 """
 
 
-def _DetermineIfSegmentationShouldBeDone(master_config):
-    """ This function is in a trival state right now, but
-    more complicated rulesets may be necessary in the furture
-    to determine when segmentation should be run.
-    This is being left so that anticipated future
-    changes are easier to implement.
-    """
-    do_BRAINSCut_Segmentation = False
-    if master_config['workflow_phase'] == 'atlas-based-reference':
-        if 'segmentation' in master_config['components']:
-            do_BRAINSCut_Segmentation = True
-    elif master_config['workflow_phase'] == 'subject-based-reference':
-        if 'segmentation' in master_config['components']:
-            do_BRAINSCut_Segmentation = True
-    return  do_BRAINSCut_Segmentation
-
-def create_singleSession(dataDict, master_config, interpMode, pipeline_name):
+def _create_singleSession(dataDict, master_config, interpMode, pipeline_name):
     """
     create singleSession workflow on a single session
 
@@ -75,6 +59,7 @@ def create_singleSession(dataDict, master_config, interpMode, pipeline_name):
     from nipype.interfaces.utility import Split, Rename, IdentityInterface, Function
 
     from workflows.baseline import generate_single_session_template_WF
+
     from PipeLineFunctionHelpers import convertToList
     from utilities.misc import GenerateSubjectOutputPattern as outputPattern
     from utilities.misc import GenerateWFName
@@ -88,7 +73,8 @@ def create_singleSession(dataDict, master_config, interpMode, pipeline_name):
     isBlackList=os.path.isfile( blackListFileName )
 
     pname = "{0}_{1}_{2}".format(master_config['workflow_phase'], subject, session)
-    sessionWorkflow = generate_single_session_template_WF(project, subject, session, master_config,
+    onlyT1 = not(len(dataDict['T2s']) > 0)
+    sessionWorkflow = generate_single_session_template_WF(project, subject, session, onlyT1, master_config,
                                                           phase=master_config['workflow_phase'],
                                                           interpMode=interpMode,
                                                           pipeline_name=pipeline_name,
@@ -101,98 +87,6 @@ def create_singleSession(dataDict, master_config, interpMode, pipeline_name):
     sessionWorkflow_inputsspec.inputs.PDs = dataDict['PDs']
     sessionWorkflow_inputsspec.inputs.FLs = dataDict['FLs']
     sessionWorkflow_inputsspec.inputs.OTHERs = dataDict['OTs']
-    atlasBCDNode = MakeAtlasNode(master_config['atlascache'], 'BBCDAtlas_{0}'.format(session), ['BCDSupport'])
-    sessionWorkflow.connect([(atlasBCDNode, sessionWorkflow_inputsspec,
-                              [('template_t1', 'template_t1'),
-                               ('template_landmarks_50Lmks_fcsv','atlasLandmarkFilename'),
-                               ('template_weights_50Lmks_wts', 'atlasWeightFilename'),
-                               ('LLSModel_50Lmks_h5', 'LLSModel'),
-                               ('T1_50Lmks_mdl', 'inputTemplateModel')
-                               ]),
-                             ])
-
-    if master_config['workflow_phase'] == 'atlas-based-reference':
-        # TODO: input atlas csv
-        atlasABCNode = MakeAtlasNode(master_config['atlascache'], 'BABCAtlas_{0}'.format(session), ['BRAINSABCSupport','LabelMapsSupport'])
-        sessionWorkflow.connect(atlasABCNode,'ExtendedAtlasDefinition_xml',sessionWorkflow_inputsspec,'atlasDefinition')
-        sessionWorkflow.connect([( atlasABCNode,sessionWorkflow_inputsspec, [
-                                                ('hncma_atlas','hncma_atlas'),
-                                                ('template_leftHemisphere','template_leftHemisphere'),
-                                                ('template_rightHemisphere','template_rightHemisphere'),
-                                                ('template_WMPM2_labels','template_WMPM2_labels'),
-                                                ('template_nac_labels','template_nac_labels'),
-                                                ('template_ventricles','template_ventricles') ]
-                                 )]
-                                )
-
-    elif master_config['workflow_phase'] == 'subject-based-reference':
-        print master_config['previousresult']
-        template_DG = pe.Node(interface=nio.DataGrabber(infields=['subject'],
-                                                        outfields=['outAtlasXMLFullPath']),
-                              name='Template_DG')
-        template_DG.inputs.base_directory = master_config['previousresult']
-        template_DG.inputs.subject = subject
-        template_DG.inputs.template = '%s/Atlas/AtlasDefinition_%s.xml'
-        template_DG.inputs.template_args['outAtlasXMLFullPath'] = [['subject', 'subject']]
-        template_DG.inputs.sort_filelist = True
-        template_DG.inputs.raise_on_empty = True
-
-        sessionWorkflow.connect([(template_DG, sessionWorkflow_inputsspec,
-                                  [('outAtlasXMLFullPath', 'atlasDefinition')
-                                   ]),
-                                 ])
-    else:
-        assert 0 == 1, "Invalid workflow type specified for singleSession"
-
-    do_BRAINSCut_Segmentation = _DetermineIfSegmentationShouldBeDone(master_config)
-    if do_BRAINSCut_Segmentation:
-        from workflows.segmentation import segmentation
-        from workflows.WorkupT1T2BRAINSCut import GenerateWFName
-        try:
-            bCutInputName = ".".join([GenerateWFName(project, subject, session, 'Segmentation'), 'inputspec'])
-        except:
-            print project, subject, session
-            raise
-        sname = 'segmentation'
-        onlyT1 = not(len(dataDict['T2s']) > 0)
-        atlasBCUTNode = MakeAtlasNode(master_config['atlascache'],
-                                      'BBCUTAtlas_{0}'.format(session), ['BRAINSCutSupport'])
-        segWF = segmentation(project, subject, session, master_config, onlyT1, pipeline_name=sname)
-        ##TODO: sessionWorkflow.connect(WsegWF)
-        sessionWorkflow.connect([(atlasBCUTNode, segWF,
-                                [
-                                 ('template_t1', 'inputspec.template_t1'),
-                                 ('template_t1', bCutInputName + '.template_t1'),
-                                 ('rho', bCutInputName + '.rho'),
-                                 ('phi', bCutInputName + '.phi'),
-                                 ('theta', bCutInputName + '.theta'),
-                                 ('l_caudate_ProbabilityMap', bCutInputName + '.l_caudate_ProbabilityMap'),
-                                 ('r_caudate_ProbabilityMap', bCutInputName + '.r_caudate_ProbabilityMap'),
-                                 ('l_hippocampus_ProbabilityMap', bCutInputName + '.l_hippocampus_ProbabilityMap'),
-                                 ('r_hippocampus_ProbabilityMap', bCutInputName + '.r_hippocampus_ProbabilityMap'),
-                                 ('l_putamen_ProbabilityMap', bCutInputName + '.l_putamen_ProbabilityMap'),
-                                 ('r_putamen_ProbabilityMap', bCutInputName + '.r_putamen_ProbabilityMap'),
-                                 ('l_thalamus_ProbabilityMap', bCutInputName + '.l_thalamus_ProbabilityMap'),
-                                 ('r_thalamus_ProbabilityMap', bCutInputName + '.r_thalamus_ProbabilityMap'),
-                                 ('l_accumben_ProbabilityMap', bCutInputName + '.l_accumben_ProbabilityMap'),
-                                 ('r_accumben_ProbabilityMap', bCutInputName + '.r_accumben_ProbabilityMap'),
-                                 ('l_globus_ProbabilityMap', bCutInputName + '.l_globus_ProbabilityMap'),
-                                 ('r_globus_ProbabilityMap', bCutInputName + '.r_globus_ProbabilityMap'),
-                                 ('trainModelFile_txtD0060NT0060_gz', bCutInputName + '.trainModelFile_txtD0060NT0060_gz')])])
-        outputSpec = sessionWorkflow.get_node('outputspec')
-        sessionWorkflow.connect([(outputSpec, segWF, [('t1_average', 'inputspec.t1_average'),
-                                                      ('LMIatlasToSubject_tx', 'inputspec.LMIatlasToSubject_tx'),
-                                                      ('atlasToSubjectRegistrationState','inputspec.atlasToSubjectRegistrationState'),
-                                                      ('outputLabels', 'inputspec.inputLabels'),
-                                                      ('posteriorImages', 'inputspec.posteriorImages'),
-                                                      ('UpdatedPosteriorsList', 'inputspec.UpdatedPosteriorsList'),
-                                                      ('outputHeadLabels', 'inputspec.inputHeadLabels')
-
-                                 ])
-                                 ])
-        if not onlyT1:
-            sessionWorkflow.connect([(outputSpec, segWF, [('t2_average', 'inputspec.t2_average')])])
-
     return sessionWorkflow
 
 
@@ -254,20 +148,21 @@ def createAndRun(sessions, environment, experiment, pipeline, cluster, useSentin
                 sentinal_file = os.path.join(
                     sentinal_file_basedir,
                     "TissueClassify",
-                    "t1_average_BRAINSABC.nii.gz"
+                    "brainStem.nii.gz"
                 )
+                #"t1_average_BRAINSABC.nii.gz"
 
             if 'warp_atlas_to_subject' in master_config['components']:
                 sentinal_file = os.path.join(
                     sentinal_file_basedir,
                     "WarpedAtlas2Subject",
-                    "template_rightHemisphere.nii.gz"
+                    "rho.nii.gz"
                 )
 
             if master_config['workflow_phase'] == 'atlas-based-reference':
                 atlasDirectory = master_config['atlascache']
             else:
-                atlasDirectory = os.path.join(master_config['previousresult'],subject,'Atlas','AVG_T1.nii.gz')
+                atlasDirectory = os.path.join(master_config['previousresult'],subject,'Atlas')
 
             if os.path.exists(atlasDirectory):
                 print "LOOKING FOR DIRECTORY {0}".format(atlasDirectory)
@@ -277,7 +172,8 @@ def createAndRun(sessions, environment, experiment, pipeline, cluster, useSentin
                 continue
 
             ## Use different sentinal file if segmentation specified.
-            do_BRAINSCut_Segmentation = _DetermineIfSegmentationShouldBeDone(master_config)
+            from workflows.baseline import DetermineIfSegmentationShouldBeDone
+            do_BRAINSCut_Segmentation = DetermineIfSegmentationShouldBeDone(master_config)
             if do_BRAINSCut_Segmentation:
                 sentinal_file = os.path.join(
                     sentinal_file_basedir,
@@ -287,12 +183,19 @@ def createAndRun(sessions, environment, experiment, pipeline, cluster, useSentin
             print "#" * 50
             print sentinal_file + " exists? " + str(os.path.exists(sentinal_file))
             print "-" * 50
-            if useSentinal and os.path.exists(sentinal_file):
+            def allPathsExists( list_of_paths ):
+                is_missing = False
+                for ff in list_of_paths:
+                    if not os.path.exists(ff):
+                        is_missing = True
+                        print("MISSING: {0}".format(ff))
+                return not is_missing
+            if useSentinal and allPathsExists( [ sentinal_file ] ):
                 print("SKIPPING: {0} exists".format(sentinal_file))
             else:
                 print("PROCESSING INCOMPLETE:  {0} does not exists".format(sentinal_file))
                 if dryRun == False:
-                    workflow = create_singleSession(_dict, master_config, 'Linear',
+                    workflow = _create_singleSession(_dict, master_config, 'Linear',
                                                 'singleSession_{0}_{1}'.format(_dict['subject'], _dict['session']))
                     print("Starting session {0}".format(session))
                     # HACK Hard-coded to SGEGraph, but --wfrun is ignored completely

@@ -58,12 +58,30 @@ from SEMTools.segmentation.specialized  import BRAINSCreateLabelMapFromProbabili
 def get_list_element(nestedList, index):
     return nestedList[index]
 
+
+
+def DetermineIfSegmentationShouldBeDone(master_config):
+    """ This function is in a trival state right now, but
+    more complicated rulesets may be necessary in the furture
+    to determine when segmentation should be run.
+    This is being left so that anticipated future
+    changes are easier to implement.
+    """
+    do_BRAINSCut_Segmentation = False
+    if master_config['workflow_phase'] == 'atlas-based-reference':
+        if 'segmentation' in master_config['components']:
+            do_BRAINSCut_Segmentation = True
+    elif master_config['workflow_phase'] == 'subject-based-reference':
+        if 'segmentation' in master_config['components']:
+            do_BRAINSCut_Segmentation = True
+    return  do_BRAINSCut_Segmentation
+
 def getAllT1sLength(allT1s):
     return len(allT1s)
 
-def generate_single_session_template_WF(projectid, subjectid, sessionid, master_config, phase, interpMode, pipeline_name, doDenoise=True):
+def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1, master_config, phase, interpMode, pipeline_name, doDenoise=True):
     """
-    Run autoworkup on a single session
+    Run autoworkup on a single sessionid
 
     This is the main function to call when processing a data set with T1 & T2
     data.  ExperimentBaseDirectoryPrefix is the base of the directory to place results, T1Images & T2Images
@@ -76,6 +94,7 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, master_
     #    raise NotImplementedError
     # master_config['components'].append('auxlmk')
     # master_config['components'].append('tissue_classify')
+
     assert phase in ['atlas-based-reference', 'subject-based-reference'], "Unknown phase! Valid entries: 'atlas-based-reference', 'subject-based-reference'"
 
     if 'tissue_classify' in master_config['components']:
@@ -83,6 +102,7 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, master_
     if 'landmark' in master_config['components'] :
         assert 'denoise' in master_config['components'], "landmark Requires denoise step!"
 
+    from workflows.atlasNode import MakeAtlasNode
     baw201 = pe.Workflow(name=pipeline_name)
 
     inputsSpec = pe.Node(interface=IdentityInterface(fields=['atlasLandmarkFilename', 'atlasWeightFilename',
@@ -106,6 +126,7 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, master_
                                                               'outputLandmarksInInputSpace',
                                                               'output_tx', 'LMIatlasToSubject_tx',
                                                               'writeBranded2DImage',
+                                                              'brainStemMask',
                                                               'UpdatedPosteriorsList'  # Longitudinal
                                                               ]),
                           run_without_submitting=True, name='outputspec')
@@ -115,6 +136,63 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, master_
     DataSink.overwrite = master_config['ds_overwrite']
     DataSink.inputs.container = '{0}/{1}/{2}'.format(projectid, subjectid, sessionid)
     DataSink.inputs.base_directory = master_config['resultdir']
+
+    atlas_static_directory = master_config['atlascache']
+    if master_config['workflow_phase'] == 'atlas-based-reference':
+        atlas_warped_directory = master_config['atlascache']
+        atlasABCNode_XML = MakeAtlasNode(atlas_warped_directory, 'BABCXMLAtlas_{0}'.format(sessionid),
+          ['W_BRAINSABCSupport'])
+        baw201.connect(atlasABCNode_XML,'ExtendedAtlasDefinition_xml',inputsSpec,'atlasDefinition')
+    elif master_config['workflow_phase'] == 'subject-based-reference':
+        print master_config['previousresult']
+        atlas_warped_directory = os.path.join(master_config['previousresult'],subjectid,'Atlas')
+
+        ## TODO: THIS NEEDS WORK!
+        template_DG = pe.Node(interface=nio.DataGrabber(infields=['subject'],
+                                                        outfields=['outAtlasXMLFullPath']),
+                              name='Template_DG')
+        template_DG.inputs.base_directory = master_config['previousresult']
+        template_DG.inputs.subject = subjectid
+        template_DG.inputs.template = '%s/Atlas/AtlasDefinition_%s.xml'
+        template_DG.inputs.template_args['outAtlasXMLFullPath'] = [['subject', 'subject']]
+        template_DG.inputs.sort_filelist = True
+        template_DG.inputs.raise_on_empty = True
+
+        baw201.connect(template_DG, 'outAtlasXMLFullPath',
+                                inputsSpec, 'atlasDefinition')
+    else:
+        assert 0 == 1, "Invalid workflow type specified for singleSession"
+
+    atlasABCNode_W = MakeAtlasNode(atlas_warped_directory, 'BABCAtlas_W{0}'.format(sessionid),
+        ['W_BRAINSABCSupport','W_LabelMapsSupport'])
+    baw201.connect([( atlasABCNode_W,inputsSpec, [
+                                            ('hncma_atlas','hncma_atlas'),
+                                            ('template_leftHemisphere','template_leftHemisphere'),
+                                            ('template_rightHemisphere','template_rightHemisphere'),
+                                            ('template_WMPM2_labels','template_WMPM2_labels'),
+                                            ('template_nac_labels','template_nac_labels'),
+                                            ('template_ventricles','template_ventricles') ]
+                             )]
+                            )
+    ## These landmarks are only relevant for the atlas-based-reference case
+    atlasBCDNode_W = MakeAtlasNode(atlas_warped_directory, 'BBCDAtlas_W{0}'.format(sessionid),
+        ['W_BCDSupport'])
+    baw201.connect([(atlasBCDNode_W, inputsSpec,
+                          [('template_t1', 'template_t1'),
+                           ('template_landmarks_50Lmks_fcsv','atlasLandmarkFilename'),
+                           ]),
+                         ])
+    atlasBCDNode_S = MakeAtlasNode(atlas_static_directory, 'BBCDAtlas_S{0}'.format(sessionid),
+        ['S_BCDSupport'])
+    baw201.connect([(atlasBCDNode_S, inputsSpec,
+                          [('template_weights_50Lmks_wts', 'atlasWeightFilename'),
+                           ('LLSModel_50Lmks_h5', 'LLSModel'),
+                           ('T1_50Lmks_mdl', 'inputTemplateModel')
+                           ]),
+                         ])
+    ## Needed for both segmentation and template building prep
+    atlasBCUTNode_W = MakeAtlasNode(atlas_warped_directory,
+                                  'BBCUTAtlas_W{0}'.format(sessionid), ['W_BRAINSCutSupport'])
 
     if doDenoise:
         print    """
@@ -240,7 +318,7 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, master_
                         (myLocalTCWF,myLocalBrainStemWF, [('outputspec.outputLabels',
                                                            'inputspec.inputTissueLabelFilename')])
                       ])
-
+        baw201.connect(myLocalBrainStemWF,'outputspec.outputBrainstemFilename',DataSink,'TissueClassify.@brainstem')
 
         baw201.connect([(outputsSpec, DataSink,  # TODO: change to myLocalTCWF -> DataSink
                                    [(('t1_average', convertToList), 'TissueClassify.@t1'),
@@ -248,8 +326,6 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, master_
                                     (('pd_average', convertToList), 'TissueClassify.@pd'),
                                     (('fl_average', convertToList), 'TissueClassify.@fl')]),
                              ])
-
-
 
         currentFixWMPartitioningName = "_".join(['FixWMPartitioning', str(subjectid), str(sessionid)])
         FixWMNode = pe.Node(interface=Function(function=FixWMPartitioning,
@@ -296,6 +372,68 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, master_
                         (AccumulateLikeTissuePosteriorsNode, DataSink, [('AccumulatePriorsList',
                                                                          'ACCUMULATED_POSTERIORS.@AccumulateLikeTissuePosteriorsOutputDir')])])
 
+
+###########################
+    do_BRAINSCut_Segmentation = DetermineIfSegmentationShouldBeDone(master_config)
+    if do_BRAINSCut_Segmentation:
+        from workflows.segmentation import segmentation
+        from workflows.WorkupT1T2BRAINSCut import GenerateWFName
+
+        try:
+            bCutInputName = ".".join([GenerateWFName(projectid, subjectid, sessionid, 'Segmentation'), 'inputspec'])
+        except:
+            print projectid, subjectid, sessionid
+            raise
+        sname = 'segmentation'
+
+        segWF = segmentation(projectid, subjectid, sessionid, master_config, onlyT1, pipeline_name=sname)
+        ##TODO: baw201.connect(WsegWF)
+        print("ERROR:  WRONG ATLAS INFORMATION!! Need to make new atlas information here from averages")
+        sys.exit(-1)
+
+        baw201.connect([(atlasBCUTNode_W, segWF,
+                                [
+                                 ('template_t1', 'inputspec.template_t1'),
+                                 ('template_t1', bCutInputName + '.template_t1'),
+                                 ('rho', bCutInputName + '.rho'),
+                                 ('phi', bCutInputName + '.phi'),
+                                 ('theta', bCutInputName + '.theta'),
+                                 ('l_caudate_ProbabilityMap', bCutInputName + '.l_caudate_ProbabilityMap'),
+                                 ('r_caudate_ProbabilityMap', bCutInputName + '.r_caudate_ProbabilityMap'),
+                                 ('l_hippocampus_ProbabilityMap', bCutInputName + '.l_hippocampus_ProbabilityMap'),
+                                 ('r_hippocampus_ProbabilityMap', bCutInputName + '.r_hippocampus_ProbabilityMap'),
+                                 ('l_putamen_ProbabilityMap', bCutInputName + '.l_putamen_ProbabilityMap'),
+                                 ('r_putamen_ProbabilityMap', bCutInputName + '.r_putamen_ProbabilityMap'),
+                                 ('l_thalamus_ProbabilityMap', bCutInputName + '.l_thalamus_ProbabilityMap'),
+                                 ('r_thalamus_ProbabilityMap', bCutInputName + '.r_thalamus_ProbabilityMap'),
+                                 ('l_accumben_ProbabilityMap', bCutInputName + '.l_accumben_ProbabilityMap'),
+                                 ('r_accumben_ProbabilityMap', bCutInputName + '.r_accumben_ProbabilityMap'),
+                                 ('l_globus_ProbabilityMap', bCutInputName + '.l_globus_ProbabilityMap'),
+                                 ('r_globus_ProbabilityMap', bCutInputName + '.r_globus_ProbabilityMap')
+                                ]
+                       )])
+
+        atlasBCUTNode_S = MakeAtlasNode('XXXX',
+                                      'BBCUTAtlas_S{0}'.format(sessionid), ['S_BRAINSCutSupport'])
+        baw201.connect(atlasBCUTNode_S, 'trainModelFile_txtD0060NT0060_gz',
+                       segWF, bCutInputName + '.trainModelFile_txtD0060NT0060_gz')
+
+        ## baw201_outputspec = baw201.get_node('outputspec')
+        baw201.connect([(myLocalTCWF, segWF, [ ('outputspec.t1_average', 'inputspec.t1_average'),
+                                               ('outputspec.atlasToSubjectRegistrationState','inputspec.atlasToSubjectRegistrationState'),
+                                               ('outputspec.outputLabels', 'inputspec.inputLabels'),
+                                               ('outputspec.posteriorImages', 'inputspec.posteriorImages'),
+                                               ('outputspec.outputHeadLabels', 'inputspec.inputHeadLabels')
+                                 ] ),
+                         (myLocalLMIWF,segWF, [('outputspec.atlasToSubjectTransform','inputspec.LMIatlasToSubject_tx')
+                                 ] ),
+                         (FixWMNode,segWF, [('UpdatedPosteriorsList','inputspec.UpdatedPosteriorsList')
+                                 ] ),
+                      ] )
+        if not onlyT1:
+            baw201.connect([(myLocalTCWF, segWF, [('outputspec.t2_average', 'inputspec.t2_average')])])
+
+
     if 'warp_atlas_to_subject' in master_config['components']:
         ##
         ##~/src/NEP-build/bin/BRAINSResample
@@ -308,14 +446,17 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, master_
         ##
         ##
 
+        ## TODO : SHOULD USE BRAINSCut transform that was refined even further!
+
         BResample = dict()
         AtlasLabelMapsToResample=[
-        'hncma_atlas',
-        'template_WMPM2_labels',
-        'template_nac_labels',
-        ]
+            'hncma_atlas',
+            'template_WMPM2_labels',
+            'template_nac_labels',
+            ]
         for atlasImage in AtlasLabelMapsToResample:
             BResample[atlasImage] = pe.Node(interface=BRAINSResample(), name="BRAINSResample_"+atlasImage)
+            BResample[atlasImage].plugin_args = {'qsub_args': modify_qsub_args(master_config['queue'], 1, 1, 1)}
             BResample[atlasImage].inputs.pixelType='short'
             BResample[atlasImage].inputs.interpolationMode='NearestNeighbor'
             BResample[atlasImage].inputs.outputVolume=atlasImage+".nii.gz"
@@ -327,12 +468,13 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, master_
             baw201.connect(BResample[atlasImage], 'outputVolume', DataSink, 'WarpedAtlas2Subject.@'+atlasImage)
 
         AtlasBinaryMapsToResample =[
-        'template_rightHemisphere',
-        'template_leftHemisphere',
-        'template_ventricles'
-        ]
+            'template_rightHemisphere',
+            'template_leftHemisphere',
+            'template_ventricles']
+
         for atlasImage in AtlasBinaryMapsToResample:
             BResample[atlasImage] = pe.Node(interface=BRAINSResample(), name="BRAINSResample_"+atlasImage)
+            BResample[atlasImage].plugin_args = {'qsub_args': modify_qsub_args(master_config['queue'], 1, 1, 1)}
             BResample[atlasImage].inputs.pixelType='binary'
             BResample[atlasImage].inputs.interpolationMode='Linear'  ## Conversion to distance map, so use linear to resample distance map
             BResample[atlasImage].inputs.outputVolume=atlasImage+".nii.gz"
@@ -342,5 +484,67 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, master_
             baw201.connect(myLocalTCWF,'outputspec.atlasToSubjectTransform', BResample[atlasImage], 'warpTransform')
             baw201.connect(BResample[atlasImage], 'outputVolume', DataSink, 'WarpedAtlas2Subject.@'+atlasImage)
 
+
+        BRAINSCutAtlasImages = [
+            'rho',
+            'phi',
+            'theta',
+            'l_caudate_ProbabilityMap',
+            'r_caudate_ProbabilityMap',
+            'l_hippocampus_ProbabilityMap',
+            'r_hippocampus_ProbabilityMap',
+            'l_putamen_ProbabilityMap',
+            'r_putamen_ProbabilityMap',
+            'l_thalamus_ProbabilityMap',
+            'r_thalamus_ProbabilityMap',
+            'l_accumben_ProbabilityMap',
+            'r_accumben_ProbabilityMap',
+            'l_globus_ProbabilityMap',
+            'r_globus_ProbabilityMap'
+            ]
+        for atlasImage in BRAINSCutAtlasImages:
+            BResample[atlasImage] = pe.Node(interface=BRAINSResample(), name="BCUTBRAINSResample_"+atlasImage)
+            BResample[atlasImage].plugin_args = {'qsub_args': modify_qsub_args(master_config['queue'], 1, 1, 1)}
+            BResample[atlasImage].inputs.pixelType='float'
+            BResample[atlasImage].inputs.interpolationMode='Linear'  ## Conversion to distance map, so use linear to resample distance map
+            BResample[atlasImage].inputs.outputVolume=atlasImage+".nii.gz"
+
+            baw201.connect(myLocalTCWF,'outputspec.t1_average', BResample[atlasImage], 'referenceVolume')
+            baw201.connect(atlasBCUTNode_W, atlasImage,         BResample[atlasImage], 'inputVolume')
+            baw201.connect(myLocalTCWF,'outputspec.atlasToSubjectTransform', BResample[atlasImage], 'warpTransform')
+            baw201.connect(BResample[atlasImage], 'outputVolume', DataSink, 'WarpedAtlas2Subject.@'+atlasImage)
+
+        ### Extract ventricles
+        def ExtractSubjectVentricles(ABCFixedLabelsFN, HDCMARegisteredVentricleMaskFN,outputFileName):
+            import SimpleITK as sitk
+            import os
+            ABCLabelsImage = sitk.Cast(sitk.ReadImage(ABCFixedLabelsFN), sitk.sitkUInt32)
+            HDCMARegisteredVentricleLabels = sitk.Cast(sitk.ReadImage(HDCMARegisteredVentricleMaskFN), sitk.sitkUInt32)
+            ABCCSFLabelCode = 4
+            HDMCALeftVentricleCode = 4
+            HDMCARightVentricleCode = 43
+            HDCMAMask = ( HDCMARegisteredVentricleLabels == HDMCALeftVentricleCode ) + (HDCMARegisteredVentricleLabels == HDMCARightVentricleCode)
+            ExpandVentValue = 5
+            HDCMAMask_d5 = sitk.DilateObjectMorphology(HDCMAMask, ExpandVentValue)
+            CSFMaskImage = (ABCLabelsImage == ABCCSFLabelCode)
+            VentricleMask = ( ( HDCMAMask_d5 * CSFMaskImage + HDCMAMask )  > 0 )
+            VentricleMask_d2 = sitk.DilateObjectMorphology(VentricleMask, 2)
+            ABCWMLabelCode = 1
+            WMMaskImage = (ABCLabelsImage == ABCWMLabelCode)
+
+            subcorticalRegions = ( ABCLabelsImage >= 12 ) # All subcortical regions are listed greater than equal to values of 12
+            WMSubcortFilled = ( ( WMMaskImage + subcorticalRegions ) > 0 )
+            LargestComponentCode = 1
+            WMSubcortFilled_CC = ( sitk.RelabelComponent(sitk.ConnectedComponent(WMSubcortFilled)) == LargestComponentCode )
+            WMSubcortFilled_CC_Ventricles = ( ( WMSubcortFilled_CC + VentricleMask_d2 ) > 0 )
+            neg_WMSubcortFilled_CC = ( 1 - WMSubcortFilled_CC )
+            neg_WMSubcortFilled_CC_bg = ( sitk.RelabelComponent(sitk.ConnectedComponent(neg_WMSubcortFilled_CC)) == LargestComponentCode )
+            neg_WMSubcortFilled_CC_bg_holes = (neg_WMSubcortFilled_CC - neg_WMSubcortFilled_CC_bg )
+
+            WM_Final = sitk.Cast( ( neg_WMSubcortFilled_CC_bg_holes + WMSubcortFilled_CC_Ventricles  > 0 ), sitk.sitkUInt32 )
+            full_outputFilename = os.path.abspath(outputFileName)
+            sitk.WriteImage(WM_Final,full_outputFilename)
+            ## TODO Add splitting into hemispheres code here
+            return full_outputFilename
 
     return baw201

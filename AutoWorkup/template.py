@@ -40,9 +40,10 @@ from baw_exp import OpenSubjectDatabase
 def get_processed_subjects( resultdir ):
     import glob
     # resultdir/subject_dir/Atlas/AVG_T1.nii.gz
-    sential_file_pattern = "*/Atlas/AVG_T1.nii.gz"
+    sential_file_pattern = "*/Atlas/AVG_template_rightHemisphere.nii.gz"
     processedSubjectsPaths = glob.glob( os.path.join(resultdir, sential_file_pattern) )
     processedSubjects = [ os.path.basename(os.path.dirname(os.path.dirname(s))) for s in processedSubjectsPaths ]
+    print("SKIPPING COMPLETED SUBJECTS: {0}".format(processedSubjects))
     return processedSubjects
 
 def get_subjects_sessions_dictionary(input_subjects, cache, resultdir, prefix, dbfile, useSentinal, shuffle=False):
@@ -66,7 +67,8 @@ def get_subjects_sessions_dictionary(input_subjects, cache, resultdir, prefix, d
         subject_sessions_dictionary[subject]=_temp.getSessionsFromSubject(subject)
     return subjects,subject_sessions_dictionary
 
-def MergeByExtendListElements(t1s, t2s, pds, fls, labels, posteriors):
+## Merge the different subjects together
+def MergeByExtendListElements(t1s, t2s, pds, fls, labels, posteriors, passive_intensities, passive_masks):
     """
     *** NOTE:  All input lists MUST have the same number of elements (even if they are null) ***
 
@@ -83,10 +85,11 @@ def MergeByExtendListElements(t1s, t2s, pds, fls, labels, posteriors):
                'LABEL_MAP': os.path.join(mydatadir, '03_T1_inv_half.nii.gz')
               }
              ]
-    labels = ['brain_label_seg.nii.gz', 'brain_label_seg.nii.gz']
-    pds = [None, None]
-    t1s = ['t1_average_BRAINSABC.nii.gz', 't1_average_BRAINSABC.nii.gz']
-    t2s = ['t2_average_BRAINSABC.nii.gz', 't2_average_BRAINSABC.nii.gz']
+    #          SUBJECT_01                    SUBJECT_02                        SUBJECT_03
+    labels = ['brain_label_seg.nii.gz',      'brain_label_seg.nii.gz',          ...      ]
+    pds    = [None,                          None,                              ...      ]
+    t1s    = ['t1_average_BRAINSABC.nii.gz', 't1_average_BRAINSABC.nii.gz',     ...      ]
+    t2s    = ['t2_average_BRAINSABC.nii.gz', 't2_average_BRAINSABC.nii.gz',     ...      ]
 
     """
     # print "t1s", t1s
@@ -106,26 +109,35 @@ def MergeByExtendListElements(t1s, t2s, pds, fls, labels, posteriors):
                             'FL': DefaultContinuousInterpolationType,
                             'BRAINMASK': 'MultiLabel'
                             }
-    for list_index in range(len(t1s)):
-        if t1s[list_index] is not None:
-            ListOfImagesDictionaries[list_index]['T1'] = t1s[list_index]
-        if isinstance(t2s, list) and t2s[list_index] is not None:
-            ListOfImagesDictionaries[list_index]['T2'] = t2s[list_index]
-        if isinstance(pds, list) and pds[list_index] is not None:
-            ListOfImagesDictionaries[list_index]['PD'] = pds[list_index]
-        if isinstance(fls, list) and fls[list_index] is not None:
-            ListOfImagesDictionaries[list_index]['FL'] = fls[list_index]
-        if labels[list_index] is not None:
-            ListOfImagesDictionaries[list_index]['BRAINMASK'] = labels[list_index]
-        print ListOfImagesDictionaries[list_index]
+    for subject_index in range(len(t1s)):
+        if t1s[subject_index] is not None:
+            ListOfImagesDictionaries[subject_index]['T1'] = t1s[subject_index]
+        if isinstance(t2s, list) and t2s[subject_index] is not None:
+            ListOfImagesDictionaries[subject_index]['T2'] = t2s[subject_index]
+        if isinstance(pds, list) and pds[subject_index] is not None:
+            ListOfImagesDictionaries[subject_index]['PD'] = pds[subject_index]
+        if isinstance(fls, list) and fls[subject_index] is not None:
+            ListOfImagesDictionaries[subject_index]['FL'] = fls[subject_index]
+        if labels[subject_index] is not None:
+            ListOfImagesDictionaries[subject_index]['BRAINMASK'] = labels[subject_index]
+        print ListOfImagesDictionaries[subject_index]
         for key, value in posteriors.items():
             # print "key:", key, " -> value:", value
-            ListOfImagesDictionaries[list_index][key] = value[list_index]
+            ListOfImagesDictionaries[subject_index][key] = value[subject_index]
+            interpolationMapping[key] = DefaultContinuousInterpolationType
+        for key, value in passive_intensities.items():
+            # print "key:", key, " -> value:", value
+            ListOfImagesDictionaries[subject_index][key] = value[subject_index]
+            interpolationMapping[key] = DefaultContinuousInterpolationType
+        for key, value in passive_masks.items():
+            # print "key:", key, " -> value:", value
+            ListOfImagesDictionaries[subject_index][key] = value[subject_index]
+            interpolationMapping[key] = 'MultiLabel'
 
     # print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
-    # print "ListOfImagesDictionaries", ListOfImagesDictionaries
-    # print "registrationImageTypes", registrationImageTypes
-    # print "interpolationMapping", interpolationMapping
+    #print "ListOfImagesDictionaries", ListOfImagesDictionaries
+    #print "registrationImageTypes", registrationImageTypes
+    #print "interpolationMapping", interpolationMapping
     return ListOfImagesDictionaries, registrationImageTypes, interpolationMapping
 
 
@@ -146,6 +158,7 @@ def _template_runner(argv, environment, experiment, pipeline_options, cluster):
             experiment['dbfile'],
             argv['--use-sentinal'], argv['--use-shuffle']
             ) # Build database before parallel section
+    useSentinal = argv['--use-sentinal']
     for thisSubject in subjects:
         print("Processing atlas generation for this subject: {0}".format(thisSubject))
         print("="*80)
@@ -170,9 +183,9 @@ def _template_runner(argv, environment, experiment, pipeline_options, cluster):
             print("TEMPORARY SKIPPING:  Not ready to process {0}".format(thisSubject))
             continue
 
-
+        base_output_directory = os.path.join(pipeline_options['logging']['log_directory'],thisSubject)
         template = pe.Workflow(name='SubjectAtlas_Template_'+thisSubject)
-        template.base_dir = os.path.join(pipeline_options['logging']['log_directory'],thisSubject)
+        template.base_dir = base_output_directory
 
         subjectNode = pe.Node(interface=IdentityInterface(fields=['subject']), run_without_submitting=True, name='99_subjectIterator')
         subjectNode.inputs.subject = thisSubject
@@ -186,7 +199,10 @@ def _template_runner(argv, environment, experiment, pipeline_options, cluster):
         baselineDG = pe.MapNode(nio.DataGrabber(infields=['subject','session'],
                                                 outfields=['t1_average', 't2_average', 'pd_average',
                                                            'fl_average', 'brainMaskLabels',
-                                                           'posteriorImages']),
+                                                           'posteriorImages','passive_intensities','passive_masks'],
+                                run_without_submitting=True
+                                ),
+                                run_without_submitting=True,
                                 iterfield=['session'], name='Baseline_DG')
 
         baselineDG.inputs.base_directory = experiment['previousresult']
@@ -195,25 +211,57 @@ def _template_runner(argv, environment, experiment, pipeline_options, cluster):
         baselineDG.inputs.template = '*'
         posterior_files = ['AIR', 'BASAL', 'CRBLGM', 'CRBLWM', 'CSF', 'GLOBUS', 'HIPPOCAMPUS',
                            'NOTCSF', 'NOTGM', 'NOTVB', 'NOTWM', 'SURFGM', 'THALAMUS', 'VB', 'WM']
+        passive_intensities_files = [
+            'rho.nii.gz',
+            'phi.nii.gz',
+            'theta.nii.gz',
+            'l_thalamus_ProbabilityMap.nii.gz',
+            'r_accumben_ProbabilityMap.nii.gz',
+            'l_globus_ProbabilityMap.nii.gz',
+            'l_accumben_ProbabilityMap.nii.gz',
+            'l_caudate_ProbabilityMap.nii.gz',
+            'l_putamen_ProbabilityMap.nii.gz',
+            'r_thalamus_ProbabilityMap.nii.gz',
+            'r_putamen_ProbabilityMap.nii.gz',
+            'r_caudate_ProbabilityMap.nii.gz',
+            'r_hippocampus_ProbabilityMap.nii.gz',
+            'r_globus_ProbabilityMap.nii.gz',
+            'l_hippocampus_ProbabilityMap.nii.gz'
+            ]
+        passive_mask_files = [
+            'template_WMPM2_labels.nii.gz',
+            'hncma_atlas.nii.gz',
+            'template_nac_labels.nii.gz',
+            'template_leftHemisphere.nii.gz',
+            'template_rightHemisphere.nii.gz',
+            'template_ventricles.nii.gz'
+            ]
+
         baselineDG.inputs.field_template = {'t1_average':'*/%s/%s/TissueClassify/t1_average_BRAINSABC.nii.gz',
                                             't2_average':'*/%s/%s/TissueClassify/t2_average_BRAINSABC.nii.gz',
                                             'pd_average':'*/%s/%s/TissueClassify/pd_average_BRAINSABC.nii.gz',
                                             'fl_average':'*/%s/%s/TissueClassify/fl_average_BRAINSABC.nii.gz',
                                        'brainMaskLabels':'*/%s/%s/TissueClassify/fixed_brainlabels_seg.nii.gz',
-                                       'posteriorImages':'*/%s/%s/TissueClassify/POSTERIOR_%s.nii.gz'
+                                       'posteriorImages':'*/%s/%s/TissueClassify/POSTERIOR_%s.nii.gz',
+                                   'passive_intensities':'*/%s/%s/WarpedAtlas2Subject/%s',
+                                         'passive_masks':'*/%s/%s/WarpedAtlas2Subject/%s'
                                        }
         baselineDG.inputs.template_args  = {'t1_average':[['subject','session']],
                                             't2_average':[['subject','session']],
                                             'pd_average':[['subject','session']],
                                             'fl_average':[['subject','session']],
                                        'brainMaskLabels':[['subject','session']],
-                                       'posteriorImages':[['subject','session', posterior_files]]
+                                       'posteriorImages':[['subject','session', posterior_files]],
+                                   'passive_intensities':[['subject','session', passive_intensities_files]],
+                                         'passive_masks':[['subject','session', passive_mask_files]]
                                        }
 
         MergeByExtendListElementsNode = pe.Node(Function(function=MergeByExtendListElements,
                                                          input_names=['t1s', 't2s',
                                                                       'pds', 'fls',
-                                                                      'labels', 'posteriors'],
+                                                                      'labels', 'posteriors',
+                                                                      'passive_intensities', 'passive_masks'
+                                                                      ],
                                                          output_names=['ListOfImagesDictionaries', 'registrationImageTypes',
                                                                        'interpolationMapping']),
                                                 run_without_submitting=True, name="99_MergeByExtendListElements")
@@ -221,12 +269,25 @@ def _template_runner(argv, environment, experiment, pipeline_options, cluster):
         template.connect([(subjectNode, baselineDG, [('subject', 'subject')]),
                           (subjectNode, sessionsExtractorNode, [('subject','subject')]),
                           (sessionsExtractorNode, baselineDG, [('sessions', 'session')]),
-                          (baselineDG, MergeByExtendListElementsNode, [('t1_average', 't1s'),
-                                                                       ('t2_average', 't2s'),
-                                                                       ('pd_average', 'pds'),
-                                                                       ('fl_average', 'fls'),
-                                                                       ('brainMaskLabels', 'labels'),
-                                                                       (('posteriorImages', ConvertSessionsListOfPosteriorListToDictionaryOfSessionLists), 'posteriors')])
+                          (baselineDG, MergeByExtendListElementsNode,
+                                    [('t1_average', 't1s'),
+                                     ('t2_average', 't2s'),
+                                     ('pd_average', 'pds'),
+                                     ('fl_average', 'fls'),
+                                     ('brainMaskLabels', 'labels'),
+                                     (('posteriorImages',
+                                        ConvertSessionsListOfPosteriorListToDictionaryOfSessionLists), 'posteriors')
+                                     ]),
+                          (baselineDG, MergeByExtendListElementsNode,
+                                     [
+                                      (('passive_intensities',
+                                        ConvertSessionsListOfPosteriorListToDictionaryOfSessionLists), 'passive_intensities')
+                                     ]),
+                          (baselineDG, MergeByExtendListElementsNode,
+                                     [
+                                     (('passive_masks',
+                                        ConvertSessionsListOfPosteriorListToDictionaryOfSessionLists), 'passive_masks')
+                                     ])
                         ])
 
         myInitAvgWF = pe.Node(interface=ants.AverageImages(), name='Atlas_antsSimpleAverage')  # was 'Phase1_antsSimpleAverage'
@@ -271,7 +332,8 @@ def _template_runner(argv, environment, experiment, pipeline_options, cluster):
                                                     'qsub_args': modify_qsub_args(cluster['queue'], 2, 2, 4)}
 
         # Running off previous baseline experiment
-        NACCommonAtlas = MakeAtlasNode(experiment['atlascache'], 'NACCommonAtlas_{0}'.format('subject'), 'TemplateBuildSupport') ## HACK : replace 'subject' with subject id once this is a loop rather than an iterable.
+        NACCommonAtlas = MakeAtlasNode(experiment['atlascache'], 'NACCommonAtlas_{0}'.format('subject'),
+                ['S_BRAINSABCSupport'] ) ## HACK : replace 'subject' with subject id once this is a loop rather than an iterable.
         template.connect([(myInitAvgWF, buildTemplateIteration1, [('output_average_image', 'inputspec.fixed_image')]),
                           (MergeByExtendListElementsNode, buildTemplateIteration1, [('ListOfImagesDictionaries', 'inputspec.ListOfImagesDictionaries'),
                                                                                     ('registrationImageTypes', 'inputspec.registrationImageTypes'),

@@ -47,13 +47,13 @@ def brainStem( tissueLabelFilename,
 
     #print ("imageSize : "+str(imageSize))
     #cropLower = (myLmkIndex['lat_right'][0],myLmkIndex['mid_lat'][1],0)
-    cropLower = (myLmkIndex['lat_right'][0],
+    cropLower = [myLmkIndex['lat_right'][0],
                  myLmkIndex['mid_lat'][1],
-                 myLmkIndex['dens_axis'][2])
+                 myLmkIndex['dens_axis'][2]]
     #cropUpper   = (myLmkIndex['lat_left'][0],myLmkIndex['mid_prim_sup'][1],myLmkIndex['PC'][2])
-    cropUpper   = (imageSize[0]-myLmkIndex['lat_left'][0],
+    cropUpper   = [imageSize[0]-myLmkIndex['lat_left'][0],
                    imageSize[1]-myLmkIndex['mid_prim_sup'][1],
-                   imageSize[2]-myLmkIndex['PC'][2])
+                   imageSize[2]-myLmkIndex['PC'][2]]
 
     print ("cropLower : "+str(cropLower))
     print ("cropUpper : "+str(cropUpper))
@@ -65,11 +65,12 @@ def brainStem( tissueLabelFilename,
 
     brainStem_connected=sitk.ConnectedComponent(brainStem)
     brainStem_largest_connected=sitk.BinaryThreshold(brainStem_connected,1,1)
-    #sitk.WriteImage(brainStem_connected,"./brainStem_connected.nii.gz")
-    print brainStemFilename
-    sitk.WriteImage(brainStem_largest_connected,brainStemFilename)
 
     outputBrainstemFilename = os.path.abspath( brainStemFilename )
+    #sitk.WriteImage(brainStem_connected,"./brainStem_connected.nii.gz")
+    print outputBrainstemFilename
+    sitk.WriteImage(brainStem_largest_connected,outputBrainstemFilename)
+
     return outputBrainstemFilename
 
 def CreateBrainstemWorkflow(WFname, CLUSTER_QUEUE, outputFilename):

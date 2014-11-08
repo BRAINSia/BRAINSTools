@@ -256,6 +256,7 @@ def BAWantsRegistrationTemplateBuildSingleIterationWF(iterationPhasePrefix=''):
     BeginANTS.inputs.winsorize_upper_quantile = 0.99
     BeginANTS.inputs.output_warped_image = 'atlas2subject.nii.gz'
     BeginANTS.inputs.output_inverse_warped_image = 'subject2atlas.nii.gz'
+    BeginANTS.inputs.save_state = 'SavedBeginANTSSyNState.h5'
 
     GetMovingImagesNode = pe.Node(interface=util.Function(function=GetMovingImages,
                                                           input_names=['ListOfImagesDictionaries', 'registrationImageTypes', 'interpolationMapping'],

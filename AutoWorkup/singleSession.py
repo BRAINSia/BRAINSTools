@@ -222,9 +222,10 @@ def createAndRun(sessions, environment, experiment, pipeline, cluster, useSentin
         print "!=" * 40
         for session in sessions:
             _dict = {}
+            subject = database.getSubjFromSession(session)
             _dict['session'] = session
             _dict['project'] = database.getProjFromSession(session)
-            _dict['subject'] = database.getSubjFromSession(session)
+            _dict['subject'] = subject
             _dict['T1s'] = database.getFilenamesByScantype(session, ['T1-15', 'T1-30'])
             _dict['T2s'] = database.getFilenamesByScantype(session, ['T2-15', 'T2-30'])
             _dict['PDs'] = database.getFilenamesByScantype(session, ['PD-15', 'PD-30'])
@@ -262,6 +263,18 @@ def createAndRun(sessions, environment, experiment, pipeline, cluster, useSentin
                     "WarpedAtlas2Subject",
                     "template_rightHemisphere.nii.gz"
                 )
+
+            if master_config['workflow_phase'] == 'atlas-based-reference':
+                atlasDirectory = master_config['atlascache']
+            else:
+                atlasDirectory = os.path.join(master_config['previousresult'],subject,'Atlas','AVG_T1.nii.gz')
+
+            if os.path.exists(atlasDirectory):
+                print "LOOKING FOR DIRECTORY {0}".format(atlasDirectory)
+            else:
+                print "MISSING REQUIRED ATLAS INPUT {0}".format(atlasDirectory)
+                print("SKIPPING: {0} prerequisites missing".format(session))
+                continue
 
             ## Use different sentinal file if segmentation specified.
             do_BRAINSCut_Segmentation = _DetermineIfSegmentationShouldBeDone(master_config)

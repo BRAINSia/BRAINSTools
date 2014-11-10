@@ -22,39 +22,46 @@
  * University of Iowa Health Care 2011
  */
 
-// This program gets n fcsv files as inputs. The first argument is the number of files. After that the fcsv file names
-// come consequently.
-// For instans if we have two landmark files as input:
+ /*
+  This program gets several fcsv file each one contains several landmarks with the same name but slightly different coordinates.
+  For EACH landmark we compute the average coordination.
 
-//              .../GenerateAverageLmkFile 2 lmk1.fcsv lmk2.fcsv
+  The final output of this program is a new landmark fcsv file which contains the average coordinate of each landmark.
 
-// We have several fcsv file each one contains several landmarks with the same name but slightly different coordinates
-// For EACH landmark we compute the average coordination.
-
-// The final output of this program is a new landmark fcsv file which contains the average coordinate of each landmark
+  Usage:
+  $/GenerateAverageLmkFile \
+    --inputLandmarkFiles lmk1.fcsv,lmk2.fcsv,...,lmkn.fcsv \
+    --outputLandmarkFile outputAveLmk.fcsv
+ */
 
 #include "itkImage.h"
 #include <cmath>
 #include "Slicer3LandmarkIO.h"
 
+#include "GenerateAverageLmkFileCLP.h"
+
 int main( int argc, char * argv[] )
 {
-  if( argc < 2 )
+  PARSE_ARGS;
+
+  std::vector<std::string> inputFileNames;
+  if( inputLandmarkFiles.size() > 0 )
     {
-    std::cerr << "Usage: GenerateAverageLmkFile <number of files> <file1> <file2> ... <filen>"
-              << std::endl;
-    exit(EXIT_FAILURE);
+    inputFileNames = inputLandmarkFiles;
     }
-
-  const unsigned int k = atoi(argv[1]);  // The number of input landmark files
-
-  if( argc != static_cast<int>(k + 2) )
+  else
     {
-    std::cout << "First argument indicates the number of input landmarks files.\n"
-              << "The number of input files inserted at the command line does not match." << std::endl;
-
+    std::cerr << "ERROR: No input file name is defined" << std::endl;
     return EXIT_FAILURE;
     }
+
+  const unsigned int k = inputFileNames.size(); // The number of input landmark files
+  if( k==0 )
+    {
+    std::cerr << "ERROR: Number of input landmark files is zero!" << std::endl;
+    return EXIT_FAILURE;
+    }
+  std::cout << "Computing the average file for " << k << " input landmark files..." << std::endl;
 
   unsigned int numNamedLandmarks = 0;
   double       x_ave, y_ave, z_ave;
@@ -71,7 +78,7 @@ int main( int argc, char * argv[] )
   LandmarksMapType temp;
   for( unsigned int i = 0; i < k; i++ )
     {
-    temp = ReadSlicer3toITKLmk( argv[i + 2] );
+    temp = ReadSlicer3toITKLmk( inputFileNames[i] );
     LandmarksMapVector.push_back(temp);
     }
 
@@ -105,13 +112,7 @@ int main( int argc, char * argv[] )
     LandmarksAverageMap[name][2] = z_ave;
     }
 
-  // writing the average of the landmarks in a new landmark file
-  std::string initialFileName = argv[2];
-  int         end = initialFileName.length() - 1;
-  std::string outputLandmarkFileName = "a" + initialFileName.substr(1, end);
-  // std::cout << outputLandmarkFileName << "is written to the disk." << std::endl;
-
-  WriteITKtoSlicer3Lmk( outputLandmarkFileName, LandmarksAverageMap );
+  WriteITKtoSlicer3Lmk( outputLandmarkFile, LandmarksAverageMap );
 
   return EXIT_SUCCESS;
 }

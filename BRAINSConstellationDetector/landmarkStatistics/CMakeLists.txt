@@ -2,11 +2,21 @@
 
 ## Build all the programs
 ##
-set(ALL_PROGS_LIST
+## Not CLP programs
+set(PROGS_LIST_1
   LmkStatistics
-  GenerateAverageLmkFile
   )
-foreach(prog ${ALL_PROGS_LIST})
+foreach(prog ${PROGS_LIST_1})
   add_executable(${prog} ${prog}.cxx)
   target_link_libraries(${prog} BRAINSCommonLib ${ITK_LIBRARIES} ${VTK_LIBRARIES})
+endforeach()
+
+## Simple CLP programs
+set(PROGS_LIST_2
+  GenerateAverageLmkFile
+  )
+
+foreach(prog ${PROGS_LIST_2})
+    StandardBRAINSBuildMacro(NAME ${prog}
+     TARGET_LIBRARIES landmarksConstellationCOMMONLIB BRAINSCommonLib ${VTK_LIBRARIES})
 endforeach()

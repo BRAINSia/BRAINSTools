@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>Testing</category>
+  <title>Average Fiducials</title>
+  <description>
+    This program gets several fcsv file each one contains several landmarks with the same name but slightly different coordinates. For EACH landmark we compute the average coordination.
+  </description>
+  <version> </version>
+  <documentation-url> </documentation-url>
+  <license> </license>
+  <contributor>Ali Ghayoor</contributor>
+<acknowledgements>
+</acknowledgements>
+
+  <parameters>
+    <label>IO</label>
+    <description>Input/output parameters</description>
+
+    <string-vector>
+      <name>inputLandmarkFiles</name>
+      <longflag>inputLandmarkFiles</longflag>
+      <label>Input file names</label>
+      <channel>input</channel>
+      <description>Input landmark files names (.fcsv or .wts)</description>
+    </string-vector>
+
+    <file>
+      <name>outputLandmarkFile</name>
+      <longflag>outputLandmarkFile</longflag>
+      <label>Output file name</label>
+      <channel>output</channel>
+      <description>Ouput landmark file name that includes average values for landmarks (.fcsv or .wts)</description>
+      <default>./outputAverageLandmark.fcsv</default>
+    </file>
+  </parameters>
+
+</executable>

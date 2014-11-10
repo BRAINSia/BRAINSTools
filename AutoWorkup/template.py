@@ -196,19 +196,47 @@ def _template_runner(argv, environment, experiment, pipeline_options, cluster):
                                        run_without_submitting=True, name="99_sessionsExtractor")
         sessionsExtractorNode.inputs.subject_session_dictionary = subjects_sessions_dictionary
 
-        baselineDG = pe.MapNode(nio.DataGrabber(infields=['subject','session'],
-                                                outfields=['t1_average', 't2_average', 'pd_average',
-                                                           'fl_average', 'brainMaskLabels',
-                                                           'posteriorImages','passive_intensities','passive_masks'],
+
+
+        baselineOptionalDG = pe.MapNode(nio.DataGrabber(infields=['subject','session'],
+                                                outfields=[ 't2_average', 'pd_average',
+                                                           'fl_average'],
+                                run_without_submitting=True
+                                ),
+                                run_without_submitting=True,
+                                iterfield=['session'], name='BaselineOptional_DG')
+
+        baselineOptionalDG.inputs.base_directory = experiment['previousresult']
+        baselineOptionalDG.inputs.sort_filelist = True
+        baselineOptionalDG.inputs.raise_on_empty = False
+        baselineOptionalDG.inputs.template = '*'
+
+        baselineOptionalDG.inputs.field_template = {
+                                            't2_average':'*/%s/%s/TissueClassify/t2_average_BRAINSABC.nii.gz',
+                                            'pd_average':'*/%s/%s/TissueClassify/pd_average_BRAINSABC.nii.gz',
+                                            'fl_average':'*/%s/%s/TissueClassify/fl_average_BRAINSABC.nii.gz'
+                                       }
+        baselineOptionalDG.inputs.template_args  = {
+                                            't2_average':[['subject','session']],
+                                            'pd_average':[['subject','session']],
+                                            'fl_average':[['subject','session']]
+                                       }
+
+
+
+        baselineRequiredDG = pe.MapNode(nio.DataGrabber(infields=['subject','session'],
+                                                outfields=['t1_average', 'brainMaskLabels',
+                                                           'posteriorImages','passive_intensities','passive_masks',
+                                                           'BCD_ACPC_Landmarks_fcsv'],
                                 run_without_submitting=True
                                 ),
                                 run_without_submitting=True,
                                 iterfield=['session'], name='Baseline_DG')
 
-        baselineDG.inputs.base_directory = experiment['previousresult']
-        baselineDG.inputs.sort_filelist = True
-        baselineDG.inputs.raise_on_empty = False
-        baselineDG.inputs.template = '*'
+        baselineRequiredDG.inputs.base_directory = experiment['previousresult']
+        baselineRequiredDG.inputs.sort_filelist = True
+        baselineRequiredDG.inputs.raise_on_empty = True
+        baselineRequiredDG.inputs.template = '*'
         posterior_files = ['AIR', 'BASAL', 'CRBLGM', 'CRBLWM', 'CSF', 'GLOBUS', 'HIPPOCAMPUS',
                            'NOTCSF', 'NOTGM', 'NOTVB', 'NOTWM', 'SURFGM', 'THALAMUS', 'VB', 'WM']
         passive_intensities_files = [
@@ -237,20 +265,16 @@ def _template_runner(argv, environment, experiment, pipeline_options, cluster):
             'template_ventricles.nii.gz'
             ]
 
-        baselineDG.inputs.field_template = {'t1_average':'*/%s/%s/TissueClassify/t1_average_BRAINSABC.nii.gz',
-                                            't2_average':'*/%s/%s/TissueClassify/t2_average_BRAINSABC.nii.gz',
-                                            'pd_average':'*/%s/%s/TissueClassify/pd_average_BRAINSABC.nii.gz',
-                                            'fl_average':'*/%s/%s/TissueClassify/fl_average_BRAINSABC.nii.gz',
+        baselineRequiredDG.inputs.field_template = {'t1_average':'*/%s/%s/TissueClassify/t1_average_BRAINSABC.nii.gz',
                                        'brainMaskLabels':'*/%s/%s/TissueClassify/fixed_brainlabels_seg.nii.gz',
+                               'BCD_ACPC_Landmarks_fcsv':'*/%s/%s/ACPCAlign/BCD_ACPC_Landmarks.fcsv',
                                        'posteriorImages':'*/%s/%s/TissueClassify/POSTERIOR_%s.nii.gz',
                                    'passive_intensities':'*/%s/%s/WarpedAtlas2Subject/%s',
-                                         'passive_masks':'*/%s/%s/WarpedAtlas2Subject/%s'
+                                         'passive_masks':'*/%s/%s/WarpedAtlas2Subject/%s',
                                        }
-        baselineDG.inputs.template_args  = {'t1_average':[['subject','session']],
-                                            't2_average':[['subject','session']],
-                                            'pd_average':[['subject','session']],
-                                            'fl_average':[['subject','session']],
+        baselineRequiredDG.inputs.template_args  = {'t1_average':[['subject','session']],
                                        'brainMaskLabels':[['subject','session']],
+                               'BCD_ACPC_Landmarks_fcsv':[['subject','session']],
                                        'posteriorImages':[['subject','session', posterior_files]],
                                    'passive_intensities':[['subject','session', passive_intensities_files]],
                                          'passive_masks':[['subject','session', passive_mask_files]]
@@ -266,24 +290,29 @@ def _template_runner(argv, environment, experiment, pipeline_options, cluster):
                                                                        'interpolationMapping']),
                                                 run_without_submitting=True, name="99_MergeByExtendListElements")
 
-        template.connect([(subjectNode, baselineDG, [('subject', 'subject')]),
+        template.connect([(subjectNode, baselineRequiredDG, [('subject', 'subject')]),
+                          (subjectNode, baselineOptionalDG, [('subject', 'subject')]),
                           (subjectNode, sessionsExtractorNode, [('subject','subject')]),
-                          (sessionsExtractorNode, baselineDG, [('sessions', 'session')]),
-                          (baselineDG, MergeByExtendListElementsNode,
+                          (sessionsExtractorNode, baselineRequiredDG, [('sessions', 'session')]),
+                          (sessionsExtractorNode, baselineOptionalDG, [('sessions', 'session')]),
+                          (baselineRequiredDG, MergeByExtendListElementsNode,
                                     [('t1_average', 't1s'),
-                                     ('t2_average', 't2s'),
-                                     ('pd_average', 'pds'),
-                                     ('fl_average', 'fls'),
                                      ('brainMaskLabels', 'labels'),
                                      (('posteriorImages',
                                         ConvertSessionsListOfPosteriorListToDictionaryOfSessionLists), 'posteriors')
                                      ]),
-                          (baselineDG, MergeByExtendListElementsNode,
+                          (baselineOptionalDG, MergeByExtendListElementsNode,
+                                    [
+                                     ('t2_average', 't2s'),
+                                     ('pd_average', 'pds'),
+                                     ('fl_average', 'fls')
+                                     ]),
+                          (baselineRequiredDG, MergeByExtendListElementsNode,
                                      [
                                       (('passive_intensities',
                                         ConvertSessionsListOfPosteriorListToDictionaryOfSessionLists), 'passive_intensities')
                                      ]),
-                          (baselineDG, MergeByExtendListElementsNode,
+                          (baselineRequiredDG, MergeByExtendListElementsNode,
                                      [
                                      (('passive_masks',
                                         ConvertSessionsListOfPosteriorListToDictionaryOfSessionLists), 'passive_masks')
@@ -293,7 +322,7 @@ def _template_runner(argv, environment, experiment, pipeline_options, cluster):
         myInitAvgWF = pe.Node(interface=ants.AverageImages(), name='Atlas_antsSimpleAverage')  # was 'Phase1_antsSimpleAverage'
         myInitAvgWF.inputs.dimension = 3
         myInitAvgWF.inputs.normalize = True
-        template.connect(baselineDG, 't1_average', myInitAvgWF, "images")
+        template.connect(baselineRequiredDG, 't1_average', myInitAvgWF, "images")
         ####################################################################################################
         # TEMPLATE_BUILD_RUN_MODE = 'MULTI_IMAGE'
         # if numSessions == 1:
@@ -348,6 +377,12 @@ def _template_runner(argv, environment, experiment, pipeline_options, cluster):
                                                                                ('outputspec.passive_deformed_templates', 'deformed_list')]),
                           ])
 
+
+        ## Genearate an average lmks file.
+        myAverageLmk = pe.Node(interface = GenerateAverageLmkFile(), name="myAverageLmk" )
+        myAverageLmk.inputs.outputLandmarkFile = "AVG_LMKS.fcsv"
+        template.connect(baselineRequiredDG,'BCD_ACPC_Landmarks_fcsv',myAverageLmk,'inputLandmarkFiles')
+
         # Create DataSinks
         SubjectAtlas_DataSink = pe.Node(nio.DataSink(), name="Subject_DS")
         SubjectAtlas_DataSink.overwrite = pipeline_options['ds_overwrite']
@@ -359,6 +394,7 @@ def _template_runner(argv, environment, experiment, pipeline_options, cluster):
 
                           (subjectNode, SubjectAtlas_DataSink, [(('subject', outputPattern), 'regexp_substitutions')]),
                           (buildTemplateIteration2, SubjectAtlas_DataSink, [('outputspec.template', 'Atlas.@template')]),
+                          (myAverageLmk,SubjectAtlas_DataSink,[('outputLandmarkFile','Atlas.@outputLandmarkFile')]),
                          ])
 
         dotfilename = argv['--dotfilename']
@@ -394,6 +430,6 @@ if __name__ == '__main__':
     from workflows.utils import run_workflow, print_workflow
     from BAWantsRegistrationBuildTemplate import BAWantsRegistrationTemplateBuildSingleIterationWF
     from utilities.configFileParser import nipype_options
-
+    from SEMTools.testing.generateaveragelmkfile import GenerateAverageLmkFile
     exit = _template_runner(argv, environment, experiment, pipeline, cluster)
     sys.exit(exit)

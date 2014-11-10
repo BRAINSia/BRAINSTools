@@ -143,45 +143,152 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
         atlasABCNode_XML = MakeAtlasNode(atlas_warped_directory, 'BABCXMLAtlas_{0}'.format(sessionid),
           ['W_BRAINSABCSupport'])
         baw201.connect(atlasABCNode_XML,'ExtendedAtlasDefinition_xml',inputsSpec,'atlasDefinition')
+
+        atlasABCNode_W = MakeAtlasNode(atlas_warped_directory, 'BABCAtlas_W{0}'.format(sessionid),
+            ['W_BRAINSABCSupport','W_LabelMapsSupport'])
+        baw201.connect([( atlasABCNode_W,inputsSpec, [
+                                                ('hncma_atlas','hncma_atlas'),
+                                                ('template_leftHemisphere','template_leftHemisphere'),
+                                                ('template_rightHemisphere','template_rightHemisphere'),
+                                                ('template_WMPM2_labels','template_WMPM2_labels'),
+                                                ('template_nac_labels','template_nac_labels'),
+                                                ('template_ventricles','template_ventricles') ]
+                                 )]
+                                )
+        ## These landmarks are only relevant for the atlas-based-reference case
+        atlasBCDNode_W = MakeAtlasNode(atlas_warped_directory, 'BBCDAtlas_W{0}'.format(sessionid),
+            ['W_BCDSupport'])
+        baw201.connect([(atlasBCDNode_W, inputsSpec,
+                              [('template_t1', 'template_t1'),
+                               ('template_landmarks_50Lmks_fcsv','atlasLandmarkFilename'),
+                               ]),
+                             ])
+        ## Needed for both segmentation and template building prep
+        atlasBCUTNode_W = MakeAtlasNode(atlas_warped_directory,
+                                  'BBCUTAtlas_W{0}'.format(sessionid), ['W_BRAINSCutSupport'])
+
+
+
     elif master_config['workflow_phase'] == 'subject-based-reference':
         print master_config['previousresult']
         atlas_warped_directory = os.path.join(master_config['previousresult'],subjectid,'Atlas')
 
-        ## TODO: THIS NEEDS WORK!
+
+        atlasBCUTNode_W = pe.Node(interface=nio.DataGrabber(infields=['subject'],
+                                                            outfields=[
+                                                                "l_accumben_ProbabilityMap",
+                                                                "r_accumben_ProbabilityMap",
+                                                                "l_caudate_ProbabilityMap",
+                                                                "r_caudate_ProbabilityMap",
+                                                                "l_globus_ProbabilityMap",
+                                                                "r_globus_ProbabilityMap",
+                                                                "l_hippocampus_ProbabilityMap",
+                                                                "r_hippocampus_ProbabilityMap",
+                                                                "l_putamen_ProbabilityMap",
+                                                                "r_putamen_ProbabilityMap",
+                                                                "l_thalamus_ProbabilityMap",
+                                                                "r_thalamus_ProbabilityMap",
+                                                                "phi",
+                                                                "rho",
+                                                                "theta"
+                                                                   ]),
+                              name='PerSubject_atlasBCUTNode_W')
+        atlasBCUTNode_W.inputs.base_directory = master_config['previousresult']
+        atlasBCUTNode_W.inputs.subject = subjectid
+        atlasBCUTNode_W.inputs.field_template ={
+                                        'l_accumben_ProbabilityMap':'%s/Atlas/AVG_l_accumben_ProbabilityMap.nii.gz',
+                                        'r_accumben_ProbabilityMap':'%s/Atlas/AVG_r_accumben_ProbabilityMap.nii.gz',
+                                         'l_caudate_ProbabilityMap':'%s/Atlas/AVG_l_caudate_ProbabilityMap.nii.gz',
+                                          'l_globus_ProbabilityMap':'%s/Atlas/AVG_l_globus_ProbabilityMap.nii.gz',
+                                          'r_globus_ProbabilityMap':'%s/Atlas/AVG_r_globus_ProbabilityMap.nii.gz',
+                                     'l_hippocampus_ProbabilityMap':'%s/Atlas/AVG_l_hippocampus_ProbabilityMap.nii.gz',
+                                     'r_hippocampus_ProbabilityMap':'%s/Atlas/AVG_r_hippocampus_ProbabilityMap.nii.gz',
+                                         'l_putamen_ProbabilityMap':'%s/Atlas/AVG_l_putamen_ProbabilityMap.nii.gz',
+                                         'r_putamen_ProbabilityMap':'%s/Atlas/AVG_r_putamen_ProbabilityMap.nii.gz',
+                                        'l_thalamus_ProbabilityMap':'%s/Atlas/AVG_l_thalamus_ProbabilityMap.nii.gz',
+                                        'r_thalamus_ProbabilityMap':'%s/Atlas/AVG_r_thalamus_ProbabilityMap.nii.gz',
+                                                              'phi':'%s/Atlas/AVG_phi.nii.gz',
+                                                              'rho':'%s/Atlas/AVG_rho.nii.gz',
+                                                            'theta':'%s/Atlas/AVG_theta.nii.gz'
+                                     }
+        atlasBCUTNode_W.inputs.template_args = {
+                                        'l_accumben_ProbabilityMap':[['subject']],
+                                        'r_accumben_ProbabilityMap':[['subject']],
+                                         'l_caudate_ProbabilityMap':[['subject']],
+                                          'l_globus_ProbabilityMap':[['subject']],
+                                          'r_globus_ProbabilityMap':[['subject']],
+                                     'l_hippocampus_ProbabilityMap':[['subject']],
+                                     'r_hippocampus_ProbabilityMap':[['subject']],
+                                         'l_putamen_ProbabilityMap':[['subject']],
+                                         'r_putamen_ProbabilityMap':[['subject']],
+                                        'l_thalamus_ProbabilityMap':[['subject']],
+                                        'r_thalamus_ProbabilityMap':[['subject']],
+                                                              'phi':[['subject']],
+                                                              'rho':[['subject']],
+                                                            'theta':[['subject']]
+                                    }
+        atlasBCUTNode_W.inputs.template = '*'
+        atlasBCUTNode_W.inputs.sort_filelist = True
+        atlasBCUTNode_W.inputs.raise_on_empty = True
+
         template_DG = pe.Node(interface=nio.DataGrabber(infields=['subject'],
-                                                        outfields=['outAtlasXMLFullPath']),
+                                                        outfields=['outAtlasXMLFullPath',
+                                                                   'hncma_atlas',
+                                                                   'template_leftHemisphere',
+                                                                   'template_rightHemisphere',
+                                                                   'template_WMPM2_labels',
+                                                                   'template_nac_labels',
+                                                                   'template_ventricles',
+                                                                   'template_t1',
+                                                                   'template_landmarks_50Lmks_fcsv'
+                                                                   ]),
                               name='Template_DG')
         template_DG.inputs.base_directory = master_config['previousresult']
         template_DG.inputs.subject = subjectid
-        template_DG.inputs.template = '%s/Atlas/AtlasDefinition_%s.xml'
-        template_DG.inputs.template_args['outAtlasXMLFullPath'] = [['subject', 'subject']]
+        template_DG.inputs.field_template ={'outAtlasXMLFullPath':'%s/Atlas/AtlasDefinition_%s.xml',
+                                                    'hncma_atlas':'%s/Atlas/AVG_hncma_atlas.nii.gz',
+                                        'template_leftHemisphere':'%s/Atlas/AVG_template_leftHemisphere.nii.gz',
+                                       'template_rightHemisphere':'%s/Atlas/AVG_template_rightHemisphere.nii.gz',
+                                          'template_WMPM2_labels':'%s/Atlas/AVG_template_WMPM2_labels.nii.gz',
+                                            'template_nac_labels':'%s/Atlas/AVG_template_nac_labels.nii.gz',
+                                            'template_ventricles':'%s/Atlas/AVG_template_ventricles.nii.gz',
+                                                    'template_t1':'%s/Atlas/AVG_T1.nii.gz',
+                                 'template_landmarks_50Lmks_fcsv':'%s/Atlas/AVG_LMKS.fcsv',
+                                             }
+        template_DG.inputs.template_args = {'outAtlasXMLFullPath':[['subject', 'subject']],
+                                                    'hncma_atlas':[['subject']],
+                                        'template_leftHemisphere':[['subject']],
+                                       'template_rightHemisphere':[['subject']],
+                                          'template_WMPM2_labels':[['subject']],
+                                            'template_nac_labels':[['subject']],
+                                            'template_ventricles':[['subject']],
+                                                    'template_t1':[['subject']],
+                                 'template_landmarks_50Lmks_fcsv':[['subject']]
+                                            }
+        template_DG.inputs.template = '*'
         template_DG.inputs.sort_filelist = True
         template_DG.inputs.raise_on_empty = True
 
-        baw201.connect(template_DG, 'outAtlasXMLFullPath',
-                                inputsSpec, 'atlasDefinition')
+        baw201.connect(template_DG, 'outAtlasXMLFullPath', inputsSpec, 'atlasDefinition')
+        baw201.connect([(template_DG,inputsSpec, [
+                                                ('hncma_atlas','hncma_atlas'),
+                                                ('template_leftHemisphere','template_leftHemisphere'),
+                                                ('template_rightHemisphere','template_rightHemisphere'),
+                                                ('template_WMPM2_labels','template_WMPM2_labels'),
+                                                ('template_nac_labels','template_nac_labels'),
+                                                ('template_ventricles','template_ventricles') ]
+                                 )]
+                                )
+        ## These landmarks are only relevant for the atlas-based-reference case
+        baw201.connect([(template_DG, inputsSpec,
+                              [('template_t1', 'template_t1'),
+                               ('template_landmarks_50Lmks_fcsv','atlasLandmarkFilename'),
+                               ]),
+                             ])
+
     else:
         assert 0 == 1, "Invalid workflow type specified for singleSession"
 
-    atlasABCNode_W = MakeAtlasNode(atlas_warped_directory, 'BABCAtlas_W{0}'.format(sessionid),
-        ['W_BRAINSABCSupport','W_LabelMapsSupport'])
-    baw201.connect([( atlasABCNode_W,inputsSpec, [
-                                            ('hncma_atlas','hncma_atlas'),
-                                            ('template_leftHemisphere','template_leftHemisphere'),
-                                            ('template_rightHemisphere','template_rightHemisphere'),
-                                            ('template_WMPM2_labels','template_WMPM2_labels'),
-                                            ('template_nac_labels','template_nac_labels'),
-                                            ('template_ventricles','template_ventricles') ]
-                             )]
-                            )
-    ## These landmarks are only relevant for the atlas-based-reference case
-    atlasBCDNode_W = MakeAtlasNode(atlas_warped_directory, 'BBCDAtlas_W{0}'.format(sessionid),
-        ['W_BCDSupport'])
-    baw201.connect([(atlasBCDNode_W, inputsSpec,
-                          [('template_t1', 'template_t1'),
-                           ('template_landmarks_50Lmks_fcsv','atlasLandmarkFilename'),
-                           ]),
-                         ])
     atlasBCDNode_S = MakeAtlasNode(atlas_static_directory, 'BBCDAtlas_S{0}'.format(sessionid),
         ['S_BCDSupport'])
     baw201.connect([(atlasBCDNode_S, inputsSpec,
@@ -190,9 +297,7 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
                            ('T1_50Lmks_mdl', 'inputTemplateModel')
                            ]),
                          ])
-    ## Needed for both segmentation and template building prep
-    atlasBCUTNode_W = MakeAtlasNode(atlas_warped_directory,
-                                  'BBCUTAtlas_W{0}'.format(sessionid), ['W_BRAINSCutSupport'])
+
 
     if doDenoise:
         print    """
@@ -387,9 +492,6 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
         sname = 'segmentation'
 
         segWF = segmentation(projectid, subjectid, sessionid, master_config, onlyT1, pipeline_name=sname)
-        ##TODO: baw201.connect(WsegWF)
-        print("ERROR:  WRONG ATLAS INFORMATION!! Need to make new atlas information here from averages")
-        sys.exit(-1)
 
         baw201.connect([(atlasBCUTNode_W, segWF,
                                 [
@@ -413,7 +515,7 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
                                 ]
                        )])
 
-        atlasBCUTNode_S = MakeAtlasNode('XXXX',
+        atlasBCUTNode_S = MakeAtlasNode(atlas_static_directory,
                                       'BBCUTAtlas_S{0}'.format(sessionid), ['S_BRAINSCutSupport'])
         baw201.connect(atlasBCUTNode_S, 'trainModelFile_txtD0060NT0060_gz',
                        segWF, bCutInputName + '.trainModelFile_txtD0060NT0060_gz')

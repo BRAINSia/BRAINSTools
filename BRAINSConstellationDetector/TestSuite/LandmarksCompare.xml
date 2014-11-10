@@ -24,13 +24,13 @@
       <description>First input landmark file (.fcsv or .wts)</description>
     </file>
 
-    <file>
+    <string-vector>
       <name>inputLandmarkFile2</name>
       <longflag>--inputLandmarkFile2</longflag>
       <label>Second input file</label>
       <channel>input</channel>
-      <description>Second input landmark file (.fcsv or .wts)</description>
-    </file>
+      <description>Second input landmark file. This can be a vector of baseline file names (.fcsv or .wts)</description>
+    </string-vector>
 
     <double>
       <name>tolerance</name>

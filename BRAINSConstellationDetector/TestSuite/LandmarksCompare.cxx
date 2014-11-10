@@ -28,60 +28,89 @@ int main( int argc, char * argv[] )
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
 
-  // load corresponding landmarks in EMSP aligned space from file if possible
-  const LandmarksMapType landmarks1 = ReadSlicer3toITKLmk( inputLandmarkFile1 );
-  const LandmarksMapType landmarks2 = ReadSlicer3toITKLmk( inputLandmarkFile2 );
+  // inputLandmarkFile2 can contain several baselines, and this program is modified
+  // to work with different baselines
+  std::vector<std::string> inputLandmarkFile2Names;
+  inputLandmarkFile2Names = inputLandmarkFile2;
 
-  if( landmarks1.empty() )
+  const unsigned int numBaselines = inputLandmarkFile2Names.size(); // The number of landmark baseline files
+  if( numBaselines == 0 )
     {
-    std::cout << "ERROR: " << inputLandmarkFile1 << " is empty" << std::endl;
+    std::cerr << "ERROR: No input baseline file is defined!" << std::endl;
     return EXIT_FAILURE;
     }
-  if( landmarks2.empty() )
+
+  bool testIterationIsPassed = false;
+
+  for( unsigned int l = 0; l < numBaselines; ++l)
+     {
+     std::cout << "\nCompare the input landmark file with the baseline files number: " << l+1 << std::endl;
+
+     // load corresponding landmarks in EMSP aligned space from file if possible
+     const LandmarksMapType landmarks1 = ReadSlicer3toITKLmk( inputLandmarkFile1 );
+     const LandmarksMapType landmarks2 = ReadSlicer3toITKLmk( inputLandmarkFile2Names[l] );
+
+     if( landmarks1.empty() )
+       {
+       std::cout << "ERROR: " << inputLandmarkFile1 << " is empty" << std::endl;
+       return EXIT_FAILURE;
+       }
+     if( landmarks2.empty() )
+       {
+       std::cout << "ERROR: " << inputLandmarkFile2Names[l] << " is empty" << std::endl;
+       return EXIT_FAILURE;
+       }
+     if( landmarks1.size() != landmarks2.size() )
+       {
+       std::cout << "ERROR: number of landmarks differ." << std::endl;
+       return EXIT_FAILURE;
+       }
+     LandmarksMapType::const_iterator lmk1iter = landmarks1.begin();
+     bool allSame = true;
+     while( lmk1iter != landmarks1.end() )
+       {
+       const LandmarksMapType::const_iterator lmk2iter = landmarks2.find(lmk1iter->first);
+       if ( lmk2iter == landmarks2.end() )
+         {
+         std::cout << "Missing landmark in second file" << lmk1iter->first << std::endl;
+         allSame = false;
+         continue;
+         }
+       else
+         {
+         bool thisLmkOK = true;
+         for( unsigned int i = 0 ; i < 3 ; ++i )
+           {
+           const double error_term = vcl_abs(lmk1iter->second[i] - lmk2iter->second[i]);
+           if ( error_term > tolerance )
+             {
+             std::cout << "\nFAIL: lmk" << lmk1iter->first << "[" << i << "] differ by greater than tolerance" << std::endl;
+             std::cout << "FAIL: | "<< lmk1iter->second[i] << " - " << lmk2iter->second[i] << " | = " << error_term << " is greater than " << tolerance << std::endl;
+             allSame = false;
+             thisLmkOK = false;
+             }
+           }
+         if (thisLmkOK)
+           {
+           std::cout << "PASS:  lmk" << lmk1iter->first << std::endl;
+           }
+         }
+       ++lmk1iter;
+       }
+     if( allSame )
+       {
+       std::cout << "The input landmark file is identical to the baseline file: " << l+1 << "!" << std::endl;
+       testIterationIsPassed = true;
+       break;
+       }
+      else
+       {
+       std::cout << "WARINING: The input landmark file is too different than the baseline file: " << l+1 << "!" << std::endl;
+       }
+     }
+
+  if( testIterationIsPassed )
     {
-    std::cout << "ERROR: " << inputLandmarkFile2 << " is empty" << std::endl;
-    return EXIT_FAILURE;
-    }
-  if( landmarks1.size() != landmarks2.size() )
-    {
-    std::cout << "ERROR: number of landmarks differ." << std::endl;
-    return EXIT_FAILURE;
-    }
-  LandmarksMapType::const_iterator lmk1iter = landmarks1.begin();
-  bool allSame = true;
-  while( lmk1iter != landmarks1.end() )
-    {
-    const LandmarksMapType::const_iterator lmk2iter = landmarks2.find(lmk1iter->first);
-    if ( lmk2iter == landmarks2.end() )
-      {
-      std::cout << "Missing landmark in second file" << lmk1iter->first << std::endl;
-      allSame = false;
-      continue;
-      }
-    else
-      {
-      bool thisLmkOK = true;
-      for( unsigned int i = 0 ; i < 3 ; ++i )
-        {
-        const double error_term = vcl_abs(lmk1iter->second[i] - lmk2iter->second[i]);
-        if ( error_term > tolerance )
-          {
-          std::cout << "\nFAIL: lmk" << lmk1iter->first << "[" << i << "] differ by greater than tolerance" << std::endl;
-          std::cout << "FAIL: | "<< lmk1iter->second[i] << " - " << lmk2iter->second[i] << " | = " << error_term << " is greater than " << tolerance << std::endl;
-          allSame = false;
-          thisLmkOK = false;
-          }
-        }
-      if (thisLmkOK)
-        {
-        std::cout << "PASS:  lmk" << lmk1iter->first << std::endl;
-        }
-      }
-    ++lmk1iter;
-    }
-  if( allSame )
-    {
-    std::cout << "The landmark files are identical!" << std::endl;
     return EXIT_SUCCESS;
     }
   else

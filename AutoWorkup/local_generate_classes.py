@@ -13,6 +13,7 @@ print """for i in $(find ${BRAINS_SRC}/AutoWorkup/SEMTools  -name "*.py"); do  a
 
 
 all_known_modules_list = [
+'GenerateAverageLmkFile',
 'ResampleDTILogEuclidean',
 'UnbiasedNonLocalMeans',
 #'BatchMake',

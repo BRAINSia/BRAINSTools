@@ -155,6 +155,12 @@
       <description><![CDATA[If a gradient magnitude is greater than 0 and less than smallGradientThreshold, then DWIConvert will display an error message and quit, unless the useBMatrixGradientDirections option is set.]]></description>
       <default>0.2</default>
     </double>
+    <boolean>
+      <name>transpose</name>
+      <longflag>transposeInputBVectors</longflag>
+      <label>Transpose Input BVectors</label>
+      <default>false</default>
+      <description><![CDATA[FSL input BVectors are expected to be encoded in the input file as one vector per line. If it is not the case, use this option to transpose the file as it is read]]></description>
+    </boolean>
   </parameters>
-
 </executable>

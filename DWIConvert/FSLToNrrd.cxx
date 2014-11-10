@@ -39,7 +39,9 @@ FSLToNrrd(const std::string & inputVolume,
           const std::string & outputVolume,
           const std::string & fslNIFTIFile,
           const std::string & inputBValues,
-          const std::string & inputBVectors)
+          const std::string & inputBVectors,
+          bool transpose
+         )
 {
   if( (CheckArg<std::string>("Input Volume", inputVolume, "") == EXIT_FAILURE &&
        CheckArg<std::string>("Input Volume", fslNIFTIFile, "") == EXIT_FAILURE) ||
@@ -87,7 +89,7 @@ FSLToNrrd(const std::string & inputVolume,
     {
     return EXIT_FAILURE;
     }
-  if( ReadBVecs(BVecs, bVecCount, _inputBVectors) != EXIT_SUCCESS )
+  if( ReadBVecs(BVecs, bVecCount, _inputBVectors,transpose) != EXIT_SUCCESS )
     {
     return EXIT_FAILURE;
     }

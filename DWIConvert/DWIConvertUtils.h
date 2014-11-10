@@ -28,6 +28,7 @@
 #include "vcl_cmath.h"
 #include <iostream>
 #include <sstream>
+#include <iterator>
 #include <iomanip>
 #include <string>
 #include "itkNumberToString.h"
@@ -297,7 +298,7 @@ ReadBVals(std::vector<double> & bVals, unsigned int & bValCount, const std::stri
 
 inline
 int
-ReadBVecs(std::vector<std::vector<double> > & bVecs, unsigned int & bVecCount, const std::string & bVecFilename)
+ReadBVecs(std::vector<std::vector<double> > & bVecs, unsigned int & bVecCount, const std::string & bVecFilename , bool transpose )
 {
   std::ifstream bVecFile(bVecFilename.c_str(), std::ifstream::in);
 
@@ -306,32 +307,80 @@ ReadBVecs(std::vector<std::vector<double> > & bVecs, unsigned int & bVecCount, c
     std::cerr << "Failed to open " << bVecFilename
               << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   bVecs.clear();
   bVecCount = 0;
-  while( !bVecFile.eof() )
-    {
-    std::vector<double> x;
-    for( unsigned i = 0; i < 3; ++i )
+  if( transpose )
+  {
+    std::vector<std::vector<double> > bVecst( 3 ) ;
+      for( unsigned i = 0 ; i < 3 ; i++ )
       {
-      double val;
-      bVecFile >> val;
-      if( bVecFile.fail() )
-        {
-        break;
-        }
-      x.push_back(val);
+          std::string bvect;
+          std::getline(bVecFile, bvect);
+          bool error = false ;
+          if( bVecFile.fail() )
+          {
+              return EXIT_FAILURE ;
+          }
+          std::istringstream issLineToString(bvect);
+          for( std::istream_iterator<std::string> it = std::istream_iterator<std::string>(issLineToString); it != std::istream_iterator<std::string>(); it++ )
+          {
+              std::istringstream iss( *it ) ;
+              double val ;
+              iss >> val ;
+              if( iss.fail() )
+              {
+                  error = true ;
+                  break;
+              }
+              bVecst[ i ].push_back( val ) ;
+          }
+          if( error )
+          {
+              break ;
+          }
       }
-    if( bVecFile.fail() )
+      for( unsigned int i = 1 ; i < 3 ; i++ )
       {
-      break;
+          if( bVecst[ i ].size() !=  bVecst[ 0 ].size() )
+          {
+              return EXIT_FAILURE ;
+          }
       }
-    bVecCount++;
-    bVecs.push_back(x);
-    }
-
+      bVecCount = bVecst[ 0 ].size() ;
+      for( unsigned int i = 0 ; i < bVecCount ; i++ )
+      {
+          double list[] = {bVecst[0][i],bVecst[1][i],bVecst[2][i]} ;
+          std::vector<double> x( list , list + 3 ) ;
+          bVecs.push_back(x);
+      }
+  }
+  else
+  {
+      while( !bVecFile.eof() )
+      {
+          std::vector<double> x;
+          for( unsigned i = 0; i < 3; ++i )
+          {
+              double val;
+              bVecFile >> val;
+              if( bVecFile.fail() )
+              {
+                  break;
+              }
+              x.push_back(val);
+          }
+          if( bVecFile.fail() )
+          {
+              break;
+          }
+          bVecCount++;
+          bVecs.push_back(x);
+      }
+  }
   return EXIT_SUCCESS;
 }
+
 
 template <typename TValue>
 bool
@@ -425,7 +474,8 @@ extern int FSLToNrrd(const std::string & inputVolume,
                      const std::string & outputVolume,
                      const std::string & fslNIFTIFile,
                      const std::string & inputBValues,
-                     const std::string & inputBVectors);
+                     const std::string & inputBVectors,
+                     bool transpose);
 
     extern int NrrdToFSL(const std::string & inputVolume,
                          const std::string & outputVolume,

@@ -103,7 +103,7 @@ simpleSynReg( typename FixedImageType::Pointer & infixedImage,
     if( synFull == true )
       {
       // --shrink-factors 3x2x1
-      std::vector<unsigned int>   factors(3);
+      std::vector<unsigned int>   factors(4);
       factors[0] = 8;
       factors[1] = 4;
       factors[2] = 2;
@@ -125,7 +125,7 @@ simpleSynReg( typename FixedImageType::Pointer & infixedImage,
     if( synFull == true )
       {
       // --smoothing-sigmas 3x2x0
-      std::vector<float>    sigmas(3);
+      std::vector<float>    sigmas(4);
       sigmas[0] = 3;
       sigmas[1] = 2;
       sigmas[2] = 1;

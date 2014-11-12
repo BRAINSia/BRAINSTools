@@ -45,17 +45,16 @@ def brainStem( tissueLabelFilename,
     imageSize=brainLbl.GetSize()
     print( imageSize)
 
-    #print ("imageSize : "+str(imageSize))
-    #cropLower = (myLmkIndex['lat_right'][0],myLmkIndex['mid_lat'][1],0)
+    print ("imageSize : "+str(imageSize))
     cropLower = [myLmkIndex['lat_right'][0],
                  myLmkIndex['mid_lat'][1],
                  myLmkIndex['dens_axis'][2]]
-    #cropUpper   = (myLmkIndex['lat_left'][0],myLmkIndex['mid_prim_sup'][1],myLmkIndex['PC'][2])
+    cropLower = [ int(x) for x in cropLower ]
+    print ("cropLower : "+str(cropLower))
     cropUpper   = [imageSize[0]-myLmkIndex['lat_left'][0],
                    imageSize[1]-myLmkIndex['mid_prim_sup'][1],
                    imageSize[2]-myLmkIndex['PC'][2]]
-
-    print ("cropLower : "+str(cropLower))
+    cropUpper = [ int(x) for x in cropUpper ]
     print ("cropUpper : "+str(cropUpper))
     brainStem_area = sitk.Crop(brainLbl, cropLower, cropUpper)
     #print brainStem_area.GetSize()

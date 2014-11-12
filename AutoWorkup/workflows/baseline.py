@@ -326,7 +326,8 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
                                               'outputVolume'])
         DenoiseInputImgs.inputs.rc= [1,1,1]
         DenoiseInputImgs.inputs.rs= [4,4,4]
-        DenoiseInputImgs.plugin_args = modify_qsub_args(master_config['queue'], .2, 1, 1)
+        DenoiseInputImgs.plugin_args = {'qsub_args': modify_qsub_args(master_config['queue'], .2, 1, 1),
+                 'overwrite': True}
         baw201.connect([ (makeDenoiseInImageList, DenoiseInputImgs, [('inImageList', 'inputVolume')]),
                          (makeDenoiseInImageList, DenoiseInputImgs, [('outImageList','outputVolume')])
                       ])
@@ -418,7 +419,7 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
                                                      master_config['queue'],
                                                      "brainStem.nii.gz")
 
-        baw201.connect([(myLocalLMIWF,myLocalBrainStemWF, [('outputspec.outputLandmarksInInputSpace',
+        baw201.connect([(myLocalLMIWF,myLocalBrainStemWF, [('outputspec.outputLandmarksInACPCAlignedSpace',
                                                             'inputspec.inputLandmarkFilename')]),
                         (myLocalTCWF,myLocalBrainStemWF, [('outputspec.outputLabels',
                                                            'inputspec.inputTissueLabelFilename')])
@@ -429,7 +430,7 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
                                    [(('t1_average', convertToList), 'TissueClassify.@t1'),
                                     (('t2_average', convertToList), 'TissueClassify.@t2'),
                                     (('pd_average', convertToList), 'TissueClassify.@pd'),
-                                    (('fl_average', convertToList), 'TissueClassify.@fl')]),
+                                    (('fl_average', convertToList), 'TissueClassify.@fl')])
                              ])
 
         currentFixWMPartitioningName = "_".join(['FixWMPartitioning', str(subjectid), str(sessionid)])
@@ -558,7 +559,8 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
             ]
         for atlasImage in AtlasLabelMapsToResample:
             BResample[atlasImage] = pe.Node(interface=BRAINSResample(), name="BRAINSResample_"+atlasImage)
-            BResample[atlasImage].plugin_args = {'qsub_args': modify_qsub_args(master_config['queue'], 1, 1, 1)}
+            BResample[atlasImage].plugin_args = {'qsub_args': modify_qsub_args(master_config['queue'], 1, 1, 1),
+                    'overwrite': True }
             BResample[atlasImage].inputs.pixelType='short'
             BResample[atlasImage].inputs.interpolationMode='NearestNeighbor'
             BResample[atlasImage].inputs.outputVolume=atlasImage+".nii.gz"
@@ -576,7 +578,8 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
 
         for atlasImage in AtlasBinaryMapsToResample:
             BResample[atlasImage] = pe.Node(interface=BRAINSResample(), name="BRAINSResample_"+atlasImage)
-            BResample[atlasImage].plugin_args = {'qsub_args': modify_qsub_args(master_config['queue'], 1, 1, 1)}
+            BResample[atlasImage].plugin_args = {'qsub_args':modify_qsub_args(master_config['queue'], 1, 1, 1),
+                    'overwrite':True }
             BResample[atlasImage].inputs.pixelType='binary'
             BResample[atlasImage].inputs.interpolationMode='Linear'  ## Conversion to distance map, so use linear to resample distance map
             BResample[atlasImage].inputs.outputVolume=atlasImage+".nii.gz"
@@ -606,7 +609,7 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
             ]
         for atlasImage in BRAINSCutAtlasImages:
             BResample[atlasImage] = pe.Node(interface=BRAINSResample(), name="BCUTBRAINSResample_"+atlasImage)
-            BResample[atlasImage].plugin_args = {'qsub_args': modify_qsub_args(master_config['queue'], 1, 1, 1)}
+            BResample[atlasImage].plugin_args =  {'qsub_args': modify_qsub_args(master_config['queue'], 1, 1, 1), 'overwrite': True}
             BResample[atlasImage].inputs.pixelType='float'
             BResample[atlasImage].inputs.interpolationMode='Linear'  ## Conversion to distance map, so use linear to resample distance map
             BResample[atlasImage].inputs.outputVolume=atlasImage+".nii.gz"

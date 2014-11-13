@@ -1,15 +1,11 @@
 #!/usr/bin/env python
 
-from nipype.interfaces.base import CommandLine, CommandLineInputSpec, TraitedSpec, File, Directory
-from nipype.interfaces.base import traits, isdefined, BaseInterface
-from nipype.interfaces.utility import Merge, Split, Function, Rename, IdentityInterface
-import nipype.interfaces.io as nio   # Data i/o
+from nipype.interfaces.utility import Merge, Function, IdentityInterface
 import nipype.pipeline.engine as pe  # pypeline engine
-
 from SEMTools import *
-from RF12BRAINSCutWrapper import RF12BRAINSCutWrapper
-
 from PipeLineFunctionHelpers import getListIndex
+
+from RF12BRAINSCutWrapper import RF12BRAINSCutWrapper
 
 
 def GenerateWFName(projectid, subjectid, sessionid, WFName):
@@ -162,8 +158,8 @@ def CreateBRAINSCutWorkflow(projectid,
                             sessionid,
                             CLUSTER_QUEUE,
                             CLUSTER_QUEUE_LONG,
-                            WFName='Segmentation',
-                            t1Only=False):
+                            WFName,
+                            t1Only):
     cutWF = pe.Workflow(name=GenerateWFName(projectid, subjectid, sessionid, WFName))
 
     inputsSpec = pe.Node(interface=IdentityInterface(fields=['T1Volume', 'T2Volume',
@@ -261,12 +257,6 @@ def CreateBRAINSCutWorkflow(projectid,
     cutWF.connect(inputsSpec, 'posteriorDictionary', makeCandidateRegionNode, 'posteriorDictionary')
     cutWF.connect(makeCandidateRegionNode, 'outputCandidateRegionFileName', RF12BC, 'candidateRegion')
 
-    if not t1Only:
-        cutWF.connect(DenoisedT2, 'outputVolume', RF12BC, 'inputSubjectT2Filename')
-        # cutWF.connect(inputsSpec,'TotalGM',RF12BC,'inputSubjectTotalGMFilename')
-        # cutWF.connect(inputsSpec,'RegistrationROI',RF12BC,'inputSubjectRegistrationROIFilename')
-        # Error cutWF.connect(SGI,'outputVolume',RF12BC,'inputSubjectGadSGFilename')
-        cutWF.connect(SGI, 'outputFileName', RF12BC, 'inputSubjectGadSGFilename')
     cutWF.connect([(inputsSpec, RF12BC, [('template_t1', 'inputTemplateT1'),
                                          # ('template_brain', 'inputTemplateRegistrationROIFilename'),
                                          ('rho', 'inputTemplateRhoFilename'),
@@ -285,8 +275,14 @@ def CreateBRAINSCutWorkflow(projectid,
                                          ('l_globus_ProbabilityMap', 'probabilityMapsLeftGlobus'),
                                          ('r_globus_ProbabilityMap', 'probabilityMapsRightGlobus'),
                  ])])
+
     # TODO:
     if not t1Only:
+        cutWF.connect(DenoisedT2, 'outputVolume', RF12BC, 'inputSubjectT2Filename')
+        # cutWF.connect(inputsSpec,'TotalGM',RF12BC,'inputSubjectTotalGMFilename')
+        # cutWF.connect(inputsSpec,'RegistrationROI',RF12BC,'inputSubjectRegistrationROIFilename')
+        # Error cutWF.connect(SGI,'outputVolume',RF12BC,'inputSubjectGadSGFilename')
+        cutWF.connect(SGI, 'outputFileName', RF12BC, 'inputSubjectGadSGFilename')
         cutWF.connect(inputsSpec, 'trainModelFile_txtD0060NT0060_gz', RF12BC, 'modelFilename')
     else:
         ### TODO:  Replace with proper atlas file name in the future!!! This is a HACK

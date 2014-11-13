@@ -44,36 +44,27 @@ def _create_singleSession(dataDict, master_config, interpMode, pipeline_name):
     the path and filename of the atlas to use.
     """
     assert 'tissue_classify' in master_config['components'] or \
-        'auxlmk' in master_config['components'] or \
-        'denoise' in master_config['components'] or \
-        'landmark' in master_config['components'] or \
-        'segmentation' in master_config['components']
+           'auxlmk' in master_config['components'] or \
+           'denoise' in master_config['components'] or \
+           'landmark' in master_config['components'] or \
+           'segmentation' in master_config['components']
 
     from nipype import config, logging
+
     config.update_config(master_config)  # Set universal pipeline options
     logging.update_logging(config)
 
-    import nipype.pipeline.engine as pe
-    import nipype.interfaces.io as nio
-    from nipype.interfaces.base import CommandLine, CommandLineInputSpec, TraitedSpec, Directory, traits, isdefined, BaseInterface
-    from nipype.interfaces.utility import Split, Rename, IdentityInterface, Function
-
     from workflows.baseline import generate_single_session_template_WF
-
-    from PipeLineFunctionHelpers import convertToList
-    from utilities.misc import GenerateSubjectOutputPattern as outputPattern
-    from utilities.misc import GenerateWFName
-    from workflows.atlasNode import MakeAtlasNode
 
     project = dataDict['project']
     subject = dataDict['subject']
     session = dataDict['session']
 
     blackListFileName = dataDict['T1s'][0] + '_noDenoise'
-    isBlackList=os.path.isfile( blackListFileName )
+    isBlackList = os.path.isfile(blackListFileName)
 
     pname = "{0}_{1}_{2}".format(master_config['workflow_phase'], subject, session)
-    onlyT1 = not(len(dataDict['T2s']) > 0)
+    onlyT1 = not (len(dataDict['T2s']) > 0)
     sessionWorkflow = generate_single_session_template_WF(project, subject, session, onlyT1, master_config,
                                                           phase=master_config['workflow_phase'],
                                                           interpMode=interpMode,
@@ -91,12 +82,11 @@ def _create_singleSession(dataDict, master_config, interpMode, pipeline_name):
 
 
 def createAndRun(sessions, environment, experiment, pipeline, cluster, useSentinal, dryRun):
-    from utilities.misc import add_dict
-    from workflows.utils import run_workflow, print_workflow
     from baw_exp import OpenSubjectDatabase
     from utilities.misc import add_dict
 
-    from workflows.utils import run_workflow, print_workflow
+    from workflows.utils import run_workflow
+
     master_config = {}
     for configDict in [environment, experiment, pipeline, cluster]:
         master_config = add_dict(master_config, configDict)
@@ -126,43 +116,45 @@ def createAndRun(sessions, environment, experiment, pipeline, cluster, useSentin
             _dict['FLs'] = database.getFilenamesByScantype(session, ['FL-15', 'FL-30'])
             _dict['OTs'] = database.getFilenamesByScantype(session, ['OTHER-15', 'OTHER-30'])
             sentinal_file_basedir = os.path.join(
-                    master_config['resultdir'],
-                    _dict['project'],
-                    _dict['subject'],
-                    _dict['session']
+                master_config['resultdir'],
+                _dict['project'],
+                _dict['subject'],
+                _dict['session']
             )
 
-            sentinal_file = os.path.join( sentinal_file_basedir ) ## NO SENTINAL FILE
+            sentinal_file_list = list()
+            sentinal_file_list.append(os.path.join(sentinal_file_basedir))
             if 'denoise' in master_config['components']:
+                # # NO SENTINAL FILE
                 pass
 
-            ## Use t1 average sentinal file if  specified.
+            # # Use t1 average sentinal file if  specified.
             if 'landmark' in master_config['components']:
-                sentinal_file = os.path.join(
+                sentinal_file_list.append(os.path.join(
                     sentinal_file_basedir,
                     "ACPCAlign",
                     "landmarkInitializer_atlas_to_subject_transform.h5"
-                )
+                ))
 
             if 'tissue_classify' in master_config['components']:
-                sentinal_file = os.path.join(
-                    sentinal_file_basedir,
-                    "TissueClassify",
-                    "brainStem.nii.gz"
-                )
-                #"t1_average_BRAINSABC.nii.gz"
+                for tc_file in ["complete_brainlabels_seg.nii.gz", "t1_average_BRAINSABC.nii.gz"]:
+                    sentinal_file_list.append(os.path.join(
+                        sentinal_file_basedir,
+                        "TissueClassify",
+                        tc_file
+                    ))
 
             if 'warp_atlas_to_subject' in master_config['components']:
-                sentinal_file = os.path.join(
+                sentinal_file_list.append(os.path.join(
                     sentinal_file_basedir,
                     "WarpedAtlas2Subject",
                     "rho.nii.gz"
-                )
+                ))
 
             if master_config['workflow_phase'] == 'atlas-based-reference':
-                atlasDirectory = master_config['atlascache']
+                atlasDirectory = os.path.join(master_config['atlascache'], 'spatialImages', 'rho.nii.gz')
             else:
-                atlasDirectory = os.path.join(master_config['previousresult'],subject,'Atlas')
+                atlasDirectory = os.path.join(master_config['previousresult'], subject, 'Atlas', 'AVG_rho.nii.gz')
 
             if os.path.exists(atlasDirectory):
                 print "LOOKING FOR DIRECTORY {0}".format(atlasDirectory)
@@ -173,33 +165,34 @@ def createAndRun(sessions, environment, experiment, pipeline, cluster, useSentin
 
             ## Use different sentinal file if segmentation specified.
             from workflows.baseline import DetermineIfSegmentationShouldBeDone
+
             do_BRAINSCut_Segmentation = DetermineIfSegmentationShouldBeDone(master_config)
             if do_BRAINSCut_Segmentation:
-                sentinal_file = os.path.join(
+                sentinal_file_list.append(os.path.join(
                     sentinal_file_basedir,
                     "CleanedDenoisedRFSegmentations",
                     "allLabels_seg.nii.gz"
-                )
-            print "#" * 50
-            print sentinal_file + " exists? " + str(os.path.exists(sentinal_file))
-            print "-" * 50
-            def allPathsExists( list_of_paths ):
+                ))
+
+            def allPathsExists(list_of_paths):
                 is_missing = False
                 for ff in list_of_paths:
                     if not os.path.exists(ff):
                         is_missing = True
                         print("MISSING: {0}".format(ff))
                 return not is_missing
-            if useSentinal and allPathsExists( [ sentinal_file ] ):
-                print("SKIPPING: {0} exists".format(sentinal_file))
+
+            if useSentinal and allPathsExists(sentinal_file_list):
+                print("SKIPPING: {0} exists".format(sentinal_file_list))
             else:
-                print("PROCESSING INCOMPLETE:  {0} does not exists".format(sentinal_file))
+                print("PROCESSING INCOMPLETE: at least 1 required file does not exists")
                 if dryRun == False:
                     workflow = _create_singleSession(_dict, master_config, 'Linear',
-                                                'singleSession_{0}_{1}'.format(_dict['subject'], _dict['session']))
+                                                     'singleSession_{0}_{1}'.format(_dict['subject'], _dict['session']))
                     print("Starting session {0}".format(session))
                     # HACK Hard-coded to SGEGraph, but --wfrun is ignored completely
-                    run_workflow(workflow, plugin=master_config['plugin_name'], plugin_args=master_config['plugin_args'])
+                    run_workflow(workflow, plugin=master_config['plugin_name'],
+                                 plugin_args=master_config['plugin_args'])
                 else:
                     print("EXITING WITHOUT WORK DUE TO dryRun flag")
     except:
@@ -212,18 +205,18 @@ def createAndRun(sessions, environment, experiment, pipeline, cluster, useSentin
 
 
 def _SingleSession_main(environment, experiment, pipeline, cluster, **kwds):
-
     from utilities.configFileParser import nipype_options
 
 
     print "Copying Atlas directory and determining appropriate Nipype options..."
     pipeline = nipype_options(kwds, pipeline, cluster, experiment, environment)  # Generate Nipype options
     print "Getting session(s) from database..."
-    createAndRun(kwds['SESSIONS'], environment, experiment, pipeline, cluster, useSentinal=kwds['--use-sentinal'],dryRun=kwds['--dry-run'])
+    createAndRun(kwds['SESSIONS'], environment, experiment, pipeline, cluster, useSentinal=kwds['--use-sentinal'],
+                 dryRun=kwds['--dry-run'])
     return 0
 
 
-######################################
+# #####################################
 # Set up the environment, process command line options, and start processing
 #
 if __name__ == '__main__':
@@ -237,7 +230,6 @@ if __name__ == '__main__':
     print argv
     print '=' * 100
     environment, experiment, pipeline, cluster = setup_environment(argv)
-
 
     exit = _SingleSession_main(environment, experiment, pipeline, cluster, **argv)
     sys.exit(exit)

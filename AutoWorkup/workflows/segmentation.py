@@ -11,8 +11,6 @@
 ##
 #################################################################################
 
-import sys
-import string
 #"""Import necessary modules from nipype."""
 # from nipype.utils.config import config
 # config.set('logging', 'log_to_file', 'false')
@@ -63,7 +61,24 @@ def segmentation(projectid, subjectid, sessionid, master_config, onlyT1=True, pi
                                                              'inputHeadLabels',
                                                              'posteriorImages',
                                                              'UpdatedPosteriorsList',
-                                                             'atlasToSubjectRegistrationState']),
+                                                             'atlasToSubjectRegistrationState',
+                                                             'rho',
+                                                             'phi',
+                                                             'theta',
+                                                             'l_caudate_ProbabilityMap',
+                                                             'r_caudate_ProbabilityMap',
+                                                             'l_hippocampus_ProbabilityMap',
+                                                             'r_hippocampus_ProbabilityMap',
+                                                             'l_putamen_ProbabilityMap',
+                                                             'r_putamen_ProbabilityMap',
+                                                             'l_thalamus_ProbabilityMap',
+                                                             'r_thalamus_ProbabilityMap',
+                                                             'l_accumben_ProbabilityMap',
+                                                             'r_accumben_ProbabilityMap',
+                                                             'l_globus_ProbabilityMap',
+                                                             'r_globus_ProbabilityMap',
+                                                             'trainModelFile_txtD0060NT0060_gz',
+    ]),
                          run_without_submitting=True, name='inputspec')
 
     # outputsSpec = pe.Node(interface=IdentityInterface(fields=[...]),
@@ -132,18 +147,42 @@ def segmentation(projectid, subjectid, sessionid, master_config, onlyT1=True, pi
                                            sessionid,
                                            master_config['queue'],
                                            master_config['long_q'],
-                                           t1Only=onlyT1)
+                                           "Segmentation",
+                                           onlyT1)
     MergeStage2AverageImagesName = "99_mergeAvergeStage2Images_" + str(sessionid)
     MergeStage2AverageImages = pe.Node(interface=Merge(2), run_without_submitting=True,
                                        name=MergeStage2AverageImagesName)
 
     baw200.connect([(inputsSpec, myLocalSegWF, [('t1_average', 'inputspec.T1Volume'),
+                                                ('template_t1', 'inputspec.template_t1'),
                                                 ('posteriorImages', "inputspec.posteriorDictionary"),
                                                 ('inputLabels', 'inputspec.RegistrationROI'),]),
                     (inputsSpec, MergeStage2AverageImages, [('t1_average', 'in1')]),
                     (A2SantsRegistrationPostABCSyN, myLocalSegWF, [('composite_transform',
                                                                      'inputspec.atlasToSubjectTransform')])
                    ])
+
+    baw200.connect([(inputsSpec, myLocalSegWF,
+                     [
+                         ('rho', 'inputspec.rho'),
+                         ('phi', 'inputspec.phi'),
+                         ('theta', 'inputspec.theta'),
+                         ('l_caudate_ProbabilityMap', 'inputspec.l_caudate_ProbabilityMap'),
+                         ('r_caudate_ProbabilityMap', 'inputspec.r_caudate_ProbabilityMap'),
+                         ('l_hippocampus_ProbabilityMap', 'inputspec.l_hippocampus_ProbabilityMap'),
+                         ('r_hippocampus_ProbabilityMap', 'inputspec.r_hippocampus_ProbabilityMap'),
+                         ('l_putamen_ProbabilityMap', 'inputspec.l_putamen_ProbabilityMap'),
+                         ('r_putamen_ProbabilityMap', 'inputspec.r_putamen_ProbabilityMap'),
+                         ('l_thalamus_ProbabilityMap', 'inputspec.l_thalamus_ProbabilityMap'),
+                         ('r_thalamus_ProbabilityMap', 'inputspec.r_thalamus_ProbabilityMap'),
+                         ('l_accumben_ProbabilityMap', 'inputspec.l_accumben_ProbabilityMap'),
+                         ('r_accumben_ProbabilityMap', 'inputspec.r_accumben_ProbabilityMap'),
+                         ('l_globus_ProbabilityMap', 'inputspec.l_globus_ProbabilityMap'),
+                         ('r_globus_ProbabilityMap', 'inputspec.r_globus_ProbabilityMap'),
+                         ('trainModelFile_txtD0060NT0060_gz', 'inputspec.trainModelFile_txtD0060NT0060_gz')
+                     ]
+                    )]
+    )
 
     if not onlyT1:
         baw200.connect([(inputsSpec, myLocalSegWF, [('t2_average', 'inputspec.T2Volume')]),

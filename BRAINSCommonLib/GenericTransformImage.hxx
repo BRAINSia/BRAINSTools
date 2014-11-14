@@ -324,29 +324,53 @@ typename OutputImageType::Pointer GenericTransformImage(
       typedef itk::ResampleInPlaceImageFilter<InputImageType, OutputImageType> ResampleIPFilterType;
       typedef typename ResampleIPFilterType::Pointer                           ResampleIPFilterPointer;
 
+      typedef itk::CompositeTransform<double, 3>    CompositeTransformType;
+      typedef itk::VersorRigid3DTransform<double>   VersorRigid3DTransformType;
 
-      typedef itk::CompositeTransform<double, 3> CompositeTransformType;
+      VersorRigid3DTransformType::Pointer tempInitializerITKTransform = VersorRigid3DTransformType::New();
 
       const CompositeTransformType::ConstPointer genericCompositeTransform =
         dynamic_cast<const CompositeTransformType *>( genericTransform.GetPointer() );
-      if( genericCompositeTransform.IsNull() )
+      if( genericCompositeTransform.IsNotNull() )
         {
-        itkGenericExceptionMacro(<<"Error in type conversion");
+        if( genericCompositeTransform->GetNumberOfTransforms() > 1 )
+          {
+          std::cout << "Error in type conversion. " << __FILE__ << __LINE__ << std::endl;
+          std::cout << "ResampleInPlace is only allowed with rigid transform type,"
+          << "but the input composite transform consists of more than one transfrom." << std::endl;
+          }
+        // extract the included linear rigid transform from the input composite
+        const VersorRigid3DTransformType::ConstPointer tempTransform =
+          dynamic_cast<VersorRigid3DTransformType const *>( genericCompositeTransform->GetNthTransform(0).GetPointer() );
+        if( tempTransform.IsNull() )
+          {
+          std::cout << "Error in type conversion. " << __FILE__ << __LINE__ << std::endl;
+          std::cout << "ResampleInPlace is only allowed with rigid transform type." << std::endl;
+          }
+        else
+          {
+          tempInitializerITKTransform->SetFixedParameters( tempTransform->GetFixedParameters() );
+          tempInitializerITKTransform->SetParameters( tempTransform->GetParameters() );
+          }
         }
-      if( genericCompositeTransform->GetNumberOfTransforms() > 1 )
+      else
         {
-        std::cout << "Error in type conversion. " << __FILE__ << __LINE__ << std::endl;
-        std::cout << "ResampleInPlace is only allowed with rigid transform type,"
-                  << "but the input composite transform consists of more than one transfrom." << std::endl;
+        const VersorRigid3DTransformType::ConstPointer tempTransform =
+          dynamic_cast<VersorRigid3DTransformType const *>( genericTransform.GetPointer() );
+        if( tempTransform.IsNull() )
+          {
+          std::cout << "Error in type conversion. " << __FILE__ << __LINE__ << std::endl;
+          std::cout << "ResampleInPlace is only allowed with rigid transform type." << std::endl;
+          }
+        else
+          {
+          tempInitializerITKTransform->SetFixedParameters( tempTransform->GetFixedParameters() );
+          tempInitializerITKTransform->SetParameters( tempTransform->GetParameters() );
+          }
         }
-      // extract the included linear rigid transform from the input composite
-      typedef itk::VersorRigid3DTransform<double>    VersorRigid3DTransformType;
-      const VersorRigid3DTransformType::ConstPointer tempInitializerITKTransform =
-        dynamic_cast<VersorRigid3DTransformType const *>( genericCompositeTransform->GetNthTransform(0).GetPointer() );
       if( tempInitializerITKTransform.IsNull() )
         {
-        std::cout << "Error in type conversion. " << __FILE__ << __LINE__ << std::endl;
-        std::cout << "ResampleInPlace is only allowed with rigid transform type." << std::endl;
+        itkGenericExceptionMacro(<<"Error in type conversion. ResampleInPlace is only allowed with rigid transform type.");
         }
 
       ResampleIPFilterPointer resampleIPFilter = ResampleIPFilterType::New();

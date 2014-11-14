@@ -22,6 +22,24 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateBRAINSResampleTest4
   --warpTransform DATA{${TestData_DIR}/Transforms_h5/BRAINSFitTest_AffineRotationMasks.${XFRM_EXT}}
   )
 
+## Should provide exactly the same result as BRAINSFitTest_RigidRotationNoMasksRiginInPlaceInterp
+ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateBRAINSResampleTest7_nii
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSResampleTestDriver>
+  --compare
+  DATA{${TestData_DIR}/BRAINSFitTest_RigidRotationNoMasksRiginInPlaceInterp.result.nii.gz}
+  ${CMAKE_CURRENT_BINARY_DIR}/applyWarp_test7.nii.gz
+  --compareIntensityTolerance 30
+  --compareRadiusTolerance 5
+  --compareNumberOfPixelsTolerance 1
+  BRAINSResampleTest
+  --interpolationMode ResampleInPlace
+  --inputVolume DATA{${TestData_DIR}/rotation.test.nii.gz}
+  --referenceVolume DATA{${TestData_DIR}/test.nii.gz}
+  --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/applyWarp_test7.nii.gz
+  --pixelType uchar
+  --warpTransform DATA{${TestData_DIR}/Initializer_0.05_BRAINSFitTest_RigidRotationNoMasksRiginInPlaceInterp.mat}
+  )
+
 ## Should provide exactly the same result as BRAINSFit BRAINSFitTest_BSplineAnteScaleRotationRescaleHeadMasks test
 # ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ValidateBRAINSResampleTest5_nii
 #   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSResampleTestDriver>

@@ -275,6 +275,7 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
 
         baw201.connect(template_DG, 'outAtlasXMLFullPath', inputsSpec, 'atlasDefinition')
         baw201.connect([(template_DG, inputsSpec, [
+            ('template_t1','template_t1')
             ('hncma_atlas', 'hncma_atlas'),
             ('template_leftHemisphere', 'template_leftHemisphere'),
             ('template_rightHemisphere', 'template_rightHemisphere'),
@@ -377,7 +378,9 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
         )
 
     if 'tissue_classify' in master_config['components']:
-        myLocalTCWF = CreateTissueClassifyWorkflow("TissueClassify", master_config, interpMode)
+        useRegistrationMask = master_config['use_registration_masking']
+
+        myLocalTCWF = CreateTissueClassifyWorkflow("TissueClassify", master_config, interpMode,useRegistrationMask)
         baw201.connect([(makePreprocessingOutList, myLocalTCWF, [('T1s', 'inputspec.T1List')]),
                         (makePreprocessingOutList, myLocalTCWF, [('T2s', 'inputspec.T2List')]),
                         (inputsSpec, myLocalTCWF, [('atlasDefinition', 'inputspec.atlasDefinition'),
@@ -490,7 +493,7 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
         sname = 'segmentation'
         segWF = segmentation(projectid, subjectid, sessionid, master_config, onlyT1, pipeline_name=sname)
 
-        baw201.connect([(template_DG, segWF,
+        baw201.connect([(inputsSpec, segWF,
                          [
                              ('template_t1', 'inputspec.template_t1')
                          ])

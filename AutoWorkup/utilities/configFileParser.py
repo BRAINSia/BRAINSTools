@@ -103,6 +103,16 @@ def parseExperiment(parser, workflow_phase):
         previous = parser.get('EXPERIMENT', 'EXPERIMENT' + current_suffix + '_INPUT')
         retval['previousresult'] = create_experiment_dir(dirname, previous, 'Results', verify=True)
     atlas = validatePath(parser.get('EXPERIMENT', 'ATLAS_PATH'), False, True)
+    useRegistrationMasking = False
+
+    try:
+        regMasking = parser.get('EXPERIMENT', 'USE_REGISTRATION_MASKING')
+        if regMasking == "True":
+            useRegistrationMasking = True
+
+    except:
+        pass
+    retval['use_registration_masking'] = useRegistrationMasking
     retval['atlascache'] = clone_atlas_dir(retval['cachedir'], atlas)
     retval['dbfile'] = validatePath(parser.get('EXPERIMENT', 'SESSION_DB' + current_suffix), False, False)
     retval['components'] = [x.lower() for x in eval(parser.get('EXPERIMENT', 'WORKFLOW_COMPONENTS' + current_suffix))]

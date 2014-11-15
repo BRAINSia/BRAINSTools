@@ -42,7 +42,7 @@ def MakePosteriorDictionaryFunc(posteriorImages):
     return temp_dictionary
 
 
-def CreateTissueClassifyWorkflow(WFname, master_config, InterpolationMode):
+def CreateTissueClassifyWorkflow(WFname, master_config, InterpolationMode,UseRegistrationMasking):
     from nipype.interfaces import ants
 
     CLUSTER_QUEUE=master_config['queue']
@@ -89,7 +89,6 @@ def CreateTissueClassifyWorkflow(WFname, master_config, InterpolationMode):
     makeOutImageList.inputs.postfix = "_corrected.nii.gz"
     # HACK tissueClassifyWF.connect( inputsSpec, 'FLList', makeOutImageList, 'FLList' )
     tissueClassifyWF.connect(inputsSpec, 'OtherList', makeOutImageList, 'OtherList')
-
 
     ##### Initialize with ANTS Transform For AffineComponentBABC
     currentAtlasToSubjectantsRigidRegistration = 'AtlasToSubjectANTsPreABC_Rigid'
@@ -164,6 +163,25 @@ def CreateTissueClassifyWorkflow(WFname, master_config, InterpolationMode):
     A2SantsRegistrationPreABCSyN.inputs.winsorize_upper_quantile = 0.99
     A2SantsRegistrationPreABCSyN.inputs.output_warped_image = 'atlas2subject.nii.gz'
     A2SantsRegistrationPreABCSyN.inputs.output_inverse_warped_image = 'subject2atlas.nii.gz'
+
+    ## if using Registration masking, then do ROIAuto on fixed and moving images and connect to registraitons
+    if UseRegistrationMasking == True:
+        from SEMTools.segmentation.specialized import BRAINSROIAuto
+
+        fixedROIAuto = pe.Node(interface=BRAINSROIAuto(), name="fixedImageROIAUTOMask")
+        fixedROIAuto.inputs.outputROIMaskVolume = "fixedImageROIAutoMask.nii.gz"
+
+        movingROIAuto = pe.Node(interface=BRAINSROIAuto(), name="movingImageROIAUTOMask")
+        movingROIAuto.inputs.outputROIMaskVolume = "movingImageROIAutoMask.nii.gz"
+
+        tissueClassifyWF.connect(inputsSpec, 'PrimaryT1',fixedROIAuto,'inputVolume')
+        tissueClassifyWF.connect(inputsSpec, 'atlasVolume',movingROIAuto,'inputVolume')
+
+        tissueClassifyWF.connect(fixedROIAuto, 'outputROIMaskVolume',A2SantsRegistrationPreABCRigid,'fixed_image_mask')
+        tissueClassifyWF.connect(movingROIAuto, 'outputROIMaskVolume',A2SantsRegistrationPreABCRigid,'moving_image_mask')
+
+        tissueClassifyWF.connect(fixedROIAuto, 'outputROIMaskVolume',A2SantsRegistrationPreABCSyN,'fixed_image_mask')
+        tissueClassifyWF.connect(movingROIAuto, 'outputROIMaskVolume',A2SantsRegistrationPreABCSyN,'moving_image_mask')
 
     tissueClassifyWF.connect(A2SantsRegistrationPreABCRigid,
                              ('composite_transform', getListIndexOrNoneIfOutOfRange, 0 ),

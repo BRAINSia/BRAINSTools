@@ -97,7 +97,7 @@ ResampleInPlaceImageFilter<TInputImage, TOutputImage>
 
   // Modify the origin and direction info of the image to reflect the transform.
   m_OutputImage->SetOrigin( invOfRigidTransform->GetMatrix()
-                            * this->GetInput()->GetOrigin() + invOfRigidTransform->GetTranslation() );
+                            * this->GetInput()->GetOrigin() + invOfRigidTransform->GetOffset() );
   m_OutputImage->SetDirection( invOfRigidTransform->GetMatrix()
                                * this->GetInput()->GetDirection() );
 

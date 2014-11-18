@@ -79,6 +79,99 @@ def getAllT1sLength(allT1s):
     return len(allT1s)
 
 
+def CreateLeftRightWMHemispheres(BRAINLABELSFile,
+                                HDCMARegisteredVentricleMaskFN,
+                                LeftHemisphereMaskName,
+                                RightHemisphereMaskName,
+
+                                WM_LeftHemisphereFileName,
+                                WM_RightHemisphereFileName):
+    import SimpleITK as sitk
+    import os
+
+    def GetLargestLabel(inputMask, UseErosionCleaning):
+        LargestComponentCode = 1
+        if UseErosionCleaning:
+            erosionMask = sitk.ErodeObjectMorphology(inputMask, 1)
+        else:
+            erosionMask = inputMask
+        CC = sitk.ConnectedComponent(erosionMask)
+        Rlabel = sitk.RelabelComponent(CC)
+        largestMask = ( Rlabel == LargestComponentCode)
+        if UseErosionCleaning:
+            dilateMask = sitk.DilateObjectMorphology(largestMask, 1)
+        else:
+            dilateMask = largestMask
+
+        return (largestMask * dilateMask > 0)
+
+    ABCLabelsImage = sitk.Cast(sitk.ReadImage(BRAINLABELSFile), sitk.sitkUInt32)
+    # # Remove brain stem and cerebellum
+    BS = (ABCLabelsImage == 30)
+    Cerebellum_GM = (ABCLabelsImage == 12)
+    Cerebellum_WM = (ABCLabelsImage == 11)
+    KeepRegion = sitk.Cast((1 - (BS + Cerebellum_GM + Cerebellum_WM)), sitk.sitkUInt32)
+
+    ABCLabelsImage = KeepRegion * ABCLabelsImage
+
+    HDCMARegisteredVentricleLabels = sitk.Cast(sitk.ReadImage(HDCMARegisteredVentricleMaskFN), sitk.sitkUInt32)
+    ABCCSFLabelCode = 4
+    HDMCALeftVentricleCode = 4
+    HDMCARightVentricleCode = 43
+    HDCMAMask = ( HDCMARegisteredVentricleLabels == HDMCALeftVentricleCode ) + (
+    HDCMARegisteredVentricleLabels == HDMCARightVentricleCode)
+    ExpandVentValue = 5
+    HDCMAMask_d5 = sitk.DilateObjectMorphology(HDCMAMask, ExpandVentValue)
+    CSFMaskImage = (ABCLabelsImage == ABCCSFLabelCode)
+    VentricleMask = ( ( HDCMAMask_d5 * CSFMaskImage + HDCMAMask ) > 0 )
+    VentricleMask_d2 = sitk.DilateObjectMorphology(VentricleMask, 2)
+    ABCWMLabelCode = 1
+    WMMaskImage = (ABCLabelsImage == ABCWMLabelCode)
+
+    subcorticalRegions = (
+    ABCLabelsImage >= 12 )  # All subcortical regions are listed greater than equal to values of 12
+    WMSubcortFilled = ( ( WMMaskImage + subcorticalRegions ) > 0 )
+
+    WMSubcortFilled_CC = GetLargestLabel(WMSubcortFilled, False)
+    WMSubcortFilled_CC_Ventricles = ( ( WMSubcortFilled_CC + VentricleMask_d2 ) > 0 )
+    neg_WMSubcortFilled_CC = ( 1 - WMSubcortFilled_CC )
+    neg_WMSubcortFilled_CC_bg = GetLargestLabel(neg_WMSubcortFilled_CC, False)
+    neg_WMSubcortFilled_CC_bg_holes = (neg_WMSubcortFilled_CC - neg_WMSubcortFilled_CC_bg )
+
+    WM_Final = (neg_WMSubcortFilled_CC_bg_holes + WMSubcortFilled_CC_Ventricles > 0 )
+
+    ####################################
+    ### START WM
+
+    # Template masks for left and right hemispheres
+    Left_template = (sitk.Cast(sitk.ReadImage(LeftHemisphereMaskName), sitk.sitkUInt32) > 0 )
+    Right_template = (sitk.Cast(sitk.ReadImage(RightHemisphereMaskName), sitk.sitkUInt32) > 0 )
+
+    # Split into left and right hemispheres
+    WM_left = ( WM_Final * Left_template > 0 )
+    WM_right = ( WM_Final * Right_template > 0 )
+
+    WM_Largest_left = GetLargestLabel(WM_left, False)
+    WM_Largest_right = GetLargestLabel(WM_right, False)
+
+    WM_left_extras = WM_left - WM_Largest_left
+    WM_right_extras = WM_right - WM_Largest_right
+
+    WM_Largest_left = GetLargestLabel(WM_Largest_left + WM_right_extras, False)
+    WM_Largest_right = GetLargestLabel(WM_Largest_right + WM_left_extras, False)
+
+    ## Write todisk
+    WM_LeftHemisphereFileName = os.path.abspath(WM_LeftHemisphereFileName)
+    sitk.WriteImage(WM_Largest_left, WM_LeftHemisphereFileName)
+
+    WM_RightHemisphereFileName = os.path.abspath(WM_RightHemisphereFileName)
+    sitk.WriteImage(WM_Largest_right, WM_RightHemisphereFileName)
+
+    ## TODO Add splitting into hemispheres code here
+    return WM_LeftHemisphereFileName, WM_RightHemisphereFileName
+
+
+
 def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1, master_config, phase, interpMode,
                                         pipeline_name, doDenoise=True):
     """
@@ -275,7 +368,7 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
 
         baw201.connect(template_DG, 'outAtlasXMLFullPath', inputsSpec, 'atlasDefinition')
         baw201.connect([(template_DG, inputsSpec, [
-            ('template_t1','template_t1')
+            ## Already connected ('template_t1','template_t1'),
             ('hncma_atlas', 'hncma_atlas'),
             ('template_leftHemisphere', 'template_leftHemisphere'),
             ('template_rightHemisphere', 'template_rightHemisphere'),
@@ -559,6 +652,8 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
             'template_WMPM2_labels',
             'template_nac_labels',
         ]
+
+
         for atlasImage in AtlasLabelMapsToResample:
             BResample[atlasImage] = pe.Node(interface=BRAINSResample(), name="BRAINSResample_" + atlasImage)
             BResample[atlasImage].plugin_args = {'qsub_args': modify_qsub_args(master_config['queue'], 1, 1, 1),
@@ -623,43 +718,26 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
             baw201.connect(myLocalTCWF, 'outputspec.atlasToSubjectTransform', BResample[atlasImage], 'warpTransform')
             baw201.connect(BResample[atlasImage], 'outputVolume', DataSink, 'WarpedAtlas2Subject.@' + atlasImage)
 
-        ### Extract ventricles
-        def ExtractSubjectVentricles(ABCFixedLabelsFN, HDCMARegisteredVentricleMaskFN, outputFileName):
-            import SimpleITK as sitk
-            import os
 
-            ABCLabelsImage = sitk.Cast(sitk.ReadImage(ABCFixedLabelsFN), sitk.sitkUInt32)
-            HDCMARegisteredVentricleLabels = sitk.Cast(sitk.ReadImage(HDCMARegisteredVentricleMaskFN), sitk.sitkUInt32)
-            ABCCSFLabelCode = 4
-            HDMCALeftVentricleCode = 4
-            HDMCARightVentricleCode = 43
-            HDCMAMask = ( HDCMARegisteredVentricleLabels == HDMCALeftVentricleCode ) + (
-            HDCMARegisteredVentricleLabels == HDMCARightVentricleCode)
-            ExpandVentValue = 5
-            HDCMAMask_d5 = sitk.DilateObjectMorphology(HDCMAMask, ExpandVentValue)
-            CSFMaskImage = (ABCLabelsImage == ABCCSFLabelCode)
-            VentricleMask = ( ( HDCMAMask_d5 * CSFMaskImage + HDCMAMask ) > 0 )
-            VentricleMask_d2 = sitk.DilateObjectMorphology(VentricleMask, 2)
-            ABCWMLabelCode = 1
-            WMMaskImage = (ABCLabelsImage == ABCWMLabelCode)
+        WhiteMatterHemisphereNode = pe.Node(interface=Function(function=CreateLeftRightWMHemispheres,
+                                                                        input_names=['BRAINLABELSFile',
+                                                                                     'HDCMARegisteredVentricleMaskFN',
+                                                                                     'LeftHemisphereMaskName',
+                                                                                     'RightHemisphereMaskName',
+                                                                                     'WM_LeftHemisphereFileName',
+                                                                                     'WM_RightHemisphereFileName'],
+                                                                        output_names=['WM_LeftHemisphereFileName',
+                                                                                      'WM_RightHemisphereFileName']),
+                                                     name="WhiteMatterHemisphere")
+        WhiteMatterHemisphereNode.inputs.WM_LeftHemisphereFileName ="left_hemisphere_wm.nii.gz"
+        WhiteMatterHemisphereNode.inputs.WM_RightHemisphereFileName ="right_hemisphere_wm.nii.gz"
 
-            subcorticalRegions = (
-            ABCLabelsImage >= 12 )  # All subcortical regions are listed greater than equal to values of 12
-            WMSubcortFilled = ( ( WMMaskImage + subcorticalRegions ) > 0 )
-            LargestComponentCode = 1
-            WMSubcortFilled_CC = (
-            sitk.RelabelComponent(sitk.ConnectedComponent(WMSubcortFilled)) == LargestComponentCode )
-            WMSubcortFilled_CC_Ventricles = ( ( WMSubcortFilled_CC + VentricleMask_d2 ) > 0 )
-            neg_WMSubcortFilled_CC = ( 1 - WMSubcortFilled_CC )
-            neg_WMSubcortFilled_CC_bg = (
-            sitk.RelabelComponent(sitk.ConnectedComponent(neg_WMSubcortFilled_CC)) == LargestComponentCode )
-            neg_WMSubcortFilled_CC_bg_holes = (neg_WMSubcortFilled_CC - neg_WMSubcortFilled_CC_bg )
+        baw201.connect(myLocalBrainStemWF,'outputspec.ouputTissuelLabelFilename',WhiteMatterHemisphereNode,'BRAINLABELSFile')
+        baw201.connect(BResample['hncma_atlas'],'outputVolume',WhiteMatterHemisphereNode,'HDCMARegisteredVentricleMaskFN')
+        baw201.connect(BResample['template_leftHemisphere'],'outputVolume',WhiteMatterHemisphereNode,'LeftHemisphereMaskName')
+        baw201.connect(BResample['template_rightHemisphere'],'outputVolume',WhiteMatterHemisphereNode,'RightHemisphereMaskName')
 
-            WM_Final = sitk.Cast(( neg_WMSubcortFilled_CC_bg_holes + WMSubcortFilled_CC_Ventricles > 0 ),
-                                 sitk.sitkUInt32)
-            full_outputFilename = os.path.abspath(outputFileName)
-            sitk.WriteImage(WM_Final, full_outputFilename)
-            ## TODO Add splitting into hemispheres code here
-            return full_outputFilename
+        baw201.connect(WhiteMatterHemisphereNode,'WM_LeftHemisphereFileName',DataSink,'WarpedAtlas2Subject.@LeftHemisphereWM')
+        baw201.connect(WhiteMatterHemisphereNode,'WM_RightHemisphereFileName',DataSink,'WarpedAtlas2Subject.@RightHemisphereWM')
 
     return baw201

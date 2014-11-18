@@ -169,9 +169,11 @@ def CreateTissueClassifyWorkflow(WFname, master_config, InterpolationMode,UseReg
         from SEMTools.segmentation.specialized import BRAINSROIAuto
 
         fixedROIAuto = pe.Node(interface=BRAINSROIAuto(), name="fixedImageROIAUTOMask")
+        fixedROIAuto.inputs.ROIAutoDilateSize=10
         fixedROIAuto.inputs.outputROIMaskVolume = "fixedImageROIAutoMask.nii.gz"
 
         movingROIAuto = pe.Node(interface=BRAINSROIAuto(), name="movingImageROIAUTOMask")
+        fixedROIAuto.inputs.ROIAutoDilateSize=10
         movingROIAuto.inputs.outputROIMaskVolume = "movingImageROIAutoMask.nii.gz"
 
         tissueClassifyWF.connect(inputsSpec, 'PrimaryT1',fixedROIAuto,'inputVolume')

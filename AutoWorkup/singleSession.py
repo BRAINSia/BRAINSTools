@@ -150,6 +150,12 @@ def createAndRun(sessions, environment, experiment, pipeline, cluster, useSentin
                     "WarpedAtlas2Subject",
                     "rho.nii.gz"
                 ))
+                sentinal_file_list.append(os.path.join(
+                    sentinal_file_basedir,
+                    "WarpedAtlas2Subject",
+                    "left_hemisphere_wm.nii.gz"
+                ))
+
 
             if master_config['workflow_phase'] == 'atlas-based-reference':
                 atlasDirectory = os.path.join(master_config['atlascache'], 'spatialImages', 'rho.nii.gz')

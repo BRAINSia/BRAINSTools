@@ -34,8 +34,6 @@ int STAPLE(unsigned int argc, char *argv[] )
   itk::TimeProbe timer;
   timer.Start();
 
-  typedef float RealType;
-
   typedef itk::Image<unsigned int, ImageDimension> LabelImageType;
 
   typedef itk::MultiLabelSTAPLEImageFilter<LabelImageType, LabelImageType> FilterType;

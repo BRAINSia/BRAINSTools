@@ -74,7 +74,6 @@ int main(int argc, char *argv[])
   typedef itk::SignedMaurerDistanceMapImageFilter<LabelImageType, LabelImageType> DistanceMapFilterType;
   DistanceMapFilterType::Pointer distanceMapFilter = DistanceMapFilterType::New();
   distanceMapFilter->SetInsideIsPositive(true); // Makes all distances positive
-  typedef DistanceMapFilterType::OutputImageType DistanceMapImageType;
 
   try
     {

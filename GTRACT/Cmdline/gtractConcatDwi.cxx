@@ -90,7 +90,6 @@ int main(int argc, char *argv[])
 
   typedef signed short                   PixelType;
   typedef itk::VectorImage<PixelType, 3> NrrdImageType;
-  typedef NrrdImageType::PixelType       VectorImagePixelType;
   typedef itk::Image<PixelType, 3>       IndexImageType;
 
   typedef itk::ImageFileReader<NrrdImageType,

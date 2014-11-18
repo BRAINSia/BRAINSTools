@@ -132,12 +132,8 @@ int main( int argc, char *argv[] )
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
 
   const unsigned int Dimension = 3;
-  typedef unsigned short                      PixelType;
-  typedef itk::VectorImage<unsigned short, 3> ImageType;
-  typedef itk::VariableLengthVector<double>   realPixelType;
 
   // Some required typedef's
-  typedef itk::Vector<double, Dimension>            VectorType;
   typedef itk::Matrix<double, Dimension, Dimension> MatrixType;
   typedef MatrixType::InternalMatrixType            vnlMatrixType;
 

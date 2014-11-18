@@ -54,10 +54,6 @@ int main(int argc, char *argv[])
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
-
-  typedef double                                                          BSplineCoordinateRepType;
-  typedef itk::VersorRigid3DTransform<double>                             RigidTransformType;
-
   bool debug = true;
   if( debug )
     {

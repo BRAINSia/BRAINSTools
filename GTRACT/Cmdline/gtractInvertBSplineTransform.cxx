@@ -71,10 +71,6 @@ int main(int argc, char *argv[])
     }
 
   typedef double                              BSplineCoordinateRepType;
-  typedef itk::VersorRigid3DTransform<double> RigidTransformType;
-  typedef itk::ThinPlateR2LogRSplineKernelTransform<
-      BSplineCoordinateRepType, 3>     ThinPlateSplineTransformType;
-
 
   typedef signed short PixelType;
 

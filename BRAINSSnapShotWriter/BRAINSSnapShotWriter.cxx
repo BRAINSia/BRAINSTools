@@ -310,10 +310,8 @@ main(int argc, char * *argv)
   typedef std::vector<Image3DBinaryType::Pointer> Image3DBinaryVectorType;
 
   typedef itk::ImageFileReader<Image3DVolumeType> Image3DVolumeReaderType;
-  typedef Image3DVolumeReaderType::Pointer        Image3DVolumeReaderPointer;
 
   typedef itk::ImageFileReader<Image3DBinaryType> Image3DBinaryReaderType;
-  typedef Image3DBinaryReaderType::Pointer        Image3DBinaryReaderPointer;
 
   typedef itk::Image<unsigned char, 2> OutputGreyImageType;
 

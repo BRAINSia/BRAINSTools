@@ -62,10 +62,6 @@ main(int argc, char *argv[])
   const unsigned int Dimension = 3;
   typedef itk::Image<PixelType, Dimension> ImageType;
 
-  // Mask Reader type
-  typedef itk::Image<unsigned char, Dimension> MaskVolumeType;
-  typedef itk::ImageFileReader<MaskVolumeType> MaskReaderType;
-
   /*
    * Reader
    */

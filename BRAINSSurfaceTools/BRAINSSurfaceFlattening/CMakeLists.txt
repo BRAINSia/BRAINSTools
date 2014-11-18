@@ -1,4 +1,3 @@
-
 StandardBRAINSBuildMacro(NAME BRAINSSurfaceFlattening TARGET_LIBRARIES BRAINSCommonLib
   ${ITK_LIBRARIES})
 

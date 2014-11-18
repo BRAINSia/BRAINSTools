@@ -78,7 +78,7 @@ endif()
 
 ## These are not yet ready for prime time.
 option(USE_BRAINSContinuousClass          "Build BRAINSContinuousClass "   OFF)
-option(USE_BRAINSSurfaceTools             "Build BRAINSSurfaceTools     "  OFF)
+option(USE_BRAINSSurfaceTools             "Build BRAINSSurfaceTools     "  ON)
 option(USE_ICCDEF                         "Build ICCDEF     "              OFF)
 option(USE_BRAINSPosteriorToContinuousClass             "Build BRAINSPosteriorToContinuousClass" OFF)
 

@@ -46,7 +46,6 @@ int main(int argc, char *argv[])
   typedef short PixelType;
 
   typedef itk::Image<PixelType, LocalImageDimension> ImageType;
-  typedef ImageType::Pointer                         ImagePointerType;
   typedef ImageType::PointType                       ImagePointType;
 
   typedef itk::ImageFileReader<ImageType>         ReaderType;

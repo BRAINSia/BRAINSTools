@@ -48,7 +48,6 @@ int DoIt( int argc, char * argv[], PixelType )
   BRAINSRegisterAlternateIO();
 
   typedef itk::VectorImage<PixelType, DIMENSION>       DiffusionImageType;
-  typedef double                                       PixelTypeDouble;
 
   typedef itk::ImageFileReader<DiffusionImageType> FileReaderType;
   typename FileReaderType::Pointer firstReader = FileReaderType::New();

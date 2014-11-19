@@ -107,7 +107,6 @@ int main( int argc, char * argv[] )
   typedef double CoordinateRepType;
   typedef itk::Point<
       CoordinateRepType, ImageDimension>           PointType;
-  typedef std::vector<PointType>          PointArrayType;
   typedef itk::ImageFileReader<ImageType> ImageReaderType;
   typedef itk::ImageFileWriter<ImageType> ImageWriterType;
   typedef BCDThinPlateSplineKernelTransform<
@@ -116,7 +115,6 @@ int main( int argc, char * argv[] )
       CoordinateRepType, ImageDimension>           AffineTransformType;
   typedef TPSTransformType::PointSetType PointSetType;
   typedef itk::TransformFileWriter       TransformWriterType;
-  typedef PointSetType::Pointer          PointSetPointer;
   typedef PointSetType::PointIdentifier  PointIdType;
   typedef itk::ResampleImageFilter<
       ImageType, ImageType>                       ResamplerType;

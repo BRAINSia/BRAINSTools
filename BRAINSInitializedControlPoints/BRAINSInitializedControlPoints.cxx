@@ -131,8 +131,6 @@ int main(int argc, char* argv[])
   BSplineTransformType::Pointer initialBSplineTransform = BSplineTransformType::New();
   initialBSplineTransform->SetIdentity();
 
-  typedef BSplineTransformType::RegionType TransformRegionType;
-
   typedef itk::BSplineTransformInitializer
     <BSplineTransformType, FixedVolumeType> InitializerType;
   InitializerType::Pointer transformInitializer = InitializerType::New();

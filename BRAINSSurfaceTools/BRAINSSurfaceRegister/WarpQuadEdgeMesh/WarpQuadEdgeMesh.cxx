@@ -70,9 +70,6 @@ int main( int argc, char * argv [] )
 
   typedef itk::QuadEdgeMesh<PixelType, Dimension> MeshType;
 
-  typedef MeshType::PointType   PointType;
-  typedef PointType::VectorType VectorType;
-
   typedef itk::QuadEdgeMeshVTKPolyDataReader<MeshType> ReaderType;
 
   ReaderType::Pointer inputMeshReader = ReaderType::New();

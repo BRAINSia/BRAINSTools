@@ -339,7 +339,6 @@ int main( int argc, char * argv[] )
   //     2: (AC, PC, LE)
   //     3: ....
   typedef std::vector<ThreeLandmarksForPlane>  PlaneLandmarkSetType;
-  typedef PlaneLandmarkSetType::const_iterator PlaneLandmarkSetIteratorType;
 
   PlaneLandmarkSetType myLandmarkSetForPlanes;
 

@@ -56,8 +56,6 @@ int main( int argc, char *argv[] )
     return EXIT_FAILURE;
     }
 
-  const unsigned int Dimension = 3;
-
   LandmarksMapType origLandmarks = ReadSlicer3toITKLmk( inputLandmarksFile );
   LandmarksMapType transformedLandmarks;
 

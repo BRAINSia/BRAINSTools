@@ -1022,7 +1022,6 @@ int main(int argc, char * *argv)
 
   // Define the internal reader type
   typedef itk::ResampleImageFilter<FloatImageType, FloatImageType> ResampleType;
-  typedef ResampleType::Pointer                                    ResamplePointer;
 
   intraSubjectRegisteredImageMap =
     ResampleImageList(resamplerInterpolatorType, intraSubjectNoiseRemovedImageMap,

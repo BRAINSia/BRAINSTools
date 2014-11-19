@@ -424,13 +424,25 @@ itk::Transform<double, 3, 3>::Pointer ReadTransformFromDisk(const std::string & 
     }
   else if( currentTransformList.size() > 1 )
     {
-    // Error, too many transforms on transform list.
-    std::cout << "[FAILED]" << std::endl;
-    std::cerr << "Error using the currentTransformList for initializing:"
-              << std::endl
-              << "There should not be more than one transforms in the transform list."
-              << std::endl;
-    return NULL;
+    std::cout << "Adding all transforms in the list to a composite transform file..." << std::endl;
+    try
+      {
+      BRAINSCompositeTransformType::Pointer tempCopy = BRAINSCompositeTransformType::New();
+
+      for( TransformListType::const_iterator it = currentTransformList.begin();
+          it != currentTransformList.end(); ++it )
+        {
+        tempCopy->AddTransform( dynamic_cast<itk::Transform<double, 3, 3> *>( (*it).GetPointer() ) );
+        }
+      genericTransform = tempCopy.GetPointer();
+      }
+    catch( itk::ExceptionObject & excp )
+      {
+      std::cerr << "[FAILED]" << std::endl;
+      std::cerr << "Error while adding all input transforms to a composite transform file " << initialTransform << std::endl;
+      std::cerr << excp << std::endl;
+      throw excp;
+      }
     }
   return genericTransform;
 }

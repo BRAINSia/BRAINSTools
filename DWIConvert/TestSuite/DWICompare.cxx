@@ -48,11 +48,7 @@ int DoIt( int argc, char * argv[], PixelType )
   BRAINSRegisterAlternateIO();
 
   typedef itk::VectorImage<PixelType, DIMENSION>       DiffusionImageType;
-  typedef itk::Image<PixelType, DIMENSION>             ScalarImageType;
   typedef double                                       PixelTypeDouble;
-  typedef itk::VectorImage<PixelTypeDouble, DIMENSION> DoubleDiffusionImageType;
-  typedef itk::Image<PixelTypeDouble, DIMENSION>       ScalarDoubleImageType;
-  typedef itk::CovariantVector<double, DIMENSION>      CovariantVectorType;
 
   typedef itk::ImageFileReader<DiffusionImageType> FileReaderType;
   typename FileReaderType::Pointer firstReader = FileReaderType::New();
@@ -65,8 +61,6 @@ int DoIt( int argc, char * argv[], PixelType )
   typedef itk::MetaDataDictionary DictionaryType;
   const DictionaryType & firstDictionary = firstReader->GetMetaDataDictionary();
   const DictionaryType & secondDictionary = secondReader->GetMetaDataDictionary();
-
-  typedef itk::MetaDataObject<std::string> MetaDataStringType;
 
   DictionaryType::ConstIterator itr = firstDictionary.Begin();
   DictionaryType::ConstIterator end = firstDictionary.End();

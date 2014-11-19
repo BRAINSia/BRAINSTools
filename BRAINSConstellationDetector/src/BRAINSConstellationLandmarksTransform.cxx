@@ -58,8 +58,6 @@ int main( int argc, char *argv[] )
 
   const unsigned int Dimension = 3;
 
-  typedef itk::Point<double,Dimension> LocalPointType;
-
   LandmarksMapType origLandmarks = ReadSlicer3toITKLmk( inputLandmarksFile );
   LandmarksMapType transformedLandmarks;
 

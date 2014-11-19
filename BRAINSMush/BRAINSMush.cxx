@@ -527,15 +527,9 @@ void GenerateBrainVolume(ImageType::Pointer & firstImage,
                                              MaskImageType> ConnectedComponentFilterType;
   typedef itk::RelabelComponentImageFilter<MaskImageType,
                                            MaskImageType> RelabelComponentFilterType;
-  typedef itk::ConnectedThresholdImageFilter<MaskImageType,
-                                             MaskImageType> ConnectedThresholdFilterType;
   typedef itk::ThresholdImageFilter<MaskImageType>
     ThresholdFilterType;
-  // alternate definition to allow for binary thresholding of a mask image
-  typedef itk::BinaryThresholdImageFilter<MaskImageType,
-                                          MaskImageType> MaskBinaryThresholdFilterType;
 
-  // BinaryThresholdFilterType::Pointer threshold = BinaryThresholdFilterType::New();
   ConnectedComponentFilterType::Pointer filter = ConnectedComponentFilterType::New();
   RelabelComponentFilterType::Pointer   relabel = RelabelComponentFilterType::New();
 

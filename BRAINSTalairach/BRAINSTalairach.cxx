@@ -77,7 +77,6 @@ int main(int argc, char *argv[])
     }
 
   const int dimension = 3;
-  typedef itk::Point<unsigned int, dimension>  PointType;
   typedef itk::ContinuousIndex<double, 3>      ContinuousIndexType;
   typedef itk::Image<unsigned char, dimension> ImageType;
   typedef itk::ImageFileReader<ImageType>      ImageReaderType;

@@ -73,9 +73,6 @@ int main( int argc, char * argv [] )
   typedef MeshType::PointType   PointType;
   typedef PointType::VectorType VectorType;
 
-  typedef itk::QuadEdgeMeshTraits<VectorType, Dimension, bool, bool>     VectorPointSetTraits;
-  typedef itk::QuadEdgeMesh<VectorType, Dimension, VectorPointSetTraits> MeshWithVectorsType;
-
   typedef itk::QuadEdgeMeshVTKPolyDataReader<MeshType> ReaderType;
 
   ReaderType::Pointer inputMeshReader = ReaderType::New();

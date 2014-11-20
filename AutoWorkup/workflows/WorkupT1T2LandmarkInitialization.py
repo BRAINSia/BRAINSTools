@@ -86,7 +86,7 @@ def CreateLandmarkInitializeWorkflow(WFname, InterpolationMode, DoReverseInit=Fa
 
     landmarkInitializeWF.connect(inputsSpec, 'atlasWeightFilename', BLI, 'inputWeightFilename')
     landmarkInitializeWF.connect(inputsSpec, 'atlasLandmarkFilename', BLI, 'inputMovingLandmarkFilename')
-    landmarkInitializeWF.connect(BCD, 'outputLandmarksInACPCAlignedSpace', BLI, 'inputFixedLandmarkFilename'),
+    landmarkInitializeWF.connect(BCD, 'outputLandmarksInACPCAlignedSpace', BLI, 'inputFixedLandmarkFilename')
 
     ## This is for debugging purposes, and it is not intended for general use.
     if DoReverseInit == True:

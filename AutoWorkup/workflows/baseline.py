@@ -39,6 +39,7 @@ from PipeLineFunctionHelpers import UnwrapPosteriorImagesFromDictionaryFunction 
 
 from WorkupT1T2LandmarkInitialization import CreateLandmarkInitializeWorkflow
 from WorkupT1T2TissueClassify import CreateTissueClassifyWorkflow
+from WorkupT1T2MALF import CreateMALFWorkflow
 from WorkupAddsonBrainStem import CreateBrainstemWorkflow
 
 from utilities.misc import *
@@ -739,5 +740,22 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
 
         baw201.connect(WhiteMatterHemisphereNode,'WM_LeftHemisphereFileName',DataSink,'WarpedAtlas2Subject.@LeftHemisphereWM')
         baw201.connect(WhiteMatterHemisphereNode,'WM_RightHemisphereFileName',DataSink,'WarpedAtlas2Subject.@RightHemisphereWM')
+
+    if 'malf_2012_neuro' in master_config['components']:  ## HACK Do MALF labeling
+        good_subjects = [
+            '1001', '1004', '1005','1011',
+            '1012', '1018', '1019', '1102',
+            '1103', '1104', '1120', '1129',
+            '1009', '1010', '1013', '1014',
+            '1036', '1109', '1117', '1122']
+
+        ## HACK FOR NOW SHOULD BE MORE ELEGANT FROM THE .config file
+        BASE_DATA_GRABBER_DIR='/Shared/johnsonhj/HDNI/Neuromorphometrics/20141116_Neuromorphometrics_base_Results/Neuromorphometrics/2012Subscription'
+
+        myLocalMALF = CreateMALFWorkflow("MALF", master_config,good_subjects,BASE_DATA_GRABBER_DIR)
+        baw201.connect(myLocalTCWF,'outputspec.t1_average',myLocalMALF,'inputspec.subj_t1_image')
+        baw201.connect(myLocalLMIWF, 'outputspec.outputLandmarksInACPCAlignedSpace' ,myLocalMALF,'inputspec.subj_lmks')
+        baw201.connect(atlasBCDNode_S,'template_weights_50Lmks_wts',myLocalMALF,'inputspec.atlasWeightFilename')
+        baw201.connect(myLocalMALF,'outputspec.MALF_neuro2012_labelmap',DataSink,'TissueClassify.@MALF_neuro2012_labelmap')
 
     return baw201

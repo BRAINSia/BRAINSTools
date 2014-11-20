@@ -47,7 +47,8 @@ def _create_singleSession(dataDict, master_config, interpMode, pipeline_name):
            'auxlmk' in master_config['components'] or \
            'denoise' in master_config['components'] or \
            'landmark' in master_config['components'] or \
-           'segmentation' in master_config['components']
+           'segmentation' in master_config['components'] or \
+           'malf_2012_neuro' in master_config['components']
 
     from nipype import config, logging
 
@@ -96,7 +97,7 @@ def createAndRun(sessions, environment, experiment, pipeline, cluster, useSentin
         all_sessions = database.getAllSessions()
         if not set(sessions) <= set(all_sessions) and 'all' not in sessions:
             missing = set(sessions) - set(all_sessions)
-            assert len(missing) == 0, "Requested sessions are missing from the database: {0}".format(missing)
+            assert len(missing) == 0, "Requested sessions are missing from the database: {0}\n\n{1}".format(missing,all_sessions)
         elif 'all' in sessions:
             sessions = set(all_sessions)
         else:
@@ -154,6 +155,12 @@ def createAndRun(sessions, environment, experiment, pipeline, cluster, useSentin
                     sentinal_file_basedir,
                     "WarpedAtlas2Subject",
                     "left_hemisphere_wm.nii.gz"
+                ))
+            if 'malf_2012_neuro' in master_config['components']:
+                sentinal_file_list.append(os.path.join(
+                    sentinal_file_basedir,
+                    "WarpedAtlas2Subject",
+                    "xxxxxFILL IN DATASINK"
                 ))
 
 

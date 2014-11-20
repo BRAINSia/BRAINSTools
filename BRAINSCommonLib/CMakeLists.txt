@@ -8,7 +8,7 @@ project(BRAINSCommonLib)
 #
 # ITK
 #
-FindITKUtil(
+FindITKUtil( BRAINSCommonLib_ITK
   ITKImageLabel
   ITKDistanceMap
   ITKLabelVoting
@@ -67,7 +67,7 @@ set(BRAINSCommonLib_SRCS
 
 ## Always build BRAINSCommonLib as static
 add_library(BRAINSCommonLib STATIC ${BRAINSCommonLib_SRCS})
-target_link_libraries(BRAINSCommonLib ${ITK_LIBRARIES} ${ANTS_LIBS} ${double-conversion_LIBRARIES})
+target_link_libraries(BRAINSCommonLib ${BRAINSCommonLib_ITK_LIBRARIES} ${ANTS_LIBS} ${double-conversion_LIBRARIES})
 
 #
 # To fix compilation problem: relocation R_X86_64_32 against `a local symbol' can not be

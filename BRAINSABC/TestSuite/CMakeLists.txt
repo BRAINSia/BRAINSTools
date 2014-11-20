@@ -98,7 +98,7 @@ endif()
 
 if( ${BRAINSTools_MAX_TEST_LEVEL} GREATER 8) # This should be restored after fixing.
   add_executable(BlendImageFilterTest BlendImageFilterTest.cxx)
-  target_link_libraries(BlendImageFilterTest ${ITK_LIBRARIES})
+  target_link_libraries(BlendImageFilterTest ${BRAINSABC_ITK_LIBRARIES})
   ExternalData_add_test( ${PROJECT_NAME}FetchData NAME BlendImageFilterTest COMMAND ${LAUNCH_EXE}  $<TARGET_FILE:BlendImageFilterTest> )
 endif()
 

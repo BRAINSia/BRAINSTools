@@ -1,6 +1,6 @@
-message(WARNING "ITK_LIBRARIES:${ITK_LIBRARIES}")
+message(WARNING "BRAINSSurfaceTools_ITK_LIBRARIES:${BRAINSSurfaceTools_ITK_LIBRARIES}")
 add_subdirectory( CompareSurfaces )
-message(WARNING "ITK_LIBRARIES:${ITK_LIBRARIES}")
+message(WARNING "BRAINSSurfaceTools_ITK_LIBRARIES:${BRAINSSurfaceTools_ITK_LIBRARIES}")
 
 set(configure_header_file vtkITKConfigure.h)
 configure_file(
@@ -10,19 +10,19 @@ configure_file(
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
-message(WARNING "ITK_LIBRARIES:${ITK_LIBRARIES}")
+message(WARNING "BRAINSSurfaceTools_ITK_LIBRARIES:${BRAINSSurfaceTools_ITK_LIBRARIES}")
 StandardBRAINSBuildMacro(NAME BRAINSApplySurfaceLabels TARGET_LIBRARIES BRAINSCommonLib ${VTK_LIBRARIES}
-  ${ITK_LIBRARIES})
+  ${BRAINSSurfaceTools_ITK_LIBRARIES})
 
-message(WARNING "ITK_LIBRARIES:${ITK_LIBRARIES}")
+message(WARNING "BRAINSSurfaceTools_ITK_LIBRARIES:${BRAINSSurfaceTools_ITK_LIBRARIES}")
 StandardBRAINSBuildMacro(NAME BRAINSMeasureSurface TARGET_LIBRARIES BRAINSCommonLib ${VTK_LIBRARIES}
-  ${ITK_LIBRARIES})
+  ${BRAINSSurfaceTools_ITK_LIBRARIES})
 
-message(WARNING "ITK_LIBRARIES:${ITK_LIBRARIES}")
+message(WARNING "BRAINSSurfaceTools_ITK_LIBRARIES:${BRAINSSurfaceTools_ITK_LIBRARIES}")
 StandardBRAINSBuildMacro(NAME BRAINSSurfaceGeneration
 ADDITIONAL_SRCS vtkITKArchetypeImageSeriesReader.cxx vtkITKArchetypeImageSeriesScalarReader.cxx
-TARGET_LIBRARIES BRAINSCommonLib ${ITK_LIBRARIES} ${VTK_LIBRARIES} )
-message(WARNING "ITK_LIBRARIES:${ITK_LIBRARIES}")
+TARGET_LIBRARIES BRAINSCommonLib ${BRAINSSurfaceTools_ITK_LIBRARIES} ${VTK_LIBRARIES} )
+message(WARNING "BRAINSSurfaceTools_ITK_LIBRARIES:${BRAINSSurfaceTools_ITK_LIBRARIES}")
 
 if (BUILD_TESTING)
 

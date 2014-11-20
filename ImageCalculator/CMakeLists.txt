@@ -8,7 +8,9 @@
 #
 # ITK
 #
-FindITKUtil(ITKImageCompare
+
+FindITKUtil(ImageCalculator_ITK
+  ITKImageCompare
   ITKImageFilterBase
   ITKImageGrid
   ITKImageIntensity
@@ -21,10 +23,10 @@ add_executable(ImageCalculator
   ImageCalculatorProcess2D.cxx
   ImageCalculatorProcess3D.cxx
   ImageCalculatorUtils.cxx)
-target_link_libraries(ImageCalculator ${ITK_LIBRARIES} )
+target_link_libraries(ImageCalculator ${ImageCalculator_ITK_LIBRARIES} )
 
 add_executable(ImageGenerate ImageGenerate.cxx )
-target_link_libraries(ImageGenerate ${ITK_LIBRARIES})
+target_link_libraries(ImageGenerate ${ImageCalculator_ITK_LIBRARIES})
 
 if(BUILD_TESTING AND NOT Slicer_BUILD_BRAINSTOOLS)
     add_subdirectory(TestSuite)

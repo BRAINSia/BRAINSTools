@@ -4,4 +4,4 @@
 set(TestName TestLargestForegroundFilledMaskImageFilter)
 
 add_executable(${TestName} ${TestName}.cxx)
-target_link_libraries(${TestName})${ITK_LIBRARIES}
+target_link_libraries(${TestName})${BRAINSCommonLib_ITK_LIBRARIES}

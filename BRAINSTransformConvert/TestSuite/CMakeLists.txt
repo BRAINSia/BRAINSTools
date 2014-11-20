@@ -3,10 +3,10 @@
 # build them, so it might as well get run as a percursor test.
 add_executable(BRAINSTransformConvertMakeTestFiles
   BRAINSTransformConvertMakeTestFiles.cxx)
-target_link_libraries(BRAINSTransformConvertMakeTestFiles BRAINSCommonLib ${ITK_LIBRARIES})
+target_link_libraries(BRAINSTransformConvertMakeTestFiles BRAINSCommonLib ${BRAINSTransformConvert_ITK_LIBRARIES})
 
 add_executable(ImageCompare ImageCompare.cxx)
-target_link_libraries(ImageCompare BRAINSCommonLib ${ITK_LIBRARIES})
+target_link_libraries(ImageCompare BRAINSCommonLib ${BRAINSTransformConvert_ITK_LIBRARIES})
 
 set_target_properties(BRAINSTransformConvertMakeTestFiles
   ImageCompare

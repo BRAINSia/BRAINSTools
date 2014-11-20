@@ -8,7 +8,7 @@ set(PROGS_LIST_1
   )
 foreach(prog ${PROGS_LIST_1})
   add_executable(${prog} ${prog}.cxx)
-  target_link_libraries(${prog} BRAINSCommonLib ${ITK_LIBRARIES} ${VTK_LIBRARIES})
+  target_link_libraries(${prog} BRAINSCommonLib ${BRAINSConstellationDetector_ITK_LIBRARIES} ${VTK_LIBRARIES})
 endforeach()
 
 ## Simple CLP programs

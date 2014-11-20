@@ -8,7 +8,7 @@
 #
 # ITK
 #
-FindITKUtil(
+FindITKUtil(BRAINSConstellationDetector_ITK
   ITKThresholding
   ITKImageCompare
   ITKRegistrationCommon

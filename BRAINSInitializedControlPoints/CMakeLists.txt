@@ -8,7 +8,9 @@
 #
 # ITK
 #
-FindITKUtil(ITKImageGrid
+
+FindITKUtil(BRAINSInitializedControlPoints_ITK
+  ITKImageGrid
   ITKTransform)
 
 #-----------------------------------------------------------------------------

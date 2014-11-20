@@ -5,7 +5,7 @@ file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 ## Test landmarksConstellationTrainingDefinitionIO
 ##
 add_executable(TestlandmarksConstellationTrainingDefinitionIO TestlandmarksConstellationTrainingDefinitionIO.cxx)
-target_link_libraries(TestlandmarksConstellationTrainingDefinitionIO BRAINSCommonLib ${ITK_LIBRARIES}
+target_link_libraries(TestlandmarksConstellationTrainingDefinitionIO BRAINSCommonLib ${BRAINSConstellationDetector_ITK_LIBRARIES}
   ${VTK_LIBRARIES})
 
 set(ALL_TEST_PROGS
@@ -43,7 +43,7 @@ set(ALL_PROGS_LIST
 
 foreach(prog ${ALL_PROGS_LIST})
   add_executable(${prog} ../landmarkStatistics/${prog}.cxx)
-  target_link_libraries(${prog} BRAINSCommonLib ${ITK_LIBRARIES})
+  target_link_libraries(${prog} BRAINSCommonLib ${BRAINSConstellationDetector_ITK_LIBRARIES})
 endforeach()
 endif()
 
@@ -59,7 +59,7 @@ if( ${BRAINSTools_MAX_TEST_LEVEL} GREATER 8) # This should be restored after fix
 ##
 set (VersorTester_source VersorTester.cxx)
 add_executable(VersorTester ${VersorTester_source})
-target_link_libraries(VersorTester ${ITK_LIBRARIES})
+target_link_libraries(VersorTester ${BRAINSConstellationDetector_ITK_LIBRARIES})
 endif()
 
 # We want to fetch some data, but we do not want to use them explicity as an argument in

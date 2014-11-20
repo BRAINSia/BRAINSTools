@@ -7,7 +7,8 @@
 #
 # ITK
 #
-FindITKUtil(ITKAnisotropicSmoothing
+FindITKUtil(BRAINSABC_ITK
+  ITKAnisotropicSmoothing
   ITKDistanceMap
   ITKOptimizersv4
   ITKMetricsv4

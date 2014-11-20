@@ -8,7 +8,9 @@
 #
 # ITK
 #
-FindITKUtil(ITKBinaryMathematicalMorphology
+
+FindITKUtil(BRAINSMush_ITK
+  ITKBinaryMathematicalMorphology
   ITKCommon
   ITKConnectedComponents
   ITKIOImageBase

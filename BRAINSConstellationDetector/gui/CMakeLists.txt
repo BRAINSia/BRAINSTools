@@ -72,7 +72,7 @@ endif()
  BRAINSCommonLib
  ${LOCAL_VTK_QVTK_LIB}
  ${QT_LIBRARIES}
- ${ITK_LIBRARIES}
+ ${BRAINSConstellationDetector_ITK_LIBRARIES}
  # BRAINSConstellationDetectorCOMMONLIB
  ${VTK_LIBRARIES}
   )

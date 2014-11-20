@@ -8,7 +8,7 @@
 #
 # ITK
 #
-FindITKUtil(
+FindITKUtil(BRAINSFit_ITK
   ITKMetricsv4
   ITKOptimizersv4
   ITKSmoothing

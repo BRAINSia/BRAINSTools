@@ -8,7 +8,9 @@
 #
 # ITK
 #
-FindITKUtil(ITKDisplacementField
+
+FindITKUtil(BRAINSResample_ITK
+  ITKDisplacementField
   ITKDistanceMap
   ITKImageFunction
   ITKImageGrid

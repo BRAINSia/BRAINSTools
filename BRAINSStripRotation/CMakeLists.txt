@@ -8,7 +8,9 @@ project(BRAINSStripRotation)
 #
 # ITK
 #
-FindITKUtil(ITKTransform
+
+FindITKUtil(BRAINSStripRotation_ITK
+  ITKTransform
   ITKImageCompare)
 
 set(prog BRAINSStripRotation)

@@ -2,7 +2,8 @@
 # Dependencies.
 #
 
-FindITKUtil(
+
+FindITKUtil(BRAINSSurfaceTools_ITK
   ITKQuadEdgeMesh
   ITKOptimizers
   ITKQuadEdgeMeshFiltering

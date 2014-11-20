@@ -8,7 +8,9 @@
 #
 # ITK
 #
-FindITKUtil(ITKThresholding
+
+FindITKUtil(BRAINSLandmarkInitializer_ITK
+  ITKThresholding
   ITKDistanceMap
   ITKImageCompare
   ITKTransform)

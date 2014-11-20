@@ -5,7 +5,9 @@
 #
 # ITK
 #
-FindITKUtil(ITKTestKernel)
+
+FindITKUtil(BRAINSPosteriorToContinuousClass_ITK
+  ITKTestKernel)
 
 set(ALL_PROGS_LIST
   BRAINSPosteriorToContinuousClass

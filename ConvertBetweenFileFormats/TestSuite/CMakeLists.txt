@@ -94,7 +94,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME compare_nifti COMMAND
 set_tests_properties(compare_nifti PROPERTIES DEPENDS ccvnt_from_nifti)
 
 add_executable(ImageCompareTests ImageCompareTests.cxx)
-target_link_libraries(ImageCompareTests ${ITK_LIBRARIES} ${VTK_LIBRARIES})
+target_link_libraries(ImageCompareTests ${ConvertBetweenFileFormats_ITK_LIBRARIES} ${VTK_LIBRARIES})
 
 ExternalData_Add_Target( ${PROJECT_NAME}FetchData )  # Name of data management target
 

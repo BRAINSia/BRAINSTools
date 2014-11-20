@@ -8,7 +8,8 @@
 #
 # ITK
 #
-FindITKUtil(
+
+FindITKUtil( ICCDEF_ITK
   ITKImageCompare
   ITKFFT
   ITKConnectedComponents
@@ -43,7 +44,7 @@ set(ALL_PROGS_LIST
   iccdefRegistration_New
   )
 
-set(ICCDEFLibraries BRAINSCommonLib ${ITK_LIBRARIES})
+set(ICCDEFLibraries BRAINSCommonLib ${ICCDEF_ITK_LIBRARIES})
 DebugImageViewerLibAdditions(ICCDEFLibraries)
 
 foreach(prog ${ALL_PROGS_LIST})

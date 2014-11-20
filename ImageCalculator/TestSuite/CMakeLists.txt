@@ -3,7 +3,7 @@ add_executable(ImageCalculatorTests
   ../ImageCalculatorTests.cxx ../ImageCalculatorUtils.cxx
   ../ImageCalculatorProcess2D.cxx
   ../ImageCalculatorProcess3D.cxx)
-target_link_libraries(ImageCalculatorTests ${ITK_LIBRARIES})
+target_link_libraries(ImageCalculatorTests ${ImageCalculator_ITK_LIBRARIES})
 set_target_properties(ImageCalculatorTests PROPERTIES
   RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/testbin)
 

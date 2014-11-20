@@ -8,7 +8,8 @@
 #
 # ITK
 #
-findITKUtil(ITKDisplacementField
+findITKUtil( BRAINSDemonWarp
+  ITKDisplacementField
   ITKIOImageBase
   ITKIOMeta
   ITKImageAdaptors

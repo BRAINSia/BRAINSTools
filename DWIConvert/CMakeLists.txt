@@ -8,7 +8,9 @@ project(DWIConvert)
 #
 # ITK
 #
-FindITKUtil(ITKImageIntensity
+
+FindITKUtil( DWIConvert_ITK
+  ITKImageIntensity
   ITKImageStatistics
   ITKTestKernel
   ITKIODCMTK
@@ -33,7 +35,7 @@ foreach(f ${DWIConvertSupportLib_SRCS})
 endforeach()
 
 add_library(DWIConvertSupportLib STATIC ${DWIConvertSupportLib_SRCS})
-target_link_libraries(DWIConvertSupportLib ${ITK_LIBRARIES} )
+target_link_libraries(DWIConvertSupportLib ${DWIConvert_ITK_LIBRARIES} )
 
 #-----------------------------------------------------------------------------
 # SEMMacroBuildCLI(

@@ -8,7 +8,8 @@
 #
 # ITK
 #
-FindITKUtil(
+
+FindITKUtil( BRAINSCut_ITK
   ITKAnisotropicSmoothing
   ITKBinaryMathematicalMorphology
   ITKConnectedComponents
@@ -32,6 +33,7 @@ FindITKUtil(
   ITKThresholding
 )
 
+message(FATAL "ECHO ${BRAINSCut_ITK_LIBRARIES}")
 #
 # OpenCV
 #
@@ -75,7 +77,7 @@ add_library(BRAINSCutCOMMONLIB STATIC ${BRAINSCutCOMMONLIB_SRCS})
 #message(STATUS "${OpenCV_LIBRARIES}")
 target_link_libraries(BRAINSCutCOMMONLIB
   NetConfigurationCOMMONLIB
-  ${ITK_LIBRARIES}
+  ${BRAINSCut_ITK_LIBRARIES}
   ${OpenCV_LIBS}
   )
 

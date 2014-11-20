@@ -8,7 +8,9 @@
 #
 # ITK
 #
-FindITKUtil()
+
+FindITKUtil(BRAINSTalairach_ITK
+)
 
 #
 # VTK

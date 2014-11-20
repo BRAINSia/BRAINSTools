@@ -1,20 +1,31 @@
 #
 # encapsulate calling find_package(ITK)
 
-macro(FindITKUtil)
+## ITK_VAR_PREFIX is a required parameter to this macro
+## "ITK_VAR_PREFIX" is the new prefix variable to be used instead
+## of "ITK" for [_LIBRARIES|_INCLUDE_DIRS|_LIBRARY_DIRS] when you want to link
+## build or link against ITK
+## Instead of using ${ITK_INCLUDE_DIRS}, you now use ${${ITK_VAR_PREFIX}_INCLUDE_DIRS}
+## Instead of using ${ITK_LIBRARIES}, you now use ${${ITK_VAR_PREFIX}_LIBRARIES}
+## Instead of using ${ITK_LIBRARY_DIRS}, you now use ${${ITK_VAR_PREFIX}_LIBRARY_DIRS}
+## After ITK_VAR_PREFIX the user of the FindITKUtil macro should provide
+## a list of optional modules that are needed and will be available in the ${ARGN}
+## cmake variable.
+macro(FindITKUtil ITK_VAR_PREFIX )
+
   if(Slicer_BUILD_BRAINSTOOLS) ## Slicer has it's own internal MGHIO that conflicts with ITK
-    set(FindITK_MGHIO "")
+    set(BRAINSTOOLS_MGHIO_MODULE_NAME "")
   else()
-    set(FindITK_MGHIO MGHIO )
+    set(BRAINSTOOLS_MGHIO_MODULE_NAME MGHIO )
   endif()
 
   # ITK_FOUND needs to be reset, or it won't redo
   # setting up the include directories
-  set(ITK_FOUND OFF)
-  find_package(ITK COMPONENTS
+  find_package(ITK 4.5 REQUIRED)
+  itk_module_config(${ITK_VAR_PREFIX}
     # Everything needs ITKCommon
     ITKCommon
-    # Common depends on thes modules
+    # Common depends on these modules
     ITKVNLInstantiation
     ITKKWSys
     ITKDoubleConversion
@@ -42,14 +53,16 @@ macro(FindITKUtil)
     ITKIOTransformMatlab
     ITKIOTransformHDF5
     ITKIOGE
-    ${FindITK_MGHIO}
+    ${BRAINSTOOLS_MGHIO_MODULE_NAME}
     # other modules specific to the current directory
     ${ARGN}
-    REQUIRED)
+    )
 
   if(Slicer_BUILD_BRAINSTOOLS)
     set(ITK_NO_IO_FACTORY_REGISTER_MANAGER 1)
   endif()
-  include(${ITK_USE_FILE})
 
+  include(${ITK_USE_FILE})
+  ## Now include directories associated with the requested modules
+  include_directories(${${ITK_VAR_PREFIX}_INCLUDE_DIRS})
 endmacro()

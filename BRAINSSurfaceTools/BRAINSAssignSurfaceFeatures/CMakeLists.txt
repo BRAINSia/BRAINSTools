@@ -1,8 +1,9 @@
-FindITKUtil(
+FindITKUtil(BRAINSSurfaceTools_ITK
   ITKQuadEdgeMesh
   ITKOptimizers
   ITKQuadEdgeMeshFiltering
 )
+
 FindVTKUtil(vtkIOLegacy
   vtkIOXML
   vtkCommonDataModel
@@ -16,7 +17,7 @@ FindVTKUtil(vtkIOLegacy
 
 StandardBRAINSBuildMacro(NAME BRAINSAssignSurfaceFeatures
   TARGET_LIBRARIES BRAINSCommonLib
-  ${ITK_LIBRARIES}
+  ${BRAINSSurfaceTools_ITK_LIBRARIES}
   ${VTK_LIBRARIES})
 
 if (BUILD_TESTING)

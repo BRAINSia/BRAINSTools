@@ -8,7 +8,9 @@
 #
 # ITK
 #
-FindITKUtil(ITKImageIntensity
+
+FindITKUtil(BRAINSMultiModeSegment_ITK
+  ITKImageIntensity
   ITKBinaryMathematicalMorphology
   ITKConnectedComponents
   ITKMathematicalMorphology

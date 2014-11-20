@@ -5,7 +5,9 @@
 #
 # ITK
 #
-FindITKUtil(ITKImageGrid
+
+FindITKUtil( DebugImageViewer_ITK
+  ITKImageGrid
   ITKImageIntensity
 )
 
@@ -38,27 +40,27 @@ add_executable(DebugImageViewer
 )
 
 target_link_libraries(DebugImageViewer
-  ${ITK_LIBRARIES}
+  ${DebugImageViewer_ITK_LIBRARIES}
   ${VTK_LIBRARIES}
   ${QT_LIBRARIES})
 
 add_executable(DebugImageViewerClientTest DebugImageViewerClientTest.cxx )
 
 target_link_libraries(DebugImageViewerClientTest
-${ITK_LIBRARIES}
+${DebugImageViewer_ITK_LIBRARIES}
 ${VTK_LIBRARIES}
 )
 
 add_executable(DebugImageViewerClientTest2 DebugImageViewerClientTest2.cxx )
 
 target_link_libraries(DebugImageViewerClientTest2
-${ITK_LIBRARIES}
+${DebugImageViewer_ITK_LIBRARIES}
 ${VTK_LIBRARIES}
 )
 
 add_executable(DebugImageViewerVectorClientTest DebugImageViewerVectorClientTest.cxx
 )
 target_link_libraries(DebugImageViewerVectorClientTest
-${ITK_LIBRARIES}
+${DebugImageViewer_ITK_LIBRARIES}
 ${VTK_LIBRARIES}
 )

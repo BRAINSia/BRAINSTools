@@ -8,7 +8,9 @@
 #
 # ITK
 #
-FindITKUtil(ITKIOImageBase
+
+FindITKUtil(BRAINSSnapShotWriter_ITK
+  ITKIOImageBase
   ITKImageCompose
   ITKImageFilterBase
   ITKImageFusion

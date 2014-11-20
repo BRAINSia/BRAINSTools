@@ -1,7 +1,9 @@
 #
 # ITK
 #
-FindITKUtil(ITKImageIntensity
+
+FindITKUtil(ConvertBetweenFileFormats_ITK
+  ITKImageIntensity
   ITKTestKernel
   ITKVtkGlue)
 
@@ -18,7 +20,7 @@ include_directories(
     ${CMAKE_CURRENT_BINARY_DIR}
     )
 
-target_link_libraries(ConvertBetweenFileFormats  ${ITK_LIBRARIES} )
+target_link_libraries(ConvertBetweenFileFormats  ${ConvertBetweenFileFormats_ITK_LIBRARIES} )
 if(VTK_FOUND)
   target_link_libraries(ConvertBetweenFileFormats ${VTK_LIBRARIES})
   include_directories( ${ITKApps_SOURCE_DIR}/Auxiliary/vtk )

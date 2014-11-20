@@ -6,14 +6,14 @@ if(COMPILE_TEST_GENERATION_PROGRAMS)  ## These were programs needed to create th
   # from test.nii.gz
   if(MakeMakeXfrmImage)
     add_executable(makexfrmedImage makexfrmedImage.cxx)
-    target_link_libraries(makexfrmedImage ${ITK_LIBRARIES})
+    target_link_libraries(makexfrmedImage ${BRAINSFit_ITK_LIBRARIES})
   endif()
 endif()
 
 
 # Test the CenterOfROI Test
 add_executable(CenterOfROIInitTest CenterOfROIInitTest.cxx )
-set(CenterOfROIInitTestLibraries BRAINSCommonLib ${ITK_LIBRARIES} ${OPTIONAL_DEBUG_LINK_LIBRARIES} )
+set(CenterOfROIInitTestLibraries BRAINSCommonLib ${BRAINSFit_ITK_LIBRARIES} ${OPTIONAL_DEBUG_LINK_LIBRARIES} )
 
 DebugImageViewerLibAdditions(CenterOfROIInitTestLibraries)
 

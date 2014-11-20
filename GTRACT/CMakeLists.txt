@@ -8,7 +8,9 @@ project( GTRACT )
 #
 # ITK
 #
-FindITKUtil(ITKOptimizersv4
+
+FindITKUtil( GTRACT_ITK
+  ITKOptimizersv4
   ITKDistanceMap
   ITKMathematicalMorphology
   ITKRegionGrowing

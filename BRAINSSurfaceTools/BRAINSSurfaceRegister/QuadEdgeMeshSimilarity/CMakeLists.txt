@@ -1,5 +1,5 @@
 StandardBRAINSBuildMacro(NAME QuadEdgeMeshSimilarity
   TARGET_LIBRARIES
   BRAINSCommonLib
-  ${ITK_LIBRARIES}
+  ${BRAINSSurfaceTools_ITK_LIBRARIES}
   ${VTK_LIBRARIES})

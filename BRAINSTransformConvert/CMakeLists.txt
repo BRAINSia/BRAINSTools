@@ -8,7 +8,9 @@
 #
 # ITK
 #
-FindITKUtil(ITKTransform
+
+FindITKUtil(BRAINSTransformConvert_ITK
+  ITKTransform
   ITKImageCompare
   ITKThresholding
   ITKDistanceMap)

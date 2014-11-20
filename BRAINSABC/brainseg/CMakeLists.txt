@@ -28,7 +28,7 @@ add_library(BRAINSABCCOMMONLIB STATIC ${BRAINSABCCOMMONLIB_SRCS})
 add_dependencies(BRAINSABCCOMMONLIB InstallReferenceAtlas)
 
 
-set(BRAINSABCCOMMONLIBLibraries BRAINSCommonLib ${ITK_LIBRARIES})
+set(BRAINSABCCOMMONLIBLibraries BRAINSCommonLib ${BRAINSABC_ITK_LIBRARIES})
 
 DebugImageViewerLibAdditions(BRAINSABCCOMMONLIBLibraries)
 
@@ -63,5 +63,5 @@ if(0)
 
   ## A utility program
   add_executable(StandardizeMaskIntensity StandardizeMaskIntensity.cxx)
-  target_link_libraries(StandardizeMaskIntensity ${ITK_LIBRARIES})
+  target_link_libraries(StandardizeMaskIntensity ${BRAINSABC_ITK_LIBRARIES})
 endif()

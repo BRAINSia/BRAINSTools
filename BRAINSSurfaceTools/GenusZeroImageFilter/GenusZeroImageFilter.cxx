@@ -60,7 +60,6 @@ int main(int argc, char * argv[])
   vtkImageData *                    image;
   vtkTransform *                    transformIJKtoRAS = NULL;
   vtkTransformPolyDataFilter *      transformer = NULL;
-  vtkImageGenus0MarchingCubes *     marchingcubes = NULL;
   vtkPolyDataWriter *               writer = NULL;
 
   typedef itk::Image<unsigned short, 3>                                  ImageType;
@@ -92,13 +91,13 @@ int main(int argc, char * argv[])
   // in the vtk filter
 
   vtkImageChangeInformation *ici = vtkImageChangeInformation::New();
-  ici->SetInput(reader->GetOutput() );
+  ici->SetInputData(reader->GetOutput() );
   ici->SetOutputSpacing( 1, 1, 1 );
   ici->SetOutputOrigin( 0, 0, 0 );
   ici->Update();
 
   image = ici->GetOutput();
-  image->Update();
+  // image->UpdateInformation();
 
   // Get the dimensions, marching cubes only works on 3d
   int extents[6];
@@ -133,7 +132,7 @@ int main(int argc, char * argv[])
 
   // set up the genus zero marching cubes filter
 
-  marchingcubes = vtkImageGenus0MarchingCubes::New();
+  vtkImageGenus0MarchingCubes * marchingcubes = vtkImageGenus0MarchingCubes::New();
   /*    vtkPluginFilterWatcher watchMCubes(marchingcubes,
                                      "Marching Cubes",
                                      CLPProcessInformation,
@@ -141,7 +140,7 @@ int main(int argc, char * argv[])
 
   // pass the command line arguments to the filter
 
-  marchingcubes->SetInput(ici->GetOutput() );
+  marchingcubes->SetInputData(ici->GetOutput() );
 
   // check the supported cases and abort in case of an unsupported
   // case
@@ -221,7 +220,7 @@ int main(int argc, char * argv[])
     // determine number of edges
 
     vtkExtractEdges *extractEdges = vtkExtractEdges::New();
-    extractEdges->SetInput( marchingcubes->GetOutput() );
+    extractEdges->SetInputData( marchingcubes->GetOutput() );
     extractEdges->Update();
 
     int iNumberOfEdges = extractEdges->GetOutput()->GetNumberOfLines();
@@ -247,7 +246,7 @@ int main(int argc, char * argv[])
                                          "Transformer",
                                          CLPProcessInformation,
                                          1.0/7.0, 4.0/7.0);*/
-  transformer->SetInput(marchingcubes->GetOutput() );
+  transformer->SetInputData(marchingcubes->GetOutput() );
 
   transformer->SetTransform(transformIJKtoRAS);
   if( debug )
@@ -257,12 +256,12 @@ int main(int argc, char * argv[])
     }
 
   // TODO: add progress
-  (transformer->GetOutput() )->ReleaseDataFlagOn();
+  // (transformer->GetOutput())->ReleaseDataFlagOn();
 
   // but for now we're just going to write it out
 
   writer = vtkPolyDataWriter::New();
-  writer->SetInput(transformer->GetOutput() );
+  writer->SetInputData(transformer->GetOutput() );
 
   if( computeSurface )
     {
@@ -280,7 +279,7 @@ int main(int argc, char * argv[])
     {
 
     vtkImageCast *imageCast = vtkImageCast::New();
-    imageCast->SetInput( marchingcubes->GetCorrectedImageData() );
+    imageCast->SetInputData( marchingcubes->GetCorrectedImageData() );
     imageCast->SetOutputScalarTypeToUnsignedShort();
     imageCast->Update();
 
@@ -295,7 +294,7 @@ int main(int argc, char * argv[])
       ConnectedComponentImageFilterType::Pointer connectedComponentFilter = ConnectedComponentImageFilterType::New();
       LabelExtracterImageFilterType::Pointer     labelExtracter = LabelExtracterImageFilterType::New();
 
-      vtk2itkImageFilter->SetInput( imageCast->GetOutput() );
+      vtk2itkImageFilter->SetInputData( imageCast->GetOutput() );
       vtk2itkImageFilter->Update();
 
       // get the connected components
@@ -377,12 +376,12 @@ int main(int argc, char * argv[])
       labelExtracter->SetInput( connectedComponentFilter->GetOutput() );
       labelExtracter->Update();
 
-      itk2vtkImageFilter->SetInput( labelExtracter->GetOutput() );
-      itk2vtkImageFilter->Update();
+      itk2vtkImageFilter->SetInputData( labelExtracter->GetOutput() );
+      // itk2vtkImageFilter->Update();
 
       // and write out the result
 
-      imageWriter->SetInput( itk2vtkImageFilter->GetOutput() );
+      imageWriter->SetInputData( itk2vtkImageFilter->GetOutput() );
 
       imageWriter->SetFileName( outputVolume.c_str() );
       imageWriter->SetUseCompression( 1 );
@@ -392,7 +391,7 @@ int main(int argc, char * argv[])
     else    // just write out everything there is
       {
 
-      imageWriter->SetInput( imageCast->GetOutput() );
+      imageWriter->SetInputData( imageCast->GetOutput() );
 
       imageWriter->SetFileName( outputVolume.c_str() );
       imageWriter->SetUseCompression( 1 );

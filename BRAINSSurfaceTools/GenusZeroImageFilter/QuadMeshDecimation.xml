@@ -1,52 +1,52 @@
-< ? xml version = "1.0" encoding = "utf-8" ? >
-      < executable >
-      < category > BRAINS.Surface</ category>
-      < title > Surface Decimation</ title>
-      < description >
-      Surface decimation function based on ITK Quad Edge mesh filters.This is used to remove extra triangles for the
-      resulting surface</ description>
-      < version > 0.0 .1.$Revision : 1.2 $(alpha) < / version >
-      < documentation - url > < / documentation - url >
-      < license > < / license >
-      < contributor > Wen Li and Vincent Magnotta</ contributor>
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>BRAINS.Surface</category>
+  <title>Surface Decimation</title>
+  <description>
+Surface decimation function based on ITK Quad Edge mesh filters. This is used to remove extra triangles for the resulting surface  </description>
+  <version>0.0.1.$Revision: 1.2 $(alpha)</version>
+  <documentation-url/>
+  <license/>
+  <contributor>Wen Li and Vincent Magnotta</contributor>
 
-      < parameters >
-      < label > Decimation Parameters</ label>
-      < description > Surface Decimation Parameters</ description>
+  <parameters>
+    <label>Decimation Parameters</label>
+    <description>Surface Decimation Parameters</description>
 
-      < geometry >
-      < name > inputSurface</ name>
-      < label > Input Surface</ label>
-      < channel > input</ channel>
-      < longflag > --inputSurface</ longflag>
-      < description > Surface to be decimated</ description>
-      < / geometry >
+    <geometry>
+      <name>inputSurface</name>
+      <label>Input Surface</label>
+      <channel>input</channel>
+      <longflag>--inputSurface</longflag>
+      <description>Surface to be decimated</description>
+    </geometry>
 
-      < integer >
-      < name > numberOfElements</ name>
-      < longflag > numberOfElements</ longflag>
-      < description > Number Of Elements left</ description>
-      < label > Number Of Elements</ label>
-      < channel > input</ channel>
-      < default > 70000 < / default >
-      < / integer >
+    <integer>
+		  <name>numberOfElements</name>
+		  <longflag>numberOfElements</longflag>
+		  <description>Number Of Elements left</description>
+		  <label>Number Of Elements</label>
+		  <channel>input</channel>
+		  <default>70000</default>
+	  </integer>
 
-      < boolean >
-      < name > topologyChange</ name>
-      < label > Topology Change</ label>
-      < longflag > --topologyChange</ longflag>
-      < default > false</ default>
-      < description > Allow topology change or not < / description >
-      < / boolean >
+    <boolean>
+      <name>topologyChange</name>
+      <label>Topology Change</label>
+      <longflag>--topologyChange</longflag>
+      <default>false</default>
+      <description>Allow topology change or not</description>
+    </boolean>
 
-      < geometry >
-      < name > outputSurface</ name>
-      < label > Output Surface</ label>
-      < channel > output</ channel>
-      < longflag > --outputSurface</ longflag>
-      < description > Resulting decimated surface</ description>
-      < / geometry >
 
-      < / parameters >
+    <geometry>
+      <name>outputSurface</name>
+      <label>Output Surface</label>
+      <channel>output</channel>
+      <longflag>--outputSurface</longflag>
+      <description>Resulting decimated surface</description>
+    </geometry>
 
-      < / executable>
+  </parameters>
+
+</executable>

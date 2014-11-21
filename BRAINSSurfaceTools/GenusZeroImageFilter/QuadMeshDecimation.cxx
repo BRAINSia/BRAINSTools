@@ -1,4 +1,5 @@
 // remove the shortest edge at each iteration
+
 // until the given criterion is fulfilled.
 
 #include "itkQuadEdgeMesh.h"
@@ -13,23 +14,14 @@ typedef itk::QuadEdgeMesh<Coord, Dimension> MeshType;
 // By default the cost function is to be minimized
 typedef itk::NumberOfFacesCriterion<MeshType> CriterionType;
 
-#if ITK_VERSION_MAJOR < 4
-#include "itkQuadEdgeMeshSquaredEdgeLengthDecimation.h"
-typedef itk::QuadEdgeMeshSquaredEdgeLengthDecimation
-  <MeshType,
-   MeshType,
-   CriterionType> DecimationType;
-#else
 #include "itkSquaredEdgeLengthDecimationQuadEdgeMeshFilter.h"
 typedef itk::SquaredEdgeLengthDecimationQuadEdgeMeshFilter
   <MeshType,
    MeshType,
    CriterionType> DecimationType;
-#endif
 
 #include "itkQuadEdgeMeshVTKPolyDataReader.h"
 #include "itkQuadEdgeMeshScalarDataVTKPolyDataWriter.h"
-
 #include "QuadMeshDecimationCLP.h"
 
 int main( int argc, char * argv [] )
@@ -56,10 +48,13 @@ int main( int argc, char * argv [] )
   criterion->SetNumberOfElements( numberOfElements );
 
   DecimationType::Pointer decimate = DecimationType::New();
+
   decimate->SetInput( reader->GetOutput() );
+
   decimate->SetCriterion( criterion );
 
   // Here we allow the relocation procedure
+
   decimate->Update();
 
   typedef itk::QuadEdgeMeshScalarDataVTKPolyDataWriter<MeshType> WriterType;

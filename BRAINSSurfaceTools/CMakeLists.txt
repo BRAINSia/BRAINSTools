@@ -2,20 +2,66 @@
 # Dependencies.
 #
 
-
 FindITKUtil(BRAINSSurfaceTools_ITK
-  ITKQuadEdgeMesh
+  ITKAnisotropicSmoothing
+  ITKBinaryMathematicalMorphology
+  ITKCommon
+  ITKConnectedComponents
+  ITKDisplacementField
+  ITKDistanceMap
+  ITKIOGDCM
+  ITKIOGE
+  ITKIOImageBase
+  ITKIOTransformBase
+  ITKImageCompose
+  ITKImageFilterBase
+  ITKImageFunction
+  ITKImageGrid
+  ITKImageIntensity
+  ITKLabelMap
+  ITKMathematicalMorphology
+  ITKMesh
   ITKOptimizers
+  ITKPath
+  ITKQuadEdgeMesh
   ITKQuadEdgeMeshFiltering
+  ITKRegionGrowing
+  ITKSmoothing
+  ITKSpatialObjects
+  ITKStatistics
+  ITKThresholding
+  ITKTransform
+  ITKVTK
+  ITKVtkGlue
 )
-FindVTKUtil(vtkIOLegacy
-  vtkIOXML
+FindVTKUtil(
+  vtkCommonComputationalGeometry
+  vtkCommonCore
   vtkCommonDataModel
+  vtkCommonExecutionModel
+  vtkCommonMath
+  vtkCommonMisc
+  vtkCommonSystem
+  vtkCommonTransforms
   vtkFiltersCore
+  vtkFiltersExtraction
   vtkFiltersGeneral
   vtkFiltersGeometry
+  vtkFiltersStatistics
+  vtkIOCore
+  vtkIOGeometry
+  vtkIOImage
+  vtkIOLegacy
+  vtkIOXML
+  vtkIOXMLParser
   vtkImagingCore
-  vtkFiltersExtraction
+  vtkImagingFourier
+  vtkalglib
+  vtkRenderingCore
+  vtkRenderingOpenGL
+  vtkRenderingFreeType
+  vtkInteractionStyle
+  vtkImagingSources
   )
 
 #
@@ -28,3 +74,4 @@ add_subdirectory(BRAINSSurfaceFlattening)
 add_subdirectory(BRAINSSurfaceGeneration)
 add_subdirectory(BRAINSSurfaceRegister)
 #add_subdirectory(BRAINSSurfaceStat)
+add_subdirectory(GenusZeroImageFilter)

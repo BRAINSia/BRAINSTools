@@ -66,7 +66,7 @@ public:
   const OutputImageType *  GetOutput() const;
 
   /** Set the input in the form of a vtkImageData */
-  void SetInput( vtkImageData * );
+  void SetInputData( vtkImageData * );
 
   /** Return the internal VTK image exporter filter.
       This is intended to facilitate users the access

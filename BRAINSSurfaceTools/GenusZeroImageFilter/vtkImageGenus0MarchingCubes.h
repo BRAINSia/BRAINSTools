@@ -1,15 +1,15 @@
 /*=========================================================================
 
-  Program:   Visualization Toolkit
-  Module:    $RCSfile: vtkImageGenus0MarchingCubes.h,v $
+Program:   Visualization Toolkit
+Module:    vtkImageGenus0MarchingCubes.h
 
-  Copyright (c) Ken Martin, Will Schroeder, Bill Lorensen
-  All rights reserved.
-  See Copyright.txt or http://www.kitware.com/Copyright.htm for details.
+Copyright (c) Ken Martin, Will Schroeder, Bill Lorensen
+All rights reserved.
+See Copyright.txt or http://www.kitware.com/Copyright.htm for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-     PURPOSE.  See the above copyright notice for more information.
+This software is distributed WITHOUT ANY WARRANTY; without even
+the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+PURPOSE.  See the above copyright notice for more information.
 
 =========================================================================*/
 // .NAME vtkImageGenus0MarchingCubes - generate isosurface(s) from volume/images
@@ -28,13 +28,16 @@
 // contouring other types of data, use the general vtkContourFilter. If you
 // want to contour an image (i.e., a volume slice), use vtkMarchingSquares.
 // .SECTION See Also
-// vtkContourFilter vtkSliceCubes vtkMarchingSquares vtkDividingCubes
+// vtkContourFilter vtkSliceCubes vtkMarchingSquares vtkSynchronizedTemplates3D
+
+// This is a modification fo the vtkImageMarchingCubes algorithm
 
 #ifndef __vtkImageGenus0MarchingCubes_h
 #define __vtkImageGenus0MarchingCubes_h
 
+#include "vtkFiltersGeneralModule.h" // For export macro
 #include "vtkPolyDataAlgorithm.h"
-#include <vtkTransform.h>
+// -- #include <vtkTransform.h>
 
 #include "vtkContourValues.h" // Needed for direct access to ContourValues
 
@@ -43,13 +46,14 @@ class vtkFloatArray;
 class vtkImageData;
 class vtkPoints;
 
-class VTK_GRAPHICS_EXPORT vtkImageGenus0MarchingCubes : public vtkPolyDataAlgorithm
+#define VTK_BRAINSTOOLS_GRAPHICS_EXPORT
+class VTK_BRAINSTOOLS_GRAPHICS_EXPORT vtkImageGenus0MarchingCubes : public vtkPolyDataAlgorithm
 {
 public:
   static vtkImageGenus0MarchingCubes * New();
 
-  vtkTypeRevisionMacro(vtkImageGenus0MarchingCubes, vtkPolyDataAlgorithm);
-  void PrintSelf(ostream & os, vtkIndent indent);
+  vtkTypeMacro(vtkImageGenus0MarchingCubes, vtkPolyDataAlgorithm);
+  void PrintSelf(ostream& os, vtkIndent indent);
 
   // Description:
   // Methods to set contour values
@@ -71,16 +75,13 @@ public:
   vtkCellArray *Triangles;
   vtkPoints *   Points;
 
-  // vtkSetMacro( IJKtoRAS, vtkTransform* );
-  // vtkGetMacro( IJKtoRAS, vtkTransform* );
+  vtkSetMacro(BiggestComponent, int );
+  vtkGetMacro(BiggestComponent, int );
+  vtkBooleanMacro(BiggestComponent, int );
 
-  vtkSetMacro( BiggestComponent, int );
-  vtkGetMacro( BiggestComponent, int );
-  vtkBooleanMacro( BiggestComponent, int );
-
-  vtkSetMacro( ConnectedComponent, int );
-  vtkGetMacro( ConnectedComponent, int );
-  vtkBooleanMacro( ConnectedComponent, int );
+  vtkSetMacro(ConnectedComponent, int );
+  vtkGetMacro(ConnectedComponent, int );
+  vtkBooleanMacro(ConnectedComponent, int );
 
   vtkSetMacro( CutLoops, int );
   vtkGetMacro( CutLoops, int );
@@ -139,14 +140,12 @@ protected:
   int iConnectedComponents;
 
   vtkImageData *pCorrectedImageData;
-  // vtkTransform *IJKtoRAS;
 private:
   vtkImageGenus0MarchingCubes(const vtkImageGenus0MarchingCubes &); // Not
-                                                                    //
                                                                     // implemented.
   void operator=(const vtkImageGenus0MarchingCubes &);              // Not
+                                                                    // implemented.
 
-  // implemented.
 };
 
 #endif

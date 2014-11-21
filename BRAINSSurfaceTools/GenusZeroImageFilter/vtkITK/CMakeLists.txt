@@ -22,48 +22,6 @@ endif()
 # Dependencies
 # --------------------------------------------------------------------------
 
-#
-# VTK
-#
-#find_package(VTK REQUIRED)
-#include(${VTK_USE_FILE})
-
-if(${VTK_VERSION_MAJOR} GREATER 5)
-  # Minimum set of libraries already specified using components
-else()
-  set(VTK_LIBRARIES
-    vtkCommon
-    vtkFiltering
-    vtkImaging
-    )
-endif()
-#
-# ITK
-#
-set(${PROJECT_NAME}_ITK_COMPONENTS
-  ITKAnisotropicSmoothing
-  ITKCommon
-  ITKConnectedComponents
-  ITKDistanceMap
-  ITKIOGDCM
-  ITKIOGE
-  ITKIOImageBase
-  ITKImageCompose
-  ITKImageFilterBase
-  ITKImageFunction
-  ITKImageGrid
-  ITKLabelMap
-  ITKPath
-  ITKRegionGrowing
-  ITKThresholding
-  ITKVTK
-  )
-find_package(ITK 4.6 COMPONENTS ${${PROJECT_NAME}_ITK_COMPONENTS} REQUIRED)
-set(ITK_NO_IO_FACTORY_REGISTER_MANAGER 1) # See Libs/ITKFactoryRegistration/CMakeLists.txt
-list(APPEND ITK_LIBRARIES ITKFactoryRegistration)
-list(APPEND ITK_INCLUDE_DIRS ${ITKFactoryRegistration_INCLUDE_DIRS})
-include(${ITK_USE_FILE})
-
 # --------------------------------------------------------------------------
 # Include dirs
 # --------------------------------------------------------------------------
@@ -89,7 +47,7 @@ if(NOT DEFINED ${PROJECT_NAME}_INSTALL_NO_DEVELOPMENT)
   set(${PROJECT_NAME}_INSTALL_NO_DEVELOPMENT ON)
 endif()
 if(NOT ${PROJECT_NAME}_INSTALL_NO_DEVELOPMENT)
-  file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.(h|txx)")
+  file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.(h|hxx)")
   install(
     FILES ${headers} ${CMAKE_CURRENT_BINARY_DIR}/${configure_header_file}
     DESTINATION include/${PROJECT_NAME} COMPONENT Development)
@@ -154,7 +112,7 @@ set(srcs ${vtkITK_SRCS})
 add_library(${lib_name} ${srcs})
 
 set(libs
-  ${ITK_LIBRARIES}
+  ${BRAINSSurfaceTools_ITK_LIBRARIES}
   ${VTK_LIBRARIES}
   )
 target_link_libraries(${lib_name} ${libs})
@@ -187,27 +145,6 @@ install(TARGETS ${lib_name}
   LIBRARY DESTINATION ${${PROJECT_NAME}_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
   ARCHIVE DESTINATION ${${PROJECT_NAME}_INSTALL_LIB_DIR} COMPONENT Development
   )
-
-# --------------------------------------------------------------------------
-# Python Wrapping
-# --------------------------------------------------------------------------
-if(VTK_WRAP_PYTHON)
-  vtkMacroKitPythonWrap(
-    KIT_NAME ${lib_name}
-    KIT_SRCS ${vtkITK_SRCS}
-    KIT_INSTALL_BIN_DIR ${${PROJECT_NAME}_INSTALL_BIN_DIR}
-    KIT_INSTALL_LIB_DIR ${${PROJECT_NAME}_INSTALL_LIB_DIR}
-    )
-  # Export target
-  export(TARGETS ${lib_name}Python ${lib_name}PythonD APPEND FILE ${${PROJECT_NAME}_EXPORT_FILE})
-endif()
-
-# --------------------------------------------------------------------------
-# Testing (requires some of the examples)
-# --------------------------------------------------------------------------
-if(BUILD_TESTING)
-  add_subdirectory(Testing)
-endif()
 
 # --------------------------------------------------------------------------
 # Set INCLUDE_DIRS variable

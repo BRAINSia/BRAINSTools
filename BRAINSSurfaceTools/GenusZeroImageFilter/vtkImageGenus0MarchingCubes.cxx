@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Visualization Toolkit
-  Module:    $RCSfile: vtkImageGenus0MarchingCubes.cxx,v $
+  Module:    vtkImageGenus0MarchingCubes.cxx
 
   Copyright (c) Ken Martin, Will Schroeder, Bill Lorensen
   All rights reserved.
@@ -19,18 +19,19 @@
 #include "vtkFloatArray.h"
 #include "vtkImageData.h"
 #include "vtkInformation.h"
+#include "vtkInformationExecutivePortKey.h"
 #include "vtkInformationVector.h"
+#include "vtkMarchingCubesTriangleCases.h"
 // #include "vtkMarchingCubesCases.h"
 #include "vtkObjectFactory.h"
 #include "vtkPointData.h"
 #include "vtkPolyData.h"
 #include "vtkStreamingDemandDrivenPipeline.h"
 #include <math.h>
-#include <map>
 
+#include <map>
 #include "genus0.h"
 
-vtkCxxRevisionMacro(vtkImageGenus0MarchingCubes, "$Revision: 1.1 $");
 vtkStandardNewMacro(vtkImageGenus0MarchingCubes);
 
 // ----------------------------------------------------------------------------
@@ -78,8 +79,6 @@ vtkImageGenus0MarchingCubes::vtkImageGenus0MarchingCubes()
   ComputeSurface = 0;
 
   altValue = 1;
-
-  // IJKtoRAS = NULL;
 
   iConnectivity = 18;
 

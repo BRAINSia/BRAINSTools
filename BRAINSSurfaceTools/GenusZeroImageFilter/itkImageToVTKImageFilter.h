@@ -62,7 +62,7 @@ public:
   vtkImageData *  GetOutput() const;
 
   /** Set the input in the form of an itk::Image */
-  void SetInput( const InputImageType * );
+  void SetInputData( const InputImageType * );
 
   /** Return the internal VTK image importer filter.
       This is intended to facilitate users the access

@@ -1,5 +1,5 @@
-#ifndef __itkLevelTracingImageFilter_txx_
-#define __itkLevelTracingImageFilter_txx_
+#ifndef __itkLevelTracingImageFilter_hxx_
+#define __itkLevelTracingImageFilter_hxx_
 
 #include "itkLevelTracingImageFilter.h"
 #include "itkFloodFilledImageFunctionConditionalIterator.h"

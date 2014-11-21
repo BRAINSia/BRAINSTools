@@ -66,9 +66,9 @@ VTKImageToImageFilter<TOutputImage>
 template <class TOutputImage>
 void
 VTKImageToImageFilter<TOutputImage>
-::SetInput( vtkImageData *inputImage )
+::SetInputData( vtkImageData *inputImage )
 {
-  m_Exporter->SetInput( inputImage );
+  m_Exporter->SetInputData( inputImage );
 }
 
 /**

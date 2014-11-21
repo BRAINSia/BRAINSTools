@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>Filtering.Topology</category>
+  <title>Genus 0 Image Filter</title>
+  <description>
+    Adjusts a labelmap such that marching cubes will produce a genus zero surface.
+  </description>
+  <version>0.0.1.$Revision: 1.2 $(alpha)</version>
+  <documentation-url></documentation-url>
+  <license></license>
+  <contributor>Steven Haker and Marc Niethammer</contributor>
+
+  <parameters>
+    <label>Genus 0 Parameters</label>
+    <description>Parameters for the genus 0 image filter</description>
+
+    <boolean>
+      <name>cutLoops</name>
+      <label>Cut loops</label>
+      <longflag>--cutLoops</longflag>
+      <default>false</default>
+      <description>Cut loops instead of patching holes.</description>
+    </boolean>
+
+    <boolean>
+      <name>biggestComponent</name>
+      <label>Biggest component</label>
+      <longflag>--biggestComponent</longflag>
+      <default>true</default>
+      <description>Extract largest component of the triangulated result. (The volume result needs to be followed by an extraction of the largest connected component if desired; use 'extractFinalConnectedComponent'.)</description>
+    </boolean>
+
+    <boolean>
+      <name>extractFinalConnectedComponent</name>
+      <label>Extract final connected component</label>
+      <longflag>--extractFinalConnectedComponent</longflag>
+      <default>false</default>
+      <description>Extracts the largest connected component after the processing. This is necessary, because the topology correction only guarantees the genus, but may otherwise produce a number of objects with spherical topology.</description>
+    </boolean>
+
+    <boolean>
+      <name>connectedComponent</name>
+      <label>Connected component</label>
+      <longflag>--connectedComponent</longflag>
+      <default>false</default>
+      <description>Extract largest connected component before processing.</description>
+    </boolean>
+
+    <boolean>
+      <name>computeSurface</name>
+      <label>Compute Surface</label>
+      <longflag>--computeSurface</longflag>
+      <default>false</default>
+      <description>Compute VTK surface instead of corrected image volume.</description>
+    </boolean>
+
+    <integer-enumeration>
+      <name>connectivityModel</name>
+      <label>Connectivity Model</label>
+      <longflag>--connectivity</longflag>
+      <description>Controls the discrete connectivity model.</description>
+      <default>18</default>
+      <element>6</element>
+      <element>18</element>
+    </integer-enumeration>
+  </parameters>
+
+  <parameters>
+    <label>IO</label>
+    <description>Input/output parameters</description>
+    <image>
+      <name>inputVolume</name>
+      <label>Input Volume</label>
+      <longflag>--inputVolume</longflag>
+      <channel>input</channel>
+      <description>Input volume to be topologically corrected</description>
+    </image>
+    <image>
+      <name>outputVolume</name>
+      <label>Output Volume</label>
+      <longflag>--outputVolume</longflag>
+      <channel>output</channel>
+      <description>Topologically corrected volume output (ignored if --computeSurface is set).</description>
+    </image>
+
+    <geometry>
+      <name>vtkOutput</name>
+      <label>vtk output file</label>
+      <longflag>--vtkOutput</longflag>
+      <channel>output</channel>
+      <description>File to write a VTK triangluated mesh to (ignored if --computeSurface is not set).</description>
+    </geometry>
+
+    <file>
+      <name>stlOutput</name>
+      <label>stl output file</label>
+      <channel>output</channel>
+      <longflag>--stl</longflag>
+      <description>File to write an STL triangluated mesh to.</description>
+    </file>
+
+  </parameters>
+
+</executable>

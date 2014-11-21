@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>BRAINS.Surface</category>
+  <title>Topology Correction</title>
+  <description>
+  Fill and filter an image to generate a cortical surface
+  </description>
+  <version>0.0.1.$Revision: 1.2 $(alpha)</version>
+  <documentation-url></documentation-url>
+  <license></license>
+  <contributor>Vincent A. Magnotta</contributor>
+
+  <parameters>
+    <label>Input Files</label>
+    <description>Files Required for Generating the Cortical Surface</description>
+    
+    <image>
+      <name>leftCaudateVolume</name>
+      <label>Left Caudate</label>
+	    <longflag>--leftCaudateVolume</longflag>
+      <channel>input</channel>
+      <description>Left caudate</description>
+    </image>
+    
+    <image>
+      <name>rightCaudateVolume</name>
+      <label>Right Caudate</label>
+	    <longflag>--rightCaudateVolume</longflag>
+      <channel>input</channel>
+      <description>Right caudate</description>
+    </image>
+    
+    <image>
+      <name>leftPutamenVolume</name>
+      <label>Left Putamen</label>
+	    <longflag>--leftPutamenVolume</longflag>
+      <channel>input</channel>
+      <description>Left Putamen</description>
+    </image>
+    
+    <image>
+      <name>rightPutamenVolume</name>
+      <label>Right Putamen</label>
+	    <longflag>--rightPutamenVolume</longflag>
+      <channel>input</channel>
+      <description>Right Putamen</description>
+    </image>
+    
+    <image>
+      <name>leftThalamusVolume</name>
+      <label>Left Thalamus</label>
+	    <longflag>--leftThalamusVolume</longflag>
+      <channel>input</channel>
+      <description>Left Thalamus</description>
+    </image>
+    
+    <image>
+      <name>rightThalamusVolume</name>
+      <label>Right Thalamus</label>
+	    <longflag>--rightThalamusVolume</longflag>
+      <channel>input</channel>
+      <description>Right Thalamus</description>
+    </image>
+    
+    <image>
+      <name>ventricleVolume</name>
+      <label>Ventricle</label>
+	    <longflag>--ventricleVolume</longflag>
+      <channel>input</channel>
+      <description>Ventricle</description>
+    </image>
+    
+    <image>
+      <name>brainVolume</name>
+      <label>Brain Mask</label>
+	    <longflag>--brainVolume</longflag>
+      <channel>input</channel>
+      <description>Brain Mask</description>
+    </image>
+    
+    <image>
+      <name>leftHemisphereVolume</name>
+      <label>Left Hemisphere Volume</label>
+	    <longflag>leftHemisphereVolume</longflag>
+      <channel>input</channel>
+      <description>Left Hemisphere Volume</description>
+    </image>
+    
+    <image>
+      <name>rightHemisphereVolume</name>
+      <label>Right Hemisphere Volume</label>
+	    <longflag>rightHemisphereVolume</longflag>
+      <channel>input</channel>
+      <description>Right Hemisphere Volume</description>
+    </image>
+    
+    <image>
+      <name>clipVolume</name>
+      <label>Clip Volume</label>
+	    <longflag>clipVolume</longflag>
+      <channel>input</channel>
+      <description>Used to exclude portions of the image from surface generation</description>
+    </image>
+    
+    <image>
+      <name>tissueClassVolume</name>
+      <label>Tissue Class Image</label>
+	    <longflag>tissueClassVolume</longflag>
+      <channel>input</channel>
+      <description>Tissue Class Image</description>
+    </image>
+    
+  </parameters>  
+    
+  <parameters>
+    <label>Output Files</label>
+    <description>Files Generated for Cortical Surface Generation</description>
+    
+    <image>
+      <name>filledClassVolume</name>
+      <label>Filled Class Volume</label>
+	    <longflag>--filledClassVolume</longflag>
+      <channel>output</channel>
+      <description>Filled Class Volume</description>
+    </image>
+    
+    <image>
+      <name>leftBinarySurfaceVolume</name>
+      <label>Left Binary Surface Volume</label>
+	    <longflag>--leftBinarySurfaceVolume</longflag>
+      <channel>output</channel>
+      <description>Left Binary Surface Volume</description>
+    </image>
+    
+    <image>
+      <name>rightBinarySurfaceVolume</name>
+      <label>Right Binary Surface Volume</label>
+	    <longflag>--rightBinarySurfaceVolume</longflag>
+      <channel>output</channel>
+      <description>Right Binary Surface Volume</description>
+    </image>
+    
+  </parameters>    
+    
+      
+  <parameters>
+    <label>Filtering Parameters</label>
+    <description>Image Filtering Parameters</description>
+  
+    <boolean>
+      <name>medianFilter</name>
+      <label>Median Filter</label>
+      <longflag>medianFilter</longflag>
+      <default>false</default>
+      <description>Median Filter</description>
+    </boolean>
+    
+    <integer-vector>
+		  <name>medianFilterSize</name>
+		  <longflag>medianFilterSize</longflag>
+		  <description>Median Filter Size</description>
+		  <label>Median Filer Size</label>
+		  <channel>input</channel>
+		  <default>1,1,1</default>
+	  </integer-vector>
+    
+    <boolean>
+      <name>anisoDiffusionFilter</name>
+      <label>Anisotropic Diffusion</label>
+      <longflag>anisoDiffusionFilter</longflag>
+      <default>false</default>
+      <description>Anisotropic Diffusion</description>
+    </boolean>
+    
+    <integer>
+		  <name>iterations</name>
+		  <longflag>iterations</longflag>
+		  <description>Number of Iterations</description>
+		  <label>Number of Iterations</label>
+		  <channel>input</channel>
+		  <default>5</default>
+	  </integer>
+    
+    <float>
+		  <name>conductance</name>
+		  <longflag>conductance</longflag>
+		  <description>Conductance</description>
+		  <label>Conductance</label>
+		  <channel>input</channel>
+		  <default>1.0</default>
+	  </float>
+    
+    <float>
+		  <name>stepSize</name>
+		  <longflag>stepSize</longflag>
+		  <description>Step Size</description>
+		  <label>Step Size</label>
+		  <channel>input</channel>
+		  <default>0.0625</default>
+	  </float>
+  </parameters>
+
+</executable>

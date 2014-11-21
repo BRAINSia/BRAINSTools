@@ -398,5 +398,5 @@ int main(int argc, char *argv[])
   writeTissueClassFilter->SetInput( maximumFilter->GetOutput() );
   writeTissueClassFilter->SetFileName( filledClassVolume );
   writeTissueClassFilter->Update();
-
+  return 0;
 }

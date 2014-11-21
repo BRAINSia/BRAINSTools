@@ -6,8 +6,14 @@
 # ITK
 #
 FindITKUtil(BRAINSContinuousClass_ITK
-  ITKThresholding
+  ITKCommon
+  ITKIOImageBase
+  ITKImageFilterBase
+  ITKImageIntensity
+  ITKImageStatistics
+  ITKStatistics
   ITKTestKernel
+  ITKThresholding
 )
 
 add_subdirectory(liblinear-1.8)

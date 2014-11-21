@@ -281,6 +281,6 @@ private:
 #endif
 
 #if ITK_TEMPLATE_TXX
-# include "itkDisplacementFieldTransform.txx"
+# include "itkDisplacementFieldTransform.hxx"
 #endif
 #endif /* __itkDisplacementFieldTransform_h */

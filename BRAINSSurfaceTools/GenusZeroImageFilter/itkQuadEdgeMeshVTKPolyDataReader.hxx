@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Insight Segmentation & Registration Toolkit
-  Module:    $RCSfile: itkQuadEdgeMeshVTKPolyDataReader.txx,v $
+  Module:    $RCSfile: itkQuadEdgeMeshVTKPolyDataReader.hxx,v $
   Language:  C++
   Date:      $Date: 2009-06-02 12:48:35 $
   Version:   $Revision: 1.16 $
@@ -14,8 +14,8 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#ifndef __itkQuadEdgeMeshVTKPolyDataReader_txx
-#define __itkQuadEdgeMeshVTKPolyDataReader_txx
+#ifndef __itkQuadEdgeMeshVTKPolyDataReader_hxx
+#define __itkQuadEdgeMeshVTKPolyDataReader_hxx
 
 #include "itkQuadEdgeMeshVTKPolyDataReader.h"
 #include <fstream>
@@ -25,10 +25,10 @@
 namespace itk
 {
 
-// 
+//
 // Constructor
-// 
-template<class TOutputMesh>
+//
+template <class TOutputMesh>
 QuadEdgeMeshVTKPolyDataReader<TOutputMesh>
 ::QuadEdgeMeshVTKPolyDataReader()
 {
@@ -37,10 +37,10 @@ QuadEdgeMeshVTKPolyDataReader<TOutputMesh>
   //
   typename TOutputMesh::Pointer output = TOutputMesh::New();
   this->ProcessObject::SetNumberOfRequiredOutputs(1);
-  this->ProcessObject::SetNthOutput(0, output.GetPointer());
+  this->ProcessObject::SetNthOutput(0, output.GetPointer() );
 }
 
-template<class TOutputMesh>
+template <class TOutputMesh>
 void
 QuadEdgeMeshVTKPolyDataReader<TOutputMesh>
 ::GenerateData()
@@ -48,7 +48,7 @@ QuadEdgeMeshVTKPolyDataReader<TOutputMesh>
   typename OutputMeshType::Pointer outputMesh = this->GetOutput();
 
   outputMesh->SetCellsAllocationMethod(
-      OutputMeshType::CellsAllocatedDynamicallyCellByCell );
+    OutputMeshType::CellsAllocatedDynamicallyCellByCell );
 
   if( m_FileName == "" )
     {
@@ -63,7 +63,7 @@ QuadEdgeMeshVTKPolyDataReader<TOutputMesh>
   if( !inputFile.is_open() )
     {
     itkExceptionMacro("Unable to open file\n"
-        "inputFilename= " << m_FileName );
+                      "inputFilename= " << m_FileName );
     }
 
   std::string line;
@@ -85,10 +85,10 @@ QuadEdgeMeshVTKPolyDataReader<TOutputMesh>
 
   int numberOfPoints = -1;
 
-  if( sscanf(pointLine.c_str(),"%d",&numberOfPoints) != 1 )
+  if( sscanf(pointLine.c_str(), "%d", &numberOfPoints) != 1 )
     {
     itkExceptionMacro("ERROR: Failed to read numberOfPoints\n"
-        "       pointLine= " << pointLine );
+                      "       pointLine= " << pointLine );
     }
 
   itkDebugMacro("numberOfPoints= " << numberOfPoints );
@@ -96,7 +96,7 @@ QuadEdgeMeshVTKPolyDataReader<TOutputMesh>
   if( numberOfPoints < 1 )
     {
     itkExceptionMacro("numberOfPoints < 1"
-        << "       numberOfPoints= " << numberOfPoints );
+                      << "       numberOfPoints= " << numberOfPoints );
     }
 
   outputMesh->GetPoints()->Reserve( numberOfPoints );
@@ -106,8 +106,7 @@ QuadEdgeMeshVTKPolyDataReader<TOutputMesh>
   //
 
   PointType point;
-
-  for( int i=0; i < numberOfPoints; i++ )
+  for( int i = 0; i < numberOfPoints; i++ )
     {
     inputFile >> point;
     outputMesh->SetPoint( i, point );
@@ -132,10 +131,10 @@ QuadEdgeMeshVTKPolyDataReader<TOutputMesh>
   CellIdentifier numberOfIndices = 0;
 
   if( sscanf( polygonLine.c_str(), "%ld %ld", &numberOfPolygons,
-        &numberOfIndices ) != 2 )
+              &numberOfIndices ) != 2 )
     {
     itkExceptionMacro("ERROR: Failed to read numberOfPolygons from subline2"
-        "\npolygonLine= " << polygonLine );
+                      "\npolygonLine= " << polygonLine );
     }
 
   itkDebugMacro("numberOfPolygons " << numberOfPolygons );
@@ -144,14 +143,14 @@ QuadEdgeMeshVTKPolyDataReader<TOutputMesh>
   if( numberOfPolygons < 1 )
     {
     itkExceptionMacro("ERROR: numberOfPolygons < 1\nnumberOfPolygons= "
-        << numberOfPolygons );
+                      << numberOfPolygons );
     }
 
   if( numberOfIndices < numberOfPolygons )
     {
     itkExceptionMacro("ERROR: numberOfIndices < numberOfPolygons\n"
-        << "numberOfIndices= " << numberOfIndices << "\n"
-        << "numberOfPolygons= " << numberOfPolygons );
+                      << "numberOfIndices= " << numberOfIndices << "\n"
+                      << "numberOfPolygons= " << numberOfPolygons );
     }
 
   //
@@ -159,14 +158,13 @@ QuadEdgeMeshVTKPolyDataReader<TOutputMesh>
   //
 
   PointIdentifier numberOfCellPoints;
-  long ids[3];
-
-  for(CellIdentifier i=0; i<numberOfPolygons; i++)
+  long            ids[3];
+  for( CellIdentifier i = 0; i < numberOfPolygons; i++ )
     {
     if( inputFile.eof() )
       {
       itkExceptionMacro("Failed to read " << numberOfPolygons
-          << " polygons before the end of file");
+                                          << " polygons before the end of file");
       }
 
     std::getline( inputFile, line );
@@ -178,7 +176,7 @@ QuadEdgeMeshVTKPolyDataReader<TOutputMesh>
 
     int got;
     if( (got = sscanf( line.c_str(), "%ld %ld %ld %ld", &numberOfCellPoints,
-                       &ids[0], &ids[1], &ids[2] )) != 4 )
+                       &ids[0], &ids[1], &ids[2] ) ) != 4 )
       {
       itkExceptionMacro("Error parsing POLYGON cell. Expected 4 items but got "
                         << got << std::endl
@@ -188,8 +186,8 @@ QuadEdgeMeshVTKPolyDataReader<TOutputMesh>
     if( numberOfCellPoints != 3 )
       {
       itkExceptionMacro("ERROR: numberOfCellPoints != 3\n"
-          << "numberOfCellPoints= " << numberOfCellPoints
-          << "itkQuadEdgeMeshVTKPolyDataReader can only read triangles");
+                        << "numberOfCellPoints= " << numberOfCellPoints
+                        << "itkQuadEdgeMeshVTKPolyDataReader can only read triangles");
       }
 
     if( static_cast<long>(ids[0]) < 0 ||
@@ -197,7 +195,7 @@ QuadEdgeMeshVTKPolyDataReader<TOutputMesh>
         static_cast<long>(ids[2]) < 0 )
       {
       itkExceptionMacro("ERROR: Incorrect point ids\n"
-          "ids=" << ids[0] << " " << ids[1] << " " << ids[2]);
+                        "ids=" << ids[0] << " " << ids[1] << " " << ids[2]);
       }
 
     if( static_cast<long>(ids[0]) >= numberOfPoints ||
@@ -205,10 +203,10 @@ QuadEdgeMeshVTKPolyDataReader<TOutputMesh>
         static_cast<long>(ids[2]) >= numberOfPoints )
       {
       itkExceptionMacro("ERROR: Incorrect point ids\n"
-          << "ids=" << ids[0] << " " << ids[1] << " " << ids[2]);
+                        << "ids=" << ids[0] << " " << ids[1] << " " << ids[2]);
       }
 
-    CellAutoPointer cell;
+    CellAutoPointer    cell;
     TriangleCellType * triangleCell = new TriangleCellType;
     for( PointIdentifier k = 0; k < numberOfCellPoints; k++ )
       {
@@ -242,7 +240,7 @@ QuadEdgeMeshVTKPolyDataReader<TOutputMesh>
     itkDebugMacro("POINT_DATA line" << line );
 
     // The following line should be SCALARS or VECTORS
-    if (!inputFile.eof())
+    if( !inputFile.eof() )
       {
       std::getline( inputFile, line );
       }
@@ -253,8 +251,9 @@ QuadEdgeMeshVTKPolyDataReader<TOutputMesh>
 
     if( line.find("SCALARS") != std::string::npos )
       {
-      // Skip the following line, since it should contain the LOOKUP_TABLE string
-      if (!inputFile.eof())
+      // Skip the following line, since it should contain the LOOKUP_TABLE
+      // string
+      if( !inputFile.eof() )
         {
         std::getline( inputFile, line );
         if( line.find("LOOKUP_TABLE") == std::string::npos )
@@ -269,12 +268,13 @@ QuadEdgeMeshVTKPolyDataReader<TOutputMesh>
 
       // Read the scalar data
       double pointData;
-
-      for( int pid=0; pid < numberOfPoints; pid++ )
+      for( int pid = 0; pid < numberOfPoints; pid++ )
         {
-        if (inputFile.eof())
+        if( inputFile.eof() )
           {
-          itkExceptionMacro("Unexpected end-of-file while trying to read POINT_DATA." << "Failed while trying to reading point data for id: " << pid);
+          itkExceptionMacro(
+            "Unexpected end-of-file while trying to read POINT_DATA." << "Failed while trying to reading point data for id: "
+                                                                      << pid);
           }
         inputFile >> pointData;
         outputMesh->SetPointData( pid, pointData );
@@ -285,35 +285,34 @@ QuadEdgeMeshVTKPolyDataReader<TOutputMesh>
       {
       // Read the vector data
       typename OutputMeshType::PixelType pointData;
-
-      for( int pid=0; pid < numberOfPoints; pid++ )
+      for( int pid = 0; pid < numberOfPoints; pid++ )
         {
-        if (inputFile.eof())
+        if( inputFile.eof() )
           {
-          itkExceptionMacro("Unexpected end-of-file while trying to read POINT_DATA." << "Failed while trying to reading point data for id: " << pid);
+          itkExceptionMacro(
+            "Unexpected end-of-file while trying to read POINT_DATA." << "Failed while trying to reading point data for id: "
+                                                                      << pid);
           }
         inputFile >> pointData;
         outputMesh->SetPointData( pid, pointData );
         }
       }
 
-
     }
 
   inputFile.close();
 }
 
-template<class TOutputMesh>
+template <class TOutputMesh>
 void
 QuadEdgeMeshVTKPolyDataReader<TOutputMesh>
 ::PrintSelf( std::ostream& os, Indent indent ) const
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
 
   os << indent << "FileName: " << m_FileName << std::endl;
 }
 
-} //end of namespace itk
-
+} // end of namespace itk
 
 #endif

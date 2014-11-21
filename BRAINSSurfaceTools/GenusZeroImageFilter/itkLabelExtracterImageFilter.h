@@ -41,7 +41,7 @@ namespace itk
  * \author Tim Kelliher. GE Research, Niskayuna, NY.
  * \note This work was supported by a grant from DARPA, executed by the
  *  U.S. Army Medical Research and Materiel Command/TATRC Assistance
- *  Agreement, Contract# W81XWH-05-2-0059.
+ *  Agreement, Contract#W81XWH-05-2-0059.
  *
  * The difference is that values not in the map are automatically set to zero
  *
@@ -56,14 +56,19 @@ template <class TInput, class TOutput>
 class LabelExtracter
 {
 public:
-  LabelExtracter() {}
-  ~LabelExtracter() {}
+  LabelExtracter()
+  {
+  }
+
+  ~LabelExtracter()
+  {
+  }
 
   typedef std::map<TInput, TOutput> ChangeMapType;
 
   bool operator!=( const LabelExtracter & other ) const
   {
-    if ( m_ChangeMap != other.m_ChangeMap )
+    if( m_ChangeMap != other.m_ChangeMap )
       {
       return true;
       }
@@ -90,14 +95,14 @@ public:
     m_ChangeMap = changeMap;
   }
 
-  void ClearChangeMap( )
+  void ClearChangeMap()
   {
     m_ChangeMap.clear();
   }
 
   inline TOutput operator()( const TInput & A )
   {
-    if ( m_ChangeMap.find(A) != m_ChangeMap.end() )
+    if( m_ChangeMap.find(A) != m_ChangeMap.end() )
       {
       return m_ChangeMap[A];
       }
@@ -114,11 +119,11 @@ private:
 
 template <class TInputImage, class TOutputImage>
 class ITK_EXPORT LabelExtracterImageFilter :
-    public
-UnaryFunctorImageFilter<TInputImage, TOutputImage,
-                        Functor::LabelExtracter<
-                          typename TInputImage::PixelType,
-                          typename TOutputImage::PixelType> >
+  public
+  UnaryFunctorImageFilter<TInputImage, TOutputImage,
+                          Functor::LabelExtracter<
+                            typename TInputImage::PixelType,
+                            typename TOutputImage::PixelType> >
 {
 public:
   /** Standard class typedefs. */
@@ -128,52 +133,56 @@ public:
                                     typename TInputImage::PixelType,
                                     typename TOutputImage::PixelType>
                                   >  Superclass;
-typedef SmartPointer<Self>       Pointer;
-typedef SmartPointer<const Self> ConstPointer;
+  typedef SmartPointer<Self>       Pointer;
+  typedef SmartPointer<const Self> ConstPointer;
 
 /** Method for creation through the object factory. */
-itkNewMacro(Self);
+  itkNewMacro(Self);
 
 /** Run-time type information (and related methods). */
-itkTypeMacro(LabelExtracterImageFilter, UnaryFunctorImageFilter);
+  itkTypeMacro(LabelExtracterImageFilter, UnaryFunctorImageFilter);
 
 /** Pixel types. */
-typedef typename TInputImage::PixelType  InputPixelType;
-typedef typename TOutputImage::PixelType OutputPixelType;
+  typedef typename TInputImage::PixelType  InputPixelType;
+  typedef typename TOutputImage::PixelType OutputPixelType;
 
 /** Type of the change map to use for change requests */
-typedef std::map<InputPixelType, OutputPixelType> ChangeMapType;
+  typedef std::map<InputPixelType, OutputPixelType> ChangeMapType;
 
 /** Set up a change of a single label */
-void SetChange( const InputPixelType & original, const OutputPixelType & result );
+  void SetChange( const InputPixelType & original, const OutputPixelType & result );
 
 /** Set the entire change map */
-void SetChangeMap( const ChangeMapType & changeMap );
+  void SetChangeMap( const ChangeMapType & changeMap );
 
 /** Clears the entire change map */
-void ClearChangeMap( );
+  void ClearChangeMap();
 
 #ifdef ITK_USE_CONCEPT_CHECKING
 /** Begin concept checking */
-itkConceptMacro( InputConvertibleToOutputCheck,
-                 ( Concept::Convertible<InputPixelType, OutputPixelType> ) );
-itkConceptMacro( PixelTypeComparable,
-                 ( Concept::Comparable<InputPixelType> ) );
+  itkConceptMacro( InputConvertibleToOutputCheck,
+                   ( Concept::Convertible<InputPixelType, OutputPixelType> ) );
+  itkConceptMacro( PixelTypeComparable,
+                   ( Concept::Comparable<InputPixelType> ) );
 /** End concept checking */
 #endif
 protected:
-LabelExtracterImageFilter();
-virtual ~LabelExtracterImageFilter() {}
-void PrintSelf(std::ostream & os, Indent indent) const;
+  LabelExtracterImageFilter();
+  virtual ~LabelExtracterImageFilter()
+  {
+  }
+
+  void PrintSelf(std::ostream & os, Indent indent) const;
 
 private:
-LabelExtracterImageFilter(const Self &); // purposely not implemented
-void operator=(const Self &);            // purposely not implemented
+  LabelExtracterImageFilter(const Self &); // purposely not implemented
+  void operator=(const Self &);            // purposely not implemented
+
 };
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkLabelExtracterImageFilter.txx"
+#include "itkLabelExtracterImageFilter.hxx"
 #endif
 
 #endif

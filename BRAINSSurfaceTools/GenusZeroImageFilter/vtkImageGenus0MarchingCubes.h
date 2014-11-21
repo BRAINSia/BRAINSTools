@@ -54,13 +54,22 @@ public:
   // Description:
   // Methods to set contour values
   // why don't these do anything?
-  void SetValue(int, double ) {}
-  double GetValue(int ) { return 0.0; }
+  void SetValue(int, double )
+  {
+  }
 
-  int GetNumberOfConnectedComponents() { return iConnectedComponents; }
+  double GetValue(int )
+  {
+    return 0.0;
+  }
+
+  int GetNumberOfConnectedComponents()
+  {
+    return iConnectedComponents;
+  }
 
   vtkCellArray *Triangles;
-  vtkPoints    *Points;
+  vtkPoints *   Points;
 
   // vtkSetMacro( IJKtoRAS, vtkTransform* );
   // vtkGetMacro( IJKtoRAS, vtkTransform* );
@@ -77,8 +86,15 @@ public:
   vtkGetMacro( CutLoops, int );
   vtkBooleanMacro( CutLoops, int );
 
-  void SetAltValue( int value ) { altValue = value; }
-  double GetAltValue() { return altValue; }
+  void SetAltValue( int value )
+  {
+    altValue = value;
+  }
+
+  double GetAltValue()
+  {
+    return altValue;
+  }
 
   vtkSetMacro( ComputeSurface, int );
   vtkGetMacro( ComputeSurface, int );
@@ -88,10 +104,21 @@ public:
   vtkGetMacro( Verbose, int );
   vtkBooleanMacro( Verbose, int );
 
-  void Use18Connectivity() { iConnectivity = 18; }
-  void Use6Connectivity() { iConnectivity = 6; }
+  void Use18Connectivity()
+  {
+    iConnectivity = 18;
+  }
 
-  vtkImageData * GetCorrectedImageData() { return pCorrectedImageData; }
+  void Use6Connectivity()
+  {
+    iConnectivity = 6;
+  }
+
+  vtkImageData * GetCorrectedImageData()
+  {
+    return pCorrectedImageData;
+  }
+
 protected:
   vtkImageGenus0MarchingCubes();
   ~vtkImageGenus0MarchingCubes();
@@ -115,9 +142,11 @@ protected:
   // vtkTransform *IJKtoRAS;
 private:
   vtkImageGenus0MarchingCubes(const vtkImageGenus0MarchingCubes &); // Not
+                                                                    //
                                                                     // implemented.
   void operator=(const vtkImageGenus0MarchingCubes &);              // Not
-                                                                    // implemented.
+
+  // implemented.
 };
 
 #endif

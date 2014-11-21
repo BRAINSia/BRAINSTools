@@ -140,7 +140,7 @@ private:
 }
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkLevelTracingImageFilter.txx"
+#include "itkLevelTracingImageFilter.hxx"
 #endif
 
 #endif

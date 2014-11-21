@@ -1,1 +1,1 @@
-Authors: Steve Haker and Marc Niethammer
+Authors : Steve Haker and Marc Niethammer

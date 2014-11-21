@@ -37,10 +37,10 @@ class QuadEdgeMeshVTKPolyDataReader : public MeshSource<TOutputMesh>
 {
 public:
   /** Standard "Self" typedef. */
-  typedef QuadEdgeMeshVTKPolyDataReader   Self;
-  typedef MeshSource<TOutputMesh>         Superclass;
-  typedef SmartPointer<Self>              Pointer;
-  typedef SmartPointer<const Self>        ConstPointer;
+  typedef QuadEdgeMeshVTKPolyDataReader Self;
+  typedef MeshSource<TOutputMesh>       Superclass;
+  typedef SmartPointer<Self>            Pointer;
+  typedef SmartPointer<const Self>      ConstPointer;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -49,10 +49,10 @@ public:
   itkTypeMacro(QuadEdgeMeshVTKPolyDataReader, MeshSource);
 
   /** Hold on to the type information specified by the template parameters. */
-  typedef TOutputMesh                          OutputMeshType;
-  typedef typename OutputMeshType::MeshTraits  MeshTraits;
-  typedef typename OutputMeshType::PointType   PointType;
-  typedef typename MeshTraits::PixelType       PixelType;
+  typedef TOutputMesh                         OutputMeshType;
+  typedef typename OutputMeshType::MeshTraits MeshTraits;
+  typedef typename OutputMeshType::PointType  PointType;
+  typedef typename MeshTraits::PixelType      PixelType;
 
   /** Some convenient typedefs. */
   typedef typename OutputMeshType::Pointer         OutputMeshPointer;
@@ -65,17 +65,17 @@ public:
 
   typedef typename OutputMeshType::PointsContainerPointer
     PointsContainerPointer;
-  
+
   typedef typename OutputMeshType::PointsContainer
     PointsContainer;
 
   /** Define the triangular cell types which form the surface  */
-  typedef TriangleCell<CellType>      TriangleCellType;
+  typedef TriangleCell<CellType> TriangleCellType;
 
   typedef typename TriangleCellType::SelfAutoPointer
     TriangleCellAutoPointer;
 
-  typedef std::pair<unsigned long,unsigned long>     IndexPairType;
+  typedef std::pair<unsigned long, unsigned long>    IndexPairType;
   typedef MapContainer<IndexPairType, unsigned long> PointMapType;
   typedef typename PointType::VectorType             VectorType;
 
@@ -85,10 +85,12 @@ public:
   /** Set/Get the name of the file to be read. */
   itkSetStringMacro(FileName);
   itkGetStringMacro(FileName);
-
 protected:
   QuadEdgeMeshVTKPolyDataReader();
-  ~QuadEdgeMeshVTKPolyDataReader() {}
+  ~QuadEdgeMeshVTKPolyDataReader()
+  {
+  }
+
   void PrintSelf(std::ostream& os, Indent indent) const;
 
   /** Reads the file */
@@ -96,16 +98,16 @@ protected:
 
   /** Filename to read */
   std::string m_FileName;
-
 private:
-  QuadEdgeMeshVTKPolyDataReader(const Self&); // purposely not implemented
-  void operator=(const Self&); // purposely not implemented
+  QuadEdgeMeshVTKPolyDataReader(const Self &); // purposely not implemented
+  void operator=(const Self &);                // purposely not implemented
+
 };
 
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkQuadEdgeMeshVTKPolyDataReader.txx"
+#include "itkQuadEdgeMeshVTKPolyDataReader.hxx"
 #endif
 
-#endif //_itkQuadEdgeMeshVTKPolyDataReader_h
+#endif // _itkQuadEdgeMeshVTKPolyDataReader_h

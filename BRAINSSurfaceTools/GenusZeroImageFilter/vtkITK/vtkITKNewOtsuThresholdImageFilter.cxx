@@ -27,8 +27,8 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#ifndef _vtkITKNewOtsuThresholdImageFilter_txx
-#define _vtkITKNewOtsuThresholdImageFilter_txx
+#ifndef _vtkITKNewOtsuThresholdImageFilter_hxx
+#define _vtkITKNewOtsuThresholdImageFilter_hxx
 #include "vtkITKNewOtsuThresholdImageFilter.h"
 #endif
 

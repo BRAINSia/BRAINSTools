@@ -150,6 +150,6 @@ protected:
   CacheBlock * GetCacheBlock ( unsigned long index );
 };
 }
-# include "itkTimeSeriesDatabase.txx"
+# include "itkTimeSeriesDatabase.hxx"
 
 #endif

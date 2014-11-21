@@ -31,7 +31,7 @@ configure_file(
   )
 
 file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
-file(GLOB templates "${CMAKE_CURRENT_SOURCE_DIR}/*.txx")
+file(GLOB templates "${CMAKE_CURRENT_SOURCE_DIR}/*.hxx")
 install(FILES
   ${headers}
   ${templates}

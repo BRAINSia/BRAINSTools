@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Insight Segmentation & Registration Toolkit
-  Module:    $RCSfile: itkLabelExtracterImageFilter.txx,v $
+  Module:    $RCSfile: itkLabelExtracterImageFilter.hxx,v $
   Language:  C++
   Date:      $Date: 2009/07/17 14:37:03 $
   Version:   $Revision: 1.1 $
@@ -17,8 +17,8 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#ifndef _itkLabelExtracterImageFilter_txx
-#define _itkLabelExtracterImageFilter_txx
+#ifndef _itkLabelExtracterImageFilter_hxx
+#define _itkLabelExtracterImageFilter_hxx
 
 #include "itkLabelExtracterImageFilter.h"
 
@@ -27,22 +27,23 @@ namespace itk
 /**
  *
  */
-template<class TInputImage, class TOutputImage>
+template <class TInputImage, class TOutputImage>
 LabelExtracterImageFilter<TInputImage, TOutputImage>
 ::LabelExtracterImageFilter()
-{}
+{
+}
 
 /**
  *
  */
-template<class TInputImage, class TOutputImage>
+template <class TInputImage, class TOutputImage>
 void
 LabelExtracterImageFilter<TInputImage, TOutputImage>
 ::SetChange( const InputPixelType & original, const OutputPixelType & result )
 {
   OutputPixelType current = this->GetFunctor().GetChange(original);
 
-  if ( current != result )
+  if( current != result )
     {
     this->GetFunctor().SetChange(original, result);
     this->Modified();
@@ -52,7 +53,7 @@ LabelExtracterImageFilter<TInputImage, TOutputImage>
 /**
  *
  */
-template<class TInputImage, class TOutputImage>
+template <class TInputImage, class TOutputImage>
 void
 LabelExtracterImageFilter<TInputImage, TOutputImage>
 ::SetChangeMap( const ChangeMapType & changeMap )
@@ -65,10 +66,10 @@ LabelExtracterImageFilter<TInputImage, TOutputImage>
 /**
  *
  */
-template<class TInputImage, class TOutputImage>
+template <class TInputImage, class TOutputImage>
 void
 LabelExtracterImageFilter<TInputImage, TOutputImage>
-::ClearChangeMap( )
+::ClearChangeMap()
 {
   // If the whole map is being set then we assume that a real change is made
   this->GetFunctor().ClearChangeMap();
@@ -78,7 +79,7 @@ LabelExtracterImageFilter<TInputImage, TOutputImage>
 /**
  *
  */
-template<class TInputImage, class TOutputImage>
+template <class TInputImage, class TOutputImage>
 void
 LabelExtracterImageFilter<TInputImage, TOutputImage>
 ::PrintSelf(std::ostream & os, Indent indent) const
@@ -86,6 +87,7 @@ LabelExtracterImageFilter<TInputImage, TOutputImage>
   Superclass::PrintSelf(os, indent);
   // Maybe should iterate the change map and print it here
 }
+
 } // end namespace itk
 
 #endif

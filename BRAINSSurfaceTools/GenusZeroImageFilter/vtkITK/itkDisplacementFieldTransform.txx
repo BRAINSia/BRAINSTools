@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Insight Segmentation & Registration Toolkit
-  Module:    $RCSfile: itkDisplacementFieldTransform.txx,v $
+  Module:    $RCSfile: itkDisplacementFieldTransform.hxx,v $
   Language:  C++
   Date:      $Date: 2008-04-11 16:28:11 $
   Version:   $Revision: 1.40 $
@@ -14,8 +14,8 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#ifndef __itkDisplacementFieldTransform_txx
-#define __itkDisplacementFieldTransform_txx
+#ifndef __itkDisplacementFieldTransform_hxx
+#define __itkDisplacementFieldTransform_hxx
 
 #include "itkDisplacementFieldTransform.h"
 #include "itkContinuousIndex.h"

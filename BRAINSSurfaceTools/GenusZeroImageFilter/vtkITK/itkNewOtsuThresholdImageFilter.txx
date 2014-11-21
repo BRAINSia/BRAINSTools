@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Insight Segmentation & Registration Toolkit
-  Module:    $RCSfile: itkNewOtsuThresholdImageFilter.txx,v $
+  Module:    $RCSfile: itkNewOtsuThresholdImageFilter.hxx,v $
   Language:  C++
   Date:      $Date: 2006/03/16 19:59:56 $
   Version:   $Revision: 1.1.2.1 $
@@ -14,8 +14,8 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#ifndef _itkNewOtsuThresholdImageFilter_txx
-#define _itkNewOtsuThresholdImageFilter_txx
+#ifndef _itkNewOtsuThresholdImageFilter_hxx
+#define _itkNewOtsuThresholdImageFilter_hxx
 #include "itkNewOtsuThresholdImageFilter.h"
 
 #include "itkBinaryThresholdImageFilter.h"

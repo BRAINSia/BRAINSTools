@@ -1,61 +1,61 @@
-<?xml version="1.0" encoding="utf-8"?>
-<executable>
-  <category>BRAINS.Surface</category>
-  <title>Surface Smoothing</title>
-  <description>
-Surface smoothing function based on ITK Quad Edge mesh filters. This is used to remove stair step artifacts from the resulting surface  </description>
-  <version>0.0.1.$Revision: 1.2 $(alpha)</version>
-  <documentation-url></documentation-url>
-  <license></license>
-  <contributor>Wen Li and Vincent Magnotta</contributor>
+< ? xml version = "1.0" encoding = "utf-8" ? >
+      < executable >
+      < category > BRAINS.Surface</ category>
+      < title > Surface Smoothing</ title>
+      < description >
+      Surface smoothing function based on ITK Quad Edge mesh filters.This is used to remove stair step artifacts from
+      the resulting surface</ description>
+      < version > 0.0 .1.$Revision : 1.2 $(alpha) < / version >
+      < documentation - url > < / documentation - url >
+      < license > < / license >
+      < contributor > Wen Li and Vincent Magnotta</ contributor>
 
-  <parameters>
-    <label>Smoothing Parameters</label>
-    <description>Surface Smoothing Parameters</description>
+      < parameters >
+      < label > Smoothing Parameters</ label>
+      < description > Surface Smoothing Parameters</ description>
 
-    <geometry>
-      <name>inputSurface</name>
-      <label>Input Surface</label>
-      <channel>input</channel>
-      <longflag>--inputSurface</longflag>
-      <description>Surface to be smoothed</description>
-    </geometry>
-    
-    <integer>
-		  <name>numberOfIterations</name>
-		  <longflag>numberOfIterations</longflag>
-		  <description>Number Of Iterations</description>
-		  <label>Number Of Iterations</label>
-		  <channel>input</channel>
-		  <default>5</default>
-	  </integer>
-    
-    <float>
-		  <name>relaxationFactor</name>
-		  <longflag>relaxationFactor</longflag>
-		  <description>Relaxation factor</description>
-		  <label>Relaxation factor</label>
-		  <channel>input</channel>
-		  <default>0.1</default>
-	  </float>
-    
-    <boolean>
-      <name>delaunayConforming</name>
-      <label>Delaunay Conforming</label>
-      <longflag>--delaunayConforming</longflag>
-      <default>false</default>
-      <description>Use Delaunay Conforming option (very slow)</description>
-    </boolean>
+      < geometry >
+      < name > inputSurface</ name>
+      < label > Input Surface</ label>
+      < channel > input</ channel>
+      < longflag > --inputSurface</ longflag>
+      < description > Surface to be smoothed</ description>
+      < / geometry >
 
-  
-    <geometry>
-      <name>outputSurface</name>
-      <label>Output Surface</label>
-      <channel>output</channel>
-      <longflag>--outputSurface</longflag>
-      <description>Resulting smoothed surface</description>
-    </geometry>
+      < integer >
+      < name > numberOfIterations</ name>
+      < longflag > numberOfIterations</ longflag>
+      < description > Number Of Iterations</ description>
+      < label > Number Of Iterations</ label>
+      < channel > input</ channel>
+      < default > 5 < / default >
+      < / integer >
 
-  </parameters>
+      < float >
+      < name > relaxationFactor</ name>
+      < longflag > relaxationFactor</ longflag>
+      < description > Relaxation factor</ description>
+      < label > Relaxation factor</ label>
+      < channel > input</ channel>
+      < default > 0.1 < / default >
+      < / float >
 
-</executable>
+      < boolean >
+      < name > delaunayConforming</ name>
+      < label > Delaunay Conforming</ label>
+      < longflag > --delaunayConforming</ longflag>
+      < default > false</ default>
+      < description > Use Delaunay Conforming option(very slow) < / description >
+      < / boolean >
+
+      < geometry >
+      < name > outputSurface</ name>
+      < label > Output Surface</ label>
+      < channel > output</ channel>
+      < longflag > --outputSurface</ longflag>
+      < description > Resulting smoothed surface</ description>
+      < / geometry >
+
+      < / parameters >
+
+      < / executable>

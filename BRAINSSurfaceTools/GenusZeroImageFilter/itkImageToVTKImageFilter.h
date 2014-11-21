@@ -85,12 +85,12 @@ private:
   void operator=(const Self &);        // purposely not implemented
 
   ExporterFilterPointer m_Exporter;
-  vtkImageImport        *m_Importer;
+  vtkImageImport *      m_Importer;
 };
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkImageToVTKImageFilter.txx"
+#include "itkImageToVTKImageFilter.hxx"
 #endif
 
 #endif

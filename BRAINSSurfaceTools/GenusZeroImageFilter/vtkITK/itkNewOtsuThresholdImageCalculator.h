@@ -83,7 +83,7 @@ private:
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkNewOtsuThresholdImageCalculator.txx"
+#include "itkNewOtsuThresholdImageCalculator.hxx"
 #endif
 
 #endif

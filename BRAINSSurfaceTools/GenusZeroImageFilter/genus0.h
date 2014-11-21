@@ -13,7 +13,8 @@ Please send bug reports to haker@bwh.harvard.edu.
 
 */
 
-typedef struct _genus0parameters {
+typedef struct _genus0parameters
+  {
   /* INPUT parameters */
 
   unsigned short *input;           /* Pointer to data from which to extract
@@ -109,7 +110,7 @@ typedef struct _genus0parameters {
   int calloced_output;             /* A flag to remember if *output was
                                      calloced, so it can be freed upon
                                      destruction */
-} genus0parameters;
+  } genus0parameters;
 
 /* public stuff */
 extern void genus0init(genus0parameters *g0);         /* Initialize fields in

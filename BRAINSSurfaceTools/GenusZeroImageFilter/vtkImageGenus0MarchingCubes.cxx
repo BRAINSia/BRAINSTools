@@ -39,9 +39,9 @@ void vtkGetUnsignedShortData(vtkImageGenus0MarchingCubes *,
                              vtkImageData *, T *ptr,
                              unsigned short *pus, int totlen)
 {
-  for ( int iI = 0; iI < totlen; iI++ )
+  for( int iI = 0; iI < totlen; iI++ )
     {
-    if ( ptr[iI] > 0 )
+    if( ptr[iI] > 0 )
       {
       pus[iI] = 1;
       }
@@ -58,7 +58,7 @@ void vtkSetUnsignedShortData(vtkImageGenus0MarchingCubes *,
                              vtkImageData *, T *ptr,
                              unsigned short *pus, int totlen)
 {
-  for ( int iI = 0; iI < totlen; iI++ )
+  for( int iI = 0; iI < totlen; iI++ )
     {
     ptr[iI] = pus[iI];
     }
@@ -90,7 +90,7 @@ vtkImageGenus0MarchingCubes::vtkImageGenus0MarchingCubes()
 
 vtkImageGenus0MarchingCubes::~vtkImageGenus0MarchingCubes()
 {
-  if ( pCorrectedImageData != NULL )
+  if( pCorrectedImageData != NULL )
     {
     pCorrectedImageData->Delete();
     pCorrectedImageData = NULL;
@@ -100,12 +100,12 @@ vtkImageGenus0MarchingCubes::~vtkImageGenus0MarchingCubes()
 void vtkImageGenus0MarchingCubes::Execute()
 {
   vtkImageData *inData = vtkImageData::SafeDownCast( this->GetInput( 0 ) );
-  vtkPolyData  *outData = vtkPolyData::SafeDownCast( this->GetOutput( 0 ) );
+  vtkPolyData * outData = vtkPolyData::SafeDownCast( this->GetOutput( 0 ) );
 
   this->iConnectedComponents = 0;
 
   // Null input check
-  if ( !inData )
+  if( !inData )
     {
     std::cerr << "Error: Input data not set." << std::endl;
     return;
@@ -132,7 +132,10 @@ void vtkImageGenus0MarchingCubes::Execute()
 
   // get memory for the topologcially corrected volume
 
-  if ( pCorrectedImageData != NULL ) {pCorrectedImageData->Delete(); }
+  if( pCorrectedImageData != NULL )
+    {
+    pCorrectedImageData->Delete();
+    }
   pCorrectedImageData = vtkImageData::New();
 
   int iExtent[6];
@@ -145,11 +148,11 @@ void vtkImageGenus0MarchingCubes::Execute()
   genus0parameters g0[1]; /* need an instance of genus0parameters */
   genus0init(g0);         /* initialize the instance, set default parameters */
 
-  int            totlen;
+  int             totlen;
   unsigned short *input;
   /* set g0->dims[0..2] and allocate memory */
   totlen = 1;
-  for ( int iI = 0; iI < 3; iI++ )
+  for( int iI = 0; iI < 3; iI++ )
     {
     totlen *= ( g0->dims[iI] = dims[iI] );
     }
@@ -159,7 +162,7 @@ void vtkImageGenus0MarchingCubes::Execute()
 
   void *ptr = inData->GetScalarPointer();
 
-  switch ( inData->GetScalarType() )
+  switch( inData->GetScalarType() )
     {
     vtkTemplateMacro(
       vtkGetUnsignedShortData(this, inData, static_cast<VTK_TT *>( ptr ), input, totlen );
@@ -170,7 +173,7 @@ void vtkImageGenus0MarchingCubes::Execute()
     }
 
   float ijk2ras[16];
-  for ( int iI = 0; iI < 16; iI++ )
+  for( int iI = 0; iI < 16; iI++ )
     {
     ijk2ras[iI] = 0.0;
     }
@@ -193,7 +196,7 @@ void vtkImageGenus0MarchingCubes::Execute()
   // and set the parameters to run the code
 
   // if ( Verbose ) {
-  if ( 1 )
+  if( 1 )
     {
     std::cout << "Using verbose mode:" << std::endl << std::endl;
     std::cout << "BiggestComponent = " << BiggestComponent << std::endl;
@@ -224,13 +227,13 @@ void vtkImageGenus0MarchingCubes::Execute()
   // 18 connectivity: only surfaces are supported currently
   //
 
-  if ( CutLoops && iConnectivity == 6 && !ComputeSurface )
+  if( CutLoops && iConnectivity == 6 && !ComputeSurface )
     {
     g0->value = 0;
     DesiredCutLoopsValue = 0;
     SetAltValue( 0 );
     }
-  else if ( !CutLoops && iConnectivity == 6 && !ComputeSurface )
+  else if( !CutLoops && iConnectivity == 6 && !ComputeSurface )
     {
     g0->value = 1;
     DesiredCutLoopsValue = 0;
@@ -266,7 +269,7 @@ void vtkImageGenus0MarchingCubes::Execute()
   g0->extraijkscale[2] = 1;
 
   /* call the function! */
-  if ( genus0(g0) )
+  if( genus0(g0) )
     {
     std::cerr << "Error when executing genus0." << std::endl;
     }
@@ -280,10 +283,8 @@ void vtkImageGenus0MarchingCubes::Execute()
   _Points->Allocate(estimatedPoints, estimatedPoints / 2);
   vtkCellArray *_Triangles = vtkCellArray::New();
   _Triangles->Allocate(estimatedTriangles, estimatedTriangles / 2);
-
   // write it out
-
-  for ( int iI = 0; iI < g0->vert_count; iI++ )
+  for( int iI = 0; iI < g0->vert_count; iI++ )
     {
     double cCoors[3];
     cCoors[0] = g0->vertices[iI];                      // -dOrigin[0];
@@ -291,8 +292,7 @@ void vtkImageGenus0MarchingCubes::Execute()
     cCoors[2] = g0->vertices[iI + 2 * g0->vert_count]; // +dOrigin[2];
     _Points->InsertNextPoint( cCoors );
     }
-
-  for ( int iI = 0; iI < g0->tri_count; iI++ )
+  for( int iI = 0; iI < g0->tri_count; iI++ )
     {
     _Triangles->InsertNextCell( 3 );
     _Triangles->InsertCellPoint( g0->triangles[iI] );
@@ -310,10 +310,10 @@ void vtkImageGenus0MarchingCubes::Execute()
   _Triangles = NULL;
 
   // now export the topologically corrected image
-  //g0->output
+  // g0->output
   void *ptrCI = pCorrectedImageData->GetScalarPointer();
 
-  switch ( pCorrectedImageData->GetScalarType() )
+  switch( pCorrectedImageData->GetScalarType() )
     {
     vtkTemplateMacro(
       vtkSetUnsignedShortData(this, pCorrectedImageData, static_cast<VTK_TT *>( ptrCI ), g0->output, totlen )
@@ -327,8 +327,7 @@ void vtkImageGenus0MarchingCubes::Execute()
   // different labels in the output
 
   std::map<int, int> mapLabels;
-
-  for ( int iI = 0; iI < totlen; iI++ )
+  for( int iI = 0; iI < totlen; iI++ )
     {
     mapLabels[( g0->output )[iI]] = 1;
     }

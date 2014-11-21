@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Insight Segmentation & Registration Toolkit
-  Module:    $RCSfile: itkNewOtsuThresholdImageCalculator.txx,v $
+  Module:    $RCSfile: itkNewOtsuThresholdImageCalculator.hxx,v $
   Language:  C++
   Date:      $Date: 2006/03/16 19:59:56 $
   Version:   $Revision: 1.1.2.1 $
@@ -14,8 +14,8 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#ifndef _itkNewOtsuThresholdImageCalculator_txx
-#define _itkNewOtsuThresholdImageCalculator_txx
+#ifndef _itkNewOtsuThresholdImageCalculator_hxx
+#define _itkNewOtsuThresholdImageCalculator_hxx
 
 #include "itkNewOtsuThresholdImageCalculator.h"
 #include "itkImageRegionConstIteratorWithIndex.h"

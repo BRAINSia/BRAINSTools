@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Insight Segmentation & Registration Toolkit
-  Module:    $RCSfile: itkImageToVTKImageFilter.txx,v $
+  Module:    $RCSfile: itkImageToVTKImageFilter.hxx,v $
   Language:  C++
   Date:      $Date: 2009/03/16 13:35:43 $
   Version:   $Revision: 1.1 $
@@ -14,8 +14,8 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#ifndef _itkImageToVTKImageFilter_txx
-#define _itkImageToVTKImageFilter_txx
+#ifndef _itkImageToVTKImageFilter_hxx
+#define _itkImageToVTKImageFilter_hxx
 
 #include "itkImageToVTKImageFilter.h"
 
@@ -24,7 +24,7 @@ namespace itk
 /**
  * Constructor
  */
-template<class TInputImage>
+template <class TInputImage>
 ImageToVTKImageFilter<TInputImage>
 ::ImageToVTKImageFilter()
 {
@@ -49,11 +49,11 @@ ImageToVTKImageFilter<TInputImage>
 /**
  * Destructor
  */
-template<class TInputImage>
+template <class TInputImage>
 ImageToVTKImageFilter<TInputImage>
 ::~ImageToVTKImageFilter()
 {
-  if ( m_Importer )
+  if( m_Importer )
     {
     m_Importer->Delete();
     m_Importer = 0;
@@ -63,7 +63,7 @@ ImageToVTKImageFilter<TInputImage>
 /**
  * Set an itk::Image as input
  */
-template<class TInputImage>
+template <class TInputImage>
 void
 ImageToVTKImageFilter<TInputImage>
 ::SetInput( const InputImageType *inputImage )
@@ -74,7 +74,7 @@ ImageToVTKImageFilter<TInputImage>
 /**
  * Get a vtkImage as output
  */
-template<class TInputImage>
+template <class TInputImage>
 vtkImageData *
 ImageToVTKImageFilter<TInputImage>
 ::GetOutput() const
@@ -85,7 +85,7 @@ ImageToVTKImageFilter<TInputImage>
 /**
  * Get the importer filter
  */
-template<class TInputImage>
+template <class TInputImage>
 vtkImageImport *
 ImageToVTKImageFilter<TInputImage>
 ::GetImporter() const
@@ -96,24 +96,25 @@ ImageToVTKImageFilter<TInputImage>
 /**
  * Get the exporter filter
  */
-template<class TInputImage>
-typename ImageToVTKImageFilter<TInputImage>::ExporterFilterType *
-ImageToVTKImageFilter<TInputImage>
+template <class TInputImage>
+typename ImageToVTKImageFilter<TInputImage>::ExporterFilterType
+* ImageToVTKImageFilter<TInputImage>
 ::GetExporter() const
-{
+  {
   return m_Exporter.GetPointer();
-}
+  }
 
 /**
  * Delegate the Update to the importer
  */
-template<class TInputImage>
+template <class TInputImage>
 void
 ImageToVTKImageFilter<TInputImage>
 ::Update()
 {
   m_Importer->Update();
 }
+
 } // end namespace itk
 
 #endif

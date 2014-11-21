@@ -2,7 +2,7 @@
 
   Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights Reserved.
 
-  See Doc/copyright/copyright.txt
+  See COPYRIGHT.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
 
   Program:   3D Slicer
@@ -27,10 +27,9 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#ifndef _vtkITKNewOtsuThresholdImageFilter_hxx
-#define _vtkITKNewOtsuThresholdImageFilter_hxx
+#ifndef _vtkITKNewOtsuThresholdImageFilter_txx
+#define _vtkITKNewOtsuThresholdImageFilter_txx
 #include "vtkITKNewOtsuThresholdImageFilter.h"
 #endif
 
-vtkCxxRevisionMacro(vtkITKNewOtsuThresholdImageFilter, "$Revision: 1.1.2.1 $");
 vtkStandardNewMacro(vtkITKNewOtsuThresholdImageFilter);

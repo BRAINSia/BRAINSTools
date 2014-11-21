@@ -6,35 +6,36 @@
   or http://www.slicer.org/copyright/copyright.txt for details.
 
   Program:   vtkITK
-  Module:    $HeadURL: http://svn.slicer.org/Slicer4/trunk/Libs/vtkITK/vtkITKArchetypeImageSeriesVectorReaderFile.h $
+  Module:    $HeadURL: http://svn.slicer.org/Slicer4/trunk/Libs/vtkITK/vtkITKArchetypeDiffusionTensorImageReaderFile.h $
   Date:      $Date: 2007-01-19 13:21:56 -0500 (Fri, 19 Jan 2007) $
   Version:   $Revision: 2267 $
 
 ==========================================================================*/
 
-#ifndef __vtkITKArchetypeImageSeriesVectorReaderFile_h
-#define __vtkITKArchetypeImageSeriesVectorReaderFile_h
+#ifndef __vtkITKArchetypeDiffusionTensorImageReaderFile_h
+#define __vtkITKArchetypeDiffusionTensorImageReaderFile_h
 
 #include "vtkITKArchetypeImageSeriesReader.h"
-
-#include "itkImageFileReader.h"
 #include <vtkVersion.h>
 
-class VTK_ITK_EXPORT vtkITKArchetypeImageSeriesVectorReaderFile : public vtkITKArchetypeImageSeriesReader
+#include "itkImageFileReader.h"
+
+class VTK_ITK_EXPORT vtkITKArchetypeDiffusionTensorImageReaderFile
+  : public vtkITKArchetypeImageSeriesReader
 {
  public:
-  static vtkITKArchetypeImageSeriesVectorReaderFile *New();
-  vtkTypeMacro(vtkITKArchetypeImageSeriesVectorReaderFile,vtkITKArchetypeImageSeriesReader);
+  static vtkITKArchetypeDiffusionTensorImageReaderFile *New();
+  vtkTypeMacro(vtkITKArchetypeDiffusionTensorImageReaderFile,vtkITKArchetypeImageSeriesReader);
   void PrintSelf(ostream& os, vtkIndent indent);
 
  protected:
-  vtkITKArchetypeImageSeriesVectorReaderFile();
-  ~vtkITKArchetypeImageSeriesVectorReaderFile();
+  vtkITKArchetypeDiffusionTensorImageReaderFile();
+  ~vtkITKArchetypeDiffusionTensorImageReaderFile();
 
 #if (VTK_MAJOR_VERSION <= 5)
   void ExecuteData(vtkDataObject *data);
 #else
-  void ExecuteDataWithInformation(vtkDataObject *output, vtkInformation *outInfo);
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
 #endif
   static void ReadProgressCallback(itk::ProcessObject* obj,const itk::ProgressEvent&, void* data);
   /// private:

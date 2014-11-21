@@ -2,11 +2,11 @@
 
   Copyright Brigham and Women's Hospital (BWH) All Rights Reserved.
 
-  See Doc/copyright/copyright.txt
+  See COPYRIGHT.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
 
   Program:   vtkITK
-  Module:    $HeadURL: http://www.na-mic.org/svn/Slicer3/trunk/Libs/vtkITK/vtkITKArchetypeImageSeriesVectorReaderSeries.h $
+  Module:    $HeadURL: http://svn.slicer.org/Slicer4/trunk/Libs/vtkITK/vtkITKArchetypeImageSeriesVectorReaderSeries.h $
   Date:      $Date: 2007-01-19 13:21:56 -0500 (Fri, 19 Jan 2007) $
   Version:   $Revision: 2267 $
 
@@ -16,28 +16,32 @@
 #define __vtkITKArchetypeImageSeriesVectorReaderSeries_h
 
 #include "vtkITKArchetypeImageSeriesReader.h"
-
-#include "itkImageFileReader.h"
+#include <vtkVersion.h>
+namespace itk
+{
+  class ProcessObject;
+  class ProgressEvent;
+};
 
 class VTK_ITK_EXPORT vtkITKArchetypeImageSeriesVectorReaderSeries : public vtkITKArchetypeImageSeriesReader
 {
 public:
-  static vtkITKArchetypeImageSeriesVectorReaderSeries * New();
+  static vtkITKArchetypeImageSeriesVectorReaderSeries *New();
+  vtkTypeMacro(vtkITKArchetypeImageSeriesVectorReaderSeries,vtkITKArchetypeImageSeriesReader);
+  void PrintSelf(ostream& os, vtkIndent indent);
 
-  vtkTypeRevisionMacro(vtkITKArchetypeImageSeriesVectorReaderSeries, vtkITKArchetypeImageSeriesReader);
-  void PrintSelf(ostream & os, vtkIndent indent);
-
+  static void ReadProgressCallback(itk::ProcessObject* obj,
+                                   const itk::ProgressEvent&,
+                                   void* data);
 protected:
   vtkITKArchetypeImageSeriesVectorReaderSeries();
   ~vtkITKArchetypeImageSeriesVectorReaderSeries();
 
+#if (VTK_MAJOR_VERSION <= 5)
   void ExecuteData(vtkDataObject *data);
-
-  //BTX
-  static void ReadProgressCallback(itk::ProcessObject *obj, const itk::ProgressEvent &, void *data);
-
-  //ETX
-  // private:
+#else
+  void ExecuteDataWithInformation(vtkDataObject *output, vtkInformation *outInfo);
+#endif
 };
 
 #endif

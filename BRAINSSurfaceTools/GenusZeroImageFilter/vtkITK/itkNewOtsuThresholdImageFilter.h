@@ -22,6 +22,7 @@
 
 namespace itk
 {
+
 /** \class NewOtsuThresholdImageFilter
  * \brief Threshold an image using the Otsu Threshold
  *
@@ -37,17 +38,16 @@ namespace itk
  * \sa BinaryThresholdImageFilter
  * \ingroup IntensityImageFilters  Multithreaded
  */
-
-template <class TInputImage, class TOutputImage>
-class ITK_EXPORT NewOtsuThresholdImageFilter :
+template<class TInputImage, class TOutputImage>
+class NewOtsuThresholdImageFilter :
     public ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:
   /** Standard Self typedef */
-  typedef NewOtsuThresholdImageFilter                   Self;
-  typedef ImageToImageFilter<TInputImage, TOutputImage> Superclass;
-  typedef SmartPointer<Self>                            Pointer;
-  typedef SmartPointer<const Self>                      ConstPointer;
+  typedef NewOtsuThresholdImageFilter Self;
+  typedef ImageToImageFilter<TInputImage,TOutputImage>  Superclass;
+  typedef SmartPointer<Self>        Pointer;
+  typedef SmartPointer<const Self>  ConstPointer;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -56,39 +56,40 @@ public:
   itkTypeMacro(NewOtsuThresholdImageFilter, ImageToImageFilter);
 
   /** Image pixel value typedef. */
-  typedef typename TInputImage::PixelType  InputPixelType;
-  typedef typename TOutputImage::PixelType OutputPixelType;
+  typedef typename TInputImage::PixelType   InputPixelType;
+  typedef typename TOutputImage::PixelType   OutputPixelType;
 
   /** Image related typedefs. */
-  typedef typename TInputImage::Pointer     InputImagePointer;
-  typedef typename TOutputImage::Pointer    OutputImagePointer;
+  typedef typename TInputImage::Pointer InputImagePointer;
+  typedef typename TOutputImage::Pointer OutputImagePointer;
 
-  typedef typename TInputImage::SizeType    InputSizeType;
-  typedef typename TInputImage::IndexType   InputIndexType;
-  typedef typename TInputImage::RegionType  InputImageRegionType;
-  typedef typename TOutputImage::SizeType   OutputSizeType;
+  typedef typename TInputImage::SizeType  InputSizeType;
+  typedef typename TInputImage::IndexType  InputIndexType;
+  typedef typename TInputImage::RegionType InputImageRegionType;
+  typedef typename TOutputImage::SizeType  OutputSizeType;
   typedef typename TOutputImage::IndexType  OutputIndexType;
   typedef typename TOutputImage::RegionType OutputImageRegionType;
 
+
   /** Image related typedefs. */
   itkStaticConstMacro(InputImageDimension, unsigned int,
-                      TInputImage::ImageDimension );
+                      TInputImage::ImageDimension ) ;
   itkStaticConstMacro(OutputImageDimension, unsigned int,
-                      TOutputImage::ImageDimension );
+                      TOutputImage::ImageDimension ) ;
 
   /** Set the "outside" pixel value. The default value
    * NumericTraits<OutputPixelType>::Zero. */
-  itkSetMacro(OutsideValue, OutputPixelType);
+  itkSetMacro(OutsideValue,OutputPixelType);
 
   /** Get the "outside" pixel value. */
-  itkGetMacro(OutsideValue, OutputPixelType);
+  itkGetMacro(OutsideValue,OutputPixelType);
 
   /** Set the "inside" pixel value. The default value
    * NumericTraits<OutputPixelType>::max() */
-  itkSetMacro(InsideValue, OutputPixelType);
+  itkSetMacro(InsideValue,OutputPixelType);
 
   /** Get the "inside" pixel value. */
-  itkGetMacro(InsideValue, OutputPixelType);
+  itkGetMacro(InsideValue,OutputPixelType);
 
   /** Set/Get the number of histogram bins. Defaults is 128. */
   itkSetClampMacro( NumberOfHistogramBins, unsigned long, 1,
@@ -99,30 +100,32 @@ public:
   itkGetMacro ( Omega, double);
 
   /** Get the computed threshold. */
-  itkGetMacro(Threshold, InputPixelType);
+  itkGetMacro(Threshold,InputPixelType);
+
+
 protected:
   NewOtsuThresholdImageFilter();
-  ~NewOtsuThresholdImageFilter(){}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  ~NewOtsuThresholdImageFilter(){};
+  void PrintSelf(std::ostream& os, Indent indent) const;
 
   void GenerateInputRequestedRegion();
-
   void GenerateData ();
 
 private:
-  NewOtsuThresholdImageFilter(const Self &); // purposely not implemented
-  void operator=(const Self &);              // purposely not implemented
+  NewOtsuThresholdImageFilter(const Self&); //purposely not implemented
+  void operator=(const Self&); //purposely not implemented
 
-  InputPixelType  m_Threshold;
-  OutputPixelType m_InsideValue;
-  OutputPixelType m_OutsideValue;
-  unsigned long   m_NumberOfHistogramBins;
-  double          m_Omega;
-};  // end of class
-} // end namespace itk
+  InputPixelType      m_Threshold;
+  OutputPixelType     m_InsideValue;
+  OutputPixelType     m_OutsideValue;
+  unsigned long       m_NumberOfHistogramBins;
+  double             m_Omega;
+} ; /// end of class
+
+} /// end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkNewOtsuThresholdImageFilter.hxx"
+#include "itkNewOtsuThresholdImageFilter.txx"
 #endif
 
 #endif

@@ -17,28 +17,20 @@ PURPOSE.  See the above copyright notice for more information.
 #include "itkLevelTracingImageFilter.h"
 
 #include "vtkCellArray.h"
-#include "vtkFloatArray.h"
-#include "vtkUnsignedCharArray.h"
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
 #include "vtkPointData.h"
-#include "vtkPolyData.h"
 #include "vtkStructuredPoints.h"
 #include "vtkStreamingDemandDrivenPipeline.h"
 #include "vtkSmartPointer.h"
 
-#include "itkImage.h"
 #include "itkExtractImageFilter.h"
-#include "itkChainCodePath.h"
-#include "itkNumericTraits.h"
 
-vtkCxxRevisionMacro(vtkITKLevelTracingImageFilter, "$Revision: 1.0 $");
 vtkStandardNewMacro(vtkITKLevelTracingImageFilter);
 
 // Description:
 // Construct object with initial range (0,1) and single contour value
-// of 0.0. ComputeNormal is on, ComputeGradients is off and ComputeScalars is
-// on.
+// of 0.0. ComputeNormal is on, ComputeGradients is off and ComputeScalars is on.
 vtkITKLevelTracingImageFilter::vtkITKLevelTracingImageFilter()
 {
   this->Seed[0] = 0;
@@ -49,19 +41,22 @@ vtkITKLevelTracingImageFilter::vtkITKLevelTracingImageFilter()
 }
 
 vtkITKLevelTracingImageFilter::~vtkITKLevelTracingImageFilter()
-{}
+{
+}
+
 
 template <class T>
-void vtkITKLevelTracingTrace(vtkITKLevelTracingImageFilter *, T *scalars,
+void vtkITKLevelTracingTrace(vtkITKLevelTracingImageFilter *vtkNotUsed(self), T* scalars,
                              int dims[3], int extent[6], double origin[3], double spacing[3],
                              vtkPoints *newPoints,
                              vtkCellArray *newPolys,
                              int seed[3], int plane)
 {
+
   // Wrap scalars into an ITK image
   typedef itk::Image<T, 3> ImageType;
   typename ImageType::Pointer image = ImageType::New();
-  image->GetPixelContainer()->SetImportPointer(scalars, dims[0] * dims[1] * dims[2], false);
+  image->GetPixelContainer()->SetImportPointer(scalars, dims[0]*dims[1]*dims[2], false);
   image->SetOrigin( origin );
   image->SetSpacing( spacing );
 
@@ -79,9 +74,10 @@ void vtkITKLevelTracingTrace(vtkITKLevelTracingImageFilter *, T *scalars,
   image->SetRegions(region);
 
   // Extract the 2D slice to process
-  typedef itk::Image<T, 2>                                Image2DType;
+  typedef itk::Image<T,2> Image2DType;
   typedef itk::ExtractImageFilter<ImageType, Image2DType> ExtractType;
   typename ExtractType::Pointer extract = ExtractType::New();
+  extract->SetDirectionCollapseToIdentity(); //If you don't care about resulting image dimension
 
   typedef typename ExtractType::InputImageRegionType ExtractionRegionType;
   ExtractionRegionType extractRegion;
@@ -96,28 +92,28 @@ void vtkITKLevelTracingTrace(vtkITKLevelTracingImageFilter *, T *scalars,
   typedef itk::LevelTracingImageFilter<Image2DType, Image2DType> LevelTracingType;
   typename LevelTracingType::Pointer tracing = LevelTracingType::New();
 
-  itk::Index<2> seed2D = {{0, 0}};
-  switch ( plane )
-    {
-    case 0: // JK plane
-      seed2D[0] = seed[1];
-      seed2D[1] = seed[2];
-      extractSize[0] = 0;
-      extractIndex[0] = seed[0];
-      break;
-    case 1: // IK plane
-      seed2D[0] = seed[0];
-      seed2D[1] = seed[2];
-      extractSize[1] = 0;
-      extractIndex[1] = seed[1];
-      break;
-    case 2: // IJ plane (axials)
-      seed2D[0] = seed[0];
-      seed2D[1] = seed[1];
-      extractSize[2] = 0;
-      extractIndex[2] = seed[2];
-      break;
-    }
+  itk::Index<2> seed2D = {{0,0}};
+  switch(plane)
+  {
+  case 0: //JK plane
+    seed2D[0] = seed[1];
+    seed2D[1] = seed[2];
+    extractSize[0] = 0;
+    extractIndex[0] = seed[0];
+    break;
+  case 1:  //IK plane
+    seed2D[0] = seed[0];
+    seed2D[1] = seed[2];
+    extractSize[1] = 0;
+    extractIndex[1] = seed[1];
+    break;
+  case 2:  //IJ plane (axials)
+    seed2D[0] = seed[0];
+    seed2D[1] = seed[1];
+    extractSize[2] = 0;
+    extractIndex[2] = seed[2];
+    break;
+  }
 
   extractRegion.SetIndex( extractIndex );
   extractRegion.SetSize( extractSize );
@@ -132,7 +128,7 @@ void vtkITKLevelTracingTrace(vtkITKLevelTracingImageFilter *, T *scalars,
   // them on the right slice: IJ, IK, JK)
   // Also put the scalars in...
 
-  typedef itk::ChainCodePath<2>         ChainCodePathType;
+  typedef itk::ChainCodePath<2> ChainCodePathType;
   ChainCodePathType::Pointer chain;
   typedef ChainCodePathType::OffsetType OffsetType;
 
@@ -148,31 +144,31 @@ void vtkITKLevelTracingTrace(vtkITKLevelTracingImageFilter *, T *scalars,
     return;
     }
 
-  vtkIdType *ptIds;
-  ptIds = new vtkIdType[numberChain];
+  vtkIdType * ptIds;
+  ptIds = new vtkIdType [numberChain];
 
-  unsigned int i = 0;
+  unsigned int i=0;
   typename ImageType::IndexType chain3D;
 
   do
     {
-    switch ( plane )
+    switch( plane )
       {
       default:
-      case 0:  // JK plane
+      case 0:  //JK plane
         chain3D[0] = seed[0];
-        chain3D[1] = chainTemp[0];
-        chain3D[2] = chainTemp[1];
+        chain3D[1] = chainTemp[0] ;
+        chain3D[2] = chainTemp[1] ;
         break;
-      case 1:  // IK plane
+      case 1:  //IK plane
         chain3D[1] = seed[1];
-        chain3D[0] = chainTemp[0];
-        chain3D[2] = chainTemp[1];
+        chain3D[0] = chainTemp[0] ;
+        chain3D[2] = chainTemp[1] ;
         break;
-      case 2:  // IJ plane
+      case 2:  //IJ plane
         chain3D[2] = seed[2];
-        chain3D[0] = chainTemp[0];
-        chain3D[1] = chainTemp[1];
+        chain3D[0] = chainTemp[0] ;
+        chain3D[1] = chainTemp[1] ;
         break;
       }
 
@@ -181,12 +177,13 @@ void vtkITKLevelTracingTrace(vtkITKLevelTracingImageFilter *, T *scalars,
     offset = chain->IncrementInput(i);
     chainTemp[0] = chainTemp[0] + offset[0];
     chainTemp[1] = chainTemp[1] + offset[1];
-    // vtkGenericWarningMacro( << "Chain point: "  << chainTemp );
-    } while ( i < numberChain );
+    //vtkGenericWarningMacro( << "Chain point: "  << chainTemp );
+    }
+  while( i < numberChain );
 
   newPolys->InsertNextCell( i, ptIds );
 
-  delete[] ptIds;
+  delete [] ptIds;
 }
 
 //
@@ -203,35 +200,35 @@ int vtkITKLevelTracingImageFilter::RequestData(
 
   // get the input and ouptut
   vtkImageData *input = vtkImageData::SafeDownCast(
-    inInfo->Get( vtkDataObject::DATA_OBJECT() ) );
+    inInfo->Get(vtkDataObject::DATA_OBJECT()));
   vtkPolyData *output = vtkPolyData::SafeDownCast(
-    outInfo->Get( vtkDataObject::DATA_OBJECT() ) );
+    outInfo->Get(vtkDataObject::DATA_OBJECT()));
 
-  vtkPoints    *newPts;
+  vtkPoints *newPts;
   vtkCellArray *newPolys;
   vtkPointData *pd;
   vtkDataArray *inScalars;
-  int          dims[3], extent[6];
-  int          estimatedSize;
-  double       spacing[3], origin[3];
+  int dims[3], extent[6];
+  int estimatedSize;
+  double spacing[3], origin[3];
 
   vtkDebugMacro(<< "Executing level tracing");
 
   //
   // Initialize and check input
   //
-  pd = input->GetPointData();
-  if ( pd == NULL )
-    {
-    vtkErrorMacro(<< "PointData is NULL");
+  pd=input->GetPointData();
+  if (pd ==NULL)
+  {
+    vtkErrorMacro(<<"PointData is NULL");
     return 1;
-    }
-  inScalars = pd->GetScalars();
+  }
+  inScalars=pd->GetScalars();
   if ( inScalars == NULL )
-    {
-    vtkErrorMacro(<< "Scalars must be defined for level tracing");
+  {
+    vtkErrorMacro(<<"Scalars must be defined for level tracing");
     return 1;
-    }
+  }
 
   input->GetDimensions(dims);
   input->GetOrigin(origin);
@@ -240,21 +237,21 @@ int vtkITKLevelTracingImageFilter::RequestData(
   inInfo->Get(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(), extent);
 
   // estimate the number of points from the volume dimensions
-  estimatedSize = (int)pow ( (double)( dims[0] * dims[1] * dims[2] ), .75 );
-  estimatedSize = estimatedSize / 1024 * 1024; // multiple of 1024
-  if ( estimatedSize < 1024 )
-    {
+  estimatedSize = (int) pow ((double) (dims[0] * dims[1] * dims[2]), .75);
+  estimatedSize = estimatedSize / 1024 * 1024; //multiple of 1024
+  if (estimatedSize < 1024)
+  {
     estimatedSize = 1024;
-    }
+  }
   vtkDebugMacro(<< "Estimated allocation size is " << estimatedSize);
 
   newPts = vtkPoints::New();
-  newPts->Allocate(estimatedSize, estimatedSize / 2);
+  newPts->Allocate(estimatedSize,estimatedSize/2);
 
   newPolys = vtkCellArray::New();
-  newPolys->Allocate( newPolys->EstimateSize(estimatedSize, 2) );
+  newPolys->Allocate(newPolys->EstimateSize(estimatedSize,2));
 
-  // //////// These types are not defined in itk::NumericTraits ////////////
+////////// These types are not defined in itk::NumericTraits ////////////
 #ifdef vtkTemplateMacroCase_ui64
 #undef vtkTemplateMacroCase_ui64
 # define vtkTemplateMacroCase_ui64(typeN, type, call)
@@ -267,33 +264,33 @@ int vtkITKLevelTracingImageFilter::RequestData(
 #undef vtkTemplateMacroCase_ll
 # define vtkTemplateMacroCase_ll(typeN, type, call)
 #endif
-  if ( inScalars->GetNumberOfComponents() == 1 )
+  if (inScalars->GetNumberOfComponents() == 1 )
+  {
+    void* scalars = inScalars->GetVoidPointer(0);
+    switch (inScalars->GetDataType())
     {
-    void *scalars = inScalars->GetVoidPointer(0);
-    switch ( inScalars->GetDataType() )
-      {
       vtkTemplateMacro(
-        vtkITKLevelTracingTrace(this, static_cast<VTK_TT *>( scalars ),
-                                dims, extent, origin, spacing,
-                                newPts, newPolys, this->Seed, this->Plane
-          )
+        vtkITKLevelTracingTrace(this, static_cast<VTK_TT*>(scalars),
+        dims,extent,origin,spacing,
+        newPts,newPolys,this->Seed, this->Plane
+        )
         );
-      } // switch
-    }
-  else if ( inScalars->GetNumberOfComponents() == 3 )
+    } //switch
+  }
+  else if (inScalars->GetNumberOfComponents() == 3)
     {
     // RGB - convert for now...
     vtkSmartPointer<vtkUnsignedCharArray> grayScalars
       = vtkUnsignedCharArray::New();
     grayScalars->SetNumberOfTuples( inScalars->GetNumberOfTuples() );
 
-    double        in[3];
+    double in[3];
     unsigned char out;
-    for ( vtkIdType i = 0; i < inScalars->GetNumberOfTuples(); ++i )
+    for (vtkIdType i=0; i < inScalars->GetNumberOfTuples(); ++i)
       {
       inScalars->GetTuple(i, in);
 
-      out = static_cast<unsigned char>( ( 2125.0 * in[0] +  7154.0 * in[1] +  0721.0 * in[2] ) / 10000.0 );
+      out = static_cast<unsigned char>((2125.0 * in[0] +  7154.0 * in[1] +  0721.0 * in[2]) / 10000.0);
 
       grayScalars->SetTupleValue(i, &out);
       }
@@ -308,8 +305,8 @@ int vtkITKLevelTracingImageFilter::RequestData(
     vtkErrorMacro(<< "Can only trace scalar and RGB images.");
     }
 
-  vtkDebugMacro(<< "Created: "
-                << newPts->GetNumberOfPoints() << " points. " );
+  vtkDebugMacro(<<"Created: "
+    << newPts->GetNumberOfPoints() << " points. " );
   //
   // Update ourselves.  Because we don't know up front how many edges
   // we've created, take care to reclaim memory.
@@ -324,32 +321,32 @@ int vtkITKLevelTracingImageFilter::RequestData(
   return 1;
 }
 
+
+
+
+
 int vtkITKLevelTracingImageFilter::FillInputPortInformation(int, vtkInformation *info)
 {
   info->Set(vtkAlgorithm::INPUT_REQUIRED_DATA_TYPE(), "vtkImageData");
   return 1;
 }
 
-void vtkITKLevelTracingImageFilter::PrintSelf(ostream & os, vtkIndent indent)
+void vtkITKLevelTracingImageFilter::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os, indent);
+  this->Superclass::PrintSelf(os,indent);
 
   os << indent << "Seed point location: [" << Seed[0] << "," << Seed[1] << "," << Seed[2] << "]"
-     << std::endl;
+    << std::endl;
   os << indent << "Plane: ";
-  switch ( Plane )
+  switch (Plane)
     {
-    case 2:
-      os << "IJ" << std::endl;
+    case 2: os << "IJ" << std::endl;
       break;
-    case 1:
-      os << "IK" << std::endl;
+    case 1: os << "IK" << std::endl;
       break;
-    case 0:
-      os << "JK" << std::endl;
+    case 0: os << "JK" << std::endl;
       break;
-    default:
-      os << "(unknown)" << std::endl;
+    default: os << "(unknown)" << std::endl;
       break;
     }
 }

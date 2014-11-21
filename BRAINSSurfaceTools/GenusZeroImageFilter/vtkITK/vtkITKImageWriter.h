@@ -2,25 +2,20 @@
 
   Copyright Brigham and Women's Hospital (BWH) All Rights Reserved.
 
-  See Doc/copyright/copyright.txt
+  See COPYRIGHT.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
 
   Program:   vtkITK
-  Module:    $HeadURL: http://svn.slicer.org/Slicer3/trunk/Libs/vtkITK/vtkITKImageWriter.h $
-  Date:      $Date: 2008-09-26 14:58:21 -0500 (Fri, 26 Sep 2008) $
-  Version:   $Revision: 7610 $
+  Module:    $HeadURL$
+  Date:      $Date$
+  Version:   $Revision$
 
 ==========================================================================*/
-
-// .NAME vtkITKImageToImageFilter - Abstract base class for connecting ITK and
-// VTK
-// .SECTION Description
-// vtkITKImageToImageFilter provides a
 
 #ifndef __vtkITKImageWriter_h
 #define __vtkITKImageWriter_h
 
-#include "vtkProcessObject.h"
+#include "vtkImageAlgorithm.h"
 #include "vtkImageData.h"
 #include "vtkObjectFactory.h"
 #include "vtkMatrix4x4.h"
@@ -30,50 +25,46 @@
 
 class vtkStringArray;
 
-class VTK_ITK_EXPORT vtkITKImageWriter : public vtkProcessObject
+class VTK_ITK_EXPORT vtkITKImageWriter : public vtkImageAlgorithm
 {
 public:
+  static vtkITKImageWriter *New();
+  vtkTypeMacro(vtkITKImageWriter,vtkImageAlgorithm);
+  void PrintSelf(ostream& os, vtkIndent indent);
 
-  static vtkITKImageWriter * New();
-
-  vtkTypeRevisionMacro(vtkITKImageWriter, vtkProcessObject);
-  void PrintSelf(ostream & os, vtkIndent indent);
-
-  // Description:
-  // Specify file name for the image file. You should specify either
-  // a FileName or a FilePrefix. Use FilePrefix if the data is stored
-  // in multiple files.
+  ///
+  /// Specify file name for the image file. You should specify either
+  /// a FileName or a FilePrefix. Use FilePrefix if the data is stored
+  /// in multiple files.
   void SetFileName(const char *);
 
-  char * GetFileName()
-  {
+  char *GetFileName() {
     return FileName;
   }
 
-  // Description:
-  // use compression if possible
+  ///
+  /// use compression if possible
   vtkGetMacro (UseCompression, int);
   vtkSetMacro (UseCompression, int);
+  vtkBooleanMacro(UseCompression, int);
 
-  // Description:
-  // Set/Get the input object from the image pipeline.
-  void SetInput(vtkImageData *input);
-
-  vtkImageData * GetInput();
-
-  // Description:
-  // Set/Get the ImageIO class name.
+  ///
+  /// Set/Get the ImageIO class name.
   vtkGetStringMacro (ImageIOClassName);
   vtkSetStringMacro (ImageIOClassName);
 
-  // Description:
-  // The main interface which triggers the writer to start.
+  ///
+  /// The main interface which triggers the writer to start.
   void Write();
 
-  // Set orienation matrix
-  void SetRasToIJKMatrix( vtkMatrix4x4 *mat)
-  {
+  /// Set orienation matrix
+  void SetRasToIJKMatrix( vtkMatrix4x4* mat) {
     RasToIJKMatrix = mat;
+  }
+
+  /// Set orienation matrix
+  void SetMeasurementFrameMatrix( vtkMatrix4x4* mat) {
+    MeasurementFrameMatrix = mat;
   }
 
 protected:
@@ -81,14 +72,16 @@ protected:
   ~vtkITKImageWriter();
 
   char *FileName;
-  vtkMatrix4x4 *RasToIJKMatrix;
+  vtkMatrix4x4* RasToIJKMatrix;
+  vtkMatrix4x4* MeasurementFrameMatrix;
   int UseCompression;
-  char *ImageIOClassName;
+  char* ImageIOClassName;
+
 private:
-  vtkITKImageWriter(const vtkITKImageWriter &); // Not implemented.
-  void operator=(const vtkITKImageWriter &);    // Not implemented.
+  vtkITKImageWriter(const vtkITKImageWriter&);  /// Not implemented.
+  void operator=(const vtkITKImageWriter&);  /// Not implemented.
 };
 
-// vtkStandardNewMacro(vtkITKImageWriter)
+//vtkStandardNewMacro(vtkITKImageWriter)
 
 #endif

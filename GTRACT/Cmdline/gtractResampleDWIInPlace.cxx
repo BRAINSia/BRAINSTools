@@ -92,7 +92,7 @@ SetVectorImageRigidTransformInPlace(typename itk::VersorRigid3DTransform<double>
   typename IOImageType::Pointer OutputAlignedImage = duplicator->GetModifiableOutput();
   // Now change the Origin and Direction to make data aligned.
   OutputAlignedImage->SetOrigin(
-    InvOfRigidTransform->GetMatrix() * InputImage->GetOrigin() + InvOfRigidTransform->GetTranslation() );
+    InvOfRigidTransform->GetMatrix() * InputImage->GetOrigin() + InvOfRigidTransform->GetOffset() );
   OutputAlignedImage->SetDirection( InvOfRigidTransform->GetMatrix() * InputImage->GetDirection() );
   OutputAlignedImage->SetMetaDataDictionary(InputImage->GetMetaDataDictionary() );
   return OutputAlignedImage;
@@ -180,7 +180,7 @@ int main(int argc, char *argv[])
     {
     std::cerr << "Transform "
               << inputTransform
-              << " wasn't of the expected type itk::VersorRigid3DTransform<double"
+              << " wasn't of the expected type itk::VersorRigid3DTransform<double>"
               << std::endl;
     return EXIT_FAILURE;
     }

@@ -10,10 +10,13 @@
 #
 
 FindITKUtil(BRAINSLandmarkInitializer_ITK
-  ITKThresholding
+  ITKCommon
   ITKDistanceMap
   ITKImageCompare
-  ITKTransform)
+  ITKRegistrationCommon
+  ITKThresholding
+  ITKTransform
+)
 
 #-----------------------------------------------------------------------------
 # Output directories.

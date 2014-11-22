@@ -39,7 +39,7 @@ set(ALL_PROGS_LIST
   PerformMetricTest
   )
 
-set(BRAINSFitLibraries BRAINSCommonLib ${ANTS_LIBS})
+set(BRAINSFitLibraries BRAINSCommonLib ${ANTS_LIBS} ${BRAINSFit_ITK_LIBRARIES})
 DebugImageViewerLibAdditions(BRAINSFitLibraries)
 foreach(prog ${ALL_PROGS_LIST})
   StandardBRAINSBuildMacro(NAME ${prog} TARGET_LIBRARIES ${BRAINSFitLibraries})

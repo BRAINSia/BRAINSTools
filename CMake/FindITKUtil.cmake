@@ -21,8 +21,10 @@ macro(FindITKUtil ITK_VAR_PREFIX )
 
   # ITK_FOUND needs to be reset, or it won't redo
   # setting up the include directories
-  find_package(ITK 4.5 REQUIRED)
-  itk_module_config(${ITK_VAR_PREFIX}
+  unset(ITK_FIND_COMPONENTS)
+  unset(ITK_MODULES_REQUESTED)
+  unset(ITK_FOUND)
+  set( ITK_INCLUSION_MODULES
     # Everything needs ITKCommon
     ITKCommon
     # Common depends on these modules
@@ -57,12 +59,26 @@ macro(FindITKUtil ITK_VAR_PREFIX )
     # other modules specific to the current directory
     ${ARGN}
     )
+  list(REMOVE_DUPLICATES ITK_INCLUSION_MODULES)
+  find_package(ITK 4.5 COMPONENTS ${ITK_INCLUSION_MODULES} REQUIRED)
+  #itk_module_config(${ITK_VAR_PREFIX} ${ITK_INCLUSION_MODULES})
 
   if(Slicer_BUILD_BRAINSTOOLS)
     set(ITK_NO_IO_FACTORY_REGISTER_MANAGER 1)
   endif()
 
   include(${ITK_USE_FILE})
+  set(${ITK_VAR_PREFIX}_INCLUDE_DIRS ${ITK_INCLUDE_DIRS})
+  set(${ITK_VAR_PREFIX}_LIBRARY_DIRS ${ITK_LIBRARY_DIRS})
+  set(${ITK_VAR_PREFIX}_LIBRARIES ${ITK_LIBRARIES})
+
+  unset(ITK_INCLUDE_DIRS)
+  unset(ITK_LIBRARY_DIRS)
+  unset(ITK_LIBRARIES)
+  unset(ITK_FIND_COMPONENTS)
+  unset(ITK_MODULES_REQUESTED)
+  unset(ITK_FOUND)
+
   ## Now include directories associated with the requested modules
   include_directories(${${ITK_VAR_PREFIX}_INCLUDE_DIRS})
 endmacro()

@@ -9,8 +9,7 @@
 # ITK
 #
 
-FindITKUtil(BRAINSLabelStats_ITK
-ITKImageStatistics ITKIOXML)
+FindITKUtil(BRAINSLabelStats_ITK ITKImageStatistics ITKIOXML)
 
 #-----------------------------------------------------------------------------
 # Output directories.

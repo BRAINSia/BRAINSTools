@@ -14,9 +14,9 @@ endif()
 # --------------------------------------------------------------------------
 # Options
 # --------------------------------------------------------------------------
-if(NOT DEFINED BUILD_SHARED_LIBS)
-  option(BUILD_SHARED_LIBS "Build with shared libraries." ON)
-endif()
+#if(NOT DEFINED BUILD_SHARED_LIBS)
+#  option(BUILD_SHARED_LIBS "Build with shared libraries." ON)
+#endif()
 
 # --------------------------------------------------------------------------
 # Dependencies

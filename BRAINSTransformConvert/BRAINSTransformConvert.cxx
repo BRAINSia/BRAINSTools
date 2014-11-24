@@ -160,9 +160,9 @@ ExtractTransform(typename itk::ScaleVersor3DTransform<TScalarType>::Pointer & re
     {
     const LocalVersorRigid3DTransformType *versorRigidXfrm =
       dynamic_cast<const LocalVersorRigid3DTransformType *>(source);
+    result->SetCenter(versorRigidXfrm->GetCenter() );
     result->SetRotation(versorRigidXfrm->GetVersor() );
     result->SetTranslation(versorRigidXfrm->GetTranslation() );
-    result->SetCenter(versorRigidXfrm->GetCenter() );
     return true;
     }
   // otherwise try VersorRigidTransform
@@ -197,9 +197,9 @@ ExtractTransform(typename itk::ScaleSkewVersor3DTransform< TScalarType >::Pointe
     {
     const LocalScaleVersor3DTransformType *scaleVersorXfrm =
       dynamic_cast<const LocalScaleVersor3DTransformType *>(source);
+    result->SetCenter(scaleVersorXfrm->GetCenter() );
     result->SetRotation(scaleVersorXfrm->GetVersor() );
     result->SetTranslation(scaleVersorXfrm->GetTranslation() );
-    result->SetCenter(scaleVersorXfrm->GetCenter() );
     result->SetScale(scaleVersorXfrm->GetScale() );
     return true;
     }

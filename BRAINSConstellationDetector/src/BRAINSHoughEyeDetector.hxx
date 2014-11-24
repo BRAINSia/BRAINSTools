@@ -371,7 +371,7 @@ BRAINSHoughEyeDetector<TInputImage, TOutputImage>
     this->m_OutputImage->SetRegions( region );
 
     this->m_OutputImage->SetOrigin( this->m_InvVersorTransform->GetMatrix()
-                                    * image->GetOrigin() + this->m_InvVersorTransform->GetTranslation() );
+                                    * image->GetOrigin() + this->m_InvVersorTransform->GetOffset() );
 
     this->m_OutputImage->SetDirection( this->m_InvVersorTransform->GetMatrix()
                                        * image->GetDirection() );

@@ -46,35 +46,32 @@
 #include "itkPoint.h"
 #include "itkImageIteratorWithIndex.h"
 #include <BRAINSCommonLib.h>
+#include "Slicer3LandmarkIO.h"
+
+
+static void
+CheckLandmarks( const LandmarksMapType & lmks )
+{
+  if( lmks.size() < 4 )
+    {
+    std::cerr << "At least 4 fiducual points (AC, PC, IRP, and SLA) must be specified." << std::endl;
+    exit(EXIT_FAILURE);
+    }
+
+  if( lmks.find( "AC" ) == lmks.end() ||
+      lmks.find( "PC" ) == lmks.end() ||
+      lmks.find( "IRP" ) == lmks.end() ||
+      lmks.find( "SLA" ) == lmks.end() )
+    {
+    std::cerr << " Four landmarks ( AC, PC, IRP, and SLA ) has to be provided" << std::endl;
+    exit(EXIT_FAILURE);
+    }
+}
 
 int main(int argc, char *argv[])
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
-
-  if( ( AC.size() != 3 ) || ( PC.size() != 3 ) || ( IRP.size() != 3 ) || ( SLA.size() != 3 ) )
-    {
-    std::cout << "Error: The AC, PC, IRP, and SLA points must all have three values" << std::endl;
-    return 1;
-    }
-
-  const bool debug = true;
-  if( debug )
-    {
-    std::cout << "=====================================================" << std::endl;
-    std::cout << "AC: " <<   AC[0] << " " <<  AC[1] << " " <<  AC[2] << std::endl;
-    std::cout << "PC: " <<   PC[0] << " " <<  PC[1] << " " <<  PC[2] << std::endl;
-    std::cout << "IRP: " << IRP[0] << " " << IRP[1] << " " << IRP[2] << std::endl;
-    std::cout << "SLA: " <<  SLA[0] << " " << SLA[1] << " " << SLA[2] << std::endl;
-    std::cout << "ACisIndex: " <<  ACisIndex << std::endl;
-    std::cout << "PCisIndex: " <<  PCisIndex << std::endl;
-    std::cout << "IRPisIndex: " <<  IRPisIndex << std::endl;
-    std::cout << "SLAisIndex: " <<  SLAisIndex << std::endl;
-    std::cout << "Image: " <<  inputVolume << std::endl;
-    std::cout << "Talairach Grid: " <<  outputGrid << std::endl;
-    std::cout << "Talairach Box: " <<  outputBox << std::endl;
-    std::cout << "=====================================================" << std::endl;
-    }
 
   const int dimension = 3;
   typedef itk::ContinuousIndex<double, 3>      ContinuousIndexType;
@@ -88,15 +85,85 @@ int main(int argc, char *argv[])
   double PCpoint[3];
   double IRPpoint[3];
   double SLApoint[3];
-  for( int i = 0; i < 3; i++ )
+
+  if( !inputLandmarksFile.empty() )
     {
-    ACpoint[i] = AC[i];
-    PCpoint[i] = PC[i];
-    IRPpoint[i] = IRP[i];
-    SLApoint[i] = SLA[i];
+    std::cout << "Reading landmark points from fcsv file..." << std::endl;
+    LandmarksMapType inputLmks = ReadSlicer3toITKLmk( inputLandmarksFile );
+
+    // Check input landmark file to see whether it has required input points
+    CheckLandmarks( inputLmks );
+
+    typedef LandmarksMapType::const_iterator LandmarkConstIterator;
+    for( LandmarkConstIterator lmkIt = inputLmks.begin(); lmkIt != inputLmks.end(); ++lmkIt )
+      {
+      if( lmkIt->first == "AC" )
+        {
+        ACpoint[0] = lmkIt->second[0];
+        ACpoint[1] = lmkIt->second[1];
+        ACpoint[2] = lmkIt->second[2];
+        }
+      else if( lmkIt->first == "PC" )
+        {
+        PCpoint[0] = lmkIt->second[0];
+        PCpoint[1] = lmkIt->second[1];
+        PCpoint[2] = lmkIt->second[2];
+        }
+      else if( lmkIt->first == "IRP" )
+        {
+        IRPpoint[0] = lmkIt->second[0];
+        IRPpoint[1] = lmkIt->second[1];
+        IRPpoint[2] = lmkIt->second[2];
+        }
+      else if( lmkIt->first == "SLA" )
+        {
+        SLApoint[0] = lmkIt->second[0];
+        SLApoint[1] = lmkIt->second[1];
+        SLApoint[2] = lmkIt->second[2];
+        }
+      }
+
+    ACisIndex = false;
+    PCisIndex = false;
+    IRPisIndex = false;
+    SLAisIndex = false;
+    }
+  else
+    {
+    // Read directly the coordinates of input points
+    //
+    if( ( AC.size() != 3 ) || ( PC.size() != 3 ) || ( IRP.size() != 3 ) || ( SLA.size() != 3 ) )
+      {
+      std::cout << "Error: The AC, PC, IRP, and SLA points must all have three values." << std::endl;
+      return EXIT_FAILURE;
+      }
+
+    for( int i = 0; i < 3; i++ )
+      {
+      ACpoint[i] = AC[i];
+      PCpoint[i] = PC[i];
+      IRPpoint[i] = IRP[i];
+      SLApoint[i] = SLA[i];
+      }
     }
 
-  vtkTalairachGrid *tGrid = vtkTalairachGrid::New();
+  const bool debug = true;
+  if( debug )
+    {
+    std::cout << "=====================================================" << std::endl;
+    std::cout << "AC: "  <<  ACpoint[0]  << " " <<  ACpoint[1]  << " " <<  ACpoint[2]  << std::endl;
+    std::cout << "PC: "  <<  PCpoint[0]  << " " <<  PCpoint[1]  << " " <<  PCpoint[2]  << std::endl;
+    std::cout << "IRP: " <<  IRPpoint[0] << " " <<  IRPpoint[1] << " " <<  IRPpoint[2] << std::endl;
+    std::cout << "SLA: " <<  SLApoint[0] << " " <<  SLApoint[1] << " " <<  SLApoint[2] << std::endl;
+    std::cout << "ACisIndex: " <<  ACisIndex << std::endl;
+    std::cout << "PCisIndex: " <<  PCisIndex << std::endl;
+    std::cout << "IRPisIndex: " <<  IRPisIndex << std::endl;
+    std::cout << "SLAisIndex: " <<  SLAisIndex << std::endl;
+    std::cout << "Image: " <<  inputVolume << std::endl;
+    std::cout << "Talairach Grid: " <<  outputGrid << std::endl;
+    std::cout << "Talairach Box: " <<  outputBox << std::endl;
+    std::cout << "=====================================================" << std::endl;
+    }
 
   if( ACisIndex )
     {
@@ -106,6 +173,7 @@ int main(int argc, char *argv[])
     pixelIndex[1] = ACpoint[1];
     pixelIndex[2] = ACpoint[2];
     ( reader->GetOutput() )->TransformContinuousIndexToPhysicalPoint(pixelIndex, point);
+    std::cout << "Mapped AC from index to physical space: " << point << std::endl;
     ACpoint[0] = point[0];
     ACpoint[1] = point[1];
     ACpoint[2] = point[2];
@@ -119,6 +187,7 @@ int main(int argc, char *argv[])
     pixelIndex[1] = PCpoint[1];
     pixelIndex[2] = PCpoint[2];
     ( reader->GetOutput() )->TransformContinuousIndexToPhysicalPoint(pixelIndex, point);
+    std::cout << "Mapped PC from index to physical space: " << point << std::endl;
     PCpoint[0] = point[0];
     PCpoint[1] = point[1];
     PCpoint[2] = point[2];
@@ -132,7 +201,7 @@ int main(int argc, char *argv[])
     pixelIndex[1] = IRPpoint[1];
     pixelIndex[2] = IRPpoint[2];
     ( reader->GetOutput() )->TransformContinuousIndexToPhysicalPoint(pixelIndex, point);
-    std::cout << "Mapped IRP: " << point << std::endl;
+    std::cout << "Mapped IRP from index to physical space: " << point << std::endl;
     IRPpoint[0] = point[0];
     IRPpoint[1] = point[1];
     IRPpoint[2] = point[2];
@@ -146,11 +215,13 @@ int main(int argc, char *argv[])
     pixelIndex[1] = SLApoint[1];
     pixelIndex[2] = SLApoint[2];
     ( reader->GetOutput() )->TransformContinuousIndexToPhysicalPoint(pixelIndex, point);
-    std::cout << "Mapped SLA: " << point << std::endl;
+    std::cout << "Mapped SLA from index to physical space: " << point << std::endl;
     SLApoint[0] = point[0];
     SLApoint[1] = point[1];
     SLApoint[2] = point[2];
     }
+
+  vtkTalairachGrid *tGrid = vtkTalairachGrid::New();
 
   tGrid->SetACPoint(ACpoint);
   tGrid->SetPCPoint(PCpoint);
@@ -249,5 +320,5 @@ int main(int argc, char *argv[])
       }
     }
 
-  return 0;
+  return EXIT_SUCCESS;
 }

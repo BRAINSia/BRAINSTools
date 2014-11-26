@@ -266,7 +266,7 @@ def _template_runner(argv, environment, experiment, pipeline_options, cluster):
             ]
 
         baselineRequiredDG.inputs.field_template = {'t1_average':'*/%s/%s/TissueClassify/t1_average_BRAINSABC.nii.gz',
-                                       'brainMaskLabels':'*/%s/%s/TissueClassify/fixed_brainlabels_seg.nii.gz',
+                                       'brainMaskLabels':'*/%s/%s/TissueClassify/complete_brainlabels_seg.nii.gz',
                                'BCD_ACPC_Landmarks_fcsv':'*/%s/%s/ACPCAlign/BCD_ACPC_Landmarks.fcsv',
                                        'posteriorImages':'*/%s/%s/TissueClassify/POSTERIOR_%s.nii.gz',
                                    'passive_intensities':'*/%s/%s/WarpedAtlas2Subject/%s',

@@ -172,7 +172,7 @@ int main(int argc, char *argv[])
   if( conversionMode == "FSLToNrrd" )
     {
     return FSLToNrrd(inputVolume, outputVolume,fslNIFTIFile,
-                     inputBValues, inputBVectors);
+                     inputBValues, inputBVectors,transpose);
     }
   // make FSL file set from a NRRD file.
   if( conversionMode == "NrrdToFSL" )

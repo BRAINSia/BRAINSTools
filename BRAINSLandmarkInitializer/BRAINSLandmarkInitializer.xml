@@ -6,7 +6,7 @@
   <version> 1.0</version>
   <documentation-url></documentation-url>
   <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
-  <contributor>Eunyoung Regina Kim</contributor>
+  <contributor>Eunyoung Regina Kim, Ali Ghayoor</contributor>
   <acknowledgements></acknowledgements>
  <parameters>
    <file>
@@ -44,5 +44,34 @@
      <description>output transform file name (ex: ./outputTransform.mat) </description>
      <default></default>
    </file>
+
+   <string-enumeration>
+     <name>outputTransformType</name>
+     <longflag>outputTransformType</longflag>
+     <channel>input</channel>
+     <description>The target transformation type. </description>
+     <default>AffineTransform</default>
+     <element>AffineTransform</element>
+     <element>BSplineTransform</element>
+     <element>VersorRigid3DTransform</element>
+   </string-enumeration>
+
+   <image>
+     <name>inputReferenceImageFilename</name>
+     <label>Reference image</label>
+     <longflag>inputReferenceImageFilename</longflag>
+     <description>Set the reference image to define the parametric domain for the BSpline transform. </description>
+     <channel>input</channel>
+   </image>
+
+   <integer>
+     <name>bsplineNumberOfControlPoints</name>
+     <label>Number of control points for the BSpline transform</label>
+     <longflag>bsplineNumberOfControlPoints</longflag>
+     <description>Set the number of control points to define the parametric domain for the BSpline transform. </description>
+     <channel>input</channel>
+     <default>8</default>
+   </integer>
+
 </parameters>
 </executable>

@@ -80,6 +80,8 @@ def getAllT1sLength(allT1s):
     return len(allT1s)
 
 
+##TODO:  Move to module that can be re-used
+##       GetLargestLabel is copied elsewhere
 def CreateLeftRightWMHemispheres(BRAINLABELSFile,
                                 HDCMARegisteredVentricleMaskFN,
                                 LeftHemisphereMaskName,
@@ -754,6 +756,9 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
 
         myLocalMALF = CreateMALFWorkflow("MALF", master_config,good_subjects,BASE_DATA_GRABBER_DIR)
         baw201.connect(myLocalTCWF,'outputspec.t1_average',myLocalMALF,'inputspec.subj_t1_image')
+        baw201.connect(myLocalBrainStemWF, 'outputspec.ouputTissuelLabelFilename',myLocalMALF,'inputspec.subj_fixed_head_labels')
+
+        baw201.connect(BResample['template_leftHemisphere'],'outputVolume',myLocalMALF,'inputspec.subj_left_hemisphere')
         baw201.connect(myLocalLMIWF, 'outputspec.outputLandmarksInACPCAlignedSpace' ,myLocalMALF,'inputspec.subj_lmks')
         baw201.connect(atlasBCDNode_S,'template_weights_50Lmks_wts',myLocalMALF,'inputspec.atlasWeightFilename')
         baw201.connect(myLocalMALF,'outputspec.MALF_neuro2012_labelmap',DataSink,'TissueClassify.@MALF_neuro2012_labelmap')

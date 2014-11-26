@@ -159,8 +159,8 @@ def createAndRun(sessions, environment, experiment, pipeline, cluster, useSentin
             if 'malf_2012_neuro' in master_config['components']:
                 sentinal_file_list.append(os.path.join(
                     sentinal_file_basedir,
-                    "WarpedAtlas2Subject",
-                    "xxxxxFILL IN DATASINK"
+                    "TissueClassify",
+                    "neuro2012_20fusion_merge_seg.nii.gz"
                 ))
 
 

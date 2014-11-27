@@ -3,10 +3,6 @@
 #-- ---------------------------------------------------------------------------
 #Output directories.
 #
-add_subdirectory(vtkITK)
-include_directories(${GenusZeroImageFilter_SOURCE_DIR}/vtkITK ${GenusZeroImageFilter_BINARY_DIR}/vtkITK)
-include_directories(${GenusZeroImageFilter_SOURCE_DIR} ${GenusZeroImageFilter_BINARY_DIR})
-
 #In ITK4 quad edge mesh classes moved to Algorithms
 
 set(CLP GenusZeroImageFilter)

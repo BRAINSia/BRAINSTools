@@ -1,11 +1,5 @@
 add_subdirectory( CompareSurfaces )
 
-set(configure_header_file vtkITKConfigure.h)
-configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/${configure_header_file}.in
-  ${CMAKE_CURRENT_BINARY_DIR}/${configure_header_file}
-  )
-
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 StandardBRAINSBuildMacro(NAME BRAINSApplySurfaceLabels TARGET_LIBRARIES BRAINSCommonLib ${VTK_LIBRARIES}
@@ -15,8 +9,7 @@ StandardBRAINSBuildMacro(NAME BRAINSMeasureSurface TARGET_LIBRARIES BRAINSCommon
   ${BRAINSSurfaceTools_ITK_LIBRARIES})
 
 StandardBRAINSBuildMacro(NAME BRAINSSurfaceGeneration
-ADDITIONAL_SRCS vtkITKArchetypeImageSeriesReader.cxx vtkITKArchetypeImageSeriesScalarReader.cxx
-TARGET_LIBRARIES BRAINSCommonLib ${BRAINSSurfaceTools_ITK_LIBRARIES} ${VTK_LIBRARIES} )
+  TARGET_LIBRARIES BRAINSCommonLib ${BRAINSSurfaceTools_ITK_LIBRARIES} vtkITK ${VTK_LIBRARIES} )
 
 if (BUILD_TESTING)
 

@@ -64,6 +64,10 @@ FindVTKUtil(
   vtkImagingSources
   )
 
+add_subdirectory(vtkITK)
+include_directories(${CMAKE_CURRENT_LIST_DIR}/vtkITK ${CMAKE_CURRENT_BINARY_DIR}/vtkITK)
+include_directories(${CMAKE_CURRENT_LIST_DIR}        ${CMAKE_CURRENT_BINARY_DIR})
+
 #
 # ITK
 #

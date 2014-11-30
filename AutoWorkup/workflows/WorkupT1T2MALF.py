@@ -38,6 +38,8 @@ def CreateMALFWorkflow(WFname, master_config,good_subjects,BASE_DATA_GRABBER_DIR
 
     inputsSpec = pe.Node(interface=IdentityInterface(fields=['subj_t1_image', #Desired image to create label map for
                                                              'subj_lmks', #The landmarks corresponding to t1_image
+                                                             'subj_fixed_head_labels', #The fixed head labels from BABC
+                                                             'subj_left_hemisphere', #The warped left hemisphere mask
                                                              'atlasWeightFilename'  #The static weights file name
                                                             ]),
                          run_without_submitting=True,
@@ -226,9 +228,92 @@ def CreateMALFWorkflow(WFname, master_config,good_subjects,BASE_DATA_GRABBER_DIR
     jointFusion.inputs.method='Joint[0.1,2]'
     jointFusion.inputs.output_label_image='fusion_neuro2012_20.nii.gz'
 
+    def FixLabelMapFromNeuromorphemetrics2012(fusionFN,FixedHeadFN,LeftHemisphereFN,outFN):
+        import SimpleITK as sitk
+        import os
+
+        def ForceMaskInsert(inlabels,newmask,newmaskvalue):
+            newmask = sitk.Cast( (newmask>0) , sitk.sitkUInt8)
+            outlabels=inlabels*sitk.Cast( (1-newmask), sitk.sitkUInt8)
+            outlabels = outlabels + newmask*newmaskvalue
+            return sitk.Cast(outlabels,sitk.sitkUInt8)
+        ## TODO: GetLargestLabel is copied from elsewhere
+        def GetLargestLabel(inputMask, UseErosionCleaning):
+            LargestComponentCode = 1
+            if UseErosionCleaning:
+                erosionMask = sitk.ErodeObjectMorphology(inputMask, 1)
+            else:
+                erosionMask = inputMask
+            CC = sitk.ConnectedComponent(erosionMask)
+            Rlabel = sitk.RelabelComponent(CC)
+            largestMask = ( Rlabel == LargestComponentCode)
+            if UseErosionCleaning:
+                dilateMask = sitk.DilateObjectMorphology(largestMask, 1)
+            else:
+                dilateMask = largestMask
+
+            return (largestMask * dilateMask > 0)
+
+        def RecodeNonLargest(outlabels,keepCode,UNKNOWN_LABEL_CODE):
+            orig_mask = (outlabels ==  keepCode)
+            connected_mask = GetLargestLabel(orig_mask,False)
+            small_regions = ( orig_mask - connected_mask )
+            outlabels = ForceMaskInsert(outlabels,connected_mask,keepCode)
+            outlabels = ForceMaskInsert(outlabels,small_regions,UNKNOWN_LABEL_CODE)
+            return outlabels
+
+        fusionIm=sitk.Cast(sitk.ReadImage(fusionFN),sitk.sitkUInt8)
+        FixedHead=sitk.Cast(sitk.ReadImage(FixedHeadFN),sitk.sitkUInt8)
+        LeftHemisphereIm=sitk.Cast(sitk.ReadImage(LeftHemisphereFN),sitk.sitkUInt8)
+
+        csf_labels=(FixedHead == 4)
+        outlabels= ForceMaskInsert(fusionIm,csf_labels,51)
+        blood_labels=(FixedHead == 5)
+        BLOOD_CODE=230
+        outlabels = ForceMaskInsert(outlabels,blood_labels,BLOOD_CODE)  ## Add blood as value 230
+        left_hemi_pre = ( outlabels == 52 )
+        outlabels = ForceMaskInsert(outlabels,left_hemi_pre,51)  ## Make all CSF Right hemisphere
+        left_hemi_post =  (LeftHemisphereIm * sitk.Cast ( ( outlabels == 51 ),sitk.sitkUInt8) > 0 )
+        outlabels = ForceMaskInsert(outlabels,left_hemi_post,52)  ## Make all CSF Right hemisphere
+        ## Now extend brainstem lower
+        brain_stem = (FixedHead == 30) * (outlabels == 0) ## Only extend to areas where there is not already a label
+        outlabels = ForceMaskInsert(outlabels,brain_stem,35)  ## Make all CSF Right hemisphere
+        BRAIN_MASK=sitk.Cast( (FixedHead > 0),sitk.sitkUInt8)
+        outlabels = outlabels * BRAIN_MASK
+
+        ## Caudate = 36 37
+        ## Putamen = 57 58
+        ## Pallidus = 55,56
+        ## Thalamus = 59,60
+        ## Hippocampus = 47,48
+        ## Accumbens  = 23,30
+        UNKNOWN_LABEL_CODE=255
+        labels_to_ensure_connected = [36,37,57,58,55,56,59,60,47,48,23,30]
+        for keepCode in labels_to_ensure_connected:
+            outlabels = RecodeNonLargest(outlabels,keepCode,UNKNOWN_LABEL_CODE)
+
+        ## FILL IN HOLES
+        unkown_holes = ( BRAIN_MASK > 0 ) * ( outlabels == 0 )
+        outlabels = ForceMaskInsert(outlabels,unkown_holes,UNKNOWN_LABEL_CODE)  ## Fill unkown regeions with unkown code
+
+        fixedFusionLabelFN=os.path.realpath(outFN)
+        sitk.WriteImage(outlabels,fixedFusionLabelFN)
+        #print("\n\n\n\n\n\n{0}\n\n\n\nXXXXXXXX".format(fixedFusionLabelFN))
+        return fixedFusionLabelFN
+
+    fixFusionLabelMap = pe.Node(Function(function=FixLabelMapFromNeuromorphemetrics2012,
+                                                   input_names=['fusionFN','FixedHeadFN','LeftHemisphereFN','outFN' ],
+                                                   output_names=['fixedFusionLabelFN']), name="FixedFusionLabelmap")
+    fixFusionLabelMap.inputs.outFN = 'neuro2012_20fusion_merge_seg.nii.gz'
+    MALFWF.connect(jointFusion, 'output_label_image', fixFusionLabelMap, 'fusionFN')
+    MALFWF.connect(inputsSpec, 'subj_fixed_head_labels', fixFusionLabelMap, 'FixedHeadFN')
+    MALFWF.connect(inputsSpec, 'subj_left_hemisphere', fixFusionLabelMap, 'LeftHemisphereFN')
+
+
+
     MALFWF.connect(warpedAtlasT1MergeNode,'out',jointFusion,'warped_intensity_images')
     MALFWF.connect(warpedAtlasLblMergeNode,'out',jointFusion,'warped_label_images')
     MALFWF.connect(inputsSpec, 'subj_t1_image',jointFusion,'target_image')
-    MALFWF.connect(jointFusion,'output_label_image',outputsSpec,'MALF_neuro2012_labelmap')
+    MALFWF.connect(fixFusionLabelMap,'fixedFusionLabelFN',outputsSpec,'MALF_neuro2012_labelmap')
 
     return MALFWF

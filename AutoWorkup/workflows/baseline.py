@@ -80,6 +80,8 @@ def getAllT1sLength(allT1s):
     return len(allT1s)
 
 
+##TODO:  Move to module that can be re-used
+##       GetLargestLabel is copied elsewhere
 def CreateLeftRightWMHemispheres(BRAINLABELSFile,
                                 HDCMARegisteredVentricleMaskFN,
                                 LeftHemisphereMaskName,
@@ -270,6 +272,64 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
         print master_config['previousresult']
         atlas_warped_directory = os.path.join(master_config['previousresult'], subjectid, 'Atlas')
 
+        atlasBCUTNode_W = pe.Node(interface=nio.DataGrabber(infields=['subject'],
+                                                            outfields=[
+                                                                "l_accumben_ProbabilityMap",
+                                                                "r_accumben_ProbabilityMap",
+                                                                "l_caudate_ProbabilityMap",
+                                                                "r_caudate_ProbabilityMap",
+                                                                "l_globus_ProbabilityMap",
+                                                                "r_globus_ProbabilityMap",
+                                                                "l_hippocampus_ProbabilityMap",
+                                                                "r_hippocampus_ProbabilityMap",
+                                                                "l_putamen_ProbabilityMap",
+                                                                "r_putamen_ProbabilityMap",
+                                                                "l_thalamus_ProbabilityMap",
+                                                                "r_thalamus_ProbabilityMap",
+                                                                "phi",
+                                                                "rho",
+                                                                "theta"
+                                                            ]),
+                                  name='PerSubject_atlasBCUTNode_W')
+        atlasBCUTNode_W.inputs.base_directory = master_config['previousresult']
+        atlasBCUTNode_W.inputs.subject = subjectid
+        atlasBCUTNode_W.inputs.field_template = {
+            'l_accumben_ProbabilityMap': '%s/Atlas/AVG_l_accumben_ProbabilityMap.nii.gz',
+            'r_accumben_ProbabilityMap': '%s/Atlas/AVG_r_accumben_ProbabilityMap.nii.gz',
+            'l_caudate_ProbabilityMap': '%s/Atlas/AVG_l_caudate_ProbabilityMap.nii.gz',
+            'r_caudate_ProbabilityMap': '%s/Atlas/AVG_r_caudate_ProbabilityMap.nii.gz',
+            'l_globus_ProbabilityMap': '%s/Atlas/AVG_l_globus_ProbabilityMap.nii.gz',
+            'r_globus_ProbabilityMap': '%s/Atlas/AVG_r_globus_ProbabilityMap.nii.gz',
+            'l_hippocampus_ProbabilityMap': '%s/Atlas/AVG_l_hippocampus_ProbabilityMap.nii.gz',
+            'r_hippocampus_ProbabilityMap': '%s/Atlas/AVG_r_hippocampus_ProbabilityMap.nii.gz',
+            'l_putamen_ProbabilityMap': '%s/Atlas/AVG_l_putamen_ProbabilityMap.nii.gz',
+            'r_putamen_ProbabilityMap': '%s/Atlas/AVG_r_putamen_ProbabilityMap.nii.gz',
+            'l_thalamus_ProbabilityMap': '%s/Atlas/AVG_l_thalamus_ProbabilityMap.nii.gz',
+            'r_thalamus_ProbabilityMap': '%s/Atlas/AVG_r_thalamus_ProbabilityMap.nii.gz',
+            'phi': '%s/Atlas/AVG_phi.nii.gz',
+            'rho': '%s/Atlas/AVG_rho.nii.gz',
+            'theta': '%s/Atlas/AVG_theta.nii.gz'
+        }
+        atlasBCUTNode_W.inputs.template_args = {
+            'l_accumben_ProbabilityMap': [['subject']],
+            'r_accumben_ProbabilityMap': [['subject']],
+            'l_caudate_ProbabilityMap': [['subject']],
+            'r_caudate_ProbabilityMap': [['subject']],
+            'l_globus_ProbabilityMap': [['subject']],
+            'r_globus_ProbabilityMap': [['subject']],
+            'l_hippocampus_ProbabilityMap': [['subject']],
+            'r_hippocampus_ProbabilityMap': [['subject']],
+            'l_putamen_ProbabilityMap': [['subject']],
+            'r_putamen_ProbabilityMap': [['subject']],
+            'l_thalamus_ProbabilityMap': [['subject']],
+            'r_thalamus_ProbabilityMap': [['subject']],
+            'phi': [['subject']],
+            'rho': [['subject']],
+            'theta': [['subject']]
+        }
+        atlasBCUTNode_W.inputs.template = '*'
+        atlasBCUTNode_W.inputs.sort_filelist = True
+        atlasBCUTNode_W.inputs.raise_on_empty = True
 
         template_DG = pe.Node(interface=nio.DataGrabber(infields=['subject'],
                                                         outfields=['outAtlasXMLFullPath',
@@ -534,65 +594,6 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
                              ('template_t1', 'inputspec.template_t1')
                          ])
         ])
-        atlasBCUTNode_W = pe.Node(interface=nio.DataGrabber(infields=['subject'],
-                                                            outfields=[
-                                                                "l_accumben_ProbabilityMap",
-                                                                "r_accumben_ProbabilityMap",
-                                                                "l_caudate_ProbabilityMap",
-                                                                "r_caudate_ProbabilityMap",
-                                                                "l_globus_ProbabilityMap",
-                                                                "r_globus_ProbabilityMap",
-                                                                "l_hippocampus_ProbabilityMap",
-                                                                "r_hippocampus_ProbabilityMap",
-                                                                "l_putamen_ProbabilityMap",
-                                                                "r_putamen_ProbabilityMap",
-                                                                "l_thalamus_ProbabilityMap",
-                                                                "r_thalamus_ProbabilityMap",
-                                                                "phi",
-                                                                "rho",
-                                                                "theta"
-                                                            ]),
-                                  name='PerSubject_atlasBCUTNode_W')
-        atlasBCUTNode_W.inputs.base_directory = master_config['previousresult']
-        atlasBCUTNode_W.inputs.subject = subjectid
-        atlasBCUTNode_W.inputs.field_template = {
-            'l_accumben_ProbabilityMap': '%s/Atlas/AVG_l_accumben_ProbabilityMap.nii.gz',
-            'r_accumben_ProbabilityMap': '%s/Atlas/AVG_r_accumben_ProbabilityMap.nii.gz',
-            'l_caudate_ProbabilityMap': '%s/Atlas/AVG_l_caudate_ProbabilityMap.nii.gz',
-            'r_caudate_ProbabilityMap': '%s/Atlas/AVG_r_caudate_ProbabilityMap.nii.gz',
-            'l_globus_ProbabilityMap': '%s/Atlas/AVG_l_globus_ProbabilityMap.nii.gz',
-            'r_globus_ProbabilityMap': '%s/Atlas/AVG_r_globus_ProbabilityMap.nii.gz',
-            'l_hippocampus_ProbabilityMap': '%s/Atlas/AVG_l_hippocampus_ProbabilityMap.nii.gz',
-            'r_hippocampus_ProbabilityMap': '%s/Atlas/AVG_r_hippocampus_ProbabilityMap.nii.gz',
-            'l_putamen_ProbabilityMap': '%s/Atlas/AVG_l_putamen_ProbabilityMap.nii.gz',
-            'r_putamen_ProbabilityMap': '%s/Atlas/AVG_r_putamen_ProbabilityMap.nii.gz',
-            'l_thalamus_ProbabilityMap': '%s/Atlas/AVG_l_thalamus_ProbabilityMap.nii.gz',
-            'r_thalamus_ProbabilityMap': '%s/Atlas/AVG_r_thalamus_ProbabilityMap.nii.gz',
-            'phi': '%s/Atlas/AVG_phi.nii.gz',
-            'rho': '%s/Atlas/AVG_rho.nii.gz',
-            'theta': '%s/Atlas/AVG_theta.nii.gz'
-        }
-        atlasBCUTNode_W.inputs.template_args = {
-            'l_accumben_ProbabilityMap': [['subject']],
-            'r_accumben_ProbabilityMap': [['subject']],
-            'l_caudate_ProbabilityMap': [['subject']],
-            'r_caudate_ProbabilityMap': [['subject']],
-            'l_globus_ProbabilityMap': [['subject']],
-            'r_globus_ProbabilityMap': [['subject']],
-            'l_hippocampus_ProbabilityMap': [['subject']],
-            'r_hippocampus_ProbabilityMap': [['subject']],
-            'l_putamen_ProbabilityMap': [['subject']],
-            'r_putamen_ProbabilityMap': [['subject']],
-            'l_thalamus_ProbabilityMap': [['subject']],
-            'r_thalamus_ProbabilityMap': [['subject']],
-            'phi': [['subject']],
-            'rho': [['subject']],
-            'theta': [['subject']]
-        }
-        atlasBCUTNode_W.inputs.template = '*'
-        atlasBCUTNode_W.inputs.sort_filelist = True
-        atlasBCUTNode_W.inputs.raise_on_empty = True
-
         baw201.connect([(atlasBCUTNode_W, segWF,
                          [
                              ('rho', 'inputspec.rho'),
@@ -755,6 +756,9 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
 
         myLocalMALF = CreateMALFWorkflow("MALF", master_config,good_subjects,BASE_DATA_GRABBER_DIR)
         baw201.connect(myLocalTCWF,'outputspec.t1_average',myLocalMALF,'inputspec.subj_t1_image')
+        baw201.connect(myLocalBrainStemWF, 'outputspec.ouputTissuelLabelFilename',myLocalMALF,'inputspec.subj_fixed_head_labels')
+
+        baw201.connect(BResample['template_leftHemisphere'],'outputVolume',myLocalMALF,'inputspec.subj_left_hemisphere')
         baw201.connect(myLocalLMIWF, 'outputspec.outputLandmarksInACPCAlignedSpace' ,myLocalMALF,'inputspec.subj_lmks')
         baw201.connect(atlasBCDNode_S,'template_weights_50Lmks_wts',myLocalMALF,'inputspec.atlasWeightFilename')
         baw201.connect(myLocalMALF,'outputspec.MALF_neuro2012_labelmap',DataSink,'TissueClassify.@MALF_neuro2012_labelmap')

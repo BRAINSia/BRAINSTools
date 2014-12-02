@@ -33,9 +33,9 @@ if(${PRIMARY_PROJECT_NAME}_USE_QT)
   list(APPEND ${proj}_CMAKE_OPTIONS -DANTS_USE_QT:BOOL=ON)
 endif()
 ### --- End Project specific additions
-set(${proj}_REPOSITORY "https://github.com/BRAINSia/ANTs.git")
-#set(${proj}_REPOSITORY "https://github.com/stnava/ANTs.git")
-set(${proj}_GIT_TAG "b04da9f02f490aa6855026929fcf3874f5eaa562") ## Update ANTS 20141109 Change the state file
+#set(${proj}_REPOSITORY "https://github.com/BRAINSia/ANTs.git")
+set(${proj}_REPOSITORY "https://github.com/stnava/ANTs.git")
+set(${proj}_GIT_TAG "3c069d53fdda698fc4cffce1c4ab4579c87c408a") ## Update ANTS 20141123 Change the state file
 ExternalProject_Add(${proj}
   GIT_REPOSITORY ${${proj}_REPOSITORY}
   GIT_TAG ${${proj}_GIT_TAG}

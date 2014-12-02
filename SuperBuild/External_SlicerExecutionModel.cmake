@@ -34,6 +34,8 @@ if(NOT DEFINED SlicerExecutionModel_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM
     ${${proj}_EP_ARGS}
     GIT_REPOSITORY "${git_protocol}://github.com/Slicer/SlicerExecutionModel.git"
     GIT_TAG "aacaca959980a2b3e22de9f41393ca83db5f73f4"
+#    GIT_REPOSITORY "${git_protocol}://github.com/BRAINSia/SlicerExecutionModel.git"
+#    GIT_TAG "ConditionalGenerateCLP"
     SOURCE_DIR ${SOURCE_DOWNLOAD_CACHE}/${proj}
     BINARY_DIR ${proj}-build
     CMAKE_ARGS -Wno-dev --no-warn-unused-cli

@@ -1,1 +1,15 @@
 TODO: http:www.nitrc.org is the primary home of managing this project.
+
+*BRAINSCut Description with respect to the BRAINSTools AutoWorkUp Pipeline.*
+
+The resulting data set of bias-corrected average T1 and/or T2 images from BRAINSABC are subsequently segmented for subcortical structures using an automated segmentation framework, BRAINSCut. BRAINSCut is an extension of previous works that employs robust random forest machine learning that has been validated on multi-site MR data (Kim, Magnotta, Liu, & Johnson, 2014). The subcortical structures of interest include accumben, caudate, putamen, hippocampus, and thalamus. The result of this procedure were again visually inspected and resulted in a success rate greater than 90%. All the development processing was blinded to clinical data, such as HD gene-expansion status, gender, and age. 
+
+*References*
+
+•	Kim, E. Y., Magnotta, V. a, Liu, D., & Johnson, H. J. (2014). Stable Atlas-based Mapped Prior (STAMP) machine-learning segmentation for multicenter large-scale MRI data. Magnetic Resonance Imaging, 32(7), 832–844. doi:10.1016/j.mri.2014.04.016
+
+•	Kim, E. Y., & Johnson, H. (2010). Multi-structure segmentation of multi-modal brain images using artificial neural networks. Analysis, 7623, 76234B–76234B–12. doi:10.1117/12.844613
+
+•	Powell, S. (2006). Automated brain segmentation using neural networks. Medical Imaging 2006: Image Processing (p. 61443Q–61443Q–11). SPIE.
+
+•	Powell, S., Magnotta, V. a, Johnson, H., Jammalamadaka, V. K., Pierson, R., & Andreasen, N. C. (2008). Registration and machine learning-based automated segmentation of subcortical and cerebellar brain structures. NeuroImage, 39(1), 238–47. doi:10.1016/j.neuroimage.2007.05.063

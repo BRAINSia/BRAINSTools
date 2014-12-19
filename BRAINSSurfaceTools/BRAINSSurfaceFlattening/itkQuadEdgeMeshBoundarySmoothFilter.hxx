@@ -196,7 +196,7 @@ QuadEdgeMeshBoundarySmoothFilter<TInputMesh, TOutputMesh>
     OutputQEPrimal*e = deleteMesh->FindEdge(pId0, pId2);
 
     // find two edges on the boundary belong to the same triangle
-    if( e != (OutputQEPrimal *)0 )
+    if( e != (OutputQEPrimal *)ITK_NULLPTR )
       {
       // add first
       pIt = addMesh->GetPoints()->Begin();
@@ -229,7 +229,7 @@ QuadEdgeMeshBoundarySmoothFilter<TInputMesh, TOutputMesh>
 
       // actual add
       OutputQEPrimal* tmpEdge = addMesh->AddFaceTriangle(pId0_2, pId1_2, pId2_2);
-      if( tmpEdge == NULL )
+      if( tmpEdge == ITK_NULLPTR )
         {
         tmpEdge = addMesh->AddFaceTriangle(pId0_2, pId2_2, pId1_2);
         }

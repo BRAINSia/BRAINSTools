@@ -56,8 +56,8 @@ OtsuHistogramMatchingImageFilter<TInputImage, TOutputImage, THistogramMeasuremen
   m_OutputHistogram(HistogramType::New() ),
   m_LowerGradient(0.0),
   m_UpperGradient(0.0),
-  m_SourceMask(NULL),
-  m_ReferenceMask(NULL)
+  m_SourceMask(ITK_NULLPTR),
+  m_ReferenceMask(ITK_NULLPTR)
 {
   this->SetNumberOfRequiredInputs(2);
 
@@ -127,11 +127,11 @@ const typename OtsuHistogramMatchingImageFilter<TInputImage, TOutputImage, THist
   {
   if( this->GetNumberOfInputs() < 2 )
     {
-    return NULL;
+    return ITK_NULLPTR;
     }
 
   TInputImage const * const temp = dynamic_cast<TInputImage *>( this->ProcessObject::GetInput(1) );
-  if( temp == NULL )
+  if( temp == ITK_NULLPTR )
     {
     itkGenericExceptionMacro( << "Invalid mask converstion attempted." );
     }

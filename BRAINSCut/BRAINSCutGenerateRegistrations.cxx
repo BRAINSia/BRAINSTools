@@ -24,7 +24,7 @@
 // ----------------------------------------------------- //
 BRAINSCutGenerateRegistrations
 ::BRAINSCutGenerateRegistrations(  BRAINSCutDataHandler& dataHandler ) :
-  myDataHandler(NULL),
+  myDataHandler(ITK_NULLPTR),
   atlasToSubjectRegistraionOn(false),
   subjectDataSets()
 {

@@ -205,7 +205,7 @@ int main(int argc, char *argv[])
 
       const ResampleFilterType::TransformType *curTransform =
         dynamic_cast<const ResampleFilterType::TransformType *>(curTransformBase.GetPointer() );
-      if( curTransform == 0 )
+      if( curTransform == ITK_NULLPTR )
         {
         std::cerr << "Invalid transform " << curTransformBase << std::endl;
         exit(1);

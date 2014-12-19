@@ -190,8 +190,8 @@ VDemonsPreprocessor<TInputImage, TOutputImage>
                                           "BOBF_Fixed.nii.gz");
         }
       }
-    m_InputMovingImage[i] = NULL;
-    m_InputFixedImage[i] = NULL;
+    m_InputMovingImage[i] = ITK_NULLPTR;
+    m_InputFixedImage[i] = ITK_NULLPTR;
     }
 
   if( m_OutputFixedImage.size() > 1 )

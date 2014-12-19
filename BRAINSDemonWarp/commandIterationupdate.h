@@ -136,7 +136,7 @@ public:
       return;
       }
 
-    typename DisplacementFieldType::Pointer deffield = 0;
+    typename DisplacementFieldType::Pointer deffield = ITK_NULLPTR;
     unsigned int iter = vcl_numeric_limits<unsigned int>::max();
     double       metricbefore = -1.0;
 
@@ -367,9 +367,9 @@ protected:
 
     m_HarmonicEnergyCalculator = HarmonicEnergyCalculatorType::New();
 
-    m_TrueField = 0;
-    m_TrueWarpGradientCalculator = 0;
-    m_CompWarpGradientCalculator = 0;
+    m_TrueField = ITK_NULLPTR;
+    m_TrueWarpGradientCalculator = ITK_NULLPTR;
+    m_CompWarpGradientCalculator = ITK_NULLPTR;
   }
 
   ~CommandIterationUpdate()

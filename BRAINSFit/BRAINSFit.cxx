@@ -300,8 +300,8 @@ int main(int argc, char *argv[])
   extractMovingVolume = ExtractImage<MovingVolumeType>(OriginalMovingVolume,
                                                        movingVolumeTimeIndex);
   // Multimodal registration input setting
-  FixedVolumeType::Pointer  extractFixedVolume2=NULL;
-  MovingVolumeType::Pointer extractMovingVolume2=NULL;
+  FixedVolumeType::Pointer  extractFixedVolume2=ITK_NULLPTR;
+  MovingVolumeType::Pointer extractMovingVolume2=ITK_NULLPTR;
   if( fixedVolume2 != ""  && movingVolume2 != "" )
     {
     InputImageType::Pointer
@@ -356,8 +356,8 @@ int main(int argc, char *argv[])
   // If masks are associated with the images, then read them into the correct
   // orientation.
   // if they've been defined assign the masks...
-  ImageMaskPointer fixedMask = NULL;
-  ImageMaskPointer movingMask = NULL;
+  ImageMaskPointer fixedMask = ITK_NULLPTR;
+  ImageMaskPointer movingMask = ITK_NULLPTR;
   if( maskProcessingMode == "NOMASK" )
     {
     if( fixedBinaryVolume != "" || movingBinaryVolume != "" )
@@ -414,7 +414,7 @@ int main(int argc, char *argv[])
       }
     else
       {
-      fixedMask = NULL;
+      fixedMask = ITK_NULLPTR;
       }
 
     if( movingBinaryVolume != "" )
@@ -425,7 +425,7 @@ int main(int argc, char *argv[])
       }
     else
       {
-      movingMask = NULL;
+      movingMask = ITK_NULLPTR;
       }
     }
 

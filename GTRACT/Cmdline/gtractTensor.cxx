@@ -286,8 +286,8 @@ int main(int argc, char *argv[])
     strcpy( tokTmStr, NrrdValue.c_str() );
     TVector tmpDir(3);
     tmpDir[0] = atof( strtok(tokTmStr, " ") );
-    tmpDir[1] = atof( strtok(NULL, " ") );
-    tmpDir[2] = atof( strtok(NULL, " ") );
+    tmpDir[1] = atof( strtok(ITK_NULLPTR, " ") );
+    tmpDir[2] = atof( strtok(ITK_NULLPTR, " ") );
     if( applyMeasurementFrame )
       {
       std::cout << "Original Direction: " << tmpDir << std::endl;

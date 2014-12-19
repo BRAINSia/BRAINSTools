@@ -114,8 +114,8 @@ ApplicationBase<TParser, TPreprocessor, TRegistrator>
   try
     {
     this->InitializeRegistrator();
-    m_Preprocessor = NULL;
-    m_Parser = NULL;
+    m_Preprocessor = ITK_NULLPTR;
+    m_Parser = ITK_NULLPTR;
     m_Registrator->Execute();
     }
   catch( itk::ExceptionObject & err )

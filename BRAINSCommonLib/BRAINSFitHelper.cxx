@@ -55,7 +55,7 @@ ExtractConstPointerToImageMaskFromImageSpatialObject( SpatialObjectType::ConstPo
   ImageMaskSpatialObjectType const * const temp =
     dynamic_cast<ImageMaskSpatialObjectType const *>( inputSpatialObject.GetPointer() );
 
-  if( temp == NULL )
+  if( temp == ITK_NULLPTR )
     {
     itkGenericExceptionMacro(<< "Invalid mask converstion attempted.");
     }
@@ -87,16 +87,16 @@ ConvertMaskImageToSpatialMask( itk::Image<unsigned char,3>::ConstPointer inputIm
 namespace itk
 {
 BRAINSFitHelper::BRAINSFitHelper() :
-  m_FixedVolume(NULL),
-  m_FixedVolume2(NULL), // For multi-modal SyN
-  m_MovingVolume(NULL),
-  m_MovingVolume2(NULL), // For multi-modal SyN
-  m_PreprocessedMovingVolume(NULL),
-  m_PreprocessedMovingVolume2(NULL), // For multi-modal SyN
-  m_FixedBinaryVolume(NULL),
-  m_FixedBinaryVolume2(NULL), // For multi-modal SyN
-  m_MovingBinaryVolume(NULL),
-  m_MovingBinaryVolume2(NULL), // For multi-modal SyN
+  m_FixedVolume(ITK_NULLPTR),
+  m_FixedVolume2(ITK_NULLPTR), // For multi-modal SyN
+  m_MovingVolume(ITK_NULLPTR),
+  m_MovingVolume2(ITK_NULLPTR), // For multi-modal SyN
+  m_PreprocessedMovingVolume(ITK_NULLPTR),
+  m_PreprocessedMovingVolume2(ITK_NULLPTR), // For multi-modal SyN
+  m_FixedBinaryVolume(ITK_NULLPTR),
+  m_FixedBinaryVolume2(ITK_NULLPTR), // For multi-modal SyN
+  m_MovingBinaryVolume(ITK_NULLPTR),
+  m_MovingBinaryVolume2(ITK_NULLPTR), // For multi-modal SyN
   m_OutputFixedVolumeROI(""),
   m_OutputMovingVolumeROI(""),
   m_SamplingPercentage(1.0), // instead or number of samples, sampling% should be used that is a number between 0 and 1.
@@ -123,8 +123,8 @@ BRAINSFitHelper::BRAINSFitHelper() :
   m_PermittedNumberOfIterations(0),
   // m_AccumulatedNumberOfIterationsForAllLevels(0),
   m_DebugLevel(0),
-  m_CurrentGenericTransform(NULL),
-  m_RestoreState(NULL),
+  m_CurrentGenericTransform(ITK_NULLPTR),
+  m_RestoreState(ITK_NULLPTR),
   //m_GenericTransformList(0),
   m_DisplayDeformedImage(false),
   m_PromptUserAfterDisplay(false),
@@ -133,7 +133,7 @@ BRAINSFitHelper::BRAINSFitHelper() :
   m_CostMetricName("MMI"), // Default to Mattes Mutual Information Metric
   m_SaveState(""),
   m_UseROIBSpline(false),
-  m_Helper(NULL),
+  m_Helper(ITK_NULLPTR),
   m_SamplingStrategy(AffineRegistrationType::NONE),
   m_NormalizeInputImages(false),
   m_InitializeRegistrationByCurrentGenericTransform(true),
@@ -183,7 +183,7 @@ NormalizeImage(typename ImageType::Pointer inputImage)
   windowingFilter->SetOutputMaximum( 1 );
   windowingFilter->Update();
 
-  typename ImageType::Pointer outputImage = NULL;
+  typename ImageType::Pointer outputImage = ITK_NULLPTR;
   outputImage = windowingFilter->GetOutput();
   outputImage->Update();
   outputImage->DisconnectPipeline();

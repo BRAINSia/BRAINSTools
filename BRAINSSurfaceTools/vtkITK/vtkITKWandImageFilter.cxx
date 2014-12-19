@@ -119,13 +119,13 @@ void vtkITKWandImageFilter::SimpleExecute(vtkImageData *input, vtkImageData *out
   //
   vtkPointData *pd = input->GetPointData();
   pd=input->GetPointData();
-  if (pd ==NULL)
+  if (pd ==ITK_NULLPTR)
     {
     vtkErrorMacro(<<"PointData is NULL");
     return;
     }
   vtkDataArray *inScalars=pd->GetScalars();
-  if ( inScalars == NULL )
+  if ( inScalars == ITK_NULLPTR )
     {
     vtkErrorMacro(<<"Scalars must be defined for wand selection");
     return;

@@ -179,7 +179,7 @@ const typename QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TFixedMesh, TMovin
   {
   if( this->GetNumberOfInputs() < 3 )
     {
-    return NULL;
+    return ITK_NULLPTR;
     }
 
   return static_cast<const DestinationPointSetType *>(this->ProcessObject::GetInput(2) );
@@ -192,7 +192,7 @@ GetFinalDestinationPoints() const
   {
   if( this->GetNumberOfOutputs() < 3 )
     {
-    return 0;
+    return ITK_NULLPTR;
     }
 
   const DestinationPointSetType * pointSet =
@@ -215,7 +215,7 @@ QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TFixedMesh, TMovingMesh, TOutputM
 
   itkDebugMacro("setting Destination Points to " << destinationPoints );
 
-  if( destinationPoints == NULL )
+  if( destinationPoints == ITK_NULLPTR )
     {
     itkExceptionMacro("Pointer to DestinationPoints was NULL");
     }
@@ -841,7 +841,7 @@ QuadEdgeMeshSphericalDiffeomorphicDemonsFilter<TFixedMesh, TMovingMesh, TOutputM
     {
     EdgeType * edge1 = this->m_FixedMeshAtInitialDestinationPoints->FindEdge( pointItr.Index() );
 
-    EdgeType * temp1 = NULL;
+    EdgeType * temp1 = ITK_NULLPTR;
     EdgeType * temp2 = edge1;
 
     const PointType & point = pointItr.Value();

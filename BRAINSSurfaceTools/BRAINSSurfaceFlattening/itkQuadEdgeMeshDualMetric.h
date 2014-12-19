@@ -39,7 +39,7 @@ public:
   typedef typename MeshType::PointType       PointType;
   typedef typename PointType::RealType       ValueType;
 
-  QuadEdgeMeshDualMetric() : m_Mesh( 0 )
+  QuadEdgeMeshDualMetric() : m_Mesh( ITK_NULLPTR )
   {
   }
 

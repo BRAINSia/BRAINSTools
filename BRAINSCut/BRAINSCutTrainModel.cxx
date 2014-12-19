@@ -38,8 +38,8 @@ BRAINSCutTrainModel
   m_modelBasename(""),
   m_ANNVectorFilenamePrefix(""),
   m_RFErrorFilename(""),
-  m_trainingDataSet(NULL),
-  m_ANNLayerStructure(NULL)
+  m_trainingDataSet(ITK_NULLPTR),
+  m_ANNLayerStructure(ITK_NULLPTR)
 {
 }
 
@@ -47,11 +47,11 @@ BRAINSCutTrainModel
 ::~BRAINSCutTrainModel()
 {
   // Must release the memory so that it does not leak
-  if( this->m_ANNLayerStructure != NULL )
+  if( this->m_ANNLayerStructure != ITK_NULLPTR )
     {
     cvReleaseMat( &this->m_ANNLayerStructure );
     }
-  if( this->m_trainingDataSet != NULL )
+  if( this->m_trainingDataSet != ITK_NULLPTR )
     {
     delete this->m_trainingDataSet;
     }
@@ -102,7 +102,7 @@ BRAINSCutTrainModel
 {
   m_myDataHandler.SetTrainConfiguration( "ANNParameters" );
   m_myDataHandler.SetTrainingVectorConfiguration();
-  if( this->m_ANNLayerStructure != NULL )
+  if( this->m_ANNLayerStructure != ITK_NULLPTR )
     {
     cvReleaseMat( &this->m_ANNLayerStructure );
     }
@@ -149,8 +149,8 @@ BRAINSCutTrainModel
 
   myTrainer.train( currentTrainData.pairedInput,
                    currentTrainData.pairedOutput,
-                   NULL, // Sample weight
-                   0,    // Sample Index,
+                   ITK_NULLPTR, // Sample weight
+                   ITK_NULLPTR,    // Sample Index,
                    CvANN_MLP_TrainParams( cvTermCriteria( CV_TERMCRIT_ITER
                                                           | CV_TERMCRIT_EPS,
                                                           m_trainEpochIteration, m_trainDesiredError),
@@ -322,7 +322,7 @@ BRAINSCutTrainModel
                 0.0F,                  // float  _regression_accuracy=0,
                 m_trainUseSurrogates,
                 10,                       // int    _max_categories=10,
-                0,                        // float* _priors,
+                ITK_NULLPTR,                        // float* _priors,
                 m_trainCalcVarImportance, // bool   _calc_var_importance=false,
                 0,                        // int    _nactive_vars=0,
                 numberOfTree,
@@ -333,10 +333,10 @@ BRAINSCutTrainModel
   forest.train( this->m_trainingDataSet->GetTrainingSubSet(0)->pairedInput,
                 CV_ROW_SAMPLE,   // or CV_COL_SAMPLE
                 this->m_trainingDataSet->GetTrainingSubSet(0)->pairedOutputRF,
-                0,
-                0,    // CvMat* sampleIdx=0,
-                0,    // CvMat* varType=0,
-                0,    // CvMat* missingMask=0,
+                ITK_NULLPTR,
+                ITK_NULLPTR,    // CvMat* sampleIdx=0,
+                ITK_NULLPTR,    // CvMat* varType=0,
+                ITK_NULLPTR,    // CvMat* missingMask=0,
                 randomTreeTrainParamters
                 );
   writeRFTrainInformation( forest, depth, numberOfTree );

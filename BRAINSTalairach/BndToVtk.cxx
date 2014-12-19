@@ -22,6 +22,8 @@
 #include <vector>
 #include <sstream>
 
+#include "itkMacro.h" //Needed for ITK_NULLPTR
+
 #define PR(x) std::cout << #x " = " << x << "\n"; // print macro
 
 vtkStandardNewMacro(BndToVtk);
@@ -63,25 +65,25 @@ void BndToVtk::ProcessBND(std::string bndFile)
   for( int i = 0; i < 3; i++ )
     {
     const std::string fillVals = tokens[i];
-    AC[i] = strtod(fillVals.c_str(), NULL);
+    AC[i] = strtod(fillVals.c_str(), ITK_NULLPTR);
     }
   /* fill in PC point values */
   for( int i = 3; i < 6; i++ )
     {
     const std::string fillVals = tokens[i];
-    PC[i - 3] = strtod(fillVals.c_str(), NULL);
+    PC[i - 3] = strtod(fillVals.c_str(), ITK_NULLPTR);
     }
   /* fill in SLA point values */
   for( int i = 6; i < 9; i++ )
     {
     const std::string fillVals = tokens[i];
-    SLA[i - 6] = strtod(fillVals.c_str(), NULL);
+    SLA[i - 6] = strtod(fillVals.c_str(), ITK_NULLPTR);
     }
   /* fill in IRP point values */
   for( int i = 9; i < 12; i++ )
     {
     const std::string fillVals = tokens[i];
-    IRP[i - 9] = strtod(fillVals.c_str(), NULL);
+    IRP[i - 9] = strtod(fillVals.c_str(), ITK_NULLPTR);
     }
 
   /* Y and Z are inverted in the BRAINS representation vis a vis VTK */

@@ -24,6 +24,8 @@
 
 #include "QDelLabelDialogs.h"
 
+#include "itkMacro.h" //Needed for ITK_NULLPTR
+
 QDelLabelDialogs::QDelLabelDialogs(QString text, QWidget *myParent) : QDialog(myParent)
 {
   m_label.setText(text);
@@ -47,7 +49,7 @@ QDelLabelDialogs::QDelLabelDialogs(QString text, QWidget *myParent) : QDialog(my
   QObject::connect( &m_accept, SIGNAL( clicked() ),
                     this, SLOT( accept2() ) );
 
-  m_listItem = NULL;
+  m_listItem = ITK_NULLPTR;
 }
 
 void QDelLabelDialogs::exec(QListWidgetItem *listItem)

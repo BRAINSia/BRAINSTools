@@ -37,7 +37,7 @@ BRAINSCutVectorTrainingSet
   recordSize(0),
   bufferRecordSize(0),
   numberOfSubSet(1),
-  currentTrainingSubSet(NULL)
+  currentTrainingSubSet(ITK_NULLPTR)
 
 {
   // trainingVectorFilename = vectorFilename;
@@ -279,7 +279,7 @@ BRAINSCutVectorTrainingSet
     {
     throw (  BRAINSCutExceptionStringHandler( "Specified SubSet is not valid") );
     }
-  else if( count == currentSubSetID && currentTrainingSubSet != NULL )
+  else if( count == currentSubSetID && currentTrainingSubSet != ITK_NULLPTR )
     {
     return currentTrainingSubSet;
     }

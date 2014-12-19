@@ -334,12 +334,12 @@ bool areDirectionsEqual(std::string direction1, std::string direction2, double d
   strncpy( tmpDir2, direction2.c_str(), MAXSTR - 1 );
 
   const double x1 = atof( strtok(tmpDir1, " ") );
-  const double y1 = atof( strtok(NULL, " ") );
-  const double z1 = atof( strtok(NULL, " ") );
+  const double y1 = atof( strtok(ITK_NULLPTR, " ") );
+  const double z1 = atof( strtok(ITK_NULLPTR, " ") );
 
   const double x2 = atof( strtok(tmpDir2, " ") );
-  const double y2 = atof( strtok(NULL, " ") );
-  const double z2 = atof( strtok(NULL, " ") );
+  const double y2 = atof( strtok(ITK_NULLPTR, " ") );
+  const double z2 = atof( strtok(ITK_NULLPTR, " ") );
 
   if( averageB0only )
     {

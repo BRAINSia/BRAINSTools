@@ -245,7 +245,7 @@ int main(int argc, char* argv[])
     }
 
   typedef itk::Transform<double, 3, 3> GenericTransformType;
-  GenericTransformType::Pointer genericTransform = NULL;
+  GenericTransformType::Pointer genericTransform = ITK_NULLPTR;
 
   if( transformType == "Rigid" )
     {
@@ -273,13 +273,13 @@ int main(int argc, char* argv[])
     //   computeAffineTransform(fixedPoints, movingPoints,
     //                          fixedCenter, movingCenter);
     std::cerr << "Unsupported transform type: " << transformType << std::endl;
-    genericTransform = NULL;
+    genericTransform = ITK_NULLPTR;
     return EXIT_FAILURE;
     }
   else
     {
     std::cerr << "Unsupported transform type: " << transformType << std::endl;
-    genericTransform = NULL;
+    genericTransform = ITK_NULLPTR;
     return EXIT_FAILURE;
     }
 

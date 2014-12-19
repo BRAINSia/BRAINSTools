@@ -75,7 +75,7 @@ TransformWarp(
   warp->SetDisplacementField(displacementField);
   warp->SetInterpolator(interp);
 
-  if( ReferenceImage != NULL )
+  if( ReferenceImage != ITK_NULLPTR )
     {
     warp->SetOutputParametersFromImage(ReferenceImage);
     }
@@ -212,7 +212,7 @@ GetInterpolatorFromString(const std::string & interpolationMode)
     std::cout << "Error: Invalid interpolation mode specified -" << interpolationMode << "- " << std::endl;
     std::cout << "\tValid modes: NearestNeighbor, Linear, BSpline, WindowedSinc" << std::endl;
     }
-  return NULL;
+  return ITK_NULLPTR;
 }
 
 template <typename InputImageType, typename OutputImageType, typename DisplacementImageType>

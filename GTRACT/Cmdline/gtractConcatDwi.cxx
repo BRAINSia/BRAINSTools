@@ -171,8 +171,8 @@ int main(int argc, char *argv[])
       itk::ExposeMetaData<std::string>(currentMetaData, tmpStr, NrrdValue);
       strcpy( tokStr, NrrdValue.c_str() );
       double x = atof( strtok( tokStr, " " ) );
-      double y = atof( strtok( NULL, " " ) );
-      double z = atof( strtok( NULL, " " ) );
+      double y = atof( strtok( ITK_NULLPTR, " " ) );
+      double z = atof( strtok( ITK_NULLPTR, " " ) );
       sprintf(tmpStr, "DWMRI_gradient_%04d", vectorIndex);
       // sprintf(tmpValue, " %18.15lf %18.15lf %18.15lf", x * bValueScale, y * bValueScale, z * bValueScale);
       // NrrdValue = tmpValue;

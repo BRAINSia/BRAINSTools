@@ -105,21 +105,21 @@ public:
   Rigid3DCenterReflectorFunctor() :
     vnl_cost_function(UNKNOWNS_TO_ESTIMATE),
     m_params(),
-    m_OriginalImage(NULL),
+    m_OriginalImage(ITK_NULLPTR),
     m_OutputImageSpacing(),
     m_OutputImageDirection(),
     m_OutputImageStartIndex(),
     m_OutputImageSize(),
     m_OutputImageOrigin(),
     m_CenterOfHeadMass(),
-    m_InternalResampledForReflectiveComputationImage(NULL),
-    m_ResampleFilter(NULL),
+    m_InternalResampledForReflectiveComputationImage(ITK_NULLPTR),
+    m_ResampleFilter(ITK_NULLPTR),
     m_BackgroundValue(0),
     m_CenterOfImagePoint(),
     m_Translation(),
     m_Iterations(0),
     m_Optimizer( &( *this ) ),
-    m_imInterp(NULL),
+    m_imInterp(ITK_NULLPTR),
     m_cc(0.0)
   {
     this->m_params.set_size(UNKNOWNS_TO_ESTIMATE);

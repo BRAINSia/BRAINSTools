@@ -46,6 +46,7 @@
 #include "vtkMaskLabel.h"
 #include "RemoveTinyLabelsCLP.h"
 #include <BRAINSCommonLib.h>
+#include "itkMacro.h" //Needed for ITK_NULLPTR
 
 int main( int argc, char * argv[] )
 {
@@ -82,7 +83,7 @@ int main( int argc, char * argv[] )
   // unsigned int *absentLabel = new unsigned int[50];
   unsigned int *neighborLabels = new unsigned int[50];
   int           ncells;
-  vtkIdType *   pts = 0;
+  vtkIdType *   pts = ITK_NULLPTR;
   vtkIdType     npts = 0;
   vtkIdType     pid_orig;
   double *      pt;
@@ -98,7 +99,7 @@ int main( int argc, char * argv[] )
 
   std::string labelName = labelArray->GetName();
 
-  if( (labelArray == NULL) || (labelName != "LabelValue") )
+  if( (labelArray == ITK_NULLPTR) || (labelName != "LabelValue") )
     {
     std::cerr << "There is no labelarray on the input surface. ";
     std::cerr << "Quit." << std::endl;

@@ -33,7 +33,7 @@ template <class TReferenceImagePixelType,
 DiffusionTensor3DReconstructionWithMaskImageFilter<TReferenceImagePixelType,
                                                    TGradientImagePixelType, TTensorPixelType>
 ::DiffusionTensor3DReconstructionWithMaskImageFilter() :
-  m_GradientDirectionContainer(NULL),
+  m_GradientDirectionContainer(ITK_NULLPTR),
   m_NumberOfGradientDirections(0),
   m_NumberOfBaselineImages(1),
   m_Threshold(NumericTraits<ReferencePixelType>::min() ),
@@ -265,7 +265,7 @@ void DiffusionTensor3DReconstructionWithMaskImageFilter<TReferenceImagePixelType
     {
     typedef ImageRegionConstIterator<GradientImagesType> GradientIteratorType;
     typedef typename GradientImagesType::PixelType       GradientVectorType;
-    typename GradientImagesType::Pointer gradientImagePointer = NULL;
+    typename GradientImagesType::Pointer gradientImagePointer = ITK_NULLPTR;
 
     // Would have liked a dynamic_cast here, but seems SGI doesn't like it
     // The enum will ensure that an inappropriate cast is not done

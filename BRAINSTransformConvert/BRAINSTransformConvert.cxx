@@ -89,7 +89,7 @@ ExtractTransform(typename itk::AffineTransform< TScalarType, 3 >::Pointer &resul
   typedef itk::AffineTransform< TScalarType, 3 > LocalAffineTransformType;
   typedef typename LocalAffineTransformType::Superclass MatrixOffsetTransformType;
   const MatrixOffsetTransformType *matBasePtr = dynamic_cast<const MatrixOffsetTransformType *>(source);
-  if( matBasePtr == 0 )
+  if( matBasePtr == ITK_NULLPTR )
     {
     return false;
     }

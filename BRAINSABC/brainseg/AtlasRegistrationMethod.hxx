@@ -63,12 +63,12 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
   m_AtlasLinearTransformChoice("Affine"),
   m_ImageLinearTransformChoice("Rigid"),
   m_SaveState(""),
-  m_RestoreState(NULL),
+  m_RestoreState(ITK_NULLPTR),
   m_DebugLevel(0)
 {
-  m_InputImageTissueRegion = NULL;
-  m_InputSpatialObjectTissueRegion = NULL;
-  m_AtlasToSubjectInitialTransform = NULL;
+  m_InputImageTissueRegion = ITK_NULLPTR;
+  m_InputSpatialObjectTissueRegion = ITK_NULLPTR;
+  m_AtlasToSubjectInitialTransform = ITK_NULLPTR;
 }
 
 template <class TOutputPixel, class TProbabilityPixel>
@@ -335,7 +335,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
         intraSubjectRegistrationHelper->SetMaskInferiorCutOffFromCenter(65.0); //
         //
         // maskInferiorCutOffFromCenter);
-        intraSubjectRegistrationHelper->SetCurrentGenericTransform(0);
+        intraSubjectRegistrationHelper->SetCurrentGenericTransform(ITK_NULLPTR);
         if( this->m_DebugLevel > 9 )
           {
           static unsigned int IntraSubjectRegistration = 0;
@@ -527,7 +527,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
         {
         std::cout << "SyN registration is resotred from state, and no atlasToSubjectInitialTransform is needed."
                   << std::endl;
-        this->m_AtlasToSubjectInitialTransform = NULL;
+        this->m_AtlasToSubjectInitialTransform = ITK_NULLPTR;
         }
       else if( this->m_AtlasToSubjectInitialTransform.IsNotNull() )
         {

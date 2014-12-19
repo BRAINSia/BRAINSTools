@@ -30,7 +30,7 @@ template <class TInputMesh, class TOutput>
 MeshFunction<TInputMesh, TOutput>
 ::MeshFunction()
 {
-  m_Mesh = NULL;
+  m_Mesh = ITK_NULLPTR;
 }
 
 /**

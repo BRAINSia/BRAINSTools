@@ -341,7 +341,7 @@ LargestForegroundFilledMaskImageFilter<TInputImage, TOutputImage>
   seededConnectedThresholdFilter->SetInput( ErodeFilter->GetOutput() );
   seededConnectedThresholdFilter->Update();
 
-  typename IntegerImageType::Pointer dilateMask = NULL;
+  typename IntegerImageType::Pointer dilateMask = ITK_NULLPTR;
     {
     typename ThresholdFilterType::Pointer FinalThreshold =
       ThresholdFilterType::New();

@@ -30,12 +30,14 @@
 #include <QLabel>
 #include <QObject>
 
+#include "itkMacro.h" //Needed for ITK_NULLPTR
+
 class QHelpDialog : public QDialog
 {
   Q_OBJECT
 public:
 
-  QHelpDialog( QWidget *myParent = 0 );
+  QHelpDialog( QWidget *myParent = ITK_NULLPTR );
 protected:
 
   QGridLayout *m_layout;

@@ -20,6 +20,7 @@
 #include <iostream>
 #include <fstream>
 #include "BRAINSCutExceptionStringHandler.h"
+#include "itkMacro.h" //Needed for ITK_NULLPTR
 
 int
 StreamToRead
@@ -33,7 +34,7 @@ StreamToRead
 StreamToRead
 ::StreamToRead(const std::string & name, const std::string & filename) :
   FileToRead<std::fstream *>(name, filename),
-  m_F(0)
+  m_F(ITK_NULLPTR)
 {
   if( this->m_Filename == "" )
     {
@@ -41,7 +42,7 @@ StreamToRead
     msg += this->GetName();
     throw BRAINSCutExceptionStringHandler(msg);
     }
-  if( this->m_F != 0 )
+  if( this->m_F != ITK_NULLPTR )
     {
     if( this->m_F->is_open() )
       {
@@ -76,10 +77,10 @@ StreamToRead::
 void
 StreamToRead::Close()
 {
-  if( m_F != 0 )
+  if( m_F != ITK_NULLPTR )
     {
     m_F->close();
     delete m_F;
     }
-  m_F = 0;
+  m_F = ITK_NULLPTR;
 }

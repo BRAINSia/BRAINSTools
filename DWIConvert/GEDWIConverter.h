@@ -164,16 +164,16 @@ protected:
 
       // relevant GE tags
       DcmDictEntry *GEDictBValue = new DcmDictEntry(0x0043, 0x1039, DcmVR(EVR_IS),
-                                                    "B Value of diffusion weighting", 1, 1, 0, true,
+                                                    "B Value of diffusion weighting", 1, 1, ITK_NULLPTR, true,
                                                     "dicomtonrrd");
       DcmDictEntry *GEDictXGradient = new DcmDictEntry(0x0019, 0x10bb, DcmVR(EVR_DS),
-                                                       "X component of gradient direction", 1, 1, 0, true,
+                                                       "X component of gradient direction", 1, 1, ITK_NULLPTR, true,
                                                        "dicomtonrrd");
       DcmDictEntry *GEDictYGradient = new DcmDictEntry(0x0019, 0x10bc, DcmVR(EVR_DS),
-                                                       "Y component of gradient direction", 1, 1, 0, true,
+                                                       "Y component of gradient direction", 1, 1, ITK_NULLPTR, true,
                                                        "dicomtonrrd");
       DcmDictEntry *GEDictZGradient = new DcmDictEntry(0x0019, 0x10bd, DcmVR(EVR_DS),
-                                                       "Z component of gradient direction", 1, 1, 0, true,
+                                                       "Z component of gradient direction", 1, 1, ITK_NULLPTR, true,
                                                        "dicomtonrrd");
 
       itk::DCMTKFileReader::AddDictEntry(GEDictBValue);

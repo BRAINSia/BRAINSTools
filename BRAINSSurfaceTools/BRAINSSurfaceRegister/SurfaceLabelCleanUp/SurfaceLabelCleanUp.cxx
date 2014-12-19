@@ -46,6 +46,8 @@
 #include "vtkVersion.h"
 #include "SurfaceLabelCleanUpCLP.h"
 
+#include "itkMacro.h" //Needed for ITK_NULLPTR
+
 int SurfaceConnectivityCells(vtkSmartPointer<vtkPolyData> mesh);
 
 int SurfaceConnectivityPoints(vtkSmartPointer<vtkPolyData> mesh);
@@ -72,7 +74,7 @@ int main( int argc, char * argv[] )
   vtkSmartPointer<vtkPolyData> surface_in = reader->GetOutput();
   vtkDataArray *               labelArray = surface_in->GetPointData()->GetScalars();
   std::string                  arrayName = labelArray->GetName();
-  if( labelArray == NULL || arrayName != "LabelValue" )
+  if( labelArray == ITK_NULLPTR || arrayName != "LabelValue" )
     {
     std::cerr << "There is no label array as scalars on input surface. ";
     std::cerr << "Quit." << std::endl;

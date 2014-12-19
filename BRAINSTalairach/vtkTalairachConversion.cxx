@@ -39,7 +39,7 @@ vtkStandardNewMacro(vtkTalairachConversion);
 vtkTalairachConversion::vtkTalairachConversion()
 {
   this->MaskImage = ImageType::New();
-  this->TalairachGrid = NULL;
+  this->TalairachGrid = ITK_NULLPTR;
   this->SegmentationMode = false;
   this->HemisphereMode = both;
 }
@@ -49,12 +49,12 @@ vtkTalairachConversion::~vtkTalairachConversion()
   if( this->MaskImage )
     {
     this->MaskImage->Delete();
-    this->MaskImage = NULL;
+    this->MaskImage = ITK_NULLPTR;
     }
   if( this->TalairachGrid )
     {
     this->TalairachGrid->Delete();
-    this->TalairachGrid = NULL;
+    this->TalairachGrid = ITK_NULLPTR;
     }
 }
 
@@ -65,7 +65,7 @@ void vtkTalairachConversion::Initialize()
   if( this->TalairachGrid )
     {
     this->TalairachGrid->Delete();
-    this->TalairachGrid = NULL;
+    this->TalairachGrid = ITK_NULLPTR;
     }
   this->SegmentationMode = false;
   this->HemisphereMode = both;

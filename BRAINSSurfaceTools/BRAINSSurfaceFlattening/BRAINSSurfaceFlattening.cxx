@@ -181,7 +181,7 @@ int main( int argc, char* * argv )
     // look for seedCell0 along seedAxis-
     if( p[seed_ax] < seedMin )
       {
-      if( p.GetEdge() != (QEPrimal *)0 )
+      if( p.GetEdge() != (QEPrimal *)ITK_NULLPTR )
         {
         QEPrimal* e = p.GetEdge();
         if( e->GetLeft() != mesh->m_NoFace )
@@ -195,7 +195,7 @@ int main( int argc, char* * argv )
     // look for seedCell1 along seedAxis+
     if( p[seed_ax] > seedMax )
       {
-      if( p.GetEdge() != (QEPrimal *)0 )
+      if( p.GetEdge() != (QEPrimal *)ITK_NULLPTR )
         {
         QEPrimal* e = p.GetEdge();
         if( e->GetLeft() != mesh->m_NoFace )

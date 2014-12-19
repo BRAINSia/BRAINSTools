@@ -28,12 +28,14 @@
 #include <QFileDialog>
 #include <QObject>
 
+#include "itkMacro.h" //Needed for ITK_NULLPTR
+
 class QFileDialogs : public QWidget
 {
   Q_OBJECT
 public:
 
-  QFileDialogs( QString landmarks = "", QWidget *myParent = 0 ) : QWidget( myParent )
+  QFileDialogs( QString landmarks = "", QWidget *myParent = ITK_NULLPTR ) : QWidget( myParent )
   {
     m_landmarks = landmarks;
   }

@@ -254,7 +254,7 @@ LinearInterpolateMeshFunction<TInputMesh>
       //
       // Explore triangles around pointIds[0]
       //
-      EdgeType * temp1 = NULL;
+      EdgeType * temp1 = ITK_NULLPTR;
       EdgeType * temp2 = edge1;
 
       do

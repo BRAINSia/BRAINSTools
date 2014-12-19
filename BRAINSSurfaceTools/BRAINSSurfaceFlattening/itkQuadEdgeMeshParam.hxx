@@ -28,8 +28,8 @@ template <typename TInputMesh, typename TOutputMesh, typename TSolverTraits>
 QuadEdgeMeshParam<TInputMesh, TOutputMesh, TSolverTraits>
 ::QuadEdgeMeshParam()
 {
-  this->m_CoefficientsMethod = 0;
-  this->m_BorderTransform = 0;
+  this->m_CoefficientsMethod = ITK_NULLPTR;
+  this->m_BorderTransform = ITK_NULLPTR;
 }
 
 // ---------------------------------------------------------------------

@@ -73,7 +73,7 @@ public:
         {
         std::cerr << "Error: no DICOMfiles found in inputDirectory: " << m_DicomDirectory
                   << std::endl;
-        return 0;
+        return ITK_NULLPTR;
         }
 
       m_Headers.resize(m_InputFileNames.size());
@@ -90,7 +90,7 @@ public:
           {
           std::cerr << "Error reading slice" << m_InputFileNames[i] << std::endl;
           delete curReader;
-          curReader = 0;
+          curReader = ITK_NULLPTR;
           }
         // check for pixel data.
         if(curReader)
@@ -110,7 +110,7 @@ public:
       if( headerCount == 0 )
         {
         std::cerr << "No pixel data in series " << m_DicomDirectory << std::endl;
-        return 0;
+        return ITK_NULLPTR;
         }
       m_InputFileNames.resize(0);
       //
@@ -127,9 +127,9 @@ public:
       catch(itk::ExceptionObject &excp)
         {
         std::cerr << "Can't get vendor name from DICOM file" << excp << std::endl;
-        return 0;
+        return ITK_NULLPTR;
         }
-      DWIConverter *converter(0);
+      DWIConverter *converter(ITK_NULLPTR);
       if(StringContains(this->m_Vendor,"PHILIPS"))
         {
         converter = new PhilipsDWIConverter(m_Headers,m_InputFileNames,

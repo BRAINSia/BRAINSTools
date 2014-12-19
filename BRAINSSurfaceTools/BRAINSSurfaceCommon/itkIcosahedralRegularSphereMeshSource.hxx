@@ -280,7 +280,7 @@ IcosahedralRegularSphereMeshSource<TOutputMesh>
     // set output
     outputMesh->Graft(result);
 
-    result->SetCells( NULL );
+    result->SetCells( ITK_NULLPTR );
     }
 }
 

@@ -36,7 +36,7 @@
 // TODO: consider using itk::LabelMap Hole filling process in ITK4
 BRAINSCutApplyModel
 ::BRAINSCutApplyModel() :
-  m_myDataHandler(NULL),
+  m_myDataHandler(ITK_NULLPTR),
   m_applyDataSetList(),
   m_method(""),
   m_normalization(""),
@@ -47,8 +47,8 @@ BRAINSCutApplyModel
   m_ANNTestingSSEFileStream(),
   m_annOutputThreshold(0),
   m_gaussianSmoothingSigma(0),
-  m_openCVANN(NULL),
-  m_openCVRandomForest(NULL)
+  m_openCVANN(ITK_NULLPTR),
+  m_openCVRandomForest(ITK_NULLPTR)
 {
 }
 
@@ -74,7 +74,7 @@ BRAINSCutApplyModel
 
 BRAINSCutApplyModel
 ::BRAINSCutApplyModel( BRAINSCutDataHandler& dataHandler ) :
-  m_myDataHandler(NULL),
+  m_myDataHandler(ITK_NULLPTR),
   m_applyDataSetList(),
   m_method(""),
   m_normalization(""),
@@ -85,8 +85,8 @@ BRAINSCutApplyModel
   m_ANNTestingSSEFileStream(),
   m_annOutputThreshold(0),
   m_gaussianSmoothingSigma(0),
-  m_openCVANN(NULL),
-  m_openCVRandomForest(NULL)
+  m_openCVANN(ITK_NULLPTR),
+  m_openCVRandomForest(ITK_NULLPTR)
 {
   this->m_myDataHandler = &dataHandler;
   // TODO Take this apart to generate registration one by one!

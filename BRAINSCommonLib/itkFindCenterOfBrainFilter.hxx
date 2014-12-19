@@ -40,14 +40,14 @@ FindCenterOfBrainFilter<TInputImage, TMaskImage>
   m_HeadSizeEstimate(0),
   m_BackgroundValue(NumericTraits<typename ImageType::PixelType>::Zero),
   m_GenerateDebugImages(false),
-  m_ImageMask(0),
-  m_ClippedImageMask(0),
-  m_TrimmedImage(0),
-  m_DebugDistanceImage(0),
-  m_DebugGridImage(0),
-  m_DebugAfterGridComputationsForegroundImage(0),
-  m_DebugClippedImageMask(0),
-  m_DebugTrimmedImage(0)
+  m_ImageMask(ITK_NULLPTR),
+  m_ClippedImageMask(ITK_NULLPTR),
+  m_TrimmedImage(ITK_NULLPTR),
+  m_DebugDistanceImage(ITK_NULLPTR),
+  m_DebugGridImage(ITK_NULLPTR),
+  m_DebugAfterGridComputationsForegroundImage(ITK_NULLPTR),
+  m_DebugClippedImageMask(ITK_NULLPTR),
+  m_DebugTrimmedImage(ITK_NULLPTR)
 {
   m_CenterOfBrain[0] = 0.0;
   m_CenterOfBrain[1] = 0.0;

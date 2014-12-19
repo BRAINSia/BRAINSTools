@@ -545,7 +545,7 @@ public:
     {
       if ( n >= this->GetNumberOfSeriesInstanceUIDs() )
         {
-        return NULL;
+        return ITK_NULLPTR;
         }
       return this->SeriesInstanceUIDs[n].c_str();
     }
@@ -554,7 +554,7 @@ public:
     {
       if ( n >= this->GetNumberOfContentTime() )
         {
-        return NULL;
+        return ITK_NULLPTR;
         }
       return this->ContentTime[n].c_str();
     }
@@ -563,7 +563,7 @@ public:
     {
       if ( n >= this->GetNumberOfTriggerTime() )
         {
-        return NULL;
+        return ITK_NULLPTR;
         }
       return this->TriggerTime[n].c_str();
     }
@@ -572,7 +572,7 @@ public:
     {
       if ( n >= this->GetNumberOfEchoNumbers() )
         {
-        return NULL;
+        return ITK_NULLPTR;
         }
       return this->EchoNumbers[n].c_str();
     }
@@ -581,7 +581,7 @@ public:
     {
       if ( n >= this->GetNumberOfDiffusionGradientOrientation() )
         {
-        return NULL;
+        return ITK_NULLPTR;
         }
       float *dgo = new float [3];
       for (int k = 0; k <3; k++)
@@ -604,7 +604,7 @@ public:
     {
       if ( n >= this->GetNumberOfImageOrientationPatient() )
         {
-        return NULL;
+        return ITK_NULLPTR;
         }
       float *dgo = new float [6];
       for (int k = 0; k <6; k++)
@@ -618,7 +618,7 @@ public:
     {
       if (n >= this->GetNumberOfImagePositionPatient() )
         {
-        return NULL;
+        return ITK_NULLPTR;
         }
       float *ipp = new float [3];
       for (int k = 0; k <3; k++)

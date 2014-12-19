@@ -44,6 +44,7 @@
 
 #include "CombineLabelsCLP.h"
 #include <BRAINSCommonLib.h>
+#include "itkMacro.h" //Needed for ITK_NULLPTR
 
 int main( int argc, char * argv[] )
 {
@@ -68,7 +69,7 @@ int main( int argc, char * argv[] )
 
   // get label array from input surface
   vtkDataArray *labelArray = inputSurface->GetPointData()->GetArray("LabelValue");
-  if( labelArray == NULL )
+  if( labelArray == ITK_NULLPTR )
     {
     std::cerr << "There is no label array on the input surface. ";
     std::cerr << "Quit." << std::endl;

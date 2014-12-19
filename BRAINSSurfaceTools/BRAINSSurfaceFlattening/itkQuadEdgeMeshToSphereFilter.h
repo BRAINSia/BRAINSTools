@@ -136,7 +136,7 @@ public:
   itkSetMacro( Radius, OutputCoordRepType );
 protected:
   QuadEdgeMeshToSphereFilter() : Superclass(),
-    m_CoefficientsMethod( 0 ), m_Radius( 1. )
+    m_CoefficientsMethod( ITK_NULLPTR ), m_Radius( 1. )
   {
   }
 

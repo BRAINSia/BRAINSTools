@@ -144,7 +144,7 @@ public:
   {
     ImageMaskPointer tmp = this->GetSpatialObjectROI();
 
-    typename UCHARIMAGE::ConstPointer rval = NULL;
+    typename UCHARIMAGE::ConstPointer rval = ITK_NULLPTR;
     if( tmp.IsNotNull() )
       {
       const typename itk::ImageMaskSpatialObject<3>::ConstPointer imso =

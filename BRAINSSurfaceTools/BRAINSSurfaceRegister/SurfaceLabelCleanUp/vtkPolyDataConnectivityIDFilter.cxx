@@ -45,6 +45,8 @@
 #include "vtkPointData.h"
 #include "vtkPolyData.h"
 
+#include "itkMacro.h" //Needed for ITK_NULLPTR
+
 vtkStandardNewMacro(vtkPolyDataConnectivityIDFilter);
 
 // Construct with default extraction mode to extract largest regions.
@@ -113,7 +115,7 @@ int vtkPolyDataConnectivityIDFilter::RequestData(
   //  Check input/allocate storage
   inPts = input->GetPoints();
 
-  if( inPts == NULL )
+  if( inPts == ITK_NULLPTR )
     {
     vtkErrorMacro("No points!");
     return 1;
@@ -132,7 +134,7 @@ int vtkPolyDataConnectivityIDFilter::RequestData(
   this->InScalars = input->GetPointData()->GetScalars();
   if( !this->ScalarConnectivity )
     {
-    this->InScalars = NULL;
+    this->InScalars = ITK_NULLPTR;
     }
   else
     {

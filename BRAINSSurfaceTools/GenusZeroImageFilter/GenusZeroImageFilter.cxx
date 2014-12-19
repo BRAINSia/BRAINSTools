@@ -56,11 +56,11 @@ int main(int argc, char * argv[])
   bool debug = true;
 
   // vtk and helper variables
-  vtkITKArchetypeImageSeriesReader* reader = NULL;
+  vtkITKArchetypeImageSeriesReader* reader = ITK_NULLPTR;
   vtkImageData *                    image;
-  vtkTransform *                    transformIJKtoRAS = NULL;
-  vtkTransformPolyDataFilter *      transformer = NULL;
-  vtkPolyDataWriter *               writer = NULL;
+  vtkTransform *                    transformIJKtoRAS = ITK_NULLPTR;
+  vtkTransformPolyDataFilter *      transformer = ITK_NULLPTR;
+  vtkPolyDataWriter *               writer = ITK_NULLPTR;
 
   typedef itk::Image<unsigned short, 3>                                  ImageType;
   typedef itk::VTKImageToImageFilter<ImageType>                          VTKToITKImageFilterType;
@@ -70,7 +70,7 @@ int main(int argc, char * argv[])
   // check for the input file
   FILE * infile;
   infile = fopen(inputVolume.c_str(), "r");
-  if( infile == NULL )
+  if( infile == ITK_NULLPTR )
     {
     std::cerr << "ERROR: cannot open input volume file " << inputVolume << endl;
     return EXIT_FAILURE;

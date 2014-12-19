@@ -225,7 +225,7 @@ public:
   {
     OptimizerPointer optimizer = dynamic_cast<OptimizerPointer>( object );
 
-    if( optimizer == NULL )
+    if( optimizer == ITK_NULLPTR )
       {
       itkGenericExceptionMacro("fail to convert to Optimizer Pointer");
       }
@@ -335,10 +335,10 @@ protected:
   CommandIterationUpdate() : m_DisplayDeformedImage(false),
     m_PromptUserAfterDisplay(false),
     m_PrintParameters(true),
-    m_MovingImage(NULL),
-    m_FixedImage(NULL),
-    m_Transform(NULL),
-    m_ObserverCostMetricObject(NULL)
+    m_MovingImage(ITK_NULLPTR),
+    m_FixedImage(ITK_NULLPTR),
+    m_Transform(ITK_NULLPTR),
+    m_ObserverCostMetricObject(ITK_NULLPTR)
   {
   }
 

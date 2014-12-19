@@ -49,7 +49,7 @@ class QLabelList : public QListWidget
   typedef std::map<QString, std::vector<double> > LandmarksMapType;
 public:
 
-  QLabelList( QWidget *myParent = 0 ) :
+  QLabelList( QWidget *myParent = ITK_NULLPTR ) :
     QListWidget( myParent )
   {
     m_color = 0;

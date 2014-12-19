@@ -72,7 +72,7 @@ DisplacementFieldType::Pointer GetDeformationField( std::string filename)
   if( useTransform )
     {
     std::cout << "Return null deformation. Use transformation instead." << std::endl;
-    return NULL;
+    return ITK_NULLPTR;
     }
   typedef itk::ImageFileReader<DisplacementFieldType> DeformationReaderType;
   DeformationReaderType::Pointer deformationReader = DeformationReaderType::New();
@@ -92,7 +92,7 @@ itk::Transform<double, 3, 3>::Pointer GetGenericTransform( std::string filename)
   if( useDeformation )
     {
     std::cout << "Return null transformation. Use deformation instead." << std::endl;
-    return NULL;
+    return ITK_NULLPTR;
     }
   return itk::ReadTransformFromDisk( filename );
 }

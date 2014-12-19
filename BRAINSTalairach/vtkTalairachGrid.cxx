@@ -36,6 +36,7 @@
 #include "vtkUnstructuredGrid.h"
 #include "vtkTalairachGrid.h"
 #include "vtkStructuredGridWriter.h"
+#include "itkMacro.h" //Needed for ITK_NULLPTR
 #define PR(x) std::cout << #x " = " << x << "\n"; // a simple print macro for
                                                    // use when debugging
 
@@ -686,6 +687,7 @@ void vtkTalairachGrid::WriteBoundingBoxGrid(std::string filename)
 #else
   gridWriter->SetInputData(boundingBoxGrid);
 #endif
+
   gridWriter->Write();
 }
 
@@ -770,22 +772,22 @@ vtkTalairachGrid::~vtkTalairachGrid()
   if( ( this->boundingBoxGrid ) )
     {
     ( this->boundingBoxGrid )->Delete();
-    ( this->boundingBoxGrid ) = NULL;
+    ( this->boundingBoxGrid ) = ITK_NULLPTR;
     }
   if( ( this->talairachGrid ) )
     {
     ( this->talairachGrid )->Delete();
-    ( this->talairachGrid ) = NULL;
+    ( this->talairachGrid ) = ITK_NULLPTR;
     }
   if( ( this->boundingBoxGridPoints ) )
     {
     ( this->boundingBoxGridPoints )->Delete();
-    ( this->boundingBoxGridPoints ) = NULL;
+    ( this->boundingBoxGridPoints ) = ITK_NULLPTR;
     }
   if( ( this->talairachGridPoints ) )
     {
     ( this->talairachGridPoints )->Delete();
-    ( this->talairachGridPoints ) = NULL;
+    ( this->talairachGridPoints ) = ITK_NULLPTR;
     }
 }
 

@@ -55,7 +55,7 @@ DataSet * BRAINSCutConfiguration::GetAtlasDataSet() const
       return current;
       }
     }
-  return 0;
+  return ITK_NULLPTR;
 }
 
 BRAINSCutConfiguration::TrainDataSetListType

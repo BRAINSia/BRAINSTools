@@ -20,6 +20,8 @@
 
 #include "muException.h"
 
+#include "itkMacro.h" //Needed for ITK_NULLPTR
+
 namespace mu
 {
 Log *
@@ -90,7 +92,7 @@ void
 Log
 ::WriteString(const char *s)
 {
-  if( s == NULL )
+  if( s == ITK_NULLPTR )
     {
     std::cout << "[Log::WriteString] NULL argument" << std::endl << std::flush;
     return;

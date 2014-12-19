@@ -506,12 +506,12 @@ DoCenteredInitialization( typename FixedImageType::Pointer & orientedFixedVolume
 
 template <class FixedImageType, class MovingImageType>
 BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::BRAINSFitHelperTemplate() :
-  m_FixedVolume(NULL),
-  m_FixedVolume2(NULL),
-  m_MovingVolume(NULL),
-  m_MovingVolume2(NULL),
-  m_FixedBinaryVolume(NULL),
-  m_MovingBinaryVolume(NULL),
+  m_FixedVolume(ITK_NULLPTR),
+  m_FixedVolume2(ITK_NULLPTR),
+  m_MovingVolume(ITK_NULLPTR),
+  m_MovingVolume2(ITK_NULLPTR),
+  m_FixedBinaryVolume(ITK_NULLPTR),
+  m_MovingBinaryVolume(ITK_NULLPTR),
   m_OutputFixedVolumeROI(""),
   m_OutputMovingVolumeROI(""),
   m_SamplingPercentage(1),
@@ -537,13 +537,13 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::BRAINSFitHelperTemplat
   m_ActualNumberOfIterations(0),
   m_PermittedNumberOfIterations(0),
   m_DebugLevel(0),
-  m_CurrentGenericTransform(NULL),
-  m_RestoreState(NULL),
+  m_CurrentGenericTransform(ITK_NULLPTR),
+  m_RestoreState(ITK_NULLPTR),
   m_DisplayDeformedImage(false),
   m_PromptUserAfterDisplay(false),
   m_FinalMetricValue(0.0),
   m_ObserveIterations(true),
-  m_CostMetricObject(NULL),
+  m_CostMetricObject(ITK_NULLPTR),
   m_UseROIBSpline(0),
   m_SamplingStrategy(AffineRegistrationType::NONE),
   m_InitializeRegistrationByCurrentGenericTransform(true),
@@ -1224,7 +1224,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
       if ( m_UseROIBSpline  )
         {
         ImageMaskSpatialObjectType::Pointer roiMask = ImageMaskSpatialObjectType::New();
-        if( m_MovingBinaryVolume.GetPointer() != NULL )
+        if( m_MovingBinaryVolume.GetPointer() != ITK_NULLPTR )
           {
           ImageMaskSpatialObjectType::Pointer movingImageMask =
           dynamic_cast<ImageMaskSpatialObjectType *>(m_MovingBinaryVolume.GetPointer() );
@@ -1240,7 +1240,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
             resampler->SetOutputParametersFromImage( m_FixedVolume );
             resampler->Update();
             }
-          if( m_FixedBinaryVolume.GetPointer() != NULL )
+          if( m_FixedBinaryVolume.GetPointer() != ITK_NULLPTR )
             {
             typedef itk::AddImageFilter<MaskImageType, MaskImageType> AddFilterType;
             ImageMaskSpatialObjectType::Pointer fixedImageMask =
@@ -1256,7 +1256,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
             roiMask->SetImage(resampler->GetOutput() );
             }
           }
-        else if( m_FixedBinaryVolume.GetPointer() != NULL )
+        else if( m_FixedBinaryVolume.GetPointer() != ITK_NULLPTR )
           {
           ImageMaskSpatialObjectType::Pointer fixedImageMask =
           dynamic_cast<ImageMaskSpatialObjectType *>(m_FixedBinaryVolume.GetPointer() );

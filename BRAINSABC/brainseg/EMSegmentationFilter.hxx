@@ -115,7 +115,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
   windowingFilter->SetOutputMaximum( 1 );
   windowingFilter->Update();
 
-  typename TInputImage::Pointer outputImage = NULL;
+  typename TInputImage::Pointer outputImage = ITK_NULLPTR;
   outputImage = windowingFilter->GetOutput();
   outputImage->Update();
   outputImage->DisconnectPipeline();
@@ -491,10 +491,10 @@ template <class TInputImage, class TProbabilityImage>
 EMSegmentationFilter<TInputImage, TProbabilityImage>
 ::EMSegmentationFilter()
 {
-  m_DirtyLabels = NULL;
-  m_CleanedLabels = NULL;
-  m_ThresholdedLabels = NULL;
-  m_DirtyThresholdedLabels = NULL;
+  m_DirtyLabels = ITK_NULLPTR;
+  m_CleanedLabels = ITK_NULLPTR;
+  m_ThresholdedLabels = ITK_NULLPTR;
+  m_DirtyThresholdedLabels = ITK_NULLPTR;
 
   m_SampleSpacing = 2.0;
 
@@ -534,14 +534,14 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
   m_CorrectedImages.clear();
   m_RawCorrectedImages.clear();
 
-  m_TemplateBrainMask = NULL;
+  m_TemplateBrainMask = ITK_NULLPTR;
   m_OriginalAtlasImages.clear();
   m_WarpedAtlasImages.clear();
 
   m_OutputDebugDir = "";
   // m_PriorLookupTable = IntVectorType(0);
 
-  m_NonAirRegion = 0;
+  m_NonAirRegion = ITK_NULLPTR;
 
   m_AtlasTransformType = "SyN"; // "invalid_TransformationTypeNotSet";
 
@@ -551,7 +551,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
 
   m_DebugLevel = 0;
 
-  m_TemplateGenericTransform = NULL;
+  m_TemplateGenericTransform = ITK_NULLPTR;
 
   m_WarpGrid[0] = 5;
   m_WarpGrid[1] = 5;
@@ -1234,8 +1234,8 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
   KNNPosteriors.resize(numClasses);
   if( this->m_UseKNN )
     {
-    ByteImagePointer thresholdedLabels = NULL;
-    ByteImagePointer dirtyThresholdedLabels = NULL; // It is the label image that is used in ComputeKNNPosteriors,
+    ByteImagePointer thresholdedLabels = ITK_NULLPTR;
+    ByteImagePointer dirtyThresholdedLabels = ITK_NULLPTR; // It is the label image that is used in ComputeKNNPosteriors,
                                                     // since it has all labels (not only foreground region).
     ComputeLabels<TProbabilityImage, ByteImageType, double>(EMPosteriors, priorIsForegroundPriorVector,
                                                             priorLabelCodeVector, nonAirRegion,
@@ -1596,7 +1596,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
 #endif
   for( LOOPITERTYPE i = 0; i < (LOOPITERTYPE)WarpedPriorsList.size(); i++ )
     {
-    typename ByteImageType::Pointer probThreshImage = NULL;
+    typename ByteImageType::Pointer probThreshImage = ITK_NULLPTR;
 
     typedef itk::BinaryThresholdImageFilter<TProbabilityImage, ByteImageType> ProbThresholdType;
     typename ProbThresholdType::Pointer probThresh = ProbThresholdType::New();

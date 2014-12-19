@@ -95,16 +95,16 @@ template <
   class TOutputImage,
   class TFieldValue>
 DemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::DemonsRegistrator() :
-  m_InitialDisplacementField(NULL),
-  m_FixedImage(NULL),
-  m_MovingImage(NULL),
+  m_InitialDisplacementField(ITK_NULLPTR),
+  m_FixedImage(ITK_NULLPTR),
+  m_MovingImage(ITK_NULLPTR),
   m_FixedImagePyramid(FixedImagePyramidType::New() ),
   m_MovingImagePyramid(MovingImagePyramidType::New() ),
   m_Registration(RegistrationType::New() ),
   m_DefaultPixelValue( NumericTraits<typename RealImageType::PixelType>::Zero),
   m_NumberOfLevels(1),
   m_NumberOfIterations(UnsignedIntArray(1) ),
-  m_DisplacementField(NULL),
+  m_DisplacementField(ITK_NULLPTR),
   m_DisplacementBaseName("none"),
   m_WarpedImageName("none"),
   m_CheckerBoardFilename("none"),
@@ -246,7 +246,7 @@ void DemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute()
         m_Registration->RemoveObserver(m_Tag);
         m_Tag = 0;
         }
-      m_Registration = NULL;
+      m_Registration = ITK_NULLPTR;
       }
     catch( itk::ExceptionObject & err )
       {
@@ -283,10 +283,10 @@ void DemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute()
   if( this->m_WarpedImageName != std::string("none") || this->m_CheckerBoardFilename != std::string("none") )
     {
     /*Warp the image with the generated deformation field.*/
-    typename RealImageType::Pointer DeformedMovingImagePtr(0);
+    typename RealImageType::Pointer DeformedMovingImagePtr(ITK_NULLPTR);
 
       {
-      typename RealImageType::Pointer sourceMovingImage = NULL;
+      typename RealImageType::Pointer sourceMovingImage = ITK_NULLPTR;
       if( this->GetUseHistogramMatching() == true )
         {
         sourceMovingImage = m_MovingImage;

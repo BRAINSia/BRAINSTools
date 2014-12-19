@@ -20,13 +20,14 @@
 #define XMLParser_h
 #include <string>
 #include <expat.h>
+#include "itkMacro.h"
 
 class XMLParser
 {
 public:
   XMLParser(const std::string & filename) : m_Filename(filename),
-    m_UserData(0),
-    m_Buffer(0)
+    m_UserData(ITK_NULLPTR),
+    m_Buffer(ITK_NULLPTR)
   {
   }
 

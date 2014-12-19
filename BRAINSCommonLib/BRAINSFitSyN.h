@@ -41,7 +41,7 @@ simpleSynReg( typename FixedImageType::Pointer & infixedImage,
               double samplingPercentage = 1.0,
               std::string whichMetric = "cc",
               const bool synFull = true,
-              typename itk::CompositeTransform<double,3>::Pointer restoreState = NULL )
+              typename itk::CompositeTransform<double,3>::Pointer restoreState = ITK_NULLPTR )
 {
   typename SyNRegistrationHelperType::Pointer regHelper = SyNRegistrationHelperType::New();
     {

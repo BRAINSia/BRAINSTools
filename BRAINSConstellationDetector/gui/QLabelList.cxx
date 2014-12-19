@@ -77,7 +77,7 @@ void QLabelList::createListItemAddButtonSlot()
 
 void QLabelList::editListItemSlot(const QString & label)
 {
-  if( this->currentItem() != NULL )
+  if( this->currentItem() != ITK_NULLPTR )
     {
     QString lastLabel = this->currentItem()->text();
     QString newLabel = QString("%1: ( %2 )").arg( lastLabel.section(':', 0, 0) ).arg(label);
@@ -87,7 +87,7 @@ void QLabelList::editListItemSlot(const QString & label)
 
 void QLabelList::switchListItemSlot()
 {
-  if( this->currentItem() != NULL )
+  if( this->currentItem() != ITK_NULLPTR )
     {
     if( this->currentRow() == this->count() - 1 )
       {
@@ -106,7 +106,7 @@ void QLabelList::switchListItemSlot()
 
 void QLabelList::deleteListItemSlot()
 {
-  if( this->currentItem() != NULL )
+  if( this->currentItem() != ITK_NULLPTR )
     {
     delete this->currentItem();
     if( this->count() > 0 )
@@ -124,10 +124,10 @@ void QLabelList::deleteListItemSlot()
 
 void QLabelList::deleteListSlot()
 {
-  if( this->currentItem() != NULL )
+  if( this->currentItem() != ITK_NULLPTR )
     {
     this->setCurrentItem( this->item(0) );
-    while( this->currentItem() != NULL )
+    while( this->currentItem() != ITK_NULLPTR )
       {
       delete this->currentItem();
       }
@@ -145,7 +145,7 @@ void QLabelList::deleteListItemMouseSlot(QListWidgetItem *)
 
 void QLabelList::cancelHighlight(QListWidgetItem *)
 {
-  if( this->currentItem() != NULL )
+  if( this->currentItem() != ITK_NULLPTR )
     {
     // disable the highlight color
     const QColor color = this->item( this->currentRow() )->background().color();
@@ -160,7 +160,7 @@ void QLabelList::cancelHighlight(QListWidgetItem *)
 
 void QLabelList::sliceChangedSlot()
 {
-  if( this->currentItem() != NULL )
+  if( this->currentItem() != ITK_NULLPTR )
     {
     QString textLabel = this->item( this->currentRow() )->text();
     double  myPos[3];
@@ -175,7 +175,7 @@ void QLabelList::sliceChangedSlot()
 
 void QLabelList::checkVisibilitySlot()
 {
-  if( this->currentItem() != NULL )
+  if( this->currentItem() != ITK_NULLPTR )
     {
     int table[3 * MAX_LABEL_NUM];
 
@@ -191,7 +191,7 @@ void QLabelList::checkVisibilitySlot()
     for( i = 0; i < 3; ++i )
       { // for different viewers
       this->setCurrentRow(0);
-      while( this->item( this->currentRow() ) != NULL )
+      while( this->item( this->currentRow() ) != ITK_NULLPTR )
         {
         textLabel = this->item( this->currentRow() )->text();
         slice = textLabel.section(' ', 2 + i, 2 + i).toDouble();
@@ -214,7 +214,7 @@ void QLabelList::checkVisibilitySlot()
 
 void QLabelList::checkVisibilitySlot(double *tag)
 {
-  if( this->currentItem() != NULL )
+  if( this->currentItem() != ITK_NULLPTR )
     {
     int     table[3 * MAX_LABEL_NUM];
     int     currRow = this->currentRow();
@@ -231,7 +231,7 @@ void QLabelList::checkVisibilitySlot(double *tag)
     for( i = 0; i < 3; ++i )
       { // for different viewers
       this->setCurrentRow(0);
-      while( this->item( this->currentRow() ) != NULL )
+      while( this->item( this->currentRow() ) != ITK_NULLPTR )
         {
         textLabel = this->item( this->currentRow() )->text();
         slice = textLabel.section(' ', 2 + i, 2 + i).toDouble();
@@ -259,7 +259,7 @@ void QLabelList::checkVisibilitySlot(QListWidgetItem *)
 
 void QLabelList::ackWheelChanged()
 {
-  if( this->currentItem() != NULL )
+  if( this->currentItem() != ITK_NULLPTR )
     {
     double  labelPos[3 * MAX_LABEL_NUM];
     int     currRow = this->currentRow();
@@ -267,7 +267,7 @@ void QLabelList::ackWheelChanged()
     QString textLabel;
 
     this->setCurrentRow(0);
-    while( this->item( this->currentRow() ) != NULL )
+    while( this->item( this->currentRow() ) != ITK_NULLPTR )
       {
       textLabel = this->item( this->currentRow() )->text();
       currPos[0] = textLabel.section(' ', 2, 2).toDouble();
@@ -294,7 +294,7 @@ void QLabelList::readLandmarks()
 
   this->setCurrentRow(0);
   m_landmarks.clear();
-  while( this->item( this->currentRow() ) != NULL )
+  while( this->item( this->currentRow() ) != ITK_NULLPTR )
     {
     std::vector<double> labelPos;
     QString             textLabel = this->item( this->currentRow() )->text();

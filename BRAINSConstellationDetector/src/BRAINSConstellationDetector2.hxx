@@ -54,14 +54,14 @@ BRAINSConstellationDetector2<TInputImage, TOutputImage>
   this->m_RescaleIntensitiesOutputRange.push_back(4000);
   this->m_BackgroundFillValueString = "0";
   this->m_InterpolationMode = "Linear";
-  this->m_OriginalInputImage = NULL;
+  this->m_OriginalInputImage = ITK_NULLPTR;
 
   // Outputs
   this->m_Transform = "";
-  this->m_OrigToACPCVersorTransform = NULL;
-  this->m_OutputImage = NULL;
-  this->m_OutputResampledImage = NULL;
-  this->m_OutputUntransformedClippedVolume = NULL;
+  this->m_OrigToACPCVersorTransform = ITK_NULLPTR;
+  this->m_OutputImage = ITK_NULLPTR;
+  this->m_OutputResampledImage = ITK_NULLPTR;
+  this->m_OutputUntransformedClippedVolume = ITK_NULLPTR;
 
   /** Advanced parameters */
   /** Manual Override */

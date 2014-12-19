@@ -596,7 +596,7 @@ int main(int argc, char * *argv)
   muLogMacro(<< "Registering images using affine transform...\n");
 
   typedef itk::Transform<double, 3, 3> GenericTransformType;
-  GenericTransformType::Pointer atlasToSubjectPreSegmentationTransform = NULL;
+  GenericTransformType::Pointer atlasToSubjectPreSegmentationTransform = ITK_NULLPTR;
 
   AtlasRegType::MapOfFloatImageVectors atlasOriginalImageList;
   ByteImagePointer               atlasBrainMask;
@@ -688,7 +688,7 @@ int main(int argc, char * *argv)
 
   typedef itk::ImageFileReader<FloatImageType> LocalReaderType;
   typedef LocalReaderType::Pointer             LocalReaderPointer;
-  FloatImageType::Pointer KeyImageFirstRead=NULL;
+  FloatImageType::Pointer KeyImageFirstRead=ITK_NULLPTR;
 
   AtlasRegType::MapOfStringVectors intraSubjectTransformFileNames;
   unsigned int i = 0;
@@ -719,7 +719,7 @@ int main(int argc, char * *argv)
       muLogMacro( << "Standardizing Intensities: ...\n" );
       FloatImagePointer curImage =
         StandardizeMaskIntensity<FloatImageType, ByteImageType>(typewiseEqualizedToFirstImage,
-                                                                NULL,
+                                                                ITK_NULLPTR,
                                                                 0.0005, 1.0 - 0.0005,
                                                                 1, 0.95 * MAX_IMAGE_OUTPUT_VALUE,
                                                                 0, MAX_IMAGE_OUTPUT_VALUE);

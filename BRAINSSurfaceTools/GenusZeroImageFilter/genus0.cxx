@@ -1,6 +1,8 @@
 #include "genus0.h"
 #include <iostream>
 
+#include "itkMacro.h" //Needed for ITK_NULLPTR
+
 static int    verbose, invconnectivity, connectivity, autocrop[3][2];
 static int    img_horiz, img_vert, img_depth; /*,paddeddims[3];*/
 static size_t paddeddims[3];                  /* CHANGE MN */
@@ -9,9 +11,9 @@ static int    elist18[27][19], elist[27][7], elist26[27][27];
 static int *  status, *cm, cm_size, que_size, *que, que_len, que_pos;
 static int    maxlevels, comp_count = 10, cut_loops;
 static int    calloced = 0, max_calloced = 32;
-static int *  persist = NULL;
+static int *  persist = ITK_NULLPTR;
 
-static void * *       calloc_list = NULL;
+static void * *       calloc_list = ITK_NULLPTR;
 static unsigned char *zpic;
 static float          voxelsize[3], *fzpic, fzpicmax;
 
@@ -30,7 +32,7 @@ static void * basic_calloc(size_t nelem, size_t elsize)
 
 static void basic_free(void *ptr)
 {
-  if( ptr != NULL )
+  if( ptr != ITK_NULLPTR )
     {
     free(ptr);
     }
@@ -61,7 +63,7 @@ static void Gfree_all(int keep_persist)
 {
   int i;
 
-  if( calloc_list == NULL )
+  if( calloc_list == ITK_NULLPTR )
     {
     return;                      /* already done freeing all */
     }
@@ -73,23 +75,23 @@ static void Gfree_all(int keep_persist)
       i--; /* don't advance i, since we compressed the list */
       }
     }
-  if( calloc_list != NULL )
+  if( calloc_list != ITK_NULLPTR )
     {
     basic_free(calloc_list);
     }
-  calloc_list = NULL;
-  if( persist != NULL )
+  calloc_list = ITK_NULLPTR;
+  if( persist != ITK_NULLPTR )
     {
     basic_free(persist);
     }
-  persist = NULL;
+  persist = ITK_NULLPTR;
 }
 
 static void error_msg(const char *msg, int line)
 {
   char line_msg[100];
 
-  if( calloc_list == NULL )
+  if( calloc_list == ITK_NULLPTR )
     {
     return;                      /* must have been an error already */
     }
@@ -108,11 +110,11 @@ static void * Gcalloc(size_t nelem, size_t elsize, int make_persist)
     {
     cl = calloc_list;
     calloc_list = (void * *)basic_calloc( max_calloced * 2, sizeof( void * ) );
-    if( calloc_list == NULL )
+    if( calloc_list == ITK_NULLPTR )
       {
       calloc_list = cl;
       error_msg("Memory error.\n", __LINE__);
-      return NULL;
+      return ITK_NULLPTR;
       }
     for( j = 0; j < calloced; j++ )
       {
@@ -122,11 +124,11 @@ static void * Gcalloc(size_t nelem, size_t elsize, int make_persist)
 
     p = persist;
     persist = (int *)basic_calloc( max_calloced * 2, sizeof( int ) );
-    if( persist == NULL )
+    if( persist == ITK_NULLPTR )
       {
       persist = p;
       error_msg("Memory error.\n", __LINE__);
-      return NULL;
+      return ITK_NULLPTR;
       }
     for( j = 0; j < calloced; j++ )
       {
@@ -137,10 +139,10 @@ static void * Gcalloc(size_t nelem, size_t elsize, int make_persist)
     }
 
   calloc_list[calloced] = basic_calloc(nelem, elsize);
-  if( calloc_list[calloced] == NULL )
+  if( calloc_list[calloced] == ITK_NULLPTR )
     {
     error_msg("Memory error.\n", __LINE__);
-    return NULL;
+    return ITK_NULLPTR;
     }
   else
     {
@@ -440,7 +442,7 @@ static int dist_squared(
     }
 
   g_stride = (size_t *)Gcalloc(rank, sizeof( size_t ), 0);
-  if( g_stride == NULL )
+  if( g_stride == ITK_NULLPTR )
     {
     error_msg("Memory error.\n", __LINE__); return 1;
     }
@@ -466,25 +468,25 @@ static int dist_squared(
     }
 
   g_tmp = (float *)Gcalloc(max_axis_len, sizeof( float ), 0);
-  if( g_tmp == NULL )
+  if( g_tmp == ITK_NULLPTR )
     {
     error_msg("Memory error.\n", __LINE__); return 1;
     }
 
   g_tmp_row = (float *)Gcalloc(max_axis_len, sizeof( float ), 0);
-  if( g_tmp_row == NULL )
+  if( g_tmp_row == ITK_NULLPTR )
     {
     error_msg("Memory error.\n", __LINE__); return 1;
     }
 
   g_j = (float * *)Gcalloc(max_axis_len, sizeof( float * ), 0);
-  if( g_j == NULL )
+  if( g_j == ITK_NULLPTR )
     {
     error_msg("Memory error.\n", __LINE__); return 1;
     }
 
   g_x = (float *)Gcalloc(max_axis_len, sizeof( float ), 0);
-  if( g_x == NULL )
+  if( g_x == ITK_NULLPTR )
     {
     error_msg("Memory error.\n", __LINE__); return 1;
     }
@@ -523,28 +525,28 @@ static int dist_squared(
     g_deltax = deltax;
 
     g_recip = (float * *)Gcalloc(rank - 1, sizeof( float * ), 0);
-    if( g_recip == NULL )
+    if( g_recip == ITK_NULLPTR )
       {
       error_msg("Memory error.\n", __LINE__); return 1;
       }
     g_square = (float * *)Gcalloc(rank - 1, sizeof( float * ), 0);
-    if( g_square == NULL )
+    if( g_square == ITK_NULLPTR )
       {
       error_msg("Memory error.\n", __LINE__); return 1;
       }
     for( i = 0; i < rank - 1; i++ )
       {
-      g_recip[i] = g_square[i] = NULL;
+      g_recip[i] = g_square[i] = ITK_NULLPTR;
       }
     for( i = 0; i < rank - 1; i++ )
       {
       g_recip[i] = (float *)Gcalloc(axis_len[i] + 1, sizeof( float ), 0);
-      if( g_recip[i] == NULL )
+      if( g_recip[i] == ITK_NULLPTR )
         {
         error_msg("Memory error.\n", __LINE__); return 1;
         }
       g_square[i] = (float *)Gcalloc(axis_len[i] + 1, sizeof( float ), 0);
-      if( g_square[i] == NULL )
+      if( g_square[i] == ITK_NULLPTR )
         {
         error_msg("Memory error.\n", __LINE__); return 1;
         }
@@ -727,7 +729,7 @@ static int get_cc(unsigned char *_zpic, int *_que, int *_status, size_t *dims, i
       }
     }
   g_counts = (int *)Gcalloc(groups + 1, sizeof( int ), 0);
-  if( g_counts == NULL )
+  if( g_counts == ITK_NULLPTR )
     {
     error_msg("Memory error.\n", __LINE__); return 1;
     }
@@ -814,7 +816,7 @@ static int set_up(genus0parameters *g0)
     print_msg("Setting up...\n");
     }
 
-  if( ( input = g0->input ) == NULL )
+  if( ( input = g0->input ) == ITK_NULLPTR )
     {
     error_msg("No input volume.\n", __LINE__); return 1;
     }
@@ -825,13 +827,13 @@ static int set_up(genus0parameters *g0)
     }
 
   calloc_list = (void * *)basic_calloc( max_calloced, sizeof( void * ) );
-  if( calloc_list == NULL )
+  if( calloc_list == ITK_NULLPTR )
     {
     error_msg("Memory error.\n", __LINE__); return 1;
     }
 
   persist = (int *)basic_calloc( max_calloced, sizeof( int ) );
-  if( persist == NULL )
+  if( persist == ITK_NULLPTR )
     {
     error_msg("Memory error.\n", __LINE__); return 1;
     }
@@ -914,7 +916,7 @@ static int set_up(genus0parameters *g0)
   totlen = img_horiz * img_vert * img_depth;
   paddeddims[0] = img_horiz; paddeddims[1] = img_vert; paddeddims[2] = img_depth;
 
-  if( ( zpic = (unsigned char *)Gcalloc(totlen, sizeof( unsigned char ), 0) ) == NULL )
+  if( ( zpic = (unsigned char *)Gcalloc(totlen, sizeof( unsigned char ), 0) ) == ITK_NULLPTR )
     {
     error_msg("Memory error.\n", __LINE__); return 1;
     }
@@ -931,19 +933,19 @@ static int set_up(genus0parameters *g0)
       }
     }
 
-  que = NULL;
-  status = NULL;
+  que = ITK_NULLPTR;
+  status = ITK_NULLPTR;
 
   if( g0->connected_component )
     {
     que_size = totlen;
-    if( ( que = (int *)Gcalloc(que_size, sizeof( int ), 0) ) == NULL )
+    if( ( que = (int *)Gcalloc(que_size, sizeof( int ), 0) ) == ITK_NULLPTR )
       {
       error_msg("Memory error.\n", __LINE__); return 1;
       }
 
     /* initialize voxel status */
-    if( ( status = (int *)Gcalloc(totlen, sizeof( int ), 0) ) == NULL )
+    if( ( status = (int *)Gcalloc(totlen, sizeof( int ), 0) ) == ITK_NULLPTR )
       {
       error_msg("Memory error.\n", __LINE__); return 1;
       }
@@ -984,7 +986,7 @@ static int set_up(genus0parameters *g0)
     paddeddims[0] = img_horiz;  paddeddims[1] = img_vert; paddeddims[2] = img_depth;
     }
 
-  if( ( m = g0->ijk2ras ) == NULL )
+  if( ( m = g0->ijk2ras ) == ITK_NULLPTR )
     {
     voxelsize[0] = voxelsize[1] = voxelsize[2] = 1.0;
     }
@@ -1078,15 +1080,15 @@ static int set_up(genus0parameters *g0)
   if( !( g0->any_genus ) )
     {
     que_size = totlen;
-    if( que == NULL )  /* might have already calloced it above ... */
+    if( que == ITK_NULLPTR )  /* might have already calloced it above ... */
       {
-      if( ( que = (int *)Gcalloc(que_size, sizeof( int ), 0) ) == NULL )
+      if( ( que = (int *)Gcalloc(que_size, sizeof( int ), 0) ) == ITK_NULLPTR )
         {
         error_msg("Memory error.\n", __LINE__); return 1;
         }
       }
 
-    if( ( fzpic = (float *)Gcalloc(totlen, sizeof( float ), 0) ) == NULL )
+    if( ( fzpic = (float *)Gcalloc(totlen, sizeof( float ), 0) ) == ITK_NULLPTR )
       {
       error_msg("Memory error.\n", __LINE__); return 1;
       }
@@ -1116,15 +1118,15 @@ static int set_up(genus0parameters *g0)
     /* Formula for cm_size.  certain to be <= totlen + 12 */
     cm_size = totlen + 12;
     // std::cout << "CM Size " << cm_size << std::endl;
-    if( ( cm = (int *)Gcalloc(cm_size, sizeof( int ), 0) ) == NULL )
+    if( ( cm = (int *)Gcalloc(cm_size, sizeof( int ), 0) ) == ITK_NULLPTR )
       {
       error_msg("Memory error.\n", __LINE__); return 1;
       }
 
     /* initialize voxel status */
-    if( status == NULL )  /* might have already calloced it above ... */
+    if( status == ITK_NULLPTR )  /* might have already calloced it above ... */
       {
-      if( ( status = (int *)Gcalloc(totlen, sizeof( int ), 0) ) == NULL )
+      if( ( status = (int *)Gcalloc(totlen, sizeof( int ), 0) ) == ITK_NULLPTR )
         {
         error_msg("Memory error.\n", __LINE__); return 1;
         }
@@ -1188,7 +1190,7 @@ static int set_up(genus0parameters *g0)
     } /* if (!(g0->any_genus)) */
   else
     {
-    if( que != NULL )
+    if( que != ITK_NULLPTR )
       {
       Gfree(que);              /* don't need the que if not doing topology
                                  correction */
@@ -1372,15 +1374,15 @@ static int test6(int qqp, int *nc)
 
 static int cmtostat(void)
 {
-  int  j, i, *cmremap = NULL, *ccount = NULL, totlen;
+  int  j, i, *cmremap = ITK_NULLPTR, *ccount = ITK_NULLPTR, totlen;
   char msg[200];
 
   // std::cout << "COUNT SIZE " << comp_count << std::endl;
-  if( ( cmremap = (int *)Gcalloc(comp_count + 1, sizeof( int ), 0) ) == NULL )
+  if( ( cmremap = (int *)Gcalloc(comp_count + 1, sizeof( int ), 0) ) == ITK_NULLPTR )
     {
     error_msg("Memory error.\n", __LINE__); return 1;
     }
-  if( ( ccount = (int *)Gcalloc(comp_count + 1, sizeof( int ), 0) ) == NULL )
+  if( ( ccount = (int *)Gcalloc(comp_count + 1, sizeof( int ), 0) ) == ITK_NULLPTR )
     {
     error_msg("Memory error.\n", __LINE__); return 1;
     }
@@ -1555,8 +1557,8 @@ static int GetSurf(unsigned char *J, unsigned char val, int *dims, int _connecti
 
 #include "tricases.h"
 
-  *Tris = NULL;
-  *Verts = NULL;
+  *Tris = ITK_NULLPTR;
+  *Verts = ITK_NULLPTR;
   *Tri_count = *Vert_count = 0;
   for( i = 0; i < 256; i++ )
     {
@@ -1610,13 +1612,13 @@ static int GetSurf(unsigned char *J, unsigned char val, int *dims, int _connecti
   cellplanem[0] = 0; cellplanem[1] = cellplane; cellplanem[2] = ( cellplane << 1 );
 
   v_idx = (int *)Gcalloc(cellplane * 3 * 2, sizeof( int ), 0);
-  if( v_idx == NULL )
+  if( v_idx == ITK_NULLPTR )
     {
     error_msg("Memory error.\n", __LINE__); return 1;
     }
 
   _status = (unsigned char *)Gcalloc(cells, sizeof( unsigned char ), 0);
-  if( _status == NULL )
+  if( _status == ITK_NULLPTR )
     {
     error_msg("Memory error.\n", __LINE__); return 1;
     }
@@ -1714,13 +1716,13 @@ static int GetSurf(unsigned char *J, unsigned char val, int *dims, int _connecti
 
   /* allocate memory for tris and verts */
   tris = (int *)Gcalloc(tri_count * 3, sizeof( int ), g0->return_surface);
-  if( tris == NULL )
+  if( tris == ITK_NULLPTR )
     {
     error_msg("Memory error.\n", __LINE__); return 1;
     }
 
   verts = (float *)Gcalloc(vert_count * 3, sizeof( float ), g0->return_surface);
-  if( verts == NULL )
+  if( verts == ITK_NULLPTR )
     {
     error_msg("Memory error.\n", __LINE__); return 1;
     }
@@ -1807,11 +1809,11 @@ static int GetSurf(unsigned char *J, unsigned char val, int *dims, int _connecti
       }
     } /* end for k */
 
-  if( _status != NULL )
+  if( _status != ITK_NULLPTR )
     {
     Gfree(_status);
     }
-  if( v_idx != NULL )
+  if( v_idx != ITK_NULLPTR )
     {
     Gfree(v_idx);
     }
@@ -1836,7 +1838,7 @@ static int big_component(int *Tris, float *Verts, int *Vert_count, int *Tri_coun
     print_msg("Extracting component with largest number of vertices...\n");
     }
 
-  if( ( v_count = (int *)Gcalloc(vert_count, sizeof( int ), 0) ) == NULL )
+  if( ( v_count = (int *)Gcalloc(vert_count, sizeof( int ), 0) ) == ITK_NULLPTR )
     {
     error_msg("Memory error.\n", __LINE__); return 1;
     }
@@ -1849,7 +1851,7 @@ static int big_component(int *Tris, float *Verts, int *Vert_count, int *Tri_coun
     v_count[*( tp++ )]++;
     }
 
-  if( ( v_ran = (int *)Gcalloc(vert_count + 1, sizeof( int ), 0) ) == NULL )
+  if( ( v_ran = (int *)Gcalloc(vert_count + 1, sizeof( int ), 0) ) == ITK_NULLPTR )
     {
     error_msg("Memory error.\n", __LINE__); return 1;
     }
@@ -1861,7 +1863,7 @@ static int big_component(int *Tris, float *Verts, int *Vert_count, int *Tri_coun
     v_count[i] = 0;
     }
 
-  if( ( v_idx = (int *)Gcalloc(v_ran[vert_count], sizeof( int ), 0) ) == NULL )
+  if( ( v_idx = (int *)Gcalloc(v_ran[vert_count], sizeof( int ), 0) ) == ITK_NULLPTR )
     {
     error_msg("Memory error.\n", __LINE__); return 1;
     }
@@ -1884,7 +1886,7 @@ static int big_component(int *Tris, float *Verts, int *Vert_count, int *Tri_coun
     component[i] = 0;
     }
 
-  if( ( _que = (int *)Gcalloc(vert_count, sizeof( int ), 0) ) == NULL )
+  if( ( _que = (int *)Gcalloc(vert_count, sizeof( int ), 0) ) == ITK_NULLPTR )
     {
     error_msg("Memory error.\n", __LINE__); return 1;
     }
@@ -1923,7 +1925,7 @@ static int big_component(int *Tris, float *Verts, int *Vert_count, int *Tri_coun
 
   if( _comp_count > 1 )
     {
-    if( ( c_count = (int *)Gcalloc(1 + _comp_count, sizeof( int ), 0) ) == NULL )
+    if( ( c_count = (int *)Gcalloc(1 + _comp_count, sizeof( int ), 0) ) == ITK_NULLPTR )
       {
       error_msg("Memory error.\n", __LINE__); return 1;
       }
@@ -2079,9 +2081,9 @@ static int save_image(genus0parameters *g0)
   if( g0->return_adjusted_label_map )  /* they want a new label map back */
     {
     origlen = ( g0->dims[0] ) * ( g0->dims[1] ) * ( g0->dims[2] );
-    if( output == NULL )  /* they didn't allocate.  So we need to */
+    if( output == ITK_NULLPTR )  /* they didn't allocate.  So we need to */
       {
-      if( ( output = (unsigned short *)Gcalloc(origlen, sizeof( unsigned short ), 1) ) == NULL )
+      if( ( output = (unsigned short *)Gcalloc(origlen, sizeof( unsigned short ), 1) ) == ITK_NULLPTR )
         {
         error_msg("Memory error.\n", __LINE__); return 1;
         }
@@ -2165,7 +2167,7 @@ static int save_image(genus0parameters *g0)
     }
 
   /* multiply verts by ijk2ras matrix */
-  if( g0->ijk2ras != NULL )
+  if( g0->ijk2ras != ITK_NULLPTR )
     {
     m = g0->ijk2ras;
     for( h = 0; h < g0->vert_count; h++ )
@@ -2187,8 +2189,8 @@ static int save_image(genus0parameters *g0)
   if( !( g0->return_surface ) )  /* don't return surface if they didn't want it
                                    */
     {
-    Gfree(g0->vertices); g0->vertices = NULL;
-    Gfree(g0->triangles); g0->triangles = NULL;
+    Gfree(g0->vertices); g0->vertices = ITK_NULLPTR;
+    Gfree(g0->triangles); g0->triangles = ITK_NULLPTR;
     }
 
   if( verbose )
@@ -2201,7 +2203,7 @@ static int save_image(genus0parameters *g0)
 
 extern void genus0init(genus0parameters *g0)
 {
-  g0->input = NULL;
+  g0->input = ITK_NULLPTR;
   g0->return_adjusted_label_map = 1;
   g0->return_surface = 1;
   ( g0->dims )[0] = ( g0->dims )[1] = ( g0->dims )[2] = 0;
@@ -2214,15 +2216,15 @@ extern void genus0init(genus0parameters *g0)
   g0->any_genus = 0;
   g0->biggest_component = 1;
   g0->connected_component = 1;
-  g0->ijk2ras = NULL;
+  g0->ijk2ras = ITK_NULLPTR;
   ( g0->extraijkscale )[0] = ( g0->extraijkscale )[1] = ( g0->extraijkscale )[2] = 1.0;
   g0->verbose = 0;
 
-  g0->output = NULL;
+  g0->output = ITK_NULLPTR;
   g0->vert_count = 0;
-  g0->vertices = NULL;
+  g0->vertices = ITK_NULLPTR;
   g0->tri_count = 0;
-  g0->triangles = NULL;
+  g0->triangles = ITK_NULLPTR;
   g0->calloced_output = 0; /* private */
 }
 
@@ -2276,22 +2278,22 @@ extern int genus0(genus0parameters *g0)
 
 extern void genus0destruct(genus0parameters *g0)
 {
-  if( g0->vertices != NULL )
+  if( g0->vertices != ITK_NULLPTR )
     {
     basic_free(g0->vertices);
-    g0->vertices = NULL;
+    g0->vertices = ITK_NULLPTR;
     }
-  if( g0->triangles != NULL )
+  if( g0->triangles != ITK_NULLPTR )
     {
     basic_free(g0->triangles);
-    g0->triangles = NULL;
+    g0->triangles = ITK_NULLPTR;
     }
   if( g0->calloced_output )
     {
-    if( g0->output != NULL )
+    if( g0->output != ITK_NULLPTR )
       {
       basic_free(g0->output);
-      g0->output = NULL;
+      g0->output = ITK_NULLPTR;
       g0->calloced_output = 0;
       }
     }

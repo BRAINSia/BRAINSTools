@@ -51,6 +51,9 @@
 #include "RearrangeSurfaceLabelsCLP.h"
 #include <BRAINSCommonLib.h>
 
+#include "itkMacro.h" //Needed for ITK_NULLPTR
+
+
 int main( int argc, char * argv[] )
 {
   PARSE_ARGS;
@@ -67,7 +70,7 @@ int main( int argc, char * argv[] )
   // check the labelArray
   vtkDataArray *labelArray = surface_in->GetPointData()->GetScalars();
   std::string   arrayName = labelArray->GetName();
-  if( labelArray == NULL || arrayName != "LabelValue" )
+  if( labelArray == ITK_NULLPTR || arrayName != "LabelValue" )
     {
     std::cerr << "There is no label array exist on the surface. ";
     std::cerr << "Quit." << std::endl;

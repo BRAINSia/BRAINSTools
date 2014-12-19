@@ -266,13 +266,13 @@ AtlasDefinition::InitFromXML(const std::string & XMLFilename)
   std::streamsize fSize =
     itksys::SystemTools::FileLength(XMLFilename.c_str() );
 
-  XML_Parser parser = XML_ParserCreate(0);
+  XML_Parser parser = XML_ParserCreate(ITK_NULLPTR);
   XML_SetUserData( parser, static_cast<void *>( this ) );
   XML_SetElementHandler(parser, AtlasXMLParser::XMLstart, AtlasXMLParser::XMLend);
   XML_SetCharacterDataHandler(parser, AtlasXMLParser::XMLcharhandler);
 
   char *filebuf = new char[fSize];
-  if( filebuf == NULL )
+  if( filebuf == ITK_NULLPTR )
     {
     throw;
     }

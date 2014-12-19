@@ -117,7 +117,7 @@ ComputeRigidTransformFromGeneric(const itk::Transform<double, 3, 3>::ConstPointe
           << " not equal to any recognized type VersorRigid3DTransform OR "
           << " ScaleVersor3DTransform OR ScaleSkewVersor3DTransform OR AffineTransform"
           << std::endl;
-        return NULL;
+        return ITK_NULLPTR;
         }
       }
     catch( itk::ExceptionObject & excp )
@@ -127,7 +127,7 @@ ComputeRigidTransformFromGeneric(const itk::Transform<double, 3, 3>::ConstPointe
         << "Error while converting the genericTransformToWrite to Rigid"
         << std::endl;
       std::cerr << excp << std::endl;
-      return NULL;
+      return ITK_NULLPTR;
       }
     }
   return versorRigid;
@@ -251,7 +251,7 @@ int WriteStrippedRigidTransformToDisk(const itk::Transform<double, 3, 3>::ConstP
 
 itk::Transform<double, 3, 3>::Pointer ReadTransformFromDisk(const std::string & initialTransform)
 {
-  itk::Transform<double, 3, 3>::Pointer genericTransform = NULL;
+  itk::Transform<double, 3, 3>::Pointer genericTransform = ITK_NULLPTR;
 
   typedef itk::ThinPlateR2LogRSplineKernelTransform<double, 3> ThinPlateSpline3DTransformType;
   typedef itk::ScaleVersor3DTransform<double>                  ScaleVersor3DTransformType;
@@ -459,7 +459,7 @@ void WriteTransformToDisk( itk::Transform<TScalarType, 3, 3> const *const MyTran
   typedef typename DisplacementFieldTransformType::DisplacementFieldType    DisplacementFieldType;
   typedef itk::ImageFileWriter<DisplacementFieldType>                       DisplacementFieldWriter;
   const DisplacementFieldTransformType *dispXfrm = dynamic_cast<const DisplacementFieldTransformType *>(MyTransform );
-  if( dispXfrm != 0 ) // if it's a displacement field transform
+  if( dispXfrm != ITK_NULLPTR ) // if it's a displacement field transform
     {
     typename DisplacementFieldType::ConstPointer dispField = dispXfrm->GetDisplacementField();
     typename DisplacementFieldWriter::Pointer dispWriter = DisplacementFieldWriter::New();

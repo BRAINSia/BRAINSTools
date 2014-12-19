@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
 
   ThresholdRegionFinderType::Pointer thresholdRegionFinder = ThresholdRegionFinderType::New();
 
-  MaskImageType::Pointer RegionMaskVolume = NULL;
+  MaskImageType::Pointer RegionMaskVolume = ITK_NULLPTR;
   if( inputMaskVolume != "" )
     {
     RegionMaskVolume = itkUtil::ReadImage<MaskImageType>(inputMaskVolume);

@@ -210,7 +210,7 @@ public:
    *  a collection of 2D slices arranged in a single
    *  mosaic slice.
    */
-  virtual void LoadDicomDirectory()
+  virtual void LoadDicomDirectory() ITK_OVERRIDE
     {
       this->DWIConverter::LoadDicomDirectory();
       std::string ImageType;
@@ -273,7 +273,7 @@ public:
         }
     }
   /** find the bvalues and gradient vectors */
-  void ExtractDWIData()
+  void ExtractDWIData() ITK_OVERRIDE
     {
       for( unsigned int k = 0; k < this->m_NSlice; k += this->m_Stride )
         {
@@ -685,7 +685,7 @@ protected:
         }
       return vm;
     }
-  virtual void AddFlagsToDictionary()
+  virtual void AddFlagsToDictionary() ITK_OVERRIDE
     {
       // relevant Siemens private tags
       DcmDictEntry *SiemensMosiacParameters = new DcmDictEntry(0x0051, 0x100b, DcmVR(EVR_IS),

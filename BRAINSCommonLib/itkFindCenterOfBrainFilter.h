@@ -116,11 +116,11 @@ public:
 protected:
   FindCenterOfBrainFilter();
   ~FindCenterOfBrainFilter();
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
-  void AllocateOutputs();
+  void AllocateOutputs() ITK_OVERRIDE;
 
-  virtual void GenerateData();
+  virtual void GenerateData() ITK_OVERRIDE;
 
 private:
   bool         m_Maximize;

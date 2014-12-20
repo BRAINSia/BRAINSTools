@@ -31,7 +31,7 @@ public:
   typedef ElementParser SuperClass;
   BRAINSCutConfiguration();
 
-  virtual int PrintSelf(std::ostream & os, int indent) const
+  virtual int PrintSelf(std::ostream & os, int indent) const ITK_OVERRIDE
   {
     indent += SuperClass::PrintSelf(os, indent);
     return indent + 2;

@@ -31,7 +31,7 @@ public:
     {
     }
   virtual ~GEDWIConverter() {}
-  virtual void LoadDicomDirectory()
+  virtual void LoadDicomDirectory() ITK_OVERRIDE
     {
       this->DWIConverter::LoadDicomDirectory();
       this->m_MeasurementFrame = this->m_LPSDirCos;
@@ -40,7 +40,7 @@ public:
       this->m_NVolume = this->m_NSlice / this->m_SlicesPerVolume;
     }
 
-  void ExtractDWIData()
+  void ExtractDWIData() ITK_OVERRIDE
     {
       std::string ModelName;
       // OK, so there is an accomdation made on the basis of one site
@@ -157,7 +157,7 @@ public:
         }
     }
 protected:
-  virtual void AddFlagsToDictionary()
+  virtual void AddFlagsToDictionary() ITK_OVERRIDE
     {
       // these have to be dynamically allocated because otherwise there's
       // a malloc error after main exits.

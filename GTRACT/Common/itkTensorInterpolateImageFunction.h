@@ -88,7 +88,7 @@ public:
 
   /** CoordRep typedef support. */
   typedef TCoordRep CoordRepType;
-  virtual OutputType Evaluate( const PointType & point ) const
+  virtual OutputType Evaluate( const PointType & point ) const ITK_OVERRIDE
   {
     ContinuousIndexType index;
 
@@ -106,7 +106,7 @@ public:
    *
    * ImageFunction::IsInsideBuffer() can be used to check bounds before
    * calling the method. */
-  virtual OutputType EvaluateAtContinuousIndex(const ContinuousIndexType & index ) const = 0;
+  virtual OutputType EvaluateAtContinuousIndex(const ContinuousIndexType & index ) const ITK_OVERRIDE = 0;
 
   /** Interpolate the image at an index position.
    * Simply returns the image value at the
@@ -115,7 +115,7 @@ public:
    *
    * ImageFunction::IsInsideBuffer() can be used to check bounds before
    * calling the method. */
-  virtual OutputType EvaluateAtIndex( const IndexType & index ) const
+  virtual OutputType EvaluateAtIndex( const IndexType & index ) const ITK_OVERRIDE
   {
     OutputType output;
     PixelType  input = this->GetInputImage()->GetPixel( index );
@@ -136,7 +136,7 @@ protected:
   {
   }
 
-  void PrintSelf(std::ostream & os, Indent indent) const
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE
   {
     Superclass::PrintSelf( os, indent );
   }

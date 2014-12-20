@@ -38,6 +38,7 @@
 #include <vector>
 
 #include "vtkVersion.h"
+#include "itkMacro.h" //Needed for ITK_OVERRIDE
 
 #if (VTK_MAJOR_VERSION >= 6)
 #define VTK_FILTERING_EXPORT /* */
@@ -52,7 +53,7 @@ public:
 
   /* Description:
    * Clear out the memory associated with both the box and grid */
-  void Initialize();
+  void Initialize() ITK_OVERRIDE;
 
   /* Description:
    * Get the dimensions of the bounding box and the talairach grid */
@@ -119,7 +120,7 @@ public:
   /* Description:
    * Write out the appropriate data when the talairachGrid object is added to
    * an IO stream */
-  void PrintSelf(ostream & os, vtkIndent indent);
+  void PrintSelf(ostream & os, vtkIndent indent) ITK_OVERRIDE;
 
 protected:
 

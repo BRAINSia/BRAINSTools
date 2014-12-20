@@ -81,9 +81,9 @@ public:
    * FIXME: What to do if the point is far from the Mesh ?
    *
    */
-  virtual OutputType Evaluate( const PointType& point ) const;
+  virtual OutputType Evaluate( const PointType& point ) const ITK_OVERRIDE;
 
-  virtual void EvaluateDerivative( const PointType& point, DerivativeType & derivative ) const;
+  virtual void EvaluateDerivative( const PointType& point, DerivativeType & derivative ) const ITK_OVERRIDE;
 
   static void GetDerivativeFromPixelsAndBasis(PixelType pixelValue1, PixelType pixelValue2, PixelType pixelValue3,
                                               const VectorType & u12, const VectorType & u32,
@@ -127,7 +127,7 @@ protected:
   LinearInterpolateMeshFunction();
   ~LinearInterpolateMeshFunction();
 
-  void PrintSelf(std::ostream& os, Indent indent) const;
+  void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE;
 
   virtual bool ComputeWeights( const PointType & point, const InstanceIdentifierVectorType & pointIds ) const;
 

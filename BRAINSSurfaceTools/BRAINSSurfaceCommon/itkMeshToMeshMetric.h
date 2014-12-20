@@ -141,7 +141,7 @@ public:
   itkGetConstObjectMacro( Interpolator, InterpolatorType );
 
   /** Return the number of parameters required by the Transform */
-  unsigned int GetNumberOfParameters(void) const
+  unsigned int GetNumberOfParameters(void) const ITK_OVERRIDE
   {
     return m_Transform->GetNumberOfParameters();
   }
@@ -167,7 +167,7 @@ protected:
   virtual ~MeshToMeshMetric()
   {
   };
-  void PrintSelf(std::ostream& os, Indent indent) const;
+  void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE;
 
   FixedMeshConstPointer  m_FixedMesh;
   MovingMeshConstPointer m_MovingMesh;

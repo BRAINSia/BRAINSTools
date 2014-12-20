@@ -249,7 +249,7 @@ protected:
   {
   }
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** Method invoked by the pipeline in order to trigger the computation of
     * the registration. */

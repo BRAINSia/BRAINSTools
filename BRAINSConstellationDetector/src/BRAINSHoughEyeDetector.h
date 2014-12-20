@@ -92,7 +92,7 @@ public:
   itkNewMacro(Self);
 
   /** Display */
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** Set/Get the number of circles to extract */
   itkSetMacro(NumberOfSpheres, unsigned int);
@@ -205,7 +205,7 @@ protected:
 
   BRAINSHoughEyeDetector();
 
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
   /** Input Parameters */
   // Pass parameters from Hough Transform Radial Voting Filter

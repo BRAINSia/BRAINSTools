@@ -128,7 +128,7 @@ protected:
   QuadEdgeMeshScalarPixelValuesSmoothingFilter();
   ~QuadEdgeMeshScalarPixelValuesSmoothingFilter();
 
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
 private:
 

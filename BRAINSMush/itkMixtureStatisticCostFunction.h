@@ -127,21 +127,21 @@ public:
 
   /** Not necessary for this optimizer. */
   void GetDerivative( const ParametersType & itkNotUsed(parameters),
-                      DerivativeType & itkNotUsed(derivative) ) const
+                      DerivativeType & itkNotUsed(derivative) ) const ITK_OVERRIDE
   {
   }
 
   /** Return the values evaluated for the given parameters. */
-  MeasureType GetValue(const ParametersType & parameters) const;
+  MeasureType GetValue(const ParametersType & parameters) const ITK_OVERRIDE;
 
   /** Return a pointer of values evaluated for the given parameters. */
   MeasureType * GetValue(ParametersType & parameters);
 
   /** Get the SpaceDimension. */
-  unsigned int GetNumberOfParameters() const;
+  unsigned int GetNumberOfParameters() const ITK_OVERRIDE;
 
   /** Get the number Range Dimension. */
-  unsigned int GetNumberOfValues() const;
+  unsigned int GetNumberOfValues() const ITK_OVERRIDE;
 
   /** Initialize */
   void Initialize(short label);
@@ -150,7 +150,7 @@ protected:
   MixtureStatisticCostFunction();
   virtual ~MixtureStatisticCostFunction();
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   FirstImageConstPointer  m_FirstImage;
   SecondImageConstPointer m_SecondImage;

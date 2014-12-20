@@ -151,12 +151,12 @@ protected:
   {
   }
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /**
     * GenerateData()
     */
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
 private:
   GridForwardWarpImageFilterNew(const Self &); // purposely not implemented

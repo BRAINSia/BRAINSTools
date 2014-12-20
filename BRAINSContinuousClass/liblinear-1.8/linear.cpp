@@ -141,13 +141,13 @@ public:
   l2r_lr_fun(const problem *prob, double Cp, double Cn);
   ~l2r_lr_fun();
 
-  double fun(double *w);
+  double fun(double *w) ITK_OVERRIDE;
 
-  void grad(double *w, double *g);
+  void grad(double *w, double *g) ITK_OVERRIDE;
 
-  void Hv(double *s, double *Hs);
+  void Hv(double *s, double *Hs) ITK_OVERRIDE;
 
-  int get_nr_variable(void);
+  int get_nr_variable(void) ITK_OVERRIDE;
 
 private:
   void Xv(double *v, double *Xv);
@@ -314,13 +314,13 @@ public:
   l2r_l2_svc_fun(const problem *prob, double Cp, double Cn);
   ~l2r_l2_svc_fun();
 
-  double fun(double *w);
+  double fun(double *w) ITK_OVERRIDE;
 
-  void grad(double *w, double *g);
+  void grad(double *w, double *g) ITK_OVERRIDE;
 
-  void Hv(double *s, double *Hs);
+  void Hv(double *s, double *Hs) ITK_OVERRIDE;
 
-  int get_nr_variable(void);
+  int get_nr_variable(void) ITK_OVERRIDE;
 
 private:
   void Xv(double *v, double *Xv);

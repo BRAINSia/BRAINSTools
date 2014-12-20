@@ -21,6 +21,7 @@
 #include "FileToRead.h"
 #include <iostream>
 #include <fstream>
+#include "itkMacro.h" //Needed for ITK_OVERRIDE
 
 typedef std::fstream FileStreamType;
 
@@ -32,11 +33,11 @@ public:
   typedef FileToRead<std::fstream *> Superclass;
   typedef Superclass::OutputType     OutputType;
 
-  virtual OutputType GetValue() const;
+  virtual OutputType GetValue() const ITK_OVERRIDE;
 
-  virtual void Close();
+  virtual void Close() ITK_OVERRIDE;
 
-  virtual int PrintSelf(std::ostream & os, int indent) const;
+  virtual int PrintSelf(std::ostream & os, int indent) const ITK_OVERRIDE;
 
   StreamToRead(const std::string & name, const std::string & filename);
   virtual ~StreamToRead();

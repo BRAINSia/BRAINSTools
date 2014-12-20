@@ -172,7 +172,7 @@ protected:
   void SolveLinearSystems( const MatrixType& iM, const VectorType& iBx, const VectorType& iBy, VectorType& oX,
                            VectorType& oY );
 
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
 private:
 

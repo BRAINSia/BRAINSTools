@@ -128,7 +128,7 @@ protected:
   ResampleQuadEdgeMeshFilter();
   ~ResampleQuadEdgeMeshFilter();
 
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
 private:
 

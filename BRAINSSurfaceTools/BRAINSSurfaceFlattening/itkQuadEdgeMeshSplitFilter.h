@@ -123,7 +123,7 @@ protected:
   PolygonSetType      m_ProcessedFaces;
   SeedVectorType      m_SeedFaces;
 
-  virtual void GenerateData();
+  virtual void GenerateData() ITK_OVERRIDE;
 
   OutputPointIdList AddFacePointsToOutputMesh( OutputMeshType* iMesh, InputPolygonType* iPoly );
 

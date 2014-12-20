@@ -297,7 +297,7 @@ private:
   itkGetConstReferenceMacro( OverrideOutputInformation, bool );
   itkBooleanMacro( OverrideOutputInformation );
 
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
 protected:
   DtiFastMarchingCostFilter();
@@ -305,7 +305,7 @@ protected:
   {
   }
 
-  void PrintSelf( std::ostream & os, Indent indent ) const;
+  void PrintSelf( std::ostream & os, Indent indent ) const ITK_OVERRIDE;
 
   virtual void UpdateFront( // const TensorImageType *,
     LevelSetImageType * );
@@ -330,9 +330,9 @@ protected:
   }
 
   /** Generate the output image meta information. */
-  virtual void GenerateOutputInformation();
+  virtual void GenerateOutputInformation() ITK_OVERRIDE;
 
-  virtual void EnlargeOutputRequestedRegion(DataObject *output);
+  virtual void EnlargeOutputRequestedRegion(DataObject *output) ITK_OVERRIDE;
 
   /** Get Large Value. This value is used to
       represent the concept of infinity for the time assigned to pixels that

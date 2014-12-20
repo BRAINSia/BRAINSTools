@@ -53,7 +53,7 @@ public:
   static vtkImageGenus0MarchingCubes * New();
 
   vtkTypeMacro(vtkImageGenus0MarchingCubes, vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) ITK_OVERRIDE;
 
   // Description:
   // Methods to set contour values
@@ -126,7 +126,7 @@ protected:
 
   void Execute();
 
-  virtual int FillInputPortInformation(int port, vtkInformation *info);
+  virtual int FillInputPortInformation(int port, vtkInformation *info) ITK_OVERRIDE;
 
   int BiggestComponent;
   int ConnectedComponent;

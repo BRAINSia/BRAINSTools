@@ -88,7 +88,7 @@ protected:
   QuadEdgeMeshClampScalarsFilter();
   ~QuadEdgeMeshClampScalarsFilter();
 
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
 private:
 

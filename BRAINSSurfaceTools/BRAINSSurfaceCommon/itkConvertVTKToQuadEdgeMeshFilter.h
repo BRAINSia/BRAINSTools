@@ -90,7 +90,7 @@ protected:
   };
 
   /** convert the polydata */
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
 private:
   ConvertVTKToQuadEdgeMeshFilter(const Self &); // purposely not implemented

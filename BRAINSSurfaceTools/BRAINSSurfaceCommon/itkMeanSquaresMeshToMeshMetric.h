@@ -92,14 +92,14 @@ public:
                       Superclass::FixedMeshDimension);
 
   /** Get the derivatives of the match measure. */
-  void GetDerivative( const TransformParametersType & parameters, DerivativeType & derivative ) const;
+  void GetDerivative( const TransformParametersType & parameters, DerivativeType & derivative ) const ITK_OVERRIDE;
 
   /**  Get the value for single valued optimizers. */
-  MeasureType GetValue( const TransformParametersType & parameters ) const;
+  MeasureType GetValue( const TransformParametersType & parameters ) const ITK_OVERRIDE;
 
   /**  Get value and derivatives for multiple valued optimizers. */
   void GetValueAndDerivative( const TransformParametersType & parameters, MeasureType& Value,
-                              DerivativeType& Derivative ) const;
+                              DerivativeType& Derivative ) const ITK_OVERRIDE;
 
 protected:
   MeanSquaresMeshToMeshMetric();

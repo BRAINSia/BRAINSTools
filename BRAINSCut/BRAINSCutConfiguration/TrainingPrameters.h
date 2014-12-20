@@ -30,7 +30,7 @@ class TrainingParameters : public ElementParser
 {
 public:
   typedef ElementParser SuperClass;
-  virtual int PrintSelf(std::ostream & os, int indent) const
+  virtual int PrintSelf(std::ostream & os, int indent) const ITK_OVERRIDE
   {
     indent += SuperClass::PrintSelf(os, indent);
     os << this->PrintSpaces(indent) << "=== TrainingParameters ===" << std::endl;

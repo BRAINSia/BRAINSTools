@@ -292,24 +292,24 @@ protected:
   int m_HoughEyeDetectorMode;
 
   /** Method for evaluating the implicit function over the image. */
-  virtual void BeforeThreadedGenerateData();
+  virtual void BeforeThreadedGenerateData() ITK_OVERRIDE;
 
-  virtual void AfterThreadedGenerateData();
+  virtual void AfterThreadedGenerateData() ITK_OVERRIDE;
 
-  virtual void ThreadedGenerateData(const OutputImageRegionType & windowRegion, ThreadIdType threadId);
+  virtual void ThreadedGenerateData(const OutputImageRegionType & windowRegion, ThreadIdType threadId) ITK_OVERRIDE;
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** HoughTransformRadialVotingImageFilter needs the entire input. Therefore
    * it must provide an implementation GenerateInputRequestedRegion().
    * \sa ProcessObject::GenerateInputRequestedRegion(). */
-  void GenerateInputRequestedRegion();
+  void GenerateInputRequestedRegion() ITK_OVERRIDE;
 
   /** HoughTransformRadialVotingImageFilter's produces all the output.
    * Therefore, it must provide an implementation of
    * EnlargeOutputRequestedRegion.
    * \sa ProcessObject::EnlargeOutputRequestedRegion() */
-  void EnlargeOutputRequestedRegion( DataObject * itkNotUsed(output) );
+  void EnlargeOutputRequestedRegion( DataObject * itkNotUsed(output) ) ITK_OVERRIDE;
 
   void ComputeMeanRadiusImage();
 

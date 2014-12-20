@@ -148,7 +148,7 @@ protected:
   OutputCoordRepType        m_Radius;
   SeedVectorType            m_SeedFaces;
 
-  void GenerateData()
+  void GenerateData() ITK_OVERRIDE
   {
     assert( m_CoefficientsMethod != 0 );
     this->CopyInputMeshToOutputMesh();

@@ -150,7 +150,7 @@ public:
   itkGetConstMacro(NumberOfMatchPoints, unsigned long);
 
   /** This filter requires all of the input to be in the buffer. */
-  virtual void GenerateInputRequestedRegion();
+  virtual void GenerateInputRequestedRegion() ITK_OVERRIDE;
 
   /** Methods to get the histograms of the source, reference, and
     * output. Objects are only valid after Update() has been called
@@ -183,7 +183,7 @@ protected:
     *
     * \sa ProcessObject::VerifyInputInformation
     */
-  virtual void VerifyInputInformation()
+  virtual void VerifyInputInformation() ITK_OVERRIDE
   {
   }
 
@@ -192,13 +192,13 @@ protected:
   {
   }
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
-  void BeforeThreadedGenerateData();
+  void BeforeThreadedGenerateData() ITK_OVERRIDE;
 
-  void AfterThreadedGenerateData();
+  void AfterThreadedGenerateData() ITK_OVERRIDE;
 
-  void ThreadedGenerateData(const OutputImageRegionType & outputRegionForThread, ThreadIdType threadId);
+  void ThreadedGenerateData(const OutputImageRegionType & outputRegionForThread, ThreadIdType threadId) ITK_OVERRIDE;
 
   /** Compute min, max and mean of an image. */
   void ComputeMinMaxMean(const InputImageType *image, THistogramMeasurement & minValue,

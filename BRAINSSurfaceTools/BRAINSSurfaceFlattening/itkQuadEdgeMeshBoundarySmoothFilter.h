@@ -144,7 +144,7 @@ protected:
 
   int AdjustBoundary( OutputMeshType * deleteMesh, OutputMeshType * addMesh);
 
-  virtual void GenerateData();
+  virtual void GenerateData() ITK_OVERRIDE;
 
 private:
   QuadEdgeMeshBoundarySmoothFilter( const Self & );

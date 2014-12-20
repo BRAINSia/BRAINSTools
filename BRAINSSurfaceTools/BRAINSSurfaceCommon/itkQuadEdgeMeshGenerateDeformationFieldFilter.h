@@ -97,7 +97,7 @@ protected:
   QuadEdgeMeshGenerateDeformationFieldFilter();
   ~QuadEdgeMeshGenerateDeformationFieldFilter();
 
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
 private:
 

@@ -34,7 +34,7 @@ public:
 
   virtual ~PhilipsDWIConverter() {}
 
-  virtual void LoadDicomDirectory()
+  virtual void LoadDicomDirectory() ITK_OVERRIDE
     {
       this->DWIConverter::LoadDicomDirectory();
       if(!this->m_MultiSliceVolume)
@@ -46,7 +46,7 @@ public:
         }
       // single-frame file handled specially
     }
-  void ExtractDWIData()
+  void ExtractDWIData() ITK_OVERRIDE
     {
       if( !this->m_MultiSliceVolume )
         {
@@ -360,7 +360,7 @@ protected:
   /** # of trailing images to ignore */
   unsigned int        m_NTrailingImagesToIgnore;
 
-  virtual void AddFlagsToDictionary()
+  virtual void AddFlagsToDictionary() ITK_OVERRIDE
     {
       // relevant Philips private tags
       DcmDictEntry *PhilipsDictBValue  = new DcmDictEntry(0x2001, 0x1003, DcmVR(EVR_FL),

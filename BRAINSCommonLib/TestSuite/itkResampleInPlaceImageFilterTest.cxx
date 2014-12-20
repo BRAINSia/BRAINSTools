@@ -33,7 +33,7 @@
 // return true if it fails the validation
 inline bool Validate( double input, double desired, double tolerance )
 {
-  return abs( input - desired ) > tolerance * abs( desired );
+  return std::abs<double>( input - desired ) > tolerance * std::abs<double>( desired );
 }
 
 int main( int argc, char * argv[] )

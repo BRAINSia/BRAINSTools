@@ -127,7 +127,7 @@ protected:
 
   MapPointIdentifier m_BoundaryPtMap;
 
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
   void ComputeBoundary();
 

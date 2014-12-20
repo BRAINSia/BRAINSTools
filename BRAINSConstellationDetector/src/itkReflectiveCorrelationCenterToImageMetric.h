@@ -142,7 +142,7 @@ public:
     this->m_imInterp = LinearInterpolatorType::New();
   }
 
-  double f(vnl_vector<double> const & params)
+  double f(vnl_vector<double> const & params) ITK_OVERRIDE
   {
     const double        MaxUnpenalizedAllowedDistance = 8.0;
     const double        DistanceFromCenterOfMass = vcl_abs(params[2]);

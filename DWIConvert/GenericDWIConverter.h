@@ -32,11 +32,11 @@ public:
     }
   virtual ~GenericDWIConverter() {}
 protected:
-  virtual void ExtractDWIData()
+  virtual void ExtractDWIData() ITK_OVERRIDE
     {
       // throw; // don't call
     }
-  virtual void AddFlagsToDictionary()
+  virtual void AddFlagsToDictionary() ITK_OVERRIDE
     {
       // throw; // don't call
     }

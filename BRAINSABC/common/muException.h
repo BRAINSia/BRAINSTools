@@ -55,7 +55,7 @@ public:
   }
 
   const char * what() const
-  throw ( )
+  throw ( ) ITK_OVERRIDE
   {
     return m_Message.c_str();
   }

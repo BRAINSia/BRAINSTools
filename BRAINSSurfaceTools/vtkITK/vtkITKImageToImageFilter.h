@@ -61,7 +61,7 @@ public:
 
   vtkTypeMacro(vtkITKImageToImageFilter, vtkImageAlgorithm);
 
-  void PrintSelf(ostream& os, vtkIndent indent)
+  void PrintSelf(ostream& os, vtkIndent indent) ITK_OVERRIDE
   {
     Superclass::PrintSelf ( os, indent );
     this->vtkExporter->PrintSelf ( os, indent );
@@ -71,7 +71,7 @@ public:
   ///
   /// This method considers the sub filters MTimes when computing this objects
   /// modified time.
-  unsigned long int GetMTime()
+  unsigned long int GetMTime() ITK_OVERRIDE
   {
     unsigned long int t1, t2;
 
@@ -91,7 +91,7 @@ public:
 
   ///
   /// Pass modified message to itk filter
-  void Modified()
+  void Modified() ITK_OVERRIDE
   {
     this->Superclass::Modified();
     if (this->m_Process)
@@ -102,14 +102,14 @@ public:
 
   ///
   /// Pass DebugOn.
-  void DebugOn()
+  void DebugOn() ITK_OVERRIDE
   {
     this->m_Process->DebugOn();
   };
 
   ///
   /// Pass DebugOff.
-  void DebugOff()
+  void DebugOff() ITK_OVERRIDE
   {
     this->m_Process->DebugOff();
   };
@@ -131,7 +131,7 @@ public:
   ///
   /// This method returns the cache to make a connection
   /// It justs feeds the request to the sub filter.
-  virtual void SetOutput ( vtkDataObject* d ) { this->vtkImporter->SetOutput ( d ); };
+  virtual void SetOutput ( vtkDataObject* d ) ITK_OVERRIDE { this->vtkImporter->SetOutput ( d ); };
   virtual vtkImageData *GetOutput() { return this->vtkImporter->GetOutput(); };
   virtual vtkImageData *GetOutput(int idx)
   {
@@ -149,12 +149,12 @@ public:
 #endif
   };
 
-  virtual void SetInputConnection(vtkAlgorithmOutput* input)
+  virtual void SetInputConnection(vtkAlgorithmOutput* input) ITK_OVERRIDE
   {
     this->vtkCast->SetInputConnection(input);
   };
 
-  virtual void SetInputConnection(int port, vtkAlgorithmOutput* input)
+  virtual void SetInputConnection(int port, vtkAlgorithmOutput* input) ITK_OVERRIDE
   {
     this->vtkCast->SetInputConnection(port, input);
   };
@@ -181,12 +181,12 @@ public:
         }
     }
 #else
-  virtual void Update()
+  virtual void Update() ITK_OVERRIDE
     {
       this->vtkCast->Update();
       this->vtkImporter->Update();
     }
-  virtual void Update(int port)
+  virtual void Update(int port) ITK_OVERRIDE
     {
       this->vtkCast->Update();
       this->vtkImporter->Update(port);
@@ -213,7 +213,7 @@ public:
 
   /// BTX
   /// Dummy ExecuteData
-  void ExecuteData (vtkDataObject *)
+  void ExecuteData (vtkDataObject *) ITK_OVERRIDE
   {
     vtkWarningMacro(<< "This filter does not respond to Update(). Doing a GetOutput->Update() instead.");
   }

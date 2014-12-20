@@ -65,7 +65,7 @@ public:
   static vtkMaskLabel * New();
 
   vtkTypeMacro(vtkMaskLabel, vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) ITK_OVERRIDE;
 
   // Description:
   // Specify the label value
@@ -82,7 +82,7 @@ protected:
   {
   };
 
-  int RequestData(vtkInformation *, vtkInformationVector * *, vtkInformationVector *);
+  int RequestData(vtkInformation *, vtkInformationVector * *, vtkInformationVector *) ITK_OVERRIDE;
 
   int Label; // the label value that decides which cell is going to be kept.
 

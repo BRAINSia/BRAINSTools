@@ -94,7 +94,7 @@ protected:
   PiecewiseRescaleQuadEdgeMeshFilter();
   ~PiecewiseRescaleQuadEdgeMeshFilter();
 
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
 private:
 

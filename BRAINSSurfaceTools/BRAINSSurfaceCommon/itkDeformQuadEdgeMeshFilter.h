@@ -112,7 +112,7 @@ protected:
   DeformQuadEdgeMeshFilter();
   ~DeformQuadEdgeMeshFilter();
 
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
 private:
 

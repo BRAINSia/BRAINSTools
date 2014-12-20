@@ -79,7 +79,7 @@ public:
   ImporterFilterType * GetImporter() const;
 
   /** This call delegate the update to the importer */
-  void Update();
+  void Update() ITK_OVERRIDE;
 
 protected:
   VTKImageToImageFilter();

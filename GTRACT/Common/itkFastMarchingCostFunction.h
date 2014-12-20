@@ -108,15 +108,15 @@ public:
   itkGetConstObjectMacro( CostImage, CostImageType );
 
   // Returns dimension of image
-  unsigned int GetNumberOfParameters() const;
+  unsigned int GetNumberOfParameters() const ITK_OVERRIDE;
 
   /** This method returns the value of the vcl_cost function for
     * the specified parameters, or position. */
-  MeasureType GetValue( const ParametersType & parameters ) const;
+  MeasureType GetValue( const ParametersType & parameters ) const ITK_OVERRIDE;
 
   /** This method returns the derivative of the vcl_cost function corresponding
     * to the specified parameters.   */
-  void GetDerivative( const ParametersType & parameters, DerivativeType & derivative ) const;
+  void GetDerivative( const ParametersType & parameters, DerivativeType & derivative ) const ITK_OVERRIDE;
 
 protected:
   FastMarchingCostFunction();
@@ -125,7 +125,7 @@ protected:
   {
   }
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   // void SetMetaDataHeader();
 

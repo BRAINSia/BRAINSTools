@@ -88,7 +88,6 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
   typedef typename itk::Statistics::ImageToHistogramFilter<TInputImage>   HistogramFilterType;
   typedef typename HistogramFilterType::InputBooleanObjectType            InputBooleanObjectType;
   typedef typename HistogramFilterType::HistogramSizeType                 HistogramSizeType;
-  typedef typename HistogramFilterType::HistogramType                     HistogramType;
 
   HistogramSizeType histogramSize( 1 );
   histogramSize[0] = 256;
@@ -454,8 +453,6 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
   muLogMacro(<< "Create posteriors from likelihood matrix..." << std::endl);
   ProbabilityImageVectorType Posteriors;
   Posteriors.resize(numClasses);
-
-  typedef itk::DiscreteGaussianImageFilter<TInputImage, TInputImage> SmoothingFilterType;
 
   for( unsigned int iclass = 0; iclass < numClasses; iclass++ )
     {

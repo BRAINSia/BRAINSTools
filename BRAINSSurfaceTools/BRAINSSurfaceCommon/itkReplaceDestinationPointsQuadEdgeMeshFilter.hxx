@@ -138,10 +138,6 @@ ReplaceDestinationPointsQuadEdgeMeshFilter<TInputMesh, TInputPointSet>
 
   OutputPointIterator outputPointItr = outputPoints->Begin();
 
-  typedef typename OutputMeshType::PointDataContainer    DisplacementVectorContainer;
-  typedef typename DisplacementVectorContainer::Pointer  DisplacementVectorContainerPointer;
-  typedef typename DisplacementVectorContainer::Iterator DisplacementVectorIterator;
-
   while( destinationPointItr != destinationPointEnd )
     {
     OutputPointType & outputPoint = outputPointItr.Value();

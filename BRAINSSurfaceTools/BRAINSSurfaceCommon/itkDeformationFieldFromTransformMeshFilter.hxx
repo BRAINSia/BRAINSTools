@@ -65,9 +65,6 @@ void
 DeformationFieldFromTransformMeshFilter<TInputMesh, TOutputMesh>
 ::GenerateData()
 {
-  typedef typename TInputMesh::PointsContainer  InputPointsContainer;
-  typedef typename TOutputMesh::PointsContainer OutputPointsContainer;
-
   typedef typename TInputMesh::PointsContainerConstPointer InputPointsContainerPointer;
   typedef typename TOutputMesh::PointsContainerPointer     OutputPointsContainerPointer;
 

@@ -105,8 +105,6 @@ int main( int argc, char * argv[] )
 
   // typedefs
   typedef double CoordinateRepType;
-  typedef itk::Point<
-      CoordinateRepType, ImageDimension>           PointType;
   typedef itk::ImageFileReader<ImageType> ImageReaderType;
   typedef itk::ImageFileWriter<ImageType> ImageWriterType;
   typedef BCDThinPlateSplineKernelTransform<

@@ -70,8 +70,6 @@ int main(int argc, char *argv[])
     std::cout << "==============================================================" << std::endl;
     }
 
-  typedef double                              BSplineCoordinateRepType;
-
   typedef signed short PixelType;
 
   typedef itk::Image<PixelType, 3>        ImageType;

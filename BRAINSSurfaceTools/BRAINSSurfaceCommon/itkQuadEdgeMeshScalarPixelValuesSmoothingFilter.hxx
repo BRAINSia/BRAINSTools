@@ -53,8 +53,6 @@ QuadEdgeMeshScalarPixelValuesSmoothingFilter<TInputMesh, TOutputMesh>
   //
   // Visit all nodes of the Mesh
   //
-  typedef typename OutputPointDataContainer::ConstIterator OutputPointDataIterator;
-
   OutputPointsContainerPointer points = outputMesh->GetPoints();
 
   if( points.IsNull() )

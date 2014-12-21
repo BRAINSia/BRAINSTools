@@ -612,8 +612,6 @@ extractArray(LinearInterpolatorType::Pointer imInterp,
              const landmarksConstellationModelIO::IndexLocationVectorType & model,
              std::vector<float> & result_array)
 {
-  typedef double AccumulatorType;
-
   int q = 0;
   for( landmarksConstellationModelIO::IndexLocationVectorType::const_iterator it = model.begin();
        it != model.end(); ++it, ++q )

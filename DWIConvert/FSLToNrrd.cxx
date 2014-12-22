@@ -156,6 +156,20 @@ FSLToNrrd(const std::string & inputVolume,
   VolumeType::PointType     inputOrigin = inputVol->GetOrigin();
   VolumeType::DirectionType inputDirection = inputVol->GetDirection();
 
+  // VAM Begin
+  // Changes to Fix "space directions" field in the NRRD Header
+  //
+  VolumeType::DirectionType spaceDirections;
+  spaceDirections.SetIdentity();
+  VolumeType::DirectionType spacingMatrix;
+  spacingMatrix.Fill(0.0);
+  spacingMatrix[0][0] = inputSpacing[0];
+  spacingMatrix[1][1] = inputSpacing[1];
+  spacingMatrix[2][2] = inputSpacing[2];
+
+  std::cout << "Spacing :" << inputSpacing << std::endl;
+  std::cout << "Direction :" << inputDirection << std::endl;
+
   std::ofstream header;
   // std::string headerFileName = outputDir + "/" + outputFileName;
 
@@ -176,19 +190,8 @@ FSLToNrrd(const std::string & inputVolume,
          << inputSize[2] << " "
          << inputSize[3] << std::endl;
   header << "thicknesses:  NaN  NaN " << inputSpacing[2] << " NaN" << std::endl;
-  double spaceDirections[3][3];
-  for( unsigned i = 0; i < 3; ++i )
-    {
-    for( unsigned j = 0; j < 3; ++j )
-      {
-      spaceDirections[i][j] = inputDirection[i][j];
-      if( i == j )
-        {
-        spaceDirections[i][j] *= inputSpacing[i];
-        }
-      }
-    }
-  // need to check
+
+  spaceDirections = inputDirection * spacingMatrix;
   header << "space directions: "
          << "(" << spaceDirections[0][0] << ","
          << spaceDirections[1][0] << ","

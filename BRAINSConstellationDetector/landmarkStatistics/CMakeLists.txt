@@ -18,5 +18,5 @@ set(PROGS_LIST_2
 
 foreach(prog ${PROGS_LIST_2})
     StandardBRAINSBuildMacro(NAME ${prog}
-     TARGET_LIBRARIES landmarksConstellationCOMMONLIB BRAINSCommonLib ${VTK_LIBRARIES})
+     TARGET_LIBRARIES landmarksConstellationCOMMONLIB BRAINSCommonLib)
 endforeach()

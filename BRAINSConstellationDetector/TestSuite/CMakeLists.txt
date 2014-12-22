@@ -34,19 +34,6 @@ foreach(prog ${ALL_PROGS_LIST})
     TARGET_LIBRARIES landmarksConstellationCOMMONLIB BRAINSCommonLib ${VTK_LIBRARIES})
 endforeach()
 
-if( ${BRAINSTools_MAX_TEST_LEVEL} GREATER 8) # This should be restored after fixing.
-## Programs for landmarks statistics. These programs do not have any xml file
-set(ALL_PROGS_LIST
-    LmkStatistics
-    GenerateAverageLmkFile
-    )
-
-foreach(prog ${ALL_PROGS_LIST})
-  add_executable(${prog} ../landmarkStatistics/${prog}.cxx)
-  target_link_libraries(${prog} BRAINSCommonLib ${BRAINSConstellationDetector_ITK_LIBRARIES})
-endforeach()
-endif()
-
 ## Simple programs
 ## Test BRAINSClipInferior
 ##

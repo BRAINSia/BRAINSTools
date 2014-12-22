@@ -14,7 +14,7 @@
   endif()
 
   FindVTKUtil(vtkRenderingFreeType vtkRenderingOpenGL vtkInteractionStyle
-    vtkImagingSources vtkGUISupportQt)
+    vtkRenderingCore  vtkImagingSources vtkGUISupportQt)
 
   set( BRAINSConstellationDetectorGUI_SRC
    QSliceViewer.cxx

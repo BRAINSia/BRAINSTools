@@ -27,6 +27,9 @@ FindITKUtil(BRAINSConstellationDetector_ITK
   ITKConvolution
 )
 
+FindVTKUtil(vtkRenderingFreeType vtkRenderingOpenGL vtkInteractionStyle
+    vtkRenderingCore  vtkImagingSources vtkGUISupportQt)
+
 #-----------------------------------------------------------------------------
 # Output directories.
 #

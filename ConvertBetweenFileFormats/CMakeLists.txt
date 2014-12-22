@@ -7,6 +7,9 @@ FindITKUtil(ConvertBetweenFileFormats_ITK
   ITKTestKernel
   ITKVtkGlue)
 
+FindVTKUtil(vtkRenderingFreeType vtkRenderingOpenGL vtkInteractionStyle
+    vtkRenderingCore  vtkImagingSources vtkGUISupportQt)
+
 # This project is intended to be built outside the Insight source tree
 project(ConvertBetweenFileFormats)
 

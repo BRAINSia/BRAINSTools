@@ -41,6 +41,8 @@ PURPOSE.  See the above copyright notice for more information.
 
 #include "vtkContourValues.h" // Needed for direct access to ContourValues
 
+#include "itkMacro.h" //Needed for ITK_OVERRIDE
+
 class vtkCellArray;
 class vtkFloatArray;
 class vtkImageData;

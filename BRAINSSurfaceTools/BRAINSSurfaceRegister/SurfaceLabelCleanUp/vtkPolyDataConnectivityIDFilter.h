@@ -64,6 +64,8 @@
 #include "vtkPolyDataAlgorithm.h"
 #include "vtkVersion.h"
 
+#include "itkMacro.h" //Needed for ITK_OVERRIDE
+
 #if (VTK_MAJOR_VERSION >= 6)
 #define VTK_GRAPHICS_EXPORT /* */
 #endif

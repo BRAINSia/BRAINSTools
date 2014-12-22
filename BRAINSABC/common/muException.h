@@ -24,6 +24,7 @@
 #include <string>
 
 #include "Log.h"
+#include "itkMacro.h" //Needed for ITK_OVERRIDE
 
 namespace mu
 {
@@ -33,8 +34,7 @@ class Exception : public std::exception
 {
 public:
 
-  Exception()
-  throw ( ) :
+  Exception() throw ( ) :
     m_Message("")
   {
   }
@@ -54,8 +54,7 @@ public:
     os << m_Message << std::endl;
   }
 
-  const char * what() const
-  throw ( ) ITK_OVERRIDE
+  const char * what() const throw ( ) ITK_OVERRIDE
   {
     return m_Message.c_str();
   }

@@ -1599,7 +1599,7 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME ${BRAINSFitTestName}
   --outputVolumePixelType ushort
   --transformType Rigid,Affine,BSpline
   --useROIBSpline
-  --splineGridSize 3,3,3
+  --splineGridSize 3
   --initializeTransformMode useCenterOfROIAlign
   --maskProcessingMode ROI
   --numberOfThreads 1

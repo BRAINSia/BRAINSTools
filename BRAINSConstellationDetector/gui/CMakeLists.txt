@@ -13,8 +13,11 @@
     set(QT_LIBRARIES ${QT_QT_LIBRARY})
   endif()
 
+  if(BUILD_WITH_GUI OR BRAINS3_USE_QT OR BRAINSTools_USE_QT)
+    set(LOCAL_VTKQT vtkGUISupportQt)
+  endif()
   FindVTKUtil(vtkRenderingFreeType vtkRenderingOpenGL vtkInteractionStyle
-    vtkRenderingCore  vtkImagingSources vtkGUISupportQt)
+    vtkRenderingCore  vtkImagingSources ${LOCAL_VTKQT})
 
   set( BRAINSConstellationDetectorGUI_SRC
    QSliceViewer.cxx

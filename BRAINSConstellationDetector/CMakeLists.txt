@@ -27,8 +27,11 @@ FindITKUtil(BRAINSConstellationDetector_ITK
   ITKConvolution
 )
 
+if(BUILD_WITH_GUI OR BRAINS3_USE_QT OR BRAINSTools_USE_QT)
+  set(LOCAL_VTKQT vtkGUISupportQt)
+endif()
 FindVTKUtil(vtkRenderingFreeType vtkRenderingOpenGL vtkInteractionStyle
-    vtkRenderingCore  vtkImagingSources vtkGUISupportQt)
+    vtkRenderingCore  vtkImagingSources ${LOCAL_VTKQT})
 
 #-----------------------------------------------------------------------------
 # Output directories.

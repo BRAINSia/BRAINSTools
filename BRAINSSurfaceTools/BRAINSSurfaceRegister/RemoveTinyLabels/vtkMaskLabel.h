@@ -82,7 +82,7 @@ protected:
   {
   };
 
-  int RequestData(vtkInformation *, vtkInformationVector * *, vtkInformationVector *) override;
+  int RequestData(vtkInformation *, vtkInformationVector * *, vtkInformationVector *) ITK_OVERRIDE;
 
   int Label; // the label value that decides which cell is going to be kept.
 

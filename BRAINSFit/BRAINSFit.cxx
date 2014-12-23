@@ -124,22 +124,40 @@ int main(int argc, char *argv[])
 
   std::string localInitializeTransformMode = initializeTransformMode;
 
-  // std::vector<int> zeroOrigin(3, 0);
-
-  // Verify that the spline grid sizes are greater than 3
+  std::vector<int> BSplineGridSize(3, 0);
+  {
+  // Verify that spline grid size has enough parameters
+  // If it has more than 3 parameters, only the first 3 parameters are used for three dimensions.
+  // However, if it has less than 3 parameters, the first parameter is used for all three dimensions.
+  if( splineGridSize.size() >= 3 )
     {
-//    bool validGridSize = true;
-    for( unsigned int sgs = 0; sgs < splineGridSize.size(); sgs++ )
-      {
-      if( splineGridSize[sgs] < 3 )
-        {
-//        validGridSize = false;
-        std::cout << "splineGridSize[" << sgs << "]= " << splineGridSize[sgs]
-                  << " is invalid.  There must be at lest 3 divisions in each dimension of the image." << std::endl;
-        return EXIT_FAILURE;
-        }
-      }
+    for( unsigned int sgs = 0; sgs < BSplineGridSize.size(); ++sgs)
+       {
+       // Verify that the spline grid sizes are greater than 3
+       if( splineGridSize[sgs] < 3 )
+         {
+         std::cout << "splineGridSize[" << sgs << "]= " << splineGridSize[sgs]
+                   << " is invalid.  There must be at least 3 divisions in each dimension of the image." << std::endl;
+         return EXIT_FAILURE;
+         }
+       BSplineGridSize[sgs] = splineGridSize[sgs];
+       }
     }
+  else
+    {
+    for( unsigned int sgs = 0; sgs < BSplineGridSize.size(); ++sgs)
+       {
+       if( splineGridSize[0] < 3 )
+         {
+         std::cout << "splineGridSize = " << splineGridSize[0]
+                   << " is invalid.  There must be at least 3 divisions in each dimension of the image." << std::endl;
+         return EXIT_FAILURE;
+         }
+       BSplineGridSize[sgs] = splineGridSize[0];
+       }
+    }
+  }
+
   std::vector<std::string> localTransformType;
   // See if the individual boolean registration options are being used.  If any
   // of these are set, then transformType is not used.
@@ -484,7 +502,7 @@ int main(int argc, char *argv[])
     myHelper->SetInitializeTransformMode(localInitializeTransformMode);
     myHelper->SetMaskInferiorCutOffFromCenter(maskInferiorCutOffFromCenter);
     myHelper->SetCurrentGenericTransform(currentGenericTransform);
-    myHelper->SetSplineGridSize(splineGridSize);
+    myHelper->SetSplineGridSize(BSplineGridSize);
     myHelper->SetCostFunctionConvergenceFactor(costFunctionConvergenceFactor);
     myHelper->SetProjectedGradientTolerance(projectedGradientTolerance);
     myHelper->SetMaxBSplineDisplacement(maxBSplineDisplacement);

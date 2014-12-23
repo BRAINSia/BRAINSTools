@@ -63,8 +63,17 @@ void ComputeLabels(
   foregroundMask->Allocate();
 
   size_t currentMinLabelSize = 0;
+  const unsigned short max_iterations = 10; // Prevent infinite looping, just fail
+  unsigned short current_iteration = 0;
   do
     {
+    current_iteration++;
+    if ( current_iteration > max_iterations )
+      {
+      std::cout << "ERROR:  Infinite loop detected for auto-correction" << std::endl;
+      std::cout << "        Check input images to ensure proper intializaiton was completed." << std::endl;
+      exit(-1);
+      }
     DirtyLabels->FillBuffer(0);
     foregroundMask->FillBuffer(0);
 #if defined(LOCAL_USE_OPEN_MP) && (_OPENMP < 200805)
@@ -139,8 +148,9 @@ void ComputeLabels(
         currentMinLabelSize = std::min<size_t>( currentMinLabelSize, currentLabelCount );
         if (currentLabelCount < minLabelSizeAllowed )
           {
-          std::cout << "\n\nWARNING:  Increaseing importance of label "<< it->first
-                    << "\n            because too few samples found.\n\n" << std::endl;
+          std::cout << "\n\nWARNING:  Increasing importance of label "<< it->first
+                    << "\n            because too few samples found."
+                    << "\n           " <<  currentLabelCount << " < " <<  minLabelSizeAllowed << std::endl;
           //Multiply this prior by 1.1 to increase it's importance.
           typedef itk::MultiplyImageFilter<TProbabilityImage,TProbabilityImage> MultiplyFilterType;
           typename MultiplyFilterType::Pointer filter = MultiplyFilterType::New();

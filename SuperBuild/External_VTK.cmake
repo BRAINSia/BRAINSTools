@@ -1,11 +1,8 @@
 
 set(proj VTK)
 
-option(USE_VTK_6 "Build using VTK version 6" ON)
-if(USE_VTK_6)
-  set(${proj}_REQUIRED_VERSION "6.10")  #If a required version is necessary, then set this, else leave blank
-  set(VTK_VERSION_MAJOR 6)
-endif()
+set(${proj}_REQUIRED_VERSION "6.10")  #If a required version is necessary, then set this, else leave blank
+set(VTK_VERSION_MAJOR 6)
 
 # Set dependency list
 set(${proj}_DEPENDENCIES "zlib")
@@ -60,29 +57,27 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT ${CMAKE_PROJECT_N
     list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS
       #-DDESIRED_QT_VERSION:STRING=4 # Unused
       -DVTK_USE_GUISUPPORT:BOOL=ON
-      -DVTK_USE_QVTK_QTOPENGL:BOOL=${${LOCAL_PROJECT_NAME}_USE_QT}
-      -DVTK_USE_QT:BOOL=${${LOCAL_PROJECT_NAME}_USE_QT}   ##VTK5
-      -DVTK_Group_Qt:BOOL=${${LOCAL_PROJECT_NAME}_USE_QT} ##VTK6
+      -DVTK_USE_QVTK_QTOPENGL:BOOL=${${PRIMARY_PROJECT_NAME}_USE_QT}
+      -DVTK_Group_Qt:BOOL=${${PRIMARY_PROJECT_NAME}_USE_QT} ##VTK6
       -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
+      -DVTK_REQUIRED_OBJCXX_FLAGS:STRING="" # Should not be needed, but is always causing problems on mac
+                                            # This is to prevent the garbage collection errors from creeping back in
       )
   else()
     list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS
       -DVTK_USE_CARBON:BOOL=OFF
       -DVTK_USE_COCOA:BOOL=ON # Default to Cocoa, VTK/CMakeLists.txt will enable Carbon and disable cocoa if needed
       -DVTK_USE_X:BOOL=OFF
-      #-DVTK_USE_RPATH:BOOL=ON # Unused
-      #-DDESIRED_QT_VERSION:STRING=4 # Unused
       -DVTK_USE_GUISUPPORT:BOOL=ON
-      -DVTK_USE_QVTK_QTOPENGL:BOOL=${${LOCAL_PROJECT_NAME}_USE_QT}
-      -DVTK_USE_QT:BOOL=${${LOCAL_PROJECT_NAME}_USE_QT}    ## VTK5
-      -DVTK_Group_Qt:BOOL=${${LOCAL_PROJECT_NAME}_USE_QT}  ## VTK6
+      -DVTK_USE_QVTK_QTOPENGL:BOOL=${${PRIMARY_PROJECT_NAME}_USE_QT}
+      -DVTK_Group_Qt:BOOL=${${PRIMARY_PROJECT_NAME}_USE_QT}  ## VTK6
       -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
       )
   endif()
 
   list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS
-      -DModule_vtkGUISupportQt:BOOL=${${LOCAL_PROJECT_NAME}_USE_QT}
-      -DModule_vtkGUISupportQtOpenGL:BOOL=${${LOCAL_PROJECT_NAME}_USE_QT})
+      -DModule_vtkGUISupportQt:BOOL=${${PRIMARY_PROJECT_NAME}_USE_QT}
+      -DModule_vtkGUISupportQtOpenGL:BOOL=${${PRIMARY_PROJECT_NAME}_USE_QT})
 
   # Disable Tk when Python wrapping is enabled
   if(${PRIMARY_PROJECT_NAME}_USE_PYTHONQT)
@@ -127,9 +122,10 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT ${CMAKE_PROJECT_N
   if(NOT DEFINED git_protocol)
     set(git_protocol "git")
   endif()
-  #set(${proj}_REPOSITORY ${git_protocol}://vtk.org/VTK.git)
   set(${proj}_GIT_REPOSITORY "${git_protocol}://github.com/Slicer/VTK.git" CACHE STRING "Repository from which to get VTK" FORCE)
   set(${proj}_GIT_TAG "ea7cdc4e0b399be244e79392c67fed068c33e454")  # VTK 20141221
+  set(${proj}_GIT_REPOSITORY "${git_protocol}://vtk.org/VTK.git" CACHE STRING "Repository from which to get VTK" FORCE)
+  set(${proj}_GIT_TAG "998ebc6462cafafbc9600f91bf3091ec5bc2c0ab")  # VTK 20141221
 
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
@@ -152,6 +148,8 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT ${CMAKE_PROJECT_N
       -DVTK_LEGACY_REMOVE:BOOL=ON
       -DVTK_WRAP_TCL:BOOL=${VTK_WRAP_TCL}
       -DVTK_WRAP_PYTHON:BOOL=${VTK_WRAP_PYTHON}
+      -DModule_vtkIOXML:BOOL=ON
+      -DModule_vtkIOXMLParser:BOOL=ON
       ${VTK_PYTHON_ARGS}
       ${VTK_QT_ARGS}
       ${VTK_MAC_ARGS}

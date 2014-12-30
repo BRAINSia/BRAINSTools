@@ -47,7 +47,7 @@ DemonsPreprocessor<TInputImage, TOutputImage>
   m_MovingBinaryVolume("none"),
   m_Lower(NumericTraits<PixelType>::NonpositiveMin() ),
   m_Upper(NumericTraits<PixelType>::max() ),
-  m_DefaultPixelValue(NumericTraits<PixelType>::One),
+  m_DefaultPixelValue(NumericTraits<PixelType>::OneValue()),
   m_OutDebug(false),
   m_UseHistogramMatching(0)
 {

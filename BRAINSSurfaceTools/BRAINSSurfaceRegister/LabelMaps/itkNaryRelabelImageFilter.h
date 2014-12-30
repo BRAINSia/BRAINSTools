@@ -90,7 +90,7 @@ public:
 
   /**
    * Set/Get the value used as "background" in the images.
-   * Defaults to NumericTraits<PixelType>::Zero.
+   * Defaults to NumericTraits<PixelType>::ZeroValue().
    */
   itkSetMacro(BackgroundValue, InputImagePixelType);
   itkGetConstMacro(BackgroundValue, InputImagePixelType);

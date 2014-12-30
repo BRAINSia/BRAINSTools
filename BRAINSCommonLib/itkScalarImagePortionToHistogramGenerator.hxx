@@ -60,7 +60,7 @@ ScalarImagePortionToHistogramGenerator<TImageType, TMaskType>
 ::SetBinaryPortionImage(const TMaskType *binaryImage)
 {
   m_ImageToListSampleGenerator->SetMaskImage(binaryImage);
-  m_ImageToListSampleGenerator->SetMaskValue(NumericTraits<typename TMaskType::PixelType>::One);
+  m_ImageToListSampleGenerator->SetMaskValue(NumericTraits<typename TMaskType::PixelType>::OneValue());
 }
 
 template <class TImageType, class TMaskType>

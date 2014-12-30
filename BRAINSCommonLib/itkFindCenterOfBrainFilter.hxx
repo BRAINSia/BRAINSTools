@@ -38,7 +38,7 @@ FindCenterOfBrainFilter<TInputImage, TMaskImage>
   m_ClosingSize(7),
   m_HeadSizeLimit(1000),
   m_HeadSizeEstimate(0),
-  m_BackgroundValue(NumericTraits<typename ImageType::PixelType>::Zero),
+  m_BackgroundValue(NumericTraits<typename ImageType::PixelType>::ZeroValue()),
   m_GenerateDebugImages(false),
   m_ImageMask(ITK_NULLPTR),
   m_ClippedImageMask(ITK_NULLPTR),

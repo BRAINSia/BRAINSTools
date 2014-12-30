@@ -101,7 +101,7 @@ DemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::DemonsRegistrator() :
   m_FixedImagePyramid(FixedImagePyramidType::New() ),
   m_MovingImagePyramid(MovingImagePyramidType::New() ),
   m_Registration(RegistrationType::New() ),
-  m_DefaultPixelValue( NumericTraits<typename RealImageType::PixelType>::Zero),
+  m_DefaultPixelValue( NumericTraits<typename RealImageType::PixelType>::ZeroValue()),
   m_NumberOfLevels(1),
   m_NumberOfIterations(UnsignedIntArray(1) ),
   m_DisplacementField(ITK_NULLPTR),

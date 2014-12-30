@@ -41,7 +41,7 @@ ThirionRegistration<TImage, TRealImage, TOutputImage>
   m_BOBFTemplateMask("none"),
   m_Lower(NumericTraits<PixelType>::NonpositiveMin() ),
   m_Upper(NumericTraits<PixelType>::max() ),
-  m_DefaultPixelValue(NumericTraits<PixelType>::Zero),
+  m_DefaultPixelValue(NumericTraits<PixelType>::ZeroValue()),
   m_NumberOfHistogramLevels(256),
   m_NumberOfMatchPoints(2),
   m_NumberOfLevels(4)

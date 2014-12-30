@@ -52,8 +52,8 @@ namespace itk
 template <class TDisplacementField, class TOutputImage>
 GridForwardWarpImageFilterNew<TDisplacementField, TOutputImage>
 ::GridForwardWarpImageFilterNew() :
-  m_BackgroundValue(NumericTraits<PixelType>::Zero),
-  m_ForegroundValue(NumericTraits<PixelType>::One)
+  m_BackgroundValue(NumericTraits<PixelType>::ZeroValue()),
+  m_ForegroundValue(NumericTraits<PixelType>::OneValue())
 {
   // Setup default values
   for( unsigned int q = 0; q < ImageDimension; q++ )

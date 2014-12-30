@@ -257,7 +257,7 @@ BRAINSCutGenerateProbability
   while( !bbri.IsAtEnd() )
     {
     // Zeroing voxel signal intensity values
-    bbri.Set(itk::NumericTraits<WorkingImageType::PixelType>::Zero);
+    bbri.Set(itk::NumericTraits<WorkingImageType::PixelType>::ZeroValue());
     ++bbri;
     }
 }

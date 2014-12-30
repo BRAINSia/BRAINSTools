@@ -299,7 +299,7 @@ DisplacementFieldTransform<TScalarType, NDimensions>
    * of ITK images
    */
   this->m_Jacobian.set_size( SpaceDimension, numberOfParameters );
-  this->m_Jacobian.Fill( NumericTraits<JacobianInternalPixelType>::Zero );
+  this->m_Jacobian.Fill( NumericTraits<JacobianInternalPixelType>::ZeroValue() );
   SizeType size;
   size.Fill( 1 );
   m_LastSupportRegion.SetSize( size );
@@ -486,7 +486,7 @@ DisplacementFieldTransform<TScalarType, NDimensions>
     return transformedPoint;
     }
 
-  outputPoint.Fill( NumericTraits<ScalarType>::Zero );
+  outputPoint.Fill( NumericTraits<ScalarType>::ZeroValue() );
 
   OutputVectorType displacement = LinearInterpolateAtIndex( index );
   for ( j = 0; j < SpaceDimension; j++ )
@@ -524,7 +524,7 @@ DisplacementFieldTransform<TScalarType, NDimensions>
   p0.SetSize( SpaceDimension );
   for ( j = 0; j < SpaceDimension; j++ )
     {
-    p0[j] = NumericTraits<JacobianInternalPixelType>::Zero;
+    p0[j] = NumericTraits<JacobianInternalPixelType>::ZeroValue();
     }
 
   for ( j = 0; j < SpaceDimension; j++ )

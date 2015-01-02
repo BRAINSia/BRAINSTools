@@ -24,14 +24,17 @@ def OpenSubjectDatabase(ExperimentBaseDirectoryCache, single_subject, mountPrefi
     import os.path
     import SessionDB
     subjectDatabaseFile = os.path.join(ExperimentBaseDirectoryCache, 'InternalWorkflowSubjectDB.db')
-    ## TODO:  Only make DB if db is older than subject_data_file.
-    if (not os.path.exists(subjectDatabaseFile)) or \
-      (os.path.getmtime(subjectDatabaseFile) < os.path.getmtime(subject_data_file)):
-        ExperimentDatabase = SessionDB.SessionDB(subjectDatabaseFile, single_subject)
+    ExperimentDatabase = SessionDB.SessionDB(subjectDatabaseFile, single_subject)
+    dbfileTime = os.path.getmtime(subjectDatabaseFile)
+    try:
+        datafileTime = os.path.getmtime(subject_data_file)
+    except OSError:
+        datafileTime = time.time()
+    if (not os.path.exists(subjectDatabaseFile)) or (dbfileTime < datafileTime):
+        print("Single_subject {0}: Creating database, {1}".format(single_subject,subjectDatabaseFile))
         ExperimentDatabase.MakeNewDB(subject_data_file, mountPrefix)
     else:
         print("Single_subject {0}: Using cached database, {1}".format(single_subject,subjectDatabaseFile))
-        ExperimentDatabase = SessionDB.SessionDB(subjectDatabaseFile, single_subject)
     #print "ENTIRE DB for {_subjid}: ".format(_subjid=ExperimentDatabase.getSubjectFilter())
     #print "^^^^^^^^^^^^^"
     #for row in ExperimentDatabase.getEverything():

@@ -236,12 +236,18 @@ int main(int argc, char *argv[])
               << std::endl;
     DWIMeasurementFrame.set_identity();
     }
+  std::cout << "Input DWI image measurement frame: " << DWIMeasurementFrame << std::endl;
   vnl_matrix_fixed<double, 3, 3> DWIInverseMeasurementFrame = vnl_inverse( DWIMeasurementFrame );
+
+  std::cout << "Input DWI image vector length: " << resampleImage->GetVectorLength() << std::endl;
 
   // Resample DWI in place
   resampleImage = SetVectorImageRigidTransformInPlace<NrrdImageType>(rigidTransform.GetPointer(), resampleImage);
 
   std::cout << "Rigid transform matrix: " << rigidTransform->GetMatrix().GetVnlMatrix() << std::endl;
+
+  std::stringstream outputGradDirMetaDataStream;
+
   // Rotate gradient vectors by rigid transform and inverse measurement frame
   for( unsigned int i = 0; i < resampleImage->GetVectorLength(); i++ )
     {
@@ -258,6 +264,11 @@ int main(int argc, char *argv[])
 
     // Rotate the diffusion gradient with rigid transform and inverse measurement frame
     RigidTransformType::Pointer inverseRigidTransform = RigidTransformType::New();
+    const NrrdImageType::PointType centerPoint = rigidTransform->GetCenter();
+    inverseRigidTransform->SetCenter( centerPoint );
+    inverseRigidTransform->SetIdentity();
+    rigidTransform->GetInverse(inverseRigidTransform);
+
     curGradientDirection = inverseRigidTransform->GetMatrix().GetVnlMatrix() * DWIInverseMeasurementFrame
       * curGradientDirection;
 
@@ -275,22 +286,47 @@ int main(int argc, char *argv[])
       NrrdValue += doubleConvert(curGradientDirection[dir]);
       }
     itk::EncapsulateMetaData<std::string>(resampleImage->GetMetaDataDictionary(), KeyString, NrrdValue);
+
+    outputGradDirMetaDataStream << KeyString << ","
+                                << curGradientDirection[0] << ","
+                                << curGradientDirection[1] << ","
+                                << curGradientDirection[2] << std::endl;
     }
 
   // Set DWI measurement frame to identity by multiplying by its inverse
   // Update Image MetaData Dictionary with new measurement frame
   vnl_matrix_fixed<double, 3, 3>    newMeasurementFrame = DWIInverseMeasurementFrame * DWIMeasurementFrame;
   std::vector<std::vector<double> > newMf(3);
+  std::stringstream outputMFMetaDataStream;
+  outputMFMetaDataStream << "measurement frame";
   for( unsigned int i = 0; i < 3; i++ )
     {
     newMf[i].resize(3);
     for( unsigned int j = 0; j < 3; j++ )
       {
       newMf[i][j] = newMeasurementFrame[i][j];
+      outputMFMetaDataStream << "," << newMf[i][j];
       }
     }
+  outputMFMetaDataStream << std::endl;
   itk::EncapsulateMetaData<std::vector<std::vector<double> > >(
     resampleImage->GetMetaDataDictionary(), "NRRD_measurement frame", newMf );
+
+  // If --writeOutputMetaData ./metaData.csv is specified in the command line,
+  // then write out the output image measurement frame and diffusion gradient directions in a simple CSV file.
+  // This helps to verify the output image meta data in TestSuite.
+  if( writeOutputMetaData != "" )
+    {
+    std::ofstream outputMetaDataFile;
+    outputMetaDataFile.open( writeOutputMetaData.c_str() );
+    if( !outputMetaDataFile.is_open() )
+      {
+      std::cerr << "Can't write the output meta data CSV file " << writeOutputMetaData << std::endl;
+      }
+    outputMetaDataFile << outputMFMetaDataStream.str();
+    outputMetaDataFile << outputGradDirMetaDataStream.str();
+    outputMetaDataFile.close();
+    }
 
   // Pad image
   const NrrdImageType::RegionType    inputRegion = resampleImage->GetLargestPossibleRegion();

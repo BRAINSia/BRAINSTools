@@ -5,7 +5,8 @@ template.py
 This program is used to generate the subject- and session-specific workflows for BRAINSTool processing
 
 Usage:
-  template.py [--rewrite-datasinks] [--wfrun PLUGIN] [--use-sentinal] [--use-shuffle] [--dotfilename PFILE] --workphase WORKPHASE --pe ENV --ExperimentConfig FILE SUBJECTS...
+  template.py subject [--rewrite-datasinks] [--wfrun PLUGIN] [--use-sentinal] [--use-shuffle] [--dotfilename PFILE] --pe ENV --ExperimentConfig FILE SUBJECTS...
+  template.py population [--rewrite-datasinks] [--wfrun PLUGIN] [--use-sentinal] [--use-shuffle] [--dotfilename PFILE] --pe ENV --ExperimentConfig FILE -p POPFILE SUBJECTS...
   template.py -v | --version
   template.py -h | --help
 
@@ -21,13 +22,13 @@ Options:
   --use-shuffle         Shuffle the subjects randomly to minimize multiple runs collision probability
   --pe=ENV              The processing environment to use from configuration file
   --wfrun=PLUGIN        The name of the workflow plugin option (default: 'local')
-  --workphase WORKPHASE The type of processing to be done only VALID is ['subject-template-generation']
   --ExperimentConfig=FILE   The configuration file
+  -p POPFILE            File containing dictionary 'groups' in Python syntax
 
 Examples:
-  $ template.py --pe OSX --ExperimentConfig my_baw.config all
-  $ template.py --wfrun helium_all.q --pe OSX --ExperimentConfig my_baw.config 1058 1059
-  $ template.py --rewrite-datasinks --pe OSX --ExperimentConfig my_baw.config 2001
+  $ template.py population --pe OSX --ExperimentConfig my_baw.config -p groupfile.txt all
+  $ template.py subject --wfrun helium_all.q --pe OSX --ExperimentConfig my_baw.config 1058 1059
+  $ template.py subject --rewrite-datasinks --pe OSX --ExperimentConfig my_baw.config 2001
 
 """
 import glob
@@ -37,16 +38,16 @@ import traceback
 
 from baw_exp import OpenSubjectDatabase
 
-def get_processed_subjects( resultdir ):
+def get_processed(resultdir):
     import glob
     # resultdir/subject_dir/Atlas/AVG_T1.nii.gz
     sential_file_pattern = "*/Atlas/AVG_template_rightHemisphere.nii.gz"
-    processedSubjectsPaths = glob.glob( os.path.join(resultdir, sential_file_pattern) )
-    processedSubjects = [ os.path.basename(os.path.dirname(os.path.dirname(s))) for s in processedSubjectsPaths ]
-    print("SKIPPING COMPLETED SUBJECTS: {0}".format(processedSubjects))
-    return processedSubjects
+    processedPaths = glob.glob( os.path.join(resultdir, sential_file_pattern) )
+    processed = [ os.path.basename(os.path.dirname(os.path.dirname(s))) for s in processedPaths ]
+    print("SKIPPING COMPLETED: {0}".format(processed))
+    return processed
 
-def get_subjects_sessions_dictionary(input_subjects, cache, resultdir, prefix, dbfile, useSentinal, shuffle=False):
+def generate_group_dictionary(input_subjects, cache, resultdir, prefix, dbfile, useSentinal, shuffle=False, groupfile=None):
     import random
     _temp = OpenSubjectDatabase(cache, ['all'], prefix, dbfile)
     if "all" in input_subjects:
@@ -55,19 +56,22 @@ def get_subjects_sessions_dictionary(input_subjects, cache, resultdir, prefix, d
         print("="*80)
         print("Using Sentinal Files to Limit Jobs Run")
         _all_subjects = set(input_subjects )
-        _processed_subjects = set( get_processed_subjects( resultdir ) )
-        subjects = list( _all_subjects - _processed_subjects ) #NOTE - in set operation notation removes values
+        processed = set( get_processed( resultdir ) )
+        subjects = list( _all_subjects - processed) #NOTE - in set operation notation removes values
     else:
         subjects = input_subjects
-
     if shuffle:
         random.shuffle(subjects)  # randomly shuffle to get max cluster efficiency
-    subject_sessions_dictionary = dict()
-    for subject in subjects:
-        subject_sessions_dictionary[subject]=_temp.getSessionsFromSubject(subject)
-    return subjects,subject_sessions_dictionary
 
-## Merge the different subjects together
+    if groupfile is not None:
+        group_dictionary = _temp.getSessionsFromGroup(groupfile)
+    else:
+        group_dictionary = dict()
+        for subject in subjects:
+            group_dictionary[subject]=_temp.getSessionsFromSubject(subject)
+    return subjects, group_dictionary
+
+## Merge the different groups together
 def MergeByExtendListElements(t1s, t2s, pds, fls, labels, posteriors, passive_intensities, passive_masks):
     """
     *** NOTE:  All input lists MUST have the same number of elements (even if they are null) ***
@@ -109,29 +113,29 @@ def MergeByExtendListElements(t1s, t2s, pds, fls, labels, posteriors, passive_in
                             'FL': DefaultContinuousInterpolationType,
                             'BRAINMASK': 'MultiLabel'
                             }
-    for subject_index in range(len(t1s)):
-        if t1s[subject_index] is not None:
-            ListOfImagesDictionaries[subject_index]['T1'] = t1s[subject_index]
-        if isinstance(t2s, list) and t2s[subject_index] is not None:
-            ListOfImagesDictionaries[subject_index]['T2'] = t2s[subject_index]
-        if isinstance(pds, list) and pds[subject_index] is not None:
-            ListOfImagesDictionaries[subject_index]['PD'] = pds[subject_index]
-        if isinstance(fls, list) and fls[subject_index] is not None:
-            ListOfImagesDictionaries[subject_index]['FL'] = fls[subject_index]
-        if labels[subject_index] is not None:
-            ListOfImagesDictionaries[subject_index]['BRAINMASK'] = labels[subject_index]
-        print ListOfImagesDictionaries[subject_index]
+    for index in range(len(t1s)):
+        if t1s[index] is not None:
+            ListOfImagesDictionaries[index]['T1'] = t1s[index]
+        if isinstance(t2s, list) and t2s[index] is not None:
+            ListOfImagesDictionaries[index]['T2'] = t2s[index]
+        if isinstance(pds, list) and pds[index] is not None:
+            ListOfImagesDictionaries[index]['PD'] = pds[index]
+        if isinstance(fls, list) and fls[index] is not None:
+            ListOfImagesDictionaries[index]['FL'] = fls[index]
+        if labels[index] is not None:
+            ListOfImagesDictionaries[index]['BRAINMASK'] = labels[index]
+        print ListOfImagesDictionaries[index]
         for key, value in posteriors.items():
             # print "key:", key, " -> value:", value
-            ListOfImagesDictionaries[subject_index][key] = value[subject_index]
+            ListOfImagesDictionaries[index][key] = value[index]
             interpolationMapping[key] = DefaultContinuousInterpolationType
         for key, value in passive_intensities.items():
             # print "key:", key, " -> value:", value
-            ListOfImagesDictionaries[subject_index][key] = value[subject_index]
+            ListOfImagesDictionaries[index][key] = value[index]
             interpolationMapping[key] = DefaultContinuousInterpolationType
         for key, value in passive_masks.items():
             # print "key:", key, " -> value:", value
-            ListOfImagesDictionaries[subject_index][key] = value[subject_index]
+            ListOfImagesDictionaries[index][key] = value[index]
             interpolationMapping[key] = 'MultiLabel'
 
     # print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
@@ -141,17 +145,16 @@ def MergeByExtendListElements(t1s, t2s, pds, fls, labels, posteriors, passive_in
     return ListOfImagesDictionaries, registrationImageTypes, interpolationMapping
 
 
-def xml_filename(subject):
-    return 'AtlasDefinition_{0}.xml'.format(subject)
+def xml_filename(group):
+    return 'AtlasDefinition_{0}.xml'.format(group)
 
-def getSessionsFromSubjectDictionary(subject_session_dictionary,subject):
-    return subject_session_dictionary[subject]
-
+def get_dict_value(dictonary, key):
+    return dictionary[key]
 
 def _template_runner(argv, environment, experiment, pipeline_options, cluster):
     print "Getting subjects from database..."
     # subjects = argv["--subjects"].split(',')
-    subjects, subjects_sessions_dictionary = get_subjects_sessions_dictionary(argv['SUBJECTS'],
+    subjects, group_dictionary = generate_group_dictionary(argv['SUBJECTS'],
             experiment['cachedir'],
             experiment['resultdir'],
             environment['prefix'],
@@ -159,80 +162,74 @@ def _template_runner(argv, environment, experiment, pipeline_options, cluster):
             argv['--use-sentinal'], argv['--use-shuffle']
             ) # Build database before parallel section
     useSentinal = argv['--use-sentinal']
-    for thisSubject in subjects:
-        print("Processing atlas generation for this subject: {0}".format(thisSubject))
+    for group_key, group_value in group_dictionary.keys():
+        print("Processing atlas generation for {0}".format(group_key))
         print("="*80)
         print "Copying Atlas directory and determining appropriate Nipype options..."
         pipeline_options = nipype_options(argv, pipeline_options, cluster, experiment, environment)  # Generate Nipype options
         print "Dispatching jobs to the system..."
         ######
-        ###### Now start workflow construction
+        ###### Now start workflow construction # FIXME: def construct_workflow():
         ######
         # Set universal pipeline options
         nipype_config.update_config(pipeline_options)
 
         ready_for_template_building = True
-        for thisSession in subjects_sessions_dictionary[thisSubject]:
-            path_test = os.path.join(experiment['previousresult'],'*/{0}/{1}/TissueClassify/t1_average_BRAINSABC.nii.gz'.format(thisSubject,thisSession))
+        for session in group_value:
+            path_test = os.path.join(experiment['previousresult'],'*/*/{0}/TissueClassify/t1_average_BRAINSABC.nii.gz'.format(session))
             t1_file_result = glob.glob(path_test)
-            if len(t1_file_result) != 1:
-                print("Incorrect number of t1 images found for data grabber {0}".format(t1_file_result))
-                print("     at path {0}".format(path_test))
+            try:
+                assert len(t1_file_result) == 1, "Only one t1_average_BRAINSABC.nii.gz per session"
+            except AssertionError:
+                print("Incorrect number of t1 images found for data grabber\n\tat {0}".format(path_test))
                 ready_for_template_building = False
         if not ready_for_template_building:
-            print("TEMPORARY SKIPPING:  Not ready to process {0}".format(thisSubject))
+            print("TEMPORARY SKIPPING:  Not ready to process {0}".format(group_key))
             continue
 
-        base_output_directory = os.path.join(pipeline_options['logging']['log_directory'],thisSubject)
-        template = pe.Workflow(name='SubjectAtlas_Template_'+thisSubject)
+        base_output_directory = os.path.join(pipeline_options['logging']['log_directory'], group_key)
+        if argv['--groupfile'] is None:
+            template = pe.Workflow(name='SubjectAtlas_Template_' + group_key)
+        else:
+            template = pe.Workflow(name='PopulationAtlas_Template_' + group_key)
         template.base_dir = base_output_directory
 
         subjectNode = pe.Node(interface=IdentityInterface(fields=['subject']), run_without_submitting=True, name='99_subjectIterator')
-        subjectNode.inputs.subject = thisSubject
+        subjectNode.inputs.subject = group_key
 
-        sessionsExtractorNode = pe.Node(Function(function=getSessionsFromSubjectDictionary,
-                                                          input_names=['subject_session_dictionary','subject'],
-                                                          output_names=['sessions']),
-                                       run_without_submitting=True, name="99_sessionsExtractor")
-        sessionsExtractorNode.inputs.subject_session_dictionary = subjects_sessions_dictionary
+        sessionsExtractorNode = pe.Node(Function(function=get_dict_value,
+                                                 input_names=['dictionary','key'],
+                                                 output_names=['sessions']),
+                                        run_without_submitting=True,
+                                        name="99_sessionsExtractor")
+        sessionsExtractorNode.inputs.dictionary = group_dictionary
 
 
 
-        baselineOptionalDG = pe.MapNode(nio.DataGrabber(infields=['subject','session'],
-                                                outfields=[ 't2_average', 'pd_average',
-                                                           'fl_average'],
-                                run_without_submitting=True
-                                ),
-                                run_without_submitting=True,
-                                iterfield=['session'], name='BaselineOptional_DG')
-
+        baselineOptionalDG = pe.MapNode(nio.DataGrabber(infields=['session'],
+                                                        outfields=['t2_average', 'pd_average', 'fl_average'],
+                                                        run_without_submitting=True),
+                                        run_without_submitting=True,
+                                        iterfield=['session'],
+                                        name='BaselineOptional_DG')
         baselineOptionalDG.inputs.base_directory = experiment['previousresult']
         baselineOptionalDG.inputs.sort_filelist = True
         baselineOptionalDG.inputs.raise_on_empty = False
         baselineOptionalDG.inputs.template = '*'
-
-        baselineOptionalDG.inputs.field_template = {
-                                            't2_average':'*/%s/%s/TissueClassify/t2_average_BRAINSABC.nii.gz',
-                                            'pd_average':'*/%s/%s/TissueClassify/pd_average_BRAINSABC.nii.gz',
-                                            'fl_average':'*/%s/%s/TissueClassify/fl_average_BRAINSABC.nii.gz'
-                                       }
-        baselineOptionalDG.inputs.template_args  = {
-                                            't2_average':[['subject','session']],
-                                            'pd_average':[['subject','session']],
-                                            'fl_average':[['subject','session']]
-                                       }
+        baselineOptionalDG.inputs.field_template = {'t2_average':'*/*/%s/TissueClassify/t2_average_BRAINSABC.nii.gz',
+                                                    'pd_average':'*/*/%s/TissueClassify/pd_average_BRAINSABC.nii.gz',
+                                                    'fl_average':'*/*/%s/TissueClassify/fl_average_BRAINSABC.nii.gz'}
+        baselineOptionalDG.inputs.template_args  = {'t2_average':[['session']],
+                                                    'pd_average':[['session']],
+                                                    'fl_average':[['session']]}
 
 
-
-        baselineRequiredDG = pe.MapNode(nio.DataGrabber(infields=['subject','session'],
-                                                outfields=['t1_average', 'brainMaskLabels',
-                                                           'posteriorImages','passive_intensities','passive_masks',
-                                                           'BCD_ACPC_Landmarks_fcsv'],
-                                run_without_submitting=True
-                                ),
-                                run_without_submitting=True,
-                                iterfield=['session'], name='Baseline_DG')
-
+        baselineRequiredDG = pe.MapNode(nio.DataGrabber(infields=['session'],
+                                                        outfields=['t1_average', 'brainMaskLabels', 'posteriorImages',
+                                                                   'passive_intensities','passive_masks', 'BCD_ACPC_Landmarks_fcsv'],
+                                                        run_without_submitting=True),
+                                        run_without_submitting=True,
+                                        iterfield=['session'], name='Baseline_DG')
         baselineRequiredDG.inputs.base_directory = experiment['previousresult']
         baselineRequiredDG.inputs.sort_filelist = True
         baselineRequiredDG.inputs.raise_on_empty = True
@@ -264,35 +261,28 @@ def _template_runner(argv, environment, experiment, pipeline_options, cluster):
             'template_rightHemisphere.nii.gz',
             'template_ventricles.nii.gz'
             ]
-
-        baselineRequiredDG.inputs.field_template = {'t1_average':'*/%s/%s/TissueClassify/t1_average_BRAINSABC.nii.gz',
-                                       'brainMaskLabels':'*/%s/%s/TissueClassify/complete_brainlabels_seg.nii.gz',
-                               'BCD_ACPC_Landmarks_fcsv':'*/%s/%s/ACPCAlign/BCD_ACPC_Landmarks.fcsv',
-                                       'posteriorImages':'*/%s/%s/TissueClassify/POSTERIOR_%s.nii.gz',
-                                   'passive_intensities':'*/%s/%s/WarpedAtlas2Subject/%s',
-                                         'passive_masks':'*/%s/%s/WarpedAtlas2Subject/%s',
-                                       }
-        baselineRequiredDG.inputs.template_args  = {'t1_average':[['subject','session']],
-                                       'brainMaskLabels':[['subject','session']],
-                               'BCD_ACPC_Landmarks_fcsv':[['subject','session']],
-                                       'posteriorImages':[['subject','session', posterior_files]],
-                                   'passive_intensities':[['subject','session', passive_intensities_files]],
-                                         'passive_masks':[['subject','session', passive_mask_files]]
-                                       }
+        baselineRequiredDG.inputs.field_template = {'t1_average':             '*/*/%s/TissueClassify/t1_average_BRAINSABC.nii.gz',
+                                                    'brainMaskLabels':        '*/*/%s/TissueClassify/complete_brainlabels_seg.nii.gz',
+                                                    'BCD_ACPC_Landmarks_fcsv':'*/*/%s/ACPCAlign/BCD_ACPC_Landmarks.fcsv',
+                                                    'posteriorImages':        '*/*/%s/TissueClassify/POSTERIOR_%s.nii.gz',
+                                                    'passive_intensities':    '*/*/%s/WarpedAtlas2Subject/%s',
+                                                    'passive_masks':          '*/*/%s/WarpedAtlas2Subject/%s'}
+        baselineRequiredDG.inputs.template_args  = {'t1_average':[['session']],
+                                                    'brainMaskLabels':[['session']],
+                                                    'BCD_ACPC_Landmarks_fcsv':[['session']],
+                                                    'posteriorImages':[['session', posterior_files]],
+                                                    'passive_intensities':[['session', passive_intensities_files]],
+                                                    'passive_masks':[['session', passive_mask_files]]}
 
         MergeByExtendListElementsNode = pe.Node(Function(function=MergeByExtendListElements,
-                                                         input_names=['t1s', 't2s',
-                                                                      'pds', 'fls',
-                                                                      'labels', 'posteriors',
-                                                                      'passive_intensities', 'passive_masks'
-                                                                      ],
+                                                         input_names=['t1s', 't2s', 'pds', 'fls', 'labels', 'posteriors',
+                                                                      'passive_intensities', 'passive_masks'],
                                                          output_names=['ListOfImagesDictionaries', 'registrationImageTypes',
                                                                        'interpolationMapping']),
-                                                run_without_submitting=True, name="99_MergeByExtendListElements")
+                                                run_without_submitting=True,
+                                                name="99_MergeByExtendListElements")
 
-        template.connect([(subjectNode, baselineRequiredDG, [('subject', 'subject')]),
-                          (subjectNode, baselineOptionalDG, [('subject', 'subject')]),
-                          (subjectNode, sessionsExtractorNode, [('subject','subject')]),
+        template.connect([(subjectNode, sessionsExtractorNode, [('subject','key')]),
                           (sessionsExtractorNode, baselineRequiredDG, [('sessions', 'session')]),
                           (sessionsExtractorNode, baselineOptionalDG, [('sessions', 'session')]),
                           (baselineRequiredDG, MergeByExtendListElementsNode,
@@ -412,10 +402,16 @@ if __name__ == '__main__':
 
     argv = docopt(__doc__, version='1.1')
     print argv
-    if argv['--workphase'] != 'subject-template-generation':
-        print("ERROR: Only --workphase subject-template-generation supported for template building")
-        sys.exit(-1)
+    valid_phases = ['subject-template-generation', 'population-template-generation']
+    if argv['subject']:
+        this_phase = valid_phases[0]
+    elif argv['population']:
+        this_phase = valid_phases[1]
+    else:
+        raise RuntimeError("Unknown workphase attempted!")
+    print("Running {0} workphase".format(this_phase))
     print '=' * 100
+    argv['--workphase'] = this_phase
     environment, experiment, pipeline, cluster = setup_environment(argv)
     from nipype import config as nipype_config
     import nipype.pipeline.engine as pe

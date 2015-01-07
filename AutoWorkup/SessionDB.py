@@ -3,6 +3,8 @@ import sys
 import sqlite3 as lite
 import csv
 
+DEBUG = False
+
 class SessionDB():
     def __init__(self, defaultDBName='TempFileForDB.db', subject_list=[]):
         self.MasterTableName = "MasterDB"
@@ -34,11 +36,11 @@ class SessionDB():
             self.connection.close()
 
     def _local_fillDB_AndClose(self, sqlCommandList):
-        print "Filling SQLite database SessionDB.py"
+        if DEBUG: print "Filling SQLite database SessionDB.py"
         for sqlCommand in sqlCommandList:
             self.cursor.execute(sqlCommand)
         self.connection.commit()
-        print "Finished filling SQLite database SessionDB.py"
+        if DEBUG: print "Finished filling SQLite database SessionDB.py"
 
     def MakeNewDB(self, subject_data_file, mountPrefix):
         ## First close so that we can delete.
@@ -52,57 +54,48 @@ class SessionDB():
         sqlCommandList = list()
         missingFilesLog = self.dbName + "_MissingFiles.log"
         missingCount = 0
-        print("MISSING FILES RECORED IN {0}".format(missingFilesLog))
+        if DEBUG: print("MISSING FILES RECORED IN {0}".format(missingFilesLog))
         missingFiles = open(missingFilesLog, 'w')
-        print "Building Subject returnList: " + subject_data_file
+        if DEBUG: print "Building Subject returnList: " + subject_data_file
         subjData = csv.reader(open(subject_data_file, 'rb'), delimiter=',', quotechar='"')
-        for row in subjData:
-            if len(row) < 1:
-                # contine of it is an empty row
-                continue
-            if row[0][0] == '#':
-                # if the first character is a #, then it is commented out
-                continue
-            if row[0] == 'project':
-                # continue if header line
-                continue
+        for linenumber, row in enumerate(subjData):
+            if len(row) < 1 or row[0][0] == '#' or row[0] == 'project':
+                continue  # empty row, comment, or header line
+            elif len(row) != 4:
+                raise RuntimeError("Invalid number of elements in subject data file {0}, line {0}", subject_data_file, linenumber)
             currDict = dict()
             validEntry = True
-            if len(row) == 4:
-                currDict = {'project': row[0],
-                            'subj': row[1],
-                            'session': row[2]}
-                rawDict = eval(row[3])
-                for imageType in rawDict.keys():
-                    currDict['type'] = imageType
-                    fullPaths = [mountPrefix + i for i in rawDict[imageType]]
-                    if len(fullPaths) < 1:
-                        print("Invalid Entry!  {0}".format(currDict))
+            currDict = {'project': row[0],
+                        'subj': row[1],
+                        'session': row[2]}
+            rawDict = eval(row[3])
+            for imageType in rawDict.keys():
+                currDict['type'] = imageType
+                fullPaths = [mountPrefix + i for i in rawDict[imageType]]
+                if len(fullPaths) < 1:
+                    if DEBUG: print("Invalid Entry!  {0}".format(currDict))
+                    validEntry = False
+                for i in range(len(fullPaths)):
+                    imagePath = fullPaths[i]
+                    if not os.path.exists(imagePath):
+                        if DEBUG: print("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX  Missing File: {0}\n".format(imagePath))
+                        missingFiles.write("Missing File: {0}\n".format(imagePath))
                         validEntry = False
-                    for i in range(len(fullPaths)):
-                        imagePath = fullPaths[i]
-                        if not os.path.exists(imagePath):
-                            print("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX  Missing File: {0}\n".format(imagePath))
-                            missingFiles.write("Missing File: {0}\n".format(imagePath))
-                            validEntry = False
-                            missingCount += 1
-                        else:
-                            print("Found file {0}".format(imagePath))
-                        if validEntry == True:
-                            currDict['Qpos'] = str(i)
-                            currDict['filename'] = imagePath
-                            sqlCommand = self.makeSQLiteCommand(currDict)
-                            sqlCommandList.append(sqlCommand)
-            else:
-                print "ERROR:  Invalid number of elements in row"
-                print row
-        sqlCommandList
+                        missingCount += 1
+                    else:
+                        if DEBUG: print("Found file {0}".format(imagePath))
+                    if validEntry == True:
+                        currDict['Qpos'] = str(i)
+                        currDict['filename'] = imagePath
+                        sqlCommand = self.makeSQLiteCommand(currDict)
+                        sqlCommandList.append(sqlCommand)
+        # sqlCommandList
         self._local_fillDB_AndClose(sqlCommandList)
         if missingCount > 0:
             if os.path.exists(self.dbName):
                 os.remove(self.dbName)
             missingFiles.close()
-            print("ABORTING: At least 1 missing file\n"*20)
+            if DEBUG: print("ABORTING: At least 1 missing file\n"*20)
             sys.exit(-1)
         else:
             missingFiles.write("NO_MISSING_FILES")
@@ -209,6 +202,37 @@ class SessionDB():
             returnList.append(str(i[0]))
         return returnList
 
+    def getSessionsFromGroup(self, groupfile):
+        """ Create a dictionary of {group: {subject: [sessions]}, ...}
+
+        Keyword Arguments:
+        self   -- SessionDB object
+        groupfile -- path to group dictionary file
+
+        NOTA BENE: groupfile MUST have a Python dictionary named 'groups' defined within it
+
+        >>> def test():
+        ...   import os, os.path
+        ...   import SessionDB
+        ...   db = SessionDB.SessionDB(subject_list=['all'])
+        ...   dbfile = os.path.join(os.getcwd(), 'test_SessionDB.csv')
+        ...   db.MakeNewDB(dbfile, '')
+        ...   groupfile = os.path.abspath('test_groupfile.pydict')
+        ...   return db.getSessionsFromGroup(groupfile)
+        >>> test()
+        {'groupA': ['63819', '59911'], 'groupC': [], 'groupB': ['29876']}
+        """
+        execfile(groupfile, globals())
+        assert 'groups' in globals(), "'groups' not found in {0}".format(groupfile)
+        allSessions = set(self.getAllSessions())
+        for k, v in groups.items():
+            valid = list(set(v).intersection(allSessions))
+            if len(valid) == 0:
+                if DEBUG: print "WARNING: Group {0} is empty!".format(k)
+            groups[k] = valid
+        return groups
+
+
     def getEverything(self):
         sqlCommand = "SELECT * FROM ({_master_query});".format(_master_query=self.MasterQueryFilter)
         val = self.getInfoFromDB(sqlCommand)
@@ -261,3 +285,11 @@ class SessionDB():
 # a.getFirstScan('42245','T1-30')
 # a.getInfoFromDB("SELECT filename FROM SessionDB WHERE session=42245 ORDER BY type ASC, Qpos ASC;")
 # a.getInfoFromDB("SELECT DISTINCT subj FROM SessionDB;")
+
+if __name__ == '__main__':
+    import os.path
+    import doctest
+
+    doctest.testmod(verbose=True, raise_on_error=True)
+    # dirname = os.path.dirname(__file__)
+    # doctest.testfile(os.path.join(dirname, 'tests/SessionDB.test'))

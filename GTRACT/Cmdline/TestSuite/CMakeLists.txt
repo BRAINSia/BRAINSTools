@@ -74,6 +74,19 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${GTRACTTestName}
     --inputVolume DATA{${TestData_DIR}/DWI_test1.nrrd}
     --inputTransform DATA{${TestData_DIR}/${GTRACTTestName}_rigid_transform.mat}
     --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${GTRACTTestName}.test.nrrd
+    --writeOutputMetaData ${CMAKE_CURRENT_BINARY_DIR}/${GTRACTTestName}_metaData.csv
 )
+
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/compareTwoCSVFiles.py.in ${CMAKE_CURRENT_BINARY_DIR}/compareTwoCSVFiles.py @ONLY IMMEDIATE)
+
+## Add a test to verify the output DWI image data
+set(PARENT_TEST GTRACTTest_gtractResampleDWIInPlace)
+set(GTRACTTestName chk_${PARENT_TEST})
+ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${GTRACTTestName}
+  COMMAND ${LAUNCH_EXE} python compareTwoCSVFiles.py
+    --csvReferenceFile DATA{${TestData_DIR}/${GTRACTTestName}_referenceMetaData.csv}
+    --csvInputFile ${CMAKE_CURRENT_BINARY_DIR}/${PARENT_TEST}_metaData.csv
+)
+set_property(TEST ${GTRACTTestName} APPEND PROPERTY DEPENDS ${PARENT_TEST})
 
 ExternalData_Add_Target( ${PROJECT_NAME}FetchData )

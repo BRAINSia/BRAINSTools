@@ -1,0 +1,57 @@
+"""
+compareTwoCSVFiles.py
+======
+
+This program compares two input csv files.
+
+USAGE:
+  compareTwoCSVFiles.py \
+   --csvReferenceFile <file1.csv>
+   --csvInputFile <file2.csv>
+"""
+
+import sys, getopt
+import os.path
+import csv
+
+def csv_file_reader(filename):
+  import csv
+  dataList=[]
+  with open(filename) as lf:
+    reader = csv.reader(lf, delimiter=',')
+    for line in reader:
+      dataList.append(line)
+  return dataList
+
+def main(argv):
+  csvReferenceFile = ''
+  csvInputFile = ''
+
+  try:
+    opts, args = getopt.getopt(argv,"hr:i:",["csvReferenceFile=","csvInputFile="])
+  except getopt.GetoptError:
+    print 'compareTwoCSVFiles.py -r <csvReferenceFile> -i <csvInputFile>'
+    sys.exit(2)
+  for opt, arg in opts:
+    if opt == '-h':
+      print 'compareTwoCSVFiles.py -r <csvReferenceFile> -i <csvInputFile>'
+      sys.exit()
+    elif opt in ("-r", "--csvReferenceFile"):
+      referenceFile = arg
+    elif opt in ("-i", "--csvInputFile"):
+      inputFile = arg
+
+  print 'Reference csv file: ', referenceFile
+  print 'Input csv file: ', inputFile
+
+  refDataList = csv_file_reader(referenceFile)
+  inputDataList = csv_file_reader(inputFile)
+
+  if refDataList != inputDataList:
+    print 'Input csv files do not match!!!'
+    sys.exit(1)
+  else:
+    print 'Input csv files are the same!'
+
+if __name__ == "__main__":
+  main(sys.argv[1:])

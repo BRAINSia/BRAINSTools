@@ -261,6 +261,11 @@ int main(int argc, char *argv[])
 
     // Rotate the diffusion gradient with rigid transform and inverse measurement frame
     RigidTransformType::Pointer inverseRigidTransform = RigidTransformType::New();
+    const NrrdImageType::PointType centerPoint = rigidTransform->GetCenter();
+    inverseRigidTransform->SetCenter( centerPoint );
+    inverseRigidTransform->SetIdentity();
+    rigidTransform->GetInverse(inverseRigidTransform);
+
     curGradientDirection = inverseRigidTransform->GetMatrix().GetVnlMatrix() * DWIInverseMeasurementFrame
       * curGradientDirection;
 

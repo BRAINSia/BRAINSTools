@@ -63,6 +63,14 @@
       <default>0</default>
     </integer>
 
+    <file>
+      <name>writeOutputMetaData</name>
+      <longflag>writeOutputMetaData</longflag>
+      <label>Output MetaData CSV File</label>
+      <description>A file to write the output image diffusion gradient directions in a CSV file</description>
+      <channel>output</channel>
+    </file>
+
   </parameters>
 
   <parameters advanced="true">

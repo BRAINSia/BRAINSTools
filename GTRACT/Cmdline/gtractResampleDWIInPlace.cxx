@@ -242,6 +242,9 @@ int main(int argc, char *argv[])
   resampleImage = SetVectorImageRigidTransformInPlace<NrrdImageType>(rigidTransform.GetPointer(), resampleImage);
 
   std::cout << "Rigid transform matrix: " << rigidTransform->GetMatrix().GetVnlMatrix() << std::endl;
+
+  std::stringstream outputGradDirMetaDataStream;
+
   // Rotate gradient vectors by rigid transform and inverse measurement frame
   for( unsigned int i = 0; i < resampleImage->GetVectorLength(); i++ )
     {
@@ -275,22 +278,47 @@ int main(int argc, char *argv[])
       NrrdValue += doubleConvert(curGradientDirection[dir]);
       }
     itk::EncapsulateMetaData<std::string>(resampleImage->GetMetaDataDictionary(), KeyString, NrrdValue);
+
+    outputGradDirMetaDataStream << KeyString << ","
+                                << curGradientDirection[0] << ","
+                                << curGradientDirection[1] << ","
+                                << curGradientDirection[2] << std::endl;
     }
 
   // Set DWI measurement frame to identity by multiplying by its inverse
   // Update Image MetaData Dictionary with new measurement frame
   vnl_matrix_fixed<double, 3, 3>    newMeasurementFrame = DWIInverseMeasurementFrame * DWIMeasurementFrame;
   std::vector<std::vector<double> > newMf(3);
+  std::stringstream outputMFMetaDataStream;
+  outputMFMetaDataStream << "measurement frame";
   for( unsigned int i = 0; i < 3; i++ )
     {
     newMf[i].resize(3);
     for( unsigned int j = 0; j < 3; j++ )
       {
       newMf[i][j] = newMeasurementFrame[i][j];
+      outputMFMetaDataStream << "," << newMf[i][j];
       }
     }
+  outputMFMetaDataStream << std::endl;
   itk::EncapsulateMetaData<std::vector<std::vector<double> > >(
     resampleImage->GetMetaDataDictionary(), "NRRD_measurement frame", newMf );
+
+  // If --writeOutputMetaData ./metaData.csv is specified on the command line,
+  // then write out the output image measurement frame and diffusion gradient directions in a simple CSV file.
+  // This helps to verify the output image meta data in TestSuite.
+  if( writeOutputMetaData != "" )
+    {
+    std::ofstream outputMetaDataFile;
+    outputMetaDataFile.open( writeOutputMetaData.c_str() );
+    if( !outputMetaDataFile.is_open() )
+      {
+      std::cerr << "Can't write the output meta data CSV file " << writeOutputMetaData << std::endl;
+      }
+    outputMetaDataFile << outputMFMetaDataStream.str();
+    outputMetaDataFile << outputGradDirMetaDataStream.str();
+    outputMetaDataFile.close();
+    }
 
   // Pad image
   const NrrdImageType::RegionType    inputRegion = resampleImage->GetLargestPossibleRegion();

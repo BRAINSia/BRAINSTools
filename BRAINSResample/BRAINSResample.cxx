@@ -77,7 +77,7 @@ int main(int argc, char *argv[])
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
 
   const bool debug = true;
-  const bool useTransform = ( warpTransform.size() > 0 );
+  bool useTransform = ( warpTransform.size() > 0 );
   const bool useDisplacementField = ( deformationVolume.size() > 0 );
 
   if(inputVolume.empty())
@@ -97,6 +97,15 @@ int main(int argc, char *argv[])
     std::cout << "ERROR: warpTransform and deformationVolume are mutually exclusive, only use one of them."
               << std::endl;
     return EXIT_FAILURE;
+    }
+  // If neither warpTransform nor deformationVolume are defined,
+  //  use an identity transform as the warpTransform.
+  if( !useTransform && !useDisplacementField )
+    {
+    std::cout << "WARNING: neither warpTransform nor deformationVolume are defined, so warpTransform is set as identity."
+              << std::endl;
+    useTransform = true;
+    warpTransform = "Identity";
     }
 
   if( debug )

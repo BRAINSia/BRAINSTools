@@ -141,7 +141,8 @@ def runMainWorkflow(DWI_scan, T2_scan, labelMap_image, BASE_DIR):
 
     outputsSpec = pe.Node(interface=IdentityInterface(fields=['CorrectedDWI_in_T2Space','tensor_image','DWIBrainMask',
                                                               'FAImage','MDImage','RDImage','FrobeniusNormImage',
-                                                              'Lambda1Image','Lambda2Image','Lambda3Image']),
+                                                              'Lambda1Image','Lambda2Image','Lambda3Image',
+                                                              'ukfTracks','ukf2ndTracks' ]),
                           name='outputsSpec')
 
     # Step0: remove the skull from the T2 volume
@@ -346,6 +347,28 @@ def runMainWorkflow(DWI_scan, T2_scan, labelMap_image, BASE_DIR):
     DWIWorkflow.connect(DTIProcess, 'lambda2_output', outputsSpec, 'Lambda2Image')
     DWIWorkflow.connect(DTIProcess, 'lambda3_output', outputsSpec, 'Lambda3Image')
 
+    ## UKF Processing
+    UKFNode = pe.Node(interface=UKFTractography(), name= "UKFRunRecordStates")
+    UKFNode.inputs.tracts = "ukfTracts.vtk"
+    #UKFNode.inputs.tractsWithSecondTensor = "ukfSecondTensorTracks.vtk"
+    UKFNode.inputs.numTensor = '2'  ## default True
+    UKFNode.inputs.freeWater = True ## default False
+    UKFNode.inputs.recordFA = True ## default False
+    UKFNode.inputs.recordTensors = True ## default False
+    #UKFNode.inputs.recordCovariance = True ## default False
+    #UKFNode.inputs.recordState = True ## default False
+    #UKFNode.inputs.recordFreeWater = True ## default False
+    #UKFNode.inputs.recordTrace = True ## default False
+    #UKFNode.inputs.recordNMSE = True ## default False
+
+
+    DWIWorkflow.connect(gtractResampleDWIInPlace_Trigid, 'outputVolume', UKFNode, 'dwiFile')
+    DWIWorkflow.connect(DWIBRAINMASK, 'outputVolume', UKFNode, 'maskFile')
+
+    DWIWorkflow.connect(UKFNode,'tracts',outputsSpec,'ukfTracks')
+    #DWIWorkflow.connect(UKFNode,'tractsWithSecondTensor',outputsSpec,'ukf2ndTracks')
+
+
     # Step12: Write outputs with DataSink
     DWIDataSink = pe.Node(interface=nio.DataSink(), name='DWIDataSink')
 
@@ -355,6 +378,9 @@ def runMainWorkflow(DWI_scan, T2_scan, labelMap_image, BASE_DIR):
 
     DWIDataSink.inputs.base_directory = dataSinkDirectory
     DWIDataSink.inputs.container = sessionID
+
+    DWIWorkflow.connect(outputsSpec, 'ukfTracks', DWIDataSink, 'Outputs.@ukfTracks')
+    DWIWorkflow.connect(outputsSpec, 'ukf2ndTracks', DWIDataSink, 'Outputs.@ukf2ndTracks')
 
     DWIWorkflow.connect(outputsSpec, 'CorrectedDWI_in_T2Space', DWIDataSink, 'Outputs.@CorrectedDWI_in_T2Space')
     DWIWorkflow.connect(outputsSpec, 'tensor_image', DWIDataSink, 'Outputs.@tensor_image')

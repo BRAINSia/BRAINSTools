@@ -126,8 +126,7 @@ protected:
   vtkImageGenus0MarchingCubes();
   ~vtkImageGenus0MarchingCubes();
 
-  void Execute();
-
+  virtual int RequestData(vtkInformation *, vtkInformationVector**, vtkInformationVector *);
   virtual int FillInputPortInformation(int port, vtkInformation *info) ITK_OVERRIDE;
 
   int BiggestComponent;

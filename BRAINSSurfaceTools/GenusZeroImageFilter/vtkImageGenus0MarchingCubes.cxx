@@ -98,10 +98,15 @@ vtkImageGenus0MarchingCubes::~vtkImageGenus0MarchingCubes()
     }
 }
 
-void vtkImageGenus0MarchingCubes::Execute()
+int vtkImageGenus0MarchingCubes::RequestData( vtkInformation *vtkNotUsed(request),
+					       vtkInformationVector **inputVector,
+					       vtkInformationVector *outputVector)
 {
+  vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
+  vtkInformation *outInfo = outputVector->GetInformationObject(0);
+
   vtkImageData *inData = vtkImageData::SafeDownCast( this->GetInput( 0 ) );
-  vtkPolyData * outData = vtkPolyData::SafeDownCast( this->GetOutput( 0 ) );
+  vtkPolyData *outData = vtkPolyData::SafeDownCast( this->GetOutput( 0 ) );
 
   this->iConnectedComponents = 0;
 
@@ -109,7 +114,7 @@ void vtkImageGenus0MarchingCubes::Execute()
   if( !inData )
     {
     std::cerr << "Error: Input data not set." << std::endl;
-    return;
+    return 1;
     }
 
   // vtkMatrix4x4* matIJKtoRAS = IJKtoRAS->GetMatrix();
@@ -170,7 +175,7 @@ void vtkImageGenus0MarchingCubes::Execute()
       );
     default:
       vtkErrorMacro(<< "Unknown output ScalarType");
-      return;
+      return 1;
     }
 
   float ijk2ras[16];
@@ -321,7 +326,7 @@ void vtkImageGenus0MarchingCubes::Execute()
       );
     default:
       vtkErrorMacro(<< "Unknown output ScalarType");
-      return;
+      return 1;
     }
 
   // determine the number of connected compontens by counting the number of
@@ -341,6 +346,8 @@ void vtkImageGenus0MarchingCubes::Execute()
 
   // deallocate the temporary memory
   free(input);
+
+  return 1;
 }
 
 // ----------------------------------------------------------------------------

@@ -76,4 +76,138 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${GTRACTTestName}
     --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${GTRACTTestName}.test.nrrd
 )
 
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/compareTwoCSVFiles.py.in ${CMAKE_CURRENT_BINARY_DIR}/compareTwoCSVFiles.py @ONLY IMMEDIATE)
+
+## The following set of tests verify that gtractResampleDWIInPlace
+# changes the gradient directions table in a proper way when the
+# input DWI image goes under different rotations.
+# 5 tests are designed. The first three tests apply 3 different rotations around z axis (-15, 15, 45);
+# then, two more tests are designed by 30 degree rotation around each of x, y directions.
+# For each regression test the rotated DWI header file (measurement frame and diffusion
+# gradient directions) is written to a simple CSV file that is compared with corresponding
+# baseline csv file.
+# The reference metaData are approved by looking into corresponding color tensor images
+# created by ditestim.
+
+set(GTRACTTestName GTRACTTest_gtractResampleDWIInPlace_Rot15z)
+ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${GTRACTTestName}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:gtractResampleDWIInPlaceTests>
+    --compare DATA{${TestData_DIR}/${GTRACTTestName}.standard.nrrd}
+              ${CMAKE_CURRENT_BINARY_DIR}/${GTRACTTestName}.test.nrrd
+    --compareIntensityTolerance 0
+    --compareRadiusTolerance 0
+    --compareNumberOfPixelsTolerance 0
+  gtractResampleDWIInPlaceTest
+    --inputVolume DATA{${TestData_DIR}/DWI_test1.nrrd}
+    --inputTransform DATA{${TestData_DIR}/GTRACTTest_rigidTx_Rot15z.h5}
+    --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${GTRACTTestName}.test.nrrd
+    --writeOutputMetaData ${CMAKE_CURRENT_BINARY_DIR}/${GTRACTTestName}_metaData.test.csv
+)
+
+set(PARENT_TEST GTRACTTest_gtractResampleDWIInPlace_Rot15z)
+set(GTRACTTestName chk_${PARENT_TEST})
+ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${GTRACTTestName}
+  COMMAND ${LAUNCH_EXE} python compareTwoCSVFiles.py
+    --csvReferenceFile DATA{${TestData_DIR}/${GTRACTTestName}_metaData.standard.csv}
+    --csvInputFile ${CMAKE_CURRENT_BINARY_DIR}/${PARENT_TEST}_metaData.test.csv
+)
+set_property(TEST ${GTRACTTestName} APPEND PROPERTY DEPENDS ${PARENT_TEST})
+
+set(GTRACTTestName GTRACTTest_gtractResampleDWIInPlace_Rot-15z)
+ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${GTRACTTestName}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:gtractResampleDWIInPlaceTests>
+    --compare DATA{${TestData_DIR}/${GTRACTTestName}.standard.nrrd}
+              ${CMAKE_CURRENT_BINARY_DIR}/${GTRACTTestName}.test.nrrd
+    --compareIntensityTolerance 0
+    --compareRadiusTolerance 0
+    --compareNumberOfPixelsTolerance 0
+  gtractResampleDWIInPlaceTest
+    --inputVolume DATA{${TestData_DIR}/DWI_test1.nrrd}
+    --inputTransform DATA{${TestData_DIR}/GTRACTTest_rigidTx_Rot-15z.h5}
+    --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${GTRACTTestName}.test.nrrd
+    --writeOutputMetaData ${CMAKE_CURRENT_BINARY_DIR}/${GTRACTTestName}_metaData.test.csv
+)
+
+set(PARENT_TEST GTRACTTest_gtractResampleDWIInPlace_Rot-15z)
+set(GTRACTTestName chk_${PARENT_TEST})
+ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${GTRACTTestName}
+  COMMAND ${LAUNCH_EXE} python compareTwoCSVFiles.py
+    --csvReferenceFile DATA{${TestData_DIR}/${GTRACTTestName}_metaData.standard.csv}
+    --csvInputFile ${CMAKE_CURRENT_BINARY_DIR}/${PARENT_TEST}_metaData.test.csv
+)
+set_property(TEST ${GTRACTTestName} APPEND PROPERTY DEPENDS ${PARENT_TEST})
+
+set(GTRACTTestName GTRACTTest_gtractResampleDWIInPlace_Rot45z)
+ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${GTRACTTestName}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:gtractResampleDWIInPlaceTests>
+    --compare DATA{${TestData_DIR}/${GTRACTTestName}.standard.nrrd}
+              ${CMAKE_CURRENT_BINARY_DIR}/${GTRACTTestName}.test.nrrd
+    --compareIntensityTolerance 0
+    --compareRadiusTolerance 0
+    --compareNumberOfPixelsTolerance 0
+  gtractResampleDWIInPlaceTest
+    --inputVolume DATA{${TestData_DIR}/DWI_test1.nrrd}
+    --inputTransform DATA{${TestData_DIR}/GTRACTTest_rigidTx_Rot45z.h5}
+    --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${GTRACTTestName}.test.nrrd
+    --writeOutputMetaData ${CMAKE_CURRENT_BINARY_DIR}/${GTRACTTestName}_metaData.test.csv
+)
+
+set(PARENT_TEST GTRACTTest_gtractResampleDWIInPlace_Rot45z)
+set(GTRACTTestName chk_${PARENT_TEST})
+ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${GTRACTTestName}
+  COMMAND ${LAUNCH_EXE} python compareTwoCSVFiles.py
+    --csvReferenceFile DATA{${TestData_DIR}/${GTRACTTestName}_metaData.standard.csv}
+    --csvInputFile ${CMAKE_CURRENT_BINARY_DIR}/${PARENT_TEST}_metaData.test.csv
+)
+set_property(TEST ${GTRACTTestName} APPEND PROPERTY DEPENDS ${PARENT_TEST})
+
+set(GTRACTTestName GTRACTTest_gtractResampleDWIInPlace_Rot30x)
+ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${GTRACTTestName}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:gtractResampleDWIInPlaceTests>
+    --compare DATA{${TestData_DIR}/${GTRACTTestName}.standard.nrrd}
+              ${CMAKE_CURRENT_BINARY_DIR}/${GTRACTTestName}.test.nrrd
+    --compareIntensityTolerance 0
+    --compareRadiusTolerance 0
+    --compareNumberOfPixelsTolerance 0
+  gtractResampleDWIInPlaceTest
+    --inputVolume DATA{${TestData_DIR}/DWI_test1.nrrd}
+    --inputTransform DATA{${TestData_DIR}/GTRACTTest_rigidTx_Rot30x.h5}
+    --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${GTRACTTestName}.test.nrrd
+    --writeOutputMetaData ${CMAKE_CURRENT_BINARY_DIR}/${GTRACTTestName}_metaData.test.csv
+)
+
+set(PARENT_TEST GTRACTTest_gtractResampleDWIInPlace_Rot30x)
+set(GTRACTTestName chk_${PARENT_TEST})
+ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${GTRACTTestName}
+  COMMAND ${LAUNCH_EXE} python compareTwoCSVFiles.py
+    --csvReferenceFile DATA{${TestData_DIR}/${GTRACTTestName}_metaData.standard.csv}
+    --csvInputFile ${CMAKE_CURRENT_BINARY_DIR}/${PARENT_TEST}_metaData.test.csv
+)
+set_property(TEST ${GTRACTTestName} APPEND PROPERTY DEPENDS ${PARENT_TEST})
+
+set(GTRACTTestName GTRACTTest_gtractResampleDWIInPlace_Rot30y)
+ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${GTRACTTestName}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:gtractResampleDWIInPlaceTests>
+    --compare DATA{${TestData_DIR}/${GTRACTTestName}.standard.nrrd}
+              ${CMAKE_CURRENT_BINARY_DIR}/${GTRACTTestName}.test.nrrd
+    --compareIntensityTolerance 0
+    --compareRadiusTolerance 0
+    --compareNumberOfPixelsTolerance 0
+  gtractResampleDWIInPlaceTest
+    --inputVolume DATA{${TestData_DIR}/DWI_test1.nrrd}
+    --inputTransform DATA{${TestData_DIR}/GTRACTTest_rigidTx_Rot30y.h5}
+    --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${GTRACTTestName}.test.nrrd
+    --writeOutputMetaData ${CMAKE_CURRENT_BINARY_DIR}/${GTRACTTestName}_metaData.test.csv
+)
+
+set(PARENT_TEST GTRACTTest_gtractResampleDWIInPlace_Rot30y)
+set(GTRACTTestName chk_${PARENT_TEST})
+ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${GTRACTTestName}
+  COMMAND ${LAUNCH_EXE} python compareTwoCSVFiles.py
+    --csvReferenceFile DATA{${TestData_DIR}/${GTRACTTestName}_metaData.standard.csv}
+    --csvInputFile ${CMAKE_CURRENT_BINARY_DIR}/${PARENT_TEST}_metaData.test.csv
+)
+set_property(TEST ${GTRACTTestName} APPEND PROPERTY DEPENDS ${PARENT_TEST})
+
+
 ExternalData_Add_Target( ${PROJECT_NAME}FetchData )

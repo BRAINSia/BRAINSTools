@@ -6,16 +6,17 @@ DWIWorkFlow.py
 The purpose of this pipeline is to complete all the pre-processing steps needed to turn diffusion-weighted images into FA images that will be used to build a template diffusion tensor atlas for fiber tracking.
 
 Usage:
-  DWIWorkFlow.py --inputDWIScan DWISCAN [--baseDIR BASEDIR]
+  DWIWorkFlow.py --inputDWIScan DWISCAN --program_paths PROGRAM_PATHS --python_aux_paths PYTHON_AUX_PATHS [--baseDIR BASEDIR]
   DWIWorkFlow.py -v | --version
   DWIWorkFlow.py -h | --help
 
 Options:
-  -h --help                   Show this help and exit
-  -v --version                Print the version and exit
-  --inputDWIScan DWISCAN      Path to the input DWI scan for further processing
-  --baseDIR BASEDIR           Base directory that outputs will be written to
-
+  -h --help                                 Show this help and exit
+  -v --version                              Print the version and exit
+  --inputDWIScan DWISCAN                    Path to the input DWI scan for further processing
+  --baseDIR BASEDIR                         Base directory that outputs will be written to
+  --program_paths PROGRAM_PATHS             Path to the directory where binary files are places
+  --python_aux_paths PYTHON_AUX_PATHS       Path to the AutoWorkup directory
 """
 
 #############################  UTILITY FUNCTIONS  #####################################
@@ -388,6 +389,10 @@ if __name__ == '__main__':
   DWISCAN = argv['--inputDWIScan']
   assert os.path.exists(DWISCAN), "Input DWI scan is not found: %s" % DWISCAN
 
+  PROGRAM_PATHS = argv['--program_paths']
+
+  PYTHON_AUX_PATHS = argv['--python_aux_paths']
+
   if argv['--baseDIR'] == None:
       print("*** base directory is set to current working directory.")
       BASEDIR = os.getcwd()
@@ -398,7 +403,6 @@ if __name__ == '__main__':
   #\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
   #####################################################################################
   #     Prepend the shell environment search paths
-  PROGRAM_PATHS = '/scratch/NAMICExternalProjects/release/bin'
   PROGRAM_PATHS = PROGRAM_PATHS.split(':')
   PROGRAM_PATHS.extend(os.environ['PATH'].split(':'))
   os.environ['PATH'] = ':'.join(PROGRAM_PATHS)
@@ -407,7 +411,6 @@ if __name__ == '__main__':
 
   # Platform specific information
   #     Prepend the python search paths
-  PYTHON_AUX_PATHS = '/scratch/NAMICExternalProjects/release/BRAINSTools/AutoWorkup'
   PYTHON_AUX_PATHS = PYTHON_AUX_PATHS.split(':')
   PYTHON_AUX_PATHS.extend(sys.path)
   sys.path = PYTHON_AUX_PATHS

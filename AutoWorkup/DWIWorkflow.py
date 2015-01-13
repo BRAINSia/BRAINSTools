@@ -6,7 +6,7 @@ DWIWorkFlow.py
 The purpose of this pipeline is to complete all the pre-processing steps needed to turn diffusion-weighted images into FA images that will be used to build a template diffusion tensor atlas for fiber tracking.
 
 Usage:
-  DWIWorkFlow.py --inputDWIScan DWISCAN --program_paths PROGRAM_PATHS --python_aux_paths PYTHON_AUX_PATHS [--baseDIR BASEDIR]
+  DWIWorkFlow.py --inputDWIScan DWISCAN --inputT2Scan T2SCAN --inputBrainLabelsMapImage BLMImage --program_paths PROGRAM_PATHS --python_aux_paths PYTHON_AUX_PATHS [--baseDIR BASEDIR]
   DWIWorkFlow.py -v | --version
   DWIWorkFlow.py -h | --help
 
@@ -14,6 +14,8 @@ Options:
   -h --help                                 Show this help and exit
   -v --version                              Print the version and exit
   --inputDWIScan DWISCAN                    Path to the input DWI scan for further processing
+  --inputT2Scan T2SCAN                      Path to the input T2 scan
+  --inputBrainLabelsMapImage BLMImage       Path to the input brain labels map image
   --baseDIR BASEDIR                         Base directory that outputs will be written to
   --program_paths PROGRAM_PATHS             Path to the directory where binary files are places
   --python_aux_paths PYTHON_AUX_PATHS       Path to the AutoWorkup directory
@@ -117,21 +119,13 @@ def GetRigidTransformInverse(inputTransform):
 #######################################################################################
 #\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 
-def runMainWorkflow(DWI_scan, BASE_DIR):
+def runMainWorkflow(DWI_scan, T2_scan, labelMap_image, BASE_DIR):
     print("Running the workflow ...")
-    ######## Input scans ############
+
     sessionID = os.path.basename(os.path.dirname(DWI_scan))
     subjectID = os.path.basename(os.path.dirname(os.path.dirname(DWI_scan)))
     siteID = os.path.basename(os.path.dirname(os.path.dirname(os.path.dirname(DWI_scan))))
 
-    scalarsDIR = os.path.join('/Shared/sinapse/CACHE/20141124_TrackOn_base_Results/',
-                              siteID,
-                              subjectID,
-                              sessionID,
-                              'TissueClassify')
-
-    T2_scan = os.path.join(scalarsDIR,'t2_average_BRAINSABC.nii.gz')
-    labelMap_image = os.path.join(scalarsDIR,'complete_brainlabels_seg.nii.gz')
     #\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
     ####### Workflow ###################
     WFname = 'DWIWorkflow_' + sessionID
@@ -389,6 +383,12 @@ if __name__ == '__main__':
   DWISCAN = argv['--inputDWIScan']
   assert os.path.exists(DWISCAN), "Input DWI scan is not found: %s" % DWISCAN
 
+  T2SCAN = argv['--inputT2Scan']
+  assert os.path.exists(T2SCAN), "Input T2 scan is not found: %s" % T2SCAN
+
+  LabelMapImage = argv['--inputBrainLabelsMapImage']
+  assert os.path.exists(LabelMapImage), "Input Brain labels map image is not found: %s" % LabelMapImage
+
   PROGRAM_PATHS = argv['--program_paths']
 
   PYTHON_AUX_PATHS = argv['--python_aux_paths']
@@ -427,6 +427,6 @@ if __name__ == '__main__':
   from SEMTools import *
   #####################################################################################
 
-  exit = runMainWorkflow(DWISCAN, BASEDIR)
+  exit = runMainWorkflow(DWISCAN, T2SCAN, LabelMapImage, BASEDIR)
 
   sys.exit(exit)

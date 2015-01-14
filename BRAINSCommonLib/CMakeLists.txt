@@ -43,6 +43,11 @@ LIST_CONTAINS(ITK_HAS_MGHIO MGHIO ${ITK_MODULES_ENABLED})
 if (NOT ITK_HAS_MGHIO)
   message(STATUS "WARNING: ITK_MODULES_ENABLED does not contain MGHIO, so programs will not be able to process .mgz formatted files")
 endif()
+
+configure_file("BRAINSToolsVersionConfig.h.in" "BRAINSToolsVersionConfig.h" @ONLY IMMEDIATE)
+install(FILES "${CMAKE_CURRENT_BINARY_DIR}/BRAINSToolsVersionConfig.h"
+  DESTINATION "${BRAINSTools_CLI_INSTALL_ARCHIVE_DESTINATION}/include" COMPONENT Development)
+
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/BRAINSCommonLib.h.in
   ${CMAKE_CURRENT_BINARY_DIR}/BRAINSCommonLib.h
@@ -63,6 +68,7 @@ set(BRAINSCommonLib_SRCS
   itkOrthogonalize3DRotationMatrix.cxx
   BRAINSThreadControl.cxx
   ExtractSingleLargestRegion.cxx
+  BRAINSToolsVersion.cxx
 )
 
 ## Always build BRAINSCommonLib as static

@@ -24,6 +24,8 @@
 #include "BRAINSFitHelper.h"
 #include "BRAINSFitCLP.h"
 
+#include "BRAINSToolsVersion.h"
+
 
 // This program was modified from
 // Insight/Examples/Registration/ImageRegistration8.cxx
@@ -105,6 +107,13 @@ DebugImageViewerClient DebugImageDisplaySender;
 int main(int argc, char *argv[])
 {
   PARSE_ARGS;
+
+  if(printVersionInfo)
+    {
+    std::cout << BRAINSTools::Version::ExtendedVersionString() << std::endl;
+    return EXIT_SUCCESS;
+    }
+
   BRAINSRegisterAlternateIO();
 
 #ifdef USE_DebugImageViewer

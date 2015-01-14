@@ -6,7 +6,7 @@ DWIWorkFlow.py
 The purpose of this pipeline is to complete all the pre-processing steps needed to turn diffusion-weighted images into FA images that will be used to build a template diffusion tensor atlas for fiber tracking.
 
 Usage:
-  DWIWorkFlow.py --inputDWIScan DWISCAN --inputT2Scan T2SCAN --inputBrainLabelsMapImage BLMImage --program_paths PROGRAM_PATHS --python_aux_paths PYTHON_AUX_PATHS [--baseDIR BASEDIR]
+  DWIWorkFlow.py --inputDWIScan DWISCAN --inputT2Scan T2SCAN --inputBrainLabelsMapImage BLMImage --program_paths PROGRAM_PATHS --python_aux_paths PYTHON_AUX_PATHS [--workflowCacheDir CACHEDIR] [--resultDir RESULTDIR]
   DWIWorkFlow.py -v | --version
   DWIWorkFlow.py -h | --help
 
@@ -16,9 +16,10 @@ Options:
   --inputDWIScan DWISCAN                    Path to the input DWI scan for further processing
   --inputT2Scan T2SCAN                      Path to the input T2 scan
   --inputBrainLabelsMapImage BLMImage       Path to the input brain labels map image
-  --baseDIR BASEDIR                         Base directory that outputs will be written to
   --program_paths PROGRAM_PATHS             Path to the directory where binary files are places
   --python_aux_paths PYTHON_AUX_PATHS       Path to the AutoWorkup directory
+  --workflowCacheDir CACHEDIR               Base directory that cache outputs of workflow will be written to (default: ./)
+  --resultDir RESULTDIR                     Outputs of dataSink will be written to a sub directory under the resultDir named by input scan sessionID (default: CACHEDIR)
 """
 
 #############################  UTILITY FUNCTIONS  #####################################
@@ -119,7 +120,7 @@ def GetRigidTransformInverse(inputTransform):
 #######################################################################################
 #\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 
-def runMainWorkflow(DWI_scan, T2_scan, labelMap_image, BASE_DIR):
+def runMainWorkflow(DWI_scan, T2_scan, labelMap_image, BASE_DIR, dataSink_DIR):
     print("Running the workflow ...")
 
     sessionID = os.path.basename(os.path.dirname(DWI_scan))
@@ -347,11 +348,11 @@ def runMainWorkflow(DWI_scan, T2_scan, labelMap_image, BASE_DIR):
     DWIWorkflow.connect(DTIProcess, 'lambda2_output', outputsSpec, 'Lambda2Image')
     DWIWorkflow.connect(DTIProcess, 'lambda3_output', outputsSpec, 'Lambda3Image')
 
-    ## UKF Processing
+    # Step12: UKF Processing
     UKFNode = pe.Node(interface=UKFTractography(), name= "UKFRunRecordStates")
     UKFNode.inputs.tracts = "ukfTracts.vtk"
     #UKFNode.inputs.tractsWithSecondTensor = "ukfSecondTensorTracks.vtk"
-    UKFNode.inputs.numTensor = '2'  ## default True
+    UKFNode.inputs.numTensor = '2'
     UKFNode.inputs.freeWater = True ## default False
     UKFNode.inputs.recordFA = True ## default False
     UKFNode.inputs.recordTensors = True ## default False
@@ -361,27 +362,18 @@ def runMainWorkflow(DWI_scan, T2_scan, labelMap_image, BASE_DIR):
     #UKFNode.inputs.recordTrace = True ## default False
     #UKFNode.inputs.recordNMSE = True ## default False
 
-
     DWIWorkflow.connect(gtractResampleDWIInPlace_Trigid, 'outputVolume', UKFNode, 'dwiFile')
     DWIWorkflow.connect(DWIBRAINMASK, 'outputVolume', UKFNode, 'maskFile')
-
     DWIWorkflow.connect(UKFNode,'tracts',outputsSpec,'ukfTracks')
     #DWIWorkflow.connect(UKFNode,'tractsWithSecondTensor',outputsSpec,'ukf2ndTracks')
 
-
-    # Step12: Write outputs with DataSink
+    ## Write all outputs with DataSink
     DWIDataSink = pe.Node(interface=nio.DataSink(), name='DWIDataSink')
-
-    dataSinkDirectory = os.path.join(BASE_DIR,'Results')
-    if not os.path.exists(dataSinkDirectory):
-        os.makedirs(dataSinkDirectory)
-
-    DWIDataSink.inputs.base_directory = dataSinkDirectory
+    DWIDataSink.inputs.base_directory = dataSink_DIR
     DWIDataSink.inputs.container = sessionID
 
     DWIWorkflow.connect(outputsSpec, 'ukfTracks', DWIDataSink, 'Outputs.@ukfTracks')
-    DWIWorkflow.connect(outputsSpec, 'ukf2ndTracks', DWIDataSink, 'Outputs.@ukf2ndTracks')
-
+    #DWIWorkflow.connect(outputsSpec, 'ukf2ndTracks', DWIDataSink, 'Outputs.@ukf2ndTracks')
     DWIWorkflow.connect(outputsSpec, 'CorrectedDWI_in_T2Space', DWIDataSink, 'Outputs.@CorrectedDWI_in_T2Space')
     DWIWorkflow.connect(outputsSpec, 'tensor_image', DWIDataSink, 'Outputs.@tensor_image')
     DWIWorkflow.connect(outputsSpec, 'DWIBrainMask', DWIDataSink, 'Outputs.@DWIBrainMask')
@@ -419,11 +411,20 @@ if __name__ == '__main__':
 
   PYTHON_AUX_PATHS = argv['--python_aux_paths']
 
-  if argv['--baseDIR'] == None:
-      print("*** base directory is set to current working directory.")
-      BASEDIR = os.getcwd()
+  if argv['--workflowCacheDir'] == None:
+      print("*** workflow cache directory is set to current working directory.")
+      CACHEDIR = os.getcwd()
   else:
-      BASEDIR = argv['--baseDIR']
+      CACHEDIR = argv['--workflowCacheDir']
+      assert os.path.exists(CACHEDIR), "Cache directory is not found: %s" % CACHEDIR
+
+  if argv['--resultDir'] == None:
+      print("*** data sink result directory is set to the cache directory.")
+      RESULTDIR = CACHEDIR
+  else:
+      RESULTDIR = argv['--resultDir']
+      assert os.path.exists(RESULTDIR), "Results directory is not found: %s" % RESULTDIR
+
   print '=' * 100
 
   #\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
@@ -453,6 +454,6 @@ if __name__ == '__main__':
   from SEMTools import *
   #####################################################################################
 
-  exit = runMainWorkflow(DWISCAN, T2SCAN, LabelMapImage, BASEDIR)
+  exit = runMainWorkflow(DWISCAN, T2SCAN, LabelMapImage, CACHEDIR, RESULTDIR)
 
   sys.exit(exit)

@@ -174,7 +174,7 @@ int vtkImageGenus0MarchingCubes::RequestData( vtkInformation *vtkNotUsed(request
       vtkGetUnsignedShortData(this, inData, static_cast<VTK_TT *>( ptr ), input, totlen );
       );
     default:
-      vtkErrorMacro(<< "Unknown output ScalarType");
+      vtkErrorMacro(<< "Unknown input ScalarType");
       return 1;
     }
 
@@ -317,13 +317,12 @@ int vtkImageGenus0MarchingCubes::RequestData( vtkInformation *vtkNotUsed(request
 
   // now export the topologically corrected image
   // g0->output
-  void *ptrCI = pCorrectedImageData->GetScalarPointer();
+  pCorrectedImageData->AllocateScalars( VTK_UNSIGNED_SHORT, 1);
+  void *ptrCI = pCorrectedImageData->GetScalarPointer( );
 
   switch( pCorrectedImageData->GetScalarType() )
     {
-    vtkTemplateMacro(
-      vtkSetUnsignedShortData(this, pCorrectedImageData, static_cast<VTK_TT *>( ptrCI ), g0->output, totlen )
-      );
+    vtkTemplateMacro( vtkSetUnsignedShortData(this, pCorrectedImageData, static_cast<VTK_TT *>( ptrCI ), g0->output, totlen ) );
     default:
       vtkErrorMacro(<< "Unknown output ScalarType");
       return 1;

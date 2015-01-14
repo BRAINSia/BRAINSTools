@@ -254,6 +254,7 @@ int main(int argc, char * argv[])
     std::cout << "Transforming using inversed matrix:\n";
     transformIJKtoRAS->GetMatrix()->Print(std::cout);
     }
+  transformer->Update();
 
   // TODO: add progress
   // (transformer->GetOutput())->ReleaseDataFlagOn();

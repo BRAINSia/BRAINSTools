@@ -29,16 +29,9 @@ if( BUILD_TESTING )
 
   set(TESTBIN ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 
-  add_test( TEST_GenusZeroImageFilter ${TESTBIN} / GenusZeroImageFilter-- inputVolume
-            ${BrainsRegressionData_DIR} / trunk / surface / 00361 95 - T1T2_leftTissueClass.nii.gz
-            -- outputVolume ${BRAINS_BINARY_DIR} / Testing / results / GenusZerotest.nii.gz-- vtkOutput
-            ${BRAINS_BINARY_DIR} / Testing / results / GenusZerotest.vtk-- connectivity 6
-            -- biggestComponent-- connectedComponent )
+  add_test( TEST_GenusZeroImageFilter ${TESTBIN}/GenusZeroImageFilter --inputVolume /scratch/BRAINSTools/regressiontest/surface/0036195-T1T2_leftTissueClass.nii.gz --outputVolume /scratch/BRAINSTools-build/Testing/results/GenusZerotest.nii.gz --vtkOutput /scratch/BRAINSTools-build/Testing/results/GenusZerotest.vtk --connectivity 6 --biggestComponent --connectedComponent )
 
-  add_test( COMPARE_GenusZeroImageFilter ${TESTBIN} / ImageCompare
-            ${BRAINS_BINARY_DIR} / Testing / results / GenusZerotest.nii.gz
-            ${BrainsRegressionData_DIR} / trunk / surface / 00361 95_leftTissueClass_genus0.nii.gz
-            )
+  add_test( COMPARE_GenusZeroImageFilter ${TESTBIN}/ImageCompare /scratch/BRAINSTools-build/Testing/results/GenusZerotest.nii.gz /scratch/BRAINSTools/regressiontest/surface/0036195-T1T2_leftTissueClass_genus0.nii.gz )
 
   set_tests_properties( COMPARE_GenusZeroImageFilter PROPERTIES DEPENDS TEST_GenusZeroImageFilter )
 

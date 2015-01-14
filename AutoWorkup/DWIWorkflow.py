@@ -102,7 +102,7 @@ def RestoreDCFromSavedMatrix(inputVolume, inputDirectionCosine):
     import SimpleITK as sitk
     inImage = sitk.ReadImage(inputVolume)
     inImage.SetDirection(inputDirectionCosine)
-    outputVolume = os.path.realpath('correctedDWI.nrrd')
+    outputVolume = os.path.realpath('CorrectedDWI.nrrd')
     sitk.WriteImage(inImage, outputVolume)
     return outputVolume
 
@@ -140,7 +140,7 @@ def runMainWorkflow(DWI_scan, T2_scan, labelMap_image, BASE_DIR, dataSink_DIR):
     inputsSpec.inputs.T2Volume = T2_scan
     inputsSpec.inputs.LabelMapVolume = labelMap_image
 
-    outputsSpec = pe.Node(interface=IdentityInterface(fields=['CorrectedDWI_in_T2Space','tensor_image','DWIBrainMask',
+    outputsSpec = pe.Node(interface=IdentityInterface(fields=['CorrectedDWI','CorrectedDWI_in_T2Space','tensor_image','DWIBrainMask',
                                                               'FAImage','MDImage','RDImage','FrobeniusNormImage',
                                                               'Lambda1Image','Lambda2Image','Lambda3Image',
                                                               'ukfTracks','ukf2ndTracks' ]),
@@ -292,6 +292,7 @@ def runMainWorkflow(DWI_scan, T2_scan, labelMap_image, BASE_DIR, dataSink_DIR):
 
     DWIWorkflow.connect(gtractResampleDWI_SyN,'outputVolume',RestoreDCFromSavedMatrixNode,'inputVolume')
     DWIWorkflow.connect(SaveDirectionCosineToMatrixNode,'directionCosine',RestoreDCFromSavedMatrixNode,'inputDirectionCosine')
+    DWIWorkflow.connect(RestoreDCFromSavedMatrixNode,'outputVolume', outputsSpec, 'CorrectedDWI')
 
     GetRigidTransformInverseNode = pe.Node(interface=Function(function = GetRigidTransformInverse,
                                                               input_names=['inputTransform'],
@@ -374,6 +375,7 @@ def runMainWorkflow(DWI_scan, T2_scan, labelMap_image, BASE_DIR, dataSink_DIR):
 
     DWIWorkflow.connect(outputsSpec, 'ukfTracks', DWIDataSink, 'Outputs.@ukfTracks')
     #DWIWorkflow.connect(outputsSpec, 'ukf2ndTracks', DWIDataSink, 'Outputs.@ukf2ndTracks')
+    DWIWorkflow.connect(outputsSpec, 'CorrectedDWI', DWIDataSink, 'Outputs.@CorrectedDWI')
     DWIWorkflow.connect(outputsSpec, 'CorrectedDWI_in_T2Space', DWIDataSink, 'Outputs.@CorrectedDWI_in_T2Space')
     DWIWorkflow.connect(outputsSpec, 'tensor_image', DWIDataSink, 'Outputs.@tensor_image')
     DWIWorkflow.connect(outputsSpec, 'DWIBrainMask', DWIDataSink, 'Outputs.@DWIBrainMask')

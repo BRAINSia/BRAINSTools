@@ -195,7 +195,7 @@ void ITKWriteVTKImage(vtkITKImageWriter *self, vtkImageData *inputImage, char *f
           {
           DoubleVectorType tagvalue;
           tagvalue.resize( 3 );
-          for( int i = 0; i < 3; i++ )
+          for( i = 0; i < 3; i++ )
             {
             tagvalue[i].resize( 3 );
             for( int j = 0; j < 3; j++ )

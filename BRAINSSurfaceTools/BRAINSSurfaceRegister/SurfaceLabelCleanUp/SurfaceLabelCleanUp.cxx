@@ -175,6 +175,7 @@ int SurfaceConnectivityCells(vtkSmartPointer<vtkPolyData> mesh)
         connect->InitializeSpecifiedRegionList();
         connect->AddSpecifiedRegion(j);
         connect->SetExtractionModeToSpecifiedRegions();
+	connect->Update();
 
         island = connect->GetOutput();
 #if (VTK_MAJOR_VERSION < 6)
@@ -369,6 +370,7 @@ int SurfaceConnectivityPoints(vtkSmartPointer<vtkPolyData> mesh)
         connect->InitializeSpecifiedRegionList();
         connect->AddSpecifiedRegion(j);
         connect->SetExtractionModeToSpecifiedRegions();
+	connect->Update();
 
         island = connect->GetOutput();
 #if (VTK_MAJOR_VERSION < 6)

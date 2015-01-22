@@ -194,6 +194,7 @@ int main( int argc, char * *argv )
 #else
     del->SetInputData( surface );
 #endif
+    del->Update();
 
     vtkUnstructuredGrid *CurrentMesh = del->GetOutput();
 

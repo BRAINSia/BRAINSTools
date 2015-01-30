@@ -54,15 +54,11 @@ def CreateAntsRegistrationMask(brainMask):
     assert os.path.exists(brainMask), "File not found: %s" % brainMask
     labelsMap = sitk.ReadImage(brainMask)
     label_mask = labelsMap>0
-    # erode the label mask
-    erodeFilter = sitk.BinaryErodeImageFilter()
-    erodeFilter.SetKernelRadius(4)
-    eroded_mask = erodeFilter.Execute( label_mask )
     # dilate the label mask
     dilateFilter = sitk.BinaryDilateImageFilter()
-    dilateFilter.SetKernelRadius(4)
+    dilateFilter.SetKernelRadius(12)
     dilated_mask = dilateFilter.Execute( label_mask )
-    regMask = eroded_mask - dilated_mask
+    regMask = dilated_mask
     registrationMask = os.path.realpath('registrationMask.nrrd')
     sitk.WriteImage(regMask, registrationMask)
     return registrationMask
@@ -129,7 +125,7 @@ def runMainWorkflow(DWI_scan, T2_scan, labelMap_image, BASE_DIR, dataSink_DIR):
 
     #\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
     ####### Workflow ###################
-    WFname = 'DWIWorkflow_' + sessionID
+    WFname = 'DWIWorkflow_CACHE_' + sessionID
     DWIWorkflow = pe.Workflow(name=WFname)
     DWIWorkflow.base_dir = BASE_DIR
 
@@ -258,7 +254,7 @@ def runMainWorkflow(DWI_scan, T2_scan, labelMap_image, BASE_DIR, dataSink_DIR):
     antsReg_B0ToTransformedT2.inputs.output_transform_prefix = 'Tsyn'
     antsReg_B0ToTransformedT2.inputs.winsorize_lower_quantile = 0.01
     antsReg_B0ToTransformedT2.inputs.winsorize_upper_quantile = 0.99
-    antsReg_B0ToTransformedT2.inputs.args = '--float 1 --restrict-deformation 0x1x0'
+    antsReg_B0ToTransformedT2.inputs.args = '--float 0 --restrict-deformation 0x1x0'
 
     DWIWorkflow.connect(ForceDCtoIDNode, ('outputVolume', pickFromList, 1), antsReg_B0ToTransformedT2, 'fixed_image')
     DWIWorkflow.connect(ForceDCtoIDNode, ('outputVolume', pickFromList, 2), antsReg_B0ToTransformedT2, 'fixed_image_mask')
@@ -306,30 +302,56 @@ def runMainWorkflow(DWI_scan, T2_scan, labelMap_image, BASE_DIR, dataSink_DIR):
 
     DWIWorkflow.connect(RestoreDCFromSavedMatrixNode,'outputVolume',gtractResampleDWIInPlace_Trigid,'inputVolume')
     DWIWorkflow.connect(GetRigidTransformInverseNode,'inverseTransform',gtractResampleDWIInPlace_Trigid,'inputTransform') #Inverse of rigid transform from BFit
-    gtractResampleDWIInPlace_Trigid.inputs.outputVolume = 'CorrectedDWI_in_T2Space.nrrd'
-    gtractResampleDWIInPlace_Trigid.inputs.outputResampledB0 = 'CorrectedDWI_in_T2Space_B0.nrrd'
+    gtractResampleDWIInPlace_Trigid.inputs.outputVolume = 'CorrectedDWI_in_T2Space_estimate.nrrd'
+    gtractResampleDWIInPlace_Trigid.inputs.outputResampledB0 = 'CorrectedDWI_in_T2Space_estimate_B0.nrrd'
 
-    # Finally we pass the outputs of the gtractResampleDWIInPlace_Trigid to the outputsSpec
-    DWIWorkflow.connect(gtractResampleDWIInPlace_Trigid, 'outputVolume', outputsSpec, 'CorrectedDWI_in_T2Space')
+    # Setp9: An extra registration step to tune the alignment between the CorrecetedDWI_in_T2Space image and T2 image.
+    BFit_TuneRegistration = pe.Node(interface=BRAINSFit(), name="BFit_TuneRegistration")
+    BFit_TuneRegistration.inputs.costMetric = "MMI"
+    BFit_TuneRegistration.inputs.numberOfSamples = 100000
+    BFit_TuneRegistration.inputs.numberOfIterations = [1500]
+    BFit_TuneRegistration.inputs.numberOfHistogramBins = 50
+    BFit_TuneRegistration.inputs.maximumStepLength = 0.2
+    BFit_TuneRegistration.inputs.minimumStepLength = [0.00005]
+    BFit_TuneRegistration.inputs.useRigid = True
+    BFit_TuneRegistration.inputs.useAffine = True
+    BFit_TuneRegistration.inputs.maskInferiorCutOffFromCenter = 65
+    BFit_TuneRegistration.inputs.maskProcessingMode = "ROIAUTO"
+    BFit_TuneRegistration.inputs.ROIAutoDilateSize = 13
+    BFit_TuneRegistration.inputs.backgroundFillValue = 0.0
+    BFit_TuneRegistration.inputs.initializeTransformMode = 'useCenterOfHeadAlign'
+    BFit_TuneRegistration.inputs.strippedOutputTransform = "CorrectedB0inT2Space_to_T2_RigidTransform.h5"
+    DWIWorkflow.connect(ExtractBRAINFromHeadNode, 'outputVolume', BFit_TuneRegistration, 'fixedVolume') #T2 brain volume
+    DWIWorkflow.connect(gtractResampleDWIInPlace_Trigid, 'outputResampledB0', BFit_TuneRegistration, 'movingVolume') # CorrectedB0_in_T2Space
 
-    # Step9: Create brain mask from the input labelmap
+    gtractResampleDWIInPlace_TuneRigidTx = pe.Node(interface=gtractResampleDWIInPlace(),
+                                                   name="gtractResampleDWIInPlace_TuneRigidTx")
+    DWIWorkflow.connect(gtractResampleDWIInPlace_Trigid,'outputVolume',gtractResampleDWIInPlace_TuneRigidTx,'inputVolume')
+    DWIWorkflow.connect(BFit_TuneRegistration,'strippedOutputTransform',gtractResampleDWIInPlace_TuneRigidTx,'inputTransform')
+    gtractResampleDWIInPlace_TuneRigidTx.inputs.outputVolume = 'CorrectedDWI_in_T2Space.nrrd'
+    gtractResampleDWIInPlace_TuneRigidTx.inputs.outputResampledB0 = 'CorrectedDWI_in_T2Space_B0.nrrd'
+
+    # Finally we pass the outputs of the gtractResampleDWIInPlace_TuneRigidTx to the outputsSpec
+    DWIWorkflow.connect(gtractResampleDWIInPlace_TuneRigidTx, 'outputVolume', outputsSpec, 'CorrectedDWI_in_T2Space')
+
+    # Step10: Create brain mask from the input labelmap
     DWIBRAINMASK = pe.Node(interface=BRAINSResample(), name='DWIBRAINMASK')
     DWIBRAINMASK.inputs.interpolationMode = 'Linear'
     DWIBRAINMASK.inputs.outputVolume = 'BrainMaskForDWI.nrrd'
     DWIBRAINMASK.inputs.pixelType = 'binary'
-    DWIWorkflow.connect(gtractResampleDWIInPlace_Trigid,'outputResampledB0',DWIBRAINMASK,'referenceVolume')
+    DWIWorkflow.connect(gtractResampleDWIInPlace_TuneRigidTx,'outputResampledB0',DWIBRAINMASK,'referenceVolume')
     DWIWorkflow.connect(inputsSpec,'LabelMapVolume',DWIBRAINMASK,'inputVolume')
     DWIWorkflow.connect(DWIBRAINMASK, 'outputVolume', outputsSpec, 'DWIBrainMask')
 
-    # Step10: DTI estimation
+    # Step11: DTI estimation
     DTIEstim = pe.Node(interface=dtiestim(), name="DTIEstim")
     DTIEstim.inputs.method = 'wls'
     DTIEstim.inputs.tensor_output = 'DTI_Output.nrrd'
-    DWIWorkflow.connect(gtractResampleDWIInPlace_Trigid, 'outputVolume', DTIEstim, 'dwi_image')
+    DWIWorkflow.connect(gtractResampleDWIInPlace_TuneRigidTx, 'outputVolume', DTIEstim, 'dwi_image')
     DWIWorkflow.connect(DWIBRAINMASK, 'outputVolume', DTIEstim, 'brain_mask')
     DWIWorkflow.connect(DTIEstim, 'tensor_output', outputsSpec, 'tensor_image')
 
-    # Step11: DTI process
+    # Step12: DTI process
     DTIProcess = pe.Node(interface=dtiprocess(), name='DTIProcess')
     DTIProcess.inputs.fa_output = 'FA.nrrd'
     DTIProcess.inputs.md_output = 'MD.nrrd'
@@ -349,7 +371,7 @@ def runMainWorkflow(DWI_scan, T2_scan, labelMap_image, BASE_DIR, dataSink_DIR):
     DWIWorkflow.connect(DTIProcess, 'lambda2_output', outputsSpec, 'Lambda2Image')
     DWIWorkflow.connect(DTIProcess, 'lambda3_output', outputsSpec, 'Lambda3Image')
 
-    # Step12: UKF Processing
+    # Step13: UKF Processing
     UKFNode = pe.Node(interface=UKFTractography(), name= "UKFRunRecordStates")
     UKFNode.inputs.tracts = "ukfTracts.vtk"
     #UKFNode.inputs.tractsWithSecondTensor = "ukfSecondTensorTracks.vtk"
@@ -363,7 +385,7 @@ def runMainWorkflow(DWI_scan, T2_scan, labelMap_image, BASE_DIR, dataSink_DIR):
     #UKFNode.inputs.recordTrace = True ## default False
     #UKFNode.inputs.recordNMSE = True ## default False
 
-    DWIWorkflow.connect(gtractResampleDWIInPlace_Trigid, 'outputVolume', UKFNode, 'dwiFile')
+    DWIWorkflow.connect(gtractResampleDWIInPlace_TuneRigidTx, 'outputVolume', UKFNode, 'dwiFile')
     DWIWorkflow.connect(DWIBRAINMASK, 'outputVolume', UKFNode, 'maskFile')
     DWIWorkflow.connect(UKFNode,'tracts',outputsSpec,'ukfTracks')
     #DWIWorkflow.connect(UKFNode,'tractsWithSecondTensor',outputsSpec,'ukf2ndTracks')

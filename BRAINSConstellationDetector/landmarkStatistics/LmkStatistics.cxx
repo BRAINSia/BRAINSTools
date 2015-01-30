@@ -121,6 +121,9 @@ int main( int argc, char * argv[] )
       d2 = pow( LandmarksMapVector[i][name][2] - LandmarksMapVector[i + k][name][2], 2);
 
       dist = sqrt(d0 + d1 + d2);
+      //dist = sqrt(d0); // distance in left/right direction
+      //dist = sqrt(d1); // distance in anterior/posterior direction
+      //dist = sqrt(d2); // distance in superior/inferior direction
 
       LandmarksDistanceMap[name].push_back(dist);
       }

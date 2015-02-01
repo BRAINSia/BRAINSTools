@@ -48,7 +48,7 @@ if(NOT ( DEFINED "USE_SYSTEM_${proj}" AND "${USE_SYSTEM_${proj}}" ) )
 
   ### --- End Project specific additions
   set(${proj}_REPOSITORY ${git_protocol}://github.com/BRAINSia/libtiff.git)
-  set(${proj}_GIT_TAG f696451cb05a8f33ec477eadcadd10fae9f58c39)
+  set(${proj}_GIT_TAG 7ddcdf9b098102011e5a7ceafe53711fad93fde7)
 
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${${proj}_REPOSITORY}

@@ -16,7 +16,7 @@ endif()
 
 # Sanity checks
 if(DEFINED zlib_DIR AND NOT EXISTS ${zlib_DIR})
-  message(FATAL_ERROR "zlib_DIR variable is defined but corresponds to non-existing directory")
+  message(FATAL_ERROR "zlib_DIR variable is defined but corresponds to nonexistent directory")
 endif()
 
 if(NOT DEFINED zlib_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
@@ -25,7 +25,7 @@ if(NOT DEFINED zlib_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     set(git_protocol "git")
   endif()
 
-  set(EP_SOURCE_DIR ${SOURCE_DOWNLOAD_CACHE}/${proj})
+  set(EP_SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj})
   set(EP_BINARY_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
   set(EP_INSTALL_DIR ${CMAKE_BINARY_DIR}/${proj}-install)
 

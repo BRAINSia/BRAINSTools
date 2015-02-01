@@ -64,7 +64,7 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
 
   ### --- End Project specific additions
   set(${proj}_REPOSITORY "http://openjpeg.googlecode.com/svn/trunk")
-  set(${proj}_SVN_REVISION r2885) #2014-09-26 New Repository.
+  set(${proj}_SVN_REVISION r2995) #2015-01-30 New Repository.
   ExternalProject_Add(${proj}
     SVN_REPOSITORY ${${proj}_REPOSITORY}
     SVN_REVISION -r ${${proj}_SVN_REVISION}

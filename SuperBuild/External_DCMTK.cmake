@@ -14,7 +14,7 @@ endif()
 
 # Sanity checks
 if(DEFINED DCMTK_DIR AND NOT EXISTS ${DCMTK_DIR})
-  message(FATAL_ERROR "DCMTK_DIR variable is defined but corresponds to non-existing directory")
+  message(FATAL_ERROR "DCMTK_DIR variable is defined but corresponds to nonexistent directory")
 endif()
 
 if(NOT DEFINED DCMTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
@@ -34,18 +34,19 @@ if(NOT DEFINED DCMTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   endif()
 
   set(${proj}_REPOSITORY ${git_protocol}://github.com/commontk/DCMTK.git)
-  set(${proj}_GIT_TAG "f461865d1759854db56e4c840991c81c77e45bb9")
+  set(${proj}_GIT_TAG "3366181db75ac0e334045c66350e438adf304cb0")
 
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
     GIT_REPOSITORY ${DCMTK_REPOSITORY}
     GIT_TAG ${DCMTK_GIT_TAG}
-    SOURCE_DIR ${SOURCE_DOWNLOAD_CACHE}/${proj}
+    SOURCE_DIR ${proj}
     BINARY_DIR ${proj}-build
-    CMAKE_ARGS -Wno-dev --no-warn-unused-cli
     CMAKE_CACHE_ARGS
-      ${COMMON_EXTERNAL_PROJECT_ARGS}
-      -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/DCMTK-install
+      -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}
+      -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
+      -DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}
+      -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags}
       ${CMAKE_PROJECT_INCLUDE_EXTERNAL_PROJECT_ARG}
       -DBUILD_SHARED_LIBS:BOOL=OFF
       -DDCMTK_WITH_DOXYGEN:BOOL=OFF
@@ -57,10 +58,25 @@ if(NOT DEFINED DCMTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       -DDCMTK_WITH_ICONV:BOOL=OFF  # see CTK github issue #178
       -DDCMTK_OVERWRITE_WIN32_COMPILER_FLAGS:BOOL=OFF
       ${EXTERNAL_PROJECT_OPTIONAL_ARGS}
+    INSTALL_COMMAND ""
     DEPENDS
       ${${proj}_DEPENDENCIES}
   )
-  set(DCMTK_DIR ${CMAKE_BINARY_DIR}/${proj}-install)
+  set(DCMTK_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
+
+  #-----------------------------------------------------------------------------
+  # Launcher setting specific to build tree
+
+  set(_lib_subdir lib)
+  if(WIN32)
+    set(_lib_subdir bin)
+  endif()
+
+  set(${proj}_LIBRARY_PATHS_LAUNCHER_BUILD ${DCMTK_DIR}/${_lib_subdir}/<CMAKE_CFG_INTDIR>)
+  mark_as_superbuild(
+    VARS ${proj}_LIBRARY_PATHS_LAUNCHER_BUILD
+    LABELS "LIBRARY_PATHS_LAUNCHER_BUILD"
+    )
 
 else()
   ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})

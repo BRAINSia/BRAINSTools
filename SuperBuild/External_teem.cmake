@@ -17,96 +17,69 @@ endif()
 
 # Sanity checks
 if(DEFINED Teem_DIR AND NOT EXISTS ${Teem_DIR})
-  message(FATAL_ERROR "Teem_DIR variable is defined but corresponds to non-existing directory")
+  message(FATAL_ERROR "Teem_DIR variable is defined but corresponds to nonexistent directory")
 endif()
 
-set(EXTERNAL_PROJECT_OPTIONAL_ARGS)
+if(NOT DEFINED Teem_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
-set(CMAKE_PROJECT_INCLUDE_EXTERNAL_PROJECT_ARG)
-if(CTEST_USE_LAUNCHERS)
-  set(CMAKE_PROJECT_INCLUDE_EXTERNAL_PROJECT_ARG
-    "-DCMAKE_PROJECT_Teem_INCLUDE:FILEPATH=${CMAKE_ROOT}/Modules/CTestUseLaunchers.cmake")
-endif()
+  set(EXTERNAL_PROJECT_OPTIONAL_ARGS)
 
-if(${CMAKE_VERSION} VERSION_GREATER "2.8.11.2")
-  # Following CMake commit 2a7975398, the FindPNG.cmake module
-  # supports detection of release and debug libraries. Specifying only
-  # the release variable is enough to ensure the variable PNG_LIBRARY
-  # is internally set if the project is built either in Debug or Release.
-  list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS
-    -DPNG_LIBRARY_RELEASE:FILEPATH=${PNG_LIBRARY}
+  set(CMAKE_PROJECT_INCLUDE_EXTERNAL_PROJECT_ARG)
+  if(CTEST_USE_LAUNCHERS)
+    set(CMAKE_PROJECT_INCLUDE_EXTERNAL_PROJECT_ARG
+      "-DCMAKE_PROJECT_Teem_INCLUDE:FILEPATH=${CMAKE_ROOT}/Modules/CTestUseLaunchers.cmake")
+  endif()
+
+  if(${CMAKE_VERSION} VERSION_GREATER "2.8.11.2")
+    # Following CMake commit 2a7975398, the FindPNG.cmake module
+    # supports detection of release and debug libraries. Specifying only
+    # the release variable is enough to ensure the variable PNG_LIBRARY
+    # is internally set if the project is built either in Debug or Release.
+    list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS
+      -DPNG_LIBRARY_RELEASE:FILEPATH=${PNG_LIBRARY}
+      )
+  else()
+    list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS
+      -DPNG_LIBRARY:FILEPATH=${PNG_LIBRARY}
+      )
+  endif()
+
+  ExternalProject_Add(${proj}
+    ${${proj}_EP_ARGS}
+    GIT_REPOSITORY "${git_protocol}://github.com/Slicer/teem"
+    GIT_TAG a0ae38afb8913119ca7d584816d81de091fb49d7
+    SOURCE_DIR ${SOURCE_DOWNLOAD_CACHE}/teem
+    BINARY_DIR teem-build
+    CMAKE_ARGS -Wno-dev --no-warn-unused-cli
+    CMAKE_CACHE_ARGS
+      ${COMMON_EXTERNAL_PROJECT_ARGS}
+      -DBUILD_TESTING:BOOL=OFF
+      -DBUILD_SHARED_LIBS:BOOL=OFF
+      ${CMAKE_PROJECT_INCLUDE_EXTERNAL_PROJECT_ARG}
+      -DTeem_USE_LIB_INSTALL_SUBDIR:BOOL=ON
+      -DCMAKE_VERBOSE_MAKEFILE:BOOL=OFF
+      -DVTK_DIR:PATH=${VTK_DIR}
+      -DTeem_PTHREAD:BOOL=OFF
+      -DTeem_BZIP2:BOOL=OFF
+      -DTeem_ZLIB:BOOL=ON
+      -DTeem_PNG:BOOL=OFF
+      -DZLIB_ROOT:PATH=${ZLIB_ROOT}
+      -DZLIB_INCLUDE_DIR:PATH=${ZLIB_INCLUDE_DIR}
+      -DZLIB_LIBRARY:FILEPATH=${ZLIB_LIBRARY}
+      -DTeem_VTK_MANGLE:BOOL=OFF ## NOT NEEDED FOR EXTERNAL ZLIB outside of vtk
+      -DPNG_PNG_INCLUDE_DIR:PATH=${PNG_INCLUDE_DIR}
+      -DTeem_PNG_DLLCONF_IPATH:PATH=${VTK_DIR}/Utilities
+      ${EXTERNAL_PROJECT_OPTIONAL_ARGS}
+    INSTALL_COMMAND ""
+    DEPENDS
+      ${${proj}_DEPENDENCIES}
     )
+
+  set(Teem_DIR ${CMAKE_BINARY_DIR}/teem-build)
+
 else()
-  list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS
-    -DPNG_LIBRARY:FILEPATH=${PNG_LIBRARY}
-    )
+  ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
 endif()
-
-set(${proj}_REPOSITORY "${git_protocol}://github.com/BRAINSia/teem.git")
-set(${proj}_TAG "3c906b5484740f734e2a75f69cd69e0b4d6896f6")
-
-ExternalProject_Add(${proj}
-  ${${proj}_EP_ARGS}
-  GIT_REPOSITORY ${${proj}_REPOSITORY}
-  GIT_TAG ${${proj}_TAG}
-  URL_MD5 ${teem_MD5}
-  DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}
-  SOURCE_DIR ${SOURCE_DOWNLOAD_CACHE}/teem
-  BINARY_DIR teem-build
-  CMAKE_ARGS -Wno-dev --no-warn-unused-cli
-  CMAKE_CACHE_ARGS
-  #
-  # TeemConfig.cmake isn't configured properly unless
-  # the LIBRARY_OUTPUT_PATH and EXECUTABLE_OUTPUT_PATH variables
-  # match where the libraries actually end up; in our case we
-  # pass in CMAKE_LIBRARY_OUTPUT_DIRECTORY, etc which changes the
-  # output paths without telling the Teem CMake system about it, so
-  # the TeemConfig.cmake file ends up being wrong.
-  -DLIBRARY_OUTPUT_PATH:PATH=${CMAKE_ARCHIVE_OUTPUT_PATH}
-  -DEXECUTABLE_OUTPUT_PATH:PATH=${CMAKE_RUNTIME_OUTPUT_PATH}
-  ${COMMON_EXTERNAL_PROJECT_ARGS}
-  -DBUILD_TESTING:BOOL=OFF
-  -DBUILD_SHARED_LIBS:BOOL=OFF
-  #
-  # TeemConfig.cmake isn't configured properly unless
-  # the LIBRARY_OUTPUT_PATH and EXECUTABLE_OUTPUT_PATH variables
-  # match where the libraries actually end up; in our case we
-  # pass in CMAKE_LIBRARY_OUTPUT_DIRECTORY, etc which changes the
-  # output paths without telling the Teem CMake system about it, so
-  # the TeemConfig.cmake file ends up being wrong.
-  -DLIBRARY_OUTPUT_PATH:PATH=${CMAKE_ARCHIVE_OUTPUT_PATH}
-  -DEXECUTABLE_OUTPUT_PATH:PATH=${CMAKE_RUNTIME_OUTPUT_PATH}
-  ${CMAKE_PROJECT_INCLUDE_EXTERNAL_PROJECT_ARG}
-  -DTeem_USE_LIB_INSTALL_SUBDIR:BOOL=ON
-  -DCMAKE_VERBOSE_MAKEFILE:BOOL=OFF
-  -DVTK_DIR:PATH=${VTK_DIR}
-  -DTeem_PTHREAD:BOOL=OFF
-  -DTeem_BZIP2:BOOL=OFF
-  -DTeem_ZLIB:BOOL=ON
-  -DTeem_PNG:BOOL=OFF
-  -DZLIB_ROOT:PATH=${ZLIB_ROOT}
-  -DZLIB_INCLUDE_DIR:PATH=${ZLIB_INCLUDE_DIR}
-  -DZLIB_LIBRARY:FILEPATH=${ZLIB_LIBRARY}
-  -DTeem_VTK_MANGLE:BOOL=OFF ## NOT NEEDED FOR EXTERNAL ZLIB outside of vtk
-  -DPNG_PNG_INCLUDE_DIR:PATH=${PNG_INCLUDE_DIR}
-  -DTeem_PNG_DLLCONF_IPATH:PATH=${VTK_DIR}/Utilities
-  ${EXTERNAL_PROJECT_OPTIONAL_ARGS}
-  INSTALL_COMMAND ""
-  DEPENDS
-  ${${proj}_DEPENDENCIES}
-  )
-
-# ExternalProject_Add_Step(${proj} fix_AIR_EXISTS
-#     COMMAND ${CMAKE_COMMAND} -DAIR_FILE=${SOURCE_DOWNLOAD_CACHE}/teem/src/air/air.h
-#     -P ${CMAKE_CURRENT_LIST_DIR}/TeemPatch.cmake
-#     COMMAND ${CMAKE_COMMAND} -E make_directory ${SOURCE_DOWNLOAD_CACHE}/teem/include/teem
-#     COMMAND ${CMAKE_COMMAND} -E copy ${SOURCE_DOWNLOAD_CACHE}/teem/src/bane/bane.h
-#     ${SOURCE_DOWNLOAD_CACHE}/teem/include/teem/bane.h
-#     DEPENDEES download
-#     DEPENDERS configure
-#     )
-
-set(Teem_DIR ${CMAKE_BINARY_DIR}/lib)
 
 mark_as_superbuild(
   VARS Teem_DIR:PATH

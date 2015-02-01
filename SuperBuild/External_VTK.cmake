@@ -122,10 +122,10 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT ${CMAKE_PROJECT_N
   if(NOT DEFINED git_protocol)
     set(git_protocol "git")
   endif()
-  set(${proj}_GIT_REPOSITORY "${git_protocol}://github.com/Slicer/VTK.git" CACHE STRING "Repository from which to get VTK" FORCE)
-  set(${proj}_GIT_TAG "ea7cdc4e0b399be244e79392c67fed068c33e454")  # VTK 20141221
+  # set(${proj}_GIT_REPOSITORY "${git_protocol}://github.com/Slicer/VTK.git" CACHE STRING "Repository from which to get VTK" FORCE)
+  # set(${proj}_GIT_TAG "ea7cdc4e0b399be244e79392c67fed068c33e454")  # VTK 20141221
   set(${proj}_GIT_REPOSITORY "${git_protocol}://vtk.org/VTK.git" CACHE STRING "Repository from which to get VTK" FORCE)
-  set(${proj}_GIT_TAG "998ebc6462cafafbc9600f91bf3091ec5bc2c0ab")  # VTK 20141221
+  set(${proj}_GIT_TAG "5f242e01e5b91cde00728e327878e32436d62324")  # VTK 20150130
 
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}

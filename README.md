@@ -2,6 +2,9 @@ The BRAINSTools is a harness to assist in building the many of the BRAINSTools u
 
 Developers should run the "./Utilities/SetupForDevelopment.sh" script to get started.
 
+If developing on Mac OS X, make sure the xcode command line tools are installed with the command:
+xcode-select --install
+
 For more information on the individual BRAINSTools, please see the following link:
 https://github.com/BRAINSia/BRAINSTools/wiki
 

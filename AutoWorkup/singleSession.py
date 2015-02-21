@@ -162,6 +162,21 @@ def createAndRun(sessions, environment, experiment, pipeline, cluster, useSentin
                     "TissueClassify",
                     "neuro2012_20fusion_merge_seg.nii.gz"
                 ))
+                sentinal_file_list.append(os.path.join(
+                    sentinal_file_basedir,
+                    "TissueClassify",
+                    "fswm_extended_neuro2012_20_merge_seg.nii.gz"
+                ))
+                sentinal_file_list.append(os.path.join(
+                    sentinal_file_basedir,
+                    "TissueClassify",
+                    "fswm_standard_neuro2012_20_merge_seg.nii.gz"
+                ))
+                sentinal_file_list.append(os.path.join(
+                    sentinal_file_basedir,
+                    "TissueClassify",
+                    "fswm_extended_neuro2012_labelmap.png"
+                ))
 
 
             if master_config['workflow_phase'] == 'atlas-based-reference':

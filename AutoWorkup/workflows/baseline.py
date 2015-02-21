@@ -762,5 +762,8 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
         baw201.connect(myLocalLMIWF, 'outputspec.outputLandmarksInACPCAlignedSpace' ,myLocalMALF,'inputspec.subj_lmks')
         baw201.connect(atlasBCDNode_S,'template_weights_50Lmks_wts',myLocalMALF,'inputspec.atlasWeightFilename')
         baw201.connect(myLocalMALF,'outputspec.MALF_neuro2012_labelmap',DataSink,'TissueClassify.@MALF_neuro2012_labelmap')
+        baw201.connect(myLocalMALF,'outputspec.MALF_fswm_extended_neuro2012_labelmap',DataSink,'TissueClassify.@MALF_fswm_extended_neuro2012_labelmap')
+        baw201.connect(myLocalMALF,'outputspec.MALF_fswm_standard_neuro2012_labelmap',DataSink,'TissueClassify.@MALF_fswm_standard_neuro2012_labelmap')
+        baw201.connect(myLocalMALF,'outputspec.MALF_extended_snapshot',DataSink,'TissueClassify.@MALF_extended_snapshot')
 
     return baw201

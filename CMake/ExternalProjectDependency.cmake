@@ -1,14 +1,11 @@
-###########################################################################
+################################################################################
 #
-#  Library:   CTK
+#  Program: 3D Slicer
 #
 #  Copyright (c) Kitware Inc.
 #
-#  Licensed under the Apache License, Version 2.0 (the "License");
-#  you may not use this file except in compliance with the License.
-#  You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0.txt
+#  See COPYRIGHT.txt
+#  or http://www.slicer.org/copyright/copyright.txt for details.
 #
 #  Unless required by applicable law or agreed to in writing, software
 #  distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,7 +13,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 #
-###########################################################################
+#  This file was originally developed by Jean-Christophe Fillion-Robin, Kitware Inc.
+#  and was partially funded by NIH grant 3P41RR013218-12S1
+#
+################################################################################
 
 include(CMakeParseArguments)
 
@@ -335,7 +335,7 @@ endfunction()
 #!
 function(ExternalProject_Message proj msg)
   set(_display 1)
-  if("${ARGV2}" MATCHES ".+")
+  if(NOT "x${ARGV2}" STREQUAL "x")
     set(_display ${ARGN})
   endif()
   if(${_display})

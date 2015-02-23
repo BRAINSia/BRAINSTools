@@ -4,7 +4,7 @@
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/CMake)
 
 
-include(Artichoke)
+include(ExternalProjectDependency)
 
 include(CMakeDependentOption)
 

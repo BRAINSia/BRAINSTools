@@ -28,8 +28,8 @@ ExternalData_add_test( ${PROJECT_NAME}FetchData NAME BRAINSABCSmallTest
    --filterMethod GradientAnisotropicDiffusion
    --gridSize 10,10,10
    --inputVolumeTypes T1,T2
-   --inputVolumes DATA{${TestData_DIR}/BRAINSABCSmall_T1.nii.gz}
-   --inputVolumes DATA{${TestData_DIR}/BRAINSABCSmall_T2.nii.gz}
+   --inputVolumes DATA{${TestData_DIR}/affine_t1.nrrd}
+   --inputVolumes DATA{${TestData_DIR}/affine_t2.nrrd}
    --interpolationMode Linear
    --maxBiasDegree 4
    --maxIterations 1

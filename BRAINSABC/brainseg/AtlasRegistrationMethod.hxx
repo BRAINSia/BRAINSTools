@@ -478,9 +478,9 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
   // TODO:  Need to make this register all the atlas filenames to all the
   //       reference images.  Should probably do it in reverse order.
   muLogMacro(<< "Register atlas to subject images" << std::endl);
-  if( itksys::SystemTools::FileExists( this->m_AtlasToSubjectTransformFileName.c_str() ) ) // Shortcut if the
-                                                                                           // registration has been done
-                                                                                           // previously.
+  // Shortcut if the registration has been done previously.
+  const bool SkipIfExistsForDebug = false; //This is a debugging step that should not normally be used
+  if( SkipIfExistsForDebug && itksys::SystemTools::FileExists( this->m_AtlasToSubjectTransformFileName.c_str() ) )
     {
     try
       {

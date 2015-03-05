@@ -67,6 +67,7 @@ If both T1 and T2 images are available, we recommend use both and follow the ste
     * Atlas/Atlas_20131115/probabilityMaps/r_caudate_ProbabilityMap.nii.gz
   * [Create XML] Fill in \<DataSet...\> Section.
   This section describes your subject of interest. (Replace all the square bracket parts [] ).
+
   ```
   # For T1 only inputs:
     <DataSet Name="subject" Type="Apply"      OutputDir="./" >
@@ -85,6 +86,7 @@ If both T1 and T2 images are available, we recommend use both and follow the ste
        ID="BSpline_ROI" />
     </DataSet>
   ```
+  
   * [Create XML] *Multimodal Only* Create SG, Sum of Gradient, Image from T1 and T2 using GenerateSummedGradientImage
   ```
   $BRAINSToolsBinDir/GenerateSummedGradientImage \

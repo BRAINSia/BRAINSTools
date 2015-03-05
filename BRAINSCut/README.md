@@ -131,13 +131,25 @@ Normalization          = "IQR"
 ```
 
 ### Reference for T1 only application:
-ROI         | Model File | Normalization
------------ | ---------- | ------------
-l/r caudate | T1OnlyModels/trainModelFile.txtD0060NT0060_caudate_LinearWithMask.gz
-l/r caudate | T1OnlyModels/
-l/r caudate | T1OnlyModels/
-l/r caudate | T1OnlyModels/
-l/r caudate | T1OnlyModels/
+ROI             | Model File | Normalization
+--------------- | ---------- | ------------
+l/r caudate     | T1OnlyModels/trainModelFile.txtD0060NT0060_caudate_LinearWithMask.gz | Linear
+l/r accumben    | T1OnlyModels/trainModelFile.txtD0060NT0060_accumben.gz | IQR
+l/r globus      | T1OnlyModels/trainModelFile.txtD0060NT0060_globus.gz | IQR
+l/r putamen     | T1OnlyModels/trainModelFile.txtD0060NT0060_putamen.gz | IQR
+l/r thalamus    | T1OnlyModels/trainModelFile.txtD0060NT0060_thalamus.gz | IQR
+l/r hippocampus | T1OnlyModels/trainModelFile.txtD0060NT0060_hippocampus.gz | IQR
+
+### Reference for T1 and T2 Multimodal application:
+ROI             | Model File | Normalization
+--------------- | ---------- | ------------
+l/r caudate     | modelFiles/trainModelFile.txtD0060NT0060_caudate_LinearWithMask.gz | Linear
+l/r accumben    | modelFiles/trainModelFile.txtD0060NT0060_accumben.gz | IQR
+l/r globus      | modelFiles/trainModelFile.txtD0060NT0060_globus.gz | IQR
+l/r putamen     | modelFiles/trainModelFile.txtD0060NT0060_putamen.gz | IQR
+l/r thalamus    | modelFiles/trainModelFile.txtD0060NT0060_thalamus.gz | IQR
+l/r hippocampus | modelFiles/trainModelFile.txtD0060NT0060_hippocampus.gz | IQR
+
 
 ## BRAINSCut Description with respect to the BRAINSTools AutoWorkUp Pipeline.
 

@@ -74,7 +74,7 @@ If both T1 and T2 images are available, we recommend use both and follow the ste
     <Registration SubjToAtlasRegistrationFilename=""
        AtlasToSubjRegistrationFilename="[Your_registration_directory]/[your_atlas_to_subject.h5]"
        ID="BSpline_ROI" />
-  </DataSet>
+    </DataSet>
   # For multi-modal T1 and T2 inputs
     <DataSet Name="subject" Type="Apply"      OutputDir="./" >
     <Image Type="T1" Filename="[Your_T1_brain_MRI_directory]/[your_t1_image_filename]" />
@@ -83,7 +83,7 @@ If both T1 and T2 images are available, we recommend use both and follow the ste
     <Registration SubjToAtlasRegistrationFilename=""
       AtlasToSubjRegistrationFilename="[Your_Registration_directory]/[your_atlas_to_subject.h5]"
        ID="BSpline_ROI" />
-  </DataSet>
+    </DataSet>
   ```
   * [Create XML] *Multimodal Only* Create SG, Sum of Gradient, Image from T1 and T2 using GenerateSummedGradientImage
   ```

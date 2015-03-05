@@ -121,6 +121,23 @@ BRAINSCut --applyModel \
     * subjectANNLabel_r_caudate.nii.gzdef.nii.gz
     * subject_ANNLabel_seg.nii.gz_AmbiguousMap.nii.gz
 
+### Case 2: Getting new subcortical segmentation using BRAINSTools provided Model Files *Other than caudate*
+The process of getting other subcortical structures are pretty same to the Case 1. 
+Make sure to use 'Example/subcorticalT1OnlyApply.xml' or  'Example/subcorticalT1T2Apply.xml'. 
+The main differences are in the *Normalization*. 
+```
+## for accumben, putamen, globus, thalamus, and hippocampus
+Normalization          = "IQR"
+```
+
+### Reference for T1 only application:
+ROI         | Model File | Normalization
+----------- | ---------- | ------------
+l/r caudate | T1OnlyModels/trainModelFile.txtD0060NT0060_caudate_LinearWithMask.gz
+l/r caudate | T1OnlyModels/
+l/r caudate | T1OnlyModels/
+l/r caudate | T1OnlyModels/
+l/r caudate | T1OnlyModels/
 
 ## BRAINSCut Description with respect to the BRAINSTools AutoWorkUp Pipeline.
 

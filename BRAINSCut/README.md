@@ -129,6 +129,14 @@ The main differences are in the *Normalization*.
 ## for accumben, putamen, globus, thalamus, and hippocampus
 Normalization          = "IQR"
 ```
+And then run the similar commend line with *proper* model file:
+```
+/Shared/sinapse/scratch/eunyokim/src/NamicExternal/build_Mac_201501/bin/BRAINSCut --applyModel \
+  --netConfiguration  [your_xml_filename] \
+  --modelFilename  [BRAINSTools_model_file_name_according_to_the_below_tables] \
+  --method RandomForest \
+  --numberOfTrees 60  --randomTreeDepth 60
+```
 
 ### Reference for T1 only application:
 ROI             | Model File | Normalization

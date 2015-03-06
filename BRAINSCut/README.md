@@ -15,6 +15,7 @@ BRAINSCut provides four stages. Each stage is either for training or testing pha
 
 4. Apply model and get segmentation (command line option --applyModel)
 
+**Multi-modal processing, t1 and t2 weighted input, assumes that t1 and t2 are pre-aligned (co-registered) each other**
 ## Usage Example
 
 ### Case 1: Getting new caudate segmentation using BRAINSTools provided Model Files

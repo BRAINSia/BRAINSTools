@@ -524,6 +524,7 @@ int main(int argc, char *argv[])
     myHelper->SetInitializeRegistrationByCurrentGenericTransform(initializeRegistrationByCurrentGenericTransform);
     myHelper->SetMaximumNumberOfEvaluations(maximumNumberOfEvaluations);
     myHelper->SetMaximumNumberOfCorrections(maximumNumberOfCorrections);
+    myHelper->SetWriteOutputTransformInFloat(writeOutputTransformInFloat);
 
     //HACK: create a flag for normalization
     bool NormalizeInputImages = false;
@@ -691,8 +692,18 @@ int main(int argc, char *argv[])
       itkUtil::WriteImage<WriteOutImageType>(CastImage, outputVolume);
       }
     }
-    itk::WriteBothTransformsToDisk(currentGenericTransform.GetPointer(),
-                                   localOutputTransform, strippedOutputTransform);
+    if( writeOutputTransformInFloat )
+      {
+      std::cout << "Write the output transform in single (float) precision..." << std::endl;
+      itk::WriteBothTransformsToDisk<double,float>(currentGenericTransform.GetPointer(),
+                                                   localOutputTransform, strippedOutputTransform);
+      }
+    else
+      {
+      itk::WriteBothTransformsToDisk<double,double>(currentGenericTransform.GetPointer(),
+                                                    localOutputTransform, strippedOutputTransform);
+      }
+
 
   return 0;
 }

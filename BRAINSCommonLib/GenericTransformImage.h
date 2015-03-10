@@ -68,6 +68,10 @@ namespace itk
   * WriteTransformToDisk<TScalarType>(myAffine.GetPointer(), "myAffineFile.mat");
   * \endcode
   */
+template<class TInputScalarType, class TWriteScalarType>
+extern void WriteTransformToDisk( itk::Transform<TInputScalarType, 3, 3> const *const genericTransformToWrite,
+                                 const std::string & outputTransform);
+
 template<class TScalarType>
 extern void WriteTransformToDisk( itk::Transform<TScalarType, 3, 3> const *const genericTransformToWrite,
                                  const std::string & outputTransform);
@@ -106,6 +110,10 @@ extern void WriteTransformToDisk( itk::Transform<TScalarType, 3, 3> const *const
   * \endcode
   */
 
+template<class TScalarType>
+extern typename itk::Transform<TScalarType, 3, 3>::Pointer
+ReadTransformFromDisk(const std::string & initialTransform);
+
 extern itk::Transform<double, 3, 3>::Pointer ReadTransformFromDisk(const std::string & initialTransform);
 
 /**
@@ -133,7 +141,8 @@ ComputeRigidTransformFromGeneric(const itk::Transform<double, 3, 3>::ConstPointe
   * \brief Special purpose convenience function -- should not have a public
   *interface.
   */
-extern int WriteBothTransformsToDisk(const itk::Transform<double, 3, 3>::ConstPointer genericTransformToWrite,
+template<class TInputScalarType, class TWriteScalarType>
+extern int WriteBothTransformsToDisk(const typename itk::Transform<TInputScalarType, 3, 3>::ConstPointer genericTransformToWrite,
                                      const std::string & outputTransform, const std::string & strippedOutputTransform);
 
 /**
@@ -141,7 +150,8 @@ extern int WriteBothTransformsToDisk(const itk::Transform<double, 3, 3>::ConstPo
   * \brief Special purpose convenience function -- should not have a public
   *interface.
   */
-extern int WriteStrippedRigidTransformToDisk(const itk::Transform<double, 3, 3>::ConstPointer genericTransformToWrite,
+template<class TInputScalarType, class TWriteScalarType>
+extern int WriteStrippedRigidTransformToDisk(const typename itk::Transform<TInputScalarType, 3, 3>::ConstPointer genericTransformToWrite,
                                              const std::string & strippedOutputTransform);
 }
 

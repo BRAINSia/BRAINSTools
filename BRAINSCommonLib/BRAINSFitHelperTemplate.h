@@ -89,6 +89,8 @@ public:
   typedef SmartPointer<Self>       Pointer;
   typedef SmartPointer<const Self> ConstPointer;
 
+  typedef double RealType;
+
   typedef typename FixedImageType::ConstPointer FixedImageConstPointer;
   typedef typename FixedImageType::Pointer      FixedImagePointer;
 
@@ -99,30 +101,30 @@ public:
   itkStaticConstMacro(FixedImageDimension, unsigned int, FixedImageType::ImageDimension);
   itkStaticConstMacro(MovingImageDimension, unsigned int, MovingImageType::ImageDimension);
 
-  typedef itk::ObjectToObjectMetricBaseTemplate<double>                       MetricType;
+  typedef itk::ObjectToObjectMetricBaseTemplate<RealType>                       MetricType;
   typedef typename itk::ObjectToObjectMultiMetricv4< FixedImageDimension,
                                                      MovingImageDimension,
                                                      FixedImageType,
-                                                     double>                  MultiMetricType;
+                                                     RealType>                  MultiMetricType;
   typedef typename itk::ImageToImageMetricv4< FixedImageType,
                                               MovingImageType,
                                               FixedImageType,
-                                              double >                        ImageMetricType;
+                                              RealType >                        ImageMetricType;
 
-  typedef itk::CompositeTransform<double, MovingImageDimension>     CompositeTransformType;
-  typedef typename CompositeTransformType::Pointer                  CompositeTransformPointer;
-  typedef IdentityTransform<double, MovingImageDimension>           IdentityTransformType;
+  typedef itk::CompositeTransform<RealType, MovingImageDimension>     CompositeTransformType;
+  typedef typename CompositeTransformType::Pointer                    CompositeTransformPointer;
+  typedef IdentityTransform<RealType, MovingImageDimension>           IdentityTransformType;
 
   typedef SpatialObject<itkGetStaticConstMacro(FixedImageDimension)>  FixedBinaryVolumeType;
   typedef SpatialObject<itkGetStaticConstMacro(MovingImageDimension)> MovingBinaryVolumeType;
   typedef typename FixedBinaryVolumeType::Pointer                     FixedBinaryVolumePointer;
   typedef typename MovingBinaryVolumeType::Pointer                    MovingBinaryVolumePointer;
 
-  typedef itk::ImageRegistrationMethodv4<FixedImageType, MovingImageType>  AffineRegistrationType;
-  typedef itk::TranslationTransform<double, MovingImageDimension>          TranslationTransformType;
-  typedef itk::AffineTransform<double, MovingImageDimension>               AffineTransformType;
-  typedef itk::ScalableAffineTransform<double, MovingImageDimension>       ScalableAffineTransformType;
-  typedef typename AffineRegistrationType::MetricSamplingStrategyType      SamplingStrategyType;
+  typedef itk::ImageRegistrationMethodv4<FixedImageType, MovingImageType>    AffineRegistrationType;
+  typedef itk::TranslationTransform<RealType, MovingImageDimension>          TranslationTransformType;
+  typedef itk::AffineTransform<RealType, MovingImageDimension>               AffineTransformType;
+  typedef itk::ScalableAffineTransform<RealType, MovingImageDimension>       ScalableAffineTransformType;
+  typedef typename AffineRegistrationType::MetricSamplingStrategyType        SamplingStrategyType;
 
   typedef typename AffineTransformType::Superclass                         MatrixOffsetTransformBaseType;
   typedef typename MatrixOffsetTransformBaseType::Pointer                  MatrixOffsetTransformBasePointer;
@@ -170,8 +172,8 @@ public:
     WINDOWSINC_INTERP = 1
     } InterpolationType;
 
-  itkSetMacro(SamplingPercentage,            double);
-  itkGetConstMacro(SamplingPercentage,       double);
+  itkSetMacro(SamplingPercentage,            RealType);
+  itkGetConstMacro(SamplingPercentage,       RealType);
   itkSetMacro(NumberOfHistogramBins,         unsigned int);
   itkGetConstMacro(NumberOfHistogramBins,    unsigned int);
   itkSetMacro(NumberOfMatchPoints,           unsigned int);
@@ -294,7 +296,7 @@ private:
   std::string               m_OutputFixedVolumeROI;
   std::string               m_OutputMovingVolumeROI;
 
-  double       m_SamplingPercentage;
+  RealType     m_SamplingPercentage;
   unsigned int m_NumberOfHistogramBins;
   bool         m_HistogramMatch;
   float        m_RemoveIntensityOutliers;

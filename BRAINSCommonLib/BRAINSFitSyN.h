@@ -25,23 +25,24 @@
 
 namespace // put in anon namespace to suppress shadow declaration warnings.
 {
-typedef  ants::RegistrationHelper<double,3>                SyNRegistrationHelperType;
+typedef  double                                            RealType;
+typedef  ants::RegistrationHelper<RealType,3>              SyNRegistrationHelperType;
 typedef  SyNRegistrationHelperType::ImageType              ImageType;
-typedef  itk::CompositeTransform<double,3>                 CompositeTransformType;
+typedef  SyNRegistrationHelperType::CompositeTransformType CompositeTransformType;
 }
 
 template <class FixedImageType, class MovingimageType>
-typename itk::CompositeTransform<double,3>::Pointer
+typename CompositeTransformType::Pointer
 simpleSynReg( typename FixedImageType::Pointer & infixedImage,
               typename MovingimageType::Pointer & inmovingImage,
-              typename itk::CompositeTransform<double,3>::Pointer compositeInitialTransform,
-              typename itk::CompositeTransform<double,3>::Pointer & internalSavedState,
+              typename CompositeTransformType::Pointer compositeInitialTransform,
+              typename CompositeTransformType::Pointer & internalSavedState,
               typename FixedImageType::Pointer & infixedImage2 = NULL,
               typename MovingimageType::Pointer & inmovingImage2 = NULL,
-              double samplingPercentage = 1.0,
+              RealType samplingPercentage = 1.0,
               std::string whichMetric = "cc",
               const bool synFull = true,
-              typename itk::CompositeTransform<double,3>::Pointer restoreState = ITK_NULLPTR )
+              typename CompositeTransformType::Pointer restoreState = ITK_NULLPTR )
 {
   typename SyNRegistrationHelperType::Pointer regHelper = SyNRegistrationHelperType::New();
     {
@@ -85,8 +86,8 @@ simpleSynReg( typename FixedImageType::Pointer & infixedImage,
     }
 
     {
-    std::vector<double> convergenceThresholdList;
-    const double        convergenceThreshold = 1e-6;
+    std::vector<RealType> convergenceThresholdList;
+    const RealType        convergenceThreshold = 1e-6;
     convergenceThresholdList.push_back(convergenceThreshold);
     regHelper->SetConvergenceThresholds( convergenceThresholdList );
     }
@@ -160,7 +161,7 @@ simpleSynReg( typename FixedImageType::Pointer & infixedImage,
     // - Metric type (MMI->mattes, MSE->meansquares, NC->cc, MIH->mi)
     typename SyNRegistrationHelperType::MetricEnumeration curMetric = regHelper->StringToMetricType(whichMetric);
     // - Metric weight
-    const double weighting = 1.0;
+    const RealType weighting = 1.0;
     // - Sampling strategy (alway random)
     typename SyNRegistrationHelperType::SamplingStrategy samplingStrategy = SyNRegistrationHelperType::random;
     // - Sampling percentage (defined by input)

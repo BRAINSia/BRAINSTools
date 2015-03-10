@@ -231,7 +231,7 @@ DoConversion( int argc, char *argv[] )
   typedef itk::Transform< TScalarType, 3, 3 >                       GenericTransformType;
   typedef itk::BSplineDeformableTransform < TScalarType, 3, 3>      BSplineTransformType;
 
-  typedef itk::AffineTransform< TScalarType, 3 >            LocalAffineTransformTYpe;
+  typedef itk::AffineTransform< TScalarType, 3 >            LocalAffineTransformType;
   typedef itk::VersorRigid3DTransform< TScalarType >        LocalVersorRigid3DTransformType;
   typedef itk::ScaleVersor3DTransform< TScalarType >        LocalScaleVersor3DTransformType;
   typedef itk::ScaleSkewVersor3DTransform< TScalarType >    LocalScaleSkewVersor3DTransformType;
@@ -418,7 +418,7 @@ DoConversion( int argc, char *argv[] )
 
   if( outputTransformType == "Affine" )
     {
-    typename LocalAffineTransformTYpe::Pointer affineXfrm = LocalAffineTransformTYpe::New();
+    typename LocalAffineTransformType::Pointer affineXfrm = LocalAffineTransformType::New();
     if( ExtractTransform<TScalarType>(affineXfrm, inputXfrm.GetPointer() ) == false )
       {
       TransformConvertError<TScalarType>(inputXfrm, "Affine Transform");
@@ -459,7 +459,8 @@ DoConversion( int argc, char *argv[] )
 
   if( inputTransformTypeName.find("CompositeTransform") == std::string::npos ) // Input composite is assumed to be a state file
                                                                                // not a transform, so it is converted differently
-                                                                               // and is already written to the disk.
+                                                                               // and is already written to the disk, so here we
+                                                                               // only consider cases that are not composite transforms.
     {
     if( outputTransformType == "Same" )
       {

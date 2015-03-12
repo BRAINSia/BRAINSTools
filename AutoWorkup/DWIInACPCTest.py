@@ -293,6 +293,7 @@ BFitB0_T2.inputs.maskProcessingMode = 'ROIAUTO'
 BFitB0_T2.inputs.ROIAutoDilateSize = 13
 BFitB0_T2.inputs.backgroundFillValue = 0.0
 BFitB0_T2.inputs.initializeTransformMode = 'useCenterOfHeadAlign'
+BFitB0_T2.inputs.writeOutputTransformInFloat = True
 
 BFitB0_T2.inputs.outputTransform = 'B0ToT2_AffineTransform.h5'
 BFitB0_T2.inputs.strippedOutputTransform = 'B0ToT2_RigidTransform.h5'
@@ -337,6 +338,7 @@ BSPLINE_T2_TO_RIPB0.inputs.useAffine = True  # Using initial transform from BRAI
 
 BSPLINE_T2_TO_RIPB0.inputs.useBSpline = True
 # BSPLINE_T2_TO_RIPB0.inputs.useROIBSpline = True
+BSPLINE_T2_TO_RIPB0.inputs.writeOutputTransformInFloat = True
 
 ##  This needs to be debugged, it should work. BSPLINE_T2_TO_RIPB0.inputs.useROIBSpline = True
 BSPLINE_T2_TO_RIPB0.inputs.maxBSplineDisplacement = 24

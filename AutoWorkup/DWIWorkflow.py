@@ -173,6 +173,7 @@ def runMainWorkflow(DWI_scan, T2_scan, labelMap_image, BASE_DIR, dataSink_DIR):
     BFit_T2toB0.inputs.backgroundFillValue = 0.0
     BFit_T2toB0.inputs.initializeTransformMode = 'useCenterOfHeadAlign'
     BFit_T2toB0.inputs.strippedOutputTransform = "T2ToB0_RigidTransform.h5"
+    BFit_T2toB0.inputs.writeOutputTransformInFloat = True
     DWIWorkflow.connect(EXTRACT_B0, 'outputVolume', BFit_T2toB0, 'fixedVolume')
     DWIWorkflow.connect(ExtractBRAINFromHeadNode, 'outputVolume', BFit_T2toB0, 'movingVolume')
 
@@ -254,7 +255,8 @@ def runMainWorkflow(DWI_scan, T2_scan, labelMap_image, BASE_DIR, dataSink_DIR):
     antsReg_B0ToTransformedT2.inputs.output_transform_prefix = 'Tsyn'
     antsReg_B0ToTransformedT2.inputs.winsorize_lower_quantile = 0.01
     antsReg_B0ToTransformedT2.inputs.winsorize_upper_quantile = 0.99
-    antsReg_B0ToTransformedT2.inputs.args = '--float 0 --restrict-deformation 0x1x0'
+    antsReg_B0ToTransformedT2.inputs.float = True
+    antsReg_B0ToTransformedT2.inputs.args = '--restrict-deformation 0x1x0'
 
     DWIWorkflow.connect(ForceDCtoIDNode, ('outputVolume', pickFromList, 1), antsReg_B0ToTransformedT2, 'fixed_image')
     DWIWorkflow.connect(ForceDCtoIDNode, ('outputVolume', pickFromList, 2), antsReg_B0ToTransformedT2, 'fixed_image_mask')
@@ -321,6 +323,7 @@ def runMainWorkflow(DWI_scan, T2_scan, labelMap_image, BASE_DIR, dataSink_DIR):
     BFit_TuneRegistration.inputs.backgroundFillValue = 0.0
     BFit_TuneRegistration.inputs.initializeTransformMode = 'useCenterOfHeadAlign'
     BFit_TuneRegistration.inputs.strippedOutputTransform = "CorrectedB0inT2Space_to_T2_RigidTransform.h5"
+    BFit_TuneRegistration.inputs.writeOutputTransformInFloat = True
     DWIWorkflow.connect(ExtractBRAINFromHeadNode, 'outputVolume', BFit_TuneRegistration, 'fixedVolume') #T2 brain volume
     DWIWorkflow.connect(gtractResampleDWIInPlace_Trigid, 'outputResampledB0', BFit_TuneRegistration, 'movingVolume') # CorrectedB0_in_T2Space
 

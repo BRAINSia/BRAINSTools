@@ -24,6 +24,7 @@ class UKFTractographyInputSpec(CommandLineInputSpec):
     recordNMSE = traits.Bool(desc="Whether to store NMSE. Attaches field 'NMSE' to fiber. ", argstr="--recordNMSE ")
     recordState = traits.Bool(desc="Whether to attach the states to the fiber. Will generate field 'state'.", argstr="--recordState ")
     recordCovariance = traits.Bool(desc="Whether to store the covariance. Will generate field 'covariance' in fiber.", argstr="--recordCovariance ")
+    recordLength = traits.Float(desc="Record length of tractography, in millimeters", argstr="--recordLength %f")
     minFA = traits.Float(desc="Abort the tractography when the Fractional Anisotropy is less than this value", argstr="--minFA %f")
     minGA = traits.Float(desc="Abort the tractography when the Generalized Anisotropy is less than this value", argstr="--minGA %f")
     fullTensorModel = traits.Bool(desc="Whether to use the full tensor model. If unchecked, use the default simple tensor model", argstr="--fullTensorModel ")

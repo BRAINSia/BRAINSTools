@@ -59,16 +59,14 @@ def CreateEstimationWorkflow(WFname):
     # Step3: UKF Processing
     UKFNode = pe.Node(interface=UKFTractography(), name= "UKFRunRecordStates")
     UKFNode.inputs.tracts = "ukfTracts.vtk"
-    #UKFNode.inputs.tractsWithSecondTensor = "ukfSecondTensorTracks.vtk"
+    UKFNode.inputs.seedsPerVoxel = 10
     UKFNode.inputs.numTensor = '2'
     UKFNode.inputs.freeWater = True ## default False
-    UKFNode.inputs.recordFA = True ## default False
-    UKFNode.inputs.recordTensors = True ## default False
-    #UKFNode.inputs.recordCovariance = True ## default False
-    #UKFNode.inputs.recordState = True ## default False
-    #UKFNode.inputs.recordFreeWater = True ## default False
-    #UKFNode.inputs.recordTrace = True ## default False
-    #UKFNode.inputs.recordNMSE = True ## default False
+    UKFNode.inputs.minFA = 0.06
+    UKFNode.inputs.minGA = 0.06
+    UKFNode.inputs.seedFALimit = 0.06
+    UKFNode.inputs.Ql = 70
+    UKFNode.inputs.recordLength = 2
 
     EstimationWF.connect(inputsSpec, 'DWI_Corrected_Aligned_CS', UKFNode, 'dwiFile')
     EstimationWF.connect(inputsSpec, 'DWIBrainMask', UKFNode, 'maskFile')

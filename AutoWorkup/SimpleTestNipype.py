@@ -91,6 +91,7 @@ BRAINSFitDWI2ACPC.inputs.initializeTransformMode = 'useMomentsAlign'
 BRAINSFitDWI2ACPC.inputs.maskProcessingMode = 'ROIAUTO'
 BRAINSFitDWI2ACPC.inputs.ROIAutoDilateSize = 7
 BRAINSFitDWI2ACPC.inputs.outputTransform = 'DWI_to_ACPC.h5'
+BRAINSFitDWI2ACPC.inputs.writeOutputTransformInFloat = True
 #print BF.cmdline
 
 DWI_AutoProcess.connect(DWI_DG,'DWIQCed',BRAINSFitDWI2ACPC,'movingVolume')
@@ -110,6 +111,7 @@ BRAINSFitFS2ACPC.inputs.initializeTransformMode = 'useMomentsAlign'
 BRAINSFitFS2ACPC.inputs.maskProcessingMode = 'ROIAUTO'
 BRAINSFitFS2ACPC.inputs.ROIAutoDilateSize = 12
 BRAINSFitFS2ACPC.inputs.outputTransform = 'FS_to_ACPC.h5'
+BRAINSFitFS2ACPC.inputs.writeOutputTransformInFloat = True
 #print BF.cmdline
 
 DWI_AutoProcess.connect(DWI_DG,'FST1',BRAINSFitFS2ACPC,'movingVolume')

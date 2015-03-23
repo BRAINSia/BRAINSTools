@@ -45,6 +45,7 @@ def CreateANTSRegistrationWorkflow(WFname, CLUSTER_QUEUE, CLUSTER_QUEUE_LONG, Nu
     BFitAtlasToSubject.inputs.outputTransform = "Trial_Initializer_Output.h5"
     BFitAtlasToSubject.inputs.maskProcessingMode = "ROIAUTO"
     BFitAtlasToSubject.inputs.ROIAutoDilateSize = 4
+    BFitAtlasToSubject.inputs.writeOutputTransformInFloat = True
     # BFitAtlasToSubject.inputs.maskProcessingMode="ROI"
    # ANTSWF.connect(inputsSpec,'fixedBinaryVolume',BFitAtlasToSubject,'fixedBinaryVolume')
    # ANTSWF.connect(inputsSpec,'movingBinaryVolume',BFitAtlasToSubject,'movingBinaryVolume')
@@ -70,6 +71,7 @@ def CreateANTSRegistrationWorkflow(WFname, CLUSTER_QUEUE, CLUSTER_QUEUE_LONG, Nu
     ComputeAtlasToSubjectTransform.inputs.output_transform_prefix = 'antsRegPrefix_'
     ComputeAtlasToSubjectTransform.inputs.output_warped_image = 'moving_to_fixed.nii.gz'
     ComputeAtlasToSubjectTransform.inputs.output_inverse_warped_image = 'fixed_to_moving.nii.gz'
+    ComputeAtlasToSubjectTransform.inputs.float = True
     # ComputeAtlasToSubjectTransform.inputs.num_threads=-1
     # if os.environ.has_key('NSLOTS'):
     #    ComputeAtlasToSubjectTransform.inputs.num_threads=int(os.environ.has_key('NSLOTS'))

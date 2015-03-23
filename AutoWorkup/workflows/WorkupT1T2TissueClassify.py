@@ -123,6 +123,7 @@ def CreateTissueClassifyWorkflow(WFname, master_config, InterpolationMode,UseReg
     A2SantsRegistrationPreABCRigid.inputs.winsorize_upper_quantile = 0.99
     A2SantsRegistrationPreABCRigid.inputs.output_warped_image = 'atlas2subjectRigid.nii.gz'
     A2SantsRegistrationPreABCRigid.inputs.output_inverse_warped_image = 'subject2atlasRigid.nii.gz'
+    A2SantsRegistrationPreABCRigid.inputs.float = True
 
     tissueClassifyWF.connect(inputsSpec, 'atlasToSubjectInitialTransform',A2SantsRegistrationPreABCRigid,'initial_moving_transform')
     tissueClassifyWF.connect(inputsSpec, 'PrimaryT1',A2SantsRegistrationPreABCRigid,'fixed_image')
@@ -163,6 +164,7 @@ def CreateTissueClassifyWorkflow(WFname, master_config, InterpolationMode,UseReg
     A2SantsRegistrationPreABCSyN.inputs.winsorize_upper_quantile = 0.99
     A2SantsRegistrationPreABCSyN.inputs.output_warped_image = 'atlas2subject.nii.gz'
     A2SantsRegistrationPreABCSyN.inputs.output_inverse_warped_image = 'subject2atlas.nii.gz'
+    A2SantsRegistrationPreABCSyN.inputs.float = True
 
     ## if using Registration masking, then do ROIAuto on fixed and moving images and connect to registraitons
     if UseRegistrationMasking == True:

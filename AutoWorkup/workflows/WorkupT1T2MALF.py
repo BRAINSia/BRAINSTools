@@ -138,6 +138,7 @@ def CreateMALFWorkflow(WFname, master_config,good_subjects,BASE_DATA_GRABBER_DIR
         A2SantsRegistrationPreABCRigid[malf_atlas_subject].inputs.output_transform_prefix = 'AtlasToSubjectPreBABC_Rigid'
         A2SantsRegistrationPreABCRigid[malf_atlas_subject].inputs.winsorize_lower_quantile = 0.01
         A2SantsRegistrationPreABCRigid[malf_atlas_subject].inputs.winsorize_upper_quantile = 0.99
+        A2SantsRegistrationPreABCRigid[malf_atlas_subject].inputs.float = True
         ## NO NEED FOR THIS A2SantsRegistrationPreABCRigid[malf_atlas_subject].inputs.output_warped_image = 'atlas2subjectRigid.nii.gz'
         ## NO NEED FOR THIS A2SantsRegistrationPreABCRigid[malf_atlas_subject].inputs.output_inverse_warped_image = 'subject2atlasRigid.nii.gz'
 
@@ -180,6 +181,7 @@ def CreateMALFWorkflow(WFname, master_config,good_subjects,BASE_DATA_GRABBER_DIR
         A2SantsRegistrationPreABCSyN[malf_atlas_subject].inputs.winsorize_upper_quantile = 0.99
         A2SantsRegistrationPreABCSyN[malf_atlas_subject].inputs.output_warped_image = malf_atlas_subject + '_2subject.nii.gz'
         ## NO NEED FOR THIS A2SantsRegistrationPreABCSyN[malf_atlas_subject].inputs.output_inverse_warped_image = 'subject2atlas.nii.gz'
+        A2SantsRegistrationPreABCSyN[malf_atlas_subject].inputs.float = True
 
         ## if using Registration masking, then do ROIAuto on fixed and moving images and connect to registraitons
         UseRegistrationMasking = True

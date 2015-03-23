@@ -92,6 +92,7 @@ class BRAINSFitInputSpec(CommandLineInputSpec):
     promptUser = traits.Bool(desc="Prompt the user to hit enter each time an image is sent to the DebugImageViewer", argstr="--promptUser ")
     metricSamplingStrategy = traits.Enum("Random", desc="It defines the method that registration filter uses to sample the input fixed image. Only Random is supported for now.", argstr="--metricSamplingStrategy %s")
     logFileReport = traits.Either(traits.Bool, File(), hash_files=False, desc="A file to write out final information report in CSV file: MetricName,MetricValue,FixedImageName,FixedMaskName,MovingImageName,MovingMaskName", argstr="--logFileReport %s")
+    writeOutputTransformInFloat = traits.Bool(desc="By default, the output registration transforms (either the output composite transform or each transform component) are written to the disk in double precision. If this flag is ON, the output transforms will be written in single (float) precision. It is especially important if the output transform is a displacement field transform, or it is a composite transform that includes several displacement fields.", argstr="--writeOutputTransformInFloat ")
 
 
 class BRAINSFitOutputSpec(TraitedSpec):

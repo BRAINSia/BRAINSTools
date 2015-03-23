@@ -70,6 +70,7 @@ public:
   typedef SmartPointer<Self>       Pointer;
   typedef SmartPointer<const Self> ConstPointer;
 
+  typedef double                         RealType;
   typedef float                         PixelType;
   typedef itk::Image<PixelType, 3>      FixedImageType;
   typedef FixedImageType::ConstPointer  FixedImageConstPointer;
@@ -83,7 +84,7 @@ public:
   itkStaticConstMacro(FixedImageDimension, unsigned int, FixedImageType::ImageDimension);
   itkStaticConstMacro(MovingImageDimension, unsigned int, MovingImageType::ImageDimension);
 
-  typedef itk::CompositeTransform<double, MovingImageDimension>       CompositeTransformType;
+  typedef itk::CompositeTransform<RealType, MovingImageDimension>       CompositeTransformType;
 
   typedef SpatialObject<itkGetStaticConstMacro(FixedImageDimension)>  FixedBinaryVolumeType;
   typedef SpatialObject<itkGetStaticConstMacro(MovingImageDimension)> MovingBinaryVolumeType;
@@ -96,7 +97,7 @@ public:
   typedef HelperType::MultiMetricType                        MultiMetricType;
 
   typedef itk::ImageRegistrationMethodv4<FixedImageType, MovingImageType>  AffineRegistrationType;
-  typedef itk::AffineTransform<double, 3>                                  AffineTransformType;
+  typedef itk::AffineTransform<RealType, 3>                                AffineTransformType;
   typedef AffineRegistrationType::MetricSamplingStrategyType               SamplingStrategyType;
 
   /** Method for creation through the object factory. */
@@ -147,8 +148,8 @@ public:
     WINDOWSINC_INTERP = 1
     } InterpolationType;
 
-  itkSetMacro(SamplingPercentage,                double);
-  itkGetConstMacro(SamplingPercentage,           double);
+  itkSetMacro(SamplingPercentage,                RealType);
+  itkGetConstMacro(SamplingPercentage,           RealType);
   itkSetMacro(NumberOfHistogramBins,             unsigned int);
   itkGetConstMacro(NumberOfHistogramBins,        unsigned int);
   itkSetMacro(NumberOfMatchPoints,               unsigned int);
@@ -203,6 +204,8 @@ public:
   itkGetConstMacro(ObserveIterations,        bool);
   itkSetMacro(UseROIBSpline, bool);
   itkGetConstMacro(UseROIBSpline, bool);
+  itkSetMacro(WriteOutputTransformInFloat, bool);
+  itkGetConstMacro(WriteOutputTransformInFloat, bool);
 
   void SetSamplingStrategy(std::string strategy)
   {
@@ -280,7 +283,7 @@ private:
   std::string               m_OutputFixedVolumeROI;
   std::string               m_OutputMovingVolumeROI;
 
-  double       m_SamplingPercentage;
+  RealType     m_SamplingPercentage;
   unsigned int m_NumberOfHistogramBins;
   bool         m_HistogramMatch;
   float        m_RemoveIntensityOutliers;
@@ -320,6 +323,7 @@ private:
   int                                        m_MaximumNumberOfEvaluations;
   int                                        m_MaximumNumberOfCorrections;
   bool                                       m_SyNFull;
+  bool                                       m_WriteOutputTransformInFloat;
 };  // end BRAINSFitHelper class
 
 template <class TLocalCostMetric>

@@ -442,6 +442,13 @@
       <description>If this flag is ON, the current generic composite transform, resulted from the linear registration stages, is set to initialize the follow nonlinear registration process. However, by the default behaviour, the moving image is first warped based on the existant transform before it is passed to the BSpline registration filter. It is done to speed up the BSpline registration by reducing the computations of composite transform Jacobian.</description>
       <default>0</default>
     </boolean>
+    <boolean>
+      <name>writeOutputTransformInFloat</name>
+      <longflag>writeOutputTransformInFloat</longflag>
+      <label>writes the output registration transforms in single precision</label>
+      <description>By default, the output registration transforms (either the output composite transform or each transform component) are written to the disk in double precision. If this flag is ON, the output transforms will be written in single (float) precision. It is especially important if the output transform is a displacement field transform, or it is a composite transform that includes several displacement fields.</description>
+      <default>false</default>
+    </boolean>
   </parameters>
 
   <parameters advanced="true">

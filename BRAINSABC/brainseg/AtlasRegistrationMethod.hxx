@@ -353,7 +353,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
         this->m_IntraSubjectTransforms[mapOfModalImageListsIt->first].push_back(p);
         // Write out intermodal matricies
         muLogMacro(<< "Writing " << (*isNamesIt) << "." << std::endl);
-        itk::WriteTransformToDisk<double>(p, (*isNamesIt));
+        itk::WriteTransformToDisk<double, float>(p, (*isNamesIt));
         }
       ++currModeImageListIt;
       ++isNamesIt;
@@ -783,7 +783,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
 */
     // End generating the best initial transform for atlas T1 to subject T1
     muLogMacro(<< "Writing " << this->m_AtlasToSubjectTransformFileName << "." << std::endl);
-    itk::WriteTransformToDisk<double>(m_AtlasToSubjectTransform, this->m_AtlasToSubjectTransformFileName);
+    itk::WriteTransformToDisk<double, float>(m_AtlasToSubjectTransform, this->m_AtlasToSubjectTransformFileName);
     }
 }
 

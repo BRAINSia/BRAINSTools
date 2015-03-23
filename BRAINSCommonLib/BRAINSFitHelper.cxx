@@ -139,7 +139,8 @@ BRAINSFitHelper::BRAINSFitHelper() :
   m_InitializeRegistrationByCurrentGenericTransform(true),
   m_MaximumNumberOfEvaluations(900),
   m_MaximumNumberOfCorrections(12),
-  m_SyNFull(true)
+  m_SyNFull(true),
+  m_WriteOutputTransformInFloat(false)
 {
   m_SplineGridSize[0] = 14;
   m_SplineGridSize[1] = 10;
@@ -405,7 +406,7 @@ BRAINSFitHelper::Update(void)
   GenericMetricType::Pointer metric;
   if( this->m_CostMetricName == "MMI" )
     {
-    typedef itk::MattesMutualInformationImageToImageMetricv4<FixedImageType, MovingImageType, FixedImageType, double> MIMetricType;
+    typedef itk::MattesMutualInformationImageToImageMetricv4<FixedImageType, MovingImageType, FixedImageType, RealType> MIMetricType;
     MIMetricType::Pointer mutualInformationMetric = MIMetricType::New();
     //The next line was a hack for early ITKv4 mattes mutual informaiton
     //that was using a lot of memory
@@ -422,7 +423,7 @@ BRAINSFitHelper::Update(void)
     }
   else if( this->m_CostMetricName == "MSE" )
     {
-    typedef itk::MeanSquaresImageToImageMetricv4<FixedImageType, MovingImageType, FixedImageType, double> MSEMetricType;
+    typedef itk::MeanSquaresImageToImageMetricv4<FixedImageType, MovingImageType, FixedImageType, RealType> MSEMetricType;
     MSEMetricType::Pointer meanSquareMetric = MSEMetricType::New();
     meanSquareMetric = meanSquareMetric;
     metric = meanSquareMetric;
@@ -432,7 +433,7 @@ BRAINSFitHelper::Update(void)
     }
   else if( this->m_CostMetricName == "NC" )
     {
-    typedef itk::CorrelationImageToImageMetricv4<FixedImageType, MovingImageType, FixedImageType, double> corrMetricType;
+    typedef itk::CorrelationImageToImageMetricv4<FixedImageType, MovingImageType, FixedImageType, RealType> corrMetricType;
     corrMetricType::Pointer corrMetric = corrMetricType::New();
     metric = corrMetric;
 
@@ -441,7 +442,7 @@ BRAINSFitHelper::Update(void)
     }
   else if( this->m_CostMetricName == "MIH" )
     {
-    typedef itk::JointHistogramMutualInformationImageToImageMetricv4<FixedImageType, MovingImageType, FixedImageType, double> MutualInformationMetricType;
+    typedef itk::JointHistogramMutualInformationImageToImageMetricv4<FixedImageType, MovingImageType, FixedImageType, RealType> MutualInformationMetricType;
     MutualInformationMetricType::Pointer mutualInformationMetric = MutualInformationMetricType::New();
     mutualInformationMetric = mutualInformationMetric;
     mutualInformationMetric->SetNumberOfHistogramBins( this->m_NumberOfHistogramBins );
@@ -763,7 +764,14 @@ BRAINSFitHelper::PrintCommandLine(const bool dumpTempVolumes, const std::string 
   if( m_CurrentGenericTransform.IsNotNull() )
     {
     const std::string initialTransformString("DEBUGInitialTransform_" + suffix + ".h5");
-    WriteBothTransformsToDisk(this->m_CurrentGenericTransform.GetPointer(), initialTransformString, "");
+    if( this->m_WriteOutputTransformInFloat )
+      {
+      WriteBothTransformsToDisk<double,float>(this->m_CurrentGenericTransform.GetPointer(), initialTransformString, "");
+      }
+    else
+      {
+      WriteBothTransformsToDisk<double,double>(this->m_CurrentGenericTransform.GetPointer(), initialTransformString, "");
+      }
     oss << "--initialTransform " << initialTransformString  << "  \\" << std::endl;
     }
     {

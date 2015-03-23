@@ -261,6 +261,7 @@ AtlasDefinition::InitFromXML(const std::string & XMLFilename)
 
   if( !xmlFile.good() )
     {
+    std::cout << "ERROR:  XML file " << XMLFilename << " can not be read properly " << std::flush << std::endl;
     throw;
     }
   std::streamsize fSize =
@@ -274,12 +275,14 @@ AtlasDefinition::InitFromXML(const std::string & XMLFilename)
   char *filebuf = new char[fSize];
   if( filebuf == ITK_NULLPTR )
     {
+    std::cout << "ERROR:  memory char[" << fSize << "] can not be allocated properly " << std::flush << std::endl;
     throw;
     }
 
   xmlFile.read(filebuf, fSize);
   if( static_cast<std::streamsize>(xmlFile.gcount() ) != fSize )
     {
+    std::cout << "ERROR:  file not read proplerly "  << XMLFilename << std::flush << std::endl;
     delete [] filebuf;
     throw;
     }

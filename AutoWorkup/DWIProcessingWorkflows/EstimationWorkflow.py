@@ -71,6 +71,5 @@ def CreateEstimationWorkflow(WFname):
     EstimationWF.connect(inputsSpec, 'DWI_Corrected_Aligned_CS', UKFNode, 'dwiFile')
     EstimationWF.connect(inputsSpec, 'DWIBrainMask', UKFNode, 'maskFile')
     EstimationWF.connect(UKFNode,'tracts',outputsSpec,'ukfTracks')
-    #DWIWorkflow.connect(UKFNode,'tractsWithSecondTensor',outputsSpec,'ukf2ndTracks')
 
     return EstimationWF

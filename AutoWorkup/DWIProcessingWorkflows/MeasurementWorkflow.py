@@ -21,7 +21,7 @@ def CreateMeasurementWorkflow(WFname, LABELS_CONFIG_FILE):
     def CreateDWILabelMap(T2LabelMapVolume,DWIBrainMask):
         import os
         import SimpleITK as sitk
-        T2LabelMapVolume = sitk.ReadImage(T2LabelMapVolume,sitk.sitkUInt8)
+        T2LabelMapVolume = sitk.ReadImage(T2LabelMapVolume,sitk.sitkUInt16) #FreeSurfer labelmap needs uint-16
         DWIBrainMask = sitk.ReadImage(DWIBrainMask)
         # 1- Dilate input DWI mask
         dilateFilter = sitk.BinaryDilateImageFilter()
@@ -37,8 +37,14 @@ def CreateMeasurementWorkflow(WFname, LABELS_CONFIG_FILE):
         # Thresholding by 0
         threshFilt = sitk.BinaryThresholdImageFilter()
         thresh_resampled_dilated_mask = threshFilt.Execute(resampled_dilated_mask,0.0001,1.0,1,0)
-        # 3- Multiply this binary mask to the T2 labelmap volume
-        DWILabelMapVolume = thresh_resampled_dilated_mask * T2LabelMapVolume
+        # 3- Cast the thresholded image to uInt-16
+        castFilt = sitk.CastImageFilter()
+        castFilt.SetOutputPixelType(sitk.sitkUInt16)
+        casted_thresh_resampled_dilated_mask = castFilt.Execute(thresh_resampled_dilated_mask)
+        # 4- Multiply this binary mask to the T2 labelmap volume
+        mulFilt = sitk.MultiplyImageFilter()
+        DWILabelMapVolume = mulFilt.Execute(casted_thresh_resampled_dilated_mask,T2LabelMapVolume)
+        # write the output label map
         outputVolume = os.path.realpath('DWILabelMapVolume.nrrd')
         sitk.WriteImage(DWILabelMapVolume, outputVolume)
         return outputVolume
@@ -89,6 +95,8 @@ def CreateMeasurementWorkflow(WFname, LABELS_CONFIG_FILE):
                 maximum = 0
                 minimum = 0
             else:
+                if totalVolume == 0:
+                   raise ValueError('Label {0} is not found in T2 labels map, but exists in DWI labels map!'.format(labelID))
                 confidence_coeficient=effectiveVolume/totalVolume
             # Now create statistics list
             statsList = [format(mean,'.4f'),
@@ -99,7 +107,7 @@ def CreateMeasurementWorkflow(WFname, LABELS_CONFIG_FILE):
                          effectiveVolume,
                          totalVolume,
                          format(confidence_coeficient,'.3f')]
-            return statsList
+            return statsList, totalVolume
 
         def writeLabelStatistics(filename,statisticsDictionary):
             import csv
@@ -118,7 +126,10 @@ def CreateMeasurementWorkflow(WFname, LABELS_CONFIG_FILE):
         voxelVolume=computeVoxelVolume(resampledRISVolume)
         for key in labelsDictionary:
             labelID = int(key)
-            statisticsDictionary[labelsDictionary[key]] = ReturnStatisticsList(labelID,voxelVolume,resampledRISVolume,DWILabelMap,T2LabelMap)
+            [statisticsList, total_volume] = ReturnStatisticsList(labelID,voxelVolume,resampledRISVolume,DWILabelMap,T2LabelMap)
+            if total_volume != 0:
+               statisticsDictionary[labelsDictionary[key]] = statisticsList
+        # Create output file name
         inputBaseName = os.path.basename(inputVolume)
         inputName = os.path.splitext(inputBaseName)[0]
         RISName = inputName.split('_',1)[0]

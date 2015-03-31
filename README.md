@@ -30,14 +30,39 @@ CC=/usr/bin/gcc-4.2 CXX=/usr/bin/g++-4.2 ccmake ../BRAINSTools \
 ## -DPYTHON_LIBRARY:PATH=/path/to/python/lib \
 ## -DPYTHON_INCLUDE_DIR:PATH=/path/to/python/include
 
-make -j24 -k
+make -j${NUMOFTHREADS} -k
 
 ## NOTE: The fetching of data still has problems with parallel builds, so we need to restart it at least
 #        once
 make
 ```
 
-## Testing 
+### Ubuntu 14.04
+Building BRAINSTools on a fresh Ubuntu install is a trivial task:
+1) Install the necessary dependencies
+```sh
+sudo apt-get update
+sudo apt-get upgrade
+sudo apt-get install git cmake cmake-curses-gui python2.7
+python2.7-dev g++ freeglut3-dev
+```
+2) Clone the repository and build
+```sh
+git clone https://github.com/BRAINSia/BRAINSTools.git
+mkdir build
+cd build
+CC=/usr/bin/gcc-4.8 \
+CXX=/usr/bin/g++-4.8 \
+cmake ../BRAINSTools \
+-DPYTHON_INCLUDE_DIR:PATH=/usr/include/python2.7 \
+-DPYTHON_INCLUDE_DIR2:PATH=/usr/include/x86_64-linux-gnu/python2.7 \
+-DPYTHON_LIBRARY:FILEPATH=/usr/lib/x86_64-linux-gnu/libpython2.7.so \
+-DBUILD_TESTING:BOOL=OFF
+make -j${NUMOFTHREADS} -k
+```
+(!) You can find the number of threads on your system in Ubuntu with `lscpu`
+
+## Testing
 `BRAINSTools_MAX_TEST_LEVEL` adjusts how agressive the test suite is
 so that long running tests or incomplete tests can easily be
 silenced

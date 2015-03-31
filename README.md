@@ -39,6 +39,7 @@ make
 
 ### Ubuntu 14.04
 Building BRAINSTools on a fresh Ubuntu install is a trivial task:
+
 1) Install the necessary dependencies
 ```sh
 sudo apt-get update
@@ -60,7 +61,7 @@ cmake ../BRAINSTools \
 -DBUILD_TESTING:BOOL=OFF
 make -j${NUMOFTHREADS} -k
 ```
-(!) You can find the number of threads on your system in Ubuntu with `lscpu`
+:warning: You can find the number of threads on your system in Ubuntu with `lscpu`
 
 ## Testing
 `BRAINSTools_MAX_TEST_LEVEL` adjusts how agressive the test suite is

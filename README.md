@@ -9,6 +9,7 @@ For more information on the individual BRAINSTools, please see the following lin
 https://github.com/BRAINSia/BRAINSTools/wiki
 
 ## Building
+### Mac OSX and Linux RedHat 6
 Example session for a clean build:
 
 ```sh

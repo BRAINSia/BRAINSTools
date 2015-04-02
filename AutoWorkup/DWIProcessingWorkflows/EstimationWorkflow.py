@@ -63,6 +63,7 @@ def CreateEstimationWorkflow(WFname):
     # Step1: DTI estimation
     DTIEstim = pe.Node(interface=dtiestim(), name="DTIEstim")
     DTIEstim.inputs.method = 'wls'
+    DTIEstim.inputs.threshold = 0
     DTIEstim.inputs.tensor_output = 'DTI_Output.nrrd'
     EstimationWF.connect(inputsSpec, 'DWI_Corrected_Aligned_CS', DTIEstim, 'dwi_image')
     EstimationWF.connect(inputsSpec, 'DWIBrainMask', DTIEstim, 'brain_mask')

@@ -39,7 +39,7 @@ make
 ```
 
 ### Ubuntu 14.04
-Building BRAINSTools on a fresh Ubuntu install is a trivial task:
+Building BRAINSTools on a fresh Ubuntu install is somewhat involved:
 
 1) Install the necessary dependencies
 ```sh
@@ -63,6 +63,19 @@ cmake ../BRAINSTools \
 make -j${NUMOFTHREADS} -k
 ```
 :warning: You can find the number of threads on your system in Ubuntu with `lscpu`
+
+3) The build will (currently) fail on BRAINSTools.  This is because
+the Python values aren't propogated correctly.
+```sh
+cd BRAINSTools-build
+ccmake . -DPYTHON_INCLUDE_DIR2:PATH=/usr/include/x86_64-linux-gnu/python2.7
+```
+There will be some warning messages in CMake which you can ignore.
+```
+make -j${NUMOFTHREADS} -k
+cd ..
+make BRAINSTools/fast
+```
 
 ## Testing
 `BRAINSTools_MAX_TEST_LEVEL` adjusts how agressive the test suite is

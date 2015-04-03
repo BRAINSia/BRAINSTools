@@ -142,7 +142,7 @@ def runMainWorkflow(DWI_scan, T2_scan, labelMap_image, BASE_DIR, dataSink_DIR, P
     DWIWorkflow.connect(outputsSpec, 'Lambda3_stats', DWIDataSink, 'Outputs.@Lambda3_stats')
 
     DWIWorkflow.write_graph()
-    DWIWorkflow.run()
+    DWIWorkflow.run(plugin='MultiProc')
 
 
 if __name__ == '__main__':

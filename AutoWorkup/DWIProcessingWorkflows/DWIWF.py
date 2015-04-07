@@ -115,6 +115,7 @@ def runMainWorkflow(DWI_scan, T2_scan, labelMap_image, BASE_DIR, dataSink_DIR, P
 
     ## Write all outputs with DataSink
     DWIDataSink = pe.Node(interface=nio.DataSink(), name='DWIDataSink')
+    DWIDataSink.overwrite = True
     DWIDataSink.inputs.base_directory = dataSink_DIR
     DWIDataSink.inputs.container = sessionID
     DWIDataSink.inputs.substitutions = [('_ComputeStatistics0', ''),('_ComputeStatistics1', ''),('_ComputeStatistics2', ''),

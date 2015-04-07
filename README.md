@@ -38,17 +38,37 @@ make -j${NUMOFTHREADS} -k
 make
 ```
 
-### Ubuntu 14.04
-Building BRAINSTools on a fresh Ubuntu install is somewhat involved:
+### Linux Debian (Ubuntu)
+Building BRAINSTools on a fresh install has the additional dependency
+of building CMake on your system.  You cannot use the version from
+`apt-get` as that does some unnatural things with Python resources to
+be backwards compatible (see http://public.kitware.com/Bug/view.php?id=14156).
 
-1) Install the necessary dependencies
+1) Install the necessary dependencies:
 ```sh
 sudo apt-get update
 sudo apt-get upgrade
-sudo apt-get install git cmake cmake-curses-gui python2.7
+sudo apt-get install git python2.7
 python2.7-dev g++ freeglut3-dev
 ```
-2) Clone the repository and build
+
+2) Get the CMake binaries:
+```sh
+# You can find the URL of the latest CMake binary by
+# * Go to www.cmake.org/download in a browser
+# * Hover over the desired 'Binary distribution' for your operating
+#     system
+# * Right-click and select 'Copy Link Address' for the file ending in
+#     "tar.gz"
+URL=http://www.cmake.org/files/v3.2/cmake-3.2.1-Linux-x86_64.tar.gz
+wget ${URL}
+# Decompress the file
+tar -xzvf cmake-3.2.1-Linux-x86_64.tar.gz
+# Add the binary to your PATH environment variable
+export PATH=${PWD}/cmake-3.2.1-Linux-x86_64/bin:${PATH}
+```
+
+2) Clone the repository and build:
 ```sh
 git clone https://github.com/BRAINSia/BRAINSTools.git
 mkdir build
@@ -58,24 +78,10 @@ CXX=/usr/bin/g++-4.8 \
 cmake ../BRAINSTools \
 -DPYTHON_INCLUDE_DIR:PATH=/usr/include/python2.7 \
 -DPYTHON_INCLUDE_DIR2:PATH=/usr/include/x86_64-linux-gnu/python2.7 \
--DPYTHON_LIBRARY:FILEPATH=/usr/lib/x86_64-linux-gnu/libpython2.7.so \
--DBUILD_TESTING:BOOL=OFF
+-DPYTHON_LIBRARY:FILEPATH=/usr/lib/x86_64-linux-gnu/libpython2.7.so
 make -j${NUMOFTHREADS} -k
 ```
 :warning: You can find the number of threads on your system in Ubuntu with `lscpu`
-
-3) The build will (currently) fail on BRAINSTools.  This is because
-the Python values aren't propogated correctly.
-```sh
-cd BRAINSTools-build
-ccmake . -DPYTHON_INCLUDE_DIR2:PATH=/usr/include/x86_64-linux-gnu/python2.7
-```
-There will be some warning messages in CMake which you can ignore.
-```
-make -j${NUMOFTHREADS} -k
-cd ..
-make BRAINSTools/fast
-```
 
 ## Testing
 `BRAINSTools_MAX_TEST_LEVEL` adjusts how agressive the test suite is

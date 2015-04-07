@@ -6,7 +6,8 @@
 ## This workflow calls 4 other WFs for:
 ## -Correction and Alignement
 ## -CS (CompressSensing)
-## -Estimation of RISs and ukfTracts
+## -Estimation of RISs
+## -Run UKFTractography
 ## -Statistic measurements
 
 """
@@ -69,6 +70,9 @@ def runMainWorkflow(DWI_scan, T2_scan, labelMap_image, BASE_DIR, dataSink_DIR, P
     estimationWFname = 'EstimationWorkflow_CACHE_' + sessionID
     myEstimationWF = CreateEstimationWorkflow(estimationWFname)
 
+    tractographyWFname = 'TractographyWorkflow_CACHE_' + sessionID
+    myTractographyWF = CreateTractographyWorkflow(tractographyWFname)
+
     measurementWFname = 'MeasurementWorkflow_CACHE_' + sessionID
     myMeasurementWF = CreateMeasurementWorkflow(measurementWFname, LABELS_CONFIG_FILE)
 
@@ -82,6 +86,8 @@ def runMainWorkflow(DWI_scan, T2_scan, labelMap_image, BASE_DIR, dataSink_DIR, P
                                                 ]),
                          (myCorrectionWF, myEstimationWF, [('outputsSpec.DWIBrainMask','inputsSpec.DWIBrainMask')]),
                          (myCSWF, myEstimationWF, [('outputsSpec.DWI_Corrected_Aligned_CS','inputsSpec.DWI_Corrected_Aligned_CS')]),
+                         (myCorrectionWF, myTractographyWF, [('outputsSpec.DWIBrainMask','inputsSpec.DWIBrainMask')]),
+                         (myCSWF, myTractographyWF, [('outputsSpec.DWI_Corrected_Aligned_CS','inputsSpec.DWI_Corrected_Aligned_CS')]),
                          (inputsSpec, myMeasurementWF, [('LabelMapVolume','inputsSpec.T2LabelMapVolume')]),
                          (myCorrectionWF, myMeasurementWF, [('outputsSpec.DWIBrainMask','inputsSpec.DWIBrainMask')]),
                          (myEstimationWF, myMeasurementWF, [('outputsSpec.FAImage','inputsSpec.FAImage'),
@@ -102,8 +108,8 @@ def runMainWorkflow(DWI_scan, T2_scan, labelMap_image, BASE_DIR, dataSink_DIR, P
                                                         ('outputsSpec.FrobeniusNormImage','FrobeniusNormImage'),
                                                         ('outputsSpec.Lambda1Image','Lambda1Image'),
                                                         ('outputsSpec.Lambda2Image','Lambda2Image'),
-                                                        ('outputsSpec.Lambda3Image','Lambda3Image'),
-                                                        ('outputsSpec.ukfTracks','ukfTracks')]),
+                                                        ('outputsSpec.Lambda3Image','Lambda3Image')]),
+                         (myTractographyWF, outputsSpec, [('outputsSpec.ukfTracks','ukfTracks')]),
                          (myMeasurementWF, outputsSpec, [('outputsSpec.FA_stats','FA_stats'),
                                                          ('outputsSpec.MD_stats','MD_stats'),
                                                          ('outputsSpec.RD_stats','RD_stats'),
@@ -215,6 +221,7 @@ if __name__ == '__main__':
   from CorrectionWorkflow import CreateCorrectionWorkflow
   from CSWorkflow import CreateCSWorkflow
   from EstimationWorkflow import CreateEstimationWorkflow
+  from TractographyWorkflow import CreateTractographyWorkflow
   from MeasurementWorkflow import CreateMeasurementWorkflow
 
   exit = runMainWorkflow(DWISCAN, T2SCAN, LabelMapImage, CACHEDIR, RESULTDIR, PYTHON_AUX_PATHS, LABELS_CONFIG_FILE)

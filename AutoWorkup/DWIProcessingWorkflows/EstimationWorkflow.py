@@ -56,8 +56,7 @@ def CreateEstimationWorkflow(WFname):
 
     outputsSpec = pe.Node(interface=IdentityInterface(fields=['tensor_image','FAImage','MDImage',
                                                               'RDImage','FrobeniusNormImage',
-                                                              'Lambda1Image','Lambda2Image','Lambda3Image',
-                                                              'ukfTracks']),
+                                                              'Lambda1Image','Lambda2Image','Lambda3Image']),
                           name='outputsSpec')
 
     # Step1: DTI estimation
@@ -98,21 +97,5 @@ def CreateEstimationWorkflow(WFname):
     EstimationWF.connect(DTIProcess, 'lambda1_output', outputsSpec, 'Lambda1Image')
     EstimationWF.connect(DTIProcess, 'lambda2_output', outputsSpec, 'Lambda2Image')
     EstimationWF.connect(DTIProcess, 'lambda3_output', outputsSpec, 'Lambda3Image')
-
-    # Step3: UKF Processing
-    UKFNode = pe.Node(interface=UKFTractography(), name= "UKFRunRecordStates")
-    UKFNode.inputs.tracts = "ukfTracts.vtk"
-    UKFNode.inputs.seedsPerVoxel = 10
-    UKFNode.inputs.numTensor = '2'
-    UKFNode.inputs.freeWater = True ## default False
-    UKFNode.inputs.minFA = 0.06
-    UKFNode.inputs.minGA = 0.06
-    UKFNode.inputs.seedFALimit = 0.06
-    UKFNode.inputs.Ql = 70
-    UKFNode.inputs.recordLength = 2
-
-    EstimationWF.connect(inputsSpec, 'DWI_Corrected_Aligned_CS', UKFNode, 'dwiFile')
-    EstimationWF.connect(inputsSpec, 'DWIBrainMask', UKFNode, 'maskFile')
-    EstimationWF.connect(UKFNode,'tracts',outputsSpec,'ukfTracks')
 
     return EstimationWF

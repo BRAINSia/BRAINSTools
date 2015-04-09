@@ -140,6 +140,30 @@ def CreateMeasurementWorkflow(WFname, LABELS_CONFIG_FILE):
     # This function helps to pick desirable output from the output list
     def pickFromList(inputlist,item):
         return inputlist[item]
+
+    def ResampleRISVolumes(referenceVolume, inputVolume):
+        import os
+        import SimpleITK as sitk
+        refVolume = sitk.ReadImage(referenceVolume)
+        RISVolume = sitk.ReadImage(inputVolume)
+        # 1- voxel-wise square root of input volume
+        sqrtFilt = sitk.SqrtImageFilter()
+        RIS_sqrt = sqrtFilt.Execute(RISVolume)
+        # 2-resample squared image using cubic BSpline
+        resFilt = sitk.ResampleImageFilter()
+        resFilt.SetReferenceImage(refVolume)
+        resFilt.SetInterpolator(sitk.sitkBSpline)
+        RIS_sqrt_res = resFilt.Execute(RIS_sqrt)
+        # 3- square the resampled RIS volume voxel-wise
+        squarFilt = sitk.SquareImageFilter()
+        RIS_resampled = squarFilt.Execute(RIS_sqrt_res)
+        # Create output file name
+        inputBaseName = os.path.basename(inputVolume)
+        RISName = os.path.splitext(inputBaseName)[0]
+        outputVolume = os.path.realpath(RISName + '_res.nrrd')
+        sitk.WriteImage(RIS_resampled,outputVolume)
+        assert os.path.isfile(outputVolume), "Resampled RIS file is not found: %s" % outputVolume
+        return outputVolume
     #################################
     #\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
     MeasurementWF = pe.Workflow(name=WFname)
@@ -180,8 +204,25 @@ def CreateMeasurementWorkflow(WFname, LABELS_CONFIG_FILE):
                                                                        ('Lambda1Image','Lambda1Image'),
                                                                        ('Lambda2Image','Lambda2Image'),
                                                                        ('Lambda3Image','Lambda3Image')])])
-
-
+    # To resample RIS volumes we should consider that the output of resampling
+    # should not have any negative intensity value becuase negative values have no
+    # meaning in rotationally invariant scalar measures.
+    # There are 3 options:
+    # 1- Use linear interpolation (commented out part using BRAINSResample)
+    # 2- Use Gaussian interpolation
+    # 3- Use cubic BSpline interpolation
+    # Third option is chosen here, but with some considerations:
+    # "voxel-wise squared root of intensity values" +
+    # cubic BSpline interpolation +
+    # "voxel-wise square of intesity values"
+    ResampleRISsNode = pe.MapNode(interface=Function(function = ResampleRISVolumes,
+                                                     input_names=['referenceVolume','inputVolume'],
+                                                     output_names=['outputVolume']),
+                                  name="ResampleRISs",
+                                  iterfield=['inputVolume'])
+    MeasurementWF.connect(inputsSpec,'T2LabelMapVolume',ResampleRISsNode,'referenceVolume')
+    MeasurementWF.connect(MakeResamplerInFilesListNode,'RISsList',ResampleRISsNode,'inputVolume')
+    '''
     ResampleRISsNode = pe.MapNode(interface=BRAINSResample(), name="ResampleRISs",
                                   iterfield=['inputVolume', 'outputVolume'])
     ResampleRISsNode.inputs.interpolationMode = 'Linear'
@@ -190,7 +231,7 @@ def CreateMeasurementWorkflow(WFname, LABELS_CONFIG_FILE):
                                             'lambda1_res.nrrd','lambda2_res.nrrd','lambda3_res.nrrd']
     MeasurementWF.connect(inputsSpec,'T2LabelMapVolume',ResampleRISsNode,'referenceVolume')
     MeasurementWF.connect(MakeResamplerInFilesListNode,'RISsList',ResampleRISsNode,'inputVolume')
-
+    '''
     # Step3: Computes statistics of each resampled RIS over all input labels
     # and writes the results as a CSV file (a csv file for each RIS)
     ComputeStatisticsNode = pe.MapNode(interface=Function(function = ComputeStatistics,

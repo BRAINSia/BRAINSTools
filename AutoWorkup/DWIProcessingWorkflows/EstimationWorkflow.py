@@ -51,7 +51,7 @@ def CreateEstimationWorkflow(WFname):
 
     EstimationWF = pe.Workflow(name=WFname)
 
-    inputsSpec = pe.Node(interface=IdentityInterface(fields=['DWI_Corrected_Aligned_CS', 'DWIBrainMask']),
+    inputsSpec = pe.Node(interface=IdentityInterface(fields=['inputDWIImage', 'DWIBrainMask']),
                          name='inputsSpec')
 
     outputsSpec = pe.Node(interface=IdentityInterface(fields=['tensor_image','FAImage','MDImage',
@@ -64,7 +64,7 @@ def CreateEstimationWorkflow(WFname):
     DTIEstim.inputs.method = 'wls'
     DTIEstim.inputs.threshold = 0
     DTIEstim.inputs.tensor_output = 'DTI_Output.nrrd'
-    EstimationWF.connect(inputsSpec, 'DWI_Corrected_Aligned_CS', DTIEstim, 'dwi_image')
+    EstimationWF.connect(inputsSpec, 'inputDWIImage', DTIEstim, 'dwi_image')
     EstimationWF.connect(inputsSpec, 'DWIBrainMask', DTIEstim, 'brain_mask')
     EstimationWF.connect(DTIEstim, 'tensor_output', outputsSpec, 'tensor_image')
 

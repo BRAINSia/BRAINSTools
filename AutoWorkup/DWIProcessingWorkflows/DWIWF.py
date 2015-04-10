@@ -164,15 +164,23 @@ def runMainWorkflow(DWI_scan, T2_scan, labelMap_image, BASE_DIR, dataSink_DIR, P
     DWIDataSink.overwrite = True
     DWIDataSink.inputs.base_directory = dataSink_DIR
     #DWIDataSink.inputs.container = sessionID
-    DWIDataSink.inputs.substitutions = [('DTI_RIS/_ComputeStatistics0', 'DTI_RIS/'),('DTI_RIS/_ComputeStatistics1', 'DTI_RIS/'),
-                                        ('DTI_RIS/_ComputeStatistics2', 'DTI_RIS/'),('DTI_RIS/_ComputeStatistics3', 'DTI_RIS/'),
+    DWIDataSink.inputs.substitutions = [('DTI_RIS/_ComputeStatistics0', 'DTI_RIS/'),('DTI_RIS/_ComputeStatistics1', 'DTI_RIS/'),('DTI_RIS/_ComputeStatistics2', 'DTI_RIS/'),
+                                        ('DTI_RIS/_ComputeStatistics3/frobenius_statistics.csv', 'DTI_RIS/frobenius_norm_statistics.csv'),
                                         ('DTI_RIS/_ComputeStatistics4', 'DTI_RIS/'),('DTI_RIS/_ComputeStatistics5', 'DTI_RIS/'),('DTI_RIS/_ComputeStatistics6', 'DTI_RIS/'),
+                                        ('DTI_RIS_withoutCS/DTI_Output.nrrd', 'DTI_RIS_withoutCS/DTI_Output_withoutCS.nrrd'),
+                                        ('DTI_RIS_withoutCS/FA.nrrd', 'DTI_RIS_withoutCS/FA_withoutCS.nrrd'),
                                         ('DTI_RIS_withoutCS/_ComputeStatistics0/FA_statistics.csv', 'DTI_RIS_withoutCS/FA_withoutCS_statistics.csv'),
+                                        ('DTI_RIS_withoutCS/MD.nrrd', 'DTI_RIS_withoutCS/MD_withoutCS.nrrd'),
                                         ('DTI_RIS_withoutCS/_ComputeStatistics1/MD_statistics.csv', 'DTI_RIS_withoutCS/MD_withoutCS_statistics.csv'),
+                                        ('DTI_RIS_withoutCS/RD.nrrd', 'DTI_RIS_withoutCS/RD_withoutCS.nrrd'),
                                         ('DTI_RIS_withoutCS/_ComputeStatistics2/RD_statistics.csv', 'DTI_RIS_withoutCS/RD_withoutCS_statistics.csv'),
-                                        ('DTI_RIS_withoutCS/_ComputeStatistics3/frobenius_statistics.csv', 'DTI_RIS_withoutCS/frobenius_withoutCS_statistics.csv'),
+                                        ('DTI_RIS_withoutCS/frobenius_norm_output.nrrd', 'DTI_RIS_withoutCS/frobenius_norm_output_withoutCS.nrrd'),
+                                        ('DTI_RIS_withoutCS/_ComputeStatistics3/frobenius_statistics.csv', 'DTI_RIS_withoutCS/frobenius_norm_withoutCS_statistics.csv'),
+                                        ('DTI_RIS_withoutCS/lambda1_output.nrrd', 'DTI_RIS_withoutCS/lambda1_output_withoutCS.nrrd'),
                                         ('DTI_RIS_withoutCS/_ComputeStatistics4/lambda1_statistics.csv', 'DTI_RIS_withoutCS/lambda1_withoutCS_statistics.csv'),
+                                        ('DTI_RIS_withoutCS/lambda2_output.nrrd', 'DTI_RIS_withoutCS/lambda2_output_withoutCS.nrrd'),
                                         ('DTI_RIS_withoutCS/_ComputeStatistics5/lambda2_statistics.csv', 'DTI_RIS_withoutCS/lambda2_withoutCS_statistics.csv'),
+                                        ('DTI_RIS_withoutCS/lambda3_output.nrrd', 'DTI_RIS_withoutCS/lambda3_output_withoutCS.nrrd'),
                                         ('DTI_RIS_withoutCS/_ComputeStatistics6/lambda3_statistics.csv', 'DTI_RIS_withoutCS/lambda3_withoutCS_statistics.csv')
                                        ]
     # Outputs (directory)

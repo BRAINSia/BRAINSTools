@@ -44,11 +44,6 @@
 namespace
 {
 
-bool testValue( const double v1, const double v2, int maxUlps=4 )
-{
-  return itk::Math::FloatAlmostEqual( v1, v2, maxUlps);
-}
-
 template <class ImageType>
 bool TestIfInformationIsDifferent(typename ImageType::ConstPointer first,
                                   typename ImageType::ConstPointer second)
@@ -84,19 +79,19 @@ bool TestIfInformationIsDifferent(typename ImageType::ConstPointer first,
     failureStatus = true;
     }
 
-  typedef itk::ImageConstIterator< ImageType >  firstVectorImageIterator;
+  typedef itk::ImageRegionConstIterator< ImageType >  firstVectorImageIterator;
   firstVectorImageIterator  itr1( first, first->GetLargestPossibleRegion() );
   itr1.GoToBegin();
 
-  typedef itk::ImageConstIterator< ImageType >  secondVectorImageIterator;
+  typedef itk::ImageRegionConstIterator< ImageType >  secondVectorImageIterator;
   secondVectorImageIterator itr2( second, second->GetLargestPossibleRegion() );
   itr2.GoToBegin();
-#if 0 //TODO:  This needs to be finished.
+
   while( ! itr1.IsAtEnd() )
     {
-    if( ( itr2.IsAtEnd() ) || ( !testValue( itr1.Value(), itr2.Value() ) )
+    if( ( itr2.IsAtEnd() ) || ( itr1.Get() != itr2.Get() ) )
       {
-      if(failureStatus == false )
+      if( failureStatus == false )
         {
         std::cout << "ERROR: Pixel values are different "  << std::endl;
         }
@@ -105,7 +100,6 @@ bool TestIfInformationIsDifferent(typename ImageType::ConstPointer first,
     ++itr1;
     ++itr2;
     }
-#endif
 
   return failureStatus;
 }

@@ -3,7 +3,7 @@
   <category>BRAINS.Segmentation</category>
   <title>BRAINSCut:SimilarityIndexComputation</title>
   <description>Automatic analysis of BRAINSCut Output</description>
-  <version> 1.0</version>
+  <version>4.4.0</version>
   <documentation-url></documentation-url>
   <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
   <contributor>Eunyoung Regin Kim</contributor>

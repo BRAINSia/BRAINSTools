@@ -7,20 +7,18 @@
 #
 
 # Version info
+include(ProjectSourceVersion)
 
 ## NOTE:    NEED TO MANUALLY UPDATE ALL XML FILES
 ##          vim $(git grep  -l "<version>" -- *.xml)
 ##          :%s/< *version *> *[^<]*</<version>4.4.0</g
 ##          git commit
 ##          git tag -a v4.4.0
-set(${PROJECT_NAME}_VERSION_MAJOR 4)
-set(${PROJECT_NAME}_VERSION_MINOR 4)  ## See note above for updating versions
-set(${PROJECT_NAME}_VERSION_PATCH 0)
-#set(${PROJECT_NAME}_VERSION_TWEAK "")
+set(${PROJECT_NAME}_VERSION_MAJOR ${_GIT_VERSION_MAJOR})
+set(${PROJECT_NAME}_VERSION_MINOR ${_GIT_VERSION_MINOR})  ## See note above for updating versions
+set(${PROJECT_NAME}_VERSION_PATCH ${_GIT_VERSION_PATCH})
+set(${PROJECT_NAME}_VERSION_TWEAK ${_GIT_VERSION_TWEAK})
 ### SEE ---- NOTE  --- ABOVE --- FOR CONSISTENT -- TAGGING
-
-
-include(ProjectSourceVersion)
 
 # pre-release codes are defined based on suffix of most recent tags.
 

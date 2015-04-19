@@ -49,59 +49,27 @@ bool testValue( const double v1, const double v2, int maxUlps=4 )
   return itk::Math::FloatAlmostEqual( v1, v2, maxUlps);
 }
 
-template <typename TVector>
-bool testVector( const TVector & v1, const TVector & v2, int maxUlps=4 )
-{
-  bool pass = true;
-
-  for( unsigned int i = 0; i < TVector::Dimension; i++ )
-    {
-    if( !testValue( v1[i], v2[i], maxUlps ) )
-      {
-      pass = false;
-      }
-    }
-  return pass;
-}
-
-template <typename TMatrix>
-bool testMatrix( const TMatrix & m1, const TMatrix & m2, int maxUlps=4 )
-{
-  bool pass = true;
-
-  for( unsigned int  i = 0; i < TMatrix::RowDimensions; i++ )
-    {
-    for( unsigned int j = 0; j < TMatrix::ColumnDimensions; j++ )
-      {
-      if( !testValue( m1[i][j], m2[i][j], maxUlps ) )
-        {
-        pass = false;
-        }
-      }
-    }
-  return pass;
-}
-
 template <class ImageType>
 bool TestIfInformationIsDifferent(typename ImageType::ConstPointer first,
                                   typename ImageType::ConstPointer second)
 {
+  const float coordinateTolerance = 1e-3;
   bool failureStatus = false;
-  if( !testVector(first->GetSpacing(), second->GetSpacing()) )
+  if( !first->GetSpacing().GetVnlVector().is_equal( second->GetSpacing().GetVnlVector(), coordinateTolerance ) )
     {
     std::cout << "The first image Spacing does not match second image Information" << std::endl;
     std::cout << "First Spacing: " << first->GetSpacing() << std::endl;
     std::cout << "Second Spacing: " << second->GetSpacing() << std::endl;
     failureStatus = true;
     }
-  if( !testVector(first->GetOrigin(), second->GetOrigin(), 10000000) )
+  if( !first->GetOrigin().GetVnlVector().is_equal( second->GetOrigin().GetVnlVector(), coordinateTolerance ) )
     {
     std::cout << "The first image Origin does not match second image Information"<< std::endl;
     std::cout << "First Origin: " << first->GetOrigin() << std::endl;
     std::cout << "Second Origin: " << second->GetOrigin() << std::endl;
     failureStatus = true;
     }
-  if( !testMatrix(first->GetDirection(), second->GetDirection()) )
+  if( !first->GetDirection().GetVnlMatrix().as_ref().is_equal( second->GetDirection().GetVnlMatrix(), coordinateTolerance ) )
     {
     std::cout << "The first image Direction does not match second image Information"<< std::endl;
     std::cout << "First Direction: " << first->GetDirection() << std::endl;
@@ -126,7 +94,7 @@ bool TestIfInformationIsDifferent(typename ImageType::ConstPointer first,
 #if 0 //TODO:  This needs to be finished.
   while( ! itr1.IsAtEnd() )
     {
-    if( ( itr2.IsAtEnd() ) || ( itr1.Value()  != itr2.Value() ) )
+    if( ( itr2.IsAtEnd() ) || ( !testValue( itr1.Value(), itr2.Value() ) )
       {
       if(failureStatus == false )
         {

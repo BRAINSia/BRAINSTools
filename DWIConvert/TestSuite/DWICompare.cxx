@@ -37,9 +37,71 @@
 #include "DWICompareCLP.h"
 #include <BRAINSCommonLib.h>
 
+#define DIMENSION 3
+
+
 namespace
 {
-#define DIMENSION 3
+
+template <class ImageType>
+bool TestIfInformationIsDifferent(typename ImageType::ConstPointer first,
+                                  typename ImageType::ConstPointer second)
+{
+  bool failureStatus = false;
+  if (first->GetSpacing() != second->GetSpacing())
+    {
+    std::cout << "The first image Spacing does not match second image Information" << std::endl;
+    std::cout << "First Spacing: " << first->GetSpacing() << std::endl;
+    std::cout << "Second Spacing: " << second->GetSpacing() << std::endl;
+    failureStatus = true;
+    }
+  if (first->GetOrigin() != second->GetOrigin())
+    {
+    std::cout << "The first image Origin does not match second image Information"<< std::endl;
+    std::cout << "First Origin: " << first->GetOrigin() << std::endl;
+    std::cout << "Second Origin: " << second->GetOrigin() << std::endl;
+    failureStatus = true;
+    }
+  if (first->GetDirection() != second->GetDirection())
+    {
+    std::cout << "The first image Direction does not match second image Information"<< std::endl;
+    std::cout << "First Direction: " << first->GetDirection() << std::endl;
+    std::cout << "Second Direction: " << second->GetDirection() << std::endl;
+    failureStatus = true;
+    }
+  if(first->GetLargestPossibleRegion() != second->GetLargestPossibleRegion())
+    {
+    std::cout <<"The first image Size does not match second image Information"<< std::endl;
+    std::cout <<"first: " << first->GetLargestPossibleRegion()
+              << "updated: " << second->GetLargestPossibleRegion() << std::endl;
+    failureStatus = true;
+    }
+
+  typedef itk::ImageConstIterator< ImageType >  firstVectorImageIterator;
+  firstVectorImageIterator  itr1( first, first->GetLargestPossibleRegion() );
+  itr1.GoToBegin();
+
+  typedef itk::ImageConstIterator< ImageType >  secondVectorImageIterator;
+  secondVectorImageIterator itr2( second, second->GetLargestPossibleRegion() );
+  itr2.GoToBegin();
+#if 0 //TODO:  This needs to be finished.
+  while( ! itr1.IsAtEnd() )
+    {
+    if( ( itr2.IsAtEnd() ) || ( itr1.Value()  != itr2.Value() ) )
+      {
+      if(failureStatus == false )
+        {
+        std::cout << "ERROR: Pixel values are different "  << std::endl;
+        }
+      failureStatus = true;
+      }
+    ++itr1;
+    ++itr2;
+    }
+#endif
+
+  return failureStatus;
+}
 
 template <class PixelType>
 int DoIt( int argc, char * argv[], PixelType )
@@ -54,8 +116,12 @@ int DoIt( int argc, char * argv[], PixelType )
   typename FileReaderType::Pointer secondReader = FileReaderType::New();
   firstReader->SetFileName( inputVolume1.c_str() );
   firstReader->Update();
+  typename DiffusionImageType::ConstPointer firstImage = firstReader->GetOutput();
   secondReader->SetFileName( inputVolume2.c_str() );
   secondReader->Update();
+  typename DiffusionImageType::ConstPointer secondImage = secondReader->GetOutput();
+
+  bool failure = TestIfInformationIsDifferent<DiffusionImageType>(firstImage, secondImage);
 
   typedef itk::MetaDataDictionary DictionaryType;
   const DictionaryType & firstDictionary = firstReader->GetMetaDataDictionary();
@@ -64,7 +130,6 @@ int DoIt( int argc, char * argv[], PixelType )
   DictionaryType::ConstIterator itr = firstDictionary.Begin();
   DictionaryType::ConstIterator end = firstDictionary.End();
 
-  bool failure = false;
 
   // If the angle between two gradients differs more than this value they are
   // considered to be non-colinear

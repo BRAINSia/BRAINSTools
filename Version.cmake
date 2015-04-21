@@ -14,6 +14,8 @@ include(ProjectSourceVersion)
 ##          :%s/< *version *> *[^<]*</<version>4.4.0</g
 ##          git commit
 ##          git tag -a v4.4.0
+##          git push origin v4.4.0
+##          git push origin --tags  ## DON'T forget to do this!
 set(${PROJECT_NAME}_VERSION_MAJOR ${_GIT_VERSION_MAJOR})
 set(${PROJECT_NAME}_VERSION_MINOR ${_GIT_VERSION_MINOR})  ## See note above for updating versions
 set(${PROJECT_NAME}_VERSION_PATCH ${_GIT_VERSION_PATCH})

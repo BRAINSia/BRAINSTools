@@ -16,8 +16,8 @@
 *
 *=========================================================================*/
 
-#define BRAINSTools_VERSION_MAJOR @BRAINSTools_VERSION_MAJOR@
-#define BRAINSTools_VERSION_MINOR @BRAINSTools_VERSION_MINOR@
-#define BRAINSTools_VERSION_PATCH @BRAINSTools_VERSION_PATCH@
-#define BRAINSTools_VERSION_TWEAK @BRAINSTools_VERSION_TWEAK@
-#define BRAINSTools_VERSION "@BRAINSTools_VERSION@"
+#define BRAINSTools_VERSION_MAJOR @BRAINSTools_VERSION_MAJOR@ //A number, so no quotes
+#define BRAINSTools_VERSION_MINOR @BRAINSTools_VERSION_MINOR@ //A number, so no quotes
+#define BRAINSTools_VERSION_PATCH @BRAINSTools_VERSION_PATCH@ //A number, so no quotes
+#define BRAINSTools_VERSION_TWEAK @BRAINSTools_VERSION_TWEAK@ //A number, so no quotes
+#define BRAINSTools_VERSION       "@BRAINSTools_VERSION@"

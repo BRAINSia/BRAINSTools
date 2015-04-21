@@ -66,9 +66,15 @@ public:
                                                     m_UseBMatrixGradientDirections(useBMatrixGradientDirections),
                                                     m_IsInterleaved(false)
     {
+      { // Set the m_Origin only 1 time, and then use it every time
+      // origin
+      double origin[3];
+      m_Headers[0]->GetOrigin(origin);
+      this->m_Origin[0] = origin[0];
+      this->m_Origin[1] = origin[1];
+      this->m_Origin[2] = origin[2];
+      }
 
-
-      this->m_Origin.Fill(0.0);
       this->m_NRRDSpaceDefinition = "left-posterior-superior";;
       this->m_NRRDSpaceDirection.SetIdentity();
       this->m_MeasurementFrame.SetIdentity();
@@ -138,13 +144,6 @@ public:
       m_YRes = spacing[1];
       m_XRes = spacing[0];
       m_SliceSpacing = spacing[2];
-
-      // origin
-      double origin[3];
-      m_Headers[0]->GetOrigin(origin);
-      this->m_Origin[0] = origin[0];
-      this->m_Origin[1] = origin[1];
-      this->m_Origin[2] = origin[2];
 
       // a map of ints keyed by the slice location string
       // reported in the dicom file.  The number of slices per
@@ -303,7 +302,9 @@ protected:
   void DetermineSliceOrderIS()
     {
       double image0Origin[3];
-      this->m_Headers[0]->GetOrigin(image0Origin);
+      image0Origin[0]=m_Origin[0];
+      image0Origin[1]=m_Origin[1];
+      image0Origin[2]=m_Origin[2];
       std::cout << "Slice 0: " << image0Origin[0] << " "
                 << image0Origin[1] << " " << image0Origin[2] << std::endl;
 

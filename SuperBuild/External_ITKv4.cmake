@@ -40,7 +40,7 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   set(${proj}_REPOSITORY ${git_protocol}://itk.org/ITK.git)
   #set(${proj}_REPOSITORY ${git_protocol}://github.com/BRAINSia/ITK.git)
   set(${proj}_REPOSITORY ${git_protocol}://itk.org/ITK.git)
-  set(${proj}_GIT_TAG 8f7c404aff99f5ae3dfedce6e480701f0304864c ) # 2015-04-18
+  set(${proj}_GIT_TAG a19875295454334d0417e67a0253196e0ee75962 ) # 2015-04-21 Fix DCMTK
 #  message("COMMON_EXTERNAL_PROJECT_ARGS:
 #${COMMON_EXTERNAL_PROJECT_ARGS}")
   ExternalProject_Add(${proj}

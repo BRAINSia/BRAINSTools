@@ -333,13 +333,13 @@ protected:
       if(this->m_SliceOrderIS)
         {
         std::cout << "Slice order is IS" << std::endl;
-        this->m_NRRDSpaceDirection[0][2] = -this->m_NRRDSpaceDirection[0][2];
-        this->m_NRRDSpaceDirection[1][2] = -this->m_NRRDSpaceDirection[1][2];
-        this->m_NRRDSpaceDirection[2][2] = -this->m_NRRDSpaceDirection[2][2];
         }
       else
         {
         std::cout << "Slice order is SI" << std::endl;
+        this->m_NRRDSpaceDirection[0][2] = -this->m_NRRDSpaceDirection[0][2];
+        this->m_NRRDSpaceDirection[1][2] = -this->m_NRRDSpaceDirection[1][2];
+        this->m_NRRDSpaceDirection[2][2] = -this->m_NRRDSpaceDirection[2][2];
         }
     }
 

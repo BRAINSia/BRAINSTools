@@ -19,10 +19,6 @@
 /*=========================================================================
 
  Program:   GTRACT (Guided Tensor Restore Anatomical Connectivity Tractography)
- Module:    $RCSfile: $
- Language:  C++
- Date:      $Date: 2006/03/29 14:53:40 $
- Version:   $Revision: 1.9 $
 
    Copyright (c) University of Iowa Department of Radiology. All rights reserved.
    See GTRACT-Copyright.txt or http://mri.radiology.uiowa.edu/copyright/GTRACT-Copyright.txt

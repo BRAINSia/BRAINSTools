@@ -1,7 +1,6 @@
 
 add_executable(PrettyPrintTableTest PrettyPrintTableTest.cxx)
 target_link_libraries(PrettyPrintTableTest BRAINSCommonLib)
-
 set_target_properties(PrettyPrintTableTest PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/testbin)
 
 add_executable( itkResampleInPlaceImageFilterTest itkResampleInPlaceImageFilterTest.cxx)
@@ -10,6 +9,10 @@ target_link_libraries( itkResampleInPlaceImageFilterTest ${BRAINSCommonLib_ITK_L
 
 add_executable(BRAINSCleanMask BRAINSCleanMask.cxx)
 target_link_libraries(BRAINSCleanMask ${BRAINSCommonLib_ITK_LIBRARIES})
+
+add_executable(DWIMetaDataDictionaryValidatorTest DWIMetaDataDictionaryValidatorTest.cxx)
+target_link_libraries(DWIMetaDataDictionaryValidatorTest BRAINSCommonLib)
+set_target_properties(DWIMetaDataDictionaryValidatorTest PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/testbin)
 
 StandardBRAINSBuildMacro(NAME FindCenterOfBrain TARGET_LIBRARIES BRAINSCommonLib)
 

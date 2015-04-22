@@ -69,6 +69,7 @@ set(BRAINSCommonLib_SRCS
   BRAINSThreadControl.cxx
   ExtractSingleLargestRegion.cxx
   BRAINSToolsVersion.cxx
+  DWIMetaDataDictionaryValidator.cxx
 )
 
 ## Always build BRAINSCommonLib as static
@@ -149,4 +150,3 @@ install(FILES ${TESTFILES_TO_INSTALL}
 if(BUILD_TESTING AND NOT Slicer_BUILD_BRAINSTOOLS)
   add_subdirectory(TestSuite)
 endif()
-

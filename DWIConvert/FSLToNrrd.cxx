@@ -201,7 +201,7 @@ FSLToNrrd(const std::string & inputVolume,
          << spaceDirections[2][1] << ") "
          << "(" << spaceDirections[0][2] << ","
          << spaceDirections[1][2] << ","
-         << spaceDirections[2][2] << ") none"
+         << -spaceDirections[2][2] << ") none"
          << std::endl;
   header << "centerings: cell cell cell ???" << std::endl;
   header << "kinds: space space space list" << std::endl;

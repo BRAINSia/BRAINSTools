@@ -25,7 +25,7 @@ def CreateTractographyWorkflow(WFname):
 
     # Step1: UKF Processing
     UKFNode = pe.Node(interface=UKFTractography(), name= "UKFRunRecordStates")
-    UKFNode.inputs.tracts = "ukfTracts.vtk"
+    UKFNode.inputs.tracts = "ukfTracts.vtp"
     UKFNode.inputs.seedsPerVoxel = 10
     UKFNode.inputs.numTensor = '2'
     UKFNode.inputs.freeWater = True ## default False

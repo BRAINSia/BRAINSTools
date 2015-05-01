@@ -31,16 +31,6 @@ ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj
 if(NOT ( DEFINED "USE_SYSTEM_${proj}" AND "${USE_SYSTEM_${proj}}" ) )
   #message(STATUS "${__indent}Adding project ${proj}")
 
-  # Set CMake OSX variable to pass down the external project
-  set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
-  if(APPLE)
-    list(APPEND CMAKE_OSX_EXTERNAL_PROJECT_ARGS
-      -DCMAKE_OSX_ARCHITECTURES:STRING=${CMAKE_OSX_ARCHITECTURES}
-      -DCMAKE_OSX_SYSROOT:STRING=${CMAKE_OSX_SYSROOT}
-      -DCMAKE_OSX_DEPLOYMENT_TARGET:STRING=${CMAKE_OSX_DEPLOYMENT_TARGET})
-    set(APPLE_CFLAGS " -DHAVE_APPLE_OPENGL_FRAMEWORK")
-  endif()
-
   ### --- Project specific additions here
 
   AutoConf_FLAGS(${proj}_CFLAGS C "${APPLE_CFLAGS}")
@@ -51,6 +41,7 @@ if(NOT ( DEFINED "USE_SYSTEM_${proj}" AND "${USE_SYSTEM_${proj}}" ) )
   set(${proj}_GIT_TAG 7ddcdf9b098102011e5a7ceafe53711fad93fde7)
 
   ExternalProject_Add(${proj}
+    ${${proj}_EP_ARGS}
     GIT_REPOSITORY ${${proj}_REPOSITORY}
     GIT_TAG ${${proj}_GIT_TAG}
     SOURCE_DIR ${SOURCE_DOWNLOAD_CACHE}/${proj}
@@ -88,4 +79,17 @@ else()
   ExternalProject_Add_Empty(${proj} "${${proj}_DEPENDENCIES}")
 endif()
 
-list(APPEND ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS ${proj}_DIR:PATH)
+mark_as_superbuild(
+  VARS
+    ${proj}_INCLUDE_DIR:PATH
+    ${proj}_LIBRARY:FILEPATH
+  LABELS "FIND_PACKAGE"
+  )
+
+ExternalProject_Message(${proj} "${proj}_INCLUDE_DIR:${${proj}_INCLUDE_DIR}")
+mark_as_superbuild(
+  VARS
+    ${proj}_DIR:FILE
+  LABELS
+     "FIND_PACKAGE"
+)

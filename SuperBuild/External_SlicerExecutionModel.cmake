@@ -33,12 +33,11 @@ if(NOT DEFINED SlicerExecutionModel_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
     GIT_REPOSITORY "${git_protocol}://github.com/Slicer/SlicerExecutionModel.git"
-    GIT_TAG "e00851314ab17d4f1e8eba097e47947df13c100f"
-    SOURCE_DIR ${SOURCE_DOWNLOAD_CACHE}/${proj}
+    GIT_TAG "b31b424a2e18fa7e9ada11433a16b1e148d6cdd8"
+    SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
     BINARY_DIR ${proj}-build
     CMAKE_ARGS -Wno-dev --no-warn-unused-cli
     CMAKE_CACHE_ARGS
-      ${COMMON_EXTERNAL_PROJECT_ARGS}
       -DBUILD_TESTING:BOOL=OFF
       -DITK_DIR:PATH=${ITK_DIR}
       -DDCMTK_DIR:PATH=${DCMTK_DIR}
@@ -53,12 +52,22 @@ if(NOT DEFINED SlicerExecutionModel_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM
       -DSlicerExecutionModel_DEFAULT_CLI_INSTALL_RUNTIME_DESTINATION:STRING=${Slicer_INSTALL_CLIMODULES_BIN_DIR}
       -DSlicerExecutionModel_DEFAULT_CLI_INSTALL_LIBRARY_DESTINATION:STRING=${Slicer_INSTALL_CLIMODULES_LIB_DIR}
       -DSlicerExecutionModel_DEFAULT_CLI_INSTALL_ARCHIVE_DESTINATION:STRING=${Slicer_INSTALL_CLIMODULES_LIB_DIR}
+      -DSlicerExecutionModel_DEFAULT_CLI_TARGETS_FOLDER_PREFIX:STRING=Module-
       ${EXTERNAL_PROJECT_OPTIONAL_ARGS}
     INSTALL_COMMAND ""
     DEPENDS
       ${${proj}_DEPENDENCIES}
     )
   set(SlicerExecutionModel_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
+
+  #-----------------------------------------------------------------------------
+  # Launcher setting specific to build tree
+
+  set(${proj}_LIBRARY_PATHS_LAUNCHER_BUILD ${SlicerExecutionModel_DIR}/ModuleDescriptionParser/bin/<CMAKE_CFG_INTDIR>)
+  mark_as_superbuild(
+    VARS ${proj}_LIBRARY_PATHS_LAUNCHER_BUILD
+    LABELS "LIBRARY_PATHS_LAUNCHER_BUILD"
+    )
 
 else()
   ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})

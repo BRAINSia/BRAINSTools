@@ -39,15 +39,6 @@ ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj
 if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" ) )
   #message(STATUS "${__indent}Adding project ${proj}")
 
-  # Set CMake OSX variable to pass down the external project
-  set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
-  if(APPLE)
-    list(APPEND CMAKE_OSX_EXTERNAL_PROJECT_ARGS
-      -DCMAKE_OSX_ARCHITECTURES:STRING=${CMAKE_OSX_ARCHITECTURES}
-      -DCMAKE_OSX_SYSROOT:STRING=${CMAKE_OSX_SYSROOT}
-      -DCMAKE_OSX_DEPLOYMENT_TARGET:STRING=${CMAKE_OSX_DEPLOYMENT_TARGET})
-  endif()
-
   ### --- Project specific additions here
   set(${proj}_CMAKE_OPTIONS
       -DBUILD_EXAMPLES:BOOL=OFF
@@ -120,8 +111,10 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
   #set(${proj}_REPOSITORY "${git_protocol}://github.com/Itseez/opencv")
   #set(${proj}_GIT_TAG "2.4.9") # USE THIS FOR UPDATED VERSION
   set(${proj}_REPOSITORY "${git_protocol}://github.com/BRAINSia/opencv.git") # USE THIS FOR UPDATED VERSION
-  set(${proj}_GIT_TAG "20140630_Upstream") # USE THIS FOR UPDATED VERSION for GCC 4.4.7 on RHEL6
+  set(${proj}_GIT_TAG "20150501_OpenCV") # USE THIS FOR UPDATED VERSION for clang with c++11 support
+  #set(${proj}_GIT_TAG "20140630_Upstream") # USE THIS FOR UPDATED VERSION for GCC 4.4.7 on RHEL6
   ExternalProject_Add(${proj}
+    ${${proj}_EP_ARGS}
     GIT_REPOSITORY ${${proj}_REPOSITORY}
     GIT_TAG ${${proj}_GIT_TAG}
     SOURCE_DIR ${SOURCE_DOWNLOAD_CACHE}/${proj}
@@ -134,8 +127,6 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
     CMAKE_GENERATOR ${gen}
     CMAKE_ARGS -Wno-dev --no-warn-unused-cli
     CMAKE_CACHE_ARGS
-      ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
-      ${COMMON_EXTERNAL_PROJECT_ARGS}
       ${${proj}_CMAKE_OPTIONS}
 ## We really do want to install in order to limit # of include paths INSTALL_COMMAND ""
     DEPENDS
@@ -156,7 +147,12 @@ else()
   ExternalProject_Add_Empty(${proj} "${${proj}_DEPENDENCIES}")
 endif()
 
-list(APPEND ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS ${extProjName}_DIR:PATH)
+mark_as_superbuild(
+  VARS
+    ${extProjName}_DIR:FILE
+  LABELS
+     "FIND_PACKAGE"
+)
 
 superbuild_stack_pop(CACHED_extProjName extProjName)
 superbuild_stack_pop(CACHED_proj proj)

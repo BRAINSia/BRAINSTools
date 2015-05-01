@@ -7,21 +7,17 @@ set(${proj}_DEPENDENCIES "zlib" VTK)
   list(APPEND ${proj}_DEPENDENCIES DCMTK)
 #endif()
 
-if(${PRIMARY_PROJECT_NAME}_USE_QT) ## QT requires VTK support in ITK
-  list(APPEND ${proj}_DEPENDENCIES VTK)
-endif()
-
 # Include dependent projects if any
 ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj}_DEPENDENCIES)
 
 if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   unset(ITK_DIR CACHE)
-  find_package(ITK 4 COMPONENTS ${${CMAKE_PROJECT_NAME}_ITK_COMPONENTS} REQUIRED NO_MODULE)
+  find_package(ITK 4.6 COMPONENTS ${${CMAKE_PROJECT_NAME}_ITK_COMPONENTS} REQUIRED NO_MODULE)
 endif()
 
 # Sanity checks
 if(DEFINED ITK_DIR AND NOT EXISTS ${ITK_DIR})
-  message(FATAL_ERROR "ITK_DIR variable is defined but corresponds to non-existing directory")
+  message(FATAL_ERROR "ITK_DIR variable is defined but corresponds to nonexistent directory")
 endif()
 
 if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
@@ -38,28 +34,40 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   endif()
 
   set(${proj}_REPOSITORY ${git_protocol}://itk.org/ITK.git)
-  #set(${proj}_REPOSITORY ${git_protocol}://github.com/BRAINSia/ITK.git)
-  set(${proj}_REPOSITORY ${git_protocol}://itk.org/ITK.git)
-  set(${proj}_GIT_TAG a19875295454334d0417e67a0253196e0ee75962 ) # 2015-04-21 Fix DCMTK
-#  message("COMMON_EXTERNAL_PROJECT_ARGS:
-#${COMMON_EXTERNAL_PROJECT_ARGS}")
+  set(${proj}_GIT_TAG 120b3420a9edc6488aa8f91bc8e657fb619fcabe ) # 2015-04-28 Fixed VTKGlue
+  set(EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS)
+
+  if(NOT ${CMAKE_PROJECT_NAME}ITKV3_COMPATIBILITY AND CMAKE_CL_64)
+    # enables using long long type for indexes and size on platforms
+    # where long is only 32-bits (msvc)
+    set(EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS
+      -DITK_USE_64BITS_IDS:BOOL=ON
+      )
+  endif()
+
+  if(${CMAKE_PROJECT_NAME}USE_PYTHONQT)
+    # XXX Ensure python executable used for ITKModuleHeaderTest
+    #     is the same as Slicer.
+    #     This will keep the sanity check implemented in SlicerConfig.cmake
+    #     quiet.
+    list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS
+      -DPYTHON_EXECUTABLE:PATH=${PYTHON_EXECUTABLE}
+      )
+  endif()
+
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
     GIT_REPOSITORY ${ITKv4_REPOSITORY}
     GIT_TAG ${ITKv4_GIT_TAG}
-    SOURCE_DIR ${SOURCE_DOWNLOAD_CACHE}/${proj}
+    SOURCE_DIR ${proj}
     BINARY_DIR ${proj}-build
     CMAKE_CACHE_ARGS
-      ${COMMON_EXTERNAL_PROJECT_ARGS}
-    CMAKE_ARGS
       -DBUILD_TESTING:BOOL=OFF
       -DBUILD_EXAMPLES:BOOL=OFF
       -DITK_LEGACY_REMOVE:BOOL=ON
       -DITKV3_COMPATIBILITY:BOOL=OFF
       -DITK_BUILD_DEFAULT_MODULES:BOOL=ON
       -DModule_ITKReview:BOOL=ON
-      ${ITK_VTK_OPTIONS}
-      -DModule_MGHIO:BOOL=ON        #To provide FreeSurfer Compatibility
       -DBUILD_SHARED_LIBS:BOOL=OFF
       -DITK_INSTALL_NO_DEVELOPMENT:BOOL=ON
       -DKWSYS_USE_MD5:BOOL=ON # Required by SlicerExecutionModel
@@ -73,14 +81,30 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       -DZLIB_ROOT:PATH=${ZLIB_ROOT}
       -DZLIB_INCLUDE_DIR:PATH=${ZLIB_INCLUDE_DIR}
       -DZLIB_LIBRARY:FILEPATH=${ZLIB_LIBRARY}
+      -DModule_MGHIO:BOOL=ON        #To provide FreeSurfer Compatibility
       -DITK_USE_FFTWD:BOOL=ON
       -DITK_USE_FFTWF:BOOL=ON
+      ${ITK_VTK_OPTIONS}
       -DVTK_DIR:PATH=${VTK_DIR}
     INSTALL_COMMAND ""
     DEPENDS
       ${${proj}_DEPENDENCIES}
     )
- set(ITK_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
+  set(ITK_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
+
+  #-----------------------------------------------------------------------------
+  # Launcher setting specific to build tree
+
+  set(_lib_subdir lib)
+  if(WIN32)
+    set(_lib_subdir bin)
+  endif()
+
+  set(${proj}_LIBRARY_PATHS_LAUNCHER_BUILD ${ITK_DIR}/${_lib_subdir}/<CMAKE_CFG_INTDIR>)
+  mark_as_superbuild(
+    VARS ${proj}_LIBRARY_PATHS_LAUNCHER_BUILD
+    LABELS "LIBRARY_PATHS_LAUNCHER_BUILD"
+    )
 
 else()
   ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})

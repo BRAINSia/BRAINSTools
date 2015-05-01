@@ -39,15 +39,6 @@ ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj
 if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" ) )
   #message(STATUS "${__indent}Adding project ${proj}")
 
-  # Set CMake OSX variable to pass down the external project
-  set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
-  if(APPLE)
-    list(APPEND CMAKE_OSX_EXTERNAL_PROJECT_ARGS
-      -DCMAKE_OSX_ARCHITECTURES:STRING=${CMAKE_OSX_ARCHITECTURES}
-      -DCMAKE_OSX_SYSROOT:STRING=${CMAKE_OSX_SYSROOT}
-      -DCMAKE_OSX_DEPLOYMENT_TARGET:STRING=${CMAKE_OSX_DEPLOYMENT_TARGET})
-  endif()
-
   ### --- Project specific additions here
   set(${proj}_CMAKE_OPTIONS
       -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_BINARY_DIR}/Utils
@@ -58,6 +49,7 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
   set(${proj}_GIT_TAG 0cdca9fa1eba11e19af53a1a14234a1dfb7a2515)
 
   ExternalProject_Add(${proj}
+    ${${proj}_EP_ARGS}
     GIT_REPOSITORY ${${proj}_REPOSITORY}
     GIT_TAG ${${proj}_GIT_TAG}
     SOURCE_DIR ${SOURCE_DOWNLOAD_CACHE}/${proj}
@@ -70,8 +62,6 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
     CMAKE_GENERATOR ${gen}
     CMAKE_ARGS -Wno-dev --no-warn-unused-cli
     CMAKE_CACHE_ARGS
-      ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
-      ${COMMON_EXTERNAL_PROJECT_ARGS}
       ${${proj}_CMAKE_OPTIONS}
     INSTALL_COMMAND ""
     DEPENDS
@@ -88,5 +78,10 @@ else()
   ExternalProject_Add_Empty(${proj} "${${proj}_DEPENDENCIES}")
 endif()
 
-list(APPEND ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS ${extProjName}_EXE:FILEPATH)
+mark_as_superbuild(
+  VARS
+    ${extProjName}_EXE:FILEPATH
+  LABELS
+     "FIND_PACKAGE"
+)
 

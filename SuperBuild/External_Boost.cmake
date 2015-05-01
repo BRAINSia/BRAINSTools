@@ -26,15 +26,6 @@ ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj
 if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" ) )
   #message(STATUS "${__indent}Adding project ${proj}")
 
-  # Set CMake OSX variable to pass down the external project
-  set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
-  if(APPLE)
-    list(APPEND CMAKE_OSX_EXTERNAL_PROJECT_ARGS
-      -DCMAKE_OSX_ARCHITECTURES:STRING=${CMAKE_OSX_ARCHITECTURES}
-      -DCMAKE_OSX_SYSROOT:STRING=${CMAKE_OSX_SYSROOT}
-      -DCMAKE_OSX_DEPLOYMENT_TARGET:STRING=${CMAKE_OSX_DEPLOYMENT_TARGET})
-  endif()
-
   ### --- Project specific additions here
   set(Boost_Install_Dir ${CMAKE_CURRENT_BINARY_DIR}/${proj}-install)
   set(Boost_Configure_Script ${CMAKE_CURRENT_LIST_DIR}/External_Boost_configureboost.cmake)
@@ -50,6 +41,7 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
   endif()
   set(BOOST_SOURCE_DIR ${SOURCE_DOWNLOAD_CACHE}/${proj})
   ExternalProject_Add(${proj}
+    ${${proj}_EP_ARGS}
     URL ${${proj}_URL}
     URL_MD5 ${${proj}_MD5}
     SOURCE_DIR ${BOOST_SOURCE_DIR}
@@ -77,4 +69,9 @@ else()
   ExternalProject_Add_Empty(${proj} "${${proj}_DEPENDENCIES}")
 endif()
 
-list(APPEND ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS ${extProjName}_DIR:PATH)
+mark_as_superbuild(
+  VARS
+    ${extProjName}_DIR:PATH
+  LABELS
+    "FIND_PACKAGE"
+)

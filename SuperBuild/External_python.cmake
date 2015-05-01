@@ -6,7 +6,6 @@ set(${proj}_DEPENDENCIES zlib)
 if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_python)
   list(APPEND ${proj}_DEPENDENCIES CTKAPPLAUNCHER)
 endif()
-
 if(${CMAKE_PROJECT_NAME}_USE_PYTHONQT_WITH_TCL)
   if(WIN32)
     list(APPEND ${proj}_DEPENDENCIES tcl)
@@ -36,7 +35,7 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
    OR NOT DEFINED PYTHON_LIBRARY
    OR NOT DEFINED PYTHON_EXECUTABLE) AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
-  set(python_SOURCE_DIR "${SOURCE_DOWNLOAD_CACHE}/Python-2.7.3")
+  set(python_SOURCE_DIR "${CMAKE_BINARY_DIR}/Python-2.7.3")
 
   set(EXTERNAL_PROJECT_OPTIONAL_ARGS)
   if(MSVC)
@@ -48,7 +47,8 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
   endif()
 
   ExternalProject_Add(python-source
-    URL "http://www.python.org/ftp/python/2.7.3/Python-2.7.3.tgz"
+    ${${proj}_EP_ARGS}
+    URL "https://www.python.org/ftp/python/2.7.3/Python-2.7.3.tgz"
     URL_MD5 "2cf641732ac23b18d139be077bd906cd"
     DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}
     SOURCE_DIR ${python_SOURCE_DIR}
@@ -81,6 +81,12 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
       )
   endif()
 
+  if(APPLE)
+    list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_ARGS
+      -DCMAKE_BUILD_WITH_INSTALL_RPATH:BOOL=ON
+      )
+  endif()
+
   set(EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS)
 
   # Force Python build to "Release".
@@ -95,15 +101,17 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
     GIT_REPOSITORY "${git_protocol}://github.com/davidsansome/python-cmake-buildsystem.git"
-    GIT_TAG "82e14946e3640be603601623d9bd282b992f2d7c"
+    GIT_TAG "0838470ec2a0d20909571793ebb4ccc8a3292ac5"
     SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
     BINARY_DIR ${proj}-build
     CMAKE_ARGS -Wno-dev --no-warn-unused-cli
     CMAKE_CACHE_ARGS
       -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}
+      #-DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags} # Not used
       -DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}
       -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags}
       -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_BINARY_DIR}/${proj}-install
+      #-DBUILD_TESTING:BOOL=OFF
       -DBUILD_SHARED:BOOL=ON
       -DBUILD_STATIC:BOOL=OFF
       -DUSE_SYSTEM_LIBRARIES:BOOL=OFF
@@ -137,7 +145,7 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
   else()
     message(FATAL_ERROR "Unknown system !")
   endif()
-  set(PYTHON_INCLUDE_DIRS ${PYTHON_INCLUDE_DIR})
+
   if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_python)
 
     # Configure python launcher
@@ -163,23 +171,85 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
     set(CMAKE_CFG_INTDIR ${SAVED_CMAKE_CFG_INTDIR}) # Restore CMAKE_CFG_INTDIR
   endif()
 
+  #-----------------------------------------------------------------------------
+  # Launcher setting specific to build tree
+
+  set(_lib_subdir lib)
+  if(WIN32)
+    set(_lib_subdir bin)
+  endif()
+
+  # library paths
+  set(${proj}_LIBRARY_PATHS_LAUNCHER_BUILD ${python_DIR}/${_lib_subdir})
+  mark_as_superbuild(
+    VARS ${proj}_LIBRARY_PATHS_LAUNCHER_BUILD
+    LABELS "LIBRARY_PATHS_LAUNCHER_BUILD"
+    )
+
+  # paths
+  set(${proj}_PATHS_LAUNCHER_BUILD ${python_DIR}/bin)
+  mark_as_superbuild(
+    VARS ${proj}_PATHS_LAUNCHER_BUILD
+    LABELS "PATHS_LAUNCHER_BUILD"
+    )
+
+  # pythonpath
+  set(_pythonhome ${CMAKE_BINARY_DIR}/python-install)
+  set(pythonpath_subdir lib/python2.7)
+  if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    set(pythonpath_subdir Lib)
+  endif()
+
+  set(${proj}_PYTHONPATH_LAUNCHER_BUILD
+    ${_pythonhome}/${pythonpath_subdir}
+    ${_pythonhome}/${pythonpath_subdir}/lib-dynload
+    ${_pythonhome}/${pythonpath_subdir}/site-packages
+    )
+  mark_as_superbuild(
+    VARS ${proj}_PYTHONPATH_LAUNCHER_BUILD
+    LABELS "PYTHONPATH_LAUNCHER_BUILD"
+    )
+
+  # environment variables
+  set(${proj}_ENVVARS_LAUNCHER_BUILD "PYTHONHOME=${python_DIR}")
+  mark_as_superbuild(
+    VARS ${proj}_ENVVARS_LAUNCHER_BUILD
+    LABELS "ENVVARS_LAUNCHER_BUILD"
+    )
+
+  #-----------------------------------------------------------------------------
+  # Launcher setting specific to install tree
+
+  # library paths
+  if(UNIX)
+    # On windows, python libraries are installed along with the executable
+    set(${proj}_LIBRARY_PATHS_LAUNCHER_INSTALLED <APPLAUNCHER_DIR>/lib/Python/lib)
+    mark_as_superbuild(
+      VARS ${proj}_LIBRARY_PATHS_LAUNCHER_INSTALLED
+      LABELS "LIBRARY_PATHS_LAUNCHER_INSTALLED"
+      )
+  endif()
+
+  # pythonpath
+  set(${proj}_PYTHONPATH_LAUNCHER_INSTALLED
+    <APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}
+    <APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}/lib-dynload
+    <APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}/site-packages
+    )
+  mark_as_superbuild(
+    VARS ${proj}_PYTHONPATH_LAUNCHER_INSTALLED
+    LABELS "PYTHONPATH_LAUNCHER_INSTALLED"
+    )
+
+  # environment variables
+  set(${proj}_ENVVARS_LAUNCHER_INSTALLED "PYTHONHOME=<APPLAUNCHER_DIR>/lib/Python")
+  mark_as_superbuild(
+    VARS ${proj}_ENVVARS_LAUNCHER_INSTALLED
+    LABELS "ENVVARS_LAUNCHER_INSTALLED"
+    )
+
 else()
   ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
-endif()
-
-#
-# there's a problem with CMake not detecting the right PYTHON_INCLUDE_DIR, so fix
-# if need be
-if( NOT EXISTS "${PYTHON_INCLUDE_DIR}/Python.h")
-  find_file(_python_h "Python.h" PATHS ${PYTHON_INCLUDE_DIR}
-    NO_DEFAULT_PATH)
-  if(NOT _python_h)
-    message(FATAL_ERROR "Can't find python.h in ${PYTHON_INCLUDE_DIR}")
-  else()
-    get_filename_component(_PYTHON_INCLUDE_DIR "${_python_h}" DIRECTORY)
-    set(PYTHON_INCLUDE_DIR "${_PYTHON_INCLUDE_DIR}"
-      CACHE PATH "include directory for Python" FORCE)
-  endif()
 endif()
 
 mark_as_superbuild(

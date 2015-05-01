@@ -47,12 +47,11 @@ if(NOT DEFINED Teem_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
     GIT_REPOSITORY "${git_protocol}://github.com/Slicer/teem"
-    GIT_TAG b83e5461cca0f734677b3043d48074059012c807
-    SOURCE_DIR ${SOURCE_DOWNLOAD_CACHE}/teem
+    GIT_TAG slicer-2015-04-14-r6245
+    SOURCE_DIR teem
     BINARY_DIR teem-build
     CMAKE_ARGS -Wno-dev --no-warn-unused-cli
     CMAKE_CACHE_ARGS
-      ${COMMON_EXTERNAL_PROJECT_ARGS}
       -DBUILD_TESTING:BOOL=OFF
       -DBUILD_SHARED_LIBS:BOOL=OFF
       ${CMAKE_PROJECT_INCLUDE_EXTERNAL_PROJECT_ARG}
@@ -76,6 +75,28 @@ if(NOT DEFINED Teem_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     )
 
   set(Teem_DIR ${CMAKE_BINARY_DIR}/teem-build)
+
+  #-----------------------------------------------------------------------------
+  # Launcher setting specific to build tree
+
+  # library paths
+  set(${proj}_LIBRARY_PATHS_LAUNCHER_BUILD ${Teem_DIR}/bin/<CMAKE_CFG_INTDIR>)
+  mark_as_superbuild(
+    VARS ${proj}_LIBRARY_PATHS_LAUNCHER_BUILD
+    LABELS "LIBRARY_PATHS_LAUNCHER_BUILD" "PATHS_LAUNCHER_BUILD"
+    )
+
+  #-----------------------------------------------------------------------------
+  # Launcher setting specific to install tree
+
+  # library paths
+  if(UNIX AND NOT APPLE)
+    set(${proj}_LIBRARY_PATHS_LAUNCHER_INSTALLED <APPLAUNCHER_DIR>/lib/Teem-1.12.0)
+    mark_as_superbuild(
+      VARS ${proj}_LIBRARY_PATHS_LAUNCHER_INSTALLED
+      LABELS "LIBRARY_PATHS_LAUNCHER_INSTALLED"
+      )
+  endif()
 
 else()
   ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})

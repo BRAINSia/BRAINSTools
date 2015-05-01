@@ -39,15 +39,6 @@ SlicerMacroCheckExternalProjectDependency(${proj})
 if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" ) )
   #message(STATUS "${__indent}Adding project ${proj}")
 
-  # Set CMake OSX variable to pass down the external project
-  set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
-  if(APPLE)
-    list(APPEND CMAKE_OSX_EXTERNAL_PROJECT_ARGS
-      -DCMAKE_OSX_ARCHITECTURES:STRING=${CMAKE_OSX_ARCHITECTURES}
-      -DCMAKE_OSX_SYSROOT:STRING=${CMAKE_OSX_SYSROOT}
-      -DCMAKE_OSX_DEPLOYMENT_TARGET:STRING=${CMAKE_OSX_DEPLOYMENT_TARGET})
-  endif()
-
   ### --- Project specific additions here
   set(${proj}_CMAKE_OPTIONS
   )
@@ -56,6 +47,7 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
   set(${proj}_REPOSITORY "${git_protocol}://github.com/bengardner/uncrustify.git")
   set(${proj}_GIT_TAG "60f3681da60462eda539b78e0c6c3eea823481e5")
   ExternalProject_Add(${proj}
+    ${${proj}_EP_ARGS}
     GIT_REPOSITORY ${${proj}_REPOSITORY}
     GIT_TAG ${${proj}_GIT_TAG}
     SOURCE_DIR ${SOURCE_DOWNLOAD_CACHE}/${proj}
@@ -82,7 +74,12 @@ else()
   SlicerMacroEmptyExternalProject(${proj} "${${proj}_DEPENDENCIES}")
 endif()
 
-list(APPEND ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS ${extProjName}_EXE:PATH)
+mark_as_superbuild(
+  VARS
+    ${extProjName}_EXE:FILE
+  LABELS
+     "FIND_PACKAGE"
+)
 
 ProjectDependancyPop(CACHED_extProjName extProjName)
 ProjectDependancyPop(CACHED_proj proj)

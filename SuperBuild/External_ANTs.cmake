@@ -9,14 +9,6 @@ endif()
 # Set dependency list
 ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj}_DEPENDENCIES)
 
-set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
-if(APPLE)
-  list(APPEND CMAKE_OSX_EXTERNAL_PROJECT_ARGS
-    -DCMAKE_OSX_ARCHITECTURES:STRING=${CMAKE_OSX_ARCHITECTURES}
-    -DCMAKE_OSX_SYSROOT:STRING=${CMAKE_OSX_SYSROOT}
-    -DCMAKE_OSX_DEPLOYMENT_TARGET:STRING=${CMAKE_OSX_DEPLOYMENT_TARGET})
-endif()
-
 ### --- Project specific additions here
 set(${proj}_CMAKE_OPTIONS
   -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/${proj}-install
@@ -35,8 +27,9 @@ endif()
 ### --- End Project specific additions
 #set(${proj}_REPOSITORY "https://github.com/BRAINSia/ANTs.git")
 set(${proj}_REPOSITORY "https://github.com/stnava/ANTs.git")
-set(${proj}_GIT_TAG "4d37532aa6a73b72deedf2663a0d002b267c464f") ## Update ANTS 20150418
+set(${proj}_GIT_TAG "2b1ba60a4d10b7dcd53caf2739c79b332e4e615b") ## Update ANTS 20150421
 ExternalProject_Add(${proj}
+  ${${proj}_EP_ARGS}
   GIT_REPOSITORY ${${proj}_REPOSITORY}
   GIT_TAG ${${proj}_GIT_TAG}
   SOURCE_DIR ${SOURCE_DOWNLOAD_CACHE}/${proj}
@@ -49,8 +42,6 @@ ExternalProject_Add(${proj}
   CMAKE_GENERATOR ${gen}
   CMAKE_ARGS -Wno-dev --no-warn-unused-cli
   CMAKE_CACHE_ARGS
-  ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
-  ${COMMON_EXTERNAL_PROJECT_ARGS}
   ${${proj}_CMAKE_OPTIONS}
   INSTALL_COMMAND ""
   DEPENDS

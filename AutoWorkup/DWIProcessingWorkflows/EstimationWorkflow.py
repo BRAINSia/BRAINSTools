@@ -29,6 +29,7 @@ def CreateEstimationWorkflow(WFname):
         DTIProcess.inputs.lambda1_output = 'lambda1_output.nrrd'
         DTIProcess.inputs.lambda2_output = 'lambda2_output.nrrd'
         DTIProcess.inputs.lambda3_output = 'lambda3_output.nrrd'
+        DTIProcess.inputs.correction = 'nearest'
         DTIProcess.inputs.scalar_float = True
         DTIProcess.inputs.ignore_exception = True
         DTIProcess.run()

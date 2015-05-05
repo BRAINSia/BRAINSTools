@@ -17,7 +17,7 @@
  *  limitations under the License.
 *=========================================================================*/
 /*
- *  \author Hans J. Johnson, David M. Welch
+ *  \authors Hans J. Johnson, David M. Welch, Ali Ghayoor
  *
  *
  * This class is used to build a meta-data dictionary and validate that the
@@ -36,24 +36,7 @@
 
 DWIMetaDataDictionaryValidator::DWIMetaDataDictionaryValidator()
 {
-  this->is_valid = false;
-
-  // this->SetMetaDataDictionary();
-
-  //Verify that Kinds is 4D
-  //Identify gd_index of the gradients
-
-  //Verify that kinds[gd_index] is 'list'
-  //Verfify that all other kinds are 'space
-
-  //Verify that thickness[gd_index] is not NaN
-  //Verify that all other thicknesses are NaN
-
-  //Verify that space units are mm Otherwise fail
-  //Verify that centerings[gd_index] is '???'
-  //Verfiy that all other centerings are 'cell'
-  //Verify that sizes[gd_index] == the number of gradients specified
-
+  this->m_dict.Clear();
 }
 
 DWIMetaDataDictionaryValidator::~DWIMetaDataDictionaryValidator() {}
@@ -82,47 +65,6 @@ void DWIMetaDataDictionaryValidator::SetMetaDataDictionary(DWIMetaDataDictionary
   m_dict = rhs;
 }
 
-#if 0
-int DWIMetaDataDictionaryValidator::GetNumberOfDimensions()
-{
-  itkGenericExceptionMacro("NRRD metadata in ITK does not (currently) store the number of dimensions!");
-  /*
-  int retval;
-  if (m_dict.HasKey("dimension"))
-    {
-    itk::ExposeMetaData<int>(m_dict, "dimension", retval);
-    }
-  else if (m_dict.HasKey("NRRD_dimension"))
-    {
-    itk::ExposeMetaData<int>(m_dict, "NRRD_dimension", retval);
-    }
-  else { itkGenericExceptionMacro("Could not find the number of dimensions!"); }
-  return retval;
-  */
-}
-
-void DWIMetaDataDictionaryValidator::SetNumberOfDimensions(const int /*rhs*/)
-{
-  itkGenericExceptionMacro("NRRD metadata in ITK does not (currently) store the number of dimensions!");
-}
-
-void DWIMetaDataDictionaryValidator::SetNumberOfDimensions(const DWIMetaDataDictionaryValidator::Integer3x1ArrayType /*rhs*/)
-{
-  itkGenericExceptionMacro("NRRD metadata in ITK does not (currently) store the number of dimensions!");
-  /*
-  int dims = rhs.size();
-  try
-    {
-    itk::EncapsulateMetaData<int>(m_dict, "dimension", dims);
-    }
-  catch (...)
-    {
-    itkGenericExceptionMacro("Could not set number of dimensions!");
-    }
-  */
-}
-#endif
-
 std::vector<std::vector<double> > DWIMetaDataDictionaryValidator::GetMeasurementFrame() const
 {
   std::vector<std::vector<double> > retval;
@@ -145,20 +87,20 @@ void DWIMetaDataDictionaryValidator::SetMeasurementFrame(const std::vector<std::
 
 DWIMetaDataDictionaryValidator::Double3x1ArrayType DWIMetaDataDictionaryValidator::GetGradient(int index) const
 {
-     DWIMetaDataDictionaryValidator::Double3x1ArrayType   currentGradient;
-     std::string key = DWIMetaDataDictionaryValidator::GetGradientKeyString(index);
-     if (m_dict.HasKey(key))
-       {
-       std::string   NrrdValue;
-       itk::ExposeMetaData<std::string>(m_dict, key, NrrdValue);
-       sscanf(NrrdValue.c_str(), "%lf %lf %lf", &currentGradient[0], &currentGradient[1], &currentGradient[2]);
-       }
-     else
-       {
-       itkGenericExceptionMacro("Gradient not found in metadata");
-       }
-     return currentGradient;
+  DWIMetaDataDictionaryValidator::Double3x1ArrayType   currentGradient;
+  std::string key = DWIMetaDataDictionaryValidator::GetGradientKeyString(index);
+  if (m_dict.HasKey(key))
+   {
+   std::string   NrrdValue;
+   itk::ExposeMetaData<std::string>(m_dict, key, NrrdValue);
+   sscanf(NrrdValue.c_str(), "%lf %lf %lf", &currentGradient[0], &currentGradient[1], &currentGradient[2]);
    }
+  else
+   {
+   itkGenericExceptionMacro("Gradient not found in metadata");
+   }
+  return currentGradient;
+}
 
 void DWIMetaDataDictionaryValidator::SetGradient(int index, DWIMetaDataDictionaryValidator::Double3x1ArrayType & gradient)
 {
@@ -194,41 +136,42 @@ int DWIMetaDataDictionaryValidator::GetGradientCount()
    }
 
 DWIMetaDataDictionaryValidator::GradientTableType DWIMetaDataDictionaryValidator::GetGradientTable() const
+{
+  DWIMetaDataDictionaryValidator::GradientTableType myGradientTable;
+  DWIMetaDataDictionaryValidator::StringVectorType allKeys = m_dict.GetKeys();
+  int count = 0;
+  for (DWIMetaDataDictionaryValidator::StringVectorType::iterator it = allKeys.begin();
+      it != allKeys.end();
+      ++it)
    {
-     DWIMetaDataDictionaryValidator::GradientTableType myGradientTable;
-     DWIMetaDataDictionaryValidator::StringVectorType allKeys = m_dict.GetKeys();
-     int count = 0;
-     for (DWIMetaDataDictionaryValidator::StringVectorType::iterator it = allKeys.begin();
-          it != allKeys.end();
-          ++it)
-       {
-       if((*it).find("DWMRI_gradient_") != std::string::npos)
-         {
-         std::string   gradientString = (*it).substr(15,4);
-         int index = std::stoi(gradientString);
-         DWIMetaDataDictionaryValidator::Double3x1ArrayType curGradientDirection = GetGradient(index);
-         myGradientTable.push_back(curGradientDirection);
-         }
-       count++;
-       }
-     return myGradientTable;
+   if((*it).find("DWMRI_gradient_") != std::string::npos)
+     {
+     std::string   gradientString = (*it).substr(15,4);
+     int index = std::stoi(gradientString);
+     DWIMetaDataDictionaryValidator::Double3x1ArrayType curGradientDirection = GetGradient(index);
+     myGradientTable.push_back(curGradientDirection);
+     }
+   count++;
    }
+  return myGradientTable;
+}
 
 void DWIMetaDataDictionaryValidator::SetGradientTable(std::vector<std::array<double, 3> > & myGradientTable)
+{
+  int count = 0;
+  for( DWIMetaDataDictionaryValidator::GradientTableType::iterator it = myGradientTable.begin();
+       it != myGradientTable.end(); ++it )
      {
-       int count = 0;
-     for (DWIMetaDataDictionaryValidator::GradientTableType::iterator it = myGradientTable.begin(); it != myGradientTable.end(); ++it)
-       {
-       DWIMetaDataDictionaryValidator::SetGradient(count++, *it);
-       }
-     // Remove additional gradients
-     std::string nextKey = DWIMetaDataDictionaryValidator::GetGradientKeyString(count++);
-     while (m_dict.HasKey(nextKey))
-       {
-       m_dict.Erase(nextKey);
-       std::string nextKeyString = DWIMetaDataDictionaryValidator::GetGradientKeyString(count++);
-       }
+     DWIMetaDataDictionaryValidator::SetGradient(count++, *it);
      }
+  // Remove additional gradients
+  std::string nextKey = DWIMetaDataDictionaryValidator::GetGradientKeyString(count++);
+  while(m_dict.HasKey(nextKey))
+     {
+     m_dict.Erase(nextKey);
+     nextKey = DWIMetaDataDictionaryValidator::GetGradientKeyString(count++);
+     }
+}
 
 void DWIMetaDataDictionaryValidator::DeleteGradientTable()
 {
@@ -245,7 +188,7 @@ void DWIMetaDataDictionaryValidator::DeleteGradientTable()
          it++;
          }
        }
-     }
+}
 
 double DWIMetaDataDictionaryValidator::GetBValue() const
 {
@@ -297,9 +240,17 @@ void DWIMetaDataDictionaryValidator::GenericSetStringVector(const std::vector<st
   for(size_t index=0; index< values.size(); ++index)
     {
     const std::string currKey = this->GetIndexedKeyString(KeyBaseName,index);
-    itk::EncapsulateMetaData< std::string >(this->m_dict,
-                                            currKey,
-                                            values[index]);
+    /*
+     * Only those axises that have information associated with it need to be set here.
+     * itkNrrdIO uses "???" for the list/vector axis.
+     * Also, it handles the permutation properly based on the "kinds" field in image.
+     */
+    if( values[index] != "???" )
+      {
+      itk::EncapsulateMetaData< std::string >(this->m_dict,
+                                              currKey,
+                                              values[index]);
+      }
     }
 }
 
@@ -308,22 +259,31 @@ void DWIMetaDataDictionaryValidator::GenericSetDoubleVector(const std::vector<do
   for(size_t index=0; index< values.size(); ++index)
     {
     const std::string currKey = this->GetIndexedKeyString(KeyBaseName,index);
-    itk::EncapsulateMetaData< double >(this->m_dict,
-                                            currKey,
-                                            values[index]);
+    /*
+     * thickness is a per axis value, and the only axis that has information associated with it needs to be set here.
+     * itkNrrdIO uses "nan" for the other axis.
+     * Also, itkNrrdIO handles the correct permutation based on the "kinds" field in image. It sets the thickness value
+     * for the 3rd space/domain.
+     */
+    if( !std::isnan(values[index]) )
+      {
+      itk::EncapsulateMetaData< double >(this->m_dict,
+                                         currKey,
+                                         values[index]);
+      }
     }
 }
 
 
 std::vector<std::string> DWIMetaDataDictionaryValidator::GenericGetStringVector(const std::string & KeyBaseName,
-                                                                          const size_t  numElements,
-                                                                          const std::string defaultValue) const
+                                                                                const size_t  numElements,
+                                                                                const std::string defaultValue) const
 {
   std::vector<std::string> values(numElements);
   for(size_t index=0; index< values.size() ; ++index)
     {
     const std::string currKey = this->GetIndexedKeyString(KeyBaseName,index);
-    double temp;
+    std::string temp;
     if (itk::ExposeMetaData(this->m_dict, currKey, temp ) )
       {
       values[index]=temp;
@@ -337,8 +297,8 @@ std::vector<std::string> DWIMetaDataDictionaryValidator::GenericGetStringVector(
 }
 
 std::vector<double> DWIMetaDataDictionaryValidator::GenericGetDoubleVector(const std::string & KeyBaseName,
-                                                                                const size_t  numElements,
-                                                                                const double defaultValue) const
+                                                                           const size_t  numElements,
+                                                                           const double defaultValue) const
 {
   std::vector<double> values(numElements);
   for(size_t index=0; index< values.size() ; ++index)
@@ -356,30 +316,6 @@ std::vector<double> DWIMetaDataDictionaryValidator::GenericGetDoubleVector(const
     }
   return values;
 }
-
-void DWIMetaDataDictionaryValidator::SetSpaceUnits(const std::vector<std::string> & values)
-{
-  const std::string _spaceString("mm"); //Only mm supported
-  for(auto x: values)
-    {
-    if ( (x != _spaceString ) )
-      {
-      std::cout << "ERROR: " << x << " Not a valid NRRD_space units" << std::endl;
-      }
-    }
-  const std::string KeyBaseName("NRRD_space units");
-  this->GenericSetStringVector(values,KeyBaseName);
-}
-
-std::vector<std::string> DWIMetaDataDictionaryValidator::GetSpaceUnits() const
-{
-
-  // space units are always 3
-  const std::string KeyBaseName("NRRD_space units");
-
-  return this->GenericGetStringVector(KeyBaseName,3, "mm");
-}
-
 
 std::vector<std::string>  DWIMetaDataDictionaryValidator::GetCenterings() const
 {
@@ -412,38 +348,6 @@ void DWIMetaDataDictionaryValidator::SetCenterings(const std::vector<std::string
   this->GenericSetStringVector(outValues,KeyBaseName);
 }
 
-
-std::vector<std::string> DWIMetaDataDictionaryValidator::GetKinds() const
-{
-  // kind units are always 4 for DWI
-  const std::string KeyBaseName("NRRD_kinds");
-  return this->GenericGetStringVector(KeyBaseName,4, "list");
-}
-
-void DWIMetaDataDictionaryValidator::SetKinds(const std::vector<std::string> & values)
-{
-  const std::string _spaceString("space");
-  const std::string _listString("list");
-
-  std::vector<std::string> outValues=values;
-  while(outValues.size() < 4)  //PADD to 4D for diffusion last element is list
-    {
-    outValues.push_back(_listString);
-    }
-
-  for(size_t i=0; i< outValues.size(); ++i)
-    {
-    const std::string x = outValues[i];
-    if ( (x != _spaceString ) && (x != _listString) )
-      {
-      std::cout << "ERROR: " << i  << " " << x << " Not a valid NRRD_kinds" << std::endl;
-      }
-    }
-  const std::string KeyBaseName("NRRD_kinds");
-  this->GenericSetStringVector(outValues,KeyBaseName);
-
-}
-
 std::vector<double> DWIMetaDataDictionaryValidator::GetThicknesses() const
 {
   // Thickness units are always 4 for DWI
@@ -472,24 +376,6 @@ void DWIMetaDataDictionaryValidator::SetModality(const std::string & value)
   if ( value != "DWMRI" )
     {
     std::cout << "ERROR: " << value << " Not a valid modality" << std::endl;
-    }
-  this->SetStringDictObject(KeyBaseName, value);
-}
-
-std::string DWIMetaDataDictionaryValidator::GetSpace() const
-{
-  const std::string KeyBaseName("NRRD_space");
-  std::string valstr;
-  itk::ExposeMetaData<std::string>(m_dict, KeyBaseName, valstr);
-  return valstr;
-}
-
-void DWIMetaDataDictionaryValidator::SetSpace(const std::string & value)
-{
-  const std::string KeyBaseName("NRRD_space");
-  if ( value != "left-posterior-superior" )
-    {
-    std::cout << "ERROR: " << value << " Not a valid modality for ITK" << std::endl;
     }
   this->SetStringDictObject(KeyBaseName, value);
 }

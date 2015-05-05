@@ -17,7 +17,7 @@
  *  limitations under the License.
 *=========================================================================*/
 /*
- *  \author Hans J. Johnson, David M. Welch
+ *  \authors Hans J. Johnson, David M. Welch, Ali Ghayoor
  *
  *
  * This class is used to build a meta-data dictionary and validate that the
@@ -38,12 +38,37 @@
 #include "itkMetaDataObject.h"
 #include "itkMetaDataDictionary.h"
 
+/*
+ * Note that the following fields do not need to be set by Metadata validator,
+   since itkNrrdImageIO extract them from image information:
+   - type e.g. short
+   - dimension i.e. 4
+   - space i.e. left-posterior-superior
+   - sizes
+   - space directions
+   - kinds
+   - endian
+   - encoding
+   - space origin
+
+ * Also, "space units" is an optional field, and ITK does not set that
+   in the output MetaDataDictionary even if it exists in the header of
+   read Nrrd file. Therefore, this field does not need to be set by the
+   validator.
+
+ * The following fields should be managed by validator:
+    - thickness
+    - centerings
+    - measurement frame
+    - modality
+    - b-value
+    - gradient_xxxx
+ */
 
 class DWIMetaDataDictionaryValidator
 {
  private:
   itk::MetaDataDictionary m_dict;
-  bool is_valid;
   void SetStringDictObject(const std::string, const std::string);
 
  protected:
@@ -84,13 +109,6 @@ class DWIMetaDataDictionaryValidator
   // metadata dictionary methods
   MetaDataDictionaryType GetMetaDataDictionary();
   void SetMetaDataDictionary( ConstMetaDataDictionaryType );
-#if 0
-  // dimension
-  // Currently, these just raise an error saying you should use the itk::Image to get this info
-  int GetNumberOfDimensions();
-  void SetNumberOfDimensions(int);
-  void SetNumberOfDimensions(const Integer3x1ArrayType);
-#endif
 
   // measurement frame
   std::vector<std::vector<double> > GetMeasurementFrame() const;
@@ -112,15 +130,6 @@ class DWIMetaDataDictionaryValidator
   std::vector<std::string> GetCenterings() const;
   void SetCenterings(const std::vector<std::string> & );
 
-  // kinds
-  std::vector<std::string> GetKinds() const;
-  void SetKinds(const std::vector<std::string> & );
-
-  //spaceUnits
-  std::vector<std::string> GetSpaceUnits() const;
-  void SetSpaceUnits(const std::vector<std::string> & values);
-
-
   //thickness
   std::vector<double> GetThicknesses() const;
   void SetThicknesses(const std::vector<double> & values);
@@ -128,10 +137,6 @@ class DWIMetaDataDictionaryValidator
   //modality
   std::string GetModality() const;
   void SetModality(const std::string & value);
-
-  //Space i.e. left-posterior-superior
-  std::string GetSpace() const;
-  void SetSpace(const std::string & value);
 };
 
 #endif // DWIMetaDataDictionaryValidator_h_

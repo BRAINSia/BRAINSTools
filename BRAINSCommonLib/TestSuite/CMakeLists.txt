@@ -10,9 +10,9 @@ target_link_libraries( itkResampleInPlaceImageFilterTest ${BRAINSCommonLib_ITK_L
 add_executable(BRAINSCleanMask BRAINSCleanMask.cxx)
 target_link_libraries(BRAINSCleanMask ${BRAINSCommonLib_ITK_LIBRARIES})
 
-add_executable(DWIMetaDataDictionaryValidatorTest DWIMetaDataDictionaryValidatorTest.cxx)
-target_link_libraries(DWIMetaDataDictionaryValidatorTest BRAINSCommonLib)
-set_target_properties(DWIMetaDataDictionaryValidatorTest PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/testbin)
+add_executable(DWIMetaDataDictionaryValidatorTests DWIMetaDataDictionaryValidatorTests.cxx)
+target_link_libraries(DWIMetaDataDictionaryValidatorTests BRAINSCommonLib)
+set_target_properties(DWIMetaDataDictionaryValidatorTests PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/testbin)
 
 StandardBRAINSBuildMacro(NAME FindCenterOfBrain TARGET_LIBRARIES BRAINSCommonLib)
 
@@ -48,6 +48,22 @@ ExternalData_expand_arguments(FindCenterOFBrainFetchData FindCenterClippedImageM
 
 ExternalData_expand_arguments(FindCenterOfBrainFetchData
   FindCenterTrimmedImage DATA{${TestData_DIR}/FindCenter/FindCenterTrimmedImage.nii.gz})
+
+ExternalData_Add_Target( ${PROJECT_NAME}FetchData )
+
+set(MetaDataValidatorTestName DWIMetaDataDictionaryValidatorTest)
+ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${MetaDataValidatorTestName}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:DWIMetaDataDictionaryValidatorTests>
+    --compare DATA{${TestData_DIR}/DWI_TestData_OUTPUTS/PhilipsAchieva2.nrrd}
+              ${CMAKE_CURRENT_BINARY_DIR}/outputSameAsRefVolume.nrrd
+    --compareIntensityTolerance 0
+    --compareRadiusTolerance 0
+    --compareNumberOfPixelsTolerance 0
+  DWIMetaDataDictionaryValidatorTest
+  ${CMAKE_CURRENT_BINARY_DIR}/ouputArtificialTestNrrdImage.nrrd
+  DATA{${TestData_DIR}/DWI_TestData_OUTPUTS/PhilipsAchieva2.nrrd}
+  ${CMAKE_CURRENT_BINARY_DIR}/outputSameAsRefVolume.nrrd
+)
 
 if( ${BRAINSTools_MAX_TEST_LEVEL} GREATER 8) # This should be restored after fixing.
 ExternalData_add_test(FindCenterOfBrainFetchData

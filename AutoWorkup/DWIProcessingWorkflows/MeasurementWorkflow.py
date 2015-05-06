@@ -146,6 +146,12 @@ def CreateMeasurementWorkflow(WFname, LABELS_CONFIG_FILE):
         import SimpleITK as sitk
         refVolume = sitk.ReadImage(referenceVolume)
         RISVolume = sitk.ReadImage(inputVolume)
+        # 0- because of numberical precision error, we have small negative values
+        # in rotationary invariant scalars e.g. -1e-13,
+        # so set voxel value x to 0 if -1e-5<x<1e-5
+        binaryThreshFilt = sitk.BinaryThresholdImageFilter()
+        maskNearZero = binaryThreshFilt.Execute(RISVolume,-1e-5,1e-5,0,1)
+        RISVolume = RISVolume * sitk.Cast(maskNearZero,sitk.sitkFloat64)
         # 1- voxel-wise square root of input volume
         sqrtFilt = sitk.SqrtImageFilter()
         RIS_sqrt = sqrtFilt.Execute(RISVolume)

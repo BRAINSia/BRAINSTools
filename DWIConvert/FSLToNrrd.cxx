@@ -24,14 +24,14 @@
 #include "DWIConvertUtils.h"
 #include "itksys/SystemTools.hxx"
 #include "vnl/vnl_math.h"
-typedef short                               PixelValueType;
-typedef itk::Image<PixelValueType, 4>       VolumeType;
-typedef itk::VectorImage<PixelValueType, 3> VectorVolumeType;
 
-#include "itkMetaDataObject.h"
+#include <itkExtractImageFilter.h>
+#include <itkComposeImageFilter.h>
+#include "DWIMetaDataDictionaryValidator.h"
 
 typedef short                               PixelValueType;
-typedef itk::Image<PixelValueType, 4>       VolumeType;
+typedef itk::Image<PixelValueType, 4>       Volume4DType;
+typedef itk::Image<PixelValueType, 3>       Volume3DType;
 typedef itk::VectorImage<PixelValueType, 3> VectorVolumeType;
 
 int
@@ -50,19 +50,19 @@ FSLToNrrd(const std::string & inputVolume,
     return EXIT_FAILURE;
     }
 
-  VolumeType::Pointer inputVol;
+  Volume4DType::Pointer inputVol;
 
   // string to use as template if no bval or bvec filename is given.
   std::string inputVolumeNameTemplate = inputVolume;
   if(fslNIFTIFile.size() > 0)
     {
-    if( ReadVolume<VolumeType>(inputVol, fslNIFTIFile) != EXIT_SUCCESS )
+    if( ReadVolume<Volume4DType>(inputVol, fslNIFTIFile) != EXIT_SUCCESS )
       {
       return EXIT_FAILURE;
       }
     inputVolumeNameTemplate = fslNIFTIFile;
     }
-  else if( inputVolume.size() == 0 || ReadVolume<VolumeType>(inputVol, inputVolume) != EXIT_SUCCESS )
+  else if( inputVolume.size() == 0 || ReadVolume<Volume4DType>(inputVol, inputVolume) != EXIT_SUCCESS )
     {
     return EXIT_FAILURE;
     }
@@ -139,8 +139,11 @@ FSLToNrrd(const std::string & inputVolume,
       }
     }
 
-  VolumeType::SizeType inputSize =
+  Volume4DType::SizeType inputSize =
     inputVol->GetLargestPossibleRegion().GetSize();
+
+  Volume4DType::IndexType inputIndex =
+    inputVol->GetLargestPossibleRegion().GetIndex();
 
   const unsigned int volumeCount = inputSize[3];
   if( volumeCount != bValCount )
@@ -152,91 +155,113 @@ FSLToNrrd(const std::string & inputVolume,
     }
 
   // convert from image series to vector voxels
-  VolumeType::SpacingType   inputSpacing = inputVol->GetSpacing();
-  VolumeType::PointType     inputOrigin = inputVol->GetOrigin();
-  VolumeType::DirectionType inputDirection = inputVol->GetDirection();
-
-  // VAM Begin
-  // Changes to Fix "space directions" field in the NRRD Header
-  //
-  VolumeType::DirectionType spaceDirections;
-  spaceDirections.SetIdentity();
-  VolumeType::DirectionType spacingMatrix;
-  spacingMatrix.Fill(0.0);
-  spacingMatrix[0][0] = inputSpacing[0];
-  spacingMatrix[1][1] = inputSpacing[1];
-  spacingMatrix[2][2] = inputSpacing[2];
-
+  Volume4DType::SpacingType   inputSpacing = inputVol->GetSpacing();
   std::cout << "Spacing :" << inputSpacing << std::endl;
-  std::cout << "Direction :" << inputDirection << std::endl;
 
-  std::ofstream header;
-  // std::string headerFileName = outputDir + "/" + outputFileName;
+  ////////
+  // "inputVol" is read as a 4D image. Here we convert that to a VectorImageType:
+  //
+  typedef itk::ExtractImageFilter< Volume4DType, Volume3DType > ExtractFilterType;
 
-  header.open(outputVolume.c_str(), std::ios::out | std::ios::binary);
-  header.precision(17);
-  header << "NRRD0005" << std::endl;
-  header << "# This file was created by DWIConvert version 1.0" << std::endl
-         << "# https://github.com/BRAINSia/BRAINSTools" << std::endl
-         << "# part of the BRAINSTools package." << std::endl
-         << "type: short" << std::endl
-         << "dimension: 4" << std::endl;
+  typedef itk::ComposeImageFilter<Volume3DType, VectorVolumeType> ComposeImageFilterType;
+  ComposeImageFilterType::Pointer composer= ComposeImageFilterType::New();
 
-  // need to check
-  header << "space: left-posterior-superior" << std::endl;
-  // in nrrd, size array is the number of pixels in 1st, 2nd, 3rd, ... dimensions
-  header << "sizes: " << inputSize[0] << " "
-         << inputSize[1] << " "
-         << inputSize[2] << " "
-         << inputSize[3] << std::endl;
-  header << "thicknesses:  NaN  NaN " << inputSpacing[2] << " NaN" << std::endl;
+  for( size_t componentNumber = 0; componentNumber < inputSize[3]; ++componentNumber )
+     {
+     Volume4DType::SizeType extractSize = inputSize;
+     extractSize[3] = 0;
+     Volume4DType::IndexType extractIndex = inputIndex;
+     extractIndex[3] = componentNumber;
+     Volume4DType::RegionType extractRegion(extractIndex, extractSize);
 
-  spaceDirections = inputDirection * spacingMatrix;
-  header << "space directions: "
-         << "(" << spaceDirections[0][0] << ","
-         << spaceDirections[1][0] << ","
-         << spaceDirections[2][0] << ") "
-         << "(" << spaceDirections[0][1] << ","
-         << spaceDirections[1][1] << ","
-         << spaceDirections[2][1] << ") "
-         << "(" << spaceDirections[0][2] << ","
-         << spaceDirections[1][2] << ","
-         << -spaceDirections[2][2] << ") none"
-         << std::endl;
-  header << "centerings: cell cell cell ???" << std::endl;
-  header << "kinds: space space space list" << std::endl;
+     ExtractFilterType::Pointer extracter = ExtractFilterType::New();
+     extracter->SetExtractionRegion( extractRegion );
+     extracter->SetInput( inputVol );
+     extracter->SetDirectionCollapseToIdentity();
+     extracter->Update();
 
-  header << "endian: little" << std::endl;
-  header << "encoding: raw" << std::endl;
-  header << "space units: \"mm\" \"mm\" \"mm\"" << std::endl;
-  header << "space origin: "
-         << "(" << inputOrigin[0]
-         << "," << inputOrigin[1]
-         << "," << inputOrigin[2] << ") " << std::endl;
-  header << "measurement frame: "
-         << "(" << 1 << "," << 0 << "," << 0 << ") "
-         << "(" << 0 << "," << 1 << "," << 0 << ") "
-         << "(" << 0 << "," << 0 << "," << 1 << ")"
-         << std::endl;
+     composer->SetInput(componentNumber,extracter->GetOutput());
+     }
+  composer->Update();
+  VectorVolumeType::Pointer nrrdVolume = composer->GetOutput();
 
-  header << "modality:=DWMRI" << std::endl;
-  // this is the norminal BValue, i.e. the largest one.
-  header << "DWMRI_b-value:=" << maxBValue << std::endl;
+  const unsigned int nrrdNumOfComponents = nrrdVolume->GetNumberOfComponentsPerPixel();
+  std::cout << "Number of components in converted Nrrd volume: " << nrrdNumOfComponents << std::endl;
+  if( nrrdNumOfComponents != bVecCount )
+    {
+    std::cerr << "Mismatch between count of B Vectors ("
+    << bVecCount << ") and number of components in converted vector image ("
+    << nrrdNumOfComponents << ")" << std::endl;
+    return EXIT_FAILURE;
+    }
+  ////////
+
+  // Define nrrd volume metaData
+  DWIMetaDataDictionaryValidator nrrdVolumeValidator;
+
+  /* Fields that need to be set:
+   - thickness
+   - centerings
+   - modality
+   - measurement frame
+   - b-value
+   - gradients
+
+   NOTE: "centerings" and "thickness" should be created based on "volume interleaved".
+         If the image is "pixel interleave" (like vectorImage in ITK), the NrrdIO
+         will automatically handle the correct permutation.
+   */
+  // centerings (optional)
+  std::vector<std::string> tempCenterings(4,std::string("cell"));
+  tempCenterings[3] = "???";
+  nrrdVolumeValidator.SetCenterings(tempCenterings);
+
+  // thickness (optional)
+  std::vector<double> tempThickness(4,std::nan(""));
+  tempThickness[2] = inputSpacing[2];
+  nrrdVolumeValidator.SetThicknesses(tempThickness);
+
+  // modality
+  std::string tempModality("DWMRI"); //The only valid DWI modality
+  nrrdVolumeValidator.SetModality(tempModality);
+
+  // measurement frame -> it is identity
+  std::vector<std::vector<double> > msrFrame(3);
+  for( unsigned int saxi = 0; saxi < 3; saxi++ )
+    {
+    msrFrame[saxi].resize(3);
+    for( unsigned int saxj = 0; saxj < 3; saxj++ )
+      {
+      msrFrame[saxi][saxj] = 0.0;
+      }
+    }
+  msrFrame[0][0] = 1.0; msrFrame[1][1] = 1.0; msrFrame[2][2] = 1.0;
+  nrrdVolumeValidator.SetMeasurementFrame(msrFrame);
+
+  // b-value
+  nrrdVolumeValidator.SetBValue( maxBValue );
+
+  // Gradient directions
+  std::vector<std::array<double, 3> > gradientTable( bVecCount );
+  std::array<double, 3> BVec_i_arr;
   for( unsigned int i = 0; i < bVecCount; ++i )
     {
-    header << "DWMRI_gradient_" << std::setw(4) << std::setfill('0')
-           << i << ":="
-           << BVecs[i][0] << "   "
-           << BVecs[i][1] << "   "
-           << BVecs[i][2]
-           << std::endl;
+    // convert std::vector to std::array
+    std::copy_n( BVecs[i].begin(), 3, BVec_i_arr.begin() );
+    gradientTable[i] = BVec_i_arr;
     }
+  nrrdVolumeValidator.SetGradientTable( gradientTable );
 
-  // write data in the same file is .nrrd was chosen
-  header << std::endl;;
-  unsigned long nVoxels = inputVol->GetLargestPossibleRegion().GetNumberOfPixels();
-  header.write( reinterpret_cast<char *>(inputVol->GetBufferPointer() ),
-                nVoxels * sizeof(short) );
-  header.close();
+  // Add metaDataDictionary to Nrrd volume
+  nrrdVolume->SetMetaDataDictionary(nrrdVolumeValidator.GetMetaDataDictionary());
+  // Write Nrrd volume to disk
+  typedef itk::ImageFileWriter<VectorVolumeType> WriterType;
+  WriterType::Pointer nrrdWriter = WriterType::New();
+  nrrdWriter->UseCompressionOn();
+  nrrdWriter->UseInputMetaDataDictionaryOn();
+  nrrdWriter->SetInput( nrrdVolume );
+  nrrdWriter->SetFileName( outputVolume );
+  nrrdWriter->Update();
+
   return EXIT_SUCCESS;
 }

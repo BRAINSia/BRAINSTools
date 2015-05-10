@@ -192,9 +192,11 @@ int DoIt( int argc, char * argv[], PixelType )
       iss >> secondGradientVector[0] >> secondGradientVector[1] >> secondGradientVector[2];
       secondGradientVector.normalize();
 
-      if( firstGradientValueString != secondGradientValueString )
+      // Check to see if two gradient vectors are equal within a tolerance
+      const float coordinateTolerance = 1e-3;
+      if( !firstGradientVector.as_ref().is_equal(secondGradientVector, coordinateTolerance) )
         {
-        // Check to see if gradients are colinear within tolerance
+        // If not, check to see if gradients are colinear within tolerance
         double gradientDot = dot_product(firstGradientVector, secondGradientVector);
 
         double magnitudesProduct = secondGradientVector.magnitude() * firstGradientVector.magnitude();

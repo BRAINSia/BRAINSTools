@@ -80,6 +80,3 @@ mark_as_superbuild(
   LABELS
      "FIND_PACKAGE"
 )
-
-ProjectDependancyPop(CACHED_extProjName extProjName)
-ProjectDependancyPop(CACHED_proj proj)

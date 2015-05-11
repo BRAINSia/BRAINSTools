@@ -93,20 +93,16 @@ endif()
 ## Enthought Canopy or anaconda are convenient ways to install python 2.7 on linux
 ## or the other option is the free version of Anaconda from https://store.continuum.io/
 set(REQUIRED_PYTHON_VERSION 2.7)
-if(APPLE)
- set(PYTHON_EXECUTABLE
-       /System/Library/Frameworks/Python.framework/Versions/${REQUIRED_PYTHON_VERSION}/bin/python2.7
-       CACHE FILEPATH "The apple specified python version" )
- set(PYTHON_LIBRARY
-       /System/Library/Frameworks/Python.framework/Versions/${REQUIRED_PYTHON_VERSION}/lib/libpython2.7.dylib
-       CACHE FILEPATH "The apple specified python shared library" )
- set(PYTHON_INCLUDE_DIR
-       /System/Library/Frameworks/Python.framework/Versions/${REQUIRED_PYTHON_VERSION}/include/python2.7
-       CACHE PATH "The apple specified python headers" )
-else()
-  find_package ( PythonInterp REQUIRED )
-  message(STATUS "Found PythonInterp version ${PYTHON_VERSION_STRING}")
-  find_package ( PythonLibs REQUIRED )
+# find_package ( PythonInterp REQUIRED )
+# message(STATUS "Found PythonInterp version ${PYTHON_VERSION_STRING}")
+# find_package ( PythonLibs REQUIRED )
+find_package( PythonVirtualenv REQUIRED )
+
+# Check the Python version found
+if( NOT PYTHON_VERSION_MAJOR EQUAL "2" )
+  message( FATAL_ERROR " - Nipype requires Python version == 2" )
+elseif( PYTHON_VERSION_MINOR LESS "7")
+  message( FATAL_ERROR " - Nipype requires Python version > 2.6" )
 endif()
 
 set(PYTHON_INSTALL_CMAKE_ARGS
@@ -196,4 +192,3 @@ if(ITK_LEGACY_REMOVE)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX_RELEASE_DESIRED_FLAGS} " )
   endif()
 endif()
-

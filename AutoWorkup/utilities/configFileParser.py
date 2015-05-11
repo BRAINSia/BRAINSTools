@@ -93,6 +93,8 @@ def parseExperiment(parser, workflow_phase):
         current_suffix = '_TEMP'
     elif workflow_phase == 'subject-based-reference':
         current_suffix = '_LONG'
+    elif workflow_phase == 'cross-validation':
+        current_suffix = '_CV'
     else:
         assert 0 == 1, "ERROR INVALID workflow_phase"
     current = parser.get('EXPERIMENT', 'EXPERIMENT' + current_suffix)
@@ -114,9 +116,12 @@ def parseExperiment(parser, workflow_phase):
         pass
     retval['use_registration_masking'] = useRegistrationMasking
     retval['atlascache'] = clone_atlas_dir(retval['cachedir'], atlas)
-    retval['dbfile'] = validatePath(parser.get('EXPERIMENT', 'SESSION_DB' + current_suffix), False, False)
-    retval['components'] = [x.lower() for x in eval(parser.get('EXPERIMENT', 'WORKFLOW_COMPONENTS' + current_suffix))]
-    retval['workflow_phase'] = workflow_phase
+    if workflow_phase == 'cross-validation':
+        retval['components'] = ['']
+    else:
+        retval['dbfile'] = validatePath(parser.get('EXPERIMENT', 'SESSION_DB' + current_suffix), False, False)
+        retval['components'] = [x.lower() for x in eval(parser.get('EXPERIMENT', 'WORKFLOW_COMPONENTS' + current_suffix))]
+        retval['workflow_phase'] = workflow_phase
     return retval
 
 

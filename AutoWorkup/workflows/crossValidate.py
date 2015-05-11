@@ -7,16 +7,19 @@ This is used to cross validate Multi-Atlas Label Fusion using ANTs JointFusion t
 Usage:
   crossValidate.py -h | --help
   crossValidate.py -t | --test
-  crossValidate.py SIZE [--header] FILE
+  crossValidate.py --testSamplesize SIZE [--header] --sampleFile listFILE --workphase WORKPHASE [--wfrun PLGIN] --pe ENV  --ExperimentConfig FILE [--rewrite-datasinks]
 
-Arguments:
-  SIZE          Sample size
-  FILE          comma-seperated file in the format:
-                     labelmap, t1_average, t2_average
 Options:
   -h, --help    Show this help and exit
   -t, --test    Run doctests
-  --header      Give this flag if CSV file has a header line
+  --testSamplesize=SIZE    a size of test sample. Should be less the the total size list in sample File
+  --sampleFile=listFILE        A data list including all the information.
+  --header                 Give this flag if CSV file has a header line
+  --pe=ENV                 The processing environment to use from configuration file
+  --wfrun=PLUGIN            The name of the workflow plugin option (default: 'local')
+  --ExperimentConfig=FILE   The configuration file
+  --workphase WORKPHASE The type of processing to be done [cross-validation]
+  --rewrite-datasinks   Turn on the Nipype option to overwrite all files in the 'results' directory
 
 
 PIPELINE
@@ -36,146 +39,149 @@ from nipype.interfaces.utility import Select, Merge, Split, Function, Rename, Id
 from nipype.interfaces.ants.segmentation import JointFusion
 
 
-class CSVReaderInputSpec(DynamicTraitedSpec, TraitedSpec):
-    in_file = File(exists=True, mandatory=True, desc='Input comma-seperated value (CSV) file')
-    header = traits.Bool(False, usedefault=True, desc='True if the first line is a column header')
-
-
-class CSVReader(BaseInterface):
+def subsample_crossValidationSet(length, test_size):
     """
-    Example
-    -------
-
-    >>> def testNoHeader():
-    ...   import os.path
-    ...   import crossValidate as cv
-    ...   reader = cv.CSVReader()
-    ...   reader.inputs.in_file = os.path.abspath('test_noHeader.csv')
-    ...   # reader.inputs.header = False
-    ...   out = reader.run()
-    ...   assert len(out.outputs.column_0) == 4
-    ...   for output in out.outputs.column_0:
-    ...       assert os.path.basename(output) == 't1_average_BRAINSABC.nii.gz'
-    ...   assert len(out.outputs.column_1) == 4
-    ...   for output in out.outputs.column_1:
-    ...       assert os.path.basename(output) == 'neuro2012_20fusion_merge_seg.nii.gz'
-    ...   assert len(out.outputs.column_2) == 4
-    ...   for output in out.outputs.column_2:
-    ...       assert os.path.basename(output) == 't2_average_BRAINSABC.nii.gz'
-
-    >>> testNoHeader()
-
-    >>> def testHeader():
-    ...   import os.path
-    ...   import crossValidate as cv
-    ...   reader = cv.CSVReader()
-    ...   reader.inputs.in_file = os.path.abspath('test_Header.csv')
-    ...   reader.inputs.header = True
-    ...   out = reader.run()
-    ...   assert len(out.outputs.t1) == 4
-    ...   for output in out.outputs.t1:
-    ...       assert os.path.basename(output) == 't1_average_BRAINSABC.nii.gz'
-    ...   assert len(out.outputs.t2) == 4
-    ...   for output in out.outputs.t2:
-    ...       assert os.path.basename(output) == 't2_average_BRAINSABC.nii.gz'
-    ...   assert len(out.outputs.label) == 4
-    ...   for output in out.outputs.label:
-    ...       assert os.path.basename(output) == 'neuro2012_20fusion_merge_seg.nii.gz'
-
-    >>> testHeader()
-
-
-    """
-    input_spec = CSVReaderInputSpec
-    output_spec = DynamicTraitedSpec
-    _always_run = True
-
-    def _append_entry(self, outputs, entry):
-        for key, value in zip(self._outfields, entry):
-            outputs[key].append(value)
-        return outputs
-
-    def _parse_line(self, line):
-        line = line.replace('\n', '')
-        entry = [x.strip() for x in line.split(',')]
-        return entry
-
-    def _get_outfields(self):
-        with open(self.inputs.in_file, 'r') as fid:
-            entry = self._parse_line(fid.readline())
-            if self.inputs.header:
-                self._outfields = tuple(entry)
-            else:
-                self._outfields = tuple(['column_' + str(x) for x in range(len(entry))])
-        return self._outfields
-
-    def _run_interface(self, runtime):
-        self._get_outfields()
-        return runtime
-
-    def _outputs(self):
-        return self._add_output_traits(super(CSVReader, self)._outputs())
-
-    def _add_output_traits(self, base):
-        return add_traits(base, self._get_outfields())
-
-    def _list_outputs(self):
-        outputs = self.output_spec().get()
-        isHeader = True
-        for key in self._outfields:
-            outputs[key] = []  # initialize outfields
-        with open(self.inputs.in_file, 'r') as fid:
-            for line in fid.readlines():
-                if self.inputs.header and isHeader:  # skip header line
-                    isHeader = False
-                    continue
-                entry = self._parse_line(line)
-                outputs = self._append_entry(outputs, entry)
-        return outputs
-
-
-
-
-def sample_test_lists(in_list, size):
-    """
-    >>> print zip(*sample_test_lists(range(10), 2))  #doctest: +NORMALIZE_WHITESPACE
+    >>> print zip(*subsample_crossValidationSet(10, 2))  #doctest: +NORMALIZE_WHITESPACE
     [([0, 1], [2, 3, 4, 5, 6, 7, 8, 9]),
      ([2, 3], [0, 1, 4, 5, 6, 7, 8, 9]),
      ([4, 5], [0, 1, 2, 3, 6, 7, 8, 9]),
      ([6, 7], [0, 1, 2, 3, 4, 5, 8, 9]),
      ([8, 9], [0, 1, 2, 3, 4, 5, 6, 7])]
 
-    >>> print zip(*sample_test_lists(range(9), 3))  #doctest: +NORMALIZE_WHITESPACE
+    >>> print zip(*subsample_crossValidationSet(9, 3))  #doctest: +NORMALIZE_WHITESPACE
     [([0, 1, 2], [3, 4, 5, 6, 7, 8]),
      ([3, 4, 5], [0, 1, 2, 6, 7, 8]),
      ([6, 7, 8], [0, 1, 2, 3, 4, 5])]
     """
-    size = int(size)
-    samples = list()
-    tests = list()
-    length = len(in_list)
-    base_sample = range(size)
-    for x in range(0, length, size):
-        test = [y + x for y in base_sample]
-        sample = range(length)
+    test_size = int(test_size)
+    subsample_data_index = []
+    base_train = range(test_size)
+    for x in range(0, length, test_size):
+        test = [y + x for y in base_train]
+        train = range(length)
         for y in test:
             try:
-                sample.remove(y)
+                train.remove(y)
             except ValueError:
-                raise ValueError("List size is not evenly divisible by N({0})".format(size))
-        samples.append(sample)
-        tests.append(test)
-    return tests, samples
+                raise ValueError("List test size is not evenly divisible by N({0})".format(test_size))
+        subsample_data_index.append( {'train':train, 'test':test } )
+    print "="*80
+    print subsample_data_index
+    return subsample_data_index
+
+def writeCVSubsetFile( environment, experiment, pipeline, cluster, csv_file, test_size, hasHeader):
+
+    from utilities.misc import add_dict
+    master_config = {}
+    for configDict in [environment, experiment, pipeline, cluster]:
+        master_config = add_dict(master_config, configDict)
+
+    """
+    read in csv file
+    """
+    import csv
+    csv_data=[]
+    with open(csv_file, mode='r') as infile:
+          reader = csv.DictReader(infile, skipinitialspace=True)
+          for row in reader:
+            csv_data.append(row)
+    print csv_data
+
+    totalSampleSize = len(csv_data)
+    print totalSampleSize
+    cv_subsets = subsample_crossValidationSet( totalSampleSize, test_size)
+
+    """
+    global variable
+    """
+    BASE_DATA_GRABBER_DIR='/Shared/johnsonhj/HDNI/Neuromorphometrics/20141116_Neuromorphometrics_base_Results/Neuromorphometrics/2012Subscription'
+    #master_config = {'queue':'HJ',
+    #    'long_q':'HJ'}
+
+    """
+    workflow
+    """
+    import nipype.pipeline.engine as pe
+    import nipype.interfaces.io as nio
+    from WorkupT1T2MALF import CreateMALFWorkflow
+    CV_MALF_WF = pe.Workflow(name="CV_MALF")
+    CV_MALF_WF.base_dir = master_config['cachedir']
 
 
-class CrossValidationWorkflow(Workflow):
+    subset_no = 1
+    for subset in cv_subsets:
+        print "-"*80
+        print " Creat a subset workflow Set " + str(subset_no)
+        print "-"*80
+        trainData = [ csv_data[i] for i in subset['train'] ]
+        testData = [ csv_data[i] for i in subset['test'] ]
+
+        print [ (trainData[i])['id'] for i in range( len(trainData))]
+
+        for testSession in testData:
+            MALFWFName = "MALF_Set{0}_{1}".format(subset_no, testSession['id'])
+            myMALF = CreateMALFWorkflow( MALFWFName,
+                                         master_config,
+                                         [ (trainData[i])['id'] for i in range( len(trainData))],
+                                         BASE_DATA_GRABBER_DIR,
+                                         runFixFusionLabelMap=False)
+
+            testSessionName= "testSessionSpec_Set{0}_{1}".format(subset_no, testSession['id'])
+            testSessionSpec = pe.Node( interface=IdentityInterface( fields=['t1_average',
+                                                                         'tissueLabel',
+                                                                         'template_leftHemisphere',
+                                                                         'landmarkInACPCAlignedSpace',
+                                                                         'template_weights_50Lmks_wts',
+                                                                         'labelFilename']),
+                                    run_without_submitting = True,
+                                    name=testSessionName)
+
+            CV_MALF_WF.connect(testSessionSpec,'t1_average', myMALF,'inputspec.subj_t1_image')
+            CV_MALF_WF.connect(testSessionSpec,'tissueLabel',myMALF,'inputspec.subj_fixed_head_labels')
+
+            CV_MALF_WF.connect(testSessionSpec,'template_leftHemisphere', myMALF,'inputspec.subj_left_hemisphere')
+            CV_MALF_WF.connect(testSessionSpec,'landmarkInACPCAlignedSpace', myMALF,'inputspec.subj_lmks')
+            CV_MALF_WF.connect(testSessionSpec,'template_weights_50Lmks_wts', myMALF,'inputspec.atlasWeightFilename')
+            CV_MALF_WF.connect(testSessionSpec, 'labelFilename', myMALF, 'inputspec.labelBaseFilename')
+
+            """ set test image information
+            """
+            print testSession
+            testSessionSpec.inputs.t1_average = testSession['t1']
+            testSessionSpec.inputs.tissueLabel = testSession['fixed_head_label']
+            testSessionSpec.inputs.template_leftHemisphere = testSession['warpedAtlasLeftHemisphere']
+            testSessionSpec.inputs.landmarkInACPCAlignedSpace = testSession['lmk']
+            testSessionSpec.inputs.template_weights_50Lmks_wts = "/Shared/sinapse/scratch/eunyokim/src/NamicExternal/build_Mac_201501/bin/Atlas/Atlas_20131115/20141004_BCD/template_landmarks_50Lmks.fcsv"
+            testSessionSpec.inputs.labelFilename='FS_wmparc.nii.gz'
+
+            """
+            DataSink
+            """
+            dsName = "DataSink_DS_Set{0}_{1}".format(subset_no,testSession['id'])
+            DataSink = pe.Node(name=dsName, interface=nio.DataSink())
+            DataSink.overwrite = master_config['ds_overwrite']
+            DataSink.inputs.container = 'CV_Set{0}/{1}'.format(subset_no, testSession['id'])
+            DataSink.inputs.base_directory = master_config['resultdir']
+
+            CV_MALF_WF.connect(myMALF, 'outputspec.MALF_neuro2012_labelmap',
+                               DataSink, 'Segmentation.@MALF_neuro2012_labelmap')
+
+            subset_no=subset_no+1
+
+    #CV_MALF_WF.write_graph()
+    CV_MALF_WF.run( plugin=master_config['plugin_name'],
+                    plugin_args=master_config['plugin_args'])
+
+
+
+class CrossValidationJointFusionWorkflow(Workflow):
     """ Nipype workflow for Multi-Label Atlas Fusion cross-validation experiment """
     csv_file = None
     hasHeader = None
     sample_size = None
 
-    def __init__(self, csv_file=None, size=0, hasHeader=False, name='CrossValidationWorkflow', **kwargs):
-        super(CrossValidationWorkflow, self).__init__(name=name, **kwargs)
+    def __init__(self, csv_file=None, size=0, hasHeader=False, name='CrossValidationJointFusionWorkflow', **kwargs):
+        super(CrossValidationJointFusionWorkflow, self).__init__(name=name, **kwargs)
         self.csv_file = File(value=os.path.abspath(csv_file), exists=True)
         self.hasHeader = traits.Bool(hasHeader)
         self.sample_size = traits.Int(size)
@@ -189,46 +195,62 @@ class CrossValidationWorkflow(Workflow):
         csvReader.inputs.header = self.hasHeader.default_value
         csvOut = csvReader.run()
 
+        print "="*80
+        print csvOut.outputs.__dict__
+        print "="*80
+
         iters = {}
         label = csvOut.outputs.__dict__.keys()[0]
         result = eval("csvOut.outputs.{0}".format(label))
-        iters['tests'], iters['samples'] = sample_test_lists(result, self.sample_size.default_value)
+        iters['tests'], iters['trains'] = subsample_crossValidationSet(result, self.sample_size.default_value)
         # Main event
-        out_fields = ['T1', 'T2', 'Label', 'sampleindex', 'testindex']
-        inputs = Node(interface=IdentityInterface(fields=out_fields),
+        out_fields = ['T1', 'T2', 'Label', 'trainindex', 'testindex']
+        inputsND = Node(interface=IdentityInterface(fields=out_fields),
                        run_without_submitting=True, name='inputs')
-        inputs.iterables = [('sampleindex', iters['samples']),
+        inputsND.iterables = [('trainindex', iters['trains']),
                              ('testindex', iters['tests'])]
         if not self.hasHeader.default_value:
-            inputs.inputs.T1 = csvOut.outputs.column_0
-            inputs.inputs.Label = csvOut.outputs.column_1
-            inputs.inputs.T2 = csvOut.outputs.column_2
+            inputsND.inputs.T1 = csvOut.outputs.column_0
+            inputsND.inputs.Label = csvOut.outputs.column_1
+            inputsND.inputs.T2 = csvOut.outputs.column_2
         else:
+            inputsND.inputs.T1 = csvOut.outputs.__dict__['t1']
+            inputsND.inputs.Label = csvOut.outputs.__dict__['label']
+            inputsND.inputs.T2 = csvOut.outputs.__dict__['t2']
             pass #TODO
         metaflow = Workflow(name='metaflow')
-        metaflow.add_nodes([inputs])
-        import pdb; pdb.set_trace()
+        metaflow.config['execution'] = {
+            'plugin': 'Linear',
+            'stop_on_first_crash': 'false',
+            'stop_on_first_rerun': 'false',  # This stops at first attempt to rerun, before running, and before deleting previous results.
+            'hash_method': 'timestamp',
+            'single_thread_matlab': 'true',  # Multi-core 2011a  multi-core for matrix multiplication.
+            'remove_unnecessary_outputs': 'false',
+            'use_relative_paths': 'false',  # relative paths should be on, require hash update when changed.
+            'remove_node_directories': 'false',  # Experimental
+            'local_hash_check': 'false'
+        }
+
+        metaflow.add_nodes([inputsND])
+        """import pdb; pdb.set_trace()"""
         fusionflow = FusionLabelWorkflow()
-        self.connect([(metaflow, fusionflow, [('inputs.sampleindex', 'sampleT1s.index'), ('inputs.T1',    'sampleT1s.inlist')]),
-                      (metaflow, fusionflow, [('inputs.sampleindex', 'sampleT2s.index'), ('inputs.T2',    'sampleT2s.inlist')]),
-                      (metaflow, fusionflow, [('inputs.sampleindex', 'sampleLabels.index'), ('inputs.Label', 'sampleLabels.inlist')]),
-                      (metaflow, fusionflow, [('inputs.testindex',   'testT1s.index'), ('inputs.T1',    'testT1s.inlist')]),
-                      (metaflow, fusionflow, [('inputs.testindex',   'testT2s.index'), ('inputs.T2',    'testT2s.inlist')]),
-                      (metaflow, fusionflow, [('inputs.testindex',   'testLabels.index'), ('inputs.Label', 'testLabels.inlist')])
+        self.connect([(metaflow, fusionflow, [('inputs.trainindex', 'trainT1s.index'), ('inputs.T1',    'trainT1s.inlist')]),
+                      (metaflow, fusionflow, [('inputs.trainindex', 'trainLabels.index'), ('inputs.Label', 'trainLabels.inlist')]),
+                      (metaflow, fusionflow, [('inputs.testindex',  'testT1s.index'), ('inputs.T1',    'testT1s.inlist')])
                       ])
 
     # def _connect_subworkflow(self):
     #     labelFusion = MapNode(FusionLabelWorkflow(),
-    #                           iterfield=['sampleindex', 'testindex'],
+    #                           iterfield=['trainindex', 'testindex'],
     #                           name='FusionLabelWorkflow')
     #     self.connect([(self.get_node('csvReader'), labelFusion.inputspec, [('column_0', 'T1'),
     #                                                                        ('column_2', 'T2'),
     #                                                                        ('column_1', 'Label')]),
-    #                   (self.get_node('createTests'), labelFusion.inputspec, [('samples', 'sampleindex'),
+    #                   (self.get_node('createTests'), labelFusion.inputspec, [('trains', 'trainindex'),
     #                                                                          ('tests', 'testindex')])
     #                  ])
     def _connect_subworkflow(self, node):
-        self.connect(createTests, 'samples', node, 'sampleindex')
+        self.connect(createTests, 'trains', node, 'trainindex')
         self.connect(createTests, 'tests', node, 'testindex')
         self.connect(csvReader, 'T1', node.inputspec, 'T1')
         self.connect(csvReader, 'T2', node.inputspec, 'T2')
@@ -253,41 +275,47 @@ class FusionLabelWorkflow(Workflow):
 
 
     def create(self):
-        sampleT1s    = Node(interface=Select(), name='sampleT1s')
-        sampleT2s    = Node(interface=Select(), name='sampleT2s')
-        sampleLabels = Node(interface=Select(), name='sampleLabels')
-
+        trainT1s    = Node(interface=Select(), name='trainT1s')
+        trainT2s    = Node(interface=Select(), name='trainT2s')
+        trainLabels = Node(interface=Select(), name='trainLabels')
         testT1s      = Node(interface=Select(), name='testT1s')
-        testT2s      = Node(interface=Select(), name='testT2s')
-        testLabels   = Node(interface=Select(), name='testLabels')
 
-        intensityImages = Node(interface=Merge(2), name='intensityImages')
+        #intensityImages = Node(interface=Merge(2), name='intensityImages')
 
         jointFusion = Node(interface=JointFusion(), name='jointFusion')
         jointFusion.inputs.dimension = 3
         jointFusion.inputs.modalities = 1  #TODO: verify 2 for T1/T2
-        jointFusion.inputs.method = 'Joint[0.1, 2]'
+        jointFusion.inputs.method =  "Joint[0.1,2]" # this does not work
         jointFusion.inputs.output_label_image = 'fusion_neuro2012_20.nii.gz'
 
         outputs = Node(interface=IdentityInterface(fields=['output_label_image']),
                        run_without_submitting=True, name='outputspec')
 
         self.connect([# Don't worry about T2s now per Regina
-                      # (sampleT1s, intensityImages, [('out', 'in1')]),
-                      # (sampleT2s, intensityImages, [('out', 'in2')]),
-                      # (intensityImages, jointFusion, [('out', 'warped_intensity_images')]),
-                      (sampleT1s, jointFusion, [('out', 'warped_intensity_images')]),
-                      #END: per Regina
-                      (sampleLabels, jointFusion, [('out', 'warped_label_images')]),
+                      # (trainT1s, intensityImages, [('out', 'in1')]),
+                      # (trainT2s, intensityImages, [('out', 'in2')]),
+                      (testT1s, jointFusion, [('out', 'target_image')]),
+                      (trainT1s, jointFusion, [('out', 'warped_intensity_images')]),
+                      (trainLabels, jointFusion, [('out', 'warped_label_images')]),
                       (jointFusion, outputs, [('output_label_image', 'output_label_image')]),
                       ])
         ## output => jointFusion.outputs.output_label_image
 
 
-def main(**kwargs):
-    workflow = CrossValidationWorkflow(csv_file=kwargs['FILE'], size=kwargs['SIZE'], hasHeader=kwargs['--header'])
-    workflow.create()
-    return workflow.write_graph()
+def main(environment, experiment, pipeline, cluster, **kwargs):
+    from utilities.configFileParser import nipype_options
+
+    print "Copying Atlas directory and determining appropriate Nipype options..."
+    pipeline = nipype_options(kwargs, pipeline, cluster, experiment, environment)  # Generate Nipype options
+    print "Getting session(s) from database..."
+
+    writeCVSubsetFile( environment,
+                       experiment,
+                       pipeline,
+                       cluster,
+                       csv_file=kwargs['--sampleFile'],
+                       test_size=kwargs['--testSamplesize'],
+                       hasHeader=kwargs['--header'] )
 
 
 def _test():
@@ -304,8 +332,10 @@ if __name__ == "__main__":
     argv = docopt(__doc__, version='1.1')
     print argv
     print '=' * 100
+    from AutoWorkup import setup_environment
     if argv['--test']:
         sys.exit(_test())
+    environment, experiment, pipeline, cluster = setup_environment(argv)
     # from AutoWorkup import setup_environment
-    # environment, experiment, pipeline, cluster = setup_environment(argv)
-    sys.exit(main(**argv))
+    # environment, experiment, pipeline, cluster = setup_envir""
+    sys.exit(main(environment, experiment, pipeline, cluster, **argv))

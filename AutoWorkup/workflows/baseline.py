@@ -761,6 +761,13 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
         baw201.connect(BResample['template_leftHemisphere'],'outputVolume',myLocalMALF,'inputspec.subj_left_hemisphere')
         baw201.connect(myLocalLMIWF, 'outputspec.outputLandmarksInACPCAlignedSpace' ,myLocalMALF,'inputspec.subj_lmks')
         baw201.connect(atlasBCDNode_S,'template_weights_50Lmks_wts',myLocalMALF,'inputspec.atlasWeightFilename')
+
+        inputLabelFileMALFnameSpec = pe.Node( interface=IdentityInterface( fields=['labelBaseFilename']),
+                                              run_without_submitting = True,
+                                              name=inputLabelFileMALFnameSpec)
+        baw201.connect( inputLabelFileMALFnameSpec, 'labelBaseFilename',
+                        myLocalMALF, 'inputspec.labelBaseFilename')
+
         baw201.connect(myLocalMALF,'outputspec.MALF_neuro2012_labelmap',DataSink,'TissueClassify.@MALF_neuro2012_labelmap')
         baw201.connect(myLocalMALF,'outputspec.MALF_fswm_extended_neuro2012_labelmap',DataSink,'TissueClassify.@MALF_fswm_extended_neuro2012_labelmap')
         baw201.connect(myLocalMALF,'outputspec.MALF_fswm_standard_neuro2012_labelmap',DataSink,'TissueClassify.@MALF_fswm_standard_neuro2012_labelmap')

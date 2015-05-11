@@ -29,7 +29,7 @@ def getListIndexOrNoneIfOutOfRange(imageList, index):
         return None
 
 
-def CreateMALFWorkflow(WFname, master_config,good_subjects,BASE_DATA_GRABBER_DIR):
+def CreateMALFWorkflow(WFname, master_config,good_subjects,BASE_DATA_GRABBER_DIR, runFixFusionLabelMap=True):
     from nipype.interfaces import ants
 
     CLUSTER_QUEUE=master_config['queue']
@@ -41,7 +41,8 @@ def CreateMALFWorkflow(WFname, master_config,good_subjects,BASE_DATA_GRABBER_DIR
                                                              'subj_lmks', #The landmarks corresponding to t1_image
                                                              'subj_fixed_head_labels', #The fixed head labels from BABC
                                                              'subj_left_hemisphere', #The warped left hemisphere mask
-                                                             'atlasWeightFilename'  #The static weights file name
+                                                             'atlasWeightFilename',  #The static weights file name
+                                                             'labelBaseFilename' #Atlas label base name ex) neuro_lbls.nii.gz
                                                             ]),
                          run_without_submitting=True,
                          name='inputspec')
@@ -68,7 +69,8 @@ def CreateMALFWorkflow(WFname, master_config,good_subjects,BASE_DATA_GRABBER_DIR
     malf_atlas_mergeindex = 1;
     for malf_atlas_subject in good_subjects:
         ## Need DataGrabber Here For the Atlas
-        MALF_DG[malf_atlas_subject] = pe.Node(interface=nio.DataGrabber(infields=['subject'],
+        MALF_DG[malf_atlas_subject] = pe.Node(interface=nio.DataGrabber(infields=['subject',
+                                                                                  'labelBaseFilename'],
                                                         outfields=['malf_atlas_t1',
                                                                    'malf_atlas_lbls',
                                                                    'malf_fswm_atlas_lbls',
@@ -79,16 +81,16 @@ def CreateMALFWorkflow(WFname, master_config,good_subjects,BASE_DATA_GRABBER_DIR
         MALF_DG[malf_atlas_subject].inputs.base_directory = BASE_DATA_GRABBER_DIR
 
         MALF_DG[malf_atlas_subject].inputs.subject = malf_atlas_subject
+        MALFWF.connect( inputsSpec, 'labelBaseFilename',
+                        MALF_DG[malf_atlas_subject], 'labelBaseFilename')
         MALF_DG[malf_atlas_subject].inputs.field_template = {
                                              'malf_atlas_t1': '%s/TissueClassify/t1_average_BRAINSABC.nii.gz',
-                                             'malf_atlas_lbls': '%s/TissueClassify/neuro_lbls.nii.gz',
-                                             'malf_fswm_atlas_lbls': '%s/TissueClassify/neuro_lbls_MALF_In_FSLabel.nii.gz',
+                                             'malf_atlas_lbls': '%s/TissueClassify/%s',
                                              'malf_atlas_lmks': '%s/ACPCAlign/BCD_ACPC_Landmarks.fcsv',
         }
         MALF_DG[malf_atlas_subject].inputs.template_args = {
                                             'malf_atlas_t1':   [['subject']],
-                                            'malf_atlas_lbls': [['subject']],
-                                            'malf_fswm_atlas_lbls': [['subject']],
+                                            'malf_atlas_lbls': [['subject','labelBaseFilename']],
                                             'malf_atlas_lmks': [['subject']],
         }
         MALF_DG[malf_atlas_subject].inputs.template = '*'
@@ -271,20 +273,24 @@ def CreateMALFWorkflow(WFname, master_config,good_subjects,BASE_DATA_GRABBER_DIR
     MALFWF.connect(warpedAtlasLblMergeNode,'out',jointFusion,'warped_label_images')
     MALFWF.connect(inputsSpec, 'subj_t1_image',jointFusion,'target_image')
 
-    NEUROLABELS_DICT = { 'BRAINSTEM': 35, 'RH_CSF': 51, 'LH_CSF': 52, 'BLOOD': 230 , 'UNKNOWN': 255 ,
-    'CONNECTED': [36,37,57,58,55,56,59,60,47,48,23,30]
-    }
-    fixFusionLabelMap = pe.Node(Function(function=FixLabelMapFromNeuromorphemetrics2012,
-                                                   input_names=['fusionFN','FixedHeadFN','LeftHemisphereFN','outFN',
-                                                   'OUT_DICT'],
-                                                   output_names=['fixedFusionLabelFN']), name="FixedFusionLabelmap")
-    fixFusionLabelMap.inputs.outFN = 'neuro2012_20fusion_merge_seg.nii.gz'
-    fixFusionLabelMap.inputs.OUT_DICT = NEUROLABELS_DICT
-    MALFWF.connect(jointFusion, 'output_label_image', fixFusionLabelMap, 'fusionFN')
-    MALFWF.connect(inputsSpec, 'subj_fixed_head_labels', fixFusionLabelMap, 'FixedHeadFN')
-    MALFWF.connect(inputsSpec, 'subj_left_hemisphere', fixFusionLabelMap, 'LeftHemisphereFN')
+    if runFixFusionLabelMap:
+        fixFusionLabelMap = pe.Node(Function(function=FixLabelMapFromNeuromorphemetrics2012,
+                                                       input_names=['fusionFN','FixedHeadFN','LeftHemisphereFN','outFN' ],
+                                                       output_names=['fixedFusionLabelFN']), name="FixedFusionLabelmap")
+        fixFusionLabelMap.inputs.outFN = 'neuro2012_20fusion_merge_seg.nii.gz'
+        MALFWF.connect(jointFusion, 'output_label_image', fixFusionLabelMap, 'fusionFN')
+        MALFWF.connect(inputsSpec, 'subj_fixed_head_labels', fixFusionLabelMap, 'FixedHeadFN')
+        MALFWF.connect(inputsSpec, 'subj_left_hemisphere', fixFusionLabelMap, 'LeftHemisphereFN')
+        MALFWF.connect(fixFusionLabelMap,'fixedFusionLabelFN',outputsSpec,'MALF_neuro2012_labelmap')
+    else:
+        MALFWF.connect(jointFusion, 'output_label_image', outputsSpec,'MALF_neuro2012_labelmap')
 
-    MALFWF.connect(fixFusionLabelMap,'fixedFusionLabelFN',outputsSpec,'MALF_neuro2012_labelmap')
+
+
+    MALFWF.connect(warpedAtlasT1MergeNode,'out',jointFusion,'warped_intensity_images')
+    MALFWF.connect(warpedAtlasLblMergeNode,'out',jointFusion,'warped_label_images')
+    MALFWF.connect(inputsSpec, 'subj_t1_image',jointFusion,'target_image')
+
 
     ## 2014-02-19 Updated fs_wmparcelation_improved malf
     newJointFusion = pe.Node(interface=ants.JointFusion(),name="FSWM_JointFusion")

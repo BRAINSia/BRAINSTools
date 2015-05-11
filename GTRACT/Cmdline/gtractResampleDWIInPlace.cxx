@@ -45,8 +45,7 @@
 #include <itkResampleImageFilter.h>
 #include <itkVectorResampleImageFilter.h>
 #include <itkTransformFileWriter.h>
-#include <itkMetaDataDictionary.h>
-#include <itkMetaDataObject.h>
+#include "DWIMetaDataDictionaryValidator.h"
 
 #include "GenericTransformImage.h"
 #include "BRAINSFitHelper.h"
@@ -158,7 +157,6 @@ int main(int argc, char *argv[])
 
   NrrdImageType::Pointer        resampleImage = imageReader->GetOutput();
   NrrdImageType::DirectionType  myDirection = resampleImage->GetDirection();
-  itk::MetaDataDictionary       inputMetaDataDictionary = resampleImage->GetMetaDataDictionary();
   GenericTransformType::Pointer baseTransform = ITK_NULLPTR;
   if( inputTransform == "ID"  || inputTransform == "Identity" || inputTransform.size() == 0 )
     {
@@ -209,10 +207,14 @@ int main(int argc, char *argv[])
       warpDWIXFRM = itk::ReadTransformFromDisk(warpDWITransform);
       }
     }
+
+  // Instantiate an object of MetaDataDictionaryValidator class, and set its MetaDataDictionary
+  DWIMetaDataDictionaryValidator resampleImageValidator;
+  resampleImageValidator.SetMetaDataDictionary(resampleImage->GetMetaDataDictionary());
+
   // Get measurement frame and its inverse from DWI scan
   std::vector<std::vector<double> > msrFrame;
-  itk::ExposeMetaData<std::vector<std::vector<double> > >( inputMetaDataDictionary,
-                                                           "NRRD_measurement frame", msrFrame );
+  msrFrame = resampleImageValidator.GetMeasurementFrame();
   vnl_matrix_fixed<double, 3, 3> DWIMeasurementFrame;
   if( msrFrame.size() != 0 )
     {
@@ -241,19 +243,21 @@ int main(int argc, char *argv[])
 
   std::stringstream outputGradDirMetaDataStream;
 
+  // Get gradient table and update the gradient vectors by rigid transform and inverse measurement frame
+  DWIMetaDataDictionaryValidator::GradientTableType gradTable = resampleImageValidator.GetGradientTable();
+  // Now delete the gradient table to fill with new gradient values
+  resampleImageValidator.DeleteGradientTable();
+
+  DWIMetaDataDictionaryValidator::GradientTableType newGradTable( gradTable.size() );
+
   // Rotate gradient vectors by rigid transform and inverse measurement frame
-  for( unsigned int i = 0; i < resampleImage->GetVectorLength(); i++ )
+  for( unsigned int i = 0; i < gradTable.size(); i++ )
     {
     // Get Current Gradient Direction
     vnl_vector<double> curGradientDirection(3);
-    char               tmpStr[64];
-    sprintf(tmpStr, "DWMRI_gradient_%04u", i);
-    std::string KeyString(tmpStr);
-    std::string NrrdValue;
-
-    itk::ExposeMetaData<std::string>(inputMetaDataDictionary, KeyString, NrrdValue);
-    sscanf(
-      NrrdValue.c_str(), " %lf %lf %lf", &curGradientDirection[0], &curGradientDirection[1], &curGradientDirection[2]);
+    curGradientDirection[0] = gradTable[i][0];
+    curGradientDirection[1] = gradTable[i][1];
+    curGradientDirection[2] = gradTable[i][2];
 
     // Rotate the diffusion gradient with rigid transform and inverse measurement frame
     RigidTransformType::Pointer inverseRigidTransform = RigidTransformType::New();
@@ -265,32 +269,27 @@ int main(int argc, char *argv[])
     curGradientDirection = inverseRigidTransform->GetMatrix().GetVnlMatrix() * DWIInverseMeasurementFrame
       * curGradientDirection;
 
-    // Updated the Image MetaData Dictionary with Updated Gradient Information
-    // sprintf(tmpStr, " %18.15lf %18.15lf %18.15lf", curGradientDirection[0], curGradientDirection[1],
-    // curGradientDirection[2]);
-    // NrrdValue = tmpStr;
-    NrrdValue = " ";
-    for( unsigned dir = 0; dir < 3; ++dir )
-      {
-      if( dir > 0 )
-        {
-        NrrdValue += " ";
-        }
-      NrrdValue += doubleConvert(curGradientDirection[dir]);
-      }
-    itk::EncapsulateMetaData<std::string>(resampleImage->GetMetaDataDictionary(), KeyString, NrrdValue);
+    newGradTable[i][0] = curGradientDirection[0];
+    newGradTable[i][1] = curGradientDirection[1];
+    newGradTable[i][2] = curGradientDirection[2];
 
+    // This is only for writeOutputMetaData
+    char  tmpStr[64];
+    sprintf(tmpStr, "DWMRI_gradient_%04u", i);
+    std::string KeyString(tmpStr);
     outputGradDirMetaDataStream << KeyString << ","
                                 << curGradientDirection[0] << ","
                                 << curGradientDirection[1] << ","
                                 << curGradientDirection[2] << std::endl;
     }
 
+  resampleImageValidator.SetGradientTable( newGradTable );
+
   // Set DWI measurement frame to identity by multiplying by its inverse
   // Update Image MetaData Dictionary with new measurement frame
   vnl_matrix_fixed<double, 3, 3>    newMeasurementFrame = DWIInverseMeasurementFrame * DWIMeasurementFrame;
   std::vector<std::vector<double> > newMf(3);
-  std::stringstream outputMFMetaDataStream;
+  std::stringstream outputMFMetaDataStream; // This is only for writeOutputMetaData
   outputMFMetaDataStream << "measurement frame";
   for( unsigned int i = 0; i < 3; i++ )
     {
@@ -302,8 +301,10 @@ int main(int argc, char *argv[])
       }
     }
   outputMFMetaDataStream << std::endl;
-  itk::EncapsulateMetaData<std::vector<std::vector<double> > >(
-    resampleImage->GetMetaDataDictionary(), "NRRD_measurement frame", newMf );
+  resampleImageValidator.SetMeasurementFrame( newMf );
+
+  // Update the metaDataDictionary of resampleImage after that gradient table and measurement frame are updated.
+  resampleImage->SetMetaDataDictionary( resampleImageValidator.GetMetaDataDictionary() );
 
   // If --writeOutputMetaData ./metaData.csv is specified on the command line,
   // then write out the output image measurement frame and diffusion gradient directions in a simple CSV file.

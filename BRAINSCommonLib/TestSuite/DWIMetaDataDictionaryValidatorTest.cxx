@@ -1,5 +1,3 @@
-//TODO Convert itkDwiToVectorImageFilter.hxx to use this class.
-
 /**
  * \author Ali Ghayoor
  * This test file creates an ITK vector image,

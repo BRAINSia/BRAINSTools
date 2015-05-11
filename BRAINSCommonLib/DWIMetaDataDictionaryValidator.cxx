@@ -112,28 +112,27 @@ void DWIMetaDataDictionaryValidator::SetGradient(int index, DWIMetaDataDictionar
 }
 
 int DWIMetaDataDictionaryValidator::GetGradientCount()
-   {
-     DWIMetaDataDictionaryValidator::StringVectorType keys = m_dict.GetKeys();
-     int count = 0;
-     for (DWIMetaDataDictionaryValidator::StringVectorType::iterator it = keys.begin(); it != keys.end(); ++it)
+{
+  DWIMetaDataDictionaryValidator::StringVectorType keys = m_dict.GetKeys();
+  int count = 0;
+  for( DWIMetaDataDictionaryValidator::StringVectorType::iterator it = keys.begin(); it != keys.end(); ++it )
+     {
+     if((*it).find("DWMRI_gradient_") != std::string::npos)
        {
-       if((*it).find("DWMRI_gradient_") != std::string::npos)
-         {
-         count++;
-         }
-       //#if 0 // I don't know what this is supposed to do, or where it was referenced from
-       else if((*it).find("DWMRI_NEX") != std::string::npos)
-         {
-         int repeats=0;
-         if( itk::ExposeMetaData<int>(m_dict, "DWMRI_NEX", repeats) )
-           {
-           count += repeats;
-           }
-         }
-       //#endif
+       count++;
        }
-     return count;
-   }
+     // Check for repeated components
+     else if((*it).find("DWMRI_NEX") != std::string::npos)
+       {
+       int repeats=0;
+       if( itk::ExposeMetaData<int>(m_dict, "DWMRI_NEX", repeats) )
+         {
+         count += repeats;
+         }
+       }
+     }
+  return count;
+}
 
 DWIMetaDataDictionaryValidator::GradientTableType DWIMetaDataDictionaryValidator::GetGradientTable() const
 {
@@ -176,18 +175,14 @@ void DWIMetaDataDictionaryValidator::SetGradientTable(std::vector<std::array<dou
 void DWIMetaDataDictionaryValidator::DeleteGradientTable()
 {
   for (itk::MetaDataDictionary::MetaDataDictionaryMapType::iterator it = m_dict.Begin();
-       it != m_dict.End(); )
-       {
-       //http://stackoverflow.com/questions/8234779/how-to-remove-from-a-map-while-iterating-it
-       if( (*it).first.find("DWMRI_gradient_") != std::string::npos )
-         {
-         m_dict.Erase((*it).first);
-         }
-       else
-         {
-         it++;
-         }
-       }
+       it != m_dict.End(); ++it)
+      {
+      //http://stackoverflow.com/questions/8234779/how-to-remove-from-a-map-while-iterating-it
+      if( (*it).first.find("DWMRI_gradient_") != std::string::npos )
+        {
+        m_dict.Erase((*it).first);
+        }
+      }
 }
 
 double DWIMetaDataDictionaryValidator::GetBValue() const
@@ -208,27 +203,6 @@ void DWIMetaDataDictionaryValidator::SetBValue(const double bvalue)
   const std::string        valstr(doubleConvert(bvalue));
   DWIMetaDataDictionaryValidator::SetStringDictObject(key, valstr);
 }
-
-
-/** vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv */
-/** vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv */
-/** vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv */
-/** vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv */
-/** vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv */
-/** vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv */
-/** vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv */
-/** vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv */
-/*
-   bool DWIMetaDataDictionaryValidator::IsValidDWIHeader() const
-   {
-     return false;
-    // TODO:  check that the dictionary has all the required header information for NRRD
-    // DWI writing
-   }
-
-   //TODO: Move code from gtractDWIResampleInPlace here
-*/
-
 
 std::string DWIMetaDataDictionaryValidator::GetIndexedKeyString(const std::string base_key_name, const size_t index) const
 {

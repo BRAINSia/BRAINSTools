@@ -254,7 +254,7 @@ std::vector<std::string> DWIMetaDataDictionaryValidator::GenericGetStringVector(
   for(size_t index=0; index< values.size() ; ++index)
     {
     const std::string currKey = this->GetIndexedKeyString(KeyBaseName,index);
-    std::string temp = 0.0;
+    std::string temp("0.0");
     if (itk::ExposeMetaData(this->m_dict, currKey, temp ) )
       {
       values[index]=temp;
@@ -275,7 +275,7 @@ std::vector<double> DWIMetaDataDictionaryValidator::GenericGetDoubleVector(const
   for(size_t index=0; index< values.size() ; ++index)
     {
     const std::string currKey = this->GetIndexedKeyString(KeyBaseName,index);
-    double temp;
+    double temp=0.0;
     if (itk::ExposeMetaData(this->m_dict, currKey, temp ) )
       {
       values[index]=temp;

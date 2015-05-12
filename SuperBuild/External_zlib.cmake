@@ -38,6 +38,10 @@ if(NOT DEFINED zlib_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     INSTALL_DIR ${EP_INSTALL_DIR}
     CMAKE_ARGS -Wno-dev --no-warn-unused-cli
     CMAKE_CACHE_ARGS
+      #-DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}
+      #-DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
+      -DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}
+      -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags}
       ## CXX should not be needed, but it a cmake default test
 #      -DZLIB_MANGLE_PREFIX:STRING=slicer_zlib_
       -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>

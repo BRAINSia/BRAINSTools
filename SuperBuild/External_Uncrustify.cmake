@@ -1,19 +1,3 @@
-# Make sure this file is included only once by creating globally unique varibles
-# based on the name of this included file.
-# get_filename_component(CMAKE_CURRENT_LIST_FILENAME ${CMAKE_CURRENT_LIST_FILE} NAME_WE)
-# if(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED)
-#   return()
-# endif()
-# set(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED 1)
-
-## External_${extProjName}.cmake files can be recurisvely included,
-## and cmake variables are global, so when including sub projects it
-## is important make the extProjName and proj variables
-## appear to stay constant in one of these files.
-## Store global variables before overwriting (then restore at end of this file.)
-ProjectDependancyPush(CACHED_extProjName ${extProjName})
-ProjectDependancyPush(CACHED_proj ${proj})
-
 # Make sure that the ExtProjName/IntProjName variables are unique globally
 # even if other External_${ExtProjName}.cmake files are sourced by
 # SlicerMacroCheckExternalProjectDependency
@@ -41,6 +25,10 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
 
   ### --- Project specific additions here
   set(${proj}_CMAKE_OPTIONS
+      -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}
+      -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
+      -DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}
+      -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags}
   )
 
   ### --- End Project specific additions

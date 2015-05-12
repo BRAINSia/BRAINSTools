@@ -11,6 +11,10 @@ ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj
 
 ### --- Project specific additions here
 set(${proj}_CMAKE_OPTIONS
+  -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}
+  -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
+  -DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}
+  -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags}
   -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/${proj}-install
   -DUSE_SYSTEM_ITK:BOOL=ON
   -DUSE_SYSTEM_SlicerExecutionModel:BOOL=ON
@@ -27,7 +31,7 @@ endif()
 ### --- End Project specific additions
 #set(${proj}_REPOSITORY "https://github.com/BRAINSia/ANTs.git")
 set(${proj}_REPOSITORY "https://github.com/stnava/ANTs.git")
-set(${proj}_GIT_TAG "2b1ba60a4d10b7dcd53caf2739c79b332e4e615b") ## Update ANTS 20150421
+set(${proj}_GIT_TAG "f9885c166f2495379ff6e9fa8d480ce25c588e71") ## Update ANTS 20150421
 ExternalProject_Add(${proj}
   ${${proj}_EP_ARGS}
   GIT_REPOSITORY ${${proj}_REPOSITORY}
@@ -42,7 +46,7 @@ ExternalProject_Add(${proj}
   CMAKE_GENERATOR ${gen}
   CMAKE_ARGS -Wno-dev --no-warn-unused-cli
   CMAKE_CACHE_ARGS
-  ${${proj}_CMAKE_OPTIONS}
+    ${${proj}_CMAKE_OPTIONS}
   INSTALL_COMMAND ""
   DEPENDS
   ${${proj}_DEPENDENCIES}

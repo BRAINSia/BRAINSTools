@@ -1,4 +1,7 @@
 #-----------------------------------------------------------------------------
+enable_language(C)
+enable_language(CXX)
+#-----------------------------------------------------------------------------
 # Sanity checks
 #------------------------------------------------------------------------------
 include(PreventInSourceBuilds)
@@ -258,6 +261,14 @@ endif()
 
 set(extProjName ${LOCAL_PROJECT_NAME})
 set(proj        ${LOCAL_PROJECT_NAME})
+
+#-----------------------------------------------------------------------------
+# Enable and setup External project global properties
+#-----------------------------------------------------------------------------
+
+set(ep_common_c_flags "${CMAKE_C_FLAGS} ${CMAKE_C_FLAGS_INIT} ${ADDITIONAL_C_FLAGS}")
+set(ep_common_cxx_flags "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_INIT} ${ADDITIONAL_CXX_FLAGS}")
+
 ExternalProject_Include_Dependencies(${proj} DEPENDS_VAR ${PRIMARY_PROJECT_NAME}_DEPENDENCIES)
 
 #-----------------------------------------------------------------------------

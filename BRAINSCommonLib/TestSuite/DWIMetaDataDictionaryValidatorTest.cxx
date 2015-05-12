@@ -287,7 +287,7 @@ int main( int argc, char *argv[] )
     {
     /* We should apply direction vcl_cosines to gradient directions if requested by
      the user */
-    std::vector<std::array<double, 3> > GradientTable( numOfComponents );
+    DWIMetaDataDictionaryValidator::GradientTableType GradientTable( numOfComponents );
     GradientTable[0][0] =0; //first b0 image
     GradientTable[0][1] =0;
     GradientTable[0][2] =0;
@@ -322,7 +322,7 @@ int main( int argc, char *argv[] )
 
     bldValidator.SetGradientTable(GradientTable);
 
-    const std::vector<std::array<double, 3> > outGT = bldValidator.GetGradientTable();
+    const DWIMetaDataDictionaryValidator::GradientTableType outGT = bldValidator.GetGradientTable();
     if(GradientTable != outGT)
       {
       std::cout << "ERROR: outGT not preserved! Output outGT:" << std::endl;

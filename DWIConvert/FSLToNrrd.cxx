@@ -242,13 +242,13 @@ FSLToNrrd(const std::string & inputVolume,
   nrrdVolumeValidator.SetBValue( maxBValue );
 
   // Gradient directions
-  std::vector<std::array<double, 3> > gradientTable( bVecCount );
-  std::array<double, 3> BVec_i_arr;
+  DWIMetaDataDictionaryValidator::GradientTableType gradientTable( bVecCount );
+  MyArrayWrapper<double, 3> BVec_fixedSize;
   for( unsigned int i = 0; i < bVecCount; ++i )
     {
-    // convert std::vector to std::array
-    std::copy_n( BVecs[i].begin(), 3, BVec_i_arr.begin() );
-    gradientTable[i] = BVec_i_arr;
+    // convert std::vector to MyArrayWrapper that is a vector with fixed size
+    std::copy_n( BVecs[i].begin(), 3, BVec_fixedSize.begin() );
+    gradientTable[i] = BVec_fixedSize;
     }
   nrrdVolumeValidator.SetGradientTable( gradientTable );
 

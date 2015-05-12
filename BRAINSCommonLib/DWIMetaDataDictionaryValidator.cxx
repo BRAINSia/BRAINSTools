@@ -27,11 +27,6 @@
  */
 #include "DWIMetaDataDictionaryValidator.h"
 
-#include <string>
-#include <vector>
-#include <array>
-// #include "itkMetaDataObject.h"
-#include "itkMetaDataDictionary.h"
 #include "itkNumberToString.h"
 
 DWIMetaDataDictionaryValidator::DWIMetaDataDictionaryValidator()
@@ -155,7 +150,7 @@ DWIMetaDataDictionaryValidator::GradientTableType DWIMetaDataDictionaryValidator
   return myGradientTable;
 }
 
-void DWIMetaDataDictionaryValidator::SetGradientTable(std::vector<std::array<double, 3> > & myGradientTable)
+void DWIMetaDataDictionaryValidator::SetGradientTable(GradientTableType & myGradientTable)
 {
   int count = 0;
   for( DWIMetaDataDictionaryValidator::GradientTableType::iterator it = myGradientTable.begin();

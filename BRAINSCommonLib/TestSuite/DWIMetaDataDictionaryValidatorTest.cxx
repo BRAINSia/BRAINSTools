@@ -189,7 +189,7 @@ int main( int argc, char *argv[] )
     //thickness testing
     {
     bool thicknessPass = true;
-    std::vector<double> tempThickness(4,std::nan(""));
+    std::vector<double> tempThickness(4,std::numeric_limits<double>::quiet_NaN());
     tempThickness[2] = 2.123;
     bldValidator.SetThicknesses(tempThickness);
     const std::vector<double> outThicknesses = bldValidator.GetThicknesses();

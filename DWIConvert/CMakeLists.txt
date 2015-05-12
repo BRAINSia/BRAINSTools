@@ -35,7 +35,7 @@ foreach(f ${DWIConvertSupportLib_SRCS})
 endforeach()
 
 add_library(DWIConvertSupportLib STATIC ${DWIConvertSupportLib_SRCS})
-target_link_libraries(DWIConvertSupportLib ${DWIConvert_ITK_LIBRARIES} )
+target_link_libraries(DWIConvertSupportLib ${DWIConvert_ITK_LIBRARIES} BRAINSCommonLib)
 
 #-----------------------------------------------------------------------------
 # SEMMacroBuildCLI(
@@ -46,7 +46,7 @@ target_link_libraries(DWIConvertSupportLib ${DWIConvert_ITK_LIBRARIES} )
 
 # several files needed down in ExtenededTesting
 StandardBRAINSBuildMacro(NAME DWIConvert EXECUTABLE_ONLY
-  TARGET_LIBRARIES BRAINSCommonLib DWIConvertSupportLib)
+  TARGET_LIBRARIES DWIConvertSupportLib)
 
 if(BUILD_TESTING AND NOT Slicer_BUILD_BRAINSTOOLS)
   add_subdirectory(TestSuite)

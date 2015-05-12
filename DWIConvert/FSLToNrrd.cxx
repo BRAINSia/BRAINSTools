@@ -217,7 +217,7 @@ FSLToNrrd(const std::string & inputVolume,
   nrrdVolumeValidator.SetCenterings(tempCenterings);
 
   // thickness (optional)
-  std::vector<double> tempThickness(4,std::nan(""));
+  std::vector<double> tempThickness(4,std::numeric_limits<double>::quiet_NaN());
   tempThickness[2] = inputSpacing[2];
   nrrdVolumeValidator.SetThicknesses(tempThickness);
 
@@ -247,7 +247,7 @@ FSLToNrrd(const std::string & inputVolume,
   for( unsigned int i = 0; i < bVecCount; ++i )
     {
     // convert std::vector to MyArrayWrapper that is a vector with fixed size
-    std::copy_n( BVecs[i].begin(), 3, BVec_fixedSize.begin() );
+    std::copy( BVecs[i].begin(), BVecs[i].begin()+3, BVec_fixedSize.begin() );
     gradientTable[i] = BVec_fixedSize;
     }
   nrrdVolumeValidator.SetGradientTable( gradientTable );

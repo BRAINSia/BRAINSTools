@@ -141,7 +141,7 @@ DWIMetaDataDictionaryValidator::GradientTableType DWIMetaDataDictionaryValidator
    if((*it).find("DWMRI_gradient_") != std::string::npos)
      {
      std::string   gradientString = (*it).substr(15,4);
-     int index = std::stoi(gradientString);
+     int index = std::atoi(gradientString.c_str());
      DWIMetaDataDictionaryValidator::Double3x1ArrayType curGradientDirection = GetGradient(index);
      myGradientTable.push_back(curGradientDirection);
      }
@@ -201,7 +201,9 @@ void DWIMetaDataDictionaryValidator::SetBValue(const double bvalue)
 
 std::string DWIMetaDataDictionaryValidator::GetIndexedKeyString(const std::string base_key_name, const size_t index) const
 {
-  return base_key_name+"["+std::to_string(index)+"]";
+  std::ostringstream itos;
+  itos << index;
+  return base_key_name+"["+itos.str()+"]";
 }
 
 void DWIMetaDataDictionaryValidator::GenericSetStringVector(const std::vector<std::string> & values, const std::string & KeyBaseName)
@@ -252,7 +254,7 @@ std::vector<std::string> DWIMetaDataDictionaryValidator::GenericGetStringVector(
   for(size_t index=0; index< values.size() ; ++index)
     {
     const std::string currKey = this->GetIndexedKeyString(KeyBaseName,index);
-    std::string temp;
+    std::string temp = 0.0;
     if (itk::ExposeMetaData(this->m_dict, currKey, temp ) )
       {
       values[index]=temp;
@@ -321,7 +323,7 @@ std::vector<double> DWIMetaDataDictionaryValidator::GetThicknesses() const
 {
   // Thickness units are always 4 for DWI
   const std::string KeyBaseName("NRRD_thicknesses");
-  return this->GenericGetDoubleVector(KeyBaseName,4,std::nan(""));
+  return this->GenericGetDoubleVector(KeyBaseName,4,std::numeric_limits<double>::quiet_NaN());
 }
 
 void DWIMetaDataDictionaryValidator::SetThicknesses(const std::vector<double> & values)

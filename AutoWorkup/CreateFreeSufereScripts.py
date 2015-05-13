@@ -8,27 +8,30 @@ import SimpleITK as sitk
 #==================================
 ## GLOBALS ARE EVIL, but so is searching for all the items necessary to complete an analysis
 
-FREESURFER_HOME='/Shared/sinapse/sharedopt/20131115/RHEL6/freesurfer'
-
-subjects_dir='/Shared/sinapse/CACHE/20131228_PREDICTHD_FS'
-
+FREESURFER_HOME='/Shared/pinc/sharedopt/20131115/RHEL6/freesurfer'
+#subjects_dir='/Shared/sinapse/CACHE/TRACKON_FS20131220'
+subjects_dir='/Shared/johnsonhj/TrackOn/Experiments/TRACKON_FS20131220_NoT2'
 scripts_dir = os.path.join(subjects_dir,'scripts')
 if not os.path.exists(scripts_dir):
     os.makedirs(scripts_dir)
 
 #subject_data_file='/Shared/johnsonhj/HDNI/20131116_TrackOn/scripts/edited_without_T2_PD_15s_track_autoworkup_TRACKON.csv'
-subject_data_file='/Shared/sinapse/CACHE/20131228_PREDICTHD_FS/20131124_FS.csv'
+#subject_data_file='/Shared/sinapse/CACHE/20131228_PREDICTHD_FS/20131124_FS.csv'
+subject_data_file=os.path.join(subjects_dir,'scripts/FS_Alterations2015.csv')
+USE_T2_FOR_FREESURFER=False ## For TRACKHD, don't use T2's
+USE_15T_SESSIONS=False ## For TRACKHD, don't use 1.5T sessions
 subjectDatabaseFile=os.path.join(scripts_dir,'subject_inputs.db')
 #==================================
 
-def mkfsscript(session,outscript,t1list,t2list,is3T):
+def mkfsscript(session,outscript,t1list,t2list,is3T,useT2):
+    ## TODO:  Work on staging files in/out
 
     T1_FLAGS=''
     for t1 in t1list:
         T1_FLAGS+= " -i " + t1
 
     T2_FLAGS=''
-    if len(t2list) > 0:
+    if len(t2list) > 0 and useT2 == True:
         ## HACK:  Rachael requested that this NOT be used
         T2_FLAGS=' -T2 '+ t2list[0]
         pass
@@ -100,6 +103,56 @@ exit $status
     return job_name
 
 
+def ValidateBaseTPS(base_tps_file,found_sessions,subject,templateID):
+    return_status=True
+    previous_list = list()
+    if os.path.exists(base_tps_file):
+        tpsFF=open(base_tps_file,'r')
+        for tps_session in tpsFF.readlines():
+            previous_list.append(tps_session.lstrip().rstrip())
+        tpsFF.close()
+    else:
+        return_status=False
+
+    if len(found_sessions) != len(previous_list):
+        return_status=False
+    else:
+        found_sessions.sort()
+        previous_list.sort()
+        for session in found_sessions:
+            if not session in previous_list:
+                return_status=False
+
+    if return_status == False:
+        print "WARNING:  DON'T KNOW WHAT TO DO: ", base_tps_file
+        print "current   ", found_sessions
+        print "base-tps   ", previous_list
+        import shutil
+        templ_dir=os.path.join(subjects_dir,templateID)
+        if os.path.exists(templ_dir):
+            print "REMOVE TEMPLATE: ", templ_dir
+            try:
+              shutil.rmtree(templ_dir)
+            except:
+              print "MANUALLY REMOVE: ", templ_dir
+            pass
+        else:
+            print "NO NEED TO REMOVE TEMPLATE: ", templ_dir
+
+        for session in found_sessions:
+            long_sess_dir=os.path.join(subjects_dir,session+".long."+templateID)
+            if os.path.exists(long_sess_dir):
+                print "REMOVE LONG: ", long_sess_dir
+                try:
+                    shutil.rmtree(long_sess_dir)
+                except:
+                    print "MANUALLY REMOVE: ", long_sess_dir
+                pass
+            else:
+                print "LONG already deleted: ", long_sess_dir
+
+    return return_status
+
 
 def mktemplatescript(templateID, sessionList, outscript, dependantJobNames):
     timePoints=""
@@ -147,7 +200,7 @@ exit $recon_long_stat
     outfd.write(auto_recon_script)
     return job_name
 
-def mklongscript(templateID, session, outscript,dependantJobNames,mode,is3T):
+def mklongscript(templateID, session, outscript,dependantJobNames,mode,is3T,useT2):
     if len(dependantJobNames) > 0:
         hold_jid='#$ -hold_jid '+",".join(dependantJobNames)
     else:
@@ -273,55 +326,6 @@ def find_mgz(inlist):
             pass
     return outlist
 
-def ValidateBaseTPS(base_tps_file,found_sessions,subject,templateID):
-    return_status=True
-    previous_list = list()
-    if os.path.exists(base_tps_file):
-        tpsFF=open(base_tps_file,'r')
-        for tps_session in tpsFF.readlines():
-            previous_list.append(tps_session.lstrip().rstrip())
-        tpsFF.close()
-    else:
-        return_status=False
-
-    if len(found_sessions) != len(previous_list):
-        return_status=False
-    else:
-        found_sessions.sort()
-        previous_list.sort()
-        for session in found_sessions:
-            if not session in previous_list:
-                return_status=False
-
-    if return_status == False:
-        print "WARNING:  DON'T KNOW WHAT TO DO: ", base_tps_file
-        print "current   ", found_sessions
-        print "base-tps   ", previous_list
-        import shutil
-        templ_dir=os.path.join(subjects_dir,templateID)
-        if os.path.exists(templ_dir):
-            print "REMOVE TEMPLATE: ", templ_dir
-            try:
-              shutil.rmtree(templ_dir)
-            except:
-              print "MANUALLY REMOVE: ", templ_dir
-            pass
-        else:
-            print "NO NEED TO REMOVE TEMPLATE: ", templ_dir
-
-        for session in found_sessions:
-            long_sess_dir=os.path.join(subjects_dir,session+".long."+templateID)
-            if os.path.exists(long_sess_dir):
-                print "REMOVE LONG: ", long_sess_dir
-                try:
-                    shutil.rmtree(long_sess_dir)
-                except:
-                    print "MANUALLY REMOVE: ", long_sess_dir
-                pass
-            else:
-                print "LONG already deleted: ", long_sess_dir
-
-    return return_status
 
 #==================================
 
@@ -348,9 +352,13 @@ for thisSubject in all_subjects:
         # NEVER DO THIS! if session != '77574':
         # NEVER DO THIS!   continue
         T1_files_30=ExperimentDatabase.getFilenamesByScantype(session,['T1-30'])
+        T2_files=ExperimentDatabase.getFilenamesByScantype(session,['T2-30'])
+
         if len(T1_files_30) > 0:
             is3T = True
         else:
+            if USE_15T_SESSIONS == False:
+                continue  #Skip this session
             T1_files_15=ExperimentDatabase.getFilenamesByScantype(session,['T1-15'])
             is3T = False
 
@@ -393,7 +401,7 @@ for thisSubject in all_subjects:
             this_session_base_done=True
         else:
           print "1TODO:",  session, ":", sentinal_file,":"
-          job_name=mkfsscript(session,fsscript,T1_files,T2_files,is3T)
+          job_name=mkfsscript(session,fsscript,T1_files,T2_files,is3T,USE_T2_FOR_FREESURFER)
           if is3T:
               base3T_job_names.append(job_name)
           else:
@@ -433,7 +441,7 @@ for thisSubject in all_subjects:
             ## Do secondary run
             #make_template
             #template_reference_flag ="-t " + thisSubject
-            #mkfsscript(session,fsscript,T1_files,T2_files,"baseline")
+            #mkfsscript(session,fsscript,T1_files,T2_files,"baseline",is3T,USE_T2_FOR_FREESURFER)
 
         ## -------------------------
         ## Do 3T Longitudinal timepoints
@@ -454,7 +462,7 @@ for thisSubject in all_subjects:
                     os.unlink(fsscript)
             else:
                 print "3TODO:",  session, ":", sentinal_file,":"
-                long_job_name=mklongscript(templateID,session,fsscript,template_job_names,"all",is3T)
+                long_job_name=mklongscript(templateID,session,fsscript,template_job_names,"all",is3T,USE_T2_FOR_FREESURFER)
                 long_job_names.append(long_job_name)
 
             ## -------------------------
@@ -468,7 +476,7 @@ for thisSubject in all_subjects:
                     os.unlink(fsscript)
             else:
                 print "3TODO:",  session, ":", sentinal_file,":"
-                qcache_job_name=mklongscript(templateID,session,fsscript,long_job_names,"qcache",is3T)
+                qcache_job_name=mklongscript(templateID,session,fsscript,long_job_names,"qcache",is3T,USE_T2_FOR_FREESURFER)
                 qcache_job_names.append(qcache_job_name)
 
     if len(OneT_sessions) > 0:
@@ -509,7 +517,7 @@ for thisSubject in all_subjects:
                     os.unlink(fsscript)
             else:
                 print "15LTODO:",  session, ":", sentinal_file,":"
-                long_job_name=mklongscript(templateID,session,fsscript,template_job_names,"all",False)
+                long_job_name=mklongscript(templateID,session,fsscript,template_job_names,"all",False,USE_T2_FOR_FREESURFER)
                 long_job_names.append(long_job_name)
 
             ## -------------------------
@@ -523,7 +531,7 @@ for thisSubject in all_subjects:
                     os.unlink(fsscript)
             else:
                 print "15QTODO:",  session, ":", sentinal_file,":"
-                qcache_job_name=mklongscript(templateID,session,fsscript,long_job_names,"qcache",is3T)
+                qcache_job_name=mklongscript(templateID,session,fsscript,long_job_names,"qcache",is3T,USE_T2_FOR_FREESURFER)
                 qcache_job_names.append(qcache_job_name)
 
 

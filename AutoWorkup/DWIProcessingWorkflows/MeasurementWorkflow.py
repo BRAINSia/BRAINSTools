@@ -152,6 +152,14 @@ def CreateMeasurementWorkflow(WFname, LABELS_CONFIG_FILE):
         binaryThreshFilt = sitk.BinaryThresholdImageFilter()
         maskNearZero = binaryThreshFilt.Execute(RISVolume,-1e-5,1e-5,0,1)
         RISVolume = RISVolume * sitk.Cast(maskNearZero,sitk.sitkFloat64)
+        # Linear interpolation
+        resFilt = sitk.ResampleImageFilter()
+        resFilt.SetReferenceImage(refVolume)
+        resFilt.SetOutputPixelType(RISVolume.GetPixelIDValue())
+        resFilt.SetInterpolator(sitk.sitkLinear)
+        RIS_resampled = resFilt.Execute(RISVolume)
+        '''
+        # sqrt voxel-wise + cubic BSpline + square voxel-wise
         # 1- voxel-wise square root of input volume
         sqrtFilt = sitk.SqrtImageFilter()
         RIS_sqrt = sqrtFilt.Execute(RISVolume)
@@ -163,6 +171,7 @@ def CreateMeasurementWorkflow(WFname, LABELS_CONFIG_FILE):
         # 3- square the resampled RIS volume voxel-wise
         squarFilt = sitk.SquareImageFilter()
         RIS_resampled = squarFilt.Execute(RIS_sqrt_res)
+        '''
         # Create output file name
         inputBaseName = os.path.basename(inputVolume)
         RISName = os.path.splitext(inputBaseName)[0]

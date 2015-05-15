@@ -136,6 +136,12 @@ class DWIMetaDataDictionaryValidator
   void SetGradientTable(GradientTableType & );
   void DeleteGradientTable();
 
+// GetBValue is defined as a macro on windows. Need to undef it if present.
+// The macro is usually defined in WinGDI.h itself included by Windows.h.
+#ifdef GetBValue
+#undef GetBValue
+#endif
+
   // b-value
   double GetBValue() const;
   void SetBValue(const double);

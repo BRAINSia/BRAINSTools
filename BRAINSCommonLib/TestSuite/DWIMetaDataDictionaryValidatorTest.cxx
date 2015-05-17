@@ -201,9 +201,9 @@ int main( int argc, char *argv[] )
       {
       for(size_t i = 0 ; i < outThicknesses.size(); ++i)
          {
-         if( std::isnan(outThicknesses[i]) )
+         if( vnl_math_isnan(outThicknesses[i]) )
            {
-           if( !std::isnan(tempThickness[i]) )
+           if( !vnl_math_isnan(tempThickness[i]) )
              {
              thicknessPass = false;
              }

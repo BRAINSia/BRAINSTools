@@ -50,9 +50,6 @@
 
 #include "BRAINSFitHelper.h"
 
-// #include "itkVectorImageRegisterVersorRigidFilter.h"
-// #include "itkVectorImageRegisterAffineFilter.h"
-
 #include "gtractCoregBvaluesCLP.h"
 #include "BRAINSThreadControl.h"
 #include "itkOrthogonalize3DRotationMatrix.h"
@@ -195,11 +192,6 @@ int main(int argc, char *argv[])
   OutputImageType::PixelType vectorImagePixel;
   for( unsigned int i = 0; i < movingImageReader->GetOutput()->GetVectorLength(); i++ )
     {
-    // typedef itk::VectorImageRegisterVersorRigidFilter<NrrdImageType,
-    // NrrdImageType> RegisterFilterType;
-    // RegisterFilterType::Pointer registerImageFilter =
-    // RegisterFilterType::New();
-
     // Get Current Gradient Direction
     vnl_vector<double> curGradientDirection(3);
     char               tmpStr[64];

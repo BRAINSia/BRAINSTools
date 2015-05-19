@@ -21,8 +21,7 @@
 #include "itkVectorImage.h"
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
-#include "itkMetaDataDictionary.h"
-#include "itkMetaDataObject.h"
+#include "DWIMetaDataDictionaryValidator.h"
 #include "BRAINSDWICleanupCLP.h"
 #include <list>
 #include <vector>
@@ -71,14 +70,6 @@ private:
   const std::vector<int> &valueList;
 };
 
-std::string gradName(int index)
-{
-  std::stringstream gradTag;
-
-  gradTag << "DWMRI_gradient_" << std::setw(4) << std::setfill('0') << index;
-  return gradTag.str();
-}
-
 int main(int argc, char *argv[])
 {
   PARSE_ARGS;
@@ -109,7 +100,7 @@ int main(int argc, char *argv[])
     std::cout << ex << std::endl;
     throw;
     }
-  std::cout << "Read Image" << std::endl;
+  std::cout << "Read Input Image..." << std::endl;
   NrrdImageType::Pointer inImage = imageReader->GetOutput();
 
   unsigned int numInputGradients = inImage->GetNumberOfComponentsPerPixel();
@@ -151,35 +142,29 @@ int main(int argc, char *argv[])
     outIt.Set(outpix);
     }
 
-  // deal with gradients. They're in the MetaDataDictionary
-  const itk::MetaDataDictionary &inDict = inImage->GetMetaDataDictionary();
-  itk::MetaDataDictionary &outDict = outImage->GetMetaDataDictionary();
+  // deal with gradients in meta data
+  DWIMetaDataDictionaryValidator    nrrdMetaDataValidator;
+  nrrdMetaDataValidator.SetMetaDataDictionary( inImage->GetMetaDataDictionary() );
 
-  //
-  // copy everything EXCEPT the gradients
-  for(itk::MetaDataDictionary::ConstIterator it = inDict.Begin(); it != inDict.End(); ++it)
-    {
-    if(it->first.find("DWMRI_gradient_",0) == std::string::npos)
-      {
-      outDict.Set(it->first,it->second);
-      }
-    }
-  //
-  // add the good gradients to the MetaDataDictionary
+  // Get gradient table and update the gradient vectors based on keepIndices
+  DWIMetaDataDictionaryValidator::GradientTableType inputGradTable = nrrdMetaDataValidator.GetGradientTable();
+
+  // Now delete the gradient table to fill with new gradient values
+  nrrdMetaDataValidator.DeleteGradientTable();
+
+  DWIMetaDataDictionaryValidator::GradientTableType outputGradTable( newGradientCount );
+
+  // add the good gradients to the outputGradTable
   std::list<int>::iterator keepIt = keepIndices.begin();
   for(unsigned int i = 0; i < keepIndices.size(); ++i, ++keepIt)
     {
-    std::string gradTag = gradName(*keepIt);
-    std::string gradString;
-    if(itk::ExposeMetaData<std::string>(inDict,gradTag,gradString) == false)
-      {
-      std::cerr << "Expected to find " << gradTag << "in input NRRD file, but it was missing" << std::endl;
-      return 1;
-      }
-    std::string newTag = gradName(i);
-    itk::EncapsulateMetaData<std::string>(outDict,newTag,gradString);
+    outputGradTable[i] = inputGradTable[*keepIt];
     }
+  nrrdMetaDataValidator.SetGradientTable( outputGradTable );
 
+  outImage->SetMetaDataDictionary( nrrdMetaDataValidator.GetMetaDataDictionary() );
+
+  std::cout << "Write Output Image..." << std::endl;
   WriterType::Pointer nrrdWriter = WriterType::New();
   nrrdWriter->UseCompressionOn();
   nrrdWriter->UseInputMetaDataDictionaryOn();

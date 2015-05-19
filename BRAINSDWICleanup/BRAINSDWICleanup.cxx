@@ -126,6 +126,13 @@ int main(int argc, char *argv[])
   inBadList pred(badGradients);
   keepIndices.remove_if(pred);
 
+  if( keepIndices.size() != newGradientCount )
+    {
+    std::cerr << "ERROR: The number of gradients to be kept does not match the number of output components!" << std::endl
+              << "*** Please check input list for bad gradients." << std::endl;
+    return 1;
+    }
+
   // create output volume
   NrrdImageType::Pointer outImage = AllocVecImage<NrrdImageType>(inImage,newGradientCount);
 

@@ -10,7 +10,7 @@ import SimpleITK as sitk
 
 FREESURFER_HOME='/Shared/pinc/sharedopt/20131115/RHEL6/freesurfer'
 #subjects_dir='/Shared/sinapse/CACHE/TRACKON_FS20131220'
-subjects_dir='/Shared/johnsonhj/TrackOn/Experiments/TRACKON_FS20131220_NoT2'
+subjects_dir='/Shared/johnsonhj/TrackOn/Experiments/TRACKON_FS20150701_NoT2'
 scripts_dir = os.path.join(subjects_dir,'scripts')
 if not os.path.exists(scripts_dir):
     os.makedirs(scripts_dir)
@@ -326,6 +326,11 @@ def find_mgz(inlist):
             pass
     return outlist
 
+def GetMissingFilesList(subjects_dir,session_name,required_files_list):
+    fs_full_paths = [ os.path.join(subjects_dir,session_name,fs_file) for fs_file in required_files_list ]
+    missing_files = [ fs_file_fpath for fs_file_fpath in fs_full_paths if not os.path.exists( fs_file_fpath ) ]
+    return fs_full_paths,missing_files
+
 
 #==================================
 
@@ -455,13 +460,39 @@ for thisSubject in all_subjects:
             long_job_names = list()
             fsscript = os.path.join(scripts_dir,'lg'+session+'.sh')
             sentinal_file=os.path.join(subjects_dir,session+'.long.'+templateID,'surf/rh.volume')
-            if os.path.exists(sentinal_file):
-                print "3DONE:",  session, ":", sentinal_file,":"
+
+            required_longfs_files=[
+'surf/rh.volume',
+'surf/lh.volume',
+'stats/aseg.stats',
+'stats/lh.BA.stats',
+'stats/lh.BA.thresh.stats',
+'stats/lh.aparc.DKTatlas40.stats',
+'stats/lh.aparc.a2009s.stats',
+'stats/lh.aparc.stats',
+'stats/lh.curv.stats',
+'stats/lh.entorhinal_exvivo.stats',
+'stats/lh.w-g.pct.stats',
+'stats/rh.BA.stats',
+'stats/rh.BA.thresh.stats',
+'stats/rh.aparc.DKTatlas40.stats',
+'stats/rh.aparc.a2009s.stats',
+'stats/rh.aparc.stats',
+'stats/rh.curv.stats',
+'stats/rh.entorhinal_exvivo.stats',
+'stats/rh.w-g.pct.stats',
+'stats/wmparc.stats'
+]
+            fs_full_paths,missing_files = GetMissingFilesList(subjects_dir,session+'.long.'+templateID,required_longfs_files)
+            #print("XXXXXXXX {0}\nYYYYYYYY {1}\nZZZZZZZ {2}\n".format(fs_full_paths,missing_files, len(missing_files) ))
+
+            if len(missing_files) == 0:
+                print "3DONE:",  session, "found :", len(fs_full_paths),": files"
                 long_done += 1
                 if os.path.exists(fsscript):
                     os.unlink(fsscript)
             else:
-                print "3TODO:",  session, ":", sentinal_file,":"
+                print "3TODO:",  session, "missing :", len(missing_files), ": files"
                 long_job_name=mklongscript(templateID,session,fsscript,template_job_names,"all",is3T,USE_T2_FOR_FREESURFER)
                 long_job_names.append(long_job_name)
 
@@ -470,12 +501,129 @@ for thisSubject in all_subjects:
             qcache_job_names = list()
             fsscript = os.path.join(scripts_dir,'qc'+session+'.sh')
             sentinal_file=os.path.join(subjects_dir,session+'.long.'+templateID,'surf/rh.w-g.pct.mgh.fwhm25.fsaverage.mgh')
-            if os.path.exists(sentinal_file):
-                print "3DONE:",  session, ":", sentinal_file,":"
+            required_qcache_files=[
+'surf/lh.w-g.pct.mgh',
+'surf/rh.w-g.pct.mgh',
+'surf/lh.thickness.fsaverage.mgh',
+'surf/lh.thickness.fwhm0.fsaverage.mgh',
+'surf/lh.thickness.fwhm5.fsaverage.mgh',
+'surf/lh.thickness.fwhm10.fsaverage.mgh',
+'surf/lh.thickness.fwhm15.fsaverage.mgh',
+'surf/lh.thickness.fwhm20.fsaverage.mgh',
+'surf/lh.thickness.fwhm25.fsaverage.mgh',
+'surf/lh.area.fsaverage.mgh',
+'surf/lh.area.fwhm0.fsaverage.mgh',
+'surf/lh.area.fwhm5.fsaverage.mgh',
+'surf/lh.area.fwhm10.fsaverage.mgh',
+'surf/lh.area.fwhm15.fsaverage.mgh',
+'surf/lh.area.fwhm20.fsaverage.mgh',
+'surf/lh.area.fwhm25.fsaverage.mgh',
+'surf/lh.area.pial.fsaverage.mgh',
+'surf/lh.area.pial.fwhm0.fsaverage.mgh',
+'surf/lh.area.pial.fwhm5.fsaverage.mgh',
+'surf/lh.area.pial.fwhm10.fsaverage.mgh',
+'surf/lh.area.pial.fwhm15.fsaverage.mgh',
+'surf/lh.area.pial.fwhm20.fsaverage.mgh',
+'surf/lh.area.pial.fwhm25.fsaverage.mgh',
+'surf/lh.volume.fsaverage.mgh',
+'surf/lh.volume.fwhm0.fsaverage.mgh',
+'surf/lh.volume.fwhm5.fsaverage.mgh',
+'surf/lh.volume.fwhm10.fsaverage.mgh',
+'surf/lh.volume.fwhm15.fsaverage.mgh',
+'surf/lh.volume.fwhm20.fsaverage.mgh',
+'surf/lh.volume.fwhm25.fsaverage.mgh',
+'surf/lh.curv.fsaverage.mgh',
+'surf/lh.curv.fwhm0.fsaverage.mgh',
+'surf/lh.curv.fwhm5.fsaverage.mgh',
+'surf/lh.curv.fwhm10.fsaverage.mgh',
+'surf/lh.curv.fwhm15.fsaverage.mgh',
+'surf/lh.curv.fwhm20.fsaverage.mgh',
+'surf/lh.curv.fwhm25.fsaverage.mgh',
+'surf/lh.sulc.fsaverage.mgh',
+'surf/lh.sulc.fwhm0.fsaverage.mgh',
+'surf/lh.sulc.fwhm5.fsaverage.mgh',
+'surf/lh.sulc.fwhm10.fsaverage.mgh',
+'surf/lh.sulc.fwhm15.fsaverage.mgh',
+'surf/lh.sulc.fwhm20.fsaverage.mgh',
+'surf/lh.sulc.fwhm25.fsaverage.mgh',
+'surf/lh.jacobian_white.fsaverage.mgh',
+'surf/lh.jacobian_white.fwhm0.fsaverage.mgh',
+'surf/lh.jacobian_white.fwhm5.fsaverage.mgh',
+'surf/lh.jacobian_white.fwhm10.fsaverage.mgh',
+'surf/lh.jacobian_white.fwhm15.fsaverage.mgh',
+'surf/lh.jacobian_white.fwhm20.fsaverage.mgh',
+'surf/lh.jacobian_white.fwhm25.fsaverage.mgh',
+'surf/lh.w-g.pct.mgh.fsaverage.mgh',
+'surf/lh.w-g.pct.mgh.fwhm0.fsaverage.mgh',
+'surf/lh.w-g.pct.mgh.fwhm5.fsaverage.mgh',
+'surf/lh.w-g.pct.mgh.fwhm10.fsaverage.mgh',
+'surf/lh.w-g.pct.mgh.fwhm15.fsaverage.mgh',
+'surf/lh.w-g.pct.mgh.fwhm20.fsaverage.mgh',
+'surf/lh.w-g.pct.mgh.fwhm25.fsaverage.mgh',
+'surf/rh.thickness.fsaverage.mgh',
+'surf/rh.thickness.fwhm0.fsaverage.mgh',
+'surf/rh.thickness.fwhm5.fsaverage.mgh',
+'surf/rh.thickness.fwhm10.fsaverage.mgh',
+'surf/rh.thickness.fwhm15.fsaverage.mgh',
+'surf/rh.thickness.fwhm20.fsaverage.mgh',
+'surf/rh.thickness.fwhm25.fsaverage.mgh',
+'surf/rh.area.fsaverage.mgh',
+'surf/rh.area.fwhm0.fsaverage.mgh',
+'surf/rh.area.fwhm5.fsaverage.mgh',
+'surf/rh.area.fwhm10.fsaverage.mgh',
+'surf/rh.area.fwhm15.fsaverage.mgh',
+'surf/rh.area.fwhm20.fsaverage.mgh',
+'surf/rh.area.fwhm25.fsaverage.mgh',
+'surf/rh.area.pial.fsaverage.mgh',
+'surf/rh.area.pial.fwhm0.fsaverage.mgh',
+'surf/rh.area.pial.fwhm5.fsaverage.mgh',
+'surf/rh.area.pial.fwhm10.fsaverage.mgh',
+'surf/rh.area.pial.fwhm15.fsaverage.mgh',
+'surf/rh.area.pial.fwhm20.fsaverage.mgh',
+'surf/rh.area.pial.fwhm25.fsaverage.mgh',
+'surf/rh.volume.fsaverage.mgh',
+'surf/rh.volume.fwhm0.fsaverage.mgh',
+'surf/rh.volume.fwhm5.fsaverage.mgh',
+'surf/rh.volume.fwhm10.fsaverage.mgh',
+'surf/rh.volume.fwhm15.fsaverage.mgh',
+'surf/rh.volume.fwhm20.fsaverage.mgh',
+'surf/rh.volume.fwhm25.fsaverage.mgh',
+'surf/rh.curv.fsaverage.mgh',
+'surf/rh.curv.fwhm0.fsaverage.mgh',
+'surf/rh.curv.fwhm5.fsaverage.mgh',
+'surf/rh.curv.fwhm10.fsaverage.mgh',
+'surf/rh.curv.fwhm15.fsaverage.mgh',
+'surf/rh.curv.fwhm20.fsaverage.mgh',
+'surf/rh.curv.fwhm25.fsaverage.mgh',
+'surf/rh.sulc.fsaverage.mgh',
+'surf/rh.sulc.fwhm0.fsaverage.mgh',
+'surf/rh.sulc.fwhm5.fsaverage.mgh',
+'surf/rh.sulc.fwhm10.fsaverage.mgh',
+'surf/rh.sulc.fwhm15.fsaverage.mgh',
+'surf/rh.sulc.fwhm20.fsaverage.mgh',
+'surf/rh.sulc.fwhm25.fsaverage.mgh',
+'surf/rh.jacobian_white.fsaverage.mgh',
+'surf/rh.jacobian_white.fwhm0.fsaverage.mgh',
+'surf/rh.jacobian_white.fwhm5.fsaverage.mgh',
+'surf/rh.jacobian_white.fwhm10.fsaverage.mgh',
+'surf/rh.jacobian_white.fwhm15.fsaverage.mgh',
+'surf/rh.jacobian_white.fwhm20.fsaverage.mgh',
+'surf/rh.jacobian_white.fwhm25.fsaverage.mgh',
+'surf/rh.w-g.pct.mgh.fsaverage.mgh',
+'surf/rh.w-g.pct.mgh.fwhm0.fsaverage.mgh',
+'surf/rh.w-g.pct.mgh.fwhm5.fsaverage.mgh',
+'surf/rh.w-g.pct.mgh.fwhm10.fsaverage.mgh',
+'surf/rh.w-g.pct.mgh.fwhm15.fsaverage.mgh',
+'surf/rh.w-g.pct.mgh.fwhm20.fsaverage.mgh',
+'surf/rh.w-g.pct.mgh.fwhm25.fsaverage.mgh'
+]
+            fs_full_paths,missing_files = GetMissingFilesList(subjects_dir,session+'.long.'+templateID, required_qcache_files)
+            if len(missing_files) == 0:
+                print "3DONE:",  session, " found :", len(fs_full_paths) ,": files"
                 if os.path.exists(fsscript):
                     os.unlink(fsscript)
             else:
-                print "3TODO:",  session, ":", sentinal_file,":"
+                print "3TODO:",  session, " missing :", len(missing_files), ": files"
                 qcache_job_name=mklongscript(templateID,session,fsscript,long_job_names,"qcache",is3T,USE_T2_FOR_FREESURFER)
                 qcache_job_names.append(qcache_job_name)
 

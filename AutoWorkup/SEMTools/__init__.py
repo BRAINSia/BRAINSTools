@@ -8,4 +8,3 @@ from utilities import *
 from legacy import *
 from registration import *
 from converters import DWISimpleCompare, DWICompare
-from utility import *

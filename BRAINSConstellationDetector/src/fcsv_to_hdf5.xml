@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
-  <category>Utility.BRAINS</category>
+  <category>Utilities.BRAINS</category>
   <title>fcsv_to_hdf5 (BRAINS)</title>
   <description>Convert a collection of fcsv files to a HDF5 format file</description>
   <parameters>

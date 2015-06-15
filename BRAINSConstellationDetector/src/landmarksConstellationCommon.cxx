@@ -28,7 +28,6 @@
 #include "itkReflectiveCorrelationCenterToImageMetric.h"
 #include "landmarksConstellationCommon.h"
 #include "TrimForegroundInDirection.h"
-#include "GenericTransformImage.h"
 #include "itkOrthogonalize3DRotationMatrix.h"
 
 typedef itk::ImageMomentsCalculator<SImageType> momentsCalculatorType;

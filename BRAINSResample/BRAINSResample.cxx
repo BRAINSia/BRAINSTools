@@ -257,7 +257,7 @@ int main(int argc, char *argv[])
         PrincipalOperandImage,
         ReferenceImage,
         // DisplacementField,
-        genericTransform,
+        genericTransform.GetPointer(),
         defaultValue,
         interpolationMode,
         pixelType == "binary");

@@ -194,7 +194,7 @@ typename OutputImageType::Pointer GenericTransformImage(
   InputImageType const *const OperandImage,
   const itk::ImageBase<InputImageType::ImageDimension> *ReferenceImage,
   // typename DisplacementImageType::Pointer DisplacementField,
-  typename itk::Transform<double, 3, 3>::Pointer genericTransform,
+  typename itk::Transform<double, 3, 3>::ConstPointer genericTransform,
   typename InputImageType::PixelType suggestedDefaultValue, // NOTE:  This is
                                                             // ignored in the
                                                             // case of binary

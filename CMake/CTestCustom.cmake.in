@@ -324,6 +324,9 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
   # At some point this may be addressed by CMake feature request:
   # http://public.kitware.com/Bug/view.php?id=10179
   "ld.*warning.*duplicate dylib.*"
+
+  # DCMTK build warning
+  "Warning: SNDFILE .*"
   )
 endif()
 

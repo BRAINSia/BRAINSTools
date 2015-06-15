@@ -49,7 +49,7 @@
             <flag>o</flag>
             <longflag>outputVolume</longflag>
             <label>Output Volume Filename</label>
-            <description>ACPC-aligned output image with the same voxels, but updated origin, and direction cosign so that the AC point would fall at the physical location (0.0,0.0,0.0), and the mid-sagital plane is the plane where physical L/R coordinate is 0.0.</description>
+            <description>ACPC-aligned output image with the same voxels as the input image, but updated origin, and direction cosign so that the AC point would fall at the physical location (0.0,0.0,0.0), and the mid-sagital plane is the plane where physical L/R coordinate is 0.0. No interpolation method is involved to create the "outputVolume", and this output image is created using "resample in place" filter.</description>
             <channel>output</channel>
             <default></default>
         </image>
@@ -57,7 +57,7 @@
             <name>outputResampledVolume</name>
             <longflag>outputResampledVolume</longflag>
             <label>Output Resampled Volume Filename</label>
-            <description>ACPC-aligned output image in a resampled unifor space.  Currently this is a 1mm, 256^3, Identity direction image.</description>
+            <description>ACPC-aligned output image in a resampled uniform isotropic space.  Currently this is a 1mm, 256^3 image with identity direction cosign. Choose desired interpolation mode to generate the outputResampledVolume.</description>
             <channel>output</channel>
             <default></default>
         </image>
@@ -197,11 +197,10 @@
           <name>interpolationMode</name>
           <longflag>interpolationMode</longflag>
           <label>Interpolation Mode</label>
-          <description>Type of interpolation to be used when applying transform to moving volume.  Options are Linear, ResampleInPlace, NearestNeighbor, BSpline, or WindowedSinc</description>
+          <description>Type of interpolation to be used when applying transform to moving volume to create OutputResampledVolume.  Options are Linear, NearestNeighbor, BSpline, or WindowedSinc</description>
           <default>Linear</default>
           <element>NearestNeighbor</element>
           <element>Linear</element>
-          <element>ResampleInPlace</element>
           <element>BSpline</element>
           <element>WindowedSinc</element>
           <element>Hamming</element>

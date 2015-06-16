@@ -174,10 +174,14 @@ int RecoverBValues(const TImage *inputVol,
     }
   for( unsigned i = 0; i < bVectors.size(); ++i )
     {
-    double bval = vcl_sqrt( (bVectors[i][0] * bVectors[i][0])
+    double norm = vcl_sqrt( (bVectors[i][0] * bVectors[i][0])
                             + (bVectors[i][1] * bVectors[i][1])
                             + (bVectors[i][2] * bVectors[i][2]) );
-    bval *= BValue;
+    if( std::abs( 1- norm) > 1e-4 ) // Asssume value very close to 1 are 1
+      {
+      norm = 1.0;
+      }
+    const double bval = norm*BValue;
     bValues.push_back(bval);
     }
   return EXIT_SUCCESS;
@@ -220,14 +224,20 @@ normalize(const std::vector<TScalar> &vec,double *normedVec)
     normedVec[j] = vec[j];
     norm += vec[j] * vec[j];
     }
-  norm = sqrt(norm);
-  if(norm < 0.00001)
+  norm = std::sqrt(norm);
+  if( norm < 0.00001) //Only norm if not equal to zero
     {
-    norm = 0.00001;
+    for(unsigned j = 0; j < 3; ++j)
+      {
+      normedVec[j] = 0.0;
+      }
     }
-  for(unsigned j = 0; j < 3; ++j)
+  else if( std::abs(1.0 - norm) > 1e-4 ) //Only normalize if not very close to 1
     {
-    normedVec[j] /= norm;
+    for(unsigned j = 0; j < 3; ++j)
+      {
+      normedVec[j] /= norm;
+      }
     }
 }
 

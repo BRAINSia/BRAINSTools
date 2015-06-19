@@ -403,7 +403,7 @@ typename itk::Transform<TScalarType, 3, 3>::Pointer ReadTransformFromDisk(const 
       tempCopy->ComputeWMatrix();
       genericTransform = tempCopy.GetPointer();
       }
-      else if( transformFileType == "BSplineDeformableTransform" )
+    else if( transformFileType == "BSplineTransform" )
       {
       const typename BSplineTransformType::ConstPointer tempInitializerITKTransform =
         dynamic_cast<BSplineTransformType const *>( ( *( currentTransformList.begin() ) ).GetPointer() );

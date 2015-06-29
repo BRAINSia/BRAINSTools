@@ -177,7 +177,7 @@ int RecoverBValues(const TImage *inputVol,
     double norm = vcl_sqrt( (bVectors[i][0] * bVectors[i][0])
                             + (bVectors[i][1] * bVectors[i][1])
                             + (bVectors[i][2] * bVectors[i][2]) );
-    if( std::abs( 1- norm) > 1e-4 ) // Asssume value very close to 1 are 1
+    if( std::abs( 1- norm) < 1e-4 ) // Asssume value very close to 1 are 1
       {
       norm = 1.0;
       }

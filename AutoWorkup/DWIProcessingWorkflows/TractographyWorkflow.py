@@ -34,6 +34,10 @@ def CreateTractographyWorkflow(WFname):
     UKFNode.inputs.seedFALimit = 0.06
     UKFNode.inputs.Ql = 70
     UKFNode.inputs.recordLength = 2
+    UKFNode.inputs.recordTensors
+    UKFNode.inputs.recordFreeWater
+    UKFNode.inputs.recordFA
+    UKFNode.inputs.recordTrace
 
     TractWF.connect(inputsSpec, 'DWI_Corrected_Aligned_CS', UKFNode, 'dwiFile')
     TractWF.connect(inputsSpec, 'DWIBrainMask', UKFNode, 'maskFile')

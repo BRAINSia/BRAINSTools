@@ -1,8 +1,8 @@
 function runCS(testFileName,maskFileName,outFileName)
 
     % Add main MATLAB_SCRIPTS code tree
-    addpath('/Shared/sinapse/scratch/aghayoor/CompressedSensing/WorkInProgress/MATLAB_SCRIPTS')
-    addpath('/Shared/sinapse/scratch/aghayoor/CompressedSensing/WorkInProgress/mexFiles')
+    addpath('/Shared/sinapse/scratch/aghayoor/CompressedSensing/30June2015/CompressedSensing/MATLAB_SCRIPTS')
+    addpath('/Shared/sinapse/scratch/aghayoor/CompressedSensing/30June2015/CompressedSensing/mexFiles')
 
     % Check that the file exists
     assert(exist(testFileName, 'file') == 2, 'File does not exist');

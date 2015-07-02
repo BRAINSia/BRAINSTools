@@ -8,8 +8,8 @@ import nipype.pipeline.engine as pe  # pypeline engine
 
 from utilities.misc import *
 from utilities.distributed import modify_qsub_args
-from SEMTools.utilities.brains import BRAINSLandmarkInitializer
-from SEMTools import BRAINSSnapShotWriter
+from semtools.utilities.brains import BRAINSLandmarkInitializer
+from semtools import BRAINSSnapShotWriter
 
 """
     from WorkupT1T2MALF import CreateMALFWorkflow
@@ -188,7 +188,7 @@ def CreateMALFWorkflow(WFname, master_config,good_subjects,BASE_DATA_GRABBER_DIR
         ## if using Registration masking, then do ROIAuto on fixed and moving images and connect to registraitons
         UseRegistrationMasking = True
         if UseRegistrationMasking == True:
-            from SEMTools.segmentation.specialized import BRAINSROIAuto
+            from semtools.segmentation.specialized import BRAINSROIAuto
 
             fixedROIAuto[malf_atlas_subject] = pe.Node(interface=BRAINSROIAuto(), name="fixedROIAUTOMask_"+malf_atlas_subject)
             fixedROIAuto[malf_atlas_subject].inputs.ROIAutoDilateSize=10

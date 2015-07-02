@@ -8,10 +8,10 @@ import nipype.pipeline.engine as pe  # pypeline engine
 
 import os
 
-from SEMTools.segmentation.specialized import BRAINSConstellationDetector
-from SEMTools.utilities.brains import BRAINSLandmarkInitializer
-from SEMTools.registration.brainsresample import BRAINSResample
-from SEMTools.segmentation.specialized import BRAINSROIAuto
+from semtools.segmentation.specialized import BRAINSConstellationDetector
+from semtools.utilities.brains import BRAINSLandmarkInitializer
+from semtools.registration.brainsresample import BRAINSResample
+from semtools.segmentation.specialized import BRAINSROIAuto
 
 """
     from WorkupT1T2LandmarkInitialization import CreateLandmarkInitializeWorkflow

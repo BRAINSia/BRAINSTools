@@ -2,5 +2,5 @@ try:
     import utilities
 except ImportError:
     import AutoWorkup.utilities
-#import AutoWorkup.SEMTools
+#import AutoWorkup.semtools
 import segmentation, baseline, singleSession, template, utils, databaseNode, atlasNode

@@ -45,14 +45,14 @@ from WorkupAddsonBrainStem import CreateBrainstemWorkflow
 from utilities.misc import *
 
 try:
-    from SEMTools import *
+    from semtools import *
 except ImportError:
-    from AutoWorkup.SEMTools import *
+    from AutoWorkup.semtools import *
 
-from SEMTools.registration.brainsresample import BRAINSResample
+from semtools.registration.brainsresample import BRAINSResample
 
-from SEMTools.filtering.denoising import UnbiasedNonLocalMeans
-from SEMTools.segmentation.specialized import BRAINSCreateLabelMapFromProbabilityMaps
+from semtools.filtering.denoising import UnbiasedNonLocalMeans
+from semtools.segmentation.specialized import BRAINSCreateLabelMapFromProbabilityMaps
 
 
 def get_list_element(nestedList, index):

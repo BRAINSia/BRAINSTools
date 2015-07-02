@@ -2,7 +2,7 @@
 
 from nipype.interfaces.utility import Merge, Function, IdentityInterface
 import nipype.pipeline.engine as pe  # pypeline engine
-from SEMTools import *
+from semtools import *
 from PipeLineFunctionHelpers import getListIndex
 
 from RF12BRAINSCutWrapper import RF12BRAINSCutWrapper

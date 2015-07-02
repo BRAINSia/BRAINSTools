@@ -39,7 +39,7 @@ def segmentation(projectid, subjectid, sessionid, master_config, onlyT1=True, pi
     from PipeLineFunctionHelpers import ClipT1ImageWithBrainMask
     from WorkupT1T2BRAINSCut import CreateBRAINSCutWorkflow
     from utilities.distributed import modify_qsub_args
-    from SEMTools import BRAINSSnapShotWriter
+    from semtools import BRAINSSnapShotWriter
 
     #CLUSTER_QUEUE=master_config['queue']
     CLUSTER_QUEUE_LONG=master_config['long_q']

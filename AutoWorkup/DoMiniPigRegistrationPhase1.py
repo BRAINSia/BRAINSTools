@@ -45,7 +45,7 @@ def addToSysPath(index, path):
 
 # Modify the PATH for python modules
 addToSysPath(0, '/scratch/johnsonhj/src/NEP-11/NIPYPE')
-addToSysPath(0, '/scratch/johnsonhj/src/NEP-11/BRAINSTools/AutoWorkup/SEMTools')
+addToSysPath(0, '/scratch/johnsonhj/src/NEP-11/BRAINSTools/AutoWorkup/semtools')
 addToSysPath(1, '/scratch/johnsonhj/src/NEP-11/BRAINSTools/AutoWorkup')
 addToSysPath(1, '/scratch/johnsonhj/src/NEP-11/BRAINSTools')
 
@@ -71,7 +71,7 @@ from nipype.interfaces.ants import (
     AverageImages, MultiplyImages,
     AverageAffineTransform)
 
-from SEMTools import *
+from semtools import *
 
 import yaml
 

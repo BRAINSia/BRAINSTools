@@ -292,7 +292,8 @@ LevelTracingImageFilter<TInputImage,TOutputImage>
   InputImagePixelType threshold = inputImage->GetPixel(m_Seed);
   OffsetType offset;
 
-  IndexType pix, pixTemp, seed;
+  IndexType pix;
+  IndexType seed;
   InputImagePixelType val;
 
   seed[0] = m_Seed[0];
@@ -328,6 +329,8 @@ LevelTracingImageFilter<TInputImage,TOutputImage>
   // Look for the 4 connected neighbor that is background. Save it as
   // the zeroIndex.
   bool found = false;
+  IndexType pixTemp;
+  pixTemp.Fill(0);
   for(zeroIndex = 1; zeroIndex<8; zeroIndex+=2)
     {
     offsetX = neighbors[zeroIndex][0];

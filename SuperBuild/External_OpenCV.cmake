@@ -82,6 +82,13 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
       -DBUILD_opencv_video:BOOL=OFF
       -DBUILD_opencv_videostab:BOOL=OFF
       -DBUILD_opencv_world:BOOL=OFF
+
+      -DBUILD_opencv_superres:BOOL=OFF
+      -DBUILD_opencv_python2:BOOL=OFF
+      -DBUILD_opencv_videoio:BOOL=OFF
+      -DBUILD_opencv_java:BOOL=OFF
+      -DBUILD_opencv_imgcodec:BOOL=OFF
+
 ## Turn off GPU supports
       -DWITH_CUDA:BOOL=OFF
       -DWITH_CUFFT:BOOL=OFF
@@ -115,7 +122,7 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
   #set(${proj}_REPOSITORY "${git_protocol}://github.com/Itseez/opencv")
   #set(${proj}_GIT_TAG "2.4.9") # USE THIS FOR UPDATED VERSION
   set(${proj}_REPOSITORY "${git_protocol}://github.com/BRAINSia/opencv.git") # USE THIS FOR UPDATED VERSION
-  set(${proj}_GIT_TAG "20150501_OpenCV") # USE THIS FOR UPDATED VERSION for clang with c++11 support
+  set(${proj}_GIT_TAG e01b485ac65c72ae5fdf4631fb18cb3d4c3ce910)  # "20150501_OpenCV" USE THIS FOR UPDATED VERSION for clang with c++11 support
   #set(${proj}_GIT_TAG "20140630_Upstream") # USE THIS FOR UPDATED VERSION for GCC 4.4.7 on RHEL6
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}

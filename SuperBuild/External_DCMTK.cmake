@@ -43,11 +43,11 @@ if(NOT DEFINED DCMTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     SOURCE_DIR ${proj}
     BINARY_DIR ${proj}-build
     CMAKE_CACHE_ARGS
-      ${CMAKE_PROJECT_INCLUDE_EXTERNAL_PROJECT_ARG}
       -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}
       -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
       -DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}
       -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags}
+      ${CMAKE_PROJECT_INCLUDE_EXTERNAL_PROJECT_ARG}
       -DBUILD_SHARED_LIBS:BOOL=OFF
       -DDCMTK_WITH_DOXYGEN:BOOL=OFF
       -DDCMTK_WITH_ZLIB:BOOL=OFF # see CTK github issue #25
@@ -63,6 +63,7 @@ if(NOT DEFINED DCMTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       ${${proj}_DEPENDENCIES}
   )
   set(DCMTK_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
+  set(DCMTK_SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj})
 
   #-----------------------------------------------------------------------------
   # Launcher setting specific to build tree
@@ -76,6 +77,13 @@ if(NOT DEFINED DCMTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   mark_as_superbuild(
     VARS ${proj}_LIBRARY_PATHS_LAUNCHER_BUILD
     LABELS "LIBRARY_PATHS_LAUNCHER_BUILD"
+    )
+
+  # environment variables
+  set(${proj}_ENVVARS_LAUNCHER_INSTALLED "DCMDICTHOME=<APPLAUNCHER_DIR>/lib/Slicer-4.4/private.dic")
+  mark_as_superbuild(
+    VARS ${proj}_ENVVARS_LAUNCHER_INSTALLED
+    LABELS "ENVVARS_LAUNCHER_INSTALLED"
     )
 
 else()

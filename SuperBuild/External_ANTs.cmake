@@ -29,9 +29,8 @@ if(${PRIMARY_PROJECT_NAME}_USE_QT)
   list(APPEND ${proj}_CMAKE_OPTIONS -DANTS_USE_QT:BOOL=ON)
 endif()
 ### --- End Project specific additions
-#set(${proj}_REPOSITORY "https://github.com/BRAINSia/ANTs.git")
 set(${proj}_REPOSITORY "https://github.com/stnava/ANTs.git")
-set(${proj}_GIT_TAG "FixDoublePrecisionFixedParameters") ## WIP
+set(${proj}_GIT_TAG 9d5eefe487e1e1e1a3241a66c68a7e8f5d2dd6b9)  # "FixDoublePrecisionFixedParameters"
 ExternalProject_Add(${proj}
   ${${proj}_EP_ARGS}
   GIT_REPOSITORY ${${proj}_REPOSITORY}

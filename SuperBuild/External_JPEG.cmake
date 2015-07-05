@@ -28,7 +28,7 @@ if(NOT ( DEFINED "USE_SYSTEM_${proj}" AND "${USE_SYSTEM_${proj}}" ) )
 
   ### --- End Project specific additions
   set(${proj}_REPOSITORY ${git_protocol}://github.com/BRAINSia/JPeg9A.git)
-  set(${proj}_GIT_TAG BRAINSTools_CompilerCleanup)
+  set(${proj}_GIT_TAG 43056c8b105e3b3f5fff0da8c1b48e58a99c1725)  # BRAINSTools_CompilerCleanup
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
     GIT_REPOSITORY ${${proj}_REPOSITORY}

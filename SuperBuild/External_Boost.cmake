@@ -34,28 +34,36 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
   ### --- End Project specific additions
 # SVN is too slow SVN_REPOSITORY http://svn.boost.org/svn/boost/trunk
 # SVN is too slow SVN_REVISION -r "82586"
-  set(${proj}_URL http://sourceforge.net/projects/boost/files/boost/1.55.0/boost_1_55_0.tar.gz )
-  set(${proj}_MD5 93780777cfbf999a600f62883bd54b17 )
+  set(${proj}_URL http://sourceforge.net/projects/boost/files/boost/1.58.0/boost_1_58_0.tar.gz )
+  set(${proj}_MD5 5a5d5614d9a07672e1ab2a250b5defc5 )
+
+
   if(CMAKE_COMPILER_IS_CLANGXX)
     set(CLANG_ARG -DCMAKE_COMPILER_IS_CLANGXX:BOOL=ON)
   endif()
   set(BOOST_SOURCE_DIR ${SOURCE_DOWNLOAD_CACHE}/${proj})
+
+  ### --- End Project specific additions
+  set(${proj}_REPOSITORY "${git_protocol}://github.com/boostorg/boost.git")
+  set(${proj}_GIT_TAG "boost-1.58.0") # July 4, 2015
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
-    URL ${${proj}_URL}
-    URL_MD5 ${${proj}_MD5}
-    SOURCE_DIR ${BOOST_SOURCE_DIR}
+    GIT_REPOSITORY ${${proj}_REPOSITORY}
+    GIT_TAG ${${proj}_GIT_TAG}
+    SOURCE_DIR ${SOURCE_DOWNLOAD_CACHE}/${proj}
+    #BINARY_DIR ${proj}-build
+    BUILD_IN_SOURCE 1
+
     ${cmakeversion_external_update} "${cmakeversion_external_update_value}"
     CONFIGURE_COMMAND ${CMAKE_COMMAND}
-    ${CLANG_ARG}
-    -DBUILD_DIR:PATH=${CMAKE_CURRENT_BINARY_DIR}/${proj}
-    -DBOOST_INSTALL_DIR:PATH=${Boost_Install_Dir}
-    -P ${Boost_Configure_Script}
+                             ${CLANG_ARG}
+                             -DBUILD_DIR:PATH=${CMAKE_CURRENT_BINARY_DIR}/${proj}
+                             -DBOOST_INSTALL_DIR:PATH=${Boost_Install_Dir}
+                             -P ${Boost_Configure_Script}
     INSTALL_COMMAND ""
-    BUILD_IN_SOURCE 1
     BUILD_COMMAND ${CMAKE_COMMAND}
-    -DBUILD_DIR:PATH=${CMAKE_CURRENT_BINARY_DIR}/Boost
-    -DBOOST_INSTALL_DIR:PATH=${Boost_Install_Dir} -P ${Boost_Build_Script}
+                             -DBUILD_DIR:PATH=${CMAKE_CURRENT_BINARY_DIR}/Boost
+                             -DBOOST_INSTALL_DIR:PATH=${Boost_Install_Dir} -P ${Boost_Build_Script}
   )
   set(BOOST_ROOT        ${BOOST_SOURCE_DIR})
   set(BOOST_INCLUDE_DIR ${BOOST_SOURCE_DIR})

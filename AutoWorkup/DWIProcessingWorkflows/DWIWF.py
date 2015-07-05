@@ -56,11 +56,11 @@ def runMainWorkflow(DWI_scan, T2_scan, labelMap_image, BASE_DIR, dataSink_DIR, P
 
     outputsSpec = pe.Node(interface=IdentityInterface(fields=['DWI_Corrected','DWI_Corrected_Aligned','DWI_Corrected_Aligned_CS','DWIBrainMask',
                                                               'ukfTracks',
-                                                              'tensor_image','FAImage','MDImage','RDImage','FrobeniusNormImage',
+                                                              'tensor_image','idwi_image','FAImage','MDImage','RDImage','FrobeniusNormImage',
                                                               'Lambda1Image','Lambda2Image','Lambda3Image',
                                                               'FA_stats','MD_stats','RD_stats','FrobeniusNorm_stats',
                                                               'Lambda1_stats','Lambda2_stats','Lambda3_stats',
-                                                              'tensor_image_withoutCS','FAImage_withoutCS','MDImage_withoutCS','RDImage_withoutCS','FrobeniusNormImage_withoutCS',
+                                                              'tensor_image_withoutCS','idwi_image_withoutCS','FAImage_withoutCS','MDImage_withoutCS','RDImage_withoutCS','FrobeniusNormImage_withoutCS',
                                                               'Lambda1Image_withoutCS','Lambda2Image_withoutCS','Lambda3Image_withoutCS',
                                                               'FA_withoutCS_stats','MD_withoutCS_stats','RD_withoutCS_stats','FrobeniusNorm_withoutCS_stats',
                                                               'Lambda1_withoutCS_stats','Lambda2_withoutCS_stats','Lambda3_withoutCS_stats']),
@@ -115,6 +115,7 @@ def runMainWorkflow(DWI_scan, T2_scan, labelMap_image, BASE_DIR, dataSink_DIR, P
                                                         ('outputsSpec.DWIBrainMask','DWIBrainMask')]),
                          (myCSWF, outputsSpec, [('outputsSpec.DWI_Corrected_Aligned_CS','DWI_Corrected_Aligned_CS')]),
                          (myEstimationWF, outputsSpec, [('outputsSpec.tensor_image','tensor_image'),
+                                                        ('outputsSpec.idwi_image','idwi_image'),
                                                         ('outputsSpec.FAImage','FAImage'),
                                                         ('outputsSpec.MDImage','MDImage'),
                                                         ('outputsSpec.RDImage','RDImage'),
@@ -143,6 +144,7 @@ def runMainWorkflow(DWI_scan, T2_scan, labelMap_image, BASE_DIR, dataSink_DIR, P
                                                                           ('outputsSpec.Lambda2Image','inputsSpec.Lambda2Image'),
                                                                           ('outputsSpec.Lambda3Image','inputsSpec.Lambda3Image')]),
                          (EstimationWFWithoutCS, outputsSpec, [('outputsSpec.tensor_image','tensor_image_withoutCS'),
+                                                               ('outputsSpec.idwi_image','idwi_image_withoutCS'),
                                                                ('outputsSpec.FAImage','FAImage_withoutCS'),
                                                                ('outputsSpec.MDImage','MDImage_withoutCS'),
                                                                ('outputsSpec.RDImage','RDImage_withoutCS'),
@@ -168,6 +170,7 @@ def runMainWorkflow(DWI_scan, T2_scan, labelMap_image, BASE_DIR, dataSink_DIR, P
                                         ('DTI_RIS/_ComputeStatistics3/frobenius_statistics.csv', 'DTI_RIS/frobenius_norm_statistics.csv'),
                                         ('DTI_RIS/_ComputeStatistics4', 'DTI_RIS/'),('DTI_RIS/_ComputeStatistics5', 'DTI_RIS/'),('DTI_RIS/_ComputeStatistics6', 'DTI_RIS/'),
                                         ('DTI_RIS_withoutCS/DTI_Output.nrrd', 'DTI_RIS_withoutCS/DTI_Output_withoutCS.nrrd'),
+                                        ('DTI_RIS_withoutCS/IDWI_Output.nrrd', 'DTI_RIS_withoutCS/IDWI_Output_withoutCS.nrrd'),
                                         ('DTI_RIS_withoutCS/FA.nrrd', 'DTI_RIS_withoutCS/FA_withoutCS.nrrd'),
                                         ('DTI_RIS_withoutCS/_ComputeStatistics0/FA_statistics.csv', 'DTI_RIS_withoutCS/FA_withoutCS_statistics.csv'),
                                         ('DTI_RIS_withoutCS/MD.nrrd', 'DTI_RIS_withoutCS/MD_withoutCS.nrrd'),
@@ -192,6 +195,7 @@ def runMainWorkflow(DWI_scan, T2_scan, labelMap_image, BASE_DIR, dataSink_DIR, P
     DWIWorkflow.connect(outputsSpec, 'ukfTracks', DWIDataSink, 'Outputs.Tractography.@ukfTracks')
     # Outputs/DTI_RIS
     DWIWorkflow.connect(outputsSpec, 'tensor_image', DWIDataSink, 'Outputs.DTI_RIS.@tensor_image')
+    DWIWorkflow.connect(outputsSpec, 'idwi_image', DWIDataSink, 'Outputs.DTI_RIS.@idwi_image')
     DWIWorkflow.connect(outputsSpec, 'FAImage', DWIDataSink, 'Outputs.DTI_RIS.@FAImage')
     DWIWorkflow.connect(outputsSpec, 'MDImage', DWIDataSink, 'Outputs.DTI_RIS.@MDImage')
     DWIWorkflow.connect(outputsSpec, 'RDImage', DWIDataSink, 'Outputs.DTI_RIS.@RDImage')
@@ -208,6 +212,7 @@ def runMainWorkflow(DWI_scan, T2_scan, labelMap_image, BASE_DIR, dataSink_DIR, P
     DWIWorkflow.connect(outputsSpec, 'Lambda3_stats', DWIDataSink, 'Outputs.DTI_RIS.@Lambda3_stats')
     # Outputs/DTI_RIS_withoutCS
     DWIWorkflow.connect(outputsSpec, 'tensor_image_withoutCS', DWIDataSink, 'Outputs.DTI_RIS_withoutCS.@tensor_image_withoutCS')
+    DWIWorkflow.connect(outputsSpec, 'idwi_image_withoutCS', DWIDataSink, 'Outputs.DTI_RIS_withoutCS.@idwi_image_withoutCS')
     DWIWorkflow.connect(outputsSpec, 'FAImage_withoutCS', DWIDataSink, 'Outputs.DTI_RIS_withoutCS.@FAImage_withoutCS')
     DWIWorkflow.connect(outputsSpec, 'MDImage_withoutCS', DWIDataSink, 'Outputs.DTI_RIS_withoutCS.@MDImage_withoutCS')
     DWIWorkflow.connect(outputsSpec, 'RDImage_withoutCS', DWIDataSink, 'Outputs.DTI_RIS_withoutCS.@RDImage_withoutCS')

@@ -55,9 +55,9 @@ def CreateEstimationWorkflow(WFname):
     inputsSpec = pe.Node(interface=IdentityInterface(fields=['inputDWIImage', 'DWIBrainMask']),
                          name='inputsSpec')
 
-    outputsSpec = pe.Node(interface=IdentityInterface(fields=['tensor_image','FAImage','MDImage',
-                                                              'RDImage','FrobeniusNormImage',
-                                                              'Lambda1Image','Lambda2Image','Lambda3Image']),
+    outputsSpec = pe.Node(interface=IdentityInterface(fields=['tensor_image','idwi_image', # from dtiestim
+                                                              'FAImage','MDImage','RDImage','FrobeniusNormImage', # from dtiprocess
+                                                              'Lambda1Image','Lambda2Image','Lambda3Image']), # from dtiprocess
                           name='outputsSpec')
 
     # Step1: DTI estimation
@@ -69,6 +69,7 @@ def CreateEstimationWorkflow(WFname):
     EstimationWF.connect(inputsSpec, 'inputDWIImage', DTIEstim, 'dwi_image')
     EstimationWF.connect(inputsSpec, 'DWIBrainMask', DTIEstim, 'brain_mask')
     EstimationWF.connect(DTIEstim, 'tensor_output', outputsSpec, 'tensor_image')
+    EstimationWF.connect(DTIEstim, 'idwi', outputsSpec, 'idwi_image')
 
     # Step2: DTI process
     # HACK: In the linux, "dtiprocess" returns a segmentation fault after it finishes all its processing

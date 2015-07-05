@@ -65,6 +65,7 @@ def CreateEstimationWorkflow(WFname):
     DTIEstim.inputs.method = 'wls'
     DTIEstim.inputs.threshold = 0
     DTIEstim.inputs.tensor_output = 'DTI_Output.nrrd'
+    DTIEstim.inputs.idwi = 'IDWI_Ouput.nrrd'
     EstimationWF.connect(inputsSpec, 'inputDWIImage', DTIEstim, 'dwi_image')
     EstimationWF.connect(inputsSpec, 'DWIBrainMask', DTIEstim, 'brain_mask')
     EstimationWF.connect(DTIEstim, 'tensor_output', outputsSpec, 'tensor_image')

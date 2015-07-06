@@ -123,7 +123,7 @@ ReadSlicer3toITKLmk( const std::string & landmarksFilename )
       {
       size_t            pos1 = line.find( ',', 0 );
       const std::string name = line.substr( 0, pos1 );
-      PointType         labelPos;
+      LandmarkPointType labelPos;
       for( unsigned int i = 0; i < 3; ++i )
         {
         const size_t pos2 = line.find( ',', pos1 + 1 );

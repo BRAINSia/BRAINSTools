@@ -34,9 +34,9 @@ class ThreeLandmarksForPlane
   // The definition depends on Slicer3LandmarkIO.
   // Point type is simply itk::Pointe<double, 3>
 public:
-  PointType A;
-  PointType B;
-  PointType C;
+  LandmarkPointType A;
+  LandmarkPointType B;
+  LandmarkPointType C;
 
   typedef itk::Point<double, 3> VectorType;
 
@@ -97,7 +97,7 @@ public:
               << std::endl;
   }
 
-  double GetRelativeLocationToPlane( PointType x )
+  double GetRelativeLocationToPlane( LandmarkPointType x )
   {
     double answer =
       normal[0] * ( A[0] - x[0] )
@@ -129,7 +129,7 @@ CutBinaryVolumeByPlaneWithDirection( typename TImageType::Pointer * _imageVolume
   std::cout << __LINE__ << "::" << __FILE__ << std::endl;
   for( it.GoToBegin(); !it.IsAtEnd(); ++it )
     {
-    PointType currentPhysicalLocation;
+    LandmarkPointType currentPhysicalLocation;
     (*_imageVolume)->TransformIndexToPhysicalPoint( it.GetIndex(), currentPhysicalLocation );
 
     if( direction == "true" &&
@@ -149,7 +149,7 @@ CutBinaryVolumeByPlaneWithDirection( typename TImageType::Pointer * _imageVolume
 template <class TImageType>
 void
 CutBinaryVolumeByPointWithDirection( typename TImageType::Pointer * _imageVolume,
-                                     const PointType _landmark,
+                                     const LandmarkPointType _landmark,
                                      const std::string & _direction )
 {
   // set directional constant for convenient programming
@@ -193,7 +193,7 @@ CutBinaryVolumeByPointWithDirection( typename TImageType::Pointer * _imageVolume
   std::cout << __LINE__ << "::" << __FILE__ << std::endl;
   for( it.GoToBegin(); !it.IsAtEnd(); ++it )
     {
-    PointType currentPhysicalLocation;
+    LandmarkPointType currentPhysicalLocation;
     (*_imageVolume)->TransformIndexToPhysicalPoint( it.GetIndex(), currentPhysicalLocation );
 
     switch( myDirection )
@@ -319,7 +319,7 @@ int main( int argc, char * argv[] )
       std::exit( EXIT_FAILURE );
       }
 
-    PointType currentLdmk = landmarksSet.find( *ldmkIt )->second;
+    LandmarkPointType currentLdmk = landmarksSet.find( *ldmkIt )->second;
     std::cout << "currentLdmk:: " << *ldmkIt << "::"
               << currentLdmk[0] << ", "
               << currentLdmk[1] << ", "
@@ -375,7 +375,7 @@ int main( int argc, char * argv[] )
         std::cerr << "ERROR: Landmark not found: " << *inputLdmrIt << std::endl;
         std::exit( EXIT_FAILURE );
         }
-      PointType currentLandmark = landmarksSet.find( *inputLdmrIt )->second;
+      LandmarkPointType currentLandmark = landmarksSet.find( *inputLdmrIt )->second;
       std::cout << "currentLandmark:: " << *inputLdmrIt << "::"
                 << currentLandmark[0] << ", "
                 << currentLandmark[1] << ", "

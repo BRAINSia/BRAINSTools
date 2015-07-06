@@ -47,9 +47,9 @@
 
 // D E F I N E S //////////////////////////////////////////////////////////////
 
-typedef std::map<std::string, std::vector<double> >    LandmarksDistanceMapType;
-typedef std::map<std::string, double>                  LandmarksValueMapType;
-typedef std::vector<std::map<std::string, PointType> > LandmarksMapTypeVec;
+typedef std::map<std::string, std::vector<double> >            LandmarksDistanceMapType;
+typedef std::map<std::string, double>                          LandmarksValueMapType;
+typedef std::vector<std::map<std::string, LandmarkPointType> > LandmarksMapTypeVec;
 
 // F U N C T I O N S //////////////////////////////////////////////////////////
 

@@ -42,19 +42,13 @@ int main( int argc, char * argv[] )
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
 
-  std::map<std::string, PointType> lmksMap;
-  PointType                        ACpoint;
-  PointType                        PCpoint;
-  PointType                        midACPCpoint;
 
-  lmksMap = ReadSlicer3toITKLmk(inputLandmarkFile);
+  std::map<std::string, LandmarkPointType> lmksMap = ReadSlicer3toITKLmk(inputLandmarkFile);
 
-  ACpoint = lmksMap["AC"];
-  PCpoint = lmksMap["PC"];
+  const LandmarkPointType ACpoint = lmksMap["AC"];
+  const LandmarkPointType PCpoint = lmksMap["PC"];
 
-  midACPCpoint[0] = (PCpoint[0] - ACpoint[0]) / 2;
-  midACPCpoint[1] = (PCpoint[1] - ACpoint[1]) / 2;
-  midACPCpoint[2] = (PCpoint[2] - ACpoint[2]) / 2;
+  const LandmarkPointType midACPCpoint = (PCpoint - ACpoint) * 0.5;
 
 //  std::cout << "PC :" << PCpoint[0] << ", " << PCpoint[1] << ", " << PCpoint[2] << ")" << std::endl;
 //  std::cout << "midpoint :" << midACPCpoint[0] << ", " << midACPCpoint[1] << ", " << midACPCpoint[2] << ")" <<

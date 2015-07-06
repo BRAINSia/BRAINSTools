@@ -82,10 +82,10 @@ int main( int argc, char * argv[] )
   std::map<std::string, double> LandmarksVarianceMap; // for variance
   std::map<std::string, double> LandmarksSTDMap;      // for standard deviation
 
-  typedef std::vector<std::map<std::string, PointType> > LandmarksMapTypeVec;
+  typedef std::vector<std::map<std::string, LandmarkPointType> > LandmarksMapTypeVec;
   LandmarksMapTypeVec LandmarksMapVector;
 
-  // LandmarksMapType is as "std::map<std::string, PointType>" which means a map between landmarks and their
+  // LandmarksMapType is as "std::map<std::string, LandmarkPointType>" which means a map between landmarks and their
   // coordinates.
   // For each input landmark file this LandmarksMapType is computed and is set in a vector: "LandmarksMapTypeVec"
 

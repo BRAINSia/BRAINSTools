@@ -1019,10 +1019,6 @@ int main(int argc, char * *argv)
   // ::ResampleImages()
   {
   // muLogMacro(<< "ResampleImages");
-
-  // Define the internal reader type
-  typedef itk::ResampleImageFilter<FloatImageType, FloatImageType> ResampleType;
-
   intraSubjectRegisteredImageMap =
     ResampleImageList(resamplerInterpolatorType, intraSubjectNoiseRemovedImageMap,
                       intraSubjectTransforms,atlasreg->GetKeySubjectImage());

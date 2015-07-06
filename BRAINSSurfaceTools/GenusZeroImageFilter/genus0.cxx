@@ -2017,7 +2017,8 @@ static int big_component(int *Tris, float *Verts, int *Vert_count, int *Tri_coun
 static int save_image(genus0parameters *g0)
 {
   int             i, j, k, totlen, h, h1, sti;
-  int *           pad, dims[3], origlen, vo[3], v2[3], pos[3];
+  int *           pad, dims[3], origlen, vo[3];
+  int pos[3];
   char            msg[200];
   unsigned short *output, zp;
   float *         m, *verts, hv[3];
@@ -2115,7 +2116,6 @@ static int save_image(genus0parameters *g0)
       }
     }
   vo[0] = 0; vo[1] = g0->vert_count; vo[2] = ( g0->vert_count ) * 2;
-  v2[0] = 1; v2[1] = dims[0]; v2[2] = dims[0] * dims[1];
   verts = g0->vertices;
 
   if( g0->return_adjusted_label_map )  /* they want a new label map back */

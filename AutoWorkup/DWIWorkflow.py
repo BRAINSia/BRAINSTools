@@ -478,7 +478,7 @@ if __name__ == '__main__':
   import nipype.interfaces.io as nio   # Data i/oS
   import nipype.pipeline.engine as pe  # pypeline engine
   from nipype.interfaces.freesurfer import ReconAll
-  from semtools import *
+  from nipype.interfaces.semtools import *
   #####################################################################################
 
   exit = runMainWorkflow(DWISCAN, T2SCAN, LabelMapImage, CACHEDIR, RESULTDIR)

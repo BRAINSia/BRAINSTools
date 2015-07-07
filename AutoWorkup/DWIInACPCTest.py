@@ -63,7 +63,7 @@ from nipype.interfaces.utility import Merge, Split, Function, Rename, IdentityIn
 import nipype.interfaces.io as nio   # Data i/oS
 import nipype.pipeline.engine as pe  # pypeline engine
 from nipype.interfaces.freesurfer import ReconAll
-from semtools import *
+from nipype.interfaces.semtools import *
 
 
 def get_global_sge_script(pythonPathsList, binPathsList, customEnvironment={}):
@@ -258,7 +258,7 @@ import nipype.interfaces.io as nio   # Data i/oS
 import nipype.pipeline.engine as pe  # pypeline engine
 from nipype.interfaces.freesurfer import ReconAll
 
-from semtools import BRAINSFit,gtractResampleDWIInPlace,dtiestim,dtiprocess
+from nipype.interfaces.semtools import BRAINSFit,gtractResampleDWIInPlace,dtiestim,dtiprocess
 
 inputsSpec = pe.Node(interface=IdentityInterface(fields=['SESSION_TUPLE']), name='inputspec')
 inputsSpec.iterables = ('SESSION_TUPLE',SESSION_TUPLE)
@@ -394,7 +394,7 @@ MasterDWIWorkflow.connect(DTIProcess, 'lambda2_output', outputsSpec, 'Lambda2Ima
 MasterDWIWorkflow.connect(DTIProcess, 'lambda3_output', outputsSpec, 'Lambda3Image')
 
 ## UKF Processing
-from semtools import UKFTractography
+from nipype.interfaces.semtools import UKFTractography
 UKFNode = pe.Node(interface=UKFTractography(), name= "UKFRunRecordStates")
 UKFNode.inputs.tracts = "ukfTrackts.vtk"
 UKFNode.inputs.tractsWithSecondTensor = "ukfSecondTensorTracks.vtk"

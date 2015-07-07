@@ -1,6 +1,6 @@
 from nipype.interfaces.base import CommandLine, CommandLineInputSpec, TraitedSpec, File, Directory, traits, isdefined, InputMultiPath, OutputMultiPath
 import os
-from semtools.diffusion.dtiprep import DTIPrepInputSpec, DTIPrepOutputSpec, DTIPrep
+from nipype.interfaces.semtools.diffusion.dtiprep import DTIPrepInputSpec, DTIPrepOutputSpec, DTIPrep
 
 
 class DTIPrepextOutputSpec(DTIPrepOutputSpec):

@@ -430,6 +430,6 @@ if __name__ == '__main__':
     from workflows.utils import run_workflow, print_workflow
     from BAWantsRegistrationBuildTemplate import BAWantsRegistrationTemplateBuildSingleIterationWF
     from utilities.configFileParser import nipype_options
-    from semtools.testing.generateaveragelmkfile import GenerateAverageLmkFile
+    from nipype.interfaces.semtools.testing.generateaveragelmkfile import GenerateAverageLmkFile
     exit = _template_runner(argv, environment, experiment, pipeline, cluster)
     sys.exit(exit)

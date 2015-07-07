@@ -38,7 +38,7 @@ PROGRAM_PATHS = PROGRAM_PATHS.split(':')
 PROGRAM_PATHS.extend(os.environ['PATH'].split(':'))
 os.environ['PATH'] = ':'.join(PROGRAM_PATHS)
 
-from semtools import *
+from nipype.interfaces.semtools import *
 
 print "Building Pipeline"
 ########### PIPELINE INITIALIZATION #############

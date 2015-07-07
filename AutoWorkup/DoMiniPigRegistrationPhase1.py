@@ -71,7 +71,7 @@ from nipype.interfaces.ants import (
     AverageImages, MultiplyImages,
     AverageAffineTransform)
 
-from semtools import *
+from nipype.interfaces.semtools import *
 
 import yaml
 

@@ -12,7 +12,7 @@ from nipype.interfaces.base import traits, isdefined, BaseInterface
 from nipype.interfaces.utility import Merge, Split, Function, Rename, IdentityInterface
 import nipype.interfaces.io as nio   # Data i/oS
 import nipype.pipeline.engine as pe  # pypeline engine
-from semtools import *
+from nipype.interfaces.semtools import *
 
 def CreateTractographyWorkflow(WFname):
     TractWF = pe.Workflow(name=WFname)

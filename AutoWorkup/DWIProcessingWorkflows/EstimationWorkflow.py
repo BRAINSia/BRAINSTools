@@ -13,13 +13,13 @@ from nipype.interfaces.base import traits, isdefined, BaseInterface
 from nipype.interfaces.utility import Merge, Split, Function, Rename, IdentityInterface
 import nipype.interfaces.io as nio   # Data i/oS
 import nipype.pipeline.engine as pe  # pypeline engine
-from semtools import *
+from nipype.interfaces.semtools import *
 
 def CreateEstimationWorkflow(WFname):
     #### Utility function ####
     def RunDTIProcess(dti_image):
         import os
-        from semtools import dtiprocess
+        from nipype.interfaces.semtools import dtiprocess
         DTIProcess = dtiprocess()
         DTIProcess.inputs.dti_image = dti_image
         DTIProcess.inputs.fa_output = 'FA.nrrd'

@@ -296,7 +296,7 @@ if __name__ == '__main__':
   import nipype.interfaces.io as nio   # Data i/oS
   import nipype.pipeline.engine as pe  # pypeline engine
   import nipype.interfaces.matlab as matlab
-  from semtools import *
+  from nipype.interfaces.semtools import *
   #####################################################################################
   from CorrectionWorkflow import CreateCorrectionWorkflow
   from CSWorkflow import CreateCSWorkflow

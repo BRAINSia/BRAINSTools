@@ -8,7 +8,7 @@ import nipype.pipeline.engine as pe  # pypeline engine
 
 import os
 
-from semtools import *
+from nipype.interfaces.semtools import *
 
 """
     from WorkupT1T2ANTS import CreateANTSRegistrationWorkflow

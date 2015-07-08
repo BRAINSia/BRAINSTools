@@ -306,18 +306,28 @@ public:
             nItems = valueArray.size();
             }
           vnl_vector_fixed<double, 3> vect3d;
+          vect3d.fill( 0.0 );
 
-          if( nItems != 1 )
+          double currentBValue = 0.0;
+          if( nItems == 1 )
+            {
+            currentBValue = valueArray[0] ;
+            }
+          else
             {
             // B_Value is missing -- the punt position is to count this
             // volume as having a B_value & Gradient Direction of zero
             std::cout << "Warning: Cannot find complete information on B_value in 0029|1010" << std::endl;
+            }
+
+          std::cout << "---------- BVALUE: " << currentBValue << std::endl;
+          if ( currentBValue < 1.0 )
+          {
             this->m_BValues.push_back( 0.0 );
-            vect3d.fill( 0.0 );
             this->m_DiffusionVectors.push_back(vect3d);
             continue;
-            }
-          this->m_BValues.push_back( valueArray[0] );
+          }
+          this->m_BValues.push_back( currentBValue );
           if((csaIt = csaHeader.find("DiffusionGradientDirection")) == csaHeader.end())
             {
             nItems = 0;
@@ -340,21 +350,19 @@ public:
             }
           else
             {
-            std::cout << "Number of Directions : " << nItems << std::endl;
-            std::cout << "   Directions 0: " << valueArray[0] << std::endl;
-            std::cout << "   Directions 1: " << valueArray[1] << std::endl;
-            std::cout << "   Directions 2: " << valueArray[2] << std::endl;
-            double DiffusionVector_magnitude;
-            vect3d[0] = valueArray[0];
-            vect3d[1] = valueArray[1];
-            vect3d[2] = valueArray[2];
-
-            DiffusionVector_magnitude = sqrt((vect3d[0] * vect3d[0]) +
-                                             (vect3d[1] * vect3d[1]) +
-                                             (vect3d[2] * vect3d[2]) );
-
-            std::cout << "DiffusionVector_magnitude " << DiffusionVector_magnitude << std::endl;
-            if( DiffusionVector_magnitude <= this->m_SmallGradientThreshold )
+            double DiffusionVector_magnitude = sqrt((valueArray[0] * valueArray[0]) +
+              (valueArray[1] * valueArray[1]) +
+              (valueArray[2] * valueArray[2]) );
+            if ( DiffusionVector_magnitude > 1.1 )
+              {
+              //Gradient vectors are supposed to be unit vectors!
+              // If coded as [ 1.0001 1.0001 1.0001 ]  then it is really a B0 image.
+              // This is ugly hack but works around a persistent dicom coding problem
+              // on some scanners
+              std::fill(valueArray.begin(), valueArray.end(), 0.0);
+              DiffusionVector_magnitude=0.0;
+              }
+            else if( DiffusionVector_magnitude <= this->m_SmallGradientThreshold )
               {
               std::cout << "ERROR: Gradient vector with unreasonably small magnitude exists." << std::endl;
               std::cout << "Gradient #" << k << " with magnitude " << DiffusionVector_magnitude << std::endl;
@@ -363,9 +371,18 @@ public:
               throw;
               }
 
+            std::cout << "Number of Directions : " << nItems << std::endl;
+            std::cout << "   Directions 0: " << valueArray[0] << std::endl;
+            std::cout << "   Directions 1: " << valueArray[1] << std::endl;
+            std::cout << "   Directions 2: " << valueArray[2] << std::endl;
+            std::cout << "DiffusionVector_magnitude " << DiffusionVector_magnitude << std::endl;
+
+            vect3d[0] = valueArray[0];
+            vect3d[1] = valueArray[1];
+            vect3d[2] = valueArray[2];
             // vect3d.normalize();
             this->m_DiffusionVectors.push_back(vect3d);
-            int p = this->m_BValues.size();
+            const int p = this->m_BValues.size();
             std::cout << "Image#: " << k
                       << " BV: " << this->m_BValues[p - 1] << " GD: "
                       << this->m_DoubleConvert(this->m_DiffusionVectors[k / this->m_Stride][0]) << ","
@@ -674,13 +691,16 @@ protected:
         {
         const int itemLength = ConvertFromCharPtr(infoAsCharPtr + offset + 4);
         const int strideSize = static_cast<int>(ceil(static_cast<double>(itemLength) / 4) * 4);
-        if( infoAsString.length() < offset + 16 + itemLength )
+        const size_t infoAsStringLength=infoAsString.length();
+
+        if( infoAsStringLength < ( offset + 16 + itemLength ) )
           {
           // data not available or incomplete
           return 0;
           }
         const std::string valueString = infoAsString.substr( offset + 16, itemLength );
-        valueArray.push_back( atof(valueString.c_str() ) );
+        const double componentValue =  atof(valueString.c_str() );
+        valueArray.push_back( componentValue );
         offset += 16 + strideSize;
         }
       return vm;

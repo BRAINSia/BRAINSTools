@@ -1,10 +1,4 @@
 
-#add_executable( gtractCoregBvaluesTests
-#    ${GTRACT_SOURCE_DIR}/Cmdline/gtractCoregBvaluesPrimary.cxx gtractCoregBvaluesTests.cxx )
-#target_link_libraries( gtractCoregBvaluesTests  BRAINSCommonLib GTRACTCommon )
-#set_target_properties(gtractCoregBvaluesTests PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${GTRACT_BINARY_DIR})
-#set(GTRACT_CoregBvalues_TESTS ${GTRACT_BINARY_DIR}/gtractCoregBvaluesTests )
-#
 #add_executable( gtractCoRegAnatomyTests
 #    ${GTRACT_SOURCE_DIR}/Cmdline/gtractCoRegAnatomyPrimary.cxx gtractCoRegAnatomyTests.cxx )
 #target_link_libraries( gtractCoRegAnatomyTests  BRAINSCommonLib GTRACTCommon )
@@ -18,21 +12,6 @@
 #set(GTRACT_TEST_INPUT_DIR "${GTRACT_SOURCE_DIR}/Data")
 #
 #message(warning "${CMAKE_BUNDLE_OUTPUT_DIRECTORY}")
-#
-#add_test(NAME gtractCoregBvalues_Test COMMAND ${LAUNCH_EXE} $<TARGET_FILE:GTRACT_CoregBvalues_TESTS>
-# --compare
-#  ${GTRACT_SOURCE_DIR}/Data/b0_s.nhdr
-#  ${GTRACT_TEST_OUTPUT_DIR}/b0_s.nhdr
-# --compareNumberOfPixelsTolerance 1000
-# --compareIntensityTolerance 20
-# gtractCoregBvaluesTest
-#  --fixedVolume ${GTRACT_TEST_INPUT_DIR}/dti1.nhdr
-#  --movingVolume ${GTRACT_TEST_INPUT_DIR}/dti2.nhdr
-#  --fixedVolumeIndex 0 --debugLevel 0
-#  --eddyCurrentCorrection --relaxationFactor 0.25 --maximumStepSize 0.1
-#  --outputVolume ${GTRACT_TEST_OUTPUT_DIR}/b0_s.nhdr
-#  --outputTransform ${GTRACT_TEST_OUTPUT_DIR}/b0_s.${XFRM_EXT}
-#)
 #
 #add_test(NAME gtractCoRegAnatomy_Rigid_Test COMMAND ${LAUNCH_EXE} $<TARGET_FILE:GTRACT_CoRegAnatomy_TESTS>
 #   gtractCoRegAnatomyTest
@@ -58,6 +37,74 @@
 #     --spatialScale 10
 #)
 
+set(DWIBASELINE_DIR ${TestData_DIR}/DWI_TestData_OUTPUTS)
+
+## Test for gtractCoregBvalues
+add_executable( gtractCoregBvaluesTests gtractCoregBvaluesTests.cxx )
+target_link_libraries( gtractCoregBvaluesTests  BRAINSCommonLib GTRACTCommon )
+set_target_properties(gtractCoregBvaluesTests PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+
+## TODO: gtractCoregBvalues returns segfault after the registration step.
+##       This test is commented out until the bug is fixed.
+##       The use of this program seems to be deprecated, since DTIPrep is
+##       used for coregistration and eddy current correction.
+#set(GTRACTTestName gtractCoregBvalues_Test)
+#ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${GTRACTTestName}
+#  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:gtractCoregBvaluesTests>
+#    --compare DATA{${DWIBASELINE_DIR}/SiemensTrio-Syngo2004A-1.nrrd}
+#              ${CMAKE_CURRENT_BINARY_DIR}/${GTRACTTestName}.test.nrrd
+#    --compareNumberOfPixelsTolerance 1000
+#    --compareIntensityTolerance 20
+# gtractCoregBvaluesTest
+#  --fixedVolume DATA{${DWIBASELINE_DIR}/SiemensTrio-Syngo2004A-1.nrrd}
+#  --movingVolume DATA{${DWIBASELINE_DIR}/SiemensTrio-Syngo2004A-1.nrrd}
+#  --fixedVolumeIndex 0
+#  --debugLevel 0
+#  --eddyCurrentCorrection
+#  --relaxationFactor 0.25
+#  --maximumStepSize 0.1
+#  --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${GTRACTTestName}.test.nrrd
+#  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${GTRACTTestName}.test.${XFRM_EXT}
+#)
+
+## Test for gtractAverageBvalues
+add_executable( gtractAverageBvaluesTests gtractAverageBvaluesTests.cxx )
+target_link_libraries( gtractAverageBvaluesTests  BRAINSCommonLib GTRACTCommon )
+set_target_properties(gtractAverageBvaluesTests PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+
+set(GTRACTTestName GTRACTTest_gtractAverageBvalues)
+ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${GTRACTTestName}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:gtractAverageBvaluesTests>
+  --compare DATA{${TestData_DIR}/${GTRACTTestName}.standard.nrrd}
+            ${CMAKE_CURRENT_BINARY_DIR}/${GTRACTTestName}.test.nrrd
+    --compareIntensityTolerance 0
+    --compareRadiusTolerance 0
+    --compareNumberOfPixelsTolerance 0
+  gtractAverageBvaluesTest
+    --inputVolume DATA{${DWIBASELINE_DIR}/SiemensTrio-Syngo2004A-1.nrrd}
+    --averageB0only
+    --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${GTRACTTestName}.test.nrrd
+)
+
+## Test for gtractConcatDwi
+add_executable( gtractConcatDwiTests gtractConcatDwiTests.cxx )
+target_link_libraries( gtractConcatDwiTests  BRAINSCommonLib GTRACTCommon )
+set_target_properties(gtractConcatDwiTests PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+
+set(GTRACTTestName GTRACTTest_gtractConcatDwi)
+ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${GTRACTTestName}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:gtractConcatDwiTests>
+  --compare DATA{${TestData_DIR}/${GTRACTTestName}.standard.nrrd}
+            ${CMAKE_CURRENT_BINARY_DIR}/${GTRACTTestName}.test.nrrd
+    --compareIntensityTolerance 0
+    --compareRadiusTolerance 0
+    --compareNumberOfPixelsTolerance 0
+  gtractConcatDwiTest
+    --inputVolume DATA{${DWIBASELINE_DIR}/SiemensTrio-Syngo2004A-1.nrrd},DATA{${DWIBASELINE_DIR}/SiemensTrio-Syngo2004A-2.nrrd}
+    --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${GTRACTTestName}.test.nrrd
+)
+
+## A set of tests for gtractResampleDWIInPlace
 add_executable( gtractResampleDWIInPlaceTests gtractResampleDWIInPlaceTests.cxx )
 target_link_libraries( gtractResampleDWIInPlaceTests  BRAINSCommonLib GTRACTCommon )
 set_target_properties(gtractResampleDWIInPlaceTests PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})

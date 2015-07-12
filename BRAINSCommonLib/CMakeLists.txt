@@ -29,21 +29,6 @@ FindITKUtil( BRAINSCommonLib_ITK
 # Output directories.
 #
 
-## Determine if ITK has MGHIO
-macro(LIST_CONTAINS var value)
-  set(${var})
-  foreach (value2 ${ARGN})
-    if (${value} STREQUAL ${value2})
-      set(${var} TRUE)
-    endif (${value} STREQUAL ${value2})
-  endforeach (value2)
-endmacro(LIST_CONTAINS)
-
-LIST_CONTAINS(ITK_HAS_MGHIO MGHIO ${ITK_MODULES_ENABLED})
-if (NOT ITK_HAS_MGHIO)
-  message(STATUS "WARNING: ITK_MODULES_ENABLED does not contain MGHIO, so programs will not be able to process .mgz formatted files")
-endif()
-
 configure_file("BRAINSToolsVersionConfig.h.in" "BRAINSToolsVersionConfig.h" @ONLY IMMEDIATE)
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/BRAINSToolsVersionConfig.h"
   DESTINATION "${BRAINSTools_CLI_INSTALL_ARCHIVE_DESTINATION}/include" COMPONENT Development)

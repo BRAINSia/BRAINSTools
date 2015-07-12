@@ -85,7 +85,7 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       -DZLIB_ROOT:PATH=${ZLIB_ROOT}
       -DZLIB_INCLUDE_DIR:PATH=${ZLIB_INCLUDE_DIR}
       -DZLIB_LIBRARY:FILEPATH=${ZLIB_LIBRARY}
-      -DModule_MGHIO:BOOL=ON        #To provide FreeSurfer Compatibility
+      -DModule_MGHIO:BOOL=ON        #To provide FreeSurfer Compatibility Required!
       -DITK_USE_FFTWD:BOOL=ON
       -DITK_USE_FFTWF:BOOL=ON
       ${ITK_VTK_OPTIONS}

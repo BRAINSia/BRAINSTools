@@ -77,14 +77,7 @@ ResampleInPlaceImageFilter<TInputImage, TOutputImage>
     return;
     }
 
-  typedef typename RigidTransformType::Pointer RigidTransformPointer;
-  RigidTransformPointer invOfRigidTransform = RigidTransformType::New();
-  invOfRigidTransform->SetIdentity();
-  const InputImagePointType centerPoint = m_RigidTransform->GetCenter();
-  invOfRigidTransform->SetCenter( centerPoint );
-  invOfRigidTransform->SetIdentity();
-  this->m_RigidTransform->GetInverse( invOfRigidTransform );    // Cache the
-                                                                // inverse
+    //  SEE HEADER FILE FOR MATH DESCRIPTION
 
     {
     /** make a cast copied version of the input image **/
@@ -95,11 +88,24 @@ ResampleInPlaceImageFilter<TInputImage, TOutputImage>
     m_OutputImage = CastFilter->GetOutput();
     }
 
+  typedef typename RigidTransformType::ConstPointer RigidTransformConstPointer;
+  RigidTransformConstPointer FMTxfm = this->m_RigidTransform.GetPointer();
+  const typename RigidTransformType::MatrixType inverseRotation( FMTxfm->GetMatrix().GetInverse() );
+
   // Modify the origin and direction info of the image to reflect the transform.
-  m_OutputImage->SetOrigin( invOfRigidTransform->GetMatrix()
-                            * this->GetInput()->GetOrigin() + invOfRigidTransform->GetOffset() );
-  m_OutputImage->SetDirection( invOfRigidTransform->GetMatrix()
-                               * this->GetInput()->GetDirection() );
+  itk::Vector<double,3> newOriginVector = inverseRotation * (
+                                                  this->GetInput()->GetOrigin().GetVectorFromOrigin()
+                                                - FMTxfm->GetCenter().GetVectorFromOrigin()
+                                                - FMTxfm->GetTranslation() ) // NewOrigin = [R^-1] * ( O - C - T ) + C
+                            + FMTxfm->GetCenter().GetVectorFromOrigin();
+  itk::Point<double,3> newOriginPoint;
+  for(int i =0; i < 3 ; ++i)
+  {
+   newOriginPoint[i]=newOriginVector[i];
+  }
+  m_OutputImage->SetOrigin( newOriginPoint );
+  m_OutputImage->SetDirection( inverseRotation
+                               * this->GetInput()->GetDirection() ); // NewDC = [R^-1][DC]
 
   this->GraftOutput( m_OutputImage );
 }

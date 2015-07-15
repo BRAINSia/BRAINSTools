@@ -36,7 +36,7 @@ namespace itk
  * \brief Resample an image in place.
  *
  * The current ITK resample image filter will generate a physical memory-
- * modified version of the input image if the input transform is not identical. The
+ * modified version of the input image if the input transform is not identity. The
  * abuse use of the filter can be cumbersome in a situation that the image is very
  * large, and there are lots of transform to be superimposed for the input image, and
  * we even don't care about those intermediate transformed images.
@@ -56,6 +56,38 @@ namespace itk
  * rigid transform
  * \return -- An image with the same voxels values as the input, but with differnt
  * physical space representation affected by the rigid transform.
+ *
+ * The purpose of this code is to generate the new origin and direction
+ * that will remove the need for using the transform.
+ *
+ * Given a set of PhysFixedImagePoints (i.e. from the fixedImage space)
+ * those points are converted to PhysMovingImagePoints = TfmF2M( PhysFixedImagePoints )
+ * and then MovingContinuousIndexPoints = movingImage->TransformPhysicalPointToContinuousIndex( PhysMovingImagePoints )
+ * to get image values.
+ *
+ * We desire to change the moving image DirectionCosign [DC] and Origin O such that
+ * we can compute the:
+ * MovingContinuousIndexPoints = newMovingImage->TransformPhysicalPointToContinuousIndex( PhysFixedImagePoints )
+ *
+ *Image Notations:
+ *  DC-DirectionCosign
+ *  O-Origin
+ *
+ *Rigid Transform Notations:
+ *  R-Rotation
+ *  C-Center Of Rotation
+ *  T-Translation
+ *
+ * TransformPhysicalPointToContinuousIndex:
+ * CI = [SP^-1][DC^-1]( PhysMovingImagePoints - O )
+ * PhysMovingImagePoints = [R](PhysFixedImagePoints - C) + C + T
+ *
+ * After substitutions:
+ * MovingContinuousIndexPoints = [R^-1][DC][SP] * CI + [R^-1] * O - [R^-1] * C - [R^-1]*T + C
+ *                               ----------            --------------------------------------
+ *                                 NewDC                    NewOrigin
+ * NewDC = [R^-1][DC]
+ * NewOrigin = [R^-1] * ( O - C - T ) + C
  *
  * \ingroup GeometricTransforms
  */

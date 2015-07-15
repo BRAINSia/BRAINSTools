@@ -10,7 +10,8 @@ experiment that should be run.
 
 python baw_exp.py -processingLevel 2 -ExperimentConfig Template.config -pe IPL_ENVIRONMENT
 
-# BRAINSAutoWorkUp Manual (Under Construction by Regina EY Kim)
+# BRAINSAutoWorkUp Manual 
+***(Under Construction by Regina EY Kim)***
 BRAINSAutoWorkUp is developed for batch processing of brain MRI (T1-weighted or T1- and T2-weighted MRI set).
 The pipeline is constructed based on NIPYPE.
 
@@ -21,7 +22,7 @@ The pipeline is constructed based on NIPYPE.
 * NIPYPE
 
 Let's say your NAMICExternalProjects build and located at:
-```
+```Shell
 % NamicBuild=myNAMIC_build_location
 ```
 ### Python Environment
@@ -34,7 +35,7 @@ A list file specifies where T1- (and T2-)weighted images are in the form of pyth
 "projectName","subjectName","MRISessionName","{'T1-30':[t1 repeated scans list],'T2-30':[t2 repeated scans list]}'
 ```
 A rough example of *bawInputList.csv*:
-```
+```Python
 "projectA","111","12345611","{'T1-30':['somewhere/T1_filename.nii.gz'],'T2-30':['somewhere/T2_COR.nii.gz']}"
 "projectB","112","12345614","{'T1-30':['somewhere/T1_filename.nii.gz', 'somewhere/T1_COR_REP1.nii.gz'],'T2-30':['somewhere/T2_COR.nii.gz']}"
 "projectA","111","12345698","{'T1-30':['somewhere/T1_COR.nii.gz', 'somewhere/T1_COR_REP1.nii.gz'],'T2-30':['somewhere/T2_COR.nii.gz']}"
@@ -43,7 +44,7 @@ A rough example of *bawInputList.csv*:
 A configuration file allows for HPC power utilization as well as local machine running. 
 Syntax follows a standard INI configuration file format (Please see https://en.wikipedia.org/wiki/INI_file)
 * EXPERIMENT section
-```
+```INI
 [EXPERIMENT]
 SESSION_DB_BASE=path_to_the_list/bawInputList.csv
 SESSION_DB_TEMP=%(SESSION_DB_BASE)s
@@ -77,21 +78,22 @@ WORKFLOW_COMPONENTS_LONG=['denoise','landmark','auxlmk','tissue_classify','segme
 ATLAS_PATH=$NamicBuild/bin/Atlas/Atlas_20131115
 ```
 * NIPYPE section
-```
+```INI
 [NIPYPE]
 GLOBAL_DATA_SINK_REWRITE=False
 ```
 * DEFAULT section
-```
+```INI
 [DEFAULT]
 MOUNT_PREFIX=
 MODULES=
 ```
-* OS specific section
-ALl the OS specifications can be given one configuration file. This allows
+* OS specific section:
+
+ALL the OS specifications can be given one configuration file. This allows
 developers to test/run/utilize as many computing resources as possible
 in one experiment setup. 
-```
+```INI
 [OSX]
 ## The cluster queue to use for submitting "normal running" jobs.
 QUEUE=-q all
@@ -166,6 +168,6 @@ python $NamicBuild/BRAINSTools/AutoWorkup/singleSession.py \
       --pe ${env} \
       --ExperimentConfig ./KIDsHD.config \
       --use-sentinal \
-      62830809  62556312
+      all
 
 ```

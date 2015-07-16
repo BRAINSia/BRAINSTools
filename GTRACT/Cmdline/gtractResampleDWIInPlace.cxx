@@ -47,6 +47,7 @@
 #include <itkTransformFileWriter.h>
 #include "DWIMetaDataDictionaryValidator.h"
 
+#include "itkResampleInPlaceImageFilter.h"
 #include "GenericTransformImage.h"
 #include "BRAINSFitHelper.h"
 #include "BRAINSThreadControl.h"
@@ -69,26 +70,15 @@ typename IOImageType::Pointer
 SetVectorImageRigidTransformInPlace(typename itk::VersorRigid3DTransform<double>::ConstPointer RigidTransform,
                                     const IOImageType *InputImage)
 {
-  typedef itk::VersorRigid3DTransform<double>              VersorRigid3DTransformType;
+  typedef itk::ResampleInPlaceImageFilter<IOImageType, IOImageType> ResampleIPFilterType;
+  typedef typename ResampleIPFilterType::Pointer                    ResampleIPFilterPointer;
 
-  typename VersorRigid3DTransformType::Pointer InvOfRigidTransform = VersorRigid3DTransformType::New();
-  const typename IOImageType::PointType centerPoint = RigidTransform->GetCenter();
-  InvOfRigidTransform->SetCenter( centerPoint );
-  InvOfRigidTransform->SetIdentity();
-  RigidTransform->GetInverse(InvOfRigidTransform);
+  ResampleIPFilterPointer resampleIPFilter = ResampleIPFilterType::New();
+  resampleIPFilter->SetInputImage( InputImage );
+  resampleIPFilter->SetRigidTransform( RigidTransform.GetPointer() );
+  resampleIPFilter->Update();
+  typename IOImageType::Pointer OutputAlignedImage = resampleIPFilter->GetOutput();
 
-  /** Wei: The output image will have exact the same index contents
-    but with modified image info so that the index-to-physical mapping
-    makes the image in the physical space AC-PC aligned */
-  typedef itk::ImageDuplicator<IOImageType> DuplicatorType;
-  typename DuplicatorType::Pointer duplicator = DuplicatorType::New();
-  duplicator->SetInputImage(InputImage);
-  duplicator->Update();
-  typename IOImageType::Pointer OutputAlignedImage = duplicator->GetModifiableOutput();
-  // Now change the Origin and Direction to make data aligned.
-  OutputAlignedImage->SetOrigin(
-    InvOfRigidTransform->GetMatrix() * InputImage->GetOrigin() + InvOfRigidTransform->GetOffset() );
-  OutputAlignedImage->SetDirection( InvOfRigidTransform->GetMatrix() * InputImage->GetDirection() );
   OutputAlignedImage->SetMetaDataDictionary(InputImage->GetMetaDataDictionary() );
   return OutputAlignedImage;
 }

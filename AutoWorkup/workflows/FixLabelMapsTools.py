@@ -79,11 +79,15 @@ def FixLabelMapFromNeuromorphemetrics2012(fusionFN,FixedHeadFN,LeftHemisphereFN,
     left_hemi_post =  (LeftHemisphereIm * sitk.Cast ( ( outlabels == OUT_DICT['RH_CSF'] ),sitk.sitkUInt32) > 0 ) # SplitCSF with LeftHemisphereMask
     outlabels = ForceMaskInsert(outlabels,left_hemi_post,OUT_DICT['LH_CSF'])  ## Make all CSF Right hemisphere
     ## Now extend brainstem lower
-    brain_stem = (FixedHead == BRAINSABC_DICT['BRAINSTEM']) * (outlabels == 0) ## Only extend to areas where there is not already a label
-    outlabels = ForceMaskInsert(outlabels,brain_stem,OUT_DICT['BRAINSTEM'])  ## Make all CSF Right hemisphere
+    ## BrainStem often mislabled to Cerebellum WM (label 7 and 46)
+    ## Fix for brainstem for the mislabeld Cerebellum as well.
+    misLabelDict = { "none":0, "leftCrblWM":7, "rightCrblWM":46}
+    for misLabel in misLabelDict:
+        brain_stem = (FixedHead == BRAINSABC_DICT['BRAINSTEM']) * ( outlabels == misLabelDict[misLabel])
+        outlabels = ForceMaskInsert(outlabels,brain_stem,OUT_DICT['BRAINSTEM'])  ## Make all CSF Right hemisphere
+
     BRAIN_MASK=sitk.Cast( (FixedHead > 0),sitk.sitkUInt32)
     outlabels = outlabels * BRAIN_MASK
-
     ## Caudate = 36 37
     ## Putamen = 57 58
     ## Pallidus = 55,56

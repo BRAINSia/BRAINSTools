@@ -22,6 +22,33 @@ from nipype.interfaces.semtools import BRAINSSnapShotWriter
     MALFWF.connect(BLI,'outputTransformFilename',myLocalTCWF,'atlasToSubjectInitialTransform')
 """
 
+def readRecodingList( recodeLabelFilename ):
+    recodeLabelPairList = []
+    import csv
+    with open( recodeLabelFilename, 'r') as f:
+        reader = csv.reader(f, delimiter=',')
+        for line in reader:
+           if line[0].startswith("#"):
+               pass
+           else:
+               origLbl, origName, targetLbl, targetName= line
+               origLbl = int(origLbl)
+               targetLbl = int(targetLbl)
+               recodeLabelPairList.append( (origLbl, targetLbl) )
+               print " relabel: {0:30} ({1:5d}) --> {2:30} ({3:5d})".format(origName, origLbl, targetName, targetLbl)
+    return recodeLabelPairList
+
+def readMalfAtlasDbBase( dictionaryFilename ):
+    malfAtlasDict = {}
+    #scanID, ['atlasID', 't1', 't2' ,'label', 'lmks']
+    import ast
+    with open(dictionaryFilename, 'r') as f:
+        for line in f.readlines():
+            scanID, scanDict=ast.literal_eval(line)
+            malfAtlasDict[scanID]=scanDict
+
+    return malfAtlasDict
+
 def getListIndexOrNoneIfOutOfRange(imageList, index):
     if index < len(imageList):
         return imageList[index]
@@ -46,10 +73,10 @@ def CreateMALFWorkflow(WFname, master_config,good_subjects,BASE_DATA_GRABBER_DIR
                                                             ]),
                          run_without_submitting=True,
                          name='inputspec')
-    outputsSpec = pe.Node(interface=IdentityInterface(fields=['MALF_neuro2012_labelmap',
-                                                       'MALF_fswm_extended_neuro2012_labelmap',
-                                                       'MALF_fswm_standard_neuro2012_labelmap',
-                                                       'MALF_fswm_lobar_neuro2012_labelmap',
+    outputsSpec = pe.Node(interface=IdentityInterface(fields=['MALF_HDAtlas20_2015_label',
+                                                       'MALF_HDAtlas20_2015_CSFVBInjected_label',
+                                                       'MALF_HDAtlas20_2015_fs_standard_label',
+                                                       'MALF_HDAtlas20_2015_lobar_label',
                                                        'MALF_extended_snapshot']),
                           run_without_submitting=True,
                           name='outputspec')
@@ -67,36 +94,24 @@ def CreateMALFWorkflow(WFname, master_config,good_subjects,BASE_DATA_GRABBER_DIR
     warpedAtlasLblMergeNode = pe.Node(interface=Merge(len(good_subjects)),name="LblMergeAtlas")
     NewwarpedAtlasLblMergeNode = pe.Node(interface=Merge(len(good_subjects)),name="fswmLblMergeAtlas")
     malf_atlas_mergeindex = 1;
-    for malf_atlas_subject in good_subjects:
+
+    """WIP:
+    The ultimate goal is NOT to have MALF_DG
+    """
+    print 'malf_atlas_db_base'
+    print master_config['malf_atlas_db_base']
+    malfAtlasDict = readMalfAtlasDbBase( master_config['malf_atlas_db_base'] )
+    malfAtlases = dict()
+
+    for malf_atlas_subject in malfAtlasDict:
         ## Need DataGrabber Here For the Atlas
-        MALF_DG[malf_atlas_subject] = pe.Node(interface=nio.DataGrabber(infields=['subject',
-                                                                                  'labelBaseFilename'],
-                                                        outfields=['malf_atlas_t1',
-                                                                   'malf_atlas_lbls',
-                                                                   'malf_fswm_atlas_lbls',
-                                                                   'malf_atlas_lmks'
-                                                        ]),
-                              run_without_submitting=True,name='MALF_DG_'+malf_atlas_subject)
-        #MALF_DG[malf_atlas_subject].inputs.base_directory = master_config['previousresult']
-        MALF_DG[malf_atlas_subject].inputs.base_directory = BASE_DATA_GRABBER_DIR
-
-        MALF_DG[malf_atlas_subject].inputs.subject = malf_atlas_subject
-        MALFWF.connect( inputsSpec, 'labelBaseFilename',
-                        MALF_DG[malf_atlas_subject], 'labelBaseFilename')
-        MALF_DG[malf_atlas_subject].inputs.field_template = {
-                                             'malf_atlas_t1': '%s/TissueClassify/t1_average_BRAINSABC.nii.gz',
-                                             'malf_atlas_lbls': '%s/TissueClassify/%s',
-                                             'malf_atlas_lmks': '%s/ACPCAlign/BCD_ACPC_Landmarks.fcsv',
-        }
-        MALF_DG[malf_atlas_subject].inputs.template_args = {
-                                            'malf_atlas_t1':   [['subject']],
-                                            'malf_atlas_lbls': [['subject','labelBaseFilename']],
-                                            'malf_atlas_lmks': [['subject']],
-        }
-        MALF_DG[malf_atlas_subject].inputs.template = '*'
-        MALF_DG[malf_atlas_subject].inputs.sort_filelist = True
-        MALF_DG[malf_atlas_subject].inputs.raise_on_empty = True
-
+        malfAtlases[malf_atlas_subject] = pe.Node(interface = IdentityInterface(
+                                                                  fields=['t1', 't2', 'label', 'lmks']),
+                                                                  name='malfAtlasInput'+malf_atlas_subject)
+        malfAtlases[malf_atlas_subject].inputs.t1 = malfAtlasDict[malf_atlas_subject]['t1']
+        malfAtlases[malf_atlas_subject].inputs.t2 = malfAtlasDict[malf_atlas_subject]['t2']
+        malfAtlases[malf_atlas_subject].inputs.label = malfAtlasDict[malf_atlas_subject]['label']
+        malfAtlases[malf_atlas_subject].inputs.lmks = malfAtlasDict[malf_atlas_subject]['lmks']
         ## Create BLI first
         ########################################################
         # Run BLI atlas_to_subject
@@ -105,7 +120,7 @@ def CreateMALFWorkflow(WFname, master_config,good_subjects,BASE_DATA_GRABBER_DIR
         BLICreator[malf_atlas_subject].inputs.outputTransformFilename = "landmarkInitializer_{0}_to_subject_transform.h5".format(malf_atlas_subject)
 
         MALFWF.connect(inputsSpec, 'atlasWeightFilename', BLICreator[malf_atlas_subject], 'inputWeightFilename')
-        MALFWF.connect(MALF_DG[malf_atlas_subject], 'malf_atlas_lmks', BLICreator[malf_atlas_subject], 'inputMovingLandmarkFilename')
+        MALFWF.connect(malfAtlases[malf_atlas_subject], 'lmks', BLICreator[malf_atlas_subject], 'inputMovingLandmarkFilename')
         MALFWF.connect(inputsSpec, 'subj_lmks', BLICreator[malf_atlas_subject], 'inputFixedLandmarkFilename')
 
 
@@ -146,7 +161,7 @@ def CreateMALFWorkflow(WFname, master_config,good_subjects,BASE_DATA_GRABBER_DIR
 
         MALFWF.connect(BLICreator[malf_atlas_subject], 'outputTransformFilename',A2SantsRegistrationPreABCRigid[malf_atlas_subject],'initial_moving_transform')
         MALFWF.connect(inputsSpec, 'subj_t1_image',A2SantsRegistrationPreABCRigid[malf_atlas_subject],'fixed_image')
-        MALFWF.connect(MALF_DG[malf_atlas_subject], 'malf_atlas_t1',A2SantsRegistrationPreABCRigid[malf_atlas_subject],'moving_image')
+        MALFWF.connect(malfAtlases[malf_atlas_subject], 't1',A2SantsRegistrationPreABCRigid[malf_atlas_subject],'moving_image')
 
 
         ##### Initialize with ANTS Transform For SyN component BABC
@@ -199,7 +214,7 @@ def CreateMALFWorkflow(WFname, master_config,good_subjects,BASE_DATA_GRABBER_DIR
             movingROIAuto[malf_atlas_subject].inputs.outputROIMaskVolume = "movingImageROIAutoMask.nii.gz"
 
             MALFWF.connect(inputsSpec, 'subj_t1_image',fixedROIAuto[malf_atlas_subject],'inputVolume')
-            MALFWF.connect(MALF_DG[malf_atlas_subject], 'malf_atlas_t1', movingROIAuto[malf_atlas_subject],'inputVolume')
+            MALFWF.connect(malfAtlases[malf_atlas_subject], 't1', movingROIAuto[malf_atlas_subject],'inputVolume')
 
             MALFWF.connect(fixedROIAuto[malf_atlas_subject], 'outputROIMaskVolume',A2SantsRegistrationPreABCRigid[malf_atlas_subject],'fixed_image_mask')
             MALFWF.connect(movingROIAuto[malf_atlas_subject], 'outputROIMaskVolume',A2SantsRegistrationPreABCRigid[malf_atlas_subject],'moving_image_mask')
@@ -211,7 +226,7 @@ def CreateMALFWorkflow(WFname, master_config,good_subjects,BASE_DATA_GRABBER_DIR
                                  ('composite_transform', getListIndexOrNoneIfOutOfRange, 0 ),
                                  A2SantsRegistrationPreABCSyN[malf_atlas_subject],'initial_moving_transform')
         MALFWF.connect(inputsSpec, 'subj_t1_image',A2SantsRegistrationPreABCSyN[malf_atlas_subject],'fixed_image')
-        MALFWF.connect(MALF_DG[malf_atlas_subject], 'malf_atlas_t1',A2SantsRegistrationPreABCSyN[malf_atlas_subject],'moving_image')
+        MALFWF.connect(malfAtlases[malf_atlas_subject], 't1',A2SantsRegistrationPreABCSyN[malf_atlas_subject],'moving_image')
         MALFWF.connect(A2SantsRegistrationPreABCSyN[malf_atlas_subject],'warped_image',warpedAtlasT1MergeNode,'in'+str(malf_atlas_mergeindex) )
 
         ### Original labelmap resampling
@@ -228,7 +243,7 @@ def CreateMALFWorkflow(WFname, master_config,good_subjects,BASE_DATA_GRABBER_DIR
                         labelMapResample[malf_atlas_subject],'transforms')
         MALFWF.connect( inputsSpec, 'subj_t1_image',
                         labelMapResample[malf_atlas_subject],'reference_image')
-        MALFWF.connect( MALF_DG[malf_atlas_subject], 'malf_atlas_lbls',
+        MALFWF.connect( malfAtlases[malf_atlas_subject], 'label',
                         labelMapResample[malf_atlas_subject],'input_image')
 
 
@@ -248,7 +263,7 @@ def CreateMALFWorkflow(WFname, master_config,good_subjects,BASE_DATA_GRABBER_DIR
                         NewlabelMapResample[malf_atlas_subject],'transforms')
         MALFWF.connect( inputsSpec, 'subj_t1_image',
                         NewlabelMapResample[malf_atlas_subject],'reference_image')
-        MALFWF.connect( MALF_DG[malf_atlas_subject], 'malf_fswm_atlas_lbls',
+        MALFWF.connect( malfAtlases[malf_atlas_subject], 'label',
                         NewlabelMapResample[malf_atlas_subject],'input_image')
 
 
@@ -267,74 +282,26 @@ def CreateMALFWorkflow(WFname, master_config,good_subjects,BASE_DATA_GRABBER_DIR
     jointFusion.inputs.dimension=3
     jointFusion.inputs.modalities=1
     jointFusion.inputs.method='Joint[0.1,2]'
-    jointFusion.inputs.output_label_image='fusion_neuro2012_20.nii.gz'
+    jointFusion.inputs.output_label_image='MALF_HDAtlas20_2015_label.nii.gz'
 
     MALFWF.connect(warpedAtlasT1MergeNode,'out',jointFusion,'warped_intensity_images')
     MALFWF.connect(warpedAtlasLblMergeNode,'out',jointFusion,'warped_label_images')
     MALFWF.connect(inputsSpec, 'subj_t1_image',jointFusion,'target_image')
+    MALFWF.connect(jointFusion, 'output_label_image', outputsSpec,'MALF_HDAtlas20_2015_label')
 
-    if runFixFusionLabelMap:
-        fixFusionLabelMap = pe.Node(Function(function=FixLabelMapFromNeuromorphemetrics2012,
-                                                       input_names=['fusionFN','FixedHeadFN','LeftHemisphereFN','outFN' ],
-                                                       output_names=['fixedFusionLabelFN']), name="FixedFusionLabelmap")
-        fixFusionLabelMap.inputs.outFN = 'neuro2012_20fusion_merge_seg.nii.gz'
-        MALFWF.connect(jointFusion, 'output_label_image', fixFusionLabelMap, 'fusionFN')
-        MALFWF.connect(inputsSpec, 'subj_fixed_head_labels', fixFusionLabelMap, 'FixedHeadFN')
-        MALFWF.connect(inputsSpec, 'subj_left_hemisphere', fixFusionLabelMap, 'LeftHemisphereFN')
-        MALFWF.connect(fixFusionLabelMap,'fixedFusionLabelFN',outputsSpec,'MALF_neuro2012_labelmap')
-    else:
-        MALFWF.connect(jointFusion, 'output_label_image', outputsSpec,'MALF_neuro2012_labelmap')
-
-
-
-    MALFWF.connect(warpedAtlasT1MergeNode,'out',jointFusion,'warped_intensity_images')
-    MALFWF.connect(warpedAtlasLblMergeNode,'out',jointFusion,'warped_label_images')
-    MALFWF.connect(inputsSpec, 'subj_t1_image',jointFusion,'target_image')
-
-
-    ## 2014-02-19 Updated fs_wmparcelation_improved malf
-    newJointFusion = pe.Node(interface=ants.JointFusion(),name="FSWM_JointFusion")
-    many_cpu_JointFusion_options_dictionary = {'qsub_args': modify_qsub_args(CLUSTER_QUEUE,8,4,4), 'overwrite': True}
-    newJointFusion.plugin_args = many_cpu_JointFusion_options_dictionary
-    newJointFusion.inputs.dimension=3
-    newJointFusion.inputs.modalities=1
-    newJointFusion.inputs.method='Joint[0.1,2]'
-    newJointFusion.inputs.output_label_image='fswm_neuro2012_20.nii.gz'
-
-    MALFWF.connect(warpedAtlasT1MergeNode,'out',newJointFusion,'warped_intensity_images')
-    MALFWF.connect(NewwarpedAtlasLblMergeNode,'out',newJointFusion,'warped_label_images')
-    MALFWF.connect(inputsSpec, 'subj_t1_image',newJointFusion,'target_image')
-
-    FREESURFER_DICT = { 'BRAINSTEM': 16, 'RH_CSF':24, 'LH_CSF':24, 'BLOOD': 15000, 'UNKNOWN': 999,
-                        'CONNECTED': [11,12,13,9,17,26,50,51,52,48,53,58]
-    }
+    ## post processing of jointfusion
     injectSurfaceCSFandVBIntoLabelMap = pe.Node(Function(function=FixLabelMapFromNeuromorphemetrics2012,
                                                    input_names=['fusionFN','FixedHeadFN','LeftHemisphereFN','outFN',
                                                    'OUT_DICT'],
                                                    output_names=['fixedFusionLabelFN']), name="injectSurfaceCSFandVBIntoLabelMap")
-    injectSurfaceCSFandVBIntoLabelMap.inputs.outFN = 'fswm_neuro2012_20_merge_seg.nii.gz'
+    injectSurfaceCSFandVBIntoLabelMap.inputs.outFN = 'MALF_HDAtlas20_2015_CSFVBInjected_label.nii.gz'
+    FREESURFER_DICT = { 'BRAINSTEM': 16, 'RH_CSF':24, 'LH_CSF':24, 'BLOOD': 15000, 'UNKNOWN': 999,
+                        'CONNECTED': [11,12,13,9,17,26,50,51,52,48,53,58]
+                      }
     injectSurfaceCSFandVBIntoLabelMap.inputs.OUT_DICT = FREESURFER_DICT
-    MALFWF.connect(newJointFusion, 'output_label_image', injectSurfaceCSFandVBIntoLabelMap, 'fusionFN')
+    MALFWF.connect(jointFusion, 'output_label_image', injectSurfaceCSFandVBIntoLabelMap, 'fusionFN')
     MALFWF.connect(inputsSpec, 'subj_fixed_head_labels', injectSurfaceCSFandVBIntoLabelMap, 'FixedHeadFN')
     MALFWF.connect(inputsSpec, 'subj_left_hemisphere', injectSurfaceCSFandVBIntoLabelMap, 'LeftHemisphereFN')
-
-    ## We need to recode values to ensure that there are no conflicts in the future
-    RECODE_LABELS_2_Extended_FSWM = [
-                                (7071,15071),(7072,15072),(7073,15073),(7145,15145),(7157,15157),
-                                (7161,15161),(7179,15179),(7141,15141),(7151,15151),(7163,15163),
-                                (7165,15165),(7143,15143),(7191,15191),(7193,15193),(7185,15185),
-                                (7201,15201),(7175,15175),(7195,15195),(7173,15173),(7144,15144),
-                                (7156,15156),(7160,15160),(7178,15178),(7140,15140),(7150,15150),
-                                (7162,15162),(7164,15164),(7142,15142),(7190,15190),(7192,15192),
-                                (7184,15184),(7174,15174),(7194,15194),(7172,15172)]
-    ## def RecodeLabelMap(InputFileName,OutputFileName,RECODE_TABLE):
-    RecodeToExtended = pe.Node(Function(function=RecodeLabelMap,
-                                                   input_names=['InputFileName','OutputFileName','RECODE_TABLE'],
-                                                   output_names=['OutputFileName']),
-                                                   name="RecodeToExteneded")
-    RecodeToExtended.inputs.RECODE_TABLE = RECODE_LABELS_2_Extended_FSWM
-    RecodeToExtended.inputs.OutputFileName = 'fswm_extended_neuro2012_20_merge_seg.nii.gz'
-    MALFWF.connect(injectSurfaceCSFandVBIntoLabelMap, 'fixedFusionLabelFN',RecodeToExtended,'InputFileName')
 
     ## We need to recode values to ensure that the labels match FreeSurer as close as possible by merging
     ## some labels together to standard FreeSurfer confenventions (i.e. for WMQL)
@@ -344,66 +311,44 @@ def CreateMALFWorkflow(WFname, master_config,good_subjects,BASE_DATA_GRABBER_DIR
                                 (15191,1028),(15193,1028),(15185,1030),(15201,1030),(15175,1031),(15195,1031),
                                 (15173,1035),(15144,2011),(15156,2011),(15160,2011),(15178,2012),(15140,2014),
                                 (15150,2017),(15162,2018),(15164,2019),(15142,2027),(15190,2028),(15192,2028),
-                                (15184,2030),(15174,2031),(15194,2031),(15172,2035)]
+                                (15184,2030),(15174,2031),(15194,2031),(15172,2035),(15200,2030)]
     ## def RecodeLabelMap(InputFileName,OutputFileName,RECODE_TABLE):
     RecodeToStandardFSWM = pe.Node(Function(function=RecodeLabelMap,
                                                    input_names=['InputFileName','OutputFileName','RECODE_TABLE'],
                                                    output_names=['OutputFileName']),
                                                    name="RecodeToStandardFSWM")
     RecodeToStandardFSWM.inputs.RECODE_TABLE = RECODE_LABELS_2_Standard_FSWM
-    RecodeToStandardFSWM.inputs.OutputFileName = 'fswm_standard_neuro2012_20_merge_seg.nii.gz'
-    MALFWF.connect(RecodeToExtended, 'OutputFileName',RecodeToStandardFSWM,'InputFileName')
+    RecodeToStandardFSWM.inputs.OutputFileName = 'MALF_HDAtlas20_2015_fs_standard_label.nii.gz'
+    MALFWF.connect(injectSurfaceCSFandVBIntoLabelMap, 'fixedFusionLabelFN',RecodeToStandardFSWM,'InputFileName')
 
-
-    MALFWF.connect(RecodeToExtended,'OutputFileName',outputsSpec,'MALF_fswm_extended_neuro2012_labelmap')
-    MALFWF.connect(RecodeToStandardFSWM,'OutputFileName',outputsSpec,'MALF_fswm_standard_neuro2012_labelmap')
+    MALFWF.connect(injectSurfaceCSFandVBIntoLabelMap,'fixedFusionLabelFN',outputsSpec,'MALF_HDAtlas20_2015_CSFVBInjected_label')
+    MALFWF.connect(RecodeToStandardFSWM,'OutputFileName',outputsSpec,'MALF_HDAtlas20_2015_fs_standard_label')
 
     ## MALF_SNAPSHOT_WRITER for Segmented result checking:
     MALF_SNAPSHOT_WRITERNodeName = "MALF_ExtendedMALF_SNAPSHOT_WRITER"
     MALF_SNAPSHOT_WRITER = pe.Node(interface=BRAINSSnapShotWriter(), name=MALF_SNAPSHOT_WRITERNodeName)
 
-    MALF_SNAPSHOT_WRITER.inputs.outputFilename = 'fswm_extended_neuro2012_labelmap.png'  # output specification
+    MALF_SNAPSHOT_WRITER.inputs.outputFilename = 'MALF_HDAtlas20_2015_CSFVBInjected_label.png'  # output specification
     MALF_SNAPSHOT_WRITER.inputs.inputPlaneDirection = [2, 1, 1, 1, 1, 0, 0]
     MALF_SNAPSHOT_WRITER.inputs.inputSliceToExtractInPhysicalPoint = [-3, -7, -3, 5, 7, 22, -22]
 
     MALFWF.connect([(inputsSpec, MALF_SNAPSHOT_WRITER, [( 'subj_t1_image','inputVolumes')]),
-                    (RecodeToExtended, MALF_SNAPSHOT_WRITER, [('OutputFileName', 'inputBinaryVolumes')])
+                    (injectSurfaceCSFandVBIntoLabelMap, MALF_SNAPSHOT_WRITER, [('fixedFusionLabelFN', 'inputBinaryVolumes')])
                    ])
     MALFWF.connect(MALF_SNAPSHOT_WRITER,'outputFilename',outputsSpec,'MALF_extended_snapshot')
 
     ## Lobar Pacellation by recoding
-    #### HACK:
-    #### LAbel 2001 in FS standard is WRONG. It supposed to be, 2030,ctx-rh-superiortemporal in FS
-    #### which is from 200 Right_STG_superior_temporal_gyrus in neuromorphometric.
-    #### 20 Atlas has to be properly changed/considered
-    RECODE_LABELS_2_LobarPacellation = [(4,4),(5,5),(7,7),(8,8),(10,10),
-            (11,11),(12,12),(13,13),(14,14),(15,15),(16,16),(17,17),(18,18),(24,24),(26,26),(28,28),
-            (30,30),(31,31),(43,43),(44,44),(46,46),(47,47),(49,49),(50,50),(51,51),(52,52),(53,53),
-            (54,54),(58,58),(60,60),(62,62),(63,63),(85,85),
-            (251,251),(252,252),(253,253),(254,254),(255,255),(1000,1000),
-            (1002,1002),(1005,1005),(1006,1004),(1007,1004),(1008,1006),(1009,1004),(1010,1010),(1011,1005),(1012,1001),
-            (1013,1005),(1014,1001),(1015,1004),(1016,1016),(1017,1001),(1018,1001),(1019,1001),(1020,1001),(1021,1005),
-            (1022,1006),(1024,1001),(1025,1006),(1026,1026),(1027,1001),(1028,1001),(1029,1006),(1030,1004),(1031,1006),
-            (1032,1001),(1033,1004),(1034,1004),(1035,1035),(1116,1005),(1129,1129),(2000,2000),(2001,1004),(2002,2002),
-            (2005,2005),(2006,2004),(2007,2004),(2008,2006),(2009,2004),(2010,2010),(2011,2005),(2012,2001),(2013,2005),
-            (2014,2001),(2015,2004),(2016,2016),(2017,2001),(2018,2001),(2019,2001),(2020,2001),(2021,2005),(2022,2006),
-            (2024,2001),(2025,2006),(2026,2026),(2027,2001),(2028,2001),(2029,2006),(2030,2004),(2031,2006),(2032,2001),
-            (2033,2004),(2034,2004),(2035,2035),(2116,2005),(2129,2129),(3001,3001),(3002,3002),(3003,3001),(3005,3005),
-            (3006,3004),(3007,3004),(3008,3006),(3009,3004),(3010,3010),(3011,3005),(3012,3001),(3013,3005),(3014,3001),
-            (3015,3004),(3016,3016),(3017,3001),(3018,3001),(3019,3001),(3020,3001),(3021,3005),(3022,3006),(3023,3023),
-            (3024,3001),(3025,3006),(3026,3026),(3027,3001),(3028,3001),(3029,3006),(3030,3004),(3031,3006),(3032,3001),
-            (3033,3004),(3034,3004),(3035,3035),(4001,4001),(4002,4002),(4003,4001),(4005,4005),(4006,4004),(4007,4004),
-            (4008,4006),(4009,4004),(4010,4010),(4011,4005),(4012,4001),(4013,4005),(4014,4001),(4015,4004),(4016,4016),
-            (4017,4001),(4018,4001),(4019,4001),(4020,4001),(4021,4005),(4022,4006),(4023,4023),(4024,4001),(4025,4006),
-            (4026,4026),(4027,4001),(4028,4001),(4029,4006),(4030,4004),(4031,4006),(4032,4001),(4033,4004),(4034,4004),
-            (4035,4035),(5001,5001),(5002,5002)]
-    RecordToFSLobes = pe.Node(Function(function=RecodeLabelMap,
-                                                input_names=['InputFileName','OutputFileName','RECODE_TABLE'],
-                                                output_names=['OutputFileName']),
-                                                name="RecordToFSLobes")
-    RecordToFSLobes.inputs.RECODE_TABLE = RECODE_LABELS_2_LobarPacellation
-    RecordToFSLobes.inputs.OutputFileName = 'fswm_standard_neuro2012_20_lobar_seg.nii.gz'
-    MALFWF.connect(RecodeToStandardFSWM, 'OutputFileName',RecordToFSLobes,'InputFileName')
-    MALFWF.connect(RecordToFSLobes,'OutputFileName',outputsSpec,'MALF_fswm_lobar_neuro2012_labelmap')
+    if master_config['relabel2lobes_filename'] != None:
+        print "Generate relabeled version based on {0}".format(master_config['relabel2lobes_filename'])
+
+        RECODE_LABELS_2_LobarPacellation = readRecodingList( master_config['relabel2lobes_filename'] )
+        RecordToFSLobes = pe.Node(Function(function=RecodeLabelMap,
+                                                    input_names=['InputFileName','OutputFileName','RECODE_TABLE'],
+                                                    output_names=['OutputFileName']),
+                                                    name="RecordToFSLobes")
+        RecordToFSLobes.inputs.RECODE_TABLE = RECODE_LABELS_2_LobarPacellation
+        RecordToFSLobes.inputs.OutputFileName = 'MALF_HDAtlas20_2015_lobar_label.nii.gz'
+        MALFWF.connect(RecodeToStandardFSWM, 'OutputFileName',RecordToFSLobes,'InputFileName')
+        MALFWF.connect(RecordToFSLobes,'OutputFileName',outputsSpec,'MALF_HDAtlas20_2015_lobar_label')
 
     return MALFWF

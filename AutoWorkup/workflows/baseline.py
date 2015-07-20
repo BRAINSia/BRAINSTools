@@ -743,7 +743,7 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
         baw201.connect(WhiteMatterHemisphereNode,'WM_LeftHemisphereFileName',DataSink,'WarpedAtlas2Subject.@LeftHemisphereWM')
         baw201.connect(WhiteMatterHemisphereNode,'WM_RightHemisphereFileName',DataSink,'WarpedAtlas2Subject.@RightHemisphereWM')
 
-    if 'malf_2012_neuro' in master_config['components']:  ## HACK Do MALF labeling
+    if 'malf_2015_wholebrain' in master_config['components']:  ## HACK Do MALF labeling
         good_subjects = [
             '1001', '1004', '1005','1011',
             '1012', '1018', '1019', '1102',
@@ -764,14 +764,14 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
 
         inputLabelFileMALFnameSpec = pe.Node( interface=IdentityInterface( fields=['labelBaseFilename']),
                                               run_without_submitting = True,
-                                              name=inputLabelFileMALFnameSpec)
+                                              name="inputLabelFileMALFnameSpec")
         baw201.connect( inputLabelFileMALFnameSpec, 'labelBaseFilename',
                         myLocalMALF, 'inputspec.labelBaseFilename')
 
-        baw201.connect(myLocalMALF,'outputspec.MALF_neuro2012_labelmap',DataSink,'TissueClassify.@MALF_neuro2012_labelmap')
-        baw201.connect(myLocalMALF,'outputspec.MALF_fswm_extended_neuro2012_labelmap',DataSink,'TissueClassify.@MALF_fswm_extended_neuro2012_labelmap')
-        baw201.connect(myLocalMALF,'outputspec.MALF_fswm_standard_neuro2012_labelmap',DataSink,'TissueClassify.@MALF_fswm_standard_neuro2012_labelmap')
-        baw201.connect(myLocalMALF,'outputspec.MALF_fswm_lobar_neuro2012_labelmap',DataSink,'TissueClassify.@MALF_fswm_lobar_neuro2012_labelmap')
+        baw201.connect(myLocalMALF,'outputspec.MALF_HDAtlas20_2015_label',DataSink,'TissueClassify.@MALF_HDAtlas20_2015_label')
+        baw201.connect(myLocalMALF,'outputspec.MALF_HDAtlas20_2015_CSFVBInjected_label',DataSink,'TissueClassify.@MALF_HDAtlas20_2015_CSFVBInjected_label')
+        baw201.connect(myLocalMALF,'outputspec.MALF_HDAtlas20_2015_fs_standard_label',DataSink,'TissueClassify.@MALF_HDAtlas20_2015_fs_standard_label')
+        baw201.connect(myLocalMALF,'outputspec.MALF_HDAtlas20_2015_lobar_label',DataSink,'TissueClassify.@MALF_HDAtlas20_2015_lobar_label')
         baw201.connect(myLocalMALF,'outputspec.MALF_extended_snapshot',DataSink,'TissueClassify.@MALF_extended_snapshot')
 
     return baw201

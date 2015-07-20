@@ -177,7 +177,17 @@ def createAndRun(sessions, environment, experiment, pipeline, cluster, useSentin
                     "TissueClassify",
                     "fswm_extended_neuro2012_labelmap.png"
                 ))
-
+            if 'malf_2015_wholebrain' in master_config['components']:
+                sentinal_file_list.append(os.path.join(
+                    sentinal_file_basedir,
+                    "TissueClassify",
+                    "malf_2015_wholebrain_label.nii.gz"
+                ))
+                sentinal_file_list.append(os.path.join(
+                    sentinal_file_basedir,
+                    "TissueClassify",
+                    "malf_2015_wholebrain_label.png"
+                ))
 
             if master_config['workflow_phase'] == 'atlas-based-reference':
                 atlasDirectory = os.path.join(master_config['atlascache'], 'spatialImages', 'rho.nii.gz')

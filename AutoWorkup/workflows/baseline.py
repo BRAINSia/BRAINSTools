@@ -744,18 +744,16 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
         baw201.connect(WhiteMatterHemisphereNode,'WM_RightHemisphereFileName',DataSink,'WarpedAtlas2Subject.@RightHemisphereWM')
 
     if 'malf_2015_wholebrain' in master_config['components']:  ## HACK Do MALF labeling
-        good_subjects = [
-            '1001', '1004', '1005','1011',
-            '1012', '1018', '1019', '1102',
-            '1103', '1104', '1120', '1129',
-            '1009', '1010', '1013', '1014',
-            '1036', '1109', '1117', '1122']
-
         ## HACK FOR NOW SHOULD BE MORE ELEGANT FROM THE .config file
         BASE_DATA_GRABBER_DIR='/Shared/johnsonhj/HDNI/Neuromorphometrics/20141116_Neuromorphometrics_base_Results/Neuromorphometrics/2012Subscription'
 
-        myLocalMALF = CreateMALFWorkflow("MALF", master_config,good_subjects,BASE_DATA_GRABBER_DIR)
+        if onlyT1:
+            print "T1 only processing in baseline"
+        else:
+            print "Multimodal processing in baseline"
+        myLocalMALF = CreateMALFWorkflow("MALF", onlyT1, master_config,BASE_DATA_GRABBER_DIR)
         baw201.connect(myLocalTCWF,'outputspec.t1_average',myLocalMALF,'inputspec.subj_t1_image')
+        baw201.connect(myLocalTCWF,'outputspec.t2_average',myLocalMALF,'inputspec.subj_t2_image')
         baw201.connect(myLocalBrainStemWF, 'outputspec.ouputTissuelLabelFilename',myLocalMALF,'inputspec.subj_fixed_head_labels')
 
         baw201.connect(BResample['template_leftHemisphere'],'outputVolume',myLocalMALF,'inputspec.subj_left_hemisphere')

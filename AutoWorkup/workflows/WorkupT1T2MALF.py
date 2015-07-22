@@ -22,6 +22,14 @@ from nipype.interfaces.semtools import BRAINSSnapShotWriter
     MALFWF.connect(BLI,'outputTransformFilename',myLocalTCWF,'atlasToSubjectInitialTransform')
 """
 
+def MakeVector(inFN1, inFN2=None):
+    print "inFN1: {0}".format(inFN1)
+    print "inFN2: {0}".format(inFN2)
+    if inFN2 == None:
+        return inFN1
+    else:
+        return [inFN1, inFN2]
+
 def readRecodingList( recodeLabelFilename ):
     recodeLabelPairList = []
     import csv
@@ -56,7 +64,7 @@ def getListIndexOrNoneIfOutOfRange(imageList, index):
         return None
 
 
-def CreateMALFWorkflow(WFname, master_config,good_subjects,BASE_DATA_GRABBER_DIR, runFixFusionLabelMap=True):
+def CreateMALFWorkflow(WFname, onlyT1, master_config,BASE_DATA_GRABBER_DIR, runFixFusionLabelMap=True):
     from nipype.interfaces import ants
 
     CLUSTER_QUEUE=master_config['queue']
@@ -65,6 +73,7 @@ def CreateMALFWorkflow(WFname, master_config,good_subjects,BASE_DATA_GRABBER_DIR
     MALFWF = pe.Workflow(name=WFname)
 
     inputsSpec = pe.Node(interface=IdentityInterface(fields=['subj_t1_image', #Desired image to create label map for
+                                                             'subj_t2_image', #Desired image to create label map for
                                                              'subj_lmks', #The landmarks corresponding to t1_image
                                                              'subj_fixed_head_labels', #The fixed head labels from BABC
                                                              'subj_left_hemisphere', #The warped left hemisphere mask
@@ -82,26 +91,23 @@ def CreateMALFWorkflow(WFname, master_config,good_subjects,BASE_DATA_GRABBER_DIR
                           name='outputspec')
 
     BLICreator = dict()
-    MALF_DG = dict()
-    A2SantsRegistrationPreABCRigid =dict()
-    A2SantsRegistrationPreABCSyN = dict()
+    A2SantsRegistrationPreMALF_SyN = dict()
     fixedROIAuto = dict()
     movingROIAuto = dict()
     labelMapResample = dict()
     NewlabelMapResample = dict()
 
-    warpedAtlasT1MergeNode = pe.Node(interface=Merge(len(good_subjects)),name="T1sMergeAtlas")
-    warpedAtlasLblMergeNode = pe.Node(interface=Merge(len(good_subjects)),name="LblMergeAtlas")
-    NewwarpedAtlasLblMergeNode = pe.Node(interface=Merge(len(good_subjects)),name="fswmLblMergeAtlas")
     malf_atlas_mergeindex = 1;
 
-    """WIP:
-    The ultimate goal is NOT to have MALF_DG
-    """
     print 'malf_atlas_db_base'
     print master_config['malf_atlas_db_base']
     malfAtlasDict = readMalfAtlasDbBase( master_config['malf_atlas_db_base'] )
     malfAtlases = dict()
+    sessionMakeMultimodalInput = dict()
+    atlasMakeMultimodalInput = dict()
+    warpedAtlasT1MergeNode = pe.Node(interface=Merge(len(malfAtlasDict)),name="T1sMergeAtlas")
+    warpedAtlasLblMergeNode = pe.Node(interface=Merge(len(malfAtlasDict)),name="LblMergeAtlas")
+    NewwarpedAtlasLblMergeNode = pe.Node(interface=Merge(len(malfAtlasDict)),name="fswmLblMergeAtlas")
 
     for malf_atlas_subject in malfAtlasDict:
         ## Need DataGrabber Here For the Atlas
@@ -123,82 +129,51 @@ def CreateMALFWorkflow(WFname, master_config,good_subjects,BASE_DATA_GRABBER_DIR
         MALFWF.connect(malfAtlases[malf_atlas_subject], 'lmks', BLICreator[malf_atlas_subject], 'inputMovingLandmarkFilename')
         MALFWF.connect(inputsSpec, 'subj_lmks', BLICreator[malf_atlas_subject], 'inputFixedLandmarkFilename')
 
-
-        ##### Initialize with ANTS Transform For AffineComponentBABC
-        currentAtlasToSubjectantsRigidRegistration = 'Rigid_AtlasToSubjectANTsPreABC_'+malf_atlas_subject
-        A2SantsRegistrationPreABCRigid[malf_atlas_subject] = pe.Node(interface=ants.Registration(), name=currentAtlasToSubjectantsRigidRegistration)
-        many_cpu_ANTsRigid_options_dictionary = {'qsub_args': modify_qsub_args(CLUSTER_QUEUE,2,1,1), 'overwrite': True}
-        A2SantsRegistrationPreABCRigid[malf_atlas_subject].plugin_args = many_cpu_ANTsRigid_options_dictionary
-
-        A2SantsRegistrationPreABCRigid[malf_atlas_subject].inputs.num_threads   = -1
-        A2SantsRegistrationPreABCRigid[malf_atlas_subject].inputs.dimension = 3
-        A2SantsRegistrationPreABCRigid[malf_atlas_subject].inputs.transforms = ["Affine",]
-        A2SantsRegistrationPreABCRigid[malf_atlas_subject].inputs.transform_parameters = [[0.1]]
-        A2SantsRegistrationPreABCRigid[malf_atlas_subject].inputs.metric = ['MI']
-        A2SantsRegistrationPreABCRigid[malf_atlas_subject].inputs.sampling_strategy = ['Regular']
-        A2SantsRegistrationPreABCRigid[malf_atlas_subject].inputs.sampling_percentage = [0.5]
-        A2SantsRegistrationPreABCRigid[malf_atlas_subject].inputs.metric_weight = [1.0]
-        A2SantsRegistrationPreABCRigid[malf_atlas_subject].inputs.radius_or_number_of_bins = [32]
-        A2SantsRegistrationPreABCRigid[malf_atlas_subject].inputs.number_of_iterations = [[1000,1000, 500, 100]]
-
-        A2SantsRegistrationPreABCRigid[malf_atlas_subject].inputs.convergence_threshold = [1e-8]
-
-        A2SantsRegistrationPreABCRigid[malf_atlas_subject].inputs.convergence_window_size = [10]
-        A2SantsRegistrationPreABCRigid[malf_atlas_subject].inputs.use_histogram_matching = [True]
-        A2SantsRegistrationPreABCRigid[malf_atlas_subject].inputs.shrink_factors = [[8, 4, 2, 1]]
-        A2SantsRegistrationPreABCRigid[malf_atlas_subject].inputs.smoothing_sigmas = [[3, 2, 1, 0]]
-        A2SantsRegistrationPreABCRigid[malf_atlas_subject].inputs.sigma_units = ["vox"]
-        A2SantsRegistrationPreABCRigid[malf_atlas_subject].inputs.use_estimate_learning_rate_once = [False]
-        A2SantsRegistrationPreABCRigid[malf_atlas_subject].inputs.write_composite_transform = True  # Required for initialize_transforms_per_stage
-        A2SantsRegistrationPreABCRigid[malf_atlas_subject].inputs.collapse_output_transforms = False # Mutually Exclusive with initialize_transforms_per_stage
-        A2SantsRegistrationPreABCRigid[malf_atlas_subject].inputs.initialize_transforms_per_stage = True
-        A2SantsRegistrationPreABCRigid[malf_atlas_subject].inputs.output_transform_prefix = 'AtlasToSubjectPreBABC_Rigid'
-        A2SantsRegistrationPreABCRigid[malf_atlas_subject].inputs.winsorize_lower_quantile = 0.01
-        A2SantsRegistrationPreABCRigid[malf_atlas_subject].inputs.winsorize_upper_quantile = 0.99
-        A2SantsRegistrationPreABCRigid[malf_atlas_subject].inputs.float = True
-        ## NO NEED FOR THIS A2SantsRegistrationPreABCRigid[malf_atlas_subject].inputs.output_warped_image = 'atlas2subjectRigid.nii.gz'
-        ## NO NEED FOR THIS A2SantsRegistrationPreABCRigid[malf_atlas_subject].inputs.output_inverse_warped_image = 'subject2atlasRigid.nii.gz'
-
-        MALFWF.connect(BLICreator[malf_atlas_subject], 'outputTransformFilename',A2SantsRegistrationPreABCRigid[malf_atlas_subject],'initial_moving_transform')
-        MALFWF.connect(inputsSpec, 'subj_t1_image',A2SantsRegistrationPreABCRigid[malf_atlas_subject],'fixed_image')
-        MALFWF.connect(malfAtlases[malf_atlas_subject], 't1',A2SantsRegistrationPreABCRigid[malf_atlas_subject],'moving_image')
-
-
-        ##### Initialize with ANTS Transform For SyN component BABC
-        currentAtlasToSubjectantsRegistration = 'SyN_AtlasToSubjectANTsPreABC_'+malf_atlas_subject
-        A2SantsRegistrationPreABCSyN[malf_atlas_subject] = pe.Node(interface=ants.Registration(), name=currentAtlasToSubjectantsRegistration)
+        ##### Initialize with ANTS Transform For SyN
+        currentAtlasToSubjectantsRegistration = 'SyN_AtlasToSubjectANTsPreMALF_'+malf_atlas_subject
+        A2SantsRegistrationPreMALF_SyN[malf_atlas_subject] = pe.Node(interface=ants.Registration(), name=currentAtlasToSubjectantsRegistration)
         many_cpu_ANTsSyN_options_dictionary = {'qsub_args': modify_qsub_args(CLUSTER_QUEUE_LONG,4,2,16), 'overwrite': True}
-        A2SantsRegistrationPreABCSyN[malf_atlas_subject].plugin_args = many_cpu_ANTsSyN_options_dictionary
+        A2SantsRegistrationPreMALF_SyN[malf_atlas_subject].plugin_args = many_cpu_ANTsSyN_options_dictionary
 
-        A2SantsRegistrationPreABCSyN[malf_atlas_subject].inputs.num_threads   = -1
-        A2SantsRegistrationPreABCSyN[malf_atlas_subject].inputs.dimension = 3
-        A2SantsRegistrationPreABCSyN[malf_atlas_subject].inputs.transforms = ["SyN","SyN"]
-        A2SantsRegistrationPreABCSyN[malf_atlas_subject].inputs.transform_parameters = [[0.1, 3, 0],[0.1, 3, 0] ]
-        A2SantsRegistrationPreABCSyN[malf_atlas_subject].inputs.metric = ['MI','MI']
-        A2SantsRegistrationPreABCSyN[malf_atlas_subject].inputs.sampling_strategy = [None,None]
-        A2SantsRegistrationPreABCSyN[malf_atlas_subject].inputs.sampling_percentage = [1.0,1.0]
-        A2SantsRegistrationPreABCSyN[malf_atlas_subject].inputs.metric_weight = [1.0,1.0]
-        A2SantsRegistrationPreABCSyN[malf_atlas_subject].inputs.radius_or_number_of_bins = [32,32]
-        A2SantsRegistrationPreABCSyN[malf_atlas_subject].inputs.number_of_iterations = [[500, 500, 500, 500 ], [70]]
+        A2SantsRegistrationPreMALF_SyN[malf_atlas_subject].inputs.num_threads   = -1
+        A2SantsRegistrationPreMALF_SyN[malf_atlas_subject].inputs.dimension = 3
+        #### DEBUGGIN
+        A2SantsRegistrationPreMALF_SyN[malf_atlas_subject].inputs.transforms = ["Affine","Affine","SyN","SyN"]
+        A2SantsRegistrationPreMALF_SyN[malf_atlas_subject].inputs.transform_parameters = [[0.1],[0.1],[0.1, 3, 0],[0.1, 3, 0]]
+        if onlyT1:
+            A2SantsRegistrationPreMALF_SyN[malf_atlas_subject].inputs.metric = ['MI','MI','CC','CC']
+            A2SantsRegistrationPreMALF_SyN[malf_atlas_subject].inputs.metric_weight = [1.0,1.0,1.0,1.0]
+            A2SantsRegistrationPreMALF_SyN[malf_atlas_subject].inputs.sampling_percentage = [.5,.5,1.0,1.0]
+            A2SantsRegistrationPreMALF_SyN[malf_atlas_subject].inputs.radius_or_number_of_bins = [32,32,4,4]
+            A2SantsRegistrationPreMALF_SyN[malf_atlas_subject].inputs.sampling_strategy = ['Regular','Regular',None,None]
+        else:
+            A2SantsRegistrationPreMALF_SyN[malf_atlas_subject].inputs.metric = ['MI',['MI','MI'],'CC',['CC','CC']]
+            A2SantsRegistrationPreMALF_SyN[malf_atlas_subject].inputs.metric_weight = [1.0,[1.0,1.0],1.0,[1.0,1.0]]
+            A2SantsRegistrationPreMALF_SyN[malf_atlas_subject].inputs.sampling_percentage = [.5,[.5,0.5],1.0,[1.0,1.0]]
+            A2SantsRegistrationPreMALF_SyN[malf_atlas_subject].inputs.radius_or_number_of_bins = [32,[32,32],4,[4,4]]
+            A2SantsRegistrationPreMALF_SyN[malf_atlas_subject].inputs.sampling_strategy = ['Regular',['Regular','Regular'],None,[None,None]]
 
-        A2SantsRegistrationPreABCSyN[malf_atlas_subject].inputs.convergence_threshold = [1e-8,1e-4]
 
-        A2SantsRegistrationPreABCSyN[malf_atlas_subject].inputs.convergence_window_size = [12]
-        A2SantsRegistrationPreABCSyN[malf_atlas_subject].inputs.use_histogram_matching = [True,True]
-        A2SantsRegistrationPreABCSyN[malf_atlas_subject].inputs.shrink_factors = [[8, 4, 3, 2], [1]]
-        A2SantsRegistrationPreABCSyN[malf_atlas_subject].inputs.smoothing_sigmas = [[3, 2, 2, 1], [0]]
-        A2SantsRegistrationPreABCSyN[malf_atlas_subject].inputs.sigma_units = ["vox","vox"]
-        A2SantsRegistrationPreABCSyN[malf_atlas_subject].inputs.use_estimate_learning_rate_once = [False,False]
-        A2SantsRegistrationPreABCSyN[malf_atlas_subject].inputs.write_composite_transform = True # Required for initialize_transforms_per_stage
-        A2SantsRegistrationPreABCSyN[malf_atlas_subject].inputs.collapse_output_transforms = False # Mutually Exclusive with initialize_transforms_per_stage
-        A2SantsRegistrationPreABCSyN[malf_atlas_subject].inputs.initialize_transforms_per_stage = True
-        ## NO NEED FOR THIS A2SantsRegistrationPreABCSyN[malf_atlas_subject].inputs.save_state = 'SavedInternalSyNState.h5'
-        A2SantsRegistrationPreABCSyN[malf_atlas_subject].inputs.output_transform_prefix = malf_atlas_subject+'_ToSubjectPreBABC_SyN'
-        A2SantsRegistrationPreABCSyN[malf_atlas_subject].inputs.winsorize_lower_quantile = 0.01
-        A2SantsRegistrationPreABCSyN[malf_atlas_subject].inputs.winsorize_upper_quantile = 0.99
-        A2SantsRegistrationPreABCSyN[malf_atlas_subject].inputs.output_warped_image = malf_atlas_subject + '_2subject.nii.gz'
-        ## NO NEED FOR THIS A2SantsRegistrationPreABCSyN[malf_atlas_subject].inputs.output_inverse_warped_image = 'subject2atlas.nii.gz'
-        A2SantsRegistrationPreABCSyN[malf_atlas_subject].inputs.float = True
+        A2SantsRegistrationPreMALF_SyN[malf_atlas_subject].inputs.number_of_iterations = [[1000,1000,500],[500,500],[500,500],[500,70]]
+
+        A2SantsRegistrationPreMALF_SyN[malf_atlas_subject].inputs.convergence_threshold = [1e-8,1e-6,1e-8,1e-6]
+
+        A2SantsRegistrationPreMALF_SyN[malf_atlas_subject].inputs.convergence_window_size = [12]
+        A2SantsRegistrationPreMALF_SyN[malf_atlas_subject].inputs.use_histogram_matching = [True,True,True,True]
+        A2SantsRegistrationPreMALF_SyN[malf_atlas_subject].inputs.shrink_factors = [[8, 4, 2],[2, 1],[8, 4],[2, 1]]
+        A2SantsRegistrationPreMALF_SyN[malf_atlas_subject].inputs.smoothing_sigmas = [[3, 2, 1],[1, 0],[3, 2],[1, 0]]
+        A2SantsRegistrationPreMALF_SyN[malf_atlas_subject].inputs.sigma_units = ["vox","vox","vox","vox"]
+        A2SantsRegistrationPreMALF_SyN[malf_atlas_subject].inputs.use_estimate_learning_rate_once = [False,False,False,False]
+        A2SantsRegistrationPreMALF_SyN[malf_atlas_subject].inputs.write_composite_transform = True # Required for initialize_transforms_per_stage
+        A2SantsRegistrationPreMALF_SyN[malf_atlas_subject].inputs.collapse_output_transforms = False # Mutually Exclusive with initialize_transforms_per_stage
+        A2SantsRegistrationPreMALF_SyN[malf_atlas_subject].inputs.initialize_transforms_per_stage = True
+        ## NO NEED FOR THIS A2SantsRegistrationPreMALF_SyN[malf_atlas_subject].inputs.save_state = 'SavedInternalSyNState.h5'
+        A2SantsRegistrationPreMALF_SyN[malf_atlas_subject].inputs.output_transform_prefix = malf_atlas_subject+'_ToSubjectPreMALF_SyN'
+        A2SantsRegistrationPreMALF_SyN[malf_atlas_subject].inputs.winsorize_lower_quantile = 0.01
+        A2SantsRegistrationPreMALF_SyN[malf_atlas_subject].inputs.winsorize_upper_quantile = 0.99
+        A2SantsRegistrationPreMALF_SyN[malf_atlas_subject].inputs.output_warped_image = malf_atlas_subject + '_2subject.nii.gz'
+        ## NO NEED FOR THIS A2SantsRegistrationPreMALF_SyN[malf_atlas_subject].inputs.output_inverse_warped_image = 'subject2atlas.nii.gz'
+        A2SantsRegistrationPreMALF_SyN[malf_atlas_subject].inputs.float = True
 
         ## if using Registration masking, then do ROIAuto on fixed and moving images and connect to registraitons
         UseRegistrationMasking = True
@@ -216,18 +191,39 @@ def CreateMALFWorkflow(WFname, master_config,good_subjects,BASE_DATA_GRABBER_DIR
             MALFWF.connect(inputsSpec, 'subj_t1_image',fixedROIAuto[malf_atlas_subject],'inputVolume')
             MALFWF.connect(malfAtlases[malf_atlas_subject], 't1', movingROIAuto[malf_atlas_subject],'inputVolume')
 
-            MALFWF.connect(fixedROIAuto[malf_atlas_subject], 'outputROIMaskVolume',A2SantsRegistrationPreABCRigid[malf_atlas_subject],'fixed_image_mask')
-            MALFWF.connect(movingROIAuto[malf_atlas_subject], 'outputROIMaskVolume',A2SantsRegistrationPreABCRigid[malf_atlas_subject],'moving_image_mask')
+            MALFWF.connect(fixedROIAuto[malf_atlas_subject], 'outputROIMaskVolume',A2SantsRegistrationPreMALF_SyN[malf_atlas_subject],'fixed_image_mask')
+            MALFWF.connect(movingROIAuto[malf_atlas_subject], 'outputROIMaskVolume',A2SantsRegistrationPreMALF_SyN[malf_atlas_subject],'moving_image_mask')
 
-            MALFWF.connect(fixedROIAuto[malf_atlas_subject], 'outputROIMaskVolume',A2SantsRegistrationPreABCSyN[malf_atlas_subject],'fixed_image_mask')
-            MALFWF.connect(movingROIAuto[malf_atlas_subject], 'outputROIMaskVolume',A2SantsRegistrationPreABCSyN[malf_atlas_subject],'moving_image_mask')
+        MALFWF.connect(BLICreator[malf_atlas_subject],'outputTransformFilename',
+                       A2SantsRegistrationPreMALF_SyN[malf_atlas_subject],'initial_moving_transform')
 
-        MALFWF.connect(A2SantsRegistrationPreABCRigid[malf_atlas_subject],
-                                 ('composite_transform', getListIndexOrNoneIfOutOfRange, 0 ),
-                                 A2SantsRegistrationPreABCSyN[malf_atlas_subject],'initial_moving_transform')
-        MALFWF.connect(inputsSpec, 'subj_t1_image',A2SantsRegistrationPreABCSyN[malf_atlas_subject],'fixed_image')
-        MALFWF.connect(malfAtlases[malf_atlas_subject], 't1',A2SantsRegistrationPreABCSyN[malf_atlas_subject],'moving_image')
-        MALFWF.connect(A2SantsRegistrationPreABCSyN[malf_atlas_subject],'warped_image',warpedAtlasT1MergeNode,'in'+str(malf_atlas_mergeindex) )
+        """
+        multimodal ants registration if t2 exists
+        """
+        sessionMakeMultimodalInput[malf_atlas_subject] = pe.Node(Function(function=MakeVector,
+                                                                          input_names=['inFN1', 'inFN2'],
+                                                                          output_names=['outFNs']),
+                                    run_without_submitting=True, name="sessionMakeMultimodalInput_"+malf_atlas_subject)
+        MALFWF.connect(inputsSpec, 'subj_t1_image', sessionMakeMultimodalInput[malf_atlas_subject], 'inFN1')
+        if not onlyT1:
+            MALFWF.connect(inputsSpec, 'subj_t2_image', sessionMakeMultimodalInput[malf_atlas_subject], 'inFN2')
+        else:
+            pass
+
+        atlasMakeMultimodalInput[malf_atlas_subject] = pe.Node(Function(function=MakeVector, input_names=['inFN1', 'inFN2'], output_names=['outFNs']),
+                                  run_without_submitting=True, name="atlasMakeMultimodalInput"+malf_atlas_subject)
+        MALFWF.connect(malfAtlases[malf_atlas_subject], 't1', atlasMakeMultimodalInput[malf_atlas_subject], 'inFN1')
+        if not onlyT1:
+            MALFWF.connect(malfAtlases[malf_atlas_subject], 't2', atlasMakeMultimodalInput[malf_atlas_subject], 'inFN2')
+        else:
+            pass
+
+        MALFWF.connect(sessionMakeMultimodalInput[malf_atlas_subject], 'outFNs',
+                       A2SantsRegistrationPreMALF_SyN[malf_atlas_subject],'fixed_image')
+        MALFWF.connect(atlasMakeMultimodalInput[malf_atlas_subject], 'outFNs',
+                       A2SantsRegistrationPreMALF_SyN[malf_atlas_subject],'moving_image')
+        MALFWF.connect(A2SantsRegistrationPreMALF_SyN[malf_atlas_subject],'warped_image',
+                       warpedAtlasT1MergeNode,'in'+str(malf_atlas_mergeindex) )
 
         ### Original labelmap resampling
         labelMapResample[malf_atlas_subject] = pe.Node(interface=ants.ApplyTransforms(),name="WLABEL_"+malf_atlas_subject)
@@ -239,7 +235,7 @@ def CreateMALFWorkflow(WFname, master_config,good_subjects,BASE_DATA_GRABBER_DIR
         labelMapResample[malf_atlas_subject].inputs.default_value=0
         labelMapResample[malf_atlas_subject].inputs.invert_transform_flags=[False]
 
-        MALFWF.connect( A2SantsRegistrationPreABCSyN[malf_atlas_subject],'composite_transform',
+        MALFWF.connect( A2SantsRegistrationPreMALF_SyN[malf_atlas_subject],'composite_transform',
                         labelMapResample[malf_atlas_subject],'transforms')
         MALFWF.connect( inputsSpec, 'subj_t1_image',
                         labelMapResample[malf_atlas_subject],'reference_image')
@@ -259,7 +255,7 @@ def CreateMALFWorkflow(WFname, master_config,good_subjects,BASE_DATA_GRABBER_DIR
         NewlabelMapResample[malf_atlas_subject].inputs.default_value=0
         NewlabelMapResample[malf_atlas_subject].inputs.invert_transform_flags=[False]
 
-        MALFWF.connect( A2SantsRegistrationPreABCSyN[malf_atlas_subject],'composite_transform',
+        MALFWF.connect( A2SantsRegistrationPreMALF_SyN[malf_atlas_subject],'composite_transform',
                         NewlabelMapResample[malf_atlas_subject],'transforms')
         MALFWF.connect( inputsSpec, 'subj_t1_image',
                         NewlabelMapResample[malf_atlas_subject],'reference_image')

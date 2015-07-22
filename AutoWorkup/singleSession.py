@@ -66,6 +66,10 @@ def _create_singleSession(dataDict, master_config, interpMode, pipeline_name):
 
     pname = "{0}_{1}_{2}".format(master_config['workflow_phase'], subject, session)
     onlyT1 = not (len(dataDict['T2s']) > 0)
+    if onlyT1:
+        print "T1 Only processing starts ..."
+    else:
+        print "Multimodal processing starts ..."
     sessionWorkflow = generate_single_session_template_WF(project, subject, session, onlyT1, master_config,
                                                           phase=master_config['workflow_phase'],
                                                           interpMode=interpMode,

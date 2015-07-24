@@ -34,10 +34,12 @@
 #include "ml.h"
 #include "cxcore.h"
 
-#include "opencv2/flann/flann.hpp"
+// #include "opencv2/flann/flann.hpp" **opencv 2
+#include "opencv2/flann.hpp"
 
 // typedef CvANN_MLP_Revision OpenCVMLPType;
-typedef CvANN_MLP OpenCVMLPType;
+//typedef CvANN_MLP OpenCVMLPType;
+typedef cv::ml::ANN_MLP OpenCVMLPType;
 
 /** Training data set definition */
 
@@ -45,9 +47,9 @@ typedef float scalarType;
 
 struct pairedTrainingSetType
   {
-  CvMat * pairedInput;
-  CvMat * pairedOutput;
-  CvMat * pairedOutputRF;
+  cv::Mat pairedInput;
+  cv::Mat pairedOutput;
+  cv::Mat pairedOutputRF;
   unsigned int size;
   };
 

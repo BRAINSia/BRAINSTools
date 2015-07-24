@@ -280,7 +280,7 @@ FeatureInputVector
   std::map<std::string, InputVectorMapType> featureInputOfROI;
 
   std::cout << "****************************************************" << std::endl;
-  std::cout << "***********ComputeFEatureInputOfROI*****************" << std::endl;
+  std::cout << "******** Compute Feature Input Of ROI **************" << std::endl;
   std::cout << "****************************************************" << std::endl;
 
   SetGradientImage( ROIName );

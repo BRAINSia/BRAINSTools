@@ -139,9 +139,13 @@ int main(int argc, char * *argv)
         }
       m_ModelApplier.Apply();
       }
-    catch( BRAINSCutExceptionStringHandler& e )
+      catch( BRAINSCutExceptionStringHandler& e )
       {
       std::cout << e.Error();
+      }
+      catch( ... )
+      {
+      std::cout<<"Unspecified error in ";
       }
     }
 

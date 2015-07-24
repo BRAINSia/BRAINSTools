@@ -97,9 +97,10 @@ private:
 
   scalarType      m_annOutputThreshold;
   scalarType      m_gaussianSmoothingSigma;
-  OpenCVMLPType * m_openCVANN;
+  cv::Ptr<OpenCVMLPType> m_openCVANN;
 
-  CvRTrees* m_openCVRandomForest;
+  //CvRTrees* m_openCVRandomForest;
+  cv::Ptr<cv::ml::RTrees>  m_openCVRandomForest;
 
   /* private functions  */
   std::string GetANNModelBaseName();

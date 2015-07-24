@@ -310,6 +310,7 @@ ShuffleVectors::Shuffling()
     if( buf[m_IVS  + m_OVS] != LineGuard )
       {
       std::cerr << "Record not properly terminated by sentinel value ::  "
+                << buf << " where "
                 << buf[m_IVS  + m_OVS] << " != "
                 << LineGuard
                 << " at Vector index " << vectorIndex

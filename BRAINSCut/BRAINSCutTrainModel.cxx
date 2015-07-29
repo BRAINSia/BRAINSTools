@@ -137,39 +137,36 @@ BRAINSCutTrainModel
 
 void
 BRAINSCutTrainModel
-::TrainWithUpdate( neuralNetType& myTrainer, bool update, pairedTrainingSetType& currentTrainData )
+::TrainWithUpdate( cv::Ptr<OpenCVMLPType> myTrainer, bool update, pairedTrainingSetType& currentTrainData )
 {
   int updateOption = 0;
 
   if( update )
     {
-    updateOption = CvANN_MLP::UPDATE_WEIGHTS;
+    updateOption = OpenCVMLPType::UPDATE_WEIGHTS;
     }
   // TODO change subset number properly
 
-  myTrainer.train( currentTrainData.pairedInput,
-                   currentTrainData.pairedOutput,
-                   ITK_NULLPTR, // Sample weight
-                   ITK_NULLPTR,    // Sample Index,
-                   CvANN_MLP_TrainParams( cvTermCriteria( CV_TERMCRIT_ITER
-                                                          | CV_TERMCRIT_EPS,
-                                                          m_trainEpochIteration, m_trainDesiredError),
-                                          CvANN_MLP_TrainParams::RPROP,  //
-                                          0.1,                           //
-                                          FLT_EPSILON ),
-                   updateOption);
+  myTrainer->setBackpropMomentumScale(0.1);
+  myTrainer->setTrainMethod(OpenCVMLPType::RPROP);
+  myTrainer->setTermCriteria(cvTermCriteria( CV_TERMCRIT_ITER
+                           | CV_TERMCRIT_EPS,
+                           m_trainEpochIteration, m_trainDesiredError));
+  myTrainer->train( cv::ml::TrainData::create(currentTrainData.pairedInput,
+                                              cv::ml::ROW_SAMPLE,
+                                              currentTrainData.pairedOutput));
 }
 
 void
 BRAINSCutTrainModel
-::SaveRFTrainModelAtIteration( CvRTrees& myTrainer, int depth, int NTrees)
+::SaveRFTrainModelAtIteration( cv::Ptr<cv::ml::RTrees> myTrainer, int depth, int NTrees)
 {
   std::string filename = m_myDataHandler.GetRFModelFilename( depth, NTrees );
 
   try
     {
     std::cout << "Save Model File :: " << filename << std::endl;
-    myTrainer.save( filename.c_str() );
+    myTrainer->save( filename.c_str() );
     }
   catch( ... )
     {
@@ -181,7 +178,7 @@ BRAINSCutTrainModel
 
 void
 BRAINSCutTrainModel
-::SaveANNTrainModelAtIteration( neuralNetType& myTrainer, unsigned int No)
+::SaveANNTrainModelAtIteration( cv::Ptr<OpenCVMLPType>  myTrainer, unsigned int No)
 {
   char tempid[10];
 
@@ -197,19 +194,15 @@ BRAINSCutTrainModel
               << std::endl;
     itksys::SystemTools::MakeDirectory( path.c_str() );
     }
-  myTrainer.save( filename.c_str() );
+  myTrainer->save( filename.c_str() );
 }
 
 void
 BRAINSCutTrainModel
-::writeRFTrainInformation( CvRTrees& myTrainer,
+::writeRFTrainInformation( cv::Ptr<cv::ml::RTrees>  myTrainer,
                            int depth,
                            int nTree)
 {
-  char cError[40];
-
-  sprintf( cError, "%.5g", myTrainer.get_train_error() );
-
   char cDepth[10];
   sprintf( cDepth, "%d", depth );
 
@@ -217,7 +210,6 @@ BRAINSCutTrainModel
   sprintf( cNTree, "%d", nTree);
 
   std::string line = "error,";
-  line += cError;
   line += ", depth, ";
   line += cDepth;
   line += ", number of Tree, ";
@@ -245,7 +237,7 @@ BRAINSCutTrainModel
 
 void
 BRAINSCutTrainModel
-::printANNTrainInformation( neuralNetType & /*NOT USED myTrainer */, unsigned int No )
+::printANNTrainInformation( cv::Ptr<OpenCVMLPType> /*NOT USED myTrainer */, unsigned int No )
 {
   std::cout << " Error, " << " NOT_COMPUTED " /* myTrainer.get_MSE() This needs to be instumented again */
             << " Iteration, " << No
@@ -265,27 +257,31 @@ void
 BRAINSCutTrainModel
 ::TrainANN()
 {
-  neuralNetType * trainner = new neuralNetType();
+  cv::Ptr<OpenCVMLPType>  trainner =  OpenCVMLPType::create();
   int             layer[3];
 
   this->FillANNLayerStructureArray3D(layer);
-
-  cvInitMatHeader( this->m_ANNLayerStructure, 1, 3, CV_32SC1, layer );
-
-  trainner->create( this->m_ANNLayerStructure,
-                    CvANN_MLP::SIGMOID_SYM,
-                    m_activationSlope,
-                    m_activationMinMax);
+  const int nLayer=3;
+  //cv::Mat annLayer = cv::Mat(nLayer, layer, CV_32SC1, cv::Scalar::all(0.0F));
+  cv::Mat annLayer = cv::Mat(1, nLayer, CV_32SC1, layer);
+  trainner->setActivationFunction(OpenCVMLPType::SIGMOID_SYM);
+  std::cout<<"ANNLayer::"
+           <<annLayer
+           <<std::endl;
+  trainner->setLayerSizes(annLayer);
+  std::cout<<"getLayerSizes::"
+           <<trainner->getLayerSizes()
+           <<std::endl;
   for( unsigned int currentIteration = 1;
        currentIteration <= m_trainIteration;
        currentIteration++ )
     {
     unsigned int subSetNo =  (currentIteration - 1) % this->m_trainingDataSet->GetNumberOfSubSet();
-    TrainWithUpdate( *trainner,
+    TrainWithUpdate( trainner,
                      (currentIteration > 1), // after first iteration, update
                      *(this->m_trainingDataSet->GetTrainingSubSet(subSetNo) ) );
-    SaveANNTrainModelAtIteration( *trainner, currentIteration );
-    printANNTrainInformation( *trainner, currentIteration );
+    SaveANNTrainModelAtIteration( trainner, currentIteration );
+    printANNTrainInformation( trainner, currentIteration );
     /*
     if( trainner->get_MSE()  < m_trainDesiredError )
       {
@@ -294,7 +290,6 @@ BRAINSCutTrainModel
       }
       */
     }
-  delete trainner;
 }
 
 /** random forest training */
@@ -315,30 +310,19 @@ void
 BRAINSCutTrainModel
 ::TrainRandomForestAt( const int depth, const int numberOfTree )
 {
-  CvRTrees   forest;
-  CvRTParams randomTreeTrainParamters =
-    CvRTParams( depth,
-                m_trainMinSampleCount,
-                0.0F,                  // float  _regression_accuracy=0,
-                m_trainUseSurrogates,
-                10,                       // int    _max_categories=10,
-                ITK_NULLPTR,                        // float* _priors,
-                m_trainCalcVarImportance, // bool   _calc_var_importance=false,
-                0,                        // int    _nactive_vars=0,
-                numberOfTree,
-                0,                     // float  forest_accuracy=0,
-                0
-                );
+  cv::Ptr<cv::ml::RTrees> forest = cv::ml::RTrees::create();
+  forest->setMaxDepth(depth);
+  forest->setMinSampleCount(m_trainMinSampleCount);
+  forest->setUseSurrogates(m_trainUseSurrogates);
+  forest->setCalculateVarImportance(m_trainCalcVarImportance);
+  forest->setTermCriteria( cv::TermCriteria(
+                              cv::TermCriteria::MAX_ITER + cv::TermCriteria::EPS,
+                              numberOfTree,
+                              0.1F));
+  forest->train(cv::ml::TrainData::create( this->m_trainingDataSet->GetTrainingSubSet(0)->pairedInput,
+                                          cv::ml::ROW_SAMPLE,
+                                           this->m_trainingDataSet->GetTrainingSubSet(0)->pairedOutputRF));
 
-  forest.train( this->m_trainingDataSet->GetTrainingSubSet(0)->pairedInput,
-                CV_ROW_SAMPLE,   // or CV_COL_SAMPLE
-                this->m_trainingDataSet->GetTrainingSubSet(0)->pairedOutputRF,
-                ITK_NULLPTR,
-                ITK_NULLPTR,    // CvMat* sampleIdx=0,
-                ITK_NULLPTR,    // CvMat* varType=0,
-                ITK_NULLPTR,    // CvMat* missingMask=0,
-                randomTreeTrainParamters
-                );
   writeRFTrainInformation( forest, depth, numberOfTree );
   SaveRFTrainModelAtIteration( forest, depth, numberOfTree);
 }

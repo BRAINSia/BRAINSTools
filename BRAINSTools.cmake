@@ -156,6 +156,7 @@ set(brains_modulenames
   BRAINSROIAuto
   GTRACT
   ImageCalculator
+  BRAINSCut
   ## Temporarily Removed Need to update OpenCV BRAINSCut
   BRAINSLandmarkInitializer
   BRAINSSnapShotWriter

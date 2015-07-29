@@ -46,8 +46,9 @@ int main( int argc, char ** argv )
     myExit = EXIT_FAILURE;
     }
 
-  if( filter->GetDiceCoefficient() != 1.0F )
+  if( filter->GetDiceCoefficient() < 0.97F )
   {
+    std::cout<<"DSC = "<<  filter->GetDiceCoefficient() << std::endl;
     myExit = EXIT_FAILURE;
   }
 

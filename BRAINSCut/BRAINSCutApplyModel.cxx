@@ -46,9 +46,7 @@ BRAINSCutApplyModel
   m_depthOfTree(0),
   m_ANNTestingSSEFileStream(),
   m_annOutputThreshold(0),
-  m_gaussianSmoothingSigma(0),
-  m_openCVANN(ITK_NULLPTR),
-  m_openCVRandomForest(ITK_NULLPTR)
+  m_gaussianSmoothingSigma(0)
 {
 }
 
@@ -84,9 +82,7 @@ BRAINSCutApplyModel
   m_depthOfTree(0),
   m_ANNTestingSSEFileStream(),
   m_annOutputThreshold(0),
-  m_gaussianSmoothingSigma(0),
-  m_openCVANN(ITK_NULLPTR),
-  m_openCVRandomForest(ITK_NULLPTR)
+  m_gaussianSmoothingSigma(0)
 {
   this->m_myDataHandler = &dataHandler;
   // TODO Take this apart to generate registration one by one!
@@ -106,7 +102,8 @@ BRAINSCutApplyModel
   m_applyDataSetList = this->m_myDataHandler->GetApplyDataSet();
 
   /** set default: ANN **/
-  this->m_openCVANN = new OpenCVMLPType();
+  this->m_openCVANN = OpenCVMLPType::create();
+  //new OpenCVMLPType();
 
   SetMethod( "ANN" );
 }
@@ -114,14 +111,6 @@ BRAINSCutApplyModel
 BRAINSCutApplyModel
 ::~BRAINSCutApplyModel()
 {
-  this->m_openCVANN->clear();
-  delete this->m_openCVANN;
-
-  if(  m_method ==  "RandomForest" )
-    {
-    this->m_openCVRandomForest->clear();
-    delete this->m_openCVRandomForest;
-    }
 }
 
 void
@@ -135,7 +124,8 @@ BRAINSCutApplyModel
     }
   else
     {
-    m_openCVRandomForest = new CvRTrees;
+    //m_openCVRandomForest = CvRTrees;
+    m_openCVRandomForest = cv::ml::RTrees::create();
     this->m_myDataHandler->SetTrainConfiguration( "RandomForestParameters");
     }
 }
@@ -274,7 +264,6 @@ BRAINSCutApplyModel
             }
           catch( itk::ExceptionObject& ex )
             {
-            std::cout << "ERROR at " << __LINE__ << "::" << __FILE__ << std::endl;
             std::cout << ex.what() << std::endl;
             }
           }
@@ -395,7 +384,6 @@ BRAINSCutApplyModel
     }
   catch( std::exception& ex )
     {
-    std::cout << "ERROR at" << __LINE__ << "::" << __FILE__ << std::endl;
     std::cout << ex.what() << std::endl;
     std::exit( EXIT_FAILURE );
     }
@@ -746,27 +734,29 @@ BRAINSCutApplyModel
     {
     /* get open cv type matrix from array for prediction */
 
-    CvMat openCVInputFeature;
-    cvInitMatHeader( &openCVInputFeature, 1, inputVectorSize, CV_32FC1,
-                     &(it->second[0]) ); //
+    cv::Mat openCVInputFeature = cv::Mat(1, inputVectorSize, CV_32F,
+             &(it->second[0]) ); //
                                          // http://stackoverflow.com/questions/6701816/how-to-use-a-stdvector-in-a-c-function
     // std::cout<<FeatureInputVector::HashIndexFromKey( it->first );
 
     /* predict */
     if( m_method == "ANN" )
       {
-      CvMat * openCVOutput = cvCreateMat( 1, NumberOfROIS, CV_32FC1 );
-      this->m_openCVANN->predict( &openCVInputFeature, openCVOutput );
+      cv::Mat openCVOutput = cv::Mat::zeros(1, NumberOfROIS, CV_32S);
+      std::cout<<openCVInputFeature<<std::endl;
+      openCVOutput = this->m_openCVANN->predict( openCVInputFeature );
 
       /* insert result to the result output vector */
       resultOutputVector.insert( std::pair<hashKeyType, scalarType>(
-                                   ( it->first ),
-                                   cvmGet( openCVOutput,  0, roiNumber) ) );
+                                 ( it->first ),
+                                 openCVOutput.at<float>(0, roiNumber) ));
+                                 //cvmGet( openCVOutput,  0, roiNumber) ) );
       // CV_MAT_ELEM( *openCVOutput, scalarType, 0, roiNumber) ) );
       }
     else if( m_method == "RandomForest" )
       {
-      const scalarType response = m_openCVRandomForest->predict( &openCVInputFeature );
+      std::cout<<openCVInputFeature<<std::endl;
+      const scalarType response = this->m_openCVRandomForest->predict( openCVInputFeature );
       // make binary input
       /*if( response > 0.5F )
       {
@@ -813,7 +803,8 @@ BRAINSCutApplyModel
     }
 
   std::cout << "Filename:: " << ANNModelFilename << std::endl;
-  this->m_openCVANN->load( ANNModelFilename.c_str() );
+  this->m_openCVANN = OpenCVMLPType::load<OpenCVMLPType>( ANNModelFilename );
+  //this->m_openCVANN->load( ANNModelFilename.c_str() );
 }
 
 void
@@ -829,7 +820,7 @@ BRAINSCutApplyModel
     throw BRAINSCutExceptionStringHandler( errorMsg );
     }
   std::cout << "******* LOAD random forest file ********" << std::endl;
-  m_openCVRandomForest->load( randomForestFilename.c_str() );
+  m_openCVRandomForest = cv::Algorithm::load<cv::ml::RTrees>( randomForestFilename.c_str() );
 }
 
 inline void

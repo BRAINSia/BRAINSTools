@@ -27,6 +27,8 @@ public:
   BRAINSCutTrainModel( BRAINSCutDataHandler & dataHandler );
   virtual ~BRAINSCutTrainModel();
 
+  typedef cv::ml::RTrees CvRTrees;
+
   /** train */
   void InitializeNeuralNetwork();
 
@@ -41,15 +43,15 @@ public:
   void TrainRandomForestAt( const int depth, const int numberOfTree );
 
   /** inline functions */
-  inline void TrainWithUpdate(neuralNetType& myTrainer, bool update, pairedTrainingSetType& currentTrainData);
+  inline void TrainWithUpdate(cv::Ptr<OpenCVMLPType> myTrainer, bool update, pairedTrainingSetType& currentTrainData);
 
-  inline void SaveANNTrainModelAtIteration( neuralNetType& myTrainer, unsigned int No);
+  inline void SaveANNTrainModelAtIteration( cv::Ptr<OpenCVMLPType> myTrainer, unsigned int No);
 
-  inline void SaveRFTrainModelAtIteration( CvRTrees& myTrainer, int depth, int NTrees);
+  inline void SaveRFTrainModelAtIteration( cv::Ptr<cv::ml::RTrees> myTrainer, int depth, int NTrees);
 
-  inline void writeRFTrainInformation( CvRTrees& myTrainer, int depth, int nTree);
+  inline void writeRFTrainInformation( cv::Ptr<cv::ml::RTrees> myTrainer, int depth, int nTree);
 
-  inline void printANNTrainInformation( neuralNetType& myTrainer, unsigned int No );
+  inline void printANNTrainInformation( cv::Ptr<OpenCVMLPType> myTrainer, unsigned int No );
 
   void FillANNLayerStructureArray3D( int * const layer ) const;
 

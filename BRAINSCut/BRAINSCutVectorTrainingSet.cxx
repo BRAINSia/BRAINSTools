@@ -47,9 +47,6 @@ BRAINSCutVectorTrainingSet
 BRAINSCutVectorTrainingSet
 ::~BRAINSCutVectorTrainingSet()
 {
-  cvReleaseMat( &(currentTrainingSubSet->pairedInput) );
-  cvReleaseMat( &(currentTrainingSubSet->pairedOutput) );
-  cvReleaseMat( &(currentTrainingSubSet->pairedOutputRF) );
 }
 
 // ---------------------------//
@@ -275,6 +272,7 @@ pairedTrainingSetType *
 BRAINSCutVectorTrainingSet
 ::GetTrainingSubSet( unsigned int count )
 {
+  std::cout<<currentTrainingSubSet<<std::endl;
   if( !(count < numberOfSubSet) )
     {
     throw (  BRAINSCutExceptionStringHandler( "Specified SubSet is not valid") );
@@ -312,7 +310,8 @@ BRAINSCutVectorTrainingSet
   scalarType * pairedInputBuffer = new scalarType[subSetSize * inputVectorSize];
   scalarType * pairedOutputBuffer = new scalarType[subSetSize * outputVectorSize];
   scalarType * pairedOutputBufferRF = new scalarType[subSetSize];  // RandomForest
-  for( unsigned int i = 0; i < subSetSize  && !readInFile.eof(); i++ )
+
+  for( int i = 0; i < subSetSize  && !readInFile.eof(); i++ )
     {
     currentBuffer = ReadBufferFromFileStream( readInFile );
     /* move this to one line buffer for open cv matrix type */
@@ -331,35 +330,38 @@ BRAINSCutVectorTrainingSet
         }
       }
     pairedOutputBufferRF[i] = tempOutput;
+
     for( int j = 0; j < inputVectorSize; j++ )
       {
       pairedInputBuffer[i * inputVectorSize + j] = currentBuffer[j + outputVectorSize];
       }
+    std::cout<<std::endl;
     }
   delete[] currentBuffer;
 
   currentTrainingSubSet = new pairedTrainingSetType;
-  currentTrainingSubSet->pairedInput = cvCreateMat( subSetSize, inputVectorSize, CV_32FC1 );
-  cvInitMatHeader( currentTrainingSubSet->pairedInput,
-                   subSetSize,
+  currentTrainingSubSet->pairedInput = cv::Mat( subSetSize,
                    inputVectorSize,
-                   CV_32FC1,
+                   CV_32F,
                    pairedInputBuffer);
-  currentTrainingSubSet->pairedOutput = cvCreateMat( subSetSize, outputVectorSize, CV_32FC1);
-  cvInitMatHeader( currentTrainingSubSet->pairedOutput,
-                   subSetSize,
+  currentTrainingSubSet->pairedOutput = cv::Mat( subSetSize,
                    outputVectorSize,
-                   CV_32FC1,
+                   CV_32F,
                    pairedOutputBuffer);
 
-  currentTrainingSubSet->pairedOutputRF = cvCreateMat( subSetSize, 1, CV_32FC1);
-  cvInitMatHeader( currentTrainingSubSet->pairedOutputRF,
-                   subSetSize,
+  currentTrainingSubSet->pairedOutputRF = cv::Mat( subSetSize,
                    1,
-                   CV_32FC1,
+                   CV_32F,
                    pairedOutputBufferRF);
 
-  if( currentTrainingSubSet->pairedInput->rows == 0 )
+  std::cout<< " n row input= " << (currentTrainingSubSet->pairedInput).rows
+           << " n row output = " << (currentTrainingSubSet->pairedOutput).rows
+           << std::endl;
+  if( (currentTrainingSubSet->pairedInput).rows != (currentTrainingSubSet->pairedOutput).rows)
+    {
+    throw (  BRAINSCutExceptionStringHandler( "Input and Output row do not match!! ") );
+    }
+  if( (currentTrainingSubSet->pairedInput).rows == 0)
     {
     throw (  BRAINSCutExceptionStringHandler( "Vector File is Empty!! ") );
     }

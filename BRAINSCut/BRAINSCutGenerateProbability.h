@@ -127,7 +127,7 @@ private:
       GenericTransformImage<WarperImageType, WarperImageType, LocalDisplacementFieldType>(
         PrincipalOperandImage,
         ReferenceImage,
-        genericTransform,
+        genericTransform.GetPointer(),
         defaultValue,
         interpolationMode,
         pixelType == "binary");

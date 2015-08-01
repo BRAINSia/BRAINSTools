@@ -302,19 +302,19 @@ BRAINSCutDataHandler
                                         ("rho", GenericTransformImage<WorkingImageType,
                                                                       WorkingImageType,
                                                                       DisplacementFieldType>
-                                          ( m_rho, referenceImage, genericTransform,
+                                          ( m_rho, referenceImage, genericTransform.GetPointer(),
                                           0.0, "Linear", transoformationPixelType == "binary") ) );
   warpedSpatialLocationImages.insert( std::pair<std::string, WorkingImagePointer>
                                         ("phi", GenericTransformImage<WorkingImageType,
                                                                       WorkingImageType,
                                                                       DisplacementFieldType>
-                                          ( m_phi, referenceImage, genericTransform,
+                                          ( m_phi, referenceImage, genericTransform.GetPointer(),
                                           0.0, "Linear", transoformationPixelType == "binary") ) );
   warpedSpatialLocationImages.insert( std::pair<std::string, WorkingImagePointer>
                                         ("theta", GenericTransformImage<WorkingImageType,
                                                                         WorkingImageType,
                                                                         DisplacementFieldType>
-                                          ( m_theta, referenceImage, genericTransform,
+                                          ( m_theta, referenceImage, genericTransform.GetPointer(),
                                           0.0, "Linear", transoformationPixelType == "binary") ) );
 }
 
@@ -402,7 +402,7 @@ BRAINSCutDataHandler
                          (*roiTyIt), GenericTransformImage<WorkingImageType,
                                                            WorkingImageType,
                                                            DisplacementFieldType>
-                         ( currentROI, referenceImage,genericTransform, 0.0, "Linear",
+                         ( currentROI, referenceImage,genericTransform.GetPointer(), 0.0, "Linear",
                            transformationPixelType == "binary") ) );
     }
 }

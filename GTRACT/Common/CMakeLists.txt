@@ -2,8 +2,6 @@
 
 set(GTRACTCommon_SRC
   algo.cxx
-  itkTimeSeriesVersorRigidFilter.cxx
-  itkTimeSeriesVersorScaleSkewFilter.cxx
   itkAnatomicalVersorRigidFilter.cxx
   itkAnatomicalBSplineFilter.cxx
   itkInvertBSplineFilter.cxx
@@ -12,8 +10,6 @@ set(GTRACTCommon_SRC
   itkComputeDiffusionTensorImageFilter.cxx
   itkGtractImageIO.cxx
   itkGtractParameterIO.cxx
-  # itkGtractTransformIO.cxx
-  # itkDtiTrackingFilterFibersAndPoints.cxx
 )
 
 add_library(GTRACTCommon STATIC ${GTRACTCommon_SRC})

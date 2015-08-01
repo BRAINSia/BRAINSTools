@@ -60,17 +60,8 @@
 
 namespace itk
 {
-/** \class Orient4dImageFilter
- * \brief Permute axes and then flip images as needed to obtain
- *  agreement in coordinateOrientation codes.
+/** \class InvertBSplineFilter
  *
- * This class satisfies performs the following steps:
- *    For i in 4th Dimension
- *      ExtractVolume with Extract Image Filter
- *      Orient 3D extracted volume
- *    End
- *
- * It is build upon the ExtractImageFilter and the OrientImageFilter
  */
 
 class GTRACT_COMMON_EXPORT InvertBSplineFilter : public itk::Object

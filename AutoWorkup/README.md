@@ -171,3 +171,80 @@ python $NamicBuild/BRAINSTools/AutoWorkup/singleSession.py \
       all
 
 ```
+
+## BCD Failure Case
+
+In any failure case of BCD, BAW can be proceeded by 1) fix BCD manually and then 2) specify that manaull fixed file as an input.
+
+- To fix manually, I ran following scripts in order:
+cd /raid0/homes/aghayoor/BCD-test/Jira_cases/kidsFailure_ticket_PREDICTIMG-4209
+* Step 1
+```
+#bash 1_reportFailure.sh
+#!/bin/bash
+
+llsModel='Atlas/20141004_BCD/LLSModel_50Lmks.h5'
+atlasLandmarkWeights='Atlas/20141004_BCD/template_weights_50Lmks.wts'
+atlasLandmarks='Atlas/20141004_BCD/template_landmarks_50Lmks.fcsv'
+atlasVolume='Atlas/template_t1.nii.gz'
+inputTemplateModel='Atlas/20141004_BCD/T1_50Lmks.mdl'
+inputVolume='input_t1_to_be_fixed.nii.gz'
+
+BRAINSConstellationDetector  \
+  --LLSModel ${llsModel} \
+  --acLowerBound 80.000000 \
+  --atlasLandmarkWeights ${atlasLandmarkWeights} \
+  --atlasLandmarks ${atlasLandmarks} \
+  --atlasVolume ${atlasVolume} \
+  --houghEyeDetectorMode 1 \
+  --inputTemplateModel ${inputTemplateModel} \
+  --inputVolume ${inputVolume} \
+  --interpolationMode Linear \
+  --forceHoughEyeDetectorReportFailure
+
+
+  # README:
+  # Remove "EMSP.fcsv" after this run!
+```
+* Step 2
+```
+#bash 2_runBCD_usingEMSP.sh
+#!/bin/bash
+
+llsModel='Atlas/20141004_BCD/LLSModel_50Lmks.h5'
+atlasLandmarkWeights='Atlas/20141004_BCD/template_weights_50Lmks.wts'
+atlasLandmarks='Atlas/20141004_BCD/template_landmarks_50Lmks.fcsv'
+atlasVolume='Atlas/template_t1.nii.gz'
+inputTemplateModel='Atlas/20141004_BCD/T1_50Lmks.mdl'
+inputVolume='input_t1_to_be_fixed.nii.gz'
+
+outputDir=$PWD/HDAdultAtlas_t1_20avg_manually_fixed
+mkdir $outputDir
+cd $outputDir
+
+BRAINSConstellationDetector  \
+  --LLSModel ${llsModel} \
+  --acLowerBound 80.000000 \
+  --atlasLandmarkWeights ${atlasLandmarkWeights} \
+  --atlasLandmarks ${atlasLandmarks} \
+  --atlasVolume ${atlasVolume} \
+  --houghEyeDetectorMode 1 \
+  --inputTemplateModel ${inputTemplateModel} \
+  --inputVolume ../EMSP.nrrd \
+  --interpolationMode Linear \
+  --outputLandmarksInACPCAlignedSpace BCD_ACPC_Landmarks.fcsv \
+  --outputLandmarksInInputSpace BCD_Original.fcsv \
+  --outputResampledVolume BCD_ACPC.nii.gz \
+  --outputTransform BCD_Original2ACPC_transform.h5 \
+  --writeBranded2DImage BCD_Branded2DQCimage.png \
+  --writedebuggingImagesLevel 3
+
+```
+* Step 3:
+Copy "EMSP.nrrd"  file to the adjacent of original t1
+Change BAW input csv file t1 to above EMSP.nrrd (Name can be anything)
+``` 
+touch ${inputVolume}_noDenoise
+```
+
+BCD should generate correct results if it is run on copied "EMSP.nrrd" file.

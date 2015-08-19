@@ -436,19 +436,9 @@ int main(int argc, char *argv[])
         }
       else
         {
-        if( useBMatrixGradientDirections )
+        for( unsigned ind = 0; ind < 3; ++ind )
           {
-          for( unsigned ind = 0; ind < 3; ++ind )
-            {
-            vec[ind] = DiffusionVectors[k][ind];
-            }
-          }
-        else
-          {
-          for( unsigned ind = 0; ind < 3; ++ind )
-            {
-            vec[ind] = DiffusionVectors[k][ind] * scaleFactor;
-            }
+          vec[ind] = DiffusionVectors[k][ind] * scaleFactor;
           }
         }
       gradientVectors.push_back(vec);

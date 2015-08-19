@@ -162,6 +162,7 @@ Write4DVolume( DWIConverter::VolumeType::Pointer & img, int nVolumes, const std:
 int main(int argc, char *argv[])
 {
   PARSE_ARGS;
+  const std::string version = commandLine.getVersion();
   BRAINSRegisterAlternateIO();
   dcmtk::log4cplus::helpers::LogLog::getLogLog()->setQuietMode(true);
   // just need one instance to do double to string conversions
@@ -468,7 +469,7 @@ int main(int argc, char *argv[])
            << std::setprecision(17) << std::scientific;
 
     // stamp with DWIConvert branding
-    header << "# This file was created by DWIConvert version 1.0" << std::endl
+    header << "# This file was created by DWIConvert version " << version << std::endl
            << "# https://github.com/BRAINSia/BRAINSTools" << std::endl
            << "# part of the BRAINSTools package." << std::endl
            << "# Command line options:" << std::endl

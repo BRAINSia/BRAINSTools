@@ -181,7 +181,12 @@ int RecoverBValues(const TImage *inputVol,
       {
       norm = 1.0;
       }
-    const double bval = norm*BValue;
+    // bval_i = (G_norm)^2 * bval_max
+    double bval = norm*norm*BValue;
+    if( std::abs( bval - std::round(bval) ) < 1e-2 )
+      {
+      bval = std::round(bval);
+      }
     bValues.push_back(bval);
     }
   return EXIT_SUCCESS;

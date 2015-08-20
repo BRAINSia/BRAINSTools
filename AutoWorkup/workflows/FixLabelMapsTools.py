@@ -58,7 +58,7 @@ def FixLabelMapFromNeuromorphemetrics2012(fusionFN,FixedHeadFN,LeftHemisphereFN,
 
     fusionIm=sitk.Cast(sitk.ReadImage(fusionFN),sitk.sitkUInt32)
     FixedHead=sitk.Cast(sitk.ReadImage(FixedHeadFN),sitk.sitkUInt32)
-    LeftHemisphereIm=sitk.Cast(sitk.ReadImage(LeftHemisphereFN),sitk.sitkUInt32)
+
 
     BRAINSABC_DICT = { 'BRAINSTEM': 30, 'CSF': 4 , 'BLOOD': 5 }
 
@@ -74,10 +74,12 @@ def FixLabelMapFromNeuromorphemetrics2012(fusionFN,FixedHeadFN,LeftHemisphereFN,
     outlabels= ForceMaskInsert(outlabels,csf_labels,OUT_DICT['RH_CSF'])
 
     ## Now split CSF based on LeftHemisphereMask
-    left_hemi_pre = ( outlabels == OUT_DICT['LH_CSF'] )
-    outlabels = ForceMaskInsert(outlabels,left_hemi_pre,OUT_DICT['RH_CSF'])  ## Make all CSF Right hemisphere
-    left_hemi_post =  (LeftHemisphereIm * sitk.Cast ( ( outlabels == OUT_DICT['RH_CSF'] ),sitk.sitkUInt32) > 0 ) # SplitCSF with LeftHemisphereMask
-    outlabels = ForceMaskInsert(outlabels,left_hemi_post,OUT_DICT['LH_CSF'])  ## Make all CSF Right hemisphere
+    if LeftHemisphereFN != None:
+        LeftHemisphereIm=sitk.Cast(sitk.ReadImage(LeftHemisphereFN),sitk.sitkUInt32)
+        left_hemi_pre = ( outlabels == OUT_DICT['LH_CSF'] )
+        outlabels = ForceMaskInsert(outlabels,left_hemi_pre,OUT_DICT['RH_CSF'])  ## Make all CSF Right hemisphere
+        left_hemi_post =  (LeftHemisphereIm * sitk.Cast ( ( outlabels == OUT_DICT['RH_CSF'] ),sitk.sitkUInt32) > 0 ) # SplitCSF with LeftHemisphereMask
+        outlabels = ForceMaskInsert(outlabels,left_hemi_post,OUT_DICT['LH_CSF'])  ## Make all CSF Right hemisphere
     ## Now extend brainstem lower
     ## BrainStem often mislabled to Cerebellum WM (label 7 and 46)
     ## Fix for brainstem for the mislabeld Cerebellum as well.

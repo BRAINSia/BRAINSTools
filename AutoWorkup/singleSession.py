@@ -70,11 +70,23 @@ def _create_singleSession(dataDict, master_config, interpMode, pipeline_name):
         print "T1 Only processing starts ..."
     else:
         print "Multimodal processing starts ..."
+
+    doDenoise = False
+    if ('denoise' in master_config['components']):
+        if isBlackList:
+            print """
+                  Denoise is ignored when the session is in Blacklist
+                  There is known issue that Landmark Detection algorithm
+                  may not work well with denoising step
+                  """
+            doDenoise = False
+        else:
+            doDenoise = True
     sessionWorkflow = generate_single_session_template_WF(project, subject, session, onlyT1, master_config,
                                                           phase=master_config['workflow_phase'],
                                                           interpMode=interpMode,
                                                           pipeline_name=pipeline_name,
-                                                          doDenoise=(not isBlackList))
+                                                          doDenoise=doDenoise)
     sessionWorkflow.base_dir = master_config['cachedir']
 
     sessionWorkflow_inputsspec = sessionWorkflow.get_node('inputspec')

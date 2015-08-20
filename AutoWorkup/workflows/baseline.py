@@ -197,8 +197,9 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
 
     if 'tissue_classify' in master_config['components']:
         assert ('landmark' in master_config['components'] ), "tissue_classify Requires landmark step!"
-    if 'landmark' in master_config['components']:
-        assert 'denoise' in master_config['components'], "landmark Requires denoise step!"
+    # NOT TRUE
+    #if 'landmark' in master_config['components']:
+    #    assert 'denoise' in master_config['components'], "landmark Requires denoise step!"
 
     from workflows.atlasNode import MakeAtlasNode
 

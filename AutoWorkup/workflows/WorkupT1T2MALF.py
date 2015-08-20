@@ -64,9 +64,13 @@ def getListIndexOrNoneIfOutOfRange(imageList, index):
         return None
 
 
-def CreateMALFWorkflow(WFname, onlyT1, master_config,BASE_DATA_GRABBER_DIR, runFixFusionLabelMap=True):
+def CreateMALFWorkflow(WFname, onlyT1, master_config,BASE_DATA_GRABBER_DIR=None, runFixFusionLabelMap=True):
     from nipype.interfaces import ants
 
+    if onlyT1:
+      n_modality = 1
+    else:
+      n_modality = 2
     CLUSTER_QUEUE=master_config['queue']
     CLUSTER_QUEUE_LONG=master_config['long_q']
 
@@ -99,15 +103,29 @@ def CreateMALFWorkflow(WFname, onlyT1, master_config,BASE_DATA_GRABBER_DIR, runF
 
     malf_atlas_mergeindex = 1;
 
+    """
+    multimodal ants registration if t2 exists
+    """
+    sessionMakeMultimodalInput = pe.Node(Function(function=MakeVector,
+                                                                      input_names=['inFN1', 'inFN2'],
+                                                                      output_names=['outFNs']),
+                                run_without_submitting=True, name="sessionMakeMultimodalInput")
+    MALFWF.connect(inputsSpec, 'subj_t1_image', sessionMakeMultimodalInput, 'inFN1')
+    if not onlyT1:
+        MALFWF.connect(inputsSpec, 'subj_t2_image', sessionMakeMultimodalInput, 'inFN2')
+    else:
+        pass
+
+
     print 'malf_atlas_db_base'
     print master_config['malf_atlas_db_base']
     malfAtlasDict = readMalfAtlasDbBase( master_config['malf_atlas_db_base'] )
     malfAtlases = dict()
-    sessionMakeMultimodalInput = dict()
     atlasMakeMultimodalInput = dict()
-    warpedAtlasT1MergeNode = pe.Node(interface=Merge(len(malfAtlasDict)),name="T1sMergeAtlas")
+    t2Resample = dict()
     warpedAtlasLblMergeNode = pe.Node(interface=Merge(len(malfAtlasDict)),name="LblMergeAtlas")
     NewwarpedAtlasLblMergeNode = pe.Node(interface=Merge(len(malfAtlasDict)),name="fswmLblMergeAtlas")
+    warpedAtlasesMergeNode = pe.Node(interface=Merge(len(malfAtlasDict)*n_modality),name="MergeAtlases")
 
     for malf_atlas_subject in malfAtlasDict:
         ## Need DataGrabber Here For the Atlas
@@ -198,18 +216,8 @@ def CreateMALFWorkflow(WFname, onlyT1, master_config,BASE_DATA_GRABBER_DIR, runF
                        A2SantsRegistrationPreMALF_SyN[malf_atlas_subject],'initial_moving_transform')
 
         """
-        multimodal ants registration if t2 exists
+        make multimodal input for atlases
         """
-        sessionMakeMultimodalInput[malf_atlas_subject] = pe.Node(Function(function=MakeVector,
-                                                                          input_names=['inFN1', 'inFN2'],
-                                                                          output_names=['outFNs']),
-                                    run_without_submitting=True, name="sessionMakeMultimodalInput_"+malf_atlas_subject)
-        MALFWF.connect(inputsSpec, 'subj_t1_image', sessionMakeMultimodalInput[malf_atlas_subject], 'inFN1')
-        if not onlyT1:
-            MALFWF.connect(inputsSpec, 'subj_t2_image', sessionMakeMultimodalInput[malf_atlas_subject], 'inFN2')
-        else:
-            pass
-
         atlasMakeMultimodalInput[malf_atlas_subject] = pe.Node(Function(function=MakeVector, input_names=['inFN1', 'inFN2'], output_names=['outFNs']),
                                   run_without_submitting=True, name="atlasMakeMultimodalInput"+malf_atlas_subject)
         MALFWF.connect(malfAtlases[malf_atlas_subject], 't1', atlasMakeMultimodalInput[malf_atlas_subject], 'inFN1')
@@ -218,15 +226,39 @@ def CreateMALFWorkflow(WFname, onlyT1, master_config,BASE_DATA_GRABBER_DIR, runF
         else:
             pass
 
-        MALFWF.connect(sessionMakeMultimodalInput[malf_atlas_subject], 'outFNs',
+        MALFWF.connect(sessionMakeMultimodalInput, 'outFNs',
                        A2SantsRegistrationPreMALF_SyN[malf_atlas_subject],'fixed_image')
         MALFWF.connect(atlasMakeMultimodalInput[malf_atlas_subject], 'outFNs',
                        A2SantsRegistrationPreMALF_SyN[malf_atlas_subject],'moving_image')
         MALFWF.connect(A2SantsRegistrationPreMALF_SyN[malf_atlas_subject],'warped_image',
-                       warpedAtlasT1MergeNode,'in'+str(malf_atlas_mergeindex) )
+                       warpedAtlasesMergeNode,'in'+str(malf_atlas_mergeindex*n_modality - 1) )
 
-        ### Original labelmap resampling
-        labelMapResample[malf_atlas_subject] = pe.Node(interface=ants.ApplyTransforms(),name="WLABEL_"+malf_atlas_subject)
+        """
+        Original t2 resampling
+        """
+        if not onlyT1:
+            t2Resample[malf_atlas_subject] = pe.Node(interface=ants.ApplyTransforms(),name="resampledT2"+malf_atlas_subject)
+            many_cpu_t2Resample_options_dictionary = {'qsub_args': modify_qsub_args(CLUSTER_QUEUE,1,1,1), 'overwrite': True}
+            t2Resample[malf_atlas_subject].plugin_args = many_cpu_t2Resample_options_dictionary
+            t2Resample[malf_atlas_subject].inputs.dimension=3
+            t2Resample[malf_atlas_subject].inputs.output_image=malf_atlas_subject+'_t2.nii.gz'
+            t2Resample[malf_atlas_subject].inputs.interpolation='BSpline'
+            t2Resample[malf_atlas_subject].inputs.default_value=0
+            t2Resample[malf_atlas_subject].inputs.invert_transform_flags=[False]
+
+            MALFWF.connect( A2SantsRegistrationPreMALF_SyN[malf_atlas_subject],'composite_transform',
+                            t2Resample[malf_atlas_subject],'transforms')
+            MALFWF.connect( inputsSpec, 'subj_t1_image',
+                            t2Resample[malf_atlas_subject],'reference_image')
+            MALFWF.connect( malfAtlases[malf_atlas_subject], 't2',
+                            t2Resample[malf_atlas_subject],'input_image')
+            MALFWF.connect(t2Resample[malf_atlas_subject],'output_image',
+                           warpedAtlasesMergeNode,'in'+str(malf_atlas_mergeindex*n_modality) )
+
+        """
+        Original labelmap resampling
+        """
+        labelMapResample[malf_atlas_subject] = pe.Node(interface=ants.ApplyTransforms(),name="resampledLabel"+malf_atlas_subject)
         many_cpu_labelMapResample_options_dictionary = {'qsub_args': modify_qsub_args(CLUSTER_QUEUE,1,1,1), 'overwrite': True}
         labelMapResample[malf_atlas_subject].plugin_args = many_cpu_labelMapResample_options_dictionary
         labelMapResample[malf_atlas_subject].inputs.dimension=3
@@ -267,6 +299,7 @@ def CreateMALFWorkflow(WFname, onlyT1, master_config,BASE_DATA_GRABBER_DIR, runF
 
         malf_atlas_mergeindex += 1
 
+
     ## Now work on cleaning up the label maps
     from FixLabelMapsTools import FixLabelMapFromNeuromorphemetrics2012
     from FixLabelMapsTools import RecodeLabelMap
@@ -276,28 +309,20 @@ def CreateMALFWorkflow(WFname, onlyT1, master_config,BASE_DATA_GRABBER_DIR, runF
     many_cpu_JointFusion_options_dictionary = {'qsub_args': modify_qsub_args(CLUSTER_QUEUE,8,4,4), 'overwrite': True}
     jointFusion.plugin_args = many_cpu_JointFusion_options_dictionary
     jointFusion.inputs.dimension=3
-    jointFusion.inputs.modalities=1
     jointFusion.inputs.method='Joint[0.1,2]'
     jointFusion.inputs.output_label_image='MALF_HDAtlas20_2015_label.nii.gz'
 
-    MALFWF.connect(warpedAtlasT1MergeNode,'out',jointFusion,'warped_intensity_images')
+    MALFWF.connect(warpedAtlasesMergeNode,'out',jointFusion,'warped_intensity_images')
     MALFWF.connect(warpedAtlasLblMergeNode,'out',jointFusion,'warped_label_images')
-    MALFWF.connect(inputsSpec, 'subj_t1_image',jointFusion,'target_image')
+    #MALFWF.connect(inputsSpec, 'subj_t1_image',jointFusion,'target_image')
+    MALFWF.connect(sessionMakeMultimodalInput, 'outFNs',jointFusion,'target_image')
     MALFWF.connect(jointFusion, 'output_label_image', outputsSpec,'MALF_HDAtlas20_2015_label')
 
-    ## post processing of jointfusion
-    injectSurfaceCSFandVBIntoLabelMap = pe.Node(Function(function=FixLabelMapFromNeuromorphemetrics2012,
-                                                   input_names=['fusionFN','FixedHeadFN','LeftHemisphereFN','outFN',
-                                                   'OUT_DICT'],
-                                                   output_names=['fixedFusionLabelFN']), name="injectSurfaceCSFandVBIntoLabelMap")
-    injectSurfaceCSFandVBIntoLabelMap.inputs.outFN = 'MALF_HDAtlas20_2015_CSFVBInjected_label.nii.gz'
-    FREESURFER_DICT = { 'BRAINSTEM': 16, 'RH_CSF':24, 'LH_CSF':24, 'BLOOD': 15000, 'UNKNOWN': 999,
-                        'CONNECTED': [11,12,13,9,17,26,50,51,52,48,53,58]
-                      }
-    injectSurfaceCSFandVBIntoLabelMap.inputs.OUT_DICT = FREESURFER_DICT
-    MALFWF.connect(jointFusion, 'output_label_image', injectSurfaceCSFandVBIntoLabelMap, 'fusionFN')
-    MALFWF.connect(inputsSpec, 'subj_fixed_head_labels', injectSurfaceCSFandVBIntoLabelMap, 'FixedHeadFN')
-    MALFWF.connect(inputsSpec, 'subj_left_hemisphere', injectSurfaceCSFandVBIntoLabelMap, 'LeftHemisphereFN')
+    if onlyT1:
+        jointFusion.inputs.modalities=1
+    else:
+        jointFusion.inputs.modalities=2
+
 
     ## We need to recode values to ensure that the labels match FreeSurer as close as possible by merging
     ## some labels together to standard FreeSurfer confenventions (i.e. for WMQL)
@@ -315,9 +340,7 @@ def CreateMALFWorkflow(WFname, onlyT1, master_config,BASE_DATA_GRABBER_DIR, runF
                                                    name="RecodeToStandardFSWM")
     RecodeToStandardFSWM.inputs.RECODE_TABLE = RECODE_LABELS_2_Standard_FSWM
     RecodeToStandardFSWM.inputs.OutputFileName = 'MALF_HDAtlas20_2015_fs_standard_label.nii.gz'
-    MALFWF.connect(injectSurfaceCSFandVBIntoLabelMap, 'fixedFusionLabelFN',RecodeToStandardFSWM,'InputFileName')
 
-    MALFWF.connect(injectSurfaceCSFandVBIntoLabelMap,'fixedFusionLabelFN',outputsSpec,'MALF_HDAtlas20_2015_CSFVBInjected_label')
     MALFWF.connect(RecodeToStandardFSWM,'OutputFileName',outputsSpec,'MALF_HDAtlas20_2015_fs_standard_label')
 
     ## MALF_SNAPSHOT_WRITER for Segmented result checking:
@@ -328,10 +351,45 @@ def CreateMALFWorkflow(WFname, onlyT1, master_config,BASE_DATA_GRABBER_DIR, runF
     MALF_SNAPSHOT_WRITER.inputs.inputPlaneDirection = [2, 1, 1, 1, 1, 0, 0]
     MALF_SNAPSHOT_WRITER.inputs.inputSliceToExtractInPhysicalPoint = [-3, -7, -3, 5, 7, 22, -22]
 
-    MALFWF.connect([(inputsSpec, MALF_SNAPSHOT_WRITER, [( 'subj_t1_image','inputVolumes')]),
-                    (injectSurfaceCSFandVBIntoLabelMap, MALF_SNAPSHOT_WRITER, [('fixedFusionLabelFN', 'inputBinaryVolumes')])
-                   ])
     MALFWF.connect(MALF_SNAPSHOT_WRITER,'outputFilename',outputsSpec,'MALF_extended_snapshot')
+
+    if runFixFusionLabelMap:
+        ## post processing of jointfusion
+        injectSurfaceCSFandVBIntoLabelMap = pe.Node(Function(function=FixLabelMapFromNeuromorphemetrics2012,
+                                                      input_names=['fusionFN',
+                                                        'FixedHeadFN',
+                                                        'LeftHemisphereFN',
+                                                        'outFN',
+                                                        'OUT_DICT'],
+                                                      output_names=['fixedFusionLabelFN']),
+                                               name="injectSurfaceCSFandVBIntoLabelMap")
+        injectSurfaceCSFandVBIntoLabelMap.inputs.outFN = 'MALF_HDAtlas20_2015_CSFVBInjected_label.nii.gz'
+        FREESURFER_DICT = { 'BRAINSTEM': 16, 'RH_CSF':24, 'LH_CSF':24, 'BLOOD': 15000, 'UNKNOWN': 999,
+                            'CONNECTED': [11,12,13,9,17,26,50,51,52,48,53,58]
+                          }
+        injectSurfaceCSFandVBIntoLabelMap.inputs.OUT_DICT = FREESURFER_DICT
+        MALFWF.connect(jointFusion, 'output_label_image', injectSurfaceCSFandVBIntoLabelMap, 'fusionFN')
+        MALFWF.connect(inputsSpec, 'subj_fixed_head_labels', injectSurfaceCSFandVBIntoLabelMap, 'FixedHeadFN')
+        MALFWF.connect(inputsSpec, 'subj_left_hemisphere', injectSurfaceCSFandVBIntoLabelMap, 'LeftHemisphereFN')
+
+        MALFWF.connect(injectSurfaceCSFandVBIntoLabelMap, 'fixedFusionLabelFN',
+                       RecodeToStandardFSWM,'InputFileName')
+
+        MALFWF.connect(injectSurfaceCSFandVBIntoLabelMap,'fixedFusionLabelFN',
+                       outputsSpec,'MALF_HDAtlas20_2015_CSFVBInjected_label')
+        MALFWF.connect([(inputsSpec, MALF_SNAPSHOT_WRITER, [( 'subj_t1_image','inputVolumes')]),
+                    (injectSurfaceCSFandVBIntoLabelMap, MALF_SNAPSHOT_WRITER,
+                      [('fixedFusionLabelFN', 'inputBinaryVolumes')])
+                   ])
+    else:
+        MALFWF.connect(jointFusion, 'output_label_image',
+                       RecodeToStandardFSWM,'InputFileName')
+        MALFWF.connect(jointFusion, 'output_label_image',
+                       outputsSpec,'MALF_HDAtlas20_2015_CSFVBInjected_label')
+        MALFWF.connect([(inputsSpec, MALF_SNAPSHOT_WRITER, [( 'subj_t1_image','inputVolumes')]),
+                    (jointFusion, MALF_SNAPSHOT_WRITER,
+                      [('output_label_image', 'inputBinaryVolumes')])
+                   ])
 
     ## Lobar Pacellation by recoding
     if master_config['relabel2lobes_filename'] != None:

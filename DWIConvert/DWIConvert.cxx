@@ -159,6 +159,45 @@ Write4DVolume( DWIConverter::VolumeType::Pointer & img, int nVolumes, const std:
   return EXIT_SUCCESS;
 }
 
+double
+ComputeMaxBvalue(const std::vector<float> &bValues)
+{
+  double maxBvalue(0.0);
+  for( unsigned int k = 0; k < bValues.size(); ++k )
+    {
+    if( bValues[k] > maxBvalue )
+      {
+      maxBvalue = bValues[k];
+      }
+    }
+  return maxBvalue;
+}
+
+DWIConverter::DiffusionVecVectorType
+computeScaledDiffusionVectors( const DWIConverter::DiffusionVecVectorType &UnitNormDiffusionVectors,
+                               const std::vector<float> &bValues,
+                               const double maxBvalue)
+{
+  DWIConverter::DiffusionVecVectorType BvalueScaledDiffusionVectors;
+  for( unsigned int k = 0; k < UnitNormDiffusionVectors.size(); ++k )
+    {
+    vnl_vector_fixed<double,3> vec(3);
+    float scaleFactor = 0;
+    if( maxBvalue > 0 )
+      {
+      scaleFactor = sqrt( bValues[k] / maxBvalue );
+      }
+    std::cout << "Scale Factor for Multiple BValues: " << k << " -- sqrt( " << bValues[k] << " / " << maxBvalue << " ) = "
+    << scaleFactor << std::endl;
+    for( unsigned ind = 0; ind < 3; ++ind )
+      {
+      vec[ind] = UnitNormDiffusionVectors[k][ind] * scaleFactor;
+      }
+    BvalueScaledDiffusionVectors.push_back(vec);
+    }
+  return BvalueScaledDiffusionVectors;
+}
+
 int main(int argc, char *argv[])
 {
   PARSE_ARGS;
@@ -312,8 +351,11 @@ int main(int argc, char *argv[])
     }
 
   DWIConverter::VolumeType::Pointer dmImage = converter->GetDiffusionVolume();
-  const DWIConverter::DiffusionVecVectorType &DiffusionVectors = converter->GetDiffusionVectors();
+  const DWIConverter::DiffusionVecVectorType &UnitNormDiffusionVectors = converter->GetDiffusionVectors();
   const std::vector<float> &bValues = converter->GetBValues();
+  const double maxBvalue = ComputeMaxBvalue(bValues);
+  const DWIConverter::DiffusionVecVectorType &BvalueScaledDiffusionVectors =
+    computeScaledDiffusionVectors(UnitNormDiffusionVectors, bValues, maxBvalue);
 
   if( conversionMode != "DicomToFSL" && !fMRIOutput)
     {
@@ -374,16 +416,6 @@ int main(int argc, char *argv[])
   const vnl_matrix_fixed<double, 3, 3> InverseMeasurementFrame =
     converter->GetMeasurementFrame().GetInverse();
 
-  double maxBvalue(0.0);
-
-  for( unsigned int k = 0; k < bValues.size(); ++k )
-    {
-    if( bValues[k] > maxBvalue )
-      {
-      maxBvalue = bValues[k];
-      }
-    }
-
   // construct vector of gradients
   std::vector<std::vector<double> > gradientVectors;
   if( gradientVectorFile != "" )
@@ -415,30 +447,23 @@ int main(int argc, char *argv[])
   else
     {
     // grab the diffusion vectors.
-    for( unsigned int k = 0; k < DiffusionVectors.size(); ++k )
+    for( unsigned int k = 0; k < BvalueScaledDiffusionVectors.size(); ++k )
       {
-      float scaleFactor = 0;
-      if( maxBvalue > 0 )
-        {
-        scaleFactor = sqrt( bValues[k] / maxBvalue );
-        }
-      std::cout << "For Multiple BValues: " << k << " -- " << bValues[k] << " / " << maxBvalue << " = "
-                << scaleFactor << std::endl;
       std::vector<double> vec(3);
       if( useIdentityMeaseurementFrame )
         {
-        vnl_vector_fixed<double,3> RotatedDiffusionVectors =
-          InverseMeasurementFrame * (DiffusionVectors[k]);
+        vnl_vector_fixed<double,3> RotatedScaledDiffusionVectors =
+          InverseMeasurementFrame * (BvalueScaledDiffusionVectors[k]);
         for( unsigned ind = 0; ind < 3; ++ind )
           {
-          vec[ind] = RotatedDiffusionVectors[ind] * scaleFactor;
+          vec[ind] = RotatedScaledDiffusionVectors[ind];
           }
         }
       else
         {
         for( unsigned ind = 0; ind < 3; ++ind )
           {
-          vec[ind] = DiffusionVectors[k][ind] * scaleFactor;
+          vec[ind] = BvalueScaledDiffusionVectors[k][ind];
           }
         }
       gradientVectors.push_back(vec);
@@ -653,29 +678,19 @@ int main(int argc, char *argv[])
     protocolGradientsFile << "==================================" << std::endl;
     for( unsigned int k = 0; k < converter->GetNVolume(); ++k )
       {
-      float scaleFactor = 0;
-      if( maxBvalue > 0 )
-        {
-        scaleFactor = sqrt( bValues[k] / maxBvalue );
-        }
       protocolGradientsFile << "DWMRI_gradient_" << std::setw(4) << std::setfill('0') << k << "=["
-                            << DoubleConvert(DiffusionVectors[k][0] * scaleFactor) << ";"
-                            << DoubleConvert(DiffusionVectors[k][1] * scaleFactor) << ";"
-                            << DoubleConvert(DiffusionVectors[k][2] * scaleFactor) << "]" << std::endl;
+                            << DoubleConvert(BvalueScaledDiffusionVectors[k][0]) << ";"
+                            << DoubleConvert(BvalueScaledDiffusionVectors[k][1]) << ";"
+                            << DoubleConvert(BvalueScaledDiffusionVectors[k][2]) << "]" << std::endl;
       }
     protocolGradientsFile << "==================================" << std::endl;
     for( unsigned int k = 0; k < converter->GetNVolume(); ++k )
       {
-      float scaleFactor = 0;
-      if( maxBvalue > 0 )
-        {
-        scaleFactor = sqrt( bValues[k] / maxBvalue );
-        }
-      const vnl_vector_fixed<double, 3u> ProtocolGradient = InverseMeasurementFrame * DiffusionVectors[k];
+      const vnl_vector_fixed<double, 3u> ProtocolGradient = InverseMeasurementFrame * BvalueScaledDiffusionVectors[k];
       protocolGradientsFile << "Protocol_gradient_" << std::setw(4) << std::setfill('0') << k << "=["
-                            << DoubleConvert(ProtocolGradient[0] * scaleFactor) << ";"
-                            << DoubleConvert(ProtocolGradient[1] * scaleFactor) << ";"
-                            << DoubleConvert(ProtocolGradient[2] * scaleFactor) << "]" << std::endl;
+                            << DoubleConvert(ProtocolGradient[0]) << ";"
+                            << DoubleConvert(ProtocolGradient[1]) << ";"
+                            << DoubleConvert(ProtocolGradient[2]) << "]" << std::endl;
       }
     protocolGradientsFile << "==================================" << std::endl;
     protocolGradientsFile.close();

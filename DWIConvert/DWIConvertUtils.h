@@ -33,6 +33,8 @@
 #include <string>
 #include "itkNumberToString.h"
 
+#include <cmath>
+
 template <typename TArg>
 int
 CheckArg(const char *argName, const TArg & argVal, const TArg & emptyVal)
@@ -183,9 +185,9 @@ int RecoverBValues(const TImage *inputVol,
       }
     // bval_i = (G_norm)^2 * bval_max
     double bval = norm*norm*BValue;
-    if( std::abs( bval - std::round(bval) ) < 1e-2 )
+    if( std::abs( bval - itk::Math::Round<double>(bval) ) < 1e-2 )
       {
-      bval = std::round(bval);
+      bval = itk::Math::Round<double>(bval);
       }
     bValues.push_back(bval);
     }

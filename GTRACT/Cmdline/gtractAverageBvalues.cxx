@@ -52,6 +52,7 @@
 
 #include "gtractAverageBvaluesCLP.h"
 #include "BRAINSThreadControl.h"
+#include "DWIMetaDataDictionaryValidator.h"
 #include <BRAINSCommonLib.h>
 
 int buildDirectionLut(itk::Array<int> & lut, itk::Array<int> & count, itk::MetaDataDictionary meta, int numImages,
@@ -145,9 +146,6 @@ int main(int argc, char *argv[])
   avgImage->SetOrigin( imageReader->GetOutput()->GetOrigin() );
   avgImage->SetDirection( imageReader->GetOutput()->GetDirection() );
   avgImage->SetVectorLength( numUniqueDirections );
-  /* Update Meta Data */
-  // avgImage->SetMetaDataDictionary(
-  // imageReader->GetOutput()->GetMetaDataDictionary() );
   avgImage->Allocate();
 
   NrrdImageType::Pointer outputImage = NrrdImageType::New();
@@ -197,52 +195,29 @@ int main(int argc, char *argv[])
     }
 
   /* Update the Meta data Header */
-  itk::MetaDataDictionary origMeta = imageReader->GetOutput()->GetMetaDataDictionary();
-  itk::MetaDataDictionary newMeta;
-  std::string             NrrdValue;
+  DWIMetaDataDictionaryValidator metaDataValidator;
+  metaDataValidator.SetMetaDataDictionary(imageReader->GetOutput()->GetMetaDataDictionary());
 
-  itk::ExposeMetaData<std::string>(origMeta, "DWMRI_b-value", NrrdValue);
-  itk::EncapsulateMetaData<std::string>(newMeta, "DWMRI_b-value", NrrdValue);
-
-  NrrdValue = "DWMRI";
-  itk::EncapsulateMetaData<std::string>(newMeta, "modality", NrrdValue);
-  for( int i = 0; i < 4; i++ )
-    {
-    char tmpStr[64];
-    sprintf(tmpStr, "NRRD_centerings[%d]", i);
-    itk::ExposeMetaData<std::string>(origMeta, tmpStr, NrrdValue);
-    itk::EncapsulateMetaData<std::string>(newMeta, tmpStr, NrrdValue);
-    sprintf(tmpStr, "NRRD_kinds[%d]", i);
-    itk::ExposeMetaData<std::string>(origMeta, tmpStr, NrrdValue);
-    itk::EncapsulateMetaData<std::string>(newMeta, tmpStr, NrrdValue);
-    sprintf(tmpStr, "NRRD_space units[%d]", i);
-    itk::ExposeMetaData<std::string>(origMeta, tmpStr, NrrdValue);
-    itk::EncapsulateMetaData<std::string>(newMeta, tmpStr, NrrdValue);
-    // sprintf(tmpStr, "NRRD_thicknesses[%d]", i);
-    // itk::ExposeMetaData<std::string>(origMeta, tmpStr, NrrdValue);
-    // itk::EncapsulateMetaData<std::string>(newMeta, tmpStr, NrrdValue);
-    }
-
-  std::vector<std::vector<double> > msrFrame;
-  itk::ExposeMetaData<std::vector<std::vector<double> > >(origMeta, "NRRD_measurement frame", msrFrame);
-  itk::EncapsulateMetaData<std::vector<std::vector<double> > >(newMeta, "NRRD_measurement frame", msrFrame);
-
+  // Get gradient table and update the gradient vectors
+  DWIMetaDataDictionaryValidator::GradientTableType gradTable = metaDataValidator.GetGradientTable();
+  // Now delete the gradient table to fill with new gradient values
+  metaDataValidator.DeleteGradientTable();
+  // Update the validator using a new gradient table
+  DWIMetaDataDictionaryValidator::GradientTableType newGradTable( numUniqueDirections );
   int currentIndex = 0;
   for( int i = 0; i < vectorLength; i++ )
     {
     if( lut[i] == currentIndex )
       {
-      // std::cout << "Index " << currentIndex << std::endl;
-      char tmpStr[64];
-      sprintf(tmpStr, "DWMRI_gradient_%04d", i);
-      itk::ExposeMetaData<std::string>(origMeta, tmpStr, NrrdValue);
-      sprintf(tmpStr, "DWMRI_gradient_%04d", currentIndex);
-      itk::EncapsulateMetaData<std::string>(newMeta, tmpStr, NrrdValue);
+      newGradTable[currentIndex][0] = gradTable[i][0];
+      newGradTable[currentIndex][1] = gradTable[i][1];
+      newGradTable[currentIndex][2] = gradTable[i][2];
       currentIndex++;
       }
     }
+  metaDataValidator.SetGradientTable( newGradTable );
 
-  outputImage->SetMetaDataDictionary( newMeta );
+  outputImage->SetMetaDataDictionary( metaDataValidator.GetMetaDataDictionary() );
 
   typedef itk::ImageFileWriter<NrrdImageType> WriterType;
   WriterType::Pointer nrrdWriter = WriterType::New();

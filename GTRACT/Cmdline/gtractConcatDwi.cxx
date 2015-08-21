@@ -53,6 +53,7 @@
 
 #include "gtractConcatDwiCLP.h"
 #include "BRAINSThreadControl.h"
+#include "DWIMetaDataDictionaryValidator.h"
 #include <BRAINSCommonLib.h>
 
 int main(int argc, char *argv[])
@@ -94,9 +95,14 @@ int main(int argc, char *argv[])
 
   typedef itk::ImageFileReader<NrrdImageType,
                                itk::DefaultConvertPixelTraits<PixelType> > FileReaderType;
-  itk::MetaDataDictionary resultMetaData;
+
+  DWIMetaDataDictionaryValidator currentMetaDataValidator;
+  DWIMetaDataDictionaryValidator resultMetaDataValidator;
+  DWIMetaDataDictionaryValidator::GradientTableType resultGradTable;
+
   typedef itk::ComposeImageFilter<IndexImageType> VectorImageFilterType;
   VectorImageFilterType::Pointer indexImageToVectorImageFilter = VectorImageFilterType::New();
+
   int                            vectorIndex = 0;
   double                         baselineBvalue = 0.0;
 
@@ -115,17 +121,16 @@ int main(int argc, char *argv[])
       std::cout << ex << std::endl << std::flush;
       throw;
       }
-    // InputImages[i] = imageReader->GetOutput();
 
-    itk::MetaDataDictionary  currentMetaData = imageReader->GetOutput()->GetMetaDataDictionary();
-    std::string              NrrdValue;
+    currentMetaDataValidator.SetMetaDataDictionary(imageReader->GetOutput()->GetMetaDataDictionary());
     NrrdImageType::PointType currentOrigin = imageReader->GetOutput()->GetOrigin();
     if( i == 0 )
       {
       firstOrigin = currentOrigin;
-      resultMetaData = currentMetaData;
-      itk::ExposeMetaData<std::string>(currentMetaData, "DWMRI_b-value", NrrdValue);
-      baselineBvalue = atof( NrrdValue.c_str() );
+
+      resultMetaDataValidator.SetMetaDataDictionary(imageReader->GetOutput()->GetMetaDataDictionary());
+      resultMetaDataValidator.DeleteGradientTable();
+      baselineBvalue = resultMetaDataValidator.GetBValue();
       }
     else
       {
@@ -143,14 +148,13 @@ int main(int argc, char *argv[])
         imageReader->GetOutput()->SetOrigin(firstOrigin);
         }
       }
-    itk::ExposeMetaData<std::string>(currentMetaData, "DWMRI_b-value", NrrdValue);
-    double currentBvalue = atof( NrrdValue.c_str() );
+    DWIMetaDataDictionaryValidator::GradientTableType currGradTable = currentMetaDataValidator.GetGradientTable();
+    double currentBvalue = currentMetaDataValidator.GetBValue();
     double bValueScale = currentBvalue / baselineBvalue;
     for( unsigned int j = 0; j < imageReader->GetOutput()->GetVectorLength(); j++ )
       {
       typedef itk::VectorIndexSelectionCastImageFilter<NrrdImageType, IndexImageType> VectorSelectFilterType;
       typedef VectorSelectFilterType::Pointer                                         VectorSelectFilterPointer;
-
       VectorSelectFilterPointer selectIndexImageFilter = VectorSelectFilterType::New();
       selectIndexImageFilter->SetIndex( j );
       selectIndexImageFilter->SetInput( imageReader->GetOutput() );
@@ -164,32 +168,22 @@ int main(int argc, char *argv[])
         }
       indexImageToVectorImageFilter->SetInput( vectorIndex, selectIndexImageFilter->GetOutput() );
 
-      char tmpStr[64];
-      char tokStr[64];
+      // Scale the current gradient and put in the result gradient table
+      DWIMetaDataDictionaryValidator::Double3x1ArrayType scaledGradient;
+      scaledGradient[0] = currGradTable[j][0] * bValueScale;
+      scaledGradient[1] = currGradTable[j][1] * bValueScale;
+      scaledGradient[2] = currGradTable[j][2] * bValueScale;
+      resultGradTable.push_back(scaledGradient);
 
-      sprintf(tmpStr, "DWMRI_gradient_%04u", j);
-      itk::ExposeMetaData<std::string>(currentMetaData, tmpStr, NrrdValue);
-      strcpy( tokStr, NrrdValue.c_str() );
-      double x = atof( strtok( tokStr, " " ) );
-      double y = atof( strtok( ITK_NULLPTR, " " ) );
-      double z = atof( strtok( ITK_NULLPTR, " " ) );
-      sprintf(tmpStr, "DWMRI_gradient_%04d", vectorIndex);
-      // sprintf(tmpValue, " %18.15lf %18.15lf %18.15lf", x * bValueScale, y * bValueScale, z * bValueScale);
-      // NrrdValue = tmpValue;
-      NrrdValue = " ";
-      NrrdValue += doubleConvert(x * bValueScale);
-      NrrdValue += " ";
-      NrrdValue += doubleConvert(y * bValueScale);
-      NrrdValue += " ";
-      NrrdValue += doubleConvert(z * bValueScale);
-      itk::EncapsulateMetaData<std::string>(resultMetaData, tmpStr, NrrdValue);
       vectorIndex++;
       }
     }
+  resultMetaDataValidator.SetGradientTable( resultGradTable );
+
   try
     {
     indexImageToVectorImageFilter->Update();
-    indexImageToVectorImageFilter->GetOutput()->SetMetaDataDictionary(resultMetaData);
+    indexImageToVectorImageFilter->GetOutput()->SetMetaDataDictionary( resultMetaDataValidator.GetMetaDataDictionary() );
     }
   catch( itk::ExceptionObject & ex )
     {

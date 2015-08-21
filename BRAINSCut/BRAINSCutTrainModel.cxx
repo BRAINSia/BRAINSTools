@@ -199,8 +199,7 @@ BRAINSCutTrainModel
 
 void
 BRAINSCutTrainModel
-::writeRFTrainInformation( cv::Ptr<cv::ml::RTrees>  myTrainer,
-                           int depth,
+::recordRFTrainInformation( int depth,
                            int nTree)
 {
   char cDepth[10];
@@ -323,7 +322,7 @@ BRAINSCutTrainModel
                                           cv::ml::ROW_SAMPLE,
                                            this->m_trainingDataSet->GetTrainingSubSet(0)->pairedOutputRF));
 
-  writeRFTrainInformation( forest, depth, numberOfTree );
+  recordRFTrainInformation( depth, numberOfTree );
   SaveRFTrainModelAtIteration( forest, depth, numberOfTree);
 }
 

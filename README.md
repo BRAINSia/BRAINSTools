@@ -9,7 +9,38 @@ For more information on the individual BRAINSTools, please see the following lin
 https://github.com/BRAINSia/BRAINSTools/wiki
 
 ## Building
-### Mac OSX and Linux RedHat 6
+### Mac OSX
+Building BRAINSTools on mac is the same as any standard out of
+source cmake build. Make a folder for the BRAINSTools project.
+Clone the BRAINSTools repository, and run the set-up script. Make
+a build directory contained in the same folder as the git repository.
+From the build directory, run cmake (or ccmake to manually configure
+the build settings) with the BRAINSTools repo as an argument, then
+run make. For Example:
+
+```sh
+mkdir brains
+cd brains
+git clone http://github.com/BRAINSIa/BRAINSTools.git
+
+cd BRAINSTools
+./Utilities/SetupForDevelopment.sh
+cd ..
+
+mkdir build
+cd build
+cmake ../BRAINSTools
+
+## NOTE: To configure options in the cmake GUI, use:
+##     ccmake ../BRAINSTools
+## instead
+make -j${NUMOFTHREADS} -k
+
+## NOTE: To find the number of threads from the OSX terminal, use:
+##    sysctl -n hw.ncpu
+```
+
+### Linux RedHat 6
 Example session for a clean build:
 
 ```sh

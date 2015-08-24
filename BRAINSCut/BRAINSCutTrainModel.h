@@ -49,7 +49,7 @@ public:
 
   inline void SaveRFTrainModelAtIteration( cv::Ptr<cv::ml::RTrees> myTrainer, int depth, int NTrees);
 
-  inline void writeRFTrainInformation( cv::Ptr<cv::ml::RTrees> myTrainer, int depth, int nTree);
+  inline void recordRFTrainInformation( int depth, int nTree);
 
   inline void printANNTrainInformation( cv::Ptr<OpenCVMLPType> myTrainer, unsigned int No );
 

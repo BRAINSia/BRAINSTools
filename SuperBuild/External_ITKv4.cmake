@@ -34,7 +34,7 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   endif()
 
   set(${proj}_REPOSITORY ${git_protocol}://itk.org/ITK.git)
-  set(${proj}_GIT_TAG a402899eccc342ff6c3e832e0dddfb3cdf2cf7bc ) # 2015-07-16 Fixed precision and MGHIO
+  set(${proj}_GIT_TAG 48415e6d0180d78cfe250718980478c8330889dd ) # itk/master at Aug 25th 2015
   set(EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS)
 
   if(NOT ${CMAKE_PROJECT_NAME}ITKV3_COMPATIBILITY AND CMAKE_CL_64)
@@ -42,16 +42,6 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     # where long is only 32-bits (msvc)
     set(EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS
       -DITK_USE_64BITS_IDS:BOOL=ON
-      )
-  endif()
-
-  if(${CMAKE_PROJECT_NAME}USE_PYTHONQT)
-    # XXX Ensure python executable used for ITKModuleHeaderTest
-    #     is the same as Slicer.
-    #     This will keep the sanity check implemented in SlicerConfig.cmake
-    #     quiet.
-    list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS
-      -DPYTHON_EXECUTABLE:PATH=${PYTHON_EXECUTABLE}
       )
   endif()
 

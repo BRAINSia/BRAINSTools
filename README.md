@@ -56,11 +56,6 @@ cd ../BRAINSTools-build/
 CC=/usr/bin/gcc-4.2 CXX=/usr/bin/g++-4.2 ccmake ../BRAINSTools \
     -DUSE_BRAINSConstellationDetector:BOOL=ON \
     -DUSE_BRAINSABC:BOOL=ON
-## NOTE: If you are using a version of Python different from the system default, CMake will ignore your
-##       environment variables.  To ensure CMake points to the right version, you need to set the
-##       following variables as well:
-## -DPYTHON_LIBRARY:PATH=/path/to/python/lib \
-## -DPYTHON_INCLUDE_DIR:PATH=/path/to/python/include
 
 make -j${NUMOFTHREADS} -k
 
@@ -107,9 +102,6 @@ cd build
 CC=/usr/bin/gcc-4.8 \
 CXX=/usr/bin/g++-4.8 \
 cmake ../BRAINSTools \
--DPYTHON_INCLUDE_DIR:PATH=/usr/include/python2.7 \
--DPYTHON_INCLUDE_DIR2:PATH=/usr/include/x86_64-linux-gnu/python2.7 \
--DPYTHON_LIBRARY:FILEPATH=/usr/lib/x86_64-linux-gnu/libpython2.7.so
 make -j${NUMOFTHREADS} -k
 ```
 :warning: You can find the number of threads on your system in Ubuntu with `lscpu`

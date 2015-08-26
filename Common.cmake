@@ -89,28 +89,6 @@ if(Slicer_BUILD_BRAINSTOOLS OR USE_AutoWorkup OR USE_GTRACT OR USE_BRAINSTalaira
   set(BRAINSTools_REQUIRES_VTK ON)
 endif()
 
-## NIPYPE is not stable under python 2.6, so require 2.7 when using autoworkup
-## Enthought Canopy or anaconda are convenient ways to install python 2.7 on linux
-## or the other option is the free version of Anaconda from https://store.continuum.io/
-set(REQUIRED_PYTHON_VERSION 2.7)
-# find_package ( PythonInterp REQUIRED )
-# message(STATUS "Found PythonInterp version ${PYTHON_VERSION_STRING}")
-# find_package ( PythonLibs REQUIRED )
-find_package( PythonVirtualenv REQUIRED )
-
-# Check the Python version found
-if( NOT PYTHON_VERSION_MAJOR EQUAL "2" )
-  message( FATAL_ERROR " - Nipype requires Python version == 2" )
-elseif( PYTHON_VERSION_MINOR LESS "7")
-  message( FATAL_ERROR " - Nipype requires Python version > 2.6" )
-endif()
-
-set(PYTHON_INSTALL_CMAKE_ARGS
-      PYTHON_EXECUTABLE:FILEPATH
-      PYTHON_LIBRARY:FILEPATH
-      PYTHON_INCLUDE_DIR:PATH
-   )
-
 if(USE_ICCDEF OR ITK_USE_FFTWD OR ITK_USE_FFTWF)
   set(${PROJECT_NAME}_BUILD_FFTWF_SUPPORT ON)
 endif()

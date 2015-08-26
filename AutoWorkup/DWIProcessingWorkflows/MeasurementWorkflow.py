@@ -207,7 +207,7 @@ def CreateMeasurementWorkflow(WFname, LABELS_CONFIG_FILE):
     #                  and is used to compute all stats like [mean,std,max,min,median,effective_volume].
 
     # Step2: Resample each RIS to T2LabelmapVolume voxel lattice
-    MakeResamplerInFilesListNode = pe.Node(Function(function=MakeResamplerInFileList,
+    MakeResamplerInFilesListNode = pe.Node(interface=Function(function=MakeResamplerInFileList,
                                                     input_names=['FAImage','MDImage','RDImage','FrobeniusNormImage',
                                                                  'Lambda1Image','Lambda2Image','Lambda3Image'],
                                                     output_names=['RISsList']),

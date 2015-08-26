@@ -15,6 +15,14 @@ import nipype.pipeline.engine as pe  # pypeline engine
 from nipype.interfaces.semtools import *
 
 def CreateTractographyWorkflow(WFname):
+    ###### UTILITY FUNCTIONS #######
+    def computeNumberOfSeedsPerVoxel(inputVolume):
+        import operator
+        voxelVolume = reduce(operator.mul, inputVolume.GetSpacing())
+        # 10 seeds per voxel is used when voxel voluem is 8 mm^3.
+        seedsPerVoxel = round(voxelVolume*10/8)
+        return seedsPerVoxel
+    #################################
     TractWF = pe.Workflow(name=WFname)
 
     inputsSpec = pe.Node(interface=IdentityInterface(fields=['DWI_Corrected_Aligned_CS', 'DWIBrainMask']),
@@ -23,10 +31,27 @@ def CreateTractographyWorkflow(WFname):
     outputsSpec = pe.Node(interface=IdentityInterface(fields=['ukfTracks']),
                           name='outputsSpec')
 
-    # Step1: UKF Processing
+    ########
+    # Before running the UKF, we need to define the number of seeds per voxel
+    # based on the voxel volume of the input DWI scan.
+    ########
+
+    # Step1: extract B0 from DWI volume
+    EXTRACT_B0 = pe.Node(interface=extractNrrdVectorIndex(),name="EXTRACT_B0")
+    EXTRACT_B0.inputs.vectorIndex = 0
+    EXTRACT_B0.inputs.outputVolume = 'B0_Image.nrrd'
+    TractWF.connect(inputsSpec,'DWI_Corrected_Aligned_CS',EXTRACT_B0,'inputVolume')
+
+    # Step2: Compute number of seeds per voxel
+    computeNumberOfSeedsPerVoxelNode = pe.Node(interface=Function(function = computeNumberOfSeedsPerVoxel,
+                                                                  input_names=['inputVolume'],
+                                                                  output_names=['seedsPerVoxel']),
+                                               name="ComputeNumberOfSeedsPerVoxel")
+    TractWF.connect(EXTRACT_B0, 'outputVolume', computeNumberOfSeedsPerVoxelNode, 'inputVolume')
+
+    # Step3: UKF Processing
     UKFNode = pe.Node(interface=UKFTractography(), name= "UKFRunRecordStates")
     UKFNode.inputs.tracts = "ukfTracts.vtp"
-    UKFNode.inputs.seedsPerVoxel = 10
     UKFNode.inputs.numTensor = '2'
     UKFNode.inputs.freeWater = True ## default False
     UKFNode.inputs.minFA = 0.06
@@ -41,6 +66,7 @@ def CreateTractographyWorkflow(WFname):
 
     TractWF.connect(inputsSpec, 'DWI_Corrected_Aligned_CS', UKFNode, 'dwiFile')
     TractWF.connect(inputsSpec, 'DWIBrainMask', UKFNode, 'maskFile')
+    TractWF.connect(computeNumberOfSeedsPerVoxelNode, 'seedsPerVoxel', UKFNode, 'seedsPerVoxel')
     TractWF.connect(UKFNode,'tracts',outputsSpec,'ukfTracks')
 
     return TractWF

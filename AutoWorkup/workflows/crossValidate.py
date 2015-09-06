@@ -94,7 +94,8 @@ def writeCVSubsetFile( environment, experiment, pipeline, cluster, csv_file, tes
     """
     global variable
     """
-    BASE_DATA_GRABBER_DIR='/Shared/johnsonhj/HDNI/Neuromorphometrics/20141116_Neuromorphometrics_base_Results/Neuromorphometrics/2012Subscription'
+    ## HACK FOR NOW SHOULD BE MORE ELEGANT FROM THE .config file
+    BASE_DATA_GRABBER_DIR='/Shared/johnsonhj/HDNI/ReferenceData/Neuromorphometrics/2012Subscription'
     #master_config = {'queue':'HJ',
     #    'long_q':'HJ'}
 

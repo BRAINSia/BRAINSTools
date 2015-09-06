@@ -30,10 +30,11 @@ def setup_environment(argv):
     else:
         load_modules(cluster['modules'])  # Load modules if not already done  ## MODS PATH
         # print os.environ['LOADEDMODULES']
-    if environment['virtualenv_dir'] is not None:  # MODS PATH
-        activate_this = validatePath(
-            os.path.join(environment['virtualenv_dir'], 'bin', 'activate_this.py'), False, False)
-        execfile(activate_this, dict(__file__=activate_this))
+    #if environment['virtualenv_dir'] is not None:  # MODS PATH
+        #activate_this = validatePath(
+        #    os.path.join(environment['virtualenv_dir'], 'bin', 'activate_this.py'), False, False)
+        #if os.path.exists( activate_this ) :
+        #    execfile(activate_this, dict(__file__=activate_this))
     utilities_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'utilities')
     configure_env = validatePath(os.path.join(utilities_path, 'configure_env.py'), False, False)
     # Add the AutoWorkup directory to the PYTHONPATH every time - REQUIRED FOR CLUSTER DISPATCHING

@@ -187,8 +187,7 @@ def CreateTissueClassifyWorkflow(WFname, master_config, InterpolationMode,UseReg
         tissueClassifyWF.connect(fixedROIAuto, 'outputROIMaskVolume',A2SantsRegistrationPreABCSyN,'fixed_image_mask')
         tissueClassifyWF.connect(movingROIAuto, 'outputROIMaskVolume',A2SantsRegistrationPreABCSyN,'moving_image_mask')
 
-    tissueClassifyWF.connect(A2SantsRegistrationPreABCRigid,
-                             ('composite_transform', getListIndexOrNoneIfOutOfRange, 0 ),
+    tissueClassifyWF.connect(A2SantsRegistrationPreABCRigid, 'composite_transform',
                              A2SantsRegistrationPreABCSyN,'initial_moving_transform')
     tissueClassifyWF.connect(inputsSpec, 'PrimaryT1',A2SantsRegistrationPreABCSyN,'fixed_image')
     tissueClassifyWF.connect(inputsSpec, 'atlasVolume',A2SantsRegistrationPreABCSyN,'moving_image')
@@ -220,7 +219,7 @@ def CreateTissueClassifyWorkflow(WFname, master_config, InterpolationMode,UseReg
     tissueClassifyWF.connect(inputsSpec, 'atlasDefinition', BABCext, 'atlasDefinition')
     # NOTE: MUTUALLY EXCLUSIVE with restoreState
     #tissueClassifyWF.connect(A2SantsRegistrationPreABCSyN,
-    #                         ( 'composite_transform', getListIndexOrNoneIfOutOfRange, 0 ),
+    #                         'composite_transform',
     #                         BABCext, 'atlasToSubjectInitialTransform')
     tissueClassifyWF.connect(A2SantsRegistrationPreABCSyN,'save_state',
                              BABCext, 'restoreState')

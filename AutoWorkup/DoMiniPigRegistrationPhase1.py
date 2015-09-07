@@ -388,7 +388,7 @@ ResampleLabelMap = pe.Node(BRAINSResample(), name="ResampleLabelMap")
 ResampleLabelMap.inputs.pixelType = 'ushort'
 ResampleLabelMap.inputs.interpolationMode = 'NearestNeighbor'
 ResampleLabelMap.inputs.outputVolume = 'ResampleLabelMap.nii.gz'
-minipigWF.connect([(BeginANTS2, ResampleLabelMap, [(('composite_transform', getListIndex, 0), 'warpTransform')])])
+minipigWF.connect([(BeginANTS2, ResampleLabelMap, [('composite_transform', 'warpTransform')])])
 
 minipigWF.connect(input_spec, 'Domestic_LabelMap', ResampleLabelMap, 'inputVolume')
 minipigWF.connect(T1DynFix, 'outFN', ResampleLabelMap, 'referenceVolume')

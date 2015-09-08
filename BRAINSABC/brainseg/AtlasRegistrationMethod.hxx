@@ -525,7 +525,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
       std::cout << "****************************************" << std::endl;
       if( m_AtlasLinearTransformChoice == "SyN" && this->m_RestoreState.IsNotNull() )
         {
-        std::cout << "SyN registration is resotred from state, and no atlasToSubjectInitialTransform is needed."
+        std::cout << "SyN registration is restored from state, and no atlasToSubjectInitialTransform is needed."
                   << std::endl;
         this->m_AtlasToSubjectInitialTransform = ITK_NULLPTR;
         }

@@ -205,9 +205,14 @@ public:
     {
       return GetMapVectorFirstElement(this->m_AtlasOriginalImageList);
     }
-  InternalImagePointer GetSecondModalityAtlasOriginalImage(const std::string type)
+  InternalImagePointer GetSecondModalityAtlasOriginalImage(const std::string & type)
     {
-      return *(this->m_AtlasOriginalImageList.find( type )->second.begin());
+      MapOfFloatImageVectors::iterator test_map_location = this->m_AtlasOriginalImageList.find( type );
+      if( test_map_location == this->m_AtlasOriginalImageList.end() )
+        {
+        return ITK_NULLPTR;
+        }
+      return *(test_map_location->second.begin());
     }
 
   void SetAtlasOriginalImageList(MapOfFloatImageVectors & NewAtlasList);

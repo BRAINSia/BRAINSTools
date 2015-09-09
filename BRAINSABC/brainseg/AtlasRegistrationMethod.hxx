@@ -573,13 +573,19 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
     // Set the fixed and moving image
     atlasToSubjectRegistrationHelper->SetFixedVolume(this->m_ModalityAveragedOfIntraSubjectImages[0]); // by AverageIntraSubjectRegisteredImages function
     atlasToSubjectRegistrationHelper->SetMovingVolume(this->GetFirstAtlasOriginalImage());
-    if( this->m_ModalityAveragedOfIntraSubjectImages.size() > 1 )
+    InternalImagePointer SecondImagePointer = this->GetSecondModalityAtlasOriginalImage("T2");
+    //if ( SecondImagePointer.IsNull() ) //HACK: This is not a great solution, and it requires the atlas to have a PD image
+    //{
+    //    muLogMacro( << "Multimodal Registration will be run using a PD image." <<   std::endl );
+    //    SecondImagePointer = this->GetSecondModalityAtlasOriginalImage("PD");
+    //}
+    if( this->m_ModalityAveragedOfIntraSubjectImages.size() > 1  && SecondImagePointer.IsNotNull() )
         {
         muLogMacro( << "Multimodal Registration will be run." <<   std::endl );
-        muLogMacro( << "because number of modalities is." << this->m_ModalityAveragedOfIntraSubjectImages.size() <<  std::endl );
+        muLogMacro( << "because number of modalities is: " << this->m_ModalityAveragedOfIntraSubjectImages.size() <<  std::endl );
         //std::cout<<this->GetSecondModalityAtlasOriginalImage("T2")<<std::endl;
         atlasToSubjectRegistrationHelper->SetFixedVolume2(this->m_ModalityAveragedOfIntraSubjectImages[1]); // by AverageIntraSubjectRegisteredImages function
-        atlasToSubjectRegistrationHelper->SetMovingVolume2(this->GetSecondModalityAtlasOriginalImage("T2"));
+        atlasToSubjectRegistrationHelper->SetMovingVolume2(SecondImagePointer);
         }
     else
         {

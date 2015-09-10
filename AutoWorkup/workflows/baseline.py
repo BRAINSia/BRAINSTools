@@ -197,9 +197,11 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
 
     if 'tissue_classify' in master_config['components']:
         assert ('landmark' in master_config['components'] ), "tissue_classify Requires landmark step!"
-    # NOT TRUE
-    #if 'landmark' in master_config['components']:
+    # NOT TRUE if 'landmark' in master_config['components']:
     #    assert 'denoise' in master_config['components'], "landmark Requires denoise step!"
+
+    if 'malf_2015_wholebrain' in master_config['components']:
+        assert ('warp_atlas_to_subject' in master_config['components'] ), "malf_2015_wholebrain requires warp_atlas_to_subject!"
 
     from workflows.atlasNode import MakeAtlasNode
 

@@ -102,7 +102,6 @@ def CreateMALFWorkflow(WFname, onlyT1, master_config,BASE_DATA_GRABBER_DIR=None,
     NewlabelMapResample = dict()
 
     malf_atlas_mergeindex = 1;
-
     """
     multimodal ants registration if t2 exists
     """
@@ -120,14 +119,15 @@ def CreateMALFWorkflow(WFname, onlyT1, master_config,BASE_DATA_GRABBER_DIR=None,
     print 'malf_atlas_db_base'
     print master_config['malf_atlas_db_base']
     malfAtlasDict = readMalfAtlasDbBase( master_config['malf_atlas_db_base'] )
+    number_of_atlas_sources = len(malfAtlasDict)
     malfAtlases = dict()
     atlasMakeMultimodalInput = dict()
     t2Resample = dict()
-    warpedAtlasLblMergeNode = pe.Node(interface=Merge(len(malfAtlasDict)),name="LblMergeAtlas")
-    NewwarpedAtlasLblMergeNode = pe.Node(interface=Merge(len(malfAtlasDict)),name="fswmLblMergeAtlas")
-    warpedAtlasesMergeNode = pe.Node(interface=Merge(len(malfAtlasDict)*n_modality),name="MergeAtlases")
+    warpedAtlasLblMergeNode = pe.Node(interface=Merge(number_of_atlas_sources),name="LblMergeAtlas")
+    NewwarpedAtlasLblMergeNode = pe.Node(interface=Merge(number_of_atlas_sources),name="fswmLblMergeAtlas")
+    warpedAtlasesMergeNode = pe.Node(interface=Merge(number_of_atlas_sources*n_modality),name="MergeAtlases")
 
-    for malf_atlas_subject in malfAtlasDict:
+    for malf_atlas_subject in malfAtlasDict.keys():
         ## Need DataGrabber Here For the Atlas
         malfAtlases[malf_atlas_subject] = pe.Node(interface = IdentityInterface(
                                                                   fields=['t1', 't2', 'label', 'lmks']),
@@ -231,7 +231,7 @@ def CreateMALFWorkflow(WFname, onlyT1, master_config,BASE_DATA_GRABBER_DIR=None,
         MALFWF.connect(atlasMakeMultimodalInput[malf_atlas_subject], 'outFNs',
                        A2SantsRegistrationPreMALF_SyN[malf_atlas_subject],'moving_image')
         MALFWF.connect(A2SantsRegistrationPreMALF_SyN[malf_atlas_subject],'warped_image',
-                       warpedAtlasesMergeNode,'in'+str(malf_atlas_mergeindex*n_modality - 1) )
+                       warpedAtlasesMergeNode,'in'+str(malf_atlas_mergeindex*n_modality) )
 
         """
         Original t2 resampling
@@ -253,7 +253,7 @@ def CreateMALFWorkflow(WFname, onlyT1, master_config,BASE_DATA_GRABBER_DIR=None,
             MALFWF.connect( malfAtlases[malf_atlas_subject], 't2',
                             t2Resample[malf_atlas_subject],'input_image')
             MALFWF.connect(t2Resample[malf_atlas_subject],'output_image',
-                           warpedAtlasesMergeNode,'in'+str(malf_atlas_mergeindex*n_modality) )
+                           warpedAtlasesMergeNode,'in'+str(malf_atlas_mergeindex*n_modality+1) )
 
         """
         Original labelmap resampling

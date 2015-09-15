@@ -36,6 +36,9 @@ Optional inputs:
 --cw256                   Include this flag after -autorecon1 if images have a FOV > 256.  The
                           flag causes mri_convert to conform the image to dimensions of 256^3.
 
+--longbase <name>         Set the longitudinal base template. If a longitudinal 
+                          base is set, no input files will be used/required.
+
 Author:
 David Ellis
 University of Iowa
@@ -50,8 +53,10 @@ def procargs(argv):
     plugin = 'Linear'
     queue = None
     subjects_dir = None
+    long_base = None
     qcache = False
     cw256 = False
+    longitudinal = False
     try:
         opts, args = getopt.getopt(argv, "hi:q:s:", ["help",
                                                      "T1=",
@@ -62,7 +67,8 @@ def procargs(argv):
                                                      "queue=",
                                                      "subjects_dir=",
                                                      "qcache",
-                                                     "cw256"])
+                                                     "cw256",
+                                                     "longbase="])
     except getopt.GetoptError:
         print "Error occured when parsing arguments"
         help()
@@ -103,21 +109,30 @@ def procargs(argv):
             qcache = True
         elif opt in ("--cw256"):
             cw256 = True
-    if subject_id != None and len(in_T1s) != 0 and subjects_dir != None:
-        print 'Subject ID: %s' % subject_id
-        print 'Input T1s: %s' % in_T1s
+        elif opt in ("--longbase"):
+            longitudinal = True
+            long_base = arg
+            #TODO: Check that the longitudinal base pre-exists
+    if subject_id != None and (len(in_T1s) != 0 or longitudinal) and subjects_dir != None:
+        print 'Subject ID: {0}'.format(subject_id)
+        print 'Input T1s: {0}'.format(in_T1s)
         if in_T2 != None:
-            print 'Input T2: %s' % in_T2
+            print 'Input T2: {0}'.format(in_T2)
         if in_FLAIR != None:
-            print 'Input FLAIR: %s' % in_FLAIR
-        print 'Plugin: %s' % plugin
+            print 'Input FLAIR: {0}'.format(in_FLAIR)
+        print 'Plugin: {0}'.format(plugin)
         if queue != None:
-            print 'Queue: %s' % queue
+            print 'Queue: {0}'.format(queue)
+        if longitudinal:
+            print 'Running longitudinally'
+            print 'Longitudinal Base: {0}'.format(long_base)
+        print 'Make qcache: {0}'.format(qcache)
+        print 'Conform to 256: {0}'.format(cw256)
     else:
         print "Error: subject_id, subjects_dir and at least 1 input T1 scan are required inputs"
         help()
         sys.exit(2)
-    return in_T1s, subject_id, in_T2, in_FLAIR, plugin, queue, subjects_dir, qcache, cw256
+    return in_T1s, subject_id, in_T2, in_FLAIR, plugin, queue, subjects_dir, qcache, cw256, longitudinal, long_base
 
 
 def checkenv():
@@ -133,7 +148,7 @@ def checkenv():
     return fs_home
 
 def main(argv):
-    in_T1s, subject_id, in_T2, in_FLAIR, plugin, queue, subjects_dir, qcache, cw256 = procargs(
+    in_T1s, subject_id, in_T2, in_FLAIR, plugin, queue, subjects_dir, qcache, cw256, longitudinal, long_base  = procargs(
         argv)
     fs_home = checkenv()
 

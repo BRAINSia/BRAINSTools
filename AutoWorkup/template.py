@@ -328,9 +328,11 @@ def _template_runner(argv, environment, experiment, pipeline_options, cluster):
         # if numSessions == 1:
         #     TEMPLATE_BUILD_RUN_MODE = 'SINGLE_IMAGE'
         ####################################################################################################
-        buildTemplateIteration1 = BAWantsRegistrationTemplateBuildSingleIterationWF('iteration01')
+        CLUSTER_QUEUE=cluster['queue']
+        CLUSTER_QUEUE_LONG=cluster['long_q']
+        buildTemplateIteration1 = BAWantsRegistrationTemplateBuildSingleIterationWF('iteration01',CLUSTER_QUEUE,CLUSTER_QUEUE_LONG)
         # buildTemplateIteration2 = buildTemplateIteration1.clone(name='buildTemplateIteration2')
-        buildTemplateIteration2 = BAWantsRegistrationTemplateBuildSingleIterationWF('Iteration02')
+        buildTemplateIteration2 = BAWantsRegistrationTemplateBuildSingleIterationWF('Iteration02',CLUSTER_QUEUE,CLUSTER_QUEUE_LONG)
 
         CreateAtlasXMLAndCleanedDeformedAveragesNode = pe.Node(interface=Function(function=CreateAtlasXMLAndCleanedDeformedAverages,
                                                               input_names=['t1_image', 'deformed_list', 'AtlasTemplate', 'outDefinition'],
@@ -347,7 +349,7 @@ def _template_runner(argv, environment, experiment, pipeline_options, cluster):
             for bt in [buildTemplateIteration1, buildTemplateIteration2]:
                 BeginANTS = bt.get_node("BeginANTS")
                 BeginANTS.plugin_args = {'template': pipeline_options['plugin_args']['template'], 'overwrite': True,
-                                         'qsub_args': modify_qsub_args(cluster['queue'], 4, 2, 4)}
+                                         'qsub_args': modify_qsub_args(cluster['queue'], 6, 4, 16)}
                 wimtdeformed = bt.get_node("wimtdeformed")
                 wimtdeformed.plugin_args = {'template': pipeline_options['plugin_args']['template'], 'overwrite': True,
                                             'qsub_args': modify_qsub_args(cluster['queue'], 2, 2, 2)}

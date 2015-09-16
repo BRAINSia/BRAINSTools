@@ -10,6 +10,8 @@
 ##
 #################################################################################
 
+from utilities.distributed import modify_qsub_args
+
 import nipype.pipeline.engine as pe
 import nipype.interfaces.utility as util
 from nipype.interfaces.utility import Function
@@ -70,18 +72,13 @@ def RenestDeformedPassiveImages(deformedPassiveImages, flattened_image_nametypes
     return nested_imagetype_list, outputAverageImageName_list, image_type_list, nested_interpolation_type
 
 
-def SplitCompositeToComponentTransforms(composite_transform_as_list):
+def SplitCompositeToComponentTransforms(transformFilename):
     ### Nota bene: The outputs will include the initial_moving_transform from Registration (which depends on what
     ###            the invert_initial_moving_transform is set to)
     import os
     import subprocess
     import sys
 
-    if len( composite_transform_as_list ) != 1:
-        print("ERROR: Only 1 element allowed in the composite transform list")
-        sys.exit(-1)
-
-    transformFilename = composite_transform_as_list[0]
     if transformFilename.endswith('.h5'):
         decomposedOutputPrefix = "decomposedTransform"
         commandLine = "CompositeTransformUtil  --disassemble " + transformFilename + " " + decomposedOutputPrefix
@@ -92,11 +89,15 @@ def SplitCompositeToComponentTransforms(composite_transform_as_list):
         script_name = "decomposedTransform" + '_script.sh'
         print( script_name )
         script = open(script_name, 'w')
+        script.write("#!/bin/bash\n")
+        script.write("\npushd "+ " " + os.path.abspath( "." )+ "\n")
         script.write(commandLine)
+        script.write("\npopd \n" )
         script.close()
         os.chmod(script_name, 0777)
         script_name = os.path.abspath( script_name )
-        print "Starting CompositeTransformUtil"
+        print("XX"*40)
+        print "Starting CompositeTransformUtil script: {0}".format(script_name)
         scriptStatus = subprocess.check_call([script_name], shell=True)
         if scriptStatus != 0:
             sys.exit(scriptStatus)
@@ -194,7 +195,7 @@ def GetPassiveImages(ListOfImagesDictionaries, registrationImageTypes):
 ##        any other string indicates the normal mode that you would expect and replicates the shell script build_template_parallel.sh
 
 
-def BAWantsRegistrationTemplateBuildSingleIterationWF(iterationPhasePrefix=''):
+def BAWantsRegistrationTemplateBuildSingleIterationWF(iterationPhasePrefix,CLUSTER_QUEUE,CLUSTER_QUEUE_LONG):
     """
 
     Inputs::
@@ -231,6 +232,7 @@ def BAWantsRegistrationTemplateBuildSingleIterationWF(iterationPhasePrefix=''):
 
     ### NOTE MAP NODE! warp each of the original images to the provided fixed_image as the template
     BeginANTS = pe.MapNode(interface=Registration(), name='BeginANTS', iterfield=['moving_image'])
+    ## This is set in the template.py file BeginANTS.plugin_args = BeginANTS_cpu_sge_options_dictionary
     BeginANTS.inputs.dimension = 3
     """ This is the recommended set of parameters from the ANTS developers """
     BeginANTS.inputs.output_transform_prefix = str(iterationPhasePrefix) + '_tfm'
@@ -302,13 +304,13 @@ def BAWantsRegistrationTemplateBuildSingleIterationWF(iterationPhasePrefix=''):
     AvgAffineTransform.inputs.output_affine_transform = 'Avererage_' + str(iterationPhasePrefix) + '_Affine.h5'
 
     SplitCompositeTransform = pe.MapNode(interface=util.Function(function=SplitCompositeToComponentTransforms,
-                                      input_names=['composite_transform_as_list'],
+                                      input_names=['transformFilename'],
                                       output_names=['affine_component_list', 'warp_component_list']),
-                                      iterfield=['composite_transform_as_list'],
+                                      iterfield=['transformFilename'],
                                       run_without_submitting=True,
                                       name='99_SplitCompositeTransform')
-    TemplateBuildSingleIterationWF.connect(BeginANTS, 'composite_transform', SplitCompositeTransform, 'composite_transform_as_list')
-    ## PREVIOUS TemplateBuildSingleIterationWF.connect(BeginANTS, 'forward_transforms', SplitCompositeTransform, 'composite_transform_as_list')
+    TemplateBuildSingleIterationWF.connect(BeginANTS, 'composite_transform', SplitCompositeTransform, 'transformFilename')
+    ## PREVIOUS TemplateBuildSingleIterationWF.connect(BeginANTS, 'forward_transforms', SplitCompositeTransform, 'transformFilename')
     TemplateBuildSingleIterationWF.connect(SplitCompositeTransform, 'affine_component_list', AvgAffineTransform, 'transforms')
 
     ## Now average the warp fields togther

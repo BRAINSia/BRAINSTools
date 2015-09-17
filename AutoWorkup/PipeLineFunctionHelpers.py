@@ -1,3 +1,4 @@
+from __future__ import print_function
 ## NOTE: THERE CAN NOT BE ANY GLOBAL imports in this file
 ##       NIPYPE pipeline functions must be self contained
 ##       and any import needed for a function must be
@@ -111,7 +112,7 @@ def ConvertSessionsListOfPosteriorListToDictionaryOfSessionLists(dg_list_list):
             key = basename(postFileName).replace('POSTERIOR_','').replace('.nii.gz','')
             assert key in dictionary_of_session_list.keys(), "All session list must have the same key values"
             dictionary_of_session_list[key].append(postFileName)
-    print dictionary_of_session_list
+    print(dictionary_of_session_list)
     return dictionary_of_session_list
 
 def GetOnePosteriorImageFromDictionaryFunction(postDict, key):
@@ -271,8 +272,8 @@ def AccumulateLikeTissuePosteriors(posteriorImages):
             accum_image = accum_image + load_images_list[inlist[curr_image]]
         sitk.WriteImage(accum_image, outname)
         AccumulatePriorsList.append(os.path.realpath(outname))
-    print "HACK \n\n\n\n\n\n\n HACK \n\n\n: {APL}\n".format(APL=AccumulatePriorsList)
-    print ": {APN}\n".format(APN=AccumulatePriorsNames)
+    print("HACK \n\n\n\n\n\n\n HACK \n\n\n: {APL}\n".format(APL=AccumulatePriorsList))
+    print(": {APN}\n".format(APN=AccumulatePriorsNames))
     return AccumulatePriorsList, AccumulatePriorsNames
 
 

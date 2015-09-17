@@ -1,3 +1,5 @@
+from __future__ import print_function
+from __future__ import absolute_import
 #################################################################################
 ## Program:   Build Template Parallel
 ## Language:  Python
@@ -10,7 +12,7 @@
 ##
 #################################################################################
 
-from utilities.distributed import modify_qsub_args
+from .utilities.distributed import modify_qsub_args
 
 import nipype.pipeline.engine as pe
 import nipype.interfaces.utility as util
@@ -64,11 +66,11 @@ def RenestDeformedPassiveImages(deformedPassiveImages, flattened_image_nametypes
             nested_interpolation_type.append(interpolationMapping[image_type])
         else:
             nested_interpolation_type.append('Linear')  # Linear is the default.
-    print "\n" * 10
-    print "HACK: ", nested_imagetype_list
-    print "HACK: ", outputAverageImageName_list
-    print "HACK: ", image_type_list
-    print "HACK: ", nested_interpolation_type
+    print("\n" * 10)
+    print("HACK: ", nested_imagetype_list)
+    print("HACK: ", outputAverageImageName_list)
+    print("HACK: ", image_type_list)
+    print("HACK: ", nested_interpolation_type)
     return nested_imagetype_list, outputAverageImageName_list, image_type_list, nested_interpolation_type
 
 
@@ -94,14 +96,14 @@ def SplitCompositeToComponentTransforms(transformFilename):
         script.write(commandLine)
         script.write("\npopd \n" )
         script.close()
-        os.chmod(script_name, 0777)
+        os.chmod(script_name, 0o777)
         script_name = os.path.abspath( script_name )
         print("XX"*40)
-        print "Starting CompositeTransformUtil script: {0}".format(script_name)
+        print("Starting CompositeTransformUtil script: {0}".format(script_name))
         scriptStatus = subprocess.check_call([script_name], shell=True)
         if scriptStatus != 0:
             sys.exit(scriptStatus)
-        print "Ending CompositeTransformUtil"
+        print("Ending CompositeTransformUtil")
         if os.path.exists( affineTransformName ) and os.path.exists( warpTransformName ):
             affine_component_list = os.path.abspath( affineTransformName )
             warp_component_list = os.path.abspath( warpTransformName )
@@ -125,13 +127,13 @@ def FlattenTransformAndImagesList(ListOfPassiveImagesDictionaries, transforms, i
     subjCount = len(ListOfPassiveImagesDictionaries)
     tranCount = len(transforms)
     if subjCount != tranCount:
-        print "ERROR:  subjCount must equal tranCount {0} != {1}".format(subjCount, tranCount)
+        print("ERROR:  subjCount must equal tranCount {0} != {1}".format(subjCount, tranCount))
         sys.exit(-1)
     if invert_transform_flags is None:
         invert_transform_flags = [False] * subjCount
     invertTfmsFlagsCount = len(invert_transform_flags)
     if subjCount != invertTfmsFlagsCount:
-        print "ERROR:  subjCount must equal invertTfmsFlags {0} != {1}".format(subjCount, invertTfmsFlagsCount)
+        print("ERROR:  subjCount must equal invertTfmsFlags {0} != {1}".format(subjCount, invertTfmsFlagsCount))
         sys.exit(-1)
     flattened_images = list()
     flattened_image_nametypes = list()

@@ -1,5 +1,6 @@
 #!/bin/python
 
+from __future__ import print_function
 import termcolor  # <-- used to make pretty printing in color
 import regex  # <-- support Perl style regular expressions that closely match what is used in CTest
 import sys
@@ -64,12 +65,12 @@ def GetListOfCustomExludePatterns(patterns_file_name):
             start_matchresult = start_excepts_pat.search(line)
             if start_matchresult:
                 in_excepts_block = True
-                print "Starting Block on line ", linenum
+                print("Starting Block on line ", linenum)
         else:
             end_matchresult = end_excepts_pat.search(line)
             if end_matchresult:
                 in_excepts_block = False
-                print "Ending Block on line ", linenum
+                print("Ending Block on line ", linenum)
             else:
                 ispat_matchresult = string_pattern_pat.search(line)
                 if ispat_matchresult:
@@ -132,9 +133,9 @@ ff = open(sys.argv[1], 'r')
 all_lines = ff.readlines()
 ff.close
 for idx in range(0, len(warn_regex_patterns)):
-    print ""
-    print termcolor.colored(warn_regex_patterns[idx], 'blue')
-    print "=" * 80
+    print("")
+    print(termcolor.colored(warn_regex_patterns[idx], 'blue'))
+    print("=" * 80)
 
     line_count = 0
     for line in all_lines:

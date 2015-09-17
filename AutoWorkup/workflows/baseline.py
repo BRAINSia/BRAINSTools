@@ -11,6 +11,8 @@
 ##
 #################################################################################
 
+from __future__ import print_function
+from __future__ import absolute_import
 import os
 #"""Import necessary modules from nipype."""
 # from nipype.utils.config import config
@@ -37,10 +39,10 @@ from utilities.distributed import modify_qsub_args
 from PipeLineFunctionHelpers import convertToList, FixWMPartitioning, AccumulateLikeTissuePosteriors
 from PipeLineFunctionHelpers import UnwrapPosteriorImagesFromDictionaryFunction as flattenDict
 
-from WorkupT1T2LandmarkInitialization import CreateLandmarkInitializeWorkflow
-from WorkupT1T2TissueClassify import CreateTissueClassifyWorkflow
-from WorkupT1T2MALF import CreateMALFWorkflow
-from WorkupAddsonBrainStem import CreateBrainstemWorkflow
+from .WorkupT1T2LandmarkInitialization import CreateLandmarkInitializeWorkflow
+from .WorkupT1T2TissueClassify import CreateTissueClassifyWorkflow
+from .WorkupT1T2MALF import CreateMALFWorkflow
+from .WorkupAddsonBrainStem import CreateBrainstemWorkflow
 
 from utilities.misc import *
 
@@ -272,7 +274,7 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
 
 
     elif master_config['workflow_phase'] == 'subject-based-reference':
-        print master_config['previousresult']
+        print(master_config['previousresult'])
         atlas_warped_directory = os.path.join(master_config['previousresult'], subjectid, 'Atlas')
 
         atlasBCUTNode_W = pe.Node(interface=nio.DataGrabber(infields=['subject'],
@@ -751,9 +753,9 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
         BASE_DATA_GRABBER_DIR='/Shared/johnsonhj/HDNI/ReferenceData/Neuromorphometrics/2012Subscription'
 
         if onlyT1:
-            print "T1 only processing in baseline"
+            print("T1 only processing in baseline")
         else:
-            print "Multimodal processing in baseline"
+            print("Multimodal processing in baseline")
         myLocalMALF = CreateMALFWorkflow("MALF", onlyT1, master_config,BASE_DATA_GRABBER_DIR)
         baw201.connect(myLocalTCWF,'outputspec.t1_average',myLocalMALF,'inputspec.subj_t1_image')
         baw201.connect(myLocalTCWF,'outputspec.t2_average',myLocalMALF,'inputspec.subj_t2_image')

@@ -1,3 +1,4 @@
+from __future__ import print_function
 ##############################################################################
 import os
 import re
@@ -50,26 +51,26 @@ echo {CUSTENV}
 
 
 def findInputImagesForSubject(inputT1, BRAINSAtlasDir, outputDir):
-    print "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-    print inputT1
-    print "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+    print("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+    print(inputT1)
+    print("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
     import os
     import sys
 
     TissueClassifyDir = os.path.dirname(inputT1)
-    print "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-    print TissueClassifyDir
+    print("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+    print(TissueClassifyDir)
     outputT2 = TissueClassifyDir + "/t2_average_BRAINSABC.nii.gz"
-    print "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-    print outputT2
+    print("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+    print(outputT2)
 
     ScanDir = os.path.dirname(os.path.dirname(TissueClassifyDir))
     outputInitialTransform = ScanDir + "/ACPCAlign/landmarkInitializer_atlas_to_subject_transform.mat"
 
-    print "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-    print ScanDir
-    print "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-    print outputInitialTransform
+    print("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+    print(ScanDir)
+    print("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+    print(outputInitialTransform)
 
     result = {'t1': inputT1, 't2': outputT2, 'transform': outputInitialTransform}
     # --------------------------------------------------------------------------------------- #
@@ -85,9 +86,9 @@ def findInputImagesForSubject(inputT1, BRAINSAtlasDir, outputDir):
     # subjectID = subjectID_date_postFix.split( '_' )[0]
     # scan      = subjectID_date_postFix.split( '_' )[1]
 
-    print "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-    print "site::" + siteID + ", subjectID::" + subjectID + ",scan::" + scan
-    print "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+    print("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+    print("site::" + siteID + ", subjectID::" + subjectID + ",scan::" + scan)
+    print("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 
     import WFPerSubject
 
@@ -175,7 +176,7 @@ def main(argv=None):
         else:
             ncol = 0
             for col in row:
-                print '%-8s: %s' % (header[ncol], col)
+                print('%-8s: %s' % (header[ncol], col))
                 if header[ncol] == "subject":
                     subjectList.append(col)
                 ncol += 1
@@ -198,7 +199,7 @@ def main(argv=None):
     results = dataSrc.run()
 
     t1List = [i for i in iter_flatten(results.outputs.t1)]
-    print t1List
+    print(t1List)
     # --------------------------------------------------------------------------------------- #
 
     # --------------------------------------------------------------------------------------- #

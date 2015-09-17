@@ -18,13 +18,15 @@ Options:
   -v, --version  Print file version and exit
   --debug        Run doctests for file  # TODO
 """
+from __future__ import print_function
+from __future__ import absolute_import
 from ConfigParser import ConfigParser
 import os
 import sys
 
-from pathHandling import *
-from distributed import modify_qsub_args
-import misc
+from .pathHandling import *
+from .distributed import modify_qsub_args
+from . import misc
 
 
 def parseEnvironment(parser, environment):
@@ -73,8 +75,8 @@ def create_experiment_dir(dirname, name, suffix, verify=False):
         return validatePath(fullpath, False, True)
     else:
         if os.path.isdir(fullpath):
-            print "WARNING: Experiment directory already exists.  Continuing will overwrite the previous results..."
-            print "   Path: {0}".format(fullpath)
+            print("WARNING: Experiment directory already exists.  Continuing will overwrite the previous results...")
+            print("   Path: {0}".format(fullpath))
             return fullpath
         try:
             os.makedirs(fullpath)
@@ -127,7 +129,7 @@ def parseExperiment(parser, workflow_phase):
         retval['dbfile'] = validatePath(parser.get('EXPERIMENT', 'SESSION_DB' + current_suffix), False, False)
         retval['components'] = [x.lower() for x in eval(parser.get('EXPERIMENT', 'WORKFLOW_COMPONENTS' + current_suffix))]
         if 'malf_2015_wholebrain' in retval['components']:
-            print "'malf_2015_wholebrain' will be run with a specified 'malf_atlas_db_base'."
+            print("'malf_2015_wholebrain' will be run with a specified 'malf_atlas_db_base'.")
             """ HACK: warp_atlas_to_subject is coupled with malf????"""
             retval['malf_atlas_db_base'] = validatePath(parser.get('EXPERIMENT', 'MALF_ATLAS_DB_BASE'),
                                                        allow_empty=False,
@@ -203,7 +205,7 @@ def get_cpus(option):
         assert option in ['local', 'ds_runner'], "wfrun parse error!  Current option: {0}".format(option)
         threads = 1
         if option == 'local':
-            print "RUNNING WITHOUT POOL BUILDING"
+            print("RUNNING WITHOUT POOL BUILDING")
     else:
         threads = int(suffix.strip('_'))
     return int(total_cpus / threads)
@@ -220,7 +222,7 @@ def _nipype_plugin_config(wfrun, cluster, template=''):
     elif wfrun in ['local_4', 'local_12']:
         plugin_name = 'MultiProc'
         proc_count = int(wfrun.split('local_')[1])
-        print "Running with {0} parallel processes on local machine".format(proc_count)
+        print("Running with {0} parallel processes on local machine".format(proc_count))
         plugin_args = {'n_procs': proc_count}
     elif wfrun == 'ds_runner':
         plugin_name = _create_DS_runner()
@@ -272,7 +274,7 @@ def nipype_options(args, pipeline, cluster, experiment, environment):
     #     retval['execution'][key] = value
     """
     retval = {}
-    from distributed import create_global_sge_script
+    from .distributed import create_global_sge_script
     template = create_global_sge_script(cluster, environment)
     #else:
     #    template = None
@@ -296,8 +298,8 @@ if __name__ == "__main__":
         pass
     output = parseFile(args["FILE"], args["ENV"], args["PHASE"])
     from pprint import pprint
-    print ""
-    print "**** OUTPUT ****"
+    print("")
+    print("**** OUTPUT ****")
     for d in output:
         pprint(d)
-        print ""
+        print("")

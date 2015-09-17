@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from __future__ import print_function
 usage = """
    Usage::
    python WorkupAddsonBrainStem.py --landmarkFilename --brainStemFilename --tissueLabelFilename
@@ -154,13 +155,13 @@ def main(argv=None):
                                                             "landmarkFilename=",
                                                             "brainStemFilename=",
                                                             "tissueLabelFilename="])
-    except getopt.error, msg:
-        print msg
-        print "for help use --help"
+    except getopt.error as msg:
+        print(msg)
+        print("for help use --help")
         sys.exit(2)
     for o, a in opts:
         if o in ("-h", "--help"):
-            print usage
+            print(usage)
             sys.exit(0)
         elif o == '--landmarkFilename':
             lmkFilename = a
@@ -168,7 +169,7 @@ def main(argv=None):
             bsFilename = a
         elif o == '--tissueLabelFilename':
             tlFilename = a
-    print lmkFilename, bsFilename, tlFilename
+    print(lmkFilename, bsFilename, tlFilename)
 
     brainStem(tlFilename, lmkFilename, bsFilename)
 

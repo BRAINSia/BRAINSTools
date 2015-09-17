@@ -15,6 +15,7 @@ USAGE:
   --inputLandmarksFile <input landmarks file (output of BCD)> \
   --outputTalairachLandmarksFile <output landmarks file (including AC,PC,SLA,IRP)>
 """
+from __future__ import print_function
 
 import sys, getopt
 import os.path
@@ -61,11 +62,11 @@ def main(argv):
   try:
     opts, args = getopt.getopt(argv,"hi:m:l:o:",["inputVolume=","inputLabelsImage=","inputLandmarksFile=","outputTalairachLandmarksFile="])
   except getopt.GetoptError:
-    print 'BRAINSTalairachext.py -i <inputVolume> -m <inputLabelsImage> -l <inputLandmarksFile> -o <outputTalairachLandmarksFile>'
+    print('BRAINSTalairachext.py -i <inputVolume> -m <inputLabelsImage> -l <inputLandmarksFile> -o <outputTalairachLandmarksFile>')
     sys.exit(2)
   for opt, arg in opts:
     if opt == '-h':
-      print 'BRAINSTalairachext.py -i <inputVolume> -m <inputLabelsImage> -l <inputLandmarksFile> -o <outputTalairachLandmarksFile>'
+      print('BRAINSTalairachext.py -i <inputVolume> -m <inputLabelsImage> -l <inputLandmarksFile> -o <outputTalairachLandmarksFile>')
       sys.exit()
     elif opt in ("-i", "--inputVolume"):
       inputVolume = arg
@@ -76,10 +77,10 @@ def main(argv):
     elif opt in ("-o", "--outputTalairachLandmarksFile"):
       outputTalairachLandmarksFile = arg
 
-  print 'Input Volume is "', inputVolume
-  print 'Input Labels Image is "', inputLabelsImage
-  print 'Input Landmarks File is "', inputLandmarksFile
-  print 'Output Talairach Landmarks File is "', outputTalairachLandmarksFile
+  print('Input Volume is "', inputVolume)
+  print('Input Labels Image is "', inputLabelsImage)
+  print('Input Landmarks File is "', inputLandmarksFile)
+  print('Output Talairach Landmarks File is "', outputTalairachLandmarksFile)
 
   input_img = sitk.ReadImage(inputVolume)
   img_labels = sitk.ReadImage(inputLabelsImage)
@@ -119,8 +120,8 @@ def main(argv):
   A=bbox[2]
   indx_SLA=[L,A,S]
 
-  print("IRP indeces: ",indx_IRP)
-  print("SLA indeces: ",indx_SLA)
+  print(("IRP indeces: ",indx_IRP))
+  print(("SLA indeces: ",indx_SLA))
 
   itk_IRP = unified_important_labels.TransformIndexToPhysicalPoint(indx_IRP)
   itk_SLA = unified_important_labels.TransformIndexToPhysicalPoint(indx_SLA)
@@ -128,8 +129,8 @@ def main(argv):
   IRP=[-itk_IRP[0],-itk_IRP[1],itk_IRP[2]]
   SLA=[-itk_SLA[0],-itk_SLA[1],itk_SLA[2]]
 
-  print("IRP: ",IRP)
-  print("SLA: ",SLA)
+  print(("IRP: ",IRP))
+  print(("SLA: ",SLA))
 
   data=[['SLA', SLA[0], SLA[1], SLA[2],1,1],
         ['IRP', IRP[0], IRP[1], IRP[2],1,1]]

@@ -13,6 +13,7 @@ from nipype.interfaces.utility import Merge, Split, Function, Rename, IdentityIn
 import nipype.interfaces.io as nio   # Data i/oS
 import nipype.pipeline.engine as pe  # pypeline engine
 from nipype.interfaces.semtools import *
+from functools import reduce
 
 def CreateMeasurementWorkflow(WFname, LABELS_CONFIG_FILE):
     #\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/

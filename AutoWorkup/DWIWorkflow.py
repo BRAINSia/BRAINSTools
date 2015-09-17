@@ -21,6 +21,7 @@ Options:
   --workflowCacheDir CACHEDIR               Base directory that cache outputs of workflow will be written to (default: ./)
   --resultDir RESULTDIR                     Outputs of dataSink will be written to a sub directory under the resultDir named by input scan sessionID (default: CACHEDIR)
 """
+from __future__ import print_function
 
 #############################  UTILITY FUNCTIONS  #####################################
 #\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
@@ -423,7 +424,7 @@ if __name__ == '__main__':
 
   from docopt import docopt
   argv = docopt(__doc__, version='1.0')
-  print argv
+  print(argv)
 
   DWISCAN = argv['--inputDWIScan']
   assert os.path.exists(DWISCAN), "Input DWI scan is not found: %s" % DWISCAN
@@ -452,7 +453,7 @@ if __name__ == '__main__':
       RESULTDIR = argv['--resultDir']
       assert os.path.exists(RESULTDIR), "Results directory is not found: %s" % RESULTDIR
 
-  print '=' * 100
+  print('=' * 100)
 
   #\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
   #####################################################################################

@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from __future__ import print_function
 from ctypes import *
 from ctypes.util import find_library
 import sys

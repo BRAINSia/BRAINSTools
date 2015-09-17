@@ -14,6 +14,7 @@ Options:
   -f OUTFILE   The output file csv with average T1/T2 entries in Python dictionary [default: /tmp/autoworkup_report.csv]
 
 """
+from __future__ import print_function
 import csv
 import glob
 import os.path
@@ -51,7 +52,7 @@ def main(REPORT, EXPERIMENT, outdir=None, OUTFILE='/tmp/autoworkup_report.csv', 
                 writer = csv.DictWriter(oid, fieldnames=report_reader.fieldnames, quoting=csv.QUOTE_ALL)
                 writer.writeheader()
             path = os.path.join(EXPERIMENT, row['project'], row['subject'], row['session'], 'TissueClassify')
-            print path
+            print(path)
             if outdir is not None:
                 outpath = os.path.join(outdir, row['project'], row['subject'], row['session'])
                 # assert os.path.isdir(path)
@@ -73,7 +74,7 @@ def main(REPORT, EXPERIMENT, outdir=None, OUTFILE='/tmp/autoworkup_report.csv', 
                     except:
                         pass
                 # END HACK
-                print outpath
+                print(outpath)
             outdict = {}
             olddict = eval(row['imagefiles'])
             for key in olddict.keys():
@@ -95,7 +96,7 @@ if __name__ == "__main__":
     from docopt import docopt
 
     args = docopt(__doc__)
-    print args
+    print(args)
     for key in args.keys():
         if key.startswith('-'):
             value = args.pop(key)

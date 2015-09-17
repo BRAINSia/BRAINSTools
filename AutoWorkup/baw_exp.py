@@ -10,6 +10,8 @@
 ##      PURPOSE.  See the above copyright notices for more information.
 ##
 #################################################################################
+from __future__ import print_function
+from __future__ import absolute_import
 import os
 import re
 import sys
@@ -22,7 +24,7 @@ import time
 
 def OpenSubjectDatabase(ExperimentBaseDirectoryCache, single_subject, mountPrefix, subject_data_file):
     import os.path
-    import SessionDB
+    from . import SessionDB
     subjectDatabaseFile = os.path.join(ExperimentBaseDirectoryCache, 'InternalWorkflowSubjectDB.db')
     ## TODO:  Only make DB if db is older than subject_data_file.
     if (not os.path.exists(subjectDatabaseFile)) or \
@@ -48,7 +50,7 @@ def DoSingleSubjectProcessing(sp_args):
 
     while time.time() < start_time :
         time.sleep(start_time-time.time()+1)
-        print "Delaying start for {0}".format(subjectid)
+        print("Delaying start for {0}".format(subjectid))
 
     list_with_one_subject = [ subjectid ]
     ExperimentDatabase = OpenSubjectDatabase(ExperimentBaseDirectoryCache, list_with_one_subject, mountPrefix,
@@ -56,7 +58,7 @@ def DoSingleSubjectProcessing(sp_args):
 
     import WorkupT1T2  # NOTE:  This needs to occur AFTER the PYTHON_AUX_PATHS has been modified
     if not PreviousExperimentName is None:
-        print "Running based on previous experiment results..."
+        print("Running based on previous experiment results...")
         baw200 = WorkupT1T2.WorkupT1T2(subjectid, mountPrefix,
                                        os.path.join(ExperimentBaseDirectoryCache, str(subjectid)),
                                        ExperimentBaseDirectoryResults,
@@ -75,7 +77,7 @@ def DoSingleSubjectProcessing(sp_args):
                                        GLOBAL_DATA_SINK_REWRITE,
                                        WORKFLOW_COMPONENTS=WORKFLOW_COMPONENTS, CLUSTER_QUEUE=CLUSTER_QUEUE,
                                        CLUSTER_QUEUE_LONG=CLUSTER_QUEUE_LONG, SGE_JOB_SCRIPT=JOB_SCRIPT)
-    print "Start Processing"
+    print("Start Processing")
     SGEFlavor = 'SGE'
     try:
         if input_arguments.wfrun == 'helium_all.q':
@@ -106,7 +108,7 @@ def DoSingleSubjectProcessing(sp_args):
                 baw200.write_graph()
             except:
                 pass
-            print "Running On ipl_OSX"
+            print("Running On ipl_OSX")
             baw200.run(plugin=SGEFlavor,
                        plugin_args=dict(template=JOB_SCRIPT,
                                         qsub_args=modify_qsub_args(CLUSTER_QUEUE,2,1,1),
@@ -117,14 +119,14 @@ def DoSingleSubjectProcessing(sp_args):
                 baw200.write_graph()
             except:
                 pass
-            print "Running with 4 parallel processes on local machine"
+            print("Running with 4 parallel processes on local machine")
             baw200.run(plugin='MultiProc', plugin_args={'n_procs': 4})
         elif input_arguments.wfrun == 'local_12':
             try:
                 baw200.write_graph()
             except:
                 pass
-            print "Running with 12 parallel processes on local machine"
+            print("Running with 12 parallel processes on local machine")
             baw200.run(plugin='MultiProc', plugin_args={'n_procs': 12})
         elif input_arguments.wfrun == 'ds_runner':
             class ds_runner(object):
@@ -139,12 +141,12 @@ def DoSingleSubjectProcessing(sp_args):
                 baw200.write_graph()
             except:
                 pass
-            print "Running sequentially on local machine"
+            print("Running sequentially on local machine")
             # baw200.run(updatehash=True)
             baw200.run()
         else:
-            print "You must specify the run environment type. [helium_all.q,helium_all.q_graph,ipl_OSX,local_4,local_12,local]"
-            print input_arguments.wfrun
+            print("You must specify the run environment type. [helium_all.q,helium_all.q_graph,ipl_OSX,local_4,local_12,local]")
+            print(input_arguments.wfrun)
             sys.exit(-1)
     except:
         print("ERROR: EXCEPTION CAUGHT IN RUNNING SUBJECT {0}".format(subjectid))
@@ -192,7 +194,7 @@ def MasterProcessingController(argv=None):
     os.environ['PATH'] = ':'.join(environment['PATH'])
     # Virtualenv
     if not environment['virtualenv_dir'] is None:
-        print "Loading virtualenv_dir..."
+        print("Loading virtualenv_dir...")
         execfile(environment['virtualenv_dir'], dict(__file__=environment['virtualenv_dir']))
     ###### Now ensure that all the required packages can be read in from this custom path
     #\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
@@ -279,7 +281,7 @@ def MasterProcessingController(argv=None):
 
     cluster = setup_cpu(args.wfrun, config)  # None unless wfrun is 'helium*' or 'ipl_OSX', then dict()
 
-    print "Configuring Pipeline"
+    print("Configuring Pipeline")
     ## Ensure that entire db is built and cached before parallel section starts.
     _ignoreme = OpenSubjectDatabase(experiment['output_cache'], [ "all" ], environment['prefix'], environment['subject_data_file'])
     to_do_subjects = args.subject.split(',')
@@ -291,7 +293,7 @@ def MasterProcessingController(argv=None):
     #  have the same environment as the job submission host.
 
     JOB_SCRIPT = get_global_sge_script(sys.path, os.environ['PATH'], CUSTOM_ENVIRONMENT, MODULES)
-    print JOB_SCRIPT
+    print(JOB_SCRIPT)
 
     # Randomly shuffle to_do_subjects to get max
     import random
@@ -322,7 +324,7 @@ def MasterProcessingController(argv=None):
 
         for indx in range(0,len(sp_args_list)):
             if all_results[indx] == False:
-                    print "FAILED for {0}".format(sp_args_list[indx][-1])
+                    print("FAILED for {0}".format(sp_args_list[indx][-1]))
 
     print("THIS RUN OF BAW FOR SUBJS {0} HAS COMPLETED".format(to_do_subjects))
     return 0

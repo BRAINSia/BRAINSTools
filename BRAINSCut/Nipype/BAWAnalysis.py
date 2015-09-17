@@ -1,3 +1,4 @@
+from __future__ import print_function
 ## Analysis interface for BAW version
 ## input: segmentations from BCut
 ##        manual traces

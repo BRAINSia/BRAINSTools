@@ -2,15 +2,16 @@
          execfile('path/to/configure_FS', dict(env={os.environ-like dictionary})
     you will set the FreeSurfer environment driven by the configuration file.
 """
+from __future__ import absolute_import
 try:
     env.keys()
     FS_VARS
-except NameError, AttributeError:
+except NameError as AttributeError:
     raise AssertionError(
         "Run this file like: execfile('path/to/configure_FS', dict(env={}) \
         where 'env' is set to an os.environ-like dictionary")
 import os
-import misc
+from . import misc
 #####################################################################################
 #  FreeSurfer is extraordinarly finicky and is easily confused and incorrect.
 

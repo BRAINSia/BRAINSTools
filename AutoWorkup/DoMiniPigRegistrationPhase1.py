@@ -1,3 +1,4 @@
+from __future__ import print_function
 import sys
 import os
 import errno
@@ -80,7 +81,7 @@ import yaml
 with open(sys.argv[1],'r') as paramFptr:
    ExperimentInfo = yaml.safe_load(paramFptr)
 
-print ExperimentInfo
+print(ExperimentInfo)
 # del WDIR
 
 def mkdir_p(path):

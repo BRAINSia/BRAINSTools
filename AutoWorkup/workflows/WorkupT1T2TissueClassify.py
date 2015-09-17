@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from __future__ import print_function
 from nipype.interfaces.base import CommandLine, CommandLineInputSpec, TraitedSpec, File, Directory
 from nipype.interfaces.base import traits, isdefined, BaseInterface
 from nipype.interfaces.utility import Merge, Split, Function, Rename, IdentityInterface
@@ -35,8 +36,8 @@ def getListIndexOrNoneIfOutOfRange(imageList, index):
 def MakePosteriorDictionaryFunc(posteriorImages):
     from PipeLineFunctionHelpers import POSTERIORS
     if len(POSTERIORS) != len(posteriorImages):
-        print "ERROR: ", posteriorNames
-        print "ERROR: ", POSTERIORS
+        print("ERROR: ", posteriorNames)
+        print("ERROR: ", POSTERIORS)
         return -1
     temp_dictionary = dict(zip(POSTERIORS, posteriorImages))
     return temp_dictionary

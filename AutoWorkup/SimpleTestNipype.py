@@ -1,3 +1,4 @@
+from __future__ import print_function
 __author__ = 'johnsonhj'
 
 ######################################################################################
@@ -40,7 +41,7 @@ os.environ['PATH'] = ':'.join(PROGRAM_PATHS)
 
 from nipype.interfaces.semtools import *
 
-print "Building Pipeline"
+print("Building Pipeline")
 ########### PIPELINE INITIALIZATION #############
 DWI_AutoProcess = pe.Workflow(name="DWI_20130515")  # HACK: This needs to be specified in the config file.
 DWI_AutoProcess.config['execution'] = {

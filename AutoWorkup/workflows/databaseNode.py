@@ -1,3 +1,5 @@
+from __future__ import print_function
+from __future__ import absolute_import
 import os.path
 import sqlite3
 
@@ -81,7 +83,7 @@ class SQLiteGrabber(IOBase):
         try:
             c.execute(query)
             retval = c.fetchall()
-        except sqlite3.Error, err:
+        except sqlite3.Error as err:
             # err.message = err.message + " -> " + query
             raise err
         finally:  # Clean up...
@@ -147,7 +149,7 @@ def getAllScans(cache, subject, prefix, dbfile, session):
 def MakeDatabaseNode(cache, dbfile, table_name='MasterDB', columns=['*'], constraints=[]):
     import os.path
     import nipype.pipeline.engine as pe  # pypeline engine
-    from databaseNode import SQLiteGrabber  # OpenSubjectDatabase
+    from .databaseNode import SQLiteGrabber  # OpenSubjectDatabase
     node = pe.Node(interface=SQLiteGrabber(), name="99_OpenSubjectDatabase")
     node.inputs.database_file = os.path.join(cache, dbfile)
     node.inputs.table_name = table_name

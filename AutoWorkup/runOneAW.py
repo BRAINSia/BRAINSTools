@@ -1,3 +1,4 @@
+from __future__ import print_function
 import os
 import argparse
 import csv
@@ -27,8 +28,8 @@ class runOneAW():
  -wfrun local \
  -subject {subject} \n""".format(brainsToolsScriptsDir=input_arguments.brainsToolsScriptsDir,
                                  configFile=self.configPath, subject=input_arguments.subject)
-        print '-' * 80
-        print '\nExecuting command: \n{bawCommand}'.format(bawCommand=bawCommand)
+        print('-' * 80)
+        print('\nExecuting command: \n{bawCommand}'.format(bawCommand=bawCommand))
         os.system(bawCommand)
 
     def generateSessionCSV(self):
@@ -38,15 +39,15 @@ class runOneAW():
         if input_arguments.t2 != []:
             sessionDict['T2-30'] = input_arguments.t2
         if sessionDict == dict():
-            print 'ERROR: No T1 or T2 images were given as input arguments.'
+            print('ERROR: No T1 or T2 images were given as input arguments.')
             sys.exit()
         col_name_list = ["project", "subject", "session", "imagefiles"]
         newFile = csv.writer(open(self.sessionPath, 'wb'), quoting=csv.QUOTE_ALL)
         newFile.writerow(col_name_list)
         line = (input_arguments.project, input_arguments.subject, input_arguments.session, sessionDict)
         newFile.writerow(line)
-        print '\nThe session csv file has been generated: {0}\n'.format(self.sessionPath)
-        print line
+        print('\nThe session csv file has been generated: {0}\n'.format(self.sessionPath))
+        print(line)
 
     def generateConfigFile(self):
         """ TODO: Move configString text to a separate text file
@@ -147,8 +148,8 @@ BCDMODELPATH=%(_BRAINSTOOLS_BUILD_PATH)s/BRAINSTools-build/TestData"""
         handle = open(self.configPath, 'w')
         handle.write(newConfigString)
         handle.close()
-        print '\nThe configuration file has been generated: {0}'.format(self.configPath)
-        print newConfigString
+        print('\nThe configuration file has been generated: {0}'.format(self.configPath))
+        print(newConfigString)
 
 if __name__ == "__main__":
     # Create and parse input arguments

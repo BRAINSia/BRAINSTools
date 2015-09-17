@@ -1,3 +1,4 @@
+from __future__ import print_function
 
 ##############################################################################
 
@@ -75,7 +76,7 @@ def ConfigurationSectionMap(configurationFilename):
             except:
                 print("""exception on
                       %s""" % option )
-                print "Unexpected error:", sys.exc_info()[0]
+                print("Unexpected error:", sys.exc_info()[0])
                 sectionDict[option] = None
         returnDict[section] = sectionDict
     return returnDict

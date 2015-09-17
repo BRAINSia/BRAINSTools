@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 
+from __future__ import print_function
+from __future__ import absolute_import
 from nipype.interfaces.utility import Merge, Function, IdentityInterface
 import nipype.pipeline.engine as pe  # pypeline engine
 from nipype.interfaces.semtools import *
 from PipeLineFunctionHelpers import getListIndex
 
-from RF12BRAINSCutWrapper import RF12BRAINSCutWrapper
+from .RF12BRAINSCutWrapper import RF12BRAINSCutWrapper
 
 
 def GenerateWFName(projectid, subjectid, sessionid, WFName):
@@ -28,7 +30,7 @@ def CreateLabelMap(listOfImages, LabelImageName, CSVFileName, posteriorDictionar
     The inputs are the initial segmentation, the WM Probability, and the CSF Probability
     """
         seg = sitk.Cast(initial_seg, sitk.sitkUInt8)
-        print "AA", initial_seg
+        print("AA", initial_seg)
         # print "BB", dict(sitk.Statistics(seg))
         exclude_Mask = sitk.Cast(sitk.BinaryThreshold(probMapOfExclusion, percentageThreshold, 1.0, 0, 1), sitk.sitkUInt8)
         # print "CC", dict(sitk.Statistics(exclude_Mask))
@@ -80,21 +82,21 @@ def CreateLabelMap(listOfImages, LabelImageName, CSVFileName, posteriorDictionar
 
     cleaned_labels_map = dict()
     labelImage = None
-    print "ZZZ"
+    print("ZZZ")
     x = 0
     for segFN in listOfImages:
         x = x + 1
-        print x, segFN
+        print(x, segFN)
         ## Clean up the segmentations
         curr_segROI = CleanUpGMSegmentationWithWMCSF(segFN, posteriorDictionary, 0.85, 0.85)
-        print "Y"
+        print("Y")
         curr_segROI.GetSize()
         remove_pre_postfix = segFN.replace(".nii.gz", "")
         remove_pre_postfix = os.path.basename(remove_pre_postfix.replace("subjectANNLabel_", "").replace("_seg", ""))
         remove_pre_postfix = os.path.basename(remove_pre_postfix.replace("ANNContinuousPrediction", "").replace("subject", ""))
         structName = remove_pre_postfix.lower()
         cleaned_fileName = os.path.join(os.path.dirname(segFN), "cleaned_" + structName + "_seg.nii.gz")
-        print "=" * 20, structName, " ", cleaned_fileName
+        print("=" * 20, structName, " ", cleaned_fileName)
         cleaned_labels_map[structName] = cleaned_fileName
         sitk.WriteImage(curr_segROI, cleaned_fileName)
         if labelImage is None:

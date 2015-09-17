@@ -1,12 +1,14 @@
 #!/usr/bin/env python
 
+from __future__ import print_function
+from __future__ import absolute_import
 import argparse
 import os
 import shutil
 import SimpleITK as sitk
 import subprocess
 
-from PipeLineFunctionHelpers import mkdir_p, make_dummy_file, recursive_dir_rm
+from .PipeLineFunctionHelpers import mkdir_p, make_dummy_file, recursive_dir_rm
 
 
 def normalizeWM(t1, wm_prob):
@@ -25,15 +27,15 @@ def normalizeWM(t1, wm_prob):
 
 def IsFirstNewerThanSecond(firstFile, secondFile):
     if not os.path.exists(firstFile):
-        print "ERROR: image missing", firstFile
+        print("ERROR: image missing", firstFile)
         return True
     if not os.path.exists(secondFile):
-        print "Returning True because file is missing:  {0}".format(secondFile)
+        print("Returning True because file is missing:  {0}".format(secondFile))
         return True
     image_time = os.path.getmtime(firstFile)
     reference_time = os.path.getmtime(secondFile)
     if image_time > reference_time:
-        print "Returning True because {0} is newer than {1}".format(firstFile, secondFile)
+        print("Returning True because {0} is newer than {1}".format(firstFile, secondFile))
         return True
     return False
 
@@ -60,14 +62,14 @@ exit $status
     script = open(script_name, 'w')
     script.write(mri_convert_script)
     script.close()
-    os.chmod(script_name, 0777)
+    os.chmod(script_name, 0o777)
     script_name_stdout = mgzVol + '_convert.out'
     script_name_stdout_fid = open(script_name_stdout, 'w')
-    print "Starting mri_convert"
+    print("Starting mri_convert")
     scriptStatus = subprocess.check_call([script_name], stdout=script_name_stdout_fid, stderr=subprocess.STDOUT, shell='/bin/bash')
     if scriptStatus != 0:
         sys.exit(scriptStatus)
-    print "Ending mri_convert"
+    print("Ending mri_convert")
     script_name_stdout_fid.close()
     return
 
@@ -98,14 +100,14 @@ exit $status
     script = open(script_name, 'w')
     script.write(mri_mask_script)
     script.close()
-    os.chmod(script_name, 0777)
+    os.chmod(script_name, 0o777)
     script_name_stdout = output_brainmask_fn_mgz + '_convert.out'
     script_name_stdout_fid = open(script_name_stdout, 'w')
-    print "Starting mri_mask"
+    print("Starting mri_mask")
     scriptStatus = subprocess.check_call([script_name], stdout=script_name_stdout_fid, stderr=subprocess.STDOUT, shell='/bin/bash')
     if scriptStatus != 0:
         sys.exit(scriptStatus)
-    print "Ending mri_mask"
+    print("Ending mri_mask")
     script_name_stdout_fid.close()
     return
 
@@ -120,7 +122,7 @@ def baw_FixBrainMask(brainmask, subjects_dir, FREESURFER_HOME, FS_SCRIPT, subj_s
     if IsFirstNewerThanSecond(brainmask, output_brainmask_fn_mgz) \
         or IsFirstNewerThanSecond(brainmask, output_nu_fn_mgz) \
             or IsFirstNewerThanSecond(output_nu_fn_mgz, output_custom_brainmask_fn_mgz):
-        print "Fixing BrainMask recon-auto1 stage"
+        print("Fixing BrainMask recon-auto1 stage")
         brain = sitk.ReadImage(brainmask)
         blood = sitk.BinaryThreshold(brain, 5, 5)
         not_blood = 1 - blood
@@ -138,7 +140,7 @@ def baw_FixBrainMask(brainmask, subjects_dir, FREESURFER_HOME, FS_SCRIPT, subj_s
         ## Multipy output_brainmask_fn_mgz =  output_custom_brainmask_fn_mgz * output_nu_fn_mgz
         run_mri_mask_script(output_brainmask_fn_mgz, output_custom_brainmask_fn_mgz, output_nu_fn_mgz, subjects_dir, subj_session_id, FREESURFER_HOME, FS_SCRIPT)
     else:
-        print "NOTHING TO BE DONE, SO SKIPPING."
+        print("NOTHING TO BE DONE, SO SKIPPING.")
         return  # Nothing to be done, files are already up-to-date.
 
 
@@ -180,14 +182,14 @@ exit $status
     script = open(script_name, 'w')
     script.write(auto_recon_script)
     script.close()
-    os.chmod(script_name, 0777)
+    os.chmod(script_name, 0o777)
     script_name_stdout = script_name + '_out'
     script_name_stdout_fid = open(script_name_stdout, 'w')
-    print "Starting auto_recon Stage: {0} for SubjectSession {1}".format(StageToRun, subj_session_id)
+    print("Starting auto_recon Stage: {0} for SubjectSession {1}".format(StageToRun, subj_session_id))
     scriptStatus = subprocess.check_call([script_name], stdout=script_name_stdout_fid, stderr=subprocess.STDOUT, shell='/bin/bash')
     if scriptStatus != 0:
         sys.exit(scriptStatus)
-    print "Ending auto_recon Stage: {0} for SubjectSession {1}".format(StageToRun, subj_session_id)
+    print("Ending auto_recon Stage: {0} for SubjectSession {1}".format(StageToRun, subj_session_id))
     script_name_stdout_fid.close()
     return
 
@@ -198,11 +200,11 @@ def runSubjectTemplate(args, FREESURFER_HOME, FS_SCRIPT):
     base_template_id = args.base_template_id
     list_all_subj_session_ids = args.list_all_subj_session_ids
     subjects_dir = args.subjects_dir
-    print "X" * 80
-    print "base_template_id :{0}:".format(base_template_id)
-    print "Input a list of list_all_subj_session_ids :{0}:".format(list_all_subj_session_ids)
-    print "subjects_dir :{0}:".format(subjects_dir)
-    print "X" * 80
+    print("X" * 80)
+    print("base_template_id :{0}:".format(base_template_id))
+    print("Input a list of list_all_subj_session_ids :{0}:".format(list_all_subj_session_ids))
+    print("subjects_dir :{0}:".format(subjects_dir))
+    print("X" * 80)
     assert isinstance(list_all_subj_session_ids, list), "Must input a list of list_all_subj_session_ids :{0}:".format(list_all_subj_session_ids)
     StageToRun = "Within-SubjectTemplate"
     FS_SCRIPT_FN = os.path.join(FREESURFER_HOME, FS_SCRIPT)
@@ -268,14 +270,14 @@ exit $status
     script = open(script_name, 'w')
     script.write(auto_recon_script)
     script.close()
-    os.chmod(script_name, 0777)
+    os.chmod(script_name, 0o777)
     script_name_stdout = script_name + '_out'
     script_name_stdout_fid = open(script_name_stdout, 'w')
-    print "Starting auto_recon Stage: {0} for SubjectSession {1}".format(StageToRun, base_template_id)
+    print("Starting auto_recon Stage: {0} for SubjectSession {1}".format(StageToRun, base_template_id))
     scriptStatus = subprocess.check_call([script_name], stdout=script_name_stdout_fid, stderr=subprocess.STDOUT, shell='/bin/bash')
     if scriptStatus != 0:
         sys.exit(scriptStatus)
-    print "Ending auto_recon Stage: {0} for SubjectSession {1}".format(StageToRun, base_template_id)
+    print("Ending auto_recon Stage: {0} for SubjectSession {1}".format(StageToRun, base_template_id))
     script_name_stdout_fid.close()
     return
 
@@ -318,14 +320,14 @@ exit $status
     script = open(script_name, 'w')
     script.write(auto_recon_script)
     script.close()
-    os.chmod(script_name, 0777)
+    os.chmod(script_name, 0o777)
     script_name_stdout = script_name + '_out'
     script_name_stdout_fid = open(script_name_stdout, 'w')
-    print "Starting auto_recon Stage: {0} for SubjectSession {1}".format(StageToRun, base_template_id)
+    print("Starting auto_recon Stage: {0} for SubjectSession {1}".format(StageToRun, base_template_id))
     scriptStatus = subprocess.check_call([script_name], stdout=script_name_stdout_fid, stderr=subprocess.STDOUT, shell='/bin/bash')
     if scriptStatus != 0:
         sys.exit(scriptStatus)
-    print "Ending auto_recon Stage: {0} for SubjectSession {1}".format(StageToRun, base_template_id)
+    print("Ending auto_recon Stage: {0} for SubjectSession {1}".format(StageToRun, base_template_id))
     script_name_stdout_fid.close()
     return
 
@@ -370,9 +372,9 @@ if __name__ == "__main__":
             raise Exception("INVALID PATH FOR FREESURFER HOME :{0}:".format(local_FREESURFER_HOME))
         # local_FS_SCRIPT = os.path.join(local_FREESURFER_HOME,'FreeSurferEnv.sh')
         local_FS_SCRIPT = 'FreeSurferEnv.sh'
-    except KeyError, err:
-        print KeyError
-        print err
+    except KeyError as err:
+        print(KeyError)
+        print(err)
         raise KeyError
     ### END HACK
     subparsers = parser.add_subparsers(help='Currently supported subprocesses: "autorecon", "template", "longitudinal"')

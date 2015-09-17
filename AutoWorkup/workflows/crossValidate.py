@@ -30,6 +30,8 @@ PIPELINE
              -> JointFusion(), iterfield=[sample_list, test_list])
              -> DataSink()
 """
+from __future__ import print_function
+from __future__ import absolute_import
 import os.path
 
 from nipype.pipeline.engine import Workflow, Node, MapNode
@@ -65,8 +67,8 @@ def subsample_crossValidationSet(length, test_size):
             except ValueError:
                 raise ValueError("List test size is not evenly divisible by N({0})".format(test_size))
         subsample_data_index.append( {'train':train, 'test':test } )
-    print "="*80
-    print subsample_data_index
+    print("="*80)
+    print(subsample_data_index)
     return subsample_data_index
 
 def writeCVSubsetFile( environment, experiment, pipeline, cluster, csv_file, test_size, hasHeader):
@@ -85,10 +87,10 @@ def writeCVSubsetFile( environment, experiment, pipeline, cluster, csv_file, tes
           reader = csv.DictReader(infile, skipinitialspace=True)
           for row in reader:
             csv_data.append(row)
-    print csv_data
+    print(csv_data)
 
     totalSampleSize = len(csv_data)
-    print totalSampleSize
+    print(totalSampleSize)
     cv_subsets = subsample_crossValidationSet( totalSampleSize, test_size)
 
     """
@@ -104,20 +106,20 @@ def writeCVSubsetFile( environment, experiment, pipeline, cluster, csv_file, tes
     """
     import nipype.pipeline.engine as pe
     import nipype.interfaces.io as nio
-    from WorkupT1T2MALF import CreateMALFWorkflow
+    from .WorkupT1T2MALF import CreateMALFWorkflow
     CV_MALF_WF = pe.Workflow(name="CV_MALF")
     CV_MALF_WF.base_dir = master_config['cachedir']
 
 
     subset_no = 1
     for subset in cv_subsets:
-        print "-"*80
-        print " Creat a subset workflow Set " + str(subset_no)
-        print "-"*80
+        print("-"*80)
+        print(" Creat a subset workflow Set " + str(subset_no))
+        print("-"*80)
         trainData = [ csv_data[i] for i in subset['train'] ]
         testData = [ csv_data[i] for i in subset['test'] ]
 
-        print [ (trainData[i])['id'] for i in range( len(trainData))]
+        print([ (trainData[i])['id'] for i in range( len(trainData))])
 
         for testSession in testData:
             MALFWFName = "MALF_Set{0}_{1}".format(subset_no, testSession['id'])
@@ -147,7 +149,7 @@ def writeCVSubsetFile( environment, experiment, pipeline, cluster, csv_file, tes
 
             """ set test image information
             """
-            print testSession
+            print(testSession)
             testSessionSpec.inputs.t1_average = testSession['t1']
             testSessionSpec.inputs.tissueLabel = testSession['fixed_head_label']
             testSessionSpec.inputs.template_leftHemisphere = testSession['warpedAtlasLeftHemisphere']
@@ -196,9 +198,9 @@ class CrossValidationJointFusionWorkflow(Workflow):
         csvReader.inputs.header = self.hasHeader.default_value
         csvOut = csvReader.run()
 
-        print "="*80
-        print csvOut.outputs.__dict__
-        print "="*80
+        print("="*80)
+        print(csvOut.outputs.__dict__)
+        print("="*80)
 
         iters = {}
         label = csvOut.outputs.__dict__.keys()[0]
@@ -306,9 +308,9 @@ class FusionLabelWorkflow(Workflow):
 def main(environment, experiment, pipeline, cluster, **kwargs):
     from utilities.configFileParser import nipype_options
 
-    print "Copying Atlas directory and determining appropriate Nipype options..."
+    print("Copying Atlas directory and determining appropriate Nipype options...")
     pipeline = nipype_options(kwargs, pipeline, cluster, experiment, environment)  # Generate Nipype options
-    print "Getting session(s) from database..."
+    print("Getting session(s) from database...")
 
     writeCVSubsetFile( environment,
                        experiment,
@@ -331,8 +333,8 @@ if __name__ == "__main__":
     from docopt import docopt
 
     argv = docopt(__doc__, version='1.1')
-    print argv
-    print '=' * 100
+    print(argv)
+    print('=' * 100)
     from AutoWorkup import setup_environment
     if argv['--test']:
         sys.exit(_test())

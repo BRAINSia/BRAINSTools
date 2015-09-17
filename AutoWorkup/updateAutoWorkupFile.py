@@ -1,3 +1,4 @@
+from __future__ import print_function
 import argparse
 import csv
 import os
@@ -29,7 +30,7 @@ class UpdateAutoWorkup():
         newFile.writerow(col_name_list)
         oldFile = csv.reader(open(inputArguments.autoWorkupFile, 'rb'), delimiter=',', quotechar='\"')
         blackListDict, blackListKeys = self._getBlackList()
-        print blackListDict, blackListKeys
+        print(blackListDict, blackListKeys)
         for row in oldFile:
             ## skip header
             if oldFile.line_num > 1:

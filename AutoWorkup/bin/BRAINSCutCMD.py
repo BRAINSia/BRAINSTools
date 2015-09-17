@@ -4,49 +4,50 @@
 # :: copy model file into md5 repository
 # :: connect input/output in the BAW
 
+from __future__ import print_function
 import sys
 import argparse
 import subprocess
 
 if False:
-    print "^" * 100
-    print "PYTHON EXEC: ", sys.executable
-    print "VERSION: ", sys.version
+    print("^" * 100)
+    print("PYTHON EXEC: ", sys.executable)
+    print("VERSION: ", sys.version)
     # HACK
     dummy = False
     if sys.version[:3] != '2.7':
-        print __file__
+        print(__file__)
         dummy = True
     # END HACK
-    print "ARGV: [\n"
-    print sys.argv[0]
+    print("ARGV: [\n")
+    print(sys.argv[0])
     for __argv in sys.argv[1:]:
         if __argv.startswith('-'):
-            print "    ", __argv, "=",
+            print("    ", __argv, "=", end=' ')
         else:
-            print __argv
-    print "]"
+            print(__argv)
+    print("]")
     del __argv
-    print "^" * 100
+    print("^" * 100)
 
     if dummy:  # debugging
         import os
-        print "PATH: ["
+        print("PATH: [")
         __PATH = os.environ['PATH']
         for p in __PATH.split(':'):
-            print p, ","
-        print ']'
+            print(p, ",")
+        print(']')
         __PPATH = ''
         try:
-            print "PYTHONPATH: ["
+            print("PYTHONPATH: [")
             __PPATH = os.environ['PYTHONPATH']
             for p in __PPATH.split(':'):
-                print p, ","
-            print ']'
+                print(p, ",")
+            print(']')
         except KeyError:
             pass
         del __PATH, __PPATH
-        print "^" * 100
+        print("^" * 100)
         raise NotImplementedError
         sys.exit(-1)
     # END HACK
@@ -272,7 +273,7 @@ if __name__ == '__main__':
     args = brainscutParser.parse_args()
     ## HACK:  DOUBLE CHECK THAT IQR IS USED
     if args.vectorNormalization != "IQR":
-        print "ERROR:   ONLY IQR SUPPORTED AT THE MOMENT"
+        print("ERROR:   ONLY IQR SUPPORTED AT THE MOMENT")
         exit - 1
 
 

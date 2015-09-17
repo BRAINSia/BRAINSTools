@@ -1,3 +1,4 @@
+from __future__ import print_function
 def MakeAtlasNode(atlasDirectory, name, atlasParts):
     """ Make an atlas node that contains the elements requested in the atlasParts section
         This will allow more fine grained data grabbers to be used, thereby allowing enhanced
@@ -289,9 +290,9 @@ def CreateAtlasXMLAndCleanedDeformedAverages(t1_image, deformed_list, AtlasTempl
         else:
             import sys
 
-            print "ERROR: basename {0} not in list!! \n{1}".format(base_name, ['AVG_BRAINMASK.nii.gz', 'AVG_T2.nii.gz',
+            print("ERROR: basename {0} not in list!! \n{1}".format(base_name, ['AVG_BRAINMASK.nii.gz', 'AVG_T2.nii.gz',
                                                                                'AVG_PD.nii.gz', interiorPriors,
-                                                                               exteriorPriors])
+                                                                               exteriorPriors]))
             sys.exit(-1)
 
     binmask = None

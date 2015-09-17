@@ -32,6 +32,8 @@ Examples:
   $ singleSession.py --rewrite-datasinks --pe OSX --ExperimentConfig my_baw.config 00003
 
 """
+from __future__ import print_function
+from __future__ import absolute_import
 
 
 def _create_singleSession(dataDict, master_config, interpMode, pipeline_name):
@@ -55,7 +57,7 @@ def _create_singleSession(dataDict, master_config, interpMode, pipeline_name):
     config.update_config(master_config)  # Set universal pipeline options
     logging.update_logging(config)
 
-    from workflows.baseline import generate_single_session_template_WF
+    from .workflows.baseline import generate_single_session_template_WF
 
     project = dataDict['project']
     subject = dataDict['subject']
@@ -67,18 +69,18 @@ def _create_singleSession(dataDict, master_config, interpMode, pipeline_name):
     pname = "{0}_{1}_{2}".format(master_config['workflow_phase'], subject, session)
     onlyT1 = not (len(dataDict['T2s']) > 0)
     if onlyT1:
-        print "T1 Only processing starts ..."
+        print("T1 Only processing starts ...")
     else:
-        print "Multimodal processing starts ..."
+        print("Multimodal processing starts ...")
 
     doDenoise = False
     if ('denoise' in master_config['components']):
         if isBlackList:
-            print """
+            print("""
                   Denoise is ignored when the session is in Blacklist
                   There is known issue that Landmark Detection algorithm
                   may not work well with denoising step
-                  """
+                  """)
             doDenoise = False
         else:
             doDenoise = True
@@ -99,10 +101,10 @@ def _create_singleSession(dataDict, master_config, interpMode, pipeline_name):
 
 
 def createAndRun(sessions, environment, experiment, pipeline, cluster, useSentinal, dryRun):
-    from baw_exp import OpenSubjectDatabase
-    from utilities.misc import add_dict
+    from .baw_exp import OpenSubjectDatabase
+    from .utilities.misc import add_dict
 
-    from workflows.utils import run_workflow
+    from .workflows.utils import run_workflow
 
     master_config = {}
     for configDict in [environment, experiment, pipeline, cluster]:
@@ -118,9 +120,9 @@ def createAndRun(sessions, environment, experiment, pipeline, cluster, useSentin
             sessions = set(all_sessions)
         else:
             sessions = set(sessions)
-        print "!=" * 40
+        print("!=" * 40)
         print("Doing sessions {0}".format(sessions))
-        print "!=" * 40
+        print("!=" * 40)
         for session in sessions:
             _dict = {}
             subject = database.getSubjFromSession(session)
@@ -211,14 +213,14 @@ def createAndRun(sessions, environment, experiment, pipeline, cluster, useSentin
                 atlasDirectory = os.path.join(master_config['previousresult'], subject, 'Atlas', 'AVG_rho.nii.gz')
 
             if os.path.exists(atlasDirectory):
-                print "LOOKING FOR DIRECTORY {0}".format(atlasDirectory)
+                print("LOOKING FOR DIRECTORY {0}".format(atlasDirectory))
             else:
-                print "MISSING REQUIRED ATLAS INPUT {0}".format(atlasDirectory)
+                print("MISSING REQUIRED ATLAS INPUT {0}".format(atlasDirectory))
                 print("SKIPPING: {0} prerequisites missing".format(session))
                 continue
 
             ## Use different sentinal file if segmentation specified.
-            from workflows.baseline import DetermineIfSegmentationShouldBeDone
+            from .workflows.baseline import DetermineIfSegmentationShouldBeDone
 
             do_BRAINSCut_Segmentation = DetermineIfSegmentationShouldBeDone(master_config)
             if do_BRAINSCut_Segmentation:
@@ -259,12 +261,12 @@ def createAndRun(sessions, environment, experiment, pipeline, cluster, useSentin
 
 
 def _SingleSession_main(environment, experiment, pipeline, cluster, **kwds):
-    from utilities.configFileParser import nipype_options
+    from .utilities.configFileParser import nipype_options
 
 
-    print "Copying Atlas directory and determining appropriate Nipype options..."
+    print("Copying Atlas directory and determining appropriate Nipype options...")
     pipeline = nipype_options(kwds, pipeline, cluster, experiment, environment)  # Generate Nipype options
-    print "Getting session(s) from database..."
+    print("Getting session(s) from database...")
     createAndRun(kwds['SESSIONS'], environment, experiment, pipeline, cluster, useSentinal=kwds['--use-sentinal'],
                  dryRun=kwds['--dry-run'])
     return 0
@@ -278,11 +280,11 @@ if __name__ == '__main__':
     import os
 
     from docopt import docopt
-    from AutoWorkup import setup_environment
+    from .AutoWorkup import setup_environment
 
     argv = docopt(__doc__, version='1.1')
-    print argv
-    print '=' * 100
+    print(argv)
+    print('=' * 100)
     environment, experiment, pipeline, cluster = setup_environment(argv)
 
     exit = _SingleSession_main(environment, experiment, pipeline, cluster, **argv)

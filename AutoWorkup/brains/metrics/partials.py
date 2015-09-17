@@ -149,7 +149,7 @@ def getPosteriorVolume(*args, **kwds):
         if dirname is None:
             try:
                 dirname = check_file(os.path.join(experimentDir, project, subject, session))
-            except Exception, err:
+            except Exception as err:
                 raise err
     assert dirname is not None
     volume = 0.0

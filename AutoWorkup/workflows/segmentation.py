@@ -19,6 +19,8 @@
 #--config.set('logging', 'interface_level', 'DEBUG')
 #--config.set('execution','remove_unnecessary_outputs','false')
 
+from __future__ import print_function
+from __future__ import absolute_import
 from nipype.utils.misc import package_check
 # package_check('nipype', '5.4', 'tutorial1') ## HACK: Check nipype version
 package_check('numpy', '1.3', 'tutorial1')
@@ -37,7 +39,7 @@ def segmentation(projectid, subjectid, sessionid, master_config, onlyT1=True, pi
     config.update_config(master_config)
 
     from PipeLineFunctionHelpers import ClipT1ImageWithBrainMask
-    from WorkupT1T2BRAINSCut import CreateBRAINSCutWorkflow
+    from .WorkupT1T2BRAINSCut import CreateBRAINSCutWorkflow
     from utilities.distributed import modify_qsub_args
     from nipype.interfaces.semtools import BRAINSSnapShotWriter
 
@@ -47,9 +49,9 @@ def segmentation(projectid, subjectid, sessionid, master_config, onlyT1=True, pi
 
     # HACK: print for debugging
     for key, itme in master_config.items():
-        print "-" * 30
-        print key, ":", itme
-    print "-" * 30
+        print("-" * 30)
+        print(key, ":", itme)
+    print("-" * 30)
     #END HACK
 
     inputsSpec = pe.Node(interface=IdentityInterface(fields=['t1_average',

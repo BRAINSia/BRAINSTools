@@ -1,5 +1,7 @@
 #! /usr/bin/env python
 
+from __future__ import print_function
+from __future__ import absolute_import
 def load_modules(modules):
     """ The command 'module' is actually a script call in bash:
 
@@ -12,17 +14,17 @@ def load_modules(modules):
 
 
 def setup_environment(argv):
-    print "Configuring environment..."
+    print("Configuring environment...")
     import os
     import os.path
-    from utilities.configFileParser import resolveDataSinkOption, parseFile
-    from utilities.pathHandling import validatePath
-    from utilities import misc
+    from .utilities.configFileParser import resolveDataSinkOption, parseFile
+    from .utilities.pathHandling import validatePath
+    from .utilities import misc
     environment, experiment, pipeline, cluster = parseFile(
         argv["--ExperimentConfig"], argv["--pe"], argv["--workphase"])
     pipeline['ds_overwrite'] = resolveDataSinkOption(argv, pipeline)
     if cluster is None:
-        print "Running on local"
+        print("Running on local")
         #raise NotImplementedError("Running local has old code and has not been tested!")
         #assert argv["--wfrun"] in argvWFRUN, \
         #    "wfrun  options for clusters can only be given when the configuration file's CLUSTER option == True"
@@ -46,19 +48,19 @@ def setup_environment(argv):
              )  # MODS PATH
 
     print("@"*80)
-    print environment['env']['PYTHONPATH']
+    print(environment['env']['PYTHONPATH'])
     print("@"*80)
-    print environment['env']['PATH']
+    print(environment['env']['PATH'])
     print("@"*80)
 
     from nipype import config
     config.enable_debug_mode()
-    from utilities.package_check import verify_packages
+    from .utilities.package_check import verify_packages
     verify_packages()
     if 'FREESURFER' in experiment['components']:  # FREESURFER MODS
         configure_FS = validatePath(os.path.join(utilities_path, 'utilities', 'configure_FS.py'), False, False)
         execfile(configure_FS, dict(FS_VARS=misc.FS_VARS, env=environment['env']))
-        print "FREESURFER needs to check for sane environment here!"  # TODO: raise warning, write method, what???
+        print("FREESURFER needs to check for sane environment here!")  # TODO: raise warning, write method, what???
     for key, value in environment['env'].items():
         if key in ['PATH', 'PYTHONPATH'] + misc.FS_VARS:
             pass

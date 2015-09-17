@@ -1,3 +1,4 @@
+from __future__ import print_function
 # \author Hans J. Johnson
 # This file will help store new data
 # in a publicly available web location

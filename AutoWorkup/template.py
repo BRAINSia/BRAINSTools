@@ -30,12 +30,14 @@ Examples:
   $ template.py --rewrite-datasinks --pe OSX --ExperimentConfig my_baw.config 2001
 
 """
+from __future__ import print_function
+from __future__ import absolute_import
 import glob
 import os
 import sys
 import traceback
 
-from baw_exp import OpenSubjectDatabase
+from .baw_exp import OpenSubjectDatabase
 
 def get_processed_subjects( resultdir ):
     import glob
@@ -120,7 +122,7 @@ def MergeByExtendListElements(t1s, t2s, pds, fls, labels, posteriors, passive_in
             ListOfImagesDictionaries[subject_index]['FL'] = fls[subject_index]
         if labels[subject_index] is not None:
             ListOfImagesDictionaries[subject_index]['BRAINMASK'] = labels[subject_index]
-        print ListOfImagesDictionaries[subject_index]
+        print(ListOfImagesDictionaries[subject_index])
         for key, value in posteriors.items():
             # print "key:", key, " -> value:", value
             ListOfImagesDictionaries[subject_index][key] = value[subject_index]
@@ -149,7 +151,7 @@ def getSessionsFromSubjectDictionary(subject_session_dictionary,subject):
 
 
 def _template_runner(argv, environment, experiment, pipeline_options, cluster):
-    print "Getting subjects from database..."
+    print("Getting subjects from database...")
     # subjects = argv["--subjects"].split(',')
     subjects, subjects_sessions_dictionary = get_subjects_sessions_dictionary(argv['SUBJECTS'],
             experiment['cachedir'],
@@ -162,9 +164,9 @@ def _template_runner(argv, environment, experiment, pipeline_options, cluster):
     for thisSubject in subjects:
         print("Processing atlas generation for this subject: {0}".format(thisSubject))
         print("="*80)
-        print "Copying Atlas directory and determining appropriate Nipype options..."
+        print("Copying Atlas directory and determining appropriate Nipype options...")
         pipeline_options = nipype_options(argv, pipeline_options, cluster, experiment, environment)  # Generate Nipype options
-        print "Dispatching jobs to the system..."
+        print("Dispatching jobs to the system...")
         ######
         ###### Now start workflow construction
         ######
@@ -408,16 +410,16 @@ def _template_runner(argv, environment, experiment, pipeline_options, cluster):
 
 if __name__ == '__main__':
     import sys
-    from AutoWorkup import setup_environment
+    from .AutoWorkup import setup_environment
 
     from docopt import docopt
 
     argv = docopt(__doc__, version='1.1')
-    print argv
+    print(argv)
     if argv['--workphase'] != 'subject-template-generation':
         print("ERROR: Only --workphase subject-template-generation supported for template building")
         sys.exit(-1)
-    print '=' * 100
+    print('=' * 100)
     environment, experiment, pipeline, cluster = setup_environment(argv)
     from nipype import config as nipype_config
     import nipype.pipeline.engine as pe
@@ -425,13 +427,13 @@ if __name__ == '__main__':
     from nipype.interfaces.utility import IdentityInterface, Function
     import nipype.interfaces.ants as ants
 
-    from PipeLineFunctionHelpers import ConvertSessionsListOfPosteriorListToDictionaryOfSessionLists
-    from workflows.atlasNode import MakeAtlasNode, CreateAtlasXMLAndCleanedDeformedAverages
-    from utilities.misc import GenerateSubjectOutputPattern as outputPattern
-    from utilities.distributed import modify_qsub_args
-    from workflows.utils import run_workflow, print_workflow
-    from BAWantsRegistrationBuildTemplate import BAWantsRegistrationTemplateBuildSingleIterationWF
-    from utilities.configFileParser import nipype_options
+    from .PipeLineFunctionHelpers import ConvertSessionsListOfPosteriorListToDictionaryOfSessionLists
+    from .workflows.atlasNode import MakeAtlasNode, CreateAtlasXMLAndCleanedDeformedAverages
+    from .utilities.misc import GenerateSubjectOutputPattern as outputPattern
+    from .utilities.distributed import modify_qsub_args
+    from .workflows.utils import run_workflow, print_workflow
+    from .BAWantsRegistrationBuildTemplate import BAWantsRegistrationTemplateBuildSingleIterationWF
+    from .utilities.configFileParser import nipype_options
     from nipype.interfaces.semtools.testing.generateaveragelmkfile import GenerateAverageLmkFile
     exit = _template_runner(argv, environment, experiment, pipeline, cluster)
     sys.exit(exit)

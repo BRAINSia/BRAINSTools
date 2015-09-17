@@ -1,3 +1,4 @@
+from __future__ import print_function
 FS_VARS = ['FREESURFER_HOME',
            'FSFAST_HOME',
            'FSF_OUTPUT_FORMAT',
@@ -77,10 +78,10 @@ def add_dict(d1, d2, force=False):
     if d2:
         if not force:
             try:
-                print "d1.keys():::"
-                print d1.keys()
-                print "d2.keys():::"
-                print d2.keys()
+                print("d1.keys():::")
+                print(d1.keys())
+                print("d2.keys():::")
+                print(d2.keys())
                 assert set(d1.keys()).isdisjoint(set(d2.keys()))
             except AssertionError:
                 raise ValueError("Dictionaries have one or more duplicate keys")

@@ -1,3 +1,4 @@
+from __future__ import print_function
 import sys
 #########################################################################################
 #{#######################################################################################
@@ -8,7 +9,7 @@ def combineCSVs(dataFile, featureFileList):
     returnDictionary = {}
     with open(dataFile, "r") as dataListFile:
         dataListReader = csv.reader(dataListFile, delimiter=",", skipinitialspace=True)
-        dataListHeader = dataListReader.next()
+        dataListHeader = next(dataListReader)
         for session in dataListReader:
             sessionWithHeader = zip(dataListHeader, session)
 
@@ -22,7 +23,7 @@ def combineCSVs(dataFile, featureFileList):
     for ft in featureFileList.iterkeys():
         with open(featureFileList[ft], "r") as featureListFile:
             featureListReader = csv.reader(featureListFile, delimiter=",", skipinitialspace=True)
-            featureListHeader = featureListReader.next()
+            featureListHeader = next(featureListReader)
             for row in featureListReader:
                 rowWithHeader = zip(featureListHeader, row)
                 rowFeatureDict = {}

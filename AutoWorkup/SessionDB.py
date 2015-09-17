@@ -1,3 +1,4 @@
+from __future__ import print_function
 import os
 import sys
 import sqlite3 as lite
@@ -34,11 +35,11 @@ class SessionDB():
             self.connection.close()
 
     def _local_fillDB_AndClose(self, sqlCommandList):
-        print "Filling SQLite database SessionDB.py"
+        print("Filling SQLite database SessionDB.py")
         for sqlCommand in sqlCommandList:
             self.cursor.execute(sqlCommand)
         self.connection.commit()
-        print "Finished filling SQLite database SessionDB.py"
+        print("Finished filling SQLite database SessionDB.py")
 
     def MakeNewDB(self, subject_data_file, mountPrefix):
         ## First close so that we can delete.
@@ -54,7 +55,7 @@ class SessionDB():
         missingCount = 0
         print("MISSING FILES RECORED IN {0}".format(missingFilesLog))
         missingFiles = open(missingFilesLog, 'w')
-        print "Building Subject returnList: " + subject_data_file
+        print("Building Subject returnList: " + subject_data_file)
         subjData = csv.reader(open(subject_data_file, 'rb'), delimiter=',', quotechar='"')
         for row in subjData:
             if len(row) < 1:
@@ -94,8 +95,8 @@ class SessionDB():
                             sqlCommand = self.makeSQLiteCommand(currDict)
                             sqlCommandList.append(sqlCommand)
             else:
-                print "ERROR:  Invalid number of elements in row"
-                print row
+                print("ERROR:  Invalid number of elements in row")
+                print(row)
         sqlCommandList
         self._local_fillDB_AndClose(sqlCommandList)
         if missingCount > 0:

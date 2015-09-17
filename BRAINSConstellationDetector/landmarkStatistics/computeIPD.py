@@ -20,6 +20,7 @@ Example:
   computeIPD.py --inputFilesList TRACKDataFCSVList.txt --outputIPDsList TRACKIPDs.txt
   computeIPD.py --inputFilesList PREDICTDataFCSVList.txt --outputIPDsList PREDICTIPDs.txt
 """
+from __future__ import print_function
 
 def csv_file_reader(fcsvFile,dataList):
   import csv
@@ -53,14 +54,14 @@ if __name__ == '__main__':
 
   from docopt import docopt
   argv = docopt(__doc__, version='1.0')
-  print argv
+  print(argv)
 
   INPUTLIST = argv['--inputFilesList']
   assert os.path.exists(INPUTLIST), "Input files list is not found: %s" % INPUTLIST
 
   IPDsLIST = argv['--outputIPDsList']
 
-  print '=' * 100
+  print('=' * 100)
 
   dataList=[]
   with open(INPUTLIST) as lf:

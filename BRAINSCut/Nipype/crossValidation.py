@@ -1,3 +1,4 @@
+from __future__ import print_function
 ##############################################################################
 
 
@@ -156,7 +157,7 @@ def readListFileBySessionID(inputFilename,
               {fn}""".format( fn=inputFilename ))
         with open(inputFilename, "r") as inFile:
             reader = csv.reader(inFile, delimiter=",", skipinitialspace=True)
-            header = reader.next()
+            header = next(reader)
             print(header)
             for row in reader:
                 rowWithHeader = zip(header, row)

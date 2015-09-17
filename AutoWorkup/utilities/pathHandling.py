@@ -1,3 +1,4 @@
+from __future__ import print_function
 # TODO: Run doctests (failing first!)
 
 import os.path
@@ -81,10 +82,10 @@ def clone_atlas_dir(cachedir, atlasdir):
     import stat
 
     new_dir = os.path.join(cachedir, 'Atlas')
-    print "Searching for atlas directory in cache..."
+    print("Searching for atlas directory in cache...")
     if not os.path.exists(new_dir):
         old_dir = validatePath(atlasdir, False, True)
-        print "Copying new atlas {0} to cache directory...".format(old_dir)
+        print("Copying new atlas {0} to cache directory...".format(old_dir))
         newfiles = copy_tree(old_dir, new_dir, preserve_mode=1, preserve_times=1, verbose=True)
         xml_file='ExtendedAtlasDefinition.xml'
         old_xml = os.path.join(old_dir, xml_file + '.in')
@@ -95,5 +96,5 @@ def clone_atlas_dir(cachedir, atlasdir):
             os.chmod(fname, stat.S_IRUSR | stat.S_IRGRP | stat.S_IROTH)
             assert os.path.isfile(fname)
     else:
-        print "Atlas directory found at {0}".format(new_dir)
+        print("Atlas directory found at {0}".format(new_dir))
     return new_dir

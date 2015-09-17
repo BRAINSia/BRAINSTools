@@ -1,3 +1,4 @@
+from __future__ import print_function
 
 # --------------------------------------------------------------------------------------- #
 
@@ -94,12 +95,12 @@ def LabelStatistics(inputLabel,
     outputDictionary['Maximum'] = Maximum
     outputDictionary['Sigma'] = Sigma
     outputDictionary['Variance'] = Variance
-    print "################################################## Mean:: " + str(Mean)
-    print "################################################## Median:: " + str(Median)
-    print "################################################## Minimum:: " + str(Minimum)
-    print "################################################## Maximum:: " + str(Maximum)
-    print "################################################## Sigma:: " + str(Sigma)
-    print "################################################## Variance:: " + str(Variance)
+    print("################################################## Mean:: " + str(Mean))
+    print("################################################## Median:: " + str(Median))
+    print("################################################## Minimum:: " + str(Minimum))
+    print("################################################## Maximum:: " + str(Maximum))
+    print("################################################## Sigma:: " + str(Sigma))
+    print("################################################## Variance:: " + str(Variance))
 
     ## TODO 25/75 quantiles
     LowerHalfMsk = sitk.BinaryThreshold(inImg, Minimum, Median)
@@ -107,14 +108,14 @@ def LabelStatistics(inputLabel,
     Quantile25Calculator.Execute(inImg, inMsk * LowerHalfMsk)
     Quantile25 = Quantile25Calculator.GetMedian(labelValue)
     outputDictionary['Quantile25'] = Quantile25
-    print "################################################## Quantile25:: " + str(Quantile25)
+    print("################################################## Quantile25:: " + str(Quantile25))
 
     UpperHalfMsk = sitk.BinaryThreshold(inImg, Median, Maximum)
     Quantile75Calculator = sitk.LabelStatisticsImageFilter()
     Quantile75Calculator.Execute(inImg, inMsk * UpperHalfMsk)
     Quantile75 = Quantile75Calculator.GetMedian(labelValue)
     outputDictionary['Quantile75'] = Quantile75
-    print "################################################## Quantile75:: " + str(Quantile75)
+    print("################################################## Quantile75:: " + str(Quantile75))
 
     ## TODO MAD
     AbsoluteFilter = sitk.AbsImageFilter()
@@ -124,7 +125,7 @@ def LabelStatistics(inputLabel,
     MADCalculator.Execute(AbsImg, inMsk)
     MAD = MADCalculator.GetMedian(labelValue)
     outputDictionary['MAD'] = MAD
-    print "################################################## MAD:: " + str(MAD)
+    print("################################################## MAD:: " + str(MAD))
 
     import csv
     csvFile = open(outputCSVFilename, 'w')
@@ -168,22 +169,22 @@ def NormalizeInputVolume(inputVolume,
     expImg = expImg + e  # make exp. image
 
     if inputMethod == 'zScore':
-        print "zScore Normalization"
+        print("zScore Normalization")
         outImg = (inImg - inputStats['Mean']) / inputStats['Sigma']
     elif inputMethod == 'MAD':
-        print "MAD Normalization"
+        print("MAD Normalization")
         outImg = (inImg - inputStats['Median']) / inputStats['MAD']
     elif inputMethod == 'Sigmoid':
-        print "Sigmoid Normalization"
+        print("Sigmoid Normalization")
         outImg = 1 / (1 + expImg ** (-2 * (inImg - inputStats['Median']) / IQR))
     elif inputMethod == 'QEstimator':
-        print "QEstimator Normalization"
+        print("QEstimator Normalization")
         outImg = (inImg - inputStats['Median']) / IQR
     elif inputMethod == 'Linear':
-        print "Linear Normalization"
+        print("Linear Normalization")
         outImg = (inImg - inputStats['Minimum']) / (inputStats['Maximum'] - inputStats['Minimum'])
     elif inputMethod == 'DoubleSigmoid':
-        print "Double Sigmoid Normalization"
+        print("Double Sigmoid Normalization")
         outMsk1 = sitk.BinaryThreshold(inImg, inputStats['Minimum'], inputStats['Median'])
         outImg1 = 1 / (1 + expImg ** (-2 * (inImg - (inputStats['Median'])) /
                       (inputStats['Median'] - inputStats['Quantile25'])))

@@ -1,3 +1,4 @@
+from __future__ import print_function
 def getProbabilityMapFilename(roiList):
     probabilityMapFilename = {}
     for roi in roiList:

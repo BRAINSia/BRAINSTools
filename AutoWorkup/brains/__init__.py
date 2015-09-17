@@ -1,4 +1,5 @@
+from __future__ import absolute_import
 __version__ = 'beta'
-import config
-import metrics
-from common import *
+from . import config
+from . import metrics
+from .common import *

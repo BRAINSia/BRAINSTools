@@ -14,7 +14,7 @@ from builtins import range
 ##
 #################################################################################
 
-from .utilities.distributed import modify_qsub_args
+from utilities.distributed import modify_qsub_args
 
 import nipype.pipeline.engine as pe
 import nipype.interfaces.utility as util

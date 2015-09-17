@@ -38,7 +38,7 @@ import os
 import sys
 import traceback
 
-from .baw_exp import OpenSubjectDatabase
+from baw_exp import OpenSubjectDatabase
 
 def get_processed_subjects( resultdir ):
     import glob
@@ -411,7 +411,7 @@ def _template_runner(argv, environment, experiment, pipeline_options, cluster):
 
 if __name__ == '__main__':
     import sys
-    from .AutoWorkup import setup_environment
+    from AutoWorkup import setup_environment
 
     from docopt import docopt
 
@@ -428,13 +428,13 @@ if __name__ == '__main__':
     from nipype.interfaces.utility import IdentityInterface, Function
     import nipype.interfaces.ants as ants
 
-    from .PipeLineFunctionHelpers import ConvertSessionsListOfPosteriorListToDictionaryOfSessionLists
-    from .workflows.atlasNode import MakeAtlasNode, CreateAtlasXMLAndCleanedDeformedAverages
-    from .utilities.misc import GenerateSubjectOutputPattern as outputPattern
-    from .utilities.distributed import modify_qsub_args
-    from .workflows.utils import run_workflow, print_workflow
-    from .BAWantsRegistrationBuildTemplate import BAWantsRegistrationTemplateBuildSingleIterationWF
-    from .utilities.configFileParser import nipype_options
+    from PipeLineFunctionHelpers import ConvertSessionsListOfPosteriorListToDictionaryOfSessionLists
+    from workflows.atlasNode import MakeAtlasNode, CreateAtlasXMLAndCleanedDeformedAverages
+    from utilities.misc import GenerateSubjectOutputPattern as outputPattern
+    from utilities.distributed import modify_qsub_args
+    from workflows.utils import run_workflow, print_workflow
+    from BAWantsRegistrationBuildTemplate import BAWantsRegistrationTemplateBuildSingleIterationWF
+    from utilities.configFileParser import nipype_options
     from nipype.interfaces.semtools.testing.generateaveragelmkfile import GenerateAverageLmkFile
     exit = _template_runner(argv, environment, experiment, pipeline, cluster)
     sys.exit(exit)

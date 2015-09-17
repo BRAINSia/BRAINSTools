@@ -30,7 +30,7 @@ import time
 
 def OpenSubjectDatabase(ExperimentBaseDirectoryCache, single_subject, mountPrefix, subject_data_file):
     import os.path
-    from . import SessionDB
+    import SessionDB
     subjectDatabaseFile = os.path.join(ExperimentBaseDirectoryCache, 'InternalWorkflowSubjectDB.db')
     ## TODO:  Only make DB if db is older than subject_data_file.
     if (not os.path.exists(subjectDatabaseFile)) or \

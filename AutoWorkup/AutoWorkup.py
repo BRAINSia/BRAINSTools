@@ -2,7 +2,6 @@
 
 from __future__ import print_function
 from __future__ import absolute_import
-from past.builtins import execfile
 def load_modules(modules):
     """ The command 'module' is actually a script call in bash:
 
@@ -18,9 +17,9 @@ def setup_environment(argv):
     print("Configuring environment...")
     import os
     import os.path
-    from .utilities.configFileParser import resolveDataSinkOption, parseFile
-    from .utilities.pathHandling import validatePath
-    from .utilities import misc
+    from utilities.configFileParser import resolveDataSinkOption, parseFile
+    from utilities.pathHandling import validatePath
+    from utilities import misc
     environment, experiment, pipeline, cluster = parseFile(
         argv["--ExperimentConfig"], argv["--pe"], argv["--workphase"])
     pipeline['ds_overwrite'] = resolveDataSinkOption(argv, pipeline)
@@ -37,13 +36,13 @@ def setup_environment(argv):
         #activate_this = validatePath(
         #    os.path.join(environment['virtualenv_dir'], 'bin', 'activate_this.py'), False, False)
         #if os.path.exists( activate_this ) :
-        #    execfile(activate_this, dict(__file__=activate_this))
+        #    exec(open(activate_this).read(), dict(__file__=activate_this))
     utilities_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'utilities')
     configure_env = validatePath(os.path.join(utilities_path, 'configure_env.py'), False, False)
     # Add the AutoWorkup directory to the PYTHONPATH every time - REQUIRED FOR CLUSTER DISPATCHING
     environment['env']['PYTHONPATH'] = environment['env']['PYTHONPATH'] + ":" + os.path.dirname(__file__)
 
-    execfile(configure_env, dict(__file__=__file__,
+    exec(open(configure_env).read() , dict(__file__=__file__,
                                  append_os_path=environment['env']['PATH'],
                                  append_sys_path=environment['env']['PYTHONPATH'])
              )  # MODS PATH
@@ -56,11 +55,11 @@ def setup_environment(argv):
 
     from nipype import config
     config.enable_debug_mode()
-    from .utilities.package_check import verify_packages
+    from utilities.package_check import verify_packages
     verify_packages()
     if 'FREESURFER' in experiment['components']:  # FREESURFER MODS
         configure_FS = validatePath(os.path.join(utilities_path, 'utilities', 'configure_FS.py'), False, False)
-        execfile(configure_FS, dict(FS_VARS=misc.FS_VARS, env=environment['env']))
+        exec(open(configure_FS).read(), dict(FS_VARS=misc.FS_VARS, env=environment['env']))
         print("FREESURFER needs to check for sane environment here!")  # TODO: raise warning, write method, what???
     for key, value in list(environment['env'].items()):
         if key in ['PATH', 'PYTHONPATH'] + misc.FS_VARS:

@@ -101,7 +101,8 @@ def CreateMALFWorkflow(WFname, onlyT1, master_config,BASE_DATA_GRABBER_DIR=None,
     labelMapResample = dict()
     NewlabelMapResample = dict()
 
-    malf_atlas_mergeindex = 1;
+    malf_atlas_mergeindex = 0
+    merge_input_offset = 1 #Merge nodes are indexed from 1, not zero!
     """
     multimodal ants registration if t2 exists
     """
@@ -231,12 +232,12 @@ def CreateMALFWorkflow(WFname, onlyT1, master_config,BASE_DATA_GRABBER_DIR=None,
         MALFWF.connect(atlasMakeMultimodalInput[malf_atlas_subject], 'outFNs',
                        A2SantsRegistrationPreMALF_SyN[malf_atlas_subject],'moving_image')
         MALFWF.connect(A2SantsRegistrationPreMALF_SyN[malf_atlas_subject],'warped_image',
-                       warpedAtlasesMergeNode,'in'+str(malf_atlas_mergeindex*n_modality) )
+                       warpedAtlasesMergeNode,'in'+str(merge_input_offset + malf_atlas_mergeindex*n_modality) )
 
         """
         Original t2 resampling
         """
-        if not onlyT1:
+        for modality_index in range(1,n_modality):
             t2Resample[malf_atlas_subject] = pe.Node(interface=ants.ApplyTransforms(),name="resampledT2"+malf_atlas_subject)
             many_cpu_t2Resample_options_dictionary = {'qsub_args': modify_qsub_args(CLUSTER_QUEUE,1,1,1), 'overwrite': True}
             t2Resample[malf_atlas_subject].plugin_args = many_cpu_t2Resample_options_dictionary
@@ -253,7 +254,7 @@ def CreateMALFWorkflow(WFname, onlyT1, master_config,BASE_DATA_GRABBER_DIR=None,
             MALFWF.connect( malfAtlases[malf_atlas_subject], 't2',
                             t2Resample[malf_atlas_subject],'input_image')
             MALFWF.connect(t2Resample[malf_atlas_subject],'output_image',
-                           warpedAtlasesMergeNode,'in'+str(malf_atlas_mergeindex*n_modality+1) )
+                           warpedAtlasesMergeNode,'in'+str(merge_input_offset + malf_atlas_mergeindex*n_modality+modality_index) )
 
         """
         Original labelmap resampling
@@ -275,7 +276,7 @@ def CreateMALFWorkflow(WFname, onlyT1, master_config,BASE_DATA_GRABBER_DIR=None,
                         labelMapResample[malf_atlas_subject],'input_image')
 
 
-        MALFWF.connect(labelMapResample[malf_atlas_subject],'output_image',warpedAtlasLblMergeNode,'in'+str(malf_atlas_mergeindex) )
+        MALFWF.connect(labelMapResample[malf_atlas_subject],'output_image',warpedAtlasLblMergeNode,'in'+str(merge_input_offset + malf_atlas_mergeindex) )
 
         ### New labelmap resampling
         NewlabelMapResample[malf_atlas_subject] = pe.Node(interface=ants.ApplyTransforms(),name="FSWM_WLABEL_"+malf_atlas_subject)
@@ -295,7 +296,7 @@ def CreateMALFWorkflow(WFname, onlyT1, master_config,BASE_DATA_GRABBER_DIR=None,
                         NewlabelMapResample[malf_atlas_subject],'input_image')
 
 
-        MALFWF.connect(NewlabelMapResample[malf_atlas_subject],'output_image',NewwarpedAtlasLblMergeNode,'in'+str(malf_atlas_mergeindex) )
+        MALFWF.connect(NewlabelMapResample[malf_atlas_subject],'output_image',NewwarpedAtlasLblMergeNode,'in'+str(merge_input_offset + malf_atlas_mergeindex) )
 
         malf_atlas_mergeindex += 1
 

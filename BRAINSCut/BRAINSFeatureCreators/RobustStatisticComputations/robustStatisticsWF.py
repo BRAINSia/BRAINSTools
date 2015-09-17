@@ -24,7 +24,7 @@ def get_global_sge_script(pythonPathsList, binPathsList, customEnvironment={}):
 so that all the python modules and commands are pathed properly"""
 
     custEnvString = ""
-    for key, value in customEnvironment.items():
+    for key, value in list(customEnvironment.items()):
         custEnvString += "export " + key + "=" + value + "\n"
 
     PYTHONPATH = ":".join(pythonPathsList)

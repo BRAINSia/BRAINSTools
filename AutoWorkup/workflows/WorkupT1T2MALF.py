@@ -2,6 +2,8 @@
 
 from __future__ import print_function
 from __future__ import absolute_import
+from builtins import str
+from builtins import range
 from nipype.interfaces.base import CommandLine, CommandLineInputSpec, TraitedSpec, File, Directory
 from nipype.interfaces.base import traits, isdefined, BaseInterface
 from nipype.interfaces.utility import Merge, Split, Function, Rename, IdentityInterface
@@ -130,7 +132,7 @@ def CreateMALFWorkflow(WFname, onlyT1, master_config,BASE_DATA_GRABBER_DIR=None,
     NewwarpedAtlasLblMergeNode = pe.Node(interface=Merge(number_of_atlas_sources),name="fswmLblMergeAtlas")
     warpedAtlasesMergeNode = pe.Node(interface=Merge(number_of_atlas_sources*n_modality),name="MergeAtlases")
 
-    for malf_atlas_subject in malfAtlasDict.keys():
+    for malf_atlas_subject in list(malfAtlasDict.keys()):
         ## Need DataGrabber Here For the Atlas
         malfAtlases[malf_atlas_subject] = pe.Node(interface = IdentityInterface(
                                                                   fields=['t1', 't2', 'label', 'lmks']),

@@ -6,6 +6,7 @@
     __file__ is the current Python file that exists in the BRAINSTools/AutoWorkup/ directory.
 """
 from __future__ import print_function
+from builtins import str
 
 try:
     __file__

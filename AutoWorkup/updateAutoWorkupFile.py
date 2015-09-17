@@ -1,11 +1,12 @@
 from __future__ import print_function
+from builtins import object
 import argparse
 import csv
 import os
 import textwrap
 
 
-class UpdateAutoWorkup():
+class UpdateAutoWorkup(object):
 
     def _getBlackList(self):
         handle = csv.reader(open(inputArguments.blackList, 'rb'), delimiter=',', quotechar='\"')
@@ -15,7 +16,7 @@ class UpdateAutoWorkup():
                 blackListDict[row[0]] = row[1]
             else:
                 print("WARNING: WRONG # of columns in csv (should be 3): {0}".format(row))
-        return blackListDict, blackListDict.keys()
+        return blackListDict, list(blackListDict.keys())
 
     def _generateNewPathName(self):
         dirname = os.path.dirname(inputArguments.autoWorkupFile)
@@ -36,19 +37,19 @@ class UpdateAutoWorkup():
             if oldFile.line_num > 1:
                 scanDict = eval(row[3])
                 newScanDict = dict()
-                for scan in scanDict.keys():
+                for scan in list(scanDict.keys()):
                     filepaths = scanDict[scan]
                     for path in filepaths:
                         if path in blackListKeys:
                             newPath = blackListDict[path]
                             if newPath == '':
                                 continue
-                            if scan not in newScanDict.keys():
+                            if scan not in list(newScanDict.keys()):
                                 newScanDict[scan] = [newPath]
                             else:
                                 newScanDict[scan].append(newPath)
                         else:
-                            if scan not in newScanDict.keys():
+                            if scan not in list(newScanDict.keys()):
                                 newScanDict[scan] = [path]
                             else:
                                 newScanDict[scan].append(path)

@@ -1,13 +1,19 @@
 from __future__ import print_function
+from future import standard_library
+standard_library.install_aliases()
+from builtins import next
+from builtins import str
+from builtins import zip
+from builtins import range
 ##############################################################################
 
 
 def getDictionaryValues(inputDictionary):
     print(inputDictionary)
     returnList = []
-    for session in inputDictionary.iterkeys():
+    for session in list(inputDictionary.keys()):
         sessionDict = inputDictionary[session]
-        for label in sessionDict.iterkeys():
+        for label in list(sessionDict.keys()):
             for img in sessionDict[label]:
                 returnList.append(img)
     return returnList
@@ -29,7 +35,7 @@ def get_global_sge_script(pythonPathsList, binPathsList, customEnvironment={}):
 so that all the python modules and commands are pathed properly"""
 
     custEnvString = ""
-    for key, value in customEnvironment.items():
+    for key, value in list(customEnvironment.items()):
         custEnvString += "export " + key + "=" + value + "\n"
 
     PYTHONPATH = ":".join(pythonPathsList)
@@ -61,9 +67,9 @@ def writeConfigFile(originalFilename,
     print("""****************************
           writeConfigFile
           """)
-    import ConfigParser
+    import configparser
 
-    inConfigParser = ConfigParser.ConfigParser()
+    inConfigParser = configparser.ConfigParser()
     try:
         print( """read
                {fn}""".format( fn=originalFilename ))
@@ -73,7 +79,7 @@ def writeConfigFile(originalFilename,
                fail to read file {fn}
                """.format( fn=originalFilename ))
 
-    outConfigParser = ConfigParser.RawConfigParser()
+    outConfigParser = configparser.RawConfigParser()
 
     for section in inConfigParser.sections():
         outConfigParser.add_section(section)
@@ -81,7 +87,7 @@ def writeConfigFile(originalFilename,
             outConfigParser.set(section, option, inConfigParser.get(section, option))
 
     print(outputAdditionaListFiles)
-    for option in outputAdditionaListFiles.iterkeys():
+    for option in list(outputAdditionaListFiles.keys()):
         print(outputAdditionaListFiles[option])
         print(outputAdditionaListFiles[option])
         print(outputAdditionaListFiles[option])
@@ -104,15 +110,15 @@ def writeListFile(sessionDict,
           writeListFile
           """)
     import csv
-    for outTag in outFilenameDict.iterkeys():
+    for outTag in list(outFilenameDict.keys()):
         outFile = open(outFilenameDict[outTag], "wb")
 
         writer = csv.DictWriter(outFile,
-                                sessionDict[sessionDict.keys()[0]].keys())
+                                list(sessionDict[list(sessionDict.keys())[0]].keys()))
         writer.writeheader()
 
         print(tagsToWrite)
-        for session in sessionDict.iterkeys():
+        for session in list(sessionDict.keys()):
             sessionRow = sessionDict[session]
             if tagsToWrite[session] == outTag:
                 print("Add {s} ".format(s=sessionRow['sessionID']))
@@ -160,7 +166,7 @@ def readListFileBySessionID(inputFilename,
             header = next(reader)
             print(header)
             for row in reader:
-                rowWithHeader = zip(header, row)
+                rowWithHeader = list(zip(header, row))
                 rowDict = {}
                 for (name, value) in rowWithHeader:
                     rowDict[name] = value.strip()
@@ -278,18 +284,18 @@ def createConfigurationFileForCrossValidationUnitTest(inputConfigurationFilename
                                                    numberOfTotalSession)
     featureSessionDict = {}
     if len(featureListFilenamesDict) > 0:
-        for ft in featureListFilenamesDict.iterkeys():
+        for ft in list(featureListFilenamesDict.keys()):
             featureSessionDict[ft] = this.readListFileBySessionID(featureListFilenamesDict[ft],
                                                                   numberOfTotalSession)
 
     #{ iterate throug subsets
     outputConfigFilenameDict = {}
     for nTest in range(0, len(numberOfElementsInSubset)):
-        trainApplyTagList = this.getTags(mainSessionDict.keys(),
+        trainApplyTagList = this.getTags(list(mainSessionDict.keys()),
                                          nTest,
                                          numberOfElementsInSubset)
         newConfigFilename, newMainFilename, newFeatureFilenameDict = this.generateNewFilenames(nTest,
-                                                                                               featureListFilenamesDict.keys(),
+                                                                                               list(featureListFilenamesDict.keys()),
                                                                                                outputConfigurationFilenamePrefix)
         this.writeListFile(mainSessionDict,
                            newMainFilename,
@@ -299,7 +305,7 @@ def createConfigurationFileForCrossValidationUnitTest(inputConfigurationFilename
         print("++++++++++++++++++++++++++++++++newFeatureFilenameDict++++++++++++++++++++++++++++++++")
         print(newFeatureFilenameDict)
         if len(featureSessionDict) > 0:
-            for ft in featureSessionDict.iterkeys():
+            for ft in list(featureSessionDict.keys()):
                 this.writeListFile(featureSessionDict[ft],
                                    newFeatureFilenameDict[ft],
                                    trainApplyTagList)
@@ -326,7 +332,7 @@ def extractConfigFile(configurationFiledict):
           extractConfigFile
           """)
     print(configurationFiledict)
-    return configurationFiledict.values()
+    return list(configurationFiledict.values())
 
 
 def crossValidationWorkUp(crossValidationConfigurationFilename,
@@ -415,7 +421,7 @@ def crossValidationWorkUp(crossValidationConfigurationFilename,
                                            function=this.getProbabilityMapFilename)
                                        )
     print(roiDict)
-    probMapFilenameGenerator.inputs.roiList = roiDict.keys()
+    probMapFilenameGenerator.inputs.roiList = list(roiDict.keys())
     print("""************************
           probabilityMapGeneratorND
           """)
@@ -723,7 +729,7 @@ def main(argv=None):
                         testElementPerSubject)
         featureFilenameDict = {'f1': 'f1.csv', 'f2': 'f2.csv'}
         configFilename, mainFilenameDict, featureFilenameDict = generateNewFilenames(3,
-                                                                                     featureFilenameDict.keys(),
+                                                                                     list(featureFilenameDict.keys()),
                                                                                      "outputPrefix")
         import ConfigurationParser
         m_configurationMap = ConfigurationParser.ConfigurationSectionMap(args.crossValidationConfigurationFilename)
@@ -731,7 +737,7 @@ def main(argv=None):
         listFiles = m_configurationMap['ListFiles']
         mainListFilename = listFiles['subjectListFilename'.lower()]
         sessionDict = readListFileBySessionID(mainListFilename)
-        myTag = getTags(sessionDict.keys(),
+        myTag = getTags(list(sessionDict.keys()),
                         2,
                         listFiles['numberOfElementInSubset'.lower()])
         writeListFile(sessionDict,

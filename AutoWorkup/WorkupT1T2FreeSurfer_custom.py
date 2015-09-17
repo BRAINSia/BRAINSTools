@@ -1,5 +1,6 @@
 from __future__ import print_function
 from __future__ import absolute_import
+from builtins import str
 from nipype.interfaces.utility import Merge, IdentityInterface
 import nipype.pipeline.engine as pe  # pypeline engine
 from nipype.interfaces.freesurfer.model import MS_LDA

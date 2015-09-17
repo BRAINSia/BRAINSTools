@@ -1,4 +1,6 @@
 from __future__ import print_function
+from builtins import zip
+from builtins import range
 def MakeAtlasNode(atlasDirectory, name, atlasParts):
     """ Make an atlas node that contains the elements requested in the atlasParts section
         This will allow more fine grained data grabbers to be used, thereby allowing enhanced
@@ -114,7 +116,7 @@ def MakeAtlasNode(atlasDirectory, name, atlasParts):
     # # Remove filename extensions for images, but replace . with _ for other file types
     atlas_file_keys = [os.path.basename(fn).replace('.nii.gz', '').replace('.', '_').replace('-', '_') for fn in
                        atlas_file_names]
-    atlas_outputs_filename_match = dict(zip(atlas_file_keys, atlas_file_names))
+    atlas_outputs_filename_match = dict(list(zip(atlas_file_keys, atlas_file_names)))
 
     node = pe.Node(interface=nio.DataGrabber(force_output=False, outfields=atlas_file_keys),
                    run_without_submitting=True,
@@ -125,10 +127,10 @@ def MakeAtlasNode(atlasDirectory, name, atlasParts):
     node.inputs.template = '*'
     ## Prefix every filename with atlasDirectory
     atlas_search_paths = ['{0}'.format(fn) for fn in atlas_file_names]
-    node.inputs.field_template = dict(zip(atlas_file_keys, atlas_search_paths))
+    node.inputs.field_template = dict(list(zip(atlas_file_keys, atlas_search_paths)))
     ## Give 'atlasDirectory' as the substitution argument
     atlas_template_args_match = [[[]] for i in atlas_file_keys]  # build a list of proper length with repeated entries
-    node.inputs.template_args = dict(zip(atlas_file_keys, atlas_template_args_match))
+    node.inputs.template_args = dict(list(zip(atlas_file_keys, atlas_template_args_match)))
     # print "+" * 100
     # print node.inputs
     # print "-" * 100
@@ -194,7 +196,7 @@ def CreateAtlasXMLAndCleanedDeformedAverages(t1_image, deformed_list, AtlasTempl
     load_images_list = dict()
     for full_pathname in deformed_list:
         base_name = os.path.basename(full_pathname)
-        if base_name in patternDict.keys():
+        if base_name in list(patternDict.keys()):
             load_images_list[base_name] = sitk.ReadImage(full_pathname)
         else:
             print("MISSING FILE FROM patternDict: {0}".format(base_name))
@@ -301,7 +303,7 @@ def CreateAtlasXMLAndCleanedDeformedAverages(t1_image, deformed_list, AtlasTempl
 
     for full_pathname in clean_deformed_list:
         base_name = os.path.basename(full_pathname)
-        if base_name in patternDict.keys():
+        if base_name in list(patternDict.keys()):
             xmlAtlasFileContents = xmlAtlasFileContents.replace(patternDict[base_name], base_name)
     ## If there is no T2, then use the PD image
     if T2File is not None:

@@ -1,3 +1,5 @@
+from past.builtins import execfile
+from builtins import range
 from AutoWorkup import utilities
 
 def configure_env_test():

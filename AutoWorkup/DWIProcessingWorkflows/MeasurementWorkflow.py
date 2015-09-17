@@ -1,3 +1,5 @@
+from __future__ import division
+from past.utils import old_div
 ## \author Ali Ghayoor
 ##
 ## This workflow computes the statistics of RISs over regions of interest from the input label map.
@@ -98,7 +100,7 @@ def CreateMeasurementWorkflow(WFname, LABELS_CONFIG_FILE):
             else:
                 if totalVolume == 0:
                    raise ValueError('Label {0} is not found in T2 labels map, but exists in DWI labels map!'.format(labelID))
-                confidence_coeficient=effectiveVolume/totalVolume
+                confidence_coeficient=old_div(effectiveVolume,totalVolume)
             # Now create statistics list
             statsList = [format(mean,'.4f'),
                          format(std,'.4f'),

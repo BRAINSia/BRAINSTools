@@ -70,7 +70,7 @@ def brainStem(tissueLabelFilename,
     """
     ## get index locations
     myLmkIndex = dict()
-    for lmk in myLandmark.keys():
+    for lmk in list(myLandmark.keys()):
         myLmkIndex[lmk] = brainLbl.TransformPhysicalPointToIndex(myLandmark[lmk])
 
     imageSize = brainLbl.GetSize()

@@ -21,6 +21,7 @@
 
 from __future__ import print_function
 from __future__ import absolute_import
+from builtins import str
 from nipype.utils.misc import package_check
 # package_check('nipype', '5.4', 'tutorial1') ## HACK: Check nipype version
 package_check('numpy', '1.3', 'tutorial1')
@@ -48,7 +49,7 @@ def segmentation(projectid, subjectid, sessionid, master_config, onlyT1=True, pi
     baw200 = pe.Workflow(name=pipeline_name)
 
     # HACK: print for debugging
-    for key, itme in master_config.items():
+    for key, itme in list(master_config.items()):
         print("-" * 30)
         print(key, ":", itme)
     print("-" * 30)

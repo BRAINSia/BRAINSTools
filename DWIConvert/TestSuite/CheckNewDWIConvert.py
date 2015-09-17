@@ -1,4 +1,5 @@
 from __future__ import print_function
+from builtins import str
 #
 # script to download DICOM files, convert them and compare them
 # with the already converted files in /paulsen/MRx
@@ -142,7 +143,7 @@ def remove_already_processed(nrrdList,processedFname):
     if processed:
         origsize = len(nrrdList)
         processedsize = len(processed)
-        rval = filter(lambda x: x not in processed,nrrdList)
+        rval = [x for x in nrrdList if x not in processed]
         print(processedFname)
         print("Original # of files ", origsize, \
             " # processed ", processedsize, \

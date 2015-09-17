@@ -1,4 +1,6 @@
 from __future__ import print_function
+from builtins import next
+from builtins import zip
 import sys
 #########################################################################################
 #{#######################################################################################
@@ -11,7 +13,7 @@ def combineCSVs(dataFile, featureFileList):
         dataListReader = csv.reader(dataListFile, delimiter=",", skipinitialspace=True)
         dataListHeader = next(dataListReader)
         for session in dataListReader:
-            sessionWithHeader = zip(dataListHeader, session)
+            sessionWithHeader = list(zip(dataListHeader, session))
 
             sessionDict = {}
             for (name, value) in sessionWithHeader:
@@ -20,12 +22,12 @@ def combineCSVs(dataFile, featureFileList):
             returnDictionary[sessionDict['sessionID']]['featureImageDict'] = {}  # initialize
 
     import ast
-    for ft in featureFileList.iterkeys():
+    for ft in list(featureFileList.keys()):
         with open(featureFileList[ft], "r") as featureListFile:
             featureListReader = csv.reader(featureListFile, delimiter=",", skipinitialspace=True)
             featureListHeader = next(featureListReader)
             for row in featureListReader:
-                rowWithHeader = zip(featureListHeader, row)
+                rowWithHeader = list(zip(featureListHeader, row))
                 rowFeatureDict = {}
                 for (name, value) in rowWithHeader:
 
@@ -56,18 +58,18 @@ def addSession(subjectID,
     else:
         outStream.write(" >\n")
 
-    for imgType in imageDict.iterkeys():
+    for imgType in list(imageDict.keys()):
         outStream.write("    <Image Type=\"{str}\"".format(str=imgType))
         outStream.write(" Filename=\"{str}\" />\n".format(str=imageDict[imgType]))
 
-    for featureType in featureDict.iterkeys():
+    for featureType in list(featureDict.keys()):
         outStream.write("    <Image Type=\"{str}\"".format(str=featureType))
         outStream.write(" Filename=\"{str}\" />\n".format(str=featureDict[featureType]))
 
     outStream.write("    <Mask  Type=\"RegistrationROI\" Filename=\"{fn}\" />\n".format(fn="na"))
 
     if dataType == "Train":
-        for roiID in roiDict.iterkeys():
+        for roiID in list(roiDict.keys()):
             outStream.write("    <Mask Type=\"{str}\" ".format(str=roiID))
             outStream.write(" Filename=\"{str}\" />\n".format(str=roiDict[roiID]))
 
@@ -125,12 +127,12 @@ def xmlGenerator(p_templateDict,
     # template
     # :: p_templateDict { t1:t1Filename }
     outStream.write("  <DataSet Name=\"template\" Type=\"Atlas\" >\n")
-    for imgType in p_templateDict.iterkeys():
+    for imgType in list(p_templateDict.keys()):
         outStream.write("      <Image Type=\"{tp}\" Filename=\"{fn}\" />\n".format(tp=imgType,
                                                                                    fn=p_templateDict[imgType]))
-    for featureImgType in p_featureImageFilenames.iterkeys():
+    for featureImgType in list(p_featureImageFilenames.keys()):
         outStream.write("      <Image Type=\"{tp}\" Filename=\"na\" />\n".format(tp=featureImgType))
-    for spType in p_templateSpatialLocation.iterkeys():
+    for spType in list(p_templateSpatialLocation.keys()):
         outStream.write("      <SpatialLocation Type=\"{tp}\" Filename=\"{fn}\" />\n".format(tp=spType,
                                                                                              fn=p_templateSpatialLocation[spType]))
     outStream.write(" </DataSet>\n")
@@ -192,10 +194,10 @@ def xmlGenerator(p_templateDict,
     #
     if not p_inputVectorCreateDict:
         p_inputVectorCreateDict = {}
-        for roiID in p_roiList.iterkeys():
+        for roiID in list(p_roiList.keys()):
             p_inputVectorCreateDict[roiID] = 'true'
 
-    for roiID in p_roiList.iterkeys():
+    for roiID in list(p_roiList.keys()):
         addProbabilityMapElement(p_roiList[roiID],
                                  roiID,
                                  p_gaussianSigma,
@@ -220,7 +222,7 @@ def xmlGenerator(p_templateDict,
     import glob
     import os
 
-    for sessionKey in dataDictionary.iterkeys():
+    for sessionKey in list(dataDictionary.keys()):
         session = dataDictionary[sessionKey]
         if 'featureImageDict' in session:
             featureImageDict = session['featureImageDict']

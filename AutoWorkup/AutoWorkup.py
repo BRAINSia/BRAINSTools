@@ -2,6 +2,7 @@
 
 from __future__ import print_function
 from __future__ import absolute_import
+from past.builtins import execfile
 def load_modules(modules):
     """ The command 'module' is actually a script call in bash:
 
@@ -61,7 +62,7 @@ def setup_environment(argv):
         configure_FS = validatePath(os.path.join(utilities_path, 'utilities', 'configure_FS.py'), False, False)
         execfile(configure_FS, dict(FS_VARS=misc.FS_VARS, env=environment['env']))
         print("FREESURFER needs to check for sane environment here!")  # TODO: raise warning, write method, what???
-    for key, value in environment['env'].items():
+    for key, value in list(environment['env'].items()):
         if key in ['PATH', 'PYTHONPATH'] + misc.FS_VARS:
             pass
         else:

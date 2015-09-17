@@ -106,7 +106,7 @@ class SQLiteGrabber(IOBase):
         if self.inputs.constraints:
             query += " WHERE"
             for key, value in self.inputs.constraints:
-                if isinstance(value, str) or isinstance(value, unicode):
+                if isinstance(value, str) or isinstance(value, str):
                     query += " {column}='{value}'".format(column=key, value=value)
                 elif isinstance(value, list):
                     query += " {column} IN (".format(column=key)

@@ -1,4 +1,6 @@
 from __future__ import print_function
+from builtins import map
+from builtins import range
 import numpy as np
 import os.path
 
@@ -12,7 +14,7 @@ labels = ['caudate', 'putamen', 'hippocampus', 'thalamus', 'accumben', 'globus',
 
 
 def constructLabels(labels):
-    numbers = range(1, ((len(labels) * 2) + 1))
+    numbers = list(range(1, ((len(labels) * 2) + 1)))
     full_labels = []
     index = 0
     for label in labels:

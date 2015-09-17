@@ -32,6 +32,7 @@ Examples:
 """
 from __future__ import print_function
 from __future__ import absolute_import
+from builtins import range
 import glob
 import os
 import sys
@@ -123,15 +124,15 @@ def MergeByExtendListElements(t1s, t2s, pds, fls, labels, posteriors, passive_in
         if labels[subject_index] is not None:
             ListOfImagesDictionaries[subject_index]['BRAINMASK'] = labels[subject_index]
         print(ListOfImagesDictionaries[subject_index])
-        for key, value in posteriors.items():
+        for key, value in list(posteriors.items()):
             # print "key:", key, " -> value:", value
             ListOfImagesDictionaries[subject_index][key] = value[subject_index]
             interpolationMapping[key] = DefaultContinuousInterpolationType
-        for key, value in passive_intensities.items():
+        for key, value in list(passive_intensities.items()):
             # print "key:", key, " -> value:", value
             ListOfImagesDictionaries[subject_index][key] = value[subject_index]
             interpolationMapping[key] = DefaultContinuousInterpolationType
-        for key, value in passive_masks.items():
+        for key, value in list(passive_masks.items()):
             # print "key:", key, " -> value:", value
             ListOfImagesDictionaries[subject_index][key] = value[subject_index]
             interpolationMapping[key] = 'MultiLabel'

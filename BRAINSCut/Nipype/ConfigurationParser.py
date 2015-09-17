@@ -1,4 +1,10 @@
 from __future__ import print_function
+from __future__ import division
+from future import standard_library
+standard_library.install_aliases()
+from builtins import str
+from builtins import zip
+from past.utils import old_div
 
 ##############################################################################
 
@@ -14,7 +20,7 @@ def getOutputDirDict(configurationFilename):
                             listFiles['applyFeatureListFileDictionary'.lower()])
     outputDirDict = {}
     print(applyDict)
-    for sessionID in applyDict.iterkeys():
+    for sessionID in list(applyDict.keys()):
         outputDirDict[sessionID] = 'apply_' + sessionID
     print(outputDirDict)
     print(outputDirDict)
@@ -34,7 +40,7 @@ def ConfigurationSectionMap(configurationFilename):
            """.format( fn=configurationFilename) )
     import sys
     import os
-    import ConfigParser
+    import configparser
     import ast
 
     if os.path.exists(configurationFilename):
@@ -54,7 +60,7 @@ def ConfigurationSectionMap(configurationFilename):
                              "normalization"]
                             )
 
-    m_configuration = ConfigParser.ConfigParser()
+    m_configuration = configparser.ConfigParser()
     print( """READ
            {fn}.""".format( fn=configurationFilename ))
     m_configuration.read(configurationFilename)
@@ -129,14 +135,14 @@ def BRAINSCutCMDFromConfigFile(configurationFilename,
 
     import os
     p_probMapDict = {}
-    for roi in probabilityMapDict.iterkeys():
+    for roi in list(probabilityMapDict.keys()):
         p_probMapDict[roi] = os.path.abspath(probabilityMapDict[roi])
 
     p_vectorFilename = os.path.abspath(vectorFilename)
     p_modelFilename = os.path.abspath(modelFilename)
     p_xmlFilename = os.path.abspath(xmlFilename)
     p_applyModelOutputDirDict = {}
-    for sessionID in applyModelOutputDirDict.iterkeys():
+    for sessionID in list(applyModelOutputDirDict.keys()):
         p_applyModelOutputDirDict[sessionID] = os.path.abspath(applyModelOutputDirDict[sessionID])
 
     returnList = xmlGenerator(m_templateDict,
@@ -154,7 +160,7 @@ def BRAINSCutCMDFromConfigFile(configurationFilename,
                               applyModel,
                               p_applyModelOutputDirDict)
     optionStr = ""
-    for option in methodParameter.iterkeys():
+    for option in list(methodParameter.keys()):
         optionStr = optionStr + " {option} {value} ".format(option=option, value=methodParameter[option])
     returnList['outputDirDict'] = p_applyModelOutputDirDict
 
@@ -218,7 +224,7 @@ def BRAINSCutGenerateProbabilityMap(configurationFilename,
            """.format( str=probabilityMapDict) )
 
     import os
-    for roi in probabilityMapDict.iterkeys():
+    for roi in list(probabilityMapDict.keys()):
         print(os.path.abspath(probabilityMapDict[roi]))
         probDir = os.path.dirname(os.path.abspath(probabilityMapDict[roi]))
         if not os.path.exists(probDir):
@@ -242,7 +248,7 @@ def BRAINSCutGenerateProbabilityMap(configurationFilename,
                                             dummyMethodParameter)
     returnProbMapList = returnList['probabilityMap']
     import sys
-    if returnProbMapList.keys() != probabilityMapDict.keys():
+    if list(returnProbMapList.keys()) != list(probabilityMapDict.keys()):
         print("""ERROR
               returnProbMapList has to match probabilityMapDict
               in BRAINSCutGenerateProbabilityMap
@@ -268,7 +274,7 @@ def BRAINSCutCreateVector(configurationFilename,
     print(BRAINSCutCreateVector)
     import os
     import sys
-    for roi in probabilityMapDict.iterkeys():
+    for roi in list(probabilityMapDict.keys()):
         if not os.path.exists(probabilityMapDict[roi]):
             print( """ ERROR
                    {fn}  does not exist.
@@ -390,7 +396,7 @@ def BRAINSCutApplyModel(configurationFilename,
                   {fn}""".format( fn=normalization))
             sys.exit()
     p_probMapDict = {}
-    for roi in probabilityMapDict.iterkeys():
+    for roi in list(probabilityMapDict.keys()):
         if not os.path.exists(probabilityMapDict[roi]):
             print( """ ERROR
                    probabilityMapDict[ roi ]  does not exist.
@@ -422,7 +428,7 @@ def BRAINSCutApplyModel(configurationFilename,
                                             methodParameter)
     import glob
     outputLabelDict = {}
-    for session in returnList['outputDirDict'].iterkeys():
+    for session in list(returnList['outputDirDict'].keys()):
         outputDir = returnList['outputDirDict'][session]
         print(outputDir)
         print(outputDir)
@@ -449,12 +455,12 @@ def BRAINSCutApplyModel(configurationFilename,
 def updating(originalFilename,
              editedFilename,
              whatToChangeDict):
-    import ConfigParser
+    import configparser
 
-    inConfigParser = ConfigParser.ConfigParser()
+    inConfigParser = configparser.ConfigParser()
     inConfigParser.read(originalFilename)
 
-    outConfigParser = ConfigParser.RawConfigParser()
+    outConfigParser = configparser.RawConfigParser()
 
     for section in inConfigParser.sections():
         outConfigParser.add_section(section)
@@ -493,7 +499,7 @@ def ConfigurationFileEditor(originalFilename,
         new_ROIDictTemplate[key] = 'false'
 
     editedFilenames = {}
-    for roi in roiDict.iterkeys():
+    for roi in list(roiDict.keys()):
         new_ROIDict = new_ROIDictTemplate.copy()
         new_ROIDict[roi] = 'true'
         # print( "{roi} set to {boolean}".format( roi=roi, boolean=new_ROIDict[roi]))
@@ -501,12 +507,12 @@ def ConfigurationFileEditor(originalFilename,
         new_ConfigFilename = editedFilenamePrefix + "_" + roi + ".config"
 
         newValues = [new_ROIDict]
-        whatToChange = dict(zip(varToChange, newValues))
+        whatToChange = dict(list(zip(varToChange, newValues)))
         editedFilenames[roi] = updating(originalFilename,
                                         new_ConfigFilename,
                                         whatToChange)
 
-    return editedFilenames.values()
+    return list(editedFilenames.values())
 
 #########################################################################################
 
@@ -538,7 +544,7 @@ def BalanceInputVectors(inputVectorFilenames):
     print(TVC)
     print(TVC)
     import operator
-    maxFile = max(TVC.iteritems(), key=operator.itemgetter(1))[0]
+    maxFile = max(iter(list(TVC.items())), key=operator.itemgetter(1))[0]
     # maxFile = max(TVC)
     print (maxFile)
     print (maxFile)
@@ -561,13 +567,13 @@ def BalanceInputVectors(inputVectorFilenames):
                        " --outputVectorFileBaseName " +
                        outputVectorFilenames[inputVectorFile] +
                        " --inputVectorFileBaseName " + inputVectorFile +
-                       " --resampleProportion " + str(float(maxTVC) / float(TVC[inputVectorFile]))]
+                       " --resampleProportion " + str(old_div(float(maxTVC), float(TVC[inputVectorFile])))]
         print("HACK:  UPSAMPPLING: {0}".format(upsampleCMD))
         subprocess.call(upsampleCMD, shell=True)
         outputVectorFilenames[inFile] = os.path.abspath(outputVectorFilenames[inFile])
 
     ## return list of upsampled file names
-    return outputVectorFilenames.values(), outputVectorHdrFilenames.values()
+    return list(outputVectorFilenames.values()), list(outputVectorHdrFilenames.values())
 
 #########################################################################################
 

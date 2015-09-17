@@ -1,4 +1,6 @@
 from __future__ import print_function
+from builtins import str
+from builtins import range
 FS_VARS = ['FREESURFER_HOME',
            'FSFAST_HOME',
            'FSF_OUTPUT_FORMAT',
@@ -79,14 +81,14 @@ def add_dict(d1, d2, force=False):
         if not force:
             try:
                 print("d1.keys():::")
-                print(d1.keys())
+                print(list(d1.keys()))
                 print("d2.keys():::")
-                print(d2.keys())
+                print(list(d2.keys()))
                 assert set(d1.keys()).isdisjoint(set(d2.keys()))
             except AssertionError:
                 raise ValueError("Dictionaries have one or more duplicate keys")
-        for key in d2.keys():
-            if key in retval.keys() and force:
+        for key in list(d2.keys()):
+            if key in list(retval.keys()) and force:
                 try:
                     retval[key] += d2[key]
                 except:

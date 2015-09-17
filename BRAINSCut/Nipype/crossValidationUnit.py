@@ -38,7 +38,7 @@ def unitWorkUp(configurationFilename,
                                       output_names=['probabilityMapFilename'],
                                       function=this.getProbabilityMapFilename)
                                   )
-    filenameGeneratorND.inputs.roiList = roiDict.keys()
+    filenameGeneratorND.inputs.roiList = list(roiDict.keys())
 
     #
     #--------------------------------  start from generate probability

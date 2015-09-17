@@ -1,10 +1,13 @@
 from __future__ import print_function
+from builtins import str
+from builtins import range
+from builtins import object
 import os
 import sys
 import sqlite3 as lite
 import csv
 
-class SessionDB():
+class SessionDB(object):
     def __init__(self, defaultDBName='TempFileForDB.db', subject_list=[]):
         self.MasterTableName = "MasterDB"
         self.dbName = defaultDBName
@@ -74,7 +77,7 @@ class SessionDB():
                             'subj': row[1],
                             'session': row[2]}
                 rawDict = eval(row[3])
-                for imageType in rawDict.keys():
+                for imageType in list(rawDict.keys()):
                     currDict['type'] = imageType
                     fullPaths = [mountPrefix + i for i in rawDict[imageType]]
                     if len(fullPaths) < 1:
@@ -114,10 +117,10 @@ class SessionDB():
         return self.MasterQueryFilter
 
     def makeSQLiteCommand(self, imageDict):
-        keys = imageDict.keys()
-        vals = imageDict.values()
+        keys = list(imageDict.keys())
+        vals = list(imageDict.values())
         col_names = ",".join(keys)
-        values = ', '.join(map(lambda x: "'" + x + "'", vals))
+        values = ', '.join(["'" + x + "'" for x in vals])
         sqlCommand = "INSERT INTO {_tablename} ({_col_names}) VALUES ({_values});".format(
             _tablename=self.MasterTableName,
             _col_names=col_names, _values=values)

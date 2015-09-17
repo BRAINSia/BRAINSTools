@@ -1,3 +1,5 @@
+from builtins import str
+from builtins import zip
 #!/usr/bin/env python
 
 from nipype.interfaces.base import CommandLine, CommandLineInputSpec, TraitedSpec, File, Directory
@@ -85,7 +87,7 @@ def CreateLabelMap(listOfImages, LabelImageName, CSVFileName, projectid, subject
             myMeasurementMap = ls.GetMeasurementMap(value)
             dictKeys = myMeasurementMap.GetVectorOfMeasurementNames()
             dictValues = myMeasurementMap.GetVectorOfMeasurementValues()
-            measurementDict = dict(zip(dictKeys, dictValues))
+            measurementDict = dict(list(zip(dictKeys, dictValues)))
             structVolume = ImageSpacing[0] * ImageSpacing[1] * ImageSpacing[2] * measurementDict['Count']
             writeDictionary['Volume_mm3'] = structVolume
             writeDictionary['Structure'] = name

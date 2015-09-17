@@ -1,4 +1,5 @@
 from __future__ import print_function
+from builtins import range
 ## NOTE: THERE CAN NOT BE ANY GLOBAL imports in this file
 ##       NIPYPE pipeline functions must be self contained
 ##       and any import needed for a function must be
@@ -84,7 +85,7 @@ def ClipT1ImageWithBrainMask(t1_image, brain_labels, clipped_file_name):
 
 
 def UnwrapPosteriorImagesFromDictionaryFunction(postDict):
-    return postDict.values()
+    return list(postDict.values())
 
 
 def ConvertSessionsListOfPosteriorListToDictionaryOfSessionLists(dg_list_list):
@@ -110,7 +111,7 @@ def ConvertSessionsListOfPosteriorListToDictionaryOfSessionLists(dg_list_list):
     for one_session_list in dg_list_list[1:]:
         for postFileName in one_session_list:
             key = basename(postFileName).replace('POSTERIOR_','').replace('.nii.gz','')
-            assert key in dictionary_of_session_list.keys(), "All session list must have the same key values"
+            assert key in list(dictionary_of_session_list.keys()), "All session list must have the same key values"
             dictionary_of_session_list[key].append(postFileName)
     print(dictionary_of_session_list)
     return dictionary_of_session_list

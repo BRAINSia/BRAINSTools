@@ -12,6 +12,12 @@
 #################################################################################
 from __future__ import print_function
 from __future__ import absolute_import
+from past.builtins import execfile
+from future import standard_library
+standard_library.install_aliases()
+from builtins import str
+from builtins import range
+from builtins import object
 import os
 import re
 import sys
@@ -157,7 +163,7 @@ def DoSingleSubjectProcessing(sp_args):
 
 def MasterProcessingController(argv=None):
     import argparse
-    import ConfigParser
+    import configparser
     import csv
     import string
 
@@ -180,7 +186,7 @@ def MasterProcessingController(argv=None):
     parser.add_argument('--version', action='version', version='%(prog)s 1.0')
     args = parser.parse_args()
 
-    config = ConfigParser.ConfigParser(allow_no_value=True)
+    config = configparser.ConfigParser(allow_no_value=True)
     config.read(args.ExperimentConfig)
 
     # Pipeline-specific information
@@ -228,7 +234,7 @@ def MasterProcessingController(argv=None):
         os.makedirs(experiment['output_cache'])
     if not os.path.exists(experiment['output_results']):
         os.makedirs(experiment['output_results'])
-    if 'input_results' in experiment.keys():
+    if 'input_results' in list(experiment.keys()):
         assert os.path.exists(experiment['input_results']), "The previous experiment directory does not exist: {0}".format(experiment['input_results'])
 
     #\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
@@ -268,7 +274,7 @@ def MasterProcessingController(argv=None):
     ## Set custom environmental variables so that subproceses work properly (i.e. for FreeSurfer)
     CUSTOM_ENVIRONMENT = eval(environment['misc'])
     # print CUSTOM_ENVIRONMENT
-    for key, value in CUSTOM_ENVIRONMENT.items():
+    for key, value in list(CUSTOM_ENVIRONMENT.items()):
         # print "SETTING: ", key, value
         os.putenv(key, value)
         os.environ[key] = value

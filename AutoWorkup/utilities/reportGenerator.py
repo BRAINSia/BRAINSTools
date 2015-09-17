@@ -77,7 +77,7 @@ def main(REPORT, EXPERIMENT, outdir=None, OUTFILE='/tmp/autoworkup_report.csv', 
                 print(outpath)
             outdict = {}
             olddict = eval(row['imagefiles'])
-            for key in olddict.keys():
+            for key in list(olddict.keys()):
                 if key.startswith('T1'):
                     fname = os.path.join(path, 't1_average_BRAINSABC.nii.gz')
                     newpath = os.path.join(outpath, 't1_average_BRAINSABC.nii.gz')
@@ -97,7 +97,7 @@ if __name__ == "__main__":
 
     args = docopt(__doc__)
     print(args)
-    for key in args.keys():
+    for key in list(args.keys()):
         if key.startswith('-'):
             value = args.pop(key)
             newkey = key.strip("-")

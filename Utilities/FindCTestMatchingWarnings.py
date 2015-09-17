@@ -1,6 +1,7 @@
 #!/bin/python
 
 from __future__ import print_function
+from builtins import range
 import termcolor  # <-- used to make pretty printing in color
 import regex  # <-- support Perl style regular expressions that closely match what is used in CTest
 import sys

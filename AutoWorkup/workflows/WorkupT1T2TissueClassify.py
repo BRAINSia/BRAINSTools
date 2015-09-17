@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from __future__ import print_function
+from builtins import zip
 from nipype.interfaces.base import CommandLine, CommandLineInputSpec, TraitedSpec, File, Directory
 from nipype.interfaces.base import traits, isdefined, BaseInterface
 from nipype.interfaces.utility import Merge, Split, Function, Rename, IdentityInterface
@@ -39,7 +40,7 @@ def MakePosteriorDictionaryFunc(posteriorImages):
         print("ERROR: ", posteriorNames)
         print("ERROR: ", POSTERIORS)
         return -1
-    temp_dictionary = dict(zip(POSTERIORS, posteriorImages))
+    temp_dictionary = dict(list(zip(POSTERIORS, posteriorImages)))
     return temp_dictionary
 
 

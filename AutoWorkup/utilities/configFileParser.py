@@ -20,7 +20,12 @@ Options:
 """
 from __future__ import print_function
 from __future__ import absolute_import
-from ConfigParser import ConfigParser
+from __future__ import division
+from future import standard_library
+standard_library.install_aliases()
+from past.utils import old_div
+from builtins import object
+from configparser import ConfigParser
 import os
 import sys
 
@@ -39,12 +44,12 @@ def parseEnvironment(parser, environment):
         retval['env'] = eval(parser.get(environment, 'ENVAR_DICT'))
     else:
         retval['env'] = dict()
-    if 'PYTHONPATH' in retval['env'].keys():
+    if 'PYTHONPATH' in list(retval['env'].keys()):
         pythonpath = appendPathList(parser.get(environment, 'APPEND_PYTHONPATH'), retval['env']['PYTHONPATH'])
         retval['env']['PYTHONPATH'] = pythonpath  # Create append to PYTHONPATH
     else:
         retval['env']['PYTHONPATH'] = parser.get(environment, 'APPEND_PYTHONPATH')
-    if 'PATH' in retval['env'].keys():
+    if 'PATH' in list(retval['env'].keys()):
         envpath = appendPathList(parser.get(environment, 'APPEND_PATH'), retval['env']['PATH'])
         retval['env']['PATH'] = envpath  # Create append to PATH
     else:
@@ -208,7 +213,7 @@ def get_cpus(option):
             print("RUNNING WITHOUT POOL BUILDING")
     else:
         threads = int(suffix.strip('_'))
-    return int(total_cpus / threads)
+    return int(old_div(total_cpus, threads))
 
 
 def _nipype_plugin_config(wfrun, cluster, template=''):

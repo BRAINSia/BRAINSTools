@@ -1,4 +1,6 @@
 from __future__ import print_function
+from builtins import str
+from builtins import object
 import argparse
 import csv
 import os
@@ -6,7 +8,7 @@ import textwrap
 import sqlite3 as lite
 
 
-class UpdateAutoWorkup():
+class UpdateAutoWorkup(object):
 
     def updateAutoWorkup(self):
         newPath = self._generateNewPathName()
@@ -24,7 +26,7 @@ class UpdateAutoWorkup():
                 newImagesList = NewImageDict.getNewImagesList(project, subject, session)
                 scanDict = eval(row[3])
                 if newImagesList != []:
-                    if inputArguments.modality not in scanDict.keys():
+                    if inputArguments.modality not in list(scanDict.keys()):
                         scanDict[inputArguments.modality] = newImagesList
                     else:
                         for filepath in newImagesList:
@@ -40,7 +42,7 @@ class UpdateAutoWorkup():
         return newPath
 
 
-class MakeNewImageDict():
+class MakeNewImageDict(object):
 
     def __init__(self):
         self.newImageDict = dict()
@@ -88,10 +90,10 @@ class MakeNewImageDict():
         dbCur.close()
 
     def _makeSQLiteCommand(self, imageDict):
-        keys = imageDict.keys()
-        vals = imageDict.values()
+        keys = list(imageDict.keys())
+        vals = list(imageDict.values())
         col_names = ",".join(keys)
-        values = ', '.join(map(lambda x: "'" + x + "'", vals))
+        values = ', '.join(["'" + x + "'" for x in vals])
         sqlCommand = "INSERT INTO {dbTableName} ({col_names}) VALUES ({values});".format(dbTableName=self.dbTableName,
                                                                                          col_names=col_names, values=values)
         return sqlCommand

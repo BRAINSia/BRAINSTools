@@ -1,4 +1,5 @@
 from __future__ import print_function
+from builtins import str
 ## Analysis interface for BAW version
 ## input: segmentations from BCut
 ##        manual traces
@@ -17,7 +18,7 @@ def get_global_sge_script(pythonPathsList, binPathsList, customEnvironment={}):
 so that all the python modules and commands are pathed properly"""
 
     custEnvString = ""
-    for key, value in customEnvironment.items():
+    for key, value in list(customEnvironment.items()):
         custEnvString += "export " + key + "=" + value + "\n"
 
     PYTHONPATH = ":".join(pythonPathsList)
@@ -47,7 +48,7 @@ def writeCSV(dataDictList,
              outputCSVFilename):
     import csv
     f = open(outputCSVFilename, 'wb')
-    w = csv.DictWriter(f, dataDictList[0].keys())
+    w = csv.DictWriter(f, list(dataDictList[0].keys()))
     w.writeheader()
     for row in dataDictList:
         w.writerow(row)
@@ -251,7 +252,7 @@ def similarityComputeWorkflow(ResultDir,
     #
     # get roiList
     #
-    roiList = configMap['Options']['roiBooleanCreator'.lower()].keys()
+    roiList = list(configMap['Options']['roiBooleanCreator'.lower()].keys())
     print(""" ROIList:::
           {str}
           """.format( str=roiList ))
@@ -262,7 +263,7 @@ def similarityComputeWorkflow(ResultDir,
     import XMLConfigurationGenerator
     subjectListFilename = configMap['ListFiles']['subjectListFilename'.lower()]
     manualDict = XMLConfigurationGenerator.combineCSVs(subjectListFilename, {})
-    sessionList = manualDict.keys()
+    sessionList = list(manualDict.keys())
 
     #
     # workflow

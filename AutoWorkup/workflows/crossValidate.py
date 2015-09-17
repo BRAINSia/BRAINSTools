@@ -32,6 +32,8 @@ PIPELINE
 """
 from __future__ import print_function
 from __future__ import absolute_import
+from builtins import str
+from builtins import range
 import os.path
 
 from nipype.pipeline.engine import Workflow, Node, MapNode
@@ -57,10 +59,10 @@ def subsample_crossValidationSet(length, test_size):
     """
     test_size = int(test_size)
     subsample_data_index = []
-    base_train = range(test_size)
+    base_train = list(range(test_size))
     for x in range(0, length, test_size):
         test = [y + x for y in base_train]
-        train = range(length)
+        train = list(range(length))
         for y in test:
             try:
                 train.remove(y)
@@ -203,7 +205,7 @@ class CrossValidationJointFusionWorkflow(Workflow):
         print("="*80)
 
         iters = {}
-        label = csvOut.outputs.__dict__.keys()[0]
+        label = list(csvOut.outputs.__dict__.keys())[0]
         result = eval("csvOut.outputs.{0}".format(label))
         iters['tests'], iters['trains'] = subsample_crossValidationSet(result, self.sample_size.default_value)
         # Main event

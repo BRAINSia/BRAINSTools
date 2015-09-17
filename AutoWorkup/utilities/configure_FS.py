@@ -4,7 +4,7 @@
 """
 from __future__ import absolute_import
 try:
-    env.keys()
+    list(env.keys())
     FS_VARS
 except NameError as AttributeError:
     raise AssertionError(

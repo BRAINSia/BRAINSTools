@@ -120,7 +120,7 @@ class RF12BRAINSCutWrapper(CommandLine):
         return self._outputs_from_inputs(outputs)
 
     def _outputs_from_inputs(self, outputs):
-        for name in outputs.keys():
+        for name in list(outputs.keys()):
             coresponding_input = getattr(self.inputs, name)
             if isdefined(coresponding_input):
                 if isinstance(coresponding_input, bool) and coresponding_input == True:

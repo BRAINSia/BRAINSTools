@@ -27,7 +27,7 @@ class DTIPrepext(DTIPrep):
                                                  ]
         full_outputs = self._outputs().get()
         pruned_outputs = dict()
-        for key, value in full_outputs.iteritems():
+        for key, value in list(full_outputs.items()):
             if key not in custom_implied_outputs_with_no_inputs:
                 pruned_outputs[key] = value
         outputs = super(DTIPrepext, self)._outputs_from_inputs(pruned_outputs)

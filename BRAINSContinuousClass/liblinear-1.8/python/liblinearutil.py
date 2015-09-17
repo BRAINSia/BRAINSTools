@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from __future__ import print_function
+from builtins import zip
 from liblinear import *
 
 def svm_read_problem(data_file_name):

@@ -1,11 +1,12 @@
 from __future__ import print_function
+from builtins import object
 import os
 import argparse
 import csv
 import sys
 
 
-class runOneAW():
+class runOneAW(object):
 
     def main(self):
         self.makeOuputDir()

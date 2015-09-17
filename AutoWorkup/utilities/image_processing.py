@@ -1,6 +1,7 @@
 """
 Image processing functions for pipelines
 """
+from builtins import range
 
 def FixWMPartitioning(brainMask, PosteriorsList):
     """"There were some errors in mis-classifications for WM/NON_WM"""

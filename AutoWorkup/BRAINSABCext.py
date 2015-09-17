@@ -1,3 +1,5 @@
+from builtins import range
+from builtins import object
 from nipype.interfaces.base import CommandLine, CommandLineInputSpec, TraitedSpec, File, Directory, traits, isdefined, InputMultiPath, OutputMultiPath
 import os
 from nipype.interfaces.semtools.segmentation.specialized import BRAINSABCOutputSpec, BRAINSABCInputSpec, BRAINSABC
@@ -6,7 +8,7 @@ from nipype.interfaces.semtools.segmentation.specialized import BRAINSABCOutputS
 from xml.etree import ElementTree as et
 
 
-class GetPosteriorsFromAtlasXML():
+class GetPosteriorsFromAtlasXML(object):
 
     def __init__(self, xmlFile):
         self.xmlFile = xmlFile
@@ -25,7 +27,7 @@ class GetPosteriorsFromAtlasXML():
     def getPriorTypeNameList(self, xmlString):
         myelem = et.fromstring(xmlString)
         elementsList = myelem.getiterator()
-        iterator = range(len(elementsList))
+        iterator = list(range(len(elementsList)))
         priorTypeNameList = list()
         for i in iterator:
             ## the Prior type is the next item in elementsList after a Prior tag:
@@ -72,7 +74,7 @@ class BRAINSABCext(BRAINSABC):
                                                  ]
         full_outputs = self.output_spec().get()
         pruned_outputs = dict()
-        for key, value in full_outputs.iteritems():
+        for key, value in list(full_outputs.items()):
             if key not in custom_implied_outputs_with_no_inputs:
                 pruned_outputs[key] = value
         outputs = super(BRAINSABCext, self)._outputs_from_inputs(pruned_outputs)
@@ -80,7 +82,7 @@ class BRAINSABCext(BRAINSABC):
                        'T2': ('outputT2AverageImage', 't2_average_BRAINSABC.nii.gz'),
                        'PD': ('outputPDAverageImage', 'pd_average_BRAINSABC.nii.gz'),
                        'FL': ('outputFLAverageImage', 'fl_average_BRAINSABC.nii.gz')}
-        for key, values in input_check.iteritems():
+        for key, values in list(input_check.items()):
             if key in self.inputs.inputVolumeTypes:
                 outputs[values[0]] = os.path.abspath(values[1])
             else:

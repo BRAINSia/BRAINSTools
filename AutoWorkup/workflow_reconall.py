@@ -6,6 +6,7 @@ from nipype.interfaces.utility import Function,IdentityInterface
 import nipype.pipeline.engine as pe  # pypeline engine
 from nipype.interfaces.freesurfer import *
 
+
 def VerifyInputs(T1sList):
     ##TODO Make this its own node
     ##TODO Convert .mgz files to .nii.gz
@@ -47,7 +48,15 @@ def mkdir_p(path):
         else:
             raise
 
+def outputfilename(subjects_dir, filename, subfolder1='mri', subfolder2=''):
+    dest_dir = os.path.join(
+        subjects_dir, subject_id, subfolder1, subfolder2)
+    if not os.path.isdir(dest_dir):
+        mkdir_p(dest_dir)
+    return os.path.join(dest_dir, filename)
+
 def CreateStandardOutFileNames(input_T1s, subject_id, subjects_dir):
+    ##TODO: Get rid of this method and the node that uses it
     import os
     InputVols = list()
     Iscaleout = list()
@@ -88,18 +97,7 @@ def copy_file(in_file, out_file=None):
     shutil.copy(in_file, out_file)
     return out_file
 
-def create_reconall(in_T1s, subject_id, in_T2, in_FLAIR, subjects_dir, qcache, cw256, fs_home):
-
-    def outputfilename(filename, subfolder1='mri', subfolder2=''):
-        dest_dir = os.path.join(
-            subjects_dir, subject_id, subfolder1, subfolder2)
-        if not os.path.isdir(dest_dir):
-            mkdir_p(dest_dir)
-        return os.path.join(dest_dir, filename)
-
-    # Workflow Configurations
-    reconall = pe.Workflow(name="recon-all")
-
+def create_AutoRecon1(subject_id, subjects_dir, in_T1s, in_T2, in_FLAIR, cw256, fs_home):    
     # AutoRecon1
     # Workflow
     ar1_wf = pe.Workflow(name='AutoRecon1')
@@ -134,7 +132,32 @@ def create_reconall(in_T1s, subject_id, in_T2, in_FLAIR, subjects_dir, qcache, c
                      [('InputVols', 'out_file')]),
                     ])
 
+    # T2 image preparation
+    if in_T2 != None:
+        # Create T2raw.mgz
+        # mri_convert
+        ar1_inputs.inputs.Raw_T2 = in_T2
+        T2_convert = pe.Node(MRIConvert(), name="T2_convert")
+        T2_convert.inputs.out_file = outputfilename(subjects_dir, 'T2raw.mgz', 'mri', 'orig')
+        T2_convert.inputs.no_scale = True
+        ar1_wf.connect([(ar1_inputs, T2_convert, [('Raw_T2', 'in_file')]),
+                        ]) 
 
+    if in_FLAIR != None:
+        # FLAIR image preparation
+        # Create FLAIRraw.mgz
+        # mri_convert
+        ar1_inputs.inputs.Raw_FLAIR = in_FLAIR
+        FLAIR_convert = pe.Node(MRIConvert(), name="FLAIR_convert")
+        FLAIR_convert.inputs.out_file = outputfilename(subjects_dir, 
+            'FLAIRraw.mgz', 'mri', 'orig')
+        FLAIR_convert.inputs.no_scale = True
+        ar1_wf.connect([(ar1_inputs, FLAIR_convert, [('Raw_FLAIR', 'in_file')]),
+                        ])
+
+
+
+    
     # Motion Correction
     """
     When there are multiple source volumes, this step will correct for small
@@ -145,7 +168,7 @@ def create_reconall(in_T1s, subject_id, in_T2, in_FLAIR, subjects_dir, qcache, c
 
     create_long_template = pe.Node(RobustTemplate(), name="Robust_Template")
     create_long_template.inputs.average_metric = 'median'
-    create_long_template.inputs.template_output = outputfilename('rawavg.mgz')
+    create_long_template.inputs.template_output = outputfilename(subjects_dir, 'rawavg.mgz')
     create_long_template.inputs.auto_detect_sensitivity = True
     create_long_template.inputs.initial_timepoint = 1
     create_long_template.inputs.fixed_timepoint = True
@@ -160,7 +183,7 @@ def create_reconall(in_T1s, subject_id, in_T2, in_FLAIR, subjects_dir, qcache, c
 
     # mri_convert
     conform_template = pe.Node(MRIConvert(), name='Conform_Template')
-    conform_template.inputs.out_file = outputfilename('orig.mgz')
+    conform_template.inputs.out_file = outputfilename(subjects_dir, 'orig.mgz')
     conform_template.inputs.conform = True
     conform_template.inputs.cw256 = cw256    
     conform_template.inputs.resample_type = 'cubic'
@@ -170,7 +193,7 @@ def create_reconall(in_T1s, subject_id, in_T2, in_FLAIR, subjects_dir, qcache, c
 
     add_to_header = pe.Node(AddXFormToHeader(), name="Add_Transform_to_Header")
     add_to_header.inputs.copy_name = True
-    add_to_header.inputs.out_file = outputfilename('orig.mgz')
+    add_to_header.inputs.out_file = outputfilename(subjects_dir, 'orig.mgz')
 
     ar1_wf.connect([(conform_template, add_to_header, [('out_file', 'in_file')]),
                     (out_fn, add_to_header, [('XFMout', 'transform')]),
@@ -188,14 +211,14 @@ def create_reconall(in_T1s, subject_id, in_T2, in_FLAIR, subjects_dir, qcache, c
     bias_correction.inputs.protocol_iterations = 1000
     bias_correction.inputs.distance = 50
     bias_correction.inputs.no_rescale = True
-    bias_correction.inputs.out_file = outputfilename('orig_nu.mgz')
+    bias_correction.inputs.out_file = outputfilename(subjects_dir, 'orig_nu.mgz')
 
     ar1_wf.connect([(add_to_header, bias_correction, [('out_file', 'in_file')]),
                     ])
 
     talairach_avi = pe.Node(TalairachAVI(), name="Compute_Transform")
     talairach_avi.inputs.atlas = '3T18yoSchwartzReactN32_as_orig'
-    talairach_avi.inputs.out_file = outputfilename(
+    talairach_avi.inputs.out_file = outputfilename(subjects_dir, 
         'talairach.auto.xfm', 'mri', 'transforms')
 
     ar1_wf.connect([(bias_correction, talairach_avi, [('out_file', 'in_file')]),
@@ -220,7 +243,7 @@ def create_reconall(in_T1s, subject_id, in_T2, in_FLAIR, subjects_dir, qcache, c
                                    ['log_file'],
                                    awk),
                           name='Awk')
-    awk_logfile.inputs.awk_file = os.path.join(os.path.abspath(os.environ.get('FREESURFER_HOME')),
+    awk_logfile.inputs.awk_file = os.path.join(fs_home,
                                                'bin',
                                                'extract_talairach_avi_QA.awk')
     ar1_wf.connect([(talairach_avi, awk_logfile, [('out_log', 'log_file')]),
@@ -239,7 +262,7 @@ def create_reconall(in_T1s, subject_id, in_T2, in_FLAIR, subjects_dir, qcache, c
 
     mri_normalize = pe.Node(Normalize(), name="Normalize_T1")
     mri_normalize.inputs.gradient = 1
-    mri_normalize.inputs.out_file = outputfilename('T1.mgz')
+    mri_normalize.inputs.out_file = outputfilename(subjects_dir, 'T1.mgz')
     ar1_wf.connect([(bias_correction, mri_normalize, [('out_file', 'in_file')]),
                     (copy_transform, mri_normalize,
                      [('out_file', 'transform')]),
@@ -252,10 +275,10 @@ def create_reconall(in_T1s, subject_id, in_T2, in_FLAIR, subjects_dir, qcache, c
     """
 
     mri_em_register = pe.Node(EMRegister(), name="EM_Register")
-    mri_em_register.inputs.template = os.path.join(os.path.abspath(os.environ.get('FREESURFER_HOME')),
+    mri_em_register.inputs.template = os.path.join(fs_home,
                                                    'average',
                                                    'RB_all_withskull_2014-08-21.gca')
-    mri_em_register.inputs.out_file = outputfilename(
+    mri_em_register.inputs.out_file = outputfilename(subjects_dir, 
         'talairach_with_skull.lta', 'mri', 'transforms')
     mri_em_register.inputs.skull = True
     ar1_wf.connect([(bias_correction, mri_em_register, [('out_file', 'in_file')]),
@@ -264,10 +287,10 @@ def create_reconall(in_T1s, subject_id, in_T2, in_FLAIR, subjects_dir, qcache, c
     watershed_skull_strip = pe.Node(
         WatershedSkullStrip(), name='Watershed_Skull_Strip')
     watershed_skull_strip.inputs.t1 = True
-    watershed_skull_strip.inputs.brain_atlas = os.path.join(os.path.abspath(os.environ.get('FREESURFER_HOME')),
+    watershed_skull_strip.inputs.brain_atlas = os.path.join(fs_home,
                                                             'average',
                                                             'RB_all_withskull_2014-08-21.gca')
-    watershed_skull_strip.inputs.out_file = outputfilename(
+    watershed_skull_strip.inputs.out_file = outputfilename(subjects_dir, 
         'brainmask.auto.mgz')
     ar1_wf.connect([(mri_normalize, watershed_skull_strip, [('out_file', 'in_file')]),
                     (mri_em_register, watershed_skull_strip,
@@ -278,11 +301,15 @@ def create_reconall(in_T1s, subject_id, in_T2, in_FLAIR, subjects_dir, qcache, c
                                       ['out_file'],
                                       copy_file),
                              name='Copy_Brainmask')
-    copy_brainmask.inputs.out_file = outputfilename('brainmask.mgz')
+    copy_brainmask.inputs.out_file = outputfilename(subjects_dir, 'brainmask.mgz')
 
     ar1_wf.connect([(watershed_skull_strip, copy_brainmask, [('brain_vol', 'in_file')]),
                     ])
 
+    return ar1_wf
+
+def create_AutoRecon2(subjects_dir, fs_home):
+    
     # AutoRecon2
     # Workflow
     ar2_wf = pe.Workflow(name="AutoRecon2")
@@ -294,8 +321,7 @@ def create_reconall(in_T1s, subject_id, in_T2, in_FLAIR, subjects_dir, qcache, c
                                                    'subject_id',
                                                    'lh',
                                                    'rh',
-                                                   'subjects_dir',
-                                                   'freesurfer_home']),
+                                                   'subjects_dir']),
                          run_without_submitting=True,
                          name='AutoRecon2_Inputs')
     ar2_inputs.inputs.lh = 'lh'
@@ -312,7 +338,7 @@ def create_reconall(in_T1s, subject_id, in_T2, in_FLAIR, subjects_dir, qcache, c
         MNIBiasCorrection(), name="Intensity_Correction")
     intensity_correction.inputs.iterations = 1
     intensity_correction.inputs.protocol_iterations = 1000
-    intensity_correction.inputs.out_file = outputfilename('nu.mgz')
+    intensity_correction.inputs.out_file = outputfilename(subjects_dir, 'nu.mgz')
     ar2_wf.connect([(ar2_inputs, intensity_correction, [('orig', 'in_file'),
                                                         ('brainmask', 'mask'),
                                                         ('transform',
@@ -336,10 +362,10 @@ def create_reconall(in_T1s, subject_id, in_T2, in_FLAIR, subjects_dir, qcache, c
     atlas found in FREESURFER_HOME/average (see -gca flag for more info).
     """
     align_transform = pe.Node(EMRegister(), name="Align_Transform")
-    align_transform.inputs.template = os.path.join(os.path.abspath(os.environ.get('FREESURFER_HOME')),
+    align_transform.inputs.template = os.path.join(fs_home,
                                                    'average',
                                                    'RB_all_2014-08-21.gca')
-    align_transform.inputs.out_file = outputfilename(
+    align_transform.inputs.out_file = outputfilename(subjects_dir, 
         'talairach.lta', 'mri', 'transforms')
     align_transform.inputs.nbrspacing = 3
     ar2_wf.connect([(ar2_inputs, align_transform, [('brainmask', 'mask')]),
@@ -354,9 +380,9 @@ def create_reconall(in_T1s, subject_id, in_T2, in_FLAIR, subjects_dir, qcache, c
     estimate the bias field/scalings. Creates mri/norm.mgz.
     """
     ca_normalize = pe.Node(CANormalize(), name='CA_Normalize')
-    ca_normalize.inputs.out_file = outputfilename('norm.mgz')
-    ca_normalize.inputs.control_points = outputfilename('ctrl_pts.mgz')
-    ca_normalize.inputs.atlas = os.path.join(os.path.abspath(os.environ.get('FREESURFER_HOME')),
+    ca_normalize.inputs.out_file = outputfilename(subjects_dir, 'norm.mgz')
+    ca_normalize.inputs.control_points = outputfilename(subjects_dir, 'ctrl_pts.mgz')
+    ca_normalize.inputs.atlas = os.path.join(fs_home,
                                              'average',
                                              'RB_all_2014-08-21.gca')
     ar2_wf.connect([(align_transform, ca_normalize, [('out_file', 'transform')]),
@@ -368,10 +394,10 @@ def create_reconall(in_T1s, subject_id, in_T2, in_FLAIR, subjects_dir, qcache, c
     ca_register = pe.Node(CARegister(), name='CA_Register')
     ca_register.inputs.align = 'after'
     ca_register.inputs.no_big_ventricles = True
-    ca_register.inputs.template = os.path.join(os.path.abspath(os.environ.get('FREESURFER_HOME')),
+    ca_register.inputs.template = os.path.join(fs_home,
                                                'average',
                                                'RB_all_2014-08-21.gca')
-    ca_register.inputs.out_file = outputfilename(
+    ca_register.inputs.out_file = outputfilename(subjects_dir, 
         'talairach.m3z', 'mri', 'transforms')
     ar2_wf.connect([(ca_normalize, ca_register, [('out_file', 'in_file')]),
                     (ar2_inputs, ca_register, [('brainmask', 'mask')]),
@@ -385,8 +411,8 @@ def create_reconall(in_T1s, subject_id, in_T2, in_FLAIR, subjects_dir, qcache, c
     """
     remove_neck = pe.Node(RemoveNeck(), name='Remove_Neck')
     remove_neck.inputs.radius = 25
-    remove_neck.inputs.out_file = outputfilename('nu_noneck.mgz')
-    remove_neck.inputs.template = os.path.join(os.path.abspath(os.environ.get('FREESURFER_HOME')),
+    remove_neck.inputs.out_file = outputfilename(subjects_dir, 'nu_noneck.mgz')
+    remove_neck.inputs.template = os.path.join(fs_home,
                                                'average',
                                                'RB_all_2014-08-21.gca')
     ar2_wf.connect([(ca_register, remove_neck, [('out_file', 'transform')]),
@@ -398,9 +424,9 @@ def create_reconall(in_T1s, subject_id, in_T2, in_FLAIR, subjects_dir, qcache, c
     # possessing the skull.
     em_reg_withskull = pe.Node(EMRegister(), name='EM_Register_withSkull')
     em_reg_withskull.inputs.skull = True
-    em_reg_withskull.inputs.out_file = outputfilename(
+    em_reg_withskull.inputs.out_file = outputfilename(subjects_dir, 
         'talairach_with_skull_2.lta', 'mri', 'transforms')
-    em_reg_withskull.inputs.template = os.path.join(os.path.abspath(os.environ.get('FREESURFER_HOME')),
+    em_reg_withskull.inputs.template = os.path.join(fs_home,
                                                     'average',
                                                     'RB_all_withskull_2014-08-21.gca')
 
@@ -414,8 +440,8 @@ def create_reconall(in_T1s, subject_id, in_T2, in_FLAIR, subjects_dir, qcache, c
     ca_label.inputs.relabel_unlikely = (9, .3)
     ca_label.inputs.prior = 0.5
     ca_label.inputs.align = True
-    ca_label.inputs.out_file = outputfilename('aseg.auto_noCCseg.mgz')
-    ca_label.inputs.template = os.path.join(os.path.abspath(os.environ.get('FREESURFER_HOME')),
+    ca_label.inputs.out_file = outputfilename(subjects_dir, 'aseg.auto_noCCseg.mgz')
+    ca_label.inputs.template = os.path.join(fs_home,
                                             'average',
                                             'RB_all_2014-08-21.gca')
     ar2_wf.connect([(ca_normalize, ca_label, [('out_file', 'in_file')]),
@@ -425,9 +451,9 @@ def create_reconall(in_T1s, subject_id, in_T2, in_FLAIR, subjects_dir, qcache, c
     # mri_cc - segments the corpus callosum into five separate labels in the
     # subcortical segmentation volume 'aseg.mgz'
     segment_cc = pe.Node(SegmentCC(), name="Segment_CorpusCallosum")
-    segment_cc.inputs.out_rotation = outputfilename(
+    segment_cc.inputs.out_rotation = outputfilename(subjects_dir, 
         'cc_up.lta', 'mri', 'transforms')
-    segment_cc.inputs.out_file = outputfilename('aseg.auto.mgz')
+    segment_cc.inputs.out_file = outputfilename(subjects_dir, 'aseg.auto.mgz')
     ar2_wf.connect([(ar2_inputs, segment_cc, [('subject_id', 'subject_id'),
                                               ('subjects_dir', 'subjects_dir')]),
                     (ca_label, segment_cc, [('out_file', 'in_file')]),
@@ -438,7 +464,7 @@ def create_reconall(in_T1s, subject_id, in_T2, in_FLAIR, subjects_dir, qcache, c
                                ['out_file'],
                                copy_file),
                       name='Copy_CCSegmentation')
-    copy_cc.inputs.out_file = outputfilename('aseg.presurf.mgz')
+    copy_cc.inputs.out_file = outputfilename(subjects_dir, 'aseg.presurf.mgz')
 
     ar2_wf.connect([(segment_cc, copy_cc, [('out_file', 'in_file')])
                     ])
@@ -451,7 +477,7 @@ def create_reconall(in_T1s, subject_id, in_T2, in_FLAIR, subjects_dir, qcache, c
     brain.mgz volume. The -autorecon2-cp stage begins here.
     """
     normalization2 = pe.Node(Normalize(), name="Normalization2")
-    normalization2.inputs.out_file = outputfilename('brain.mgz')
+    normalization2.inputs.out_file = outputfilename(subjects_dir, 'brain.mgz')
     ar2_wf.connect([(copy_cc, normalization2, [('out_file', 'segmentation')]),
                     (ar2_inputs, normalization2, [('brainmask', 'mask')]),
                     (ca_normalize, normalization2, [('out_file', 'in_file')])
@@ -462,7 +488,7 @@ def create_reconall(in_T1s, subject_id, in_T2, in_FLAIR, subjects_dir, qcache, c
     # Applies brainmask.mgz to brain.mgz to create brain.finalsurfs.mgz.
     mri_mask = pe.Node(ApplyMask(), name="Mask_Brain_Final_Surface")
     mri_mask.inputs.mask_thresh = 5
-    mri_mask.inputs.out_file = outputfilename('brain.finalsurfs.mgz')
+    mri_mask.inputs.out_file = outputfilename(subjects_dir, 'brain.finalsurfs.mgz')
 
     ar2_wf.connect([(normalization2, mri_mask, [('out_file', 'in_file')]),
                     (ar2_inputs, mri_mask, [('brainmask', 'mask_file')])
@@ -477,12 +503,12 @@ def create_reconall(in_T1s, subject_id, in_T2, in_FLAIR, subjects_dir, qcache, c
     """
 
     wm_seg = pe.Node(SegmentWM(), name="Segment_WM")
-    wm_seg.inputs.out_file = outputfilename('wm.seg.mgz')
+    wm_seg.inputs.out_file = outputfilename(subjects_dir, 'wm.seg.mgz')
     ar2_wf.connect([(normalization2, wm_seg, [('out_file', 'in_file')])
                     ])
 
     edit_wm = pe.Node(EditWMwithAseg(), name='Edit_WhiteMatter')
-    edit_wm.inputs.out_file = outputfilename('wm.asegedit.mgz')
+    edit_wm.inputs.out_file = outputfilename(subjects_dir, 'wm.asegedit.mgz')
     edit_wm.inputs.keep_in = True
     ar2_wf.connect([(wm_seg, edit_wm, [('out_file', 'in_file')]),
                     (copy_cc, edit_wm, [('out_file', 'seg_file')]),
@@ -490,7 +516,7 @@ def create_reconall(in_T1s, subject_id, in_T2, in_FLAIR, subjects_dir, qcache, c
                     ])
 
     pretess = pe.Node(MRIPretess(), name="MRI_Pretess")
-    pretess.inputs.out_file = outputfilename('wm.mgz')
+    pretess.inputs.out_file = outputfilename(subjects_dir, 'wm.mgz')
     pretess.inputs.label = 'wm'
     ar2_wf.connect([(edit_wm, pretess, [('out_file', 'in_filled')]),
                     (ca_normalize, pretess, [('out_file', 'in_norm')])
@@ -504,8 +530,8 @@ def create_reconall(in_T1s, subject_id, in_T2, in_FLAIR, subjects_dir, qcache, c
     """
 
     cut_and_fill = pe.Node(MRIFill(), name="Cut_and_Fill")
-    cut_and_fill.inputs.log_file = outputfilename('ponscc.cut.log', 'scripts')
-    cut_and_fill.inputs.out_file = outputfilename('filled.mgz')
+    cut_and_fill.inputs.log_file = outputfilename(subjects_dir, 'ponscc.cut.log', 'scripts')
+    cut_and_fill.inputs.out_file = outputfilename(subjects_dir, 'filled.mgz')
     ar2_wf.connect([(pretess, cut_and_fill, [('out_file', 'in_file')]),
                     (align_transform, cut_and_fill,
                      [('out_file', 'transform')]),
@@ -828,6 +854,10 @@ def create_reconall(in_T1s, subject_id, in_T2, in_FLAIR, subjects_dir, qcache, c
                     (pretess, ar2_rh, [('out_file', 'Make_Surfaces.in_wm')]),
                     ])
 
+    return ar2_wf, ar2_lh, ar2_rh
+
+def create_AutoRecon3(subjects_dir, fs_home):
+    
     # AutoRecon3
     # Workflow
     ar3_wf = pe.Workflow(name="AutoRecon3")
@@ -868,7 +898,6 @@ def create_reconall(in_T1s, subject_id, in_T2, in_FLAIR, subjects_dir, qcache, c
                                                    'brain_finalsurfs',
                                                    'wm',
                                                    'filled',
-                                                   'T2raw',
                                                    'brainmask',
                                                    'transform',
                                                    'orig_mgz',
@@ -900,7 +929,6 @@ def create_reconall(in_T1s, subject_id, in_T2, in_FLAIR, subjects_dir, qcache, c
                                                       'brain_finalsurfs',
                                                       'wm',
                                                       'filled',
-                                                      'T2raw',
                                                       'sphere',
                                                       'sulc',
                                                       'area',
@@ -1130,8 +1158,8 @@ def create_reconall(in_T1s, subject_id, in_T2, in_FLAIR, subjects_dir, qcache, c
         parcellation_stats_white.inputs.mgz = True
         parcellation_stats_white.inputs.tabular_output = True
         parcellation_stats_white.inputs.surface = 'white'
-        parcellation_stats_white.inputs.out_color = outputfilename('aparc.annot.ctab', 'label')
-        parcellation_stats_white.inputs.out_table = outputfilename('{0}.aparc.stats'.format(hemisphere), 'stats')
+        parcellation_stats_white.inputs.out_color = outputfilename(subjects_dir, 'aparc.annot.ctab', 'label')
+        parcellation_stats_white.inputs.out_table = outputfilename(subjects_dir, '{0}.aparc.stats'.format(hemisphere), 'stats')
 
         ar3_wf.connect([(ar3_inputs, parcellation_stats_white, [('subject_id', 'subject_id'),
                                                                 ('subjects_dir',
@@ -1169,8 +1197,8 @@ def create_reconall(in_T1s, subject_id, in_T2, in_FLAIR, subjects_dir, qcache, c
         parcellation_stats_pial.inputs.mgz = True
         parcellation_stats_pial.inputs.tabular_output = True
         parcellation_stats_pial.inputs.surface = 'pial'
-        parcellation_stats_pial.inputs.out_color = outputfilename('aparc.annot.ctab', 'label')
-        parcellation_stats_pial.inputs.out_table = outputfilename('{0}.aparc.pial.stats'.format(hemisphere), 'stats')
+        parcellation_stats_pial.inputs.out_color = outputfilename(subjects_dir, 'aparc.annot.ctab', 'label')
+        parcellation_stats_pial.inputs.out_table = outputfilename(subjects_dir, '{0}.aparc.pial.stats'.format(hemisphere), 'stats')
 
         ar3_wf.connect([(ar3_inputs, parcellation_stats_pial, [('subject_id', 'subject_id'),
                                                              ('subjects_dir',
@@ -1212,7 +1240,7 @@ def create_reconall(in_T1s, subject_id, in_T2, in_FLAIR, subjects_dir, qcache, c
             
         cortical_parcellation_2.inputs.classifier = os.path.join(
             fs_home, 'average', '{0}.destrieux.simple.2009-07-29.gcs'.format(hemisphere))
-        cortical_parcellation_2.inputs.out_file = outputfilename('{0}.aparc.a2009s.annot'.format(hemisphere), 'label')
+        cortical_parcellation_2.inputs.out_file = outputfilename(subjects_dir, '{0}.aparc.a2009s.annot'.format(hemisphere), 'label')
         cortical_parcellation_2.inputs.seed = 1234
 
         ar3_wf.connect([(ar3_inputs, cortical_parcellation_2, [('subject_id', 'subject_id'),
@@ -1229,8 +1257,8 @@ def create_reconall(in_T1s, subject_id, in_T2, in_FLAIR, subjects_dir, qcache, c
         # Parcellation Statistics 2
         parcellation_stats_white_2 = parcellation_stats_white.clone(
             name="Parcellation_Statistics_{0}_2".format(hemisphere))
-        parcellation_stats_white_2.inputs.out_color = outputfilename('aparc.annot.a2009s.ctab', 'label')
-        parcellation_stats_white_2.inputs.out_table = outputfilename('{0}.aparc.a2009s.stats'.format(hemisphere), 'stats')
+        parcellation_stats_white_2.inputs.out_color = outputfilename(subjects_dir, 'aparc.annot.a2009s.ctab', 'label')
+        parcellation_stats_white_2.inputs.out_table = outputfilename(subjects_dir, '{0}.aparc.a2009s.stats'.format(hemisphere), 'stats')
         ar3_wf.connect([(ar3_inputs, parcellation_stats_white_2, [('subject_id', 'subject_id'),
                                                                   ('subjects_dir',
                                                                    'subjects_dir'),
@@ -1266,7 +1294,7 @@ def create_reconall(in_T1s, subject_id, in_T2, in_FLAIR, subjects_dir, qcache, c
         cortical_parcellation_3 = pe.Node(MRIsCALabel(), name="Cortical_Parcellation_{0}_3".format(hemisphere))
         cortical_parcellation_3.inputs.classifier = os.path.join(
             fs_home, 'average', '{0}.DKTatlas40.gcs'.format(hemisphere))
-        cortical_parcellation_3.inputs.out_file = outputfilename('{0}.aparc.DKTatlas40.annot'.format(hemisphere), 'label')
+        cortical_parcellation_3.inputs.out_file = outputfilename(subjects_dir, '{0}.aparc.DKTatlas40.annot'.format(hemisphere), 'label')
         cortical_parcellation_3.inputs.seed = 1234
         ar3_wf.connect([(ar3_inputs, cortical_parcellation_3, [('subject_id', 'subject_id'),
                                                                ('subjects_dir',
@@ -1282,8 +1310,8 @@ def create_reconall(in_T1s, subject_id, in_T2, in_FLAIR, subjects_dir, qcache, c
         # Parcellation Statistics 3
         parcellation_stats_white_3 = parcellation_stats_white.clone(
             name="Parcellation_Statistics_{0}_3".format(hemisphere))
-        parcellation_stats_white_3.inputs.out_color = outputfilename('aparc.annot.DKTatlas40.ctab', 'label')
-        parcellation_stats_white_3.inputs.out_table = outputfilename('{0}.aparc.DKTatlas40.stats'.format(hemisphere), 'stats')
+        parcellation_stats_white_3.inputs.out_color = outputfilename(subjects_dir, 'aparc.annot.DKTatlas40.ctab', 'label')
+        parcellation_stats_white_3.inputs.out_table = outputfilename(subjects_dir, '{0}.aparc.DKTatlas40.stats'.format(hemisphere), 'stats')
 
         ar3_wf.connect([(ar3_inputs, parcellation_stats_white_3, [('subject_id', 'subject_id'),
                                                                    ('subjects_dir',
@@ -1619,6 +1647,79 @@ def create_reconall(in_T1s, subject_id, in_T2, in_FLAIR, subjects_dir, qcache, c
                         ('out_ribbon', 'BA_Maps_Inputs.ribbon')])
                     ])
 
+    if qcache:
+        for hemisphere in ['lh', 'rh']:
+            if hemisphere == 'lh':
+                hemi_wf = ar3_lh_wf
+                hemi_contrast = lh_contrast
+            else:
+                hemi_wf = ar3_rh_wf
+                hemi_contrast = rh_contrast
+            for connection, meas_file, meas_name in [(hemi_wf, 'Make_Pial_Surface.out_thickness', 'thickness'),
+                                                     (ar3_inputs, '{0}_area'.format(
+                                                         hemisphere), 'area'),
+                                                     (hemi_wf, 'Make_Pial_Surface.out_area',
+                                                      'area.pial'),
+                                                     (hemi_wf, 'Calculate_Volume.out_file',
+                                                      'volume'),
+                                                     (ar3_inputs, '{0}_curv'.format(
+                                                         hemisphere), 'curv'),
+                                                     (ar3_inputs, '{0}_sulc'.format(
+                                                         hemisphere), 'sulc'),
+                                                     (ar3_inputs, '{0}_white_K'.format(
+                                                         hemisphere), 'white.K'),
+                                                     (ar3_inputs, '{0}_white_H'.format(
+                                                         hemisphere), 'white.H'),
+                                                     (hemi_wf, 'Jacobian.out_file',
+                                                      'jacobian_white'),
+                                                     (hemi_contrast, 'out_contrast', 'w-g.pct.mgh')]:
+                preprocess = pe.Node(MRISPreprocReconAll(), name="QCache_Preproc_{0}_{1}".format(
+                    hemisphere, meas_name.replace('.', '_')))
+                target_id = 'fsaverage'
+                preprocess.inputs.out_file = outputfilename(subjects_dir, 
+                    '{0}.{1}.{2}.mgh'.format(hemisphere, meas_name, target_id), 'surf')
+                target_dir = os.path.join(subjects_dir, target_id)
+                if not os.path.isdir(target_dir):
+                    # link fsaverage if it doesn't exist
+                    target_home = os.path.join(fs_home, 'subjects', target_id)
+                    # Create a symlink
+                    os.symlink(target_home, target_dir)
+                preprocess.inputs.target = target_id
+                preprocess.inputs.hemi = hemisphere
+                ar3_wf.connect([(ar3_inputs, preprocess, [('subject_id', 'subject_id'),
+                                                          ('subjects_dir',
+                                                           'subjects_dir'),
+                                                          ])])
+                ar3_wf.connect([(hemi_wf, preprocess, [('Surface_Registration.out_file', 'surfreg_file')]),
+                                (connection, preprocess,
+                                 [(meas_file, 'surf_measure_file')])
+                                ])
+
+                for value in range(0, 26, 5):
+                    surf2surf = pe.Node(SurfaceSmooth(), name="Qcache_{0}_{1}_fwhm{2}".format(
+                        hemisphere, meas_name.replace('.', '_'), value))
+                    surf2surf.inputs.fwhm = value
+                    surf2surf.inputs.cortex = True
+                    surf2surf.inputs.subject_id = target_id
+                    surf2surf.inputs.hemi = hemisphere
+                    tval_file = "{0}.{1}.fwhm{2}.fsaverage.mgh".format(
+                        hemisphere, meas_name, value)
+                    surf2surf.inputs.out_file = outputfilename(subjects_dir, 
+                        tval_file, 'surf')
+                    ar3_lh_wf.connect([(preprocess, surf2surf, [('out_file', 'in_file')]),
+                                       (ar3_inputs, surf2surf,
+                                        [('subjects_dir', 'subjects_dir')]),
+                                       ])
+
+    return ar3_wf
+
+def create_reconall(in_T1s, subject_id, in_T2, in_FLAIR, subjects_dir, qcache, cw256, fs_home):
+    ar1_wf = create_AutoRecon1(subject_id, subjects_dir, in_T1s, in_T2, in_FLAIR, cw256, fs_home)
+    ar2_wf, ar2_lh, ar2_rh = create_AutoRecon2(subjects_dir, fs_home)
+    ar3_wf = create_AutoRecon3(subjects_dir, fs_home)
+
+    # Connect workflows 
+    reconall = pe.Workflow(name="recon-all")
     reconall.connect([(ar1_wf, ar3_wf, [('AutoRecon1_Inputs.subject_id', 'AutoRecon3_Inputs.subject_id'),
                                         ('AutoRecon1_Inputs.subjects_dir',
                                          'AutoRecon3_Inputs.subjects_dir'),
@@ -1697,96 +1798,6 @@ def create_reconall(in_T1s, subject_id, in_T2, in_FLAIR, subjects_dir, qcache, c
                                         ]),
                       ])
 
-    if in_T2 != None:
-        # T2 image preparation
-        # Create T2raw.mgz
-        # mri_convert
-        ar1_inputs.inputs.Raw_T2 = in_T2
-        T2_convert = pe.Node(MRIConvert(), name="T2_convert")
-        T2_convert.inputs.out_file = outputfilename('T2raw.mgz', 'mri', 'orig')
-        T2_convert.inputs.no_scale = True
-        ar1_wf.connect([(ar1_inputs, T2_convert, [('Raw_T2', 'in_file')]),
-                        ]) 
-        ar3_wf.connect([(ar3_inputs, workflow, [('T2raw', 'Inputs.T2raw')])])
-        reconall.connect([(ar1_wf, ar3_wf, [('T2_convert.out_file',
-                                             'AutoRecon3_Inputs.T2raw')])])
-
-    if in_FLAIR != None:
-        # FLAIR image preparation
-        # Create FLAIRraw.mgz
-        # mri_convert
-        ar1_inputs.inputs.Raw_FLAIR = in_FLAIR
-        FLAIR_convert = pe.Node(MRIConvert(), name="FLAIR_convert")
-        FLAIR_convert.inputs.out_file = outputfilename(
-            'FLAIRraw.mgz', 'mri', 'orig')
-        FLAIR_convert.inputs.no_scale = True
-        ar1_wf.connect([(ar1_inputs, FLAIR_convert, [('Raw_FLAIR', 'in_file')]),
-                        ])
-
-
-    if qcache:
-        for hemisphere in ['lh', 'rh']:
-            if hemisphere == 'lh':
-                hemi_wf = ar3_lh_wf
-                hemi_contrast = lh_contrast
-            else:
-                hemi_wf = ar3_rh_wf
-                hemi_contrast = rh_contrast
-            for connection, meas_file, meas_name in [(hemi_wf, 'Make_Pial_Surface.out_thickness', 'thickness'),
-                                                     (ar3_inputs, '{0}_area'.format(
-                                                         hemisphere), 'area'),
-                                                     (hemi_wf, 'Make_Pial_Surface.out_area',
-                                                      'area.pial'),
-                                                     (hemi_wf, 'Calculate_Volume.out_file',
-                                                      'volume'),
-                                                     (ar3_inputs, '{0}_curv'.format(
-                                                         hemisphere), 'curv'),
-                                                     (ar3_inputs, '{0}_sulc'.format(
-                                                         hemisphere), 'sulc'),
-                                                     (ar3_inputs, '{0}_white_K'.format(
-                                                         hemisphere), 'white.K'),
-                                                     (ar3_inputs, '{0}_white_H'.format(
-                                                         hemisphere), 'white.H'),
-                                                     (hemi_wf, 'Jacobian.out_file',
-                                                      'jacobian_white'),
-                                                     (hemi_contrast, 'out_contrast', 'w-g.pct.mgh')]:
-                preprocess = pe.Node(MRISPreprocReconAll(), name="QCache_Preproc_{0}_{1}".format(
-                    hemisphere, meas_name.replace('.', '_')))
-                target_id = 'fsaverage'
-                preprocess.inputs.out_file = outputfilename(
-                    '{0}.{1}.{2}.mgh'.format(hemisphere, meas_name, target_id), 'surf')
-                target_dir = os.path.join(subjects_dir, target_id)
-                if not os.path.isdir(target_dir):
-                    # link fsaverage if it doesn't exist
-                    target_home = os.path.join(fs_home, 'subjects', target_id)
-                    # Create a symlink
-                    os.symlink(target_home, target_dir)
-                preprocess.inputs.target = target_id
-                preprocess.inputs.hemi = hemisphere
-                ar3_wf.connect([(ar3_inputs, preprocess, [('subject_id', 'subject_id'),
-                                                          ('subjects_dir',
-                                                           'subjects_dir'),
-                                                          ])])
-                ar3_wf.connect([(hemi_wf, preprocess, [('Surface_Registration.out_file', 'surfreg_file')]),
-                                (connection, preprocess,
-                                 [(meas_file, 'surf_measure_file')])
-                                ])
-
-                for value in range(0, 26, 5):
-                    surf2surf = pe.Node(SurfaceSmooth(), name="Qcache_{0}_{1}_fwhm{2}".format(
-                        hemisphere, meas_name.replace('.', '_'), value))
-                    surf2surf.inputs.fwhm = value
-                    surf2surf.inputs.cortex = True
-                    surf2surf.inputs.subject_id = target_id
-                    surf2surf.inputs.hemi = hemisphere
-                    tval_file = "{0}.{1}.fwhm{2}.fsaverage.mgh".format(
-                        hemisphere, meas_name, value)
-                    surf2surf.inputs.out_file = outputfilename(
-                        tval_file, 'surf')
-                    ar3_lh_wf.connect([(preprocess, surf2surf, [('out_file', 'in_file')]),
-                                       (ar3_inputs, surf2surf,
-                                        [('subjects_dir', 'subjects_dir')]),
-                                       ])
 
     return reconall
 

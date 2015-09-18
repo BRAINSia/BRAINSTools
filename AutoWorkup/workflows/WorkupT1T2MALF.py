@@ -27,8 +27,8 @@ from nipype.interfaces.semtools import BRAINSSnapShotWriter
 """
 
 def MakeVector(inFN1, inFN2=None):
-    print("inFN1: {0}".format(inFN1))
-    print("inFN2: {0}".format(inFN2))
+    #print("inFN1: {0}".format(inFN1))
+    #print("inFN2: {0}".format(inFN2))
     if inFN2 == None:
         return inFN1
     else:
@@ -47,7 +47,7 @@ def readRecodingList( recodeLabelFilename ):
                origLbl = int(origLbl)
                targetLbl = int(targetLbl)
                recodeLabelPairList.append( (origLbl, targetLbl) )
-               print(" relabel: {0:30} ({1:5d}) --> {2:30} ({3:5d})".format(origName, origLbl, targetName, targetLbl))
+               #print(" relabel: {0:30} ({1:5d}) --> {2:30} ({3:5d})".format(origName, origLbl, targetName, targetLbl))
     return recodeLabelPairList
 
 def readMalfAtlasDbBase( dictionaryFilename ):
@@ -121,8 +121,8 @@ def CreateMALFWorkflow(WFname, onlyT1, master_config,BASE_DATA_GRABBER_DIR=None,
         pass
 
 
-    print('malf_atlas_db_base')
-    print(master_config['malf_atlas_db_base'])
+    #print('malf_atlas_db_base')
+    #print(master_config['malf_atlas_db_base'])
     malfAtlasDict = readMalfAtlasDbBase( master_config['malf_atlas_db_base'] )
     number_of_atlas_sources = len(malfAtlasDict)
     malfAtlases = dict()
@@ -398,7 +398,7 @@ def CreateMALFWorkflow(WFname, onlyT1, master_config,BASE_DATA_GRABBER_DIR=None,
 
     ## Lobar Pacellation by recoding
     if master_config['relabel2lobes_filename'] != None:
-        print("Generate relabeled version based on {0}".format(master_config['relabel2lobes_filename']))
+        #print("Generate relabeled version based on {0}".format(master_config['relabel2lobes_filename']))
 
         RECODE_LABELS_2_LobarPacellation = readRecodingList( master_config['relabel2lobes_filename'] )
         RecordToFSLobes = pe.Node(Function(function=RecodeLabelMap,

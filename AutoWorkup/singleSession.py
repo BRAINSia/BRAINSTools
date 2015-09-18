@@ -174,38 +174,30 @@ def createAndRun(sessions, environment, experiment, pipeline, cluster, useSentin
                     "WarpedAtlas2Subject",
                     "left_hemisphere_wm.nii.gz"
                 ))
+
             if 'malf_2012_neuro' in master_config['components']:
                 sentinal_file_list.append(os.path.join(
                     sentinal_file_basedir,
                     "TissueClassify",
-                    "neuro2012_20fusion_merge_seg.nii.gz"
+                    "MALF_HDAtlas20_2015_fs_standard_label.nii.gz"
                 ))
                 sentinal_file_list.append(os.path.join(
                     sentinal_file_basedir,
                     "TissueClassify",
-                    "fswm_extended_neuro2012_20_merge_seg.nii.gz"
+                    "MALF_HDAtlas20_2015_label.nii.gz"
                 ))
                 sentinal_file_list.append(os.path.join(
                     sentinal_file_basedir,
                     "TissueClassify",
-                    "fswm_standard_neuro2012_20_merge_seg.nii.gz"
+                    "MALF_HDAtlas20_2015_lobar_label.nii.gz"
                 ))
                 sentinal_file_list.append(os.path.join(
                     sentinal_file_basedir,
                     "TissueClassify",
-                    "fswm_extended_neuro2012_labelmap.png"
+                    "MALF_HDAtlas20_2015_CSFVBInjected_label.nii.gz"
                 ))
             if 'malf_2015_wholebrain' in master_config['components']:
-                sentinal_file_list.append(os.path.join(
-                    sentinal_file_basedir,
-                    "TissueClassify",
-                    "malf_2015_wholebrain_label.nii.gz"
-                ))
-                sentinal_file_list.append(os.path.join(
-                    sentinal_file_basedir,
-                    "TissueClassify",
-                    "malf_2015_wholebrain_label.png"
-                ))
+                pass
 
             if master_config['workflow_phase'] == 'atlas-based-reference':
                 atlasDirectory = os.path.join(master_config['atlascache'], 'spatialImages', 'rho.nii.gz')

@@ -52,6 +52,7 @@ set(ALL_PROGS_LIST
   BRAINSABC
   ESLR
   GenerateLabelMapFromProbabilityMap
+  GeneratePurePlugMask
   )
 foreach( prog ${ALL_PROGS_LIST} )
   StandardBRAINSBuildMacro( NAME ${prog}

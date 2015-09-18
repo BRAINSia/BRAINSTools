@@ -33,7 +33,7 @@
 #ifndef __EMSegmentationFilter_h
 #define __EMSegmentationFilter_h
 
-#include "BRAINSABCUtilities.h"
+#include "GeneratePurePlugMask.h"
 #include <map>
 #include <list>
 class AtlasDefinition;
@@ -113,11 +113,31 @@ public:
 
   typedef itk::Transform<double, 3, 3>  GenericTransformType;
 
-  typedef std::vector< FloatingPrecision >                      MeasurementVectorType;
+  typedef itk::Array< FloatingPrecision >                       MeasurementVectorType;
   typedef itk::Statistics::ListSample< MeasurementVectorType >  SampleType;
+
+  typedef itk::NearestNeighborInterpolateImageFunction< InputImageType, double > InputImageNNInterpolationType;
+  typedef itk::NearestNeighborInterpolateImageFunction< ByteImageType, double >  MaskNNInterpolationType;
+
+  typedef std::vector<typename InputImageNNInterpolationType::Pointer> InputImageInterpolatorVector;
+  typedef std::map<std::string, InputImageInterpolatorVector>          MapOfInputImageInterpolatorVectors;
 
   itkSetMacro(UseKNN, bool);
   itkGetMacro(UseKNN, bool);
+
+  itkSetMacro(UsePurePlugs, bool);
+  itkGetMacro(UsePurePlugs, bool);
+
+  itkSetMacro(PurePlugsThreshold, float);
+  itkGetMacro(PurePlugsThreshold, float);
+
+  void SetNumberOfSubSamplesInEachPlugArea(unsigned int nx, unsigned int ny, unsigned int nz)
+    {
+    m_NumberOfSubSamplesInEachPlugArea[0] = nx;
+    m_NumberOfSubSamplesInEachPlugArea[1] = ny;
+    m_NumberOfSubSamplesInEachPlugArea[2] = nz;
+    this->Modified();
+    }
 
   // Set/Get the maximum polynomial degree of the bias field estimate
   itkSetMacro(MaxBiasDegree, unsigned int);
@@ -260,10 +280,7 @@ protected:
                                        const ProbabilityImageVectorType &WarpedPriorsList,
                                        ByteImagePointer &NonAirRegion);
 
-  ByteImageVectorType ForceToOne(const unsigned int CurrentEMIteration,
-                                 // const MapOfInputImageVectors &intensityList,
-                                 ProbabilityImageVectorType &WarpedPriorsList,
-                                 typename ByteImageType::Pointer NonAirRegion);
+  ByteImageVectorType ForceToOne(ProbabilityImageVectorType &WarpedPriorsList);
 private:
 
   void WritePartitionTable(const unsigned int CurrentEMIteration) const;
@@ -291,9 +308,6 @@ private:
   unsigned int ComputePriorLookupTable(void);
 
   void InitializePosteriors(void);
-
-  typename TInputImage::Pointer
-  NormalizeInputIntensityImage(const typename TInputImage::Pointer inputImage);
 
   void
   kNNCore( SampleType * trainMatrix,
@@ -441,7 +455,12 @@ private:
 
   std::vector<RegionStats> m_ListOfClassStatistics;
 
-  bool         m_UseKNN;
+  bool              m_UseKNN;
+
+  bool              m_UsePurePlugs;
+  float             m_PurePlugsThreshold;
+  unsigned int      m_NumberOfSubSamplesInEachPlugArea[3];
+  ByteImagePointer  m_PurePlugsMask;
 
   bool         m_UpdateTransformation;
   unsigned int m_DebugLevel;

@@ -49,6 +49,8 @@ CombinedComputeDistributions( const std::vector<typename ByteImageType::Pointer>
   typedef std::vector<typename TInputImage::Pointer> InputImageVector;
   typedef std::map<std::string,InputImageVector> MapOfInputImageVectors;
 
+  typedef itk::NearestNeighborInterpolateImageFunction< TInputImage, double > InputImageNNInterpolationType;
+
   const LOOPITERTYPE numClasses =     PosteriorsList.size();
   const LOOPITERTYPE numModalities = InputImageMap.size();
 
@@ -87,6 +89,7 @@ CombinedComputeDistributions( const std::vector<typename ByteImageType::Pointer>
         for( long ii = 0; ii < (long)size[0]; ii++ )
           {
           const typename TProbabilityImage::IndexType currIndex = {{ii, jj, kk}};
+          // Here pure plugs mask implicitly comes in! as CandidateRegions are multiplied by purePlugsMask!
           if( currentCandidateRegion->GetPixel(currIndex) )
             {
             const double currentProbValue = currentProbImage->GetPixel(currIndex);
@@ -120,6 +123,10 @@ CombinedComputeDistributions( const std::vector<typename ByteImageType::Pointer>
           imIt != mapIt->second.end(); ++imIt, ++meanIndex)
         {
         typename TInputImage::Pointer im1 = *imIt;
+        typename InputImageNNInterpolationType::Pointer im1Interp =
+          InputImageNNInterpolationType::New();
+        im1Interp->SetInputImage( im1 );
+
         double muSum = 0.0;
 #if defined(LOCAL_USE_OPEN_MP)
 #pragma omp parallel for default(shared) reduction(+:muSum)
@@ -131,13 +138,22 @@ CombinedComputeDistributions( const std::vector<typename ByteImageType::Pointer>
             for( long ii = 0; ii < (long)size[0]; ii++ )
               {
               const typename TProbabilityImage::IndexType currIndex = {{ii, jj, kk}};
+              // transform probability image index to physical point
+              typename TProbabilityImage::PointType currPoint;
+              PosteriorsList[0]->TransformIndexToPhysicalPoint(currIndex, currPoint);
+              // Here pure plugs mask comes in, since CandidateRegions are multiplied by purePlugsMask!
               if( currentCandidateRegion->GetPixel(currIndex) )
                 {
                 const double currentProbValue = currentProbImage->GetPixel(currIndex);
-                const double currentInputValue = im1->GetPixel(currIndex);
+                // input volumes may have a different voxel lattice than the probability image
+                double currentInputValue = 1;
+                if( im1Interp->IsInsideBuffer(currPoint) )
+                  {
+                  currentInputValue = im1Interp->Evaluate(currPoint);
+                  }
                 if( logConvertValues )
                   {
-                  muSum += currentProbValue * LOGP(currentInputValue);
+                  muSum += currentProbValue * LOGP( currentInputValue );
                   }
                 else
                   {
@@ -154,6 +170,13 @@ CombinedComputeDistributions( const std::vector<typename ByteImageType::Pointer>
       ListOfClassStatistics[iclass].m_Means[mapIt->first] /= mapIt->second.size();
       }
     }
+
+  // for each prior (posterior) class, different means are computed for each modality channel.
+
+  ////////////////////////////////
+  // Now compute covariance matrix( numOfModalities x numOfModalities )
+  // e.g. A 2x2 matrix if only T1 and T2 modality channels are involved.
+  // Note that we can have several T1s and several T2 images.
 
   std::vector<MatrixType> oldCovariances(ListOfClassStatistics.size() );
   if( (LOOPITERTYPE)oldCovariances.size() != numClasses )
@@ -208,6 +231,9 @@ CombinedComputeDistributions( const std::vector<typename ByteImageType::Pointer>
       for(unsigned i = 0; i < mapIt->second.size(); ++i)
         {
         typename TInputImage::Pointer im1 = mapIt->second[i];
+        typename InputImageNNInterpolationType::Pointer im1Interp =
+          InputImageNNInterpolationType::New();
+        im1Interp->SetInputImage( im1 );
 
         bool first_through_inner_loop(true);
 
@@ -225,6 +251,10 @@ CombinedComputeDistributions( const std::vector<typename ByteImageType::Pointer>
           for (; j < mapIt2->second.size(); ++j)
             {
             typename TInputImage::Pointer im2 = mapIt2->second[j];
+            typename InputImageNNInterpolationType::Pointer im2Interp =
+              InputImageNNInterpolationType::New();
+            im2Interp->SetInputImage( im2 );
+
             double var = 0.0;
 #if defined(LOCAL_USE_OPEN_MP)
 #pragma omp parallel for default(shared) reduction(+:var)
@@ -235,20 +265,36 @@ CombinedComputeDistributions( const std::vector<typename ByteImageType::Pointer>
                 {
                 for( long ii = 0; ii < (long)size[0]; ii++ )
                   {
-                  const typename TInputImage::IndexType currIndex = {{ii, jj, kk}};
+                  const typename TProbabilityImage::IndexType currIndex = {{ii, jj, kk}};
+                  // transform probability image index to physical point
+                  typename TProbabilityImage::PointType currPoint;
+                  PosteriorsList[0]->TransformIndexToPhysicalPoint(currIndex, currPoint);
+                  // Here pure plugs mask comes in, since CandidateRegions are multiplied by purePlugsMask!
                   if( currentCandidateRegion->GetPixel(currIndex) )
                     {
                     const double currentProbValue = currentProbImage->GetPixel(currIndex);
+                    // input image values should be evaluated in physical space.
+                    double inputValue1 = 1;
+                    double inputValue2 = 1;
+                    if( im1Interp->IsInsideBuffer(currPoint) )
+                      {
+                      inputValue1 = im1Interp->Evaluate(currPoint);
+                      }
+                    if( im2Interp->IsInsideBuffer(currPoint) )
+                      {
+                      inputValue2 = im2Interp->Evaluate(currPoint);
+                      }
+
                     if( logConvertValues )
                       {
-                      const double diff1 = LOGP( static_cast<double>( im1->GetPixel(currIndex) ) ) - mu1;
-                      const double diff2 = LOGP( static_cast<double>( im2->GetPixel(currIndex) ) ) - mu2;
+                      const double diff1 = LOGP( inputValue1 ) - mu1;
+                      const double diff2 = LOGP( inputValue2 ) - mu2;
                       var += currentProbValue * ( diff1 * diff2 );
                       }
                     else
                       {
-                      const double diff1 = ( static_cast<double>( im1->GetPixel(currIndex) ) ) - mu1;
-                      const double diff2 = ( static_cast<double>( im2->GetPixel(currIndex) ) ) - mu2;
+                      const double diff1 = inputValue1 - mu1;
+                      const double diff2 = inputValue2 - mu2;
                       var += currentProbValue * ( diff1 * diff2 );
                       }
                     }
@@ -287,28 +333,22 @@ CombinedComputeDistributions( const std::vector<typename ByteImageType::Pointer>
       }
       ListOfClassStatistics[iclass].m_Covariance = covtmp;
     } // end covariance loop
-  if( DebugLevel > 5 )
-    {
-    for( LOOPITERTYPE iclass = 0; iclass < (LOOPITERTYPE)numClasses; iclass++ )
-      {
-      muLogMacro(<< "DEBUG USING NEW COVARIANCES: " << iclass << std::endl
-                 << ListOfClassStatistics[iclass].m_Covariance << std::endl );
-      }
-    }
+
   if( DebugLevel > 9 )
     {
     std::cout << "=================================================" << std::endl;
-    unsigned ichan = 0;
     for( LOOPITERTYPE iclass = 0; iclass < (LOOPITERTYPE)numClasses; iclass++ )
       {
+      unsigned ichan = 0;
       for(typename MapOfInputImageVectors::const_iterator mapIt = InputImageMap.begin();
           mapIt != InputImageMap.end(); ++mapIt)
         {
-        muLogMacro( << "DEBUG MEAN " << ichan << " : " << iclass << " : \n"
+        muLogMacro( << "DEBUG MEAN (channel " << ichan << ", class " << iclass << "): \n"
                     << ListOfClassStatistics[iclass].m_Means[mapIt->first]
                     << " \n" << std::endl );
+        ++ichan;
         }
-      muLogMacro( << "DEBUG Covariances: " << iclass << "\n" << ListOfClassStatistics[iclass].m_Covariance
+      muLogMacro( << "DEBUG Covariances (class " << iclass << "):\n" << ListOfClassStatistics[iclass].m_Covariance
                   << std::endl );
       }
     }

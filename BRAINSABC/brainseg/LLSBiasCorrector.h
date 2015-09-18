@@ -83,7 +83,6 @@ public:
   typedef std::vector<InputImagePointer> InputImageVector;
   typedef std::map<std::string,InputImageVector> MapOfInputImageVectors;
 
-
   typedef itk::Image<unsigned char, itkGetStaticConstMacro(ImageDimension)> ByteImageType;
   typedef typename ByteImageType::Pointer                                   ByteImagePointer;
   typedef typename ByteImageType::IndexType                                 ByteImageIndexType;
@@ -105,6 +104,9 @@ public:
   typedef InternalImageType::PixelType  InternalImagePixelType;
   typedef InternalImageType::RegionType InternalImageRegionType;
   typedef InternalImageType::SizeType   InternalImageSizeType;
+
+  typedef itk::NearestNeighborInterpolateImageFunction< InputImageType, double > InputImageNNInterpolationType;
+  typedef itk::NearestNeighborInterpolateImageFunction< ByteImageType, double > MaskNNInterpolationType;
 
   typedef double ScalarType;
 

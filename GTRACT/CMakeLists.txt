@@ -33,6 +33,7 @@ FindITKUtil( GTRACT_ITK
   ITKStatistics
   ITKThresholding
   ITKTransform
+  ITKNrrdIO
   )
 
 #-----------------------------------------------------------------------------

@@ -23,8 +23,8 @@
  */
 
 #include "landmarkIO.h"
-#include "itk_hdf5.h"
-#include "itk_H5Cpp.h"
+//#include "itk_hdf5.h"
+//#include "itk_H5Cpp.h"
 #include "itkNumberToString.h"
 
 RGBImageType::Pointer ReturnOrientedRGBImage(SImageType::Pointer inputImage)

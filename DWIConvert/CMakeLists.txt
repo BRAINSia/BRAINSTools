@@ -16,6 +16,7 @@ FindITKUtil( DWIConvert_ITK
   ITKIODCMTK
   ITKIORAW
   ITKDCMTK
+  ITKNrrdIO
 )
 
 #-----------------------------------------------------------------------------

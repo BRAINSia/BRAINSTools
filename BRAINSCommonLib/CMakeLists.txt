@@ -23,6 +23,7 @@ FindITKUtil( BRAINSCommonLib_ITK
   ITKMetricsv4
   ITKOptimizersv4
   ITKRegionGrowing
+  ITKNrrdIO
 )
 
 #-----------------------------------------------------------------------------

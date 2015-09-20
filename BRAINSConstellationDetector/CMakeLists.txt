@@ -9,22 +9,34 @@
 # ITK
 #
 FindITKUtil(BRAINSConstellationDetector_ITK
-  ITKThresholding
-  ITKImageCompare
-  ITKRegistrationCommon
-  ITKSmoothing
-  ITKConnectedComponents
-  ITKMathematicalMorphology
   ITKBinaryMathematicalMorphology
+  ITKCommon
+  ITKConnectedComponents
+  ITKConvolution
   ITKDistanceMap
-  ITKRegionGrowing
+  ITKHDF5
+  ITKIOImageBase
+  ITKIOTransformBase
   ITKImageCompare
+  ITKImageFilterBase
+  ITKImageFunction
+  ITKImageGrid
+  ITKImageIntensity
+  ITKImageStatistics
+  ITKLabelMap
+  ITKMathematicalMorphology
   ITKOptimizersv4
+  ITKRegionGrowing
+  ITKRegistrationCommon
   ITKRegistrationMethodsv4
+  ITKSmoothing
+  ITKSpatialObjects
+  ITKStatistics
+  ITKTestKernel
+  ITKThresholding
+  ITKTransform
   ITKVTK
   ITKVtkGlue
-  ITKTestKernel
-  ITKConvolution
 )
 
 if(BUILD_WITH_GUI OR BRAINS3_USE_QT OR BRAINSTools_USE_QT)

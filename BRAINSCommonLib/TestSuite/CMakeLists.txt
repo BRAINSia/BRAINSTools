@@ -49,8 +49,6 @@ ExternalData_expand_arguments(FindCenterOFBrainFetchData FindCenterClippedImageM
 ExternalData_expand_arguments(FindCenterOfBrainFetchData
   FindCenterTrimmedImage DATA{${TestData_DIR}/FindCenter/FindCenterTrimmedImage.nii.gz})
 
-ExternalData_Add_Target( ${PROJECT_NAME}FetchData )
-
 set(MetaDataValidatorTestName DWIMetaDataDictionaryValidatorTest)
 ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${MetaDataValidatorTestName}
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:DWIMetaDataDictionaryValidatorTests>
@@ -64,6 +62,8 @@ ExternalData_add_test(${PROJECT_NAME}FetchData NAME ${MetaDataValidatorTestName}
   DATA{${TestData_DIR}/DWI_TestData_OUTPUTS/PhilipsAchieva2.nrrd}
   ${CMAKE_CURRENT_BINARY_DIR}/outputSameAsRefVolume.nrrd
 )
+
+ExternalData_Add_Target( ${PROJECT_NAME}FetchData )
 
 if( ${BRAINSTools_MAX_TEST_LEVEL} GREATER 8) # This should be restored after fixing.
 ExternalData_add_test(FindCenterOfBrainFetchData

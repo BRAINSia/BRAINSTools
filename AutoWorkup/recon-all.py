@@ -151,7 +151,12 @@ def main(argv):
     in_T1s, subject_id, in_T2, in_FLAIR, plugin, queue, subjects_dir, qcache, cw256, longitudinal, long_base  = procargs(
         argv)
     fs_home = checkenv()
-
+    if longitudinal:
+        long_id = "{0}.long.{1}".format(subject_id, long_base)
+        subject_folder = long_id
+    else:
+        subject_folder = subject_id
+    
     # Experiment Info
     ExperimentInfo = {"Atlas": {"TEMP_CACHE": os.path.join(subjects_dir, subject_id),
                                 "LOG_DIR": os.path.join(subjects_dir, 'log')}}
@@ -160,11 +165,11 @@ def main(argv):
     for item in ExperimentInfo["Atlas"].iteritems():
         mkdir_p(item[1])
     for folder in ['bem', 'label', 'mri', 'scripts', 'src', 'stats', 'surf', 'tmp', 'touch', 'trash']:
-        mkdir_p(os.path.join(subjects_dir, subject_id, folder))
+        mkdir_p(os.path.join(subjects_dir, subject_folder, folder))
         if folder == 'mri':
-            mkdir_p(os.path.join(subjects_dir, subject_id, folder, 'orig'))
+            mkdir_p(os.path.join(subjects_dir, subject_folder, folder, 'orig'))
             mkdir_p(
-                os.path.join(subjects_dir, subject_id, folder, 'transforms'))
+                os.path.join(subjects_dir, subject_folder, folder, 'transforms'))
 
     # Now that we've defined the args and created the folders, create workflow
     reconall = create_reconall(in_T1s,
@@ -174,7 +179,10 @@ def main(argv):
                                subjects_dir,
                                qcache,
                                cw256,
-                               fs_home)
+                               fs_home,
+                               longitudinal,
+                               long_base
+                               )
 
     # Set workflow configurations
     reconall.config['execution'] = {

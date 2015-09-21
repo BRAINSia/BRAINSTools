@@ -4,8 +4,8 @@ from autorecon1 import mkdir_p, create_AutoRecon1
 from autorecon2 import create_AutoRecon2
 from autorecon3 import create_AutoRecon3
 
-def create_reconall(in_T1s, subject_id, in_T2, in_FLAIR, subjects_dir, qcache, cw256, fs_home):
-    ar1_wf = create_AutoRecon1(subjects_dir, subject_id, fs_home, in_T1s, in_T2, in_FLAIR, cw256)
+def create_reconall(in_T1s, subject_id, in_T2, in_FLAIR, subjects_dir, qcache, cw256, fs_home, longitudinal, long_base):
+    ar1_wf = create_AutoRecon1(subjects_dir, subject_id, fs_home, in_T1s, in_T2, in_FLAIR, cw256, longitudinal, long_base)
     ar2_wf, ar2_lh, ar2_rh = create_AutoRecon2(subjects_dir, subject_id, fs_home)
     ar3_wf = create_AutoRecon3(subjects_dir, subject_id, fs_home, qcache)
 

@@ -55,24 +55,6 @@ def outputfilename(subjects_dir, subject_id, filename, subfolder1='mri', subfold
         mkdir_p(dest_dir)
     return os.path.join(dest_dir, filename)
 
-def CreateStandardOutFileNames(input_T1s, subject_id, subjects_dir):
-    ##TODO: Get rid of this method and the node that uses it
-    import os
-    InputVols = list()
-    Iscaleout = list()
-    LTAout = list()
-    orig_dir = os.path.join(subjects_dir, subject_id, 'mri', 'orig')
-    XFMout = os.path.join(
-        subjects_dir, subject_id, 'mri', 'transforms', 'talairach.xfm')
-    for i, T1 in enumerate(input_T1s):
-        file_num = str(i + 1)
-        while len(file_num) < 3:
-            file_num = '0' + file_num
-        Iscaleout.append(os.path.join(orig_dir, file_num + '-iscale.txt'))
-        LTAout.append(os.path.join(orig_dir, file_num + '.lta'))
-        InputVols.append(os.path.join(orig_dir, file_num + '.mgz'))
-    return InputVols, Iscaleout, LTAout, XFMout, subjects_dir
-
 def awk(awk_file, log_file):
     """
     This method uses 'awk' which must be installed prior to running the workflow and is not a
@@ -97,7 +79,23 @@ def copy_file(in_file, out_file=None):
     shutil.copy(in_file, out_file)
     return out_file
 
-def create_AutoRecon1(subjects_dir, subject_id, fs_home, in_T1s, in_T2, in_FLAIR, cw256):    
+def create_preproc_filenames(subjects_dir, subject_id, in_T1s):
+    # Create output filenames
+    inputvols = list()
+    iscaleout = list()
+    ltaout = list()
+    orig_dir = os.path.join(subjects_dir, subject_id, 'mri', 'orig')
+
+    for i, T1 in enumerate(in_T1s):
+        file_num = str(i + 1)
+        while len(file_num) < 3:
+            file_num = '0' + file_num
+        iscaleout.append(os.path.join(orig_dir, file_num + '-iscale.txt'))
+        ltaout.append(os.path.join(orig_dir, file_num + '.lta'))
+        inputvols.append(os.path.join(orig_dir, file_num + '.mgz'))
+    return inputvols, iscaleout, ltaout
+
+def create_AutoRecon1(subjects_dir, subject_id, fs_home, in_T1s, in_T2, in_FLAIR, cw256, longitudinal, long_base):
     # AutoRecon1
     # Workflow
     ar1_wf = pe.Workflow(name='AutoRecon1')
@@ -107,56 +105,70 @@ def create_AutoRecon1(subjects_dir, subject_id, fs_home, in_T1s, in_T2, in_FLAIR
         run_without_submitting=True,
         name='AutoRecon1_Inputs')
 
-    ar1_inputs.inputs.Raw_T1 = VerifyInputs(in_T1s)
-    ar1_inputs.inputs.subject_id = subject_id
-    ar1_inputs.inputs.subjects_dir = subjects_dir
+    inputvols, iscaleout, ltaout = create_preproc_filenames(subjects_dir, subject_id, in_T1s)
+     
+    if not longitudinal:
+        ar1_inputs.inputs.Raw_T1 = VerifyInputs(in_T1s)
+        ar1_inputs.inputs.subject_id = subject_id
+        ar1_inputs.inputs.subjects_dir = subjects_dir
 
-    # T1 image preparation
-    # For all T1's mri_convert ${InputVol} ${out_file}
-    T1_image_preparation = pe.MapNode(
-        MRIConvert(), iterfield=['in_file', 'out_file'], name="T1_prep")
+        # T1 image preparation
+        # For all T1's mri_convert ${InputVol} ${out_file}
+        T1_image_preparation = pe.MapNode(
+            MRIConvert(), iterfield=['in_file', 'out_file'], name="T1_prep")
+        T1_image_preparation.inputs.out_file = inputvols
 
-    # Create output filenames
-
-    out_fn = pe.Node(Function(['input_T1s', 'subject_id', 'subjects_dir'],
-                              ['InputVols', 'Iscaleout', 'LTAout',
-                                  'XFMout', 'subjects_dir'],
-                              CreateStandardOutFileNames),
-                     name="CreateStandardOutFileNames")
-
-    ar1_wf.connect([(ar1_inputs, T1_image_preparation, [('Raw_T1', 'in_file')]),
-                    (ar1_inputs, out_fn, [('Raw_T1', 'input_T1s'),
-                                          ('subject_id', 'subject_id'),
-                                          ('subjects_dir', 'subjects_dir')]),
-                    (out_fn, T1_image_preparation,
-                     [('InputVols', 'out_file')]),
-                    ])
-
-    # T2 image preparation
-    if in_T2 != None:
-        # Create T2raw.mgz
-        # mri_convert
-        ar1_inputs.inputs.Raw_T2 = in_T2
-        T2_convert = pe.Node(MRIConvert(), name="T2_convert")
-        T2_convert.inputs.out_file = outputfilename(subjects_dir, subject_id, 'T2raw.mgz', 'mri', 'orig')
-        T2_convert.inputs.no_scale = True
-        ar1_wf.connect([(ar1_inputs, T2_convert, [('Raw_T2', 'in_file')]),
-                        ]) 
-
-    if in_FLAIR != None:
-        # FLAIR image preparation
-        # Create FLAIRraw.mgz
-        # mri_convert
-        ar1_inputs.inputs.Raw_FLAIR = in_FLAIR
-        FLAIR_convert = pe.Node(MRIConvert(), name="FLAIR_convert")
-        FLAIR_convert.inputs.out_file = outputfilename(subjects_dir, subject_id, 
-            'FLAIRraw.mgz', 'mri', 'orig')
-        FLAIR_convert.inputs.no_scale = True
-        ar1_wf.connect([(ar1_inputs, FLAIR_convert, [('Raw_FLAIR', 'in_file')]),
+        ar1_wf.connect([(ar1_inputs, T1_image_preparation, [('Raw_T1', 'in_file')]),
                         ])
 
+        # T2 image preparation
+        if in_T2 != None:
+            # Create T2raw.mgz
+            # mri_convert
+            ar1_inputs.inputs.Raw_T2 = in_T2
+            T2_convert = pe.Node(MRIConvert(), name="T2_convert")
+            T2_convert.inputs.out_file = outputfilename(subjects_dir, subject_id, 'T2raw.mgz', 'mri', 'orig')
+            T2_convert.inputs.no_scale = True
+            ar1_wf.connect([(ar1_inputs, T2_convert, [('Raw_T2', 'in_file')]),
+                            ]) 
 
+        if in_FLAIR != None:
+            # FLAIR image preparation
+            # Create FLAIRraw.mgz
+            # mri_convert
+            ar1_inputs.inputs.Raw_FLAIR = in_FLAIR
+            FLAIR_convert = pe.Node(MRIConvert(), name="FLAIR_convert")
+            FLAIR_convert.inputs.out_file = outputfilename(subjects_dir, subject_id, 
+                                                           'FLAIRraw.mgz', 'mri', 'orig')
+            FLAIR_convert.inputs.no_scale = True
+            ar1_wf.connect([(ar1_inputs, FLAIR_convert, [('Raw_FLAIR', 'in_file')]),
+                            ])
 
+    else:
+        # for each orig/*.lta file, copy it to the destination
+        # for each orig/*-
+        print "TODO: Create longitudinal workflow"
+        ss_subject_id = subject_id
+        subject_id = "{0}.long.{1}".format(subject_id, long_base)
+        ss_inputvols, ss_iscaleout, ss_ltaout = [inputvols, iscaleout, ltaout]
+        inputvols, iscaleout, ltaout = create_preproc_filenames(subjects_dir, subject_id, in_T1s)
+        for i, lta in enumerate(ss_ltaout):
+            if not os.path.isfile(lta):
+                print "ERROR: Could not find input file: {0}".format(lta)
+                print exc
+                sys.exit(-1)
+            else:
+                shutil.copy(lta, ltaout[i])
+
+        for i, iscale in enumerate(ss_iscaleout):
+            if not os.path.isfile(iscale):
+                print "ERROR: Could not find input file: {0}".format(lta)
+                print exc
+                sys.exit(-1)
+            else:
+                shutil.copy(iscale, iscaleout[i])
+
+        #TODO: add wrapping for mri_concatenate_lta
     
     # Motion Correction
     """
@@ -166,19 +178,19 @@ def create_AutoRecon1(subjects_dir, subject_id, fs_home, in_T1s, in_T2, in_FLAIR
     255 cubed char images (1mm isotropic voxels) in mri/orig.mgz.
     """
 
-    create_long_template = pe.Node(RobustTemplate(), name="Robust_Template")
-    create_long_template.inputs.average_metric = 'median'
-    create_long_template.inputs.template_output = outputfilename(subjects_dir, subject_id, 'rawavg.mgz')
-    create_long_template.inputs.auto_detect_sensitivity = True
-    create_long_template.inputs.initial_timepoint = 1
-    create_long_template.inputs.fixed_timepoint = True
-    create_long_template.inputs.no_iteration = True
-    create_long_template.inputs.intensity_scaling = True
-    create_long_template.inputs.subsample_threshold = 200
+    create_template = pe.Node(RobustTemplate(), name="Robust_Template")
+    create_template.inputs.average_metric = 'median'
+    create_template.inputs.template_output = outputfilename(subjects_dir, subject_id, 'rawavg.mgz')
+    create_template.inputs.auto_detect_sensitivity = True
+    create_template.inputs.initial_timepoint = 1
+    create_template.inputs.fixed_timepoint = True
+    create_template.inputs.no_iteration = True
+    create_template.inputs.intensity_scaling = True
+    create_template.inputs.subsample_threshold = 200
+    create_template.inputs.scaled_intensity_outputs = iscaleout
+    create_template.inputs.transform_outputs = ltaout
 
-    ar1_wf.connect([(T1_image_preparation, create_long_template, [('out_file', 'infiles')]),
-                    (out_fn, create_long_template, [('Iscaleout', 'scaled_intensity_outputs'),
-                                                    ('LTAout', 'transform_outputs')]),
+    ar1_wf.connect([(T1_image_preparation, create_template, [('out_file', 'infiles')]),
                     ])
 
     # mri_convert
@@ -189,14 +201,15 @@ def create_AutoRecon1(subjects_dir, subject_id, fs_home, in_T1s, in_T2, in_FLAIR
     conform_template.inputs.resample_type = 'cubic'
 
     ar1_wf.connect(
-        [(create_long_template, conform_template, [('template_output', 'in_file')])])
+        [(create_template, conform_template, [('template_output', 'in_file')])])
 
     add_to_header = pe.Node(AddXFormToHeader(), name="Add_Transform_to_Header")
     add_to_header.inputs.copy_name = True
     add_to_header.inputs.out_file = outputfilename(subjects_dir, subject_id, 'orig.mgz')
+    add_to_header.inputs.transform = os.path.join(
+        subjects_dir, subject_id, 'mri', 'transforms', 'talairach.xfm')
 
     ar1_wf.connect([(conform_template, add_to_header, [('out_file', 'in_file')]),
-                    (out_fn, add_to_header, [('XFMout', 'transform')]),
                     ])
 
     # Talairach
@@ -228,9 +241,10 @@ def create_AutoRecon1(subjects_dir, subject_id, fs_home, in_T1s, in_T2, in_FLAIR
                                       ['out_file'],
                                       copy_file),
                              name='Copy_Transform')
+    copy_transform.inputs.out_file = os.path.join(
+        subjects_dir, subject_id, 'mri', 'transforms', 'talairach.xfm')
 
     ar1_wf.connect([(talairach_avi, copy_transform, [('out_file', 'in_file')]),
-                    (out_fn, copy_transform, [('XFMout', 'out_file')])
                     ])
 
     check_alignment = pe.Node(

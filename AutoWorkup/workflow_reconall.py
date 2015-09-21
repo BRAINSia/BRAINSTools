@@ -48,7 +48,7 @@ def mkdir_p(path):
         else:
             raise
 
-def outputfilename(subjects_dir, filename, subfolder1='mri', subfolder2=''):
+def outputfilename(subjects_dir, subject_id, filename, subfolder1='mri', subfolder2=''):
     dest_dir = os.path.join(
         subjects_dir, subject_id, subfolder1, subfolder2)
     if not os.path.isdir(dest_dir):
@@ -97,7 +97,7 @@ def copy_file(in_file, out_file=None):
     shutil.copy(in_file, out_file)
     return out_file
 
-def create_AutoRecon1(subject_id, subjects_dir, in_T1s, in_T2, in_FLAIR, cw256, fs_home):    
+def create_AutoRecon1(subjects_dir, subject_id, fs_home, in_T1s, in_T2, in_FLAIR, cw256):    
     # AutoRecon1
     # Workflow
     ar1_wf = pe.Workflow(name='AutoRecon1')
@@ -138,7 +138,7 @@ def create_AutoRecon1(subject_id, subjects_dir, in_T1s, in_T2, in_FLAIR, cw256, 
         # mri_convert
         ar1_inputs.inputs.Raw_T2 = in_T2
         T2_convert = pe.Node(MRIConvert(), name="T2_convert")
-        T2_convert.inputs.out_file = outputfilename(subjects_dir, 'T2raw.mgz', 'mri', 'orig')
+        T2_convert.inputs.out_file = outputfilename(subjects_dir, subject_id, 'T2raw.mgz', 'mri', 'orig')
         T2_convert.inputs.no_scale = True
         ar1_wf.connect([(ar1_inputs, T2_convert, [('Raw_T2', 'in_file')]),
                         ]) 
@@ -149,7 +149,7 @@ def create_AutoRecon1(subject_id, subjects_dir, in_T1s, in_T2, in_FLAIR, cw256, 
         # mri_convert
         ar1_inputs.inputs.Raw_FLAIR = in_FLAIR
         FLAIR_convert = pe.Node(MRIConvert(), name="FLAIR_convert")
-        FLAIR_convert.inputs.out_file = outputfilename(subjects_dir, 
+        FLAIR_convert.inputs.out_file = outputfilename(subjects_dir, subject_id, 
             'FLAIRraw.mgz', 'mri', 'orig')
         FLAIR_convert.inputs.no_scale = True
         ar1_wf.connect([(ar1_inputs, FLAIR_convert, [('Raw_FLAIR', 'in_file')]),
@@ -168,7 +168,7 @@ def create_AutoRecon1(subject_id, subjects_dir, in_T1s, in_T2, in_FLAIR, cw256, 
 
     create_long_template = pe.Node(RobustTemplate(), name="Robust_Template")
     create_long_template.inputs.average_metric = 'median'
-    create_long_template.inputs.template_output = outputfilename(subjects_dir, 'rawavg.mgz')
+    create_long_template.inputs.template_output = outputfilename(subjects_dir, subject_id, 'rawavg.mgz')
     create_long_template.inputs.auto_detect_sensitivity = True
     create_long_template.inputs.initial_timepoint = 1
     create_long_template.inputs.fixed_timepoint = True
@@ -183,7 +183,7 @@ def create_AutoRecon1(subject_id, subjects_dir, in_T1s, in_T2, in_FLAIR, cw256, 
 
     # mri_convert
     conform_template = pe.Node(MRIConvert(), name='Conform_Template')
-    conform_template.inputs.out_file = outputfilename(subjects_dir, 'orig.mgz')
+    conform_template.inputs.out_file = outputfilename(subjects_dir, subject_id, 'orig.mgz')
     conform_template.inputs.conform = True
     conform_template.inputs.cw256 = cw256    
     conform_template.inputs.resample_type = 'cubic'
@@ -193,7 +193,7 @@ def create_AutoRecon1(subject_id, subjects_dir, in_T1s, in_T2, in_FLAIR, cw256, 
 
     add_to_header = pe.Node(AddXFormToHeader(), name="Add_Transform_to_Header")
     add_to_header.inputs.copy_name = True
-    add_to_header.inputs.out_file = outputfilename(subjects_dir, 'orig.mgz')
+    add_to_header.inputs.out_file = outputfilename(subjects_dir, subject_id, 'orig.mgz')
 
     ar1_wf.connect([(conform_template, add_to_header, [('out_file', 'in_file')]),
                     (out_fn, add_to_header, [('XFMout', 'transform')]),
@@ -211,14 +211,14 @@ def create_AutoRecon1(subject_id, subjects_dir, in_T1s, in_T2, in_FLAIR, cw256, 
     bias_correction.inputs.protocol_iterations = 1000
     bias_correction.inputs.distance = 50
     bias_correction.inputs.no_rescale = True
-    bias_correction.inputs.out_file = outputfilename(subjects_dir, 'orig_nu.mgz')
+    bias_correction.inputs.out_file = outputfilename(subjects_dir, subject_id, 'orig_nu.mgz')
 
     ar1_wf.connect([(add_to_header, bias_correction, [('out_file', 'in_file')]),
                     ])
 
     talairach_avi = pe.Node(TalairachAVI(), name="Compute_Transform")
     talairach_avi.inputs.atlas = '3T18yoSchwartzReactN32_as_orig'
-    talairach_avi.inputs.out_file = outputfilename(subjects_dir, 
+    talairach_avi.inputs.out_file = outputfilename(subjects_dir, subject_id, 
         'talairach.auto.xfm', 'mri', 'transforms')
 
     ar1_wf.connect([(bias_correction, talairach_avi, [('out_file', 'in_file')]),
@@ -262,7 +262,7 @@ def create_AutoRecon1(subject_id, subjects_dir, in_T1s, in_T2, in_FLAIR, cw256, 
 
     mri_normalize = pe.Node(Normalize(), name="Normalize_T1")
     mri_normalize.inputs.gradient = 1
-    mri_normalize.inputs.out_file = outputfilename(subjects_dir, 'T1.mgz')
+    mri_normalize.inputs.out_file = outputfilename(subjects_dir, subject_id, 'T1.mgz')
     ar1_wf.connect([(bias_correction, mri_normalize, [('out_file', 'in_file')]),
                     (copy_transform, mri_normalize,
                      [('out_file', 'transform')]),
@@ -278,7 +278,7 @@ def create_AutoRecon1(subject_id, subjects_dir, in_T1s, in_T2, in_FLAIR, cw256, 
     mri_em_register.inputs.template = os.path.join(fs_home,
                                                    'average',
                                                    'RB_all_withskull_2014-08-21.gca')
-    mri_em_register.inputs.out_file = outputfilename(subjects_dir, 
+    mri_em_register.inputs.out_file = outputfilename(subjects_dir, subject_id, 
         'talairach_with_skull.lta', 'mri', 'transforms')
     mri_em_register.inputs.skull = True
     ar1_wf.connect([(bias_correction, mri_em_register, [('out_file', 'in_file')]),
@@ -290,7 +290,7 @@ def create_AutoRecon1(subject_id, subjects_dir, in_T1s, in_T2, in_FLAIR, cw256, 
     watershed_skull_strip.inputs.brain_atlas = os.path.join(fs_home,
                                                             'average',
                                                             'RB_all_withskull_2014-08-21.gca')
-    watershed_skull_strip.inputs.out_file = outputfilename(subjects_dir, 
+    watershed_skull_strip.inputs.out_file = outputfilename(subjects_dir, subject_id, 
         'brainmask.auto.mgz')
     ar1_wf.connect([(mri_normalize, watershed_skull_strip, [('out_file', 'in_file')]),
                     (mri_em_register, watershed_skull_strip,
@@ -301,14 +301,14 @@ def create_AutoRecon1(subject_id, subjects_dir, in_T1s, in_T2, in_FLAIR, cw256, 
                                       ['out_file'],
                                       copy_file),
                              name='Copy_Brainmask')
-    copy_brainmask.inputs.out_file = outputfilename(subjects_dir, 'brainmask.mgz')
+    copy_brainmask.inputs.out_file = outputfilename(subjects_dir, subject_id, 'brainmask.mgz')
 
     ar1_wf.connect([(watershed_skull_strip, copy_brainmask, [('brain_vol', 'in_file')]),
                     ])
 
     return ar1_wf
 
-def create_AutoRecon2(subjects_dir, fs_home):
+def create_AutoRecon2(subjects_dir, subject_id, fs_home):
     
     # AutoRecon2
     # Workflow
@@ -338,7 +338,7 @@ def create_AutoRecon2(subjects_dir, fs_home):
         MNIBiasCorrection(), name="Intensity_Correction")
     intensity_correction.inputs.iterations = 1
     intensity_correction.inputs.protocol_iterations = 1000
-    intensity_correction.inputs.out_file = outputfilename(subjects_dir, 'nu.mgz')
+    intensity_correction.inputs.out_file = outputfilename(subjects_dir, subject_id, 'nu.mgz')
     ar2_wf.connect([(ar2_inputs, intensity_correction, [('orig', 'in_file'),
                                                         ('brainmask', 'mask'),
                                                         ('transform',
@@ -365,7 +365,7 @@ def create_AutoRecon2(subjects_dir, fs_home):
     align_transform.inputs.template = os.path.join(fs_home,
                                                    'average',
                                                    'RB_all_2014-08-21.gca')
-    align_transform.inputs.out_file = outputfilename(subjects_dir, 
+    align_transform.inputs.out_file = outputfilename(subjects_dir, subject_id, 
         'talairach.lta', 'mri', 'transforms')
     align_transform.inputs.nbrspacing = 3
     ar2_wf.connect([(ar2_inputs, align_transform, [('brainmask', 'mask')]),
@@ -380,8 +380,8 @@ def create_AutoRecon2(subjects_dir, fs_home):
     estimate the bias field/scalings. Creates mri/norm.mgz.
     """
     ca_normalize = pe.Node(CANormalize(), name='CA_Normalize')
-    ca_normalize.inputs.out_file = outputfilename(subjects_dir, 'norm.mgz')
-    ca_normalize.inputs.control_points = outputfilename(subjects_dir, 'ctrl_pts.mgz')
+    ca_normalize.inputs.out_file = outputfilename(subjects_dir, subject_id, 'norm.mgz')
+    ca_normalize.inputs.control_points = outputfilename(subjects_dir, subject_id, 'ctrl_pts.mgz')
     ca_normalize.inputs.atlas = os.path.join(fs_home,
                                              'average',
                                              'RB_all_2014-08-21.gca')
@@ -397,7 +397,7 @@ def create_AutoRecon2(subjects_dir, fs_home):
     ca_register.inputs.template = os.path.join(fs_home,
                                                'average',
                                                'RB_all_2014-08-21.gca')
-    ca_register.inputs.out_file = outputfilename(subjects_dir, 
+    ca_register.inputs.out_file = outputfilename(subjects_dir, subject_id, 
         'talairach.m3z', 'mri', 'transforms')
     ar2_wf.connect([(ca_normalize, ca_register, [('out_file', 'in_file')]),
                     (ar2_inputs, ca_register, [('brainmask', 'mask')]),
@@ -411,7 +411,7 @@ def create_AutoRecon2(subjects_dir, fs_home):
     """
     remove_neck = pe.Node(RemoveNeck(), name='Remove_Neck')
     remove_neck.inputs.radius = 25
-    remove_neck.inputs.out_file = outputfilename(subjects_dir, 'nu_noneck.mgz')
+    remove_neck.inputs.out_file = outputfilename(subjects_dir, subject_id, 'nu_noneck.mgz')
     remove_neck.inputs.template = os.path.join(fs_home,
                                                'average',
                                                'RB_all_2014-08-21.gca')
@@ -424,7 +424,7 @@ def create_AutoRecon2(subjects_dir, fs_home):
     # possessing the skull.
     em_reg_withskull = pe.Node(EMRegister(), name='EM_Register_withSkull')
     em_reg_withskull.inputs.skull = True
-    em_reg_withskull.inputs.out_file = outputfilename(subjects_dir, 
+    em_reg_withskull.inputs.out_file = outputfilename(subjects_dir, subject_id, 
         'talairach_with_skull_2.lta', 'mri', 'transforms')
     em_reg_withskull.inputs.template = os.path.join(fs_home,
                                                     'average',
@@ -440,7 +440,7 @@ def create_AutoRecon2(subjects_dir, fs_home):
     ca_label.inputs.relabel_unlikely = (9, .3)
     ca_label.inputs.prior = 0.5
     ca_label.inputs.align = True
-    ca_label.inputs.out_file = outputfilename(subjects_dir, 'aseg.auto_noCCseg.mgz')
+    ca_label.inputs.out_file = outputfilename(subjects_dir, subject_id, 'aseg.auto_noCCseg.mgz')
     ca_label.inputs.template = os.path.join(fs_home,
                                             'average',
                                             'RB_all_2014-08-21.gca')
@@ -451,9 +451,9 @@ def create_AutoRecon2(subjects_dir, fs_home):
     # mri_cc - segments the corpus callosum into five separate labels in the
     # subcortical segmentation volume 'aseg.mgz'
     segment_cc = pe.Node(SegmentCC(), name="Segment_CorpusCallosum")
-    segment_cc.inputs.out_rotation = outputfilename(subjects_dir, 
+    segment_cc.inputs.out_rotation = outputfilename(subjects_dir, subject_id, 
         'cc_up.lta', 'mri', 'transforms')
-    segment_cc.inputs.out_file = outputfilename(subjects_dir, 'aseg.auto.mgz')
+    segment_cc.inputs.out_file = outputfilename(subjects_dir, subject_id, 'aseg.auto.mgz')
     ar2_wf.connect([(ar2_inputs, segment_cc, [('subject_id', 'subject_id'),
                                               ('subjects_dir', 'subjects_dir')]),
                     (ca_label, segment_cc, [('out_file', 'in_file')]),
@@ -464,7 +464,7 @@ def create_AutoRecon2(subjects_dir, fs_home):
                                ['out_file'],
                                copy_file),
                       name='Copy_CCSegmentation')
-    copy_cc.inputs.out_file = outputfilename(subjects_dir, 'aseg.presurf.mgz')
+    copy_cc.inputs.out_file = outputfilename(subjects_dir, subject_id, 'aseg.presurf.mgz')
 
     ar2_wf.connect([(segment_cc, copy_cc, [('out_file', 'in_file')])
                     ])
@@ -477,7 +477,7 @@ def create_AutoRecon2(subjects_dir, fs_home):
     brain.mgz volume. The -autorecon2-cp stage begins here.
     """
     normalization2 = pe.Node(Normalize(), name="Normalization2")
-    normalization2.inputs.out_file = outputfilename(subjects_dir, 'brain.mgz')
+    normalization2.inputs.out_file = outputfilename(subjects_dir, subject_id, 'brain.mgz')
     ar2_wf.connect([(copy_cc, normalization2, [('out_file', 'segmentation')]),
                     (ar2_inputs, normalization2, [('brainmask', 'mask')]),
                     (ca_normalize, normalization2, [('out_file', 'in_file')])
@@ -488,7 +488,7 @@ def create_AutoRecon2(subjects_dir, fs_home):
     # Applies brainmask.mgz to brain.mgz to create brain.finalsurfs.mgz.
     mri_mask = pe.Node(ApplyMask(), name="Mask_Brain_Final_Surface")
     mri_mask.inputs.mask_thresh = 5
-    mri_mask.inputs.out_file = outputfilename(subjects_dir, 'brain.finalsurfs.mgz')
+    mri_mask.inputs.out_file = outputfilename(subjects_dir, subject_id, 'brain.finalsurfs.mgz')
 
     ar2_wf.connect([(normalization2, mri_mask, [('out_file', 'in_file')]),
                     (ar2_inputs, mri_mask, [('brainmask', 'mask_file')])
@@ -503,12 +503,12 @@ def create_AutoRecon2(subjects_dir, fs_home):
     """
 
     wm_seg = pe.Node(SegmentWM(), name="Segment_WM")
-    wm_seg.inputs.out_file = outputfilename(subjects_dir, 'wm.seg.mgz')
+    wm_seg.inputs.out_file = outputfilename(subjects_dir, subject_id, 'wm.seg.mgz')
     ar2_wf.connect([(normalization2, wm_seg, [('out_file', 'in_file')])
                     ])
 
     edit_wm = pe.Node(EditWMwithAseg(), name='Edit_WhiteMatter')
-    edit_wm.inputs.out_file = outputfilename(subjects_dir, 'wm.asegedit.mgz')
+    edit_wm.inputs.out_file = outputfilename(subjects_dir, subject_id, 'wm.asegedit.mgz')
     edit_wm.inputs.keep_in = True
     ar2_wf.connect([(wm_seg, edit_wm, [('out_file', 'in_file')]),
                     (copy_cc, edit_wm, [('out_file', 'seg_file')]),
@@ -516,7 +516,7 @@ def create_AutoRecon2(subjects_dir, fs_home):
                     ])
 
     pretess = pe.Node(MRIPretess(), name="MRI_Pretess")
-    pretess.inputs.out_file = outputfilename(subjects_dir, 'wm.mgz')
+    pretess.inputs.out_file = outputfilename(subjects_dir, subject_id, 'wm.mgz')
     pretess.inputs.label = 'wm'
     ar2_wf.connect([(edit_wm, pretess, [('out_file', 'in_filled')]),
                     (ca_normalize, pretess, [('out_file', 'in_norm')])
@@ -530,8 +530,8 @@ def create_AutoRecon2(subjects_dir, fs_home):
     """
 
     cut_and_fill = pe.Node(MRIFill(), name="Cut_and_Fill")
-    cut_and_fill.inputs.log_file = outputfilename(subjects_dir, 'ponscc.cut.log', 'scripts')
-    cut_and_fill.inputs.out_file = outputfilename(subjects_dir, 'filled.mgz')
+    cut_and_fill.inputs.log_file = outputfilename(subjects_dir, subject_id, 'ponscc.cut.log', 'scripts')
+    cut_and_fill.inputs.out_file = outputfilename(subjects_dir, subject_id, 'filled.mgz')
     ar2_wf.connect([(pretess, cut_and_fill, [('out_file', 'in_file')]),
                     (align_transform, cut_and_fill,
                      [('out_file', 'transform')]),
@@ -856,7 +856,7 @@ def create_AutoRecon2(subjects_dir, fs_home):
 
     return ar2_wf, ar2_lh, ar2_rh
 
-def create_AutoRecon3(subjects_dir, fs_home):
+def create_AutoRecon3(subjects_dir, subject_id, fs_home, qcache):
     
     # AutoRecon3
     # Workflow
@@ -1158,8 +1158,8 @@ def create_AutoRecon3(subjects_dir, fs_home):
         parcellation_stats_white.inputs.mgz = True
         parcellation_stats_white.inputs.tabular_output = True
         parcellation_stats_white.inputs.surface = 'white'
-        parcellation_stats_white.inputs.out_color = outputfilename(subjects_dir, 'aparc.annot.ctab', 'label')
-        parcellation_stats_white.inputs.out_table = outputfilename(subjects_dir, '{0}.aparc.stats'.format(hemisphere), 'stats')
+        parcellation_stats_white.inputs.out_color = outputfilename(subjects_dir, subject_id, 'aparc.annot.ctab', 'label')
+        parcellation_stats_white.inputs.out_table = outputfilename(subjects_dir, subject_id, '{0}.aparc.stats'.format(hemisphere), 'stats')
 
         ar3_wf.connect([(ar3_inputs, parcellation_stats_white, [('subject_id', 'subject_id'),
                                                                 ('subjects_dir',
@@ -1197,8 +1197,8 @@ def create_AutoRecon3(subjects_dir, fs_home):
         parcellation_stats_pial.inputs.mgz = True
         parcellation_stats_pial.inputs.tabular_output = True
         parcellation_stats_pial.inputs.surface = 'pial'
-        parcellation_stats_pial.inputs.out_color = outputfilename(subjects_dir, 'aparc.annot.ctab', 'label')
-        parcellation_stats_pial.inputs.out_table = outputfilename(subjects_dir, '{0}.aparc.pial.stats'.format(hemisphere), 'stats')
+        parcellation_stats_pial.inputs.out_color = outputfilename(subjects_dir, subject_id, 'aparc.annot.ctab', 'label')
+        parcellation_stats_pial.inputs.out_table = outputfilename(subjects_dir, subject_id, '{0}.aparc.pial.stats'.format(hemisphere), 'stats')
 
         ar3_wf.connect([(ar3_inputs, parcellation_stats_pial, [('subject_id', 'subject_id'),
                                                              ('subjects_dir',
@@ -1240,7 +1240,7 @@ def create_AutoRecon3(subjects_dir, fs_home):
             
         cortical_parcellation_2.inputs.classifier = os.path.join(
             fs_home, 'average', '{0}.destrieux.simple.2009-07-29.gcs'.format(hemisphere))
-        cortical_parcellation_2.inputs.out_file = outputfilename(subjects_dir, '{0}.aparc.a2009s.annot'.format(hemisphere), 'label')
+        cortical_parcellation_2.inputs.out_file = outputfilename(subjects_dir, subject_id, '{0}.aparc.a2009s.annot'.format(hemisphere), 'label')
         cortical_parcellation_2.inputs.seed = 1234
 
         ar3_wf.connect([(ar3_inputs, cortical_parcellation_2, [('subject_id', 'subject_id'),
@@ -1257,8 +1257,8 @@ def create_AutoRecon3(subjects_dir, fs_home):
         # Parcellation Statistics 2
         parcellation_stats_white_2 = parcellation_stats_white.clone(
             name="Parcellation_Statistics_{0}_2".format(hemisphere))
-        parcellation_stats_white_2.inputs.out_color = outputfilename(subjects_dir, 'aparc.annot.a2009s.ctab', 'label')
-        parcellation_stats_white_2.inputs.out_table = outputfilename(subjects_dir, '{0}.aparc.a2009s.stats'.format(hemisphere), 'stats')
+        parcellation_stats_white_2.inputs.out_color = outputfilename(subjects_dir, subject_id, 'aparc.annot.a2009s.ctab', 'label')
+        parcellation_stats_white_2.inputs.out_table = outputfilename(subjects_dir, subject_id, '{0}.aparc.a2009s.stats'.format(hemisphere), 'stats')
         ar3_wf.connect([(ar3_inputs, parcellation_stats_white_2, [('subject_id', 'subject_id'),
                                                                   ('subjects_dir',
                                                                    'subjects_dir'),
@@ -1294,7 +1294,7 @@ def create_AutoRecon3(subjects_dir, fs_home):
         cortical_parcellation_3 = pe.Node(MRIsCALabel(), name="Cortical_Parcellation_{0}_3".format(hemisphere))
         cortical_parcellation_3.inputs.classifier = os.path.join(
             fs_home, 'average', '{0}.DKTatlas40.gcs'.format(hemisphere))
-        cortical_parcellation_3.inputs.out_file = outputfilename(subjects_dir, '{0}.aparc.DKTatlas40.annot'.format(hemisphere), 'label')
+        cortical_parcellation_3.inputs.out_file = outputfilename(subjects_dir, subject_id, '{0}.aparc.DKTatlas40.annot'.format(hemisphere), 'label')
         cortical_parcellation_3.inputs.seed = 1234
         ar3_wf.connect([(ar3_inputs, cortical_parcellation_3, [('subject_id', 'subject_id'),
                                                                ('subjects_dir',
@@ -1310,8 +1310,8 @@ def create_AutoRecon3(subjects_dir, fs_home):
         # Parcellation Statistics 3
         parcellation_stats_white_3 = parcellation_stats_white.clone(
             name="Parcellation_Statistics_{0}_3".format(hemisphere))
-        parcellation_stats_white_3.inputs.out_color = outputfilename(subjects_dir, 'aparc.annot.DKTatlas40.ctab', 'label')
-        parcellation_stats_white_3.inputs.out_table = outputfilename(subjects_dir, '{0}.aparc.DKTatlas40.stats'.format(hemisphere), 'stats')
+        parcellation_stats_white_3.inputs.out_color = outputfilename(subjects_dir, subject_id, 'aparc.annot.DKTatlas40.ctab', 'label')
+        parcellation_stats_white_3.inputs.out_table = outputfilename(subjects_dir, subject_id, '{0}.aparc.DKTatlas40.stats'.format(hemisphere), 'stats')
 
         ar3_wf.connect([(ar3_inputs, parcellation_stats_white_3, [('subject_id', 'subject_id'),
                                                                    ('subjects_dir',
@@ -1676,7 +1676,7 @@ def create_AutoRecon3(subjects_dir, fs_home):
                 preprocess = pe.Node(MRISPreprocReconAll(), name="QCache_Preproc_{0}_{1}".format(
                     hemisphere, meas_name.replace('.', '_')))
                 target_id = 'fsaverage'
-                preprocess.inputs.out_file = outputfilename(subjects_dir, 
+                preprocess.inputs.out_file = outputfilename(subjects_dir, subject_id, 
                     '{0}.{1}.{2}.mgh'.format(hemisphere, meas_name, target_id), 'surf')
                 target_dir = os.path.join(subjects_dir, target_id)
                 if not os.path.isdir(target_dir):
@@ -1704,7 +1704,7 @@ def create_AutoRecon3(subjects_dir, fs_home):
                     surf2surf.inputs.hemi = hemisphere
                     tval_file = "{0}.{1}.fwhm{2}.fsaverage.mgh".format(
                         hemisphere, meas_name, value)
-                    surf2surf.inputs.out_file = outputfilename(subjects_dir, 
+                    surf2surf.inputs.out_file = outputfilename(subjects_dir, subject_id, 
                         tval_file, 'surf')
                     ar3_lh_wf.connect([(preprocess, surf2surf, [('out_file', 'in_file')]),
                                        (ar3_inputs, surf2surf,
@@ -1714,9 +1714,9 @@ def create_AutoRecon3(subjects_dir, fs_home):
     return ar3_wf
 
 def create_reconall(in_T1s, subject_id, in_T2, in_FLAIR, subjects_dir, qcache, cw256, fs_home):
-    ar1_wf = create_AutoRecon1(subject_id, subjects_dir, in_T1s, in_T2, in_FLAIR, cw256, fs_home)
-    ar2_wf, ar2_lh, ar2_rh = create_AutoRecon2(subjects_dir, fs_home)
-    ar3_wf = create_AutoRecon3(subjects_dir, fs_home)
+    ar1_wf = create_AutoRecon1(subjects_dir, subject_id, fs_home, in_T1s, in_T2, in_FLAIR, cw256)
+    ar2_wf, ar2_lh, ar2_rh = create_AutoRecon2(subjects_dir, subject_id, fs_home)
+    ar3_wf = create_AutoRecon3(subjects_dir, subject_id, fs_home, qcache)
 
     # Connect workflows 
     reconall = pe.Workflow(name="recon-all")

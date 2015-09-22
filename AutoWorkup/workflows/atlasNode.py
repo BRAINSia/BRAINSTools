@@ -195,6 +195,7 @@ def CreateAtlasXMLAndCleanedDeformedAverages(t1_image, deformed_list, AtlasTempl
     #print("\n\n\nALL_FILES: {0}\n\n\n".format(deformed_list))
     load_images_list = dict()
     for full_pathname in deformed_list:
+        full_pathname=str(full_pathname)
         base_name = os.path.basename(full_pathname)
         if base_name in list(patternDict.keys()):
             load_images_list[base_name] = sitk.ReadImage(full_pathname)
@@ -255,7 +256,7 @@ def CreateAtlasXMLAndCleanedDeformedAverages(t1_image, deformed_list, AtlasTempl
     T2File = None
     PDFile = None
     for index in range(0, len(deformed_list)):
-        full_pathname = deformed_list[index]
+        full_pathname = str(deformed_list[index])
         base_name = os.path.basename(full_pathname)
         if base_name == 'AVG_BRAINMASK.nii.gz':
             ### Make Brain Mask Binary

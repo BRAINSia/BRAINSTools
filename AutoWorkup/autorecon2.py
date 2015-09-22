@@ -5,25 +5,37 @@ import nipype.pipeline.engine as pe  # pypeline engine
 from nipype.interfaces.freesurfer import *
 from autorecon1 import mkdir_p, outputfilename, copy_file
 
-def create_AutoRecon2(subjects_dir, subject_id, fs_home):
+def create_AutoRecon2(subjects_dir, subject_id, fs_home, longitudinal):
     
     # AutoRecon2
     # Workflow
     ar2_wf = pe.Workflow(name="AutoRecon2")
 
     # Input node
-    ar2_inputs = pe.Node(IdentityInterface(fields=['orig',
-                                                   'brainmask',
-                                                   'transform',
-                                                   'subject_id',
-                                                   'lh',
-                                                   'rh',
-                                                   'subjects_dir']),
-                         run_without_submitting=True,
-                         name='AutoRecon2_Inputs')
+    if longitudinal:
+        ar2_inputs = pe.Node(IdentityInterface(fields=['orig',
+                                                       'brainmask',
+                                                       'transform',
+                                                       'subject_id',
+                                                       'talairach_lta',
+                                                       'lh',
+                                                       'rh',
+                                                       'subjects_dir']),
+                             run_without_submitting=True,
+                             name='AutoRecon2_Inputs')
+    else:
+        ar2_inputs = pe.Node(IdentityInterface(fields=['orig',
+                                                       'brainmask',
+                                                       'transform',
+                                                       'subject_id',
+                                                       'lh',
+                                                       'rh',
+                                                       'subjects_dir']),
+                             run_without_submitting=True,
+                             name='AutoRecon2_Inputs')
+        
     ar2_inputs.inputs.lh = 'lh'
     ar2_inputs.inputs.rh = 'rh'
-    ar2_inputs.inputs.subjects_dir = subjects_dir
 
     # NU Intensity Correction
     """
@@ -58,17 +70,27 @@ def create_AutoRecon2(subjects_dir, subject_id, fs_home):
     Computes the transform to align the mri/nu.mgz volume to the default GCA 
     atlas found in FREESURFER_HOME/average (see -gca flag for more info).
     """
-    align_transform = pe.Node(EMRegister(), name="Align_Transform")
-    align_transform.inputs.template = os.path.join(fs_home,
-                                                   'average',
-                                                   'RB_all_2014-08-21.gca')
-    align_transform.inputs.out_file = outputfilename(subjects_dir, subject_id, 
-        'talairach.lta', 'mri', 'transforms')
-    align_transform.inputs.nbrspacing = 3
-    ar2_wf.connect([(ar2_inputs, align_transform, [('brainmask', 'mask')]),
-                    (add_to_header_nu, align_transform,
-                     [('out_file', 'in_file')])
-                    ])
+    if longitudinal:
+        align_transform = pe.Node(Function(['in_file', 'out_file'],
+                                   ['out_file'],
+                                   copy_file),
+                          name='Copy_Talairach_lta')
+        align_transform.inputs.out_file = os.path.join(subjects_dir, subject_id, 'mri', 'transforms', 'talairach.lta')
+
+        ar2_wf.connect([(ar2_inputs, align_transform, [('talairach_lta', 'in_file')])])
+        
+    else:        
+        align_transform = pe.Node(EMRegister(), name="Align_Transform")
+        align_transform.inputs.template = os.path.join(fs_home,
+                                                       'average',
+                                                       'RB_all_2014-08-21.gca')
+        align_transform.inputs.out_file = outputfilename(subjects_dir, subject_id, 
+                                                         'talairach.lta', 'mri', 'transforms')
+        align_transform.inputs.nbrspacing = 3
+        ar2_wf.connect([(ar2_inputs, align_transform, [('brainmask', 'mask')]),
+                        (add_to_header_nu, align_transform,
+                         [('out_file', 'in_file')])
+                        ])
 
     # CA Normalize
     """

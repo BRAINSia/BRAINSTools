@@ -14,7 +14,7 @@ def create_reconall(in_T1s, subject_id, in_T2, in_FLAIR, subjects_dir, qcache, c
     reconall = pe.Workflow(name="recon-all")
     if longitudinal:
         # grab files from the initial single session run
-        grab_inittp_files = pe.Node(DataGrabber(), name="Grab_Initial_Files".format(subject_id),
+        grab_inittp_files = pe.Node(DataGrabber(), name="Grab_Initial_Files",
                                     infields=['subject_id'],
                                     outfileds=['inputvols', 'iscales', 'ltas'])
         grab_inittp_files.inputs.template = '*'

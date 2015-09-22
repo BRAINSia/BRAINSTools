@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
-  <category>BRAINS.LabelStatistics</category>
+  <category>Quantification</category>
   <title>Label Statistics (BRAINS)</title>
   <description>Compute image statistics within each label of a label map. </description>
   <version>4.5.0</version>

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-  <executable>
+<executable>
+  <category>Diffusion.Diffusion Weighted Images</category>
   <title>BRAINSDWICleanup</title>
 
   <description>Remove bad gradients/volumes from DWI NRRD file.</description>
@@ -40,4 +41,4 @@
     </integer-vector>
   </parameters>
 
-  </executable>
+</executable>

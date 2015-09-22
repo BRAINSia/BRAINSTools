@@ -79,6 +79,22 @@ def copy_file(in_file, out_file=None):
     shutil.copy(in_file, out_file)
     return out_file
 
+def copy_files(in_files, out_files):
+    """
+    Create a function to copy a file that can be modified by a following node 
+    without changing the original file
+    """
+    import shutil
+    if len(in_files) != len(out_files):
+        print "ERROR: Length of input files must be identical to the length of 
+        outrput files to be copied"
+        sys.exit(-1)
+    for i, in_file in enumerate(in_files):
+        out_file = out_files[i]
+        print "copying %s to %s" % (in_file, out_file)
+        shutil.copy(in_file, out_file)
+    return out_files
+
 def create_preproc_filenames(subjects_dir, subject_id, in_T1s):
     # Create output filenames
     inputvols = list()
@@ -100,17 +116,16 @@ def create_AutoRecon1(subjects_dir, subject_id, fs_home, in_T1s, in_T2, in_FLAIR
     # Workflow
     ar1_wf = pe.Workflow(name='AutoRecon1')
 
-    ar1_inputs = pe.Node(interface=IdentityInterface(
-        fields=['Raw_T1', 'Raw_T2', 'Raw_FLAIR', 'subject_id', 'subjects_dir']),
-        run_without_submitting=True,
-        name='AutoRecon1_Inputs')
-
-    inputvols, iscaleout, ltaout = create_preproc_filenames(subjects_dir, subject_id, in_T1s)
-     
     if not longitudinal:
-        ar1_inputs.inputs.Raw_T1 = VerifyInputs(in_T1s)
+        ar1_inputs = pe.Node(interface=IdentityInterface(
+            fields=['Raw_T1s', 'Raw_T2', 'Raw_FLAIR', 'subject_id', 'subjects_dir']),
+                             run_without_submitting=True,
+                             name='AutoRecon1_Inputs')
         ar1_inputs.inputs.subject_id = subject_id
         ar1_inputs.inputs.subjects_dir = subjects_dir
+        ar1_inputs.inputs.Raw_T1s = VerifyInputs(in_T1s)
+
+        inputvols, iscaleout, ltaout = create_preproc_filenames(subjects_dir, subject_id, in_T1s)
 
         # T1 image preparation
         # For all T1's mri_convert ${InputVol} ${out_file}
@@ -118,7 +133,7 @@ def create_AutoRecon1(subjects_dir, subject_id, fs_home, in_T1s, in_T2, in_FLAIR
             MRIConvert(), iterfield=['in_file', 'out_file'], name="T1_prep")
         T1_image_preparation.inputs.out_file = inputvols
 
-        ar1_wf.connect([(ar1_inputs, T1_image_preparation, [('Raw_T1', 'in_file')]),
+        ar1_wf.connect([(ar1_inputs, T1_image_preparation, [('Raw_T1s', 'in_file')]),
                         ])
 
         # T2 image preparation
@@ -143,32 +158,68 @@ def create_AutoRecon1(subjects_dir, subject_id, fs_home, in_T1s, in_T2, in_FLAIR
             FLAIR_convert.inputs.no_scale = True
             ar1_wf.connect([(ar1_inputs, FLAIR_convert, [('Raw_FLAIR', 'in_file')]),
                             ])
-
     else:
+        ar1_inputs = pe.Node(interface=IdentityInterface(
+            fields=['in_T1s',
+                    'iscales',
+                    'ltas',
+                    'subj_to_base',
+                    'talairach',
+                    'brainmask',
+                    'subject_id',
+                    'subjects_dir']),
+                             run_without_submitting=True,
+                             name='AutoRecon1_Inputs')
+        ar1_inputs.inputs.subject_id = subject_id
+        ar1_inputs.inputs.subjects_dir = subjects_dir
+
+        #TODO: Move this data grabber outside autorecon1
+        grab_inittp_files = pe.Node(DataGrabber(), name="Grab_Initial_Files".format(subject_id),
+                                    infields=['subject_id'],
+                                    outfileds=['inputvols', 'iscales', 'ltas', 'wm'])
+        grab_inittp_files.inputs.template = '*'
+        grab_inittp_files.inputs.field_template = dict(inputvols='%s/mri/orig/0*.mgz',
+                                                       iscales='%s/mri/orig/0*-iscale.txt',
+                                                       ltas='%s/mri/orig/0*.lta')
+        
+        grab_inittp_files.inputs.template_args = dict(inputvols=[['subject_id']],
+                                                      iscales=[['subject_id']],
+                                                      ltas=[['subject_id']])
+
+        ar1_wf.connect([(grab_inittp_files, ar1_inputs, [('inputvols', 'in_T1s'),
+                                                         ('iscales', 'iscales'),
+                                                         ('ltas', 'ltas')])])
+        
         # for each orig/*.lta file, copy it to the destination
         # for each orig/*-
         print "TODO: Create longitudinal workflow"
         ss_subject_id = subject_id
         subject_id = "{0}.long.{1}".format(subject_id, long_base)
-        ss_inputvols, ss_iscaleout, ss_ltaout = [inputvols, iscaleout, ltaout]
-        inputvols, iscaleout, ltaout = create_preproc_filenames(subjects_dir, subject_id, in_T1s)
-        for i, lta in enumerate(ss_ltaout):
-            if not os.path.isfile(lta):
-                print "ERROR: Could not find input file: {0}".format(lta)
-                print exc
-                sys.exit(-1)
-            else:
-                shutil.copy(lta, ltaout[i])
+        , in_iscales, in_ltas = create_preproc_filenames(subjects_dir, subject_id, in_T1s)
 
-        for i, iscale in enumerate(ss_iscaleout):
-            if not os.path.isfile(iscale):
-                print "ERROR: Could not find input file: {0}".format(lta)
-                print exc
-                sys.exit(-1)
-            else:
-                shutil.copy(iscale, iscaleout[i])
+        copy_ltas = pe.MapNode(Function(['in_file', 'out_file'],
+                                        ['out_file'],
+                                        copy_file),
+                               iterfield=['in_file', 'out_file'],
+                               name='Copy_ltas')
+        ar1_wf.connect([(ar1_inputs, copy_ltas, [('ltas', 'in_file')])])
+        copy_ltas.inputs.out_file = in_ltas
 
-        #TODO: add wrapping for mri_concatenate_lta
+        copy_iscales = pe.MapNode(Function(['in_file', 'out_file'],
+                                           ['out_file'],
+                                           copy_file),
+                                  iterfield=['in_file', 'out_file'],
+                                  name='Copy_iscales')
+        ar1_wf.connect([(ar1_inputs, copy_iscales, [('iscales', 'in_file')])])
+        copy_iscales.inputs.out_file = in_iscales
+
+        concatenate_lta = pe.MapNode(ConcatenateLTA(), iterfield=['in_file'],
+                                     name="Concatenate_ltas")
+        ar1_wf.connect([(copy_ltas, concatenate_lta, [('out_file', 'in_file')]),
+                        (ar1_inputs, concatenate_lta, [('subj_to_base', 'subj_to_base')])])
+
+        ##TODO: wrap concatenate and use genfile for the output
+        ##TODO: add wrapping for mri_concatenate_lta (should be a mapnode here)
     
     # Motion Correction
     """
@@ -181,16 +232,23 @@ def create_AutoRecon1(subjects_dir, subject_id, fs_home, in_T1s, in_T2, in_FLAIR
     create_template = pe.Node(RobustTemplate(), name="Robust_Template")
     create_template.inputs.average_metric = 'median'
     create_template.inputs.template_output = outputfilename(subjects_dir, subject_id, 'rawavg.mgz')
-    create_template.inputs.auto_detect_sensitivity = True
-    create_template.inputs.initial_timepoint = 1
-    create_template.inputs.fixed_timepoint = True
     create_template.inputs.no_iteration = True
-    create_template.inputs.intensity_scaling = True
-    create_template.inputs.subsample_threshold = 200
-    create_template.inputs.scaled_intensity_outputs = iscaleout
-    create_template.inputs.transform_outputs = ltaout
-
-    ar1_wf.connect([(T1_image_preparation, create_template, [('out_file', 'infiles')]),
+    if longitudinal:
+        ar1_wf.connect([(concatenate_lta, create_template, [('out_file', 'initial_transforms')]),
+                        (ar1_inputs, create_template, [('in_T1s', 'in_files')]),
+                        (copy_iscales, create_template, [('out_file','in_intensity_scales')]),
+                        ])
+        #TODO: connect mri_concatenate_lta to create_template.inputs.ixforms
+        #TODO: connect the copied iscaleout files to the --iscalein input
+    else:
+        create_template.inputs.fixed_timepoint = True
+        create_template.inputs.auto_detect_sensitivity = True
+        create_template.inputs.initial_timepoint = 1
+        create_template.inputs.scaled_intensity_outputs = iscaleout
+        create_template.inputs.transform_outputs = ltaout
+        create_template.inputs.subsample_threshold = 200
+        create_template.inputs.intensity_scaling = True
+        ar1_wf.connect([(T1_image_preparation, create_template, [('out_file', 'in_files')]),
                     ])
 
     # mri_convert
@@ -317,8 +375,6 @@ def create_AutoRecon1(subjects_dir, subject_id, fs_home, in_T1s, in_T2, in_FLAIR
                              name='Copy_Brainmask')
     copy_brainmask.inputs.out_file = outputfilename(subjects_dir, subject_id, 'brainmask.mgz')
 
-    ar1_wf.connect([(watershed_skull_strip, copy_brainmask, [('brain_vol', 'in_file')]),
-                    ])
+    ar1_wf.connect([(watershed_skull_strip, copy_brainmask, [('brain_vol', 'in_file')])])
 
     return ar1_wf
-

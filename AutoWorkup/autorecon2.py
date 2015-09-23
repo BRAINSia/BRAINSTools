@@ -5,7 +5,16 @@ import nipype.pipeline.engine as pe  # pypeline engine
 from nipype.interfaces.freesurfer import *
 from autorecon1 import mkdir_p, outputfilename, copy_file
 
-def create_AutoRecon2(subjects_dir, subject_id, fs_home, longitudinal):
+def copy_ltas(in_file, subjects_dir, subject_id, long_base):
+    import os
+    out_file = copy_file(
+        in_file,
+        os.path.join(
+            subjects_dir, subject_id, 'mri', 'transforms',
+            os.path.basename(in_file).replace(long_base, subject_id)))
+    return out_file
+
+def create_AutoRecon2(subjects_dir, subject_id, fs_home, longitudinal, long_base):
     
     # AutoRecon2
     # Workflow
@@ -18,6 +27,8 @@ def create_AutoRecon2(subjects_dir, subject_id, fs_home, longitudinal):
                                                        'transform',
                                                        'subject_id',
                                                        'talairach_lta',
+                                                       'talairach_m3z',
+                                                       'aseg_template',
                                                        'lh',
                                                        'rh',
                                                        'subjects_dir']),
@@ -100,10 +111,23 @@ def create_AutoRecon2(subjects_dir, subject_id, fs_home, longitudinal):
     """
     ca_normalize = pe.Node(CANormalize(), name='CA_Normalize')
     ca_normalize.inputs.out_file = outputfilename(subjects_dir, subject_id, 'norm.mgz')
-    ca_normalize.inputs.control_points = outputfilename(subjects_dir, subject_id, 'ctrl_pts.mgz')
     ca_normalize.inputs.atlas = os.path.join(fs_home,
                                              'average',
                                              'RB_all_2014-08-21.gca')
+    if longitudinal:
+        copy_template_aseg = pe.Node(Function(['in_file', 'out_file'],
+                                   ['out_file'],
+                                   copy_file),
+                          name='Copy_Template_Aseg')
+        copy_template_aseg.inputs.out_file = os.path.join(
+            subjects_dir, subject_id, 'mri', 'transforms', 'aseg_{0}.mgz'.format(long_base))
+
+        ar1_wf.connect([(ar2_inputs, copy_template, [('aseg_template', 'in_file')]),
+                        (copy_template, ca_normalize, [('out_file', 'long_file')])])
+        #TODO: switch subject_id to long_id
+    else:
+        ca_normalize.inputs.control_points = outputfilename(subjects_dir, subject_id, 'ctrl_pts.mgz')
+
     ar2_wf.connect([(align_transform, ca_normalize, [('out_file', 'transform')]),
                     (ar2_inputs, ca_normalize, [('brainmask', 'mask')]),
                     (add_to_header_nu, ca_normalize, [('out_file', 'in_file')])])
@@ -120,9 +144,14 @@ def create_AutoRecon2(subjects_dir, subject_id, fs_home, longitudinal):
         'talairach.m3z', 'mri', 'transforms')
     ar2_wf.connect([(ca_normalize, ca_register, [('out_file', 'in_file')]),
                     (ar2_inputs, ca_register, [('brainmask', 'mask')]),
-                    (align_transform, ca_register, [('out_file', 'transform')])
                     ])
-
+    if longitudinal:
+        ca_register.inputs.levels = 2
+        ca_register.inputs.A = 1
+        ar2_wf.connect([(ar1_inputs, ca_register, [('tailarach_m3z', 'l_files')])])
+    else:
+        ar2_wf.connect([(align_transform, ca_register, [('out_file', 'transform')])])
+    
     # Remove Neck
     """
     The neck region is removed from the NU-corrected volume mri/nu.mgz. Makes use
@@ -138,7 +167,7 @@ def create_AutoRecon2(subjects_dir, subject_id, fs_home, longitudinal):
                     (add_to_header_nu, remove_neck, [('out_file', 'in_file')])
                     ])
 
-    # EM Registration, with Skull
+    # SkullLTA (EM Registration, with Skull)
     # Computes transform to align volume mri/nu_noneck.mgz with GCA volume
     # possessing the skull.
     em_reg_withskull = pe.Node(EMRegister(), name='EM_Register_withSkull')
@@ -153,8 +182,22 @@ def create_AutoRecon2(subjects_dir, subject_id, fs_home, longitudinal):
                     (remove_neck, em_reg_withskull, [('out_file', 'in_file')])
                     ])
 
-    # CA Label
+    # SubCort Seg (CA Label)
     # Labels subcortical structures, based in GCA model.
+    if longitudinal:
+        copy_long_ltas = pe.MapNode(Function(['in_file',
+                                              'subjects_dir',
+                                              'subject_id',
+                                              'long_base'],
+                                             ['out_file'],
+                                             copy_ltas),
+                                    iterfield=['in_file'],
+                                    name='Copy_long_ltas')
+        ar2_wf.connect([(ar2_inputs, copy_long_ltas, [('long_ltas', 'in_file'),
+                                                      ('subjects_dir', 'subjects_dir'),
+                                                      ('subject_id', 'subject_id')])])
+        copy_long_ltas.inputs.long_base = long_base
+            
     ca_label = pe.Node(CALabel(), name='CA_Label')
     ca_label.inputs.relabel_unlikely = (9, .3)
     ca_label.inputs.prior = 0.5

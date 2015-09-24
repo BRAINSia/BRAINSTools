@@ -13,7 +13,7 @@ import nipype.pipeline.engine as pe  # pypeline engine
 from utilities.misc import *
 from utilities.distributed import modify_qsub_args
 from nipype.interfaces.semtools.utilities.brains import BRAINSLandmarkInitializer
-from nipype.interfaces.semtools import BRAINSSnapShotWriter
+# HACK Remove due to bugs from nipype.interfaces.semtools import BRAINSSnapShotWriter
 
 """
     from WorkupT1T2MALF import CreateMALFWorkflow
@@ -349,14 +349,14 @@ def CreateMALFWorkflow(WFname, onlyT1, master_config,BASE_DATA_GRABBER_DIR=None,
     MALFWF.connect(RecodeToStandardFSWM,'OutputFileName',outputsSpec,'MALF_HDAtlas20_2015_fs_standard_label')
 
     ## MALF_SNAPSHOT_WRITER for Segmented result checking:
-    MALF_SNAPSHOT_WRITERNodeName = "MALF_ExtendedMALF_SNAPSHOT_WRITER"
-    MALF_SNAPSHOT_WRITER = pe.Node(interface=BRAINSSnapShotWriter(), name=MALF_SNAPSHOT_WRITERNodeName)
+#    MALF_SNAPSHOT_WRITERNodeName = "MALF_ExtendedMALF_SNAPSHOT_WRITER"
+#    MALF_SNAPSHOT_WRITER = pe.Node(interface=BRAINSSnapShotWriter(), name=MALF_SNAPSHOT_WRITERNodeName)
 
-    MALF_SNAPSHOT_WRITER.inputs.outputFilename = 'MALF_HDAtlas20_2015_CSFVBInjected_label.png'  # output specification
-    MALF_SNAPSHOT_WRITER.inputs.inputPlaneDirection = [2, 1, 1, 1, 1, 0, 0]
-    MALF_SNAPSHOT_WRITER.inputs.inputSliceToExtractInPhysicalPoint = [-3, -7, -3, 5, 7, 22, -22]
+#    MALF_SNAPSHOT_WRITER.inputs.outputFilename = 'MALF_HDAtlas20_2015_CSFVBInjected_label.png'  # output specification
+#    MALF_SNAPSHOT_WRITER.inputs.inputPlaneDirection = [2, 1, 1, 1, 1, 0, 0]
+#    MALF_SNAPSHOT_WRITER.inputs.inputSliceToExtractInPhysicalPoint = [-3, -7, -3, 5, 7, 22, -22]
 
-    MALFWF.connect(MALF_SNAPSHOT_WRITER,'outputFilename',outputsSpec,'MALF_extended_snapshot')
+#    MALFWF.connect(MALF_SNAPSHOT_WRITER,'outputFilename',outputsSpec,'MALF_extended_snapshot')
 
     if runFixFusionLabelMap:
         ## post processing of jointfusion
@@ -382,19 +382,19 @@ def CreateMALFWorkflow(WFname, onlyT1, master_config,BASE_DATA_GRABBER_DIR=None,
 
         MALFWF.connect(injectSurfaceCSFandVBIntoLabelMap,'fixedFusionLabelFN',
                        outputsSpec,'MALF_HDAtlas20_2015_CSFVBInjected_label')
-        MALFWF.connect([(inputsSpec, MALF_SNAPSHOT_WRITER, [( 'subj_t1_image','inputVolumes')]),
-                    (injectSurfaceCSFandVBIntoLabelMap, MALF_SNAPSHOT_WRITER,
-                      [('fixedFusionLabelFN', 'inputBinaryVolumes')])
-                   ])
+#        MALFWF.connect([(inputsSpec, MALF_SNAPSHOT_WRITER, [( 'subj_t1_image','inputVolumes')]),
+#                    (injectSurfaceCSFandVBIntoLabelMap, MALF_SNAPSHOT_WRITER,
+#                      [('fixedFusionLabelFN', 'inputBinaryVolumes')])
+#                   ])
     else:
         MALFWF.connect(jointFusion, 'output_label_image',
                        RecodeToStandardFSWM,'InputFileName')
         MALFWF.connect(jointFusion, 'output_label_image',
                        outputsSpec,'MALF_HDAtlas20_2015_CSFVBInjected_label')
-        MALFWF.connect([(inputsSpec, MALF_SNAPSHOT_WRITER, [( 'subj_t1_image','inputVolumes')]),
-                    (jointFusion, MALF_SNAPSHOT_WRITER,
-                      [('output_label_image', 'inputBinaryVolumes')])
-                   ])
+#        MALFWF.connect([(inputsSpec, MALF_SNAPSHOT_WRITER, [( 'subj_t1_image','inputVolumes')]),
+#                    (jointFusion, MALF_SNAPSHOT_WRITER,
+#                      [('output_label_image', 'inputBinaryVolumes')])
+#                   ])
 
     ## Lobar Pacellation by recoding
     if master_config['relabel2lobes_filename'] != None:

@@ -111,7 +111,7 @@ def create_preproc_filenames(subjects_dir, subject_id, in_T1s):
         inputvols.append(os.path.join(orig_dir, file_num + '.mgz'))
     return inputvols, iscaleout, ltaout
 
-def create_AutoRecon1(subjects_dir, subject_id, fs_home, in_T1s, in_T2, in_FLAIR, cw256, longitudinal, long_base):
+def create_AutoRecon1(subjects_dir, subject_id, fs_home, in_T1s, in_T2, in_FLAIR, cw256, longitudinal, long_template):
     # AutoRecon1
     # Workflow
     ar1_wf = pe.Workflow(name='AutoRecon1')
@@ -163,9 +163,9 @@ def create_AutoRecon1(subjects_dir, subject_id, fs_home, in_T1s, in_T2, in_FLAIR
             fields=['in_T1s',
                     'iscales',
                     'ltas',
-                    'subj_to_base',
-                    'talairach',
-                    'brainmask',
+                    'subj_to_template_lta',
+                    'template_talairach_xfm',
+                    'template_brainmask',
                     'subject_id',
                     'subjects_dir']),
                              run_without_submitting=True,
@@ -173,8 +173,6 @@ def create_AutoRecon1(subjects_dir, subject_id, fs_home, in_T1s, in_T2, in_FLAIR
         ar1_inputs.inputs.subject_id = subject_id
         ar1_inputs.inputs.subjects_dir = subjects_dir
 
-        ss_subject_id = subject_id
-        subject_id = "{0}.long.{1}".format(subject_id, long_base)
         _volnames_, in_iscales, in_ltas = create_preproc_filenames(subjects_dir, subject_id, in_T1s)
 
         copy_ltas = pe.MapNode(Function(['in_file', 'out_file'],
@@ -196,7 +194,7 @@ def create_AutoRecon1(subjects_dir, subject_id, fs_home, in_T1s, in_T2, in_FLAIR
         concatenate_lta = pe.MapNode(ConcatenateLTA(), iterfield=['in_file'],
                                      name="Concatenate_ltas")
         ar1_wf.connect([(copy_ltas, concatenate_lta, [('out_file', 'in_file')]),
-                        (ar1_inputs, concatenate_lta, [('subj_to_base', 'subj_to_base')])])
+                        (ar1_inputs, concatenate_lta, [('subj_to_template_lta', 'subj_to_base')])])
 
     
     # Motion Correction
@@ -275,7 +273,7 @@ def create_AutoRecon1(subjects_dir, subject_id, fs_home, in_T1s, in_T2, in_FLAIR
         copy_template_xfm.inputs.out_file = os.path.join(
             subjects_dir, subject_id, 'mri', 'transforms', 'talairach.auto.xfm')
 
-        ar1_wf.connect([(ar1_inputs, copy_template_xfm, [('talairach', 'in_file')])])
+        ar1_wf.connect([(ar1_inputs, copy_template_xfm, [('template_talairach_xfm', 'in_file')])])
     else:
         talairach_avi = pe.Node(TalairachAVI(), name="Compute_Transform")
         talairach_avi.inputs.atlas = '3T18yoSchwartzReactN32_as_orig'
@@ -344,7 +342,8 @@ def create_AutoRecon1(subjects_dir, subject_id, fs_home, in_T1s, in_T2, in_FLAIR
                                                    copy_file),
                                           name='Copy_Template_Brainmask')
         copy_template_brainmask.inputs.out_file = os.path.join(
-            subjects_dir, subject_id, 'mri', 'brainmask_{0}.mgz'.format(long_base))
+            subjects_dir, subject_id, 'mri', 'brainmask_{0}.mgz'.format(long_template))
+        ar1_wf.connect([(ar1_inputs, copy_template_brainmask, [('template_brainmask', 'in_file')])])
 
         mask1 = pe.Node(ApplyMask(), name="ApplyMask1")
         mask1.inputs.keep_mask_deletion_edits = True

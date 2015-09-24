@@ -1,14 +1,19 @@
 import nipype
 import nipype.pipeline.engine as pe  # pypeline engine
 from nipype.interfaces.io import DataGrabber, FreeSurferSource
+from nipype.interfaces.Utility import Merge
 from autorecon1 import mkdir_p, create_AutoRecon1
 from autorecon2 import create_AutoRecon2
 from autorecon3 import create_AutoRecon3
 
-def create_reconall(in_T1s, subject_id, in_T2, in_FLAIR, subjects_dir, qcache, cw256, fs_home, longitudinal, long_base):
-    ar1_wf = create_AutoRecon1(subjects_dir, subject_id, fs_home, in_T1s, in_T2, in_FLAIR, cw256, longitudinal, long_base)
-    ar2_wf, ar2_lh, ar2_rh = create_AutoRecon2(subjects_dir, subject_id, fs_home)
-    ar3_wf = create_AutoRecon3(subjects_dir, subject_id, fs_home, qcache)
+def create_reconall(in_T1s, subject_id, in_T2, in_FLAIR, subjects_dir, qcache, cw256, fs_home, longitudinal, long_template, timepoints):
+    if longitudinal:
+        current_id = "{0}.long.{1}".format(subject_id, long_template)
+    else:
+        current_id = subject_id        
+    ar1_wf = create_AutoRecon1(subjects_dir, current_id, fs_home, in_T1s, in_T2, in_FLAIR, cw256, longitudinal, long_template)
+    ar2_wf, ar2_lh, ar2_rh = create_AutoRecon2(subjects_dir, current_id, fs_home, longitudinal, long_template, timepoints)
+    ar3_wf = create_AutoRecon3(subjects_dir, current_id, fs_home, qcache)
 
     # Connect workflows 
     reconall = pe.Workflow(name="recon-all")
@@ -31,38 +36,99 @@ def create_reconall(in_T1s, subject_id, in_T2, in_FLAIR, subjects_dir, qcache, c
                                                        ('iscales', 'AutoRecon1_Inputs.iscales'),
                                                        ('ltas', 'AutoRecon1_Inputs.ltas')])])
 
+        merge_norms = pe.Node(Merge(len(timepoints)), name="Merge_Norms")
+        merge_segs = pe.Node(Merge(len(timepoints)), name="Merge_Segmentations")
+        merge_segs_noCC = pe.Node(Merge(len(timepoints)), name="Merge_Segmentations_noCC")
+        merge_template_ltas = pe.Node(Merge(len(timepoints)), name="Merge_Template_ltas")
+
+        for i, tp in enumerate(timepoints):
+            # datasource timepoint files
+            tp_data_source = pe.Node(FreeSurferSource(), name="{0}_DataSource".format(tp))
+            tp_data_source.inputs.subject_id = tp
+            tp_data_source.inputs.subjects_dir = subjects_dir
+
+            tp_data_grabber = pe.Node(DataGrabber(), name="{0}_DataGrabber".format(tp),
+                                      infields=['tp', 'long_tempate'],
+                                      outfileds=['subj_to_template_lta', 'seg_noCC', 'seg_presurf'])
+            tp_data_grabber.inputs.template = '*'
+            tp_data_grabber.inputs.base_directory = subjects_dir
+            tp_data_grabber.inputs.field_template = dict(
+                subj_to_template_lta='%s/mri/transforms/%s_to_%s.lta',
+                seg_noCC='%s/mri/aseg.auto_noCCseg.mgz',
+                seg_presurf='%s/mri/aseg.presurf.mgz',)
+
+            tp_data_grabber.inputs.template_args = dict(
+                subj_to_template_lta=[['long_template', 'tp', 'long_template']],
+                seg_noCC=[['tp']],
+                seg_presurf=[['tp']])
+                        
+            reconall.connect([(tp_data_source, merge_norms, [('norm', 'in{0}'.format(i))]),
+                              (tp_data_grabber, merge_segs, [('seg_presurf', 'in{0}'.format(i))]),
+                              (tp_data_grabber, merge_segs_noCC, [('seg_noCC', 'in{0}'.format(i))]),
+                              (tp_data_grabber, merge_template_ltas, [('subj_to_template_lta', 'in{0}'.format(i))])])
+
+            if tp == subject_id:
+                reconall.connect([(tp_data_source, ar2_wf, [('wm', 'AutoRecon2_Inputs.init_wm')]),
+                                  (tp_data_grabber, ar2_wf, [('subj_to_template_lta', 'AutoRecon2_Inputs.subj_to_template_lta')]),
+                                  (tp_data_grabber, ar2_wf, [('subj_to_template_lta', 'AutoRecon1_Inputs.subj_to_template_lta')])])
+
+        reconall.connect([(merge_norms, ar2_wf, [('out', 'AutoRecon2_Inputs.alltps_norms')]),
+                          (merge_segs, ar2_wf, [('out', 'AutoRecon2_Inputs.alltps_segs')]),
+                          (merge_template_ltas, ar2_wf, [('out', 'AutoRecon2_Inputs.alltps_to_template_ltas')]),
+                          (merge_segs_noCC, ar2_wf, [('out', 'AutoRecon2_Inputs.alltps_segs_noCC')])])
+
+                        
+
         # datasource files from the template run
         ds_template_files = pe.Node(FreeSurferSource(), name="Datasource_Template_Files")
         ds_template_files.inputs.subject_id = subject_id
         ds_template_files.inputs.subjects_dir = subjects_dir
 
-        reconall.connect([(ds_template_files, ar1_wf, [('brainmask', 'AutoRecon1_Inputs.brainmask')])])
+        reconall.connect([(ds_template_files, ar1_wf, [('brainmask', 'AutoRecon1_Inputs.template_brainmask')]),
+                          (ds_template_files, ar2_wf, [('aseg', 'AutoRecon2_Inputs.template_aseg')])])
 
         # grab files from template run
         grab_template_files = pe.Node(DataGrabber(), name="Grab_Template_Files",
-                                      infields=['subject_id', 'long_base'],
-                                      outfields=['subj_to_base',
-                                                 'talairach_xfm',
-                                                 'talairach_lta',
-                                                 'label_intensities'])
+                                      infields=['subject_id', 'long_template'],
+                                      outfields=['template_talairach_xfm',
+                                                 'template_talairach_lta',
+                                                 'template_talairach_m3z',
+                                                 'template_label_intensities',
+                                                 'template_lh_white',
+                                                 'template_rh_white',
+                                                 'template_lh_pial',
+                                                 'template_rh_pial'])
         grab_template_files.inputs.template = '*'
         grab_template_files.inputs.base_directory = subjects_dir
         grab_template_files.inputs.subject_id = subject_id
-        grab_template_files.inputs.long_base = long_base
+        grab_template_files.inputs.long_template = long_template
         grab_template_files.inputs.field_template = dict(
-            subj_to_base='%s/mri/transforms/%s_to_%s.lta',
-            talairach_xfm='%s/mri/transfroms/talairach.xfm',
-            talairach_lta='%s/mri/transfroms/talairach.lta',
-            talairach_m3z='%s/mri/transfroms/talairach.m3z',
-            label_intensities='%s/mri/aseg.auto_noCCseg.label_intensities.txt')
+            template_talairach_xfm='%s/mri/transfroms/talairach.xfm',
+            template_talairach_lta='%s/mri/transfroms/talairach.lta',
+            template_talairach_m3z='%s/mri/transfroms/talairach.m3z',
+            template_label_intensities='%s/mri/aseg.auto_noCCseg.label_intensities.txt',
+            template_lh_white='%s/surf/lh.white',
+            template_rh_white='%s/surf/rh.white',
+            template_lh_pial='%s/surf/lh.pial',
+            template_rh_pial='%s/surf/rh.pial')
         
-        grab_template_files.inputs.template_args = dict(subj_to_base=[['long_base', 'subject_id', 'long_base']],
-                                                        talairach_xfm=[['long_base']],
-                                                        talairach_lta=[['long_base']],
-                                                        talairach_m3z=[['long_base']],
-                                                        label_intensities=[['long_base']])
-        reconall.connect([(grab_template_files, ar1_wf, [('subj_to_base', 'AutoRecon1_Inputs.subj_to_base'),
-                                                         ('talairach_xfm', 'AutoRecon1_Inputs.talairach')])])
+        grab_template_files.inputs.template_args = dict(
+            template_talairach_xfm=[['long_template']],
+            template_talairach_lta=[['long_template']],
+            template_talairach_m3z=[['long_template']],
+            template_lh_white=[['long_template']],
+            template_rh_white=[['long_template']],
+            template_lh_pial=[['long_template']],
+            template_rh_pial=[['long_template']])
+        reconall.connect([(grab_template_files, ar1_wf, [('template_talairach_xfm', 'AutoRecon1_Inputs.template_talairach_xfm')]),
+                          (grab_template_files, ar2_wf, [('template_talairach_lta', 'AutoRecon2_Inputs.template_talairach_lta'),
+                                                         ('template_talairach_m3z', 'AutoRecon2_Inputs.template_talairach_m3z'),
+                                                         ('template_label_intensities', 'AutoRecon2_Inputs.template_label_intensities')]),
+                                                         ('template_lh_white', 'AutoRecon2_Inputs.template_lh_white')]),
+                                                         ('template_rh_white', 'AutoRecon2_Inputs.template_rh_white')]),
+                                                         ('template_lh_pial', 'AutoRecon2_Inputs.template_lh_pial')]),
+                                                         ('template_rh_pial', 'AutoRecon2_Inputs.template_rh_pial')]),
+                      ])
         # end longitudinal data collection
         
     reconall.connect([(ar1_wf, ar3_wf, [('AutoRecon1_Inputs.subject_id', 'AutoRecon3_Inputs.subject_id'),
@@ -136,13 +202,12 @@ def create_reconall(in_T1s, subject_id, in_T2, in_FLAIR, subjects_dir, qcache, c
                                          'AutoRecon3_Inputs.brain_finalsurfs'),
                                         ('MRI_Pretess.out_file',
                                          'AutoRecon3_Inputs.wm'),
-                                        ('Cut_and_Fill.out_file',
+                                        ('Fill.out_file',
                                          'AutoRecon3_Inputs.filled'),
                                         ('CA_Normalize.out_file',
                                          'AutoRecon3_Inputs.norm'),
                                         ]),
                       ])
-
 
     return reconall
 

@@ -57,6 +57,7 @@ def procargs(argv):
     qcache = False
     cw256 = False
     longitudinal = False
+    timepoints = list()
     try:
         opts, args = getopt.getopt(argv, "hi:q:s:", ["help",
                                                      "T1=",
@@ -68,7 +69,8 @@ def procargs(argv):
                                                      "subjects_dir=",
                                                      "qcache",
                                                      "cw256",
-                                                     "longbase="])
+                                                     "longbase=",
+                                                     "tp="])
     except getopt.GetoptError:
         print "Error occured when parsing arguments"
         help()
@@ -113,26 +115,42 @@ def procargs(argv):
             longitudinal = True
             long_base = arg
             #TODO: Check that the longitudinal base pre-exists
-    if subject_id != None and (len(in_T1s) != 0 or longitudinal) and subjects_dir != None:
-        print 'Subject ID: {0}'.format(subject_id)
-        print 'Input T1s: {0}'.format(in_T1s)
-        if in_T2 != None:
-            print 'Input T2: {0}'.format(in_T2)
-        if in_FLAIR != None:
-            print 'Input FLAIR: {0}'.format(in_FLAIR)
-        print 'Plugin: {0}'.format(plugin)
-        if queue != None:
-            print 'Queue: {0}'.format(queue)
-        if longitudinal:
-            print 'Running longitudinally'
-            print 'Longitudinal Base: {0}'.format(long_base)
-        print 'Make qcache: {0}'.format(qcache)
-        print 'Conform to 256: {0}'.format(cw256)
-    else:
-        print "Error: subject_id, subjects_dir and at least 1 input T1 scan are required inputs"
+        elif opt in ("--tp"):
+            timepoints.append(arg)
+
+    if subject_id == None:
+        print "ERROR: Must set subject_id using -s flag"
         help()
         sys.exit(2)
-    return in_T1s, subject_id, in_T2, in_FLAIR, plugin, queue, subjects_dir, qcache, cw256, longitudinal, long_base
+        
+    if not longitudinal and len(in_T1s) == 0:
+        print "ERROR: Must have at least one input T1 image"
+        help()
+        sys.exit(2)
+        
+    if subjects_dir == None:
+        print "ERROR: Must set the subjects_dir before running"
+        help()
+        sys.exit(2)
+        
+    print 'Subject ID: {0}'.format(subject_id)
+    print 'Input T1s: {0}'.format(in_T1s)
+    if in_T2 != None:
+        print 'Input T2: {0}'.format(in_T2)
+    if in_FLAIR != None:
+        print 'Input FLAIR: {0}'.format(in_FLAIR)
+    print 'Plugin: {0}'.format(plugin)
+    print 'Make qcache: {0}'.format(qcache)
+    print 'Conform to 256: {0}'.format(cw256)
+    if queue != None:
+        print 'Queue: {0}'.format(queue)
+
+    if longitudinal:
+        # set input requirements for running longitudinally
+        # print erros when inputs are not set correctly
+        print 'Running longitudinally'
+        print 'Longitudinal Base: {0}'.format(long_base)
+    return in_T1s, subject_id, in_T2, in_FLAIR, plugin, queue, subjects_dir, qcache, cw256, longitudinal, long_base, timepoints
 
 
 def checkenv():
@@ -148,7 +166,7 @@ def checkenv():
     return fs_home
 
 def main(argv):
-    in_T1s, subject_id, in_T2, in_FLAIR, plugin, queue, subjects_dir, qcache, cw256, longitudinal, long_base  = procargs(
+    in_T1s, subject_id, in_T2, in_FLAIR, plugin, queue, subjects_dir, qcache, cw256, longitudinal, long_base, timepoints  = procargs(
         argv)
     fs_home = checkenv()
     if longitudinal:
@@ -181,7 +199,8 @@ def main(argv):
                                cw256,
                                fs_home,
                                longitudinal,
-                               long_base
+                               long_base,
+                               timepoints
                                )
 
     # Set workflow configurations

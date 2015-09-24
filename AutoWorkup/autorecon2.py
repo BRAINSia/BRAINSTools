@@ -5,16 +5,16 @@ import nipype.pipeline.engine as pe  # pypeline engine
 from nipype.interfaces.freesurfer import *
 from autorecon1 import mkdir_p, outputfilename, copy_file
 
-def copy_ltas(in_file, subjects_dir, subject_id, long_base):
+def copy_ltas(in_file, subjects_dir, subject_id, long_template):
     import os
     out_file = copy_file(
         in_file,
         os.path.join(
             subjects_dir, subject_id, 'mri', 'transforms',
-            os.path.basename(in_file).replace(long_base, subject_id)))
+            os.path.basename(in_file).replace(long_template, subject_id)))
     return out_file
 
-def create_AutoRecon2(subjects_dir, subject_id, fs_home, longitudinal, long_base):
+def create_AutoRecon2(subjects_dir, subject_id, fs_home, longitudinal, long_template, timepoints):
     
     # AutoRecon2
     # Workflow
@@ -26,27 +26,34 @@ def create_AutoRecon2(subjects_dir, subject_id, fs_home, longitudinal, long_base
                                                        'brainmask',
                                                        'transform',
                                                        'subject_id',
-                                                       'talairach_lta',
-                                                       'talairach_m3z',
-                                                       'aseg_template',
-                                                       'lh',
-                                                       'rh',
+                                                       'template_talairach_lta',
+                                                       'template_talairach_m3z',
+                                                       'template_label_intensities',
+                                                       'template_aseg',
+                                                       'subj_to_template_lta',
+                                                       'alltps_to_template_ltas',
+                                                       'template_lh_white',
+                                                       'template_rh_white',
+                                                       'template_lh_pial',
+                                                       'template_rh_pial',
+                                                       'init_wm',
+                                                       'timepoints',
+                                                       'alltps_segs',
+                                                       'alltps_segs_noCC',
+                                                       'alltps_norms',
                                                        'subjects_dir']),
                              run_without_submitting=True,
                              name='AutoRecon2_Inputs')
+        ar2_inputs.inputs.timepoints = timepoints
     else:
         ar2_inputs = pe.Node(IdentityInterface(fields=['orig',
                                                        'brainmask',
                                                        'transform',
                                                        'subject_id',
-                                                       'lh',
-                                                       'rh',
                                                        'subjects_dir']),
                              run_without_submitting=True,
                              name='AutoRecon2_Inputs')
         
-    ar2_inputs.inputs.lh = 'lh'
-    ar2_inputs.inputs.rh = 'rh'
 
     # NU Intensity Correction
     """
@@ -88,7 +95,7 @@ def create_AutoRecon2(subjects_dir, subject_id, fs_home, longitudinal, long_base
                           name='Copy_Talairach_lta')
         align_transform.inputs.out_file = os.path.join(subjects_dir, subject_id, 'mri', 'transforms', 'talairach.lta')
 
-        ar2_wf.connect([(ar2_inputs, align_transform, [('talairach_lta', 'in_file')])])
+        ar2_wf.connect([(ar2_inputs, align_transform, [('template_talairach_lta', 'in_file')])])
         
     else:        
         align_transform = pe.Node(EMRegister(), name="Align_Transform")
@@ -120,9 +127,9 @@ def create_AutoRecon2(subjects_dir, subject_id, fs_home, longitudinal, long_base
                                    copy_file),
                           name='Copy_Template_Aseg')
         copy_template_aseg.inputs.out_file = os.path.join(
-            subjects_dir, subject_id, 'mri', 'transforms', 'aseg_{0}.mgz'.format(long_base))
+            subjects_dir, subject_id, 'mri', 'transforms', 'aseg_{0}.mgz'.format(long_template))
 
-        ar1_wf.connect([(ar2_inputs, copy_template, [('aseg_template', 'in_file')]),
+        ar1_wf.connect([(ar2_inputs, copy_template, [('template_aseg', 'in_file')]),
                         (copy_template, ca_normalize, [('out_file', 'long_file')])])
         #TODO: switch subject_id to long_id
     else:
@@ -148,7 +155,7 @@ def create_AutoRecon2(subjects_dir, subject_id, fs_home, longitudinal, long_base
     if longitudinal:
         ca_register.inputs.levels = 2
         ca_register.inputs.A = 1
-        ar2_wf.connect([(ar1_inputs, ca_register, [('tailarach_m3z', 'l_files')])])
+        ar2_wf.connect([(ar1_inputs, ca_register, [('template_talairach_m3z', 'l_files')])])
     else:
         ar2_wf.connect([(align_transform, ca_register, [('out_file', 'transform')])])
     
@@ -188,25 +195,25 @@ def create_AutoRecon2(subjects_dir, subject_id, fs_home, longitudinal, long_base
         copy_long_ltas = pe.MapNode(Function(['in_file',
                                               'subjects_dir',
                                               'subject_id',
-                                              'long_base'],
+                                              'long_template'],
                                              ['out_file'],
                                              copy_ltas),
                                     iterfield=['in_file'],
                                     name='Copy_long_ltas')
-        ar2_wf.connect([(ar2_inputs, copy_long_ltas, [('long_ltas', 'in_file'),
+        ar2_wf.connect([(ar2_inputs, copy_long_ltas, [('alltps_to_template_ltas', 'in_file'),
                                                       ('subjects_dir', 'subjects_dir'),
                                                       ('subject_id', 'subject_id')])])
-        copy_long_ltas.inputs.long_base = long_base
+        copy_long_ltas.inputs.long_template = long_template
 
         merge_norms = pe.Node(Merge(2), name="Merge_Norms")
-        ar2_wf.connect([(ar2_inputs, merge_norms, [('long_norms', 'in1')]),
+        ar2_wf.connect([(ar2_inputs, merge_norms, [('alltps_norms', 'in1')]),
                         (ca_normalize, merge_norms, [('out_file', 'in2')])])
                                                    
         
         fuse_segmentations = pe.Node(FuseSegmentations(), name="Fuse_Segmentations")
         ar2_wf.connect([(ar2_inputs, fuse_segmentations, [('timepoints', 'timepoints'),
-                                                          ('long_segs', 'in_segmentations'),
-                                                          ('long_segs_noCC', 'in_segmentations_noCC'),
+                                                          ('alltps_segs', 'in_segmentations'),
+                                                          ('alltps_segs_noCC', 'in_segmentations_noCC'),
                                                           ('subject_id', 'subject_id')]),
                         (merge_norms, fuse_segmentations, [('out', 'in_norms')])])
         fuse_segmentations.inputs.out_file = os.path.join(subjects_dir, subject_id, 'mri', 'aseg.fused.mgz')
@@ -224,7 +231,7 @@ def create_AutoRecon2(subjects_dir, subject_id, fs_home, longitudinal, long_base
                     ])
     if longitudinal:
         ar2_wf.connect([(fuse_segmentations, ca_label, [('out_file', 'in_vol')]),
-                        (ar2_inputs, ca_label, [('long_intensities', 'intensities')])])
+                        (ar2_inputs, ca_label, [('template_label_intensities', 'intensities')])])
 
     # mri_cc - segments the corpus callosum into five separate labels in the
     # subcortical segmentation volume 'aseg.mgz'
@@ -308,7 +315,7 @@ def create_AutoRecon2(subjects_dir, subject_id, fs_home, longitudinal, long_base
         ar2_wf.connect([(pretess, transfer_init_wm, [('out_file', 'in_file'),
                                                      ('out_file', 'out_file')]),
                         (ar2_inputs, transfer_init_wm, [('init_wm', 'mask_file'),
-                                                        ('template_lta', 'xfm_file')])])
+                                                        ('subj_to_template_lta', 'xfm_file')])])
         """changing the pretess variable so that the rest of the connections still work!!!"""
         pretess = transfer_init_wm
         

@@ -20,10 +20,27 @@ def brainStem(tissueLabelFilename,
     import SimpleITK as sitk
 
     def cropAndResampleInPlace(inputBrainLabelFilename,
-                               lower, upper, thresholdUpper, thresholdLower,
+                               physBB1, physBB2, thresholdUpper, thresholdLower,
                                outputImageFilename):
+
         brainLbl = sitk.ReadImage(inputBrainLabelFilename)
-        brainStem_area = sitk.Crop(brainLbl, lower, upper)
+
+        roiBBStart_index = brainLbl.TransformPhysicalPointToIndex(physBB1)
+        roiBBStop_index  = brainLbl.TransformPhysicalPointToIndex(physBB2)
+        del(physBB1)
+        del(physBB2)
+        roiBBStart_final_index =[ min(roiBBStart_index[i],roiBBStop_index[i]) for i in range(0,3) ]
+        roiBBStop_final_index = [ max(roiBBStart_index[i],roiBBStop_index[i]) for i in range(0,3) ]
+        roiBBSize_final_index = [ roiBBStop_final_index[i] - roiBBStart_final_index[i] for i in range(0,3) ]
+        del(roiBBStart_index)
+        del(roiBBStop_index)
+
+#        print( "XX"*30)
+#        print( brainLbl.GetSize() )
+#        print( roiBBStart_final_index )
+#        print( roiBBSize_final_index )
+
+        brainStem_area = sitk.RegionOfInterest(brainLbl,roiBBSize_final_index,roiBBStart_final_index)
 
         # HACK: WM label value should be given
         brainStem = sitk.BinaryThreshold(brainStem_area, thresholdUpper, thresholdLower)
@@ -45,7 +62,6 @@ def brainStem(tissueLabelFilename,
         sitk.WriteImage(brainStemInPlace, outputImageFilename)
 
         import os
-
         return os.path.abspath(outputImageFilename)
 
 
@@ -58,48 +74,44 @@ def brainStem(tissueLabelFilename,
             lmkX = float(lmk[1])
             lmkY = float(lmk[2])
             lmkZ = float(lmk[3])
-            #print (lmkID, lmkX, lmkY, lmkZ)
             #RAS to LPS
             myLandmark[lmkID] = (-lmkX, -lmkY, lmkZ)
-
-    ## read a label file 'TissueClassify/fixed_brainlabels_seg.nii.gz'
-    brainLbl = sitk.ReadImage(tissueLabelFilename)
 
     """
     brain stem
     """
-    ## get index locations
-    myLmkIndex = dict()
-    for lmk in list(myLandmark.keys()):
-        myLmkIndex[lmk] = brainLbl.TransformPhysicalPointToIndex(myLandmark[lmk])
+    roiBBStart = [myLandmark['lat_right'][0],
+                 myLandmark['mid_lat'][1],
+                 myLandmark['dens_axis'][2]]
 
-    imageSize = brainLbl.GetSize()
-    cropLower = [myLmkIndex['lat_right'][0],
-                 myLmkIndex['mid_lat'][1],
-                 myLmkIndex['dens_axis'][2]]
-    cropLower = [int(x) for x in cropLower]
-    cropUpper = [imageSize[0] - myLmkIndex['lat_left'][0],
-                 imageSize[1] - myLmkIndex['mid_prim_sup'][1],
-                 imageSize[2] - myLmkIndex['PC'][2]]
-    cropUpper = [int(x) for x in cropUpper]
+    roiBBStop = [myLandmark['lat_left'][0],
+                 myLandmark['mid_prim_sup'][1],
+                 myLandmark['PC'][2]]
+
     wmLabelNo = 1
-    brainStem = cropAndResampleInPlace(tissueLabelFilename, cropLower, cropUpper, wmLabelNo, wmLabelNo,
+    brainStem = cropAndResampleInPlace(tissueLabelFilename, roiBBStart, roiBBStop, wmLabelNo, wmLabelNo,
                                        brainStemFilename)
 
     """
     below the brain stem
     """
-    cropUpper = [0, 0, 0]
-    cropLower = [0, 0, myLmkIndex['dens_axis'][2]]
+    ## read a label file 'TissueClassify/fixed_brainlabels_seg.nii.gz'
+    brainLbl = sitk.ReadImage(tissueLabelFilename)
+    brainLblMaxIndex = [ x-1 for x in brainLbl.GetSize() ]
+    fov1 = brainLbl.TransformIndexToPhysicalPoint([0,0,0])
+    fov2 = brainLbl.TransformIndexToPhysicalPoint(brainLblMaxIndex)
 
-    brainStemExtraBottom = cropAndResampleInPlace(tissueLabelFilename, cropLower, cropUpper, 0, 255,
+    roiBBStart = [min(fov1[0],fov2[0]), min(fov1[1],fov2[1]) , min(fov1[2],fov2[2]) ]
+    roiBBStop  =  [max(fov1[0],fov2[0]), max(fov1[1],fov2[1]) , myLandmark['dens_axis'][2] ]
+
+    noExtraBottomBrainStem = cropAndResampleInPlace(tissueLabelFilename, roiBBStart, roiBBStop, 0, 255,
                                                   brainStemFilename + "_InValid.nii.gz")
 
     brainStemBinary = ( sitk.ReadImage(brainStem) > 0 )
-    brainStemExtraBottomBinary = 1 - (sitk.ReadImage(brainStemExtraBottom) > 0)
+    noExtraBottomBrainStemBinary = (sitk.ReadImage(noExtraBottomBrainStem) > 0)
 
     outputTissueLabel = brainLbl * (1 - (brainStemBinary > 0) ) * (
-    1 - (brainStemExtraBottomBinary > 0)) + brainStemBinary * 30
+    1 - (noExtraBottomBrainStemBinary > 0)) + brainStemBinary * 30
 
     errod_brain_mask = sitk.ErodeObjectMorphology(( outputTissueLabel > 0 ), 2)
     LargestComponentCode = 1

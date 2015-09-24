@@ -1,6 +1,6 @@
 import os
 import nipype
-from nipype.interfaces.utility import Function,IdentityInterface
+from nipype.interfaces.utility import Function, IdentityInterface, Merge
 import nipype.pipeline.engine as pe  # pypeline engine
 from nipype.interfaces.freesurfer import *
 from autorecon1 import mkdir_p, outputfilename, copy_file
@@ -197,7 +197,20 @@ def create_AutoRecon2(subjects_dir, subject_id, fs_home, longitudinal, long_base
                                                       ('subjects_dir', 'subjects_dir'),
                                                       ('subject_id', 'subject_id')])])
         copy_long_ltas.inputs.long_base = long_base
-            
+
+        merge_norms = pe.Node(Merge(2), name="Merge_Norms")
+        ar2_wf.connect([(ar2_inputs, merge_norms, [('long_norms', 'in1')]),
+                        (ca_normalize, merge_norms, [('out_file', 'in2')])])
+                                                   
+        
+        fuse_segmentations = pe.Node(FuseSegmentations(), name="Fuse_Segmentations")
+        ar2_wf.connect([(ar2_inputs, fuse_segmentations, [('timepoints', 'timepoints'),
+                                                          ('long_segs', 'in_segmentations'),
+                                                          ('long_segs_noCC', 'in_segmentations_noCC'),
+                                                          ('subject_id', 'subject_id')]),
+                        (merge_norms, fuse_segmentations, [('out', 'in_norms')])])
+        fuse_segmentations.inputs.out_file = os.path.join(subjects_dir, subject_id, 'mri', 'aseg.fused.mgz')
+        
     ca_label = pe.Node(CALabel(), name='CA_Label')
     ca_label.inputs.relabel_unlikely = (9, .3)
     ca_label.inputs.prior = 0.5
@@ -209,6 +222,9 @@ def create_AutoRecon2(subjects_dir, subject_id, fs_home, longitudinal, long_base
     ar2_wf.connect([(ca_normalize, ca_label, [('out_file', 'in_file')]),
                     (ca_register, ca_label, [('out_file', 'transform')])
                     ])
+    if longitudinal:
+        ar2_wf.connect([(fuse_segmentations, ca_label, [('out_file', 'in_vol')]),
+                        (ar2_inputs, ca_label, [('long_intensities', 'intensities')])])
 
     # mri_cc - segments the corpus callosum into five separate labels in the
     # subcortical segmentation volume 'aseg.mgz'
@@ -284,20 +300,33 @@ def create_AutoRecon2(subjects_dir, subject_id, fs_home, longitudinal, long_base
                     (ca_normalize, pretess, [('out_file', 'in_norm')])
                     ])
 
-    # Cut/Fill
+    if longitudinal:
+        transfer_init_wm = pe.Node(ApplyMask(), name="Transfer_Initial_WM")
+        transfer_init_wm.inputs.transfer = 255
+        transfer_init_wm.inputs.keep_mask_deletion_edits = True
+        transfer_init_wm.inputs.out_file = os.path.join(subjects_dir, subject_id, 'mri', 'brain.finalsurfs.mgz')
+
+        ar2_wf.connect([(pretess, transfer_init_wm, [('out_file', 'in_file'),
+                                                     ('out_file', 'out_file')]),
+                        (ar2_inputs, transfer_init_wm, [('init_wm', 'mask_file'),
+                                                        ('template_lta', 'xfm_file')])])
+        """changing the pretess variable so that the rest of the connections still work!!!"""
+        pretess = transfer_init_wm
+        
+    # Fill
     """ This creates the subcortical mass from which the orig surface is created. 
     The mid brain is cut from the cerebrum, and the hemispheres are cut from each 
     other. The left hemisphere is binarized to 255. The right hemisphere is binarized 
     to 127. The input is mri/wm.mgz and the output is mri/filled.mgz. Calls mri_fill.
     """
 
-    cut_and_fill = pe.Node(MRIFill(), name="Cut_and_Fill")
-    cut_and_fill.inputs.log_file = outputfilename(subjects_dir, subject_id, 'ponscc.cut.log', 'scripts')
-    cut_and_fill.inputs.out_file = outputfilename(subjects_dir, subject_id, 'filled.mgz')
-    ar2_wf.connect([(pretess, cut_and_fill, [('out_file', 'in_file')]),
-                    (align_transform, cut_and_fill,
+    fill = pe.Node(MRIFill(), name="Fill")
+    fill.inputs.log_file = outputfilename(subjects_dir, subject_id, 'ponscc.cut.log', 'scripts')
+    fill.inputs.out_file = outputfilename(subjects_dir, subject_id, 'filled.mgz')
+    ar2_wf.connect([(pretess, fill, [('out_file', 'in_file')]),
+                    (align_transform, fill,
                      [('out_file', 'transform')]),
-                    (ca_label, cut_and_fill, [('out_file', 'segmentation')]),
+                    (ca_label, fill, [('out_file', 'segmentation')]),
                     ])
 
     # Split by Hemisphere
@@ -585,7 +614,7 @@ def create_AutoRecon2(subjects_dir, subject_id, fs_home, longitudinal, long_base
                                           ('subjects_dir', 'Hemispheres.subjects_dir')]),
                     (ca_normalize, ar2_lh, [
                      ('out_file', 'Pretess_by_Hemisphere.in_norm')]),
-                    (cut_and_fill, ar2_lh, [
+                    (fill, ar2_lh, [
                      ('out_file', 'Pretess_by_Hemisphere.in_filled')]),
                     (ar2_inputs, ar2_lh, [('subject_id', 'Fix_Topology.subject_id'),
                                           ('subjects_dir', 'Fix_Topology.subjects_dir')]),
@@ -595,13 +624,13 @@ def create_AutoRecon2(subjects_dir, subject_id, fs_home, longitudinal, long_base
                                           ('subjects_dir', 'Curvature_Stats.subjects_dir')]),
                     (copy_cc, ar2_lh, [('out_file', 'Make_Surfaces.in_aseg')]),
                     (mri_mask, ar2_lh, [('out_file', 'Make_Surfaces.in_T1')]),
-                    (cut_and_fill, ar2_lh, [
+                    (fill, ar2_lh, [
                      ('out_file', 'Make_Surfaces.in_filled')]),
                     (pretess, ar2_lh, [('out_file', 'Make_Surfaces.in_wm')]),
 
                     (ca_normalize, ar2_rh, [
                      ('out_file', 'Pretess_by_Hemisphere.in_norm')]),
-                    (cut_and_fill, ar2_rh, [
+                    (fill, ar2_rh, [
                      ('out_file', 'Pretess_by_Hemisphere.in_filled')]),
                     (ar2_inputs, ar2_rh, [('subject_id', 'Fix_Topology.subject_id'),
                                           ('subjects_dir', 'Fix_Topology.subjects_dir')]),
@@ -611,7 +640,7 @@ def create_AutoRecon2(subjects_dir, subject_id, fs_home, longitudinal, long_base
                                           ('subjects_dir', 'Curvature_Stats.subjects_dir')]),
                     (copy_cc, ar2_rh, [('out_file', 'Make_Surfaces.in_aseg')]),
                     (mri_mask, ar2_rh, [('out_file', 'Make_Surfaces.in_T1')]),
-                    (cut_and_fill, ar2_rh, [
+                    (fill, ar2_rh, [
                      ('out_file', 'Make_Surfaces.in_filled')]),
                     (pretess, ar2_rh, [('out_file', 'Make_Surfaces.in_wm')]),
                     ])

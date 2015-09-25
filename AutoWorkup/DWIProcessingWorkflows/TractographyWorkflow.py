@@ -24,7 +24,7 @@ def CreateTractographyWorkflow(WFname):
         voxelVolume = reduce(operator.mul, inVol.GetSpacing())
         # 10 seeds per voxel is used when voxel voluem is 8 mm^3.
         seedsPerVoxel = round(voxelVolume*10/8)
-        return seedsPerVoxel
+        return int(seedsPerVoxel)
     #################################
     TractWF = pe.Workflow(name=WFname)
 

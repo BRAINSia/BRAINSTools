@@ -83,9 +83,6 @@ def CreateCorrectionWorkflow(WFname):
         sitk.WriteImage(inImage, outputVolume)
         return outputVolume
 
-    def pickCompositeTransfromFromList(composite_transform_as_list):
-        return composite_transform_as_list[0]
-
     def RestoreDCFromSavedMatrix(inputVolume, inputDirectionCosine):
         import os
         import SimpleITK as sitk
@@ -246,7 +243,7 @@ def CreateCorrectionWorkflow(WFname):
                                     name="gtractResampleDWI_SyN")
     CorrectionWF.connect(DWI_ForceDCtoIDNode,'outputVolume',
                          gtractResampleDWI_SyN,'inputVolume')
-    CorrectionWF.connect(antsReg_B0ToTransformedT2,('composite_transform',pickCompositeTransfromFromList),
+    CorrectionWF.connect(antsReg_B0ToTransformedT2,'composite_transform',
                          gtractResampleDWI_SyN,'warpDWITransform')
     CorrectionWF.connect(ForceDCtoIDNode,('outputVolume', pickFromList, 1),
                          gtractResampleDWI_SyN,'referenceVolume') # fixed image of antsRegistration

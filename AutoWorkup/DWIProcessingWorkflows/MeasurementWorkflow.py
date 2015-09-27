@@ -1,5 +1,4 @@
 from __future__ import division
-import past
 from past.utils import old_div
 ## \author Ali Ghayoor
 ##
@@ -80,6 +79,7 @@ def CreateMeasurementWorkflow(WFname, LABELS_CONFIG_FILE):
             return reduce(operator.mul, inputVolume.GetSpacing())
 
         def ReturnStatisticsList(labelID,voxelVolume,resampledRISVolume,DWILabelMap,T2LabelMap):
+            from past.utils import old_div
             statFilter = sitk.LabelStatisticsImageFilter()
             # RIS stats over input label ID
             statFilter.Execute(resampledRISVolume, DWILabelMap)

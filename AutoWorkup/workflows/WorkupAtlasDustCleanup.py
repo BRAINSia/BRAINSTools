@@ -26,7 +26,7 @@ def runAutomaticCleanupScript(arguments):
   return arguments['--outputAtlasPath']
 
 def CreateDustCleanupWorkflow(WFname, onlyT1, master_config,
-                              BASE_DATA_GRABBER_DIR=None, runFixFusionLabelMap=True):
+                              runFixFusionLabelMap=True):
 
     if onlyT1:
       n_modality = 1

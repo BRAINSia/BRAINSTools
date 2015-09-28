@@ -74,7 +74,7 @@ def getListIndexOrNoneIfOutOfRange(imageList, index):
         return None
 
 
-def CreateMALFWorkflow(WFname, onlyT1, master_config,BASE_DATA_GRABBER_DIR=None, runFixFusionLabelMap=True):
+def CreateMALFWorkflow(WFname, onlyT1, master_config, runFixFusionLabelMap=True):
     from nipype.interfaces import ants
 
     if onlyT1:

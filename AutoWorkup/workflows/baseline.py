@@ -43,6 +43,7 @@ from PipeLineFunctionHelpers import UnwrapPosteriorImagesFromDictionaryFunction 
 from .WorkupT1T2LandmarkInitialization import CreateLandmarkInitializeWorkflow
 from .WorkupT1T2TissueClassify import CreateTissueClassifyWorkflow
 from .WorkupT1T2MALF import CreateMALFWorkflow
+from .WorkupAtlasDustCleanup import CreateDustCleanupWorkflow
 from .WorkupAddsonBrainStem import CreateBrainstemWorkflow
 
 from utilities.misc import *
@@ -776,5 +777,12 @@ def generate_single_session_template_WF(projectid, subjectid, sessionid, onlyT1,
         baw201.connect(myLocalMALF,'outputspec.MALF_HDAtlas20_2015_fs_standard_label',DataSink,'TissueClassify.@MALF_HDAtlas20_2015_fs_standard_label')
         baw201.connect(myLocalMALF,'outputspec.MALF_HDAtlas20_2015_lobar_label',DataSink,'TissueClassify.@MALF_HDAtlas20_2015_lobar_label')
         baw201.connect(myLocalMALF,'outputspec.MALF_extended_snapshot',DataSink,'TissueClassify.@MALF_extended_snapshot')
+
+        myLocalDustCleanup = CreateDustCleanupWorkflow("DUST_CLEANUP", onlyT1, master_config)
+        baw201.connect(myLocalTCWF, 'outputspec.t1_average', myLocalDustCleanup, 'inputspec.subj_t1_image')
+        baw201.connect(myLocalTCWF, 'outputspec.t2_average', myLocalDustCleanup, 'inputspec.subj_t2_image')
+        baw201.connect(myLocalMALF, 'outputspec.MALF_HDAtlas20_2015_label', myLocalDustCleanup, 'inputspec.subj_label_atlas')
+
+        baw201.connect(myLocalDustCleanup, 'outputspec.dustCleanedOutputAtlas_label', DataSink, 'DustCleanup.@MALF_HDAtlas20_2015_dustCleaned_label')
 
     return baw201

@@ -3,12 +3,12 @@
 from nipype.interfaces.utility import Function, IdentityInterface
 import nipype.pipeline.engine as pe  # pypeline engine
 
-def MakeVector(inFN1, inFN2, inAtlas, outAtlas, maxIslandCount,
+def MakeVector(inFN1, inAtlas, outAtlas, maxIslandCount,
                useFullyConnected, forceLabelChange,
-               includeList=None, excludeList=None):
+               inFN2=None, includeList=None, excludeList=None):
     arguments = {'--inputT1Path': inFN1,
                  '--inputT2Path': inFN2,
-                 '--inputAtlasPath':inAtlas,
+                 '--inputAtlasPath': inAtlas,
                  '--outputAtlasPath': outAtlas,
                  '--maximumIslandVoxelCount': maxIslandCount,
                  '--useFullyConnectedInConnectedComponentFilter': useFullyConnected,

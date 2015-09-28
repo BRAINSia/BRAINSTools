@@ -1,8 +1,7 @@
 #!/usr/bin/env python
 
-from nipype.interfaces.utility import Merge, Split, Function, Rename, IdentityInterface
+from nipype.interfaces.utility import Function, IdentityInterface
 import nipype.pipeline.engine as pe  # pypeline engine
-from atlasSmallIslandCleanup import DustCleanup
 
 def MakeVector(inFN1, inFN2, inAtlas, outAtlas, maxIslandCount,
                useFullyConnected, forceLabelChange,
@@ -20,6 +19,7 @@ def MakeVector(inFN1, inFN2, inAtlas, outAtlas, maxIslandCount,
     return arguments
 
 def runAutomaticCleanupScript(arguments):
+  from atlasSmallIslandCleanup import DustCleanup
   print arguments
   localDustCleanupObject = DustCleanup(arguments=arguments)
   localDustCleanupObject.main()

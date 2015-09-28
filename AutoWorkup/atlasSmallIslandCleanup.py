@@ -1,5 +1,5 @@
 """
-usage: atlasSmallIslandCleanup.py --inputAtlasPath=<argument> --outputAtlasPath=<argument> --inputT1Path=<argument> --inputT2Path=<argument> [--includeLabelsList=<argument> | --excludeLabelsList=<argument>] --maximumIslandVoxelCount=<argument> [--useFullyConnectedInConnectedComponentFilter] [--forceSuspiciousLabelChange]
+usage: atlasSmallIslandCleanup.py --inputAtlasPath=<argument> --outputAtlasPath=<argument> --inputT1Path=<argument> [--inputT2Path=<argument>] [--includeLabelsList=<argument> | --excludeLabelsList=<argument>] --maximumIslandVoxelCount=<argument> [--useFullyConnectedInConnectedComponentFilter] [--forceSuspiciousLabelChange]
 atlasSmallIslandCleanup.py -h | --help
 """
 
@@ -29,7 +29,10 @@ class DustCleanup():
   def main(self):
     labelImage = sitk.Cast(sitk.ReadImage(self.inputAtlasPath), sitk.sitkInt16)
     inputT1VolumeImage = sitk.ReadImage(self.inputT1Path)
-    inputT2VolumeImage = sitk.ReadImage(self.inputT2Path)
+    if self.inputT2Path:
+      inputT2VolumeImage = sitk.ReadImage(self.inputT2Path)
+    else:
+      inputT2VolumeImage = None
     labelsList = self.getLabelsList(inputT1VolumeImage, labelImage)
     for label in labelsList:
       labelImage = self.relabelCurrentLabel(labelImage, inputT1VolumeImage, inputT2VolumeImage, label)
@@ -81,7 +84,8 @@ class DustCleanup():
       maskForCurrentLabel = sitk.BinaryThreshold(labelImage, label, label)
       relabeledConnectedRegion = self.getRelabeldConnectedRegion(maskForCurrentLabel, currentIslandSize)
       labelStatsT1WithRelabeledConnectedRegion = self.getLabelStatsObject(inputT1VolumeImage, relabeledConnectedRegion)
-      labelStatsT2WithRelabeledConnectedRegion = self.getLabelStatsObject(inputT2VolumeImage, relabeledConnectedRegion)
+      if inputT2VolumeImage:
+        labelStatsT2WithRelabeledConnectedRegion = self.getLabelStatsObject(inputT2VolumeImage, relabeledConnectedRegion)
       labelList = self.getLabelListFromLabelStatsObject(labelStatsT1WithRelabeledConnectedRegion)
       labelList.remove(0)  #remove background label from labelList
       labelList.reverse()
@@ -98,7 +102,10 @@ class DustCleanup():
           continue
         elif islandVoxelCount == currentIslandSize and currentLabel != 1: #stop if you reach largest island
           meanT1Intensity = labelStatsT1WithRelabeledConnectedRegion.GetMean(currentLabel)
-          meanT2Intensity = labelStatsT2WithRelabeledConnectedRegion.GetMean(currentLabel)
+          if inputT2VolumeImage:
+            meanT2Intensity = labelStatsT2WithRelabeledConnectedRegion.GetMean(currentLabel)
+          else:
+            meanT2Intensity = None
           targetLabels = self.getTargetLabels(labelImage, relabeledConnectedRegion, inputT1VolumeImage, currentLabel)
           diffDict = self.calculateLabelIntensityDifferenceValue(meanT1Intensity, meanT2Intensity,
                                                                  targetLabels, inputT1VolumeImage,
@@ -199,18 +206,19 @@ class DustCleanup():
 
     squareRootDiffLabelDict = dict()
     labelStatsT1WithInputLabelImage = self.getLabelStatsObject(inputT1VolumeImage, inputLabelImage)
-    labelStatsT2WithInputLabelImage = self.getLabelStatsObject(inputT2VolumeImage, inputLabelImage)
+    if inputT2VolumeImage:
+      labelStatsT2WithInputLabelImage = self.getLabelStatsObject(inputT2VolumeImage, inputLabelImage)
 
     for targetLabel in targetLabels:
-      # if targetLabel == 0:
-      #   continue
       averageT1IntensityTargetLabel = labelStatsT1WithInputLabelImage.GetMean(targetLabel)
-      averageT2IntensityTargetLabel = labelStatsT2WithInputLabelImage.GetMean(targetLabel)
-
       squareDiffAverageT1 = math.pow(averageT1IntensitySuspiciousLabel -
                                      averageT1IntensityTargetLabel, 2)
-      squareDiffAverageT2 = math.pow(averageT2IntensitySuspiciousLabel -
-                                     averageT2IntensityTargetLabel, 2)
+      if inputT2VolumeImage:
+        averageT2IntensityTargetLabel = labelStatsT2WithInputLabelImage.GetMean(targetLabel)
+        squareDiffAverageT2 = math.pow(averageT2IntensitySuspiciousLabel -
+                                       averageT2IntensityTargetLabel, 2)
+      else:
+        squareDiffAverageT2 = 0
       squareRootDiff = math.sqrt(squareDiffAverageT1 + squareDiffAverageT2)
 
       squareRootDiffLabelDict[int(targetLabel)] = squareRootDiff

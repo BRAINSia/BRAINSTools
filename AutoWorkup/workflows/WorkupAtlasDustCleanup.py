@@ -72,7 +72,7 @@ def CreateDustCleanupWorkflow(WFname, onlyT1, master_config,
     sessionRunDustCleanupOnSuspicious.inputs.useFullyConnected = False
     sessionRunDustCleanupOnSuspicious.inputs.forceLabelChange = True
     sessionRunDustCleanupOnSuspicious.inputs.noDilation = True
-    sessionRunDustCleanupOnSuspicious.inputs.includeList = 999
+    sessionRunDustCleanupOnSuspicious.inputs.includeList = '999'
     sessionRunDustCleanupOnSuspicious.inputs.excludeList = None
 
     """

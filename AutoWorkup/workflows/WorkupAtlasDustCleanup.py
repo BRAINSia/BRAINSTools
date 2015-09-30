@@ -24,8 +24,7 @@ def runAutomaticCleanupScript(inFN1, inAtlas, outAtlas, maxIslandCount,
     localDustCleanupObject.main()
     return outAtlas
 
-def CreateDustCleanupWorkflow(WFname, onlyT1, master_config,
-                              runFixFusionLabelMap=True):
+def CreateDustCleanupWorkflow(WFname, onlyT1, master_config):
 
     if onlyT1:
       n_modality = 1

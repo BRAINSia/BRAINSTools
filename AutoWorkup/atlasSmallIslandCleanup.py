@@ -1,5 +1,5 @@
 """
-usage: atlasSmallIslandCleanup.py --inputAtlasPath=<argument> --outputAtlasPath=<argument> --inputT1Path=<argument> [--inputT2Path=<argument>] [--includeLabelsList=<argument> | --excludeLabelsList=<argument>] --maximumIslandVoxelCount=<argument> [--useFullyConnectedInConnectedComponentFilter] [--forceSuspiciousLabelChange]
+usage: atlasSmallIslandCleanup.py --inputAtlasPath=<argument> --outputAtlasPath=<argument> --inputT1Path=<argument> [--inputT2Path=<argument>] [--includeLabelsList=<argument> | --excludeLabelsList=<argument>] --maximumIslandVoxelCount=<argument> [--useFullyConnectedInConnectedComponentFilter] [--forceSuspiciousLabelChange] [--noDilation]
 atlasSmallIslandCleanup.py -h | --help
 """
 
@@ -18,6 +18,7 @@ class DustCleanup():
     self.maximumIslandVoxelCount = int(arguments['--maximumIslandVoxelCount'])
     self.useFullyConnectedInConnectedComponentFilter = arguments['--useFullyConnectedInConnectedComponentFilter']
     self.forceSuspiciousLabelChange = arguments['--forceSuspiciousLabelChange']
+    self.noDilation = arguments['--noDilation']
     self.islandStatistics = {'Total': {'numberOfIslandsCleaned': 0, 'numberOfIslands': 0}}
 
   def evalInputListArg(self, inputArg):
@@ -126,7 +127,7 @@ class DustCleanup():
     return labelImage
 
   def getRelabeldConnectedRegion(self, maskForCurrentLabel, currentIslandSize):
-    if currentIslandSize > 1:
+    if (currentIslandSize > 1) and (not self.noDilation):
       dilationKernelRadius = self.calcDilationKernelRadius(currentIslandSize)
       dilatedMaskForCurrentLabel = self.dilateLabelMap(maskForCurrentLabel, dilationKernelRadius)
       relabeledConnectedLabelMap = self.runConnectedComponentsAndRelabel(dilatedMaskForCurrentLabel)

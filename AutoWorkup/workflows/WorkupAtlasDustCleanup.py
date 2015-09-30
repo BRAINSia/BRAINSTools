@@ -51,7 +51,7 @@ def CreateDustCleanupWorkflow(WFname, onlyT1, master_config,
     """
     multimodal atlas dust cleanup if t2 exists
     """
-    sessionMakeMultimodalInput = pe.Node(Function(function=MakeVector,     #TODO sessionMakeMultimodalInput okay naming??
+    sessionMakeMultimodalInput = pe.Node(Function(function=MakeVector,
                                                   input_names=['inFN1', 'inFN2', 'inAtlas', 'outAtlas',
                                                                'maxIslandCount', 'useFullyConnected',
                                                                'forceLabelChange', 'includeList',
@@ -65,12 +65,12 @@ def CreateDustCleanupWorkflow(WFname, onlyT1, master_config,
         pass
 
     dustCleanupWF.connect(inputsSpec, 'subj_label_atlas', sessionMakeMultimodalInput, 'inAtlas')
-    sessionMakeMultimodalInput.inputs.outAtlas = 'dustCleanedLabelAtlas.nii.gz'  #TODO decide on output atlas name
+    sessionMakeMultimodalInput.inputs.outAtlas = 'dustCleanedLabel_maxIsland5.nii.gz'
     sessionMakeMultimodalInput.inputs.maxIslandCount = 5
-    sessionMakeMultimodalInput.inputs.useFullyConnected = True #TODO decide
-    sessionMakeMultimodalInput.inputs.forceLabelChange = True #TODO decide
+    sessionMakeMultimodalInput.inputs.useFullyConnected = True
+    sessionMakeMultimodalInput.inputs.forceLabelChange = True
     sessionMakeMultimodalInput.inputs.includeList = None
-    sessionMakeMultimodalInput.inputs.excludeList = '3,4,5'  #TODO decide
+    sessionMakeMultimodalInput.inputs.excludeList = '4,5,14,15,21,24,31,43,44,63,72,85,98,128,219,15000'
 
 
     sessionRunDustCleanupInput = pe.Node(Function(function=runAutomaticCleanupScript,

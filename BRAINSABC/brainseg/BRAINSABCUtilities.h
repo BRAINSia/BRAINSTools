@@ -83,7 +83,7 @@ class RegionStats
 public:
   typedef vnl_matrix<FloatingPrecision>         MatrixType;
   typedef vnl_matrix_inverse<FloatingPrecision> MatrixInverseType;
-  typedef std::map<std::string,double>          MeanMapType;;
+  typedef std::map<std::string,double>          MeanMapType;
   RegionStats() : m_Means(), m_Covariance(), m_Weighting(0.0)
   {
   }

@@ -2480,10 +2480,6 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
                   this->m_SampleSpacing, this->m_DebugLevel,
                   this->m_OutputDebugDir);
     }
-  this->m_ListOfClassStatistics.resize(0); // Reset this to empty for debugging
-                                           // purposes to induce failures when
-                                           // being re-used.
-  this->m_ListOfClassStatistics = this->ComputeDistributions(SubjectCandidateRegions, this->m_Posteriors);
   this->WritePartitionTable(0 + 100);
 }
 

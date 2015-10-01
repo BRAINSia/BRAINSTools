@@ -26,6 +26,8 @@
 #include "itkExtractImageFilter.h"
 #include "itkComposeImageFilter.h"
 
+#include <iomanip>
+
 int main( int argc, char * argv[] )
 {
   if( argc < 3 )
@@ -34,14 +36,17 @@ int main( int argc, char * argv[] )
     return EXIT_FAILURE;
     }
 
+  const std::string input4Dimage(  argv[1]  );
+  const std::string outputPrefix( argv[2] );
+
   typedef short                               PixelValueType;
   typedef itk::Image<PixelValueType, 4>       Volume4DType;
   typedef itk::Image<PixelValueType, 3>       Volume3DType;
 
-  std::cout << "- Read image: " << argv[1] << std::endl;
+  std::cout << "- Read image: " << input4Dimage << std::endl;
   typedef itk::ImageFileReader<Volume4DType> Image4DReaderType;
   Image4DReaderType::Pointer image4DReader = Image4DReaderType::New();
-  image4DReader->SetFileName( argv[1] );
+  image4DReader->SetFileName( input4Dimage );
   try
     {
     image4DReader->Update();
@@ -79,9 +84,10 @@ int main( int argc, char * argv[] )
     extracter->SetDirectionCollapseToIdentity();
     extracter->Update();
 
+    // Need to zeropad to ensure that files are printed in order.
     std::stringstream fNumber("");
-    fNumber << componentNumber;
-    const std::string fn = argv[2] + fNumber.str() + ".nii.gz";
+    fNumber << std::setw(3) << std::setfill('0') << componentNumber;
+    const std::string fn = outputPrefix + fNumber.str() + ".nii.gz";
 
     std::cout << "- Write image: " << fn << std::endl;
 
@@ -99,6 +105,5 @@ int main( int argc, char * argv[] )
       std::cerr << excp << std::endl;
       }
     }
-
   return EXIT_SUCCESS;
 }

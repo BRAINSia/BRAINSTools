@@ -38,6 +38,14 @@ endforeach()
 add_library(DWIConvertSupportLib STATIC ${DWIConvertSupportLib_SRCS})
 target_link_libraries(DWIConvertSupportLib ${DWIConvert_ITK_LIBRARIES} BRAINSCommonLib)
 
+set(PROGS_LIST_1
+  Convert4DImageTo3DSeries
+  )
+foreach(prog ${PROGS_LIST_1})
+  add_executable(${prog} ${prog}.cxx)
+  target_link_libraries(${prog} BRAINSCommonLib ${DWIConvert_ITK_LIBRARIES})
+endforeach()
+
 #-----------------------------------------------------------------------------
 # SEMMacroBuildCLI(
 #     NAME ${MODULE_NAME}

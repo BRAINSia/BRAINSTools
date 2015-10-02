@@ -88,7 +88,6 @@ ResampleInPlaceImageFilter<TInputImage, TOutputImage>
     m_OutputImage = CastFilter->GetOutput();
     }
 
-  typedef typename RigidTransformType::ConstPointer RigidTransformConstPointer;
   RigidTransformConstPointer FMTxfm = this->m_RigidTransform.GetPointer();
   const typename RigidTransformType::MatrixType inverseRotation( FMTxfm->GetMatrix().GetInverse() );
 

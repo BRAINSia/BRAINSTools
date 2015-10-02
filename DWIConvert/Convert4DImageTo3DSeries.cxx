@@ -39,7 +39,7 @@ int main( int argc, char * argv[] )
   const std::string input4Dimage(  argv[1]  );
   const std::string outputPrefix( argv[2] );
 
-  typedef short                               PixelValueType;
+  typedef float                               PixelValueType;
   typedef itk::Image<PixelValueType, 4>       Volume4DType;
   typedef itk::Image<PixelValueType, 3>       Volume3DType;
 

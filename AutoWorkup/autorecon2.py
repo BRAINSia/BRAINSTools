@@ -104,6 +104,8 @@ def create_AutoRecon2(config):
         align_transform.inputs.out_file = outputfilename(config['subjects_dir'], config['current_id'], 
                                                          'talairach.lta', 'mri', 'transforms')
         align_transform.inputs.nbrspacing = 3
+        if config['openmp'] != None:
+            align_transform.inputs.num_threads = config['openmp']
         if config['plugin_args'] != None:
             align_transform.plugin_args = config['plugin_args']
         ar2_wf.connect([(ar2_inputs, align_transform, [('brainmask', 'mask')]),
@@ -149,6 +151,8 @@ def create_AutoRecon2(config):
                                                'RB_all_2014-08-21.gca')
     ca_register.inputs.out_file = outputfilename(config['subjects_dir'], config['current_id'], 
         'talairach.m3z', 'mri', 'transforms')
+    if config['openmp'] != None:
+        ca_register.inputs.num_threads = config['openmp']
     if config['plugin_args'] != None:
         ca_register.plugin_args = config['plugin_args']
     ar2_wf.connect([(ca_normalize, ca_register, [('out_file', 'in_file')]),
@@ -186,6 +190,8 @@ def create_AutoRecon2(config):
     em_reg_withskull.inputs.template = os.path.join(config['FREESURFER_HOME'],
                                                     'average',
                                                     'RB_all_withskull_2014-08-21.gca')
+    if config['openmp'] != None:
+        em_reg_withskull.inputs.num_threads = config['openmp']
     if config['plugin_args'] != None:
         em_reg_withskull.plugin_args = config['plugin_args']
     ar2_wf.connect([(align_transform, em_reg_withskull, [('out_file', 'transform')]),
@@ -229,6 +235,8 @@ def create_AutoRecon2(config):
     ca_label.inputs.template = os.path.join(config['FREESURFER_HOME'],
                                             'average',
                                             'RB_all_2014-08-21.gca')
+    if config['openmp'] != None:
+        ca_label.inputs.num_threads = config['openmp']
     if config['plugin_args'] != None:
         ca_label.plugin_args = config['plugin_args']
     ar2_wf.connect([(ca_normalize, ca_label, [('out_file', 'in_file')]),
@@ -490,6 +498,8 @@ def create_AutoRecon2(config):
             qsphere.inputs.seed = 1234
             qsphere.inputs.magic = True
             qsphere.inputs.out_file = qsphere_nofix
+            if config['openmp'] != None:
+                qsphere.inputs.num_threads = config['openmp']
             if config['plugin_args'] != None:
                 qsphere.plugin_args = config['plugin_args']
             hemi_wf.connect([(inflate1, qsphere, [('out_file', 'in_file')]),

@@ -13,7 +13,7 @@ def create_reconall(config):
 
     # Connect workflows 
     reconall = pe.Workflow(name="recon-all")
-    if longitudinal:
+    if config['longitudinal']:
         # grab files from the initial single session run
         grab_inittp_files = pe.Node(DataGrabber(), name="Grab_Initial_Files",
                                     infields=['subject_id'],

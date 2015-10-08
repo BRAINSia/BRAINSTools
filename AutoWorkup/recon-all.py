@@ -188,7 +188,8 @@ def checkenv():
     elif not os.path.isdir(fs_home):
         print "ERROR: FREESURFER_HOME must be set to a valid directory before \
 running this workflow"
-    elif os.path.join(fs_home, 'bin') not in path:
+    elif os.path.join(fs_home, 'bin') not in path.replace('//','/'):
+        print path
         print "ERROR: Could not find necessary executable in path"
         setupscript = os.path.join(fs_home, 'SetUpFreeSurfer.sh')
         if os.path.isfile(setupscript):

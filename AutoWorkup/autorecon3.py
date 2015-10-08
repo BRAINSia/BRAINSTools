@@ -95,7 +95,8 @@ def create_AutoRecon3(config['subjects_dir'], config['current_id'], config['FREE
 
     ar3_sphere = pe.Node(Sphere(), name="Spherical_Inflation")
     ar3_sphere.inputs.seed = 1234
-    ar3_sphere.plugin_args = plugin_args
+    if config['plugin_args'] != None:
+        ar3_sphere.plugin_args = config['plugin_args']
     ar3_lh_wf.connect([(ar3_lh_inputs, ar3_sphere, [('inflated', 'in_file'),
                                                     ('smoothwm',
                                                      'in_smoothwm'),
@@ -151,7 +152,8 @@ def create_AutoRecon3(config['subjects_dir'], config['current_id'], config['FREE
 
     ar3_parcellation = pe.Node(MRIsCALabel(), "Cortical_Parcellation")
     ar3_parcellation.inputs.seed = 1234
-    ar3_parcellation.plugin_args = plugin_args
+    if config['plugin_args'] != None:
+        ar3_parcellation.plugin_args = config['plugin_args']
     ar3_lh_wf.connect([(ar3_lh_inputs, ar3_parcellation, [('smoothwm', 'smoothwm'),
                                                           ('cortex_label',
                                                            'label'),

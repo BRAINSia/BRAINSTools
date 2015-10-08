@@ -161,10 +161,10 @@ def procargs(argv):
             sys.exit(2)
         if config['openmp'] != None:
             minmemoryGB = 8 # this could be modified in later updates
-            config['plugin_args'] = modify_qsub_args(config['queue'],
-                                                     minmemoryGB,
-                                                     config['openmp'],
-                                                     config['openmp'])
+            config['plugin_args'] = { 'qsub_args' :  modify_qsub_args(config['queue'],
+                                                                      minmemoryGB,
+                                                                      config['openmp'],
+                                                                      config['openmp']) }
             print 'plugin_args: {0}'.format(config['plugin_args'])
                 
     if config['openmp'] != None:

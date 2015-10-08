@@ -1,21 +1,19 @@
 import nipype
 import nipype.pipeline.engine as pe  # pypeline engine
 from nipype.interfaces.io import DataGrabber, FreeSurferSource
-from nipype.interfaces.Utility import Merge
+from nipype.interfaces.utility import Merge
 from autorecon1 import mkdir_p, create_AutoRecon1
 from autorecon2 import create_AutoRecon2
 from autorecon3 import create_AutoRecon3
 
-def create_reconall(in_T1s, subject_id, in_T2, in_FLAIR, subjects_dir, qcache, cw256, fs_home, longitudinal, long_template, timepoints, plugin_args):
+def create_reconall(in_T1s, subject_id, in_T2, in_FLAIR, subjects_dir, qcache, cw256, fs_home, longitudinal, long_template, timepoints):
     if longitudinal:
         current_id = "{0}.long.{1}".format(subject_id, long_template)
     else:
         current_id = subject_id        
-    ar1_wf = create_AutoRecon1(
-        subjects_dir, current_id, fs_home, in_T1s, in_T2, in_FLAIR, cw256, longitudinal, long_template, plugin_args)
-    ar2_wf, ar2_lh, ar2_rh = create_AutoRecon2(
-        subjects_dir, current_id, fs_home, longitudinal, long_template, timepoints, plugin_args)
-    ar3_wf = create_AutoRecon3(subjects_dir, current_id, fs_home, qcache, plugin_args)
+    ar1_wf = create_AutoRecon1(subjects_dir, current_id, fs_home, in_T1s, in_T2, in_FLAIR, cw256, longitudinal, long_template)
+    ar2_wf, ar2_lh, ar2_rh = create_AutoRecon2(subjects_dir, current_id, fs_home, longitudinal, long_template, timepoints)
+    ar3_wf = create_AutoRecon3(subjects_dir, current_id, fs_home, qcache)
 
     # Connect workflows 
     reconall = pe.Workflow(name="recon-all")
@@ -125,12 +123,12 @@ def create_reconall(in_T1s, subject_id, in_T2, in_FLAIR, subjects_dir, qcache, c
         reconall.connect([(grab_template_files, ar1_wf, [('template_talairach_xfm', 'AutoRecon1_Inputs.template_talairach_xfm')]),
                           (grab_template_files, ar2_wf, [('template_talairach_lta', 'AutoRecon2_Inputs.template_talairach_lta'),
                                                          ('template_talairach_m3z', 'AutoRecon2_Inputs.template_talairach_m3z'),
-                                                         ('template_label_intensities', 'AutoRecon2_Inputs.template_label_intensities')]),
-                                                         ('template_lh_white', 'AutoRecon2_Inputs.template_lh_white')]),
-                                                         ('template_rh_white', 'AutoRecon2_Inputs.template_rh_white')]),
-                                                         ('template_lh_pial', 'AutoRecon2_Inputs.template_lh_pial')]),
-                                                         ('template_rh_pial', 'AutoRecon2_Inputs.template_rh_pial')]),
-                      ])
+                                                         ('template_label_intensities', 'AutoRecon2_Inputs.template_label_intensities'),
+                                                         ('template_lh_white', 'AutoRecon2_Inputs.template_lh_white'),
+                                                         ('template_rh_white', 'AutoRecon2_Inputs.template_rh_white'),
+                                                         ('template_lh_pial', 'AutoRecon2_Inputs.template_lh_pial'),
+                                                         ('template_rh_pial', 'AutoRecon2_Inputs.template_rh_pial'),])
+                          ])
         # end longitudinal data collection
         
     reconall.connect([(ar1_wf, ar3_wf, [('AutoRecon1_Inputs.subject_id', 'AutoRecon3_Inputs.subject_id'),

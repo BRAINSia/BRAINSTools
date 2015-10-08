@@ -368,6 +368,7 @@ def create_AutoRecon1(subjects_dir, subject_id, fs_home, in_T1s, in_T2, in_FLAIR
         mri_em_register.inputs.out_file = outputfilename(subjects_dir, subject_id, 
                                                          'talairach_with_skull.lta', 'mri', 'transforms')
         mri_em_register.inputs.skull = True
+        mri_em_register.plugin_args = plugin_args
         ar1_wf.connect([(bias_correction, mri_em_register, [('out_file', 'in_file')]),
                     ])
 

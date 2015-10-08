@@ -15,7 +15,6 @@ def copy_ltas(in_file, subjects_dir, subject_id, long_template):
     return out_file
 
 def create_AutoRecon2(subjects_dir, subject_id, fs_home, longitudinal, long_template, timepoints):
-    
     # AutoRecon2
     # Workflow
     ar2_wf = pe.Workflow(name="AutoRecon2")
@@ -97,7 +96,7 @@ def create_AutoRecon2(subjects_dir, subject_id, fs_home, longitudinal, long_temp
 
         ar2_wf.connect([(ar2_inputs, align_transform, [('template_talairach_lta', 'in_file')])])
         
-    else:        
+    else:
         align_transform = pe.Node(EMRegister(), name="Align_Transform")
         align_transform.inputs.template = os.path.join(fs_home,
                                                        'average',
@@ -105,6 +104,7 @@ def create_AutoRecon2(subjects_dir, subject_id, fs_home, longitudinal, long_temp
         align_transform.inputs.out_file = outputfilename(subjects_dir, subject_id, 
                                                          'talairach.lta', 'mri', 'transforms')
         align_transform.inputs.nbrspacing = 3
+        align_transform.plugin_args = plugin_args
         ar2_wf.connect([(ar2_inputs, align_transform, [('brainmask', 'mask')]),
                         (add_to_header_nu, align_transform,
                          [('out_file', 'in_file')])
@@ -149,6 +149,7 @@ def create_AutoRecon2(subjects_dir, subject_id, fs_home, longitudinal, long_temp
                                                'RB_all_2014-08-21.gca')
     ca_register.inputs.out_file = outputfilename(subjects_dir, subject_id, 
         'talairach.m3z', 'mri', 'transforms')
+    ca_register.plugin_args = plugin_args
     ar2_wf.connect([(ca_normalize, ca_register, [('out_file', 'in_file')]),
                     (ar2_inputs, ca_register, [('brainmask', 'mask')]),
                     ])
@@ -184,7 +185,7 @@ def create_AutoRecon2(subjects_dir, subject_id, fs_home, longitudinal, long_temp
     em_reg_withskull.inputs.template = os.path.join(fs_home,
                                                     'average',
                                                     'RB_all_withskull_2014-08-21.gca')
-
+    em_reg_withskull.plugin_args = plugin_args
     ar2_wf.connect([(align_transform, em_reg_withskull, [('out_file', 'transform')]),
                     (remove_neck, em_reg_withskull, [('out_file', 'in_file')])
                     ])
@@ -226,6 +227,7 @@ def create_AutoRecon2(subjects_dir, subject_id, fs_home, longitudinal, long_temp
     ca_label.inputs.template = os.path.join(fs_home,
                                             'average',
                                             'RB_all_2014-08-21.gca')
+    ca_label.plugin_args = plugin_args
     ar2_wf.connect([(ca_normalize, ca_label, [('out_file', 'in_file')]),
                     (ca_register, ca_label, [('out_file', 'transform')])
                     ])
@@ -485,6 +487,7 @@ def create_AutoRecon2(subjects_dir, subject_id, fs_home, longitudinal, long_temp
             qsphere.inputs.seed = 1234
             qsphere.inputs.magic = True
             qsphere.inputs.out_file = qsphere_nofix
+            qsphere.plugin_args = plugin_args
             hemi_wf.connect([(inflate1, qsphere, [('out_file', 'in_file')]),
                          ])
 

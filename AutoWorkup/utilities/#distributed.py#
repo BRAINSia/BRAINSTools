@@ -52,18 +52,6 @@ def create_global_sge_script(cluster, environment):
     return retval
 
 
-def modify_qsub_args(queue, memoryGB, minThreads, maxThreads, stdout='/dev/null', stderr='/dev/null'):
-    """
-    Outputs qsub_args string for Nipype nodes
-    queue is the string to specify the queue "-q all.q | -q HJ,ICTS,UI"
-    memoryGB is a numeric in gigabytes to be given (ie 2.1 will result in "-l mem_free=2.1G")
-          if memoryGB = 0, then it is automatically computed.
-    minThreads The fewest number of threads to use (if an algorithm has benifits from more than 1 thread)
-    maxThreads The max number of threads to use (if an algorithm is not multi-threaded, then just use 1)
-    stdout Where to put stdout logs
-    stderr Where to put stderr logs
-
-    >>> modify_qsub_args('test', 2, 5, None)
     -S /bin/bash -cwd -pe smp 5 -l mem_free=2G -o /dev/null -e /dev/null test FAIL
     >>> modify_qsub_args('test', 2, 5, -1 )
     -S /bin/bash -cwd -pe smp 5- -l mem_free=2G -o /dev/null -e /dev/null test FAIL
@@ -85,10 +73,10 @@ def modify_qsub_args(queue, memoryGB, minThreads, maxThreads, stdout='/dev/null'
     minThreads=int(minThreads) # Ensure that threads are integers
 
     if maxThreads is None or minThreads == maxThreads:
-       threadsRangeString = '{0}'.format(minThreads)
+       threadsRangeString =  '{0}'.format(minThreads)
        maxThreads = minThreads
     elif maxThreads == -1:
-       threadsRangeString= '{0}-'.format(minThreads)
+       threadsRangeString= '{0}-'.format(minThreasds)
        maxThreads = 12345 #HUGE NUMBER!
     else:
        threadsRangeString= "{0}-{1}".format(minThreads,maxThreads)

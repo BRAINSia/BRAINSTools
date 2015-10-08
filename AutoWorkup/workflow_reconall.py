@@ -6,14 +6,16 @@ from autorecon1 import mkdir_p, create_AutoRecon1
 from autorecon2 import create_AutoRecon2
 from autorecon3 import create_AutoRecon3
 
-def create_reconall(in_T1s, subject_id, in_T2, in_FLAIR, subjects_dir, qcache, cw256, fs_home, longitudinal, long_template, timepoints):
+def create_reconall(in_T1s, subject_id, in_T2, in_FLAIR, subjects_dir, qcache, cw256, fs_home, longitudinal, long_template, timepoints, plugin_args):
     if longitudinal:
         current_id = "{0}.long.{1}".format(subject_id, long_template)
     else:
         current_id = subject_id        
-    ar1_wf = create_AutoRecon1(subjects_dir, current_id, fs_home, in_T1s, in_T2, in_FLAIR, cw256, longitudinal, long_template)
-    ar2_wf, ar2_lh, ar2_rh = create_AutoRecon2(subjects_dir, current_id, fs_home, longitudinal, long_template, timepoints)
-    ar3_wf = create_AutoRecon3(subjects_dir, current_id, fs_home, qcache)
+    ar1_wf = create_AutoRecon1(
+        subjects_dir, current_id, fs_home, in_T1s, in_T2, in_FLAIR, cw256, longitudinal, long_template, plugin_args)
+    ar2_wf, ar2_lh, ar2_rh = create_AutoRecon2(
+        subjects_dir, current_id, fs_home, longitudinal, long_template, timepoints, plugin_args)
+    ar3_wf = create_AutoRecon3(subjects_dir, current_id, fs_home, qcache, plugin_args)
 
     # Connect workflows 
     reconall = pe.Workflow(name="recon-all")

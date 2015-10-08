@@ -14,13 +14,13 @@ def copy_ltas(in_file, subjects_dir, subject_id, long_template):
             os.path.basename(in_file).replace(long_template, subject_id)))
     return out_file
 
-def create_AutoRecon2(subjects_dir, subject_id, fs_home, longitudinal, long_template, timepoints):
+def create_AutoRecon2(config):
     # AutoRecon2
     # Workflow
     ar2_wf = pe.Workflow(name="AutoRecon2")
 
     # Input node
-    if longitudinal:
+    if config['longitudinal']:
         ar2_inputs = pe.Node(IdentityInterface(fields=['orig',
                                                        'brainmask',
                                                        'transform',
@@ -43,7 +43,7 @@ def create_AutoRecon2(subjects_dir, subject_id, fs_home, longitudinal, long_temp
                                                        'subjects_dir']),
                              run_without_submitting=True,
                              name='AutoRecon2_Inputs')
-        ar2_inputs.inputs.timepoints = timepoints
+        ar2_inputs.inputs.timepoints = config['timepoints']
     else:
         ar2_inputs = pe.Node(IdentityInterface(fields=['orig',
                                                        'brainmask',
@@ -64,7 +64,7 @@ def create_AutoRecon2(subjects_dir, subject_id, fs_home, longitudinal, long_temp
         MNIBiasCorrection(), name="Intensity_Correction")
     intensity_correction.inputs.iterations = 1
     intensity_correction.inputs.protocol_iterations = 1000
-    intensity_correction.inputs.out_file = outputfilename(subjects_dir, subject_id, 'nu.mgz')
+    intensity_correction.inputs.out_file = outputfilename(config['subjects_dir'], config['current_id'], 'nu.mgz')
     ar2_wf.connect([(ar2_inputs, intensity_correction, [('orig', 'in_file'),
                                                         ('brainmask', 'mask'),
                                                         ('transform',
@@ -87,21 +87,21 @@ def create_AutoRecon2(subjects_dir, subject_id, fs_home, longitudinal, long_temp
     Computes the transform to align the mri/nu.mgz volume to the default GCA 
     atlas found in FREESURFER_HOME/average (see -gca flag for more info).
     """
-    if longitudinal:
+    if config['longitudinal']:
         align_transform = pe.Node(Function(['in_file', 'out_file'],
                                    ['out_file'],
                                    copy_file),
                           name='Copy_Talairach_lta')
-        align_transform.inputs.out_file = os.path.join(subjects_dir, subject_id, 'mri', 'transforms', 'talairach.lta')
+        align_transform.inputs.out_file = os.path.join(config['subjects_dir'], config['current_id'], 'mri', 'transforms', 'talairach.lta')
 
         ar2_wf.connect([(ar2_inputs, align_transform, [('template_talairach_lta', 'in_file')])])
         
     else:
         align_transform = pe.Node(EMRegister(), name="Align_Transform")
-        align_transform.inputs.template = os.path.join(fs_home,
+        align_transform.inputs.template = os.path.join(config['FREESURFER_HOME'],
                                                        'average',
                                                        'RB_all_2014-08-21.gca')
-        align_transform.inputs.out_file = outputfilename(subjects_dir, subject_id, 
+        align_transform.inputs.out_file = outputfilename(config['subjects_dir'], config['current_id'], 
                                                          'talairach.lta', 'mri', 'transforms')
         align_transform.inputs.nbrspacing = 3
         align_transform.plugin_args = plugin_args
@@ -117,23 +117,22 @@ def create_AutoRecon2(subjects_dir, subject_id, fs_home, longitudinal, long_temp
     estimate the bias field/scalings. Creates mri/norm.mgz.
     """
     ca_normalize = pe.Node(CANormalize(), name='CA_Normalize')
-    ca_normalize.inputs.out_file = outputfilename(subjects_dir, subject_id, 'norm.mgz')
-    ca_normalize.inputs.atlas = os.path.join(fs_home,
+    ca_normalize.inputs.out_file = outputfilename(config['subjects_dir'], config['current_id'], 'norm.mgz')
+    ca_normalize.inputs.atlas = os.path.join(config['FREESURFER_HOME'],
                                              'average',
                                              'RB_all_2014-08-21.gca')
-    if longitudinal:
+    if config['longitudinal']:
         copy_template_aseg = pe.Node(Function(['in_file', 'out_file'],
                                    ['out_file'],
                                    copy_file),
                           name='Copy_Template_Aseg')
         copy_template_aseg.inputs.out_file = os.path.join(
-            subjects_dir, subject_id, 'mri', 'transforms', 'aseg_{0}.mgz'.format(long_template))
+            config['subjects_dir'], config['current_id'], 'mri', 'transforms', 'aseg_{0}.mgz'.format(config['long_template']))
 
         ar1_wf.connect([(ar2_inputs, copy_template, [('template_aseg', 'in_file')]),
                         (copy_template, ca_normalize, [('out_file', 'long_file')])])
-        #TODO: switch subject_id to long_id
     else:
-        ca_normalize.inputs.control_points = outputfilename(subjects_dir, subject_id, 'ctrl_pts.mgz')
+        ca_normalize.inputs.control_points = outputfilename(config['subjects_dir'], config['current_id'], 'ctrl_pts.mgz')
 
     ar2_wf.connect([(align_transform, ca_normalize, [('out_file', 'transform')]),
                     (ar2_inputs, ca_normalize, [('brainmask', 'mask')]),
@@ -144,16 +143,16 @@ def create_AutoRecon2(subjects_dir, subject_id, fs_home, longitudinal, long_temp
     ca_register = pe.Node(CARegister(), name='CA_Register')
     ca_register.inputs.align = 'after'
     ca_register.inputs.no_big_ventricles = True
-    ca_register.inputs.template = os.path.join(fs_home,
+    ca_register.inputs.template = os.path.join(config['FREESURFER_HOME'],
                                                'average',
                                                'RB_all_2014-08-21.gca')
-    ca_register.inputs.out_file = outputfilename(subjects_dir, subject_id, 
+    ca_register.inputs.out_file = outputfilename(config['subjects_dir'], config['current_id'], 
         'talairach.m3z', 'mri', 'transforms')
     ca_register.plugin_args = plugin_args
     ar2_wf.connect([(ca_normalize, ca_register, [('out_file', 'in_file')]),
                     (ar2_inputs, ca_register, [('brainmask', 'mask')]),
                     ])
-    if longitudinal:
+    if config['longitudinal']:
         ca_register.inputs.levels = 2
         ca_register.inputs.A = 1
         ar2_wf.connect([(ar1_inputs, ca_register, [('template_talairach_m3z', 'l_files')])])
@@ -167,8 +166,8 @@ def create_AutoRecon2(subjects_dir, subject_id, fs_home, longitudinal, long_temp
     """
     remove_neck = pe.Node(RemoveNeck(), name='Remove_Neck')
     remove_neck.inputs.radius = 25
-    remove_neck.inputs.out_file = outputfilename(subjects_dir, subject_id, 'nu_noneck.mgz')
-    remove_neck.inputs.template = os.path.join(fs_home,
+    remove_neck.inputs.out_file = outputfilename(config['subjects_dir'], config['current_id'], 'nu_noneck.mgz')
+    remove_neck.inputs.template = os.path.join(config['FREESURFER_HOME'],
                                                'average',
                                                'RB_all_2014-08-21.gca')
     ar2_wf.connect([(ca_register, remove_neck, [('out_file', 'transform')]),
@@ -180,9 +179,9 @@ def create_AutoRecon2(subjects_dir, subject_id, fs_home, longitudinal, long_temp
     # possessing the skull.
     em_reg_withskull = pe.Node(EMRegister(), name='EM_Register_withSkull')
     em_reg_withskull.inputs.skull = True
-    em_reg_withskull.inputs.out_file = outputfilename(subjects_dir, subject_id, 
+    em_reg_withskull.inputs.out_file = outputfilename(config['subjects_dir'], config['current_id'], 
         'talairach_with_skull_2.lta', 'mri', 'transforms')
-    em_reg_withskull.inputs.template = os.path.join(fs_home,
+    em_reg_withskull.inputs.template = os.path.join(config['FREESURFER_HOME'],
                                                     'average',
                                                     'RB_all_withskull_2014-08-21.gca')
     em_reg_withskull.plugin_args = plugin_args
@@ -192,7 +191,7 @@ def create_AutoRecon2(subjects_dir, subject_id, fs_home, longitudinal, long_temp
 
     # SubCort Seg (CA Label)
     # Labels subcortical structures, based in GCA model.
-    if longitudinal:
+    if config['longitudinal']:
         copy_long_ltas = pe.MapNode(Function(['in_file',
                                               'subjects_dir',
                                               'subject_id',
@@ -204,7 +203,7 @@ def create_AutoRecon2(subjects_dir, subject_id, fs_home, longitudinal, long_temp
         ar2_wf.connect([(ar2_inputs, copy_long_ltas, [('alltps_to_template_ltas', 'in_file'),
                                                       ('subjects_dir', 'subjects_dir'),
                                                       ('subject_id', 'subject_id')])])
-        copy_long_ltas.inputs.long_template = long_template
+        copy_long_ltas.inputs.long_template = config['long_template']
 
         merge_norms = pe.Node(Merge(2), name="Merge_Norms")
         ar2_wf.connect([(ar2_inputs, merge_norms, [('alltps_norms', 'in1')]),
@@ -217,30 +216,30 @@ def create_AutoRecon2(subjects_dir, subject_id, fs_home, longitudinal, long_temp
                                                           ('alltps_segs_noCC', 'in_segmentations_noCC'),
                                                           ('subject_id', 'subject_id')]),
                         (merge_norms, fuse_segmentations, [('out', 'in_norms')])])
-        fuse_segmentations.inputs.out_file = os.path.join(subjects_dir, subject_id, 'mri', 'aseg.fused.mgz')
+        fuse_segmentations.inputs.out_file = os.path.join(config['subjects_dir'], config['current_id'], 'mri', 'aseg.fused.mgz')
         
     ca_label = pe.Node(CALabel(), name='CA_Label')
     ca_label.inputs.relabel_unlikely = (9, .3)
     ca_label.inputs.prior = 0.5
     ca_label.inputs.align = True
-    ca_label.inputs.out_file = outputfilename(subjects_dir, subject_id, 'aseg.auto_noCCseg.mgz')
-    ca_label.inputs.template = os.path.join(fs_home,
+    ca_label.inputs.out_file = outputfilename(config['subjects_dir'], config['current_id'], 'aseg.auto_noCCseg.mgz')
+    ca_label.inputs.template = os.path.join(config['FREESURFER_HOME'],
                                             'average',
                                             'RB_all_2014-08-21.gca')
     ca_label.plugin_args = plugin_args
     ar2_wf.connect([(ca_normalize, ca_label, [('out_file', 'in_file')]),
                     (ca_register, ca_label, [('out_file', 'transform')])
                     ])
-    if longitudinal:
+    if config['longitudinal']:
         ar2_wf.connect([(fuse_segmentations, ca_label, [('out_file', 'in_vol')]),
                         (ar2_inputs, ca_label, [('template_label_intensities', 'intensities')])])
 
     # mri_cc - segments the corpus callosum into five separate labels in the
     # subcortical segmentation volume 'aseg.mgz'
     segment_cc = pe.Node(SegmentCC(), name="Segment_CorpusCallosum")
-    segment_cc.inputs.out_rotation = outputfilename(subjects_dir, subject_id, 
+    segment_cc.inputs.out_rotation = outputfilename(config['subjects_dir'], config['current_id'], 
         'cc_up.lta', 'mri', 'transforms')
-    segment_cc.inputs.out_file = outputfilename(subjects_dir, subject_id, 'aseg.auto.mgz')
+    segment_cc.inputs.out_file = outputfilename(config['subjects_dir'], config['current_id'], 'aseg.auto.mgz')
     ar2_wf.connect([(ar2_inputs, segment_cc, [('subject_id', 'subject_id'),
                                               ('subjects_dir', 'subjects_dir')]),
                     (ca_label, segment_cc, [('out_file', 'in_file')]),
@@ -251,7 +250,7 @@ def create_AutoRecon2(subjects_dir, subject_id, fs_home, longitudinal, long_temp
                                ['out_file'],
                                copy_file),
                       name='Copy_CCSegmentation')
-    copy_cc.inputs.out_file = outputfilename(subjects_dir, subject_id, 'aseg.presurf.mgz')
+    copy_cc.inputs.out_file = outputfilename(config['subjects_dir'], config['current_id'], 'aseg.presurf.mgz')
 
     ar2_wf.connect([(segment_cc, copy_cc, [('out_file', 'in_file')])
                     ])
@@ -264,7 +263,7 @@ def create_AutoRecon2(subjects_dir, subject_id, fs_home, longitudinal, long_temp
     brain.mgz volume. The -autorecon2-cp stage begins here.
     """
     normalization2 = pe.Node(Normalize(), name="Normalization2")
-    normalization2.inputs.out_file = outputfilename(subjects_dir, subject_id, 'brain.mgz')
+    normalization2.inputs.out_file = outputfilename(config['subjects_dir'], config['current_id'], 'brain.mgz')
     ar2_wf.connect([(copy_cc, normalization2, [('out_file', 'segmentation')]),
                     (ar2_inputs, normalization2, [('brainmask', 'mask')]),
                     (ca_normalize, normalization2, [('out_file', 'in_file')])
@@ -275,7 +274,7 @@ def create_AutoRecon2(subjects_dir, subject_id, fs_home, longitudinal, long_temp
     # Applies brainmask.mgz to brain.mgz to create brain.finalsurfs.mgz.
     mri_mask = pe.Node(ApplyMask(), name="Mask_Brain_Final_Surface")
     mri_mask.inputs.mask_thresh = 5
-    mri_mask.inputs.out_file = outputfilename(subjects_dir, subject_id, 'brain.finalsurfs.mgz')
+    mri_mask.inputs.out_file = outputfilename(config['subjects_dir'], config['current_id'], 'brain.finalsurfs.mgz')
 
     ar2_wf.connect([(normalization2, mri_mask, [('out_file', 'in_file')]),
                     (ar2_inputs, mri_mask, [('brainmask', 'mask_file')])
@@ -290,12 +289,12 @@ def create_AutoRecon2(subjects_dir, subject_id, fs_home, longitudinal, long_temp
     """
 
     wm_seg = pe.Node(SegmentWM(), name="Segment_WM")
-    wm_seg.inputs.out_file = outputfilename(subjects_dir, subject_id, 'wm.seg.mgz')
+    wm_seg.inputs.out_file = outputfilename(config['subjects_dir'], config['current_id'], 'wm.seg.mgz')
     ar2_wf.connect([(normalization2, wm_seg, [('out_file', 'in_file')])
                     ])
 
     edit_wm = pe.Node(EditWMwithAseg(), name='Edit_WhiteMatter')
-    edit_wm.inputs.out_file = outputfilename(subjects_dir, subject_id, 'wm.asegedit.mgz')
+    edit_wm.inputs.out_file = outputfilename(config['subjects_dir'], config['current_id'], 'wm.asegedit.mgz')
     edit_wm.inputs.keep_in = True
     ar2_wf.connect([(wm_seg, edit_wm, [('out_file', 'in_file')]),
                     (copy_cc, edit_wm, [('out_file', 'seg_file')]),
@@ -303,13 +302,13 @@ def create_AutoRecon2(subjects_dir, subject_id, fs_home, longitudinal, long_temp
                     ])
 
     pretess = pe.Node(MRIPretess(), name="MRI_Pretess")
-    pretess.inputs.out_file = outputfilename(subjects_dir, subject_id, 'wm.mgz')
+    pretess.inputs.out_file = outputfilename(config['subjects_dir'], config['current_id'], 'wm.mgz')
     pretess.inputs.label = 'wm'
     ar2_wf.connect([(edit_wm, pretess, [('out_file', 'in_filled')]),
                     (ca_normalize, pretess, [('out_file', 'in_norm')])
                     ])
 
-    if longitudinal:
+    if config['longitudinal']:
         transfer_init_wm = pe.Node(ApplyMask(), name="Transfer_Initial_WM")
         transfer_init_wm.inputs.transfer = 255
         transfer_init_wm.inputs.keep_mask_deletion_edits = True
@@ -329,8 +328,8 @@ def create_AutoRecon2(subjects_dir, subject_id, fs_home, longitudinal, long_temp
     """
 
     fill = pe.Node(MRIFill(), name="Fill")
-    fill.inputs.log_file = os.path.join(subjects_dir, subject_id, 'scripts', 'ponscc.cut.log')
-    fill.inputs.out_file = os.path.join(subjects_dir, subject_id, 'mri', 'filled.mgz')
+    fill.inputs.log_file = os.path.join(config['subjects_dir'], config['current_id'], 'scripts', 'ponscc.cut.log')
+    fill.inputs.out_file = os.path.join(config['subjects_dir'], config['current_id'], 'mri', 'filled.mgz')
     ar2_wf.connect([(pretess, fill, [('out_file', 'in_file')]),
                     (align_transform, fill,
                      [('out_file', 'transform')]),
@@ -350,7 +349,7 @@ def create_AutoRecon2(subjects_dir, subject_id, fs_home, longitudinal, long_temp
             label = 127
             hemi_wf = ar2_rh
         # define some output files
-        surf_dir = os.path.join(subjects_dir, subject_id, 'surf')
+        surf_dir = os.path.join(config['subjects_dir'], config['current_id'], 'surf')
         orig = os.path.join(surf_dir, hemisphere + '.orig')
         orig_nofix = orig + '.nofix'
         smoothwm = os.path.join(surf_dir, hemisphere + '.smoothwm')
@@ -360,30 +359,30 @@ def create_AutoRecon2(subjects_dir, subject_id, fs_home, longitudinal, long_temp
         qsphere_nofix = os.path.join(surf_dir, hemisphere + '.qsphere.nofix')
         sulc = os.path.join(surf_dir, hemisphere + '.sulc')
         stats = os.path.join(
-            subjects_dir, subject_id, 'stats', hemisphere + '.curv.stats')
+            config['subjects_dir'], config['current_id'], 'stats', hemisphere + '.curv.stats')
 
-        if longitudinal:
+        if config['longitudinal']:
             # Make White Surf
             # Copy files from longitudinal base
             copy_template_white = pe.Node(Function(['in_file', 'out_file'],
                                                    ['out_file'],
                                                    copy_file),
                                           name='Copy_Template_White')
-            copy_template_white.inputs.out_file = os.path.join(subjects_dir, subject_id, 'surf',
+            copy_template_white.inputs.out_file = os.path.join(config['subjects_dir'], config['current_id'], 'surf',
                                                                '{0}.orig'.format(hemisphere))
 
             copy_template_orig_white = pe.Node(Function(['in_file', 'out_file'],
                                                    ['out_file'],
                                                    copy_file),
                                           name='Copy_Template_Orig_White')
-            copy_template_orig_white.inputs.out_file = os.path.join(subjects_dir, subject_id, 'surf',
+            copy_template_orig_white.inputs.out_file = os.path.join(config['subjects_dir'], config['current_id'], 'surf',
                                                                     '{0}.orig_white'.format(hemisphere))
 
             copy_template_orig_pial = pe.Node(Function(['in_file', 'out_file'],
                                                    ['out_file'],
                                                    copy_file),
                                           name='Copy_Template_Orig_Pial')
-            copy_template_orig_pial.inputs.out_file = os.path.join(subjects_dir, subject_id, 'surf',
+            copy_template_orig_pial.inputs.out_file = os.path.join(config['subjects_dir'], config['current_id'], 'surf',
                                                                    '{0}.orig_pial'.format(hemisphere))
 
             # White
@@ -620,7 +619,7 @@ def create_AutoRecon2(subjects_dir, subject_id, fs_home, longitudinal, long_temp
                          (inflate2, curvature_stats, [('out_sulc', 'in_sulc')]),
                      ])
 
-        if longitudinal:
+        if config['longitudinal']:
             ar2_wf.connect([(ar2_inputs, hemi_wf, [('template_{0}_white'.format(hemisphere),
                                                     'Copy_Template_White.in_file'),
                                                    ('template_{0}_white'.format(hemisphere),

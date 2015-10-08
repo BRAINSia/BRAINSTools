@@ -111,21 +111,21 @@ def create_preproc_filenames(subjects_dir, subject_id, in_T1s):
         inputvols.append(os.path.join(orig_dir, file_num + '.mgz'))
     return inputvols, iscaleout, ltaout
 
-def create_AutoRecon1(subjects_dir, subject_id, fs_home, in_T1s, in_T2, in_FLAIR, cw256, longitudinal, long_template):
+def create_AutoRecon1(config):
     # AutoRecon1
     # Workflow
     ar1_wf = pe.Workflow(name='AutoRecon1')
 
-    if not longitudinal:
+    if not config['longitudinal']:
         ar1_inputs = pe.Node(interface=IdentityInterface(
             fields=['Raw_T1s', 'Raw_T2', 'Raw_FLAIR', 'subject_id', 'subjects_dir']),
                              run_without_submitting=True,
                              name='AutoRecon1_Inputs')
-        ar1_inputs.inputs.subject_id = subject_id
-        ar1_inputs.inputs.subjects_dir = subjects_dir
-        ar1_inputs.inputs.Raw_T1s = VerifyInputs(in_T1s)
+        ar1_inputs.inputs.subject_id = config['current_id']
+        ar1_inputs.inputs.subjects_dir = config['subjects_dir']
+        ar1_inputs.inputs.Raw_T1s = VerifyInputs(config['in_T1s'])
 
-        inputvols, iscaleout, ltaout = create_preproc_filenames(subjects_dir, subject_id, in_T1s)
+        inputvols, iscaleout, ltaout = create_preproc_filenames(config['subjects_dir'], config['current_id'], config['in_T1s'])
 
         # T1 image preparation
         # For all T1's mri_convert ${InputVol} ${out_file}
@@ -137,24 +137,27 @@ def create_AutoRecon1(subjects_dir, subject_id, fs_home, in_T1s, in_T2, in_FLAIR
                         ])
 
         # T2 image preparation
-        if in_T2 != None:
+        if config['in_T2'] != None:
             # Create T2raw.mgz
             # mri_convert
-            ar1_inputs.inputs.Raw_T2 = in_T2
+            ar1_inputs.inputs.Raw_T2 = config['in_T2']
             T2_convert = pe.Node(MRIConvert(), name="T2_convert")
-            T2_convert.inputs.out_file = outputfilename(subjects_dir, subject_id, 'T2raw.mgz', 'mri', 'orig')
+            T2_convert.inputs.out_file = os.path.join(config['subjects_dir'], config['current_id'], 'mri', 'orig', 'T2raw.mgz')
             T2_convert.inputs.no_scale = True
             ar1_wf.connect([(ar1_inputs, T2_convert, [('Raw_T2', 'in_file')]),
                             ]) 
 
-        if in_FLAIR != None:
+        if config['in_FLAIR'] != None:
             # FLAIR image preparation
             # Create FLAIRraw.mgz
             # mri_convert
-            ar1_inputs.inputs.Raw_FLAIR = in_FLAIR
+            ar1_inputs.inputs.Raw_FLAIR = config['in_FLAIR']
             FLAIR_convert = pe.Node(MRIConvert(), name="FLAIR_convert")
-            FLAIR_convert.inputs.out_file = outputfilename(subjects_dir, subject_id, 
-                                                           'FLAIRraw.mgz', 'mri', 'orig')
+            FLAIR_convert.inputs.out_file = os.path.join(config['subjects_dir'],
+                                                         config['current_id'],
+                                                         'mri',
+                                                         'orig',
+                                                         'FLAIRraw.mgz')
             FLAIR_convert.inputs.no_scale = True
             ar1_wf.connect([(ar1_inputs, FLAIR_convert, [('Raw_FLAIR', 'in_file')]),
                             ])
@@ -170,10 +173,10 @@ def create_AutoRecon1(subjects_dir, subject_id, fs_home, in_T1s, in_T2, in_FLAIR
                     'subjects_dir']),
                              run_without_submitting=True,
                              name='AutoRecon1_Inputs')
-        ar1_inputs.inputs.subject_id = subject_id
-        ar1_inputs.inputs.subjects_dir = subjects_dir
+        ar1_inputs.inputs.subject_id = config['current_id']
+        ar1_inputs.inputs.subjects_dir = config['subjects_dir']
 
-        _volnames_, in_iscales, in_ltas = create_preproc_filenames(subjects_dir, subject_id, in_T1s)
+        _volnames_, in_iscales, in_ltas = create_preproc_filenames(config['subjects_dir'], config['current_id'], config['in_T1s'])
 
         copy_ltas = pe.MapNode(Function(['in_file', 'out_file'],
                                         ['out_file'],
@@ -207,9 +210,9 @@ def create_AutoRecon1(subjects_dir, subject_id, fs_home, in_T1s, in_T2, in_FLAIR
 
     create_template = pe.Node(RobustTemplate(), name="Robust_Template")
     create_template.inputs.average_metric = 'median'
-    create_template.inputs.template_output = outputfilename(subjects_dir, subject_id, 'rawavg.mgz')
+    create_template.inputs.template_output = outputfilename(config['subjects_dir'], config['current_id'], 'rawavg.mgz')
     create_template.inputs.no_iteration = True
-    if longitudinal:
+    if config['longitudinal']:
         ar1_wf.connect([(concatenate_lta, create_template, [('out_file', 'initial_transforms')]),
                         (ar1_inputs, create_template, [('in_T1s', 'in_files')]),
                         (copy_iscales, create_template, [('out_file','in_intensity_scales')]),
@@ -229,12 +232,12 @@ def create_AutoRecon1(subjects_dir, subject_id, fs_home, in_T1s, in_T2, in_FLAIR
 
     # mri_convert
     conform_template = pe.Node(MRIConvert(), name='Conform_Template')
-    conform_template.inputs.out_file = outputfilename(subjects_dir, subject_id, 'orig.mgz')
-    if longitudinal:
+    conform_template.inputs.out_file = outputfilename(config['subjects_dir'], config['current_id'], 'orig.mgz')
+    if config['longitudinal']:
         conform_template.inputs.out_datatype = 'uchar'
     else:
         conform_template.inputs.conform = True
-        conform_template.inputs.cw256 = cw256    
+        conform_template.inputs.cw256 = config['cw256']    
         conform_template.inputs.resample_type = 'cubic'
 
     ar1_wf.connect(
@@ -243,7 +246,7 @@ def create_AutoRecon1(subjects_dir, subject_id, fs_home, in_T1s, in_T2, in_FLAIR
     add_to_header = pe.Node(AddXFormToHeader(), name="Add_Transform_to_Header")
     add_to_header.inputs.copy_name = True
     add_to_header.inputs.transform = os.path.join(
-        subjects_dir, subject_id, 'mri', 'transforms', 'talairach.xfm')
+        config['subjects_dir'], config['current_id'], 'mri', 'transforms', 'talairach.xfm')
 
     ar1_wf.connect([(conform_template, add_to_header, [('out_file', 'in_file'),
                                                        ('out_file', 'out_file')])])
@@ -260,24 +263,24 @@ def create_AutoRecon1(subjects_dir, subject_id, fs_home, in_T1s, in_T2, in_FLAIR
     bias_correction.inputs.protocol_iterations = 1000
     bias_correction.inputs.distance = 50
     bias_correction.inputs.no_rescale = True
-    bias_correction.inputs.out_file = outputfilename(subjects_dir, subject_id, 'orig_nu.mgz')
+    bias_correction.inputs.out_file = outputfilename(config['subjects_dir'], config['current_id'], 'orig_nu.mgz')
 
     ar1_wf.connect([(add_to_header, bias_correction, [('out_file', 'in_file')]),
                 ])
 
-    if longitudinal:
+    if config['longitudinal']:
         copy_template_xfm = pe.Node(Function(['in_file', 'out_file'],
                                              ['out_file'],
                                              copy_file),
                                     name='Copy_Template_Transform')
         copy_template_xfm.inputs.out_file = os.path.join(
-            subjects_dir, subject_id, 'mri', 'transforms', 'talairach.auto.xfm')
+            config['subjects_dir'], config['current_id'], 'mri', 'transforms', 'talairach.auto.xfm')
 
         ar1_wf.connect([(ar1_inputs, copy_template_xfm, [('template_talairach_xfm', 'in_file')])])
     else:
         talairach_avi = pe.Node(TalairachAVI(), name="Compute_Transform")
         talairach_avi.inputs.atlas = '3T18yoSchwartzReactN32_as_orig'
-        talairach_avi.inputs.out_file = outputfilename(subjects_dir, subject_id, 
+        talairach_avi.inputs.out_file = outputfilename(config['subjects_dir'], config['current_id'], 
                                                        'talairach.auto.xfm', 'mri', 'transforms')
         
         ar1_wf.connect([(bias_correction, talairach_avi, [('out_file', 'in_file')]),
@@ -288,9 +291,9 @@ def create_AutoRecon1(subjects_dir, subject_id, fs_home, in_T1s, in_T2, in_FLAIR
                                       copy_file),
                              name='Copy_Transform')
     copy_transform.inputs.out_file = os.path.join(
-        subjects_dir, subject_id, 'mri', 'transforms', 'talairach.xfm')
+        config['subjects_dir'], config['current_id'], 'mri', 'transforms', 'talairach.xfm')
 
-    if longitudinal:
+    if config['longitudinal']:
         ar1_wf.connect([(copy_template_xfm, copy_transform, [('out_file', 'in_file')])])
     else:
         ar1_wf.connect([(talairach_avi, copy_transform, [('out_file', 'in_file')])])
@@ -301,12 +304,12 @@ def create_AutoRecon1(subjects_dir, subject_id, fs_home, in_T1s, in_T2, in_FLAIR
     ar1_wf.connect([(copy_transform, check_alignment, [('out_file', 'in_file')]),
                     ])
 
-    if not longitudinal:
+    if not config['longitudinal']:
         awk_logfile = pe.Node(Function(['awk_file', 'log_file'],
                                        ['log_file'],
                                        awk),
                               name='Awk')
-        awk_logfile.inputs.awk_file = os.path.join(fs_home,
+        awk_logfile.inputs.awk_file = os.path.join(config['FREESURFER_HOME'],
                                                    'bin',
                                                    'extract_talairach_avi_QA.awk')
         ar1_wf.connect([(talairach_avi, awk_logfile, [('out_log', 'log_file')])])
@@ -324,7 +327,7 @@ def create_AutoRecon1(subjects_dir, subject_id, fs_home, in_T1s, in_T2, in_FLAIR
 
     mri_normalize = pe.Node(Normalize(), name="Normalize_T1")
     mri_normalize.inputs.gradient = 1
-    mri_normalize.inputs.out_file = outputfilename(subjects_dir, subject_id, 'T1.mgz')
+    mri_normalize.inputs.out_file = outputfilename(config['subjects_dir'], config['current_id'], 'T1.mgz')
     ar1_wf.connect([(bias_correction, mri_normalize, [('out_file', 'in_file')]),
                     (copy_transform, mri_normalize,
                      [('out_file', 'transform')]),
@@ -336,18 +339,18 @@ def create_AutoRecon1(subjects_dir, subject_id, fs_home, in_T1s, in_T2, in_FLAIR
     mri/brainmask.auto.mgz and mri/brainmask.mgz. Runs the mri_watershed program.
     """
 
-    if longitudinal:
+    if config['longitudinal']:
         copy_template_brainmask = pe.Node(Function(['in_file', 'out_file'],
                                                    ['out_file'],
                                                    copy_file),
                                           name='Copy_Template_Brainmask')
         copy_template_brainmask.inputs.out_file = os.path.join(
-            subjects_dir, subject_id, 'mri', 'brainmask_{0}.mgz'.format(long_template))
+            config['subjects_dir'], config['current_id'], 'mri', 'brainmask_{0}.mgz'.format(config['long_template']))
         ar1_wf.connect([(ar1_inputs, copy_template_brainmask, [('template_brainmask', 'in_file')])])
 
         mask1 = pe.Node(ApplyMask(), name="ApplyMask1")
         mask1.inputs.keep_mask_deletion_edits = True
-        mask1.inputs.out_file = os.path.join(subjects_dir, subject_id, 'mri', 'brainmask.auto.mgz')
+        mask1.inputs.out_file = os.path.join(config['subjects_dir'], config['current_id'], 'mri', 'brainmask.auto.mgz')
         
         ar1_wf.connect([(mri_normalize, mask1, [('out_file', 'in_file')]),
                         (copy_template_brainmask, mask1, [('out_file', 'mask_file')])])
@@ -362,10 +365,10 @@ def create_AutoRecon1(subjects_dir, subject_id, fs_home, in_T1s, in_T2, in_FLAIR
                         
     else:    
         mri_em_register = pe.Node(EMRegister(), name="EM_Register")
-        mri_em_register.inputs.template = os.path.join(fs_home,
+        mri_em_register.inputs.template = os.path.join(config['FREESURFER_HOME'],
                                                        'average',
                                                        'RB_all_withskull_2014-08-21.gca')
-        mri_em_register.inputs.out_file = outputfilename(subjects_dir, subject_id, 
+        mri_em_register.inputs.out_file = outputfilename(config['subjects_dir'], config['current_id'], 
                                                          'talairach_with_skull.lta', 'mri', 'transforms')
         mri_em_register.inputs.skull = True
         mri_em_register.plugin_args = plugin_args
@@ -375,10 +378,10 @@ def create_AutoRecon1(subjects_dir, subject_id, fs_home, in_T1s, in_T2, in_FLAIR
         watershed_skull_strip = pe.Node(
             WatershedSkullStrip(), name='Watershed_Skull_Strip')
         watershed_skull_strip.inputs.t1 = True
-        watershed_skull_strip.inputs.brain_atlas = os.path.join(fs_home,
+        watershed_skull_strip.inputs.brain_atlas = os.path.join(config['FREESURFER_HOME'],
                                                                 'average',
                                                                 'RB_all_withskull_2014-08-21.gca')
-        watershed_skull_strip.inputs.out_file = outputfilename(subjects_dir, subject_id, 
+        watershed_skull_strip.inputs.out_file = outputfilename(config['subjects_dir'], config['current_id'], 
                                                                'brainmask.auto.mgz')
         ar1_wf.connect([(mri_normalize, watershed_skull_strip, [('out_file', 'in_file')]),
                         (mri_em_register, watershed_skull_strip,
@@ -389,9 +392,12 @@ def create_AutoRecon1(subjects_dir, subject_id, fs_home, in_T1s, in_T2, in_FLAIR
                                       ['out_file'],
                                       copy_file),
                              name='Copy_Brainmask')
-    copy_brainmask.inputs.out_file = outputfilename(subjects_dir, subject_id, 'brainmask.mgz')
+    copy_brainmask.inputs.out_file = os.path.join(config['subjects_dir'],
+                                                  config['current_id'],
+                                                  'mri',
+                                                  'brainmask.mgz')
 
-    if longitudinal:
+    if config['longitudinal']:
         ar1_wf.connect([(mask2, copy_brainmask, [('brain_vol', 'in_file')])])
     else:
         ar1_wf.connect([(watershed_skull_strip, copy_brainmask, [('brain_vol', 'in_file')])])

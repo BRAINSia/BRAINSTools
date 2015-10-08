@@ -57,7 +57,8 @@ def procargs(argv):
                'cw256' : False,
                'longitudinal' : False,
                'timepoints' : list(),
-               'openmp', None }
+               'openmp' : None,
+               'plugin_args' : None }
 
     try:
         opts, args = getopt.getopt(argv, "hi:q:s:", ["help",
@@ -107,8 +108,6 @@ def procargs(argv):
             config['queue'] = arg
         elif opt in ("--subjects_dir"):
             config['subjects_dir'] = os.path.abspath(arg)
-            # Set the subjects directory environment variable
-#            os.environ["SUBJECTS_DIR"] = subjects_dir
         elif opt in ("--qcache"):
             config['qcache'] = True
         elif opt in ("--cw256"):
@@ -140,28 +139,48 @@ def procargs(argv):
         print "ERROR: Must set the subjects_dir before running"
         help()
         sys.exit(2)
-        
+
+    # print the input cofigurations
     print 'Subject ID: {0}'.format(config['subject_id'])
     print 'Input T1s: {0}'.format(config['in_T1s'])
+    
     if config['in_T2'] != None:
         print 'Input T2: {0}'.format(config['in_T2'])
+
     if config['in_FLAIR'] != None:
         print 'Input FLAIR: {0}'.format(config['in_FLAIR'])
+        
     print 'Plugin: {0}'.format(config['plugin'])
     print 'Make qcache: {0}'.format(config['qcache'])
     print 'Conform to 256: {0}'.format(config['cw256'])
+    
     if config['queue'] != None:
         print 'Queue: {0}'.format(config['queue'])
-
+        if config['plugin'] == 'Linear':
+            print "ERROR: cannot submit to a queue unless SGE or SGEGraph plugins are set"
+            sys.exit(2)
+        if config['openmp'] != None:
+            minmemoryGB = 8 # this could be modified in later updates
+            config['plugin_args'] = modify_qsub_args(config['queue'],
+                                                     minmemoryGB,
+                                                     config['openmp'],
+                                                     config['openmp'])
+            print 'plugin_args: {0}'.format(config['plugin_args'])
+                
+    if config['openmp'] != None:
+        print 'OpenMP: {0}'.format(config['openmp'])
+        
     if config['longitudinal']:
         # set input requirements for running longitudinally
-        # print erros when inputs are not set correctly
+        # TODO: print errors when inputs are not set correctly
         print 'Running longitudinally'
         print 'Longitudinal Base: {0}'.format(config['long_base'])
     return config
 
 def which(program):
-    # code from http://stackoverflow.com/questions/377017/test-if-executable-exists-in-python
+    # checks for an executable program in the filepath
+    # code taken from:
+    # http://stackoverflow.com/questions/377017/test-if-executable-exists-in-python
     def is_exe(fpath):
         return os.path.isfile(fpath) and os.access(fpath, os.X_OK)
     fpath, fname = os.path.split(program)
@@ -187,12 +206,18 @@ def checkenv():
     if fs_home == None:
         print "ERROR: please set FREESURFER_HOME before running the workflow"
     elif not os.path.isdir(fs_home):
-        print "ERROR: FREESURFER_HOME must be set to a valid directory before running workflow"
+        print "ERROR: FREESURFER_HOME must be set to a valid directory before \
+running this workflow"
     elif which(test_program) == None:
-        print """ERROR: Could not find necessary executable in path
-        Please source the setup script before running the workflow:
-        source {0}/SetUpFreeSurfer.sh
-        """.format(fs_home)
+        print "ERROR: Could not find necessary executable in path"
+        setupscript = os.path.join(fs_home, 'SetUpFreeSurfer.sh')
+        if os.path.isfile(setupscript):
+            print "Please source the setup script before running the workflow:\
+\nsource {0}".format(setupscript)
+        else:
+            print "Please ensure that FREESURFER_HOME is set to a valid fs \
+directory and source the necessary SetUpFreeSurfer.sh script before running \
+this workflow"
     else:
         return fs_home
     sys.exit(2)
@@ -244,13 +269,6 @@ def modify_qsub_args(queue, memoryGB, minThreads, maxThreads, stdout='/dev/null'
 
     if maxThreads < minThreads:
        assert  maxThreads > minThreads, "Must specify maxThreads({0}) > minThreads({1})".format(minThreads,maxThreads)
-
-    ## TODO:  May need to figure out how to set memory and threads for cluster.
-    ## for now just let the number of threads requested take care of this because
-    ## the job manager on helium is really slow with lots of constraints
-    ##  -l mem_free={mem}
-
-    ## format_str = '-S /bin/bash -cwd -pe smp {mint}{maxt} -o {stdout} -e {stderr} {queue}'
     format_str = '-S /bin/bash -cwd -pe smp {totalThreads} -o {stdout} -e {stderr} {queue}'.format(
                  mint=minThreads, maxt=threadsRangeString,
                  totalThreads=threadsRangeString,
@@ -262,12 +280,13 @@ def main(argv):
     config = procargs(argv)
     config['FREESURFER_HOME'] = checkenv()
     if config['longitudinal']:
-        long_id = "{0}.long.{1}".format(config['subject_id'], config['long_base'])
-        subject_folder = long_id
+        config['long_id'] = "{0}.long.{1}".format(config['subject_id'], config['long_base'])
+        config['current_id'] = config['long_id']
     else:
-        subject_folder = config['subject_id']
+        config['current_id'] = config['subject_id']
     
     # Experiment Info
+    # TODO: Have user input cache directory
     ExperimentInfo = {"Atlas": {"TEMP_CACHE": os.path.join(config['subjects_dir'], config['subject_id']),
                                 "LOG_DIR": os.path.join(config['subjects_dir'], 'log')}}
     
@@ -275,26 +294,14 @@ def main(argv):
     for item in ExperimentInfo["Atlas"].iteritems():
         mkdir_p(item[1])
     for folder in ['bem', 'label', 'mri', 'scripts', 'src', 'stats', 'surf', 'tmp', 'touch', 'trash']:
-        mkdir_p(os.path.join(config['subjects_dir'], subject_folder, folder))
+        mkdir_p(os.path.join(config['subjects_dir'], config['current_id'], folder))
         if folder == 'mri':
-            mkdir_p(os.path.join(config['subjects_dir'], subject_folder, folder, 'orig'))
+            mkdir_p(os.path.join(config['subjects_dir'], config['current_id'], folder, 'orig'))
             mkdir_p(
-                os.path.join(config['subjects_dir'], subject_folder, folder, 'transforms'))
+                os.path.join(config['subjects_dir'], config['current_id'], folder, 'transforms'))
 
     # Now that we've defined the args and created the folders, create workflow
-    reconall = create_reconall(config['in_T1s'],
-                               config['subject_id'],
-                               config['in_T2'],
-                               config['in_FLAIR'],
-                               config['subjects_dir'],
-                               config['qcache'],
-                               config['cw256'],
-                               config['FREESURFER_HOME'],
-                               config['longitudinal'],
-                               config['long_base'],
-                               config['timepoints'],
-                               plugin_args
-                               )
+    reconall = create_reconall(config)
 
     # Set workflow configurations
     reconall.config['execution'] = {

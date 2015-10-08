@@ -5,7 +5,7 @@ import nipype.pipeline.engine as pe  # pypeline engine
 from nipype.interfaces.freesurfer import *
 from autorecon1 import outputfilename
 
-def create_AutoRecon3(subjects_dir, subject_id, fs_home, qcache):
+def create_AutoRecon3(config['subjects_dir'], config['current_id'], config['FREESURFER_HOME'], config['qcache']):
     
     # AutoRecon3
     # Workflow
@@ -58,13 +58,13 @@ def create_AutoRecon3(subjects_dir, subject_id, fs_home, qcache):
     ar3_inputs.inputs.rh = 'rh'
 
     ar3_inputs.inputs.lh_atlas = os.path.join(
-        fs_home, 'average/lh.average.curvature.filled.buckner40.tif')
+        config['FREESURFER_HOME'], 'average/lh.average.curvature.filled.buckner40.tif')
     ar3_inputs.inputs.lh_classifier = os.path.join(
-        fs_home, 'average/lh.curvature.buckner40.filled.desikan_killiany.2010-03-25.gcs')
+        config['FREESURFER_HOME'], 'average/lh.curvature.buckner40.filled.desikan_killiany.2010-03-25.gcs')
     ar3_inputs.inputs.rh_atlas = os.path.join(
-        fs_home, 'average/rh.average.curvature.filled.buckner40.tif')
+        config['FREESURFER_HOME'], 'average/rh.average.curvature.filled.buckner40.tif')
     ar3_inputs.inputs.rh_classifier = os.path.join(
-        fs_home, 'average/rh.curvature.buckner40.filled.desikan_killiany.2010-03-25.gcs')
+        config['FREESURFER_HOME'], 'average/rh.curvature.buckner40.filled.desikan_killiany.2010-03-25.gcs')
 
     ar3_lh_inputs = pe.Node(IdentityInterface(fields=['hemisphere',
                                                       'subject_id',
@@ -307,8 +307,8 @@ def create_AutoRecon3(subjects_dir, subject_id, fs_home, qcache):
         parcellation_stats_white.inputs.mgz = True
         parcellation_stats_white.inputs.tabular_output = True
         parcellation_stats_white.inputs.surface = 'white'
-        parcellation_stats_white.inputs.out_color = outputfilename(subjects_dir, subject_id, 'aparc.annot.ctab', 'label')
-        parcellation_stats_white.inputs.out_table = outputfilename(subjects_dir, subject_id, '{0}.aparc.stats'.format(hemisphere), 'stats')
+        parcellation_stats_white.inputs.out_color = outputfilename(config['subjects_dir'], config['current_id'], 'aparc.annot.ctab', 'label')
+        parcellation_stats_white.inputs.out_table = outputfilename(config['subjects_dir'], config['current_id'], '{0}.aparc.stats'.format(hemisphere), 'stats')
 
         ar3_wf.connect([(ar3_inputs, parcellation_stats_white, [('subject_id', 'subject_id'),
                                                                 ('subjects_dir',
@@ -346,8 +346,8 @@ def create_AutoRecon3(subjects_dir, subject_id, fs_home, qcache):
         parcellation_stats_pial.inputs.mgz = True
         parcellation_stats_pial.inputs.tabular_output = True
         parcellation_stats_pial.inputs.surface = 'pial'
-        parcellation_stats_pial.inputs.out_color = outputfilename(subjects_dir, subject_id, 'aparc.annot.ctab', 'label')
-        parcellation_stats_pial.inputs.out_table = outputfilename(subjects_dir, subject_id, '{0}.aparc.pial.stats'.format(hemisphere), 'stats')
+        parcellation_stats_pial.inputs.out_color = outputfilename(config['subjects_dir'], config['current_id'], 'aparc.annot.ctab', 'label')
+        parcellation_stats_pial.inputs.out_table = outputfilename(config['subjects_dir'], config['current_id'], '{0}.aparc.pial.stats'.format(hemisphere), 'stats')
 
         ar3_wf.connect([(ar3_inputs, parcellation_stats_pial, [('subject_id', 'subject_id'),
                                                              ('subjects_dir',
@@ -388,8 +388,8 @@ def create_AutoRecon3(subjects_dir, subject_id, fs_home, qcache):
             rh_cort_parc2 = cortical_parcellation_2
             
         cortical_parcellation_2.inputs.classifier = os.path.join(
-            fs_home, 'average', '{0}.destrieux.simple.2009-07-29.gcs'.format(hemisphere))
-        cortical_parcellation_2.inputs.out_file = outputfilename(subjects_dir, subject_id, '{0}.aparc.a2009s.annot'.format(hemisphere), 'label')
+            config['FREESURFER_HOME'], 'average', '{0}.destrieux.simple.2009-07-29.gcs'.format(hemisphere))
+        cortical_parcellation_2.inputs.out_file = outputfilename(config['subjects_dir'], config['current_id'], '{0}.aparc.a2009s.annot'.format(hemisphere), 'label')
         cortical_parcellation_2.inputs.seed = 1234
 
         ar3_wf.connect([(ar3_inputs, cortical_parcellation_2, [('subject_id', 'subject_id'),
@@ -406,8 +406,8 @@ def create_AutoRecon3(subjects_dir, subject_id, fs_home, qcache):
         # Parcellation Statistics 2
         parcellation_stats_white_2 = parcellation_stats_white.clone(
             name="Parcellation_Statistics_{0}_2".format(hemisphere))
-        parcellation_stats_white_2.inputs.out_color = outputfilename(subjects_dir, subject_id, 'aparc.annot.a2009s.ctab', 'label')
-        parcellation_stats_white_2.inputs.out_table = outputfilename(subjects_dir, subject_id, '{0}.aparc.a2009s.stats'.format(hemisphere), 'stats')
+        parcellation_stats_white_2.inputs.out_color = outputfilename(config['subjects_dir'], config['current_id'], 'aparc.annot.a2009s.ctab', 'label')
+        parcellation_stats_white_2.inputs.out_table = outputfilename(config['subjects_dir'], config['current_id'], '{0}.aparc.a2009s.stats'.format(hemisphere), 'stats')
         ar3_wf.connect([(ar3_inputs, parcellation_stats_white_2, [('subject_id', 'subject_id'),
                                                                   ('subjects_dir',
                                                                    'subjects_dir'),
@@ -442,8 +442,8 @@ def create_AutoRecon3(subjects_dir, subject_id, fs_home, qcache):
         # Cortical Parcellation 3
         cortical_parcellation_3 = pe.Node(MRIsCALabel(), name="Cortical_Parcellation_{0}_3".format(hemisphere))
         cortical_parcellation_3.inputs.classifier = os.path.join(
-            fs_home, 'average', '{0}.DKTatlas40.gcs'.format(hemisphere))
-        cortical_parcellation_3.inputs.out_file = outputfilename(subjects_dir, subject_id, '{0}.aparc.DKTatlas40.annot'.format(hemisphere), 'label')
+            config['FREESURFER_HOME'], 'average', '{0}.DKTatlas40.gcs'.format(hemisphere))
+        cortical_parcellation_3.inputs.out_file = outputfilename(config['subjects_dir'], config['current_id'], '{0}.aparc.DKTatlas40.annot'.format(hemisphere), 'label')
         cortical_parcellation_3.inputs.seed = 1234
         ar3_wf.connect([(ar3_inputs, cortical_parcellation_3, [('subject_id', 'subject_id'),
                                                                ('subjects_dir',
@@ -459,8 +459,8 @@ def create_AutoRecon3(subjects_dir, subject_id, fs_home, qcache):
         # Parcellation Statistics 3
         parcellation_stats_white_3 = parcellation_stats_white.clone(
             name="Parcellation_Statistics_{0}_3".format(hemisphere))
-        parcellation_stats_white_3.inputs.out_color = outputfilename(subjects_dir, subject_id, 'aparc.annot.DKTatlas40.ctab', 'label')
-        parcellation_stats_white_3.inputs.out_table = outputfilename(subjects_dir, subject_id, '{0}.aparc.DKTatlas40.stats'.format(hemisphere), 'stats')
+        parcellation_stats_white_3.inputs.out_color = outputfilename(config['subjects_dir'], config['current_id'], 'aparc.annot.DKTatlas40.ctab', 'label')
+        parcellation_stats_white_3.inputs.out_table = outputfilename(config['subjects_dir'], config['current_id'], '{0}.aparc.DKTatlas40.stats'.format(hemisphere), 'stats')
 
         ar3_wf.connect([(ar3_inputs, parcellation_stats_white_3, [('subject_id', 'subject_id'),
                                                                    ('subjects_dir',
@@ -583,7 +583,7 @@ def create_AutoRecon3(subjects_dir, subject_id, fs_home, qcache):
 
     segstats = pe.Node(SegStatsReconAll(), name="Segmentation_Statistics")
     segstats.inputs.color_table_file = os.path.join(
-        fs_home, 'ASegStatsLUT.txt')
+        config['FREESURFER_HOME'], 'ASegStatsLUT.txt')
     segstats.inputs.empty = True
     segstats.inputs.brain_vol = 'brain-vol-from-seg'
     segstats.inputs.exclude_ctx_gm_wm = True
@@ -655,7 +655,7 @@ def create_AutoRecon3(subjects_dir, subject_id, fs_home, qcache):
     wm_segstats = pe.Node(
         SegStatsReconAll(), name="WM_Segmentation_Statistics")
     wm_segstats.inputs.color_table_file = os.path.join(
-        fs_home, 'WMParcStatsLUT.txt')
+        config['FREESURFER_HOME'], 'WMParcStatsLUT.txt')
     wm_segstats.inputs.intensity_units = "MR"
     wm_segstats.inputs.wm_vol_from_surf = True
     wm_segstats.inputs.etiv = True
@@ -723,7 +723,7 @@ def create_AutoRecon3(subjects_dir, subject_id, fs_home, qcache):
             label2annot = pe.Node(Label2Annot(), name=node_name + '_2_Annot')
             label2annot.inputs.hemisphere = hemisphere
             label2annot.inputs.color_table = os.path.join(
-                fs_home, 'average', 'colortable_BA.txt')
+                config['FREESURFER_HOME'], 'average', 'colortable_BA.txt')
             label2annot.inputs.verbose_off = True
             label2annot.inputs.keep_max = True
             if threshold:
@@ -796,7 +796,7 @@ def create_AutoRecon3(subjects_dir, subject_id, fs_home, qcache):
                         ('out_ribbon', 'BA_Maps_Inputs.ribbon')])
                     ])
 
-    if qcache:
+    if config['qcache']:
         for hemisphere in ['lh', 'rh']:
             if hemisphere == 'lh':
                 hemi_wf = ar3_lh_wf
@@ -825,12 +825,12 @@ def create_AutoRecon3(subjects_dir, subject_id, fs_home, qcache):
                 preprocess = pe.Node(MRISPreprocReconAll(), name="QCache_Preproc_{0}_{1}".format(
                     hemisphere, meas_name.replace('.', '_')))
                 target_id = 'fsaverage'
-                preprocess.inputs.out_file = outputfilename(subjects_dir, subject_id, 
+                preprocess.inputs.out_file = outputfilename(config['subjects_dir'], config['current_id'], 
                     '{0}.{1}.{2}.mgh'.format(hemisphere, meas_name, target_id), 'surf')
-                target_dir = os.path.join(subjects_dir, target_id)
+                target_dir = os.path.join(config['subjects_dir'], target_id)
                 if not os.path.isdir(target_dir):
                     # link fsaverage if it doesn't exist
-                    target_home = os.path.join(fs_home, 'subjects', target_id)
+                    target_home = os.path.join(config['FREESURFER_HOME'], 'subjects', target_id)
                     # Create a symlink
                     os.symlink(target_home, target_dir)
                 preprocess.inputs.target = target_id
@@ -853,7 +853,7 @@ def create_AutoRecon3(subjects_dir, subject_id, fs_home, qcache):
                     surf2surf.inputs.hemi = hemisphere
                     tval_file = "{0}.{1}.fwhm{2}.fsaverage.mgh".format(
                         hemisphere, meas_name, value)
-                    surf2surf.inputs.out_file = outputfilename(subjects_dir, subject_id, 
+                    surf2surf.inputs.out_file = outputfilename(config['subjects_dir'], config['current_id'], 
                         tval_file, 'surf')
                     ar3_lh_wf.connect([(preprocess, surf2surf, [('out_file', 'in_file')]),
                                        (ar3_inputs, surf2surf,

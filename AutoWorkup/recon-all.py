@@ -251,7 +251,7 @@ def modify_qsub_args(queue, memoryGB, minThreads, maxThreads, stdout='/dev/null'
 
     if maxThreads < minThreads:
        assert  maxThreads > minThreads, "Must specify maxThreads({0}) > minThreads({1})".format(minThreads,maxThreads)
-    format_str = '-S /bin/bash -cwd -pe smp {totalThreads} -o {stdout} -e {stderr} {queue}'.format(
+    format_str = '-S /bin/bash -cwd -pe smp {totalThreads} -o {stdout} -e {stderr} -q {queue}'.format(
                  mint=minThreads, maxt=threadsRangeString,
                  totalThreads=threadsRangeString,
                  mem=memoryGB,

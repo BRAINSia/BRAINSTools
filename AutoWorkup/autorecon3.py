@@ -5,7 +5,7 @@ import nipype.pipeline.engine as pe  # pypeline engine
 from nipype.interfaces.freesurfer import *
 from autorecon1 import outputfilename
 
-def create_AutoRecon3(config['subjects_dir'], config['current_id'], config['FREESURFER_HOME'], config['qcache']):
+def create_AutoRecon3(config):
     
     # AutoRecon3
     # Workflow

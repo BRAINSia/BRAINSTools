@@ -177,38 +177,18 @@ def procargs(argv):
         print 'Longitudinal Base: {0}'.format(config['long_base'])
     return config
 
-def which(program):
-    # checks for an executable program in the filepath
-    # code taken from:
-    # http://stackoverflow.com/questions/377017/test-if-executable-exists-in-python
-    def is_exe(fpath):
-        return os.path.isfile(fpath) and os.access(fpath, os.X_OK)
-    fpath, fname = os.path.split(program)
-    if fpath:
-        if is_exe(program):
-            return program
-        else:
-            for path in os.environ["PATH"].split(os.pathsep):
-                path = path.strip('"')
-                exe_file = os.path.join(path, program)
-                if is_exe(exe_file):
-                    return exe_file
-    return None
-
 
 def checkenv():
     """Check for the necessary FS environment variables"""
-    # will search for test program to ensure that
-    # it has been added to the PATH variable
-    test_program = 'mris_sphere'
     fs_home = os.environ.get('FREESURFER_HOME')
+    path = os.environ.get('PATH')
     print "FREESURFER_HOME: {0}".format(fs_home)
     if fs_home == None:
         print "ERROR: please set FREESURFER_HOME before running the workflow"
     elif not os.path.isdir(fs_home):
         print "ERROR: FREESURFER_HOME must be set to a valid directory before \
 running this workflow"
-    elif which(test_program) == None:
+    elif os.path.join(fs_home, 'bin') not in path:
         print "ERROR: Could not find necessary executable in path"
         setupscript = os.path.join(fs_home, 'SetUpFreeSurfer.sh')
         if os.path.isfile(setupscript):

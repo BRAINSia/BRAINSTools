@@ -249,6 +249,7 @@ def modify_qsub_args(queue, memoryGB, minThreads, maxThreads, stdout='/dev/null'
     >>> modify_qsub_args('test', 1, 5, 7, stdout='/my/path', stderr='/my/error')
     -S /bin/bash -cwd -pe smp 5-7 -l mem_free=1G -o /my/path -e /my/error test FAIL
     """
+    import math
     assert memoryGB <= 48 , "Memory must be supplied in GB, so anything more than 24 seems not-useful now."
 
     ## NOTE: At least 1 thread needs to be requested per 2GB needed

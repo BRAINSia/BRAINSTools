@@ -310,23 +310,25 @@ def CreateMALFWorkflow(WFname, onlyT1, master_config,BASE_DATA_GRABBER_DIR=None,
     from .FixLabelMapsTools import RecodeLabelMap
 
     ### Original NeuroMorphometrica merged fusion
-    jointFusion = pe.Node(interface=ants.JointFusion(),name="JointFusion")
+    jointFusion = pe.Node(interface=ants.AntsJointFusion(),name="AntsJointFusion")
     many_cpu_JointFusion_options_dictionary = {'qsub_args': modify_qsub_args(CLUSTER_QUEUE,8,4,4), 'overwrite': True}
     jointFusion.plugin_args = many_cpu_JointFusion_options_dictionary
     jointFusion.inputs.dimension=3
-    jointFusion.inputs.method='Joint[0.1,2]'
-    jointFusion.inputs.output_label_image='MALF_HDAtlas20_2015_label.nii.gz'
+    #jointFusion.inputs.method='Joint[0.1,2]'
+    jointFusion.inputs.output_image=['MALF_HDAtlas20_2015_label.nii.gz']
 
-    MALFWF.connect(warpedAtlasesMergeNode,'out',jointFusion,'warped_intensity_images')
-    MALFWF.connect(warpedAtlasLblMergeNode,'out',jointFusion,'warped_label_images')
+    #MALFWF.connect(warpedAtlasesMergeNode,'out',jointFusion,'warped_intensity_images')
+    #MALFWF.connect(warpedAtlasLblMergeNode,'out',jointFusion,'warped_label_images')
+    MALFWF.connect(warpedAtlasesMergeNode,'out',jointFusion,'atlas_image')
+    MALFWF.connect(warpedAtlasLblMergeNode,'out',jointFusion,'atlas_segmentation_image')
     #MALFWF.connect(inputsSpec, 'subj_t1_image',jointFusion,'target_image')
     MALFWF.connect(sessionMakeMultimodalInput, 'outFNs',jointFusion,'target_image')
     MALFWF.connect(jointFusion, 'output_label_image', outputsSpec,'MALF_HDAtlas20_2015_label')
 
-    if onlyT1:
-        jointFusion.inputs.modalities=1
-    else:
-        jointFusion.inputs.modalities=2
+    #if onlyT1:
+    #    jointFusion.inputs.modalities=1
+    #else:
+    #    jointFusion.inputs.modalities=2
 
 
     ## We need to recode values to ensure that the labels match FreeSurer as close as possible by merging

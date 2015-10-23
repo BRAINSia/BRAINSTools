@@ -65,6 +65,7 @@ if(${LOCAL_PROJECT_NAME}_USE_QT)
 find_package(Qt4 REQUIRED)
 endif()
 
+
 #-----------------------------------------------------------------------------
 # Enable and setup External project global properties
 #-----------------------------------------------------------------------------
@@ -142,6 +143,7 @@ option(${PROJECT_NAME}_BUILD_DICOM_SUPPORT "Build Dicom Support" ON)
 set(${LOCAL_PROJECT_NAME}_DEPENDENCIES DCMTK ITKv4 SlicerExecutionModel)
 
 list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES teem)
+list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES TBB)
 #list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES Boost)
 
 if(BUILD_STYLE_UTILS)

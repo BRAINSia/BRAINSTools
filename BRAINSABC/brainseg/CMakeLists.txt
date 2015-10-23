@@ -1,4 +1,6 @@
 
+
+
 include_directories(
   ${BRAINSTools_SOURCE_DIR}/BRAINSABC/brainseg
   ${BRAINSTools_SOURCE_DIR}/BRAINSABC/common
@@ -25,10 +27,10 @@ set(BRAINSABCCOMMONLIB_SRCS
 ## Build BRAINSABCCOMMONLIB library
 ##
 add_library(BRAINSABCCOMMONLIB STATIC ${BRAINSABCCOMMONLIB_SRCS})
-add_dependencies(BRAINSABCCOMMONLIB InstallReferenceAtlas)
+add_dependencies(BRAINSABCCOMMONLIB InstallReferenceAtlas )
 
 
-set(BRAINSABCCOMMONLIBLibraries BRAINSCommonLib ${BRAINSABC_ITK_LIBRARIES})
+set(BRAINSABCCOMMONLIBLibraries BRAINSCommonLib ${BRAINSABC_ITK_LIBRARIES} ${TBB_LIBRARY})
 
 DebugImageViewerLibAdditions(BRAINSABCCOMMONLIBLibraries)
 

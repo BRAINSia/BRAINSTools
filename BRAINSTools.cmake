@@ -66,6 +66,10 @@ include(${GenerateCLP_USE_FILE})
 include(${SlicerExecutionModel_USE_FILE})
 include(${SlicerExecutionModel_CMAKE_DIR}/SEMMacroBuildCLI.cmake)
 
+find_package(TBB REQUIRED)
+# set(VTK_SMP_IMPLEMENTATION_LIBRARIES ${TBB_LIBRARY})
+include_directories(${TBB_INCLUDE_DIRS})
+
 if(USE_ANTS)
   # find ANTS includes
   message("ANTs_SOURCE_DIR=${ANTs_SOURCE_DIR}")

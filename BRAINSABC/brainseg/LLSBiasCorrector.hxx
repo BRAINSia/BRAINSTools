@@ -31,6 +31,9 @@
 #include "itkTimeProbe.h"
 #include "ComputeDistributions.h"
 
+#include "tbb/parallel_reduce.h"
+#include "tbb/tbb.h"
+
 #define USE_HALF_RESOLUTION 1
 #define MIN_SKIP_SIZE 2
 
@@ -286,10 +289,31 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>
   m_Basis.set_size(numEquations, numCoefficients);
 
   {
+  typedef typename  std::vector<ProbabilityImageIndexType>::const_iterator IterType ;
   // Coordinate scaling and offset parameters
-  unsigned long long int local_XMu_x = 0;
-  unsigned long long int local_XMu_y = 0;
-  unsigned long long int local_XMu_z = 0;
+  vnl_vector_fixed<unsigned long long int,3> local_XMu =
+  tbb::parallel_reduce(
+     tbb::blocked_range< IterType > (
+                           m_ValidIndicies.begin(), m_ValidIndicies.end()),
+
+     vnl_vector_fixed<unsigned long long int,3>(),
+
+     [] (const tbb::blocked_range<IterType>& r, vnl_vector_fixed<unsigned long long int,3> init) -> vnl_vector_fixed<unsigned long long int,3>  {
+     for( IterType currIndex = r.begin(); currIndex != r.end(); ++currIndex )
+     {
+     init[0] = init[0]+(*currIndex)[0];
+     init[1] = init[1]+(*currIndex)[1];
+     init[2] = init[2]+(*currIndex)[2];
+     }
+     return init;
+     },
+
+     [] (  vnl_vector_fixed<unsigned long long int,3> a,
+           vnl_vector_fixed<unsigned long long int,3> b ) ->  vnl_vector_fixed<unsigned long long int,3> {
+   return a+b;
+}
+);
+
   {
 #if defined(LOCAL_USE_OPEN_MP)
 #pragma omp parallel for default(shared) reduction(+:local_XMu_x,local_XMu_y,local_XMu_z)
@@ -297,15 +321,15 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>
   for( unsigned int kk = 0; kk < numEquations; kk++ )
     {
     const ProbabilityImageIndexType & currProbIndex = m_ValidIndicies[kk];
-    local_XMu_x += currProbIndex[0];
-    local_XMu_y += currProbIndex[1];
-    local_XMu_z += currProbIndex[2];
+    local_XMu[0] += currProbIndex[0];
+    local_XMu[1] += currProbIndex[1];
+    local_XMu[2] += currProbIndex[2];
     }
   }
   const double invNumEquations = 1.0 / static_cast<double>(numEquations);
-  m_XMu[0] = static_cast<double>(local_XMu_x) * invNumEquations;
-  m_XMu[1] = static_cast<double>(local_XMu_y) * invNumEquations;
-  m_XMu[2] = static_cast<double>(local_XMu_z) * invNumEquations;
+  m_XMu[0] = static_cast<double>(local_XMu[0]) * invNumEquations;
+  m_XMu[1] = static_cast<double>(local_XMu[1]) * invNumEquations;
+  m_XMu[2] = static_cast<double>(local_XMu[2]) * invNumEquations;
   }
 
   {
@@ -536,14 +560,10 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>
 
 #if LLSBIAS_USE_NORMAL_EQUATION
   MatrixType lhs(numCoefficients * numModalities, numCoefficients * numModalities);
-
   MatrixType rhs(numCoefficients * numModalities, 1);
-
 #else
   MatrixType lhs(numEquations * numModalities, numCoefficients * numModalities);
-
   MatrixType rhs(numEquations * numModalities, 1);
-
 #endif
 
   muLogMacro(<< "Fill rhs" << std::endl );

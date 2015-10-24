@@ -139,14 +139,7 @@ void
 BRAINSCutTrainModel
 ::TrainWithUpdate( cv::Ptr<OpenCVMLPType> myTrainer, bool update, pairedTrainingSetType& currentTrainData )
 {
-  int updateOption = 0;
-
-  if( update )
-    {
-    updateOption = OpenCVMLPType::UPDATE_WEIGHTS;
-    }
   // TODO change subset number properly
-
   myTrainer->setBackpropMomentumScale(0.1);
   myTrainer->setTrainMethod(OpenCVMLPType::RPROP);
   myTrainer->setTermCriteria(cvTermCriteria( CV_TERMCRIT_ITER

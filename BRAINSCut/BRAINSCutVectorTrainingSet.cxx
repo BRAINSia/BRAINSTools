@@ -311,7 +311,7 @@ BRAINSCutVectorTrainingSet
   scalarType * pairedOutputBuffer = new scalarType[subSetSize * outputVectorSize];
   scalarType * pairedOutputBufferRF = new scalarType[subSetSize];  // RandomForest
 
-  for( int i = 0; i < subSetSize  && !readInFile.eof(); i++ )
+  for( unsigned int i = 0; i < subSetSize  && !readInFile.eof(); i++ )
     {
     currentBuffer = ReadBufferFromFileStream( readInFile );
     /* move this to one line buffer for open cv matrix type */

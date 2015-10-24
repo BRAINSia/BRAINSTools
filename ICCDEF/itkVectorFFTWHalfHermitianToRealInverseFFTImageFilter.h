@@ -66,13 +66,13 @@ public:
   /** Image type typedef support. */
   typedef TInputImageType              ImageType;
   typedef typename ImageType::SizeType ImageSizeType;
-  virtual void GenerateOutputInformation(); // figure out allocation for output image
+  virtual void GenerateOutputInformation() ITK_OVERRIDE; // figure out allocation for output image
 
-  virtual void GenerateInputRequestedRegion();
+  virtual void GenerateInputRequestedRegion() ITK_OVERRIDE;
 
   //
   // these should be defined in every FFT filter class
-  virtual void GenerateData();  // generates output from input
+  virtual void GenerateData() ITK_OVERRIDE;  // generates output from input
 
   virtual bool FullMatrix();
 

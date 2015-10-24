@@ -127,11 +127,11 @@ protected:
   {
   }
 
-  void PrintSelf(std::ostream& os, Indent indent) const;
+  void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE;
 
   void MakeReport();
 
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
   void ComputeInverse(InputImageConstPointer &, OutputImagePointer &);
 

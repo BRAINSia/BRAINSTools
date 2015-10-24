@@ -94,9 +94,9 @@ protected:
   virtual ~AverageImageFilter() {}
 
   void ThreadedGenerateData
-  ( const OutputImageRegionType &outputRegionForThread, ThreadIdType threadId);
+  ( const OutputImageRegionType &outputRegionForThread, ThreadIdType threadId) ITK_OVERRIDE;
 
-  void PrintSelf(std::ostream&, Indent) const;
+  void PrintSelf(std::ostream&, Indent) const ITK_OVERRIDE;
 
 private:
   AverageImageFilter(const Self&); //purposely not implemented

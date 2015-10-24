@@ -208,10 +208,10 @@ protected:
   }
 
   /*** Initialize the preprocessor */
-  virtual void InitializePreprocessor();
+  virtual void InitializePreprocessor() ITK_OVERRIDE;
 
   /*** Initialize the registrator  */
-  virtual void InitializeRegistrator();
+  virtual void InitializeRegistrator() ITK_OVERRIDE;
 
 private:
 

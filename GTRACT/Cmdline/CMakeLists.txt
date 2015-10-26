@@ -1,4 +1,5 @@
-FindVTKUtil(vtkIOLegacy
+FindVTKUtil(
+  vtkIOLegacy
   vtkIOXML
   vtkCommonDataModel
   vtkFiltersCore

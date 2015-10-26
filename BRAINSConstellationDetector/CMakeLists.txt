@@ -39,11 +39,8 @@ FindITKUtil(BRAINSConstellationDetector_ITK
   ITKVtkGlue
 )
 
-if(BUILD_WITH_GUI OR BRAINS3_USE_QT OR BRAINSTools_USE_QT)
-  set(LOCAL_VTKQT vtkGUISupportQt)
-endif()
-FindVTKUtil(vtkRenderingFreeType vtkRenderingOpenGL vtkInteractionStyle
-    vtkRenderingCore  vtkImagingSources ${LOCAL_VTKQT})
+FindVTKUtil(vtkRenderingFreeType vtkInteractionStyle vtkRenderingCore  vtkImagingSources ${LOCAL_VTKQT})
+set(BCD_VTK_LIBRARIES ${VTK_LIBRARIES})
 
 #-----------------------------------------------------------------------------
 # Output directories.
@@ -56,6 +53,7 @@ add_subdirectory(landmarkStatistics)
 
 # Build GUI option, the option is provided in src directory
 if(BUILD_WITH_GUI OR BRAINS3_USE_QT OR BRAINSTools_USE_QT)
+  set(LOCAL_VTKQT vtkGUISupportQt)
   add_subdirectory(gui)
 endif()
 

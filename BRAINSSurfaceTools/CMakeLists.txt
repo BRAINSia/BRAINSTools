@@ -58,7 +58,7 @@ FindVTKUtil(
   vtkImagingFourier
   vtkalglib
   vtkRenderingCore
-  vtkRenderingOpenGL
+
   vtkRenderingFreeType
   vtkInteractionStyle
   vtkImagingSources

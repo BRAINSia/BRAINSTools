@@ -554,7 +554,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
       // will break algorithm for many other segmentation types.
       }
 
-    muLogMacro(<< "Registering first atlas images to first subject image." << std::endl);
+    muLogMacro(<< "Registering first atlas image to first subject image." << std::endl);
     // Initialize the outputTransform with the initializer before starting the loop.
     this->m_AtlasToSubjectTransform = this->m_AtlasToSubjectInitialTransform;
     if( this->m_AtlasToSubjectTransform.IsNotNull() )
@@ -581,8 +581,8 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
     //}
     if( this->m_ModalityAveragedOfIntraSubjectImages.size() > 1  && SecondImagePointer.IsNotNull() )
         {
-        muLogMacro( << "Multimodal Registration will be run." <<   std::endl );
-        muLogMacro( << "because number of modalities is: " << this->m_ModalityAveragedOfIntraSubjectImages.size() <<  std::endl );
+        muLogMacro( << "Multimodal registration will be run using the first two modalities." <<   std::endl );
+        muLogMacro( << "Number of modalities is: " << this->m_ModalityAveragedOfIntraSubjectImages.size() <<  std::endl );
         //std::cout<<this->GetSecondModalityAtlasOriginalImage("T2")<<std::endl;
         atlasToSubjectRegistrationHelper->SetFixedVolume2(this->m_ModalityAveragedOfIntraSubjectImages[1]); // by AverageIntraSubjectRegisteredImages function
         atlasToSubjectRegistrationHelper->SetMovingVolume2(SecondImagePointer);
@@ -593,12 +593,11 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
         muLogMacro( << "Multimodal Registration will NOT be run." <<   std::endl );
         }
     muLogMacro( << "Generating MovingImage Mask (Atlas 0)" <<   std::endl );
+    const int dilateSize = 10;
     typedef itk::BRAINSROIAutoImageFilter<InternalImageType, itk::Image<unsigned char, 3> > LocalROIAutoType;
     typename LocalROIAutoType::Pointer  ROIFilter = LocalROIAutoType::New();
     ROIFilter->SetInput(this->GetFirstAtlasOriginalImage());
-    ROIFilter->SetDilateSize(1);   // Only use a very small non-tissue
-    // region outside of head during
-    // initial runnings
+    ROIFilter->SetDilateSize(dilateSize);
     ROIFilter->Update();
     atlasToSubjectRegistrationHelper->SetMovingBinaryVolume(ROIFilter->GetSpatialObjectROI() );
     if( this->m_DebugLevel > 7 )
@@ -609,7 +608,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
       writer->UseCompressionOn();
 
       std::ostringstream oss;
-      oss << this->m_OutputDebugDir << "Atlas_MovingMask_0.nii.gz" << std::ends;
+      oss << this->m_OutputDebugDir << "AtlasToSubjectRegistration_MovingMask_0.nii.gz" << std::ends;
       std::string fn = oss.str();
 
       writer->SetInput( movingMaskImage );
@@ -618,13 +617,11 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
       muLogMacro( << __FILE__ << " " << __LINE__ << " "  <<   std::endl );
       }
 
-    muLogMacro( << "Generating FixedImage Mask (Atlas)" <<   std::endl );
+    muLogMacro( << "Generating FixedImage Mask (Subject)" <<   std::endl );
     typedef itk::BRAINSROIAutoImageFilter<InternalImageType, itk::Image<unsigned char, 3> > LocalROIAutoType;
     ROIFilter = LocalROIAutoType::New();
     ROIFilter->SetInput(this->GetModifiableKeySubjectImage());
-    ROIFilter->SetDilateSize(1);   // Only use a very small non-tissue
-    // region outside of head during
-    // initial runnings
+    ROIFilter->SetDilateSize(dilateSize);
     ROIFilter->Update();
     atlasToSubjectRegistrationHelper->SetFixedBinaryVolume(ROIFilter->GetSpatialObjectROI() );
     if( this->m_DebugLevel > 7 )
@@ -635,7 +632,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
       writer->UseCompressionOn();
 
       std::ostringstream oss;
-      oss << this->m_OutputDebugDir << "SubjectForAtlas_FixedMask_0.nii.gz";
+      oss << this->m_OutputDebugDir << "AtlasToSubjectRegistration_FixedMask_0.nii.gz";
       std::string fn = oss.str();
 
       writer->SetInput( fixedMaskImage );

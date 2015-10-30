@@ -18,9 +18,7 @@ macro(FindVTKUtil)
     vtkCommonTransforms
     ${ARGN}
   )
-  find_package(VTK 6.0 COMPONENTS ${VTK_COMMON_COMPONENTS}
-    REQUIRED)
-  include(${VTK_USE_FILE})
+  find_package(VTK 6.0 COMPONENTS ${VTK_COMMON_COMPONENTS} REQUIRED)
 
   ## Paradigm specified by http://www.vtk.org/Wiki/VTK/Build_System_Migration#How_Implementation_Modules_Are_Initialized
   include_directories(${VTK_INCLUDE_DIRS})
@@ -39,6 +37,8 @@ macro(FindVTKUtil)
   endif()
   set_property(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS ${VTK_DEFINITIONS})
 
+  find_package(VTK 6.0 REQUIRED) ## HACK: VTK should be minimized.  This is maximizing it's use to all modules.
+  include(${VTK_USE_FILE})
   #  message("VTK_USE_FILE:${VTK_USE_FILE}")
   #  message("VTK_INCLUDE_DIRS:${VTK_INCLUDE_DIRS}")
   include_directories(${VTK_INCLUDE_DIRS})

@@ -39,8 +39,28 @@ FindITKUtil(BRAINSConstellationDetector_ITK
   ITKVtkGlue
 )
 
-FindVTKUtil(vtkRenderingFreeType vtkInteractionStyle vtkRenderingCore  vtkImagingSources ${LOCAL_VTKQT})
-set(BCD_VTK_LIBRARIES ${VTK_LIBRARIES})
+# Build GUI option, the option is provided in src directory
+if(BUILD_WITH_GUI OR BRAINS3_USE_QT OR BRAINSTools_USE_QT)
+  set(LOCAL_VTKQT vtkGUISupportQt)
+endif()
+
+FindVTKUtil(
+  vtkCommonColor
+  vtkCommonComputationalGeometry
+  vtkCommonCore
+  vtkCommonDataModel
+  vtkCommonExecutionModel
+  vtkCommonMath
+  vtkCommonMisc
+  vtkCommonSystem
+  vtkCommonTransforms
+  vtkFiltersCore
+  vtkFiltersGeneral
+  vtkFiltersSources
+  vtkImagingCore
+  vtkInteractionStyle
+  vtkRenderingCore
+${LOCAL_VTKQT})
 
 #-----------------------------------------------------------------------------
 # Output directories.
@@ -53,7 +73,6 @@ add_subdirectory(landmarkStatistics)
 
 # Build GUI option, the option is provided in src directory
 if(BUILD_WITH_GUI OR BRAINS3_USE_QT OR BRAINSTools_USE_QT)
-  set(LOCAL_VTKQT vtkGUISupportQt)
   add_subdirectory(gui)
 endif()
 

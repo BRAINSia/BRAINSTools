@@ -28,8 +28,6 @@ findITKUtil( BRAINSDemonWarp
   ITKTestKernel
 )
 
-FindVTKUtil(vtkRenderingFreeType)
-
 #-----------------------------------------------------------------------------
 # Output directories.
 #

@@ -71,7 +71,7 @@ endif()
  ${QT_LIBRARIES}
  ${BRAINSConstellationDetector_ITK_LIBRARIES}
  # BRAINSConstellationDetectorCOMMONLIB
- ${BCD_VTK_LIBRARIES}
+ ${VTK_LIBRARIES}
   )
 
 ## Build all the programs

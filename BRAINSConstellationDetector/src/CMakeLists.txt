@@ -8,7 +8,7 @@ add_library(landmarksConstellationCOMMONLIB STATIC
   PrepareOutputImages.cxx
   BRAINSConstellationDetectorPrimary.cxx)
 
-target_link_libraries(landmarksConstellationCOMMONLIB BRAINSCommonLib ${BRAINSConstellationDetector_ITK_LIBRARIES} ${BCD_VTK_LIBRARIES})
+target_link_libraries(landmarksConstellationCOMMONLIB BRAINSCommonLib ${BRAINSConstellationDetector_ITK_LIBRARIES} ${VTK_LIBRARIES})
 
 
 #
@@ -43,6 +43,6 @@ set(ALL_PROGS_LIST
   BRAINSConstellationLandmarksTransform
   )
 foreach(prog ${ALL_PROGS_LIST})
-  StandardBRAINSBuildMacro(NAME ${prog} TARGET_LIBRARIES landmarksConstellationCOMMONLIB)
+  StandardBRAINSBuildMacro(NAME ${prog} TARGET_LIBRARIES landmarksConstellationCOMMONLIB ${VTK_LIBRARIES} )
 
 endforeach()

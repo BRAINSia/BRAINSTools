@@ -289,7 +289,7 @@ typename OutputImageType::Pointer GenericTransformImage(
     const typename InputImageType::SizeType size = PrincipalOperandImage->GetLargestPossibleRegion().GetSize();
     const typename InputImageType::SpacingType spacing = PrincipalOperandImage->GetSpacing();
     double diagonalLength = 0;
-    for( int s = 0; s < InputImageType::ImageDimension; ++s )
+    for( unsigned int s = 0; s < InputImageType::ImageDimension; ++s )
       {
       diagonalLength += size[s] * spacing[s];
       }

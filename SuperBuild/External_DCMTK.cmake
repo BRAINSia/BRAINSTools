@@ -28,6 +28,7 @@ if(NOT DEFINED DCMTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   if(UNIX)
     list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS
+      -DBUILD_APPS:BOOL=OFF
       -DDCMTK_FORCE_FPIC_ON_UNIX:BOOL=ON
       -DDCMTK_WITH_WRAP:BOOL=OFF   # CTK does not build on Mac with this option turned ON due to library dependencies missing
       )

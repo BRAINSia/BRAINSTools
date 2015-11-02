@@ -43,7 +43,7 @@ public:
   void TrainRandomForestAt( const int depth, const int numberOfTree );
 
   /** inline functions */
-  inline void TrainWithUpdate(cv::Ptr<OpenCVMLPType> myTrainer, bool update, pairedTrainingSetType& currentTrainData);
+  inline void TrainWithUpdate(cv::Ptr<OpenCVMLPType> myTrainer, pairedTrainingSetType& currentTrainData);
 
   inline void SaveANNTrainModelAtIteration( cv::Ptr<OpenCVMLPType> myTrainer, unsigned int No);
 

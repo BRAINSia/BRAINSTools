@@ -39,8 +39,10 @@ mark_as_advanced(${LOCAL_PROJECT_NAME}_SUPERBUILD)
 
 if(${LOCAL_PROJECT_NAME}_SUPERBUILD)
   project(SuperBuild_${LOCAL_PROJECT_NAME} C CXX)
+  set(CMAKE_CXX_STANDARD 98) # Supported values are ``98``, ``11`` and ``14``.
 else()
   project(${LOCAL_PROJECT_NAME} C CXX)
+  set(CMAKE_CXX_STANDARD 98) # Supported values are ``98``, ``11`` and ``14``.
 endif()
 
 enable_language(C)
@@ -63,6 +65,7 @@ include(itkCheckSourceTree)
 #-----------------------------------------------------------------------------
 if(${LOCAL_PROJECT_NAME}_SUPERBUILD)
   project(SuperBuild_${LOCAL_PROJECT_NAME} C CXX)
+  set(CMAKE_CXX_STANDARD 98)
   include("${CMAKE_CURRENT_SOURCE_DIR}/SuperBuild.cmake")
   return()
 else()

@@ -15,6 +15,7 @@ set(${proj}_CMAKE_OPTIONS
   -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
   -DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}
   -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags}
+  -DCMAKE_CXX_STANDARD:STRING=${CMAKE_CXX_STANDARD}
   -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/${proj}-install
   -DUSE_SYSTEM_ITK:BOOL=ON
   -DUSE_SYSTEM_SlicerExecutionModel:BOOL=ON
@@ -30,7 +31,7 @@ if(${PRIMARY_PROJECT_NAME}_USE_QT)
 endif()
 ### --- End Project specific additions
 set(${proj}_REPOSITORY "https://github.com/stnava/ANTs.git")
-set(${proj}_GIT_TAG d8492e62775fa8294a05c3db77e478cab03c927b)  # "Speed Improvements"
+set(${proj}_GIT_TAG 8a995a03548b4bc97c2b3c8be83f0e14e1be4688)  # "Speed Improvements"
 ExternalProject_Add(${proj}
   ${${proj}_EP_ARGS}
   GIT_REPOSITORY ${${proj}_REPOSITORY}

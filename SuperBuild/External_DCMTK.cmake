@@ -34,7 +34,7 @@ if(NOT DEFINED DCMTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   endif()
 
   set(${proj}_REPOSITORY ${git_protocol}://github.com/commontk/DCMTK.git)
-  set(${proj}_GIT_TAG "545de8711c76c9d51c1509b83e6714635a899a10") # 2015-10-23
+  set(${proj}_GIT_TAG "545de8711c76c9d51c1509b83e6714635a899a10") # DCMTK-3.6.1_20150924 + patch for MacOSX/Windows build error
 
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
@@ -58,6 +58,8 @@ if(NOT DEFINED DCMTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       -DDCMTK_WITH_XML:BOOL=OFF  # see CTK github issue #25
       -DDCMTK_WITH_ICONV:BOOL=OFF  # see CTK github issue #178
       -DDCMTK_OVERWRITE_WIN32_COMPILER_FLAGS:BOOL=OFF
+      -DDCMTK_ENABLE_BUILTIN_DICTIONARY:BOOL=ON
+      -DDCMTK_ENABLE_PRIVATE_TAGS:BOOL=ON
       ${EXTERNAL_PROJECT_OPTIONAL_ARGS}
     INSTALL_COMMAND ""
     DEPENDS
@@ -78,13 +80,6 @@ if(NOT DEFINED DCMTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   mark_as_superbuild(
     VARS ${proj}_LIBRARY_PATHS_LAUNCHER_BUILD
     LABELS "LIBRARY_PATHS_LAUNCHER_BUILD"
-    )
-
-  # environment variables
-  set(${proj}_ENVVARS_LAUNCHER_INSTALLED "DCMDICTHOME=<APPLAUNCHER_DIR>/lib/Slicer-4.4/private.dic")
-  mark_as_superbuild(
-    VARS ${proj}_ENVVARS_LAUNCHER_INSTALLED
-    LABELS "ENVVARS_LAUNCHER_INSTALLED"
     )
 
 else()

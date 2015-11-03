@@ -840,11 +840,32 @@ int main(int argc, char * *argv)
 
   atlasreg->SetAtlasOriginalImageList(atlasOriginalImageList);
 
-  const std::string atlasTransformFileName = outputDir
-    + GetStrippedImageFileNameExtension(GetMapVectorFirstElement(templateVolumes))
-    + std::string("_to_")
-    + GetStrippedImageFileNameExtension(input_Volumes[0]) + suffixstr
-    + std::string("PreSegmentation.h5");
+  std::string atlasTransformFileName = "";
+  if( atlasToSubjectTransform != "" )
+    {
+    // If this final transform filename exists,
+    // it will be just read in and will be used directly
+    // without doing registration.
+    const bool doesExist = itksys::SystemTools::FileExists( atlasToSubjectTransform.c_str() );
+    if( doesExist )
+      {
+      atlasTransformFileName = atlasToSubjectTransform;
+      }
+    else
+      {
+      atlasTransformFileName = GetStrippedImageFileNameExtension(atlasToSubjectTransform)
+        + std::string("PreSegmentation.h5");
+      }
+    }
+  else
+    {
+    atlasTransformFileName = outputDir
+      + GetStrippedImageFileNameExtension(GetMapVectorFirstElement(templateVolumes))
+      + std::string("_to_")
+      + GetStrippedImageFileNameExtension(input_Volumes[0]) + suffixstr
+      + std::string("PreSegmentation.h5");
+    }
+
   atlasreg->SetAtlasToSubjectTransformFileName(atlasTransformFileName);
   }
 
@@ -1195,7 +1216,16 @@ int main(int argc, char * *argv)
 
     if( !atlasWarpingOff )
       {
-      segfilter->UpdateTransformationOn();
+      // If the final transform filename exists, it will be read in and will be used directly,
+      // so no update is run during iterations.
+      if( atlasToSubjectTransform != "" && itksys::SystemTools::FileExists( atlasToSubjectTransform.c_str() ) )
+        {
+        segfilter->UpdateTransformationOff();
+        }
+      else
+        {
+        segfilter->UpdateTransformationOn();
+        }
       }
     else
       {
@@ -1334,15 +1364,12 @@ int main(int argc, char * *argv)
           writer->Update();
           }
         }
-      if( atlasToSubjectTransform != "" )
+
+      // If this final transform filename exists, it has been used directly
+      // with no pre-segmentation registration and no updating during iterations,
+      // so there is no need to overwrite that.
+      if( atlasToSubjectTransform != "" && !itksys::SystemTools::FileExists( atlasToSubjectTransform.c_str() ) )
         {
-        /* HACK Remove this completely
-      const std::string postSegmentationTransformFileName = outputDir
-        + GetStrippedImageFileNameExtension(templateVolumes[0])
-        + std::string("_to_")
-        + GetStrippedImageFileNameExtension( ( inputVolumes[0] ) )
-        + std::string("_") + defaultSuffix + "_PostSegmentation.h5";
-        */
         const std::string postSegmentationTransformFileName = atlasToSubjectTransform;
         // NOTE:  Aliasing of smart-pointers up the polymorphic tree OK here
         // because
@@ -1352,9 +1379,6 @@ int main(int argc, char * *argv)
         GenericTransformType::Pointer atlasToSubjectPostSegmentationTransform =
           segfilter->GetTemplateGenericTransform();
         itk::WriteTransformToDisk<double,float>(atlasToSubjectPostSegmentationTransform, postSegmentationTransformFileName);
-        // TODO:  Need to write a short circuit so that if this final transform
-        // filename exists, it will just read it in and use it directly
-        // without doing all the iterations.
         }
       }
 

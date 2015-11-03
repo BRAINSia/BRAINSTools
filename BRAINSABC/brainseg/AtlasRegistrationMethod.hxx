@@ -475,11 +475,15 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
                       << "m_IntraSubjectOriginalImageList.size() = " << m_IntraSubjectOriginalImageList.size() );
     }
 
-  muLogMacro(<< "\nRegister atlas to subject images..." << std::endl);
+  muLogMacro(<< "\n^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^" << std::endl);
+  muLogMacro(<< "Register atlas to subject images..." << std::endl);
+  muLogMacro(<< "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n" << std::endl);
 
   /*****  Shortcut if the registration has been done previously. ******/
-  const bool SkipIfExistsForDebug = false; //This is a debugging step that should not normally be used
-  if( SkipIfExistsForDebug && itksys::SystemTools::FileExists( this->m_AtlasToSubjectTransformFileName.c_str() ) )
+  // If this final transform filename exists,
+  // it will be just read in and will be used directly
+  // without doing the registration.
+  if( itksys::SystemTools::FileExists( this->m_AtlasToSubjectTransformFileName.c_str() ) )
     {
     try
       {
@@ -787,7 +791,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
                  << " " << m_AtlasToSubjectTransform->GetParameters() <<   std::endl );
       }
 */
-    // End generating the best initial transform for atlas T1 to subject T1
+    // End generating the best initial transform from atlas to subject.
     muLogMacro(<< "Writing " << this->m_AtlasToSubjectTransformFileName << "." << std::endl);
     itk::WriteTransformToDisk<double, float>(m_AtlasToSubjectTransform, this->m_AtlasToSubjectTransformFileName);
     }

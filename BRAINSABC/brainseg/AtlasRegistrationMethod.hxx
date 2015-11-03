@@ -475,19 +475,20 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
                       << "m_IntraSubjectOriginalImageList.size() = " << m_IntraSubjectOriginalImageList.size() );
     }
 
-  // TODO:  Need to make this register all the atlas filenames to all the
-  //       reference images.  Should probably do it in reverse order.
-  muLogMacro(<< "Register atlas to subject images" << std::endl);
-  // Shortcut if the registration has been done previously.
+  muLogMacro(<< "\nRegister atlas to subject images..." << std::endl);
+
+  /*****  Shortcut if the registration has been done previously. ******/
   const bool SkipIfExistsForDebug = false; //This is a debugging step that should not normally be used
   if( SkipIfExistsForDebug && itksys::SystemTools::FileExists( this->m_AtlasToSubjectTransformFileName.c_str() ) )
     {
     try
       {
+      std::cout << "****************************************" << std::endl;
       muLogMacro(<< "Reading cached Atlas to subject transform: "
                  << this->m_AtlasToSubjectTransformFileName << "." << std::endl);
       m_AtlasToSubjectTransform = itk::ReadTransformFromDisk(this->m_AtlasToSubjectTransformFileName);
       // Note:  No need to write this transform to disk
+      std::cout << "****************************************" << std::endl;
       }
     catch( ... )
       {
@@ -504,7 +505,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
     // Note:  No need to write this transform to disk
     return;
     }
-  else // We actaully need to run a registration
+  else /***** We actaully need to run a registration ******/
     {
     typedef itk::BRAINSFitHelper HelperType;
     HelperType::Pointer atlasToSubjectRegistrationHelper = HelperType::New();
@@ -521,6 +522,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
       }
     // Deal with creating an initial transform.
     std::string atlasToSubjectInitialTransformName = "";
+    bool runSyNFull = true; // This flag runs SyN registration in mulitple resolution levels.
       {
       std::cout << "****************************************" << std::endl;
       if( m_AtlasLinearTransformChoice == "SyN" && this->m_RestoreState.IsNotNull() )
@@ -528,6 +530,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
         std::cout << "SyN registration is restored from state, and no atlasToSubjectInitialTransform is needed."
                   << std::endl;
         this->m_AtlasToSubjectInitialTransform = ITK_NULLPTR;
+        runSyNFull = false; // When SyN is restored from state, we need to run that only in full resolution level.
         }
       else if( this->m_AtlasToSubjectInitialTransform.IsNotNull() )
         {
@@ -739,7 +742,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>
       transformType.push_back("SyN");
       atlasToSubjectRegistrationHelper->SetMinimumStepLength(minimumStepSize);
       atlasToSubjectRegistrationHelper->SetTransformType(transformType);
-      atlasToSubjectRegistrationHelper->SetSyNFull(false);
+      atlasToSubjectRegistrationHelper->SetSyNFull(runSyNFull);
       }
     else
       {

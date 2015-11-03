@@ -733,13 +733,13 @@ int main(int argc, char * *argv)
         FloatImageType::SpacingType::ValueType minPixelSize =
           vcl_numeric_limits<FloatImageType::SpacingType::ValueType>::max();
         const FloatImageType::SpacingType & imageSpacing = curImage->GetSpacing();
-        for( int is = 0; is < FloatImageType::ImageDimension; ++is )
+        for( FloatImageType::ImageDimensionType is = 0; is < FloatImageType::ImageDimension; ++is )
           {
           minPixelSize = vcl_min( minPixelSize, imageSpacing[is]);
           }
         localFilterTimeStep =
           ( (minPixelSize - vcl_numeric_limits<FloatImageType::SpacingType::ValueType>::epsilon() )
-            / ( vcl_pow(2.0, FloatImageType::ImageDimension + 1 ) )
+            / ( vcl_pow(2.0, static_cast<double>(FloatImageType::ImageDimension + 1) ) )
             );
         }
       FloatImagePointer denoisedImage =

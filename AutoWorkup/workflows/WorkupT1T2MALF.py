@@ -334,7 +334,13 @@ def CreateMALFWorkflow(WFname, onlyT1, master_config,BASE_DATA_GRABBER_DIR=None,
     MALFWF.connect(AdjustMergeListNode,'out',jointFusion,'atlas_image')
     MALFWF.connect(warpedAtlasLblMergeNode,'out',jointFusion,'atlas_segmentation_image')
     #MALFWF.connect(inputsSpec, 'subj_t1_image',jointFusion,'target_image')
-    MALFWF.connect(sessionMakeMultimodalInput, 'outFNs',jointFusion,'target_image')
+    AdjustTargetImageListNode = pe.Node(Function(function=adjustMergeList,
+                                                   input_names=['allList','n_modality'],
+                                                   output_names=['out']),
+                                                   name="AdjustTargetImageListNode")
+    AdjustTargetImageListNode.inputs.n_modality = n_modality
+    MALFWF.connect(sessionMakeMultimodalInput, 'outFNs',AdjustTargetImageListNode,'allList')
+    MALFWF.connect(AdjustTargetImageListNode, 'out',jointFusion,'target_image')
     MALFWF.connect(jointFusion, 'output_label_image', outputsSpec,'MALF_HDAtlas20_2015_label')
 
     #if onlyT1:

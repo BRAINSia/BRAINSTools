@@ -703,7 +703,7 @@ SImageType::PointType GetImageCenterPhysicalPoint(SImageType::Pointer & image)
 
   itk::ContinuousIndex<double, 3> centerIndex;
 
-  for( int q = 0; q < SImageType::ImageDimension; ++q )
+  for( size_t q = 0; q < SImageType::ImageDimension; ++q )
     {
     centerIndex[q] = 0.5 * ( imageOverallSize[q] - 1 );
     }

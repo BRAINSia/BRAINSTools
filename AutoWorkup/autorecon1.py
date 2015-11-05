@@ -75,6 +75,8 @@ def copy_file(in_file, out_file=None):
     import shutil
     if out_file == None:
         out_file = os.path.join(os.getcwd(), os.path.basename(in_file))
+    if type(in_file) is list and len(in_file) == 1:
+        in_file = in_file[0]
     print "copying %s to %s" % (in_file, out_file)
     shutil.copy(in_file, out_file)
     return out_file
@@ -208,27 +210,44 @@ def create_AutoRecon1(config):
     255 cubed char images (1mm isotropic voxels) in mri/orig.mgz.
     """
 
-    create_template = pe.Node(RobustTemplate(), name="Robust_Template")
-    create_template.inputs.average_metric = 'median'
-    create_template.inputs.template_output = outputfilename(config['subjects_dir'], config['current_id'], 'rawavg.mgz')
-    create_template.inputs.no_iteration = True
-    if config['longitudinal']:
-        ar1_wf.connect([(concatenate_lta, create_template, [('out_file', 'initial_transforms')]),
-                        (ar1_inputs, create_template, [('in_T1s', 'in_files')]),
-                        (copy_iscales, create_template, [('out_file','in_intensity_scales')]),
-                        ])
-        #TODO: connect mri_concatenate_lta to create_template.inputs.ixforms
-        #TODO: connect the copied iscaleout files to the --iscalein input
-    else:
-        create_template.inputs.fixed_timepoint = True
-        create_template.inputs.auto_detect_sensitivity = True
-        create_template.inputs.initial_timepoint = 1
-        create_template.inputs.scaled_intensity_outputs = iscaleout
-        create_template.inputs.transform_outputs = ltaout
-        create_template.inputs.subsample_threshold = 200
-        create_template.inputs.intensity_scaling = True
-        ar1_wf.connect([(T1_image_preparation, create_template, [('out_file', 'in_files')]),
+    # if only one scan is input, just copy the raw scan as input
+    if not config['longitudinal'] and len(config['in_T1s']) == 1:
+        create_template = pe.Node(Function(['in_file', 'out_file'],
+                                           ['out_file'],
+                                            copy_file),
+                                  name="Robust_Template")
+        create_template.inputs.out_file = os.path.join(
+            config['subjects_dir'], config['subject_id'], 'mri', 'rawavg.mgz')
+        ar1_wf.connect([(T1_image_preparation, create_template, [('out_file', 'in_file')]),
                     ])
+        print """
+WARNING: only one run found. This is OK, but motion
+correction cannot be performed on one run, so I'll
+copy the run to rawavg and continue."""
+        
+    else:
+        # if multiple T1 scans are given
+        create_template = pe.Node(RobustTemplate(), name="Robust_Template")
+        create_template.inputs.average_metric = 'median'
+        create_template.inputs.out_file = outputfilename(config['subjects_dir'], config['current_id'], 'rawavg.mgz')
+        create_template.inputs.no_iteration = True
+            
+        # if running longitudinally
+        if config['longitudinal']:
+            ar1_wf.connect([(concatenate_lta, create_template, [('out_file', 'initial_transforms')]),
+                            (ar1_inputs, create_template, [('in_T1s', 'in_files')]),
+                            (copy_iscales, create_template, [('out_file','in_intensity_scales')]),
+                        ])
+        else:
+            create_template.inputs.fixed_timepoint = True
+            create_template.inputs.auto_detect_sensitivity = True
+            create_template.inputs.initial_timepoint = 1
+            create_template.inputs.scaled_intensity_outputs = iscaleout
+            create_template.inputs.transform_outputs = ltaout
+            create_template.inputs.subsample_threshold = 200
+            create_template.inputs.intensity_scaling = True
+            ar1_wf.connect([(T1_image_preparation, create_template, [('out_file', 'in_files')]),
+                        ])
 
     # mri_convert
     conform_template = pe.Node(MRIConvert(), name='Conform_Template')
@@ -237,11 +256,12 @@ def create_AutoRecon1(config):
         conform_template.inputs.out_datatype = 'uchar'
     else:
         conform_template.inputs.conform = True
-        conform_template.inputs.cw256 = config['cw256']    
-        conform_template.inputs.resample_type = 'cubic'
-
+        if len(config['in_T1s']) != 1:
+            conform_template.inputs.cw256 = config['cw256']    
+            conform_template.inputs.resample_type = 'cubic'
+            
     ar1_wf.connect(
-        [(create_template, conform_template, [('template_output', 'in_file')])])
+        [(create_template, conform_template, [('out_file', 'in_file')])])
 
     add_to_header = pe.Node(AddXFormToHeader(), name="Add_Transform_to_Header")
     add_to_header.inputs.copy_name = True

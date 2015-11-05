@@ -126,7 +126,8 @@ def create_reconall(config):
                                                          ('template_rh_pial', 'AutoRecon2_Inputs.template_rh_pial'),])
                           ])
         # end longitudinal data collection
-        
+
+    # connect autorecon 1 - 3 
     reconall.connect([(ar1_wf, ar3_wf, [('AutoRecon1_Inputs.subject_id', 'AutoRecon3_Inputs.subject_id'),
                                         ('AutoRecon1_Inputs.subjects_dir',
                                          'AutoRecon3_Inputs.subjects_dir'),

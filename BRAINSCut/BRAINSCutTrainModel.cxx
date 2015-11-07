@@ -137,7 +137,7 @@ BRAINSCutTrainModel
 
 void
 BRAINSCutTrainModel
-::TrainWithUpdate( cv::Ptr<OpenCVMLPType> myTrainer, bool update, pairedTrainingSetType& currentTrainData )
+::TrainWithUpdate( cv::Ptr<OpenCVMLPType> myTrainer, pairedTrainingSetType& currentTrainData )
 {
   // TODO change subset number properly
   myTrainer->setBackpropMomentumScale(0.1);
@@ -270,7 +270,6 @@ BRAINSCutTrainModel
     {
     unsigned int subSetNo =  (currentIteration - 1) % this->m_trainingDataSet->GetNumberOfSubSet();
     TrainWithUpdate( trainner,
-                     (currentIteration > 1), // after first iteration, update
                      *(this->m_trainingDataSet->GetTrainingSubSet(subSetNo) ) );
     SaveANNTrainModelAtIteration( trainner, currentIteration );
     printANNTrainInformation( trainner, currentIteration );

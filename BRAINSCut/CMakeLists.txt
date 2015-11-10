@@ -33,7 +33,6 @@ FindITKUtil( BRAINSCut_ITK
   ITKThresholding
 )
 
-message(FATAL "ECHO ${BRAINSCut_ITK_LIBRARIES}")
 #
 # OpenCV
 #

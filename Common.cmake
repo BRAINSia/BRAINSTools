@@ -54,7 +54,6 @@ option(USE_BRAINSROIAuto                  "Build BRAINSROIAuto"                 
 option(USE_BRAINSResample                 "Build BRAINSResample"                 ON)
 option(USE_BRAINSDemonWarp                "Build BRAINSDemonWarp "               ON)
 option(USE_GTRACT                         "Build GTRACT"                         ON)
-option(USE_BRAINSABC                      "Build BRAINSABC"                      ON)
 option(USE_BRAINSTransformConvert         "Build BRAINSTransformConvert"         ON)
 option(USE_BRAINSTalairach                "Build BRAINSTalairach"                ON)
 option(USE_BRAINSConstellationDetector    "Build BRAINSConstellationDetector"    ON)
@@ -70,7 +69,7 @@ option(USE_BRAINSMultiSTAPLE              "Build BRAINSMultiSTAPLE"             
 option(USE_DWIConvert                     "Build DWIConvert"                     ON)
 option(USE_BRAINSDWICleanup               "Build BRAINSDWICleanup"               ON)
 option(USE_BRAINSCreateLabelMapFromProbabilityMaps "Build BRAINSCreateLabelMapFromProbabilityMaps" OFF)
-option(USE_BRAINSMultiSTAPLE              "Build BRAINSMultiSTAPLE" ON)
+option(USE_BRAINSMultiSTAPLE              "Build BRAINSMultiSTAPLE"              ON)
 option(USE_ANTS                           "Build ANTS"                           ON)
 
 ## These are not yet ready for prime time.
@@ -81,6 +80,19 @@ option(USE_BRAINSPosteriorToContinuousClass             "Build BRAINSPosteriorTo
 
 option(USE_DebugImageViewer "Build DebugImageViewer" OFF)
 option(BRAINS_DEBUG_IMAGE_WRITE "Enable writing out intermediate image results" OFF)
+
+if(${CMAKE_CXX_STANDARD} STREQUAL "11" OR ${CMAKE_CXX_STANDARD} STREQUAL "14")
+  option(USE_BRAINSABC                      "Build BRAINSABC"                      ON)
+else()
+  option(USE_BRAINSABC                      "Build BRAINSABC"                      OFF)
+endif()
+
+if(USE_BRAINSABC )
+  if(NOT ${CMAKE_CXX_STANDARD} STREQUAL "11" )
+    message(FATAL_ERROR "BRAINSABC Requires C++11 compilers.  Use -DCMAKE_CXX_STANDARD:STRING=11 when configuring")
+  endif()
+  set(USE_TBB ON) ## BRAINSABC requires a built version of Intel's TBB
+endif()
 
 if(Slicer_BUILD_BRAINSTOOLS OR USE_AutoWorkup OR USE_GTRACT OR USE_BRAINSTalairach OR USE_BRAINSSurfaceTools OR USE_BRAINSConstellationDetector OR USE_BRAINSDemonWarp OR USE_ConvertBetweenFileFormats )
   set(BRAINSTools_REQUIRES_VTK ON)

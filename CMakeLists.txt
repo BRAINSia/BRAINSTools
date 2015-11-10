@@ -39,11 +39,19 @@ mark_as_advanced(${LOCAL_PROJECT_NAME}_SUPERBUILD)
 
 if(${LOCAL_PROJECT_NAME}_SUPERBUILD)
   project(SuperBuild_${LOCAL_PROJECT_NAME} C CXX)
-  set(CMAKE_CXX_STANDARD 98) # Supported values are ``98``, ``11`` and ``14``.
 else()
   project(${LOCAL_PROJECT_NAME} C CXX)
-  set(CMAKE_CXX_STANDARD 98) # Supported values are ``98``, ``11`` and ``14``.
 endif()
+
+if(NOT ${CMAKE_CONFIGURATION_TYPES})
+  set(CMAKE_CONFIGURATION_TYPES "Release;Debug" CACHE STRING "" FORCE) # setting only two configuration types
+endif()
+
+if(NOT ${CMAKE_CXX_STANDARD})
+   ## For compatibility with Slicer
+   set(CMAKE_CXX_STANDARD 98) # Supported values are ``98``, ``11`` and ``14``.
+endif()
+
 
 enable_language(C)
 enable_language(CXX)

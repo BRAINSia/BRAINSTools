@@ -92,7 +92,7 @@ endif()
 
 if(${LOCAL_PROJECT_NAME}_USE_QT)
   if(NOT QT4_FOUND)
-    find_package(Qt4 4.6 COMPONENTS QtCore QtGui QtNetwork QtXml REQUIRED)
+    find_package(Qt4 4.8 COMPONENTS QtCore QtGui QtNetwork QtXml REQUIRED)
     include(${QT_USE_FILE})
   endif()
 endif()

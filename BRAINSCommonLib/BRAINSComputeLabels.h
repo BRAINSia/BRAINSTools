@@ -30,7 +30,8 @@
 
 typedef std::map<size_t,size_t> LabelCountMapType;
 typedef itk::Image<unsigned char, 3>       ByteImageType;
-extern LabelCountMapType GetMinLabelCount(ByteImageType::Pointer & labelsImage);
+extern LabelCountMapType GetMinLabelCount(ByteImageType::Pointer & labelsImage,
+                                          const vnl_vector<unsigned int> & PriorLabelCodeVector);
 // Labeling using maximum a posteriori, also do brain stripping using
 // mathematical morphology and connected component
 template <class TProbabilityImage, class TByteImage,
@@ -139,7 +140,7 @@ void ComputeLabels(
         }
       }
     //
-    LabelCountMapType currentLabelsMapCounts = GetMinLabelCount( DirtyLabels );
+    LabelCountMapType currentLabelsMapCounts = GetMinLabelCount( DirtyLabels, PriorLabelCodeVector );
     currentMinLabelSize = currentLabelsMapCounts.begin()->second;
     for( typename LabelCountMapType::const_iterator it = currentLabelsMapCounts.begin();
           it != currentLabelsMapCounts.end(); ++it)

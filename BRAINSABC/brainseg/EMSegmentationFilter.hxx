@@ -308,13 +308,15 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
       {
       if( SampledLabelsMap[ labelClasses[i] ].size() < KNN_SamplesPerLabel )
         {
-        muLogMacro(<<"WARNING: There is not enough samples for all label codes." << std::endl );
+        muLogMacro(<<"WARNING: Not enough samples for label class: " << labelClasses[i]
+                   << ". Only " << SampledLabelsMap[ labelClasses[i] ].size() << " samples were picked. "
+                   << KNN_SamplesPerLabel << " needed!" << std::endl );
         }
       }
     }
 
   vnl_vector<FloatingPrecision> labelVector(numberOfSamples);
-  muLogMacro(<< "\n* Computing the label vector with " << numberOfSamples << " samples..." << std::endl);
+  muLogMacro(<< "\n* Creating \"label vector\" with " << numberOfSamples << " samples..." << std::endl);
 
   // set kNN train sample set. it has #numberOfSamples training cases with (#numOfInputImages + #numClasses) features
   muLogMacro(<< "\n* Computing train matrix as a list of samples" << std::endl);

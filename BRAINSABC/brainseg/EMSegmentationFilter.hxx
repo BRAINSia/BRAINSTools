@@ -235,7 +235,8 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
 ::ComputekNNPosteriors(const ProbabilityImageVectorType & Priors,
                        const MapOfInputImageVectors & intensityImages, // input corrected images
                        ByteImagePointer & labelsImage,
-                       const IntVectorType & labelClasses)
+                       const IntVectorType & labelClasses,
+                       const std::vector<bool> & priorIsForegroundPriorVector)
 
 {
   // Phase 1: create train sample set, label vector, and the test matrix
@@ -347,10 +348,27 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
          {
          mv.push_back( inIt->GetPointer()->GetPixel( *vit ) );
          }
-       for( unsigned int c_indx = 0; c_indx<labelClasses.size() ; ++c_indx) // Add 15 more features from posteriors
+
+       // Here we find out that the prior with maximum value belongs to background or foreground
+       double maxPriorClassValue = Priors[0]->GetPixel( *vit );
+       unsigned int       indexMaxPosteriorClassValue = 0;
+       for( unsigned int iclass = 1; iclass < labelClasses.size() ; ++iclass)
+         {
+         const double currentPriorClassValue = Priors[iclass]->GetPixel( *vit );
+         if( currentPriorClassValue > maxPriorClassValue )
+           {
+           maxPriorClassValue = currentPriorClassValue;
+           indexMaxPosteriorClassValue = iclass;
+           }
+         }
+       bool fgflag = priorIsForegroundPriorVector[indexMaxPosteriorClassValue];
+
+       // foreground and background classes should be added exclusively
+       for( unsigned int c_indx = 0; c_indx < labelClasses.size() ; ++c_indx) // Add 15 more features from EM posteriors
          {
          //mv.push_back( Priors[c_indx]->GetPixel( *vit ) );
-         mv.push_back( (  Priors[c_indx]->GetPixel( *vit ) > 0.01 ) ? 1 : 0 );
+         mv.push_back( (  Priors[c_indx]->GetPixel( *vit ) > 0.01 &&
+                          priorIsForegroundPriorVector[c_indx] == fgflag ) ? 1 : 0 );
          }
        trainSampleSet->PushBack( mv );
        }
@@ -418,6 +436,21 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
       for( LOOPITERTYPE ii = 0; ii < (LOOPITERTYPE)size[0]; ii++ )
         {
         const typename InputImageType::IndexType currIndex = {{ii, jj, kk}};
+
+        // Here we find out that the prior, with maximum value at the current index, belongs to background or foreground
+        double maxPriorClassValue = Priors[0]->GetPixel( currIndex );
+        unsigned int       indexMaxPosteriorClassValue = 0;
+        for( unsigned int iclass = 1; iclass < labelClasses.size() ; ++iclass)
+          {
+          const double currentPriorClassValue = Priors[iclass]->GetPixel( currIndex );
+          if( currentPriorClassValue > maxPriorClassValue )
+            {
+            maxPriorClassValue = currentPriorClassValue;
+            indexMaxPosteriorClassValue = iclass;
+            }
+          }
+        bool fgflag = priorIsForegroundPriorVector[indexMaxPosteriorClassValue];
+
         unsigned int colIndex = 0;
         typename ProbabilityImageVectorType::const_iterator inIt = inputImagesVector.begin();
         while( ( inIt != inputImagesVector.end() ) && ( colIndex < numOfInputImages ) )
@@ -426,9 +459,11 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
           ++colIndex;
           ++inIt;
           }
-        while( colIndex-numOfInputImages < labelClasses.size() ) // Add 15 more features from posteriors
+        // foreground and background classes should be added exclusively
+        while( colIndex-numOfInputImages < labelClasses.size() ) // Add 15 more features from EM posteriors
           {
-          testMatrix(rowIndex,colIndex) = ( Priors[colIndex-numOfInputImages]->GetPixel( currIndex ) > 0.01 ) ? 1 : 0 ;
+          testMatrix(rowIndex,colIndex) = ( Priors[colIndex-numOfInputImages]->GetPixel( currIndex ) > 0.01 &&
+                                            priorIsForegroundPriorVector[colIndex-numOfInputImages] == fgflag ) ? 1 : 0;
           ++colIndex;
           }
         ++rowIndex;
@@ -1231,6 +1266,9 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
   // Run KNN on posteriors
   ProbabilityImageVectorType KNNPosteriors;
   KNNPosteriors.resize(numClasses);
+  // KNNPosteriors and EMPosteriors will be merged by averaging
+  ProbabilityImageVectorType AveragePosteriors;
+  AveragePosteriors.resize(numClasses);
   if( this->m_UseKNN )
     {
     ByteImagePointer thresholdedLabels = ITK_NULLPTR;
@@ -1260,7 +1298,8 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
     KNNPosteriors = this->ComputekNNPosteriors(EMPosteriors,
                                             IntensityImages,
                                             dirtyThresholdedLabels,
-                                            priorLabelCodeVector);
+                                            priorLabelCodeVector,
+                                            priorIsForegroundPriorVector);
     ComputeKNNPosteriorsTimer.Stop();
     itk::RealTimeClock::TimeStampType knnElapsedTime = ComputeKNNPosteriorsTimer.GetTotal();
     muLogMacro(<< "Computing KNN posteriors took " << knnElapsedTime << " " << ComputeKNNPosteriorsTimer.GetUnit() << std::endl);
@@ -1268,8 +1307,8 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
     NormalizeProbListInPlace<TProbabilityImage>( KNNPosteriors );
     this->WriteDebugPosteriors(IterationID, "KNN", KNNPosteriors);
 
-    ProbabilityImageVectorType AveragePosteriors;
-    AveragePosteriors.resize(numClasses);
+    // Merge KNN and EMPosteriors here by averaging.
+    //
     for(size_t pp = 0 ; pp < KNNPosteriors.size(); ++pp )
       {
       typedef itk::MultiplyImageFilter<TProbabilityImage,TProbabilityImage> MultiplyFilterType;
@@ -1284,15 +1323,12 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>
       sqrtFilter->Update();
       AveragePosteriors[pp] = sqrtFilter->GetOutput();
       }
+    // Normalize probability list such that all posterior values will sum up to 1.
     NormalizeProbListInPlace<TProbabilityImage>( AveragePosteriors );
     this->WriteDebugPosteriors(IterationID, "AVG_KNN_EM", AveragePosteriors);
-    return AveragePosteriors;
     }
 
-  ////
-  //TODO: Merge KNN and EMPosteriors here by averaging.
-  ////
-  return (this->m_UseKNN) ? KNNPosteriors : EMPosteriors;
+  return (this->m_UseKNN) ? AveragePosteriors : EMPosteriors;
 }
 
 

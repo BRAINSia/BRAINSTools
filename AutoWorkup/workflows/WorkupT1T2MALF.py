@@ -320,6 +320,7 @@ def CreateMALFWorkflow(WFname, onlyT1, master_config,BASE_DATA_GRABBER_DIR=None,
     many_cpu_JointFusion_options_dictionary = {'qsub_args': modify_qsub_args(CLUSTER_QUEUE,8,4,4), 'overwrite': True}
     jointFusion.plugin_args = many_cpu_JointFusion_options_dictionary
     jointFusion.inputs.dimension=3
+    jointFusion.inputs.search_radius=[3]
     #jointFusion.inputs.method='Joint[0.1,2]'
     jointFusion.inputs.output_image=['MALF_HDAtlas20_2015_label.nii.gz']
 

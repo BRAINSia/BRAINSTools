@@ -19,8 +19,9 @@ if not os.path.exists(scripts_dir):
 
 #subject_data_file='/Shared/johnsonhj/HDNI/20131116_TrackOn/scripts/edited_without_T2_PD_15s_track_autoworkup_TRACKON.csv'
 #subject_data_file='/Shared/sinapse/CACHE/20131228_PREDICTHD_FS/20131124_FS.csv'
-subject_data_file=os.path.join(subjects_dir,'scripts/FS_Alterations2015.csv')
-subject_data_file=os.path.join(subjects_dir,'scripts/edited_without_T2_PD_15s_predict_autoworkup_PREDICT.csv')
+subject_data_file=os.path.join(subjects_dir,'scripts','2015-05-27_trackon_autoworkup.csv')
+#subject_data_file=os.path.join(subjects_dir,'scripts/short_test.csv')
+#subject_data_file=os.path.join(subjects_dir,'scripts/edited_without_T2_PD_15s_predict_autoworkup_PREDICT.csv')
 USE_T2_FOR_FREESURFER=False ## For TRACKHD, don't use T2's
 USE_15T_SESSIONS=False ## For TRACKHD, don't use 1.5T sessions
 subjectDatabaseFile=os.path.join(scripts_dir,'subject_inputs.db')
@@ -274,7 +275,11 @@ def ValidateBaseTPS(base_tps_file,found_sessions,subject,templateID):
         import shutil
         templ_dir=os.path.join(subjects_dir,templateID)
         if os.path.exists(templ_dir):
+<<<<<<< 2e941f75075b76949684a0b24ac43e4ecdb8569e
             print("REMOVE TEMPLATE: {0}".foramt(templ_dir) )
+=======
+            print("REMOVE TEMPLATE: {0}".format(templ_dir) )
+>>>>>>> ENH: TrackOn Freesurfer Processing.
             try:
               shutil.rmtree(templ_dir)
             except:

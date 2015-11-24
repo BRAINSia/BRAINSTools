@@ -39,6 +39,11 @@ Optional inputs:
 --longbase <name>         Set the longitudinal base template. If a longitudinal 
                           base is set, no input files will be used/required.
 
+--openmp <numthreads>     OpenMP parallelization (CentOS 6 distribution only!) 
+                          To enable this feature, add the flag -openmp <numthreads> 
+                          to recon-all, where <numthreads> is the number of threads 
+                          you would like to run.
+
 Author:
 David Ellis
 University of Iowa

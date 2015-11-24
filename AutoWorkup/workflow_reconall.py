@@ -139,8 +139,6 @@ def create_reconall(config):
                                          'AutoRecon3_Inputs.orig_mgz'),
                                         ('Robust_Template.out_file',
                                          'AutoRecon3_Inputs.rawavg'),
-                                        ('T2_convert.out_file',
-                                         'AutoRecon3_Inputs.rawT2'),
                                         ]),
                       (ar1_wf, ar2_wf, [('Copy_Brainmask.out_file', 'AutoRecon2_Inputs.brainmask'),
                                         ('Copy_Transform.out_file',

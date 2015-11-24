@@ -21,7 +21,7 @@ def create_AutoRecon2(config):
 
     # Input node
     if config['longitudinal']:
-        ar2_inputs = pe.Node(IdentityInterface(fields=['orig',
+        inputSpec = pe.Node(IdentityInterface(fields=['orig',
                                                        'brainmask',
                                                        'transform',
                                                        'subject_id',
@@ -43,9 +43,9 @@ def create_AutoRecon2(config):
                                                        'subjects_dir']),
                              run_without_submitting=True,
                              name='AutoRecon2_Inputs')
-        ar2_inputs.inputs.timepoints = config['timepoints']
+        inputSpec.inputs.timepoints = config['timepoints']
     else:
-        ar2_inputs = pe.Node(IdentityInterface(fields=['orig',
+        inputSpec = pe.Node(IdentityInterface(fields=['orig',
                                                        'brainmask',
                                                        'transform',
                                                        'subject_id',
@@ -65,7 +65,7 @@ def create_AutoRecon2(config):
     intensity_correction.inputs.iterations = 1
     intensity_correction.inputs.protocol_iterations = 1000
     intensity_correction.inputs.out_file = outputfilename(config['subjects_dir'], config['current_id'], 'nu.mgz')
-    ar2_wf.connect([(ar2_inputs, intensity_correction, [('orig', 'in_file'),
+    ar2_wf.connect([(inputSpec, intensity_correction, [('orig', 'in_file'),
                                                         ('brainmask', 'mask'),
                                                         ('transform',
                                                          'transform')
@@ -78,7 +78,7 @@ def create_AutoRecon2(config):
                                                               ('out_file',
                                                                'out_file')
                                                               ]),
-                    (ar2_inputs, add_to_header_nu,
+                    (inputSpec, add_to_header_nu,
                      [('transform', 'transform')])
                     ])
 
@@ -94,7 +94,7 @@ def create_AutoRecon2(config):
                           name='Copy_Talairach_lta')
         align_transform.inputs.out_file = os.path.join(config['subjects_dir'], config['current_id'], 'mri', 'transforms', 'talairach.lta')
 
-        ar2_wf.connect([(ar2_inputs, align_transform, [('template_talairach_lta', 'in_file')])])
+        ar2_wf.connect([(inputSpec, align_transform, [('template_talairach_lta', 'in_file')])])
         
     else:
         align_transform = pe.Node(EMRegister(), name="Align_Transform")
@@ -108,7 +108,7 @@ def create_AutoRecon2(config):
             align_transform.inputs.num_threads = config['openmp']
         if config['plugin_args'] != None:
             align_transform.plugin_args = config['plugin_args']
-        ar2_wf.connect([(ar2_inputs, align_transform, [('brainmask', 'mask')]),
+        ar2_wf.connect([(inputSpec, align_transform, [('brainmask', 'mask')]),
                         (add_to_header_nu, align_transform,
                          [('out_file', 'in_file')])
                         ])
@@ -132,13 +132,13 @@ def create_AutoRecon2(config):
         copy_template_aseg.inputs.out_file = os.path.join(
             config['subjects_dir'], config['current_id'], 'mri', 'transforms', 'aseg_{0}.mgz'.format(config['long_template']))
 
-        ar1_wf.connect([(ar2_inputs, copy_template, [('template_aseg', 'in_file')]),
+        ar1_wf.connect([(inputSpec, copy_template, [('template_aseg', 'in_file')]),
                         (copy_template, ca_normalize, [('out_file', 'long_file')])])
     else:
         ca_normalize.inputs.control_points = outputfilename(config['subjects_dir'], config['current_id'], 'ctrl_pts.mgz')
 
     ar2_wf.connect([(align_transform, ca_normalize, [('out_file', 'transform')]),
-                    (ar2_inputs, ca_normalize, [('brainmask', 'mask')]),
+                    (inputSpec, ca_normalize, [('brainmask', 'mask')]),
                     (add_to_header_nu, ca_normalize, [('out_file', 'in_file')])])
 
     # CA Register
@@ -156,7 +156,7 @@ def create_AutoRecon2(config):
     if config['plugin_args'] != None:
         ca_register.plugin_args = config['plugin_args']
     ar2_wf.connect([(ca_normalize, ca_register, [('out_file', 'in_file')]),
-                    (ar2_inputs, ca_register, [('brainmask', 'mask')]),
+                    (inputSpec, ca_register, [('brainmask', 'mask')]),
                     ])
     if config['longitudinal']:
         ca_register.inputs.levels = 2
@@ -209,18 +209,18 @@ def create_AutoRecon2(config):
                                              copy_ltas),
                                     iterfield=['in_file'],
                                     name='Copy_long_ltas')
-        ar2_wf.connect([(ar2_inputs, copy_long_ltas, [('alltps_to_template_ltas', 'in_file'),
+        ar2_wf.connect([(inputSpec, copy_long_ltas, [('alltps_to_template_ltas', 'in_file'),
                                                       ('subjects_dir', 'subjects_dir'),
                                                       ('subject_id', 'subject_id')])])
         copy_long_ltas.inputs.long_template = config['long_template']
 
         merge_norms = pe.Node(Merge(2), name="Merge_Norms")
-        ar2_wf.connect([(ar2_inputs, merge_norms, [('alltps_norms', 'in1')]),
+        ar2_wf.connect([(inputSpec, merge_norms, [('alltps_norms', 'in1')]),
                         (ca_normalize, merge_norms, [('out_file', 'in2')])])
                                                    
         
         fuse_segmentations = pe.Node(FuseSegmentations(), name="Fuse_Segmentations")
-        ar2_wf.connect([(ar2_inputs, fuse_segmentations, [('timepoints', 'timepoints'),
+        ar2_wf.connect([(inputSpec, fuse_segmentations, [('timepoints', 'timepoints'),
                                                           ('alltps_segs', 'in_segmentations'),
                                                           ('alltps_segs_noCC', 'in_segmentations_noCC'),
                                                           ('subject_id', 'subject_id')]),
@@ -244,7 +244,7 @@ def create_AutoRecon2(config):
                     ])
     if config['longitudinal']:
         ar2_wf.connect([(fuse_segmentations, ca_label, [('out_file', 'in_vol')]),
-                        (ar2_inputs, ca_label, [('template_label_intensities', 'intensities')])])
+                        (inputSpec, ca_label, [('template_label_intensities', 'intensities')])])
 
     # mri_cc - segments the corpus callosum into five separate labels in the
     # subcortical segmentation volume 'aseg.mgz'
@@ -252,7 +252,7 @@ def create_AutoRecon2(config):
     segment_cc.inputs.out_rotation = outputfilename(config['subjects_dir'], config['current_id'], 
         'cc_up.lta', 'mri', 'transforms')
     segment_cc.inputs.out_file = outputfilename(config['subjects_dir'], config['current_id'], 'aseg.auto.mgz')
-    ar2_wf.connect([(ar2_inputs, segment_cc, [('subject_id', 'subject_id'),
+    ar2_wf.connect([(inputSpec, segment_cc, [('subject_id', 'subject_id'),
                                               ('subjects_dir', 'subjects_dir')]),
                     (ca_label, segment_cc, [('out_file', 'in_file')]),
                     (ca_normalize, segment_cc, [('out_file', 'in_norm')]),
@@ -277,7 +277,7 @@ def create_AutoRecon2(config):
     normalization2 = pe.Node(Normalize(), name="Normalization2")
     normalization2.inputs.out_file = outputfilename(config['subjects_dir'], config['current_id'], 'brain.mgz')
     ar2_wf.connect([(copy_cc, normalization2, [('out_file', 'segmentation')]),
-                    (ar2_inputs, normalization2, [('brainmask', 'mask')]),
+                    (inputSpec, normalization2, [('brainmask', 'mask')]),
                     (ca_normalize, normalization2, [('out_file', 'in_file')])
                     ])
 
@@ -289,7 +289,7 @@ def create_AutoRecon2(config):
     mri_mask.inputs.out_file = outputfilename(config['subjects_dir'], config['current_id'], 'brain.finalsurfs.mgz')
 
     ar2_wf.connect([(normalization2, mri_mask, [('out_file', 'in_file')]),
-                    (ar2_inputs, mri_mask, [('brainmask', 'mask_file')])
+                    (inputSpec, mri_mask, [('brainmask', 'mask_file')])
                     ])
 
     # WM Segmentation
@@ -327,7 +327,7 @@ def create_AutoRecon2(config):
 
         ar2_wf.connect([(pretess, transfer_init_wm, [('out_file', 'in_file'),
                                                      ('out_file', 'out_file')]),
-                        (ar2_inputs, transfer_init_wm, [('init_wm', 'mask_file'),
+                        (inputSpec, transfer_init_wm, [('init_wm', 'mask_file'),
                                                         ('subj_to_template_lta', 'xfm_file')])])
         """changing the pretess variable so that the rest of the connections still work!!!"""
         pretess = transfer_init_wm
@@ -635,7 +635,7 @@ def create_AutoRecon2(config):
                      ])
 
         if config['longitudinal']:
-            ar2_wf.connect([(ar2_inputs, hemi_wf, [('template_{0}_white'.format(hemisphere),
+            ar2_wf.connect([(inputSpec, hemi_wf, [('template_{0}_white'.format(hemisphere),
                                                     'Copy_Template_White.in_file'),
                                                    ('template_{0}_white'.format(hemisphere),
                                                     'Copy_Template_Orig_White.in_file'),
@@ -645,11 +645,11 @@ def create_AutoRecon2(config):
         # Connect inputs for the hemisphere workflows
         ar2_wf.connect([(ca_normalize, hemi_wf, [('out_file', 'Pretess2.in_norm')]),
                         (fill, hemi_wf, [('out_file', 'Pretess2.in_filled')]),
-                        (ar2_inputs, hemi_wf, [('subject_id', 'Fix_Topology.subject_id'),
+                        (inputSpec, hemi_wf, [('subject_id', 'Fix_Topology.subject_id'),
                                                ('subjects_dir', 'Fix_Topology.subjects_dir')]),
-                        (ar2_inputs, hemi_wf, [('subject_id', 'Make_Surfaces.subject_id'),
+                        (inputSpec, hemi_wf, [('subject_id', 'Make_Surfaces.subject_id'),
                                                ('subjects_dir', 'Make_Surfaces.subjects_dir')]),
-                        (ar2_inputs, hemi_wf, [('subject_id', 'Curvature_Stats.subject_id'),
+                        (inputSpec, hemi_wf, [('subject_id', 'Curvature_Stats.subject_id'),
                                                ('subjects_dir', 'Curvature_Stats.subjects_dir')]),
                         (copy_cc, hemi_wf, [('out_file', 'Make_Surfaces.in_aseg')]),
                         (mri_mask, hemi_wf, [('out_file', 'Make_Surfaces.in_T1')]),

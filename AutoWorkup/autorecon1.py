@@ -119,13 +119,13 @@ def create_AutoRecon1(config):
     ar1_wf = pe.Workflow(name='AutoRecon1')
 
     if not config['longitudinal']:
-        ar1_inputs = pe.Node(interface=IdentityInterface(
+        inputSpec = pe.Node(interface=IdentityInterface(
             fields=['Raw_T1s', 'Raw_T2', 'Raw_FLAIR', 'subject_id', 'subjects_dir']),
                              run_without_submitting=True,
                              name='AutoRecon1_Inputs')
-        ar1_inputs.inputs.subject_id = config['current_id']
-        ar1_inputs.inputs.subjects_dir = config['subjects_dir']
-        ar1_inputs.inputs.Raw_T1s = VerifyInputs(config['in_T1s'])
+        inputSpec.inputs.subject_id = config['current_id']
+        inputSpec.inputs.subjects_dir = config['subjects_dir']
+        inputSpec.inputs.Raw_T1s = VerifyInputs(config['in_T1s'])
 
         inputvols, iscaleout, ltaout = create_preproc_filenames(config['subjects_dir'], config['current_id'], config['in_T1s'])
 
@@ -135,25 +135,25 @@ def create_AutoRecon1(config):
             MRIConvert(), iterfield=['in_file', 'out_file'], name="T1_prep")
         T1_image_preparation.inputs.out_file = inputvols
 
-        ar1_wf.connect([(ar1_inputs, T1_image_preparation, [('Raw_T1s', 'in_file')]),
+        ar1_wf.connect([(inputSpec, T1_image_preparation, [('Raw_T1s', 'in_file')]),
                         ])
 
         # T2 image preparation
         if config['in_T2'] != None:
             # Create T2raw.mgz
             # mri_convert
-            ar1_inputs.inputs.Raw_T2 = config['in_T2']
+            inputSpec.inputs.Raw_T2 = config['in_T2']
             T2_convert = pe.Node(MRIConvert(), name="T2_convert")
             T2_convert.inputs.out_file = os.path.join(config['subjects_dir'], config['current_id'], 'mri', 'orig', 'T2raw.mgz')
             T2_convert.inputs.no_scale = True
-            ar1_wf.connect([(ar1_inputs, T2_convert, [('Raw_T2', 'in_file')]),
+            ar1_wf.connect([(inputSpec, T2_convert, [('Raw_T2', 'in_file')]),
                             ]) 
 
         if config['in_FLAIR'] != None:
             # FLAIR image preparation
             # Create FLAIRraw.mgz
             # mri_convert
-            ar1_inputs.inputs.Raw_FLAIR = config['in_FLAIR']
+            inputSpec.inputs.Raw_FLAIR = config['in_FLAIR']
             FLAIR_convert = pe.Node(MRIConvert(), name="FLAIR_convert")
             FLAIR_convert.inputs.out_file = os.path.join(config['subjects_dir'],
                                                          config['current_id'],
@@ -161,10 +161,10 @@ def create_AutoRecon1(config):
                                                          'orig',
                                                          'FLAIRraw.mgz')
             FLAIR_convert.inputs.no_scale = True
-            ar1_wf.connect([(ar1_inputs, FLAIR_convert, [('Raw_FLAIR', 'in_file')]),
+            ar1_wf.connect([(inputSpec, FLAIR_convert, [('Raw_FLAIR', 'in_file')]),
                             ])
     else:
-        ar1_inputs = pe.Node(interface=IdentityInterface(
+        inputSpec = pe.Node(interface=IdentityInterface(
             fields=['in_T1s',
                     'iscales',
                     'ltas',
@@ -175,8 +175,8 @@ def create_AutoRecon1(config):
                     'subjects_dir']),
                              run_without_submitting=True,
                              name='AutoRecon1_Inputs')
-        ar1_inputs.inputs.subject_id = config['current_id']
-        ar1_inputs.inputs.subjects_dir = config['subjects_dir']
+        inputSpec.inputs.subject_id = config['current_id']
+        inputSpec.inputs.subjects_dir = config['subjects_dir']
 
         _volnames_, in_iscales, in_ltas = create_preproc_filenames(config['subjects_dir'], config['current_id'], config['in_T1s'])
 
@@ -185,7 +185,7 @@ def create_AutoRecon1(config):
                                         copy_file),
                                iterfield=['in_file', 'out_file'],
                                name='Copy_ltas')
-        ar1_wf.connect([(ar1_inputs, copy_ltas, [('ltas', 'in_file')])])
+        ar1_wf.connect([(inputSpec, copy_ltas, [('ltas', 'in_file')])])
         copy_ltas.inputs.out_file = in_ltas
 
         copy_iscales = pe.MapNode(Function(['in_file', 'out_file'],
@@ -193,13 +193,13 @@ def create_AutoRecon1(config):
                                            copy_file),
                                   iterfield=['in_file', 'out_file'],
                                   name='Copy_iscales')
-        ar1_wf.connect([(ar1_inputs, copy_iscales, [('iscales', 'in_file')])])
+        ar1_wf.connect([(inputSpec, copy_iscales, [('iscales', 'in_file')])])
         copy_iscales.inputs.out_file = in_iscales
 
         concatenate_lta = pe.MapNode(ConcatenateLTA(), iterfield=['in_file'],
                                      name="Concatenate_ltas")
         ar1_wf.connect([(copy_ltas, concatenate_lta, [('out_file', 'in_file')]),
-                        (ar1_inputs, concatenate_lta, [('subj_to_template_lta', 'subj_to_base')])])
+                        (inputSpec, concatenate_lta, [('subj_to_template_lta', 'subj_to_base')])])
 
     
     # Motion Correction
@@ -235,7 +235,7 @@ copy the run to rawavg and continue."""
         # if running longitudinally
         if config['longitudinal']:
             ar1_wf.connect([(concatenate_lta, create_template, [('out_file', 'initial_transforms')]),
-                            (ar1_inputs, create_template, [('in_T1s', 'in_files')]),
+                            (inputSpec, create_template, [('in_T1s', 'in_files')]),
                             (copy_iscales, create_template, [('out_file','in_intensity_scales')]),
                         ])
         else:
@@ -296,7 +296,7 @@ copy the run to rawavg and continue."""
         copy_template_xfm.inputs.out_file = os.path.join(
             config['subjects_dir'], config['current_id'], 'mri', 'transforms', 'talairach.auto.xfm')
 
-        ar1_wf.connect([(ar1_inputs, copy_template_xfm, [('template_talairach_xfm', 'in_file')])])
+        ar1_wf.connect([(inputSpec, copy_template_xfm, [('template_talairach_xfm', 'in_file')])])
     else:
         talairach_avi = pe.Node(TalairachAVI(), name="Compute_Transform")
         talairach_avi.inputs.atlas = '3T18yoSchwartzReactN32_as_orig'
@@ -366,7 +366,7 @@ copy the run to rawavg and continue."""
                                           name='Copy_Template_Brainmask')
         copy_template_brainmask.inputs.out_file = os.path.join(
             config['subjects_dir'], config['current_id'], 'mri', 'brainmask_{0}.mgz'.format(config['long_template']))
-        ar1_wf.connect([(ar1_inputs, copy_template_brainmask, [('template_brainmask', 'in_file')])])
+        ar1_wf.connect([(inputSpec, copy_template_brainmask, [('template_brainmask', 'in_file')])])
 
         mask1 = pe.Node(ApplyMask(), name="ApplyMask1")
         mask1.inputs.keep_mask_deletion_edits = True

@@ -249,6 +249,11 @@ def _nipype_execution_config(stop_on_first_crash=False, stop_on_first_rerun=Fals
     if stop_on_first_rerun:
         # This stops at first attempt to rerun, before running, and before deleting previous results
         stop_rerun = 'true'
+
+    import tempfile
+    crashdumpTempDirName=tempfile.gettempdir()
+    print( "*** Note")
+    print( "    Crash file will be written to '{0}'".format(crashdumpTempDirName))
     return {
         'stop_on_first_crash': stop_crash,
         'stop_on_first_rerun': stop_rerun,
@@ -259,7 +264,8 @@ def _nipype_execution_config(stop_on_first_crash=False, stop_on_first_rerun=Fals
         'remove_node_directories': 'false',  # default
         'remove_unnecessary_outputs': 'false',
         'local_hash_check': 'true',          # default
-        'job_finished_timeout': 25}
+        'job_finished_timeout': 25,
+        'crashdump_dir':crashdumpTempDirName}
 
 
 def _nipype_logging_config(cachedir):

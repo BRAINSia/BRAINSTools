@@ -169,7 +169,8 @@ def procargs(argv):
             config['plugin_args'] = { 'qsub_args' :  modify_qsub_args(config['queue'],
                                                                       minmemoryGB,
                                                                       config['openmp'],
-                                                                      config['openmp']) }
+                                                                      config['openmp']), 
+                                      'overwrite' : True }
             print 'plugin_args: {0}'.format(config['plugin_args'])
                 
     if config['openmp'] != None:

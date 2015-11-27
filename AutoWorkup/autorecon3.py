@@ -3,7 +3,7 @@ import nipype
 from nipype.interfaces.utility import Function,IdentityInterface
 import nipype.pipeline.engine as pe  # pypeline engine
 from nipype.interfaces.freesurfer import *
-from autorecon1 import outputfilename
+
 
 def create_AutoRecon3(config):
     
@@ -14,15 +14,15 @@ def create_AutoRecon3(config):
 
     # Input Node
     inputSpec = pe.Node(IdentityInterface(fields=['lh',
-                                                   'rh',
-                                                   'subject_id',
-                                                   'subjects_dir',
-                                                   'lh_inflated',
-                                                   'rh_inflated',
-                                                   'lh_smoothwm',
-                                                   'rh_smoothwm',
-                                                   'lh_white',
-                                                   'rh_white',
+                                                  'rh',
+                                                  'subject_id',
+                                                  'subjects_dir',
+                                                  'lh_inflated',
+                                                  'rh_inflated',
+                                                  'lh_smoothwm',
+                                                  'rh_smoothwm',
+                                                  'lh_white',
+                                                  'rh_white',
                                                    'lh_white_H',
                                                    'rh_white_H',
                                                    'lh_white_K',
@@ -58,13 +58,17 @@ def create_AutoRecon3(config):
     inputSpec.inputs.rh = 'rh'
 
     inputSpec.inputs.lh_atlas = os.path.join(
-        config['FREESURFER_HOME'], 'average/lh.average.curvature.filled.buckner40.tif')
+        config['FREESURFER_HOME'], 'average', 
+        'lh.average.curvature.filled.buckner40.tif')
     inputSpec.inputs.lh_classifier = os.path.join(
-        config['FREESURFER_HOME'], 'average/lh.curvature.buckner40.filled.desikan_killiany.2010-03-25.gcs')
+        config['FREESURFER_HOME'], 'average', 
+        'lh.curvature.buckner40.filled.desikan_killiany.2010-03-25.gcs')
     inputSpec.inputs.rh_atlas = os.path.join(
-        config['FREESURFER_HOME'], 'average/rh.average.curvature.filled.buckner40.tif')
+        config['FREESURFER_HOME'], 'average',
+        'rh.average.curvature.filled.buckner40.tif')
     inputSpec.inputs.rh_classifier = os.path.join(
-        config['FREESURFER_HOME'], 'average/rh.curvature.buckner40.filled.desikan_killiany.2010-03-25.gcs')
+        config['FREESURFER_HOME'], 'average',
+        'rh.curvature.buckner40.filled.desikan_killiany.2010-03-25.gcs')
 
     ar3_lh_inputs = pe.Node(IdentityInterface(fields=['hemisphere',
                                                       'subject_id',
@@ -313,8 +317,12 @@ def create_AutoRecon3(config):
         parcellation_stats_white.inputs.mgz = True
         parcellation_stats_white.inputs.tabular_output = True
         parcellation_stats_white.inputs.surface = 'white'
-        parcellation_stats_white.inputs.out_color = outputfilename(config['subjects_dir'], config['current_id'], 'aparc.annot.ctab', 'label')
-        parcellation_stats_white.inputs.out_table = outputfilename(config['subjects_dir'], config['current_id'], '{0}.aparc.stats'.format(hemisphere), 'stats')
+        parcellation_stats_white.inputs.out_color = os.path.join(
+            config['subjects_dir'], config['current_id'], 
+            'label', 'aparc.annot.ctab')
+        parcellation_stats_white.inputs.out_table = os.path.join(
+            config['subjects_dir'], config['current_id'], 
+            'stats', '{0}.aparc.stats'.format(hemisphere))
 
         ar3_wf.connect([(inputSpec, parcellation_stats_white, [('subject_id', 'subject_id'),
                                                                 ('subjects_dir',
@@ -352,8 +360,12 @@ def create_AutoRecon3(config):
         parcellation_stats_pial.inputs.mgz = True
         parcellation_stats_pial.inputs.tabular_output = True
         parcellation_stats_pial.inputs.surface = 'pial'
-        parcellation_stats_pial.inputs.out_color = outputfilename(config['subjects_dir'], config['current_id'], 'aparc.annot.ctab', 'label')
-        parcellation_stats_pial.inputs.out_table = outputfilename(config['subjects_dir'], config['current_id'], '{0}.aparc.pial.stats'.format(hemisphere), 'stats')
+        parcellation_stats_pial.inputs.out_color = os.path.join(
+            config['subjects_dir'], config['current_id'], 
+            'label', 'aparc.annot.ctab')
+        parcellation_stats_pial.inputs.out_table = os.path.join(
+            config['subjects_dir'], config['current_id'], 
+            'stats', '{0}.aparc.pial.stats'.format(hemisphere))
 
         ar3_wf.connect([(inputSpec, parcellation_stats_pial, [('subject_id', 'subject_id'),
                                                              ('subjects_dir',
@@ -394,8 +406,11 @@ def create_AutoRecon3(config):
             rh_cort_parc2 = cortical_parcellation_2
             
         cortical_parcellation_2.inputs.classifier = os.path.join(
-            config['FREESURFER_HOME'], 'average', '{0}.destrieux.simple.2009-07-29.gcs'.format(hemisphere))
-        cortical_parcellation_2.inputs.out_file = outputfilename(config['subjects_dir'], config['current_id'], '{0}.aparc.a2009s.annot'.format(hemisphere), 'label')
+            config['FREESURFER_HOME'], 'average', 
+            '{0}.destrieux.simple.2009-07-29.gcs'.format(hemisphere))
+        cortical_parcellation_2.inputs.out_file = os.path.join(
+            config['subjects_dir'], config['current_id'], 
+            'label', '{0}.aparc.a2009s.annot'.format(hemisphere))
         cortical_parcellation_2.inputs.seed = 1234
 
         ar3_wf.connect([(inputSpec, cortical_parcellation_2, [('subject_id', 'subject_id'),
@@ -412,8 +427,12 @@ def create_AutoRecon3(config):
         # Parcellation Statistics 2
         parcellation_stats_white_2 = parcellation_stats_white.clone(
             name="Parcellation_Statistics_{0}_2".format(hemisphere))
-        parcellation_stats_white_2.inputs.out_color = outputfilename(config['subjects_dir'], config['current_id'], 'aparc.annot.a2009s.ctab', 'label')
-        parcellation_stats_white_2.inputs.out_table = outputfilename(config['subjects_dir'], config['current_id'], '{0}.aparc.a2009s.stats'.format(hemisphere), 'stats')
+        parcellation_stats_white_2.inputs.out_color = os.path.join(
+            config['subjects_dir'], config['current_id'],
+            'label', 'aparc.annot.a2009s.ctab')
+        parcellation_stats_white_2.inputs.out_table = os.path.join(
+            config['subjects_dir'], config['current_id'], 
+            'stats', '{0}.aparc.a2009s.stats'.format(hemisphere))
         ar3_wf.connect([(inputSpec, parcellation_stats_white_2, [('subject_id', 'subject_id'),
                                                                   ('subjects_dir',
                                                                    'subjects_dir'),
@@ -449,7 +468,9 @@ def create_AutoRecon3(config):
         cortical_parcellation_3 = pe.Node(MRIsCALabel(), name="Cortical_Parcellation_{0}_3".format(hemisphere))
         cortical_parcellation_3.inputs.classifier = os.path.join(
             config['FREESURFER_HOME'], 'average', '{0}.DKTatlas40.gcs'.format(hemisphere))
-        cortical_parcellation_3.inputs.out_file = outputfilename(config['subjects_dir'], config['current_id'], '{0}.aparc.DKTatlas40.annot'.format(hemisphere), 'label')
+        cortical_parcellation_3.inputs.out_file = os.path.join(
+            config['subjects_dir'], config['current_id'], 
+            'label', '{0}.aparc.DKTatlas40.annot'.format(hemisphere))
         cortical_parcellation_3.inputs.seed = 1234
         ar3_wf.connect([(inputSpec, cortical_parcellation_3, [('subject_id', 'subject_id'),
                                                                ('subjects_dir',
@@ -465,8 +486,12 @@ def create_AutoRecon3(config):
         # Parcellation Statistics 3
         parcellation_stats_white_3 = parcellation_stats_white.clone(
             name="Parcellation_Statistics_{0}_3".format(hemisphere))
-        parcellation_stats_white_3.inputs.out_color = outputfilename(config['subjects_dir'], config['current_id'], 'aparc.annot.DKTatlas40.ctab', 'label')
-        parcellation_stats_white_3.inputs.out_table = outputfilename(config['subjects_dir'], config['current_id'], '{0}.aparc.DKTatlas40.stats'.format(hemisphere), 'stats')
+        parcellation_stats_white_3.inputs.out_color = os.path.join(
+            config['subjects_dir'], config['current_id'],
+            'label', 'aparc.annot.DKTatlas40.ctab')
+        parcellation_stats_white_3.inputs.out_table = os.path.join(
+            config['subjects_dir'], config['current_id'], 
+            'stats', '{0}.aparc.DKTatlas40.stats'.format(hemisphere))
 
         ar3_wf.connect([(inputSpec, parcellation_stats_white_3, [('subject_id', 'subject_id'),
                                                                    ('subjects_dir',
@@ -831,8 +856,9 @@ def create_AutoRecon3(config):
                 preprocess = pe.Node(MRISPreprocReconAll(), name="QCache_Preproc_{0}_{1}".format(
                     hemisphere, meas_name.replace('.', '_')))
                 target_id = 'fsaverage'
-                preprocess.inputs.out_file = outputfilename(config['subjects_dir'], config['current_id'], 
-                    '{0}.{1}.{2}.mgh'.format(hemisphere, meas_name, target_id), 'surf')
+                preprocess.inputs.out_file = os.path.join(
+                    config['subjects_dir'], config['current_id'], 
+                    'surf', '{0}.{1}.{2}.mgh'.format(hemisphere, meas_name, target_id))
                 target_dir = os.path.join(config['subjects_dir'], target_id)
                 if not os.path.isdir(target_dir):
                     # link fsaverage if it doesn't exist
@@ -859,8 +885,9 @@ def create_AutoRecon3(config):
                     surf2surf.inputs.hemi = hemisphere
                     tval_file = "{0}.{1}.fwhm{2}.fsaverage.mgh".format(
                         hemisphere, meas_name, value)
-                    surf2surf.inputs.out_file = outputfilename(config['subjects_dir'], config['current_id'], 
-                        tval_file, 'surf')
+                    surf2surf.inputs.out_file = os.path.join(
+                        config['subjects_dir'], config['current_id'], 
+                        'surf', tval_file)
                     ar3_lh_wf.connect([(preprocess, surf2surf, [('out_file', 'in_file')]),
                                        (inputSpec, surf2surf,
                                         [('subjects_dir', 'subjects_dir')]),

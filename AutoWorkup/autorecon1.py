@@ -48,12 +48,6 @@ def mkdir_p(path):
         else:
             raise
 
-def outputfilename(subjects_dir, subject_id, filename, subfolder1='mri', subfolder2=''):
-    dest_dir = os.path.join(
-        subjects_dir, subject_id, subfolder1, subfolder2)
-    if not os.path.isdir(dest_dir):
-        mkdir_p(dest_dir)
-    return os.path.join(dest_dir, filename)
 
 def awk(awk_file, log_file):
     """
@@ -144,7 +138,10 @@ def create_AutoRecon1(config):
             # mri_convert
             inputSpec.inputs.Raw_T2 = config['in_T2']
             T2_convert = pe.Node(MRIConvert(), name="T2_convert")
-            T2_convert.inputs.out_file = os.path.join(config['subjects_dir'], config['current_id'], 'mri', 'orig', 'T2raw.mgz')
+            T2_convert.inputs.out_file = os.path.join(config['subjects_dir'], 
+                                                      config['current_id'], 
+                                                      'mri', 'orig',
+                                                      'T2raw.mgz')
             T2_convert.inputs.no_scale = True
             ar1_wf.connect([(inputSpec, T2_convert, [('Raw_T2', 'in_file')]),
                             ]) 
@@ -229,7 +226,9 @@ copy the run to rawavg and continue."""
         # if multiple T1 scans are given
         create_template = pe.Node(RobustTemplate(), name="Robust_Template")
         create_template.inputs.average_metric = 'median'
-        create_template.inputs.out_file = outputfilename(config['subjects_dir'], config['current_id'], 'rawavg.mgz')
+        create_template.inputs.out_file = os.path.join(config['subjects_dir'], 
+                                                       config['current_id'], 'mri',
+                                                       'rawavg.mgz')
         create_template.inputs.no_iteration = True
             
         # if running longitudinally
@@ -251,7 +250,9 @@ copy the run to rawavg and continue."""
 
     # mri_convert
     conform_template = pe.Node(MRIConvert(), name='Conform_Template')
-    conform_template.inputs.out_file = outputfilename(config['subjects_dir'], config['current_id'], 'orig.mgz')
+    conform_template.inputs.out_file = os.path.join(config['subjects_dir'], 
+                                                    config['current_id'], 
+                                                    'mri', 'orig.mgz')
     if config['longitudinal']:
         conform_template.inputs.out_datatype = 'uchar'
     else:
@@ -283,7 +284,9 @@ copy the run to rawavg and continue."""
     bias_correction.inputs.protocol_iterations = 1000
     bias_correction.inputs.distance = 50
     bias_correction.inputs.no_rescale = True
-    bias_correction.inputs.out_file = outputfilename(config['subjects_dir'], config['current_id'], 'orig_nu.mgz')
+    bias_correction.inputs.out_file = os.path.join(config['subjects_dir'], 
+                                                   config['current_id'], 
+                                                   'mri', 'orig_nu.mgz')
 
     ar1_wf.connect([(add_to_header, bias_correction, [('out_file', 'in_file')]),
                 ])
@@ -300,8 +303,8 @@ copy the run to rawavg and continue."""
     else:
         talairach_avi = pe.Node(TalairachAVI(), name="Compute_Transform")
         talairach_avi.inputs.atlas = '3T18yoSchwartzReactN32_as_orig'
-        talairach_avi.inputs.out_file = outputfilename(config['subjects_dir'], config['current_id'], 
-                                                       'talairach.auto.xfm', 'mri', 'transforms')
+        talairach_avi.inputs.out_file = os.path.join(config['subjects_dir'], config['current_id'], 
+                                                     'mri', 'transforms', 'talairach.auto.xfm')
         
         ar1_wf.connect([(bias_correction, talairach_avi, [('out_file', 'in_file')]),
                     ])
@@ -347,7 +350,8 @@ copy the run to rawavg and continue."""
 
     mri_normalize = pe.Node(Normalize(), name="Normalize_T1")
     mri_normalize.inputs.gradient = 1
-    mri_normalize.inputs.out_file = outputfilename(config['subjects_dir'], config['current_id'], 'T1.mgz')
+    mri_normalize.inputs.out_file = os.path.join(config['subjects_dir'], 
+                                                 config['current_id'], 'mri', 'T1.mgz')
     ar1_wf.connect([(bias_correction, mri_normalize, [('out_file', 'in_file')]),
                     (copy_transform, mri_normalize,
                      [('out_file', 'transform')]),
@@ -388,8 +392,10 @@ copy the run to rawavg and continue."""
         mri_em_register.inputs.template = os.path.join(config['FREESURFER_HOME'],
                                                        'average',
                                                        'RB_all_withskull_2014-08-21.gca')
-        mri_em_register.inputs.out_file = outputfilename(config['subjects_dir'], config['current_id'], 
-                                                         'talairach_with_skull.lta', 'mri', 'transforms')
+        mri_em_register.inputs.out_file = os.path.join(config['subjects_dir'], 
+                                                       config['current_id'], 
+                                                       'mri', 'transforms',
+                                                       'talairach_with_skull.lta')
         mri_em_register.inputs.skull = True
         if config['openmp'] != None:
             mri_em_register.inputs.num_threads = config['openmp']
@@ -404,8 +410,9 @@ copy the run to rawavg and continue."""
         watershed_skull_strip.inputs.brain_atlas = os.path.join(config['FREESURFER_HOME'],
                                                                 'average',
                                                                 'RB_all_withskull_2014-08-21.gca')
-        watershed_skull_strip.inputs.out_file = outputfilename(config['subjects_dir'], config['current_id'], 
-                                                               'brainmask.auto.mgz')
+        watershed_skull_strip.inputs.out_file = os.path.join(config['subjects_dir'], 
+                                                             config['current_id'], 
+                                                             'mri', 'brainmask.auto.mgz')
         ar1_wf.connect([(mri_normalize, watershed_skull_strip, [('out_file', 'in_file')]),
                         (mri_em_register, watershed_skull_strip,
                          [('out_file', 'transform')]),

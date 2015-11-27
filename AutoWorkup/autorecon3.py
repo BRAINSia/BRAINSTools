@@ -715,116 +715,37 @@ def create_AutoRecon3(config):
                                               ]),
                     ])
 
-    # Brodmann Area Maps (BA Maps) and Hinds V1 Atlas
+    # add brodman area maps to the workflow
+    ba_WF = create_ba_maps_wf(config)
 
-    ba_inputs = pe.Node(IdentityInterface(fields=['lh_sphere_reg',
-                                                  'rh_sphere_reg',
-                                                  'lh_white',
-                                                  'rh_white',
-                                                  'lh_pial',
-                                                  'rh_pial',
-                                                  'transform',
-                                                  'lh_thickness',
-                                                  'rh_thickness',
-                                                  'brainmask',
-                                                  'aseg',
-                                                  'ribbon',
-                                                  'wm',
-                                                  'subject_id',
-                                                  'subjects_dir'
-                                                  ]),
-                        name="BA_Maps_Inputs")
-
-    ba_WF = pe.Workflow(name="Brodmann_Area_Maps")
-    labels = ["BA1", "BA2", "BA3a", "BA3b", "BA4a", "BA4p", "BA6",
-              "BA44", "BA45", "V1", "V2", "MT", "entorhinal", "perirhinal"]
-    for hemisphere in ['lh', 'rh']:
-        for threshold in [True, False]:
-            if threshold:
-                node_name = 'BA_Maps_' + hemisphere + '_Tresh'
-            else:
-                node_name = 'BA_Maps_' + hemisphere
-
-            node = pe.MapNode(
-                Label2Label(), name=node_name, iterfield=['label'])
-            node.inputs.hemisphere = hemisphere
-            node.inputs.label = labels
-            node.inputs.threshold = threshold
-
-            label2annot = pe.Node(Label2Annot(), name=node_name + '_2_Annot')
-            label2annot.inputs.hemisphere = hemisphere
-            label2annot.inputs.color_table = os.path.join(
-                config['FREESURFER_HOME'], 'average', 'colortable_BA.txt')
-            label2annot.inputs.verbose_off = True
-            label2annot.inputs.keep_max = True
-            if threshold:
-                label2annot.inputs.out_annot = "BA_exvivo.thresh"
-            else:
-                label2annot.inputs.out_annot = "BA_exvivo"
-
-            stats_node = pe.Node(
-                ParcellationStats(), name=node_name + '_Stats')
-            stats_node.inputs.hemisphere = hemisphere
-            stats_node.inputs.mgz = True
-            stats_node.inputs.surface = 'white'
-            stats_node.inputs.tabular_output = True
-
-            ba_WF.connect([(ba_inputs, node, [('{0}_sphere_reg'.format(hemisphere), 'sphere_reg'),
-                                              ('{0}_white'.format(
-                                                  hemisphere), 'white'),
-                                              ('subject_id', 'subject_id'),
-                                              ('subjects_dir', 'subjects_dir'),
-                                              ]),
-                           (node, label2annot, [('out_file', 'in_labels')]),
-                           (ba_inputs, label2annot, [('subject_id', 'subject_id'),
-                                                     ('subjects_dir',
-                                                      'subjects_dir'),
-                                                     ]),
-                           (label2annot, stats_node,
-                            [('out_file', 'in_annotation')]),
-                           (ba_inputs, stats_node, [('{0}_thickness'.format(hemisphere), 'thickness'),
-                                                    ('subject_id',
-                                                     'subject_id'),
-                                                    ('subjects_dir',
-                                                     'subjects_dir'),
-                                                    ('lh_white', 'lh_white'),
-                                                    ('rh_white', 'rh_white'),
-                                                    ('lh_pial', 'lh_pial'),
-                                                    ('rh_pial', 'rh_pial'),
-                                                    ('transform', 'transform'),
-                                                    ('brainmask', 'brainmask'),
-                                                    ('aseg', 'aseg'),
-                                                    ('wm', 'wm'),
-                                                    ('ribbon', 'ribbon')])])
-
-    ar3_wf.connect([(ar3_lh_wf, ba_WF, [('Surface_Registration.out_file', 'BA_Maps_Inputs.lh_sphere_reg'),
+    ar3_wf.connect([(ar3_lh_wf, ba_WF, [('Surface_Registration.out_file', 'Inputs.lh_sphere_reg'),
                                         ('Make_Pial_Surface.out_thickness',
-                                         'BA_Maps_Inputs.lh_thickness'),
+                                         'Inputs.lh_thickness'),
                                         ('Make_Pial_Surface.out_pial',
-                                         'BA_Maps_Inputs.lh_pial'),
+                                         'Inputs.lh_pial'),
                                         ]),
-                    (ar3_rh_wf, ba_WF, [('Surface_Registration.out_file', 'BA_Maps_Inputs.rh_sphere_reg'),
+                    (ar3_rh_wf, ba_WF, [('Surface_Registration.out_file', 'Inputs.rh_sphere_reg'),
                                         ('Make_Pial_Surface.out_thickness',
-                                         'BA_Maps_Inputs.rh_thickness'),
+                                         'Inputs.rh_thickness'),
                                         ('Make_Pial_Surface.out_pial',
-                                         'BA_Maps_Inputs.rh_pial'),
+                                         'Inputs.rh_pial'),
                                         ]),
-                    (inputSpec, ba_WF, [('subject_id', 'BA_Maps_Inputs.subject_id'),
+                    (inputSpec, ba_WF, [('subject_id', 'Inputs.subject_id'),
                                          ('subjects_dir',
-                                          'BA_Maps_Inputs.subjects_dir'),
+                                          'Inputs.subjects_dir'),
                                          ('lh_white',
-                                          'BA_Maps_Inputs.lh_white'),
+                                          'Inputs.lh_white'),
                                          ('rh_white',
-                                          'BA_Maps_Inputs.rh_white'),
+                                          'Inputs.rh_white'),
                                          ('transform',
-                                          'BA_Maps_Inputs.transform'),
+                                          'Inputs.transform'),
                                          ('aseg_presurf',
-                                          'BA_Maps_Inputs.aseg'),
+                                          'Inputs.aseg'),
                                          ('brainmask',
-                                          'BA_Maps_Inputs.brainmask'),
-                                         ('wm', 'BA_Maps_Inputs.wm')]),
+                                          'Inputs.brainmask'),
+                                         ('wm', 'Inputs.wm')]),
                     (volume_mask, ba_WF, [
-                        ('out_ribbon', 'BA_Maps_Inputs.ribbon')])
+                        ('out_ribbon', 'Inputs.ribbon')])
                     ])
 
     if config['qcache']:

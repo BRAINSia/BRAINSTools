@@ -22,7 +22,9 @@ def runAutomaticCleanupScript(inFN1, inAtlas, outAtlas, maxIslandCount,
     print arguments
     localDustCleanupObject = DustCleanup(arguments=arguments)
     localDustCleanupObject.main()
-    return outAtlas
+
+    import os
+    return os.path.abspath(outAtlas)
 
 def CreateDustCleanupWorkflow(WFname, onlyT1, master_config):
 
